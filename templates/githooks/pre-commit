@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Hook pre-commit del arnés: rechaza el commit si no actualiza CHANGELOG.md.
+# Instalar: git config core.hooksPath .githooks  (o copiar a .git/hooks/pre-commit)
+set -euo pipefail
+
+if git diff --cached --name-only | grep -qx "CHANGELOG.md"; then
+  exit 0
+fi
+
+echo "ERROR: este commit no actualiza CHANGELOG.md."
+echo "El arnes exige registrar cada commit en CHANGELOG.md (ver AGENTS.md seccion 8)."
+echo "Agrega tu entrada y vuelve a commitear."
+exit 1

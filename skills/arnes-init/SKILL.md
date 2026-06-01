@@ -1,0 +1,43 @@
+---
+name: arnes-init
+description: Inicializa un proyecto nuevo con el andamiaje del arnés (AGENTS.md, CLAUDE.md, CHANGELOG, ESTADO, requirements, docs, hook pre-commit). Idempotente: no vuelve a correr si ya está inicializado. Trabaja en español.
+---
+
+# arnes-init — arranque de proyecto
+
+Inicializa el andamiaje del arnés en el proyecto actual. **Es idempotente**: revisa el
+marcador antes de hacer nada.
+
+## Procedimiento
+
+1. **Verifica el marcador.** Si existe `.arnes-initialized` en la raíz del proyecto,
+   informa que ya está inicializado y NO hagas nada más.
+
+2. **Si no existe**, crea el andamiaje copiando desde `templates/` del plugin y rellenando
+   los `{{PLACEHOLDERS}}`:
+   - `AGENTS.md`  ← `templates/AGENTS.md.tpl`  (archivo canónico)
+   - `CLAUDE.md`  ← `templates/CLAUDE.md.tpl`  (importa AGENTS.md)
+   - `CHANGELOG.md` ← `templates/CHANGELOG.md.tpl`
+   - `docs/ESTADO.md` ← `templates/ESTADO.md.tpl`
+   - `PENDING_APPROVAL.md` ← `templates/PENDING_APPROVAL.md.tpl`
+   - `ARCHITECTURE.md` ← `templates/ARCHITECTURE.md.tpl`
+   - `requirements/README.md` ← `templates/requirements-README.md.tpl`
+   - `.githooks/pre-commit` ← `templates/githooks/pre-commit` (recuerda `git config core.hooksPath .githooks`)
+   - Carpetas vacías: `docs/decisions/`, `docs/seguridad/`, `docs/usuario/`, `memory/`.
+   - La plantilla de ADRs (`templates/ADR.md.tpl`) queda disponible para cuando se registre una decisión.
+   - `.mcp.json.example` se deja como referencia; NO se activa salvo que el usuario quiera el músculo de runtime.
+
+3. **Entrevista mínima para rellenar `AGENTS.md`** (una pregunta a la vez): nombre del
+   proyecto, descripción, stack, módulos, modelo de permisos, comandos de quality gates,
+   máximo de reintentos dev↔QA, qué decisiones requieren gate humano, y destinatario del
+   entregable. Si el usuario prefiere, lanza al `analista-requerimientos` para esta parte.
+
+4. **Crea el marcador** `.arnes-initialized` con la fecha y la versión del arnés.
+
+5. **Resumen:** lista lo creado y el próximo paso (normalmente: levantar el primer REQ con
+   el `analista-requerimientos`).
+
+## Reglas
+- No sobrescribas archivos existentes sin avisar.
+- No metas datos de un proyecto/cliente en las plantillas del plugin; el contenido específico
+  va solo en los archivos del proyecto.

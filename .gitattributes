@@ -1,0 +1,4 @@
+# El hook es un script bash: debe conservar LF aunque se clone en Windows
+templates/githooks/pre-commit text eol=lf
+# (opcional, defensivo) normalizar texto del repo
+* text=auto

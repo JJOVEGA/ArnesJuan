@@ -1,0 +1,25 @@
+# ── Arnés (plugin) — .gitignore ──────────────────────────────────────────────
+# Regla rectora: este repo es el PLUGIN genérico. No debe contener config local,
+# dependencias, ni archivos de estado de proyectos concretos.
+
+# Config MCP REAL del proyecto (el ejemplo sí se versiona; ver negación abajo)
+.mcp.json
+
+# Dependencias
+node_modules/
+
+# Basura del SO
+.DS_Store
+
+# Marcador que crea /arnes-init en cada proyecto (no pertenece al plugin)
+.arnes-initialized
+
+# Config local de Claude Code (específica de cada máquina/sesión)
+.claude/settings.local.json
+
+# ── Conservar siempre (negaciones defensivas) ────────────────────────────────
+# Estos archivos del plugin NUNCA deben ignorarse, aunque empiecen con punto.
+!.mcp.json.example
+!.claude-plugin/
+!templates/githooks/pre-commit
+!tests/escenarios/.gitkeep
