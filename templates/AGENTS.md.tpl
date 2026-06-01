@@ -48,6 +48,12 @@
 Los subagentes NO se invocan entre sí; la sesión principal orquesta el bucle y el humano
 aprueba cada fase.
 
+> **La sesión coordinadora no edita el código de la app en directo.** Todo cambio de código
+> —incluida la **depuración de errores**— se delega en el `desarrollador`; luego `qa-tester`
+> valida y `auditor-seguridad` revisa si aplica. La coordinadora orquesta, mantiene el
+> pipeline y los quality gates, y pide la aprobación humana; no parchea a mano. Es justo al
+> depurar cuando aparece la tentación de "arreglar rápido" saltándose el arnés: no se hace.
+
 | Agente | Modelo | Responsabilidad |
 |--------|--------|-----------------|
 | `analista-requerimientos` | Opus | Levanta y documenta requerimientos en `requirements/` |

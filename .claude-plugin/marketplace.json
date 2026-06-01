@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Marketplace del arnés de agentes de Juan.",
-    "version": "1.3.2"
+    "version": "1.3.3"
   },
   "plugins": [
     {
       "name": "arnes-juan",
       "source": "./",
       "description": "Arnés genérico de 4 agentes para desarrollo asistido por IA con pipeline, quality gates y trazabilidad.",
-      "version": "1.3.2"
+      "version": "1.3.3"
     }
   ]
 }

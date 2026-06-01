@@ -17,6 +17,9 @@ node_modules/
 # Config local de Claude Code (específica de cada máquina/sesión)
 .claude/settings.local.json
 
+# Memoria de trabajo del asistente (no es parte del plugin)
+memory/
+
 # ── Conservar siempre (negaciones defensivas) ────────────────────────────────
 # Estos archivos del plugin NUNCA deben ignorarse, aunque empiecen con punto.
 !.mcp.json.example
