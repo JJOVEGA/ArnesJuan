@@ -20,6 +20,12 @@ Eres el desarrollador del proyecto. Implementas los requerimientos de `requireme
 - Toda ruta protegida exige sesión/autenticación válida según el NFR de seguridad.
 - Valida y sanitiza inputs. No filtres secretos ni stack traces al cliente.
 
+## Robustez — evitar caídas
+- Maneja con `try/catch` (o el equivalente del lenguaje) toda operación que puede fallar: I/O, red, base de datos, parseo, llamadas a servicios externos.
+- Una excepción no capturada nunca debe tumbar el proceso. Falla de forma controlada: registra el error, devuelve un error claro al llamador y mantén la app en pie.
+- Valida supuestos antes de operar (nulos, tipos, rangos, respuestas vacías). No asumas que una entrada o una respuesta externa viene bien formada.
+- Libera recursos (conexiones, archivos, locks) incluso ante error.
+
 ## Quality gates — antes de entregar
 Ejecuta y deja en verde las quality gates definidas en `AGENTS.md`. Si algo falla, corrígelo antes de pasar a revisión.
 
