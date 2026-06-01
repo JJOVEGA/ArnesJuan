@@ -114,7 +114,27 @@ Cada entrada en `CHANGELOG.md` lleva: fecha, **Origen** (`GitHub` = commit / `In
 usuario, modelo de IA, agente(s) y detalle. Todo commit DEBE actualizar `CHANGELOG.md` en el
 mismo commit (lo exige el hook `pre-commit`).
 
-## 9. Convenciones de trabajo
+## 9. Cambios de requerimientos (versionado y deriva)
+
+**PRINCIPIO:** un requerimiento NO se reescribe encima. Se **versiona** dejando rastro del
+antes, el después y, sobre todo, el **PORQUÉ** (enlazado a su causa: `SEC-xxx`, un NFR, un
+cambio de legislación, una limitación detectada en pruebas, un parche de dependencia, etc.).
+
+- **Cambio MENOR** (ajusta un criterio o un detalle): edita el REQ y registra en su
+  **Historial de cambios**: fecha, qué cambió (antes → después) y la causa. Añade entrada en
+  `CHANGELOG.md`.
+- **Cambio DE FONDO** (cambia el alcance, la decisión base o el significado del REQ): crea un
+  **ADR nuevo** (contexto, qué cambió y por qué, decisión, consecuencias); el REQ se actualiza
+  y **enlaza** a ese ADR. Mismo patrón que un `ADR-005` que supersede al `ADR-003`.
+- **DERIVA** (el código terminó distinto de lo que dice el REQ): **no se deja en silencio**. Se
+  actualiza el REQ para reflejar la realidad implementada, con su trazabilidad y causa; si el
+  desvío fue de fondo, además un ADR.
+- **REGLA DE ESTADO:** cuando un REQ ya `completado` cambia, vuelve a `en-progreso` o
+  `en-revisión` y **re-recorre el ciclo** (dev ajusta → QA re-valida contra los criterios
+  nuevos → seguridad revisa). Un cambio de requerimiento **reabre** el trabajo; no es solo
+  editar texto.
+
+## 10. Convenciones de trabajo
 
 - Idioma de documentación y comunicación: **español**.
 - No introducir abstracciones ni features fuera del alcance del REQ en curso.
@@ -124,13 +144,13 @@ mismo commit (lo exige el hook `pre-commit`).
   un ADR usando la plantilla del arnés (`templates/ADR.md.tpl`). No se borran; si una decisión
   se revierte, se crea un ADR nuevo que supersede al anterior.
 
-## 10. Entrega
+## 11. Entrega
 
 El proyecto no se considera cerrado hasta generar `DELIVERY.md` (artefacto de cierre:
 resumen ejecutivo, changelog consolidado, estado de docs, módulos entregados, handoff)
 y obtener la aprobación del destinatario.
 
-## 11. Mapa de carpetas
+## 12. Mapa de carpetas
 
 ```
 AGENTS.md              ← este archivo (canónico, cross-tool)

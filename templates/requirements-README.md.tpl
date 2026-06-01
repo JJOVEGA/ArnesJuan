@@ -18,6 +18,12 @@ Esta carpeta es el **contrato compartido**: la única fuente de verdad sobre qu�
 
 Un REQ solo pasa a `completado` cuando: criterios de aceptación cumplidos + quality gates en verde + visto bueno de seguridad.
 
+## Cambios de requerimientos
+Un REQ **no se reescribe encima**: se versiona. Todo cambio se anota en el **Historial de
+cambios** del REQ (fecha · antes→después · causa · ADR si aplica). Los cambios de fondo
+generan un **ADR**. Si un REQ `completado` cambia, vuelve a `en-progreso`/`en-revisión` y
+**re-recorre el ciclo**. Política completa en `AGENTS.md`, sección "Cambios de requerimientos".
+
 ## Metodología
 **1. Historia de usuario:** Como **[rol]**, quiero **[acción]**, para **[beneficio]**.
 **2. Criterios de aceptación en Gherkin:** **Dado** [contexto] **Cuando** [acción] **Entonces** [resultado].
@@ -43,6 +49,11 @@ Como [rol], quiero [acción], para [beneficio].
 ## Trazabilidad
 Origen: (...)
 Tocado por: (agente / fecha)
+
+## Historial de cambios
+| Fecha | Antes → Después | Causa | ADR |
+|------------|-----------------|-------------------------|--------|
+| AAAA-MM-DD | (creación) | — | — |
 ```
 
 ## Índice
