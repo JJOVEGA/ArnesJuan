@@ -25,6 +25,8 @@ Eres el desarrollador del proyecto. Implementas los requerimientos de `requireme
 - Una excepción no capturada nunca debe tumbar el proceso. Falla de forma controlada: registra el error, devuelve un error claro al llamador y mantén la app en pie.
 - Valida supuestos antes de operar (nulos, tipos, rangos, respuestas vacías). No asumas que una entrada o una respuesta externa viene bien formada.
 - Libera recursos (conexiones, archivos, locks) incluso ante error.
+- Al comparar contra un **conjunto conocido de valores** que vienen de fuera (roles, enums, flags, cabeceras, config escrita a mano), **normaliza antes de comparar** (recorta espacios y unifica mayúsc./minúsc. cuando aplique) o valida explícitamente. No dependas de la coincidencia exacta de strings tecleados por una persona.
+- Un camino **fail-closed** (deniega/no concede nada ante un valor no reconocido) es correcto, pero **no debe ser silencioso**: registra el valor no reconocido (log/warn) para poder diagnosticarlo. "Entra pero no ve nada, sin explicación" es un bug de diagnóstico.
 
 ## Quality gates — antes de entregar
 Ejecuta y deja en verde las quality gates definidas en `AGENTS.md`. Si algo falla, corrígelo antes de pasar a revisión.
