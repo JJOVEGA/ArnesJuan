@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel — {{NOMBRE_PROYECTO}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --w:#fff;--k:#0a0a0a;--red:#ff3300;--gray:#8a8a8a;--line:#e2e2e2;--soft:#f4f4f4;
+    --green:#1f7a3d;--amber:#b45309;--blue:#1d4ed8;
+    --f-disp:'Archivo',sans-serif;--f-body:'Nunito',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--w);color:var(--k);font-family:var(--f-body);line-height:1.5}
+  .page{max-width:1100px;margin:0 auto;padding:0 32px 64px}
+  .rule--red{height:3px;background:var(--red)}
+  header{padding:34px 0 18px}
+  .kicker{font-family:var(--f-disp);font-weight:600;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--red)}
+  h1{font-family:var(--f-disp);font-weight:900;font-size:clamp(34px,6vw,60px);line-height:.95;letter-spacing:-1.5px;margin:8px 0 6px}
+  .meta{font-size:13px;color:var(--gray);font-weight:600;display:flex;gap:18px;flex-wrap:wrap}.meta b{color:var(--k)}
+  .hint{font-size:12px;font-weight:700;color:var(--red);margin-top:10px}
+  .hint::before{content:'▸ ';}
+  section{padding:30px 0}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:18px}
+  .sec-no{font-family:var(--f-disp);font-weight:900;font-size:14px;color:var(--red)}
+  .sec-title{font-family:var(--f-disp);font-weight:800;font-size:22px;letter-spacing:-.5px;text-transform:uppercase}
+  .exec{display:grid;grid-template-columns:1.4fr 1fr;border:3px solid var(--k)}
+  .exec .vision{padding:26px 28px;border-right:3px solid var(--k)}
+  .exec .vision p{font-size:16px;line-height:1.45;font-weight:600;margin-top:8px}
+  .stats{display:flex;flex-direction:column}
+  .stat{padding:16px 24px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;justify-content:space-between}
+  .stat:last-child{border-bottom:0}.stat .n{font-family:var(--f-disp);font-weight:900;font-size:40px;line-height:1}
+  .stat .l{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray);text-align:right;max-width:120px}
+  .stat--risk .n{color:var(--red)}
+  .prog{display:flex;height:26px;border:3px solid var(--k);margin-top:6px;font-family:var(--f-disp);font-weight:800;font-size:11px}
+  .prog span{display:flex;align-items:center;justify-content:center;color:var(--w);overflow:hidden;white-space:nowrap}
+  .p-done{background:var(--green)}.p-prog{background:var(--blue)}.p-pend{background:var(--gray)}
+  .legend{display:flex;gap:16px;margin-top:10px;font-size:12px;font-weight:700;flex-wrap:wrap}
+  .legend i{width:11px;height:11px;display:inline-block;margin-right:5px;vertical-align:middle}
+  .mods{display:grid;grid-template-columns:repeat(3,1fr);border-top:3px solid var(--k);border-left:3px solid var(--k)}
+  .mod{border-right:3px solid var(--k);border-bottom:3px solid var(--k);padding:18px 20px}
+  .mod .id{font-family:var(--f-disp);font-weight:900;font-size:13px;color:var(--red)}
+  .mod .nm{font-family:var(--f-disp);font-weight:800;font-size:17px;margin:4px 0 8px}
+  .mod .st{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;display:inline-block;padding:2px 8px}
+  .st-fase1{background:var(--k);color:var(--w)}.st-fase2{background:var(--soft);color:var(--gray)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{font-family:var(--f-disp);font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:1px;text-align:left;padding:9px 10px;border-bottom:3px solid var(--k)}
+  td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+  td .rid{font-family:var(--f-disp);font-weight:800}
+  .badge{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 9px;white-space:nowrap;font-family:var(--f-disp)}
+  .b-done{background:var(--green);color:#fff}.b-prog{background:var(--blue);color:#fff}
+  .b-pend{background:var(--soft);color:var(--gray)}.b-block{background:var(--red);color:#fff}
+  .sev{font-family:var(--f-disp);font-weight:900;font-size:11px;padding:2px 8px}
+  .sev-alta{background:var(--red);color:#fff}.sev-media{background:var(--amber);color:#fff}.sev-mit{background:var(--green);color:#fff}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+  ul.clean{list-style:none;font-size:14px}
+  ul.clean li{padding:8px 0 8px 20px;border-bottom:1px solid var(--line);position:relative;font-weight:600}
+  ul.clean li::before{content:'';position:absolute;left:0;top:15px;width:9px;height:9px;background:var(--red)}
+  .next0{background:var(--k);color:var(--w);padding:14px 16px;font-weight:700;font-size:14px;margin-bottom:12px}.next0 b{color:var(--red)}
+  footer{margin-top:24px;padding-top:14px;border-top:3px solid var(--k);font-size:11px;color:var(--gray);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+  /* clickable */
+  tr.clk,li.clk{cursor:pointer;transition:background .12s}
+  tr.clk:hover{background:#fff5f2}
+  tr.clk td:first-child .rid{text-decoration:underline;text-decoration-color:var(--red);text-underline-offset:3px}
+  li.clk:hover{background:#fff5f2}
+  .clk .caret{float:right;color:var(--red);font-weight:900}
+  /* drawer */
+  .overlay{position:fixed;inset:0;background:rgba(10,10,10,.45);opacity:0;visibility:hidden;transition:.2s;z-index:50}
+  .overlay.open{opacity:1;visibility:visible}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:min(520px,92vw);background:var(--w);border-left:6px solid var(--red);transform:translateX(100%);transition:transform .26s cubic-bezier(.4,0,.2,1);z-index:51;display:flex;flex-direction:column}
+  .drawer.open{transform:translateX(0)}
+  .d-head{padding:22px 26px;border-bottom:3px solid var(--k);display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+  .d-eyebrow{font-family:var(--f-disp);font-weight:900;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--red)}
+  .d-title{font-family:var(--f-disp);font-weight:800;font-size:22px;line-height:1.1;letter-spacing:-.5px;margin-top:4px}
+  .d-close{font-family:var(--f-disp);font-weight:900;font-size:22px;background:none;border:0;cursor:pointer;line-height:1;color:var(--k)}
+  .d-body{padding:24px 26px;overflow-y:auto}
+  .d-body h4{font-family:var(--f-disp);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--gray);margin:18px 0 6px}
+  .d-body h4:first-child{margin-top:0}
+  .d-body p{font-size:14px;margin-bottom:6px}
+  .d-body .gherkin{font-family:var(--f-disp);font-size:13px;background:var(--soft);border-left:3px solid var(--k);padding:10px 12px;margin:6px 0;font-weight:600}
+  .d-body code{background:#fff0ec;color:var(--red);padding:1px 5px;font-family:var(--f-disp);font-size:12px}
+  .hidden-details{display:none}
+  @media(max-width:780px){.page{padding:0 18px 48px}.exec{grid-template-columns:1fr}.exec .vision{border-right:0;border-bottom:3px solid var(--k)}.mods{grid-template-columns:1fr}.two{grid-template-columns:1fr;gap:18px}}
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <!-- FILL: header — kicker = organización/contexto, h1 = nombre del proyecto, meta = fecha de generación + fase + stack -->
+    <div class="kicker">{{KICKER}}</div>
+    <h1>{{NOMBRE_PROYECTO}}</h1>
+    <div class="meta"><span>Generado <b>{{FECHA}}</b></span><span>Fase <b>{{FASE}}</b></span><span>Stack <b>{{STACK}}</b></span></div>
+    <div class="hint">Hacé clic en cualquier requerimiento, hallazgo o decisión para ver el detalle</div>
+  </header>
+  <div class="rule--red"></div>
+
+  <section>
+    <div class="exec">
+      <div class="vision"><div class="kicker" style="color:var(--gray)">Visión</div><p>{{VISION}}</p></div>
+      <div class="stats">
+        <!-- FILL: 3 indicadores clave del proyecto -->
+        <div class="stat"><span class="n">{{REQ_DONE}}/{{REQ_TOTAL}}</span><span class="l">REQ completados</span></div>
+        <div class="stat"><span class="n">{{TESTS}}</span><span class="l">Tests en verde</span></div>
+        <div class="stat stat--risk"><span class="n">{{RIESGO_N}}</span><span class="l">{{RIESGO_L}}</span></div>
+      </div>
+    </div>
+    <!-- FILL: barra de avance — un <span> por estado, flex proporcional al conteo -->
+    <div class="prog"><span class="p-done" style="flex:2">{{N}} COMPLETADOS</span><span class="p-prog" style="flex:1">{{N}} EN CURSO</span><span class="p-pend" style="flex:1">{{N}} PENDIENTE</span></div>
+    <div class="legend"><span><i class="p-done"></i>Completado</span><span><i class="p-prog"></i>En progreso</span><span><i class="p-pend"></i>Pendiente</span><span><i style="background:var(--red)"></i>Riesgo / bloqueo</span></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">01</span><span class="sec-title">Módulos</span></div>
+    <div class="mods">
+      <!-- FILL: una .mod por módulo (de AGENTS.md §3). st-fase1 = en curso, st-fase2 = futuro. Ejemplo: -->
+      <div class="mod"><div class="id">{{ID}}</div><div class="nm">{{NOMBRE_MODULO}}</div><span class="st st-fase1">{{ESTADO}}</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">02</span><span class="sec-title">Requerimientos</span></div>
+    <table>
+      <thead><tr><th style="width:100px">ID</th><th>Título</th><th style="width:160px">Estado</th></tr></thead>
+      <tbody>
+        <!-- FILL: una <tr class="clk" data-detail="REQ-XXX"> por cada REQ/NFR. Badge: b-done/b-prog/b-pend/b-block. Cada uno necesita su bloque oculto con data-id igual. Ejemplo: -->
+        <tr class="clk" data-detail="REQ-001"><td><span class="rid">REQ-001</span></td><td>{{TITULO}}<span class="caret">›</span></td><td><span class="badge b-done">Completado</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">03</span><span class="sec-title">Seguridad</span></div>
+    <table>
+      <thead><tr><th style="width:100px">ID</th><th>Hallazgo</th><th style="width:100px">Sev.</th><th style="width:140px">Estado</th></tr></thead>
+      <tbody>
+        <!-- FILL: una <tr class="clk" data-detail="SEC-XXX"> por hallazgo. sev-alta/sev-media/sev-mit; badge b-block si bloquea. Cada uno con su bloque oculto. Ejemplo: -->
+        <tr class="clk" data-detail="SEC-001"><td><span class="rid">SEC-001</span></td><td>{{HALLAZGO}}<span class="caret">›</span></td><td><span class="sev sev-alta">Alta</span></td><td><span class="badge b-block">Bloquea deploy</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="two">
+      <div>
+        <div class="sec-head"><span class="sec-no">04</span><span class="sec-title">Próximos pasos</span></div>
+        <!-- FILL: de docs/ESTADO.md. El paso 0 destacado solo si hay un bloqueante de planificación -->
+        <div class="next0">{{PASO_0}}</div>
+        <ul class="clean">
+          <li>{{PROXIMO_PASO}}</li>
+        </ul>
+      </div>
+      <div>
+        <div class="sec-head"><span class="sec-no">05</span><span class="sec-title">Decisiones (ADR)</span></div>
+        <ul class="clean">
+          <!-- FILL: un <li class="clk" data-detail="ADR-XXX"> por ADR (de docs/decisions/), cada uno con su bloque oculto. Ejemplo: -->
+          <li class="clk" data-detail="ADR-001">ADR-001 — {{TITULO_ADR}}<span class="caret">›</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>Panel generado automáticamente desde los archivos del proyecto · No editar a mano · Volver a ejecutar /arnes-panel para actualizar</footer>
+</div>
+
+<!-- DETALLE EMBEBIDO (oculto; el clic lo trae al drawer) -->
+<div class="hidden-details">
+  <!-- FILL: un <div data-id="..."> por CADA item clicable (REQ/NFR/SEC/ADR). data-id debe coincidir con el data-detail de su fila.
+       data-eyebrow = tipo + estado · data-title = título. Adentro: <h4> de sección + <p>/<div class="gherkin"> con el contenido COMPLETO leído del archivo fuente. Ejemplos de cada tipo: -->
+  <div data-id="REQ-001" data-eyebrow="Requerimiento · Completado" data-title="{{TITULO}}">
+    <h4>Historia de usuario</h4><p>{{HISTORIA}}</p>
+    <h4>Criterios de aceptación</h4>
+    <div class="gherkin">Dado ... · Cuando ... · Entonces ...</div>
+    <h4>Notas / implementación</h4><p>{{NOTAS}}</p>
+  </div>
+  <div data-id="SEC-001" data-eyebrow="Seguridad · Alta · Bloquea deploy" data-title="{{TITULO}}">
+    <h4>Hallazgo</h4><p>{{DESCRIPCION}}</p>
+    <h4>Recomendación</h4><p>{{RECOMENDACION}}</p>
+  </div>
+  <div data-id="ADR-001" data-eyebrow="Decisión · Aceptada" data-title="{{TITULO}}">
+    <h4>Contexto</h4><p>{{CONTEXTO}}</p>
+    <h4>Decisión</h4><p>{{DECISION}}</p>
+    <h4>Consecuencias</h4><p>{{CONSECUENCIAS}}</p>
+  </div>
+</div>
+
+<div class="overlay" id="ov"></div>
+<aside class="drawer" id="dw" role="dialog" aria-modal="true">
+  <div class="d-head"><div><div class="d-eyebrow" id="dEye"></div><div class="d-title" id="dTitle"></div></div><button class="d-close" id="dClose" aria-label="Cerrar">✕</button></div>
+  <div class="d-body" id="dBody"></div>
+</aside>
+
+<script>
+  var ov=document.getElementById('ov'),dw=document.getElementById('dw');
+  function openDetail(id){
+    var src=document.querySelector('.hidden-details [data-id="'+id+'"]');
+    if(!src)return;
+    document.getElementById('dEye').textContent=src.getAttribute('data-eyebrow')||'';
+    document.getElementById('dTitle').textContent=src.getAttribute('data-title')||id;
+    document.getElementById('dBody').innerHTML=src.innerHTML;
+    ov.classList.add('open');dw.classList.add('open');
+  }
+  function closeDetail(){ov.classList.remove('open');dw.classList.remove('open');}
+  document.querySelectorAll('[data-detail]').forEach(function(el){
+    el.addEventListener('click',function(){openDetail(el.getAttribute('data-detail'));});
+  });
+  ov.addEventListener('click',closeDetail);
+  document.getElementById('dClose').addEventListener('click',closeDetail);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDetail();});
+</script>
+</body>
+</html>

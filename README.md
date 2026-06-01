@@ -7,8 +7,9 @@ Cursor y otras herramientas vía AGENTS.md + MCP).
 - **4 agentes** (`agents/`): `analista-requerimientos`, `desarrollador` (dueño también de
   `ARCHITECTURE.md`), `qa-tester`, `auditor-seguridad`. Genéricos: el contexto del proyecto
   vive en `AGENTS.md`, no en los agentes.
-- **Comandos** (`skills/`): `/arnes-init` (andamia un proyecto, idempotente) y `/arnes-close`
-  (genera el entregable `DELIVERY.md`).
+- **Comandos** (`skills/`): `/arnes-init` (andamia un proyecto, idempotente), `/arnes-close`
+  (genera el entregable `DELIVERY.md`) y `/arnes-panel` (panel HTML interactivo de estado del
+  proyecto: solo lectura, se regenera; clic para ver el detalle).
 - **Plantillas** (`templates/`): AGENTS.md (canónico) + CLAUDE.md (puntero) + CHANGELOG,
   ESTADO, PENDING_APPROVAL, ARCHITECTURE, DELIVERY, ADR, requirements y el hook pre-commit
   que exige changelog.
