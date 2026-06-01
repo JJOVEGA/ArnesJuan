@@ -14,16 +14,25 @@ Cursor y otras herramientas vía AGENTS.md + MCP).
   que exige changelog.
 - **Tests del arnés** (`tests/`): escenarios para validar los agentes antes de versionar.
 
-## Qué se incorporó de Ruflo (y qué no)
-Decisión: copiar lo valioso para tener independencia, no depender de instalar Ruflo.
-- **Copiado como nativo:** la plantilla y convención de **ADRs** (de `ruflo-adr`) y el patrón
-  de **gates por fase** (de `ruflo-sparc`), ambos en `AGENTS.md` + `templates/`.
-- **Convenciones que ya cubre el arnés:** control de costo = presupuesto + límite de
-  reintentos; observabilidad = logs en archivos (CHANGELOG + registro-seguridad + ESTADO);
-  documentación = propiedad repartida entre los agentes.
-- **Músculo de runtime (NO copiable a markdown):** el escáner de CVEs y el medidor de tokens
-  de Ruflo son motores TypeScript. Quedan como *opcional* vía `.mcp.json.example` — se
-  enchufan si quieres, sin que el arnés dependa de ellos ni de Ruflo.
+## Qué hace el arnés
+Coordina cuatro agentes especializados en un pipeline con el humano siempre al mando:
+- **Quality gates por fase:** cada requerimiento recorre análisis → desarrollo → QA →
+  seguridad. No avanza de fase sin cumplir los criterios, y el humano aprueba cada salto vía
+  `PENDING_APPROVAL.md`.
+- **Decisiones trazables (ADRs):** las decisiones de arquitectura se registran como ADRs en
+  `docs/decisions/` (con su plantilla), para que siempre quede por qué se hizo cada cosa.
+- **Control de costo:** presupuesto por tarea + límite de reintentos dev↔QA. Superado el
+  límite, el requerimiento se bloquea y escala en vez de gastar indefinidamente.
+- **Observabilidad en archivos:** todo queda en texto auditable — `CHANGELOG.md` (cada
+  commit), `docs/seguridad/registro-seguridad.md` (hallazgos) y `docs/ESTADO.md` (estado).
+- **Documentación viva:** cada agente es dueño de su documentación (técnica, de usuario, de
+  seguridad) y la mantiene junto al código, reflejando el sistema real y no solo la intención.
+
+## Músculo de runtime opcional (MCP)
+El arnés funciona solo con markdown, sin dependencias externas. Si quieres capacidades de
+runtime "duras" —un escáner real de CVEs, medición de tokens, etc.— se enchufan vía **MCP**
+partiendo de `.mcp.json.example`. Son intercambiables (semgrep, bandit, el motor que
+prefieras) y **opcionales**: el arnés no depende de ninguno para funcionar.
 
 ## Instalar (Claude Code)
 ```

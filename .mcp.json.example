@@ -2,9 +2,9 @@
   "_comment": "OPCIONAL. El arnés NO depende de esto. Renombra a .mcp.json en el proyecto solo si quieres el músculo de runtime (escáner real de CVEs, medición de tokens, etc.). Estos servidores se enchufan vía MCP y son intercambiables.",
   "mcpServers": {
     "_ejemplo_security_audit": {
-      "_descripcion": "Motor de CVEs para el auditor-seguridad. Sustituible por semgrep/bandit/etc.",
+      "_descripcion": "Motor de CVEs para el auditor-seguridad. Conecta el tuyo (semgrep, bandit, trivy, etc.).",
       "command": "npx",
-      "args": ["-y", "ruflo", "mcp", "start"]
+      "args": ["-y", "<tu-servidor-mcp-de-seguridad>", "start"]
     }
   }
 }
