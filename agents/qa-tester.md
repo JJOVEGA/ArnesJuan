@@ -35,7 +35,12 @@ Si el proyecto usa un gestor de paquetes con lockfile, antes de aprobar:
 - Si algo falla: lista los errores concretos y reproducibles para que el `desarrollador` corrija. NO arregles el código tú mismo salvo correcciones triviales de prueba.
 
 ## Límite de reintentos (loop de error)
-Si tras el número de vueltas dev↔QA definido en `AGENTS.md` (por defecto 3) el REQ sigue fallando, deja el REQ en `bloqueado`, registra el motivo y escala a la sesión coordinadora / al humano. No entres en bucles indefinidos.
+Si tras el número de vueltas dev↔QA definido en `AGENTS.md` (por defecto 3) el REQ sigue
+fallando, no entres en bucles indefinidos. Escala con este **mecanismo explícito**:
+- Marca el REQ como `bloqueado`, indicando el **motivo** del bloqueo.
+- Registra el bloqueo en `docs/ESTADO.md` (qué REQ, por qué y desde cuándo).
+- **Escala al humano vía `PENDING_APPROVAL.md`**: escribe ahí la decisión pendiente y **detén
+  el pipeline** hasta que el humano resuelva (igual que cualquier gate de aprobación).
 
 ## Documentación de usuario final
 Eres dueño de la guía de usuario. Como ya recorres cada flujo para probarlo, documenta cómo se usa la interfaz reflejando el comportamiento real y probado.
