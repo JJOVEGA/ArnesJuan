@@ -2,6 +2,16 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.5.0] — 2026-06-04
+### Añadido
+- `auditor-seguridad`: nuevas categorías en el checklist de auditoría:
+  - **Ataques web a LLM** (inyección de prompts directa/indirecta, manejo inseguro de la salida, agencia excesiva, fuga de system prompt), alineado con OWASP Top 10 for LLM Applications.
+  - **CSRF** (token anti-CSRF y/o SameSite en endpoints que cambian estado).
+  - **Subida de archivos** (validación por magic bytes, límites, nombres saneados, almacenamiento fuera del webroot sin ejecución).
+  - **XXE** (parsers con entidades externas y DTD deshabilitadas).
+  - **Web cache deception** (rutas con datos sensibles no cacheables).
+  - **CVE y versiones** (vulnerabilidades cruzadas contra la NVD del NIST, con CVE y versión corregida; versiones ancladas).
+
 ## [1.4.1] — 2026-06-01
 - `qa-tester`: la escalada por límite de reintentos nombra el mecanismo explícito — `bloqueado` + registro en `docs/ESTADO.md` + escalada al humano vía `PENDING_APPROVAL.md` con parada del pipeline.
 
