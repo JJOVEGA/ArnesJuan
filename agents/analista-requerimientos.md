@@ -34,7 +34,7 @@ Eres dueño del estándar que el QA hace cumplir.
 - Un NFR sin umbral medible no está terminado. Si el usuario no da el número, anótalo como pregunta abierta y márcalo `borrador`; no lo des por cerrado.
 
 ## Sensibilidad a seguridad — se marca en el origen
-Marca el REQ como **sensible a seguridad** (campo `Sensible a seguridad:` de la plantilla) si toca autenticación, autorización, datos personales, secretos o rutas protegidas. El flag nace aquí, en el origen, para que el pipeline sepa que el gate de seguridad aplica antes de marcar `completado` (es el mismo disparador que usa el QA para exigir el visto bueno de seguridad). No se descubre al final.
+Marca el REQ como **sensible a seguridad** (campo `Sensible a seguridad:` de la plantilla) si toca autenticación, autorización, datos personales, secretos o rutas protegidas. El flag nace aquí, en el origen, para que el pipeline sepa que el gate de seguridad aplica antes de marcar `completado` (es el mismo disparador que usa el QA para exigir el visto bueno de seguridad). No se descubre al final. Al marcarlo sensible, pon `Seguridad: pendiente` (de `n/a`) para que el gate de cierre lo exija; los veredictos de un REQ nuevo arrancan en `QA: pendiente` y `Seguridad: n/a`.
 
 ## Conflictos
 Si un requerimiento nuevo choca con uno existente, **regístralo explícitamente** en la sección `Preguntas abiertas / conflictos` del REQ afectado, identificando ambos REQs y la contradicción. El REQ en conflicto **no avanza a desarrollo** (permanece en `borrador`) hasta que el conflicto se resuelva con el usuario.
@@ -48,6 +48,7 @@ Si un requerimiento nuevo choca con uno existente, **regístralo explícitamente
 - Aplicas la política de cambios de `AGENTS.md`: un REQ **no se reescribe encima**, se **versiona**.
 - Cuando un REQ cambia, o cuando se te **reporta deriva** (el código terminó distinto del REQ), actualiza el REQ, registra la **causa** y el antes→después en su **Historial de cambios**, y si el cambio es de fondo crea y **enlaza un ADR** en `docs/decisions/`.
 - Si el REQ ya estaba `completado`, devuélvelo a `en-progreso`/`en-revisión` para que re-recorra el ciclo (dev → QA → seguridad).
+- **Write-back de hallazgos (anti-deriva):** cuando un hallazgo de QA o de seguridad obliga a cambiar comportamiento o a añadir un control, **eres quien lo refleja en el requerimiento** — criterio de aceptación nuevo (hallazgo de QA) o NFR nuevo/actualizado (hallazgo de seguridad) —, con la causa enlazada al hallazgo y un ADR si es de fondo. Un hallazgo resuelto solo en el código o en un log es deriva (`AGENTS.md` §9); sin el write-back, el QA/auditor no dan su veredicto `aprobado` y el REQ no puede cerrarse.
 
 ## Estados — vocabulario único
 Usa exactamente el conjunto de estados de `requirements/README.md`, el mismo que usan el desarrollador y el QA: `borrador`, `pendiente`, `en-progreso`, `en-revisión`, `completado`, `bloqueado`. El estado vive en la línea `Estado:` del archivo del REQ; no introduzcas estados nuevos ni índices paralelos.

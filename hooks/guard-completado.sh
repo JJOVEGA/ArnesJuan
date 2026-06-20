@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
-# guard-completado.sh — Invariantes A3 y A2 sobre la transición de un REQ a `completado`.
+# guard-completado.sh — Invariantes A2, A3 y anti-deriva sobre la transición de un REQ a `completado`.
 #
-#   A2: no se completa un REQ si hay aprobaciones pendientes en PENDING_APPROVAL.md.
-#   A3: no se completa un REQ si alguna quality gate falla.
+#   A2: no completar con aprobaciones pendientes en PENDING_APPROVAL.md.
+#   A3: no completar si alguna quality gate falla.
+#   Veredictos (anti-deriva): no completar sin `QA: aprobado`, ni un REQ marcado
+#       `Sensible a seguridad: sí` sin `Seguridad: aprobado`. Así ningún REQ se cierra con la
+#       validación o la auditoría pendientes/abiertas; el write-back del hallazgo al
+#       requerimiento es lo que lleva esos veredictos a "aprobado" (ver AGENTS.md §9).
 #
-# Se dispara cuando una edición dentro de `requirements/` deja el `Estado:` del REQ en
-# el valor terminal (`completado`). Si la transición no ocurre, el hook no hace nada.
+# Se dispara cuando una edición dentro de `requirements/` deja el `Estado:` del REQ en el
+# valor terminal (`completado`). Si la transición no ocurre, el hook no hace nada.
 set -uo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
@@ -42,6 +46,31 @@ esac
 
 # ¿El cambio deja el REQ en `completado`? Normalizado: case-insensitive y espacios.
 printf '%s' "$nuevo" | grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" || exit 0
+
+# --- Veredictos QA/Seguridad (anti-deriva) ---
+# Los campos viven en el archivo del REQ; se prefiere el contenido entrante y se respalda en disco
+# (pre-edición), porque QA/seguridad fijan su veredicto antes de la transición a completado.
+disk="$(cat "$fp" 2>/dev/null || true)"
+campo() {  # $1=etiqueta -> valor normalizado (minúsculas, sin espacios)
+  local v
+  v="$(printf '%s\n' "$nuevo" | sed -n -E "s/^$1:[[:space:]]*//p" | head -1)"
+  [ -z "$v" ] && v="$(printf '%s\n' "$disk" | sed -n -E "s/^$1:[[:space:]]*//p" | head -1)"
+  printf '%s' "$v" | tr '[:upper:]' '[:lower:]' | tr -d ' \r'
+}
+qa="$(campo 'QA')"
+seg="$(campo 'Seguridad')"
+sens="$(campo 'Sensible a seguridad')"
+
+# Solo se exige el campo cuando está presente (compatibilidad con REQ antiguos sin veredictos).
+if [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
+  arnes_deny "ARNES: no se puede completar '$rel': el veredicto de QA es '$qa' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9)."
+fi
+case "$sens" in
+  sí|si)
+    if [ "$seg" != "aprobado" ]; then
+      arnes_deny "ARNES: no se puede completar '$rel': es 'Sensible a seguridad: sí' y el veredicto de seguridad es '${seg:-ausente}' (se requiere 'Seguridad: aprobado'). El control hallado debe quedar como NFR antes de cerrar (AGENTS.md §9)."
+    fi ;;
+esac
 
 # --- Gate A2: no completar con aprobaciones pendientes ---
 pending_rel="$(jq -r '.pending_approval // "PENDING_APPROVAL.md"' "$manifest")"

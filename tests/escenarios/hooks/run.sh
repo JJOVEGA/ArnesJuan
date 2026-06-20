@@ -38,6 +38,12 @@ emite_edit() {
      + (if $at!=""  then {agent_type:$at} else {} end)'
 }
 
+# mkreq <archivo> <sensible> <qa> <seguridad> — crea un REQ en disco con sus veredictos.
+mkreq() {
+  printf '# %s\nEstado: en-revisión\nSensible a seguridad: %s\nQA: %s\nSeguridad: %s\n' \
+    "$(basename "$1" .md)" "$2" "$3" "$4" > "$1"
+}
+
 # check <nombre> <esperado:deny|allow> <script> <json>
 check() {
   local nombre="$1" esperado="$2" script="$3" json="$4" out got
@@ -59,6 +65,16 @@ check "coordinadora edita doc fuera de app -> allow" allow guard-codigo.sh "$(em
 echo "A3/A2 — guard-completado.sh (transición a completado):"
 check "REQ -> en-progreso (no completado) -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-001.md" "" "" 'Estado: en-progreso')"
 check "REQ -> completado, sin pendientes, gate ok -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-001.md" "" "" 'Estado: completado')"
+
+echo "Veredictos QA/Seguridad (anti-deriva):"
+mkreq "$PROJ/requirements/REQ-010.md" "no" "pendiente" "n/a"
+check "completado con QA: pendiente -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-010.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-011.md" "no" "aprobado" "n/a"
+check "completado con QA: aprobado (no sensible) -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-011.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-012.md" "sí" "aprobado" "pendiente"
+check "sensible + Seguridad: pendiente -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-012.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-013.md" "sí" "aprobado" "aprobado"
+check "sensible + QA y Seguridad aprobados -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-013.md" "" "" 'Estado: completado')"
 
 # Con una aprobación pendiente -> debe denegar el completado (A2)
 printf '## Pendientes\n### [2026-06-20] (qa) — algo\n- Contexto: x\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"

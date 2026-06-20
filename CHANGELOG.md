@@ -2,6 +2,29 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.12.0] — 2026-06-20
+### Añadido — sistema anti-deriva (cierra el lazo requerimiento↔implementación)
+Evita que los cambios forzados por hallazgos de QA/seguridad queden solo en el código o en un
+log y el REQ termine describiendo algo distinto de lo construido. Tres capas:
+- **Política (`AGENTS.md` §9):** nuevo caso **"Cambios por hallazgo"** — un hallazgo no se
+  cierra hasta que el requerimiento lo refleje (criterio de aceptación nuevo si es de QA, o NFR
+  nuevo/actualizado si es de seguridad), con causa enlazada y ADR si es de fondo. El write-back
+  lo hace el `analista-requerimientos`.
+- **Máquina (`guard-completado`):** veredictos en el REQ — campos `QA:` y `Seguridad:`. El hook
+  **impide `completado`** sin `QA: aprobado`, y un REQ `Sensible a seguridad: sí` sin
+  `Seguridad: aprobado`. Compatible con REQ antiguos (solo exige el campo si está presente).
+- **Cierre (`/arnes-close` + `DELIVERY.md`):** verificación **"Trazabilidad y no-deriva"**
+  bloqueante por cada REQ `completado` (criterios/NFRs reflejan lo construido; cada hallazgo
+  traza a REQ/NFR/ADR o está `aceptado`).
+### Cambiado
+- Plantilla de REQ: campos `QA:` y `Seguridad:`; documentados en `requirements/README.md`.
+- Agentes: `qa-tester` fija `QA:` y exige write-back de su hallazgo antes de aprobar;
+  `auditor-seguridad` fija `Seguridad:` y no levanta el veto sin el NFR; `analista` es
+  responsable del write-back e inicializa los veredictos.
+- `AGENTS.md` §13: nueva fila de enforcement y nota del **techo honesto** (la máquina no
+  verifica equivalencia semántica; la reconciliación final es la verificación de cierre).
+- Escenario de hooks: +4 casos de veredictos QA/Seguridad.
+
 ## [1.11.0] — 2026-06-20
 ### Cambiado
 - `auditor-seguridad`: reestructuración integral del agente (supersede y amplía el checklist

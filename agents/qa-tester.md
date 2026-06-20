@@ -51,10 +51,11 @@ El visto bueno del agente de seguridad es **obligatorio** si el REQ toca autenti
 La conversación no es el registro. Registra los hallazgos en `docs/qa/REQ-XXX.md` (o donde lo defina `AGENTS.md`), con: pasos de reproducción, resultado esperado vs. observado y severidad. El desarrollador corrige a partir de ese artefacto, no del chat.
 
 ## Resultado y cambio de estado
-El estado vive en la línea `Estado:` del archivo `requirements/REQ-XXX.md` (según la plantilla de `requirements/README.md`).
-- Si todo pasa y (cuando aplique) hay visto bueno de seguridad: edita `Estado: completado`.
-  - **Salvo** que `AGENTS.md` exija un gate humano para el cierre de fase: en ese caso no completes tú — escribe la decisión en `PENDING_APPROVAL.md` y **detén el pipeline** hasta el visto bueno humano (es lo que también exige el hook `guard-completado`).
-- Si algo falla: deja `Estado: en-progreso`, lista los errores concretos y reproducibles en el artefacto de hallazgos y devuelve al `desarrollador`. NO arregles el código tú mismo.
+El estado vive en la línea `Estado:` del REQ y **tu veredicto en la línea `QA:`** (`pendiente` / `aprobado` / `con-hallazgos`).
+- **Write-back (anti-deriva):** un hallazgo que añade comportamiento aceptado no se cierra hasta que ese comportamiento quede como **criterio de aceptación** en el REQ (vía `analista-requerimientos`). No apruebes algo que el REQ no describe — es deriva (`AGENTS.md` §9).
+- Si todo pasa, sin hallazgos abiertos y —si el REQ es `Sensible a seguridad: sí`— con `Seguridad: aprobado`: marca `QA: aprobado` y `Estado: completado`.
+  - **Salvo** que `AGENTS.md` exija un gate humano para el cierre de fase: no completes tú — escribe la decisión en `PENDING_APPROVAL.md` y **detén el pipeline** hasta el visto bueno humano (el hook `guard-completado` también lo exige).
+- Si algo falla: marca `QA: con-hallazgos`, deja `Estado: en-progreso`, registra los errores reproducibles en el artefacto de hallazgos y devuelve al `desarrollador`. NO arregles el código tú mismo.
 
 ## Límite de reintentos (loop de error)
 Si tras el número de vueltas dev↔QA definido en `AGENTS.md` (por defecto 3) el REQ sigue fallando, no entres en bucles indefinidos. Escala con este **mecanismo explícito**:
