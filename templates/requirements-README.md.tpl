@@ -18,6 +18,16 @@ Esta carpeta es el **contrato compartido**: la única fuente de verdad sobre qu�
 
 Un REQ solo pasa a `completado` cuando: criterios de aceptación cumplidos + quality gates en verde + visto bueno de seguridad.
 
+## Veredictos de validación (campos del REQ)
+Cierran el lazo de hallazgos para que no haya deriva silenciosa:
+- `QA:` — veredicto del `qa-tester`: `pendiente` | `aprobado` | `con-hallazgos`.
+- `Seguridad:` — veredicto del `auditor-seguridad`: `n/a` | `pendiente` | `aprobado` | `vetado`
+  (al marcar el REQ `Sensible a seguridad: sí`, pásalo de `n/a` a `pendiente`).
+
+El hook `guard-completado` **impide** marcar `completado` sin `QA: aprobado`, y un REQ
+`Sensible a seguridad: sí` sin `Seguridad: aprobado`. Llegar a "aprobado" exige que los
+hallazgos estén resueltos **y reflejados en el REQ/NFR** (write-back, ver `AGENTS.md` §9).
+
 ## Cambios de requerimientos
 Un REQ **no se reescribe encima**: se versiona. Todo cambio se anota en el **Historial de
 cambios** del REQ (fecha · antes→después · causa · ADR si aplica). Los cambios de fondo
@@ -35,6 +45,9 @@ generan un **ADR**. Si un REQ `completado` cambia, vuelve a `en-progreso`/`en-re
 Estado: borrador
 Módulo: (...)
 Prioridad: (alta / media / baja)
+Sensible a seguridad: (sí / no)
+QA: pendiente
+Seguridad: n/a
 NFR relacionados: (NFR-xxx, ...)
 
 ## Historia
@@ -45,6 +58,9 @@ Como [rol], quiero [acción], para [beneficio].
 
 ## Notas / alcance
 (detalles, fuera de alcance, dependencias)
+
+## Preguntas abiertas / conflictos
+(preguntas sin resolver; conflictos con otros REQs identificando ambos y la contradicción. Mientras haya algo aquí, el REQ se queda en `borrador`.)
 
 ## Trazabilidad
 Origen: (...)

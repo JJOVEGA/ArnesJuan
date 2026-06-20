@@ -12,6 +12,11 @@
 ## Requerimientos cubiertos
 (lista de REQ `completado` con enlace)
 
+## Trazabilidad y no-deriva
+(por cada REQ `completado`: sus criterios/NFRs reflejan lo realmente construido, y cada hallazgo
+de QA/seguridad traza a un REQ/NFR/ADR o está `aceptado` con justificación. Sin deriva pendiente
+— si la hay, el proyecto no se entrega hasta hacer el write-back.)
+
 ## Pruebas realizadas
 (quality gates + cobertura + resultado de QA)
 

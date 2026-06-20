@@ -2,6 +2,91 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.12.0] — 2026-06-20
+### Añadido — sistema anti-deriva (cierra el lazo requerimiento↔implementación)
+Evita que los cambios forzados por hallazgos de QA/seguridad queden solo en el código o en un
+log y el REQ termine describiendo algo distinto de lo construido. Tres capas:
+- **Política (`AGENTS.md` §9):** nuevo caso **"Cambios por hallazgo"** — un hallazgo no se
+  cierra hasta que el requerimiento lo refleje (criterio de aceptación nuevo si es de QA, o NFR
+  nuevo/actualizado si es de seguridad), con causa enlazada y ADR si es de fondo. El write-back
+  lo hace el `analista-requerimientos`.
+- **Máquina (`guard-completado`):** veredictos en el REQ — campos `QA:` y `Seguridad:`. El hook
+  **impide `completado`** sin `QA: aprobado`, y un REQ `Sensible a seguridad: sí` sin
+  `Seguridad: aprobado`. Compatible con REQ antiguos (solo exige el campo si está presente).
+- **Cierre (`/arnes-close` + `DELIVERY.md`):** verificación **"Trazabilidad y no-deriva"**
+  bloqueante por cada REQ `completado` (criterios/NFRs reflejan lo construido; cada hallazgo
+  traza a REQ/NFR/ADR o está `aceptado`).
+### Cambiado
+- Plantilla de REQ: campos `QA:` y `Seguridad:`; documentados en `requirements/README.md`.
+- Agentes: `qa-tester` fija `QA:` y exige write-back de su hallazgo antes de aprobar;
+  `auditor-seguridad` fija `Seguridad:` y no levanta el veto sin el NFR; `analista` es
+  responsable del write-back e inicializa los veredictos.
+- `AGENTS.md` §13: nueva fila de enforcement y nota del **techo honesto** (la máquina no
+  verifica equivalencia semántica; la reconciliación final es la verificación de cierre).
+- Escenario de hooks: +4 casos de veredictos QA/Seguridad.
+
+## [1.11.0] — 2026-06-20
+### Cambiado
+- `auditor-seguridad`: reestructuración integral del agente (supersede y amplía el checklist
+  de 1.7.0), agnóstica del stack y anclada a OWASP Top 10 Web / API / LLM:
+  - **Principio agnóstico del stack:** audita principios; el mecanismo concreto (secretos,
+    aislamiento en BD, identidad, defaults de cloud) se lee de `AGENTS.md`. Nombres de producto
+    como ejemplos, no como único mecanismo válido.
+  - **Disparador obligatorio por el flag `Sensible a seguridad:`** del analista (cadena
+    analista → auditor → QA atada por máquina).
+  - Checklist por áreas: **Identidad/acceso** (+ validación de JWT, BFLA, sesión con OAuth/OIDC),
+    **Config/exposición** (defaults de BaaS/cloud, inventario de endpoints huérfanos, CORS,
+    subdomain takeover), **Entrada/salida** (XSS, deserialización, **SSRF**+IMDSv2, open redirect,
+    verificación de webhooks), **Criptografía**, **Lógica de negocio/concurrencia** (abuso de
+    flujo, TOCTOU), **Resiliencia** (GraphQL), **Cadena de suministro** (slopsquatting,
+    toolchain de IA/MCP), **LLM**, **Gobernanza**.
+  - **Regresión de seguridad entre iteraciones:** compara contra el estado aprobado en
+    `registro-seguridad.md` para cazar controles que la IA debilita silenciosamente.
+### Coherencia
+- Veto reflejado en la línea `Estado:` del REQ (corrige `estado:`/frontmatter de la propuesta),
+  consistente con dev/QA/analista.
+
+## [1.10.0] — 2026-06-20
+### Cambiado
+- `analista-requerimientos`: revisión integral con foco en **completar lo no dicho**:
+  - **Postura de interrogación**: indagar comportamiento ante error, casos negativos, límites
+    y supuestos implícitos, no solo transcribir lo que el usuario describe.
+  - **Criterios de aceptación testeables** (concretos, observables, medibles) y **Gherkin con
+    escenarios de error/borde**, no solo el camino feliz — es lo que el QA usa para falsar.
+  - **NFR cuantificados** con número y unidad; sin umbral → `borrador`.
+  - **Sensibilidad a seguridad marcada en el origen** (mismo disparador que el gate de QA).
+  - **Conflictos** registrados explícitamente; el REQ no avanza hasta resolverlos.
+  - **Definition of Ready** explícita; al cumplirse, el REQ pasa de `borrador` a `pendiente`.
+### Añadido
+- Plantilla de REQ (`requirements/README.md`): campo `Sensible a seguridad:` y sección
+  `Preguntas abiertas / conflictos`, para que el flag de seguridad y los conflictos tengan
+  un lugar máquina-legible.
+### Coherencia
+- Vocabulario de estados del analista alineado al canónico (incluye `pendiente`, que la
+  propuesta omitía); `pendiente` queda definido como "cumple Definition of Ready, listo para dev".
+- Estado nombrado como línea `Estado:`, consistente con `desarrollador` y `qa-tester`.
+
+## [1.9.0] — 2026-06-20
+### Cambiado
+- `qa-tester`: revisión integral del agente con foco en **falsación** (no solo confirmar):
+  - **Postura adversarial**: asumir el código roto y probar entradas vacías/nulas/malformadas,
+    límites, concurrencia/idempotencia y el camino de error de cada dependencia externa.
+  - **Cuestionar el REQ**: devolver al analista los criterios intesteables/vagos en vez de
+    aprobar contra un REQ pobre.
+  - **Flakiness**: un test no determinista no es evidencia; se reporta como flaky.
+  - **Carga no concluyente**: una prueba de carga no representativa no cuenta como "cumple".
+  - **Independencia**: QA solo edita tests/fixtures/guía de usuario, nunca el código de la app
+    (reforzado por el hook `guard-codigo`).
+  - **Visto bueno de seguridad determinista** para REQ que tocan auth/datos/secretos.
+  - **Artefacto persistente de hallazgos** en `docs/qa/REQ-XXX.md` (no el chat).
+  - Cierre de estado coherente con los gates: completa, salvo gate humano → `PENDING_APPROVAL.md`.
+### Añadido
+- Carpeta `docs/qa/` (hallazgos de QA por REQ) al andamiaje (`arnes-init`) y al mapa de `AGENTS.md`.
+### Coherencia
+- Estado del REQ nombrado como `Estado:` (línea), consistente con la plantilla y con el `desarrollador`.
+- Manifiesto `.arnes/config.json`: se aclara que `codigo_app.globs` apunta a código de
+  producción (tests fuera), para que QA pueda editar pruebas sin chocar con el hook `guard-codigo`.
+
 ## [1.8.0] — 2026-06-20
 ### Cambiado
 - `desarrollador`: revisión integral del agente y **pasa a modelo Opus** (antes Sonnet).

@@ -146,6 +146,14 @@ cambio de legislación, una limitación detectada en pruebas, un parche de depen
 - **DERIVA** (el código terminó distinto de lo que dice el REQ): **no se deja en silencio**. Se
   actualiza el REQ para reflejar la realidad implementada, con su trazabilidad y causa; si el
   desvío fue de fondo, además un ADR.
+- **CAMBIOS POR HALLAZGO** (un hallazgo de QA o de seguridad obliga a cambiar comportamiento o a
+  añadir un control): es la deriva más común en este arnés, porque los agentes hallan cosas por
+  diseño. El hallazgo **no se cierra** hasta que el requerimiento lo refleje — un **criterio de
+  aceptación** nuevo (hallazgo de QA) o un **NFR** nuevo/actualizado (hallazgo de seguridad) —,
+  con la causa enlazada al hallazgo y un ADR si es de fondo. Un hallazgo resuelto solo en el
+  código o en un log (`docs/qa/…`, `registro-seguridad.md`) es deriva. El `analista-requerimientos`
+  hace el write-back; el `qa-tester` y el `auditor-seguridad` no dan su veredicto `aprobado`
+  (campos `QA:`/`Seguridad:` del REQ) hasta que existe.
 - **REGLA DE ESTADO:** cuando un REQ ya `completado` cambia, vuelve a `en-progreso` o
   `en-revisión` y **re-recorre el ciclo** (dev ajusta → QA re-valida contra los criterios
   nuevos → seguridad revisa). Un cambio de requerimiento **reabre** el trabajo; no es solo
@@ -180,6 +188,7 @@ docs/
   decisions/           ← ADRs
   seguridad/           ← gobernanza-datos.md + registro-seguridad.md
   usuario/             ← documentación de usuario final
+  qa/                  ← hallazgos de QA por REQ (artefacto persistente)
 DELIVERY.md            ← artefacto de cierre (al entregar)
 .arnes/config.json     ← manifiesto machine-readable (lo leen los hooks de enforcement)
 .claude/agents/        ← definiciones de los 4 agentes (del plugin)
@@ -196,6 +205,13 @@ cumple la máquina vía hooks `PreToolUse` del plugin, que leen `.arnes/config.j
 | La coordinadora no edita código de la app (sólo el `desarrollador`) | §5 | `guard-codigo` |
 | No completar un REQ con aprobaciones pendientes | §6 | `guard-completado` |
 | No completar un REQ con quality gates en rojo | §7 | `guard-completado` |
+| No completar sin `QA: aprobado` (ni un REQ sensible sin `Seguridad: aprobado`) | §9 | `guard-completado` |
+
+**Anti-deriva — el techo honesto:** la máquina puede impedir que un REQ se cierre con la
+validación/auditoría pendientes (campos `QA:`/`Seguridad:`), pero **no** puede verificar que el
+requerimiento describa *semánticamente* lo construido. Esa reconciliación es responsabilidad del
+write-back (§9) y se verifica al cierre: `/arnes-close` comprueba la **trazabilidad y no-deriva**
+de cada REQ `completado` antes de generar `DELIVERY.md`.
 
 Si `.arnes/config.json` no existe, los hooks son **inertes** (no estorban). Requieren `jq`;
 sin él, el enforcement queda inactivo con aviso (no bloquea). El changelog sigue cubierto por

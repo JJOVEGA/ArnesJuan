@@ -17,8 +17,19 @@ contenido: resume lo real.
    - **Seguridad:** estado de `docs/seguridad/registro-seguridad.md` (hallazgos abiertos vs. mitigados).
    - **Documentación entregada:** enlaces a `ARCHITECTURE.md`, `docs/`, `docs/usuario/`, `docs/decisions/`.
    - **Handoff:** cómo correr/desplegar/mantener (de la doc técnica). Credenciales las gestiona el cliente.
-3. Pregunta el **destinatario** (técnico / ejecutivo / ambos) y ajusta el nivel de detalle.
-4. Marca el `DELIVERY.md` como pendiente de aprobación: regístralo en `PENDING_APPROVAL.md`
+3. **Verificación de trazabilidad y no-deriva (bloqueante).** Por cada REQ `completado`, confirma:
+   - Sus **criterios de aceptación reflejan el comportamiento construido** (no solo el original):
+     los hallazgos de QA que añadieron conducta están como criterios.
+   - Los **controles de seguridad** implementados por hallazgo están como **NFR**, no solo en
+     `registro-seguridad.md`.
+   - Cada hallazgo (en `docs/qa/` y `docs/seguridad/registro-seguridad.md`) **traza** a un
+     REQ/NFR/ADR, o está explícitamente `aceptado` con justificación.
+   - Veredictos coherentes: `QA: aprobado` y, si es sensible, `Seguridad: aprobado`.
+   Si encuentras **deriva** (algo construido que el requerimiento no refleja), es **bloqueante**:
+   devuélvelo al `analista-requerimientos` para el write-back antes de entregar. Documenta el
+   resultado en la sección *Trazabilidad y no-deriva* de `DELIVERY.md`.
+4. Pregunta el **destinatario** (técnico / ejecutivo / ambos) y ajusta el nivel de detalle.
+5. Marca el `DELIVERY.md` como pendiente de aprobación: regístralo en `PENDING_APPROVAL.md`
    y NO des el proyecto por cerrado hasta el visto bueno del destinatario.
 
 ## Reglas
