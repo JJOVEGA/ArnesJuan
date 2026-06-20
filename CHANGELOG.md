@@ -11,7 +11,7 @@
     campo `agent_id` del input del hook.
   - `hooks/guard-completado.sh` (**A2/A3**): deniega marcar un REQ como `completado` si hay
     aprobaciones pendientes en `PENDING_APPROVAL.md` o si alguna quality gate falla.
-  - `hooks/hooks.json` + `hooks/lib.sh`; declarados en `plugin.json` (`"hooks"`).
+  - `hooks/hooks.json` + `hooks/lib.sh`; el plugin auto-descubre `hooks/hooks.json`.
 - **Manifiesto machine-readable** `templates/arnes-config.json.tpl` → `.arnes/config.json`:
   fuente de verdad ejecutable (agente de código, globs de app, quality gates, estados).
 - `arnes-init`: emite y rellena `.arnes/config.json`; entrevista por los globs de app.
