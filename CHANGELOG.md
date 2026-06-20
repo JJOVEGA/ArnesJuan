@@ -2,6 +2,27 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.11.0] — 2026-06-20
+### Cambiado
+- `auditor-seguridad`: reestructuración integral del agente (supersede y amplía el checklist
+  de 1.7.0), agnóstica del stack y anclada a OWASP Top 10 Web / API / LLM:
+  - **Principio agnóstico del stack:** audita principios; el mecanismo concreto (secretos,
+    aislamiento en BD, identidad, defaults de cloud) se lee de `AGENTS.md`. Nombres de producto
+    como ejemplos, no como único mecanismo válido.
+  - **Disparador obligatorio por el flag `Sensible a seguridad:`** del analista (cadena
+    analista → auditor → QA atada por máquina).
+  - Checklist por áreas: **Identidad/acceso** (+ validación de JWT, BFLA, sesión con OAuth/OIDC),
+    **Config/exposición** (defaults de BaaS/cloud, inventario de endpoints huérfanos, CORS,
+    subdomain takeover), **Entrada/salida** (XSS, deserialización, **SSRF**+IMDSv2, open redirect,
+    verificación de webhooks), **Criptografía**, **Lógica de negocio/concurrencia** (abuso de
+    flujo, TOCTOU), **Resiliencia** (GraphQL), **Cadena de suministro** (slopsquatting,
+    toolchain de IA/MCP), **LLM**, **Gobernanza**.
+  - **Regresión de seguridad entre iteraciones:** compara contra el estado aprobado en
+    `registro-seguridad.md` para cazar controles que la IA debilita silenciosamente.
+### Coherencia
+- Veto reflejado en la línea `Estado:` del REQ (corrige `estado:`/frontmatter de la propuesta),
+  consistente con dev/QA/analista.
+
 ## [1.10.0] — 2026-06-20
 ### Cambiado
 - `analista-requerimientos`: revisión integral con foco en **completar lo no dicho**:
