@@ -24,7 +24,7 @@ marcador antes de hacer nada.
    - `requirements/README.md` ← `templates/requirements-README.md.tpl`
    - `.arnes/config.json` ← `templates/arnes-config.json.tpl` (manifiesto machine-readable que leen los hooks de enforcement del plugin; ver paso 3)
    - `.githooks/pre-commit` ← `templates/githooks/pre-commit` (recuerda `git config core.hooksPath .githooks`)
-   - Carpetas vacías: `docs/decisions/`, `docs/seguridad/`, `docs/usuario/`, `memory/`.
+   - Carpetas vacías: `docs/decisions/`, `docs/seguridad/`, `docs/usuario/`, `docs/qa/`, `memory/`.
    - La plantilla de ADRs (`templates/ADR.md.tpl`) queda disponible para cuando se registre una decisión.
    - `.mcp.json.example` se deja como referencia; NO se activa salvo que el usuario quiera el músculo de runtime.
 

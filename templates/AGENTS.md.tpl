@@ -180,6 +180,7 @@ docs/
   decisions/           ← ADRs
   seguridad/           ← gobernanza-datos.md + registro-seguridad.md
   usuario/             ← documentación de usuario final
+  qa/                  ← hallazgos de QA por REQ (artefacto persistente)
 DELIVERY.md            ← artefacto de cierre (al entregar)
 .arnes/config.json     ← manifiesto machine-readable (lo leen los hooks de enforcement)
 .claude/agents/        ← definiciones de los 4 agentes (del plugin)

@@ -2,6 +2,27 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.9.0] — 2026-06-20
+### Cambiado
+- `qa-tester`: revisión integral del agente con foco en **falsación** (no solo confirmar):
+  - **Postura adversarial**: asumir el código roto y probar entradas vacías/nulas/malformadas,
+    límites, concurrencia/idempotencia y el camino de error de cada dependencia externa.
+  - **Cuestionar el REQ**: devolver al analista los criterios intesteables/vagos en vez de
+    aprobar contra un REQ pobre.
+  - **Flakiness**: un test no determinista no es evidencia; se reporta como flaky.
+  - **Carga no concluyente**: una prueba de carga no representativa no cuenta como "cumple".
+  - **Independencia**: QA solo edita tests/fixtures/guía de usuario, nunca el código de la app
+    (reforzado por el hook `guard-codigo`).
+  - **Visto bueno de seguridad determinista** para REQ que tocan auth/datos/secretos.
+  - **Artefacto persistente de hallazgos** en `docs/qa/REQ-XXX.md` (no el chat).
+  - Cierre de estado coherente con los gates: completa, salvo gate humano → `PENDING_APPROVAL.md`.
+### Añadido
+- Carpeta `docs/qa/` (hallazgos de QA por REQ) al andamiaje (`arnes-init`) y al mapa de `AGENTS.md`.
+### Coherencia
+- Estado del REQ nombrado como `Estado:` (línea), consistente con la plantilla y con el `desarrollador`.
+- Manifiesto `.arnes/config.json`: se aclara que `codigo_app.globs` apunta a código de
+  producción (tests fuera), para que QA pueda editar pruebas sin chocar con el hook `guard-codigo`.
+
 ## [1.8.0] — 2026-06-20
 ### Cambiado
 - `desarrollador`: revisión integral del agente y **pasa a modelo Opus** (antes Sonnet).

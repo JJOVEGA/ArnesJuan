@@ -9,7 +9,7 @@
   },
 
   "codigo_app": {
-    "_doc": "Rutas (relativas a la raíz) que SÓLO el agente de código puede editar. Patrones estilo shell; '*' abarca también separadores '/'. Ej.: \"src/*\", \"app/*\", \"lib/*\", \"*.py\".",
+    "_doc": "Rutas (relativas a la raíz) que SÓLO el agente de código puede editar. Apunta a código de PRODUCCIÓN; deja fuera tests y fixtures para que el qa-tester pueda editarlos. Patrones estilo shell; '*' abarca también separadores '/'. Ej.: \"src/*\", \"app/*\", \"lib/*\", \"*.py\".",
     "globs": [{{CODIGO_APP_GLOBS}}]
   },
 

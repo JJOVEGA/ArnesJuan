@@ -1,7 +1,7 @@
 {
   "name": "arnes-juan",
   "description": "Arnés genérico de 4 agentes (requerimientos, desarrollo, QA, seguridad) para Claude Code: pipeline con quality gates, memoria en archivos, changelog auditable y documentación viva. Reutilizable entre proyectos y clientes.",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "author": {
     "name": "Juan"
   }
