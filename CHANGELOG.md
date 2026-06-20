@@ -2,6 +2,21 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.8.0] — 2026-06-20
+### Cambiado
+- `desarrollador`: revisión integral del agente y **pasa a modelo Opus** (antes Sonnet).
+  - **Robustez:** de "envuelve todo en `try/catch`" a manejo en un **boundary central** (sin
+    catches vacíos); redacción de logs sin tokens/PII; idempotencia y condiciones de carrera.
+  - **Mecanismo exacto de estado** del REQ (línea `Estado:` del archivo, no índices paralelos)
+    y regla de **`bloqueado` ante ambigüedad/conflicto** en vez de adivinar.
+  - **Jerarquía ante conflictos:** NFR de seguridad > alcance del REQ > convenciones de `AGENTS.md`.
+  - Nuevas secciones **Calidad y eficiencia** (solución más simple, evitar N+1/O(n²), separar
+    dominio/infra) y **Pruebas** (el dev escribe las pruebas automatizadas del REQ).
+  - **Definition of Done** explícita; `description` con límites de rol (no QA ni auditoría).
+  - `ARCHITECTURE.md` se actualiza solo cuando cambia la vista de sistema, no por cambios internos.
+- `AGENTS.md.tpl`: §5 refleja `desarrollador` en **Opus**; §7 incorpora que las pruebas
+  automatizadas son parte de cada REQ (las escribe el desarrollador).
+
 ## [1.7.0] — 2026-06-20
 ### Añadido
 - `auditor-seguridad`: cinco categorías explícitas en el checklist, nombradas para que no se

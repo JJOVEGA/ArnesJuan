@@ -62,11 +62,11 @@ aprueba cada fase.
 | Agente | Modelo | Responsabilidad |
 |--------|--------|-----------------|
 | `analista-requerimientos` | Opus | Levanta y documenta requerimientos en `requirements/` |
-| `desarrollador` | Sonnet | Codifica los requerimientos + documentación **técnica**, dueño de `ARCHITECTURE.md` (vista de sistema e integración) |
+| `desarrollador` | Opus | Codifica los requerimientos + documentación **técnica**, dueño de `ARCHITECTURE.md` (vista de sistema e integración) |
 | `qa-tester` | Sonnet | Prueba el trabajo del desarrollador, corre quality gates, escribe documentación de **usuario final** |
 | `auditor-seguridad` | Opus | Revisa seguridad y gobernanza; mantiene `docs/seguridad/`; puede vetar |
 
-Modelo asignado por dificultad: Opus en razonamiento profundo, Sonnet en volumen e iteración.
+Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
 
 > Documentación distribuida (no hay 5º agente "documentador"): cada agente documenta su
 > rebanada con el contexto vivo, y el `desarrollador` consolida la vista de arquitectura en
@@ -116,6 +116,10 @@ Señales automáticas de verdad. El `qa-tester` las usa como fuente de verdad an
 (por defecto, para stack Node/TS: `npm run typecheck`, `npm run lint`, `npm run build`, `npm test`)
 
 Un REQ no pasa a `completado` si alguna puerta falla.
+
+Las **pruebas automatizadas** son parte de cada REQ: las escribe el `desarrollador` y el REQ
+no pasa a `en-revisión` sin ellas. El tipo (unitarias/integración/e2e) y la cobertura mínima
+se fijan por proyecto; si no se definieron, se usa el estándar del stack.
 
 > 🔒 **Cumplido por máquina:** el hook `guard-completado` (plugin) corre las quality gates de
 > `.arnes/config.json` justo antes de aceptar la transición de un REQ a `completado` y la
