@@ -22,6 +22,7 @@ marcador antes de hacer nada.
    - `PENDING_APPROVAL.md` ← `templates/PENDING_APPROVAL.md.tpl`
    - `ARCHITECTURE.md` ← `templates/ARCHITECTURE.md.tpl`
    - `requirements/README.md` ← `templates/requirements-README.md.tpl`
+   - `.arnes/config.json` ← `templates/arnes-config.json.tpl` (manifiesto machine-readable que leen los hooks de enforcement del plugin; ver paso 3)
    - `.githooks/pre-commit` ← `templates/githooks/pre-commit` (recuerda `git config core.hooksPath .githooks`)
    - Carpetas vacías: `docs/decisions/`, `docs/seguridad/`, `docs/usuario/`, `memory/`.
    - La plantilla de ADRs (`templates/ADR.md.tpl`) queda disponible para cuando se registre una decisión.
@@ -31,6 +32,16 @@ marcador antes de hacer nada.
    proyecto, descripción, stack, módulos, modelo de permisos, comandos de quality gates,
    máximo de reintentos dev↔QA, qué decisiones requieren gate humano, y destinatario del
    entregable. Si el usuario prefiere, lanza al `analista-requerimientos` para esta parte.
+
+   **Rellena también `.arnes/config.json`** (es lo que vuelve ejecutables las invariantes):
+   - `codigo_app.globs`: rutas de código de la app que SÓLO el `desarrollador` puede editar
+     (p. ej. `["src/*", "app/*"]`). Pregúntalas explícitamente; sin ellas la regla A1 no
+     protege nada.
+   - `quality_gates`: los MISMOS comandos que pusiste en `AGENTS.md §7` (deben coincidir).
+   - El resto (`agentes`, `estados`, `requirements_dir`, `pending_approval`) viene con los
+     valores por defecto del arnés; cámbialos sólo si el proyecto se desvía del estándar.
+   - **Requisito:** los hooks usan `jq`. Si no está instalado, el enforcement queda inactivo
+     (con aviso por stderr, no bloquea); avísale al usuario que lo instale para activarlo.
 
 4. **Crea el marcador** `.arnes-initialized` con la fecha y la versión del arnés.
 
