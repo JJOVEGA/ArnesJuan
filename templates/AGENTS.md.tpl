@@ -53,6 +53,11 @@ aprueba cada fase.
 > valida y `auditor-seguridad` revisa si aplica. La coordinadora orquesta, mantiene el
 > pipeline y los quality gates, y pide la aprobación humana; no parchea a mano. Es justo al
 > depurar cuando aparece la tentación de "arreglar rápido" saltándose el arnés: no se hace.
+>
+> 🔒 **Esto lo cumple la máquina, no la buena voluntad.** El hook `guard-codigo` (plugin) deniega
+> en runtime cualquier `Edit/Write` sobre `codigo_app.globs` (de `.arnes/config.json`) que no
+> venga del agente `desarrollador`. La coordinadora y los demás subagentes reciben un rechazo
+> con motivo. Para cambiar qué cuenta como "código de la app", edita el manifiesto.
 
 | Agente | Modelo | Responsabilidad |
 |--------|--------|-----------------|
@@ -84,6 +89,10 @@ Máximo **{{MAX_REINTENTOS}}** vueltas dev↔QA por REQ; superado ese límite, e
 pendiente en `PENDING_APPROVAL.md` y **detiene** el pipeline. No continúa hasta que el humano
 resuelve (aprueba/rechaza) y limpia esa entrada. Así el bloqueo queda visible y por escrito.
 
+> 🔒 **Cumplido por máquina:** mientras `PENDING_APPROVAL.md` tenga entradas en "## Pendientes",
+> el hook `guard-completado` (plugin) deniega marcar cualquier REQ como `completado`. El avance
+> no depende de que el modelo "recuerde" detenerse.
+
 **Gates por fase (patrón tipo SPARC):** cada fase del roadmap tiene una puerta explícita —
 no se entra a la fase siguiente hasta cumplir el criterio de terminado de la actual + tu visto
 bueno. Las fases no se solapan en silencio.
@@ -107,6 +116,10 @@ Señales automáticas de verdad. El `qa-tester` las usa como fuente de verdad an
 (por defecto, para stack Node/TS: `npm run typecheck`, `npm run lint`, `npm run build`, `npm test`)
 
 Un REQ no pasa a `completado` si alguna puerta falla.
+
+> 🔒 **Cumplido por máquina:** el hook `guard-completado` (plugin) corre las quality gates de
+> `.arnes/config.json` justo antes de aceptar la transición de un REQ a `completado` y la
+> **deniega** si alguna falla. Mantén la lista de gates idéntica aquí y en el manifiesto.
 
 ## 8. CHANGELOG — reglas
 
@@ -164,6 +177,22 @@ docs/
   seguridad/           ← gobernanza-datos.md + registro-seguridad.md
   usuario/             ← documentación de usuario final
 DELIVERY.md            ← artefacto de cierre (al entregar)
+.arnes/config.json     ← manifiesto machine-readable (lo leen los hooks de enforcement)
 .claude/agents/        ← definiciones de los 4 agentes (del plugin)
 memory/                ← memoria/preferencias (no versionar secretos)
 ```
+
+## 13. Enforcement por runtime (hooks del plugin)
+
+Tres invariantes de este documento NO dependen de que el modelo "obedezca el markdown": las
+cumple la máquina vía hooks `PreToolUse` del plugin, que leen `.arnes/config.json`.
+
+| Invariante | Sección | Hook |
+|------------|---------|------|
+| La coordinadora no edita código de la app (sólo el `desarrollador`) | §5 | `guard-codigo` |
+| No completar un REQ con aprobaciones pendientes | §6 | `guard-completado` |
+| No completar un REQ con quality gates en rojo | §7 | `guard-completado` |
+
+Si `.arnes/config.json` no existe, los hooks son **inertes** (no estorban). Requieren `jq`;
+sin él, el enforcement queda inactivo con aviso (no bloquea). El changelog sigue cubierto por
+el hook `pre-commit` de git (§8).

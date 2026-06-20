@@ -15,6 +15,17 @@ Cursor y otras herramientas vía AGENTS.md + MCP).
   que exige changelog.
 - **Tests del arnés** (`tests/`): escenarios para validar los agentes antes de versionar.
 
+## Enforcement por runtime (hooks)
+Las invariantes críticas no dependen de que el modelo "obedezca el markdown": las cumple la
+máquina vía hooks `PreToolUse` del plugin (`hooks/`), que leen el manifiesto `.arnes/config.json`:
+- **Sólo el `desarrollador` edita el código de la app** (la coordinadora y demás subagentes
+  reciben un rechazo en runtime).
+- **Un REQ no pasa a `completado`** si hay aprobaciones pendientes en `PENDING_APPROVAL.md` o si
+  alguna quality gate está en rojo.
+
+Son **inertes** sin `.arnes/config.json` (no estorban en repos ajenos al arnés) y requieren `jq`.
+El `pre-commit` de git sigue exigiendo el changelog en cada commit.
+
 ## Qué hace el arnés
 Coordina cuatro agentes especializados en un pipeline con el humano siempre al mando:
 - **Quality gates por fase:** cada requerimiento recorre análisis → desarrollo → QA →
