@@ -2,6 +2,24 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.7.0] — 2026-06-20
+### Añadido
+- `auditor-seguridad`: cinco categorías explícitas en el checklist, nombradas para que no se
+  pasen por alto:
+  - **Ciclo de vida de la sesión / caducidad:** expiración del lado del servidor por
+    inactividad (idle) **y** por vida máxima absoluta; cookies `HttpOnly`/`Secure`/`SameSite`;
+    rotación del id de sesión; sesiones de verificación de un solo uso.
+  - **BOLA / autorización a nivel de objeto (IDOR):** verificar pertenencia del recurso al
+    usuario/tenant en endpoints que reciben un id, no solo que haya sesión válida.
+  - **RLS / aislamiento en la BD:** Row-Level Security como defensa en profundidad de BOLA
+    (multi-tenant); cuidado con el pooling y con roles que evaden RLS.
+  - **Mass assignment / over-posting:** exigir whitelist de campos escribibles; campos
+    sensibles (rol, tenant, permisos) nunca asignables desde el body.
+  - **Fuerza bruta y abuso de credenciales** (límites por IP y por cuenta, backoff/CAPTCHA,
+    mensajes genéricos, MFA) y **Agotamiento de recursos / DoS** (límites de body/JSON,
+    paginación con tope, descompresión, ReDoS, timeouts), desdoblando el antiguo
+    "Resiliencia y abuso".
+
 ## [1.6.0] — 2026-06-20
 ### Añadido
 - **Enforcement por runtime (hooks `PreToolUse` del plugin)** — bajan a mecanismo lo que antes
