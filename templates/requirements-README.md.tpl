@@ -35,6 +35,7 @@ generan un **ADR**. Si un REQ `completado` cambia, vuelve a `en-progreso`/`en-re
 Estado: borrador
 Módulo: (...)
 Prioridad: (alta / media / baja)
+Sensible a seguridad: (sí / no)
 NFR relacionados: (NFR-xxx, ...)
 
 ## Historia
@@ -45,6 +46,9 @@ Como [rol], quiero [acción], para [beneficio].
 
 ## Notas / alcance
 (detalles, fuera de alcance, dependencias)
+
+## Preguntas abiertas / conflictos
+(preguntas sin resolver; conflictos con otros REQs identificando ambos y la contradicción. Mientras haya algo aquí, el REQ se queda en `borrador`.)
 
 ## Trazabilidad
 Origen: (...)

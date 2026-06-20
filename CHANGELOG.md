@@ -2,6 +2,26 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.10.0] — 2026-06-20
+### Cambiado
+- `analista-requerimientos`: revisión integral con foco en **completar lo no dicho**:
+  - **Postura de interrogación**: indagar comportamiento ante error, casos negativos, límites
+    y supuestos implícitos, no solo transcribir lo que el usuario describe.
+  - **Criterios de aceptación testeables** (concretos, observables, medibles) y **Gherkin con
+    escenarios de error/borde**, no solo el camino feliz — es lo que el QA usa para falsar.
+  - **NFR cuantificados** con número y unidad; sin umbral → `borrador`.
+  - **Sensibilidad a seguridad marcada en el origen** (mismo disparador que el gate de QA).
+  - **Conflictos** registrados explícitamente; el REQ no avanza hasta resolverlos.
+  - **Definition of Ready** explícita; al cumplirse, el REQ pasa de `borrador` a `pendiente`.
+### Añadido
+- Plantilla de REQ (`requirements/README.md`): campo `Sensible a seguridad:` y sección
+  `Preguntas abiertas / conflictos`, para que el flag de seguridad y los conflictos tengan
+  un lugar máquina-legible.
+### Coherencia
+- Vocabulario de estados del analista alineado al canónico (incluye `pendiente`, que la
+  propuesta omitía); `pendiente` queda definido como "cumple Definition of Ready, listo para dev".
+- Estado nombrado como línea `Estado:`, consistente con `desarrollador` y `qa-tester`.
+
 ## [1.9.0] — 2026-06-20
 ### Cambiado
 - `qa-tester`: revisión integral del agente con foco en **falsación** (no solo confirmar):
