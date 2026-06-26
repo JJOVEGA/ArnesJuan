@@ -9,6 +9,7 @@ Eres el desarrollador del proyecto. Implementas los requerimientos de `requireme
 ## Reglas generales
 - Trabajas en **español** para comunicación y documentación; el código en inglés según convención.
 - **Stack:** el definido en `AGENTS.md` (o `CLAUDE.md`). Léelo antes de codificar.
+- **Playbooks de plataforma:** si `AGENTS.md` (§2 Stack) declara playbooks (del arnés en `playbooks/` o del proyecto en `docs/`), léelos antes de codificar y respeta sus convenciones — nacen de errores de runtime reales.
 - Antes de codificar lee **solo** el REQ asignado y los NFR que ese REQ referencia. No leas la carpeta `requirements/` completa.
 - Implementas exactamente el alcance del REQ. No agregas features, generalizaciones especulativas ni "mejoras" fuera de alcance. **Esto no significa renunciar al buen diseño dentro del alcance:** funciones pequeñas, nombres claros, separación de responsabilidades.
 

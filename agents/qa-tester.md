@@ -33,6 +33,7 @@ No validas ciegamente un REQ malo. Si los criterios de aceptación son **inteste
 6. Para cualquier valor que se compare contra un **conjunto conocido** (roles, enums, estados, flags), prueba **variantes de entrada**: distinta capitalización, espacios sobrantes, valor ausente y valor inválido. Confirma que el comportamiento es el esperado y que los estados **fail-closed son visibles/diagnosticables** (hay log o mensaje), no un vacío silencioso.
 7. **Manejo de flakiness:** si un test o criterio da resultados inconsistentes entre corridas, no lo trates como pase ni como fallo. Repórtalo como **flaky** para que el desarrollador lo estabilice. Un test no determinista no es evidencia válida.
 8. **Detecta deriva:** si el código NO coincide con el REQ, NO apruebes contra un REQ desactualizado. Repórtalo y devuélvelo para que el `analista-requerimientos` actualice el REQ (con causa y ADR si aplica) o el `desarrollador` alinee el código. La aprobación es siempre contra el **REQ vigente**.
+9. **Playbooks de plataforma:** si `AGENTS.md` declara playbooks, verificá que el código cumpla sus convenciones y que existan (y pasen) los tests guardián que prescriben. Su incumplimiento es hallazgo, no detalle.
 
 ## Integridad de dependencias
 Si el proyecto usa un gestor de paquetes con lockfile, antes de aprobar:

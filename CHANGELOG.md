@@ -2,6 +2,27 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.13.0] — 2026-06-26
+### Añadido — mecanismo de playbooks de plataforma
+Conocimiento reutilizable y caro de aprender (errores de runtime) para un stack/servicio
+concreto, sin acoplar el flujo base del arnés a ningún cliente. Es **opt-in**: sólo aplica
+si el proyecto lo declara en su `AGENTS.md`.
+- **`playbooks/README.md`:** documenta el mecanismo (genérico, opt-in, vinculante cuando aplica).
+- **`playbooks/power-apps-dataverse.md`:** primer playbook — convenciones de persistencia
+  Power Apps Code App + Dataverse (no escribir `statecode`/`statuscode`, nombres de lookup en
+  `@odata.bind`, fuente nativa vs conector, identidad en 2 pasos + checklist). Cada regla nació
+  de un error de runtime real.
+- **`templates/dataverse-lookups.guard.test.ts.tpl`:** plantilla del test guardián de lookups
+  (cruza cada `@odata.bind` contra los esquemas generados). El test no puede viajar genérico
+  porque depende de `.power/schemas/` del proyecto; el arnés ofrece el arranque y cada proyecto
+  lo adapta.
+### Cambiado
+- `desarrollador`: lee los playbooks declarados antes de codificar y respeta sus convenciones.
+- `qa-tester`: nuevo paso 9 — verifica cumplimiento de playbooks y sus tests guardián;
+  el incumplimiento es hallazgo.
+- `AGENTS.md.tpl` §2 Stack: nueva subsección *Playbooks de plataforma aplicables* para que
+  cada proyecto declare los que usa.
+
 ## [1.12.0] — 2026-06-20
 ### Añadido — sistema anti-deriva (cierra el lazo requerimiento↔implementación)
 Evita que los cambios forzados por hallazgos de QA/seguridad queden solo en el código o en un

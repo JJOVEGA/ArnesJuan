@@ -34,6 +34,11 @@
 | Hosting | {{HOSTING}} |
 | Repo | {{REPO_URL}} |
 
+### Playbooks de plataforma aplicables
+<!-- Lista los playbooks de convenciones que aplican a este proyecto. Los agentes
+     dev/qa/auditor DEBEN leerlos. Ej: `plugins/ArnesJuan/playbooks/power-apps-dataverse.md` -->
+- (ninguno / listar)
+
 ## 3. Módulos / alcance
 
 {{TABLA_MODULOS}}
