@@ -23,24 +23,26 @@ proj="$(arnes_project_dir "$input")"
 manifest="$(arnes_manifest_path "$proj")"
 [ -f "$manifest" ] || exit 0   # no es un proyecto del arnés -> inerte
 
-fp="$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty')"
+fp="$(printf '%s' "$input" | arnes_jq -r '.tool_input.file_path // empty')"
 [ -n "$fp" ] || exit 0
 
-req_dir="$(jq -r '.requirements_dir // "requirements"' "$manifest")"
-rel="${fp#"$proj"/}"
+req_dir="$(arnes_jq -r '.requirements_dir // "requirements"' "$manifest")"
+# Comparación en forma canónica: en Windows `proj` y `fp` llegan en formas distintas.
+rel="$(arnes_norm_path "$fp")"
+rel="${rel#"$(arnes_norm_path "$proj")"/}"
 case "$rel" in
   "$req_dir"/*) ;;          # dentro de requirements/ -> seguimos
   *) exit 0 ;;
 esac
 
-estado_done="$(jq -r '.estados.completado // "completado"' "$manifest")"
+estado_done="$(arnes_jq -r '.estados.completado // "completado"' "$manifest")"
 
 # Texto entrante según la herramienta usada.
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty')"
+tool="$(printf '%s' "$input" | arnes_jq -r '.tool_name // empty')"
 case "$tool" in
-  Edit)      nuevo="$(printf '%s' "$input" | jq -r '.tool_input.new_string // empty')" ;;
-  Write)     nuevo="$(printf '%s' "$input" | jq -r '.tool_input.content // empty')" ;;
-  MultiEdit) nuevo="$(printf '%s' "$input" | jq -r '[.tool_input.edits[]?.new_string] | join("\n")')" ;;
+  Edit)      nuevo="$(printf '%s' "$input" | arnes_jq -r '.tool_input.new_string // empty')" ;;
+  Write)     nuevo="$(printf '%s' "$input" | arnes_jq -r '.tool_input.content // empty')" ;;
+  MultiEdit) nuevo="$(printf '%s' "$input" | arnes_jq -r '[.tool_input.edits[]?.new_string] | join("\n")')" ;;
   *) exit 0 ;;
 esac
 
@@ -73,7 +75,7 @@ case "$sens" in
 esac
 
 # --- Gate A2: no completar con aprobaciones pendientes ---
-pending_rel="$(jq -r '.pending_approval // "PENDING_APPROVAL.md"' "$manifest")"
+pending_rel="$(arnes_jq -r '.pending_approval // "PENDING_APPROVAL.md"' "$manifest")"
 pending="$proj/$pending_rel"
 if [ -f "$pending" ]; then
   abiertas="$(awk '
@@ -96,7 +98,7 @@ while IFS= read -r cmd; do
     rm -f "$tmp"
     arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': falló la quality gate \`$cmd\`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: $out"
   fi
-done < <(jq -r '.quality_gates[]? // empty' "$manifest")
+done < <(arnes_jq -r '.quality_gates[]? | if type=="object" then (.comando // empty) else . end' "$manifest")
 rm -f "$tmp"
 
 exit 0

@@ -85,6 +85,26 @@ printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 jq '.quality_gates = ["false"]' "$PROJ/.arnes/config.json" > "$PROJ/.arnes/config.json.tmp" && mv "$PROJ/.arnes/config.json.tmp" "$PROJ/.arnes/config.json"
 check "REQ -> completado con quality gate roja -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-001.md" "" "" 'Estado: completado')"
 
+# --- Regresión Windows y formas del manifiesto (bugs hallados en SENDA, 2026-09-01) ---
+echo "Regresión Windows / formas del manifiesto:"
+
+# El manifiesto real de un proyecto declara objetos {nombre, comando}; la plantilla
+# (templates/arnes-config.json.tpl) no fija la forma. El hook debe aceptar AMBAS.
+setgates() { jq "$1" "$PROJ/.arnes/config.json" > "$PROJ/.arnes/c.tmp" && mv "$PROJ/.arnes/c.tmp" "$PROJ/.arnes/config.json"; }
+setgates '.quality_gates = [{"nombre":"Verde","comando":"true"}]'
+check "quality_gates como objetos, en verde -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-001.md" "" "" 'Estado: completado')"
+setgates '.quality_gates = [{"nombre":"Roja","comando":"false"}]'
+check "quality_gates como objetos, en rojo -> deny"   deny  guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-001.md" "" "" 'Estado: completado')"
+setgates '.quality_gates = ["true"]'
+
+# En Windows el file_path llega como `C:\proj\src\a.ts` mientras que la raíz del
+# proyecto puede llegar en forma MSYS `/tmp/...`. Sin normalizar, la resta del
+# prefijo deja la ruta absoluta, ningún glob casa y el hook PERMITE TODO.
+if command -v cygpath >/dev/null 2>&1; then
+  WPROJ="$(cygpath -w -- "$PROJ")"
+  check "ruta estilo Windows con backslashes -> deny" deny guard-codigo.sh "$(emite_edit "${WPROJ}\src\app.ts" "" "" 'hola')"
+fi
+
 echo "INERTE — sin manifiesto, el hook no estorba:"
 PROJ2="$(mktemp -d)"; mkdir -p "$PROJ2/src"; export CLAUDE_PROJECT_DIR="$PROJ2"
 check "sin .arnes/config.json edita src/ -> allow" allow guard-codigo.sh "$(jq -n --arg fp "$PROJ2/src/x.ts" '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{file_path:$fp,old_string:"x",new_string:"y"}}')"

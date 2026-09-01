@@ -1,4 +1,9 @@
-# El hook es un script bash: debe conservar LF aunque se clone en Windows
+# Los hooks de enforcement y los scripts de prueba son bash ejecutados por su
+# shebang. Con CRLF, `env` busca un programa llamado `bash\r`, no lo encuentra y
+# el hook NO LLEGA A CORRER: Claude Code lo interpreta como "permitir". Es decir,
+# el enforcement falla ABIERTO y en silencio. Deben conservar LF aunque el
+# marketplace clone el plugin en Windows. (Bug encontrado en SENDA, 2026-09-01.)
+*.sh text eol=lf
 templates/githooks/pre-commit text eol=lf
 # (opcional, defensivo) normalizar texto del repo
 * text=auto
