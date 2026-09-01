@@ -45,3 +45,29 @@ arnes_deny() {
 
 # Aviso por stderr (no silencioso), sin bloquear.
 arnes_warn() { printf 'ARNES (hook): %s\n' "$1" >&2; }
+
+# --- Compatibilidad Windows ---------------------------------------------------
+# En Windows `jq` suele ser un binario NATIVO, no MSYS. Eso rompe dos cosas a la vez:
+#   1. Traducción de rutas: bash ve `/tmp/x`, pero jq devuelve `C:/Users/.../Temp/x`.
+#      Al restar el prefijo del proyecto, `rel` conserva la ruta absoluta y NINGÚN
+#      glob casa jamás -> el hook permite todo.
+#   2. stdout en modo texto: cada línea llega con CRLF, así que un glob leído del
+#      manifiesto es `src/*\r` y tampoco casa nunca.
+# Ambos fallan ABIERTO y en silencio: el enforcement parece activo y no lo está.
+
+# jq con el CR de Windows retirado de la salida.
+arnes_jq() { jq "$@" | tr -d '\r'; }
+
+# Ruta canónica para COMPARAR (no para abrir): separadores `/` y, en Windows, forma
+# mixta `c:/...` con la unidad en minúscula. Fuera de Windows es la identidad.
+arnes_norm_path() {
+  local p="$1" bs='\' fs='/'
+  if command -v cygpath >/dev/null 2>&1; then
+    p="$(cygpath -m -- "$p" 2>/dev/null || printf '%s' "$p")"
+  fi
+  p="${p//"$bs"/"$fs"}"
+  case "$p" in
+    [A-Za-z]:*) p="$(printf '%s' "${p%%:*}" | tr '[:upper:]' '[:lower:]'):${p#*:}" ;;
+  esac
+  printf '%s' "$p"
+}

@@ -2,6 +2,40 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.14.0] — 2026-09-01
+### Corregido — el enforcement no funcionaba en Windows (fallaba ABIERTO y en silencio)
+Descubierto en el proyecto SENDA: los tres invariantes que el arnés dice cumplir «por
+máquina» (§13) llevaban desde su introducción **sin bloquear nada** en Windows. La sesión
+coordinadora podía editar `src/` sin que `guard-codigo` dijera una palabra, y ningún REQ
+quedaba realmente protegido por `guard-completado`. `tests/escenarios/hooks/run.sh` pasaba
+de 7/13 porque **todos** sus casos verdes eran casos `allow`, que también pasan cuando el
+hook no llega a ejecutarse. Tres causas independientes, cada una suficiente por sí sola:
+
+- **Shebang con CRLF.** `.gitattributes` traía `* text=auto`, así que al clonar el plugin en
+  Windows los `.sh` quedaban con CRLF y el shebang pasaba a ser `#!/usr/bin/env bash\r`.
+  `env` busca un binario llamado `bash\r`, no existe, el hook **no corre** y Claude Code lo
+  interpreta como permitir. Ahora `*.sh text eol=lf` los blinda, igual que ya se hacía con
+  `templates/githooks/pre-commit`.
+- **Traducción de rutas de MSYS.** En Windows `jq` suele ser un binario nativo: bash ve la
+  raíz del proyecto como `/tmp/x` mientras que `jq` devuelve el `file_path` como
+  `C:/Users/.../x`. Al restar el prefijo, `rel` conservaba la ruta absoluta, ningún glob de
+  `codigo_app` casaba y el `case` de `requirements/` tampoco. Nuevo `arnes_norm_path()`
+  (`hooks/lib.sh`) canoniza ambas rutas antes de compararlas — vía `cygpath` cuando existe,
+  identidad en Linux y macOS.
+- **CRLF en el stdout de jq.** Cada glob leído del manifiesto llegaba como `src/*\r`, que no
+  casa con nada. Nuevo `arnes_jq()` retira el CR; ambos guards lo usan en lugar de `jq`.
+
+### Corregido — `quality_gates` sólo aceptaba una de las dos formas del manifiesto
+`guard-completado` leía `.quality_gates[]` esperando cadenas sueltas, pero un manifiesto real
+las declara como objetos `{nombre, comando}` (la plantilla `arnes-config.json.tpl` no fija la
+forma). Con objetos, el hook hacía `eval` sobre JSON pretty-printed: nunca ejecutaba las gates
+de verdad y denegaba con un mensaje incomprensible. Ahora acepta **ambas** formas.
+
+### Añadido — pruebas de regresión
+`tests/escenarios/hooks/run.sh` pasa de 13 a 16 casos: `quality_gates` como objetos en verde y
+en rojo, y un `file_path` estilo Windows con backslashes. Contra el código anterior fallan
+8 de 16; contra este, 0.
+
 ## [1.13.0] — 2026-06-26
 ### Añadido — mecanismo de playbooks de plataforma
 Conocimiento reutilizable y caro de aprender (errores de runtime) para un stack/servicio

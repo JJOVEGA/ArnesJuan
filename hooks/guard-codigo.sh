@@ -18,14 +18,16 @@ proj="$(arnes_project_dir "$input")"
 manifest="$(arnes_manifest_path "$proj")"
 [ -f "$manifest" ] || exit 0   # no es un proyecto del arnés -> inerte
 
-fp="$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty')"
+fp="$(printf '%s' "$input" | arnes_jq -r '.tool_input.file_path // empty')"
 [ -n "$fp" ] || exit 0
-agent_id="$(printf '%s' "$input" | jq -r '.agent_id // empty')"
-agent_type="$(printf '%s' "$input" | jq -r '.agent_type // empty')"
-agente_codigo="$(jq -r '.agentes.agente_codigo // "desarrollador"' "$manifest")"
+agent_id="$(printf '%s' "$input" | arnes_jq -r '.agent_id // empty')"
+agent_type="$(printf '%s' "$input" | arnes_jq -r '.agent_type // empty')"
+agente_codigo="$(arnes_jq -r '.agentes.agente_codigo // "desarrollador"' "$manifest")"
 
 # Ruta relativa a la raíz del proyecto (para comparar contra los globs).
-rel="${fp#"$proj"/}"
+# Comparación en forma canónica: en Windows `proj` y `fp` llegan en formas distintas.
+rel="$(arnes_norm_path "$fp")"
+rel="${rel#"$(arnes_norm_path "$proj")"/}"
 
 # ¿La ruta es código de la app según los globs del manifiesto?
 es_codigo=0
@@ -33,7 +35,7 @@ while IFS= read -r g; do
   [ -n "$g" ] || continue
   # shellcheck disable=SC2053  -- glob a la derecha a propósito
   if [[ "$rel" == $g ]]; then es_codigo=1; break; fi
-done < <(jq -r '.codigo_app.globs[]? // empty' "$manifest")
+done < <(arnes_jq -r '.codigo_app.globs[]? // empty' "$manifest")
 
 [ "$es_codigo" -eq 1 ] || exit 0   # no es código de app -> permitir
 
