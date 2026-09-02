@@ -28,8 +28,7 @@ fp="$(printf '%s' "$input" | arnes_jq -r '.tool_input.file_path // empty')"
 
 req_dir="$(arnes_jq -r '.requirements_dir // "requirements"' "$manifest")"
 # Comparación en forma canónica: en Windows `proj` y `fp` llegan en formas distintas.
-rel="$(arnes_norm_path "$fp")"
-rel="${rel#"$(arnes_norm_path "$proj")"/}"
+rel="$(arnes_ruta_relativa "$fp" "$proj")"
 case "$rel" in
   "$req_dir"/*) ;;          # dentro de requirements/ -> seguimos
   *) exit 0 ;;

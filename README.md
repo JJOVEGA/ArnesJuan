@@ -16,15 +16,39 @@ Cursor y otras herramientas vía AGENTS.md + MCP).
 - **Tests del arnés** (`tests/`): escenarios para validar los agentes antes de versionar.
 
 ## Enforcement por runtime (hooks)
-Las invariantes críticas no dependen de que el modelo "obedezca el markdown": las cumple la
-máquina vía hooks `PreToolUse` del plugin (`hooks/`), que leen el manifiesto `.arnes/config.json`:
+Las invariantes críticas no se quedan en el markdown: las vigila la máquina vía hooks
+`PreToolUse` del plugin (`hooks/`), que leen el manifiesto `.arnes/config.json`:
 - **Sólo el `desarrollador` edita el código de la app** (la coordinadora y demás subagentes
-  reciben un rechazo en runtime).
-- **Un REQ no pasa a `completado`** si hay aprobaciones pendientes en `PENDING_APPROVAL.md` o si
-  alguna quality gate está en rojo.
+  reciben un rechazo en runtime, con el motivo).
+- **Un REQ no pasa a `completado`** si hay aprobaciones pendientes en `PENDING_APPROVAL.md`, si
+  alguna quality gate está en rojo, o si falta el veredicto de QA/seguridad.
 
 Son **inertes** sin `.arnes/config.json` (no estorban en repos ajenos al arnés) y requieren `jq`.
 El `pre-commit` de git sigue exigiendo el changelog en cada commit.
+
+**El nombre del agente en el manifiesto va en corto** (`"agente_codigo": "desarrollador"`). En
+runtime Claude Code entrega el agente con el prefijo del plugin que lo provee
+(`arnes-juan:desarrollador`); el hook lo tolera. Declararlo con prefijo es opcional y vuelve la
+comparación estricta con ese proveedor.
+
+### Limitación conocida: la cobertura de `Bash` es parcial (y a propósito)
+`guard-codigo` mira `Edit`/`Write`/`MultiEdit` y, en `Bash`, sólo las escrituras **evidentes**:
+redirección `>`/`>>`, `tee`, `cp`, `mv`, `install`, `sed -i`, `perl -i` y `dd of=`. Quedan fuera
+los scripts, los formateadores que reescriben archivos (`prettier --write`, `eslint --fix`),
+`patch`/`git apply` y cualquier programa que escriba por su cuenta. `guard-completado` no mira
+`Bash` en absoluto: un `sed -i` sobre un REQ puede cerrarlo sin pasar por las puertas.
+
+**El porqué:** un hook no puede analizar shell arbitrario de forma fiable — redirecciones
+indirectas, heredocs, variables, subshells, scripts que escriben por su cuenta. Perseguir la
+cobertura total genera falsos positivos sobre comandos de lectura perfectamente legítimos
+(`cat`, `grep`, `git diff`, un build que escupe su log), y un guard que estorba acaba
+desactivado. Un guard apagado protege menos que uno parcial, así que el detector se sesga
+explícitamente al **falso negativo**: si duda, permite.
+
+Conclusión honesta, la misma que dice `AGENTS.md` §13: **es una barandilla, no una jaula.**
+Impide que el modelo se desvíe por descuido; no contiene a un agente decidido a rodearla. Cuando
+deniega por `Bash`, el mensaje dice que la cobertura es parcial, para que un falso positivo se
+reconozca al instante.
 
 ## Qué hace el arnés
 Coordina cuatro agentes especializados en un pipeline con el humano siempre al mando:

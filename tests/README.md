@@ -16,7 +16,8 @@ Empieza con uno minimo por agente y crece con cada fallo real encontrado en proy
 - seguridad — dado codigo con un secreto en cliente, lo detecta y veta.
 - hooks — `escenarios/hooks/run.sh`: prueba en aislamiento los hooks de enforcement
   (A1 quién edita código, A2 aprobaciones pendientes, A3 quality gates). Ejecutable directo:
-  `bash tests/escenarios/hooks/run.sh` (requiere `jq`).
+  `bash tests/escenarios/hooks/run.sh` (requiere `jq`). Todo caso nuevo se comprueba también
+  contra los hooks anteriores (`ARNES_HOOKS_DIR=...`): si pasa antes del arreglo, no prueba nada.
 
 ## Como validar
 Corre cada escenario en un proyecto de prueba y compara contra la salida esperada.
