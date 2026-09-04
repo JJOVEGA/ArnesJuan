@@ -251,8 +251,46 @@ check "PENDING recien copiado de la plantilla -> allow" allow guard-completado.s
   "$(emite_edit "$PROJ/requirements/REQ-001.md" "" "" 'Estado: completado')"
 printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 
+# --- El punto de entrada REAL: guard.sh ----------------------------------------
+# Los bloques de arriba prueban cada guardian por separado, que es como se
+# desarrollan. Pero `hooks.json` invoca `guard.sh`, que los corre a los DOS en un
+# solo proceso. Sin estos casos, el banco validaria algo distinto de lo que
+# realmente se ejecuta — y en este arnes un hueco asi no se nota: falla abierto.
+#
+# El riesgo concreto que cubren: dentro de `guard.sh` los guardianes son
+# funciones, y si alguna dijera "permito" con `exit 0` en vez de `return 0`,
+# mataria el proceso y el segundo NUNCA correria. Por eso hay casos que exigen
+# denegacion del SEGUNDO guardian pasando por el primero.
+echo "guard.sh — punto de entrada unico (los dos guardianes, un proceso):"
+check "A1 por guard.sh: coordinadora edita src/ -> deny" deny guard.sh \
+  "$(emite_edit "$PROJ/src/app.ts" "" "" 'hola')"
+check "A1 por guard.sh: desarrollador edita src/ -> allow" allow guard.sh \
+  "$(emite_edit "$PROJ/src/app.ts" "a1" "arnes-juan:desarrollador" 'hola')"
+check "A1 por guard.sh: edicion neutra -> allow" allow guard.sh \
+  "$(emite_edit "$PROJ/docs/nota.md" "" "" 'hola')"
+# CRITICO: el primer guardian permite y el SEGUNDO debe seguir juzgando.
+mkreq "$PROJ/requirements/REQ-030.md" "no" "pendiente" "n/a"
+check "guard.sh: el 2o guardian sigue corriendo tras el 1o -> deny" deny guard.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-030.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-031.md" "no" "aprobado" "n/a"
+check "guard.sh: cierre limpio -> allow" allow guard.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-031.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-032.md" "sí" "aprobado" "pendiente"
+check "guard.sh: sensible sin seguridad -> deny" deny guard.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-032.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-033.md" "no" "aprobado" "n/a" "SEC-9 (instrumento)"
+check "guard.sh: hallazgo de instrumento -> allow" allow guard.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-033.md" "" "" 'Estado: completado')"
+check "guard.sh: Bash escribe en src/ -> deny" deny guard.sh \
+  "$(emite_bash "echo x > src/app.ts" "" "")"
+check "guard.sh: Bash cierra un REQ -> deny" deny guard.sh \
+  "$(emite_bash "sed -i 's/en-revision/completado/' requirements/REQ-031.md" "" "")"
+check "guard.sh: Bash de lectura -> allow" allow guard.sh \
+  "$(emite_bash "grep -rn foo src/" "" "")"
+
 echo "INERTE — sin manifiesto, el hook no estorba:"
 PROJ2="$(mktemp -d)"; mkdir -p "$PROJ2/src"; export CLAUDE_PROJECT_DIR="$PROJ2"
+check "sin .arnes/config.json, guard.sh no estorba -> allow" allow guard.sh "$(jq -n --arg fp "$PROJ2/src/x.ts" '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{file_path:$fp,old_string:"x",new_string:"y"}}')"
 check "sin .arnes/config.json edita src/ -> allow" allow guard-codigo.sh "$(jq -n --arg fp "$PROJ2/src/x.ts" '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{file_path:$fp,old_string:"x",new_string:"y"}}')"
 check "sin .arnes/config.json escribe por Bash -> allow" allow guard-codigo.sh "$(emite_bash 'echo x > src/x.ts' "" "")"
 rm -rf "$PROJ2"

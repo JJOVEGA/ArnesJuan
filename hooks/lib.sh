@@ -13,13 +13,65 @@
 # Lee TODO el stdin de forma bloqueante. El harness a veces tarda en enviarlo.
 arnes_read_stdin() { cat; }
 
+# --- Preludio y analisis compartidos ------------------------------------------
+# Los dos guardianes hacian EXACTAMENTE el mismo trabajo previo —arrancar, leer
+# stdin, interpretar el mismo JSON, leer el mismo manifiesto— cada uno en su
+# propio proceso. Aqui se hace UNA vez y se memoriza, para que `guard.sh` pueda
+# ejecutar los dos en un solo arranque.
+
+# Lee stdin y localiza proyecto y manifiesto. Devuelve 1 si no hay nada que
+# vigilar (sin input, sin proyecto, o proyecto que no usa el arnes -> INERTE).
+arnes_preludio() {
+  arnes_require_jq || return 1
+  IFS= read -r -d '' ARNES_INPUT || true
+  [ -n "${ARNES_INPUT:-}" ] || return 1
+  arnes_project_dir "$ARNES_INPUT"
+  [ -n "$ARNES_PROJ" ] || return 1
+  ARNES_MANIFEST="$ARNES_PROJ/.arnes/config.json"
+  [ -f "$ARNES_MANIFEST" ] || return 1
+  return 0
+}
+
+# Campos del input que usan los guardianes. UNA llamada a jq para los dos.
+# `command` va al final porque puede ser multilinea: se lleva el resto del texto.
+arnes_parse_input() {
+  [ -z "${ARNES_INPUT_LISTO:-}" ] || return 0
+  arnes_jq_str "$ARNES_INPUT" -r '[.tool_name // "",
+                                   .agent_id // "",
+                                   .agent_type // "",
+                                   .tool_input.file_path // "",
+                                   .tool_input.command // ""] | .[]'
+  { IFS= read -r ARNES_TOOL; IFS= read -r ARNES_AGENT_ID; IFS= read -r ARNES_AGENT_TYPE
+    IFS= read -r ARNES_FP; IFS= read -r -d '' ARNES_CMD; } <<< "$ARNES_JQ"
+  ARNES_CMD="${ARNES_CMD%$'\n'}"
+  ARNES_INPUT_LISTO=1
+}
+
+# Campos del manifiesto, tambien en UNA llamada. Los globs van al final porque son
+# una lista de longitud variable: se leen como el resto del flujo.
+arnes_parse_manifest() {
+  [ -z "${ARNES_MANIFEST_LISTO:-}" ] || return 0
+  local g
+  arnes_jq_file "$ARNES_MANIFEST" -r '[(.agentes.agente_codigo // "desarrollador"),
+                                       (.requirements_dir // "requirements"),
+                                       (.estados.completado // "completado"),
+                                       (.pending_approval // "PENDING_APPROVAL.md")]
+                                      + (.codigo_app.globs // []) | .[]'
+  ARNES_GLOBS=()
+  { IFS= read -r ARNES_AGENTE_CODIGO; IFS= read -r ARNES_REQ_DIR
+    IFS= read -r ARNES_ESTADO_DONE;   IFS= read -r ARNES_PENDING
+    while IFS= read -r g; do [ -n "$g" ] && ARNES_GLOBS+=("$g"); done
+  } <<< "$ARNES_JQ"
+  ARNES_GLOBS_CARGADOS=1
+  ARNES_MANIFEST_LISTO=1
+}
+
 # Raíz del proyecto: prioriza $CLAUDE_PROJECT_DIR; si no, el campo `cwd` del input.
-arnes_project_dir() {
-  local input="$1"
+arnes_project_dir() {   # <input json> -> ARNES_PROJ
   if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
-    printf '%s' "$CLAUDE_PROJECT_DIR"
+    ARNES_PROJ="$CLAUDE_PROJECT_DIR"      # caso normal: cero forks
   else
-    printf '%s' "$input" | jq -r '.cwd // empty'
+    ARNES_PROJ="$(printf '%s' "$1" | jq -r '.cwd // empty')"
   fi
 }
 
@@ -71,18 +123,48 @@ arnes_jq() {
   printf '%s\n' "${out//$'\r'/}"
 }
 
+# Las dos formas que SÍ hay que usar en el camino caliente: dejan el resultado en
+# ARNES_JQ y cuestan UN solo fork.
+#
+# `arnes_jq` imprime, así que sus llamadas acaban envueltas en `< <(printf ... |
+# arnes_jq ...)`, y eso son TRES forks para una sola lectura: la sustitución de
+# proceso, la tubería, y el `$( )` interno de la propia función. Con here-string
+# —que bash resuelve con un archivo temporal, sin bifurcar— y asignando en vez de
+# imprimir, queda uno.
+arnes_jq_str() {   # <json> <args de jq...> -> ARNES_JQ
+  local json="$1"; shift
+  local out
+  out="$(jq "$@" <<< "$json")" || return $?
+  ARNES_JQ="${out//$'\r'/}"
+}
+
+arnes_jq_file() {  # <archivo> <args de jq...> -> ARNES_JQ
+  local f="$1"; shift
+  local out
+  out="$(jq "$@" "$f")" || return $?
+  ARNES_JQ="${out//$'\r'/}"
+}
+
 # Ruta canónica para COMPARAR (no para abrir): separadores `/` y, en Windows, forma
 # mixta `c:/...` con la unidad en minúscula. Fuera de Windows es la identidad.
-arnes_norm_path() {
-  local p="$1" bs='\' fs='/'
-  if command -v cygpath >/dev/null 2>&1; then
-    p="$(cygpath -m -- "$p" 2>/dev/null || printf '%s' "$p")"
-  fi
-  p="${p//"$bs"/"$fs"}"
+arnes_norm_path() {   # <ruta> -> ARNES_NORM
+  local p="$1" d
+  # `cygpath` SÓLO cuando hace falta. Su trabajo es traducir la forma MSYS
+  # (`/tmp/x`) a forma Windows (`C:/Users/.../Temp/x`); una ruta que ya llega
+  # como `X:\...` o `X:/...` no necesita conversión. Saltárselo ahorra un fork
+  # —el coste dominante en esta plataforma— en el caso más común de Windows,
+  # donde tanto `file_path` como la raíz del proyecto ya vienen calificadas.
   case "$p" in
-    [A-Za-z]:*) p="$(printf '%s' "${p%%:*}" | tr '[:upper:]' '[:lower:]'):${p#*:}" ;;
+    [A-Za-z]:*) ;;                       # ya es forma Windows: nada que traducir
+    /*) if command -v cygpath >/dev/null 2>&1; then
+          p="$(cygpath -m -- "$p" 2>/dev/null)" || p="$1"
+        fi ;;
   esac
-  printf '%s' "$p"
+  p="${p//\\//}"
+  case "$p" in
+    [A-Za-z]:*) d="${p%%:*}"; p="${d,,}:${p#*:}" ;;   # unidad en minúscula, sin `tr`
+  esac
+  ARNES_NORM="$p"
 }
 
 # --- Rutas relativas al proyecto ----------------------------------------------
@@ -90,24 +172,37 @@ arnes_norm_path() {
 # raíz del proyecto. Una ruta ya relativa (típica en comandos de Bash) se deja tal
 # cual, asumiendo que el comando corre en la raíz; si el agente hizo `cd` a otro
 # sitio, el resultado no casará con ningún glob (falso negativo, nunca positivo).
-arnes_ruta_relativa() {  # <ruta> <raíz del proyecto>
+arnes_ruta_relativa() {  # <ruta> <raíz del proyecto> -> ARNES_REL
   local p pp
-  p="$(arnes_norm_path "$1")"
-  pp="$(arnes_norm_path "$2")"
+  arnes_norm_path "$1"; p="$ARNES_NORM"
+  arnes_norm_path "$2"; pp="$ARNES_NORM"
   p="${p#"$pp"/}"
-  p="${p#./}"
-  printf '%s' "$p"
+  ARNES_REL="${p#./}"
 }
 
 # ¿La ruta relativa cae dentro de `codigo_app.globs`?
+#
+# Los globs se leen UNA sola vez por invocación del hook y quedan cacheados:
+# `guard-bash` llama a esta función una vez por cada destino de escritura que
+# encuentra en el comando, y sin caché cada llamada pagaba otro `jq` más su
+# sustitución de proceso — dos forks por destino.
 arnes_es_codigo_app() {  # <ruta relativa> <manifiesto>
   local rel="$1" manifest="$2" g
   [ -n "$rel" ] || return 1
-  while IFS= read -r g; do
-    [ -n "$g" ] || continue
+  if [ -z "${ARNES_GLOBS_CARGADOS:-}" ]; then
+    ARNES_GLOBS=()
+    arnes_jq_file "$manifest" -r '.codigo_app.globs[]? // empty'
+    while IFS= read -r g; do
+      [ -n "$g" ] && ARNES_GLOBS+=("$g")
+    done <<< "$ARNES_JQ"
+    ARNES_GLOBS_CARGADOS=1
+  fi
+  # Si `arnes_parse_manifest` ya corrio, los globs vienen de ahi y este bloque no
+  # se ejecuta: una lectura del manifiesto para todo, no una por pregunta.
+  for g in ${ARNES_GLOBS[@]+"${ARNES_GLOBS[@]}"}; do
     # shellcheck disable=SC2053  -- glob a la derecha a propósito
     if [[ "$rel" == $g ]]; then return 0; fi
-  done < <(arnes_jq -r '.codigo_app.globs[]? // empty' "$manifest")
+  done
   return 1
 }
 
@@ -126,35 +221,54 @@ arnes_es_codigo_app() {  # <ruta relativa> <manifiesto>
 #   3. Si el manifiesto NO trae prefijo, cualquier proveedor con ese nombre corto
 #      casa. El manifiesto no dijo de qué plugin viene, y exigirlo obligaría a cada
 #      proyecto a conocer el nombre del plugin — que es el fallo que se corrige.
-arnes_norm_ident() {
-  printf '%s' "$1" | tr -d '\r' | tr '[:upper:]' '[:lower:]' \
-    | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
+# RENDIMIENTO — por qué estas funciones ASIGNAN en vez de imprimir.
+# Una función que devuelve su valor por stdout obliga a un `$( )` en cada punto de
+# llamada, y en MSYS un `fork` está emulado copiando memoria: medido en Windows,
+# un subshell que sólo ejecuta un builtin cuesta ~554 ms, y añadirle un binario
+# real sólo suma ~80 ms más. El coste NO son los programas, son las sustituciones.
+# La versión anterior de `arnes_norm_ident` era `printf | tr | tr | sed` —cuatro
+# procesos— y `arnes_agente_coincide` la invocaba cuatro veces dentro de `$( )`:
+# ~20 forks para comparar dos nombres. Aquí no queda ninguno.
+arnes_norm_ident() {   # -> ARNES_IDENT
+  local s="${1//$'\r'/}"
+  s="${s,,}"
+  s="${s#"${s%%[![:space:]]*}"}"   # recorta espacios por la izquierda
+  s="${s%"${s##*[![:space:]]}"}"   # ...y por la derecha
+  ARNES_IDENT="$s"
 }
 
-arnes_ident_nombre() {  # nombre corto, sin prefijo de plugin
-  local s; s="$(arnes_norm_ident "$1")"; printf '%s' "${s##*:}"
+arnes_ident_nombre() {   # nombre corto, sin prefijo de plugin -> ARNES_NOMBRE
+  arnes_norm_ident "$1"
+  ARNES_NOMBRE="${ARNES_IDENT##*:}"
 }
 
-arnes_ident_prefijo() {  # prefijo del proveedor, o vacío si no lo trae
-  local s; s="$(arnes_norm_ident "$1")"
-  case "$s" in *:*) printf '%s' "${s%:*}" ;; *) printf '' ;; esac
+arnes_ident_prefijo() {  # prefijo del proveedor, o vacío -> ARNES_PREFIJO
+  arnes_norm_ident "$1"
+  case "$ARNES_IDENT" in
+    *:*) ARNES_PREFIJO="${ARNES_IDENT%:*}" ;;
+    *)   ARNES_PREFIJO='' ;;
+  esac
 }
 
 arnes_agente_coincide() {  # <agent_type recibido> <nombre declarado>
   local rn dn rp dp
-  rn="$(arnes_ident_nombre "$1")"; dn="$(arnes_ident_nombre "$2")"
+  arnes_ident_nombre "$1"; rn="$ARNES_NOMBRE"
+  arnes_ident_nombre "$2"; dn="$ARNES_NOMBRE"
   [ -n "$rn" ] && [ "$rn" = "$dn" ] || return 1
-  rp="$(arnes_ident_prefijo "$1")"; dp="$(arnes_ident_prefijo "$2")"
+  arnes_ident_prefijo "$1"; rp="$ARNES_PREFIJO"
+  arnes_ident_prefijo "$2"; dp="$ARNES_PREFIJO"
   if [ -n "$dp" ] && [ -n "$rp" ] && [ "$rp" != "$dp" ]; then return 1; fi
   return 0
 }
 
 # Nombre del agente para un mensaje humano: corto y, si venía calificado, con el
 # identificador completo entre paréntesis para poder diagnosticar el origen.
+# Ésta sí imprime: sólo se usa al construir el motivo de una denegación, así que
+# el fork de su `$( )` ocurre una vez y en un camino que ya terminó en bloqueo.
 arnes_agente_legible() {  # <agent_type>
   local ident nombre
-  ident="$(arnes_norm_ident "$1")"
-  nombre="$(arnes_ident_nombre "$1")"
+  arnes_norm_ident "$1";   ident="$ARNES_IDENT"
+  arnes_ident_nombre "$1"; nombre="$ARNES_NOMBRE"
   if [ "$ident" != "$nombre" ]; then
     printf "'%s' (%s)" "$nombre" "$ident"
   else
@@ -174,11 +288,28 @@ arnes_agente_legible() {  # <agent_type>
 # Sesgo explícito al FALSO NEGATIVO: primero se descarta el texto entrecomillado,
 # así una mención de una ruta dentro de un mensaje no dispara nada.
 arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
-  local cmd="$1" limpio i j n tok
-  limpio="$(printf '%s' "$cmd" | sed -e 's/"[^"]*"/ /g' -e "s/'[^']*'/ /g")"
-  # Separa los operadores de su operando: `>src/a.ts` -> `> src/a.ts`.
-  limpio="$(printf '%s' "$limpio" \
-    | sed -e 's/>|/>/g' -e 's/>>/>/g' -e 's/>/ > /g' -e 's/|/ | /g' -e 's/;/ ; /g')"
+  local cmd="$1" limpio i j n tok pre post q
+  # Las dos limpiezas se hacen SIN procesos. Antes eran dos `printf | sed`, o sea
+  # cuatro bifurcaciones, y este camino se recorre en CADA comando de shell que
+  # ejecuta un agente — el más frecuente de todos.
+  #
+  # 1) Fuera el texto entrecomillado, para que una ruta mencionada dentro de un
+  #    mensaje (`git commit -m "toca src/a.ts"`) no dispare nada. Se recorta por
+  #    pares de comillas en un bucle, que es lo que bash sabe hacer sin regex.
+  limpio="$cmd"
+  for q in '"' "'"; do
+    while [[ "$limpio" == *"$q"*"$q"* ]]; do
+      pre="${limpio%%"$q"*}"
+      post="${limpio#*"$q"}"; post="${post#*"$q"}"
+      limpio="$pre $post"
+    done
+  done
+  # 2) Separa los operadores de su operando: `>src/a.ts` -> `> src/a.ts`.
+  limpio="${limpio//>|/>}"
+  limpio="${limpio//>>/>}"
+  limpio="${limpio//>/ > }"
+  limpio="${limpio//|/ | }"
+  limpio="${limpio//;/ ; }"
 
   local reponer_f=0
   case $- in *f*) reponer_f=1 ;; esac
@@ -238,4 +369,53 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
     esac
   done
   return 0
+}
+
+# --- Campos de cabecera del REQ ---------------------------------------------
+# Normaliza un valor de campo: minúsculas, sin espacios ni CR, y con la tilde de
+# "sí" plegada. La versión anterior era `printf | tr | tr` — tres procesos.
+#
+# EL PLIEGUE DE LA TILDE CORRIGE UN FALLO ABIERTO QUE YA EXISTÍA. La conversión a
+# minúsculas trabaja byte a byte y, sin locale definido, no toca la `Í`: un REQ
+# que declarara `Sensible a seguridad: SÍ` quedaba como `sÍ`, NO casaba con
+# `sí|si`, y se saltaba la puerta de seguridad EN SILENCIO. Plegar el acento deja
+# una sola forma cerrada (`si`) contra la que comparar, en vez de una lista de
+# variantes que se pudre — que es justo lo que este arnés predica.
+arnes_norm_campo() {   # <valor> -> ARNES_CAMPO
+  local v="${1//$'\r'/}"
+  v="${v// /}"
+  v="${v//Í/i}"; v="${v//í/i}"
+  ARNES_CAMPO="${v,,}"
+}
+
+# Extrae en UNA pasada los campos de cabecera del REQ que gobiernan el cierre.
+#
+# RENDIMIENTO. La versión anterior leía cada campo con `printf | sed | head`
+# —tres procesos y dos tuberías para sacar una línea de un texto que YA está en
+# memoria— y se invocaba cinco veces, con una rama de respaldo que podía
+# duplicarlo. Medido en esta máquina: 5.116 ms por campo contra 326 ms leyendo en
+# bash. Era, con diferencia, el punto más caro de todo el enforcement.
+#
+# Precedencia idéntica a la anterior: se prefiere el contenido ENTRANTE y se
+# respalda en el del disco (pre-edición), porque QA y seguridad fijan su veredicto
+# antes de la transición a completado. Por eso se recorre primero el disco y
+# después lo entrante: lo segundo pisa a lo primero.
+arnes_campos_req() {   # <texto en disco> <texto entrante>
+  ARNES_QA=''; ARNES_SEG=''; ARNES_SENS=''; ARNES_HALL=''
+  local texto l
+  for texto in "$1" "$2"; do
+    [ -n "$texto" ] || continue
+    while IFS= read -r l; do
+      case "$l" in
+        'QA:'*)                   ARNES_QA="${l#QA:}" ;;
+        'Seguridad:'*)            ARNES_SEG="${l#Seguridad:}" ;;
+        'Sensible a seguridad:'*) ARNES_SENS="${l#Sensible a seguridad:}" ;;
+        'Hallazgos abiertos:'*)   ARNES_HALL="${l#Hallazgos abiertos:}" ;;
+      esac
+    done <<< "$texto"
+  done
+  arnes_norm_campo "$ARNES_QA";   ARNES_QA="$ARNES_CAMPO"
+  arnes_norm_campo "$ARNES_SEG";  ARNES_SEG="$ARNES_CAMPO"
+  arnes_norm_campo "$ARNES_SENS"; ARNES_SENS="$ARNES_CAMPO"
+  arnes_norm_campo "$ARNES_HALL"; ARNES_HALL="$ARNES_CAMPO"
 }
