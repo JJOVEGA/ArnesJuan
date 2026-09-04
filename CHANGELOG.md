@@ -80,6 +80,13 @@ siempre— no puede mapearla a la del plugin —tres niveles, declarados en `Rig
 trabajo puede prescindir de QA, y «ninguno» es una respuesta válida.
 
 ## [1.20.0] — 2026-09-04
+
+> **Esta versión no llegó a publicarse por separado y NO tiene tag.** Su contenido entró en
+> `main` dentro del mismo commit que 1.21.0 —el squash del PR #13 los fusionó—, así que ningún
+> commit llegó nunca a declarar `1.20.0` en `plugin.json`. Se conserva como entrada porque
+> describe un cuerpo de trabajo distinto y `/arnes-upgrade` lo necesita como **paso** de
+> migración, pero ningún proyecto puede estar *en* 1.20.0. Etiquetarla apuntaría a un commit
+> que dice `1.21.0`: una versión existe cuando `plugin.json` la declara.
 ### Cambiado — `/arnes-upgrade` pasa a ser un merge a tres vías, no una comparación
 La primera versión comparaba el archivo del proyecto contra la plantilla nueva y preguntaba
 ante cualquier diferencia. En un proyecto real **casi todo difiere**, así que serían ~20
