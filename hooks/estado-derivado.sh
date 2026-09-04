@@ -26,7 +26,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 arnes_estado_derivado() {
   local destino cuerpo tmp
-  local total=0 hechos=0 revision=0 progreso=0 bloqueados=0 otros=0
+  local total=0 hechos=0 revision=0 progreso=0 bloqueados=0 otros=0 notas=0
   local f base linea filas='' pend_abiertas='?' rama='?' sha='?' limpio='?'
 
   arnes_parse_manifest_estado || return 0
@@ -46,6 +46,13 @@ arnes_estado_derivado() {
       case "$linea" in 'Estado:'*) est="${linea#Estado:}"; break ;; esac
     done <<< "$texto"
     arnes_norm_campo "$est"; est="$ARNES_CAMPO"
+    # Sin `Estado:` no es un REQ, es una nota que vive en la misma carpeta. Medido:
+    # el bloque decia 58 REQ y habia 57, porque contaba
+    # `consecuencias-de-las-decisiones-abiertas.md`. Un bloque que presume de
+    # derivar del disco no puede decir 58 donde el disco dice 57. Se cuentan aparte
+    # y se DICE, en vez de esconderlos: que un archivo quede fuera por silencio es
+    # justo lo que este bloque existe para evitar.
+    if [ -z "$est" ]; then notas=$((notas+1)); continue; fi
     arnes_campos_req "$texto" ''
     total=$((total+1))
     case "$est" in
@@ -55,7 +62,14 @@ arnes_estado_derivado() {
       bloqueado)              bloqueados=$((bloqueados+1)) ;;
       *)                      otros=$((otros+1)) ;;
     esac
-    filas+="| ${base%.md} | ${est:-—} | ${ARNES_QA:-—} | ${ARNES_SEG:-—} | ${ARNES_RIGOR:-—} | ${ARNES_HALL:-—} |"$'\n'
+    # Solo lo ABIERTO va a la tabla. El bloque responde "donde quedamos", y un REQ
+    # completado ya no es parte de esa respuesta: es historia, y la linea de conteo
+    # ya lo resume. Medido: con 58 REQ el bloque pesaba 10,4 KB -- un 25 % sobre un
+    # ESTADO.md de 40 KB que se lee al empezar CADA sesion. Es justo el presupuesto
+    # que la rotacion existe para cuidar, y aqui se lo estaba comiendo el arnes.
+    if [ "$est" != "$ARNES_ESTADO_DONE" ]; then
+      filas+="| ${base%.md} | ${est:-—} | ${ARNES_QA:-—} | ${ARNES_SEG:-—} | ${ARNES_RIGOR:-—} | ${ARNES_HALL:-—} |"$'\n'
+    fi
   done
 
   # --- La cola de aprobaciones ---
@@ -108,9 +122,12 @@ arnes_estado_derivado() {
 **Repositorio:** \`$rama\` @ \`$sha\` — $limpio
 **Aprobaciones pendientes:** $pend_abiertas
 **REQ:** $total — completado $hechos · en-revisión $revision · en-progreso $progreso · bloqueado $bloqueados · otros $otros
+**Otros archivos en \`$ARNES_REQ_DIR/\` sin \`Estado:\` (notas, no REQ):** $notas
 "
   if [ -n "$filas" ]; then
     cuerpo+="
+_Sólo los REQ abiertos; los $hechos completados no se listan._
+
 | REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
 |---|---|---|---|---|---|
 $filas"

@@ -381,6 +381,26 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
 # `sí|si`, y se saltaba la puerta de seguridad EN SILENCIO. Plegar el acento deja
 # una sola forma cerrada (`si`) contra la que comparar, en vez de una lista de
 # variantes que se pudre — que es justo lo que este arnés predica.
+# Retira el enfasis de Markdown SOLO cuando envuelve el valor entero (pareado).
+# Vive aparte porque hace falta en dos momentos: al normalizar el campo, y otra vez
+# tras quitar un parentesis final -- porque `**aprobado** (medido)` no esta envuelto
+# hasta que el parentesis desaparece.
+arnes_desenvuelve() {   # <valor> -> ARNES_DESENV
+  local v="$1" antes
+  while :; do
+    antes="$v"
+    case "$v" in
+      '**'*'**') v="${v#\*\*}"; v="${v%\*\*}" ;;
+      '__'*'__') v="${v#__}";   v="${v%__}"   ;;
+      '*'*'*')   v="${v#\*}";   v="${v%\*}"   ;;
+      '_'*'_')   v="${v#_}";    v="${v%_}"    ;;
+      '`'*'`')   v="${v#\`}";   v="${v%\`}"   ;;
+    esac
+    [ "$v" != "$antes" ] || break
+  done
+  ARNES_DESENV="$v"
+}
+
 arnes_norm_campo() {   # <valor> -> ARNES_CAMPO
   local v="${1//$'\r'/}"
   # El MARCADO no es parte del valor. `**sí**` es el mismo valor que `sí`: el
@@ -399,18 +419,7 @@ arnes_norm_campo() {   # <valor> -> ARNES_CAMPO
   # suelto nunca lo es. Asi que `**si**` se desenvuelve y `aprobado*` se respeta, y
   # el argumento de arriba sigue en pie sin abrir una puerta nueva.
   v="${v// /}"
-  local antes
-  while :; do
-    antes="$v"
-    case "$v" in
-      '**'*'**') v="${v#\*\*}"; v="${v%\*\*}" ;;
-      '__'*'__') v="${v#__}";   v="${v%__}"   ;;
-      '*'*'*')   v="${v#\*}";   v="${v%\*}"   ;;
-      '_'*'_')   v="${v#_}";    v="${v%_}"    ;;
-      '`'*'`')   v="${v#\`}";   v="${v%\`}"   ;;
-    esac
-    [ "$v" != "$antes" ] || break
-  done
+  arnes_desenvuelve "$v"; v="$ARNES_DESENV"
   v="${v//Í/i}"; v="${v//í/i}"
   ARNES_CAMPO="${v,,}"
 }
@@ -445,6 +454,11 @@ arnes_veredicto() {   # <valor normalizado> -> ARNES_VEREDICTO
   case "$v" in
     *')') case "$v" in *'('*) v="${v%%(*}" ;; esac ;;
   esac
+  # Y se desenvuelve OTRA VEZ. Medido por dos proyectos: `aprobado (medido)` contaba
+  # y `**aprobado** (medido)` no, porque al normalizar el enfasis no envolvia el
+  # valor entero -- el parentesis estaba detras. Mismo valor, dos escrituras,
+  # veredictos opuestos: la misma asimetria que `n/a` / `no aplica`.
+  arnes_desenvuelve "$v"; v="$ARNES_DESENV"
   ARNES_VEREDICTO="$v"
 }
 
