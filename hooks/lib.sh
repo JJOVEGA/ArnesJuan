@@ -14,12 +14,11 @@
 arnes_read_stdin() { cat; }
 
 # Raíz del proyecto: prioriza $CLAUDE_PROJECT_DIR; si no, el campo `cwd` del input.
-arnes_project_dir() {
-  local input="$1"
+arnes_project_dir() {   # <input json> -> ARNES_PROJ
   if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
-    printf '%s' "$CLAUDE_PROJECT_DIR"
+    ARNES_PROJ="$CLAUDE_PROJECT_DIR"      # caso normal: cero forks
   else
-    printf '%s' "$input" | jq -r '.cwd // empty'
+    ARNES_PROJ="$(printf '%s' "$1" | jq -r '.cwd // empty')"
   fi
 }
 
@@ -73,16 +72,24 @@ arnes_jq() {
 
 # Ruta canónica para COMPARAR (no para abrir): separadores `/` y, en Windows, forma
 # mixta `c:/...` con la unidad en minúscula. Fuera de Windows es la identidad.
-arnes_norm_path() {
-  local p="$1" bs='\' fs='/'
-  if command -v cygpath >/dev/null 2>&1; then
-    p="$(cygpath -m -- "$p" 2>/dev/null || printf '%s' "$p")"
-  fi
-  p="${p//"$bs"/"$fs"}"
+arnes_norm_path() {   # <ruta> -> ARNES_NORM
+  local p="$1" d
+  # `cygpath` SÓLO cuando hace falta. Su trabajo es traducir la forma MSYS
+  # (`/tmp/x`) a forma Windows (`C:/Users/.../Temp/x`); una ruta que ya llega
+  # como `X:\...` o `X:/...` no necesita conversión. Saltárselo ahorra un fork
+  # —el coste dominante en esta plataforma— en el caso más común de Windows,
+  # donde tanto `file_path` como la raíz del proyecto ya vienen calificadas.
   case "$p" in
-    [A-Za-z]:*) p="$(printf '%s' "${p%%:*}" | tr '[:upper:]' '[:lower:]'):${p#*:}" ;;
+    [A-Za-z]:*) ;;                       # ya es forma Windows: nada que traducir
+    /*) if command -v cygpath >/dev/null 2>&1; then
+          p="$(cygpath -m -- "$p" 2>/dev/null)" || p="$1"
+        fi ;;
   esac
-  printf '%s' "$p"
+  p="${p//\\//}"
+  case "$p" in
+    [A-Za-z]:*) d="${p%%:*}"; p="${d,,}:${p#*:}" ;;   # unidad en minúscula, sin `tr`
+  esac
+  ARNES_NORM="$p"
 }
 
 # --- Rutas relativas al proyecto ----------------------------------------------
@@ -90,24 +97,34 @@ arnes_norm_path() {
 # raíz del proyecto. Una ruta ya relativa (típica en comandos de Bash) se deja tal
 # cual, asumiendo que el comando corre en la raíz; si el agente hizo `cd` a otro
 # sitio, el resultado no casará con ningún glob (falso negativo, nunca positivo).
-arnes_ruta_relativa() {  # <ruta> <raíz del proyecto>
+arnes_ruta_relativa() {  # <ruta> <raíz del proyecto> -> ARNES_REL
   local p pp
-  p="$(arnes_norm_path "$1")"
-  pp="$(arnes_norm_path "$2")"
+  arnes_norm_path "$1"; p="$ARNES_NORM"
+  arnes_norm_path "$2"; pp="$ARNES_NORM"
   p="${p#"$pp"/}"
-  p="${p#./}"
-  printf '%s' "$p"
+  ARNES_REL="${p#./}"
 }
 
 # ¿La ruta relativa cae dentro de `codigo_app.globs`?
+#
+# Los globs se leen UNA sola vez por invocación del hook y quedan cacheados:
+# `guard-bash` llama a esta función una vez por cada destino de escritura que
+# encuentra en el comando, y sin caché cada llamada pagaba otro `jq` más su
+# sustitución de proceso — dos forks por destino.
 arnes_es_codigo_app() {  # <ruta relativa> <manifiesto>
   local rel="$1" manifest="$2" g
   [ -n "$rel" ] || return 1
-  while IFS= read -r g; do
-    [ -n "$g" ] || continue
+  if [ -z "${ARNES_GLOBS_CARGADOS:-}" ]; then
+    ARNES_GLOBS=()
+    while IFS= read -r g; do
+      [ -n "$g" ] && ARNES_GLOBS+=("$g")
+    done < <(arnes_jq -r '.codigo_app.globs[]? // empty' "$manifest")
+    ARNES_GLOBS_CARGADOS=1
+  fi
+  for g in ${ARNES_GLOBS[@]+"${ARNES_GLOBS[@]}"}; do
     # shellcheck disable=SC2053  -- glob a la derecha a propósito
     if [[ "$rel" == $g ]]; then return 0; fi
-  done < <(arnes_jq -r '.codigo_app.globs[]? // empty' "$manifest")
+  done
   return 1
 }
 
@@ -126,35 +143,54 @@ arnes_es_codigo_app() {  # <ruta relativa> <manifiesto>
 #   3. Si el manifiesto NO trae prefijo, cualquier proveedor con ese nombre corto
 #      casa. El manifiesto no dijo de qué plugin viene, y exigirlo obligaría a cada
 #      proyecto a conocer el nombre del plugin — que es el fallo que se corrige.
-arnes_norm_ident() {
-  printf '%s' "$1" | tr -d '\r' | tr '[:upper:]' '[:lower:]' \
-    | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
+# RENDIMIENTO — por qué estas funciones ASIGNAN en vez de imprimir.
+# Una función que devuelve su valor por stdout obliga a un `$( )` en cada punto de
+# llamada, y en MSYS un `fork` está emulado copiando memoria: medido en Windows,
+# un subshell que sólo ejecuta un builtin cuesta ~554 ms, y añadirle un binario
+# real sólo suma ~80 ms más. El coste NO son los programas, son las sustituciones.
+# La versión anterior de `arnes_norm_ident` era `printf | tr | tr | sed` —cuatro
+# procesos— y `arnes_agente_coincide` la invocaba cuatro veces dentro de `$( )`:
+# ~20 forks para comparar dos nombres. Aquí no queda ninguno.
+arnes_norm_ident() {   # -> ARNES_IDENT
+  local s="${1//$'\r'/}"
+  s="${s,,}"
+  s="${s#"${s%%[![:space:]]*}"}"   # recorta espacios por la izquierda
+  s="${s%"${s##*[![:space:]]}"}"   # ...y por la derecha
+  ARNES_IDENT="$s"
 }
 
-arnes_ident_nombre() {  # nombre corto, sin prefijo de plugin
-  local s; s="$(arnes_norm_ident "$1")"; printf '%s' "${s##*:}"
+arnes_ident_nombre() {   # nombre corto, sin prefijo de plugin -> ARNES_NOMBRE
+  arnes_norm_ident "$1"
+  ARNES_NOMBRE="${ARNES_IDENT##*:}"
 }
 
-arnes_ident_prefijo() {  # prefijo del proveedor, o vacío si no lo trae
-  local s; s="$(arnes_norm_ident "$1")"
-  case "$s" in *:*) printf '%s' "${s%:*}" ;; *) printf '' ;; esac
+arnes_ident_prefijo() {  # prefijo del proveedor, o vacío -> ARNES_PREFIJO
+  arnes_norm_ident "$1"
+  case "$ARNES_IDENT" in
+    *:*) ARNES_PREFIJO="${ARNES_IDENT%:*}" ;;
+    *)   ARNES_PREFIJO='' ;;
+  esac
 }
 
 arnes_agente_coincide() {  # <agent_type recibido> <nombre declarado>
   local rn dn rp dp
-  rn="$(arnes_ident_nombre "$1")"; dn="$(arnes_ident_nombre "$2")"
+  arnes_ident_nombre "$1"; rn="$ARNES_NOMBRE"
+  arnes_ident_nombre "$2"; dn="$ARNES_NOMBRE"
   [ -n "$rn" ] && [ "$rn" = "$dn" ] || return 1
-  rp="$(arnes_ident_prefijo "$1")"; dp="$(arnes_ident_prefijo "$2")"
+  arnes_ident_prefijo "$1"; rp="$ARNES_PREFIJO"
+  arnes_ident_prefijo "$2"; dp="$ARNES_PREFIJO"
   if [ -n "$dp" ] && [ -n "$rp" ] && [ "$rp" != "$dp" ]; then return 1; fi
   return 0
 }
 
 # Nombre del agente para un mensaje humano: corto y, si venía calificado, con el
 # identificador completo entre paréntesis para poder diagnosticar el origen.
+# Ésta sí imprime: sólo se usa al construir el motivo de una denegación, así que
+# el fork de su `$( )` ocurre una vez y en un camino que ya terminó en bloqueo.
 arnes_agente_legible() {  # <agent_type>
   local ident nombre
-  ident="$(arnes_norm_ident "$1")"
-  nombre="$(arnes_ident_nombre "$1")"
+  arnes_norm_ident "$1";   ident="$ARNES_IDENT"
+  arnes_ident_nombre "$1"; nombre="$ARNES_NOMBRE"
   if [ "$ident" != "$nombre" ]; then
     printf "'%s' (%s)" "$nombre" "$ident"
   else

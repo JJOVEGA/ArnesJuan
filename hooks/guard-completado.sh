@@ -11,16 +11,21 @@
 # Se dispara cuando una edición dentro de `requirements/` deja el `Estado:` del REQ en el
 # valor terminal (`completado`). Si la transición no ocurre, el hook no hace nada.
 set -uo pipefail
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Directorio del propio script por expansión de parámetro. La forma habitual
+# —`$(cd "$(dirname ...)" && pwd)"`— son DOS forks anidados, y en esta
+# plataforma un fork cuesta más que ejecutar el binario que va dentro.
+DIR="${BASH_SOURCE[0]%/*}"
+[ "$DIR" = "${BASH_SOURCE[0]}" ] && DIR=.
 # shellcheck source=/dev/null
 . "$DIR/lib.sh"
 
-input="$(arnes_read_stdin)"
+# Lee stdin con el builtin `read`: `cat` costaba un fork y su sustitución, otro.
+IFS= read -r -d '' input || true
 arnes_require_jq || exit 0
 
-proj="$(arnes_project_dir "$input")"
+arnes_project_dir "$input"; proj="$ARNES_PROJ"
 [ -n "$proj" ] || exit 0
-manifest="$(arnes_manifest_path "$proj")"
+manifest="$proj/.arnes/config.json"
 [ -f "$manifest" ] || exit 0   # no es un proyecto del arnés -> inerte
 
 # UNA lectura del input para todo lo que se necesita de él. Este hook corre en
@@ -69,8 +74,8 @@ if [ "$tool" = "Bash" ]; then
     [ -n "$d" ] || continue
     case "$d" in /dev/*|/tmp/*) continue ;; esac
     case "$d" in
-      /*|[A-Za-z]:*) rel="$(arnes_ruta_relativa "$d" "$proj")" ;;
-      *)             rel="$(arnes_norm_path "$d")"; rel="${rel#./}" ;;
+      /*|[A-Za-z]:*) arnes_ruta_relativa "$d" "$proj"; rel="$ARNES_REL" ;;
+      *)             arnes_norm_path "$d"; rel="${ARNES_NORM#./}" ;;
     esac
     case "$rel" in
       "$req_dir"/*)
@@ -85,7 +90,7 @@ BASHEOF
 fi
 
 # --- Via Edit/Write/MultiEdit ---
-rel="$(arnes_ruta_relativa "$fp" "$proj")"
+arnes_ruta_relativa "$fp" "$proj"; rel="$ARNES_REL"
 case "$rel" in
   "$req_dir"/*) ;;          # dentro de requirements/ -> seguimos
   *) exit 0 ;;

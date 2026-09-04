@@ -11,16 +11,21 @@
 # Ver `arnes_bash_escrituras` en lib.sh: es una barandilla contra el descuido, no
 # una jaula contra un agente decidido a rodearla.
 set -uo pipefail
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Directorio del propio script por expansión de parámetro. La forma habitual
+# —`$(cd "$(dirname ...)" && pwd)"`— son DOS forks anidados, y en esta
+# plataforma un fork cuesta más que ejecutar el binario que va dentro.
+DIR="${BASH_SOURCE[0]%/*}"
+[ "$DIR" = "${BASH_SOURCE[0]}" ] && DIR=.
 # shellcheck source=/dev/null
 . "$DIR/lib.sh"
 
-input="$(arnes_read_stdin)"
+# Lee stdin con el builtin `read`: `cat` costaba un fork y su sustitución, otro.
+IFS= read -r -d '' input || true
 arnes_require_jq || exit 0
 
-proj="$(arnes_project_dir "$input")"
+arnes_project_dir "$input"; proj="$ARNES_PROJ"
 [ -n "$proj" ] || exit 0
-manifest="$(arnes_manifest_path "$proj")"
+manifest="$proj/.arnes/config.json"
 [ -f "$manifest" ] || exit 0   # no es un proyecto del arnés -> inerte
 
 # UNA lectura del input para todo lo que se necesita de él. Este hook corre en
@@ -45,12 +50,12 @@ if [ "$tool" = "Bash" ]; then
   via_bash=1
   while IFS= read -r cand; do
     [ -n "$cand" ] || continue
-    rel="$(arnes_ruta_relativa "$cand" "$proj")"
+    arnes_ruta_relativa "$cand" "$proj"; rel="$ARNES_REL"
     if arnes_es_codigo_app "$rel" "$manifest"; then objetivo="$rel"; break; fi
   done < <(arnes_bash_escrituras "$comando")
 else
   [ -n "$fp" ] || exit 0
-  rel="$(arnes_ruta_relativa "$fp" "$proj")"
+  arnes_ruta_relativa "$fp" "$proj"; rel="$ARNES_REL"
   arnes_es_codigo_app "$rel" "$manifest" && objetivo="$rel"
 fi
 
