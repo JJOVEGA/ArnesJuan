@@ -331,7 +331,7 @@ check "...y tampoco al cerrar de paso -> deny" deny guard-completado.sh \
 Seguridad: aprobado')"
 # La excepcion se declara AL EMITIRLA, no al invocarla.
 check "auditoria PREVENTIVA declarada -> allow" allow guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Seguridad: aprobado (preventiva)')"
+  "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Seguridad: preventiva')"
 mkreq_r "REQ-051" "no" "aprobado" "pendiente" ""
 check "orden correcto: QA ya aprobado -> allow" allow guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-051.md" "" "" 'Seguridad: aprobado')"
@@ -345,7 +345,7 @@ check "REQ antiguo sin campo QA -> allow" allow guard-completado.sh \
 # La firma preventiva desbloquea el ORDEN, no el CIERRE: se emitio antes de que
 # existiera el codigo, luego no acredita el codigo. Un REQ critico sigue exigiendo
 # la auditoria de verdad.
-mkreq_r "REQ-054" "sí" "aprobado" "aprobado (preventiva)" ""
+mkreq_r "REQ-054" "sí" "aprobado" "preventiva" ""
 check "critico: solo firma preventiva no cierra -> deny" deny guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-054.md" "" "" 'Estado: completado')"
 mkreq_r "REQ-055" "sí" "aprobado" "aprobado" ""
@@ -419,7 +419,7 @@ check "Seguridad en **negrita** cierra un critico -> allow" allow guard-completa
 # Y la firma PREVENTIVA sigue sin cerrar aunque venga decorada: quitar el marcado
 # no puede convertirla en una firma completa. Es el fallo que el arreglo obvio
 # --cortar el valor en el primer parentesis-- habria introducido.
-mkreq "$PROJ/requirements/REQ-070.md" "sí" "aprobado" "**aprobado (preventiva)**"
+mkreq "$PROJ/requirements/REQ-070.md" "sí" "aprobado" "**preventiva**"
 check "preventiva decorada TAMPOCO cierra -> deny" deny guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-070.md" "" "" 'Estado: completado')"
 mkreq_r "REQ-071" "no" "pendiente" "n/a" "**ligero**"
@@ -479,6 +479,52 @@ check "'*aprobado*' pareado si cierra -> allow" allow guard-completado.sh \
 mkreq "$PROJ/requirements/REQ-077.md" "**sí**" "aprobado" "pendiente"
 check "y '**sí**' sigue exigiendo auditoria -> deny" deny guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-077.md" "" "" 'Estado: completado')"
+
+# --- El parentesis es EVIDENCIA, y la evidencia no cambia el veredicto ---------
+# Medido en un proyecto real: 26 REQ paralizados porque su convencion es
+# `QA: aprobado (medido el 3/9, 42 pruebas)` -- el veredicto con lo que lo sostiene
+# al lado-- y la comparacion exigia la palabra exacta. La alternativa era quitar los
+# parentesis de 35 lineas, o sea BORRAR LA EVIDENCIA del encabezado del REQ, que es
+# media razon de ser de este arnes.
+#
+# La primera version metia el matiz DENTRO del parentesis (`aprobado (preventiva)`),
+# y el mismo signo significaba "evidencia" en un caso y "matiz que invierte el
+# veredicto" en el otro. Esa ambiguedad era un error de diseño y se QUITO en vez de
+# arbitrarse: un matiz que cambia el veredicto ES OTRO VEREDICTO.
+echo "Parentesis = evidencia (el veredicto no cambia):"
+mkreq "$PROJ/requirements/REQ-080.md" "no" "aprobado (medido el 3/9, 42 pruebas)" "n/a"
+check "QA con su evidencia entre parentesis cierra -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-080.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-081.md" "sí" "aprobado" "aprobado (auditado el 3/9)"
+check "Seguridad con evidencia cierra un critico -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-081.md" "" "" 'Estado: completado')"
+# Balanceado y final, la misma leccion que el enfasis pareado: si no cierra, no es
+# un parentesis, es texto -- y el texto sobra en un veredicto.
+mkreq "$PROJ/requirements/REQ-083.md" "sí" "aprobado" "aprobado (sin cerrar"
+check "parentesis sin cerrar no es evidencia -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-083.md" "" "" 'Estado: completado')"
+# `preventiva` es SU PROPIO veredicto, no un matiz de aprobado. Sigue sin cerrar.
+mkreq "$PROJ/requirements/REQ-082.md" "sí" "aprobado" "preventiva"
+check "preventiva NO cierra un critico -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-082.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-084.md" "no" "pendiente" "pendiente"
+check "preventiva desbloquea el ORDEN del ciclo -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-084.md" "" "" 'Seguridad: preventiva')"
+
+# --- La cola de aprobaciones acaba donde acaba su seccion ----------------------
+# Antes solo la cerraba una cabecera literal `## Resueltas`, asi que cualquier otra
+# --`## Notas`, `## Historico`-- la dejaba abierta y sus `###` contaban como
+# aprobaciones pendientes. Los proyectos lo esquivaban ordenando el archivo: carga,
+# no estilo.
+echo "Cola de aprobaciones: la seccion acaba en la siguiente cabecera:"
+mkreq "$PROJ/requirements/REQ-085.md" "no" "aprobado" "n/a"
+printf '## Pendientes\n\n## Notas\n### [2026-01-01] esto NO es una aprobacion\n- contexto\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+check "un ### bajo OTRA cabecera no es cola -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-085.md" "" "" 'Estado: completado')"
+printf '## Pendientes\n### [2026-01-01] una aprobacion de verdad\n- contexto\n\n## Notas\n### otra cosa\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+check "...pero uno bajo Pendientes si -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-085.md" "" "" 'Estado: completado')"
+printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 
 # --- Continuidad automatica: el bloque DERIVADO de ESTADO.md -------------------
 # Este hook no decide nada (no hay deny/allow que mirar): escribe un archivo. Asi

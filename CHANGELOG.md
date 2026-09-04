@@ -2,6 +2,55 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.23.0] — 2026-09-04
+### Corregido — el paréntesis es evidencia, y la evidencia no cambia el veredicto
+**Medido en un proyecto real: 26 REQ paralizados.** Su convención es
+`QA: aprobado (medido el 3/9, 42 pruebas)` —el veredicto con lo que lo sostiene al lado— y la
+comparación exigía la palabra exacta. Veinte REQ no habrían podido cerrarse y diez ya cerrados
+habrían sido denegados al volver a tocarlos.
+
+La alternativa era quitar los paréntesis de 35 líneas de veredicto, o sea **borrar la evidencia
+del encabezado del REQ** — que es media razón de ser de este arnés. Poner la medición al lado de
+la afirmación es lo que permite cazar lo falso; un veredicto sin ella es una opinión.
+
+**La ambigüedad era un error de diseño mío, y se quita en vez de arbitrarse.** 1.21.0 metía el
+matiz **dentro** del paréntesis —`aprobado (preventiva)`—, así que el mismo signo significaba
+«evidencia» en un caso y «matiz que invierte el veredicto» en el otro: cortar servía a uno y rompía
+al otro. Pero **un matiz que cambia el veredicto ES OTRO VEREDICTO**, no un paréntesis: una
+revisión hecha antes de que existiera el código y una aprobación del código son estados distintos
+del mundo, y meter uno entre paréntesis del otro era confundirlos.
+
+- `Seguridad: preventiva` pasa a ser **su propio valor** (antes `aprobado (preventiva)`). Sigue
+  sin cerrar un REQ crítico y sigue desbloqueando el orden del ciclo. Costó casi nada cambiarlo:
+  la sintaxis tenía un día y estaba declarada en cero REQ.
+- Un paréntesis **final y balanceado** se retira antes de comparar. `aprobado (sin cerrar` no es
+  un paréntesis, es texto — la misma lección que el énfasis pareado.
+
+**Riesgo residual, dicho en voz alta:** `aprobado (con reservas)` cuenta como aprobado. Es una
+violación de la convención —el matiz debe ser un veredicto— y no un agujero silencioso: está
+escrito en la plantilla del REQ y en la ficha de los dos agentes que firman.
+
+El cambio es **estrictamente más permisivo** en los campos de veredicto: nada que pasara antes
+falla ahora.
+
+### Corregido — la cola de aprobaciones acaba donde acaba su sección
+El conteo sólo cerraba la sección ante una cabecera literal `## Resueltas`. Cualquier otra
+—`## Notas`, `## Histórico`— la dejaba abierta y sus `###` se contaban como aprobaciones
+pendientes, bloqueando cierres legítimos. Los proyectos lo esquivaban **ordenando el archivo**:
+carga, no estilo.
+
+Otra lista enumerada donde hacía falta una propiedad cerrada: la sección va de su cabecera a la
+**siguiente del mismo nivel**, se llame como se llame.
+
+### Documentado — el plugin no se actualiza solo
+Medido: un proyecto corría **1.13.0 del 3 de agosto** con **1.21.0** publicada. Un mes de
+correcciones —tres puertas que no existían incluidas— que nunca llegaron, sin ninguna señal.
+
+Y es peor de lo que parece, porque **las correcciones que más importan son silenciosas por
+definición**: cuando una puerta no se está cumpliendo, nada falla — simplemente no protege. El
+README y `/arnes-upgrade` lo dicen ahora, y la Fase 1 avisa de comprobar que el plugin instalado
+sea el actual antes de usarlo como destino.
+
 ## [1.22.0] — 2026-09-04
 ### Añadido — continuidad automática: el arnés deja escrito dónde quedó todo
 El coste más caro de una sesión larga no es el tiempo: es **reconstruir dónde quedó todo cuando

@@ -20,9 +20,19 @@ Un REQ solo pasa a `completado` cuando: criterios de aceptación cumplidos + qua
 
 ## Veredictos de validación (campos del REQ)
 Cierran el lazo de hallazgos para que no haya deriva silenciosa:
+
+**Un paréntesis final es evidencia, y la evidencia no cambia el veredicto.** Escribe
+`QA: aprobado (medido el 3/9, 42 pruebas)` sin miedo: el hook compara `aprobado` y el paréntesis
+queda en el REQ, que es donde sirve. Poner la evidencia al lado de la afirmación es media razón
+de ser de este arnés.
+
+> **Y por eso mismo, un matiz que cambia el veredicto NO va entre paréntesis: es otro veredicto.**
+> Una auditoría preventiva se escribe `Seguridad: preventiva`, no `aprobado (preventiva)`. Si
+> escribes `aprobado (con reservas)` contará como **aprobado**, porque el paréntesis significa
+> una sola cosa.
 - `QA:` — veredicto del `qa-tester`: `pendiente` | `aprobado` | `con-hallazgos`.
 - `Seguridad:` — veredicto del `auditor-seguridad`: `n/a` | `pendiente` | `aprobado` |
-  `aprobado (preventiva)` | `vetado` (al marcar el REQ `Sensible a seguridad: sí`, pásalo de
+  `preventiva` | `vetado` (al marcar el REQ `Sensible a seguridad: sí`, pásalo de
   `n/a` a `pendiente`).
 
 **El orden importa:** `Seguridad: aprobado` no se escribe mientras `QA:` siga en `pendiente` o
@@ -30,7 +40,7 @@ Cierran el lazo de hallazgos para que no haya deriva silenciosa:
 validar acreditaría algo que no revisó. El hook lo impide **en cualquier edición del REQ**, no
 sólo al cerrarlo, porque el daño se hace al escribir el veredicto. La única salida es la
 auditoría **preventiva** —hecha antes de que exista el código—, que se declara al emitirla
-como `Seguridad: aprobado (preventiva)` y **no** cubre el código posterior.
+como `Seguridad: preventiva` y **no** cubre el código posterior.
 
 El hook `guard-completado` **impide** marcar `completado` sin `QA: aprobado`, y un REQ
 `Sensible a seguridad: sí` sin `Seguridad: aprobado`. Llegar a "aprobado" exige que los

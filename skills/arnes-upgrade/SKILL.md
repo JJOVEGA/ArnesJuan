@@ -73,6 +73,10 @@ significaría pisar trabajo de una persona.
 - Origen: `arnes_version` de `.arnes/config.json`; si falta, `.arnes-initialized`; si tampoco,
   **pregunta**.
 - Destino: `version` de `.claude-plugin/plugin.json` del plugin instalado.
+  **Comprueba que el plugin instalado es el actual antes de usarlo como destino.** No se
+  actualiza solo: medido, un proyecto corría 1.13.0 con 1.21.0 publicada, un mes atrás y sin
+  ninguna señal. Migrar hacia un plugin viejo deja al proyecto al día **con una versión que ya
+  no es la de nadie**, y la siguiente migración partirá de esa base.
 - Si coinciden: informa que está al día y **para**. Idempotente.
 - **Acredita la versión de origen antes de usarla** (ver abajo). Toda la migración cuelga de
   ese número.
@@ -211,7 +215,7 @@ nada.
 - `AGENTS.md` §6: bloque **el orden no es una sugerencia** —seguridad no firma lo que QA no ha
   validado— con la **excepción nombrada** de la auditoría preventiva.
 - `AGENTS.md` §13: fila «Seguridad no firma lo que QA no ha validado».
-- `requirements/README.md`: el valor `aprobado (preventiva)` en el campo `Seguridad:` y el
+- `requirements/README.md`: el valor `preventiva` en el campo `Seguridad:` y el
   párrafo **el orden importa**.
 
   Esta migración **no es cosmética**: el hook empieza a denegar una escritura que antes pasaba,

@@ -415,6 +415,39 @@ arnes_norm_campo() {   # <valor> -> ARNES_CAMPO
   ARNES_CAMPO="${v,,}"
 }
 
+# UN PARENTESIS FINAL ES EVIDENCIA, Y LA EVIDENCIA NO CAMBIA EL VEREDICTO.
+#
+# La convencion que hace valioso a este arnes es que el veredicto lleve al lado lo
+# que lo sostiene: `QA: aprobado (medido el 3/9, 42 pruebas)`. Comparar contra la
+# palabra exacta obligaba a elegir entre que el hook funcione o que la evidencia
+# viva en el encabezado del REQ -- y quitar la evidencia seria destruir justo lo
+# que el arnes viene a dar. Medido en un proyecto real: 26 REQ paralizados.
+#
+# La primera version metia el matiz DENTRO del parentesis --`aprobado (preventiva)`--
+# y eso creaba una ambiguedad imposible: el mismo signo significaba "evidencia" en
+# un caso y "matiz que invierte el veredicto" en el otro. Cortar servia a uno y
+# rompia al otro.
+#
+# La ambiguedad era un error de diseño, y se QUITA en vez de arbitrarse: un matiz
+# que cambia el veredicto ES OTRO VEREDICTO, no un parentesis. Por eso `preventiva`
+# pasa a ser su propio valor. Ahora el parentesis significa una sola cosa.
+#
+# Se exige que el parentesis sea FINAL y BALANCEADO, la misma leccion que el
+# enfasis pareado: `aprobado(medido)` -> `aprobado`; `aprobado(sin cerrar` se
+# respeta tal cual, porque no es un parentesis, es texto.
+#
+# Riesgo residual, dicho en voz alta: `aprobado (con reservas)` contaria como
+# aprobado. Es una violacion de la convencion --el matiz debe ser un veredicto--
+# y no un agujero silencioso: esta escrito en la plantilla y en la ficha de los
+# dos agentes que firman.
+arnes_veredicto() {   # <valor normalizado> -> ARNES_VEREDICTO
+  local v="$1"
+  case "$v" in
+    *')') case "$v" in *'('*) v="${v%%(*}" ;; esac ;;
+  esac
+  ARNES_VEREDICTO="$v"
+}
+
 # `Sensible a seguridad:` es un BOOLEANO tecleado a mano dentro de un Markdown.
 #
 # Su población no es {si,no}: es lo que a un agente le dé por escribir en una
@@ -489,8 +522,8 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
       esac
     done <<< "$texto"
   done
-  arnes_norm_campo "$ARNES_QA";   ARNES_QA="$ARNES_CAMPO"
-  arnes_norm_campo "$ARNES_SEG";  ARNES_SEG="$ARNES_CAMPO"
+  arnes_norm_campo "$ARNES_QA";   arnes_veredicto "$ARNES_CAMPO"; ARNES_QA="$ARNES_VEREDICTO"
+  arnes_norm_campo "$ARNES_SEG";  arnes_veredicto "$ARNES_CAMPO"; ARNES_SEG="$ARNES_VEREDICTO"
   arnes_norm_campo "$ARNES_SENS"; ARNES_SENS="$ARNES_CAMPO"
   arnes_norm_campo "$ARNES_HALL"; ARNES_HALL="$ARNES_CAMPO"
   arnes_norm_campo "$ARNES_RIGOR"; ARNES_RIGOR="$ARNES_CAMPO"

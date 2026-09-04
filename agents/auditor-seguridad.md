@@ -31,7 +31,7 @@ Como mínimo, tu auditoría cubre **OWASP Top 10 (Web)**, **OWASP API Security T
   hook lo impide, y hace bien.
   **Única excepción — auditoría preventiva:** una revisión hecha **antes de que exista el código**
   (diseño, modelo de amenaza, el REQ mismo) sí va por delante, porque no acredita nada
-  construido. Declárala **al emitirla** como `Seguridad: aprobado (preventiva)` —nunca a
+  construido. Declárala **al emitirla** con su propio veredicto, `Seguridad: preventiva` —nunca a
   posteriori para desbloquearte— y ten claro que **no cubre el código posterior**: cuando exista,
   vuelves a auditar en tu turno.
 - **Veredicto y veto:** refleja tu veredicto en la línea `Seguridad:` del REQ (`aprobado` / `vetado`); un veto va además a `Estado: bloqueado` con motivo y a tu bitácora, usando el vocabulario de estados del arnés.

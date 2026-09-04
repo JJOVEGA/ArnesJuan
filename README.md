@@ -17,6 +17,17 @@ Cursor y otras herramientas vía AGENTS.md + MCP).
   que exige changelog.
 - **Tests del arnés** (`tests/`): escenarios para validar los agentes antes de versionar.
 
+## El plugin no se actualiza solo
+Medido en un proyecto real (2026-09-04): el proyecto corría **1.13.0, del 3 de agosto**, con
+**1.21.0** publicada. Un mes de correcciones —incluidas tres puertas que no existían— que nunca
+llegaron. El registro del marketplace no tenía marca de auto-actualización y su última sincronía
+era de un mes antes.
+
+**No cuentes con que llegue sola.** Un proyecto puede quedarse versiones atrás sin ninguna señal,
+y las correcciones que más importan —las de una puerta que no se estaba cumpliendo— son
+silenciosas por definición: nada falla, simplemente no protege. Actualiza el plugin
+explícitamente y después corre `/arnes-upgrade`, en ese orden.
+
 ## Enforcement por runtime (hooks)
 Las invariantes críticas no se quedan en el markdown: las vigila la máquina vía hooks
 `PreToolUse` del plugin (`hooks/`), que leen el manifiesto `.arnes/config.json`:

@@ -95,7 +95,7 @@ que nadie emitió. Buscar paralelismo aquí no ahorra tiempo: produce una firma 
 > **Excepción nombrada — la auditoría preventiva.** Una revisión de seguridad hecha **antes de
 > que exista el código** —sobre el diseño, el modelo de amenaza o el REQ mismo— sí puede ir por
 > delante, porque no acredita nada construido. Se declara **al emitirla**, escribiendo
-> `Seguridad: aprobado (preventiva)` en el REQ; nunca al invocarla: una excepción que se inventa
+> `Seguridad: preventiva` en el REQ; nunca al invocarla: una excepción que se inventa
 > cuando hace falta no es una excepción, es una salida. Esa firma **no** cubre el código
 > posterior: cuando el código exista, la auditoría se repite en su turno.
 
@@ -268,7 +268,7 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 | El rigor se puede subir, nunca bajar: `Sensible a seguridad: sí` impone `critico` | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | No completar sin `QA: aprobado` (salvo `Rigor: ligero`), ni un REQ `critico` sin `Seguridad: aprobado` | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | La transición a `completado` no se hace por shell | §6 | `guard-completado` | `Bash` (parcial) |
-| Seguridad no firma lo que QA no ha validado (salvo auditoría `(preventiva)`) | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| Seguridad no firma lo que QA no ha validado (salvo `Seguridad: preventiva`) | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 
 **Es una barandilla, no una jaula.** El hook impide que el modelo **se desvíe por descuido**;
 no contiene a un agente decidido a rodearlo. Concretamente:

@@ -121,7 +121,7 @@ arnes_guard_completado() {
   # tuviera los veredictos cruzados no debe bloquearse por algo que no hizo.
   if [ "$seg" = "aprobado" ] && [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
     if grep -q 'Seguridad:' <<< "$nuevo"; then
-      arnes_deny "ARNES: '$rel' lleva 'Seguridad: aprobado' pero su 'QA:' es '$qa'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGENTS.md 6): la auditoria no firma sobre un arbol que QA no ha validado, porque no mira las quality gates. Si es una auditoria PREVENTIVA —sin codigo todavia— declarala como 'Seguridad: aprobado (preventiva)'."
+      arnes_deny "ARNES: '$rel' lleva 'Seguridad: aprobado' pero su 'QA:' es '$qa'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGENTS.md 6): la auditoria no firma sobre un arbol que QA no ha validado, porque no mira las quality gates. Si es una auditoria PREVENTIVA —sin codigo todavia— declarala con su propio veredicto: 'Seguridad: preventiva'."
     fi
   fi
 
@@ -206,8 +206,13 @@ arnes_guard_completado() {
       /<!--/ {enc=1}
       /-->/  {enc=0; next}
       enc    {next}
-      /^##[[:space:]]+Pendientes/ {sec=1; next}
-      /^##[[:space:]]+Resueltas/  {sec=0}
+      # La seccion va de su cabecera a la SIGUIENTE DEL MISMO NIVEL, se llame como
+      # se llame. Antes solo la cerraba una cabecera literal `## Resueltas`, asi que
+      # cualquier otra --`## Notas`, `## Historico`-- la dejaba abierta y sus `###`
+      # se contaban como aprobaciones pendientes. Eso es una lista enumerada donde
+      # hace falta una propiedad cerrada, y obligaba a los proyectos a ordenar el
+      # archivo para esquivarlo: carga, no estilo.
+      /^##[[:space:]]/ {sec = ($0 ~ /^##[[:space:]]+Pendientes/) ? 1 : 0; next}
       sec && /^###[[:space:]]/    {c++}
       END {print c+0}
     ' "$pending")"
