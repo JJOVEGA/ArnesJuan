@@ -109,23 +109,20 @@ printf '%s' "$nuevo" | grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|
 # --- Veredictos QA/Seguridad (anti-deriva) ---
 # Los campos viven en el archivo del REQ; se prefiere el contenido entrante y se respalda en disco
 # (pre-edición), porque QA/seguridad fijan su veredicto antes de la transición a completado.
-disk="$(cat "$fp" 2>/dev/null || true)"
-campo() {  # $1=etiqueta -> valor normalizado (minúsculas, sin espacios)
-  local v
-  v="$(printf '%s\n' "$nuevo" | sed -n -E "s/^$1:[[:space:]]*//p" | head -1)"
-  [ -z "$v" ] && v="$(printf '%s\n' "$disk" | sed -n -E "s/^$1:[[:space:]]*//p" | head -1)"
-  printf '%s' "$v" | tr '[:upper:]' '[:lower:]' | tr -d ' \r'
-}
-qa="$(campo 'QA')"
-seg="$(campo 'Seguridad')"
-sens="$(campo 'Sensible a seguridad')"
+disk=''; [ -f "$fp" ] && IFS= read -r -d '' disk < "$fp"   # `read`, no `cat`: sin fork
+arnes_campos_req "$disk" "$nuevo"
+qa="$ARNES_QA"; seg="$ARNES_SEG"; sens="$ARNES_SENS"
 
 # Solo se exige el campo cuando está presente (compatibilidad con REQ antiguos sin veredictos).
 if [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
   arnes_deny "ARNES: no se puede completar '$rel': el veredicto de QA es '$qa' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9)."
 fi
+# `si` a secas: el normalizador pliega la tilde, así que `SÍ`, `Sí`, `sí` y `SI`
+# llegan aquí como la misma forma. Antes se comparaba contra la lista `sí|si` y
+# un REQ escrito `Sensible a seguridad: SÍ` NO casaba —la conversión a minúsculas
+# no toca la `Í` sin locale— y se saltaba esta puerta en silencio.
 case "$sens" in
-  sí|si)
+  si)
     if [ "$seg" != "aprobado" ]; then
       arnes_deny "ARNES: no se puede completar '$rel': es 'Sensible a seguridad: sí' y el veredicto de seguridad es '${seg:-ausente}' (se requiere 'Seguridad: aprobado'). El control hallado debe quedar como NFR antes de cerrar (AGENTS.md §9)."
     fi ;;
@@ -137,12 +134,15 @@ esac
 # de instrumento mantiene un REQ abierto mientras QA encuentra variantes suyas.
 # Un hallazgo SIN clase deniega: la puerta no puede saber si bloquea o no, y un
 # "no se" que deja pasar es un "si" disfrazado.
-hall="$(campo 'Hallazgos abiertos')"
+hall="$ARNES_HALL"
 case "$hall" in
   ''|ninguno|'(ninguno)'|n/a|na|-|'(-)') hall='' ;;
 esac
 if [ -n "$hall" ]; then
-  while IFS= read -r h; do
+  # La lista se parte con IFS, no con `printf | tr`: eran tres forks para trocear
+  # una cadena que ya está en memoria.
+  IFS=',' read -r -a ARNES_HALLAZGOS <<< "$hall"
+  for h in ${ARNES_HALLAZGOS[@]+"${ARNES_HALLAZGOS[@]}"}; do
     [ -n "$h" ] || continue
     id="${h%%(*}"
     clase=''
@@ -159,9 +159,7 @@ if [ -n "$hall" ]; then
       *)
         arnes_deny "ARNES: no se puede completar '$rel': el hallazgo '$id' declara la clase '$clase', que no existe. Validas: 'usuario/dinero', 'contrato', 'instrumento'." ;;
     esac
-  done <<HALLEOF
-$(printf '%s' "$hall" | tr ',' '\n')
-HALLEOF
+  done
 fi
 
 # --- Gate A2: no completar con aprobaciones pendientes ---

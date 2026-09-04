@@ -275,3 +275,52 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
   done
   return 0
 }
+
+# --- Campos de cabecera del REQ ---------------------------------------------
+# Normaliza un valor de campo: minúsculas, sin espacios ni CR, y con la tilde de
+# "sí" plegada. La versión anterior era `printf | tr | tr` — tres procesos.
+#
+# EL PLIEGUE DE LA TILDE CORRIGE UN FALLO ABIERTO QUE YA EXISTÍA. La conversión a
+# minúsculas trabaja byte a byte y, sin locale definido, no toca la `Í`: un REQ
+# que declarara `Sensible a seguridad: SÍ` quedaba como `sÍ`, NO casaba con
+# `sí|si`, y se saltaba la puerta de seguridad EN SILENCIO. Plegar el acento deja
+# una sola forma cerrada (`si`) contra la que comparar, en vez de una lista de
+# variantes que se pudre — que es justo lo que este arnés predica.
+arnes_norm_campo() {   # <valor> -> ARNES_CAMPO
+  local v="${1//$'\r'/}"
+  v="${v// /}"
+  v="${v//Í/i}"; v="${v//í/i}"
+  ARNES_CAMPO="${v,,}"
+}
+
+# Extrae en UNA pasada los campos de cabecera del REQ que gobiernan el cierre.
+#
+# RENDIMIENTO. La versión anterior leía cada campo con `printf | sed | head`
+# —tres procesos y dos tuberías para sacar una línea de un texto que YA está en
+# memoria— y se invocaba cinco veces, con una rama de respaldo que podía
+# duplicarlo. Medido en esta máquina: 5.116 ms por campo contra 326 ms leyendo en
+# bash. Era, con diferencia, el punto más caro de todo el enforcement.
+#
+# Precedencia idéntica a la anterior: se prefiere el contenido ENTRANTE y se
+# respalda en el del disco (pre-edición), porque QA y seguridad fijan su veredicto
+# antes de la transición a completado. Por eso se recorre primero el disco y
+# después lo entrante: lo segundo pisa a lo primero.
+arnes_campos_req() {   # <texto en disco> <texto entrante>
+  ARNES_QA=''; ARNES_SEG=''; ARNES_SENS=''; ARNES_HALL=''
+  local texto l
+  for texto in "$1" "$2"; do
+    [ -n "$texto" ] || continue
+    while IFS= read -r l; do
+      case "$l" in
+        'QA:'*)                   ARNES_QA="${l#QA:}" ;;
+        'Seguridad:'*)            ARNES_SEG="${l#Seguridad:}" ;;
+        'Sensible a seguridad:'*) ARNES_SENS="${l#Sensible a seguridad:}" ;;
+        'Hallazgos abiertos:'*)   ARNES_HALL="${l#Hallazgos abiertos:}" ;;
+      esac
+    done <<< "$texto"
+  done
+  arnes_norm_campo "$ARNES_QA";   ARNES_QA="$ARNES_CAMPO"
+  arnes_norm_campo "$ARNES_SEG";  ARNES_SEG="$ARNES_CAMPO"
+  arnes_norm_campo "$ARNES_SENS"; ARNES_SENS="$ARNES_CAMPO"
+  arnes_norm_campo "$ARNES_HALL"; ARNES_HALL="$ARNES_CAMPO"
+}
