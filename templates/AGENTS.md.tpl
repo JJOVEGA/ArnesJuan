@@ -95,7 +95,7 @@ que nadie emitió. Buscar paralelismo aquí no ahorra tiempo: produce una firma 
 > **Excepción nombrada — la auditoría preventiva.** Una revisión de seguridad hecha **antes de
 > que exista el código** —sobre el diseño, el modelo de amenaza o el REQ mismo— sí puede ir por
 > delante, porque no acredita nada construido. Se declara **al emitirla**, escribiendo
-> `Seguridad: aprobado (preventiva)` en el REQ; nunca al invocarla: una excepción que se inventa
+> `Seguridad: preventiva` en el REQ; nunca al invocarla: una excepción que se inventa
 > cuando hace falta no es una excepción, es una salida. Esa firma **no** cubre el código
 > posterior: cuando el código exista, la auditoría se repite en su turno.
 
@@ -268,7 +268,7 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 | El rigor se puede subir, nunca bajar: `Sensible a seguridad: sí` impone `critico` | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | No completar sin `QA: aprobado` (salvo `Rigor: ligero`), ni un REQ `critico` sin `Seguridad: aprobado` | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | La transición a `completado` no se hace por shell | §6 | `guard-completado` | `Bash` (parcial) |
-| Seguridad no firma lo que QA no ha validado (salvo auditoría `(preventiva)`) | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| Seguridad no firma lo que QA no ha validado (salvo `Seguridad: preventiva`) | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 
 **Es una barandilla, no una jaula.** El hook impide que el modelo **se desvíe por descuido**;
 no contiene a un agente decidido a rodearlo. Concretamente:
@@ -290,6 +290,20 @@ no contiene a un agente decidido a rodearlo. Concretamente:
   Dentro de esa vía la detección del estado terminal es **deliberadamente ancha** —lo busca en
   cualquier parte del comando, no como `estado:` seguido del valor—, porque la forma más natural
   de cerrar un REQ por shell sustituye el **valor** y no escribe nunca la palabra «Estado».
+
+**Otro que tampoco decide: la rotación.** Un artefacto de bitácora —`CHANGELOG.md`, el registro
+de seguridad— crece sin tope, y todo lo que crece sin tope acaba entrando entero en la ventana
+de contexto. Con `rotacion.activo: true`, al parar un agente el arnés **mueve** las secciones
+sobrantes a `<nombre>-archivo.md` y deja un puntero. **Mueve; no resume** — un resumen
+convertiría la bitácora en la versión que el modelo recuerda de ella. Viene apagada.
+
+**Un hook que no decide nada: la continuidad.** Al parar un agente (`Stop` / `SubagentStop`),
+el arnés reescribe en `docs/ESTADO.md`, entre marcadores, un bloque **derivado** del disco:
+estado y veredictos de cada REQ, cola de aprobaciones, rama y limpieza del árbol. No permite ni
+impide nada — existe porque **un resumen redactado por el modelo miente justo cuando más falta
+hace**, que es cuando le queda poco contexto. Por eso no se redacta: se deriva, y cada línea
+sale de leer un archivo. Nunca bloquea la parada, no toca nada fuera de los marcadores, y se
+apaga con `estado_derivado.activo: false`.
 
 La consecuencia práctica: el enforcement por runtime es la última red, no la primera. La regla
 sigue siendo la de §5, y saltársela por otra vía es un incumplimiento aunque ningún hook grite.

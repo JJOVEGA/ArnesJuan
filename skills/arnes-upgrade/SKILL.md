@@ -73,6 +73,10 @@ significaría pisar trabajo de una persona.
 - Origen: `arnes_version` de `.arnes/config.json`; si falta, `.arnes-initialized`; si tampoco,
   **pregunta**.
 - Destino: `version` de `.claude-plugin/plugin.json` del plugin instalado.
+  **Comprueba que el plugin instalado es el actual antes de usarlo como destino.** No se
+  actualiza solo: medido, un proyecto corría 1.13.0 con 1.21.0 publicada, un mes atrás y sin
+  ninguna señal. Migrar hacia un plugin viejo deja al proyecto al día **con una versión que ya
+  no es la de nadie**, y la siguiente migración partirá de esa base.
 - Si coinciden: informa que está al día y **para**. Idempotente.
 - **Acredita la versión de origen antes de usarla** (ver abajo). Toda la migración cuelga de
   ese número.
@@ -211,7 +215,7 @@ nada.
 - `AGENTS.md` §6: bloque **el orden no es una sugerencia** —seguridad no firma lo que QA no ha
   validado— con la **excepción nombrada** de la auditoría preventiva.
 - `AGENTS.md` §13: fila «Seguridad no firma lo que QA no ha validado».
-- `requirements/README.md`: el valor `aprobado (preventiva)` en el campo `Seguridad:` y el
+- `requirements/README.md`: el valor `preventiva` en el campo `Seguridad:` y el
   párrafo **el orden importa**.
 
   Esta migración **no es cosmética**: el hook empieza a denegar una escritura que antes pasaba,
@@ -224,6 +228,19 @@ nada.
   comentario tras el valor **no se reconocía**, y esos REQ nunca activaron la puerta de
   seguridad. Al actualizar empiezan a activarla. Busca en `requirements/` los valores que
   no sean `sí`/`no` limpios y comprueba si alguno cerró sin auditoría.
+
+### Hacia 1.22.0
+- `.arnes/config.json`: bloque `estado_derivado` (`activo`, `archivo`). Si falta, el hook usa
+  `docs/ESTADO.md` y se activa igual — no hace falta migrar para que funcione.
+- `docs/ESTADO.md`: no se toca. El hook **añade** su bloque entre marcadores la primera vez que
+  para un agente. **Avísale al usuario de que ese archivo pasa a tener una parte que se
+  reescribe sola**, porque si edita ahí dentro perderá lo que escriba.
+- Si el proyecto no tiene la carpeta del archivo destino, el hook **no la crea** y no pasa nada.
+- `.arnes/config.json`: bloque `rotacion`. Viene **apagado** (`activo: false`), así que migrar no
+  cambia nada por sí solo. **Pregunta al usuario** si quiere encenderlo y para qué artefactos —
+  no lo decidas tú: mover secciones de la bitácora de su proyecto es su decisión. Y si la
+  enciende, **pregunta también el `orden`**: un CHANGELOG es `nuevo-primero`, un registro que se
+  añade al final es `nuevo-al-final`, y equivocarse archiva lo más reciente.
 
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 

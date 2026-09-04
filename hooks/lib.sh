@@ -389,10 +389,63 @@ arnes_norm_campo() {   # <valor> -> ARNES_CAMPO
   # y NINGUNO casaba, así que la puerta de seguridad no llegó a existir para ellos.
   # Esto NO es una lista de variantes del valor —que se pudre—: es quitar sintaxis
   # de Markdown, que es un conjunto cerrado y ajeno al dominio.
-  v="${v//\*/}"; v="${v//_/}"; v="${v//\`/}"
+  #
+  # PERO SOLO CUANDO ENVUELVE EL VALOR ENTERO, y esto se pago aprendiendo: retirar
+  # todo `*` suelto convertia `Seguridad: aprobado*` en `aprobado`. Un asterisco tras
+  # una firma no es adorno, es una LLAMADA A NOTA AL PIE, y una nota al pie apunta a
+  # una salvedad -- lo contrario de una firma incondicional.
+  #
+  # El enfasis de Markdown es PAREADO por definicion: abre y cierra. Un asterisco
+  # suelto nunca lo es. Asi que `**si**` se desenvuelve y `aprobado*` se respeta, y
+  # el argumento de arriba sigue en pie sin abrir una puerta nueva.
   v="${v// /}"
+  local antes
+  while :; do
+    antes="$v"
+    case "$v" in
+      '**'*'**') v="${v#\*\*}"; v="${v%\*\*}" ;;
+      '__'*'__') v="${v#__}";   v="${v%__}"   ;;
+      '*'*'*')   v="${v#\*}";   v="${v%\*}"   ;;
+      '_'*'_')   v="${v#_}";    v="${v%_}"    ;;
+      '`'*'`')   v="${v#\`}";   v="${v%\`}"   ;;
+    esac
+    [ "$v" != "$antes" ] || break
+  done
   v="${v//Í/i}"; v="${v//í/i}"
   ARNES_CAMPO="${v,,}"
+}
+
+# UN PARENTESIS FINAL ES EVIDENCIA, Y LA EVIDENCIA NO CAMBIA EL VEREDICTO.
+#
+# La convencion que hace valioso a este arnes es que el veredicto lleve al lado lo
+# que lo sostiene: `QA: aprobado (medido el 3/9, 42 pruebas)`. Comparar contra la
+# palabra exacta obligaba a elegir entre que el hook funcione o que la evidencia
+# viva en el encabezado del REQ -- y quitar la evidencia seria destruir justo lo
+# que el arnes viene a dar. Medido en un proyecto real: 26 REQ paralizados.
+#
+# La primera version metia el matiz DENTRO del parentesis --`aprobado (preventiva)`--
+# y eso creaba una ambiguedad imposible: el mismo signo significaba "evidencia" en
+# un caso y "matiz que invierte el veredicto" en el otro. Cortar servia a uno y
+# rompia al otro.
+#
+# La ambiguedad era un error de diseño, y se QUITA en vez de arbitrarse: un matiz
+# que cambia el veredicto ES OTRO VEREDICTO, no un parentesis. Por eso `preventiva`
+# pasa a ser su propio valor. Ahora el parentesis significa una sola cosa.
+#
+# Se exige que el parentesis sea FINAL y BALANCEADO, la misma leccion que el
+# enfasis pareado: `aprobado(medido)` -> `aprobado`; `aprobado(sin cerrar` se
+# respeta tal cual, porque no es un parentesis, es texto.
+#
+# Riesgo residual, dicho en voz alta: `aprobado (con reservas)` contaria como
+# aprobado. Es una violacion de la convencion --el matiz debe ser un veredicto--
+# y no un agujero silencioso: esta escrito en la plantilla y en la ficha de los
+# dos agentes que firman.
+arnes_veredicto() {   # <valor normalizado> -> ARNES_VEREDICTO
+  local v="$1"
+  case "$v" in
+    *')') case "$v" in *'('*) v="${v%%(*}" ;; esac ;;
+  esac
+  ARNES_VEREDICTO="$v"
 }
 
 # `Sensible a seguridad:` es un BOOLEANO tecleado a mano dentro de un Markdown.
@@ -422,9 +475,22 @@ arnes_sens_efectiva() {   # ARNES_SENS -> si|no ; ARNES_SENS_DUDOSA -> 0|1
   corte="$ARNES_SENS"
   corte="${corte%%—*}"; corte="${corte%%–*}"; corte="${corte%%-*}"
   corte="${corte%%(*}"; corte="${corte%%[*}"; corte="${corte%%,*}"; corte="${corte%%;*}"
+  # LA GENEROSIDAD VA DE UN SOLO LADO, y esto tambien se pago aprendiendo.
+  #
+  # El conjunto que ABRE la puerta tiene que ser minimo e inequivoco; el que la
+  # cierra puede ser generoso, porque equivocarse ahi no cuesta nada. La primera
+  # version metia `n/a` y `ninguna` entre los negativos, y eso es exactamente lo que
+  # alguien escribe cuando NO HA CLASIFICADO -- no cuando ha decidido que no es
+  # sensible. Esas dos entradas le abrian un hueco a la regla de fallo cerrado justo
+  # en el caso para el que se construyo.
+  #
+  # Lo delataba una asimetria: `n/a` abria la puerta y `no aplica`, que es la misma
+  # frase, la cerraba. Alargar la lista para taparlo seria la lista enumerada que se
+  # pudre; lo correcto es que SOLO UNA NEGACION EXPLICITA abra. Ahora las dos formas
+  # coinciden, y ninguna abre.
   case "$corte" in
     si|s|true|x|yes|verdadero)  ARNES_SENS='si' ;;
-    no|n|false|na|n/a|ninguna)  ARNES_SENS='no' ;;
+    no|n|false)                 ARNES_SENS='no' ;;
     *) ARNES_SENS='si'; ARNES_SENS_DUDOSA=1 ;;
   esac
 }
@@ -456,8 +522,8 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
       esac
     done <<< "$texto"
   done
-  arnes_norm_campo "$ARNES_QA";   ARNES_QA="$ARNES_CAMPO"
-  arnes_norm_campo "$ARNES_SEG";  ARNES_SEG="$ARNES_CAMPO"
+  arnes_norm_campo "$ARNES_QA";   arnes_veredicto "$ARNES_CAMPO"; ARNES_QA="$ARNES_VEREDICTO"
+  arnes_norm_campo "$ARNES_SEG";  arnes_veredicto "$ARNES_CAMPO"; ARNES_SEG="$ARNES_VEREDICTO"
   arnes_norm_campo "$ARNES_SENS"; ARNES_SENS="$ARNES_CAMPO"
   arnes_norm_campo "$ARNES_HALL"; ARNES_HALL="$ARNES_CAMPO"
   arnes_norm_campo "$ARNES_RIGOR"; ARNES_RIGOR="$ARNES_CAMPO"

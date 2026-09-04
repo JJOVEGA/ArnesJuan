@@ -331,7 +331,7 @@ check "...y tampoco al cerrar de paso -> deny" deny guard-completado.sh \
 Seguridad: aprobado')"
 # La excepcion se declara AL EMITIRLA, no al invocarla.
 check "auditoria PREVENTIVA declarada -> allow" allow guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Seguridad: aprobado (preventiva)')"
+  "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Seguridad: preventiva')"
 mkreq_r "REQ-051" "no" "aprobado" "pendiente" ""
 check "orden correcto: QA ya aprobado -> allow" allow guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-051.md" "" "" 'Seguridad: aprobado')"
@@ -345,7 +345,7 @@ check "REQ antiguo sin campo QA -> allow" allow guard-completado.sh \
 # La firma preventiva desbloquea el ORDEN, no el CIERRE: se emitio antes de que
 # existiera el codigo, luego no acredita el codigo. Un REQ critico sigue exigiendo
 # la auditoria de verdad.
-mkreq_r "REQ-054" "sí" "aprobado" "aprobado (preventiva)" ""
+mkreq_r "REQ-054" "sí" "aprobado" "preventiva" ""
 check "critico: solo firma preventiva no cierra -> deny" deny guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-054.md" "" "" 'Estado: completado')"
 mkreq_r "REQ-055" "sí" "aprobado" "aprobado" ""
@@ -392,9 +392,20 @@ check_motivo "...y la denegacion dice por que" "no se reconoce" guard-completado
 mkreq "$PROJ/requirements/REQ-065.md" "**no**" "aprobado" "pendiente"
 check "no sensible en **negrita** -> allow" allow guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-065.md" "" "" 'Estado: completado')"
+# El conjunto que ABRE la puerta es minimo: solo una negacion explicita. `n/a` y
+# `ninguna` son lo que se escribe cuando NO se ha clasificado, no cuando se ha
+# decidido que no es sensible -- le abrian un hueco al fallo cerrado justo en el
+# caso para el que se construyo. Lo delataba una asimetria: `n/a` abria y
+# `no aplica`, la misma frase, cerraba. Ahora coinciden, y ninguna abre.
 mkreq "$PROJ/requirements/REQ-066.md" "n/a" "aprobado" "pendiente"
-check "no sensible como n/a -> allow" allow guard-completado.sh \
+check "'n/a' no abre la puerta -> deny" deny guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-066.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-072.md" "no aplica" "aprobado" "pendiente"
+check "...y 'no aplica' dice lo mismo -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-072.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-073.md" "ninguna" "aprobado" "pendiente"
+check "'ninguna' tampoco abre -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-073.md" "" "" 'Estado: completado')"
 mkreq "$PROJ/requirements/REQ-067.md" "no — es solo texto" "aprobado" "pendiente"
 check "no + comentario tras el valor -> allow" allow guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-067.md" "" "" 'Estado: completado')"
@@ -408,7 +419,7 @@ check "Seguridad en **negrita** cierra un critico -> allow" allow guard-completa
 # Y la firma PREVENTIVA sigue sin cerrar aunque venga decorada: quitar el marcado
 # no puede convertirla en una firma completa. Es el fallo que el arreglo obvio
 # --cortar el valor en el primer parentesis-- habria introducido.
-mkreq "$PROJ/requirements/REQ-070.md" "sí" "aprobado" "**aprobado (preventiva)**"
+mkreq "$PROJ/requirements/REQ-070.md" "sí" "aprobado" "**preventiva**"
 check "preventiva decorada TAMPOCO cierra -> deny" deny guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-070.md" "" "" 'Estado: completado')"
 mkreq_r "REQ-071" "no" "pendiente" "n/a" "**ligero**"
@@ -441,6 +452,252 @@ check "guard.sh: Bash cierra un REQ -> deny" deny guard.sh \
   "$(emite_bash "sed -i 's/en-revision/completado/' requirements/REQ-031.md" "" "")"
 check "guard.sh: Bash de lectura -> allow" allow guard.sh \
   "$(emite_bash "grep -rn foo src/" "" "")"
+
+# --- El asterisco de NOTA AL PIE no es enfasis --------------------------------
+# El arreglo de 1.21.0 retiraba todo `*`, y eso convertia `Seguridad: aprobado*`
+# en `aprobado`: un asterisco tras una firma es una llamada a nota al pie, y una
+# nota al pie apunta a una SALVEDAD -- lo contrario de una firma incondicional.
+#
+# Fue el mismo error girado: el argumento se hizo sobre `Sensible a seguridad:`
+# --donde `**si**` si es el mismo valor-- y el cambio se aplico a los cinco
+# campos. El sujeto del arreglo era mas estrecho que su poblacion.
+#
+# El enfasis de Markdown es PAREADO por definicion: solo se retira cuando envuelve
+# el valor entero. Un asterisco suelto nunca envuelve nada.
+echo "Asterisco de nota al pie (una salvedad no es una firma):"
+mkreq "$PROJ/requirements/REQ-074.md" "sí" "aprobado" "aprobado*"
+check "'aprobado*' NO cierra un critico -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-074.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-075.md" "sí" "aprobado" "*aprobado"
+check "'*aprobado' tampoco -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-075.md" "" "" 'Estado: completado')"
+# Control positivo: el enfasis PAREADO si se retira, o el arreglo habria roto lo
+# que 1.21.0 vino a arreglar.
+mkreq "$PROJ/requirements/REQ-076.md" "sí" "aprobado" "*aprobado*"
+check "'*aprobado*' pareado si cierra -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-076.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-077.md" "**sí**" "aprobado" "pendiente"
+check "y '**sí**' sigue exigiendo auditoria -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-077.md" "" "" 'Estado: completado')"
+
+# --- El parentesis es EVIDENCIA, y la evidencia no cambia el veredicto ---------
+# Medido en un proyecto real: 26 REQ paralizados porque su convencion es
+# `QA: aprobado (medido el 3/9, 42 pruebas)` -- el veredicto con lo que lo sostiene
+# al lado-- y la comparacion exigia la palabra exacta. La alternativa era quitar los
+# parentesis de 35 lineas, o sea BORRAR LA EVIDENCIA del encabezado del REQ, que es
+# media razon de ser de este arnes.
+#
+# La primera version metia el matiz DENTRO del parentesis (`aprobado (preventiva)`),
+# y el mismo signo significaba "evidencia" en un caso y "matiz que invierte el
+# veredicto" en el otro. Esa ambiguedad era un error de diseño y se QUITO en vez de
+# arbitrarse: un matiz que cambia el veredicto ES OTRO VEREDICTO.
+echo "Parentesis = evidencia (el veredicto no cambia):"
+mkreq "$PROJ/requirements/REQ-080.md" "no" "aprobado (medido el 3/9, 42 pruebas)" "n/a"
+check "QA con su evidencia entre parentesis cierra -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-080.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-081.md" "sí" "aprobado" "aprobado (auditado el 3/9)"
+check "Seguridad con evidencia cierra un critico -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-081.md" "" "" 'Estado: completado')"
+# Balanceado y final, la misma leccion que el enfasis pareado: si no cierra, no es
+# un parentesis, es texto -- y el texto sobra en un veredicto.
+mkreq "$PROJ/requirements/REQ-083.md" "sí" "aprobado" "aprobado (sin cerrar"
+check "parentesis sin cerrar no es evidencia -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-083.md" "" "" 'Estado: completado')"
+# `preventiva` es SU PROPIO veredicto, no un matiz de aprobado. Sigue sin cerrar.
+mkreq "$PROJ/requirements/REQ-082.md" "sí" "aprobado" "preventiva"
+check "preventiva NO cierra un critico -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-082.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-084.md" "no" "pendiente" "pendiente"
+check "preventiva desbloquea el ORDEN del ciclo -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-084.md" "" "" 'Seguridad: preventiva')"
+
+# --- La cola de aprobaciones acaba donde acaba su seccion ----------------------
+# Antes solo la cerraba una cabecera literal `## Resueltas`, asi que cualquier otra
+# --`## Notas`, `## Historico`-- la dejaba abierta y sus `###` contaban como
+# aprobaciones pendientes. Los proyectos lo esquivaban ordenando el archivo: carga,
+# no estilo.
+echo "Cola de aprobaciones: la seccion acaba en la siguiente cabecera:"
+mkreq "$PROJ/requirements/REQ-085.md" "no" "aprobado" "n/a"
+printf '## Pendientes\n\n## Notas\n### [2026-01-01] esto NO es una aprobacion\n- contexto\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+check "un ### bajo OTRA cabecera no es cola -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-085.md" "" "" 'Estado: completado')"
+printf '## Pendientes\n### [2026-01-01] una aprobacion de verdad\n- contexto\n\n## Notas\n### otra cosa\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+check "...pero uno bajo Pendientes si -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-085.md" "" "" 'Estado: completado')"
+printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+
+# --- Continuidad automatica: el bloque DERIVADO de ESTADO.md -------------------
+# Este hook no decide nada (no hay deny/allow que mirar): escribe un archivo. Asi
+# que se comprueba por CONTENIDO, que es la misma regla que el arnes aplica a todo
+# lo demas -- se acredita por lo que quedo escrito, no porque el comando dijera
+# que si.
+#
+# Lo que hay que fijar, por orden de dano si se rompe:
+#   1. que NO estorbe donde no le llaman (sin manifiesto, repo ajeno)
+#   2. que NUNCA falle (un hook Stop que falla deja la sesion colgada)
+#   3. que no pise lo que escribio una persona
+#   4. que correrlo dos veces de lo mismo
+echo "Continuidad automatica (hook Stop -> bloque derivado):"
+
+EST_PROJ="$(mktemp -d)"
+mkdir -p "$EST_PROJ/.arnes" "$EST_PROJ/requirements" "$EST_PROJ/docs"
+cp "$PROJ/.arnes/config.json" "$EST_PROJ/.arnes/config.json"
+printf '## Pendientes\n- decidir el proveedor\n- aprobar el borrado\n\n## Resueltas\n- otra\n' > "$EST_PROJ/PENDING_APPROVAL.md"
+printf '# REQ-001\nEstado: completado\nSensible a seguridad: no\nQA: aprobado\nSeguridad: n/a\n' > "$EST_PROJ/requirements/REQ-001.md"
+printf '# REQ-002\nEstado: en-revisión\nSensible a seguridad: **sí**\nQA: con-hallazgos\nSeguridad: pendiente\n' > "$EST_PROJ/requirements/REQ-002.md"
+printf '# Los REQ\nEste README no es un REQ y no debe contarse.\n' > "$EST_PROJ/requirements/README.md"
+printf '# ESTADO\n\n## Fase actual\nESTO LO ESCRIBIO UNA PERSONA.\n' > "$EST_PROJ/docs/ESTADO.md"
+
+# corre_estado <dir-proyecto> -> ejecuta el hook Stop contra ese proyecto
+corre_estado() {
+  local d="$1" json
+  json="$(CLAUDE_PROJECT_DIR="$d" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR,stop_hook_active:false}')"
+  : > "$ERRLOG"
+  printf '%s' "$json" | CLAUDE_PROJECT_DIR="$d" "$HOOKS_DIR/estado-derivado.sh" >/dev/null 2>"$ERRLOG"
+}
+# check_estado <nombre> <patron-grep> <si|no: debe aparecer> <archivo>
+check_estado() {
+  local nombre="$1" patron="$2" debe="$3" archivo="$4" hay=no
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
+  [ -f "$archivo" ] && grep -q -- "$patron" "$archivo" && hay=si
+  if [ "$hay" = "$debe" ]; then echo "  PASS  $nombre"; PASS=$((PASS+1))
+  else echo "  FAIL  $nombre  esperaba aparece=$debe, fue=$hay"; diag; FAIL=$((FAIL+1)); fi
+}
+
+corre_estado "$EST_PROJ"; EST_RC=$?
+if [ "$EST_RC" -eq 0 ]; then echo "  PASS  el hook sale 0 (no bloquea la parada)"; PASS=$((PASS+1))
+else echo "  FAIL  el hook salio $EST_RC: una parada bloqueada es peor que no tener el bloque"; diag; FAIL=$((FAIL+1)); fi
+
+check_estado "escribe el bloque derivado"          "ARNES:DERIVADO inicio"  si "$EST_PROJ/docs/ESTADO.md"
+check_estado "no pisa lo que escribio una persona" "ESTO LO ESCRIBIO UNA"   si "$EST_PROJ/docs/ESTADO.md"
+check_estado "cuenta los REQ, no el README"        "REQ:\*\* 2"             si "$EST_PROJ/docs/ESTADO.md"
+check_estado "lee la cola de aprobaciones"         "pendientes:\*\* 2"      si "$EST_PROJ/docs/ESTADO.md"
+# El REQ-002 dice `**si**`: desde 1.21.0 su rigor efectivo es critico, y el bloque
+# derivado lo ENSEÑA. Es la utilidad de mostrar los valores como los lee la maquina.
+check_estado "el bloque delata el rigor efectivo"  "critico"                si "$EST_PROJ/docs/ESTADO.md"
+# Sin repositorio el estado del arbol es DESCONOCIDO. Decir "limpio" o "con cambios"
+# seria afirmar un hecho que no se tiene.
+check_estado "arbol sin repo -> desconocido, no inventado" "desconocido"    si "$EST_PROJ/docs/ESTADO.md"
+
+corre_estado "$EST_PROJ"
+EST_N="$(grep -c 'ARNES:DERIVADO inicio' "$EST_PROJ/docs/ESTADO.md")"
+if [ "$EST_N" = "1" ]; then echo "  PASS  idempotente: dos pasadas, un solo bloque"; PASS=$((PASS+1))
+else echo "  FAIL  idempotente: hay $EST_N bloques tras dos pasadas"; FAIL=$((FAIL+1)); fi
+
+# Apagable: quien no lo quiera, lo apaga.
+EST_OFF="$(mktemp -d)"; mkdir -p "$EST_OFF/.arnes" "$EST_OFF/requirements" "$EST_OFF/docs"
+jq '.estado_derivado.activo = false' "$PROJ/.arnes/config.json" > "$EST_OFF/.arnes/config.json"
+corre_estado "$EST_OFF"
+check_estado "con activo:false no escribe" "ARNES:DERIVADO" no "$EST_OFF/docs/ESTADO.md"
+
+# INERTE en un repo ajeno: sin manifiesto no se toca nada. Es la invariante que
+# permite instalar el plugin sin que estorbe fuera de un proyecto del arnes.
+EST_AJENO="$(mktemp -d)"; mkdir -p "$EST_AJENO/docs"
+printf '# El ESTADO de OTRO proyecto\n' > "$EST_AJENO/docs/ESTADO.md"
+corre_estado "$EST_AJENO"; EST_RC=$?
+check_estado "sin manifiesto no escribe (repo ajeno)" "ARNES:DERIVADO" no "$EST_AJENO/docs/ESTADO.md"
+if [ "$EST_RC" -eq 0 ]; then echo "  PASS  sin manifiesto tambien sale 0"; PASS=$((PASS+1))
+else echo "  FAIL  sin manifiesto salio $EST_RC"; FAIL=$((FAIL+1)); fi
+
+# Sin la carpeta destino no se inventa: crear `docs/` en un proyecto que no la tiene
+# seria decidir su estructura, y eso no le toca al arnes.
+EST_SIN="$(mktemp -d)"; mkdir -p "$EST_SIN/.arnes" "$EST_SIN/requirements"
+cp "$PROJ/.arnes/config.json" "$EST_SIN/.arnes/config.json"
+corre_estado "$EST_SIN"
+if [ ! -e "$EST_SIN/docs" ]; then echo "  PASS  sin la carpeta destino no la inventa"; PASS=$((PASS+1))
+else echo "  FAIL  creo docs/ en un proyecto que no la tenia"; FAIL=$((FAIL+1)); fi
+
+rm -rf "$EST_PROJ" "$EST_OFF" "$EST_AJENO" "$EST_SIN"
+
+# --- Rotacion de artefactos: una bitacora no crece sin tope --------------------
+# Medido en un proyecto real: el CHANGELOG.md llego a 1,17 MB, del orden de 300.000
+# tokens que entran en la ventana cada vez que alguien lo lee.
+#
+# Estos casos existen porque los DOS fallos de este hook los encontro una prueba
+# desechable de scratchpad, no una lectura del codigo: la comprobacion con `case`
+# --que fallaba siempre porque `## [1.20.0]` lleva corchetes, y en un patron de
+# `case` los corchetes son una clase de caracteres-- y el conteo invertido, que
+# conservaba `total - conservar` y vaciaba el archivo a trozos en cada pasada.
+# Una prueba que encuentra un fallo y luego se tira no protege de nada manana.
+echo "Rotacion de artefactos (mover, nunca resumir):"
+
+# rot_proj <conservar> <umbral> <activo> <orden> -> deja la ruta en ROT_P
+rot_proj() {
+  ROT_P="$(mktemp -d)"; mkdir -p "$ROT_P/.arnes"
+  jq -n --argjson c "$1" --argjson u "$2" --argjson a "$3" --arg o "$4" \
+    '{agentes:{agente_codigo:"desarrollador"},
+      rotacion:{activo:$a, umbral_bytes:$u, conservar_secciones:$c, orden:$o,
+                artefactos:["CHANGELOG.md"]}}' > "$ROT_P/.arnes/config.json"
+  { printf '# CHANGELOG\n\n> PREAMBULO DE UNA PERSONA.\n\n'
+    for v in 10 9 8 7 6 5 4 3 2 1; do
+      printf '## [1.%s.0]\n' "$v"
+      for i in 1 2 3 4 5 6; do printf 'relleno %s de 1.%s.0 para que el archivo pese lo suyo\n' "$i" "$v"; done
+      printf '\n'
+    done
+  } > "$ROT_P/CHANGELOG.md"
+}
+rot_corre() {
+  local d="$1" json
+  json="$(CLAUDE_PROJECT_DIR="$d" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')"
+  : > "$ERRLOG"
+  printf '%s' "$json" | CLAUDE_PROJECT_DIR="$d" "$HOOKS_DIR/rotar-artefactos.sh" >/dev/null 2>"$ERRLOG"
+}
+rot_sec() { grep -c '^## ' "$1" 2>/dev/null || echo 0; }
+# rot_check <nombre> <esperado> <obtenido>
+rot_check() {
+  if [ -n "$FILTRO" ] && ! printf '%s' "$1" | grep -qi -- "$FILTRO"; then return 0; fi
+  if [ "$2" = "$3" ]; then echo "  PASS  $1"; PASS=$((PASS+1))
+  else echo "  FAIL  $1  esperado=$2 obtenido=$3"; diag; FAIL=$((FAIL+1)); fi
+}
+
+# Apagada: instalar el plugin no puede reestructurar el documento de nadie.
+rot_proj 3 2000 false nuevo-primero
+rot_corre "$ROT_P"
+rot_check "apagada por defecto no toca nada" "10-no" "$(rot_sec "$ROT_P/CHANGELOG.md")-$([ -e "$ROT_P/CHANGELOG-archivo.md" ] && echo si || echo no)"
+rm -rf "$ROT_P"
+
+# Bajo el umbral tampoco: no se rota por rotar.
+rot_proj 3 999999 true nuevo-primero
+rot_corre "$ROT_P"
+rot_check "bajo el umbral no toca nada" "10" "$(rot_sec "$ROT_P/CHANGELOG.md")"
+rm -rf "$ROT_P"
+
+# Conserva EXACTAMENTE lo declarado. Es el conteo que estaba invertido.
+rot_proj 3 2000 true nuevo-primero
+rot_corre "$ROT_P"; ROT_RC=$?
+rot_check "conserva exactamente conservar_secciones" "3" "$(rot_sec "$ROT_P/CHANGELOG.md")"
+rot_check "nada se pierde: origen + archivo = total" "10" \
+  "$(( $(rot_sec "$ROT_P/CHANGELOG.md") + $(rot_sec "$ROT_P/CHANGELOG-archivo.md") ))"
+rot_check "conserva LAS NUEVAS, no las viejas" "1" "$(grep -c '^## \[1\.10\.0\]' "$ROT_P/CHANGELOG.md")"
+rot_check "no pisa el preambulo de una persona" "1" "$(grep -c 'PREAMBULO DE UNA PERSONA' "$ROT_P/CHANGELOG.md")"
+rot_check "deja el puntero al archivo" "1" "$(grep -c 'CHANGELOG-archivo.md' "$ROT_P/CHANGELOG.md")"
+rot_check "el hook sale 0 (no bloquea la parada)" "0" "$ROT_RC"
+# Idempotencia: la primera version volvia a rotar en cada pasada.
+rot_corre "$ROT_P"; rot_corre "$ROT_P"
+rot_check "idempotente: tres pasadas, mismo reparto" "3-7" \
+  "$(rot_sec "$ROT_P/CHANGELOG.md")-$(rot_sec "$ROT_P/CHANGELOG-archivo.md")"
+rm -rf "$ROT_P"
+
+# El orden se DECLARA. Con `nuevo-al-final` se conserva la otra mitad.
+rot_proj 3 2000 true nuevo-al-final
+rot_corre "$ROT_P"
+rot_check "orden nuevo-al-final conserva el final" "1" "$(grep -c '^## \[1\.1\.0\]' "$ROT_P/CHANGELOG.md")"
+rot_check "...y archiva el principio" "1" "$(grep -c '^## \[1\.10\.0\]' "$ROT_P/CHANGELOG-archivo.md")"
+rm -rf "$ROT_P"
+
+# Sin encabezados no hay limite seguro: no se corta a media entrada.
+rot_proj 3 2000 true nuevo-primero
+{ printf '# CHANGELOG sin secciones\n'; for i in $(seq 1 200); do printf 'linea larga de relleno numero %s en un archivo sin ningun encabezado de nivel dos\n' "$i"; done; } > "$ROT_P/CHANGELOG.md"
+ROT_ANTES="$(wc -c < "$ROT_P/CHANGELOG.md")"
+rot_corre "$ROT_P"
+rot_check "sin encabezados no corta nada" "$ROT_ANTES" "$(wc -c < "$ROT_P/CHANGELOG.md")"
+rm -rf "$ROT_P"
+
+# Inerte en repo ajeno, como el resto de hooks.
+ROT_AJENO="$(mktemp -d)"; printf '# CHANGELOG de OTRO\n## [9.9.9]\nx\n' > "$ROT_AJENO/CHANGELOG.md"
+rot_corre "$ROT_AJENO"; ROT_RC=$?
+rot_check "sin manifiesto no toca nada y sale 0" "1-0" "$(rot_sec "$ROT_AJENO/CHANGELOG.md")-$ROT_RC"
+rm -rf "$ROT_AJENO"
 
 echo "INERTE — sin manifiesto, el hook no estorba:"
 PROJ2="$(mktemp -d)"; mkdir -p "$PROJ2/src"; export CLAUDE_PROJECT_DIR="$PROJ2"
