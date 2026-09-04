@@ -7,9 +7,11 @@ Cursor y otras herramientas vía AGENTS.md + MCP).
 - **4 agentes** (`agents/`): `analista-requerimientos`, `desarrollador` (dueño también de
   `ARCHITECTURE.md`), `qa-tester`, `auditor-seguridad`. Genéricos: el contexto del proyecto
   vive en `AGENTS.md`, no en los agentes.
-- **Comandos** (`skills/`): `/arnes-init` (andamia un proyecto, idempotente), `/arnes-close`
-  (genera el entregable `DELIVERY.md`) y `/arnes-panel` (panel HTML interactivo de estado del
-  proyecto: solo lectura, se regenera; clic para ver el detalle).
+- **Comandos** (`skills/`): `/arnes-init` (andamia un proyecto, idempotente),
+  `/arnes-upgrade` (pone al día el andamiaje de un proyecto ya inicializado cuando el arnés
+  sube de versión: aditivo, nunca sobrescribe), `/arnes-close` (genera el entregable
+  `DELIVERY.md`) y `/arnes-panel` (panel HTML interactivo de estado del proyecto: solo
+  lectura, se regenera; clic para ver el detalle).
 - **Plantillas** (`templates/`): AGENTS.md (canónico) + CLAUDE.md (puntero) + CHANGELOG,
   ESTADO, PENDING_APPROVAL, ARCHITECTURE, DELIVERY, ADR, requirements y el hook pre-commit
   que exige changelog.
@@ -76,6 +78,12 @@ prefieras) y **opcionales**: el arnés no depende de ninguno para funcionar.
 /plugin install arnes-juan@arnes-juan
 ```
 Luego, en un proyecto nuevo: `/arnes-init`. Al cerrar: `/arnes-close`.
+
+Cuando el arnés suba de versión, en cada proyecto ya existente: `/arnes-upgrade`. Hace falta
+porque los hooks y los agentes viven en el plugin y se actualizan solos, pero los archivos que
+`/arnes-init` copió al proyecto —`AGENTS.md`, `.arnes/config.json`, `requirements/README.md`…—
+se quedan como estaban. Sin ese paso, la máquina empieza a exigir cosas que el `AGENTS.md` del
+proyecto no describe.
 
 ## Las dos capas
 - **Maquinaria** (este plugin): agentes, comandos, plantillas. Viaja entre proyectos/clientes.

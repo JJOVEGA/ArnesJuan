@@ -13,6 +13,12 @@ marcador antes de hacer nada.
 1. **Verifica el marcador.** Si existe `.arnes-initialized` en la raíz del proyecto,
    informa que ya está inicializado y NO hagas nada más.
 
+   **Y ofrece la salida:** compara `arnes_version` de `.arnes/config.json` con la versión
+   del plugin instalado (`.claude-plugin/plugin.json`). Si difieren, dilo y remite a
+   **`/arnes-upgrade`**, que es lo que pone al día el andamiaje sin sobrescribir nada. Sin
+   ese aviso, quien ejecute esta skill en un proyecto existente se queda sin camino: los
+   hooks ya se actualizaron solos y sus archivos no.
+
 2. **Si no existe**, crea el andamiaje copiando desde `templates/` del plugin y rellenando
    los `{{PLACEHOLDERS}}`:
    - `AGENTS.md`  ← `templates/AGENTS.md.tpl`  (archivo canónico)
