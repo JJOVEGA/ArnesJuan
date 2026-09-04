@@ -131,6 +131,9 @@ prometer de más es peor que documentar el hueco: quien confía en una jaula dej
 - `arnes-config.json.tpl`: documenta que basta el nombre corto del agente, y sincroniza
   `arnes_version` (llevaba en 1.6.0).
 
+### Añadido — licencia de uso propietaria (`LICENSE`)
+El repositorio es público —necesario para `/plugin marketplace add`— pero el arnés no es open source, y hasta ahora el repo no lo decía. `LICENSE` fija el marco: permite descarga, instalación y uso interno, incluido trabajo comercial y para clientes; prohíbe redistribución, espejos o marketplaces alternativos, obras derivadas, integración en productos de terceros e ingeniería inversa. Declara explícitamente que configurar el arnés vía `AGENTS.md`/`CLAUDE.md` y plantillas es Uso Interno, no obra derivada — la separación maquinaria/estado del proyecto llevada al plano legal. Los forks se autorizan sólo para preparar contribuciones al repo original y toda contribución queda cedida a SysVEGA. Español vinculante, traducción al inglés informativa; ley aplicable Costa Rica.
+
 ### Añadido — pruebas de regresión
 `tests/escenarios/hooks/run.sh` pasa de 16 a **44 casos**: identidad con prefijo (aceptado,
 denegado para otro agente, coordinadora denegada, normalización, manifiesto calificado en ambos
@@ -143,10 +146,6 @@ también pasan con el hook muerto:
 - **Canario**: si el `deny` canónico no deniega, la corrida aborta en lugar de dar verde.
 - **`ARNES_HOOKS_DIR`**: permite correr el banco contra otra copia de los hooks, para comprobar
   que un caso nuevo falla con el código anterior.
-## [1.14.1] — 2026-09-04
-### Añadido — licencia de uso propietaria (`LICENSE`)
-El repositorio es público —necesario para `/plugin marketplace add`— pero el arnés no es open source, y hasta ahora el repo no lo decía. `LICENSE` fija el marco: permite descarga, instalación y uso interno, incluido trabajo comercial y para clientes; prohíbe redistribución, espejos o marketplaces alternativos, obras derivadas, integración en productos de terceros e ingeniería inversa. Declara explícitamente que configurar el arnés vía `AGENTS.md`/`CLAUDE.md` y plantillas es Uso Interno, no obra derivada — la separación maquinaria/estado del proyecto llevada al plano legal. Los forks se autorizan sólo para preparar contribuciones al repo original y toda contribución queda cedida a SysVEGA. Español vinculante, traducción al inglés informativa; ley aplicable Costa Rica.
-
 ## [1.14.0] — 2026-09-01
 ### Corregido — el enforcement no funcionaba en Windows (fallaba ABIERTO y en silencio)
 Descubierto en el proyecto SENDA: los tres invariantes que el arnés dice cumplir «por
