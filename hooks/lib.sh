@@ -13,6 +13,59 @@
 # Lee TODO el stdin de forma bloqueante. El harness a veces tarda en enviarlo.
 arnes_read_stdin() { cat; }
 
+# --- Preludio y analisis compartidos ------------------------------------------
+# Los dos guardianes hacian EXACTAMENTE el mismo trabajo previo —arrancar, leer
+# stdin, interpretar el mismo JSON, leer el mismo manifiesto— cada uno en su
+# propio proceso. Aqui se hace UNA vez y se memoriza, para que `guard.sh` pueda
+# ejecutar los dos en un solo arranque.
+
+# Lee stdin y localiza proyecto y manifiesto. Devuelve 1 si no hay nada que
+# vigilar (sin input, sin proyecto, o proyecto que no usa el arnes -> INERTE).
+arnes_preludio() {
+  arnes_require_jq || return 1
+  IFS= read -r -d '' ARNES_INPUT || true
+  [ -n "${ARNES_INPUT:-}" ] || return 1
+  arnes_project_dir "$ARNES_INPUT"
+  [ -n "$ARNES_PROJ" ] || return 1
+  ARNES_MANIFEST="$ARNES_PROJ/.arnes/config.json"
+  [ -f "$ARNES_MANIFEST" ] || return 1
+  return 0
+}
+
+# Campos del input que usan los guardianes. UNA llamada a jq para los dos.
+# `command` va al final porque puede ser multilinea: se lleva el resto del texto.
+arnes_parse_input() {
+  [ -z "${ARNES_INPUT_LISTO:-}" ] || return 0
+  arnes_jq_str "$ARNES_INPUT" -r '[.tool_name // "",
+                                   .agent_id // "",
+                                   .agent_type // "",
+                                   .tool_input.file_path // "",
+                                   .tool_input.command // ""] | .[]'
+  { IFS= read -r ARNES_TOOL; IFS= read -r ARNES_AGENT_ID; IFS= read -r ARNES_AGENT_TYPE
+    IFS= read -r ARNES_FP; IFS= read -r -d '' ARNES_CMD; } <<< "$ARNES_JQ"
+  ARNES_CMD="${ARNES_CMD%$'\n'}"
+  ARNES_INPUT_LISTO=1
+}
+
+# Campos del manifiesto, tambien en UNA llamada. Los globs van al final porque son
+# una lista de longitud variable: se leen como el resto del flujo.
+arnes_parse_manifest() {
+  [ -z "${ARNES_MANIFEST_LISTO:-}" ] || return 0
+  local g
+  arnes_jq_file "$ARNES_MANIFEST" -r '[(.agentes.agente_codigo // "desarrollador"),
+                                       (.requirements_dir // "requirements"),
+                                       (.estados.completado // "completado"),
+                                       (.pending_approval // "PENDING_APPROVAL.md")]
+                                      + (.codigo_app.globs // []) | .[]'
+  ARNES_GLOBS=()
+  { IFS= read -r ARNES_AGENTE_CODIGO; IFS= read -r ARNES_REQ_DIR
+    IFS= read -r ARNES_ESTADO_DONE;   IFS= read -r ARNES_PENDING
+    while IFS= read -r g; do [ -n "$g" ] && ARNES_GLOBS+=("$g"); done
+  } <<< "$ARNES_JQ"
+  ARNES_GLOBS_CARGADOS=1
+  ARNES_MANIFEST_LISTO=1
+}
+
 # Raíz del proyecto: prioriza $CLAUDE_PROJECT_DIR; si no, el campo `cwd` del input.
 arnes_project_dir() {   # <input json> -> ARNES_PROJ
   if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
@@ -144,6 +197,8 @@ arnes_es_codigo_app() {  # <ruta relativa> <manifiesto>
     done <<< "$ARNES_JQ"
     ARNES_GLOBS_CARGADOS=1
   fi
+  # Si `arnes_parse_manifest` ya corrio, los globs vienen de ahi y este bloque no
+  # se ejecuta: una lectura del manifiesto para todo, no una por pregunta.
   for g in ${ARNES_GLOBS[@]+"${ARNES_GLOBS[@]}"}; do
     # shellcheck disable=SC2053  -- glob a la derecha a propósito
     if [[ "$rel" == $g ]]; then return 0; fi

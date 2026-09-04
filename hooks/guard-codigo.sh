@@ -10,77 +10,68 @@
 # PARCIAL, `Bash` (redirecciones, `tee`, `cp`/`mv`/`install`, `sed -i`, `dd of=`).
 # Ver `arnes_bash_escrituras` en lib.sh: es una barandilla contra el descuido, no
 # una jaula contra un agente decidido a rodearla.
+#
+# La lógica vive en una FUNCIÓN para que `guard.sh` pueda ejecutar los dos
+# guardianes en un solo arranque de intérprete, reutilizando el mismo análisis del
+# input y del manifiesto. Este archivo sigue siendo ejecutable por su cuenta —el
+# banco de pruebas lo invoca así— y en ambos casos corre exactamente el mismo
+# código, que es lo que hace que las pruebas sigan valiendo.
 set -uo pipefail
-# Directorio del propio script por expansión de parámetro. La forma habitual
-# —`$(cd "$(dirname ...)" && pwd)"`— son DOS forks anidados, y en esta
-# plataforma un fork cuesta más que ejecutar el binario que va dentro.
 DIR="${BASH_SOURCE[0]%/*}"
 [ "$DIR" = "${BASH_SOURCE[0]}" ] && DIR=.
 # shellcheck source=/dev/null
 . "$DIR/lib.sh"
 
-# Lee stdin con el builtin `read`: `cat` costaba un fork y su sustitución, otro.
-IFS= read -r -d '' input || true
-arnes_require_jq || exit 0
+# ⚠️ REGLA CRÍTICA DE ESTA FUNCIÓN: "permitir" se dice con `return 0`, NUNCA con
+# `exit 0`. Un `exit` aquí mataría el proceso entero y el segundo guardián no
+# llegaría a correr — fallo abierto y en silencio, que es justo la familia de
+# defecto que este arnés existe para impedir. `arnes_deny` sí termina el proceso,
+# y eso es correcto: una denegación es final y no hay nada más que juzgar.
+arnes_guard_codigo() {
+  local objetivo="" via_bash=0 rel cand quien
 
-arnes_project_dir "$input"; proj="$ARNES_PROJ"
-[ -n "$proj" ] || exit 0
-manifest="$proj/.arnes/config.json"
-[ -f "$manifest" ] || exit 0   # no es un proyecto del arnés -> inerte
+  arnes_parse_input
 
-# UNA lectura del input para todo lo que se necesita de él, y con UN solo fork.
-# Este hook corre en CADA Edit/Write/MultiEdit y en CADA Bash, así que la forma de
-# leer importa más que el número de campos: `< <(printf ... | arnes_jq ...)` son
-# tres bifurcaciones —sustitución de proceso, tubería y el `$( )` interno— para
-# una sola lectura. Con `arnes_jq_str` y here-strings queda una.
-# `command` va al final porque puede ser multilínea: se lleva el resto del texto.
-arnes_jq_str "$input" -r '[.tool_name // "",
-                           .agent_id // "",
-                           .agent_type // "",
-                           .tool_input.file_path // "",
-                           .tool_input.command // ""] | .[]'
-{ IFS= read -r tool; IFS= read -r agent_id; IFS= read -r agent_type; IFS= read -r fp
-  IFS= read -r -d '' comando; } <<< "$ARNES_JQ"
-comando="${comando%$'\n'}"
+  if [ "$ARNES_TOOL" = "Bash" ]; then
+    [ -n "$ARNES_CMD" ] || return 0
+    via_bash=1
+    while IFS= read -r cand; do
+      [ -n "$cand" ] || continue
+      arnes_ruta_relativa "$cand" "$ARNES_PROJ"; rel="$ARNES_REL"
+      if arnes_es_codigo_app "$rel" "$ARNES_MANIFEST"; then objetivo="$rel"; break; fi
+    done <<< "$(arnes_bash_escrituras "$ARNES_CMD")"
+  else
+    [ -n "$ARNES_FP" ] || return 0
+    arnes_ruta_relativa "$ARNES_FP" "$ARNES_PROJ"; rel="$ARNES_REL"
+    arnes_es_codigo_app "$rel" "$ARNES_MANIFEST" && objetivo="$rel"
+  fi
 
-# --- ¿Qué ruta(s) de código de la app toca esta llamada? ---
-# Comparación en forma canónica: en Windows `proj` y `fp` llegan en formas distintas.
-objetivo=""      # primera ruta de código de app detectada
-via_bash=0
-if [ "$tool" = "Bash" ]; then
-  [ -n "$comando" ] || exit 0
-  via_bash=1
-  while IFS= read -r cand; do
-    [ -n "$cand" ] || continue
-    arnes_ruta_relativa "$cand" "$proj"; rel="$ARNES_REL"
-    if arnes_es_codigo_app "$rel" "$manifest"; then objetivo="$rel"; break; fi
-  done < <(arnes_bash_escrituras "$comando")
-else
-  [ -n "$fp" ] || exit 0
-  arnes_ruta_relativa "$fp" "$proj"; rel="$ARNES_REL"
-  arnes_es_codigo_app "$rel" "$manifest" && objetivo="$rel"
-fi
+  [ -n "$objetivo" ] || return 0   # no es código de app -> permitir
 
-[ -n "$objetivo" ] || exit 0   # no es código de app -> permitir
+  arnes_parse_manifest
 
-# Sólo aquí hace falta el manifiesto: la inmensa mayoría de las llamadas ya
-# salieron arriba sin llegar a leerlo.
-arnes_jq_file "$manifest" -r '.agentes.agente_codigo // "desarrollador"'; agente_codigo="$ARNES_JQ"
+  # Es código de app. Permitido SÓLO si es un subagente real (agent_id presente) Y
+  # además es el agente de código designado. La comparación tolera el prefijo del
+  # plugin (`arnes-juan:desarrollador` casa con `desarrollador`); ver lib.sh.
+  if [ -n "$ARNES_AGENT_ID" ] && arnes_agente_coincide "$ARNES_AGENT_TYPE" "$ARNES_AGENTE_CODIGO"; then
+    return 0
+  fi
 
-# Es código de app. Permitido SÓLO si es un subagente real (agent_id presente) Y
-# además es el agente de código designado. La comparación tolera el prefijo del
-# plugin (`arnes-juan:desarrollador` casa con `desarrollador`); ver lib.sh.
-if [ -n "$agent_id" ] && arnes_agente_coincide "$agent_type" "$agente_codigo"; then
+  # Editor no autorizado -> fail-closed, no silencioso.
+  if [ -n "$ARNES_AGENT_ID" ]; then
+    quien="el subagente $(arnes_agente_legible "${ARNES_AGENT_TYPE:-desconocido}")"
+  else
+    quien="la sesión coordinadora"
+  fi
+  if [ "$via_bash" -eq 1 ]; then
+    arnes_deny "ARNES: el comando escribe en '$objetivo', que es código de la app; sólo el agente '$ARNES_AGENTE_CODIGO' puede hacerlo (intento de $quien). Escribirlo por Bash no salta la regla: delega el cambio en '$ARNES_AGENTE_CODIGO' (ver AGENTS.md §5). Nota: la detección en Bash es parcial (redirecciones, tee, cp/mv/install, sed -i, dd) — si esto es un falso positivo, repórtalo."
+  fi
+  arnes_deny "ARNES: '$objetivo' es código de la app; sólo el agente '$ARNES_AGENTE_CODIGO' puede editarlo (intento de $quien). Delega el cambio en '$ARNES_AGENTE_CODIGO' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5)."
+}
+
+# Ejecutado directamente (no `source`): hace su propio preludio y corre.
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+  arnes_preludio || exit 0
+  arnes_guard_codigo
   exit 0
 fi
-
-# Editor no autorizado -> fail-closed, no silencioso.
-if [ -n "$agent_id" ]; then
-  quien="el subagente $(arnes_agente_legible "${agent_type:-desconocido}")"
-else
-  quien="la sesión coordinadora"
-fi
-if [ "$via_bash" -eq 1 ]; then
-  arnes_deny "ARNES: el comando escribe en '$objetivo', que es código de la app; sólo el agente '$agente_codigo' puede hacerlo (intento de $quien). Escribirlo por Bash no salta la regla: delega el cambio en '$agente_codigo' (ver AGENTS.md §5). Nota: la detección en Bash es parcial (redirecciones, tee, cp/mv/install, sed -i, dd) — si esto es un falso positivo, repórtalo."
-fi
-arnes_deny "ARNES: '$objetivo' es código de la app; sólo el agente '$agente_codigo' puede editarlo (intento de $quien). Delega el cambio en '$agente_codigo' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5)."
