@@ -86,6 +86,19 @@ Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
 
 **Flujo:** analista define REQ → desarrollador codifica → qa-tester valida → auditor-seguridad revisa → REQ `completado`.
 
+**El orden no es una sugerencia: es la condición de validez de la firma.** El
+`auditor-seguridad` no firma `Seguridad: aprobado` sobre un árbol que el `qa-tester` no ha
+validado, porque **no mira las quality gates**: su veredicto acredita la revisión de seguridad,
+no que el código funcione. Firmar antes convierte una revisión parcial en un sello de calidad
+que nadie emitió. Buscar paralelismo aquí no ahorra tiempo: produce una firma falsa.
+
+> **Excepción nombrada — la auditoría preventiva.** Una revisión de seguridad hecha **antes de
+> que exista el código** —sobre el diseño, el modelo de amenaza o el REQ mismo— sí puede ir por
+> delante, porque no acredita nada construido. Se declara **al emitirla**, escribiendo
+> `Seguridad: aprobado (preventiva)` en el REQ; nunca al invocarla: una excepción que se inventa
+> cuando hace falta no es una excepción, es una salida. Esa firma **no** cubre el código
+> posterior: cuando el código exista, la auditoría se repite en su turno.
+
 **Loop de error:** si QA o seguridad encuentran fallos, el REQ vuelve al desarrollador.
 Máximo **{{MAX_REINTENTOS}}** vueltas dev↔QA **por REQ**, y el contador **NO se reinicia con
 cada hallazgo nuevo**. Esto es deliberado: un tope por hallazgo no acota nada, porque cada
@@ -255,13 +268,16 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 | El rigor se puede subir, nunca bajar: `Sensible a seguridad: sí` impone `critico` | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | No completar sin `QA: aprobado` (salvo `Rigor: ligero`), ni un REQ `critico` sin `Seguridad: aprobado` | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | La transición a `completado` no se hace por shell | §6 | `guard-completado` | `Bash` (parcial) |
+| Seguridad no firma lo que QA no ha validado (salvo auditoría `(preventiva)`) | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 
 **Es una barandilla, no una jaula.** El hook impide que el modelo **se desvíe por descuido**;
 no contiene a un agente decidido a rodearlo. Concretamente:
 
 - **`Bash` sólo está cubierto en parte, y las dos puertas comparten esa cobertura.** Ambos
   guardianes usan el mismo detector de escrituras (redirección `>`/`>>`, `tee`, `cp`, `mv`,
-  `install`, `sed -i`, `perl -i`, `dd of=`). Quedan fuera, **a propósito**, los scripts, los
+  `install`, `sed -i`, `perl -i`, `dd of=`). Quedan fuera, **a propósito**, los scripts, **los
+  intérpretes** —`node script.mjs`, `python x.py`: la ruta vive dentro del archivo y el
+  detector sólo lee el texto del comando; es el agujero más grande de los que quedan—, los
   heredocs indirectos, los formateadores que reescriben archivos (`prettier --write`,
   `eslint --fix`), `patch`/`git apply` y cualquier programa que escriba por su cuenta. Un hook
   no puede analizar shell arbitrario de forma fiable, y perseguirlo produce falsos positivos

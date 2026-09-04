@@ -94,16 +94,40 @@ arnes_guard_completado() {
     else "" end'
   nuevo="$ARNES_JQ"
 
-  # ¿El cambio deja el REQ en `completado`? Normalizado: case-insensitive y espacios.
-  # Here-string en vez de `printf | grep`: la tubería costaba un fork de más.
-  grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" <<< "$nuevo" || return 0
-
   # --- Veredictos QA/Seguridad (anti-deriva) ---
   # Los campos viven en el archivo del REQ; se prefiere el contenido entrante y se respalda en disco
   # (pre-edición), porque QA/seguridad fijan su veredicto antes de la transición a completado.
   disk=''; [ -f "$fp" ] && IFS= read -r -d '' disk < "$fp"   # `read`, no `cat`: sin fork
   arnes_campos_req "$disk" "$nuevo"
   qa="$ARNES_QA"; seg="$ARNES_SEG"; sens="$ARNES_SENS"; rigor="$ARNES_RIGOR"
+
+  # --- Orden del ciclo: seguridad no firma lo que QA no ha validado -------------
+  # `AGENTS.md` §6 fija desarrollador -> qa-tester -> auditor-seguridad. La regla
+  # ya estaba escrita; lo que faltaba es que se cumpliera. Buscando paralelismo se
+  # emitio la firma de seguridad sobre arboles que QA no habia validado, y el
+  # argumento del propio auditor lo zanja: "yo no miro seis de las siete quality
+  # gates".
+  #
+  # Corre en CUALQUIER edicion del REQ, no solo al cerrarlo: el dano se hace al
+  # escribir el veredicto, no al cierre. Por eso este bloque va ANTES de la
+  # comprobacion de transicion a `completado`.
+  #
+  # EXCEPCION NOMBRADA: la auditoria PREVENTIVA —sin codigo todavia— si puede ir
+  # por delante, porque no firma nada construido. Se declara escribiendo
+  # `Seguridad: aprobado (preventiva)`, y se declara AL EMITIRLA, no al invocarla:
+  # una excepcion que se inventa cuando hace falta no es una excepcion.
+  #
+  # Solo se juzga si esta edicion TOCA el campo: reordenar un REQ viejo que ya
+  # tuviera los veredictos cruzados no debe bloquearse por algo que no hizo.
+  if [ "$seg" = "aprobado" ] && [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
+    if grep -q 'Seguridad:' <<< "$nuevo"; then
+      arnes_deny "ARNES: '$rel' lleva 'Seguridad: aprobado' pero su 'QA:' es '$qa'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGENTS.md 6): la auditoria no firma sobre un arbol que QA no ha validado, porque no mira las quality gates. Si es una auditoria PREVENTIVA —sin codigo todavia— declarala como 'Seguridad: aprobado (preventiva)'."
+    fi
+  fi
+
+  # ¿El cambio deja el REQ en `completado`? Normalizado: case-insensitive y espacios.
+  # Here-string en vez de `printf | grep`: la tubería costaba un fork de más.
+  grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" <<< "$nuevo" || return 0
 
   # --- Nivel de rigor: cuanta ceremonia exige ESTE requerimiento ---
   # `ligero` no pide veredictos: es para lo que no tiene logica —textos, etiquetas,
@@ -121,13 +145,19 @@ arnes_guard_completado() {
   if [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
     arnes_deny "ARNES: no se puede completar '$rel': el veredicto de QA es '$qa' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9)."
   fi
-  # `si` a secas: el normalizador pliega la tilde, así que `SÍ`, `Sí`, `sí` y `SI`
-  # llegan aquí como la misma forma. Antes se comparaba contra la lista `sí|si` y
-  # un REQ escrito `Sensible a seguridad: SÍ` NO casaba —la conversión a minúsculas
-  # no toca la `Í` sin locale— y se saltaba esta puerta en silencio.
+  # `si` a secas: el normalizador pliega la tilde y retira el marcado de Markdown,
+  # así que `SÍ`, `sí`, `**sí**` y `sí — porque toca auth` llegan aquí como la misma
+  # forma. Y un valor que NO se entiende se trata como sensible, no como «no»: ver
+  # `arnes_sens_efectiva` en lib.sh.
   case "$rigor" in
     critico)
       if [ "$seg" != "aprobado" ]; then
+        # Si el rigor salió de un valor que no se entendió, la denegación TIENE que
+        # decirlo: un deny que no explica de dónde sale se lee como un falso positivo
+        # y acaba con alguien apagando el guard.
+        if [ "${ARNES_SENS_DUDOSA:-0}" = "1" ]; then
+          arnes_deny "ARNES: no se puede completar '$rel': su 'Sensible a seguridad:' dice '${ARNES_SENS_CRUDO}', que no se reconoce ni como si ni como no, y un valor que no se entiende se trata como SENSIBLE —no saber no puede abrir una puerta—. Escribe 'si' o 'no' (el énfasis de Markdown y un comentario tras el valor si se toleran), o declara 'Seguridad: aprobado' si de verdad lo es."
+        fi
         arnes_deny "ARNES: no se puede completar '$rel': su rigor efectivo es 'critico' y el veredicto de seguridad es '${seg:-ausente}' (se requiere 'Seguridad: aprobado'). El control hallado debe quedar como NFR antes de cerrar (AGENTS.md §9)."
       fi ;;
   esac

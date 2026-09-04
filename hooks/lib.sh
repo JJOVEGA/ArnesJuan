@@ -383,9 +383,50 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
 # variantes que se pudre — que es justo lo que este arnés predica.
 arnes_norm_campo() {   # <valor> -> ARNES_CAMPO
   local v="${1//$'\r'/}"
+  # El MARCADO no es parte del valor. `**sí**` es el mismo valor que `sí`: el
+  # énfasis lo pone quien escribe para que se lea bonito, no para decir otra cosa.
+  # Medido: siete REQ de un proyecto real declaraban `Sensible a seguridad: **sí**`
+  # y NINGUNO casaba, así que la puerta de seguridad no llegó a existir para ellos.
+  # Esto NO es una lista de variantes del valor —que se pudre—: es quitar sintaxis
+  # de Markdown, que es un conjunto cerrado y ajeno al dominio.
+  v="${v//\*/}"; v="${v//_/}"; v="${v//\`/}"
   v="${v// /}"
   v="${v//Í/i}"; v="${v//í/i}"
   ARNES_CAMPO="${v,,}"
+}
+
+# `Sensible a seguridad:` es un BOOLEANO tecleado a mano dentro de un Markdown.
+#
+# Su población no es {si,no}: es lo que a un agente le dé por escribir en una
+# cabecera. Una forma cerrada sólo funciona si algo obliga a producirla, y aquí no
+# hay nada que lo obligue —el sujeto del control es más estrecho que su población—,
+# así que perseguirlo añadiendo variantes es la lista enumerada que se pudre.
+#
+# El arreglo estructural es otro: TRES estados, y el tercero cae del lado seguro.
+# Un valor presente que no se entiende NO significa «no es sensible», significa «no
+# lo sé», y no saber se resuelve pidiendo la auditoría, no saltándosela. Antes el
+# `*)` del `case` decía «no» en silencio: es exactamente la regla que
+# `/arnes-upgrade` aplica a `UNKNOWN` —una comprobación que no puede responder no
+# dice «no sé», dice «sí»— y que aquí faltaba.
+#
+# AUSENTE sigue siendo «no», y eso no se toca: exigir auditoría a todo REQ que no
+# declara el campo rompería cualquier proyecto anterior a que el campo existiera.
+arnes_sens_efectiva() {   # ARNES_SENS -> si|no ; ARNES_SENS_DUDOSA -> 0|1
+  local corte
+  ARNES_SENS_DUDOSA=0; ARNES_SENS_CRUDO="$ARNES_SENS"
+  if [ -z "$ARNES_SENS" ]; then ARNES_SENS='no'; return 0; fi
+  # Un comentario tras el valor no es el valor: `sí — gobierna la puerta…`.
+  # El paréntesis se corta AQUÍ y no en `arnes_norm_campo`, porque
+  # `Seguridad: aprobado (preventiva)` necesita conservarlo: cortarlo allí
+  # convertiría una auditoría preventiva en una firma completa.
+  corte="$ARNES_SENS"
+  corte="${corte%%—*}"; corte="${corte%%–*}"; corte="${corte%%-*}"
+  corte="${corte%%(*}"; corte="${corte%%[*}"; corte="${corte%%,*}"; corte="${corte%%;*}"
+  case "$corte" in
+    si|s|true|x|yes|verdadero)  ARNES_SENS='si' ;;
+    no|n|false|na|n/a|ninguna)  ARNES_SENS='no' ;;
+    *) ARNES_SENS='si'; ARNES_SENS_DUDOSA=1 ;;
+  esac
 }
 
 # Extrae en UNA pasada los campos de cabecera del REQ que gobiernan el cierre.
@@ -420,6 +461,7 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
   arnes_norm_campo "$ARNES_SENS"; ARNES_SENS="$ARNES_CAMPO"
   arnes_norm_campo "$ARNES_HALL"; ARNES_HALL="$ARNES_CAMPO"
   arnes_norm_campo "$ARNES_RIGOR"; ARNES_RIGOR="$ARNES_CAMPO"
+  arnes_sens_efectiva
   arnes_rigor_efectivo
 }
 

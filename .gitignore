@@ -20,6 +20,14 @@ node_modules/
 # Memoria de trabajo del asistente (no es parte del plugin)
 memory/
 
+# Insumos de proyectos concretos — ESTE REPO ES PÚBLICO
+# Los documentos que traen lecciones de un proyecto real llevan hallazgos de un
+# cliente: nombres, umbrales, arquitectura, huecos de seguridad concretos. El arnés
+# se queda con la FORMA del hallazgo y nunca con su instancia, así que estos
+# archivos se leen aquí pero no se publican. Un `git add -A` distraído bastaría.
+mejoras-arnes-*.md
+insumos/
+
 # ── Conservar siempre (negaciones defensivas) ────────────────────────────────
 # Estos archivos del plugin NUNCA deben ignorarse, aunque empiecen con punto.
 !.mcp.json.example

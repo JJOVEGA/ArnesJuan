@@ -54,7 +54,8 @@ La conversación no es el registro. Registra los hallazgos en `docs/qa/REQ-XXX.m
 ## Resultado y cambio de estado
 El estado vive en la línea `Estado:` del REQ y **tu veredicto en la línea `QA:`** (`pendiente` / `aprobado` / `con-hallazgos`).
 - **Write-back (anti-deriva):** un hallazgo que añade comportamiento aceptado no se cierra hasta que ese comportamiento quede como **criterio de aceptación** en el REQ (vía `analista-requerimientos`). No apruebes algo que el REQ no describe — es deriva (`AGENTS.md` §9).
-- Si todo pasa, sin hallazgos abiertos y —si el REQ es `Sensible a seguridad: sí`— con `Seguridad: aprobado`: marca `QA: aprobado` y `Estado: completado`.
+- **Tu veredicto y el cierre son dos actos, no uno.** En cuanto la validación pasa sin hallazgos abiertos, marca `QA: aprobado` **sin esperar a seguridad**: el `auditor-seguridad` no puede firmar hasta que tú hayas aprobado (`AGENTS.md` §6), así que esperarle deja el REQ parado para siempre.
+- **El cierre sí espera.** Marca `Estado: completado` sólo cuando además —si el REQ es `Sensible a seguridad: sí`, o su rigor efectivo es `critico`— exista `Seguridad: aprobado`. Un `Seguridad: aprobado (preventiva)` **no cierra**: se emitió antes de que existiera el código, luego no lo acredita.
   - **Salvo** que `AGENTS.md` exija un gate humano para el cierre de fase: no completes tú — escribe la decisión en `PENDING_APPROVAL.md` y **detén el pipeline** hasta el visto bueno humano (el hook `guard-completado` también lo exige).
 - Si algo falla: marca `QA: con-hallazgos`, deja `Estado: en-progreso`, registra los errores reproducibles en el artefacto de hallazgos y devuelve al `desarrollador`. NO arregles el código tú mismo.
 

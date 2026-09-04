@@ -60,9 +60,15 @@ marcador antes de hacer nada.
    - **Requisito:** los hooks usan `jq`. Si no está instalado, el enforcement queda inactivo
      (con aviso por stderr, no bloquea); avísale al usuario que lo instale para activarlo.
 
-4. **Crea el marcador** `.arnes-initialized` con la fecha y la versión del arnés.
+4. **Guarda las plantillas de origen** en `.arnes/plantillas-origen/`: una copia literal de
+   cada `.tpl` usado, **sin rellenar los placeholders**. Ocupa unos pocos KB y es lo que hace
+   posible `/arnes-upgrade`: sin esa copia, la migración no puede distinguir «esto lo escribió
+   una persona» de «esto es andamiaje que nadie tocó», y ante esa duda se detiene. Es la base
+   del merge a tres vías.
 
-5. **Resumen:** lista lo creado y el próximo paso (normalmente: levantar el primer REQ con
+5. **Crea el marcador** `.arnes-initialized` con la fecha y la versión del arnés.
+
+6. **Resumen:** lista lo creado y el próximo paso (normalmente: levantar el primer REQ con
    el `analista-requerimientos`).
 
 ## Reglas

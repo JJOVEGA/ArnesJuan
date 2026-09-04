@@ -2,6 +2,178 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.21.0] — 2026-09-04
+### Corregido — `Sensible a seguridad: **sí**` no activaba la puerta de seguridad
+**Fallo en abierto, medido en un proyecto real:** siete REQ declaraban ser sensibles y
+**ninguno** casaba. El normalizador plegaba la tilde y bajaba a minúsculas, pero el marcado
+de Markdown seguía ahí: `**sí**` llegaba como `**si**`, que no es `si`, así que el rigor
+efectivo caía a `estandar` y `Seguridad: aprobado` **dejaba de exigirse**. La puerta no se
+abría: nunca llegaba a existir. Seis eran negrita; el séptimo llevaba un comentario tras el
+valor.
+
+Uno de ellos gobernaba la subida de foto de perfil —Entra ID, token delegado, datos
+personales— y lo único que impedía su cierre era que QA seguía en `con-hallazgos`. Estaba a
+un campo de distancia.
+
+**El arreglo va en dos mitades, y la segunda es la que importa.**
+
+1. **El marcado no es parte del valor.** `arnes_norm_campo` retira `*`, `_` y las comillas
+   invertidas. No es una lista de variantes del valor —esas se pudren—: es retirar sintaxis
+   de Markdown, que es un conjunto cerrado y ajeno al dominio. El **paréntesis no se toca**
+   ahí: cortarlo convertiría `Seguridad: aprobado (preventiva)` en una firma completa, y una
+   auditoría preventiva cerraría un REQ crítico. Habría sido cambiar un fallo en abierto por
+   otro.
+
+2. **Tres estados, y el tercero cae del lado seguro.** `arnes_sens_efectiva` clasifica el
+   campo en `sí` / `no` / **no se entiende**, y lo que no se entiende se trata como sensible.
+   Una forma cerrada sólo funciona si algo obliga a producirla, y aquí el valor es Markdown
+   libre tecleado por un agente: el sujeto del control es más estrecho que su población. La
+   respuesta no es enumerar mejor, es que **la lista deje de ser peligrosa cuando esté
+   incompleta**. Es la regla que `/arnes-upgrade` ya aplica a `UNKNOWN` —*una comprobación que
+   no puede responder no dice «no sé», dice «sí»*— y que aquí faltaba. La denegación lo
+   explica, porque un `deny` que no dice de dónde sale se lee como falso positivo y acaba con
+   alguien apagando el guard.
+
+**Campo ausente sigue significando «no».** Cambiarlo obligaría a auditar todo REQ anterior a
+que el campo existiera.
+
+### Corregido — el banco escribía siempre limpio, y por eso no lo veía
+Veinticuatro fixtures, dos valores: `"sí"` y `"no"`. Es **el mismo diagnóstico que quedó
+escrito en 1.16.0** sobre otro campo —*«el banco no lo veía porque escribía su propio archivo
+limpio, nunca la plantilla»*— y reapareció porque entonces se arregló el **caso** y no el
+**banco**. Ahora cada campo que se compara contra una forma cerrada tiene su fixture decorado
+con sus controles negativos: trece casos, incluido el que fija que la firma preventiva
+**decorada** tampoco cierra.
+
+### Documentado — el intérprete es el siguiente agujero por tamaño
+`node script.mjs` no lo ve ningún guardián: el detector lee el texto del comando y la ruta
+vive **dentro** del script. No es una regresión —la cobertura de `Bash` siempre se declaró
+parcial— pero ahora está medido y nombrado en vez de quedar bajo el genérico «scripts»: en
+Windows, donde `sed -i` es incómodo, un intérprete es lo primero que alcanza cualquiera.
+
+### Añadido — `/arnes-upgrade` acredita la versión de origen en vez de creérsela
+`arnes_version` lo escribe quien migra y **ninguna puerta lo comprobaba**. Es la misma clase de
+defecto que `Sensible a seguridad: **sí**`: un campo escrito a mano que nadie verifica acaba
+mintiendo. Aquí miente en el peor sitio, porque de ese número sale la **base** del merge a tres
+vías: si es falso, la base se recupera igual —sólo que la equivocada— y entonces cada `INTACTO`
+y cada `MODIFICADO` se calculan contra un documento que el proyecto nunca tuvo. La migración no
+falla: **acierta en el procedimiento y se equivoca en todo el resultado.**
+
+*(Caso real: un proyecto declaraba `1.15.0` con el plugin instalado en `1.14.0` — una versión
+que ni siquiera estaba presente.)*
+
+La Fase 1 pasa a dar **tres resultados**: `CONFIRMADO` —las plantillas de origen guardadas son
+idénticas a las del tag declarado—, `CORROBORADO` —no las hay, pero los marcadores concuerdan, y
+se sigue **diciéndolo**: la base es reconstruida, no guardada— y `DESMENTIDO`, que es `UNKNOWN`
+y para. Antes de nada, una contradicción barata: un origen **posterior** al plugin instalado es
+imposible.
+
+Los **marcadores** son rasgos que sólo pueden existir a partir de una versión. Sirven para
+**desmentir**, que es barato y seguro; reconstruir el número exacto a partir de ellos sería
+inferencia, que es justo lo que esta skill evita. Si desmienten lo declarado se **pregunta**, no
+se sustituye por la que parezca.
+
+### Añadido — `/arnes-upgrade` avisa del choque de vocabulario del rigor
+Un proyecto con su propia escala —dos niveles, declarados en `Sensible a seguridad:`, con QA
+siempre— no puede mapearla a la del plugin —tres niveles, declarados en `Rigor:`, donde
+`ligero` **salta QA**— sin decidir. Queda como **CONFLICTO** con su tabla: se pregunta qué
+trabajo puede prescindir de QA, y «ninguno» es una respuesta válida.
+
+## [1.20.0] — 2026-09-04
+### Cambiado — `/arnes-upgrade` pasa a ser un merge a tres vías, no una comparación
+La primera versión comparaba el archivo del proyecto contra la plantilla nueva y preguntaba
+ante cualquier diferencia. En un proyecto real **casi todo difiere**, así que serían ~20
+preguntas por migración y el usuario acabaría aceptándolas sin leer — peor que no preguntar.
+
+El modelo correcto son **tres** documentos: la plantilla de la versión de **origen** (base), el
+archivo **del proyecto**, y la plantilla de **destino**. La base es lo que permite distinguir
+*«esto lo escribió una persona»* de *«esto es andamiaje que nadie tocó»*.
+
+**Cuatro estados** en vez de «igual o distinto»:
+
+| Estado | Evidencia | Acción |
+|---|---|---|
+| `NUEVO` | No existía en la base | Añadir |
+| `INTACTO` | Idéntico a la base | Actualizar |
+| `MODIFICADO` | Existe y difiere de la base | Conflicto |
+| `ELIMINADO` | Existía en la base y ya no está | Conflicto |
+
+`ELIMINADO` es conflicto y **no** «volver a añadir»: una sección ausente pudo borrarse a
+propósito, y reponerla revertiría una decisión humana en silencio.
+
+**Tres resultados, nunca dos:** `SAFE` se aplica solo; `CONFLICTO` y **`UNKNOWN`** se detienen
+igual. Nunca se convierte incertidumbre en decisión — una comprobación que no puede responder
+no dice «no sé», dice «sí», y aquí eso significaría pisar trabajo de una persona.
+
+**Protocolo verificable**, porque lo ejecuta un agente y no código determinista: inventario →
+plan → aplicar sólo lo planeado → **verificar releyendo el disco** → registrar. La fase de
+verificación es la que importa: *el acto de editar no es la prueba de que se editó bien*. Es la
+misma regla de acreditar por contenido que el arnés aplica a todo lo demás.
+
+**Reanudable, no atómica.** El plan vive en `.arnes/migracion.md` y al reanudar sólo hay dos
+caminos válidos: continuar desde la primera operación no aplicada, o revertir con git. Nunca
+«parece que algunas cosas ya están, sigo desde donde me parezca» — eso vuelve a inferir el
+estado del contenido, que es lo que el plan existe para evitar.
+
+**El respaldo lo da git**, no una copia hecha a mano: se exige el árbol limpio antes de empezar.
+
+### Añadido — `arnes-init` guarda las plantillas de origen
+En `.arnes/plantillas-origen/`, sin rellenar. Ocupa unos KB y es lo que hace posible el merge a
+tres vías **sin depender de tener acceso al repositorio del plugin**. La migración las refresca
+al terminar, para que la siguiente tenga base.
+
+### Corregido — `v1.14.0` nunca se etiquetó
+Sin ese tag, un proyecto inicializado en 1.14.0 no tenía base recuperable y la migración habría
+caído en `UNKNOWN` para todo. Etiquetada retroactivamente; las seis versiones vivas
+(`v1.14.0`…`v1.19.0`) están verificadas contra el `plugin.json` que declaran.
+
+### Añadido — el ciclo se cumple: seguridad no firma lo que QA no ha validado
+`AGENTS.md` §6 fija desarrollador → qa-tester → auditor-seguridad. La regla ya estaba escrita;
+faltaba que se cumpliera: buscando paralelismo se emitió la firma de seguridad sobre árboles que
+QA no había validado, y el argumento del propio auditor lo zanja — *«yo no miro seis de las
+siete quality gates»*.
+
+Corre en **cualquier** edición del REQ, no sólo al cerrarlo: el daño se hace al escribir el
+veredicto. **Excepción nombrada:** la auditoría **preventiva** —sin código todavía— sí puede ir
+por delante, y se declara como `Seguridad: aprobado (preventiva)` **al emitirla**, no al
+invocarla.
+
+La excepción **está escrita donde se lee**, no sólo en el mensaje del `deny`: `AGENTS.md` §6 y
+§13, `requirements/README.md` y la ficha del `auditor-seguridad`. Una máquina que exige algo que
+el `AGENTS.md` del proyecto no describe es exactamente la deriva que `/arnes-upgrade` existe para
+evitar; por eso esta migración **no es cosmética**: sin ella el hook deniega y la salida no está
+documentada en el proyecto.
+
+### Corregido — el bloqueo mutuo que la regla del orden habría causado
+La ficha del `qa-tester` metía **dos actos en una frase**: «marca `QA: aprobado` **y**
+`Estado: completado`», condicionado a que ya existiera `Seguridad: aprobado`. Con la regla del
+orden recién añadida eso cierra un ciclo: QA espera la firma de seguridad, y seguridad no puede
+firmar hasta que QA apruebe. Un REQ sensible no habría avanzado nunca.
+
+Los dos actos van separados: **el veredicto se emite en cuanto la validación pasa** —sin esperar
+a nadie— y **el cierre sí espera** la auditoría. Un `aprobado (preventiva)` desbloquea el orden
+pero **no cierra** un REQ crítico, y ahora hay caso de prueba que lo fija.
+
+### Corregido — el `README` describía un agujero que ya estaba tapado
+Decía que `guard-completado` «no mira `Bash` en absoluto» y que un `sed -i` podía cerrar un REQ
+sin pasar por las puertas. Dejó de ser cierto en 1.16.0: sí mira `Bash`, y lo **deriva** a
+`Edit`/`Write`. Documentación caducada en la dirección peligrosa —prometer menos protección de la
+que hay también es deriva—.
+
+### Corregido — el banco de pruebas dejaba de tragarse el `stderr`
+`corre()` mandaba `stderr` a `/dev/null`, así que un aborto del canario sólo podía ofrecer tres
+conjeturas —«¿CRLF? ¿jq? ¿permisos?»— y ninguna evidencia; es justo lo que el propio banco
+prohíbe en `check_motivo`. Ahora se aparta a un archivo fijo reutilizado (cero forks extra) y
+todo fallo lo enseña; el canario añade además la salida real, el `rc` de un segundo intento y los
+permisos del hook.
+
+### Corregido — los insumos de proyectos reales no podían publicarse por descuido
+Los documentos que traen lecciones de un proyecto concreto llevan hallazgos de un cliente
+—nombres, umbrales, arquitectura, huecos de seguridad— y este repositorio es **público**.
+Estaban sin versionar, pero nada impedía que un `git add -A` distraído los subiera. Ahora
+`mejoras-arnes-*.md` e `insumos/` están ignorados: el arnés se queda con la **forma** del
+hallazgo y nunca con su instancia.
+
 ## [1.19.0] — 2026-09-04
 ### Añadido — nivel de rigor por REQ: no todo requerimiento paga lo mismo
 El arnés aplicaba el máximo rigor a todo: un cambio de texto pasaba por los mismos cuatro

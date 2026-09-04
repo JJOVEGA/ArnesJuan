@@ -1,77 +1,231 @@
 ---
 name: arnes-upgrade
-description: Pone al día el andamiaje de un proyecto ya inicializado con la versión instalada del arnés. Aditivo y quirúrgico, nunca sobrescribe contenido del proyecto. Trabaja en español.
+description: Pone al día el andamiaje de un proyecto ya inicializado con la versión instalada del arnés, mediante un merge a tres vías contra la plantilla de origen. Nunca sobrescribe trabajo humano; ante la duda se detiene. Trabaja en español.
 ---
 
 # arnes-upgrade — poner al día un proyecto existente
 
 ## Por qué existe
 
-Los hooks, los agentes y las skills viven **en el plugin**, así que se actualizan solos.
-Los ~10 archivos que `arnes-init` copió al proyecto —`AGENTS.md`, `.arnes/config.json`,
-`requirements/README.md`…— **se quedan congelados para siempre**.
+Los hooks, los agentes y las skills viven **en el plugin** y se actualizan solos. Los ~10
+archivos que `arnes-init` copió al proyecto —`AGENTS.md`, `.arnes/config.json`,
+`requirements/README.md`…— **quedan congelados**.
 
-La consecuencia es una deriva garantizada en cada versión: **la máquina empieza a exigir
-cosas que el `AGENTS.md` del proyecto no describe**, y los agentes, que leen esos archivos,
-no se enteran de las capacidades nuevas. La capacidad existe en el arnés y no en los
-documentos que la gobiernan.
+La consecuencia es una deriva garantizada en cada versión: **la máquina empieza a exigir cosas
+que el `AGENTS.md` del proyecto no describe**, y los agentes, que leen esos archivos, no se
+enteran de las capacidades nuevas.
 
-## Regla de oro
+## El modelo: merge a tres vías
 
-**Aditivo y quirúrgico. Nunca sobrescribas contenido del proyecto.**
+No es «comparar con la plantilla nueva». Son **tres** documentos:
 
-Un `AGENTS.md` está lleno de decisiones de ese proyecto: su stack, sus módulos, sus gates,
-sus quality gates. Copiar la plantilla encima lo destruiría. Esta skill **añade lo que
-falta** y, ante cualquier duda, **pregunta en vez de decidir**.
+| | Qué es |
+|---|---|
+| **base** | La plantilla de la versión **desde la que migra** el proyecto |
+| **nuestro** | El archivo tal como está hoy en el proyecto |
+| **suyo** | La plantilla de la versión **destino** |
+
+La base es lo que permite distinguir *«esto lo escribió una persona»* de *«esto es andamiaje
+que nadie tocó»*. Sin base no hay forma de saberlo, y **sin saberlo no se toca nada**.
+
+**De dónde sale la base**, en este orden:
+1. `.arnes/plantillas-origen/` del propio proyecto, si `arnes-init` la dejó. Es la fuente
+   preferida: no depende de tener acceso al repositorio del plugin.
+2. El repositorio del arnés, en el tag de la versión de origen
+   (`git show v1.16.0:templates/AGENTS.md.tpl`).
+
+Si ninguna de las dos está disponible, **el estado es `UNKNOWN` y la migración se detiene** —
+nunca se adivina. Y al terminar, deja en `.arnes/plantillas-origen/` las plantillas de la
+versión destino, para que la siguiente migración tenga base.
+
+## Clasificación: cuatro estados
+
+Para cada sección gestionada, comparando los tres documentos:
+
+| Estado | Evidencia | Acción |
+|---|---|---|
+| **NUEVO** | No existía en la base y sí en el destino | Añadir |
+| **INTACTO** | Existe en el proyecto **idéntica** a la base | Actualizar |
+| **MODIFICADO** | Existe en el proyecto y **difiere** de la base | **Conflicto** |
+| **ELIMINADO** | Existía en la base y **no está** en el proyecto | **Conflicto** |
+
+**Por qué `ELIMINADO` es conflicto y no «volver a añadir»:** una sección ausente pudo borrarse
+**a propósito** —«este proyecto no usa eso»—. Reponerla revierte una decisión humana en
+silencio. Si no existía en la base, entonces sí es `NUEVO` y se añade.
+
+## Tres resultados, nunca dos
+
+```
+SAFE      -> se aplica solo
+CONFLICTO -> se detiene y se pregunta
+UNKNOWN   -> se detiene y se pregunta
+```
+
+**`UNKNOWN` es tan terminal como `CONFLICTO`, y esto no es negociable.** Nunca conviertas
+incertidumbre en decisión: si no puedes recuperar la base, si una sección no se localiza con
+seguridad, o si el archivo tiene una estructura que no reconoces, **el estado es `UNKNOWN` y
+paras**. Una comprobación que no puede responder no dice «no sé», dice «sí» — y aquí eso
+significaría pisar trabajo de una persona.
 
 ## Procedimiento
 
-1. **Punto de partida.** Lee `arnes_version` de `.arnes/config.json`. Si no está (proyectos
-   anteriores a ese campo), mira `.arnes-initialized`. Si tampoco, **pregunta** desde qué
-   versión se migra — no lo adivines.
+### Fase 1 — Inventario (no toca nada)
+- Origen: `arnes_version` de `.arnes/config.json`; si falta, `.arnes-initialized`; si tampoco,
+  **pregunta**.
+- Destino: `version` de `.claude-plugin/plugin.json` del plugin instalado.
+- Si coinciden: informa que está al día y **para**. Idempotente.
+- **Acredita la versión de origen antes de usarla** (ver abajo). Toda la migración cuelga de
+  ese número.
+- Recupera las plantillas **base** y **destino**. Si alguna no se puede: `UNKNOWN`.
+- **Exige el árbol de git limpio.** Si hay cambios sin comitear, para: el respaldo y la
+  reversión los da git, y con el árbol sucio no se puede distinguir lo tuyo de lo mío.
 
-2. **Destino.** Lee `version` de `.claude-plugin/plugin.json` del plugin instalado.
+#### La versión de origen es una afirmación, no una evidencia
 
-3. **Si coinciden, para.** Informa que está al día y no toques nada. Idempotente, como
-   `arnes-init`.
+`arnes_version` lo escribe quien migra, y **ninguna puerta lo comprueba**. Un campo escrito a
+mano que nadie verifica acaba mintiendo — es la misma clase de defecto que
+`Sensible a seguridad: **sí**`, que declaraba una cosa y valía otra.
 
-4. **Qué cambió.** El `CHANGELOG.md` del plugin entre esas dos versiones es la fuente. Lee
-   sólo las entradas de ese rango.
+Aquí miente en el peor sitio posible: es de donde sale la **base** del merge. Si el número es
+falso, la base se recupera igual —sólo que la equivocada— y entonces todo `INTACTO` y todo
+`MODIFICADO` de la Fase 2 se calculan contra un documento que este proyecto nunca tuvo. La
+migración no falla: **acierta en el procedimiento y se equivoca en todo el resultado.**
 
-5. **Aplica, archivo por archivo:**
-   - **Secciones nuevas** en `AGENTS.md` o `requirements/README.md`: insértalas en su sitio,
-     conservando intacto lo que ya había.
-   - **Campos nuevos** en `.arnes/config.json`: añádelos con su valor por defecto.
-   - **Si una sección ya existe pero con contenido distinto:** NO la fusiones. Muestra la
-     diferencia y pregunta.
-   - **Los REQ existentes no se tocan.** Los campos nuevos son compatibles hacia atrás por
-     diseño; un REQ antiguo sin ellos debe seguir cerrando igual.
+*(Caso real, 2026-09-04: un proyecto declaraba `1.15.0` con el plugin instalado en `1.14.0` —
+una versión que ni siquiera estaba presente.)*
 
-6. **Enseña el resumen ANTES de escribir** y pide confirmación.
+**Tres resultados, y sólo el primero permite seguir sin decir nada:**
 
-7. **Sólo al final**, actualiza `arnes_version` en `.arnes/config.json`. Ese campo es el
-   registro de dónde quedó la migración: si se sube antes de aplicar los cambios, la
-   próxima ejecución creerá que ya está hecho.
+| | Cuándo | Qué se hace |
+|---|---|---|
+| **CONFIRMADO** | `.arnes/plantillas-origen/` existe y es **idéntica** a la del tag declarado | Se sigue |
+| **CORROBORADO** | No hay plantillas de origen, pero los marcadores concuerdan | Se sigue **diciéndolo**: la base es reconstruida, no guardada |
+| **DESMENTIDO** | Los marcadores contradicen lo declarado, o el tag no existe | `UNKNOWN` — **para y pregunta** |
+
+**Contradicción barata que se comprueba primero:** si el origen declarado es **posterior** al
+plugin instalado, es imposible que ese plugin lo escribiera. No lo resuelvas tú — es señal de
+que el campo se editó a mano.
+
+**Los marcadores** son rasgos que sólo pueden existir a partir de una versión, así que su
+presencia acota el origen por abajo y su ausencia —en un archivo por lo demás intacto— lo acota
+por arriba:
+
+| Marcador en el proyecto | Implica origen ≥ |
+|---|---|
+| `requirements/README.md` tiene la sección **Nivel de rigor** | 1.19.0 |
+| `requirements/README.md` nombra `Hallazgos abiertos:` | 1.16.0 |
+| `AGENTS.md` §13 tiene la fila «la transición a `completado` no se hace por shell» | 1.16.0 |
+| `AGENTS.md` §6 nombra la auditoría `(preventiva)` | 1.20.0 |
+| `.arnes/config.json` tiene `plantillas_origen` | 1.20.0 |
+
+*(Los tres primeros están comprobados contra los tags: ausentes en la versión anterior,
+presentes desde la que se indica. Si añades marcadores, compruébalos igual — un marcador mal
+fechado desmiente declaraciones correctas, que es peor que no tener marcador.)*
+
+Un marcador **presente** cuyo origen declarado es anterior desmiente la declaración: el proyecto
+ya venía de más adelante. Un marcador **ausente** en un archivo que por lo demás coincide con la
+plantilla declarada la desmiente también, en la otra dirección.
+
+**No conviertas esto en adivinar la versión.** Los marcadores sirven para **desmentir**, que es
+barato y seguro; reconstruir el número exacto a partir de ellos es inferencia, y la inferencia
+es justo lo que esta skill evita. Si desmienten lo declarado, el resultado es `UNKNOWN` y se
+pregunta — no se sustituye por la que a ti te parezca.
+
+### Fase 2 — Plan (no toca nada)
+Clasifica **cada** sección en `NUEVO` / `INTACTO` / `MODIFICADO` / `ELIMINADO` / `UNKNOWN`, con
+su archivo, su acción propuesta y la evidencia que la sostiene. Escríbelo en
+`.arnes/migracion.md`.
+
+**Si hay algún `UNKNOWN`, no se aplica nada.** Los `CONFLICTO` se listan para el humano.
+
+### Fase 3 — Aplicar
+Sólo las operaciones marcadas `SAFE` en el plan. **Está prohibido hacer cualquier cambio que no
+esté en el plan** — nada de «ya que estoy, mejoro esto».
+
+### Fase 4 — Verificar (releyendo el disco)
+Vuelve a leer **todos** los archivos tocados y comprueba:
+1. Cada operación del plan está aplicada.
+2. Ninguna sección `MODIFICADO` cambió.
+3. No desapareció contenido que estuviera antes.
+4. La versión registrada es la de destino.
+
+**No des por hecho que se aplicó porque lo escribiste.** El acto de editar no es la prueba de
+que se editó bien; la prueba es volver a leer. Es la misma regla que el arnés aplica a todo lo
+demás: se acredita por contenido, no porque el comando dijera que sí.
+
+### Fase 5 — Registrar
+**Sólo ahora** actualiza `arnes_version` en `.arnes/config.json` y deja constancia en el
+`CHANGELOG.md` del proyecto, con origen y destino. Ese campo es el registro de la migración: si
+se sube antes de verificar, la siguiente ejecución creerá que está hecho y el proyecto quedará
+a medias sin que nadie lo note.
+
+## Si se interrumpe a mitad
+
+`.arnes/migracion.md` conserva el plan y qué se aplicó. Al reanudar hay **dos** caminos válidos
+y ninguno más:
+
+- **Continuar** desde la primera operación no aplicada.
+- **Revertir** con git y empezar de cero.
+
+**Nunca** *«parece que algunas cosas ya están, sigo desde donde me parezca»*: eso vuelve a
+inferir el estado del contenido, que es justo lo que el plan existe para evitar. Cada operación
+se comprueba antes de aplicarla —¿ya está en su forma final?— para que reanudar no duplique
+nada.
 
 ## Migraciones conocidas
 
 ### Hacia 1.16.0
-- `AGENTS.md` §6: el tope de vueltas se cuenta **por REQ y no se reinicia**; y la tabla de
-  **clases de hallazgo** (`usuario/dinero`, `contrato`, `instrumento`).
-- `AGENTS.md` §13: filas nuevas de enforcement (cierre por Bash, clase del hallazgo) y la
-  nota de que la cobertura de `Bash` es parcial.
-- `requirements/README.md`: campo `Hallazgos abiertos:` en la plantilla y sección
-  **Clases de hallazgo**.
-- `PENDING_APPROVAL.md`: si la copia del proyecto conserva el ejemplo comentado **bajo**
-  `## Pendientes`, muévelo fuera de la sección. Con el `awk` corregido ya no bloquea, pero
-  el archivo queda más claro.
-- `.arnes/config.json`: `arnes_version` a la versión instalada.
+- `AGENTS.md` §6: tope de vueltas **por REQ, sin reiniciarse**; tabla de **clases de hallazgo**.
+- `AGENTS.md` §13: filas de enforcement nuevas (cierre por Bash, clase del hallazgo).
+- `requirements/README.md`: campo `Hallazgos abiertos:` y sección **Clases de hallazgo**.
+- `PENDING_APPROVAL.md`: si conserva el ejemplo comentado **bajo** `## Pendientes`, sácalo de
+  la sección.
+
+### Hacia 1.19.0
+
+> **CONFLICTO conocido — el vocabulario del rigor choca.** Un proyecto que ya tenía su
+> propia escala de rigor **no la puede mapear sin decidir**, y esto no es cosmético:
+>
+> | | Escala propia típica del proyecto | Plugin 1.19.0+ |
+> |---|---|---|
+> | Niveles | dos — crítico / normal | tres — `ligero` / `estandar` / `critico` |
+> | Se declara en | `Sensible a seguridad:` | `Rigor:` |
+> | Qué gobierna | cuánta demostración se exige | **qué agentes corren** |
+> | QA | siempre | **`ligero` lo salta** |
+>
+> El día que el proyecto escriba `Rigor: ligero`, la máquina se saltará QA mientras su
+> `AGENTS.md` sigue prometiendo que QA revisa siempre. Es la deriva que advierte §13, y
+> aparece **justo al migrar**. El mapeo se reescribe en el vocabulario de tres, y se
+> **pregunta** —no se infiere— qué trabajo del proyecto puede prescindir de QA. Si la
+> respuesta es «ninguno», es una respuesta válida: no se declara `ligero` en ningún REQ.
+- `requirements/README.md`: campo `Rigor:` en la plantilla y sección **Nivel de rigor**.
+- `AGENTS.md` §6: bloque del nivel de rigor y el marcador `{{CRITERIO_RIGOR_CRITICO}}` —
+  **pregunta al usuario qué es crítico en su dominio**, no lo inventes.
+- `AGENTS.md` §13: fila «el rigor se puede subir, nunca bajar».
+
+### Hacia 1.20.0
+- `AGENTS.md` §6: bloque **el orden no es una sugerencia** —seguridad no firma lo que QA no ha
+  validado— con la **excepción nombrada** de la auditoría preventiva.
+- `AGENTS.md` §13: fila «Seguridad no firma lo que QA no ha validado».
+- `requirements/README.md`: el valor `aprobado (preventiva)` en el campo `Seguridad:` y el
+  párrafo **el orden importa**.
+
+  Esta migración **no es cosmética**: el hook empieza a denegar una escritura que antes pasaba,
+  y la salida —declarar la auditoría preventiva— sólo existe si el proyecto la tiene escrita.
+  Un proyecto sin migrar verá un `deny` cuya excepción no está en su `AGENTS.md`.
+
+### Hacia 1.21.0
+- Nada que migrar en los archivos del proyecto, pero **sí hay que revisar los REQ que
+  ya existen**: hasta 1.20.0, un `Sensible a seguridad:` con marcado —`**sí**`— o con un
+  comentario tras el valor **no se reconocía**, y esos REQ nunca activaron la puerta de
+  seguridad. Al actualizar empiezan a activarla. Busca en `requirements/` los valores que
+  no sean `sí`/`no` limpios y comprueba si alguno cerró sin auditoría.
+
+*(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas
-
-- No inventes contenido de proyecto. Si algo requiere una decisión —un umbral, un nombre,
-  una política— **pregunta**.
-- No toques `CHANGELOG.md` ni `docs/ESTADO.md` del proyecto: son su bitácora, no andamiaje.
-- Si el proyecto personalizó una plantilla, respétalo. Se informa, no se corrige.
-- Deja constancia de la migración en el `CHANGELOG.md` del proyecto, con la versión de
-  origen y la de destino.
+- No inventes contenido de proyecto. Ante una decisión —un umbral, un nombre, una política—
+  **pregunta**.
+- No toques el `CHANGELOG.md` ni `docs/ESTADO.md` del proyecto salvo para dejar constancia de
+  la migración: son su bitácora, no andamiaje.
+- Si el proyecto personalizó una plantilla, se respeta. Se informa, no se corrige.

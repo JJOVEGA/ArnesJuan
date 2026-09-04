@@ -23,7 +23,9 @@ command -v jq >/dev/null 2>&1 || { echo "SKIP: jq no instalado"; exit 0; }
 
 # --- proyecto de prueba efímero ---
 PROJ="$(mktemp -d)"
-trap 'rm -rf "$PROJ"' EXIT
+# Un archivo fijo, reutilizado: capturar stderr no debe costar un fork por llamada.
+ERRLOG="$(mktemp)"
+trap 'rm -rf "$PROJ"; rm -f "$ERRLOG"' EXIT
 mkdir -p "$PROJ/.arnes" "$PROJ/requirements" "$PROJ/src" "$PROJ/tests"
 cat > "$PROJ/.arnes/config.json" <<'JSON'
 {
@@ -88,7 +90,10 @@ Estado: en-revisión
 setcfg()   { jq "$1" "$PROJ/.arnes/config.json" > "$PROJ/.arnes/c.tmp" && mv "$PROJ/.arnes/c.tmp" "$PROJ/.arnes/config.json"; }
 setgates() { setcfg "$1"; }
 
-corre() { printf '%s' "$2" | "$HOOKS_DIR/$1" 2>/dev/null; }
+# stderr NO se descarta: se aparta para poder enseñarlo cuando algo falla.
+corre() { : > "$ERRLOG"; printf '%s' "$2" | "$HOOKS_DIR/$1" 2>"$ERRLOG"; }
+# diagnostico: lo que el hook escribio en stderr, si escribio algo.
+diag() { [ -s "$ERRLOG" ] && sed 's/^/          stderr| /' "$ERRLOG"; return 0; }
 
 # check <nombre> <esperado:deny|allow> <script> <json>
 check() {
@@ -99,7 +104,7 @@ check() {
   if [ "$got" = "$esperado" ]; then
     echo "  PASS  $nombre  ($got)"; PASS=$((PASS+1))
   else
-    echo "  FAIL  $nombre  esperado=$esperado got=$got"; FAIL=$((FAIL+1))
+    echo "  FAIL  $nombre  esperado=$esperado got=$got"; diag; FAIL=$((FAIL+1))
   fi
 }
 
@@ -113,15 +118,24 @@ check_motivo() {
   if [ -n "$motivo" ] && printf '%s' "$motivo" | grep -Eq "$patron"; then
     echo "  PASS  $nombre"; PASS=$((PASS+1))
   else
-    echo "  FAIL  $nombre  motivo=<${motivo:-vacío}> no casa /$patron/"; FAIL=$((FAIL+1))
+    echo "  FAIL  $nombre  motivo=<${motivo:-vacío}> no casa /$patron/"; diag; FAIL=$((FAIL+1))
   fi
 }
 
 # --- CANARIO: si el hook no corre, todo caso `allow` sería un verde falso -------
 canario="$(corre guard-codigo.sh "$(emite_edit "$PROJ/src/app.ts" "" "" 'hola')")"
 if ! printf '%s' "$canario" | grep -Eq '"permissionDecision": *"deny"'; then
-  echo "ABORT: el canario no denegó; el hook no se está ejecutando (¿CRLF? ¿jq? ¿permisos?)."
+  echo "ABORT: el canario no denegó; el hook no se está ejecutando."
   echo "       Con el hook muerto, todos los casos 'allow' pasarían en falso."
+  # Un aborto sin evidencia obliga a adivinar, y adivinar fue lo que nos costó un día:
+  # se relanza UNA vez enseñando todo lo que el primer intento se calló.
+  echo "       --- evidencia del intento ---"
+  diag
+  echo "       salida: <$canario>"
+  printf '%s' "$(emite_edit "$PROJ/src/app.ts" "" "" 'hola')" | "$HOOKS_DIR/guard-codigo.sh" > /dev/null
+  echo "       rc del hook en un 2º intento: $?"
+  echo "       hook: $HOOKS_DIR/guard-codigo.sh"
+  ls -l "$HOOKS_DIR/guard-codigo.sh" 2>&1 | sed 's/^/       /'
   exit 1
 fi
 
@@ -303,6 +317,103 @@ check "estandar sobre SENSIBLE no baja el suelo -> deny" deny guard-completado.s
 # Un valor inventado nunca debe abrir la puerta.
 mkreq_r "REQ-048" "no" "pendiente" "n/a" "inventado"
 check "Rigor invalido se ignora, no abre -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-048.md" "" "" 'Estado: completado')"
+
+# --- Orden del ciclo: seguridad no firma lo que QA no ha validado --------------
+# La regla ya estaba en AGENTS.md 6; lo que faltaba era que se cumpliera. Corre en
+# CUALQUIER edicion del REQ, no solo al cerrarlo: el dano se hace al escribir el
+# veredicto, no al cierre.
+echo "Orden del ciclo (seguridad tras QA):"
+mkreq_r "REQ-050" "no" "pendiente" "pendiente" ""
+check "firmar Seguridad con QA pendiente -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Seguridad: aprobado')"
+check "...y tampoco al cerrar de paso -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Estado: completado
+Seguridad: aprobado')"
+# La excepcion se declara AL EMITIRLA, no al invocarla.
+check "auditoria PREVENTIVA declarada -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Seguridad: aprobado (preventiva)')"
+mkreq_r "REQ-051" "no" "aprobado" "pendiente" ""
+check "orden correcto: QA ya aprobado -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-051.md" "" "" 'Seguridad: aprobado')"
+mkreq_r "REQ-052" "no" "pendiente" "pendiente" ""
+check "edicion que NO toca Seguridad -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-052.md" "" "" 'Notas: trabajo en curso')"
+# Un REQ anterior al campo QA no puede quedar bloqueado por esto.
+mkreq_r "REQ-053" "no" "" "pendiente" ""
+check "REQ antiguo sin campo QA -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-053.md" "" "" 'Seguridad: aprobado')"
+# La firma preventiva desbloquea el ORDEN, no el CIERRE: se emitio antes de que
+# existiera el codigo, luego no acredita el codigo. Un REQ critico sigue exigiendo
+# la auditoria de verdad.
+mkreq_r "REQ-054" "sí" "aprobado" "aprobado (preventiva)" ""
+check "critico: solo firma preventiva no cierra -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-054.md" "" "" 'Estado: completado')"
+mkreq_r "REQ-055" "sí" "aprobado" "aprobado" ""
+check "critico: auditoria real si cierra -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-055.md" "" "" 'Estado: completado')"
+# Sin esto la regla del orden seria un abrazo mortal: QA firma primero, siempre.
+mkreq_r "REQ-056" "sí" "pendiente" "pendiente" ""
+check "sensible: QA firma sin esperar a seguridad -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-056.md" "" "" 'QA: aprobado')"
+
+# --- Formas DECORADAS: el banco escribia siempre limpio -----------------------
+# LECCION (2026-09-04): un proyecto real declaraba `Sensible a seguridad: **si**`
+# en siete REQ y NINGUNO casaba -- la puerta de seguridad no llegaba a existir para
+# ellos. El banco no lo vio porque escribe sus propios REQ y los escribe limpios:
+# veinticuatro fixtures y solo dos valores, "si" y "no".
+#
+# Es EL MISMO diagnostico que quedo escrito en 1.16.0 sobre otro campo --"el banco
+# no lo veia porque escribia su propio archivo limpio, nunca la plantilla"-- y
+# reaparecio porque entonces se arreglo el CASO y no el BANCO. Por eso ahora cada
+# campo que se compara contra una forma cerrada tiene su fixture decorado, con sus
+# controles negativos: probar que no se estorba a quien escribe `no` es lo que da
+# valor a los `deny`.
+echo "Formas decoradas (marcado de Markdown en el valor):"
+mkreq "$PROJ/requirements/REQ-060.md" "**sí**" "aprobado" "pendiente"
+check "sensible en **negrita** exige auditoria -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-060.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-061.md" "**sí** — toca autenticación" "aprobado" "pendiente"
+check "negrita + comentario tras el valor -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-061.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-062.md" "sí — gobierna la puerta" "aprobado" "pendiente"
+check "comentario tras el valor, sin negrita -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-062.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-063.md" "_sí_" "aprobado" "pendiente"
+check "sensible en _cursiva_ -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-063.md" "" "" 'Estado: completado')"
+# El tercer estado: un valor que no se entiende cae del lado seguro. Sin esto, la
+# lista de formas reconocidas seria una lista enumerada, y esas se pudren.
+mkreq "$PROJ/requirements/REQ-064.md" "por evaluar" "aprobado" "pendiente"
+check "valor que NO se entiende -> deny (lado seguro)" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-064.md" "" "" 'Estado: completado')"
+check_motivo "...y la denegacion dice por que" "no se reconoce" guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-064.md" "" "" 'Estado: completado')"
+# Controles negativos: el arnes NO puede estorbar a quien declara que no es sensible.
+mkreq "$PROJ/requirements/REQ-065.md" "**no**" "aprobado" "pendiente"
+check "no sensible en **negrita** -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-065.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-066.md" "n/a" "aprobado" "pendiente"
+check "no sensible como n/a -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-066.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-067.md" "no — es solo texto" "aprobado" "pendiente"
+check "no + comentario tras el valor -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-067.md" "" "" 'Estado: completado')"
+# Los otros campos tambien se comparan contra forma cerrada, y tambien se decoran.
+mkreq "$PROJ/requirements/REQ-068.md" "no" "**aprobado**" "n/a"
+check "QA en **negrita** cuenta como aprobado -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-068.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-069.md" "sí" "aprobado" "**aprobado**"
+check "Seguridad en **negrita** cierra un critico -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-069.md" "" "" 'Estado: completado')"
+# Y la firma PREVENTIVA sigue sin cerrar aunque venga decorada: quitar el marcado
+# no puede convertirla en una firma completa. Es el fallo que el arreglo obvio
+# --cortar el valor en el primer parentesis-- habria introducido.
+mkreq "$PROJ/requirements/REQ-070.md" "sí" "aprobado" "**aprobado (preventiva)**"
+check "preventiva decorada TAMPOCO cierra -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-070.md" "" "" 'Estado: completado')"
+mkreq_r "REQ-071" "no" "pendiente" "n/a" "**ligero**"
+check "Rigor **ligero** decorado se reconoce -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-071.md" "" "" 'Estado: completado')"
 
 echo "guard.sh — punto de entrada unico (los dos guardianes, un proceso):"
 check "A1 por guard.sh: coordinadora edita src/ -> deny" deny guard.sh \

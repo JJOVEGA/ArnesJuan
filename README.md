@@ -24,6 +24,9 @@ Las invariantes críticas no se quedan en el markdown: las vigila la máquina v�
   reciben un rechazo en runtime, con el motivo).
 - **Un REQ no pasa a `completado`** si hay aprobaciones pendientes en `PENDING_APPROVAL.md`, si
   alguna quality gate está en rojo, o si falta el veredicto de QA/seguridad.
+- **El orden del ciclo se cumple:** `Seguridad: aprobado` no se escribe sobre un árbol que QA no
+  ha validado —el auditor no mira las quality gates—. La única salida es declarar la auditoría
+  **preventiva**, que desbloquea el orden pero **no** cierra un REQ crítico.
 
 Son **inertes** sin `.arnes/config.json` (no estorban en repos ajenos al arnés) y requieren `jq`.
 El `pre-commit` de git sigue exigiendo el changelog en cada commit.
@@ -36,9 +39,19 @@ comparación estricta con ese proveedor.
 ### Limitación conocida: la cobertura de `Bash` es parcial (y a propósito)
 `guard-codigo` mira `Edit`/`Write`/`MultiEdit` y, en `Bash`, sólo las escrituras **evidentes**:
 redirección `>`/`>>`, `tee`, `cp`, `mv`, `install`, `sed -i`, `perl -i` y `dd of=`. Quedan fuera
-los scripts, los formateadores que reescriben archivos (`prettier --write`, `eslint --fix`),
-`patch`/`git apply` y cualquier programa que escriba por su cuenta. `guard-completado` no mira
-`Bash` en absoluto: un `sed -i` sobre un REQ puede cerrarlo sin pasar por las puertas.
+**cualquier intérprete** —`node script.mjs`, `python x.py`, `pwsh -File x.ps1`—, los
+formateadores que reescriben archivos (`prettier --write`, `eslint --fix`),
+`patch`/`git apply` y cualquier programa que escriba por su cuenta.
+
+`guard-completado` **sí** mira `Bash`, pero no lo juzga: lo **deriva**. Un comando que escribe en
+`requirements/` y menciona el estado terminal se deniega pidiendo que la transición se haga con
+`Edit`/`Write`, que es donde el hook puede ver el contenido resultante y evaluar veredictos, cola
+y quality gates. Reimplementar esas puertas para la shell sería una segunda transcripción de la
+misma regla, y dos transcripciones se desfasan. Dentro de esa vía la detección es
+**deliberadamente ancha**, porque la forma más natural de cerrar un REQ por shell
+—`sed -i 's/en-revisión/completado/'`— sustituye el **valor** y no escribe nunca la palabra
+«Estado». Fuera de esas formas evidentes sigue habiendo vías abiertas: la cobertura de `Bash` es
+parcial en las dos puertas.
 
 **El porqué:** un hook no puede analizar shell arbitrario de forma fiable — redirecciones
 indirectas, heredocs, variables, subshells, scripts que escriben por su cuenta. Perseguir la
@@ -46,6 +59,12 @@ cobertura total genera falsos positivos sobre comandos de lectura perfectamente 
 (`cat`, `grep`, `git diff`, un build que escupe su log), y un guard que estorba acaba
 desactivado. Un guard apagado protege menos que uno parcial, así que el detector se sesga
 explícitamente al **falso negativo**: si duda, permite.
+
+**El intérprete es el agujero más grande de los que quedan, y está medido.** `node script.mjs`
+no lo ve ningún guardián: el detector lee el **texto del comando** y la ruta vive dentro del
+script. En Windows eso no es un caso rebuscado —`sed -i` es incómodo aquí, y un intérprete es
+lo primero que alcanza cualquiera—. Cerrarlo de verdad exigiría ejecutar el programa para
+saber qué escribe, que es justo lo que un hook no puede hacer.
 
 Conclusión honesta, la misma que dice `AGENTS.md` §13: **es una barandilla, no una jaula.**
 Impide que el modelo se desvíe por descuido; no contiene a un agente decidido a rodearla. Cuando
