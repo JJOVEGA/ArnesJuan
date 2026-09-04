@@ -2,6 +2,68 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.15.0] — 2026-09-02
+### Corregido — el guard denegaba justo al agente autorizado (prefijo del plugin)
+`guard-codigo` comparaba `agent_type` en crudo contra `agentes.agente_codigo` del manifiesto.
+Claude Code entrega el agente **con el prefijo del plugin que lo provee**
+(`arnes-juan:desarrollador`), mientras que el manifiesto declara el nombre corto
+(`desarrollador`): la igualdad no se cumplía nunca y el hook **rechazaba al único agente que
+puede escribir código**. Costó dos entregas bloqueadas en SENDA, y el parche local (poner el
+nombre con prefijo en `.arnes/config.json`) era frágil: se rompe si el plugin cambia de nombre
+y obliga a cada proyecto a conocerlo.
+
+La comparación ahora vive en `arnes_agente_coincide()` (`hooks/lib.sh`) y es **tolerante al
+prefijo sin volverse permisiva**:
+- Se compara el **nombre corto** (tras el último `:`), normalizado — minúsculas, sin espacios ni
+  CR: es un campo que escribe una persona a mano.
+- Si **ambos** lados traen prefijo, además deben coincidir. Un proyecto que necesite
+  desambiguar declara `arnes-juan:desarrollador` y con eso rechaza a `otro-plugin:desarrollador`.
+- Si el manifiesto **no** trae prefijo, cualquier proveedor con ese nombre corto casa: el
+  manifiesto no dijo de qué plugin viene, y exigirlo reintroduce el bug que se corrige.
+El motivo del deny sigue nombrando al agente de forma legible: `'qa-tester' (arnes-juan:qa-tester)`.
+
+`guard-completado` no compara nombres de agente en ningún punto (revisado); no le aplica.
+
+### Añadido — cobertura PARCIAL de `Bash` en `guard-codigo`
+`hooks/hooks.json` sólo declaraba `Edit|Write|MultiEdit`, así que un `cat > archivo` nunca
+disparaba el guard — y eso fue exactamente lo que hizo un agente al verse rechazado por el bug
+de arriba. Ahora `Bash` tiene su propio matcher (sólo `guard-codigo`) y `arnes_bash_escrituras()`
+detecta las escrituras **evidentes**: redirección `>`/`>>`, `tee`, `cp`, `mv`, `install`,
+`sed -i`, `perl -i` y `dd of=`.
+
+Es deliberadamente parcial y **sesgada al falso negativo**: descarta el texto entrecomillado
+antes de analizar, exige intención de escritura *y* una ruta que case con `codigo_app.globs`, y
+ante la duda permite. Quedan fuera a propósito los scripts, los formateadores que reescriben
+archivos (`prettier --write`, `eslint --fix`), `patch`/`git apply` y todo programa que escriba
+por su cuenta. El mensaje de denegación dice que la cobertura es parcial, para que un falso
+positivo se reconozca al instante.
+
+### Cambiado — la documentación ahora dice la verdad sobre el enforcement
+`AGENTS.md.tpl` §5 prometía «esto lo cumple la máquina, no la buena voluntad». No es cierto y
+prometer de más es peor que documentar el hueco: quien confía en una jaula deja de mirar.
+- §5 y §13: **es una barandilla, no una jaula** — impide el desvío por descuido, no contiene a
+  un agente decidido a rodearla. §13 lista ahora las herramientas cubiertas por invariante y los
+  huecos conocidos (Bash parcial en `guard-codigo`; `guard-completado` no mira `Bash`, así que un
+  `sed -i` sobre un REQ puede cerrarlo sin pasar por las puertas).
+- §6 y §7: «Cumplido por máquina» → «Vigilado por máquina», con puntero al alcance real.
+- `README.md` del plugin: sección *Limitación conocida* con el porqué (un hook no puede analizar
+  shell arbitrario; perseguirlo da falsos positivos y un guard que estorba acaba desactivado —
+  uno apagado protege menos que uno parcial).
+- `arnes-config.json.tpl`: documenta que basta el nombre corto del agente, y sincroniza
+  `arnes_version` (llevaba en 1.6.0).
+
+### Añadido — pruebas de regresión
+`tests/escenarios/hooks/run.sh` pasa de 16 a **44 casos**: identidad con prefijo (aceptado,
+denegado para otro agente, coordinadora denegada, normalización, manifiesto calificado en ambos
+sentidos), escrituras por `Bash` que deben denegarse, y una batería de **falsos positivos** que
+deben permitirse (`cat`, `grep`, `sed -n`, `git commit -m` con la ruta en el mensaje, leer código
+y escribir fuera). Contra el código anterior fallan 14 de los 28 nuevos; contra este, 0.
+
+Dos defensas contra el verde falso de ayer, cuando todos los casos verdes eran casos `allow` que
+también pasan con el hook muerto:
+- **Canario**: si el `deny` canónico no deniega, la corrida aborta en lugar de dar verde.
+- **`ARNES_HOOKS_DIR`**: permite correr el banco contra otra copia de los hooks, para comprobar
+  que un caso nuevo falla con el código anterior.
 ## [1.14.1] — 2026-09-04
 ### Añadido — licencia de uso propietaria (`LICENSE`)
 El repositorio es público —necesario para `/plugin marketplace add`— pero el arnés no es open source, y hasta ahora el repo no lo decía. `LICENSE` fija el marco: permite descarga, instalación y uso interno, incluido trabajo comercial y para clientes; prohíbe redistribución, espejos o marketplaces alternativos, obras derivadas, integración en productos de terceros e ingeniería inversa. Declara explícitamente que configurar el arnés vía `AGENTS.md`/`CLAUDE.md` y plantillas es Uso Interno, no obra derivada — la separación maquinaria/estado del proyecto llevada al plano legal. Los forks se autorizan sólo para preparar contribuciones al repo original y toda contribución queda cedida a SysVEGA. Español vinculante, traducción al inglés informativa; ley aplicable Costa Rica.

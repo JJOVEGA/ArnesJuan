@@ -59,10 +59,14 @@ aprueba cada fase.
 > pipeline y los quality gates, y pide la aprobación humana; no parchea a mano. Es justo al
 > depurar cuando aparece la tentación de "arreglar rápido" saltándose el arnés: no se hace.
 >
-> 🔒 **Esto lo cumple la máquina, no la buena voluntad.** El hook `guard-codigo` (plugin) deniega
-> en runtime cualquier `Edit/Write` sobre `codigo_app.globs` (de `.arnes/config.json`) que no
-> venga del agente `desarrollador`. La coordinadora y los demás subagentes reciben un rechazo
-> con motivo. Para cambiar qué cuenta como "código de la app", edita el manifiesto.
+> 🔒 **La máquina te lo recuerda; no te lo impide del todo.** El hook `guard-codigo` (plugin)
+> deniega en runtime cualquier `Edit/Write/MultiEdit` sobre `codigo_app.globs` (de
+> `.arnes/config.json`) que no venga del agente `desarrollador`, y también las escrituras
+> **evidentes** por `Bash` (redirección `>`/`>>`, `tee`, `cp`/`mv`, `sed -i`, `dd`). La
+> coordinadora y los demás subagentes reciben un rechazo con motivo. Es una **barandilla, no
+> una jaula**: impide el desvío por descuido, no contiene a quien se empeñe en rodearla
+> (alcance y límites reales en §13). Para cambiar qué cuenta como "código de la app", edita
+> el manifiesto.
 
 | Agente | Modelo | Responsabilidad |
 |--------|--------|-----------------|
@@ -94,9 +98,9 @@ Máximo **{{MAX_REINTENTOS}}** vueltas dev↔QA por REQ; superado ese límite, e
 pendiente en `PENDING_APPROVAL.md` y **detiene** el pipeline. No continúa hasta que el humano
 resuelve (aprueba/rechaza) y limpia esa entrada. Así el bloqueo queda visible y por escrito.
 
-> 🔒 **Cumplido por máquina:** mientras `PENDING_APPROVAL.md` tenga entradas en "## Pendientes",
+> 🔒 **Vigilado por máquina:** mientras `PENDING_APPROVAL.md` tenga entradas en "## Pendientes",
 > el hook `guard-completado` (plugin) deniega marcar cualquier REQ como `completado`. El avance
-> no depende de que el modelo "recuerde" detenerse.
+> no depende de que el modelo "recuerde" detenerse — con el alcance real descrito en §13.
 
 **Gates por fase (patrón tipo SPARC):** cada fase del roadmap tiene una puerta explícita —
 no se entra a la fase siguiente hasta cumplir el criterio de terminado de la actual + tu visto
@@ -126,9 +130,10 @@ Las **pruebas automatizadas** son parte de cada REQ: las escribe el `desarrollad
 no pasa a `en-revisión` sin ellas. El tipo (unitarias/integración/e2e) y la cobertura mínima
 se fijan por proyecto; si no se definieron, se usa el estándar del stack.
 
-> 🔒 **Cumplido por máquina:** el hook `guard-completado` (plugin) corre las quality gates de
+> 🔒 **Vigilado por máquina:** el hook `guard-completado` (plugin) corre las quality gates de
 > `.arnes/config.json` justo antes de aceptar la transición de un REQ a `completado` y la
-> **deniega** si alguna falla. Mantén la lista de gates idéntica aquí y en el manifiesto.
+> **deniega** si alguna falla (alcance real en §13). Mantén la lista de gates idéntica aquí y
+> en el manifiesto.
 
 ## 8. CHANGELOG — reglas
 
@@ -202,15 +207,32 @@ memory/                ← memoria/preferencias (no versionar secretos)
 
 ## 13. Enforcement por runtime (hooks del plugin)
 
-Tres invariantes de este documento NO dependen de que el modelo "obedezca el markdown": las
-cumple la máquina vía hooks `PreToolUse` del plugin, que leen `.arnes/config.json`.
+Cuatro invariantes de este documento no se quedan en la prosa: las vigila la máquina vía hooks
+`PreToolUse` del plugin, que leen `.arnes/config.json`.
 
-| Invariante | Sección | Hook |
-|------------|---------|------|
-| La coordinadora no edita código de la app (sólo el `desarrollador`) | §5 | `guard-codigo` |
-| No completar un REQ con aprobaciones pendientes | §6 | `guard-completado` |
-| No completar un REQ con quality gates en rojo | §7 | `guard-completado` |
-| No completar sin `QA: aprobado` (ni un REQ sensible sin `Seguridad: aprobado`) | §9 | `guard-completado` |
+| Invariante | Sección | Hook | Herramientas cubiertas |
+|------------|---------|------|------------------------|
+| La coordinadora no edita código de la app (sólo el `desarrollador`) | §5 | `guard-codigo` | `Edit`/`Write`/`MultiEdit` + `Bash` (parcial) |
+| No completar un REQ con aprobaciones pendientes | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| No completar un REQ con quality gates en rojo | §7 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| No completar sin `QA: aprobado` (ni un REQ sensible sin `Seguridad: aprobado`) | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+
+**Es una barandilla, no una jaula.** El hook impide que el modelo **se desvíe por descuido**;
+no contiene a un agente decidido a rodearlo. Concretamente:
+
+- **`Bash` sólo está cubierto en parte.** `guard-codigo` detecta las escrituras evidentes
+  (redirección `>`/`>>`, `tee`, `cp`, `mv`, `install`, `sed -i`, `perl -i`, `dd of=`) y deniega
+  con un motivo que dice que la cobertura es parcial. Quedan fuera, **a propósito**, los
+  scripts, los heredocs indirectos, los formateadores que reescriben archivos
+  (`prettier --write`, `eslint --fix`), `patch`/`git apply` y cualquier programa que escriba
+  por su cuenta. Un hook no puede analizar shell arbitrario de forma fiable, y perseguirlo
+  produce falsos positivos que acaban con alguien desactivando el guard: un guard apagado
+  protege menos que uno parcial.
+- **`guard-completado` no mira `Bash`.** Un `sed -i` sobre un archivo de `requirements/` puede
+  dejar un REQ en `completado` sin pasar por las puertas. Es un hueco conocido.
+
+La consecuencia práctica: el enforcement por runtime es la última red, no la primera. La regla
+sigue siendo la de §5, y saltársela por otra vía es un incumplimiento aunque ningún hook grite.
 
 **Anti-deriva — el techo honesto:** la máquina puede impedir que un REQ se cierre con la
 validación/auditoría pendientes (campos `QA:`/`Seguridad:`), pero **no** puede verificar que el
@@ -221,3 +243,8 @@ de cada REQ `completado` antes de generar `DELIVERY.md`.
 Si `.arnes/config.json` no existe, los hooks son **inertes** (no estorban). Requieren `jq`;
 sin él, el enforcement queda inactivo con aviso (no bloquea). El changelog sigue cubierto por
 el hook `pre-commit` de git (§8).
+
+**Nombre del agente en el manifiesto:** basta el nombre corto (`desarrollador`). El hook tolera
+el prefijo del plugin que Claude Code añade en runtime (`arnes-juan:desarrollador`), así que no
+hay que escribirlo. Escribirlo es opcional y hace la comparación **estricta**: `agentes.agente_codigo`
+con prefijo sólo acepta a ese proveedor, útil si conviven dos plugins con un agente homónimo.

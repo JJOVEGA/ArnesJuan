@@ -71,3 +71,158 @@ arnes_norm_path() {
   esac
   printf '%s' "$p"
 }
+
+# --- Rutas relativas al proyecto ----------------------------------------------
+# Devuelve la ruta con la que se comparan los globs del manifiesto: relativa a la
+# raíz del proyecto. Una ruta ya relativa (típica en comandos de Bash) se deja tal
+# cual, asumiendo que el comando corre en la raíz; si el agente hizo `cd` a otro
+# sitio, el resultado no casará con ningún glob (falso negativo, nunca positivo).
+arnes_ruta_relativa() {  # <ruta> <raíz del proyecto>
+  local p pp
+  p="$(arnes_norm_path "$1")"
+  pp="$(arnes_norm_path "$2")"
+  p="${p#"$pp"/}"
+  p="${p#./}"
+  printf '%s' "$p"
+}
+
+# ¿La ruta relativa cae dentro de `codigo_app.globs`?
+arnes_es_codigo_app() {  # <ruta relativa> <manifiesto>
+  local rel="$1" manifest="$2" g
+  [ -n "$rel" ] || return 1
+  while IFS= read -r g; do
+    [ -n "$g" ] || continue
+    # shellcheck disable=SC2053  -- glob a la derecha a propósito
+    if [[ "$rel" == $g ]]; then return 0; fi
+  done < <(arnes_jq -r '.codigo_app.globs[]? // empty' "$manifest")
+  return 1
+}
+
+# --- Identidad del agente -----------------------------------------------------
+# Claude Code entrega el agente en `agent_type` CON el prefijo del plugin que lo
+# provee (`arnes-juan:desarrollador`), mientras que el manifiesto lo declara por su
+# nombre corto (`desarrollador`). Comparar en crudo no casaba nunca y el guard
+# terminaba denegando justo al único agente autorizado (bug hallado en SENDA).
+#
+# Regla de coincidencia — tolerante al prefijo, sin volverse permisiva:
+#   1. Se compara el NOMBRE CORTO (lo que va tras el último ':'), normalizado
+#      (minúsculas, sin espacios ni CR): el manifiesto lo escribe una persona.
+#   2. Si AMBOS lados traen prefijo, además deben coincidir los prefijos. Un
+#      proyecto que necesite desambiguar declara `arnes-juan:desarrollador` y con
+#      eso rechaza a `otro-plugin:desarrollador`.
+#   3. Si el manifiesto NO trae prefijo, cualquier proveedor con ese nombre corto
+#      casa. El manifiesto no dijo de qué plugin viene, y exigirlo obligaría a cada
+#      proyecto a conocer el nombre del plugin — que es el fallo que se corrige.
+arnes_norm_ident() {
+  printf '%s' "$1" | tr -d '\r' | tr '[:upper:]' '[:lower:]' \
+    | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
+}
+
+arnes_ident_nombre() {  # nombre corto, sin prefijo de plugin
+  local s; s="$(arnes_norm_ident "$1")"; printf '%s' "${s##*:}"
+}
+
+arnes_ident_prefijo() {  # prefijo del proveedor, o vacío si no lo trae
+  local s; s="$(arnes_norm_ident "$1")"
+  case "$s" in *:*) printf '%s' "${s%:*}" ;; *) printf '' ;; esac
+}
+
+arnes_agente_coincide() {  # <agent_type recibido> <nombre declarado>
+  local rn dn rp dp
+  rn="$(arnes_ident_nombre "$1")"; dn="$(arnes_ident_nombre "$2")"
+  [ -n "$rn" ] && [ "$rn" = "$dn" ] || return 1
+  rp="$(arnes_ident_prefijo "$1")"; dp="$(arnes_ident_prefijo "$2")"
+  if [ -n "$dp" ] && [ -n "$rp" ] && [ "$rp" != "$dp" ]; then return 1; fi
+  return 0
+}
+
+# Nombre del agente para un mensaje humano: corto y, si venía calificado, con el
+# identificador completo entre paréntesis para poder diagnosticar el origen.
+arnes_agente_legible() {  # <agent_type>
+  local ident nombre
+  ident="$(arnes_norm_ident "$1")"
+  nombre="$(arnes_ident_nombre "$1")"
+  if [ "$ident" != "$nombre" ]; then
+    printf "'%s' (%s)" "$nombre" "$ident"
+  else
+    printf "'%s'" "$nombre"
+  fi
+}
+
+# --- Escrituras evidentes dentro de un comando de Bash ------------------------
+# COBERTURA DELIBERADAMENTE PARCIAL. Un hook no puede analizar shell arbitrario de
+# forma fiable (heredocs, scripts, herramientas que escriben por su cuenta), y un
+# intento de cobertura total produce falsos positivos que terminan con alguien
+# desactivando el guard. Aquí sólo se detectan las formas obvias y directas:
+#   redirección `>`/`>>`, `tee`, `cp`, `mv`, `install`, `sed -i`, `perl -i`, `dd of=`.
+# Todo lo demás (compiladores, formateadores, `git apply`, `patch`, scripts) queda
+# fuera a propósito: es una barandilla, no una jaula.
+#
+# Sesgo explícito al FALSO NEGATIVO: primero se descarta el texto entrecomillado,
+# así una mención de una ruta dentro de un mensaje no dispara nada.
+arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
+  local cmd="$1" limpio i j n tok
+  limpio="$(printf '%s' "$cmd" | sed -e 's/"[^"]*"/ /g' -e "s/'[^']*'/ /g")"
+  # Separa los operadores de su operando: `>src/a.ts` -> `> src/a.ts`.
+  limpio="$(printf '%s' "$limpio" \
+    | sed -e 's/>|/>/g' -e 's/>>/>/g' -e 's/>/ > /g' -e 's/|/ | /g' -e 's/;/ ; /g')"
+
+  local reponer_f=0
+  case $- in *f*) reponer_f=1 ;; esac
+  set -f
+  # shellcheck disable=SC2206  -- se quiere el word splitting, con globbing apagado
+  local -a t=($limpio)
+  [ "$reponer_f" -eq 1 ] || set +f
+
+  n=${#t[@]}
+  _arnes_es_separador() { case "$1" in '>'|'|'|';'|'&&'|'||'|'&') return 0 ;; *) return 1 ;; esac; }
+  _arnes_emite() { [ -n "${1:-}" ] && ! _arnes_es_separador "$1" && printf '%s\n' "$1"; }
+
+  for ((i = 0; i < n; i++)); do
+    tok="${t[i]}"
+    case "$tok" in
+      '>')
+        _arnes_emite "${t[i + 1]:-}" ;;
+      tee|*/tee)
+        for ((j = i + 1; j < n; j++)); do
+          _arnes_es_separador "${t[j]}" && break
+          case "${t[j]}" in -*) continue ;; esac
+          _arnes_emite "${t[j]}"
+        done ;;
+      cp|mv|install|*/cp|*/mv|*/install)
+        # El destino es el último operando del segmento; se prueba también su forma
+        # de directorio (`cp x src` debe casar con el glob `src/*`).
+        local dest=""
+        for ((j = i + 1; j < n; j++)); do
+          _arnes_es_separador "${t[j]}" && break
+          case "${t[j]}" in -*) continue ;; esac
+          dest="${t[j]}"
+        done
+        if [ -n "$dest" ]; then
+          _arnes_emite "$dest"
+          case "$dest" in */) ;; *) _arnes_emite "$dest/" ;; esac
+        fi ;;
+      sed|perl|*/sed|*/perl)
+        local en_sitio=0
+        for ((j = i + 1; j < n; j++)); do
+          _arnes_es_separador "${t[j]}" && break
+          # Sólo cuenta como in-place `--in-place[=x]` o un flag corto con `i`
+          # (`-i`, `-i.bak`, `-pi`). `--expression` también lleva una `i` y NO lo es.
+          case "${t[j]}" in
+            --in-place|--in-place=*) en_sitio=1 ;;
+            --*) : ;;
+            -*i*) en_sitio=1 ;;
+          esac
+        done
+        [ "$en_sitio" -eq 1 ] || continue
+        for ((j = i + 1; j < n; j++)); do
+          _arnes_es_separador "${t[j]}" && break
+          case "${t[j]}" in -*) continue ;; esac
+          _arnes_emite "${t[j]}"
+        done ;;
+      of=*)
+        _arnes_emite "${tok#of=}" ;;
+    esac
+  done
+  return 0
+}

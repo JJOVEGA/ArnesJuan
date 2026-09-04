@@ -1,9 +1,9 @@
 {
   "_doc": "Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad EJECUTABLE de las invariantes que en AGENTS.md están en prosa. Editar aquí cambia el enforcement en un solo sitio.",
-  "arnes_version": "1.6.0",
+  "arnes_version": "1.15.0",
 
   "agentes": {
-    "_doc": "El nombre llega al hook en el campo `agent_type`. Sólo `agente_codigo` puede editar `codigo_app.globs`.",
+    "_doc": "El nombre llega al hook en el campo `agent_type`. Sólo `agente_codigo` puede editar `codigo_app.globs`. Basta el nombre corto: el hook tolera el prefijo del plugin que Claude Code añade en runtime (`arnes-juan:desarrollador`). Escribirlo CON prefijo es opcional y hace la comparación estricta con ese proveedor.",
     "agente_codigo": "desarrollador",
     "conocidos": ["analista-requerimientos", "desarrollador", "qa-tester", "auditor-seguridad"]
   },
