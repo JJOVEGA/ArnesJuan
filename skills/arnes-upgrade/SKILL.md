@@ -74,9 +74,62 @@ significaría pisar trabajo de una persona.
   **pregunta**.
 - Destino: `version` de `.claude-plugin/plugin.json` del plugin instalado.
 - Si coinciden: informa que está al día y **para**. Idempotente.
+- **Acredita la versión de origen antes de usarla** (ver abajo). Toda la migración cuelga de
+  ese número.
 - Recupera las plantillas **base** y **destino**. Si alguna no se puede: `UNKNOWN`.
 - **Exige el árbol de git limpio.** Si hay cambios sin comitear, para: el respaldo y la
   reversión los da git, y con el árbol sucio no se puede distinguir lo tuyo de lo mío.
+
+#### La versión de origen es una afirmación, no una evidencia
+
+`arnes_version` lo escribe quien migra, y **ninguna puerta lo comprueba**. Un campo escrito a
+mano que nadie verifica acaba mintiendo — es la misma clase de defecto que
+`Sensible a seguridad: **sí**`, que declaraba una cosa y valía otra.
+
+Aquí miente en el peor sitio posible: es de donde sale la **base** del merge. Si el número es
+falso, la base se recupera igual —sólo que la equivocada— y entonces todo `INTACTO` y todo
+`MODIFICADO` de la Fase 2 se calculan contra un documento que este proyecto nunca tuvo. La
+migración no falla: **acierta en el procedimiento y se equivoca en todo el resultado.**
+
+*(Caso real, 2026-09-04: un proyecto declaraba `1.15.0` con el plugin instalado en `1.14.0` —
+una versión que ni siquiera estaba presente.)*
+
+**Tres resultados, y sólo el primero permite seguir sin decir nada:**
+
+| | Cuándo | Qué se hace |
+|---|---|---|
+| **CONFIRMADO** | `.arnes/plantillas-origen/` existe y es **idéntica** a la del tag declarado | Se sigue |
+| **CORROBORADO** | No hay plantillas de origen, pero los marcadores concuerdan | Se sigue **diciéndolo**: la base es reconstruida, no guardada |
+| **DESMENTIDO** | Los marcadores contradicen lo declarado, o el tag no existe | `UNKNOWN` — **para y pregunta** |
+
+**Contradicción barata que se comprueba primero:** si el origen declarado es **posterior** al
+plugin instalado, es imposible que ese plugin lo escribiera. No lo resuelvas tú — es señal de
+que el campo se editó a mano.
+
+**Los marcadores** son rasgos que sólo pueden existir a partir de una versión, así que su
+presencia acota el origen por abajo y su ausencia —en un archivo por lo demás intacto— lo acota
+por arriba:
+
+| Marcador en el proyecto | Implica origen ≥ |
+|---|---|
+| `requirements/README.md` tiene la sección **Nivel de rigor** | 1.19.0 |
+| `requirements/README.md` nombra `Hallazgos abiertos:` | 1.16.0 |
+| `AGENTS.md` §13 tiene la fila «la transición a `completado` no se hace por shell» | 1.16.0 |
+| `AGENTS.md` §6 nombra la auditoría `(preventiva)` | 1.20.0 |
+| `.arnes/config.json` tiene `plantillas_origen` | 1.20.0 |
+
+*(Los tres primeros están comprobados contra los tags: ausentes en la versión anterior,
+presentes desde la que se indica. Si añades marcadores, compruébalos igual — un marcador mal
+fechado desmiente declaraciones correctas, que es peor que no tener marcador.)*
+
+Un marcador **presente** cuyo origen declarado es anterior desmiente la declaración: el proyecto
+ya venía de más adelante. Un marcador **ausente** en un archivo que por lo demás coincide con la
+plantilla declarada la desmiente también, en la otra dirección.
+
+**No conviertas esto en adivinar la versión.** Los marcadores sirven para **desmentir**, que es
+barato y seguro; reconstruir el número exacto a partir de ellos es inferencia, y la inferencia
+es justo lo que esta skill evita. Si desmienten lo declarado, el resultado es `UNKNOWN` y se
+pregunta — no se sustituye por la que a ti te parezca.
 
 ### Fase 2 — Plan (no toca nada)
 Clasifica **cada** sección en `NUEVO` / `INTACTO` / `MODIFICADO` / `ELIMINADO` / `UNKNOWN`, con

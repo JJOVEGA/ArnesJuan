@@ -51,6 +51,28 @@ vive **dentro** del script. No es una regresión —la cobertura de `Bash` siemp
 parcial— pero ahora está medido y nombrado en vez de quedar bajo el genérico «scripts»: en
 Windows, donde `sed -i` es incómodo, un intérprete es lo primero que alcanza cualquiera.
 
+### Añadido — `/arnes-upgrade` acredita la versión de origen en vez de creérsela
+`arnes_version` lo escribe quien migra y **ninguna puerta lo comprobaba**. Es la misma clase de
+defecto que `Sensible a seguridad: **sí**`: un campo escrito a mano que nadie verifica acaba
+mintiendo. Aquí miente en el peor sitio, porque de ese número sale la **base** del merge a tres
+vías: si es falso, la base se recupera igual —sólo que la equivocada— y entonces cada `INTACTO`
+y cada `MODIFICADO` se calculan contra un documento que el proyecto nunca tuvo. La migración no
+falla: **acierta en el procedimiento y se equivoca en todo el resultado.**
+
+*(Caso real: un proyecto declaraba `1.15.0` con el plugin instalado en `1.14.0` — una versión
+que ni siquiera estaba presente.)*
+
+La Fase 1 pasa a dar **tres resultados**: `CONFIRMADO` —las plantillas de origen guardadas son
+idénticas a las del tag declarado—, `CORROBORADO` —no las hay, pero los marcadores concuerdan, y
+se sigue **diciéndolo**: la base es reconstruida, no guardada— y `DESMENTIDO`, que es `UNKNOWN`
+y para. Antes de nada, una contradicción barata: un origen **posterior** al plugin instalado es
+imposible.
+
+Los **marcadores** son rasgos que sólo pueden existir a partir de una versión. Sirven para
+**desmentir**, que es barato y seguro; reconstruir el número exacto a partir de ellos sería
+inferencia, que es justo lo que esta skill evita. Si desmienten lo declarado se **pregunta**, no
+se sustituye por la que parezca.
+
 ### Añadido — `/arnes-upgrade` avisa del choque de vocabulario del rigor
 Un proyecto con su propia escala —dos niveles, declarados en `Sensible a seguridad:`, con QA
 siempre— no puede mapearla a la del plugin —tres niveles, declarados en `Rigor:`, donde
