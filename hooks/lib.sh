@@ -55,8 +55,21 @@ arnes_warn() { printf 'ARNES (hook): %s\n' "$1" >&2; }
 #      manifiesto es `src/*\r` y tampoco casa nunca.
 # Ambos fallan ABIERTO y en silencio: el enforcement parece activo y no lo está.
 
-# jq con el CR de Windows retirado de la salida.
-arnes_jq() { jq "$@" | tr -d '\r'; }
+# jq con el CR de Windows retirado de la salida, SIN arrancar un segundo proceso.
+#
+# La forma obvia —`jq "$@" | tr -d '\r'`— cuesta DOS arranques de proceso por
+# lectura. Medido en Windows con emulación MSYS y antivirus de por medio, un
+# arranque ronda el segundo, y los guardianes hacen varias lecturas por
+# invocación: el `tr` llegaba a ser la mitad del coste del hook.
+#
+# Bash quita los CR con expansión de variable, que no arranca nada. El
+# `printf` final repone el salto que la sustitución de comandos se come, para
+# que esto siga sirviendo igual en `$(...)` que en `< <(...)`.
+arnes_jq() {
+  local out
+  out="$(jq "$@")" || return $?
+  printf '%s\n' "${out//$'\r'/}"
+}
 
 # Ruta canónica para COMPARAR (no para abrir): separadores `/` y, en Windows, forma
 # mixta `c:/...` con la unidad en minúscula. Fuera de Windows es la identidad.
