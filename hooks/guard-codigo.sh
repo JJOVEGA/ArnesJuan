@@ -23,17 +23,24 @@ proj="$(arnes_project_dir "$input")"
 manifest="$(arnes_manifest_path "$proj")"
 [ -f "$manifest" ] || exit 0   # no es un proyecto del arnés -> inerte
 
-tool="$(printf '%s' "$input" | arnes_jq -r '.tool_name // empty')"
-agent_id="$(printf '%s' "$input" | arnes_jq -r '.agent_id // empty')"
-agent_type="$(printf '%s' "$input" | arnes_jq -r '.agent_type // empty')"
-agente_codigo="$(arnes_jq -r '.agentes.agente_codigo // "desarrollador"' "$manifest")"
+# UNA lectura del input para todo lo que se necesita de él. Este hook corre en
+# CADA Edit/Write/MultiEdit y en CADA Bash; en Windows un arranque de proceso
+# cuesta ~0,5 s, así que leer los campos por separado eran cinco `jq` más cinco
+# `tr` por invocación. `command` va al final porque puede ser multilínea: se lee
+# como el resto del flujo.
+{ IFS= read -r tool; IFS= read -r agent_id; IFS= read -r agent_type; IFS= read -r fp
+  comando="$(cat)"; } < <(
+  printf '%s' "$input" | arnes_jq -r '[.tool_name // "",
+                                       .agent_id // "",
+                                       .agent_type // "",
+                                       .tool_input.file_path // "",
+                                       .tool_input.command // ""] | .[]')
 
 # --- ¿Qué ruta(s) de código de la app toca esta llamada? ---
 # Comparación en forma canónica: en Windows `proj` y `fp` llegan en formas distintas.
 objetivo=""      # primera ruta de código de app detectada
 via_bash=0
 if [ "$tool" = "Bash" ]; then
-  comando="$(printf '%s' "$input" | arnes_jq -r '.tool_input.command // empty')"
   [ -n "$comando" ] || exit 0
   via_bash=1
   while IFS= read -r cand; do
@@ -42,13 +49,16 @@ if [ "$tool" = "Bash" ]; then
     if arnes_es_codigo_app "$rel" "$manifest"; then objetivo="$rel"; break; fi
   done < <(arnes_bash_escrituras "$comando")
 else
-  fp="$(printf '%s' "$input" | arnes_jq -r '.tool_input.file_path // empty')"
   [ -n "$fp" ] || exit 0
   rel="$(arnes_ruta_relativa "$fp" "$proj")"
   arnes_es_codigo_app "$rel" "$manifest" && objetivo="$rel"
 fi
 
 [ -n "$objetivo" ] || exit 0   # no es código de app -> permitir
+
+# Sólo aquí hace falta el manifiesto: la inmensa mayoría de las llamadas ya
+# salieron arriba sin llegar a leerlo.
+agente_codigo="$(arnes_jq -r '.agentes.agente_codigo // "desarrollador"' "$manifest")"
 
 # Es código de app. Permitido SÓLO si es un subagente real (agent_id presente) Y
 # además es el agente de código designado. La comparación tolera el prefijo del

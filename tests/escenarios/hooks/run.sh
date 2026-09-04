@@ -12,7 +12,12 @@ set -uo pipefail
 # ARNES_HOOKS_DIR permite apuntar a OTRA copia de los hooks: así se comprueba que un
 # caso nuevo falla contra el código anterior (si pasa antes del arreglo, no prueba nada).
 HOOKS_DIR="${ARNES_HOOKS_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../hooks" && pwd)}"
+TPL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../templates" && pwd)"
 PASS=0; FAIL=0
+# Filtro opcional: `run.sh bash` corre solo los casos cuyo nombre lo contenga.
+# Existe porque una vuelta completa cuesta ~8 min en Windows, y un ciclo de
+# verificacion caro es lo que empuja a saltarse la suite.
+FILTRO="${1:-}"
 
 command -v jq >/dev/null 2>&1 || { echo "SKIP: jq no instalado"; exit 0; }
 
@@ -54,10 +59,12 @@ emite_bash() {
      + (if $at!=""  then {agent_type:$at} else {} end)'
 }
 
-# mkreq <archivo> <sensible> <qa> <seguridad> — crea un REQ en disco con sus veredictos.
+# mkreq <archivo> <sensible> <qa> <seguridad> [hallazgos] — crea un REQ en disco.
 mkreq() {
   printf '# %s\nEstado: en-revisión\nSensible a seguridad: %s\nQA: %s\nSeguridad: %s\n' \
     "$(basename "$1" .md)" "$2" "$3" "$4" > "$1"
+  if [ -n "${5:-}" ]; then printf 'Hallazgos abiertos: %s\n' "$5" >> "$1"; fi
+  return 0
 }
 
 # setcfg <filtro jq> — muta el manifiesto del proyecto de prueba.
@@ -69,6 +76,7 @@ corre() { printf '%s' "$2" | "$HOOKS_DIR/$1" 2>/dev/null; }
 # check <nombre> <esperado:deny|allow> <script> <json>
 check() {
   local nombre="$1" esperado="$2" script="$3" json="$4" out got
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
   out="$(corre "$script" "$json")"
   if printf '%s' "$out" | grep -Eq '"permissionDecision": *"deny"'; then got=deny; else got=allow; fi
   if [ "$got" = "$esperado" ]; then
@@ -82,6 +90,7 @@ check() {
 # Un deny mudo, o que no nombre a quien lo intentó, es un bug de diagnóstico.
 check_motivo() {
   local nombre="$1" patron="$2" script="$3" json="$4" out motivo
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
   out="$(corre "$script" "$json")"
   motivo="$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecisionReason // empty' 2>/dev/null)"
   if [ -n "$motivo" ] && printf '%s' "$motivo" | grep -Eq "$patron"; then
@@ -195,6 +204,52 @@ check "coordinadora: la ruta sólo se menciona en un mensaje -> allow" allow gua
 check "coordinadora: lee código y escribe fuera -> allow" allow guard-codigo.sh "$(emite_bash 'cp src/app.ts /tmp/copia.ts' "" "")"
 check "coordinadora: redirige un log fuera de los globs -> allow" allow guard-codigo.sh "$(emite_bash 'npm run build > /tmp/build.log 2>&1' "" "")"
 check "qa-tester escribe en tests/ (no es código de app) -> allow" allow guard-codigo.sh "$(emite_bash 'echo x > tests/a.test.ts' "a11" "arnes-juan:qa-tester")"
+
+# --- Clase del hallazgo: la unica puerta que existe para DEJAR PASAR ------------
+# Un defecto del propio arnes no puede impedir cerrar una funcion de negocio.
+echo "Clase del hallazgo:"
+mkreq "$PROJ/requirements/REQ-020.md" "no" "aprobado" "n/a" "SEC-1 (instrumento)"
+check "hallazgo de instrumento -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-020.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-021.md" "no" "aprobado" "n/a" "SEC-2 (usuario/dinero)"
+check "hallazgo de usuario/dinero -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-021.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-022.md" "no" "aprobado" "n/a" "SEC-3 (contrato)"
+check "hallazgo de contrato -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-022.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-023.md" "no" "aprobado" "n/a" "SEC-4"
+check "hallazgo SIN clase -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-023.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-024.md" "no" "aprobado" "n/a" "SEC-5 (instrumento), SEC-6 (usuario/dinero)"
+check "mezcla: basta uno bloqueante -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-024.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-025.md" "no" "aprobado" "n/a" "(ninguno)"
+check "sin hallazgos abiertos -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-025.md" "" "" 'Estado: completado')"
+# Compatibilidad: un REQ anterior a este campo no puede quedar bloqueado por el.
+mkreq "$PROJ/requirements/REQ-026.md" "no" "aprobado" "n/a"
+check "REQ antiguo sin el campo -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-026.md" "" "" 'Estado: completado')"
+
+# --- Cierre de un REQ por Bash: se DERIVA a Edit/Write -------------------------
+# Era la limitacion conocida de la version anterior: `guard-completado` no miraba
+# Bash, asi que un `sed -i` cerraba un REQ sin que ninguna puerta lo evaluara.
+echo "Cierre de REQ por Bash (guard-completado):"
+check "sed -i que cierra un REQ -> deny" deny guard-completado.sh \
+  "$(emite_bash "sed -i 's/en-revision/completado/' requirements/REQ-001.md" "" "")"
+check "heredoc que cierra un REQ -> deny" deny guard-completado.sh \
+  "$(emite_bash "cat > requirements/REQ-001.md <<'FIN'
+Estado: completado
+FIN" "" "")"
+# Frontera: mencionar el estado NO basta, hace falta escribir en el REQ.
+check "leer un REQ que menciona completado -> allow" allow guard-completado.sh \
+  "$(emite_bash "grep -n 'completado' requirements/REQ-001.md" "" "")"
+check "anotar en un REQ sin cerrarlo -> allow" allow guard-completado.sh \
+  "$(emite_bash "echo 'nota de trabajo' >> requirements/REQ-001.md" "" "")"
+check "escribir fuera de requirements/ -> allow" allow guard-completado.sh \
+  "$(emite_bash "echo completado > notas.txt" "" "")"
+
+# --- Arranque limpio: la plantilla de PENDING no puede bloquear ----------------
+# El ejemplo de formato vivia COMENTADO bajo `## Pendientes`; el conteo lo leia
+# como 1 pendiente y un proyecto recien inicializado no cerraba ningun REQ.
+echo "Arranque limpio — plantilla de PENDING_APPROVAL:"
+cp "$TPL_DIR/PENDING_APPROVAL.md.tpl" "$PROJ/PENDING_APPROVAL.md"
+check "PENDING recien copiado de la plantilla -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-001.md" "" "" 'Estado: completado')"
+printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 
 echo "INERTE — sin manifiesto, el hook no estorba:"
 PROJ2="$(mktemp -d)"; mkdir -p "$PROJ2/src"; export CLAUDE_PROJECT_DIR="$PROJ2"

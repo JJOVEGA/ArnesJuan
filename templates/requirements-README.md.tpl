@@ -28,6 +28,24 @@ El hook `guard-completado` **impide** marcar `completado` sin `QA: aprobado`, y 
 `Sensible a seguridad: sí` sin `Seguridad: aprobado`. Llegar a "aprobado" exige que los
 hallazgos estén resueltos **y reflejados en el REQ/NFR** (write-back, ver `AGENTS.md` §9).
 
+## Clases de hallazgo
+Todo hallazgo abierto se declara en el campo `Hallazgos abiertos:` de la cabecera, con
+su **clase entre paréntesis**: `SEC-121 (instrumento), SEC-144 (usuario/dinero)`.
+
+| Clase | Qué es | Efecto en el cierre |
+|---|---|---|
+| `usuario/dinero` | Afecta lo que alguien ve, decide o cobra | **Bloquea.** Reabre el REQ |
+| `contrato` | El requerimiento dice algo falso sobre lo construido | **Bloquea** hasta el write-back |
+| `instrumento` | El control o la prueba tienen un defecto, sin efecto en el producto | **No bloquea.** Deuda técnica con dueño |
+
+**Un hallazgo sin clase declarada no cuenta como hallazgo** — y la puerta deniega el
+cierre hasta que se clasifique, porque no puede saber si bloquea.
+
+Por qué existe la clase `instrumento`: un defecto del propio arnés —un lector de
+umbral, un guardián— **no puede impedir cerrar una función de negocio**. Atacar
+guardianes es valioso y tiene su propio ciclo; los hallazgos que produzca entran como
+deuda con dueño, no reabren REQ de negocio.
+
 ## Cambios de requerimientos
 Un REQ **no se reescribe encima**: se versiona. Todo cambio se anota en el **Historial de
 cambios** del REQ (fecha · antes→después · causa · ADR si aplica). Los cambios de fondo
@@ -48,6 +66,7 @@ Prioridad: (alta / media / baja)
 Sensible a seguridad: (sí / no)
 QA: pendiente
 Seguridad: n/a
+Hallazgos abiertos: (ninguno)
 NFR relacionados: (NFR-xxx, ...)
 
 ## Historia

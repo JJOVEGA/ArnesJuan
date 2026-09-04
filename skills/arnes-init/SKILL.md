@@ -38,6 +38,10 @@ marcador antes de hacer nada.
      (p. ej. `["src/*", "app/*"]`). Pregúntalas explícitamente; sin ellas la regla A1 no
      protege nada.
    - `quality_gates`: los MISMOS comandos que pusiste en `AGENTS.md §7` (deben coincidir).
+   - `{{ARNES_VERSION}}`: **NO lo teclees.** Léelo de `.claude-plugin/plugin.json`
+     del propio plugin (`jq -r .version`). Una versión escrita a mano se desfasa de
+     la real en cuanto el arnés sube de versión, y entonces el manifiesto miente
+     sobre contra qué enforcement se inicializó el proyecto.
    - El resto (`agentes`, `estados`, `requirements_dir`, `pending_approval`) viene con los
      valores por defecto del arnés; cámbialos sólo si el proyecto se desvía del estándar.
    - **Requisito:** los hooks usan `jq`. Si no está instalado, el enforcement queda inactivo
