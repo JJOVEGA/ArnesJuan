@@ -20,6 +20,7 @@
     "todos": ["borrador", "pendiente", "en-progreso", "en-revisión", "completado", "bloqueado"]
   },
 
+  "plantillas_origen": ".arnes/plantillas-origen",
   "requirements_dir": "requirements",
   "pending_approval": "PENDING_APPROVAL.md"
 }

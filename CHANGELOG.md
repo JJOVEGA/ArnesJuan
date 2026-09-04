@@ -2,6 +2,65 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.20.0] — 2026-09-04
+### Cambiado — `/arnes-upgrade` pasa a ser un merge a tres vías, no una comparación
+La primera versión comparaba el archivo del proyecto contra la plantilla nueva y preguntaba
+ante cualquier diferencia. En un proyecto real **casi todo difiere**, así que serían ~20
+preguntas por migración y el usuario acabaría aceptándolas sin leer — peor que no preguntar.
+
+El modelo correcto son **tres** documentos: la plantilla de la versión de **origen** (base), el
+archivo **del proyecto**, y la plantilla de **destino**. La base es lo que permite distinguir
+*«esto lo escribió una persona»* de *«esto es andamiaje que nadie tocó»*.
+
+**Cuatro estados** en vez de «igual o distinto»:
+
+| Estado | Evidencia | Acción |
+|---|---|---|
+| `NUEVO` | No existía en la base | Añadir |
+| `INTACTO` | Idéntico a la base | Actualizar |
+| `MODIFICADO` | Existe y difiere de la base | Conflicto |
+| `ELIMINADO` | Existía en la base y ya no está | Conflicto |
+
+`ELIMINADO` es conflicto y **no** «volver a añadir»: una sección ausente pudo borrarse a
+propósito, y reponerla revertiría una decisión humana en silencio.
+
+**Tres resultados, nunca dos:** `SAFE` se aplica solo; `CONFLICTO` y **`UNKNOWN`** se detienen
+igual. Nunca se convierte incertidumbre en decisión — una comprobación que no puede responder
+no dice «no sé», dice «sí», y aquí eso significaría pisar trabajo de una persona.
+
+**Protocolo verificable**, porque lo ejecuta un agente y no código determinista: inventario →
+plan → aplicar sólo lo planeado → **verificar releyendo el disco** → registrar. La fase de
+verificación es la que importa: *el acto de editar no es la prueba de que se editó bien*. Es la
+misma regla de acreditar por contenido que el arnés aplica a todo lo demás.
+
+**Reanudable, no atómica.** El plan vive en `.arnes/migracion.md` y al reanudar sólo hay dos
+caminos válidos: continuar desde la primera operación no aplicada, o revertir con git. Nunca
+«parece que algunas cosas ya están, sigo desde donde me parezca» — eso vuelve a inferir el
+estado del contenido, que es lo que el plan existe para evitar.
+
+**El respaldo lo da git**, no una copia hecha a mano: se exige el árbol limpio antes de empezar.
+
+### Añadido — `arnes-init` guarda las plantillas de origen
+En `.arnes/plantillas-origen/`, sin rellenar. Ocupa unos KB y es lo que hace posible el merge a
+tres vías **sin depender de tener acceso al repositorio del plugin**. La migración las refresca
+al terminar, para que la siguiente tenga base.
+
+### Corregido — `v1.14.0` nunca se etiquetó
+Sin ese tag, un proyecto inicializado en 1.14.0 no tenía base recuperable y la migración habría
+caído en `UNKNOWN` para todo. Etiquetada retroactivamente; las seis versiones vivas
+(`v1.14.0`…`v1.19.0`) están verificadas contra el `plugin.json` que declaran.
+
+### Añadido — el ciclo se cumple: seguridad no firma lo que QA no ha validado
+`AGENTS.md` §6 fija desarrollador → qa-tester → auditor-seguridad. La regla ya estaba escrita;
+faltaba que se cumpliera: buscando paralelismo se emitió la firma de seguridad sobre árboles que
+QA no había validado, y el argumento del propio auditor lo zanja — *«yo no miro seis de las
+siete quality gates»*.
+
+Corre en **cualquier** edición del REQ, no sólo al cerrarlo: el daño se hace al escribir el
+veredicto. **Excepción nombrada:** la auditoría **preventiva** —sin código todavía— sí puede ir
+por delante, y se declara como `Seguridad: aprobado (preventiva)` **al emitirla**, no al
+invocarla.
+
 ## [1.19.0] — 2026-09-04
 ### Añadido — nivel de rigor por REQ: no todo requerimiento paga lo mismo
 El arnés aplicaba el máximo rigor a todo: un cambio de texto pasaba por los mismos cuatro
