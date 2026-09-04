@@ -24,6 +24,9 @@ Las invariantes críticas no se quedan en el markdown: las vigila la máquina v�
   reciben un rechazo en runtime, con el motivo).
 - **Un REQ no pasa a `completado`** si hay aprobaciones pendientes en `PENDING_APPROVAL.md`, si
   alguna quality gate está en rojo, o si falta el veredicto de QA/seguridad.
+- **El orden del ciclo se cumple:** `Seguridad: aprobado` no se escribe sobre un árbol que QA no
+  ha validado —el auditor no mira las quality gates—. La única salida es declarar la auditoría
+  **preventiva**, que desbloquea el orden pero **no** cierra un REQ crítico.
 
 Son **inertes** sin `.arnes/config.json` (no estorban en repos ajenos al arnés) y requieren `jq`.
 El `pre-commit` de git sigue exigiendo el changelog en cada commit.
@@ -37,8 +40,17 @@ comparación estricta con ese proveedor.
 `guard-codigo` mira `Edit`/`Write`/`MultiEdit` y, en `Bash`, sólo las escrituras **evidentes**:
 redirección `>`/`>>`, `tee`, `cp`, `mv`, `install`, `sed -i`, `perl -i` y `dd of=`. Quedan fuera
 los scripts, los formateadores que reescriben archivos (`prettier --write`, `eslint --fix`),
-`patch`/`git apply` y cualquier programa que escriba por su cuenta. `guard-completado` no mira
-`Bash` en absoluto: un `sed -i` sobre un REQ puede cerrarlo sin pasar por las puertas.
+`patch`/`git apply` y cualquier programa que escriba por su cuenta.
+
+`guard-completado` **sí** mira `Bash`, pero no lo juzga: lo **deriva**. Un comando que escribe en
+`requirements/` y menciona el estado terminal se deniega pidiendo que la transición se haga con
+`Edit`/`Write`, que es donde el hook puede ver el contenido resultante y evaluar veredictos, cola
+y quality gates. Reimplementar esas puertas para la shell sería una segunda transcripción de la
+misma regla, y dos transcripciones se desfasan. Dentro de esa vía la detección es
+**deliberadamente ancha**, porque la forma más natural de cerrar un REQ por shell
+—`sed -i 's/en-revisión/completado/'`— sustituye el **valor** y no escribe nunca la palabra
+«Estado». Fuera de esas formas evidentes sigue habiendo vías abiertas: la cobertura de `Bash` es
+parcial en las dos puertas.
 
 **El porqué:** un hook no puede analizar shell arbitrario de forma fiable — redirecciones
 indirectas, heredocs, variables, subshells, scripts que escriben por su cuenta. Perseguir la

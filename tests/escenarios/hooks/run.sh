@@ -23,7 +23,9 @@ command -v jq >/dev/null 2>&1 || { echo "SKIP: jq no instalado"; exit 0; }
 
 # --- proyecto de prueba efímero ---
 PROJ="$(mktemp -d)"
-trap 'rm -rf "$PROJ"' EXIT
+# Un archivo fijo, reutilizado: capturar stderr no debe costar un fork por llamada.
+ERRLOG="$(mktemp)"
+trap 'rm -rf "$PROJ"; rm -f "$ERRLOG"' EXIT
 mkdir -p "$PROJ/.arnes" "$PROJ/requirements" "$PROJ/src" "$PROJ/tests"
 cat > "$PROJ/.arnes/config.json" <<'JSON'
 {
@@ -88,7 +90,10 @@ Estado: en-revisión
 setcfg()   { jq "$1" "$PROJ/.arnes/config.json" > "$PROJ/.arnes/c.tmp" && mv "$PROJ/.arnes/c.tmp" "$PROJ/.arnes/config.json"; }
 setgates() { setcfg "$1"; }
 
-corre() { printf '%s' "$2" | "$HOOKS_DIR/$1" 2>/dev/null; }
+# stderr NO se descarta: se aparta para poder enseñarlo cuando algo falla.
+corre() { : > "$ERRLOG"; printf '%s' "$2" | "$HOOKS_DIR/$1" 2>"$ERRLOG"; }
+# diagnostico: lo que el hook escribio en stderr, si escribio algo.
+diag() { [ -s "$ERRLOG" ] && sed 's/^/          stderr| /' "$ERRLOG"; return 0; }
 
 # check <nombre> <esperado:deny|allow> <script> <json>
 check() {
@@ -99,7 +104,7 @@ check() {
   if [ "$got" = "$esperado" ]; then
     echo "  PASS  $nombre  ($got)"; PASS=$((PASS+1))
   else
-    echo "  FAIL  $nombre  esperado=$esperado got=$got"; FAIL=$((FAIL+1))
+    echo "  FAIL  $nombre  esperado=$esperado got=$got"; diag; FAIL=$((FAIL+1))
   fi
 }
 
@@ -113,15 +118,24 @@ check_motivo() {
   if [ -n "$motivo" ] && printf '%s' "$motivo" | grep -Eq "$patron"; then
     echo "  PASS  $nombre"; PASS=$((PASS+1))
   else
-    echo "  FAIL  $nombre  motivo=<${motivo:-vacío}> no casa /$patron/"; FAIL=$((FAIL+1))
+    echo "  FAIL  $nombre  motivo=<${motivo:-vacío}> no casa /$patron/"; diag; FAIL=$((FAIL+1))
   fi
 }
 
 # --- CANARIO: si el hook no corre, todo caso `allow` sería un verde falso -------
 canario="$(corre guard-codigo.sh "$(emite_edit "$PROJ/src/app.ts" "" "" 'hola')")"
 if ! printf '%s' "$canario" | grep -Eq '"permissionDecision": *"deny"'; then
-  echo "ABORT: el canario no denegó; el hook no se está ejecutando (¿CRLF? ¿jq? ¿permisos?)."
+  echo "ABORT: el canario no denegó; el hook no se está ejecutando."
   echo "       Con el hook muerto, todos los casos 'allow' pasarían en falso."
+  # Un aborto sin evidencia obliga a adivinar, y adivinar fue lo que nos costó un día:
+  # se relanza UNA vez enseñando todo lo que el primer intento se calló.
+  echo "       --- evidencia del intento ---"
+  diag
+  echo "       salida: <$canario>"
+  printf '%s' "$(emite_edit "$PROJ/src/app.ts" "" "" 'hola')" | "$HOOKS_DIR/guard-codigo.sh" > /dev/null
+  echo "       rc del hook en un 2º intento: $?"
+  echo "       hook: $HOOKS_DIR/guard-codigo.sh"
+  ls -l "$HOOKS_DIR/guard-codigo.sh" 2>&1 | sed 's/^/       /'
   exit 1
 fi
 
@@ -313,7 +327,8 @@ mkreq_r "REQ-050" "no" "pendiente" "pendiente" ""
 check "firmar Seguridad con QA pendiente -> deny" deny guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Seguridad: aprobado')"
 check "...y tampoco al cerrar de paso -> deny" deny guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Seguridad: aprobado')"
+  "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Estado: completado
+Seguridad: aprobado')"
 # La excepcion se declara AL EMITIRLA, no al invocarla.
 check "auditoria PREVENTIVA declarada -> allow" allow guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Seguridad: aprobado (preventiva)')"
@@ -327,6 +342,19 @@ check "edicion que NO toca Seguridad -> allow" allow guard-completado.sh \
 mkreq_r "REQ-053" "no" "" "pendiente" ""
 check "REQ antiguo sin campo QA -> allow" allow guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-053.md" "" "" 'Seguridad: aprobado')"
+# La firma preventiva desbloquea el ORDEN, no el CIERRE: se emitio antes de que
+# existiera el codigo, luego no acredita el codigo. Un REQ critico sigue exigiendo
+# la auditoria de verdad.
+mkreq_r "REQ-054" "sí" "aprobado" "aprobado (preventiva)" ""
+check "critico: solo firma preventiva no cierra -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-054.md" "" "" 'Estado: completado')"
+mkreq_r "REQ-055" "sí" "aprobado" "aprobado" ""
+check "critico: auditoria real si cierra -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-055.md" "" "" 'Estado: completado')"
+# Sin esto la regla del orden seria un abrazo mortal: QA firma primero, siempre.
+mkreq_r "REQ-056" "sí" "pendiente" "pendiente" ""
+check "sensible: QA firma sin esperar a seguridad -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-056.md" "" "" 'QA: aprobado')"
 
 echo "guard.sh — punto de entrada unico (los dos guardianes, un proceso):"
 check "A1 por guard.sh: coordinadora edita src/ -> deny" deny guard.sh \

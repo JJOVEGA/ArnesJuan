@@ -134,6 +134,17 @@ nada.
   **pregunta al usuario qué es crítico en su dominio**, no lo inventes.
 - `AGENTS.md` §13: fila «el rigor se puede subir, nunca bajar».
 
+### Hacia 1.20.0
+- `AGENTS.md` §6: bloque **el orden no es una sugerencia** —seguridad no firma lo que QA no ha
+  validado— con la **excepción nombrada** de la auditoría preventiva.
+- `AGENTS.md` §13: fila «Seguridad no firma lo que QA no ha validado».
+- `requirements/README.md`: el valor `aprobado (preventiva)` en el campo `Seguridad:` y el
+  párrafo **el orden importa**.
+
+  Esta migración **no es cosmética**: el hook empieza a denegar una escritura que antes pasaba,
+  y la salida —declarar la auditoría preventiva— sólo existe si el proyecto la tiene escrita.
+  Un proyecto sin migrar verá un `deny` cuya excepción no está en su `AGENTS.md`.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

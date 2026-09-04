@@ -61,6 +61,42 @@ veredicto. **Excepción nombrada:** la auditoría **preventiva** —sin código 
 por delante, y se declara como `Seguridad: aprobado (preventiva)` **al emitirla**, no al
 invocarla.
 
+La excepción **está escrita donde se lee**, no sólo en el mensaje del `deny`: `AGENTS.md` §6 y
+§13, `requirements/README.md` y la ficha del `auditor-seguridad`. Una máquina que exige algo que
+el `AGENTS.md` del proyecto no describe es exactamente la deriva que `/arnes-upgrade` existe para
+evitar; por eso esta migración **no es cosmética**: sin ella el hook deniega y la salida no está
+documentada en el proyecto.
+
+### Corregido — el bloqueo mutuo que la regla del orden habría causado
+La ficha del `qa-tester` metía **dos actos en una frase**: «marca `QA: aprobado` **y**
+`Estado: completado`», condicionado a que ya existiera `Seguridad: aprobado`. Con la regla del
+orden recién añadida eso cierra un ciclo: QA espera la firma de seguridad, y seguridad no puede
+firmar hasta que QA apruebe. Un REQ sensible no habría avanzado nunca.
+
+Los dos actos van separados: **el veredicto se emite en cuanto la validación pasa** —sin esperar
+a nadie— y **el cierre sí espera** la auditoría. Un `aprobado (preventiva)` desbloquea el orden
+pero **no cierra** un REQ crítico, y ahora hay caso de prueba que lo fija.
+
+### Corregido — el `README` describía un agujero que ya estaba tapado
+Decía que `guard-completado` «no mira `Bash` en absoluto» y que un `sed -i` podía cerrar un REQ
+sin pasar por las puertas. Dejó de ser cierto en 1.16.0: sí mira `Bash`, y lo **deriva** a
+`Edit`/`Write`. Documentación caducada en la dirección peligrosa —prometer menos protección de la
+que hay también es deriva—.
+
+### Corregido — el banco de pruebas dejaba de tragarse el `stderr`
+`corre()` mandaba `stderr` a `/dev/null`, así que un aborto del canario sólo podía ofrecer tres
+conjeturas —«¿CRLF? ¿jq? ¿permisos?»— y ninguna evidencia; es justo lo que el propio banco
+prohíbe en `check_motivo`. Ahora se aparta a un archivo fijo reutilizado (cero forks extra) y
+todo fallo lo enseña; el canario añade además la salida real, el `rc` de un segundo intento y los
+permisos del hook.
+
+### Corregido — los insumos de proyectos reales no podían publicarse por descuido
+Los documentos que traen lecciones de un proyecto concreto llevan hallazgos de un cliente
+—nombres, umbrales, arquitectura, huecos de seguridad— y este repositorio es **público**.
+Estaban sin versionar, pero nada impedía que un `git add -A` distraído los subiera. Ahora
+`mejoras-arnes-*.md` e `insumos/` están ignorados: el arnés se queda con la **forma** del
+hallazgo y nunca con su instancia.
+
 ## [1.19.0] — 2026-09-04
 ### Añadido — nivel de rigor por REQ: no todo requerimiento paga lo mismo
 El arnés aplicaba el máximo rigor a todo: un cambio de texto pasaba por los mismos cuatro

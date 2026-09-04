@@ -21,8 +21,16 @@ Un REQ solo pasa a `completado` cuando: criterios de aceptación cumplidos + qua
 ## Veredictos de validación (campos del REQ)
 Cierran el lazo de hallazgos para que no haya deriva silenciosa:
 - `QA:` — veredicto del `qa-tester`: `pendiente` | `aprobado` | `con-hallazgos`.
-- `Seguridad:` — veredicto del `auditor-seguridad`: `n/a` | `pendiente` | `aprobado` | `vetado`
-  (al marcar el REQ `Sensible a seguridad: sí`, pásalo de `n/a` a `pendiente`).
+- `Seguridad:` — veredicto del `auditor-seguridad`: `n/a` | `pendiente` | `aprobado` |
+  `aprobado (preventiva)` | `vetado` (al marcar el REQ `Sensible a seguridad: sí`, pásalo de
+  `n/a` a `pendiente`).
+
+**El orden importa:** `Seguridad: aprobado` no se escribe mientras `QA:` siga en `pendiente` o
+`con-hallazgos` — el auditor no mira las quality gates, así que su firma sobre un árbol sin
+validar acreditaría algo que no revisó. El hook lo impide **en cualquier edición del REQ**, no
+sólo al cerrarlo, porque el daño se hace al escribir el veredicto. La única salida es la
+auditoría **preventiva** —hecha antes de que exista el código—, que se declara al emitirla
+como `Seguridad: aprobado (preventiva)` y **no** cubre el código posterior.
 
 El hook `guard-completado` **impide** marcar `completado` sin `QA: aprobado`, y un REQ
 `Sensible a seguridad: sí` sin `Seguridad: aprobado`. Llegar a "aprobado" exige que los
