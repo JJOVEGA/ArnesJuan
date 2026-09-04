@@ -26,7 +26,7 @@ DIR="${BASH_SOURCE[0]%/*}"
 # correcto: una denegación es final y no hay nada más que juzgar.
 arnes_guard_completado() {
   local tool fp bash_cmd req_dir estado_done pending_rel rel d escrituras nuevo
-  local disk qa seg sens hall h id clase pending abiertas tmp cmd out
+  local disk qa seg sens rigor hall h id clase pending abiertas tmp cmd out
 
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
@@ -103,7 +103,19 @@ arnes_guard_completado() {
   # (pre-edición), porque QA/seguridad fijan su veredicto antes de la transición a completado.
   disk=''; [ -f "$fp" ] && IFS= read -r -d '' disk < "$fp"   # `read`, no `cat`: sin fork
   arnes_campos_req "$disk" "$nuevo"
-  qa="$ARNES_QA"; seg="$ARNES_SEG"; sens="$ARNES_SENS"
+  qa="$ARNES_QA"; seg="$ARNES_SEG"; sens="$ARNES_SENS"; rigor="$ARNES_RIGOR"
+
+  # --- Nivel de rigor: cuanta ceremonia exige ESTE requerimiento ---
+  # `ligero` no pide veredictos: es para lo que no tiene logica —textos, etiquetas,
+  # ajustes de presentacion—. `estandar` pide QA. `critico` pide QA y auditoria.
+  #
+  # Un REQ que no declara `Rigor:` se juzga EXACTAMENTE como antes de que los
+  # niveles existieran, asi que un proyecto sin migrar no nota ningun cambio.
+  # Y `Sensible a seguridad: si` impone `critico` como suelo: el nivel se puede
+  # subir, nunca bajar (ver `arnes_rigor_efectivo` en lib.sh).
+  if [ "$rigor" = "ligero" ]; then
+    return 0
+  fi
 
   # Solo se exige el campo cuando está presente (compatibilidad con REQ antiguos sin veredictos).
   if [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
@@ -113,10 +125,10 @@ arnes_guard_completado() {
   # llegan aquí como la misma forma. Antes se comparaba contra la lista `sí|si` y
   # un REQ escrito `Sensible a seguridad: SÍ` NO casaba —la conversión a minúsculas
   # no toca la `Í` sin locale— y se saltaba esta puerta en silencio.
-  case "$sens" in
-    si)
+  case "$rigor" in
+    critico)
       if [ "$seg" != "aprobado" ]; then
-        arnes_deny "ARNES: no se puede completar '$rel': es 'Sensible a seguridad: sí' y el veredicto de seguridad es '${seg:-ausente}' (se requiere 'Seguridad: aprobado'). El control hallado debe quedar como NFR antes de cerrar (AGENTS.md §9)."
+        arnes_deny "ARNES: no se puede completar '$rel': su rigor efectivo es 'critico' y el veredicto de seguridad es '${seg:-ausente}' (se requiere 'Seguridad: aprobado'). El control hallado debe quedar como NFR antes de cerrar (AGENTS.md §9)."
       fi ;;
   esac
 

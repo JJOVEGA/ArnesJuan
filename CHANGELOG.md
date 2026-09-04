@@ -2,6 +2,45 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.19.0] — 2026-09-04
+### Añadido — nivel de rigor por REQ: no todo requerimiento paga lo mismo
+El arnés aplicaba el máximo rigor a todo: un cambio de texto pasaba por los mismos cuatro
+agentes que un cálculo de dinero. Medido en el proyecto de origen, un REQ cuesta del orden de
+**1 M de tokens** y varias horas de reloj; para la mayoría eso es desproporcionado, y el arnés
+no tenía forma de decirlo.
+
+Cada REQ declara ahora `Rigor:` en su cabecera:
+
+| Nivel | Qué corre | Cuándo |
+|---|---|---|
+| `ligero` | analista + desarrollador + quality gates | Sin lógica: textos, etiquetas, presentación |
+| `estandar` | + QA | Lógica de negocio ordinaria |
+| `critico` | + auditoría de seguridad | Dinero · datos personales · identidad o acceso · documento con efecto legal · cambio irreversible |
+
+**El arnés trae el MECANISMO, nunca el MAPEO.** Los criterios son independientes del dominio a
+propósito. Qué REQ de un proyecto concreto cae en cada nivel lo pregunta `arnes-init` y se
+escribe en el `AGENTS.md` **de ese proyecto**: el plugin no sabe —ni debe— qué es una constancia
+salarial.
+
+**Compatibilidad total, y es deliberada.** Un REQ que no declara `Rigor:` se juzga **exactamente
+como antes de que los niveles existieran**. Un proyecto que no migre no nota ningún cambio, y la
+velocidad se gana con un acto explícito, nunca por sorpresa.
+
+**Se puede subir, nunca bajar.** `Sensible a seguridad: sí` impone `critico` como **suelo**:
+escribir `Rigor: ligero` ahí no baja nada. Un valor no reconocido se ignora y cae a la
+derivación — nunca abre la puerta.
+
+Distinguir el **suelo de seguridad** del **valor por defecto** es lo que hace que esto funcione:
+tratarlos como lo mismo deja `ligero` inalcanzable, porque el defecto de un REQ no sensible ya
+es `estandar` y anularía cualquier declaración menor.
+
+**Gobierno:** lo fija el `analista-requerimientos`; el `auditor-seguridad` **puede subirlo** —y
+subirlo sobre un REQ ya cerrado lo **reabre**— y nadie lo baja sin firma del dueño del sistema.
+
+### Pruebas
+68 → **77 casos**, 0 fallos. Los tres que más importan impiden que el nivel se convierta en una
+puerta trasera: `ligero` sobre un REQ sensible, `estandar` sobre un REQ sensible, y un valor
+inventado. Los tres deben **denegar**.
 ## [1.18.0] — 2026-09-04
 ### Añadido — `/arnes-upgrade`: los proyectos existentes también se ponen al día
 Hasta ahora el arnés no tenía **ninguna ruta de migración**. `arnes-init` se niega a actuar si

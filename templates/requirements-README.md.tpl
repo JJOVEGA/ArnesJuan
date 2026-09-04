@@ -28,6 +28,30 @@ El hook `guard-completado` **impide** marcar `completado` sin `QA: aprobado`, y 
 `Sensible a seguridad: sí` sin `Seguridad: aprobado`. Llegar a "aprobado" exige que los
 hallazgos estén resueltos **y reflejados en el REQ/NFR** (write-back, ver `AGENTS.md` §9).
 
+## Nivel de rigor
+Cuánta demostración se exige **por encima** de las quality gates, que son binarias y corren
+siempre. Lo fija el analista en la cabecera del REQ.
+
+| Nivel | Qué corre | Cuándo |
+|---|---|---|
+| `ligero` | analista + desarrollador + quality gates | Sin lógica: textos, etiquetas, ajustes de presentación |
+| `estandar` | + QA | Lógica de negocio ordinaria |
+| `critico` | + auditoría de seguridad | Dinero · datos personales · identidad o acceso · documento con efecto legal · cambio irreversible (esquema, migración, borrado) |
+
+**Qué REQ de ESTE proyecto cae en cada nivel se decide en `AGENTS.md`, no aquí.** Los
+criterios de arriba son independientes del dominio a propósito: el arnés trae el mecanismo,
+cada proyecto pone el mapeo con sus ejemplos concretos.
+
+**Reglas de gobierno:**
+- **Lo fija el analista.** El auditor **puede subirlo**; nadie lo baja sin su firma.
+- **Se puede subir, nunca bajar.** Un REQ marcado `Sensible a seguridad: sí` tiene `critico`
+  como **suelo**: escribir `Rigor: ligero` ahí no lo baja. Bajarlo de verdad exige cambiar la
+  sensibilidad, que es un campo visible del analista.
+- **Si se omite, se deriva:** sensible → `critico`, si no → `estandar`. Es exactamente el
+  comportamiento anterior a que existieran los niveles, así que un proyecto que no declare
+  nada no nota ningún cambio.
+- Un valor no reconocido se ignora y se cae a la derivación. Nunca abre la puerta.
+
 ## Clases de hallazgo
 Todo hallazgo abierto se declara en el campo `Hallazgos abiertos:` de la cabecera, con
 su **clase entre paréntesis**: `SEC-121 (instrumento), SEC-144 (usuario/dinero)`.
@@ -67,6 +91,7 @@ Sensible a seguridad: (sí / no)
 QA: pendiente
 Seguridad: n/a
 Hallazgos abiertos: (ninguno)
+Rigor: (ligero / estandar / critico — ver abajo; si se omite, se deriva)
 NFR relacionados: (NFR-xxx, ...)
 
 ## Historia

@@ -67,6 +67,23 @@ mkreq() {
   return 0
 }
 
+# mkreq_r <nombre> <sensible> <qa> <seguridad> <rigor> — REQ con nivel de rigor.
+mkreq_r() {
+  { printf '# %s
+Estado: en-revisión
+' "$1"
+    [ -n "$2" ] && printf 'Sensible a seguridad: %s
+' "$2"
+    [ -n "$3" ] && printf 'QA: %s
+' "$3"
+    [ -n "$4" ] && printf 'Seguridad: %s
+' "$4"
+    [ -n "$5" ] && printf 'Rigor: %s
+' "$5"
+  } > "$PROJ/requirements/$1.md"
+  return 0
+}
+
 # setcfg <filtro jq> — muta el manifiesto del proyecto de prueba.
 setcfg()   { jq "$1" "$PROJ/.arnes/config.json" > "$PROJ/.arnes/c.tmp" && mv "$PROJ/.arnes/c.tmp" "$PROJ/.arnes/config.json"; }
 setgates() { setcfg "$1"; }
@@ -261,6 +278,32 @@ printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 # funciones, y si alguna dijera "permito" con `exit 0` en vez de `return 0`,
 # mataria el proceso y el segundo NUNCA correria. Por eso hay casos que exigen
 # denegacion del SEGUNDO guardian pasando por el primero.
+# --- Nivel de rigor: cuanta ceremonia paga cada REQ ----------------------------
+# La compatibilidad es lo que mas importa aqui: un REQ que NO declara `Rigor:`
+# debe juzgarse EXACTAMENTE como antes de que los niveles existieran. Si eso se
+# rompiera, un proyecto sin migrar cambiaria de comportamiento sin avisar.
+echo "Nivel de rigor:"
+mkreq_r "REQ-040" "no" "pendiente" "n/a" ""
+check "sin Rigor + QA pendiente -> deny (como siempre)" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-040.md" "" "" 'Estado: completado')"
+mkreq_r "REQ-041" "sí" "aprobado" "pendiente" ""
+check "sin Rigor + sensible sin seguridad -> deny (como siempre)" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-041.md" "" "" 'Estado: completado')"
+mkreq_r "REQ-042" "no" "pendiente" "n/a" "ligero"
+check "LIGERO no exige veredictos -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-042.md" "" "" 'Estado: completado')"
+mkreq_r "REQ-043" "no" "pendiente" "n/a" "estandar"
+check "estandar exige QA -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-043.md" "" "" 'Estado: completado')"
+mkreq_r "REQ-044" "no" "aprobado" "pendiente" "critico"
+check "critico exige seguridad -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-044.md" "" "" 'Estado: completado')"
+mkreq_r "REQ-045" "no" "aprobado" "aprobado" "critico"
+check "critico con QA y seguridad -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-045.md" "" "" 'Estado: completado')"
+# EL SUELO: declarar un nivel menor sobre un REQ sensible NO lo baja.
+mkreq_r "REQ-046" "sí" "pendiente" "n/a" "ligero"
+check "ligero sobre SENSIBLE no baja el suelo -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-046.md" "" "" 'Estado: completado')"
+mkreq_r "REQ-047" "sí" "aprobado" "pendiente" "estandar"
+check "estandar sobre SENSIBLE no baja el suelo -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-047.md" "" "" 'Estado: completado')"
+# Un valor inventado nunca debe abrir la puerta.
+mkreq_r "REQ-048" "no" "pendiente" "n/a" "inventado"
+check "Rigor invalido se ignora, no abre -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-048.md" "" "" 'Estado: completado')"
+
 echo "guard.sh — punto de entrada unico (los dos guardianes, un proceso):"
 check "A1 por guard.sh: coordinadora edita src/ -> deny" deny guard.sh \
   "$(emite_edit "$PROJ/src/app.ts" "" "" 'hola')"

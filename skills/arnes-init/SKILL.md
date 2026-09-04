@@ -37,7 +37,14 @@ marcador antes de hacer nada.
 3. **Entrevista mínima para rellenar `AGENTS.md`** (una pregunta a la vez): nombre del
    proyecto, descripción, stack, módulos, modelo de permisos, comandos de quality gates,
    máximo de reintentos dev↔QA, qué decisiones requieren gate humano, y destinatario del
-   entregable. Si el usuario prefiere, lanza al `analista-requerimientos` para esta parte.
+   entregable.
+
+   **Pregunta también `{{CRITERIO_RIGOR_CRITICO}}`:** *«¿qué hace que un requerimiento sea
+   crítico en este dominio?»*. El arnés trae los niveles (`ligero`/`estandar`/`critico`) y los
+   criterios genéricos —dinero, datos personales, identidad, documento con efecto legal,
+   cambio irreversible—, pero **qué REQ de este proyecto cae en cada uno lo decide el
+   proyecto**. Pide ejemplos concretos: son los que el analista usará para clasificar.
+   Si el proyecto entero es de bajo riesgo, dilo aquí: puede declararse `ligero` por defecto. Si el usuario prefiere, lanza al `analista-requerimientos` para esta parte.
 
    **Rellena también `.arnes/config.json`** (es lo que vuelve ejecutables las invariantes):
    - `codigo_app.globs`: rutas de código de la app que SÓLO el `desarrollador` puede editar

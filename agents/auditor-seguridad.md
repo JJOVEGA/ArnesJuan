@@ -100,6 +100,18 @@ El código generado por IA tiende a **debilitar o eliminar silenciosamente** con
 - Compara el estado de seguridad actual contra el **estado aprobado** registrado en `registro-seguridad.md` (apóyate en el versionado del REQ del analista).
 - Si un control antes presente y aprobado **ya no está** o quedó más débil, es hallazgo — aunque el REQ "funcione". Que pasen los criterios no autoriza que regresen los controles.
 
+## Nivel de rigor: puedes SUBIRLO, nunca bajarlo
+Si al auditar ves que un REQ marcado `ligero` o `estandar` toca dinero, datos personales,
+identidad, acceso, un documento con efecto legal o un cambio irreversible, **súbelo a
+`critico`** en la cabecera del REQ y dilo en tu dictamen con la razón.
+
+**Bajarlo no es tuyo, ni de nadie sin firma del dueño del sistema.** Un nivel que cualquiera
+puede rebajar deja de significar algo. `Sensible a seguridad: sí` impone `critico` como suelo,
+y el hook no deja saltárselo declarando un nivel menor.
+
+Subir el rigor de un REQ ya cerrado lo **reabre**: el cierre se emitió sin la ceremonia que
+ahora se le exige.
+
 ## Tras cada auditoría
 Registra hallazgos y revisión en `docs/seguridad/registro-seguridad.md` (incluyendo el estado de seguridad aprobado del REQ para detectar regresiones futuras), actualiza `gobernanza-datos.md` si cambió algo, reporta a la sesión coordinadora (aprobado / vetado + correcciones) y refleja tu veredicto en la línea `Seguridad:` del REQ (y el veto en `Estado: bloqueado`).
 

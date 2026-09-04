@@ -401,7 +401,7 @@ arnes_norm_campo() {   # <valor> -> ARNES_CAMPO
 # antes de la transición a completado. Por eso se recorre primero el disco y
 # después lo entrante: lo segundo pisa a lo primero.
 arnes_campos_req() {   # <texto en disco> <texto entrante>
-  ARNES_QA=''; ARNES_SEG=''; ARNES_SENS=''; ARNES_HALL=''
+  ARNES_QA=''; ARNES_SEG=''; ARNES_SENS=''; ARNES_HALL=''; ARNES_RIGOR=''
   local texto l
   for texto in "$1" "$2"; do
     [ -n "$texto" ] || continue
@@ -411,6 +411,7 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
         'Seguridad:'*)            ARNES_SEG="${l#Seguridad:}" ;;
         'Sensible a seguridad:'*) ARNES_SENS="${l#Sensible a seguridad:}" ;;
         'Hallazgos abiertos:'*)   ARNES_HALL="${l#Hallazgos abiertos:}" ;;
+        'Rigor:'*)                ARNES_RIGOR="${l#Rigor:}" ;;
       esac
     done <<< "$texto"
   done
@@ -418,4 +419,65 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
   arnes_norm_campo "$ARNES_SEG";  ARNES_SEG="$ARNES_CAMPO"
   arnes_norm_campo "$ARNES_SENS"; ARNES_SENS="$ARNES_CAMPO"
   arnes_norm_campo "$ARNES_HALL"; ARNES_HALL="$ARNES_CAMPO"
+  arnes_norm_campo "$ARNES_RIGOR"; ARNES_RIGOR="$ARNES_CAMPO"
+  arnes_rigor_efectivo
+}
+
+# Nivel de rigor con el que se juzga este REQ.
+#
+# EL VALOR POR DEFECTO REPRODUCE EXACTAMENTE EL COMPORTAMIENTO ANTERIOR. Un REQ
+# que no declare `Rigor:` se juzga como siempre: si esta marcado
+# `Sensible a seguridad: si` se le exige auditoria, y si no, no. Asi un proyecto
+# que no haya migrado no nota NINGUN cambio — y la velocidad que dan los niveles
+# se gana con un acto deliberado, nunca por sorpresa.
+#
+# El arnes trae el MECANISMO, no el MAPEO: que REQ de un proyecto es critico lo
+# decide ese proyecto en su `AGENTS.md`, no el plugin.
+arnes_rigor_efectivo() {
+  local declarado="$ARNES_RIGOR" nd ns
+  # SUELO DE SEGURIDAD: `Sensible a seguridad: si` obliga a `critico` y eso no se
+  # puede bajar. Un REQ que NO es sensible no tiene suelo.
+  #
+  # Es distinto del VALOR POR DEFECTO, y confundirlos hace que `ligero` no pueda
+  # activarse nunca: si el defecto de un REQ no sensible fuera tambien un suelo,
+  # cualquier declaracion mas baja quedaria anulada y el nivel no serviria para
+  # nada. El suelo limita hacia abajo; el defecto solo aplica si no hay nada
+  # declarado.
+  if [ -z "$declarado" ]; then
+    # Nada declarado -> se juzga EXACTAMENTE como antes de existir los niveles.
+    case "$ARNES_SENS" in
+      si) ARNES_RIGOR='critico' ;;
+      *)  ARNES_RIGOR='estandar' ;;
+    esac
+    return 0
+  fi
+
+  arnes_rigor_nivel "$declarado"; nd=$?
+  if [ "$nd" -eq 0 ]; then
+    # Valor no reconocido: se ignora y se cae al comportamiento de siempre.
+    case "$ARNES_SENS" in
+      si) ARNES_RIGOR='critico' ;;
+      *)  ARNES_RIGOR='estandar' ;;
+    esac
+    return 0
+  fi
+
+  # Declarado y valido. Sube libremente; bajar del suelo de seguridad, no.
+  ARNES_RIGOR="$declarado"
+  case "$ARNES_SENS" in
+    si) arnes_rigor_nivel critico; ns=$?
+        [ "$nd" -lt "$ns" ] && ARNES_RIGOR='critico' ;;
+  esac
+  return 0
+}
+
+# Orden de los niveles como codigo de retorno: ligero(1) < estandar(2) < critico(3).
+# Un valor no reconocido vale 0, asi que nunca puede ganarle a lo derivado.
+arnes_rigor_nivel() {
+  case "$1" in
+    ligero)   return 1 ;;
+    estandar) return 2 ;;
+    critico)  return 3 ;;
+    *)        return 0 ;;
+  esac
 }
