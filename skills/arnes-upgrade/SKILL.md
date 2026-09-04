@@ -242,6 +242,16 @@ nada.
   enciende, **pregunta también el `orden`**: un CHANGELOG es `nuevo-primero`, un registro que se
   añade al final es `nuevo-al-final`, y equivocarse archiva lo más reciente.
 
+### Hacia 1.24.0
+- Nada que migrar en archivos del proyecto. Pero **avísale al usuario de dos cosas antes de
+  terminar**, porque dos revisores pidieron saberlas antes y no después:
+  1. La continuidad (`estado_derivado`) **viene encendida** y reescribe un bloque en
+     `docs/ESTADO.md` **en cada parada de agente y de subagente**. Con agentes en paralelo hay
+     reescrituras concurrentes: idempotentes, no se corrompen, pero es un archivo que él mantiene.
+     Se apaga con `estado_derivado.activo: false`.
+  2. La rotación **viene apagada**. Si sus bitácoras pesan (medido: 1,4 MB y 1,3 MB en un
+     proyecto), es donde más gana — pero la enciende él, con su `orden`.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

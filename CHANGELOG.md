@@ -2,6 +2,36 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.24.0] — 2026-09-04
+Tres correcciones, todas medidas por **dos proyectos distintos** validando 1.23.0 contra sus
+archivos reales. Ninguna toca archivos del proyecto: migrar es sólo actualizar el plugin.
+
+### Corregido — `**aprobado** (medido…)` no contaba y `aprobado (medido…)` sí
+Al normalizar, el énfasis sólo se retira si envuelve el valor **entero** — y con el paréntesis
+detrás no lo envolvía. Luego se quitaba el paréntesis y quedaba `**aprobado**`. Mismo valor, dos
+escrituras, veredictos opuestos: la misma asimetría que `n/a` / `no aplica`. Ahora el veredicto
+se desenvuelve **otra vez** tras quitar el paréntesis. La dirección era segura —la decorada era
+la estricta—, pero una regla que depende de cómo se escribe el mismo valor no es una regla.
+
+### Corregido — el bloque derivado contaba una nota como REQ
+Decía 58 REQ donde había 57: contaba todo `.md` de `requirements/` salvo el README, incluida una
+nota sin `Estado:`. **Un bloque que presume de derivar del disco no puede decir 58 donde el disco
+dice 57.** Sin `Estado:` no es un REQ; se cuentan aparte y **se dice cuántos hay** — que un
+archivo quede fuera por silencio es justo lo que el bloque existe para evitar.
+
+### Cambiado — el bloque derivado lista sólo lo abierto
+Con 58 REQ pesaba **10,4 KB**: un 25 % sobre un `ESTADO.md` de 40 KB que se lee al empezar
+**cada** sesión. Es justo el presupuesto que la rotación existe para cuidar, y aquí se lo estaba
+comiendo el arnés. El bloque responde *«dónde quedamos»*, y un REQ completado ya no es parte de
+esa respuesta: la línea de conteo lo resume y la tabla lista sólo los abiertos.
+
+### Documentado — la continuidad viene encendida y corre en cada parada de subagente
+Dos revisores lo señalaron con la misma frase: *«que lo sepas antes, no después»*. `docs/ESTADO.md`
+es territorio del integrador, y con agentes en paralelo varias reescrituras compiten. Es
+idempotente y las reescrituras producen el mismo bloque, así que no se corrompe — pero el hook
+escribe en un archivo que una persona mantiene, y eso se avisa al migrar. Se apaga con
+`estado_derivado.activo: false`.
+
 ## [1.23.0] — 2026-09-04
 ### Corregido — el paréntesis es evidencia, y la evidencia no cambia el veredicto
 **Medido en un proyecto real: 26 REQ paralizados.** Su convención es

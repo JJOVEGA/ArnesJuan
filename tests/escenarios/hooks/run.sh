@@ -568,6 +568,12 @@ check "preventiva NO cierra un critico -> deny" deny guard-completado.sh \
 mkreq "$PROJ/requirements/REQ-084.md" "no" "pendiente" "pendiente"
 check "preventiva desbloquea el ORDEN del ciclo -> allow" allow guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-084.md" "" "" 'Seguridad: preventiva')"
+# Medido por DOS proyectos: `aprobado (medido)` contaba y `**aprobado** (medido)` no,
+# porque al normalizar el enfasis no envolvia el valor entero -- el parentesis estaba
+# detras. Mismo valor, dos escrituras, veredictos opuestos: la asimetria de `n/a`.
+mkreq "$PROJ/requirements/REQ-086.md" "no" "**aprobado** (medido el 3/9)" "n/a"
+check "enfasis + evidencia: misma escritura, mismo veredicto -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-086.md" "" "" 'Estado: completado')"
 
 # --- La cola de aprobaciones acaba donde acaba su seccion ----------------------
 # Antes solo la cerraba una cabecera literal `## Resueltas`, asi que cualquier otra
@@ -645,6 +651,15 @@ corre_estado "$EST_PROJ"
 EST_N="$(grep -c 'ARNES:DERIVADO inicio' "$EST_PROJ/docs/ESTADO.md")"
 if [ "$EST_N" = "1" ]; then echo "  PASS  idempotente: dos pasadas, un solo bloque"; PASS=$((PASS+1))
 else echo "  FAIL  idempotente: hay $EST_N bloques tras dos pasadas"; FAIL=$((FAIL+1)); fi
+
+# Medido: el bloque decia 58 REQ y habia 57, porque contaba una nota sin `Estado:`.
+# Y pesaba 10,4 KB con 58 filas, un 25 % de un ESTADO.md que se lee en CADA sesion.
+printf '# Nota\nEsto NO tiene Estado y no es un REQ.\n' > "$EST_PROJ/requirements/consecuencias.md"
+corre_estado "$EST_PROJ"
+check_estado "una nota sin Estado: no cuenta como REQ"  "REQ:\*\* 2 "              si "$EST_PROJ/docs/ESTADO.md"
+check_estado "...y se dice cuantas hay, no se esconden" "notas, no REQ):\*\* 1"    si "$EST_PROJ/docs/ESTADO.md"
+check_estado "un REQ completado NO ocupa fila"          "^| REQ-001 "              no "$EST_PROJ/docs/ESTADO.md"
+check_estado "un REQ abierto SI ocupa fila"             "^| REQ-002 "              si "$EST_PROJ/docs/ESTADO.md"
 
 # Apagable: quien no lo quiera, lo apaga.
 EST_OFF="$(mktemp -d)"; mkdir -p "$EST_OFF/.arnes" "$EST_OFF/requirements" "$EST_OFF/docs"
@@ -817,7 +832,7 @@ FAIL="$(grep -c '^  FAIL ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=137
+CASOS_ESPERADOS=142
 if [ $((PASS+FAIL)) -ne "$CASOS_ESPERADOS" ]; then
   echo "ABORT: corrieron $((PASS+FAIL)) casos y se esperaban $CASOS_ESPERADOS."
   echo "       O falta un caso por el camino, o alguien anadio uno y no actualizo"
