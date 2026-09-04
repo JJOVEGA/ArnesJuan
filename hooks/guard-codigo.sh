@@ -28,18 +28,20 @@ arnes_project_dir "$input"; proj="$ARNES_PROJ"
 manifest="$proj/.arnes/config.json"
 [ -f "$manifest" ] || exit 0   # no es un proyecto del arnés -> inerte
 
-# UNA lectura del input para todo lo que se necesita de él. Este hook corre en
-# CADA Edit/Write/MultiEdit y en CADA Bash; en Windows un arranque de proceso
-# cuesta ~0,5 s, así que leer los campos por separado eran cinco `jq` más cinco
-# `tr` por invocación. `command` va al final porque puede ser multilínea: se lee
-# como el resto del flujo.
+# UNA lectura del input para todo lo que se necesita de él, y con UN solo fork.
+# Este hook corre en CADA Edit/Write/MultiEdit y en CADA Bash, así que la forma de
+# leer importa más que el número de campos: `< <(printf ... | arnes_jq ...)` son
+# tres bifurcaciones —sustitución de proceso, tubería y el `$( )` interno— para
+# una sola lectura. Con `arnes_jq_str` y here-strings queda una.
+# `command` va al final porque puede ser multilínea: se lleva el resto del texto.
+arnes_jq_str "$input" -r '[.tool_name // "",
+                           .agent_id // "",
+                           .agent_type // "",
+                           .tool_input.file_path // "",
+                           .tool_input.command // ""] | .[]'
 { IFS= read -r tool; IFS= read -r agent_id; IFS= read -r agent_type; IFS= read -r fp
-  comando="$(cat)"; } < <(
-  printf '%s' "$input" | arnes_jq -r '[.tool_name // "",
-                                       .agent_id // "",
-                                       .agent_type // "",
-                                       .tool_input.file_path // "",
-                                       .tool_input.command // ""] | .[]')
+  IFS= read -r -d '' comando; } <<< "$ARNES_JQ"
+comando="${comando%$'\n'}"
 
 # --- ¿Qué ruta(s) de código de la app toca esta llamada? ---
 # Comparación en forma canónica: en Windows `proj` y `fp` llegan en formas distintas.
@@ -63,7 +65,7 @@ fi
 
 # Sólo aquí hace falta el manifiesto: la inmensa mayoría de las llamadas ya
 # salieron arriba sin llegar a leerlo.
-agente_codigo="$(arnes_jq -r '.agentes.agente_codigo // "desarrollador"' "$manifest")"
+arnes_jq_file "$manifest" -r '.agentes.agente_codigo // "desarrollador"'; agente_codigo="$ARNES_JQ"
 
 # Es código de app. Permitido SÓLO si es un subagente real (agent_id presente) Y
 # además es el agente de código designado. La comparación tolera el prefijo del

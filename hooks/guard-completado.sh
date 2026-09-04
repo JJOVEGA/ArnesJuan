@@ -33,10 +33,11 @@ manifest="$proj/.arnes/config.json"
 # de proceso cuesta ~0,5 s, así que leer los campos por separado eran cinco jq
 # más cinco tr por invocación. `cmd` va al final porque puede ser multilínea: se
 # lee como el resto del flujo.
-{ IFS= read -r tool; IFS= read -r fp; bash_cmd="$(cat)"; } < <(
-  printf '%s' "$input" | arnes_jq -r '[.tool_name // "",
-                                       .tool_input.file_path // "",
-                                       .tool_input.command // ""] | .[]')
+arnes_jq_str "$input" -r '[.tool_name // "",
+                           .tool_input.file_path // "",
+                           .tool_input.command // ""] | .[]'
+{ IFS= read -r tool; IFS= read -r fp; IFS= read -r -d '' bash_cmd; } <<< "$ARNES_JQ"
+bash_cmd="${bash_cmd%$'\n'}"
 
 case "$tool" in
   Bash)
@@ -51,10 +52,10 @@ case "$tool" in
 esac
 
 # UNA lectura del manifiesto para los tres campos que se usan aguas abajo.
-{ IFS= read -r req_dir; IFS= read -r estado_done; IFS= read -r pending_rel; } < <(
-  arnes_jq -r '[(.requirements_dir // "requirements"),
-                (.estados.completado // "completado"),
-                (.pending_approval // "PENDING_APPROVAL.md")] | .[]' "$manifest")
+arnes_jq_file "$manifest" -r '[(.requirements_dir // "requirements"),
+                              (.estados.completado // "completado"),
+                              (.pending_approval // "PENDING_APPROVAL.md")] | .[]'
+{ IFS= read -r req_dir; IFS= read -r estado_done; IFS= read -r pending_rel; } <<< "$ARNES_JQ"
 
 # --- Vía Bash: no se juzga aquí, se DERIVA ---
 # `guard-codigo` ya cubre A1 por esta vía. Lo que quedaba abierto —y estaba
@@ -79,7 +80,7 @@ if [ "$tool" = "Bash" ]; then
     esac
     case "$rel" in
       "$req_dir"/*)
-        if printf '%s' "$bash_cmd" | grep -iqE "(^|[^a-zA-Z])${estado_done}([^a-zA-Z]|$)"; then
+        if grep -iqE "(^|[^a-zA-Z])${estado_done}([^a-zA-Z]|$)" <<< "$bash_cmd"; then
           arnes_deny "ARNES: este comando escribe en '$rel' y menciona '$estado_done'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesitan el contenido resultante (veredictos de QA y Seguridad, cola de $pending_rel y quality gates). Hazlo con Edit/Write para que este mismo hook lo evalue (AGENTS.md 6)."
         fi ;;
     esac
@@ -97,14 +98,16 @@ case "$rel" in
 esac
 
 # Texto entrante, resuelto segun la herramienta dentro del propio jq.
-nuevo="$(printf '%s' "$input" | arnes_jq -r '
+arnes_jq_str "$input" -r '
   if   .tool_name == "Edit"      then (.tool_input.new_string // "")
   elif .tool_name == "Write"     then (.tool_input.content // "")
   elif .tool_name == "MultiEdit" then ([.tool_input.edits[]?.new_string] | join("\n"))
-  else "" end')"
+  else "" end'
+nuevo="$ARNES_JQ"
 
 # ¿El cambio deja el REQ en `completado`? Normalizado: case-insensitive y espacios.
-printf '%s' "$nuevo" | grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" || exit 0
+# Here-string en vez de `printf | grep`: la tubería costaba un fork de más.
+grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" <<< "$nuevo" || exit 0
 
 # --- Veredictos QA/Seguridad (anti-deriva) ---
 # Los campos viven en el archivo del REQ; se prefiere el contenido entrante y se respalda en disco
@@ -183,6 +186,8 @@ if [ -f "$pending" ]; then
 fi
 
 # --- Gate A3: quality gates en verde antes de completar ---
+arnes_jq_file "$manifest" -r '.quality_gates[]? | if type=="object" then (.comando // empty) else . end'
+ARNES_GATES="$ARNES_JQ"
 tmp="$(mktemp 2>/dev/null || echo /tmp/arnes_gate.$$)"
 while IFS= read -r cmd; do
   [ -n "$cmd" ] || continue
@@ -191,7 +196,7 @@ while IFS= read -r cmd; do
     rm -f "$tmp"
     arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': falló la quality gate \`$cmd\`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: $out"
   fi
-done < <(arnes_jq -r '.quality_gates[]? | if type=="object" then (.comando // empty) else . end' "$manifest")
+done <<< "$ARNES_GATES"
 rm -f "$tmp"
 
 exit 0

@@ -70,6 +70,28 @@ arnes_jq() {
   printf '%s\n' "${out//$'\r'/}"
 }
 
+# Las dos formas que SÍ hay que usar en el camino caliente: dejan el resultado en
+# ARNES_JQ y cuestan UN solo fork.
+#
+# `arnes_jq` imprime, así que sus llamadas acaban envueltas en `< <(printf ... |
+# arnes_jq ...)`, y eso son TRES forks para una sola lectura: la sustitución de
+# proceso, la tubería, y el `$( )` interno de la propia función. Con here-string
+# —que bash resuelve con un archivo temporal, sin bifurcar— y asignando en vez de
+# imprimir, queda uno.
+arnes_jq_str() {   # <json> <args de jq...> -> ARNES_JQ
+  local json="$1"; shift
+  local out
+  out="$(jq "$@" <<< "$json")" || return $?
+  ARNES_JQ="${out//$'\r'/}"
+}
+
+arnes_jq_file() {  # <archivo> <args de jq...> -> ARNES_JQ
+  local f="$1"; shift
+  local out
+  out="$(jq "$@" "$f")" || return $?
+  ARNES_JQ="${out//$'\r'/}"
+}
+
 # Ruta canónica para COMPARAR (no para abrir): separadores `/` y, en Windows, forma
 # mixta `c:/...` con la unidad en minúscula. Fuera de Windows es la identidad.
 arnes_norm_path() {   # <ruta> -> ARNES_NORM
@@ -116,9 +138,10 @@ arnes_es_codigo_app() {  # <ruta relativa> <manifiesto>
   [ -n "$rel" ] || return 1
   if [ -z "${ARNES_GLOBS_CARGADOS:-}" ]; then
     ARNES_GLOBS=()
+    arnes_jq_file "$manifest" -r '.codigo_app.globs[]? // empty'
     while IFS= read -r g; do
       [ -n "$g" ] && ARNES_GLOBS+=("$g")
-    done < <(arnes_jq -r '.codigo_app.globs[]? // empty' "$manifest")
+    done <<< "$ARNES_JQ"
     ARNES_GLOBS_CARGADOS=1
   fi
   for g in ${ARNES_GLOBS[@]+"${ARNES_GLOBS[@]}"}; do
