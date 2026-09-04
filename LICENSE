@@ -1,0 +1,179 @@
+LICENCIA DE USO PROPIETARIA — ArnesJuan
+Copyright (c) 2026 SysVEGA (Juan Vega). Todos los derechos reservados.
+
+Versión 1.0 — 4 de septiembre de 2026
+
+===============================================================================
+ESPAÑOL (versión vinculante)
+===============================================================================
+
+0. DEFINICIONES
+
+   "el Software" significa ArnesJuan: el arnés de agentes, sus subagentes,
+   comandos, plantillas, hooks, documentación y cualquier otro archivo
+   contenido en este repositorio, en cualquier versión.
+
+   "el Licenciante" significa SysVEGA (Juan Vega), Costa Rica.
+
+   "el Licenciatario" o "usted" significa la persona física o jurídica que
+   descarga, instala, ejecuta o accede al Software.
+
+   "Uso Interno" significa el uso del Software por el Licenciatario y su
+   personal, dentro de sus propios proyectos, ya sean internos o realizados
+   para terceros clientes, sin entregar el Software mismo a esos terceros.
+
+1. CONCESIÓN DE LICENCIA
+
+   El Licenciante concede al Licenciatario una licencia mundial, no exclusiva,
+   intransferible, no sublicenciable, revocable y libre de regalías para:
+
+   (a) descargar e instalar el Software mediante los mecanismos de
+       distribución publicados por el Licenciante (por ejemplo, la instalación
+       como plugin de Claude Code);
+
+   (b) ejecutar y utilizar el Software para Uso Interno, incluido el uso en
+       actividades comerciales del Licenciatario;
+
+   (c) realizar copias de respaldo razonables, exclusivamente con fines de
+       continuidad operativa.
+
+   Toda la titularidad, el derecho de autor y demás derechos de propiedad
+   intelectual sobre el Software permanecen en el Licenciante. Esta licencia
+   otorga derechos de uso; no transfiere propiedad alguna.
+
+2. RESTRICCIONES
+
+   Salvo autorización previa, expresa y por escrito del Licenciante, el
+   Licenciatario NO podrá:
+
+   (a) redistribuir, publicar, comercializar, vender, alquilar, prestar,
+       sublicenciar ni poner el Software a disposición de terceros, ya sea de
+       forma gratuita u onerosa;
+
+   (b) alojar, replicar o publicar copias, espejos o marketplaces del Software
+       en repositorios, registros o catálogos distintos de los publicados por
+       el Licenciante;
+
+   (c) crear obras derivadas, adaptaciones, versiones modificadas o productos
+       basados en el Software, ni incorporarlo total o parcialmente en otro
+       producto, herramienta, plataforma o servicio ofrecido a terceros;
+
+   (d) descompilar, aplicar ingeniería inversa ni intentar derivar el diseño
+       subyacente del Software con el fin de reproducir su funcionalidad en
+       otro producto;
+
+   (e) suprimir, alterar u ocultar los avisos de copyright, autoría, marcas o
+       las referencias a esta Licencia contenidas en el Software;
+
+   (f) utilizar el nombre "ArnesJuan", "SysVEGA" o cualquier marca del
+       Licenciante para promocionar, respaldar o identificar productos o
+       servicios propios o de terceros.
+
+   Para evitar dudas: la configuración del Software mediante los archivos de
+   estado de proyecto (AGENTS.md, CLAUDE.md y las plantillas instaladas en el
+   repositorio del Licenciatario) constituye Uso Interno conforme a la
+   cláusula 1(b) y no una obra derivada a efectos de la cláusula 2(c).
+
+3. FORKS Y CONTRIBUCIONES
+
+   El Software se publica en un repositorio público. La función de "fork" de
+   la plataforma de alojamiento se autoriza únicamente con el fin de preparar
+   y proponer contribuciones al repositorio original del Licenciante. Un fork
+   no autoriza ninguno de los usos restringidos en la cláusula 2, y debe
+   eliminarse una vez concluido ese fin.
+
+   Toda contribución enviada al Licenciante (código, documentación o
+   cualquier otro material) se entiende cedida al Licenciante de forma
+   irrevocable, gratuita y sin límite territorial ni temporal, quedando
+   sujeta a esta misma Licencia. El contribuyente declara ser titular de los
+   derechos sobre lo aportado.
+
+4. AUSENCIA DE GARANTÍA
+
+   EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO,
+   EXPRESA O IMPLÍCITA, INCLUIDAS, SIN LIMITACIÓN, LAS GARANTÍAS DE
+   COMERCIABILIDAD, IDONEIDAD PARA UN PROPÓSITO DETERMINADO, TITULARIDAD Y NO
+   INFRACCIÓN. EL LICENCIANTE NO GARANTIZA QUE EL SOFTWARE SEA ININTERRUMPIDO
+   O LIBRE DE ERRORES.
+
+5. LIMITACIÓN DE RESPONSABILIDAD
+
+   EN NINGÚN CASO EL LICENCIANTE SERÁ RESPONSABLE POR DAÑOS DIRECTOS,
+   INDIRECTOS, INCIDENTALES, ESPECIALES, PUNITIVOS O CONSECUENTES, NI POR
+   LUCRO CESANTE, PÉRDIDA DE DATOS O INTERRUPCIÓN DE ACTIVIDADES, DERIVADOS
+   DEL USO O DE LA IMPOSIBILIDAD DE USO DEL SOFTWARE, AUN CUANDO SE HUBIERA
+   ADVERTIDO DE LA POSIBILIDAD DE TALES DAÑOS.
+
+   El Software orquesta agentes de inteligencia artificial que generan y
+   modifican código. El Licenciatario es el único responsable de revisar,
+   validar y aprobar cualquier resultado producido con el Software antes de
+   su uso en producción.
+
+6. VIGENCIA Y TERMINACIÓN
+
+   Esta Licencia rige desde el primer acto de descarga, instalación o uso del
+   Software y permanece vigente hasta su terminación. Se resolverá de pleno
+   derecho, sin necesidad de notificación previa, ante cualquier
+   incumplimiento de las cláusulas 2 o 3. Terminada la Licencia, el
+   Licenciatario deberá cesar todo uso del Software y destruir las copias en
+   su poder. Las cláusulas 4, 5 y 7 sobreviven a la terminación.
+
+7. LEY APLICABLE Y JURISDICCIÓN
+
+   Esta Licencia se rige por las leyes de la República de Costa Rica. Las
+   controversias que deriven de ella se someterán a los tribunales
+   competentes de San José, Costa Rica, con renuncia a cualquier otro fuero.
+
+8. LICENCIAS ALTERNATIVAS
+
+   Los usos no permitidos por esta Licencia —incluidos la redistribución, la
+   creación de obras derivadas o la integración en productos de terceros—
+   pueden autorizarse mediante licencia comercial separada. Consultas a:
+   https://sysvega.cr
+
+===============================================================================
+ENGLISH (informative translation)
+===============================================================================
+
+PROPRIETARY USE LICENSE — ArnesJuan
+Copyright (c) 2026 SysVEGA (Juan Vega). All rights reserved.
+
+This software is NOT open source. It is published in a public repository for
+distribution convenience only.
+
+GRANTED: You may download, install and run ArnesJuan for internal use,
+including within your own commercial projects and client work, at no cost,
+and keep reasonable backup copies.
+
+NOT GRANTED: You may not redistribute, publish, sell, rent, sublicense or
+otherwise make the Software available to third parties; host mirrors or
+alternative marketplaces of it; create derivative works, modified versions or
+products based on it; incorporate it into any product, tool, platform or
+service offered to third parties; reverse engineer it to reproduce its
+functionality elsewhere; remove copyright or attribution notices; or use the
+"ArnesJuan" or "SysVEGA" names or marks to promote your own offerings.
+
+For the avoidance of doubt: configuring the Software through its project
+state files (AGENTS.md, CLAUDE.md and the templates installed in your own
+repository) is Internal Use, not a derivative work.
+
+FORKS: The hosting platform's fork feature is permitted solely to prepare
+contributions back to the Licensor's repository, and the fork must be deleted
+afterwards. Contributions submitted to the Licensor are irrevocably assigned
+to the Licensor.
+
+NO WARRANTY. The Software is provided "AS IS", without warranty of any kind.
+The Licensor is not liable for any direct, indirect, incidental, special,
+punitive or consequential damages. The Software orchestrates AI agents that
+generate and modify code; you alone are responsible for reviewing and
+validating any output before production use.
+
+TERMINATION: This license terminates automatically upon breach of the
+restrictions above.
+
+GOVERNING LAW: Republic of Costa Rica; courts of San José, Costa Rica.
+
+Commercial licenses covering redistribution, derivative works or third-party
+integration are available separately: https://sysvega.cr
+
+In case of discrepancy, the Spanish version above prevails.
