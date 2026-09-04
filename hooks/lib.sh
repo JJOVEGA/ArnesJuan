@@ -233,11 +233,28 @@ arnes_agente_legible() {  # <agent_type>
 # Sesgo explícito al FALSO NEGATIVO: primero se descarta el texto entrecomillado,
 # así una mención de una ruta dentro de un mensaje no dispara nada.
 arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
-  local cmd="$1" limpio i j n tok
-  limpio="$(printf '%s' "$cmd" | sed -e 's/"[^"]*"/ /g' -e "s/'[^']*'/ /g")"
-  # Separa los operadores de su operando: `>src/a.ts` -> `> src/a.ts`.
-  limpio="$(printf '%s' "$limpio" \
-    | sed -e 's/>|/>/g' -e 's/>>/>/g' -e 's/>/ > /g' -e 's/|/ | /g' -e 's/;/ ; /g')"
+  local cmd="$1" limpio i j n tok pre post q
+  # Las dos limpiezas se hacen SIN procesos. Antes eran dos `printf | sed`, o sea
+  # cuatro bifurcaciones, y este camino se recorre en CADA comando de shell que
+  # ejecuta un agente — el más frecuente de todos.
+  #
+  # 1) Fuera el texto entrecomillado, para que una ruta mencionada dentro de un
+  #    mensaje (`git commit -m "toca src/a.ts"`) no dispare nada. Se recorta por
+  #    pares de comillas en un bucle, que es lo que bash sabe hacer sin regex.
+  limpio="$cmd"
+  for q in '"' "'"; do
+    while [[ "$limpio" == *"$q"*"$q"* ]]; do
+      pre="${limpio%%"$q"*}"
+      post="${limpio#*"$q"}"; post="${post#*"$q"}"
+      limpio="$pre $post"
+    done
+  done
+  # 2) Separa los operadores de su operando: `>src/a.ts` -> `> src/a.ts`.
+  limpio="${limpio//>|/>}"
+  limpio="${limpio//>>/>}"
+  limpio="${limpio//>/ > }"
+  limpio="${limpio//|/ | }"
+  limpio="${limpio//;/ ; }"
 
   local reponer_f=0
   case $- in *f*) reponer_f=1 ;; esac
