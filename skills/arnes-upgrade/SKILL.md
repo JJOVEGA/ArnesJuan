@@ -252,6 +252,13 @@ nada.
   2. La rotación **viene apagada**. Si sus bitácoras pesan (medido: 1,4 MB y 1,3 MB en un
      proyecto), es donde más gana — pero la enciende él, con su `orden`.
 
+### Hacia 1.25.0
+- Nada que migrar. **Avísale al usuario** de que los comandos Bash de lectura ya no arrancan el
+  guardián, y de que la cobertura de Bash es algo menor que antes en un punto concreto: escrituras
+  escondidas tras `npx`, `docker exec`, `bash -c` o `xargs -n1`. Si su proyecto depende de que esas
+  formas se detecten, puede añadir en `.claude/settings.json` un hook `PreToolUse` con
+  `matcher: "Bash"` sin `if` hacia el `guard.sh` del plugin — recupera el catch-all a cambio del coste.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

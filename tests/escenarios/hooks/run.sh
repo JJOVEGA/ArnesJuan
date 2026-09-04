@@ -780,7 +780,54 @@ rm -rf "$ROT_AJENO"
 
 }
 seccion_20() {
-  seccion_nueva "INERTE — sin manifiesto, el hook no estorba:"
+# --- hooks.json: la forma que hace que Bash de lectura NO arranque el guard -------
+# Los hooks del plugin se declaran en hooks.json y Claude Code evalua el `if` de cada
+# handler ANTES de crear el proceso (verificado en 2.1.260 con control positivo). El
+# banco no puede probar ese motor --es de Claude Code--, pero SI puede fijar la forma
+# del archivo: si alguien anade un handler Bash sin `if`, todos los `ls` vuelven a
+# pagar el interprete y nadie lo nota, porque nada falla: solo se vuelve lento.
+seccion_nueva "hooks.json (la forma que evita el spawn):"
+HJ="$HOOKS_DIR/hooks.json"
+hj_check() {   # <nombre> <esperado> <obtenido>
+  if [ -n "$FILTRO" ] && ! printf '%s' "$1" | grep -qi -- "$FILTRO"; then return 0; fi
+  if [ "$2" = "$3" ]; then echo "  PASS  $1"; PASS=$((PASS+1))
+  else echo "  FAIL  $1  esperado=$2 obtenido=$3"; FAIL=$((FAIL+1)); fi
+}
+hj_check "es JSON valido" "ok" "$(jq -e . "$HJ" >/dev/null 2>&1 && echo ok || echo roto)"
+hj_check "Edit/Write/MultiEdit van a guard.sh SIN if (los globs son del proyecto)" "1-0" \
+  "$(jq -r '[.hooks.PreToolUse[] | select(.matcher=="Edit|Write|MultiEdit")] | length' "$HJ")-$(jq -r '[.hooks.PreToolUse[] | select(.matcher=="Edit|Write|MultiEdit") | .hooks[] | select(has("if"))] | length' "$HJ")"
+hj_check "TODO handler de Bash lleva if (ninguno arranca por un ls)" "0" \
+  "$(jq -r '[.hooks.PreToolUse[] | select(.matcher=="Bash") | .hooks[] | select(has("if")|not)] | length' "$HJ")"
+# Los disparadores del `if` son los mismos que el detector de escrituras buscaba en el
+# texto. Si uno desaparece de aqui, esa escritura deja de llegar al guard en silencio.
+for d in 'Bash(* >*)' 'Bash(tee *)' 'Bash(cp *)' 'Bash(mv *)' 'Bash(install *)' 'Bash(sed -i*)' 'Bash(perl -i*)' 'Bash(dd *)'; do
+  hj_check "disparador presente: $d" "1" "$(jq -r --arg d "$d" '[.hooks.PreToolUse[] | .hooks[] | select(.if==$d)] | length' "$HJ")"
+done
+hj_check "todos los handlers Bash apuntan a guard.sh" "0" \
+  "$(jq -r '[.hooks.PreToolUse[] | select(.matcher=="Bash") | .hooks[] | select(.command | endswith("/hooks/guard.sh") | not)] | length' "$HJ")"
+hj_check "Stop y SubagentStop: UN solo proceso, stop.sh" "stop.sh-stop.sh" \
+  "$(jq -r '.hooks.Stop[0].hooks | map(.command | split("/") | last) | join(",")' "$HJ")-$(jq -r '.hooks.SubagentStop[0].hooks | map(.command | split("/") | last) | join(",")' "$HJ")"
+
+# --- stop.sh: el segundo paso sigue corriendo tras el primero ---------------------
+# Mismo caso que "guard.sh: el 2o guardian sigue corriendo tras el 1o": si la
+# continuidad terminara el proceso, la rotacion nunca correria y nadie lo veria.
+# (misma seccion: comparte proyecto con la de arriba)
+echo "stop.sh (continuidad y rotacion en un proceso):"
+ST="$(mktemp -d)"; mkdir -p "$ST/.arnes" "$ST/requirements" "$ST/docs"
+jq '.rotacion = {activo:true, umbral_bytes:500, conservar_secciones:2, artefactos:["CHANGELOG.md"]}' "$PROJ/.arnes/config.json" > "$ST/.arnes/config.json"
+printf '## Pendientes\n\n## Resueltas\n' > "$ST/PENDING_APPROVAL.md"
+printf '# REQ-001\nEstado: en-revisión\nQA: pendiente\nSeguridad: n/a\n' > "$ST/requirements/REQ-001.md"
+{ printf '# CHANGELOG\n\n'; for v in 5 4 3 2 1; do printf '## [1.%s.0]\n' "$v"; for i in 1 2 3 4; do printf 'relleno %s de 1.%s.0 para que pese\n' "$i" "$v"; done; printf '\n'; done; } > "$ST/CHANGELOG.md"
+: > "$ERRLOG"
+CLAUDE_PROJECT_DIR="$ST" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}' | CLAUDE_PROJECT_DIR="$ST" "$HOOKS_DIR/stop.sh" >/dev/null 2>"$ERRLOG"; ST_RC=$?
+hj_check "stop.sh sale 0 (no bloquea la parada)" "0" "$ST_RC"
+hj_check "la continuidad escribio su bloque" "1" "$(grep -c 'ARNES:DERIVADO inicio' "$ST/docs/ESTADO.md" 2>/dev/null || echo 0)"
+hj_check "...y la rotacion corrio EN LA MISMA parada" "2" "$(grep -c '^## ' "$ST/CHANGELOG.md")"
+rm -rf "$ST"
+
+}
+seccion_21() {
+seccion_nueva "INERTE — sin manifiesto, el hook no estorba:"
 PROJ2="$(mktemp -d)"; mkdir -p "$PROJ2/src"; export CLAUDE_PROJECT_DIR="$PROJ2"
 check "sin .arnes/config.json, guard.sh no estorba -> allow" allow guard.sh "$(jq -n --arg fp "$PROJ2/src/x.ts" '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{file_path:$fp,old_string:"x",new_string:"y"}}')"
 check "sin .arnes/config.json edita src/ -> allow" allow guard-codigo.sh "$(jq -n --arg fp "$PROJ2/src/x.ts" '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{file_path:$fp,old_string:"x",new_string:"y"}}')"
@@ -789,7 +836,7 @@ rm -rf "$PROJ2"
 
 }
 
-TOTAL_SECCIONES=20
+TOTAL_SECCIONES=21
 
 # --- Despacho en paralelo -----------------------------------------------------
 # El canario ya corrio en el padre, solo y antes que nada: si el hook esta muerto no
@@ -832,7 +879,7 @@ FAIL="$(grep -c '^  FAIL ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=142
+CASOS_ESPERADOS=158
 if [ $((PASS+FAIL)) -ne "$CASOS_ESPERADOS" ]; then
   echo "ABORT: corrieron $((PASS+FAIL)) casos y se esperaban $CASOS_ESPERADOS."
   echo "       O falta un caso por el camino, o alguien anadio uno y no actualizo"

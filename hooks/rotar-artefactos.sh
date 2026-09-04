@@ -24,7 +24,9 @@
 #   hace nada. Un corte a media seccion parte una entrada en dos.
 # - NUNCA BLOQUEA la parada, como el resto de hooks Stop.
 set -uo pipefail
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DIR="${BASH_SOURCE[0]%/*}"
+[ "$DIR" = "${BASH_SOURCE[0]}" ] && DIR=.
+# shellcheck source=/dev/null
 . "$DIR/lib.sh"
 
 arnes_rotar_artefactos() {
