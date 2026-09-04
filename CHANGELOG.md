@@ -2,6 +2,68 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.17.0] — 2026-09-04
+### Rendimiento — el coste no era `jq`, era bifurcar
+Los hooks tardaban **~35 s por edición de archivo** en Windows. La causa no era la que
+parecía. Medido en esa máquina:
+
+```
+$(echo hola)   subshell con un builtin    554 ms
+dirname        binario externo            643 ms
+${var//x/y}    expansión pura de bash       0 ms
+```
+
+Ejecutar el binario sólo suma ~80 ms sobre el `fork` que lo envuelve. En Windows no existe
+`fork()` y la emulación MSYS lo resuelve copiando memoria a mano, así que **el gasto está en
+bifurcar, no en los programas**. El código estaba escrito en el estilo normal de shell
+—funciones que devuelven por stdout, tuberías para transformar texto—, que es gratis en Linux
+y carísimo aquí.
+
+| | Antes | Ahora |
+|---|---|---|
+| Una edición de archivo | ~35 s | **5,5 s** |
+| Un comando de shell | ~30 s | **3,3 s** |
+| Suite completa (68 casos) | — | 630 s |
+
+Los cambios, todos en la misma dirección:
+
+- **Un solo punto de entrada** (`hooks/guard.sh`): los dos guardianes hacían el mismo trabajo
+  previo —arrancar, cargar la librería, leer stdin, interpretar el mismo JSON, leer el mismo
+  manifiesto— cada uno en su proceso. Ahora el preludio se hace una vez y ambos corren como
+  funciones en el mismo proceso, con el análisis **memorizado**.
+- **Toda función que devuelve por stdout obliga a un `$( )` en cada llamada.** Los helpers del
+  camino caliente pasan a **asignar a una variable**.
+- **Lecturas de `jq` con here-string:** `< <(printf … | arnes_jq …)` eran **tres** bifurcaciones
+  por lectura (sustitución de proceso, tubería y el `$( )` interno). Ahora una.
+- **Texto manipulado en bash, no en procesos:** `printf|sed|head` para leer un campo del REQ
+  costaba 5.116 ms por campo y se invocaba cinco veces; en bash son 326 ms. `printf|tr|tr`,
+  `cat`, `dirname`, `cygpath` innecesario y los `sed` de la detección de escrituras por shell
+  (esta última, **−94%**) salen del camino común.
+
+**Lo que no cambia:** los dos guardianes siguen siendo **ejecutables por su cuenta** y el banco
+los invoca así. Producción y pruebas ejecutan la misma función, no dos copias que puedan
+desfasarse.
+
+**El riesgo que hubo que cerrar al convertirlos en funciones:** decir «permito» con `exit 0`
+mata el proceso y el segundo guardián nunca corre — fallo abierto y en silencio. Todo `exit`
+del cuerpo pasó a `return`, y hay un caso de prueba (`deny`, o sea control positivo) que existe
+sólo para cazar una reintroducción de ese error.
+
+### Corregido — un REQ con `Sensible a seguridad: SÍ` se saltaba la auditoría
+La normalización a minúsculas trabaja byte a byte y, sin locale definido, no toca la `Í`. El
+valor quedaba como `sÍ`, **no casaba** con la lista `sí|si`, y el REQ cerraba **sin exigir
+`Seguridad: aprobado`**.
+
+Comprobado que el código anterior se comportaba igual: el defecto es previo, no lo introduce
+esta versión. El normalizador pliega ahora la tilde y la comparación es contra **una forma
+cerrada** (`si`) en vez de una lista de variantes — que es exactamente lo que el arnés predica
+en su propio playbook: cuando la familia de formas de escribir algo es abierta, el control no
+puede enumerarlas.
+
+### Pruebas
+57 → **68 casos**, 0 fallos. Los 11 nuevos cubren el punto de entrada real (`guard.sh`), que
+antes no tenía ninguno: sin ellos el banco habría validado algo distinto de lo que se ejecuta.
+
 ## [1.16.0] — 2026-09-03
 ### Añadido — la clase del hallazgo decide si bloquea el cierre
 Hasta ahora **cualquier** hallazgo abierto impedía cerrar un REQ. En la práctica eso mantiene
