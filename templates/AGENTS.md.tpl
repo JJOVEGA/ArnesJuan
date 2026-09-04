@@ -87,8 +87,25 @@ Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
 **Flujo:** analista define REQ → desarrollador codifica → qa-tester valida → auditor-seguridad revisa → REQ `completado`.
 
 **Loop de error:** si QA o seguridad encuentran fallos, el REQ vuelve al desarrollador.
-Máximo **{{MAX_REINTENTOS}}** vueltas dev↔QA por REQ; superado ese límite, el REQ pasa a
-`bloqueado` y se escala al humano. La seguridad puede **vetar** en cualquier momento.
+Máximo **{{MAX_REINTENTOS}}** vueltas dev↔QA **por REQ**, y el contador **NO se reinicia con
+cada hallazgo nuevo**. Esto es deliberado: un tope por hallazgo no acota nada, porque cada
+arreglo cierra el hallazgo documentado y la vuelta siguiente encuentra una variante. Un REQ
+puede pasar semanas en `en-revisión` sin haber gastado nunca tres vueltas del mismo hallazgo.
+
+Agotado el tope, el REQ **no se queda abierto**: o cierra con el residual **declarado**
+(dueño, forzador medido y vencimiento) o pasa a `bloqueado` y se escala al humano. La
+seguridad puede **vetar** en cualquier momento.
+
+**No todo hallazgo bloquea.** Cada hallazgo abierto declara su clase en el campo
+`Hallazgos abiertos:` del REQ — `usuario/dinero`, `contrato` o `instrumento` (tabla completa
+en `requirements/README.md`). Sólo las dos primeras impiden cerrar. Un defecto **del propio
+arnés** —un lector de umbral, un guardián, una prueba— es `instrumento` y va a deuda técnica
+con dueño: atacar guardianes es valioso, pero **no puede ser condición para cerrar una
+función de negocio**.
+
+> 🔒 **Cumplido por máquina:** `guard-completado` lee `Hallazgos abiertos:` y deniega el
+> cierre si alguno es `usuario/dinero` o `contrato` — y también si alguno **no declara clase**,
+> porque entonces la puerta no puede saber si bloquea.
 
 **Gates de aprobación humana** — el pipeline se detiene y espera tu visto bueno antes de:
 {{GATES_HUMANOS}}
@@ -207,7 +224,7 @@ memory/                ← memoria/preferencias (no versionar secretos)
 
 ## 13. Enforcement por runtime (hooks del plugin)
 
-Cuatro invariantes de este documento no se quedan en la prosa: las vigila la máquina vía hooks
+Las invariantes de este documento que no se quedan en la prosa las vigila la máquina, vía hooks
 `PreToolUse` del plugin, que leen `.arnes/config.json`.
 
 | Invariante | Sección | Hook | Herramientas cubiertas |
@@ -215,21 +232,28 @@ Cuatro invariantes de este documento no se quedan en la prosa: las vigila la má
 | La coordinadora no edita código de la app (sólo el `desarrollador`) | §5 | `guard-codigo` | `Edit`/`Write`/`MultiEdit` + `Bash` (parcial) |
 | No completar un REQ con aprobaciones pendientes | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | No completar un REQ con quality gates en rojo | §7 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno **sin clase** | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | No completar sin `QA: aprobado` (ni un REQ sensible sin `Seguridad: aprobado`) | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| La transición a `completado` no se hace por shell | §6 | `guard-completado` | `Bash` (parcial) |
 
 **Es una barandilla, no una jaula.** El hook impide que el modelo **se desvíe por descuido**;
 no contiene a un agente decidido a rodearlo. Concretamente:
 
-- **`Bash` sólo está cubierto en parte.** `guard-codigo` detecta las escrituras evidentes
-  (redirección `>`/`>>`, `tee`, `cp`, `mv`, `install`, `sed -i`, `perl -i`, `dd of=`) y deniega
-  con un motivo que dice que la cobertura es parcial. Quedan fuera, **a propósito**, los
-  scripts, los heredocs indirectos, los formateadores que reescriben archivos
-  (`prettier --write`, `eslint --fix`), `patch`/`git apply` y cualquier programa que escriba
-  por su cuenta. Un hook no puede analizar shell arbitrario de forma fiable, y perseguirlo
-  produce falsos positivos que acaban con alguien desactivando el guard: un guard apagado
-  protege menos que uno parcial.
-- **`guard-completado` no mira `Bash`.** Un `sed -i` sobre un archivo de `requirements/` puede
-  dejar un REQ en `completado` sin pasar por las puertas. Es un hueco conocido.
+- **`Bash` sólo está cubierto en parte, y las dos puertas comparten esa cobertura.** Ambos
+  guardianes usan el mismo detector de escrituras (redirección `>`/`>>`, `tee`, `cp`, `mv`,
+  `install`, `sed -i`, `perl -i`, `dd of=`). Quedan fuera, **a propósito**, los scripts, los
+  heredocs indirectos, los formateadores que reescriben archivos (`prettier --write`,
+  `eslint --fix`), `patch`/`git apply` y cualquier programa que escriba por su cuenta. Un hook
+  no puede analizar shell arbitrario de forma fiable, y perseguirlo produce falsos positivos
+  que acaban con alguien desactivando el guard: un guard apagado protege menos que uno parcial.
+- **`guard-completado` sí mira `Bash`, pero no lo juzga: lo DERIVA.** Un comando que escribe en
+  `requirements/` y menciona el estado terminal se deniega pidiendo que la transición se haga
+  con `Edit`/`Write`, que es donde el hook puede ver el contenido resultante y evaluar
+  veredictos, cola y quality gates. Reimplementar esas puertas para la shell sería una segunda
+  transcripción de la misma regla, y dos transcripciones se desfasan.
+  Dentro de esa vía la detección del estado terminal es **deliberadamente ancha** —lo busca en
+  cualquier parte del comando, no como `estado:` seguido del valor—, porque la forma más natural
+  de cerrar un REQ por shell sustituye el **valor** y no escribe nunca la palabra «Estado».
 
 La consecuencia práctica: el enforcement por runtime es la última red, no la primera. La regla
 sigue siendo la de §5, y saltársela por otra vía es un incumplimiento aunque ningún hook grite.

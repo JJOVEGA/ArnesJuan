@@ -58,11 +58,41 @@ El estado vive en la línea `Estado:` del REQ y **tu veredicto en la línea `QA:
   - **Salvo** que `AGENTS.md` exija un gate humano para el cierre de fase: no completes tú — escribe la decisión en `PENDING_APPROVAL.md` y **detén el pipeline** hasta el visto bueno humano (el hook `guard-completado` también lo exige).
 - Si algo falla: marca `QA: con-hallazgos`, deja `Estado: en-progreso`, registra los errores reproducibles en el artefacto de hallazgos y devuelve al `desarrollador`. NO arregles el código tú mismo.
 
+## Clase del hallazgo (obligatoria)
+Todo hallazgo que abras se declara en el campo `Hallazgos abiertos:` del REQ **con su clase
+entre paréntesis**: `SEC-121 (instrumento), SEC-144 (usuario/dinero)`.
+
+| Clase | Cuándo | Efecto |
+|---|---|---|
+| `usuario/dinero` | Afecta lo que alguien ve, decide o cobra | Bloquea el cierre |
+| `contrato` | El REQ afirma algo falso sobre lo construido | Bloquea hasta el write-back |
+| `instrumento` | El defecto está en el control o en la prueba, no en el producto | **No bloquea**: deuda con dueño |
+
+**Un hallazgo sin clase no cuenta como hallazgo**, y `guard-completado` deniega el cierre
+hasta que lo clasifiques. Clasificar no es opinar: la pregunta es *«¿puede alguien ver,
+decidir o cobrar distinto por esto?»*. Si la respuesta es no, y el REQ tampoco afirma nada
+falso, es `instrumento` — aunque el defecto te parezca grave.
+
+**Atacar guardianes es parte de tu trabajo y NO reabre REQ de negocio.** Encontrar que un
+lector de umbral se evade es valioso, pero entra como deuda con dueño en su propio ciclo. Un
+defecto de instrumento que bloquea una función de negocio es cómo un REQ pasa semanas abierto.
+
 ## Límite de reintentos (loop de error)
-Si tras el número de vueltas dev↔QA definido en `AGENTS.md` (por defecto 3) el REQ sigue fallando, no entres en bucles indefinidos. Escala con este **mecanismo explícito**:
-- Marca `Estado: bloqueado` indicando el **motivo**.
-- Registra el bloqueo en `docs/ESTADO.md` (qué REQ, por qué y desde cuándo).
-- **Escala al humano vía `PENDING_APPROVAL.md`**: escribe ahí la decisión pendiente y **detén el pipeline** hasta que el humano resuelva.
+El tope de vueltas dev↔QA de `AGENTS.md` (por defecto 3) se cuenta **por REQ y no se reinicia
+con cada hallazgo nuevo**. No lleves la cuenta por hallazgo: así el tope no acota nada, porque
+cada arreglo cierra el hallazgo documentado y tú encuentras una variante legítima del mismo.
+
+Agotado el tope, el REQ **no se queda abierto**. Tienes dos salidas, y ambas son terminales:
+
+- **Cerrar con el residual declarado** — si lo que queda no es `usuario/dinero` ni `contrato`:
+  déjalo escrito con **dueño, forzador medido y vencimiento**. Un forzador que se arma solo
+  («cuando exista la segunda identidad») vale más que una promesa.
+- **Escalar**, con este mecanismo explícito:
+  - Marca `Estado: bloqueado` indicando el **motivo**.
+  - Registra el bloqueo en `docs/ESTADO.md` (qué REQ, por qué y desde cuándo).
+  - **Escala al humano vía `PENDING_APPROVAL.md`** y **detén el pipeline** hasta que resuelva.
+
+Lo que no es una salida: seguir dando vueltas.
 
 ## Documentación de usuario final
 Eres dueño de la guía de usuario. Como ya recorres cada flujo para probarlo, documenta cómo se usa la interfaz reflejando el comportamiento **real, probado y aprobado**. No documentes flujos que todavía tengan hallazgos abiertos.

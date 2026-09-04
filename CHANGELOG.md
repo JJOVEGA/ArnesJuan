@@ -2,6 +2,85 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.16.0] — 2026-09-03
+### Añadido — la clase del hallazgo decide si bloquea el cierre
+Hasta ahora **cualquier** hallazgo abierto impedía cerrar un REQ. En la práctica eso mantiene
+REQ de negocio abiertos durante semanas por defectos **del propio arnés**: un lector de umbral
+que se evade, un guardián con un agujero. Atacar guardianes es valioso, pero **no puede ser
+condición para cerrar una función de negocio**.
+
+Y el tope de vueltas no acotaba nada, porque **se reiniciaba con cada hallazgo nuevo**: cada
+arreglo cierra el hallazgo documentado y la vuelta siguiente encuentra una variante legítima
+del mismo defecto, así que un REQ puede pasar semanas en `en-revisión` sin haber gastado nunca
+tres vueltas del mismo hallazgo.
+
+- **Campo `Hallazgos abiertos:`** en la plantilla de REQ, con la clase entre paréntesis:
+  `SEC-121 (instrumento), SEC-144 (usuario/dinero)`.
+- **Tres clases, sólo dos bloquean:** `usuario/dinero` (afecta lo que alguien ve, decide o
+  cobra) y `contrato` (el REQ afirma algo falso sobre lo construido) **bloquean**;
+  `instrumento` (el defecto está en el control o la prueba, no en el producto) **no bloquea**
+  y va a deuda técnica con dueño.
+- **Un hallazgo sin clase deniega.** Sin ella la puerta no puede saber si bloquea, y un «no sé»
+  que deja pasar es un «sí» disfrazado. Una clase desconocida también deniega.
+- **El tope se cuenta por REQ y no se reinicia** (`AGENTS.md` §6). Agotado, el REQ no se queda
+  abierto: cierra con el residual declarado —dueño, forzador medido, vencimiento— o pasa a
+  `bloqueado` y se escala.
+
+Es la primera puerta del arnés que existe para **dejar pasar**. Las demás añaden formas de
+bloquear; ésta quita una que sobraba.
+
+### Corregido — cerrada la limitación conocida de 1.15.0: `guard-completado` ya mira `Bash`
+1.15.0 dejó escrito el hueco: *«un `sed -i` sobre un archivo de `requirements/` puede dejar un
+REQ en `completado` sin pasar por las puertas»*. Ahora `guard-completado` está también en el
+matcher de `Bash`.
+
+**No juzga: DERIVA.** Un comando que escribe en `requirements/` y menciona el estado terminal
+se deniega pidiendo que la transición se haga con `Edit`/`Write`, que es donde el hook puede ver
+el contenido resultante. Reimplementar veredictos, cola y quality gates para la shell sería una
+segunda transcripción de la misma regla, y dos transcripciones se desfasan.
+
+Hereda la **misma cobertura parcial** que `guard-codigo` —usa el mismo `arnes_bash_escrituras`—
+y eso queda dicho en `AGENTS.md` §13; no es cobertura total y no se presenta como tal.
+
+La detección del estado terminal sí es **deliberadamente ancha** —en cualquier parte del
+comando, no `estado:` seguido del valor—. Lo obligó una prueba en rojo: la forma más natural de
+cerrar un REQ por shell sustituye el **valor** y no escribe nunca la palabra «Estado».
+
+### Corregido — un proyecto recién inicializado no podía cerrar ningún REQ
+La plantilla de `PENDING_APPROVAL.md` traía su ejemplo de formato —comentado en HTML— bajo
+`## Pendientes`. El conteo de `guard-completado` cuenta líneas `^###` y no sabe de comentarios,
+así que devolvía **1 pendiente** con la cola vacía y denegaba todos los cierres. El banco no lo
+veía porque escribía su propio archivo limpio, nunca la plantilla.
+
+Arreglado por los **dos** lados —el `awk` ignora lo que está dentro de `<!-- -->` y la plantilla
+saca el ejemplo de la sección—, porque corregir sólo el caso que falló lo reabre en el siguiente.
+
+### Corregido — la versión del arnés se tecleaba a mano
+`templates/arnes-config.json.tpl` pasa a `{{ARNES_VERSION}}` y `arnes-init` lo deriva de
+`.claude-plugin/plugin.json`. El escritor es la corrida, no una persona.
+
+### Rendimiento — los hooks gastaban ~20 procesos por invocación
+Cada `arnes_jq` arranca `jq` **y** `tr`, y en Windows sobre almacenamiento sincronizado un
+arranque cuesta ~0,5 s. Los campos se leen ahora **agrupados, una llamada por fuente**, y
+colocados **después** de la salida temprana que puedan aprovechar.
+
+| Hook | Antes | Ahora |
+|---|---|---|
+| `guard-codigo` | 6 | **2** |
+| `guard-completado` | 9 | **4** |
+
+El caso más frecuente mejora más de lo que dice la tabla: un comando de shell de sólo lectura
+—la mayoría— sale con **una** llamada, antes de tocar el manifiesto. No cambia ninguna regla.
+
+### Pruebas
+41 → 54 casos, con filtro opcional (`run.sh bash`, `run.sh hallazgo`) porque una vuelta completa
+cuesta minutos y un ciclo de verificación caro es lo que empuja a saltarse la suite.
+
+Los casos nuevos incluyen el de compatibilidad que importa —**un REQ anterior al campo de
+hallazgos no puede quedar bloqueado por él**— y **dos** `deny` distintos para el cierre por
+shell: con uno solo el hueco seguía abierto, porque la forma con `sed` y la forma con heredoc
+fallan por razones distintas.
+
 ## [1.15.0] — 2026-09-02
 ### Corregido — el guard denegaba justo al agente autorizado (prefijo del plugin)
 `guard-codigo` comparaba `agent_type` en crudo contra `agentes.agente_codigo` del manifiesto.
