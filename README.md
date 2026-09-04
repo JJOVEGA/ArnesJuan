@@ -28,6 +28,36 @@ Las invariantes críticas no se quedan en el markdown: las vigila la máquina v�
   ha validado —el auditor no mira las quality gates—. La única salida es declarar la auditoría
   **preventiva**, que desbloquea el orden pero **no** cierra un REQ crítico.
 
+### Continuidad: un bloque que se **deriva**, no se redacta
+Al parar un agente (`Stop` / `SubagentStop`), el arnés reescribe en `docs/ESTADO.md`, entre
+marcadores, un bloque leído del disco: estado y veredictos de cada REQ, cola de aprobaciones,
+rama y si el árbol tiene cambios sin comitear.
+
+**Por qué derivado y no un resumen.** Pedirle a un agente que cuente lo que hizo no resuelve la
+pérdida de contexto: un resumen redactado por el modelo miente justo cuando más falta hace —
+cuando le queda poco contexto, que es cuando peor recuerda. Aquí cada línea sale de leer un
+archivo, así que si el bloque se equivoca es que el disco dice eso.
+
+Los veredictos se muestran **como los lee la máquina** —normalizados— y no como están escritos:
+si un valor se ve raro ahí, es que la puerta lo está leyendo raro, y eso es justo lo que
+conviene ver.
+
+Nunca bloquea la parada, no toca nada fuera de sus marcadores, es idempotente, y se apaga con
+`estado_derivado.activo: false`.
+
+### Rotación: una bitácora no crece sin tope
+Un `CHANGELOG.md` de **1,17 MB** —medido en un proyecto real— son del orden de **300 000 tokens**
+que entran en la ventana cada vez que alguien lo lee. Con `rotacion.activo: true`, el hook `Stop`
+**mueve** las secciones sobrantes a `<nombre>-archivo.md` y deja un puntero.
+
+**Mueve; no resume.** Un resumen convertiría la bitácora en la versión que el modelo recuerda de
+ella. Nunca borra —añade, relee para comprobar que llegó, y sólo entonces recorta—, corta sólo en
+encabezados `## `, y **qué mitad es «lo viejo» se declara, no se adivina**: un CHANGELOG pone lo
+nuevo arriba, un registro cronológico al final, y equivocarse archivaría lo más reciente.
+
+Viene **apagada**: reestructurar un documento que escribió una persona no puede ser el
+comportamiento por defecto.
+
 Son **inertes** sin `.arnes/config.json` (no estorban en repos ajenos al arnés) y requieren `jq`.
 El `pre-commit` de git sigue exigiendo el changelog en cada commit.
 

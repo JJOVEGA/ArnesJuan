@@ -389,8 +389,28 @@ arnes_norm_campo() {   # <valor> -> ARNES_CAMPO
   # y NINGUNO casaba, así que la puerta de seguridad no llegó a existir para ellos.
   # Esto NO es una lista de variantes del valor —que se pudre—: es quitar sintaxis
   # de Markdown, que es un conjunto cerrado y ajeno al dominio.
-  v="${v//\*/}"; v="${v//_/}"; v="${v//\`/}"
+  #
+  # PERO SOLO CUANDO ENVUELVE EL VALOR ENTERO, y esto se pago aprendiendo: retirar
+  # todo `*` suelto convertia `Seguridad: aprobado*` en `aprobado`. Un asterisco tras
+  # una firma no es adorno, es una LLAMADA A NOTA AL PIE, y una nota al pie apunta a
+  # una salvedad -- lo contrario de una firma incondicional.
+  #
+  # El enfasis de Markdown es PAREADO por definicion: abre y cierra. Un asterisco
+  # suelto nunca lo es. Asi que `**si**` se desenvuelve y `aprobado*` se respeta, y
+  # el argumento de arriba sigue en pie sin abrir una puerta nueva.
   v="${v// /}"
+  local antes
+  while :; do
+    antes="$v"
+    case "$v" in
+      '**'*'**') v="${v#\*\*}"; v="${v%\*\*}" ;;
+      '__'*'__') v="${v#__}";   v="${v%__}"   ;;
+      '*'*'*')   v="${v#\*}";   v="${v%\*}"   ;;
+      '_'*'_')   v="${v#_}";    v="${v%_}"    ;;
+      '`'*'`')   v="${v#\`}";   v="${v%\`}"   ;;
+    esac
+    [ "$v" != "$antes" ] || break
+  done
   v="${v//Í/i}"; v="${v//í/i}"
   ARNES_CAMPO="${v,,}"
 }
@@ -422,9 +442,22 @@ arnes_sens_efectiva() {   # ARNES_SENS -> si|no ; ARNES_SENS_DUDOSA -> 0|1
   corte="$ARNES_SENS"
   corte="${corte%%—*}"; corte="${corte%%–*}"; corte="${corte%%-*}"
   corte="${corte%%(*}"; corte="${corte%%[*}"; corte="${corte%%,*}"; corte="${corte%%;*}"
+  # LA GENEROSIDAD VA DE UN SOLO LADO, y esto tambien se pago aprendiendo.
+  #
+  # El conjunto que ABRE la puerta tiene que ser minimo e inequivoco; el que la
+  # cierra puede ser generoso, porque equivocarse ahi no cuesta nada. La primera
+  # version metia `n/a` y `ninguna` entre los negativos, y eso es exactamente lo que
+  # alguien escribe cuando NO HA CLASIFICADO -- no cuando ha decidido que no es
+  # sensible. Esas dos entradas le abrian un hueco a la regla de fallo cerrado justo
+  # en el caso para el que se construyo.
+  #
+  # Lo delataba una asimetria: `n/a` abria la puerta y `no aplica`, que es la misma
+  # frase, la cerraba. Alargar la lista para taparlo seria la lista enumerada que se
+  # pudre; lo correcto es que SOLO UNA NEGACION EXPLICITA abra. Ahora las dos formas
+  # coinciden, y ninguna abre.
   case "$corte" in
     si|s|true|x|yes|verdadero)  ARNES_SENS='si' ;;
-    no|n|false|na|n/a|ninguna)  ARNES_SENS='no' ;;
+    no|n|false)                 ARNES_SENS='no' ;;
     *) ARNES_SENS='si'; ARNES_SENS_DUDOSA=1 ;;
   esac
 }

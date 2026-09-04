@@ -2,6 +2,104 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.22.0] — 2026-09-04
+### Añadido — continuidad automática: el arnés deja escrito dónde quedó todo
+El coste más caro de una sesión larga no es el tiempo: es **reconstruir dónde quedó todo cuando
+el contexto se pierde**. Un hook `Stop` / `SubagentStop` reescribe ahora en `docs/ESTADO.md`,
+entre marcadores, un bloque con el estado y los veredictos de cada REQ, la cola de aprobaciones,
+la rama y si el árbol tiene cambios sin comitear.
+
+**No se redacta: se deriva, y ésa es toda la diferencia.** Pedirle a un agente que resuma lo que
+hizo no resuelve nada, porque un resumen escrito por el modelo miente justo cuando más falta
+hace —cuando le queda poco contexto, que es cuando peor recuerda—. Aquí cada línea sale de leer
+un archivo: si el bloque se equivoca, es que el disco dice eso.
+
+Los veredictos aparecen **como los lee la máquina** —normalizados, sin mayúsculas ni tildes ni
+marcado— y no como están escritos en el REQ. Es deliberado: un `Sensible a seguridad: **sí**`
+sale en el bloque con su rigor efectivo `critico`, así que **el fallo que 1.21.0 arregló habría
+sido visible** en este tablero.
+
+**Las invariantes que trae por delante de su utilidad:**
+- **Nunca bloquea la parada.** Un hook `Stop` que falla deja la sesión colgada, y una herramienta
+  de continuidad que impide terminar es peor que no tenerla. Sale `0` pase lo que pase.
+- **No toca lo que escribió una persona.** Sólo reescribe entre sus marcadores.
+- **Idempotente.** Dos pasadas dan un solo bloque.
+- **Inerte sin manifiesto**, como los demás hooks, y **no inventa la carpeta destino**: decidir la
+  estructura de un proyecto no le toca al arnés.
+- **Si `git` no puede responder, lo dice.** El árbol queda `desconocido`, no «limpio» ni «con
+  cambios»: las dos serían afirmar un hecho que no se tiene. Es la misma regla que 1.21.0 aplicó
+  a los valores que no se entienden.
+
+Se apaga con `estado_derivado.activo: false`.
+
+### Añadido — rotación de artefactos: una bitácora no puede crecer sin tope
+Medido en un proyecto real: el `CHANGELOG.md` llegó a **1,17 MB**. A ~4 caracteres por token son
+del orden de **300 000 tokens en un solo archivo**, y se pagan otra vez en cada sesión que lo
+lea. No es un problema de disco: es presupuesto.
+
+El hook `Stop` / `SubagentStop` **mueve** las secciones sobrantes a `<nombre>-archivo.md` y deja
+un puntero.
+
+**Mueve; no resume.** Un resumen aquí sería peor que el problema: convertiría la bitácora en *la
+versión que el modelo recuerda de la bitácora*, y una bitácora que no es fiel no sirve para nada.
+
+**Las invariantes, otra vez por delante de la utilidad:**
+- **Apagada salvo que el proyecto la encienda.** Reestructurar un documento que escribió una
+  persona no puede ser el comportamiento por defecto.
+- **Nunca borra.** Añade al destino, **relee para comprobar que llegó**, y sólo entonces recorta
+  el origen. Si la comprobación falla, el origen no se toca: mejor un archivo grande que uno
+  perdido.
+- **Corta sólo en encabezados `## `.** Sin límites seguros no hace nada; un corte a media sección
+  parte una entrada en dos.
+- **Qué mitad es «lo viejo» no se adivina, se declara** (`rotacion.orden`). Un CHANGELOG pone lo
+  nuevo arriba; un registro cronológico lo añade al final. Adivinar mal archivaría lo más
+  **reciente**, que es justo lo que hay que tener a mano.
+- **Idempotente por construcción:** al terminar quedan exactamente `conservar_secciones`, así que
+  la pasada siguiente no encuentra excedente. La primera versión restaba al revés y cada pasada
+  volvía a rotar, vaciando el archivo a trozos; lo cazó la prueba de idempotencia.
+
+Y un fallo que la prueba también cazó antes de existir el caso: la comprobación de que el texto
+llegó al destino usaba `case`, pero un encabezado `## [1.20.0]` lleva **corchetes**, que en un
+patrón de `case` son una clase de caracteres y no texto. Habría fallado siempre, y el recorte no
+habría ocurrido nunca. Ahora se compara con `grep -F`.
+
+### Corregido — el asterisco de nota al pie no es énfasis (regresión de 1.21.0)
+1.21.0 retiraba **todo** `*` del valor, y eso convertía `Seguridad: aprobado*` en `aprobado`. Un
+asterisco tras una firma no es adorno: es una **llamada a nota al pie**, y una nota al pie apunta
+a una **salvedad** — lo contrario de una firma incondicional. Lo delataba una asimetría:
+`aprobado, ver nota` denegó siempre (el texto sobra), pero `aprobado*` pasaba. El agujero era
+exactamente la forma escueta.
+
+**Es el mismo error de 1.21.0, girado.** El argumento —*el marcado no es parte del valor*— se
+hizo sobre `Sensible a seguridad:`, donde `**sí**` sí es el mismo valor, y el cambio se aplicó a
+los cinco campos. **El sujeto del arreglo era más estrecho que su población**, que es literalmente
+la invariante que el propio arnés enuncia.
+
+El arreglo conserva el argumento sin abrir puerta nueva: **el énfasis de Markdown es pareado por
+definición**, así que sólo se retira cuando **envuelve el valor entero**. `**sí**` sí; `aprobado*`
+no. Un asterisco suelto nunca envuelve nada.
+
+### Corregido — sólo una negación explícita abre la puerta de seguridad
+El conjunto negativo de 1.21.0 incluía `n/a` y `ninguna`. Pero eso es lo que alguien escribe
+cuando **no ha clasificado**, no cuando ha decidido que un REQ no es sensible: esas dos entradas
+le abrían un hueco a la regla de fallo cerrado **justo en el caso para el que se construyó**. Lo
+delataba una asimetría: `n/a` abría la puerta y `no aplica`, que es la misma frase, la cerraba.
+
+Alargar la lista para taparlo sería la lista enumerada que se pudre. Lo correcto es invertir de
+qué lado va la generosidad: **el conjunto que ABRE la puerta debe ser mínimo e inequívoco**
+—`no`, `n`, `false`— y el que la cierra puede ser generoso, porque equivocarse ahí no cuesta
+nada. Ahora las dos formas coinciden, y ninguna abre.
+
+### Corregido — `estado_derivado.activo: false` no apagaba nada
+En `jq`, el operador `//` trata `false` **igual que ausente**: `.activo // true` devuelve `true`
+cuando alguien escribió `false`, así que el interruptor estaba soldado en «encendido». Lo
+encontró el caso de prueba, no una lectura del código.
+
+Es la misma clase de defecto que el resto de esta versión: **una comprobación que no distingue
+«ausente» de «explícitamente negativo».** Ahora sólo un `false` explícito apaga; el resto deja el
+hook activo, que es el lado inocuo. Revisados los demás `//` del código: todos operan sobre
+cadenas o arrays, donde `//` se comporta bien.
+
 ## [1.21.0] — 2026-09-04
 ### Corregido — `Sensible a seguridad: **sí**` no activaba la puerta de seguridad
 **Fallo en abierto, medido en un proyecto real:** siete REQ declaraban ser sensibles y

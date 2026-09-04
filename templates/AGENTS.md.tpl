@@ -291,6 +291,20 @@ no contiene a un agente decidido a rodearlo. Concretamente:
   cualquier parte del comando, no como `estado:` seguido del valor—, porque la forma más natural
   de cerrar un REQ por shell sustituye el **valor** y no escribe nunca la palabra «Estado».
 
+**Otro que tampoco decide: la rotación.** Un artefacto de bitácora —`CHANGELOG.md`, el registro
+de seguridad— crece sin tope, y todo lo que crece sin tope acaba entrando entero en la ventana
+de contexto. Con `rotacion.activo: true`, al parar un agente el arnés **mueve** las secciones
+sobrantes a `<nombre>-archivo.md` y deja un puntero. **Mueve; no resume** — un resumen
+convertiría la bitácora en la versión que el modelo recuerda de ella. Viene apagada.
+
+**Un hook que no decide nada: la continuidad.** Al parar un agente (`Stop` / `SubagentStop`),
+el arnés reescribe en `docs/ESTADO.md`, entre marcadores, un bloque **derivado** del disco:
+estado y veredictos de cada REQ, cola de aprobaciones, rama y limpieza del árbol. No permite ni
+impide nada — existe porque **un resumen redactado por el modelo miente justo cuando más falta
+hace**, que es cuando le queda poco contexto. Por eso no se redacta: se deriva, y cada línea
+sale de leer un archivo. Nunca bloquea la parada, no toca nada fuera de los marcadores, y se
+apaga con `estado_derivado.activo: false`.
+
 La consecuencia práctica: el enforcement por runtime es la última red, no la primera. La regla
 sigue siendo la de §5, y saltársela por otra vía es un incumplimiento aunque ningún hook grite.
 
