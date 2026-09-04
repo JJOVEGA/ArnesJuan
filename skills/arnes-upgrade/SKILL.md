@@ -115,8 +115,8 @@ por arriba:
 | `requirements/README.md` tiene la sección **Nivel de rigor** | 1.19.0 |
 | `requirements/README.md` nombra `Hallazgos abiertos:` | 1.16.0 |
 | `AGENTS.md` §13 tiene la fila «la transición a `completado` no se hace por shell» | 1.16.0 |
-| `AGENTS.md` §6 nombra la auditoría `(preventiva)` | 1.20.0 |
-| `.arnes/config.json` tiene `plantillas_origen` | 1.20.0 |
+| `AGENTS.md` §6 nombra la auditoría `(preventiva)` | 1.21.0 |
+| `.arnes/config.json` tiene `plantillas_origen` | 1.21.0 |
 
 *(Los tres primeros están comprobados contra los tags: ausentes en la versión anterior,
 presentes desde la que se indica. Si añades marcadores, compruébalos igual — un marcador mal
@@ -204,6 +204,10 @@ nada.
 - `AGENTS.md` §13: fila «el rigor se puede subir, nunca bajar».
 
 ### Hacia 1.20.0
+
+> **1.20.0 nunca se publicó**: su contenido llegó dentro de 1.21.0. Ningún proyecto puede estar
+> *en* 1.20.0, así que esto no es un destino — es un **paso** que se aplica junto con el
+> siguiente al migrar desde 1.19.0 o antes.
 - `AGENTS.md` §6: bloque **el orden no es una sugerencia** —seguridad no firma lo que QA no ha
   validado— con la **excepción nombrada** de la auditoría preventiva.
 - `AGENTS.md` §13: fila «Seguridad no firma lo que QA no ha validado».
