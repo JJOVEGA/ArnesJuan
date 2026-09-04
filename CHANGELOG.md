@@ -2,6 +2,61 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.21.0] — 2026-09-04
+### Corregido — `Sensible a seguridad: **sí**` no activaba la puerta de seguridad
+**Fallo en abierto, medido en un proyecto real:** siete REQ declaraban ser sensibles y
+**ninguno** casaba. El normalizador plegaba la tilde y bajaba a minúsculas, pero el marcado
+de Markdown seguía ahí: `**sí**` llegaba como `**si**`, que no es `si`, así que el rigor
+efectivo caía a `estandar` y `Seguridad: aprobado` **dejaba de exigirse**. La puerta no se
+abría: nunca llegaba a existir. Seis eran negrita; el séptimo llevaba un comentario tras el
+valor.
+
+Uno de ellos gobernaba la subida de foto de perfil —Entra ID, token delegado, datos
+personales— y lo único que impedía su cierre era que QA seguía en `con-hallazgos`. Estaba a
+un campo de distancia.
+
+**El arreglo va en dos mitades, y la segunda es la que importa.**
+
+1. **El marcado no es parte del valor.** `arnes_norm_campo` retira `*`, `_` y las comillas
+   invertidas. No es una lista de variantes del valor —esas se pudren—: es retirar sintaxis
+   de Markdown, que es un conjunto cerrado y ajeno al dominio. El **paréntesis no se toca**
+   ahí: cortarlo convertiría `Seguridad: aprobado (preventiva)` en una firma completa, y una
+   auditoría preventiva cerraría un REQ crítico. Habría sido cambiar un fallo en abierto por
+   otro.
+
+2. **Tres estados, y el tercero cae del lado seguro.** `arnes_sens_efectiva` clasifica el
+   campo en `sí` / `no` / **no se entiende**, y lo que no se entiende se trata como sensible.
+   Una forma cerrada sólo funciona si algo obliga a producirla, y aquí el valor es Markdown
+   libre tecleado por un agente: el sujeto del control es más estrecho que su población. La
+   respuesta no es enumerar mejor, es que **la lista deje de ser peligrosa cuando esté
+   incompleta**. Es la regla que `/arnes-upgrade` ya aplica a `UNKNOWN` —*una comprobación que
+   no puede responder no dice «no sé», dice «sí»*— y que aquí faltaba. La denegación lo
+   explica, porque un `deny` que no dice de dónde sale se lee como falso positivo y acaba con
+   alguien apagando el guard.
+
+**Campo ausente sigue significando «no».** Cambiarlo obligaría a auditar todo REQ anterior a
+que el campo existiera.
+
+### Corregido — el banco escribía siempre limpio, y por eso no lo veía
+Veinticuatro fixtures, dos valores: `"sí"` y `"no"`. Es **el mismo diagnóstico que quedó
+escrito en 1.16.0** sobre otro campo —*«el banco no lo veía porque escribía su propio archivo
+limpio, nunca la plantilla»*— y reapareció porque entonces se arregló el **caso** y no el
+**banco**. Ahora cada campo que se compara contra una forma cerrada tiene su fixture decorado
+con sus controles negativos: trece casos, incluido el que fija que la firma preventiva
+**decorada** tampoco cierra.
+
+### Documentado — el intérprete es el siguiente agujero por tamaño
+`node script.mjs` no lo ve ningún guardián: el detector lee el texto del comando y la ruta
+vive **dentro** del script. No es una regresión —la cobertura de `Bash` siempre se declaró
+parcial— pero ahora está medido y nombrado en vez de quedar bajo el genérico «scripts»: en
+Windows, donde `sed -i` es incómodo, un intérprete es lo primero que alcanza cualquiera.
+
+### Añadido — `/arnes-upgrade` avisa del choque de vocabulario del rigor
+Un proyecto con su propia escala —dos niveles, declarados en `Sensible a seguridad:`, con QA
+siempre— no puede mapearla a la del plugin —tres niveles, declarados en `Rigor:`, donde
+`ligero` **salta QA**— sin decidir. Queda como **CONFLICTO** con su tabla: se pregunta qué
+trabajo puede prescindir de QA, y «ninguno» es una respuesta válida.
+
 ## [1.20.0] — 2026-09-04
 ### Cambiado — `/arnes-upgrade` pasa a ser un merge a tres vías, no una comparación
 La primera versión comparaba el archivo del proyecto contra la plantilla nueva y preguntaba

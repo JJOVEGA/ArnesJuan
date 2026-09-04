@@ -39,7 +39,8 @@ comparación estricta con ese proveedor.
 ### Limitación conocida: la cobertura de `Bash` es parcial (y a propósito)
 `guard-codigo` mira `Edit`/`Write`/`MultiEdit` y, en `Bash`, sólo las escrituras **evidentes**:
 redirección `>`/`>>`, `tee`, `cp`, `mv`, `install`, `sed -i`, `perl -i` y `dd of=`. Quedan fuera
-los scripts, los formateadores que reescriben archivos (`prettier --write`, `eslint --fix`),
+**cualquier intérprete** —`node script.mjs`, `python x.py`, `pwsh -File x.ps1`—, los
+formateadores que reescriben archivos (`prettier --write`, `eslint --fix`),
 `patch`/`git apply` y cualquier programa que escriba por su cuenta.
 
 `guard-completado` **sí** mira `Bash`, pero no lo juzga: lo **deriva**. Un comando que escribe en
@@ -58,6 +59,12 @@ cobertura total genera falsos positivos sobre comandos de lectura perfectamente 
 (`cat`, `grep`, `git diff`, un build que escupe su log), y un guard que estorba acaba
 desactivado. Un guard apagado protege menos que uno parcial, así que el detector se sesga
 explícitamente al **falso negativo**: si duda, permite.
+
+**El intérprete es el agujero más grande de los que quedan, y está medido.** `node script.mjs`
+no lo ve ningún guardián: el detector lee el **texto del comando** y la ruta vive dentro del
+script. En Windows eso no es un caso rebuscado —`sed -i` es incómodo aquí, y un intérprete es
+lo primero que alcanza cualquiera—. Cerrarlo de verdad exigiría ejecutar el programa para
+saber qué escribe, que es justo lo que un hook no puede hacer.
 
 Conclusión honesta, la misma que dice `AGENTS.md` §13: **es una barandilla, no una jaula.**
 Impide que el modelo se desvíe por descuido; no contiene a un agente decidido a rodearla. Cuando

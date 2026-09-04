@@ -145,13 +145,19 @@ arnes_guard_completado() {
   if [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
     arnes_deny "ARNES: no se puede completar '$rel': el veredicto de QA es '$qa' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9)."
   fi
-  # `si` a secas: el normalizador pliega la tilde, así que `SÍ`, `Sí`, `sí` y `SI`
-  # llegan aquí como la misma forma. Antes se comparaba contra la lista `sí|si` y
-  # un REQ escrito `Sensible a seguridad: SÍ` NO casaba —la conversión a minúsculas
-  # no toca la `Í` sin locale— y se saltaba esta puerta en silencio.
+  # `si` a secas: el normalizador pliega la tilde y retira el marcado de Markdown,
+  # así que `SÍ`, `sí`, `**sí**` y `sí — porque toca auth` llegan aquí como la misma
+  # forma. Y un valor que NO se entiende se trata como sensible, no como «no»: ver
+  # `arnes_sens_efectiva` en lib.sh.
   case "$rigor" in
     critico)
       if [ "$seg" != "aprobado" ]; then
+        # Si el rigor salió de un valor que no se entendió, la denegación TIENE que
+        # decirlo: un deny que no explica de dónde sale se lee como un falso positivo
+        # y acaba con alguien apagando el guard.
+        if [ "${ARNES_SENS_DUDOSA:-0}" = "1" ]; then
+          arnes_deny "ARNES: no se puede completar '$rel': su 'Sensible a seguridad:' dice '${ARNES_SENS_CRUDO}', que no se reconoce ni como si ni como no, y un valor que no se entiende se trata como SENSIBLE —no saber no puede abrir una puerta—. Escribe 'si' o 'no' (el énfasis de Markdown y un comentario tras el valor si se toleran), o declara 'Seguridad: aprobado' si de verdad lo es."
+        fi
         arnes_deny "ARNES: no se puede completar '$rel': su rigor efectivo es 'critico' y el veredicto de seguridad es '${seg:-ausente}' (se requiere 'Seguridad: aprobado'). El control hallado debe quedar como NFR antes de cerrar (AGENTS.md §9)."
       fi ;;
   esac

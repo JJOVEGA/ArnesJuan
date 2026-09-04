@@ -356,6 +356,65 @@ mkreq_r "REQ-056" "sí" "pendiente" "pendiente" ""
 check "sensible: QA firma sin esperar a seguridad -> allow" allow guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-056.md" "" "" 'QA: aprobado')"
 
+# --- Formas DECORADAS: el banco escribia siempre limpio -----------------------
+# LECCION (2026-09-04): un proyecto real declaraba `Sensible a seguridad: **si**`
+# en siete REQ y NINGUNO casaba -- la puerta de seguridad no llegaba a existir para
+# ellos. El banco no lo vio porque escribe sus propios REQ y los escribe limpios:
+# veinticuatro fixtures y solo dos valores, "si" y "no".
+#
+# Es EL MISMO diagnostico que quedo escrito en 1.16.0 sobre otro campo --"el banco
+# no lo veia porque escribia su propio archivo limpio, nunca la plantilla"-- y
+# reaparecio porque entonces se arreglo el CASO y no el BANCO. Por eso ahora cada
+# campo que se compara contra una forma cerrada tiene su fixture decorado, con sus
+# controles negativos: probar que no se estorba a quien escribe `no` es lo que da
+# valor a los `deny`.
+echo "Formas decoradas (marcado de Markdown en el valor):"
+mkreq "$PROJ/requirements/REQ-060.md" "**sí**" "aprobado" "pendiente"
+check "sensible en **negrita** exige auditoria -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-060.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-061.md" "**sí** — toca autenticación" "aprobado" "pendiente"
+check "negrita + comentario tras el valor -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-061.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-062.md" "sí — gobierna la puerta" "aprobado" "pendiente"
+check "comentario tras el valor, sin negrita -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-062.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-063.md" "_sí_" "aprobado" "pendiente"
+check "sensible en _cursiva_ -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-063.md" "" "" 'Estado: completado')"
+# El tercer estado: un valor que no se entiende cae del lado seguro. Sin esto, la
+# lista de formas reconocidas seria una lista enumerada, y esas se pudren.
+mkreq "$PROJ/requirements/REQ-064.md" "por evaluar" "aprobado" "pendiente"
+check "valor que NO se entiende -> deny (lado seguro)" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-064.md" "" "" 'Estado: completado')"
+check_motivo "...y la denegacion dice por que" "no se reconoce" guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-064.md" "" "" 'Estado: completado')"
+# Controles negativos: el arnes NO puede estorbar a quien declara que no es sensible.
+mkreq "$PROJ/requirements/REQ-065.md" "**no**" "aprobado" "pendiente"
+check "no sensible en **negrita** -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-065.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-066.md" "n/a" "aprobado" "pendiente"
+check "no sensible como n/a -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-066.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-067.md" "no — es solo texto" "aprobado" "pendiente"
+check "no + comentario tras el valor -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-067.md" "" "" 'Estado: completado')"
+# Los otros campos tambien se comparan contra forma cerrada, y tambien se decoran.
+mkreq "$PROJ/requirements/REQ-068.md" "no" "**aprobado**" "n/a"
+check "QA en **negrita** cuenta como aprobado -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-068.md" "" "" 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-069.md" "sí" "aprobado" "**aprobado**"
+check "Seguridad en **negrita** cierra un critico -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-069.md" "" "" 'Estado: completado')"
+# Y la firma PREVENTIVA sigue sin cerrar aunque venga decorada: quitar el marcado
+# no puede convertirla en una firma completa. Es el fallo que el arreglo obvio
+# --cortar el valor en el primer parentesis-- habria introducido.
+mkreq "$PROJ/requirements/REQ-070.md" "sí" "aprobado" "**aprobado (preventiva)**"
+check "preventiva decorada TAMPOCO cierra -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-070.md" "" "" 'Estado: completado')"
+mkreq_r "REQ-071" "no" "pendiente" "n/a" "**ligero**"
+check "Rigor **ligero** decorado se reconoce -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-071.md" "" "" 'Estado: completado')"
+
 echo "guard.sh — punto de entrada unico (los dos guardianes, un proceso):"
 check "A1 por guard.sh: coordinadora edita src/ -> deny" deny guard.sh \
   "$(emite_edit "$PROJ/src/app.ts" "" "" 'hola')"

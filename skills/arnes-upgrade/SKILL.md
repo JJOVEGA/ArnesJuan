@@ -129,6 +129,22 @@ nada.
   la sección.
 
 ### Hacia 1.19.0
+
+> **CONFLICTO conocido — el vocabulario del rigor choca.** Un proyecto que ya tenía su
+> propia escala de rigor **no la puede mapear sin decidir**, y esto no es cosmético:
+>
+> | | Escala propia típica del proyecto | Plugin 1.19.0+ |
+> |---|---|---|
+> | Niveles | dos — crítico / normal | tres — `ligero` / `estandar` / `critico` |
+> | Se declara en | `Sensible a seguridad:` | `Rigor:` |
+> | Qué gobierna | cuánta demostración se exige | **qué agentes corren** |
+> | QA | siempre | **`ligero` lo salta** |
+>
+> El día que el proyecto escriba `Rigor: ligero`, la máquina se saltará QA mientras su
+> `AGENTS.md` sigue prometiendo que QA revisa siempre. Es la deriva que advierte §13, y
+> aparece **justo al migrar**. El mapeo se reescribe en el vocabulario de tres, y se
+> **pregunta** —no se infiere— qué trabajo del proyecto puede prescindir de QA. Si la
+> respuesta es «ninguno», es una respuesta válida: no se declara `ligero` en ningún REQ.
 - `requirements/README.md`: campo `Rigor:` en la plantilla y sección **Nivel de rigor**.
 - `AGENTS.md` §6: bloque del nivel de rigor y el marcador `{{CRITERIO_RIGOR_CRITICO}}` —
   **pregunta al usuario qué es crítico en su dominio**, no lo inventes.
@@ -144,6 +160,13 @@ nada.
   Esta migración **no es cosmética**: el hook empieza a denegar una escritura que antes pasaba,
   y la salida —declarar la auditoría preventiva— sólo existe si el proyecto la tiene escrita.
   Un proyecto sin migrar verá un `deny` cuya excepción no está en su `AGENTS.md`.
+
+### Hacia 1.21.0
+- Nada que migrar en los archivos del proyecto, pero **sí hay que revisar los REQ que
+  ya existen**: hasta 1.20.0, un `Sensible a seguridad:` con marcado —`**sí**`— o con un
+  comentario tras el valor **no se reconocía**, y esos REQ nunca activaron la puerta de
+  seguridad. Al actualizar empiezan a activarla. Busca en `requirements/` los valores que
+  no sean `sí`/`no` limpios y comprueba si alguno cerró sin auditoría.
 
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 

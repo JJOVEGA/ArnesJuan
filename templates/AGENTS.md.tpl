@@ -275,7 +275,9 @@ no contiene a un agente decidido a rodearlo. Concretamente:
 
 - **`Bash` sólo está cubierto en parte, y las dos puertas comparten esa cobertura.** Ambos
   guardianes usan el mismo detector de escrituras (redirección `>`/`>>`, `tee`, `cp`, `mv`,
-  `install`, `sed -i`, `perl -i`, `dd of=`). Quedan fuera, **a propósito**, los scripts, los
+  `install`, `sed -i`, `perl -i`, `dd of=`). Quedan fuera, **a propósito**, los scripts, **los
+  intérpretes** —`node script.mjs`, `python x.py`: la ruta vive dentro del archivo y el
+  detector sólo lee el texto del comando; es el agujero más grande de los que quedan—, los
   heredocs indirectos, los formateadores que reescriben archivos (`prettier --write`,
   `eslint --fix`), `patch`/`git apply` y cualquier programa que escriba por su cuenta. Un hook
   no puede analizar shell arbitrario de forma fiable, y perseguirlo produce falsos positivos
