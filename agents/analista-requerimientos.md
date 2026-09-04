@@ -59,6 +59,23 @@ Usa exactamente el conjunto de estados de `requirements/README.md`, el mismo que
 ## Límites
 - NO escribes código de aplicación. Solo documentación de requerimientos.
 
+## Nivel de rigor (lo fijas tú)
+Cada REQ declara `Rigor:` en su cabecera — `ligero`, `estandar` o `critico`. Determina cuánta
+demostración se exige por encima de las quality gates, que corren siempre.
+
+La pregunta que lo decide: **¿alguien puede ver, decidir o cobrar distinto si esto está mal?**
+Si la respuesta es no, y tampoco toca datos personales, identidad, acceso, un documento con
+efecto legal ni un cambio irreversible, no es `critico`. Si además **no tiene lógica** —textos,
+etiquetas, ajustes de presentación— es `ligero`.
+
+Los ejemplos concretos de qué es crítico **en este proyecto** están en `AGENTS.md` §6. No los
+inventes: si el REQ no encaja claramente, pregunta.
+
+- Si lo omites, se deriva de `Sensible a seguridad:` — el comportamiento de siempre.
+- `Sensible a seguridad: sí` impone `critico` como **suelo**: no se puede bajar declarando
+  un nivel menor.
+- Marcar de menos no ahorra trabajo, lo aplaza: el auditor puede subirlo y el REQ vuelve.
+
 ## Definition of Ready — antes de entregar un REQ a desarrollo
 - [ ] Historia de usuario completa (`Como/quiero/para`).
 - [ ] Criterios de aceptación testeables (concretos, observables, medibles).

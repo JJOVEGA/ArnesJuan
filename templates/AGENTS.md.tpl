@@ -107,6 +107,25 @@ función de negocio**.
 > cierre si alguno es `usuario/dinero` o `contrato` — y también si alguno **no declara clase**,
 > porque entonces la puerta no puede saber si bloquea.
 
+**Nivel de rigor — cuánta ceremonia paga cada REQ.** No todo requerimiento merece el mismo
+esfuerzo. Cada REQ declara `Rigor:` en su cabecera: `ligero` (analista + desarrollador +
+quality gates), `estandar` (+ QA) o `critico` (+ auditoría de seguridad). Tabla completa en
+`requirements/README.md`.
+
+**Qué es crítico EN ESTE PROYECTO:**
+{{CRITERIO_RIGOR_CRITICO}}
+*(criterios genéricos que suelen aplicar: dinero · datos personales · identidad o acceso ·
+documento con efecto legal · cambio irreversible de esquema o borrado. Sustitúyelos por los
+ejemplos concretos de este dominio.)*
+
+Lo fija el analista; el auditor **puede subirlo** y nadie lo baja sin su firma. `Sensible a
+seguridad: sí` impone `critico` como **suelo**. Si se omite, se deriva del campo de
+sensibilidad — exactamente como se juzgaba antes de que existieran los niveles.
+
+> 🔒 **Cumplido por máquina:** `guard-completado` calcula el rigor efectivo y sólo exige
+> `Seguridad: aprobado` en `critico`. Un `Rigor: ligero` escrito sobre un REQ sensible **no
+> baja nada**: el suelo manda.
+
 **Gates de aprobación humana** — el pipeline se detiene y espera tu visto bueno antes de:
 {{GATES_HUMANOS}}
 (por defecto: cierre de cada fase, decisiones arquitecturales, y cambios que tocan datos/credenciales de producción).
@@ -233,7 +252,8 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 | No completar un REQ con aprobaciones pendientes | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | No completar un REQ con quality gates en rojo | §7 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno **sin clase** | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
-| No completar sin `QA: aprobado` (ni un REQ sensible sin `Seguridad: aprobado`) | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| El rigor se puede subir, nunca bajar: `Sensible a seguridad: sí` impone `critico` | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| No completar sin `QA: aprobado` (salvo `Rigor: ligero`), ni un REQ `critico` sin `Seguridad: aprobado` | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | La transición a `completado` no se hace por shell | §6 | `guard-completado` | `Bash` (parcial) |
 
 **Es una barandilla, no una jaula.** El hook impide que el modelo **se desvíe por descuido**;
