@@ -94,16 +94,40 @@ arnes_guard_completado() {
     else "" end'
   nuevo="$ARNES_JQ"
 
-  # ¿El cambio deja el REQ en `completado`? Normalizado: case-insensitive y espacios.
-  # Here-string en vez de `printf | grep`: la tubería costaba un fork de más.
-  grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" <<< "$nuevo" || return 0
-
   # --- Veredictos QA/Seguridad (anti-deriva) ---
   # Los campos viven en el archivo del REQ; se prefiere el contenido entrante y se respalda en disco
   # (pre-edición), porque QA/seguridad fijan su veredicto antes de la transición a completado.
   disk=''; [ -f "$fp" ] && IFS= read -r -d '' disk < "$fp"   # `read`, no `cat`: sin fork
   arnes_campos_req "$disk" "$nuevo"
   qa="$ARNES_QA"; seg="$ARNES_SEG"; sens="$ARNES_SENS"; rigor="$ARNES_RIGOR"
+
+  # --- Orden del ciclo: seguridad no firma lo que QA no ha validado -------------
+  # `AGENTS.md` §6 fija desarrollador -> qa-tester -> auditor-seguridad. La regla
+  # ya estaba escrita; lo que faltaba es que se cumpliera. Buscando paralelismo se
+  # emitio la firma de seguridad sobre arboles que QA no habia validado, y el
+  # argumento del propio auditor lo zanja: "yo no miro seis de las siete quality
+  # gates".
+  #
+  # Corre en CUALQUIER edicion del REQ, no solo al cerrarlo: el dano se hace al
+  # escribir el veredicto, no al cierre. Por eso este bloque va ANTES de la
+  # comprobacion de transicion a `completado`.
+  #
+  # EXCEPCION NOMBRADA: la auditoria PREVENTIVA —sin codigo todavia— si puede ir
+  # por delante, porque no firma nada construido. Se declara escribiendo
+  # `Seguridad: aprobado (preventiva)`, y se declara AL EMITIRLA, no al invocarla:
+  # una excepcion que se inventa cuando hace falta no es una excepcion.
+  #
+  # Solo se juzga si esta edicion TOCA el campo: reordenar un REQ viejo que ya
+  # tuviera los veredictos cruzados no debe bloquearse por algo que no hizo.
+  if [ "$seg" = "aprobado" ] && [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
+    if grep -q 'Seguridad:' <<< "$nuevo"; then
+      arnes_deny "ARNES: '$rel' lleva 'Seguridad: aprobado' pero su 'QA:' es '$qa'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGENTS.md 6): la auditoria no firma sobre un arbol que QA no ha validado, porque no mira las quality gates. Si es una auditoria PREVENTIVA —sin codigo todavia— declarala como 'Seguridad: aprobado (preventiva)'."
+    fi
+  fi
+
+  # ¿El cambio deja el REQ en `completado`? Normalizado: case-insensitive y espacios.
+  # Here-string en vez de `printf | grep`: la tubería costaba un fork de más.
+  grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" <<< "$nuevo" || return 0
 
   # --- Nivel de rigor: cuanta ceremonia exige ESTE requerimiento ---
   # `ligero` no pide veredictos: es para lo que no tiene logica —textos, etiquetas,
