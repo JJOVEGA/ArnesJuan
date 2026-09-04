@@ -2,6 +2,33 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.18.0] — 2026-09-04
+### Añadido — `/arnes-upgrade`: los proyectos existentes también se ponen al día
+Hasta ahora el arnés no tenía **ninguna ruta de migración**. `arnes-init` se niega a actuar si
+el proyecto ya está inicializado, y no existía nada más.
+
+El problema que eso creaba es estructural, no accidental: los hooks, los agentes y las skills
+viven **en el plugin** y se actualizan solos, pero los ~10 archivos que `arnes-init` copió al
+proyecto —`AGENTS.md`, `.arnes/config.json`, `requirements/README.md`…— **quedan congelados
+para siempre**. Cada versión nueva del arnés garantizaba así una deriva: **la máquina empezaba
+a exigir cosas que el `AGENTS.md` del proyecto no describe**, y los agentes, que leen esos
+archivos, no se enteraban de las capacidades nuevas.
+
+`/arnes-upgrade` cierra ese hueco, con tres reglas de diseño:
+
+- **Aditivo y quirúrgico, nunca sobrescribe.** Un `AGENTS.md` está lleno de decisiones del
+  proyecto —stack, módulos, gates—; copiar la plantilla encima las destruiría. Añade lo que
+  falta y, si una sección existe pero con contenido distinto, **muestra la diferencia y
+  pregunta** en vez de fusionar a ciegas.
+- **`arnes_version` es el registro de la migración, y se actualiza AL FINAL.** Subirlo antes
+  de aplicar los cambios haría que la siguiente ejecución creyera que ya está hecho, dejando
+  el proyecto a medias sin que nadie lo note.
+- **Los REQ existentes no se tocan.** Los campos nuevos son compatibles hacia atrás por
+  diseño, y hay un caso de prueba que lo fija.
+
+`arnes-init` remite ahora a esta skill cuando encuentra un proyecto ya inicializado con una
+versión distinta a la instalada. Sin ese aviso, quien la ejecutara se quedaba sin camino.
+
 ## [1.17.0] — 2026-09-04
 ### Rendimiento — el coste no era `jq`, era bifurcar
 Los hooks tardaban **~35 s por edición de archivo** en Windows. La causa no era la que
