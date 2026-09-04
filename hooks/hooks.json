@@ -1,43 +1,44 @@
 {
+  "_doc": [
+    "PreToolUse: Edit/Write/MultiEdit siempre pasan por guard.sh (los globs de codigo son config del PROYECTO,",
+    "asi que el filtro no puede vivir aqui). Bash solo arranca guard.sh cuando el comando casa con un `if`:",
+    "cada `if` es una regla de permiso (una sola por handler, sin OR), y Claude Code la evalua ANTES de crear",
+    "el proceso. Verificado empiricamente en 2.1.260 con control positivo. Un `ls` o un `git status` ya no",
+    "pagan el interprete. Los disparadores son los mismos que el detector de escrituras ya buscaba en el texto;",
+    "la diferencia es que el motor de `if` no desenvuelve npx, docker exec, bash -c ni xargs con flags, asi que",
+    "ahi la cobertura es algo menor que antes. Estaba declarada parcial; ahora esta medida. `Bash(* >*)` cubre",
+    "`> f`, `>file` y `>> f` sin arrancar por `2>/dev/null` ni `2>&1`, que son lecturas.",
+    "Stop/SubagentStop: un solo proceso (stop.sh) para continuidad y rotacion, como guard.sh para los guardianes."
+  ],
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Edit|Write|MultiEdit|Bash",
+        "matcher": "Edit|Write|MultiEdit",
         "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh"
-          }
+          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh" }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "if": "Bash(* >*)",         "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh" },
+          { "type": "command", "if": "Bash(tee *)",        "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh" },
+          { "type": "command", "if": "Bash(cp *)",         "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh" },
+          { "type": "command", "if": "Bash(mv *)",         "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh" },
+          { "type": "command", "if": "Bash(install *)",    "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh" },
+          { "type": "command", "if": "Bash(sed -i*)",      "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh" },
+          { "type": "command", "if": "Bash(sed --in-place*)", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh" },
+          { "type": "command", "if": "Bash(perl -i*)",     "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh" },
+          { "type": "command", "if": "Bash(dd *)",         "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh" },
+          { "type": "command", "if": "Bash(xargs *)",      "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh" }
         ]
       }
     ],
     "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/estado-derivado.sh"
-          },
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/rotar-artefactos.sh"
-          }
-        ]
-      }
+      { "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/stop.sh" } ] }
     ],
     "SubagentStop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/estado-derivado.sh"
-          },
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/rotar-artefactos.sh"
-          }
-        ]
-      }
+      { "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/stop.sh" } ] }
     ]
   }
 }

@@ -273,6 +273,9 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 **Es una barandilla, no una jaula.** El hook impide que el modelo **se desvíe por descuido**;
 no contiene a un agente decidido a rodearlo. Concretamente:
 
+- **Un comando Bash de lectura no arranca el guardián.** Cada handler lleva un `if` que Claude Code
+  evalúa antes de crear el proceso; sólo las formas de escritura conocidas llegan al hook. Lo que
+  ese filtro no desenvuelve —`npx`, `docker exec`, `bash -c`, `xargs -n1`— queda fuera, y se dice.
 - **`Bash` sólo está cubierto en parte, y las dos puertas comparten esa cobertura.** Ambos
   guardianes usan el mismo detector de escrituras (redirección `>`/`>>`, `tee`, `cp`, `mv`,
   `install`, `sed -i`, `perl -i`, `dd of=`). Quedan fuera, **a propósito**, los scripts, **los

@@ -21,7 +21,9 @@
 #   y el bloque se anade al final si no existia.
 # - INERTE sin `.arnes/config.json`, como los demas hooks.
 set -uo pipefail
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DIR="${BASH_SOURCE[0]%/*}"
+[ "$DIR" = "${BASH_SOURCE[0]}" ] && DIR=.
+# shellcheck source=/dev/null
 . "$DIR/lib.sh"
 
 arnes_estado_derivado() {

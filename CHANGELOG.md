@@ -2,6 +2,47 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.25.0] — 2026-09-04
+### Cambiado — un `ls` ya no arranca el guardián
+Hasta ahora **cada** comando Bash —`git status`, `ls`, `grep`, `npm test`— arrancaba `guard.sh`, y
+en esta plataforma arrancar el intérprete es la parte cara (~1,2 s medido, con el resto del
+trabajo ya optimizado). La mayoría de esas llamadas terminaba en *«no escribe nada relevante →
+permitir»*: se pagaba el proceso para no hacer nada.
+
+Ahora el `hooks.json` del plugin declara **un handler por disparador**, cada uno con un `if` que
+Claude Code evalúa **antes de crear el proceso**. `Bash(* >*)`, `Bash(tee *)`, `Bash(cp *)`,
+`Bash(mv *)`, `Bash(install *)`, `Bash(sed -i*)`, `Bash(perl -i*)`, `Bash(dd *)`, `Bash(xargs *)`.
+Un comando que no casa con ninguno **no arranca nada**.
+
+**Verificado, no leído.** Plugin desechable con dos handlers —uno sin `if` como control positivo y
+otro con `if: "Bash(touch *)"`—, sesión headless con `--plugin-dir`, un `ls` y un `touch`: el
+control registró los dos; el `if` sólo el `touch`. Sin el control, «no hay registro para `ls`» habría
+sido indistinguible de «el plugin no cargó». Queda como prueba de integración en
+`tests/escenarios/integracion/plugin-if/`.
+
+**Qué se pierde, dicho antes y no después.** El motor de `if` desenvuelve `timeout`, `nice`, `xargs`
+sin flags y asignaciones de entorno; **no** desenvuelve `npx`, `docker exec`, `bash -c`, `xargs -n1`
+ni `find -exec`. Nuestro detector escaneaba el texto entero y ahí veía algo más. La cobertura de
+Bash siempre estuvo declarada parcial; ahora está **medida**, y el banco fija la lista de
+disparadores para que ninguno desaparezca en silencio.
+
+**Por qué no hay un «perfil estricto» como interruptor.** Un plugin envía un solo `hooks.json`, y un
+interruptor por proyecto exigiría arrancar el proceso para leerlo — justo el coste que esto evita. Se
+envía la forma que ahorra; quien quiera el catch-all anterior puede añadir en su `settings.json` un
+hook `Bash` sin `if` hacia el mismo `guard.sh`.
+
+`Edit`/`Write`/`MultiEdit` siguen pasando siempre por `guard.sh`: sus globs de código son
+configuración **del proyecto**, y el filtro del plugin no puede conocerlos.
+
+### Cambiado — `Stop` y `SubagentStop` en un solo proceso
+Continuidad y rotación iban como dos hooks: dos intérpretes por cada parada de cada subagente, y
+como la rotación viene apagada, el segundo arrancaba sólo para descubrir que no tenía nada que
+hacer. `stop.sh` hace el preludio una vez y corre los dos como funciones — el mismo principio que
+`guard.sh`. Los dos archivos siguen siendo ejecutables por su cuenta y el banco los invoca así. De
+paso, ambos calculaban su directorio con dos forks; ahora con ninguno.
+
+Sin migración de archivos del proyecto: basta actualizar el plugin.
+
 ## [1.24.0] — 2026-09-04
 Tres correcciones, todas medidas por **dos proyectos distintos** validando 1.23.0 contra sus
 archivos reales. Ninguna toca archivos del proyecto: migrar es sólo actualizar el plugin.

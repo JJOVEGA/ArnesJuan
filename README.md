@@ -77,6 +77,17 @@ runtime Claude Code entrega el agente con el prefijo del plugin que lo provee
 (`arnes-juan:desarrollador`); el hook lo tolera. Declararlo con prefijo es opcional y vuelve la
 comparación estricta con ese proveedor.
 
+### Un `ls` no arranca el guardián
+Cada handler de Bash lleva un `if` —una regla de permiso— que Claude Code evalúa **antes de crear el
+proceso**. Sólo los comandos que casan con un disparador de escritura (`>`, `tee`, `cp`, `mv`,
+`install`, `sed -i`, `perl -i`, `dd`, `xargs`) llegan a `guard.sh`; `git status`, `grep` o `npm test`
+no pagan nada. Verificado con control positivo en `tests/escenarios/integracion/plugin-if/`.
+
+El precio, medido: el motor de `if` no desenvuelve `npx`, `docker exec`, `bash -c` ni `xargs -n1`, así
+que una escritura escondida ahí ya no llega al guardián. Estaba dentro de la cobertura parcial
+declarada abajo; ahora está nombrada. Quien prefiera el catch-all puede añadir en su
+`settings.json` un hook `Bash` sin `if` hacia el mismo `guard.sh`, a cambio del coste.
+
 ### Limitación conocida: la cobertura de `Bash` es parcial (y a propósito)
 `guard-codigo` mira `Edit`/`Write`/`MultiEdit` y, en `Bash`, sólo las escrituras **evidentes**:
 redirección `>`/`>>`, `tee`, `cp`, `mv`, `install`, `sed -i`, `perl -i` y `dd of=`. Quedan fuera
