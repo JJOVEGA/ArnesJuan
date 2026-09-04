@@ -304,6 +304,30 @@ check "estandar sobre SENSIBLE no baja el suelo -> deny" deny guard-completado.s
 mkreq_r "REQ-048" "no" "pendiente" "n/a" "inventado"
 check "Rigor invalido se ignora, no abre -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-048.md" "" "" 'Estado: completado')"
 
+# --- Orden del ciclo: seguridad no firma lo que QA no ha validado --------------
+# La regla ya estaba en AGENTS.md 6; lo que faltaba era que se cumpliera. Corre en
+# CUALQUIER edicion del REQ, no solo al cerrarlo: el dano se hace al escribir el
+# veredicto, no al cierre.
+echo "Orden del ciclo (seguridad tras QA):"
+mkreq_r "REQ-050" "no" "pendiente" "pendiente" ""
+check "firmar Seguridad con QA pendiente -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Seguridad: aprobado')"
+check "...y tampoco al cerrar de paso -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Seguridad: aprobado')"
+# La excepcion se declara AL EMITIRLA, no al invocarla.
+check "auditoria PREVENTIVA declarada -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Seguridad: aprobado (preventiva)')"
+mkreq_r "REQ-051" "no" "aprobado" "pendiente" ""
+check "orden correcto: QA ya aprobado -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-051.md" "" "" 'Seguridad: aprobado')"
+mkreq_r "REQ-052" "no" "pendiente" "pendiente" ""
+check "edicion que NO toca Seguridad -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-052.md" "" "" 'Notas: trabajo en curso')"
+# Un REQ anterior al campo QA no puede quedar bloqueado por esto.
+mkreq_r "REQ-053" "no" "" "pendiente" ""
+check "REQ antiguo sin campo QA -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-053.md" "" "" 'Seguridad: aprobado')"
+
 echo "guard.sh — punto de entrada unico (los dos guardianes, un proceso):"
 check "A1 por guard.sh: coordinadora edita src/ -> deny" deny guard.sh \
   "$(emite_edit "$PROJ/src/app.ts" "" "" 'hola')"
