@@ -15,20 +15,39 @@ HOOKS_DIR="${ARNES_HOOKS_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../hook
 TPL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../templates" && pwd)"
 PASS=0; FAIL=0
 # Filtro opcional: `run.sh bash` corre solo los casos cuyo nombre lo contenga.
-# Existe porque una vuelta completa cuesta ~8 min en Windows, y un ciclo de
+# MEDIDO (2026-09-04, Windows + MSYS + almacenamiento sincronizado):
+#   secuencial          23m10   user 1m10   sys 17m36
+#   paralelo (20 a la vez) 16m58   user 1m28   sys 16m33
+# Solo un 27% mejor, y `sys` ~= `real` en los dos casos: el sistema hace UNA cosa a
+# la vez. La creacion de procesos en esta maquina es de un solo carril (fork
+# emulado + filtro del antivirus), y ninguna paralelizacion del despacho puede
+# saltarse eso. El coste vive en el kernel, no en el codigo del banco.
+#
+# Existe porque una vuelta completa cuesta ~17 min en Windows, y un ciclo de
 # verificacion caro es lo que empuja a saltarse la suite.
 FILTRO="${1:-}"
 
 command -v jq >/dev/null 2>&1 || { echo "SKIP: jq no instalado"; exit 0; }
 
-# --- proyecto de prueba efímero ---
-PROJ="$(mktemp -d)"
+# --- proyecto de prueba efímero, UNO POR SECCION -------------------------------
+# Antes había un solo proyecto compartido por todo el banco, y eso creaba
+# acoplamiento invisible: `setgates ["false"]` dejaba las gates en rojo al final de
+# una sección y las restauraba OTRA sección más abajo. Hoy ningún caso mide mal por
+# eso, pero la corrección de una sección dependía de que otra limpiara detrás — y
+# bajo ejecución concurrente eso deja de ser frágil y pasa a ser falso.
+#
+# Cada sección arranca ahora de un proyecto recién hecho, con el manifiesto base.
+# Lo que una sección necesite distinto, lo declara ella.
+RAIZ="$(mktemp -d)"
+# Cuantas secciones a la vez. `ARNES_JOBS=1` reproduce el orden secuencial exacto,
+# que es lo que se usa para diagnosticar cuando algo falla solo en paralelo.
+JOBS="${ARNES_JOBS:-6}"
 # Un archivo fijo, reutilizado: capturar stderr no debe costar un fork por llamada.
-ERRLOG="$(mktemp)"
-trap 'rm -rf "$PROJ"; rm -f "$ERRLOG"' EXIT
-mkdir -p "$PROJ/.arnes" "$PROJ/requirements" "$PROJ/src" "$PROJ/tests"
-cat > "$PROJ/.arnes/config.json" <<'JSON'
-{
+ERRLOG="$(mktemp)"   # el despachador da uno propio a cada seccion
+trap 'rm -rf "$RAIZ"; rm -f "$ERRLOG"' EXIT
+SEC=0
+
+MANIFIESTO_BASE='{
   "agentes": { "agente_codigo": "desarrollador",
                "conocidos": ["analista-requerimientos","desarrollador","qa-tester","auditor-seguridad"] },
   "codigo_app": { "globs": ["src/*", "app/*"] },
@@ -36,10 +55,18 @@ cat > "$PROJ/.arnes/config.json" <<'JSON'
   "estados": { "completado": "completado" },
   "requirements_dir": "requirements",
   "pending_approval": "PENDING_APPROVAL.md"
+}'
+
+# seccion_nueva [titulo] — proyecto limpio y, si hay titulo, lo anuncia.
+seccion_nueva() {
+  PROJ="$RAIZ/proj-$BASHPID"
+  mkdir -p "$PROJ/.arnes" "$PROJ/requirements" "$PROJ/src" "$PROJ/tests" "$PROJ/docs"
+  printf '%s\n' "$MANIFIESTO_BASE" > "$PROJ/.arnes/config.json"
+  printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+  export CLAUDE_PROJECT_DIR="$PROJ"
+  [ -z "${1:-}" ] || echo "$1"
 }
-JSON
-printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
-export CLAUDE_PROJECT_DIR="$PROJ"
+seccion_nueva          # el canario necesita proyecto antes de la primera sección
 
 # emite_edit <file_path> <agent_id> <agent_type> <new_string>
 # Los campos agent_id/agent_type se OMITEN cuando van vacíos: así llega el input
@@ -139,17 +166,22 @@ if ! printf '%s' "$canario" | grep -Eq '"permissionDecision": *"deny"'; then
   exit 1
 fi
 
-echo "A1 — guard-codigo.sh (quién edita código de la app):"
+seccion_01() {
+  seccion_nueva "A1 — guard-codigo.sh (quién edita código de la app):"
 check "coordinadora edita src/ -> deny"          deny  guard-codigo.sh "$(emite_edit "$PROJ/src/app.ts" ""    ""               'hola')"
 check "desarrollador edita src/ -> allow"        allow guard-codigo.sh "$(emite_edit "$PROJ/src/app.ts" "a1"  "desarrollador"  'hola')"
 check "qa-tester edita src/ -> deny"             deny  guard-codigo.sh "$(emite_edit "$PROJ/src/app.ts" "a2"  "qa-tester"      'hola')"
 check "coordinadora edita doc fuera de app -> allow" allow guard-codigo.sh "$(emite_edit "$PROJ/docs/README.md" "" "" 'hola')"
 
-echo "A3/A2 — guard-completado.sh (transición a completado):"
+}
+seccion_02() {
+  seccion_nueva "A3/A2 — guard-completado.sh (transición a completado):"
 check "REQ -> en-progreso (no completado) -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-001.md" "" "" 'Estado: en-progreso')"
 check "REQ -> completado, sin pendientes, gate ok -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-001.md" "" "" 'Estado: completado')"
 
-echo "Veredictos QA/Seguridad (anti-deriva):"
+}
+seccion_03() {
+  seccion_nueva "Veredictos QA/Seguridad (anti-deriva):"
 mkreq "$PROJ/requirements/REQ-010.md" "no" "pendiente" "n/a"
 check "completado con QA: pendiente -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-010.md" "" "" 'Estado: completado')"
 mkreq "$PROJ/requirements/REQ-011.md" "no" "aprobado" "n/a"
@@ -169,7 +201,9 @@ setgates '.quality_gates = ["false"]'
 check "REQ -> completado con quality gate roja -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-001.md" "" "" 'Estado: completado')"
 
 # --- Regresión Windows y formas del manifiesto (bugs hallados en SENDA, 2026-09-01) ---
-echo "Regresión Windows / formas del manifiesto:"
+}
+seccion_04() {
+  seccion_nueva "Regresión Windows / formas del manifiesto:"
 
 # El manifiesto real de un proyecto declara objetos {nombre, comando}; la plantilla
 # (templates/arnes-config.json.tpl) no fija la forma. El hook debe aceptar AMBAS.
@@ -191,7 +225,9 @@ fi
 # Claude Code entrega `agent_type` con el prefijo del plugin (`arnes-juan:desarrollador`)
 # y el manifiesto declara el nombre corto: la comparación cruda no casaba NUNCA, así que
 # el guard denegaba justo al único agente autorizado a escribir código.
-echo "Identidad del agente (prefijo del plugin):"
+}
+seccion_05() {
+  seccion_nueva "Identidad del agente (prefijo del plugin):"
 check "desarrollador CON prefijo de plugin -> allow" allow guard-codigo.sh "$(emite_edit "$PROJ/src/app.ts" "a3" "arnes-juan:desarrollador" 'hola')"
 check "qa-tester CON prefijo de plugin -> deny"      deny  guard-codigo.sh "$(emite_edit "$PROJ/src/app.ts" "a4" "arnes-juan:qa-tester" 'hola')"
 check_motivo "el deny sigue nombrando al agente de forma legible" "subagente 'qa-tester' \(arnes-juan:qa-tester\)" \
@@ -214,7 +250,9 @@ setcfg '.agentes.agente_codigo = "desarrollador"'
 # Un agente rechazado en `Edit` escribió el archivo con `cat > ...` y el guard ni se
 # enteró: `Bash` no estaba en el matcher. La cobertura nueva es parcial a propósito;
 # lo que NO se negocia es que no dispare sobre comandos de lectura.
-echo "Bash — escrituras evidentes (cobertura parcial):"
+}
+seccion_06() {
+  seccion_nueva "Bash — escrituras evidentes (cobertura parcial):"
 check "coordinadora: redirección a código -> deny"      deny guard-codigo.sh "$(emite_bash 'cat > src/app.ts <<< "export const x = 1;"' "" "")"
 check "coordinadora: >> pegado al archivo -> deny"      deny guard-codigo.sh "$(emite_bash 'echo x >>src/app.ts' "" "")"
 check "coordinadora: ruta absoluta del proyecto -> deny" deny guard-codigo.sh "$(emite_bash "echo x > $PROJ/src/app.ts" "" "")"
@@ -227,7 +265,9 @@ check_motivo "el deny por Bash admite que la cobertura es parcial" "parcial" \
   guard-codigo.sh "$(emite_bash 'echo x > src/app.ts' "" "")"
 check "desarrollador (con prefijo) escribe por Bash -> allow" allow guard-codigo.sh "$(emite_bash 'echo x > src/app.ts' "a10" "arnes-juan:desarrollador")"
 
-echo "Bash — lo que NO debe denegar (falsos positivos):"
+}
+seccion_07() {
+  seccion_nueva "Bash — lo que NO debe denegar (falsos positivos):"
 check "coordinadora: cat de lectura -> allow"        allow guard-codigo.sh "$(emite_bash 'cat src/app.ts' "" "")"
 check "coordinadora: grep recursivo -> allow"        allow guard-codigo.sh "$(emite_bash 'grep -rn foo src/ | head -20' "" "")"
 check "coordinadora: sed sin -i -> allow"            allow guard-codigo.sh "$(emite_bash "sed -n '1,20p' src/app.ts" "" "")"
@@ -238,7 +278,9 @@ check "qa-tester escribe en tests/ (no es código de app) -> allow" allow guard-
 
 # --- Clase del hallazgo: la unica puerta que existe para DEJAR PASAR ------------
 # Un defecto del propio arnes no puede impedir cerrar una funcion de negocio.
-echo "Clase del hallazgo:"
+}
+seccion_08() {
+  seccion_nueva "Clase del hallazgo:"
 mkreq "$PROJ/requirements/REQ-020.md" "no" "aprobado" "n/a" "SEC-1 (instrumento)"
 check "hallazgo de instrumento -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-020.md" "" "" 'Estado: completado')"
 mkreq "$PROJ/requirements/REQ-021.md" "no" "aprobado" "n/a" "SEC-2 (usuario/dinero)"
@@ -258,7 +300,9 @@ check "REQ antiguo sin el campo -> allow" allow guard-completado.sh "$(emite_edi
 # --- Cierre de un REQ por Bash: se DERIVA a Edit/Write -------------------------
 # Era la limitacion conocida de la version anterior: `guard-completado` no miraba
 # Bash, asi que un `sed -i` cerraba un REQ sin que ninguna puerta lo evaluara.
-echo "Cierre de REQ por Bash (guard-completado):"
+}
+seccion_09() {
+  seccion_nueva "Cierre de REQ por Bash (guard-completado):"
 check "sed -i que cierra un REQ -> deny" deny guard-completado.sh \
   "$(emite_bash "sed -i 's/en-revision/completado/' requirements/REQ-001.md" "" "")"
 check "heredoc que cierra un REQ -> deny" deny guard-completado.sh \
@@ -276,7 +320,9 @@ check "escribir fuera de requirements/ -> allow" allow guard-completado.sh \
 # --- Arranque limpio: la plantilla de PENDING no puede bloquear ----------------
 # El ejemplo de formato vivia COMENTADO bajo `## Pendientes`; el conteo lo leia
 # como 1 pendiente y un proyecto recien inicializado no cerraba ningun REQ.
-echo "Arranque limpio — plantilla de PENDING_APPROVAL:"
+}
+seccion_10() {
+  seccion_nueva "Arranque limpio — plantilla de PENDING_APPROVAL:"
 cp "$TPL_DIR/PENDING_APPROVAL.md.tpl" "$PROJ/PENDING_APPROVAL.md"
 check "PENDING recien copiado de la plantilla -> allow" allow guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-001.md" "" "" 'Estado: completado')"
@@ -296,7 +342,9 @@ printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 # La compatibilidad es lo que mas importa aqui: un REQ que NO declara `Rigor:`
 # debe juzgarse EXACTAMENTE como antes de que los niveles existieran. Si eso se
 # rompiera, un proyecto sin migrar cambiaria de comportamiento sin avisar.
-echo "Nivel de rigor:"
+}
+seccion_11() {
+  seccion_nueva "Nivel de rigor:"
 mkreq_r "REQ-040" "no" "pendiente" "n/a" ""
 check "sin Rigor + QA pendiente -> deny (como siempre)" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-040.md" "" "" 'Estado: completado')"
 mkreq_r "REQ-041" "sí" "aprobado" "pendiente" ""
@@ -322,7 +370,9 @@ check "Rigor invalido se ignora, no abre -> deny" deny guard-completado.sh "$(em
 # La regla ya estaba en AGENTS.md 6; lo que faltaba era que se cumpliera. Corre en
 # CUALQUIER edicion del REQ, no solo al cerrarlo: el dano se hace al escribir el
 # veredicto, no al cierre.
-echo "Orden del ciclo (seguridad tras QA):"
+}
+seccion_12() {
+  seccion_nueva "Orden del ciclo (seguridad tras QA):"
 mkreq_r "REQ-050" "no" "pendiente" "pendiente" ""
 check "firmar Seguridad con QA pendiente -> deny" deny guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Seguridad: aprobado')"
@@ -368,7 +418,9 @@ check "sensible: QA firma sin esperar a seguridad -> allow" allow guard-completa
 # campo que se compara contra una forma cerrada tiene su fixture decorado, con sus
 # controles negativos: probar que no se estorba a quien escribe `no` es lo que da
 # valor a los `deny`.
-echo "Formas decoradas (marcado de Markdown en el valor):"
+}
+seccion_13() {
+  seccion_nueva "Formas decoradas (marcado de Markdown en el valor):"
 mkreq "$PROJ/requirements/REQ-060.md" "**sí**" "aprobado" "pendiente"
 check "sensible en **negrita** exige auditoria -> deny" deny guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-060.md" "" "" 'Estado: completado')"
@@ -426,7 +478,9 @@ mkreq_r "REQ-071" "no" "pendiente" "n/a" "**ligero**"
 check "Rigor **ligero** decorado se reconoce -> allow" allow guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-071.md" "" "" 'Estado: completado')"
 
-echo "guard.sh — punto de entrada unico (los dos guardianes, un proceso):"
+}
+seccion_14() {
+  seccion_nueva "guard.sh — punto de entrada unico (los dos guardianes, un proceso):"
 check "A1 por guard.sh: coordinadora edita src/ -> deny" deny guard.sh \
   "$(emite_edit "$PROJ/src/app.ts" "" "" 'hola')"
 check "A1 por guard.sh: desarrollador edita src/ -> allow" allow guard.sh \
@@ -464,7 +518,9 @@ check "guard.sh: Bash de lectura -> allow" allow guard.sh \
 #
 # El enfasis de Markdown es PAREADO por definicion: solo se retira cuando envuelve
 # el valor entero. Un asterisco suelto nunca envuelve nada.
-echo "Asterisco de nota al pie (una salvedad no es una firma):"
+}
+seccion_15() {
+  seccion_nueva "Asterisco de nota al pie (una salvedad no es una firma):"
 mkreq "$PROJ/requirements/REQ-074.md" "sí" "aprobado" "aprobado*"
 check "'aprobado*' NO cierra un critico -> deny" deny guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-074.md" "" "" 'Estado: completado')"
@@ -491,7 +547,9 @@ check "y '**sí**' sigue exigiendo auditoria -> deny" deny guard-completado.sh \
 # y el mismo signo significaba "evidencia" en un caso y "matiz que invierte el
 # veredicto" en el otro. Esa ambiguedad era un error de diseño y se QUITO en vez de
 # arbitrarse: un matiz que cambia el veredicto ES OTRO VEREDICTO.
-echo "Parentesis = evidencia (el veredicto no cambia):"
+}
+seccion_16() {
+  seccion_nueva "Parentesis = evidencia (el veredicto no cambia):"
 mkreq "$PROJ/requirements/REQ-080.md" "no" "aprobado (medido el 3/9, 42 pruebas)" "n/a"
 check "QA con su evidencia entre parentesis cierra -> allow" allow guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-080.md" "" "" 'Estado: completado')"
@@ -516,7 +574,9 @@ check "preventiva desbloquea el ORDEN del ciclo -> allow" allow guard-completado
 # --`## Notas`, `## Historico`-- la dejaba abierta y sus `###` contaban como
 # aprobaciones pendientes. Los proyectos lo esquivaban ordenando el archivo: carga,
 # no estilo.
-echo "Cola de aprobaciones: la seccion acaba en la siguiente cabecera:"
+}
+seccion_17() {
+  seccion_nueva "Cola de aprobaciones: la seccion acaba en la siguiente cabecera:"
 mkreq "$PROJ/requirements/REQ-085.md" "no" "aprobado" "n/a"
 printf '## Pendientes\n\n## Notas\n### [2026-01-01] esto NO es una aprobacion\n- contexto\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 check "un ### bajo OTRA cabecera no es cola -> allow" allow guard-completado.sh \
@@ -537,7 +597,9 @@ printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 #   2. que NUNCA falle (un hook Stop que falla deja la sesion colgada)
 #   3. que no pise lo que escribio una persona
 #   4. que correrlo dos veces de lo mismo
-echo "Continuidad automatica (hook Stop -> bloque derivado):"
+}
+seccion_18() {
+  seccion_nueva "Continuidad automatica (hook Stop -> bloque derivado):"
 
 EST_PROJ="$(mktemp -d)"
 mkdir -p "$EST_PROJ/.arnes" "$EST_PROJ/requirements" "$EST_PROJ/docs"
@@ -619,7 +681,9 @@ rm -rf "$EST_PROJ" "$EST_OFF" "$EST_AJENO" "$EST_SIN"
 # `case` los corchetes son una clase de caracteres-- y el conteo invertido, que
 # conservaba `total - conservar` y vaciaba el archivo a trozos en cada pasada.
 # Una prueba que encuentra un fallo y luego se tira no protege de nada manana.
-echo "Rotacion de artefactos (mover, nunca resumir):"
+}
+seccion_19() {
+  seccion_nueva "Rotacion de artefactos (mover, nunca resumir):"
 
 # rot_proj <conservar> <umbral> <activo> <orden> -> deja la ruta en ROT_P
 rot_proj() {
@@ -699,12 +763,67 @@ rot_corre "$ROT_AJENO"; ROT_RC=$?
 rot_check "sin manifiesto no toca nada y sale 0" "1-0" "$(rot_sec "$ROT_AJENO/CHANGELOG.md")-$ROT_RC"
 rm -rf "$ROT_AJENO"
 
-echo "INERTE — sin manifiesto, el hook no estorba:"
+}
+seccion_20() {
+  seccion_nueva "INERTE — sin manifiesto, el hook no estorba:"
 PROJ2="$(mktemp -d)"; mkdir -p "$PROJ2/src"; export CLAUDE_PROJECT_DIR="$PROJ2"
 check "sin .arnes/config.json, guard.sh no estorba -> allow" allow guard.sh "$(jq -n --arg fp "$PROJ2/src/x.ts" '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{file_path:$fp,old_string:"x",new_string:"y"}}')"
 check "sin .arnes/config.json edita src/ -> allow" allow guard-codigo.sh "$(jq -n --arg fp "$PROJ2/src/x.ts" '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{file_path:$fp,old_string:"x",new_string:"y"}}')"
 check "sin .arnes/config.json escribe por Bash -> allow" allow guard-codigo.sh "$(emite_bash 'echo x > src/x.ts' "" "")"
 rm -rf "$PROJ2"
+
+}
+
+TOTAL_SECCIONES=20
+
+# --- Despacho en paralelo -----------------------------------------------------
+# El canario ya corrio en el padre, solo y antes que nada: si el hook esta muerto no
+# se lanza ni una seccion.
+activos=0
+for i in $(seq 1 "$TOTAL_SECCIONES"); do
+  (
+    ERRLOG="$RAIZ/err-$i"        # propio: en paralelo, un stderr compartido miente
+    "seccion_$(printf '%02d' "$i")"
+  ) > "$RAIZ/out-$i" 2>&1 &
+  # Contador propio, NO `jobs -pr` dentro de `$( )`: el job control no cruza el
+  # subshell de la sustitucion y devolvia 1 con tres trabajos vivos, asi que el
+  # limitador no limitaba nada y las 20 secciones salian a la vez.
+  activos=$((activos+1))
+  if [ "$activos" -ge "$JOBS" ]; then wait -n 2>/dev/null; activos=$((activos-1)); fi
+done
+wait
+
+# La salida se concatena EN ORDEN: una suite cuyo informe cambia de forma segun el
+# reparto de CPU es una suite que nadie compara con la vuelta anterior.
+llegaron=0
+for i in $(seq 1 "$TOTAL_SECCIONES"); do
+  if [ -f "$RAIZ/out-$i" ]; then cat "$RAIZ/out-$i"; llegaron=$((llegaron+1)); fi
+done
+
+# --- Cuadre 1: ninguna seccion puede desaparecer en silencio ------------------
+# Una seccion muerta produce CERO lineas, que es exactamente lo que produce una
+# seccion que paso limpia. Sin este control, matarla y acertarla se ven igual.
+if [ "$llegaron" -ne "$TOTAL_SECCIONES" ]; then
+  echo "ABORT: llegaron $llegaron de $TOTAL_SECCIONES secciones. Alguna murio sin dejar salida."
+  exit 1
+fi
+
+# --- El recuento sale DEL TEXTO, no de variables ------------------------------
+# Los contadores del padre se quedaron a cero: cada seccion incremento los suyos en
+# su propio proceso y se los llevo al morir.
+PASS="$(grep -c '^  PASS ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {print s+0}')"
+FAIL="$(grep -c '^  FAIL ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {print s+0}')"
+
+# --- Cuadre 2: el numero de casos es una invariante del banco -----------------
+# Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
+# convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
+CASOS_ESPERADOS=137
+if [ $((PASS+FAIL)) -ne "$CASOS_ESPERADOS" ]; then
+  echo "ABORT: corrieron $((PASS+FAIL)) casos y se esperaban $CASOS_ESPERADOS."
+  echo "       O falta un caso por el camino, o alguien anadio uno y no actualizo"
+  echo "       CASOS_ESPERADOS. Las dos cosas hay que mirarlas."
+  exit 1
+fi
 
 echo "-------------------------------------------"
 echo "Resultado: $PASS PASS, $FAIL FAIL"
