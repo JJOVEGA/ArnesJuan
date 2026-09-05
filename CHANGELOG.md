@@ -2,6 +2,41 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.28.0] — 2026-09-05
+### Corregido — FALLO EN ABIERTO: desde 1.25.0 una redirección por Bash rodeaba las dos puertas
+**Medido en un proyecto real, con control positivo en la misma tanda:** un `Write` a `src/` denegó
+—el plugin estaba cargado—, y `echo 'Estado: completado' > requirements/x.md` **pasó y creó el
+archivo**. También `echo '// sonda' > src/x.ts`. Reportado como `SEC-184` reabierto.
+
+**La causa es mía y es del diseño de 1.25.0.** Puse un handler con `if` por disparador para que un
+`ls` no arrancara el guardián. `if` funciona —verificado en `2.1.260` y `2.1.261`, en plugin— **pero
+sólo para prefijos de comando**. Una redirección **nunca casa**: Claude Code la separa del comando
+antes de evaluar el patrón, como dice la doc de permisos al tratar el destino de `>` como escritura
+aparte. `Bash(* >*)` y `Bash(*>*)` no dispararon en ninguna versión.
+
+```
+touch a.txt          ->  IF_TOUCH dispara
+echo hola > b.txt    ->  TODOS dispara, ningún IF_REDIR
+cp a.txt c.txt       ->  IF_CP dispara
+```
+
+El informe que lo encontró concluyó que **los diez** handlers fallaban; medido, fallan sólo los de
+redirección y los otros ocho disparan. No cambia la consecuencia: la redirección es la forma de
+escritura más común y puede ir en cualquier comando, así que **la única puerta posible para Bash es
+la que ve todos**. Se restaura el catch-all. El coste vuelve al de 1.24.0 y se acepta.
+
+**Mi prueba de integración tenía control positivo para que `if` existe, no para el patrón del que
+dependía todo.** Sondeó `touch` y pasó. Ahora sondea la redirección y exige que **no** case; si un
+día casa, sale con código 3 para revisar si Bash puede volver a ser selectivo. Y el banco, que en
+1.25.0 **exigía** que todo handler de Bash llevara `if` —certificando la forma que dejaba la puerta
+en abierto—, ahora exige lo contrario.
+
+**La lección, que vale más que el defecto** y que la escribió quien lo encontró: *una optimización
+que reduce cuándo se invoca un control puede apagarlo entero sin cambiar una línea de su lógica.*
+El guardián era correcto; simplemente ya no se le llamaba.
+
+`stop.sh` se queda: es independiente y correcto.
+
 ## [1.27.0] — 2026-09-04
 ### Corregido — la rotación no funcionaba en archivos CRLF, y además fugaba
 **Medido en un proyecto real:** su `CHANGELOG.md` (sin CR) rotó perfecto — 1 421 795 → 36 650

@@ -82,16 +82,26 @@ runtime Claude Code entrega el agente con el prefijo del plugin que lo provee
 (`arnes-juan:desarrollador`); el hook lo tolera. Declararlo con prefijo es opcional y vuelve la
 comparación estricta con ese proveedor.
 
-### Un `ls` no arranca el guardián
-Cada handler de Bash lleva un `if` —una regla de permiso— que Claude Code evalúa **antes de crear el
-proceso**. Sólo los comandos que casan con un disparador de escritura (`>`, `tee`, `cp`, `mv`,
-`install`, `sed -i`, `perl -i`, `dd`, `xargs`) llegan a `guard.sh`; `git status`, `grep` o `npm test`
-no pagan nada. Verificado con control positivo en `tests/escenarios/integracion/plugin-if/`.
+### Bash pasa siempre por el guardián, y esto se pagó con un fallo en abierto
+1.25.0 puso un handler con `if` por disparador de escritura para que un `ls` no arrancara el
+guardián. `if` funciona —medido con control positivo en `2.1.260` y `2.1.261`— **pero sólo para
+prefijos de comando**. Una redirección **nunca casa**: Claude Code la separa del comando antes de
+evaluar el patrón, así que `Bash(* >*)` no disparó en ninguna versión.
 
-El precio, medido: el motor de `if` no desenvuelve `npx`, `docker exec`, `bash -c` ni `xargs -n1`, así
-que una escritura escondida ahí ya no llega al guardián. Estaba dentro de la cobertura parcial
-declarada abajo; ahora está nombrada. Quien prefiera el catch-all puede añadir en su
-`settings.json` un hook `Bash` sin `if` hacia el mismo `guard.sh`, a cambio del coste.
+```
+echo 'Estado: completado' > requirements/x.md   ->  PASÓ y creó el archivo   (proyecto real)
+touch a.txt                                     ->  if dispara
+echo hola > b.txt                               ->  ningún if dispara
+```
+
+**Desde 1.25.0 hasta 1.27.0, la forma de escritura más común rodeaba las dos puertas en silencio.**
+Y mi prueba de integración tenía control positivo para *que `if` existe*, no para el patrón del que
+dependía todo. Como la redirección puede ir en cualquier comando, la única puerta posible para Bash
+es la que ve **todos**. El coste vuelve al de 1.24.0 y se acepta: una puerta lenta protege; una
+puerta que no se invoca, no.
+
+La lección quedó escrita donde se lee: *una optimización que reduce cuándo se invoca un control
+puede apagarlo entero sin cambiar una línea de su lógica.*
 
 ### Limitación conocida: la cobertura de `Bash` es parcial (y a propósito)
 `guard-codigo` mira `Edit`/`Write`/`MultiEdit` y, en `Bash`, sólo las escrituras **evidentes**:
