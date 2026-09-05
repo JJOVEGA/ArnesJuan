@@ -55,8 +55,16 @@ arnes_rotar_uno() {
   # El archivo se lee de todos modos justo despues; se compara la longitud leida. Cuenta
   # caracteres y no bytes --con UTF-8 queda un poco por debajo--, y para un umbral de
   # rotacion eso es aceptable: se rota un poco mas tarde, nunca antes de tiempo.
+  # `umbral_bytes` mide BYTES, y ${#texto} cuenta CARACTERES salvo en locale C: un
+  # archivo UTF-8 de 4 032 bytes y 2 032 caracteres con umbral 3 000 rotaba en 1.29.2 y
+  # dejo de rotar en 1.29.3. Lo midio una revision externa. LC_ALL=C solo para la
+  # cuenta, y se restaura: el resto de la funcion no depende del locale, pero no hay
+  # razon para cambiarselo a `date` ni a `grep`.
   IFS= read -r -d '' texto < "$f"
-  [ "${#texto}" -gt "$umbral" ] 2>/dev/null || return 0
+  local _lc_prev="${LC_ALL-__sin__}" tam_bytes
+  LC_ALL=C; tam_bytes="${#texto}"
+  if [ "$_lc_prev" = "__sin__" ]; then unset LC_ALL; else LC_ALL="$_lc_prev"; fi
+  [ "$tam_bytes" -gt "$umbral" ] 2>/dev/null || return 0
 
   # --- Se parte en secciones de nivel 2. Sin limites, no se toca nada. ---
   local -a cuerpos=()

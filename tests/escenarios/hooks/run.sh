@@ -794,6 +794,13 @@ check_estado "campos DENTRO de una seccion NO se leen: QA queda vacio"  "^| REQ-
 check_estado "...y Rigor cae al defecto, no al 'critico' de la historia" "^| REQ-099 | en-revisión | — | — | critico"      no "$EST_G/docs/ESTADO.md"
 rm -rf "$EST_G"
 
+# Un .md VACIO es un archivo sin Estado y se cuenta como nota, como antes de 1.29.3:
+# awk no emite linea para un archivo sin lineas, y desaparecia del conteo en silencio.
+: > "$EST_PROJ/requirements/vacio.md"
+corre_estado "$EST_PROJ"
+check_estado "un .md VACIO cuenta como nota, no desaparece" "notas, no REQ):\*\* 2" si "$EST_PROJ/docs/ESTADO.md"
+rm -f "$EST_PROJ/requirements/vacio.md"
+
 # Apagable: quien no lo quiera, lo apaga.
 EST_OFF="$(mktemp -d)"; mkdir -p "$EST_OFF/.arnes" "$EST_OFF/requirements" "$EST_OFF/docs"
 jq '.estado_derivado.activo = false' "$PROJ/.arnes/config.json" > "$EST_OFF/.arnes/config.json"
@@ -986,6 +993,16 @@ else
 fi
 rm -rf "$SYR_RAIZ"
 
+# `umbral_bytes` mide BYTES. Un archivo UTF-8 de ~4 000 bytes y ~2 000 caracteres con umbral
+# 3 000 rotaba en 1.29.2 y dejo de rotar en 1.29.3, cuando ${#texto} sustituyo a wc -c.
+ROT_U="$(mktemp -d)"; mkdir -p "$ROT_U/.arnes"
+printf '{ "agentes": { "agente_codigo": "desarrollador" }, "rotacion": { "activo": true, "umbral_bytes": 3000, "conservar_secciones": 1, "artefactos": ["UTF8.md"] } }' > "$ROT_U/.arnes/config.json"
+{ printf '# UTF8\n\n'; for v in 3 2 1; do printf '## [1.%s.0]\n' "$v"; for i in $(seq 1 12); do printf 'áéíóú áéíóú áéíóú áéíóú áéíóú áéíóú áéíóú áéíóú áéíóú áéíóú\n'; done; printf '\n'; done; } > "$ROT_U/UTF8.md"
+ROT_UB="$(LC_ALL=C; t="$(cat "$ROT_U/UTF8.md")"; printf '%s' "${#t}")"
+rot_corre "$ROT_U"
+rot_check "umbral_bytes mide BYTES: UTF-8 de ${ROT_UB} bytes (< chars×2) con umbral 3000 ROTA" "1" "$(rot_sec "$ROT_U/UTF8.md")"
+rm -rf "$ROT_U"
+
 # Inerte en repo ajeno, como el resto de hooks.
 ROT_AJENO="$(mktemp -d)"; printf '# CHANGELOG de OTRO\n## [9.9.9]\nx\n' > "$ROT_AJENO/CHANGELOG.md"
 rot_corre "$ROT_AJENO"; ROT_RC=$?
@@ -1098,7 +1115,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=180
+CASOS_ESPERADOS=182
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)
