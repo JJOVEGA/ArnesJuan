@@ -143,4 +143,11 @@ Tocado por: (agente / fecha)
 ```
 
 ## Índice
-(lista de REQ y NFR con su estado)
+| ID | Título | Estado | Rigor | QA | Seguridad |
+|---|---|---|---|---|---|
+| [REQ-001](REQ-001.md) | Dos bypass del enforcement en v1.30.2: cierre sustituyendo sólo el valor, y sustitución de comandos en heredoc sin citar | `pendiente` | critico | pendiente | pendiente |
+| [REQ-002](REQ-002.md) | Veredicto fechado y no caduco: una firma no vale sobre código que cambió después | `pendiente` | critico | pendiente | pendiente |
+| [REQ-003](REQ-003.md) | Un solo lector y un solo vocabulario: `con-hallazgos` en Seguridad, aviso al escribir fuera del vocabulario, y el informe que lee como la puerta | `pendiente` | critico | pendiente | pendiente |
+| [REQ-004](REQ-004.md) | Rotación de UNA sección del documento: la historia se archiva, el contrato no se toca | `pendiente` | critico | pendiente | pendiente |
+| [REQ-005](REQ-005.md) | Git destructivo prohibido a los agentes: el trabajo de un subagente no es atómico para git | `pendiente` | critico | pendiente | pendiente |
+| [REQ-006](REQ-006.md) | Celdas del bloque derivado recortadas: un veredicto de 1 296 caracteres no cabe en una tabla | `pendiente` | critico | pendiente | pendiente |

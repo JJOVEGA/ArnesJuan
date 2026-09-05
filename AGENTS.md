@@ -57,7 +57,7 @@ Plugin de Claude Code: un arnés de cuatro agentes (analista, desarrollador, QA,
 
 - Repositorio **público**: describe el arnés, nunca los hallazgos de un cliente. Los documentos `mejoras-arnes-*.md` e `insumos/` están en `.gitignore` y no se citan literalmente.
 - `main` protegido por el ruleset `proteger-main`: **todo por PR**, sin push directo, con el check `hooks-en-linux` **requerido y estricto**.
-- La fusión a `main`, el tag de versión y la actualización de la instalación estable son decisiones **humanas**.
+- La fusión a `main`, el tag de versión y la publicación son decisiones **humanas**, **delegadas** a la coordinadora por el propietario (2026-09-05) cuando todo está en verde; cualquier rojo o hallazgo abierto las devuelve al humano (§6 y `docs/gobernanza/autoalojamiento.md`). La instalación estable se actualiza después de publicar y verificar.
 - El manifiesto `.arnes/config.json` de este repo es el mapeo del arnés sobre sí mismo: `hooks/`, `tools/` y `.github/` son código protegido.
 
 ## 5. Equipo de agentes de IA
@@ -85,10 +85,20 @@ aprueba cada fase.
 |--------|--------|-----------------|
 | `analista-requerimientos` | Opus | Levanta y documenta requerimientos en `requirements/` |
 | `desarrollador` | Opus | Codifica los requerimientos + documentación **técnica**, dueño de `ARCHITECTURE.md` (vista de sistema e integración) |
-| `qa-tester` | Sonnet | Prueba el trabajo del desarrollador, corre quality gates, escribe documentación de **usuario final** |
+| `qa-tester` | **Opus** (sólo aquí; ver abajo) | Prueba el trabajo del desarrollador, corre quality gates, escribe documentación de **usuario final** |
 | `auditor-seguridad` | Opus | Revisa seguridad y gobernanza; mantiene `docs/seguridad/`; puede vetar |
 
 Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
+
+> 🔒 **QA corre con Opus en el autoalojamiento (decisión del propietario, 2026-09-05).** Aquí el
+> `qa-tester` no valida una función de negocio: valida **el mecanismo que gobierna a todos los demás
+> proyectos**, e intenta romperlo. Se lanza con el modelo **Opus**, por encima del `sonnet` que
+> declara el agente.
+>
+> **Cómo se aplica, y por qué así:** con el parámetro `model` de la herramienta `Agent` al despachar
+> el subagente, que tiene precedencia sobre el frontmatter. **No** se edita `agents/qa-tester.md` del
+> plugin: ese archivo lo heredan todos los proyectos que instalan el arnés, y esta decisión es de
+> este repositorio, no suya. Misma frontera que el resto de la política de autoalojamiento.
 
 > Documentación distribuida (no hay 5º agente "documentador"): cada agente documenta su
 > rebanada con el contexto vivo, y el `desarrollador` consolida la vista de arquitectura en
@@ -98,6 +108,17 @@ Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
 ## 6. Orquestación, loops de error y gates humanos
 
 **Flujo:** analista define REQ → desarrollador codifica → qa-tester valida → auditor-seguridad revisa → REQ `completado`.
+
+> 🔒 **Política de autoalojamiento (sólo este repositorio; no se propaga a las plantillas).** Para el
+> desarrollo de ArnesJuan, **todo REQ pasa por analista, desarrollador, QA y auditor de seguridad
+> antes de llegar a la aprobación humana**, en ese orden. Todo REQ se declara por defecto
+> `Rigor: critico` y `Sensible a seguridad: sí`, con `QA: pendiente` y `Seguridad: pendiente` al
+> nacer: cualquier cambio puede alterar el mecanismo que controla a los demás proyectos. Una
+> excepción editorial —una errata, un texto sin efecto en la máquina ni en lo que los proyectos
+> heredan— sólo puede bajar ese nivel con **autorización expresa del propietario (Juan)**, nunca
+> por reclasificación automática de un agente. El coordinador reúne la evidencia y, **con todo en verde** (CI sin FAIL, SKIP explicados,
+> fail-before/pass-after, QA y auditor aprobados), **fusiona, etiqueta y publica por delegación
+> permanente del propietario (2026-09-05)**; cualquier rojo o hallazgo abierto devuelve la decisión a Juan. Procedimiento completo en `docs/gobernanza/autoalojamiento.md`.
 
 **El orden no es una sugerencia: es la condición de validez de la firma.** El
 `auditor-seguridad` no firma `Seguridad: aprobado` sobre un árbol que el `qa-tester` no ha

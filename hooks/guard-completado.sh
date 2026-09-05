@@ -28,7 +28,7 @@ arnes_guard_completado() {
   local tool fp bash_cmd req_dir estado_done pending_rel rel d escrituras nuevo
   local disk qa seg sens rigor hall h id clase pending abiertas tmp cmd out
   local -a piezas=()
-  local modo resultante reconstruido np k old new ra done_norm
+  local modo resultante reconstruido np k old new ra done_norm est_antes est_despues
 
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
@@ -118,10 +118,15 @@ arnes_guard_completado() {
   # Si algun `old_string` no esta en el texto, la herramienta fallara entera y no
   # escribira nada: entonces se leen los fragmentos como hasta ahora (y el banco, que
   # fabrica ediciones con `old_string:"x"`, sigue midiendo lo mismo).
-  # `Write` trae el documento completo: es su propio resultante.
+  # `Write` trae el documento COMPLETO: es su propio resultante, y por eso la transicion
+  # tambien se lee de su cabecera. Medido con 1.30.2: un `Write` cuyo CUERPO citaba
+  # `Estado: completado (...)` dentro de un criterio fue denegado, porque el `grep` miraba
+  # todo el contenido y no la cabecera. Los VEREDICTOS de un `Write` se siguen leyendo con
+  # la precedencia de siempre (entrante sobre disco), que es la lectura estricta: un `Write`
+  # que borrara la linea `QA:` no se libra del veredicto que hay en disco.
   nuevo=''; resultante=''; reconstruido=0
   if [ "$modo" = "W" ]; then
-    nuevo="${piezas[1]:-}"
+    nuevo="${piezas[1]:-}"; resultante="$nuevo"
   else
     # Sin CR: los proyectos en Windows guardan CRLF y la herramienta casa el `old_string`
     # igual; si aqui no casara, se caeria a los fragmentos y el bypass volveria por la
@@ -173,15 +178,35 @@ arnes_guard_completado() {
   fi
 
   # ¿El cambio deja el REQ en `completado`? Normalizado: case-insensitive y espacios.
-  # Here-string en vez de `printf | grep`: la tubería costaba un fork de más.
-  grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" <<< "$nuevo" || return 0
-  # Y la cabecera del documento RESULTANTE tiene que decirlo: una linea de historia
-  # `- 2026-08-01: Estado: completado (revertido)` no es una transicion, y antes hacia
-  # correr las puertas —y denegar— sobre un REQ cuya cabecera seguia en revision.
-  if [ "$reconstruido" -eq 1 ]; then
-    arnes_estado_cabecera "$resultante"
-    arnes_norm_campo "$estado_done"; done_norm="$ARNES_CAMPO"
-    [ "$ARNES_ESTADO" = "$done_norm" ] || return 0
+  arnes_norm_campo "$estado_done"; done_norm="$ARNES_CAMPO"
+  if [ "$reconstruido" -eq 1 ] || [ "$modo" = "W" ]; then
+    # HAY DOCUMENTO: la transicion se determina SOLO con el, nunca con el fragmento.
+    # Transicion = la cabecera en disco NO decia el estado terminal y la cabecera
+    # resultante SI lo dice.
+    #
+    # Dos fallos medidos contra 1.30.2, uno en cada sentido:
+    #  · Un `Edit` con `old_string: en-revisión` y `new_string: completado` —un fragmento
+    #    que no escribe en ninguna parte la palabra «Estado»— cerraba el REQ con QA
+    #    pendiente: el hook ya reconstruia el documento, pero ADEMAS exigia la palabra en
+    #    el FRAGMENTO y salia antes de llegar a las puertas. Y sustituir solo el VALOR es
+    #    la forma mas natural de cerrar un REQ a mano.
+    #  · Un `Write` cuyo CUERPO citaba `Estado: completado (...)` dentro de un criterio era
+    #    denegado, porque el `grep` miraba todo el contenido en vez de la cabecera.
+    #
+    # La regla que resuelve los dos es la misma que ya regia para MultiEdit: manda la
+    # cabecera del documento que quedara escrito. Por eso una linea de historia
+    # `Estado: completado (revertido)` no es una transicion, y reabrir un REQ ya cerrado
+    # tampoco.
+    arnes_estado_cabecera "$resultante"; est_despues="$ARNES_ESTADO"
+    arnes_estado_cabecera "$disk";       est_antes="$ARNES_ESTADO"
+    [ "$est_despues" = "$done_norm" ] || return 0
+    [ "$est_antes" != "$done_norm" ] || return 0
+  else
+    # NO hay documento: un `Edit`/`MultiEdit` cuyo `old_string` no esta en el archivo. La
+    # herramienta fallara entera y no escribira nada, pero se juzga el fragmento como
+    # siempre —el banco fabrica ediciones asi y tiene que seguir midiendo lo mismo—.
+    # Here-string en vez de `printf | grep`: la tuberia costaba un fork de mas.
+    grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" <<< "$nuevo" || return 0
   fi
 
   # --- Nivel de rigor: cuanta ceremonia exige ESTE requerimiento ---

@@ -345,12 +345,28 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
   #    Solo cuenta como heredoc `<<` o `<<-` seguido de una PALABRA (EOF, PY, END...):
   #    `<<<` es una here-string y `1<<2` es aritmetica, y un delimitador que no fuera
   #    palabra tragaria el resto del comando —fallo abierto—. Sin procesos.
+  #
+  #    PERO EL CUERPO NO SIEMPRE ES TEXTO, y esto era un fallo en abierto medido en
+  #    1.30.2 por una revision externa: con el delimitador SIN CITAR (`<<EOF`) bash
+  #    ejecuta de verdad las sustituciones `$( ... )` y los acentos graves del cuerpo,
+  #    asi que `$(echo x > src/generated.ts)` creaba el archivo y ninguna puerta lo
+  #    veia. Con el delimitador CITADO o ESCAPADO (`<<'EOF'`, `<<"EOF"`, `<<\EOF`) el
+  #    cuerpo si es literal entero, exactamente como en el shell real.
+  #    Por eso, sin citar, se conservan y se analizan SOLO las lineas con `$(` o con un
+  #    acento grave; el resto del cuerpo se descuenta como antes. Convertir el cuerpo
+  #    entero en comandos devolveria el falso positivo de 1.29.1.
+  #    LIMITACION CONOCIDA, dicha en voz alta: una sustitucion que ABRE en una linea y
+  #    CIERRA en otra solo aporta sus lineas con `$(`; queda fuera a proposito, como el
+  #    resto de la cobertura parcial de Bash (AGENTS.md 13).
   if [[ "$limpio" == *'<<'* ]]; then
-    local sin='' linea delim='' dentro=0 resto sinhs
+    local sin='' linea delim='' dentro=0 citado=0 resto sinhs
     while IFS= read -r linea || [ -n "$linea" ]; do
       if [ "$dentro" -eq 1 ]; then
         resto="${linea#"${linea%%[![:blank:]]*}"}"     # `<<-` admite sangria delante del cierre
-        [ "$resto" = "$delim" ] && dentro=0
+        if [ "$resto" = "$delim" ]; then dentro=0; continue; fi
+        if [ "$citado" -eq 0 ]; then
+          case "$linea" in *'$('*|*'`'*) sin+="$linea"$'\n' ;; esac
+        fi
         continue
       fi
       sin+="$linea"$'\n'
@@ -360,6 +376,9 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
         *'<<'*)
         resto="${sinhs#*<<}"; resto="${resto#-}"
         resto="${resto#"${resto%%[! ]*}"}"             # espacios entre `<<` y la palabra
+        # Citado o escapado -> cuerpo literal. Se anota ANTES de pelar las comillas,
+        # que es justo la marca que las distingue.
+        citado=0; case "$resto" in \'*|\"*|\\*) citado=1 ;; esac
         delim="${resto%%[[:space:]\;\|\&\)\<\>]*}"
         delim="${delim#\'}"; delim="${delim%\'}"; delim="${delim#\"}"; delim="${delim%\"}"
         delim="${delim#\\}"
@@ -380,6 +399,12 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
     done
   done
   # 2) Separa los operadores de su operando: `>src/a.ts` -> `> src/a.ts`.
+  #    Y las sustituciones de comando pierden sus parentesis, para que el destino de
+  #    `$(echo x > src/a.ts)` quede como operando limpio de `>` y no como `src/a.ts)`,
+  #    que no casaria con ningun glob —fallo abierto—. El patron va entrecomillado
+  #    para que `$(` sea texto, no una expansion.
+  limpio="${limpio//'$('/ }"
+  limpio="${limpio//)/ }"
   limpio="${limpio//>|/>}"
   limpio="${limpio//>>/>}"
   limpio="${limpio//>/ > }"

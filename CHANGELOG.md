@@ -2,7 +2,64 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
-## [1.30.3] — en curso (candidata; gobernada por v1.30.2)
+## [1.30.3] — 2026-09-05
+### Corregido — dos bypass de v1.30.2, encontrados por una revisión externa
+Los dos se reprodujeron **contra la instalación estable que gobernaba la sesión**, no sobre el
+papel, y los dos son de la misma familia: la puerta miraba el FRAGMENTO o el TEXTO, y no lo que
+iba a quedar escrito ni lo que el shell iba a ejecutar de verdad.
+
+- **FALLO EN ABIERTO: un `Edit` que sustituía sólo el VALOR cerraba un REQ con QA pendiente.**
+  Con la cabecera en `Estado: en-revisión` / `QA: pendiente`, un `Edit` con
+  `old_string: en-revisión` y `new_string: completado` devolvía **ALLOW**. Desde 1.30.2 el hook ya
+  reconstruía el documento resultante, pero **además** exigía que el fragmento contuviera
+  «Estado: completado» antes de correr las puertas; el fragmento `completado` no lleva esa palabra
+  en ninguna parte y el hook salía por arriba. Y sustituir el valor es la forma **más natural** de
+  cerrar un REQ a mano, así que el agujero estaba justo donde más se pisa. Ahora, cuando hay
+  documento, la transición se determina **sólo con el documento**: hay transición si la cabecera en
+  disco no decía el estado terminal y la resultante sí. El análisis del fragmento queda **sólo**
+  como respaldo para un `Edit`/`MultiEdit` cuyo `old_string` no está en el archivo —la herramienta
+  fallará entera y no escribirá nada—.
+- **FALLO EN ABIERTO: una sustitución de comandos dentro de un heredoc SIN CITAR escribía código
+  protegido sin que ninguna puerta la viera.** `cat <<EOF` / `$(echo x > src/generated.ts)` / `EOF`
+  crea el archivo de verdad —bash expande el cuerpo—, pero el detector de escrituras descontaba
+  **todo** el cuerpo del heredoc como texto desde 1.30.2. La corrección distingue lo que el shell
+  distingue: con delimitador **citado o escapado** (`<<'EOF'`, `<<"EOF"`, `<<\EOF`) el cuerpo es
+  literal y se descuenta entero, como hasta ahora; **sin citar**, se conservan y se analizan sólo
+  las líneas con `$(` o con acentos graves, y el resto sigue siendo texto. Convertir el cuerpo
+  entero en comandos habría devuelto el falso positivo de 1.29.1 —un resumen en heredoc con
+  `cp README.md src/…` como texto—, así que no se hace. De paso, los paréntesis de la sustitución
+  se retiran al tokenizar, para que el destino de `$(echo x > src/a.ts)` quede como un operando
+  limpio y no como `src/a.ts)`, que no casaría con ningún glob. Todo con expansión de parámetros:
+  **cero procesos nuevos** en un camino que recorre cada comando que ejecuta un agente.
+  Queda escrito en el código lo que sigue fuera: una sustitución que abre en una línea y cierra en
+  otra, y el resto de la cobertura parcial de Bash (`AGENTS.md` §13).
+
+**Y un falso positivo del mismo camino, medido mientras se redactaba el requerimiento:** un `Write`
+cuyo **cuerpo** citaba `Estado: completado (…)` dentro de un criterio era denegado, porque por esa
+vía la transición se buscaba en todo el contenido en vez de en la cabecera. Un `Write` trae el
+documento completo, así que ahora es su propio resultante y se juzga por su cabecera, igual que un
+`Edit` reconstruido. Los **veredictos** de un `Write` se siguen leyendo con la precedencia estricta
+de siempre (entrante sobre disco): quien borre la línea `QA:` no se libra del veredicto que hay en
+disco.
+
+Treinta y cuatro casos nuevos en el banco (230). Caso 1, sobre el documento resultante: el bypass y
+su motivo, con `MultiEdit`, con `replace_all`, sobre un archivo CRLF, con la cola de aprobaciones
+abierta y con una quality gate roja; el estado terminal tomado del manifiesto (`hecho`) y su
+control; el respaldo por fragmento vivo (`Write`, `old_string` ausente); un REQ que no existe en
+disco (sin traza de bash); y los controles que no pueden estorbar —todo en verde, la cabecera ya
+cerrada, reabrir un REQ, y el `Write` que sólo cita el estado—. Caso 2, sobre el heredoc: la
+sustitución, los acentos graves, `<<-` con sangría y un heredoc sin delimitador de cierre; y los
+controles citado, escapado, entrecomillado, la expansión inocente, el texto literal, el
+desarrollador autorizado, la here-string y la aritmética; más uno de rendimiento —10 000 líneas de
+cuerpo por debajo de 5 s— porque este camino lo paga cada comando.
+
+Cada caso de bypass trae su par **fail-before / pass-after**: falla contra los hooks de v1.30.2 y
+pasa contra los de la candidata. Un caso que pasa antes del arreglo no prueba nada.
+
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos`
+> (requerimiento) y `desarrollador` (código, banco y bitácora). QA y auditoría de seguridad,
+> pendientes: el REQ queda `en-revisión`.
+
 ### Autoalojamiento — el arnés se instala sobre sí mismo
 El repositorio queda inicializado con su propio andamiaje (`arnes-init`, plantillas de 1.30.2):
 `AGENTS.md`, `CLAUDE.md`, `.arnes/config.json` (con `hooks/`, `tools/` y `.github/` como código

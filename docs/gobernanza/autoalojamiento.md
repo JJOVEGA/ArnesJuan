@@ -88,6 +88,28 @@ deniega; el banco completo es la puerta de `main` en CI (`hooks-en-linux`, reque
   una edición de la coordinadora sobre `hooks/` que N debe denegar, y un comando que distinga
   el comportamiento de N del de N-1.
 
+## Política de rigor (dictada por el propietario, 2026-09-05)
+
+Todo REQ de este repositorio pasa por **analista → desarrollador → QA → auditor de seguridad →
+coordinador reúne la evidencia → Juan aprueba la fusión y la publicación**. Se declara por defecto
+`Rigor: critico` y `Sensible a seguridad: sí`, con `QA: pendiente` y `Seguridad: pendiente`. Una
+excepción editorial sólo baja ese nivel con autorización expresa del propietario; nunca por
+reclasificación automática de un agente. **Esta política pertenece únicamente a ArnesJuan**: no se
+traslada a las plantillas ni a los proyectos que instalan el arnés, que conservan su propio mapeo.
+
+## Aprobación humana delegada (propietario, 2026-09-05)
+
+El propietario autorizó de forma **permanente** que, cuando **todo** esté en verde, la coordinadora
+fusione, etiquete y publique sin volver a preguntar. «Todo en verde» significa, a la vez:
+CI `hooks-en-linux` con **0 FAIL** y cada `SKIP` explicado; el par *fail-before / pass-after*
+presente para cada bypass del REQ; `QA: aprobado` y `Seguridad: aprobado` (o hallazgos abiertos
+sólo de clase `instrumento`, con dueño); plantillas de los consumidores sin cambios exclusivos del
+autoalojamiento; instalación nueva y actualización verificadas. **Cualquier** `FAIL`, un `SKIP` sin
+explicar, un hallazgo abierto de clase `usuario/dinero` o `contrato`, o un veto del auditor devuelve
+la decisión al propietario: se presenta la evidencia y se para. La delegación cubre la fusión, el
+tag y la publicación; la instalación estable se actualiza después (`autoUpdate`) y gobierna la
+sesión siguiente.
+
 ## Registro
 
 | Ciclo | N (guardián) | N+1 (candidata) | REQ | Resultado |

@@ -79,12 +79,21 @@ emite_edit() {
      + (if $at!=""  then {agent_type:$at} else {} end)'
 }
 
-# emite_edit_real <file_path> <old_string> <new_string> — un Edit de la coordinadora
-# cuyo `old_string` SI esta en el archivo: el hook reconstruye el documento resultante.
+# emite_edit_real <file_path> <old_string> <new_string> [replace_all] — un Edit de la
+# coordinadora cuyo `old_string` SI esta en el archivo: el hook reconstruye el documento
+# resultante. El 4o argumento, cuando no va vacio, marca `replace_all: true`.
 emite_edit_real() {
-  jq -n --arg fp "$1" --arg os "$2" --arg ns "$3" \
+  jq -n --arg fp "$1" --arg os "$2" --arg ns "$3" --arg ra "${4:-}" \
     '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,
-      tool_input:{file_path:$fp,old_string:$os,new_string:$ns}}'
+      tool_input:({file_path:$fp,old_string:$os,new_string:$ns}
+                  + (if $ra!="" then {replace_all:true} else {} end))}'
+}
+
+# emite_write <file_path> <contenido> — un Write de la coordinadora con el documento entero.
+emite_write() {
+  jq -n --arg fp "$1" --arg c "$2" \
+    '{hook_event_name:"PreToolUse",tool_name:"Write",cwd:env.CLAUDE_PROJECT_DIR,
+      tool_input:{file_path:$fp,content:$c}}'
 }
 
 # emite_multiedit <file_path> <old1> <new1> [<old2> <new2> ...] — un MultiEdit real.
@@ -297,6 +306,22 @@ check "here-string (<<<) no es heredoc: el cp de detras sigue viendose -> deny" 
   "$(emite_bash 'cat <<< "hola" ; cp /tmp/x.ts src/' "" "")"
 check "aritmetica \$((1<<n)) no es heredoc: el cp de la linea siguiente sigue viendose -> deny" deny guard-codigo.sh \
   "$(emite_bash $'echo $((1<<n))\ncp /tmp/x.ts src/' "" "")"
+# --- Heredoc SIN CITAR: el cuerpo no es solo texto (medido en 1.30.2) ---------------
+# Una revision externa escribio codigo protegido con `cat <<EOF` / `$(echo x > src/...)`:
+# el shell EJECUTA la sustitucion y crea el archivo, pero el detector descontaba TODO el
+# cuerpo del heredoc como texto y devolvia ALLOW. Con el delimitador sin citar se
+# conservan y se analizan las lineas con una sustitucion; el resto sigue siendo texto.
+check "heredoc sin citar: una sustitucion escribe en codigo protegido -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo x > src/generated.ts)\nEOF' "" "")"
+check_motivo "heredoc sin citar: ...y el motivo nombra el archivo que se crearia" "src/generated\.ts" \
+  guard-codigo.sh "$(emite_bash $'cat <<EOF\n$(echo x > src/generated.ts)\nEOF' "" "")"
+check "heredoc sin citar: acentos graves que escriben en codigo -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n`echo x > src/a.ts`\nEOF' "" "")"
+check "heredoc sin citar con <<- y sangria: cp al codigo dentro de la sustitucion -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<-EOF\n\t$(cp README.md src/a.ts)\n\tEOF' "" "")"
+# Sin delimitador de cierre el bucle tiene que TERMINAR igual y seguir viendo la sustitucion.
+check "heredoc sin citar y sin cierre: la sustitucion se sigue viendo -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo x > src/a.ts)' "" "")"
 check_motivo "el deny por Bash admite que la cobertura es parcial" "parcial" \
   guard-codigo.sh "$(emite_bash 'echo x > src/app.ts' "" "")"
 check "desarrollador (con prefijo) escribe por Bash -> allow" allow guard-codigo.sh "$(emite_bash 'echo x > src/app.ts' "a10" "arnes-juan:desarrollador")"
@@ -318,6 +343,43 @@ check "heredoc: 'echo x > src/otro.ts' en el cuerpo -> allow" allow guard-codigo
   "$(emite_bash $'cat <<EOF\nejemplo: echo hola > src/otro.ts\nEOF' "" "")"
 check "heredoc con <<- y sangria: 'tee src/otro.ts' en el cuerpo -> allow" allow guard-codigo.sh \
   "$(emite_bash $'cat <<-EOF\n\tejemplo: tee src/otro.ts\n\tEOF' "" "")"
+# --- Heredoc CITADO: el cuerpo si es literal, tambien en el shell real ---------------
+# El control que da valor a los deny de arriba: con el delimitador citado o escapado bash
+# NO expande nada, no se crea ningun archivo, y el hook no puede estorbar.
+check "heredoc CITADO <<'EOF': el cuerpo es literal -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<\'EOF\'\n$(echo x > src/generated.ts)\nEOF' "" "")"
+check 'heredoc CITADO con comillas dobles: el cuerpo es literal -> allow' allow guard-codigo.sh \
+  "$(emite_bash $'cat <<"EOF"\n$(echo x > src/generated.ts)\nEOF' "" "")"
+check 'heredoc ESCAPADO con barra invertida: el cuerpo es literal -> allow' allow guard-codigo.sh \
+  "$(emite_bash $'cat <<\\EOF\n$(echo x > src/generated.ts)\nEOF' "" "")"
+# Sin citar, pero la expansion no escribe nada: tampoco puede denegarse.
+check "heredoc sin citar: una expansion inocente de fecha -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\nfecha: $(date)\nEOF' "" "")"
+# El falso positivo de 1.29.1, ahora tambien con el delimitador SIN citar: texto es texto.
+check "heredoc sin citar: 'cp README.md src/...' como TEXTO del cuerpo -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\nresumen: cp README.md src/x.ts ; listo\nEOF' "" "")"
+# La restriccion es de QUIEN edita, no de la forma del comando.
+check "heredoc sin citar: el desarrollador si puede escribir codigo -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo x > src/generated.ts)\nEOF' "a12" "arnes-juan:desarrollador")"
+# Ni la here-string ni la aritmetica son heredocs, y solas no escriben nada.
+check "heredoc: una here-string sola no lo es -> allow" allow guard-codigo.sh \
+  "$(emite_bash 'cat <<< "hola"' "" "")"
+check "heredoc: la aritmetica \$((1<<n)) sola no lo es -> allow" allow guard-codigo.sh \
+  "$(emite_bash 'echo $((1<<n))' "" "")"
+# RENDIMIENTO (CA-28): un cuerpo de 10.000 lineas se analiza con expansion de parametros,
+# sin un proceso por linea. Umbral 5 s: un hook PreToolUse muere a los 60 s y un hook
+# muerto no deniega, asi que el margen tiene que ser amplio, no justo.
+if [ -z "$FILTRO" ] || printf '%s' "heredoc sin citar: 10.000 lineas de cuerpo" | grep -qi -- "$FILTRO"; then
+cuerpo="$(yes 'linea de texto sin expansiones' | head -10000)"
+json_10k="$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF' "$cuerpo")" "" "")"
+t0="$(date +%s)"; salida="$(corre guard-codigo.sh "$json_10k")"; t1="$(date +%s)"
+dt=$((t1 - t0))
+if ! printf '%s' "$salida" | grep -Eq '"permissionDecision": *"deny"' && [ "$dt" -lt 5 ]; then
+  echo "  PASS  heredoc sin citar: 10.000 lineas de cuerpo -> allow en ${dt}s (umbral 5s)"; PASS=$((PASS+1))
+else
+  echo "  FAIL  heredoc sin citar: 10.000 lineas de cuerpo: ${dt}s (umbral 5s) salida=<$salida>"; diag; FAIL=$((FAIL+1))
+fi
+fi
 check "coordinadora: redirige un log fuera de los globs -> allow" allow guard-codigo.sh "$(emite_bash 'npm run build > /tmp/build.log 2>&1' "" "")"
 check "qa-tester escribe en tests/ (no es código de app) -> allow" allow guard-codigo.sh "$(emite_bash 'echo x > tests/a.test.ts' "a11" "arnes-juan:qa-tester")"
 
@@ -362,6 +424,10 @@ check "anotar en un REQ sin cerrarlo -> allow" allow guard-completado.sh \
 check "escribir fuera de requirements/ -> allow" allow guard-completado.sh \
   "$(emite_bash "echo completado > notas.txt" "" "")"
 
+# El mismo heredoc sin citar, por la via del cierre de un REQ: la sustitucion ejecuta el
+# `sed -i` de verdad, asi que la transicion tiene que derivarse a Edit/Write igual.
+check "heredoc sin citar que cierra un REQ con sed -i -> deny" deny guard-completado.sh \
+  "$(emite_bash $'cat <<EOF\n$(sed -i \'s/en-revisión/completado/\' requirements/REQ-001.md)\nEOF' "" "")"
 # --- Arranque limpio: la plantilla de PENDING no puede bloquear ----------------
 # El ejemplo de formato vivia COMENTADO bajo `## Pendientes`; el conteo lo leia
 # como 1 pendiente y un proyecto recien inicializado no cerraba ningun REQ.
@@ -528,6 +594,88 @@ check "MultiEdit sobre un REQ CRLF: el bypass tambien -> deny" deny guard-comple
 # Y al reves: `Estado: completado` escrito SOLO en la historia no es una transicion.
 check "Edit: 'Estado: completado' solo en la historia NO es una transicion -> allow" allow guard-completado.sh \
   "$(emite_edit_real "$PROJ/requirements/REQ-114.md" 'Seguridad: pendiente (registro anterior)' $'Seguridad: pendiente (registro anterior)\n- 2026-08-01: Estado: completado (intento anterior, revertido)')"
+# --- El bypass por SUSTITUCION DEL VALOR (medido en 1.30.2) -------------------------
+# Una revision externa cerro un REQ con `old_string: en-revisión` / `new_string: completado`.
+# El fragmento no escribe la palabra «Estado» en ninguna parte, y el hook exigia esa palabra
+# EN EL FRAGMENTO antes de correr las puertas: salia por arriba y devolvia ALLOW con
+# `QA: pendiente`. Sustituir el VALOR es la forma mas natural de cerrar un REQ a mano.
+# Ahora, con el documento reconstruido, la transicion se lee del DOCUMENTO: la cabecera en
+# disco no lo decia y la resultante si.
+mkreq "$PROJ/requirements/REQ-120.md" "no" "pendiente" "n/a"
+check "transicion por documento: Edit que sustituye SOLO el valor -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-120.md" 'en-revisión' 'completado')"
+check_motivo "transicion por documento: ...y el motivo nombra el veredicto que falta" "QA es 'pendiente'" \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-120.md" 'en-revisión' 'completado')"
+# Control positivo: el mismo Edit sobre un REQ que SI puede cerrarse no puede estorbar.
+mkreq "$PROJ/requirements/REQ-121.md" "no" "aprobado" "n/a"
+check "transicion por documento: control, SOLO el valor con todo en verde -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-121.md" 'en-revisión' 'completado')"
+# El suelo del REQ sensible tambien se aplica por esta via.
+mkreq "$PROJ/requirements/REQ-122.md" "sí" "aprobado" "pendiente"
+check "transicion por documento: SOLO el valor sobre un REQ sensible sin auditoria -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-122.md" 'en-revisión' 'completado')"
+# MultiEdit: una edicion sustituye el valor y la otra anota el historial.
+printf '# REQ-124\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n\n## Historial\n| 2026-09-01 | nace |\n' > "$PROJ/requirements/REQ-124.md"
+check "transicion por documento: MultiEdit con SOLO el valor + fila de historial -> deny" deny guard-completado.sh \
+  "$(emite_multiedit "$PROJ/requirements/REQ-124.md" 'en-revisión' 'completado' '| 2026-09-01 | nace |' $'| 2026-09-01 | nace |\n| 2026-09-02 | cierra |')"
+# `replace_all`: el valor aparece ANTES de la cabecera, asi que solo sustituyendo TODAS las
+# ocurrencias queda `Estado: completado`. Es lo que separa "se reconstruyo" de "se adivino".
+printf '# REQ-125 (nacio en-revisión)\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n' > "$PROJ/requirements/REQ-125.md"
+check "transicion por documento: replace_all sustituye TODAS las ocurrencias -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-125.md" 'en-revisión' 'completado' 1)"
+check "transicion por documento: control, sin replace_all solo la primera y la cabecera no cambia -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-125.md" 'en-revisión' 'completado')"
+# El mismo bypass sobre un archivo CRLF: el CR no puede devolver un ALLOW por la puerta de atras.
+printf '# REQ-123\r\nEstado: en-revisión\r\nSensible a seguridad: no\r\nQA: pendiente\r\nSeguridad: n/a\r\n' > "$PROJ/requirements/REQ-123.md"
+check "transicion por documento: SOLO el valor sobre un REQ CRLF -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-123.md" 'en-revisión' 'completado')"
+# --- El fallback sigue vivo: sin documento reconstruido se juzga el fragmento ---------
+mkreq "$PROJ/requirements/REQ-126.md" "no" "pendiente" "n/a"
+check "transicion por documento: Write con la cabecera completa -> deny" deny guard-completado.sh \
+  "$(emite_write "$PROJ/requirements/REQ-126.md" $'# REQ-126\nEstado: completado\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n')"
+# Y al reves: un `Write` cuya CABECERA sigue en revision pero cuyo cuerpo cita el estado
+# terminal dentro de un criterio. Medido con 1.30.2 mientras se redactaba un REQ: el `grep`
+# miraba todo el contenido y lo denegaba. Manda la cabecera, aqui tambien.
+check "transicion por documento: control, Write que solo CITA el estado en el cuerpo -> allow" allow guard-completado.sh \
+  "$(emite_write "$PROJ/requirements/REQ-126.md" $'# REQ-126\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n\n## Criterios\n- Cuando el REQ queda `Estado: completado (ejemplo citado)`, entonces...\n')"
+mkreq "$PROJ/requirements/REQ-127.md" "no" "pendiente" "n/a"
+check "transicion por documento: old_string ausente + 'Estado: completado' en el fragmento -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-127.md" "" "" 'Estado: completado')"
+check "transicion por documento: old_string ausente y fragmento 'completado' a secas -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-127.md" "" "" 'completado')"
+# Un REQ que NO existe en disco: `disk` vacio no puede tumbar el hook con `set -u` ni dejar traza.
+if [ -z "$FILTRO" ] || printf '%s' "transicion por documento: REQ inexistente en disco" | grep -qi -- "$FILTRO"; then
+salida="$(corre guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-999.md" 'en-revisión' 'completado')")"
+if ! printf '%s' "$salida" | grep -Eq '"permissionDecision": *"deny"' && [ ! -s "$ERRLOG" ]; then
+  echo "  PASS  transicion por documento: REQ inexistente en disco -> allow y sin traza de bash"; PASS=$((PASS+1))
+else
+  echo "  FAIL  transicion por documento: REQ inexistente en disco: salida=<$salida>"; diag; FAIL=$((FAIL+1))
+fi
+fi
+# --- No hay transicion: la cabecera en disco YA decia el estado terminal --------------
+printf '# REQ-128\nEstado: completado\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n\n## Historia\ntexto original\n' > "$PROJ/requirements/REQ-128.md"
+check "transicion por documento: la cabecera en disco YA decia completado -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-128.md" 'texto original' 'texto corregido')"
+check "transicion por documento: reabrir un REQ cerrado a en-progreso -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-128.md" 'completado' 'en-progreso')"
+# --- Las puertas A2 y A3 corren sobre el documento reconstruido, no sobre el fragmento --
+mkreq "$PROJ/requirements/REQ-129.md" "no" "aprobado" "n/a"
+printf '## Pendientes\n\n### Fusionar el PR de la candidata\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+check_motivo "transicion por documento: SOLO el valor con la cola de aprobaciones abierta -> deny" "PENDING_APPROVAL" \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-129.md" 'en-revisión' 'completado')"
+printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+setgates '.quality_gates = ["false"]'
+check_motivo "transicion por documento: SOLO el valor con una quality gate roja -> deny" "quality gate" \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-129.md" 'en-revisión' 'completado')"
+setgates '.quality_gates = ["true"]'
+# --- El estado terminal es el DEL MANIFIESTO, no la palabra «completado» ---------------
+mkreq "$PROJ/requirements/REQ-130.md" "no" "pendiente" "n/a"
+setcfg '.estados.completado = "hecho"'
+check "transicion por documento: estado terminal 'hecho' del manifiesto -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-130.md" 'en-revisión' 'hecho')"
+check "transicion por documento: control, 'completado' ya no es terminal en ese manifiesto -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-130.md" 'en-revisión' 'completado')"
+setcfg '.estados.completado = "completado"'
 
 }
 seccion_15() {
@@ -1203,7 +1351,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=196
+CASOS_ESPERADOS=230
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)
