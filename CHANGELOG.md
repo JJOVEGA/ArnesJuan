@@ -2,6 +2,24 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.30.1] — 2026-09-05
+### Corregido — dos bordes que la optimización de 1.29.3 introdujo
+Los encontró una revisión externa **comparando 1.29.2 con 1.29.3 archivo por archivo**, que es la
+forma de encontrar lo que una mejora de rendimiento rompe sin que nada falle. De paso midió el
+cambio en Linux: **747 ms → 44 ms** sobre ~3,5 MB, ~17×, con el mismo hash de salida una vez
+retiradas hora y versión.
+
+- **Un `.md` vacío desaparecía del conteo.** `awk` no emite nada para un archivo sin líneas, así
+  que ya no contaba como *«archivo sin `Estado:`»* — 1.29.2 decía 1, 1.29.3 decía 0. Se cuenta antes
+  de pasar a `awk`, como antes.
+- **`umbral_bytes` medía caracteres.** Al sustituir `wc -c` por `${#texto}` la cuenta pasó a ser de
+  caracteres: un UTF-8 de 4 032 bytes y 2 032 caracteres con umbral 3 000 rotaba antes y dejó de
+  rotar. Yo lo había anotado como *«aceptable»*; el campo se llama `bytes` y tiene que medir bytes.
+  `LC_ALL=C` sólo para la cuenta, y se restaura.
+
+Un caso por borde. El patrón que el revisor nombra —cada ceguera real se vuelve regresión
+permanente— es deliberado, y esta versión son dos más.
+
 ## [1.30.0] — 2026-09-05
 ### Corregido — FALLO EN ABIERTO: una línea de historia se leía como el veredicto
 Los campos del REQ se leían en **todo** el archivo, y cuando un campo aparecía dos veces ganaba la

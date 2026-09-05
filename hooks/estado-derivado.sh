@@ -54,6 +54,11 @@ arnes_estado_derivado() {
   for f in "$ARNES_PROJ/$ARNES_REQ_DIR"/*.md; do
     [ -f "$f" ] || continue
     case "${f##*/}" in README.md|readme.md) continue ;; esac
+    # Un .md VACIO no tiene lineas, asi que awk (FNR==1) nunca lo ve y no emitiria nada:
+    # desapareceria del conteo. Antes del awk contaba como "archivo sin Estado", y eso
+    # se conserva contandolo aqui. Lo encontro una revision externa comparando 1.29.2
+    # con 1.29.3 archivo por archivo.
+    if [ ! -s "$f" ]; then notas=$((notas+1)); continue; fi
     REQS+=("$f")
   done
   local extraidos=''
