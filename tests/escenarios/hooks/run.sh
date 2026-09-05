@@ -740,6 +740,30 @@ else
 fi
 rm -rf "$SYM_RAIZ"
 
+# --- El banco no tenia TAMANO, y por eso no vio 92 segundos ----------------------
+# Medido en un proyecto real: 47 REQ, 3,73 MB, uno de 244 KB, y el bloque derivado
+# tardaba 92 s por parada leyendo linea a linea en bash. Con REQ de cinco lineas eso son
+# microsegundos; el banco certificaba la correccion y no veia el coste. Estos casos no
+# miden tiempo --un temporizador es fragil entre maquinas-- pero SI exigen que el bloque
+# sea correcto sobre un fixture del tamano real, y que los campos se encuentren aunque
+# esten a doscientas lineas de la cabecera.
+EST_G="$(mktemp -d)"; mkdir -p "$EST_G/.arnes" "$EST_G/requirements" "$EST_G/docs"
+cp "$PROJ/.arnes/config.json" "$EST_G/.arnes/config.json"
+printf '## Pendientes\n\n## Resueltas\n' > "$EST_G/PENDING_APPROVAL.md"
+EST_RELLENO="$(printf 'Esta linea documenta la historia del requerimiento con detalle suficiente para pesar lo que pesa uno real.\n%.0s' $(seq 1 700))"
+for i in $(seq -w 1 47); do
+  EST_ST=en-revisión; [ "$((10#$i % 3))" -eq 0 ] && EST_ST=completado
+  { printf '# REQ-%s\nEstado: %s\nSensible a seguridad: no\nQA: aprobado (medido)\nSeguridad: n/a\n\n## Historia\n' "$i" "$EST_ST"; printf '%s' "$EST_RELLENO"; } > "$EST_G/requirements/REQ-$i.md"
+done
+# Un REQ con los veredictos DESPUES de doscientas lineas de historia: se encuentran igual.
+{ printf '# REQ-099\nEstado: en-revisión\n\n## Historia\n'; printf '%s' "$EST_RELLENO"; printf '\nQA: con-hallazgos\nRigor: critico\nHallazgos abiertos: SEC-1 (usuario/dinero)\n'; } > "$EST_G/requirements/REQ-099.md"
+corre_estado "$EST_G"
+check_estado "47 REQ grandes (3,7 MB): el bloque los cuenta todos"    "REQ:\*\* 48 "                       si "$EST_G/docs/ESTADO.md"
+check_estado "...y los 15 completados salen como completados"          "completado 15 "                      si "$EST_G/docs/ESTADO.md"
+check_estado "campos a 200 lineas de la cabecera: QA se encuentra"     "^| REQ-099 | en-revisión | con-hallazgos" si "$EST_G/docs/ESTADO.md"
+check_estado "...y Rigor y Hallazgos tambien"                          "| critico | sec-1(usuario/dinero) |"  si "$EST_G/docs/ESTADO.md"
+rm -rf "$EST_G"
+
 # Apagable: quien no lo quiera, lo apaga.
 EST_OFF="$(mktemp -d)"; mkdir -p "$EST_OFF/.arnes" "$EST_OFF/requirements" "$EST_OFF/docs"
 jq '.estado_derivado.activo = false' "$PROJ/.arnes/config.json" > "$EST_OFF/.arnes/config.json"
@@ -1044,7 +1068,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=172
+CASOS_ESPERADOS=176
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)

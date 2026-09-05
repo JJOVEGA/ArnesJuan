@@ -300,6 +300,14 @@ nada.
   al usuario: o mueve el destino dentro del proyecto, o acepta que la continuidad y la rotación no
   operen sobre ese directorio.
 
+### Hacia 1.29.3
+- Nada que migrar. **Si el proyecto apagó `estado_derivado` por coste** (hasta 1.29.2 el bloque
+  tardaba ~90 s por parada con REQ grandes), dile al usuario que puede volver a encenderlo: la
+  extracción pasa a una sola pasada de `awk`. Que lo mida en su máquina antes de dar nada por hecho.
+- Si sus REQ pesan decenas de KB porque documentan su historia dentro del archivo, **menciónalo**:
+  ese coste lo paga cada agente que lea el REQ, no sólo el hook. La rotación de la historia del REQ
+  está diseñada y no construida; no lo hagas a mano.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

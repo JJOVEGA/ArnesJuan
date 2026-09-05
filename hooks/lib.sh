@@ -548,6 +548,19 @@ arnes_sens_efectiva() {   # ARNES_SENS -> si|no ; ARNES_SENS_DUDOSA -> 0|1
   esac
 }
 
+# La cola de normalizacion de arnes_campos_req, separada para que el bloque derivado
+# --que extrae los campos con UNA pasada de awk sobre todos los REQ-- pase por EL MISMO
+# camino que la puerta. Dos normalizadores se desfasan; uno solo, no.
+arnes_campos_normaliza() {   # <qa> <seg> <sens> <hall> <rigor> -> ARNES_QA/SEG/SENS/HALL/RIGOR
+  arnes_norm_campo "$1"; arnes_veredicto "$ARNES_CAMPO"; ARNES_QA="$ARNES_VEREDICTO"
+  arnes_norm_campo "$2"; arnes_veredicto "$ARNES_CAMPO"; ARNES_SEG="$ARNES_VEREDICTO"
+  arnes_norm_campo "$3"; ARNES_SENS="$ARNES_CAMPO"
+  arnes_norm_campo "$4"; ARNES_HALL="$ARNES_CAMPO"
+  arnes_norm_campo "$5"; ARNES_RIGOR="$ARNES_CAMPO"
+  arnes_sens_efectiva
+  arnes_rigor_efectivo
+}
+
 # Extrae en UNA pasada los campos de cabecera del REQ que gobiernan el cierre.
 #
 # RENDIMIENTO. La versión anterior leía cada campo con `printf | sed | head`
@@ -575,13 +588,7 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
       esac
     done <<< "$texto"
   done
-  arnes_norm_campo "$ARNES_QA";   arnes_veredicto "$ARNES_CAMPO"; ARNES_QA="$ARNES_VEREDICTO"
-  arnes_norm_campo "$ARNES_SEG";  arnes_veredicto "$ARNES_CAMPO"; ARNES_SEG="$ARNES_VEREDICTO"
-  arnes_norm_campo "$ARNES_SENS"; ARNES_SENS="$ARNES_CAMPO"
-  arnes_norm_campo "$ARNES_HALL"; ARNES_HALL="$ARNES_CAMPO"
-  arnes_norm_campo "$ARNES_RIGOR"; ARNES_RIGOR="$ARNES_CAMPO"
-  arnes_sens_efectiva
-  arnes_rigor_efectivo
+  arnes_campos_normaliza "$ARNES_QA" "$ARNES_SEG" "$ARNES_SENS" "$ARNES_HALL" "$ARNES_RIGOR"
 }
 
 # Nivel de rigor con el que se juzga este REQ.

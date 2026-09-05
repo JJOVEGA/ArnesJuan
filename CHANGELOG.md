@@ -2,6 +2,43 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.29.3] — 2026-09-05
+### Corregido — el bloque derivado costaba 92 segundos por parada en un proyecto real
+**Medido en Adelantos, con el control de plataforma hecho** (`bash -c true` = 2,4 s allí):
+`stop.sh` **125 s por turno**, de los que **92 eran la continuidad** y 12,6 la rotación *sin nada
+que rotar*. Reproducido aquí con un fixture del mismo tamaño —47 REQ, 3,7 MB, uno de 231 KB—:
+**126 818 ms**.
+
+**La causa:** el bloque recorría cada REQ **línea a línea en bash, dos veces** (una para
+`Estado:`, otra dentro de `arnes_campos_req`). Con REQ de cinco líneas, como los del banco, eso son
+microsegundos. Con 244 KB son decenas de miles de iteraciones por archivo, en cada parada, dos
+veces por turno. **El banco no lo vio porque sus artefactos no tienen tamaño.** Es la tercera vez
+que el banco certifica la corrección y no ve el coste; la lección es la misma que con el CRLF y con
+el `if`: lo que no se ejecuta en condiciones reales, no se ve.
+
+**El arreglo:** los seis campos de **todos** los REQ se extraen en **una sola pasada de `awk`**
+(`hooks/campos-req.awk`) y bash normaliza 47 líneas cortas por **el mismo camino que la puerta**
+—`arnes_campos_normaliza`, compartida con `arnes_campos_req`, para que dos normalizadores no se
+desfasen—. Semántica conservada byte a byte: `Estado:` primera aparición, los demás última, como
+hacían los bucles. Y la rotación deja de pagar un `wc -c` por artefacto.
+
+| | antes | después |
+|---|---|---|
+| 47 REQ grandes, misma máquina cargada | 126 818 ms | **23 033 ms** |
+| salida | `47 — completado 15 · en-revisión 32` | **idéntica** |
+
+Lo que queda son **unos ocho procesos** —bash, `jq`, `awk`, `git`— en una plataforma donde cada uno
+cuesta 1-4 s. Ése es el suelo, no el hook; se puede bajar a la mitad juntando llamadas, y queda
+apuntado.
+
+**El banco tiene ahora tamaño:** cuatro casos sobre un fixture de 3,7 MB, incluido un REQ con sus
+veredictos a doscientas líneas de la cabecera, que se encuentran igual.
+
+**Si apagaste la continuidad por coste, vuelve a encenderla y mide.** Y la observación de fondo que
+esta medición deja sobre la mesa: **un REQ de 244 KB documenta su propia historia dentro del archivo**,
+y eso lo paga cualquier agente que lo lea, no sólo el hook. El arreglo estructural es rotar la
+historia del REQ como se rota el CHANGELOG. Queda diseñado, no construido.
+
 ## [1.29.2] — 2026-09-05
 ### Corregido — la contención de rutas era léxica; ahora es física
 1.29.0 bloqueaba `..`, absolutas y `~`. Una revisión externa reprodujo en 1.29.1 que un **enlace

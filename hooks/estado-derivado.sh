@@ -39,32 +39,36 @@ arnes_estado_derivado() {
   [ -d "${destino%/*}" ] || return 0     # sin la carpeta, no se inventa (y sin fork: sin dirname)
   arnes_dir_interno "${destino%/*}" || return 0   # contencion FISICA: un symlink no saca la escritura del proyecto
 
-  # --- Los REQ, leidos del disco uno a uno (read, no cat: sin forks) ---
+  # --- Los REQ, en UNA pasada de awk (no linea a linea en bash) ------------------
+  # Antes: dos bucles `while read` en bash POR ARCHIVO (uno para Estado:, otro dentro de
+  # arnes_campos_req). Con REQ de 5 lineas, como los del banco, microsegundos. Medido en
+  # un proyecto real --47 REQ, 3,73 MB, uno de 244 KB--: 92 s por parada, dos veces por
+  # turno. Reproducido aqui con un fixture del mismo tamano: 126 818 ms. El banco no lo
+  # vio porque sus artefactos no tienen tamano.
+  #
+  # awk procesa los 4 MB en un solo proceso y devuelve una linea por archivo con los seis
+  # campos crudos; bash normaliza 47 lineas cortas por el MISMO camino que la puerta.
+  # La semantica se conserva byte a byte (Estado: primera aparicion; el resto, ultima):
+  # ver hooks/campos-req.awk.
+  local -a REQS=()
   for f in "$ARNES_PROJ/$ARNES_REQ_DIR"/*.md; do
     [ -f "$f" ] || continue
-    base="$(basename "$f")"
-    case "$base" in README.md|readme.md) continue ;; esac
-    local texto='' est=''
-    IFS= read -r -d '' texto < "$f"
-    while IFS= read -r linea; do
-      case "$linea" in 'Estado:'*) est="${linea#Estado:}"; break ;; esac
-    done <<< "$texto"
-    # `Estado:` lleva la MISMA regla que los veredictos: un parentesis final es
-    # evidencia y no cambia el valor. Sin esto, `completado (2026-09-01)` no era
-    # `completado` y el bloque lo contaba entre los abiertos: medido en un proyecto
-    # real, decia 2 completados donde habia 9 y metia 44 REQ en "otros".
-    # La PUERTA no estaba afectada --busca el estado en el texto crudo y si lo caza--,
-    # asi que era un tablero que mentia, no un fallo en abierto. Serio igual: el
-    # proyecto apago la continuidad por esto.
-    arnes_norm_campo "$est"; arnes_veredicto "$ARNES_CAMPO"; est="$ARNES_VEREDICTO"
+    case "${f##*/}" in README.md|readme.md) continue ;; esac
+    REQS+=("$f")
+  done
+  local extraidos=''
+  if [ "${#REQS[@]}" -gt 0 ]; then
+    extraidos="$(awk -f "$DIR/campos-req.awk" "${REQS[@]}" 2>/dev/null)" || extraidos=''
+  fi
+  local ruta c_est c_qa c_seg c_sens c_hall c_rig est
+  while IFS=$'\001' read -r ruta c_est c_qa c_seg c_sens c_hall c_rig; do
+    [ -n "$ruta" ] || continue
+    base="${ruta##*/}"
+    arnes_norm_campo "$c_est"; arnes_veredicto "$ARNES_CAMPO"; est="$ARNES_VEREDICTO"
     # Sin `Estado:` no es un REQ, es una nota que vive en la misma carpeta. Medido:
-    # el bloque decia 58 REQ y habia 57, porque contaba
-    # `consecuencias-de-las-decisiones-abiertas.md`. Un bloque que presume de
-    # derivar del disco no puede decir 58 donde el disco dice 57. Se cuentan aparte
-    # y se DICE, en vez de esconderlos: que un archivo quede fuera por silencio es
-    # justo lo que este bloque existe para evitar.
+    # el bloque decia 58 REQ y habia 57. Se cuentan aparte y se DICE.
     if [ -z "$est" ]; then notas=$((notas+1)); continue; fi
-    arnes_campos_req "$texto" ''
+    arnes_campos_normaliza "$c_qa" "$c_seg" "$c_sens" "$c_hall" "$c_rig"
     total=$((total+1))
     case "$est" in
       "$ARNES_ESTADO_DONE") hechos=$((hechos+1)) ;;
@@ -73,15 +77,11 @@ arnes_estado_derivado() {
       bloqueado)              bloqueados=$((bloqueados+1)) ;;
       *)                      otros=$((otros+1)) ;;
     esac
-    # Solo lo ABIERTO va a la tabla. El bloque responde "donde quedamos", y un REQ
-    # completado ya no es parte de esa respuesta: es historia, y la linea de conteo
-    # ya lo resume. Medido: con 58 REQ el bloque pesaba 10,4 KB -- un 25 % sobre un
-    # ESTADO.md de 40 KB que se lee al empezar CADA sesion. Es justo el presupuesto
-    # que la rotacion existe para cuidar, y aqui se lo estaba comiendo el arnes.
+    # Solo lo ABIERTO va a la tabla: el bloque responde "donde quedamos".
     if [ "$est" != "$ARNES_ESTADO_DONE" ]; then
       filas+="| ${base%.md} | ${est:-—} | ${ARNES_QA:-—} | ${ARNES_SEG:-—} | ${ARNES_RIGOR:-—} | ${ARNES_HALL:-—} |"$'\n'
     fi
-  done
+  done <<< "$extraidos"
 
   # --- La cola de aprobaciones ---
   local pfile="$ARNES_PROJ/$ARNES_PENDING_REL"
