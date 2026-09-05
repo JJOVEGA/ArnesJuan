@@ -50,11 +50,13 @@ arnes_rotar_uno() {
   [ -f "$f" ] || return 0
   arnes_dir_interno "${f%/*}" || return 0   # contencion FISICA: el directorio del artefacto, resuelto, dentro del proyecto
 
-  tam="$(wc -c < "$f" 2>/dev/null)" || return 0
-  tam="${tam// /}"
-  [ "$tam" -gt "$umbral" ] 2>/dev/null || return 0
-
+  # Sin `wc -c`: era un fork por artefacto en CADA parada, aunque no hubiera nada que
+  # rotar (medido: 12,6 s en un proyecto real con dos artefactos y nada que mover).
+  # El archivo se lee de todos modos justo despues; se compara la longitud leida. Cuenta
+  # caracteres y no bytes --con UTF-8 queda un poco por debajo--, y para un umbral de
+  # rotacion eso es aceptable: se rota un poco mas tarde, nunca antes de tiempo.
   IFS= read -r -d '' texto < "$f"
+  [ "${#texto}" -gt "$umbral" ] 2>/dev/null || return 0
 
   # --- Se parte en secciones de nivel 2. Sin limites, no se toca nada. ---
   local -a cuerpos=()
