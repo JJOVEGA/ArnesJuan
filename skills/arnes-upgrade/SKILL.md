@@ -308,6 +308,14 @@ nada.
   ese coste lo paga cada agente que lea el REQ, no sólo el hook. La rotación de la historia del REQ
   está diseñada y no construida; no lo hagas a mano.
 
+### Hacia 1.30.0
+- **Cambio de semántica, y hay que revisar los REQ.** Los campos valen sólo antes del primer `## `.
+  Corre `tools/arnes-lectura.sh` y mira: (a) REQ cuyos veredictos vivan **debajo** de una sección —
+  hasta hoy se leían, desde hoy no: hay que subirlos a la cabecera—; (b) REQ cuya historia tenga
+  líneas `Campo:` a columna cero —hasta hoy se leían **como veredicto**; conviene saber si alguno
+  cerró así—. Pregúntale al usuario antes de mover nada.
+- `requirements/README.md`: párrafo **los campos valen sólo en la cabecera**. `AGENTS.md` §13: fila nueva.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

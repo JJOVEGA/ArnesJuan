@@ -12,10 +12,16 @@
 #   ruta \001 Estado \001 QA \001 Seguridad \001 Sensible \001 Hallazgos \001 Rigor
 function volcar() {
   if (f != "") printf "%s\001%s\001%s\001%s\001%s\001%s\001%s\n", f, est, qa, seg, sens, hall, rig
-  est = ""; qa = ""; seg = ""; sens = ""; hall = ""; rig = ""
+  est = ""; qa = ""; seg = ""; sens = ""; hall = ""; rig = ""; fin = 0
 }
 FNR == 1 { volcar(); f = FILENAME }
 { sub(/\r$/, "") }
+# LOS CAMPOS VALEN SOLO EN LA CABECERA: antes del primer `## `. Medido: una linea
+# `Seguridad: aprobado (A-009, 2026-09-02)` dentro de `## Historial de cambios` se leia
+# como el veredicto y cerraba un REQ critico con la cabecera en pendiente. Regla
+# estructural, la de la plantilla; no depende del nombre de ninguna seccion.
+/^## / { fin = 1 }
+fin    { next }
 /^Estado:/               { if (est == "") est = substr($0, 8) }
 /^QA:/                   { qa   = substr($0, 4) }
 /^Seguridad:/            { seg  = substr($0, 11) }

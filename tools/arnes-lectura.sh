@@ -73,6 +73,8 @@ for f in "$PROY/$REQ_DIR"/*.md; do
   # Los campos CRUDOS, para poder enseñar el contraste con lo que la máquina lee.
   cru_est=''; cru_qa=''; cru_seg=''; cru_sens=''; cru_rig=''
   while IFS= read -r l; do
+    # Solo la cabecera cuenta, como para la puerta: lo que haya en una seccion no es un campo.
+    case "$l" in '## '*) break ;; esac
     case "$l" in
       'Estado:'*)               cru_est="${l#Estado:}" ;;
       'QA:'*)                   cru_qa="${l#QA:}" ;;

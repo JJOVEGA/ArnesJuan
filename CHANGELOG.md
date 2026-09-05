@@ -2,6 +2,40 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.30.0] — 2026-09-05
+### Corregido — FALLO EN ABIERTO: una línea de historia se leía como el veredicto
+Los campos del REQ se leían en **todo** el archivo, y cuando un campo aparecía dos veces ganaba la
+**última**. Un REQ que documenta su propia historia dentro del archivo —como los de 244 KB de un
+proyecto real— tiene líneas de log a columna cero. Medido:
+
+```
+cabecera: Seguridad: pendiente · REQ crítico · intenta cerrar
+  historia: Seguridad: aprobado (A-009, 2026-09-02)   ->  ALLOW   *** cierra con la cabecera en pendiente ***
+  historia: Seguridad: aprobado                       ->  ALLOW
+  historia: Seguridad: aprobado (A-009) — texto       ->  DENY    (por accidente: el texto detrás impedía normalizar)
+  historia: - Seguridad: aprobado (A-009)             ->  DENY    (viñeta, no columna cero)
+```
+
+**Es la familia de `**sí**`:** la máquina lee algo distinto de lo que la cabecera declara. Y la forma
+que se cuela es exactamente la que un historial usa —veredicto, referencia, fecha—.
+
+**La regla que lo cierra es estructural, no un nombre de sección.** Los campos valen **sólo en la
+cabecera: antes del primer `## `**. Es lo que la plantilla siempre dijo; ahora lo dice la máquina, en
+los tres lectores a la vez —la puerta (`arnes_campos_req`), el bloque derivado (`campos-req.awk`) y
+el informe (`arnes-lectura.sh`)— para que no se desfasen. Un fragmento de `Edit` sin `##` se sigue
+leyendo entero. Y como consecuencia, **rotar la historia de un REQ es seguro por construcción**: nada
+de lo que haya en una sección puede tocar lo que la máquina decide.
+
+**El banco fijaba lo contrario hasta ayer.** 1.29.3 añadió *«campos a 200 líneas de la cabecera se
+encuentran igual»* porque eso hacía el código. Se da la vuelta y se dice: certificar lo que el código
+hace no es certificar lo que debe hacer.
+
+### Al migrar
+Corre `tools/arnes-lectura.sh` y mira dos cosas: REQ cuyos veredictos vivan **debajo** de un `##`
+(hay que subirlos a la cabecera; hasta hoy se leían, desde hoy no), y REQ cuya historia tenga líneas
+`Campo:` a columna cero (hasta hoy se leían como veredicto; desde hoy no, y conviene saber si alguno
+cerró así).
+
 ## [1.29.3] — 2026-09-05
 ### Gobernanza — el CI es puerta de `main`
 `proteger-main` exige desde hoy que `hooks-en-linux` esté verde y la rama al día. Aplicado con la

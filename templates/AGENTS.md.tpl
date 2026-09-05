@@ -269,6 +269,7 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 | No completar sin `QA: aprobado` (salvo `Rigor: ligero`), ni un REQ `critico` sin `Seguridad: aprobado` | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | La transición a `completado` no se hace por shell | §6 | `guard-completado` | `Bash` (parcial) |
 | Seguridad no firma lo que QA no ha validado (salvo `Seguridad: preventiva`) | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| Los campos del REQ valen sólo en la cabecera: una línea igual dentro de una sección no es un veredicto | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 
 **Es una barandilla, no una jaula.** El hook impide que el modelo **se desvíe por descuido**;
 no contiene a un agente decidido a rodearlo. Concretamente:
