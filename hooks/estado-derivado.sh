@@ -36,7 +36,8 @@ arnes_estado_derivado() {
 
   arnes_ruta_interna "$ARNES_ESTADO_ARCHIVO" || return 0   # fuera del proyecto: no se escribe
   destino="$ARNES_PROJ/$ARNES_ESTADO_ARCHIVO"
-  [ -d "$(dirname "$destino")" ] || return 0     # sin la carpeta, no se inventa
+  [ -d "${destino%/*}" ] || return 0     # sin la carpeta, no se inventa (y sin fork: sin dirname)
+  arnes_dir_interno "${destino%/*}" || return 0   # contencion FISICA: un symlink no saca la escritura del proyecto
 
   # --- Los REQ, leidos del disco uno a uno (read, no cat: sin forks) ---
   for f in "$ARNES_PROJ/$ARNES_REQ_DIR"/*.md; do
