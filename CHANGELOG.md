@@ -3,6 +3,11 @@
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
 ## [1.29.3] — 2026-09-05
+### Gobernanza — el CI es puerta de `main`
+`proteger-main` exige desde hoy que `hooks-en-linux` esté verde y la rama al día. Aplicado con la
+cuenta admin vía `gh auth switch` y verificado releyendo el ruleset. **Un PR rojo ya no se puede
+fusionar.** No cambia el plugin; cambia quién decide si algo entra en `main`: el banco.
+
 ### Corregido — el bloque derivado costaba 92 segundos por parada en un proyecto real
 **Medido en Adelantos, con el control de plataforma hecho** (`bash -c true` = 2,4 s allí):
 `stop.sh` **125 s por turno**, de los que **92 eran la continuidad** y 12,6 la rotación *sin nada
@@ -55,7 +60,7 @@ su directorio. Cuesta dos subshells, que se pagan sólo en una parada de agente.
 crea un enlace real— **y corren de verdad en el CI de Linux.** Es la primera vez que un caso existe
 *porque* hay CI: sin él no habría dónde ejecutarlo.
 
-### Pendiente del dueño del repo — el CI aún no es puerta de `main`
+### Pendiente del dueño del repo — el CI aún no es puerta de `main` *(resuelto el mismo día; ver 1.29.3)*
 El ruleset `proteger-main` no exige `hooks-en-linux`; un PR rojo se puede fusionar. Editarlo exige
 admin, y la cuenta que opera el arnés tiene `push` pero no `admin`: la API devuelve 404. El
 procedimiento exacto y la regla en JSON están en `docs/gobernanza/ci-como-puerta.md`. Hasta
