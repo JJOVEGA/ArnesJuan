@@ -854,7 +854,7 @@ seccion_20() {
 # banco no puede probar ese motor --es de Claude Code--, pero SI puede fijar la forma
 # del archivo: si alguien anade un handler Bash sin `if`, todos los `ls` vuelven a
 # pagar el interprete y nadie lo nota, porque nada falla: solo se vuelve lento.
-seccion_nueva "hooks.json (la forma que evita el spawn):"
+seccion_nueva "hooks.json (la forma que NO deja Bash sin guardian):"
 HJ="$HOOKS_DIR/hooks.json"
 hj_check() {   # <nombre> <esperado> <obtenido>
   if [ -n "$FILTRO" ] && ! printf '%s' "$1" | grep -qi -- "$FILTRO"; then return 0; fi
@@ -862,17 +862,21 @@ hj_check() {   # <nombre> <esperado> <obtenido>
   else echo "  FAIL  $1  esperado=$2 obtenido=$3"; FAIL=$((FAIL+1)); fi
 }
 hj_check "es JSON valido" "ok" "$(jq -e . "$HJ" >/dev/null 2>&1 && echo ok || echo roto)"
-hj_check "Edit/Write/MultiEdit van a guard.sh SIN if (los globs son del proyecto)" "1-0" \
-  "$(jq -r '[.hooks.PreToolUse[] | select(.matcher=="Edit|Write|MultiEdit")] | length' "$HJ")-$(jq -r '[.hooks.PreToolUse[] | select(.matcher=="Edit|Write|MultiEdit") | .hooks[] | select(has("if"))] | length' "$HJ")"
-hj_check "TODO handler de Bash lleva if (ninguno arranca por un ls)" "0" \
-  "$(jq -r '[.hooks.PreToolUse[] | select(.matcher=="Bash") | .hooks[] | select(has("if")|not)] | length' "$HJ")"
-# Los disparadores del `if` son los mismos que el detector de escrituras buscaba en el
-# texto. Si uno desaparece de aqui, esa escritura deja de llegar al guard en silencio.
-for d in 'Bash(* >*)' 'Bash(tee *)' 'Bash(cp *)' 'Bash(mv *)' 'Bash(install *)' 'Bash(sed -i*)' 'Bash(perl -i*)' 'Bash(dd *)'; do
-  hj_check "disparador presente: $d" "1" "$(jq -r --arg d "$d" '[.hooks.PreToolUse[] | .hooks[] | select(.if==$d)] | length' "$HJ")"
-done
-hj_check "todos los handlers Bash apuntan a guard.sh" "0" \
-  "$(jq -r '[.hooks.PreToolUse[] | select(.matcher=="Bash") | .hooks[] | select(.command | endswith("/hooks/guard.sh") | not)] | length' "$HJ")"
+# NINGUN handler lleva `if`. 1.25.0 puso uno por disparador para que un `ls` no arrancara
+# el guardian, y `if` funciona --medido con control positivo-- pero SOLO para prefijos de
+# comando: una redireccion NUNCA casa, porque Claude Code la separa del comando antes de
+# evaluar el patron. Medido en un proyecto real: `echo 'Estado: completado' > requirements/x`
+# paso y creo el archivo. Como la redireccion puede ir en cualquier comando, la unica puerta
+# posible para Bash es la que ve TODOS. Este caso existe para que nadie vuelva a "optimizar"
+# esto sin pasar por aqui: la version anterior de este mismo banco EXIGIA el `if`, y eso
+# certificaba la forma que dejaba la puerta en abierto.
+hj_check "NINGUN handler lleva if: la redireccion no se puede seleccionar con if" "0" \
+  "$(jq -r '[.hooks.PreToolUse[] | .hooks[] | select(has("if"))] | length' "$HJ")"
+hj_check "un solo grupo cubre Edit|Write|MultiEdit|Bash" "1" \
+  "$(jq -r '[.hooks.PreToolUse[] | select(.matcher=="Edit|Write|MultiEdit|Bash")] | length' "$HJ")"
+hj_check "Bash esta en el matcher (la puerta de consola existe)" "true" "$(jq -r '[.hooks.PreToolUse[].matcher | select(split("|") | index("Bash") != null)] | length > 0' "$HJ")"
+hj_check "todos los handlers PreToolUse apuntan a guard.sh" "0" \
+  "$(jq -r '[.hooks.PreToolUse[] | .hooks[] | select(.command | endswith("/hooks/guard.sh") | not)] | length' "$HJ")"
 hj_check "Stop y SubagentStop: UN solo proceso, stop.sh" "stop.sh-stop.sh" \
   "$(jq -r '.hooks.Stop[0].hooks | map(.command | split("/") | last) | join(",")' "$HJ")-$(jq -r '.hooks.SubagentStop[0].hooks | map(.command | split("/") | last) | join(",")' "$HJ")"
 
@@ -947,8 +951,11 @@ FAIL="$(grep -c '^  FAIL ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=169
-if [ $((PASS+FAIL)) -ne "$CASOS_ESPERADOS" ]; then
+CASOS_ESPERADOS=162
+# Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
+# (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
+# `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)
+if [ -z "$FILTRO" ] && [ $((PASS+FAIL)) -ne "$CASOS_ESPERADOS" ]; then
   echo "ABORT: corrieron $((PASS+FAIL)) casos y se esperaban $CASOS_ESPERADOS."
   echo "       O falta un caso por el camino, o alguien anadio uno y no actualizo"
   echo "       CASOS_ESPERADOS. Las dos cosas hay que mirarlas."

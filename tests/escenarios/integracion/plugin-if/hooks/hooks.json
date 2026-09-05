@@ -5,7 +5,9 @@
         "matcher": "Bash",
         "hooks": [
           { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/registra.sh TODOS" },
-          { "type": "command", "if": "Bash(touch *)", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/registra.sh CON_IF" }
+          { "type": "command", "if": "Bash(touch *)", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/registra.sh IF_TOUCH" },
+          { "type": "command", "if": "Bash(* >*)",    "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/registra.sh IF_REDIR" },
+          { "type": "command", "if": "Bash(*>*)",     "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/registra.sh IF_REDIR2" }
         ]
       }
     ]

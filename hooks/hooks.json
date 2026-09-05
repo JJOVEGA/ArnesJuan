@@ -1,101 +1,41 @@
 {
   "_doc": [
-    "PreToolUse: Edit/Write/MultiEdit siempre pasan por guard.sh (los globs de codigo son config del PROYECTO,",
-    "asi que el filtro no puede vivir aqui). Bash solo arranca guard.sh cuando el comando casa con un `if`:",
-    "cada `if` es una regla de permiso (una sola por handler, sin OR), y Claude Code la evalua ANTES de crear",
-    "el proceso. Verificado empiricamente en 2.1.260 con control positivo. Un `ls` o un `git status` ya no",
-    "pagan el interprete. Los disparadores son los mismos que el detector de escrituras ya buscaba en el texto;",
-    "ahi la cobertura es algo menor que antes. MEDIDO, y esto es lo importante: un INTERPRETE (python - <<EOF, node -e, ruby) tampoco arranca el guardian, y AUNQUE LO ARRANCARA no serviria, porque el detector de escrituras no ve la ruta: vive dentro del script. Anadir Bash(python*) seria teatro -- coste sin cobertura, y peor que el hueco porque pareceria cerrado. El arreglo de verdad es otro: preguntar despues si cambiaron los archivos protegidos, que es una pregunta CERRADA, en vez de adivinar antes si el comando escribe.",
-    "ahi la cobertura es algo menor que antes. Estaba declarada parcial; ahora esta medida. `Bash(* >*)` cubre",
-    "`> f`, `>file` y `>> f` sin arrancar por `2>/dev/null` ni `2>&1`, que son lecturas.",
-    "Stop/SubagentStop: un solo proceso (stop.sh) para continuidad y rotacion, como guard.sh para los guardianes."
+    "PreToolUse: Edit/Write/MultiEdit y Bash pasan SIEMPRE por guard.sh, sin `if`.",
+    "",
+    "POR QUE BASH NO LLEVA `if`, Y ESTO SE PAGO CON UN FALLO EN ABIERTO. 1.25.0 puso un handler con `if` por",
+    "disparador de escritura (`Bash(cp *)`, `Bash(sed -i*)`, `Bash(* >*)`...) para que un `ls` no arrancara el",
+    "guardian. `if` funciona --medido en 2.1.260 y 2.1.261, en plugin, con control positivo-- PERO SOLO PARA",
+    "PREFIJOS DE COMANDO. Una redireccion NUNCA casa: Claude Code la separa del comando antes de evaluar el",
+    "patron (la doc de permisos lo dice: el destino de `>` se trata como escritura de archivo aparte), asi que",
+    "`Bash(* >*)` y `Bash(*>*)` no disparan en ninguna version. Medido en un proyecto real: `echo 'Estado:",
+    "completado' > requirements/x.md` paso y creo el archivo. Desde 1.25.0 la forma de escritura MAS COMUN",
+    "rodeaba las dos puertas, en silencio.",
+    "",
+    "La leccion, que vale mas que el defecto: una optimizacion que reduce CUANDO se invoca un control puede",
+    "apagarlo entero sin cambiar una linea de su logica. Y mi prueba de integracion tenia control positivo",
+    "para que `if` EXISTE, no para el patron del que dependia todo.",
+    "",
+    "Como la redireccion puede aparecer en cualquier comando y no se puede seleccionar con `if`, la unica",
+    "puerta posible para Bash es la que ve TODOS los comandos. El coste vuelve a ser el de 1.24.0 (~1,2 s por",
+    "Bash en Windows) y se acepta: una puerta lenta protege; una puerta que no se invoca, no.",
+    "",
+    "Stop/SubagentStop: un solo proceso (stop.sh) para continuidad y rotacion. Eso si se queda: es",
+    "independiente y correcto."
   ],
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Edit|Write|MultiEdit",
+        "matcher": "Edit|Write|MultiEdit|Bash",
         "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "if": "Bash(* >*)",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(tee *)",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(cp *)",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(mv *)",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(install *)",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(sed -i*)",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(sed --in-place*)",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(perl -i*)",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(dd *)",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(xargs *)",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh"
-          }
+          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh" }
         ]
       }
     ],
     "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/stop.sh"
-          }
-        ]
-      }
+      { "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/stop.sh" } ] }
     ],
     "SubagentStop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/stop.sh"
-          }
-        ]
-      }
+      { "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/stop.sh" } ] }
     ]
   }
 }

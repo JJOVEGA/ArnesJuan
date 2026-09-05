@@ -275,6 +275,14 @@ nada.
   Hasta 1.26.0 ese caso añadía al archivo sin recortar el origen, y repetía en cada parada.
   Si hay duplicados, se limpian a mano: el contenido nunca se perdió, sólo se copió de más.
 
+### Hacia 1.28.0
+- **Urgente si el proyecto corrió 1.25.0, 1.26.0 o 1.27.0:** durante esas versiones una redirección por
+  Bash (`echo ... > archivo`) **no pasaba por ningún guardián**. Revisa en el `git log` de ese periodo si
+  algún REQ cambió a `completado` o si se tocó código de `codigo_app.globs` desde consola por alguien
+  que no fuera el agente de código. La puerta vuelve a existir al instalar 1.28.0; lo que pasó mientras
+  no existía hay que mirarlo a mano.
+- Nada que migrar en archivos del proyecto.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas
