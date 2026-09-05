@@ -808,6 +808,38 @@ rot_check "...y SU conservar_secciones, distinto del global" "1" \
   "$(grep -c '^## ' "$ROT_M/seg/registro.md")"
 rm -rf "$ROT_M"
 
+# --- Un artefacto CRLF rota igual que uno LF -----------------------------------
+# En Windows la mayoria de los archivos son CRLF, y este banco los escribia todos
+# con LF: por eso no lo vio. Medido en un proyecto real: el registro de seguridad
+# (12 857 CRLF) creaba su archivo y NO recortaba el origen, en silencio y con exit 0.
+# Peor que inoperante: el contenido quedaba en los dos sitios y cada parada lo volvia
+# a anadir -- 3, 6, 9 secciones en tres pasadas. Una fuga sin tope, justo en la
+# funcion cuyo proposito es frenar el crecimiento sin tope.
+ROT_CR="$(mktemp -d)"; mkdir -p "$ROT_CR/.arnes"
+cat > "$ROT_CR/.arnes/config.json" <<JSON
+{ "agentes": { "agente_codigo": "desarrollador" },
+  "rotacion": { "activo": true, "umbral_bytes": 400, "conservar_secciones": 2,
+                "artefactos": ["LF.md","CRLF.md"] } }
+JSON
+rot_gen() { printf '# %s\n\n' "$1"; for v in 5 4 3 2 1; do printf '## [1.%s.0]\n' "$v"; for i in 1 2 3; do printf 'relleno %s de 1.%s.0 con texto suficiente\n' "$i" "$v"; done; printf '\n'; done; }
+rot_gen LF > "$ROT_CR/LF.md"
+rot_gen CRLF | sed 's/$/\r/' > "$ROT_CR/CRLF.md"
+# Tres pasadas: la fuga solo se ve repitiendo.
+rot_corre "$ROT_CR"; rot_corre "$ROT_CR"; rot_corre "$ROT_CR"
+rot_check "un artefacto CRLF rota igual que uno LF" "2-3" \
+  "$(rot_sec "$ROT_CR/CRLF.md")-$(rot_sec "$ROT_CR/CRLF-archivo.md")"
+rot_check "...y no duplica: tres pasadas, mismo reparto" "2-3" \
+  "$(rot_sec "$ROT_CR/LF.md")-$(rot_sec "$ROT_CR/LF-archivo.md")"
+rot_check "nada se pierde con CRLF: origen + archivo = total" "5" \
+  "$(( $(rot_sec "$ROT_CR/CRLF.md") + $(rot_sec "$ROT_CR/CRLF-archivo.md") ))"
+# Se MUEVE tal cual: el final de linea del contenido no se toca.
+rot_check "el contenido movido conserva su CRLF" "si" \
+  "$([ "$(tr -cd '\r' < "$ROT_CR/CRLF-archivo.md" | wc -c)" -gt 0 ] && echo si || echo no)"
+# Si la verificacion falla, no puede quedar medio hecho ni dejar basura.
+rot_check "sin temporales huerfanos" "0" \
+  "$(ls "$ROT_CR"/*.arnes.tmp 2>/dev/null | wc -l)"
+rm -rf "$ROT_CR"
+
 # Inerte en repo ajeno, como el resto de hooks.
 ROT_AJENO="$(mktemp -d)"; printf '# CHANGELOG de OTRO\n## [9.9.9]\nx\n' > "$ROT_AJENO/CHANGELOG.md"
 rot_corre "$ROT_AJENO"; ROT_RC=$?
@@ -915,7 +947,7 @@ FAIL="$(grep -c '^  FAIL ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=164
+CASOS_ESPERADOS=169
 if [ $((PASS+FAIL)) -ne "$CASOS_ESPERADOS" ]; then
   echo "ABORT: corrieron $((PASS+FAIL)) casos y se esperaban $CASOS_ESPERADOS."
   echo "       O falta un caso por el camino, o alguien anadio uno y no actualizo"

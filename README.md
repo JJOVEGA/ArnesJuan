@@ -117,11 +117,25 @@ cobertura total genera falsos positivos sobre comandos de lectura perfectamente 
 desactivado. Un guard apagado protege menos que uno parcial, así que el detector se sesga
 explícitamente al **falso negativo**: si duda, permite.
 
-**El intérprete es el agujero más grande de los que quedan, y está medido.** `node script.mjs`
-no lo ve ningún guardián: el detector lee el **texto del comando** y la ruta vive dentro del
-script. En Windows eso no es un caso rebuscado —`sed -i` es incómodo aquí, y un intérprete es
-lo primero que alcanza cualquiera—. Cerrarlo de verdad exigiría ejecutar el programa para
-saber qué escribe, que es justo lo que un hook no puede hacer.
+**El intérprete es el agujero más grande de los que quedan, y está medido dos veces.** Ni
+`node script.mjs`, ni `python - <<EOF`, ni `ruby` arrancan el guardián — y **aunque lo
+arrancaran no serviría**, porque el detector lee el *texto del comando* y la ruta vive dentro
+del script:
+
+```
+python - <<EOF ... open("src/app.ts","w") ... EOF   ->  no detecta
+echo x > src/app.ts                                 ->  src/app.ts   (control positivo)
+```
+
+Por eso añadir `Bash(python*)` al filtro previo sería **teatro**: coste sin cobertura, y peor
+que el hueco porque parecería cerrado. En Windows esto no es rebuscado — `sed -i` es incómodo
+aquí y un intérprete es lo primero que alcanza cualquiera.
+
+El arreglo de verdad es **cambiar la pregunta**. En vez de adivinar *antes* si un comando
+escribe —una pregunta abierta que admite formas nuevas sin fin— preguntar *después* si
+cambiaron los archivos protegidos, que es cerrada y no depende de cómo se escribieran. No
+previene, detecta; pero el arnés ya se declara barandilla, y una que avisa siempre vale más
+que una que previene a veces. Diseñado, no construido.
 
 Conclusión honesta, la misma que dice `AGENTS.md` §13: **es una barandilla, no una jaula.**
 Impide que el modelo se desvíe por descuido; no contiene a un agente decidido a rodearla. Cuando
