@@ -2,6 +2,22 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.29.1] — 2026-09-05
+### Corregido — el banco tenía un caso que desaparecía en Linux, y el CI lo cazó en su primer viaje
+El primer run del banco fuera de Windows abortó con **«168 casos y se esperaban 169»**: el mismo
+hueco que el revisor había medido como 161 de 162. El caso «ruta estilo Windows con backslashes»
+va dentro de `if command -v cygpath`, y en Linux no hay `cygpath`: **el caso no fallaba,
+desaparecía**, y un caso ausente se lee igual que uno que pasó. Es exactamente lo que el cuadre de
+casos existe para cazar, y lo cazó en 6 segundos.
+
+**El banco tiene ahora tres estados.** Un caso que no puede correr en esta plataforma imprime
+`SKIP` con el motivo, y el cuadre suma `PASS + FAIL + SKIP`. Saltarse un caso por plataforma es
+legítimo; que no se vea, no.
+
+**Y el dato que este run dejó medido:** los mismos 169 casos tardan **24 minutos en Windows y 6
+segundos en Linux**. Es el coste de crear procesos en esta plataforma, en una sola cifra. Sólo
+cambia el banco: el plugin es el de 1.29.0.
+
 ## [1.29.0] — 2026-09-05
 Cuatro hallazgos de una revisión externa que leyó el código de 1.28.0. Tres verificados y
 corregidos; el cuarto es una decisión de política y queda abierto, dicho aquí.

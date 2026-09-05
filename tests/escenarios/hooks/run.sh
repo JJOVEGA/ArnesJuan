@@ -219,6 +219,12 @@ setgates '.quality_gates = ["true"]'
 if command -v cygpath >/dev/null 2>&1; then
   WPROJ="$(cygpath -w -- "$PROJ")"
   check "ruta estilo Windows con backslashes -> deny" deny guard-codigo.sh "$(emite_edit "${WPROJ}\src\app.ts" "" "" 'hola')"
+else
+  # Sin cygpath no hay forma Windows que probar. Pero un caso que NO corre tiene que
+  # VERSE y CONTARSE: el primer run del banco en Linux abortó con "168 de 169" porque
+  # este caso desaparecía en silencio, y un caso ausente se lee igual que uno que
+  # pasó. SKIP es el tercer estado, y el cuadre lo suma.
+  echo "  SKIP  ruta estilo Windows con backslashes -> deny  (sin cygpath: caso solo de Windows)"
 fi
 
 # --- Regresión: identidad del agente (bug hallado en SENDA, 2026-09-02) --------
@@ -995,6 +1001,7 @@ fi
 # su propio proceso y se los llevo al morir.
 PASS="$(grep -c '^  PASS ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {print s+0}')"
 FAIL="$(grep -c '^  FAIL ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {print s+0}')"
+SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {print s+0}')"
 
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
@@ -1003,13 +1010,14 @@ CASOS_ESPERADOS=169
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)
-if [ -z "$FILTRO" ] && [ $((PASS+FAIL)) -ne "$CASOS_ESPERADOS" ]; then
-  echo "ABORT: corrieron $((PASS+FAIL)) casos y se esperaban $CASOS_ESPERADOS."
+# PASS + FAIL + SKIP: un caso saltado por plataforma cuenta como caso, no como hueco.
+if [ -z "$FILTRO" ] && [ $((PASS+FAIL+SKIP)) -ne "$CASOS_ESPERADOS" ]; then
+  echo "ABORT: corrieron $((PASS+FAIL+SKIP)) casos (PASS $PASS · FAIL $FAIL · SKIP $SKIP) y se esperaban $CASOS_ESPERADOS."
   echo "       O falta un caso por el camino, o alguien anadio uno y no actualizo"
   echo "       CASOS_ESPERADOS. Las dos cosas hay que mirarlas."
   exit 1
 fi
 
 echo "-------------------------------------------"
-echo "Resultado: $PASS PASS, $FAIL FAIL"
+if [ "${SKIP:-0}" -gt 0 ]; then echo "Resultado: $PASS PASS, $FAIL FAIL, $SKIP SKIP (casos de otra plataforma)"; else echo "Resultado: $PASS PASS, $FAIL FAIL"; fi
 [ "$FAIL" -eq 0 ]
