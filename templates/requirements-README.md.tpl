@@ -19,6 +19,11 @@ Esta carpeta es el **contrato compartido**: la única fuente de verdad sobre qu�
 Un REQ solo pasa a `completado` cuando: criterios de aceptación cumplidos + quality gates en verde + visto bueno de seguridad.
 
 ## Veredictos de validación (campos del REQ)
+
+**Los campos valen sólo en la cabecera: antes del primer `## `.** Una línea `Seguridad: aprobado` dentro
+de `## Historial` o de cualquier otra sección **no es un veredicto** y la máquina no la lee. Medido: así
+una línea de log cerraba un REQ crítico con la cabecera en `pendiente`. Si un REQ tiene sus campos
+debajo de una sección, súbelos.
 Cierran el lazo de hallazgos para que no haya deriva silenciosa:
 
 **Un paréntesis final es evidencia, y la evidencia no cambia el veredicto.** Escribe

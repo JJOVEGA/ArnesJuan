@@ -579,6 +579,13 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
   for texto in "$1" "$2"; do
     [ -n "$texto" ] || continue
     while IFS= read -r l; do
+      # LOS CAMPOS VALEN SOLO EN LA CABECERA: antes del primer `## `. Medido: una linea
+      # `Seguridad: aprobado (A-009, 2026-09-02)` dentro de `## Historial de cambios` se
+      # leia como EL veredicto y cerraba un REQ critico cuya cabecera decia `pendiente`.
+      # Es la familia de `**si**`: la maquina lee algo distinto de lo que la cabecera
+      # declara. La regla es estructural --lo que dice la plantilla-- y no depende del
+      # nombre de ninguna seccion, que seria mapeo del proyecto.
+      case "$l" in '## '*) break ;; esac
       case "$l" in
         'QA:'*)                   ARNES_QA="${l#QA:}" ;;
         'Seguridad:'*)            ARNES_SEG="${l#Seguridad:}" ;;

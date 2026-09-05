@@ -451,7 +451,32 @@ check "sensible: QA firma sin esperar a seguridad -> allow" allow guard-completa
 # valor a los `deny`.
 }
 seccion_14() {
-  seccion_nueva "Formas decoradas (marcado de Markdown en el valor):"
+  # --- Los campos valen SOLO en la cabecera: la puerta -------------------------------
+# Medido: `Seguridad: aprobado (A-009, 2026-09-02)` a columna cero dentro de
+# `## Historial de cambios` cerraba un REQ critico cuya cabecera decia `pendiente`. La
+# forma con parentesis final es la que normaliza a `aprobado` limpio; la forma con texto
+# detras denegaba POR ACCIDENTE. Es la familia de `**si**`: la maquina lee algo distinto
+# de lo que la cabecera declara. La regla es estructural --antes del primer `## `--, no
+# el nombre de una seccion, que seria mapeo del proyecto.
+seccion_nueva "Campos solo en la cabecera (la historia no es un veredicto):"
+printf '# REQ-110\nEstado: en-revisión\nSensible a seguridad: sí\nQA: aprobado\nSeguridad: pendiente\n\n## Historial de cambios\n- 2026-09-01: se abrio la auditoria\nSeguridad: aprobado (A-009, 2026-09-02)\n' > "$PROJ/requirements/REQ-110.md"
+check "historia con 'Seguridad: aprobado (...)' a col. 0 NO cierra -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-110.md" "" "" 'Estado: completado')"
+printf '# REQ-111\nEstado: en-revisión\nSensible a seguridad: sí\nQA: aprobado\nSeguridad: aprobado\n\n## Historial de cambios\nSeguridad: pendiente\n' > "$PROJ/requirements/REQ-111.md"
+check "control: la CABECERA si se lee (aprobado arriba, pendiente en historia) -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-111.md" "" "" 'Estado: completado')"
+printf '# REQ-112\nEstado: en-revisión\nSensible a seguridad: sí\nQA: aprobado\nSeguridad: pendiente\n\n## Historial\n- Seguridad: aprobado (A-009)\n' > "$PROJ/requirements/REQ-112.md"
+check "vineta '- Seguridad:' en historia tampoco cuenta -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-112.md" "" "" 'Estado: completado')"
+# Un fragmento de Edit no tiene `##`: se lee entero, como siempre.
+printf '# REQ-113\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n' > "$PROJ/requirements/REQ-113.md"
+check "un fragmento sin '##' se lee entero: QA aprobado en el Edit -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-113.md" "" "" 'QA: aprobado
+Estado: completado')"
+
+}
+seccion_15() {
+seccion_nueva "Formas decoradas (marcado de Markdown en el valor):"
 mkreq "$PROJ/requirements/REQ-060.md" "**sí**" "aprobado" "pendiente"
 check "sensible en **negrita** exige auditoria -> deny" deny guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-060.md" "" "" 'Estado: completado')"
@@ -510,7 +535,7 @@ check "Rigor **ligero** decorado se reconoce -> allow" allow guard-completado.sh
   "$(emite_edit "$PROJ/requirements/REQ-071.md" "" "" 'Estado: completado')"
 
 }
-seccion_15() {
+seccion_16() {
   seccion_nueva "guard.sh — punto de entrada unico (los dos guardianes, un proceso):"
 check "A1 por guard.sh: coordinadora edita src/ -> deny" deny guard.sh \
   "$(emite_edit "$PROJ/src/app.ts" "" "" 'hola')"
@@ -550,7 +575,7 @@ check "guard.sh: Bash de lectura -> allow" allow guard.sh \
 # El enfasis de Markdown es PAREADO por definicion: solo se retira cuando envuelve
 # el valor entero. Un asterisco suelto nunca envuelve nada.
 }
-seccion_16() {
+seccion_17() {
   seccion_nueva "Asterisco de nota al pie (una salvedad no es una firma):"
 mkreq "$PROJ/requirements/REQ-074.md" "sí" "aprobado" "aprobado*"
 check "'aprobado*' NO cierra un critico -> deny" deny guard-completado.sh \
@@ -579,7 +604,7 @@ check "y '**sí**' sigue exigiendo auditoria -> deny" deny guard-completado.sh \
 # veredicto" en el otro. Esa ambiguedad era un error de diseño y se QUITO en vez de
 # arbitrarse: un matiz que cambia el veredicto ES OTRO VEREDICTO.
 }
-seccion_17() {
+seccion_18() {
   seccion_nueva "Parentesis = evidencia (el veredicto no cambia):"
 mkreq "$PROJ/requirements/REQ-080.md" "no" "aprobado (medido el 3/9, 42 pruebas)" "n/a"
 check "QA con su evidencia entre parentesis cierra -> allow" allow guard-completado.sh \
@@ -612,7 +637,7 @@ check "enfasis + evidencia: misma escritura, mismo veredicto -> allow" allow gua
 # aprobaciones pendientes. Los proyectos lo esquivaban ordenando el archivo: carga,
 # no estilo.
 }
-seccion_18() {
+seccion_19() {
   seccion_nueva "Cola de aprobaciones: la seccion acaba en la siguiente cabecera:"
 mkreq "$PROJ/requirements/REQ-085.md" "no" "aprobado" "n/a"
 printf '## Pendientes\n\n## Notas\n### [2026-01-01] esto NO es una aprobacion\n- contexto\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
@@ -635,7 +660,7 @@ printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 #   3. que no pise lo que escribio una persona
 #   4. que correrlo dos veces de lo mismo
 }
-seccion_19() {
+seccion_20() {
   seccion_nueva "Continuidad automatica (hook Stop -> bloque derivado):"
 
 EST_PROJ="$(mktemp -d)"
@@ -760,8 +785,13 @@ done
 corre_estado "$EST_G"
 check_estado "47 REQ grandes (3,7 MB): el bloque los cuenta todos"    "REQ:\*\* 48 "                       si "$EST_G/docs/ESTADO.md"
 check_estado "...y los 15 completados salen como completados"          "completado 15 "                      si "$EST_G/docs/ESTADO.md"
-check_estado "campos a 200 lineas de la cabecera: QA se encuentra"     "^| REQ-099 | en-revisión | con-hallazgos" si "$EST_G/docs/ESTADO.md"
-check_estado "...y Rigor y Hallazgos tambien"                          "| critico | sec-1(usuario/dinero) |"  si "$EST_G/docs/ESTADO.md"
+# Los campos valen SOLO en la cabecera. Ayer este mismo banco fijaba lo contrario --"campos
+# a 200 lineas de la cabecera se encuentran igual"-- porque eso hacia el codigo. Medido hoy:
+# una linea `Seguridad: aprobado (A-009, 2026-09-02)` dentro de `## Historial` se leia como
+# EL veredicto y cerraba un REQ critico con la cabecera en pendiente. El caso se da la
+# vuelta: lo que hay dentro de una seccion NO es un campo.
+check_estado "campos DENTRO de una seccion NO se leen: QA queda vacio"  "^| REQ-099 | en-revisión | — | — | estandar | — |" si "$EST_G/docs/ESTADO.md"
+check_estado "...y Rigor cae al defecto, no al 'critico' de la historia" "^| REQ-099 | en-revisión | — | — | critico"      no "$EST_G/docs/ESTADO.md"
 rm -rf "$EST_G"
 
 # Apagable: quien no lo quiera, lo apaga.
@@ -800,7 +830,7 @@ rm -rf "$EST_PROJ" "$EST_OFF" "$EST_AJENO" "$EST_SIN"
 # conservaba `total - conservar` y vaciaba el archivo a trozos en cada pasada.
 # Una prueba que encuentra un fallo y luego se tira no protege de nada manana.
 }
-seccion_20() {
+seccion_21() {
   seccion_nueva "Rotacion de artefactos (mover, nunca resumir):"
 
 # rot_proj <conservar> <umbral> <activo> <orden> -> deja la ruta en ROT_P
@@ -963,7 +993,7 @@ rot_check "sin manifiesto no toca nada y sale 0" "1-0" "$(rot_sec "$ROT_AJENO/CH
 rm -rf "$ROT_AJENO"
 
 }
-seccion_21() {
+seccion_22() {
 # --- hooks.json: la forma que hace que Bash de lectura NO arranque el guard -------
 # Los hooks del plugin se declaran en hooks.json y Claude Code evalua el `if` de cada
 # handler ANTES de crear el proceso (verificado en 2.1.260 con control positivo). El
@@ -1014,7 +1044,7 @@ hj_check "...y la rotacion corrio EN LA MISMA parada" "2" "$(grep -c '^## ' "$ST
 rm -rf "$ST"
 
 }
-seccion_22() {
+seccion_23() {
 seccion_nueva "INERTE — sin manifiesto, el hook no estorba:"
 PROJ2="$(mktemp -d)"; mkdir -p "$PROJ2/src"; export CLAUDE_PROJECT_DIR="$PROJ2"
 check "sin .arnes/config.json, guard.sh no estorba -> allow" allow guard.sh "$(jq -n --arg fp "$PROJ2/src/x.ts" '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{file_path:$fp,old_string:"x",new_string:"y"}}')"
@@ -1024,7 +1054,7 @@ rm -rf "$PROJ2"
 
 }
 
-TOTAL_SECCIONES=22
+TOTAL_SECCIONES=23
 
 # --- Despacho en paralelo -----------------------------------------------------
 # El canario ya corrio en el padre, solo y antes que nada: si el hook esta muerto no
@@ -1068,7 +1098,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=176
+CASOS_ESPERADOS=180
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)
