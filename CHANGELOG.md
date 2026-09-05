@@ -20,10 +20,13 @@ echo hola > b.txt    ->  TODOS dispara, ningún IF_REDIR
 cp a.txt c.txt       ->  IF_CP dispara
 ```
 
-El informe que lo encontró concluyó que **los diez** handlers fallaban; medido, fallan sólo los de
-redirección y los otros ocho disparan. No cambia la consecuencia: la redirección es la forma de
-escritura más común y puede ir en cualquier comando, así que **la única puerta posible para Bash es
-la que ve todos**. Se restaura el catch-all. El coste vuelve al de 1.24.0 y se acepta.
+**Lo reportaron dos proyectos por separado, y la atribución importa.** Uno concluyó que los diez
+handlers fallaban; el otro midió que `cp` y `tee` denegaban y concluyó, textualmente, que
+*«`Bash(* >*)` no se dispara nunca; los otros nueve empiezan por un token literal y funcionan»*.
+La medición aquí confirmó el segundo diagnóstico letra por letra. No cambia el arreglo: la
+redirección es la forma de escritura más común y puede ir en cualquier comando, así que **la única
+puerta posible para Bash es la que ve todos**. Se restaura el catch-all. El coste vuelve al de 1.24.0
+y se acepta.
 
 **Mi prueba de integración tenía control positivo para que `if` existe, no para el patrón del que
 dependía todo.** Sondeó `touch` y pasó. Ahora sondea la redirección y exige que **no** case; si un
