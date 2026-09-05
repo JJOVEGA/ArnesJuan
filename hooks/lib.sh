@@ -336,6 +336,42 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
   #    mensaje (`git commit -m "toca src/a.ts"`) no dispare nada. Se recorta por
   #    pares de comillas en un bucle, que es lo que bash sabe hacer sin regex.
   limpio="$cmd"
+  # 0) Fuera el CUERPO de cada heredoc. Medido (1.29.1, proyecto real): un comando cuyo
+  #    resumen en heredoc contenia la linea `cp README.md src/...` COMO TEXTO fue
+  #    denegado; el detector leia el cuerpo como si fuera el comando. Reproducido con
+  #    `cp`, con `>` y con `tee` dentro del cuerpo. Un heredoc es texto que se ENTREGA
+  #    a un comando, igual que lo entrecomillado: se descuenta igual, y ANTES que las
+  #    comillas, porque el delimitador puede ir entrecomillado (`<<'EOF'`).
+  #    Solo cuenta como heredoc `<<` o `<<-` seguido de una PALABRA (EOF, PY, END...):
+  #    `<<<` es una here-string y `1<<2` es aritmetica, y un delimitador que no fuera
+  #    palabra tragaria el resto del comando —fallo abierto—. Sin procesos.
+  if [[ "$limpio" == *'<<'* ]]; then
+    local sin='' linea delim='' dentro=0 resto sinhs
+    while IFS= read -r linea || [ -n "$linea" ]; do
+      if [ "$dentro" -eq 1 ]; then
+        resto="${linea#"${linea%%[![:blank:]]*}"}"     # `<<-` admite sangria delante del cierre
+        [ "$resto" = "$delim" ] && dentro=0
+        continue
+      fi
+      sin+="$linea"$'\n'
+      sinhs="${linea//<<</ }"
+      case "$sinhs" in
+        *'(('*'<<'*) ;;                                  # `$((1<<n))` es aritmetica, no heredoc
+        *'<<'*)
+        resto="${sinhs#*<<}"; resto="${resto#-}"
+        resto="${resto#"${resto%%[! ]*}"}"             # espacios entre `<<` y la palabra
+        delim="${resto%%[[:space:]\;\|\&\)\<\>]*}"
+        delim="${delim#\'}"; delim="${delim%\'}"; delim="${delim#\"}"; delim="${delim%\"}"
+        delim="${delim#\\}"
+        # Una PALABRA: empieza por letra o `_` (EOF, PY, END, SQL...). `1<<2` da `2` y no lo es.
+        case "$delim" in
+          [A-Za-z_]*) case "$delim" in *[!A-Za-z0-9_]*) delim='' ;; *) dentro=1 ;; esac ;;
+          *) delim='' ;;
+        esac ;;
+      esac
+    done <<< "$limpio"
+    limpio="$sin"
+  fi
   for q in '"' "'"; do
     while [[ "$limpio" == *"$q"*"$q"* ]]; do
       pre="${limpio%%"$q"*}"
@@ -596,6 +632,22 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
     done <<< "$texto"
   done
   arnes_campos_normaliza "$ARNES_QA" "$ARNES_SEG" "$ARNES_SENS" "$ARNES_HALL" "$ARNES_RIGOR"
+}
+
+# `Estado:` de la CABECERA de un documento, normalizado y sin su parentesis de
+# evidencia. La PRIMERA aparicion manda, como en campos-req.awk: la cabecera declara
+# el estado una vez. Existe para juzgar la transicion sobre el documento RESULTANTE,
+# no sobre el fragmento editado (ver guard-completado.sh).
+arnes_estado_cabecera() {   # <texto> -> ARNES_ESTADO
+  ARNES_ESTADO=''
+  local l
+  while IFS= read -r l; do
+    case "$l" in '## '*) break ;; esac
+    case "$l" in 'Estado:'*)
+      arnes_norm_campo "${l#Estado:}"; arnes_veredicto "$ARNES_CAMPO"; ARNES_ESTADO="$ARNES_VEREDICTO"
+      return 0 ;;
+    esac
+  done <<< "$1"
 }
 
 # Nivel de rigor con el que se juzga este REQ.

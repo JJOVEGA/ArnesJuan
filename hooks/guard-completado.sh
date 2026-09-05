@@ -27,6 +27,8 @@ DIR="${BASH_SOURCE[0]%/*}"
 arnes_guard_completado() {
   local tool fp bash_cmd req_dir estado_done pending_rel rel d escrituras nuevo
   local disk qa seg sens rigor hall h id clase pending abiertas tmp cmd out
+  local -a piezas=()
+  local modo resultante reconstruido np k old new ra done_norm
 
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
@@ -86,19 +88,64 @@ arnes_guard_completado() {
     *) return 0 ;;
   esac
 
-  # Texto entrante, resuelto segun la herramienta dentro del propio jq.
+  # Lo que entra, por herramienta, en UNA llamada a jq. Piezas separadas por \001 —un
+  # byte que ningun Markdown lleva; bash no puede guardar NUL en una variable—:
+  #   Write     -> W \001 contenido
+  #   Edit      -> E \001 old \001 new \001 replace_all
+  #   MultiEdit -> E \001 old1 \001 new1 \001 ra1 \001 old2 \001 new2 \001 ra2 ...
   arnes_jq_str "$ARNES_INPUT" -r '
-    if   .tool_name == "Edit"      then (.tool_input.new_string // "")
-    elif .tool_name == "Write"     then (.tool_input.content // "")
-    elif .tool_name == "MultiEdit" then ([.tool_input.edits[]?.new_string] | join("\n"))
-    else "" end'
-  nuevo="$ARNES_JQ"
+    if   .tool_name == "Write" then ["W", (.tool_input.content // "")]
+    elif .tool_name == "Edit"  then ["E", (.tool_input.old_string // ""), (.tool_input.new_string // ""),
+                                     (if .tool_input.replace_all == true then "1" else "0" end)]
+    elif .tool_name == "MultiEdit" then ["E"] + [.tool_input.edits[]? |
+                                     (.old_string // ""), (.new_string // ""),
+                                     (if .replace_all == true then "1" else "0" end)]
+    else ["W", ""] end | join("\u0001")'
+  piezas=()
+  IFS=$'\001' read -r -d '' -a piezas <<< "$ARNES_JQ" || true
+  modo="${piezas[0]:-W}"
+
+  disk=''; [ -f "$fp" ] && IFS= read -r -d '' disk < "$fp"   # `read`, no `cat`: sin fork
+
+  # --- El documento RESULTANTE, no los fragmentos ----------------------------------
+  # FALLO EN ABIERTO medido en 1.30.1: un MultiEdit que cerraba el REQ y aprobaba SOLO
+  # la linea del historial pasaba. Se concatenaban los `new_string`, y el `## ` que
+  # separa cabecera de historia se quedaba en el disco: el fragmento del historial se
+  # leia como cabecera. La cabecera existe en el DOCUMENTO, no en los fragmentos. Asi
+  # que se aplica cada edicion al texto en disco —lo mismo que hara la herramienta— y
+  # los campos se leen de lo que quedara escrito.
+  #
+  # Si algun `old_string` no esta en el texto, la herramienta fallara entera y no
+  # escribira nada: entonces se leen los fragmentos como hasta ahora (y el banco, que
+  # fabrica ediciones con `old_string:"x"`, sigue midiendo lo mismo).
+  # `Write` trae el documento completo: es su propio resultante.
+  nuevo=''; resultante=''; reconstruido=0
+  if [ "$modo" = "W" ]; then
+    nuevo="${piezas[1]:-}"
+  else
+    # Sin CR: los proyectos en Windows guardan CRLF y la herramienta casa el `old_string`
+    # igual; si aqui no casara, se caeria a los fragmentos y el bypass volveria por la
+    # puerta de atras. Los lectores de campos ya quitan el CR, asi que nada cambia.
+    resultante="${disk//$'\r'/}"; reconstruido=1; np=${#piezas[@]}
+    for ((k = 1; k + 2 < np; k += 3)); do
+      old="${piezas[k]//$'\r'/}"; new="${piezas[k+1]//$'\r'/}"; ra="${piezas[k+2]}"
+      nuevo+="$new"$'\n'
+      if [ -z "$old" ] || [[ "$resultante" != *"$old"* ]]; then reconstruido=0; continue; fi
+      # Sustitucion literal: patron y reemplazo entre comillas, asi `*`, `[` o `&` en
+      # un veredicto no significan nada (patsub_replacement esta activo en bash 5.2+).
+      case "$ra" in
+        1*) resultante="${resultante//"$old"/"$new"}" ;;
+        *)  resultante="${resultante/"$old"/"$new"}" ;;
+      esac
+    done
+  fi
 
   # --- Veredictos QA/Seguridad (anti-deriva) ---
-  # Los campos viven en el archivo del REQ; se prefiere el contenido entrante y se respalda en disco
-  # (pre-edición), porque QA/seguridad fijan su veredicto antes de la transición a completado.
-  disk=''; [ -f "$fp" ] && IFS= read -r -d '' disk < "$fp"   # `read`, no `cat`: sin fork
-  arnes_campos_req "$disk" "$nuevo"
+  # Reconstruido: los campos son los de la cabecera del documento que quedara en disco.
+  # Sin reconstruir: se prefiere el fragmento entrante y se respalda en disco (pre-edicion),
+  # porque QA/seguridad fijan su veredicto antes de la transicion a completado.
+  if [ "$reconstruido" -eq 1 ]; then arnes_campos_req "$resultante" ''
+  else arnes_campos_req "$disk" "$nuevo"; fi
   qa="$ARNES_QA"; seg="$ARNES_SEG"; sens="$ARNES_SENS"; rigor="$ARNES_RIGOR"
 
   # --- Orden del ciclo: seguridad no firma lo que QA no ha validado -------------
@@ -128,6 +175,14 @@ arnes_guard_completado() {
   # ¿El cambio deja el REQ en `completado`? Normalizado: case-insensitive y espacios.
   # Here-string en vez de `printf | grep`: la tubería costaba un fork de más.
   grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" <<< "$nuevo" || return 0
+  # Y la cabecera del documento RESULTANTE tiene que decirlo: una linea de historia
+  # `- 2026-08-01: Estado: completado (revertido)` no es una transicion, y antes hacia
+  # correr las puertas —y denegar— sobre un REQ cuya cabecera seguia en revision.
+  if [ "$reconstruido" -eq 1 ]; then
+    arnes_estado_cabecera "$resultante"
+    arnes_norm_campo "$estado_done"; done_norm="$ARNES_CAMPO"
+    [ "$ARNES_ESTADO" = "$done_norm" ] || return 0
+  fi
 
   # --- Nivel de rigor: cuanta ceremonia exige ESTE requerimiento ---
   # `ligero` no pide veredictos: es para lo que no tiene logica —textos, etiquetas,

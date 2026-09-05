@@ -2,6 +2,35 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.30.2] — 2026-09-05
+### Corregido — tres fallos medidos por tres revisores distintos el mismo día
+- **FALLO EN ABIERTO: un MultiEdit cerraba el REQ aprobando sólo la línea del historial.** La regla
+  de 1.30.0 —los campos valen sólo en la cabecera— se aplicaba a los `new_string` **concatenados**, y
+  el `## ` que separa cabecera de historia se quedaba en el disco: el fragmento del historial se leía
+  como cabecera. Reproducido: `Estado: completado` + `Seguridad: aprobado (A-009)` sobre la línea
+  histórica → **ALLOW** con la cabecera en `pendiente`. El hook **reconstruye ahora el documento
+  resultante** aplicando cada edición al texto en disco —lo mismo que hará la herramienta— y lee la
+  cabecera de ahí. Una sola regla para Edit, MultiEdit y `replace_all`; si un `old_string` no está en
+  el archivo la herramienta fallará entera y no escribirá nada, y entonces se leen los fragmentos como
+  antes. De paso, una línea de historia `Estado: completado (revertido)` ya no hace correr las puertas
+  sobre un REQ cuya cabecera sigue en revisión. Descartada la alternativa de prohibir MultiEdit:
+  castiga al que edita bien.
+- **`tools/arnes-lectura.sh` siempre salía 0.** `avisa` se llamaba dentro de `$( … )` y el contador
+  moría en el subshell: el informe decía *«Ningún valor anómalo»* con cuatro REQ fuera del vocabulario
+  en un proyecto real. Un informe que siempre dice que todo está bien es peor que no tenerlo. El texto
+  se acumula ahora con `printf -v` en el proceso padre. Además la comparación con el vocabulario era
+  por prefijo (`|aprobad` casaba con `|aprobado`); es exacta.
+- **Falso positivo: el cuerpo de un heredoc se leía como comando.** Un resumen en heredoc con la
+  línea `cp README.md src/…` **como texto** era denegado. Reproducido con `cp`, con `>` y con `tee`
+  dentro del cuerpo. El cuerpo se descuenta igual que lo entrecomillado, sin procesos y antes que las
+  comillas (el delimitador puede ir entrecomillado). Sólo cuenta como heredoc `<<`/`<<-` seguido de una
+  palabra: `<<<` es here-string y `1<<2` aritmética, y un delimitador que no fuera palabra tragaría el
+  resto del comando —fallo abierto—.
+
+Catorce casos nuevos en el banco (196): el bypass —también sobre un archivo CRLF— y sus dos controles; los tres cuerpos de heredoc y
+cuatro controles positivos (un `cp` tras el cierre, la redirección en la propia línea del heredoc, una
+here-string y la aritmética `$((1<<n))`); y tres del informe (sale 1 y nombra el valor, cuenta 1, control en 0).
+
 ## [1.30.1] — 2026-09-05
 ### Corregido — dos bordes que la optimización de 1.29.3 introdujo
 Los encontró una revisión externa **comparando 1.29.2 con 1.29.3 archivo por archivo**, que es la
