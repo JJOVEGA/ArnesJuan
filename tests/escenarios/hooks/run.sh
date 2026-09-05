@@ -79,6 +79,27 @@ emite_edit() {
      + (if $at!=""  then {agent_type:$at} else {} end)'
 }
 
+# emite_edit_real <file_path> <old_string> <new_string> — un Edit de la coordinadora
+# cuyo `old_string` SI esta en el archivo: el hook reconstruye el documento resultante.
+emite_edit_real() {
+  jq -n --arg fp "$1" --arg os "$2" --arg ns "$3" \
+    '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,
+      tool_input:{file_path:$fp,old_string:$os,new_string:$ns}}'
+}
+
+# emite_multiedit <file_path> <old1> <new1> [<old2> <new2> ...] — un MultiEdit real.
+emite_multiedit() {
+  local fp="$1"; shift
+  local edits='[]'
+  while [ "$#" -ge 2 ]; do
+    edits="$(jq -c --arg os "$1" --arg ns "$2" '. + [{old_string:$os,new_string:$ns}]' <<< "$edits")"
+    shift 2
+  done
+  jq -n --arg fp "$fp" --argjson ed "$edits" \
+    '{hook_event_name:"PreToolUse",tool_name:"MultiEdit",cwd:env.CLAUDE_PROJECT_DIR,
+      tool_input:{file_path:$fp,edits:$ed}}'
+}
+
 # emite_bash <comando> <agent_id> <agent_type>
 emite_bash() {
   jq -n --arg cmd "$1" --arg aid "$2" --arg at "$3" \
@@ -267,6 +288,15 @@ check "coordinadora: sed -i sobre código -> deny"       deny guard-codigo.sh "$
 check "coordinadora: cp a directorio de código -> deny" deny guard-codigo.sh "$(emite_bash 'cp /tmp/x.ts src/' "" "")"
 check "coordinadora: mv a directorio de código -> deny" deny guard-codigo.sh "$(emite_bash 'mv /tmp/x.ts src' "" "")"
 check "coordinadora: escritura en la segunda orden encadenada -> deny" deny guard-codigo.sh "$(emite_bash 'npm run build && echo listo > app/gen.ts' "" "")"
+# Controles positivos del descuento de heredocs (1.30.2): lo que NO es cuerpo sigue viendose.
+check "heredoc: el cuerpo se descuenta, pero el cp DESPUES del cierre -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<\'EOF\'\ntexto que no escribe nada\nEOF\ncp /tmp/x.ts src/' "" "")"
+check "heredoc: la redireccion en la PROPIA linea del heredoc -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF > src/gen.ts\nexport const x = 1;\nEOF' "" "")"
+check "here-string (<<<) no es heredoc: el cp de detras sigue viendose -> deny" deny guard-codigo.sh \
+  "$(emite_bash 'cat <<< "hola" ; cp /tmp/x.ts src/' "" "")"
+check "aritmetica \$((1<<n)) no es heredoc: el cp de la linea siguiente sigue viendose -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'echo $((1<<n))\ncp /tmp/x.ts src/' "" "")"
 check_motivo "el deny por Bash admite que la cobertura es parcial" "parcial" \
   guard-codigo.sh "$(emite_bash 'echo x > src/app.ts' "" "")"
 check "desarrollador (con prefijo) escribe por Bash -> allow" allow guard-codigo.sh "$(emite_bash 'echo x > src/app.ts' "a10" "arnes-juan:desarrollador")"
@@ -279,6 +309,15 @@ check "coordinadora: grep recursivo -> allow"        allow guard-codigo.sh "$(em
 check "coordinadora: sed sin -i -> allow"            allow guard-codigo.sh "$(emite_bash "sed -n '1,20p' src/app.ts" "" "")"
 check "coordinadora: la ruta sólo se menciona en un mensaje -> allow" allow guard-codigo.sh "$(emite_bash 'git commit -m "arregla src/app.ts > listo"' "" "")"
 check "coordinadora: lee código y escribe fuera -> allow" allow guard-codigo.sh "$(emite_bash 'cp src/app.ts /tmp/copia.ts' "" "")"
+# El cuerpo de un heredoc es TEXTO que se entrega a un comando, no el comando (1.30.2).
+# Medido en un proyecto real: un resumen en heredoc con `cp README.md src/...` como texto
+# era denegado. Reproducido con cp, con `>` y con tee.
+check "heredoc: 'cp README.md src/...' como TEXTO del cuerpo -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<\'EOF\'\nresumen: cp README.md src/canario.txt ; listo\nEOF' "" "")"
+check "heredoc: 'echo x > src/otro.ts' en el cuerpo -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\nejemplo: echo hola > src/otro.ts\nEOF' "" "")"
+check "heredoc con <<- y sangria: 'tee src/otro.ts' en el cuerpo -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<-EOF\n\tejemplo: tee src/otro.ts\n\tEOF' "" "")"
 check "coordinadora: redirige un log fuera de los globs -> allow" allow guard-codigo.sh "$(emite_bash 'npm run build > /tmp/build.log 2>&1' "" "")"
 check "qa-tester escribe en tests/ (no es código de app) -> allow" allow guard-codigo.sh "$(emite_bash 'echo x > tests/a.test.ts' "a11" "arnes-juan:qa-tester")"
 
@@ -473,6 +512,22 @@ printf '# REQ-113\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente
 check "un fragmento sin '##' se lee entero: QA aprobado en el Edit -> allow" allow guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-113.md" "" "" 'QA: aprobado
 Estado: completado')"
+# --- El bypass por MultiEdit (medido en 1.30.1) -------------------------------------
+# Un MultiEdit que cerraba el REQ y aprobaba SOLO la linea del historial pasaba: se
+# concatenaban los `new_string` y el `## ` se quedaba en el disco. El hook reconstruye
+# ahora el documento resultante y lee la cabecera de ahi.
+printf '# REQ-114\nEstado: en-revisión\nSensible a seguridad: sí\nQA: aprobado\nSeguridad: pendiente\n\n## Historial\n\nSeguridad: pendiente (registro anterior)\n' > "$PROJ/requirements/REQ-114.md"
+check "MultiEdit: cierra y aprueba SOLO la linea del historial -> deny" deny guard-completado.sh \
+  "$(emite_multiedit "$PROJ/requirements/REQ-114.md" 'Estado: en-revisión' 'Estado: completado' 'Seguridad: pendiente (registro anterior)' 'Seguridad: aprobado (A-009)')"
+check "control: MultiEdit que aprueba la CABECERA y cierra -> allow" allow guard-completado.sh \
+  "$(emite_multiedit "$PROJ/requirements/REQ-114.md" 'Estado: en-revisión' 'Estado: completado' $'Seguridad: pendiente\n' $'Seguridad: aprobado (A-009)\n')"
+# El mismo bypass sobre un archivo CRLF (Windows): la reconstruccion tiene que casar igual.
+printf '# REQ-115\r\nEstado: en-revisión\r\nSensible a seguridad: sí\r\nQA: aprobado\r\nSeguridad: pendiente\r\n\r\n## Historial\r\n\r\nSeguridad: pendiente (registro anterior)\r\n' > "$PROJ/requirements/REQ-115.md"
+check "MultiEdit sobre un REQ CRLF: el bypass tambien -> deny" deny guard-completado.sh \
+  "$(emite_multiedit "$PROJ/requirements/REQ-115.md" 'Estado: en-revisión' 'Estado: completado' 'Seguridad: pendiente (registro anterior)' 'Seguridad: aprobado (A-009)')"
+# Y al reves: `Estado: completado` escrito SOLO en la historia no es una transicion.
+check "Edit: 'Estado: completado' solo en la historia NO es una transicion -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-114.md" 'Seguridad: pendiente (registro anterior)' $'Seguridad: pendiente (registro anterior)\n- 2026-08-01: Estado: completado (intento anterior, revertido)')"
 
 }
 seccion_15() {
@@ -1071,7 +1126,40 @@ rm -rf "$PROJ2"
 
 }
 
-TOTAL_SECCIONES=23
+seccion_24() {
+seccion_nueva "tools/arnes-lectura.sh (el informe tiene que poder decir que algo esta mal):"
+# FALLO EN ABIERTO medido (1.30.1): el contador de anomalias se incrementaba dentro de un
+# subshell y el informe decia «Ningún valor anómalo» y salia 0 con cuatro REQ fuera del
+# vocabulario en un proyecto real. Un informe que siempre dice que todo esta bien es peor
+# que no tenerlo: estos casos exigen que sepa decir que NO.
+if [ -z "$FILTRO" ] || printf '%s' "arnes-lectura" | grep -qi -- "$FILTRO"; then
+LECTURA="$HOOKS_DIR/../tools/arnes-lectura.sh"
+mkreq "$PROJ/requirements/REQ-240.md" "no" "aprobado con residual declarado" "n/a"
+mkreq "$PROJ/requirements/REQ-241.md" "no" "aprobado" "n/a"
+salida="$(bash "$LECTURA" "$PROJ" 2>"$ERRLOG")"; rc=$?
+if [ "$rc" -eq 1 ] && printf '%s' "$salida" | grep -q 'aprobadoconresidualdeclarado'; then
+  echo "  PASS  arnes-lectura: un veredicto fuera del vocabulario sale 1 y lo nombra"; PASS=$((PASS+1))
+else
+  echo "  FAIL  arnes-lectura: un veredicto fuera del vocabulario: rc=$rc (esperado 1)"; diag
+  printf '%s\n' "$salida" | head -12 | sed 's/^/          salida| /'; FAIL=$((FAIL+1))
+fi
+if printf '%s' "$salida" | grep -q 'NO LEE COMO ESTÁN ESCRITOS (1)'; then
+  echo "  PASS  arnes-lectura: ...y cuenta 1 anomalia, no 0"; PASS=$((PASS+1))
+else
+  echo "  FAIL  arnes-lectura: ...el contador no dice 1"; FAIL=$((FAIL+1))
+fi
+mkreq "$PROJ/requirements/REQ-240.md" "no" "aprobado" "n/a"
+salida="$(bash "$LECTURA" "$PROJ" 2>"$ERRLOG")"; rc=$?
+if [ "$rc" -eq 0 ] && printf '%s' "$salida" | grep -q 'Ningún valor anómalo'; then
+  echo "  PASS  arnes-lectura: control, con todo en vocabulario sale 0 y lo dice"; PASS=$((PASS+1))
+else
+  echo "  FAIL  arnes-lectura: control: rc=$rc (esperado 0)"; diag; FAIL=$((FAIL+1))
+fi
+fi
+
+}
+
+TOTAL_SECCIONES=24
 
 # --- Despacho en paralelo -----------------------------------------------------
 # El canario ya corrio en el padre, solo y antes que nada: si el hook esta muerto no
@@ -1115,7 +1203,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=182
+CASOS_ESPERADOS=196
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)

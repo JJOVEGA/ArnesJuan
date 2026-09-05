@@ -43,27 +43,32 @@ REQ_DIR=''; DONE=''
 arnes_jq_file "$MAN" -r '(.estados.todos // ["borrador","pendiente","en-progreso","en-revisión","completado","bloqueado"])[]'
 ESTADOS_OK=''
 while IFS= read -r e; do arnes_norm_campo "$e"; ESTADOS_OK+="|$ARNES_CAMPO"; done <<< "$ARNES_JQ"
+ESTADOS_OK+="|"   # cerrado por los dos lados: la comparacion es `|valor|`, exacta, no por prefijo
 
 # Formas que la máquina reconoce en cada campo. Un valor fuera de aquí no es
 # necesariamente un error del proyecto: puede ser un error del arnés al leerlo, y
 # distinguirlo es justo lo que este informe existe para permitir.
-QA_OK='|pendiente|aprobado|con-hallazgos'
-SEG_OK='|n/a|pendiente|aprobado|preventiva|vetado'
-RIG_OK='|ligero|estandar|critico'
+QA_OK='|pendiente|aprobado|con-hallazgos|'
+SEG_OK='|n/a|pendiente|aprobado|preventiva|vetado|'
+RIG_OK='|ligero|estandar|critico|'
 
 VERSION="$(jq -r '.version // "?"' "$DIR/../.claude-plugin/plugin.json" 2>/dev/null || echo '?')"
 printf 'Lectura del arnés sobre %s/ — plugin %s\n\n' "$REQ_DIR" "$VERSION"
 
 anomalias=0; reqs=0; notas=0; nc=0; ne=0; nl=0
-avisa() {   # <req> <campo> <crudo> <leido> <consecuencia>
-  anomalias=$((anomalias+1))
-  printf '  %-12s %s\n' "$1" "$2"
-  printf '  %-12s   escrito:  «%s»\n' '' "$3"
-  printf '  %-12s   se lee:   <%s>\n' '' "$4"
-  printf '  %-12s   %s\n\n' '' "$5"
-}
-
 detalle=''
+# FALLO EN ABIERTO medido (1.30.1): `avisa` se llamaba dentro de `$( ... )` para capturar
+# su texto, y el `anomalias=$((anomalias+1))` moria en ese subshell. El informe decia
+# «Ningún valor anómalo» y salia 0 con cuatro REQ fuera del vocabulario en un proyecto
+# real —justo la familia que vino a cazar—. El texto se ACUMULA ahora en una variable del
+# proceso padre (`printf -v`) y el contador vive ahi. El banco exige que salga 1 y lo nombre.
+avisa() {   # <req> <campo> <crudo> <leido> <consecuencia>
+  local t
+  anomalias=$((anomalias+1))
+  printf -v t '  %-12s %s\n  %-12s   escrito:  «%s»\n  %-12s   se lee:   <%s>\n  %-12s   %s\n\n' \
+    "$1" "$2" '' "$3" '' "$4" '' "$5"
+  detalle+="$t"
+}
 for f in "$PROY/$REQ_DIR"/*.md; do
   [ -f "$f" ] || continue
   base="$(basename "$f")"
@@ -92,32 +97,29 @@ for f in "$PROY/$REQ_DIR"/*.md; do
   arnes_campos_req "$texto" ''
   case "$ARNES_RIGOR" in critico) nc=$((nc+1)) ;; estandar) ne=$((ne+1)) ;; ligero) nl=$((nl+1)) ;; esac
 
-  bloque=''
-  if [ "${ESTADOS_OK}|" != "${ESTADOS_OK/|$est|/|}|" ] || [ -z "${ESTADOS_OK##*|$est*}" ]; then :; fi
-  case "$ESTADOS_OK" in *"|$est"*) ;; *)
-    bloque+="$(avisa "${base%.md}" "Estado:" "${cru_est# }" "$est" \
-      "no está en \`estados.todos\` del manifiesto; ninguna puerta lo reconoce.")" ;;
+  case "$ESTADOS_OK" in *"|$est|"*) ;; *)
+    avisa "${base%.md}" "Estado:" "${cru_est# }" "$est" \
+      "no está en \`estados.todos\` del manifiesto; ninguna puerta lo reconoce." ;;
   esac
   if [ "${ARNES_SENS_DUDOSA:-0}" = "1" ]; then
-    bloque+="$(avisa "${base%.md}" "Sensible a seguridad:" "${cru_sens# }" "$ARNES_SENS_CRUDO" \
-      "no se lee ni como sí ni como no → se trata como SENSIBLE (lado seguro). Escribe \`sí\` o \`no\`.")"
+    avisa "${base%.md}" "Sensible a seguridad:" "${cru_sens# }" "$ARNES_SENS_CRUDO" \
+      "no se lee ni como sí ni como no → se trata como SENSIBLE (lado seguro). Escribe \`sí\` o \`no\`."
   fi
-  if [ -n "$ARNES_QA" ]; then case "$QA_OK" in *"|$ARNES_QA"*) ;; *)
-    bloque+="$(avisa "${base%.md}" "QA:" "${cru_qa# }" "$ARNES_QA" \
-      "no es \`aprobado\` ni ningún veredicto conocido → este REQ NO puede cerrarse.")" ;;
+  if [ -n "$ARNES_QA" ]; then case "$QA_OK" in *"|$ARNES_QA|"*) ;; *)
+    avisa "${base%.md}" "QA:" "${cru_qa# }" "$ARNES_QA" \
+      "no es \`aprobado\` ni ningún veredicto conocido → este REQ NO puede cerrarse." ;;
   esac; fi
-  if [ -n "$ARNES_SEG" ]; then case "$SEG_OK" in *"|$ARNES_SEG"*) ;; *)
-    bloque+="$(avisa "${base%.md}" "Seguridad:" "${cru_seg# }" "$ARNES_SEG" \
-      "no es un veredicto conocido → si el rigor es \`critico\`, este REQ NO puede cerrarse.")" ;;
+  if [ -n "$ARNES_SEG" ]; then case "$SEG_OK" in *"|$ARNES_SEG|"*) ;; *)
+    avisa "${base%.md}" "Seguridad:" "${cru_seg# }" "$ARNES_SEG" \
+      "no es un veredicto conocido → si el rigor es \`critico\`, este REQ NO puede cerrarse." ;;
   esac; fi
   if [ -n "$cru_rig" ]; then
     arnes_norm_campo "$cru_rig"; r="$ARNES_CAMPO"
-    case "$RIG_OK" in *"|$r"*) ;; *)
-      bloque+="$(avisa "${base%.md}" "Rigor:" "${cru_rig# }" "$r" \
-        "no es un nivel válido → se IGNORA y el REQ se juzga como si no lo declarara.")" ;;
+    case "$RIG_OK" in *"|$r|"*) ;; *)
+      avisa "${base%.md}" "Rigor:" "${cru_rig# }" "$r" \
+        "no es un nivel válido → se IGNORA y el REQ se juzga como si no lo declarara." ;;
     esac
   fi
-  detalle+="$bloque"
 done
 
 if [ "$anomalias" -gt 0 ]; then
