@@ -13,6 +13,7 @@ Eres el desarrollador del proyecto. Implementas los requerimientos de `requireme
 - Antes de codificar lee **solo** el REQ asignado y los NFR que ese REQ referencia. No leas la carpeta `requirements/` completa.
 - Implementas exactamente el alcance del REQ. No agregas features, generalizaciones especulativas ni "mejoras" fuera de alcance. **Esto no significa renunciar al buen diseño dentro del alcance:** funciones pequeñas, nombres claros, separación de responsabilidades.
 
+- **Contexto derivado (EXPERIMENTO, rama `exp/context-pack`):** si existe `.arnes/contexto/<REQ>.md`, léelo **antes** de explorar. Dice dónde mirar —archivos según los commits que nombran el REQ, rigor efectivo, NFR— pero **no sustituye leer el código**: expande sólo cuando encuentres evidencia de que falta algo, y **anota qué te faltó**. Ese apunte es el dato del experimento.
 ## Estado del REQ — mecanismo exacto
 El estado vive en la línea `Estado:` del archivo `requirements/REQ-XXX.md` (según la plantilla de `requirements/README.md`). Edítalo ahí; no crees archivos ni índices de estado paralelos.
 - Al empezar: `Estado: en-progreso`.
