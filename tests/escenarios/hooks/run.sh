@@ -891,6 +891,20 @@ rm -rf "$EST_PROJ" "$EST_OFF" "$EST_AJENO" "$EST_SIN"
 # `case` los corchetes son una clase de caracteres-- y el conteo invertido, que
 # conservaba `total - conservar` y vaciaba el archivo a trozos en cada pasada.
 # Una prueba que encuentra un fallo y luego se tira no protege de nada manana.
+
+# --- Celdas recortadas (1.31.0) -------------------------------------------------
+# Medido en un proyecto con 57 REQ: cuatro celdas de veredicto eran el 37 % del bloque,
+# la mayor de 1 296 caracteres sin un espacio, que ademas rompe la tabla. El bloque
+# responde "donde quedamos": basta ver `aprobadoconlacondicion…` para saber que la
+# maquina no lee `aprobado`.
+EST3="$(mktemp -d)"; mkdir -p "$EST3/.arnes" "$EST3/requirements" "$EST3/docs"
+cp "$PROJ/.arnes/config.json" "$EST3/.arnes/config.json"
+printf '# REQ-009\nEstado: en-revisión\nSensible a seguridad: no\nQA: aprobado con la condición de que se corrija el redondeo de los montos en las tres monedas antes del cierre\nSeguridad: n/a\n' > "$EST3/requirements/REQ-009.md"
+printf '# ESTADO\n' > "$EST3/docs/ESTADO.md"
+corre_estado "$EST3"
+check_estado "una celda larga se recorta con elipsis"        "aprobadoconlacondici.*…" si "$EST3/docs/ESTADO.md"
+check_estado "...y el texto completo NO entra en el bloque"  "antesdelcierre"          no "$EST3/docs/ESTADO.md"
+rm -rf "$EST3"
 }
 seccion_21() {
   seccion_nueva "Rotacion de artefactos (mover, nunca resumir):"
@@ -1159,7 +1173,169 @@ fi
 
 }
 
-TOTAL_SECCIONES=24
+seccion_25() {
+seccion_nueva "git destructivo (guard-git.sh): los agentes no borran trabajo ajeno:"
+# Medido en un proyecto real: ~52 archivos sin comitear perdidos en un incidente, y el
+# trabajo de un subagente no es atomico para git. Lista por defecto del arnes; el
+# proyecto la amplia o la apaga en el manifiesto. Mira el comando SIN su texto.
+for c in 'git clean -fd' 'git reset --hard HEAD~1' 'git checkout .' 'git checkout -- .' 'git restore .' 'git stash' 'git stash push -m wip' 'cd x && git clean -fdx' 'git -C proj reset --hard' '(git reset --hard)'; do
+  check "deny: $c" deny guard-git.sh "$(emite_bash "$c" "" "")"
+done
+check_motivo "el deny nombra la regla del manifiesto" "git.prohibidos" guard-git.sh "$(emite_bash 'git clean -fd' "" "")"
+for c in 'git stash list' 'git restore --staged .' 'git clean -n' 'git status' 'git checkout main' 'git checkout -- src/a.ts' 'git reset --soft HEAD~1' 'git commit -m "no uses git clean; usa stash"' 'echo git clean -fd' 'ls -la' 'git log --oneline -3'; do
+  check "allow: $c" allow guard-git.sh "$(emite_bash "$c" "" "")"
+done
+check "tambien por guard.sh, el punto de entrada real -> deny" deny guard.sh "$(emite_bash 'git clean -fd' "" "")"
+setcfg '.git = {activo:false}'
+check "git.activo=false apaga la barandilla -> allow" allow guard-git.sh "$(emite_bash 'git clean -fd' "" "")"
+setcfg '.git = {prohibidos:["push --force"]}'
+check "lista propia: push --force -> deny" deny guard-git.sh "$(emite_bash 'git push --force origin main' "" "")"
+check "lista propia: clean ya no esta -> allow" allow guard-git.sh "$(emite_bash 'git clean -fd' "" "")"
+
+}
+seccion_26() {
+seccion_nueva "Veredicto fechado y no caduco (opt-in: veredictos.*):"
+# Medido en un proyecto real: cuatro REQ se habrian cerrado con un `QA: aprobado`
+# emitido contra codigo que cambio despues; otro llevaba `Seguridad: aprobado` a
+# secas y era el unico que nadie sabia que estaba caduco. Un veredicto es una foto.
+if ! command -v git >/dev/null 2>&1; then
+  echo "  SKIP  veredictos fechados  (sin git en esta plataforma)"; return 0
+fi
+( cd "$PROJ" && git init -q && git config user.email a@b.c && git config user.name arnes && git config core.autocrlf false \
+  && printf 'x\n' > src/app.ts && git add -A \
+  && GIT_AUTHOR_DATE=2026-09-01T10:00:00 GIT_COMMITTER_DATE=2026-09-01T10:00:00 git commit -qm codigo ) >/dev/null 2>&1
+# Sin opt-in, NADA cambia: un REQ sin fecha cierra como siempre.
+mkreq "$PROJ/requirements/REQ-260.md" "no" "aprobado" "n/a"
+check "sin opt-in: 'QA: aprobado' sin fecha cierra como siempre -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-260.md" 'Estado: en-revisión' 'Estado: completado')"
+setcfg '.veredictos = {exigir_fecha:true, caducan_con_codigo:true}'
+check "exigir_fecha: 'QA: aprobado' sin fecha -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-260.md" 'Estado: en-revisión' 'Estado: completado')"
+check_motivo "...y dice como escribirla" "AAAA-MM-DD" guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-260.md" 'Estado: en-revisión' 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-261.md" "no" "aprobado (R-1, 2026-09-02)" "n/a"
+check "veredicto POSTERIOR al ultimo commit del codigo -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-261.md" 'Estado: en-revisión' 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-262.md" "no" "aprobado (R-1, 2026-08-30)" "n/a"
+check "veredicto ANTERIOR al ultimo commit del codigo -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-262.md" 'Estado: en-revisión' 'Estado: completado')"
+check_motivo "...y nombra las dos fechas" "2026-08-30.*2026-09-01" guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-262.md" 'Estado: en-revisión' 'Estado: completado')"
+printf 'y\n' >> "$PROJ/src/app.ts"
+check "cambios SIN COMMIT en el codigo -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-261.md" 'Estado: en-revisión' 'Estado: completado')"
+check_motivo "...y nombra el archivo sucio" "src/app.ts" guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-261.md" 'Estado: en-revisión' 'Estado: completado')"
+( cd "$PROJ" && git checkout -q -- src/app.ts ) >/dev/null 2>&1
+check "control: arbol limpio otra vez -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-261.md" 'Estado: en-revisión' 'Estado: completado')"
+# Critico: tambien Seguridad tiene que llevar fecha.
+mkreq "$PROJ/requirements/REQ-263.md" "sí" "aprobado (R-1, 2026-09-02)" "aprobado"
+check "critico: 'Seguridad: aprobado' sin fecha -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-263.md" 'Estado: en-revisión' 'Estado: completado')"
+mkreq "$PROJ/requirements/REQ-264.md" "sí" "aprobado (R-1, 2026-09-02)" "aprobado (A-3, 2026-09-03)"
+check "critico: los dos fechados y posteriores -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-264.md" 'Estado: en-revisión' 'Estado: completado')"
+rm -rf "$PROJ/.git"
+check "caducan_con_codigo sin repositorio git -> deny (no puede medir, no deja pasar)" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-261.md" 'Estado: en-revisión' 'Estado: completado')"
+
+}
+seccion_27() {
+seccion_nueva "Aviso al escribir un veredicto fuera del vocabulario (systemMessage, no deny):"
+# Medido en un proyecto real: cuatro REQ llevaban semanas con un `QA:` que la puerta no
+# reconoce y nadie lo supo hasta que un cierre fallo. Se avisa al escribirlo.
+# aviso_check <nombre> <esperado: aviso|nada|deny> <salida>
+aviso_check() {
+  local nombre="$1" esperado="$2" out="$3" got=nada
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
+  printf '%s' "$out" | grep -Eq '"permissionDecision": *"deny"' && got=deny
+  if [ "$got" = nada ] && printf '%s' "$out" | grep -q '"systemMessage"'; then got=aviso; fi
+  if [ "$got" = "$esperado" ]; then echo "  PASS  $nombre  ($got)"; PASS=$((PASS+1))
+  else echo "  FAIL  $nombre  esperado=$esperado got=$got  salida=<$(printf '%s' "$out" | head -c 200)>"; diag; FAIL=$((FAIL+1)); fi
+}
+mkreq "$PROJ/requirements/REQ-270.md" "no" "pendiente" "n/a"
+out="$(corre guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-270.md" 'QA: pendiente' 'QA: aprobado con residual declarado')")"
+aviso_check "QA fuera del vocabulario: AVISA y no deniega" aviso "$out"
+if [ -z "$FILTRO" ] || printf '%s' "aviso" | grep -qi -- "$FILTRO"; then
+  if printf '%s' "$out" | grep -q 'aprobadoconresidualdeclarado'; then echo "  PASS  ...y enseña lo que la maquina lee"; PASS=$((PASS+1))
+  else echo "  FAIL  ...el aviso no enseña el valor leido"; FAIL=$((FAIL+1)); fi
+fi
+aviso_check "QA en vocabulario, con evidencia entre parentesis: nada" nada \
+  "$(corre guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-270.md" 'QA: pendiente' 'QA: aprobado (R-2, 2026-09-05)')")"
+aviso_check "una edicion que no toca el campo: nada" nada \
+  "$(corre guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-270.md" 'Sensible a seguridad: no' 'Sensible a seguridad: sí')")"
+mkreq "$PROJ/requirements/REQ-271.md" "no" "pendiente" "pendiente"
+aviso_check "Seguridad fuera del vocabulario: AVISA" aviso \
+  "$(corre guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-271.md" 'Seguridad: pendiente' 'Seguridad: aprobado salvo el modulo X')")"
+aviso_check "por guard.sh, el punto de entrada real: AVISA" aviso \
+  "$(corre guard.sh "$(emite_edit_real "$PROJ/requirements/REQ-270.md" 'QA: pendiente' 'QA: aprobado con residual declarado')")"
+
+}
+seccion_28() {
+seccion_nueva "Rotacion de una SECCION (el historial del REQ; los criterios no se tocan):"
+# Medido en un proyecto real: requirements/ pesaba 3,73 MB en 47 archivos, uno de 244 KB,
+# y lo paga cada agente que abre el REQ. Que seccion es historia lo declara el proyecto.
+RS_P="$(mktemp -d)"; mkdir -p "$RS_P/.arnes" "$RS_P/requirements"
+rs_cfg() {  # <conservar_entradas> <umbral_bytes> <orden>
+  jq -n --argjson c "$1" --argjson u "$2" --arg o "$3" \
+    '{agentes:{agente_codigo:"desarrollador"},
+      rotacion:{activo:true, artefactos:[{glob:"requirements/*.md", seccion:"## Historial",
+                conservar_entradas:$c, umbral_bytes:$u, orden:$o}]}}' > "$RS_P/.arnes/config.json"
+}
+rs_req() {  # <archivo> — un REQ con criterios, 8 entradas de historial con continuacion, y notas detras
+  { printf '# REQ\nEstado: en-revisión\nSensible a seguridad: no\nQA: aprobado\nSeguridad: n/a\n\n## Criterios de aceptación\n- C1 el criterio uno\n- C2 el criterio dos\n- C3 el criterio tres\n\n## Historial de cambios\n\n'
+    for d in 01 02 03 04 05 06 07 08; do
+      printf -- '- 2026-08-%s: entrada %s del historial con texto de relleno suficiente para pesar\n  continuacion de la entrada %s\n' "$d" "$d" "$d"
+    done
+    printf '\n## Notas\nNOTA DE UNA PERSONA.\n'
+  } > "$1"
+}
+rs_corre() {
+  : > "$ERRLOG"
+  CLAUDE_PROJECT_DIR="$RS_P" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}' \
+    | CLAUDE_PROJECT_DIR="$RS_P" "$HOOKS_DIR/rotar-artefactos.sh" >/dev/null 2>"$ERRLOG"
+}
+rs_check() {  # <nombre> <esperado> <obtenido>
+  if [ -n "$FILTRO" ] && ! printf '%s' "$1" | grep -qi -- "$FILTRO"; then return 0; fi
+  if [ "$2" = "$3" ]; then echo "  PASS  $1"; PASS=$((PASS+1))
+  else echo "  FAIL  $1  esperado=$2 obtenido=$3"; diag; FAIL=$((FAIL+1)); fi
+}
+rs_n() { grep -c '^- 2026' "$1" 2>/dev/null || echo 0; }
+rs_tiene_cr() { local t=''; IFS= read -r -d '' t < "$1"; case "$t" in *$'\r'*) echo si ;; *) echo no ;; esac; }
+F="$RS_P/requirements/REQ-001.md"; A="$RS_P/requirements/historial/REQ-001.md"
+rs_cfg 3 400 nuevo-al-final; rs_req "$F"
+printf '# Los REQ\nSin historial aqui.\n' > "$RS_P/requirements/README.md"
+sed 's/$/\r/' "$F" > "$RS_P/requirements/REQ-002.md"     # el mismo REQ en CRLF (Windows)
+rs_corre; RS_RC=$?
+rs_check "el hook sale 0 (no bloquea la parada)" "0" "$RS_RC"
+rs_check "conserva exactamente conservar_entradas en el REQ" "3" "$(rs_n "$F")"
+rs_check "mueve el resto a historial/<nombre>.md" "5" "$(rs_n "$A")"
+rs_check "conserva las NUEVAS (nuevo-al-final): 08 en REQ, 01 fuera" "1-0-1" \
+  "$(grep -c '2026-08-08' "$F")-$(grep -c '2026-08-01' "$F")-$(grep -c '2026-08-01' "$A")"
+rs_check "los criterios de aceptacion NO se tocan" "3" "$(grep -c '^- C[123] el criterio' "$F")"
+rs_check "la seccion de despues sigue en su sitio" "1" "$(grep -c 'NOTA DE UNA PERSONA' "$F")"
+rs_check "la cabecera del REQ no cambia" "1" "$(grep -c '^Estado: en-revisión' "$F")"
+rs_check "las continuaciones viajan con su entrada" "1" "$(grep -c 'continuacion de la entrada 01' "$A")"
+rs_check "deja UN puntero al archivo" "1" "$(grep -c 'historial/REQ-001.md' "$F")"
+rs_corre; rs_corre
+rs_check "idempotente: tres pasadas, mismo reparto y un solo puntero" "3-5-1" \
+  "$(rs_n "$F")-$(rs_n "$A")-$(grep -c 'historial/REQ-001.md' "$F")"
+rs_check "un archivo sin la seccion no se toca" "1" "$(grep -c 'Sin historial aqui' "$RS_P/requirements/README.md")"
+rs_check "CRLF: mismo reparto" "3-5" \
+  "$(rs_n "$RS_P/requirements/REQ-002.md")-$(rs_n "$RS_P/requirements/historial/REQ-002.md")"
+rs_check "CRLF: el REQ conserva sus CR" "si" "$(rs_tiene_cr "$RS_P/requirements/REQ-002.md")"
+# Bajo el umbral no se toca; y con menos entradas que conservar, tampoco.
+rs_cfg 3 999999 nuevo-al-final; rs_req "$F"; rm -rf "$RS_P/requirements/historial"
+rs_corre
+rs_check "bajo el umbral no toca nada" "8-no" "$(rs_n "$F")-$([ -e "$A" ] && echo si || echo no)"
+rs_cfg 20 400 nuevo-al-final; rs_corre
+rs_check "con menos entradas que conservar_entradas no toca nada" "8" "$(rs_n "$F")"
+rm -rf "$RS_P"
+
+}
+
+TOTAL_SECCIONES=28
 
 # --- Despacho en paralelo -----------------------------------------------------
 # El canario ya corrio en el padre, solo y antes que nada: si el hook esta muerto no
@@ -1203,7 +1379,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=196
+CASOS_ESPERADOS=257
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)

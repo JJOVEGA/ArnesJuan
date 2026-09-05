@@ -47,6 +47,17 @@ Las invariantes críticas no se quedan en el markdown: las vigila la máquina v�
 - **El orden del ciclo se cumple:** `Seguridad: aprobado` no se escribe sobre un árbol que QA no
   ha validado —el auditor no mira las quality gates—. La única salida es declarar la auditoría
   **preventiva**, que desbloquea el orden pero **no** cierra un REQ crítico.
+- **Ningún agente ejecuta git destructivo** (`guard-git`, desde 1.31.0): `clean`, `reset --hard`,
+  `checkout .`, `restore .` y `stash` se deniegan con el motivo. Medido en un proyecto real: ~52
+  archivos sin comitear perdidos en un incidente, y el trabajo de un subagente no es atómico para
+  git —mientras escribe, el árbol contiene estados intermedios que no son de nadie—. Es una lista y
+  se sabe que las listas se pudren; el proyecto la amplía o la apaga en `git.prohibidos` / `git.activo`.
+- **Un veredicto puede exigir fecha y caducar** (opt-in, `veredictos.*`): la fecha va en el
+  paréntesis de evidencia —`QA: aprobado (R-045, 2026-09-01)`— y un veredicto anterior al último
+  commit que tocó el código de la app no cierra el REQ. Medido: cuatro REQ se habrían cerrado con
+  un `aprobado` emitido contra código que cambió después. Sin git que consultar, no deja pasar.
+- **Un veredicto fuera del vocabulario se avisa al escribirlo**, sin denegar: el REQ no podría
+  cerrarse y, sin el aviso, nadie lo sabría hasta el cierre.
 
 ### Continuidad: un bloque que se **deriva**, no se redacta
 Al parar un agente (`Stop` / `SubagentStop`), el arnés reescribe en `docs/ESTADO.md`, entre
@@ -79,6 +90,13 @@ nuevo arriba, un registro cronológico al final, y equivocarse archivaría lo m�
 `CHANGELOG` crece por arriba y un registro cronológico por abajo, así que `artefactos` acepta
 cadena (hereda los ajustes globales) u objeto con su `orden`, `umbral_bytes` y
 `conservar_secciones` — la misma convención que las `quality_gates`.
+
+**También rota una sección, no sólo un archivo** (desde 1.31.0). Medido: `requirements/` pesaba
+3,73 MB en 47 archivos, uno de 244 KB, y lo paga cada agente que abre el REQ para leer dos criterios.
+Un objeto con `glob` y `seccion` —`{ "glob": "requirements/*.md", "seccion": "## Historial",
+"conservar_entradas": 20 }`— mueve las entradas viejas de esa sección a `historial/<nombre>.md` y
+deja un puntero; **el resto del documento no se toca**, porque los criterios de aceptación son el
+contrato. Qué sección es historia lo declara el proyecto; el arnés trae el mecanismo.
 
 Viene **apagada**: reestructurar un documento que escribió una persona no puede ser el
 comportamiento por defecto.

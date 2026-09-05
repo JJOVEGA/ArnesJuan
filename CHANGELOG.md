@@ -2,6 +2,40 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.31.0] — 2026-09-05
+### Añadido — cinco mecanismos que pidieron dos proyectos; el mapeo, en el manifiesto de cada uno
+- **Veredicto fechado y no caduco** (`veredictos.exigir_fecha`, `veredictos.caducan_con_codigo`;
+  apagados por defecto). Medido: cuatro REQ se habrían cerrado con un `QA: aprobado` emitido contra
+  código que cambió **después**, y otro llevaba `Seguridad: aprobado` a secas, sin ronda ni fecha —el
+  único que nadie sabía que estaba caduco—. La fecha viaja en el paréntesis de evidencia,
+  `QA: aprobado (R-045, 2026-09-01)`, que ya era la convención. Con `exigir_fecha`, un veredicto sin
+  fecha no cierra. Con `caducan_con_codigo`, tampoco cierra uno anterior al último commit que tocó
+  `codigo_app.globs`, ni con cambios sin commit en ese código; y sin repositorio git que consultar
+  **no deja pasar**: una puerta que no puede medir no dice «sí».
+- **Aviso al escribir un veredicto fuera del vocabulario.** Medido: cuatro REQ llevaban semanas con
+  un `QA:` que la puerta no reconoce, y nadie lo supo hasta que un cierre falló. El hook lo dice **al
+  escribirlo**, sin denegar, con `systemMessage`: llega a la persona; un hook `PreToolUse` no tiene
+  forma documentada de añadir contexto al modelo sin bloquear la llamada. El vocabulario vive ahora
+  en un solo sitio (`lib.sh`) y lo comparten la puerta y `tools/arnes-lectura.sh`.
+- **Rotación de una SECCIÓN.** `rotacion.artefactos` acepta `{ "glob", "seccion", "conservar_entradas",
+  "umbral_bytes", "orden", "archivo_dir" }`. Medido: `requirements/` pesaba 3,73 MB en 47 archivos, uno
+  de 244 KB, y lo paga cada agente que abre el REQ para leer dos criterios. Mueve las entradas viejas
+  de `## Historial` a `historial/<nombre>.md` y deja un puntero; **el resto del documento no se toca**:
+  los criterios son el contrato. Qué sección es historia lo declara el proyecto. Apagada, como toda la
+  rotación; funciona con CRLF.
+- **Git destructivo prohibido a los agentes** (`guard-git.sh`; `git.prohibidos`, `git.activo`). Medido:
+  ~52 archivos sin comitear perdidos en un incidente, y el trabajo de un subagente no es atómico para
+  git. Por defecto deniega `clean`, `reset --hard`, `checkout .`, `restore .` y `stash` (no `stash
+  list|show`, no `restore --staged`, no `clean -n`). Mira el comando sin su texto: `git commit -m "no
+  uses git clean"` no es un `git clean`, y un `ls` no paga el manifiesto. **Es la única novedad
+  encendida por defecto**; se apaga con `git.activo: false` o se sustituye la lista.
+- **Celdas del bloque derivado recortadas a 40 caracteres.** Medido en un proyecto con 57 REQ: cuatro
+  celdas de veredicto eran el 37 % del bloque, la mayor de 1 296 caracteres sin un espacio, que además
+  rompía la tabla.
+
+Sesenta y un casos nuevos en el banco (257) en cuatro secciones nuevas y dos existentes. Cada mecanismo
+se sondeó con controles positivos y negativos antes de escribir sus casos.
+
 ## [1.30.2] — 2026-09-05
 ### Corregido — tres fallos medidos por tres revisores distintos el mismo día
 - **FALLO EN ABIERTO: un MultiEdit cerraba el REQ aprobando sólo la línea del historial.** La regla

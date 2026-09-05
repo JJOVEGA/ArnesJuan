@@ -52,14 +52,22 @@ arnes_parse_input() {
 arnes_parse_manifest() {
   [ -z "${ARNES_MANIFEST_LISTO:-}" ] || return 0
   local g
+  # Una sola llamada a jq para todo el manifiesto. Los booleanos se comparan con `==`
+  # y no con `//`: para jq `false // x` es `x`, y un `activo: false` se leia como activo.
   arnes_jq_file "$ARNES_MANIFEST" -r '[(.agentes.agente_codigo // "desarrollador"),
                                        (.requirements_dir // "requirements"),
                                        (.estados.completado // "completado"),
-                                       (.pending_approval // "PENDING_APPROVAL.md")]
+                                       (.pending_approval // "PENDING_APPROVAL.md"),
+                                       (if .veredictos.exigir_fecha == true then "true" else "false" end),
+                                       (if .veredictos.caducan_con_codigo == true then "true" else "false" end),
+                                       (if .git.activo == false then "false" else "true" end),
+                                       ((.git.prohibidos // ["clean","reset --hard","checkout .","restore .","stash"]) | join("\t"))]
                                       + (.codigo_app.globs // []) | .[]'
   ARNES_GLOBS=()
   { IFS= read -r ARNES_AGENTE_CODIGO; IFS= read -r ARNES_REQ_DIR
     IFS= read -r ARNES_ESTADO_DONE;   IFS= read -r ARNES_PENDING
+    IFS= read -r ARNES_VER_FECHA;     IFS= read -r ARNES_VER_CADUCAN
+    IFS= read -r ARNES_GIT_ACTIVO;    IFS= read -r ARNES_GIT_PROHIBIDOS
     while IFS= read -r g; do [ -n "$g" ] && ARNES_GLOBS+=("$g"); done
   } <<< "$ARNES_JQ"
   ARNES_GLOBS_CARGADOS=1
@@ -97,6 +105,20 @@ arnes_deny() {
 
 # Aviso por stderr (no silencioso), sin bloquear.
 arnes_warn() { printf 'ARNES (hook): %s\n' "$1" >&2; }
+
+# --- Avisos que llegan a la PERSONA sin bloquear la llamada ------------------------
+# Un hook PreToolUse solo tiene dos salidas que Claude Code escucha: denegar, o
+# `systemMessage`, que se muestra a la persona (la documentacion de hooks no ofrece
+# forma de anadir contexto al modelo sin bloquear; `ask` bloquea hasta que un humano
+# responda, que es peor que el aviso). Se acumulan y se emiten UNA vez al final del
+# proceso, solo si ningun guardian denego: una denegacion ya lo dice todo.
+ARNES_AVISOS=''
+arnes_aviso() { ARNES_AVISOS+="ARNES: $1"$'\n'; }
+arnes_emitir_avisos() {
+  [ -n "$ARNES_AVISOS" ] || return 0
+  jq -cn --arg m "${ARNES_AVISOS%$'\n'}" '{systemMessage:$m}'
+  return 0
+}
 
 # --- Compatibilidad Windows ---------------------------------------------------
 # En Windows `jq` suele ser un binario NATIVO, no MSYS. Eso rompe dos cosas a la vez:
@@ -326,15 +348,13 @@ arnes_agente_legible() {  # <agent_type>
 #
 # Sesgo explícito al FALSO NEGATIVO: primero se descarta el texto entrecomillado,
 # así una mención de una ruta dentro de un mensaje no dispara nada.
-arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
-  local cmd="$1" limpio i j n tok pre post q
-  # Las dos limpiezas se hacen SIN procesos. Antes eran dos `printf | sed`, o sea
-  # cuatro bifurcaciones, y este camino se recorre en CADA comando de shell que
-  # ejecuta un agente — el más frecuente de todos.
-  #
-  # 1) Fuera el texto entrecomillado, para que una ruta mencionada dentro de un
-  #    mensaje (`git commit -m "toca src/a.ts"`) no dispare nada. Se recorta por
-  #    pares de comillas en un bucle, que es lo que bash sabe hacer sin regex.
+# El comando SIN su texto: sin cuerpos de heredoc y sin lo entrecomillado. Es lo que
+# miran los detectores (escrituras, git destructivo): una ruta o una orden que solo
+# aparece dentro de un mensaje o de un heredoc no es una orden. Compartido para que
+# los dos detectores descuenten exactamente lo mismo; dos copias se desfasarian.
+# Todo SIN procesos: este camino se recorre en CADA comando de shell de un agente.
+arnes_bash_sin_texto() {  # <comando> -> ARNES_SIN_TEXTO
+  local cmd="$1" limpio pre post q
   limpio="$cmd"
   # 0) Fuera el CUERPO de cada heredoc. Medido (1.29.1, proyecto real): un comando cuyo
   #    resumen en heredoc contenia la linea `cp README.md src/...` COMO TEXTO fue
@@ -372,6 +392,9 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
     done <<< "$limpio"
     limpio="$sin"
   fi
+  # 1) Fuera el texto entrecomillado, para que una ruta mencionada dentro de un
+  #    mensaje (`git commit -m "toca src/a.ts"`) no dispare nada. Se recorta por
+  #    pares de comillas en un bucle, que es lo que bash sabe hacer sin regex.
   for q in '"' "'"; do
     while [[ "$limpio" == *"$q"*"$q"* ]]; do
       pre="${limpio%%"$q"*}"
@@ -379,6 +402,12 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
       limpio="$pre $post"
     done
   done
+  ARNES_SIN_TEXTO="$limpio"
+}
+
+arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
+  local cmd="$1" limpio i j n tok
+  arnes_bash_sin_texto "$cmd"; limpio="$ARNES_SIN_TEXTO"
   # 2) Separa los operadores de su operando: `>src/a.ts` -> `> src/a.ts`.
   limpio="${limpio//>|/>}"
   limpio="${limpio//>>/>}"
@@ -609,8 +638,35 @@ arnes_campos_normaliza() {   # <qa> <seg> <sens> <hall> <rigor> -> ARNES_QA/SEG/
 # respalda en el del disco (pre-edición), porque QA y seguridad fijan su veredicto
 # antes de la transición a completado. Por eso se recorre primero el disco y
 # después lo entrante: lo segundo pisa a lo primero.
+# Vocabulario CERRADO de los veredictos, en UN sitio: lo usan la puerta (aviso al
+# escribir un valor que no existe) y tools/arnes-lectura.sh. Dos copias se desfasan.
+ARNES_VOCAB_QA='pendiente|aprobado|con-hallazgos'
+ARNES_VOCAB_SEG='n/a|pendiente|aprobado|preventiva|vetado'
+ARNES_VOCAB_RIGOR='ligero|estandar|critico'
+arnes_en_vocab() {   # <valor normalizado> <vocab a|b|c> -> 0 si es uno de ellos (exacto, no por prefijo)
+  case "|$2|" in *"|$1|"*) return 0 ;; esac
+  return 1
+}
+
+# Primera fecha ISO (AAAA-MM-DD) dentro de un texto -> ARNES_FECHA (vacio si no hay).
+# Es como viaja la fecha de un veredicto: en su parentesis de evidencia,
+# `QA: aprobado (R-045, 2026-09-01)`. Sin procesos.
+arnes_fecha_en() {
+  ARNES_FECHA=''
+  if [[ "$1" =~ ([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]) ]]; then ARNES_FECHA="${BASH_REMATCH[1]}"; fi
+}
+
+# Recorta un texto a N caracteres con elipsis -> ARNES_CORTO. Para las celdas del
+# bloque derivado: medido, cuatro celdas de veredicto eran el 37 % del bloque en un
+# proyecto que sigue la convencion de poner la evidencia al lado del veredicto.
+arnes_recorta() {   # <texto> <n>
+  ARNES_CORTO="$1"
+  [ "${#ARNES_CORTO}" -le "$2" ] || ARNES_CORTO="${ARNES_CORTO:0:$2}…"
+}
+
 arnes_campos_req() {   # <texto en disco> <texto entrante>
   ARNES_QA=''; ARNES_SEG=''; ARNES_SENS=''; ARNES_HALL=''; ARNES_RIGOR=''
+  ARNES_QA_CRUDO=''; ARNES_SEG_CRUDO=''
   local texto l
   for texto in "$1" "$2"; do
     [ -n "$texto" ] || continue
@@ -631,6 +687,9 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
       esac
     done <<< "$texto"
   done
+  # Los valores CRUDOS se conservan: la fecha del veredicto vive en su parentesis, que
+  # la normalizacion retira a proposito (el parentesis es evidencia, no veredicto).
+  ARNES_QA_CRUDO="$ARNES_QA"; ARNES_SEG_CRUDO="$ARNES_SEG"
   arnes_campos_normaliza "$ARNES_QA" "$ARNES_SEG" "$ARNES_SENS" "$ARNES_HALL" "$ARNES_RIGOR"
 }
 

@@ -48,9 +48,10 @@ ESTADOS_OK+="|"   # cerrado por los dos lados: la comparacion es `|valor|`, exac
 # Formas que la máquina reconoce en cada campo. Un valor fuera de aquí no es
 # necesariamente un error del proyecto: puede ser un error del arnés al leerlo, y
 # distinguirlo es justo lo que este informe existe para permitir.
-QA_OK='|pendiente|aprobado|con-hallazgos|'
-SEG_OK='|n/a|pendiente|aprobado|preventiva|vetado|'
-RIG_OK='|ligero|estandar|critico|'
+# El vocabulario vive en lib.sh (ARNES_VOCAB_*): lo mismo que usa la puerta, no una copia.
+QA_OK="|$ARNES_VOCAB_QA|"
+SEG_OK="|$ARNES_VOCAB_SEG|"
+RIG_OK="|$ARNES_VOCAB_RIGOR|"
 
 VERSION="$(jq -r '.version // "?"' "$DIR/../.claude-plugin/plugin.json" 2>/dev/null || echo '?')"
 printf 'Lectura del arnés sobre %s/ — plugin %s\n\n' "$REQ_DIR" "$VERSION"

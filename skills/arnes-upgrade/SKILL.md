@@ -121,6 +121,7 @@ por arriba:
 | `AGENTS.md` §13 tiene la fila «la transición a `completado` no se hace por shell» | 1.16.0 |
 | `AGENTS.md` §6 nombra la auditoría `(preventiva)` | 1.21.0 |
 | `.arnes/config.json` tiene `plantillas_origen` | 1.21.0 |
+| `.arnes/config.json` tiene la clave `"git"` con `"prohibidos"` | 1.31.0 |
 
 *(Los tres primeros están comprobados contra los tags: ausentes en la versión anterior,
 presentes desde la que se indica. Si añades marcadores, compruébalos igual — un marcador mal
@@ -315,6 +316,19 @@ nada.
   líneas `Campo:` a columna cero —hasta hoy se leían **como veredicto**; conviene saber si alguno
   cerró así—. Pregúntale al usuario antes de mover nada.
 - `requirements/README.md`: párrafo **los campos valen sólo en la cabecera**. `AGENTS.md` §13: fila nueva.
+
+### Hacia 1.31.0
+- **Una sola novedad encendida por defecto, y hay que decírsela al usuario:** `guard-git.sh` deniega a
+  cualquier agente `git clean`, `reset --hard`, `checkout .`, `restore .` y `stash` (no `stash list|show`,
+  no `restore --staged`, no `clean -n`). Si el proyecto lo necesita distinto: `git.activo: false` o su
+  propia lista en `git.prohibidos`.
+- `.arnes/config.json`: bloques nuevos `veredictos` (apagado) y `git`; `rotacion.artefactos` admite la
+  forma de sección (`glob` + `seccion`). **Pregunta antes de encender `veredictos.*`**: exige que los
+  veredictos lleven fecha, y los REQ existentes seguramente no la llevan —mídelo con
+  `tools/arnes-lectura.sh`—. Un proyecto que lo encienda sin re-validar no cierra ningún REQ hasta
+  hacerlo. Puede ser justo lo que quiere; se decide, no se hereda.
+- `requirements/README.md`: párrafo **la fecha del veredicto también va en el paréntesis**.
+  `AGENTS.md` §13: dos filas nuevas, el párrafo **un hook que avisa sin decidir** y la rotación de sección.
 
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 

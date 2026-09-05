@@ -31,6 +31,13 @@ Cierran el lazo de hallazgos para que no haya deriva silenciosa:
 queda en el REQ, que es donde sirve. Poner la evidencia al lado de la afirmación es media razón
 de ser de este arnés.
 
+**La fecha del veredicto también va en el paréntesis, con su ronda:** `QA: aprobado (R-045, 2026-09-01)`.
+Un veredicto es una foto, y una foto sólo vale si el sujeto estaba quieto: un `aprobado` sin fecha es
+indistinguible de uno inventado y sobrevive a los cambios del código que juzga. Si el proyecto enciende
+`veredictos.exigir_fecha` en `.arnes/config.json`, el hook exige la fecha; con
+`veredictos.caducan_con_codigo` no deja cerrar un veredicto anterior al último commit que tocó el código
+de la app, ni con cambios sin commit en ese código.
+
 > **Y por eso mismo, un matiz que cambia el veredicto NO va entre paréntesis: es otro veredicto.**
 > Una auditoría preventiva se escribe `Seguridad: preventiva`, no `aprobado (preventiva)`. Si
 > escribes `aprobado (con reservas)` contará como **aprobado**, porque el paréntesis significa

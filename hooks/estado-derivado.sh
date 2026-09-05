@@ -84,7 +84,14 @@ arnes_estado_derivado() {
     esac
     # Solo lo ABIERTO va a la tabla: el bloque responde "donde quedamos".
     if [ "$est" != "$ARNES_ESTADO_DONE" ]; then
-      filas+="| ${base%.md} | ${est:-—} | ${ARNES_QA:-—} | ${ARNES_SEG:-—} | ${ARNES_RIGOR:-—} | ${ARNES_HALL:-—} |"$'\n'
+      # Celdas recortadas a 40: medido en un proyecto con 57 REQ, cuatro celdas de
+      # veredicto eran el 37 % del bloque (la mayor, 1 296 caracteres sin un espacio,
+      # que ademas rompe la tabla). El bloque responde "donde quedamos"; para eso basta
+      # ver que la maquina lee `aprobadoconlacondicion…` y no `aprobado`.
+      arnes_recorta "${ARNES_QA:-—}" 40;   local c_qa_v="$ARNES_CORTO"
+      arnes_recorta "${ARNES_SEG:-—}" 40;  local c_seg_v="$ARNES_CORTO"
+      arnes_recorta "${ARNES_HALL:-—}" 40; local c_hall_v="$ARNES_CORTO"
+      filas+="| ${base%.md} | ${est:-—} | $c_qa_v | $c_seg_v | ${ARNES_RIGOR:-—} | $c_hall_v |"$'\n'
     fi
   done <<< "$extraidos"
 

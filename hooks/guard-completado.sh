@@ -148,6 +148,19 @@ arnes_guard_completado() {
   else arnes_campos_req "$disk" "$nuevo"; fi
   qa="$ARNES_QA"; seg="$ARNES_SEG"; sens="$ARNES_SENS"; rigor="$ARNES_RIGOR"
 
+  # --- Aviso al ESCRIBIR un veredicto fuera del vocabulario (no deniega) ----------
+  # Medido en un proyecto real: cuatro REQ llevaban semanas con un `QA:` que la puerta
+  # no reconoce, y nadie lo supo hasta que un cierre fallo. El momento de escribir un
+  # veredicto no es el momento de bloquear a nadie: se AVISA aqui, que es donde se
+  # comete, y solo si ESTA edicion toca el campo. Llega a la persona por `systemMessage`
+  # (ver arnes_aviso en lib.sh); tools/arnes-lectura.sh lo enseña despues en frio.
+  if [ -n "$qa" ] && ! arnes_en_vocab "$qa" "$ARNES_VOCAB_QA" && grep -q 'QA:' <<< "$nuevo"; then
+    arnes_aviso "'$rel': 'QA:${ARNES_QA_CRUDO}' se lee como <$qa>, que NO es un veredicto ($ARNES_VOCAB_QA). Asi este REQ no podra cerrarse. Un matiz va entre parentesis: 'QA: aprobado (…)'; un veredicto distinto es otro valor."
+  fi
+  if [ -n "$seg" ] && ! arnes_en_vocab "$seg" "$ARNES_VOCAB_SEG" && grep -q 'Seguridad:' <<< "$nuevo"; then
+    arnes_aviso "'$rel': 'Seguridad:${ARNES_SEG_CRUDO}' se lee como <$seg>, que NO es un veredicto ($ARNES_VOCAB_SEG). Si el rigor es critico, este REQ no podra cerrarse."
+  fi
+
   # --- Orden del ciclo: seguridad no firma lo que QA no ha validado -------------
   # `AGENTS.md` §6 fija desarrollador -> qa-tester -> auditor-seguridad. La regla
   # ya estaba escrita; lo que faltaba es que se cumpliera. Buscando paralelismo se
@@ -220,6 +233,49 @@ arnes_guard_completado() {
           arnes_deny "ARNES: no se puede completar '$rel': su rigor efectivo es 'critico' y el veredicto de seguridad es '${seg:-ausente}' (se requiere 'Seguridad: aprobado'). El control hallado debe quedar como NFR antes de cerrar (AGENTS.md §9)."
         fi ;;
     esac
+
+    # --- Veredicto FECHADO y no CADUCO (opt-in del proyecto) -------------------------
+    # Medido en un proyecto real: cuatro REQ se habrian cerrado con un `QA: aprobado`
+    # emitido contra codigo que cambio DESPUES; otro llevaba `Seguridad: aprobado` a
+    # secas, sin ronda ni fecha, y era el unico que nadie sabia que estaba caduco. Un
+    # veredicto es una foto, y una foto solo vale si el sujeto estaba quieto.
+    #
+    # La fecha viaja en el parentesis de evidencia —`QA: aprobado (R-045, 2026-09-01)`—,
+    # que ya es la convencion del arnes. Con `veredictos.exigir_fecha` un veredicto sin
+    # fecha no cierra. Con `veredictos.caducan_con_codigo` tampoco cierra uno anterior
+    # al ultimo commit que toco `codigo_app.globs`, ni con cambios sin commit en ese
+    # codigo: un veredicto no puede ser posterior a codigo que aun no existe en git.
+    # Y si hay que medir y no se puede (sin git), NO se deja pasar: una puerta que no
+    # puede responder no dice "si".
+    if [ "$ARNES_VER_FECHA" = "true" ] || [ "$ARNES_VER_CADUCAN" = "true" ]; then
+      local -a _vered=("QA:|$ARNES_QA_CRUDO")
+      [ "$rigor" = "critico" ] && _vered+=("Seguridad:|$ARNES_SEG_CRUDO")
+      local fecha_codigo='' commit_codigo='' sucio='' _v _campo _crudo _linea_git
+      if [ "$ARNES_VER_CADUCAN" = "true" ]; then
+        if ! command -v git >/dev/null 2>&1 || ! git -C "$ARNES_PROJ" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+          arnes_deny "ARNES: no se puede completar '$rel': el manifiesto exige que el veredicto no sea anterior al ultimo cambio del codigo (veredictos.caducan_con_codigo) y aqui no hay repositorio git que consultar. Una puerta que no puede medir no deja pasar."
+        fi
+        if [ "${#ARNES_GLOBS[@]}" -gt 0 ]; then
+          _linea_git="$(git -C "$ARNES_PROJ" log -1 --format='%cs %h' -- "${ARNES_GLOBS[@]}" 2>/dev/null)"
+          if [ -n "$_linea_git" ]; then fecha_codigo="${_linea_git%% *}"; commit_codigo="${_linea_git#* }"; fi
+          sucio="$(git -C "$ARNES_PROJ" status --porcelain -- "${ARNES_GLOBS[@]}" 2>/dev/null)"
+          sucio="${sucio%%$'\n'*}"
+        fi
+      fi
+      for _v in "${_vered[@]}"; do
+        _campo="${_v%%|*}"; _crudo="${_v#*|}"
+        arnes_fecha_en "$_crudo"
+        if [ -z "$ARNES_FECHA" ]; then
+          arnes_deny "ARNES: no se puede completar '$rel': '$_campo$_crudo' no lleva fecha y el manifiesto la exige (veredictos). Un veredicto sin fecha no se puede caducar, y uno que no caduca sobrevive a los cambios del codigo que juzga. Escribe ronda y fecha entre parentesis: '$_campo aprobado (R-000, AAAA-MM-DD)'."
+        fi
+        if [ -n "$fecha_codigo" ] && [[ "$ARNES_FECHA" < "$fecha_codigo" ]]; then
+          arnes_deny "ARNES: no se puede completar '$rel': el veredicto '$_campo$_crudo' es del $ARNES_FECHA y el codigo cambio el $fecha_codigo ($commit_codigo). Un veredicto anterior al codigo que juzga no lo juzga: re-validacion requerida (AGENTS.md 9)."
+        fi
+      done
+      if [ -n "$sucio" ]; then
+        arnes_deny "ARNES: no se puede completar '$rel': hay cambios SIN COMMIT en el codigo de la app (${sucio#???}). Un veredicto no puede ser posterior a codigo que aun no existe en git: commitea —o descarta— antes de cerrar (veredictos.caducan_con_codigo)."
+      fi
+    fi
   fi
 
   # --- Clase del hallazgo: no todo hallazgo bloquea ---
@@ -302,5 +358,6 @@ arnes_guard_completado() {
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
   arnes_preludio || exit 0
   arnes_guard_completado
+  arnes_emitir_avisos
   exit 0
 fi
