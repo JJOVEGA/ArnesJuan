@@ -33,7 +33,26 @@
   celdas de veredicto eran el 37 % del bloque, la mayor de 1 296 caracteres sin un espacio, que además
   rompía la tabla.
 
-Sesenta y un casos nuevos en el banco (257) en cuatro secciones nuevas y dos existentes. Cada mecanismo
+### Corregido — cuatro defectos de 1.30.2, medidos al usarla y al revisarla
+- **`tools/arnes-lectura.sh` no aplicaba la regla del paréntesis a `Estado:`**, y la puerta sí (desde
+  1.26.0): `Estado: en-revisión (2026-08-25, …)` salía como *«ninguna puerta lo reconoce»*. Medido en
+  un proyecto real: 28 de 42 anomalías eran falsas, y el ruido enterraba las 14 reales. Un informe que
+  lee distinto de la puerta que informa miente. Mismo lector para los tres campos.
+- **Faltaba `con-hallazgos` en el vocabulario de `Seguridad:`.** Entre `pendiente` («no he mirado») y
+  `vetado` (freno formal con remedio, dueño y umbral) no había forma de decir lo intermedio, que es el
+  estado más común de una auditoría real; cinco REQ ya lo escribían. Ahora es válido y, como los demás
+  valores distintos de `aprobado`, no cierra un REQ crítico.
+- **Un Edit que sustituía sólo el valor cerraba el REQ sin puertas** (revisión externa de 1.30.2):
+  `old_string: "en-revisión"`, `new_string: "completado"` — el fragmento no dice «Estado:», el grep
+  sobre el fragmento exigía la palabra y salía antes de las puertas. La transición se lee ahora del
+  **documento reconstruido**: la cabecera en disco no decía el estado terminal y la resultante sí. El
+  grep sobre el fragmento queda sólo para `Write` y para cuando no se pudo reconstruir.
+- **El cuerpo de un heredoc sin citar no es sólo texto** (misma revisión): bash ejecuta `$(…)` y los
+  acentos graves dentro de `<<EOF`, y `$(echo x > src/generated.ts)` escribía el archivo y pasaba.
+  Con el delimitador sin citar, las líneas con `$(` o acento grave se conservan y se analizan; con el
+  delimitador citado (`<<'EOF'`) todo el cuerpo es literal y se descuenta entero.
+
+Sesenta y ocho casos nuevos en el banco (264) en cuatro secciones nuevas y cuatro existentes. Cada mecanismo
 se sondeó con controles positivos y negativos antes de escribir sus casos.
 
 ## [1.30.2] — 2026-09-05

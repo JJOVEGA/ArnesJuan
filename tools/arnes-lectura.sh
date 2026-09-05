@@ -90,7 +90,11 @@ for f in "$PROY/$REQ_DIR"/*.md; do
     esac
   done <<< "$texto"
 
-  arnes_norm_campo "$cru_est"; est="$ARNES_CAMPO"
+  # EL MISMO LECTOR QUE LA PUERTA, tambien para `Estado:`: la regla del parentesis se le
+  # aplica desde 1.26.0, y este informe no lo hacia. Medido en un proyecto real: 28 de 42
+  # anomalias eran falsas, todas `Estado: en-revisión (fecha, ...)`. Un informe que lee
+  # distinto de la puerta que informa miente, y el ruido enterraba las 14 reales.
+  arnes_norm_campo "$cru_est"; arnes_veredicto "$ARNES_CAMPO"; est="$ARNES_VEREDICTO"
   if [ -z "$est" ]; then notas=$((notas+1)); continue; fi
   reqs=$((reqs+1))
 

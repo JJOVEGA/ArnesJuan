@@ -274,7 +274,7 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 | Ningún agente ejecuta git destructivo: `clean`, `reset --hard`, `checkout .`, `restore .`, `stash` (`git.prohibidos`) | §10 | `guard-git` | `Bash` |
 
 **Un hook que avisa sin decidir.** Al escribir `QA:` o `Seguridad:` con un valor fuera del vocabulario
-(`pendiente` | `aprobado` | `con-hallazgos`; `n/a` | `pendiente` | `aprobado` | `preventiva` | `vetado`),
+(`pendiente` | `aprobado` | `con-hallazgos`; `n/a` | `pendiente` | `aprobado` | `con-hallazgos` | `preventiva` | `vetado`),
 el arnés lo dice **en ese momento** con un mensaje a la persona, sin denegar la edición: ese REQ no
 podrá cerrarse y, sin el aviso, nadie lo sabría hasta el cierre. Un matiz va entre paréntesis
 (`aprobado (con residual declarado, R-045, 2026-09-01)`); un veredicto distinto es otro valor.

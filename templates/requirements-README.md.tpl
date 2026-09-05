@@ -44,7 +44,7 @@ de la app, ni con cambios sin commit en ese código.
 > una sola cosa.
 - `QA:` — veredicto del `qa-tester`: `pendiente` | `aprobado` | `con-hallazgos`.
 - `Seguridad:` — veredicto del `auditor-seguridad`: `n/a` | `pendiente` | `aprobado` |
-  `preventiva` | `vetado` (al marcar el REQ `Sensible a seguridad: sí`, pásalo de
+  `con-hallazgos` | `preventiva` | `vetado` (al marcar el REQ `Sensible a seguridad: sí`, pásalo de
   `n/a` a `pendiente`).
 
 **El orden importa:** `Seguridad: aprobado` no se escribe mientras `QA:` siga en `pendiente` o

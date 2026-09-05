@@ -187,14 +187,23 @@ arnes_guard_completado() {
 
   # ¿El cambio deja el REQ en `completado`? Normalizado: case-insensitive y espacios.
   # Here-string en vez de `printf | grep`: la tubería costaba un fork de más.
-  grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" <<< "$nuevo" || return 0
-  # Y la cabecera del documento RESULTANTE tiene que decirlo: una linea de historia
-  # `- 2026-08-01: Estado: completado (revertido)` no es una transicion, y antes hacia
-  # correr las puertas —y denegar— sobre un REQ cuya cabecera seguia en revision.
+  arnes_norm_campo "$estado_done"; done_norm="$ARNES_CAMPO"
   if [ "$reconstruido" -eq 1 ]; then
-    arnes_estado_cabecera "$resultante"
-    arnes_norm_campo "$estado_done"; done_norm="$ARNES_CAMPO"
-    [ "$ARNES_ESTADO" = "$done_norm" ] || return 0
+    # Reconstruido: la transicion se lee del DOCUMENTO, no del fragmento. Medido (1.30.2):
+    # un Edit que sustituia SOLO el valor `en-revisión` por `completado` —su `new_string`
+    # no dice "Estado:"— cerraba el REQ con QA pendiente, porque el grep sobre el
+    # fragmento exigia la palabra y salia antes de las puertas. Y al reves: una linea de
+    # historia `Estado: completado (revertido)` no es una transicion. Transicion = la
+    # cabecera en disco NO decia el estado terminal y la cabecera resultante SI lo dice.
+    local est_desp est_antes
+    arnes_estado_cabecera "$resultante"; est_desp="$ARNES_ESTADO"
+    arnes_estado_cabecera "$disk";       est_antes="$ARNES_ESTADO"
+    [ "$est_desp" = "$done_norm" ] || return 0
+    [ "$est_antes" != "$done_norm" ] || return 0
+  else
+    # Sin documento reconstruido (Write, o un old_string que no esta en el archivo): el
+    # fragmento, como siempre. Case-insensitive y con espacios; here-string, sin tuberia.
+    grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" <<< "$nuevo" || return 0
   fi
 
   # --- Nivel de rigor: cuanta ceremonia exige ESTE requerimiento ---

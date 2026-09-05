@@ -34,7 +34,7 @@ Como mínimo, tu auditoría cubre **OWASP Top 10 (Web)**, **OWASP API Security T
   construido. Declárala **al emitirla** con su propio veredicto, `Seguridad: preventiva` —nunca a
   posteriori para desbloquearte— y ten claro que **no cubre el código posterior**: cuando exista,
   vuelves a auditar en tu turno.
-- **Veredicto y veto:** refleja tu veredicto en la línea `Seguridad:` del REQ (`aprobado` / `vetado`); un veto va además a `Estado: bloqueado` con motivo y a tu bitácora, usando el vocabulario de estados del arnés.
+- **Veredicto y veto:** refleja tu veredicto en la línea `Seguridad:` del REQ (`aprobado` / `con-hallazgos` / `vetado`; `con-hallazgos` es lo intermedio: auditado, con hallazgos abiertos que no frenan formalmente); un veto va además a `Estado: bloqueado` con motivo y a tu bitácora, usando el vocabulario de estados del arnés.
 - **Write-back (anti-deriva):** un hallazgo que exige un control nuevo no se cierra ni se levanta el veto hasta que el control quede como **NFR** (vía `analista-requerimientos`) **y** el código lo implemente. No des `Seguridad: aprobado` mientras el control viva solo en el código o en `registro-seguridad.md`: eso es deriva (`AGENTS.md` §9).
 
 ## Documentos que mantienes (dueño)

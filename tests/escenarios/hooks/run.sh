@@ -297,6 +297,12 @@ check "here-string (<<<) no es heredoc: el cp de detras sigue viendose -> deny" 
   "$(emite_bash 'cat <<< "hola" ; cp /tmp/x.ts src/' "" "")"
 check "aritmetica \$((1<<n)) no es heredoc: el cp de la linea siguiente sigue viendose -> deny" deny guard-codigo.sh \
   "$(emite_bash $'echo $((1<<n))\ncp /tmp/x.ts src/' "" "")"
+# Un heredoc SIN citar ejecuta `$(...)` y los acentos graves de su cuerpo (medido en 1.30.2: el
+# archivo se escribia y el hook permitia).
+check "heredoc SIN citar: \$(echo x > src/generated.ts) en el cuerpo SE EJECUTA -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo x > src/generated.ts)\nEOF' "" "")"
+check "heredoc SIN citar: acento grave en el cuerpo tambien se ejecuta -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n`cp /tmp/x.ts src/`\nEOF' "" "")"
 check_motivo "el deny por Bash admite que la cobertura es parcial" "parcial" \
   guard-codigo.sh "$(emite_bash 'echo x > src/app.ts' "" "")"
 check "desarrollador (con prefijo) escribe por Bash -> allow" allow guard-codigo.sh "$(emite_bash 'echo x > src/app.ts' "a10" "arnes-juan:desarrollador")"
@@ -318,6 +324,8 @@ check "heredoc: 'echo x > src/otro.ts' en el cuerpo -> allow" allow guard-codigo
   "$(emite_bash $'cat <<EOF\nejemplo: echo hola > src/otro.ts\nEOF' "" "")"
 check "heredoc con <<- y sangria: 'tee src/otro.ts' en el cuerpo -> allow" allow guard-codigo.sh \
   "$(emite_bash $'cat <<-EOF\n\tejemplo: tee src/otro.ts\n\tEOF' "" "")"
+check "heredoc CITADO (<<'EOF'): el mismo \$(echo x > src/generated.ts) es texto literal -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<\'EOF\'\n$(echo x > src/generated.ts)\nEOF' "" "")"
 check "coordinadora: redirige un log fuera de los globs -> allow" allow guard-codigo.sh "$(emite_bash 'npm run build > /tmp/build.log 2>&1' "" "")"
 check "qa-tester escribe en tests/ (no es código de app) -> allow" allow guard-codigo.sh "$(emite_bash 'echo x > tests/a.test.ts' "a11" "arnes-juan:qa-tester")"
 
@@ -525,6 +533,18 @@ check "control: MultiEdit que aprueba la CABECERA y cierra -> allow" allow guard
 printf '# REQ-115\r\nEstado: en-revisión\r\nSensible a seguridad: sí\r\nQA: aprobado\r\nSeguridad: pendiente\r\n\r\n## Historial\r\n\r\nSeguridad: pendiente (registro anterior)\r\n' > "$PROJ/requirements/REQ-115.md"
 check "MultiEdit sobre un REQ CRLF: el bypass tambien -> deny" deny guard-completado.sh \
   "$(emite_multiedit "$PROJ/requirements/REQ-115.md" 'Estado: en-revisión' 'Estado: completado' 'Seguridad: pendiente (registro anterior)' 'Seguridad: aprobado (A-009)')"
+# 1.30.2 dejaba pasar un Edit que sustituia SOLO el valor: `new_string="completado"` no dice
+# "Estado:" y el grep sobre el fragmento exigia la palabra, saliendo antes de las puertas.
+# La transicion se lee del documento: la cabecera no decia `completado` y ahora si.
+printf '# REQ-116\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n' > "$PROJ/requirements/REQ-116.md"
+check "Edit que sustituye SOLO el valor 'en-revisión' por 'completado', QA pendiente -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-116.md" 'en-revisión' 'completado')"
+printf '# REQ-117\nEstado: en-revisión\nSensible a seguridad: no\nQA: aprobado\nSeguridad: n/a\n' > "$PROJ/requirements/REQ-117.md"
+check "control: el mismo Edit con QA aprobado -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-117.md" 'en-revisión' 'completado')"
+printf '# REQ-118\nEstado: completado\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n\n## Historial\n- nota\n' > "$PROJ/requirements/REQ-118.md"
+check "un REQ YA completado: editar su historia no es una transicion -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-118.md" '- nota' '- nota ampliada')"
 # Y al reves: `Estado: completado` escrito SOLO en la historia no es una transicion.
 check "Edit: 'Estado: completado' solo en la historia NO es una transicion -> allow" allow guard-completado.sh \
   "$(emite_edit_real "$PROJ/requirements/REQ-114.md" 'Seguridad: pendiente (registro anterior)' $'Seguridad: pendiente (registro anterior)\n- 2026-08-01: Estado: completado (intento anterior, revertido)')"
@@ -1150,6 +1170,11 @@ if [ -z "$FILTRO" ] || printf '%s' "arnes-lectura" | grep -qi -- "$FILTRO"; then
 LECTURA="$HOOKS_DIR/../tools/arnes-lectura.sh"
 mkreq "$PROJ/requirements/REQ-240.md" "no" "aprobado con residual declarado" "n/a"
 mkreq "$PROJ/requirements/REQ-241.md" "no" "aprobado" "n/a"
+# `Estado:` con parentesis de evidencia es VALIDO: la puerta le aplica la regla del parentesis
+# desde 1.26.0 y el informe no lo hacia (medido: 28 de 42 anomalias eran falsas por esto). Y
+# `Seguridad: con-hallazgos` existe desde 1.31.0. Un `Estado:` fuera de la lista SI se reporta.
+printf '# REQ-242\nEstado: en-revisión (2026-08-25, reabierto por R-031)\nSensible a seguridad: no\nQA: pendiente\nSeguridad: con-hallazgos\n' > "$PROJ/requirements/REQ-242.md"
+printf '# REQ-243\nEstado: inventado\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n' > "$PROJ/requirements/REQ-243.md"
 salida="$(bash "$LECTURA" "$PROJ" 2>"$ERRLOG")"; rc=$?
 if [ "$rc" -eq 1 ] && printf '%s' "$salida" | grep -q 'aprobadoconresidualdeclarado'; then
   echo "  PASS  arnes-lectura: un veredicto fuera del vocabulario sale 1 y lo nombra"; PASS=$((PASS+1))
@@ -1157,17 +1182,22 @@ else
   echo "  FAIL  arnes-lectura: un veredicto fuera del vocabulario: rc=$rc (esperado 1)"; diag
   printf '%s\n' "$salida" | head -12 | sed 's/^/          salida| /'; FAIL=$((FAIL+1))
 fi
-if printf '%s' "$salida" | grep -q 'NO LEE COMO ESTÁN ESCRITOS (1)'; then
-  echo "  PASS  arnes-lectura: ...y cuenta 1 anomalia, no 0"; PASS=$((PASS+1))
+if printf '%s' "$salida" | grep -q 'NO LEE COMO ESTÁN ESCRITOS (2)'; then
+  echo "  PASS  arnes-lectura: ...y cuenta 2 anomalias (el QA y el Estado inventado), ni 0 ni 4"; PASS=$((PASS+1))
 else
-  echo "  FAIL  arnes-lectura: ...el contador no dice 1"; FAIL=$((FAIL+1))
+  echo "  FAIL  arnes-lectura: ...el contador no dice 2"; printf '%s\n' "$salida" | head -20 | sed 's/^/          salida| /'; FAIL=$((FAIL+1))
 fi
-mkreq "$PROJ/requirements/REQ-240.md" "no" "aprobado" "n/a"
+if printf '%s' "$salida" | grep -q 'REQ-243 *Estado:'; then
+  echo "  PASS  arnes-lectura: un Estado fuera de estados.todos SI se reporta"; PASS=$((PASS+1))
+else
+  echo "  FAIL  arnes-lectura: el Estado inventado no se reporta"; FAIL=$((FAIL+1))
+fi
+mkreq "$PROJ/requirements/REQ-240.md" "no" "aprobado" "n/a"; rm -f "$PROJ/requirements/REQ-243.md"
 salida="$(bash "$LECTURA" "$PROJ" 2>"$ERRLOG")"; rc=$?
 if [ "$rc" -eq 0 ] && printf '%s' "$salida" | grep -q 'Ningún valor anómalo'; then
-  echo "  PASS  arnes-lectura: control, con todo en vocabulario sale 0 y lo dice"; PASS=$((PASS+1))
+  echo "  PASS  arnes-lectura: control, todo en vocabulario (con un Estado entre parentesis) sale 0"; PASS=$((PASS+1))
 else
-  echo "  FAIL  arnes-lectura: control: rc=$rc (esperado 0)"; diag; FAIL=$((FAIL+1))
+  echo "  FAIL  arnes-lectura: control: rc=$rc (esperado 0)"; diag; printf '%s\n' "$salida" | head -12 | sed 's/^/          salida| /'; FAIL=$((FAIL+1))
 fi
 fi
 
@@ -1379,7 +1409,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=257
+CASOS_ESPERADOS=264
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)

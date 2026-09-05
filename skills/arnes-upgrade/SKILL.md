@@ -327,8 +327,11 @@ nada.
   veredictos lleven fecha, y los REQ existentes seguramente no la llevan —mídelo con
   `tools/arnes-lectura.sh`—. Un proyecto que lo encienda sin re-validar no cierra ningún REQ hasta
   hacerlo. Puede ser justo lo que quiere; se decide, no se hereda.
-- `requirements/README.md`: párrafo **la fecha del veredicto también va en el paréntesis**.
+- `requirements/README.md`: párrafo **la fecha del veredicto también va en el paréntesis**, y
+  `Seguridad: con-hallazgos` pasa a ser un valor válido (lo intermedio entre `pendiente` y `vetado`).
   `AGENTS.md` §13: dos filas nuevas, el párrafo **un hook que avisa sin decidir** y la rotación de sección.
+- Corre `tools/arnes-lectura.sh` **después** de instalar: hasta 1.30.2 reportaba como anómalo todo
+  `Estado:` con paréntesis de evidencia, y no lo era.
 
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 

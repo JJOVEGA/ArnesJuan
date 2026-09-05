@@ -366,11 +366,17 @@ arnes_bash_sin_texto() {  # <comando> -> ARNES_SIN_TEXTO
   #    `<<<` es una here-string y `1<<2` es aritmetica, y un delimitador que no fuera
   #    palabra tragaria el resto del comando —fallo abierto—. Sin procesos.
   if [[ "$limpio" == *'<<'* ]]; then
-    local sin='' linea delim='' dentro=0 resto sinhs
+    local sin='' linea delim='' dentro=0 citado=0 resto sinhs
     while IFS= read -r linea || [ -n "$linea" ]; do
       if [ "$dentro" -eq 1 ]; then
         resto="${linea#"${linea%%[![:blank:]]*}"}"     # `<<-` admite sangria delante del cierre
-        [ "$resto" = "$delim" ] && dentro=0
+        if [ "$resto" = "$delim" ]; then dentro=0; continue; fi
+        # Un heredoc SIN citar (`<<EOF`) no es solo texto: bash EJECUTA `$(...)` y los
+        # acentos graves de su cuerpo. Medido (1.30.2): `$(echo x > src/generated.ts)`
+        # dentro de `<<EOF` escribia el archivo y pasaba. Esas lineas se conservan y se
+        # analizan; el resto del cuerpo es texto. Con el delimitador citado (`<<'EOF'`,
+        # `<<"EOF"`, `<<\EOF`) todo el cuerpo es literal y se descuenta entero.
+        if [ "$citado" -eq 0 ]; then case "$linea" in *'$('*|*'`'*) sin+="$linea"$'\n' ;; esac; fi
         continue
       fi
       sin+="$linea"$'\n'
@@ -380,6 +386,7 @@ arnes_bash_sin_texto() {  # <comando> -> ARNES_SIN_TEXTO
         *'<<'*)
         resto="${sinhs#*<<}"; resto="${resto#-}"
         resto="${resto#"${resto%%[! ]*}"}"             # espacios entre `<<` y la palabra
+        citado=0; case "$resto" in \'*|\"*|\\*) citado=1 ;; esac
         delim="${resto%%[[:space:]\;\|\&\)\<\>]*}"
         delim="${delim#\'}"; delim="${delim%\'}"; delim="${delim#\"}"; delim="${delim%\"}"
         delim="${delim#\\}"
@@ -408,7 +415,10 @@ arnes_bash_sin_texto() {  # <comando> -> ARNES_SIN_TEXTO
 arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
   local cmd="$1" limpio i j n tok
   arnes_bash_sin_texto "$cmd"; limpio="$ARNES_SIN_TEXTO"
-  # 2) Separa los operadores de su operando: `>src/a.ts` -> `> src/a.ts`.
+  # 2) Separa los operadores de su operando: `>src/a.ts` -> `> src/a.ts`. Y las sustituciones
+  #    `$( ... )` pierden sus parentesis, para que `$(echo x > src/a.ts)` deje `src/a.ts` limpio.
+  limpio="${limpio//\$(/ }"
+  limpio="${limpio//)/ }"
   limpio="${limpio//>|/>}"
   limpio="${limpio//>>/>}"
   limpio="${limpio//>/ > }"
@@ -641,7 +651,10 @@ arnes_campos_normaliza() {   # <qa> <seg> <sens> <hall> <rigor> -> ARNES_QA/SEG/
 # Vocabulario CERRADO de los veredictos, en UN sitio: lo usan la puerta (aviso al
 # escribir un valor que no existe) y tools/arnes-lectura.sh. Dos copias se desfasan.
 ARNES_VOCAB_QA='pendiente|aprobado|con-hallazgos'
-ARNES_VOCAB_SEG='n/a|pendiente|aprobado|preventiva|vetado'
+# `con-hallazgos` tambien en Seguridad (1.31.0): entre `pendiente` ("no he mirado") y `vetado`
+# (freno formal con remedio, dueno y umbral) faltaba lo intermedio, que es el estado mas comun
+# de una auditoria real; cinco REQ de un proyecto ya lo escribian porque era lo que querian decir.
+ARNES_VOCAB_SEG='n/a|pendiente|aprobado|con-hallazgos|preventiva|vetado'
 ARNES_VOCAB_RIGOR='ligero|estandar|critico'
 arnes_en_vocab() {   # <valor normalizado> <vocab a|b|c> -> 0 si es uno de ellos (exacto, no por prefijo)
   case "|$2|" in *"|$1|"*) return 0 ;; esac
