@@ -718,6 +718,28 @@ if [ "$EST_RC" -eq 0 ]; then echo "  PASS  ...y sigue saliendo 0"; PASS=$((PASS+
 else echo "  FAIL  salio $EST_RC"; FAIL=$((FAIL+1)); fi
 rm -rf "$EST_RAIZ"
 
+# --- Contencion FISICA: un enlace simbolico no saca la escritura del proyecto ------
+# La contencion lexica de 1.29.0 bloqueaba `..`, absolutas y `~`. Una revision externa
+# reprodujo en 1.29.1 que `docs -> /externo` con `archivo: docs/ESTADO.md` escribia
+# fuera. En Windows sin modo desarrollador `ln -s` no crea un enlace real, asi que aqui
+# el caso sale SKIP y lo ejecuta el CI en Linux: es exactamente para lo que esta.
+SYM_RAIZ="$(mktemp -d)"; SYM_P="$SYM_RAIZ/proyecto"; SYM_EXT="$SYM_RAIZ/externo"
+mkdir -p "$SYM_P/.arnes" "$SYM_P/requirements" "$SYM_EXT"
+ln -s "$SYM_EXT" "$SYM_P/docs" 2>/dev/null
+if [ -L "$SYM_P/docs" ]; then
+  jq '.estado_derivado = {activo:true, archivo:"docs/ESTADO.md"}' "$PROJ/.arnes/config.json" > "$SYM_P/.arnes/config.json"
+  printf '## Pendientes\n\n## Resueltas\n' > "$SYM_P/PENDING_APPROVAL.md"
+  corre_estado "$SYM_P"; SYM_RC=$?
+  if [ ! -e "$SYM_EXT/ESTADO.md" ]; then echo "  PASS  docs -> externo (symlink): el bloque derivado NO se escribe fuera"; PASS=$((PASS+1))
+  else echo "  FAIL  el bloque derivado atraveso el symlink y se escribio FUERA"; FAIL=$((FAIL+1)); fi
+  if [ "$SYM_RC" -eq 0 ]; then echo "  PASS  ...y sigue saliendo 0"; PASS=$((PASS+1))
+  else echo "  FAIL  salio $SYM_RC"; FAIL=$((FAIL+1)); fi
+else
+  echo "  SKIP  docs -> externo (symlink): el bloque derivado NO se escribe fuera  (sin symlinks reales en esta plataforma)"
+  echo "  SKIP  ...y sigue saliendo 0  (sin symlinks reales en esta plataforma)"
+fi
+rm -rf "$SYM_RAIZ"
+
 # Apagable: quien no lo quiera, lo apaga.
 EST_OFF="$(mktemp -d)"; mkdir -p "$EST_OFF/.arnes" "$EST_OFF/requirements" "$EST_OFF/docs"
 jq '.estado_derivado.activo = false' "$PROJ/.arnes/config.json" > "$EST_OFF/.arnes/config.json"
@@ -894,6 +916,22 @@ rot_check "rotacion con ruta '../fuera.md' NO toca nada fuera del proyecto" "$RO
   "$(wc -c < "$ROT_RAIZ/fuera.md")-$([ -e "$ROT_RAIZ/fuera-archivo.md" ] && echo si || echo no)"
 rm -rf "$ROT_RAIZ"
 
+# La misma contencion fisica para la rotacion: un artefacto bajo un directorio enlazado
+# hacia fuera no se toca. SKIP donde no hay symlinks reales; lo ejecuta el CI en Linux.
+SYR_RAIZ="$(mktemp -d)"; SYR_P="$SYR_RAIZ/proyecto"; SYR_EXT="$SYR_RAIZ/externo"
+mkdir -p "$SYR_P/.arnes" "$SYR_EXT"
+ln -s "$SYR_EXT" "$SYR_P/bitacoras" 2>/dev/null
+if [ -L "$SYR_P/bitacoras" ]; then
+  printf '# fuera\n\n## [1.5.0]\nx\n\n## [1.4.0]\nx\n\n## [1.3.0]\nx\n' > "$SYR_EXT/LOG.md"; SYR_ANTES="$(wc -c < "$SYR_EXT/LOG.md")"
+  printf '{ "agentes": { "agente_codigo": "desarrollador" }, "rotacion": { "activo": true, "umbral_bytes": 10, "conservar_secciones": 1, "artefactos": ["bitacoras/LOG.md"] } }' > "$SYR_P/.arnes/config.json"
+  rot_corre "$SYR_P"
+  rot_check "rotacion bajo un directorio symlink hacia fuera NO toca el externo" "$SYR_ANTES-no" \
+    "$(wc -c < "$SYR_EXT/LOG.md")-$([ -e "$SYR_EXT/LOG-archivo.md" ] && echo si || echo no)"
+else
+  echo "  SKIP  rotacion bajo un directorio symlink hacia fuera NO toca el externo  (sin symlinks reales en esta plataforma)"
+fi
+rm -rf "$SYR_RAIZ"
+
 # Inerte en repo ajeno, como el resto de hooks.
 ROT_AJENO="$(mktemp -d)"; printf '# CHANGELOG de OTRO\n## [9.9.9]\nx\n' > "$ROT_AJENO/CHANGELOG.md"
 rot_corre "$ROT_AJENO"; ROT_RC=$?
@@ -1006,7 +1044,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=169
+CASOS_ESPERADOS=172
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)

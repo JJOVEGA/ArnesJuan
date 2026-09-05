@@ -23,6 +23,9 @@ entrada de `hooks.json` no tenían bit de ejecución y **en Unix ningún hook co
 recibía *Permission denied* y seguía. Lo encontró una revisión externa. Desde 1.29.0 un CI en
 `ubuntu-latest` comprueba el bit como propiedad cerrada y corre el banco entero en cada PR.
 
+El CI **informa pero aún no impide**: convertirlo en puerta obligatoria de `main` exige admin del repo.
+Cómo hacerlo, en `docs/gobernanza/ci-como-puerta.md`.
+
 ## El plugin no se actualiza solo
 Medido en un proyecto real (2026-09-04): el proyecto corría **1.13.0, del 3 de agosto**, con
 **1.21.0** publicada. Un mes de correcciones —incluidas tres puertas que no existían— que nunca

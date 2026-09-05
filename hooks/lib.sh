@@ -165,6 +165,25 @@ arnes_ruta_interna() {   # <ruta configurada> -> 0 si es interna, 1 si no
   return 0
 }
 
+# La contencion LEXICA de arriba no basta: un enlace simbolico `docs -> /externo`
+# atraviesa una ruta que parece interna. Medido por una revision externa en 1.29.1:
+# `estado_derivado.archivo = docs/ESTADO.md` con `docs` enlazado escribio fuera del
+# proyecto. Esta es la contencion FISICA: el directorio destino, RESUELTO, tiene que
+# quedar dentro de la raiz RESUELTA. `pwd -P` es POSIX y resuelve enlaces; cuesta dos
+# subshells, que se pagan solo en una parada de agente, nunca en un PreToolUse.
+#
+# Se comprueba el DIRECTORIO padre, no el archivo: el archivo puede no existir aun
+# (primera escritura) y un archivo enlazado se escribe donde apunte su directorio.
+arnes_dir_interno() {   # <directorio existente> -> 0 si su ruta fisica queda dentro del proyecto
+  local d="$1" fis raiz
+  [ -d "$d" ] || return 1
+  fis="$(cd -- "$d" 2>/dev/null && pwd -P)" || return 1
+  raiz="$(cd -- "$ARNES_PROJ" 2>/dev/null && pwd -P)" || return 1
+  case "$fis/" in "$raiz/"*) return 0 ;; esac
+  return 1
+}
+
+
 # Ruta canónica para COMPARAR (no para abrir): separadores `/` y, en Windows, forma
 # mixta `c:/...` con la unidad en minúscula. Fuera de Windows es la identidad.
 arnes_norm_path() {   # <ruta> -> ARNES_NORM

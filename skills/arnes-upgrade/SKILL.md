@@ -294,6 +294,12 @@ nada.
 - `QA:` ausente sigue permitido. **Pregunta** si quiere que la migración añada `QA: pendiente` a los
   REQ que no lo declaran: es el paso previo para que una versión futura exija el campo.
 
+### Hacia 1.29.2
+- Nada que migrar. Si el proyecto tiene `docs/` o algún directorio de bitácoras como **enlace
+  simbólico hacia fuera del repositorio**, desde ahora el arnés no escribe ahí (y sale 0). Avísale
+  al usuario: o mueve el destino dentro del proyecto, o acepta que la continuidad y la rotación no
+  operen sobre ese directorio.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

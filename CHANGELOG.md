@@ -2,6 +2,28 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.29.2] — 2026-09-05
+### Corregido — la contención de rutas era léxica; ahora es física
+1.29.0 bloqueaba `..`, absolutas y `~`. Una revisión externa reprodujo en 1.29.1 que un **enlace
+simbólico** `docs -> /externo` con `estado_derivado.archivo: docs/ESTADO.md` escribía fuera del
+proyecto, y la rotación tocaba un archivo externo a través de un directorio enlazado. La cadena
+parecía interna; el disco no. *«No pueden salir del proyecto»* era demasiado absoluto.
+
+Ahora, además de la regla léxica, **el directorio destino se resuelve físicamente** con `pwd -P`
+—POSIX, resuelve enlaces— y tiene que quedar dentro de la raíz también resuelta. Se comprueba el
+directorio y no el archivo: el archivo puede no existir aún, y uno enlazado se escribe donde apunte
+su directorio. Cuesta dos subshells, que se pagan sólo en una parada de agente.
+
+**Los casos del banco que lo fijan salen `SKIP` en Windows** —sin modo desarrollador `ln -s` no
+crea un enlace real— **y corren de verdad en el CI de Linux.** Es la primera vez que un caso existe
+*porque* hay CI: sin él no habría dónde ejecutarlo.
+
+### Pendiente del dueño del repo — el CI aún no es puerta de `main`
+El ruleset `proteger-main` no exige `hooks-en-linux`; un PR rojo se puede fusionar. Editarlo exige
+admin, y la cuenta que opera el arnés tiene `push` pero no `admin`: la API devuelve 404. El
+procedimiento exacto y la regla en JSON están en `docs/gobernanza/ci-como-puerta.md`. Hasta
+entonces el CI **informa pero no impide**, y está escrito así.
+
 ## [1.29.1] — 2026-09-05
 ### Corregido — el banco tenía un caso que desaparecía en Linux, y el CI lo cazó en su primer viaje
 El primer run del banco fuera de Windows abortó con **«168 casos y se esperaban 169»**: el mismo

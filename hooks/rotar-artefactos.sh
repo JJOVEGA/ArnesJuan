@@ -48,6 +48,7 @@ arnes_rotar_uno() {
   local f="$1" orden="$2" umbral="$3" conservar="$4" destino tam texto linea
   local preambulo='' seccion='' secciones=0 i=0 corte
   [ -f "$f" ] || return 0
+  arnes_dir_interno "${f%/*}" || return 0   # contencion FISICA: el directorio del artefacto, resuelto, dentro del proyecto
 
   tam="$(wc -c < "$f" 2>/dev/null)" || return 0
   tam="${tam// /}"
