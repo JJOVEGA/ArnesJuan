@@ -2,6 +2,39 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.26.0] — 2026-09-04
+Tres correcciones medidas por un tercer proyecto. Ninguna toca archivos del proyecto.
+
+### Corregido — el orden de rotación es del ARTEFACTO, no del proyecto
+**Era mi error, y del mismo tipo que llevo el día evitando en otros sitios.** `rotacion.orden` era
+un solo valor global, pero medido en un proyecto real el `CHANGELOG.md` crece **por arriba** y
+`docs/seguridad/registro-seguridad.md` **por abajo**. Un orden único no puede servir a los dos, y
+equivocarse archiva **lo más reciente** — justo lo que hay que tener a mano. Con dos bitácoras de
+1,4 MB y 1,3 MB, la función quedaba inservible para una de ellas.
+
+`artefactos` acepta ahora **cadena u objeto**, la misma convención que ya usan las
+`quality_gates`: una cadena hereda los ajustes globales, un objeto declara los suyos
+(`ruta`, `orden`, `umbral_bytes`, `conservar_secciones`). Los manifiestos que hoy declaran una
+lista de nombres siguen funcionando igual.
+
+### Corregido — `Estado:` no llevaba la regla del paréntesis
+1.23.0 hizo que `aprobado (evidencia)` contara como `aprobado`, y no apliqué lo mismo a `Estado:`.
+Medido: el bloque derivado decía **2 completados donde había 9** y metía 44 REQ en «otros».
+
+**La puerta no estaba afectada** — busca el estado terminal en el texto crudo y lo caza igual, con
+fecha o sin ella; está medido. Así que no era un fallo en abierto: era **un tablero que mentía**.
+Serio igual, porque el proyecto que lo reportó tuvo que apagar la continuidad por eso.
+
+### Añadido — la versión instalada se ve en cada parada
+Un proyecto corrió **1.13.0 durante un mes** con 1.24.0 publicada, sin ninguna señal. El bloque
+derivado imprime ahora la versión del plugin instalado y, si el proyecto declara otra en
+`arnes_version`, avisa de **migración pendiente**.
+
+**No consulta la red, a propósito.** Un hook que hace DNS puede colgar una parada, y estos hooks
+tienen como primera invariante no bloquear nunca. Se enseña lo que es gratis — lo instalado contra
+lo declarado. Comparar contra lo publicado es trabajo de `/arnes-upgrade`, que ya tiene red y ya
+acredita la versión de origen.
+
 ## [1.25.0] — 2026-09-04
 ### Cambiado — un `ls` ya no arranca el guardián
 Hasta ahora **cada** comando Bash —`git status`, `ls`, `grep`, `npm test`— arrancaba `guard.sh`, y

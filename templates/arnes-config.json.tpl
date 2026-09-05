@@ -31,8 +31,9 @@
     "activo": false,
     "umbral_bytes": 262144,
     "conservar_secciones": 12,
-    "_doc_orden": "Qué mitad es «lo viejo» NO se adivina. `nuevo-primero` (por defecto) es la convención del CHANGELOG: lo reciente arriba. Un registro cronológico que añade al final necesita `nuevo-al-final`. Equivocarse aquí archiva lo más RECIENTE, que es justo lo que hay que tener a mano.",
+    "_doc_orden": "Qué mitad es «lo viejo» NO se adivina. `nuevo-primero` (por defecto) es la convención del CHANGELOG: lo reciente arriba. Un registro cronológico que añade al final necesita `nuevo-al-final`. Equivocarse aquí archiva lo más RECIENTE, que es justo lo que hay que tener a mano. ESTOS VALORES SON EL DEFECTO: cada artefacto puede declarar el suyo, porque el orden es una propiedad DEL ARTEFACTO. Medido en un proyecto real: el CHANGELOG crece por arriba y el registro de seguridad por abajo, así que un solo orden dejaba la rotación inservible para uno de los dos.",
     "orden": "nuevo-primero",
+    "_doc_artefactos": "Cadena u objeto, la misma convención que `quality_gates`. Una cadena hereda los ajustes de arriba; un objeto declara los suyos: { \"ruta\": \"docs/seguridad/registro.md\", \"orden\": \"nuevo-al-final\", \"umbral_bytes\": 100000, \"conservar_secciones\": 8 }.",
     "artefactos": []
   },
 
