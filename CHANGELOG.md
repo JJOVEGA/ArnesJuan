@@ -2,6 +2,17 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.30.3] — en curso (candidata; gobernada por v1.30.2)
+### Autoalojamiento — el arnés se instala sobre sí mismo
+El repositorio queda inicializado con su propio andamiaje (`arnes-init`, plantillas de 1.30.2):
+`AGENTS.md`, `CLAUDE.md`, `.arnes/config.json` (con `hooks/`, `tools/` y `.github/` como código
+protegido), `requirements/`, `PENDING_APPROVAL.md`, `docs/ESTADO.md`, `ARCHITECTURE.md`,
+`.arnes/plantillas-origen/` y el `pre-commit`. El procedimiento permanente está en
+`docs/gobernanza/autoalojamiento.md`: **la versión estable N gobierna el desarrollo de N+1**.
+Medido antes de editar: la instalación que corre los hooks es 1.30.2 (38b59fb), en
+`~/.claude/plugins/cache/…/1.30.2`, byte a byte igual al tag y distinta del worktree; un `Write`
+de la coordinadora sobre `hooks/` fue denegado por ella.
+
 ## [1.30.2] — 2026-09-05
 ### Corregido — tres fallos medidos por tres revisores distintos el mismo día
 - **FALLO EN ABIERTO: un MultiEdit cerraba el REQ aprobando sólo la línea del historial.** La regla
