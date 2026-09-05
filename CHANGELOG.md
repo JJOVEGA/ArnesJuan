@@ -2,6 +2,50 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.27.0] — 2026-09-04
+### Corregido — la rotación no funcionaba en archivos CRLF, y además fugaba
+**Medido en un proyecto real:** su `CHANGELOG.md` (sin CR) rotó perfecto — 1 421 795 → 36 650
+bytes. Su registro de seguridad (12 857 CRLF) **creaba el archivo y no recortaba el origen**, en
+silencio y con `exit 0`.
+
+La causa, aislada por quien lo reportó: al cortar el bloque por el salto de línea, la sonda de
+verificación se quedaba con el **CR pegado al final** — 92 bytes contra 91 — mientras `grep` en
+Windows lee el archivo en modo texto y ya lo ha quitado de sus líneas. No podía casar nunca. **Es
+la misma familia que el CR de `jq` que dejaba `guard-codigo` en abierto**, sólo que aquí viene del
+propio archivo — y en Windows eso es la mayoría de los archivos. El banco no lo vio porque
+escribía todos sus artefactos con LF.
+
+**Y era peor que inoperante.** Al medirlo aquí apareció lo que el informe no llegó a ver: el
+contenido quedaba en los **dos** sitios, así que cada parada lo volvía a añadir — 3, 6, 9 secciones
+en tres pasadas. Una fuga sin tope, justo en la función cuyo propósito es frenar el crecimiento
+sin tope.
+
+Dos arreglos, y el segundo es el que importa para el futuro:
+- La sonda pierde el CR final. Seguro en los dos casos: `-F` busca subcadena, así que casa igual
+  con una línea que lo conserve.
+- **La escritura pasa a ser todo o nada.** El destino se arma en un temporal y sólo se publica si
+  la verificación pasa. Antes se añadía y *después* se verificaba, así que **cualquier** fallo de
+  verificación —no sólo el del CR— dejaba el contenido duplicado.
+
+### Documentado — el intérprete: por qué añadir `Bash(python*)` sería teatro
+El mismo informe señaló que `python - <<EOF` no está entre los disparadores de 1.25.0. Cierto — y
+medirlo dio algo más incómodo: **aunque estuviera, no serviría.**
+
+```
+python - <<EOF ... open("src/app.ts","w") ... EOF   ->  no detecta
+node -e '...writeFileSync("src/app.ts")...'          ->  no detecta
+echo x > src/app.ts                                  ->  src/app.ts   (control positivo)
+```
+
+El guardión arrancaría, miraría el comando y permitiría: la ruta vive **dentro** del script.
+Añadir el disparador sería coste sin cobertura — y peor que el hueco, porque parecería cerrado.
+
+El arreglo de verdad es **cambiar la pregunta**: en vez de adivinar *antes* si un comando escribe
+—abierta, admite formas nuevas sin fin— preguntar *después* si cambiaron los archivos protegidos,
+que es **cerrada**. No previene, detecta; pero el arnés ya se declara barandilla, y una que avisa
+siempre vale más que una que previene a veces. Queda diseñado y nombrado en `hooks.json`, el
+README y `AGENTS.md`; no construido.
+
 ## [1.26.0] — 2026-09-04
 Tres correcciones medidas por un tercer proyecto. Ninguna toca archivos del proyecto.
 

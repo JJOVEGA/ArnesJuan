@@ -268,6 +268,13 @@ nada.
   proyecto no coincide. **Actualiza `arnes_version` al terminar la migración** o el aviso quedará
   puesto para siempre — es la Fase 5, y ahora se nota si se salta.
 
+### Hacia 1.27.0
+- Nada que migrar. Pero **si el proyecto tenía la rotación encendida sobre algún artefacto con
+  finales de línea CRLF**, comprueba dos cosas antes de darla por buena: que el origen se haya
+  recortado de verdad, y que su `-archivo.md` no tenga secciones repetidas de pasadas anteriores.
+  Hasta 1.26.0 ese caso añadía al archivo sin recortar el origen, y repetía en cada parada.
+  Si hay duplicados, se limpian a mano: el contenido nunca se perdió, sólo se copió de más.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

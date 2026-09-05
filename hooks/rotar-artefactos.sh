@@ -95,23 +95,45 @@ arnes_rotar_uno() {
 
   destino="${f%.md}-archivo.md"
 
-  # --- 1) Anadir al destino, y RELEER para comprobar que llego ---
-  local marca="<!-- ARNES:ROTADO $(date '+%Y-%m-%d %H:%M') -->"
-  if [ ! -f "$destino" ]; then
+  # --- 1) Construir el destino COMPLETO aparte, verificarlo, y solo entonces mover --
+  #
+  # Antes se anadia al destino y DESPUES se verificaba. Cuando la verificacion
+  # fallaba, el contenido ya estaba en el destino y el origen no se recortaba: quedaba
+  # DUPLICADO, y la siguiente parada lo volvia a anadir. Medido con un archivo CRLF:
+  # 3 -> 6 -> 9 secciones en tres pasadas. Una fuga sin tope, justo en la funcion cuyo
+  # proposito es frenar el crecimiento sin tope.
+  #
+  # Ahora el destino se arma en un temporal y solo se publica si la verificacion pasa.
+  # Todo o nada: ni se pierde contenido ni se duplica.
+  local marca tmp_dest
+  marca="<!-- ARNES:ROTADO $(date '+%Y-%m-%d %H:%M') -->"
+  tmp_dest="$destino.arnes.tmp"
+  if [ -f "$destino" ]; then
+    cat "$destino" > "$tmp_dest" || return 0
+  else
     printf '# Archivo de %s\n\n> Secciones retiradas de `%s` para que no crezca sin tope.\n> Se MOVIERON tal cual: aqui no hay resumen ni reescritura.\n\n' \
-      "$(basename "$f")" "$(basename "$f")" > "$destino" || return 0
+      "$(basename "$f")" "$(basename "$f")" > "$tmp_dest" || return 0
   fi
-  printf '%s\n%s\n' "$marca" "$viejo" >> "$destino" || return 0
+  printf '%s\n%s\n' "$marca" "$viejo" >> "$tmp_dest" || { rm -f "$tmp_dest"; return 0; }
 
   # La prueba no es que el append no fallara: es que el texto ESTE en el disco.
   #
   # Se comprueba con `grep -F`, no con `case`: un encabezado de CHANGELOG lleva
   # corchetes --`## [1.20.0]`-- y en un patron de `case` los corchetes son una CLASE
-  # DE CARACTERES, no texto. La comprobacion habria fallado siempre y el recorte no
-  # habria ocurrido nunca. Un fork, y solo cuando toca rotar.
-  local sonda NL=$'\n'
+  # DE CARACTERES, no texto.
+  #
+  # Y a la sonda se le RETIRA EL CR FINAL. En un archivo CRLF, cortar por el salto de
+  # linea deja el CR pegado al final de la sonda, mientras que grep en Windows lee el
+  # archivo en modo texto y ya lo ha quitado de sus lineas: 92 bytes contra 91, y no
+  # casaba NUNCA. Es la misma familia que el CR de jq que dejaba `guard-codigo` en
+  # abierto -- solo que aqui viene del propio archivo, y en Windows eso es la mayoria
+  # de los archivos. Quitarlo es seguro en los dos casos: `-F` busca subcadena, asi
+  # que la sonda sin CR casa igual con una linea que lo conserve.
+  local sonda NL=$'\n' CR=$'\r'
   sonda="${viejo%%"$NL"*}"
-  grep -qF -- "$sonda" "$destino" || return 0    # no llego: el origen NO se toca
+  sonda="${sonda%"$CR"}"
+  grep -qF -- "$sonda" "$tmp_dest" || { rm -f "$tmp_dest"; return 0; }
+  mv -f "$tmp_dest" "$destino" || { rm -f "$tmp_dest"; return 0; }
 
   # --- 2) Solo ahora se recorta el origen ---
   local puntero="> Las secciones anteriores se movieron a [\`$(basename "$destino")\`]($(basename "$destino")) — el arnés las rota para que este archivo no crezca sin tope."
