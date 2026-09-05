@@ -372,7 +372,32 @@ check "Rigor invalido se ignora, no abre -> deny" deny guard-completado.sh "$(em
 # veredicto, no al cierre.
 }
 seccion_12() {
-  seccion_nueva "Orden del ciclo (seguridad tras QA):"
+  # --- `ligero` salta los VEREDICTOS, no las PUERTAS -------------------------------
+seccion_nueva "Rigor ligero: salta veredictos, no puertas:"
+# La plantilla promete "analista + desarrollador + quality gates" para ligero. Hasta
+# 1.28.0 el codigo hacia `return 0` antes de la clase del hallazgo, de las aprobaciones
+# pendientes y de las quality gates: un REQ ligero cerraba con el build en rojo. Lo
+# encontro una revision externa leyendo el codigo; estos casos lo fijan.
+mkreq_r "REQ-090" "no" "pendiente" "n/a" "ligero"
+setgates '.quality_gates = ["false"]'
+check "ligero con quality gate ROJA -> deny (la plantilla promete gates)" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-090.md" "" "" 'Estado: completado')"
+setgates '.quality_gates = ["true"]'
+printf '## Pendientes\n### [2026-09-05] (qa) — decision humana\n- Contexto: x\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+check "ligero con aprobacion humana PENDIENTE -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-090.md" "" "" 'Estado: completado')"
+printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+mkreq "$PROJ/requirements/REQ-091.md" "no" "pendiente" "n/a" "SEC-7 (usuario/dinero)"
+printf 'Rigor: ligero\n' >> "$PROJ/requirements/REQ-091.md"
+check "ligero con hallazgo usuario/dinero ABIERTO -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-091.md" "" "" 'Estado: completado')"
+# Control positivo de lo que SI salta: sin veredicto de QA, con todo lo demas verde.
+check "ligero SIN veredicto de QA y todo verde -> allow (eso si lo salta)" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-090.md" "" "" 'Estado: completado')"
+
+}
+seccion_13() {
+seccion_nueva "Orden del ciclo (seguridad tras QA):"
 mkreq_r "REQ-050" "no" "pendiente" "pendiente" ""
 check "firmar Seguridad con QA pendiente -> deny" deny guard-completado.sh \
   "$(emite_edit "$PROJ/requirements/REQ-050.md" "" "" 'Seguridad: aprobado')"
@@ -419,7 +444,7 @@ check "sensible: QA firma sin esperar a seguridad -> allow" allow guard-completa
 # controles negativos: probar que no se estorba a quien escribe `no` es lo que da
 # valor a los `deny`.
 }
-seccion_13() {
+seccion_14() {
   seccion_nueva "Formas decoradas (marcado de Markdown en el valor):"
 mkreq "$PROJ/requirements/REQ-060.md" "**sí**" "aprobado" "pendiente"
 check "sensible en **negrita** exige auditoria -> deny" deny guard-completado.sh \
@@ -479,7 +504,7 @@ check "Rigor **ligero** decorado se reconoce -> allow" allow guard-completado.sh
   "$(emite_edit "$PROJ/requirements/REQ-071.md" "" "" 'Estado: completado')"
 
 }
-seccion_14() {
+seccion_15() {
   seccion_nueva "guard.sh — punto de entrada unico (los dos guardianes, un proceso):"
 check "A1 por guard.sh: coordinadora edita src/ -> deny" deny guard.sh \
   "$(emite_edit "$PROJ/src/app.ts" "" "" 'hola')"
@@ -519,7 +544,7 @@ check "guard.sh: Bash de lectura -> allow" allow guard.sh \
 # El enfasis de Markdown es PAREADO por definicion: solo se retira cuando envuelve
 # el valor entero. Un asterisco suelto nunca envuelve nada.
 }
-seccion_15() {
+seccion_16() {
   seccion_nueva "Asterisco de nota al pie (una salvedad no es una firma):"
 mkreq "$PROJ/requirements/REQ-074.md" "sí" "aprobado" "aprobado*"
 check "'aprobado*' NO cierra un critico -> deny" deny guard-completado.sh \
@@ -548,7 +573,7 @@ check "y '**sí**' sigue exigiendo auditoria -> deny" deny guard-completado.sh \
 # veredicto" en el otro. Esa ambiguedad era un error de diseño y se QUITO en vez de
 # arbitrarse: un matiz que cambia el veredicto ES OTRO VEREDICTO.
 }
-seccion_16() {
+seccion_17() {
   seccion_nueva "Parentesis = evidencia (el veredicto no cambia):"
 mkreq "$PROJ/requirements/REQ-080.md" "no" "aprobado (medido el 3/9, 42 pruebas)" "n/a"
 check "QA con su evidencia entre parentesis cierra -> allow" allow guard-completado.sh \
@@ -581,7 +606,7 @@ check "enfasis + evidencia: misma escritura, mismo veredicto -> allow" allow gua
 # aprobaciones pendientes. Los proyectos lo esquivaban ordenando el archivo: carga,
 # no estilo.
 }
-seccion_17() {
+seccion_18() {
   seccion_nueva "Cola de aprobaciones: la seccion acaba en la siguiente cabecera:"
 mkreq "$PROJ/requirements/REQ-085.md" "no" "aprobado" "n/a"
 printf '## Pendientes\n\n## Notas\n### [2026-01-01] esto NO es una aprobacion\n- contexto\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
@@ -604,7 +629,7 @@ printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 #   3. que no pise lo que escribio una persona
 #   4. que correrlo dos veces de lo mismo
 }
-seccion_18() {
+seccion_19() {
   seccion_nueva "Continuidad automatica (hook Stop -> bloque derivado):"
 
 EST_PROJ="$(mktemp -d)"
@@ -673,6 +698,20 @@ check_estado "...y no ocupa fila entre los abiertos"        "^| REQ-020 "       
 # con 1.24.0 publicada, sin ninguna senal. No se consulta la red: se ensena lo gratis.
 check_estado "la version del plugin se ve en el bloque"     "plugin instalado"               si "$EST_PROJ/docs/ESTADO.md"
 
+# --- Una ruta del manifiesto no puede salir del proyecto --------------------------
+# `estado_derivado.archivo` y las `ruta` de rotacion se concatenaban tal cual: con
+# `"archivo": "../fuera.md"` el hook de parada escribia FUERA del repositorio en cada
+# parada. El manifiesto tambien lo puede escribir un agente y no lo protege guard-codigo.
+EST_RAIZ="$(mktemp -d)"; EST_FUERA="$EST_RAIZ/proyecto"; mkdir -p "$EST_FUERA/.arnes" "$EST_FUERA/requirements" "$EST_FUERA/docs"
+jq '.estado_derivado = {activo:true, archivo:"../fuera.md"}' "$PROJ/.arnes/config.json" > "$EST_FUERA/.arnes/config.json"
+printf '## Pendientes\n\n## Resueltas\n' > "$EST_FUERA/PENDING_APPROVAL.md"
+corre_estado "$EST_FUERA"; EST_RC=$?
+if [ ! -e "$EST_RAIZ/fuera.md" ]; then echo "  PASS  estado_derivado.archivo '../fuera.md' NO escribe fuera del proyecto"; PASS=$((PASS+1))
+else echo "  FAIL  el bloque derivado se escribio FUERA del proyecto"; FAIL=$((FAIL+1)); fi
+if [ "$EST_RC" -eq 0 ]; then echo "  PASS  ...y sigue saliendo 0"; PASS=$((PASS+1))
+else echo "  FAIL  salio $EST_RC"; FAIL=$((FAIL+1)); fi
+rm -rf "$EST_RAIZ"
+
 # Apagable: quien no lo quiera, lo apaga.
 EST_OFF="$(mktemp -d)"; mkdir -p "$EST_OFF/.arnes" "$EST_OFF/requirements" "$EST_OFF/docs"
 jq '.estado_derivado.activo = false' "$PROJ/.arnes/config.json" > "$EST_OFF/.arnes/config.json"
@@ -709,7 +748,7 @@ rm -rf "$EST_PROJ" "$EST_OFF" "$EST_AJENO" "$EST_SIN"
 # conservaba `total - conservar` y vaciaba el archivo a trozos en cada pasada.
 # Una prueba que encuentra un fallo y luego se tira no protege de nada manana.
 }
-seccion_19() {
+seccion_20() {
   seccion_nueva "Rotacion de artefactos (mover, nunca resumir):"
 
 # rot_proj <conservar> <umbral> <activo> <orden> -> deja la ruta en ROT_P
@@ -840,6 +879,15 @@ rot_check "sin temporales huerfanos" "0" \
   "$(ls "$ROT_CR"/*.arnes.tmp 2>/dev/null | wc -l)"
 rm -rf "$ROT_CR"
 
+# La misma regla para la rotacion: una `ruta` fuera del proyecto no se toca.
+ROT_RAIZ="$(mktemp -d)"; ROT_FUERA="$ROT_RAIZ/proyecto"; mkdir -p "$ROT_FUERA/.arnes"
+printf '# fuera\n\n## [1.5.0]\nx\n\n## [1.4.0]\nx\n\n## [1.3.0]\nx\n' > "$ROT_RAIZ/fuera.md"; ROT_ANTES="$(wc -c < "$ROT_RAIZ/fuera.md")"
+printf '{ "agentes": { "agente_codigo": "desarrollador" }, "rotacion": { "activo": true, "umbral_bytes": 10, "conservar_secciones": 1, "artefactos": ["../fuera.md"] } }' > "$ROT_FUERA/.arnes/config.json"
+rot_corre "$ROT_FUERA"
+rot_check "rotacion con ruta '../fuera.md' NO toca nada fuera del proyecto" "$ROT_ANTES-no" \
+  "$(wc -c < "$ROT_RAIZ/fuera.md")-$([ -e "$ROT_RAIZ/fuera-archivo.md" ] && echo si || echo no)"
+rm -rf "$ROT_RAIZ"
+
 # Inerte en repo ajeno, como el resto de hooks.
 ROT_AJENO="$(mktemp -d)"; printf '# CHANGELOG de OTRO\n## [9.9.9]\nx\n' > "$ROT_AJENO/CHANGELOG.md"
 rot_corre "$ROT_AJENO"; ROT_RC=$?
@@ -847,7 +895,7 @@ rot_check "sin manifiesto no toca nada y sale 0" "1-0" "$(rot_sec "$ROT_AJENO/CH
 rm -rf "$ROT_AJENO"
 
 }
-seccion_20() {
+seccion_21() {
 # --- hooks.json: la forma que hace que Bash de lectura NO arranque el guard -------
 # Los hooks del plugin se declaran en hooks.json y Claude Code evalua el `if` de cada
 # handler ANTES de crear el proceso (verificado en 2.1.260 con control positivo). El
@@ -898,7 +946,7 @@ hj_check "...y la rotacion corrio EN LA MISMA parada" "2" "$(grep -c '^## ' "$ST
 rm -rf "$ST"
 
 }
-seccion_21() {
+seccion_22() {
 seccion_nueva "INERTE — sin manifiesto, el hook no estorba:"
 PROJ2="$(mktemp -d)"; mkdir -p "$PROJ2/src"; export CLAUDE_PROJECT_DIR="$PROJ2"
 check "sin .arnes/config.json, guard.sh no estorba -> allow" allow guard.sh "$(jq -n --arg fp "$PROJ2/src/x.ts" '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{file_path:$fp,old_string:"x",new_string:"y"}}')"
@@ -908,7 +956,7 @@ rm -rf "$PROJ2"
 
 }
 
-TOTAL_SECCIONES=21
+TOTAL_SECCIONES=22
 
 # --- Despacho en paralelo -----------------------------------------------------
 # El canario ya corrio en el padre, solo y antes que nada: si el hook esta muerto no
@@ -951,7 +999,7 @@ FAIL="$(grep -c '^  FAIL ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=162
+CASOS_ESPERADOS=169
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)

@@ -1,0 +1,47 @@
+# CI del arnés — POR QUÉ EXISTE, dicho por delante.
+#
+# Los tres que probamos el arnés durante su primera semana estábamos en Windows, donde el
+# bit de ejecución no existe. Los dos puntos de entrada que hooks.json invoca —guard.sh y
+# stop.sh— llegaron a main en modo 100644: en Linux o macOS NINGÚN hook se ejecutaba y
+# Claude Code seguía adelante. Todo el enforcement apagado en Unix, en silencio. Lo vio
+# una revisión externa, no una prueba. Esta es la prueba.
+#
+# Corre el banco en Linux, que es lo que ninguno de nosotros tenía, y comprueba el bit
+# de ejecución como propiedad cerrada: cada script que un hook invoca tiene que ser
+# ejecutable, y el día que uno deje de serlo esto se pone rojo antes de llegar a nadie.
+name: banco
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  hooks-en-linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: bit de ejecución en todo punto de entrada
+        # Propiedad cerrada: lo que un hook o el usuario invoca directamente es 100755.
+        # `git ls-files -s` lee el modo del índice, que es lo que llega al clonar.
+        run: |
+          set -e
+          malos=0
+          for f in hooks/*.sh tools/*.sh templates/githooks/pre-commit tests/escenarios/hooks/run.sh; do
+            modo="$(git ls-files -s -- "$f" | awk '{print $1}')"
+            if [ "$modo" != "100755" ]; then echo "NO EJECUTABLE ($modo): $f"; malos=$((malos+1)); fi
+          done
+          [ "$malos" -eq 0 ] || { echo "$malos archivo(s) sin bit de ejecución: en Unix el hook no arranca y Claude Code sigue adelante."; exit 1; }
+          echo "todos los puntos de entrada son 100755"
+
+      - name: jq
+        run: command -v jq >/dev/null || sudo apt-get install -y jq
+
+      - name: banco de hooks (proyectos efímeros, en paralelo)
+        # En Windows tarda ~20 min por el coste de crear procesos; aquí debería bajar de 3.
+        # El banco arranca con un canario que exige un deny real antes de correr nada, y
+        # termina con un cuadre de casos: un caso perdido por el camino es un fallo, no un
+        # verde más pequeño. Si el total no cuadra en Linux pero sí en Windows, hay un caso
+        # dependiente de plataforma, y eso también hay que saberlo.
+        run: bash tests/escenarios/hooks/run.sh

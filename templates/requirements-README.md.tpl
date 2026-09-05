@@ -53,6 +53,9 @@ siempre. Lo fija el analista en la cabecera del REQ.
 | Nivel | Qué corre | Cuándo |
 |---|---|---|
 | `ligero` | analista + desarrollador + quality gates | Sin lógica: textos, etiquetas, ajustes de presentación |
+
+> `ligero` salta **sólo** los veredictos de QA y seguridad. La clase del hallazgo, las aprobaciones humanas
+> pendientes y las quality gates corren igual que en cualquier otro nivel.
 | `estandar` | + QA | Lógica de negocio ordinaria |
 | `critico` | + auditoría de seguridad | Dinero · datos personales · identidad o acceso · documento con efecto legal · cambio irreversible (esquema, migración, borrado) |
 

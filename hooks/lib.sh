@@ -145,6 +145,26 @@ arnes_jq_file() {  # <archivo> <args de jq...> -> ARNES_JQ
   ARNES_JQ="${out//$'\r'/}"
 }
 
+# Una ruta CONFIGURABLE del manifiesto tiene que quedarse DENTRO del proyecto.
+#
+# `estado_derivado.archivo` y las `ruta` de la rotacion se concatenaban a la raiz tal
+# cual, asi que `"archivo": "../fuera.md"` hacia que el hook de parada escribiera fuera
+# del repositorio en cada parada. El manifiesto lo escribe el proyecto -- pero tambien
+# lo puede escribir un agente, y no esta protegido por guard-codigo. Un hook que escribe
+# fuera del arbol es un hook que puede escribir en cualquier sitio.
+#
+# Regla CERRADA, sin forks: relativa, sin `..` como segmento, sin `~`, sin barra
+# invertida (aqui no se normaliza; lo que no sea una ruta POSIX relativa limpia, no pasa).
+arnes_ruta_interna() {   # <ruta configurada> -> 0 si es interna, 1 si no
+  local r="$1"
+  case "$r" in
+    ''|/*|[A-Za-z]:*|'~'*) return 1 ;;
+    ..|../*|*/..|*/../*)   return 1 ;;
+  esac
+  case "$r" in *'\'*) return 1 ;; esac
+  return 0
+}
+
 # Ruta canónica para COMPARAR (no para abrir): separadores `/` y, en Windows, forma
 # mixta `c:/...` con la unidad en minúscula. Fuera de Windows es la identidad.
 arnes_norm_path() {   # <ruta> -> ARNES_NORM
