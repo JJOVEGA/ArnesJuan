@@ -661,6 +661,18 @@ check_estado "...y se dice cuantas hay, no se esconden" "notas, no REQ):\*\* 1" 
 check_estado "un REQ completado NO ocupa fila"          "^| REQ-001 "              no "$EST_PROJ/docs/ESTADO.md"
 check_estado "un REQ abierto SI ocupa fila"             "^| REQ-002 "              si "$EST_PROJ/docs/ESTADO.md"
 
+# `Estado:` lleva la MISMA regla que los veredictos: el parentesis es evidencia.
+# Medido: sin esto el bloque decia 2 completados donde habia 9 y metia 44 REQ en
+# "otros". La PUERTA no estaba afectada --caza el estado en el texto crudo-- asi que
+# era un tablero que mentia; serio igual, porque el proyecto apago la continuidad.
+printf '# REQ-020\nEstado: completado (2026-09-01)\nQA: aprobado\nSeguridad: n/a\n' > "$EST_PROJ/requirements/REQ-020.md"
+corre_estado "$EST_PROJ"
+check_estado "Estado con evidencia cuenta como completado" "REQ:\*\* 3 .* completado 2" si "$EST_PROJ/docs/ESTADO.md"
+check_estado "...y no ocupa fila entre los abiertos"        "^| REQ-020 "                    no "$EST_PROJ/docs/ESTADO.md"
+# La version instalada, visible en cada parada. Un proyecto real corrio 1.13.0 un MES
+# con 1.24.0 publicada, sin ninguna senal. No se consulta la red: se ensena lo gratis.
+check_estado "la version del plugin se ve en el bloque"     "plugin instalado"               si "$EST_PROJ/docs/ESTADO.md"
+
 # Apagable: quien no lo quiera, lo apaga.
 EST_OFF="$(mktemp -d)"; mkdir -p "$EST_OFF/.arnes" "$EST_OFF/requirements" "$EST_OFF/docs"
 jq '.estado_derivado.activo = false' "$PROJ/.arnes/config.json" > "$EST_OFF/.arnes/config.json"
@@ -772,6 +784,30 @@ rot_corre "$ROT_P"
 rot_check "sin encabezados no corta nada" "$ROT_ANTES" "$(wc -c < "$ROT_P/CHANGELOG.md")"
 rm -rf "$ROT_P"
 
+# --- El orden es del ARTEFACTO, no del proyecto -------------------------------
+# Medido en un proyecto real: el CHANGELOG crece por arriba y el registro de
+# seguridad por abajo. Con un `orden` global la rotacion era inservible para uno de
+# los dos, y equivocarse archiva lo MAS RECIENTE. `artefactos` acepta cadena u
+# objeto, la misma convencion que las quality_gates: la cadena hereda lo global.
+ROT_M="$(mktemp -d)"; mkdir -p "$ROT_M/.arnes" "$ROT_M/seg"
+cat > "$ROT_M/.arnes/config.json" <<JSON
+{ "agentes": { "agente_codigo": "desarrollador" },
+  "rotacion": { "activo": true, "umbral_bytes": 400, "conservar_secciones": 2,
+                "artefactos": [ "CHANGELOG.md",
+                                { "ruta": "seg/registro.md", "orden": "nuevo-al-final", "conservar_secciones": 1 } ] } }
+JSON
+for n in CHANGELOG.md seg/registro.md; do
+  { printf '# %s\n\n' "$n"; for v in 5 4 3 2 1; do printf '## [1.%s.0]\n' "$v"; for i in 1 2 3; do printf 'relleno %s de 1.%s.0 con texto suficiente\n' "$i" "$v"; done; printf '\n'; done; } > "$ROT_M/$n"
+done
+rot_corre "$ROT_M"
+rot_check "artefacto como CADENA sigue funcionando (compatibilidad)" "## [1.5.0] ## [1.4.0]" \
+  "$(grep -o '^## \[1\.[0-9]*\.0\]' "$ROT_M/CHANGELOG.md" | tr '\n' ' ' | sed 's/ $//')"
+rot_check "...y el OBJETO usa SU orden, opuesto, en la misma pasada" "## [1.1.0]" \
+  "$(grep -o '^## \[1\.[0-9]*\.0\]' "$ROT_M/seg/registro.md" | tr '\n' ' ' | sed 's/ $//')"
+rot_check "...y SU conservar_secciones, distinto del global" "1" \
+  "$(grep -c '^## ' "$ROT_M/seg/registro.md")"
+rm -rf "$ROT_M"
+
 # Inerte en repo ajeno, como el resto de hooks.
 ROT_AJENO="$(mktemp -d)"; printf '# CHANGELOG de OTRO\n## [9.9.9]\nx\n' > "$ROT_AJENO/CHANGELOG.md"
 rot_corre "$ROT_AJENO"; ROT_RC=$?
@@ -879,7 +915,7 @@ FAIL="$(grep -c '^  FAIL ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=158
+CASOS_ESPERADOS=164
 if [ $((PASS+FAIL)) -ne "$CASOS_ESPERADOS" ]; then
   echo "ABORT: corrieron $((PASS+FAIL)) casos y se esperaban $CASOS_ESPERADOS."
   echo "       O falta un caso por el camino, o alguien anadio uno y no actualizo"

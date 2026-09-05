@@ -259,6 +259,15 @@ nada.
   formas se detecten, puede añadir en `.claude/settings.json` un hook `PreToolUse` con
   `matcher: "Bash"` sin `if` hacia el `guard.sh` del plugin — recupera el catch-all a cambio del coste.
 
+### Hacia 1.26.0
+- Nada obligatorio. Pero si el proyecto tenía `rotacion` encendida con más de un artefacto,
+  **pregúntale si alguno crece en dirección contraria**: ahora cada uno declara su `orden`,
+  `umbral_bytes` y `conservar_secciones` pasándolo de cadena a objeto. Antes compartían uno solo, y
+  para el que creciera al revés la rotación archivaba lo más reciente.
+- El bloque derivado empieza a mostrar la versión del plugin y a avisar si `arnes_version` del
+  proyecto no coincide. **Actualiza `arnes_version` al terminar la migración** o el aviso quedará
+  puesto para siempre — es la Fase 5, y ahora se nota si se salta.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

@@ -30,26 +30,27 @@ DIR="${BASH_SOURCE[0]%/*}"
 . "$DIR/lib.sh"
 
 arnes_rotar_artefactos() {
-  local art
+  local ruta orden umbral conservar
   arnes_parse_manifest_rotacion || return 0
   [ "$ARNES_ROT_ACTIVO" = "true" ] || return 0
   [ -n "$ARNES_ROT_LISTA" ] || return 0
-  while IFS= read -r art; do
-    [ -n "$art" ] || continue
-    arnes_rotar_uno "$ARNES_PROJ/$art" || true
+  while IFS=$'	' read -r ruta orden umbral conservar; do
+    [ -n "$ruta" ] || continue
+    arnes_rotar_uno "$ARNES_PROJ/$ruta" "$orden" "$umbral" "$conservar" || true
   done <<< "$ARNES_ROT_LISTA"
   return 0
 }
 
-# arnes_rotar_uno <ruta> — rota UN artefacto si le toca.
+# arnes_rotar_uno <ruta> <orden> <umbral> <conservar> — rota UN artefacto si le toca.
+# Los ajustes llegan por parametro, no por global: cada artefacto tiene los suyos.
 arnes_rotar_uno() {
-  local f="$1" destino tam texto linea
+  local f="$1" orden="$2" umbral="$3" conservar="$4" destino tam texto linea
   local preambulo='' seccion='' secciones=0 i=0 corte
   [ -f "$f" ] || return 0
 
   tam="$(wc -c < "$f" 2>/dev/null)" || return 0
   tam="${tam// /}"
-  [ "$tam" -gt "$ARNES_ROT_UMBRAL" ] 2>/dev/null || return 0
+  [ "$tam" -gt "$umbral" ] 2>/dev/null || return 0
 
   IFS= read -r -d '' texto < "$f"
 
@@ -73,8 +74,8 @@ arnes_rotar_uno() {
   # aparte. (La primera version restaba al reves --conservaba `total - conservar`--
   # y cada pasada volvia a rotar, vaciando el archivo a trozos.)
   local total="${#cuerpos[@]}"
-  [ "$total" -gt "$ARNES_ROT_CONSERVAR" ] || return 0
-  corte="$ARNES_ROT_CONSERVAR"
+  [ "$total" -gt "$conservar" ] || return 0
+  corte="$conservar"
 
   # --- Que mitad es "lo viejo" NO se adivina: se declara ---
   # Un CHANGELOG pone lo nuevo arriba; un registro cronologico lo anade al final.
@@ -83,7 +84,7 @@ arnes_rotar_uno() {
   # usan las plantillas del arnes; lo contrario se declara con
   # `rotacion.orden: "nuevo-al-final"`.
   local viejo='' nuevo=''
-  if [ "$ARNES_ROT_ORDEN" = "nuevo-al-final" ]; then
+  if [ "$orden" = "nuevo-al-final" ]; then
     for (( i=0; i<total-corte; i++ )); do viejo+="${cuerpos[$i]}"; done
     for (( i=total-corte; i<total; i++ )); do nuevo+="${cuerpos[$i]}"; done
   else
@@ -119,24 +120,38 @@ arnes_rotar_uno() {
 }
 
 arnes_parse_manifest_rotacion() {
+  # `artefactos` acepta CADENA u OBJETO, la misma convencion que ya usan las
+  # quality_gates. Una cadena hereda los ajustes globales; un objeto declara los
+  # suyos. Asi un manifiesto que hoy dice ["CHANGELOG.md"] sigue funcionando igual.
+  #
+  # POR QUE por artefacto y no global: medido en un proyecto real, el CHANGELOG crece
+  # por arriba y el registro de seguridad por abajo. Un solo `orden` no puede servir a
+  # los dos, y equivocarse archiva lo MAS RECIENTE. Con el orden global la funcion era
+  # inservible para uno de los dos archivos; el error fue mio y es el mismo de siempre:
+  # el orden es una propiedad DEL ARTEFACTO, no del proyecto.
   arnes_jq_file "$ARNES_MANIFEST" -r '
-    [ (if .rotacion.activo == true then "true" else "false" end),
-      ((.rotacion.umbral_bytes // 262144) | tostring),
-      ((.rotacion.conservar_secciones // 12) | tostring),
-      (if .rotacion.orden == "nuevo-al-final" then "nuevo-al-final" else "nuevo-primero" end) ]
-    + ["--"] + (.rotacion.artefactos // []) | join("\n")' || return 1
-  local i=0 l
+    . as $m
+    | ($m.rotacion.umbral_bytes // 262144) as $u
+    | ($m.rotacion.conservar_secciones // 12) as $c
+    | (if $m.rotacion.orden == "nuevo-al-final" then "nuevo-al-final" else "nuevo-primero" end) as $o
+    | [ (if $m.rotacion.activo == true then "true" else "false" end) ]
+      + [ ($m.rotacion.artefactos // [])[]
+          | if type == "object"
+            then [ (.ruta // .archivo // ""),
+                   (if (.orden // $o) == "nuevo-al-final" then "nuevo-al-final" else "nuevo-primero" end),
+                   ((.umbral_bytes // $u) | tostring),
+                   ((.conservar_secciones // $c) | tostring) ]
+            else [ ., $o, ($u | tostring), ($c | tostring) ]
+            end
+          | join("	") ]
+    | join("
+")' || return 1
+  local primera=1 l
   ARNES_ROT_LISTA=''
   while IFS= read -r l; do
-    case "$i" in
-      0) ARNES_ROT_ACTIVO="$l" ;;
-      1) ARNES_ROT_UMBRAL="$l" ;;
-      2) ARNES_ROT_CONSERVAR="$l" ;;
-      3) ARNES_ROT_ORDEN="$l" ;;
-      4) : ;;                                   # separador
-      *) ARNES_ROT_LISTA+="$l"$'\n' ;;
-    esac
-    i=$((i+1))
+    if [ "$primera" = 1 ]; then ARNES_ROT_ACTIVO="$l"; primera=0; continue; fi
+    ARNES_ROT_LISTA+="$l"$'
+'
   done <<< "$ARNES_JQ"
   return 0
 }

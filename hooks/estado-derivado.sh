@@ -27,7 +27,7 @@ DIR="${BASH_SOURCE[0]%/*}"
 . "$DIR/lib.sh"
 
 arnes_estado_derivado() {
-  local destino cuerpo tmp
+  local destino cuerpo tmp v_plugin v_proyecto aviso_version
   local total=0 hechos=0 revision=0 progreso=0 bloqueados=0 otros=0 notas=0
   local f base linea filas='' pend_abiertas='?' rama='?' sha='?' limpio='?'
 
@@ -47,7 +47,14 @@ arnes_estado_derivado() {
     while IFS= read -r linea; do
       case "$linea" in 'Estado:'*) est="${linea#Estado:}"; break ;; esac
     done <<< "$texto"
-    arnes_norm_campo "$est"; est="$ARNES_CAMPO"
+    # `Estado:` lleva la MISMA regla que los veredictos: un parentesis final es
+    # evidencia y no cambia el valor. Sin esto, `completado (2026-09-01)` no era
+    # `completado` y el bloque lo contaba entre los abiertos: medido en un proyecto
+    # real, decia 2 completados donde habia 9 y metia 44 REQ en "otros".
+    # La PUERTA no estaba afectada --busca el estado en el texto crudo y si lo caza--,
+    # asi que era un tablero que mentia, no un fallo en abierto. Serio igual: el
+    # proyecto apago la continuidad por esto.
+    arnes_norm_campo "$est"; arnes_veredicto "$ARNES_CAMPO"; est="$ARNES_VEREDICTO"
     # Sin `Estado:` no es un REQ, es una nota que vive en la misma carpeta. Medido:
     # el bloque decia 58 REQ y habia 57, porque contaba
     # `consecuencias-de-las-decisiones-abiertas.md`. Un bloque que presume de
@@ -109,6 +116,21 @@ arnes_estado_derivado() {
     fi
   fi
 
+  # --- Version instalada, visible en cada parada -------------------------------
+  # Un proyecto real corrio 1.13.0 durante un MES con 1.24.0 publicada, sin ninguna
+  # senal: el plugin no se actualiza solo. No se consulta la red --un hook que hace
+  # DNS puede colgar una parada-- pero SI se ensena lo que es gratis: la version
+  # instalada y la que el proyecto declara haber migrado. Verlo en cada sesion es lo
+  # que faltaba; comparar contra el remoto es trabajo de /arnes-upgrade.
+  if arnes_jq_file "$DIR/../.claude-plugin/plugin.json" -r '.version // "?"' 2>/dev/null
+    then v_plugin="$ARNES_JQ"; else v_plugin='?'; fi
+  if arnes_jq_file "$ARNES_MANIFEST" -r '.arnes_version // ""' 2>/dev/null
+    then v_proyecto="$ARNES_JQ"; else v_proyecto=''; fi
+  aviso_version="**Arnés:** plugin instalado \`$v_plugin\`"
+  if [ -n "$v_proyecto" ] && [ "$v_proyecto" != "$v_plugin" ]; then
+    aviso_version+=" · el proyecto declara \`$v_proyecto\` — **migración pendiente** (\`/arnes-upgrade\`)"
+  fi
+
   # --- El bloque ---
   cuerpo="<!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
 ## Estado derivado — $(date '+%Y-%m-%d %H:%M')
@@ -122,6 +144,7 @@ arnes_estado_derivado() {
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
 **Repositorio:** \`$rama\` @ \`$sha\` — $limpio
+$aviso_version
 **Aprobaciones pendientes:** $pend_abiertas
 **REQ:** $total — completado $hechos · en-revisión $revision · en-progreso $progreso · bloqueado $bloqueados · otros $otros
 **Otros archivos en \`$ARNES_REQ_DIR/\` sin \`Estado:\` (notas, no REQ):** $notas

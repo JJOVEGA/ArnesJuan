@@ -66,6 +66,11 @@ ella. Nunca borra —añade, relee para comprobar que llegó, y sólo entonces r
 encabezados `## `, y **qué mitad es «lo viejo» se declara, no se adivina**: un CHANGELOG pone lo
 nuevo arriba, un registro cronológico al final, y equivocarse archivaría lo más reciente.
 
+**Cada artefacto declara lo suyo.** El orden es una propiedad del artefacto, no del proyecto: un
+`CHANGELOG` crece por arriba y un registro cronológico por abajo, así que `artefactos` acepta
+cadena (hereda los ajustes globales) u objeto con su `orden`, `umbral_bytes` y
+`conservar_secciones` — la misma convención que las `quality_gates`.
+
 Viene **apagada**: reestructurar un documento que escribió una persona no puede ser el
 comportamiento por defecto.
 
