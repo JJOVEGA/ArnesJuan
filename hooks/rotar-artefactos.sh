@@ -36,6 +36,7 @@ arnes_rotar_artefactos() {
   [ -n "$ARNES_ROT_LISTA" ] || return 0
   while IFS=$'	' read -r ruta orden umbral conservar; do
     [ -n "$ruta" ] || continue
+    arnes_ruta_interna "$ruta" || continue   # fuera del proyecto: no se toca
     arnes_rotar_uno "$ARNES_PROJ/$ruta" "$orden" "$umbral" "$conservar" || true
   done <<< "$ARNES_ROT_LISTA"
   return 0

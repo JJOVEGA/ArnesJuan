@@ -34,6 +34,7 @@ arnes_estado_derivado() {
   arnes_parse_manifest_estado || return 0
   [ "$ARNES_ESTADO_ACTIVO" != "false" ] || return 0
 
+  arnes_ruta_interna "$ARNES_ESTADO_ARCHIVO" || return 0   # fuera del proyecto: no se escribe
   destino="$ARNES_PROJ/$ARNES_ESTADO_ARCHIVO"
   [ -d "$(dirname "$destino")" ] || return 0     # sin la carpeta, no se inventa
 

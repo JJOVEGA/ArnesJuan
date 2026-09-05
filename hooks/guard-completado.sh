@@ -137,30 +137,35 @@ arnes_guard_completado() {
   # niveles existieran, asi que un proyecto sin migrar no nota ningun cambio.
   # Y `Sensible a seguridad: si` impone `critico` como suelo: el nivel se puede
   # subir, nunca bajar (ver `arnes_rigor_efectivo` en lib.sh).
-  if [ "$rigor" = "ligero" ]; then
-    return 0
-  fi
+  # `ligero` salta SOLO los veredictos de QA y seguridad. NO salta la clase del
+  # hallazgo, ni las aprobaciones humanas pendientes, ni las quality gates: la
+  # plantilla promete "analista + desarrollador + quality gates" para ligero, y hasta
+  # 1.28.0 el codigo hacia `return 0` aqui mismo, ANTES de las tres puertas de abajo.
+  # Un REQ ligero cerraba con el build en rojo y con una aprobacion humana pendiente.
+  # La maquina hacia menos de lo que el papel decia -- deriva, desde 1.19.0.
+  if [ "$rigor" != "ligero" ]; then
 
-  # Solo se exige el campo cuando está presente (compatibilidad con REQ antiguos sin veredictos).
-  if [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
-    arnes_deny "ARNES: no se puede completar '$rel': el veredicto de QA es '$qa' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9)."
+    # Solo se exige el campo cuando está presente (compatibilidad con REQ antiguos sin veredictos).
+    if [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
+      arnes_deny "ARNES: no se puede completar '$rel': el veredicto de QA es '$qa' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9)."
+    fi
+    # `si` a secas: el normalizador pliega la tilde y retira el marcado de Markdown,
+    # así que `SÍ`, `sí`, `**sí**` y `sí — porque toca auth` llegan aquí como la misma
+    # forma. Y un valor que NO se entiende se trata como sensible, no como «no»: ver
+    # `arnes_sens_efectiva` en lib.sh.
+    case "$rigor" in
+      critico)
+        if [ "$seg" != "aprobado" ]; then
+          # Si el rigor salió de un valor que no se entendió, la denegación TIENE que
+          # decirlo: un deny que no explica de dónde sale se lee como un falso positivo
+          # y acaba con alguien apagando el guard.
+          if [ "${ARNES_SENS_DUDOSA:-0}" = "1" ]; then
+            arnes_deny "ARNES: no se puede completar '$rel': su 'Sensible a seguridad:' dice '${ARNES_SENS_CRUDO}', que no se reconoce ni como si ni como no, y un valor que no se entiende se trata como SENSIBLE —no saber no puede abrir una puerta—. Escribe 'si' o 'no' (el énfasis de Markdown y un comentario tras el valor si se toleran), o declara 'Seguridad: aprobado' si de verdad lo es."
+          fi
+          arnes_deny "ARNES: no se puede completar '$rel': su rigor efectivo es 'critico' y el veredicto de seguridad es '${seg:-ausente}' (se requiere 'Seguridad: aprobado'). El control hallado debe quedar como NFR antes de cerrar (AGENTS.md §9)."
+        fi ;;
+    esac
   fi
-  # `si` a secas: el normalizador pliega la tilde y retira el marcado de Markdown,
-  # así que `SÍ`, `sí`, `**sí**` y `sí — porque toca auth` llegan aquí como la misma
-  # forma. Y un valor que NO se entiende se trata como sensible, no como «no»: ver
-  # `arnes_sens_efectiva` en lib.sh.
-  case "$rigor" in
-    critico)
-      if [ "$seg" != "aprobado" ]; then
-        # Si el rigor salió de un valor que no se entendió, la denegación TIENE que
-        # decirlo: un deny que no explica de dónde sale se lee como un falso positivo
-        # y acaba con alguien apagando el guard.
-        if [ "${ARNES_SENS_DUDOSA:-0}" = "1" ]; then
-          arnes_deny "ARNES: no se puede completar '$rel': su 'Sensible a seguridad:' dice '${ARNES_SENS_CRUDO}', que no se reconoce ni como si ni como no, y un valor que no se entiende se trata como SENSIBLE —no saber no puede abrir una puerta—. Escribe 'si' o 'no' (el énfasis de Markdown y un comentario tras el valor si se toleran), o declara 'Seguridad: aprobado' si de verdad lo es."
-        fi
-        arnes_deny "ARNES: no se puede completar '$rel': su rigor efectivo es 'critico' y el veredicto de seguridad es '${seg:-ausente}' (se requiere 'Seguridad: aprobado'). El control hallado debe quedar como NFR antes de cerrar (AGENTS.md §9)."
-      fi ;;
-  esac
 
   # --- Clase del hallazgo: no todo hallazgo bloquea ---
   # Un defecto del propio arnes (un lector de umbral, un guardian, una prueba) no

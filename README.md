@@ -17,6 +17,12 @@ Cursor y otras herramientas vía AGENTS.md + MCP).
   que exige changelog.
 - **Tests del arnés** (`tests/`): escenarios para validar los agentes antes de versionar.
 
+## Probado en Linux desde 1.29.0, y no antes
+Los tres proyectos que estrenaron el arnés estaban en Windows. Hasta 1.28.0 los dos puntos de
+entrada de `hooks.json` no tenían bit de ejecución y **en Unix ningún hook corría**: Claude Code
+recibía *Permission denied* y seguía. Lo encontró una revisión externa. Desde 1.29.0 un CI en
+`ubuntu-latest` comprueba el bit como propiedad cerrada y corre el banco entero en cada PR.
+
 ## El plugin no se actualiza solo
 Medido en un proyecto real (2026-09-04): el proyecto corría **1.13.0, del 3 de agosto**, con
 **1.21.0** publicada. Un mes de correcciones —incluidas tres puertas que no existían— que nunca

@@ -283,6 +283,17 @@ nada.
   no existía hay que mirarlo a mano.
 - Nada que migrar en archivos del proyecto.
 
+### Hacia 1.29.0
+- **Si el proyecto corre en Linux o macOS:** hasta 1.28.0 ningún hook se ejecutaba (bit de ejecución
+  ausente). Revisa el periodo como si no hubiera habido arnés: cierres de REQ, ediciones de
+  `codigo_app.globs` por quien no fuera el agente de código, y commits sin entrada de CHANGELOG.
+- **Si algún REQ `ligero` se cerró entre 1.19.0 y 1.28.0:** comprueba que sus quality gates estaban
+  en verde y que no había aprobaciones humanas pendientes. La puerta no lo miraba.
+- **Si `estado_derivado.archivo` o alguna `ruta` de rotación sale del proyecto** (`..`, absoluta, `~`),
+  desde ahora se ignora en silencio. Avísale al usuario para que la corrija.
+- `QA:` ausente sigue permitido. **Pregunta** si quiere que la migración añada `QA: pendiente` a los
+  REQ que no lo declaran: es el paso previo para que una versión futura exija el campo.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

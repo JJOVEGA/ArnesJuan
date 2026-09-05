@@ -2,6 +2,55 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.29.0] — 2026-09-05
+Cuatro hallazgos de una revisión externa que leyó el código de 1.28.0. Tres verificados y
+corregidos; el cuarto es una decisión de política y queda abierto, dicho aquí.
+
+### Corregido — en Unix NINGÚN hook se ejecutaba
+`guard.sh` y `stop.sh` —los dos puntos de entrada que `hooks.json` invoca— estaban en el índice
+como `100644`. En Linux o macOS, Claude Code intentaba ejecutarlos, recibía *Permission denied* y
+**seguía adelante**: todo el enforcement apagado, en silencio. También `estado-derivado.sh`,
+`rotar-artefactos.sh`, `tools/arnes-lectura.sh` y la plantilla del `pre-commit`, que al copiarse
+sin bit deja de exigir el CHANGELOG.
+
+**Nadie lo vio porque los tres que probamos el arnés estamos en Windows**, donde el bit no
+existe. Lo encontró una revisión externa; lo fija un CI en `ubuntu-latest` que comprueba el modo
+de cada punto de entrada como propiedad cerrada y corre el banco entero. Es la primera vez que
+el arnés se ejecuta fuera de Windows.
+
+### Corregido — `Rigor: ligero` saltaba las puertas, no sólo los veredictos
+La plantilla promete que `ligero` corre *«analista + desarrollador + quality gates»*. El código
+hacía `return 0` **antes** de la clase del hallazgo, de las aprobaciones humanas pendientes y de
+las quality gates: un REQ `ligero` cerraba con el build en rojo y con una decisión humana sin
+tomar. Deriva mía desde 1.19.0: la máquina hacía menos de lo que el papel decía.
+
+Ahora `ligero` salta **exactamente** los veredictos de QA y seguridad. Las tres puertas corren
+igual. Cuatro casos lo fijan, incluido el control positivo de que sigue saltando lo que debe.
+
+### Corregido — una ruta del manifiesto podía salir del proyecto
+`estado_derivado.archivo` y las `ruta` de la rotación se concatenaban a la raíz tal cual: con
+`"archivo": "../fuera.md"` el hook de parada escribía **fuera del repositorio** en cada parada.
+El manifiesto también lo puede escribir un agente, y `guard-codigo` no lo protege.
+
+Regla cerrada, sin forks: relativa, sin `..` como segmento, sin `~`, sin barra invertida. Lo que
+no sea una ruta POSIX relativa limpia no se escribe ni se toca, y el hook sale 0 igual.
+
+### Abierto — un REQ nuevo sin `QA:` puede cerrarse, y es una decisión, no un olvido
+La puerta exige `QA: aprobado` **si el campo existe**. Fue una elección de compatibilidad
+—los REQ anteriores al campo no pueden quedar bloqueados— y tiene su caso de prueba. La revisión
+señala, con razón, que un REQ **nuevo** escrito directamente como `Estado: completado` sin `QA:`
+también pasa, y eso contradice la promesa.
+
+No se cierra en esta versión porque **la máquina no puede distinguir un REQ viejo de uno nuevo
+mirando el archivo**. El camino honesto es en dos pasos: `/arnes-upgrade` añade `QA: pendiente`
+a los REQ que no lo tienen, y en la versión siguiente la puerta exige el campo. Hacerlo al revés
+bloquearía todo REQ antiguo el día de instalar.
+
+### Añadido — CI
+`.github/workflows/banco.yml`: en cada push a `main` y en cada PR, comprueba el bit de ejecución
+y corre los 169 casos en Linux. Si el total cuadra en Windows y no en Linux, hay un caso
+dependiente de plataforma — y eso también hay que saberlo.
+
 ## [1.28.0] — 2026-09-05
 ### Corregido — FALLO EN ABIERTO: desde 1.25.0 una redirección por Bash rodeaba las dos puertas
 **Medido en un proyecto real, con control positivo en la misma tanda:** un `Write` a `src/` denegó
