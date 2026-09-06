@@ -191,6 +191,17 @@ $aviso_version
     cuerpo+=" — ahí no se rota nada; la comparación del nombre es exacta. Revisa \`rotacion.artefactos[].seccion\`.
 "
   fi
+  # La RAMA HERMANA (QA-109): la sección declarada SÍ está, pero no tiene ni una entrada
+  # reconocible. Se enseña por separado —no se suma a la de arriba— porque lo que hay que
+  # corregir es distinto: allí, el nombre en el manifiesto; aquí, el formato de la sección
+  # (una tabla son continuaciones, no entradas) o la expectativa de rotarla.
+  if [ "${ARNES_ROT_SIN_ENTRADAS:-0}" -gt 0 ] 2>/dev/null; then
+    local rot_ej2="${ARNES_ROT_SIN_ENTRADAS_EJ:-}"
+    cuerpo+="**Rotación:** $ARNES_ROT_SIN_ENTRADAS archivo(s) contienen la sección declarada y superan el umbral, pero **sin ninguna entrada reconocible**"
+    [ -z "$rot_ej2" ] || cuerpo+=" (p. ej. \`${rot_ej2%%|*}\` → \`${rot_ej2#*|}\`)"
+    cuerpo+=" — ahí tampoco se rota nada; una entrada empieza por \`- \`, \`* \`, \`### \` o \`N. \` y las filas de tabla son continuaciones.
+"
+  fi
   if [ -n "$filas" ]; then
     cuerpo+="
 _Sólo los REQ abiertos; los $hechos completados no se listan._

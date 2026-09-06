@@ -193,20 +193,72 @@ check() {
 # Cada seccion corre en su propio subshell, asi que una funcion definida dentro de una
 # no existe para las demas: al usarla en otra seccion los casos no fallaban, es que
 # NO SE EJECUTABAN — y solo el cuadre de CASOS_ESPERADOS lo delato.
-cronometra_bash() {   # <nombre> <esperado:deny|allow> <umbral_ms> <json>
-  local nombre="$1" esperado="$2" techo="$3" json="$4" t0 t1 ms salida got
+# DEV 1.31.0 v3 (QA-111): EL VEREDICTO DECIDE; EL RELOJ NO.
+#
+# Hasta v3 un caso fallaba si `ms >= techo`, con el techo puesto JUSTO encima de lo
+# medido. QA midio el mismo caso ("heredoc CITADO de ~300 KB", techo 1000) en 1038 ms
+# (FAIL) y en 616 ms (PASS) sobre LA MISMA linea base, sin cambiar nada: dos corridas
+# completas de v1.30.3 dieron 457 y 458 PASS. El banco es la puerta REQUERIDA de `main`,
+# y un rojo que la gente aprende a re-lanzar es un rojo que deja de significar algo.
+#
+# El reparto, que es el arreglo de raiz y no un numero mas alto:
+#   1) EL VEREDICTO (`deny`/`allow`) decide, y NO se reintenta: es discreto, estable y
+#      es lo que el caso quiere acreditar. Un `allow` donde se espera `deny` no mejora
+#      repitiendolo.
+#   2) QUE EL HOOK RESPONDA es la otra mitad discreta, y la que de verdad importa: un
+#      hook que se atasca muere, `guard.sh` recibe salida vacia y PERMITE (QA-007). Eso
+#      lo detecta `timeout` por su codigo de salida (124), no una comparacion de reloj —
+#      y se comprueba SIEMPRE, tambien cuando se esperaba `allow`, que es justo donde un
+#      hook muerto pasaba por bueno.
+#   3) EL TIEMPO se conserva, porque el coste es la propiedad que estos casos vigilan
+#      (lineal vs cuadratico son ordenes de magnitud), pero contra un techo HOLGADO
+#      —CRONO_HOLGURA veces el presupuesto declarado— y con REINTENTO: solo falla si la
+#      MEJOR de CRONO_INTENTOS medidas se pasa. Un pico de carga ajena no es una
+#      regresion; un algoritmo cuadratico se pasa por multiplos, no por un 4 %.
+#      Reintentar no cuesta nada en el camino feliz: solo se repite si la primera medida
+#      se paso del techo holgado.
+# El numero medido se imprime siempre: el banco sigue sirviendo de medicion.
+CRONO_HOLGURA="${ARNES_CRONO_HOLGURA:-4}"
+CRONO_INTENTOS="${ARNES_CRONO_INTENTOS:-3}"
+
+# mide_hook <script> <json> <timeout_s> -> deja SALIDA_HOOK, CRONO_MS y CRONO_RC.
+# La entrada va por ARCHIVO y no por tuberia para poder leer el codigo de salida de
+# `timeout` (en `printf | timeout` el `$?` es el del ULTIMO de la tuberia dentro de la
+# sustitucion, y con `set -o pipefail` distinguirlo exige mas ceremonia que un archivo).
+SALIDA_HOOK=''; CRONO_MS=0; CRONO_RC=0
+mide_hook() {
+  local script="$1" json="$2" secs="$3" t0 t1 entrada="$ERRLOG.in"
+  : > "$ERRLOG"
+  printf '%s' "$json" > "$entrada"
+  t0="$(date +%s%N)"
+  SALIDA_HOOK="$(timeout "$secs" bash "$HOOKS_DIR/$script" < "$entrada" 2>"$ERRLOG")"; CRONO_RC=$?
+  t1="$(date +%s%N)"
+  CRONO_MS=$(( (t1 - t0) / 1000000 ))
+  rm -f "$entrada"
+}
+
+cronometra_bash() {   # <nombre> <esperado:deny|allow> <presupuesto_ms> <json>
+  local nombre="$1" esperado="$2" presu="$3" json="$4" got holgado secs intento=1 mejor=-1
   if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
   if ! json_no_vacio "$nombre" "$json"; then FAIL=$((FAIL+1)); return 0; fi
-  # Techo duro de reloj: un hook que se atasca no puede convertir el banco en una
-  # espera de minutos. `timeout` lo corta y el caso falla por tiempo, que es la verdad.
-  t0="$(date +%s%N)"; salida="$(: > "$ERRLOG"; printf '%s' "$json" | timeout $(( (techo/1000) + 5 )) "$HOOKS_DIR/guard-codigo.sh" 2>"$ERRLOG")"; t1="$(date +%s%N)"
-  ms=$(( (t1 - t0) / 1000000 ))
-  if printf '%s' "$salida" | grep -Eq '"permissionDecision": *"deny"'; then got=deny; else got=allow; fi
-  if [ "$got" = "$esperado" ] && [ "$ms" -lt "$techo" ]; then
-    echo "  PASS  $nombre  ($got en ${ms}ms, umbral ${techo}ms)"; PASS=$((PASS+1))
-  else
-    echo "  FAIL  $nombre  esperado=$esperado got=$got  ${ms}ms (umbral ${techo}ms)"; diag; FAIL=$((FAIL+1))
-  fi
+  holgado=$(( presu * CRONO_HOLGURA )); secs=$(( (holgado / 1000) + 5 ))
+  while : ; do
+    mide_hook guard-codigo.sh "$json" "$secs"
+    if [ "$CRONO_RC" -eq 124 ]; then
+      echo "  FAIL  $nombre  NO RESPONDIO en ${secs}s: timeout lo corto (un hook muerto PERMITE)"; diag; FAIL=$((FAIL+1)); return 0
+    fi
+    if printf '%s' "$SALIDA_HOOK" | grep -Eq '"permissionDecision": *"deny"'; then got=deny; else got=allow; fi
+    if [ "$got" != "$esperado" ]; then
+      echo "  FAIL  $nombre  esperado=$esperado got=$got  (${CRONO_MS}ms)"; diag; FAIL=$((FAIL+1)); return 0
+    fi
+    if [ "$mejor" -lt 0 ] || [ "$CRONO_MS" -lt "$mejor" ]; then mejor="$CRONO_MS"; fi
+    if [ "$CRONO_MS" -lt "$holgado" ]; then
+      echo "  PASS  $nombre  ($got en ${CRONO_MS}ms; presupuesto ${presu}ms, techo holgado ${holgado}ms)"; PASS=$((PASS+1)); return 0
+    fi
+    [ "$intento" -lt "$CRONO_INTENTOS" ] || break
+    intento=$(( intento + 1 ))
+  done
+  echo "  FAIL  $nombre  DESBOCADO: veredicto $got correcto, pero ${mejor}ms en la mejor de $CRONO_INTENTOS medidas (presupuesto ${presu}ms, techo holgado ${holgado}ms)"; diag; FAIL=$((FAIL+1))
 }
 
 # check_motivo <nombre> <regex> <script> <json> — exige deny Y que el motivo lo explique.
@@ -1643,6 +1695,30 @@ cronometra_bash "DEV v3: heredoc SIN citar de ~300 KB SIN expansiones -> allow" 
 check "DEV v3: control, los mismos 300 KB citados + escritura real -> deny" deny guard-codigo.sh \
   "$(emite_bash "$(printf "cat > docs/x.md <<'EOF'\n%s\nEOF\necho x > src/grande.ts" "$GRANDE_CITADO")" "" "")"
 
+# DEV 1.31.0 v3 (QA-111): LO QUE EL CASO DE ARRIBA QUERIA ACREDITAR, SIN RELOJ.
+# «El heredoc citado se descuenta ENTERO y no entra en el presupuesto de analisis» es una
+# propiedad DISCRETA, y hasta v3 se comprobaba de la peor forma posible: cronometrando.
+# Se comprueba directamente, y por el MOTIVO, que es donde el hook dice por que decidio:
+#   - si los 300 KB citados hubieran entrado en el presupuesto (64 KiB), la respuesta
+#     seria el deny POR TAMANO, no el deny por la ruta;
+#   - que el motivo NOMBRE la ruta prueba ademas que el analisis SI corrio y SI vio la
+#     escritura de fuera del heredoc — un hook muerto no nombra ninguna ruta.
+# Los dos hechos juntos son exactamente la propiedad, y ninguno depende de la carga de
+# la maquina. El caso cronometrado de arriba se queda como MEDICION del coste.
+check_motivo "DEV 1.31.0 v3: QA-111 los 300 KB CITADOS se descuentan enteros: deny POR LA RUTA" \
+  "escribe en 'src/grande\.ts'" guard-codigo.sh \
+  "$(emite_bash "$(printf "cat > docs/x.md <<'EOF'\n%s\nEOF\necho x > src/grande.ts" "$GRANDE_CITADO")" "" "")"
+# La otra mitad, explicita: el motivo NO puede ser el del presupuesto. Sin este control,
+# un dia en que el descuento se rompa el caso de arriba seguiria en rojo pero nadie
+# sabria si es por tamano o por otra cosa; y si ademas cambiara el orden de las puertas,
+# un deny por tamano podria colarse como acierto.
+MOT_CIT="$(corre guard-codigo.sh "$(emite_bash "$(printf "cat > docs/x.md <<'EOF'\n%s\nEOF\necho x > src/grande.ts" "$GRANDE_CITADO")" "" "")" | jq -r '.hookSpecificOutput.permissionDecisionReason // empty' 2>/dev/null)"
+if printf '%s' "$MOT_CIT" | grep -q 'demasiado grande para analizarlo'; then
+  echo "  FAIL  DEV 1.31.0 v3: QA-111 ...y NO por el presupuesto de analisis  motivo=<${MOT_CIT:0:120}>"; diag; FAIL=$((FAIL+1))
+else
+  echo "  PASS  DEV 1.31.0 v3: QA-111 ...y NO por el presupuesto de analisis"; PASS=$((PASS+1))
+fi
+
 # --- 4) Lineal tambien en LINEAS, con analisis de verdad ----------------------
 # 4.000 lineas de cuerpo con expansion y comillas son 64.000 bytes: caben JUSTO bajo el
 # presupuesto, asi que este caso mide el analisis real y no el atajo del techo. Que el
@@ -2318,8 +2394,35 @@ cp "$RP2/requirements/REQ-414.md" "$RP2/antes414.md"
 : > "$ERRLOG"
 printf '%s' "$(CLAUDE_PROJECT_DIR="$RP2" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')" \
   | CLAUDE_PROJECT_DIR="$RP2" "$HOOKS_DIR/stop.sh" >/dev/null 2>"$ERRLOG"
-rsec_check "QA 1.31.0 v2: QA-109 seccion sin entradas reconocibles: no rota y no avisa" "iguales-silencio" \
+# DEV 1.31.0 v3 (QA-109): la conducta que este caso fijaba —silencio— era la medida, no
+# la querida. El criterio cambia: NO ROTAR sigue igual (sin entradas no hay limite seguro
+# donde cortar), pero se AVISA, como en la rama que ya avisaba.
+rsec_check "DEV 1.31.0 v3: QA-109 seccion sin entradas reconocibles: NO rota, pero AVISA" "iguales-aviso" \
   "$(cmp -s "$RP2/antes414.md" "$RP2/requirements/REQ-414.md" && echo iguales || echo distintos)-$(grep -q 'REQ-414.md' "$ERRLOG" && echo aviso || echo silencio)"
+# Los dos casos son ERRORES DE MAPEO DISTINTOS y piden acciones distintas: alli se
+# corrige el nombre de la seccion en el manifiesto, aqui el formato de la seccion o la
+# expectativa de rotarla. Un aviso que no los distinga manda a mirar el archivo
+# equivocado, asi que se exige que el texto diga que la seccion SI esta y que lo que
+# falta son ENTRADAS, y que NO reutilice el texto de la otra rama.
+rsec_check "DEV 1.31.0 v3: QA-109 el aviso DISTINGUE 'existe sin entradas' de 'no existe'" "si-si-no" \
+  "$(grep -q 'ENTRADA reconocible' "$ERRLOG" && echo si || echo no)-$(grep -q "SI contiene la seccion '## Historial de cambios'" "$ERRLOG" && echo si || echo no)-$(grep -q 'NO contiene la seccion' "$ERRLOG" && echo si || echo no)"
+# Y la segunda mitad de CA-09, igual que en la rama hermana: el bloque derivado lo
+# refleja, con el archivo de ejemplo, sin volver a mirar el disco.
+rsec_check "DEV 1.31.0 v3: QA-109 el bloque derivado refleja la seccion sin entradas" "si-si" \
+  "$(grep -q 'sin ninguna entrada reconocible' "$RP2/docs/ESTADO.md" && echo si || echo no)-$(grep -q 'REQ-414.md' "$RP2/docs/ESTADO.md" && echo si || echo no)"
+rm -rf "$RP2"
+
+# CONTROL de los tres de arriba: con la MISMA seccion y el MISMO umbral, pero con
+# entradas de verdad, no se avisa nada y se rota. Sin este control, un aviso emitido
+# siempre —o una rotacion rota— pasaria por acierto.
+rsec_proj true 20 1000 nuevo-al-final
+mkdir -p "$RP2/docs"; printf '# ESTADO\n' > "$RP2/docs/ESTADO.md"
+rsec_req "$RP2/requirements/REQ-415.md" 60
+: > "$ERRLOG"
+printf '%s' "$(CLAUDE_PROJECT_DIR="$RP2" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')" \
+  | CLAUDE_PROJECT_DIR="$RP2" "$HOOKS_DIR/stop.sh" >/dev/null 2>"$ERRLOG"
+rsec_check "DEV 1.31.0 v3: QA-109 control: con entradas de verdad ni aviso ni mencion en el bloque" "silencio-no-20" \
+  "$(grep -q 'ENTRADA reconocible' "$ERRLOG" && echo aviso || echo silencio)-$(grep -q 'sin ninguna entrada reconocible' "$RP2/docs/ESTADO.md" && echo si || echo no)-$(rsec_ent "$RP2/requirements/REQ-415.md")"
 rm -rf "$RP2"
 
 # CA-17: no regresion. La forma ANTERIOR —artefacto por ruta, secciones `## `— sigue
@@ -3275,13 +3378,16 @@ check "SEC-004 CA-50a ...y tambien para la puerta de cierre" allow \
   guard-completado.sh "$(emite_write "$PROJ/docs/notas.md" 'hola')"
 # CA-50 (b): un enlace ROTO no puede matar al guardian — y un guardian muerto no deniega.
 ln -sf "$PROJ/no-existe-jamas.md" "$PROJ/docs/enlace-roto.md"
-t0="$(date +%s%N)"
-sal_roto="$(printf '%s' "$(emite_write "$PROJ/docs/enlace-roto.md" 'hola')" | bash "$HOOKS_DIR/guard.sh" 2>"$ERRLOG")"
-t1="$(date +%s%N)"; ms_roto=$(( (t1 - t0) / 1000000 ))
-if [ "$ms_roto" -lt 1000 ] && printf '%s' "$sal_roto" | grep -q '"deny"'; then
-  echo "  PASS  SEC-004 CA-50b enlace ROTO: responde deny en ${ms_roto}ms, ni cuelga ni revienta"; PASS=$((PASS+1))
+# DEV 1.31.0 v3 (QA-111): este caso tambien decidia por reloj de pared (umbral 1000 ms)
+# y era el decimo del banco que lo hacia. Lo que acredita —«ni cuelga ni revienta»— es
+# discreto: que RESPONDA (no lo corte `timeout`) y que responda `deny`. El reloj se
+# informa; no decide. Un enlace roto que colgara el guardian lo caza el `timeout`, que es
+# el fallo real: un hook muerto no deniega.
+mide_hook guard.sh "$(emite_write "$PROJ/docs/enlace-roto.md" 'hola')" 15
+if [ "$CRONO_RC" -ne 124 ] && printf '%s' "$SALIDA_HOOK" | grep -q '"deny"'; then
+  echo "  PASS  SEC-004 CA-50b enlace ROTO: responde deny (${CRONO_MS}ms), ni cuelga ni revienta"; PASS=$((PASS+1))
 else
-  echo "  FAIL  SEC-004 CA-50b enlace roto: ${ms_roto}ms, salida=<${sal_roto:0:80}>"; diag; FAIL=$((FAIL+1))
+  echo "  FAIL  SEC-004 CA-50b enlace roto: rc=$CRONO_RC ${CRONO_MS}ms, salida=<${SALIDA_HOOK:0:80}>"; diag; FAIL=$((FAIL+1))
 fi
 # CA-50 (c) — DESVIACION DECLARADA. El criterio pide `allow` para un enlace que apunta
 # FUERA del proyecto, porque esta escrito suponiendo la salida (a), la que RESUELVE el
@@ -3539,7 +3645,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=610
+CASOS_ESPERADOS=615
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)

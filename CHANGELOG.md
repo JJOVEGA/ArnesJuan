@@ -302,12 +302,54 @@ desarrollador había visto. Merecen el detalle, porque son familias que se repit
 De ahí salió además una regla que se queda: **un criterio de coste se escribe como techo, nunca como
 igualdad.** Escrito como igualdad, una mejora se lee como fallo.
 
+### Corregido — el instrumento: un caso del banco decidía por reloj de pared (QA-111)
+
+**Qué fallaba:** el caso «heredoc CITADO de ~300 KB → allow y barato» comparaba el tiempo medido
+contra un umbral fijo de 1 000 ms puesto justo encima de lo observado. QA lo vio dar **1 038 ms
+(FAIL)** y **616 ms (PASS)** sobre **la misma** línea base sin cambiar nada — y por eso dos corridas
+completas de v1.30.3 dieron 457 y 458. **Por qué importa más de lo que parece:** el banco es la
+puerta **requerida** de `main`, y un rojo que la gente aprende a re-lanzar es un rojo que deja de
+significar algo. **Qué cambia — el reparto, no un número más alto:** (1) el **veredicto**
+(`deny`/`allow`) es discreto y estable, decide el caso y no se reintenta; (2) que el hook
+**responda** se comprueba por el código de salida de `timeout`, no por una comparación de reloj, y
+**siempre**, también donde se espera `allow` — que es justo donde un hook muerto pasaba por bueno
+(QA-007); (3) el **tiempo** se conserva, porque el coste es la propiedad que estos casos vigilan,
+pero contra un techo **holgado** (cuatro veces el presupuesto declarado, ajustable por
+`ARNES_CRONO_HOLGURA`) y **con reintento**: sólo falla si la mejor de tres medidas se pasa. Un pico
+de carga ajena no es una regresión; un algoritmo cuadrático se pasa por múltiplos, no por un 4 %.
+Reintentar no cuesta nada en el camino feliz. **Eran diez los casos que decidían por reloj**: nueve
+por el cronómetro compartido y uno suelto (`SEC-004 CA-50b`, el enlace roto), que llevaba su propio
+umbral de 1 000 ms escrito a mano; los diez pasan al mismo criterio. Y lo que el caso quería
+acreditar —que el heredoc citado se descuenta **entero** y no entra en el presupuesto de análisis—
+se comprueba ahora **sin reloj**, por el motivo del `deny`: si los 300 KB hubieran entrado en el
+presupuesto, la respuesta sería el rechazo **por tamaño**; que el motivo nombre la ruta prueba
+además que el análisis corrió. El caso cronometrado se queda como **medición** del coste.
+
+### Corregido — la rama hermana del aviso: una sección que sí existe pero no tiene entradas (QA-109)
+
+**Qué fallaba:** desde la vuelta 1, una sección **declarada que no existe** en el documento avisa y
+lo refleja el bloque derivado (CA-09). La rama de al lado seguía muda: una sección que **sí** existe
+y **supera el umbral**, pero cuyo contenido no tiene ni una entrada reconocible, no rota nada y no
+decía nada. **No es hipotético:** el `## Historial de cambios` de los REQ de este repositorio es una
+**tabla**, y las filas de tabla son continuaciones (CA-07), no entradas — así que ArnesJuan
+encendiendo su propia rotación no rotaría nada y no se enteraría. Es el mismo error de mapeo y el
+mismo silencio que CA-09 declara inaceptable. **Qué cambia:** se emite el aviso por stderr y se
+cuenta para el bloque derivado, exactamente como en la otra rama, con **texto distinto** en los dos
+casos, porque la acción que pide cada uno es distinta: allí se corrige el nombre de la sección en el
+manifiesto; aquí, el formato de la sección o la expectativa de rotarla. **Lo que no cambia:** no
+rotar sigue siendo lo correcto —sin entradas no hay límite seguro donde cortar—, y sólo se avisa
+**por encima del umbral**: por debajo no se toca nada por diseño (CA-06) y avisar sería ruido en
+cada parada.
+
 ### Pruebas
-Banco: **606 casos** (310 antes de esta versión; 480 al cerrar la implementación, 569 con los
-casos que añadió QA y 606 tras la vuelta 1), **605 PASS · 0 FAIL · 1 SKIP** sobre la candidata y
-el cuadre de `CASOS_ESPERADOS` cerrado. Contra la instalación estable **v1.30.3**, el mismo banco
-da **458 PASS · 147 FAIL · 1 SKIP**: los 141 son exactamente los casos nuevos de comportamiento
-—fail-before/pass-after— y **todos** los controles de no regresión pasan también contra ella.
+Banco: **615 casos** (310 antes de esta versión; 480 al cerrar la implementación, 569 con los
+casos que añadió QA, 606 tras la vuelta 1 y 615 tras la vuelta 2), **614 PASS · 0 FAIL · 1 SKIP**
+sobre la candidata y el cuadre de `CASOS_ESPERADOS` cerrado. Contra la instalación estable
+**v1.30.3**, el mismo banco da **462 PASS · 152 FAIL · 1 SKIP**: son exactamente los casos nuevos
+de comportamiento —fail-before/pass-after— y **todos** los controles de no regresión pasan también
+contra ella. Esa cifra de línea base ya es **reproducible**, que es la prueba de que QA-111 está
+cerrado: **tres corridas seguidas** dieron `462 · 152 · 1` las tres, donde antes del arreglo dos
+corridas de la misma línea base daban 457 y 458.
 Coste medido con `awk` y `jq` instrumentados en el `PATH` (Linux/WSL2): el camino común de `Bash`
 (`ls -la`, `npm run build` por `guard.sh`) gasta **1 `jq`**, los mismos que v1.30.3 —eran **2**
 antes de la vuelta 1, porque leer el manifiesto se había puesto por delante del corte temprano—;

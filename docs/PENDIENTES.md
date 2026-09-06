@@ -190,3 +190,25 @@ se escribe una vez y la usan los dos. Candidata: **1.33.0**, con REQ-008.
 
 **Mientras no exista**, en el índice queda escrita la advertencia de que no es fuente y de que manda
 el REQ. Es lo barato que se puede hacer hoy sin abrir otro frente.
+
+### 1.32.0 — la rotación de la historia de un REQ no rota nada donde más falta hace (medido)
+
+`REQ-004` (1.31.0) rota **una sección declarada** de un documento, y su caso de uso principal es la
+`## Historial de cambios` de un REQ, que es donde se acumula el peso. Medido sobre este repositorio al
+cerrar 1.31.0: la sección de un REQ real pesa **19 813 bytes**, unas 20 veces el umbral, y la rotación
+reconoce **0 entradas**. Extendido a los 11 REQ: **0 entradas reconocidas y 94 filas de tabla**. La
+historia de un REQ se escribe como **tabla Markdown**, y una fila de tabla no es una entrada para el
+contador.
+
+**Por qué no entró en 1.31.0, y la decisión está medida:** no cabe como parche. Hay que decidir qué se
+hace con el separador `|---|`, con la fila de cabecera —que no se archiva, o el archivo queda sin
+encabezado y el origen sin tabla— y cómo queda el puntero dentro de una tabla partida en dos. Son
+criterios de aceptación nuevos, no un patrón más. Y el riesgo de esperar es **cero**: la rotación viene
+apagada y, desde 1.31.0, quien la encienda **ve el aviso** de que la sección existe pero no tiene
+entradas reconocibles. Un fallo mudo pasó a ser un fallo diagnosticable, que es lo que 1.31.0 podía
+comprar honestamente.
+
+**Para su REQ en 1.32.0:** reconocer filas de tabla como entradas, con la cabecera y el separador
+tratados aparte, el puntero coherente en las dos mitades, y el par fail-before/pass-after sobre un REQ
+real de este repositorio. Enlaza con la estrategia de working set de 1.35.0: éste es el mecanismo que
+mide su rama B1.

@@ -251,6 +251,27 @@ arnes_rotar_seccion() {
   done <<< "$cuerpo"
   [ "$hay" -eq 1 ] && ent+=("$cur")
   local total="${#ent[@]}"
+  # LA SECCION EXISTE PERO NO TIENE NI UNA ENTRADA RECONOCIBLE (CA-09, rama hermana;
+  # QA-109). No rotar sigue siendo lo correcto —sin entradas no hay limite seguro donde
+  # cortar, y cortar sin limite parte una entrada en dos—, pero callarse repite EXACTAMENTE
+  # el error que CA-09 declara inaceptable un parrafo mas arriba: el proyecto declaro una
+  # seccion que crece, la seccion crece, y nadie se entera de que no se archiva nada. Es la
+  # otra mitad del mismo error de mapeo, y no es hipotetica: el `## Historial de cambios`
+  # de los REQ de este repositorio es una TABLA, y CA-07 cuenta las filas como
+  # continuaciones, no como entradas.
+  #
+  # SOLO se avisa POR ENCIMA DEL UMBRAL, porque el paso 2 ya salio antes en caso contrario:
+  # por debajo no se toca nada por diseno (CA-06) y avisar seria ruido en cada parada.
+  #
+  # El texto DISTINGUE los dos casos —"no contiene la seccion" vs "la contiene sin
+  # entradas"— porque la accion que pide cada uno es distinta: alli se corrige el nombre
+  # en el manifiesto; aqui, o el formato de la seccion, o la expectativa de rotarla.
+  if [ "$total" -eq 0 ]; then
+    arnes_warn "rotacion: '${f#"$ARNES_PROJ/"}' SI contiene la seccion '$sec' y supera el umbral, pero no tiene ni una ENTRADA reconocible; no se rota nada en ese archivo. Una entrada empieza a columna cero por '- ', '* ', '### ' o 'N. '; las filas de tabla, las lineas indentadas y los parrafos sueltos son continuaciones, no entradas. Revisa el formato de la seccion o la expectativa de rotarla."
+    ARNES_ROT_SIN_ENTRADAS=$(( ${ARNES_ROT_SIN_ENTRADAS:-0} + 1 ))
+    [ -n "${ARNES_ROT_SIN_ENTRADAS_EJ:-}" ] || ARNES_ROT_SIN_ENTRADAS_EJ="${f##*/}|$sec"
+    return 0
+  fi
   # Un `conservar` no numerico (manifiesto escrito a mano) hace fallar la comparacion y
   # el artefacto se ignora entero: no se toca nada. Una parada no se bloquea por esto.
   [ "$total" -gt "$conservar" ] 2>/dev/null || return 0
