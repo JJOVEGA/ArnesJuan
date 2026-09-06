@@ -2,6 +2,11 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-05 · registro del ciclo 1 del autoalojamiento
+> Origen: Interno (documentación de gobernanza) · usuario: Juan · modelo de IA: Fable 5.1 (coordinadora) · agente: sesión coordinadora.
+
+- `docs/gobernanza/autoalojamiento.md`: la fila del ciclo 1 pasa a **publicado** (v1.30.3 sobre 6c1b58a, PR #31) y se abre la fila del ciclo 2 (1.31.0, guardián v1.30.3). Sin efecto en la máquina ni en lo que heredan los proyectos.
+
 ## [1.30.3] — 2026-09-05
 ### Corregido — dos bypass de v1.30.2, encontrados por una revisión externa
 Los dos se reprodujeron **contra la instalación estable que gobernaba la sesión**, no sobre el
