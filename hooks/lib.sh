@@ -56,7 +56,9 @@ arnes_parse_manifest() {
                                        (.requirements_dir // "requirements"),
                                        (.estados.completado // "completado"),
                                        (.pending_approval // "PENDING_APPROVAL.md"),
-                                       (.limites.bash_max_analisis // "" | tostring),
+                                       (if   (.limites.bash_max_analisis|type) == "number" then (.limites.bash_max_analisis|tostring)
+                                        elif  .limites.bash_max_analisis == null            then ""
+                                        else  "!tipo" end),
                                        (if .veredictos.exigir_fecha == true then "true" else "false" end),
                                        (if .veredictos.caducan_con_codigo == true then "true" else "false" end),
                                        (if .git.activo == false then "false" else "true" end),
@@ -78,7 +80,12 @@ arnes_parse_manifest() {
     IFS= read -r ARNES_GIT_ACTIVO;    IFS= read -r ARNES_GIT_PROHIBIDOS
     while IFS= read -r g; do [ -n "$g" ] && ARNES_GLOBS+=("$g"); done
   } <<< "$ARNES_JQ"
+  # El TIPO lo decide el JSON, no la forma del texto: `"999999"` entrecomillado es una
+  # cadena, no un número, y se comportaba como si lo fuera (SEC-006(b), R-001). Un techo
+  # escrito a mano no puede desactivar la puerta por una errata ni por un tipo.
   case "${ARNES_BASH_MAX:-}" in
+    '!tipo')       arnes_warn "'limites.bash_max_analisis' de .arnes/config.json no es un numero en el JSON (una cadena como \"999999\" no lo es); se ignora y manda el techo por defecto del arnes."
+                   ARNES_BASH_MAX='' ;;
     ''|*[!0-9]*|0) ARNES_BASH_MAX='' ;;
   esac
   ARNES_GLOBS_CARGADOS=1
@@ -237,6 +244,23 @@ arnes_norm_path() {   # <ruta> -> ARNES_NORM
         fi ;;
   esac
   p="${p//\\//}"
+  # BARRAS REPETIDAS (SEC-003, R-001). Era la evasión más barata medida en todo el
+  # arnés: UN carácter de más —`<raíz>//src//a.ts`— y las DOS puertas se apagaban a la
+  # vez. `arnes_ruta_relativa` recorta el prefijo del proyecto TEXTUALMENTE, así que la
+  # ruta no empezaba por `<raíz>/`, el prefijo no se recortaba, la relativa quedaba con
+  # `/` inicial y ningún glob de `codigo_app.globs` casaba; por la misma razón ninguna
+  # ruta caía dentro de `requirements/` y el cierre de un REQ dejaba de juzgarse.
+  # Se colapsa AQUÍ —antes de recortar el prefijo—, con expansión de parámetros y sin
+  # ningún proceso. El bucle es O(log n) sobre la ristra de barras, no sobre la ruta.
+  #
+  # La doble barra INICIAL se conserva: en Windows `//servidor/recurso` es una ruta UNC
+  # y comérsela cambiaría de máquina, no de forma.
+  case "$p" in
+    //*) d='//'; p="${p#//}" ;;
+    *)   d='' ;;
+  esac
+  while [ "$p" != "${p//\/\//\/}" ]; do p="${p//\/\//\/}"; done
+  p="$d$p"
   case "$p" in
     [A-Za-z]:*) d="${p%%:*}"; p="${d,,}:${p#*:}" ;;   # unidad en minúscula, sin `tr`
   esac
@@ -390,6 +414,29 @@ arnes_agente_legible() {  # <agent_type>
 # se agota rapido: por eso el techo esta aqui y no mas arriba. El material real de un
 # comando normal son decenas de bytes; esto solo lo toca una entrada construida.
 ARNES_BASH_MAX_ANALISIS=65536
+# MÁXIMO que un manifiesto puede declarar en `limites.bash_max_analisis`. Es OPERATIVO,
+# no arbitrario: en este techo el peor caso analizable —cuerpo denso en `$(`— tiene que
+# seguir respondiendo por debajo de los 5 s, muy lejos de los 60 s en que el hook muere
+# PERMITIENDO. Medido en la plataforma de desarrollo (Linux/WSL2, 2026-09-05) con este
+# mismo detector, `$(x)` repetido + una escritura real al final:
+#     128 KiB -> 2,3 s      192 KiB -> 5,3 s      256 KiB -> 8,8 s
+# Así que el máximo es 128 KiB y no los 256 KiB que se propusieron: el criterio manda
+# bajarlo hasta que cumpla el umbral absoluto, y 192 KiB ya no lo cumple. El número
+# vigente sale impreso en el motivo del deny. Si el detector se abarata, se vuelve a
+# medir y sube; nunca al revés.
+ARNES_BASH_MAX_MANIFIESTO=131072
+
+# PRESUPUESTO de la reconstruccion de un REQ en `guard-completado`, en bytes-edicion
+# (tamano del documento en disco x numero de ediciones). El techo fail-closed del analisis
+# de Bash vivia SOLO en el detector de escrituras, mientras la via Edit/MultiEdit aplicaba
+# cada edicion sobre una copia completa del texto —coste del orden de ediciones x tamano,
+# SIN techo—. Medido (Linux/WSL2, 2026-09-05) sobre un REQ de ~300 KB: 101 ediciones 2,2 s ·
+# 401 ediciones 8,0 s · 1.501 ediciones 25,7 s; y con un REQ de 3,1 MB + 401 ediciones, SIN
+# respuesta a los 30 s. Por encima de 60 s el hook muere, no emite nada y el resultado
+# efectivo es PERMITIR: la familia del reloj, otra vez. 64 MiB-edicion deja holgadamente
+# dentro el caso ordinario (un REQ grande con un punado de ediciones) y corta antes de que
+# el reloj decida. Igual que el otro techo: el numero es operativo y sale impreso en el deny.
+ARNES_EDIT_MAX_PRESUPUESTO=67108864
 # Codigo de salida de `arnes_bash_escrituras` cuando NO analizo por presupuesto.
 ARNES_RC_EXCESO=2
 
@@ -403,11 +450,28 @@ ARNES_RC_EXCESO=2
 # subirlo tiene sentido. Un proyecto que quisiera un techo MAS BAJO que el del codigo no
 # obtendria nada que la puerta no le de ya: el techo no autoriza, solo acota el analisis.
 arnes_techo_bash() {   # -> ARNES_TECHO
+  local v m
   if [ -z "${ARNES_TECHO:-}" ]; then
     ARNES_TECHO="$ARNES_BASH_MAX_ANALISIS"
     arnes_parse_manifest
-    if [ -n "${ARNES_BASH_MAX:-}" ] && (( ARNES_BASH_MAX > ARNES_TECHO )); then
-      ARNES_TECHO="$ARNES_BASH_MAX"
+    if [ -n "${ARNES_BASH_MAX:-}" ]; then
+      # TOPE DEL VALOR DECLARADO (SEC-006(b), R-001). El coste del análisis crece con el
+      # tamaño y un hook `PreToolUse` MUERE a los 60 s permitiendo: sin máximo, subir el
+      # techo desde el manifiesto reabre POR CONFIGURACIÓN el fallo en abierto que el
+      # presupuesto cerró. `4294967296` se aceptaba tal cual.
+      #
+      # La comparación es por LONGITUD y luego lexicográfica sobre dígitos, no aritmética:
+      # `99999999999999999999` desborda el entero de 64 bits de bash y `(( ))` daría un
+      # número cualquiera —incluido uno pequeño—, que es fallar en abierto justo en la
+      # comprobación que existe para no fallar en abierto.
+      v="${ARNES_BASH_MAX}"; m="$ARNES_BASH_MAX_MANIFIESTO"
+      while [ "${v:0:1}" = 0 ] && [ ${#v} -gt 1 ]; do v="${v:1}"; done
+      if [ ${#v} -gt ${#m} ] || { [ ${#v} -eq ${#m} ] && [ "$v" \> "$m" ]; }; then
+        arnes_warn "'limites.bash_max_analisis' de .arnes/config.json declara $ARNES_BASH_MAX bytes y el maximo admitido es $ARNES_BASH_MAX_MANIFIESTO; se aplica el maximo. Un techo mas alto deja de responder antes de que el hook muera, y un hook muerto no deniega."
+        ARNES_TECHO="$ARNES_BASH_MAX_MANIFIESTO"
+      elif (( v > ARNES_TECHO )); then
+        ARNES_TECHO="$v"
+      fi
     fi
   fi
   return 0
@@ -847,6 +911,82 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
         _arnes_emite "${tok#of=}" ;;
     esac
   done
+  return 0
+}
+
+# --- Lectura de un archivo del disco, sin procesos y SIN mentir ----------------
+# `IFS= read -r -d '' x < f` es la forma barata de leer un archivo entero en bash: un
+# solo builtin, cero forks. Tiene un borde que costó un fallo en abierto medido
+# (SEC-002, R-001): el delimitador es NUL, así que un NUL DENTRO del archivo hace que
+# `read` termine ahí y devuelva 0 — la variable queda TRUNCADA y el llamador cree que
+# tiene el documento entero. Un REQ con un NUL en la primera línea se leía sin
+# veredictos, y un campo vacío no dispara ninguna exigencia.
+#
+# La distinción es gratis y estaba ahí desde siempre: `read -d ''` devuelve 0 SÓLO si
+# encontró el delimitador. Al final del archivo (lo normal) devuelve 1. Así que
+#   rc==0  ->  había un NUL  ->  lo leído NO es el archivo
+#   rc!=0  ->  se leyó hasta el final  ->  lo leído ES el archivo
+# Esta función invierte ese código a la pregunta que hace el llamador —«¿puedo fiarme
+# de esto?»— y añade el otro modo de no poder medir: un archivo sin permiso de lectura.
+arnes_lee_archivo() {   # <ruta> -> ARNES_TEXTO ; 0 = leído entero, 1 = NO medible
+  ARNES_TEXTO=''
+  [ -e "$1" ] || return 0        # no existe: no hay texto, y eso sí se sabe
+  [ -f "$1" ] && [ -r "$1" ] || return 1
+  if IFS= read -r -d '' ARNES_TEXTO < "$1" 2>/dev/null; then
+    ARNES_TEXTO=''               # truncado por un NUL: no se devuelve la mitad de un documento
+    return 1
+  fi
+  return 0
+}
+
+# --- La cola de aprobaciones: UNA regla, la de la puerta ----------------------
+# Había DOS transcripciones de la misma regla: `guard-completado` contaba encabezados
+# `###` bajo `## Pendientes` con un awk, y el bloque derivado de `docs/ESTADO.md`
+# contaba viñetas (`- `, `* `, `1. `) con un bucle. Una entrada real del formato que
+# documenta el propio `PENDING_APPROVAL.md` —un `###` con cuatro viñetas debajo— valía
+# 1 para la puerta y 4 para el bloque. Ninguno de los dos números miente por sí solo;
+# lo que miente es que haya dos, porque el que se lee deja de ser el que bloquea.
+#
+# Gana la de la PUERTA: es la que decide, la que está documentada y la que ya distingue
+# el ejemplo comentado de una entrada real.
+#
+# LA REGLA, escrita una vez: una entrada es una línea que empieza por `###` + espacio,
+# dentro de la sección que abre un encabezado `## ` cuyo texto empieza por `Pendientes`
+# y que cierra el siguiente encabezado `## ` de CUALQUIER nombre, descontando lo que
+# caiga dentro de un comentario HTML (`<!--` … `-->`).
+#
+# Sin `awk`: la puerta pierde el fork que pagaba y la parada no gana ninguno. En esta
+# plataforma cada fork cuesta 1,2-6 s, así que unificar no puede pagarse con un proceso.
+#
+# Y es una PUERTA: si el archivo no se puede medir —un NUL que trunca la lectura, un
+# archivo ilegible— no devuelve 0, devuelve «no lo sé» (rc 1). Contar 0 sobre un archivo
+# truncado abriría el cierre de cualquier REQ con aprobaciones humanas pendientes.
+arnes_cola_pendientes() {   # <archivo> -> ARNES_COLA ; 0 = medido, 1 = NO medible
+  local linea resto dentro=0 enc=0 n=0
+  ARNES_COLA=0
+  [ -e "$1" ] || return 0        # sin archivo no hay cola: cero, y es una medida
+  arnes_lee_archivo "$1" || { ARNES_COLA=''; return 1; }
+  while IFS= read -r linea; do
+    linea="${linea%$'\r'}"       # CRLF: el retorno de carro no puede cambiar la cuenta
+    # Comentarios HTML, con la misma semántica que tenía el awk de la puerta: la línea
+    # que ABRE ya no cuenta, y la que CIERRA tampoco.
+    case "$linea" in *'<!--'*) enc=1 ;; esac
+    case "$linea" in *'-->'*)  enc=0; continue ;; esac
+    [ "$enc" -eq 0 ] || continue
+    case "$linea" in
+      '##'[[:space:]]*)
+        resto="${linea#\#\#}"
+        while :; do
+          case "$resto" in [[:space:]]*) resto="${resto#?}" ;; *) break ;; esac
+        done
+        case "$resto" in Pendientes*) dentro=1 ;; *) dentro=0 ;; esac
+        continue ;;
+      '###'[[:space:]]*)
+        [ "$dentro" -eq 1 ] && n=$((n+1))
+        continue ;;
+    esac
+  done <<< "$ARNES_TEXTO"
+  ARNES_COLA="$n"
   return 0
 }
 

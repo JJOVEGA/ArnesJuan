@@ -309,6 +309,15 @@ no contiene a un agente decidido a rodearlo. Concretamente:
   Dentro de esa vía la detección del estado terminal es **deliberadamente ancha** —lo busca en
   cualquier parte del comando, no como `estado:` seguido del valor—, porque la forma más natural
   de cerrar un REQ por shell sustituye el **valor** y no escribe nunca la palabra «Estado».
+  **Y ancha no es infalible.** Esa detección lee el **texto crudo del comando**, así que la palabra
+  del estado terminal puede escribirse partida entre expansiones —dentro de un heredoc sin citar—
+  y la comprobación no la ve; el archivo queda escrito. Ensanchar el patrón cubriría esa forma
+  concreta y **no la clase**: una variable, un `printf`, un `base64 -d` o un intérprete la
+  reproducen. La respuesta no es un patrón más largo sino una **puerta posterior**, que deja de
+  preguntar antes si un comando escribe y pregunta después si algo protegido cambió. Hasta que
+  exista, esta vía es exactamente lo que dice ser: una **barandilla contra el descuido**, no contra
+  la ofuscación deliberada. Escríbelo así en tu propio `AGENTS.md`: una promesa más fuerte que la
+  que la máquina cumple es peor que ninguna, porque se confía en ella.
 
 **Otro que tampoco decide: la rotación.** Un artefacto de bitácora —`CHANGELOG.md`, el registro
 de seguridad— crece sin tope, y todo lo que crece sin tope acaba entrando entero en la ventana

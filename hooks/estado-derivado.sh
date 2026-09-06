@@ -117,22 +117,16 @@ arnes_estado_derivado() {
   done <<< "$extraidos"
 
   # --- La cola de aprobaciones ---
-  local pfile="$ARNES_PROJ/$ARNES_PENDING_REL"
-  if [ -f "$pfile" ]; then
-    local ptexto='' dentro=0 n=0
-    IFS= read -r -d '' ptexto < "$pfile"
-    while IFS= read -r linea; do
-      case "$linea" in
-        '## Pendientes'*) dentro=1; continue ;;
-        '## '*)           dentro=0; continue ;;
-      esac
-      [ "$dentro" -eq 1 ] || continue
-      case "$linea" in
-        '- '*|'* '*|'1. '*) n=$((n+1)) ;;
-      esac
-    done <<< "$ptexto"
-    pend_abiertas="$n"
-  fi
+  # UNA sola regla, la de la puerta, en `hooks/lib.sh`. Este bloque contaba VIÑETAS y
+  # la puerta contaba encabezados `###`: una entrada real valía 4 aquí y 1 allí, y el
+  # número que se leía dejaba de ser el que bloquea (REQ-009). Si la cola no se puede
+  # medir, se dice `sin datos`: el bloque informa y no decide, pero tampoco puede
+  # afirmar un número que no midió.
+  # Sin `if [ -f ]`: un proyecto SIN archivo de cola no tiene aprobaciones pendientes, y
+  # eso es un 0 medido, no un `?`. La funcion ya distingue «no hay archivo» (0) de «hay
+  # archivo y no se pudo leer» (sin datos).
+  if arnes_cola_pendientes "$ARNES_PROJ/$ARNES_PENDING_REL"; then pend_abiertas="$ARNES_COLA"
+  else pend_abiertas='sin datos'; fi
 
   # --- Git: unos pocos forks, y solo en una parada de agente (no en cada Edit) ---
   #

@@ -37,9 +37,10 @@ command -v jq >/dev/null 2>&1 || { printf 'Hace falta jq.\n' >&2; exit 2; }
 
 ARNES_MANIFEST="$MAN"
 arnes_jq_file "$MAN" -r '[(.requirements_dir // "requirements"),
-                          (.estados.completado // "completado")] | .[]'
-REQ_DIR=''; DONE=''
-{ IFS= read -r REQ_DIR; IFS= read -r DONE; } <<< "$ARNES_JQ"
+                          (.estados.completado // "completado"),
+                          (.pending_approval // "PENDING_APPROVAL.md")] | .[]'
+REQ_DIR=''; DONE=''; PEND_REL=''
+{ IFS= read -r REQ_DIR; IFS= read -r DONE; IFS= read -r PEND_REL; } <<< "$ARNES_JQ"
 arnes_jq_file "$MAN" -r '(.estados.todos // ["borrador","pendiente","en-progreso","en-revisión","completado","bloqueado"])[]'
 ESTADOS_OK=''
 while IFS= read -r e; do arnes_norm_campo "$e"; ESTADOS_OK+="|$ARNES_CAMPO"; done <<< "$ARNES_JQ"
@@ -141,6 +142,16 @@ printf 'RESUMEN\n'
 printf '  %s REQ leídos' "$reqs"
 [ "$notas" -gt 0 ] && printf ' · %s archivo(s) sin `Estado:` (notas, no REQ)' "$notas"
 printf '\n  rigor efectivo: critico %s · estandar %s · ligero %s\n' "$nc" "$ne" "$nl"
+# La cola de aprobaciones, con la MISMA función que usa la puerta de cierre y el bloque
+# derivado de `docs/ESTADO.md` (`arnes_cola_pendientes`, hooks/lib.sh). Este informe existe
+# para detectar desfases entre lo que se escribe y lo que la máquina lee: tener aquí una
+# tercera transcripción de la regla de conteo sería cómico.
+if arnes_cola_pendientes "$PROY/$PEND_REL"; then
+  printf '  cola de aprobaciones (%s): %s pendiente(s) — %s\n' "$PEND_REL" "$ARNES_COLA" \
+    "$([ "$ARNES_COLA" -gt 0 ] && echo 'ningún REQ puede cerrarse' || echo 'no bloquea el cierre')"
+else
+  printf '  cola de aprobaciones (%s): sin datos — no se pudo leer entera; la puerta de cierre DENIEGA\n' "$PEND_REL"
+fi
 printf '\n  El rigor efectivo es DERIVADO: `Sensible a seguridad: sí` impone `critico`\n'
 printf '  aunque no se declare `Rigor:`. Si un REQ que crees crítico sale `estandar`,\n'
 printf '  su campo de sensibilidad no se está leyendo como crees.\n'

@@ -413,6 +413,24 @@ nada.
   probable que la mayoría desaparezcan solas.
 - El bloque derivado de `docs/ESTADO.md` se regenera en la siguiente parada: **no hay nada que
   migrar a mano** por el recorte de celdas.
+- **La cola de aprobaciones del bloque derivado puede BAJAR sin que nadie haya resuelto nada.**
+  Hasta 1.30.3 el bloque contaba **viñetas** y la puerta contaba encabezados `###`: una entrada
+  real del formato documentado valía **4** en el bloque y **1** en la puerta. Ahora las dos usan
+  la misma regla —la de la puerta—, así que el número puede caer de golpe. **No hay nada que
+  migrar a mano:** el bloque se regenera en la siguiente parada. Si la cola no se puede leer
+  entera (un byte NUL, un archivo sin permiso), el bloque dice `sin datos` y la puerta **deniega**
+  el cierre: antes contaba 0 y dejaba pasar.
+- **Un REQ con la cabecera decorada empieza a ser JUZGADO.** La **clave** de un campo se lee ahora
+  con la misma tolerancia que su valor (sangrado, tabulador y énfasis de Markdown: `**Estado:**`,
+  `Estado :`, `` `Estado:` ``). Hasta 1.30.3 esas formas dejaban el campo **vacío**, y un campo
+  vacío no exigía nada. **Paso de migración: corre `tools/arnes-lectura.sh` ANTES de actualizar**
+  para ver qué REQ cambian de lectura — los que aparecían como «nota sin Estado» pasan a contar
+  como REQ, con sus veredictos y su rigor.
+- **`limites.bash_max_analisis` tiene ahora un máximo.** Si el manifiesto declara un valor por
+  encima del máximo operativo del arnés, se aplica **el máximo** y se avisa por stderr; y un valor
+  que no sea un **número** en el JSON (`"999999"` entrecomillado) cae al techo por defecto, también
+  con aviso. Un techo más alto dejaría de responder antes de que el hook muera, y un hook muerto no
+  deniega. Si el proyecto declaró un número enorme «por si acaso», bórralo: no hacía lo que parecía.
 
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 

@@ -3,9 +3,9 @@
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
 ## [1.31.0] — 2026-09-05
-> Origen: GitHub · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos` (REQ-002…006), `desarrollador` (implementación y banco), `qa-tester` y `auditor-seguridad` (pendientes en el ciclo 2 del autoalojamiento).
+> Origen: GitHub · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos` (REQ-002…009), `desarrollador` (implementación y banco), `qa-tester` y `auditor-seguridad` (pendientes en el ciclo 2 del autoalojamiento).
 
-Cinco mecanismos, todos nacidos de defectos **medidos en proyectos reales** y descritos aquí
+Siete mecanismos, todos nacidos de defectos **medidos en proyectos reales** y descritos aquí
 en la forma del hallazgo: qué fallaba, por dónde, y qué cambia para un proyecto. Cuatro nacen
 **apagados**; sólo uno viene encendido, y se dice por qué.
 
@@ -82,6 +82,77 @@ normalizador y sólo al componer la fila, así que ni la puerta ni el informe ve
 recortado —si llegara a la lectura, un `Hallazgos abiertos:` largo podría perder su clase
 bloqueante por el camino—.
 
+### Corregido — la cola de aprobaciones se contaba de dos maneras (REQ-009)
+**Qué fallaba:** la misma cola, dos números. La puerta de cierre contaba **encabezados
+`###`** bajo `## Pendientes`; el bloque derivado de `docs/ESTADO.md` contaba **viñetas**
+(`- `, `* `, `1. `) en la misma sección. Una entrada real del formato que documenta el
+propio `PENDING_APPROVAL.md` —un `###` con cuatro viñetas debajo— valía **1** para la
+puerta y **4** para el bloque. Ninguno de los dos números miente por sí solo; lo que miente
+es que haya dos, porque el número que se lee deja de ser el que bloquea. Además el conteo de
+viñetas nunca recibió la corrección del **ejemplo comentado**, así que un `<!-- … -->` con un
+ejemplo dentro sumaba. **Por dónde:** dos transcripciones de la misma regla, en dos archivos
+—la misma familia que el vocabulario de veredictos de REQ-003—, y se desfasaron en silencio
+hasta que alguien comparó los dos números.
+**Qué cambia:** la regla vive **una** vez (`arnes_cola_pendientes`, `hooks/lib.sh`) y la usan
+por igual la puerta, el bloque derivado y `tools/arnes-lectura.sh`, que ahora también informa
+de la cola. Gana la regla de la puerta —la que decide y la que está documentada—: una entrada
+es una línea `###` + espacio dentro de la sección que abre un `## ` cuyo texto empieza por
+«Pendientes» y cierra el siguiente `## ` de cualquier nombre, descontando los comentarios
+HTML. **Y la cola es una puerta:** si no se puede leer entera —un byte NUL que la trunca, un
+archivo sin permiso— la puerta **deniega** con motivo propio en vez de contar 0 sobre un
+archivo que nadie leyó, y el bloque derivado dice `sin datos` en vez de `0`. *Se paga en
+negativo:* el conteo se hace con lecturas y expansión de parámetros, así que la puerta pierde
+el `awk` que pagaba en cada cierre (medido: 1 → 0) y la parada no gana ninguno.
+**Al actualizar:** el número de aprobaciones pendientes del bloque derivado puede **bajar**
+sin que nadie haya resuelto nada. No hay nada que migrar: se regenera en la siguiente parada.
+
+### Seguridad — cuatro huecos de la auditoría R-001, todos de la misma familia (REQ-007)
+Todos **preexistentes** —medidos idénticos en 1.30.3 y en la versión anterior—, ninguno es
+regresión, y todos son la misma clase: **un dato que controla quien llama decide cómo se
+comporta el guardián**.
+
+- **Una barra de más desactivaba las DOS puertas.** Un `Write` a `<raíz>//src//a.ts` o un
+  `Edit` sobre `<raíz>//requirements//REQ-x.md` pasaban: la ruta relativa se calcula
+  recortando el prefijo del proyecto **textualmente**, la ruta no empezaba por `<raíz>/`, el
+  prefijo no se recortaba, ningún glob de código casaba y ninguna ruta caía dentro de
+  `requirements/`. Era la evasión **más barata** medida en todo el arnés —un carácter, sin
+  ninguna forma exótica— y alcanzaba a los dos guardianes a la vez. Ahora las barras repetidas
+  se colapsan al normalizar la ruta, **antes** de recortar el prefijo y **sin ningún proceso**;
+  la doble barra inicial de una ruta UNC de Windows se conserva.
+- **Un byte de control desincronizaba la simulación del cierre.** Las piezas de un
+  `Edit`/`MultiEdit` se trocean con un separador que viaja **dentro** del propio dato: con un
+  byte de control metido en un `new_string`, el bucle leía como tripletas cosas que no lo eran
+  y **el documento que el hook simula dejaba de ser el que la herramienta iba a escribir**. Las
+  cuatro puertas del cierre —veredictos, cola, quality gates y clase del hallazgo— se saltaban
+  a la vez, con un byte. Ahora un `tool_input` con bytes de control C0 —cualquiera salvo
+  tabulador, salto de línea y retorno de carro, que el Markdown normal sí lleva— **no se juzga:
+  se deniega**, en la misma llamada a `jq` y sin ningún proceso nuevo.
+- **Un NUL dentro del documento truncaba la lectura del disco.** La forma barata de leer un
+  archivo entero en bash usa el NUL como delimitador, así que un NUL en la primera línea dejaba
+  el texto cortado ahí: los veredictos se leían de un documento incompleto —y un campo vacío no
+  exige nada— y, de paso, la reconstrucción fallaba y la puerta caía a su vía más laxa. Bastaba
+  una escritura previa en `requirements/`, que ninguna puerta restringe. Ahora la lectura
+  **dice** cuándo no pudo leer el archivo entero, y una edición que menciona el estado terminal
+  sobre un documento ilegible se deniega con motivo propio. Lo que decide sigue siendo la
+  transición: una edición que no toca el estado no queda bloqueada por el byte.
+- **El techo de análisis de Bash se podía subir sin tope desde el manifiesto.** El coste del
+  análisis crece con el tamaño y un hook `PreToolUse` **muere a los 60 s permitiendo**: un
+  `limites.bash_max_analisis` de `4294967296` reabría **por configuración** justo el fallo en
+  abierto que el presupuesto de 1.30.3 cerró. Y `"999999"` **entrecomillado** —una cadena, no un
+  número— se aceptaba como si lo fuera. Ahora el valor declarado tiene un **máximo operativo**,
+  medido y no arbitrario: por encima se aplica el máximo y se avisa; un valor que no sea un
+  número en el JSON cae al techo por defecto, también con aviso. Un valor **más bajo** que el
+  defecto sigue sin bajar nada, y el motivo del deny sigue imprimiendo el techo vigente en bytes
+  sin nombrar ninguna ruta.
+
+**Pendiente de decisión humana, y por eso no aplicado:** el manifiesto que define la frontera
+no está **dentro** de la frontera —quien no puede escribir el código de los guardianes sí puede
+cambiar la regla que dice qué es ese código—. Es escalada de privilegios dentro del arnés y el
+mecanismo para cerrarla ya existe; lo que falta es el **mapeo**, y cambiar el mapeo de este
+repositorio exige aprobación del propietario. Queda escrito en `PENDING_APPROVAL.md` y el
+pipeline se detiene ahí. **Ninguna plantilla hereda esos globs:** es mapeo de este repositorio,
+no mecanismo, y el banco tiene un caso que se pone rojo si algún día aparecen ahí.
+
 ### Andamiaje que heredan los proyectos
 - `templates/arnes-config.json.tpl`: bloques nuevos `veredictos` (apagado), `git` (encendido) y
   `limites` (**opcional**: el techo de análisis de Bash que 1.30.3 dejó sin documentar), y la
@@ -89,14 +160,25 @@ bloqueante por el camino—.
 - `templates/requirements-README.md.tpl` y `templates/AGENTS.md.tpl`: `con-hallazgos`, la fecha
   del veredicto, el aviso sin bloqueo, la rotación de la historia y el recorte de celdas.
 - `skills/arnes-upgrade/SKILL.md`: sección **Hacia 1.31.0** con qué preguntar antes de encender
-  `veredictos.*`, qué avisar de `guard-git` y dos marcadores nuevos de versión.
+  `veredictos.*`, qué avisar de `guard-git`, dos marcadores nuevos de versión y los tres avisos
+  nuevos: la cuenta de la cola puede bajar sola, un REQ con la cabecera decorada empieza a ser
+  juzgado, y `limites.bash_max_analisis` tiene ahora un máximo.
+- `templates/PENDING_APPROVAL.md.tpl`: la regla de conteo de la cola, escrita **una vez**, y el
+  aviso de que el bloque derivado y la puerta cuentan lo mismo.
+- `templates/AGENTS.md.tpl`: el párrafo que acota la detección del estado terminal por `Bash`
+  —lee el texto crudo del comando, así que partir la palabra entre expansiones la evade; la
+  respuesta es la puerta posterior, no un patrón más largo—, para que ningún proyecto lea una
+  promesa más fuerte de la que la máquina cumple.
 - `ARCHITECTURE.md`: vista de sistema al día, con el guardián nuevo y el orden de `guard.sh`.
 
 ### Pruebas
-Banco: **428 casos** (310 antes), **427 PASS · 0 FAIL · 1 SKIP** sobre la candidata y el cuadre
+Banco: **480 casos** (310 antes), **479 PASS · 0 FAIL · 1 SKIP** sobre la candidata y el cuadre
 de `CASOS_ESPERADOS` cerrado. Contra la instalación estable **v1.30.3**, el mismo banco da
-**376 PASS · 51 FAIL · 1 SKIP**: los 51 son exactamente los casos nuevos de comportamiento
+**407 PASS · 72 FAIL · 1 SKIP**: los 72 son exactamente los casos nuevos de comportamiento
 —fail-before/pass-after— y **todos** los controles de no regresión pasan también contra ella.
+Coste medido con `awk` y `jq` instrumentados en el `PATH`: el camino común de `Bash` (`ls -la`
+por `guard.sh`) gasta lo mismo que v1.30.3 —1 `jq`, 0 `awk`—, el cierre de un REQ **baja** de 1
+`awk` a 0, y la parada no gana ninguno.
 
 ## [Interno] — 2026-09-05 · migración del andamiaje de este repo 1.30.2 → 1.30.3 (`arnes-upgrade`)
 > Origen: Interno · usuario: Juan · modelo de IA: Fable 5.1 (coordinadora) · skill `arnes-upgrade` del plugin 1.30.3.

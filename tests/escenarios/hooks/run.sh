@@ -1123,7 +1123,12 @@ seccion_20() {
 EST_PROJ="$(mktemp -d)"
 mkdir -p "$EST_PROJ/.arnes" "$EST_PROJ/requirements" "$EST_PROJ/docs"
 cp "$PROJ/.arnes/config.json" "$EST_PROJ/.arnes/config.json"
-printf '## Pendientes\n- decidir el proveedor\n- aprobar el borrado\n\n## Resueltas\n- otra\n' > "$EST_PROJ/PENDING_APPROVAL.md"
+# REQ-009: la cola se cuenta con LA REGLA DE LA PUERTA —encabezados `###`—, no con
+# vinetas. Esta sonda escribia dos vinetas y esperaba 2; la puerta habria dicho 0 sobre
+# ese mismo archivo, asi que el caso acreditaba un numero que no bloqueaba nada. Ahora la
+# sonda escribe DOS ENTRADAS del formato documentado, con su cuerpo de vinetas debajo: el
+# 2 que se comprueba es el mismo 2 que deniega el cierre.
+printf '## Pendientes\n### [2026-09-05] (coordinadora) — decidir el proveedor\n- **Contexto** x\n- **Espera** aprobación\n\n### [2026-09-05] (coordinadora) — aprobar el borrado\n- **Contexto** y\n\n## Resueltas\n### [2026-09-01] (coordinadora) — otra\n' > "$EST_PROJ/PENDING_APPROVAL.md"
 printf '# REQ-001\nEstado: completado\nSensible a seguridad: no\nQA: aprobado\nSeguridad: n/a\n' > "$EST_PROJ/requirements/REQ-001.md"
 printf '# REQ-002\nEstado: en-revisión\nSensible a seguridad: **sí**\nQA: con-hallazgos\nSeguridad: pendiente\n' > "$EST_PROJ/requirements/REQ-002.md"
 printf '# Los REQ\nEste README no es un REQ y no debe contarse.\n' > "$EST_PROJ/requirements/README.md"
@@ -2423,7 +2428,369 @@ check "CA-12 un QA largo que empieza por aprobado se lee como siempre -> deny" d
 rm -rf "$DER"
 }
 
-TOTAL_SECCIONES=30
+# --- REQ-009: la cola de aprobaciones se cuenta UNA vez, con la regla de la puerta ----
+seccion_31() {
+  seccion_nueva "Cola de aprobaciones: una sola regla, la de la puerta (REQ-009):"
+
+# Un REQ listo para cerrar: lo unico que puede bloquearlo es la cola.
+printf '# REQ-900\nEstado: en-revisión\nSensible a seguridad: no\nQA: aprobado\nSeguridad: n/a\n' > "$PROJ/requirements/REQ-900.md"
+CIERRE="$(emite_edit_real "$PROJ/requirements/REQ-900.md" 'en-revisión' 'completado')"
+
+# La ENTRADA REAL del formato que documenta el propio PENDING_APPROVAL.md: un `###` y sus
+# cuatro vinetas. Contra v1.30.3 la puerta decia 1 y el bloque derivado decia 4.
+ENTRADA='## Pendientes
+
+### [2026-09-05] (desarrollador) — Una decision que espera
+- **Contexto** por que se detuvo aqui
+- **Opciones** A / B
+- **Recomendación del agente** A
+- **Espera** aprobación del humano
+
+## Resueltas
+'
+printf '%s' "$ENTRADA" > "$PROJ/PENDING_APPROVAL.md"
+check_motivo "REQ-009 CA-01 la puerta cuenta 1 sobre la entrada del formato documentado" \
+  'hay 1 aprobación' guard-completado.sh "$CIERRE"
+
+# El MISMO archivo, leido por el bloque derivado: tiene que decir 1, no 4.
+DER9="$(mktemp -d)"
+mkdir -p "$DER9/.arnes" "$DER9/requirements" "$DER9/docs"
+printf '%s\n' "$MANIFIESTO_BASE" > "$DER9/.arnes/config.json"
+printf '# ESTADO\n' > "$DER9/docs/ESTADO.md"
+der9_cola() {   # -> imprime lo que el bloque derivado escribe como cola
+  local json
+  json="$(CLAUDE_PROJECT_DIR="$DER9" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR,stop_hook_active:false}')"
+  : > "$ERRLOG"
+  printf '%s' "$json" | CLAUDE_PROJECT_DIR="$DER9" "$HOOKS_DIR/estado-derivado.sh" >/dev/null 2>"$ERRLOG"
+  sed -n 's/^\*\*Aprobaciones pendientes:\*\* //p' "$DER9/docs/ESTADO.md" | tail -1
+}
+der9_check() {
+  if [ -n "$FILTRO" ] && ! printf '%s' "$1" | grep -qi -- "$FILTRO"; then return 0; fi
+  if [ "$2" = "$3" ]; then echo "  PASS  $1"; PASS=$((PASS+1))
+  else echo "  FAIL  $1  esperado=<$2> obtenido=<$3>"; diag; FAIL=$((FAIL+1)); fi
+}
+printf '%s' "$ENTRADA" > "$DER9/PENDING_APPROVAL.md"
+der9_check "REQ-009 CA-01 el bloque derivado dice 1 sobre la misma entrada (decia 4)" "1" "$(der9_cola)"
+
+# CA-12: CRLF. El retorno de carro no puede cambiar la cuenta en ninguno de los dos.
+printf '%s' "$ENTRADA" | sed 's/$/\r/' > "$PROJ/PENDING_APPROVAL.md"
+check_motivo "REQ-009 CA-12 CRLF: la puerta sigue contando 1" 'hay 1 aprobación' guard-completado.sh "$CIERRE"
+printf '%s' "$ENTRADA" | sed 's/$/\r/' > "$DER9/PENDING_APPROVAL.md"
+der9_check "REQ-009 CA-12 CRLF: el bloque derivado tambien dice 1" "1" "$(der9_cola)"
+
+# CA-07: un ejemplo COMENTADO dentro de la seccion no es una entrada.
+COMENTADO='## Pendientes
+
+<!--
+### [AAAA-MM-DD] (agente) — Título de la decisión
+- **Contexto** …
+-->
+
+## Resueltas
+'
+printf '%s' "$COMENTADO" > "$PROJ/PENDING_APPROVAL.md"
+check "REQ-009 CA-07 un ejemplo comentado bajo Pendientes no bloquea el cierre" allow guard-completado.sh "$CIERRE"
+printf '%s' "$COMENTADO" > "$DER9/PENDING_APPROVAL.md"
+der9_check "REQ-009 CA-07 el bloque derivado tambien dice 0 con el ejemplo comentado" "0" "$(der9_cola)"
+
+# CA-06: el archivo de arranque del arnes, con el ejemplo FUERA de la cola.
+cp "$TPL_DIR/PENDING_APPROVAL.md.tpl" "$PROJ/PENDING_APPROVAL.md"
+check "REQ-009 CA-06 la plantilla de PENDING no bloquea (ejemplo fuera de la cola)" allow guard-completado.sh "$CIERRE"
+
+# CA-09 / CA-10: lo resuelto no bloquea, y CUALQUIER seccion cierra la cola.
+printf '## Pendientes\n\n## Resueltas\n### a\n### b\n### c\n### d\n### e\n' > "$PROJ/PENDING_APPROVAL.md"
+check "REQ-009 CA-09 cinco entradas bajo Resueltas no bloquean" allow guard-completado.sh "$CIERRE"
+printf '## Pendientes\n\n## Notas\n### a\n### b\n' > "$PROJ/PENDING_APPROVAL.md"
+check "REQ-009 CA-10 cualquier seccion cierra la cola, no solo Resueltas" allow guard-completado.sh "$CIERRE"
+
+# CA-11: solo el nivel `###` es una entrada.
+printf '## Pendientes\n### [2026-09-05] (dev) — una\n#### un subapartado suyo\n' > "$PROJ/PENDING_APPROVAL.md"
+check_motivo "REQ-009 CA-11 un '####' no es una entrada: sigue siendo 1" 'hay 1 aprobación' guard-completado.sh "$CIERRE"
+
+# CA-13: la forma del encabezado. Abre por prefijo; sin espacio no abre nada.
+printf '## Pendientes (2 abiertas)\n### [2026-09-05] (dev) — una\n' > "$PROJ/PENDING_APPROVAL.md"
+check_motivo "REQ-009 CA-13 '## Pendientes (2 abiertas)' abre la seccion por prefijo" 'hay 1 aprobación' guard-completado.sh "$CIERRE"
+printf '##Pendientes\n### [2026-09-05] (dev) — una\n' > "$PROJ/PENDING_APPROVAL.md"
+check "REQ-009 CA-13 '##Pendientes' sin espacio no abre la seccion (como en v1.30.3)" allow guard-completado.sh "$CIERRE"
+
+# CA-05: control de no regresion, 0 / 1 / 3 entradas.
+printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+check "REQ-009 CA-05 con 0 entradas el cierre pasa" allow guard-completado.sh "$CIERRE"
+printf '## Pendientes\n### a\n### b\n### c\n' > "$PROJ/PENDING_APPROVAL.md"
+check_motivo "REQ-009 CA-05 con 3 entradas deniega y dice cuantas" 'hay 3 aprobación' guard-completado.sh "$CIERRE"
+
+# CA-14: sin archivo de cola, no hay cola. Ni error ni bloqueo.
+rm -f "$PROJ/PENDING_APPROVAL.md"
+check "REQ-009 CA-14 sin PENDING_APPROVAL.md el cierre no se bloquea" allow guard-completado.sh "$CIERRE"
+rm -f "$DER9/PENDING_APPROVAL.md"
+der9_check "REQ-009 CA-14 sin archivo el bloque derivado dice 0, no error" "0" "$(der9_cola)"
+
+# --- Bloque C: la cola es una puerta. Si no se puede contar, no deja pasar ---
+# CA-15: un NUL antes de la seccion truncaria la lectura y la cuenta saldria 0 sobre un
+# archivo que nadie leyo entero. Eso ABRE el cierre de cualquier REQ con aprobaciones
+# humanas abiertas: es exactamente lo que no puede pasar.
+printf 'basura' > "$PROJ/PENDING_APPROVAL.md"
+printf '\000' >> "$PROJ/PENDING_APPROVAL.md"
+printf '\n## Pendientes\n### [2026-09-05] (dev) — una decision de verdad\n' >> "$PROJ/PENDING_APPROVAL.md"
+check_motivo "REQ-009 CA-15 un NUL en la cola: DENY con motivo propio, nunca allow por 0" \
+  'no se pudo leer entera' guard-completado.sh "$CIERRE"
+# CA-16: el bloque derivado informa, no decide: no bloquea la parada, pero tampoco puede
+# afirmar un numero que no midio.
+cp "$PROJ/PENDING_APPROVAL.md" "$DER9/PENDING_APPROVAL.md"
+DER9_COLA="$(der9_cola)"; DER9_RC=$?
+der9_check "REQ-009 CA-16 con NUL el bloque dice 'sin datos', no 0" "sin datos" "$DER9_COLA"
+der9_check "REQ-009 CA-16 con NUL la parada NO se bloquea (rc 0)" "0" "$DER9_RC"
+
+# CA-17: archivo ilegible. Con root todo es legible y el caso no mide nada: se salta
+# diciendolo, que es distinto de pasar.
+printf '## Pendientes\n### [2026-09-05] (dev) — una\n' > "$PROJ/PENDING_APPROVAL.md"
+chmod 000 "$PROJ/PENDING_APPROVAL.md" 2>/dev/null
+if [ -r "$PROJ/PENDING_APPROVAL.md" ]; then
+  echo "  SKIP  REQ-009 CA-17 cola ilegible (condicion: corriendo como root, chmod 000 sigue siendo legible)"
+else
+  check_motivo "REQ-009 CA-17 una cola ilegible deniega el cierre con el mismo motivo" \
+    'no se pudo leer entera' guard-completado.sh "$CIERRE"
+fi
+chmod 644 "$PROJ/PENDING_APPROVAL.md" 2>/dev/null
+
+# --- Bloque A: la regla es UNA. Se prueba por mutacion, no por lectura ---
+# CA-02: ningun consumidor conserva transcripcion propia de la regla.
+PROPIOS=$(grep -c -e '\^###' -e "'- '\*|'\* '\*|'1\. '\*" \
+  "$HOOKS_DIR/guard-completado.sh" "$HOOKS_DIR/estado-derivado.sh" 2>/dev/null | awk -F: '{s+=$NF} END {print s+0}')
+der9_check "REQ-009 CA-02 ningun consumidor conserva su propio patron de conteo" "0" "$PROPIOS"
+
+# CA-03: se muta SOLO la funcion de lib.sh —que `###` case tambien con `####`— y se mira
+# si los TRES lectores cambian. No mide que la regla sea correcta: mide que sea UNA.
+MUT="$(mktemp -d)"
+cp -r "$HOOKS_DIR" "$MUT/hooks"
+cp -r "$HOOKS_DIR/../tools" "$MUT/tools" 2>/dev/null || true
+cp -r "$HOOKS_DIR/../.claude-plugin" "$MUT/.claude-plugin" 2>/dev/null || true
+mkdir -p "$MUT/proy/.arnes" "$MUT/proy/requirements" "$MUT/proy/docs"
+printf '%s\n' "$MANIFIESTO_BASE" > "$MUT/proy/.arnes/config.json"
+printf '# ESTADO\n' > "$MUT/proy/docs/ESTADO.md"
+printf '# REQ-901\nEstado: en-revisión\nSensible a seguridad: no\nQA: aprobado\nSeguridad: n/a\n' > "$MUT/proy/requirements/REQ-901.md"
+printf '## Pendientes\n### [2026-09-05] (dev) — una\n#### y un subapartado\n' > "$MUT/proy/PENDING_APPROVAL.md"
+tres_cuentas() {   # -> "puerta|bloque|informe"
+  local j p b i
+  j="$(CLAUDE_PROJECT_DIR="$MUT/proy" jq -n '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,
+        tool_input:{file_path:(env.CLAUDE_PROJECT_DIR+"/requirements/REQ-901.md"),old_string:"en-revisión",new_string:"completado"}}')"
+  p="$(printf '%s' "$j" | CLAUDE_PROJECT_DIR="$MUT/proy" "$MUT/hooks/guard-completado.sh" 2>/dev/null \
+       | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' | sed -n 's/.*hay \([0-9]*\) aprobación.*/\1/p')"
+  printf '%s' "$(CLAUDE_PROJECT_DIR="$MUT/proy" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR,stop_hook_active:false}')" \
+    | CLAUDE_PROJECT_DIR="$MUT/proy" "$MUT/hooks/estado-derivado.sh" >/dev/null 2>&1
+  b="$(sed -n 's/^\*\*Aprobaciones pendientes:\*\* //p' "$MUT/proy/docs/ESTADO.md" | tail -1)"
+  i="$("$MUT/tools/arnes-lectura.sh" "$MUT/proy" 2>/dev/null | sed -n 's/.*cola de aprobaciones ([^)]*): \([0-9]*\) pendiente.*/\1/p')"
+  printf '%s|%s|%s' "$p" "$b" "$i"
+}
+der9_check "REQ-009 CA-03 sin mutar, los tres lectores dicen 1" "1|1|1" "$(tres_cuentas)"
+sed -i "s/'###'\[\[:space:\]\]\*)/'###'*)/" "$MUT/hooks/lib.sh"
+der9_check "REQ-009 CA-03 mutada SOLO lib.sh, los tres cambian a 2 (la regla es una)" "2|2|2" "$(tres_cuentas)"
+sed -i "s/'###'\*)/'###'[[:space:]]*)/" "$MUT/hooks/lib.sh"
+der9_check "REQ-009 CA-03 retirada la mutacion, los tres vuelven a 1" "1|1|1" "$(tres_cuentas)"
+
+# CA-20: la unificacion se paga en NEGATIVO. La puerta pagaba un `awk` por cierre y ahora
+# no arranca ninguno; la parada no gana ninguno. Se mide con un awk instrumentado en PATH.
+BIN9="$(mktemp -d)"
+printf '#!/bin/sh\necho awk >> "%s/awk.log"\nexec /usr/bin/awk "$@"\n' "$BIN9" > "$BIN9/awk"
+chmod +x "$BIN9/awk"
+printf '## Pendientes\n### [2026-09-05] (dev) — una\n' > "$PROJ/PENDING_APPROVAL.md"
+: > "$BIN9/awk.log"
+printf '%s' "$CIERRE" | PATH="$BIN9:$PATH" "$HOOKS_DIR/guard-completado.sh" >/dev/null 2>&1
+der9_check "REQ-009 CA-20 el cierre no arranca ningun awk para contar la cola" "0" "$(wc -l < "$BIN9/awk.log" | tr -d ' ')"
+rm -rf "$MUT" "$DER9" "$BIN9"
+}
+
+# --- REQ-007: los huecos de la auditoria R-001 (SEC-001, SEC-002, SEC-003, SEC-006) ----
+seccion_32() {
+  seccion_nueva "Huecos de la auditoria de seguridad R-001 (REQ-007, bloque H):"
+
+printf '# REQ-700\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n' > "$PROJ/requirements/REQ-700.md"
+printf '# REQ-701\nEstado: en-revisión\nSensible a seguridad: no\nQA: aprobado\nSeguridad: n/a\n' > "$PROJ/requirements/REQ-701.md"
+
+# --- SEC-003 (CA-47/CA-48): una barra de mas desactivaba LAS DOS puertas ---
+# Un caracter, sin ninguna forma exotica: `arnes_ruta_relativa` recortaba el prefijo del
+# proyecto TEXTUALMENTE, la ruta no empezaba por `<raiz>/`, ningun glob casaba y ninguna
+# ruta caia dentro de requirements/.
+check "REQ-007 CA-47 SEC-003 Write a <raiz>//src//a.ts -> deny igual que con una barra" deny \
+  guard-codigo.sh "$(emite_write "$PROJ//src//a.ts" 'hola')"
+check "REQ-007 CA-47 SEC-003 Edit que cierra un REQ en <raiz>//requirements//REQ-700.md -> deny" deny \
+  guard-completado.sh "$(emite_edit_real "$PROJ//requirements//REQ-700.md" 'en-revisión' 'completado')"
+# CA-48: los controles positivos que YA se resolvian bien no pueden romperse.
+check "REQ-007 CA-48 control <raiz>/./src/../src/a.ts sigue deny" deny \
+  guard-codigo.sh "$(emite_write "$PROJ/./src/../src/a.ts" 'hola')"
+check "REQ-007 CA-48 control <raiz>/src/./a.ts sigue deny" deny \
+  guard-codigo.sh "$(emite_write "$PROJ/src/./a.ts" 'hola')"
+check "REQ-007 CA-48 control ruta relativa src/a.ts sigue deny" deny \
+  guard-codigo.sh "$(emite_write "src/a.ts" 'hola')"
+check "REQ-007 CA-48 control ./src/a.ts sigue deny" deny \
+  guard-codigo.sh "$(emite_write "./src/a.ts" 'hola')"
+# CA-48 (a): lo que decide es el glob, no la barra.
+check "REQ-007 CA-48 <raiz>//docs//notas.md (fuera de los globs) -> allow" allow \
+  guard-codigo.sh "$(emite_write "$PROJ//docs//notas.md" 'hola')"
+# CA-48 (b): la doble barra INICIAL de una UNC de Windows no se colapsa.
+check "REQ-007 CA-48 una ruta UNC //servidor/recurso/x.ts conserva su forma -> allow" allow \
+  guard-codigo.sh "$(emite_write "//servidor/recurso/src/a.ts" 'hola')"
+# CA-48 (c): la restriccion sigue siendo de QUIEN edita.
+check "REQ-007 CA-48 el desarrollador si puede escribir en <raiz>//src//a.ts" allow \
+  guard-codigo.sh "$(jq -n --arg fp "$PROJ//src//a.ts" '{hook_event_name:"PreToolUse",tool_name:"Write",cwd:env.CLAUDE_PROJECT_DIR,agent_id:"a1",agent_type:"desarrollador",tool_input:{file_path:$fp,content:"hola"}}')"
+
+# --- SEC-001 (CA-43/CA-44): un byte de control desincronizaba la simulacion ---
+# El separador de las piezas viaja DENTRO del dato que controla quien llama. Con campos
+# de mas, el bucle leia como tripletas cosas que no lo eran y el documento que el hook
+# simulaba dejaba de ser el que la herramienta iba a escribir: las cuatro puertas del
+# cierre se saltaban a la vez, con un byte.
+SOH=$'\001'
+check "REQ-007 CA-43 SEC-001 MultiEdit con un byte de control en el new_string -> deny" deny \
+  guard-completado.sh "$(jq -n --arg fp "$PROJ/requirements/REQ-700.md" --arg ns "completado${SOH}x${SOH}y${SOH}1" \
+    '{hook_event_name:"PreToolUse",tool_name:"MultiEdit",cwd:env.CLAUDE_PROJECT_DIR,
+      tool_input:{file_path:$fp,edits:[{old_string:"en-revisión",new_string:$ns},{old_string:"# REQ-700",new_string:"# REQ-700"}]}}')"
+check "REQ-007 CA-43 SEC-001 Write con 'nota'+byte de control delante del documento cerrado -> deny" deny \
+  guard-completado.sh "$(emite_write "$PROJ/requirements/REQ-700.md" "nota${SOH}# REQ-700
+Estado: completado
+QA: pendiente
+")"
+check "REQ-007 CA-44 control: el MultiEdit HONESTO que cierra con QA pendiente ya denegaba" deny \
+  guard-completado.sh "$(emite_multiedit "$PROJ/requirements/REQ-700.md" 'en-revisión' 'completado' '# REQ-700' '# REQ-700 x')"
+check "REQ-007 CA-44 control: el mismo MultiEdit sobre un REQ en verde -> allow" allow \
+  guard-completado.sh "$(emite_multiedit "$PROJ/requirements/REQ-701.md" 'en-revisión' 'completado' '# REQ-701' '# REQ-701 x')"
+check "REQ-007 CA-44 control: tabuladores y saltos de linea legitimos no son un falso positivo" allow \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-701.md" '# REQ-701' "# REQ-701
+| a	| b |
+")"
+
+# --- SEC-002 (CA-45/CA-46): un NUL en el REQ truncaba la lectura del disco ---
+# `read -d ''` se detiene en el primer NUL: los veredictos se leian de un texto incompleto
+# —y un campo vacio no exige nada— y ademas el `old_string` no se encontraba, asi que la
+# puerta caia a la via mas laxa. Bastaba una escritura previa en requirements/.
+printf '# REQ-702 ' > "$PROJ/requirements/REQ-702.md"
+printf '\000' >> "$PROJ/requirements/REQ-702.md"
+printf ' nota\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n' >> "$PROJ/requirements/REQ-702.md"
+check_motivo "REQ-007 CA-45 SEC-002 un NUL en el REQ: el cierre deniega con motivo propio" \
+  'no se puede leer entero' guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-702.md" 'en-revisión' 'completado')"
+check "REQ-007 CA-46 control: sobre el REQ con NUL, una edicion que no toca el estado -> allow" allow \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-702.md" 'nota' 'otra anotacion')"
+check "REQ-007 CA-46 control: el mismo REQ SIN NUL y con QA pendiente -> deny (como siempre)" deny \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-700.md" 'en-revisión' 'completado')"
+check "REQ-007 CA-46 control: el mismo REQ SIN NUL y con los veredictos completos -> allow" allow \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-701.md" 'en-revisión' 'completado')"
+
+# --- SEC-006 parte (b) (CA-54/CA-55): el techo del manifiesto no tenia tope ---
+# El coste del analisis crece con el tamano y un hook PreToolUse MUERE a los 60 s
+# permitiendo: sin maximo, subir el techo desde el manifiesto reabria POR CONFIGURACION
+# el fallo en abierto que el presupuesto cerro.
+GRANDE="$(printf 'a%.0s' $(seq 1 140000))"
+MEDIANO="$(printf 'a%.0s' $(seq 1 70000))"
+setcfg '.limites.bash_max_analisis = 4294967296'
+check_motivo "REQ-007 CA-54 SEC-006 un techo de 4294967296 se recorta al maximo y el deny lo dice" \
+  'presupuesto de analisis vigente es de 131072 bytes' guard-codigo.sh "$(emite_bash "$GRANDE" "" "")"
+setcfg '.limites.bash_max_analisis = 99999999999999999999'
+check_motivo "REQ-007 CA-54 SEC-006 un valor que desborda 64 bits tampoco sube el techo" \
+  'presupuesto de analisis vigente es de 131072 bytes' guard-codigo.sh "$(emite_bash "$GRANDE" "" "")"
+setcfg '.limites.bash_max_analisis = "999999"'
+check_motivo "REQ-007 CA-54 SEC-006 '999999' entrecomillado no es un numero: cae al defecto" \
+  'presupuesto de analisis vigente es de 65536 bytes' guard-codigo.sh "$(emite_bash "$MEDIANO" "" "")"
+# CA-55: los cuatro controles ya medidos. Su veredicto es identico al de v1.30.3.
+setcfg '.limites.bash_max_analisis = 100'
+check_motivo "REQ-007 CA-55 control: un valor mas bajo que el defecto no baja el techo" \
+  'presupuesto de analisis vigente es de 65536 bytes' guard-codigo.sh "$(emite_bash "$MEDIANO" "" "")"
+setcfg '.limites.bash_max_analisis = -5'
+check_motivo "REQ-007 CA-55 control: -5 cae al defecto" \
+  'presupuesto de analisis vigente es de 65536 bytes' guard-codigo.sh "$(emite_bash "$MEDIANO" "" "")"
+setcfg '.limites.bash_max_analisis = 0'
+check_motivo "REQ-007 CA-55 control: 0 cae al defecto" \
+  'presupuesto de analisis vigente es de 65536 bytes' guard-codigo.sh "$(emite_bash "$MEDIANO" "" "")"
+setcfg 'del(.limites)'
+check_motivo "REQ-007 CA-55 control: la clave ausente cae al defecto" \
+  'presupuesto de analisis vigente es de 65536 bytes' guard-codigo.sh "$(emite_bash "$MEDIANO" "" "")"
+# CA-55: el motivo del deny por presupuesto NO nombra ninguna ruta (QA-016 de REQ-001).
+S7_MOT="$(printf '%s' "$(emite_bash "$MEDIANO" "" "")" | "$HOOKS_DIR/guard-codigo.sh" 2>/dev/null | jq -r '.hookSpecificOutput.permissionDecisionReason // ""')"
+if [ -n "$FILTRO" ] && ! printf '%s' "REQ-007 CA-55 el deny por presupuesto no nombra ninguna ruta" | grep -qi -- "$FILTRO"; then :
+elif printf '%s' "$S7_MOT" | grep -q 'src/'; then
+  echo "  FAIL  REQ-007 CA-55 el deny por presupuesto no nombra ninguna ruta"; FAIL=$((FAIL+1))
+else
+  echo "  PASS  REQ-007 CA-55 el deny por presupuesto no nombra ninguna ruta"; PASS=$((PASS+1))
+fi
+# CA-53, control obligatorio: la ampliacion de globs es MAPEO de ArnesJuan y no se propaga
+# a las plantillas. Si un dia aparece ahi, este caso se pone rojo.
+if [ -n "$FILTRO" ] && ! printf '%s' "REQ-007 CA-53 ninguna plantilla hereda los globs del autoalojamiento" | grep -qi -- "$FILTRO"; then :
+elif sed -n '/"codigo_app"/,/^  }/p' "$TPL_DIR/arnes-config.json.tpl" | grep -qE '\.arnes|\.claude-plugin'; then
+  echo "  FAIL  REQ-007 CA-53 ninguna plantilla hereda los globs del autoalojamiento"; FAIL=$((FAIL+1))
+else
+  echo "  PASS  REQ-007 CA-53 ninguna plantilla hereda los globs del autoalojamiento"; PASS=$((PASS+1))
+fi
+
+# --- QA-014 (CA-40/CA-41): la clase del hallazgo solo se leia en forma CERRADA ---
+# `AGENTS.md` 6 pide anotar dueno y forzador en la deuda de `instrumento`, y la puerta
+# denegaba el cierre justo por esa anotacion: partia la lista por comas sin mirar el
+# parentesis y leia «un hallazgo sin clase». Castigaba lo que la metodologia pide.
+mkreq "$PROJ/requirements/REQ-710.md" no aprobado n/a 'QA-006 (instrumento, dueño REQ-007)'
+check "REQ-007 CA-40 QA-014 '(instrumento, dueño REQ-007)': la clase es el primer elemento -> allow" allow \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-710.md" 'en-revisión' 'completado')"
+mkreq "$PROJ/requirements/REQ-711.md" no aprobado n/a 'SEC-9 (usuario/dinero, dueño desarrollador, vence 2026-10-01)'
+check_motivo "REQ-007 CA-40 QA-014 la evidencia acompana, nunca cambia el veredicto -> deny por la clase" \
+  "clase 'usuario/dinero'" guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-711.md" 'en-revisión' 'completado')"
+mkreq "$PROJ/requirements/REQ-712.md" no aprobado n/a 'QA-006 (nota, instrumento)'
+check_motivo "REQ-007 CA-41 control: la clase NO es el primer elemento -> deny" \
+  'no cuenta como hallazgo' guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-712.md" 'en-revisión' 'completado')"
+mkreq "$PROJ/requirements/REQ-713.md" no aprobado n/a 'QA-006 [instrumento]'
+check_motivo "REQ-007 CA-41 control: otro delimitador no es un parentesis -> deny" \
+  'no cuenta como hallazgo' guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-713.md" 'en-revisión' 'completado')"
+mkreq "$PROJ/requirements/REQ-714.md" no aprobado n/a 'QA-006 (dueño REQ-007)'
+# El motivo admite las dos redacciones —la de v1.30.3 y la de esta version—: lo que este
+# control acredita es que un hallazgo sin clase reconocible NO cierra, en las dos.
+check_motivo "REQ-007 CA-41 control: sin ninguna clase -> deny" \
+  'no cuenta como hallazgo|no es una clase valida|que no existe' guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-714.md" 'en-revisión' 'completado')"
+mkreq "$PROJ/requirements/REQ-715.md" no aprobado n/a 'QA-006 (Instrumento)'
+check "REQ-007 CA-41 control: '(Instrumento)' se sigue leyendo como hoy -> allow" allow \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-715.md" 'en-revisión' 'completado')"
+mkreq "$PROJ/requirements/REQ-716.md" no aprobado n/a 'QA-006 ( instrumento )'
+check "REQ-007 CA-41 control: '( instrumento )' se sigue leyendo como hoy -> allow" allow \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-716.md" 'en-revisión' 'completado')"
+mkreq "$PROJ/requirements/REQ-717.md" no aprobado n/a 'QA-006 (instrumento) — REQ-007'
+check "REQ-007 CA-41 control: '(instrumento) — REQ-007' se sigue leyendo como hoy -> allow" allow \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-717.md" 'en-revisión' 'completado')"
+
+# --- SEC-007 (CA-56/CA-57): la reconstruccion no tenia techo ---
+# El presupuesto fail-closed del analisis de Bash vivia SOLO en el detector de escrituras;
+# la via Edit/MultiEdit aplicaba cada edicion sobre una copia completa del texto. Medido:
+# 1.501 ediciones sobre 300 KB -> 25,7 s, y 3,1 MB x 401 ediciones -> sin respuesta a los
+# 30 s. A los 60 s el hook muere sin emitir nada y el resultado efectivo es PERMITIR.
+S7BIG="$PROJ/requirements/REQ-720.md"
+{ printf '# REQ-720\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n'
+  for i in $(seq 0 49); do printf 'marca%s\n' "$i"; done
+  printf 'x%.0s' $(seq 1 700000); printf '\n'; } > "$S7BIG"
+# emite_multi_n <file> <n> — n ediciones iguales en UNA sola llamada a jq.
+emite_multi_n() {
+  jq -n --arg fp "$1" --argjson n "$2" \
+    '{hook_event_name:"PreToolUse",tool_name:"MultiEdit",cwd:env.CLAUDE_PROJECT_DIR,
+      tool_input:{file_path:$fp,edits:[range($n)|{old_string:"en-revisión",new_string:"completado"}]}}'
+}
+check_motivo "REQ-007 CA-56 SEC-007 100 ediciones sobre 700 KB superan el presupuesto -> deny" \
+  'presupuesto de 67108864 bytes-edicion' guard-completado.sh "$(emite_multi_n "$S7BIG" 100)"
+# CA-56: el motivo dice el presupuesto y NO nombra ninguna ruta.
+S7_M="$(printf '%s' "$(emite_multi_n "$S7BIG" 100)" | "$HOOKS_DIR/guard-completado.sh" 2>/dev/null | jq -r '.hookSpecificOutput.permissionDecisionReason // ""')"
+if [ -n "$FILTRO" ] && ! printf '%s' "REQ-007 CA-56 el deny por presupuesto de reconstruccion no nombra ninguna ruta" | grep -qi -- "$FILTRO"; then :
+elif printf '%s' "$S7_M" | grep -qE 'REQ-720|requirements/'; then
+  echo "  FAIL  REQ-007 CA-56 el deny por presupuesto de reconstruccion no nombra ninguna ruta"; FAIL=$((FAIL+1))
+else
+  echo "  PASS  REQ-007 CA-56 el deny por presupuesto de reconstruccion no nombra ninguna ruta"; PASS=$((PASS+1))
+fi
+# CA-57 (b): por DEBAJO del presupuesto se reconstruye y se juzga con el veredicto de siempre.
+# 50 ediciones REALES —cada una casa con su marca en el documento— mas el cierre: el
+# documento se reconstruye de verdad y se juzga por su cabecera resultante.
+check "REQ-007 CA-57 control: 50 ediciones (bajo el presupuesto) se juzgan como siempre -> deny" deny \
+  guard-completado.sh "$(jq -n --arg fp "$S7BIG" '{hook_event_name:"PreToolUse",tool_name:"MultiEdit",cwd:env.CLAUDE_PROJECT_DIR,
+      tool_input:{file_path:$fp,edits:([range(50)|{old_string:("marca"+tostring),new_string:("MARCA"+tostring)}]
+                                       + [{old_string:"en-revisión",new_string:"completado"}])}}')"
+# CA-57 (c): por encima del presupuesto NUNCA hay allow, ni siquiera para el agente de codigo.
+check "REQ-007 CA-57 control: el deny por presupuesto alcanza tambien al desarrollador" deny \
+  guard-completado.sh "$(emite_multi_n "$S7BIG" 100 | jq '. + {agent_id:"a1",agent_type:"desarrollador"}')"
+# CA-57 (a): el caso ordinario no cambia de veredicto ni de coste.
+check "REQ-007 CA-57 control: una edicion sola sobre el mismo REQ se juzga como siempre -> deny" deny \
+  guard-completado.sh "$(emite_edit_real "$S7BIG" 'en-revisión' 'completado')"
+}
+
+TOTAL_SECCIONES=32
 
 # --- Despacho en paralelo -----------------------------------------------------
 # El canario ya corrio en el padre, solo y antes que nada: si el hook esta muerto no
@@ -2467,7 +2834,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=428
+CASOS_ESPERADOS=493
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)

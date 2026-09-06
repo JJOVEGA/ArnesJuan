@@ -40,7 +40,7 @@ Ciclo 1 = 1.30.3 (REQ-001). El banco corre siempre en WSL (~10 s); nunca en Wind
       1.31.0 / 1.32.0).
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-05 22:57
+## Estado derivado — 2026-09-05 23:28
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -50,23 +50,25 @@ Ciclo 1 = 1.30.3 (REQ-001). El banco corre siempre en WSL (~10 s); nunca en Wind
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.31.0-mecanismos` @ `96392c0` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.31.0-mecanismos` @ `88a064d` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.30.3`
-**Aprobaciones pendientes:** 0
-**REQ:** 9 — completado 1 · en-revisión 0 · en-progreso 0 · bloqueado 0 · otros 8
+**Aprobaciones pendientes:** 4
+**REQ:** 11 — completado 1 · en-revisión 5 · en-progreso 0 · bloqueado 0 · otros 5
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
 _Sólo los REQ abiertos; los 1 completados no se listan._
 
 | REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
 |---|---|---|---|---|---|
-| REQ-002 | pendiente | pendiente | pendiente | critico | (ninguno) |
-| REQ-003 | pendiente | pendiente | pendiente | critico | (ninguno) |
-| REQ-004 | pendiente | pendiente | pendiente | critico | (ninguno) |
-| REQ-005 | pendiente | pendiente | pendiente | critico | (ninguno) |
-| REQ-006 | pendiente | pendiente | pendiente | critico | (ninguno) |
+| REQ-002 | en-revisión | pendiente | pendiente | critico | (ninguno) |
+| REQ-003 | en-revisión | pendiente | pendiente | critico | (ninguno) |
+| REQ-004 | en-revisión | pendiente | pendiente | critico | (ninguno) |
+| REQ-005 | en-revisión | pendiente | pendiente | critico | (ninguno) |
+| REQ-006 | en-revisión | pendiente | pendiente | critico | (ninguno) |
 | REQ-007 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-008 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-009 | pendiente | pendiente | pendiente | critico | (ninguno) |
+| REQ-010 | pendiente | pendiente | pendiente | critico | (ninguno) |
+| REQ-011 | pendiente | pendiente | pendiente | critico | (ninguno) |
 
 <!-- ARNES:DERIVADO fin -->
