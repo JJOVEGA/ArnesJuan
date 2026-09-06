@@ -114,4 +114,5 @@ sesión siguiente.
 
 | Ciclo | N (guardián) | N+1 (candidata) | REQ | Resultado |
 |---|---|---|---|---|
-| 1 | v1.30.2 (38b59fb) | rama `cand/1.30.3-autoalojamiento` | REQ-001 | en curso |
+| 1 | v1.30.2 (38b59fb) | rama `cand/1.30.3-autoalojamiento` → `main` 6c1b58a | REQ-001 | **publicado** 2026-09-05: tag `v1.30.3` sobre 6c1b58a (PR #31, `hooks-en-linux` 309/0/1). Tres vueltas dev↔QA; QA y seguridad aprobados; SEC-001..007 preexistentes → REQ-007. El REQ se cierra al verificar la instalación estable en 1.30.3 |
+| 2 | v1.30.3 (6c1b58a) | rama `cand/1.31.0-…` | REQ-002..007 | pendiente de abrir (guardián nuevo desde la sesión siguiente) |
