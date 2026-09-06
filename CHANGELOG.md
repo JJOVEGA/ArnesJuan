@@ -2,6 +2,14 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-05 · migración del andamiaje de este repo 1.30.2 → 1.30.3 (`arnes-upgrade`)
+> Origen: Interno · usuario: Juan · modelo de IA: Fable 5.1 (coordinadora) · skill `arnes-upgrade` del plugin 1.30.3.
+
+- Origen 1.30.2 **CONFIRMADO** (`.arnes/plantillas-origen/` idéntica a `v1.30.2:templates/`); destino 1.30.3 (instalación 6c1b58a, la actual). Ninguna plantilla cambia entre ambas: **nada que aplicar**. Plan en `.arnes/migracion.md`.
+- `.arnes/plantillas-origen/` completada con las 3 plantillas que faltaban (ADR, DELIVERY, guard.test.ts), copiadas de la versión destino.
+- `arnes_version` 1.30.2 → 1.30.3 (Fase 5, tras verificar). Aviso «Hacia 1.30.3» aplicado: `tools/arnes-lectura.sh` no muestra ningún REQ `completado` con veredictos pendientes.
+- Primer uso real de la skill sobre un proyecto ya inicializado tras publicar: sirve de verificación de instalación/actualización de 1.30.3.
+
 ## [Interno] — 2026-09-05 · registro del ciclo 1 del autoalojamiento
 > Origen: Interno (documentación de gobernanza) · usuario: Juan · modelo de IA: Fable 5.1 (coordinadora) · agente: sesión coordinadora.
 
