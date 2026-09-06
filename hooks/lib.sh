@@ -55,13 +55,22 @@ arnes_parse_manifest() {
   arnes_jq_file "$ARNES_MANIFEST" -r '[(.agentes.agente_codigo // "desarrollador"),
                                        (.requirements_dir // "requirements"),
                                        (.estados.completado // "completado"),
-                                       (.pending_approval // "PENDING_APPROVAL.md")]
+                                       (.pending_approval // "PENDING_APPROVAL.md"),
+                                       (.limites.bash_max_analisis // "" | tostring)]
                                       + (.codigo_app.globs // []) | .[]'
   ARNES_GLOBS=()
+  # `limites.bash_max_analisis` es OPCIONAL: el valor por defecto vive en el codigo
+  # (`ARNES_BASH_MAX_ANALISIS`) y ningun proyecto tiene que declararlo. Solo se acepta si
+  # es un entero positivo; cualquier otra cosa se ignora y manda el defecto —un techo
+  # escrito a mano no puede desactivar la puerta por una errata.
   { IFS= read -r ARNES_AGENTE_CODIGO; IFS= read -r ARNES_REQ_DIR
     IFS= read -r ARNES_ESTADO_DONE;   IFS= read -r ARNES_PENDING
+    IFS= read -r ARNES_BASH_MAX
     while IFS= read -r g; do [ -n "$g" ] && ARNES_GLOBS+=("$g"); done
   } <<< "$ARNES_JQ"
+  case "${ARNES_BASH_MAX:-}" in
+    ''|*[!0-9]*|0) ARNES_BASH_MAX='' ;;
+  esac
   ARNES_GLOBS_CARGADOS=1
   ARNES_MANIFEST_LISTO=1
 }
@@ -326,8 +335,304 @@ arnes_agente_legible() {  # <agent_type>
 #
 # Sesgo explícito al FALSO NEGATIVO: primero se descarta el texto entrecomillado,
 # así una mención de una ruta dentro de un mensaje no dispara nada.
+
+# --- Presupuesto de analisis del detector de Bash -----------------------------
+# "Una puerta que no puede medir no deja pasar" (AGENTS.md 1). El detector de escrituras
+# es ahora LINEAL en todos sus ejes, pero ningun algoritmo carece de acantilado: un hook
+# PreToolUse muere a los 60 s y UN HOOK MUERTO NO DENIEGA — guard.sh recibe salida vacia y
+# el comando pasa. Antes de llegar ahi por agotamiento, se deniega por TAMANO y se dice
+# como salir. Fallar cerrado y a tiempo es preferible a fallar abierto y en silencio.
+#
+# QUE SE MIDE, exactamente (y no otra cosa):
+#   (a) los bytes de las lineas del cuerpo de un heredoc SIN CITAR que llevan `$(` o un
+#       acento grave — el unico material del cuerpo que el shell EJECUTA y que por eso
+#       hay que analizar; y
+#   (b) los bytes del texto del comando que quedan FUERA de los cuerpos de heredoc.
+#
+# QUE NO SE MIDE: el tamano del comando. Un `cat > docs/x.md <<'EOF'` de 300 KB con el
+# delimitador CITADO es la forma legitima y corriente de escribir un archivo grande, la
+# usan todos los agentes y su cuerpo se descuenta entero sin analizarse: sigue en `allow`
+# y sigue siendo barato. Poner el techo sobre el comando entero lo habria roto.
+#
+# EL VALOR (65536 = 64 KiB) sale de MEDIR en la plataforma de desarrollo (Linux/WSL2,
+# 2026-09-05) el peor caso por byte —una linea de cuerpo densa en `$(...)`, que gasta un
+# fragmento cada 7 bytes—: 64 KiB de ese material se analizan de punta a punta en 0,71 s,
+# frente al tope de 2 s que se fijo para el tamano maximo admitido y a los 60 s en que el
+# hook muere. El doble (128 KiB) ya cuesta 1,8 s y el cuadruple 6,3 s, asi que el margen
+# se agota rapido: por eso el techo esta aqui y no mas arriba. El material real de un
+# comando normal son decenas de bytes; esto solo lo toca una entrada construida.
+ARNES_BASH_MAX_ANALISIS=65536
+# Codigo de salida de `arnes_bash_escrituras` cuando NO analizo por presupuesto.
+ARNES_RC_EXCESO=2
+
+# Techo efectivo, resuelto UNA vez por proceso y SOLO cuando hace falta.
+#
+# La clave OPCIONAL `limites.bash_max_analisis` del manifiesto solo puede SUBIRLO. No es
+# un descuido: leer el manifiesto cuesta un `jq`, y el camino comun —todo comando de
+# shell de todo agente, el mas frecuente que hay— no puede pagar un proceso por comando
+# (CA-39). Por eso el techo del codigo se aplica sin preguntar a nadie y el manifiesto
+# solo se consulta cuando ese techo ya se quedo corto, que es justo el caso en el que
+# subirlo tiene sentido. Un proyecto que quisiera un techo MAS BAJO que el del codigo no
+# obtendria nada que la puerta no le de ya: el techo no autoriza, solo acota el analisis.
+arnes_techo_bash() {   # -> ARNES_TECHO
+  if [ -z "${ARNES_TECHO:-}" ]; then
+    ARNES_TECHO="$ARNES_BASH_MAX_ANALISIS"
+    arnes_parse_manifest
+    if [ -n "${ARNES_BASH_MAX:-}" ] && (( ARNES_BASH_MAX > ARNES_TECHO )); then
+      ARNES_TECHO="$ARNES_BASH_MAX"
+    fi
+  fi
+  return 0
+}
+
+# Descuenta el texto ENTRECOMILLADO de UN fragmento, por pares. Sin procesos.
+#
+# Por fragmento y no sobre el comando entero, por dos razones medidas (revision de
+# REQ-001, vuelta 1):
+#
+#   1. CORRECCION. Las comillas del cuerpo de un heredoc son TEXTO para bash: ahi dentro
+#      no abren ni cierran nada. Al descontar sobre TODO el comando, una comilla IMPAR del
+#      cuerpo (`$(date) don't`) se emparejaba con la primera comilla del comando REAL
+#      posterior al cierre y borraba lo que hubiera en medio -- la redireccion se evaporaba
+#      y el hook permitia una escritura que el shell si hacia. Un fragmento no puede ver
+#      comillas que no sean suyas, asi que esa asimetria deja de existir.
+#
+#   2. COSTE. El bucle anterior RECONSTRUIA la cadena entera por cada par: cuadratico
+#      sobre el texto conservado. Medido: 500 lineas de cuerpo con expansiones 5,5 s,
+#      1.000 -> 40 s, 1.500 -> sin respuesta en 65 s. Un hook PreToolUse muere a los 60 s
+#      y UN HOOK MUERTO NO DENIEGA: el coste era, el solo, un fallo en abierto.
+#
+# COSTE, SEGUNDA VUELTA (REQ-001 v3). Consumir el prefijo con `${s#*"$q"}` acoto el
+# problema al fragmento, pero NO lo elimino: cada `${s#...}` COPIA el resto de la cadena,
+# asi que un fragmento de n comillas seguia costando O(n^2) DENTRO de si mismo. Medido en
+# la vuelta 1: 2.000 comillas 527 ms, 4.000 -> 2,1 s, 8.000 -> 8,7 s (doblar cuadruplica).
+#
+# Aqui no se copia ningun resto: el texto se PARTE UNA VEZ por la comilla, usando el
+# troceado en palabras de bash con `IFS` (una sola pasada del interprete, en C), y los
+# trozos PARES —los de fuera de comillas— se vuelven a unir con `${a[*]}`, que tambien es
+# una sola pasada. Todo el descuento es O(n). No hay procesos: `IFS` + expansion de array.
+#
+#   "a'b'c"  ->  trozos [a][b][c]  ->  se conservan 0 y 2  ->  "a c"
+#
+# La marca `\001` del final evita la unica asimetria del troceado: bash DESCARTA el campo
+# vacio final, asi que sin ella `a'b'` y `a'b` producirian el mismo numero de trozos y la
+# paridad —que es la que decide si la ultima comilla esta huerfana— se leeria mal.
+# Con un numero IMPAR de comillas la ultima no cierra nada: se conserva tal cual, con su
+# comilla, exactamente como hacia el bucle anterior (no se inventa un cierre que no hay).
+_arnes_desentrecomilla() {   # <texto> -> ARNES_SINCOM
+  local s="$1" q k np i
+  local -a p keep
+  local reponer_f=0; case $- in *f*) reponer_f=1 ;; esac
+  local IFS
+  for q in '"' "'"; do
+    case "$s" in *"$q"*) ;; *) continue ;; esac
+    IFS="$q"; set -f
+    # shellcheck disable=SC2206  -- se quiere el troceado por IFS, con globbing apagado
+    p=($s$'\001')
+    [ "$reponer_f" -eq 1 ] || set +f
+    np=${#p[@]}; k=$((np - 1))
+    p[k]="${p[k]%$'\001'}"
+    keep=()
+    for ((i = 0; i < np; i += 2)); do keep+=("${p[i]}"); done
+    IFS=' '
+    s="${keep[*]}"
+    (( k % 2 )) && s+="$q${p[k]}"
+  done
+  ARNES_SINCOM="$s"
+}
+
+# De una linea del cuerpo de un heredoc SIN CITAR, extrae SOLO lo que el shell EJECUTA:
+# el interior de cada `$( ... )` y de cada par de acentos graves.
+#
+# El resto de la linea es texto que se ENTREGA al comando, y analizarla entera por llevar
+# una expansion devolvia el falso positivo de 1.29.1: `ver $(date) y luego cp README.md
+# src/x.ts` se denegaba sin que nada copiara nada. La regla queda escrita: dentro del
+# cuerpo, comando es lo que va dentro de la expansion; lo demas es texto.
+#
+# Cada fragmento se acumula como un elemento de `ARNES_EXPS`, que se une con `;`
+# —separador que el tokenizador ya entiende— UNA sola vez al final: ni las comillas ni
+# los operandos de un fragmento cruzan a otro.
+#
+# DONDE TERMINA UN FRAGMENTO (REQ-001 v4, hallazgo QA-015). La version anterior tomaba
+# de cada trozo el prefijo hasta el PRIMER `)`. Medido, eso perdia TODO lo que siguiera
+# a ese `)` dentro de la misma sustitucion —incluida la redireccion— en tres formas
+# corrientes que el shell SI ejecuta:
+#     $(cat "$(ls README.md)" > src/a.ts)   el `)` de la sustitucion INTERIOR trunca
+#     $(echo "a)b" > src/a.ts)              el `)` va DENTRO de comillas
+#     $(echo "(hola)" > src/a.ts)           parentesis literal entrecomillado
+# El primer `)` no es el cierre: el cierre es el `)` que devuelve la PROFUNDIDAD a cero,
+# contando solo los parentesis que NO estan entrecomillados. Comillas y profundidad se
+# resuelven en la MISMA pasada, que es la unica forma de no depender de un orden
+# imposible: para saber que comillas descontar hace falta saber donde acaba el
+# fragmento, y para saber donde acaba hace falta haber descontado las comillas.
+#
+# COMO, SIN VOLVER A SER CUADRATICO. La linea se marca UNA vez (unas pocas sustituciones
+# `${s//x/y}`, cada una una pasada de bash en C) y se PARTE UNA vez en ATOMOS: cada
+# atomo es un caracter con significado (`\`, `$(`, `(`, `)`, `"`, `'`) seguido del texto
+# que va detras. El recorrido toca cada atomo exactamente una vez, y el texto del
+# fragmento se acumula en un ARRAY que se une al cerrar —nunca concatenando cadenas, que
+# es copiar, y copiar dentro de un bucle es justo lo que hacia cuadratica a la version de
+# la vuelta 1 (2.000 expansiones 1.151 ms, 4.000 -> 5,1 s, 8.000 -> 18,2 s, 16.000 -> el
+# hook muere a los 60 s y guard.sh recibe salida vacia: FALLO EN ABIERTO).
+# Sin procesos: solo `IFS`, expansion de parametros y arrays.
+#
+# LAS COMILLAS SOLO SON SINTAXIS DENTRO DE LA SUSTITUCION, y no es un detalle: en el
+# cuerpo de un heredoc sin citar una comilla es TEXTO —`don't $(cp README.md src/a.ts)`
+# ejecuta el `cp`—, mientras que dentro de `$( )` bash reinterpreta como comando y ahi si
+# abre y cierra. Por eso el estado de comillas nace vacio al abrir cada fragmento y muere
+# al cerrarlo: no cruza de un fragmento a otro ni contagia al texto de alrededor. Con la
+# comilla IMPAR —la que no cierra nunca— se conserva lo que va detras, tal cual, igual que
+# hace `_arnes_desentrecomilla`: no se inventa un cierre que no hay, y lo que no se puede
+# descontar se analiza.
+#
+# ESCAPE (REQ-001 v3, ampliado en v4): `\$(` NO es una sustitucion —bash imprime el texto
+# literal—, y denegarlo era un falso positivo en un detector cuyo sesgo declarado es el
+# contrario. Se cuenta la barra invertida por PARIDAD, que es la unica lectura correcta:
+# `\$(` no ejecuta, `\\$(` SI ejecuta (la primera barra escapa a la segunda).
+# La paridad vale para TODOS los caracteres con significado, no solo para `$(`, y eso no
+# es simetria decorativa: un `\)` es un parentesis LITERAL y no cierra nada, asi que
+# tratarlo como cierre partia el fragmento antes de tiempo y perdia la redireccion.
+# Medido en un sandbox real: `$(echo \) > src/x.ts)` CREA el archivo. Es la misma familia
+# que QA-015 y se cierra en el mismo sitio.
+# Los acentos graves NO reciben este trato a proposito: un acento escapado cambia la
+# PAREJA de todos los demas, y equivocarse ahi produce un falso NEGATIVO. Se prefiere el
+# falso positivo.
+#
+# FUERA DE ALCANCE, dicho en voz alta (cobertura parcial, AGENTS.md 13):
+#   - Una sustitucion que ABRE en una linea y CIERRA en otra aporta solo el resto de SU
+#     linea (si la profundidad no vuelve a cero, se toma hasta el final): se ve el
+#     comando que la abre, no lo que siga en las lineas siguientes.
+#   - Los acentos graves NO entran en la cuenta de profundidad: se siguen leyendo por
+#     PAREJAS sobre la linea, y del interior de cada pareja se toma todo. Un acento sin
+#     pareja abre y llega al final de la linea. Es el trato de siempre y se mantiene a
+#     proposito: un acento escapado cambia la pareja de todos los demas (ver arriba).
+#   - Un byte `\001` en la linea se neutraliza a un espacio antes de marcar: es el
+#     separador interno del troceado y no puede venir del texto sin confundir los atomos.
+# Anota UN fragmento ejecutable. El descuento de comillas solo se llama cuando el
+# fragmento LLEVA comillas: en un cuerpo denso en expansiones se pagaba una llamada a
+# funcion por fragmento, y la llamada costaba mas que el trabajo. Lo usa el camino de los
+# acentos graves; el de `$( )` ya entrega el fragmento descontado por construccion.
+_arnes_frag() {   # <interior de la expansion>
+  case "$1" in
+    *\"*|*\'*) _arnes_desentrecomilla "$1"; ARNES_EXPS+=("$ARNES_SINCOM") ;;
+    *)          ARNES_EXPS+=("$1") ;;
+  esac
+}
+
+_arnes_expansiones() {   # <linea del cuerpo> -> acumula fragmentos en ARNES_EXPS
+  local linea="$1" s i np ty tx ch prof q nbs
+  local -a p frag qbuf
+  local reponer_f=0; case $- in *f*) reponer_f=1 ;; esac
+  local IFS
+  if [[ "$linea" == *'$('* ]]; then
+    # Marcado. El ORDEN no es cosmetico: la barra invertida va primero para poder leer
+    # su paridad delante de un `$(`, y `$(` antes que `(` suelto para no partirlo en dos.
+    # Las sustituciones que no tocan nada se saltan con un `case`, que no copia la cadena.
+    s="$linea"
+    case "$s" in *$'\001'*) s="${s//$'\001'/ }" ;; esac
+    case "$s" in *\\*)      s="${s//\\/$'\001'B}" ;; esac
+    s="${s//'$('/$'\001'D}"
+    case "$s" in *'('*)     s="${s//'('/$'\001'A}" ;; esac
+    s="${s//')'/$'\001'C}"
+    case "$s" in *'"'*)     s="${s//'"'/$'\001'Q}" ;; esac
+    case "$s" in *"'"*)     s="${s//"'"/$'\001'S}" ;; esac
+    IFS=$'\001'; set -f
+    # shellcheck disable=SC2206  -- se quiere el troceado por IFS, con globbing apagado
+    p=($s)
+    [ "$reponer_f" -eq 1 ] || set +f
+    np=${#p[@]}
+    # `prof` = profundidad de parentesis del fragmento abierto (0 = fuera de todo
+    # fragmento). `q` = comilla abierta DENTRO del fragmento. `nbs` = barras invertidas
+    # pegadas justo antes del atomo actual, para la paridad del escape.
+    prof=0; q=''; nbs=0; frag=(); qbuf=()
+    # El cuerpo del bucle esta escrito para NO copiar texto que no se vaya a usar:
+    # `${p[i]:1}` COPIA la cola del atomo, asi que solo se pide en las ramas que la
+    # necesitan. La rama mas frecuente —el `)` que cierra de verdad el fragmento— no la
+    # pide: lo que sigue al cierre es texto del cuerpo y ya no es de nadie.
+    for ((i = 1; i < np; i++)); do
+      ty="${p[i]:0:1}"
+      if [ -n "$q" ]; then
+        # Dentro de comillas todo es literal: ni abre, ni cierra, ni cuenta profundidad.
+        # Lo entrecomillado se guarda aparte y se TIRA al cerrar la comilla (ese es el
+        # descuento); solo vuelve si la comilla resulta ser IMPAR (al final del bucle).
+        nbs=0
+        if [ "$ty" = "$q" ]; then q=''; qbuf=(); frag+=("${p[i]:1}")
+        else
+          case $ty in
+            B) ch='\' ;;  D) ch='$(' ;;  A) ch='(' ;;
+            C) ch=')' ;;  Q) ch='"' ;;   S) ch="'" ;;
+            *) continue ;;
+          esac
+          qbuf+=("$ch${p[i]:1}")
+        fi
+        continue
+      fi
+      case $ty in
+        D) if (( nbs % 2 )); then                    # `\$(` es texto, no sustitucion
+             nbs=0; (( prof > 0 )) && frag+=("\$(${p[i]:1}")
+           elif (( prof == 0 )); then
+             nbs=0; prof=1; frag=("${p[i]:1}")       # abre: el estado de comillas nace limpio
+           else
+             nbs=0; prof=$((prof + 1)); frag+=("\$(${p[i]:1}")
+           fi ;;
+        C) if (( nbs % 2 )); then                    # `\)` NO cierra: es un parentesis literal
+             nbs=0; (( prof > 0 )) && frag+=(")${p[i]:1}")
+           else
+             nbs=0
+             if (( prof > 0 )); then
+               prof=$((prof - 1))
+               if (( prof == 0 )); then              # este SI es el cierre real
+                 IFS=''; ARNES_EXPS+=("${frag[*]}"); IFS=$'\001'; frag=()
+               else frag+=(")${p[i]:1}"); fi
+             fi
+           fi ;;
+        B) tx="${p[i]:1}"; nbs=$((nbs + 1)); [ -z "$tx" ] || nbs=0
+           (( prof > 0 )) && frag+=("\\$tx") ;;
+        A) if (( nbs % 2 )); then nbs=0; (( prof > 0 )) && frag+=("(${p[i]:1}")
+           else nbs=0; (( prof > 0 )) && { prof=$((prof + 1)); frag+=("(${p[i]:1}"); }
+           fi ;;
+        Q) if (( nbs % 2 )); then nbs=0; (( prof > 0 )) && frag+=("\"${p[i]:1}")
+           else nbs=0; (( prof > 0 )) && { q=Q; qbuf=("\"${p[i]:1}"); }
+           fi ;;
+        S) if (( nbs % 2 )); then nbs=0; (( prof > 0 )) && frag+=("'${p[i]:1}")
+           else nbs=0; (( prof > 0 )) && { q=S; qbuf=("'${p[i]:1}"); }
+           fi ;;
+      esac
+    done
+    if (( prof > 0 )); then     # no cerro en esta linea -> se analiza el resto, entero
+      [ -z "$q" ] || frag+=("${qbuf[@]}")
+      IFS=''; ARNES_EXPS+=("${frag[*]}")
+    fi
+  fi
+  if [[ "$linea" == *'`'* ]]; then
+    IFS='`'; set -f
+    # shellcheck disable=SC2206
+    p=($linea$'\001')
+    [ "$reponer_f" -eq 1 ] || set +f
+    np=${#p[@]}
+    p[np - 1]="${p[np - 1]%$'\001'}"
+    for ((i = 1; i < np; i += 2)); do             # impares: lo que va entre pareja y pareja
+      _arnes_frag "${p[i]}"
+    done
+  fi
+}
+
 arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
-  local cmd="$1" limpio i j n tok pre post q
+  #
+  # Devuelve 0 con las rutas (ninguna, una o varias) y `$ARNES_RC_EXCESO` (2) SIN
+  # ANALIZAR NADA cuando el material a analizar supera el presupuesto: ver
+  # `ARNES_BASH_MAX_ANALISIS`. Los dos guardianes traducen ese 2 a una denegacion con
+  # motivo. Un `return 2` nunca sale por la salida estandar, asi que un llamador que
+  # ignore el codigo ve una lista vacia: eso seria permitir, y por eso los dos
+  # llamadores lo miran (y hay caso de banco para cada uno).
+  local cmd="$1" limpio i j n tok
+  local ARNES_SINCOM=''
+  local -a ARNES_EXPS=()
+  # IFS explicito: el troceado en palabras de esta funcion (y el de sus auxiliares) no
+  # puede depender de como lo haya dejado el llamador.
+  local IFS=$' \t\n'
+  # Presupuesto: bytes de material que SI se analiza con coste. Se acumula aqui.
+  local analizado=0 max_analisis="$ARNES_BASH_MAX_ANALISIS" exceso=0
   # Las dos limpiezas se hacen SIN procesos. Antes eran dos `printf | sed`, o sea
   # cuatro bifurcaciones, y este camino se recorre en CADA comando de shell que
   # ejecuta un agente — el más frecuente de todos.
@@ -352,24 +657,36 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
   #    asi que `$(echo x > src/generated.ts)` creaba el archivo y ninguna puerta lo
   #    veia. Con el delimitador CITADO o ESCAPADO (`<<'EOF'`, `<<"EOF"`, `<<\EOF`) el
   #    cuerpo si es literal entero, exactamente como en el shell real.
-  #    Por eso, sin citar, se conservan y se analizan SOLO las lineas con `$(` o con un
-  #    acento grave; el resto del cuerpo se descuenta como antes. Convertir el cuerpo
-  #    entero en comandos devolveria el falso positivo de 1.29.1.
-  #    LIMITACION CONOCIDA, dicha en voz alta: una sustitucion que ABRE en una linea y
-  #    CIERRA en otra solo aporta sus lineas con `$(`; queda fuera a proposito, como el
-  #    resto de la cobertura parcial de Bash (AGENTS.md 13).
+  #    Por eso, sin citar, se conserva SOLO EL INTERIOR de cada `$( ... )` y de cada par
+  #    de acentos graves (ver `_arnes_expansiones`); el resto del cuerpo se descuenta como
+  #    antes. Conservar la LINEA ENTERA que lleva la expansion —como hizo el primer
+  #    arreglo— devuelve el falso positivo de 1.29.1 por otra puerta, y ademas mete en el
+  #    analisis comillas que en el cuerpo son texto (ver `_arnes_desentrecomilla`).
+  #    Las limitaciones de este recorte estan escritas en `_arnes_expansiones`.
   if [[ "$limpio" == *'<<'* ]]; then
-    local sin='' linea delim='' dentro=0 citado=0 resto sinhs
+    local linea delim='' dentro=0 citado=0 resto sinhs
+    local -a sin=()
     while IFS= read -r linea || [ -n "$linea" ]; do
       if [ "$dentro" -eq 1 ]; then
         resto="${linea#"${linea%%[![:blank:]]*}"}"     # `<<-` admite sangria delante del cierre
         if [ "$resto" = "$delim" ]; then dentro=0; continue; fi
         if [ "$citado" -eq 0 ]; then
-          case "$linea" in *'$('*|*'`'*) sin+="$linea"$'\n' ;; esac
+          case "$linea" in
+            *'$('*|*'`'*)
+              # PRESUPUESTO, antes de analizar la linea y no despues: pasado el techo se
+              # deja de trabajar. Asi el coste total queda acotado por el propio techo, y
+              # no por el tamano de la entrada (que lo elige quien la escribe).
+              if (( analizado + ${#linea} > max_analisis )); then
+                arnes_techo_bash; max_analisis="$ARNES_TECHO"
+                if (( analizado + ${#linea} > max_analisis )); then exceso=1; break; fi
+              fi
+              analizado=$(( analizado + ${#linea} ))
+              _arnes_expansiones "$linea" ;;
+          esac
         fi
         continue
       fi
-      sin+="$linea"$'\n'
+      sin+=("$linea")
       sinhs="${linea//<<</ }"
       case "$sinhs" in
         *'(('*'<<'*) ;;                                  # `$((1<<n))` es aritmetica, no heredoc
@@ -389,15 +706,22 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
         esac ;;
       esac
     done <<< "$limpio"
-    limpio="$sin"
+    IFS=$'\n'; limpio="${sin[*]}"; IFS=$' \t\n'
   fi
-  for q in '"' "'"; do
-    while [[ "$limpio" == *"$q"*"$q"* ]]; do
-      pre="${limpio%%"$q"*}"
-      post="${limpio#*"$q"}"; post="${post#*"$q"}"
-      limpio="$pre $post"
-    done
-  done
+  # Segundo sumando del presupuesto: el texto de comando que queda FUERA de los cuerpos
+  # de heredoc. Es el que recorre el camino comun, y tiene su propio acantilado.
+  if [ "$exceso" -eq 0 ] && (( analizado + ${#limpio} > max_analisis )); then
+    arnes_techo_bash; max_analisis="$ARNES_TECHO"
+    (( analizado + ${#limpio} > max_analisis )) && exceso=1
+  fi
+  [ "$exceso" -eq 0 ] || return "$ARNES_RC_EXCESO"
+  # El comando REAL se desentrecomilla de una pieza —igual que antes, para no cambiar su
+  # conducta— y los fragmentos ejecutables del cuerpo se le añaden YA descontados, cada uno
+  # por su cuenta. La frontera del heredoc no se cruza en ninguna direccion.
+  _arnes_desentrecomilla "$limpio"; limpio="$ARNES_SINCOM"
+  # `;` como pegamento: el tokenizador de mas abajo ya lo separa (`${limpio//;/ ; }`) y
+  # es lo que impide que el operando de un fragmento se lea como operando del siguiente.
+  if [ "${#ARNES_EXPS[@]}" -gt 0 ]; then IFS=';'; limpio+=" ; ${ARNES_EXPS[*]}"; IFS=$' \t\n'; fi
   # 2) Separa los operadores de su operando: `>src/a.ts` -> `> src/a.ts`.
   #    Y las sustituciones de comando pierden sus parentesis, para que el destino de
   #    `$(echo x > src/a.ts)` quede como operando limpio de `>` y no como `src/a.ts)`,

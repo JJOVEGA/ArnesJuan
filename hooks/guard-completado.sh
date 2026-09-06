@@ -26,7 +26,7 @@ DIR="${BASH_SOURCE[0]%/*}"
 # correcto: una denegación es final y no hay nada más que juzgar.
 arnes_guard_completado() {
   local tool fp bash_cmd req_dir estado_done pending_rel rel d escrituras nuevo
-  local disk qa seg sens rigor hall h id clase pending abiertas tmp cmd out
+  local disk qa seg sens rigor hall h id clase pending abiertas tmp cmd out rc
   local -a piezas=()
   local modo resultante reconstruido np k old new ra done_norm est_antes est_despues
 
@@ -40,7 +40,17 @@ arnes_guard_completado() {
       # Salida temprana barata: la inmensa mayoría de los comandos son lecturas y
       # no escriben nada. Se descartan aquí sin haber tocado el manifiesto.
       [ -n "$bash_cmd" ] || return 0
-      escrituras="$(arnes_bash_escrituras "$bash_cmd")"
+      # Igual que en `guard-codigo`: un `$ARNES_RC_EXCESO` no es "no escribe nada".
+      # Aqui la denegacion alcanza a TODOS los agentes, porque la regla que este
+      # guardian aplica tambien alcanza a todos: nadie cierra un REQ desde la shell.
+      escrituras="$(arnes_bash_escrituras "$bash_cmd")"; rc=$?
+      if [ "$rc" -eq "$ARNES_RC_EXCESO" ]; then
+        arnes_parse_manifest
+        # Igual que en `guard-codigo`: el techo se resuelve aqui porque el detector corrio
+        # en un subshell y su memorizacion no vuelve (REQ-001, QA-016).
+        arnes_techo_bash
+        arnes_deny "ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande para analizarlo con garantia; no se analizo y no se permite. Una puerta que no puede medir no deja pasar (AGENTS.md 1): sin analisis no se puede saber si el comando toca '$ARNES_REQ_DIR'. El presupuesto de analisis vigente es de $ARNES_TECHO bytes y este comando lo supera. Salidas: heredoc CITADO (<<'EOF'), un archivo de script, o partir el comando en trozos por debajo de $ARNES_TECHO bytes. El techo se puede SUBIR en .arnes/config.json con 'limites.bash_max_analisis' (bytes)."
+      fi
       [ -n "$escrituras" ] || return 0 ;;
     Edit|Write|MultiEdit)
       [ -n "$fp" ] || return 0 ;;

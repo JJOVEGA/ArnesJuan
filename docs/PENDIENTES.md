@@ -83,3 +83,31 @@
   git. Nunca se construye el grafo entero aunque el experimento gane.
 - **Límite documentado, no pendiente:** el hueco del intérprete (`python x.py` que escribe) no se
   cierra como prevención; se cierra como detección con la puerta posterior de 1.32.0.
+
+## Observado en el autoalojamiento (2026-09-05): fricciones del propio arnés sobre sí mismo
+
+Medidas mientras el arnés v1.30.2 gobernaba el desarrollo de 1.30.3. Cada punto es la **forma** del
+hallazgo; se convierte en REQ con el analista al abrir la versión que lo recoja.
+
+- **La sonda del guardián es manual.** Versión, commit, ruta de la instalación y una escritura
+  denegada sobre código protegido se comprobaron a mano en cada arranque. Un `SessionStart` (o un
+  `tools/arnes-guardian.sh`) que lo imprima y lo mida ahorra el ritual y no depende de que la
+  coordinadora se acuerde. Candidata: 1.32.0.
+- **El arnés no sabe que la sesión no está gobernada.** Dos sesiones seguidas creyeron tener guardián
+  y no lo tenían (plugin instalado a mitad de sesión; los hooks se cargan al arrancar). Un `Stop` que
+  compare la versión instalada con la que cargó la sesión puede avisar en el bloque derivado.
+  Candidata: 1.32.0.
+- **Dos transcripciones de la regla de la cola de aprobaciones.** `guard-completado.sh` cuenta
+  encabezados `###` bajo `## Pendientes`; `estado-derivado.sh` cuenta viñetas en la misma sección.
+  Una entrada real del formato documentado vale 1 para la puerta y 4 para el bloque derivado.
+  Misma familia que REQ-003 (vocabulario compartido). Candidata: 1.31.0.
+- **Regla de banco: un JSON vacío es FAIL, nunca `allow`.** Un caso de rendimiento pasaba porque el
+  helper reventaba el límite de argumento (`MAX_ARG_STRLEN`, 128 KB) y el hook recibía entrada vacía.
+  Ya aplicado en `run.sh` (1.30.3); queda extenderlo a toda sonda nueva y a los helpers de los
+  proyectos que copien el patrón.
+- **Nombres de proyectos en el árbol público.** Entradas antiguas del CHANGELOG, un comentario de
+  `lib.sh`, el README del banco y `.gitattributes` nombran proyectos que usan el arnés. Son nombres,
+  no hallazgos; retirarlos es una decisión editorial del propietario.
+- **REQ ya redactados en la rama 1.30.3 y a la espera de su versión:** REQ-007 (clave decorada y
+  destino entrecomillado; 1.31.0) y REQ-008 (informe de proyecto con avance, bloqueos, decisiones
+  pendientes y marca, como evolución de `arnes-panel`; 1.33.0).
