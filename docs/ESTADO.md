@@ -1,43 +1,39 @@
 # ESTADO — ArnesJuan
 
 > Tablero de continuidad. Responde: ¿dónde quedamos y cuál es el próximo paso concreto?
-> Lo de aquí lo escribes tú. Al final aparecerá un **bloque derivado** entre marcadores
+> Lo de aquí lo escribes tú. Al final aparece un **bloque derivado** entre marcadores
 > `<!-- ARNES:DERIVADO ... -->` que **reescribe el arnés** en cada parada de agente: no lo
 > edites, se sobrescribe. Lo de fuera de esos marcadores no se toca nunca.
-> Se actualiza al cerrar cada sesión de trabajo.
 
 ## Fase actual
-Fase 0 — autoalojamiento: el arnés (v1.30.2 instalado, en WSL) gobierna el desarrollo de su siguiente versión.
-Ciclo 1 = 1.30.3 (REQ-001). El banco corre siempre en WSL (~10 s); nunca en Windows.
+Fase 0 — autoalojamiento. **Ciclo 2 cerrado: v1.31.0 publicada** (tag sobre `main` 2fecae1, PR #33) e
+instalación estable ya en 1.31.0. El guardián de la sesión **siguiente** será 1.31.0.
 
 ## En progreso
-- REQ-001 — los dos bypass de 1.30.2 (rama `cand/1.30.3-autoalojamiento`, PR #31). Tres vueltas dev↔QA
-  gastadas (tope alcanzado); `QA: aprobado` en la tercera. Auditoría de seguridad en curso.
-- Redactados y a la espera de su versión: REQ-002..006 (1.31.0), REQ-007 (huecos preexistentes del lector
-  y del detector; 1.31.0), REQ-008 (informe de proyecto como evolución de `arnes-panel`; 1.33.0).
+- Nada en curso. Los siete REQ de la ventana 1.31.0 quedaron `completado` con QA y Seguridad aprobados.
+- **REQ-007** sigue `en-progreso` a propósito: sus bloques B y C cruzan a 1.32.0.
+- Redactados y esperando su versión: REQ-008 (informe de proyecto, 1.33.0) y REQ-011 (puerta posterior, 1.32.0).
 
 ## Próximo paso concreto
-1. Auditor firma `Seguridad:` en REQ-001 y deja `docs/seguridad/` escrito.
-2. Coordinadora: commit + push de la rama, CI `hooks-en-linux` en verde, fusión squash, tag `v1.30.3`
-   sobre el merge, verificación tag ↔ plugin.json, fila del ciclo 1 en `docs/gobernanza/autoalojamiento.md`.
-3. Reiniciar la sesión (1.30.3 pasa a gobernar) y correr `/arnes-upgrade` sobre este repo.
-4. Ciclo 2 = 1.31.0: `cand/1.31.0-…` desde `main`; REQ-002..007 con referencia en la rama `feat/1.31.0`.
+1. **Reiniciar la sesión** para que 1.31.0 pase a gobernar (los hooks se cargan al arrancar).
+2. Correr `/arnes-upgrade` sobre este repositorio: 1.31.0 **sí** cambió plantillas, así que hay andamiaje
+   que poner al día. Su Fase 5 (`arnes_version`) la ejecuta el `desarrollador`, porque el manifiesto entró
+   en su propia frontera.
+3. Abrir el ciclo 3 (1.32.0) con el analista: REQ-007 bloques B y C, REQ-011, y el bloque de 1.32.0 de
+   `docs/PENDIENTES.md`, que ya tiene la deuda del ciclo 2 con dueño y criterio.
 
 ## Bloqueos
-- Ninguno. La fusión, el tag y la publicación están delegados por el propietario cuando todo está en verde
-  (`docs/gobernanza/autoalojamiento.md`); cualquier rojo o veto vuelve al humano.
+- Ninguno. La fusión, el tag y la publicación están delegados cuando todo está en verde; un veto del
+  auditor o un hallazgo bloqueante devuelven la decisión al propietario, y así ocurrió en este ciclo.
 
 ## Pendientes (cola)
-- [ ] Decisión editorial del propietario: nombres de proyectos consumidores en el árbol público (CHANGELOG
-      antiguo, `lib.sh:252`, README del banco, `.gitattributes`).
-- [ ] **1.35.0 — working set explícito** (estrategia de contexto): decidido por el propietario el
-      2026-09-05; el análisis completo y las reglas de diseño están en `docs/PENDIENTES.md`, sección
-      «1.35.0 — el working set explícito». Su MVP es REQ-004, que va en 1.31.0.
-- [ ] **Decisión abierta del propietario:** ¿adelantar sólo el adelgazamiento de `AGENTS.md` a 1.32.0
-      o 1.33.0? No depende de ninguna medición y es el mayor coste fijo de contexto (26 KB en cada
-      agente, en cada arranque). Preguntarlo al abrir 1.32.0.
-- [ ] Mejoras observadas en el autoalojamiento → `docs/PENDIENTES.md` (ya listadas; convertir en REQ al abrir
-      1.31.0 / 1.32.0).
+- [ ] Decisión editorial del propietario: nombres de proyectos consumidores en el árbol público, y las
+      dos cuentas de GitHub nombradas en `AGENTS.md` (hallazgo informativo SEC-008; la salida propuesta
+      es sustituir nombres por roles).
+- [ ] **1.35.0 — working set explícito**: análisis y reglas de diseño en `docs/PENDIENTES.md`. Sigue
+      abierta la pregunta de si adelantar sólo el adelgazamiento de `AGENTS.md`, que es el mayor coste
+      fijo de contexto y no depende de ninguna medición.
+- [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
 ## Estado derivado — 2026-09-06 15:49

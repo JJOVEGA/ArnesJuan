@@ -2,6 +2,21 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-06 · cierre del ciclo 2 del autoalojamiento
+> Origen: Interno (documentación de gobernanza) · usuario: Juan · modelo de IA: Opus 5 · agente: sesión coordinadora.
+
+- `v1.31.0` publicada (tag sobre `main` 2fecae1, PR #33, `hooks-en-linux` 682/0/1) e instalación estable
+  actualizada. Los siete REQ de la ventana pasan a `completado` con QA y Seguridad aprobados; REQ-007
+  sigue `en-progreso` y cruza a 1.32.0.
+- `docs/gobernanza/autoalojamiento.md`: fila del ciclo 2 como publicado, fila del ciclo 3 abierta, y lo
+  que enseñó el ciclo — incluida una lección que sólo aparece al autoalojarse: **el cierre de un REQ lo
+  juzga el guardián de la sesión, no la versión recién publicada**. Al cerrar con 1.30.3 gobernando, la
+  puerta rechazó el campo `Hallazgos abiertos:` escrito en la forma ancha que 1.31.0 aprendió a leer. No
+  es un fallo, es el principio funcionando; la consecuencia para cualquier proyecto es que ese campo se
+  escribe en forma cerrada y la evidencia vive en el informe.
+- `docs/PENDIENTES.md`: la deuda del ciclo 2, toda con criterio y dueño, y la migración de andamiaje que
+  este repositorio tiene pendiente porque 1.31.0 **sí** cambió plantillas.
+
 ## [1.31.0] — 2026-09-05
 > Origen: GitHub · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos` (REQ-002…009), `desarrollador` (implementación y banco), `qa-tester` y `auditor-seguridad` (pendientes en el ciclo 2 del autoalojamiento).
 
