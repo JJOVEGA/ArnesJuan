@@ -316,6 +316,69 @@ nada.
   cerró así—. Pregúntale al usuario antes de mover nada.
 - `requirements/README.md`: párrafo **los campos valen sólo en la cabecera**. `AGENTS.md` §13: fila nueva.
 
+### Hacia 1.30.1
+- Nada que migrar en archivos del proyecto: los dos arreglos son del plugin. Pero **avísale al
+  usuario de dos cosas si tiene la rotación encendida**:
+  1. Hasta 1.30.0, `umbral_bytes` contaba **caracteres**, no bytes. Un artefacto en UTF-8 con
+     acentos pesaba en la cuenta menos de lo que pesa en disco, así que **pudo dejar de rotar sin
+     avisar**. Desde 1.30.1 mide bytes: es posible que el primer arranque rote un artefacto que
+     llevaba tiempo quieto. Que lo mire antes de dar la rotación por rota.
+  2. `tools/arnes-lectura.sh` deja de decir que todo está bien cuando no lo está: un `.md` sin
+     ninguna línea vuelve a contarse como archivo **sin `Estado:`**. Si el informe del proyecto
+     empieza a señalar archivos que antes callaba, es esto y no un cambio en sus REQ.
+
+### Hacia 1.30.2
+- Nada que migrar en archivos del proyecto. **Sí hay que revisar los REQ ya cerrados**, porque un
+  agujero se cierra y eso cambia lo que se pudo colar antes:
+  - **Un `MultiEdit` podía cerrar un REQ aprobando sólo la línea del historial.** La cabecera
+    seguía en `pendiente` y el hook leía como cabecera un fragmento de la historia. Corre
+    `tools/arnes-lectura.sh` y busca REQ `completado` cuya **cabecera** no lleve los veredictos que
+    su historia sí menciona: pudieron cerrarse así. **Pregunta antes de tocar nada.**
+  - Desde ahora el hook **reconstruye el documento resultante** (Edit, MultiEdit y `replace_all`)
+    y juzga la cabecera de ese resultado. Efecto visible y deseado: una línea de historia como
+    `Estado: completado (revertido)` deja de hacer correr las puertas sobre un REQ que sigue en
+    revisión.
+  - **Falso positivo que desaparece:** un heredoc cuyo cuerpo mencione `cp README.md src/…` como
+    **texto** ya no se deniega. Si el proyecto había partido comandos o cambiado su forma de
+    escribir resúmenes para esquivar aquel deny, díselo: puede volver a escribirlos como quiera.
+
+### Hacia 1.30.3
+- **Nada que migrar en archivos del proyecto.** Ninguna plantilla cambia; `arnes-upgrade` no tiene
+  nada que aplicar. Todo lo que sigue son **cambios de conducta de los hooks**, que es lo que hay
+  que avisar antes de terminar:
+  1. **Un `Edit` que sustituye sólo el VALOR pasa a `deny`.** Cerrar un REQ cambiando
+     `en-revisión` → `completado` con `QA:`/`Seguridad:` pendientes, con la cola de
+     `PENDING_APPROVAL.md` abierta o con una quality gate roja **antes devolvía `allow`**. Es la
+     forma más natural de cerrar un REQ a mano, así que el agujero estaba donde más se pisa:
+     **corre `tools/arnes-lectura.sh` y revisa los REQ `completado` con veredictos pendientes**,
+     porque hasta hoy pudieron cerrarse así. Pregunta antes de mover nada.
+  2. **Un heredoc SIN citar que escriba código protegido pasa a `deny`** para quien no sea el
+     agente de código. `cat <<EOF` / `$(echo x > src/generated.ts)` / `EOF` crea el archivo de
+     verdad —bash expande el cuerpo— y hasta ahora ninguna puerta lo veía. Con el delimitador
+     **citado o escapado** (`<<'EOF'`, `<<"EOF"`, `<<\EOF`) el cuerpo sigue siendo literal y no se
+     analiza: si un flujo del proyecto choca, esa es la salida.
+  3. **Un `Write` que sólo CITA el estado en el cuerpo deja de denegarse.** La transición se lee en
+     la **cabecera** del documento resultante, así que un criterio que escriba
+     `Estado: completado (ejemplo)` dentro del texto ya no dispara nada.
+  4. **Un `Write` sobre un REQ que EN DISCO ya estaba `completado` deja de denegarse.** No hay
+     transición que juzgar. Avisa de la consecuencia: **reabrir un REQ cerrado que cambia es
+     responsabilidad del write-back (`AGENTS.md` §9), no de la puerta** — la máquina ya no lo va a
+     recordar por nadie.
+  5. **Presupuesto fail-closed de 64 KiB sobre el texto analizable de Bash.** Se cuentan el texto
+     del comando **fuera** de los heredocs más las líneas del cuerpo de heredocs **sin citar** que
+     lleven `$( )` o acentos graves. Por encima, el hook **no analiza y deniega** con el motivo y la
+     salida (heredoc citado, archivo de script, o partir el comando): una puerta que no puede medir
+     no deja pasar, y agotar el tiempo de un `PreToolUse` deja pasar **todo**. Los heredocs
+     **citados no cuentan**, así que escribir un archivo grande con `cat > x <<'EOF'` sigue siendo
+     barato y sigue en `allow`.
+     - `limites.bash_max_analisis` en `.arnes/config.json` **sólo puede SUBIR** el techo; bajarlo no
+       hace nada. Es **opcional** y **no está en la plantilla** todavía: si el proyecto la necesita,
+       se añade a mano al manifiesto y se le dice por qué.
+     - **Advertencia que hay que dar:** en `guard-completado` el deny por presupuesto alcanza
+       **también al agente de código**, porque la regla de ese guardián —nadie cierra un REQ desde
+       la shell— alcanza a todos y sin análisis no se puede saber si el comando toca
+       `requirements/`.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

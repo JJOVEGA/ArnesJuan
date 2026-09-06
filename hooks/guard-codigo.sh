@@ -28,18 +28,29 @@ DIR="${BASH_SOURCE[0]%/*}"
 # defecto que este arnés existe para impedir. `arnes_deny` sí termina el proceso,
 # y eso es correcto: una denegación es final y no hay nada más que juzgar.
 arnes_guard_codigo() {
-  local objetivo="" via_bash=0 rel cand quien
+  local objetivo="" via_bash=0 exceso=0 rel cand quien escrituras rc
 
   arnes_parse_input
 
   if [ "$ARNES_TOOL" = "Bash" ]; then
     [ -n "$ARNES_CMD" ] || return 0
     via_bash=1
-    while IFS= read -r cand; do
-      [ -n "$cand" ] || continue
-      arnes_ruta_relativa "$cand" "$ARNES_PROJ"; rel="$ARNES_REL"
-      if arnes_es_codigo_app "$rel" "$ARNES_MANIFEST"; then objetivo="$rel"; break; fi
-    done <<< "$(arnes_bash_escrituras "$ARNES_CMD")"
+    # El codigo de salida NO se ignora: `$ARNES_RC_EXCESO` significa "no analice",
+    # y una lista vacia por no haber analizado no puede leerse como "no escribe nada".
+    escrituras="$(arnes_bash_escrituras "$ARNES_CMD")"; rc=$?
+    if [ "$rc" -eq "$ARNES_RC_EXCESO" ]; then
+      # Fail-closed CON destinatario: el guardian solo prohibe a quien no es el agente
+      # de codigo, asi que el rechazo por tamano se decide abajo, en el mismo sitio y
+      # con las mismas reglas que cualquier otra escritura. Al agente de codigo no le
+      # estorba, porque a el ya se le permitia escribir.
+      exceso=1; objetivo="(comando no analizable)"
+    else
+      while IFS= read -r cand; do
+        [ -n "$cand" ] || continue
+        arnes_ruta_relativa "$cand" "$ARNES_PROJ"; rel="$ARNES_REL"
+        if arnes_es_codigo_app "$rel" "$ARNES_MANIFEST"; then objetivo="$rel"; break; fi
+      done <<< "$escrituras"
+    fi
   else
     [ -n "$ARNES_FP" ] || return 0
     arnes_ruta_relativa "$ARNES_FP" "$ARNES_PROJ"; rel="$ARNES_REL"
@@ -62,6 +73,13 @@ arnes_guard_codigo() {
     quien="el subagente $(arnes_agente_legible "${ARNES_AGENT_TYPE:-desconocido}")"
   else
     quien="la sesión coordinadora"
+  fi
+  if [ "$exceso" -eq 1 ]; then
+    # El techo se vuelve a resolver AQUI: `arnes_bash_escrituras` corre en una sustitucion
+    # de comandos, o sea en un subshell, y lo que memorice alli no vuelve. Es un `jq` en
+    # el camino de la denegacion, que ya no es el camino comun (REQ-001, QA-016).
+    arnes_techo_bash
+    arnes_deny "ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande para analizarlo con garantia, asi que no se analizo y no se permite (intento de $quien). No es un veredicto sobre lo que hace el comando: es que la puerta no puede medirlo, y una puerta que no puede medir no deja pasar. El presupuesto de analisis vigente es de $ARNES_TECHO bytes y este comando lo supera. Salidas: usa un heredoc CITADO (<<'EOF'), que se descuenta entero y no tiene este techo; escribe el contenido en un archivo de script y ejecutalo; o parte el comando en trozos por debajo de $ARNES_TECHO bytes. El techo se puede SUBIR en .arnes/config.json con 'limites.bash_max_analisis' (bytes)."
   fi
   if [ "$via_bash" -eq 1 ]; then
     arnes_deny "ARNES: el comando escribe en '$objetivo', que es código de la app; sólo el agente '$ARNES_AGENTE_CODIGO' puede hacerlo (intento de $quien). Escribirlo por Bash no salta la regla: delega el cambio en '$ARNES_AGENTE_CODIGO' (ver AGENTS.md §5). Nota: la detección en Bash es parcial (redirecciones, tee, cp/mv/install, sed -i, dd) — si esto es un falso positivo, repórtalo."

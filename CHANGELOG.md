@@ -2,6 +2,283 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.30.3] — 2026-09-05
+### Corregido — dos bypass de v1.30.2, encontrados por una revisión externa
+Los dos se reprodujeron **contra la instalación estable que gobernaba la sesión**, no sobre el
+papel, y los dos son de la misma familia: la puerta miraba el FRAGMENTO o el TEXTO, y no lo que
+iba a quedar escrito ni lo que el shell iba a ejecutar de verdad.
+
+- **FALLO EN ABIERTO: un `Edit` que sustituía sólo el VALOR cerraba un REQ con QA pendiente.**
+  Con la cabecera en `Estado: en-revisión` / `QA: pendiente`, un `Edit` con
+  `old_string: en-revisión` y `new_string: completado` devolvía **ALLOW**. Desde 1.30.2 el hook ya
+  reconstruía el documento resultante, pero **además** exigía que el fragmento contuviera
+  «Estado: completado» antes de correr las puertas; el fragmento `completado` no lleva esa palabra
+  en ninguna parte y el hook salía por arriba. Y sustituir el valor es la forma **más natural** de
+  cerrar un REQ a mano, así que el agujero estaba justo donde más se pisa. Ahora, cuando hay
+  documento, la transición se determina **sólo con el documento**: hay transición si la cabecera en
+  disco no decía el estado terminal y la resultante sí. El análisis del fragmento queda **sólo**
+  como respaldo para un `Edit`/`MultiEdit` cuyo `old_string` no está en el archivo —la herramienta
+  fallará entera y no escribirá nada—.
+- **FALLO EN ABIERTO: una sustitución de comandos dentro de un heredoc SIN CITAR escribía código
+  protegido sin que ninguna puerta la viera.** `cat <<EOF` / `$(echo x > src/generated.ts)` / `EOF`
+  crea el archivo de verdad —bash expande el cuerpo—, pero el detector de escrituras descontaba
+  **todo** el cuerpo del heredoc como texto desde 1.30.2. La corrección distingue lo que el shell
+  distingue: con delimitador **citado o escapado** (`<<'EOF'`, `<<"EOF"`, `<<\EOF`) el cuerpo es
+  literal y se descuenta entero, como hasta ahora; **sin citar**, se conservan y se analizan sólo
+  las líneas con `$(` o con acentos graves, y el resto sigue siendo texto. Convertir el cuerpo
+  entero en comandos habría devuelto el falso positivo de 1.29.1 —un resumen en heredoc con
+  `cp README.md src/…` como texto—, así que no se hace. De paso, los paréntesis de la sustitución
+  se retiran al tokenizar, para que el destino de `$(echo x > src/a.ts)` quede como un operando
+  limpio y no como `src/a.ts)`, que no casaría con ningún glob. Todo con expansión de parámetros:
+  **cero procesos nuevos** en un camino que recorre cada comando que ejecuta un agente.
+  Queda escrito en el código lo que sigue fuera: una sustitución que abre en una línea y cierra en
+  otra, y el resto de la cobertura parcial de Bash (`AGENTS.md` §13).
+
+**Y un falso positivo del mismo camino, medido mientras se redactaba el requerimiento:** un `Write`
+cuyo **cuerpo** citaba `Estado: completado (…)` dentro de un criterio era denegado, porque por esa
+vía la transición se buscaba en todo el contenido en vez de en la cabecera. Un `Write` trae el
+documento completo, así que ahora es su propio resultante y se juzga por su cabecera, igual que un
+`Edit` reconstruido. Los **veredictos** de un `Write` se siguen leyendo con la precedencia estricta
+de siempre (entrante sobre disco): quien borre la línea `QA:` no se libra del veredicto que hay en
+disco.
+
+Treinta y cuatro casos nuevos en el banco (230). Caso 1, sobre el documento resultante: el bypass y
+su motivo, con `MultiEdit`, con `replace_all`, sobre un archivo CRLF, con la cola de aprobaciones
+abierta y con una quality gate roja; el estado terminal tomado del manifiesto (`hecho`) y su
+control; el respaldo por fragmento vivo (`Write`, `old_string` ausente); un REQ que no existe en
+disco (sin traza de bash); y los controles que no pueden estorbar —todo en verde, la cabecera ya
+cerrada, reabrir un REQ, y el `Write` que sólo cita el estado—. Caso 2, sobre el heredoc: la
+sustitución, los acentos graves, `<<-` con sangría y un heredoc sin delimitador de cierre; y los
+controles citado, escapado, entrecomillado, la expansión inocente, el texto literal, el
+desarrollador autorizado, la here-string y la aritmética; más uno de rendimiento —10 000 líneas de
+cuerpo por debajo de 5 s— porque este camino lo paga cada comando.
+
+Cada caso de bypass trae su par **fail-before / pass-after**: falla contra los hooks de v1.30.2 y
+pasa contra los de la candidata. Un caso que pasa antes del arreglo no prueba nada.
+
+### Corregido — el primer arreglo del heredoc abría tres agujeros nuevos (vuelta 1 de QA)
+La validación no aprobó: los dos bypass declarados estaban cerrados y medidos, pero **conservar la
+LÍNEA ENTERA** del cuerpo que llevara una expansión metía en el análisis texto que bash nunca
+ejecuta. Tres consecuencias, las dos primeras de la misma familia que este arreglo venía a cerrar:
+
+- **FALLO EN ABIERTO: una comilla impar del cuerpo desarmaba el comando real.** El descuento de
+  texto entrecomillado emparejaba comillas sobre **todo** el comando, y una comilla suelta de una
+  línea conservada (`$(date) don't`) se emparejaba con la primera comilla del comando que iba
+  **después** del cierre del heredoc, borrando lo que hubiera en medio: la redirección se evaporaba
+  del texto analizado. `cat <<EOF` / `$(date) don't` / `EOF` / `echo x > src/robado.ts && echo 'listo'`
+  daba **allow** —y el shell creaba el archivo—, con acentos graves igual, y también por la puerta
+  del cierre de un REQ (`sed -i` sobre `requirements/`). La asimetría era exacta: dentro del cuerpo
+  esas comillas son **texto** y no abren ni cierran nada, y el detector las leía como sintaxis.
+- **FALLO EN ABIERTO POR AGOTAMIENTO DE TIEMPO.** El descuento reconstruía la cadena entera por
+  cada par de comillas: coste **cuadrático** sobre el cuerpo conservado. Medido con líneas
+  `$(date) 'x' "y"`: 500 líneas → 5,5 s; 1.000 → 40 s; 1.500 → sin respuesta en 65 s. Un hook
+  `PreToolUse` muere a los 60 s y **un hook muerto no deniega**: el propio coste era un bypass.
+- **Falso positivo devuelto:** al conservar la línea entera, `ver $(date) y luego cp README.md
+  src/x.ts` se denegaba sin que nada copiara nada — el defecto de 1.29.1 por otra puerta.
+
+**La corrección cambia la frontera.** Del cuerpo sin citar ya no se conserva la línea, sino **sólo
+el interior de cada `$( … )` y de cada par de acentos graves**, que es exactamente lo que el shell
+ejecuta; el resto de la línea vuelve a ser texto. Cada fragmento se **desentrecomilla por separado**
+y se une a los demás con `;`, que el tokenizador ya trata como separador, así que ni una comilla ni
+un operando de un fragmento pueden cruzar a otro ni al comando real: la asimetría desaparece por
+construcción, no por un caso especial. Y el descuento de comillas dejó de reconstruir la cadena: se
+consume el prefijo y se acumula en un buffer, con el texto acotado por fragmento. Resultado medido
+en Linux/WSL2 con el mismo cuerpo: 500 líneas → 110 ms, 1.000 → 211 ms, 1.500 → 211 ms (antes,
+>65 s), 5.000 → 511 ms. Coste **lineal**, y **cero procesos nuevos**: todo sigue siendo expansión de
+parámetros. Dentro de una expansión las comillas siguen siendo sintaxis, como en el shell real.
+Queda escrito en el código lo que sigue fuera de alcance: el escapado (`\$(`), el anidamiento, y una
+sustitución multilínea, de la que se ve el comando que la abre pero no lo que siga debajo.
+
+El banco pasa de 246 a **253 casos** (los siete nuevos, marcados `# DEV REQ-001 v2:`): el cruce de
+comillas entre dos fragmentos del mismo cuerpo, el destino de un `cp` que no puede cruzar al
+fragmento siguiente, el falso positivo con la mención textual **delante** de la expansión, el par
+comillas-dentro-de-la-expansión con su control, la sustitución que abre en una línea y cierra en
+otra, y el camino caro con el **triple** de cuerpo (5.000 líneas): un umbral que sólo se cumple en
+el tamaño exacto que denunció el defecto no acredita que el coste dejó de ser cuadrático, sólo que
+se movió el punto de ruptura. **253: 252 PASS · 0 FAIL · 1 SKIP** (el SKIP es de Windows) contra la
+candidata, y **229 PASS · 23 FAIL · 1 SKIP** contra v1.30.2. Los casos de regresión de esta vuelta
+pasan en **las dos** versiones —son conducta que no debía cambiar—; los de bypass siguen fallando
+sólo contra v1.30.2.
+
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos`
+> (requerimiento), `desarrollador` (código, banco y bitácora) y `qa-tester` (validación, los tres
+> hallazgos de esta vuelta y las correcciones del banco: reloj en milisegundos, emisor por STDIN y
+> guarda de JSON vacío). `auditor-seguridad` (revisión de seguridad del árbol ya validado: `Seguridad: aprobado`, siete
+> hallazgos preexistentes de clase `instrumento` derivados a REQ-007 y las limitaciones del detector
+> escritas en `docs/seguridad/`). Coordinación: sesión principal (Fable 5.1); QA con Opus por
+> decisión del propietario. Tres vueltas dev↔QA (tope de §6 alcanzado en la tercera, aprobada).
+
+### Corregido — vuelta 2 de QA: el coste cuadrático no había desaparecido, había cambiado de eje
+La validación volvió a no aprobar, y con razón. El descuento **por fragmento** de la vuelta 1 hizo
+el coste lineal en el **número de líneas** del cuerpo (1.500 líneas: >65 s → 209 ms), pero **dentro
+de una línea** los dos bucles nuevos seguían avanzando con `${r#*…}`, y cada avance **copia el resto
+de la cadena**. Medido de punta a punta con una sola línea de cuerpo y N sustituciones `$(date)`
+más una escritura real fuera del heredoc: N=2.000 → 1,3 s; **N=4.000 → 5,1 s, por encima del umbral
+de 5 s que fija el propio requerimiento**; N=8.000 → 18,0 s; **N=16.000 (112 KB) → el hook no
+responde en 60 s, muere, `guard.sh` recibe salida vacía y PERMITE** — y el shell crea el archivo.
+Doblar la entrada cuadruplicaba el tiempo: cuadrático, medido, en el tamaño de una línea.
+
+**El arreglo quita la copia por paso, no la reduce.** El texto se **parte una vez** —troceado por
+`IFS`, que bash hace en C y en una pasada— y los trozos se vuelven a unir **una vez** con
+`${a[*]}`: el descuento de comillas conserva los trozos pares (lo de fuera de comillas) y el
+extractor de expansiones toma, de cada trozo, su prefijo hasta el primer `)`. Los prefijos son
+disjuntos, así que el total es lineal. Nada más cambia de criterio: con un número impar de comillas
+la última sigue sin cerrar nada y se conserva tal cual, y los fragmentos siguen sin poder cruzarse.
+Medido con la misma entrada: N=4.000 5,1 s → **410 ms**; N=8.000 18,0 s → **814 ms**; N=16.000
+sin respuesta → **212 ms**. **Cero procesos nuevos**: sigue siendo expansión de parámetros, `IFS` y
+arrays. El camino común (un comando sin `<<`) mide lo mismo que antes y que en v1.30.2 —200
+invocaciones: 23,7 s / 24,1 s / 23,9 s—, indistinguible. De regalo, la misma raíz arregla el camino
+común cuando lleva muchas comillas, que era deuda anterior a este arreglo: 32 KB de comillas
+10,5 s → **209 ms**; 64 KB 39,5 s → **313 ms**.
+
+**Y un presupuesto de tamaño, porque un algoritmo lineal también tiene acantilado.** Basta una
+entrada cien veces mayor para volver a los 60 s, y un hook muerto no deniega: el fallo en abierto
+por agotamiento no se arregla siendo más rápido, se arregla **no aceptando lo que no se puede medir
+a tiempo**. Por encima de **64 KiB de MATERIAL ANALIZADO** el hook no analiza y **deniega**
+diciendo cómo salir (heredoc citado, archivo de script, o partir el comando). Lo que se mide es
+exactamente: (a) los bytes de las líneas del cuerpo de un heredoc **sin citar** que llevan `$( )` o
+acentos graves —lo único del cuerpo que el shell ejecuta— y (b) los bytes del texto del comando
+fuera de los cuerpos. **No** se mide el tamaño del comando: un `cat > archivo <<'EOF'` de 300 KB con
+el delimitador citado es la forma normal de escribir un archivo grande, su cuerpo se descuenta
+entero sin analizarse y sigue en `allow` **y barato** (512 ms medidos), con caso de banco que lo
+fija. El valor sale de medir el peor caso por byte: 64 KiB de cuerpo denso en `$( )` se resuelven
+en **0,71 s**, frente al tope de 2 s que se fijó para el tamaño máximo admitido y a los 60 s en que
+el hook muere; el doble ya cuesta 1,8 s. La denegación por tamaño **no** alcanza al agente de
+código por la puerta de `guard-codigo` —a él ya se le permitía escribir—, y sí alcanza a todos por
+`guard-completado`, porque la regla que ese guardián aplica también alcanza a todos. `.arnes/config.json`
+puede **subir** el techo con `limites.bash_max_analisis`; no puede bajarlo, porque el defecto se
+aplica sin leer el manifiesto y leerlo costaría un proceso en el camino que recorre **cada**
+comando. **La clave es opcional y NO está en la plantilla del manifiesto**, a propósito: tocar una
+plantilla convertiría esta versión en una migración de andamiaje para todos los proyectos, y este
+parche debe quedar como «nada que migrar». El valor por defecto vive en el código; quien necesite
+subirlo lo añade a mano a su `.arnes/config.json`, y la plantilla lo recogerá cuando una versión
+futura toque el manifiesto por otro motivo. Queda documentada en la skill `arnes-upgrade`
+(«Migraciones conocidas → Hacia 1.30.3»), junto con los cinco cambios de conducta de esta versión
+y los de 1.30.1 y 1.30.2, que faltaban.
+
+**Y un falso positivo menos:** `\$(…)` escapado en el cuerpo se denegaba aunque bash no ejecuta
+nada. Se cuenta la barra invertida por **paridad**, que es la única lectura correcta —`\$(` no
+ejecuta, `\\$(` sí—, con sus tres casos. Los acentos graves **no** reciben ese trato, a propósito
+y por escrito: un acento escapado cambia la pareja de todos los demás y equivocarse ahí produce un
+falso **negativo**; se prefiere el falso positivo.
+
+El banco pasa de 271 a **288 casos** (17 nuevos, `# DEV REQ-001 v3:`): el eje de QA-007 en el tamaño
+que antes mataba al hook, con su control; la frontera del presupuesto **al byte** (65.507 se analiza
+y nombra la ruta, 65.508 deniega por tamaño y explica la salida); los 300 KB citados y los 300 KB
+sin citar sin expansiones, con el control positivo que descarta que un `allow` sea un hook muerto;
+4.000 líneas justo por debajo del techo, que exigen que el motivo **nombre la ruta** y así acreditan
+análisis real y no atajo; el presupuesto por la puerta de `guard-completado`; la clave del manifiesto
+en sus tres formas (subir, no poder bajar, y errata que no desactiva nada); y los tres del escapado.
+**288: 287 PASS · 0 FAIL · 1 SKIP** contra la candidata (tres corridas idénticas), **249 · 38 · 1**
+contra v1.30.2 y **282 · 5 · 1** contra el árbol de la vuelta 1 —ahí fallan el caso de QA-007 y
+cuatro míos: el par fail-before/pass-after. Un defecto del banco encontrado de paso: `cronometra_bash`
+estaba definida **dentro** de una sección, y cada sección corre en su propio subshell, así que al
+usarla desde otra los casos no fallaban, **no se ejecutaban**; sólo el cuadre de `CASOS_ESPERADOS`
+lo delató. Vive ya junto a `check` y `check_motivo`.
+
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agentes: `desarrollador` (código,
+> banco, plantilla y bitácora) y `qa-tester` (hallazgo QA-007 y las mediciones que lo acreditan).
+> Validación y auditoría de seguridad pendientes: el REQ sigue `en-revisión`.
+
+### Corregido — vuelta 3 de QA: el recorte que compró la linealidad cortaba en el `)` equivocado
+La validación tampoco aprobó, y esta vez el hallazgo no era de reloj sino de **cobertura**. El
+extractor de expansiones tomaba de cada trozo **el prefijo hasta el primer `)`**, sin mirar comillas
+ni anidamiento, así que **todo lo que siguiera a ese `)` dentro de la misma sustitución desaparecía
+del análisis — incluida la redirección**. Tres formas corrientes salían `allow`, y las tres **crean
+el archivo en un shell real**:
+
+```
+$(cat "$(ls README.md)" > src/a.ts)    el ) de la sustitución INTERIOR trunca
+$(echo "a)b" > src/a.ts)               el ) va dentro de comillas
+$(echo "(hola)" > src/a.ts)            paréntesis literal entrecomillado
+```
+
+No es limitación heredada: **el árbol anterior al primer arreglo de esta misma versión las denegaba
+las tres**, porque allí se conservaba la línea entera. Era una pérdida de cobertura introducida por
+el propio trabajo, y el comentario del código afirmaba del anidamiento «es más cobertura, nunca
+menos» — medido, era menos. Ese comentario también se corrige.
+
+**El cierre de un fragmento se decide ahora por PROFUNDIDAD de paréntesis, no por el primer `)`,
+contando sólo los paréntesis que no están entrecomillados.** Comillas y profundidad se resuelven en
+la **misma pasada**, porque el orden contrario es imposible: para saber qué comillas descontar hace
+falta saber dónde acaba el fragmento, y para saber dónde acaba hace falta haber descontado las
+comillas. La línea se marca una vez con unas pocas sustituciones `${s//x/y}` —cada una una pasada de
+bash en C— y se parte **una vez** en «átomos»: cada átomo es un carácter con significado (`\`, `$(`,
+`(`, `)`, `"`, `'`) seguido del texto que va detrás. El recorrido toca cada átomo exactamente una
+vez y el texto del fragmento se acumula en un **array** que se une al cerrar; nunca se concatenan
+cadenas, que es copiar, y copiar dentro de un bucle fue justo lo que hizo cuadrática a la versión de
+la vuelta 1. **Coste lineal, cero procesos nuevos**: sigue siendo `IFS`, expansión de parámetros y
+arrays. Si la profundidad nunca vuelve a cero —una sustitución que no cierra en su línea— el
+fragmento es el resto de la línea, que es la lectura fail-closed y la que ya se aplicaba.
+
+**Las comillas sólo son sintaxis DENTRO de la sustitución, y eso no es un detalle de implementación:
+es lo que hace bash.** En el cuerpo de un heredoc sin citar una comilla es texto —`don't $(cp
+README.md src/a.ts)` ejecuta el `cp`—, mientras que dentro de `$( )` el shell reinterpreta como
+comando. Por eso el estado de comillas nace vacío al abrir cada fragmento y muere al cerrarlo: no
+cruza de un fragmento a otro ni contagia al texto de alrededor. Con una comilla **impar** —la que no
+cierra nunca— se conserva lo que va detrás, tal cual: no se inventa un cierre que no hay, y lo que
+no se puede descontar se analiza.
+
+**La misma revisión destapó un `)` más que tampoco cerraba: el escapado.** La paridad de la barra
+invertida sólo se aplicaba a `$(`, así que un `\)` —un paréntesis **literal**, que no cierra nada—
+partía el fragmento antes de tiempo y se llevaba la redirección por delante. Verificado en un
+sandbox real: `cat <<EOF` / `$(echo \) > src/x.ts)` / `EOF` **crea el archivo** y el hook decía
+`allow`. Es la misma familia que el hallazgo, encontrada al escribir el arreglo, y se cierra en el
+mismo sitio: la paridad vale ahora para **todos** los caracteres con significado, no sólo para `$(`.
+Su control obligatorio —el mismo `)` **sin** barra, que sí cierra y deja lo de detrás como texto—
+sigue en `allow`.
+
+**Lo que no cambia, y hay caso para cada cosa:** el texto que sigue al cierre **real** sigue siendo
+texto (`$(date) (texto) cp README.md src/x.ts` → `allow`), que es lo que impide «arreglarlo»
+volviendo a analizar la línea entera y devolver el falso positivo de 1.29.1; los acentos graves
+siguen leyéndose por **parejas** y sin interpretar el escapado, con su límite escrito; y `\$(` sigue
+siendo texto.
+
+Medido de punta a punta, con canario positivo y negativo antes de cada tanda y `timeout` duro
+(Linux/WSL2): el peor caso **justo por debajo del presupuesto** —65.400 bytes con 21.800 `$()` más
+una escritura real— tarda **2,1–2,2 s** y deniega, frente al umbral de 5 s y al techo de 60 s en que
+el hook muere; una línea con 8.000 `$(date)` (56 KB) **1,0 s**; con 16.000 (112 KB) **218 ms**, por
+presupuesto; 20.000 líneas de cuerpo (320 KB) **1,3 s**, por presupuesto; 4.000 líneas justo bajo el
+techo **1,1 s** analizando y nombrando la ruta. El camino común —el que recorre cada comando de cada
+agente— sigue **indistinguible**: 100 invocaciones seguidas, **95 ms/invocación en la candidata
+frente a 90 ms en v1.30.2**, que es el arranque de bash y no el análisis; y con muchas comillas
+(64 KB) la candidata deniega en 316 ms donde v1.30.2 no responde en 30 s y **permite**. La población
+legítima no se toca: heredoc citado de 300 KB `allow` en 422 ms, sin citar y sin expansiones `allow`
+en 424 ms, y el control con una escritura real detrás sigue en `deny` en 527 ms.
+
+**Y el `deny` por tamaño ya dice cuánto.** Explicaba que el comando supera el presupuesto y daba
+tres salidas, pero no el **número**, así que quien lo recibía tenía que adivinar por dónde partir.
+Ahora el motivo dice el presupuesto **vigente** en bytes —el efectivo, no una constante escrita en
+el mensaje: si el manifiesto lo sube con `limites.bash_max_analisis`, el mensaje sube con él— en las
+dos puertas. El techo se vuelve a resolver en el guardián porque el detector corre dentro de una
+sustitución de comandos, o sea en un subshell, y lo que memorice allí no vuelve; es un `jq` en el
+camino de la **denegación**, que ya no es el camino común.
+
+El banco pasa de 295 a **303 casos** (8 nuevos, `# DEV REQ-001 v4:`): las cuatro esquinas de la
+regla de profundidad —anidada con la escritura en el interior, un `)` entre comillas **simples**,
+paréntesis que nunca cierra con una escritura detrás, y el reverso obligatorio, `(texto)` tras el
+cierre real como texto—, el `)` escapado con su control, y el motivo del `deny` por tamaño con el
+número, en las dos puertas.
+**303: 302 PASS · 0 FAIL · 1 SKIP** contra la candidata (tres corridas idénticas: dos en paralelo y
+una secuencial) y **253 · 49 · 1** contra v1.30.2, las dos cuadrando con `CASOS_ESPERADOS`. Los tres
+casos rojos del hallazgo y seis de los ocho nuevos **fallan** contra v1.30.2 y pasan contra la
+candidata; los otros dos son controles positivos y pasan en las dos. Y los **únicos dos** casos con
+`esperado=allow` que fallan contra v1.30.2 siguen siendo los dos cambios de conducta ya declarados:
+ni uno más.
+
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agentes: `desarrollador` (código,
+> banco y bitácora) y `qa-tester` (hallazgos QA-015 y QA-016 y las mediciones que los acreditan).
+> Validación y auditoría de seguridad pendientes: el REQ sigue `en-revisión`.
+### Autoalojamiento — el arnés se instala sobre sí mismo
+El repositorio queda inicializado con su propio andamiaje (`arnes-init`, plantillas de 1.30.2):
+`AGENTS.md`, `CLAUDE.md`, `.arnes/config.json` (con `hooks/`, `tools/` y `.github/` como código
+protegido), `requirements/`, `PENDING_APPROVAL.md`, `docs/ESTADO.md`, `ARCHITECTURE.md`,
+`.arnes/plantillas-origen/` y el `pre-commit`. El procedimiento permanente está en
+`docs/gobernanza/autoalojamiento.md`: **la versión estable N gobierna el desarrollo de N+1**.
+Medido antes de editar: la instalación que corre los hooks es 1.30.2 (38b59fb), en
+`~/.claude/plugins/cache/…/1.30.2`, byte a byte igual al tag y distinta del worktree; un `Write`
+de la coordinadora sobre `hooks/` fue denegado por ella.
+
 ## [1.30.2] — 2026-09-05
 ### Corregido — tres fallos medidos por tres revisores distintos el mismo día
 - **FALLO EN ABIERTO: un MultiEdit cerraba el REQ aprobando sólo la línea del historial.** La regla

@@ -79,12 +79,21 @@ emite_edit() {
      + (if $at!=""  then {agent_type:$at} else {} end)'
 }
 
-# emite_edit_real <file_path> <old_string> <new_string> — un Edit de la coordinadora
-# cuyo `old_string` SI esta en el archivo: el hook reconstruye el documento resultante.
+# emite_edit_real <file_path> <old_string> <new_string> [replace_all] — un Edit de la
+# coordinadora cuyo `old_string` SI esta en el archivo: el hook reconstruye el documento
+# resultante. El 4o argumento, cuando no va vacio, marca `replace_all: true`.
 emite_edit_real() {
-  jq -n --arg fp "$1" --arg os "$2" --arg ns "$3" \
+  jq -n --arg fp "$1" --arg os "$2" --arg ns "$3" --arg ra "${4:-}" \
     '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,
-      tool_input:{file_path:$fp,old_string:$os,new_string:$ns}}'
+      tool_input:({file_path:$fp,old_string:$os,new_string:$ns}
+                  + (if $ra!="" then {replace_all:true} else {} end))}'
+}
+
+# emite_write <file_path> <contenido> — un Write de la coordinadora con el documento entero.
+emite_write() {
+  jq -n --arg fp "$1" --arg c "$2" \
+    '{hook_event_name:"PreToolUse",tool_name:"Write",cwd:env.CLAUDE_PROJECT_DIR,
+      tool_input:{file_path:$fp,content:$c}}'
 }
 
 # emite_multiedit <file_path> <old1> <new1> [<old2> <new2> ...] — un MultiEdit real.
@@ -101,10 +110,18 @@ emite_multiedit() {
 }
 
 # emite_bash <comando> <agent_id> <agent_type>
+# QA REQ-001: el comando va por STDIN (`jq -Rs`), NO como argumento `--arg`.
+# MEDIDO: con el cuerpo de 10.000 lineas del caso de rendimiento, `--arg` supera el
+# limite de UN argumento del proceso (MAX_ARG_STRLEN, 128 KB en Linux; ARG_MAX no es
+# el que muerde). jq moria con `Argument list too long`, el JSON salia VACIO, el hook
+# recibia nada y respondia allow: el caso pasaba POR LA RAZON EQUIVOCADA y no medio ni
+# el tiempo ni la decision. Los otros emisores (`emite_write`, `emite_edit_real`,
+# `emite_multiedit`) tienen el mismo techo latente; hoy ningun caso les pasa 128 KB,
+# y si alguno lo hace, la guarda de `check` lo delata en vez de dejarlo en verde.
 emite_bash() {
-  jq -n --arg cmd "$1" --arg aid "$2" --arg at "$3" \
+  printf '%s' "$1" | jq -Rs --arg aid "$2" --arg at "$3" \
     '{hook_event_name:"PreToolUse",tool_name:"Bash",cwd:env.CLAUDE_PROJECT_DIR,
-      tool_input:{command:$cmd}}
+      tool_input:{command:.}}
      + (if $aid!="" then {agent_id:$aid} else {} end)
      + (if $at!=""  then {agent_type:$at} else {} end)'
 }
@@ -143,10 +160,22 @@ corre() { : > "$ERRLOG"; printf '%s' "$2" | "$HOOKS_DIR/$1" 2>"$ERRLOG"; }
 # diagnostico: lo que el hook escribio en stderr, si escribio algo.
 diag() { [ -s "$ERRLOG" ] && sed 's/^/          stderr| /' "$ERRLOG"; return 0; }
 
+# QA REQ-001: LA MISMA LECCION DEL CANARIO, UN NIVEL MAS ABAJO. Un caso que espera
+# `allow` tambien pasa cuando el hook no recibe NADA, y el emisor puede quedarse mudo
+# sin avisar (jq reventando por el tamano del argumento fue exactamente eso). Un JSON
+# vacio no es un caso: es un caso que no se ejecuto, y tiene que salir en rojo.
+json_no_vacio() {   # <nombre> <json> -> 0 si hay caso, 1 si esta vacio (y ya reporto)
+  [ -n "$2" ] && return 0
+  echo "  FAIL  $1  el JSON del caso salio VACIO: el hook no habria recibido entrada y"
+  echo "        habria respondido allow. El caso no midio nada (revisa el emisor)."
+  return 1
+}
+
 # check <nombre> <esperado:deny|allow> <script> <json>
 check() {
   local nombre="$1" esperado="$2" script="$3" json="$4" out got
   if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
+  json_no_vacio "$nombre" "$json" || { FAIL=$((FAIL+1)); return 0; }
   out="$(corre "$script" "$json")"
   if printf '%s' "$out" | grep -Eq '"permissionDecision": *"deny"'; then got=deny; else got=allow; fi
   if [ "$got" = "$esperado" ]; then
@@ -156,11 +185,36 @@ check() {
   fi
 }
 
+# QA REQ-001: el reloj se lee en MILISEGUNDOS y la decision se comprueba aparte del
+# tiempo. Con `date +%s` un caso de 0 s y uno de 0,9 s son indistinguibles, y con la
+# condicion unida por `&&` un `deny` inesperado se reportaba como "lento" en vez de
+# como lo que es. Ademas se exige que el JSON exista: ver `json_no_vacio`.
+# DEV REQ-001 v3: vive AQUI, con `check` y `check_motivo`, y no dentro de una seccion.
+# Cada seccion corre en su propio subshell, asi que una funcion definida dentro de una
+# no existe para las demas: al usarla en otra seccion los casos no fallaban, es que
+# NO SE EJECUTABAN — y solo el cuadre de CASOS_ESPERADOS lo delato.
+cronometra_bash() {   # <nombre> <esperado:deny|allow> <umbral_ms> <json>
+  local nombre="$1" esperado="$2" techo="$3" json="$4" t0 t1 ms salida got
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
+  if ! json_no_vacio "$nombre" "$json"; then FAIL=$((FAIL+1)); return 0; fi
+  # Techo duro de reloj: un hook que se atasca no puede convertir el banco en una
+  # espera de minutos. `timeout` lo corta y el caso falla por tiempo, que es la verdad.
+  t0="$(date +%s%N)"; salida="$(: > "$ERRLOG"; printf '%s' "$json" | timeout $(( (techo/1000) + 5 )) "$HOOKS_DIR/guard-codigo.sh" 2>"$ERRLOG")"; t1="$(date +%s%N)"
+  ms=$(( (t1 - t0) / 1000000 ))
+  if printf '%s' "$salida" | grep -Eq '"permissionDecision": *"deny"'; then got=deny; else got=allow; fi
+  if [ "$got" = "$esperado" ] && [ "$ms" -lt "$techo" ]; then
+    echo "  PASS  $nombre  ($got en ${ms}ms, umbral ${techo}ms)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nombre  esperado=$esperado got=$got  ${ms}ms (umbral ${techo}ms)"; diag; FAIL=$((FAIL+1))
+  fi
+}
+
 # check_motivo <nombre> <regex> <script> <json> — exige deny Y que el motivo lo explique.
 # Un deny mudo, o que no nombre a quien lo intentó, es un bug de diagnóstico.
 check_motivo() {
   local nombre="$1" patron="$2" script="$3" json="$4" out motivo
   if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
+  json_no_vacio "$nombre" "$json" || { FAIL=$((FAIL+1)); return 0; }
   out="$(corre "$script" "$json")"
   motivo="$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecisionReason // empty' 2>/dev/null)"
   if [ -n "$motivo" ] && printf '%s' "$motivo" | grep -Eq "$patron"; then
@@ -297,6 +351,22 @@ check "here-string (<<<) no es heredoc: el cp de detras sigue viendose -> deny" 
   "$(emite_bash 'cat <<< "hola" ; cp /tmp/x.ts src/' "" "")"
 check "aritmetica \$((1<<n)) no es heredoc: el cp de la linea siguiente sigue viendose -> deny" deny guard-codigo.sh \
   "$(emite_bash $'echo $((1<<n))\ncp /tmp/x.ts src/' "" "")"
+# --- Heredoc SIN CITAR: el cuerpo no es solo texto (medido en 1.30.2) ---------------
+# Una revision externa escribio codigo protegido con `cat <<EOF` / `$(echo x > src/...)`:
+# el shell EJECUTA la sustitucion y crea el archivo, pero el detector descontaba TODO el
+# cuerpo del heredoc como texto y devolvia ALLOW. Con el delimitador sin citar se
+# conservan y se analizan las lineas con una sustitucion; el resto sigue siendo texto.
+check "heredoc sin citar: una sustitucion escribe en codigo protegido -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo x > src/generated.ts)\nEOF' "" "")"
+check_motivo "heredoc sin citar: ...y el motivo nombra el archivo que se crearia" "src/generated\.ts" \
+  guard-codigo.sh "$(emite_bash $'cat <<EOF\n$(echo x > src/generated.ts)\nEOF' "" "")"
+check "heredoc sin citar: acentos graves que escriben en codigo -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n`echo x > src/a.ts`\nEOF' "" "")"
+check "heredoc sin citar con <<- y sangria: cp al codigo dentro de la sustitucion -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<-EOF\n\t$(cp README.md src/a.ts)\n\tEOF' "" "")"
+# Sin delimitador de cierre el bucle tiene que TERMINAR igual y seguir viendo la sustitucion.
+check "heredoc sin citar y sin cierre: la sustitucion se sigue viendo -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo x > src/a.ts)' "" "")"
 check_motivo "el deny por Bash admite que la cobertura es parcial" "parcial" \
   guard-codigo.sh "$(emite_bash 'echo x > src/app.ts' "" "")"
 check "desarrollador (con prefijo) escribe por Bash -> allow" allow guard-codigo.sh "$(emite_bash 'echo x > src/app.ts' "a10" "arnes-juan:desarrollador")"
@@ -318,6 +388,179 @@ check "heredoc: 'echo x > src/otro.ts' en el cuerpo -> allow" allow guard-codigo
   "$(emite_bash $'cat <<EOF\nejemplo: echo hola > src/otro.ts\nEOF' "" "")"
 check "heredoc con <<- y sangria: 'tee src/otro.ts' en el cuerpo -> allow" allow guard-codigo.sh \
   "$(emite_bash $'cat <<-EOF\n\tejemplo: tee src/otro.ts\n\tEOF' "" "")"
+# --- Heredoc CITADO: el cuerpo si es literal, tambien en el shell real ---------------
+# El control que da valor a los deny de arriba: con el delimitador citado o escapado bash
+# NO expande nada, no se crea ningun archivo, y el hook no puede estorbar.
+check "heredoc CITADO <<'EOF': el cuerpo es literal -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<\'EOF\'\n$(echo x > src/generated.ts)\nEOF' "" "")"
+check 'heredoc CITADO con comillas dobles: el cuerpo es literal -> allow' allow guard-codigo.sh \
+  "$(emite_bash $'cat <<"EOF"\n$(echo x > src/generated.ts)\nEOF' "" "")"
+check 'heredoc ESCAPADO con barra invertida: el cuerpo es literal -> allow' allow guard-codigo.sh \
+  "$(emite_bash $'cat <<\\EOF\n$(echo x > src/generated.ts)\nEOF' "" "")"
+# Sin citar, pero la expansion no escribe nada: tampoco puede denegarse.
+check "heredoc sin citar: una expansion inocente de fecha -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\nfecha: $(date)\nEOF' "" "")"
+# El falso positivo de 1.29.1, ahora tambien con el delimitador SIN citar: texto es texto.
+check "heredoc sin citar: 'cp README.md src/...' como TEXTO del cuerpo -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\nresumen: cp README.md src/x.ts ; listo\nEOF' "" "")"
+# La restriccion es de QUIEN edita, no de la forma del comando.
+check "heredoc sin citar: el desarrollador si puede escribir codigo -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo x > src/generated.ts)\nEOF' "a12" "arnes-juan:desarrollador")"
+# Ni la here-string ni la aritmetica son heredocs, y solas no escriben nada.
+check "heredoc: una here-string sola no lo es -> allow" allow guard-codigo.sh \
+  "$(emite_bash 'cat <<< "hola"' "" "")"
+check "heredoc: la aritmetica \$((1<<n)) sola no lo es -> allow" allow guard-codigo.sh \
+  "$(emite_bash 'echo $((1<<n))' "" "")"
+# RENDIMIENTO (CA-28): un cuerpo de 10.000 lineas se analiza con expansion de parametros,
+# sin un proceso por linea. Umbral 5 s: un hook PreToolUse muere a los 60 s y un hook
+# muerto no deniega, asi que el margen tiene que ser amplio, no justo.
+# CA-28: cuerpo de 10.000 lineas SIN expansiones. Es el camino BARATO —el cuerpo entero
+# se descuenta—, asi que este caso NO acredita el coste del camino caro: ver el de abajo.
+cronometra_bash "heredoc sin citar: 10.000 lineas de cuerpo SIN expansiones -> allow" allow 5000 \
+  "$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF' "$(yes 'linea de texto sin expansiones' | head -10000)")" "" "")"
+# QA REQ-001 — HALLAZGO QA-003 (coste cuadratico del cuerpo CONSERVADO).
+# Las lineas con `$(` ya no se descuentan: entran en el texto que analiza el detector, y
+# el descuento de comillas es un bucle que RECONSTRUYE la cadena entera por cada par. Con
+# 1.500 lineas de cuerpo (28 KB de comando) el hook no responde en 65 s. MEDIDO en Linux,
+# WSL2, 2026-09-05: 1.30.2 respondia `deny` en 210 ms; la candidata no responde.
+# Un hook PreToolUse muere a los 60 s, y UN HOOK MUERTO NO DENIEGA: el comando de este
+# caso escribe de verdad en `src/robado.ts`. Es fallo en abierto por agotamiento.
+#   500 lineas -> 5,5 s (1.30.2: 0,11 s) · 1.000 -> 40 s · 1.500 -> >65 s
+cronometra_bash "heredoc sin citar: 1.500 lineas con expansion y comillas + escritura real -> deny" deny 5000 \
+  "$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF\necho x > src/robado.ts' "$(yes "\$(date) 'x' \"y\"" | head -1500)")" "" "")"
+# DEV REQ-001 v2: el mismo camino caro, con el TRIPLE de cuerpo. Un umbral que solo se
+# cumple en el tamano exacto que denuncio el defecto no acredita que el coste dejo de ser
+# cuadratico: acredita que se movio el punto de ruptura. Con el descuento por fragmento
+# el coste es lineal — medido en Linux/WSL2 2026-09-05: 500 lineas 110 ms, 1.000 211 ms,
+# 1.500 211 ms, 5.000 511 ms (antes: 5,5 s / 40 s / >65 s).
+# DEV REQ-001 v3 (nota, no toco el caso): con el presupuesto de 64 KiB estas 5.000 lineas
+# (80 KB de material analizable) se deniegan POR TAMANO, no por ver la redireccion. Sigue
+# siendo `deny` y sigue siendo correcto, pero el caso ya no acredita el analisis real: eso
+# lo acredita el de 4.000 lineas de la seccion DEV v3, que cabe justo bajo el techo y
+# EXIGE que el motivo nombre la ruta.
+cronometra_bash "heredoc sin citar: 5.000 lineas con expansion y comillas + escritura real -> deny" deny 5000 \
+  "$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF\necho x > src/robado.ts' "$(yes "\$(date) 'x' \"y\"" | head -5000)")" "" "")"
+
+# QA REQ-001 — HALLAZGO QA-001 (falso NEGATIVO nuevo, medido 2026-09-05).
+# Conservar las lineas del cuerpo con `$(` mete SUS COMILLAS en el texto que analiza el
+# detector, y el descuento de entrecomillado empareja por pares SOBRE TODO EL COMANDO. Una
+# comilla impar en el cuerpo se empareja con la primera comilla del comando REAL que va
+# despues del cierre y borra lo que queda en medio: la redireccion se evapora.
+# Reproduccion: el shell CREA `src/robado.ts` (verificado ejecutandolo en un sandbox).
+# 1.30.2: deny. Candidata: allow. Es la misma familia que este REQ vino a cerrar.
+check "QA: comilla impar en el cuerpo NO puede desarmar la redireccion posterior -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(date) don\'t\nEOF\necho x > src/robado.ts && echo \'listo\'' "" "")"
+check "QA: control, el mismo comando sin el heredoc delante -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'echo x > src/robado.ts && echo \'listo\'' "" "")"
+check "QA: la misma comilla impar con acento grave en el cuerpo -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n`date` don\'t\nEOF\ncp README.md src/a.ts && echo \'ok\'' "" "")"
+check "QA: control, cuerpo con expansion y comillas PARES -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(date) \'hoy\'\nEOF\necho x > src/robado.ts && echo \'listo\'' "" "")"
+# QA REQ-001 — HALLAZGO QA-004 (falso POSITIVO nuevo). La linea entera se analiza como
+# comando por llevar UNA expansion, asi que el TEXTO que la acompana vuelve a leerse como
+# orden: es el falso positivo de 1.29.1 otra vez, ahora con `$(` en la linea. En el shell
+# real solo se expande `$(date)`; no se copia nada. 1.30.2: allow. Candidata: deny.
+check "QA: cuerpo con \$(date) y una mencion TEXTUAL de cp no es una escritura -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\nver $(date) y luego cp README.md src/x.ts\nEOF' "" "")"
+check "QA: control, cuerpo con \$(date) y sin rutas -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\nver $(date) y nada mas\nEOF' "" "")"
+
+# DEV REQ-001 v2: la frontera que cierra QA-001/QA-002/QA-003 no es "el cuerpo", es CADA
+# FRAGMENTO EJECUTABLE. Del cuerpo sin citar se conserva solo el interior de `$( )` y de
+# los acentos graves, cada uno desentrecomillado por separado y unido con `;`. Estos casos
+# fijan las tres consecuencias, para que un arreglo futuro no las deshaga en silencio.
+#
+# 1) Una comilla impar de UN fragmento tampoco puede desarmar a OTRO fragmento del mismo
+#    cuerpo: la frontera es por fragmento, no solo entre cuerpo y comando real.
+check "DEV: comilla impar en un fragmento NO desarma otro fragmento del cuerpo -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo don\'t)\n$(echo x > src/f2.ts)\nEOF' "" "")"
+# 2) ...y el operando de un fragmento no se lee como destino del comando del anterior: sin
+#    el separador, el `cp` seguiria buscando destino dentro del fragmento siguiente.
+check "DEV: el destino de un cp no cruza al fragmento siguiente -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(cp README.md)\n$(echo src/x.ts)\nEOF' "" "")"
+# 3) El falso positivo de QA-003 tampoco depende del ORDEN: la mencion textual delante de
+#    la expansion sigue siendo texto.
+check "DEV: mencion textual ANTES de la expansion sigue siendo texto -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\ncp README.md src/x.ts es lo que hace $(date)\nEOF' "" "")"
+# 4) DENTRO de la expansion las comillas SI son sintaxis, como en el shell real: `echo` con
+#    la redireccion entrecomillada imprime texto, no redirige. El par deny/allow es lo que
+#    acredita que el descuento por fragmento no se volvio ciego.
+check "DEV: comillas DENTRO de la expansion siguen siendo sintaxis -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo \'x > src/a.ts\')\nEOF' "" "")"
+check "DEV: control, la misma expansion SIN comillas -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo x > src/a.ts)\nEOF' "" "")"
+# 5) La limitacion declarada tiene un borde util: una sustitucion que abre en una linea y
+#    no cierra en ella aporta el resto de SU linea, asi que el comando que la abre se ve.
+check "DEV: sustitucion que abre en una linea y cierra en otra -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo x > src/multi.ts\n)\nEOF' "" "")"
+
+# QA REQ-001 v2 — RE-VALIDACION (vuelta 1 del bucle dev<->QA, 2026-09-05).
+# Los tres hallazgos de la vuelta 1 se verificaron con sondas propias, no solo con el
+# banco. Estos casos fijan la conducta ARREGLADA por sus BORDES, que es donde un arreglo
+# futuro la deshace en silencio. Todos verdes hoy; si alguno se pone rojo, la frontera
+# "cada fragmento ejecutable se desentrecomilla aislado" volvio a romperse.
+#
+# 1) Comillas CRUZADAS entre dos fragmentos del MISMO cuerpo: una comilla impar en el
+#    primer fragmento no puede emparejarse con una del segundo y borrar la escritura.
+check "QA v2: comilla simple impar cruzada entre dos fragmentos -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo a\')\n$(echo x > src/v1.ts)\nEOF' "" "")"
+check "QA v2: comilla doble impar cruzada entre dos fragmentos -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo "a)\n$(echo x > src/v2.ts)\nEOF' "" "")"
+# 2) Acento grave IMPAR en el cuerpo: no puede tragarse el comando real posterior.
+check "QA v2: acento grave impar en el cuerpo NO desarma la escritura posterior -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\nhola `date\nEOF\necho x > src/v3.ts' "" "")"
+# 3) La comilla impar en el comando REAL, ANTES del heredoc: el descuento del comando
+#    real sigue siendo de una pieza, y una comilla suya sin pareja no borra la escritura.
+check "QA v2: comilla impar en el comando real ANTES del heredoc -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'echo \'abre\ncat <<EOF\n$(date)\nEOF\necho x > src/v4.ts' "" "")"
+# 4) Un fragmento que TERMINA en `;` no deja al detector buscando operando en el siguiente.
+check "QA v2: fragmento que termina en ';' no cruza al siguiente -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo hola;)\n$(echo x > src/v5.ts)\nEOF' "" "")"
+check "QA v2: control, cp sin destino + ruta en el fragmento siguiente -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(cp README.md;)\n$(echo src/v6.ts)\nEOF' "" "")"
+# 5) El detector COMPLETO tiene que seguir vivo DENTRO de la expansion, no solo `>` y `cp`.
+#    Sin estos, un arreglo podria recortar el fragmento y dejar mudas las otras formas.
+check "QA v2: install dentro de la expansion -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(install -m 644 README.md src/v7.ts)\nEOF' "" "")"
+check "QA v2: perl -pi dentro de la expansion -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(perl -pi -e s/a/b/ src/v8.ts)\nEOF' "" "")"
+check "QA v2: dd of= dentro de la expansion -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(dd if=/dev/zero of=src/v9.ts)\nEOF' "" "")"
+check "QA v2: mv dentro de la expansion -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(mv README.md src/v10.ts)\nEOF' "" "")"
+# 6) Operadores dentro de la expansion: el fragmento se tokeniza como comando de verdad.
+check "QA v2: '&&' dentro de la expansion -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(true && echo x > src/v11.ts)\nEOF' "" "")"
+check "QA v2: tuberia a tee dentro de la expansion -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(cat README.md | tee src/v12.ts)\nEOF' "" "")"
+# 7) La LINEA QUE ABRE el heredoc no es cuerpo: su redireccion se sigue viendo.
+check "QA v2: redireccion en la linea que abre el heredoc -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF > src/v13.ts\ntexto\nEOF' "" "")"
+check "QA v2: 'cat > ruta <<EOF' -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat > src/v14.ts <<EOF\ntexto\nEOF' "" "")"
+
+# QA REQ-001 v2 — HALLAZGO QA-007 (`contrato`, BLOQUEA): el coste dejo de ser cuadratico
+# en el NUMERO DE LINEAS del cuerpo, pero sigue siendolo en el TAMANO DE UNA LINEA. El
+# punto de ruptura se movio de eje, no desaparecio. MEDIDO en Linux/WSL2 2026-09-05 con
+# una sola linea de cuerpo y N expansiones `$(date)`, mas la escritura real FUERA del
+# heredoc (`echo x > src/...`):
+#   N=500 -> 210 ms · 1.000 -> 411 ms · 2.000 -> 1,3 s · 4.000 -> 5,1 s ·
+#   8.000 -> 18,0 s · 12.000 -> 41,1 s · 16.000 -> NO RESPONDE en 60 s
+# Contra v1.30.2 la misma entrada responde `deny` en 213 ms con N=20.000 (plana): es una
+# REGRESION del arreglo, no una limitacion heredada. A los 60 s el hook muere, la salida
+# sale VACIA y `guard.sh` permite: verificado en un sandbox, el shell CREA `src/qa7.ts`.
+# Umbral el del REQ (CA-40/CA-48): menos de 5 s. Se usa N=8.000 —no 4.000, que cae
+# JUSTO sobre el umbral (5,0 s medidos) y daria un caso flaky— para que el resultado sea
+# el mismo en cada corrida: el `timeout` duro lo corta a los 10 s y el caso reporta
+# `got=allow`, que es LA VERDAD del defecto (hook cortado = hook que no deniega).
+# Cuando el coste sea lineal, 8.000 expansiones deben resolverse muy por debajo de 1 s.
+cronometra_bash "QA v2: UNA linea de cuerpo con 8.000 expansiones + escritura real -> deny" deny 5000 \
+  "$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF\necho x > src/qa7.ts' "$(yes '$(date)' | head -8000 | tr -d '\n')")" "" "")"
+# Control del caso de arriba: la MISMA escritura sin el cuerpo delante se resuelve al
+# instante. Sin el, un `deny` lento no distingue "el cuerpo cuesta" de "la sonda es lenta".
+cronometra_bash "QA v2: control, la misma escritura sin el cuerpo delante -> deny" deny 5000 \
+  "$(emite_bash 'echo x > src/qa7.ts' "" "")"
+
 check "coordinadora: redirige un log fuera de los globs -> allow" allow guard-codigo.sh "$(emite_bash 'npm run build > /tmp/build.log 2>&1' "" "")"
 check "qa-tester escribe en tests/ (no es código de app) -> allow" allow guard-codigo.sh "$(emite_bash 'echo x > tests/a.test.ts' "a11" "arnes-juan:qa-tester")"
 
@@ -362,6 +605,19 @@ check "anotar en un REQ sin cerrarlo -> allow" allow guard-completado.sh \
 check "escribir fuera de requirements/ -> allow" allow guard-completado.sh \
   "$(emite_bash "echo completado > notas.txt" "" "")"
 
+# El mismo heredoc sin citar, por la via del cierre de un REQ: la sustitucion ejecuta el
+# `sed -i` de verdad, asi que la transicion tiene que derivarse a Edit/Write igual.
+check "heredoc sin citar que cierra un REQ con sed -i -> deny" deny guard-completado.sh \
+  "$(emite_bash $'cat <<EOF\n$(sed -i \'s/en-revisión/completado/\' requirements/REQ-001.md)\nEOF' "" "")"
+# QA REQ-001 — HALLAZGO QA-001, por la puerta del CIERRE. Una comilla IMPAR en una linea
+# del cuerpo que se conserva (`$(`) se empareja, en el descuento global de texto
+# entrecomillado, con la primera comilla del comando REAL que va DESPUES del cierre, y se
+# lleva por delante lo que hay en medio: el `sed -i` desaparece del texto analizado.
+# 1.30.2 denegaba (descontaba el cuerpo entero); la candidata deja pasar.
+check "QA: comilla impar en el cuerpo NO puede desarmar el sed -i que cierra el REQ -> deny" deny guard-completado.sh \
+  "$(emite_bash $'cat <<EOF\n$(date) don\'t\nEOF\nsed -i \'s/en-revisión/completado/\' requirements/REQ-001.md' "" "")"
+check "QA: control, el mismo sed -i sin el heredoc delante -> deny" deny guard-completado.sh \
+  "$(emite_bash $'sed -i \'s/en-revisión/completado/\' requirements/REQ-001.md' "" "")"
 # --- Arranque limpio: la plantilla de PENDING no puede bloquear ----------------
 # El ejemplo de formato vivia COMENTADO bajo `## Pendientes`; el conteo lo leia
 # como 1 pendiente y un proyecto recien inicializado no cerraba ningun REQ.
@@ -528,6 +784,128 @@ check "MultiEdit sobre un REQ CRLF: el bypass tambien -> deny" deny guard-comple
 # Y al reves: `Estado: completado` escrito SOLO en la historia no es una transicion.
 check "Edit: 'Estado: completado' solo en la historia NO es una transicion -> allow" allow guard-completado.sh \
   "$(emite_edit_real "$PROJ/requirements/REQ-114.md" 'Seguridad: pendiente (registro anterior)' $'Seguridad: pendiente (registro anterior)\n- 2026-08-01: Estado: completado (intento anterior, revertido)')"
+# --- El bypass por SUSTITUCION DEL VALOR (medido en 1.30.2) -------------------------
+# Una revision externa cerro un REQ con `old_string: en-revisión` / `new_string: completado`.
+# El fragmento no escribe la palabra «Estado» en ninguna parte, y el hook exigia esa palabra
+# EN EL FRAGMENTO antes de correr las puertas: salia por arriba y devolvia ALLOW con
+# `QA: pendiente`. Sustituir el VALOR es la forma mas natural de cerrar un REQ a mano.
+# Ahora, con el documento reconstruido, la transicion se lee del DOCUMENTO: la cabecera en
+# disco no lo decia y la resultante si.
+mkreq "$PROJ/requirements/REQ-120.md" "no" "pendiente" "n/a"
+check "transicion por documento: Edit que sustituye SOLO el valor -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-120.md" 'en-revisión' 'completado')"
+check_motivo "transicion por documento: ...y el motivo nombra el veredicto que falta" "QA es 'pendiente'" \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-120.md" 'en-revisión' 'completado')"
+# Control positivo: el mismo Edit sobre un REQ que SI puede cerrarse no puede estorbar.
+mkreq "$PROJ/requirements/REQ-121.md" "no" "aprobado" "n/a"
+check "transicion por documento: control, SOLO el valor con todo en verde -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-121.md" 'en-revisión' 'completado')"
+# El suelo del REQ sensible tambien se aplica por esta via.
+mkreq "$PROJ/requirements/REQ-122.md" "sí" "aprobado" "pendiente"
+check "transicion por documento: SOLO el valor sobre un REQ sensible sin auditoria -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-122.md" 'en-revisión' 'completado')"
+# MultiEdit: una edicion sustituye el valor y la otra anota el historial.
+printf '# REQ-124\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n\n## Historial\n| 2026-09-01 | nace |\n' > "$PROJ/requirements/REQ-124.md"
+check "transicion por documento: MultiEdit con SOLO el valor + fila de historial -> deny" deny guard-completado.sh \
+  "$(emite_multiedit "$PROJ/requirements/REQ-124.md" 'en-revisión' 'completado' '| 2026-09-01 | nace |' $'| 2026-09-01 | nace |\n| 2026-09-02 | cierra |')"
+# `replace_all`: el valor aparece ANTES de la cabecera, asi que solo sustituyendo TODAS las
+# ocurrencias queda `Estado: completado`. Es lo que separa "se reconstruyo" de "se adivino".
+printf '# REQ-125 (nacio en-revisión)\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n' > "$PROJ/requirements/REQ-125.md"
+check "transicion por documento: replace_all sustituye TODAS las ocurrencias -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-125.md" 'en-revisión' 'completado' 1)"
+check "transicion por documento: control, sin replace_all solo la primera y la cabecera no cambia -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-125.md" 'en-revisión' 'completado')"
+# El mismo bypass sobre un archivo CRLF: el CR no puede devolver un ALLOW por la puerta de atras.
+printf '# REQ-123\r\nEstado: en-revisión\r\nSensible a seguridad: no\r\nQA: pendiente\r\nSeguridad: n/a\r\n' > "$PROJ/requirements/REQ-123.md"
+check "transicion por documento: SOLO el valor sobre un REQ CRLF -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-123.md" 'en-revisión' 'completado')"
+# --- El fallback sigue vivo: sin documento reconstruido se juzga el fragmento ---------
+mkreq "$PROJ/requirements/REQ-126.md" "no" "pendiente" "n/a"
+check "transicion por documento: Write con la cabecera completa -> deny" deny guard-completado.sh \
+  "$(emite_write "$PROJ/requirements/REQ-126.md" $'# REQ-126\nEstado: completado\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n')"
+# Y al reves: un `Write` cuya CABECERA sigue en revision pero cuyo cuerpo cita el estado
+# terminal dentro de un criterio. Medido con 1.30.2 mientras se redactaba un REQ: el `grep`
+# miraba todo el contenido y lo denegaba. Manda la cabecera, aqui tambien.
+check "transicion por documento: control, Write que solo CITA el estado en el cuerpo -> allow" allow guard-completado.sh \
+  "$(emite_write "$PROJ/requirements/REQ-126.md" $'# REQ-126\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n\n## Criterios\n- Cuando el REQ queda `Estado: completado (ejemplo citado)`, entonces...\n')"
+# QA REQ-001 v2 — CA-45. El REQ declara UN solo cambio de conducta `deny -> allow`
+# respecto a v1.30.2 (CA-36) y hasta ahora NO tenia caso: la evidencia de CA-50 no se
+# podia correr. Es el `Write` que reescribe entero un REQ que EN DISCO ya estaba en el
+# estado terminal; no hay transicion, asi que no corre ninguna de las tres puertas —ni
+# con la cola de aprobaciones abierta, ni con `Seguridad: pendiente`, ni con un hallazgo
+# `usuario/dinero`—. MEDIDO: v1.30.2 responde `deny`; la candidata, `allow`.
+printf '# REQ-131\nEstado: completado\nSensible a seguridad: sí\nQA: pendiente\nSeguridad: pendiente\n' > "$PROJ/requirements/REQ-131.md"
+printf '## Pendientes\n\n### Fusionar el PR de la candidata\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+check "transicion por documento: Write sobre un REQ que EN DISCO ya estaba terminal -> allow" allow guard-completado.sh \
+  "$(emite_write "$PROJ/requirements/REQ-131.md" $'# REQ-131\nEstado: completado\nSensible a seguridad: sí\nQA: pendiente\nSeguridad: pendiente\nHallazgos abiertos: X-1 (usuario/dinero)\n\n## Historia\nreescrito entero\n')"
+# Control obligatorio: el MISMO documento sobre un REQ que en disco NO estaba terminal
+# sigue en `deny`. Sin el, el ALLOW de arriba no prueba que la regla sea "no hay
+# transicion": probaria que la puerta dejo de mirar.
+printf '# REQ-132\nEstado: en-revisión\nSensible a seguridad: sí\nQA: pendiente\nSeguridad: pendiente\n' > "$PROJ/requirements/REQ-132.md"
+check "transicion por documento: control, el mismo Write sobre un REQ NO terminal -> deny" deny guard-completado.sh \
+  "$(emite_write "$PROJ/requirements/REQ-132.md" $'# REQ-132\nEstado: completado\nSensible a seguridad: sí\nQA: pendiente\nSeguridad: pendiente\nHallazgos abiertos: X-1 (usuario/dinero)\n\n## Historia\nreescrito entero\n')"
+printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+mkreq "$PROJ/requirements/REQ-127.md" "no" "pendiente" "n/a"
+check "transicion por documento: old_string ausente + 'Estado: completado' en el fragmento -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-127.md" "" "" 'Estado: completado')"
+check "transicion por documento: old_string ausente y fragmento 'completado' a secas -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-127.md" "" "" 'completado')"
+# Un REQ que NO existe en disco: `disk` vacio no puede tumbar el hook con `set -u` ni dejar traza.
+if [ -z "$FILTRO" ] || printf '%s' "transicion por documento: REQ inexistente en disco" | grep -qi -- "$FILTRO"; then
+salida="$(corre guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-999.md" 'en-revisión' 'completado')")"
+if ! printf '%s' "$salida" | grep -Eq '"permissionDecision": *"deny"' && [ ! -s "$ERRLOG" ]; then
+  echo "  PASS  transicion por documento: REQ inexistente en disco -> allow y sin traza de bash"; PASS=$((PASS+1))
+else
+  echo "  FAIL  transicion por documento: REQ inexistente en disco: salida=<$salida>"; diag; FAIL=$((FAIL+1))
+fi
+fi
+# --- No hay transicion: la cabecera en disco YA decia el estado terminal --------------
+printf '# REQ-128\nEstado: completado\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n\n## Historia\ntexto original\n' > "$PROJ/requirements/REQ-128.md"
+check "transicion por documento: la cabecera en disco YA decia completado -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-128.md" 'texto original' 'texto corregido')"
+check "transicion por documento: reabrir un REQ cerrado a en-progreso -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-128.md" 'completado' 'en-progreso')"
+# --- Las puertas A2 y A3 corren sobre el documento reconstruido, no sobre el fragmento --
+mkreq "$PROJ/requirements/REQ-129.md" "no" "aprobado" "n/a"
+printf '## Pendientes\n\n### Fusionar el PR de la candidata\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+check_motivo "transicion por documento: SOLO el valor con la cola de aprobaciones abierta -> deny" "PENDING_APPROVAL" \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-129.md" 'en-revisión' 'completado')"
+printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+setgates '.quality_gates = ["false"]'
+check_motivo "transicion por documento: SOLO el valor con una quality gate roja -> deny" "quality gate" \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-129.md" 'en-revisión' 'completado')"
+setgates '.quality_gates = ["true"]'
+# --- El estado terminal es el DEL MANIFIESTO, no la palabra «completado» ---------------
+mkreq "$PROJ/requirements/REQ-130.md" "no" "pendiente" "n/a"
+setcfg '.estados.completado = "hecho"'
+check "transicion por documento: estado terminal 'hecho' del manifiesto -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-130.md" 'en-revisión' 'hecho')"
+check "transicion por documento: control, 'completado' ya no es terminal en ese manifiesto -> allow" allow guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-130.md" 'en-revisión' 'completado')"
+setcfg '.estados.completado = "completado"'
+# QA REQ-001 — variantes de escritura del MISMO cierre, independientes de las del
+# desarrollador. Todas dejan la cabecera resultante en el estado terminal, asi que todas
+# tienen que denegar; si alguna se colara, la regla nueva estaria leyendo la forma del
+# fragmento y no el documento. Todas verificadas en rojo contra 1.30.2 salvo la primera.
+mkreq "$PROJ/requirements/REQ-140.md" "no" "pendiente" "n/a"
+check "QA: Edit con la LINEA ENTERA 'Estado: completado' -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-140.md" 'Estado: en-revisión' 'Estado: completado')"
+check "QA: el valor en MAYUSCULAS -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-140.md" 'en-revisión' 'COMPLETADO')"
+check "QA: el valor con su parentesis de evidencia -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-140.md" 'en-revisión' 'completado (por fin)')"
+check "QA: el valor en **negrita** -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-140.md" 'en-revisión' '**completado**')"
+check "QA: el valor con espacios de mas tras los dos puntos -> deny" deny guard-completado.sh \
+  "$(emite_edit_real "$PROJ/requirements/REQ-140.md" 'Estado: en-revisión' 'Estado:   completado')"
+# MultiEdit ENCADENADO: la 1a edicion escribe el texto que busca la 2a. Solo aplicando las
+# ediciones EN ORDEN sobre el documento —como hara la herramienta— queda la cabecera
+# cerrada; leyendo los fragmentos sueltos, ninguno dice el estado terminal.
+mkreq "$PROJ/requirements/REQ-141.md" "no" "pendiente" "n/a"
+check "QA: MultiEdit encadenado (edit1 crea lo que busca edit2) -> deny" deny guard-completado.sh \
+  "$(emite_multiedit "$PROJ/requirements/REQ-141.md" 'en-revisión' 'PROVISIONAL' 'PROVISIONAL' 'completado')"
+check "QA: control, edit2 busca lo que edit1 destruyo: la herramienta fallaria -> allow" allow guard-completado.sh \
+  "$(emite_multiedit "$PROJ/requirements/REQ-141.md" 'en-revisión' 'PROVISIONAL' 'en-revisión' 'completado')"
 
 }
 seccion_15() {
@@ -1159,7 +1537,267 @@ fi
 
 }
 
-TOTAL_SECCIONES=24
+seccion_25() {
+  seccion_nueva "DEV REQ-001 v3: presupuesto de analisis y coste lineal (QA-007):"
+# ============================================================================
+# DEV REQ-001 v3 — el eje que quedaba de QA-007 y el presupuesto que lo tapa.
+#
+# QA-007 midio que el coste seguia siendo CUADRATICO en el tamano de UNA linea del
+# cuerpo: 4.000 expansiones 5,1 s (rompe CA-40/CA-48), 8.000 18,0 s, 16.000 NO RESPONDE
+# en 60 s -> el hook muere, `guard.sh` recibe salida vacia y PERMITE. La causa medida:
+# avanzar con `${r#*...}` COPIA el resto de la cadena en cada paso.
+#
+# Arreglo: el texto se PARTE UNA VEZ (troceado por IFS, dentro de bash, sin procesos) y
+# los trozos se unen UNA vez. Nada se copia por paso. MEDIDO en Linux/WSL2 2026-09-05,
+# de punta a punta con `guard-codigo.sh`, una linea de N expansiones + escritura real:
+#   N     antes (vuelta 1)        ahora
+#   500   210 ms                  212 ms
+#   2.000 1.313 ms                212 ms
+#   4.000 5.118 ms                410 ms
+#   8.000 18.037 ms               814 ms
+#  16.000 >60 s -> ALLOW          212 ms (deny por presupuesto)
+#
+# Y ADEMAS EL PRESUPUESTO. Un algoritmo lineal tambien tiene acantilado: basta una
+# entrada 100 veces mayor. Por eso, por encima de `ARNES_BASH_MAX_ANALISIS` (64 KiB de
+# MATERIAL ANALIZADO, ver lib.sh) el hook no analiza y DENIEGA diciendo como salir.
+# Falla cerrado y a tiempo, en vez de abierto y por agotamiento.
+# ============================================================================
+
+# --- 1) El eje de QA-007, en el tamano que antes mataba al hook ---------------
+# 16.000 expansiones en UNA linea. Antes: sin respuesta en 60 s -> salida vacia -> allow
+# -> el shell creaba `src/qa7.ts` (verificado en sandbox por QA). Ahora: deny inmediato.
+cronometra_bash "DEV v3: UNA linea con 16.000 expansiones + escritura real -> deny" deny 5000 \
+  "$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF\necho x > src/qa7.ts' "$(yes '$(date)' | head -16000 | tr -d '\n')")" "" "")"
+# Control obligatorio: sin el, un deny rapido no distingue "el arreglo funciona" de
+# "la sonda no llego a construir el caso".
+cronometra_bash "DEV v3: control, la misma escritura sin el cuerpo -> deny" deny 5000 \
+  "$(emite_bash 'echo x > src/qa7.ts' "" "")"
+
+# --- 2) La frontera del presupuesto, medida al byte ---------------------------
+# El presupuesto cuenta (a) los bytes de las lineas del cuerpo SIN CITAR que llevan
+# expansion y (b) los bytes del comando fuera de los cuerpos. Aqui (b) son 29 bytes
+# (`cat <<EOF` + `echo x > src/qa7.ts`; la linea del delimitador de cierre no cuenta),
+# asi que la frontera exacta esta en una linea de cuerpo de 65.507 bytes. MEDIDO: 65.507
+# se analiza, 65.508 se deniega por tamano. Los dos casos DENIEGAN — lo que se comprueba
+# es POR QUE, que es justo lo que un `deny` a secas no distingue.
+cuerpo_de() {   # <bytes> -> una linea de cuerpo de exactamente ese tamano, densa en `$(date)`
+  local n="$1" u='$(date)' s r
+  s="$(yes "$u" | head -$(( n / ${#u} )) | tr -d '\n')"
+  r=$(( n - ${#s} ))
+  printf '%s%s' "$s" "$(printf '%*s' "$r" '' | tr ' ' 'a')"
+}
+check_motivo "DEV v3: 1 byte POR DEBAJO del presupuesto -> analiza y nombra la ruta" \
+  "escribe en 'src/qa7\.ts'" guard-codigo.sh \
+  "$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF\necho x > src/qa7.ts' "$(cuerpo_de 65507)")" "" "")"
+check_motivo "DEV v3: 1 byte POR ENCIMA del presupuesto -> deny por tamano, con salida" \
+  "demasiado grande para analizarlo con garantia.*heredoc CITADO" guard-codigo.sh \
+  "$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF\necho x > src/qa7.ts' "$(cuerpo_de 65508)")" "" "")"
+
+# --- 3) El presupuesto NO toca el camino legitimo -----------------------------
+# Escribir un archivo grande con un heredoc CITADO es la forma normal de hacerlo y la
+# usan todos los agentes: el cuerpo se descuenta entero sin analizarse. 300 KB tienen
+# que seguir siendo `allow` y seguir siendo baratos. Si el presupuesto se hubiera puesto
+# sobre el TAMANO DEL COMANDO, este caso se habria vuelto rojo — y con el, el trabajo
+# normal de todo el mundo.
+GRANDE_CITADO="$(yes 'texto de relleno de cien bytes para llegar a trescientos kilobytes sin ninguna expansion aqu' | head -3000)"
+cronometra_bash "DEV v3: heredoc CITADO de ~300 KB -> allow y barato" allow 1000 \
+  "$(emite_bash "$(printf "cat > docs/x.md <<'EOF'\n%s\nEOF" "$GRANDE_CITADO")" "" "")"
+# CA-28 en grande: sin citar pero SIN expansiones, el cuerpo tambien se descuenta entero.
+cronometra_bash "DEV v3: heredoc SIN citar de ~300 KB SIN expansiones -> allow" allow 5000 \
+  "$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF' "$GRANDE_CITADO")" "" "")"
+# CONTROL POSITIVO de los dos de arriba: un `allow` sobre una entrada de 300 KB tambien
+# lo produce un hook que murio. Con la MISMA entrada mas una escritura real fuera del
+# heredoc, el hook tiene que seguir denegando.
+check "DEV v3: control, los mismos 300 KB citados + escritura real -> deny" deny guard-codigo.sh \
+  "$(emite_bash "$(printf "cat > docs/x.md <<'EOF'\n%s\nEOF\necho x > src/grande.ts" "$GRANDE_CITADO")" "" "")"
+
+# --- 4) Lineal tambien en LINEAS, con analisis de verdad ----------------------
+# 4.000 lineas de cuerpo con expansion y comillas son 64.000 bytes: caben JUSTO bajo el
+# presupuesto, asi que este caso mide el analisis real y no el atajo del techo. Que el
+# motivo nombre la ruta es lo que lo acredita.
+check_motivo "DEV v3: 4.000 lineas de cuerpo bajo el presupuesto -> analiza y nombra la ruta" \
+  "escribe en 'src/robado\.ts'" guard-codigo.sh \
+  "$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF\necho x > src/robado.ts' "$(yes "\$(date) 'x' \"y\"" | head -4000)")" "" "")"
+
+# --- 5) El presupuesto tambien cierra la puerta del CIERRE DE REQ -------------
+# `guard-completado` comparte el detector. Si no mira el codigo de salida, una entrada
+# sobre el techo le llega como "no escribe nada" -> allow, que es el fallo en abierto de
+# siempre por otra puerta. Aqui la denegacion alcanza a TODOS los agentes, porque la
+# regla que aplica este guardian tambien alcanza a todos.
+check_motivo "DEV v3: sobre el presupuesto, guard-completado deniega por tamano" \
+  "demasiado grande para analizarlo con garantia" guard-completado.sh \
+  "$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF\nsed -i s/x/y/ requirements/REQ-001.md' "$(cuerpo_de 70000)")" "" "")"
+# ...y NO alcanza al agente de codigo por la puerta de `guard-codigo`: a el ya se le
+# permitia escribir, asi que el techo no le quita nada.
+check "DEV v3: sobre el presupuesto, guard-codigo NO estorba al desarrollador -> allow" allow guard-codigo.sh \
+  "$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF\necho x > src/qa7.ts' "$(cuerpo_de 70000)")" "a1" "arnes-juan:desarrollador")"
+check "DEV v3: ...y al qa-tester si -> deny" deny guard-codigo.sh \
+  "$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF\necho x > src/qa7.ts' "$(cuerpo_de 70000)")" "a2" "arnes-juan:qa-tester")"
+
+# --- 6) La clave opcional del manifiesto --------------------------------------
+# `limites.bash_max_analisis` es OPCIONAL: el defecto vive en el codigo y ningun
+# proyecto tiene que declararla. Se prueba en las dos direcciones, porque una clave que
+# solo se lee cuando conviene no se esta leyendo.
+setcfg '.limites = {bash_max_analisis: 4194304}'
+check_motivo "DEV v3: con el techo subido en el manifiesto, la misma entrada SI se analiza" \
+  "escribe en 'src/qa7\.ts'" guard-codigo.sh \
+  "$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF\necho x > src/qa7.ts' "$(cuerpo_de 70000)")" "" "")"
+# ...y la clave solo puede SUBIR el techo, nunca bajarlo por debajo del que trae el
+# codigo: el manifiesto se lee con `jq` y el camino comun no puede pagar un proceso por
+# comando, asi que el defecto se aplica sin preguntar. Un techo de 64 bytes escrito a
+# mano NO convierte en "no analizable" un comando que la puerta sabe analizar.
+setcfg '.limites = {bash_max_analisis: 64}'
+check_motivo "DEV v3: el manifiesto NO puede bajar el techo por debajo del defecto" \
+  "escribe en 'src/qa7\.ts'" guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(date) una linea corta pero de mas de sesenta y cuatro bytes de largo\nEOF\necho x > src/qa7.ts' "" "")"
+# Una errata en el manifiesto NO puede desactivar la puerta: valor no numerico -> manda
+# el defecto del codigo, y una entrada normal se sigue analizando.
+setcfg '.limites = {bash_max_analisis: "mucho"}'
+check_motivo "DEV v3: techo con errata -> manda el defecto del codigo, no se desactiva nada" \
+  "escribe en 'src/qa7\.ts'" guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo x > src/qa7.ts)\nEOF' "" "")"
+setcfg 'del(.limites)'
+
+# --- 7) QA-013: `\$(` escapado no es una sustitucion --------------------------
+# bash imprime el texto literal y no ejecuta nada, asi que denegarlo era un falso
+# positivo en un detector cuyo sesgo declarado es el contrario. Se cuenta la barra
+# invertida por PARIDAD: `\$(` no ejecuta, `\\$(` SI (la primera barra escapa a la
+# segunda). Los tres casos juntos son la prueba; uno solo no lo seria.
+check "DEV v3: QA-013, \$( escapado en el cuerpo -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n\\$(cp README.md src/f3.ts)\nEOF' "" "")"
+check "DEV v3: QA-013, barra ESCAPADA antes de \$( (bash si ejecuta) -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n\\\\$(cp README.md src/f3.ts)\nEOF' "" "")"
+check "DEV v3: QA-013, control, sin barra ninguna -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(cp README.md src/f3.ts)\nEOF' "" "")"
+
+# --- 8) QA REQ-001 v3: HALLAZGO QA-015 ---------------------------------------
+# El recorte por fragmento toma el prefijo hasta el PRIMER `)` (`${p[i]%%')'*}`), sin
+# mirar comillas ni anidamiento. Todo lo que venga DESPUES de ese `)` dentro de la misma
+# sustitucion se pierde — incluida la redireccion. Los tres casos siguientes crean el
+# archivo en un shell REAL (verificado en sandbox por QA) y hoy salen `allow`.
+#
+# NO es limitacion heredada: el arbol `6cb348a`, ANTERIOR al primer arreglo de este
+# mismo REQ, DENIEGA los tres (alli se conservaba la LINEA entera). El comentario de
+# `_arnes_expansiones` afirma del anidamiento "Es mas cobertura, nunca menos": medido,
+# es menos. Ver docs/qa/REQ-001.md §8.
+check "QA v3: expansion ANIDADA, la escritura va tras el ) interior -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(cat "$(ls README.md)" > src/n12.ts)\nEOF' "" "")"
+check "QA v3: un ) dentro de comillas trunca el fragmento -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo "a)b" > src/n3.ts)\nEOF' "" "")"
+check "QA v3: parentesis literal entrecomillado en la expansion -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo "(hola)" > src/n10.ts)\nEOF' "" "")"
+# Controles obligatorios: sin ellos un deny futuro no distingue "se arreglo el recorte"
+# de "se volvio a analizar la linea entera", que es el falso positivo de 1.29.1.
+check "QA v3: control, la misma expansion SIN ) interior -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo x > src/n9.ts)\nEOF' "" "")"
+check "QA v3: control, la misma forma SIN heredoc ya se detecta -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'echo $(echo "a)b" > src/n3.ts)' "" "")"
+check "QA v3: control, el acento grave NO trunca en el ) -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n`echo "a)b" > src/bt.ts`\nEOF' "" "")"
+# Control de FALSO POSITIVO (CA-49): el texto que sigue al cierre REAL de la expansion
+# sigue siendo texto y no puede volver a leerse como comando.
+check "QA v3: control CA-49, texto tras el cierre real de la expansion -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\nver $(basename "$(pwd)") y luego cp README.md src/x.ts\nEOF' "" "")"
+
+# --- 9) DEV REQ-001 v4: el cierre se decide por PROFUNDIDAD, no por el primer ) -----
+# El arreglo de QA-015 no consiste en "mirar tambien las comillas": consiste en que el
+# fragmento termina donde la profundidad de parentesis vuelve a cero, contando solo los
+# parentesis que NO estan entrecomillados. Estos cuatro casos fijan las cuatro esquinas
+# de esa regla; sin ellos, un arreglo futuro podria volver a cortar en el primer `)` y
+# solo se enterarian los tres casos de QA-015.
+#
+# (a) El `)` INTERIOR de una sustitucion anidada no cierra la exterior, y la escritura
+#     puede estar en el interior: el fragmento de fuera se la lleva igual.
+check "DEV v4: anidada con la escritura DENTRO del interior -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(x $(echo y > src/w1.ts) z)\nEOF' "" "")"
+# (b) Las comillas SIMPLES tapan el `)` igual que las dobles. Se prueban las dos formas
+#     porque el descuento las trata por separado y una sola no acredita a la otra.
+check "DEV v4: un ) entre comillas SIMPLES no cierra el fragmento -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo \'a)b\' > src/w2.ts)\nEOF' "" "")"
+# (c) Desbalanceado: si la profundidad NUNCA vuelve a cero, el fragmento es el resto de
+#     la linea. Es fail-closed a proposito, y aqui SOBREDETECTA: verificado en un sandbox
+#     real, bash NO ejecuta esta linea (la sustitucion no cierra y es un error de
+#     sintaxis), asi que no crea el archivo. Se deniega igual porque el hook trabaja
+#     LINEA A LINEA y una sustitucion abierta puede cerrar en la siguiente, que es la
+#     limitacion declarada en `_arnes_expansiones`, y entonces su interior SI se ejecuta
+#     (caso `DEV: sustitucion que abre en una linea y cierra en otra`, mas arriba). El
+#     sesgo del detector es al falso negativo, y este es el sitio exacto donde no se
+#     acepta pagarlo.
+check "DEV v4: parentesis que nunca cierra + escritura despues -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(foo ( bar) cp README.md src/w3.ts\nEOF' "" "")"
+# (d) ...y el reverso, que es el que impide "arreglarlo" analizando la linea entera: el
+#     cierre REAL es el primer `)` cuando no hay nada abierto, y lo que sigue —parentesis
+#     literales incluidos— es TEXTO. Sin este caso, (c) invita al falso positivo de 1.29.1.
+check "DEV v4: (texto) tras el cierre real sigue siendo texto -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(date) (texto) cp README.md src/x.ts\nEOF' "" "")"
+# (e) La paridad de la barra invertida vale para TODOS los caracteres con significado, no
+#     solo para `$(`: un `\)` es un parentesis LITERAL y no cierra nada. Verificado en un
+#     sandbox real: bash CREA `src/w4.ts`. Sin este caso, el arreglo de QA-015 dejaba
+#     abierta la misma puerta por el lado del escapado. El control es obligatorio: sin la
+#     barra, ese `)` SI cierra y lo de detras vuelve a ser texto.
+check "DEV v4: un ) ESCAPADO no cierra el fragmento -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo \\) > src/w4.ts)\nEOF' "" "")"
+check "DEV v4: control, el mismo ) SIN escapar si cierra -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo ) > src/w4.ts)\nEOF' "" "")"
+
+# --- 10) DEV REQ-001 v4: QA-016, el deny por tamano dice CUANTO ---------------------
+# CA-53 pide que el motivo diga cual es el presupuesto. Decir "es demasiado grande" sin
+# el numero deja a quien lo recibe partiendo el comando a ciegas. El numero sale del
+# techo EFECTIVO (`arnes_techo_bash`), no de una constante escrita en el mensaje: si el
+# manifiesto lo sube, el mensaje sube con el. Se comprueba en las dos puertas.
+check_motivo "DEV v4: el deny por tamano dice el presupuesto en bytes (guard-codigo)" \
+  "presupuesto de analisis vigente es de 65536 bytes" guard-codigo.sh \
+  "$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF\necho x > src/qa7.ts' "$(cuerpo_de 65508)")" "" "")"
+check_motivo "DEV v4: ...y tambien lo dice guard-completado" \
+  "presupuesto de analisis vigente es de 65536 bytes" guard-completado.sh \
+  "$(emite_bash "$(printf 'cat <<EOF\n%s\nEOF\nsed -i s/x/y/ requirements/REQ-001.md' "$(cuerpo_de 70000)")" "" "")"
+# --- 11) QA REQ-001 v4: la familia de QA-015, contrastada con el shell REAL ---------
+# Re-validacion, vuelta 3 (docs/qa/REQ-001.md §9). Cada uno de estos casos se comparo
+# en un sandbox con lo que bash hace DE VERDAD (crea o no crea el archivo), y el
+# veredicto exigido es el que coincide con esa medida — salvo donde la sobredeteccion
+# se declara a proposito. Sin ese contraste, un `deny` solo prueba que la sonda dispara.
+#
+# (a) Un `)` Y un `$(` dentro de comillas SIMPLES. Bash no ejecuta lo entrecomillado
+#     pero SI la redireccion de fuera: medido, CREA `src/v1.ts`. Es la union de las dos
+#     esquinas que el arreglo trata por separado (comillas y profundidad).
+check "QA v4: \$( y ) entre comillas simples, la escritura fuera -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo \'$(cp README.md src/z1.ts)\' > src/v1.ts)\nEOF' "" "")"
+# (b) Aritmetica DENTRO de la sustitucion: `$((` aporta DOS aperturas y `))` dos cierres.
+#     Si la cuenta de profundidad se descuadrara aqui, el fragmento cerraria antes de la
+#     redireccion. Medido: bash CREA `src/v3.ts`.
+check "QA v4: aritmetica \$(( )) dentro de la sustitucion -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo $((1+2)) > src/v3.ts)\nEOF' "" "")"
+# (c) Dos sustituciones en la MISMA linea: la primera cierra limpia y la segunda escribe.
+#     Comprueba que cerrar un fragmento no deja de mirar lo que viene detras.
+check "QA v4: dos sustituciones, la primera cierra y la segunda escribe -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(date) y $(cp README.md src/v4.ts)\nEOF' "" "")"
+# (d) El `)` entre comillas simples en su forma minima, `\')\'`. Medido: CREA `src/v5.ts`.
+check "QA v4: un ) solo entre comillas simples no cierra -> deny" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo \')\' > src/v5.ts)\nEOF' "" "")"
+# (e) EL OTRO LADO DE LA PARIDAD del caso `DEV v4: un ) ESCAPADO no cierra`: con DOS
+#     barras la primera escapa a la segunda, el `)` es REAL y cierra. Medido: bash no
+#     crea nada, y `> src/v6.ts` queda fuera de la sustitucion, como texto del cuerpo.
+#     Un arreglo que "denegara por si acaso" ante cualquier barra pondria esto en rojo.
+check "QA v4: con \\\\) la barra se escapa a si misma y el ) SI cierra -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo \\\\) > src/v6.ts)\nEOF' "" "")"
+# (f) Comilla IMPAR dentro de la sustitucion: no se puede descontar sin inventarse un
+#     cierre, asi que el fragmento se lleva el resto de la linea y la redireccion cae
+#     dentro. SOBREDETECTA a proposito (bash da error de sintaxis y no crea nada): es la
+#     direccion obligatoria, la misma de `DEV v4: parentesis que nunca cierra`.
+check "QA v4: comilla impar dentro de la expansion -> deny (fail-closed)" deny guard-codigo.sh \
+  "$(emite_bash $'cat <<EOF\n$(echo "a > src/v2.ts)\nEOF' "" "")"
+# (g) LIMITACION DECLARADA, no defecto de esta version: una sustitucion ANIDADA dentro de
+#     COMILLAS DOBLES se descuenta con las comillas y no se ve. Bash SI ejecuta el `cp`
+#     (medido: crea `src/g2.ts`), y ni siquiera hace falta un heredoc. Es la familia de
+#     QA-006 —lo entrecomillado se descuenta antes de analizar—, medida `allow` en la
+#     candidata Y en v1.30.2: preexistente, no regresion, y su trabajo vive en REQ-007.
+#     El caso esta aqui para que el hueco sea VISIBLE y para que el dia que REQ-007 lo
+#     cierre alguien tenga que venir a cambiarlo a `deny` a mano, en vez de descubrirlo.
+check "QA v4: LIMITACION QA-006/REQ-007, sustitucion dentro de comillas dobles -> allow" allow guard-codigo.sh \
+  "$(emite_bash $'echo "$(cp README.md src/g2.ts)"' "" "")"
+}
+
+TOTAL_SECCIONES=25
 
 # --- Despacho en paralelo -----------------------------------------------------
 # El canario ya corrio en el padre, solo y antes que nada: si el hook esta muerto no
@@ -1203,7 +1841,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=196
+CASOS_ESPERADOS=310
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)
