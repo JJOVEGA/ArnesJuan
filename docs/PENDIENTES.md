@@ -111,3 +111,66 @@ hallazgo; se convierte en REQ con el analista al abrir la versión que lo recoja
 - **REQ ya redactados en la rama 1.30.3 y a la espera de su versión:** REQ-007 (clave decorada y
   destino entrecomillado; 1.31.0) y REQ-008 (informe de proyecto con avance, bloqueos, decisiones
   pendientes y marca, como evolución de `arnes-panel`; 1.33.0).
+
+### Decisiones de la coordinadora al abrir 1.31.0 (2026-09-05)
+- **«JSON vacío = FAIL»** no lleva REQ: es un invariante del banco, exigido por el QA y escrito en
+  `tests/escenarios/hooks/README.md` por el desarrollador en 1.31.0.
+- **Nombres de proyectos consumidores en el árbol público**: decisión editorial del propietario; sin
+  versión asignada. Igual que el hallazgo informativo SEC-008 (cuentas de GitHub en `AGENTS.md`); la
+  salida propuesta es sustituir nombres por roles.
+- **Adyacentes de REQ-009 que quedan en el backlog sin versión:** avisar cuando la prosa diga «0
+  entradas» y haya `###` debajo; consolidar los ~8 procesos del hook de parada en ~4 (REQ-009 retira uno).
+- **REQ-005:** la lista por defecto de `git.prohibidos` usa `clean -f` (flags cortos casan por letra dentro
+  de un grupo) y desglosa `stash`; **REQ-004:** el nombre de sección casa de forma exacta, nunca por prefijo.
+  Ambas decisiones ya están en los REQ con su historial.
+
+## 1.35.0 — el working set explícito: qué entra en contexto, y qué se conserva sin entrar
+
+> **Origen:** análisis pedido por el propietario (2026-09-05) sobre administrar «temperaturas de
+> contexto» (HOT/WARM/COLD). Veredicto: **hacerlo pero simplificar**, y en este orden. La medición
+> va primero porque el reparto del peso **cambia por proyecto**: en este repositorio la historia es
+> el 10–20 % de un REQ (14 KB de 69 KB; 7 KB de 72 KB: lo que pesa son los criterios), mientras que
+> en un proyecto real el REQ mayor tiene 244 KB dominados por su historia. Un mecanismo que aquí
+> ahorra poco, allí ahorra mucho: el arnés trae el mecanismo, el proyecto pone el umbral.
+
+- **1. Medir antes de construir (A/B, sin código nuevo).** Tres ramas sobre una copia de un proyecto
+  real: (A) tal cual; (B1) sólo con la historia rotada fuera del REQ —el mecanismo de 1.31.0—;
+  (B2) B1 más los REQ cerrados archivados. Tres comisiones repetidas por rama (analista redactando
+  un REQ del módulo con más historia, desarrollador corrigiendo, QA validando). Se mide desde la
+  transcripción de cada agente: tokens de entrada, lecturas de caché, número de `Read`/`Grep`/`Glob`,
+  bytes por lectura, archivos distintos abiertos, tiempo hasta la primera edición, tiempo total, y
+  dos de calidad: **veces que faltó un documento histórico** y **veces que se abrió un REQ cerrado
+  que no se usó**. Si B1 captura casi todo el ahorro, B2 se justifica por claridad y no por tokens
+  — y eso también es una respuesta.
+- **2. Adelgazar `AGENTS.md` y su plantilla.** Es el mayor coste **fijo** del working set y se paga
+  en cada agente y en cada arranque: 26 KB ≈ 6.600 tokens × 4–5 agentes por REQ. Medido en una sola
+  sesión de este repositorio con quince agentes despachados: del orden de **100.000 tokens de
+  entrada sólo por ese archivo**. Se conservan las reglas que **gobiernan** (§5, §6, §7, §13) y el
+  resto se delega a archivos referenciados que se leen bajo demanda. Rinde más que archivar 135 REQ,
+  y rinde en **todos** los proyectos que instalan el arnés, no sólo en los grandes.
+- **3. Archivar los REQ cerrados, con índice derivado.** `requirements/archive/<ID>.md` (sin
+  subcarpetas por año: el ID ya es único) más `archive/INDEX.md` **derivado** entre marcadores, como
+  el bloque de `docs/ESTADO.md`. Cinco columnas y ninguna más: id, título, módulo, fecha de cierre,
+  commit; los veredictos no se indexan porque son invariante del archivado, y **ninguna etiqueta
+  redactada por el modelo** — un índice interpretado es un resumen disfrazado.
+  - **`archivado` NO es un Estado del REQ.** Sería reescribir la cabecera de un documento que debe
+    quedar intacto, pasar por la puerta como una edición más, y añadir un valor al vocabulario que
+    leen tres lectores. Es **sólo ubicación física**: `git mv`, cabecera intacta, `completado` sigue
+    siendo terminal.
+  - **Fuera de `guard-completado` y del hook de parada.** Una puerta valida; no mueve archivos ni
+    reescribe índices. Operación aparte: `tools/arnes-archivar.sh` con `plan | aplicar | verificar`
+    y una skill que sólo lo envuelve y pide confirmación. Precondición: árbol de git limpio. Plan en
+    `.arnes/archivado.md`, un **solo** commit, verificación releyendo el disco (origen ausente,
+    destino byte a byte igual a `git show HEAD:<origen>`, mismo total de REQ leídos), y rollback por
+    `git revert`. `/arnes-upgrade` **nunca** archiva: informa de que hay plan.
+  - **Recuperación sin embeddings:** grep sobre el índice, grep de nombres —no de contenido— sobre
+    `archive/`, y `git log --follow`. Referencia canónica = el **ID**; `tools/arnes-ref.sh REQ-021`
+    resuelve la ruta actual. No se reescriben REQ vivos para arreglar enlaces: sería editar el
+    contrato por un motivo de almacenamiento.
+- **4. Lo que NO se construye, y conviene dejarlo escrito:** estados nuevos del REQ; subcarpetas por
+  año; **resúmenes generados**; clasificador de relevancia (la ubicación y el encargo ya clasifican);
+  índices escritos a mano (segunda transcripción, la familia de REQ-003); embeddings, base vectorial,
+  grafo, servicio de indexación o «agente de memoria». Si tres carpetas y un índice derivado
+  resuelven el 80 %, eso es lo que se construye.
+- **Ya cubierto en 1.31.0:** REQ-004 (rotación de `## Historial de cambios` fuera del REQ) es la
+  primera mitad de esta estrategia y su MVP: se mide con B1 antes de construir nada de lo demás.

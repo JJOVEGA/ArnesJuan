@@ -84,7 +84,35 @@ arnes_estado_derivado() {
     esac
     # Solo lo ABIERTO va a la tabla: el bloque responde "donde quedamos".
     if [ "$est" != "$ARNES_ESTADO_DONE" ]; then
-      filas+="| ${base%.md} | ${est:-—} | ${ARNES_QA:-—} | ${ARNES_SEG:-—} | ${ARNES_RIGOR:-—} | ${ARNES_HALL:-—} |"$'\n'
+      # CELDAS RECORTADAS A 40 CARACTERES. Medido en un proyecto con 57 REQ: cuatro celdas
+      # de veredicto eran el 37 % del bloque, y la mayor —1 296 caracteres sin un solo
+      # espacio— ademas ROMPIA la tabla; una fila que no cabe deja de renderizarse como
+      # fila, asi que el bloque dejaba de servir para lo unico que existe. Para saber
+      # donde quedamos basta ver que la maquina lee `aprobadoconlacondicion…` y no
+      # `aprobado`.
+      #
+      # EL RECORTE ES DE PRESENTACION, Y ESA ES LA INVARIANTE QUE LO HACE SEGURO: pasa
+      # DESPUES del normalizador y SOLO al componer esta fila. Ningun lector —ni la
+      # puerta, ni tools/arnes-lectura.sh— ve el valor recortado; si llegara a la lectura,
+      # un `Hallazgos abiertos:` largo podria perder su clase bloqueante por el camino y
+      # cerrar un REQ que no debia cerrarse.
+      #
+      # 40 es una constante y no una clave del manifiesto: el ancho de una celda no cambia
+      # lo que ninguna puerta decide, y obligaria a cada proyecto a tener una opinion
+      # sobre un numero que no le afecta.
+      #
+      # Solo las tres celdas de TEXTO LIBRE. `REQ`, `Estado` y `Rigor` son de vocabulario
+      # cerrado y su longitud ya esta acotada por el vocabulario.
+      #
+      # Y la barra vertical del VALOR se neutraliza: en Markdown abriria una columna nueva
+      # y la fila perderia la forma que este recorte viene a proteger. Se sustituye por
+      # `¦` (barra partida) en vez de escaparla con `\|`, porque asi la fila conserva
+      # exactamente 7 separadores y se puede contar; escapada, el caracter seguiria ahi.
+      local c_qa_v c_seg_v c_hall_v
+      arnes_recorta "${ARNES_QA:-—}" 40;   c_qa_v="${ARNES_CORTO//|/¦}"
+      arnes_recorta "${ARNES_SEG:-—}" 40;  c_seg_v="${ARNES_CORTO//|/¦}"
+      arnes_recorta "${ARNES_HALL:-—}" 40; c_hall_v="${ARNES_CORTO//|/¦}"
+      filas+="| ${base%.md} | ${est:-—} | $c_qa_v | $c_seg_v | ${ARNES_RIGOR:-—} | $c_hall_v |"$'\n'
     fi
   done <<< "$extraidos"
 

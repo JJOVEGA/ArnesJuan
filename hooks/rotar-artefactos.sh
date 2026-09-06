@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Hook Stop / SubagentStop: mueve las secciones viejas de un artefacto que crecio
-# demasiado a un archivo aparte, dejando un puntero.
+# demasiado a un archivo aparte, dejando un puntero. Y, desde 1.31.0, mueve las ENTRADAS
+# viejas de UNA SECCION declarada de un documento, dejando el resto intacto.
 #
 # POR QUE EXISTE
 # Un artefacto de bitacora --CHANGELOG, registro de seguridad, hallazgos-- crece sin
@@ -20,8 +21,12 @@
 # - NUNCA BORRA. Primero se anade al archivo destino, se RELEE para comprobar que
 #   esta, y solo entonces se recorta el origen. Si la comprobacion falla, no se toca
 #   el origen: se prefiere un archivo grande a un archivo perdido.
-# - CORTA SOLO EN LIMITES DE SECCION (`## `). Si no encuentra limites seguros, no
-#   hace nada. Un corte a media seccion parte una entrada en dos.
+# - CORTA SOLO EN LIMITES DE SECCION (`## `) O DE ENTRADA. Si no encuentra limites
+#   seguros, no hace nada. Un corte a media seccion parte una entrada en dos.
+# - EN LA ROTACION DE SECCION, NO TOCA NADA FUERA DE ELLA. Ni la cabecera del documento
+#   ni las demas secciones: los criterios de un REQ son el CONTRATO, y una rotacion que
+#   pudiera alterar la cabecera seria un camino para cerrar o firmar un REQ sin pasar por
+#   ninguna puerta.
 # - NUNCA BLOQUEA la parada, como el resto de hooks Stop.
 set -uo pipefail
 DIR="${BASH_SOURCE[0]%/*}"
@@ -30,14 +35,25 @@ DIR="${BASH_SOURCE[0]%/*}"
 . "$DIR/lib.sh"
 
 arnes_rotar_artefactos() {
-  local ruta orden umbral conservar
+  local tipo ruta orden umbral conservar seccion adir f
   arnes_parse_manifest_rotacion || return 0
   [ "$ARNES_ROT_ACTIVO" = "true" ] || return 0
   [ -n "$ARNES_ROT_LISTA" ] || return 0
-  while IFS=$'	' read -r ruta orden umbral conservar; do
+  while IFS=$'	' read -r tipo ruta orden umbral conservar seccion adir; do
     [ -n "$ruta" ] || continue
     arnes_ruta_interna "$ruta" || continue   # fuera del proyecto: no se toca
-    arnes_rotar_uno "$ARNES_PROJ/$ruta" "$orden" "$umbral" "$conservar" || true
+    case "$tipo" in
+      seccion)
+        [ -n "$seccion" ] || continue        # sin seccion declarada no hay rotacion de seccion
+        # El glob se expande AQUI, y cada archivo pasa despues por la misma contencion
+        # fisica que un artefacto declarado por ruta.
+        for f in "$ARNES_PROJ"/$ruta; do
+          [ -f "$f" ] || continue
+          arnes_rotar_seccion "$f" "$seccion" "$orden" "$umbral" "$conservar" "$adir" || true
+        done ;;
+      *)
+        arnes_rotar_uno "$ARNES_PROJ/$ruta" "$orden" "$umbral" "$conservar" || true ;;
+    esac
   done <<< "$ARNES_ROT_LISTA"
   return 0
 }
@@ -153,10 +169,152 @@ arnes_rotar_uno() {
   return 0
 }
 
+# arnes_rotar_seccion <archivo> <seccion> <orden> <umbral> <conservar> <archivo_dir>
+#
+# Rota UNA SECCION de un documento —la que declare el proyecto— moviendo sus entradas
+# viejas a un archivo aparte y dejando un puntero. EL RESTO DEL DOCUMENTO NO SE TOCA.
+#
+# POR QUE. Medido en un proyecto real: `requirements/` pesaba 3,73 MB en 47 archivos, el
+# mayor de 244 KB. Ese peso lo paga CADA agente que abre el REQ para leer dos criterios.
+# La rotacion por secciones `## ` que existia desde 1.20.0 no servia aqui: en un REQ lo
+# que crece es UNA seccion y el resto es el contrato.
+#
+# QUE SECCION ES "HISTORIA" NO LO DECIDE EL ARNES. No hay ninguna seccion por defecto en
+# este archivo: sin `seccion` declarada no hay rotacion de seccion. El arnes trae el
+# mecanismo (cuantas entradas conservar, adonde moverlas, en que orden); el mapeo lo pone
+# el manifiesto del proyecto.
+#
+# ENTRADA = lo que empieza a columna cero por `- `, `* `, `### ` o `N. `. Cualquier otra
+# linea pertenece a la entrada anterior (continuacion: una linea indentada, una fila de
+# tabla, un parrafo suelto) o, antes de la primera, al preambulo de la seccion, que se
+# conserva. Una seccion sin entradas reconocibles no se toca: no hay limite seguro donde
+# cortar, y cortar sin limite parte una entrada en dos.
+arnes_rotar_seccion() {
+  local f="$1" sec="$2" orden="$3" umbral="$4" conservar="$5" adir="$6"
+  local texto linea antes='' cab='' cuerpo='' despues='' fase=0 rec fin_nl=0
+  [ -f "$f" ] || return 0
+  arnes_dir_interno "${f%/*}" || return 0
+  texto=''; IFS= read -r -d '' texto < "$f"
+  # El salto FINAL se aparta y se repone tal cual. Si no, el troceado por lineas lo
+  # devuelve como una linea vacia de mas y el documento reconstruido gana un salto en cada
+  # pasada: CA-03 exige que todo lo que no es la seccion quede byte a byte igual, y "casi
+  # igual" en un archivo que se reescribe en cada parada crece sin tope.
+  case "$texto" in *$'\n') fin_nl=1; texto="${texto%$'\n'}" ;; esac
+
+  # 1) La seccion va de SU CABECERA a la siguiente cabecera `## ` o al final. La
+  #    comparacion del nombre es EXACTA sobre la linea entera (recortando el espacio final
+  #    y el CR de un archivo CRLF), NUNCA por prefijo: con prefijo, declarar
+  #    `## Historial` se llevaria por delante `## Historial de cambios` —o al reves— y la
+  #    rotacion escribiria en una seccion que el proyecto no nombro. Lo de antes y lo de
+  #    despues se conserva byte a byte.
+  while IFS= read -r linea || [ -n "$linea" ]; do
+    rec="${linea%"${linea##*[![:space:]]}"}"
+    case "$fase" in
+      0) if [ "$rec" = "$sec" ]; then cab="$linea"$'\n'; fase=1; else antes+="$linea"$'\n'; fi ;;
+      1) case "$linea" in '## '*) despues+="$linea"$'\n'; fase=2 ;; *) cuerpo+="$linea"$'\n' ;; esac ;;
+      *) despues+="$linea"$'\n' ;;
+    esac
+  done <<< "$texto"
+  [ "$fase" -ge 1 ] || return 0            # el documento no tiene esa seccion: no se toca
+
+  # 2) Manda el tamano de LA SECCION, no el del archivo, y en BYTES (`LC_ALL=C` solo para
+  #    la cuenta, como en `arnes_rotar_uno`: `${#texto}` cuenta caracteres en UTF-8).
+  local _lc_prev="${LC_ALL-__sin__}" tam_bytes
+  LC_ALL=C; tam_bytes="${#cuerpo}"
+  if [ "$_lc_prev" = "__sin__" ]; then unset LC_ALL; else LC_ALL="$_lc_prev"; fi
+  [ "$tam_bytes" -gt "$umbral" ] 2>/dev/null || return 0
+
+  # 3) Preambulo de la seccion + entradas con sus continuaciones.
+  local -a ent=()
+  local pre='' cur='' hay=0
+  while IFS= read -r linea || [ -n "$linea" ]; do
+    case "$linea" in
+      '- '*|'* '*|'### '*|[0-9]'. '*|[0-9][0-9]'. '*|[0-9][0-9][0-9]'. '*)
+        [ "$hay" -eq 1 ] && ent+=("$cur")
+        cur="$linea"$'\n'; hay=1 ;;
+      *)
+        if [ "$hay" -eq 1 ]; then cur+="$linea"$'\n'; else pre+="$linea"$'\n'; fi ;;
+    esac
+  done <<< "$cuerpo"
+  [ "$hay" -eq 1 ] && ent+=("$cur")
+  local total="${#ent[@]}"
+  # Un `conservar` no numerico (manifiesto escrito a mano) hace fallar la comparacion y
+  # el artefacto se ignora entero: no se toca nada. Una parada no se bloquea por esto.
+  [ "$total" -gt "$conservar" ] 2>/dev/null || return 0
+
+  # 4) Que mitad es "lo viejo" se DECLARA, igual que en el artefacto entero: un historial
+  #    suele añadir al final (`nuevo-al-final`), un CHANGELOG pone lo nuevo arriba.
+  #    Adivinar mal archiva lo MAS RECIENTE, que es lo que hay que tener a mano.
+  local viejo='' nuevo='' i corte="$conservar"
+  if [ "$orden" = "nuevo-al-final" ]; then
+    for (( i=0; i<total-corte; i++ )); do viejo+="${ent[$i]}"; done
+    for (( i=total-corte; i<total; i++ )); do nuevo+="${ent[$i]}"; done
+  else
+    for (( i=corte; i<total; i++ )); do viejo+="${ent[$i]}"; done
+    for (( i=0; i<corte; i++ )); do nuevo+="${ent[$i]}"; done
+  fi
+  [ -n "$viejo" ] || return 0
+
+  # 5) Destino: `<archivo_dir>/<nombre>`, o `historial/<nombre>` junto al documento. Las
+  #    DOS contenciones, como en `estado_derivado.archivo` desde 1.29.1: LEXICA sobre lo
+  #    declarado (relativa, sin `..`, sin `~`, sin barra invertida) y FISICA sobre el
+  #    directorio ya resuelto (un enlace simbolico puede sacarte del proyecto con una ruta
+  #    perfectamente limpia).
+  local nombre="${f##*/}" dir_dest destino rel_dest NL=$'\n' CR=$'\r' cab1
+  cab1="${cab%%"$NL"*}"; cab1="${cab1%"$CR"}"
+  if [ -n "$adir" ]; then
+    arnes_ruta_interna "$adir" || return 0
+    dir_dest="$ARNES_PROJ/$adir"; rel_dest="$adir/$nombre"
+  else
+    dir_dest="${f%/*}/historial"; rel_dest="historial/$nombre"
+  fi
+  mkdir -p "$dir_dest" 2>/dev/null || return 0
+  arnes_dir_interno "$dir_dest" || return 0
+  destino="$dir_dest/$nombre"
+
+  # 6) TODO O NADA, exactamente como en `arnes_rotar_uno`: el destino se arma en un
+  #    temporal, se RELEE para comprobar que el texto llego, y solo entonces se publica y
+  #    se recorta el origen. Se prefiere un archivo grande a un archivo perdido.
+  local marca tmp_dest sonda
+  marca="<!-- ARNES:ROTADO $(date '+%Y-%m-%d %H:%M') -->"
+  tmp_dest="$destino.arnes.tmp"
+  if [ -f "$destino" ]; then
+    cat "$destino" > "$tmp_dest" 2>/dev/null || { rm -f "$tmp_dest"; return 0; }
+  else
+    printf '# %s — historia archivada\n\n> Entradas retiradas de la sección `%s` de `%s` para que no crezca sin tope.\n> Se MOVIERON tal cual: aquí no hay resumen ni reescritura, y el resto del documento no se tocó.\n\n' \
+      "${nombre%.md}" "$cab1" "$nombre" > "$tmp_dest" 2>/dev/null || { rm -f "$tmp_dest"; return 0; }
+  fi
+  printf '%s\n%s\n' "$marca" "$viejo" >> "$tmp_dest" 2>/dev/null || { rm -f "$tmp_dest"; return 0; }
+  # La prueba no es que el append no fallara: es que el texto ESTE en el disco. `grep -F`
+  # y no `case`, porque una entrada puede llevar corchetes y en `case` son una clase de
+  # caracteres. Y a la sonda se le retira el CR final (archivos CRLF: 92 bytes contra 91).
+  sonda="${viejo%%"$NL"*}"; sonda="${sonda%"$CR"}"
+  grep -qF -- "$sonda" "$tmp_dest" || { rm -f "$tmp_dest"; return 0; }
+  mv -f "$tmp_dest" "$destino" || { rm -f "$tmp_dest"; return 0; }
+
+  # 7) Solo ahora se recorta el origen: lo de antes + la cabecera de la seccion + su
+  #    preambulo + el puntero (una sola vez) + lo conservado + lo de despues. La cabecera
+  #    del documento viaja dentro de `antes` y no se reescribe nunca.
+  local puntero="> Entradas anteriores de esta sección en [\`$rel_dest\`]($rel_dest) — el arnés las movió para que este archivo no crezca sin tope; aquí quedan las $conservar más recientes y el resto del documento no se toca."
+  case "$pre" in *"$rel_dest"*) ;; *) pre+="$puntero"$'\n\n' ;; esac
+  local salida="$antes$cab$pre$nuevo$despues"
+  [ "$fin_nl" -eq 1 ] || salida="${salida%$'\n'}"
+  printf '%s' "$salida" > "$f.arnes.tmp" && mv -f "$f.arnes.tmp" "$f"
+  rm -f "$f.arnes.tmp"
+  return 0
+}
+
 arnes_parse_manifest_rotacion() {
   # `artefactos` acepta CADENA u OBJETO, la misma convencion que ya usan las
   # quality_gates. Una cadena hereda los ajustes globales; un objeto declara los
   # suyos. Asi un manifiesto que hoy dice ["CHANGELOG.md"] sigue funcionando igual.
+  #
+  # Un objeto con `glob` Y `seccion` es una rotacion DE SECCION: rota esa seccion en cada
+  # archivo que case el glob, conservando `conservar_entradas` (20 por defecto) y moviendo
+  # el resto a `archivo_dir` (por defecto `historial/` junto al documento). Sin las dos
+  # claves no hay rotacion de seccion: se cae a la rotacion por `## ` de siempre.
+  #
+  # Cada fila: tipo \t ruta-o-glob \t orden \t umbral \t conservar \t seccion \t archivo_dir
   #
   # POR QUE por artefacto y no global: medido en un proyecto real, el CHANGELOG crece
   # por arriba y el registro de seguridad por abajo. Un solo `orden` no puede servir a
@@ -170,12 +328,20 @@ arnes_parse_manifest_rotacion() {
     | (if $m.rotacion.orden == "nuevo-al-final" then "nuevo-al-final" else "nuevo-primero" end) as $o
     | [ (if $m.rotacion.activo == true then "true" else "false" end) ]
       + [ ($m.rotacion.artefactos // [])[]
-          | if type == "object"
-            then [ (.ruta // .archivo // ""),
+          | if type == "object" then
+              (if (.glob // "") != "" and (.seccion // "") != "" then
+                 [ "seccion", .glob,
                    (if (.orden // $o) == "nuevo-al-final" then "nuevo-al-final" else "nuevo-primero" end),
                    ((.umbral_bytes // $u) | tostring),
-                   ((.conservar_secciones // $c) | tostring) ]
-            else [ ., $o, ($u | tostring), ($c | tostring) ]
+                   ((.conservar_entradas // 20) | tostring),
+                   .seccion, (.archivo_dir // "") ]
+               else
+                 [ "archivo", (.ruta // .archivo // ""),
+                   (if (.orden // $o) == "nuevo-al-final" then "nuevo-al-final" else "nuevo-primero" end),
+                   ((.umbral_bytes // $u) | tostring),
+                   ((.conservar_secciones // $c) | tostring), "", "" ]
+               end)
+            else [ "archivo", ., $o, ($u | tostring), ($c | tostring), "", "" ]
             end
           | join("	") ]
     | join("

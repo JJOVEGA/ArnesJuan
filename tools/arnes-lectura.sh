@@ -48,9 +48,12 @@ ESTADOS_OK+="|"   # cerrado por los dos lados: la comparacion es `|valor|`, exac
 # Formas que la máquina reconoce en cada campo. Un valor fuera de aquí no es
 # necesariamente un error del proyecto: puede ser un error del arnés al leerlo, y
 # distinguirlo es justo lo que este informe existe para permitir.
-QA_OK='|pendiente|aprobado|con-hallazgos|'
-SEG_OK='|n/a|pendiente|aprobado|preventiva|vetado|'
-RIG_OK='|ligero|estandar|critico|'
+# EL VOCABULARIO VIVE EN hooks/lib.sh (`ARNES_VOCAB_*`): el mismo que usa la puerta, no
+# una copia. Dos transcripciones de la misma lista se desfasan, y este informe existe
+# justo para detectar ese tipo de desfase — tenerlo dentro seria cómico.
+QA_OK="|$ARNES_VOCAB_QA|"
+SEG_OK="|$ARNES_VOCAB_SEG|"
+RIG_OK="|$ARNES_VOCAB_RIGOR|"
 
 VERSION="$(jq -r '.version // "?"' "$DIR/../.claude-plugin/plugin.json" 2>/dev/null || echo '?')"
 printf 'Lectura del arnés sobre %s/ — plugin %s\n\n' "$REQ_DIR" "$VERSION"
@@ -89,7 +92,13 @@ for f in "$PROY/$REQ_DIR"/*.md; do
     esac
   done <<< "$texto"
 
-  arnes_norm_campo "$cru_est"; est="$ARNES_CAMPO"
+  # EL MISMO LECTOR QUE LA PUERTA, tambien para `Estado:`. La regla del parentesis de
+  # evidencia se le aplica en la puerta desde 1.26.0 y este informe no lo hacia, asi que
+  # un `Estado: en-revisión (2026-08-25, tras la ronda 3)` salia como «ninguna puerta lo
+  # reconoce». Medido en un proyecto real: 28 de 42 anomalias eran falsas, y el ruido
+  # enterraba las 14 reales. Un informe que lee distinto de la puerta sobre la que informa
+  # miente.
+  arnes_norm_campo "$cru_est"; arnes_veredicto "$ARNES_CAMPO"; est="$ARNES_VEREDICTO"
   if [ -z "$est" ]; then notas=$((notas+1)); continue; fi
   reqs=$((reqs+1))
 

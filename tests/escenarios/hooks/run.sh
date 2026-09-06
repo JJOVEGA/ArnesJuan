@@ -224,6 +224,30 @@ check_motivo() {
   fi
 }
 
+# check_aviso <nombre> <si|no: debe haber systemMessage> [<regex del aviso>] <script> <json>
+# Un aviso NO es una decision: la llamada tiene que seguir permitida. Por eso se exige
+# ademas que la salida no traiga `deny` — si el aviso llegara denegando, el arnes habria
+# convertido una errata en un bloqueo, que es justo lo que no se quiere.
+# Pasa por `json_no_vacio` como el resto: un JSON vacio es un caso que no se ejecuto.
+check_aviso() {
+  local nombre="$1" debe="$2" patron="$3" script="$4" json="$5" out msg hay=no
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
+  json_no_vacio "$nombre" "$json" || { FAIL=$((FAIL+1)); return 0; }
+  out="$(corre "$script" "$json")"
+  msg="$(printf '%s' "$out" | jq -r 'select(.systemMessage != null) | .systemMessage' 2>/dev/null | head -c 4000)"
+  [ -n "$msg" ] && hay=si
+  if [ "$hay" != "$debe" ]; then
+    echo "  FAIL  $nombre  systemMessage esperado=$debe, fue=$hay  <${msg:0:120}>"; diag; FAIL=$((FAIL+1)); return 0
+  fi
+  if [ "$debe" = "si" ] && [ -n "$patron" ] && ! printf '%s' "$msg" | grep -Eq "$patron"; then
+    echo "  FAIL  $nombre  el aviso no casa /$patron/  <${msg:0:160}>"; FAIL=$((FAIL+1)); return 0
+  fi
+  if printf '%s' "$out" | grep -Eq '"permissionDecision": *"deny"'; then
+    echo "  FAIL  $nombre  el aviso DENEGO la llamada; avisar no es decidir"; FAIL=$((FAIL+1)); return 0
+  fi
+  echo "  PASS  $nombre"; PASS=$((PASS+1))
+}
+
 # --- CANARIO: si el hook no corre, todo caso `allow` sería un verde falso -------
 canario="$(corre guard-codigo.sh "$(emite_edit "$PROJ/src/app.ts" "" "" 'hola')")"
 if ! printf '%s' "$canario" | grep -Eq '"permissionDecision": *"deny"'; then
@@ -1797,7 +1821,609 @@ check "QA v4: LIMITACION QA-006/REQ-007, sustitucion dentro de comillas dobles -
   "$(emite_bash $'echo "$(cp README.md src/g2.ts)"' "" "")"
 }
 
-TOTAL_SECCIONES=25
+# --- REQ-002: un veredicto lleva fecha y caduca con el codigo ------------------------
+# Medido en un proyecto real: cuatro REQ se habrian cerrado con un `QA: aprobado` emitido
+# contra codigo que cambio DESPUES de la firma. Las dos claves nacen APAGADAS: los casos
+# de control comprueban primero que sin opt-in no cambia nada.
+seccion_26() {
+  seccion_nueva "Veredicto fechado y no caduco (veredictos.*, opt-in):"
+
+# ver_proj <exigir_fecha> <caducan> [fecha del commit del codigo] [globs-json]
+ver_proj() {
+  VP="$(mktemp -d)"; mkdir -p "$VP/.arnes" "$VP/requirements" "$VP/src"
+  jq -n --argjson f "$1" --argjson c "$2" --argjson g "${4:-[\"src/*\"]}" \
+    '{agentes:{agente_codigo:"desarrollador"}, codigo_app:{globs:$g},
+      quality_gates:["true"], estados:{completado:"completado"},
+      requirements_dir:"requirements", pending_approval:"PENDING_APPROVAL.md",
+      veredictos:{exigir_fecha:$f, caducan_con_codigo:$c}}' > "$VP/.arnes/config.json"
+  printf '## Pendientes\n\n## Resueltas\n' > "$VP/PENDING_APPROVAL.md"
+  if [ -n "${3:-}" ]; then
+    printf 'codigo\n' > "$VP/src/app.ts"
+    git -C "$VP" init -q >/dev/null 2>&1
+    git -C "$VP" config user.email banco@arnes.local >/dev/null 2>&1
+    git -C "$VP" config user.name banco >/dev/null 2>&1
+    git -C "$VP" add -A >/dev/null 2>&1
+    GIT_AUTHOR_DATE="$3T10:00:00 +0000" GIT_COMMITTER_DATE="$3T10:00:00 +0000" \
+      git -C "$VP" commit -qm codigo >/dev/null 2>&1
+  fi
+}
+# ver_req <archivo> <qa> <seguridad> <rigor>
+ver_req() {
+  printf '# %s\nEstado: en-revisión\nSensible a seguridad: no\nQA: %s\nSeguridad: %s\nRigor: %s\n' \
+    "$(basename "$1" .md)" "$2" "$3" "$4" > "$1"
+}
+ver_cierra() { emite_edit "$1" "" "" 'Estado: completado'; }
+ver_corre() { : > "$ERRLOG"; printf '%s' "$2" | CLAUDE_PROJECT_DIR="$1" "$HOOKS_DIR/guard-completado.sh" 2>"$ERRLOG"; }
+# ver_check <nombre> <deny|allow> <dir> <json> [regex del motivo]
+ver_check() {
+  local nombre="$1" esperado="$2" d="$3" json="$4" patron="${5:-}" out got motivo
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
+  json_no_vacio "$nombre" "$json" || { FAIL=$((FAIL+1)); return 0; }
+  out="$(ver_corre "$d" "$json")"
+  if printf '%s' "$out" | grep -Eq '"permissionDecision": *"deny"'; then got=deny; else got=allow; fi
+  motivo="$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecisionReason // empty' 2>/dev/null)"
+  if [ "$got" != "$esperado" ]; then
+    echo "  FAIL  $nombre  esperado=$esperado got=$got  <${motivo:0:140}>"; diag; FAIL=$((FAIL+1)); return 0
+  fi
+  if [ -n "$patron" ] && ! printf '%s' "$motivo" | grep -Eq "$patron"; then
+    echo "  FAIL  $nombre  el motivo no casa /$patron/  <${motivo:0:180}>"; FAIL=$((FAIL+1)); return 0
+  fi
+  echo "  PASS  $nombre  ($got)"; PASS=$((PASS+1))
+}
+
+# --- Bloque A: el interruptor y la forma de la fecha ---
+# CA-01: sin opt-in, byte a byte lo de 1.30.3. Es el control que protege a todo proyecto
+# que no pida nada: una novedad que cambia el juicio sin que nadie la encienda es una
+# regresion, por muy correcta que sea.
+ver_proj false false; VP1="$VP"
+ver_req "$VP1/requirements/REQ-100.md" "aprobado" "aprobado" "critico"
+ver_check "CA-01 sin opt-in: veredictos SIN fecha -> allow" allow "$VP1" "$(ver_cierra "$VP1/requirements/REQ-100.md")"
+rm -rf "$VP1"
+
+ver_proj true false; VP2="$VP"
+ver_req "$VP2/requirements/REQ-101.md" "aprobado" "n/a" "estandar"
+ver_check "CA-02 exigir_fecha: 'aprobado' sin parentesis -> deny" deny "$VP2" \
+  "$(ver_cierra "$VP2/requirements/REQ-101.md")" 'QA:.*AAAA-MM-DD|AAAA-MM-DD.*QA:'
+ver_req "$VP2/requirements/REQ-102.md" "aprobado (R-045)" "n/a" "estandar"
+ver_check "CA-03 parentesis SIN fecha -> deny" deny "$VP2" "$(ver_cierra "$VP2/requirements/REQ-102.md")" 'AAAA-MM-DD'
+ver_req "$VP2/requirements/REQ-103.md" "aprobado (R-045, 2026-09-01)" "n/a" "estandar"
+ver_check "CA-04 fecha en cualquier posicion del parentesis -> allow" allow "$VP2" "$(ver_cierra "$VP2/requirements/REQ-103.md")"
+# CA-05: solo AAAA-MM-DD con mes 01-12 y dia 01-31. Lo que no case NO es "fecha rara":
+# es "sin fecha", y sin fecha no se cierra. Aceptar `2026-13-05` la volveria
+# incomparable contra la del codigo, que es justo para lo que se lee.
+for f in '01/09/2026' '2026-9-1' '20260901' '2026-13-05'; do
+  ver_req "$VP2/requirements/REQ-104.md" "aprobado ($f)" "n/a" "estandar"
+  ver_check "CA-05 '$f' no es una fecha -> deny" deny "$VP2" "$(ver_cierra "$VP2/requirements/REQ-104.md")" 'AAAA-MM-DD'
+done
+ver_req "$VP2/requirements/REQ-105.md" "aprobado (2026-09-01)" "aprobado" "critico"
+ver_check "CA-07 critico: la fecha se exige tambien a Seguridad -> deny" deny "$VP2" \
+  "$(ver_cierra "$VP2/requirements/REQ-105.md")" 'Seguridad:'
+ver_req "$VP2/requirements/REQ-106.md" "aprobado" "n/a" "ligero"
+ver_check "CA-08 ligero no pide veredictos ni sus fechas -> allow" allow "$VP2" "$(ver_cierra "$VP2/requirements/REQ-106.md")"
+ver_req "$VP2/requirements/REQ-107.md" "pendiente" "n/a" "estandar"
+ver_check "CA-09 QA pendiente: deniega el VEREDICTO, no la fecha" deny "$VP2" \
+  "$(ver_cierra "$VP2/requirements/REQ-107.md")" 'veredicto de QA'
+rm -rf "$VP2"
+
+# --- Bloque B: caducidad frente al codigo ---
+ver_proj false true 2026-08-30; VP3="$VP"
+ver_req "$VP3/requirements/REQ-110.md" "aprobado (2026-09-01)" "n/a" "estandar"
+ver_check "CA-10 veredicto POSTERIOR al commit, arbol limpio -> allow" allow "$VP3" "$(ver_cierra "$VP3/requirements/REQ-110.md")"
+ver_req "$VP3/requirements/REQ-111.md" "aprobado (2026-08-29)" "n/a" "estandar"
+ver_check "CA-11 veredicto ANTERIOR al commit -> deny con las dos fechas y el sha" deny "$VP3" \
+  "$(ver_cierra "$VP3/requirements/REQ-111.md")" '2026-08-29.*2026-08-30'
+# CA-12: `%cs` tiene resolucion de DIA, asi que el empate NO caduca. Es una asimetria
+# declarada, no un descuido: la alternativa seria caducar por el reloj de la maquina.
+ver_req "$VP3/requirements/REQ-112.md" "aprobado (2026-08-30)" "n/a" "estandar"
+ver_check "CA-12 mismo dia que el commit -> allow (el empate no caduca)" allow "$VP3" "$(ver_cierra "$VP3/requirements/REQ-112.md")"
+# CA-19: sin fecha no hay nada que comparar, aunque `exigir_fecha` este apagado.
+ver_req "$VP3/requirements/REQ-113.md" "aprobado" "n/a" "estandar"
+ver_check "CA-19 caducan sin exigir_fecha: 'aprobado' sin fecha -> deny" deny "$VP3" \
+  "$(ver_cierra "$VP3/requirements/REQ-113.md")" 'no lleva fecha'
+ver_req "$VP3/requirements/REQ-114.md" "aprobado (2026-09-01)" "aprobado (2026-08-29)" "critico"
+ver_check "CA-21 la caducidad alcanza a Seguridad, no solo a QA -> deny" deny "$VP3" \
+  "$(ver_cierra "$VP3/requirements/REQ-114.md")" 'Seguridad:'
+# CA-14: solo cuenta el codigo DECLARADO. Un README sucio no caduca ningun veredicto.
+printf 'ruido\n' > "$VP3/README.md"
+ver_check "CA-14 sucio FUERA de los globs -> allow" allow "$VP3" "$(ver_cierra "$VP3/requirements/REQ-110.md")"
+# CA-13: sucio DENTRO de los globs -> deny, y el motivo nombra el archivo.
+printf 'cambio sin comitear\n' >> "$VP3/src/app.ts"
+ver_check "CA-13 cambio sin comitear en el codigo -> deny nombrando el archivo" deny "$VP3" \
+  "$(ver_cierra "$VP3/requirements/REQ-110.md")" 'src/app.ts'
+rm -rf "$VP3"
+
+# CA-15: una puerta que no puede medir no deja pasar.
+ver_proj false true; VP4="$VP"
+ver_req "$VP4/requirements/REQ-120.md" "aprobado (2026-09-01)" "n/a" "estandar"
+ver_check "CA-15 sin repositorio git -> deny (no puedo medir)" deny "$VP4" \
+  "$(ver_cierra "$VP4/requirements/REQ-120.md")" 'no puede medir|no pudo responder'
+rm -rf "$VP4"
+
+# CA-16: un git anterior a `%cs` devuelve el literal. Tomarlo por fecha seria dejar pasar
+# por no entender la salida, que es la peor forma de permitir.
+ver_proj false true 2026-08-30; VP5="$VP"
+ver_req "$VP5/requirements/REQ-121.md" "aprobado (2026-09-01)" "n/a" "estandar"
+FAKEBIN="$(mktemp -d)"
+printf '#!/bin/sh\necho "%%cs abcdef1"\n' > "$FAKEBIN/git"; chmod +x "$FAKEBIN/git"
+VER_JSON="$(ver_cierra "$VP5/requirements/REQ-121.md")"
+if [ -n "$FILTRO" ] && ! printf '%s' "CA-16" | grep -qi -- "$FILTRO"; then :; else
+  json_no_vacio "CA-16 git que no entiende %cs" "$VER_JSON" || FAIL=$((FAIL+1))
+  VER_OUT="$(: > "$ERRLOG"; printf '%s' "$VER_JSON" | PATH="$FAKEBIN:$PATH" CLAUDE_PROJECT_DIR="$VP5" "$HOOKS_DIR/guard-completado.sh" 2>"$ERRLOG")"
+  if printf '%s' "$VER_OUT" | grep -Eq '"permissionDecision": *"deny"'; then
+    echo "  PASS  CA-16 git que no entiende %cs -> deny (no puedo medir)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  CA-16 git que no entiende %cs: permitio por no entender la salida"; diag; FAIL=$((FAIL+1))
+  fi
+fi
+rm -rf "$FAKEBIN" "$VP5"
+
+# CA-17: sin globs la consulta mediria el repositorio entero, que es OTRA pregunta.
+ver_proj false true 2026-08-30 '[]'; VP6="$VP"
+ver_req "$VP6/requirements/REQ-122.md" "aprobado (2026-09-01)" "n/a" "estandar"
+ver_check "CA-17 caducan con codigo_app.globs vacio -> deny" deny "$VP6" \
+  "$(ver_cierra "$VP6/requirements/REQ-122.md")" 'globs'
+rm -rf "$VP6"
+
+# CA-18: repositorio con commits pero NINGUNO que toque los globs, y el arbol limpio ahi.
+# No hay codigo posterior al veredicto porque no hay codigo comiteado, y se pudo medir.
+ver_proj false true; VP7="$VP"
+rmdir "$VP7/src" 2>/dev/null
+git -C "$VP7" init -q >/dev/null 2>&1
+git -C "$VP7" config user.email banco@arnes.local >/dev/null 2>&1
+git -C "$VP7" config user.name banco >/dev/null 2>&1
+printf 'documento\n' > "$VP7/LEEME.md"
+git -C "$VP7" add LEEME.md >/dev/null 2>&1
+git -C "$VP7" commit -qm doc >/dev/null 2>&1
+ver_req "$VP7/requirements/REQ-123.md" "aprobado (2026-09-01)" "n/a" "estandar"
+ver_check "CA-18 ningun commit toca los globs y el arbol esta limpio -> allow" allow "$VP7" \
+  "$(ver_cierra "$VP7/requirements/REQ-123.md")"
+rm -rf "$VP7"
+
+# CA-20: con las dos claves ausentes no se mide NADA, ni con el codigo cambiado despues
+# ni con el arbol sucio. El control que dice que esto es opt-in de verdad.
+ver_proj false false 2026-09-30; VP8="$VP"
+printf 'sucio\n' >> "$VP8/src/app.ts"
+ver_req "$VP8/requirements/REQ-124.md" "aprobado (2026-08-01)" "n/a" "estandar"
+ver_check "CA-20 sin las claves: codigo posterior y arbol sucio -> allow" allow "$VP8" \
+  "$(ver_cierra "$VP8/requirements/REQ-124.md")"
+rm -rf "$VP8"
+}
+
+# --- REQ-003: un vocabulario, un lector, y un aviso al escribir ----------------------
+seccion_27() {
+  seccion_nueva "Vocabulario de veredictos, aviso y lectura (REQ-003):"
+
+# --- Bloque A: `con-hallazgos` es un valor VALIDO de Seguridad, y no cierra ---
+mkreq_r "REQ-200" "no" "aprobado" "con-hallazgos" "critico"
+check "CA-02 critico con Seguridad: con-hallazgos -> deny (valido, pero no firma)" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-200.md" "" "" 'Estado: completado')"
+check "CA-03 escribir con-hallazgos sin cerrar -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-200.md" "" "" 'Seguridad: con-hallazgos')"
+# CA-08: la puerta de ORDEN del ciclo solo se dispara con `aprobado`. `con-hallazgos` no
+# es una firma, asi que puede escribirse con QA todavia pendiente.
+mkreq_r "REQ-201" "no" "pendiente" "con-hallazgos" "critico"
+check "CA-08 con-hallazgos con QA pendiente -> allow (no es una firma)" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-201.md" "" "" 'Seguridad: con-hallazgos')"
+# CA-06: no regresion. Ninguno de los otros valores cierra un REQ critico.
+for v in vetado preventiva pendiente n/a; do
+  mkreq_r "REQ-202" "no" "aprobado" "$v" "critico"
+  check "CA-06 critico con Seguridad: $v -> deny (como en 1.30.3)" deny guard-completado.sh \
+    "$(emite_edit "$PROJ/requirements/REQ-202.md" "" "" 'Estado: completado')"
+done
+mkreq_r "REQ-203" "no" "pendiente" "con-hallazgos" "ligero"
+check "CA-07 ligero con con-hallazgos -> allow" allow guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-203.md" "" "" 'Estado: completado')"
+
+# --- Bloque B: el aviso al ESCRIBIR un valor que la maquina no reconoce ---
+# No deniega: es una errata, no un ataque, y la puerta ya la atrapa al cerrar. Denegar
+# aqui añadiria friccion constante a algo inocuo, y esa friccion acaba con alguien
+# apagando el guard.
+mkreq_r "REQ-210" "no" "pendiente" "n/a" "estandar"
+check_aviso "CA-09 escribir 'QA: aprobadisimo' -> avisa sin denegar" si 'QA:.*pendiente\|aprobado\|con-hallazgos' \
+  guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-210.md" "" "" 'QA: aprobadísimo')"
+check_aviso "CA-10 escribir un valor del vocabulario -> sin aviso" no "" \
+  guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-210.md" "" "" 'QA: aprobado')"
+# CA-11: el aviso es por la ESCRITURA del campo, no por el estado del archivo. Si no,
+# cada edicion del REQ repetiria el mismo aviso hasta que alguien lo silencie.
+printf '# REQ-211\nEstado: en-revisión\nQA: aprobadísimo\nSeguridad: n/a\n\n## Historial de cambios\n| f | a | c |\n' > "$PROJ/requirements/REQ-211.md"
+check_aviso "CA-11 el REQ ya lo tenia en disco y la edicion no lo toca -> sin aviso" no "" \
+  guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-211.md" "" "" '| 2026-09-05 | otra fila | causa |')"
+check_aviso "CA-12 'Seguridad: aprobado' dentro del historial -> sin aviso" no "" \
+  guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-211.md" "" "" '| 2026-09-05 | Seguridad: aprobado | causa |')"
+check_aviso "CA-15 el mismo texto FUERA de requirements/ -> sin aviso" no "" \
+  guard-completado.sh "$(emite_edit "$PROJ/docs/notas.md" "" "" 'QA: loquesea')"
+# CA-13: el aviso no compite con la denegacion ni la sustituye.
+mkreq_r "REQ-212" "no" "aprobadísimo" "n/a" "estandar"
+check "CA-13 valor fuera del vocabulario Y cierre -> deny (manda la puerta)" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-212.md" "" "" 'Estado: completado')"
+
+# --- Bloque C: el informe lee EXACTAMENTE lo que lee la puerta ---
+LEC="$HOOKS_DIR/../tools/arnes-lectura.sh"
+lec_proj() {
+  LP="$(mktemp -d)"; mkdir -p "$LP/.arnes" "$LP/requirements"
+  printf '%s\n' "$MANIFIESTO_BASE" > "$LP/.arnes/config.json"
+}
+# lec_check <nombre> <rc esperado> <patron> <si|no aparece>
+lec_check() {
+  local nombre="$1" rc_esp="$2" patron="$3" debe="$4" out rc hay=no
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
+  out="$(: > "$ERRLOG"; bash "$LEC" "$LP" 2>"$ERRLOG")"; rc=$?
+  if [ -z "$out" ]; then
+    echo "  FAIL  $nombre  el informe no imprimio NADA: no midio nada"; diag; FAIL=$((FAIL+1)); return 0
+  fi
+  printf '%s' "$out" | grep -Eq -- "$patron" && hay=si
+  if [ "$rc" = "$rc_esp" ] && [ "$hay" = "$debe" ]; then echo "  PASS  $nombre"; PASS=$((PASS+1))
+  else echo "  FAIL  $nombre  rc=$rc (esperado $rc_esp), patron aparece=$hay (esperado $debe)"; diag; FAIL=$((FAIL+1)); fi
+}
+lec_proj
+printf '# REQ-300\nEstado: en-revisión\nSensible a seguridad: no\nQA: aprobado\nSeguridad: con-hallazgos\nRigor: critico\n' > "$LP/requirements/REQ-300.md"
+lec_check "CA-01 'Seguridad: con-hallazgos' no es una anomalia (sale 0)" 0 'REQ-300' no
+# CA-16/CA-17: la regla del parentesis se aplica a `Estado:` igual que en la puerta.
+printf '# REQ-301\nEstado: en-revisión (2026-08-25, tras la ronda 3)\nQA: aprobado\nSeguridad: n/a\n' > "$LP/requirements/REQ-301.md"
+printf '# REQ-302\nEstado: **completado** (revertido en la ronda 2)\nQA: aprobado\nSeguridad: n/a\n' > "$LP/requirements/REQ-302.md"
+lec_check "CA-16/CA-17 Estado con parentesis o enfasis no es anomalia (sale 0)" 0 'REQ-30[12]' no
+# CA-18: la comparacion es EXACTA contra el vocabulario delimitado, no por prefijo.
+printf '# REQ-303\nEstado: en-revisión-parcial\nQA: aprobado\nSeguridad: n/a\n' > "$LP/requirements/REQ-303.md"
+lec_check "CA-18/CA-20 un estado que NO existe sigue siendo anomalia (sale 1)" 1 'REQ-303' si
+lec_check "CA-20 ...y se imprime el bloque que lo explica" 1 'NO LEE COMO EST' si
+rm -rf "$LP"
+# CA-04: el informe no puede tener su propia copia del vocabulario.
+if grep -Eq "^(QA_OK|SEG_OK|RIG_OK)='\\|" "$LEC"; then
+  echo "  FAIL  CA-04 tools/arnes-lectura.sh conserva su propia lista de valores"; FAIL=$((FAIL+1))
+else
+  echo "  PASS  CA-04 el vocabulario viene de lib.sh, no de una copia en el informe"; PASS=$((PASS+1))
+fi
+}
+
+# --- REQ-004: rotar UNA seccion; el contrato no se toca -------------------------------
+seccion_28() {
+  seccion_nueva "Rotacion de UNA seccion (la historia se archiva, el contrato no):"
+
+# rsec_proj <activo> <conservar-json> <umbral> <orden> [archivo_dir] [seccion]
+rsec_proj() {
+  RP2="$(mktemp -d)"; mkdir -p "$RP2/.arnes" "$RP2/requirements"
+  jq -n --argjson a "$1" --argjson c "$2" --argjson u "$3" --arg o "$4" \
+        --arg ad "${5:-}" --arg se "${6:-## Historial de cambios}" \
+    '{agentes:{agente_codigo:"desarrollador"}, requirements_dir:"requirements",
+      rotacion:{activo:$a, artefactos:[
+        ({glob:"requirements/REQ-*.md", seccion:$se, umbral_bytes:$u, orden:$o}
+         + (if $c == null then {} else {conservar_entradas:$c} end)
+         + (if $ad == "" then {} else {archivo_dir:$ad} end))]}}' > "$RP2/.arnes/config.json"
+}
+# rsec_req <archivo> <n entradas> [crlf]
+rsec_req() {
+  local f="$1" n="$2" crlf="${3:-}" i
+  { printf '# %s\nEstado: en-revisión\nSensible a seguridad: sí\nQA: pendiente\nSeguridad: pendiente\nHallazgos abiertos: (ninguno)\nRigor: critico\n\n' "$(basename "$f" .md)"
+    printf '## Criterios de aceptación\n- CA-01 — el contrato, que no se rota jamas\n\n'
+    printf '## Historial de cambios\nPreambulo de la seccion.\n\n'
+    for i in $(seq -w 1 "$n"); do
+      printf -- '- 2026-01-%s: entrada %s con texto suficiente para pasar del umbral declarado\n' "$i" "$i"
+      printf '  continuacion indentada de %s\n| tabla | fila |\n' "$i"
+    done
+    printf '\n## Notas / alcance\nfinal intacto\n'
+  } > "$f"
+  [ -n "$crlf" ] && { sed 's/$/\r/' "$f" > "$f.crlf" && mv "$f.crlf" "$f"; }
+  return 0
+}
+rsec_corre() {
+  local json
+  json="$(CLAUDE_PROJECT_DIR="$1" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')"
+  : > "$ERRLOG"
+  printf '%s' "$json" | CLAUDE_PROJECT_DIR="$1" "$HOOKS_DIR/rotar-artefactos.sh" >/dev/null 2>"$ERRLOG"
+}
+rsec_check() {
+  if [ -n "$FILTRO" ] && ! printf '%s' "$1" | grep -qi -- "$FILTRO"; then return 0; fi
+  if [ "$2" = "$3" ]; then echo "  PASS  $1"; PASS=$((PASS+1))
+  else echo "  FAIL  $1  esperado=$2 obtenido=$3"; diag; FAIL=$((FAIL+1)); fi
+}
+rsec_cnt() {   # <patron> <archivo> -> cuenta, y 0 si el archivo no existe
+  local n
+  n="$(grep -c -- "$1" "$2" 2>/dev/null)" || n=0
+  [ -n "$n" ] || n=0
+  printf '%s' "$n"
+}
+rsec_ent() { rsec_cnt '^- 2026' "$1"; }
+
+# CA-01: apagada, no toca nada. Reestructurar el documento de una persona no puede ser
+# el comportamiento por defecto.
+rsec_proj false 20 1000 nuevo-al-final
+rsec_req "$RP2/requirements/REQ-400.md" 60
+cp "$RP2/requirements/REQ-400.md" "$RP2/antes.md"
+rsec_corre "$RP2"; rsec_corre "$RP2"
+rsec_check "CA-01 apagada: dos paradas y ni un byte cambia" "iguales-no" \
+  "$(cmp -s "$RP2/antes.md" "$RP2/requirements/REQ-400.md" && echo iguales || echo distintos)-$([ -d "$RP2/requirements/historial" ] && echo si || echo no)"
+rm -rf "$RP2"
+
+# CA-02/03/04/07/19: el reparto, y sobre todo lo que NO se toca.
+rsec_proj true 20 1000 nuevo-al-final
+rsec_req "$RP2/requirements/REQ-401.md" 60
+cp "$RP2/requirements/REQ-401.md" "$RP2/antes.md"
+rsec_corre "$RP2"; RSEC_RC=$?
+rsec_check "CA-02 quedan 20 entradas y 40 se archivan" "20-40" \
+  "$(rsec_ent "$RP2/requirements/REQ-401.md")-$(rsec_ent "$RP2/requirements/historial/REQ-401.md")"
+rsec_check "CA-02 un solo puntero al archivo" "1" "$(rsec_cnt 'historial/REQ-401.md' "$RP2/requirements/REQ-401.md")"
+rsec_check "CA-03 la cabecera y las demas secciones, byte a byte" "iguales" \
+  "$(cmp -s <(sed '/^## Historial de cambios$/,/^## Notas/{/^## Notas/!d}' "$RP2/antes.md") \
+            <(sed '/^## Historial de cambios$/,/^## Notas/{/^## Notas/!d}' "$RP2/requirements/REQ-401.md") && echo iguales || echo distintos)"
+# CA-04 es una invariante de SEGURIDAD, no una comodidad: el hook escribe en
+# requirements/ desde una parada, fuera de la via que vigila guard-completado. Una
+# rotacion que pudiera tocar la cabecera seria un camino para cerrar o firmar un REQ
+# sin puerta alguna.
+rsec_check "CA-04 los campos de la cabecera, intactos" "$(sed -n '2,7p' "$RP2/antes.md" | md5sum)" \
+  "$(sed -n '2,7p' "$RP2/requirements/REQ-401.md" | md5sum)"
+rsec_check "CA-07 ninguna continuacion queda huerfana" "60-60" \
+  "$(( $(rsec_cnt 'continuacion indentada' "$RP2/requirements/REQ-401.md") + $(rsec_cnt 'continuacion indentada' "$RP2/requirements/historial/REQ-401.md") ))-$(( $(rsec_ent "$RP2/requirements/REQ-401.md") + $(rsec_ent "$RP2/requirements/historial/REQ-401.md") ))"
+rsec_check "CA-18 la entrada mas reciente se queda en el documento" "1" \
+  "$(rsec_cnt '2026-01-60' "$RP2/requirements/REQ-401.md")"
+rsec_check "CA-19 el puntero dice cuantas quedan" "1" \
+  "$(rsec_cnt 'quedan las 20 más recientes' "$RP2/requirements/REQ-401.md")"
+rsec_check "el hook sale 0 (una parada no se bloquea)" "0" "$RSEC_RC"
+# CA-05: idempotencia. Sin ella, cada parada se lleva otro trozo del documento.
+rsec_corre "$RP2"; rsec_corre "$RP2"
+rsec_check "CA-05 idempotente: tres paradas, mismo reparto y un solo puntero" "20-40-1" \
+  "$(rsec_ent "$RP2/requirements/REQ-401.md")-$(rsec_ent "$RP2/requirements/historial/REQ-401.md")-$(rsec_cnt 'historial/REQ-401.md' "$RP2/requirements/REQ-401.md")"
+rm -rf "$RP2"
+
+# CA-06: el umbral manda sobre el numero de entradas.
+rsec_proj true 20 9999999 nuevo-al-final
+rsec_req "$RP2/requirements/REQ-402.md" 200
+rsec_corre "$RP2"
+rsec_check "CA-06 bajo el umbral no se toca nada, haya las entradas que haya" "200-no" \
+  "$(rsec_ent "$RP2/requirements/REQ-402.md")-$([ -d "$RP2/requirements/historial" ] && echo si || echo no)"
+rm -rf "$RP2"
+
+# CA-09/CA-10: un archivo que casa el glob pero no tiene la seccion no se toca; y cada
+# REQ rota a SU propio archivo.
+rsec_proj true 20 1000 nuevo-al-final
+rsec_req "$RP2/requirements/REQ-403.md" 60
+rsec_req "$RP2/requirements/REQ-404.md" 60
+printf '# REQ-405\nEstado: en-revisión\n\n## Criterios\n- sin seccion de historia\n' > "$RP2/requirements/REQ-405.md"
+cp "$RP2/requirements/REQ-405.md" "$RP2/antes405.md"
+rsec_corre "$RP2"
+rsec_check "CA-09 sin la seccion declarada, el archivo no se toca" "iguales-no" \
+  "$(cmp -s "$RP2/antes405.md" "$RP2/requirements/REQ-405.md" && echo iguales || echo distintos)-$([ -e "$RP2/requirements/historial/REQ-405.md" ] && echo si || echo no)"
+rsec_check "CA-10 cada REQ a su propio archivo de historia" "40-40-0" \
+  "$(rsec_ent "$RP2/requirements/historial/REQ-403.md")-$(rsec_ent "$RP2/requirements/historial/REQ-404.md")-$(( $(rsec_cnt 'entrada 01 con texto' "$RP2/requirements/historial/REQ-403.md") - 1 ))"
+rm -rf "$RP2"
+
+# CA-11: CRLF. La fuga medida en 1.27.0 —3 -> 6 -> 9 en tres pasadas— no puede volver.
+rsec_proj true 20 1000 nuevo-al-final
+rsec_req "$RP2/requirements/REQ-406.md" 60 crlf
+rsec_corre "$RP2"; rsec_corre "$RP2"; rsec_corre "$RP2"
+rsec_check "CA-11 CRLF: tres paradas, mismo reparto y sin duplicar" "20-40" \
+  "$(rsec_ent "$RP2/requirements/REQ-406.md")-$(rsec_ent "$RP2/requirements/historial/REQ-406.md")"
+rm -rf "$RP2"
+
+# CA-13: contencion LEXICA. `../fuera` no se escribe, y el origen no se toca.
+rsec_proj true 20 1000 nuevo-al-final ../fuera
+rsec_req "$RP2/requirements/REQ-407.md" 60
+cp "$RP2/requirements/REQ-407.md" "$RP2/antes.md"
+rsec_corre "$RP2"
+rsec_check "CA-13 archivo_dir con .. no escribe nada y no toca el origen" "iguales-no" \
+  "$(cmp -s "$RP2/antes.md" "$RP2/requirements/REQ-407.md" && echo iguales || echo distintos)-$([ -e "$RP2/../fuera" ] && echo si || echo no)"
+rm -rf "$RP2"
+
+# CA-14: contencion FISICA. Ruta relativa limpia que, RESUELTA, sale del proyecto por un
+# enlace simbolico. La misma regla que `estado_derivado.archivo` desde 1.29.1.
+if ln -s /tmp /tmp/arnes-enlace-test-$$ 2>/dev/null; then
+  rm -f /tmp/arnes-enlace-test-$$
+  rsec_proj true 20 1000 nuevo-al-final salida
+  FUERA="$(mktemp -d)"
+  ln -s "$FUERA" "$RP2/salida"
+  rsec_req "$RP2/requirements/REQ-408.md" 60
+  cp "$RP2/requirements/REQ-408.md" "$RP2/antes.md"
+  rsec_corre "$RP2"
+  rsec_check "CA-14 archivo_dir que sale por un enlace simbolico -> nada fuera" "iguales-0" \
+    "$(cmp -s "$RP2/antes.md" "$RP2/requirements/REQ-408.md" && echo iguales || echo distintos)-$(ls -1 "$FUERA" | wc -l | tr -d ' ')"
+  rm -rf "$RP2" "$FUERA"
+else
+  echo "  SKIP  CA-14 contencion fisica: esta plataforma no crea enlaces simbolicos"; SKIP=$((SKIP+1))
+fi
+
+# CA-15: archivo_dir dentro del proyecto -> ahi, y no junto al documento.
+rsec_proj true 20 1000 nuevo-al-final historial-global
+rsec_req "$RP2/requirements/REQ-409.md" 60
+rsec_corre "$RP2"
+rsec_check "CA-15 archivo_dir interno: escribe ahi y no junto al documento" "40-no" \
+  "$(rsec_ent "$RP2/historial-global/REQ-409.md")-$([ -e "$RP2/requirements/historial/REQ-409.md" ] && echo si || echo no)"
+rm -rf "$RP2"
+
+# CA-16: manifiesto malformado -> se ignora esa entrada, nada se toca, la parada sale 0.
+rsec_proj true '"veinte"' 1000 nuevo-al-final
+rsec_req "$RP2/requirements/REQ-410.md" 60
+cp "$RP2/requirements/REQ-410.md" "$RP2/antes.md"
+rsec_corre "$RP2"; RSEC_RC=$?
+rsec_check "CA-16 conservar_entradas no numerico: se ignora y sale 0" "iguales-0" \
+  "$(cmp -s "$RP2/antes.md" "$RP2/requirements/REQ-410.md" && echo iguales || echo distintos)-$RSEC_RC"
+rm -rf "$RP2"
+
+# CA-20: el nombre de la seccion se compara EXACTO, nunca por prefijo. Declarar
+# `## Historial` no puede llevarse por delante `## Historial de cambios`: la rotacion
+# escribiria en una seccion que el proyecto no nombro.
+rsec_proj true 20 1000 nuevo-al-final "" "## Historial"
+rsec_req "$RP2/requirements/REQ-411.md" 60
+cp "$RP2/requirements/REQ-411.md" "$RP2/antes.md"
+rsec_corre "$RP2"
+rsec_check "CA-20 '## Historial' no casa '## Historial de cambios' (exacto, no prefijo)" "iguales" \
+  "$(cmp -s "$RP2/antes.md" "$RP2/requirements/REQ-411.md" && echo iguales || echo distintos)"
+rm -rf "$RP2"
+
+# CA-17: no regresion. La forma ANTERIOR —artefacto por ruta, secciones `## `— sigue
+# rotando igual que en 1.30.3.
+RP3="$(mktemp -d)"; mkdir -p "$RP3/.arnes"
+jq -n '{agentes:{agente_codigo:"desarrollador"},
+        rotacion:{activo:true, umbral_bytes:2000, conservar_secciones:3, orden:"nuevo-primero",
+                  artefactos:["CHANGELOG.md"]}}' > "$RP3/.arnes/config.json"
+{ printf '# CHANGELOG\n\n'
+  for v in 10 9 8 7 6 5 4 3 2 1; do
+    printf '## [1.%s.0]\n' "$v"
+    for i in 1 2 3 4 5 6; do printf 'relleno %s de 1.%s.0 para que el archivo pese lo suyo\n' "$i" "$v"; done
+    printf '\n'
+  done
+} > "$RP3/CHANGELOG.md"
+RSEC_JSON="$(CLAUDE_PROJECT_DIR="$RP3" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')"
+: > "$ERRLOG"
+printf '%s' "$RSEC_JSON" | CLAUDE_PROJECT_DIR="$RP3" "$HOOKS_DIR/rotar-artefactos.sh" >/dev/null 2>"$ERRLOG"
+rsec_check "CA-17 la forma anterior (por ruta, secciones ##) no cambia" "3-7" \
+  "$(rsec_cnt '^## ' "$RP3/CHANGELOG.md")-$(rsec_cnt '^## ' "$RP3/CHANGELOG-archivo.md")"
+rm -rf "$RP3"
+}
+
+# --- REQ-005: git destructivo prohibido a TODOS los agentes ---------------------------
+seccion_29() {
+  seccion_nueva "guard-git: ningun agente ejecuta git destructivo:"
+
+# CA-17: sin bloque `git` en el manifiesto la puerta ya esta encendida. Es la UNICA
+# novedad de 1.31.0 activa por defecto, y lo esta porque su daño es irreversible.
+check "CA-01/CA-17 coordinadora: 'git clean -fd' -> deny (por defecto)" deny guard-git.sh "$(emite_bash 'git clean -fd' "" "")"
+check_motivo "CA-01 el motivo dice que se pierde y como seguir" 'comitea|humano' guard-git.sh "$(emite_bash 'git clean -fd' "" "")"
+# CA-02: es una regla del COMANDO, no de la identidad. Ahi esta la diferencia con
+# guard-codigo, y por eso alcanza al desarrollador y a la coordinadora por igual.
+check "CA-02 el MISMO comando desde el desarrollador -> deny igual" deny guard-git.sh "$(emite_bash 'git clean -fd' "d1" "desarrollador")"
+check "CA-03 'git reset --hard' -> deny"            deny guard-git.sh "$(emite_bash 'git reset --hard' "" "")"
+check "CA-03 'git reset --hard HEAD~1' -> deny"     deny guard-git.sh "$(emite_bash 'git reset --hard HEAD~1' "" "")"
+check "CA-04 'git checkout .' -> deny"              deny guard-git.sh "$(emite_bash 'git checkout .' "" "")"
+check "CA-04 'git restore .' -> deny"               deny guard-git.sh "$(emite_bash 'git restore .' "" "")"
+check "CA-05 'git stash' desnudo -> deny"           deny guard-git.sh "$(emite_bash 'git stash' "" "")"
+check "CA-05 'git stash push -u' -> deny"           deny guard-git.sh "$(emite_bash 'git stash push -u' "" "")"
+# CA-06: el subcomando se reconoce este donde este dentro del comando.
+check "CA-06 'cd sub && git clean -fd' -> deny"     deny guard-git.sh "$(emite_bash 'cd sub && git clean -fd' "" "")"
+check "CA-06 'git -C proj reset --hard' -> deny"    deny guard-git.sh "$(emite_bash 'git -C proj reset --hard' "" "")"
+check "CA-06 '(git reset --hard)' -> deny"          deny guard-git.sh "$(emite_bash '(git reset --hard)' "" "")"
+check "CA-06 'x=\$(git stash)' -> deny"             deny guard-git.sh "$(emite_bash 'x=$(git stash)' "" "")"
+check "CA-06 'git clean -fd | tee log' -> deny"     deny guard-git.sh "$(emite_bash 'git clean -fd | tee log' "" "")"
+# CA-07: con el delimitador SIN CITAR bash ejecuta de verdad la sustitucion. Mismo
+# descuento que el detector de escrituras, no una segunda copia de esa regla.
+check "CA-07 heredoc SIN citar con \$(git clean -fd) -> deny" deny guard-git.sh \
+  "$(emite_bash $'cat <<EOF\n$(git clean -fd)\nEOF' "" "")"
+# La lista por defecto casa por FLAG: `clean -f` alcanza -f, -fd y -fdx, y no -n.
+check "flags cortos: 'git clean -fdx' -> deny"      deny guard-git.sh "$(emite_bash 'git clean -fdx' "" "")"
+check "los argumentos entrecomillados no desarman el reconocimiento" deny guard-git.sh "$(emite_bash 'git clean -fd "src"' "" "")"
+
+# --- Controles positivos: lo que NO deniega ---
+check "CA-08 'git stash list' -> allow"             allow guard-git.sh "$(emite_bash 'git stash list' "" "")"
+check "CA-08 'git stash show' -> allow"             allow guard-git.sh "$(emite_bash 'git stash show' "" "")"
+check "CA-09 'git restore --staged archivo.ts' -> allow" allow guard-git.sh "$(emite_bash 'git restore --staged archivo.ts' "" "")"
+check "CA-10 'git clean -n' -> allow"               allow guard-git.sh "$(emite_bash 'git clean -n' "" "")"
+check "CA-10 'git clean --dry-run' -> allow"        allow guard-git.sh "$(emite_bash 'git clean --dry-run' "" "")"
+check "CA-11 'git reset --soft HEAD~1' -> allow"    allow guard-git.sh "$(emite_bash 'git reset --soft HEAD~1' "" "")"
+check "CA-11 'git reset archivo.ts' -> allow"       allow guard-git.sh "$(emite_bash 'git reset archivo.ts' "" "")"
+check "CA-12 'git checkout rama' -> allow"          allow guard-git.sh "$(emite_bash 'git checkout rama' "" "")"
+check "CA-12 'git checkout -b rama' -> allow"       allow guard-git.sh "$(emite_bash 'git checkout -b rama' "" "")"
+check "CA-12 'git restore --source=HEAD~1 x.ts' -> allow" allow guard-git.sh "$(emite_bash 'git restore --source=HEAD~1 x.ts' "" "")"
+# CA-13: lo entrecomillado y el cuerpo literal de un heredoc no son el comando.
+check "CA-13 'git commit -m \"no uses git clean\"' -> allow" allow guard-git.sh "$(emite_bash 'git commit -m "no uses git clean"' "" "")"
+check "CA-13 heredoc CITADO cuyo cuerpo dice git clean -fd -> allow" allow guard-git.sh \
+  "$(emite_bash $'cat <<\'EOF\'\ngit clean -fd\nEOF' "" "")"
+# CA-14: `git` es un TOKEN de comando, no una subcadena.
+check "CA-14 'github clone x' -> allow"             allow guard-git.sh "$(emite_bash 'github clone x' "" "")"
+check "CA-14 'mygit clean -f' -> allow"             allow guard-git.sh "$(emite_bash 'mygit clean -f' "" "")"
+check "CA-15 'echo \"git clean -f\"' -> allow"      allow guard-git.sh "$(emite_bash 'echo "git clean -f"' "" "")"
+# CA-16: no regresion. El git de todos los dias sigue pasando —y las dos consultas de
+# REQ-002 (`git log`, `git status`) son lecturas y conviven con esta puerta.
+check "CA-16 'git status' -> allow"                 allow guard-git.sh "$(emite_bash 'git status --porcelain' "" "")"
+check "CA-16 'git log' -> allow"                    allow guard-git.sh "$(emite_bash 'git log -1 --format=%cs -- src/' "" "")"
+check "CA-16 'git add .' y 'git commit' -> allow"   allow guard-git.sh "$(emite_bash 'git add . && git commit -m listo' "" "")"
+
+# --- El manifiesto: mecanismo aqui, mapeo alli ---
+setcfg '.git = {"activo": false}'
+check "CA-18 git.activo:false -> allow (acto explicito del proyecto)" allow guard-git.sh "$(emite_bash 'git clean -fd' "" "")"
+setcfg '.git = {"prohibidos": []}'
+check "CA-20 lista vacia: una decision declarada, no un error -> allow" allow guard-git.sh "$(emite_bash 'git reset --hard' "" "")"
+setcfg '.git = {"prohibidos": ["push --force"]}'
+check "CA-19 lista propia: 'git clean -fd' ya no esta en ella -> allow" allow guard-git.sh "$(emite_bash 'git clean -fd' "" "")"
+check "CA-19 lista propia: 'git push --force origin main' -> deny" deny guard-git.sh "$(emite_bash 'git push --force origin main' "" "")"
+setcfg '.git = {"prohibidos": ["reset --hard"]}'
+check "CA-21 el token en otra posicion del segmento -> deny igual" deny guard-git.sh "$(emite_bash 'git reset HEAD~1 --hard' "" "")"
+setcfg 'del(.git)'
+
+# --- Integracion y orden: guard.sh ---
+# CA-24: cuando un comando es a la vez git destructivo y escritura sobre codigo
+# protegido, el motivo es el de GIT: la denegacion es final y los demas no corren.
+check_motivo "CA-23/CA-24 en guard.sh manda el motivo de git" 'git.prohibidos' guard.sh \
+  "$(emite_bash 'git clean -fd && echo x > src/generado.ts' "" "")"
+# CA-25: interponer el guardian nuevo no apaga a los que ya estaban.
+check_motivo "CA-25 lo que guard-git permite lo sigue juzgando guard-codigo" 'código de la app|codigo de la app|protegid' guard.sh \
+  "$(emite_bash 'echo x > src/generado.ts' "" "")"
+check "CA-26 un comando sin el token git sigue pasando por guard.sh -> allow" allow guard.sh "$(emite_bash 'ls -la' "" "")"
+# CA-28: ejecutado por su cuenta decide igual que dentro de guard.sh.
+check "CA-28 guard-git.sh por su cuenta decide igual" deny guard-git.sh "$(emite_bash 'git checkout .' "" "")"
+# CA-29: el bit de ejecucion es parte del contrato del punto de entrada.
+if [ -x "$HOOKS_DIR/guard-git.sh" ]; then
+  echo "  PASS  CA-29 guard-git.sh es ejecutable"; PASS=$((PASS+1))
+else
+  echo "  FAIL  CA-29 guard-git.sh no tiene bit de ejecucion"; FAIL=$((FAIL+1))
+fi
+}
+
+# --- REQ-006: las celdas del bloque derivado, recortadas ------------------------------
+seccion_30() {
+  seccion_nueva "Celdas del bloque derivado recortadas (presentacion, no lectura):"
+
+DER="$(mktemp -d)"
+mkdir -p "$DER/.arnes" "$DER/requirements" "$DER/docs"
+printf '%s\n' "$MANIFIESTO_BASE" > "$DER/.arnes/config.json"
+printf '## Pendientes\n\n## Resueltas\n' > "$DER/PENDING_APPROVAL.md"
+printf '# ESTADO\n\n## Fase\nlo que escribio una persona\n' > "$DER/docs/ESTADO.md"
+LARGO="$(printf 'a%.0s' $(seq 1 1296))"
+C40="$(printf 'b%.0s' $(seq 1 40))"
+C41="$(printf 'c%.0s' $(seq 1 41))"
+printf '# REQ-600\nEstado: en-revisión\nQA: %s\nSeguridad: pendiente\n' "$LARGO" > "$DER/requirements/REQ-600.md"
+printf '# REQ-601\nEstado: en-revisión\nQA: aprobado\nSeguridad: con-hallazgos\nHallazgos abiertos: SEC-121 (instrumento)\n' > "$DER/requirements/REQ-601.md"
+printf '# REQ-602\nEstado: en-revisión\nQA: %s\nSeguridad: %s\n' "$C40" "$C41" > "$DER/requirements/REQ-602.md"
+printf '# REQ-603\nEstado: en-revisión\nQA: aprobado\nSeguridad: n/a\nHallazgos abiertos: SEC-1|SEC-2 (contrato)\n' > "$DER/requirements/REQ-603.md"
+der_corre() {
+  local json
+  json="$(CLAUDE_PROJECT_DIR="$DER" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR,stop_hook_active:false}')"
+  : > "$ERRLOG"
+  printf '%s' "$json" | CLAUDE_PROJECT_DIR="$DER" "$HOOKS_DIR/estado-derivado.sh" >/dev/null 2>"$ERRLOG"
+}
+der_check() {
+  if [ -n "$FILTRO" ] && ! printf '%s' "$1" | grep -qi -- "$FILTRO"; then return 0; fi
+  if [ "$2" = "$3" ]; then echo "  PASS  $1"; PASS=$((PASS+1))
+  else echo "  FAIL  $1  esperado=$2 obtenido=$3"; diag; FAIL=$((FAIL+1)); fi
+}
+der_corre; DER_RC=$?
+DER_FILA="$(grep '^| REQ-600 ' "$DER/docs/ESTADO.md" || true)"
+DER_QA="$(printf '%s' "$DER_FILA" | awk -F' \\| ' '{print $3}')"
+der_check "CA-01 la celda mide 41 como mucho y termina en elipsis" "41-si" \
+  "${#DER_QA}-$(case "$DER_QA" in *…) echo si ;; *) echo no ;; esac)"
+der_check "CA-02 el valor completo no entra en el archivo" "no" \
+  "$(grep -qF -- "$LARGO" "$DER/docs/ESTADO.md" && echo si || echo no)"
+# CA-05: una fila que no cabe deja de renderizarse como fila. La tabla es lo que el
+# bloque existe para dar.
+der_check "CA-05 toda fila de la tabla tiene 7 separadores" "0" \
+  "$(grep '^| REQ-' "$DER/docs/ESTADO.md" | awk -F'|' 'NF!=8 {n++} END {print n+0}')"
+# CA-06: una barra en el VALOR abriria una columna nueva. Se neutraliza al componer.
+der_check "CA-06 una barra dentro del valor no crea una columna" "1" \
+  "$(grep -c '^| REQ-603 .*sec-1¦sec-2' "$DER/docs/ESTADO.md")"
+der_check "CA-03 los valores cortos salen intactos y sin elipsis" "1" \
+  "$(grep -c '^| REQ-601 | en-revisión | aprobado | con-hallazgos | estandar | sec-121(instrumento) |' "$DER/docs/ESTADO.md")"
+DER_F602="$(grep '^| REQ-602 ' "$DER/docs/ESTADO.md" || true)"
+der_check "CA-04 borde exacto: 40 intacto, 41 recortado" "40-41" \
+  "$(printf '%s' "$DER_F602" | awk -F' \\| ' '{print length($3)"-"length($4)}')"
+der_check "CA-10 un 'Hallazgos abiertos:' vacio sigue mostrando el guion" "1" \
+  "$(grep -c '^| REQ-600 .* — |$' "$DER/docs/ESTADO.md")"
+der_check "CA-17 el hook sale 0 (la parada no se bloquea nunca)" "0" "$DER_RC"
+# CA-09: idempotencia. Una celda no puede ganar una segunda elipsis en cada parada.
+cp "$DER/docs/ESTADO.md" "$DER/antes.md"
+der_corre
+der_check "CA-09 idempotente: el bloque no cambia ni la celda gana otra elipsis" "iguales" \
+  "$(cmp -s "$DER/antes.md" "$DER/docs/ESTADO.md" && echo iguales || echo distintos)"
+# CA-11/CA-12: EL RECORTE ES DE PRESENTACION. La puerta lee el campo ENTERO: si el
+# recorte llegara a la lectura, un `Hallazgos abiertos:` largo podria perder su clase
+# bloqueante por el camino y cerrar un REQ que no debia cerrarse.
+cp "$DER/requirements/REQ-603.md" "$PROJ/requirements/REQ-603.md"
+printf '# REQ-604\nEstado: en-revisión\nQA: aprobado\nSeguridad: n/a\nHallazgos abiertos: SEC-9999999999999999999999999999999999999 (contrato)\n' > "$PROJ/requirements/REQ-604.md"
+check "CA-11 hallazgo largo de clase contrato: la puerta lee el campo entero -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-604.md" "" "" 'Estado: completado')"
+printf '# REQ-605\nEstado: en-revisión\nQA: aprobado con la condicion de que se repita la ronda cuando el modulo cambie\nSeguridad: n/a\n' > "$PROJ/requirements/REQ-605.md"
+check "CA-12 un QA largo que empieza por aprobado se lee como siempre -> deny" deny guard-completado.sh \
+  "$(emite_edit "$PROJ/requirements/REQ-605.md" "" "" 'Estado: completado')"
+rm -rf "$DER"
+}
+
+TOTAL_SECCIONES=30
 
 # --- Despacho en paralelo -----------------------------------------------------
 # El canario ya corrio en el padre, solo y antes que nada: si el hook esta muerto no
@@ -1841,7 +2467,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=310
+CASOS_ESPERADOS=428
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)

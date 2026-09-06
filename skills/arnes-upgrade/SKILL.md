@@ -121,6 +121,8 @@ por arriba:
 | `AGENTS.md` §13 tiene la fila «la transición a `completado` no se hace por shell» | 1.16.0 |
 | `AGENTS.md` §6 nombra la auditoría `(preventiva)` | 1.21.0 |
 | `.arnes/config.json` tiene `plantillas_origen` | 1.21.0 |
+| `.arnes/config.json` tiene la clave `"git"` con `"prohibidos"` | 1.31.0 |
+| `requirements/README.md` nombra `con-hallazgos` en el vocabulario de `Seguridad:` | 1.31.0 |
 
 *(Los tres primeros están comprobados contra los tags: ausentes en la versión anterior,
 presentes desde la que se indica. Si añades marcadores, compruébalos igual — un marcador mal
@@ -378,6 +380,39 @@ nada.
        **también al agente de código**, porque la regla de ese guardián —nadie cierra un REQ desde
        la shell— alcanza a todos y sin análisis no se puede saber si el comando toca
        `requirements/`.
+
+### Hacia 1.31.0
+- **Una sola novedad nace ENCENDIDA, y hay que decírsela al usuario:** `guard-git.sh` deniega a
+  **cualquier** agente —incluida la sesión coordinadora— `git clean -f`, `reset --hard`,
+  `checkout .`, `restore .` y `stash` en sus formas destructivas. No alcanza a `stash list`,
+  `stash show`, `restore --staged`, `clean -n` ni a ningún `git` de lectura. Es la única puerta
+  activa por defecto porque su daño es el único irreversible: git no devuelve lo que nunca se
+  comiteó. **Pregunta** si el proyecto necesita el comportamiento anterior: se apaga con
+  `git.activo: false`, o se sustituye la lista con `git.prohibidos` (`[]` es una decisión
+  declarada y válida). Que la puerta exista **no** sustituye la regla humana: comitear tras cada
+  aterrizaje.
+- `.arnes/config.json`: bloques nuevos `veredictos` (los dos interruptores **apagados**), `git`
+  (encendido, arriba) y `limites` (**opcional**, sólo si un comando legítimo topa con el techo de
+  análisis de Bash; bórralo si no lo necesitas). `rotacion.artefactos` admite además la forma de
+  **sección** (`glob` + `seccion`). **Pregunta antes de encender `veredictos.*`:** exigen que los
+  veredictos lleven fecha `AAAA-MM-DD` en su paréntesis de evidencia, y los REQ ya firmados
+  probablemente no la llevan —mídelo con `tools/arnes-lectura.sh`—; un proyecto que lo encienda
+  sin re-validar no cierra ningún REQ hasta hacerlo. Puede ser justo lo que quiere: se decide, no
+  se hereda.
+- **Rotación de sección: se añade APAGADA y no cambia nada de lo que ya rotaba.** Un proyecto que
+  rotaba artefactos enteros por secciones `## ` sigue igual (la forma anterior del manifiesto se
+  respeta). Si se activa la forma nueva, el nombre de la sección se compara **exacto**: declara
+  la línea entera (`"seccion": "## Historial de cambios"`), no un prefijo.
+- `requirements/README.md`: `Seguridad: con-hallazgos` pasa a ser un valor **válido** —los REQ que
+  ya lo escribían dejan de ser una anomalía **sin editarlos**, y sigue sin cerrar un REQ crítico—;
+  párrafos nuevos **la fecha del veredicto también va en el paréntesis**, el **aviso al escribir
+  un valor fuera del vocabulario** y el **recorte a 40 caracteres** del bloque derivado.
+  `AGENTS.md` §13: dos filas nuevas en la tabla y los dos párrafos correspondientes.
+- Corre `tools/arnes-lectura.sh` **después** de instalar: hasta 1.30.3 reportaba como anómalo todo
+  `Estado:` con paréntesis de evidencia, y no lo era. Si el proyecto tenía muchas «anomalías», es
+  probable que la mayoría desaparezcan solas.
+- El bloque derivado de `docs/ESTADO.md` se regenera en la siguiente parada: **no hay nada que
+  migrar a mano** por el recorte de celdas.
 
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 

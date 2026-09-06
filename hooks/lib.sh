@@ -56,7 +56,11 @@ arnes_parse_manifest() {
                                        (.requirements_dir // "requirements"),
                                        (.estados.completado // "completado"),
                                        (.pending_approval // "PENDING_APPROVAL.md"),
-                                       (.limites.bash_max_analisis // "" | tostring)]
+                                       (.limites.bash_max_analisis // "" | tostring),
+                                       (if .veredictos.exigir_fecha == true then "true" else "false" end),
+                                       (if .veredictos.caducan_con_codigo == true then "true" else "false" end),
+                                       (if .git.activo == false then "false" else "true" end),
+                                       ((.git.prohibidos // ["clean -f","reset --hard","checkout .","restore .","stash","stash push","stash pop","stash drop","stash clear"]) | join("\t"))]
                                       + (.codigo_app.globs // []) | .[]'
   ARNES_GLOBS=()
   # `limites.bash_max_analisis` es OPCIONAL: el valor por defecto vive en el codigo
@@ -66,6 +70,12 @@ arnes_parse_manifest() {
   { IFS= read -r ARNES_AGENTE_CODIGO; IFS= read -r ARNES_REQ_DIR
     IFS= read -r ARNES_ESTADO_DONE;   IFS= read -r ARNES_PENDING
     IFS= read -r ARNES_BASH_MAX
+    # Los booleanos se comparan con `==` y no con `//`: para jq `false // x` es `x`, y
+    # un `activo: false` se leeria como activo -- fallo en abierto por la puerta trasera.
+    # `git.prohibidos` ausente -> lista por defecto; `[]` explicito -> ninguna regla, que
+    # es una decision declarada del proyecto y no un error.
+    IFS= read -r ARNES_VER_FECHA;     IFS= read -r ARNES_VER_CADUCAN
+    IFS= read -r ARNES_GIT_ACTIVO;    IFS= read -r ARNES_GIT_PROHIBIDOS
     while IFS= read -r g; do [ -n "$g" ] && ARNES_GLOBS+=("$g"); done
   } <<< "$ARNES_JQ"
   case "${ARNES_BASH_MAX:-}" in
@@ -106,6 +116,24 @@ arnes_deny() {
 
 # Aviso por stderr (no silencioso), sin bloquear.
 arnes_warn() { printf 'ARNES (hook): %s\n' "$1" >&2; }
+
+# --- Avisos que llegan a la PERSONA sin bloquear la llamada ------------------------
+# Un hook PreToolUse solo tiene dos salidas que Claude Code escucha: DENEGAR, o
+# `systemMessage`, que se muestra a la persona. LA DOCUMENTACION DE HOOKS NO OFRECE
+# NINGUNA FORMA DE ANADIR CONTEXTO AL MODELO SIN BLOQUEAR: `permissionDecision:"ask"`
+# detiene la llamada hasta que un humano responde, y eso para un valor mal tecleado es
+# peor que el defecto que avisa. La limitacion se declara aqui, no se descubre despues.
+#
+# Se ACUMULAN y se emiten UNA vez al final del proceso, y solo si ningun guardian
+# denego: una denegacion ya lo dice todo, y dos salidas JSON en el mismo stdout no son
+# un objeto valido.
+ARNES_AVISOS=''
+arnes_aviso() { ARNES_AVISOS+="ARNES: $1"$'\n'; }
+arnes_emitir_avisos() {
+  [ -n "$ARNES_AVISOS" ] || return 0
+  jq -cn --arg m "${ARNES_AVISOS%$'\n'}" '{systemMessage:$m}'
+  return 0
+}
 
 # --- Compatibilidad Windows ---------------------------------------------------
 # En Windows `jq` suele ser un binario NATIVO, no MSYS. Eso rompe dos cosas a la vez:
@@ -617,15 +645,24 @@ _arnes_expansiones() {   # <linea del cuerpo> -> acumula fragmentos en ARNES_EXP
   fi
 }
 
-arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
-  #
-  # Devuelve 0 con las rutas (ninguna, una o varias) y `$ARNES_RC_EXCESO` (2) SIN
-  # ANALIZAR NADA cuando el material a analizar supera el presupuesto: ver
-  # `ARNES_BASH_MAX_ANALISIS`. Los dos guardianes traducen ese 2 a una denegacion con
-  # motivo. Un `return 2` nunca sale por la salida estandar, asi que un llamador que
-  # ignore el codigo ve una lista vacia: eso seria permitir, y por eso los dos
-  # llamadores lo miran (y hay caso de banco para cada uno).
-  local cmd="$1" limpio i j n tok
+# EL COMANDO SIN SU TEXTO: descuenta los cuerpos literales de heredoc y lo
+# entrecomillado, y anade al final el interior EJECUTABLE de las expansiones que
+# viajan dentro de un heredoc sin citar. Es lo que miran los detectores que juzgan
+# UNA ORDEN dentro de un comando de shell: el de escrituras (`arnes_bash_escrituras`)
+# y el de git destructivo (`guard-git.sh`).
+#
+# VIVE APARTE PARA QUE HAYA UN SOLO DESCUENTO. Dos detectores con su propia copia de
+# esta regla se desfasan, y la mitad del valor de este arnes es no tener dos
+# transcripciones de la misma regla: `git commit -m "no uses git clean"` y
+# `cp README.md src/` dentro de un heredoc citado tienen que descontarse EXACTAMENTE
+# igual en los dos, hoy y cuando alguien arregle un borde en uno de ellos.
+#
+# Devuelve 0 con el texto en `ARNES_SIN_TEXTO`, y `$ARNES_RC_EXCESO` (2) SIN ANALIZAR
+# NADA cuando el material supera el presupuesto (ver `ARNES_BASH_MAX_ANALISIS`). Un
+# `return 2` no deja nada en `ARNES_SIN_TEXTO` que se pueda confundir con "no hay nada":
+# los llamadores miran el codigo y lo traducen a una denegacion con motivo.
+arnes_bash_sin_texto() {   # <comando> -> ARNES_SIN_TEXTO
+  local cmd="$1" limpio
   local ARNES_SINCOM=''
   local -a ARNES_EXPS=()
   # IFS explicito: el troceado en palabras de esta funcion (y el de sus auxiliares) no
@@ -722,6 +759,24 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
   # `;` como pegamento: el tokenizador de mas abajo ya lo separa (`${limpio//;/ ; }`) y
   # es lo que impide que el operando de un fragmento se lea como operando del siguiente.
   if [ "${#ARNES_EXPS[@]}" -gt 0 ]; then IFS=';'; limpio+=" ; ${ARNES_EXPS[*]}"; IFS=$' \t\n'; fi
+  ARNES_SIN_TEXTO="$limpio"
+  return 0
+}
+
+arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
+  #
+  # Devuelve 0 con las rutas (ninguna, una o varias) y `$ARNES_RC_EXCESO` (2) SIN
+  # ANALIZAR NADA cuando el material a analizar supera el presupuesto: ver
+  # `ARNES_BASH_MAX_ANALISIS`. Los dos guardianes traducen ese 2 a una denegacion con
+  # motivo. Un `return 2` nunca sale por la salida estandar, asi que un llamador que
+  # ignore el codigo ve una lista vacia: eso seria permitir, y por eso los dos
+  # llamadores lo miran (y hay caso de banco para cada uno).
+  local limpio i j n tok
+  # IFS explicito: el troceado en palabras de esta funcion (y el de sus auxiliares) no
+  # puede depender de como lo haya dejado el llamador.
+  local IFS=$' \t\n'
+  arnes_bash_sin_texto "$1" || return $?
+  limpio="$ARNES_SIN_TEXTO"
   # 2) Separa los operadores de su operando: `>src/a.ts` -> `> src/a.ts`.
   #    Y las sustituciones de comando pierden sus parentesis, para que el destino de
   #    `$(echo x > src/a.ts)` quede como operando limpio de `>` y no como `src/a.ts)`,
@@ -958,8 +1013,87 @@ arnes_campos_normaliza() {   # <qa> <seg> <sens> <hall> <rigor> -> ARNES_QA/SEG/
 # respalda en el del disco (pre-edición), porque QA y seguridad fijan su veredicto
 # antes de la transición a completado. Por eso se recorre primero el disco y
 # después lo entrante: lo segundo pisa a lo primero.
+# --- Vocabulario de los veredictos: declarado UNA vez ---------------------------
+# Lo usan la puerta (para avisar de un valor que no existe) y `tools/arnes-lectura.sh`
+# (para no reportar como anomalia lo que la puerta lee perfectamente). Dos copias de la
+# misma lista se desfasan -- es el mismo defecto que tenia el parentesis de evidencia,
+# solo que con el vocabulario: medido en un proyecto real, 28 de 42 anomalias del
+# informe eran falsas porque el informe leia distinto de la puerta.
+#
+# NO es configurable desde el manifiesto: los veredictos son el MECANISMO del arnes, no
+# mapeo del proyecto. Un proyecto que redefiniera "aprobado" redefiniria la puerta.
+ARNES_VOCAB_QA='pendiente|aprobado|con-hallazgos'
+# `con-hallazgos` tambien en Seguridad: entre `pendiente` ("no he mirado") y `vetado`
+# (freno formal con remedio, dueno y umbral) faltaba lo intermedio, que es el estado mas
+# comun de una auditoria real. Medido: cinco REQ de un proyecto ya lo escribian porque el
+# vocabulario no les daba la palabra -- cuando la gente escribe un valor que la
+# herramienta no tiene, la incompleta es la herramienta. Sigue sin cerrar: sirve para
+# decir la verdad, no para firmar.
+ARNES_VOCAB_SEG='n/a|pendiente|aprobado|con-hallazgos|preventiva|vetado'
+ARNES_VOCAB_RIGOR='ligero|estandar|critico'
+# Pertenencia EXACTA y delimitada (`|valor|`), nunca por prefijo: `en-revision-parcial`
+# no es `en-revision`. Sin procesos.
+arnes_en_vocab() {   # <valor normalizado> <vocabulario a|b|c>
+  case "|$2|" in *"|$1|"*) return 0 ;; esac
+  return 1
+}
+
+# Primera fecha ISO dentro de un texto -> ARNES_FECHA (vacio si no hay ninguna).
+# Es como viaja la fecha de un veredicto: dentro de su parentesis de evidencia y en
+# CUALQUIER posicion --`QA: aprobado (R-045, 2026-09-01)`--, porque la evidencia es
+# prosa y fijarle una posicion seria inventar una convencion que nadie sigue.
+#
+# La forma es ESTRICTA a proposito: `AAAA-MM-DD` con mes 01-12 y dia 01-31. Un
+# `2026-13-05` no es una fecha aunque lo parezca, y aceptarlo como tal la volveria
+# incomparable contra la del codigo -- que es justo para lo que se lee. Lo que no case
+# se trata como "sin fecha", que es una denegacion con motivo, no un pase.
+arnes_fecha_en() {   # <texto> -> ARNES_FECHA
+  ARNES_FECHA=''
+  if [[ "$1" =~ ([0-9][0-9][0-9][0-9]-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])) ]]; then
+    ARNES_FECHA="${BASH_REMATCH[1]}"
+  fi
+}
+
+# Recorta un texto a N caracteres con elipsis -> ARNES_CORTO. Sin procesos: es una
+# expansion de parametro, ni un fork por REQ. Para las celdas del bloque derivado
+# (ver estado-derivado.sh); NUNCA para el camino de lectura de ninguna puerta.
+arnes_recorta() {   # <texto> <n>
+  ARNES_CORTO="$1"
+  [ "${#ARNES_CORTO}" -le "$2" ] && return 0
+  ARNES_CORTO="${ARNES_CORTO:0:$2}"
+  _arnes_sin_cola_partida
+  ARNES_CORTO+='…'
+  return 0
+}
+
+# EL CORTE ES POR CARACTERES, NO POR BYTES. En un locale UTF-8 la expansion de bash ya
+# cuenta caracteres y aqui no hay nada que hacer. En locale C cuenta BYTES, y cortar a
+# mitad de una secuencia multibyte dejaria un byte partido dentro de un archivo que se
+# publica como UTF-8: se retira esa cola incompleta. El locale se mira por su NOMBRE y no
+# probando rangos de bytes, porque en un locale UTF-8 los rangos de `case` se comparan por
+# COLACION y un caracter acentuado casaria por error -- la comprobacion se equivocaria
+# justo con las entradas que dice proteger.
+_arnes_sin_cola_partida() {   # ARNES_CORTO -> sin una secuencia UTF-8 incompleta al final
+  case "${LC_ALL:-${LC_CTYPE:-${LANG:-}}}" in
+    *UTF-8*|*utf-8*|*UTF8*|*utf8*) return 0 ;;
+  esac
+  local b i n=0
+  for ((i = 1; i <= 4; i++)); do
+    b="${ARNES_CORTO: -i:1}"
+    case "$b" in
+      [$'\x80'-$'\xBF']) continue ;;                                  # continuacion: sigue hacia atras
+      [$'\xC0'-$'\xDF']) n=2 ;; [$'\xE0'-$'\xEF']) n=3 ;; [$'\xF0'-$'\xF7']) n=4 ;;
+      *) return 0 ;;                                                  # ASCII: no hay nada partido
+    esac
+    (( i < n )) && ARNES_CORTO="${ARNES_CORTO:0:${#ARNES_CORTO}-i}"
+    return 0
+  done
+  return 0
+}
+
 arnes_campos_req() {   # <texto en disco> <texto entrante>
   ARNES_QA=''; ARNES_SEG=''; ARNES_SENS=''; ARNES_HALL=''; ARNES_RIGOR=''
+  ARNES_QA_CRUDO=''; ARNES_SEG_CRUDO=''
   local texto l
   for texto in "$1" "$2"; do
     [ -n "$texto" ] || continue
@@ -980,6 +1114,11 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
       esac
     done <<< "$texto"
   done
+  # El valor CRUDO se conserva ANTES de normalizar: la fecha del veredicto vive en el
+  # parentesis de evidencia, que la normalizacion retira a proposito (el parentesis es
+  # evidencia, no veredicto). Se lee del crudo con el MISMO lector, no con un segundo
+  # normalizador -- dos transcripciones de la misma regla se desfasan.
+  ARNES_QA_CRUDO="$ARNES_QA"; ARNES_SEG_CRUDO="$ARNES_SEG"
   arnes_campos_normaliza "$ARNES_QA" "$ARNES_SEG" "$ARNES_SENS" "$ARNES_HALL" "$ARNES_RIGOR"
 }
 

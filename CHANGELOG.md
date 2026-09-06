@@ -2,6 +2,102 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.31.0] — 2026-09-05
+> Origen: GitHub · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos` (REQ-002…006), `desarrollador` (implementación y banco), `qa-tester` y `auditor-seguridad` (pendientes en el ciclo 2 del autoalojamiento).
+
+Cinco mecanismos, todos nacidos de defectos **medidos en proyectos reales** y descritos aquí
+en la forma del hallazgo: qué fallaba, por dónde, y qué cambia para un proyecto. Cuatro nacen
+**apagados**; sólo uno viene encendido, y se dice por qué.
+
+### Añadido — un veredicto lleva fecha y caduca con el código (REQ-002, apagado)
+**Qué fallaba:** cuatro requerimientos estaban a punto de cerrarse con un `QA: aprobado`
+emitido contra código que había cambiado **después** de la firma, y otro llevaba un
+`Seguridad: aprobado` a secas —sin ronda ni fecha—, que era justamente el único que nadie
+sabía que estaba caduco. Un veredicto es una foto, y una foto sólo vale si el sujeto estaba
+quieto. **Por dónde:** la convención de poner la evidencia al lado de la afirmación ya
+existía; lo que faltaba era que la máquina pudiera **exigirla** y **usarla**.
+**Qué cambia:** con `veredictos.exigir_fecha`, un `aprobado` sin fecha `AAAA-MM-DD` en su
+paréntesis de evidencia no cierra; con `veredictos.caducan_con_codigo`, tampoco cierra un
+veredicto anterior al último commit que tocó `codigo_app.globs`, ni con cambios sin comitear
+en ese código. Si no se puede medir —sin git, sin repositorio, sin globs declarados o con un
+git que no entiende `%cs`— **no se deja pasar**: una puerta que no puede medir no deja pasar.
+Las dos claves vienen apagadas, así que un proyecto que no las active no nota ningún cambio.
+Cuesta como mucho **dos** invocaciones de git por evaluación, y ninguna en el camino de Bash.
+*Asimetrías declaradas:* el empate del mismo día no caduca (`%cs` tiene resolución de día) y
+una fecha futura se acepta —esta puerta mide contra el código, no contra el reloj—.
+
+### Añadido — un solo vocabulario, un solo lector, y un aviso al escribir (REQ-003)
+**Qué fallaba, tres veces:** (1) entre `pendiente` («no he mirado») y `vetado` (freno formal
+con remedio, dueño y umbral) no había forma de decir lo intermedio, que es el estado más común
+de una auditoría real: cinco requerimientos de un proyecto ya escribían `con-hallazgos` porque
+el vocabulario no les daba la palabra —cuando la gente escribe un valor que la herramienta no
+tiene, la incompleta es la herramienta—. (2) Cuatro requerimientos llevaban **semanas** con un
+`QA:` que la puerta no reconocía, y nadie lo supo hasta que un cierre falló. (3) El informe
+`tools/arnes-lectura.sh` no aplicaba a `Estado:` la regla del paréntesis de evidencia que la
+puerta aplica desde 1.26.0: **28 de 42 anomalías eran falsas**, y el ruido enterraba las 14
+reales. **Qué cambia:** `Seguridad: con-hallazgos` es un valor válido (y, como todo valor
+distinto de `aprobado`, **no cierra**); el vocabulario vive en **un solo sitio** compartido por
+las puertas y el informe; escribir un veredicto fuera de él **avisa en el momento** con un
+mensaje a la persona y **sin denegar** la edición —denegar una errata añadiría fricción
+constante a algo inocuo, y esa fricción acaba con alguien apagando el guard—; y el informe lee
+`Estado:` exactamente como lo lee la puerta.
+
+### Añadido — rotar UNA sección: la historia se archiva, el contrato no (REQ-004, apagado)
+**Qué crecía sin tope y quién lo pagaba:** en un proyecto real `requirements/` pesaba **3,73 MB
+en 47 archivos**, uno solo de **244 KB**, y ese peso lo paga **cada agente** que abre el
+requerimiento para leer dos criterios. La rotación que existía cortaba por secciones `## ` de
+un artefacto entero, y en un requerimiento lo que crece es **una** sección: el resto es el
+contrato. **Qué cambia:** un artefacto declarado con `glob` + `seccion` mueve las entradas
+viejas de esa sección a `historial/<nombre>.md` y deja un puntero. **No resume, no reescribe y
+no borra: mueve.** Y no toca **nada** fuera de la sección declarada —ni la cabecera con sus
+veredictos ni los criterios—, lo cual aquí es una invariante de seguridad y no una comodidad:
+el hook escribe en `requirements/` desde una parada, fuera de la vía que vigila la puerta de
+cierre. Qué sección es «historia» lo declara el proyecto; el arnés no trae ninguna por defecto,
+y el nombre se compara **exacto**, nunca por prefijo.
+
+### Añadido — ningún agente ejecuta git destructivo (REQ-005, **encendido**)
+**Qué se perdió:** ~52 archivos de trabajo **sin comitear** en un incidente. La causa de fondo
+no es el descuido de nadie: **el trabajo de un subagente no es atómico para git**. Mientras un
+agente escribe, el árbol contiene estados intermedios que no son de nadie; otro agente limpia
+«su» árbol y arrasa el del primero, y git no devuelve lo que nunca se comiteó. **Qué cambia:**
+`hooks/guard-git.sh` deniega por `Bash` las formas destructivas de `clean -f`, `reset --hard`,
+`checkout .`, `restore .` y `stash` a **todos** los agentes, incluida la sesión coordinadora:
+es una regla del **comando**, no de la identidad. No alcanza a `stash list`, `stash show`,
+`restore --staged`, `clean -n` ni a ningún git de lectura, y lo entrecomillado y el cuerpo
+literal de un heredoc se descuentan antes de mirar —`git commit -m "no uses git clean"` no es
+un `git clean`—. **Es la única novedad de 1.31.0 activa por defecto**, porque es la única que
+impide un daño irreversible; se apaga con `git.activo: false` o se sustituye con
+`git.prohibidos`. Cobertura parcial dicha en voz alta: quedan fuera los scripts y los
+intérpretes que ejecuten git por su cuenta. Es una barandilla, no una jaula.
+
+### Corregido — las celdas del bloque derivado no caben en una tabla (REQ-006)
+**Qué fallaba:** en un proyecto con 57 requerimientos, cuatro celdas de veredicto ocupaban el
+**37 %** del bloque de continuidad, y la mayor —**1 296 caracteres sin un solo espacio**—
+además **rompía la tabla**: una fila que no cabe deja de renderizarse como fila, así que el
+bloque dejaba de servir para lo único que existe, que es contar en tres líneas dónde quedó
+todo. **Qué cambia:** las tres celdas de texto libre (`QA`, `Seguridad`, `Hallazgos abiertos`)
+salen recortadas a 40 caracteres con `…`, y una barra vertical dentro de un valor se neutraliza
+para que no abra una columna nueva. **El recorte es de presentación**: pasa después del
+normalizador y sólo al componer la fila, así que ni la puerta ni el informe ven nunca el valor
+recortado —si llegara a la lectura, un `Hallazgos abiertos:` largo podría perder su clase
+bloqueante por el camino—.
+
+### Andamiaje que heredan los proyectos
+- `templates/arnes-config.json.tpl`: bloques nuevos `veredictos` (apagado), `git` (encendido) y
+  `limites` (**opcional**: el techo de análisis de Bash que 1.30.3 dejó sin documentar), y la
+  forma de sección en `rotacion.artefactos`, todos con su `_doc`.
+- `templates/requirements-README.md.tpl` y `templates/AGENTS.md.tpl`: `con-hallazgos`, la fecha
+  del veredicto, el aviso sin bloqueo, la rotación de la historia y el recorte de celdas.
+- `skills/arnes-upgrade/SKILL.md`: sección **Hacia 1.31.0** con qué preguntar antes de encender
+  `veredictos.*`, qué avisar de `guard-git` y dos marcadores nuevos de versión.
+- `ARCHITECTURE.md`: vista de sistema al día, con el guardián nuevo y el orden de `guard.sh`.
+
+### Pruebas
+Banco: **428 casos** (310 antes), **427 PASS · 0 FAIL · 1 SKIP** sobre la candidata y el cuadre
+de `CASOS_ESPERADOS` cerrado. Contra la instalación estable **v1.30.3**, el mismo banco da
+**376 PASS · 51 FAIL · 1 SKIP**: los 51 son exactamente los casos nuevos de comportamiento
+—fail-before/pass-after— y **todos** los controles de no regresión pasan también contra ella.
+
 ## [Interno] — 2026-09-05 · migración del andamiaje de este repo 1.30.2 → 1.30.3 (`arnes-upgrade`)
 > Origen: Interno · usuario: Juan · modelo de IA: Fable 5.1 (coordinadora) · skill `arnes-upgrade` del plugin 1.30.3.
 
