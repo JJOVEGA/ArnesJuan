@@ -40,7 +40,7 @@ Ciclo 1 = 1.30.3 (REQ-001). El banco corre siempre en WSL (~10 s); nunca en Wind
       1.31.0 / 1.32.0).
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-06 15:32
+## Estado derivado — 2026-09-06 15:49
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -50,7 +50,7 @@ Ciclo 1 = 1.30.3 (REQ-001). El banco corre siempre en WSL (~10 s); nunca en Wind
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.31.0-mecanismos` @ `2cfc535` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.31.0-mecanismos` @ `62d27c2` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.30.3`
 **Aprobaciones pendientes:** 0
 **REQ:** 11 — completado 1 · en-revisión 7 · en-progreso 1 · bloqueado 0 · otros 2
@@ -63,9 +63,9 @@ _Sólo los REQ abiertos; los 1 completados no se listan._
 | REQ-002 | en-revisión | aprobado | aprobado | critico | qa-106(instrumento) |
 | REQ-003 | en-revisión | aprobado | aprobado | critico | (ninguno) |
 | REQ-004 | en-revisión | aprobado | aprobado | critico | qa-109(instrumento,conductaimplementadaymedidael2026-09-06;faltasucriterioenelreq—dueñoanalista-requerimientos) |
-| REQ-005 | en-revisión | aprobado | con-hallazgos | critico | qa-113(instrumento,dueñoanalista-requerimientos;elcontroldeca-21generalizademássobreeldescuentodecomillas),qa-115(contrato,dueñoanalista-requerimientos;elcódigotolerasieteenvoltoriosycatorcepalabrasreservadasfrentealostresylasseisquedeclaraca-40(c),y`xargsgitclean-fd`—que«fueradealcance»declaranovisto—deniega:unlimitedeclaradocerradoensilencio,lasimetriadeloqueca-41pidevigilarenlim-10;direcciónsegura,secierraconunalineadewrite-backysinvueltadev↔qa),sec-009(contrato,dueñodesarrollador+analista-requerimientos;arregloverificadoporqaenlavuelta4—lasseisformasdeca-40endeny,ca-06intacto,31controlessinmover,cerofalsospositivosen19comandoslegitimos—pendientesólodequeelauditorlocierreensurevisión),sec-010(contrato,dueñodesarrollador+analista-requerimientos;arregloverificadoporqaenlavuelta4—ochoformasdemanifiestoilegibleendenyconmotivodemododegradado,ca-43completo,ausenteysinjqsigueninertes—pendientesólodequeelauditorlocierreensurevisión) |
+| REQ-005 | en-revisión | aprobado | aprobado | critico | qa-113(instrumento,dueñodesarrollador,ventana1.32.0;untokenentrecomilladooescapadonoseve—lim-10,declaradoenca-21.5yen«fueradealcance»,condictamenconcurrentedelauditorensec-012;nobloqueaelcierre),sec-013(instrumento,dueñodesarrollador,ventana1.32.0;lanotade`skills/arnes-upgrade`quelosproyectosheredanenumera`nohup`peronoloscuatroenvoltoriosnuevos—`xargs`,`setsid`,`ionice`,`doas`—,asiqueunproyectocon`xargsgitclean`enunguionrecibiraunadenegacionquelanotanoleanuncio;direccionseguraydenegacionruidosaconmotivo,poresonobloquea;verr-003) |
 | REQ-006 | en-revisión | aprobado | aprobado | critico | (ninguno) |
-| REQ-007 | en-progreso | pendiente | pendiente | critico | qa-114(contrato,dueñoanalista-requerimientos;ca-59exigea`gitstatus`unconteoquereq-005ca-26/ca-27declaraimposible,ysumargenderelojnodiscrimina) |
+| REQ-007 | en-progreso | pendiente | pendiente | critico | qa-114(contrato,dueñoanalista-requerimientos;ca-59exigea`gitstatus`unconteoquereq-005ca-26/ca-27declaraimposible,ysumargenderelojnodiscrimina),qa-116(contrato,dueñodesarrollador,ventana1.32.0;heredadodev1.30.3yreproducidoporelauditorenr-003enlasdosversiones:con`docs/estado.md`enmodo444ylacarpetaescribibleelbloqueseescribeigualyelmodopasaa644ensilencio,sinperdercontenidohumano.laverdadyaestaescritaenca-64.2yelarreglo—conservarelmodo—exigidoenca-64.2-bis;nocierrahastaqueelcodigoloimplemente),qa-117(contrato,dueñodesarrollador,ventana1.32.0;heredadodev1.30.3yreproducidoporelauditorenr-003enlasdosversiones:eltextohumanoposterioralosmarcadoressubeporencimadelbloqueencadaparada—sinperderunbyte,4de4lineas,eidempotente—.laverdadyaestaescritaenca-64.1yelarreglodelordenexigidoenca-64.1-bis;nocierrahastaqueelcodigoloimplemente) |
 | REQ-008 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-009 | en-revisión | aprobado | aprobado | critico | (ninguno) |
 | REQ-010 | en-revisión | aprobado | aprobado | critico | qa-108(instrumento) |

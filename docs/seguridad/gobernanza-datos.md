@@ -76,11 +76,23 @@ REQ-001 (2026-09-05): **sin hallazgos** de datos de cliente en las ~5.900 línea
   **mapeo de este repositorio** y no se propaga a `templates/`. Dos consecuencias, escritas
   para que no sorprendan: (a) subir `arnes_version` pasa a ser trabajo del agente de código;
   (b) mientras el manifiesto sea **ilegible**, la excepción de reparación (REQ-007 CA-60) abre
-  ese archivo a **cualquier** agente, y ese estado no deja rastro hoy — hallazgo **SEC-011**.
-- **Estado degradado del enforcement.** Con el manifiesto presente pero ilegible, las dos
-  puertas de escritura deniegan (fail-closed, SEC-005) pero `guard-git` **permite** — hallazgo
-  **SEC-010**. Mientras no se cierre, «manifiesto roto» debe tratarse como una **incidencia de
-  seguridad** que se repara de inmediato, no como una molestia de tooling.
+  ese archivo a **cualquier** agente — acotado a *ese* archivo y a comandos que no escriban en
+  ningún otro sitio, y desde 1.31.0 **con rastro**: el arnés emite un aviso propio que nombra la
+  herramienta y el `agent_type` que la ejerce (SEC-011, **mitigado**; verificado en R-003).
+- **Estado degradado del enforcement.** Con el manifiesto presente pero ilegible, las dos puertas
+  de escritura deniegan (fail-closed, SEC-005) y, **desde 1.31.0**, `guard-git` también: cae a la
+  **lista por defecto del código** y deniega el git destructivo diciendo que está en modo
+  degradado (SEC-010, **mitigado**; verificado en R-003 sobre once estados ilegibles). El borde
+  se declara: un proyecto con `git.activo: false` al que se le rompa el manifiesto **pasa a
+  denegar**, porque esa declaración vive dentro del archivo que no se puede leer. Aun así,
+  «manifiesto roto» sigue siendo una **incidencia de seguridad** que se repara de inmediato y no
+  una molestia de tooling: mientras dure, el mapeo del proyecto no se aplica y cualquier agente
+  puede reescribir el manifiesto (lista completa de lo que queda sin gobernar en REQ-007 CA-63.3).
+- **Lo que el estado degradado NO protege, y hay que saberlo.** `docs/ESTADO.md` y demás archivos
+  del usuario quedaron a salvo en 1.31.0 (nada que no se pueda leer se reescribe), pero el modo
+  del archivo y la posición del texto humano **fuera** de los marcadores todavía se alteran
+  (QA-116 y QA-117, heredados de v1.30.3, arreglo exigido en REQ-007 CA-64.1-bis y CA-64.2-bis,
+  ventana 1.32.0).
 
 ## 7. Cumplimiento
 

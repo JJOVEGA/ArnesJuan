@@ -375,6 +375,28 @@ cuatro paradas concurrentes por diez rondas, y un límite de tamaño de archivo.
 La regla que deja: **una comprobación que sólo mira si el bloque está nunca habría visto el archivo
 vaciado** — lo que se verifica es el archivo entero, por hash, no la parte que a uno le interesa.
 
+### Seguridad — un veto, y lo que enseñó levantarlo
+
+El `auditor-seguridad` **vetó** la puerta de git y el veto se levantó arreglando, no declarando. Encontró
+que construcciones ordinarias del shell la atravesaban (`if … then`, `{ … }`, `for … do`, `&`, `nohup`,
+la continuación de línea) y que **un manifiesto ilegible la apagaba** mientras el aviso afirmaba que todo
+se denegaba. Las dos cerradas y verificadas por él con sondas propias, no aceptadas del informe de QA.
+
+Tres cosas que se quedan del episodio:
+
+- **El radio se mide antes de decidir.** Antes de tocar nada se comprobó que el detector de escrituras
+  **no** estaba afectado: sus ocho formas denegaban igual en la candidata y en las dos versiones
+  publicadas. Eso convirtió un susto en un arreglo acotado a una sola puerta, y evitó tocar código
+  compartido que hoy funciona.
+- **Un límite se cierra con su criterio, nunca de rebote.** Al plegar la continuación de línea era fácil
+  arrastrar el escape del guion y cerrar en silencio un hueco que tiene dueño y ventana. Se dejó fijado
+  por dos casos vecinos, y el auditor lo verificó expresamente al levantar el veto.
+- **Y la simetría, que es la parte que nadie vigila:** el código acabó cubriendo **más** de lo que el
+  criterio prometía —siete envoltorios donde el requerimiento declaraba tres—, y denegaba una forma que
+  el propio documento decía no ver. Un límite que desaparece sin decirlo es tanta deriva como una
+  promesa incumplida, así que la regla quedó escrita en las dos direcciones: **cuando el código cubra más
+  de lo que el criterio promete, se actualiza el criterio en el mismo cambio.**
+
 En la tercera vuelta la puerta de git quedó aprobada, y el arreglo fue **del criterio, no del guardián**:
 se verificó que el código cumple la regla reescrita en 24 comandos, con los cuatro bordes del fin de
 opciones. El banco dejó de bailar —tres corridas de la línea base dan el mismo número, y las 625 líneas

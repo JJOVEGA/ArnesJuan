@@ -49,6 +49,16 @@ proyecto que instale el arnés decide su propia frontera. Las quality gates del 
 rápidas (sintaxis y JSON) porque un hook `PreToolUse` muere a los 60 s y un hook muerto no
 deniega; el banco completo es la puerta de `main` en CI (`hooks-en-linux`, requerido y estricto).
 
+**Cuál es «la plataforma del desarrollador» de `AGENTS.md` §7, porque dejó de ser obvia.** Desde el
+traslado del desarrollo a WSL/Linux (2026-09-05), el banco se corre **aquí**: tarda segundos en vez de
+media hora, y esa diferencia no es comodidad — un banco de treinta minutos se corre una vez y se cree,
+uno de diez segundos se corre veinte veces y se comprueba. La exigencia de §7 se cumple con las corridas
+de esta plataforma, y **está cumplida de sobra**. Lo que **no** queda cubierto, y hay que decirlo cada
+vez en lugar de darlo por hecho, es el **coste en Windows/MSYS**, donde un `fork` cuesta entre 1,2 y 6 s:
+las cifras de proceso que declaran los REQ se miden aquí y se razonan allí. Un proyecto que corra el
+arnés en Windows paga por cada proceso que añadamos, y por eso los criterios cuentan **procesos**, que
+son comparables entre plataformas, y no milisegundos, que no lo son.
+
 ## El ciclo, con los roles reales del arnés
 
 1. **Requerimiento.** Todo cambio del mecanismo nace como REQ en `requirements/` con
