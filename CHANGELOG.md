@@ -6,6 +6,7 @@
 > Origen: Interno (documentación de gobernanza) · usuario: Juan · modelo de IA: Fable 5.1 (coordinadora) · agente: sesión coordinadora.
 
 - `docs/gobernanza/autoalojamiento.md`: la fila del ciclo 1 pasa a **publicado** (v1.30.3 sobre 6c1b58a, PR #31) y se abre la fila del ciclo 2 (1.31.0, guardián v1.30.3). Sin efecto en la máquina ni en lo que heredan los proyectos.
+- `requirements/REQ-001.md`: `Estado: completado` (CA-44 cumplido: tag verificado, instalación estable en 1.30.3, cola vacía, ambos veredictos aprobados). Cierre aceptado por el guardián v1.30.2.
 
 ## [1.30.3] — 2026-09-05
 ### Corregido — dos bypass de v1.30.2, encontrados por una revisión externa
