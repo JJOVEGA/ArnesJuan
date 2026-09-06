@@ -2560,6 +2560,44 @@ if [ -w /dev/full ] || [ -c /dev/full ]; then
 else
   echo "  SKIP  QA 1.31.0 v4: CA-64.2 disco lleno (no hay /dev/full)"
 fi
+
+# DEV 1.31.0 v5 (QA-118): LA MUERTE POR SENAL A MITAD DE LA ESCRITURA TAMPOCO DEJA BASURA.
+# Los dos casos de arriba miden fallos que DEVUELVEN error —permisos, ENOSPC—, y ahi el
+# `rm -f` del hook corre. Falta la tercera forma de fallar: que al proceso lo MATEN mientras
+# escribe. Con un limite de tamano de archivo (`ulimit -f`) el kernel manda SIGXFSZ, el
+# interprete muere dentro del `printf` y ningun `rm` posterior llega a correr: medido antes
+# del arreglo, el hook salia 153 y dejaba `ESTADO.md.arnes.tmp` de 1024 bytes junto al
+# archivo de continuidad, en silencio. El destino quedaba intacto —eso ya estaba bien—, pero
+# un temporal huerfano al lado del unico archivo que sobrevive al contexto es basura que
+# alguien tendra que interpretar. Se exige lo mismo que a las otras dos averias.
+if ( ulimit -f 1 ) 2>/dev/null; then
+  EPROJ="$(mktemp -d)"; mkdir -p "$EPROJ/.arnes" "$EPROJ/docs" "$EPROJ/requirements"
+  printf '%s\n' "$MANIFIESTO_BASE" > "$EPROJ/.arnes/config.json"
+  # El texto humano se rellena a proposito por encima del limite: `ulimit -f` cuenta en
+  # bloques de 1024 bytes en bash, y el bloque derivado de un proyecto minimo cabe en uno
+  # (medido: 1020 bytes). Sin el relleno la escritura NO llegaria al limite y el caso
+  # estaria en verde sin haber provocado nunca la senal que dice medir.
+  { printf '# ESTADO\nlo que escribio una persona\n'
+    printf 'relleno de la persona %s\n' 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
+    printf 'relleno de la persona %s\n' 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40
+  } > "$EPROJ/docs/ESTADO.md"
+  EST_MD5="$(md5sum "$EPROJ/docs/ESTADO.md" | cut -d' ' -f1)"
+  # El stderr va a un archivo PROPIO y vacio: con `ulimit -f` activo, el limite se aplica a
+  # TODO archivo que se escriba, y un `$ERRLOG` que ya viniera crecido mataria al hook en su
+  # propio aviso, midiendo el banco en vez del hook.
+  EST_ERR118="$EPROJ/err.log"; : > "$EST_ERR118"
+  EST_IN118="$(CLAUDE_PROJECT_DIR="$EPROJ" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')"
+  EST_RC=0
+  ( ulimit -f 1
+    printf '%s' "$EST_IN118" | CLAUDE_PROJECT_DIR="$EPROJ" "$HOOKS_DIR/stop.sh" >/dev/null 2>"$EST_ERR118"
+  ) || EST_RC=$?
+  EST_TMP="$(ls -1 "$EPROJ/docs" | grep -c 'arnes.tmp' || true)"
+  rsec_check "DEV 1.31.0 v5: QA-118 muerte por SIGXFSZ: byte a byte, 0 temporales, avisa, sale 0" "iguales-0-si-0" \
+    "$([ "$EST_MD5" = "$(md5sum "$EPROJ/docs/ESTADO.md" | cut -d' ' -f1)" ] && echo iguales || echo distintos)-$EST_TMP-$(grep -q 'no se pudo escribir' "$EST_ERR118" && echo si || echo no)-$EST_RC"
+  rm -rf "$EPROJ"
+else
+  echo "  SKIP  DEV 1.31.0 v5: QA-118 SIGXFSZ (esta shell no acepta 'ulimit -f')"
+fi
 # QA 1.31.0 v4 (CA-64.2, concurrencia): DOS AGENTES QUE PARAN A LA VEZ.
 # `estado-derivado` publica por un temporal de nombre FIJO (`<destino>.arnes.tmp`), asi que
 # dos paradas simultaneas lo comparten. Es la carrera obvia y hay que medirla, no razonarla:
@@ -3016,10 +3054,39 @@ der_check "CA-10 un 'Hallazgos abiertos:' vacio sigue mostrando el guion" "1" \
   "$(grep -c '^| REQ-600 .* — |$' "$DER/docs/ESTADO.md")"
 der_check "CA-17 el hook sale 0 (la parada no se bloquea nunca)" "0" "$DER_RC"
 # CA-09: idempotencia. Una celda no puede ganar una segunda elipsis en cada parada.
+#
+# DEV 1.31.0 v5 (QA-119): LA COMPARACION NEUTRALIZA LA MARCA DE TIEMPO; EL BLOQUE LA
+# CONSERVA. El bloque derivado se encabeza con la fecha y la hora AL MINUTO, y este caso
+# comparaba las dos pasadas byte a byte: si cruzaban un cambio de minuto, fallaba sin que
+# nada estuviera roto (medido: 1 de 9 corridas completas). El banco es la puerta requerida
+# de `main`, asi que un rojo aleatorio bloquea una fusion legitima y —peor— ensena a
+# relanzar el CI hasta que salga verde, que es como se pierde la confianza en una puerta.
+#
+# Se NEUTRALIZA LA LINEA en la comparacion; no se quita la hora del bloque ni se fija el
+# reloj. La hora es para el humano que lee el archivo de continuidad, asi que no se toca.
+# Y fijar el reloj obligaria a interponer un `date` falso en el PATH del hook: seria medir
+# una plataforma que no es la de produccion y, de paso, taparia cualquier otro uso de la
+# fecha que apareciera manana. Tampoco se BORRA la linea: se sustituye su valor por un
+# testigo, para que la comparacion siga exigiendo que la cabecera este y en su sitio.
+der_marca_fija() { sed 's/^## Estado derivado — .*/## Estado derivado — <marca>/' "$1"; }
+# Lo que la comparacion deja de mirar, lo mira un caso propio: neutralizar sin medir la
+# marca aparte seria dejar de probarla.
+der_check "DEV 1.31.0 v5: QA-119 la cabecera lleva la marca de tiempo, con su formato" "1" \
+  "$(grep -cE '^## Estado derivado — [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$' "$DER/docs/ESTADO.md")"
 cp "$DER/docs/ESTADO.md" "$DER/antes.md"
 der_corre
 der_check "CA-09 idempotente: el bloque no cambia ni la celda gana otra elipsis" "iguales" \
-  "$(cmp -s "$DER/antes.md" "$DER/docs/ESTADO.md" && echo iguales || echo distintos)"
+  "$(cmp -s <(der_marca_fija "$DER/antes.md") <(der_marca_fija "$DER/docs/ESTADO.md") && echo iguales || echo distintos)"
+# DEV 1.31.0 v5 (QA-119): EL CRUCE DE MINUTO, FORZADO. Esperar 60 s a que ocurra de verdad
+# seria la prueba mas lenta del banco y SEGUIRIA sin ser determinista. Se falsea la marca de
+# la pasada anterior —exactamente lo que ve el caso cuando el reloj avanza— y se exige lo
+# mismo de siempre. El segundo miembro es el canario: byte a byte tiene que salir DISTINTOS,
+# porque si saliera iguales el cruce no se habria forzado y este caso estaria en verde por
+# no medir nada. Si alguien quita la hora del bloque, ese canario lo dira en voz alta.
+sed 's/^## Estado derivado — .*/## Estado derivado — 1999-01-01 00:00/' "$DER/antes.md" > "$DER/antes-otro-minuto.md"
+der_corre
+der_check "DEV 1.31.0 v5: QA-119 cruzar el minuto no rompe la idempotencia (y byte a byte si)" "iguales-distintos" \
+  "$(cmp -s <(der_marca_fija "$DER/antes-otro-minuto.md") <(der_marca_fija "$DER/docs/ESTADO.md") && echo iguales || echo distintos)-$(cmp -s "$DER/antes-otro-minuto.md" "$DER/docs/ESTADO.md" && echo iguales || echo distintos)"
 # CA-11/CA-12: EL RECORTE ES DE PRESENTACION. La puerta lee el campo ENTERO: si el
 # recorte llegara a la lectura, un `Hallazgos abiertos:` largo podria perder su clase
 # bloqueante por el camino y cerrar un REQ que no debia cerrarse.
@@ -4012,7 +4079,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=680
+CASOS_ESPERADOS=683
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)

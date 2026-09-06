@@ -278,10 +278,31 @@ $cuerpo"
 # original sigue intacto. Lo que faltaba era la otra mitad: DECIRLO y no dejar el temporal
 # huerfano. Un fallo de escritura que nadie ve es el mismo problema que un guardian mudo.
 arnes_estado_publica() {   # <tmp> <destino> <contenido>
+  # QA-118 — EL TEMPORAL SE BORRA AUNQUE AL PROCESO LO MATEN A MITAD DE LA ESCRITURA.
+  # El `rm -f` de abajo cubre el fallo que devuelve error (ENOSPC, permisos), pero NO la
+  # muerte por señal: con un límite de tamaño de archivo (`ulimit -f`) el kernel manda
+  # SIGXFSZ, el intérprete muere en el `printf` y el `rm` nunca corre — medido: el hook
+  # salía 153 y dejaba un `ESTADO.md.arnes.tmp` a medias, sin decir nada. Un artefacto
+  # huérfano al lado del archivo de continuidad es basura que alguien tendrá que
+  # interpretar, justo cuando el contexto ya se perdió.
+  #
+  # El trap cubre las dos mitades: limpia el temporal en la salida y en las señales que
+  # lo interrumpen. Y al ATENDER SIGXFSZ, la señal deja de ser mortal: `printf` devuelve
+  # !=0, el `&&` no llega al `mv` —el destino sigue intacto— y el fallo sale por el mismo
+  # camino que los demás: aviso propio y `return 0`. Es lo que ya prometía el resto del
+  # hook: nunca bloquear una parada, nunca callar la avería.
+  # La ruta viaja por una GLOBAL y el trap va en comillas simples a propósito: el cuerpo
+  # se evalúa cuando la señal llega, no cuando se instala, así que `$1` ahí dentro sería
+  # el parámetro de quien esté ejecutando en ese momento, y una expansión en comillas
+  # dobles rompería con una ruta que llevara comillas.
+  ARNES_ESTADO_TMP="$1"
+  trap 'rm -f "$ARNES_ESTADO_TMP" 2>/dev/null' EXIT INT TERM XFSZ
   if printf '%s\n' "$3" > "$1" 2>/dev/null && mv -f "$1" "$2" 2>/dev/null; then
+    trap - EXIT INT TERM XFSZ
     return 0
   fi
   rm -f "$1" 2>/dev/null
+  trap - EXIT INT TERM XFSZ
   arnes_warn "no se pudo escribir '$ARNES_ESTADO_ARCHIVO' (¿disco lleno o carpeta sin permiso?); el archivo queda EXACTAMENTE como estaba y no se dejo ningun temporal."
   return 0
 }

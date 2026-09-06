@@ -424,15 +424,61 @@ rotar sigue siendo lo correcto —sin entradas no hay límite seguro donde corta
 **por encima del umbral**: por debajo no se toca nada por diseño (CA-06) y avisar sería ruido en
 cada parada.
 
+### Corregido — el instrumento, otra vez: la idempotencia del bloque derivado se decidía por el reloj (QA-119)
+
+**Qué fallaba:** el caso «CA-09 idempotente» comparaba **byte a byte** las dos pasadas del bloque
+derivado, y el bloque se encabeza con la fecha y la hora **al minuto**. Si las dos pasadas cruzaban
+un cambio de minuto, el caso fallaba sin que nada estuviera roto: QA lo midió **1 de 9** corridas
+completas, y dos corridas del **mismo** árbol dieron `483 · 185 · 1` y `482 · 186 · 1`. **Es la
+misma familia que QA-111** —un caso del banco que decide por reloj de pared—, sólo que allí el
+reloj entraba como umbral de tiempo y aquí como contenido de la salida. **Por qué importa:** el
+banco es la puerta **requerida** de `main`; un rojo aleatorio bloquea una fusión legítima y, peor,
+enseña a re-lanzar el CI hasta que salga verde, que es como una puerta deja de significar algo.
+**Qué cambia — en el banco, no en el bloque:** la hora **se queda** en `docs/ESTADO.md`, porque es
+para la persona que lo lee; lo que se corrige es la comparación, que ahora **neutraliza** la línea
+de la marca —sustituye su valor por un testigo— en lugar de fijar el reloj. Fijar el reloj obligaría
+a interponer un `date` falso en el `PATH` del hook: mediría una plataforma que no es la de
+producción y taparía cualquier otro uso de la fecha que apareciera después. Y no se **borra** la
+línea, se neutraliza: la comparación sigue exigiendo que la cabecera esté y en su sitio, y **su
+formato lo mide un caso propio**, porque neutralizar sin medir aparte es dejar de probar. Se añade
+además el **cruce de minuto forzado** —se falsea la marca de la pasada anterior en vez de esperar
+60 s— con un canario: byte a byte tiene que seguir dando «distintos», o el caso estaría en verde
+por no medir nada. **Repasado el resto del banco:** de **16** comparaciones byte a byte (11 con
+`cmp`, 5 por `md5sum`), ésta era la **única** que comparaba contra una salida regenerada con marca
+de tiempo; las otras 15 comparan un archivo que **no debe cambiar** contra su copia previa, donde
+no hay fecha que generar. Los otros dos usos del reloj en el arnés —la marca `ARNES:ROTADO` de los
+dos rotadores— no los compara nadie byte a byte.
+
+### Corregido — un temporal huérfano cuando al hook lo matan a mitad de la escritura (QA-118)
+
+**Qué fallaba:** `estado-derivado` publica `docs/ESTADO.md` escribiendo primero un temporal y
+moviéndolo encima, y desde SEC-011 el fallo que **devuelve error** —carpeta sin permiso, disco
+lleno— borra el temporal y avisa. Faltaba la tercera forma de fallar: que al proceso lo **maten**
+mientras escribe. Con un límite de tamaño de archivo (`ulimit -f`, SIGXFSZ) el intérprete moría
+dentro del `printf` y ningún `rm` posterior llegaba a correr: medido, el hook salía **153** y dejaba
+un `ESTADO.md.arnes.tmp` a medias **en silencio**, al lado del único archivo que sobrevive a la
+pérdida de contexto. El destino quedaba intacto —eso ya estaba bien—, pero un artefacto huérfano
+sin explicación es basura que alguien tendrá que interpretar justo cuando ya no queda contexto.
+**Qué cambia:** un `trap` sobre `EXIT INT TERM XFSZ` limpia el temporal en la salida y en las
+señales que la interrumpen. Y al **atender** SIGXFSZ la señal deja de ser mortal: `printf` devuelve
+error, el `&&` no llega al `mv` —el destino sigue intacto— y la avería sale por el mismo camino que
+las otras dos, con aviso propio y código de salida **0**, que es lo que el hook de parada promete:
+nunca bloquear una parada, nunca callar la avería. Medido antes y después con la misma avería:
+`iguales-1-no-153` → `iguales-0-si-0`. **Fuera de alcance, declarado:** los dos rotadores escriben
+sus temporales con el mismo patrón y comparten esta debilidad ante una señal; viene apagada por
+defecto y nadie la ha medido, así que queda anotada, no arreglada de paso.
+
 ### Pruebas
-Banco: **615 casos** (310 antes de esta versión; 480 al cerrar la implementación, 569 con los
-casos que añadió QA, 606 tras la vuelta 1 y 615 tras la vuelta 2), **614 PASS · 0 FAIL · 1 SKIP**
-sobre la candidata y el cuadre de `CASOS_ESPERADOS` cerrado. Contra la instalación estable
-**v1.30.3**, el mismo banco da **462 PASS · 152 FAIL · 1 SKIP**: son exactamente los casos nuevos
-de comportamiento —fail-before/pass-after— y **todos** los controles de no regresión pasan también
-contra ella. Esa cifra de línea base ya es **reproducible**, que es la prueba de que QA-111 está
-cerrado: **tres corridas seguidas** dieron `462 · 152 · 1` las tres, donde antes del arreglo dos
-corridas de la misma línea base daban 457 y 458.
+Banco: **683 casos** (310 antes de esta versión; 480 al cerrar la implementación, 569 con los
+casos que añadió QA, 606 tras la vuelta 1, 615 tras la vuelta 2, 680 tras las vueltas 3 y 4, y 683
+con los tres de la vuelta 5), **682 PASS · 0 FAIL · 1 SKIP** sobre la candidata y el cuadre de
+`CASOS_ESPERADOS` cerrado. Contra la instalación estable **v1.30.3**, el mismo banco da
+**494 PASS · 188 FAIL · 1 SKIP**: son los casos nuevos de comportamiento —fail-before/pass-after—,
+entre ellos el de QA-118, que contra la línea base da exactamente el síntoma reportado
+(`iguales-1-no-153`). Esa cifra de línea base es **reproducible**, y ésa es la prueba de que QA-119
+está cerrado: **cinco corridas seguidas** dieron `494 · 188 · 1` las cinco, donde antes del arreglo
+dos corridas del mismo árbol daban `483 · 185 · 1` y `482 · 186 · 1`. Los dos casos que añade la
+vuelta 5 para QA-119 pasan **también** contra la línea base: corrigen el instrumento, no el hook.
 Coste medido con `awk` y `jq` instrumentados en el `PATH` (Linux/WSL2): el camino común de `Bash`
 (`ls -la`, `npm run build` por `guard.sh`) gasta **1 `jq`**, los mismos que v1.30.3 —eran **2**
 antes de la vuelta 1, porque leer el manifiesto se había puesto por delante del corte temprano—;
