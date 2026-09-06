@@ -212,3 +212,31 @@ comprar honestamente.
 tratados aparte, el puntero coherente en las dos mitades, y el par fail-before/pass-after sobre un REQ
 real de este repositorio. Enlaza con la estrategia de working set de 1.35.0: éste es el mecanismo que
 mide su rama B1.
+
+### 1.32.0 — deuda que deja el ciclo 2, ya con dueño y criterio escrito
+
+Todo lo de aquí tiene **criterio en su REQ** y no depende de que nadie lo recuerde:
+
+- **REQ-007 bloques B y C** (cabecera fuera de alcance; destino entrecomillado en el detector de Bash) y
+  **CA-36…CA-39**. Con ellos cierra REQ-007, que hoy cruza dos ventanas.
+- **REQ-007 CA-64.1-bis y CA-64.2-bis**: el texto humano posterior a los marcadores **sube** por encima
+  del bloque en cada parada, y un `docs/ESTADO.md` en modo 444 se reescribe igual y pasa a 644. Los dos
+  son heredados de v1.30.3, ninguno pierde un byte, y por eso se aceptaron como residual; el arreglo
+  está exigido.
+- **REQ-011**: la puerta posterior (`PostToolUse`), que es la respuesta de fondo a la palabra del estado
+  terminal partida en expansiones.
+- **QA-113 / LIM-10**: un token entrecomillado o escapado no llega al análisis (`git clean "-f"` pasa).
+  Se cierra con el bloque C, y las seis formas ya tienen caso para que se muevan **a la vez y en voz alta**.
+- **SEC-013**: la nota que heredan los proyectos enumera un envoltorio y ahora se toleran siete; una
+  denegación legítima llegaría sin estar anunciada.
+- **QA-109 y QA-114**: criterios que llegaron después de la implementación, o que se contradicen entre sí.
+- **La rotación no reconoce filas de tabla**, así que no rota la historia de un REQ — su caso de uso
+  principal. Medido: 0 entradas y 94 filas en los REQ de este repositorio.
+- **Los dos rotadores no retiran su temporal si el proceso muere por señal**, la misma familia que se
+  cerró en el hook de parada. Vienen apagados y nadie lo ha medido.
+
+**Y una migración pendiente de este repositorio:** 1.31.0 **sí** cambió plantillas (`AGENTS.md.tpl`,
+`requirements-README.md.tpl`, `PENDING_APPROVAL.md.tpl`, `arnes-config.json.tpl`), así que este proyecto
+tiene andamiaje que poner al día con `/arnes-upgrade` — y su Fase 5 la ejecuta ahora el `desarrollador`,
+porque el manifiesto entró en su propia frontera. Se hace en la sesión siguiente, que es la que corre el
+plugin 1.31.0.

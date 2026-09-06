@@ -135,4 +135,23 @@ sesión siguiente.
 | Ciclo | N (guardián) | N+1 (candidata) | REQ | Resultado |
 |---|---|---|---|---|
 | 1 | v1.30.2 (38b59fb) | rama `cand/1.30.3-autoalojamiento` → `main` 6c1b58a | REQ-001 | **publicado** 2026-09-05: tag `v1.30.3` sobre 6c1b58a (PR #31, `hooks-en-linux` 309/0/1). Tres vueltas dev↔QA; QA y seguridad aprobados; SEC-001..007 preexistentes → REQ-007. El REQ se cierra al verificar la instalación estable en 1.30.3 |
-| 2 | v1.30.3 (6c1b58a) | rama `cand/1.31.0-…` | REQ-002..007 | pendiente de abrir (guardián nuevo desde la sesión siguiente) |
+| 2 | v1.30.3 (6c1b58a) | rama `cand/1.31.0-mecanismos` → `main` 2fecae1 | REQ-002..006, 009, 010 (007 parcial) | **publicado** 2026-09-06: tag `v1.31.0` sobre 2fecae1 (PR #33, `hooks-en-linux` 682/0/1). Tres vueltas dev↔QA **más una extra autorizada por delegación tras un veto del auditor**, con su razón y su límite escritos en REQ-005. Siete REQ con las dos firmas; REQ-007 sigue `en-progreso` y cruza a 1.32.0 |
+| 3 | v1.31.0 (2fecae1) | rama `cand/1.32.0-…` | REQ-007 (bloques B y C), REQ-011, y lo que docs/PENDIENTES.md asigna a 1.32.0 | pendiente de abrir (el guardián nuevo gobierna desde la sesión siguiente) |
+
+### Lo que enseñó el ciclo 2, y no estaba previsto
+
+- **El arnés destruía el archivo del usuario.** Con el manifiesto averiado, el hook de parada tenía
+  cuatro caminos que mataban o borraban; dos reescribían `docs/ESTADO.md` **a partir de una lectura que
+  había fallado**. Lo encontró la auditoría buscando otra cosa, y el QA lo **reprodujo** en la versión
+  anterior antes de dar por bueno el arreglo. Regla que se queda: **lo que no se puede leer no se
+  reescribe**, y lo que se verifica es el archivo entero por hash, no la parte que a uno le interesa.
+- **Un veto se levanta arreglando, no declarando** — y antes de arreglar se mide el **radio**: comprobar
+  que el detector de escrituras no estaba afectado convirtió un susto en un cambio acotado a una puerta.
+- **La deriva tiene dos direcciones.** Un criterio que promete de más es deriva conocida; uno que promete
+  **de menos**, porque el código acabó cubriendo más, lo es igual y nadie lo vigila. Se cierra el límite
+  en silencio y el documento deja de describir la máquina.
+- **El cierre de un REQ lo juzga el guardián de la sesión, no la versión que se acaba de publicar.** Al
+  cerrar los REQ de 1.31.0 con 1.30.3 gobernando, la puerta rechazó el campo `Hallazgos abiertos:`
+  escrito en la forma ancha que **1.31.0** aprendió a leer. No es un fallo: es el principio funcionando.
+  La consecuencia práctica, que vale para cualquier proyecto: **el campo se escribe en la forma cerrada
+  —`ID (clase)`— y la evidencia vive en el informe**, que es donde no la lee ninguna puerta.
