@@ -391,6 +391,23 @@ nada.
   `git.activo: false`, o se sustituye la lista con `git.prohibidos` (`[]` es una decisión
   declarada y válida). Que la puerta exista **no** sustituye la regla humana: comitear tras cada
   aterrizaje.
+- **La puerta de git pasa a ver las formas ENVUELTAS.** Hasta ahora sólo miraba el primer token
+  de cada orden y no conocía las palabras reservadas del shell, así que `if …; then git clean -fd;
+  fi`, `{ git clean -fd; }`, `for … do git clean -fd; done`, `sleep 0 & git clean -fd`,
+  `nohup git clean -fd` y una orden partida con `\` + salto de línea **pasaban**. Ahora se
+  deniegan, igual que la forma desnuda. **Qué notará el proyecto:** un guión o un agente que
+  limpiara dentro de un `if` o de un bucle recibirá ahora la denegación que ya recibía sin
+  envolver. **No cambia ningún permitido:** `echo git clean -f`, un `grep` de un texto que
+  mencione el comando y `if …; then git status; fi` siguen pasando. Sigue **fuera de cobertura**
+  un subcomando que llega por variable (`G=clean; git $G -f`), los scripts y los intérpretes.
+- **Con el manifiesto ROTO, el git destructivo pasa a DENEGARSE.** Si `.arnes/config.json` existe
+  y no se puede leer como objeto JSON, la puerta ya no se apaga: aplica la **lista por defecto del
+  arnés** y deniega, diciendo que está en modo degradado. Antes permitía, y eso convertía una coma
+  de más en un interruptor de apagado. **Ojo al borde:** un proyecto con `git.activo: false` al
+  que se le rompa el manifiesto **también** pasará a denegar; la salida es reparar el JSON
+  (`jq -e . .arnes/config.json`), que es la única escritura que la avería deja pasar. Con el
+  manifiesto sano, `git.activo: false` sigue apagando la puerta igual que siempre. Y mientras dure
+  la avería, el bloque derivado de `docs/ESTADO.md` lo dice en una línea, en vez de no escribirse.
 - **La forma LARGA de un flag se deniega igual que la corta.** Un proyecto (o un agente) que
   escribiera `git clean --force`, `git clean --force -d` o `git stash save "wip"` los verá ahora
   **denegados**: son el mismo comando destructivo que `clean -f` y que `stash push`, escritos de

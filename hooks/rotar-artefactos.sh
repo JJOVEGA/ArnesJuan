@@ -379,7 +379,7 @@ arnes_parse_manifest_rotacion() {
             end
           | join("	") ]
     | join("
-")' || return 1
+")' 2>/dev/null || return 1   # manifiesto ilegible: no se rota nada, y el aviso lo da el bloque derivado (SEC-011)
   local primera=1 l
   ARNES_ROT_LISTA=''
   while IFS= read -r l; do

@@ -2425,6 +2425,141 @@ rsec_check "DEV 1.31.0 v3: QA-109 control: con entradas de verdad ni aviso ni me
   "$(grep -q 'ENTRADA reconocible' "$ERRLOG" && echo aviso || echo silencio)-$(grep -q 'sin ninguna entrada reconocible' "$RP2/docs/ESTADO.md" && echo si || echo no)-$(rsec_ent "$RP2/requirements/REQ-415.md")"
 rm -rf "$RP2"
 
+# DEV 1.31.0 v4 (CA-36 de REQ-004): LOS DOS CONTROLES QUE FALTABAN. El criterio declara
+# tres y solo uno tenia caso. Sin el de abajo, un aviso emitido SIEMPRE pasaria por acierto.
+#
+# (i) POR DEBAJO DEL UMBRAL NO SE AVISA. La rotacion ni siquiera mira la seccion de un
+# archivo que no pesa lo suficiente, asi que no hay error de mapeo que contar: un bloque
+# que informa de lo que no pasa deja de servir para saber donde quedamos.
+# La MISMA seccion sin entradas del caso de arriba (una tabla), pero con solo 3 filas: no
+# llega al umbral. El aviso es para lo que se quiso rotar y no se rotó, no ruido de cada
+# parada (CA-06 intacto).
+rsec_proj true 20 1000 nuevo-al-final
+mkdir -p "$RP2/docs"; printf '# ESTADO\n' > "$RP2/docs/ESTADO.md"
+{ printf '# REQ-416\nEstado: en-revisión\n\n## Historial de cambios\n\n'
+  i=1; while [ "$i" -le 3 ]; do printf '| 2026-01-01 | fila %s | causa | — |\n' "$i"; i=$((i+1)); done
+} > "$RP2/requirements/REQ-416.md"
+cp "$RP2/requirements/REQ-416.md" "$RP2/antes416.md"
+: > "$ERRLOG"
+printf '%s' "$(CLAUDE_PROJECT_DIR="$RP2" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')" \
+  | CLAUDE_PROJECT_DIR="$RP2" "$HOOKS_DIR/stop.sh" >/dev/null 2>"$ERRLOG"
+rsec_check "DEV 1.31.0 v4: CA-36 bajo el umbral: ni se rota, ni se avisa, ni el bloque lo dice" "iguales-silencio-no" \
+  "$(cmp -s "$RP2/antes416.md" "$RP2/requirements/REQ-416.md" && echo iguales || echo distintos)-$(grep -q 'REQ-416.md' "$ERRLOG" && echo aviso || echo silencio)-$(grep -qE 'no contienen la sección declarada|sin ninguna entrada reconocible' "$RP2/docs/ESTADO.md" && echo si || echo no)"
+rm -rf "$RP2"
+
+# (ii) LAS DOS AVERIAS A LA VEZ: dos avisos DISTINTOS y dos lineas DISTINTAS en el bloque.
+# Son errores de mapeo distintos y piden acciones distintas —alli el nombre de la seccion
+# en el manifiesto, aqui el formato de la seccion—, asi que no pueden sumarse en un solo
+# contador ni compartir texto. Cada rama por separado ya tenia caso; su CONVIVENCIA no, y
+# es donde una sumaria a la otra sin que nadie lo viera.
+rsec_proj true 20 1000 nuevo-al-final
+mkdir -p "$RP2/docs"; printf '# ESTADO\n' > "$RP2/docs/ESTADO.md"
+{ printf '# REQ-417\nEstado: en-revisión\n\n## Otra seccion cualquiera\n\n'
+  i=1; while [ "$i" -le 40 ]; do printf -- '- relleno %s para pasar del umbral de mil bytes sin traer la seccion declarada\n' "$i"; i=$((i+1)); done
+} > "$RP2/requirements/REQ-417.md"
+{ printf '# REQ-418\nEstado: en-revisión\n\n## Historial de cambios\n\n'
+  i=1; while [ "$i" -le 40 ]; do printf '| 2026-01-01 | fila de tabla %s con relleno de sobra para pasar del umbral | causa | — |\n' "$i"; i=$((i+1)); done
+} > "$RP2/requirements/REQ-418.md"
+cp "$RP2/requirements/REQ-417.md" "$RP2/antes417.md"; cp "$RP2/requirements/REQ-418.md" "$RP2/antes418.md"
+: > "$ERRLOG"
+printf '%s' "$(CLAUDE_PROJECT_DIR="$RP2" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')" \
+  | CLAUDE_PROJECT_DIR="$RP2" "$HOOKS_DIR/stop.sh" >/dev/null 2>"$ERRLOG"
+rsec_check "DEV 1.31.0 v4: CA-36 las dos averias juntas: dos avisos, uno por rama" "si-si" \
+  "$(grep -q 'REQ-417.md' "$ERRLOG" && echo si || echo no)-$(grep -q 'REQ-418.md' "$ERRLOG" && echo si || echo no)"
+rsec_check "DEV 1.31.0 v4: CA-36 las dos averias juntas: dos lineas DISTINTAS en el bloque" "si-si" \
+  "$(grep -q 'no contienen la sección declarada' "$RP2/docs/ESTADO.md" && echo si || echo no)-$(grep -q 'sin ninguna entrada reconocible' "$RP2/docs/ESTADO.md" && echo si || echo no)"
+rsec_check "DEV 1.31.0 v4: CA-36 y con las dos averias no se rota NADA" "iguales-iguales" \
+  "$(cmp -s "$RP2/antes417.md" "$RP2/requirements/REQ-417.md" && echo iguales || echo distintos)-$(cmp -s "$RP2/antes418.md" "$RP2/requirements/REQ-418.md" && echo iguales || echo distintos)"
+rm -rf "$RP2"
+
+# DEV 1.31.0 v4 (SEC-011): CON EL MANIFIESTO ILEGIBLE, `docs/ESTADO.md` NO SE PIERDE.
+# Es el archivo de continuidad —lo unico que queda cuando el contexto se pierde— y ademas
+# lleva texto de una persona fuera de los marcadores. Medido antes del arreglo: con el
+# manifiesto roto la parada dejaba dos `jq: parse error` crudos y NINGUN bloque; con el
+# manifiesto VACIO el hook moria con `unbound variable`. Ahora se deriva igual con las
+# rutas por defecto del codigo, el bloque DICE que el enforcement esta degradado, y lo de
+# fuera de los marcadores sigue byte a byte.
+for MEST in '{"agentes":{,}' '' 'null' '[]'; do
+  EPROJ="$(mktemp -d)"; mkdir -p "$EPROJ/.arnes" "$EPROJ/docs" "$EPROJ/requirements"
+  printf '%s' "$MEST" > "$EPROJ/.arnes/config.json"
+  printf '# ESTADO\n\n## Fase\nlo que escribio una persona\n' > "$EPROJ/docs/ESTADO.md"
+  ETIQ="$(printf '%s' "${MEST:-<vacio>}" | head -c 14)"
+  : > "$ERRLOG"
+  printf '%s' "$(CLAUDE_PROJECT_DIR="$EPROJ" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')" \
+    | CLAUDE_PROJECT_DIR="$EPROJ" "$HOOKS_DIR/stop.sh" >/dev/null 2>"$ERRLOG"; EST_RC=$?
+  rsec_check "DEV 1.31.0 v4: SEC-011 manifiesto ilegible ($ETIQ): bloque derivado + linea de degradado, sale 0" "si-si-0" \
+    "$(grep -q 'ARNES:DERIVADO' "$EPROJ/docs/ESTADO.md" && echo si || echo no)-$(grep -q 'enforcement degradado' "$EPROJ/docs/ESTADO.md" && echo si || echo no)-$EST_RC"
+  rsec_check "DEV 1.31.0 v4: SEC-011 manifiesto ilegible ($ETIQ): lo de la persona sigue, y sin jq crudo" "1-no" \
+    "$(grep -c 'lo que escribio una persona' "$EPROJ/docs/ESTADO.md")-$(grep -q '^jq:' "$ERRLOG" && echo si || echo no)"
+  rm -rf "$EPROJ"
+done
+
+# LOS CAMINOS EN QUE NO SE PUEDE LEER EL DESTINO: NO SE ESCRIBE NADA Y EL ARCHIVO QUEDA
+# BYTE A BYTE. Medidos antes del arreglo: los dos DESTRUIAN el texto de la persona, porque
+# se reescribia a partir de una lectura que habia fallado. Un bloque que no se escribe es
+# un inconveniente; uno que borra el documento es una perdida.
+EPROJ="$(mktemp -d)"; mkdir -p "$EPROJ/.arnes" "$EPROJ/docs" "$EPROJ/requirements"
+printf '%s\n' "$MANIFIESTO_BASE" > "$EPROJ/.arnes/config.json"
+{ printf '# ESTADO\nantes del NUL\n'; printf 'x\000y\n'; printf 'DETRAS DEL NUL\n'; } > "$EPROJ/docs/ESTADO.md"
+EST_MD5="$(md5sum "$EPROJ/docs/ESTADO.md" | cut -d' ' -f1)"
+: > "$ERRLOG"
+printf '%s' "$(CLAUDE_PROJECT_DIR="$EPROJ" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')" \
+  | CLAUDE_PROJECT_DIR="$EPROJ" "$HOOKS_DIR/stop.sh" >/dev/null 2>"$ERRLOG"
+rsec_check "DEV 1.31.0 v4: SEC-011 un NUL en ESTADO.md: no se escribe nada, byte a byte, y se avisa" "iguales-si" \
+  "$([ "$EST_MD5" = "$(md5sum "$EPROJ/docs/ESTADO.md" | cut -d' ' -f1)" ] && echo iguales || echo distintos)-$(grep -q 'NUL' "$ERRLOG" && echo si || echo no)"
+rm -rf "$EPROJ"
+
+EPROJ="$(mktemp -d)"; mkdir -p "$EPROJ/.arnes" "$EPROJ/docs" "$EPROJ/requirements"
+printf '%s\n' "$MANIFIESTO_BASE" > "$EPROJ/.arnes/config.json"
+printf '# ESTADO\nlo que escribio una persona\n' > "$EPROJ/docs/ESTADO.md"
+EST_MD5="$(md5sum "$EPROJ/docs/ESTADO.md" | cut -d' ' -f1)"
+chmod 200 "$EPROJ/docs/ESTADO.md"
+: > "$ERRLOG"
+printf '%s' "$(CLAUDE_PROJECT_DIR="$EPROJ" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')" \
+  | CLAUDE_PROJECT_DIR="$EPROJ" "$HOOKS_DIR/stop.sh" >/dev/null 2>"$ERRLOG"
+chmod 600 "$EPROJ/docs/ESTADO.md"
+rsec_check "DEV 1.31.0 v4: SEC-011 ESTADO.md sin permiso de lectura: no se escribe nada, byte a byte" "iguales-si" \
+  "$([ "$EST_MD5" = "$(md5sum "$EPROJ/docs/ESTADO.md" | cut -d' ' -f1)" ] && echo iguales || echo distintos)-$(grep -q 'no se puede leer' "$ERRLOG" && echo si || echo no)"
+rm -rf "$EPROJ"
+
+# Y LA CARPETA SIN PERMISO DE ESCRITURA: el original intacto, CERO temporales huerfanos y
+# un aviso. El `mv` ya protegia el destino; lo que faltaba era decirlo y no dejar basura.
+EPROJ="$(mktemp -d)"; mkdir -p "$EPROJ/.arnes" "$EPROJ/docs" "$EPROJ/requirements"
+printf '%s\n' "$MANIFIESTO_BASE" > "$EPROJ/.arnes/config.json"
+printf '# ESTADO\nlo que escribio una persona\n' > "$EPROJ/docs/ESTADO.md"
+EST_MD5="$(md5sum "$EPROJ/docs/ESTADO.md" | cut -d' ' -f1)"
+chmod 500 "$EPROJ/docs"
+: > "$ERRLOG"
+printf '%s' "$(CLAUDE_PROJECT_DIR="$EPROJ" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')" \
+  | CLAUDE_PROJECT_DIR="$EPROJ" "$HOOKS_DIR/stop.sh" >/dev/null 2>"$ERRLOG"
+EST_TMP="$(ls -1 "$EPROJ/docs" | grep -c 'arnes.tmp' || true)"
+chmod 700 "$EPROJ/docs"
+rsec_check "DEV 1.31.0 v4: SEC-011 carpeta sin permiso: original intacto, 0 temporales, y avisa" "iguales-0-si" \
+  "$([ "$EST_MD5" = "$(md5sum "$EPROJ/docs/ESTADO.md" | cut -d' ' -f1)" ] && echo iguales || echo distintos)-$EST_TMP-$(grep -q 'no se pudo escribir' "$ERRLOG" && echo si || echo no)"
+rm -rf "$EPROJ"
+
+# DEV 1.31.0 v4 (SEC-011): LA REPARACION DEL MANIFIESTO DEJA RASTRO, Y DISTINGUIBLE.
+# Con el manifiesto ilegible la escritura de `.arnes/config.json` esta permitida a
+# proposito —es la que devuelve la capacidad de medir—, pero su `stderr` era IDENTICO al de
+# cualquier otra llamada durante la averia: la unica escritura privilegiada del arnes era
+# indistinguible de que no hubiera pasado nada.
+EPROJ="$(mktemp -d)"; mkdir -p "$EPROJ/.arnes"
+printf '%s' '{"agentes":{,}' > "$EPROJ/.arnes/config.json"
+: > "$ERRLOG"
+printf '%s' "$(CLAUDE_PROJECT_DIR="$EPROJ" jq -n --arg f "$EPROJ/.arnes/config.json" \
+  '{tool_name:"Write",agent_id:"q1",agent_type:"qa-tester",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{file_path:$f,content:"{}"}}')" \
+  | CLAUDE_PROJECT_DIR="$EPROJ" "$HOOKS_DIR/guard.sh" >/dev/null 2>"$ERRLOG"
+rsec_check "DEV 1.31.0 v4: SEC-011 la reparacion avisa una vez, nombra el archivo y el agente" "1-si-si" \
+  "$(grep -c 'REPARACION DEL MANIFIESTO' "$ERRLOG")-$(grep -q '.arnes/config.json' "$ERRLOG" && echo si || echo no)-$(grep -q "qa-tester" "$ERRLOG" && echo si || echo no)"
+# CONTROL: cualquier OTRA ruta durante la averia sigue denegada y no lleva ese aviso.
+: > "$ERRLOG"
+EST_OUT="$(printf '%s' "$(CLAUDE_PROJECT_DIR="$EPROJ" jq -n \
+  '{tool_name:"Write",agent_id:"q1",agent_type:"qa-tester",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{file_path:"docs/n.md",content:"x"}}')" \
+  | CLAUDE_PROJECT_DIR="$EPROJ" "$HOOKS_DIR/guard.sh" 2>"$ERRLOG")"
+rsec_check "DEV 1.31.0 v4: SEC-011 control: otra ruta sigue deny y sin el aviso de reparacion" "deny-0" \
+  "$(printf '%s' "$EST_OUT" | jq -r '.hookSpecificOutput.permissionDecision // "allow"')-$(grep -c 'REPARACION DEL MANIFIESTO' "$ERRLOG")"
+rm -rf "$EPROJ"
+
 # CA-17: no regresion. La forma ANTERIOR —artefacto por ruta, secciones `## `— sigue
 # rotando igual que en 1.30.3.
 RP3="$(mktemp -d)"; mkdir -p "$RP3/.arnes"
@@ -2617,6 +2752,102 @@ check "DEV 1.31.0 v2: QA-101 '--all' es la larga de 'stash -a' -> deny" deny gua
   "$(emite_bash 'git stash --all' "" "")"
 setcfg '.git = {"prohibidos": ["reset --hard"]}'
 check "CA-21 el token en otra posicion del segmento -> deny igual" deny guard-git.sh "$(emite_bash 'git reset HEAD~1 --hard' "" "")"
+setcfg 'del(.git)'
+
+# DEV 1.31.0 v4 (SEC-009): CONSTRUCCIONES ORDINARIAS DEL SHELL. El auditor midio SIETE
+# formas que atravesaban esta puerta —la unica que nace encendida— mientras `git clean -fd`
+# desnudo denegaba. No son sintaxis exotica: `if [ … ]; then git clean -fd; fi` es
+# exactamente como se escribe una limpieza condicional, y se pisa SIN QUERER. La causa era
+# doble: la segmentacion no partia por `&` sencillo ni plegaba la continuacion de linea, y
+# el bucle de prefijos descartaba el segmento entero en cuanto empezaba por una palabra
+# reservada (`then`, `do`, `{`). Una forma, un caso: si manana alguien vuelve a estrechar
+# el bucle, el banco lo dice en voz alta y no un auditor tres meses despues.
+check "DEV 1.31.0 v4: SEC-009 'if true; then git clean -fd; fi' -> deny" deny guard-git.sh \
+  "$(emite_bash 'if true; then git clean -fd; fi' "" "")"
+check "DEV 1.31.0 v4: SEC-009 '{ git clean -fd; }' -> deny" deny guard-git.sh \
+  "$(emite_bash '{ git clean -fd; }' "" "")"
+check "DEV 1.31.0 v4: SEC-009 'for i in 1; do git clean -fd; done' -> deny" deny guard-git.sh \
+  "$(emite_bash 'for i in 1; do git clean -fd; done' "" "")"
+check "DEV 1.31.0 v4: SEC-009 'sleep 0 & git clean -fd' (el & sencillo separa) -> deny" deny guard-git.sh \
+  "$(emite_bash 'sleep 0 & git clean -fd' "" "")"
+check "DEV 1.31.0 v4: SEC-009 'nohup git clean -fd' -> deny" deny guard-git.sh \
+  "$(emite_bash 'nohup git clean -fd' "" "")"
+check "DEV 1.31.0 v4: SEC-009 continuacion de linea 'git clean \\<salto> -fd' -> deny" deny guard-git.sh \
+  "$(emite_bash 'git clean \
+ -fd' "" "")"
+# Las dos que el arreglo alcanza de paso, y que valen por si solas: un envoltorio CON
+# ARGUMENTO (`timeout 30`) y la negacion.
+check "DEV 1.31.0 v4: SEC-009 'timeout 30 git clean -fd' (envoltorio con argumento) -> deny" deny guard-git.sh \
+  "$(emite_bash 'timeout 30 git clean -fd' "" "")"
+check "DEV 1.31.0 v4: SEC-009 '! git reset --hard' -> deny" deny guard-git.sh \
+  "$(emite_bash '! git reset --hard' "" "")"
+check "DEV 1.31.0 v4: SEC-009 'while read x; do git checkout .; done' -> deny" deny guard-git.sh \
+  "$(emite_bash 'while read x; do git checkout .; done' "" "")"
+# CONTROLES, y son la mitad que sostiene el arreglo: tolerar palabras reservadas ensancha
+# donde la puerta MIRA, no lo que deniega. El nombre `git` tiene que seguir siendo un
+# COMANDO y no un texto; si estos se volvieran deny, el arreglo habria creado el falso
+# positivo que acaba con alguien apagando el guard.
+check "DEV 1.31.0 v4: SEC-009 control: 'echo git clean -f' sigue allow" allow guard-git.sh \
+  "$(emite_bash 'echo git clean -f' "" "")"
+check "DEV 1.31.0 v4: SEC-009 control: grep de un texto que dice 'then git clean -fd' -> allow" allow guard-git.sh \
+  "$(emite_bash 'grep -rn "then git clean -fd" docs/' "" "")"
+check "DEV 1.31.0 v4: SEC-009 control: 'if true; then git status; fi' -> allow" allow guard-git.sh \
+  "$(emite_bash 'if true; then git status; fi' "" "")"
+check "DEV 1.31.0 v4: SEC-009 control: 'echo hi >&2 && git add .' -> allow" allow guard-git.sh \
+  "$(emite_bash 'echo hi >&2 && git add .' "" "")"
+
+# DEV 1.31.0 v4 (SEC-012 / QA-113 / CA-21.5): LAS SEIS FORMAS DEL TOKEN ENTRECOMILLADO O
+# ESCAPADO, no dos. El criterio enumera seis y solo dos tenian caso; un criterio sin caso
+# se desfasa, y las cuatro que faltaban son exactamente por donde entraria una regresion
+# silenciosa. Hoy las seis son ALLOW: es el LIMITE DECLARADO LIM-10, heredado del descuento
+# de comillas que esta puerta comparte a proposito con el detector de escrituras, con su
+# arreglo asignado a REQ-007 Bloque C (1.32.0). Cuando el Bloque C aterrice, LAS SEIS pasan
+# a DENY a la vez y este bloque cambia EN VOZ ALTA; si alguna se quedara en ALLOW, es que
+# el arreglo fue parcial y el banco lo dira.
+check "DEV 1.31.0 v4: CA-21.5 'git reset \"--hard\"' -> allow (LIM-10; cambia en 1.32.0)" allow guard-git.sh \
+  "$(emite_bash 'git reset "--hard"' "" "")"
+check "DEV 1.31.0 v4: CA-21.5 'git \"clean\" -f' (el SUBCOMANDO entrecomillado) -> allow (LIM-10)" allow guard-git.sh \
+  "$(emite_bash 'git "clean" -f' "" "")"
+check "DEV 1.31.0 v4: CA-21.5 'git clean \\-f' (escapado, no entrecomillado) -> allow (LIM-10)" allow guard-git.sh \
+  "$(emite_bash 'git clean \-f' "" "")"
+check "DEV 1.31.0 v4: CA-21.5 'git stash \"save\" wip' (alias entrecomillado) -> allow (LIM-10)" allow guard-git.sh \
+  "$(emite_bash 'git stash "save" wip' "" "")"
+# Y el control que hace legibles a las seis: sin comillas, las mismas ordenes deniegan.
+check "DEV 1.31.0 v4: CA-21.5 control: 'git reset --hard' desnudo sigue deny" deny guard-git.sh \
+  "$(emite_bash 'git reset --hard' "" "")"
+check "DEV 1.31.0 v4: CA-21.5 control: 'git stash save wip' desnudo sigue deny" deny guard-git.sh \
+  "$(emite_bash 'git stash save wip' "" "")"
+
+# DEV 1.31.0 v4 (SEC-010): UN MANIFIESTO ILEGIBLE NO APAGA ESTA PUERTA.
+# Medido antes del arreglo: con el JSON roto —o vacio, o un array, o `git` del tipo
+# equivocado— `git clean -fd` salia ALLOW mientras el aviso del arnes afirmaba que toda
+# escritura se deniega. Y en un proyecto plantilla `.arnes/config.json` no esta protegido:
+# la unica puerta encendida por defecto tenia un interruptor de apagado alcanzable en UNA
+# escritura, y por accidente. Ahora cae a la lista que trae el CODIGO y deniega.
+for MROTO in '{"agentes":{,}' '' '[]' '{"git":"si"}'; do
+  ETIQ="$(printf '%s' "${MROTO:-<vacio>}" | head -c 20)"
+  printf '%s' "$MROTO" > "$PROJ/.arnes/config.json"
+  check "DEV 1.31.0 v4: SEC-010 manifiesto ilegible ($ETIQ): 'git clean -fd' -> deny" deny guard-git.sh \
+    "$(emite_bash 'git clean -fd' "" "")"
+done
+printf '%s' '{"agentes":{,}' > "$PROJ/.arnes/config.json"
+check_motivo "DEV 1.31.0 v4: SEC-010 el motivo dice MODO DEGRADADO y como salir" 'MODO DEGRADADO.*jq -e' guard-git.sh \
+  "$(emite_bash 'git clean -fd' "" "")"
+# CONTROL: la averia no convierte esta puerta en un deny universal. Lo que no esta en la
+# lista por defecto sigue pasando; si no, el arreglo seria un bloqueo, no una puerta.
+check "DEV 1.31.0 v4: SEC-010 control: con el manifiesto roto 'git status' sigue allow" allow guard-git.sh \
+  "$(emite_bash 'git status --porcelain' "" "")"
+# EL BORDE, declarado a proposito: un proyecto que tenia la puerta APAGADA y se le rompe el
+# manifiesto pasa a DENEGAR. Es la direccion segura —apagar es un acto explicito y una coma
+# de mas no lo es— y la salida es reparar el JSON, que la excepcion de reparacion permite.
+printf '%s' '{"git":{"activo":false},}' > "$PROJ/.arnes/config.json"
+check "DEV 1.31.0 v4: SEC-010 borde: 'git.activo:false' + JSON roto -> deny (direccion segura)" deny guard-git.sh \
+  "$(emite_bash 'git clean -fd' "" "")"
+printf '%s\n' "$MANIFIESTO_BASE" > "$PROJ/.arnes/config.json"
+# Y el control que cierra el borde: con el manifiesto SANO, `activo:false` sigue apagando.
+setcfg '.git = {"activo": false}'
+check "DEV 1.31.0 v4: SEC-010 control: con el manifiesto SANO 'activo:false' sigue apagando" allow guard-git.sh \
+  "$(emite_bash 'git clean -fd' "" "")"
 setcfg 'del(.git)'
 
 # --- Integracion y orden: guard.sh ---
@@ -3684,7 +3915,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=625
+CASOS_ESPERADOS=669
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)

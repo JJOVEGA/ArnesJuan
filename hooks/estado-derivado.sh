@@ -178,6 +178,15 @@ $aviso_version
 **REQ:** $total — completado $hechos · en-revisión $revision · en-progreso $progreso · bloqueado $bloqueados · otros $otros
 **Otros archivos en \`$ARNES_REQ_DIR/\` sin \`Estado:\` (notas, no REQ):** $notas
 "
+  # SEC-011 — LA AVERIA SE DICE EN EL ARTEFACTO, NO SOLO EN UN stderr QUE NADIE GUARDA.
+  # Mientras el manifiesto sea ilegible el enforcement esta degradado: las puertas de
+  # escritura deniegan, `guard-git` cae a su lista por defecto y las rutas de este bloque
+  # son las del codigo, no las del proyecto. Esa frase vale mas aqui que en un aviso que
+  # se pierde con la sesion.
+  if [ "${ARNES_ESTADO_MANIF_ROTO:-0}" -eq 1 ]; then
+    cuerpo+="**Manifiesto ilegible: enforcement degradado** — \`.arnes/config.json\` existe y no se puede leer como objeto JSON. Las puertas de escritura DENIEGAN, \`guard-git\` aplica su lista por defecto y este bloque usa las rutas por defecto del arnes. Salida: corrige el JSON (\`jq -e . .arnes/config.json\`).
+"
+  fi
   # ROTACION: una seccion DECLARADA que no aparece en el documento (CA-09, QA-102).
   #
   # No se vuelve a mirar el disco ni se reimplementa la comparacion: el dato lo deja la
@@ -214,10 +223,37 @@ $filas"
 <!-- ARNES:DERIVADO fin -->"
 
   # --- Escritura idempotente: se reemplaza entre marcadores, o se anade al final ---
+  #
+  # LA INVARIANTE QUE MANDA AQUI: ningun camino puede dejar el archivo peor de como estaba.
+  # `docs/ESTADO.md` es el archivo de continuidad —lo unico que queda cuando el contexto se
+  # pierde— y ademas contiene texto de una PERSONA fuera de los marcadores. Medido antes de
+  # este arreglo, dos caminos lo destruian: (a) un byte NUL en el archivo cortaba la lectura
+  # ahi mismo y todo lo que venia detras se perdia al reescribir; (b) un archivo con
+  # contenido pero SIN PERMISO DE LECTURA se leia como vacio y el bloque sustituia al
+  # documento entero. Los dos son la misma familia: se reescribia a partir de una lectura
+  # que habia fallado. La regla es: si no se puede leer lo de fuera de los marcadores, NO SE
+  # ESCRIBE NADA y se avisa. Un bloque de continuidad que no se escribe es un inconveniente;
+  # uno que borra el documento es una perdida.
   tmp="$destino.arnes.tmp"
   if [ -f "$destino" ]; then
     local texto='' fuera='' saltando=0
-    IFS= read -r -d '' texto < "$destino"
+    if [ ! -r "$destino" ]; then
+      arnes_warn "'$ARNES_ESTADO_ARCHIVO' existe pero no se puede leer; NO se escribe nada y el archivo queda como estaba. Reescribirlo sin haber leido lo que hay fuera de los marcadores borraria texto que no es del arnes."
+      return 0
+    fi
+    # `read -d ''` devuelve 0 SOLO si encontro el delimitador, es decir un NUL: entonces hay
+    # bytes detras que esta lectura no puede traer, y reescribir los perderia. En el caso
+    # normal (sin NUL) devuelve !=0 al llegar a EOF, que es el camino de siempre.
+    if IFS= read -r -d '' texto < "$destino" 2>/dev/null; then
+      arnes_warn "'$ARNES_ESTADO_ARCHIVO' contiene un byte NUL: no se puede leer entero sin perder lo que hay detras, asi que NO se escribe nada y el archivo queda como estaba. Quita el NUL y el bloque volvera a derivarse."
+      return 0
+    fi
+    # Contenido en disco pero lectura vacia: la apertura fallo entre la comprobacion y la
+    # lectura. Es el mismo caso que el de arriba y se trata igual, no se adivina.
+    if [ -z "$texto" ] && [ -s "$destino" ]; then
+      arnes_warn "'$ARNES_ESTADO_ARCHIVO' tiene contenido pero se leyo vacio; NO se escribe nada y el archivo queda como estaba."
+      return 0
+    fi
     while IFS= read -r linea; do
       case "$linea" in
         '<!-- ARNES:DERIVADO inicio'*) saltando=1; continue ;;
@@ -227,16 +263,50 @@ $filas"
     done <<< "$texto"
     # Se recorta la cola de lineas vacias que deja el bloque retirado.
     while [ "${fuera%$'\n\n'}" != "$fuera" ]; do fuera="${fuera%$'\n'}"; done
-    printf '%s\n%s\n' "$fuera" "$cuerpo" > "$tmp" && mv -f "$tmp" "$destino"
+    arnes_estado_publica "$tmp" "$destino" "$fuera
+$cuerpo"
   else
-    printf '%s\n' "$cuerpo" > "$tmp" && mv -f "$tmp" "$destino"
+    arnes_estado_publica "$tmp" "$destino" "$cuerpo"
   fi
   return 0
 }
 
+# Publicacion: se escribe COMPLETO en un temporal y solo entonces se mueve encima.
+#
+# El `mv` es lo que hace que el destino nunca quede a medias: si el temporal no se pudo
+# escribir entero —disco lleno, carpeta sin permiso—, el `&&` no llega al `mv` y el
+# original sigue intacto. Lo que faltaba era la otra mitad: DECIRLO y no dejar el temporal
+# huerfano. Un fallo de escritura que nadie ve es el mismo problema que un guardian mudo.
+arnes_estado_publica() {   # <tmp> <destino> <contenido>
+  if printf '%s\n' "$3" > "$1" 2>/dev/null && mv -f "$1" "$2" 2>/dev/null; then
+    return 0
+  fi
+  rm -f "$1" 2>/dev/null
+  arnes_warn "no se pudo escribir '$ARNES_ESTADO_ARCHIVO' (¿disco lleno o carpeta sin permiso?); el archivo queda EXACTAMENTE como estaba y no se dejo ningun temporal."
+  return 0
+}
+
 # Campos del manifiesto que este hook necesita. Uno solo de jq.
+# EL MANIFIESTO ILEGIBLE NO PUEDE APAGAR LA CONTINUIDAD, Y MENOS EN SILENCIO (SEC-011).
+#
+# Antes: `arnes_jq_file … || return 1` y el bloque no se escribia, con el error crudo de jq
+# por stderr como unica senal. Justo en el estado degradado —el unico en el que hace falta
+# saber donde quedamos— la observabilidad que `AGENTS.md` 13 promete se apagaba. Y con un
+# manifiesto VACIO era peor: jq salia 0 sin producir nada, las variables se quedaban SIN
+# ASIGNAR y `set -u` mataba el hook de parada (medido: rc=1).
+#
+# Ahora los valores por defecto se fijan ANTES de leer nada, la lectura exige un OBJETO
+# —`null`, un array o una cadena son "no se puede leer", la misma regla que
+# `arnes_parse_manifest`— y si falla se DERIVA IGUAL con los defectos del codigo, se avisa
+# y el bloque lo dice. Derivar no necesita el manifiesto: el bloque sale del disco.
 arnes_parse_manifest_estado() {
-  arnes_jq_file "$ARNES_MANIFEST" -r '
+  # Los mismos valores que declara el codigo en el resto del arnes. Asignados SIEMPRE:
+  # ninguna ruta puede dejar una variable sin definir con `set -u` activo.
+  ARNES_ESTADO_ARCHIVO='docs/ESTADO.md'; ARNES_ESTADO_ACTIVO='true'
+  ARNES_REQ_DIR='requirements'; ARNES_PENDING_REL='PENDING_APPROVAL.md'
+  arnes_norm_campo 'completado'; ARNES_ESTADO_DONE="$ARNES_CAMPO"
+  ARNES_ESTADO_MANIF_ROTO=0
+  arnes_jq_file "$ARNES_MANIFEST" -r 'if type != "object" then error("no-objeto") else . end |
     [ (.estado_derivado.archivo   // "docs/ESTADO.md"),
       # OJO con `//` en jq: trata `false` IGUAL QUE ausente, asi que
       # `.activo // true` devuelve true cuando alguien escribio false y el
@@ -246,7 +316,16 @@ arnes_parse_manifest_estado() {
       (if .estado_derivado.activo == false then "false" else "true" end),
       (.requirements_dir          // "requirements"),
       (.estados.completado        // "completado"),
-      (.pending_approval          // "PENDING_APPROVAL.md") ] | join("\n")' || return 1
+      (.pending_approval          // "PENDING_APPROVAL.md") ] | join("\n")' 2>/dev/null || ARNES_JQ=''
+  # Un archivo VACIO no hace fallar a jq: no produce entrada, asi que rc=0 y la salida es
+  # vacia. Rc cero no es lectura buena — es la misma trampa que ya cerro `arnes_parse_manifest`.
+  # Y cuando jq falla, `ARNES_JQ` conserva el valor de la lectura ANTERIOR (aqui, la de la
+  # rotacion), asi que se vacia a proposito antes de mirarlo.
+  if [ -z "$ARNES_JQ" ]; then
+    ARNES_ESTADO_MANIF_ROTO=1
+    arnes_warn "'.arnes/config.json' existe pero no se puede leer como objeto JSON (invalido, vacio, 'null' o un array): el bloque derivado se escribe igual, con las rutas por defecto del arnes ('docs/ESTADO.md', 'requirements/', 'PENDING_APPROVAL.md') y con una linea que dice que el enforcement esta degradado. Corrige el JSON ('jq -e . .arnes/config.json')."
+    return 0
+  fi
   local i=0 l
   while IFS= read -r l; do
     case "$i" in

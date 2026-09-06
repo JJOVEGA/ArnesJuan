@@ -292,3 +292,299 @@ CI ni la publicación.
 `analista-requerimientos`, en el ciclo de ese REQ. Un hallazgo que vive sólo en este registro es
 deriva. Ninguno bloquea el cierre de REQ-001: los siete son `instrumento` y están medidos
 idénticos en v1.30.2, así que no son regresiones de este cambio (`AGENTS.md` §6).
+
+---
+
+## Revisión R-002 — ventana 1.31.0 (REQ-002…REQ-007, REQ-009, REQ-010) — 2026-09-06
+
+**Alcance.** `git diff origin/main..HEAD` de `cand/1.31.0-mecanismos` (43 archivos): veredicto
+fechado y caduco (apagado), vocabulario único con aviso, rotación de una sección, **`guard-git`
+—la única puerta que nace encendida—**, celdas recortadas del bloque derivado, una sola función
+para contar la cola, plegado de acentos y forma Unicode, clave del campo decorada, y la frontera
+de este repositorio incluyéndose a sí misma. Guardián de la sesión y línea base de no-regresión:
+instalación estable **1.30.3** (`6c1b58a`). Plataforma: Linux (WSL2).
+Orden respetado: audito un árbol con `QA: aprobado` en los siete REQ que firmo (`AGENTS.md` §6).
+**REQ-007 no se firma**: sigue parcial y `en-progreso`.
+
+**Método.** Sondas propias contra `hooks/guard.sh` (el despachador real, no los guardianes
+sueltos), con **canario positivo y negativo antes de cada tanda** —`git clean -fd` → DENY,
+`ls -la` → ALLOW—, `timeout 30` por sonda y `[ -z "$out" ] && dec=allow` **antes** de parsear
+nada, porque el hook permite con salida vacía. Todo git se probó **sólo a través del hook**, en
+proyectos desechables bajo el scratchpad; **ninguna orden destructiva se ejecutó** contra este
+worktree ni contra ningún entorno de terceros. Banco corrido por el auditor contra la candidata
+**y** contra la línea base.
+
+**Error de método propio, anotado para que no se repita:** la primera tanda de sondas de
+identidad mandaba `agent_type` **sin** `agent_id` y el arnés la leyó como sesión coordinadora
+—`desarrollador` salía DENY sobre su propio código—. Es la conducta declarada en LIM de R-001;
+la tanda se repitió con los dos campos y las cifras de abajo son las de la repetición.
+
+**Banco (cifras propias, no tomadas del informe de QA).**
+
+| Corrida | PASS | FAIL | SKIP | Total |
+|---|---|---|---|---|
+| Candidata `79ff767` | **624** | **0** | 1 | 625 = `CASOS_ESPERADOS` ✔ |
+| Línea base 1.30.3 (`ARNES_HOOKS_DIR`) | **468** | **156** | 1 | 625 ✔ |
+
+Coinciden exactamente con las que entregó QA. De los 156 FAIL de la base, **79** son
+`esperado=deny got=allow` (cobertura ganada, dirección segura), 76 son comprobaciones de motivo,
+de texto o de tiempo, y **exactamente 1** es `esperado=allow got=deny`, es decir la única
+transición **`deny → allow` respecto de la versión publicada**: `REQ-007 CA-40 QA-014 '(instrumento,
+dueño REQ-007)': la clase es el primer elemento`. Está **declarada** en CA-40 con su control en
+CA-41 y su fail-before en CA-42. **Ninguna otra relajación** en 625 casos.
+
+**Veredicto: `Seguridad: con-hallazgos` en REQ-005; `aprobado` en REQ-002, 003, 004, 006, 009 y
+010.** Los dos hallazgos que bloquean (SEC-009 y SEC-010) son de clase `contrato` y viven los dos
+en `guard-git`. No son regresiones de 1.30.3 —allí la puerta no existía— pero **sí** son
+afirmaciones falsas de un REQ sobre lo construido, y la puerta afectada es **la única que se
+enciende sola en todos los proyectos que instalen 1.31.0**.
+
+---
+
+### SEC-009 — Construcciones ordinarias del shell atraviesan `guard-git`, la única puerta encendida por defecto
+
+- **Severidad:** alta · **Clase:** `contrato` · **Estado:** `abierto` · **REQ:** REQ-005 (CA-06)
+- **Dueño:** `desarrollador` (arreglo barato) + `analista-requerimientos` (declaración del límite)
+
+**Medido** (a través de `guard.sh`, con los dos canarios en la misma tanda, e idéntico para la
+sesión coordinadora y para el `desarrollador`):
+
+```
+if true; then git clean -fd; fi        ALLOW      git clean -fd            DENY  (canario)
+{ git clean -fd; }                     ALLOW      cd sub && git clean -fd  DENY
+for i in 1; do git clean -fd; done     ALLOW      sudo git clean -fd       DENY
+sleep 0 & git clean -fd                ALLOW      git reset --hard         DENY
+nohup git clean -fd                    ALLOW      git stash                DENY
+git clean \<salto de línea>  -fd       ALLOW      ls -la                   ALLOW (canario)
+G=clean; git $G -f                     ALLOW
+```
+
+**Causa** (`hooks/guard-git.sh`, `arnes_guard_git`): la segmentación sustituye por salto de línea
+sólo `&&`, `||`, `|`, `;`, `$(`, acento grave, `(` y `)`; el bucle de prefijos sólo tolera
+`*=*|sudo|command|exec|time|nice|env|builtin`; y la continuación de línea (`\` + salto) no se
+pliega antes de partir. Consecuencia: en `if …; then git clean -fd; fi` el `;` sí parte, pero el
+segmento resultante empieza por `then`, que no es `git` ni un prefijo tolerado, así que el
+segmento se descarta entero. Con `&` sencillo ni siquiera se parte.
+
+**Por qué es `contrato` y no `instrumento`.** No lo cubre ninguna de las cinco exclusiones que
+REQ-005 declara: no es un subcomando fuera de la lista, no es el remoto, **no está entrecomillado
+ni escapado** (CA-21.5), no es un script ni un intérprete, y el nombre `git` **sí aparece en el
+texto del comando**. Lo que hay es un criterio que afirma lo contrario de lo medido: **CA-06** —«el
+subcomando se reconoce **esté donde esté** dentro del comando»— es falso para siete formas
+ordinarias. `requirements/README.md` define `instrumento` como «el control o la prueba tienen un
+defecto, **sin efecto en el producto**»; aquí el producto **es** la puerta, y la afirmación falsa
+es del REQ. Además, no son formas exóticas: `if [ … ]; then git clean -fd; fi` es exactamente como
+se escribe una limpieza condicional.
+
+**Recomendación** (cualquiera de las dos cierra el hallazgo; se recomiendan las dos):
+1. **Código** — añadir al bucle de prefijos las palabras reservadas y envoltorios que preceden a un
+   comando (`then`, `else`, `elif`, `do`, `{`, `!`, `nohup`, `timeout`, `stdbuf`, `xargs` si se
+   quiere), tratar el `&` sencillo como separador y **plegar la continuación de línea** antes de
+   partir. Cada forma entra con **su** caso en el banco y con su par fail-before contra `79ff767`.
+2. **Contrato** — write-back del analista: acotar CA-06 a lo que sostiene y declarar en «Fuera de
+   alcance» qué sintaxis del shell no se ve, con las formas medidas.
+
+Mientras una de las dos no aterrice, **REQ-005 no puede cerrar**.
+
+---
+
+### SEC-010 — Un manifiesto ilegible apaga `guard-git` en la práctica, y el aviso que se emite afirma lo contrario
+
+- **Severidad:** alta · **Clase:** `contrato` · **Estado:** `abierto` · **REQ:** REQ-005 (CA-17, CA-22)
+- **Dueño:** `desarrollador` + `analista-requerimientos`
+
+**Medido**, en proyectos desechables:
+
+| Manifiesto | `git clean -fd` | Aviso |
+|---|---|---|
+| JSON roto (`{"agentes":{,}`) | **ALLOW** | sí, el de SEC-005 |
+| vacío (0 bytes) | **ALLOW** | sí, el de SEC-005 |
+| `[]` (array) | **ALLOW** | sí |
+| `{"git":"si"}` (clave del tipo equivocado) | **ALLOW** | sí |
+| `{"git":{"activo":true,"prohibidos":"clean -f"}}` (`prohibidos` cadena) | **DENY** | sí, nombra la clave — correcto |
+| ausente | ALLOW | — (inerte declarado, CA-22) |
+| sano | **DENY** | — (control) |
+
+En `arnes_guard_git`, tras `arnes_parse_manifest` la condición es
+`[ "${ARNES_GIT_ACTIVO:-}" = "true" ] || return 0`: con el manifiesto ilegible la variable queda
+**vacía** —fail-closed correcto de SEC-005 en las variables— y la puerta **permite**. El aviso que
+sí se emite dice, textualmente, *«mientras siga así, toda escritura que las puertas deban juzgar se
+DENIEGA»*, y eso es cierto de `guard-codigo`/`guard-completado` y **falso** de `guard-git`.
+
+**Composición que lo agrava** (medida): en un proyecto que use la **plantilla**,
+`.arnes/config.json` **no** está en `codigo_app.globs`, así que **cualquier** agente puede
+escribirlo. Secuencia completa, medida de punta a punta:
+
+```
+1) qa-tester: Write '{roto' -> .arnes/config.json      ALLOW
+2) qa-tester: Bash 'git clean -fd'                     ALLOW   (con el manifiesto sano: DENY)
+```
+
+Es decir: la puerta que nace encendida tiene un interruptor de apagado alcanzable en **una**
+escritura por cualquier agente, y el mismo estado de avería es el que la excepción de reparación
+(REQ-007 CA-60) abre a todos. La vía deliberada la cubre «barandilla, no jaula»; **la accidental
+no**: un proyecto con una coma de más queda, sin saberlo, con `git clean -fd` permitido justo
+cuando toda escritura está denegada y el agente busca «dejar limpio».
+
+**Por qué es `contrato`.** CA-17 declara que `git.activo` vale `true` por defecto y que ésta es «la
+única novedad de 1.31.0 **encendida por defecto**»; CA-22 declara inerte **sólo** el caso «sin `jq`
+o sin manifiesto». El estado «manifiesto ilegible» no está declarado en ningún criterio de REQ-005
+y contradice el principio que el propio arnés escribe en el aviso: *una puerta que no puede medir
+no deja pasar*.
+
+**Recomendación:** que `guard-git` **falle cerrado** con su lista por defecto cuando el manifiesto
+exista y no se pueda leer (el proyecto que quiera la puerta apagada lo declara con `git.activo:
+false`, que es un acto explícito y sigue funcionando), **o** —si se prefiere no denegar en ese
+estado— que el criterio lo declare por escrito y que el aviso de SEC-005 deje de afirmar una
+cobertura que no tiene. La primera opción es la coherente con el resto del arnés.
+
+---
+
+### SEC-011 — La excepción de reparación del manifiesto no deja rastro, y la avería es invisible en el bloque derivado
+
+- **Severidad:** media · **Clase:** `contrato` · **Estado:** `abierto` · **REQ:** REQ-007 (CA-60)
+- **Dueño:** `analista-requerimientos` (criterio) + `desarrollador` (aviso y línea del bloque)
+- **Es el pronunciamiento que REQ-007 CA-60 estaba esperando.**
+
+**Medido.** Con `.arnes/config.json` ilegible, `Write` sobre ese archivo → **ALLOW** para
+`qa-tester`, `auditor-seguridad` y `analista-requerimientos` por igual. El `stderr` de esas tres
+llamadas es **idéntico** al de cualquier otra llamada durante la avería (el `jq: parse error` y el
+aviso genérico de SEC-005): **nada** dice que se ha permitido excepcionalmente una escritura sobre
+el archivo que declara las invariantes, ni quién la hizo. Y al parar el agente, `hooks/stop.sh`
+sale 0 dejando `docs/ESTADO.md` **vacío** —sin bloque derivado— con dos `jq: parse error` crudos
+por `stderr`: la observabilidad que `AGENTS.md` §13 declara («la traza vive en archivos legibles»)
+se apaga justo en el estado degradado.
+
+**Dictamen.** Los tres límites de CA-60 —un solo archivo, sólo si es la única escritura del
+comando, sólo mientras el manifiesto sea ilegible— acotan bien el **radio**: verifiqué que
+`printf "{}" > .arnes/config.json; echo x > docs/n.md` sigue en DENY y que con el manifiesto sano
+el archivo vuelve a estar protegido. La alternativa (punto muerto) es peor, y no pido revertir la
+excepción. Pero acotar el radio **no es dejar rastro**: hoy la reparación es indistinguible de no
+haber pasado nada, y el estado en que ocurre es **también** el estado de SEC-010. **Los tres
+límites son necesarios y no suficientes: el residual exige un control extra**, y ése es el rastro.
+
+**Control que exijo como criterio/NFR de REQ-007** (los tres, baratos):
+1. La ruta de excepción emite un `arnes_warn` **propio y distinguible** del genérico de SEC-005:
+   que nombre el archivo, el `agent_type` que lo escribe y diga que es una reparación permitida
+   excepcionalmente.
+2. Mientras el manifiesto sea ilegible, el bloque derivado de `docs/ESTADO.md` escribe una línea
+   que lo dice («manifiesto ilegible: enforcement degradado»), en vez de no escribirse.
+3. El criterio declara, junto a los tres límites, **qué queda sin gobernar** durante la avería —hoy,
+   `guard-git` (SEC-010)—, para que el residual esté escrito y no descubierto.
+
+Con esos tres controles escritos e implementados, el residual de CA-60 es **aceptable** para mí.
+Sin ellos, mi firma sobre CA-60 no existe: REQ-007 no se firma en esta ventana.
+
+---
+
+### SEC-012 — Dictamen sobre QA-113 (token entrecomillado en `guard-git`): se confirma la conducta y se **concurre** con la clase `instrumento`
+
+- **Severidad:** media · **Clase:** `instrumento` (concurrente con QA) · **Estado:** `abierto`
+- **REQ:** REQ-005 (CA-21.5) · **Dueño:** `desarrollador`, ventana **1.32.0** (REQ-007 Bloque C)
+
+**Reproducido**, con los dos canarios: `git clean "-f"`, `git clean '-f'`, `git reset "--hard"`,
+`git checkout "."`, `git "clean" -f` → **ALLOW**; `git clean -fd` → DENY.
+
+**Dictamen, que se me pidió expresamente.** Sostengo `instrumento` y **no veto por este motivo**,
+por cuatro razones medidas, no por deferencia:
+
+1. **El write-back ya existe y es honesto.** CA-21.5 y «Fuera de alcance» de REQ-005 declaran hoy,
+   por escrito, que un token entrecomillado o escapado no se ve, con las seis formas medidas y con
+   la ventana y el dueño del arreglo. Un límite declarado no es un fallo en abierto: es un límite.
+2. **No abre nada que estuviera cerrado.** Verificado: 1.30.3 publicada permite la vía equivalente
+   en el detector de escrituras, y el banco entero da **una sola** transición `deny → allow`
+   respecto de la publicada, que es CA-40 y está declarada. `guard-git` con comillas deja las cosas
+   como estaban, no peor.
+3. **El descuento es compartido a propósito** y su corrección está asignada al Bloque C de REQ-007
+   (1.32.0). Duplicarlo aquí sería una segunda transcripción de la misma regla, que es justo lo que
+   este arnés predica no hacer; y sin el descuento, `git commit -m "no uses git clean"` sería un
+   `git clean`.
+4. **La ergonomía del bypass importa, y aquí juega a favor.** Nadie escribe `git clean "-f"` por
+   descuido: entrecomillar un flag es un acto deliberado, y la barandilla no pretende contener al
+   que se empeña. SEC-009, en cambio, sí se escribe por descuido, y por eso **ese** sí bloquea.
+
+**La diferencia entre los dos, dicha en una línea:** QA-113 es un hueco **declarado, heredado y
+deliberado de rodear**; SEC-009 es un hueco **no declarado, nuevo en la única puerta encendida por
+defecto y que se pisa sin querer**. La clase distinta no es una concesión: es la aplicación de la
+misma tabla a dos hechos distintos.
+
+**Nota de vigilancia para la próxima auditoría:** cuando el Bloque C aterrice en 1.32.0, estas
+formas deben pasar a DENY y los casos del banco que hoy fijan su ALLOW deben cambiar de veredicto
+**en voz alta**. Si aterriza el Bloque C y siguen en ALLOW, es regresión.
+
+---
+
+## Limitaciones conocidas — actualización de 1.31.0
+
+> Las nueve de R-001 (LIM-01…LIM-09) **siguen vigentes tal cual**: ninguna se cerró en esta
+> ventana y ninguna se agravó. Lo que 1.31.0 añade es una puerta nueva, y con ella sus propios
+> límites.
+
+| # | Límite | Conducta medida (2026-09-06, candidata `79ff767`) | Origen |
+|---|---|---|---|
+| **LIM-10** | **`guard-git` no ve un token entrecomillado o escapado** —flag o subcomando—, por el mismo descuento de comillas de LIM-04, que la puerta comparte a propósito | `git clean "-f"`, `git clean '-f'`, `git reset "--hard"`, `git checkout "."`, `git "clean" -f`, `git clean \-f` → **allow**; `git clean -fd "src"` (el **operando** entrecomillado) → **deny** | QA-113 · **SEC-012** · REQ-005 CA-21.5 → arreglo en REQ-007 Bloque C (1.32.0) |
+| **LIM-11** | **`guard-git` sólo ve la primera palabra de cada segmento**, y sólo parte por `&&`, `\|\|`, `\|`, `;`, `$(`, acento grave y paréntesis. Una palabra reservada, una llave, un `&` sencillo, un envoltorio no listado o una continuación de línea esconden el comando entero | `if true; then git clean -fd; fi`, `{ git clean -fd; }`, `for i in 1; do …; done`, `sleep 0 & git clean -fd`, `nohup git clean -fd`, `git clean \`+salto+`-fd` → **allow** | **SEC-009** — **no declarado todavía**: es hallazgo abierto, no un límite aceptado |
+| **LIM-12** | **Con el manifiesto presente pero ilegible, `guard-git` permite**, mientras el aviso de SEC-005 afirma que «toda escritura … se DENIEGA». En un proyecto plantilla el manifiesto no está protegido, así que la puerta encendida por defecto se apaga con una escritura | manifiesto roto/vacío/array/`git` del tipo equivocado → `git clean -fd` **allow** con aviso; `prohibidos` cadena → **deny** con aviso que nombra la clave | **SEC-010** — **no declarado todavía**: hallazgo abierto |
+| **LIM-13** | **Un subcomando de git que destruye pero no está en `git.prohibidos` pasa**, y la lista por defecto no incluye el remoto ni `worktree` | `git worktree remove --force .`, `git push --force`, `git rm -rf .` → allow | REQ-005 «Fuera de alcance» — **límite declarado**, mapeo del proyecto (CA-19, CA-34) |
+| **LIM-14** | **Una entrada de la cola de aprobaciones escrita con otra forma no cuenta y nadie avisa.** Sólo `### ` + espacio, dentro de `## Pendientes`, es una entrada | `- [ ] decidir algo` bajo `## Pendientes` → la puerta **permite** cerrar; `### …` → deniega. Igual que en 1.30.3 en la puerta (lo que cambia en 1.31.0 es que el bloque derivado deja de contar viñetas y dice el mismo número) | REQ-009 · `templates/PENDING_APPROVAL.md.tpl`, que lo declara — **límite declarado** |
+| **LIM-15** | **El plegado de acentos hace que una errata acentuada valga como veredicto.** Es la contrapartida querida de REQ-010 y va en las dos direcciones | `Seguridad: aprobádo` se lee `aprobado`. Controles intactos: `aprobado*` conserva el asterisco, `en revision` y `revisión` siguen siendo anomalía; y el banco entero no produce **ninguna** transición `deny → allow` por esta causa | REQ-010 — **límite declarado**, contrapartida explícita del REQ |
+
+**Formas que se comprobaron y NO son huecos** (medidas por el auditor en esta ventana, para que no
+se vuelvan a buscar): la cola con un **NUL** y la cola **sin permiso de lectura** → **deny** con
+motivo propio, nunca `allow` por 0; un REQ que es un **enlace simbólico** que sale del proyecto →
+**deny**; `git.prohibidos` con el tipo equivocado → **deny** con aviso que nombra la clave;
+`git.activo: "false"` (cadena) **no** apaga la puerta y avisa; quality gate en rojo → **deny**
+antes de mirar veredictos (fail-closed); `Seguridad: con-hallazgos`, `preventiva`, `vetado` y
+`pendiente` → **deny** del cierre en `critico` **y** en `ligero`; `Hallazgos abiertos:` con
+`(contrato)` o **sin clase** → deny, con `(instrumento)` → allow.
+
+---
+
+## Estado de seguridad aprobado por REQ — ventana 1.31.0
+
+| REQ | Veredicto | Fecha | Versión | Controles que quedan acreditados (contra esto se compara la próxima auditoría) |
+|---|---|---|---|---|
+| **REQ-002** | `aprobado` | 2026-09-06 | candidata 1.31.0 (`79ff767`) | (1) La exigencia de fecha y la caducidad **nacen apagadas**: sin las claves, la conducta es la de 1.30.3. (2) Con `exigir_fecha: true`, un `aprobado` sin fecha **no cierra**, y en `critico` se le exige a **las dos** firmas. (3) Un valor no booleano en `veredictos.exigir_fecha` **cae al defecto y avisa** (no apaga en silencio). (4) Sin repositorio git y con la caducidad encendida, **no deja pasar** |
+| **REQ-003** | `aprobado` | 2026-09-06 | candidata 1.31.0 (`79ff767`) | (1) `Seguridad: con-hallazgos` es un valor **legible** y **no cierra** un REQ crítico —verificado por el auditor, junto con `preventiva`, `vetado` y `pendiente`, en `critico` y en `ligero`—. (2) El vocabulario vive **una vez** y lo comparten puerta e informe (prueba por mutación de QA). (3) Escribir un veredicto fuera del vocabulario **avisa** y no compite con la denegación |
+| **REQ-004** | `aprobado` | 2026-09-06 | candidata 1.31.0 (`79ff767`) | (1) La rotación de sección **nace apagada**. (2) Nunca escribe fuera del proyecto: `archivo_dir: "../fuera"` y enlace simbólico que sale → **nada** fuera. (3) La **cabecera y sus veredictos no se alteran**, y el resto del documento queda byte a byte. (4) Destino sin permiso → origen intacto y **cero** temporales huérfanos. (5) Un mapeo que no casa **avisa** por sus dos ramas y lo dice el bloque derivado |
+| **REQ-005** | **`con-hallazgos`** | 2026-09-06 | candidata 1.31.0 (`79ff767`) | Acreditado: (1) la puerta es del **comando**, no de la identidad —alcanza al `desarrollador` y a la coordinadora, verificado—; (2) `cd … &&`, `git -C`, `(…)`, `$(…)`, `\| tee`, `sudo`, `env` y las opciones globales no la esquivan; (3) las ortografías larga/corta y el alias `stash save` casan; (4) la lista es del proyecto y se apaga con un acto explícito. **NO acreditado:** SEC-009 (construcciones del shell) y SEC-010 (manifiesto ilegible). **Este veredicto no cierra el REQ** |
+| **REQ-006** | `aprobado` | 2026-09-06 | candidata 1.31.0 (`79ff767`) | (1) El recorte es **sólo de presentación**: la puerta sigue leyendo el campo **entero** (un `Hallazgos abiertos:` largo con clase bloqueante sigue denegando). (2) `REQ`, `Estado` y `Rigor` no se recortan. (3) El bloque es idempotente byte a byte y no rompe la tabla |
+| **REQ-009** | `aprobado` | 2026-09-06 | candidata 1.31.0 (`79ff767`) | (1) **Una sola regla** de conteo para la puerta, el bloque derivado y el informe: el número que se lee es el que bloquea. (2) Una cola **ilegible** o con un **NUL** → **deny**, nunca `0` (verificado por el auditor). (3) Sin archivo → 0 sin error. Límite declarado: LIM-14 |
+| **REQ-010** | `aprobado` | 2026-09-06 | candidata 1.31.0 (`79ff767`) | (1) La normalización es **la misma** en los tres lectores y en `campos-req.awk` (39 cabeceras, 0 divergencias). (2) El plegado **no relaja ningún cierre**: en 625 casos del banco no hay ninguna transición `deny → allow` atribuible a él. (3) Los controles negativos (`en revision`, `enrevision`, `revisión`, `en-revisión-parcial`) siguen siendo anomalía y la `ñ` en NFD no se convierte en `n` |
+| **REQ-007** | **no se firma** | — | — | Parcial, `en-progreso`; sus bloques B y C cruzan a 1.32.0. **SEC-011** queda abierto contra su CA-60. Lo verificado de él en esta ventana (SEC-003…SEC-007 implementados, frontera de este repositorio) queda anotado en las verificaciones de gobernanza, **no** como firma |
+
+### Verificaciones de gobernanza de R-002, con su resultado
+
+Todas re-hechas por el auditor; ninguna tomada del informe de QA.
+
+| Verificación | Resultado |
+|---|---|
+| **El diff no relaja ninguna condición existente** | **Cumple.** `.github/workflows/`, `hooks/hooks.json` y `.githooks/` **no aparecen** en `git diff origin/main..HEAD`. Las `quality_gates` del manifiesto no cambian (el diff de `.arnes/config.json` toca sólo `arnes_version` y `codigo_app`). El ruleset no se toca desde el repositorio |
+| **Las transiciones `deny → allow` son exactamente las declaradas** | **Cumple.** Banco de 625 casos contra la candidata y contra 1.30.3: **una sola** (`REQ-007 CA-40`), declarada en CA-40/CA-41 con su fail-before en CA-42. Las 79 restantes van en la dirección contraria (cobertura ganada). Las tres `deny → allow` que enumeró QA en `guard-git` son respecto de la implementación **intermedia** de esta ventana (`40312c6`), no de la publicada, y no aparecen aquí porque contra 1.30.3 la puerta no existía |
+| **La frontera de este repositorio se incluye a sí misma y funciona** | **Cumple, medido.** `.arnes/config.json`, `.claude-plugin/plugin.json` y `.claude-plugin/marketplace.json`: **ALLOW sólo** para `desarrollador`; DENY para `qa-tester`, `analista-requerimientos`, `auditor-seguridad` y la sesión coordinadora. Controles: `hooks/guard-git.sh` sigue cerrado (allow sólo `desarrollador`); `templates/` y `tests/` siguen **abiertos** a todos |
+| **…y NO se propaga a `templates/`** | **Cumple.** `templates/arnes-config.json.tpl` mantiene `"globs": [{{CODIGO_APP_GLOBS}}]`: el mapeo de este repositorio no viaja a ningún proyecto |
+| **Efecto colateral aceptado del punto anterior** | **Confirmado.** `arnes_version` vive en `.arnes/config.json`, luego subirla es ahora trabajo del `desarrollador`. Hoy declara `1.30.3`, que es lo correcto **hoy** (el guardián de la sesión es la estable) y sube a `1.31.0` **después** de publicar y verificar la instalación, no antes. **Consecuencia de seguridad a vigilar:** el bump ya no lo puede hacer la coordinadora, así que si se olvida, el manifiesto miente sobre qué versión gobierna |
+| **Nada del autoalojamiento se filtra a lo que heredan los proyectos** | **Cumple.** De `templates/`, `agents/`, `playbooks/` y `skills/`, el diff toca cinco archivos, todos con **mecanismo** genérico: el bloque `veredictos`, el bloque `git` (con su lista por defecto y cómo apagarla), `limites`, la rotación de sección, la regla de conteo de la cola y la documentación de conducta de 1.31.0 en `arnes-upgrade`. Ni roles, ni globs de este repositorio, ni la política de autoalojamiento. Los tres archivos nuevos de `.arnes/plantillas-origen/` son **copias idénticas** de `templates/` (andamiaje de `arnes-upgrade`), no material nuevo |
+| **Repositorio público: sin nombres ni datos de proyectos cliente** | **Cumple.** Revisadas las ~6.600 líneas añadidas. Las únicas menciones a «cliente» son **la regla** de no publicarlos (y aparecen, correctamente, como criterio de aceptación del CHANGELOG en REQ-002/003/007). `dataverse-lookups.guard.test.ts.tpl` es una plantilla genérica con marcadores `{{…}}`, sin tabla, entorno ni identificador de nadie |
+| **Sin secretos en lo añadido** | **Cumple.** Ningún patrón de credencial, clave privada ni token en el diff; las coincidencias de «token» son todas la palabra técnica del casado de git o la contabilidad de contexto. `.gitignore` sigue cubriendo `.mcp.json`, `.claude/settings.local.json`, `memory/`, `insumos/` y `mejoras-arnes-*.md` |
+| **Cola de aprobaciones** | `PENDING_APPROVAL.md` sin entradas bajo `## Pendientes` (0, leído con la misma función que la puerta) |
+| **Modos degradados** | **Cumple en dos de tres.** Sin `jq` y sin manifiesto → inerte, declarado. Manifiesto **ilegible** → las dos puertas de escritura deniegan (SEC-005 cerrado, verificado), pero `guard-git` **permite**: es SEC-010 |
+
+### Pendientes que esta firma NO cubre
+
+- **El coste y el banco completo en Windows/MSYS**, la plataforma del `desarrollador`. Todo lo de
+  esta revisión es Linux/WSL2. `AGENTS.md` §7 lo exige antes de pedir la fusión; **no consta** que
+  se haya hecho para esta candidata. Es condición del gate humano, no de mi veredicto.
+- **CI en verde en el PR** (`hooks-en-linux`), la **fusión**, el **tag** y la actualización de la
+  instalación estable: son de la coordinadora y del propietario.
+- **REQ-007 entero**, y en particular CA-60: ver SEC-011.
+- **Los bloques B y C de REQ-007** (1.32.0): no se auditaron y no se cuentan ni a favor ni en
+  contra. Cuando el Bloque C aterrice, LIM-10 debe cerrarse **en voz alta** o es regresión.
+
+### Obligación de write-back abierta (`AGENTS.md` §9)
+
+**SEC-009, SEC-010 y SEC-011 no se cierran —ni se levanta el veto de REQ-005— hasta que el control
+quede como criterio o NFR en el REQ (vía `analista-requerimientos`) *y* el código lo implemente.**
+Un control que viva sólo en este registro es deriva. Sigue abierta, además, la obligación de R-001:
+SEC-001…SEC-007 como criterios de REQ-007 (SEC-003…SEC-007 ya implementados en esta ventana;
+SEC-001 y SEC-002 siguen asignados a 1.32.0).

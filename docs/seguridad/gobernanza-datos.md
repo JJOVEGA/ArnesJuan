@@ -67,8 +67,20 @@ REQ-001 (2026-09-05): **sin hallazgos** de datos de cliente en las ~5.900 línea
   coordinador por el propietario el 2026-09-05—, no una restricción de la plataforma. Queda
   dicho aquí para que nadie lo confunda con enforcement.
 - Dentro del árbol, el mapeo de quién edita qué vive en `.arnes/config.json`
-  (`codigo_app.globs`) y lo aplica `guard-codigo`. Ver el hallazgo **SEC-006** del registro:
-  el manifiesto que define esa frontera **no está él mismo dentro de la frontera**.
+  (`codigo_app.globs`) y lo aplica `guard-codigo`.
+- **Actualizado el 2026-09-06 (candidata 1.31.0, SEC-006 parte a).** El manifiesto ya está
+  **dentro** de su propia frontera: `codigo_app.globs` de este repositorio incluye
+  `.arnes/config.json` y `.claude-plugin/*`, de modo que sólo el `desarrollador` puede cambiar
+  la regla que dice qué es código protegido. Verificado por sonda el 2026-09-06: ALLOW sólo
+  para `desarrollador`; DENY para los otros tres agentes y para la sesión coordinadora. Es
+  **mapeo de este repositorio** y no se propaga a `templates/`. Dos consecuencias, escritas
+  para que no sorprendan: (a) subir `arnes_version` pasa a ser trabajo del agente de código;
+  (b) mientras el manifiesto sea **ilegible**, la excepción de reparación (REQ-007 CA-60) abre
+  ese archivo a **cualquier** agente, y ese estado no deja rastro hoy — hallazgo **SEC-011**.
+- **Estado degradado del enforcement.** Con el manifiesto presente pero ilegible, las dos
+  puertas de escritura deniegan (fail-closed, SEC-005) pero `guard-git` **permite** — hallazgo
+  **SEC-010**. Mientras no se cierre, «manifiesto roto» debe tratarse como una **incidencia de
+  seguridad** que se repara de inmediato, no como una molestia de tooling.
 
 ## 7. Cumplimiento
 

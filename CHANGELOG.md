@@ -173,6 +173,71 @@ impide un daño irreversible; se apaga con `git.activo: false` o se sustituye co
 `git.prohibidos`. Cobertura parcial dicha en voz alta: quedan fuera los scripts y los
 intérpretes que ejecuten git por su cuenta. Es una barandilla, no una jaula.
 
+### Corregido — construcciones ordinarias del shell atravesaban la puerta de git (SEC-009)
+**Qué fallaba:** `git clean -fd` desnudo se denegaba, pero **envuelto en cualquier construcción
+corriente del shell pasaba**: `if true; then git clean -fd; fi`, `{ git clean -fd; }`,
+`for i in 1; do git clean -fd; done`, `sleep 0 & git clean -fd`, `nohup git clean -fd` y la orden
+partida con una continuación de línea. Siete formas medidas, ninguna exótica: una limpieza
+condicional se escribe **exactamente así**, de modo que el hueco no había que buscarlo, se pisaba
+sin querer. **Por dónde:** la puerta juzga el **primer token de cada orden**, y la segmentación no
+partía por `&` sencillo ni plegaba la continuación de línea; peor, el bucle que salta lo que no es
+el comando —asignaciones de entorno, `sudo`, `env`— no conocía las **palabras reservadas del
+shell**, así que un segmento que empezaba por `then`, por `do` o por `{` se descartaba entero, con
+el `git` dentro. **Por qué importa más que en otras puertas:** es la única que nace **encendida**
+en todos los proyectos, y lo que deja pasar es irreversible. **Qué cambia:** la continuación de
+línea se pliega antes de partir, el `&` sencillo separa órdenes como ya hacían `&&`, `;` y `|`, y
+el bucle de prefijos tolera las palabras reservadas (`then`, `else`, `elif`, `do`, `{`, `!`…) y los
+envoltorios que preceden a un comando (`nohup`, `setsid`, `timeout`, `stdbuf`, `xargs`), con sus
+opciones y su argumento cuando lo llevan. Todo eso ensancha **dónde mira** la puerta, nunca lo que
+deniega: `echo git clean -f` y un `grep` de un texto que dice `then git clean -fd` siguen
+permitidos, y están en el banco para que sigan estándolo. **Lo que sigue fuera, y se dice:** un
+subcomando que llega por variable (`G=clean; git $G -f`) no se ve —el valor no está en el texto del
+comando—, igual que los intérpretes y los scripts. **No es una regresión:** contra la versión
+publicada estas formas ya pasaban, porque la puerta no existía.
+
+### Corregido — un manifiesto ilegible apagaba la puerta de git, justo cuando todo lo demás se denegaba (SEC-010)
+**Qué fallaba:** con `.arnes/config.json` presente pero ilegible —inválido, vacío, `null`, un array
+o con la clave `git` del tipo equivocado—, las dos puertas de escritura denegaban con su aviso
+mientras la puerta de git **permitía**. Y el aviso afirmaba, textualmente, que «toda escritura que
+las puertas deban juzgar se deniega»: cierto de dos puertas de tres. **Por qué es grave:** en un
+proyecto plantilla el manifiesto **no** está entre las rutas protegidas, así que la única puerta
+encendida por defecto tenía un interruptor de apagado alcanzable en **una** escritura de cualquier
+agente — y por accidente, con una coma de más. El estado en que ocurre es además aquel en el que
+todo lo demás está bloqueado y el agente busca «dejar el árbol limpio». **Qué cambia:** se aplica
+el principio rector —una puerta que no puede medir no deja pasar—. Con el manifiesto ilegible la
+puerta de git cae a la **lista por defecto que vive en el código** y **deniega**, con un motivo que
+dice que está en **modo degradado** y cuál es la salida: reparar el JSON, que es la única escritura
+que la avería deja pasar. La lista por defecto pasa a declararse **una sola vez** y las dos vías
+—manifiesto sano y modo degradado— leen la misma cadena: dos transcripciones de la misma regla se
+desfasan. **El borde, declarado en voz alta:** un proyecto que tuviera la puerta apagada con
+`git.activo: false` y se le rompa el manifiesto **pasará a denegar**. Es la dirección segura
+—apagar es un acto explícito y un JSON roto no lo es— y la salida es reparar el manifiesto. Con el
+manifiesto sano, `git.activo: false` sigue apagando la puerta exactamente como antes.
+
+### Corregido — el archivo de continuidad no se pierde, ni con el manifiesto roto ni por un byte extraño (SEC-011)
+**Qué fallaba:** tres cosas, todas en el mismo archivo y todas medidas. **(1)** Con el manifiesto
+ilegible, la parada dejaba dos errores crudos de `jq` por stderr y **ningún bloque derivado**: la
+observabilidad que el arnés promete —«la traza vive en archivos legibles»— se apagaba justo en el
+estado degradado, que es cuando hace falta. Con el manifiesto **vacío** era peor: el hook moría con
+`unbound variable` y la parada salía con error. **(2)** Un byte **NUL** en `docs/ESTADO.md` cortaba
+la lectura ahí mismo y todo lo que venía detrás **se perdía** al reescribir. **(3)** Un
+`docs/ESTADO.md` con contenido pero **sin permiso de lectura** se leía como vacío, y el bloque
+sustituía al documento entero. Las dos últimas son la misma familia: **se reescribía a partir de
+una lectura que había fallado**, y lo que se perdía era texto de una persona. **Qué cambia:** los
+valores por defecto se fijan **antes** de leer nada, así que ninguna ruta deja una variable sin
+definir; con el manifiesto ilegible el bloque **se deriva igual** —derivar no necesita el
+manifiesto: sale del disco— con las rutas por defecto del código, y escribe una línea que dice
+**«manifiesto ilegible: enforcement degradado»** con la salida. Y si lo que no se puede leer es el
+**destino** —sin permiso, o con un NUL detrás del cual hay bytes que no se pueden traer—, **no se
+escribe nada**: el archivo queda **byte a byte** como estaba y se avisa. Un bloque de continuidad
+que no se escribe es un inconveniente; uno que borra el documento es una pérdida. Si la escritura
+falla al publicar (disco lleno, carpeta sin permiso), el original sigue intacto, **no queda ningún
+temporal huérfano** y se dice. **Y la reparación del manifiesto deja rastro:** la escritura de
+`.arnes/config.json` permitida durante la avería emite un aviso **propio y distinguible** que
+nombra el archivo, la herramienta y el tipo de agente que repara —una vez por llamada, no una por
+guardián—, en vez de un stderr idéntico al de cualquier otra llamada. No se registra ningún
+contenido.
+
 ### Corregido — las celdas del bloque derivado no caben en una tabla (REQ-006)
 **Qué fallaba:** en un proyecto con 57 requerimientos, cuatro celdas de veredicto ocupaban el
 **37 %** del bloque de continuidad, y la mayor —**1 296 caracteres sin un solo espacio**—

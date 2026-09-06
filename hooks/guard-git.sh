@@ -164,7 +164,7 @@ arnes_git_alias_sub() {   # <subcomando> <primer argumento> -> ARNES_TOK (el arg
 # ⚠️ "permitir" se dice con `return 0`, NUNCA con `exit 0`: este guardian corre en el
 # mismo proceso que los otros dos y un `exit` los dejaria sin correr — fallo abierto.
 arnes_guard_git() {
-  local limpio seg sub regla i n k ok reponer_f a posicional
+  local limpio seg sub regla i n k ok reponer_f a posicional vistos motivo_extra=''
   local -a t reglas args palabras
 
   arnes_parse_input
@@ -175,8 +175,30 @@ arnes_guard_git() {
   # un proceso por comando.
   [[ "$ARNES_CMD" == *git* ]] || return 0
   arnes_parse_manifest
-  [ "${ARNES_GIT_ACTIVO:-}" = "true" ] || return 0
-  [ -n "${ARNES_GIT_PROHIBIDOS:-}" ] || return 0      # lista vacia: decision declarada
+  # SEC-010 — UN MANIFIESTO ILEGIBLE NO PUEDE APAGAR ESTA PUERTA.
+  #
+  # Con el manifiesto roto `ARNES_GIT_ACTIVO` queda vacia (el fail-closed de SEC-005 en las
+  # variables) y esta puerta PERMITIA: medido, `git clean -fd` pasaba justo mientras el
+  # aviso decia que toda escritura se deniega. Peor aun, en un proyecto plantilla
+  # `.arnes/config.json` no esta protegido, asi que la unica puerta encendida por defecto
+  # tenia un interruptor de apagado alcanzable en UNA escritura, y por accidente: una coma
+  # de mas. Aqui manda el principio rector — una puerta que no puede medir no deja pasar —,
+  # asi que se cae a la lista que trae el CODIGO y se deniega, diciendo que es modo
+  # degradado y cual es la salida.
+  #
+  # ALCANCE, dicho en voz alta: esto alcanza tambien a un proyecto que tuviera
+  # `git.activo: false` y se le rompa el manifiesto. Pasara a denegar, que es la direccion
+  # segura: apagar la puerta es un acto explicito y un JSON roto no lo es. La salida es
+  # reparar el manifiesto, que es la unica escritura que la averia deja pasar.
+  if [ "${ARNES_MANIFEST_ROTO:-0}" = "1" ]; then
+    # (el motivo lo dice; no hace falta otra bandera)
+    ARNES_GIT_ACTIVO=true
+    ARNES_GIT_PROHIBIDOS="$ARNES_GIT_PROHIBIDOS_DEFECTO"
+    motivo_extra=" MODO DEGRADADO: '.arnes/config.json' existe y no se puede leer como objeto JSON, asi que no se sabe que declaro este proyecto y se aplica la LISTA POR DEFECTO del arnes, no la suya. Salida: corrige el JSON ('jq -e . .arnes/config.json') — reparar el manifiesto es la unica escritura que la averia deja pasar —; si de verdad quieres esta puerta apagada, declaralo con 'git.activo: false' en un manifiesto legible."
+  else
+    [ "${ARNES_GIT_ACTIVO:-}" = "true" ] || return 0
+    [ -n "${ARNES_GIT_PROHIBIDOS:-}" ] || return 0    # lista vacia: decision declarada
+  fi
 
   # Si el material excede el presupuesto de analisis no se juzga aqui: `guard-codigo` y
   # `guard-completado` ya deniegan ese comando con su motivo (una puerta que no puede
@@ -185,22 +207,50 @@ arnes_guard_git() {
   limpio="$ARNES_SIN_TEXTO"
 
   IFS=$'\t' read -r -a reglas <<< "$ARNES_GIT_PROHIBIDOS"
+  # LA CONTINUACION DE LINEA SE PLIEGA ANTES DE PARTIR (SEC-009). `\` + salto no separa
+  # nada: es UN comando escrito en dos renglones. Sin plegarlo, `git clean \<salto> -fd`
+  # se leia como dos ordenes —`git clean` y `-fd`— y ninguna casaba la regla `clean -f`.
+  limpio="${limpio//\\$'\n'/ }"
   # Cada ORDEN por separado: los operadores, las sustituciones y los subshells se vuelven
   # saltos de linea y se juzga el PRIMER token de cada orden. Asi `cd x && git clean -fd`,
   # `x=$(git stash)` y `(git reset --hard)` se ven, y `echo git clean` no.
   limpio="${limpio//&&/$'\n'}"; limpio="${limpio//||/$'\n'}"; limpio="${limpio//|/$'\n'}"
   limpio="${limpio//;/$'\n'}";  limpio="${limpio//'$('/$'\n'}"; limpio="${limpio//\`/$'\n'}"
   limpio="${limpio//(/$'\n'}";  limpio="${limpio//)/$'\n'}"   # `(git reset --hard)`: el `)` pegado al token lo escondia
+  # EL `&` SENCILLO TAMBIEN SEPARA ORDENES (SEC-009), y por eso va DESPUES de `&&`: en
+  # `sleep 0 & git clean -fd` hay dos comandos, y el segundo no se veia porque el segmento
+  # entero empezaba por `sleep`. Rompe de paso `2>&1` en dos trozos, y eso es inocuo: los
+  # trozos no son `git` y ninguna regla los alcanza.
+  limpio="${limpio//&/$'\n'}"
 
   reponer_f=0; case $- in *f*) reponer_f=1 ;; esac
   set -f
   while IFS= read -r seg; do
     # shellcheck disable=SC2206  -- se quiere el word splitting, con globbing apagado
     t=($seg); n=${#t[@]}; [ "$n" -gt 0 ] || continue
-    i=0
-    # Prefijos que no son el comando: asignaciones de entorno y envoltorios.
+    i=0; vistos=0
+    # Prefijos que no son el comando: asignaciones de entorno, envoltorios y PALABRAS
+    # RESERVADAS del shell (SEC-009).
+    #
+    # POR QUE LAS RESERVADAS. `if true; then git clean -fd; fi` parte bien por el `;`, pero
+    # el segmento resultante empieza por `then` — que no es `git` ni un prefijo tolerado—,
+    # asi que el segmento se descartaba ENTERO y el comando mas ordinario del mundo
+    # atravesaba la puerta. Lo mismo con `{ … }`, con `do … done` y con `!`. Ninguna de
+    # esas palabras puede ser el comando: son andamiaje, y saltarlas solo puede hacer que
+    # la puerta MIRE donde antes no miraba. Una limpieza condicional se escribe asi.
+    #
+    # Y LAS OPCIONES Y LOS NUMEROS, SOLO DETRAS DE UN ENVOLTORIO (`vistos > 0`): `timeout
+    # 30 git clean -fd` necesita saltar el `30`, pero un segmento que EMPIEZA por un numero
+    # o por una opcion no es una llamada a git envuelta, y tolerarlo de entrada ensancharia
+    # el reconocimiento sin ninguna forma medida que lo pida.
     while [ "$i" -lt "$n" ]; do
-      case "${t[i]}" in *=*|sudo|command|exec|time|nice|env|builtin) i=$((i+1)) ;; *) break ;; esac
+      case "${t[i]}" in
+        *=*|sudo|command|exec|time|nice|ionice|env|builtin|nohup|setsid|stdbuf|doas|xargs|timeout) ;;
+        then|else|elif|do|done|fi|esac|in|if|while|until|for|case|select|function|'{'|'}'|'!'|'[['|'((') ;;
+        -*|[0-9]*) [ "$vistos" -gt 0 ] || break ;;
+        *) break ;;
+      esac
+      i=$((i+1)); vistos=$((vistos+1))
     done
     # `git` como TOKEN de comando, no como subcadena: `github`, `gitk`, `mygit` y `legit`
     # no son git.
@@ -253,7 +303,7 @@ arnes_guard_git() {
         restore) if arnes_casa_token --staged ${args[@]+"${args[@]}"} && ! arnes_casa_token --worktree ${args[@]+"${args[@]}"}; then continue; fi ;;
       esac
       [ "$reponer_f" -eq 1 ] || set +f
-      arnes_deny "ARNES: 'git $sub ${args[*]}' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, y esta orden los borra sin dejar rastro — git no puede devolver lo que nunca se comiteo. Lo prohibe el manifiesto (git.prohibidos: '$regla'). Como seguir: comitea lo que quieras conservar; si la limpieza hace falta de verdad, que la ejecute el humano fuera de la sesion. Para retirar la regla, edita .arnes/config.json a sabiendas."
+      arnes_deny "ARNES: 'git $sub ${args[*]}' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, y esta orden los borra sin dejar rastro — git no puede devolver lo que nunca se comiteo. Lo prohibe el manifiesto (git.prohibidos: '$regla'). Como seguir: comitea lo que quieras conservar; si la limpieza hace falta de verdad, que la ejecute el humano fuera de la sesion. Para retirar la regla, edita .arnes/config.json a sabiendas.$motivo_extra"
     done
   done <<< "$limpio"
   [ "$reponer_f" -eq 1 ] || set +f

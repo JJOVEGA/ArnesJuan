@@ -68,7 +68,8 @@ arnes_parse_manifest() {
   # Alcance: las claves HOJA que leen las puertas. Si el CONTENEDOR es de otro tipo
   # (`"veredictos": "x"`), jq falla al indexarlo y el manifiesto entero se declara
   # ilegible — el fail-closed de SEC-005, que aqui no se toca.
-  arnes_jq_file "$ARNES_MANIFEST" -r 'if type != "object" then error("no-objeto") else . end
+  arnes_jq_file "$ARNES_MANIFEST" --arg gitdef "$ARNES_GIT_PROHIBIDOS_DEFECTO" \
+                                  -r 'if type != "object" then error("no-objeto") else . end
                                       | . as $m
                                       | [(if ($m.agentes.agente_codigo|type) == "string" then $m.agentes.agente_codigo else "desarrollador" end),
                                        (if ($m.requirements_dir|type) == "string" then $m.requirements_dir else "requirements" end),
@@ -81,7 +82,7 @@ arnes_parse_manifest() {
                                        (if $m.veredictos.caducan_con_codigo == true then "true" else "false" end),
                                        (if $m.git.activo == false then "false" else "true" end),
                                        ((if ($m.git.prohibidos|type) == "array" then $m.git.prohibidos
-                                         else ["clean -f","reset --hard","checkout .","restore .","stash","stash push","stash pop","stash drop","stash clear"] end)
+                                         else ($gitdef | split("\t")) end)
                                         | map(select(type == "string")) | join("\t")),
                                        ([["agentes.agente_codigo",        $m.agentes.agente_codigo,         "string"],
                                          ["requirements_dir",             $m.requirements_dir,              "string"],
@@ -118,7 +119,7 @@ arnes_parse_manifest() {
   if [ "$rc" -ne 0 ] || [ -z "$ARNES_JQ" ]; then
     ARNES_JQ=''
     ARNES_MANIFEST_ROTO=1
-    arnes_warn "'.arnes/config.json' existe pero no se puede leer como objeto JSON (invalido, vacio, 'null' o un array). NO se aplica ningun valor por defecto silencioso: mientras siga asi, toda escritura que las puertas deban juzgar se DENIEGA. Un manifiesto ausente si deja los hooks inertes; uno roto, no."
+    arnes_warn "'.arnes/config.json' existe pero no se puede leer como objeto JSON (invalido, vacio, 'null' o un array). NO se aplica ningun valor por defecto silencioso: mientras siga asi, toda escritura que las puertas deban juzgar se DENIEGA, y 'guard-git' deniega el git destructivo de su LISTA POR DEFECTO (una puerta que no puede medir no deja pasar, tampoco esa). Un manifiesto ausente si deja los hooks inertes; uno roto, no."
   fi
   # `limites.bash_max_analisis` es OPCIONAL: el valor por defecto vive en el codigo
   # (`ARNES_BASH_MAX_ANALISIS`) y ningun proyecto tiene que declararlo. Solo se acepta si
@@ -507,6 +508,15 @@ ARNES_BASH_MAX_ANALISIS=65536
 # vigente sale impreso en el motivo del deny. Si el detector se abarata, se vuelve a
 # medir y sube; nunca al revés.
 ARNES_BASH_MAX_MANIFIESTO=131072
+
+# LA LISTA POR DEFECTO DE `guard-git`, EN EL CODIGO Y UNA SOLA VEZ.
+#
+# Vivia dentro del programa de jq, que es donde se lee el manifiesto. Con el manifiesto
+# ILEGIBLE no hay jq que valga y la puerta necesita la lista igual (SEC-010): repetirla en
+# bash serian dos transcripciones de la misma regla, y dos transcripciones se desfasan. Se
+# declara aqui, se le pasa a jq con `--arg`, y las dos vias leen la misma cadena.
+# Separador TABULADOR, como el resto de las listas que cruzan de jq a bash en este arnes.
+ARNES_GIT_PROHIBIDOS_DEFECTO=$'clean -f\treset --hard\tcheckout .\trestore .\tstash\tstash push\tstash pop\tstash drop\tstash clear'
 
 # PRESUPUESTO de la reconstruccion de un REQ en `guard-completado`, en bytes-edicion
 # (tamano del documento en disco x numero de ediciones). El techo fail-closed del analisis
@@ -1144,7 +1154,22 @@ arnes_deny_manifiesto_roto() {   # [destinos de escritura ya detectados por Bash
   done <<< "$destinos"
   # Un comando que repara el manifiesto Y ademas escribe en otro sitio no es una
   # reparacion: la excepcion vale cuando TODO lo que escribe es el manifiesto.
-  [ "$solo_manifiesto" -eq 1 ] && return 0
+  #
+  # SEC-011 — Y LA REPARACION DEJA RASTRO. Acotar el radio de una excepcion no es lo mismo
+  # que hacerla visible: hasta aqui el `stderr` de una escritura sobre el archivo que
+  # declara las invariantes era IDENTICO al de cualquier otra llamada durante la averia, asi
+  # que la unica escritura privilegiada del arnes era indistinguible de que no hubiera
+  # pasado nada. Se dice quien y sobre que, con un texto propio que no se confunde con el
+  # aviso generico del manifiesto roto. NO se registra ningun contenido: solo el tipo de
+  # agente y la ruta relativa.
+  if [ "$solo_manifiesto" -eq 1 ]; then
+    # Una vez por llamada, no una por guardian: los dos corren en el mismo proceso y el
+    # aviso es del hecho, no de quien lo mira.
+    [ -z "${ARNES_AVISO_REPARACION:-}" ] || return 0
+    ARNES_AVISO_REPARACION=1
+    arnes_warn "REPARACION DEL MANIFIESTO permitida excepcionalmente: '$manif_rel' se esta escribiendo (herramienta $ARNES_TOOL) por '${ARNES_AGENT_TYPE:-sesion coordinadora}' mientras el manifiesto esta ilegible. Es la UNICA escritura que la averia deja pasar, porque es la que devuelve la capacidad de medir; cualquier otra ruta sigue denegada, y con el manifiesto sano este archivo vuelve a estar protegido como cualquier otro."
+    return 0
+  fi
   arnes_deny "ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas protege este proyecto, quien es el agente de codigo ni cual es el estado terminal. Un manifiesto AUSENTE deja los hooks inertes a proposito; uno ROTO no puede, porque el proyecto si declaro invariantes y la puerta no puede leerlas — permitir aqui seria apagar el enforcement en silencio, que es justo el fallo que este arnes existe para impedir. Salida: corrige el JSON (pruebalo con 'jq -e . .arnes/config.json') o borra el archivo si este proyecto no usa el arnes. Mientras siga roto, la UNICA escritura permitida es la del propio '$manif_rel': es la que repara la averia, y esa si se puede hacer desde la sesion."
 }
 
