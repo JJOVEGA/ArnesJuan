@@ -40,7 +40,7 @@ Ciclo 1 = 1.30.3 (REQ-001). El banco corre siempre en WSL (~10 s); nunca en Wind
       1.31.0 / 1.32.0).
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-06 00:46
+## Estado derivado — 2026-09-06 01:06
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -50,7 +50,7 @@ Ciclo 1 = 1.30.3 (REQ-001). El banco corre siempre en WSL (~10 s); nunca en Wind
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.31.0-mecanismos` @ `40312c6` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.31.0-mecanismos` @ `22636cb` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.30.3`
 **Aprobaciones pendientes:** 0
 **REQ:** 11 — completado 1 · en-revisión 7 · en-progreso 1 · bloqueado 0 · otros 2
@@ -62,8 +62,8 @@ _Sólo los REQ abiertos; los 1 completados no se listan._
 |---|---|---|---|---|---|
 | REQ-002 | en-revisión | aprobado | pendiente | critico | qa-106(instrumento) |
 | REQ-003 | en-revisión | aprobado | pendiente | critico | (ninguno) |
-| REQ-004 | en-revisión | con-hallazgos | pendiente | critico | qa-102(contrato) |
-| REQ-005 | en-revisión | con-hallazgos | pendiente | critico | qa-101(contrato) |
+| REQ-004 | en-revisión | aprobado | pendiente | critico | qa-109(instrumento) |
+| REQ-005 | en-revisión | con-hallazgos | pendiente | critico | qa-110(contrato) |
 | REQ-006 | en-revisión | aprobado | pendiente | critico | (ninguno) |
 | REQ-007 | en-progreso | pendiente | pendiente | critico | qa-103(instrumento),qa-104(contrato),qa-105(instrumento),qa-107(instrumento) |
 | REQ-008 | pendiente | pendiente | pendiente | critico | (ninguno) |

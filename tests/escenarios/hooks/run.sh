@@ -2299,6 +2299,29 @@ rsec_check "DEV 1.31.0 v2: QA-102 control: con la seccion encontrada el bloque n
   "$(grep -q 'no contienen la sección declarada' "$RP2/docs/ESTADO.md" && echo si || echo no)-$(rsec_ent "$RP2/requirements/REQ-413.md")"
 rm -rf "$RP2"
 
+# QA 1.31.0 v2: HALLAZGO QA-109 — la seccion SI existe, pero no tiene ni una entrada
+# reconocible (`- `, `* `, `### `, `N. `): esta hecha SOLO de filas de tabla, que CA-07
+# cuenta como continuaciones. No se rota nada y NO SE DICE NADA — el mismo silencio que
+# CA-09 declara inaceptable para la seccion que no existe, en la rama hermana. No es
+# hipotetico: el `## Historial de cambios` de los REQ de ESTE repositorio es una tabla.
+# El caso fija la conducta MEDIDA hoy (silencio); si se decide avisar, este caso cambia
+# con el criterio que lo ordene.
+rsec_proj true 20 1000 nuevo-al-final
+mkdir -p "$RP2/docs"; printf '# ESTADO\n' > "$RP2/docs/ESTADO.md"
+{ printf '# REQ-414\nEstado: en-revisión\n\n## Historial de cambios\n\n'
+  i=1; while [ "$i" -le 60 ]; do
+    printf '| 2026-01-01 | fila de tabla numero %s con relleno de sobra para pasar del umbral de mil bytes | causa | — |\n' "$i"
+    i=$((i+1))
+  done
+} > "$RP2/requirements/REQ-414.md"
+cp "$RP2/requirements/REQ-414.md" "$RP2/antes414.md"
+: > "$ERRLOG"
+printf '%s' "$(CLAUDE_PROJECT_DIR="$RP2" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')" \
+  | CLAUDE_PROJECT_DIR="$RP2" "$HOOKS_DIR/stop.sh" >/dev/null 2>"$ERRLOG"
+rsec_check "QA 1.31.0 v2: QA-109 seccion sin entradas reconocibles: no rota y no avisa" "iguales-silencio" \
+  "$(cmp -s "$RP2/antes414.md" "$RP2/requirements/REQ-414.md" && echo iguales || echo distintos)-$(grep -q 'REQ-414.md' "$ERRLOG" && echo aviso || echo silencio)"
+rm -rf "$RP2"
+
 # CA-17: no regresion. La forma ANTERIOR —artefacto por ruta, secciones `## `— sigue
 # rotando igual que en 1.30.3.
 RP3="$(mktemp -d)"; mkdir -p "$RP3/.arnes"
@@ -2393,6 +2416,22 @@ check "DEV 1.31.0 v2: QA-101 control fin de opciones: 'git clean -- --force' -> 
 # Y la otra mitad del control: `--staged` en su forma corta tampoco toca el arbol.
 check "DEV 1.31.0 v2: QA-101 control: 'git restore -S .' (forma corta de --staged) -> allow" allow guard-git.sh \
   "$(emite_bash 'git restore -S .' "" "")"
+
+# QA 1.31.0 v2: el FIN DE OPCIONES (`--`) que 1.31.0 introduce mueve TRES veredictos de
+# DENY a ALLOW respecto de `40312c6`, y esa direccion se declara, no se descubre. Los tres
+# son correctos —medido en un repositorio desechable: `git reset -- --hard` no toca ni el
+# arbol ni el indice, y `git clean -- -f` solo alcanza a un archivo llamado `-f`, y solo
+# si el proyecto puso `clean.requireForce=false`—, pero ningun criterio los describia.
+# Se fijan aqui para que un cambio futuro en el detector no los mueva sin que nadie lo vea.
+check "QA 1.31.0 v2: fin de opciones 'git clean -- -f' -> allow (era deny en 40312c6)" allow guard-git.sh \
+  "$(emite_bash 'git clean -- -f' "" "")"
+check "QA 1.31.0 v2: fin de opciones 'git reset -- --hard' -> allow (era deny en 40312c6)" allow guard-git.sh \
+  "$(emite_bash 'git reset -- --hard' "" "")"
+# CONTROL, y es el que sostiene la regla: detras de `--` deja de buscarse una OPCION, pero
+# un token LITERAL se sigue buscando en todo el segmento, porque ahi si puede ser un
+# pathspec — y `git checkout -- .` arrasa el arbol igual.
+check "QA 1.31.0 v2: control fin de opciones: 'git checkout -- .' sigue deny" deny guard-git.sh \
+  "$(emite_bash 'git checkout -- .' "" "")"
 check "DEV 1.31.0 v2: QA-101 'git restore -W .' (forma corta de --worktree) -> deny" deny guard-git.sh \
   "$(emite_bash 'git restore -W .' "" "")"
 check "CA-14 'github clone x' -> allow"             allow guard-git.sh "$(emite_bash 'github clone x' "" "")"
@@ -3500,7 +3539,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=606
+CASOS_ESPERADOS=610
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)

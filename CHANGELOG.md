@@ -274,6 +274,34 @@ no mecanismo, y el banco tiene un caso que se pone rojo si algún día aparecen 
   promesa más fuerte de la que la máquina cumple.
 - `ARCHITECTURE.md`: vista de sistema al día, con el guardián nuevo y el orden de `guard.sh`.
 
+### Validación — dos vueltas del bucle dev↔QA, y lo que enseñaron
+
+El `qa-tester` validó la ventana en dos vueltas y devolvió defectos que ninguna prueba del
+desarrollador había visto. Merecen el detalle, porque son familias que se repiten:
+
+- **La puerta nueva de git no veía las formas largas.** `git clean --force`, `git clean --force -d` y
+  `git stash save` pasaban: el motor saltaba todo lo que empieza por dos guiones, y `save` es el alias
+  antiguo de `push`. Se arregló canonicalizando **los dos lados** antes de comparar y poniendo el alias
+  en el motor, no en la lista: un proyecto con lista propia habría perdido la equivalencia sin enterarse.
+- **El coste del camino común se había duplicado**, de un proceso a dos por cada comando de shell, como
+  efecto del arreglo del manifiesto roto. En Linux son milisegundos; donde un fork cuesta entre 1,2 y
+  6 s, es otra magnitud. Ahora las escrituras se detectan antes, y el manifiesto sólo se lee si hay algo
+  que juzgar.
+- **Un punto muerto fabricado por el propio arnés:** al meter el manifiesto dentro de su propia
+  frontera, repararlo quedaba denegado para todos. Con el manifiesto ilegible se permite escribir el
+  propio manifiesto y nada más, sin filtrar por agente — porque quién es el agente de código se lee del
+  archivo que no se puede leer.
+- **Un caso del banco que decidía por reloj de pared**, con un umbral fijo en milisegundos: dos corridas
+  de la misma línea base dieron 457 y 458. Un banco que es puerta requerida de `main` no puede tener
+  casos que dependan de lo cargada que esté la máquina.
+- **Y tres veredictos que pasaron de denegar a permitir sin estar declarados** (`git clean -- -f`,
+  `git reset -- --hard`, `git restore -S .`). Los tres son correctos y ninguno destruye nada, medido en
+  un repositorio desechable: lo que estaba mal era el criterio, que prometía casar «todos los tokens
+  presentes». Se cierra reescribiendo el requerimiento, no el guardián.
+
+De ahí salió además una regla que se queda: **un criterio de coste se escribe como techo, nunca como
+igualdad.** Escrito como igualdad, una mejora se lee como fallo.
+
 ### Pruebas
 Banco: **606 casos** (310 antes de esta versión; 480 al cerrar la implementación, 569 con los
 casos que añadió QA y 606 tras la vuelta 1), **605 PASS · 0 FAIL · 1 SKIP** sobre la candidata y
