@@ -426,6 +426,41 @@ nada.
   vacío no exigía nada. **Paso de migración: corre `tools/arnes-lectura.sh` ANTES de actualizar**
   para ver qué REQ cambian de lectura — los que aparecían como «nota sin Estado» pasan a contar
   como REQ, con sus veredictos y su rigor.
+- **El ACENTO deja de ser parte del valor de un campo, y eso CAMBIA la lectura en todos los
+  proyectos.** Hasta 1.30.3 la normalización plegaba una sola pareja de letras (`Í`/`í`), así que
+  `en-revision` sin tilde no casaba con el `en-revisión` del manifiesto y `Rigor: estándar` no se
+  reconocía. Ahora se pliegan **todas** las vocales acentuadas y con diéresis, en mayúscula y en
+  minúscula, y en las dos formas de guardado Unicode (precompuesta y descompuesta: un archivo
+  guardado en macOS puede traer la tilde descompuesta y nada lo delata a la vista). **No se
+  pliega** la `ñ` —es otra letra, no una `n` con adorno— ni los separadores: `en revision`,
+  `enrevision` y `en-revisión-parcial` siguen siendo valores distintos y siguen marcándose.
+  **Dos consecuencias, y las dos hay que decírselas al usuario:**
+  1. *Avisos que hoy aparecen dejarán de aparecer sin que nadie edite nada.* No hay nada que
+     migrar. Si el proyecto tenía REQ con `Estado:`, `Rigor:` o veredictos escritos sin tilde,
+     estaban saliendo como «valor que ninguna puerta reconoce» y eran perfectamente válidos.
+  2. *En un proyecto cuyo `estados.completado` lleve ACENTO pueden aparecer **DENY nuevos** donde
+     antes pasaba.* No es una regresión: es el cierre de un fallo **en abierto**. Escribir ese
+     estado sin tilde hacía que la puerta **no viera la transición**, y un REQ crítico podía
+     quedar cerrado sin veredicto de seguridad.
+  **Qué revisar antes de actualizar:** corre `tools/arnes-lectura.sh` y guarda la salida; después
+  de actualizar, vuelve a correrlo y compara. Los REQ que desaparecen de la lista de anomalías son
+  los que estaban mal leídos. Y mira si `estados.completado` de tu manifiesto lleva tilde: si la
+  lleva, revisa los REQ que ya declaran ese estado escrito sin ella — desde 1.31.0 la puerta los ve.
+- **Un manifiesto ROTO deja de permitirlo todo en silencio.** Si `.arnes/config.json` **existe**
+  pero no se puede leer como objeto JSON —inválido, vacío, `null` o un array—, el arnés avisa por
+  stderr **siempre** y **deniega** toda escritura que las puertas tendrían que juzgar. Hasta 1.30.3
+  se permitía todo sin decir nada, y además las variables del manifiesto se rellenaban con campos
+  del **input** de la llamada. Un manifiesto **ausente** sigue dejando los hooks inertes, que es una
+  decisión legítima del proyecto; uno roto no puede, porque el proyecto sí declaró invariantes.
+  **Paso de migración: `jq -e . .arnes/config.json` antes de actualizar.** Si falla, arréglalo o
+  borra el archivo; con 1.31.0 no vas a poder escribir hasta entonces.
+- **No se escribe a través de un enlace simbólico.** Si la ruta de un `Edit`/`Write`/`MultiEdit`
+  apunta a un enlace simbólico **dentro** del proyecto, se deniega con ese motivo. El arnés juzga
+  la ruta escrita, no su destino, así que un enlace en una ruta libre que apuntara a código
+  protegido recibía el veredicto de su nombre. No se resuelve el destino a propósito: costaría un
+  proceso en toda edición y abriría una carrera entre la comprobación y la escritura. **Qué
+  revisar:** `find . -type l -not -path './.git/*'` — si el proyecto edita habitualmente a través
+  de enlaces, dilo antes de actualizar; la salida es escribir sobre la ruta real.
 - **`limites.bash_max_analisis` tiene ahora un máximo.** Si el manifiesto declara un valor por
   encima del máximo operativo del arnés, se aplica **el máximo** y se avisa por stderr; y un valor
   que no sea un **número** en el JSON (`"999999"` entrecomillado) cae al techo por defecto, también

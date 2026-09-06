@@ -84,12 +84,16 @@ for f in "$PROY/$REQ_DIR"/*.md; do
   while IFS= read -r l; do
     # Solo la cabecera cuenta, como para la puerta: lo que haya en una seccion no es un campo.
     case "$l" in '## '*) break ;; esac
-    case "$l" in
-      'Estado:'*)               cru_est="${l#Estado:}" ;;
-      'QA:'*)                   cru_qa="${l#QA:}" ;;
-      'Seguridad:'*)            cru_seg="${l#Seguridad:}" ;;
-      'Sensible a seguridad:'*) cru_sens="${l#Sensible a seguridad:}" ;;
-      'Rigor:'*)                cru_rig="${l#Rigor:}" ;;
+    # La CLAVE se lee con `arnes_norm_clave` (hooks/lib.sh), la misma regla que la puerta:
+    # un informe que no reconoce `**Estado:**` diria «nota sin Estado» sobre un REQ que la
+    # puerta ya juzga cerrado, y un informe que lee distinto de la puerta miente.
+    arnes_norm_clave "$l" || continue
+    case "$ARNES_CLAVE" in
+      'Estado')               cru_est="$ARNES_VALOR" ;;
+      'QA')                   cru_qa="$ARNES_VALOR" ;;
+      'Seguridad')            cru_seg="$ARNES_VALOR" ;;
+      'Sensible a seguridad') cru_sens="$ARNES_VALOR" ;;
+      'Rigor')                cru_rig="$ARNES_VALOR" ;;
     esac
   done <<< "$texto"
 

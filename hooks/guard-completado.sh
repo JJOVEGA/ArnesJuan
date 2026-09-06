@@ -33,6 +33,8 @@ arnes_guard_completado() {
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
   arnes_parse_input
+  # SEC-004: una escritura a traves de un enlace simbolico no se juzga, se deniega.
+  arnes_deny_enlace
   tool="$ARNES_TOOL"; fp="$ARNES_FP"; bash_cmd="$ARNES_CMD"
 
   case "$tool" in
@@ -56,6 +58,10 @@ arnes_guard_completado() {
       [ -n "$fp" ] || return 0 ;;
     *) return 0 ;;
   esac
+  # SEC-005: si el manifiesto existe pero no se puede leer, `requirements_dir` y el estado
+  # terminal son desconocidos y esta puerta no puede juzgar nada. No deja pasar.
+  arnes_parse_manifest
+  arnes_deny_manifiesto_roto 1
 
   arnes_parse_manifest
   req_dir="$ARNES_REQ_DIR"; estado_done="$ARNES_ESTADO_DONE"; pending_rel="$ARNES_PENDING"

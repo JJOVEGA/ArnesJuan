@@ -8,7 +8,7 @@ scripts reales de `hooks/` y verifica si deniegan o permiten.
 ```
 bash tests/escenarios/hooks/run.sh
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **428 casos** (el número exacto lo cuadra `CASOS_ESPERADOS` al final de `run.sh`).
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **562 casos** (el número exacto lo cuadra `CASOS_ESPERADOS` al final de `run.sh`).
 
 ## Invariantes del banco
 Tres reglas que el banco se aplica **a sí mismo**. No son estilo: cada una nació de una vuelta

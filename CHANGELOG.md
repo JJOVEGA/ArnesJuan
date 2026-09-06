@@ -9,6 +9,74 @@ Siete mecanismos, todos nacidos de defectos **medidos en proyectos reales** y de
 en la forma del hallazgo: qué fallaba, por dónde, y qué cambia para un proyecto. Cuatro nacen
 **apagados**; sólo uno viene encendido, y se dice por qué.
 
+### Corregido — el acento no es parte del valor: `en-revision` y `en-revisión` son el mismo estado (REQ-010)
+**Qué fallaba:** un proyecto que corre el arnés reportó que el informe marca como «valor que
+ninguna puerta reconoce» un `Estado:` escrito **sin tilde**. Con decenas de requerimientos eso son
+decenas de avisos falsos por documento, y un informe ruidoso no es sólo molesto: es la forma
+conocida de que las anomalías reales se entierren. **Por dónde:** la normalización de campos
+plegaba exactamente **una pareja de letras** —`Í`/`í`—, añadida en su día para que `Sensible a
+seguridad: **Sí**` casara con `sí`. `en-revisión` lleva `ó`, que no estaba en esa pareja. Es la
+cuarta aparición de la misma familia de defecto en este arnés: **el sujeto del control era más
+estrecho que su población**. **Por qué no era sólo un aviso feo:** la misma normalización gobierna
+la detección de la transición al estado terminal. En un proyecto cuyo `estados.completado` lleve
+acento —lo declara cada proyecto: es mapeo, no mecanismo—, escribirlo sin tilde hacía que la puerta
+**no viera la transición** y un requerimiento crítico cerrara sin veredicto de seguridad. Falla en
+abierto y en silencio. **Qué cambia:** el arreglo no añade la letra que faltaba —eso repetiría el
+defecto a la quinta— sino que declara la clase completa: se pliegan todas las vocales acentuadas y
+con diéresis, en mayúscula y minúscula, en forma precompuesta **y descompuesta** (un archivo
+guardado en macOS trae la tilde descompuesta y nada lo delata a la vista). **No** se pliega la `ñ`
+—es otra letra, no una `n` con adorno; plegarla haría iguales `año` y `ano`— ni los separadores:
+`en revision`, `enrevision` y `en-revisión-parcial` siguen siendo valores distintos. El plegado vive
+**una sola vez**, en la misma función que ya normaliza caso y marcado, y lo usan por igual la
+puerta, el informe y el bloque derivado. **Coste: cero procesos y cero forks** —sólo expansión de
+parámetros, detrás de una guarda sobre el byte de cabecera, así que un valor ASCII no paga ni una
+sustitución— y el veredicto es idéntico bajo `LC_ALL=C` y bajo un locale UTF-8, porque la tabla se
+escribe con escapes de bytes y no depende de la colación del entorno. El informe sigue mostrando el
+valor **crudo** tal como está en el archivo, con el normalizado al lado: quien lee el aviso tiene
+que poder encontrar el texto en su editor.
+
+### Corregido — la CLAVE del campo también se decora, y dejaba el campo vacío (REQ-007, bloque A)
+**Qué fallaba:** el **valor** de un campo se leía con tolerancia desde 1.30.0 —`**completado**` es
+`completado`— pero la **clave** se casaba contra el literal `^Clave:`. Así que `**Estado:**
+completado`, `Estado:` seguido de tabulador, ` Estado:` con sangrado y las seis claves envueltas en
+énfasis de Markdown **no se reconocían**. **Por qué es grave y no cosmético:** falla en abierto. Con
+`**Hallazgos abiertos:** SEC-9 (usuario/dinero)` la clave no casaba, el campo quedaba **vacío** — y
+un campo vacío significa «ningún hallazgo». El requerimiento cerraba con un hallazgo de clase
+bloqueante declarado a la vista de cualquiera que leyera el documento. **Qué cambia:** la clave se
+lee con la **misma regla** que el valor y en el mismo sitio —se retira el espacio en blanco de los
+extremos y el énfasis de Markdown—, no con una lista de formas enumeradas: una lista se pudre y la
+regla vale para las formas que nadie ha escrito todavía. Es la otra mitad de la misma línea que el
+plegado de acentos, y por eso entran juntas: arreglar una sin la otra hace que el defecto reaparezca
+en la mitad de al lado. **Lo que NO cambia: dónde vale un campo.** Los campos siguen valiendo sólo
+en la cabecera, antes del primer `## `; la tolerancia es sobre **cómo** se escribe la clave, nunca
+sobre **dónde**. Y leer de más cae siempre del lado que **cierra** la puerta: `**Rigor:** critico`
+sobre un requerimiento no sensible se lee `critico` y exige auditoría.
+
+### Corregido — un manifiesto roto apagaba el enforcement en silencio (SEC-005)
+**Qué fallaba:** si `.arnes/config.json` **existía** pero no se podía leer —inválido, vacío, `null`
+o un array—, la lectura del manifiesto no miraba su código de salida y **todo se permitía sin decir
+nada**. Peor: la variable de la lectura conservaba su **valor anterior**, que era el análisis del
+**input**, así que las variables del manifiesto se rellenaban con campos que controla quien llama —
+el agente de código autorizado se quedaba valiendo `Bash`, el nombre de la herramienta, y la lista
+de rutas protegidas, vacía. La identidad del agente autorizado la escribía el llamante. **Qué
+cambia:** un manifiesto **ausente** sigue dejando los hooks inertes, que es una decisión legítima de
+un proyecto que no usa el arnés; uno **presente y roto** avisa por stderr **siempre** y **deniega**
+toda escritura que las puertas tendrían que juzgar —no se puede denegar «sólo en las rutas
+protegidas» porque justo lo que no se puede leer es cuáles son—. Ningún dato del input atraviesa ya
+esa frontera. Un `ls -la` sigue pasando: no escribe nada y bloquearlo no protegería ninguna
+invariante.
+
+### Corregido — no se escribe a través de un enlace simbólico (SEC-004)
+**Qué fallaba:** los dos guardianes clasifican por el **nombre** de la ruta, así que un enlace
+colocado en una ruta libre que apuntara a código protegido o a un requerimiento recibía el veredicto
+de su nombre y no el de lo que realmente toca. **Qué cambia:** si la ruta de un `Edit`/`Write`/
+`MultiEdit` es un enlace simbólico dentro del proyecto, se deniega con ese motivo. **El destino no
+se resuelve, y es deliberado:** resolverlo costaría un proceso en el camino de toda edición y
+abriría una carrera entre la comprobación y la escritura —lo que el hook mide y lo que la
+herramienta escribe dejarían de ser el mismo archivo—. El precio, dicho en voz alta: no se puede
+escribir a través de un enlace ni siquiera cuando su destino es inocente, y eso alcanza también al
+agente de código. La salida está a la vista: escribir sobre la ruta real.
+
 ### Añadido — un veredicto lleva fecha y caduca con el código (REQ-002, apagado)
 **Qué fallaba:** cuatro requerimientos estaban a punto de cerrarse con un `QA: aprobado`
 emitido contra código que había cambiado **después** de la firma, y otro llevaba un

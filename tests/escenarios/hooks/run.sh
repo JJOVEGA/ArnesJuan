@@ -1252,7 +1252,10 @@ check_estado "...y los 15 completados salen como completados"          "completa
 # una linea `Seguridad: aprobado (A-009, 2026-09-02)` dentro de `## Historial` se leia como
 # EL veredicto y cerraba un REQ critico con la cabecera en pendiente. El caso se da la
 # vuelta: lo que hay dentro de una seccion NO es un campo.
-check_estado "campos DENTRO de una seccion NO se leen: QA queda vacio"  "^| REQ-099 | en-revisión | — | — | estandar | — |" si "$EST_G/docs/ESTADO.md"
+# REQ-010: la celda muestra el valor NORMALIZADO (`en-revision`), que es el que aplica la
+# puerta. CA-16 lo exige: puerta, informe y bloque derivado tienen que coincidir caracter a
+# caracter, y desde 1.31.0 el acento ya no es parte del valor.
+check_estado "campos DENTRO de una seccion NO se leen: QA queda vacio"  "^| REQ-099 | en-revision | — | — | estandar | — |" si "$EST_G/docs/ESTADO.md"
 check_estado "...y Rigor cae al defecto, no al 'critico' de la historia" "^| REQ-099 | en-revisión | — | — | critico"      no "$EST_G/docs/ESTADO.md"
 rm -rf "$EST_G"
 
@@ -2403,7 +2406,7 @@ der_check "CA-05 toda fila de la tabla tiene 7 separadores" "0" \
 der_check "CA-06 una barra dentro del valor no crea una columna" "1" \
   "$(grep -c '^| REQ-603 .*sec-1¦sec-2' "$DER/docs/ESTADO.md")"
 der_check "CA-03 los valores cortos salen intactos y sin elipsis" "1" \
-  "$(grep -c '^| REQ-601 | en-revisión | aprobado | con-hallazgos | estandar | sec-121(instrumento) |' "$DER/docs/ESTADO.md")"
+  "$(grep -c '^| REQ-601 | en-revision | aprobado | con-hallazgos | estandar | sec-121(instrumento) |' "$DER/docs/ESTADO.md")"
 DER_F602="$(grep '^| REQ-602 ' "$DER/docs/ESTADO.md" || true)"
 der_check "CA-04 borde exacto: 40 intacto, 41 recortado" "40-41" \
   "$(printf '%s' "$DER_F602" | awk -F' \\| ' '{print length($3)"-"length($4)}')"
@@ -2790,7 +2793,471 @@ check "REQ-007 CA-57 control: una edicion sola sobre el mismo REQ se juzga como 
   guard-completado.sh "$(emite_edit_real "$S7BIG" 'en-revisión' 'completado')"
 }
 
-TOTAL_SECCIONES=32
+TOTAL_SECCIONES=33
+
+# --- REQ-010 (el acento no es parte del valor) + REQ-007 bloque A (la clave tambien se
+# --- decora) + SEC-004 (enlace simbolico) + SEC-006 parte a (el manifiesto, en este repo)
+# Las dos primeras son LAS DOS MITADES DE LA MISMA LINEA: el valor lo normaliza
+# `arnes_norm_campo` y la clave `arnes_norm_clave`, y las dos comparten la misma regla.
+# Por eso van en la misma seccion: si una se arregla sin la otra, el defecto reaparece en
+# la mitad de al lado.
+seccion_33() {
+  seccion_nueva "El acento y la clave decorada (REQ-010 + REQ-007 bloque A, SEC-004):"
+
+# Fixtures NFD escritos con ESCAPES DE BYTES EXPLICITOS, nunca copiando y pegando: un
+# editor puede re-normalizar al guardar y el fixture dejaria de medir lo que dice medir.
+NFD_O=$'o\xcc\x81'      # o + U+0301 COMBINING ACUTE  == "ó" en NFD
+NFD_A=$'a\xcc\x81'      # a + U+0301                  == "á" en NFD
+NFD_N=$'n\xcc\x83'      # n + U+0303 COMBINING TILDE  == "ñ" en NFD
+
+# ---------- REQ-010 · informe (arnes-lectura): el mismo lector que la puerta ----------
+L33="$(mktemp -d)"; mkdir -p "$L33/.arnes" "$L33/requirements"
+printf '%s\n' "$MANIFIESTO_BASE" > "$L33/.arnes/config.json"
+LEC33="$HOOKS_DIR/../tools/arnes-lectura.sh"
+# lec33 <nombre> <rc esperado> <patron> <si|no aparece>
+lec33() {
+  local nombre="$1" rc_esp="$2" patron="$3" debe="$4" out rc hay=no
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
+  out="$(: > "$ERRLOG"; bash "$LEC33" "$L33" 2>"$ERRLOG")"; rc=$?
+  if [ -z "$out" ]; then
+    echo "  FAIL  $nombre  el informe no imprimio NADA: no midio nada"; diag; FAIL=$((FAIL+1)); return 0
+  fi
+  printf '%s' "$out" | grep -Eq -- "$patron" && hay=si
+  if [ "$rc" = "$rc_esp" ] && [ "$hay" = "$debe" ]; then echo "  PASS  $nombre"; PASS=$((PASS+1))
+  else echo "  FAIL  $nombre  rc=$rc (esperado $rc_esp), patron aparece=$hay (esperado $debe)"; diag; FAIL=$((FAIL+1)); fi
+}
+
+# CA-01: EL CASO MEDIDO. `estados.todos` por defecto trae `en-revisión`; el REQ lo escribe
+# sin tilde. Contra v1.30.3 esto sale como «ninguna puerta lo reconoce» y el informe sale 1.
+printf '# REQ-800\nEstado: en-revision\nQA: aprobado\nSeguridad: n/a\n' > "$L33/requirements/REQ-800.md"
+lec33 "REQ-010 CA-01 'Estado: en-revision' SIN tilde no es anomalia (sale 0)" 0 'REQ-800' no
+# CA-03: la misma cabecera en NFD (bytes explicitos) tampoco lo es.
+printf '# REQ-801\nEstado: en-revisi%sn\nQA: aprobado\nSeguridad: n/a\n' "$NFD_O" > "$L33/requirements/REQ-801.md"
+lec33 "REQ-010 CA-03 'en-revisión' en NFD (o+U+0301) no es anomalia (sale 0)" 0 'REQ-801' no
+# CA-04: `estándar` no se reconocia porque `á` no estaba en la unica pareja que se plegaba.
+printf '# REQ-802\nEstado: en-revision\nQA: aprobado\nSeguridad: n/a\nRigor: est%sndar\n' 'á' > "$L33/requirements/REQ-802.md"
+lec33 "REQ-010 CA-04 'Rigor: estándar' se reconoce (sale 0)" 0 'REQ-802' no
+printf '# REQ-803\nEstado: en-revision\nQA: aprobado\nSeguridad: n/a\nRigor: cr%stico\n' 'í' > "$L33/requirements/REQ-803.md"
+lec33 "REQ-010 CA-04 no-regresion: 'Rigor: crítico' se sigue reconociendo" 0 'REQ-803' no
+# CA-11/CA-12: lo que YA se normalizaba no se pierde.
+printf '# REQ-804\nEstado: En-Revisi%sn\nQA: **pendiente**\nSeguridad: n/a\n' 'ó' > "$L33/requirements/REQ-804.md"
+printf '# REQ-805\nEstado: en-revisi%sn (2026-08-25, tras la ronda 3)\nQA: aprobado\nSeguridad: n/a\n' 'ó' > "$L33/requirements/REQ-805.md"
+lec33 "REQ-010 CA-11 mayusculas, enfasis y parentesis de evidencia siguen sin marcarse" 0 'REQ-80[45]' no
+rm -f "$L33/requirements/REQ-80"[0-5]".md"
+# CA-12: un asterisco SUELTO no es enfasis y sigue sin leerse como veredicto.
+printf '# REQ-806\nEstado: en-revision\nQA: aprobado*\nSeguridad: n/a\n' > "$L33/requirements/REQ-806.md"
+lec33 "REQ-010 CA-12 'QA: aprobado*' (nota al pie) sigue siendo anomalia (sale 1)" 1 'REQ-806' si
+rm -f "$L33/requirements/REQ-806.md"
+# CA-08: LO QUE NO SE ENSANCHA. Esto pliega ortografia, no separadores ni palabras.
+printf '# REQ-807\nEstado: en revision\nQA: aprobado\nSeguridad: n/a\n' > "$L33/requirements/REQ-807.md"
+printf '# REQ-808\nEstado: enrevision\nQA: aprobado\nSeguridad: n/a\n' > "$L33/requirements/REQ-808.md"
+printf '# REQ-809\nEstado: revisi%sn\nQA: aprobado\nSeguridad: n/a\n' 'ó' > "$L33/requirements/REQ-809.md"
+lec33 "REQ-010 CA-08 'en revision', 'enrevision' y 'revisión' siguen siendo anomalia" 1 'REQ-80[789]' si
+rm -f "$L33/requirements/REQ-80"[789]".md"
+# CA-09: la pertenencia al vocabulario sigue siendo EXACTA, no por prefijo (REQ-003 CA-18).
+printf '# REQ-810\nEstado: en-revision-parcial\nQA: aprobado\nSeguridad: n/a\n' > "$L33/requirements/REQ-810.md"
+lec33 "REQ-010 CA-09 'en-revision-parcial' sigue siendo anomalia (sale 1)" 1 'REQ-810' si
+# CA-13: el aviso ensena el valor CRUDO ademas del normalizado. Quien lee el aviso tiene
+# que poder ENCONTRAR el texto en su editor; si solo viera el plegado, buscaria en vano.
+printf '# REQ-811\nEstado: revisi%sn\nQA: aprobado\nSeguridad: n/a\n' 'ó' > "$L33/requirements/REQ-811.md"
+lec33 "REQ-010 CA-13 el aviso ensena el valor CRUDO con su tilde" 1 'escrito:  «revisión»' si
+lec33 "REQ-010 CA-13 ...y al lado el normalizado que lee la maquina" 1 'se lee:   <revision>' si
+rm -f "$L33/requirements/REQ-810.md" "$L33/requirements/REQ-811.md"
+# CA-02: LA DIRECCION INVERSA. El manifiesto declara el estado SIN tilde y el REQ lo
+# escribe CON tilde: la normalizacion se aplica a los DOS lados de la comparacion.
+python3 - "$L33/.arnes/config.json" <<'PY' 2>/dev/null || jq '.estados.todos = ["borrador","en-revision","completado"]' "$L33/.arnes/config.json" > "$L33/.arnes/c2" && mv "$L33/.arnes/c2" "$L33/.arnes/config.json"
+import json,sys
+p=sys.argv[1]; d=json.load(open(p)); d["estados"]["todos"]=["borrador","en-revision","completado"]
+json.dump(d,open(p,"w"))
+PY
+printf '# REQ-812\nEstado: en-revisi%sn\nQA: aprobado\nSeguridad: n/a\n' 'ó' > "$L33/requirements/REQ-812.md"
+lec33 "REQ-010 CA-02 manifiesto SIN tilde + REQ CON tilde: tampoco es anomalia" 0 'REQ-812' no
+# CA-10: LA FRONTERA. La `ñ` NO es una `n` con adorno: plegarla haria iguales dos palabras
+# distintas. Con un vocabulario que declara `año`, el valor `ano` NO casa.
+jq '.estados.todos = ["borrador","año","completado"]' "$L33/.arnes/config.json" > "$L33/.arnes/c3" && mv "$L33/.arnes/c3" "$L33/.arnes/config.json"
+rm -f "$L33/requirements/REQ-812.md"
+printf '# REQ-813\nEstado: ano\nQA: aprobado\nSeguridad: n/a\n' > "$L33/requirements/REQ-813.md"
+lec33 "REQ-010 CA-10 la ñ no se pliega: 'ano' no casa con 'año' (sigue anomalia)" 1 'REQ-813' si
+printf '# REQ-814\nEstado: a%so\nQA: aprobado\nSeguridad: n/a\n' 'ñ' > "$L33/requirements/REQ-814.md"
+rm -f "$L33/requirements/REQ-813.md"
+lec33 "REQ-010 CA-10 control: 'año' con ñ SI casa con 'año'" 0 'REQ-814' no
+# CA-10 en NFD: `n`+U+0303 tampoco se pliega, porque el diacritico solo se retira tras VOCAL.
+printf '# REQ-815\nEstado: a%so\nQA: aprobado\nSeguridad: n/a\n' "$NFD_N" > "$L33/requirements/REQ-815.md"
+rm -f "$L33/requirements/REQ-814.md"
+lec33 "REQ-010 CA-10 la ñ tampoco se pliega en NFD (n+U+0303 no es 'n')" 1 'REQ-815' si
+rm -rf "$L33"
+
+# ---------- REQ-010 · LA PUERTA: el fallo EN ABIERTO que esto cierra ----------
+# Un proyecto cuyo `estados.completado` lleva acento —el manifiesto lo declara cada
+# proyecto: es mapeo, no mecanismo— y un REQ critico con la auditoria pendiente. Escribir
+# el estado SIN tilde hacia que la puerta NO VIERA la transicion: allow, y un REQ critico
+# cerrado sin veredicto de seguridad. Falla en abierto y en silencio.
+P810="$RAIZ/p810-$BASHPID"; mkdir -p "$P810/.arnes" "$P810/requirements" "$P810/src"
+jq '.estados = {"completado":"aprobación","todos":["en-revisión","aprobación"]}' <<< "$MANIFIESTO_BASE" > "$P810/.arnes/config.json"
+printf '## Pendientes\n\n## Resueltas\n' > "$P810/PENDING_APPROVAL.md"
+printf '# REQ-820\nEstado: en-revisi%sn\nSensible a seguridad: s%s\nQA: aprobado\nSeguridad: pendiente\n' 'ó' 'í' > "$P810/requirements/REQ-820.md"
+CLAUDE_PROJECT_DIR="$P810" check "REQ-010 CA-05 estado terminal acentuado escrito SIN tilde -> deny (era ALLOW)" deny \
+  guard-completado.sh "$(CLAUDE_PROJECT_DIR="$P810" jq -n --arg fp "$P810/requirements/REQ-820.md" \
+    '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:$fp|sub("/requirements/.*";""),
+      tool_input:{file_path:$fp,old_string:"en-revisión",new_string:"aprobacion"}}')"
+CLAUDE_PROJECT_DIR="$P810" check "REQ-010 CA-05 control: el mismo cierre CON tilde ya denegaba" deny \
+  guard-completado.sh "$(CLAUDE_PROJECT_DIR="$P810" jq -n --arg fp "$P810/requirements/REQ-820.md" \
+    '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:$fp|sub("/requirements/.*";""),
+      tool_input:{file_path:$fp,old_string:"en-revisión",new_string:"aprobación"}}')"
+# CA-06: la direccion contraria. El REQ YA estaba en el estado terminal acentuado y la
+# edicion solo cambia la ORTOGRAFIA: no hay transicion nueva que inventar.
+printf '# REQ-821\nEstado: aprobaci%sn\nSensible a seguridad: no\nQA: aprobado\nSeguridad: n/a\n' 'ó' > "$P810/requirements/REQ-821.md"
+CLAUDE_PROJECT_DIR="$P810" check "REQ-010 CA-06 reescribir 'aprobación' como 'aprobacion' no cambia el veredicto" allow \
+  guard-completado.sh "$(CLAUDE_PROJECT_DIR="$P810" jq -n --arg fp "$P810/requirements/REQ-821.md" \
+    '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:$fp|sub("/requirements/.*";""),
+      tool_input:{file_path:$fp,old_string:"aprobación",new_string:"aprobacion"}}')"
+# CA-22: EL VEREDICTO NO PUEDE DEPENDER DEL LOCALE del entorno en que arranca el hook,
+# porque ese entorno no lo elige el arnes. Se mide el MISMO caso bajo tres locales.
+J820="$(CLAUDE_PROJECT_DIR="$P810" jq -n --arg fp "$P810/requirements/REQ-820.md" \
+  '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:$fp|sub("/requirements/.*";""),
+    tool_input:{file_path:$fp,old_string:"en-revisión",new_string:"aprobacion"}}')"
+for LOC in C C.UTF-8 es_ES.UTF-8; do
+  got="$(printf '%s' "$J820" | LC_ALL="$LOC" CLAUDE_PROJECT_DIR="$P810" bash "$HOOKS_DIR/guard-completado.sh" 2>/dev/null | grep -Eo '"permissionDecision": *"deny"' | head -1)"
+  if [ -n "$got" ]; then echo "  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=$LOC"; PASS=$((PASS+1))
+  else echo "  FAIL  REQ-010 CA-22 bajo LC_ALL=$LOC el veredicto cambio (no denego)"; FAIL=$((FAIL+1)); fi
+done
+# CA-07: el bloque derivado cuenta las TRES escrituras en la MISMA casilla.
+mkdir -p "$P810/docs"; printf '# ESTADO\n\n## Fase\nx\n' > "$P810/docs/ESTADO.md"
+rm -f "$P810/requirements/REQ-82"[01]".md"
+printf '# REQ-830\nEstado: en-revisi%sn\nQA: aprobado\nSeguridad: n/a\n' 'ó' > "$P810/requirements/REQ-830.md"
+printf '# REQ-831\nEstado: en-revision\nQA: aprobado\nSeguridad: n/a\n' > "$P810/requirements/REQ-831.md"
+printf '# REQ-832\nEstado: en-revisi%sn\nQA: aprobado\nSeguridad: n/a\n' "$NFD_O" > "$P810/requirements/REQ-832.md"
+printf '%s' "$(CLAUDE_PROJECT_DIR="$P810" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR,stop_hook_active:false}')" \
+  | CLAUDE_PROJECT_DIR="$P810" bash "$HOOKS_DIR/estado-derivado.sh" >/dev/null 2>"$ERRLOG"
+n_rev="$(grep -c '^| REQ-83[012] | en-revision |' "$P810/docs/ESTADO.md" 2>/dev/null || true)"
+if [ "${n_rev:-0}" = "3" ]; then echo "  PASS  REQ-010 CA-07 las tres escrituras caen en la MISMA casilla del bloque derivado"; PASS=$((PASS+1))
+else echo "  FAIL  REQ-010 CA-07 solo $n_rev de 3 cayeron en la casilla de 'en revision'"; diag; FAIL=$((FAIL+1)); fi
+
+# ---------- REQ-010 · CA-14/CA-18: UNA sola normalizacion, y ninguna pareja a mano ----
+LIBSH="$HOOKS_DIR/lib.sh"
+otros=0
+for f in "$HOOKS_DIR/guard-completado.sh" "$HOOKS_DIR/guard-codigo.sh" "$HOOKS_DIR/estado-derivado.sh" \
+         "$HOOKS_DIR/campos-req.awk" "$HOOKS_DIR/../tools/arnes-lectura.sh"; do
+  [ -f "$f" ] || continue
+  grep -Eq '(//|/)[áéíóúüÁÉÍÓÚÜ]/' "$f" && otros=$((otros+1))
+done
+if [ "$otros" -eq 0 ]; then echo "  PASS  REQ-010 CA-14 el plegado vive SOLO en lib.sh; nadie tiene el suyo"; PASS=$((PASS+1))
+else echo "  FAIL  REQ-010 CA-14 $otros archivo(s) fuera de lib.sh pliegan acentos por su cuenta"; FAIL=$((FAIL+1)); fi
+# CA-18: el defecto NOMBRADO. Lo que habia era la pareja `Í`/`í` escrita a mano para el
+# caso de `sí`, y ninguna mas: el sujeto del control era mas estrecho que su poblacion.
+if grep -Eq '^\s*v="\$\{v//Í/i\}"; v="\$\{v//í/i\}"' "$LIBSH"; then
+  echo "  FAIL  REQ-010 CA-18 sigue la pareja Í/í escrita a mano para un caso concreto"; FAIL=$((FAIL+1))
+else
+  echo "  PASS  REQ-010 CA-18 no queda ninguna pareja de letras escrita a mano"; PASS=$((PASS+1))
+fi
+# CA-20: SOLO expansion de parametros. Ni un `sed`, `tr`, `iconv` o `awk` nuevo en el plegado.
+if awk '/^arnes_pliega_ortografia\(\)/,/^}/' "$LIBSH" | grep -Eq '\b(sed|tr|iconv|perl|awk|python3?)\b'; then
+  echo "  FAIL  REQ-010 CA-20 el plegado invoca un binario externo"; FAIL=$((FAIL+1))
+else
+  echo "  PASS  REQ-010 CA-20 el plegado es solo expansion de parametros (ningun binario)"; PASS=$((PASS+1))
+fi
+
+# CA-19: EL CAMINO COMUN NO GANA NI UN PROCESO. Se instrumentan `sed`, `tr` e `iconv` en
+# el PATH: sus registros tienen que quedar VACIOS tras un `ls -la` cualquiera.
+BIN33="$RAIZ/bin33-$BASHPID"; mkdir -p "$BIN33"
+for b in sed tr iconv; do
+  real="$(command -v "$b" 2>/dev/null || true)"
+  printf '#!/bin/sh\necho "%s $*" >> "%s/registro-%s"\nexec %s "$@"\n' "$b" "$BIN33" "$b" "${real:-/bin/true}" > "$BIN33/$b"
+  chmod +x "$BIN33/$b"
+done
+printf '%s' "$(jq -n '{hook_event_name:"PreToolUse",tool_name:"Bash",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{command:"ls -la"}}')" \
+  | PATH="$BIN33:$PATH" bash "$HOOKS_DIR/guard.sh" >/dev/null 2>"$ERRLOG"
+huellas=0
+for b in sed tr iconv; do [ -s "$BIN33/registro-$b" ] && huellas=$((huellas+1)); done
+if [ "$huellas" -eq 0 ]; then echo "  PASS  REQ-010 CA-19 'ls -la' por guard.sh: registros de sed, tr e iconv VACIOS"; PASS=$((PASS+1))
+else echo "  FAIL  REQ-010 CA-19 $huellas binario(s) instrumentado(s) se invocaron en el camino comun"; FAIL=$((FAIL+1)); fi
+
+# ---------- REQ-007 bloque A: LA CLAVE DEL CAMPO TAMBIEN SE DECORA ----------
+# Todos sobre un REQ con `QA: pendiente`: si la clave se lee, la puerta DENIEGA por el
+# veredicto que falta; si no se lee, el campo queda vacio y la puerta deja pasar.
+mk_req() { printf '%s\n' "$1" > "$PROJ/requirements/REQ-840.md"; }
+cierra() { emite_write "$PROJ/requirements/REQ-840.md" "$1"; }
+TAB=$'\t'
+mk_req "# REQ-840"
+check "REQ-007 CA-01 'Estado:<TAB>completado' con QA pendiente -> deny" deny \
+  guard-completado.sh "$(cierra "# REQ-840
+Estado:${TAB}completado
+QA: pendiente
+Seguridad: n/a
+")"
+check "REQ-007 CA-02 '**Estado:** completado' (clave decorada) -> deny" deny \
+  guard-completado.sh "$(cierra "# REQ-840
+**Estado:** completado
+QA: pendiente
+Seguridad: n/a
+")"
+check "REQ-007 CA-03 ' Estado: completado' (un espacio de sangrado) -> deny" deny \
+  guard-completado.sh "$(cierra "# REQ-840
+ Estado: completado
+QA: pendiente
+Seguridad: n/a
+")"
+check "REQ-007 CA-03 '  Estado: completado' (dos espacios) -> deny" deny \
+  guard-completado.sh "$(cierra "# REQ-840
+  Estado: completado
+QA: pendiente
+Seguridad: n/a
+")"
+check "REQ-007 CA-03 '<TAB>Estado: completado' -> deny" deny \
+  guard-completado.sh "$(cierra "# REQ-840
+${TAB}Estado: completado
+QA: pendiente
+Seguridad: n/a
+")"
+check "REQ-007 CA-04 'Estado : completado' (espacio antes de los dos puntos) -> deny" deny \
+  guard-completado.sh "$(cierra "# REQ-840
+Estado : completado
+QA: pendiente
+Seguridad: n/a
+")"
+check "REQ-007 CA-04 '__Estado:__ completado' -> deny" deny \
+  guard-completado.sh "$(cierra "# REQ-840
+__Estado:__ completado
+QA: pendiente
+Seguridad: n/a
+")"
+check "REQ-007 CA-04 '*Estado:* completado' -> deny" deny \
+  guard-completado.sh "$(cierra "# REQ-840
+*Estado:* completado
+QA: pendiente
+Seguridad: n/a
+")"
+check "REQ-007 CA-04 '\`Estado:\` completado' -> deny" deny \
+  guard-completado.sh "$(cierra "# REQ-840
+\`Estado:\` completado
+QA: pendiente
+Seguridad: n/a
+")"
+# CA-04 (la regla, no la lista): una forma que NADIE ha escrito todavia.
+check "REQ-007 CA-04 '**Estado** : completado' (forma no enumerada) -> deny" deny \
+  guard-completado.sh "$(cierra "# REQ-840
+**Estado** : completado
+QA: pendiente
+Seguridad: n/a
+")"
+# CA-05/CA-06: LA TOLERANCIA ES SOBRE COMO SE ESCRIBE LA CLAVE, NUNCA SOBRE DONDE VALE.
+printf '# REQ-841\nEstado: en-revisión\nQA: aprobado\nSeguridad: n/a\n\n## Historial de cambios\nEstado: completado\n**Estado:** completado\n' > "$PROJ/requirements/REQ-841.md"
+check "REQ-007 CA-05 control: 'Estado: completado' DENTRO de una seccion no cierra nada" allow \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-841.md" '# REQ-841' '# REQ-841 (nota)')"
+printf '# REQ-842\nEstado: en-revisión\nSensible a seguridad: sí\nQA: pendiente\nSeguridad: pendiente\n\n## Historial de cambios\n**Seguridad:** aprobado\n' > "$PROJ/requirements/REQ-842.md"
+check "REQ-007 CA-06 control: un '**Seguridad:** aprobado' en una seccion sigue sin ser veredicto" deny \
+  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-842.md" 'en-revisión' 'completado')"
+# CA-07: EL FALLO EN ABIERTO de este bloque. La clave decorada dejaba el campo VACIO, y un
+# campo vacio significa «ningun hallazgo»: el REQ cerraba con un hallazgo bloqueante escrito.
+check_motivo "REQ-007 CA-07 '**Hallazgos abiertos:** SEC-9 (usuario/dinero)' -> deny por la clase" \
+  'usuario/dinero|hallazgo' guard-completado.sh "$(cierra "# REQ-840
+Estado: completado
+QA: aprobado
+Seguridad: n/a
+**Hallazgos abiertos:** SEC-9 (usuario/dinero)
+")"
+# CA-08: la regla vale para LOS SEIS campos, no solo para `Estado:`.
+check "REQ-007 CA-08 '**Sensible a seguridad:** sí' con Seguridad pendiente -> deny" deny \
+  guard-completado.sh "$(cierra "# REQ-840
+Estado: completado
+**Sensible a seguridad:** sí
+QA: aprobado
+Seguridad: pendiente
+")"
+check "REQ-007 CA-08 '**QA:** pendiente' -> deny" deny \
+  guard-completado.sh "$(cierra "# REQ-840
+Estado: completado
+Sensible a seguridad: no
+**QA:** pendiente
+Seguridad: n/a
+")"
+check "REQ-007 CA-08 '**Rigor:** ligero' sobre un REQ sensible (el suelo manda) -> deny" deny \
+  guard-completado.sh "$(cierra "# REQ-840
+Estado: completado
+Sensible a seguridad: sí
+**Rigor:** ligero
+QA: aprobado
+Seguridad: pendiente
+")"
+# CA-09: LEER DE MAS CAE DEL LADO QUE CIERRA LA PUERTA. La tolerancia nunca BAJA una
+# exigencia: `**Rigor:** critico` sobre un REQ no sensible se lee `critico` y exige auditoria.
+check "REQ-007 CA-09 '**Rigor:** critico' en un REQ no sensible se LEE critico -> deny" deny \
+  guard-completado.sh "$(cierra "# REQ-840
+Estado: completado
+Sensible a seguridad: no
+**Rigor:** critico
+QA: aprobado
+Seguridad: pendiente
+")"
+# Control: el mismo REQ con todo en verde SI cierra. Sin esto, los deny de arriba podrian
+# estar denegando por cualquier otra razon.
+check "REQ-007 bloque A control: clave decorada + todo en verde -> allow" allow \
+  guard-completado.sh "$(cierra "# REQ-840
+**Estado:** completado
+**Sensible a seguridad:** no
+**QA:** aprobado
+**Seguridad:** n/a
+**Hallazgos abiertos:** (ninguno)
+")"
+# CA-22: EL INFORME LEE EXACTAMENTE LO QUE LEE LA PUERTA, tambien la clave decorada.
+# Un informe que dijera «nota sin Estado» sobre un REQ que la puerta ya juzga cerrado miente.
+K33="$(mktemp -d)"; mkdir -p "$K33/.arnes" "$K33/requirements"
+printf '%s\n' "$MANIFIESTO_BASE" > "$K33/.arnes/config.json"
+printf '# REQ-850\n**Estado:** en-revisión\n**QA:** aprobado\n**Seguridad:** n/a\n' > "$K33/requirements/REQ-850.md"
+out33="$(bash "$LEC33" "$K33" 2>/dev/null)"; rc33=$?
+if [ "$rc33" = "0" ] && printf '%s' "$out33" | grep -q '1 REQ leídos'; then
+  echo "  PASS  REQ-007 CA-22 el informe lee la clave decorada igual que la puerta (1 REQ, 0 notas)"; PASS=$((PASS+1))
+else
+  echo "  FAIL  REQ-007 CA-22 el informe no leyo el REQ de clave decorada (rc=$rc33)"; FAIL=$((FAIL+1))
+fi
+rm -rf "$K33"
+# El bloque derivado, con el MISMO documento: la tercera boca dice lo mismo que las otras dos.
+printf '# REQ-851\n**Estado:** en-revisión\n**QA:** aprobado\n**Seguridad:** n/a\n' > "$P810/requirements/REQ-851.md"
+rm -f "$P810/requirements/REQ-83"[012]".md"
+printf '%s' "$(CLAUDE_PROJECT_DIR="$P810" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR,stop_hook_active:false}')" \
+  | CLAUDE_PROJECT_DIR="$P810" bash "$HOOKS_DIR/estado-derivado.sh" >/dev/null 2>"$ERRLOG"
+if grep -q '^| REQ-851 | en-revision | aprobado | n/a |' "$P810/docs/ESTADO.md" 2>/dev/null; then
+  echo "  PASS  REQ-007 CA-22 el bloque derivado tambien lee la clave decorada"; PASS=$((PASS+1))
+else
+  echo "  FAIL  REQ-007 CA-22 el bloque derivado no leyo la clave decorada"; diag; FAIL=$((FAIL+1))
+fi
+
+# ---------- SEC-004 (CA-49/CA-50): el arnes juzga LA RUTA ESCRITA, no su destino ----------
+printf '# REQ-860\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n' > "$PROJ/requirements/REQ-860.md"
+ln -sf "$PROJ/requirements/REQ-860.md" "$PROJ/docs/enlace.md"
+check_motivo "SEC-004 CA-49 Edit sobre un enlace a un REQ -> deny (salida fail-closed)" \
+  'ENLACE SIMBOLICO|ruta escrita, no su destino' guard-completado.sh \
+  "$(emite_write "$PROJ/docs/enlace.md" "# REQ-860
+Estado: completado
+QA: pendiente
+")"
+ln -sf "$PROJ/src/a.ts" "$PROJ/docs/enlace-src.md"
+check "SEC-004 CA-49 Write sobre un enlace a codigo protegido -> deny tambien en guard-codigo" deny \
+  guard-codigo.sh "$(emite_write "$PROJ/docs/enlace-src.md" 'hola')"
+# CA-50 (a): un archivo REGULAR fuera de los globs sigue permitido. La puerta no puede
+# convertir en protegido lo que no lo es.
+printf 'notas\n' > "$PROJ/docs/notas.md"
+check "SEC-004 CA-50a un archivo REGULAR en docs/ sigue -> allow" allow \
+  guard-codigo.sh "$(emite_write "$PROJ/docs/notas.md" 'hola')"
+check "SEC-004 CA-50a ...y tambien para la puerta de cierre" allow \
+  guard-completado.sh "$(emite_write "$PROJ/docs/notas.md" 'hola')"
+# CA-50 (b): un enlace ROTO no puede matar al guardian — y un guardian muerto no deniega.
+ln -sf "$PROJ/no-existe-jamas.md" "$PROJ/docs/enlace-roto.md"
+t0="$(date +%s%N)"
+sal_roto="$(printf '%s' "$(emite_write "$PROJ/docs/enlace-roto.md" 'hola')" | bash "$HOOKS_DIR/guard.sh" 2>"$ERRLOG")"
+t1="$(date +%s%N)"; ms_roto=$(( (t1 - t0) / 1000000 ))
+if [ "$ms_roto" -lt 1000 ] && printf '%s' "$sal_roto" | grep -q '"deny"'; then
+  echo "  PASS  SEC-004 CA-50b enlace ROTO: responde deny en ${ms_roto}ms, ni cuelga ni revienta"; PASS=$((PASS+1))
+else
+  echo "  FAIL  SEC-004 CA-50b enlace roto: ${ms_roto}ms, salida=<${sal_roto:0:80}>"; diag; FAIL=$((FAIL+1))
+fi
+# CA-50 (c) — DESVIACION DECLARADA. El criterio pide `allow` para un enlace que apunta
+# FUERA del proyecto, porque esta escrito suponiendo la salida (a), la que RESUELVE el
+# destino. La salida elegida es fail-closed SIN resolver, y sin resolver no se puede saber
+# adonde apunta: el enlace esta DENTRO del proyecto y se deniega por lo que es, no por
+# adonde va. Lo que si se conserva del criterio es que el arnes NO SE SALE DE LA RAIZ.
+ln -sf /etc/hostname "$PROJ/docs/enlace-fuera.md"
+check "SEC-004 CA-50c [desviacion declarada] enlace que apunta FUERA -> deny, no allow" deny \
+  guard-codigo.sh "$(emite_write "$PROJ/docs/enlace-fuera.md" 'hola')"
+# ...y el control que sostiene la desviacion: un enlace que esta FUERA del proyecto no es
+# asunto del arnes y no se juzga.
+FUERA33="$(mktemp -d)"; printf 'x\n' > "$FUERA33/real.md"; ln -sf "$FUERA33/real.md" "$FUERA33/enlace.md"
+check "SEC-004 CA-50c control: un enlace FUERA del proyecto no se juzga -> allow" allow \
+  guard-codigo.sh "$(emite_write "$FUERA33/enlace.md" 'hola')"
+rm -rf "$FUERA33"
+# CA-50 (d): el camino comun de Bash no paga NADA por esto.
+check "SEC-004 CA-50d el camino comun de Bash ('ls -la') sigue -> allow" allow \
+  guard-codigo.sh "$(jq -n '{hook_event_name:"PreToolUse",tool_name:"Bash",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{command:"ls -la"}}')"
+# ...y el agente de codigo TAMPOCO escribe a traves de un enlace: la puerta es sobre la
+# FORMA de la escritura, no sobre quien la hace.
+check "SEC-004 el desarrollador tampoco escribe a traves de un enlace -> deny" deny \
+  guard-codigo.sh "$(jq -n --arg fp "$PROJ/docs/enlace-src.md" '{hook_event_name:"PreToolUse",tool_name:"Write",cwd:env.CLAUDE_PROJECT_DIR,agent_id:"a1",agent_type:"desarrollador",tool_input:{file_path:$fp,content:"hola"}}')"
+
+# ---------- SEC-006 parte (a) (CA-53): control obligatorio de la decision ----------
+# La ampliacion de `codigo_app.globs` es MAPEO DE ESTE REPOSITORIO, no mecanismo: ninguna
+# plantilla puede ganarla, o todos los proyectos que instalen el arnes la heredarian.
+TPL33="$HOOKS_DIR/../templates/arnes-config.json.tpl"
+if [ -f "$TPL33" ] && grep -Eq '\.arnes/config\.json|\.claude-plugin' "$TPL33"; then
+  echo "  FAIL  REQ-007 CA-53 la plantilla arnes-config.json.tpl gano los globs de este repo"; FAIL=$((FAIL+1))
+else
+  echo "  PASS  REQ-007 CA-53 la ampliacion NO se propaga a templates/arnes-config.json.tpl"; PASS=$((PASS+1))
+fi
+# Y el mecanismo que la hace valer: con esos globs declarados, la coordinadora no escribe
+# el manifiesto y el agente de codigo si. Se mide sobre un proyecto efimero, no sobre este
+# repositorio: el banco no puede depender del mapeo de quien lo corre.
+M33="$RAIZ/m33-$BASHPID"; mkdir -p "$M33/.arnes" "$M33/.claude-plugin" "$M33/requirements"
+jq '.codigo_app.globs = ["hooks/*",".arnes/config.json",".claude-plugin/*"]' <<< "$MANIFIESTO_BASE" > "$M33/.arnes/config.json"
+printf '## Pendientes\n\n## Resueltas\n' > "$M33/PENDING_APPROVAL.md"
+CLAUDE_PROJECT_DIR="$M33" check "REQ-007 CA-53 la coordinadora NO escribe .arnes/config.json -> deny" deny \
+  guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$M33" emite_write "$M33/.arnes/config.json" '{}')"
+CLAUDE_PROJECT_DIR="$M33" check "REQ-007 CA-53 ...ni .claude-plugin/plugin.json -> deny" deny \
+  guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$M33" emite_write "$M33/.claude-plugin/plugin.json" '{}')"
+CLAUDE_PROJECT_DIR="$M33" check "REQ-007 CA-53 el desarrollador SI lo escribe -> allow" allow \
+  guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$M33" jq -n --arg fp "$M33/.arnes/config.json" '{hook_event_name:"PreToolUse",tool_name:"Write",cwd:env.CLAUDE_PROJECT_DIR,agent_id:"a1",agent_type:"desarrollador",tool_input:{file_path:$fp,content:"{}"}}')"
+# ---------- SEC-005 (CA-51/CA-52): un manifiesto ROTO no es un manifiesto AUSENTE ------
+# Medido en la auditoria R-001: `arnes_parse_manifest` no miraba el codigo de salida de
+# `arnes_jq_file`, y `arnes_jq_file` deja `ARNES_JQ` CON SU VALOR ANTERIOR cuando jq falla.
+# El valor anterior era el analisis del INPUT: las variables del manifiesto se rellenaban
+# con campos que controla quien llama (`ARNES_AGENTE_CODIGO` = `Bash`, el `tool_name`) y
+# los globs quedaban vacios. Todo permitido, en silencio, con las invariantes declaradas.
+R33="$RAIZ/r33-$BASHPID"; mkdir -p "$R33/.arnes" "$R33/requirements" "$R33/src" "$R33/docs"
+printf '## Pendientes\n\n## Resueltas\n' > "$R33/PENDING_APPROVAL.md"
+roto33() { printf '%s' "$1" > "$R33/.arnes/config.json"; }
+# Las cuatro formas del criterio: invalido, vacio, `null` y un array. Las tres ultimas son
+# JSON VALIDO, que es lo que las hacia peligrosas: jq las atravesaba sin fallar.
+roto33 '{ "codigo_app": '
+CLAUDE_PROJECT_DIR="$R33" check_motivo "REQ-007 CA-51 SEC-005 manifiesto INVALIDO: Write -> deny con motivo" \
+  'no se puede leer|NO se puede leer' guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_write "$R33/docs/x.md" 'hola')"
+roto33 ''
+CLAUDE_PROJECT_DIR="$R33" check "REQ-007 CA-51 SEC-005 manifiesto VACIO -> deny" deny \
+  guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_write "$R33/docs/x.md" 'hola')"
+roto33 'null'
+CLAUDE_PROJECT_DIR="$R33" check "REQ-007 CA-51 SEC-005 manifiesto 'null' (JSON valido) -> deny" deny \
+  guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_write "$R33/docs/x.md" 'hola')"
+roto33 '[1,2]'
+CLAUDE_PROJECT_DIR="$R33" check "REQ-007 CA-51 SEC-005 manifiesto ARRAY (JSON valido) -> deny" deny \
+  guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_write "$R33/docs/x.md" 'hola')"
+CLAUDE_PROJECT_DIR="$R33" check "REQ-007 CA-51 SEC-005 ...y la puerta de cierre tampoco deja pasar" deny \
+  guard-completado.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_write "$R33/requirements/REQ-870.md" 'Estado: completado')"
+# El aviso de un manifiesto ilegible va por `arnes_warn`, o sea por STDERR, y NO por
+# `systemMessage`: se emite aunque la llamada se permita —un `ls -la` no escribe nada y
+# sigue pasando—, que es justo lo que quiere decir «siempre». Se comprueba donde vive.
+: > "$ERRLOG"
+sal33="$(CLAUDE_PROJECT_DIR="$R33" jq -n '{hook_event_name:"PreToolUse",tool_name:"Bash",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{command:"ls -la"}}' \
+  | CLAUDE_PROJECT_DIR="$R33" bash "$HOOKS_DIR/guard-codigo.sh" 2>"$ERRLOG")"
+if grep -q 'no se puede leer' "$ERRLOG" && ! printf '%s' "$sal33" | grep -q '"deny"'; then
+  echo "  PASS  REQ-007 CA-51 SEC-005 el aviso se emite SIEMPRE (stderr), tambien cuando permite"; PASS=$((PASS+1))
+else
+  echo "  FAIL  REQ-007 CA-51 SEC-005 sin aviso en stderr, o el 'ls -la' quedo denegado"; diag; FAIL=$((FAIL+1))
+fi
+# NINGUNA VARIABLE DEL MANIFIESTO SE RELLENA CON CAMPOS DEL INPUT. Es la mitad grave del
+# hallazgo: no es solo que permitiera, es que el llamante escribia quien es el agente
+# autorizado. Se mide leyendo las variables, no la decision.
+fuga33="$(CLAUDE_PROJECT_DIR="$R33" bash -c '. "'"$HOOKS_DIR"'/lib.sh"
+  ARNES_INPUT="$(jq -n "{tool_name:\"Bash\",agent_type:\"qa-tester\",tool_input:{file_path:\"/x\",command:\"c\"}}")"
+  arnes_project_dir "$ARNES_INPUT"; ARNES_MANIFEST="'"$R33"'/.arnes/config.json"
+  arnes_parse_input; arnes_parse_manifest 2>/dev/null
+  printf "%s|%s|%s" "$ARNES_AGENTE_CODIGO" "$ARNES_REQ_DIR" "${#ARNES_GLOBS[@]}"')"
+if [ "$fuga33" = "||0" ]; then
+  echo "  PASS  REQ-007 CA-51 SEC-005 ninguna variable del manifiesto se rellena con el input"; PASS=$((PASS+1))
+else
+  echo "  FAIL  REQ-007 CA-51 SEC-005 fuga del input al manifiesto: <$fuga33> (esperado '||0')"; FAIL=$((FAIL+1))
+fi
+# CA-52: LOS CONTROLES QUE YA PASABAN NO CAMBIAN. Un fail-closed nuevo que rompa el modo
+# inerte convertiria el arreglo en un estorbo para todo proyecto que no usa el arnes.
+rm -f "$R33/.arnes/config.json"
+CLAUDE_PROJECT_DIR="$R33" check "REQ-007 CA-52 control: manifiesto AUSENTE sigue INERTE -> allow" allow \
+  guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_write "$R33/src/a.ts" 'hola')"
+printf '%s\n' "$MANIFIESTO_BASE" > "$R33/.arnes/config.json"
+CLAUDE_PROJECT_DIR="$R33" check "REQ-007 CA-52 control: manifiesto VALIDO decide igual que siempre -> deny" deny \
+  guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_write "$R33/src/a.ts" 'hola')"
+CLAUDE_PROJECT_DIR="$R33" check_aviso "REQ-007 CA-52 control: un manifiesto VALIDO no emite NINGUN aviso" \
+  no '' guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_write "$R33/docs/x.md" 'hola')"
+# La clave OPCIONAL ausente sigue cayendo al defecto del codigo, sin denegar ni avisar:
+# "no declarado" no puede confundirse con "ilegible".
+CLAUDE_PROJECT_DIR="$R33" check_aviso "REQ-007 CA-52 control: 'limites' ausente cae al defecto sin avisar ni denegar" \
+  no '' guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$R33" jq -n '{hook_event_name:"PreToolUse",tool_name:"Bash",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{command:"cat src/a.ts"}}')"
+}
 
 # --- Despacho en paralelo -----------------------------------------------------
 # El canario ya corrio en el padre, solo y antes que nada: si el hook esta muerto no
@@ -2834,7 +3301,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=493
+CASOS_ESPERADOS=562
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)

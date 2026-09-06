@@ -31,6 +31,8 @@ arnes_guard_codigo() {
   local objetivo="" via_bash=0 exceso=0 rel cand quien escrituras rc
 
   arnes_parse_input
+  # SEC-004: una escritura a traves de un enlace simbolico no se juzga, se deniega.
+  arnes_deny_enlace
 
   if [ "$ARNES_TOOL" = "Bash" ]; then
     [ -n "$ARNES_CMD" ] || return 0
@@ -57,9 +59,13 @@ arnes_guard_codigo() {
     arnes_es_codigo_app "$rel" "$ARNES_MANIFEST" && objetivo="$rel"
   fi
 
+  arnes_parse_manifest
+  # SEC-005: con el manifiesto roto los globs no se pueden leer, asi que `objetivo` esta
+  # vacio por ignorancia y no por inocencia. Se deniega antes de sacar ninguna conclusion.
+  arnes_deny_manifiesto_roto "$([ "$via_bash" -eq 1 ] && [ -n "$escrituras" ] && echo 1 || echo 0)"
+
   [ -n "$objetivo" ] || return 0   # no es código de app -> permitir
 
-  arnes_parse_manifest
 
   # Es código de app. Permitido SÓLO si es un subagente real (agent_id presente) Y
   # además es el agente de código designado. La comparación tolera el prefijo del

@@ -35,7 +35,17 @@ hasta separar guardián y candidato.
 
 `.arnes/config.json` de este repositorio declara `hooks/`, `tools/` y `.github/` como
 `codigo_app.globs`: **sólo el agente `desarrollador` los edita**, y la sesión coordinadora que
-lo intente recibe la denegación de N, con el motivo. Las quality gates del manifiesto son
+lo intente recibe la denegación de N, con el motivo.
+
+Desde 1.31.0 esa frontera **se incluye a sí misma**: `.arnes/config.json` y `.claude-plugin/*` están
+dentro de los globs, porque quien no puede escribir `hooks/` no debe poder cambiar la regla que dice
+qué es `hooks/` (hallazgo de la auditoría del ciclo 1). Queda fuera el resto de `.arnes/` —
+`migracion.md` y `plantillas-origen/`—, que los escribe la migración desde la sesión coordinadora y
+no declaran ninguna invariante. **Consecuencia práctica y aceptada:** `arnes_version` vive en el
+manifiesto, así que la Fase 5 de `/arnes-upgrade` en este repositorio la ejecuta el `desarrollador`.
+Ocurre una vez por versión y coincide con el commit en el que ya sube `plugin.json` y
+`marketplace.json`. **Esto es mapeo de este repositorio y no se traslada a las plantillas:** un
+proyecto que instale el arnés decide su propia frontera. Las quality gates del manifiesto son
 rápidas (sintaxis y JSON) porque un hook `PreToolUse` muere a los 60 s y un hook muerto no
 deniega; el banco completo es la puerta de `main` en CI (`hooks-en-linux`, requerido y estricto).
 
