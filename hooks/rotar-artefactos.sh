@@ -215,7 +215,20 @@ arnes_rotar_seccion() {
       *) despues+="$linea"$'\n' ;;
     esac
   done <<< "$texto"
-  [ "$fase" -ge 1 ] || return 0            # el documento no tiene esa seccion: no se toca
+  # EL DOCUMENTO NO TIENE ESA SECCION: no se toca, Y SE DICE (CA-09, QA-102).
+  #
+  # No rotar es lo correcto —la comparacion es exacta y rotar por prefijo seria adivinar
+  # que quiso decir el manifiesto—, pero salir en silencio convierte un ERROR DE MAPEO en
+  # un acierto aparente: el proyecto declaro `## Historial`, su documento dice `## Historial
+  # de cambios`, y cree que rota desde hace meses. Un artefacto declarado que no existe hay
+  # que verlo. Se avisa por stderr (no bloquea nunca: es un hook de parada) y se cuenta,
+  # para que el bloque derivado lo refleje sin volver a mirar el disco.
+  if [ "$fase" -lt 1 ]; then
+    arnes_warn "rotacion: '${f#"$ARNES_PROJ/"}' casa el artefacto declarado pero NO contiene la seccion '$sec'; no se rota nada en ese archivo. La comparacion del nombre de la seccion es EXACTA (nunca por prefijo): revisa 'rotacion.artefactos[].seccion' en .arnes/config.json, o el encabezado del documento."
+    ARNES_ROT_SIN_SECCION=$(( ${ARNES_ROT_SIN_SECCION:-0} + 1 ))
+    [ -n "${ARNES_ROT_SIN_SECCION_EJ:-}" ] || ARNES_ROT_SIN_SECCION_EJ="${f##*/}|$sec"
+    return 0
+  fi
 
   # 2) Manda el tamano de LA SECCION, no el del archivo, y en BYTES (`LC_ALL=C` solo para
   #    la cuenta, como en `arnes_rotar_uno`: `${#texto}` cuenta caracteres en UTF-8).

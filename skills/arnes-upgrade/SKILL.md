@@ -391,6 +391,15 @@ nada.
   `git.activo: false`, o se sustituye la lista con `git.prohibidos` (`[]` es una decisión
   declarada y válida). Que la puerta exista **no** sustituye la regla humana: comitear tras cada
   aterrizaje.
+- **La forma LARGA de un flag se deniega igual que la corta.** Un proyecto (o un agente) que
+  escribiera `git clean --force`, `git clean --force -d` o `git stash save "wip"` los verá ahora
+  **denegados**: son el mismo comando destructivo que `clean -f` y que `stash push`, escritos de
+  otra manera. La equivalencia funciona en los **dos** sentidos y también sobre una lista propia:
+  si declaras `git.prohibidos: ["push --force"]`, `git push -f` queda denegado igual. **No cambia
+  ningún permitido:** `clean --dry-run`, `clean -n`, `stash list`, `restore --staged` y los demás
+  siguen pasando, y lo que va detrás de `--` es un pathspec, no una opción (`git clean -- --force`
+  borra un archivo llamado `--force` y sigue permitido). Si el proyecto tenía un guión de limpieza
+  con la forma larga, o lo comitea antes o pide la limpieza al humano fuera de la sesión.
 - `.arnes/config.json`: bloques nuevos `veredictos` (los dos interruptores **apagados**), `git`
   (encendido, arriba) y `limites` (**opcional**, sólo si un comando legítimo topa con el techo de
   análisis de Bash; bórralo si no lo necesitas). `rotacion.artefactos` admite además la forma de
@@ -402,12 +411,24 @@ nada.
 - **Rotación de sección: se añade APAGADA y no cambia nada de lo que ya rotaba.** Un proyecto que
   rotaba artefactos enteros por secciones `## ` sigue igual (la forma anterior del manifiesto se
   respeta). Si se activa la forma nueva, el nombre de la sección se compara **exacto**: declara
-  la línea entera (`"seccion": "## Historial de cambios"`), no un prefijo.
+  la línea entera (`"seccion": "## Historial de cambios"`), no un prefijo. **Si te equivocas, te
+  lo dirá:** un archivo que casa el `glob` pero no contiene la sección declarada no se toca y
+  produce un aviso por stderr con el archivo y la sección, más una línea en el bloque derivado de
+  `docs/ESTADO.md`. Ese aviso es la señal de que el mapeo está mal, no de que el arnés falle.
+- **La parada rota ANTES de derivar el bloque de estado.** Nada que migrar: el bloque describe
+  ahora el disco de después de la rotación, que es el que vas a leer en la sesión siguiente.
 - `requirements/README.md`: `Seguridad: con-hallazgos` pasa a ser un valor **válido** —los REQ que
   ya lo escribían dejan de ser una anomalía **sin editarlos**, y sigue sin cerrar un REQ crítico—;
   párrafos nuevos **la fecha del veredicto también va en el paréntesis**, el **aviso al escribir
   un valor fuera del vocabulario** y el **recorte a 40 caracteres** del bloque derivado.
   `AGENTS.md` §13: dos filas nuevas en la tabla y los dos párrafos correspondientes.
+- **Un manifiesto con una clave del tipo equivocado ahora avisa.** `"exigir_fecha": "true"` (la
+  cadena en vez del booleano), un `limites.bash_max_analisis` decimal o en forma exponencial, unos
+  `codigo_app.globs` que no son un array: siguen cayendo al valor por defecto del arnés —eso no
+  cambia— pero lo dicen por stderr, con la clave y el valor recibido. Si al instalar ves uno de
+  esos avisos, el proyecto llevaba tiempo creyendo que declaraba algo que no declaraba. Y mientras
+  `.arnes/config.json` esté **roto**, la única escritura que las puertas permiten es la del propio
+  manifiesto: la reparación que el mensaje recomienda se puede hacer desde la sesión.
 - Corre `tools/arnes-lectura.sh` **después** de instalar: hasta 1.30.3 reportaba como anómalo todo
   `Estado:` con paréntesis de evidencia, y no lo era. Si el proyecto tenía muchas «anomalías», es
   probable que la mayoría desaparezcan solas.

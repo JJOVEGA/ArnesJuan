@@ -26,7 +26,13 @@ DIR="${BASH_SOURCE[0]%/*}"
 # shellcheck source=/dev/null
 . "$DIR/rotar-artefactos.sh"
 
+# ORDEN: primero se ROTA, despues se DERIVA. Dos razones, y ninguna es de estilo:
+#   1. El bloque derivado tiene que poder decir que un artefacto declaraba una seccion que
+#      no existe (REQ-004 CA-09). Ese dato lo produce la rotacion, y un dato que llega
+#      despues de escribirse el bloque no llega.
+#   2. El bloque se deriva del disco, y la rotacion cambia el disco. Derivar primero
+#      describiria el estado ANTERIOR a la parada, que es justo lo que no se quiere.
 arnes_preludio || exit 0
-arnes_estado_derivado  || true
 arnes_rotar_artefactos || true
+arnes_estado_derivado  || true
 exit 0

@@ -143,6 +143,13 @@ Tocado por: (agente / fecha)
 ```
 
 ## Índice
+
+> **Este índice es una copia a mano de campos que viven en la cabecera de cada REQ, y por eso se
+> desfasa solo.** Sólo mandan los campos del propio REQ; si una celda de aquí los contradice, la
+> equivocada es la celda. Se ha desfasado tres veces en un solo día de trabajo, así que está previsto
+> convertirlo en un bloque **derivado** entre marcadores, como el de `docs/ESTADO.md`, y dejar de
+> mantenerlo a mano. Mientras tanto, **no cites este índice como fuente**: abre el REQ.
+
 | ID | Título | Estado | Rigor | QA | Seguridad |
 |---|---|---|---|---|---|
 | [REQ-001](REQ-001.md) | Dos bypass del enforcement en v1.30.2: cierre sustituyendo sólo el valor, y sustitución de comandos en heredoc sin citar | `completado` | critico | aprobado | aprobado |

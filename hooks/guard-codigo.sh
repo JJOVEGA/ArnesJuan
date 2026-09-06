@@ -28,7 +28,7 @@ DIR="${BASH_SOURCE[0]%/*}"
 # defecto que este arnés existe para impedir. `arnes_deny` sí termina el proceso,
 # y eso es correcto: una denegación es final y no hay nada más que juzgar.
 arnes_guard_codigo() {
-  local objetivo="" via_bash=0 exceso=0 rel cand quien escrituras rc
+  local objetivo="" via_bash=0 exceso=0 rel cand quien escrituras="" rc
 
   arnes_parse_input
   # SEC-004: una escritura a traves de un enlace simbolico no se juzga, se deniega.
@@ -47,22 +47,48 @@ arnes_guard_codigo() {
       # estorba, porque a el ya se le permitia escribir.
       exceso=1; objetivo="(comando no analizable)"
     else
+      # EL MANIFIESTO SE LEE SOLO SI HAY UNA ESCRITURA QUE JUZGAR (QA-104).
+      #
+      # Un comando que no escribe nada --`ls -la`, `npm run build`, la inmensa mayoria de
+      # las llamadas de todos los agentes-- no necesita saber que rutas protege el
+      # proyecto: no toca ninguna. Detectar las escrituras es GRATIS (expansion de
+      # parametros, sin procesos); leer el manifiesto cuesta un `jq`, y este es el camino
+      # mas frecuente que existe. SEC-005 puso esa lectura por delante del corte temprano
+      # y el camino comun paso de 1 proceso a 2 --en Windows, donde un fork cuesta
+      # 1,2-6 s, eso es el orden de magnitud que el arnes lleva tres versiones peleando--.
+      #
+      # NO SE PIERDE NINGUNA GARANTIA: el alcance de SEC-005 ya excluia este caso a
+      # proposito ("un `ls -la` con el manifiesto roto sigue pasando, porque no escribe
+      # nada y bloquearlo no protegeria ninguna invariante"). El aviso del manifiesto roto
+      # se emite siempre que el manifiesto SE CONSULTA, que es siempre que hay algo que
+      # juzgar con el.
+      [ -n "$escrituras" ] || return 0
+    fi
+  else
+    [ -n "$ARNES_FP" ] || return 0
+  fi
+
+  arnes_parse_manifest
+  # SEC-005: con el manifiesto roto los globs no se pueden leer, asi que `objetivo` estaria
+  # vacio por ignorancia y no por inocencia. Se deniega antes de sacar ninguna conclusion.
+  # Recibe los destinos ya detectados (no los vuelve a analizar): con Bash solo alcanza a
+  # un comando que escribe, y ese analisis ya esta hecho aqui arriba.
+  arnes_deny_manifiesto_roto "$escrituras"
+
+  # Los globs ya estan cargados por `arnes_parse_manifest`: `arnes_es_codigo_app` no
+  # arranca un segundo `jq` para preguntar lo mismo.
+  if [ "$exceso" -eq 0 ]; then
+    if [ "$via_bash" -eq 1 ]; then
       while IFS= read -r cand; do
         [ -n "$cand" ] || continue
         arnes_ruta_relativa "$cand" "$ARNES_PROJ"; rel="$ARNES_REL"
         if arnes_es_codigo_app "$rel" "$ARNES_MANIFEST"; then objetivo="$rel"; break; fi
       done <<< "$escrituras"
+    else
+      arnes_ruta_relativa "$ARNES_FP" "$ARNES_PROJ"; rel="$ARNES_REL"
+      arnes_es_codigo_app "$rel" "$ARNES_MANIFEST" && objetivo="$rel"
     fi
-  else
-    [ -n "$ARNES_FP" ] || return 0
-    arnes_ruta_relativa "$ARNES_FP" "$ARNES_PROJ"; rel="$ARNES_REL"
-    arnes_es_codigo_app "$rel" "$ARNES_MANIFEST" && objetivo="$rel"
   fi
-
-  arnes_parse_manifest
-  # SEC-005: con el manifiesto roto los globs no se pueden leer, asi que `objetivo` esta
-  # vacio por ignorancia y no por inocencia. Se deniega antes de sacar ninguna conclusion.
-  arnes_deny_manifiesto_roto "$([ "$via_bash" -eq 1 ] && [ -n "$escrituras" ] && echo 1 || echo 0)"
 
   [ -n "$objetivo" ] || return 0   # no es código de app -> permitir
 
@@ -85,7 +111,7 @@ arnes_guard_codigo() {
     # de comandos, o sea en un subshell, y lo que memorice alli no vuelve. Es un `jq` en
     # el camino de la denegacion, que ya no es el camino comun (REQ-001, QA-016).
     arnes_techo_bash
-    arnes_deny "ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande para analizarlo con garantia, asi que no se analizo y no se permite (intento de $quien). No es un veredicto sobre lo que hace el comando: es que la puerta no puede medirlo, y una puerta que no puede medir no deja pasar. El presupuesto de analisis vigente es de $ARNES_TECHO bytes y este comando lo supera. Salidas: usa un heredoc CITADO (<<'EOF'), que se descuenta entero y no tiene este techo; escribe el contenido en un archivo de script y ejecutalo; o parte el comando en trozos por debajo de $ARNES_TECHO bytes. El techo se puede SUBIR en .arnes/config.json con 'limites.bash_max_analisis' (bytes), hasta un maximo de \$ARNES_BASH_MAX_MANIFIESTO bytes: por encima el analisis dejaria de responder antes de que el hook muera, y un hook muerto no deniega."
+    arnes_deny "ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande para analizarlo con garantia, asi que no se analizo y no se permite (intento de $quien). No es un veredicto sobre lo que hace el comando: es que la puerta no puede medirlo, y una puerta que no puede medir no deja pasar. El presupuesto de analisis vigente es de $ARNES_TECHO bytes y este comando lo supera. Salidas: usa un heredoc CITADO (<<'EOF'), que se descuenta entero y no tiene este techo; escribe el contenido en un archivo de script y ejecutalo; o parte el comando en trozos por debajo de $ARNES_TECHO bytes. El techo se puede SUBIR en .arnes/config.json con 'limites.bash_max_analisis' (bytes), hasta un maximo de $ARNES_BASH_MAX_MANIFIESTO bytes: por encima el analisis dejaria de responder antes de que el hook muera, y un hook muerto no deniega."
   fi
   if [ "$via_bash" -eq 1 ]; then
     arnes_deny "ARNES: el comando escribe en '$objetivo', que es código de la app; sólo el agente '$ARNES_AGENTE_CODIGO' puede hacerlo (intento de $quien). Escribirlo por Bash no salta la regla: delega el cambio en '$ARNES_AGENTE_CODIGO' (ver AGENTS.md §5). Nota: la detección en Bash es parcial (redirecciones, tee, cp/mv/install, sed -i, dd) — si esto es un falso positivo, repórtalo."

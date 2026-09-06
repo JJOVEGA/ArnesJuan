@@ -57,19 +57,45 @@ arnes_parse_manifest() {
   # un numero es JSON VALIDO y jq lo atravesaria devolviendo los valores por defecto y una
   # lista de globs VACIA — es decir, un proyecto sin nada protegido, en silencio. Aqui la
   # unica lectura aceptable es un OBJETO; cualquier otra cosa es "no se puede leer".
+  # EL TIPO LO DECIDE EL JSON, NO LA FORMA DEL TEXTO, Y VALE PARA TODAS LAS CLAVES.
+  #
+  # `"exigir_fecha": "true"` (una cadena) apagaba la puerta EN SILENCIO mientras el techo
+  # de Bash si avisaba ante el MISMO error de tipo (QA-106/QA-107). La regla es una sola y
+  # ahora se aplica igual a todas: lo que no tiene el tipo que esa clave espera cae al
+  # valor por defecto del arnes Y SE DICE, nombrando la clave y el valor recibido. Caer del
+  # lado seguro esta bien; hacerlo sin decirlo deja al proyecto creyendo que declaro algo.
+  #
+  # Alcance: las claves HOJA que leen las puertas. Si el CONTENEDOR es de otro tipo
+  # (`"veredictos": "x"`), jq falla al indexarlo y el manifiesto entero se declara
+  # ilegible — el fail-closed de SEC-005, que aqui no se toca.
   arnes_jq_file "$ARNES_MANIFEST" -r 'if type != "object" then error("no-objeto") else . end
-                                      | [(.agentes.agente_codigo // "desarrollador"),
-                                       (.requirements_dir // "requirements"),
-                                       (.estados.completado // "completado"),
-                                       (.pending_approval // "PENDING_APPROVAL.md"),
-                                       (if   (.limites.bash_max_analisis|type) == "number" then (.limites.bash_max_analisis|tostring)
-                                        elif  .limites.bash_max_analisis == null            then ""
+                                      | . as $m
+                                      | [(if ($m.agentes.agente_codigo|type) == "string" then $m.agentes.agente_codigo else "desarrollador" end),
+                                       (if ($m.requirements_dir|type) == "string" then $m.requirements_dir else "requirements" end),
+                                       (if ($m.estados.completado|type) == "string" then $m.estados.completado else "completado" end),
+                                       (if ($m.pending_approval|type) == "string" then $m.pending_approval else "PENDING_APPROVAL.md" end),
+                                       (if   ($m.limites.bash_max_analisis|type) == "number" then ($m.limites.bash_max_analisis|tostring)
+                                        elif  $m.limites.bash_max_analisis == null           then ""
                                         else  "!tipo" end),
-                                       (if .veredictos.exigir_fecha == true then "true" else "false" end),
-                                       (if .veredictos.caducan_con_codigo == true then "true" else "false" end),
-                                       (if .git.activo == false then "false" else "true" end),
-                                       ((.git.prohibidos // ["clean -f","reset --hard","checkout .","restore .","stash","stash push","stash pop","stash drop","stash clear"]) | join("\t"))]
-                                      + (.codigo_app.globs // []) | .[]'
+                                       (if $m.veredictos.exigir_fecha == true then "true" else "false" end),
+                                       (if $m.veredictos.caducan_con_codigo == true then "true" else "false" end),
+                                       (if $m.git.activo == false then "false" else "true" end),
+                                       ((if ($m.git.prohibidos|type) == "array" then $m.git.prohibidos
+                                         else ["clean -f","reset --hard","checkout .","restore .","stash","stash push","stash pop","stash drop","stash clear"] end)
+                                        | map(select(type == "string")) | join("\t")),
+                                       ([["agentes.agente_codigo",        $m.agentes.agente_codigo,         "string"],
+                                         ["requirements_dir",             $m.requirements_dir,              "string"],
+                                         ["estados.completado",           $m.estados.completado,            "string"],
+                                         ["pending_approval",             $m.pending_approval,              "string"],
+                                         ["limites.bash_max_analisis",    $m.limites.bash_max_analisis,     "number"],
+                                         ["veredictos.exigir_fecha",      $m.veredictos.exigir_fecha,       "boolean"],
+                                         ["veredictos.caducan_con_codigo",$m.veredictos.caducan_con_codigo, "boolean"],
+                                         ["git.activo",                   $m.git.activo,                    "boolean"],
+                                         ["git.prohibidos",               $m.git.prohibidos,                "array"],
+                                         ["codigo_app.globs",             $m.codigo_app.globs,              "array"]]
+                                        | map(select(.[1] != null and (.[1]|type) != .[2]) | .[0] + " = " + (.[1]|tojson))
+                                        | join("\u0001"))]
+                                      + (if ($m.codigo_app.globs|type) == "array" then ($m.codigo_app.globs | map(select(type == "string"))) else [] end) | .[]'
   rc=$?
   ARNES_GLOBS=()
   # SEC-005 — UN MANIFIESTO ILEGIBLE NO ES UN MANIFIESTO AUSENTE, Y NO SE PARECEN EN NADA.
@@ -107,15 +133,31 @@ arnes_parse_manifest() {
     # es una decision declarada del proyecto y no un error.
     IFS= read -r ARNES_VER_FECHA;     IFS= read -r ARNES_VER_CADUCAN
     IFS= read -r ARNES_GIT_ACTIVO;    IFS= read -r ARNES_GIT_PROHIBIDOS
+    IFS= read -r ARNES_TIPOS
     while IFS= read -r g; do [ -n "$g" ] && ARNES_GLOBS+=("$g"); done
   } <<< "$ARNES_JQ"
+  # Una entrada por clave con el tipo equivocado: la clave y el valor TAL COMO SE RECIBIO
+  # (en JSON, para que `"true"` se distinga de `true`). Sin denegar: un tipo mal escrito no
+  # puede convertirse en un bloqueo, pero tampoco en un silencio.
+  if [ -n "${ARNES_TIPOS:-}" ]; then
+    local _t
+    while IFS= read -r -d $'\001' _t || [ -n "$_t" ]; do
+      _t="${_t%$'\n'}"          # el here-string anade un salto al ultimo campo
+      [ -n "$_t" ] || continue
+      arnes_warn "'${_t%% = *}' de .arnes/config.json no tiene el tipo que esa clave espera (se recibio ${_t#* = }); se ignora y manda el valor por defecto del arnes. Lo que la puerta no entiende cae del lado seguro, y lo dice."
+    done <<< "$ARNES_TIPOS"
+  fi
   # El TIPO lo decide el JSON, no la forma del texto: `"999999"` entrecomillado es una
   # cadena, no un número, y se comportaba como si lo fuera (SEC-006(b), R-001). Un techo
   # escrito a mano no puede desactivar la puerta por una errata ni por un tipo.
   case "${ARNES_BASH_MAX:-}" in
-    '!tipo')       arnes_warn "'limites.bash_max_analisis' de .arnes/config.json no es un numero en el JSON (una cadena como \"999999\" no lo es); se ignora y manda el techo por defecto del arnes."
-                   ARNES_BASH_MAX='' ;;
-    ''|*[!0-9]*|0) ARNES_BASH_MAX='' ;;
+    '')      ;;                       # ausente: ni aviso ni techo; manda el del codigo
+    '!tipo') ARNES_BASH_MAX='' ;;     # el tipo ya lo aviso el bloque de arriba
+    # Es un numero JSON, pero no un entero positivo de bytes que la puerta pueda aplicar:
+    # `1e9` (jq lo escribe `1E+9`), `1.5`, `-5` o `0`. Caia al defecto SIN DECIR NADA, por
+    # el hueco entre «supera el maximo» y «no es un numero» (QA-107).
+    *[!0-9]*|0) arnes_warn "'limites.bash_max_analisis' de .arnes/config.json vale $ARNES_BASH_MAX, que no es un entero positivo de bytes (la forma exponencial '1e9' y los decimales tampoco lo son); se ignora y manda el techo por defecto del arnes."
+                ARNES_BASH_MAX='' ;;
   esac
   ARNES_GLOBS_CARGADOS=1
   ARNES_MANIFEST_LISTO=1
@@ -1074,14 +1116,36 @@ arnes_deny_enlace() {   # -> deniega si `file_path` es un enlace simbolico dentr
 # `Bash` SOLO cuando el detector ya encontro un destino de escritura (lo pasa el llamador,
 # que ya lo analizo: aqui no se vuelve a pagar). Un `ls -la` con el manifiesto roto sigue
 # pasando, porque no escribe nada y bloquearlo no protegeria ninguna invariante.
-arnes_deny_manifiesto_roto() {   # [1 si el llamador ya detecto una escritura por Bash]
+#
+# LA UNICA ESCRITURA QUE SE PERMITE ES LA DEL PROPIO MANIFIESTO (QA-105). El motivo de la
+# denegacion ofrece una salida --"corrige el JSON"-- que estaba prohibida por la propia
+# denegacion en cuanto `.arnes/config.json` figura en `codigo_app.globs`: ni por `Edit`, ni
+# por `Write`, ni por `Bash`, y para NINGUN agente. Un proyecto con una coma de mas quedaba
+# con todo bloqueado hasta que una persona editara el archivo fuera de la sesion. Es el
+# unico archivo cuya reparacion devuelve la capacidad de medir, y no depende de leerlo, asi
+# que se exceptua: cualquier otra ruta sigue denegada mientras el manifiesto este roto, y
+# con el manifiesto sano vuelve a estar protegido como cualquier otro archivo de los globs.
+#
+# NO SE FILTRA POR AGENTE, y es a proposito: QUIEN es el agente de codigo se lee del
+# manifiesto, que es justo lo que no se puede leer. Exigir un nombre aqui seria inventarlo.
+arnes_deny_manifiesto_roto() {   # [destinos de escritura ya detectados por Bash, uno por linea]
   [ "${ARNES_MANIFEST_ROTO:-0}" = "1" ] || return 0
+  local destinos d solo_manifiesto=1 manif_rel
   case "$ARNES_TOOL" in
-    Edit|Write|MultiEdit) ;;
-    Bash) [ "${1:-0}" = "1" ] || return 0 ;;
+    Edit|Write|MultiEdit) destinos="$ARNES_FP" ;;
+    Bash) destinos="${1:-}"; [ -n "$destinos" ] || return 0 ;;
     *) return 0 ;;
   esac
-  arnes_deny "ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas protege este proyecto, quien es el agente de codigo ni cual es el estado terminal. Un manifiesto AUSENTE deja los hooks inertes a proposito; uno ROTO no puede, porque el proyecto si declaro invariantes y la puerta no puede leerlas — permitir aqui seria apagar el enforcement en silencio, que es justo el fallo que este arnes existe para impedir. Salida: corrige el JSON (pruebalo con 'jq -e . .arnes/config.json') o borra el archivo si este proyecto no usa el arnes."
+  arnes_ruta_relativa "$ARNES_MANIFEST" "$ARNES_PROJ"; manif_rel="$ARNES_REL"
+  while IFS= read -r d; do
+    [ -n "$d" ] || continue
+    arnes_ruta_relativa "$d" "$ARNES_PROJ"
+    [ "$ARNES_REL" = "$manif_rel" ] || { solo_manifiesto=0; break; }
+  done <<< "$destinos"
+  # Un comando que repara el manifiesto Y ademas escribe en otro sitio no es una
+  # reparacion: la excepcion vale cuando TODO lo que escribe es el manifiesto.
+  [ "$solo_manifiesto" -eq 1 ] && return 0
+  arnes_deny "ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas protege este proyecto, quien es el agente de codigo ni cual es el estado terminal. Un manifiesto AUSENTE deja los hooks inertes a proposito; uno ROTO no puede, porque el proyecto si declaro invariantes y la puerta no puede leerlas — permitir aqui seria apagar el enforcement en silencio, que es justo el fallo que este arnes existe para impedir. Salida: corrige el JSON (pruebalo con 'jq -e . .arnes/config.json') o borra el archivo si este proyecto no usa el arnes. Mientras siga roto, la UNICA escritura permitida es la del propio '$manif_rel': es la que repara la averia, y esa si se puede hacer desde la sesion."
 }
 
 # --- Campos de cabecera del REQ ---------------------------------------------

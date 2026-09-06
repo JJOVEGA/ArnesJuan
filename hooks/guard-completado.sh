@@ -51,7 +51,7 @@ arnes_guard_completado() {
         # Igual que en `guard-codigo`: el techo se resuelve aqui porque el detector corrio
         # en un subshell y su memorizacion no vuelve (REQ-001, QA-016).
         arnes_techo_bash
-        arnes_deny "ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande para analizarlo con garantia; no se analizo y no se permite. Una puerta que no puede medir no deja pasar (AGENTS.md 1): sin analisis no se puede saber si el comando toca '$ARNES_REQ_DIR'. El presupuesto de analisis vigente es de $ARNES_TECHO bytes y este comando lo supera. Salidas: heredoc CITADO (<<'EOF'), un archivo de script, o partir el comando en trozos por debajo de $ARNES_TECHO bytes. El techo se puede SUBIR en .arnes/config.json con 'limites.bash_max_analisis' (bytes), hasta un maximo de \$ARNES_BASH_MAX_MANIFIESTO bytes: por encima el analisis dejaria de responder antes de que el hook muera, y un hook muerto no deniega."
+        arnes_deny "ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande para analizarlo con garantia; no se analizo y no se permite. Una puerta que no puede medir no deja pasar (AGENTS.md 1): sin analisis no se puede saber si el comando toca '$ARNES_REQ_DIR'. El presupuesto de analisis vigente es de $ARNES_TECHO bytes y este comando lo supera. Salidas: heredoc CITADO (<<'EOF'), un archivo de script, o partir el comando en trozos por debajo de $ARNES_TECHO bytes. El techo se puede SUBIR en .arnes/config.json con 'limites.bash_max_analisis' (bytes), hasta un maximo de $ARNES_BASH_MAX_MANIFIESTO bytes: por encima el analisis dejaria de responder antes de que el hook muera, y un hook muerto no deniega."
       fi
       [ -n "$escrituras" ] || return 0 ;;
     Edit|Write|MultiEdit)
@@ -61,9 +61,10 @@ arnes_guard_completado() {
   # SEC-005: si el manifiesto existe pero no se puede leer, `requirements_dir` y el estado
   # terminal son desconocidos y esta puerta no puede juzgar nada. No deja pasar.
   arnes_parse_manifest
-  arnes_deny_manifiesto_roto 1
+  # Los destinos ya estan detectados en la via Bash; en Edit/Write la escritura es cierta
+  # y la ruta viaja en `ARNES_FP`. La funcion no vuelve a analizar nada.
+  arnes_deny_manifiesto_roto "${escrituras:-}"
 
-  arnes_parse_manifest
   req_dir="$ARNES_REQ_DIR"; estado_done="$ARNES_ESTADO_DONE"; pending_rel="$ARNES_PENDING"
 
   # --- Vía Bash: no se juzga aquí, se DERIVA ---

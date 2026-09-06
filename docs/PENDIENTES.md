@@ -174,3 +174,19 @@ hallazgo; se convierte en REQ con el analista al abrir la versión que lo recoja
   resuelven el 80 %, eso es lo que se construye.
 - **Ya cubierto en 1.31.0:** REQ-004 (rotación de `## Historial de cambios` fuera del REQ) es la
   primera mitad de esta estrategia y su MVP: se mide con B1 antes de construir nada de lo demás.
+
+### Observado en el ciclo 2 (2026-09-06): el índice de `requirements/README.md` es una copia a mano
+
+Las columnas `Estado`, `QA` y `Seguridad` del índice **repiten** campos que ya viven en la cabecera de
+cada REQ. Se desfasaron **tres veces en un solo día**: el analista las corrigió dos veces y la
+coordinadora una tercera. Es la misma familia que REQ-003 (una regla, un lector) y que REQ-009 (una
+cuenta, un contador), aplicada a un artefacto de documentación en vez de a una puerta.
+
+**Mecanismo propuesto, para su REQ:** el índice pasa a ser un bloque **derivado** entre marcadores,
+escrito por el mismo lector que usan la puerta y el informe —igual que el bloque de `docs/ESTADO.md`—,
+y lo de fuera de los marcadores (el título, la descripción, las secciones de vocabulario) se sigue
+escribiendo a mano. Encaja con REQ-008, que ya deriva estas mismas cifras para el informe: la función
+se escribe una vez y la usan los dos. Candidata: **1.33.0**, con REQ-008.
+
+**Mientras no exista**, en el índice queda escrita la advertencia de que no es fuente y de que manda
+el REQ. Es lo barato que se puede hacer hoy sin abrir otro frente.

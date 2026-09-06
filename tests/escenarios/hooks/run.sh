@@ -1688,6 +1688,13 @@ setcfg '.limites = {bash_max_analisis: "mucho"}'
 check_motivo "DEV v3: techo con errata -> manda el defecto del codigo, no se desactiva nada" \
   "escribe en 'src/qa7\.ts'" guard-codigo.sh \
   "$(emite_bash $'cat <<EOF\n$(echo x > src/qa7.ts)\nEOF' "" "")"
+# QA 1.31.0: HALLAZGO QA-103 — el motivo del techo imprime el NOMBRE de la variable en
+# vez de su valor (`\$ARNES_BASH_MAX_MANIFIESTO` va escapado en guard-codigo.sh:88 y en
+# guard-completado.sh:54). Quien lee la denegacion no sabe hasta donde puede subir el
+# techo. Un deny que no se puede accionar es un deny a medias.
+check_motivo "QA-103 el motivo del techo imprime el maximo en BYTES, no el nombre de la variable" \
+  "hasta un maximo de 131072 bytes" guard-codigo.sh \
+  "$(emite_bash "$(printf 'echo "%s" > src/qa103.ts' "$(printf 'a%.0s' $(seq 1 70000))")" "" "")"
 setcfg 'del(.limites)'
 
 # --- 7) QA-013: `\$(` escapado no es una sustitucion --------------------------
@@ -2254,6 +2261,42 @@ cp "$RP2/requirements/REQ-411.md" "$RP2/antes.md"
 rsec_corre "$RP2"
 rsec_check "CA-20 '## Historial' no casa '## Historial de cambios' (exacto, no prefijo)" "iguales" \
   "$(cmp -s "$RP2/antes.md" "$RP2/requirements/REQ-411.md" && echo iguales || echo distintos)"
+# QA 1.31.0: HALLAZGO QA-102 — REQ-004 CA-09 pide dos cosas y solo se cumple una: no
+# rotar (arriba) Y DECIRLO. Un artefacto declarado cuya seccion no existe es un error de
+# mapeo que hay que ver; hoy `arnes_rotar_seccion` sale con `return 0` en silencio.
+rsec_check "QA-102 CA-09: la seccion declarada no encontrada emite arnes_warn" "hay-aviso" \
+  "$( [ -s "$ERRLOG" ] && echo hay-aviso || echo silencio)"
+# DEV 1.31.0 v2: un aviso que no dice CUAL archivo ni QUE seccion no obliga a nadie a
+# mirar nada. CA-09 pide los dos datos, porque el error que describe es de MAPEO: alguien
+# escribio un nombre de seccion y el documento tiene otro.
+rsec_check "DEV 1.31.0 v2: QA-102 el aviso nombra el archivo y la seccion declarada" "si-si" \
+  "$(grep -q 'REQ-411.md' "$ERRLOG" && echo si || echo no)-$(grep -q '## Historial' "$ERRLOG" && echo si || echo no)"
+rm -rf "$RP2"
+
+# DEV 1.31.0 v2: la SEGUNDA MITAD de CA-09 —el bloque derivado lo refleja—. Se prueba por
+# `stop.sh`, que es como corre en produccion: la rotacion deja el dato y el bloque lo
+# ensena sin volver a mirar el disco (por eso stop.sh rota ANTES de derivar).
+rsec_proj true 20 1000 nuevo-al-final "" "## Historial"
+mkdir -p "$RP2/docs"
+printf '# ESTADO\n\n## Fase\nlo que escribio una persona\n' > "$RP2/docs/ESTADO.md"
+rsec_req "$RP2/requirements/REQ-412.md" 60
+: > "$ERRLOG"
+printf '%s' "$(CLAUDE_PROJECT_DIR="$RP2" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')" \
+  | CLAUDE_PROJECT_DIR="$RP2" "$HOOKS_DIR/stop.sh" >/dev/null 2>"$ERRLOG"
+rsec_check "DEV 1.31.0 v2: QA-102 CA-09 el bloque derivado refleja la seccion no encontrada" "si-si" \
+  "$(grep -q 'no contienen la sección declarada' "$RP2/docs/ESTADO.md" && echo si || echo no)-$(grep -q 'REQ-412.md' "$RP2/docs/ESTADO.md" && echo si || echo no)"
+rsec_check "DEV 1.31.0 v2: QA-102 lo que escribio una persona sigue fuera de los marcadores" "1" \
+  "$(grep -c 'lo que escribio una persona' "$RP2/docs/ESTADO.md")"
+# CONTROL: cuando la seccion SI existe no se dice nada. Un bloque que informa de lo que no
+# pasa deja de servir para saber donde quedamos.
+rm -rf "$RP2"
+rsec_proj true 20 1000 nuevo-al-final
+mkdir -p "$RP2/docs"; printf '# ESTADO\n' > "$RP2/docs/ESTADO.md"
+rsec_req "$RP2/requirements/REQ-413.md" 60
+printf '%s' "$(CLAUDE_PROJECT_DIR="$RP2" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')" \
+  | CLAUDE_PROJECT_DIR="$RP2" "$HOOKS_DIR/stop.sh" >/dev/null 2>/dev/null
+rsec_check "DEV 1.31.0 v2: QA-102 control: con la seccion encontrada el bloque no dice nada" "no-20" \
+  "$(grep -q 'no contienen la sección declarada' "$RP2/docs/ESTADO.md" && echo si || echo no)-$(rsec_ent "$RP2/requirements/REQ-413.md")"
 rm -rf "$RP2"
 
 # CA-17: no regresion. La forma ANTERIOR —artefacto por ruta, secciones `## `— sigue
@@ -2324,6 +2367,34 @@ check "CA-13 'git commit -m \"no uses git clean\"' -> allow" allow guard-git.sh 
 check "CA-13 heredoc CITADO cuyo cuerpo dice git clean -fd -> allow" allow guard-git.sh \
   "$(emite_bash $'cat <<\'EOF\'\ngit clean -fd\nEOF' "" "")"
 # CA-14: `git` es un TOKEN de comando, no una subcadena.
+# QA 1.31.0: HALLAZGO QA-101 — la regla casa el flag CORTO por letras, pero la forma
+# LARGA equivalente y el alias del subcomando escapan. `git clean --force` borra lo mismo
+# que `git clean -f`, y `git stash save` es el alias historico de `git stash push`. Los
+# tres son la conducta que REQ-005 existe para impedir. Controles positivos justo debajo.
+check "QA-101 'git clean --force' -> deny"          deny  guard-git.sh "$(emite_bash 'git clean --force' "" "")"
+check "QA-101 'git clean --force -d' -> deny"       deny  guard-git.sh "$(emite_bash 'git clean --force -d' "" "")"
+check "QA-101 'git stash save \"wip\"' -> deny"      deny  guard-git.sh "$(emite_bash 'git stash save "wip"' "" "")"
+check "QA-101 control: 'git clean --dry-run' sigue allow" allow guard-git.sh "$(emite_bash 'git clean --dry-run' "" "")"
+check "QA-101 control: 'git stash list' sigue allow" allow guard-git.sh "$(emite_bash 'git stash list' "" "")"
+# DEV 1.31.0 v2: la equivalencia es SIMETRICA y vive en el motor, no en la lista. La forma
+# larga se traduce a su letra corta antes de comparar, en los DOS lados; asi una regla
+# escrita con una ortografia alcanza tambien la otra, y ninguna lista tiene que enumerar
+# variantes. Con el `=` pegado (`--force=x`) la opcion sigue siendo la misma.
+check "DEV 1.31.0 v2: QA-101 'git clean -d --force' (larga al final) -> deny" deny guard-git.sh \
+  "$(emite_bash 'git clean -d --force' "" "")"
+check "DEV 1.31.0 v2: QA-101 'git stash save' sin mensaje -> deny" deny guard-git.sh \
+  "$(emite_bash 'git stash save' "" "")"
+check "DEV 1.31.0 v2: QA-101 'git clean --force=si' -> deny" deny guard-git.sh \
+  "$(emite_bash 'git clean --force=si' "" "")"
+# FIN DE OPCIONES: detras de `--` lo que hay son pathspecs. `--force` ahi es el NOMBRE DE
+# UN ARCHIVO, no el flag, y denegarlo seria el falso positivo que estorba a todo el mundo.
+check "DEV 1.31.0 v2: QA-101 control fin de opciones: 'git clean -- --force' -> allow" allow guard-git.sh \
+  "$(emite_bash 'git clean -- --force' "" "")"
+# Y la otra mitad del control: `--staged` en su forma corta tampoco toca el arbol.
+check "DEV 1.31.0 v2: QA-101 control: 'git restore -S .' (forma corta de --staged) -> allow" allow guard-git.sh \
+  "$(emite_bash 'git restore -S .' "" "")"
+check "DEV 1.31.0 v2: QA-101 'git restore -W .' (forma corta de --worktree) -> deny" deny guard-git.sh \
+  "$(emite_bash 'git restore -W .' "" "")"
 check "CA-14 'github clone x' -> allow"             allow guard-git.sh "$(emite_bash 'github clone x' "" "")"
 check "CA-14 'mygit clean -f' -> allow"             allow guard-git.sh "$(emite_bash 'mygit clean -f' "" "")"
 check "CA-15 'echo \"git clean -f\"' -> allow"      allow guard-git.sh "$(emite_bash 'echo "git clean -f"' "" "")"
@@ -2341,6 +2412,28 @@ check "CA-20 lista vacia: una decision declarada, no un error -> allow" allow gu
 setcfg '.git = {"prohibidos": ["push --force"]}'
 check "CA-19 lista propia: 'git clean -fd' ya no esta en ella -> allow" allow guard-git.sh "$(emite_bash 'git clean -fd' "" "")"
 check "CA-19 lista propia: 'git push --force origin main' -> deny" deny guard-git.sh "$(emite_bash 'git push --force origin main' "" "")"
+# DEV 1.31.0 v2: QA-101 al reves. El proyecto declaro la forma LARGA; la corta es el mismo
+# flag y tiene que casar igual. Por esto la equivalencia esta en el MOTOR: si viviera en la
+# lista por defecto, una lista propia como esta la perderia sin enterarse.
+check "DEV 1.31.0 v2: QA-101 lista propia con la larga: 'git push -f origin main' -> deny" deny guard-git.sh \
+  "$(emite_bash 'git push -f origin main' "" "")"
+check "DEV 1.31.0 v2: QA-101 control: '--force-with-lease' no es '--force' -> allow" allow guard-git.sh \
+  "$(emite_bash 'git push --force-with-lease origin main' "" "")"
+# DEV 1.31.0 v2: UN CASO POR ENTRADA DE LA TABLA DE EQUIVALENCIAS (CA-21.2). Una tabla del
+# mecanismo cuyas filas nadie mide es una afirmacion, no un mecanismo; y el control de al
+# lado es el que impide que la equivalencia se vuelva ancha: cada token casa con SUS
+# ortografias, no con las del vecino.
+setcfg '.git = {"prohibidos": ["clean -d"]}'
+check "DEV 1.31.0 v2: QA-101 '--directory' es la larga de 'clean -d' -> deny" deny guard-git.sh \
+  "$(emite_bash 'git clean --directory' "" "")"
+check "DEV 1.31.0 v2: QA-101 control: '--dry-run' es la de '-n', no la de '-d' -> allow" allow guard-git.sh \
+  "$(emite_bash 'git clean --dry-run' "" "")"
+setcfg '.git = {"prohibidos": ["stash -u"]}'
+check "DEV 1.31.0 v2: QA-101 '--include-untracked' es la larga de 'stash -u' -> deny" deny guard-git.sh \
+  "$(emite_bash 'git stash --include-untracked' "" "")"
+setcfg '.git = {"prohibidos": ["stash -a"]}'
+check "DEV 1.31.0 v2: QA-101 '--all' es la larga de 'stash -a' -> deny" deny guard-git.sh \
+  "$(emite_bash 'git stash --all' "" "")"
 setcfg '.git = {"prohibidos": ["reset --hard"]}'
 check "CA-21 el token en otra posicion del segmento -> deny igual" deny guard-git.sh "$(emite_bash 'git reset HEAD~1 --hard' "" "")"
 setcfg 'del(.git)'
@@ -3157,7 +3250,7 @@ fi
 # adonde apunta: el enlace esta DENTRO del proyecto y se deniega por lo que es, no por
 # adonde va. Lo que si se conserva del criterio es que el arnes NO SE SALE DE LA RAIZ.
 ln -sf /etc/hostname "$PROJ/docs/enlace-fuera.md"
-check "SEC-004 CA-50c [desviacion declarada] enlace que apunta FUERA -> deny, no allow" deny \
+check "SEC-004 CA-50c enlace que apunta FUERA -> deny, no allow" deny \
   guard-codigo.sh "$(emite_write "$PROJ/docs/enlace-fuera.md" 'hola')"
 # ...y el control que sostiene la desviacion: un enlace que esta FUERA del proyecto no es
 # asunto del arnes y no se juzga.
@@ -3220,16 +3313,56 @@ CLAUDE_PROJECT_DIR="$R33" check "REQ-007 CA-51 SEC-005 manifiesto ARRAY (JSON va
 CLAUDE_PROJECT_DIR="$R33" check "REQ-007 CA-51 SEC-005 ...y la puerta de cierre tampoco deja pasar" deny \
   guard-completado.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_write "$R33/requirements/REQ-870.md" 'Estado: completado')"
 # El aviso de un manifiesto ilegible va por `arnes_warn`, o sea por STDERR, y NO por
-# `systemMessage`: se emite aunque la llamada se permita —un `ls -la` no escribe nada y
-# sigue pasando—, que es justo lo que quiere decir «siempre». Se comprueba donde vive.
+# `systemMessage`. Se emite SIEMPRE QUE EL MANIFIESTO SE CONSULTA —tambien cuando la
+# llamada se permite: aqui el comando escribe fuera de toda ruta protegida y aun asi hubo
+# que leer el manifiesto para saberlo—. Se comprueba donde vive.
+# DEV 1.31.0 v2 (QA-104): la sonda era `ls -la`, que NO escribe nada y por tanto ya no
+# consulta el manifiesto; el aviso se sigue exigiendo, en la llamada que si lo consulta.
 : > "$ERRLOG"
-sal33="$(CLAUDE_PROJECT_DIR="$R33" jq -n '{hook_event_name:"PreToolUse",tool_name:"Bash",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{command:"ls -la"}}' \
+sal33="$(CLAUDE_PROJECT_DIR="$R33" jq -n '{hook_event_name:"PreToolUse",tool_name:"Bash",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{command:"cat notas.md"}}' \
+  | CLAUDE_PROJECT_DIR="$R33" bash "$HOOKS_DIR/guard-codigo.sh" 2>"$ERRLOG")"
+if [ ! -s "$ERRLOG" ] && ! printf '%s' "$sal33" | grep -q '"deny"'; then
+  echo "  PASS  DEV 1.31.0 v2: QA-104 un comando que no escribe no consulta el manifiesto (ni avisa ni deniega)"; PASS=$((PASS+1))
+else
+  echo "  FAIL  DEV 1.31.0 v2: QA-104 un comando sin escrituras leyo el manifiesto o quedo denegado"; diag; FAIL=$((FAIL+1))
+fi
+: > "$ERRLOG"
+# La llamada PERMITIDA con el manifiesto roto es la que lo repara (QA-105): se consulta el
+# manifiesto, se avisa por stderr, y aun asi se deja pasar. Es la unica combinacion donde
+# «avisa aunque permita» se puede observar, porque cualquier otra escritura se deniega.
+sal33="$(CLAUDE_PROJECT_DIR="$R33" emite_bash 'printf "{}" > .arnes/config.json' "" "" \
   | CLAUDE_PROJECT_DIR="$R33" bash "$HOOKS_DIR/guard-codigo.sh" 2>"$ERRLOG")"
 if grep -q 'no se puede leer' "$ERRLOG" && ! printf '%s' "$sal33" | grep -q '"deny"'; then
-  echo "  PASS  REQ-007 CA-51 SEC-005 el aviso se emite SIEMPRE (stderr), tambien cuando permite"; PASS=$((PASS+1))
+  echo "  PASS  REQ-007 CA-51 SEC-005 el aviso se emite siempre que el manifiesto se consulta (stderr), tambien cuando permite"; PASS=$((PASS+1))
 else
-  echo "  FAIL  REQ-007 CA-51 SEC-005 sin aviso en stderr, o el 'ls -la' quedo denegado"; diag; FAIL=$((FAIL+1))
+  echo "  FAIL  REQ-007 CA-51 SEC-005 sin aviso en stderr, o la reparacion del manifiesto quedo denegada"; diag; FAIL=$((FAIL+1))
 fi
+# DEV 1.31.0 v2 (QA-105): CON EL MANIFIESTO ROTO, LA UNICA ESCRITURA QUE SE PERMITE ES LA
+# DEL PROPIO MANIFIESTO. El motivo del deny recomienda «corrige el JSON», y desde que
+# `.arnes/config.json` esta en `codigo_app.globs` esa salida estaba denegada para TODOS:
+# el remedio que el mensaje ofrece tiene que existir por la via que el mensaje nombra.
+CLAUDE_PROJECT_DIR="$R33" check "DEV 1.31.0 v2: QA-105 manifiesto roto: Write al PROPIO manifiesto -> allow" allow \
+  guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_write "$R33/.arnes/config.json" '{}')"
+CLAUDE_PROJECT_DIR="$R33" check "DEV 1.31.0 v2: QA-105 ...tambien por Bash (la via que el motivo nombra)" allow \
+  guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_bash 'printf "{}" > .arnes/config.json' "" "")"
+CLAUDE_PROJECT_DIR="$R33" check "DEV 1.31.0 v2: QA-105 ...y la puerta de cierre tampoco lo estorba" allow \
+  guard-completado.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_write "$R33/.arnes/config.json" '{}')"
+CLAUDE_PROJECT_DIR="$R33" check "DEV 1.31.0 v2: QA-105 control: cualquier OTRA ruta sigue denegada" deny \
+  guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_write "$R33/docs/x.md" 'hola')"
+CLAUDE_PROJECT_DIR="$R33" check "DEV 1.31.0 v2: QA-105 control: reparar Y escribir otra cosa no es reparar -> deny" deny \
+  guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_bash 'printf "{}" > .arnes/config.json; echo x > docs/x.md' "" "")"
+# La excepcion es de UN ARCHIVO, no del modo degradado: no se extiende por vecindad.
+CLAUDE_PROJECT_DIR="$R33" check "DEV 1.31.0 v2: QA-105 control: otro archivo bajo .arnes/ NO repara nada -> deny" deny \
+  guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_write "$R33/.arnes/migracion.md" 'hola')"
+# El fail-closed de SEC-005 no se debilita por leer el manifiesto mas tarde: un comando de
+# Bash que SI escribe lo consulta, no puede leerlo, y deniega igual que antes.
+CLAUDE_PROJECT_DIR="$R33" check "DEV 1.31.0 v2: QA-104 control: manifiesto roto + Bash que escribe -> deny (el fail-closed sigue)" deny \
+  guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_bash 'echo x > src/a.ts' "" "")"
+# Y el motivo nombra una salida ALCANZABLE: un remedio que el propio arnes deniega no es un
+# remedio. Es la mitad de diagnostico del hallazgo QA-105.
+CLAUDE_PROJECT_DIR="$R33" check_motivo "DEV 1.31.0 v2: QA-105 el motivo dice que la reparacion del manifiesto SI se puede" \
+  "UNICA escritura permitida es la del propio" guard-codigo.sh \
+  "$(CLAUDE_PROJECT_DIR="$R33" emite_write "$R33/docs/x.md" 'hola')"
 # NINGUNA VARIABLE DEL MANIFIESTO SE RELLENA CON CAMPOS DEL INPUT. Es la mitad grave del
 # hallazgo: no es solo que permitiera, es que el llamante escribia quien es el agente
 # autorizado. Se mide leyendo las variables, no la decision.
@@ -3257,6 +3390,72 @@ CLAUDE_PROJECT_DIR="$R33" check_aviso "REQ-007 CA-52 control: un manifiesto VALI
 # "no declarado" no puede confundirse con "ilegible".
 CLAUDE_PROJECT_DIR="$R33" check_aviso "REQ-007 CA-52 control: 'limites' ausente cae al defecto sin avisar ni denegar" \
   no '' guard-codigo.sh "$(CLAUDE_PROJECT_DIR="$R33" jq -n '{hook_event_name:"PreToolUse",tool_name:"Bash",cwd:env.CLAUDE_PROJECT_DIR,tool_input:{command:"cat src/a.ts"}}')"
+
+# DEV 1.31.0 v2 (QA-106/QA-107): UNA SOLA REGLA PARA TODOS LOS TIPOS. Lo que no tiene el
+# tipo que la clave espera cae al valor por defecto Y SE DICE, nombrando clave y valor. La
+# asimetria era el hallazgo: `exigir_fecha: "true"` apagaba la puerta en silencio mientras
+# el techo de Bash si avisaba ante el mismo error.
+tipo33() {   # <nombre> <filtro jq sobre el manifiesto> <patron esperado en stderr|-> 
+  local nombre="$1" filtro="$2" patron="$3" hay
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
+  jq "$filtro" "$R33/.arnes/config.json" > "$R33/.arnes/c.tmp" && mv "$R33/.arnes/c.tmp" "$R33/.arnes/config.json"
+  : > "$ERRLOG"
+  CLAUDE_PROJECT_DIR="$R33" bash "$HOOKS_DIR/guard-codigo.sh" >/dev/null 2>"$ERRLOG" \
+    <<< "$(CLAUDE_PROJECT_DIR="$R33" emite_write "$R33/docs/x.md" 'hola')"
+  if [ "$patron" = "-" ]; then
+    if [ -s "$ERRLOG" ]; then echo "  FAIL  $nombre  aviso inesperado"; diag; FAIL=$((FAIL+1)); else echo "  PASS  $nombre"; PASS=$((PASS+1)); fi
+    return 0
+  fi
+  if grep -qE "$patron" "$ERRLOG"; then echo "  PASS  $nombre"; PASS=$((PASS+1))
+  else echo "  FAIL  $nombre  el aviso no casa /$patron/"; diag; FAIL=$((FAIL+1)); fi
+}
+tipo33 "DEV 1.31.0 v2: QA-106 'exigir_fecha' con la cadena \"true\" avisa y cae al defecto" \
+  '.veredictos.exigir_fecha = "true"' "veredictos.exigir_fecha.*\"true\""
+tipo33 "DEV 1.31.0 v2: QA-106 'exigir_fecha' con el numero 1 avisa igual" \
+  '.veredictos.exigir_fecha = 1' 'veredictos.exigir_fecha.*1'
+tipo33 "DEV 1.31.0 v2: QA-106 control: el booleano de verdad no avisa" \
+  '.veredictos.exigir_fecha = true' '-'
+tipo33 "DEV 1.31.0 v2: QA-107 'bash_max_analisis: 1e9' avisa en vez de caer callado" \
+  '.limites.bash_max_analisis = 1e9' 'bash_max_analisis.*no es un entero positivo'
+tipo33 "DEV 1.31.0 v2: QA-107 'bash_max_analisis: 1.5' avisa igual" \
+  '.limites.bash_max_analisis = 1.5' 'bash_max_analisis.*no es un entero positivo'
+tipo33 "DEV 1.31.0 v2: QA-107 control: un entero valido no avisa" \
+  '.limites.bash_max_analisis = 131072' '-'
+tipo33 "DEV 1.31.0 v2: QA-106 'git.activo' con cadena avisa y manda el defecto (encendida)" \
+  '.git.activo = "false"' 'git.activo.*"false"'
+tipo33 "DEV 1.31.0 v2: QA-106 'codigo_app.globs' que no es un array avisa" \
+  '.codigo_app.globs = "src/**"' 'codigo_app.globs.*src'
+# La puerta sigue decidiendo con el defecto, que es lo que hace segura la caida: `git.activo`
+# con un tipo raro NO apaga guard-git.
+tipo33 "DEV 1.31.0 v2: QA-106 control: el manifiesto ya reparado no avisa" \
+  '.codigo_app.globs = ["src/**"] | .git = {} | del(.limites) | del(.veredictos)' '-'
+CLAUDE_PROJECT_DIR="$R33" check "DEV 1.31.0 v2: QA-106 'git.activo' con cadena no apaga la puerta de git -> deny" deny \
+  guard-git.sh "$(CLAUDE_PROJECT_DIR="$R33" emite_bash 'git clean -fd' "" "")"
+
+# --- DEV 1.31.0 v2 (QA-104): EL COSTE DEL CAMINO COMUN, MEDIDO EN PROCESOS ---------
+# El reloj no sirve para esto: en Linux un fork son milisegundos y en Windows entre 1,2 y
+# 6 s, asi que el umbral de tiempo que aqui pasaria alli no diria nada. Lo que se fija es
+# el NUMERO DE PROCESOS `jq`, que es la magnitud que cambia de plataforma. Se cuenta con un
+# `jq` instrumentado primero en el PATH que registra su llamada y delega en el real.
+JQ33="$(mktemp -d)"; CNT33="$JQ33/llamadas"
+JQREAL="$(command -v jq)"
+{ printf '#!/usr/bin/env bash\n'; printf 'echo x >> "%s"\n' "$CNT33"; printf 'exec "%s" "$@"\n' "$JQREAL"; } > "$JQ33/jq"
+chmod +x "$JQ33/jq"
+cuenta_jq33() {   # <comando de Bash> -> numero de procesos jq de UNA invocacion de guard.sh
+  local entrada; entrada="$(CLAUDE_PROJECT_DIR="$R33" emite_bash "$1" "" "")"
+  : > "$CNT33"
+  printf '%s' "$entrada" | PATH="$JQ33:$PATH" CLAUDE_PROJECT_DIR="$R33" bash "$HOOKS_DIR/guard.sh" >/dev/null 2>/dev/null
+  grep -c x "$CNT33" 2>/dev/null || echo 0
+}
+for par in "ls -la" "npm run build"; do
+  n33="$(cuenta_jq33 "$par")"
+  if [ "$n33" = "1" ]; then
+    echo "  PASS  DEV 1.31.0 v2: QA-104 '$par' cuesta 1 proceso jq (como v1.30.3)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  DEV 1.31.0 v2: QA-104 '$par' cuesta $n33 procesos jq y v1.30.3 costaba 1"; FAIL=$((FAIL+1))
+  fi
+done
+rm -rf "$JQ33"
 }
 
 # --- Despacho en paralelo -----------------------------------------------------
@@ -3301,7 +3500,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=562
+CASOS_ESPERADOS=606
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)

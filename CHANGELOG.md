@@ -64,7 +64,29 @@ un proyecto que no usa el arnés; uno **presente y roto** avisa por stderr **sie
 toda escritura que las puertas tendrían que juzgar —no se puede denegar «sólo en las rutas
 protegidas» porque justo lo que no se puede leer es cuáles son—. Ningún dato del input atraviesa ya
 esa frontera. Un `ls -la` sigue pasando: no escribe nada y bloquearlo no protegería ninguna
-invariante.
+invariante, y por lo mismo **ni siquiera lee el manifiesto** — el aviso se emite siempre que el
+manifiesto **se consulta**, que es siempre que hay algo que juzgar con él (el camino común de
+`Bash` vuelve así a costar **1 proceso**, los mismos que v1.30.3; ver *Pruebas*).
+**Y el remedio que el motivo recomienda ahora existe:** mientras el manifiesto esté roto, la
+**única** escritura permitida es la del **propio `.arnes/config.json`**. Un proyecto que lo tenga
+en `codigo_app.globs` —como éste— quedaba con la reparación denegada para todos los agentes por
+`Edit`, por `Write` y por `Bash`: el mensaje ofrecía una salida que él mismo cerraba. Es el único
+archivo cuya reparación devuelve la capacidad de medir y no depende de leerlo; cualquier otra ruta
+sigue denegada, y con el manifiesto sano vuelve a estar protegido como cualquier otro.
+
+### Corregido — lo que el manifiesto no dice bien cae del lado seguro, y ahora también lo dice
+**Qué fallaba:** `"exigir_fecha": "true"` —la cadena, no el booleano— apagaba la exigencia de
+fecha **sin una sola señal**, mientras que el techo de análisis de Bash sí avisaba ante el mismo
+error de tipo. La asimetría es lo que sorprende: el proyecto cree que declaró algo y no declaró
+nada. Y en el propio techo quedaba un hueco entre las dos ramas: `1e9` o `1.5` son números JSON
+válidos que no son enteros de bytes aplicables, así que caían al valor por defecto **callando**.
+**Qué cambia:** una sola regla para todas las claves que leen las puertas —`agentes.agente_codigo`,
+`requirements_dir`, `estados.completado`, `pending_approval`, `limites.bash_max_analisis`,
+`veredictos.*`, `git.*` y `codigo_app.globs`—: **lo que no tiene el tipo que esa clave espera cae al
+valor por defecto del arnés y se avisa**, nombrando la clave y el valor recibido tal como venía. No
+deniega —un tipo mal escrito no puede convertirse en un bloqueo— pero tampoco calla. Si lo que no
+tiene el tipo esperado es el **contenedor** (`"veredictos": "x"`), el manifiesto entero sigue
+declarándose ilegible: ése es el fail-closed de arriba y no cambia.
 
 ### Corregido — no se escribe a través de un enlace simbólico (SEC-004)
 **Qué fallaba:** los dos guardianes clasifican por el **nombre** de la ruta, así que un enlace
@@ -121,7 +143,13 @@ no borra: mueve.** Y no toca **nada** fuera de la sección declarada —ni la ca
 veredictos ni los criterios—, lo cual aquí es una invariante de seguridad y no una comodidad:
 el hook escribe en `requirements/` desde una parada, fuera de la vía que vigila la puerta de
 cierre. Qué sección es «historia» lo declara el proyecto; el arnés no trae ninguna por defecto,
-y el nombre se compara **exacto**, nunca por prefijo.
+y el nombre se compara **exacto**, nunca por prefijo — y cuando el archivo casa el `glob` pero
+**no** contiene la sección declarada, no se rota nada **y se dice**: un aviso por stderr que
+nombra el archivo y la sección que no encontró, y una línea en el bloque derivado de
+`docs/ESTADO.md`. Un artefacto declarado que no existe es un error de mapeo que hay que ver, no
+un acierto silencioso: sin la señal, un proyecto que escribió mal el nombre cree que rota desde
+hace meses. (Por eso la parada ahora **rota antes de derivar**: el bloque describe el disco
+después de la rotación, no antes.)
 
 ### Añadido — ningún agente ejecuta git destructivo (REQ-005, **encendido**)
 **Qué se perdió:** ~52 archivos de trabajo **sin comitear** en un incidente. La causa de fondo
@@ -133,7 +161,14 @@ agente escribe, el árbol contiene estados intermedios que no son de nadie; otro
 es una regla del **comando**, no de la identidad. No alcanza a `stash list`, `stash show`,
 `restore --staged`, `clean -n` ni a ningún git de lectura, y lo entrecomillado y el cuerpo
 literal de un heredoc se descuentan antes de mirar —`git commit -m "no uses git clean"` no es
-un `git clean`—. **Es la única novedad de 1.31.0 activa por defecto**, porque es la única que
+un `git clean`—. **La ortografía del flag no abre un hueco** (vuelta 1 de QA): `--force` y `-f`
+son el mismo flag escrito de dos maneras y casan igual, en los dos sentidos —una regla escrita
+`push --force` alcanza también `git push -f`—, con el valor pegado (`--force=x`) y respetando el
+fin de opciones (`git clean -- --force` borra un archivo **llamado** `--force`, y sigue
+permitido). Lo mismo con el nombre viejo de un subcomando: `git stash save` es `git stash push`.
+La equivalencia vive en el **motor** y no en la lista, para que valga también para el
+`git.prohibidos` propio de cada proyecto; sólo se reconocen las que son un hecho de git, porque
+deducir la forma corta del nombre largo haría que `clean -d` denegara un `--dry-run`. **Es la única novedad de 1.31.0 activa por defecto**, porque es la única que
 impide un daño irreversible; se apaga con `git.activo: false` o se sustituye con
 `git.prohibidos`. Cobertura parcial dicha en voz alta: quedan fuera los scripts y los
 intérpretes que ejecuten git por su cuenta. Es una barandilla, no una jaula.
@@ -240,13 +275,20 @@ no mecanismo, y el banco tiene un caso que se pone rojo si algún día aparecen 
 - `ARCHITECTURE.md`: vista de sistema al día, con el guardián nuevo y el orden de `guard.sh`.
 
 ### Pruebas
-Banco: **480 casos** (310 antes), **479 PASS · 0 FAIL · 1 SKIP** sobre la candidata y el cuadre
-de `CASOS_ESPERADOS` cerrado. Contra la instalación estable **v1.30.3**, el mismo banco da
-**407 PASS · 72 FAIL · 1 SKIP**: los 72 son exactamente los casos nuevos de comportamiento
+Banco: **606 casos** (310 antes de esta versión; 480 al cerrar la implementación, 569 con los
+casos que añadió QA y 606 tras la vuelta 1), **605 PASS · 0 FAIL · 1 SKIP** sobre la candidata y
+el cuadre de `CASOS_ESPERADOS` cerrado. Contra la instalación estable **v1.30.3**, el mismo banco
+da **458 PASS · 147 FAIL · 1 SKIP**: los 141 son exactamente los casos nuevos de comportamiento
 —fail-before/pass-after— y **todos** los controles de no regresión pasan también contra ella.
-Coste medido con `awk` y `jq` instrumentados en el `PATH`: el camino común de `Bash` (`ls -la`
-por `guard.sh`) gasta lo mismo que v1.30.3 —1 `jq`, 0 `awk`—, el cierre de un REQ **baja** de 1
-`awk` a 0, y la parada no gana ninguno.
+Coste medido con `awk` y `jq` instrumentados en el `PATH` (Linux/WSL2): el camino común de `Bash`
+(`ls -la`, `npm run build` por `guard.sh`) gasta **1 `jq`**, los mismos que v1.30.3 —eran **2**
+antes de la vuelta 1, porque leer el manifiesto se había puesto por delante del corte temprano—;
+un comando que **sí** menciona `git` cuesta 2, que es la lectura del manifiesto que la puerta
+nueva necesita para saber si está encendida; una edición fuera de las rutas protegidas **baja**
+de 3 a 2, y el cierre de un REQ de 1 `awk` a 0. En reloj, `ls -la` por `guard.sh` sobre 200
+invocaciones: **23,1 ms → 19,0 ms** por invocación (v1.30.3: 13,7 ms en la misma máquina; el
+resto no son procesos, es el intérprete cargando un guardián más). El coste real en Windows/MSYS,
+donde un fork cuesta entre 1,2 y 6 s, **queda por medir antes de publicar**.
 
 ## [Interno] — 2026-09-05 · migración del andamiaje de este repo 1.30.2 → 1.30.3 (`arnes-upgrade`)
 > Origen: Interno · usuario: Juan · modelo de IA: Fable 5.1 (coordinadora) · skill `arnes-upgrade` del plugin 1.30.3.

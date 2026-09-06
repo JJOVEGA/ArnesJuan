@@ -42,34 +42,123 @@ arnes_tiene_token() {   # <token> <args...>
   return 1
 }
 
-# Como `arnes_tiene_token`, pero un FLAG CORTO casa dentro de un grupo de flags cortos.
+# Como `arnes_tiene_token`, pero un FLAG casa ESCRITO EN CUALQUIERA DE SUS DOS FORMAS.
 #
 # POR QUE. `git clean -f`, `git clean -fd` y `git clean -ffdx` son el mismo comando
 # destructivo, y quien lo escribe elige el grupo. Exigir el token exacto convertiria la
 # regla en una lista de variantes que se pudre —`-f`, `-fd`, `-fdx`, `-ffd`...—, que es
 # justo lo que este arnes predica no hacer. Se compara por LETRAS: `-f` casa si todas sus
 # letras estan en UN grupo corto del comando, y no casa con `-n` ni con `-d` a secas.
-# `--dry-run` es una opcion larga y se compara entera, sin descomponer.
+#
+# Y LA FORMA LARGA CASA IGUAL QUE LA CORTA (QA-101, medido en la vuelta 1 de 1.31.0). La
+# version anterior saltaba explicitamente todo argumento que empezara por `--`, asi que
+# `git clean --force` —que borra exactamente lo mismo que `git clean -f`— atravesaba la
+# puerta; y al reves, una regla escrita `push --force` no veia `git push -f`. No son dos
+# comandos: son dos ortografias del MISMO flag, y el proyecto que teclea una no puede
+# quedarse sin la otra. Se resuelve CANONICALIZANDO los dos lados —regla y comando— antes
+# de comparar, no duplicando cada entrada de la lista.
+#
+# FIN DE OPCIONES (`--`). Lo que va detras de `--` es un pathspec, no una opcion: en
+# `git clean -- --force`, `--force` es el NOMBRE DE UN ARCHIVO. Un flag deja de buscarse
+# ahi; un token literal (`.`, `push`) se sigue buscando en todo el segmento, porque ese si
+# puede ser un pathspec —y `git checkout -- .` arrasa el arbol igual.
 arnes_casa_token() {   # <token> <args...>
-  local buscado="$1" a letras i
+  local buscado="$1" a letras i canon
   shift
   case "$buscado" in
-    --*|-|'') arnes_tiene_token "$buscado" "$@"; return $? ;;
+    -*) arnes_git_canon "$buscado"; buscado="$ARNES_TOK" ;;
+  esac
+  case "$buscado" in
+    -|'') arnes_tiene_token "$buscado" "$@"; return $? ;;
+    --*)
+      # Opcion larga sin equivalencia corta conocida: se compara ENTERA, y tambien en su
+      # forma con valor pegado (`--source=HEAD~1` sigue siendo `--source`).
+      for a in "$@"; do
+        [ "$a" = "--" ] && break
+        case "$a" in "$buscado"|"$buscado"=*) return 0 ;; esac
+      done
+      return 1 ;;
     -?*)
       letras="${buscado#-}"
       for a in "$@"; do
+        [ "$a" = "--" ] && break
         case "$a" in
-          --*|-) continue ;;
-          -?*)
-            for ((i = 0; i < ${#letras}; i++)); do
-              case "${a#-}" in *"${letras:i:1}"*) ;; *) continue 2 ;; esac
-            done
-            return 0 ;;
+          --*) arnes_git_canon "$a"; canon="$ARNES_TOK"
+               # Larga sin equivalencia declarada: no se descompone en letras. Traducir
+               # por parecido —la inicial del nombre— haria que `-d` casara `--dry-run`.
+               case "$canon" in --*) continue ;; esac ;;
+          -?*) canon="$a" ;;
+          *)   continue ;;
         esac
+        for ((i = 0; i < ${#letras}; i++)); do
+          case "${canon#-}" in *"${letras:i:1}"*) ;; *) continue 2 ;; esac
+        done
+        return 0
       done
       return 1 ;;
     *) arnes_tiene_token "$buscado" "$@"; return $? ;;
   esac
+}
+
+# ORTOGRAFIA DE UNA OPCION: la forma larga, traducida a su letra corta.
+#
+# QUE EQUIVALENCIAS SE RECONOCEN, Y POR QUE ESTAS. Solo las que son un HECHO de git, no
+# una suposicion:
+#
+#   - `--force`≡`-f` y `--dry-run`≡`-n` valen en TODO git (clean, checkout, push, branch,
+#     rm, mv, tag...). Por eso no se anotan por subcomando: son la regla, no la excepcion.
+#   - Las demas dependen del subcomando, y ahi se anotan con el: LA MISMA LETRA significa
+#     cosas distintas en dos subcomandos —`-d` es `--directory` en `clean` y `--delete` en
+#     `branch`—. Deducir la letra de la inicial del nombre largo seria peor que no saberla:
+#     una regla `clean -d` casaria `--dry-run` y la puerta denegaria una SIMULACION. Se
+#     prefiere no conocer una equivalencia (falso negativo, la conducta de siempre) a
+#     inventarla (falso positivo, que acaba con alguien apagando el guard).
+#
+# Una opcion larga que no este aqui se compara entera, como antes: lo que no esta en la
+# tabla NO CASA, y eso es declarado, no accidental (REQ-005 CA-21.2). Anadir una linea es
+# barato y no toca ninguna regla del proyecto —la equivalencia vive en el MOTOR, no en la
+# lista, para que valga tambien para el `git.prohibidos` propio de cada proyecto—, y cada
+# entrada nueva entra con SU caso en el banco: una equivalencia que nadie mide es una
+# afirmacion, no un mecanismo.
+#
+# LIMITE DECLARADO: un token de regla con VARIAS letras (`clean -fd`) sigue exigiendo que
+# todas esten en un mismo grupo (CA-21), y una opcion larga es un grupo de una sola letra;
+# `clean -fd` no casa `git clean --force -d`. Declara un flag por token —`clean -f`, que es
+# lo que trae la lista por defecto— y el limite no te alcanza.
+arnes_git_canon() {   # <token de opcion> -> ARNES_TOK
+  local t
+  # `--force=algo`: git admite el valor pegado con `=` y la opcion sigue siendo esa. El
+  # corte solo se aplica a las largas: un argumento corto nunca lleva `=` en su nombre.
+  case "$1" in --*) t="${1%%=*}" ;; *) t="$1" ;; esac
+  case "$t" in
+    --force)   t='-f' ;;
+    --dry-run) t='-n' ;;
+    --*)
+      case "${ARNES_GIT_SUB:-} $t" in
+        'clean --directory')         t='-d' ;;
+        'stash --include-untracked') t='-u' ;;
+        'stash --all')               t='-a' ;;
+        'restore --staged')          t='-S' ;;
+        'restore --worktree')        t='-W' ;;
+      esac ;;
+  esac
+  ARNES_TOK="$t"
+}
+
+# ALIAS DE SUBCOMANDO: `git stash save` es `git stash push` escrito con el nombre viejo.
+#
+# POR QUE ESTA EN EL MOTOR Y NO EN LA LISTA POR DEFECTO (QA-101). Anadir `stash save` a
+# `git.prohibidos` seria otra variante en una lista que ya se pudre, y —lo decisivo— un
+# proyecto que declare su PROPIA lista la perderia sin enterarse: la lista es del proyecto
+# y la ortografia de git no. Aqui la equivalencia vale para cualquier lista.
+#
+# QUE SE RECONOCE: solo `stash save`, que git desaconseja desde 2.13 (2017) y sigue
+# funcionando, y que esconde el arbol exactamente igual que `stash push`. `switch` y
+# `restore` NO estan: no son alias de `checkout`, son comandos distintos con semantica
+# propia, y un proyecto que quiera prohibirlos los declara en su lista.
+arnes_git_alias_sub() {   # <subcomando> <primer argumento> -> ARNES_TOK (el argumento, ya canonico)
+  ARNES_TOK="$2"
+  case "$1 $2" in 'stash save') ARNES_TOK='push' ;; esac
 }
 
 # ⚠️ "permitir" se dice con `return 0`, NUNCA con `exit 0`: este guardian corre en el
@@ -123,6 +212,14 @@ arnes_guard_git() {
     done
     sub="${t[i]:-}"; [ -n "$sub" ] || continue
     args=("${t[@]:i+1}")
+    # El subcomando manda en la ortografia de sus opciones (`-d` no significa lo mismo en
+    # `clean` que en `branch`), asi que viaja en una variable que `arnes_git_canon` lee.
+    ARNES_GIT_SUB="$sub"
+    # El nombre viejo del subcomando de segundo nivel se traduce al vigente ANTES de
+    # comparar: `git stash save "wip"` esconde el arbol igual que `git stash push`.
+    if [ "${#args[@]}" -gt 0 ]; then
+      arnes_git_alias_sub "$sub" "${args[0]}"; args[0]="$ARNES_TOK"
+    fi
     for regla in ${reglas[@]+"${reglas[@]}"}; do
       [ -n "$regla" ] || continue
       # Una regla es `subcomando [token...]`: el subcomando tiene que ser ESE y cada

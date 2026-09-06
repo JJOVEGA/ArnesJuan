@@ -178,6 +178,19 @@ $aviso_version
 **REQ:** $total — completado $hechos · en-revisión $revision · en-progreso $progreso · bloqueado $bloqueados · otros $otros
 **Otros archivos en \`$ARNES_REQ_DIR/\` sin \`Estado:\` (notas, no REQ):** $notas
 "
+  # ROTACION: una seccion DECLARADA que no aparece en el documento (CA-09, QA-102).
+  #
+  # No se vuelve a mirar el disco ni se reimplementa la comparacion: el dato lo deja la
+  # rotacion, que ya la hizo, en la misma parada y en el mismo proceso (ver hooks/stop.sh,
+  # que por eso rota ANTES de derivar). Aqui solo se ensena. Si no hubo ninguna, no se
+  # escribe nada: el bloque informa de lo que pasa, no de lo que no pasa.
+  if [ "${ARNES_ROT_SIN_SECCION:-0}" -gt 0 ] 2>/dev/null; then
+    local rot_ej="${ARNES_ROT_SIN_SECCION_EJ:-}"
+    cuerpo+="**Rotación:** $ARNES_ROT_SIN_SECCION archivo(s) casan un artefacto declarado pero **no contienen la sección declarada**"
+    [ -z "$rot_ej" ] || cuerpo+=" (p. ej. \`${rot_ej%%|*}\` → \`${rot_ej#*|}\`)"
+    cuerpo+=" — ahí no se rota nada; la comparación del nombre es exacta. Revisa \`rotacion.artefactos[].seccion\`.
+"
+  fi
   if [ -n "$filas" ]; then
     cuerpo+="
 _Sólo los REQ abiertos; los $hechos completados no se listan._
