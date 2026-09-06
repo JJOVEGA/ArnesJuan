@@ -302,6 +302,16 @@ desarrollador había visto. Merecen el detalle, porque son familias que se repit
 De ahí salió además una regla que se queda: **un criterio de coste se escribe como techo, nunca como
 igualdad.** Escrito como igualdad, una mejora se lee como fallo.
 
+En la tercera vuelta la puerta de git quedó aprobada, y el arreglo fue **del criterio, no del guardián**:
+se verificó que el código cumple la regla reescrita en 24 comandos, con los cuatro bordes del fin de
+opciones. El banco dejó de bailar —tres corridas de la línea base dan el mismo número, y las 625 líneas
+de resultado son idénticas entre corridas, no sólo el total—. Y quedaron dos límites dichos en voz alta:
+un token **entrecomillado** desaparece del análisis, así que `git clean "-f"` pasa donde `git clean -f`
+no —es el mismo descuento de comillas compartido cuyo arreglo está asignado a la ventana siguiente, y la
+versión publicada se comporta igual—, y **un margen de coste expresado como cociente castiga a la máquina
+rápida**: el delta es constante, el cociente no. Los dos se corrigen en el requerimiento, sin tocar una
+línea de código.
+
 ### Corregido — el instrumento: un caso del banco decidía por reloj de pared (QA-111)
 
 **Qué fallaba:** el caso «heredoc CITADO de ~300 KB → allow y barato» comparaba el tiempo medido

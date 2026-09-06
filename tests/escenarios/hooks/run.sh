@@ -2537,6 +2537,45 @@ check "QA 1.31.0 v2: control fin de opciones: 'git checkout -- .' sigue deny" de
   "$(emite_bash 'git checkout -- .' "" "")"
 check "DEV 1.31.0 v2: QA-101 'git restore -W .' (forma corta de --worktree) -> deny" deny guard-git.sh \
   "$(emite_bash 'git restore -W .' "" "")"
+
+# QA 1.31.0 v3: HALLAZGO QA-113 — un token ENTRECOMILLADO desaparece del analisis, y con
+# el la regla. `git clean "-f"` es, para bash, exactamente `git clean -f`: borra lo mismo.
+# La puerta no lo ve porque el descuento de comillas —COMPARTIDO con el detector de
+# escrituras (CA-07, CA-13)— borra lo entrecomillado antes de mirar el comando. No es una
+# regresion: en v1.30.3 publicada el mismo descuento deja pasar `echo x > "src/a.ts"`, y
+# su arreglo esta declarado y asignado a REQ-007 Bloque C (CA-14…CA-18), ventana 1.32.0.
+# Estos casos fijan la conducta MEDIDA HOY para que el cambio se vea cuando aterrice: al
+# arreglar el Bloque C estos dos `allow` pasaran a `deny` y el banco lo dira en voz alta.
+check "QA 1.31.0 v3: QA-113 'git clean \"-f\"' -> allow (hoy; cambia con REQ-007 Bloque C)" allow guard-git.sh \
+  "$(emite_bash 'git clean "-f"' "" "")"
+check "QA 1.31.0 v3: QA-113 'git checkout \".\"' -> allow (hoy; cambia con REQ-007 Bloque C)" allow guard-git.sh \
+  "$(emite_bash 'git checkout "."' "" "")"
+# CONTROL, y es el que hace legible al hallazgo: el MISMO comando sin comillas si se deniega.
+check "QA 1.31.0 v3: QA-113 control: 'git clean -f' desnudo sigue deny" deny guard-git.sh \
+  "$(emite_bash 'git clean -f' "" "")"
+
+# QA 1.31.0 v3: los bordes del FIN DE OPCIONES que CA-21.4 no enumera, medidos uno a uno.
+# Detras de `--` no hay opciones: tampoco con el valor pegado, tampoco si el `--` se
+# repite. Y la mitad que sostiene la regla: la opcion escrita ANTES del `--` sigue casando.
+check "QA 1.31.0 v3: valor pegado tras '--': 'git clean -- --force=x' -> allow" allow guard-git.sh \
+  "$(emite_bash 'git clean -- --force=x' "" "")"
+check "QA 1.31.0 v3: '--' repetido: 'git clean -- -- -f' -> allow" allow guard-git.sh \
+  "$(emite_bash 'git clean -- -- -f' "" "")"
+check "QA 1.31.0 v3: la opcion ANTES del '--' casa igual: 'git clean -f -- -f' -> deny" deny guard-git.sh \
+  "$(emite_bash 'git clean -f -- -f' "" "")"
+# `--` como UNICO argumento: no hay opcion que casar (regla con token) y tampoco hay
+# posicional que quite la forma desnuda (regla sin tokens). Los dos lados, medidos.
+check "QA 1.31.0 v3: '--' unico argumento: 'git clean --' -> allow" allow guard-git.sh \
+  "$(emite_bash 'git clean --' "" "")"
+check "QA 1.31.0 v3: '--' unico argumento: 'git stash --' -> deny (sigue siendo la forma desnuda)" deny guard-git.sh \
+  "$(emite_bash 'git stash --' "" "")"
+# La excepcion de `restore` y el fin de opciones, en sus dos direcciones: con `--staged`
+# como OPCION el arbol no se toca (allow); detras del `--` es una RUTA, y entonces el
+# comando restaura el arbol de verdad (deny).
+check "QA 1.31.0 v3: 'git restore --staged -- .' -> allow (solo rehace el indice)" allow guard-git.sh \
+  "$(emite_bash 'git restore --staged -- .' "" "")"
+check "QA 1.31.0 v3: 'git restore -- --staged .' -> deny (tras '--' es una ruta, no la opcion)" deny guard-git.sh \
+  "$(emite_bash 'git restore -- --staged .' "" "")"
 check "CA-14 'github clone x' -> allow"             allow guard-git.sh "$(emite_bash 'github clone x' "" "")"
 check "CA-14 'mygit clean -f' -> allow"             allow guard-git.sh "$(emite_bash 'mygit clean -f' "" "")"
 check "CA-15 'echo \"git clean -f\"' -> allow"      allow guard-git.sh "$(emite_bash 'echo "git clean -f"' "" "")"
@@ -3645,7 +3684,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=615
+CASOS_ESPERADOS=625
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)
