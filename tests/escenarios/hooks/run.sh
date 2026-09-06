@@ -2538,6 +2538,52 @@ rsec_check "DEV 1.31.0 v4: SEC-011 carpeta sin permiso: original intacto, 0 temp
   "$([ "$EST_MD5" = "$(md5sum "$EPROJ/docs/ESTADO.md" | cut -d' ' -f1)" ] && echo iguales || echo distintos)-$EST_TMP-$(grep -q 'no se pudo escribir' "$ERRLOG" && echo si || echo no)"
 rm -rf "$EPROJ"
 
+# QA 1.31.0 v4 (CA-64.2): EL DISCO LLENO DE VERDAD, NO SOLO LA CARPETA SIN PERMISO.
+# El caso de arriba mide un fallo de escritura por PERMISOS; este mide un fallo de
+# escritura por ESPACIO, que es otra rama del `printf` y la que de verdad se sufre en
+# produccion. Se provoca sin privilegios haciendo que el temporal apunte a `/dev/full`,
+# que devuelve ENOSPC en cada escritura. Las tres exigencias de CA-64.2 juntas: hash
+# identico, cero temporales huerfanos y un aviso propio (no el error crudo del sistema).
+if [ -w /dev/full ] || [ -c /dev/full ]; then
+  EPROJ="$(mktemp -d)"; mkdir -p "$EPROJ/.arnes" "$EPROJ/docs" "$EPROJ/requirements"
+  printf '%s\n' "$MANIFIESTO_BASE" > "$EPROJ/.arnes/config.json"
+  printf '# ESTADO\nlo que escribio una persona\ny una segunda linea suya\n' > "$EPROJ/docs/ESTADO.md"
+  EST_MD5="$(md5sum "$EPROJ/docs/ESTADO.md" | cut -d' ' -f1)"
+  ln -s /dev/full "$EPROJ/docs/ESTADO.md.arnes.tmp"
+  : > "$ERRLOG"
+  printf '%s' "$(CLAUDE_PROJECT_DIR="$EPROJ" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')" \
+    | CLAUDE_PROJECT_DIR="$EPROJ" "$HOOKS_DIR/stop.sh" >/dev/null 2>"$ERRLOG"; EST_RC=$?
+  EST_TMP="$(ls -1 "$EPROJ/docs" | grep -c 'arnes.tmp' || true)"
+  rsec_check "QA 1.31.0 v4: CA-64.2 disco lleno (ENOSPC): byte a byte, 0 temporales, avisa, sale 0" "iguales-0-si-0" \
+    "$([ "$EST_MD5" = "$(md5sum "$EPROJ/docs/ESTADO.md" | cut -d' ' -f1)" ] && echo iguales || echo distintos)-$EST_TMP-$(grep -q 'no se pudo escribir' "$ERRLOG" && echo si || echo no)-$EST_RC"
+  rm -rf "$EPROJ"
+else
+  echo "  SKIP  QA 1.31.0 v4: CA-64.2 disco lleno (no hay /dev/full)"
+fi
+# QA 1.31.0 v4 (CA-64.2, concurrencia): DOS AGENTES QUE PARAN A LA VEZ.
+# `estado-derivado` publica por un temporal de nombre FIJO (`<destino>.arnes.tmp`), asi que
+# dos paradas simultaneas lo comparten. Es la carrera obvia y hay que medirla, no razonarla:
+# lo intolerable seria que una parada leyera el archivo mientras la otra lo mueve y el
+# resultado perdiera el texto humano, quedara con DOS bloques o dejara basura. Cuatro
+# paradas a la vez, cinco rondas, y las tres invariantes en cada ronda.
+EPROJ="$(mktemp -d)"; mkdir -p "$EPROJ/.arnes" "$EPROJ/docs" "$EPROJ/requirements"
+printf '%s\n' "$MANIFIESTO_BASE" > "$EPROJ/.arnes/config.json"
+EST_IN="$(CLAUDE_PROJECT_DIR="$EPROJ" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')"
+EST_PERD=0; EST_DOBLE=0; EST_BASURA=0
+for EST_R in 1 2 3 4 5; do
+  printf '# ESTADO\nlo que escribio una persona\n' > "$EPROJ/docs/ESTADO.md"
+  for EST_K in 1 2 3 4; do
+    printf '%s' "$EST_IN" | CLAUDE_PROJECT_DIR="$EPROJ" "$HOOKS_DIR/stop.sh" >/dev/null 2>/dev/null &
+  done
+  wait
+  grep -q 'lo que escribio una persona' "$EPROJ/docs/ESTADO.md" || EST_PERD=$((EST_PERD+1))
+  [ "$(grep -c 'ARNES:DERIVADO inicio' "$EPROJ/docs/ESTADO.md")" -eq 1 ] || EST_DOBLE=$((EST_DOBLE+1))
+  [ "$(ls -1 "$EPROJ/docs" | grep -c 'arnes.tmp' || true)" -eq 0 ] || EST_BASURA=$((EST_BASURA+1))
+done
+rsec_check "QA 1.31.0 v4: CA-64.2 cuatro paradas a la vez x5: ni se pierde, ni se duplica, ni deja basura" "0-0-0" \
+  "$EST_PERD-$EST_DOBLE-$EST_BASURA"
+rm -rf "$EPROJ"
+
 # DEV 1.31.0 v4 (SEC-011): LA REPARACION DEL MANIFIESTO DEJA RASTRO, Y DISTINGUIBLE.
 # Con el manifiesto ilegible la escritura de `.arnes/config.json` esta permitida a
 # proposito —es la que devuelve la capacidad de medir—, pero su `stderr` era IDENTICO al de
@@ -2849,6 +2895,57 @@ setcfg '.git = {"activo": false}'
 check "DEV 1.31.0 v4: SEC-010 control: con el manifiesto SANO 'activo:false' sigue apagando" allow guard-git.sh \
   "$(emite_bash 'git clean -fd' "" "")"
 setcfg 'del(.git)'
+
+# QA 1.31.0 v4 (SEC-009): LA FRONTERA DE LA BARRA INVERTIDA, LEIDA JUNTO A SU VECINA.
+# CA-41 lo pide expresamente porque las dos formas se parecen y una de ellas es un LIMITE
+# DECLARADO (LIM-10, ventana 1.32.0): plegar la continuacion de linea no puede cerrar de
+# rebote el `git clean \-f` escapado. El caso de arriba mide el lado DENY; estos dos miden
+# el lado ALLOW por sus dos vecinos exactos, que es donde un plegado descuidado se nota:
+# `\` + ESPACIO + salto NO es una continuacion en bash (la barra escapa el espacio), y un
+# salto SIN barra son dos ordenes de verdad. Si alguno pasara a deny, el plegado se comio
+# mas de lo que el criterio le concede.
+check "QA 1.31.0 v4: SEC-009 frontera '\\'+ESPACIO+salto NO es continuacion -> allow" allow guard-git.sh \
+  "$(emite_bash 'git clean \ 
+-fd' "" "")"
+check "QA 1.31.0 v4: SEC-009 frontera salto SIN barra son dos ordenes -> allow" allow guard-git.sh \
+  "$(emite_bash 'git
+clean -fd' "" "")"
+# NO ENSANCHAMIENTO DE LAS PALABRAS RESERVADAS NUEVAS. El bucle de prefijos tolera ahora
+# `for`, `case`, `in`, `function`, `{`… y ninguna de ellas puede convertir en comando un
+# `git` que es ARGUMENTO. Tres formas ordinarias en que `git` aparece detras de una
+# reservada sin ser el comando: si alguna denegara, el arreglo de SEC-009 seria un falso
+# positivo sobre codigo legitimo, y un guardian que muerde a quien no toca acaba apagado.
+check "QA 1.31.0 v4: SEC-009 control 'for f in git; do echo \$f; done' -> allow" allow guard-git.sh \
+  "$(emite_bash 'for f in git; do echo $f; done' "" "")"
+check "QA 1.31.0 v4: SEC-009 control 'case git in *) echo x;; esac' -> allow" allow guard-git.sh \
+  "$(emite_bash 'case git in *) echo x;; esac' "" "")"
+check "QA 1.31.0 v4: SEC-009 control 'function git_helper { git status; }' -> allow" allow guard-git.sh \
+  "$(emite_bash 'function git_helper { git status; }' "" "")"
+# CA-41(b): el COMENTARIO. Una palabra reservada nueva no puede convertir en comando lo
+# que va detras de un `#`.
+check "QA 1.31.0 v4: SEC-009 control CA-41(b) 'echo hola # git clean -fd' -> allow" allow guard-git.sh \
+  "$(emite_bash 'echo hola # git clean -fd' "" "")"
+# QA 1.31.0 v4 (QA-115): LO QUE EL REQ DECLARA FUERA DE ALCANCE Y EL CODIGO SI VE.
+# «Fuera de alcance» de REQ-005 dice, por escrito, que `xargs git clean -fd` NO se ve
+# porque el comando viaja como argumento de otro programa. El codigo tolera `xargs` como
+# envoltorio, asi que DENIEGA. La direccion es segura y el caso se deja en verde midiendo
+# la REALIDAD, no la frase: es el guardian de que el desfase no se olvide. Cuando el
+# write-back de QA-115 aterrice —el REQ retira `xargs` de la lista, o el codigo lo retira
+# del bucle— este caso cambia EN VOZ ALTA, que es justo lo que se quiere.
+check "QA 1.31.0 v4: QA-115 'xargs git clean -fd' -> deny (el REQ lo declara fuera de alcance)" deny guard-git.sh \
+  "$(emite_bash 'xargs git clean -fd' "" "")"
+# Y el control del mismo envoltorio sobre un subcomando inocuo: no deniega por `xargs`,
+# deniega por el subcomando.
+check "QA 1.31.0 v4: QA-115 control 'xargs -n1 git status' -> allow" allow guard-git.sh \
+  "$(emite_bash 'xargs -n1 git status' "" "")"
+# SEC-010: el modo degradado deniega LA LISTA POR DEFECTO, no todo git. `git push --force`
+# destruye historia remota y NO esta en la lista por defecto: sigue pasando, igual que con
+# el manifiesto sano. El control de `git status` mide lecturas; este mide una escritura
+# peligrosa que el mapeo por defecto no reclama, que es el borde util.
+printf '%s' '{"agentes":{,}' > "$PROJ/.arnes/config.json"
+check "QA 1.31.0 v4: SEC-010 control degradado 'git push --force origin main' -> allow" allow guard-git.sh \
+  "$(emite_bash 'git push --force origin main' "" "")"
+printf '%s\n' "$MANIFIESTO_BASE" > "$PROJ/.arnes/config.json"
 
 # --- Integracion y orden: guard.sh ---
 # CA-24: cuando un comando es a la vez git destructivo y escritura sobre codigo
@@ -3915,7 +4012,7 @@ SKIP="$(grep -c '^  SKIP ' "$RAIZ"/out-* 2>/dev/null | awk -F: '{s+=$NF} END {pr
 # --- Cuadre 2: el numero de casos es una invariante del banco -----------------
 # Si alguien anade o quita un caso, actualiza CASOS_ESPERADOS. Cuesta una linea y
 # convierte "faltan tres casos" en un fallo ruidoso en vez de un verde mas pequeno.
-CASOS_ESPERADOS=669
+CASOS_ESPERADOS=680
 # Con FILTRO la vuelta es parcial por definicion: el cuadre solo vale en la completa.
 # (Sin esta guarda toda vuelta filtrada abortaba aqui, y el EXIT quedaba oculto tras un
 # `| tail` en el que se lanzaba: otro control que certificaba lo que no medía.)

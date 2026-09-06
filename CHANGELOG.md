@@ -367,6 +367,14 @@ desarrollador había visto. Merecen el detalle, porque son familias que se repit
 De ahí salió además una regla que se queda: **un criterio de coste se escribe como techo, nunca como
 igualdad.** Escrito como igualdad, una mejora se lee como fallo.
 
+Y de la verificación del veto salió otra, más incómoda: **el QA reprodujo la pérdida de texto humano**
+en la versión anterior de esta misma ventana —dos hashes distintos y la línea de la persona contada a
+cero, no una sospecha— y comprobó el arreglo con nueve averías propias que nadie había pedido: espacio
+en disco agotado de verdad, el destino como enlace simbólico, sólo lectura, finales de línea mixtos,
+cuatro paradas concurrentes por diez rondas, y un límite de tamaño de archivo. Ninguna perdió un byte.
+La regla que deja: **una comprobación que sólo mira si el bloque está nunca habría visto el archivo
+vaciado** — lo que se verifica es el archivo entero, por hash, no la parte que a uno le interesa.
+
 En la tercera vuelta la puerta de git quedó aprobada, y el arreglo fue **del criterio, no del guardián**:
 se verificó que el código cumple la regla reescrita en 24 comandos, con los cuatro bordes del fin de
 opciones. El banco dejó de bailar —tres corridas de la línea base dan el mismo número, y las 625 líneas
