@@ -121,6 +121,8 @@ por arriba:
 | `AGENTS.md` §13 tiene la fila «la transición a `completado` no se hace por shell» | 1.16.0 |
 | `AGENTS.md` §6 nombra la auditoría `(preventiva)` | 1.21.0 |
 | `.arnes/config.json` tiene `plantillas_origen` | 1.21.0 |
+| `.arnes/config.json` tiene la clave `"git"` con `"prohibidos"` | 1.31.0 |
+| `requirements/README.md` nombra `con-hallazgos` en el vocabulario de `Seguridad:` | 1.31.0 |
 
 *(Los tres primeros están comprobados contra los tags: ausentes en la versión anterior,
 presentes desde la que se indica. Si añades marcadores, compruébalos igual — un marcador mal
@@ -378,6 +380,130 @@ nada.
        **también al agente de código**, porque la regla de ese guardián —nadie cierra un REQ desde
        la shell— alcanza a todos y sin análisis no se puede saber si el comando toca
        `requirements/`.
+
+### Hacia 1.31.0
+- **Una sola novedad nace ENCENDIDA, y hay que decírsela al usuario:** `guard-git.sh` deniega a
+  **cualquier** agente —incluida la sesión coordinadora— `git clean -f`, `reset --hard`,
+  `checkout .`, `restore .` y `stash` en sus formas destructivas. No alcanza a `stash list`,
+  `stash show`, `restore --staged`, `clean -n` ni a ningún `git` de lectura. Es la única puerta
+  activa por defecto porque su daño es el único irreversible: git no devuelve lo que nunca se
+  comiteó. **Pregunta** si el proyecto necesita el comportamiento anterior: se apaga con
+  `git.activo: false`, o se sustituye la lista con `git.prohibidos` (`[]` es una decisión
+  declarada y válida). Que la puerta exista **no** sustituye la regla humana: comitear tras cada
+  aterrizaje.
+- **La puerta de git pasa a ver las formas ENVUELTAS.** Hasta ahora sólo miraba el primer token
+  de cada orden y no conocía las palabras reservadas del shell, así que `if …; then git clean -fd;
+  fi`, `{ git clean -fd; }`, `for … do git clean -fd; done`, `sleep 0 & git clean -fd`,
+  `nohup git clean -fd` y una orden partida con `\` + salto de línea **pasaban**. Ahora se
+  deniegan, igual que la forma desnuda. **Qué notará el proyecto:** un guión o un agente que
+  limpiara dentro de un `if` o de un bucle recibirá ahora la denegación que ya recibía sin
+  envolver. **No cambia ningún permitido:** `echo git clean -f`, un `grep` de un texto que
+  mencione el comando y `if …; then git status; fi` siguen pasando. Sigue **fuera de cobertura**
+  un subcomando que llega por variable (`G=clean; git $G -f`), los scripts y los intérpretes.
+- **Con el manifiesto ROTO, el git destructivo pasa a DENEGARSE.** Si `.arnes/config.json` existe
+  y no se puede leer como objeto JSON, la puerta ya no se apaga: aplica la **lista por defecto del
+  arnés** y deniega, diciendo que está en modo degradado. Antes permitía, y eso convertía una coma
+  de más en un interruptor de apagado. **Ojo al borde:** un proyecto con `git.activo: false` al
+  que se le rompa el manifiesto **también** pasará a denegar; la salida es reparar el JSON
+  (`jq -e . .arnes/config.json`), que es la única escritura que la avería deja pasar. Con el
+  manifiesto sano, `git.activo: false` sigue apagando la puerta igual que siempre. Y mientras dure
+  la avería, el bloque derivado de `docs/ESTADO.md` lo dice en una línea, en vez de no escribirse.
+- **La forma LARGA de un flag se deniega igual que la corta.** Un proyecto (o un agente) que
+  escribiera `git clean --force`, `git clean --force -d` o `git stash save "wip"` los verá ahora
+  **denegados**: son el mismo comando destructivo que `clean -f` y que `stash push`, escritos de
+  otra manera. La equivalencia funciona en los **dos** sentidos y también sobre una lista propia:
+  si declaras `git.prohibidos: ["push --force"]`, `git push -f` queda denegado igual. **No cambia
+  ningún permitido:** `clean --dry-run`, `clean -n`, `stash list`, `restore --staged` y los demás
+  siguen pasando, y lo que va detrás de `--` es un pathspec, no una opción (`git clean -- --force`
+  borra un archivo llamado `--force` y sigue permitido). Si el proyecto tenía un guión de limpieza
+  con la forma larga, o lo comitea antes o pide la limpieza al humano fuera de la sesión.
+- `.arnes/config.json`: bloques nuevos `veredictos` (los dos interruptores **apagados**), `git`
+  (encendido, arriba) y `limites` (**opcional**, sólo si un comando legítimo topa con el techo de
+  análisis de Bash; bórralo si no lo necesitas). `rotacion.artefactos` admite además la forma de
+  **sección** (`glob` + `seccion`). **Pregunta antes de encender `veredictos.*`:** exigen que los
+  veredictos lleven fecha `AAAA-MM-DD` en su paréntesis de evidencia, y los REQ ya firmados
+  probablemente no la llevan —mídelo con `tools/arnes-lectura.sh`—; un proyecto que lo encienda
+  sin re-validar no cierra ningún REQ hasta hacerlo. Puede ser justo lo que quiere: se decide, no
+  se hereda.
+- **Rotación de sección: se añade APAGADA y no cambia nada de lo que ya rotaba.** Un proyecto que
+  rotaba artefactos enteros por secciones `## ` sigue igual (la forma anterior del manifiesto se
+  respeta). Si se activa la forma nueva, el nombre de la sección se compara **exacto**: declara
+  la línea entera (`"seccion": "## Historial de cambios"`), no un prefijo. **Si te equivocas, te
+  lo dirá:** un archivo que casa el `glob` pero no contiene la sección declarada no se toca y
+  produce un aviso por stderr con el archivo y la sección, más una línea en el bloque derivado de
+  `docs/ESTADO.md`. Ese aviso es la señal de que el mapeo está mal, no de que el arnés falle.
+- **La parada rota ANTES de derivar el bloque de estado.** Nada que migrar: el bloque describe
+  ahora el disco de después de la rotación, que es el que vas a leer en la sesión siguiente.
+- `requirements/README.md`: `Seguridad: con-hallazgos` pasa a ser un valor **válido** —los REQ que
+  ya lo escribían dejan de ser una anomalía **sin editarlos**, y sigue sin cerrar un REQ crítico—;
+  párrafos nuevos **la fecha del veredicto también va en el paréntesis**, el **aviso al escribir
+  un valor fuera del vocabulario** y el **recorte a 40 caracteres** del bloque derivado.
+  `AGENTS.md` §13: dos filas nuevas en la tabla y los dos párrafos correspondientes.
+- **Un manifiesto con una clave del tipo equivocado ahora avisa.** `"exigir_fecha": "true"` (la
+  cadena en vez del booleano), un `limites.bash_max_analisis` decimal o en forma exponencial, unos
+  `codigo_app.globs` que no son un array: siguen cayendo al valor por defecto del arnés —eso no
+  cambia— pero lo dicen por stderr, con la clave y el valor recibido. Si al instalar ves uno de
+  esos avisos, el proyecto llevaba tiempo creyendo que declaraba algo que no declaraba. Y mientras
+  `.arnes/config.json` esté **roto**, la única escritura que las puertas permiten es la del propio
+  manifiesto: la reparación que el mensaje recomienda se puede hacer desde la sesión.
+- Corre `tools/arnes-lectura.sh` **después** de instalar: hasta 1.30.3 reportaba como anómalo todo
+  `Estado:` con paréntesis de evidencia, y no lo era. Si el proyecto tenía muchas «anomalías», es
+  probable que la mayoría desaparezcan solas.
+- El bloque derivado de `docs/ESTADO.md` se regenera en la siguiente parada: **no hay nada que
+  migrar a mano** por el recorte de celdas.
+- **La cola de aprobaciones del bloque derivado puede BAJAR sin que nadie haya resuelto nada.**
+  Hasta 1.30.3 el bloque contaba **viñetas** y la puerta contaba encabezados `###`: una entrada
+  real del formato documentado valía **4** en el bloque y **1** en la puerta. Ahora las dos usan
+  la misma regla —la de la puerta—, así que el número puede caer de golpe. **No hay nada que
+  migrar a mano:** el bloque se regenera en la siguiente parada. Si la cola no se puede leer
+  entera (un byte NUL, un archivo sin permiso), el bloque dice `sin datos` y la puerta **deniega**
+  el cierre: antes contaba 0 y dejaba pasar.
+- **Un REQ con la cabecera decorada empieza a ser JUZGADO.** La **clave** de un campo se lee ahora
+  con la misma tolerancia que su valor (sangrado, tabulador y énfasis de Markdown: `**Estado:**`,
+  `Estado :`, `` `Estado:` ``). Hasta 1.30.3 esas formas dejaban el campo **vacío**, y un campo
+  vacío no exigía nada. **Paso de migración: corre `tools/arnes-lectura.sh` ANTES de actualizar**
+  para ver qué REQ cambian de lectura — los que aparecían como «nota sin Estado» pasan a contar
+  como REQ, con sus veredictos y su rigor.
+- **El ACENTO deja de ser parte del valor de un campo, y eso CAMBIA la lectura en todos los
+  proyectos.** Hasta 1.30.3 la normalización plegaba una sola pareja de letras (`Í`/`í`), así que
+  `en-revision` sin tilde no casaba con el `en-revisión` del manifiesto y `Rigor: estándar` no se
+  reconocía. Ahora se pliegan **todas** las vocales acentuadas y con diéresis, en mayúscula y en
+  minúscula, y en las dos formas de guardado Unicode (precompuesta y descompuesta: un archivo
+  guardado en macOS puede traer la tilde descompuesta y nada lo delata a la vista). **No se
+  pliega** la `ñ` —es otra letra, no una `n` con adorno— ni los separadores: `en revision`,
+  `enrevision` y `en-revisión-parcial` siguen siendo valores distintos y siguen marcándose.
+  **Dos consecuencias, y las dos hay que decírselas al usuario:**
+  1. *Avisos que hoy aparecen dejarán de aparecer sin que nadie edite nada.* No hay nada que
+     migrar. Si el proyecto tenía REQ con `Estado:`, `Rigor:` o veredictos escritos sin tilde,
+     estaban saliendo como «valor que ninguna puerta reconoce» y eran perfectamente válidos.
+  2. *En un proyecto cuyo `estados.completado` lleve ACENTO pueden aparecer **DENY nuevos** donde
+     antes pasaba.* No es una regresión: es el cierre de un fallo **en abierto**. Escribir ese
+     estado sin tilde hacía que la puerta **no viera la transición**, y un REQ crítico podía
+     quedar cerrado sin veredicto de seguridad.
+  **Qué revisar antes de actualizar:** corre `tools/arnes-lectura.sh` y guarda la salida; después
+  de actualizar, vuelve a correrlo y compara. Los REQ que desaparecen de la lista de anomalías son
+  los que estaban mal leídos. Y mira si `estados.completado` de tu manifiesto lleva tilde: si la
+  lleva, revisa los REQ que ya declaran ese estado escrito sin ella — desde 1.31.0 la puerta los ve.
+- **Un manifiesto ROTO deja de permitirlo todo en silencio.** Si `.arnes/config.json` **existe**
+  pero no se puede leer como objeto JSON —inválido, vacío, `null` o un array—, el arnés avisa por
+  stderr **siempre** y **deniega** toda escritura que las puertas tendrían que juzgar. Hasta 1.30.3
+  se permitía todo sin decir nada, y además las variables del manifiesto se rellenaban con campos
+  del **input** de la llamada. Un manifiesto **ausente** sigue dejando los hooks inertes, que es una
+  decisión legítima del proyecto; uno roto no puede, porque el proyecto sí declaró invariantes.
+  **Paso de migración: `jq -e . .arnes/config.json` antes de actualizar.** Si falla, arréglalo o
+  borra el archivo; con 1.31.0 no vas a poder escribir hasta entonces.
+- **No se escribe a través de un enlace simbólico.** Si la ruta de un `Edit`/`Write`/`MultiEdit`
+  apunta a un enlace simbólico **dentro** del proyecto, se deniega con ese motivo. El arnés juzga
+  la ruta escrita, no su destino, así que un enlace en una ruta libre que apuntara a código
+  protegido recibía el veredicto de su nombre. No se resuelve el destino a propósito: costaría un
+  proceso en toda edición y abriría una carrera entre la comprobación y la escritura. **Qué
+  revisar:** `find . -type l -not -path './.git/*'` — si el proyecto edita habitualmente a través
+  de enlaces, dilo antes de actualizar; la salida es escribir sobre la ruta real.
+- **`limites.bash_max_analisis` tiene ahora un máximo.** Si el manifiesto declara un valor por
+  encima del máximo operativo del arnés, se aplica **el máximo** y se avisa por stderr; y un valor
+  que no sea un **número** en el JSON (`"999999"` entrecomillado) cae al techo por defecto, también
+  con aviso. Un techo más alto dejaría de responder antes de que el hook muera, y un hook muerto no
+  deniega. Si el proyecto declaró un número enorme «por si acaso», bórralo: no hacía lo que parecía.
 
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 

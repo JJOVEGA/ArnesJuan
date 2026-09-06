@@ -1,6 +1,6 @@
 {
   "_doc": "Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad EJECUTABLE de las invariantes que en AGENTS.md están en prosa. Editar aquí cambia el enforcement en un solo sitio.",
-  "arnes_version": "1.30.2",
+  "arnes_version": "1.30.3",
 
   "agentes": {
     "_doc": "El nombre llega al hook en el campo `agent_type`. Sólo `agente_codigo` puede editar `codigo_app.globs`. Basta el nombre corto: el hook tolera el prefijo del plugin que Claude Code añade en runtime (`arnes-juan:desarrollador`). Escribirlo CON prefijo es opcional y hace la comparación estricta con ese proveedor.",
@@ -9,8 +9,8 @@
   },
 
   "codigo_app": {
-    "_doc": "Rutas (relativas a la raíz) que SÓLO el agente de código puede editar. Apunta a código de PRODUCCIÓN; deja fuera tests y fixtures para que el qa-tester pueda editarlos. Patrones estilo shell; '*' abarca también separadores '/'. Ej.: \"src/*\", \"app/*\", \"lib/*\", \"*.py\".",
-    "globs": ["hooks/*", "tools/*", ".github/*"]
+    "_doc": "Rutas (relativas a la raíz) que SÓLO el agente de código puede editar. Apunta a código de PRODUCCIÓN; deja fuera tests y fixtures para que el qa-tester pueda editarlos. Patrones estilo shell; '*' abarca también separadores '/'. Ej.: \"src/*\", \"app/*\", \"lib/*\", \"*.py\". EN ESTE REPOSITORIO se añaden `.arnes/config.json` y `.claude-plugin/*` (SEC-006 parte a, REQ-007 CA-53): el manifiesto es la fuente de verdad EJECUTABLE de las invariantes, así que quien no puede escribir `hooks/` tampoco puede cambiar la regla que dice qué es `hooks/`. Es MAPEO de este repositorio y NO se propaga a `templates/arnes-config.json.tpl`. Coste aceptado: `arnes_version` vive aquí, así que subirla en una migración pasa a ser trabajo del `desarrollador`.",
+    "globs": ["hooks/*", "tools/*", ".github/*", ".arnes/config.json", ".claude-plugin/*"]
   },
 
   "quality_gates": ["for f in hooks/*.sh tools/*.sh; do bash -n \"$f\" || exit 1; done", "jq -e . hooks/hooks.json >/dev/null", "jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null"],

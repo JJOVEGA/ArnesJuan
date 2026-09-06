@@ -8,7 +8,31 @@ scripts reales de `hooks/` y verifica si deniegan o permiten.
 ```
 bash tests/escenarios/hooks/run.sh
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **44 casos.**
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **562 casos** (el número exacto lo cuadra `CASOS_ESPERADOS` al final de `run.sh`).
+
+## Invariantes del banco
+Tres reglas que el banco se aplica **a sí mismo**. No son estilo: cada una nació de una vuelta
+en verde que no medía lo que decía medir.
+
+1. **Un JSON vacío es un FAIL, nunca un `allow`.** Si el emisor de un caso se queda mudo —`jq`
+   reventando por el tamaño del argumento fue exactamente eso—, el hook no recibe entrada, no
+   deniega, y el caso pasa en falso. Por eso **todos** los ayudantes que ejecutan un hook
+   (`check`, `check_motivo`, `check_aviso`, `cronometra_bash`, `ver_check`, `lec_check`) pasan
+   por `json_no_vacio` —o por una guarda equivalente sobre la salida— antes de juzgar nada.
+   Un ayudante nuevo que no lo haga está introduciendo verdes falsos: es la misma lección del
+   canario, un nivel más abajo.
+2. **`CASOS_ESPERADOS` cuadra con `PASS + FAIL + SKIP`.** Un caso que desaparece produce cero
+   líneas, que es exactamente lo que produce un caso que pasó limpio. El cuadre convierte
+   «faltan tres casos» en un fallo ruidoso en vez de en un verde más pequeño; ya delató una
+   sección entera que no se ejecutaba. Quien añade o quita un caso actualiza el número, y quien
+   escribe un contador que puede quedarse vacío (un `grep -c` sobre un archivo que quizá no
+   existe) lo blinda: un `$(( 60 + ))` mata el subshell y **se lleva la sección entera** sin
+   decir nada — que es justo lo que este cuadre existe para impedir.
+3. **Cada sección corre en su propio subshell; los ayudantes viven al nivel superior.** Una
+   función definida dentro de `seccion_NN` no existe para las demás: al usarla en otra sección
+   los casos no fallaban, es que **no se ejecutaban**. Un ayudante compartido va fuera de toda
+   sección. Y cada sección arranca de un proyecto efímero recién hecho, para que ninguna dependa
+   de que otra limpie detrás.
 
 ## Cómo se escribe un caso que sirva
 Dos reglas nacidas de fallos reales:

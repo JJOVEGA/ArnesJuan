@@ -37,9 +37,10 @@ command -v jq >/dev/null 2>&1 || { printf 'Hace falta jq.\n' >&2; exit 2; }
 
 ARNES_MANIFEST="$MAN"
 arnes_jq_file "$MAN" -r '[(.requirements_dir // "requirements"),
-                          (.estados.completado // "completado")] | .[]'
-REQ_DIR=''; DONE=''
-{ IFS= read -r REQ_DIR; IFS= read -r DONE; } <<< "$ARNES_JQ"
+                          (.estados.completado // "completado"),
+                          (.pending_approval // "PENDING_APPROVAL.md")] | .[]'
+REQ_DIR=''; DONE=''; PEND_REL=''
+{ IFS= read -r REQ_DIR; IFS= read -r DONE; IFS= read -r PEND_REL; } <<< "$ARNES_JQ"
 arnes_jq_file "$MAN" -r '(.estados.todos // ["borrador","pendiente","en-progreso","en-revisión","completado","bloqueado"])[]'
 ESTADOS_OK=''
 while IFS= read -r e; do arnes_norm_campo "$e"; ESTADOS_OK+="|$ARNES_CAMPO"; done <<< "$ARNES_JQ"
@@ -48,9 +49,12 @@ ESTADOS_OK+="|"   # cerrado por los dos lados: la comparacion es `|valor|`, exac
 # Formas que la máquina reconoce en cada campo. Un valor fuera de aquí no es
 # necesariamente un error del proyecto: puede ser un error del arnés al leerlo, y
 # distinguirlo es justo lo que este informe existe para permitir.
-QA_OK='|pendiente|aprobado|con-hallazgos|'
-SEG_OK='|n/a|pendiente|aprobado|preventiva|vetado|'
-RIG_OK='|ligero|estandar|critico|'
+# EL VOCABULARIO VIVE EN hooks/lib.sh (`ARNES_VOCAB_*`): el mismo que usa la puerta, no
+# una copia. Dos transcripciones de la misma lista se desfasan, y este informe existe
+# justo para detectar ese tipo de desfase — tenerlo dentro seria cómico.
+QA_OK="|$ARNES_VOCAB_QA|"
+SEG_OK="|$ARNES_VOCAB_SEG|"
+RIG_OK="|$ARNES_VOCAB_RIGOR|"
 
 VERSION="$(jq -r '.version // "?"' "$DIR/../.claude-plugin/plugin.json" 2>/dev/null || echo '?')"
 printf 'Lectura del arnés sobre %s/ — plugin %s\n\n' "$REQ_DIR" "$VERSION"
@@ -80,16 +84,26 @@ for f in "$PROY/$REQ_DIR"/*.md; do
   while IFS= read -r l; do
     # Solo la cabecera cuenta, como para la puerta: lo que haya en una seccion no es un campo.
     case "$l" in '## '*) break ;; esac
-    case "$l" in
-      'Estado:'*)               cru_est="${l#Estado:}" ;;
-      'QA:'*)                   cru_qa="${l#QA:}" ;;
-      'Seguridad:'*)            cru_seg="${l#Seguridad:}" ;;
-      'Sensible a seguridad:'*) cru_sens="${l#Sensible a seguridad:}" ;;
-      'Rigor:'*)                cru_rig="${l#Rigor:}" ;;
+    # La CLAVE se lee con `arnes_norm_clave` (hooks/lib.sh), la misma regla que la puerta:
+    # un informe que no reconoce `**Estado:**` diria «nota sin Estado» sobre un REQ que la
+    # puerta ya juzga cerrado, y un informe que lee distinto de la puerta miente.
+    arnes_norm_clave "$l" || continue
+    case "$ARNES_CLAVE" in
+      'Estado')               cru_est="$ARNES_VALOR" ;;
+      'QA')                   cru_qa="$ARNES_VALOR" ;;
+      'Seguridad')            cru_seg="$ARNES_VALOR" ;;
+      'Sensible a seguridad') cru_sens="$ARNES_VALOR" ;;
+      'Rigor')                cru_rig="$ARNES_VALOR" ;;
     esac
   done <<< "$texto"
 
-  arnes_norm_campo "$cru_est"; est="$ARNES_CAMPO"
+  # EL MISMO LECTOR QUE LA PUERTA, tambien para `Estado:`. La regla del parentesis de
+  # evidencia se le aplica en la puerta desde 1.26.0 y este informe no lo hacia, asi que
+  # un `Estado: en-revisión (2026-08-25, tras la ronda 3)` salia como «ninguna puerta lo
+  # reconoce». Medido en un proyecto real: 28 de 42 anomalias eran falsas, y el ruido
+  # enterraba las 14 reales. Un informe que lee distinto de la puerta sobre la que informa
+  # miente.
+  arnes_norm_campo "$cru_est"; arnes_veredicto "$ARNES_CAMPO"; est="$ARNES_VEREDICTO"
   if [ -z "$est" ]; then notas=$((notas+1)); continue; fi
   reqs=$((reqs+1))
 
@@ -132,6 +146,16 @@ printf 'RESUMEN\n'
 printf '  %s REQ leídos' "$reqs"
 [ "$notas" -gt 0 ] && printf ' · %s archivo(s) sin `Estado:` (notas, no REQ)' "$notas"
 printf '\n  rigor efectivo: critico %s · estandar %s · ligero %s\n' "$nc" "$ne" "$nl"
+# La cola de aprobaciones, con la MISMA función que usa la puerta de cierre y el bloque
+# derivado de `docs/ESTADO.md` (`arnes_cola_pendientes`, hooks/lib.sh). Este informe existe
+# para detectar desfases entre lo que se escribe y lo que la máquina lee: tener aquí una
+# tercera transcripción de la regla de conteo sería cómico.
+if arnes_cola_pendientes "$PROY/$PEND_REL"; then
+  printf '  cola de aprobaciones (%s): %s pendiente(s) — %s\n' "$PEND_REL" "$ARNES_COLA" \
+    "$([ "$ARNES_COLA" -gt 0 ] && echo 'ningún REQ puede cerrarse' || echo 'no bloquea el cierre')"
+else
+  printf '  cola de aprobaciones (%s): sin datos — no se pudo leer entera; la puerta de cierre DENIEGA\n' "$PEND_REL"
+fi
 printf '\n  El rigor efectivo es DERIVADO: `Sensible a seguridad: sí` impone `critico`\n'
 printf '  aunque no se declare `Rigor:`. Si un REQ que crees crítico sale `estandar`,\n'
 printf '  su campo de sensibilidad no se está leyendo como crees.\n'

@@ -26,13 +26,15 @@ DIR="${BASH_SOURCE[0]%/*}"
 # correcto: una denegación es final y no hay nada más que juzgar.
 arnes_guard_completado() {
   local tool fp bash_cmd req_dir estado_done pending_rel rel d escrituras nuevo
-  local disk qa seg sens rigor hall h id clase pending abiertas tmp cmd out rc
+  local disk qa seg sens rigor hall h id clase pending abiertas tmp cmd out rc disk_medible acc c prof ci
   local -a piezas=()
   local modo resultante reconstruido np k old new ra done_norm est_antes est_despues
 
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
   arnes_parse_input
+  # SEC-004: una escritura a traves de un enlace simbolico no se juzga, se deniega.
+  arnes_deny_enlace
   tool="$ARNES_TOOL"; fp="$ARNES_FP"; bash_cmd="$ARNES_CMD"
 
   case "$tool" in
@@ -49,15 +51,20 @@ arnes_guard_completado() {
         # Igual que en `guard-codigo`: el techo se resuelve aqui porque el detector corrio
         # en un subshell y su memorizacion no vuelve (REQ-001, QA-016).
         arnes_techo_bash
-        arnes_deny "ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande para analizarlo con garantia; no se analizo y no se permite. Una puerta que no puede medir no deja pasar (AGENTS.md 1): sin analisis no se puede saber si el comando toca '$ARNES_REQ_DIR'. El presupuesto de analisis vigente es de $ARNES_TECHO bytes y este comando lo supera. Salidas: heredoc CITADO (<<'EOF'), un archivo de script, o partir el comando en trozos por debajo de $ARNES_TECHO bytes. El techo se puede SUBIR en .arnes/config.json con 'limites.bash_max_analisis' (bytes)."
+        arnes_deny "ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande para analizarlo con garantia; no se analizo y no se permite. Una puerta que no puede medir no deja pasar (AGENTS.md 1): sin analisis no se puede saber si el comando toca '$ARNES_REQ_DIR'. El presupuesto de analisis vigente es de $ARNES_TECHO bytes y este comando lo supera. Salidas: heredoc CITADO (<<'EOF'), un archivo de script, o partir el comando en trozos por debajo de $ARNES_TECHO bytes. El techo se puede SUBIR en .arnes/config.json con 'limites.bash_max_analisis' (bytes), hasta un maximo de $ARNES_BASH_MAX_MANIFIESTO bytes: por encima el analisis dejaria de responder antes de que el hook muera, y un hook muerto no deniega."
       fi
       [ -n "$escrituras" ] || return 0 ;;
     Edit|Write|MultiEdit)
       [ -n "$fp" ] || return 0 ;;
     *) return 0 ;;
   esac
-
+  # SEC-005: si el manifiesto existe pero no se puede leer, `requirements_dir` y el estado
+  # terminal son desconocidos y esta puerta no puede juzgar nada. No deja pasar.
   arnes_parse_manifest
+  # Los destinos ya estan detectados en la via Bash; en Edit/Write la escritura es cierta
+  # y la ruta viaja en `ARNES_FP`. La funcion no vuelve a analizar nada.
+  arnes_deny_manifiesto_roto "${escrituras:-}"
+
   req_dir="$ARNES_REQ_DIR"; estado_done="$ARNES_ESTADO_DONE"; pending_rel="$ARNES_PENDING"
 
   # --- Vía Bash: no se juzga aquí, se DERIVA ---
@@ -103,19 +110,56 @@ arnes_guard_completado() {
   #   Write     -> W \001 contenido
   #   Edit      -> E \001 old \001 new \001 replace_all
   #   MultiEdit -> E \001 old1 \001 new1 \001 ra1 \001 old2 \001 new2 \001 ra2 ...
+  # PRIMER campo: bandera de bytes de control C0 en el `tool_input` (SEC-001, R-001).
+  # El separador `\001` viaja DENTRO del dato que controla quien llama, y un `\001` metido
+  # en un `new_string` metia campos de mas: el bucle de tripletas leia como `(old,new,ra)`
+  # cosas que no lo eran y EL DOCUMENTO QUE EL HOOK SIMULA DEJABA DE SER EL QUE LA
+  # HERRAMIENTA IBA A ESCRIBIR. Con eso se saltaban las cuatro puertas del cierre a la vez.
+  # Se elige la salida (b) del criterio —RECHAZAR el input con bytes de control— y no la
+  # (a) —pasarlo fuera de banda—: es una comprobacion en la MISMA llamada a jq (cero
+  # procesos nuevos), la direccion segura es cerrar, y un REQ legitimo no lleva bytes C0.
+  # Se excluyen tabulador (09), salto de linea (0A) y retorno de carro (0D): el Markdown
+  # normal —una tabla, un bloque de codigo, un archivo CRLF— los lleva y no puede volverse
+  # un falso positivo.
   arnes_jq_str "$ARNES_INPUT" -r '
-    if   .tool_name == "Write" then ["W", (.tool_input.content // "")]
-    elif .tool_name == "Edit"  then ["E", (.tool_input.old_string // ""), (.tool_input.new_string // ""),
-                                     (if .tool_input.replace_all == true then "1" else "0" end)]
-    elif .tool_name == "MultiEdit" then ["E"] + [.tool_input.edits[]? |
-                                     (.old_string // ""), (.new_string // ""),
-                                     (if .replace_all == true then "1" else "0" end)]
-    else ["W", ""] end | join("\u0001")'
+    (if ([.tool_input | .. | strings] | join("\n") | test("[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]"))
+     then "!" else "-" end) as $ctl |
+    (if   .tool_name == "Write" then ["W", (.tool_input.content // "")]
+     elif .tool_name == "Edit"  then ["E", (.tool_input.old_string // ""), (.tool_input.new_string // ""),
+                                      (if .tool_input.replace_all == true then "1" else "0" end)]
+     elif .tool_name == "MultiEdit" then ["E"] + [.tool_input.edits[]? |
+                                      (.old_string // ""), (.new_string // ""),
+                                      (if .replace_all == true then "1" else "0" end)]
+     else ["W", ""] end) | [$ctl] + . | join("\u0001")'
   piezas=()
   IFS=$'\001' read -r -d '' -a piezas <<< "$ARNES_JQ" || true
-  modo="${piezas[0]:-W}"
+  if [ "${piezas[0]:-!}" = "!" ]; then
+    arnes_deny "ARNES: no se juzga esta edicion de '$rel': el tool_input trae bytes de control (C0 distintos de tabulador, salto de linea y retorno de carro). El hook trocea las piezas de la edicion con un separador que viaja dentro del propio dato, asi que un byte de control desincroniza la simulacion y el documento que se juzga deja de ser el que se escribiria. Un REQ legitimo no los lleva: quitalos y reintenta. Una puerta que no puede medir no deja pasar (AGENTS.md 1)."
+  fi
+  modo="${piezas[1]:-W}"
 
-  disk=''; [ -f "$fp" ] && IFS= read -r -d '' disk < "$fp"   # `read`, no `cat`: sin fork
+  # El REQ en disco, leido de forma que DICE si no pudo leerse entero (SEC-002, R-001).
+  # `read -d ''` se detiene en el primer NUL y devuelve el trozo: un NUL en la primera
+  # linea dejaba `disk` vacio, los veredictos se leian de un texto incompleto —y un campo
+  # vacio no exige nada—, y ademas el `old_string` no se encontraba, asi que la puerta
+  # caia a la via mas laxa. Bastaba una escritura previa en requirements/, que ninguna
+  # puerta restringe.
+  disk=''; disk_medible=1
+  if [ -f "$fp" ]; then
+    arnes_lee_archivo "$fp" || disk_medible=0
+    disk="$ARNES_TEXTO"
+  fi
+  if [ "$disk_medible" -eq 0 ]; then
+    # No se puede reconstruir el documento resultante ni leer los veredictos que hay en
+    # disco. Lo que decide sigue siendo LA TRANSICION: solo se deniega si la edicion trae
+    # el estado terminal —la regla ancha de la via Bash, por la misma razon: sustituir el
+    # VALOR es la forma mas natural de cerrar un REQ a mano y no escribe «Estado» en ninguna
+    # parte—. Una edicion que no lo menciona no queda bloqueada por el byte.
+    if grep -iqE "(^|[^a-zA-Z])${estado_done}([^a-zA-Z]|$)" <<< "$ARNES_JQ"; then
+      arnes_deny "ARNES: no se puede tocar el estado de '$rel': el archivo en disco no se puede leer entero —un byte NUL lo trunca, o no hay permiso de lectura—, asi que no se pueden leer sus veredictos ni simular el documento resultante, y esta edicion menciona '$estado_done'. Una puerta que no puede medir no deja pasar (AGENTS.md 1). Quita el byte NUL del archivo y reintenta."
+    fi
+    return 0
+  fi
 
   # --- El documento RESULTANTE, no los fragmentos ----------------------------------
   # FALLO EN ABIERTO medido en 1.30.1: un MultiEdit que cerraba el REQ y aprobaba SOLO
@@ -134,15 +178,30 @@ arnes_guard_completado() {
   # todo el contenido y no la cabecera. Los VEREDICTOS de un `Write` se siguen leyendo con
   # la precedencia de siempre (entrante sobre disco), que es la lectura estricta: un `Write`
   # que borrara la linea `QA:` no se libra del veredicto que hay en disco.
+  # PRESUPUESTO DE RECONSTRUCCION (SEC-007, R-001). Reconstruir cuesta del orden de
+  # `ediciones x tamano` y no tenia techo: 1.501 ediciones sobre un REQ de 300 KB tardaban
+  # 25,7 s, y un REQ de 3 MB con 401 ediciones no respondia en 30 s. A los 60 s el hook
+  # MUERE, no emite nada y el resultado efectivo es PERMITIR. Asi que por encima del
+  # presupuesto no se reconstruye: se deniega, y el deny alcanza TAMBIEN al agente de
+  # codigo, porque nadie cierra un REQ desde una llamada que la puerta no puede medir.
+  np=${#piezas[@]}
+  if [ "$modo" != "W" ]; then
+    k=$(( (np - 2) / 3 )); [ "$k" -lt 1 ] && k=1
+    if (( ${#disk} * k > ARNES_EDIT_MAX_PRESUPUESTO )); then
+      arnes_deny "ARNES: no se juzga esta edicion: reconstruir el documento resultante costaria mas de lo que esta puerta puede medir antes de morir (documento en disco x numero de ediciones supera el presupuesto de $ARNES_EDIT_MAX_PRESUPUESTO bytes-edicion). No es un veredicto sobre la edicion: es que la puerta no puede medirla, y una puerta que no puede medir no deja pasar (AGENTS.md 1). Salidas: parte el cambio en llamadas mas pequenas, o escribe el documento entero con Write."
+    fi
+  fi
+
   nuevo=''; resultante=''; reconstruido=0
   if [ "$modo" = "W" ]; then
-    nuevo="${piezas[1]:-}"; resultante="$nuevo"
+    nuevo="${piezas[2]:-}"; resultante="$nuevo"
   else
     # Sin CR: los proyectos en Windows guardan CRLF y la herramienta casa el `old_string`
     # igual; si aqui no casara, se caeria a los fragmentos y el bypass volveria por la
     # puerta de atras. Los lectores de campos ya quitan el CR, asi que nada cambia.
-    resultante="${disk//$'\r'/}"; reconstruido=1; np=${#piezas[@]}
-    for ((k = 1; k + 2 < np; k += 3)); do
+    resultante="${disk//$'\r'/}"; reconstruido=1
+    # k arranca en 2: piezas[0] es la bandera de bytes de control y piezas[1] el modo.
+    for ((k = 2; k + 2 < np; k += 3)); do
       old="${piezas[k]//$'\r'/}"; new="${piezas[k+1]//$'\r'/}"; ra="${piezas[k+2]}"
       nuevo+="$new"$'\n'
       if [ -z "$old" ] || [[ "$resultante" != *"$old"* ]]; then reconstruido=0; continue; fi
@@ -162,6 +221,27 @@ arnes_guard_completado() {
   if [ "$reconstruido" -eq 1 ]; then arnes_campos_req "$resultante" ''
   else arnes_campos_req "$disk" "$nuevo"; fi
   qa="$ARNES_QA"; seg="$ARNES_SEG"; sens="$ARNES_SENS"; rigor="$ARNES_RIGOR"
+
+  # --- Aviso al ESCRIBIR un veredicto fuera del vocabulario (NO deniega) ------------
+  # Medido en un proyecto real: cuatro REQ llevaban SEMANAS con un `QA:` que la puerta no
+  # reconocia, y nadie lo supo hasta que un cierre fallo. El defecto no era el valor: era
+  # que nada lo dijera AL ESCRIBIRLO.
+  #
+  # POR QUE NO DENIEGA. Escribir `QA: aprobadisimo` no es un ataque ni un cierre
+  # indebido: es una errata que la puerta ya atrapa al cerrar. Denegar la edicion añadiria
+  # friccion constante a algo inocuo, y esa friccion termina con alguien apagando el
+  # guard. El hook lo DICE y sigue (`systemMessage`; ver `arnes_aviso` en lib.sh).
+  #
+  # SOLO SI ESTA EDICION TOCA EL CAMPO, no por el estado del archivo: si no, cada edicion
+  # del REQ repetiria el mismo aviso hasta que alguien lo silencie. Y el valor juzgado es
+  # el de la CABECERA —`arnes_campos_req` no mira mas alla del primer `## `—, asi que una
+  # linea igual dentro de una seccion no dispara nada.
+  if [ -n "$qa" ] && ! arnes_en_vocab "$qa" "$ARNES_VOCAB_QA" && grep -q 'QA:' <<< "$nuevo"; then
+    arnes_aviso "'$rel': 'QA:${ARNES_QA_CRUDO}' se lee como <$qa>, que NO es un veredicto ($ARNES_VOCAB_QA). Asi este REQ no podra cerrarse. Un matiz va entre parentesis —'QA: aprobado (R-045, 2026-09-01)'—; un veredicto distinto es otro valor."
+  fi
+  if [ -n "$seg" ] && ! arnes_en_vocab "$seg" "$ARNES_VOCAB_SEG" && grep -q 'Seguridad:' <<< "$nuevo"; then
+    arnes_aviso "'$rel': 'Seguridad:${ARNES_SEG_CRUDO}' se lee como <$seg>, que NO es un veredicto ($ARNES_VOCAB_SEG). Si el rigor efectivo es critico, asi este REQ no podra cerrarse."
+  fi
 
   # --- Orden del ciclo: seguridad no firma lo que QA no ha validado -------------
   # `AGENTS.md` §6 fija desarrollador -> qa-tester -> auditor-seguridad. La regla
@@ -255,6 +335,85 @@ arnes_guard_completado() {
           arnes_deny "ARNES: no se puede completar '$rel': su rigor efectivo es 'critico' y el veredicto de seguridad es '${seg:-ausente}' (se requiere 'Seguridad: aprobado'). El control hallado debe quedar como NFR antes de cerrar (AGENTS.md §9)."
         fi ;;
     esac
+
+    # --- Veredicto FECHADO y no CADUCO (opt-in del proyecto) -----------------------
+    # Medido en un proyecto real: cuatro REQ se habrian cerrado con un `QA: aprobado`
+    # emitido contra codigo que cambio DESPUES de la firma; otro llevaba `Seguridad:
+    # aprobado` a secas, sin ronda ni fecha, y era justo el unico que nadie sabia que
+    # estaba caduco. Un veredicto es una foto, y una foto solo vale si el sujeto estaba
+    # quieto.
+    #
+    # LA FECHA VIAJA EN EL PARENTESIS DE EVIDENCIA —`QA: aprobado (R-045, 2026-09-01)`—,
+    # que ya es la convencion del arnes, y se lee del valor CRUDO: la normalizacion corta
+    # ese parentesis a proposito, porque la evidencia no cambia el veredicto.
+    #
+    # LAS DOS CLAVES NACEN APAGADAS: un proyecto que no las active no nota ningun cambio.
+    # El arnes trae el mecanismo; que se mida, y contra que globs, lo declara el
+    # manifiesto.
+    #
+    # SOLO SE LE EXIGE FECHA A `aprobado`: es la unica firma que cierra, y un veredicto
+    # que no cierra ya deniega por su propio motivo unas lineas mas arriba.
+    #
+    # ASIMETRIA DECLARADA: `git log -1 --format=%cs` tiene resolucion de DIA, asi que un
+    # veredicto del MISMO dia que el commit NO caduca (la comparacion es estrictamente
+    # anterior). Y una fecha FUTURA se acepta como fecha y nunca caduca: esta puerta mide
+    # el veredicto contra el CODIGO, no contra el reloj, y hacerla depender del reloj de
+    # la maquina la volveria sensible a la zona horaria justo en el limite del dia.
+    # Falsear la fecha es de la familia de `aprobado (con reservas)`: una violacion de la
+    # convencion, declarada aqui y en la plantilla, no un agujero silencioso.
+    if [ "${ARNES_VER_FECHA:-}" = "true" ] || [ "${ARNES_VER_CADUCAN:-}" = "true" ]; then
+      local -a vered=("QA:|$qa|$ARNES_QA_CRUDO")
+      [ "$rigor" = "critico" ] && vered+=("Seguridad:|$seg|$ARNES_SEG_CRUDO")
+      local fecha_codigo='' commit_codigo='' sucio='' v campo valor crudo linea_git rc_git
+      if [ "${ARNES_VER_CADUCAN:-}" = "true" ]; then
+        # Sin globs no se puede medir "el codigo": la consulta miraria el repositorio
+        # entero, que es OTRA pregunta y siempre responderia que si.
+        if [ "${#ARNES_GLOBS[@]}" -eq 0 ]; then
+          arnes_deny "ARNES: no se puede completar '$rel': el manifiesto exige que el veredicto no sea anterior al ultimo cambio del codigo (veredictos.caducan_con_codigo) pero 'codigo_app.globs' esta vacio. Sin globs declarados la consulta mediria el repositorio entero, que es otra pregunta. Declara los globs del codigo de la app, o apaga la opcion."
+        fi
+        if ! command -v git >/dev/null 2>&1; then
+          arnes_deny "ARNES: no se puede completar '$rel': el manifiesto exige medir la caducidad del veredicto contra el codigo (veredictos.caducan_con_codigo) y no hay 'git' en el PATH. Una puerta que no puede medir no deja pasar (AGENTS.md 1)."
+        fi
+        # DOS invocaciones de git por evaluacion, ni una mas, y solo en esta via: la
+        # existencia del repositorio se DERIVA del fallo de la primera en vez de gastar
+        # un tercer proceso en preguntarla.
+        linea_git="$(git -C "$ARNES_PROJ" log -1 --format='%cs %h' -- "${ARNES_GLOBS[@]}" 2>/dev/null)"; rc_git=$?
+        if [ "$rc_git" -ne 0 ]; then
+          arnes_deny "ARNES: no se puede completar '$rel': el manifiesto exige medir la caducidad del veredicto contra el codigo (veredictos.caducan_con_codigo) y 'git log' no pudo responder en '$ARNES_PROJ' (¿no es un repositorio git?). Una puerta que no puede medir no deja pasar (AGENTS.md 1)."
+        fi
+        if [ -n "$linea_git" ]; then
+          fecha_codigo="${linea_git%% *}"; commit_codigo="${linea_git#* }"
+          # Un git anterior a `%cs` devuelve el literal en vez de una fecha. Tomarlo por
+          # fecha y compararlo lexicograficamente seria dejar pasar por no entender la
+          # salida, que es la peor forma de permitir.
+          arnes_fecha_en "$fecha_codigo"
+          if [ "$ARNES_FECHA" != "$fecha_codigo" ]; then
+            arnes_deny "ARNES: no se puede completar '$rel': 'git log --format=%cs' devolvio '$fecha_codigo', que no es una fecha AAAA-MM-DD (git demasiado antiguo para ese formato). No se puede medir la caducidad del veredicto y no se deja pasar por no entender la salida (AGENTS.md 1)."
+          fi
+        fi
+        # Vacio = ningun commit ha tocado los globs: no hay codigo posterior al veredicto
+        # porque no hay codigo comiteado, y el arbol si se pudo medir.
+        sucio="$(git -C "$ARNES_PROJ" status --porcelain -- "${ARNES_GLOBS[@]}" 2>/dev/null)"; rc_git=$?
+        if [ "$rc_git" -ne 0 ]; then
+          arnes_deny "ARNES: no se puede completar '$rel': 'git status' no pudo responder en '$ARNES_PROJ' y el manifiesto exige medir la caducidad del veredicto contra el codigo (veredictos.caducan_con_codigo). Una puerta que no puede medir no deja pasar (AGENTS.md 1)."
+        fi
+        sucio="${sucio%%$'\n'*}"
+      fi
+      for v in "${vered[@]}"; do
+        campo="${v%%|*}"; crudo="${v#*|}"; valor="${crudo%%|*}"; crudo="${crudo#*|}"
+        [ "$valor" = "aprobado" ] || continue
+        arnes_fecha_en "$crudo"
+        if [ -z "$ARNES_FECHA" ]; then
+          arnes_deny "ARNES: no se puede completar '$rel': el veredicto '$campo$crudo' no lleva fecha y el manifiesto la exige (veredictos). Un veredicto sin fecha no se puede caducar, y uno que no caduca sobrevive a los cambios del codigo que juzga. Escribe la ronda y la fecha en formato AAAA-MM-DD dentro del parentesis de evidencia: '$campo aprobado (R-000, AAAA-MM-DD)'."
+        fi
+        if [ -n "$fecha_codigo" ] && [[ "$ARNES_FECHA" < "$fecha_codigo" ]]; then
+          arnes_deny "ARNES: no se puede completar '$rel': el veredicto '$campo$crudo' es del $ARNES_FECHA y el codigo de la app cambio el $fecha_codigo ($commit_codigo). Un veredicto anterior al codigo que juzga no lo juzga: hace falta re-validar y volver a firmar con la fecha nueva (AGENTS.md 9). El empate no caduca: 'git log --format=%cs' tiene resolucion de dia."
+        fi
+      done
+      if [ -n "$sucio" ]; then
+        arnes_deny "ARNES: no se puede completar '$rel': hay cambios SIN COMITEAR en el codigo de la app ('${sucio#???}'). Un veredicto no puede ser posterior a codigo que aun no existe en git, asi que la caducidad no se puede medir: comitea —o descarta— antes de cerrar (veredictos.caducan_con_codigo)."
+      fi
+    fi
   fi
 
   # --- Clase del hallazgo: no todo hallazgo bloquea ---
@@ -268,15 +427,32 @@ arnes_guard_completado() {
     ''|ninguno|'(ninguno)'|n/a|na|-|'(-)') hall='' ;;
   esac
   if [ -n "$hall" ]; then
-    # La lista se parte con IFS, no con `printf | tr`: eran tres forks para trocear
-    # una cadena que ya está en memoria.
-    IFS=',' read -r -a ARNES_HALLAZGOS <<< "$hall"
+    # La lista se parte por las comas DE FUERA del parentesis, sin procesos. Antes se
+    # partia con IFS a secas, y entonces `SEC-9 (usuario/dinero, dueno desarrollador)` se
+    # troceaba EN MEDIO de la clase: la puerta leia «un hallazgo sin clase» y denegaba el
+    # cierre. Es decir, castigaba precisamente la anotacion de dueno que AGENTS.md 6 pide
+    # para la deuda de instrumento (QA-014). Dentro del parentesis, la CLASE es el primer
+    # elemento y lo que venga tras ella es EVIDENCIA — la misma regla que ya rige el
+    # parentesis de un veredicto (`QA: aprobado (medido el 3/9)`).
+    ARNES_HALLAZGOS=(); acc=''; prof=0
+    for ((ci = 0; ci < ${#hall}; ci++)); do
+      c="${hall:ci:1}"
+      case "$c" in
+        '(') prof=$((prof+1)); acc+="$c" ;;
+        ')') [ "$prof" -gt 0 ] && prof=$((prof-1)); acc+="$c" ;;
+        ',') if [ "$prof" -eq 0 ]; then ARNES_HALLAZGOS+=("$acc"); acc=''; else acc+="$c"; fi ;;
+        *)   acc+="$c" ;;
+      esac
+    done
+    [ -n "$acc" ] && ARNES_HALLAZGOS+=("$acc")
     for h in ${ARNES_HALLAZGOS[@]+"${ARNES_HALLAZGOS[@]}"}; do
       [ -n "$h" ] || continue
       id="${h%%(*}"
       clase=''
       case "$h" in
-        *\(*\)*) clase="${h#*\(}"; clase="${clase%%\)*}" ;;
+        # La clase es lo que va hasta la primera coma de dentro del parentesis; el resto
+        # ACOMPANA al veredicto y nunca lo cambia.
+        *\(*\)*) clase="${h#*\(}"; clase="${clase%%\)*}"; clase="${clase%%,*}" ;;
       esac
       if [ -z "$clase" ]; then
         arnes_deny "ARNES: no se puede completar '$rel': el hallazgo '$id' no declara su clase, y un hallazgo sin clase no cuenta como hallazgo. Clasificalo como 'usuario/dinero', 'contrato' o 'instrumento' (requirements/README.md, seccion 'Clases de hallazgo')."
@@ -286,31 +462,22 @@ arnes_guard_completado() {
         usuario/dinero|contrato)
           arnes_deny "ARNES: no se puede completar '$rel': el hallazgo '$id' es de clase '$clase' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no afecta a lo que alguien ve, decide o cobra ni a lo que el REQ afirma (requirements/README.md, seccion 'Clases de hallazgo')." ;;
         *)
-          arnes_deny "ARNES: no se puede completar '$rel': el hallazgo '$id' declara la clase '$clase', que no existe. Validas: 'usuario/dinero', 'contrato', 'instrumento'." ;;
+          arnes_deny "ARNES: no se puede completar '$rel': el hallazgo '$id' declara '$clase', que no es una clase valida, asi que no declara su clase y un hallazgo sin clase no cuenta como hallazgo. Validas: 'usuario/dinero', 'contrato', 'instrumento'. La clase va la PRIMERA dentro del parentesis; lo que venga tras una coma es evidencia (dueno, forzador, vencimiento)." ;;
       esac
     done
   fi
 
   # --- Gate A2: no completar con aprobaciones pendientes ---
+  # La regla de conteo vive en `hooks/lib.sh` (`arnes_cola_pendientes`) y es la MISMA
+  # que lee el bloque derivado de `docs/ESTADO.md` y `tools/arnes-lectura.sh`. Antes
+  # este `awk` era una de dos transcripciones y el informe decía otro número que la
+  # puerta; dos transcripciones de la misma regla se desfasan (REQ-009).
   pending="$ARNES_PROJ/$pending_rel"
   if [ -f "$pending" ]; then
-    abiertas="$(awk '
-      # Un ejemplo de formato COMENTADO no es una entrada de la cola. La plantilla
-      # traia uno bajo `## Pendientes` y este conteo lo leia como 1 pendiente, asi
-      # que un proyecto recien inicializado no podia cerrar NINGUN REQ.
-      /<!--/ {enc=1}
-      /-->/  {enc=0; next}
-      enc    {next}
-      # La seccion va de su cabecera a la SIGUIENTE DEL MISMO NIVEL, se llame como
-      # se llame. Antes solo la cerraba una cabecera literal `## Resueltas`, asi que
-      # cualquier otra --`## Notas`, `## Historico`-- la dejaba abierta y sus `###`
-      # se contaban como aprobaciones pendientes. Eso es una lista enumerada donde
-      # hace falta una propiedad cerrada, y obligaba a los proyectos a ordenar el
-      # archivo para esquivarlo: carga, no estilo.
-      /^##[[:space:]]/ {sec = ($0 ~ /^##[[:space:]]+Pendientes/) ? 1 : 0; next}
-      sec && /^###[[:space:]]/    {c++}
-      END {print c+0}
-    ' "$pending")"
+    if ! arnes_cola_pendientes "$pending"; then
+      arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': la cola de aprobaciones ($pending_rel) no se pudo leer entera —un byte NUL la trunca, o el archivo no es legible—, asi que no se sabe cuantas aprobaciones humanas hay abiertas. Una puerta que no puede medir no deja pasar (AGENTS.md 1). Arregla el archivo y reintenta."
+    fi
+    abiertas="$ARNES_COLA"
     if [ "${abiertas:-0}" -gt 0 ]; then
       arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': hay $abiertas aprobación(es) pendiente(s) en $pending_rel. El humano debe resolverlas primero (ver AGENTS.md §6)."
     fi
@@ -337,5 +504,6 @@ arnes_guard_completado() {
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
   arnes_preludio || exit 0
   arnes_guard_completado
+  arnes_emitir_avisos
   exit 0
 fi

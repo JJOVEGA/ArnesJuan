@@ -9,9 +9,18 @@
 > detuvo aquí) · **Opciones** (A / B / …) · **Recomendación del agente** · **Espera**
 > (aprobación / elección del humano).
 >
-> El ejemplo vive AQUÍ, fuera de la cola, y a propósito: `guard-completado` cuenta las
-> entradas `###` bajo "Pendientes" para decidir si un REQ puede cerrar. Un ejemplo dentro
-> de la sección se cuenta como una pendiente real y bloquea todos los cierres.
+> **Cómo se cuenta esta cola — una sola regla, la misma para todos.** Una entrada es una
+> línea que empieza por `###` + espacio, dentro de la sección que abre un encabezado `## `
+> cuyo texto empieza por «Pendientes» y que cierra el siguiente encabezado `## ` de
+> cualquier nombre; lo que caiga dentro de un comentario HTML (`<!-- … -->`) no cuenta. Esa
+> regla vive UNA vez en el código del arnés y la usan por igual la puerta de cierre
+> (`guard-completado`), el bloque derivado de `docs/ESTADO.md` y `tools/arnes-lectura.sh`:
+> **el número que lees es exactamente el que bloquea**. Y si la cola no se puede leer entera
+> —un byte NUL, un archivo sin permiso—, la puerta DENIEGA y el bloque derivado dice
+> `sin datos`: nunca 0.
+>
+> El ejemplo vive AQUÍ, fuera de la cola, y a propósito: un ejemplo dentro de la sección se
+> cuenta como una pendiente real y bloquea todos los cierres.
 
 ## Pendientes
 

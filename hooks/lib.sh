@@ -51,14 +51,76 @@ arnes_parse_input() {
 # una lista de longitud variable: se leen como el resto del flujo.
 arnes_parse_manifest() {
   [ -z "${ARNES_MANIFEST_LISTO:-}" ] || return 0
-  local g
-  arnes_jq_file "$ARNES_MANIFEST" -r '[(.agentes.agente_codigo // "desarrollador"),
-                                       (.requirements_dir // "requirements"),
-                                       (.estados.completado // "completado"),
-                                       (.pending_approval // "PENDING_APPROVAL.md"),
-                                       (.limites.bash_max_analisis // "" | tostring)]
-                                      + (.codigo_app.globs // []) | .[]'
+  local g rc
+  ARNES_MANIFEST_ROTO=0
+  # `if type != "object" then error` NO es adorno: un manifiesto que es `null`, un array o
+  # un numero es JSON VALIDO y jq lo atravesaria devolviendo los valores por defecto y una
+  # lista de globs VACIA — es decir, un proyecto sin nada protegido, en silencio. Aqui la
+  # unica lectura aceptable es un OBJETO; cualquier otra cosa es "no se puede leer".
+  # EL TIPO LO DECIDE EL JSON, NO LA FORMA DEL TEXTO, Y VALE PARA TODAS LAS CLAVES.
+  #
+  # `"exigir_fecha": "true"` (una cadena) apagaba la puerta EN SILENCIO mientras el techo
+  # de Bash si avisaba ante el MISMO error de tipo (QA-106/QA-107). La regla es una sola y
+  # ahora se aplica igual a todas: lo que no tiene el tipo que esa clave espera cae al
+  # valor por defecto del arnes Y SE DICE, nombrando la clave y el valor recibido. Caer del
+  # lado seguro esta bien; hacerlo sin decirlo deja al proyecto creyendo que declaro algo.
+  #
+  # Alcance: las claves HOJA que leen las puertas. Si el CONTENEDOR es de otro tipo
+  # (`"veredictos": "x"`), jq falla al indexarlo y el manifiesto entero se declara
+  # ilegible — el fail-closed de SEC-005, que aqui no se toca.
+  arnes_jq_file "$ARNES_MANIFEST" --arg gitdef "$ARNES_GIT_PROHIBIDOS_DEFECTO" \
+                                  -r 'if type != "object" then error("no-objeto") else . end
+                                      | . as $m
+                                      | [(if ($m.agentes.agente_codigo|type) == "string" then $m.agentes.agente_codigo else "desarrollador" end),
+                                       (if ($m.requirements_dir|type) == "string" then $m.requirements_dir else "requirements" end),
+                                       (if ($m.estados.completado|type) == "string" then $m.estados.completado else "completado" end),
+                                       (if ($m.pending_approval|type) == "string" then $m.pending_approval else "PENDING_APPROVAL.md" end),
+                                       (if   ($m.limites.bash_max_analisis|type) == "number" then ($m.limites.bash_max_analisis|tostring)
+                                        elif  $m.limites.bash_max_analisis == null           then ""
+                                        else  "!tipo" end),
+                                       (if $m.veredictos.exigir_fecha == true then "true" else "false" end),
+                                       (if $m.veredictos.caducan_con_codigo == true then "true" else "false" end),
+                                       (if $m.git.activo == false then "false" else "true" end),
+                                       ((if ($m.git.prohibidos|type) == "array" then $m.git.prohibidos
+                                         else ($gitdef | split("\t")) end)
+                                        | map(select(type == "string")) | join("\t")),
+                                       ([["agentes.agente_codigo",        $m.agentes.agente_codigo,         "string"],
+                                         ["requirements_dir",             $m.requirements_dir,              "string"],
+                                         ["estados.completado",           $m.estados.completado,            "string"],
+                                         ["pending_approval",             $m.pending_approval,              "string"],
+                                         ["limites.bash_max_analisis",    $m.limites.bash_max_analisis,     "number"],
+                                         ["veredictos.exigir_fecha",      $m.veredictos.exigir_fecha,       "boolean"],
+                                         ["veredictos.caducan_con_codigo",$m.veredictos.caducan_con_codigo, "boolean"],
+                                         ["git.activo",                   $m.git.activo,                    "boolean"],
+                                         ["git.prohibidos",               $m.git.prohibidos,                "array"],
+                                         ["codigo_app.globs",             $m.codigo_app.globs,              "array"]]
+                                        | map(select(.[1] != null and (.[1]|type) != .[2]) | .[0] + " = " + (.[1]|tojson))
+                                        | join("\u0001"))]
+                                      + (if ($m.codigo_app.globs|type) == "array" then ($m.codigo_app.globs | map(select(type == "string"))) else [] end) | .[]'
+  rc=$?
   ARNES_GLOBS=()
+  # SEC-005 — UN MANIFIESTO ILEGIBLE NO ES UN MANIFIESTO AUSENTE, Y NO SE PARECEN EN NADA.
+  #
+  # Ausente es una decision del proyecto: no usa el arnes, y los hooks son INERTES a
+  # proposito para no estorbar. Presente-y-roto es lo contrario: el proyecto SI declaro
+  # invariantes y la puerta no puede leerlas. Confundirlos permite todo en silencio.
+  #
+  # Y habia algo peor que el silencio, medido en la auditoria R-001: `arnes_jq_file` deja
+  # `ARNES_JQ` CON SU VALOR ANTERIOR cuando jq falla, y el valor anterior es el analisis
+  # del INPUT. Asi que el bucle de lectura de abajo rellenaba las variables del manifiesto
+  # con campos que controla quien llama: `ARNES_AGENTE_CODIGO` se quedaba valiendo `Bash`
+  # —el `tool_name`— y los globs vacios. La identidad del agente autorizado la escribia el
+  # llamante. Por eso lo primero es VACIAR `ARNES_JQ`: ningun dato del input puede
+  # atravesar esta frontera.
+  # Un archivo VACIO no hace fallar a jq: no produce entrada, asi que rc=0 y la salida es
+  # vacia — y una salida vacia rellenaba todas las variables con la cadena vacia y los
+  # globs con nada, que se lee igual que "este proyecto no protege nada". Rc cero no es
+  # lo mismo que lectura buena.
+  if [ "$rc" -ne 0 ] || [ -z "$ARNES_JQ" ]; then
+    ARNES_JQ=''
+    ARNES_MANIFEST_ROTO=1
+    arnes_warn "'.arnes/config.json' existe pero no se puede leer como objeto JSON (invalido, vacio, 'null' o un array). NO se aplica ningun valor por defecto silencioso: mientras siga asi, toda escritura que las puertas deban juzgar se DENIEGA, y 'guard-git' deniega el git destructivo de su LISTA POR DEFECTO (una puerta que no puede medir no deja pasar, tampoco esa). Un manifiesto ausente si deja los hooks inertes; uno roto, no."
+  fi
   # `limites.bash_max_analisis` es OPCIONAL: el valor por defecto vive en el codigo
   # (`ARNES_BASH_MAX_ANALISIS`) y ningun proyecto tiene que declararlo. Solo se acepta si
   # es un entero positivo; cualquier otra cosa se ignora y manda el defecto —un techo
@@ -66,10 +128,37 @@ arnes_parse_manifest() {
   { IFS= read -r ARNES_AGENTE_CODIGO; IFS= read -r ARNES_REQ_DIR
     IFS= read -r ARNES_ESTADO_DONE;   IFS= read -r ARNES_PENDING
     IFS= read -r ARNES_BASH_MAX
+    # Los booleanos se comparan con `==` y no con `//`: para jq `false // x` es `x`, y
+    # un `activo: false` se leeria como activo -- fallo en abierto por la puerta trasera.
+    # `git.prohibidos` ausente -> lista por defecto; `[]` explicito -> ninguna regla, que
+    # es una decision declarada del proyecto y no un error.
+    IFS= read -r ARNES_VER_FECHA;     IFS= read -r ARNES_VER_CADUCAN
+    IFS= read -r ARNES_GIT_ACTIVO;    IFS= read -r ARNES_GIT_PROHIBIDOS
+    IFS= read -r ARNES_TIPOS
     while IFS= read -r g; do [ -n "$g" ] && ARNES_GLOBS+=("$g"); done
   } <<< "$ARNES_JQ"
+  # Una entrada por clave con el tipo equivocado: la clave y el valor TAL COMO SE RECIBIO
+  # (en JSON, para que `"true"` se distinga de `true`). Sin denegar: un tipo mal escrito no
+  # puede convertirse en un bloqueo, pero tampoco en un silencio.
+  if [ -n "${ARNES_TIPOS:-}" ]; then
+    local _t
+    while IFS= read -r -d $'\001' _t || [ -n "$_t" ]; do
+      _t="${_t%$'\n'}"          # el here-string anade un salto al ultimo campo
+      [ -n "$_t" ] || continue
+      arnes_warn "'${_t%% = *}' de .arnes/config.json no tiene el tipo que esa clave espera (se recibio ${_t#* = }); se ignora y manda el valor por defecto del arnes. Lo que la puerta no entiende cae del lado seguro, y lo dice."
+    done <<< "$ARNES_TIPOS"
+  fi
+  # El TIPO lo decide el JSON, no la forma del texto: `"999999"` entrecomillado es una
+  # cadena, no un número, y se comportaba como si lo fuera (SEC-006(b), R-001). Un techo
+  # escrito a mano no puede desactivar la puerta por una errata ni por un tipo.
   case "${ARNES_BASH_MAX:-}" in
-    ''|*[!0-9]*|0) ARNES_BASH_MAX='' ;;
+    '')      ;;                       # ausente: ni aviso ni techo; manda el del codigo
+    '!tipo') ARNES_BASH_MAX='' ;;     # el tipo ya lo aviso el bloque de arriba
+    # Es un numero JSON, pero no un entero positivo de bytes que la puerta pueda aplicar:
+    # `1e9` (jq lo escribe `1E+9`), `1.5`, `-5` o `0`. Caia al defecto SIN DECIR NADA, por
+    # el hueco entre «supera el maximo» y «no es un numero» (QA-107).
+    *[!0-9]*|0) arnes_warn "'limites.bash_max_analisis' de .arnes/config.json vale $ARNES_BASH_MAX, que no es un entero positivo de bytes (la forma exponencial '1e9' y los decimales tampoco lo son); se ignora y manda el techo por defecto del arnes."
+                ARNES_BASH_MAX='' ;;
   esac
   ARNES_GLOBS_CARGADOS=1
   ARNES_MANIFEST_LISTO=1
@@ -106,6 +195,24 @@ arnes_deny() {
 
 # Aviso por stderr (no silencioso), sin bloquear.
 arnes_warn() { printf 'ARNES (hook): %s\n' "$1" >&2; }
+
+# --- Avisos que llegan a la PERSONA sin bloquear la llamada ------------------------
+# Un hook PreToolUse solo tiene dos salidas que Claude Code escucha: DENEGAR, o
+# `systemMessage`, que se muestra a la persona. LA DOCUMENTACION DE HOOKS NO OFRECE
+# NINGUNA FORMA DE ANADIR CONTEXTO AL MODELO SIN BLOQUEAR: `permissionDecision:"ask"`
+# detiene la llamada hasta que un humano responde, y eso para un valor mal tecleado es
+# peor que el defecto que avisa. La limitacion se declara aqui, no se descubre despues.
+#
+# Se ACUMULAN y se emiten UNA vez al final del proceso, y solo si ningun guardian
+# denego: una denegacion ya lo dice todo, y dos salidas JSON en el mismo stdout no son
+# un objeto valido.
+ARNES_AVISOS=''
+arnes_aviso() { ARNES_AVISOS+="ARNES: $1"$'\n'; }
+arnes_emitir_avisos() {
+  [ -n "$ARNES_AVISOS" ] || return 0
+  jq -cn --arg m "${ARNES_AVISOS%$'\n'}" '{systemMessage:$m}'
+  return 0
+}
 
 # --- Compatibilidad Windows ---------------------------------------------------
 # En Windows `jq` suele ser un binario NATIVO, no MSYS. Eso rompe dos cosas a la vez:
@@ -209,6 +316,23 @@ arnes_norm_path() {   # <ruta> -> ARNES_NORM
         fi ;;
   esac
   p="${p//\\//}"
+  # BARRAS REPETIDAS (SEC-003, R-001). Era la evasión más barata medida en todo el
+  # arnés: UN carácter de más —`<raíz>//src//a.ts`— y las DOS puertas se apagaban a la
+  # vez. `arnes_ruta_relativa` recorta el prefijo del proyecto TEXTUALMENTE, así que la
+  # ruta no empezaba por `<raíz>/`, el prefijo no se recortaba, la relativa quedaba con
+  # `/` inicial y ningún glob de `codigo_app.globs` casaba; por la misma razón ninguna
+  # ruta caía dentro de `requirements/` y el cierre de un REQ dejaba de juzgarse.
+  # Se colapsa AQUÍ —antes de recortar el prefijo—, con expansión de parámetros y sin
+  # ningún proceso. El bucle es O(log n) sobre la ristra de barras, no sobre la ruta.
+  #
+  # La doble barra INICIAL se conserva: en Windows `//servidor/recurso` es una ruta UNC
+  # y comérsela cambiaría de máquina, no de forma.
+  case "$p" in
+    //*) d='//'; p="${p#//}" ;;
+    *)   d='' ;;
+  esac
+  while [ "$p" != "${p//\/\//\/}" ]; do p="${p//\/\//\/}"; done
+  p="$d$p"
   case "$p" in
     [A-Za-z]:*) d="${p%%:*}"; p="${d,,}:${p#*:}" ;;   # unidad en minúscula, sin `tr`
   esac
@@ -354,14 +478,57 @@ arnes_agente_legible() {  # <agent_type>
 # usan todos los agentes y su cuerpo se descuenta entero sin analizarse: sigue en `allow`
 # y sigue siendo barato. Poner el techo sobre el comando entero lo habria roto.
 #
-# EL VALOR (65536 = 64 KiB) sale de MEDIR en la plataforma de desarrollo (Linux/WSL2,
-# 2026-09-05) el peor caso por byte —una linea de cuerpo densa en `$(...)`, que gasta un
-# fragmento cada 7 bytes—: 64 KiB de ese material se analizan de punta a punta en 0,71 s,
-# frente al tope de 2 s que se fijo para el tamano maximo admitido y a los 60 s en que el
-# hook muere. El doble (128 KiB) ya cuesta 1,8 s y el cuadruple 6,3 s, asi que el margen
-# se agota rapido: por eso el techo esta aqui y no mas arriba. El material real de un
-# comando normal son decenas de bytes; esto solo lo toca una entrada construida.
+# EL VALOR (65536 = 64 KiB) sale de MEDIR el peor caso por byte. LA SERIE CITABLE ES UNA
+# SOLA y esta escrita abajo, junto a `ARNES_BASH_MAX_MANIFIESTO`: aqui NO se repite, para
+# que no vuelva a haber dos. (Hubo dos, con materiales distintos y sin decirlo, y no
+# coincidian en el mismo tamano: 128 KiB salia a 1,8 s en una y a 2,3 s en la otra. Se
+# re-midieron las dos el 2026-09-05 con el mismo detector y el mismo material; la buena es
+# la de abajo y la otra se retira. Dos series para el mismo numero significan que el
+# numero operativo se apoya en la equivocada, y ese numero decide si la puerta responde
+# antes de que el hook muera.)
+#
+# De esa serie: 64 KiB de material denso se analizan de punta a punta en 0,61 s, frente a
+# los 60 s en que el hook muere PERMITIENDO. El doble (128 KiB) ya cuesta 2,31 s, asi que
+# el margen se agota rapido: por eso el techo por defecto esta aqui y no mas arriba. El
+# material real de un comando normal son decenas de bytes; esto solo lo toca una entrada
+# construida a proposito.
 ARNES_BASH_MAX_ANALISIS=65536
+# MÁXIMO que un manifiesto puede declarar en `limites.bash_max_analisis`. Es OPERATIVO,
+# no arbitrario: en este techo el peor caso analizable —cuerpo denso en `$(`— tiene que
+# seguir respondiendo por debajo de los 5 s, muy lejos de los 60 s en que el hook muere
+# PERMITIENDO.
+#
+# LA SERIE — es la UNICA de este archivo, y la citan los dos techos. Plataforma de
+# desarrollo (Linux/WSL2), re-medida el 2026-09-05 sobre `arnes_bash_escrituras`, material
+# `$(x)` repetido hasta el tamano indicado + una escritura real al final:
+#     64 KiB -> 0,61 s   128 KiB -> 2,31 s   192 KiB -> 5,06 s   256 KiB -> 8,76 s
+# Así que el máximo es 128 KiB y no los 256 KiB que se propusieron: el criterio manda
+# bajarlo hasta que cumpla el umbral absoluto de 5 s, y 192 KiB ya no lo cumple —por poco,
+# y «por poco» tambien es no cumplir. El número
+# vigente sale impreso en el motivo del deny. Si el detector se abarata, se vuelve a
+# medir y sube; nunca al revés.
+ARNES_BASH_MAX_MANIFIESTO=131072
+
+# LA LISTA POR DEFECTO DE `guard-git`, EN EL CODIGO Y UNA SOLA VEZ.
+#
+# Vivia dentro del programa de jq, que es donde se lee el manifiesto. Con el manifiesto
+# ILEGIBLE no hay jq que valga y la puerta necesita la lista igual (SEC-010): repetirla en
+# bash serian dos transcripciones de la misma regla, y dos transcripciones se desfasan. Se
+# declara aqui, se le pasa a jq con `--arg`, y las dos vias leen la misma cadena.
+# Separador TABULADOR, como el resto de las listas que cruzan de jq a bash en este arnes.
+ARNES_GIT_PROHIBIDOS_DEFECTO=$'clean -f\treset --hard\tcheckout .\trestore .\tstash\tstash push\tstash pop\tstash drop\tstash clear'
+
+# PRESUPUESTO de la reconstruccion de un REQ en `guard-completado`, en bytes-edicion
+# (tamano del documento en disco x numero de ediciones). El techo fail-closed del analisis
+# de Bash vivia SOLO en el detector de escrituras, mientras la via Edit/MultiEdit aplicaba
+# cada edicion sobre una copia completa del texto —coste del orden de ediciones x tamano,
+# SIN techo—. Medido (Linux/WSL2, 2026-09-05) sobre un REQ de ~300 KB: 101 ediciones 2,2 s ·
+# 401 ediciones 8,0 s · 1.501 ediciones 25,7 s; y con un REQ de 3,1 MB + 401 ediciones, SIN
+# respuesta a los 30 s. Por encima de 60 s el hook muere, no emite nada y el resultado
+# efectivo es PERMITIR: la familia del reloj, otra vez. 64 MiB-edicion deja holgadamente
+# dentro el caso ordinario (un REQ grande con un punado de ediciones) y corta antes de que
+# el reloj decida. Igual que el otro techo: el numero es operativo y sale impreso en el deny.
+ARNES_EDIT_MAX_PRESUPUESTO=67108864
 # Codigo de salida de `arnes_bash_escrituras` cuando NO analizo por presupuesto.
 ARNES_RC_EXCESO=2
 
@@ -375,11 +542,28 @@ ARNES_RC_EXCESO=2
 # subirlo tiene sentido. Un proyecto que quisiera un techo MAS BAJO que el del codigo no
 # obtendria nada que la puerta no le de ya: el techo no autoriza, solo acota el analisis.
 arnes_techo_bash() {   # -> ARNES_TECHO
+  local v m
   if [ -z "${ARNES_TECHO:-}" ]; then
     ARNES_TECHO="$ARNES_BASH_MAX_ANALISIS"
     arnes_parse_manifest
-    if [ -n "${ARNES_BASH_MAX:-}" ] && (( ARNES_BASH_MAX > ARNES_TECHO )); then
-      ARNES_TECHO="$ARNES_BASH_MAX"
+    if [ -n "${ARNES_BASH_MAX:-}" ]; then
+      # TOPE DEL VALOR DECLARADO (SEC-006(b), R-001). El coste del análisis crece con el
+      # tamaño y un hook `PreToolUse` MUERE a los 60 s permitiendo: sin máximo, subir el
+      # techo desde el manifiesto reabre POR CONFIGURACIÓN el fallo en abierto que el
+      # presupuesto cerró. `4294967296` se aceptaba tal cual.
+      #
+      # La comparación es por LONGITUD y luego lexicográfica sobre dígitos, no aritmética:
+      # `99999999999999999999` desborda el entero de 64 bits de bash y `(( ))` daría un
+      # número cualquiera —incluido uno pequeño—, que es fallar en abierto justo en la
+      # comprobación que existe para no fallar en abierto.
+      v="${ARNES_BASH_MAX}"; m="$ARNES_BASH_MAX_MANIFIESTO"
+      while [ "${v:0:1}" = 0 ] && [ ${#v} -gt 1 ]; do v="${v:1}"; done
+      if [ ${#v} -gt ${#m} ] || { [ ${#v} -eq ${#m} ] && [ "$v" \> "$m" ]; }; then
+        arnes_warn "'limites.bash_max_analisis' de .arnes/config.json declara $ARNES_BASH_MAX bytes y el maximo admitido es $ARNES_BASH_MAX_MANIFIESTO; se aplica el maximo. Un techo mas alto deja de responder antes de que el hook muera, y un hook muerto no deniega."
+        ARNES_TECHO="$ARNES_BASH_MAX_MANIFIESTO"
+      elif (( v > ARNES_TECHO )); then
+        ARNES_TECHO="$v"
+      fi
     fi
   fi
   return 0
@@ -617,15 +801,24 @@ _arnes_expansiones() {   # <linea del cuerpo> -> acumula fragmentos en ARNES_EXP
   fi
 }
 
-arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
-  #
-  # Devuelve 0 con las rutas (ninguna, una o varias) y `$ARNES_RC_EXCESO` (2) SIN
-  # ANALIZAR NADA cuando el material a analizar supera el presupuesto: ver
-  # `ARNES_BASH_MAX_ANALISIS`. Los dos guardianes traducen ese 2 a una denegacion con
-  # motivo. Un `return 2` nunca sale por la salida estandar, asi que un llamador que
-  # ignore el codigo ve una lista vacia: eso seria permitir, y por eso los dos
-  # llamadores lo miran (y hay caso de banco para cada uno).
-  local cmd="$1" limpio i j n tok
+# EL COMANDO SIN SU TEXTO: descuenta los cuerpos literales de heredoc y lo
+# entrecomillado, y anade al final el interior EJECUTABLE de las expansiones que
+# viajan dentro de un heredoc sin citar. Es lo que miran los detectores que juzgan
+# UNA ORDEN dentro de un comando de shell: el de escrituras (`arnes_bash_escrituras`)
+# y el de git destructivo (`guard-git.sh`).
+#
+# VIVE APARTE PARA QUE HAYA UN SOLO DESCUENTO. Dos detectores con su propia copia de
+# esta regla se desfasan, y la mitad del valor de este arnes es no tener dos
+# transcripciones de la misma regla: `git commit -m "no uses git clean"` y
+# `cp README.md src/` dentro de un heredoc citado tienen que descontarse EXACTAMENTE
+# igual en los dos, hoy y cuando alguien arregle un borde en uno de ellos.
+#
+# Devuelve 0 con el texto en `ARNES_SIN_TEXTO`, y `$ARNES_RC_EXCESO` (2) SIN ANALIZAR
+# NADA cuando el material supera el presupuesto (ver `ARNES_BASH_MAX_ANALISIS`). Un
+# `return 2` no deja nada en `ARNES_SIN_TEXTO` que se pueda confundir con "no hay nada":
+# los llamadores miran el codigo y lo traducen a una denegacion con motivo.
+arnes_bash_sin_texto() {   # <comando> -> ARNES_SIN_TEXTO
+  local cmd="$1" limpio
   local ARNES_SINCOM=''
   local -a ARNES_EXPS=()
   # IFS explicito: el troceado en palabras de esta funcion (y el de sus auxiliares) no
@@ -722,6 +915,24 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
   # `;` como pegamento: el tokenizador de mas abajo ya lo separa (`${limpio//;/ ; }`) y
   # es lo que impide que el operando de un fragmento se lea como operando del siguiente.
   if [ "${#ARNES_EXPS[@]}" -gt 0 ]; then IFS=';'; limpio+=" ; ${ARNES_EXPS[*]}"; IFS=$' \t\n'; fi
+  ARNES_SIN_TEXTO="$limpio"
+  return 0
+}
+
+arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
+  #
+  # Devuelve 0 con las rutas (ninguna, una o varias) y `$ARNES_RC_EXCESO` (2) SIN
+  # ANALIZAR NADA cuando el material a analizar supera el presupuesto: ver
+  # `ARNES_BASH_MAX_ANALISIS`. Los dos guardianes traducen ese 2 a una denegacion con
+  # motivo. Un `return 2` nunca sale por la salida estandar, asi que un llamador que
+  # ignore el codigo ve una lista vacia: eso seria permitir, y por eso los dos
+  # llamadores lo miran (y hay caso de banco para cada uno).
+  local limpio i j n tok
+  # IFS explicito: el troceado en palabras de esta funcion (y el de sus auxiliares) no
+  # puede depender de como lo haya dejado el llamador.
+  local IFS=$' \t\n'
+  arnes_bash_sin_texto "$1" || return $?
+  limpio="$ARNES_SIN_TEXTO"
   # 2) Separa los operadores de su operando: `>src/a.ts` -> `> src/a.ts`.
   #    Y las sustituciones de comando pierden sus parentesis, para que el destino de
   #    `$(echo x > src/a.ts)` quede como operando limpio de `>` y no como `src/a.ts)`,
@@ -795,6 +1006,173 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
   return 0
 }
 
+# --- Lectura de un archivo del disco, sin procesos y SIN mentir ----------------
+# `IFS= read -r -d '' x < f` es la forma barata de leer un archivo entero en bash: un
+# solo builtin, cero forks. Tiene un borde que costó un fallo en abierto medido
+# (SEC-002, R-001): el delimitador es NUL, así que un NUL DENTRO del archivo hace que
+# `read` termine ahí y devuelva 0 — la variable queda TRUNCADA y el llamador cree que
+# tiene el documento entero. Un REQ con un NUL en la primera línea se leía sin
+# veredictos, y un campo vacío no dispara ninguna exigencia.
+#
+# La distinción es gratis y estaba ahí desde siempre: `read -d ''` devuelve 0 SÓLO si
+# encontró el delimitador. Al final del archivo (lo normal) devuelve 1. Así que
+#   rc==0  ->  había un NUL  ->  lo leído NO es el archivo
+#   rc!=0  ->  se leyó hasta el final  ->  lo leído ES el archivo
+# Esta función invierte ese código a la pregunta que hace el llamador —«¿puedo fiarme
+# de esto?»— y añade el otro modo de no poder medir: un archivo sin permiso de lectura.
+arnes_lee_archivo() {   # <ruta> -> ARNES_TEXTO ; 0 = leído entero, 1 = NO medible
+  ARNES_TEXTO=''
+  [ -e "$1" ] || return 0        # no existe: no hay texto, y eso sí se sabe
+  [ -f "$1" ] && [ -r "$1" ] || return 1
+  if IFS= read -r -d '' ARNES_TEXTO < "$1" 2>/dev/null; then
+    ARNES_TEXTO=''               # truncado por un NUL: no se devuelve la mitad de un documento
+    return 1
+  fi
+  return 0
+}
+
+# --- La cola de aprobaciones: UNA regla, la de la puerta ----------------------
+# Había DOS transcripciones de la misma regla: `guard-completado` contaba encabezados
+# `###` bajo `## Pendientes` con un awk, y el bloque derivado de `docs/ESTADO.md`
+# contaba viñetas (`- `, `* `, `1. `) con un bucle. Una entrada real del formato que
+# documenta el propio `PENDING_APPROVAL.md` —un `###` con cuatro viñetas debajo— valía
+# 1 para la puerta y 4 para el bloque. Ninguno de los dos números miente por sí solo;
+# lo que miente es que haya dos, porque el que se lee deja de ser el que bloquea.
+#
+# Gana la de la PUERTA: es la que decide, la que está documentada y la que ya distingue
+# el ejemplo comentado de una entrada real.
+#
+# LA REGLA, escrita una vez: una entrada es una línea que empieza por `###` + espacio,
+# dentro de la sección que abre un encabezado `## ` cuyo texto empieza por `Pendientes`
+# y que cierra el siguiente encabezado `## ` de CUALQUIER nombre, descontando lo que
+# caiga dentro de un comentario HTML (`<!--` … `-->`).
+#
+# Sin `awk`: la puerta pierde el fork que pagaba y la parada no gana ninguno. En esta
+# plataforma cada fork cuesta 1,2-6 s, así que unificar no puede pagarse con un proceso.
+#
+# Y es una PUERTA: si el archivo no se puede medir —un NUL que trunca la lectura, un
+# archivo ilegible— no devuelve 0, devuelve «no lo sé» (rc 1). Contar 0 sobre un archivo
+# truncado abriría el cierre de cualquier REQ con aprobaciones humanas pendientes.
+arnes_cola_pendientes() {   # <archivo> -> ARNES_COLA ; 0 = medido, 1 = NO medible
+  local linea resto dentro=0 enc=0 n=0
+  ARNES_COLA=0
+  [ -e "$1" ] || return 0        # sin archivo no hay cola: cero, y es una medida
+  arnes_lee_archivo "$1" || { ARNES_COLA=''; return 1; }
+  while IFS= read -r linea; do
+    linea="${linea%$'\r'}"       # CRLF: el retorno de carro no puede cambiar la cuenta
+    # Comentarios HTML, con la misma semántica que tenía el awk de la puerta: la línea
+    # que ABRE ya no cuenta, y la que CIERRA tampoco.
+    case "$linea" in *'<!--'*) enc=1 ;; esac
+    case "$linea" in *'-->'*)  enc=0; continue ;; esac
+    [ "$enc" -eq 0 ] || continue
+    case "$linea" in
+      '##'[[:space:]]*)
+        resto="${linea#\#\#}"
+        while :; do
+          case "$resto" in [[:space:]]*) resto="${resto#?}" ;; *) break ;; esac
+        done
+        case "$resto" in Pendientes*) dentro=1 ;; *) dentro=0 ;; esac
+        continue ;;
+      '###'[[:space:]]*)
+        [ "$dentro" -eq 1 ] && n=$((n+1))
+        continue ;;
+    esac
+  done <<< "$ARNES_TEXTO"
+  ARNES_COLA="$n"
+  return 0
+}
+
+# --- SEC-004: el arnes juzga LA RUTA ESCRITA, no su destino ---------------------
+# Los dos guardianes clasifican por el nombre de la ruta —los globs del manifiesto, el
+# `requirements_dir`—, asi que un enlace simbolico colocado en una ruta libre que apunte
+# a codigo protegido o a un REQ recibiria el veredicto de SU NOMBRE y no el de lo que
+# toca. Medido: allow en v1.30.2 y en 1.30.3.
+#
+# SALIDA ELEGIDA: fail-closed SIN RESOLVER. Si el ultimo componente de la ruta escrita es
+# un enlace, no se escribe a traves de el. Y NO se resuelve el destino a proposito, por
+# dos razones que apuntan al mismo sitio:
+#   * resolver cuesta un proceso (`readlink`/`realpath`) en el camino de TODA edicion, y
+#     en esta plataforma cada fork cuesta 1,2-6 s; aqui basta la prueba `[ -L ]` del
+#     propio bash, que no bifurca.
+#   * resolver abriria una CARRERA entre la comprobacion y la escritura: lo que el hook
+#     mide y lo que la herramienta escribe no serian el mismo archivo. Una puerta que
+#     mide otra cosa no es una puerta.
+# El precio, dicho en voz alta: no se puede escribir a traves de un enlace ni siquiera
+# cuando su destino es inocente. Es el lado que cierra, y la salida esta a la vista —
+# escribir sobre la ruta real.
+#
+# ALCANCE: solo `Edit`/`Write`/`MultiEdit` (donde hay una ruta que mirar) y solo DENTRO
+# del proyecto. Una ruta externa no es asunto del arnes, y `Bash` no paga nada de esto:
+# el camino comun no gana ni un proceso ni una llamada al sistema.
+arnes_deny_enlace() {   # -> deniega si `file_path` es un enlace simbolico dentro del proyecto
+  case "$ARNES_TOOL" in Edit|Write|MultiEdit) ;; *) return 0 ;; esac
+  [ -n "$ARNES_FP" ] || return 0
+  [ -L "$ARNES_FP" ] || return 0
+  arnes_ruta_relativa "$ARNES_FP" "$ARNES_PROJ"
+  # Si tras recortar la raiz la ruta sigue siendo absoluta o sube, esta FUERA del
+  # proyecto: se trata como externa y no se juzga, igual que cualquier otra ruta de fuera.
+  case "$ARNES_REL" in ''|/*|[A-Za-z]:*|..|../*|*/../*) return 0 ;; esac
+  arnes_deny "ARNES: '$ARNES_REL' es un ENLACE SIMBOLICO y no se escribe a traves de el. El arnés juzga la ruta escrita, no su destino: un enlace en una ruta libre que apunte a código protegido o a un REQ recibiría el veredicto de su nombre y no el de lo que realmente toca. Resolver el destino tampoco valdría —entre la comprobación y la escritura el enlace puede cambiar, y una puerta que mide otra cosa no es una puerta—. Salida: escribe directamente sobre la ruta real (SEC-004, REQ-007 CA-49)."
+}
+
+# SEC-005 — la consecuencia de un manifiesto roto: DENY en lo que escribe, con aviso.
+#
+# No se puede denegar "solo en las rutas protegidas" porque justo lo que no se puede leer
+# es CUALES son. Asi que se deniega toda escritura que una puerta tendria que juzgar: es
+# el mismo razonamiento del presupuesto de analisis de Bash —una puerta que no puede medir
+# no deja pasar—, y la salida esta a la vista y es de un minuto: arreglar el JSON.
+#
+# ALCANCE ACOTADO A PROPOSITO: `Edit`/`Write`/`MultiEdit`, donde la escritura es cierta, y
+# `Bash` SOLO cuando el detector ya encontro un destino de escritura (lo pasa el llamador,
+# que ya lo analizo: aqui no se vuelve a pagar). Un `ls -la` con el manifiesto roto sigue
+# pasando, porque no escribe nada y bloquearlo no protegeria ninguna invariante.
+#
+# LA UNICA ESCRITURA QUE SE PERMITE ES LA DEL PROPIO MANIFIESTO (QA-105). El motivo de la
+# denegacion ofrece una salida --"corrige el JSON"-- que estaba prohibida por la propia
+# denegacion en cuanto `.arnes/config.json` figura en `codigo_app.globs`: ni por `Edit`, ni
+# por `Write`, ni por `Bash`, y para NINGUN agente. Un proyecto con una coma de mas quedaba
+# con todo bloqueado hasta que una persona editara el archivo fuera de la sesion. Es el
+# unico archivo cuya reparacion devuelve la capacidad de medir, y no depende de leerlo, asi
+# que se exceptua: cualquier otra ruta sigue denegada mientras el manifiesto este roto, y
+# con el manifiesto sano vuelve a estar protegido como cualquier otro archivo de los globs.
+#
+# NO SE FILTRA POR AGENTE, y es a proposito: QUIEN es el agente de codigo se lee del
+# manifiesto, que es justo lo que no se puede leer. Exigir un nombre aqui seria inventarlo.
+arnes_deny_manifiesto_roto() {   # [destinos de escritura ya detectados por Bash, uno por linea]
+  [ "${ARNES_MANIFEST_ROTO:-0}" = "1" ] || return 0
+  local destinos d solo_manifiesto=1 manif_rel
+  case "$ARNES_TOOL" in
+    Edit|Write|MultiEdit) destinos="$ARNES_FP" ;;
+    Bash) destinos="${1:-}"; [ -n "$destinos" ] || return 0 ;;
+    *) return 0 ;;
+  esac
+  arnes_ruta_relativa "$ARNES_MANIFEST" "$ARNES_PROJ"; manif_rel="$ARNES_REL"
+  while IFS= read -r d; do
+    [ -n "$d" ] || continue
+    arnes_ruta_relativa "$d" "$ARNES_PROJ"
+    [ "$ARNES_REL" = "$manif_rel" ] || { solo_manifiesto=0; break; }
+  done <<< "$destinos"
+  # Un comando que repara el manifiesto Y ademas escribe en otro sitio no es una
+  # reparacion: la excepcion vale cuando TODO lo que escribe es el manifiesto.
+  #
+  # SEC-011 — Y LA REPARACION DEJA RASTRO. Acotar el radio de una excepcion no es lo mismo
+  # que hacerla visible: hasta aqui el `stderr` de una escritura sobre el archivo que
+  # declara las invariantes era IDENTICO al de cualquier otra llamada durante la averia, asi
+  # que la unica escritura privilegiada del arnes era indistinguible de que no hubiera
+  # pasado nada. Se dice quien y sobre que, con un texto propio que no se confunde con el
+  # aviso generico del manifiesto roto. NO se registra ningun contenido: solo el tipo de
+  # agente y la ruta relativa.
+  if [ "$solo_manifiesto" -eq 1 ]; then
+    # Una vez por llamada, no una por guardian: los dos corren en el mismo proceso y el
+    # aviso es del hecho, no de quien lo mira.
+    [ -z "${ARNES_AVISO_REPARACION:-}" ] || return 0
+    ARNES_AVISO_REPARACION=1
+    arnes_warn "REPARACION DEL MANIFIESTO permitida excepcionalmente: '$manif_rel' se esta escribiendo (herramienta $ARNES_TOOL) por '${ARNES_AGENT_TYPE:-sesion coordinadora}' mientras el manifiesto esta ilegible. Es la UNICA escritura que la averia deja pasar, porque es la que devuelve la capacidad de medir; cualquier otra ruta sigue denegada, y con el manifiesto sano este archivo vuelve a estar protegido como cualquier otro."
+    return 0
+  fi
+  arnes_deny "ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas protege este proyecto, quien es el agente de codigo ni cual es el estado terminal. Un manifiesto AUSENTE deja los hooks inertes a proposito; uno ROTO no puede, porque el proyecto si declaro invariantes y la puerta no puede leerlas — permitir aqui seria apagar el enforcement en silencio, que es justo el fallo que este arnes existe para impedir. Salida: corrige el JSON (pruebalo con 'jq -e . .arnes/config.json') o borra el archivo si este proyecto no usa el arnes. Mientras siga roto, la UNICA escritura permitida es la del propio '$manif_rel': es la que repara la averia, y esa si se puede hacer desde la sesion."
+}
+
 # --- Campos de cabecera del REQ ---------------------------------------------
 # Normaliza un valor de campo: minúsculas, sin espacios ni CR, y con la tilde de
 # "sí" plegada. La versión anterior era `printf | tr | tr` — tres procesos.
@@ -825,6 +1203,87 @@ arnes_desenvuelve() {   # <valor> -> ARNES_DESENV
   ARNES_DESENV="$v"
 }
 
+# --- Ortografia: el ACENTO NO ES PARTE DEL VALOR -------------------------------
+# El mismo argumento con el que ya se pliegan el CASO y el MARCADO, aplicado al eje que
+# faltaba. `en-revision` y `en-revisión` no son dos valores: son el mismo valor escrito
+# por dos personas, y el manifiesto declara uno de los dos. Un acento no es una VARIANTE
+# del valor —una lista de variantes se pudre—: es ORTOGRAFIA, un conjunto cerrado y
+# ajeno al dominio, exactamente como la sintaxis de Markdown.
+#
+# EL DEFECTO QUE CIERRA, dicho sin adornos: hasta 1.30.3 aqui se plegaba `Í`/`í` y NADA
+# MAS — la unica pareja que `sí` necesitaba—, de modo que el sujeto del control era mas
+# estrecho que su poblacion. Es la cuarta vez que reaparece esa misma familia en este
+# arnes, asi que el arreglo NO es anadir la letra que faltaba: es declarar la clase.
+#
+# QUE SE PLIEGA: la vocal con acento (grave, agudo, circunflejo, tilde) y con dieresis,
+# en sus DOS formas de guardado —precompuesta (NFC) y descompuesta (NFD: vocal + un
+# diacritico combinante)—, en minuscula y en mayuscula.
+# QUE NO SE PLIEGA, y la frontera va escrita a proposito:
+#   * la `ñ` (y la `ç`, y la `å`): NO son una letra con adorno, son OTRA letra. Plegarlas
+#     haria iguales dos palabras distintas (`año` y `ano`), que es el error contrario y
+#     peor. Por eso el diacritico combinante solo se retira cuando sigue a una VOCAL:
+#     asi `n`+U+0303 se conserva y la `ñ` sobrevive tambien en NFD.
+#   * los SEPARADORES y las variantes de palabra (`en revision`, `enrevision`,
+#     `revisión` a secas, `en-revisión-parcial`): son valores DISTINTOS y siguen
+#     marcandose. Esto pliega ortografia, no vocabulario.
+#
+# COSTE: cero procesos y cero forks, solo expansion de parametros — en esta plataforma
+# cada fork cuesta 1,2-6 s y una normalizacion que se pagara por REQ leido multiplicaria
+# ese coste por el numero de REQ. Las dos tablas van detras de una GUARDA sobre el byte
+# de cabecera (`\xc3` para NFC, `\xcc` para NFD), asi que un valor ASCII —el caso comun:
+# `pendiente`, `aprobado`, `completado`— paga DOS comparaciones y ni una sustitucion.
+#
+# Y se escribe con ESCAPES DE BYTES, nunca con el caracter tecleado: asi ni el editor
+# que guarde este archivo ni el locale con el que arranque el hook pueden re-normalizar
+# la tabla. Por lo mismo el resultado es IDENTICO bajo `LC_ALL=C` y bajo un locale
+# UTF-8: las secuencias son literales y no hay rangos ni clases sujetas a colacion.
+_arnes_pliega_nfd() {   # <valor> <marca combinante> -> ARNES_PLEGADO
+  local v="$1" m="$2"
+  # Solo tras una VOCAL: ver arriba, es lo que salva a la `ñ` descompuesta.
+  v="${v//"a$m"/a}"; v="${v//"e$m"/e}"; v="${v//"i$m"/i}"; v="${v//"o$m"/o}"; v="${v//"u$m"/u}"
+  v="${v//"A$m"/a}"; v="${v//"E$m"/e}"; v="${v//"I$m"/i}"; v="${v//"O$m"/o}"; v="${v//"U$m"/u}"
+  ARNES_PLEGADO="$v"
+}
+
+arnes_pliega_ortografia() {   # <valor> -> ARNES_PLEGADO
+  local v="$1" m
+  # NFC: vocal acentuada precompuesta (U+00C0-U+00FC, todas con cabecera \xc3).
+  case "$v" in *$'\xc3'*)
+    v="${v//$'\xc3\xa0'/a}"; v="${v//$'\xc3\x80'/a}"   # à À
+    v="${v//$'\xc3\xa1'/a}"; v="${v//$'\xc3\x81'/a}"   # á Á
+    v="${v//$'\xc3\xa2'/a}"; v="${v//$'\xc3\x82'/a}"   # â Â
+    v="${v//$'\xc3\xa3'/a}"; v="${v//$'\xc3\x83'/a}"   # ã Ã
+    v="${v//$'\xc3\xa4'/a}"; v="${v//$'\xc3\x84'/a}"   # ä Ä
+    v="${v//$'\xc3\xa8'/e}"; v="${v//$'\xc3\x88'/e}"   # è È
+    v="${v//$'\xc3\xa9'/e}"; v="${v//$'\xc3\x89'/e}"   # é É
+    v="${v//$'\xc3\xaa'/e}"; v="${v//$'\xc3\x8a'/e}"   # ê Ê
+    v="${v//$'\xc3\xab'/e}"; v="${v//$'\xc3\x8b'/e}"   # ë Ë
+    v="${v//$'\xc3\xac'/i}"; v="${v//$'\xc3\x8c'/i}"   # ì Ì
+    v="${v//$'\xc3\xad'/i}"; v="${v//$'\xc3\x8d'/i}"   # í Í
+    v="${v//$'\xc3\xae'/i}"; v="${v//$'\xc3\x8e'/i}"   # î Î
+    v="${v//$'\xc3\xaf'/i}"; v="${v//$'\xc3\x8f'/i}"   # ï Ï
+    v="${v//$'\xc3\xb2'/o}"; v="${v//$'\xc3\x92'/o}"   # ò Ò
+    v="${v//$'\xc3\xb3'/o}"; v="${v//$'\xc3\x93'/o}"   # ó Ó
+    v="${v//$'\xc3\xb4'/o}"; v="${v//$'\xc3\x94'/o}"   # ô Ô
+    v="${v//$'\xc3\xb5'/o}"; v="${v//$'\xc3\x95'/o}"   # õ Õ
+    v="${v//$'\xc3\xb6'/o}"; v="${v//$'\xc3\x96'/o}"   # ö Ö
+    v="${v//$'\xc3\xb9'/u}"; v="${v//$'\xc3\x99'/u}"   # ù Ù
+    v="${v//$'\xc3\xba'/u}"; v="${v//$'\xc3\x9a'/u}"   # ú Ú
+    v="${v//$'\xc3\xbb'/u}"; v="${v//$'\xc3\x9b'/u}"   # û Û
+    v="${v//$'\xc3\xbc'/u}"; v="${v//$'\xc3\x9c'/u}"   # ü Ü
+  ;; esac
+  # NFD: vocal + diacritico combinante (U+0300 grave, U+0301 agudo, U+0302 circunflejo,
+  # U+0303 tilde, U+0308 dieresis; todos con cabecera \xcc). Es la MISMA clase de arriba
+  # en su otra forma de guardado: un archivo escrito en macOS puede traer la tilde
+  # descompuesta y no hay NADA en el REQ que lo delate a la vista.
+  case "$v" in *$'\xcc'*)
+    for m in $'\xcc\x80' $'\xcc\x81' $'\xcc\x82' $'\xcc\x83' $'\xcc\x88'; do
+      case "$v" in *"$m"*) _arnes_pliega_nfd "$v" "$m"; v="$ARNES_PLEGADO" ;; esac
+    done
+  ;; esac
+  ARNES_PLEGADO="$v"
+}
+
 arnes_norm_campo() {   # <valor> -> ARNES_CAMPO
   local v="${1//$'\r'/}"
   # El MARCADO no es parte del valor. `**sí**` es el mismo valor que `sí`: el
@@ -842,9 +1301,13 @@ arnes_norm_campo() {   # <valor> -> ARNES_CAMPO
   # El enfasis de Markdown es PAREADO por definicion: abre y cierra. Un asterisco
   # suelto nunca lo es. Asi que `**si**` se desenvuelve y `aprobado*` se respeta, y
   # el argumento de arriba sigue en pie sin abrir una puerta nueva.
-  v="${v// /}"
+  # El TABULADOR se retira igual que el espacio. No es una forma exotica: es lo que
+  # deja un editor que alinea la cabecera, y hasta 1.30.3 `Estado:<TAB>completado` se
+  # leia como `\tcompletado`, que no casa con el estado terminal — la puerta no veia la
+  # transicion y respondia allow. Un blanco es un blanco.
+  v="${v// /}"; v="${v//$'\t'/}"
   arnes_desenvuelve "$v"; v="$ARNES_DESENV"
-  v="${v//Í/i}"; v="${v//í/i}"
+  arnes_pliega_ortografia "$v"; v="$ARNES_PLEGADO"
   ARNES_CAMPO="${v,,}"
 }
 
@@ -936,6 +1399,55 @@ arnes_sens_efectiva() {   # ARNES_SENS -> si|no ; ARNES_SENS_DUDOSA -> 0|1
 # La cola de normalizacion de arnes_campos_req, separada para que el bloque derivado
 # --que extrae los campos con UNA pasada de awk sobre todos los REQ-- pase por EL MISMO
 # camino que la puerta. Dos normalizadores se desfasan; uno solo, no.
+# --- La CLAVE del campo tambien se decora ---------------------------------------
+# Es la OTRA MITAD de la misma linea que `arnes_norm_campo`, y hasta 1.30.3 solo una de
+# las dos se leia con tolerancia: el VALOR se desenvolvia y la CLAVE se casaba contra el
+# literal `^Clave:`. Quien escribe `**Estado:** completado` esta diciendo
+# `Estado: completado`, y la maquina leia OTRA COSA.
+#
+# FALLA EN ABIERTO, que es lo que lo hace grave y no cosmetico: con
+# `**Hallazgos abiertos:** SEC-9 (usuario/dinero)` la clave no casaba, el campo quedaba
+# VACIO — y un campo vacio significa «ningun hallazgo». El REQ cerraba con un hallazgo
+# de clase bloqueante declarado a la vista de cualquiera que leyera el documento.
+#
+# LA REGLA ES LA MISMA QUE LA DEL VALOR, y a proposito: se retira el espacio en blanco de
+# los extremos y el enfasis de Markdown. NO es una lista de formas enumeradas —`**X:**`,
+# `__X:__`, `*X:*`, `` `X:` ``, `X :`, ` X:`— porque una lista se pudre: es una REGLA, y
+# vale para las formas que nadie ha escrito todavia.
+#
+# POR QUE NO SIRVE `arnes_desenvuelve` TAL CUAL: el par de enfasis puede CRUZAR los dos
+# puntos (`**Estado:**`), asi que abre en la clave y cierra en el valor y ninguna de las
+# dos mitades esta envuelta por su cuenta. Por eso, cuando la clave venia decorada, se
+# retira tambien el cierre que quedo al principio del valor — y solo entonces, para que
+# `Estado:**completado**` (valor decorado, clave limpia) siga siendo asunto del
+# desenvoltorio del valor y no se le coma un asterisco.
+#
+# LO QUE **NO** CAMBIA: DONDE vale un campo. Los campos siguen valiendo solo en la
+# cabecera, antes del primer `## ` — esta tolerancia es sobre COMO se escribe la clave,
+# nunca sobre donde. Y no toca el sentido: leer de mas cae siempre del lado que CIERRA la
+# puerta (un `**Rigor:** critico` se lee `critico`, nunca se rebaja).
+#
+# Sin procesos: solo expansion de parametros, igual que el resto del lector.
+_arnes_recorta_blancos() {   # <texto> -> ARNES_TRIM
+  local s="$1"
+  s="${s#"${s%%[![:blank:]]*}"}"
+  s="${s%"${s##*[![:blank:]]}"}"
+  ARNES_TRIM="$s"
+}
+
+arnes_norm_clave() {   # <linea> -> 0 + ARNES_CLAVE/ARNES_VALOR; 1 si la linea no declara campo
+  ARNES_CLAVE=''; ARNES_VALOR=''
+  local l="${1//$'\r'/}" k r
+  case "$l" in *:*) ;; *) return 1 ;; esac
+  _arnes_recorta_blancos "$l"; l="$ARNES_TRIM"
+  k="${l%%:*}"; r="${l#*:}"
+  # ¿El enfasis abria en la clave? Entonces su cierre quedo al principio del valor.
+  case "$k" in [*_\`]*) r="${r#"${r%%[!*_\`]*}"}" ;; esac
+  k="${k//\*/}"; k="${k//_/}"; k="${k//\`/}"
+  _arnes_recorta_blancos "$k"
+  ARNES_CLAVE="$ARNES_TRIM"; ARNES_VALOR="$r"
+}
+
 arnes_campos_normaliza() {   # <qa> <seg> <sens> <hall> <rigor> -> ARNES_QA/SEG/SENS/HALL/RIGOR
   arnes_norm_campo "$1"; arnes_veredicto "$ARNES_CAMPO"; ARNES_QA="$ARNES_VEREDICTO"
   arnes_norm_campo "$2"; arnes_veredicto "$ARNES_CAMPO"; ARNES_SEG="$ARNES_VEREDICTO"
@@ -958,8 +1470,87 @@ arnes_campos_normaliza() {   # <qa> <seg> <sens> <hall> <rigor> -> ARNES_QA/SEG/
 # respalda en el del disco (pre-edición), porque QA y seguridad fijan su veredicto
 # antes de la transición a completado. Por eso se recorre primero el disco y
 # después lo entrante: lo segundo pisa a lo primero.
+# --- Vocabulario de los veredictos: declarado UNA vez ---------------------------
+# Lo usan la puerta (para avisar de un valor que no existe) y `tools/arnes-lectura.sh`
+# (para no reportar como anomalia lo que la puerta lee perfectamente). Dos copias de la
+# misma lista se desfasan -- es el mismo defecto que tenia el parentesis de evidencia,
+# solo que con el vocabulario: medido en un proyecto real, 28 de 42 anomalias del
+# informe eran falsas porque el informe leia distinto de la puerta.
+#
+# NO es configurable desde el manifiesto: los veredictos son el MECANISMO del arnes, no
+# mapeo del proyecto. Un proyecto que redefiniera "aprobado" redefiniria la puerta.
+ARNES_VOCAB_QA='pendiente|aprobado|con-hallazgos'
+# `con-hallazgos` tambien en Seguridad: entre `pendiente` ("no he mirado") y `vetado`
+# (freno formal con remedio, dueno y umbral) faltaba lo intermedio, que es el estado mas
+# comun de una auditoria real. Medido: cinco REQ de un proyecto ya lo escribian porque el
+# vocabulario no les daba la palabra -- cuando la gente escribe un valor que la
+# herramienta no tiene, la incompleta es la herramienta. Sigue sin cerrar: sirve para
+# decir la verdad, no para firmar.
+ARNES_VOCAB_SEG='n/a|pendiente|aprobado|con-hallazgos|preventiva|vetado'
+ARNES_VOCAB_RIGOR='ligero|estandar|critico'
+# Pertenencia EXACTA y delimitada (`|valor|`), nunca por prefijo: `en-revision-parcial`
+# no es `en-revision`. Sin procesos.
+arnes_en_vocab() {   # <valor normalizado> <vocabulario a|b|c>
+  case "|$2|" in *"|$1|"*) return 0 ;; esac
+  return 1
+}
+
+# Primera fecha ISO dentro de un texto -> ARNES_FECHA (vacio si no hay ninguna).
+# Es como viaja la fecha de un veredicto: dentro de su parentesis de evidencia y en
+# CUALQUIER posicion --`QA: aprobado (R-045, 2026-09-01)`--, porque la evidencia es
+# prosa y fijarle una posicion seria inventar una convencion que nadie sigue.
+#
+# La forma es ESTRICTA a proposito: `AAAA-MM-DD` con mes 01-12 y dia 01-31. Un
+# `2026-13-05` no es una fecha aunque lo parezca, y aceptarlo como tal la volveria
+# incomparable contra la del codigo -- que es justo para lo que se lee. Lo que no case
+# se trata como "sin fecha", que es una denegacion con motivo, no un pase.
+arnes_fecha_en() {   # <texto> -> ARNES_FECHA
+  ARNES_FECHA=''
+  if [[ "$1" =~ ([0-9][0-9][0-9][0-9]-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])) ]]; then
+    ARNES_FECHA="${BASH_REMATCH[1]}"
+  fi
+}
+
+# Recorta un texto a N caracteres con elipsis -> ARNES_CORTO. Sin procesos: es una
+# expansion de parametro, ni un fork por REQ. Para las celdas del bloque derivado
+# (ver estado-derivado.sh); NUNCA para el camino de lectura de ninguna puerta.
+arnes_recorta() {   # <texto> <n>
+  ARNES_CORTO="$1"
+  [ "${#ARNES_CORTO}" -le "$2" ] && return 0
+  ARNES_CORTO="${ARNES_CORTO:0:$2}"
+  _arnes_sin_cola_partida
+  ARNES_CORTO+='…'
+  return 0
+}
+
+# EL CORTE ES POR CARACTERES, NO POR BYTES. En un locale UTF-8 la expansion de bash ya
+# cuenta caracteres y aqui no hay nada que hacer. En locale C cuenta BYTES, y cortar a
+# mitad de una secuencia multibyte dejaria un byte partido dentro de un archivo que se
+# publica como UTF-8: se retira esa cola incompleta. El locale se mira por su NOMBRE y no
+# probando rangos de bytes, porque en un locale UTF-8 los rangos de `case` se comparan por
+# COLACION y un caracter acentuado casaria por error -- la comprobacion se equivocaria
+# justo con las entradas que dice proteger.
+_arnes_sin_cola_partida() {   # ARNES_CORTO -> sin una secuencia UTF-8 incompleta al final
+  case "${LC_ALL:-${LC_CTYPE:-${LANG:-}}}" in
+    *UTF-8*|*utf-8*|*UTF8*|*utf8*) return 0 ;;
+  esac
+  local b i n=0
+  for ((i = 1; i <= 4; i++)); do
+    b="${ARNES_CORTO: -i:1}"
+    case "$b" in
+      [$'\x80'-$'\xBF']) continue ;;                                  # continuacion: sigue hacia atras
+      [$'\xC0'-$'\xDF']) n=2 ;; [$'\xE0'-$'\xEF']) n=3 ;; [$'\xF0'-$'\xF7']) n=4 ;;
+      *) return 0 ;;                                                  # ASCII: no hay nada partido
+    esac
+    (( i < n )) && ARNES_CORTO="${ARNES_CORTO:0:${#ARNES_CORTO}-i}"
+    return 0
+  done
+  return 0
+}
+
 arnes_campos_req() {   # <texto en disco> <texto entrante>
   ARNES_QA=''; ARNES_SEG=''; ARNES_SENS=''; ARNES_HALL=''; ARNES_RIGOR=''
+  ARNES_QA_CRUDO=''; ARNES_SEG_CRUDO=''
   local texto l
   for texto in "$1" "$2"; do
     [ -n "$texto" ] || continue
@@ -971,15 +1562,21 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
       # declara. La regla es estructural --lo que dice la plantilla-- y no depende del
       # nombre de ninguna seccion, que seria mapeo del proyecto.
       case "$l" in '## '*) break ;; esac
-      case "$l" in
-        'QA:'*)                   ARNES_QA="${l#QA:}" ;;
-        'Seguridad:'*)            ARNES_SEG="${l#Seguridad:}" ;;
-        'Sensible a seguridad:'*) ARNES_SENS="${l#Sensible a seguridad:}" ;;
-        'Hallazgos abiertos:'*)   ARNES_HALL="${l#Hallazgos abiertos:}" ;;
-        'Rigor:'*)                ARNES_RIGOR="${l#Rigor:}" ;;
+      arnes_norm_clave "$l" || continue
+      case "$ARNES_CLAVE" in
+        'QA')                   ARNES_QA="$ARNES_VALOR" ;;
+        'Seguridad')            ARNES_SEG="$ARNES_VALOR" ;;
+        'Sensible a seguridad') ARNES_SENS="$ARNES_VALOR" ;;
+        'Hallazgos abiertos')   ARNES_HALL="$ARNES_VALOR" ;;
+        'Rigor')                ARNES_RIGOR="$ARNES_VALOR" ;;
       esac
     done <<< "$texto"
   done
+  # El valor CRUDO se conserva ANTES de normalizar: la fecha del veredicto vive en el
+  # parentesis de evidencia, que la normalizacion retira a proposito (el parentesis es
+  # evidencia, no veredicto). Se lee del crudo con el MISMO lector, no con un segundo
+  # normalizador -- dos transcripciones de la misma regla se desfasan.
+  ARNES_QA_CRUDO="$ARNES_QA"; ARNES_SEG_CRUDO="$ARNES_SEG"
   arnes_campos_normaliza "$ARNES_QA" "$ARNES_SEG" "$ARNES_SENS" "$ARNES_HALL" "$ARNES_RIGOR"
 }
 
@@ -992,8 +1589,9 @@ arnes_estado_cabecera() {   # <texto> -> ARNES_ESTADO
   local l
   while IFS= read -r l; do
     case "$l" in '## '*) break ;; esac
-    case "$l" in 'Estado:'*)
-      arnes_norm_campo "${l#Estado:}"; arnes_veredicto "$ARNES_CAMPO"; ARNES_ESTADO="$ARNES_VEREDICTO"
+    arnes_norm_clave "$l" || continue
+    case "$ARNES_CLAVE" in 'Estado')
+      arnes_norm_campo "$ARNES_VALOR"; arnes_veredicto "$ARNES_CAMPO"; ARNES_ESTADO="$ARNES_VEREDICTO"
       return 0 ;;
     esac
   done <<< "$1"

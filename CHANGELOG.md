@@ -2,6 +2,523 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.31.0] — 2026-09-05
+> Origen: GitHub · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos` (REQ-002…009), `desarrollador` (implementación y banco), `qa-tester` y `auditor-seguridad` (pendientes en el ciclo 2 del autoalojamiento).
+
+Siete mecanismos, todos nacidos de defectos **medidos en proyectos reales** y descritos aquí
+en la forma del hallazgo: qué fallaba, por dónde, y qué cambia para un proyecto. Cuatro nacen
+**apagados**; sólo uno viene encendido, y se dice por qué.
+
+### Corregido — el acento no es parte del valor: `en-revision` y `en-revisión` son el mismo estado (REQ-010)
+**Qué fallaba:** un proyecto que corre el arnés reportó que el informe marca como «valor que
+ninguna puerta reconoce» un `Estado:` escrito **sin tilde**. Con decenas de requerimientos eso son
+decenas de avisos falsos por documento, y un informe ruidoso no es sólo molesto: es la forma
+conocida de que las anomalías reales se entierren. **Por dónde:** la normalización de campos
+plegaba exactamente **una pareja de letras** —`Í`/`í`—, añadida en su día para que `Sensible a
+seguridad: **Sí**` casara con `sí`. `en-revisión` lleva `ó`, que no estaba en esa pareja. Es la
+cuarta aparición de la misma familia de defecto en este arnés: **el sujeto del control era más
+estrecho que su población**. **Por qué no era sólo un aviso feo:** la misma normalización gobierna
+la detección de la transición al estado terminal. En un proyecto cuyo `estados.completado` lleve
+acento —lo declara cada proyecto: es mapeo, no mecanismo—, escribirlo sin tilde hacía que la puerta
+**no viera la transición** y un requerimiento crítico cerrara sin veredicto de seguridad. Falla en
+abierto y en silencio. **Qué cambia:** el arreglo no añade la letra que faltaba —eso repetiría el
+defecto a la quinta— sino que declara la clase completa: se pliegan todas las vocales acentuadas y
+con diéresis, en mayúscula y minúscula, en forma precompuesta **y descompuesta** (un archivo
+guardado en macOS trae la tilde descompuesta y nada lo delata a la vista). **No** se pliega la `ñ`
+—es otra letra, no una `n` con adorno; plegarla haría iguales `año` y `ano`— ni los separadores:
+`en revision`, `enrevision` y `en-revisión-parcial` siguen siendo valores distintos. El plegado vive
+**una sola vez**, en la misma función que ya normaliza caso y marcado, y lo usan por igual la
+puerta, el informe y el bloque derivado. **Coste: cero procesos y cero forks** —sólo expansión de
+parámetros, detrás de una guarda sobre el byte de cabecera, así que un valor ASCII no paga ni una
+sustitución— y el veredicto es idéntico bajo `LC_ALL=C` y bajo un locale UTF-8, porque la tabla se
+escribe con escapes de bytes y no depende de la colación del entorno. El informe sigue mostrando el
+valor **crudo** tal como está en el archivo, con el normalizado al lado: quien lee el aviso tiene
+que poder encontrar el texto en su editor.
+
+### Corregido — la CLAVE del campo también se decora, y dejaba el campo vacío (REQ-007, bloque A)
+**Qué fallaba:** el **valor** de un campo se leía con tolerancia desde 1.30.0 —`**completado**` es
+`completado`— pero la **clave** se casaba contra el literal `^Clave:`. Así que `**Estado:**
+completado`, `Estado:` seguido de tabulador, ` Estado:` con sangrado y las seis claves envueltas en
+énfasis de Markdown **no se reconocían**. **Por qué es grave y no cosmético:** falla en abierto. Con
+`**Hallazgos abiertos:** SEC-9 (usuario/dinero)` la clave no casaba, el campo quedaba **vacío** — y
+un campo vacío significa «ningún hallazgo». El requerimiento cerraba con un hallazgo de clase
+bloqueante declarado a la vista de cualquiera que leyera el documento. **Qué cambia:** la clave se
+lee con la **misma regla** que el valor y en el mismo sitio —se retira el espacio en blanco de los
+extremos y el énfasis de Markdown—, no con una lista de formas enumeradas: una lista se pudre y la
+regla vale para las formas que nadie ha escrito todavía. Es la otra mitad de la misma línea que el
+plegado de acentos, y por eso entran juntas: arreglar una sin la otra hace que el defecto reaparezca
+en la mitad de al lado. **Lo que NO cambia: dónde vale un campo.** Los campos siguen valiendo sólo
+en la cabecera, antes del primer `## `; la tolerancia es sobre **cómo** se escribe la clave, nunca
+sobre **dónde**. Y leer de más cae siempre del lado que **cierra** la puerta: `**Rigor:** critico`
+sobre un requerimiento no sensible se lee `critico` y exige auditoría.
+
+### Corregido — un manifiesto roto apagaba el enforcement en silencio (SEC-005)
+**Qué fallaba:** si `.arnes/config.json` **existía** pero no se podía leer —inválido, vacío, `null`
+o un array—, la lectura del manifiesto no miraba su código de salida y **todo se permitía sin decir
+nada**. Peor: la variable de la lectura conservaba su **valor anterior**, que era el análisis del
+**input**, así que las variables del manifiesto se rellenaban con campos que controla quien llama —
+el agente de código autorizado se quedaba valiendo `Bash`, el nombre de la herramienta, y la lista
+de rutas protegidas, vacía. La identidad del agente autorizado la escribía el llamante. **Qué
+cambia:** un manifiesto **ausente** sigue dejando los hooks inertes, que es una decisión legítima de
+un proyecto que no usa el arnés; uno **presente y roto** avisa por stderr **siempre** y **deniega**
+toda escritura que las puertas tendrían que juzgar —no se puede denegar «sólo en las rutas
+protegidas» porque justo lo que no se puede leer es cuáles son—. Ningún dato del input atraviesa ya
+esa frontera. Un `ls -la` sigue pasando: no escribe nada y bloquearlo no protegería ninguna
+invariante, y por lo mismo **ni siquiera lee el manifiesto** — el aviso se emite siempre que el
+manifiesto **se consulta**, que es siempre que hay algo que juzgar con él (el camino común de
+`Bash` vuelve así a costar **1 proceso**, los mismos que v1.30.3; ver *Pruebas*).
+**Y el remedio que el motivo recomienda ahora existe:** mientras el manifiesto esté roto, la
+**única** escritura permitida es la del **propio `.arnes/config.json`**. Un proyecto que lo tenga
+en `codigo_app.globs` —como éste— quedaba con la reparación denegada para todos los agentes por
+`Edit`, por `Write` y por `Bash`: el mensaje ofrecía una salida que él mismo cerraba. Es el único
+archivo cuya reparación devuelve la capacidad de medir y no depende de leerlo; cualquier otra ruta
+sigue denegada, y con el manifiesto sano vuelve a estar protegido como cualquier otro.
+
+### Corregido — lo que el manifiesto no dice bien cae del lado seguro, y ahora también lo dice
+**Qué fallaba:** `"exigir_fecha": "true"` —la cadena, no el booleano— apagaba la exigencia de
+fecha **sin una sola señal**, mientras que el techo de análisis de Bash sí avisaba ante el mismo
+error de tipo. La asimetría es lo que sorprende: el proyecto cree que declaró algo y no declaró
+nada. Y en el propio techo quedaba un hueco entre las dos ramas: `1e9` o `1.5` son números JSON
+válidos que no son enteros de bytes aplicables, así que caían al valor por defecto **callando**.
+**Qué cambia:** una sola regla para todas las claves que leen las puertas —`agentes.agente_codigo`,
+`requirements_dir`, `estados.completado`, `pending_approval`, `limites.bash_max_analisis`,
+`veredictos.*`, `git.*` y `codigo_app.globs`—: **lo que no tiene el tipo que esa clave espera cae al
+valor por defecto del arnés y se avisa**, nombrando la clave y el valor recibido tal como venía. No
+deniega —un tipo mal escrito no puede convertirse en un bloqueo— pero tampoco calla. Si lo que no
+tiene el tipo esperado es el **contenedor** (`"veredictos": "x"`), el manifiesto entero sigue
+declarándose ilegible: ése es el fail-closed de arriba y no cambia.
+
+### Corregido — no se escribe a través de un enlace simbólico (SEC-004)
+**Qué fallaba:** los dos guardianes clasifican por el **nombre** de la ruta, así que un enlace
+colocado en una ruta libre que apuntara a código protegido o a un requerimiento recibía el veredicto
+de su nombre y no el de lo que realmente toca. **Qué cambia:** si la ruta de un `Edit`/`Write`/
+`MultiEdit` es un enlace simbólico dentro del proyecto, se deniega con ese motivo. **El destino no
+se resuelve, y es deliberado:** resolverlo costaría un proceso en el camino de toda edición y
+abriría una carrera entre la comprobación y la escritura —lo que el hook mide y lo que la
+herramienta escribe dejarían de ser el mismo archivo—. El precio, dicho en voz alta: no se puede
+escribir a través de un enlace ni siquiera cuando su destino es inocente, y eso alcanza también al
+agente de código. La salida está a la vista: escribir sobre la ruta real.
+
+### Añadido — un veredicto lleva fecha y caduca con el código (REQ-002, apagado)
+**Qué fallaba:** cuatro requerimientos estaban a punto de cerrarse con un `QA: aprobado`
+emitido contra código que había cambiado **después** de la firma, y otro llevaba un
+`Seguridad: aprobado` a secas —sin ronda ni fecha—, que era justamente el único que nadie
+sabía que estaba caduco. Un veredicto es una foto, y una foto sólo vale si el sujeto estaba
+quieto. **Por dónde:** la convención de poner la evidencia al lado de la afirmación ya
+existía; lo que faltaba era que la máquina pudiera **exigirla** y **usarla**.
+**Qué cambia:** con `veredictos.exigir_fecha`, un `aprobado` sin fecha `AAAA-MM-DD` en su
+paréntesis de evidencia no cierra; con `veredictos.caducan_con_codigo`, tampoco cierra un
+veredicto anterior al último commit que tocó `codigo_app.globs`, ni con cambios sin comitear
+en ese código. Si no se puede medir —sin git, sin repositorio, sin globs declarados o con un
+git que no entiende `%cs`— **no se deja pasar**: una puerta que no puede medir no deja pasar.
+Las dos claves vienen apagadas, así que un proyecto que no las active no nota ningún cambio.
+Cuesta como mucho **dos** invocaciones de git por evaluación, y ninguna en el camino de Bash.
+*Asimetrías declaradas:* el empate del mismo día no caduca (`%cs` tiene resolución de día) y
+una fecha futura se acepta —esta puerta mide contra el código, no contra el reloj—.
+
+### Añadido — un solo vocabulario, un solo lector, y un aviso al escribir (REQ-003)
+**Qué fallaba, tres veces:** (1) entre `pendiente` («no he mirado») y `vetado` (freno formal
+con remedio, dueño y umbral) no había forma de decir lo intermedio, que es el estado más común
+de una auditoría real: cinco requerimientos de un proyecto ya escribían `con-hallazgos` porque
+el vocabulario no les daba la palabra —cuando la gente escribe un valor que la herramienta no
+tiene, la incompleta es la herramienta—. (2) Cuatro requerimientos llevaban **semanas** con un
+`QA:` que la puerta no reconocía, y nadie lo supo hasta que un cierre falló. (3) El informe
+`tools/arnes-lectura.sh` no aplicaba a `Estado:` la regla del paréntesis de evidencia que la
+puerta aplica desde 1.26.0: **28 de 42 anomalías eran falsas**, y el ruido enterraba las 14
+reales. **Qué cambia:** `Seguridad: con-hallazgos` es un valor válido (y, como todo valor
+distinto de `aprobado`, **no cierra**); el vocabulario vive en **un solo sitio** compartido por
+las puertas y el informe; escribir un veredicto fuera de él **avisa en el momento** con un
+mensaje a la persona y **sin denegar** la edición —denegar una errata añadiría fricción
+constante a algo inocuo, y esa fricción acaba con alguien apagando el guard—; y el informe lee
+`Estado:` exactamente como lo lee la puerta.
+
+### Añadido — rotar UNA sección: la historia se archiva, el contrato no (REQ-004, apagado)
+**Qué crecía sin tope y quién lo pagaba:** en un proyecto real `requirements/` pesaba **3,73 MB
+en 47 archivos**, uno solo de **244 KB**, y ese peso lo paga **cada agente** que abre el
+requerimiento para leer dos criterios. La rotación que existía cortaba por secciones `## ` de
+un artefacto entero, y en un requerimiento lo que crece es **una** sección: el resto es el
+contrato. **Qué cambia:** un artefacto declarado con `glob` + `seccion` mueve las entradas
+viejas de esa sección a `historial/<nombre>.md` y deja un puntero. **No resume, no reescribe y
+no borra: mueve.** Y no toca **nada** fuera de la sección declarada —ni la cabecera con sus
+veredictos ni los criterios—, lo cual aquí es una invariante de seguridad y no una comodidad:
+el hook escribe en `requirements/` desde una parada, fuera de la vía que vigila la puerta de
+cierre. Qué sección es «historia» lo declara el proyecto; el arnés no trae ninguna por defecto,
+y el nombre se compara **exacto**, nunca por prefijo — y cuando el archivo casa el `glob` pero
+**no** contiene la sección declarada, no se rota nada **y se dice**: un aviso por stderr que
+nombra el archivo y la sección que no encontró, y una línea en el bloque derivado de
+`docs/ESTADO.md`. Un artefacto declarado que no existe es un error de mapeo que hay que ver, no
+un acierto silencioso: sin la señal, un proyecto que escribió mal el nombre cree que rota desde
+hace meses. (Por eso la parada ahora **rota antes de derivar**: el bloque describe el disco
+después de la rotación, no antes.)
+
+### Añadido — ningún agente ejecuta git destructivo (REQ-005, **encendido**)
+**Qué se perdió:** ~52 archivos de trabajo **sin comitear** en un incidente. La causa de fondo
+no es el descuido de nadie: **el trabajo de un subagente no es atómico para git**. Mientras un
+agente escribe, el árbol contiene estados intermedios que no son de nadie; otro agente limpia
+«su» árbol y arrasa el del primero, y git no devuelve lo que nunca se comiteó. **Qué cambia:**
+`hooks/guard-git.sh` deniega por `Bash` las formas destructivas de `clean -f`, `reset --hard`,
+`checkout .`, `restore .` y `stash` a **todos** los agentes, incluida la sesión coordinadora:
+es una regla del **comando**, no de la identidad. No alcanza a `stash list`, `stash show`,
+`restore --staged`, `clean -n` ni a ningún git de lectura, y lo entrecomillado y el cuerpo
+literal de un heredoc se descuentan antes de mirar —`git commit -m "no uses git clean"` no es
+un `git clean`—. **La ortografía del flag no abre un hueco** (vuelta 1 de QA): `--force` y `-f`
+son el mismo flag escrito de dos maneras y casan igual, en los dos sentidos —una regla escrita
+`push --force` alcanza también `git push -f`—, con el valor pegado (`--force=x`) y respetando el
+fin de opciones (`git clean -- --force` borra un archivo **llamado** `--force`, y sigue
+permitido). Lo mismo con el nombre viejo de un subcomando: `git stash save` es `git stash push`.
+La equivalencia vive en el **motor** y no en la lista, para que valga también para el
+`git.prohibidos` propio de cada proyecto; sólo se reconocen las que son un hecho de git, porque
+deducir la forma corta del nombre largo haría que `clean -d` denegara un `--dry-run`. **Es la única novedad de 1.31.0 activa por defecto**, porque es la única que
+impide un daño irreversible; se apaga con `git.activo: false` o se sustituye con
+`git.prohibidos`. Cobertura parcial dicha en voz alta: quedan fuera los scripts y los
+intérpretes que ejecuten git por su cuenta. Es una barandilla, no una jaula.
+
+### Corregido — construcciones ordinarias del shell atravesaban la puerta de git (SEC-009)
+**Qué fallaba:** `git clean -fd` desnudo se denegaba, pero **envuelto en cualquier construcción
+corriente del shell pasaba**: `if true; then git clean -fd; fi`, `{ git clean -fd; }`,
+`for i in 1; do git clean -fd; done`, `sleep 0 & git clean -fd`, `nohup git clean -fd` y la orden
+partida con una continuación de línea. Siete formas medidas, ninguna exótica: una limpieza
+condicional se escribe **exactamente así**, de modo que el hueco no había que buscarlo, se pisaba
+sin querer. **Por dónde:** la puerta juzga el **primer token de cada orden**, y la segmentación no
+partía por `&` sencillo ni plegaba la continuación de línea; peor, el bucle que salta lo que no es
+el comando —asignaciones de entorno, `sudo`, `env`— no conocía las **palabras reservadas del
+shell**, así que un segmento que empezaba por `then`, por `do` o por `{` se descartaba entero, con
+el `git` dentro. **Por qué importa más que en otras puertas:** es la única que nace **encendida**
+en todos los proyectos, y lo que deja pasar es irreversible. **Qué cambia:** la continuación de
+línea se pliega antes de partir, el `&` sencillo separa órdenes como ya hacían `&&`, `;` y `|`, y
+el bucle de prefijos tolera las palabras reservadas (`then`, `else`, `elif`, `do`, `{`, `!`…) y los
+envoltorios que preceden a un comando (`nohup`, `setsid`, `timeout`, `stdbuf`, `xargs`), con sus
+opciones y su argumento cuando lo llevan. Todo eso ensancha **dónde mira** la puerta, nunca lo que
+deniega: `echo git clean -f` y un `grep` de un texto que dice `then git clean -fd` siguen
+permitidos, y están en el banco para que sigan estándolo. **Lo que sigue fuera, y se dice:** un
+subcomando que llega por variable (`G=clean; git $G -f`) no se ve —el valor no está en el texto del
+comando—, igual que los intérpretes y los scripts. **No es una regresión:** contra la versión
+publicada estas formas ya pasaban, porque la puerta no existía.
+
+### Corregido — un manifiesto ilegible apagaba la puerta de git, justo cuando todo lo demás se denegaba (SEC-010)
+**Qué fallaba:** con `.arnes/config.json` presente pero ilegible —inválido, vacío, `null`, un array
+o con la clave `git` del tipo equivocado—, las dos puertas de escritura denegaban con su aviso
+mientras la puerta de git **permitía**. Y el aviso afirmaba, textualmente, que «toda escritura que
+las puertas deban juzgar se deniega»: cierto de dos puertas de tres. **Por qué es grave:** en un
+proyecto plantilla el manifiesto **no** está entre las rutas protegidas, así que la única puerta
+encendida por defecto tenía un interruptor de apagado alcanzable en **una** escritura de cualquier
+agente — y por accidente, con una coma de más. El estado en que ocurre es además aquel en el que
+todo lo demás está bloqueado y el agente busca «dejar el árbol limpio». **Qué cambia:** se aplica
+el principio rector —una puerta que no puede medir no deja pasar—. Con el manifiesto ilegible la
+puerta de git cae a la **lista por defecto que vive en el código** y **deniega**, con un motivo que
+dice que está en **modo degradado** y cuál es la salida: reparar el JSON, que es la única escritura
+que la avería deja pasar. La lista por defecto pasa a declararse **una sola vez** y las dos vías
+—manifiesto sano y modo degradado— leen la misma cadena: dos transcripciones de la misma regla se
+desfasan. **El borde, declarado en voz alta:** un proyecto que tuviera la puerta apagada con
+`git.activo: false` y se le rompa el manifiesto **pasará a denegar**. Es la dirección segura
+—apagar es un acto explícito y un JSON roto no lo es— y la salida es reparar el manifiesto. Con el
+manifiesto sano, `git.activo: false` sigue apagando la puerta exactamente como antes.
+
+### Corregido — el archivo de continuidad no se pierde, ni con el manifiesto roto ni por un byte extraño (SEC-011)
+**Qué fallaba:** tres cosas, todas en el mismo archivo y todas medidas. **(1)** Con el manifiesto
+ilegible, la parada dejaba dos errores crudos de `jq` por stderr y **ningún bloque derivado**: la
+observabilidad que el arnés promete —«la traza vive en archivos legibles»— se apagaba justo en el
+estado degradado, que es cuando hace falta. Con el manifiesto **vacío** era peor: el hook moría con
+`unbound variable` y la parada salía con error. **(2)** Un byte **NUL** en `docs/ESTADO.md` cortaba
+la lectura ahí mismo y todo lo que venía detrás **se perdía** al reescribir. **(3)** Un
+`docs/ESTADO.md` con contenido pero **sin permiso de lectura** se leía como vacío, y el bloque
+sustituía al documento entero. Las dos últimas son la misma familia: **se reescribía a partir de
+una lectura que había fallado**, y lo que se perdía era texto de una persona. **Qué cambia:** los
+valores por defecto se fijan **antes** de leer nada, así que ninguna ruta deja una variable sin
+definir; con el manifiesto ilegible el bloque **se deriva igual** —derivar no necesita el
+manifiesto: sale del disco— con las rutas por defecto del código, y escribe una línea que dice
+**«manifiesto ilegible: enforcement degradado»** con la salida. Y si lo que no se puede leer es el
+**destino** —sin permiso, o con un NUL detrás del cual hay bytes que no se pueden traer—, **no se
+escribe nada**: el archivo queda **byte a byte** como estaba y se avisa. Un bloque de continuidad
+que no se escribe es un inconveniente; uno que borra el documento es una pérdida. Si la escritura
+falla al publicar (disco lleno, carpeta sin permiso), el original sigue intacto, **no queda ningún
+temporal huérfano** y se dice. **Y la reparación del manifiesto deja rastro:** la escritura de
+`.arnes/config.json` permitida durante la avería emite un aviso **propio y distinguible** que
+nombra el archivo, la herramienta y el tipo de agente que repara —una vez por llamada, no una por
+guardián—, en vez de un stderr idéntico al de cualquier otra llamada. No se registra ningún
+contenido.
+
+### Corregido — las celdas del bloque derivado no caben en una tabla (REQ-006)
+**Qué fallaba:** en un proyecto con 57 requerimientos, cuatro celdas de veredicto ocupaban el
+**37 %** del bloque de continuidad, y la mayor —**1 296 caracteres sin un solo espacio**—
+además **rompía la tabla**: una fila que no cabe deja de renderizarse como fila, así que el
+bloque dejaba de servir para lo único que existe, que es contar en tres líneas dónde quedó
+todo. **Qué cambia:** las tres celdas de texto libre (`QA`, `Seguridad`, `Hallazgos abiertos`)
+salen recortadas a 40 caracteres con `…`, y una barra vertical dentro de un valor se neutraliza
+para que no abra una columna nueva. **El recorte es de presentación**: pasa después del
+normalizador y sólo al componer la fila, así que ni la puerta ni el informe ven nunca el valor
+recortado —si llegara a la lectura, un `Hallazgos abiertos:` largo podría perder su clase
+bloqueante por el camino—.
+
+### Corregido — la cola de aprobaciones se contaba de dos maneras (REQ-009)
+**Qué fallaba:** la misma cola, dos números. La puerta de cierre contaba **encabezados
+`###`** bajo `## Pendientes`; el bloque derivado de `docs/ESTADO.md` contaba **viñetas**
+(`- `, `* `, `1. `) en la misma sección. Una entrada real del formato que documenta el
+propio `PENDING_APPROVAL.md` —un `###` con cuatro viñetas debajo— valía **1** para la
+puerta y **4** para el bloque. Ninguno de los dos números miente por sí solo; lo que miente
+es que haya dos, porque el número que se lee deja de ser el que bloquea. Además el conteo de
+viñetas nunca recibió la corrección del **ejemplo comentado**, así que un `<!-- … -->` con un
+ejemplo dentro sumaba. **Por dónde:** dos transcripciones de la misma regla, en dos archivos
+—la misma familia que el vocabulario de veredictos de REQ-003—, y se desfasaron en silencio
+hasta que alguien comparó los dos números.
+**Qué cambia:** la regla vive **una** vez (`arnes_cola_pendientes`, `hooks/lib.sh`) y la usan
+por igual la puerta, el bloque derivado y `tools/arnes-lectura.sh`, que ahora también informa
+de la cola. Gana la regla de la puerta —la que decide y la que está documentada—: una entrada
+es una línea `###` + espacio dentro de la sección que abre un `## ` cuyo texto empieza por
+«Pendientes» y cierra el siguiente `## ` de cualquier nombre, descontando los comentarios
+HTML. **Y la cola es una puerta:** si no se puede leer entera —un byte NUL que la trunca, un
+archivo sin permiso— la puerta **deniega** con motivo propio en vez de contar 0 sobre un
+archivo que nadie leyó, y el bloque derivado dice `sin datos` en vez de `0`. *Se paga en
+negativo:* el conteo se hace con lecturas y expansión de parámetros, así que la puerta pierde
+el `awk` que pagaba en cada cierre (medido: 1 → 0) y la parada no gana ninguno.
+**Al actualizar:** el número de aprobaciones pendientes del bloque derivado puede **bajar**
+sin que nadie haya resuelto nada. No hay nada que migrar: se regenera en la siguiente parada.
+
+### Seguridad — cuatro huecos de la auditoría R-001, todos de la misma familia (REQ-007)
+Todos **preexistentes** —medidos idénticos en 1.30.3 y en la versión anterior—, ninguno es
+regresión, y todos son la misma clase: **un dato que controla quien llama decide cómo se
+comporta el guardián**.
+
+- **Una barra de más desactivaba las DOS puertas.** Un `Write` a `<raíz>//src//a.ts` o un
+  `Edit` sobre `<raíz>//requirements//REQ-x.md` pasaban: la ruta relativa se calcula
+  recortando el prefijo del proyecto **textualmente**, la ruta no empezaba por `<raíz>/`, el
+  prefijo no se recortaba, ningún glob de código casaba y ninguna ruta caía dentro de
+  `requirements/`. Era la evasión **más barata** medida en todo el arnés —un carácter, sin
+  ninguna forma exótica— y alcanzaba a los dos guardianes a la vez. Ahora las barras repetidas
+  se colapsan al normalizar la ruta, **antes** de recortar el prefijo y **sin ningún proceso**;
+  la doble barra inicial de una ruta UNC de Windows se conserva.
+- **Un byte de control desincronizaba la simulación del cierre.** Las piezas de un
+  `Edit`/`MultiEdit` se trocean con un separador que viaja **dentro** del propio dato: con un
+  byte de control metido en un `new_string`, el bucle leía como tripletas cosas que no lo eran
+  y **el documento que el hook simula dejaba de ser el que la herramienta iba a escribir**. Las
+  cuatro puertas del cierre —veredictos, cola, quality gates y clase del hallazgo— se saltaban
+  a la vez, con un byte. Ahora un `tool_input` con bytes de control C0 —cualquiera salvo
+  tabulador, salto de línea y retorno de carro, que el Markdown normal sí lleva— **no se juzga:
+  se deniega**, en la misma llamada a `jq` y sin ningún proceso nuevo.
+- **Un NUL dentro del documento truncaba la lectura del disco.** La forma barata de leer un
+  archivo entero en bash usa el NUL como delimitador, así que un NUL en la primera línea dejaba
+  el texto cortado ahí: los veredictos se leían de un documento incompleto —y un campo vacío no
+  exige nada— y, de paso, la reconstrucción fallaba y la puerta caía a su vía más laxa. Bastaba
+  una escritura previa en `requirements/`, que ninguna puerta restringe. Ahora la lectura
+  **dice** cuándo no pudo leer el archivo entero, y una edición que menciona el estado terminal
+  sobre un documento ilegible se deniega con motivo propio. Lo que decide sigue siendo la
+  transición: una edición que no toca el estado no queda bloqueada por el byte.
+- **El techo de análisis de Bash se podía subir sin tope desde el manifiesto.** El coste del
+  análisis crece con el tamaño y un hook `PreToolUse` **muere a los 60 s permitiendo**: un
+  `limites.bash_max_analisis` de `4294967296` reabría **por configuración** justo el fallo en
+  abierto que el presupuesto de 1.30.3 cerró. Y `"999999"` **entrecomillado** —una cadena, no un
+  número— se aceptaba como si lo fuera. Ahora el valor declarado tiene un **máximo operativo**,
+  medido y no arbitrario: por encima se aplica el máximo y se avisa; un valor que no sea un
+  número en el JSON cae al techo por defecto, también con aviso. Un valor **más bajo** que el
+  defecto sigue sin bajar nada, y el motivo del deny sigue imprimiendo el techo vigente en bytes
+  sin nombrar ninguna ruta.
+
+**Pendiente de decisión humana, y por eso no aplicado:** el manifiesto que define la frontera
+no está **dentro** de la frontera —quien no puede escribir el código de los guardianes sí puede
+cambiar la regla que dice qué es ese código—. Es escalada de privilegios dentro del arnés y el
+mecanismo para cerrarla ya existe; lo que falta es el **mapeo**, y cambiar el mapeo de este
+repositorio exige aprobación del propietario. Queda escrito en `PENDING_APPROVAL.md` y el
+pipeline se detiene ahí. **Ninguna plantilla hereda esos globs:** es mapeo de este repositorio,
+no mecanismo, y el banco tiene un caso que se pone rojo si algún día aparecen ahí.
+
+### Andamiaje que heredan los proyectos
+- `templates/arnes-config.json.tpl`: bloques nuevos `veredictos` (apagado), `git` (encendido) y
+  `limites` (**opcional**: el techo de análisis de Bash que 1.30.3 dejó sin documentar), y la
+  forma de sección en `rotacion.artefactos`, todos con su `_doc`.
+- `templates/requirements-README.md.tpl` y `templates/AGENTS.md.tpl`: `con-hallazgos`, la fecha
+  del veredicto, el aviso sin bloqueo, la rotación de la historia y el recorte de celdas.
+- `skills/arnes-upgrade/SKILL.md`: sección **Hacia 1.31.0** con qué preguntar antes de encender
+  `veredictos.*`, qué avisar de `guard-git`, dos marcadores nuevos de versión y los tres avisos
+  nuevos: la cuenta de la cola puede bajar sola, un REQ con la cabecera decorada empieza a ser
+  juzgado, y `limites.bash_max_analisis` tiene ahora un máximo.
+- `templates/PENDING_APPROVAL.md.tpl`: la regla de conteo de la cola, escrita **una vez**, y el
+  aviso de que el bloque derivado y la puerta cuentan lo mismo.
+- `templates/AGENTS.md.tpl`: el párrafo que acota la detección del estado terminal por `Bash`
+  —lee el texto crudo del comando, así que partir la palabra entre expansiones la evade; la
+  respuesta es la puerta posterior, no un patrón más largo—, para que ningún proyecto lea una
+  promesa más fuerte de la que la máquina cumple.
+- `ARCHITECTURE.md`: vista de sistema al día, con el guardián nuevo y el orden de `guard.sh`.
+
+### Validación — dos vueltas del bucle dev↔QA, y lo que enseñaron
+
+El `qa-tester` validó la ventana en dos vueltas y devolvió defectos que ninguna prueba del
+desarrollador había visto. Merecen el detalle, porque son familias que se repiten:
+
+- **La puerta nueva de git no veía las formas largas.** `git clean --force`, `git clean --force -d` y
+  `git stash save` pasaban: el motor saltaba todo lo que empieza por dos guiones, y `save` es el alias
+  antiguo de `push`. Se arregló canonicalizando **los dos lados** antes de comparar y poniendo el alias
+  en el motor, no en la lista: un proyecto con lista propia habría perdido la equivalencia sin enterarse.
+- **El coste del camino común se había duplicado**, de un proceso a dos por cada comando de shell, como
+  efecto del arreglo del manifiesto roto. En Linux son milisegundos; donde un fork cuesta entre 1,2 y
+  6 s, es otra magnitud. Ahora las escrituras se detectan antes, y el manifiesto sólo se lee si hay algo
+  que juzgar.
+- **Un punto muerto fabricado por el propio arnés:** al meter el manifiesto dentro de su propia
+  frontera, repararlo quedaba denegado para todos. Con el manifiesto ilegible se permite escribir el
+  propio manifiesto y nada más, sin filtrar por agente — porque quién es el agente de código se lee del
+  archivo que no se puede leer.
+- **Un caso del banco que decidía por reloj de pared**, con un umbral fijo en milisegundos: dos corridas
+  de la misma línea base dieron 457 y 458. Un banco que es puerta requerida de `main` no puede tener
+  casos que dependan de lo cargada que esté la máquina.
+- **Y tres veredictos que pasaron de denegar a permitir sin estar declarados** (`git clean -- -f`,
+  `git reset -- --hard`, `git restore -S .`). Los tres son correctos y ninguno destruye nada, medido en
+  un repositorio desechable: lo que estaba mal era el criterio, que prometía casar «todos los tokens
+  presentes». Se cierra reescribiendo el requerimiento, no el guardián.
+
+De ahí salió además una regla que se queda: **un criterio de coste se escribe como techo, nunca como
+igualdad.** Escrito como igualdad, una mejora se lee como fallo.
+
+Y de la verificación del veto salió otra, más incómoda: **el QA reprodujo la pérdida de texto humano**
+en la versión anterior de esta misma ventana —dos hashes distintos y la línea de la persona contada a
+cero, no una sospecha— y comprobó el arreglo con nueve averías propias que nadie había pedido: espacio
+en disco agotado de verdad, el destino como enlace simbólico, sólo lectura, finales de línea mixtos,
+cuatro paradas concurrentes por diez rondas, y un límite de tamaño de archivo. Ninguna perdió un byte.
+La regla que deja: **una comprobación que sólo mira si el bloque está nunca habría visto el archivo
+vaciado** — lo que se verifica es el archivo entero, por hash, no la parte que a uno le interesa.
+
+### Seguridad — un veto, y lo que enseñó levantarlo
+
+El `auditor-seguridad` **vetó** la puerta de git y el veto se levantó arreglando, no declarando. Encontró
+que construcciones ordinarias del shell la atravesaban (`if … then`, `{ … }`, `for … do`, `&`, `nohup`,
+la continuación de línea) y que **un manifiesto ilegible la apagaba** mientras el aviso afirmaba que todo
+se denegaba. Las dos cerradas y verificadas por él con sondas propias, no aceptadas del informe de QA.
+
+Tres cosas que se quedan del episodio:
+
+- **El radio se mide antes de decidir.** Antes de tocar nada se comprobó que el detector de escrituras
+  **no** estaba afectado: sus ocho formas denegaban igual en la candidata y en las dos versiones
+  publicadas. Eso convirtió un susto en un arreglo acotado a una sola puerta, y evitó tocar código
+  compartido que hoy funciona.
+- **Un límite se cierra con su criterio, nunca de rebote.** Al plegar la continuación de línea era fácil
+  arrastrar el escape del guion y cerrar en silencio un hueco que tiene dueño y ventana. Se dejó fijado
+  por dos casos vecinos, y el auditor lo verificó expresamente al levantar el veto.
+- **Y la simetría, que es la parte que nadie vigila:** el código acabó cubriendo **más** de lo que el
+  criterio prometía —siete envoltorios donde el requerimiento declaraba tres—, y denegaba una forma que
+  el propio documento decía no ver. Un límite que desaparece sin decirlo es tanta deriva como una
+  promesa incumplida, así que la regla quedó escrita en las dos direcciones: **cuando el código cubra más
+  de lo que el criterio promete, se actualiza el criterio en el mismo cambio.**
+
+En la tercera vuelta la puerta de git quedó aprobada, y el arreglo fue **del criterio, no del guardián**:
+se verificó que el código cumple la regla reescrita en 24 comandos, con los cuatro bordes del fin de
+opciones. El banco dejó de bailar —tres corridas de la línea base dan el mismo número, y las 625 líneas
+de resultado son idénticas entre corridas, no sólo el total—. Y quedaron dos límites dichos en voz alta:
+un token **entrecomillado** desaparece del análisis, así que `git clean "-f"` pasa donde `git clean -f`
+no —es el mismo descuento de comillas compartido cuyo arreglo está asignado a la ventana siguiente, y la
+versión publicada se comporta igual—, y **un margen de coste expresado como cociente castiga a la máquina
+rápida**: el delta es constante, el cociente no. Los dos se corrigen en el requerimiento, sin tocar una
+línea de código.
+
+### Corregido — el instrumento: un caso del banco decidía por reloj de pared (QA-111)
+
+**Qué fallaba:** el caso «heredoc CITADO de ~300 KB → allow y barato» comparaba el tiempo medido
+contra un umbral fijo de 1 000 ms puesto justo encima de lo observado. QA lo vio dar **1 038 ms
+(FAIL)** y **616 ms (PASS)** sobre **la misma** línea base sin cambiar nada — y por eso dos corridas
+completas de v1.30.3 dieron 457 y 458. **Por qué importa más de lo que parece:** el banco es la
+puerta **requerida** de `main`, y un rojo que la gente aprende a re-lanzar es un rojo que deja de
+significar algo. **Qué cambia — el reparto, no un número más alto:** (1) el **veredicto**
+(`deny`/`allow`) es discreto y estable, decide el caso y no se reintenta; (2) que el hook
+**responda** se comprueba por el código de salida de `timeout`, no por una comparación de reloj, y
+**siempre**, también donde se espera `allow` — que es justo donde un hook muerto pasaba por bueno
+(QA-007); (3) el **tiempo** se conserva, porque el coste es la propiedad que estos casos vigilan,
+pero contra un techo **holgado** (cuatro veces el presupuesto declarado, ajustable por
+`ARNES_CRONO_HOLGURA`) y **con reintento**: sólo falla si la mejor de tres medidas se pasa. Un pico
+de carga ajena no es una regresión; un algoritmo cuadrático se pasa por múltiplos, no por un 4 %.
+Reintentar no cuesta nada en el camino feliz. **Eran diez los casos que decidían por reloj**: nueve
+por el cronómetro compartido y uno suelto (`SEC-004 CA-50b`, el enlace roto), que llevaba su propio
+umbral de 1 000 ms escrito a mano; los diez pasan al mismo criterio. Y lo que el caso quería
+acreditar —que el heredoc citado se descuenta **entero** y no entra en el presupuesto de análisis—
+se comprueba ahora **sin reloj**, por el motivo del `deny`: si los 300 KB hubieran entrado en el
+presupuesto, la respuesta sería el rechazo **por tamaño**; que el motivo nombre la ruta prueba
+además que el análisis corrió. El caso cronometrado se queda como **medición** del coste.
+
+### Corregido — la rama hermana del aviso: una sección que sí existe pero no tiene entradas (QA-109)
+
+**Qué fallaba:** desde la vuelta 1, una sección **declarada que no existe** en el documento avisa y
+lo refleja el bloque derivado (CA-09). La rama de al lado seguía muda: una sección que **sí** existe
+y **supera el umbral**, pero cuyo contenido no tiene ni una entrada reconocible, no rota nada y no
+decía nada. **No es hipotético:** el `## Historial de cambios` de los REQ de este repositorio es una
+**tabla**, y las filas de tabla son continuaciones (CA-07), no entradas — así que ArnesJuan
+encendiendo su propia rotación no rotaría nada y no se enteraría. Es el mismo error de mapeo y el
+mismo silencio que CA-09 declara inaceptable. **Qué cambia:** se emite el aviso por stderr y se
+cuenta para el bloque derivado, exactamente como en la otra rama, con **texto distinto** en los dos
+casos, porque la acción que pide cada uno es distinta: allí se corrige el nombre de la sección en el
+manifiesto; aquí, el formato de la sección o la expectativa de rotarla. **Lo que no cambia:** no
+rotar sigue siendo lo correcto —sin entradas no hay límite seguro donde cortar—, y sólo se avisa
+**por encima del umbral**: por debajo no se toca nada por diseño (CA-06) y avisar sería ruido en
+cada parada.
+
+### Corregido — el instrumento, otra vez: la idempotencia del bloque derivado se decidía por el reloj (QA-119)
+
+**Qué fallaba:** el caso «CA-09 idempotente» comparaba **byte a byte** las dos pasadas del bloque
+derivado, y el bloque se encabeza con la fecha y la hora **al minuto**. Si las dos pasadas cruzaban
+un cambio de minuto, el caso fallaba sin que nada estuviera roto: QA lo midió **1 de 9** corridas
+completas, y dos corridas del **mismo** árbol dieron `483 · 185 · 1` y `482 · 186 · 1`. **Es la
+misma familia que QA-111** —un caso del banco que decide por reloj de pared—, sólo que allí el
+reloj entraba como umbral de tiempo y aquí como contenido de la salida. **Por qué importa:** el
+banco es la puerta **requerida** de `main`; un rojo aleatorio bloquea una fusión legítima y, peor,
+enseña a re-lanzar el CI hasta que salga verde, que es como una puerta deja de significar algo.
+**Qué cambia — en el banco, no en el bloque:** la hora **se queda** en `docs/ESTADO.md`, porque es
+para la persona que lo lee; lo que se corrige es la comparación, que ahora **neutraliza** la línea
+de la marca —sustituye su valor por un testigo— en lugar de fijar el reloj. Fijar el reloj obligaría
+a interponer un `date` falso en el `PATH` del hook: mediría una plataforma que no es la de
+producción y taparía cualquier otro uso de la fecha que apareciera después. Y no se **borra** la
+línea, se neutraliza: la comparación sigue exigiendo que la cabecera esté y en su sitio, y **su
+formato lo mide un caso propio**, porque neutralizar sin medir aparte es dejar de probar. Se añade
+además el **cruce de minuto forzado** —se falsea la marca de la pasada anterior en vez de esperar
+60 s— con un canario: byte a byte tiene que seguir dando «distintos», o el caso estaría en verde
+por no medir nada. **Repasado el resto del banco:** de **16** comparaciones byte a byte (11 con
+`cmp`, 5 por `md5sum`), ésta era la **única** que comparaba contra una salida regenerada con marca
+de tiempo; las otras 15 comparan un archivo que **no debe cambiar** contra su copia previa, donde
+no hay fecha que generar. Los otros dos usos del reloj en el arnés —la marca `ARNES:ROTADO` de los
+dos rotadores— no los compara nadie byte a byte.
+
+### Corregido — un temporal huérfano cuando al hook lo matan a mitad de la escritura (QA-118)
+
+**Qué fallaba:** `estado-derivado` publica `docs/ESTADO.md` escribiendo primero un temporal y
+moviéndolo encima, y desde SEC-011 el fallo que **devuelve error** —carpeta sin permiso, disco
+lleno— borra el temporal y avisa. Faltaba la tercera forma de fallar: que al proceso lo **maten**
+mientras escribe. Con un límite de tamaño de archivo (`ulimit -f`, SIGXFSZ) el intérprete moría
+dentro del `printf` y ningún `rm` posterior llegaba a correr: medido, el hook salía **153** y dejaba
+un `ESTADO.md.arnes.tmp` a medias **en silencio**, al lado del único archivo que sobrevive a la
+pérdida de contexto. El destino quedaba intacto —eso ya estaba bien—, pero un artefacto huérfano
+sin explicación es basura que alguien tendrá que interpretar justo cuando ya no queda contexto.
+**Qué cambia:** un `trap` sobre `EXIT INT TERM XFSZ` limpia el temporal en la salida y en las
+señales que la interrumpen. Y al **atender** SIGXFSZ la señal deja de ser mortal: `printf` devuelve
+error, el `&&` no llega al `mv` —el destino sigue intacto— y la avería sale por el mismo camino que
+las otras dos, con aviso propio y código de salida **0**, que es lo que el hook de parada promete:
+nunca bloquear una parada, nunca callar la avería. Medido antes y después con la misma avería:
+`iguales-1-no-153` → `iguales-0-si-0`. **Fuera de alcance, declarado:** los dos rotadores escriben
+sus temporales con el mismo patrón y comparten esta debilidad ante una señal; viene apagada por
+defecto y nadie la ha medido, así que queda anotada, no arreglada de paso.
+
+### Pruebas
+Banco: **683 casos** (310 antes de esta versión; 480 al cerrar la implementación, 569 con los
+casos que añadió QA, 606 tras la vuelta 1, 615 tras la vuelta 2, 680 tras las vueltas 3 y 4, y 683
+con los tres de la vuelta 5), **682 PASS · 0 FAIL · 1 SKIP** sobre la candidata y el cuadre de
+`CASOS_ESPERADOS` cerrado. Contra la instalación estable **v1.30.3**, el mismo banco da
+**494 PASS · 188 FAIL · 1 SKIP**: son los casos nuevos de comportamiento —fail-before/pass-after—,
+entre ellos el de QA-118, que contra la línea base da exactamente el síntoma reportado
+(`iguales-1-no-153`). Esa cifra de línea base es **reproducible**, y ésa es la prueba de que QA-119
+está cerrado: **cinco corridas seguidas** dieron `494 · 188 · 1` las cinco, donde antes del arreglo
+dos corridas del mismo árbol daban `483 · 185 · 1` y `482 · 186 · 1`. Los dos casos que añade la
+vuelta 5 para QA-119 pasan **también** contra la línea base: corrigen el instrumento, no el hook.
+Coste medido con `awk` y `jq` instrumentados en el `PATH` (Linux/WSL2): el camino común de `Bash`
+(`ls -la`, `npm run build` por `guard.sh`) gasta **1 `jq`**, los mismos que v1.30.3 —eran **2**
+antes de la vuelta 1, porque leer el manifiesto se había puesto por delante del corte temprano—;
+un comando que **sí** menciona `git` cuesta 2, que es la lectura del manifiesto que la puerta
+nueva necesita para saber si está encendida; una edición fuera de las rutas protegidas **baja**
+de 3 a 2, y el cierre de un REQ de 1 `awk` a 0. En reloj, `ls -la` por `guard.sh` sobre 200
+invocaciones: **23,1 ms → 19,0 ms** por invocación (v1.30.3: 13,7 ms en la misma máquina; el
+resto no son procesos, es el intérprete cargando un guardián más). El coste real en Windows/MSYS,
+donde un fork cuesta entre 1,2 y 6 s, **queda por medir antes de publicar**.
+
+## [Interno] — 2026-09-05 · migración del andamiaje de este repo 1.30.2 → 1.30.3 (`arnes-upgrade`)
+> Origen: Interno · usuario: Juan · modelo de IA: Fable 5.1 (coordinadora) · skill `arnes-upgrade` del plugin 1.30.3.
+
+- Origen 1.30.2 **CONFIRMADO** (`.arnes/plantillas-origen/` idéntica a `v1.30.2:templates/`); destino 1.30.3 (instalación 6c1b58a, la actual). Ninguna plantilla cambia entre ambas: **nada que aplicar**. Plan en `.arnes/migracion.md`.
+- `.arnes/plantillas-origen/` completada con las 3 plantillas que faltaban (ADR, DELIVERY, guard.test.ts), copiadas de la versión destino.
+- `arnes_version` 1.30.2 → 1.30.3 (Fase 5, tras verificar). Aviso «Hacia 1.30.3» aplicado: `tools/arnes-lectura.sh` no muestra ningún REQ `completado` con veredictos pendientes.
+- Primer uso real de la skill sobre un proyecto ya inicializado tras publicar: sirve de verificación de instalación/actualización de 1.30.3.
+
 ## [Interno] — 2026-09-05 · registro del ciclo 1 del autoalojamiento
 > Origen: Interno (documentación de gobernanza) · usuario: Juan · modelo de IA: Fable 5.1 (coordinadora) · agente: sesión coordinadora.
 

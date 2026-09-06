@@ -336,6 +336,13 @@ no contiene a un agente decidido a rodearlo. Concretamente:
   Dentro de esa vía la detección del estado terminal es **deliberadamente ancha** —lo busca en
   cualquier parte del comando, no como `estado:` seguido del valor—, porque la forma más natural
   de cerrar un REQ por shell sustituye el **valor** y no escribe nunca la palabra «Estado».
+  **Y ancha no es infalible, y está medido:** esa detección lee el **texto crudo del comando**, así
+  que partir la palabra del estado terminal entre dos expansiones dentro de un heredoc sin citar la
+  evade, y el archivo queda escrito. Ensanchar el patrón cubriría esa forma y no la clase —una
+  variable, `printf`, `base64 -d` o un intérprete la reproducen—: es una pregunta abierta y no se
+  gana. La respuesta es la **puerta posterior**, que deja de preguntar antes si un comando escribe y
+  pregunta después si algo protegido cambió. Hasta que exista, esta vía es exactamente lo que dice
+  ser: una barandilla contra el descuido, no contra la ofuscación deliberada.
 
 **Otro que tampoco decide: la rotación.** Un artefacto de bitácora —`CHANGELOG.md`, el registro
 de seguridad— crece sin tope, y todo lo que crece sin tope acaba entrando entero en la ventana
