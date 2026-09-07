@@ -2,6 +2,38 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-07 · Caso J: el bisecado que lo explica, y dos formas medidas al revés
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+**Segundo informe de campo sobre el caso J, verificado ejecutando** `hooks/guard.sh` del plugin
+instalado 1.32.1 contra un proyecto efímero, con control positivo en la misma tanda. Confirmado: la
+clave decorada **fuera** de todo comentario sigue desbancando al veredicto vivo y cierra un `critico`
+con `Seguridad: con-hallazgos` en la cabecera.
+
+**Lo que el informe aporta y no teníamos: el bisecado.** Hasta 1.30.3 la clave se anclaba con un
+literal a columna cero, así que `**Seguridad:** aprobado` **no era un campo**; J denegaba por eso y no
+por ninguna virtud del rango de comentario. Con la tolerancia al énfasis de 1.31.0, I y J pasan a ser
+**la misma mitad partida por la única característica que no comparten** — el rango—, que es
+exactamente por qué el arreglo de 1.32.1 alcanzó a una y no a la otra.
+
+**Y el argumento que decide el diseño:** las dos reglas que producen J —tolerar el énfasis, y que gane
+la última aparición— **son correctas por separado**; el defecto es la **conjunción**. Por eso la salida
+no puede ser una preferencia entre formas sino la pregunta de estado: *el mismo campo declarado dos
+veces con valores distintos no se puede medir ⇒ deniega*.
+
+**Dos correcciones medidas aquí, una en cada dirección:** la celda de tabla que el reportante predecía
+como hueco **deniega** (el `|` inicial no se tolera), y en cambio **la indentación sí es hueco** —
+`  Seguridad: aprobado` con dos espacios permite—, forma que no estaba en ninguna lista y que
+importa porque **no es decoración**: descarta por sí sola la alternativa de «una clave decorada no
+desbanca a una limpia».
+
+**La mitad que faltaba:** si la puerta deniega por ambigüedad y el bloque derivado publica uno
+cualquiera de los dos valores, vuelve la divergencia entre las dos mitades del lector que 1.32.1 cerró
+en H-01. La marca de ambigüedad la emite el lector una vez y la consumen las dos.
+
+Clase `contrato`, **ventana 1.34.0** (movida al partirse 1.33.0; además colisiona por archivo con
+REQ-017, que tiene `hooks/lib.sh` tomado). Archivos: `docs/PENDIENTES.md`.
+
 ## [Interno] — 2026-09-07 · H-08: el CI dio verde sobre REQ-017 sin medir ninguno de sus criterios
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 

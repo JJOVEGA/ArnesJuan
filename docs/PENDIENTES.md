@@ -540,7 +540,9 @@ elegir entre denegar y avisar.
 **Clase `contrato`** — `AGENTS.md` §13 promete que un `critico` no cierra sin `Seguridad: aprobado`, y
 por esta vía cierra con el veredicto vigente en `pendiente`. **Nace ≤1.31.0** (la tolerancia a la
 clave decorada), no lo introdujo 1.32.1. Dueño: `analista-requerimientos` para la decisión de diseño,
-`desarrollador` para el mecanismo. **Ventana 1.33.0**, con el núcleo de preguntas de estado.
+`desarrollador` para el mecanismo. **Ventana 1.34.0** (movida el 2026-09-07 al partirse 1.33.0),
+con el núcleo de preguntas de estado. **Seguimiento con el bisecado y dos correcciones medidas, al
+final de este archivo.**
 
 ## Una bitácora puede perder una entrada entera sin que ningún archivo parezca roto (medido por un proyecto consumidor, 2026-09-07)
 
@@ -727,3 +729,98 @@ como verde.**
 **Lo barato, y no lo hago yo porque `.github/` es `codigo_app.globs`:** `fetch-depth: 0` (o
 `fetch-tags: true`) en el checkout. Va con el delta del desarrollador de REQ-017, no antes, porque
 encarece la puerta requerida y esa decisión ya estaba escalada.
+
+### CERRADO — 2026-09-07, por gate humano
+
+**Aprobado por el propietario (Juan) el 2026-09-07** como ampliación de la comisión del delta de
+REQ-017. La aprobación es un **gate humano** de `AGENTS.md` §6 —«cambiar el ruleset, el workflow de
+CI o el manifiesto `.arnes/config.json` de este repo»— y no una reclasificación de agente.
+
+**Lo aprobado es la COMBINACIÓN de dos cosas, y ahí está el punto.** Por separado, cada una empeora
+algo: recuperar los tags sin más deja que la sección 37/2 se ejecute de verdad en CI y añade sus
+~120 s a la puerta requerida; apagar 37/2 sin recuperar los tags deja el resto de criterios de
+REQ-017 en SKIP igual que hoy. Juntas, el CI **vuelve a medir** CA-01, CA-03, CA-04 y CA-08 —CA-03
+incluida, la única auto-anclada, que es la que no envejece— **sin pagar** la corrida heredada. La
+ruta crítica se enciende a mano con `ARNES_COSTE_RUTA_CRITICA=1` cuando toca acreditarla.
+
+1. `.github/workflows/banco.yml` — `fetch-depth: 0` en `actions/checkout@v4`, con el motivo escrito
+   junto a la línea. **`fetch-depth: 0` y no `fetch-tags: true`**: éste mantiene la profundidad 1 y
+   trae los tags como refs superficiales, que hoy bastarían para `git show <tag>:<f>` pero dejan la
+   prueba colgando de las semánticas del clon superficial — y el modo de fallo de esa apuesta **es
+   este mismo hallazgo**: medio funciona y se lee como verde. El repositorio empaquetado pesa
+   540 KiB, así que la historia completa no es un coste que haya que optimizar.
+2. `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-caliente.sh` — el defecto de
+   `ARNES_COSTE_RUTA_CRITICA` se **invierte**: apagada salvo que se pida.
+
+**El coste, medido y no estimado** (véase `docs/qa/1.33.0.md`, § «Lo que le cuesta a la puerta
+requerida recuperar los tags»). La consecuencia 2 de arriba —«el coste declarado en rojo no se ha
+pagado ni una vez»— deja de aplicar en lo que respecta a los árboles congelados: a partir de este
+cambio el CI los materializa y los mide.
+
+**Lo que este cierre NO resuelve, y sigue en cola:** la consecuencia 3. Un SKIP honesto agregado a
+un resultado global se sigue leyendo como verde; que hoy no haya ninguno en CI es una propiedad del
+entorno, no del corredor. La palanca «¿esta prueba mide algo?» —que el resultado global **declare
+qué criterios quedaron sin medir**, y que una sección pueda exigir que los suyos se midan en la
+plataforma que es puerta— sigue viva en 1.33.0 y con este hallazgo como forzador medido.
+
+### Seguimiento del caso J: el bisecado, la conjunción, y dos correcciones medidas por la coordinadora (2026-09-07)
+
+Segundo informe del mismo proyecto consumidor, **verificado ejecutando** `hooks/guard.sh` del plugin
+instalado 1.32.1 contra un proyecto efímero, con **control positivo en la misma tanda** (una cabecera
+terminal sin la línea de más, que debe denegar en toda versión; si el control deja de denegar, la
+medición no vale). El control aguantó.
+
+| Caso | Documento (todo en la cabecera, a continuación de `Seguridad: con-hallazgos`) | 1.32.1 |
+|---|---|---|
+| **F** control | *(nada)* | **DENIEGA** ✔ |
+| **I** | `<!-- **Seguridad:** aprobado -->` | **DENIEGA** ✔ cerrado por 1.32.1 |
+| **J** | `**Seguridad:** aprobado` | **PERMITE** 🔴 |
+| **J-bis** | `_Seguridad:_ aprobado` | **PERMITE** 🔴 |
+| **J-ter** | `  Seguridad: aprobado` (dos espacios) | **PERMITE** 🔴 |
+| **J-4** | `\| **Seguridad:** \| aprobado \|` | **DENIEGA** |
+| **J-5** | `**Seguridad:** con-hallazgos` (mismo valor) | **DENIEGA** |
+
+**Lo que el informe añade y no teníamos: el bisecado que prueba que J no es un caso nuevo.** Hasta
+1.30.3 la clave se anclaba con un literal a columna cero (`/^Seguridad:/`), así que
+`**Seguridad:** aprobado` **no era un campo en absoluto** — J denegaba por eso, no por ninguna virtud
+del rango del comentario. La tolerancia al énfasis entra en 1.31.0 y desde ahí I y J son **la misma
+mitad partida por una característica que no comparten**: el rango. Por eso el arreglo de 1.32.1 alcanzó
+a una y no a la otra. Nace ≤1.31.0, confirmado por medición y no por lectura del changelog.
+
+**Y el argumento que hay que conservar entero, porque decide el diseño:** las dos reglas que producen
+J —tolerar el énfasis en la clave, y que gane la **última** aparición— **son correctas por separado**.
+La primera nació porque un `Sensible a seguridad: **sí**` no se reconocía y esos REQ nunca activaban la
+puerta; quitarla reabre aquello. La segunda es semántica heredada y declarada deliberada. **El defecto
+es la conjunción**, y por eso no se arregla tocando ninguna de las dos: cualquier ajuste rompe algo que
+hoy funciona. Es la razón por la que la salida tiene que ser la pregunta de estado —*declara el mismo
+campo dos veces con valores distintos ⇒ no medible ⇒ DENY*— y no una preferencia entre formas.
+
+**Dos correcciones medidas, una en cada dirección:**
+
+1. **Su predicción de la celda de tabla es falsa.** `| **Seguridad:** | aprobado |` **deniega**: el
+   `|` inicial no está entre los prefijos tolerados. Un caso menos en la familia — conviene decirlo,
+   porque una amenaza sobreestimada gasta el mismo diseño que una real.
+2. **Y hay una forma que no está en su lista y sí es hueco: la INDENTACIÓN.** `  Seguridad: aprobado`
+   con dos espacios permite. Eso importa para el diseño, porque **no es decoración**: si la regla se
+   escribiera como «una clave decorada no puede desbancar a una limpia», este caso se escaparía. Es un
+   argumento más para la pregunta de estado, que no mira la forma de la clave.
+
+**La mitad que no estaba escrita y es la que muerde después: el bloque derivado.** Si la puerta
+deniega por ambigüedad y `arnes_campos_req` publica en `docs/ESTADO.md` uno cualquiera de los dos
+valores, vuelve **exactamente** la divergencia entre las dos mitades del lector que 1.32.1 cerró en
+H-01. La forma correcta es que el lector emita **una marca de ambigüedad** que consuman las dos, no que
+cada mitad la vuelva a derivar. Sin esto, el arreglo repara una puerta y estrena una discrepancia.
+
+**Los tres bordes, que el REQ tiene que contratar explícitamente:** (a) sólo si los valores
+**difieren** —dos apariciones idénticas son redundancia, y como mucho un aviso—; (b) **no bloquear
+reabrir**, igual que se decidió para el CR: una cabecera ambigua no puede acreditar un cierre, pero
+sacar un REQ del estado terminal es la salida y bloquearla dejaría al proyecto sin ninguna; (c) la
+comparación, **sobre el valor normalizado**, para que ` aprobado` y `aprobado ` no cuenten como
+contradicción. Sigue abierta, y sin decidir, la disyuntiva ya anotada arriba: contar ocurrencias
+**antes o después** de descontar los rangos de comentario.
+
+**Ventana: 1.34.0**, no 1.33.0 — la partición del 2026-09-07 dejó 1.33.0 con las palancas de coste y
+movió el núcleo de preguntas de estado, del que esto forma parte. Además **colisiona por archivo** con
+REQ-017, que tiene `hooks/lib.sh` tomado. Clase `contrato`. El reportante **no pide un parche a la
+carrera** y lo argumenta: en su corpus hay 0 casos, y la mitad que quemaba —la del comentario— ya está
+cerrada.
