@@ -91,6 +91,18 @@ Esta ventana va a tener muchas comisiones, y las tres primeras palancas están *
 | La nota de migración **una vez al cerrar** | `skills/arnes-upgrade/SKILL.md` colisionaba en 15 de 15 pares | Paralelismo real entre comisiones |
 | **Adelgazar `AGENTS.md`** (cuarta, propuesta por la coordinadora) | ~9 k tokens de impuesto fijo en **cada** subagente; una comisión de subida de versión gastó 28 500 tokens para ~3 000 de trabajo real | El impuesto lo paga cada comisión de 1.34.0, que son muchas |
 
+> **Alcance final de 1.33.0, fijado por el propietario el 2026-09-07 con los cuatro REQ ya escritos y
+> medidos: REQ-017 + REQ-019 + REQ-021. `REQ-020` pasa a 1.34.0.**
+>
+> Con los cuatro, la ventana salía a **~5–6 h** frente a las ~3 h con que se partió esa misma mañana —
+> REQ-021 solo son ~2 h y ~650 k tokens—. Y el corte no es sólo presupuestario: **REQ-020 depende de
+> REQ-021**, porque su criterio de coste pide exactamente las sondas que REQ-021 construye (series
+> intercaladas, mínimo de k, procesos por sección). El orden natural es **021 → 020**, y hacerlo al
+> revés obliga a escribir las sondas dos veces. **REQ-021 era el peor candidato a aplazarse** por su
+> propio argumento: paga ~150 k por ventana más dos clases de prueba-que-miente, y 1.34.0 es la que más
+> comisiones tiene.
+
+
 > **Y la palanca 3 es la que hace útil lo que viene después: el paralelismo.** Hoy no se puede
 > despachar en paralelo casi nada, y no por prudencia — `skills/arnes-upgrade/SKILL.md` colisionaba en
 > **15 de 15** pares de comisiones porque cada una escribía ahí su nota de migración. Retirada esa
@@ -288,7 +300,18 @@ con escepticismo. Reglas de diseño para el segundo, y son distintas:
 
 ## 1.35.0 — el banco en el que se puede creer
 
-**Qué entra:** la puerta que pregunta si las pruebas **miden** algo, por cribado y mutación.
+**Qué entra:** el **runner de mutación** y el **cribado automático** de aserciones sobre los 847 casos.
+
+> **Ajuste del 2026-09-07, para que esta ventana y `REQ-020` no digan lo mismo.** La *puerta* que
+> pregunta si una prueba mide algo es **REQ-020**, y va en **1.34.0**. Lo que queda aquí es lo que ese
+> REQ dejó fuera **a propósito**: la herramienta de mutación —con sus invariantes de árbol limpio y una
+> mutación cada vez— y el cribado automático. En REQ-020 la mutación entra como **procedimiento
+> acreditado y registrado por un tercero**, no como herramienta; construir la herramienta allí habría
+> sido la quinta palanca y repetía el ciclo 3 con otro nombre.
+>
+> Y la regla que esta ventana hereda de la tarde del 2026-09-07: **«acreditado por mutación» tiene que
+> decir POR QUIÉN.** Dos corpus, misma dirección — el autor rompe donde sabe que importa; sólo un
+> tercero rompe donde no ha mirado.
 
 Es la ventana con más valor demostrado por la experiencia de este repositorio, y la razón está en la
 bitácora: un caso pasaba con el JSON vacío; otro decidía por reloj de pared; una sección entera

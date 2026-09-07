@@ -2682,3 +2682,382 @@ están puestos; comprobar el resto es de la coordinadora, no mío. **Con una con
 se deriva de esta misma revisión:** la comprobación de «todo en verde» se hace sobre
 `tools/arnes-lectura.sh`, no sobre el bloque derivado de `docs/ESTADO.md`, mientras el residual siga
 abierto.
+
+---
+
+## Revisión R-010 — auditoría **PREVENTIVA** de REQ-019 y REQ-021, ventana 1.33.0 (`cand/1.33.0`) — 2026-09-07
+
+**Qué es y qué no es.** Es la excepción nombrada de `AGENTS.md` §6: una revisión hecha **antes de que
+exista el código**, sobre el diseño y sobre el REQ mismo. Se declara al emitirla —`Seguridad:
+preventiva` en los dos REQ— y **no acredita nada construido**. Cuando el código exista, la auditoría
+se repite en su turno, después del `qa-tester`. Los dos REQ están `pendiente`, con `QA: pendiente`, y
+no hay una línea escrita de ninguno de los dos: `docs/arnes/` no existe y `tests/util/` tampoco.
+
+**Alcance leído:** `requirements/REQ-019.md`, `requirements/REQ-021.md`,
+`docs/decisions/ADR-003-adelgazar-agents-md-sin-tocar-la-plantilla.md`, `AGENTS.md`,
+`requirements/README.md`, `.arnes/config.json`, `tests/escenarios/hooks/README.md` (invariantes del
+banco), el bucle de despacho y la red de limpieza de `tests/escenarios/hooks/run.sh:590-613`, y la
+sonda de procesos que hoy vive en
+`tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-caliente.sh:353-386`.
+**Nada ejecutado:** el banco no se corrió, por instrucción de la coordinadora — hay una comisión de QA
+midiendo REQ-017 y una corrida ajena le falsea las cifras. Es la misma regla que REQ-021 CA-06 declara
+y que el incidente de las 3 h 41 min midió.
+
+**Método.** Lectura de contrato, no de código: se busca la propiedad que cada criterio **no** asegura
+y el enunciado que resulta **más fuerte que la verdad**. Dos medidas de apoyo, ambas sobre el árbol
+actual y sin ejecutar nada del banco: `diff templates/AGENTS.md.tpl AGENTS.md` da hoy **40 líneas que
+sólo existen en la plantilla** y **73 que sólo existen en `AGENTS.md`** (entrada de SEC-033), y
+`grep -l 'AGENTS\.md' requirements/REQ-*.md` da **21 de 21** REQ (entrada de SEC-034).
+
+---
+
+### SEC-031 — `contrato` · **abierto** · REQ-019 · severidad alta · dueño `analista-requerimientos`
+
+**La acotación de una promesa puede delegarse mientras la promesa se queda, y entonces lo que queda escrito es MÁS FUERTE que la verdad**
+
+- **Ubicación:** `requirements/REQ-019.md` — CA-02 punto 3 y §«El criterio: qué se queda y qué se va»
+  (el filtro de tres preguntas), leídos contra CA-10.
+- **La pregunta que contesta:** *¿hay alguna forma de perder una obligación sin borrar texto?* Sí, y
+  ésta es la principal: **no se pierde la obligación, se pierde su límite.**
+- **Descripción.** El filtro de tres preguntas tiene **dos cajones**: lo que *manda* se queda; lo que
+  *explica o justifica* se va. Una **acotación** —«la cobertura sobre `Bash` es parcial a propósito»,
+  «un hook muerto no deniega», «es una barandilla, no una jaula»— no cabe en ninguno de los dos: no
+  ordena nada, así que falla la pregunta 1 y **se delega por construcción**. Y CA-02 punto 3 lo
+  bendice explícitamente: para cada fila de §13 basta que «el texto que describe su **alcance real**»
+  exista en `AGENTS.md` **o** en un destino alcanzable por puntero. La tabla de §13 se conserva byte a
+  byte (CA-02.1) — y la tabla es una lista de **promesas de cobertura**. Separar la promesa de su
+  acotación deja al lector que no salta con un modelo del sistema **más protegido de lo que está**.
+- **Por qué esto es seguridad y no estilo.** Es la forma de defecto que este registro ya midió cuatro
+  veces —**SEC-015**, **SEC-023**, **SEC-025** y **SEC-030**—: *una enumeración de lo que un control
+  no cubre envejece hacia el lado que abre*. Aquí no envejece: se **muda de sede** en un solo cambio.
+  CA-10 es asimétrico y por eso no lo ve — prohíbe **añadir** una obligación y no dice nada de
+  **restar una acotación**, que es la dirección peligrosa.
+- **Consecuencia operativa inmediata, en esta misma ventana.** **SEC-030** está `abierto` con ventana
+  **1.33.0** y su remediación 1 es literal: *«el hueco entra en la enumeración de §13 y en
+  `templates/AGENTS.md.tpl` con su número medido»*. Si REQ-019 delega esa enumeración antes, la
+  declaración de un **fail-open de la puerta de cierre** aterriza en un archivo que nadie lee por
+  defecto. Los dos trabajos van en el mismo mes y ninguno de los dos lo dice.
+- **Remediación (write-back, `analista-requerimientos`).**
+  1. **Criterio nuevo, por propiedad y no por lista:** *toda unidad de texto que **acote** una promesa
+    que permanece en `AGENTS.md` —cobertura parcial, hueco declarado, límite de plazo, «no lo
+    comprueba ninguna máquina»— deja **en la misma sede que la promesa** el enunciado de la acotación
+    **por propiedad**, con el puntero al sitio único donde vive el detalle exhaustivo y la marca «no
+    exhaustivo»; sólo la casuística se delega.* La forma ya está escrita en `requirements/README.md`
+    §(a) y no hay que inventarla; cuesta una frase por promesa, no bytes.
+  2. **Tercer cajón en el filtro:** además de «¿manda?» y «¿explica?», *¿acota?* — y una acotación
+     nunca se separa de lo que acota.
+  3. **CA-10 simétrico:** el número de **acotaciones que dejan de acompañar a su promesa** es no más
+     de 0, con la misma verificación por señalamiento que ya usa para las obligaciones nuevas.
+  4. **Orden con SEC-030:** o la declaración del agotamiento del temporizador entra **antes** del
+     reparto, o el reparto la trata como acotación bajo la regla 1. Se acuerda al despachar, no
+     después.
+
+---
+
+### SEC-032 — `contrato` · **abierto** · REQ-019 · severidad alta · dueño `analista-requerimientos`
+
+**La no-pérdida se contrata por BLOQUE y la alcanzabilidad por SECCIÓN: en esa diferencia de grano cabe un bloque que sobrevive literalmente y deja de ser leído**
+
+- **Ubicación:** `requirements/REQ-019.md` — CA-01 (grano: «todo párrafo, fila de tabla o viñeta»),
+  CA-03 (grano: «cada archivo de destino … existe **al menos un** puntero»), CA-12 (grano: «una
+  [pregunta] por **sección delegada**»), CA-13 (quién escribe ese conjunto).
+- **Descripción.** CA-01 es una partición **por bloque** y es fuerte: cero bloques sin localizar, de
+  contrato, comparación byte a byte con `grep -F`. Las dos garantías de que el bloque **se sigue
+  leyendo** operan un grano por encima: **un** puntero por archivo de destino y **una** pregunta por
+  sección delegada. Un archivo de destino que recoja doce bloques de tres secciones cumple CA-03 con
+  un puntero y CA-12 con tres preguntas; los otros nueve bloques están **dentro del archivo** y
+  **fuera de todo lo que se comprueba**. La propiedad que el REQ quiere —«no se puede perder una
+  invariante que no se ha borrado»— se sostiene sobre los bytes; la que hace falta —«no se puede
+  volver inalcanzable»— se comprueba sobre secciones.
+- **Y el universo lo declara quien hace el reparto.** El conjunto de preguntas de trabajo se escribe
+  «al hacer el reparto, en la tabla de decisión de CA-13», es decir: **el mismo agente que decide qué
+  sale escribe la prueba de que lo que salió se encuentra**. Un examinando que redacta su examen. Es
+  exactamente la cuarta forma que REQ-020 nombra —*el universo encogido en silencio*—, y aquí no hace
+  falta mala fe: basta no imaginar la pregunta que un bloque contesta, que es la razón por la que ese
+  bloque parecía prescindible.
+- **Riesgo.** Un bloque de gobierno vivo, verbatim, en un archivo que ningún puntero anuncia y ninguna
+  pregunta interroga. CA-01 lo declara conforme, CA-03 lo declara conforme y CA-12 nunca lo mira.
+- **Remediación (write-back, `analista-requerimientos`).**
+  1. **Igualar el grano en el subconjunto que importa:** todo bloque delegado que **enuncie o acote**
+     una obligación, prohibición, umbral, condición de cierre o cobertura —la propiedad, no una
+     lista— lleva **su propia** entrada en la tabla de CA-13 **con su pregunta de trabajo**, y CA-12
+     se ejerce sobre **ese** conjunto, no sobre «una por sección». Los bloques puramente narrativos
+     (una anécdota medida, un «por qué») siguen con el grano de sección.
+  2. **Terceros ojos, que es lo que cierra el universo encogido:** las preguntas de trabajo las
+     redacta **quien no hizo el reparto**. Precedente medido y ya citado en el propio REQ-021: la
+     mutación de un tercero encontró **el doble** que la del autor (REQ-020 CA-08). Es gratis aquí,
+     porque el revisor ya existe.
+  3. Y en cuanto exista el reparto, **el conjunto de preguntas se cita, no se transcribe**: sitio
+     único en la tabla de CA-13.
+
+---
+
+### SEC-033 — `contrato` · **abierto** · REQ-019 · severidad media · dueño `analista-requerimientos` (el criterio) y `desarrollador` (el residual de ADR-003)
+
+**El espejo contratado NO cubre el modo de fallo que importa: cubre un subconjunto, en una sola dirección, y una sola vez**
+
+- **Ubicación:** `requirements/REQ-019.md` CA-05; `docs/decisions/ADR-003-…md` §Decisión (tabla de
+  invariantes) y §Consecuencias («CA-05 lo detectará el día que ocurra»).
+- **La pregunta que contesta:** *¿el sustituto cubre una regla cambiada en una sede y no en la otra?*
+  **No, en las tres dimensiones que tiene esa pregunta.**
+  1. **Subconjunto.** CA-05 se enuncia sobre «cada bloque **delegado** por CA-01». Los bloques que
+     **se quedan** en `AGENTS.md` —la tabla entera de §13, el flujo de §6, las cinco reglas de §9—
+     salen del espejo. El `diff` de hoy los cubría. Un cambio de regla es **más probable** en lo que
+     se queda, porque es lo que se lee.
+  2. **Dirección.** `grep -F` es unidireccional: comprueba *delegado → plantilla*. `diff` es
+     simétrico. Un cambio hecho **sólo en la plantilla** —que es lo que heredan **todos** los
+     proyectos— queda invisible. No es hipotético: hoy hay **40 líneas que existen sólo en la
+     plantilla**. Y esta dirección ya tiene doctrina firmada en este registro: R-009 dictaminó que
+     «borrar cualquiera de las dos filas, **o desacoplarlas**, es regresión de herencia» (familia
+     SEC-015). CA-05 sólo ata un extremo de la cuerda.
+  3. **Momento.** CA-05 es una comprobación **de la revisión de este cambio**; REQ-019 deja fuera de
+     alcance, con su motivo, cualquier guardián permanente. Así que «si alguien cambia una regla en
+     una sede y no en la otra, esta comprobación lo dice» es **falso tal como está escrito**: no hay
+     nadie que la vuelva a ejecutar. Es, literalmente, la lección que este proyecto midió esta misma
+     semana y anotó en `docs/ESTADO.md`: *una comprobación contra línea base congelada es
+     acreditación de fail-before, no puerta permanente* (CA-05 de REQ-017, y H-08 desde el otro
+     lado). REQ-021 CA-08 sí la aplicó —distingue acreditación única de puerta auto-anclada—;
+     REQ-019 no.
+- **Riesgo.** Una divergencia aceptada cuyo control declarado no la vigila. El daño no es de esta
+  ventana: es que 1.34.0 empiece a adelgazar la plantilla **creyendo** que el espejo está medido.
+- **Remediación (write-back).**
+  1. **Reformular CA-05 sobre el documento entero y en las dos direcciones:** todo bloque de
+     `AGENTS.md` **y de sus destinos** aparece en la plantilla o lleva la marca `sin espejo en la
+     plantilla`, **y** todo bloque de la plantilla aparece en `AGENTS.md` o en un destino, o lleva la
+     marca simétrica. Es el mismo bucle `grep -F`, con la lista de entrada al revés; no cuesta un
+     criterio nuevo, cuesta una frase.
+  2. **Decir de qué tipo es la comprobación**, con las palabras que este proyecto ya usa:
+     **acreditación única**, no puerta. Y declarar el **forzador observable** que la vuelve a
+     disparar —*toda comisión que edite `AGENTS.md`, un destino o la plantilla durante la
+     divergencia la re-ejerce*— con su dueño. Un residual cuyo disparador es «que alguien se
+     acuerde» no vence: se olvida.
+  3. Corregir en ADR-003 la frase «CA-05 lo detectará el día que ocurra», que hoy afirma una
+     detección continua que el mecanismo no tiene.
+
+---
+
+### SEC-034 — `contrato` · **abierto** · REQ-019 · severidad media · dueño `analista-requerimientos`
+
+**El mapa de archivos declara menos de lo que los criterios obligan a escribir: CA-06 y CA-09 escriben en REQ ajenos y `Archivos:` no los declara**
+
+- **Ubicación:** `requirements/REQ-019.md` línea 4 (`Archivos:`) contra CA-06 y CA-09.
+- **Descripción.** CA-06 obliga, cuando una cita queda falsa, a **versionar el REQ que la contrata en
+  el mismo cambio** con entrada de Historial; CA-09 dice que la única salida legítima es exactamente
+  ésa. Eso es escribir en `requirements/REQ-0XX.md`. El campo `Archivos:` declara **sólo**
+  `requirements/REQ-019.md`. Medido en el árbol: **21 de 21** REQ citan `AGENTS.md`, así que el
+  universo de CA-06 es *todos*.
+- **Riesgo.** `tools/arnes-paralelo.sh` responderá **`disjunto`** entre REQ-019 y una comisión sobre
+  un REQ que REQ-019 va a editar. Es la clase de fail-open que este registro ya tiene abierta dos
+  veces —**SEC-014** (el paréntesis intermedio que borraba medio mapa en silencio) y **SEC-020** (el
+  campo decorado)—, sólo que aquí el mapa no se lee mal: **está incompleto en origen**. Y el daño es
+  el que `AGENTS.md` §6 nombra: conflicto de fusión y trabajo perdido. Añádase que un REQ
+  `completado` editado por CA-06 **se reabre** (`AGENTS.md` §9), lo que puede alcanzar a REQ que
+  nadie esperaba tocar.
+- **Remediación.** Declarar en `Archivos:` el alcance real —`requirements/REQ-*.md`— **sin
+  decoración de Markdown** (SEC-020 sigue abierto). Y aceptar la consecuencia honesta, que es la
+  correcta: **REQ-019 colisiona con casi todo y va en serie**. Un `disjunto` barato sobre un mapa
+  corto es peor que un `colisiona` caro sobre uno cierto. Si se quiere acotar, se acota el
+  **criterio** (p. ej. CA-09 endurecido: ningún bloque citado se mueve en esta ventana, y entonces
+  CA-06 no escribe en ningún REQ ajeno), no el mapa.
+
+---
+
+### SEC-035 — `contrato` · **abierto** · REQ-021 · severidad alta · dueño `analista-requerimientos`
+
+**«Ninguna sonda sobrevive a su invocación» está enunciada sobre los hijos DIRECTOS, y se apoya en una red del corredor que no ve lo que el incidente medido hizo — y que al mudar las sondas deja de verlas**
+
+- **Ubicación:** `requirements/REQ-021.md` CA-04 (puntos 1 y 2, y su párrafo de acreditación), leído
+  contra `tests/escenarios/hooks/run.sh:596-602` y la invariante 5 de
+  `tests/escenarios/hooks/README.md`.
+- **Tres defectos, y el tercero es el que importa.**
+  1. **Grado de parentesco.** CA-04.1 dice «no queda vivo **ningún proceso que ella lanzara**». El
+     caso medido —un envoltorio de `grep` que se resolvía a sí mismo— no era un proceso que la sonda
+     lanzara: era un **descendiente** creado por el sujeto instrumentado, recursivamente. Un
+     criterio sobre hijos directos declara conforme exactamente el incidente que lo origina.
+  2. **La red que se cita como precedente no sostiene el peso.** CA-04 se presenta como «la propiedad
+     que el corredor ya vigila para las secciones (invariante 5), llevada a donde el corredor no
+     llega». Lo que el corredor hace es `jobs -pr` **dentro del subshell de la sección**
+     (`run.sh:598`): eso lista los **jobs de ese shell**, no los nietos ni los hijos de un programa
+     invocado. La afirmación es más fuerte que el mecanismo.
+  3. **Y la mudanza estrecha la cobertura, que es una regresión de control introducida por este
+     mismo REQ.** Hoy las sondas viven **dentro** del archivo de sección: lo que dejan en segundo
+     plano **es** un job de ese subshell y `jobs -pr` lo alcanza. CA-01.1 las convierte en
+     **programas invocados**; a partir de ahí, lo que quede vivo es hijo del **proceso de la sonda**,
+     y cuando la sonda muere queda reparentado y **fuera** de `jobs -pr`. La red pasa del **juez**
+     (el corredor, con su cuadre por archivo y total) al **instrumento**, que es justo el artefacto
+     que este REQ decide **no** proteger. Ninguna de las dos cosas está dicha en el REQ.
+  4. **El plazo es circular donde hizo falta.** CA-04.2 exige un plazo «derivado de la propia
+     medición» y prohíbe el absoluto. Correcto como doctrina de **techos**, pero un vigilante no
+     puede derivar su plazo de una medición que **todavía no ha terminado**: en la **primera**
+     repetición no hay mínimo, y la primera repetición es exactamente donde el envoltorio recursivo
+     colgó. Sin plazo de arranque, el caso medido vuelve a caber.
+- **Riesgo.** Un proceso desbocado sobrevive a la corrida, come un núcleo y **envenena la línea base
+  de la comisión siguiente**, que concluirá «dentro del ruido» con lógica interna impecable. Está
+  medido: 3 h 41 min al 99,6 %, 92,6 s donde había 39 s. Y las cifras que envenena son las que
+  gobiernan la **puerta requerida de `main`**.
+- **Remediación (write-back, `analista-requerimientos`).**
+  1. **Enunciar la propiedad por parentesco completo:** *al terminar la sonda no sobrevive **ningún
+     descendiente suyo**, lo lance quien lo lance y en el nivel que sea*. Y decir que la comprobación
+     **no puede apoyarse en `jobs`**, que sólo ve los hijos directos del shell que la ejecuta. El
+     mecanismo lo elige el `desarrollador` —grupo de procesos o sesión propia y muerte del grupo es
+     lo habitual—; **yo no escribo código**.
+  2. **Acreditar con un nieto, no con un hijo.** El par fail-before/pass-after de CA-04 se ejerce
+     sobre un sujeto que deja vivo un **descendiente de segundo nivel**; con un hijo directo lo pasa
+     una implementación ingenua.
+  3. **Plazo de arranque declarado:** todo subproceso nace bajo plazo desde la **primera**
+     repetición; el de arranque no puede derivarse de lo que aún no se ha medido, así que se declara
+     su origen y es un techo **operativo** (se baja con la medición). Y su vencimiento es un
+     **resultado publicado** (`estado=plazo-agotado`, con el número que sí obtuvo), nunca un SKIP
+     mudo ni un PASS — la misma regla que CA-10 ya impone al resto de los estados.
+  4. **Decir en el REQ que la red del corredor deja de cubrir a las sondas al mudarlas**, y qué la
+     sustituye. Una mudanza que estrecha un control sin declararlo es deriva (`AGENTS.md` §9).
+
+---
+
+### SEC-036 — `contrato` · **abierto** · REQ-021 · severidad alta · dueño `analista-requerimientos`
+
+**Acepto NO proteger `tests/util/`; NO acepto el sustituto tal como está contratado: la calibración viaja dentro del artefacto que certifica, la juzga la propia sonda, y nada ata su camino al de la medición**
+
+- **Ubicación:** `requirements/REQ-021.md` §«La decisión que se toma aquí y no se deja abierta»
+  (punto 3 y el residual, con dueño `auditor-seguridad`) contra CA-03 y CA-01 punto 3.
+- **Lo que acepto, y por qué.** La decisión de **no** meter `tests/util/` en `codigo_app.globs` es
+  correcta y sus dos motivos se sostienen: (a) protegerlas se las quitaría al `qa-tester`, que las
+  rompe **por oficio** —y el precedente de la mutación de un tercero encontrando el doble está
+  medido—; (b) tocar `.arnes/config.json` abre **gate humano** y una entrada en
+  `PENDING_APPROVAL.md` **deniega el cierre de cualquier REQ**, incluido REQ-017. Bloquear trabajo
+  ajeno por custodiar un instrumento es peor negocio que acreditar la medida. **Concurro con la
+  dirección: acreditar > custodiar.**
+- **Lo que no acepto: el supuesto que el sustituto necesita y no tiene.** «Una sonda alterada —por
+  quien sea— no da verde» sólo es cierto si la calibración **no se puede alterar en el mismo
+  movimiento que la sonda**. Cuatro grietas, todas de contrato:
+  1. **Autocertificación.** CA-03 dice que cada sonda «**trae consigo**» su caso de calibración: la
+     expectativa —el factor conocido y su **banda declarada**— vive en el mismo archivo que se
+     cuestiona. Editar los dos es una sola edición. La banda es además **operativa** («se estrecha
+     con la medición») y el REQ no le da sede única: ensancharla es una línea y no la mide nadie.
+  2. **Contradicción interna con CA-01.3.** CA-03 hace que «la calibración **FALLA** … nombrando el
+     instrumento y los dos factores», mientras CA-01.3 prohíbe que una sonda dicte veredicto —«el
+     brazo, no el juez»— y CA-10 pone el veredicto en el ayudante de `run.sh`. Tal como están
+     escritos, los dos criterios no se pueden cumplir a la vez.
+  3. **No hay identidad de camino.** Nada obliga a que la calibración recorra **el mismo código** que
+     la medición con sólo el sujeto sustituido. Una sonda con un camino especial para el par
+     sintético calibra en verde y miente sobre el sujeto real — que es, con precisión, la propiedad
+     que el REQ dice cerrar («dejó de responder al sujeto») y la forma «el caso que no se ejecuta»
+     de REQ-020, un nivel más arriba.
+  4. **El forzador del residual es inobservable.** Está escrito como «una sonda cuya calibración
+     resulte insuficiente para detectar una alteración deliberada». Eso sólo se sabe cuando ya pasó y
+     alguien lo notó; un residual cuyo disparador es el daño que debía evitar **no vence nunca**.
+- **Y una consecuencia de separación de funciones que el REQ no nombra.** Fuera de
+  `codigo_app.globs`, `guard-codigo` permite escribir `tests/util/` a **cualquier** agente, incluida
+  la **sesión coordinadora**. Es la misma sesión que reúne la evidencia de «todo en verde» y que
+  **fusiona, etiqueta y publica por delegación permanente** del propietario (2026-09-05). Quien
+  acredita, quien decide y quien puede editar el instrumento son el mismo actor, sin ninguna puerta
+  en medio. No es una acusación: es la razón por la que el sustituto tiene que ser **verificable por
+  un tercero**, y no la palabra del instrumento.
+- **Remediación (write-back, `analista-requerimientos`), y con ella acepto el residual.**
+  1. **La expectativa de la calibración vive en el JUEZ, no en la sonda:** el factor esperado y su
+     banda se declaran en el ayudante de veredicto de `run.sh` (sitio único, ya contratado por CA-01
+     punto 4 y CA-10); la sonda publica **los dos factores obtenidos** como campos de su registro y
+     no juzga. Cierra a la vez la autocertificación y la contradicción con CA-01.3, y **no cuesta un
+     criterio nuevo**: cuesta mover una frase de CA-03 a CA-10.
+  2. **Identidad de camino, contratada:** la calibración se ejerce **por el mismo camino de código
+     que la medición**, sustituyendo únicamente el sujeto; una sonda con un camino propio para
+     calibrar incumple.
+  3. **Forzador observable para el residual, con vencimiento:** en la pasada de conformidad de
+     **1.34.0** se acredita el sustituto **por mutación de un tercero** —se altera una sonda y se
+     exige que la calibración **no dé verde**—, usando el aparato que REQ-020 construye y que el
+     orden recomendado (`REQ-017 → REQ-021 → REQ-020`) ya deja disponible. Si la mutación pasa
+     inadvertida, el sustituto queda desmentido y la decisión de no proteger `tests/util/` vuelve a
+     la mesa **con el número delante**.
+- **Residual: lo asumo como dueño (`auditor-seguridad`)** con esas tres condiciones escritas, y no
+  antes de que estén en el REQ. Un residual que sólo vive en este registro es deriva (`AGENTS.md`
+  §9).
+
+---
+
+### SEC-037 — `instrumento` · **abierto** · REQ-021 · severidad media · dueño `desarrollador` · ventana 1.33.0 (con la implementación)
+
+**Propiedades de seguridad de la medición que hoy están en el código y en ningún criterio: la mudanza las puede perder sin cambiar un solo veredicto**
+
+- **Ubicación:** la sonda que hoy vive en
+  `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-caliente.sh:353-386`, contra
+  `requirements/REQ-021.md` CA-07 (la mudanza) y CA-04.
+- **Por qué es un hallazgo y no una nota.** CA-07 garantiza la mudanza por **veredicto** y por
+  **recuento**: ningún caso cambia de resultado, el inventario cuadra. Una reescritura que conserve
+  los veredictos puede **soltar por el camino** propiedades que hoy existen y que ningún caso
+  interroga. Es la clase de regresión silenciosa que esta bitácora tiene por mandato buscar: un
+  control presente hoy que desaparece en una refactorización verde.
+- **Las cinco propiedades, y todas están hoy en el código.** *(La lista es de lo medido en este
+  archivo; el sitio único de la conducta será `tests/util/`.)*
+  1. **El reloj se mide SIN la instrumentación.** El código lo dice con todas las letras («un
+     envoltorio por proceso mide el envoltorio») y separa la pasada instrumentada de las series de
+     reloj. Si la sonda unificada toma las dos cosas en la misma invocación, **el reloj mide los
+     envoltorios** y CA-08 (ii) queda contratando una razón contaminada. Debe ser criterio: *una
+     serie de reloj no se toma bajo instrumentación, y el registro declara si la muestra lo estuvo;
+     una muestra mixta no es publicable.*
+  2. **El directorio de envoltorios es un temporal por proceso** (`.bin47-$$`). El corredor **corre
+     las secciones en paralelo** (`run.sh:607-612`): un directorio de envoltorios con **nombre fijo**
+     es la clase medida de REQ-015 —el temporal compartido— aplicada esta vez a **ejecutables**, con
+     una sonda ejecutando el envoltorio de otra a mitad de medición. CA-04.4 habla de «temporales»;
+     debe nombrar **el directorio de envoltorios** explícitamente, y exigirlo privado y recién
+     creado.
+  3. **La ruta real va congelada en el envoltorio generado** (`exec <ruta-absoluta> "$@"`), resuelta
+     con `type -P` **antes** de tocar el `PATH`. La comprobación de «ninguna ruta cae dentro del
+     propio envoltorio» debe hacerse **sobre la ruta que queda escrita en el envoltorio**, no sólo
+     sobre la resolución previa: un envoltorio que re-resuelve por `PATH` en tiempo de llamada
+     reproduce el incidente de 1.32.1 tal cual.
+  4. **El `PATH` construido se acota a la invocación instrumentada** y no se exporta más allá; y no
+     debe contener **componentes vacíos ni relativos** (`::`, `:` final, `.`), que ponen el
+     directorio de trabajo delante de los binarios reales.
+  5. **La retirada del directorio también en los caminos de error.** Hoy las salidas
+     `ENVOLTORIO-RECURSIVO` (rc 9) y el fallo de `chmod` (rc 1) **dejan el directorio detrás**. CA-04.4
+     («se retiran en la misma salida») lo corrige, pero su acreditación debe ejercer un **camino de
+     error**, no sólo el feliz.
+- **No bloquea** (clase `instrumento`, `AGENTS.md` §6): son propiedades del instrumento, con dueño y
+  ventana. Se anotan aquí para que la mudanza las herede a propósito y no por suerte.
+
+---
+
+### Lo que esta revisión NO puede decir — la mitad honesta de una preventiva
+
+- **Nada sobre el código de REQ-019 ni de REQ-021: no existe.** `docs/arnes/` y `tests/util/` no
+  están en el árbol. Esta firma no acredita ninguna implementación.
+- **Nada sobre el reparto de bloques de REQ-019**, que es donde vive el riesgo real de perder una
+  invariante. La tabla de decisión de CA-13 no existe todavía; cuando exista, la auditoría del código
+  la revisará **bloque a bloque** contra SEC-031 y SEC-032. La predicción registrada en el REQ es una
+  intención, no un reparto.
+- **Nada sobre si los punteros resuelven ni sobre si el ahorro de CA-07 se cumple:** son mediciones
+  sobre un árbol que no existe, y esta comisión **no ejecutó nada** (QA está midiendo REQ-017).
+- **Nada sobre la implementación de las sondas:** si la calibración recorre el mismo camino que la
+  medición, si el grupo de procesos se mata entero, si el envoltorio congela la ruta — todo eso se
+  audita **leyendo el código**, en el turno que corresponde, después del `qa-tester`.
+- **Nada sobre REQ-017 ni sobre la invariante 5 tal como la está construyendo.** Lo que SEC-035 dice
+  del alcance de `jobs -pr` **también afecta** a cómo se lee esa invariante, pero REQ-017 está en
+  medio de su validación y **no es mi turno**: queda como observación para su auditoría, no como
+  hallazgo contra él, y no he tocado su REQ ni el log de QA.
+- **Nada sobre coste real.** Los ~9 000 tokens y los ~150 k por ventana son medidas del analista que
+  no he reproducido.
+
+---
+
+### ¿Veto? — **NO. Dos veredictos `preventiva`, y ninguno autoriza a cerrar**
+
+No hay veto: ninguno de los dos REQ está construido, así que no hay nada que vetar. Los siete
+hallazgos son de **contrato** salvo SEC-037 (`instrumento`), y los seis de contrato **bloquean el
+cierre** hasta el write-back del `analista-requerimientos`. Eso es lo correcto y es barato: los dos
+REQ están `pendiente`, así que cada corrección cuesta una edición de criterio y no una vuelta del
+bucle. **Ninguno de los seis pide construir nada nuevo**: cinco piden enunciar por propiedad lo que ya
+se quería decir, y uno (SEC-034) pide declarar el mapa entero.
+
+**Rigor:** los dos REQ ya están en `critico` con `Sensible a seguridad: sí`. No hay nada que subir, y
+nada se baja.
+
+### Estado de seguridad aprobado por REQ — R-010 (línea base de no-regresión, ventana 1.33.0)
+
+| REQ | Estado de seguridad | Fecha | Árbol | Controles acreditados / qué vigilar en la auditoría del código |
+|---|---|---|---|---|
+| **REQ-019** | **`preventiva`** (no es `aprobado`; no cierra) | 2026-09-07 | `cand/1.33.0` @ `1792152`, **sin código** | Se acredita **el diseño**, con cuatro huecos abiertos. Propiedades que la auditoría del código verificará bloque a bloque: (a) toda **acotación** de una promesa que se queda acompaña a su promesa, por propiedad y con sitio único (SEC-031); (b) todo bloque delegado que enuncie o acote gobierno tiene **su propia** entrada y pregunta en la tabla de CA-13, redactadas por quien no hizo el reparto (SEC-032); (c) el espejo se comprueba **en las dos direcciones y sobre el documento entero**, declarado como acreditación única con forzador observable (SEC-033); (d) `Archivos:` declara `requirements/REQ-*.md` (SEC-034); (e) CA-11 se mantiene: **ningún** destino se importa desde `CLAUDE.md` — importarlos devolvería el coste entero de forma invisible; (f) la **tabla de §13 byte a byte** y la primera frase de cada bloque `🔒` siguen en `AGENTS.md` (CA-02) — debilitarlo es regresión. |
+| **REQ-021** | **`preventiva`** (no es `aprobado`; no cierra) | 2026-09-07 | `cand/1.33.0` @ `1792152`, **sin código** | Se acredita **el diseño**, con tres huecos abiertos. Propiedades que la auditoría del código verificará: (a) **ningún descendiente** sobrevive a la sonda, sin apoyarse en `jobs`, acreditado con un **nieto** y con plazo desde la primera repetición (SEC-035); (b) la expectativa de calibración vive en el **juez** y la calibración recorre el **mismo camino** que la medición (SEC-036); (c) las cinco propiedades de medición del §SEC-037 sobreviven a la mudanza; (d) **la decisión de no proteger `tests/util/` bajo `codigo_app.globs` queda acreditada como decisión mía**, con el sustituto condicionado a la mutación de un tercero en 1.34.0 — revertirla o dejarla sin ese forzador es regresión; (e) CA-01.3 y CA-10 se mantienen: una sonda **no dicta veredicto** y un registro vacío es **FAIL**, nunca SKIP. |
+
+**Alcance de las dos firmas.** Cubren el texto de los dos REQ y de ADR-003 tal como están hoy. **No
+cubren el código posterior.** Cuando exista, la auditoría se repite **después del `qa-tester`**, como
+manda `AGENTS.md` §6.

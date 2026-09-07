@@ -124,6 +124,22 @@ recupera las copias distribuidas—. Se corrige el presente, se declara el resid
   (QA-116 y QA-117, heredados de v1.30.3, arreglo exigido en REQ-007 CA-64.1-bis y CA-64.2-bis,
   ventana 1.32.0).
 
+- **Los instrumentos de medida quedan FUERA del código protegido, y es una decisión, no un olvido
+  (R-010, 2026-09-07, prospectiva — REQ-021 aún no está construido).** `codigo_app.globs` deja
+  `tests/` fuera a propósito, para que el `qa-tester` pueda romper las pruebas por oficio. Con
+  `tests/util/` eso alcanza a **los instrumentos que producen los números que gobiernan la puerta
+  requerida de `main`**, y `guard-codigo` permite escribirlos a **cualquier** agente, incluida la
+  sesión coordinadora — que es además quien reúne la evidencia de «todo en verde» y quien fusiona,
+  etiqueta y publica por delegación permanente (2026-09-05). **Se acepta**, con el mismo criterio
+  que SEC-027: la alternativa —meterlo en el manifiesto— abre un gate humano cuya cola **deniega el
+  cierre de cualquier REQ** mientras exista, y bloquear trabajo ajeno para custodiar un instrumento
+  es peor negocio que **acreditar la medida**. El sustituto es la calibración de sensibilidad en
+  cada corrida (REQ-021 CA-03). **Condición que sostiene ese `aceptado`, y sin la cual decae:** el
+  sustituto se acredita **por mutación de un tercero** en la pasada de conformidad de 1.34.0 —se
+  altera una sonda y se exige que la calibración no dé verde—, y la expectativa de la calibración
+  vive en el **juez** (`run.sh`), no dentro de la sonda que certifica. Detalle y remediación en
+  **SEC-036**; dueño del residual: `auditor-seguridad`.
+
 ## 7. Cumplimiento
 
 No aplica ningún régimen de datos personales (no se tratan). El compromiso de cumplimiento de

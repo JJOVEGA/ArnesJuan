@@ -86,8 +86,31 @@
 - **Experimento Context Pack** (rama `exp/context-pack`, protocolo en `docs/experimentos/`): medir
   antes de construir; un paquete de contexto pre-materializado por REQ, con `implementa` derivado de
   git. Nunca se construye el grafo entero aunque el experimento gane.
-- **Límite documentado, no pendiente:** el hueco del intérprete (`python x.py` que escribe) no se
-  cierra como prevención; se cierra como detección con la puerta posterior de 1.32.0.
+- **El hueco del intérprete: PENDIENTE, ni prevenido ni detectado.** Un `python x.py` que escribe no se
+  cierra como **prevención** —eso es imposible: la ruta vive dentro del archivo y el detector sólo lee
+  el texto del comando— y **tampoco está cerrado como detección**: la puerta posterior está
+  **diseñada y pendiente en REQ-011**. Verificado el 2026-09-07 contra el plugin instalado:
+  `PostToolUse` **no existe en `hooks/`, `tools/` ni `.claude-plugin/`**, y `hooks/hooks.json` registra
+  exactamente `PreToolUse`, `Stop` y `SubagentStop`. Aparece cuatro veces en el árbol y **las cuatro en
+  documentos de planificación**.
+
+  > **Corrección del 2026-09-07, y la falta era grave.** Esta viñeta decía *«Límite documentado, **no
+  > pendiente**: … se cierra como detección con la puerta posterior de 1.32.0»* — en pasado, sobre un
+  > mecanismo que nunca se construyó, y **contradiciendo a otras dos viñetas de este mismo archivo** que
+  > lo declaran por hacer. Es otra vez **un dato correcto archivado en la categoría equivocada**: «no
+  > pendiente» cuando sí lo está. Y no era una fila cualquiera — **es la que le dice al lector que el
+  > hueco está atendido, así que quien la lee deja de buscar.**
+  >
+  > **Coste real y medido, no hipotético:** un proyecto consumidor estuvo a punto de **retirar su regla
+  > de usar `Edit`/`Write` para lo que una invariante protege**, cerrando su propia mejora sobre este
+  > mecanismo inexistente. Paró porque su encargo exigía comprobar **en el código** y no en el registro
+  > ajeno. Su `AGENTS.md` decía *«el arreglo de fondo, ya **diseñado** upstream»* — presente de diseño,
+  > no de existencia—, que es la redacción correcta y la que nos salvó.
+  >
+  > **Y la corrección no es cambiar «1.32.0» por «1.34.0»**: eso vuelve a fechar una promesa. Es decir
+  > **qué es hoy**, que es lo que está escrito arriba. La forma que este repositorio ya usa para todo lo
+  > demás, aplicada por fin a sí mismo. **Va a la pasada de conformidad de 1.34.0 como cuarta promesa
+  > más ancha que el código**, junto a las tres que ya estaban.
 
 ## Observado en el autoalojamiento (2026-09-05): fricciones del propio arnés sobre sí mismo
 
@@ -1307,8 +1330,22 @@ responde *«¿estos dos REQ declaran archivos comunes?»*. Las tres cosas que ho
 
 ### 1. La colisión universal, medida: `CHANGELOG.md`
 
-**8 de los REQ abiertos declaran `CHANGELOG.md` en su campo `Archivos:`.** ⇒ la herramienta responde
-**colisiona** para prácticamente **cualquier par**, y tiene razón. No es un defecto de la herramienta:
+**9 archivos de `requirements/` declaran `CHANGELOG.md` en su campo `Archivos:`; de ellos 4 están
+`completado`, así que son 5 de los 8 REQ abiertos** (REQ-007, 008, 011, 013, 019).
+
+> **Corrección de la coordinadora (2026-09-07, la levantó el analista de REQ-022 al negarse a
+> transcribirla).** Yo escribí aquí y en el CHANGELOG **«8 de los REQ abiertos»**, y de ahí concluí que
+> la herramienta dice «colisiona» sobre **cualquier par**. **Las dos cosas son falsas.** Conté los
+> archivos que declaran el artefacto y los llamé abiertos sin mirar su `Estado:`, y la conclusión no se
+> sigue: un par en el que uno de los dos no lo declare **no colisiona por ahí**.
+>
+> **Y lo que hay debajo es peor que la colisión que yo describía**, así que la corrección no rebaja el
+> problema, lo reencuadra: los tres REQ abiertos que **no** lo declaran —REQ-017, 020, 021— **van a
+> escribir en `CHANGELOG.md` igual**, porque toda comisión lo hace. O sea que el campo **miente en las
+> dos direcciones a la vez**: de más en cinco REQ (colisión falsa) y **de menos en tres** (`disjunto`
+> falso, que es el caro). Es exactamente la regla de las dos mitades, medida sobre el propio corpus.
+
+No es un defecto de la herramienta:
 es que **el libro mayor es un destino de escritura compartido por construcción**, igual que
 `skills/arnes-upgrade/SKILL.md` colisionaba en **15 de 15** pares por la nota de migración.
 
@@ -1394,6 +1431,36 @@ trabajo perdido.
 > mayor sale del campo porque deja de ser conjunto de escritura de la comisión —pasa a serlo de la
 > coordinadora—, no por excepción.
 
+
+> **Y la siguiente colisión universal ya está identificada, antes de que muerda: el registro de QA.**
+> Con la regla de escritura exacta aplicada, `docs/qa/<versión>.md` entra en el conjunto de escritura de
+> **toda** comisión de QA ⇒ **dos QA no podrán ir en paralelo nunca**. Dato que lo confirma: en
+> `docs/qa/` ya conviven `1.32.0.md`, `1.32.0-hallazgos-req012-013.md`, `1.32.0-hallazgos-req014.md` y
+> tres archivos de vueltas de 1.32.1 — **la partición ya se hace por necesidad y sin convención**, que
+> es el estado exacto del que salió el campo `Archivos:`. Dos salidas posibles (archivo por REQ, o
+> artefacto de la coordinadora como el libro mayor) y ninguna decidida.
+
+### 4-bis. La tercera dimensión: el **sustrato de lectura compartido**
+
+**Encontrada el 2026-09-07 al intentar despachar una cuarta comisión.** `AGENTS.md` **no aparece en el
+`Archivos:` de ningún REQ** —nadie lo escribe salvo el REQ que lo adelgaza— y sin embargo **lo lee todo
+agente al arrancar**, porque el ritual del §0 lo obliga. Lo mismo, en menor grado, para
+`requirements/README.md` y `docs/ESTADO.md`.
+
+⇒ Una comisión que **reescribe un sustrato de lectura compartido** no puede correr con ninguna otra, y
+**ninguna de las tres reglas anteriores lo detecta**: no es colisión de escritura (sólo uno escribe),
+no es colisión de máquina (no mide), y el campo `Archivos:` —que declara **escritura**, correctamente—
+tampoco lo ve. El daño no es escritura perdida: es que **las otras comisiones leyeron un suelo distinto
+del que quedó**, y eso no deja rastro en ningún diff.
+
+**Regla propuesta:** un REQ cuyo conjunto de escritura incluya un artefacto que el ritual de arranque
+obliga a leer se despacha **en solitario**. La lista de esos artefactos es corta y se declara una vez
+—hoy: `AGENTS.md`, `CLAUDE.md`, `requirements/README.md`, `docs/ESTADO.md`— y **no se infiere**.
+
+*(Caso concreto que la motiva: la implementación de REQ-019 no puede solaparse con nada, y eso cambia el
+calendario de 1.33.0. Mejor saberlo antes de despacharla que después de que tres comisiones citen dos
+versiones distintas de la misma regla.)*
+
 ### 5. La puerta posterior que falta: *¿cambió algo fuera de mi ámbito?*
 
 Todo lo anterior es **prevención**, y este repositorio ya aprendió que preguntar *antes* si algo va a
@@ -1404,7 +1471,18 @@ escribir tiene una vía nueva cada vez. La pregunta de estado equivalente es bar
 Se contesta con un inventario de marcas de tiempo o hashes antes y después; no necesita saber nada de
 lo que la comisión hizo. Es la misma forma que **REQ-011** (la puerta posterior sobre `codigo_app`) y
 la misma que **CA-06** del banco (*nada de una sección sobrevive a su sección*), un nivel más arriba.
-**Detecta la escritura perdida del punto 3**, que es justo lo que ninguna otra pieza ve.
+**Detecta la escritura perdida del punto 3** — pero **no la atribuye**, y esa distinción la levantó el
+analista de REQ-022 al intentar contratarla, contra lo que yo había escrito aquí:
+
+> En un **árbol de trabajo compartido**, la fotografía «antes/después» de una comisión contiene las
+> escrituras concurrentes de las otras. La atribución es imposible **por construcción**, no por falta
+> de instrumento.
+
+La salida no es relajar el criterio, es **partir la pregunta en dos granos**: la atribución vive en el
+**nivel de llamada** —donde cada escritura pertenece a un emisor conocido antes de que nadie más
+escriba—, vía la prevención en `Edit`/`Write`/`MultiEdit` (la ruta ya viaja en el `tool_input`, así que
+es gratis) y la puerta posterior de **REQ-011** consumiendo el conjunto de ámbito. El barrido queda
+como **red de fondo que detecta y no atribuye**, escrito como límite y no como supuesto.
 
 ### 6. Lo que NO se paraleliza, y no cambia
 
@@ -1436,3 +1514,60 @@ palanca sería repetirlo con otro nombre.
 tres comisiones corren sin CHANGELOG y sin comitear—. Una práctica en vigor que no está escrita es
 deuda desde el primer día, así que **eso se escribe en `AGENTS.md` §6 dentro de 1.33.0**, como
 documentación de lo que ya se hace, no como mecanismo nuevo.
+
+
+### Calibrar un instrumento por COSTE conocido es la forma (d) una capa más arriba (2026-09-07)
+
+**Propuesta de la coordinadora, refutada por el analista de REQ-021 con las instancias medidas
+delante.** Yo propuse que cada sonda trajera su **caso de calibración**: una entrada de **coste
+conocido por construcción**, y la sonda falla si no lo reproduce. Parecía la forma de contestar «¿esta
+sonda mide algo?» sin fiarse de quien la escribió.
+
+**No lo es, y la refutación es empírica: las tres sondas mudas de esta ventana medían tiempo real.**
+El JSON vacío daba un hook en 0,1 s con una curva plana y perfecta; el canario sin arrancar decía «sin
+casos»; la tercera escribía su salida en otro archivo. **Una calibración por coste absoluto pasa en las
+tres.** Verifica que el reloj lee tiempo; **no** verifica que la sonda mida **el sujeto**. Es la forma
+prohibida **(d), fijar la magnitud equivocada**, aplicada al **instrumento** en vez de al sujeto — y no
+se me ocurrió que la lección se aplicara un nivel más arriba de donde la escribimos.
+
+**Lo que las tres tienen en común no es el coste: es que dejaron de responder al sujeto.** ⇒ la
+calibración correcta es de **sensibilidad**, en tres piezas:
+
+1. **Factor conocido, no coste conocido.** Se duplica un parámetro del sujeto sintético y la sonda tiene
+   que reproducir **el factor** dentro de una banda declarada. **Auto-anclado**: la velocidad de la
+   máquina se cancela, igual que en un cociente de duplicación.
+2. **El par sensible / insensible.** Un sujeto cuyo coste **no** depende del parámetro tiene que dar
+   ≈1, y la calibración debe **distinguirlos**. Sin la mitad insensible, **una sonda rota que devuelva
+   siempre ≈2 pasaría**.
+3. **En cada corrida, y FALLA — nunca SKIP.** Una calibración acreditada una vez es *fail-before, no
+   puerta*: envejece hacia el lado que abre. Con su coste acotado (≤ 0,25× de la medición que habilita),
+   **porque una calibración cara es una calibración que alguien apaga**.
+
+**Y el reparto que lo hace posible sin romper el banco: la sonda MIDE, el corredor JUZGA.** Las sondas
+son **programas invocables**, no `source`, así que la invariante de que un ayudante compartido vive en
+el corredor queda intacta. Beneficio lateral medido: en su propio proceso `$BASHPID` no hace falta, así
+que **el defecto cometido dos veces deja de ser expresable**, no sólo de estar prohibido.
+
+### Una comisión interrumpida puede dejar un documento que se contradice a sí mismo (2026-09-07)
+
+**Medido al parar dos comisiones a mano para bajar el número de agentes en vuelo.** El analista de
+REQ-022 había reescrito ya la **cabecera** —`Archivos:` ampliado, `Mide: sí`, y la decisión del
+registro de QA— y **no había llegado al cuerpo**, que seguía declarando esa misma pregunta como
+abierta. Peor: había puesto `Estado: pendiente`, o sea **«confirmado»** sobre un documento que se
+contradice dos secciones más abajo.
+
+**Ninguna puerta mira eso.** `guard-completado` comprueba veredictos, cola de aprobaciones, quality
+gates, clase de hallazgo y forma de la cabecera. **No comprueba que el documento sea coherente consigo
+mismo**, y no puede: eso es semántica, que es justo el techo honesto que `AGENTS.md` §13 ya declara.
+
+**Dónde entra:** en el diseño del paralelismo, porque el riesgo **nace del despacho** — una comisión
+que termina sola deja el documento cerrado; una que se para a mano, no. Y la salida ya está escrita en
+otro sitio del arnés y sólo hay que reusarla: `arnes-upgrade` contrata que una migración interrumpida
+tiene **dos** caminos válidos y ninguno más —**continuar** comprobando antes qué está ya en su forma
+final, o **revertir**—, y prohíbe expresamente *«parece que algunas cosas ya están, sigo desde donde me
+parezca»*, que vuelve a inferir el estado del contenido.
+
+⇒ **Regla propuesta: toda comisión interrumpida deja el artefacto en el estado MENOS afirmativo de los
+compatibles con lo escrito** (aquí, `borrador` y no `pendiente`), y la nota de interrupción dice **qué
+quedó hecho y qué no**. Es barato, lo puede hacer quien para —no hace falta mecanismo— y evita que el
+siguiente lea una cabecera que afirma más de lo que el cuerpo sostiene.

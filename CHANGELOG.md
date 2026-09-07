@@ -123,6 +123,46 @@ Archivos: `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-ca
 `tests/escenarios/hooks/README.md`, `.github/workflows/banco.yml`, `docs/PENDIENTES.md`,
 `docs/qa/1.33.0.md`, `requirements/REQ-017.md`.
 
+## [Interno] — 2026-09-07 · QA vuelta 1 de REQ-017: tres criterios fallan, y se corrige lo que esta bitácora afirmó
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+**`QA: con-hallazgos`, vuelta 1 de 3. Queda UNA vuelta antes del tope de `AGENTS.md` §6**, que no se
+reinicia con cada hallazgo nuevo.
+
+**CORRECCIÓN — esta bitácora afirmó, dos entradas más abajo, que bajo UTF-8 `${l%$'\r'}` «no devuelve un
+sufijo sino basura distinta en cada evaluación de la misma entrada».** Medido ahora con corpus de **106
+entradas multibyte inválidas** y k=6 evaluaciones en el mismo proceso: eso era cierto del valor
+**intermedio**, y el criterio contrata sobre el **estado publicado** — y ahí **la heredada sí repite**.
+La clase divergente real es otra: **la heredada no es invariante al locale** (7 de 106), y el no
+determinismo es un fenómeno **distinto** (0–2 de 106) que **no coincide** con ella. REQ-017 sigue
+cerrando un fallo en abierto de v1.32.1; lo que estaba mal era **qué fallo**.
+
+**Y por eso `CA-01` vuelve a fallar, por una razón nueva: el dominio quedó trazado por la propiedad
+equivocada.** Al definirlo como «las entradas donde la heredada es determinista», la clase divergente
+cae **dentro** de CA-01 —que exige 0 divergencias— y deja a **`CA-10` sin sujeto**: en 3 de 4 corridas,
+**cero** entradas cayeron fuera, así que CA-10 diría SKIP y no llegaría a PASS nunca.
+
+**`CA-08` (ii) ya no roza el techo: lo cruza.** 26 medidas, **2 rojas** (1,252× y 1,443× contra 1,250×),
+y **1 de cada 4 vueltas del banco completo en el modo de la puerta requerida** salió roja con `load`
+0,91 al arrancar — la carga no lo explica. El procedimiento intercalado que el write-back contrató
+**no se implementó**. Consecuencia dicha sin rodeos: **el banco no es estable**, y es la puerta
+requerida de `main`.
+
+**`CA-10` no tiene ni un caso en el banco**, y QA revoca su clasificación: **es cambio DE FONDO y pide
+ADR**. El precedente de la pared de los 60 s no transporta —aquella se declaró **medida** y se dio a
+otro dueño, así que ningún criterio podía fallar por ella—; CA-10 **se contrata como criterio** y
+**cambia el significado de `CA-01`**, que es donde el REQ define qué quiere decir «equivalencia» (§9).
+Y lo decisivo: **la decisión nueva es justo la que salió mal**, tomada dentro de un write-back
+clasificado *menor*, donde nadie tenía que justificar la elección de la propiedad.
+
+**Los dos hallazgos de la vuelta 0 están cerrados de verdad, reproducidos**: el sello que siempre
+permite da ahora `SKIP … terminó EN ROJO (rc=1; 14 FAIL de 40 casos)` donde antes daba dos PASS, y el
+hijo muerto a los 0,6 s da `SKIP … murió por la señal 9 a los 0,70 s de un plazo de 37 s` donde antes
+decía `DEMOSTRADO`. **Sin sobre-corrección**, medidas las dos direcciones: el positivo real sigue en
+PASS y la heredada que termina limpia dentro del plazo sigue en FAIL.
+
+Coste: 1 h 35 de reloj, ~175 k tokens declarados (219–242 k con la corrección de subestimación).
+
 ## [Interno] — 2026-09-07 · Primer despacho paralelo real: tres comisiones, y el diseño del paralelismo
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` ×2, `desarrollador`, coordinadora.
 
