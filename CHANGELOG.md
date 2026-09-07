@@ -2,6 +2,67 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-07 · REQ-017: write-back del mapa de archivos tras H-08, y CA-04 corregida antes de despachar QA (medía una función que no existe en su línea base)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
+
+**Write-back de deriva (`AGENTS.md` §9), cambio MENOR.** El delta de implementación de REQ-017
+(`cand/1.33.0`, `bf8ca8f`) tocó tres archivos que el campo `Archivos:` del REQ no declaraba, con
+ampliación de comisión **aprobada por el propietario** (gate humano de §6: el workflow de CI es
+decisión suya). El `desarrollador` no lo corrigió porque su comisión le acotaba la intervención en el
+REQ al `Historial de cambios`, y el mapa es de la **Definition of Ready** del analista; lo dejó
+anotado en la fila de H-08 para que el write-back no dependiera de que alguien leyera su informe.
+
+**Añadidos al campo:** `.github/workflows/banco.yml` (el `fetch-depth: 0` que cierra H-08),
+`docs/PENDIENTES.md` (donde vive el hallazgo con su dueño) y `docs/qa/1.33.0.md` (el registro de la
+ventana). Las rutas van **sin decoración de Markdown**: mientras **SEC-020** siga abierto, un campo
+decorado elemento por elemento hace que `tools/arnes-paralelo.sh` responda `disjunto` con rc 0 sobre
+rutas que no existen.
+
+**Y la regla de exclusión que este REQ declaraba se estrecha**: `docs/qa/<versión>.md` deja de contar
+como «artefacto de gobierno que toda comisión toca». No es universal —es por ventana— ni es un
+apéndice: es donde se escribe la evidencia medida que CA-04, CA-05 y CA-09 acreditan. El motivo de
+fondo es que la intersección se calcula **sobre lo declarado**: un archivo que REQ-007, REQ-008 y
+REQ-011 declaran y REQ-017 no salía `disjunto` **en falso** — fail-open, el modo de fallo exacto que
+el campo existe para evitar.
+
+**Consecuencia operativa, dicha por delante:** con `banco.yml` dentro del mapa, **todo REQ que declare
+`.github/`, `.github/workflows/` o ese archivo colisiona con REQ-017**, porque la herramienta expande
+un directorio a todo lo que cuelga de él. Afecta a REQ-014 (que ya colisionaba por
+`tests/escenarios/hooks/`) y al canal de informes previsto para 1.34.0, que sólo saldrá disjunto si
+declara sus rutas de `.github/` una por una en vez del directorio.
+
+**Y en el mismo write-back, tres correcciones inline en CA-04 y CA-09, ANTES de despachar QA.** El
+motivo no es la pulcritud: es **gastar una de las tres vueltas dev↔QA en un hallazgo de redacción que
+cuesta cuatro líneas**, con un contador que **no se reinicia** (`AGENTS.md` §6). Es la vuelta más cara
+y más evitable del ciclo, y `requirements/README.md` manda al QA reportar un criterio mal formado
+**antes** de ejecutar la prueba.
+
+1. **CA-04, el procedimiento — el criterio apuntaba al vacío.** Decía «se mide `arnes_sin_cita` de
+   este árbol **y la del tag v1.32.0**», y `arnes_sin_cita` **no existe** en v1.32.0: la noción de
+   cita nace en 1.32.1. La mitad derecha de la razón no designaba nada. Ahora se mide **la boca que
+   lee una línea de cabecera** —`arnes_campo_linea` hoy contra `arnes_norm_clave` sola en v1.32.0—,
+   con el puntero al sitio único (`hooks/lib.sh`) y con el porqué: lo contratado es el coste de
+   **leer una línea de cabecera**, trabajo de la **capa entera** y no de una función con un nombre
+   concreto. De las dos lecturas se contrata la **estricta** (1,27× capa contra capa, frente al
+   0,21× de comparar sólo el escáner). **El techo ≤ 2,0× no se toca.**
+2. **CA-04, referencia:** «hoy es **49×**» → **7,9×** del árbol enfermo medido **en Linux**, más el
+   **1,27×** de este árbol; el 49× queda declarado fechado en otra plataforma y no reproducible.
+3. **CA-09, referencia y procedencia:** heredada ≈ 0,99 → **≈ 0,94 MB**; v1.32.0 **≈ 1,56 MB
+   retirado** (no medible en ese rango en Linux, orden ~1); cada cifra pasa a llevar **la corrida de
+   la que sale**, y se **declara** la divergencia abierta —orden 2,01 y 2,00 en la corrida de Linux
+   del 2026-09-07 frente a un **1,46** posterior sobre un camino que se sabe cuadrático—. No se
+   resuelve aquí: es de **SEC-030** y de QA. CA-09 sigue exigiendo la **medición**, no un valor.
+
+**Clasificación: MENOR, las cuatro.** Ningún techo contratado se mueve, el alcance no cambia y no hay
+ADR. La corrección de CA-04 se examinó expresamente por si era **de fondo** —lo habría sido si
+cambiara el significado del criterio— y no lo es: la magnitud contratada sigue siendo la misma y la
+sustitución cae del lado **estricto**, así que no puede ser una relajación disfrazada
+(`requirements/README.md` § «Y el reverso, para que esto no sea una coartada»).
+
+**No se toca nada más:** `Estado:` sigue `en-progreso`, los otros siete criterios quedan **idénticos**
+y no hay ADR — el mapa es un dato de coordinación, no una decisión de arquitectura, y corregirlo no
+reabre el trabajo ni firma ningún veredicto. QA y auditoría siguen `pendiente`.
+
 ## [GitHub] — 2026-09-07 · REQ-017, delta de CA-05: el plazo se deriva del numerador, y el CI vuelve a tener tags (H-08)
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador`.
 

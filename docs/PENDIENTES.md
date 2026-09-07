@@ -800,12 +800,22 @@ campo dos veces con valores distintos ⇒ no medible ⇒ DENY*— y no una prefe
 1. **Su predicción de la celda de tabla es falsa.** `| **Seguridad:** | aprobado |` **deniega**: el
    `|` inicial no está entre los prefijos tolerados. Un caso menos en la familia — conviene decirlo,
    porque una amenaza sobreestimada gasta el mismo diseño que una real.
-2. **Y hay una forma que no está en su lista y sí es hueco: la INDENTACIÓN.** `  Seguridad: aprobado`
-   con dos espacios permite. Eso importa para el diseño, porque **no es decoración**: si la regla se
-   escribiera como «una clave decorada no puede desbancar a una limpia», este caso se escaparía. Es un
-   argumento más para la pregunta de estado, que no mira la forma de la clave.
+2. **La INDENTACIÓN es hueco:** `  Seguridad: aprobado` con dos espacios permite, y el tabulador
+   también. Importa para el diseño porque **no es decoración**: si la regla se escribiera como «una
+   clave decorada no puede desbancar a una limpia», este caso se escaparía. Es un argumento más para
+   la pregunta de estado, que no mira la forma de la clave.
 
-**La mitad que no estaba escrita y es la que muerde después: el bloque derivado.** Si la puerta
+   > **Corrección de la coordinadora (2026-09-07, mismo día).** Escribí que esta forma «no estaba en
+   > ninguna lista» del reportante. **Es falso y ellos lo señalaron:** estaba en su §4 y en la fila
+   > «que la línea limpia gane a la decorada» de su tabla del §5, cuya columna dice literalmente
+   > *«vuelve con indentación»*. La medición es correcta; la atribución de novedad, no. Queda escrito
+   > porque afirmar sin condición algo medido falso es el modo de fallo que este repositorio castiga,
+   > y no vale menos cuando el que lo hace es quien lleva la cuenta.
+
+**La mitad del bloque derivado, que sí estaba escrita y yo di por ausente.** *(Corrección de la
+coordinadora, 2026-09-07: dije «la mitad que no estaba escrita». **Estaba en su §6, último párrafo, y
+citaba H-01 por su nombre.** No la leí porque iba al final de la sección — que es un dato útil sobre
+dónde se pierde la información en un informe, no una excusa.)* Si la puerta
 deniega por ambigüedad y `arnes_campos_req` publica en `docs/ESTADO.md` uno cualquiera de los dos
 valores, vuelve **exactamente** la divergencia entre las dos mitades del lector que 1.32.1 cerró en
 H-01. La forma correcta es que el lector emita **una marca de ambigüedad** que consuman las dos, no que
@@ -824,3 +834,163 @@ movió el núcleo de preguntas de estado, del que esto forma parte. Además **co
 REQ-017, que tiene `hooks/lib.sh` tomado. Clase `contrato`. El reportante **no pide un parche a la
 carrera** y lo argumenta: en su corpus hay 0 casos, y la mitad que quemaba —la del comentario— ya está
 cerrada.
+
+### El borde de la familia J es una LISTA DE CARACTERES, no una propiedad (medido a dos bandas, 2026-09-07)
+
+Tercer intercambio con el proyecto consumidor, cada lado ejecutando contra 1.32.1 instalado y con
+control positivo en su propia tanda. **Es el hallazgo que decide cómo se escribe el REQ de 1.34.0.**
+
+**Forma nueva, suya, confirmada aquí:** `**Seguridad**: aprobado` —con el énfasis **sin cruzar** los
+dos puntos— permite. `gsub(/[*_`]/,"",k)` retira el énfasis de la clave aunque el par se cierre
+**antes** de los dos puntos, así que no hace falta que lo cruce. Todo lo escrito hasta ahora, aquí y
+allí, hablaba del par que cruza: la familia es más ancha de lo que ninguno de los dos documentó.
+
+**El mapa completo, medido en las dos máquinas y coincidente:**
+
+| | Formas | Veredicto de 1.32.1 |
+|---|---|---|
+| El par cruza los dos puntos | `**S:**` · `_S:_` · `` `S:` `` · `*S:*` | **PERMITE** |
+| El par **no** cruza | `**Seguridad**: aprobado` | **PERMITE** |
+| No hay decoración, sólo espacio | dos espacios · tabulador | **PERMITE** |
+| El par envuelve la **línea entera** | `` `Seguridad: aprobado` `` | DENIEGA |
+| Prefijo fuera de la lista | `\| … \|` · `> …` · `- …` | DENIEGA |
+
+**Y aquí está el argumento, que es de ellos y hay que conservarlo literal: las tres cerradas lo están
+por accidente, y de dos maneras distintas.** La del par que envuelve la línea entera deniega porque el
+carácter de cierre queda pegado al **valor** y deja de igualar `aprobado` — **la clave sí se reconoce**,
+o sea que el campo se declara y lo que salva es la comparación del valor. Y `|`, `>`, `-` deniegan
+sólo porque **no están en `[*_`]`**. ⇒ **el borde de esta familia es una lista de caracteres, no una
+propiedad.** Es nuestra propia lección aplicada al borde, y es la quinta vez que la vemos: *la lista no
+gana la clase*.
+
+**La exposición, convertida en número por ellos sobre su corpus de 48 REQ:** **25 líneas en 7 archivos**
+declaran un campo y hoy son **inertes sólo por su primer carácter** —`>` casi siempre: prosa citada
+dentro de la cabecera—. Si `>` entrara alguna vez en esa lista, **2 de esos archivos pasarían a tener
+cabecera contradictoria**. Dirección, dicha con precisión: el último valor de esas dos es prosa que no
+iguala `aprobado`, así que el efecto inmediato sería un **bloqueo falso, no un fail-open**. No es un
+argumento para ensanchar la lista; es la demostración de que ensancharla mueve el problema de sitio, y
+de que la regla de ambigüedad lo resuelve en **las dos direcciones a la vez**.
+
+> **Supuesto de diseño que hay que romper antes de escribir el REQ, y viene medido: las cabeceras
+> reales son largas.** En ese proyecto la mediana es de **15 líneas** y hay REQ de **100 y 109**, porque
+> documentan la historia del veredicto arriba. Consecuencia incómoda: *«los campos valen sólo en la
+> cabecera»* —la invariante de 1.30.0— **protege bastante menos de lo que la frase sugiere**; lo que de
+> hecho los está protegiendo es la lista de prefijos, que es justo lo que acabamos de declarar
+> accidental. **Quien diseñe esto pensando en cabeceras de cinco líneas se equivocará de mecanismo.**
+
+**Compromiso adquirido con el reportante, y hay que cumplirlo:** se han construido un guardián propio
+que **transcribe** nuestra normalización —una tercera mitad del lector, que puede quedarse rancia en
+verde—. Van a alimentarlo con las mismas líneas que al `.awk` real para compararlos, pero hasta que eso
+exista: **si 1.34.0 mueve la normalización de claves, hay que avisarles.** Su guardián no se entera
+solo. Anotado como obligación de la ventana, no como cortesía.
+
+**Dos trampas de método que ellos pagaron y que valen para cualquiera que reproduzca esto:**
+`CLAUDE_PROJECT_DIR` tiene **prioridad** sobre `.cwd` en `arnes_project_dir` —sin apuntarlo al fixture,
+el hook resuelve el proyecto real, el REQ le queda fuera y **permite todo**—; y leer la respuesta con
+`python3 - <<'PY'` hace que el heredoc **ocupe stdin**, se descarte la tubería y se imprima PERMITE
+siempre. La segunda la cazó su control **negativo**, no el positivo: un control positivo solo no habría
+visto ninguna de las dos.
+
+### El compromiso no vence, y por qué: el comparador tiene un punto ciego con nuestra misma forma (2026-09-07)
+
+Les ofrecí retirar el aviso cuando tuvieran su comparador contra el `.awk` real. **Lo rechazaron, y el
+motivo es bueno:** el comparador alimenta las mismas líneas a las dos mitades y compara, así que
+detecta divergencia **sólo en las formas que su corpus ejercita**. Si 1.34.0 cambia la normalización
+por una forma que a nadie se le ocurrió meter en el corpus, las dos mitades divergen y **el comparador
+sigue en verde**. Es literalmente la clase que estamos persiguiendo —*una lista en vez de una
+propiedad*—, sólo que la lista ahora es el corpus. **Un corpus es una lista de casos.**
+
+**Y hay una diferencia de latencia que tampoco cubre:** nuestro aviso llega **al publicar**; su
+comparador sólo habla **cuando corren su puerta de pruebas**, que puede ser días después. Entre las dos
+cosas queda una ventana en la que un REQ podría cerrar con la cabecera leída de otra manera.
+
+⇒ **los dos mecanismos no se solapan: el nuestro es puntual y completo, el suyo continuo y parcial.**
+Van los dos. El compromiso queda **sin fecha de caducidad**: si 1.34.0 mueve la normalización de
+claves, se avisa. No es cortesía y no se cancela por tener el comparador.
+
+> **Y esto se nos aplica a nosotros, que es la parte que importa aquí.** Su corpus va a incluir a
+> propósito **las tres formas cerradas** (`|`, `>`, `-`) además de las siete abiertas — no para fijar
+> que están cerradas, que sería **fijar el defecto**, sino para que **algo cambie de valor** en su
+> tanda si 1.34.0 mete alguna en la lista tolerada. La frase que lo resume es reutilizable y va
+> directa a la palanca de 1.33.0: **«un corpus que sólo contiene lo que hoy falla no puede avisar de
+> que hoy dejó de fallar.»**
+>
+> La puerta de «¿esta prueba mide algo?» se pensó para el caso **vacío** —un caso que no ejercita
+> nada—; H-08 añadió el caso **lleno que no se ejecuta**; esto añade el tercero: **el caso que sólo
+> fija el lado que hoy falla**. Los tres son la misma propiedad, *si el mecanismo cambiara, ¿cambiaría
+> algo en la tanda?*, y conviene que el REQ de esa palanca los nombre a los tres.
+
+**Apuesta suya, con la cifra detrás, y vale como aviso de diseño:** de sus 25 líneas inertes la
+abrumadora mayoría empieza por **`>`**. Si algún día un carácter entra en la lista tolerada por
+parecer inofensivo, será ése — es el que produce la **prosa citada**, que es exactamente donde la gente
+escribe la historia de los veredictos. Quien redacte el REQ de 1.34.0 tiene ahí nombrado el error más
+probable.
+
+### El campo `Archivos:` no dice qué artefactos de gobierno entran, y la divergencia produce falsos `disjunto` (analista, 2026-09-07)
+
+**Encontrado al reconciliar el campo de REQ-017.** No existe en ningún sitio la regla de **qué
+artefactos de gobierno se declaran en `Archivos:` y cuáles no**. REQ-017 la enunciaba en sus propias
+`Notas`; REQ-007, REQ-008, REQ-011 y REQ-013 declaran `CHANGELOG.md`, su propio archivo de REQ y
+`docs/qa/…`; REQ-017 no lo hacía. **Cuatro REQ abiertos con dos convenciones distintas sobre el mismo
+campo.**
+
+**Por qué no es cosmético: la intersección se calcula sobre lo declarado.** Un archivo que unos REQ
+declaran y otros no **no aparece en la intersección**, así que el par sale **`disjunto` siendo falso**.
+Es fail-**open** en un campo cuyo modo de fallo es **trabajo perdido y conflictos de fusión**, y va
+contra el principio que el propio REQ-017 escribió: *declararlo falla del lado cerrado, que es la
+dirección correcta*.
+
+Se escribiría en `requirements/README.md` § «El mapa de archivos» y en su plantilla heredable. Dueño:
+`analista-requerimientos`. **Ventana 1.34.0**, junto a la generalización que REQ-017 ya aplaza allí (un
+criterio de coste contra línea base congelada declara si es puerta permanente o acreditación única).
+Clase `instrumento` — degrada una herramienta de coordinación, no una puerta de cierre.
+
+**Consecuencia operativa inmediata, ya medida:** con `.github/workflows/banco.yml` dentro del campo de
+REQ-017, y como `expande()` **arrastra el directorio entero** a propósito, **REQ-018 sólo saldrá
+`disjunto` si declara sus rutas de `.github/` una por una y evita `templates/` como directorio**. El
+primer `disjunto` real que esperábamos sigue siendo alcanzable, pero **ya no es gratis**: depende de
+cómo se redacte ese campo. Y REQ-014 pasa a colisionar con REQ-017 por **dos** sitios en vez de uno.
+
+### El cuarto caso de «¿esta prueba mide algo?»: el universo se encoge en silencio, en verde (2026-09-07)
+
+Aportado por el proyecto consumidor, y es **distinto de los otros tres**: una corrida que ejecuta
+**una** cosa y excluye el resto sin decirlo, saliendo 0. En su stack es un `it.only` olvidado; la forma
+general es **el universo de la tanda encogiéndose sin que el informe lo diga**, porque lo que corrió
+pasó de verdad.
+
+Encaja en la propiedad *(si el mecanismo cambiara, ¿cambiaría algo en la tanda?)* **por el lado
+contrario a los otros tres**: aquí sí cambiaría, y para bien, pero **nadie se enteraría**, porque el
+verde no distingue «pasaron las 6 600» de «pasó la 1». Y es más probable que los otros tres, porque esa
+marca **se escribe a propósito** mientras se depura y se olvida al comitear.
+
+**Los cuatro casos, que es como debe entrar en el REQ de la palanca:**
+
+| | Forma | Cómo se nos apareció |
+|---|---|---|
+| 1 | El caso **vacío**: no ejercita nada | Los cinco casos de banco de 1.32.1 (H-02) |
+| 2 | El caso **lleno que no se ejecuta** | **H-08**: el CI sin tags, once SKIP honestos leídos como verde |
+| 3 | El caso que **sólo fija el lado que hoy falla** | Su corpus del comparador |
+| 4 | **El universo encogido en silencio** | Su `it.only` olvidado |
+
+**Y aquí la parte que nos toca a nosotros, medida y no supuesta: el banco ya responde al caso 4, por
+construcción.** `run.sh` lee `CASOS_ESPERADOS_SECCION` **del texto del archivo, no de la corrida**
+(línea 642), así que el número esperado **no puede encogerse junto con el universo**; una sección que
+no declara el suyo **aborta**, y hay dos cuadres, por archivo y total. No es teoría: el comentario de
+la línea 228 registra un caso real —casos que *no se ejecutaban*— y dice que **sólo el cuadre lo
+delató**. Es exactamente la aserción derivada que ellos acaban de inventar para su comparador
+(`comparadas == corpus.length`), y llegaron a ella por su cuenta.
+
+> **El residual honesto, que es del caso 2 y vive una capa más arriba:** en vuelta **parcial** —con
+> filtro— el cuadre **total** queda **suspendido diciéndolo** (línea 714, y el motivo escrito allí es
+> bueno: *«un cuadre que aborta en falso se acaba comentando»*). El de cada sección se sigue
+> exigiendo, así que la protección no desaparece. Pero es la misma forma que H-08: **una comprobación
+> que se suspende con motivo y se agrega a un resultado global**. Nada obliga hoy a que la vuelta
+> completa se haya corrido alguna vez antes de pedir la fusión — lo pide `AGENTS.md` §7 en prosa, y
+> ninguna puerta lo mide. **Va al REQ de la palanca como quinto supuesto a decidir**, no como hallazgo
+> separado.
+
+**Una práctica suya que conviene copiar, y no es sobre pruebas:** al declarar su exposición a nuestro
+H-08 separaron **lo medido de lo no medido** —«revisé 3 de las 11 y las tres están defendidas; **las
+otras 8 no las he mirado**; nuestra exposición es *probablemente pequeña y no medida*»— en vez de
+redondear a «cubierto». Es la forma correcta de reportar una cobertura parcial, y es justo lo que aquí
+falló el 2026-09-07 con el muestreo de cinco secciones presentado como medición.
