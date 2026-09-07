@@ -130,6 +130,36 @@ la decisión al propietario: se presenta la evidencia y se para. La delegación 
 tag y la publicación; la instalación estable se actualiza después (`autoUpdate`) y gobierna la
 sesión siguiente.
 
+## Disciplina de coste (medida el 2026-09-06, obligatoria desde el ciclo 3)
+
+El ciclo 2 costó **~4 M de tokens y ~253 USD** a precios de API. La medición dice dónde, y no era donde
+parecía: **el 87 % del gasto es caché —60 % lecturas, 27 % escrituras— y sólo el 13 % es lo que los
+modelos escriben.** No se paga por pensar: se paga por **releer**.
+
+**La fórmula que gobierna todo lo demás: el coste de una comisión es `turnos × contexto`.** Medido sobre
+3.384 turnos: 107 k de contexto medio por turno, mediana de pico 149 k, máximo 304 k. La comisión más
+cara fue de **138 turnos y 12,48 USD**; la más barata que hizo trabajo real, de **8 turnos y 0,06 USD**.
+Doscientas veces de diferencia, y la variable no es el modelo ni cuántos archivos hay en el repositorio.
+
+Tres consecuencias que cambian cómo se despacha:
+
+1. **El encargo declara un presupuesto de turnos y de tokens**, y el agente lo reporta al entregar.
+   `AGENTS.md` §6 ya pedía anotar las comisiones por encima de 200 k y nadie lo cumplía, empezando por
+   la coordinadora.
+2. **Lo grande se lee tarde y en trozos.** Un documento de 38 k leído en el turno 5 de 138 se paga 133
+   veces; el mismo leído al final, dos. Por eso importa que la **historia** de un REQ salga del archivo
+   que el desarrollador y el QA leen, y que los **criterios** describan la regla en vez de enumerar la
+   lista: en un REQ los criterios son el 54 % del peso y la historia sólo el 20 %.
+3. **La elección de modelo casi no mueve la aguja.** Medido: la misma coordinadora cuesta 196,63 USD en
+   Opus 5 y 208,48 USD en Fable 5.1, un 6 % más, porque el gasto es caché y ahí Fable lee a mitad de
+   precio. Ahorrar bajando de modelo es la optimización equivocada; la que rinde es reducir contexto.
+
+**Lo que NO se construye, y la razón:** el arnés no lleva un medidor de coste. Medir esto exige leer las
+transcripciones de la herramienta anfitriona, cuyo formato no está documentado y puede cambiar; meterlo
+en el plugin haría que todos los proyectos heredaran esa dependencia. El arnés trae el mecanismo, no el
+mapeo, y aquí el mapeo es del anfitrión. **La coordinadora mide y reporta el coste de cada ventana**, con
+el método escrito arriba, que es estable aunque el script se reescriba.
+
 ## Registro
 
 | Ciclo | N (guardián) | N+1 (candidata) | REQ | Resultado |
