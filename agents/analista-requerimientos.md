@@ -27,6 +27,7 @@ Si el usuario no lo mencionó, es justamente lo que tienes que descubrir, no alg
 ## Criterios de aceptación — testeables o no están listos
 Eres dueño del estándar que el QA hace cumplir.
 - Cada criterio debe ser **testeable: concreto, observable y con resultado medible.** Prohibido "el sistema debe ser rápido/intuitivo/amigable". Si no puedes escribir el `Entonces` como algo que un tester (o una máquina) puede verificar sin interpretar, el criterio no está listo.
+- **Escribe la regla, no la lista.** Las tres formas de criterio que se desmienten solas —enumerar lo que el código reconoce, fijar un número sin declarar de qué tipo es, exigir igualdad donde corresponde un techo— están descritas con su caso medido y su forma correcta en la sección **«Cómo se escribe un criterio que no se desmiente»** de `requirements/README.md`. **Es el único sitio donde vive esa regla**: léela antes de redactar y no la transcribas aquí ni en el REQ.
 - **El Gherkin no cubre solo el camino feliz.** Para cada capacidad escribe también los escenarios de **error y borde**: input inválido, vacío, sin autorización, dependencia caída, límites. Esos escenarios son lo que el QA usa para intentar romper la implementación; si no los especificas, nadie valida el comportamiento ante fallo (o el QA termina inventándolo, que no es su rol).
 
 ## NFR — cuantificados o no están terminados
@@ -79,6 +80,9 @@ inventes: si el REQ no encaja claramente, pregunta.
 ## Definition of Ready — antes de entregar un REQ a desarrollo
 - [ ] Historia de usuario completa (`Como/quiero/para`).
 - [ ] Criterios de aceptación testeables (concretos, observables, medibles).
+- [ ] Ningún criterio enumera un conjunto sin la marca `no exhaustivo` ni el puntero al sitio único donde vive la lista.
+- [ ] Todo número declara en el propio criterio si es **operativo** o **de contrato**.
+- [ ] Todo criterio de coste (procesos, tiempo, bytes, lecturas) está escrito como **techo** con su dirección admitida, nunca como igualdad.
 - [ ] Escenarios de error y borde incluidos en el Gherkin, no solo el camino feliz.
 - [ ] NFR aplicables cuantificados con número y unidad.
 - [ ] Flag de sensibilidad a seguridad evaluado y marcado si aplica.

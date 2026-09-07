@@ -124,6 +124,75 @@ umbral, un guardián— **no puede impedir cerrar una función de negocio**. Ata
 guardianes es valioso y tiene su propio ciclo; los hallazgos que produzca entran como
 deuda con dueño, no reabren REQ de negocio.
 
+## El mapa de archivos: el campo `Archivos:`
+
+Todo REQ **abierto** —`pendiente`, `en-progreso` o `en-revisión`— declara en su cabecera una línea
+`Archivos:` con lo que su implementación va a tocar. Existe para una sola pregunta, y es una que se
+puede responder por máquina: **¿qué dos comisiones se pueden despachar a la vez sin que se pisen?**
+
+**La forma, enunciada por propiedad y no como lista de casos:** rutas o **globs** relativos a la
+raíz del repositorio, separados por **comas**; o el valor literal `(ninguno)` si el REQ no toca
+ningún archivo del árbol. Un patrón vale si lo expande la shell contra el árbol —no hay una lista
+cerrada de globs admitidos—; una ruta **absoluta** queda fuera de la forma y se rechaza.
+
+```
+Archivos: hooks/lib.sh, tools/arnes-lectura.sh, templates/*.tpl
+Archivos: (ninguno)
+```
+
+Se escribe con las **mismas tolerancias que los demás campos de la cabecera, y ni una más**
+—`**Archivos:**`, sangría, tabuladores, el valor entre acentos graves, un paréntesis final de
+evidencia—, porque lo lee **el mismo normalizador** que las puertas. Y, como todos, **vale sólo en
+la cabecera**: una línea igual debajo del primer `## ` no declara nada.
+
+> **El paréntesis de evidencia acompaña a SU elemento — y por eso la coma de dentro no separa.** Este
+> campo es una **lista**, así que la normalización se aplica **elemento a elemento**: anotar elemento
+> por elemento —`Archivos: tools/x.sh (nuevo), hooks/lib.sh (modificado)`— **sí es una forma
+> admitida**, declara **dos** archivos y colisiona con quien declare cualquiera de los dos. La
+> evidencia puede ir en la primera posición, en una intermedia, en la última o en todas, y sigue
+> siendo evidencia: `Archivos: hooks/lib.sh, tools/arnes-lectura.sh (medido el 6/9)` declara dos
+> archivos, no tres. Dentro de un paréntesis la **coma no separa** —la evidencia las lleva—, de modo
+> que `hooks/lib.sh (medido el 6/9, 2 archivos), tools/x.sh` son **dos** elementos; el reverso de esa
+> convención es que lo que escribas dentro del paréntesis **no declara nada**. Y lo que no se entiende
+> —un paréntesis **sin cerrar**, una anotación **suelta** entre dos comas— no se descarta en silencio:
+> la herramienta lo **dice con su motivo**, el REQ pasa a `SIN DECLARAR` y colisiona con todos, nunca
+> `disjunto`. Se rechaza **en voz alta** a propósito: hasta 1.32.0 un paréntesis intermedio borraba
+> **en silencio** todo lo que venía detrás y la respuesta era `disjunto` con rc 0 sobre medio mapa
+> (SEC-014). Si quieres anotar de dónde sale cada ruta con más detalle del que cabe en un paréntesis,
+> va en el cuerpo del REQ; la cabecera es lo que lee la máquina.
+
+> **Y un límite operativo con causa abierta: escribe las rutas SIN decoración de Markdown.** Envolver
+> **cada** elemento en acentos graves o subrayado —`` `hooks/lib.sh`, `tools/x.sh` `` o
+> `_hooks/lib.sh_, _tools/x.sh_`— **no es fiable hoy**: el desenvoltorio arranca el par **exterior**,
+> que pertenece a dos elementos distintos, los dos quedan con un marcador impar y la herramienta
+> responde `disjunto` con rc 0 sobre un mapa de rutas que no existen (**SEC-020**, `contrato`,
+> **abierto**, ventana 1.33.0). No es una promesa de la máquina en ninguna dirección —es un fallo
+> declarado, no una regla—: mientras el hallazgo siga abierto, la ruta **desnuda** es la única forma
+> medida como segura, y un `disjunto` sobre un campo decorado no se toma por bueno. Envolver la línea
+> **entera** (`` `hooks/lib.sh, tools/x.sh` ``) sí se lee bien, y por eso la tolerancia del párrafo
+> anterior sigue enunciada como está.
+
+**Quién lo lee:** `tools/arnes-paralelo.sh`. Interseca los conjuntos de dos REQ **expandiendo los
+globs contra el árbol real** —no comparando cadenas— y responde `disjunto` o `colisiona` nombrando
+el archivo compartido. Comparar cadenas declararía disjuntos `hooks/lib.sh` y `hooks/*.sh`, que es
+justo la forma de error que produce un conflicto de fusión. Un patrón que todavía no casa con nada
+se conserva como ruta literal: un archivo que aún no existe es exactamente donde dos comisiones
+chocan.
+
+**Fail-closed, y el fail-closed vive en la herramienta:** un REQ sin el campo, o con un valor que no
+se puede interpretar, se declara `sin declarar`, **colisiona con todos** y el comando sale ≠ 0. Sin
+mapa no hay paralelismo, y el modo por defecto —la serie— es el que ya se usaba.
+
+> **No es una puerta.** Ningún hook lee este campo y su ausencia **no impide cerrar** ningún REQ: un
+> dato de coordinación no puede bloquear la corrección de lo construido. Lo único que cuesta no
+> declararlo es que ese REQ no se puede paralelizar. Vive en la **Definition of Ready** del analista
+> —un REQ no se entrega como `pendiente` sin su mapa—, que es una revisión humana y no una
+> comprobación de runtime.
+
+**Y lo que la herramienta no responde:** evalúa **archivos**, nunca el **orden de fases**. Dos REQ
+disjuntos no autorizan a correr el `auditor-seguridad` a la vez que el `qa-tester`. Esa regla es
+aparte y vive en `AGENTS.md` §6.
+
 ## Cambios de requerimientos
 Un REQ **no se reescribe encima**: se versiona. Todo cambio se anota en el **Historial de
 cambios** del REQ (fecha · antes→después · causa · ADR si aplica). Los cambios de fondo
@@ -135,11 +204,106 @@ generan un **ADR**. Si un REQ `completado` cambia, vuelve a `en-progreso`/`en-re
 **2. Criterios de aceptación en Gherkin:** **Dado** [contexto] **Cuando** [acción] **Entonces** [resultado].
 **3. Requisitos no funcionales** se documentan como NFR separados y se referencian desde los REQ.
 
+## Cómo se escribe un criterio que no se desmiente
+
+**Medido, no opinado:** en un ciclo de trabajo de este arnés, **7 de 20** hallazgos no fueron que
+el código estuviera mal, sino que el **criterio decía algo falso sobre lo construido** —clase
+`contrato`—. Uno costó una **vuelta entera del bucle** (~50 min entre desarrollador, QA, control y
+write-back). Las tres formas de abajo son exactamente las que se midieron, y las tres se evitan
+escribiendo la **regla** que el código implementa en vez de la **lista** de casos que se le
+ocurrieron a quien redactó ese día.
+
+Las tres están **prohibidas por nombre**. Un criterio que caiga en cualquiera de ellas está **mal
+formado**: el QA lo reporta como hallazgo de clase `contrato` contra el REQ **antes** de ejecutar
+la prueba, y quien lo reescribe es el analista (write-back, `AGENTS.md` §9).
+
+### (a) Enumerar lo que el código reconoce
+
+**Caso medido.** Un criterio listaba **tres** envoltorios de shell; el código toleraba **siete**.
+El resultado se contó como hallazgo —«el código cerró un límite en silencio»— cuando lo que había
+pasado es que el criterio se quedó corto. Una lista escrita en un contrato envejece **hacia el
+lado que abre**.
+
+- **Mal:** «Entonces se deniegan las formas envueltas en `if`, en `for` y en `{ }`.»
+- **Bien:** «Entonces se deniega **todo token que el segmentador trate como envoltorio**, según la
+  lista única de `hooks/guard-git.sh` (el `case` de prefijos del segmentador, que es el sitio del
+  caso medido); ejemplos **no exhaustivos**: `if`, `for`.»
+
+**Regla.** Un criterio que se refiera a un conjunto de cosas cuya pertenencia decide el código
+—**cualquier** conjunto, sin excepción por el tipo de cosa que sea; ejemplos **no exhaustivos**:
+envoltorios, prefijos, estados— enuncia la **propiedad de pertenencia**, **cita el
+único sitio** donde vive la lista exhaustiva y, si añade ejemplos, los marca literalmente como
+**«no exhaustivo»**. Un criterio que enumere **dos o más** elementos concretos sin (i) la marca
+`no exhaustivo` **o** (ii) el puntero al sitio único está mal formado.
+
+### (b) Fijar un número que la medición desmiente después
+
+**Caso medido.** Un máximo de **262 144** bytes que la medición obligó a bajar a **131 072**. El
+número no era el contrato: la **existencia de un techo** lo era. Como el criterio no decía de qué
+tipo era su número, bajarlo costó un hallazgo y una vuelta en vez de una línea de Historial.
+
+- **Mal:** «Entonces el tope de reconstrucción es de 262 144 bytes.»
+- **Bien:** «Entonces el tope de reconstrucción es de **no más de** 262 144 bytes (**operativo**:
+  se **baja** con la medición).»
+
+**Regla.** Todo criterio con un número declara **en el propio criterio** cuál de los dos es:
+
+| Tipo del número | Qué significa | Cómo se cambia |
+|---|---|---|
+| **operativo** | Sólo su magnitud está en juego: nadie fuera del sistema elige su conducta por ese valor exacto (topes de reconstrucción, tamaños de buffer, tiempos límite internos). Se escribe con **dirección admitida**: «**no más de** N; se **baja** con la medición» | **Cambio menor:** entrada en el Historial del REQ con la cifra medida. **Sin** ADR y **sin** cambio de alcance |
+| **de contrato** | Alguien de fuera elige su conducta por ese valor: un umbral que un proyecto declara en su manifiesto, un límite anunciado en una plantilla | **No** cambia sin **ADR** y sin **write-back** en las plantillas que lo anuncian |
+
+**Un número sin esa declaración se trata como de contrato** (fail-closed): si no se sabe quién
+depende de él, no se puede bajar en silencio.
+
+### (c) Exigir igualdad donde corresponde un techo
+
+**Caso medido.** «El **mismo** número de procesos que la versión anterior.» El código bajó de **1
+fork a 0** y el criterio declaró **incumplida una mejora**. Ése es el que costó la vuelta entera
+del bucle.
+
+- **Mal:** «Entonces el hook gasta el **mismo** número de procesos que la versión anterior.»
+- **Bien:** «Entonces el hook gasta **no más de** 0 procesos añadidos respecto a la línea base;
+  **menos** es conforme y **no** es hallazgo.»
+
+**Regla.** Todo criterio sobre **coste** —procesos, tiempo, bytes, lecturas— se enuncia como
+**techo con la dirección admitida declarada**, y **nunca** como igualdad.
+
+### Cuando el código cubre MÁS de lo que el criterio promete
+
+El criterio se actualiza **en el mismo cambio que lo descubre** —con entrada en el Historial
+(antes → después) y la causa—, y **no** se deja para un hallazgo posterior. Un criterio **más
+laxo** que lo construido programa un debilitamiento silencioso; uno **más estrecho** convierte una
+capacidad en un hallazgo `contrato`. El reverso general de esta regla —la deriva— vive en
+`AGENTS.md` §9.
+
+### Y el reverso, para que esto no sea una coartada
+
+Cuando el código **no** cumple el criterio, **no se relaja el criterio para que encaje**: se abre
+el hallazgo **contra el código**. La regla de arriba aplica **sólo** cuando el código cubre
+**más**. Ampliar un criterio para tapar una carencia es exactamente lo que `AGENTS.md` §9 llama
+**deriva**, y esta sección no puede convertirse en su coartada.
+
+### Dónde se anota la forma del hallazgo
+
+La **forma** (`enumeración` · `número` · `igualdad` · `otra`) se anota **sólo** en el log de QA
+(`docs/qa/<versión>.md`), y **nunca** dentro del paréntesis de la clase del campo `Hallazgos
+abiertos:`. Ese paréntesis es lo que lee `guard-completado` para decidir si un hallazgo bloquea:
+meterle una segunda dimensión cambiaría la entrada de la puerta por un motivo de contabilidad.
+
+### Alcance temporal
+
+La regla rige para todo criterio **escrito o modificado desde que esta sección se adopta**. Los
+REQ en estado `completado` **no** se reabren ni se reescriben para conformarlos: reescribir
+contratos cerrados por un motivo de redacción es editar el contrato por comodidad, y multiplica el
+coste que esta sección existe para bajar.
+
 ## Plantilla
 ```markdown
 # REQ-XXX — Título
 Estado: borrador
 Módulo: (...)
+Archivos: (rutas o globs relativos a la raíz, separados por comas — o `(ninguno)`)
 Prioridad: (alta / media / baja)
 Sensible a seguridad: (sí / no)
 QA: pendiente

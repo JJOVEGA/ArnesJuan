@@ -117,6 +117,32 @@ excepción editorial sólo baja ese nivel con autorización expresa del propieta
 reclasificación automática de un agente. **Esta política pertenece únicamente a ArnesJuan**: no se
 traslada a las plantillas ni a los proyectos que instalan el arnés, que conservan su propio mapeo.
 
+### Excepción medida: cuándo un REQ de este repositorio baja a `estandar` (delegado por el propietario, 2026-09-06)
+
+El suelo sigue siendo `critico` **y no se declara al nacer**. Lo que se delega es **saltar el pase del
+auditor al cierre**, y sólo cuando la máquina puede demostrar que no había nada que auditar:
+
+| Condición, las tres a la vez | Cómo se comprueba |
+|---|---|
+| El campo `Archivos:` del REQ no declara ninguna ruta bajo `hooks/`, `tools/`, `tests/`, `.github/`, `.arnes/` ni `.claude-plugin/` | `tools/arnes-paralelo.sh`, que normaliza igual que las puertas |
+| El diff del REQ sobre esas rutas es **vacío**, con `git diff` **y** `git status --short` | los dos, porque `git diff` es ciego a lo no rastreado — medido, H-08 |
+| El banco corre **idéntico**: ninguna línea del inventario suprimida, modificada ni cambiada de veredicto | `tests/escenarios/hooks/inventario.sh` |
+
+**Por qué al cierre y no al empezar.** Un REQ que *promete* no tocar la máquina no ha demostrado nada;
+uno cuyo diff sale vacío, sí. Declarar `estandar` de entrada sería confiar en la intención, que es
+exactamente lo que este arnés no hace. Así la excepción es **fail-closed**: si la prueba no se puede
+producir, el rigor se queda donde estaba.
+
+**Qué NO cambia.** `QA:` sigue siendo obligatorio —esta excepción sólo salta al auditor—; el suelo por
+`Sensible a seguridad: sí` sigue vigente para todo lo demás; y **nada de esto se propaga a las
+plantillas**: es política de autoalojamiento de este repositorio, no del arnés que heredan los
+proyectos.
+
+**Qué ahorra, medido y sin inflar.** Una comisión de auditoría por REQ que califique: ~15-20 min y unos
+4 USD. En el ciclo 3 habría calificado **uno de tres** (REQ-012, cuya CA-11 exige precisamente ese diff
+vacío). Es una palanca pequeña; las grandes son el tope de criterios por REQ y que un defecto de forma
+deje de costar una vuelta.
+
 ## Aprobación humana delegada (propietario, 2026-09-05)
 
 El propietario autorizó de forma **permanente** que, cuando **todo** esté en verde, la coordinadora
@@ -159,6 +185,37 @@ transcripciones de la herramienta anfitriona, cuyo formato no está documentado 
 en el plugin haría que todos los proyectos heredaran esa dependencia. El arnés trae el mecanismo, no el
 mapeo, y aquí el mapeo es del anfitrión. **La coordinadora mide y reporta el coste de cada ventana**, con
 el método escrito arriba, que es estable aunque el script se reescriba.
+
+## Defectos del guardián descubiertos mientras gobierna (regla del propietario, 2026-09-06)
+
+El guardián de la sesión es la versión estable instalada, y es la única copia que se ve **en uso
+real**. Sus defectos aparecen aquí y en ningún otro sitio: un `deny` que no debía denegar, una
+escritura que debía denegar y pasó, un mensaje que no dice cómo salir. **Se registran en el acto**, con
+su clase, en `docs/PENDIENTES.md`. Eso no se discute.
+
+Lo que sí se decide es **en qué ventana entra la reparación**, y el criterio es la clase del hallazgo,
+no lo molesto que resulte:
+
+| Qué se encontró | Dónde se repara |
+|---|---|
+| Deja pasar algo que debía parar, o para algo legítimo y **bloquea el trabajo del ciclo en curso** | **En la ventana abierta**, sin preguntar: un guardián que estorba el ciclo se arregla ya |
+| Clase `usuario/dinero` o `contrato` | En la ventana abierta |
+| Clase `instrumento` que no bloquea | **Ventana siguiente**, con dueño y criterio escritos |
+
+**Por qué el reparto y no «se arregla todo ya».** Una ventana que admite cualquier hallazgo del
+guardián deja de tener alcance, y un ciclo sin alcance no se cierra: el ciclo 2 terminó con siete REQ
+porque cada hallazgo abrió el siguiente. La ventana 1.32.0 tiene tres REQ declarados y la reserva es
+deliberada.
+
+Dos ejemplos vivos, ambos defectos de **1.31.0, la versión que gobierna ahora mismo**, ambos
+`instrumento`, y ambos aparcados en 1.33.0 por esta regla: la nota heredable de `guard-git` enumera un
+envoltorio cuando el código tolera siete (SEC-013), y la skill de migración no dice en ninguna parte
+que **hay que reiniciar la sesión** para que las puertas nuevas corran — un proyecto que actualiza cree
+estar protegido por puertas que aún no se han cargado.
+
+**Y la reparación no la escribe la coordinadora.** `hooks/` y `tools/` son del `desarrollador`, gobernado
+por la versión anterior, con QA y auditoría después. Un arreglo urgente del guardián sigue siendo un
+REQ; lo único que cambia es en qué ventana entra.
 
 ## Registro
 

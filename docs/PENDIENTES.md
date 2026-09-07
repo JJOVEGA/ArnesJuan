@@ -321,3 +321,28 @@ es la primera aplicación real del mapa de archivos de REQ-013, y conviene que l
 **Aplicación:** el write-back va en el REQ cuando se abra 1.33.0, no ahora. Escribirlo hoy costaría una
 comisión de analista (~4 USD medidos) para un texto que nadie lee hasta entonces, y la decisión ya está
 escrita aquí con su razón. Es la disciplina de coste aplicada a nosotros mismos.
+
+## El cuello del paralelismo no era el que creíamos (medido el 2026-09-06, ciclo 3)
+
+`tools/arnes-paralelo.sh` midió los 15 pares de comisiones del ciclo sobre el árbol de v1.31.0:
+
+| Archivo | Pares que colisiona |
+|---|---|
+| `skills/arnes-upgrade/SKILL.md` | **15 de 15** |
+| `tests/escenarios/hooks/run.sh` | 10 de 15 |
+| `hooks/lib.sh` | **1 de 15** |
+
+Llevábamos dos ciclos tratando `hooks/lib.sh` como el cuello. Partirlo **no habría desbloqueado ni un
+par**. El que bloquea todo es la skill de migración, y no porque sea grande ni porque se ejecute —no
+corre durante el ciclo—, sino porque la regla «todo lo que un proyecto hereda se documenta para la
+migración» obliga a **cada** comisión a escribir su párrafo en el mismo archivo.
+
+**La salida, encontrada por accidente en este ciclo y verificada:** la comisión B tenía prohibido tocar
+ese archivo, así que **entregó el texto en su informe** y la comisión C lo integró al pasar. Sin
+fricción y sin comisión extra. Generalizado: **la nota de migración se escribe una sola vez al cerrar
+la ventana**, con el texto que cada comisión dejó, en vez de por cada comisión al terminar. Elimina la
+colisión en vez de repartirla.
+
+**Clase `instrumento`.** No bloquea nada; es una palanca de coste. Candidata a 1.33.0 si la ventana lo
+admite, y si no, a 1.34.0 junto al resto de lo que los proyectos leen.
+

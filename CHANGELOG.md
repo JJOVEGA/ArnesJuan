@@ -2,6 +2,405 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-07 · SEC-022: el documento que ANUNCIA el campo `Archivos:` prometía un fail-closed sin hueco (rama `cand/1.32.0`, sin commit)
+> Origen: Interno (árbol de `cand/1.32.0` sin comitear) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` (SEC-022, `instrumento`, de `auditor-seguridad` R-006; precisiones de QA-216).
+
+**Una frase en un solo archivo. No se toca una línea de código** ni ningún otro documento:
+`tools/arnes-paralelo.sh`, `hooks/`, `tests/` y `.github/` quedan idénticos.
+
+- **`skills/arnes-upgrade/SKILL.md` §«Hacia 1.32.0» (SEC-022, `instrumento`).** La sección que un
+  proyecto lee **para decidir si actualiza** anunciaba el campo `Archivos:` y
+  `tools/arnes-paralelo.sh` afirmando que «el fail-closed vive en la herramienta», y **no mencionaba
+  SEC-020 en ninguna parte**: una promesa más fuerte que lo que la máquina cumple, justo en el
+  documento que la anuncia. Es la **tercera** vez de esta clase en este archivo (SEC-015 y SEC-016,
+  una frase cada una). Ahora el fail-closed se enuncia **con su excepción**: vale para el espacio del
+  campo **salvo** el marcado de Markdown **por elemento**, donde el desenvoltorio arranca el par
+  exterior y la herramienta responde `disjunto` con rc 0 sobre rutas que no existen (**SEC-020**,
+  *del propio arnés* —el proyecto que lee esto no tiene ese identificador en su registro—,
+  `contrato`, **abierto**, ventana 1.33.0); las rutas se declaran **desnudas** y un `disjunto` sobre
+  un campo decorado no se toma por bueno.
+- **Enunciado por propiedad, no por lista de dos (QA-216).** El límite se escribe como «marcado de
+  Markdown **por elemento**» con tres ejemplos —`` `a.sh`, `b.sh` ``, `_a.sh_, _b.sh_` y
+  `**a.sh**, **b.sh**`—, porque QA midió que `**` corrompe el mapa igual que los acentos graves y el
+  subrayado: una enumeración de dos habría vuelto a ser un criterio más estrecho que el fallo. Y se
+  dice lo que **sí** se lee bien, para no prohibir de más: envolver la línea **entera**
+  (`` `a.sh, b.sh` ``) y decorar **un solo** elemento. Lo que falla es el marcado **repetido**.
+
+**Puertas:** `bash -n` sobre los 10 `hooks/*.sh` y `tools/*.sh` → 0 errores; `jq -e` sobre
+`hooks/hooks.json`, `.claude-plugin/plugin.json` y `.claude-plugin/marketplace.json` → válidos, los
+tres manifiestos en `1.32.0`; banco completo **741 PASS · 0 FAIL · 1 SKIP** (el SKIP es el de rutas
+con contrabarra, que sin `cygpath` sólo corre en Windows), `rc=0` y los dos cuadres —por archivo y
+total— silenciosos.
+
+## [Interno] — 2026-09-06 · La pata de herencia de SEC-014: el documento que heredan los proyectos describía una máquina que no existe, y el límite de SEC-020 escrito donde se escribe el campo (rama `cand/1.32.0`, sin commit)
+> Origen: Interno (árbol de `cand/1.32.0` sin comitear) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` (remediación **documental** de la pata 3 de SEC-014 y declaración del residual de SEC-020, hallazgos de `auditor-seguridad` §«Re-verificación de R-004»).
+
+**Sólo documentación heredada. No se toca una línea de código:** `tools/arnes-paralelo.sh`,
+`hooks/`, `tests/` y `.github/` quedan idénticos. Lo que se corrige es que el documento que gobierna
+cómo se escribe el campo `Archivos:` —y que **heredan todos los proyectos** por `arnes-upgrade`—
+afirmaba lo contrario de lo que la máquina hace.
+
+- **`requirements/README.md` y `templates/requirements-README.md.tpl`: el párrafo invertido (SEC-014,
+  pata 3, `contrato`).** Decía que «anotar elemento por elemento —`tools/x.sh (nuevo), hooks/lib.sh
+  (modificado)`— **no es una forma admitida**» y que el REQ pasaba a `sin declarar`. Es **falso**:
+  esa línea exacta es el primer caso del arreglo de SEC-014, la herramienta la **lee** y responde
+  `colisiona` con el mapa completo, verificado en las cuatro posiciones del paréntesis. El párrafo
+  describía la **variante propuesta** al despachar la comisión —«la regla vale sólo tras el último
+  separador»— y que no se implementó, porque contradice la verificación **por conteo** que CA-03
+  exige. Ahora dice lo construido: el paréntesis acompaña a **su** elemento, en cualquier posición;
+  la coma **dentro** de un paréntesis **no separa** —con su reverso escrito: lo que va dentro no
+  declara nada—; y lo que no se entiende sale `SIN DECLARAR` **con su motivo** y colisiona con todos,
+  **nunca** `disjunto`. La dirección del error era la segura (el documento era más estrecho que el
+  código, no más ancho), pero el riesgo real no era un falso `disjunto`: era que alguien «arreglara»
+  el código para que cuadrara con la nota y **regresara SEC-014 entero**.
+- **El límite que faltaba, dicho donde se escribe el campo (SEC-020, `contrato`, ABIERTO).** Párrafo
+  nuevo: el marcado de Markdown **por elemento** —`` `a.sh`, `b.sh` `` o `_a.sh_, _b.sh_`— **no es
+  fiable**, porque el desenvoltorio arranca el par **exterior**, que pertenece a dos elementos
+  distintos, y la herramienta responde `disjunto`/rc 0 sobre un mapa de rutas que no existen. Se
+  escribe como **recomendación operativa con su causa** —las rutas van **sin decoración**—, no como
+  promesa de la máquina; envolver la línea **entera** sigue funcionando y por eso la tolerancia
+  anterior se mantiene enunciada igual.
+- **`AGENTS.md` y `templates/AGENTS.md.tpl`: `disjunto` es necesario y no suficiente.** La
+  instrucción «sólo se despacha en paralelo sobre REQ que `tools/arnes-paralelo.sh` declare
+  disjuntos» **no se retira** —sigue siendo obligatoria y sigue siendo la buena—: se **acota**.
+  Mientras SEC-020 esté abierto, un `disjunto` sobre un campo **decorado** no autoriza nada; se
+  limpia el campo y se vuelve a preguntar. Mandar confiar sin reservas en una herramienta con un
+  fail-open abierto es la misma clase de afirmación más ancha que lo construido que `ADR-002`
+  prohíbe.
+- **`requirements/REQ-013.md`:** una fila de Historial con el antes → después de los dos textos y su
+  causa. **Ninguna cabecera de REQ se toca**: SEC-020 sigue declarado abierto y cruza la ventana con
+  el REQ, por decisión de la coordinadora —siete fail-open en tres vueltas sobre el mismo archivo
+  dicen que el problema no son los siete casos, sino que el campo tolera **decoración libre**; la
+  respuesta de fondo es **restringir la gramática** del campo, que es un cambio de contrato y va a
+  1.33.0—.
+
+**Espejo verificado:** el `diff` entre `requirements/README.md` y
+`templates/requirements-README.md.tpl` sigue mostrando exactamente los mismos **tres** hunks que
+antes del cambio (el título, el párrafo de adopción propio de este repositorio y el índice de REQ);
+la sección del campo `Archivos:` queda **idéntica** en los dos archivos.
+
+**Puertas:** `bash -n` sobre los 10 `hooks/*.sh` y `tools/*.sh` → 0 errores; `jq -e` sobre
+`hooks/hooks.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` y
+`.arnes/config.json` → válidos, los tres manifiestos en `1.32.0`; banco completo **741 PASS · 0
+FAIL · 1 SKIP** (742 casos; el SKIP es el de rutas con contrabarra, que sin `cygpath` sólo corre en
+Windows), `rc=0` y los dos cuadres —por archivo y total— silenciosos.
+
+## [Interno] — 2026-09-06 · bump de versión a 1.32.0 en los tres manifiestos (rama `cand/1.32.0`, sin commit)
+> Origen: Interno (árbol de `cand/1.32.0` sin comitear) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador`.
+
+Cambio mecánico de tres valores, previo a la fusión y al tag `v1.32.0`. No toca comportamiento:
+sube la versión declarada de `1.31.0` a `1.32.0` en `.claude-plugin/plugin.json`,
+`.claude-plugin/marketplace.json` (metadata y entrada del plugin) y `arnes_version` de
+`.arnes/config.json`. Los tres viven dentro de `codigo_app.globs` de este repositorio —el
+manifiesto es la fuente de verdad ejecutable de las invariantes—, así que el bump es trabajo del
+`desarrollador` y no de la coordinadora: coste aceptado y ya anotado en el propio manifiesto.
+
+Con esto desaparece el desajuste que el bloque derivado de la parada venía señalando entre la
+versión instalada del plugin y la del árbol candidato.
+
+**Puertas:** `jq -e` sobre los tres manifiestos y sobre `hooks/hooks.json` → válidos; las dos
+versiones de `.claude-plugin/` coinciden entre sí y con `arnes_version` (`1.32.0`); `bash -n` sobre
+los 10 `hooks/*.sh` y `tools/*.sh` → 0 errores; banco completo **741 PASS · 0 FAIL · 1 SKIP** (el
+SKIP es el caso de rutas con contrabarra, que sin `cygpath` sólo corre en Windows) con los dos
+cuadres —por archivo y total— silenciosos y `rc=0`.
+
+## [Interno] — 2026-09-06 · Auditoría R-004 de 1.32.0: el sexto fail-open (un paréntesis intermedio borraba medio mapa), la promesa de concurrencia que estaba medida falsa y dos frases que prometían de más (rama `cand/1.32.0`, sin commit)
+> Origen: Interno (árbol de `cand/1.32.0` sin comitear) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` (remediación de los hallazgos de `auditor-seguridad` §R-004).
+
+**La forma del hallazgo, que es lo que se arregla:** una regla escrita para un **valor único**
+aplicada a un campo de **lista**, y dos frases de documentación más anchas que la máquina que las
+respalda. Lo primero borraba la mitad del mapa **en silencio** y respondía «adelante»; lo segundo le
+promete a quien actualiza el arnés una garantía que está **medida falsa** — y en la versión que
+existe justamente para despachar comisiones en paralelo, que es el escenario que dispara el fallo.
+
+- **`tools/arnes-paralelo.sh`: el sexto fail-open, y el peor (SEC-014, `contrato`).** `Archivos:` es
+  una **lista** y se le aplicaba la regla del paréntesis de un **veredicto**: si el valor acaba en
+  `)`, corta en el **primer** `(`. Resultado medido: `tools/x.sh (nuevo), hooks/lib.sh (modificado)`
+  se quedaba en `tools/x.sh`, todo lo demás desaparecía **antes** de validarse —sin motivo, sin bajar
+  el recuento, sin cambiar el código de salida— y la herramienta contestaba `disjunto`/**rc 0** sobre
+  un mapa que ella misma había truncado. **La asimetría iba hacia el lado que abre:** anotar *todos*
+  los elementos —lo prolijo, y lo que la plantilla enseñaba— abría el mapa; dejar el último desnudo lo
+  cerraba. Ahora la lista **se separa primero** —y el separador es la coma que **no** está dentro de
+  un paréntesis, porque la evidencia lleva comas— y la **misma** función compartida se aplica **a cada
+  elemento**: los dos archivos llegan al mapa y el par sale `colisiona`/rc 1 en **las dos
+  direcciones**. Lo que no es un elemento tampoco se traga en silencio: una anotación suelta entre
+  comas, o un paréntesis sin cerrar, salen `SIN DECLARAR` **con su motivo**.
+- **La tolerancia deja de enseñarse sin su límite.** `requirements/README.md` y
+  `templates/requirements-README.md.tpl` dicen ahora dónde vale el paréntesis de evidencia —acompaña
+  a **un elemento**, entre paréntesis balanceados— y qué pasa con lo que no se entiende: se dice y
+  colisiona. Una tolerancia enseñada sin su límite es una invitación a escribir la forma que abría.
+- **`--json` podía emitir JSON inválido (SEC-018, `instrumento`).** El escape cubría `\` y `"` y no
+  los caracteres de **control**: un tabulador en el motivo —o un tabulador vertical dentro de una
+  ruta, que no es `[:blank:]` y por tanto pasa el filtro— producía una salida que `jq` **rechaza**, y
+  en el segundo caso con **rc 0**. El modo JSON es justo el que consume una máquina. Se escapan, sólo
+  cuando los hay y sin un proceso más.
+- **`skills/arnes-upgrade`: la promesa de no-corrupción concurrente, corregida antes de publicar
+  (SEC-015, `contrato`).** La nota le decía al usuario que las reescrituras concurrentes de
+  `docs/ESTADO.md` son «idempotentes, no se corrompen». Está **medido falso**: el bloque derivado
+  publica por un temporal de **nombre fijo** y QA perdió el texto **humano** del archivo **1 vez de
+  25**. Ahora la nota separa lo que sí garantiza —bloque derivado, recalculado entero, sólo entre sus
+  marcadores— de lo que **no**: dos paradas simultáneas no están serializadas, con el consejo
+  (versionar el archivo o apagar el bloque mientras dure el paralelo) y el arreglo anunciado para
+  **1.32.1**. El defecto vive en `hooks/` desde 1.30.3 y **no** se toca aquí: esta versión sube la
+  **frecuencia** del escenario, así que lo que no puede viajar es la frase.
+- **Y el «límite honesto» de la guarda estática llega a la superficie que leen los terceros
+  (SEC-016, `instrumento`).** `ADR-002` estrechó la invariante 1 y el README del banco lo dice; la
+  nota de `arnes-upgrade` —lo único de esto que un proyecto lee— la seguía enunciando en su forma
+  ancha y prometía «las tres invariantes intactas». Ahora dice que la comprobación es **estática y
+  sobre funciones**, que un juez por indirección se le escapa, y que es una **barandilla, no una
+  jaula**.
+- **Banco:** `secciones/35-arnes-paralelo-fail-open.sh` pasa de **19** a **26** casos (**742** en
+  total). Los cinco nuevos fallan contra la herramienta auditada y los **dos controles** pasan antes y
+  después; la simetría se prueba con `sim_check`, en los dos órdenes, por propiedad.
+- **Quedan abiertos y con ventana ajena:** **SEC-017** (precedencia de un `Estado:` duplicado, 1.33.0)
+  y **SEC-019** (los 54 casos que pasan con su hook a `exit 0`, 1.35.0).
+
+**Puertas:** `bash -n` sobre los 10 `hooks/*.sh` y `tools/*.sh` y sobre los 40 archivos del banco (3 puntos de entrada + 37 secciones);
+`jq -e` sobre `hooks/hooks.json`, `plugin.json` y `marketplace.json`; banco completo **741 PASS · 0
+FAIL · 1 SKIP** —el SKIP es el caso de rutas con contrabarra, que sin `cygpath` sólo corre en
+Windows— con cuadre por archivo y total; autoprueba del corredor **73 PASS · 0
+FAIL**; `git diff v1.31.0 -- hooks/` **vacío**; `tools/arnes-paralelo.sh` sobre este repositorio no
+declara `sin declarar` ningún REQ y deja el árbol idéntico.
+
+## [Interno] — 2026-09-06 · Vuelta 3 (la última) del bucle dev↔QA de 1.32.0: los dos fail-open que quedaban, el puntero que mentía y la prueba escrita en una sola dirección (rama `cand/1.32.0`, sin commit)
+> Origen: Interno (árbol de `cand/1.32.0` sin comitear) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` (arreglo de los hallazgos de código de la vuelta 2).
+
+**La forma del hallazgo, que es lo que se arregla:** un arreglo que funciona en un orden y falla en
+el contrario, y una prueba escrita **sólo en el orden que pasa**. La vuelta 1 encontró el choque del
+archivo que aún no existe contra el glob ajeno y lo perdía después, al construir la clave del par
+suponiendo un orden de descubrimiento que la propia pasada de futuros rompe; y los dos casos que lo
+vigilaban ejercitaban la mitad que ya funcionaba. Un guardián que prueba una sola dirección de una
+relación simétrica acredita lo que ya andaba — es la cuarta vez en este ciclo.
+
+- **`tools/arnes-paralelo.sh`, los dos fail-open de clase `contrato` (QA-202, QA-211).** La clave del
+  par **se ordena al escribirla**: el par {a,b} es el mismo par se mire por donde se mire, y el
+  archivo futuro colisiona con el glob y con su directorio **en las cuatro direcciones medidas**
+  (antes: `colisiona`/rc 1 en una, `disjunto`/rc 0 en la contraria). Y un REQ del que no se extrae
+  `Estado:` de la cabecera —campos debajo del primer `## `, sin `Estado:`, o archivo de 0 bytes—
+  deja de caerse del análisis con un `continue` **mudo** en el modo sin argumentos: pasa por el sitio
+  único que el criterio declara, se declara `SIN DECLARAR` con su motivo, colisiona con todos, sale
+  ≠ 0 y **el recuento no baja en silencio**. La herramienta se contradecía consigo misma: el mismo
+  archivo, pasado como argumento explícito, sí se evaluaba.
+- **Y el residuo `instrumento` de la misma clase (QA-212).** La lista cerrada de marcadores de
+  posición deja de ser la red: la red es la **propiedad** —un elemento que no existe, del que ningún
+  ancestro existe y que no tiene forma de archivo no designa nada—, así que `n/d`, `s/d`, `n.a.`,
+  `t.b.d.` y `pendiente.` caen sin alargar ninguna lista. La lista sobrevive sólo para dar un mensaje
+  mejor, y por eso ahora sí es de verdad no exhaustiva.
+- **El puntero de la invariante 1 deja de mentir, y la máquina lo vigila (H-01).** El README del banco
+  enumeraba **seis** ayudantes «que ejecutan un hook» con la palabra **todos** delante —era falso:
+  `corre`, `ver_corre` y `mide_hook` no estaban— y declaraba un sitio único distinto del que declaraba
+  el criterio. Ahora el conjunto **no se enumera en ninguna parte**: se enuncia la propiedad («todo el
+  que el corredor define al nivel superior antes del despacho»), se da la línea de `awk` que lo deriva,
+  y la invariante dice **qué** obliga —dictar PASS/FAIL, no ejecutar— en vez de a quién. Tres casos
+  nuevos impiden la reincidencia: ningún ayudante fantasma, **ninguna línea que reenumere** el
+  conjunto, y la afirmación normativa comprobada sobre el corredor.
+- **Dos agujeros de diagnóstico del corredor (`instrumento`, H-10, H-11).** `diag` garantiza el salto
+  de línea final —con `sed`, un stderr sin `\n` pegaba la línea del caso siguiente y el cuadre perdía
+  un caso acusando al número declarado—; el arreglo estaba hecho en dos secciones y no había llegado
+  al ayudante compartido, que es donde vale para las 37. Y «guarda equivalente» deja de ser una lista
+  de tres literales atada al nombre de una variable, que producía **ABORT sobre código correcto**:
+  pasa a propiedad, con la distinción de mayúsculas **medida** y no estética (`[ -n "$FILTRO" ]` está
+  en 31 ayudantes de sección y no es una guarda).
+- **El arreglo del método, no del caso: `sim_check`.** La simetría se prueba **por propiedad** — el
+  ayudante corre el par en los dos órdenes y exige que coincidan en veredicto y código de salida —,
+  así que un caso nuevo cubre las dos direcciones sin que nadie tenga que acordarse. Revisión del
+  resto: los **20** pares de las secciones 34 y 35, medidos en las dos direcciones, dan **0
+  asimétricos** con la herramienta de esta vuelta y **2** con la anterior (exactamente los dos de
+  futuros), lo que sitúa la dependencia del orden en el único camino que la tenía.
+- **Pruebas, con fail-before medido en las dos direcciones.** Sección 35: **10 → 19** casos; contra la
+  herramienta anterior fallan los **6** que acreditan arreglo y pasan los **3** controles positivos.
+  Autoprueba: **64 → 73**; contra el corredor anterior fallan los de H-10 y H-11, y contra el README
+  anterior el de la reenumeración (`linea 62 con 6 ayudantes`). Banco: **726 → 735** casos,
+  `734 PASS, 0 FAIL, 1 SKIP`, cuadre por archivo y total en **735**. Inventario contra v1.31.0: **0**
+  líneas suprimidas o modificadas, 52 añadidas, **todas** de las dos secciones de `arnes-paralelo`.
+  `git diff v1.31.0 -- hooks/` **vacío** y `git status --short -- hooks/` sin entradas: el mecanismo
+  sigue byte a byte el publicado.
+- **Lo que NO se ha tocado, y por qué.** **H-03** (la evasión de la guarda estática con tres eslabones)
+  cierra con **residual declarado**: ensanchar el reconocedor cubre formas, nunca la clase, igual que
+  el detector de escrituras por `Bash`. **H-12** (la carrera del temporal de nombre fijo en
+  `hooks/estado-derivado.sh`) es **preexistente**, vive en `hooks/` —que CA-22 prohíbe tocar aquí— y
+  su decisión está con el propietario. **QA-205** (`~`, enlaces simbólicos, mayúsculas) sigue en deuda
+  con dueño: ninguno cambia hoy el veredicto de ningún REQ real.
+
+## [Interno] — 2026-09-06 · Vuelta 1 del bucle dev↔QA de 1.32.0: los cuatro fail-open de `arnes-paralelo` y la guarda del corredor que se evadía (rama `cand/1.32.0`, sin commit)
+> Origen: Interno (árbol de `cand/1.32.0` sin comitear) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` (arreglo de los hallazgos de código de la vuelta 1).
+
+**La forma del hallazgo, que es lo que se arregla:** las dos herramientas nuevas de esta candidata
+respondían **verde cuando no podían saberlo**. `tools/arnes-paralelo.sh` decía `disjunto` con rc 0
+ante un REQ que no podía leer, ante un marcador de posición y ante el archivo que aún no existe; y
+la guarda estática del corredor —la que impide que una sección dicte PASS/FAIL sobre un hook sin
+guarda— se rodeaba escribiendo **dos funciones en vez de una**. Un control que se evade sin ocultar
+nada no es un control.
+
+- **`tools/arnes-paralelo.sh`, cuatro fail-open (`contrato`, QA-201 a QA-204).** Un REQ que no se
+  puede leer entero —sin permiso o truncado por un byte NUL— **se declara y contamina el veredicto**
+  en vez de desaparecer del análisis; el archivo que **todavía no existe** colisiona con el glob que
+  lo alcanzará y con el directorio que lo contendrá; un **marcador de posición** (`TBD`, `todo`,
+  `n/a`, `-`, `?`) deja de leerse como ruta futura, juzgado por propiedad y no por lista; y
+  `Archivos:` duplicado resuelve con **el último**, igual que `arnes_campos_req`. De propina y de la
+  misma clase: `--json` declaraba los archivos que un patrón casa hoy donde el texto declara el
+  patrón, porque la cadena se partía sin desactivar el globbing.
+- **La guarda estática del corredor sigue ahora la cadena de llamadas (`contrato`, H-03).** Las
+  propiedades «ejecuta un hook» y «lleva guarda» se propagan por las llamadas dentro del archivo
+  hasta punto fijo: da igual en cuántos trozos se parta el ayudante. Ningún ayudante del banco real
+  queda señalado, así que **no se toca ninguna sección**.
+- **Y tres agujeros de diagnóstico del propio banco (`instrumento`, H-04/H-05/H-06).** Nada en
+  `secciones/` se queda fuera en silencio: un archivo que no casa `NN-<slug>.sh`, o un directorio que
+  sí lo casa, **abortan nombrándose** en vez de ignorarse o de matar el cuadre con un `unbound
+  variable`. Y `autoprueba-corredor.sh` —el único artefacto de la cadena sin la red que exige a todos
+  los demás— declara su `AUTOPRUEBA_CASOS_ESPERADOS` y **se aplica el cuadre a sí misma**.
+- **Pruebas, con fail-before medido.** 10 casos nuevos en
+  `tests/escenarios/hooks/secciones/35-arnes-paralelo-fail-open.sh` (9 fallan contra la herramienta
+  anterior; el décimo es el control positivo) y 13 en `autoprueba-corredor.sh` (9 fallan contra el
+  corredor anterior). Banco: **716 → 726** casos, `725 PASS, 0 FAIL, 1 SKIP`; autoprueba: **51 → 64**,
+  `0 FAIL`. La sección 34 se parte porque llegaba a 444 líneas y CA-18 fija el techo en 400.
+- **El instrumento de verificación deja de ser ciego (H-08).** Con **todo indexado** (`git add -A`,
+  sin commit), `git diff v1.31.0 -- hooks/` sigue **vacío** —el mecanismo no se ha tocado— y el paso
+  de modos del CI, replicado literal, da **0 archivos malos**: puntos de entrada `100755` y secciones
+  `100644`. Antes el control «pasaba» porque `git diff` no ve lo que no está rastreado.
+
+## [GitHub] — 2026-09-06 · REQ-013: un mapa de archivos por REQ, para poder despachar dos comisiones a la vez (rama `cand/1.32.0`)
+> Origen: GitHub (rama `cand/1.32.0`) · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos` (redacción del REQ) y `desarrollador` (esta implementación).
+
+**La forma del hallazgo, que es el motivo del cambio:** el ciclo corrió **en serie** —tiempo de reloj
+prácticamente igual a la suma del tiempo de agente, 0 comisiones solapadas en 25— y no porque una
+regla lo prohibiera, sino porque **nadie podía decir por máquina qué dos comisiones no colisionan**.
+Adivinar bien tres veces y mal la cuarta cuesta más que toda la serie que se ahorró.
+
+- **La cabecera del REQ gana el campo `Archivos:`**: rutas o globs relativos a la raíz, separados por
+  comas, o el literal `(ninguno)`. Documentado por **propiedad** —no por lista de globs válidos— en
+  `requirements/README.md` y en `templates/requirements-README.md.tpl`, con su plantilla y su lugar en
+  la Definition of Ready.
+- **`tools/arnes-paralelo.sh` (nuevo, `100755`)** responde `disjunto` o `colisiona` **nombrando el
+  archivo compartido**, para cada par de REQ, en texto o en `--json`. La intersección se resuelve
+  **expandiendo los globs contra el árbol real**, no comparando cadenas: comparar cadenas declararía
+  disjuntos `hooks/lib.sh` y `hooks/*.sh`, que es justo la forma de error que produce un conflicto de
+  fusión. Un patrón que aún no casa con nada se conserva como ruta literal, porque un archivo que
+  todavía no existe es exactamente donde dos comisiones chocan.
+- **Una regla, un lector — y la regla es la normalización, no el mapeo.** El campo se lee con la
+  normalización de `hooks/lib.sh` (recorte de la cabecera antes del primer `## `, clave decorada,
+  desenvoltorio del marcado, paréntesis de evidencia). No hay ni un `grep '^Archivos:'` ni un
+  `awk`/`sed` que reimplemente nada de eso. Y **`Archivos:` no entra en la lista de campos que leen
+  las puertas**: un campo que no gobierna nada no vive en el lector que sí gobierna. **El diff de
+  `hooks/` para este cambio es vacío**, y ésa es la comprobación.
+- **No es una novena puerta, y es deliberado.** `guard-completado` y `guard-codigo` dan **exactamente**
+  los mismos veredictos que en v1.31.0: un REQ sin el campo, o con el campo ilegible, cierra igual que
+  siempre. El fail-closed vive en la **herramienta** —sin mapa no hay paralelismo, y colisiona con
+  todos—, donde el coste de equivocarse es volver a la serie.
+- **Y lo que la herramienta no responde, escrito en su propia salida:** evalúa **archivos**, nunca el
+  **orden de fases**. `AGENTS.md` §6 y `templates/AGENTS.md.tpl` ganan la regla de despacho y las tres
+  exclusiones **con su motivo**; las dos primeras —el auditor nunca antes ni a la vez que QA, QA nunca
+  antes que el desarrollador— no se relajan en ningún caso. Sin esa línea, un `disjunto` se leería
+  como permiso para producir una firma falsa.
+- **El cuello, medido y no supuesto** (`docs/qa/1.32.0.md`): sobre el árbol de v1.31.0 colisionan
+  **15 de 15** pares, y el archivo que los colisiona **todos** resultó ser
+  `skills/arnes-upgrade/SKILL.md` (15/15), con `tests/escenarios/hooks/run.sh` en 10/15 y
+  `hooks/lib.sh` en **1/15**. Se suponía que el cuello eran los dos monolitos: partir `hooks/lib.sh`
+  no habría desbloqueado ni un par de este ciclo. Sin el número, la palanca siguiente se elige mal.
+- **Coste, medido con los binarios instrumentados en el `PATH`:** 60 REQ y 200 archivos declarados en
+  **127–245 ms** (techo 2 000 ms) y **1 proceso externo en total** —el `jq` del manifiesto— frente al
+  techo de 2 por REQ leído. La herramienta **no** está registrada en `hooks.json`: añade **0 procesos**
+  a la ruta de `Bash`, `Edit`, `Write` y la parada. El despacho ocurre una vez por ciclo, no una vez
+  por comando.
+- **Banco:** `tests/escenarios/hooks/secciones/34-arnes-paralelo.sh` (nuevo, **33** casos; total
+  683 → **716**). Inventario ordenado antes y después: las **33** líneas nuevas y nada más — ningún
+  caso cambió de veredicto y **ninguno** pasó de `deny` a `allow`. Contra los hooks de v1.31.0 la
+  sección da **30 FAIL / 3 PASS**; los tres que pasan en las dos son los controles que deben pasar en
+  ambas.
+- **Cierre de una medición pendiente ajena:** CA-16 de REQ-014 quedó sin medir porque esta herramienta
+  no existía. Medida ahora y anotada en su Historial y en `docs/qa/1.32.0.md`: dos comisiones de QA
+  sobre secciones distintas dan `disjunto` en la candidata y `colisiona` por
+  `tests/escenarios/hooks/run.sh` en v1.31.0.
+
+## [GitHub] — 2026-09-06 · REQ-014: el banco en archivos por sección (rama `cand/1.32.0`)
+> Origen: GitHub (rama `cand/1.32.0`) · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos` (redacción del REQ) y `desarrollador` (esta implementación).
+
+**La forma del hallazgo, que es el motivo del cambio:** el banco —el artefacto por el que pasa toda la
+validación del arnés— era **un solo archivo de 4.096 líneas con 33 secciones y 683 casos**. Dos
+comisiones de QA no podían despacharse a la vez porque las dos habrían escrito en el mismo archivo
+(en el ciclo 2 hubo **una** comisión para siete requerimientos), y cualquier comisión que tocara
+cuarenta líneas tenía que leerlas todas. Un banco monolítico no es un problema de estilo: es un
+cuello por el que pasa el 100 % de la validación y que sólo deja pasar a uno.
+
+- `tests/escenarios/hooks/run.sh` pasa de banco a **corredor** (4.096 → 607 líneas): ayudantes
+  compartidos, canario global, descubrimiento y los cuadres. Los casos viven ahora en
+  `tests/escenarios/hooks/secciones/NN-<slug>.sh`, **35 archivos**, ninguno de más de 342 líneas.
+- **Se descubren con un glob de bash**, en orden lexicográfico fijado con `LC_ALL=C` sólo durante la
+  expansión y **sin arrancar `find`, `ls` ni `sort`**: el descubrimiento corre en cada vuelta y en
+  Windows cada fork cuesta entre 1,2 y 6 s. Añadir o quitar una sección no toca ni una línea del
+  corredor.
+- **El cuadre gana el sujeto que le faltaba.** Cada archivo declara su `CASOS_ESPERADOS_SECCION` y el
+  corredor exige las dos cosas: que cada sección cuadre con **su** número —el ABORT dice **cuál**
+  archivo y cuántos casos de diferencia— y que la suma cuadre con `CASOS_ESPERADOS` (683, sin cambio).
+  Un archivo sin su número declarado aborta con su nombre.
+- **Canario de sección:** una sección que muere a mitad deja de ser indistinguible de una que pasó
+  limpia. El subshell deja una marca al terminar el archivo; sin ella, ABORT con el nombre del archivo
+  y su código de salida, y la vuelta sale ≠ 0.
+- **Invariante 1 comprobada sobre el texto:** una función propia de una sección que ejecute un hook y
+  dicte PASS/FAIL sin guarda contra la salida vacía aborta la vuelta antes de ejecutar nada, nombrando
+  archivo y función. Delató a `tipo33`, cuyos casos de control esperaban silencio en `stderr` y
+  habrían pasado en falso con el emisor mudo; se le puso la guarda.
+- **Corrida parcial:** `run.sh secciones/07-*.sh` corre esa sección más el canario, suspende el cuadre
+  total **diciéndolo** y sigue exigiendo el de la sección. Un selector que no casa con nada aborta en
+  vez de degradar a filtro. El filtro por nombre de caso conserva su semántica de v1.31.0.
+- `tests/escenarios/hooks/autoprueba-corredor.sh` (nuevo, 51 casos): certifica al corredor contra
+  directorios de secciones sintéticos. Sus casos **no** entran en el inventario de 683, precisamente
+  para que ese inventario se pueda comparar con el de la versión publicada anterior. Contra el
+  corredor de v1.31.0 fallan 30 de ellos: sin ese par, los casos nuevos no prueban nada.
+- `tests/escenarios/hooks/inventario.sh` (nuevo): inventario ordenado `veredicto · caso`, con los
+  milisegundos normalizados. **El criterio central de este cambio no fue «el banco pasa»** —dos casos
+  que intercambian PASS y FAIL dan el mismo total— sino el inventario **byte a byte idéntico** al de
+  v1.31.0: 683 líneas, `diff` vacío, con tres corridas antes y tres después idénticas entre sí.
+- `.github/workflows/banco.yml`: `bash -n` sobre `hooks/`, `tools/` y **todas** las secciones; el bit
+  de ejecución comprobado en sus dos mitades (puntos de entrada `100755`, secciones `100644`, porque se
+  hacen `source` y sueltas correrían cero casos en verde); y un paso nuevo para la autoprueba. El banco
+  sigue corriéndose por el **mismo** punto de entrada que en local, nunca por una lista escrita en YAML.
+- `tests/escenarios/hooks/README.md`: las tres invariantes actualizadas a la estructura nueva más una
+  cuarta (una sección que muere se distingue de una que pasó limpia), cómo se añade una sección en tres
+  líneas y por qué los modos de archivo son los que son.
+- **Ni una línea de máquina:** `git diff v1.31.0 -- hooks/ tools/` **vacío**. Este cambio reorganiza
+  **quien mide**, no lo medido — y si hubiera tocado un hook, la comparación del inventario no valdría
+  nada.
+
+## [GitHub] — 2026-09-06 · REQ-012: criterios por mecanismo, no por enumeración (rama `cand/1.32.0`)
+> Origen: GitHub (rama `cand/1.32.0`) · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos` (redacción del REQ) y `desarrollador` (esta implementación).
+
+**La forma del hallazgo, que es el motivo del cambio:** de los **20** hallazgos del ciclo 2, **7** no
+fueron código defectuoso — fueron **criterios que decían algo falso sobre lo construido** (clase
+`contrato`), y **uno** costó una vuelta entera del bucle (~50 min entre desarrollador, QA, control y
+write-back). Las tres formas medidas: **enumerar** lo que el código reconoce (un criterio listaba tres
+envoltorios de shell cuando el código toleraba siete), **fijar un número** que la medición desmiente
+después (un máximo de 262 144 bytes que hubo que bajar a 131 072), y **exigir igualdad** donde
+corresponde un techo («el mismo número de procesos que la versión anterior» declaró incumplida una
+mejora de 1 fork a 0). No se arregla con más máquina: se arregla escribiendo la regla en vez de la lista.
+
+- `requirements/README.md` (y su espejo `templates/requirements-README.md.tpl`): sección nueva
+  **«Cómo se escribe un criterio que no se desmiente»** — las tres formas con su caso medido, la forma
+  **mal** y la forma **bien**; la propiedad de pertenencia con puntero al sitio único y la marca
+  `no exhaustivo`; el número declarado **operativo** o **de contrato** (y `de contrato` como
+  fail-closed si no se declara); el coste como **techo con dirección admitida**; la corrección del
+  criterio más estrecho que lo construido **y su reverso**, para que no se use como coartada para
+  relajar criterios incómodos.
+- `agents/analista-requerimientos.md`: tres casillas verificables nuevas en la **Definition of Ready** y
+  un puntero a la sección, sin transcribir la regla por segunda vez.
+- `agents/qa-tester.md`: un criterio mal formado es hallazgo de clase **`contrato`** contra el REQ
+  **antes** de ejecutar la prueba, con su **forma** anotada en `docs/qa/<versión>.md`; el QA **no**
+  reescribe el criterio.
+- `agents/auditor-seguridad.md`: un control se describe **por propiedad, nunca por enumeración** —una
+  lista de controles envejece hacia el lado que **abre**.
+- `templates/AGENTS.md.tpl` §9: punto nuevo «criterio más estrecho que lo construido», que apunta a la
+  sección y no la duplica.
+- `skills/arnes-upgrade/SKILL.md`: sección `### Hacia 1.32.0` — qué llega, y que **no hay nada que
+  migrar**: los REQ ya cerrados no se reabren ni se reescriben.
+- `docs/qa/1.32.0.md` (nuevo): sección **«Coste del ciclo»** con la línea base del ciclo 2 escrita
+  **antes** de medir nada, una única regla de conteo y el objetivo declarado como techo (hallazgos
+  `contrato` de esas formas: no más de 3, línea base 7; vueltas del bucle causadas por ellos: 0, línea
+  base 1), más el control anti-juego que impide bajar la métrica borrando criterios.
+- **Ni una línea de máquina:** `git diff v1.31.0 -- hooks/ tools/` **vacío**; ningún campo nuevo en la
+  cabecera del REQ, ninguna llave nueva en `.arnes/config.json` y ningún proceso añadido a ninguna ruta.
+  La **forma** del hallazgo se anota sólo en el log de QA y nunca en el paréntesis de la clase, que es
+  la entrada de `guard-completado`.
+
 ## [Interno] — 2026-09-06 · migración del andamiaje de este repositorio: 1.30.3 → 1.31.0
 > Origen: Interno (migración de andamiaje, sin commit de versión) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` (la parte del manifiesto) sobre el plan de `/arnes-upgrade` de la sesión coordinadora.
 

@@ -23,6 +23,20 @@ Para cada REQ prueba al menos:
 ## Cuestionar la calidad del REQ
 No validas ciegamente un REQ malo. Si los criterios de aceptación son **intesteables, vagos, o les faltan escenarios de error**, no fuerces una aprobación: devuélvelo al `analista-requerimientos` señalando qué criterio es deficiente y qué falta. Validar fielmente un REQ pobre y aprobar algo malo es un fallo de QA, no un acierto.
 
+**Un criterio mal formado es un hallazgo, y se abre ANTES de probar nada.** La sección «Cómo se
+escribe un criterio que no se desmiente» de `requirements/README.md` prohíbe por nombre tres
+formas: enumerar un conjunto que el código reconoce sin la marca `no exhaustivo` ni el puntero al
+sitio único, fijar un número sin declarar si es **operativo** o **de contrato**, y exigir
+**igualdad** donde el criterio es de coste y corresponde un **techo**. Si un criterio cae en
+cualquiera de ellas:
+- lo reportas como hallazgo de clase **`contrato`** contra el REQ, **antes** de ejecutar la prueba
+  —probar contra un criterio que dice algo falso sobre lo construido gasta la vuelta y no mide
+  nada—;
+- anotas su **forma** (`enumeración` · `número` · `igualdad`) en `docs/qa/<versión>.md`, y **sólo
+  ahí**: nunca dentro del paréntesis de la clase en `Hallazgos abiertos:`, que es lo que lee
+  `guard-completado` para decidir si un hallazgo bloquea;
+- **no reescribes el criterio.** El write-back es del `analista-requerimientos` (`AGENTS.md` §9).
+
 ## Proceso de validación
 1. Corre las quality gates definidas en `AGENTS.md`. Reporta cualquier fallo.
 2. Verifica cada criterio de aceptación del REQ, uno por uno, y registra el resultado (pasa/falla).
