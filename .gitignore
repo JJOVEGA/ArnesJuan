@@ -34,3 +34,7 @@ insumos/
 !.claude-plugin/
 !templates/githooks/pre-commit
 !tests/escenarios/.gitkeep
+
+# Informes de defectos que llegan de proyectos consumidores (nombran cliente; repo publico)
+reporte-arnes-*.md
+*:Zone.Identifier

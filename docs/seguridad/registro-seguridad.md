@@ -1622,3 +1622,1063 @@ diff v1.31.0 -- hooks/` sigue vacío en el commit que se etiquete; (ii) los dos 
 repo **y** en las dos plantillas; (iii) `tools/arnes-paralelo.sh` no adquiere ningún consumidor
 automático mientras SEC-020 esté abierto. **Recomendación, no condición:** que la frase de SEC-022
 viaje antes del tag, como viajaron las de SEC-015 y SEC-016.
+
+---
+
+## Revisión R-007 — ventana 1.32.1 (REQ-015, REQ-016) — 2026-09-07
+
+**Alcance.** El parche 1.32.1: la carrera de publicación del hook de continuidad (REQ-015) y la
+noción de cita del lector de cabecera (REQ-016), sobre el árbol que el `qa-tester` aprobó en su
+vuelta 2. Archivos revisados: `hooks/lib.sh`, `hooks/guard-completado.sh`, `hooks/campos-req.awk`,
+`hooks/estado-derivado.sh`, `hooks/rotar-artefactos.sh`, `tools/arnes-paralelo.sh`,
+`tools/arnes-lectura.sh`, la sección 36 del banco (cuatro archivos), `skills/arnes-upgrade/SKILL.md`,
+`AGENTS.md` §13 y `templates/AGENTS.md.tpl`. **Más** un cambio de accesos hecho hoy fuera del código
+y el residual del ruleset. Guardián de la sesión: instalación estable 1.32.0. Plataforma: Linux (WSL2).
+
+**Orden de firmas: respetado.** `QA: aprobado (vuelta 2, 2026-09-07)` en los dos REQ **antes** de
+esta auditoría (`AGENTS.md` §6). Ninguna auditoría preventiva declarada en esta ventana; ningún REQ
+cerrado antes de tiempo. Los dos siguen en `en-revisión`.
+
+**Método.** Sondas propias contra `hooks/guard-completado.sh` sobre un fixture aislado del
+directorio temporal de la sesión, con `CLAUDE_PROJECT_DIR` apuntado al fixture —el error que el
+propio REQ-016 documenta— y con la regla de que **la ausencia de decisión es `allow`** y así se
+imprime. Cada sonda se corrió contra los hooks de **v1.30.3, v1.31.0, v1.32.0** (extraídos con
+`git archive`) **y** contra el árbol de hoy, para separar regresión de defecto heredado. Ninguna
+sonda se ejecutó contra un entorno de terceros. **No se repitieron** las mediciones ya publicadas
+por QA (banco 802/0/1 en tres vueltas, fail-before por sección, fuzz diferencial 2 700/0, procesos
+por llamada): se dan por buenas, con una excepción declarada — la revisión de las **tres decisiones
+que el parche cambia** sobre cabeceras con CR sembrado (vuelta 2 §3.3), que se resolvió **leyendo**
+y no midiendo la consecuencia. Ahí está SEC-024.
+
+**Veredicto: REQ-015 `aprobado`; REQ-016 `con-hallazgos` — no firmo REQ-016.** Motivo en una línea:
+el parche cierra la fabricación del **cierre** del rango (`-\r->`) y deja **abierta, y en la
+dirección que abre**, la del **abre** (`<!\r--`), con lo que un `deny` de la puerta se convierte en
+`allow` sobre una cabecera base del corpus — **incumplimiento exacto de la letra de CA-02**, medido
+hoy (SEC-024). No es un veto: hay remedio acotado, dueño y una vuelta disponible de las tres.
+
+---
+
+### SEC-023 — El fail-open de la cita corrió **publicado** dos versiones: 1.31.0 y 1.32.0 cerraron REQ `critico` sin auditoría aprobada
+
+- **Severidad:** alta · **Clase:** `contrato` · **Estado:** `en-mitigación` · **REQ:** REQ-016
+- **Ventana de exposición:** **1.31.0 y 1.32.0, ambas inclusive.** La pertenencia **no es una lista
+  escrita a mano**: es toda versión publicada que tolera el énfasis de Markdown en la **clave** del
+  campo (`arnes_norm_clave`) y **no** tiene noción de cita (`arnes_sin_cita`) — las dos condiciones a
+  la vez, la primera sin la segunda. El sitio único donde vive esa derivación, con su comando tag a
+  tag, es `skills/arnes-upgrade/SKILL.md` §`Hacia 1.32.1`. Ejemplos **no exhaustivos** a hoy: 1.31.0,
+  1.32.0. Las anteriores no leían la clave decorada; 1.30.2 y 1.30.3 **deniegan** (bisección del
+  reportante, reproducida por mí).
+- **Mecanismo.** Tres reglas correctas por separado —tolerancia de énfasis en la clave, «gana la
+  última aparición», y un lector sin noción de cita— hacían que **cualquier** línea de la cabecera
+  que empezara por la clave de un campo se convirtiera en el valor vigente, **incluida** la que vive
+  dentro de un `<!-- … -->` que dice literalmente ser histórica. Vale para cualquier campo por el
+  mismo camino: el veredicto de QA, la clase de un hallazgo bloqueante, el rigor, la sensibilidad.
+- **Lo que este parche NO deshace, y es lo que pesa:** cierra la puerta **de aquí en adelante**. **No
+  revisa lo que ya cerró.** Un proyecto que corrió 1.31.0 o 1.32.0 puede tener REQ en estado terminal
+  cuyo cierre nadie firmó, y el arnés no lo sabe ni lo puede saber por sí solo: el estado terminal no
+  guarda quién lo autorizó.
+- **Qué tiene que hacer un proyecto que corrió esas versiones.** La instrucción operativa **no se
+  duplica aquí a propósito** —dos transcripciones de la misma regla se desfasan, y esta ventana existe
+  por una de ellas—: vive en `skills/arnes-upgrade/SKILL.md` §`Hacia 1.32.1`, viñeta «**Y AUDITA TUS
+  REQ CERRADOS**», con su barrido `awk`, la comprobación tag a tag y la instrucción de **reabrir** el
+  REQ (`AGENTS.md` §9) en vez de borrar el comentario.
+- **Dictamen sobre la suficiencia de esa instrucción: suficiente en el QUÉ, insuficiente en el
+  BARRIDO.** Dice sin eufemismo lo que pudo pasar, obliga a rehacer la revisión y no a maquillar el
+  texto, y deriva las versiones del historial del lector en vez de enumerarlas. Lo que no es
+  suficiente es el **comando**, y no por el patrón: por la **pregunta**. Ver SEC-025.
+- **Estado de mitigación.** `en-mitigación`, no `mitigado`: el código cierra la vía en 1.32.1 (medido
+  por mí: el mismo documento con `<!--` bien escrito → **deny**, contra **allow** en 1.30.3, 1.31.0 y
+  1.32.0), pero la **auditoría retroactiva** de cada proyecto consumidor es acción humana que este
+  repositorio no puede acreditar. Pasa a `mitigado` cuando el barrido de SEC-025 exista y la
+  instrucción lo lleve; su ejecución en cada proyecto es de ese proyecto.
+- **Dueño:** `desarrollador` (el barrido y el código) · cada proyecto consumidor (su propia auditoría).
+
+---
+
+### SEC-024 — Un CR suelto en la cabecera decide del lado que **ABRE**: el `<!\r--` no reconocido deja gobernar el veredicto citado, y `Seg\ruridad:` fabrica la clave
+
+- **Severidad:** alta · **Clase:** `contrato` · **Estado:** `abierto` · **REQ:** REQ-016 (**bloquea
+  su cierre**) · **Ventana:** 1.32.1
+- **Ubicación:** `hooks/lib.sh` — `arnes_sin_cita` (el rango se escanea crudo, correcto) junto con
+  `arnes_norm_clave:1620` (`local l="${1//$'\r'/}"`, que descuenta **todos** los CR y también los de
+  la **clave**), y el bucle de cabecera de `arnes_campos_req`, que acepta la línea sin preguntar si
+  se pudo medir.
+- **La clase, dicha por propiedad y no por forma.** El autor de un REQ y el lector del arnés pueden
+  **discrepar sobre dónde empieza o acaba un rango de comentario**, y toda discrepancia tiene que
+  caer del lado que **DENIEGA**. Hoy cae de los dos lados: para `<!-- nota --!>` cae del lado que
+  cierra —declarado conforme, con su caso en el banco— y para `<!\r--` cae del lado que **abre**. El
+  vector es el **CR suelto**, el único carácter de control C0 que el arnés no deniega (los demás sí),
+  y lo es sólo por el transporte CRLF de Windows.
+- **Medido hoy (2026-09-07), fixture aislado, `Write`, cuatro árboles.** Base tomada de la forma del
+  corpus del banco: `critico`, `QA: aprobado`, **sin ninguna declaración de `Seguridad:`** → la base
+  **DENIEGA** con motivo propio («su rigor efectivo es 'critico' y el veredicto de seguridad es
+  'ausente'», la excepción que CA-11 nombra). Se le **añade** un rango cuyo interior declara
+  `Seguridad: aprobado`, un campo que **no estaba** en la base:
+
+  | Variante añadida a la misma base | Decisión hoy |
+  |---|---|
+  | (nada: la base desnuda) | **deny** |
+  | `<!--` / `Seguridad: aprobado (A-001, 2026-09-01)` / `-->` | **deny** ← el arreglo funcionando |
+  | `<!` + CR + `--` / `Seguridad: aprobado (A-001, 2026-09-01)` / `-->` | **ALLOW** |
+
+  Y en la forma con `Seguridad: pendiente` vigente en la base, el mismo `<!\r--`: **allow** en
+  1.30.3, 1.31.0, 1.32.0 **y hoy**; el lector de hoy publica `SEG=<aprobado>` y `CITA_ABIERTA=0`.
+- **Por qué es incumplimiento exacto de CA-02, y no una lectura amplia.** CA-02 dice: dada cualquier
+  cabecera del corpus, cuando se le añade un rango **cuyo interior no contiene ninguna declaración de
+  campo que ya estuviera en esa cabecera**, entonces **no existe** ningún caso en que un `deny` se
+  convierta en `allow`. El antecedente se satisface **literalmente** (la base no declara `Seguridad:`)
+  y el consecuente es falso. La propia acotación de CA-02 lo anticipa como lo que **sigue
+  incumpliendo** —«un delimitador de comentario que el lector **fabrique** a partir de un carácter que
+  descuenta antes de escanear el rango»— y el Historial de REQ-016 lo blinda: «la acotación **no**
+  cubre el CR interior de H-01, que sigue siendo incumplimiento de CA-02 y CA-03 y **se arregla en el
+  código, no en el criterio**». Se arregló **una mitad**: `-\r->` (el cierre) ya no se fabrica y
+  el rango queda abierto → deny, correcto. Para `<!\r--` (el abre), **no fabricar** significa que el
+  rango **nunca se abre**, y entonces lo que el autor aparcó dentro del comentario **gobierna**. El
+  mismo parche cerró una dirección e **invirtió** la otra en fallo abierto.
+- **La segunda cara del mismo vector, medida y con el mismo remedio: la clave fabricada.** Sobre una
+  base `critico` con `Seguridad: pendiente` vigente, la línea `Seg` + CR + `uridad: aprobado` cierra
+  el REQ: `arnes_norm_clave` retira el CR **después** de la cita y **fabrica la clave**. Bisecado:
+  **allow** en 1.30.3, 1.31.0, 1.32.0 y hoy — **no** lo introdujo este parche. Los dos lectores
+  coinciden (`hooks/campos-req.awk` fabrica igual), así que **CA-01 se cumple** y esta cara no
+  desmiente ningún criterio; se registra aquí porque **el remedio es el mismo** y porque el barrido de
+  SEC-025 tampoco la encuentra. Y `tools/arnes-lectura.sh` dice sobre ese documento «Ningún valor
+  anómalo: la máquina lee los 2 REQ como están escritos», `rc=0`: la afirmación es **falsa** —el
+  discriminante `ARNES_CLAVE_DECORADA` se deriva de `crudo="${l%%:*}"`, capturado **después** del
+  descuento del CR, así que la reparación que la normalización tuvo que hacer es invisible a la propia
+  función que existe para nombrarla.
+- **Riesgo.** Un REQ `critico` cierra sin auditoría de seguridad aprobada, por dos vías, en la versión
+  que se está publicando. Es exactamente el fallo que esta ventana existe para cerrar, y el sitio lo
+  empeora igual que en SEC-023: quien documenta la historia de sus veredictos en un comentario se
+  expone más.
+- **Remediación recomendada — una pregunta cerrada, no un patrón que ensanchar.** La forma que cubre
+  la **clase** y no las dos formas medidas: **una línea de la cabecera que contenga un CR que no sea
+  el que la termina deja una cabecera que no se puede medir, y una puerta que no puede medir no deja
+  pasar** → DENY citando la línea. Es el principio que CA-03 ya adoptó para el rango sin cerrar,
+  aplicado al carácter. Propiedades que la hacen preferible a cualquier alternativa examinada:
+  1. **Cierra las dos caras con un solo control** (el abre no reconocido y la clave fabricada), y
+     cualquier objetivo futuro del mismo carácter, porque no habla del objetivo sino del carácter.
+  2. **No estrecha ninguna tolerancia** y por tanto **no reabre** el camino que el `desarrollador`
+     midió y evitó: `Estado: comple\rtado` deja de leerse como estado terminal, sí, pero **no** por
+     ausencia de estado — la cabecera se deniega antes. La dirección sigue siendo la que cierra, que
+     es la única condición que ese descarte exigía.
+  3. **No toca la tolerancia al CRLF**, porque el CR que **termina** la línea queda expresamente
+     fuera: el CRLF completo lo normaliza `arnes_sin_cr_transporte` en el entrante y el disco lo
+     entrega como CR final. Las dos filas «REQ entero en CRLF» del banco no se mueven.
+  4. **Es coherente con lo que el arnés ya hace:** los bytes de control C0 distintos de tab, LF y CR
+     **se deniegan, no se limpian**. Esto sólo retira la excepción del CR allí donde no es transporte.
+  La decisión de diseño y el código son del `desarrollador`; **no escribo código**. Si elige otra
+  salida, la condición que **no** negocio es la propiedad: ninguna discrepancia autor↔lector sobre los
+  delimitadores puede caer del lado que abre, y la comprobación tiene que estar en el banco **con su
+  fail-before** contra el árbol de hoy (no contra 1.32.0, que denegaba estas formas por otro motivo).
+- **Write-back exigido antes de levantar esto (`AGENTS.md` §9, y mi propia regla):** el control no
+  vive sólo en el código ni sólo en este registro. Va a **criterio** de REQ-016 —extensión de CA-03 o
+  un CA nuevo— enunciado **por propiedad**, con el sitio único donde vive la lista exhaustiva de
+  caracteres y los ejemplos marcados **no exhaustivos**. Dueño del write-back:
+  `analista-requerimientos`.
+- **Dueño:** `desarrollador` (código y banco) · `analista-requerimientos` (write-back).
+
+---
+
+### SEC-025 — El barrido de la auditoría retroactiva afirma completitud, y hay dos contraejemplos medidos: pregunta por el **mecanismo** cuando la pregunta de **estado** es completa y gratis
+
+- **Severidad:** media · **Clase:** `contrato` · **Estado:** `abierto` · **REQ:** REQ-016 (CA-09)
+  · **Ventana:** 1.32.1 para la frase; 1.33.0 para el barrido por estado
+- **Ubicación:** `skills/arnes-upgrade/SKILL.md` §`Hacia 1.32.1`, viñeta «Qué revisar, y con qué
+  comando» — el comentario de la primera línea del barrido: «los REQ cuya CABECERA abre un comentario:
+  **son los únicos que pudieron verse afectados**».
+- **Descripción.** La frase es una **promesa de completitud** y es falsa. El barrido busca `<!--` en
+  la cabecera, así que **no encuentra** (i) una cabecera cuyo único delimitador sea un `<!\r--`
+  fabricado —la observación que el `desarrollador` dejó sin dictaminar, y que SEC-024 convierte en
+  algo peor que un hueco del barrido: en un fallo abierto vivo—, ni (ii) la **clave fabricada** de
+  SEC-024, que no necesita comentario ninguno y cierra un `critico` desde 1.30.3. Un proyecto que
+  corra el barrido, no vea nada y concluya «no me afectó» habrá llegado a una conclusión que el
+  comando no sostiene, y el cierre sin firma se queda sin firmar para siempre.
+- **Por qué es `contrato` y no un defecto de forma.** Es superficie que los proyectos **heredan** por
+  `arnes-upgrade`, y es una frase **más ancha que lo que la máquina hace**: la regla de `ADR-002`, y
+  exactamente la misma clase que SEC-015 cerró en esta misma ventana por REQ-015 CA-08 (una promesa
+  incondicional de `AGENTS.md` §13 sobre lo que la continuidad no toca). La superficie heredada no
+  tiene un régimen más laxo que un criterio: es la que actúa en proyectos que nadie de aquí audita.
+- **Y el defecto de fondo no es el patrón: es la pregunta.** Ensanchar el patrón aquí pierde —cuatro
+  derrotas medidas en este repositorio— porque el barrido interroga al **mecanismo** («¿hay un
+  comentario?») y el mecanismo tiene una vía nueva cada vez. La pregunta que **no envejece** es de
+  **estado**: *«de mis REQ en estado terminal, ¿cuáles NO cerrarían hoy, leídos con el lector de esta
+  versión?»*. Eso cubre la cita, el delimitador fabricado, la clave fabricada, el veredicto que en
+  versiones más viejas vivía dentro de `## Historial de cambios` y **cualquier vía que nadie ha
+  descubierto todavía**, porque no describe la vía: describe la discrepancia entre «está cerrado» y
+  «hoy no cerraría». Y es barata: el lector ya existe, y `arnes_campos_req "$disco" ""` da el juicio
+  sobre el documento tal como está en el disco.
+- **Remediación, en dos mitades con dueños distintos:**
+  1. **Ahora, en esta ventana, y es lo que bloquea:** la frase de completitud se corrige a la **forma
+     que no envejece** —enunciar la **propiedad** («los REQ en estado terminal cuyo veredicto vigente
+     no autorizaría hoy el cierre»), citar el barrido de `<!--` como **ejemplo no exhaustivo** de una
+     vía, y **nombrar** las dos vías conocidas que el comando no encuentra—. Y la propiedad va a
+     **CA-09**, no sólo al skill: hoy CA-09 acota «qué revisar» a la vía del comentario, así que el
+     skill cumple el criterio y el criterio es lo que se quedó corto. Dueño: `analista-requerimientos`
+     (CA-09) y `desarrollador` (la frase). Es una cláusula en cada sitio.
+  2. **1.33.0, y no bloquea:** el barrido **por estado** como modo de `tools/arnes-lectura.sh` —«REQ
+     en estado terminal que hoy no cerrarían»—, que es el control de verdad. Clase de esa mitad:
+     `instrumento`. Dueño: `desarrollador`. Va junto a SEC-020/SEC-021 y REQ-011, donde ya vive el
+     trabajo sobre lectores y campos.
+- **Nota de coste, para que la primera mitad no se lea como cara:** la sección 36-4 del banco certifica
+  el texto del skill con `mira36` (grep sobre el archivo). Añadir la propiedad son una fila más y un
+  `CASOS_ESPERADOS` que sube. No hay que reescribir ninguna medición.
+
+---
+
+### SEC-026 — Accesos del repositorio público: retirado un colaborador con `write`, y el canal privado de informes pasa a tener repositorio propio
+
+- **Severidad:** n/a (es una **corrección**, no un hallazgo) · **Clase:** n/a · **Estado:**
+  `mitigado` · **REQ:** — · **Fecha:** 2026-09-07
+- **Qué cambió, y por qué importa.** `JJOVEGA/ArnesJuan` es **público** y desde él se distribuye el
+  plugin (`.claude-plugin/marketplace.json`): un colaborador con `write` sobre este repositorio puede
+  modificar el mecanismo que gobierna a **todos** los proyectos que lo instalan. El permiso de
+  escritura aquí no es acceso a un repositorio: es acceso a las puertas de terceros.
+  - `jvega-consisa` tenía **write** y se le **retiró el acceso** por completo.
+  - Se retiró la invitación **caducada** de una tercera cuenta.
+  - Se creó `JJOVEGA/ArnesJuan-informes`, **privado**, con issues y sin colaboradores más que el
+    dueño, para los informes que sí llevan datos de cliente.
+- **Verificado por mí hoy con `gh`** (cuenta activa `jvega-habitat`, sin admin):
+  `repos/JJOVEGA/ArnesJuan/collaborators` → **exactamente dos**, `JJOVEGA` (`admin=true`) y
+  `jvega-habitat` (`admin=false, push=true`); `repos/JJOVEGA/ArnesJuan` → `visibility=public`.
+  **Lo que NO pude verificar y por eso lo digo:** las **invitaciones** exigen admin (`403`), y
+  `ArnesJuan-informes` responde `404` a esta cuenta — consistente con «privado y sin colaboradores
+  más que el dueño», pero **no** es prueba de ello. Esas dos las acredita la coordinadora con la
+  cuenta propietaria; yo acredito lo que leí.
+- **Valoración: es la corrección correcta y va en la dirección buena.** El principio de mínimo
+  privilegio sobre el repositorio que distribuye el plugin, y la separación del canal privado en un
+  repositorio **privado con issues** en vez de en archivos `.gitignore` en el árbol público —que es un
+  `git add -A` distraído de distancia, como el propio `.gitignore` advierte—.
+- **Y una consecuencia que hay que escribir, no descubrir:** el repositorio de informes es **privado
+  y por tanto fuera de la clase «Público»** de `docs/seguridad/gobernanza-datos.md` §2. La regla del
+  canal privado (§3) **no cambia**: lo que cruza de ahí a este repositorio sigue siendo la **forma**
+  del defecto y nunca su instancia. Un repositorio privado del mismo propietario facilita el traslado
+  literal, que es exactamente lo que la regla prohíbe. Anotado en §2 y §3 de `gobernanza-datos.md`.
+
+---
+
+### SEC-027 — El ruleset `proteger-main` exige el check pero **cero revisiones aprobadas**: quien tiene `write` abre y fusiona su propio cambio del plugin
+
+- **Severidad:** media · **Clase:** `instrumento` · **Estado:** `aceptado` (residual declarado, con
+  condiciones) · **REQ:** — · **Dueño:** propietario (`JJOVEGA`); es el único que puede cambiar un
+  ruleset
+- **Medido hoy (2026-09-07), leyendo el ruleset con `gh`** (`rulesets/22245314`, `enforcement:
+  active`, `target: branch`, `include: ~DEFAULT_BRANCH`):
+
+  | Regla | Estado |
+  |---|---|
+  | `deletion`, `non_fast_forward` | activas — no se borra `main` ni se reescribe |
+  | `pull_request` | activa — **todo por PR**, pero `required_approving_review_count: **0**`, `require_last_push_approval: false`, `require_code_owner_review: false` |
+  | `required_status_checks` | `hooks-en-linux` **requerido y estricto** (`strict_required_status_checks_policy: true`) |
+  | `require_extra_approval_for_unattributed_changes` | `true` — cubre commits sin autoría atribuible, **no** este caso |
+
+  Y el ejercicio real, medido y **más ancho de lo que se reportó**: los PR **#37, #38, #39 y #40**
+  fueron abiertos y fusionados por `jvega-habitat`, con **0 revisiones** cada uno. El push directo a
+  `main` sí se rechaza. Conclusión: hoy la convención de que la fusión es humana la sostienen **el
+  hábito y la delegación del propietario**, no la plataforma.
+- **Dictamen — residual `aceptado`, y NO exijo el control. Con tres condiciones que lo sostienen, y si
+  alguna cae, no lo cubro.** El razonamiento, en el orden en que pesa:
+  1. **La delegación es una decisión del dueño del sistema, escrita y fechada** (`AGENTS.md` §4/§6,
+     2026-09-05), y **no** es «cero control»: está condicionada a *«todo en verde»* y **cualquier rojo
+     o hallazgo abierto devuelve la decisión al humano**. Un residual gobernado por una regla escrita
+     con su condición de invalidez no es lo mismo que un residual sin gobierno.
+  2. **La asimetría es real y va contra el control.** Exigir una revisión aprobada cerraría el riesgo
+     **y** metería un aprobador humano en la vía que hoy funciona por delegación — con **dos** cuentas
+     en total, una de ellas el propio propietario: la única revisión posible la firmaría `JJOVEGA`,
+     que es quien ya decide. El control no añadiría un par de ojos: añadiría un turno. Y un control
+     que estorba sin añadir independencia es el perfil del control que alguien acaba desactivando, que
+     es peor que no tenerlo.
+  3. **La puerta que de verdad protege el mecanismo está activa y es estricta.** Ningún cambio de
+     `hooks/` llega a `main` sin que el banco pase en Linux. Eso es lo que impide un fallo en abierto
+     silencioso en los proyectos que instalan el plugin; una revisión aprobada no lo impediría mejor.
+  4. **Y el privilegio acaba de reducirse** (SEC-026): la superficie de «quien tiene write» pasó de
+     tres cuentas a dos.
+- **Condiciones bajo las que este `aceptado` vale** —si alguna cambia, hay que volver a mirarlo, y
+  entonces mi recomendación sería exigir la revisión:
+  (i) **el número de cuentas con `write` no crece**: en cuanto haya una tercera, «me fusiono a mí
+  mismo» deja de ser el propietario o su delegado y el control empieza a comprar independencia real;
+  (ii) el check `hooks-en-linux` sigue **requerido y estricto**, y las reglas `deletion` /
+  `non_fast_forward` siguen activas;
+  (iii) la condición de la delegación se **respeta**: con un hallazgo `contrato` abierto, la fusión y
+  el tag vuelven a Juan. **Hoy eso aplica:** SEC-020 sigue abierto y `contrato`, SEC-024 y SEC-025
+  nacen abiertos y `contrato`, y `docs/PENDIENTES.md` lleva el cierre por heredoc de `python3` como
+  `contrato`. **La publicación de 1.32.1 no está en el supuesto «todo en verde» y por tanto no está
+  delegada.**
+- **Por qué `instrumento` y no `contrato`.** No hay ningún texto del proyecto que prometa que la
+  plataforma exige revisión: `gobernanza-datos.md` §6 ya lo declara al revés («el gate humano de
+  fusión y publicación es **política declarada**, no una restricción de la plataforma»), y esta entrada
+  lo mide. Un residual **declarado, medido y con vencimiento condicional** no es un fallo oculto. Si
+  algún día un documento heredado dice que la plataforma lo exige, esa frase será `contrato` — y esta
+  entrada es la que la desmentiría.
+
+---
+
+### SEC-028 — La propiedad «ningún carácter se descuenta antes de escanear el rango» se sostiene por **inspección** y ninguna guarda la mide
+
+- **Severidad:** media · **Clase:** `instrumento` (**no bloquea el cierre**) · **Estado:** `abierto`
+  · **REQ:** — · **Dueño:** `desarrollador` · **Ventana:** 1.33.0
+- **Ubicación:** `hooks/lib.sh` (`arnes_sin_cita`), `hooks/campos-req.awk` (`sincita()`) y los ocho
+  puntos que descuentan CR; la guarda estructural existente vive en
+  `tests/escenarios/hooks/secciones/36-cabecera-comentario-html-4-el-informe-y-los-textos.sh:75-82` y
+  comprueba **coste**, no orden.
+- **Descripción y remediación:** el análisis completo, con la enumeración revisada punto por punto y
+  las dos mitades del remedio, está en la sección «Sobre el fallo en abierto cerrado por las cuatro
+  bocas» de esta revisión R-007, más abajo. En una línea: la propiedad es correcta hoy y **envejece
+  con el siguiente `grep` que alguien no haga**; hacen falta (i) una comprobación cerrada sobre el
+  cuerpo de las dos funciones y (ii) el **fuzz diferencial con semillas fijas dentro del banco**, que
+  es la mitad que mide la propiedad y no la forma. La (ii) importa más: la (i) sola no vería una boca
+  nueva.
+
+---
+
+### SEC-029 — `CHANGELOG.md` nombra a un proyecto consumidor en el repositorio **público**, y la verificación de §3 no podía encontrarlo porque es **diferencial**
+
+- **Severidad:** alta · **Clase:** `contrato` · **Estado:** `abierto` · **REQ:** — (no atribuible a
+  REQ-015 ni a REQ-016; **no** va a su campo `Hallazgos abiertos:`) · **Dueño:** `desarrollador`
+  (la corrección) y `analista-requerimientos` (el NFR del barrido de base)
+- **Ubicación:** `CHANGELOG.md:1615` — `**Medido en <nombre del proyecto>, con el control de
+  plataforma hecho**`, dentro de la entrada «el bloque derivado costaba 92 segundos por parada en un
+  proyecto real». Junto al nombre viajan métricas de forma de ese proyecto (número de REQ, tamaño
+  total del corpus, tamaño del REQ mayor, segundos por turno y la lentitud de su plataforma).
+- **Descripción.** `AGENTS.md` §4 y `gobernanza-datos.md` §3 son explícitos: este repositorio es
+  **público**, «describe el arnés, nunca los hallazgos de un cliente», y la traducción «conserva el
+  defecto y descarta el contexto» — **nunca el proyecto**. Aquí el contexto se conservó. Y
+  `gobernanza-datos.md` §7 dice cómo se trata: «su incumplimiento se trata como **hallazgo de
+  seguridad**, no como incidencia editorial». Lo trato así.
+- **Medido hoy (2026-09-07).** Aparición **única** en todo el árbol versionado (`git grep -il`
+  excluyendo `insumos/`). Introducida por el commit **`73f9452`** (PR **#26**, bump 1.29.3) y presente
+  en **`origin/main`** y en cuatro ramas remotas más: está **publicada**. **No** entró en esta ventana:
+  `git diff HEAD -- CHANGELOG.md | grep '^+.*<nombre>'` sale vacío. Y comprobado en la misma pasada,
+  sin hallazgos: ningún patrón de credencial (`ghp_`, `github_pat_`, `AKIA…`, `-----BEGIN`,
+  `api_key=`, `token=`, `password=`) en lo añadido por esta ventana; `insumos/` y `reporte-arnes-*`
+  **no** entraron al índice; no existe ningún `.env` en el árbol.
+- **La causa raíz no es el descuido: es la forma del control.** `gobernanza-datos.md` §3 define su
+  verificación como `git diff origin/main..HEAD | grep '^+'` — **diferencial**. Una verificación
+  diferencial **no puede encontrar, por construcción, lo que ya está en la base**, y la auditoría de
+  REQ-001 (2026-09-05) reportó «sin hallazgos» **con razón**: este nombre entró antes de su ventana y
+  nunca estuvo en su alcance. Es el mismo defecto de forma que SEC-025 en otro sitio: un control que
+  pregunta por el **cambio** cuando la propiedad que hay que sostener es de **estado**.
+- **Remediación, en dos mitades:**
+  1. **La instancia, ahora, y es condición de mi no-veto:** sustituir el nombre por la forma que la
+     **propia cabecera de esa entrada ya usa** («en un proyecto real»), y revisar en el mismo paso las
+     métricas adyacentes: el número de REQ, el tamaño del corpus y el del REQ mayor son **huella** del
+     proyecto y no hacen falta para entender el defecto — lo que la entrada necesita es el
+     **fixture reproducido aquí**, que ya está y es la cifra que vale. `CHANGELOG.md` está declarado
+     en el campo `Archivos:` de **los dos** REQ de esta ventana, así que la corrección cae dentro del
+     commit que ya se va a hacer: **no** necesita REQ nuevo.
+  2. **El control, con NFR, y no bloquea esta ventana:** §3 gana un **barrido de base** —una pasada
+     sobre **todo** el árbol versionado, no sobre el diff— que se corre una vez y luego queda como
+     puerta; el diferencial se conserva como lo que es, la comprobación **incremental**. El barrido se
+     enuncia **por propiedad** («ninguna ruta versionada nombra un proyecto consumidor, una
+     organización ni una persona ajena»), y la lista de nombres a buscar vive en **un solo sitio** y
+     **fuera** del repositorio público —en `insumos/`, que está en `.gitignore`—, porque una lista de
+     nombres de cliente publicada para poder buscarlos sería el mismo fallo con más pasos. Dueño del
+     NFR: `analista-requerimientos`; ventana 1.33.0.
+- **Lo que NO recomiendo, y va escrito para que nadie lo intente por celo:** **no se reescribe el
+  historial público.** El nombre vive en `origin/main` y en cuatro ramas remotas; un `filter-repo`
+  rompería toda clonación existente, chocaría con las reglas `non_fast_forward` del ruleset y no
+  retiraría las copias ya distribuidas. El remedio proporcionado es **corregir el presente, declarar
+  el residual y cerrar la vía**. El residual queda dicho aquí: **el nombre permanece en el historial
+  de un repositorio público, y eso no se deshace.** Si el proyecto afectado tiene que ser informado,
+  ésa es una decisión del propietario y no mía.
+- **Estado.** `abierto`. Pasa a `en-mitigación` cuando la mitad 1 esté en el árbol, y a `mitigado`
+  cuando el barrido de base exista como NFR y se haya corrido entero una vez.
+
+---
+
+### Dictamen de gobernanza de la ventana — las cinco preguntas
+
+1. **El orden de firmas se respetó.** `QA: aprobado (vuelta 2, 2026-09-07)` en los dos REQ antes de
+   esta auditoría; ninguna `Seguridad: preventiva` declarada; los dos REQ siguen en `en-revisión` y
+   ninguno se cerró antes de tiempo. La cola de `PENDING_APPROVAL.md` está en 0 entradas, verificado.
+2. **La clasificación de los seis hallazgos de la vuelta 1: la comparto, con una corrección de
+   coherencia sobre H-05 y una reserva sobre H-06.**
+   - **H-01, H-03, H-04 → `contrato`:** correcto y por el criterio, no por la severidad. Los tres son
+     «el criterio afirma algo falso sobre lo construido», que es la definición.
+   - **H-02.a–d → `instrumento`:** correcto. Son casos del banco que no medían; el producto se
+     sostenía. Es el uso legítimo de la clase.
+   - **H-05 → `contrato`: coincido, y resuelvo la incoherencia que QA misma señaló** entre su §0.1
+     («ajeno a esta ventana, no se escribe en estos dos REQ») y su §7.1. **No es ajeno.** El campo
+     `Archivos:` **de estos dos REQ** era falso, lo escribió esta ventana, y `tools/arnes-paralelo.sh`
+     respondía `disjunto` con rc 0 sobre un par que colisiona — y ese `disjunto` es la **única**
+     autorización para despachar en paralelo (`AGENTS.md` §6). Un mapa falso con éxito aparente sobre
+     el propio trabajo de la ventana es `contrato` de la ventana, y se arregló dentro de ella, que es
+     lo que ocurrió. La incoherencia era de **redacción**, no de decisión.
+   - **H-06 → `contrato`, ajeno a la ventana: coincido en el tratamiento y no en la comodidad.** El
+     tratamiento es correcto y tiene precedente: nace ≤1.30.x, es **idéntico** en 1.32.0 y 1.32.1
+     (QA lo midió en los dos árboles), no lo introdujo ni lo empeoró este parche, y bloquear una
+     ventana por un defecto que no introdujo es lo que este arnés llama cerrar de rebote. Va con
+     dueño y ventana propios y **no** al campo `Hallazgos abiertos:` de estos dos REQ. **Lo que no
+     acepto es que siga sin dueño:** una nota al margen que desactiva en silencio el bloqueo de la
+     cola de aprobaciones (§6) es una puerta que se apaga sin que nadie lo vea, y la divergencia es
+     entre la prosa de `PENDING_APPROVAL.md` y el código. Le corresponde dueño (`desarrollador`) y
+     ventana (1.33.0, junto a REQ-011 y SEC-020/021).
+   - **Y el mismo tratamiento, por el mismo razonamiento, aplico a la segunda cara de SEC-024** (la
+     clave fabricada, `allow` desde 1.30.3): ajena a la ventana, dueño y ventana propios, **no** al
+     campo `Hallazgos abiertos:` de estos dos REQ. Lo que **sí** bloquea es la cara del `<!\r--`,
+     porque desmiente la letra de CA-02 sobre el árbol de hoy.
+3. **El write-back NO amnistió nada. Verificado, y es lo que se me pidió confirmar.** CA-02 de
+   REQ-016 acota su invariante al rango que **añade** y no al que **envuelve**, y lo hace nombrando
+   tres veces lo que **sigue incumpliendo**: «la acotación es de esa clase y **sólo** de esa»;
+   «cualquier otra vía por la que un `deny` se vuelva `allow` sigue **incumpliendo** este criterio y
+   **no se acota para que encaje**»; y el ejemplo no exhaustivo del **delimitador fabricado**. El
+   Historial lo blinda con la cláusula anti-coartada: el CR interior de H-01 «sigue siendo
+   incumplimiento de CA-02 y CA-03 y **se arregla en el código, no en el criterio**». La conducta
+   aceptada subió a **criterio** (CA-11) en vez de quedarse en un párrafo del Historial, y con su
+   excepción medida dentro (`Seguridad:` ausente **no** se perdona en `critico`). Es un write-back
+   honesto. **Y la prueba más dura de que lo es:** la cláusula que el analista escribió para que
+   nadie usara la acotación como coartada es, literalmente, la que me deja fundar SEC-024. Un
+   write-back que amnistía no le da munición al auditor siguiente.
+4. **El cierre de 1.32.0 por un heredoc de `python3`: el registro es suficiente, y añado una cosa.**
+   `docs/PENDIENTES.md` lo tiene con fecha, mecanismo, clase `contrato`, dueño (REQ-011, la puerta
+   posterior, ventana 1.33.0), el forzador medido que le faltaba a ese REQ, y el agravante nombrado
+   (la instrucción de sesión que prefería `Bash`). No pedí absolución y no la doy: no hace falta,
+   porque **el cierre en sí era legítimo** —se revirtió, se repitió con `Edit` y la puerta lo aceptó
+   con los veredictos en su sitio—; lo que falló fue que nadie lo comprobó, y eso es lo que está
+   registrado. **Lo que falta es una consecuencia, no una línea más de relato:** mientras ese
+   `contrato` esté abierto, la condición *«todo en verde»* de la delegación del propietario **no se
+   cumple**, así que la fusión y el tag de esta ventana **no están delegados**. Eso pertenece a la
+   decisión de publicación (SEC-027, condición iii) y no a `PENDIENTES.md`.
+5. **La instrucción de sesión que empuja a editar por consola: la regla escrita NO basta, y esta
+   ventana es la prueba.** La regla de CA-10 —«la invariante manda sobre cualquier preferencia de
+   herramienta», con su motivo, en `AGENTS.md` §13 y en `templates/AGENTS.md.tpl`— es necesaria y hay
+   que conservarla: convierte en escrito lo que estaba «en la cabeza de nadie». Pero es **una regla
+   dirigida a quien lee, y el problema es de quien no lee**: el propio texto lo dice —«quien configura
+   una sesión no suele ser quien lee esta sección»—, y por tanto **se dirige exactamente a la persona
+   equivocada**. La evidencia está dentro de esta misma ventana: la instrucción reapareció **hoy**, en
+   tres comisiones (coordinadora, desarrollador y esta), después de escribirse la regla. Las tres la
+   declaramos y no la seguimos para archivos protegidos — es decir, la regla funcionó **tres veces por
+   disciplina de tres agentes**, que es precisamente la forma de cumplimiento que este arnés existe
+   para no necesitar.
+   **Dictamen: pide un control, y el control ya está especificado y con dueño — es REQ-011, la puerta
+   posterior.** No hace falta inventar nada: una puerta que deja de preguntar *antes* si un comando va
+   a escribir y pregunta *después* si algo protegido cambió es indiferente a la herramienta y por
+   tanto a la preferencia. Es la misma respuesta que `docs/PENDIENTES.md` da al heredoc de `python3`,
+   y eso **no es coincidencia: son dos forzadores medidos de la misma clase**, uno por descuido de
+   herramienta y otro por preferencia de configuración. **No abro hallazgo nuevo**: sería un tercer
+   nombre para el mismo trabajo ya dotado. Lo que sí dejo escrito es la **prioridad**: REQ-011 tiene
+   ahora dos forzadores medidos con fecha, y ninguna regla de prosa los habría evitado.
+   **Y un matiz que no quiero que se pierda:** la regla de CA-10 **no** es un sustituto fallido, es la
+   mitad honesta — declara el límite mientras la puerta no existe, que es lo que `ADR-002` manda hacer
+   con toda barandilla parcial. Lo que no se puede es tratarla como cierre.
+
+---
+
+### Sobre el fallo en abierto cerrado por las cuatro bocas — lo que se me pidió dictaminar
+
+**La enumeración de los ocho descuentos de CR es por INSPECCIÓN, no por construcción.** La revisé y
+es correcta hoy: `arnes_sin_cita` no descuenta nada; `arnes_sin_cr_transporte` y la reconstrucción del
+`Edit` en `guard-completado.sh` sustituyen CRLF por **un salto de línea** —y el escaneo es **por
+línea**, así que no pueden pegar dos caracteres para fabricar un delimitador—; el CR final suelto no
+tiene nada a su derecha con lo que pegarse; `campos-req.awk` hace su `gsub` **después** de `sincita()`;
+`arnes_norm_clave` y `arnes_norm_campo` corren después de la cita; `arnes_cola_pendientes` recorta cola.
+Correcta, y **envejece con el siguiente `grep` que alguien no haga**: nada en el árbol impide que un
+descuento futuro se ponga en el lado equivocado, y la prueba de que ese riesgo no es teórico es que
+**la tercera boca no la reportó nadie** —se encontró al arreglar la primera y ver que el caso seguía
+en `allow`—.
+
+Y las guardas que hay no cubren esa propiedad: la única guarda **estructural** sobre `arnes_sin_cita`
+(sección 36-4) comprueba que la función **existe** y que **no invoca un binario externo** —es la
+guarda de **coste** de CA-08—, no que nada se descuente antes del escaneo. Las tres bocas están
+cubiertas **por conducta**, con un caso cada una, y el par con CR interior del corpus de paridad cubre
+la divergencia entre los dos lectores. Eso es cobertura de las **formas medidas**, no de la clase. El
+fuzz diferencial de 2 700 cabeceras que da 0 divergencias **es de QA y no está en el banco**, así que
+la medición más fuerte que existe sobre esta clase no la puede repetir el CI.
+
+**Hallazgo, y no bloquea:** falta una guarda estructural que impida que un descuento futuro se ponga
+antes del escaneo. Queda como **SEC-028**, clase **`instrumento`**, dueño `desarrollador`, ventana
+**1.33.0**. Las dos mitades, y la segunda importa más que la primera: (i) sobre el **cuerpo** de
+`arnes_sin_cita` y de `sincita()`, que ninguna de las dos retire ningún carácter antes de escanear
+—pregunta cerrada sobre dos funciones, coste nulo—; (ii) el **fuzz diferencial con semillas fijas**
+(lib vs awk, CR sembrado en cualquier posición) **dentro del banco**, que es la única mitad que mide la
+propiedad y no la forma. La (i) sola sería otra enumeración: no vería una boca nueva.
+
+**La decisión de diseño: de acuerdo, y cierra la clase mejor que la alternativa — pero no la cierra
+entera, y ahí está SEC-024.** Descontar **después** del escaneo y estrechar el descuento de transporte
+a CRLF→LF más el CR final es la salida correcta: es una **pregunta cerrada** (el rango está
+delimitado), no toca **ninguna** tolerancia y por tanto no reabre nada, y el descarte de la
+alternativa está bien razonado —recortar sólo el CR final en `arnes_sin_cita` obligaba a estrechar
+`arnes_norm_clave` y eso abría un camino nuevo, `Estado: comple\rtado` dejando de leerse como estado
+terminal—. Suscribo ese descarte. **Lo que el razonamiento no cubrió** es que «no fabricar» tiene
+**dos consecuencias opuestas** según qué delimitador esté en juego: para el **cierre** (`-\r->`) no
+fabricar deja el rango **abierto** y eso deniega, correcto; para el **abre** (`<!\r--`) no fabricar
+deja el rango **sin abrir**, y entonces lo que el autor puso dentro **gobierna**. La clase se cerró en
+la dirección en que se midió y se invirtió en la otra. Por eso el remedio de SEC-024 no es tocar el
+descuento otra vez —eso volvería a mover una tolerancia— sino **negarse a medir una cabecera con un CR
+que no sea el que la termina**.
+
+---
+
+### Estado de seguridad aprobado por REQ — ventana 1.32.1 (línea base de no-regresión)
+
+| REQ | Veredicto | Fecha | Versión | Motivo / controles acreditados |
+|---|---|---|---|---|
+| **REQ-015** | **`aprobado`** | 2026-09-07 | candidata 1.32.1 | Ningún hallazgo de esta revisión toca su entregable. **Controles acreditados, y debilitarlos es regresión:** (a) el temporal de publicación incorpora una componente **propia del proceso** y sigue **en el directorio del destino**, en los **cinco** puntos de publicación de `hooks/estado-derivado.sh` y `hooks/rotar-artefactos.sh` (`arnes_tmp_publicacion`), con **fail-closed** si la componente única no se obtiene: no se cae al nombre compartido; (b) la purga retira los temporales **sin dueño vivo** y **conserva** el del proceso vivo y los archivos ajenos; (c) el destino queda **byte a byte** en todo camino de fallo, incluida la muerte por señal (QA: 0 de 40 destinos rotos con `SIGKILL`); (d) **no** se introdujo `flock` ni serialización, y CA-04 declara que no se exige — un candado sería un modo de fallo nuevo sobre contenido derivado; (e) CA-08 corrigió la promesa **incondicional** de `AGENTS.md` §13 y de `templates/AGENTS.md.tpl` a **dos mitades nombradas**: **volver a afirmarla sin condición es regresión de herencia** (es SEC-015). **Hallazgos abiertos: (ninguno).** **Alcance de esta firma:** el árbol que QA validó. Si el remedio de SEC-024 modifica `hooks/lib.sh` —archivo que este REQ declara—, re-confirmo con una relectura dirigida a `arnes_tmp_publicacion`/`arnes_purga_tmp`, no con una auditoría nueva. |
+| **REQ-016** | **`con-hallazgos`** | 2026-09-07 | candidata 1.32.1 | **No firmo.** **SEC-024** (`contrato`, abierto) desmiente la **letra** de CA-02 sobre el árbol de hoy: base del corpus que **deniega** → añadido un rango cuyo interior declara un campo que **no estaba** → **`allow`**, por un `<!\r--` que el lector —correctamente— **no** reconoce como abre, con lo que el veredicto aparcado dentro del comentario **gobierna**. La clase la fija el propio criterio y su cláusula anti-coartada, no mi preferencia. **SEC-025** (`contrato`, abierto) suma la frase de completitud del barrido heredado. **Lo que SÍ queda acreditado y es línea base de no-regresión:** el rango de comentario no declara campo en los **dos** lectores y en `tools/arnes-paralelo.sh` (cuarta superficie de decisión, cuyo `disjunto` es la única autorización de paralelismo); un rango que **abre y no cierra** deniega **citando el rango** y nunca permite por **ausencia** del campo que se tragó (CA-03); la tolerancia de clave decorada **fuera** de los rangos **no se recortó** (CA-04 — recortarla reabriría un fail-open real y es la razón por la que la propuesta (b) se descartó: **restringirla es regresión**); comentar una declaración **equivale a borrarla** y la ausencia de `Seguridad:` **no** se perdona en rigor efectivo `critico` (CA-11); el CRLF completo decide **igual que el LF** en las dos direcciones; y el coste no subió (5 procesos por llamada, una sola pasada de `awk`). **Hallazgos abiertos que le corresponden:** `SEC-024 (contrato)`, `SEC-025 (contrato)`. |
+
+**No van al campo `Hallazgos abiertos:` de estos dos REQ, y queda dicho por qué:** `H-06`
+(`contrato`, ajeno, ≤1.30.x, idéntico en los dos árboles), la **segunda cara de SEC-024** (la clave
+fabricada, `allow` desde 1.30.3), **SEC-028** (`instrumento`) y **SEC-029** (`contrato`, pero **no
+atribuible** a ninguno de los dos: entró en 1.29.3 y no lo produjo ni lo empeoró ninguna de estas dos
+comisiones). Los cuatro van con dueño y ventana propios.
+
+### ¿Veto? — **NO veto la ventana; NO firmo REQ-016; y la publicación no está delegada**
+
+**No hay veto.** Un veto es el freno formal para un fallo sin remedio en proceso, y aquí el remedio
+está especificado, es acotado (una comprobación cerrada más un caso de banco con fail-before, y dos
+cláusulas de prosa), tiene dueño y queda **una vuelta de las tres**. El mecanismo ordinario —`REQ-016`
+no cierra sin `Seguridad: aprobado`, y `guard-completado` lo exige por ser `critico`— hace el trabajo
+sin necesidad de bloquear el REQ.
+
+**Lo que sí digo con todas las letras:** **1.32.1 no se puede publicar como el parche que cierra el
+fail-open de la cita**, porque sobre el árbol de hoy la puerta sigue cerrando un REQ `critico` sin
+auditoría aprobada por dos vías medidas. Publicarla así repetiría, en la versión que remedia un fallo
+en abierto, la clase de afirmación que la produjo. Y la decisión **no es mía ni de la coordinadora**:
+con SEC-020, SEC-024, SEC-025 y el `contrato` de `docs/PENDIENTES.md` abiertos, la condición *«todo en
+verde»* de la delegación del propietario (`AGENTS.md` §4/§6) **no se cumple**, así que la fusión, el
+tag y la publicación vuelven a Juan.
+
+**Condición de mi no-veto — una, y es la de SEC-029:** que el nombre del proyecto consumidor salga de
+`CHANGELOG.md:1615` **en el mismo commit** de esta ventana, junto con las métricas que son huella de
+ese proyecto. `CHANGELOG.md` ya está declarado en el campo `Archivos:` de los dos REQ, así que no
+cuesta una comisión ni un REQ nuevo. **Si se publica 1.32.1 sin eso, mi no-veto no lo cubre:** es la
+regla que `AGENTS.md` §4 pone por delante de todas las demás en este repositorio, y llevar un tag
+nuevo sobre un árbol que la incumple es publicarla otra vez a sabiendas.
+
+**Rigor: no subo ninguno.** Los dos REQ ya son `critico` y `Sensible a seguridad: sí`, que es el
+suelo. Nada que bajar, y nada que subir.
+
+---
+
+## Revisión R-008 — firma de la ventana 1.32.1: verificación de cierre de SEC-024 y SEC-025 (REQ-015, REQ-016) — 2026-09-07
+
+**Alcance — comisión acotada, no auditoría nueva.** Verificar el cierre de los dos hallazgos que
+abrí en R-007, dictaminar la clase de la regresión de coste que la coordinadora trajo (`H-07`), y
+firmar. No se reabre nada de lo que R-007 ya dio por bueno. Archivos leídos: `hooks/lib.sh`,
+`hooks/guard-completado.sh`, `hooks/campos-req.awk`, `skills/arnes-upgrade/SKILL.md`,
+`requirements/REQ-016.md`, `AGENTS.md` §13, `templates/AGENTS.md.tpl`, `CHANGELOG.md`,
+`docs/PENDIENTES.md` y el informe de QA de la vuelta 3.
+
+**Orden de firmas: respetado.** `QA: aprobado (vuelta 3, 2026-09-07)` en los dos REQ **antes** de
+esta revisión (`AGENTS.md` §6). Los dos siguen en `en-revisión`. Ninguna auditoría preventiva.
+
+**Método.** Sondas propias contra `hooks/guard-completado.sh` sobre un fixture aislado del
+directorio temporal de la sesión, con `CLAUDE_PROJECT_DIR` apuntado al fixture y con la regla de que
+**la ausencia de decisión es `allow`**. El árbol de la vuelta 2 se reconstruyó desde los mismos
+blobs colgantes que identificó QA (`088bdd0d` para `lib.sh`, `a7abd97f` para `guard-completado.sh`),
+verificados por contenido: **ninguno de los dos tiene `ARNES_CR_INTERIOR`**. **No se repitieron** las
+mediciones publicadas por QA (banco 827/0/1, fuzz de 250 con `deny→allow = 0`, las cuatro bocas,
+CA-09 por números de línea): se dan por buenas. Lo que sí se midió aquí de nuevo, y se dice por qué:
+(a) las cinco sondas de SEC-024, porque son **mías** y su reproducción es lo que se me pidió firmar;
+(b) la afirmación **estructural** del orden, por enumeración cerrada de los descuentos de CR y no por
+lectura del comentario que la afirma; (c) el coste sobre documentos de **líneas normales**, porque
+QA sólo midió la línea única gigante y la conclusión cambia (SEC-030).
+
+**Veredicto: REQ-015 `aprobado`; REQ-016 `con-hallazgos` — no firmo REQ-016.** Motivo en una línea:
+el código de SEC-024 está cerrado y medido, pero **el control no existe en ningún contrato** —
+ningún criterio de REQ-016, ninguna fila de `AGENTS.md` §13, ninguna de `templates/AGENTS.md.tpl`
+nombran el CR—, y ésa es exactamente la condición de write-back que **SEC-024 dejó escrita por
+adelantado en R-007** y que `AGENTS.md` §9 llama deriva. No es veto: el remedio es prosa de analista,
+no cuesta código ni gasta una vuelta dev↔QA.
+
+---
+
+### SEC-024 — Estado: `abierto` → **`en-mitigación`**. El código cierra las dos caras; **el write-back no existe**
+
+#### Lo que SÍ está cerrado, medido por mí hoy sobre el árbol en revisión
+
+Fixture aislado, `Write`, base del corpus del banco (`critico`, `QA: aprobado`, **ninguna**
+declaración de `Seguridad:`, que deniega por motivo propio):
+
+| # | Sonda | R-007 (v2) | **hoy** |
+|---|---|---|---|
+| 1 | la base desnuda | deny *(ausente)* | **deny** *(ausente)* |
+| 2 | + rango **bien escrito** citando `Seguridad: aprobado` | deny *(ausente)* | **deny** *(ausente)* |
+| 3 | + el **abre fabricado** `<!`+CR+`--` citando `aprobado` | **ALLOW** | **deny** *(por el CR)* |
+| 4 | control: el mismo `<!`+CR+`--` citando `pendiente` | deny *(pendiente)* | **deny** *(por el CR)* |
+| 5 | la **clave fabricada** `Seg`+CR+`uridad: aprobado` | **ALLOW** | **deny** *(por el CR)* |
+| 6 | REQ entero en **CRLF**, comentario bien escrito, todo verde | allow | **allow** |
+| 7 | control LF de la 6 | allow | **allow** |
+| 8 | CR en el **cuerpo** (tras `## `), todo verde | — | **allow** |
+| 9 | **reabrir** con CR interior (`Estado: en-progreso`) | — | **allow** |
+
+Las dos filas que exigí mover —**3** y **5**— se movieron. El motivo cita la línea con el CR escrito
+`\r`. CRLF y LF deciden idéntico; la guarda no invade el cuerpo y no bloquea la salida.
+
+#### La afirmación estructural, que es lo que en R-007 objeté: **verificada, y por enumeración cerrada**
+
+En R-007 dictaminé que la propiedad «ningún carácter se descuenta antes de escanear el rango» se
+sostenía **por inspección** y envejecía con el siguiente `grep` que alguien no hiciera (SEC-028). La
+comprobé de la única forma que no repite ese defecto — enumerando **todos** los descuentos de CR del
+mecanismo y situando cada uno respecto del escáner:
+
+| Descuento | Función | Posición respecto al escáner |
+|---|---|---|
+| `lib.sh:255` | `arnes_sin_cr_transporte` (CRLF→LF + CR final) | **antes**, pero **no puede fabricar**: sustituye por salto de línea y el escaneo es por línea |
+| `lib.sh:501` | `arnes_norm_ident` | no toca cabecera (identidad de agente) |
+| `lib.sh:1158` | `arnes_cola_pendientes` | no toca cabecera (cola de aprobaciones) |
+| `lib.sh:1384` | `arnes_norm_campo` | **después** (aguas abajo de `arnes_campo_linea`) |
+| `lib.sh:1643/1646` | **la guarda**, en `arnes_sin_cita` | **primera sentencia** de la función |
+| `lib.sh:1677` | `arnes_norm_clave` | **después**: vía `arnes_campo_linea` (1671) y, en `arnes_estado_cabecera`, tras el `arnes_sin_cita` de la línea 1852 |
+| `campos-req.awk:63` | `gsub(/\r/,"")` | **después** de `sincita($0)` (línea 62) |
+
+Y no hay un segundo escáner de cabecera: los **dos** bucles que recorren cabecera en bash
+(`arnes_campos_req:1818` y `arnes_estado_cabecera:1852`) pasan cada línea cruda por
+`arnes_sin_cita`, y `arnes_campo_linea` es la única puerta de entrada. **El orden queda por
+construcción**, como afirma el desarrollador. Suscribo la afirmación: era mi objeción de fondo y
+está contestada. (SEC-028 **no se cierra por esto**: sigue faltando la guarda que impida que un
+descuento **futuro** se ponga en el lado equivocado; queda como estaba, `instrumento`, 1.33.0.)
+
+#### Lo que NO está cerrado, y es lo que me impide firmar: **el control no está en ningún contrato**
+
+Medido hoy sobre el árbol en revisión:
+
+```
+requirements/REQ-016.md      criterios CA-01..CA-11  -> ninguna mención del CR
+AGENTS.md §13                tabla de invariantes    -> ninguna fila del CR
+templates/AGENTS.md.tpl      tabla de invariantes    -> ninguna fila del CR
+requirements/README.md                               -> ninguna mención
+```
+
+El control vive **sólo** en el código, en 19 casos de banco y en este registro. Eso es literalmente
+lo que mi propia remediación de SEC-024 prohibió por adelantado en R-007: «*el control no vive sólo
+en el código ni sólo en este registro. Va a **criterio** de REQ-016 —extensión de CA-03 o un CA
+nuevo— enunciado **por propiedad**, con el sitio único donde vive la lista exhaustiva de caracteres y
+los ejemplos marcados **no exhaustivos**. Dueño del write-back: `analista-requerimientos`*». El
+analista hizo el write-back de **SEC-025** (CA-09) y no el de **SEC-024**.
+
+**Y no es formalismo — el hueco es exacto y se puede nombrar: CA-02 contrata el agujero; nada
+contrata el tapón.**
+
+1. **CA-02 prohíbe que un rango añadido convierta un `deny` en `allow`** —y su cláusula
+   anti-coartada nombra el delimitador fabricado—. Eso contrata el **fallo**. No contrata la
+   **respuesta elegida**: la puerta podría cumplir CA-02 reconociendo `<!\r--` como abre (salida que
+   el desarrollador descartó **con razón**, porque vuelve a fabricar). El control que sí se
+   construyó —«una cabecera que no se puede medir no deja pasar», aplicada al carácter— no lo exige
+   ningún criterio.
+2. **La segunda cara no la cubre CA-02 en absoluto.** `Seg`+CR+`uridad: aprobado` no lleva rango
+   ninguno; en R-007 dejé escrito que **no desmentía ningún criterio** (CA-01 se cumple: los dos
+   lectores fabrican igual). Hoy la puerta la **deniega**. Es un cambio de conducta de la puerta que
+   **ningún criterio describe**, en ninguna dirección.
+3. **Y estrecha CA-04 en un punto, sin decirlo.** Medido: `Estado: comple`+CR+`tado` **con todos los
+   veredictos en verde** ahora **deniega**. Es la dirección correcta y lo suscribo — pero es
+   fricción nueva sobre documentos que ningún contrato declara malformados.
+
+**Las tres consecuencias, y la primera es la que pesa:**
+- **Un control que ningún criterio contrata se puede retirar en la ventana siguiente y nada lo
+  notará** salvo 19 casos de banco cuya justificación vive en un comentario. Es exactamente la clase
+  de regresión silenciosa que este arnés existe para cazar y que mi propio mandato me obliga a
+  perseguir entre iteraciones.
+- **Un proyecto hereda una puerta que le denegará el cierre por un carácter invisible y no hereda
+  ninguna frase que lo diga.** La fila de §13 habla del rango sin cerrar; del CR, nada. Y `AGENTS.md`
+  §13 advierte, con la medición delante, que «la fricción termina con alguien apagando el guard».
+- **Es la misma clase que yo mismo bloqueé hace una vuelta.** SEC-025 fue `contrato` y bloqueó por
+  una frase de un skill. Firmar hoy sería exigirle más rigor a la prosa de una guía que al
+  requerimiento, en la misma ventana y con una vuelta de diferencia.
+
+**Remediación — es prosa, no código, y no gasta una vuelta dev↔QA:**
+1. **Un criterio nuevo en REQ-016** (CA-12, o extensión de CA-03), enunciado **por propiedad**:
+   *una línea de la cabecera que contenga un retorno de carro que no sea el que la termina deja una
+   cabecera que no se puede medir, y una puerta que no puede medir no deja pasar → DENY citando la
+   línea*; con el **sitio único** donde vive la lista exhaustiva de caracteres de control y su
+   tratamiento (`hooks/lib.sh`), y los ejemplos marcados **no exhaustivos** (el **abre fabricado**,
+   la **clave fabricada**). Debe declarar además las dos fronteras medidas y conformes: el CR que
+   **termina** la línea es transporte y no cuenta (CRLF decide igual que LF), y la guarda **no**
+   bloquea reabrir un REQ. Dueño: `analista-requerimientos`.
+2. **Una fila en la tabla de `AGENTS.md` §13 y la misma en `templates/AGENTS.md.tpl`** — los dos
+   archivos ya están declarados en el campo `Archivos:` de REQ-016, así que no cuesta un REQ nuevo.
+3. **Nada más.** El código está construido y medido; el banco lo certifica con fail-before. No pido
+   ni una línea de código.
+
+**Por qué esto NO gasta la cuarta vuelta, que es la pregunta que la coordinadora tiene que
+resolver:** el tope de `AGENTS.md` §6 es de **vueltas dev↔QA**. Aquí no interviene el desarrollador
+—no hay código que cambiar— y la validación de QA contra el criterio nuevo es la **relectura** de
+mediciones que ya publicó (19 casos de la sección 36-5, las cinco sondas, el fuzz de 250). Es una
+comisión de analista.
+
+**Y por qué el residual declarado NO es aplicable a esto** (sí lo es a `H-07`, más abajo): un
+residual **declara un defecto que se acepta**. Lo que falta aquí no es un defecto que aceptar, es
+**el documento que dice qué se construyó**. Aceptar deriva como residual es aceptar que el contrato
+no describe la máquina — lo único que `AGENTS.md` §9 no permite acordar. Si la coordinadora juzga
+que sí gasta vuelta, la salida correcta no es el residual: es `Estado: bloqueado` y subirlo al
+propietario.
+
+- **Severidad:** alta (por lo que cubre) · **Clase:** `contrato` · **Estado:** **`en-mitigación`**
+  (código cerrado y medido; write-back abierto) · **REQ:** REQ-016 (**sigue bloqueando su cierre**)
+  · **Dueño:** `analista-requerimientos`.
+
+#### Residual de SEC-024, nuevo y medido: el **bloque derivado** sigue publicando el veredicto fabricado
+
+La guarda vive en la puerta. La transcripción `hooks/campos-req.awk`, que alimenta el bloque
+derivado de `docs/ESTADO.md`, **no la tiene** —a propósito: sólo observa, para que los dos lectores
+sigan devolviendo lo mismo byte a byte (CA-01)—. Medido hoy sobre las dos cabeceras no medibles:
+
+```
+REQ-971 (Seg\ruridad: aprobado)   -> completado aprobado aprobado sí critico
+REQ-972 (<!\r-- ... aprobado -->) -> completado aprobado aprobado sí critico
+```
+
+Es decir: el bloque de continuidad que la coordinadora y el humano leen para decidir «todo en verde»
+muestra `Seguridad: aprobado` sobre una cabecera que la puerta **se niega a medir**. No es un
+fallo en abierto de la puerta —el cierre se deniega— y **no desmiente ningún criterio** (CA-01 exige
+que los dos lectores coincidan, y coinciden). Se registra porque el bloque derivado existe
+precisamente para no mentir cuando más falta hace, y aquí muestra un veredicto que nadie emitió y que
+la máquina no honra. `tools/arnes-lectura.sh` **sí** lo nombra (`<cabecera no medible>`, `rc=1`,
+medido por QA), así que la superficie que se consulta a propósito está honesta.
+
+- **Clase:** `instrumento` (**no bloquea**) · **Dueño:** `desarrollador` · **Ventana:** 1.33.0, junto
+  a la comprobación por estado de SEC-025, que es el mismo trabajo.
+
+---
+
+### SEC-025 — Estado: `abierto` → **`mitigado`** en su mitad bloqueante
+
+Verificado sobre `skills/arnes-upgrade/SKILL.md` §`Hacia 1.32.1` tal como está hoy:
+
+- **La frase de completitud que dictaminé ya no existe.** Barrido propio de once patrones
+  (`los únicos`, `el único`, `son todos`, `exhaustiv`, `basta con`, `garantiza`, `cubre todas`,
+  `no hay más`, `todos los que`, `completo`, `suficiente`) sobre las 129 líneas del apartado: las
+  únicas coincidencias son **«no exhaustivos»** (dos veces), que es lo contrario de una promesa, y
+  un «aparece completo» que habla del bloque derivado de REQ-015 y no de ningún barrido.
+- **La propiedad se enuncia por ESTADO y antes de los barridos:** «*cuáles de tus REQ en estado
+  terminal NO cerrarían hoy, leídos con el lector de esta versión*», con la razón de por qué no
+  envejece («no describe ninguna vía»), y con la frase que exigí: **«Ningún comando de este apartado
+  la responde todavía»**, su ventana (1.33.0) y el procedimiento manual entretanto.
+- **Las tres declaraciones acompañan al comando, en el mismo sitio:** que interroga **una vía y no la
+  propiedad**; el **nombre** de las dos vías que el `awk` no encuentra (abre fabricado y clave
+  fabricada, cada una con su porqué); y, literal, **«no hallar nada NO acredita ausencia de
+  exposición»**. Con sitio único (`registro-seguridad.md`, SEC-024 y SEC-025) y marca **no
+  exhaustivos**. Y cierra con «*Si el `awk` no saca nada, no has terminado: vuelve a la pregunta de
+  estado*», que es la conducta que el criterio compraba.
+
+Lo que sustituye a la frase **no promete lo que no puede dar**: eso era lo que había que dictaminar
+y queda dictaminado. La **mitad 2** (el barrido por estado como modo de `tools/arnes-lectura.sh`)
+sigue **abierta**, `instrumento`, dueño `desarrollador`, ventana 1.33.0 — como se declaró.
+
+**Observación sin clase, para el próximo write-back de CA-09.** El apartado ofrece un comando
+(`git log --oneline -- docs/ESTADO.md`, línea 634) **antes** de la propiedad (línea 677), y CA-09 (i)
+dice «antes de ofrecer **ningún** comando». Coincido con QA en no abrirlo: ese comando es de la
+migración de **REQ-015**, la propiedad precede a **todo barrido por vía** —que es la conducta que el
+criterio compra—, y la lectura hiperliteral haría CA-09 (ii) insatisfacible. Es un criterio más
+estricto que la realidad, no más ancho: **envejece hacia el lado que cierra**, y por eso no es
+hallazgo. Al próximo toque de CA-09, acótese la palabra: «antes de ofrecer ningún **barrido por
+vía**».
+
+---
+
+### `H-07` — la regresión de coste: **mi clase es `instrumento`**, y con una razón más fuerte que la de QA
+
+Se me pidió dictaminar sin deferencia a la coordinadora ni a QA, y en particular contestar a esto:
+*¿un umbral de agotamiento que baja un 36 % sobre una puerta cuya muerte es un fallo en abierto es
+`instrumento` o `contrato`?* La respuesta corta: **el hallazgo tal como está descrito es
+`instrumento` y no bloquea; y la pregunta destapa otra cosa, que sí es `contrato` y que no es de
+estos dos REQ — va como SEC-030.**
+
+**Lo que medí yo, porque QA sólo midió una línea única gigante y la conclusión cambia.** Un `Write`
+de un REQ con cabecera normal de seis líneas, `## Notas` cerrándola y un cuerpo de líneas ordinarias
+de 79 caracteres, contra el árbol de la vuelta 2 y el de hoy (máquina descargada, `load` 0,30; dos
+repeticiones en los dos tamaños grandes):
+
+| Tamaño del REQ | vuelta 2 | **hoy** |
+|---:|---:|---:|
+| 64 KB | 0,20 s | 0,34 s |
+| 231 KB | 1,33 s | 1,26 s |
+| 512 KB | 6,49 · 6,30 s | 6,27 · 7,33 s |
+| 1 024 KB | 26,02 · 26,45 s | 27,68 · 28,05 s |
+
+**Sobre documentos ordinarios el parche no añade nada** (0–6 %, dentro del ruido en tres de los
+cuatro tamaños). El régimen que el parche multiplica por ~3 es **sólo** el de la línea única de
+cientos de kilobytes, que sí es patológica. Eso **refuerza** la clase `instrumento`, y por una razón
+que no es la de QA («callar no es mentir») sino una medición: lo único que la vuelta 3 degrada es el
+reloj del **banco** —un instrumento— y un régimen de entrada que ningún documento real produce.
+
+**Y por qué no es `contrato`, dicho contra la letra:**
+- Ningún criterio de REQ-015 ni de REQ-016 fija techo de reloj; CA-08 declara su magnitud
+  (**procesos**, con el matiz **operativo**) y se cumple.
+- La puerta **sigue decidiendo lo mismo** en todo el rango medido: 40 PASS en los tres árboles de la
+  sección 32, y mis nueve sondas deciden idéntico. Ninguna decisión cambia; cambia el reloj.
+- Bloquear REQ-016 por esto convertiría el defecto de coste de un **control** en condición para
+  cerrar la función entregada — que es exactamente lo que la clase `instrumento` existe para impedir
+  (`requirements/README.md`).
+
+**Residual declarado: aplicable, y lo acepto tal como QA lo redactó**, con el vencimiento afinado.
+
+| | |
+|---|---|
+| **Hallazgo** | `H-07 (instrumento)` — `arnes_sin_cita` es cuadrática en la longitud de línea por `${l%$'\r'}` |
+| **Dueño** | `desarrollador` |
+| **Ventana** | 1.33.0 |
+| **Forzador medido, y ya está armado** | el banco completo pasa de **60 s**: hoy **92,1 s** en Linux descargado, contra ~40 s en la vuelta 2. No es una promesa: es un número que ya está por encima del único umbral de reloj que este proyecto nombra |
+| **Vencimiento** | el cierre de 1.33.0. Si 1.33.0 se publica sin el arreglo, sube a decisión humana con el número delante |
+
+**Lo que sí se pierde y no se tapa:** el banco es la puerta requerida de `main` y su reloj se ha
+multiplicado por ~2,3. Lo paga cada PR de este repositorio hasta que se arregle.
+
+---
+
+### SEC-030 — El **agotamiento del temporizador** es un fallo en abierto que ningún documento declara, y el coste de la puerta es cuadrático en el tamaño del documento que juzga — alcanzable con contenido **ordinario**
+
+- **Severidad:** alta · **Clase:** `contrato` · **Estado:** `abierto` · **REQ:** — (**no atribuible**
+  a REQ-015 ni a REQ-016; **no** va a su campo `Hallazgos abiertos:` y **no bloquea esta ventana**)
+  · **Dueño:** `analista-requerimientos` (el NFR y la prosa) y `desarrollador` (el coste)
+  · **Ventana:** 1.33.0
+- **Ubicación:** `AGENTS.md` §13 (la tabla de invariantes y la enumeración de lo que el guardián
+  **no** cubre), `templates/AGENTS.md.tpl` (la misma tabla), `requirements/README.md`; y el coste, en
+  el camino de decisión de `hooks/guard-completado.sh`.
+- **La afirmación y el hecho.** `AGENTS.md` §13 promete, sin condición, que `guard-completado`
+  **deniega** el cierre cuando los veredictos no lo autorizan, y enumera con cuidado lo que **no**
+  cubre —intérpretes, heredocs indirectos, formateadores, `patch`/`git apply`—. `AGENTS.md` §7 dice,
+  en otro sitio y con otro propósito, que «un hook `PreToolUse` muere a los 60 s, **y un hook muerto
+  no deniega**». Las dos frases juntas describen un fallo en abierto que **ninguna de las dos
+  declara como tal**, y que **no está en la enumeración de huecos** de §13. Una enumeración de lo que
+  un control no cubre envejece **hacia el lado que abre** en cuanto aparece un hueco que no está en
+  ella: es la misma forma de SEC-015 y SEC-025, y por eso la clase es la misma.
+- **Y no es teórico, que es lo que esta revisión aporta.** Medido hoy (tabla de `H-07`): un REQ de
+  **líneas ordinarias** cuesta **26–28 s** a 1 MB y **6–7 s** a 512 KB, con crecimiento cuadrático en
+  el tamaño **total** del documento — **idéntico en la vuelta 2 y hoy**, así que el defecto
+  **preexiste a esta ventana y no lo produjo**. La pared de 60 s se alcanza hacia **~1,5 MB de un
+  documento perfectamente normal**. La calificación de «entrada patológica» vale para la línea única
+  de un megabyte; **no** vale para esto. Y el tamaño no es hipotético: este mismo repositorio
+  documenta un proyecto real con un REQ de **231 KB** en un corpus de 3,7 MB, y la rotación —que es
+  el mecanismo que existe para que los artefactos no crezcan sin tope— **viene apagada por defecto**.
+- **Riesgo.** Por encima de la pared, la puerta no deniega **y tampoco dice que no pudo medir**: es
+  el fallo silencioso, en la dirección que abre, de la única puerta que impide cerrar un REQ
+  `critico` sin auditoría. Es la misma propiedad que esta ventana acaba de aplicar al **carácter**
+  («una puerta que no puede medir no deja pasar»), sin aplicar al **reloj**.
+- **Remediación, en dos mitades, y la primera es la que sostiene:**
+  1. **Declararlo.** El hueco entra en la enumeración de §13 y en `templates/AGENTS.md.tpl` con su
+     número medido y su fecha, enunciado por propiedad: *por encima de cierto tamaño de documento la
+     puerta no llega a decidir y el runtime la mata; un guardián muerto no deniega*. Es la frase que
+     hoy falta y que un proyecto necesita para no confiar en lo que no tiene.
+  2. **Acotar el coste.** El camino de decisión no debe ser cuadrático en el tamaño del documento.
+     La forma la decide el `desarrollador`; **no escribo código**. Y se deja dicho lo que no se puede
+     arreglar por esa vía: si el runtime mata el proceso, **nada que el hook haga puede denegar**, así
+     que la mitigación real es mantener el coste lejos de la pared y **declarar el límite** — no
+     prometer una puerta que se apaga sola.
+- **Por qué no bloquea esta ventana.** No es atribuible: medido en los dos árboles, idéntico. Mismo
+  criterio que apliqué a SEC-029 en R-007 —`contrato`, pero fuera del campo `Hallazgos abiertos:` de
+  unos REQ que no lo produjeron ni lo empeoraron—. Empeorar un régimen patológico en ×3 (lo que sí
+  hizo esta ventana) es `H-07`, y es `instrumento`.
+
+---
+
+### La escritura por consola sobre archivo protegido: **cuarto forzador, y no cambia mi dictamen**
+
+El `desarrollador` declaró haber cambiado `CASOS_ESPERADOS` de `tests/escenarios/hooks/run.sh` una
+vez con `python3` desde `Bash`, y haber enrutado por `Edit` todas las posteriores. Es el **agujero
+del intérprete** que `AGENTS.md` §13 documenta como hueco conocido y **declarado a propósito**, y la
+declaración voluntaria es la conducta correcta: la barandilla avisa del descuido, no contiene a quien
+se empeña, y quien la rodea lo dice.
+
+**Dictamen: se suma como cuarto forzador medido de REQ-011 (la puerta posterior) y nada más.** No
+cambia lo que dictaminé en R-007 —«pide un control, y ya está dotado»—: la clase tiene dueño, ventana
+y REQ propio. Lo que sí anoto, porque es lo que un cuarto caso añade sobre el tercero: los cuatro han
+salido de agentes que **declararon** el desvío, así que la serie mide la frecuencia del descuido, no
+la del intento de rodeo, y **no acredita nada sobre el segundo**. Un control que sólo ve lo que le
+cuentan no puede usar su propia cuenta como prueba de cobertura. La puerta posterior sigue siendo la
+respuesta, y sigue en 1.33.0.
+
+---
+
+### SEC-029 — **condición de mi no-veto: cumplida**
+
+Verificado hoy: `CHANGELOG.md:1675` dice ahora «**Medido en un proyecto real, con el control de
+plataforma hecho**», y el nombre del proyecto consumidor **no aparece** en ninguna ruta versionada.
+Las métricas que quedan van explícitamente atribuidas al **fixture reproducido aquí** («Reproducido
+aquí con un fixture del mismo tamaño —47 REQ, 3,7 MB, uno de 231 KB—»), que es la cifra que en R-007
+dije que valía: **son el defecto, no la huella**. Residual aceptado y dicho: la **forma** del corpus
+sobrevive por transitividad («del mismo tamaño»); un tamaño sin nombre no es atribuible a nadie, así
+que se acepta.
+
+Barrido de la ventana, en la misma pasada y sin hallazgos: ningún patrón de credencial (`ghp_`,
+`github_pat_`, `AKIA…`, `-----BEGIN`, `api_key=`, `token=`, `password=`) en lo añadido;
+`insumos/`, `reporte-arnes-*` y `.env` **no** están en el índice.
+
+**Estado de SEC-029:** `abierto` → **`en-mitigación`**. La decisión del propietario (historial y tags
+como están, con el residual declarado; `docs/PENDIENTES.md`) es suya y la registro sin objeción: es
+proporcionada y es la que yo mismo recomendé. Pasa a `mitigado` cuando el **barrido de base** exista
+como NFR de `gobernanza-datos.md` §3 y se haya corrido entero una vez (1.33.0; dueño del NFR:
+`auditor-seguridad`).
+
+---
+
+### No-regresión contra la línea base de R-007 — medida, no leída
+
+La vuelta 3 tocó `hooks/lib.sh`, archivo que **REQ-015 declara**. En R-007 me comprometí a
+re-confirmar con una relectura dirigida. Se hizo mejor que eso, por diferencia mecánica contra el
+árbol de la vuelta 2:
+
+- **`hooks/lib.sh` — el parche es puramente aditivo.** De 1 881 a 1 888 líneas; el `diff` sólo
+  registra **tres** líneas modificadas, y las tres son el comentario de firma de `arnes_sin_cita`, su
+  reinicio de estado y un comentario de cierre. **Nada se eliminó.** `arnes_tmp_publicacion` y
+  `arnes_purga_tmp` están byte a byte como los firmé: componente propia del proceso (`BASHPID`),
+  **fail-closed** si no se obtiene (`return 1` sin caer al nombre compartido), purga antes de
+  publicar. Ningún `flock` introducido (CA-04 de REQ-015: sigue sin exigirse).
+- **`hooks/guard-completado.sh` — también aditivo**: una declaración `local` extendida y tres bloques
+  añadidos. Nada retirado.
+- **Los controles de REQ-016 que declaré línea base siguen en pie, comprobados por conducta:**
+  CA-03 (rango que abre y no cierra → deny citando el rango), **CA-04 (la tolerancia de clave
+  decorada NO se recortó**: `**Seguridad:** pendiente` → deny, `**Seguridad:** aprobado` → allow, con
+  `**Estado:**` decorado también), CA-11 (`Seguridad: pendiente` comentada en `critico` → deny), y
+  CRLF idéntico a LF en las dos direcciones.
+
+**Ninguna regresión.**
+
+---
+
+### Estado de seguridad aprobado por REQ — ventana 1.32.1 (línea base de no-regresión, sustituye a la de R-007)
+
+| REQ | Veredicto | Fecha | Versión | Motivo / controles acreditados |
+|---|---|---|---|---|
+| **REQ-015** | **`aprobado`** | 2026-09-07 | candidata 1.32.1 | Se mantiene la firma de R-007, **re-confirmada por diferencia mecánica** contra el árbol de la vuelta 2: el parche de la vuelta 3 sobre `hooks/lib.sh` es puramente aditivo y no toca `arnes_tmp_publicacion` ni `arnes_purga_tmp`. **Controles acreditados, y debilitarlos es regresión:** (a) temporal de publicación con componente **propia del proceso** en los puntos de publicación de `estado-derivado.sh` y `rotar-artefactos.sh`, **fail-closed** si no se obtiene; (b) la purga retira los temporales **sin dueño vivo** y conserva el del proceso vivo y los ajenos; (c) el destino queda **byte a byte** en todo camino de fallo; (d) **no** hay `flock` ni serialización, y CA-04 declara que no se exige; (e) CA-08 corrigió la promesa **incondicional** de `AGENTS.md` §13 y de `templates/AGENTS.md.tpl` a **dos mitades nombradas** — volver a afirmarla sin condición es regresión de herencia (SEC-015). **Hallazgos abiertos: (ninguno).** |
+| **REQ-016** | **`con-hallazgos`** | 2026-09-07 | candidata 1.32.1 | **No firmo.** El código de **SEC-024** está cerrado y medido en las dos caras y en las cuatro bocas —lo verifiqué—, pero **el control no existe en ningún contrato**: ni criterio en REQ-016, ni fila en `AGENTS.md` §13, ni en `templates/AGENTS.md.tpl`. Es la deriva que `AGENTS.md` §9 nombra y la condición de write-back que SEC-024 dejó escrita **por adelantado** en R-007. CA-02 contrata el agujero; **nada contrata el tapón**, y la segunda cara (la clave fabricada) no la cubre CA-02 en absoluto. **SEC-025** queda **cerrada** en su mitad bloqueante. **Lo que SÍ queda acreditado y es línea base de no-regresión:** el interior de un rango no declara campo en los **dos** lectores y en `tools/arnes-paralelo.sh`; un rango que abre y no cierra deniega **citando el rango** y nunca permite por **ausencia** (CA-03); **una cabecera con un CR que no la termina no se puede medir y no deja pasar**, en las cuatro bocas, con el orden garantizado **por construcción** (la guarda es la primera sentencia del único escáner, verificado por enumeración cerrada de los siete descuentos de CR del mecanismo); la tolerancia de clave decorada **fuera** de los rangos **no se recortó** (CA-04: recortarla reabriría un fail-open real); comentar una declaración **equivale a borrarla** y la ausencia de `Seguridad:` **no** se perdona en rigor efectivo `critico` (CA-11); CRLF decide **igual** que LF; el cuerpo y la reapertura **no** se bloquean. **Hallazgos abiertos que le corresponden:** `SEC-024 (contrato)` —sólo el write-back— y `H-07 (instrumento)`. |
+
+**No van al campo `Hallazgos abiertos:` de estos dos REQ, y queda dicho por qué:** `H-06`
+(`contrato`, ajeno, ≤1.30.x), **SEC-028** (`instrumento`), **SEC-029** (`contrato`, no atribuible;
+decisión del propietario tomada), **SEC-030** (`contrato`, **no atribuible**: medido idéntico en los
+dos árboles) y el **residual del bloque derivado** de SEC-024 (`instrumento`). Los cinco con dueño y
+ventana propios.
+
+### ¿Veto? — **NO. No firmo REQ-016, y falta una comisión de analista, no una vuelta de desarrollo**
+
+**No hay veto.** Un veto es el freno formal para un fallo sin remedio en proceso. Aquí el código está
+construido, medido y certificado con fail-before; lo que falta es **un criterio y dos filas de
+tabla**, con dueño (`analista-requerimientos`), sin código y sin CI. El mecanismo ordinario
+—`guard-completado` no deja cerrar un `critico` sin `Seguridad: aprobado`— hace el trabajo sin
+bloquear nada.
+
+**Sobre la publicación, y no ha cambiado desde R-007 salvo por dos hallazgos menos.** La delegación
+del propietario (`AGENTS.md` §4/§6) se activa **con todo en verde**. Siguen abiertos SEC-020
+(`contrato`), el `contrato` de `docs/PENDIENTES.md` sobre el agujero del intérprete, el write-back de
+SEC-024 y ahora SEC-030. **La fusión, el tag y la publicación siguen siendo decisión de Juan**, no
+mía ni de la coordinadora. Lo digo igual que en R-007 y por el mismo motivo, no por inercia: dos de
+los cuatro que nombré entonces están cerrados, y los que quedan no los cierra esta ventana.
+
+**Rigor: no subo ninguno.** Los dos REQ ya son `critico` y `Sensible a seguridad: sí`, que es el
+suelo. Nada que subir y nada que bajar. **Ningún REQ cerrado se reabre por esta revisión.**
+
+---
+
+## Revisión R-009 — la firma de REQ-016: verificación del write-back de SEC-024 — 2026-09-07
+
+**Alcance declarado, y es lo único que miré.** Comisión de firma, no de auditoría. Verifiqué tres
+textos y nada más: `CA-12` nuevo y la frontera de `CA-04` en `requirements/REQ-016.md`, y las dos
+filas de invariante en `AGENTS.md` §13 y `templates/AGENTS.md.tpl`. **No** re-medí SEC-024 ni
+SEC-025 —su cierre en el código quedó verificado en R-008 y el write-back no toca código: lo
+confirmé por diferencia, el parche del analista es puramente aditivo sobre el REQ y una fila en cada
+uno de los dos documentos—. No re-litigo SEC-030, `H-07` ni el residual del bloque derivado.
+
+### SEC-024 — Estado: `en-mitigación` → **`mitigado`**. El tapón está contratado
+
+Lo que en R-008 nombré exacto —«**CA-02 contrata el agujero; nada contrata el tapón**»— ya no es
+cierto. Verificado punto por punto:
+
+| Lo que exigí en R-008 | Dónde está hoy | Veredicto |
+|---|---|---|
+| La propiedad enunciada: CR interior → cabecera no medible → **DENY citando la línea** | `REQ-016` CA-12, párrafo 1 | **cumple** |
+| **Por propiedad, no por sitio**: no nombra la función del escáner | CA-12: «*no sobre en qué función del lector vive la guarda: reescribir el escáner no lo cambia*» — no aparece `arnes_sin_cita` | **cumple** |
+| Las **dos caras** como **una** propiedad, ejemplos **no exhaustivos** | CA-12: delimitador fabricado (`<!`+CR+`--`, `-`+CR+`->`) y clave fabricada (`Seg`+CR+`uridad:`), marcados «no exhaustivos» | **cumple** |
+| **Sitio único** de la lista exhaustiva | CA-12: «*viven en un solo sitio: `hooks/lib.sh`*» | **cumple** |
+| DENY **por medibilidad y no por veredicto**, y que resolverlo como **ausencia** incumpla | CA-12: `Estado: comple`+CR+`tado` con todo en verde **deniega igual**; «*denegar alegando que el estado no es terminal, o que el campo falta, **también incumple***» | **cumple**, y es la mitad que más me importaba: sin ella, la puerta podría cumplir el criterio por el motivo equivocado y perder la guarda sin que nadie lo midiera |
+| Lo que **no** restringe: CR final = transporte, CRLF ≡ LF, cuerpo intacto, reabrir no se bloquea | CA-12, (i)(ii)(iii), con la anti-coartada «*la acotación es de esa clase y sólo de esa*» | **cumple** |
+| `CA-04`: la tolerancia de clave decorada **no se recorta** | El texto anterior de CA-04 **no se tocó** (diff: adición pura); la frontera se añade como **acotación de dónde empieza a aplicarse** —«*opera sobre una cabecera MEDIBLE*»— con la anti-coartada de siempre | **cumple** |
+| Una fila en `AGENTS.md` §13 y **la misma** en `templates/AGENTS.md.tpl` | `AGENTS.md:349` y `templates/AGENTS.md.tpl:314`, **idénticas byte a byte** (comprobado por `diff`), insertadas **bajo** la fila del rango sin cerrar y apuntando a `guard-completado` | **cumple** |
+
+Lo que hacía a SEC-024 clase `contrato` era su consecuencia, no su forma: *un control que ningún
+criterio contrata se puede retirar en la ventana siguiente y sólo lo notarán 19 casos de banco cuya
+justificación vive en un comentario*. Hoy el control está en el contrato del REQ, en la tabla de
+invariantes del proyecto y en la plantilla que heredan los proyectos por `arnes-upgrade`. Retirarlo
+desmiente un criterio y dos documentos.
+
+- **Severidad:** alta (por lo que cubre) · **Clase:** `contrato` · **Estado:** **`mitigado`** ·
+  **REQ:** REQ-016 (**deja de bloquear su cierre**) · **Dueño:** `analista-requerimientos` (cumplido).
+
+### La frontera que el analista añadió sin que se la pidieran: **conforme, y no me ata las manos**
+
+CA-12 declara que habla de la **puerta de cierre** y que el bloque derivado publicando el veredicto
+fabricado es el residual `instrumento` de SEC-024 (dueño `desarrollador`, ventana 1.33.0), **no
+contratado ahí**. Es correcta, y por una razón que va más allá de la comodidad:
+
+1. **Su razón técnica se sostiene.** CA-01 exige que **todos** los lectores devuelvan lo mismo. Sin
+   esta frontera, CA-12 leído junto a CA-01 importaría la guarda a la transcripción `awk` —y con
+   ella al bloque derivado—, que es exactamente lo que en R-008 acepté **no** hacer en 1.32.1. Un
+   criterio que contradice un residual vivo es un criterio que se incumple **a sabiendas**, y eso
+   erosiona más que la deuda que pretendía cubrir.
+2. **No es una coartada, porque señala dónde vive la deuda.** La frontera cita el registro, la clase,
+   el dueño y la ventana. Una acotación que nombra su vencimiento no silencia: reenvía.
+3. **No me ata en 1.33.0.** Que CA-12 no contrate el bloque derivado no **autoriza** su conducta: la
+   deja fuera de *este* contrato. Cuando 1.33.0 cierre el residual, el control se contrata en el REQ
+   que **posee** el bloque derivado, no ensanchando CA-12 — que es además la única forma correcta,
+   porque un criterio de la puerta de cierre no debe crecer para cubrir un informe.
+
+**Y la dejo con una condición escrita, para que la frontera no sobreviva a su motivo:** vale mientras
+el residual siga **abierto, con dueño y con ventana**. Si 1.33.0 cierra sin la guarda en el bloque
+derivado, esta frontera deja de ser una acotación y pasa a ser el sitio donde el control desapareció;
+lo revisaré en la firma de esa ventana.
+
+### El residual del bloque derivado: **mantengo `instrumento`**, y digo por qué no lo subo
+
+El analista observa —con razón de fondo— que soy **más blando** de lo que él habría sido: ese bloque
+es la superficie sobre la que la coordinadora y el humano deciden «todo en verde» antes de fusionar,
+y ahí aparece `Seguridad: aprobado` sobre una cabecera que la máquina se **niega** a medir. No abre
+la puerta de cierre, pero puede abrir **la decisión humana que va justo detrás**. La observación es
+buena y no la despacho: es exactamente el daño de SEC-024 —una firma que nadie emitió— desplazado un
+paso, hacia una autorización **delegada** (propietario, 2026-09-05) cuya condición es literalmente
+«todo en verde».
+
+**Mantengo `instrumento`, por tres razones medidas, no por preferencia:**
+
+1. **Existe una superficie de evidencia honesta, y está medida.** `tools/arnes-lectura.sh` **sí**
+   nombra la cabecera no medible (`cabecera no medible`, con la línea y el CR representado como
+   `\r`, `rc=1`; medido por QA y registrado en R-008). El defecto no es «no hay forma de saberlo»;
+   es «una de las dos superficies calla». Eso es un instrumento incompleto, no un fail-open.
+2. **La clase no es una escala de gravedad: es una regla de bloqueo.** Subirlo a `contrato`
+   detendría el cierre de REQ-016 —y con él la ventana 1.32.1— por un defecto que vive en
+   `hooks/estado-derivado.sh` y cuyo remedio pertenece a otro REQ. `AGENTS.md` §6 lo dice sin
+   ambigüedad: un defecto **del propio arnés** va a deuda con dueño y **no puede ser condición para
+   cerrar** lo que no lo causó.
+3. **Tiene dueño y vencimiento, y ahora también un forzador.** Ventana 1.33.0, dueño
+   `desarrollador`, junto al trabajo de SEC-025.
+
+**Lo que sí cambio, porque la observación lo merece — no queda en «mantengo y ya»:**
+
+- **Condición operativa mientras el residual esté abierto:** la evidencia de «todo en verde» del
+  §6 se lee de `tools/arnes-lectura.sh`, **no** del bloque derivado de `docs/ESTADO.md`, que para
+  veredictos es informativo y no acredita. Se lo paso al `analista-requerimientos` para que quede
+  contratado donde vive esa decisión —el REQ de 1.33.0 que posea el bloque derivado, o
+  `docs/gobernanza/autoalojamiento.md`—. **No** lo exijo para firmar REQ-016: REQ-016 no posee ese
+  control, y exigir aquí un control ajeno es la deriva simétrica de la que acabo de cerrar.
+- **Vencimiento con consecuencia declarada:** si el residual llega a la firma de **1.33.0** sin la
+  guarda en el bloque derivado, **sube a `contrato`** por la vía que el analista nombra —la decisión
+  delegada— y bloqueará. Queda escrito aquí para que la subida no dependa de que alguien se acuerde.
+
+### Observación al analista (no es hallazgo, no bloquea)
+
+El campo `Archivos:` de REQ-016 lista las secciones de banco 1 a 4 del caso 36 y **no** la quinta
+(`tests/escenarios/hooks/secciones/36-cabecera-comentario-html-5-el-cr-que-no-termina.sh`), que
+existe en el árbol. Es el mapa que alimenta la comprobación de disjunción de
+`tools/arnes-paralelo.sh`; un archivo que el mapa no declara no entra en esa comparación. No lo
+introdujo este write-back —viene del trabajo de código— y no afecta a mi firma; lo anoto para que se
+corrija cuando el analista toque el REQ, no como condición.
+
+### Estado de seguridad aprobado por REQ — ventana 1.32.1 (línea base de no-regresión, sustituye a la de R-008)
+
+| REQ | Estado de seguridad | Fecha | Árbol | Controles acreditados (debilitarlos es regresión) |
+|---|---|---|---|---|
+| **REQ-015** | **`aprobado`** | 2026-09-07 | candidata 1.32.1 | Sin cambios respecto a R-008: el write-back no toca código. Se mantiene íntegra la línea base de R-008 (temporal de publicación propio del proceso y fail-closed; purga que conserva el del proceso vivo y los ajenos; destino byte a byte en todo camino de fallo; **no** hay `flock` ni serialización y CA-04 lo declara; la promesa de `AGENTS.md` §13 y de la plantilla en **dos mitades nombradas**). **Hallazgos abiertos: (ninguno).** |
+| **REQ-016** | **`aprobado`** | 2026-09-07 | candidata 1.32.1 | **Firmo.** Se mantiene todo lo acreditado en R-008 —el interior de un rango no declara campo en los dos lectores y en `arnes-paralelo.sh`; el rango sin cerrar deniega **citando el rango** y nunca permite por **ausencia** (CA-03); la cabecera con CR interior no se puede medir y **no deja pasar**, en las cuatro bocas, con el orden garantizado por construcción; la tolerancia de clave decorada **fuera** de los rangos **no se recortó** (CA-04); comentar equivale a borrar y la ausencia de `Seguridad:` no se perdona en rigor efectivo `critico` (CA-11); CRLF decide igual que LF; cuerpo y reapertura no se bloquean— **y se añade lo que faltaba: el control está contratado**. **Línea base nueva y explícita:** (a) **CA-12** contrata la propiedad de medibilidad, **por propiedad y no por sitio**, con las dos caras como una sola, sitio único de la lista exhaustiva en `hooks/lib.sh` y DENY **por medibilidad y no por veredicto** —resolver el caso como **ausencia** incumple—; (b) **CA-04** conserva íntegra la tolerancia y sólo acota **dónde empieza**; (c) la invariante existe **idéntica** en `AGENTS.md` §13 y en `templates/AGENTS.md.tpl`, así que los proyectos la heredan por `arnes-upgrade`: **borrar cualquiera de las dos filas, o desacoplarlas, es regresión de herencia** (misma clase que SEC-015). **Hallazgos abiertos que le corresponden:** `H-07 (instrumento)` y el residual del bloque derivado (`instrumento`, dueño `desarrollador`, ventana 1.33.0). **Alcance de esta firma:** el árbol que QA aprobó en la vuelta 3 más este write-back documental. Cualquier cambio posterior en `hooks/` reabre la revisión. |
+
+### ¿Veto? — **NO. Firmo REQ-016, y la ventana queda sin hallazgo bloqueante**
+
+SEC-024 pasa a `mitigado`; SEC-025 quedó `mitigado` en su mitad bloqueante en R-008. **No queda
+ningún hallazgo de clase `usuario/dinero` ni `contrato` abierto** sobre REQ-015 ni REQ-016. Lo que
+sigue abierto es `instrumento` con dueño y ventana: `H-07`, el residual del bloque derivado y
+SEC-030 (agotamiento del temporizador, ventana declarada).
+
+**Sobre la publicación, y ya sin la salvedad de R-008.** El motivo por el que en R-007 y R-008 dije
+que la publicación no estaba delegada era que había hallazgos abiertos que bloqueaban. Ya no los
+hay. La delegación permanente del propietario (2026-09-05) opera **con todo en verde**: CI sin FAIL,
+SKIP explicados, fail-before/pass-after, QA y auditor aprobados. Los dos veredictos de seguridad
+están puestos; comprobar el resto es de la coordinadora, no mío. **Con una condición que sí es mía y
+se deriva de esta misma revisión:** la comprobación de «todo en verde» se hace sobre
+`tools/arnes-lectura.sh`, no sobre el bloque derivado de `docs/ESTADO.md`, mientras el residual siga
+abierto.

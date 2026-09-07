@@ -233,10 +233,32 @@ arnes_emitir_avisos() {
 # Bash quita los CR con expansión de variable, que no arranca nada. El
 # `printf` final repone el salto que la sustitución de comandos se come, para
 # que esto siga sirviendo igual en `$(...)` que en `< <(...)`.
+#
+# SE RETIRA EL CR DE TRANSPORTE Y SÓLO ESE, y esto es un arreglo, no un detalle. Estas
+# tres funciones retiraban TODOS los retornos de carro, incluidos los que vienen DENTRO
+# del dato —el `content` de un `Write`, por ejemplo—, y aguas abajo ese texto lo lee el
+# lector de cabecera, que escanea el rango `<!-- … -->`. Retirar un carácter no puede
+# destruir un delimitador pero SÍ puede crearlo: medido, un `-\r->` en el contenido
+# entrante llegaba al lector como `-->` y cerraba un REQ `critico` con su
+# `Seguridad: pendiente` vigente (H-01, `docs/qa/1.32.1-hallazgos.md`; CA-02 de REQ-016
+# nombra esta clase). Lo que Windows añade es el CR que TERMINA cada línea, así que es
+# eso lo que se descuenta: pregunta cerrada, no un patrón que ensanchar.
+#
+# La regla vive en `arnes_sin_cr_transporte` —una sola vez, sin forks—: tres copias de la
+# misma normalización se desfasan, y ésta ya se desfasó una vez contra `campos-req.awk`.
+arnes_sin_cr_transporte() {   # <texto> -> ARNES_SIN_CR
+  # El CRLF de cada línea. Y el CR final SUELTO aparte, porque la sustitución de comandos
+  # que envuelve a `jq` se come el último `\n` y deja su `\r` colgando: sin esta segunda
+  # mitad, el glob del manifiesto volvería a ser `src/*\r` y no casaría nunca (el
+  # fallo en abierto que documenta el bloque de arriba).
+  local s="${1//$'\r\n'/$'\n'}"
+  ARNES_SIN_CR="${s%$'\r'}"
+}
 arnes_jq() {
   local out
   out="$(jq "$@")" || return $?
-  printf '%s\n' "${out//$'\r'/}"
+  arnes_sin_cr_transporte "$out"
+  printf '%s\n' "$ARNES_SIN_CR"
 }
 
 # Las dos formas que SÍ hay que usar en el camino caliente: dejan el resultado en
@@ -251,14 +273,14 @@ arnes_jq_str() {   # <json> <args de jq...> -> ARNES_JQ
   local json="$1"; shift
   local out
   out="$(jq "$@" <<< "$json")" || return $?
-  ARNES_JQ="${out//$'\r'/}"
+  arnes_sin_cr_transporte "$out"; ARNES_JQ="$ARNES_SIN_CR"
 }
 
 arnes_jq_file() {  # <archivo> <args de jq...> -> ARNES_JQ
   local f="$1"; shift
   local out
   out="$(jq "$@" "$f")" || return $?
-  ARNES_JQ="${out//$'\r'/}"
+  arnes_sin_cr_transporte "$out"; ARNES_JQ="$ARNES_SIN_CR"
 }
 
 # Una ruta CONFIGURABLE del manifiesto tiene que quedarse DENTRO del proyecto.
@@ -297,6 +319,80 @@ arnes_dir_interno() {   # <directorio existente> -> 0 si su ruta fisica queda de
   raiz="$(cd -- "$ARNES_PROJ" 2>/dev/null && pwd -P)" || return 1
   case "$fis/" in "$raiz/"*) return 0 ;; esac
   return 1
+}
+
+# --- Publicacion por temporal: el nombre es del PROCESO, no solo del destino -------
+#
+# TODO PUNTO DE `hooks/` QUE PUBLICA escribe el contenido completo en un temporal y lo
+# mueve encima del destino: el `mv` (un `rename` dentro del mismo directorio) es lo que
+# impide que el destino se quede a medias. Lo que faltaba era la otra mitad: el nombre del
+# temporal se derivaba SOLO de la ruta del destino, asi que dos paradas de agente
+# simultaneas escribian EL MISMO archivo.
+#
+# Y lo que se publica entonces no es "el borrador de una de las dos": cuando la primera
+# hace `mv`, el inodo que la segunda tiene abierto con O_TRUNC pasa a SER el destino, y su
+# escritura --que ya iba tarde-- cae encima del texto publicado, empezando por el byte 0.
+# En `docs/ESTADO.md` el byte 0 es justo donde vive lo que escribio una persona. Medido
+# (H-12 / SEC-015, 2026-09-06): desaparecio 1 de 25 vueltas completas del banco. Es lo
+# unico de ese archivo que no se puede volver a derivar.
+#
+# DOS CONDICIONES, Y NINGUNA BASTA SOLA (REQ-015 CA-01). El error de R-003 fue acreditar
+# la segunda y dar por hecha la primera:
+#   (i)  NO COLISION: el nombre lleva una componente propia del proceso, asi que dos
+#        procesos VIVOS no pueden designar nunca la misma ruta temporal.
+#   (ii) UBICACION: el temporal se queda en el directorio DEL DESTINO. Un `mv` entre
+#        sistemas de archivos deja de ser un rename --copia y vuelve a introducir el
+#        archivo a medias-- y reintroduciria justo lo que el temporal viene a evitar.
+#
+# LA COMPONENTE ES `BASHPID`, Y ESO ES PARTE DEL CONTRATO DE COSTE (CA-11): es una
+# variable que el interprete YA TIENE, no un programa. Un `mktemp` seria un fork mas en el
+# camino mas caliente del arnes --cada parada de cada subagente-- y en Windows/MSYS un
+# fork cuesta 1,2-6 s (AGENTS.md 2). `$$` no serviria: dentro de un subshell devuelve el
+# pid del PADRE, y dos subshells hermanos volverian a compartir nombre.
+#
+# FAIL-CLOSED: si la componente no se puede obtener o no es un numero, NO se cae al nombre
+# compartido. Caer seria reintroducir la carrera en silencio, que es peor que no publicar:
+# se devuelve error y quien publica avisa y no escribe nada.
+arnes_tmp_publicacion() {   # <ruta destino> -> ARNES_TMP ; 1 = sin componente unica
+  local id="${BASHPID:-}"
+  case "$id" in ''|*[!0-9]*) ARNES_TMP=''; return 1 ;; esac
+  arnes_purga_tmp "$1"
+  ARNES_TMP="$1.arnes.tmp.$id"
+  return 0
+}
+
+# EL REVERSO DEL NOMBRE UNICO, Y HAY QUE PAGARLO (REQ-015 CA-02): un archivo que antes se
+# sobrescribia a si mismo pasa a ser una FAMILIA de nombres, y un temporal que sobreviva a
+# su dueno --SIGKILL, corte de luz-- ya no lo retira la parada siguiente al reutilizarlo.
+# Se retira aqui, y solo el que no tiene dueno vivo: el de un proceso que sigue corriendo
+# es una publicacion EN CURSO y borrarlo seria crear el problema que este REQ cierra.
+#
+# Cuesta un glob (sin fork) y `kill -0`, que es un builtin. El `rm` --el unico fork-- solo
+# se paga cuando de verdad hay restos, que es lo que CA-11 admite: el camino ordinario no
+# gasta ni un proceso mas que la linea base.
+#
+# LOS DOS BORDES, DICHOS: (a) si el pid pertenece a otro usuario, `kill -0` falla por
+# permisos y el temporal se toma por huerfano; el peor caso es que a su dueno le falle el
+# `mv`, y ese camino ya deja el destino intacto y avisa. (b) si el pid se reciclo en un
+# proceso ajeno, el resto se conserva y lo retira una parada posterior. Ninguno de los dos
+# puede perder contenido del destino.
+arnes_purga_tmp() {   # <ruta destino> — retira los temporales de publicacion sin dueno vivo
+  local t pid
+  local -a huerfanos=()
+  for t in "$1".arnes.tmp "$1".arnes.tmp.*; do
+    [ -f "$t" ] || continue                      # el glob sin coincidencias llega literal
+    pid="${t##*.arnes.tmp}"; pid="${pid#.}"
+    # `<destino>.arnes.tmp` a secas es el nombre COMPARTIDO de <=1.32.0: no declara dueno
+    # y ninguna version nueva lo escribe, asi que es un resto por definicion.
+    if [ -n "$pid" ]; then
+      case "$pid" in *[!0-9]*) continue ;; esac   # no es un temporal del arnes: no se toca
+      kill -0 "$pid" 2>/dev/null && continue      # dueno vivo: publicacion en curso
+    fi
+    huerfanos+=("$t")
+  done
+  [ "${#huerfanos[@]}" -gt 0 ] || return 0
+  rm -f -- "${huerfanos[@]}" 2>/dev/null
+  return 0
 }
 
 
@@ -1435,10 +1531,152 @@ _arnes_recorta_blancos() {   # <texto> -> ARNES_TRIM
   ARNES_TRIM="$s"
 }
 
+# --- LA CABECERA TIENE NOCION DE CITA: el interior de `<!-- ... -->` no declara ----
+#
+# EL DEFECTO QUE CIERRA, y es una REGRESION medida: un REQ `critico` cuyo veredicto de
+# seguridad vigente NO autorizaba el cierre cerraba igual si su cabecera llevaba un rango
+# de comentario con una linea que empezara por la clave del campo y un valor autorizante
+# —incluso diciendo dentro del propio comentario que era historico—. Sale de la suma de
+# TRES reglas que ninguna esta mal por separado: la tolerancia de enfasis en la CLAVE
+# (`arnes_norm_clave`, que cerro un fail-open real y NO se recorta), que estos campos
+# toman la ULTIMA aparicion de la cabecera, y que el lector no tenia noción de CITA.
+# Juntas, cualquier linea de la cabecera que EMPIECE por la clave —viva donde viva— se
+# convertia en el veredicto vigente.
+#
+# Y EL SITIO LO EMPEORA: el lugar donde un proyecto disciplinado escribe «este veredicto
+# es historico y no es el vigente» es precisamente un comentario HTML. La convencion que
+# existe para no confundir a la maquina era la que la confundia, asi que quien mejor
+# documentaba la historia de sus veredictos se exponia mas.
+#
+# POR QUE ESTA SALIDA Y NO MAS TOLERANCIA. Es la cuarta instancia de una leccion propia
+# (AGENTS.md 13, ADR-002, SEC-020): cuando un mecanismo interpreta texto humano libre,
+# ensanchar la tolerancia no gana la clase. Aqui no hace falta interpretar nada: el rango
+# del comentario esta DELIMITADO, asi que la pregunta es CERRADA. No se toca DONDE vale un
+# campo ni CUAL gana; se acota DONDE se lee.
+#
+# LA REGLA, escrita una vez:
+#   * lo que cae dentro de un rango `<!--` … `-->` no declara campo;
+#   * el hueco se sustituye por UN ESPACIO, nunca por nada: pegar los dos extremos podria
+#     FABRICAR una clave que nadie escribio (`Est<!--x-->ado: completado`), y un
+#     comentario solo puede estrechar el juicio de la puerta, nunca abrirlo;
+#   * NINGUN CARACTER SE DESCUENTA ANTES DE ESCANEAR EL RANGO, por la MISMA razon que el
+#     hueco lleva un espacio: retirar un caracter no puede destruir un delimitador, pero
+#     SI puede crearlo. Con el retorno de carro estaba medido —`-\r->` se convertia en
+#     `-->` y `<!\r--` en `<!--`— y por esa via un veredicto CITADO gobernaba y un rango
+#     que nunca cerraba parecia cerrado: el fail-open que esta regla vino a cerrar seguia
+#     abierto (H-01, `docs/qa/1.32.1-hallazgos.md`). El descuento del CR ocurre DESPUES,
+#     en `arnes_norm_clave`, donde ya no queda ningun delimitador que fabricar; asi la
+#     tolerancia al CRLF no cambia y la clase entera —no una forma— queda cerrada;
+#   * el rango CRUZA lineas, asi que el estado (`ARNES_CITA`) vive en el llamador: se pone
+#     a 0 antes de recorrer una cabecera y se consulta al terminarla;
+#   * un rango que ABRE y no CIERRA antes del fin de la cabecera deja una cabecera que no
+#     se puede MEDIR, y una puerta que no puede medir no deja pasar: quien recorre la
+#     cabecera lo publica (`ARNES_CITA_ABIERTA` / `ARNES_ESTADO_CITA`) y la puerta DENIEGA
+#     citando el rango — nunca permite por AUSENCIA del campo que el rango se trago.
+#
+# DONDE NO SE APLICA, y la frontera va escrita a proposito: la cola de aprobaciones
+# (`arnes_cola_pendientes`) tiene su propia noción de comentario, de grano de LINEA, que
+# documenta REQ-009 (CA-04/CA-07) y que decide cuantas entradas bloquean el cierre.
+# Unificarla aqui cambiaria ese CONTEO —`### Real <!-- nota -->` cuenta con esta regla y no
+# con la suya—, y un cambio de conteo en la cola es un cambio de veredicto en la puerta.
+# Son dos documentos y dos contratos distintos; el sitio unico de ESTA regla es esta
+# funcion y `hooks/campos-req.awk` es su transcripcion declarada.
+#
+# Sin procesos: solo expansion de parametros, como el resto del lector. Recorrer la
+# cabecera entera —en vez de salir en la primera aparicion— no añade ni un fork.
+# --- UN CR QUE NO TERMINA LA LINEA DEJA UNA CABECERA QUE NO SE PUEDE MEDIR ---------
+#
+# «NO FABRICAR» TIENE DOS CONSECUENCIAS OPUESTAS, Y AHI ESTUVO EL DEFECTO. La regla de
+# arriba —ningun caracter se descuenta antes de escanear el rango— es correcta, y cierra
+# la fabricacion del CIERRE: un `-\r->` ya no se lee como `-->`, el rango queda ABIERTO y
+# la puerta DENIEGA. Pero aplicada al ABRE se invierte: un `<!\r--` ya no se lee como
+# `<!--`, asi que el rango NUNCA SE ABRE y lo que el autor aparco dentro del comentario
+# GOBIERNA. Medido (SEC-024, R-007): sobre una cabecera `critico` que no declaraba
+# `Seguridad:` en absoluto, añadirle un rango con el abre fabricado y un
+# `Seguridad: aprobado` dentro convertia un `deny` en `allow`. La clase tenia dos caras y
+# solo una tenia caso.
+#
+# Y LA MISMA CARA POR OTRO OBJETIVO, sin comentario ninguno: `Seg\ruridad: aprobado`
+# cerraba un `critico` porque `arnes_norm_clave` descuenta el CR DESPUES y FABRICA LA
+# CLAVE. Bisecado: venia de <=1.30.3, no de este parche.
+#
+# POR QUE NO SE PERSIGUE LA VIA SINO EL ESTADO. Cubrir el `<!\r--` reconociendolo como
+# delimitador seria volver a fabricar —y reabrir el cierre—; enumerar objetivos (`<!`,
+# `-->`, cada clave) es la caza que este repositorio ha perdido cinco veces. La pregunta
+# que no envejece no habla del objetivo: **una linea de la cabecera que contiene un CR que
+# no es el que la TERMINA deja una cabecera que no se puede MEDIR**, y una puerta que no
+# puede medir no deja pasar (AGENTS.md 1). Cubre las dos caras y cualquier objetivo futuro
+# del mismo caracter.
+#
+# LO QUE NO TOCA, y por eso esta salida y no otra:
+#   * NO estrecha ninguna tolerancia, asi que no reabre nada. `Estado: comple\rtado` deja
+#     de leerse como estado terminal — pero por DENEGACION, no por AUSENCIA, que es la
+#     unica direccion que el descarte de esa alternativa exigia.
+#   * NO toca el CRLF: el CR que TERMINA la linea es transporte y sigue siendo transporte.
+#     Un REQ entero en CRLF decide identico a su gemelo en LF (casos CA-04 del banco).
+#   * NO cambia NADA de lo que este escaner devuelve: solo OBSERVA. Asi la transcripcion
+#     de `hooks/campos-req.awk` sigue diciendo lo mismo byte a byte —el fuzz diferencial
+#     compara valores de campo, no esta guarda— y el bloque derivado no cambia de opinion.
+#   * Es coherente con lo que el arnes ya hace: los bytes de control C0 distintos de tab,
+#     LF y CR se DENIEGAN, no se limpian. Esto solo retira la excepcion del CR alli donde
+#     no es transporte.
+#
+# EL ORDEN ES LA MITAD DEL ARREGLO, y va aqui por CONSTRUCCION y no por inspeccion: la
+# comprobacion es la PRIMERA sentencia del UNICO escaner de cabecera que hay. Toda boca
+# que alimenta a un lector —el lector de linea, `arnes_jq_str`, la reconstruccion del
+# documento del `Edit` con el CR en disco y `tools/arnes-paralelo.sh`— pasa por aqui con
+# la linea cruda, asi que ninguna puede llegar «ya limpia» al escaner. Una guarda en una
+# sola boca deja las otras tres abiertas; esta no vive en ninguna boca, vive en el escaner.
+#
+# El estado CRUZA lineas igual que el del rango, asi que vive en el llamador: se pone a 0
+# antes de recorrer una cabecera y se consulta al terminarla. Quien la recorre lo publica
+# (`ARNES_CR_INTERIOR` / `ARNES_ESTADO_CR`) y la puerta decide; aqui no se decide nada.
+ARNES_CITA=0
+ARNES_CR=0
+ARNES_CR_LINEA=''
+arnes_sin_cita() {   # <linea> -> ARNES_LINEA ; usa y actualiza ARNES_CITA / ARNES_CR
+  # La linea se escanea CRUDA, con sus retornos de carro: descontarlos aqui FABRICABA los
+  # delimitadores (ver la regla, arriba). Los quita `arnes_norm_clave`, aguas abajo.
+  local l="$1" out=''
+  # ANTES DE TOCAR NADA. Se descuenta UN solo CR final —el de transporte— y si queda
+  # alguno, la linea no se puede medir. Dos expansiones y un `case`: ni un fork.
+  case "${l%$'\r'}" in *$'\r'*)
+      # Se recuerda la PRIMERA, para que el motivo pueda citarla. El CR se muestra como
+      # `\r`: un motivo con un CR crudo dentro se pisa a si mismo en cualquier terminal.
+      [ "$ARNES_CR" -eq 1 ] || ARNES_CR_LINEA="${l//$'\r'/\\r}"
+      ARNES_CR=1 ;;
+  esac
+  if [ "$ARNES_CITA" -ne 0 ]; then
+    case "$l" in
+      *'-->'*) l="${l#*-->}"; ARNES_CITA=0 ;;
+      *)       ARNES_LINEA=''; return 0 ;;
+    esac
+  fi
+  while :; do
+    case "$l" in *'<!--'*) ;; *) break ;; esac
+    out+="${l%%<!--*} "
+    l="${l#*<!--}"
+    case "$l" in
+      *'-->'*) l="${l#*-->}" ;;
+      *)       ARNES_CITA=1; ARNES_LINEA="$out"; return 0 ;;
+    esac
+  done
+  ARNES_LINEA="$out$l"
+}
+
+# La UNICA puerta de entrada de un lector de cabecera: retira las citas y normaliza la
+# clave. Existe para que ningun recorrido de cabecera pueda quedarse con la mitad de la
+# regla — que es exactamente como nacio este defecto.
+arnes_campo_linea() {   # <linea> -> 0 + ARNES_CLAVE/ARNES_VALOR; 1 si no declara campo
+  arnes_sin_cita "$1"
+  arnes_norm_clave "$ARNES_LINEA"
+}
+
 arnes_norm_clave() {   # <linea> -> 0 + ARNES_CLAVE/ARNES_VALOR; 1 si la linea no declara campo
-  ARNES_CLAVE=''; ARNES_VALOR=''
-  local l="${1//$'\r'/}" k r
+  ARNES_CLAVE=''; ARNES_VALOR=''; ARNES_CLAVE_DECORADA=0
+  local l="${1//$'\r'/}" k r crudo
   case "$l" in *:*) ;; *) return 1 ;; esac
+  crudo="${l%%:*}"
   _arnes_recorta_blancos "$l"; l="$ARNES_TRIM"
   k="${l%%:*}"; r="${l#*:}"
   # ¿El enfasis abria en la clave? Entonces su cierre quedo al principio del valor.
@@ -1446,6 +1684,13 @@ arnes_norm_clave() {   # <linea> -> 0 + ARNES_CLAVE/ARNES_VALOR; 1 si la linea n
   k="${k//\*/}"; k="${k//_/}"; k="${k//\`/}"
   _arnes_recorta_blancos "$k"
   ARNES_CLAVE="$ARNES_TRIM"; ARNES_VALOR="$r"
+  # ¿La clave venia DECORADA o sangrada? Se DERIVA de la propia normalizacion —lo que la
+  # regla tuvo que retirar—, nunca de una lista de formas: `**Estado:**`, ` Estado:`,
+  # `Estado :` y las que nadie ha escrito todavia caen igual. No cambia NADA de lo que la
+  # puerta decide (CA-04: la tolerancia sigue gobernando); existe para que
+  # `tools/arnes-lectura.sh` pueda NOMBRAR la linea que gobierna cuando la forma es
+  # legitima pero el documento se lee distinto de como parece.
+  [ "$ARNES_CLAVE" = "$crudo" ] || ARNES_CLAVE_DECORADA=1
 }
 
 arnes_campos_normaliza() {   # <qa> <seg> <sens> <hall> <rigor> -> ARNES_QA/SEG/SENS/HALL/RIGOR
@@ -1550,10 +1795,18 @@ _arnes_sin_cola_partida() {   # ARNES_CORTO -> sin una secuencia UTF-8 incomplet
 
 arnes_campos_req() {   # <texto en disco> <texto entrante>
   ARNES_QA=''; ARNES_SEG=''; ARNES_SENS=''; ARNES_HALL=''; ARNES_RIGOR=''
-  ARNES_QA_CRUDO=''; ARNES_SEG_CRUDO=''
+  ARNES_QA_CRUDO=''; ARNES_SEG_CRUDO=''; ARNES_CITA_ABIERTA=0
+  ARNES_CR_INTERIOR=0; ARNES_CR_INTERIOR_LINEA=''
+  # El CR interior NO se reinicia por texto, a diferencia del rango: un CR en CUALQUIERA
+  # de las dos cabeceras que esta funcion lee deja lo que se leyo sin medir, y da igual en
+  # cual estaba.
+  ARNES_CR=0; ARNES_CR_LINEA=''
   local texto l
   for texto in "$1" "$2"; do
     [ -n "$texto" ] || continue
+    # El rango de comentario CRUZA lineas, asi que su estado se reinicia por texto: el
+    # fragmento entrante y el documento en disco son dos cabeceras, no una.
+    ARNES_CITA=0
     while IFS= read -r l; do
       # LOS CAMPOS VALEN SOLO EN LA CABECERA: antes del primer `## `. Medido: una linea
       # `Seguridad: aprobado (A-009, 2026-09-02)` dentro de `## Historial de cambios` se
@@ -1562,7 +1815,7 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
       # declara. La regla es estructural --lo que dice la plantilla-- y no depende del
       # nombre de ninguna seccion, que seria mapeo del proyecto.
       case "$l" in '## '*) break ;; esac
-      arnes_norm_clave "$l" || continue
+      arnes_campo_linea "$l" || continue
       case "$ARNES_CLAVE" in
         'QA')                   ARNES_QA="$ARNES_VALOR" ;;
         'Seguridad')            ARNES_SEG="$ARNES_VALOR" ;;
@@ -1571,7 +1824,12 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
         'Rigor')                ARNES_RIGOR="$ARNES_VALOR" ;;
       esac
     done <<< "$texto"
+    # El fin de la cabecera con un rango ABIERTO: la cabecera no se puede medir. Se
+    # publica y la puerta decide; aqui no se decide nada.
+    [ "$ARNES_CITA" -eq 0 ] || ARNES_CITA_ABIERTA=1
   done
+  # Igual que el rango abierto: se PUBLICA y la puerta decide.
+  ARNES_CR_INTERIOR="$ARNES_CR"; ARNES_CR_INTERIOR_LINEA="$ARNES_CR_LINEA"
   # El valor CRUDO se conserva ANTES de normalizar: la fecha del veredicto vive en el
   # parentesis de evidencia, que la normalizacion retira a proposito (el parentesis es
   # evidencia, no veredicto). Se lee del crudo con el MISMO lector, no con un segundo
@@ -1585,16 +1843,49 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
 # el estado una vez. Existe para juzgar la transicion sobre el documento RESULTANTE,
 # no sobre el fragmento editado (ver guard-completado.sh).
 arnes_estado_cabecera() {   # <texto> -> ARNES_ESTADO
-  ARNES_ESTADO=''
-  local l
+  ARNES_ESTADO=''; ARNES_ESTADO_CITADO=''; ARNES_ESTADO_CITA=0
+  ARNES_ESTADO_CR=0; ARNES_ESTADO_CR_LINEA=''
+  ARNES_CITA=0; ARNES_CR=0; ARNES_CR_LINEA=''
+  local l crudo visto=0
   while IFS= read -r l; do
     case "$l" in '## '*) break ;; esac
-    arnes_norm_clave "$l" || continue
-    case "$ARNES_CLAVE" in 'Estado')
-      arnes_norm_campo "$ARNES_VALOR"; arnes_veredicto "$ARNES_CAMPO"; ARNES_ESTADO="$ARNES_VEREDICTO"
-      return 0 ;;
-    esac
+    arnes_sin_cita "$l"
+    # SE COMPARA CONTRA LA LINEA CRUDA, sin tocarle nada. Antes se le descontaba el CR
+    # aqui —y `arnes_sin_cita` tambien— para que en un archivo CRLF la linea no difiriera
+    # de su version sin cita por el retorno de carro y la rama de abajo no se disparara
+    # sobre documentos sin un solo comentario. Ya no hace falta, y ademas no debe hacerse:
+    # `arnes_sin_cita` escanea la linea cruda, asi que sin comentarios devuelve el mismo
+    # texto byte a byte. Descontar el CR en un solo lado reintroduciria la asimetria.
+    crudo="$l"
+    # LA LINEA QUE EL RANGO SE TRAGO SE LEE APARTE, y NO como veredicto: solo para que la
+    # puerta pueda distinguir «aqui no hay estado» de «aqui alguien intenta declarar el
+    # estado terminal desde dentro de una cita». Sin esto, un rango sin cerrar que se
+    # tragara la linea del estado se resolveria como AUSENCIA —y la ausencia se permite—,
+    # que es la unica forma en que este arreglo podria abrir lo que vino a cerrar.
+    if [ "$visto" -eq 0 ] && [ -z "$ARNES_ESTADO_CITADO" ] && [ "$ARNES_LINEA" != "$crudo" ]; then
+      if arnes_norm_clave "$crudo"; then
+        case "$ARNES_CLAVE" in 'Estado')
+          arnes_norm_campo "$ARNES_VALOR"; arnes_veredicto "$ARNES_CAMPO"
+          ARNES_ESTADO_CITADO="$ARNES_VEREDICTO" ;;
+        esac
+      fi
+    fi
+    # La PRIMERA aparicion manda, y `visto` —no «el valor sigue vacio»— es lo que lo
+    # dice: un `Estado:` sin valor es una aparicion, y hasta ahora la funcion salia con
+    # las manos vacias en cuanto lo veia. Cambiar eso seria cambiar de opinion en
+    # silencio sobre un malformado.
+    if [ "$visto" -eq 0 ] && arnes_norm_clave "$ARNES_LINEA"; then
+      case "$ARNES_CLAVE" in 'Estado')
+        arnes_norm_campo "$ARNES_VALOR"; arnes_veredicto "$ARNES_CAMPO"; ARNES_ESTADO="$ARNES_VEREDICTO"
+        visto=1 ;;
+      esac
+    fi
   done <<< "$1"
+  # NO se sale en la primera aparicion: la cabecera se recorre entera para saber si algun
+  # rango quedo abierto —o si alguna linea llevaba un CR que no la termina—. Son unas
+  # pocas lineas de expansion de parametros y ni un fork.
+  [ "$ARNES_CITA" -eq 0 ] || ARNES_ESTADO_CITA=1
+  ARNES_ESTADO_CR="$ARNES_CR"; ARNES_ESTADO_CR_LINEA="$ARNES_CR_LINEA"
 }
 
 # Nivel de rigor con el que se juzga este REQ.

@@ -345,6 +345,8 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 | La transición a `completado` no se hace por shell | §6 | `guard-completado` | `Bash` (parcial) |
 | Seguridad no firma lo que QA no ha validado (salvo `Seguridad: preventiva`) | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Los campos del REQ valen sólo en la cabecera: una línea igual dentro de una sección no es un veredicto | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| Lo que vive dentro de un `<!-- … -->` de la cabecera **no declara campo**; un rango que abre y no cierra en la cabecera no la deja medir y no deja cerrar | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| Una línea de la cabecera con un **retorno de carro que no es el que la termina** no se puede medir y no deja cerrar — se deniega por eso, citando la línea, aunque los veredictos estén en verde. El CR **final** es transporte (CRLF decide igual que LF), el cuerpo no se toca y **reabrir** no se bloquea | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Un veredicto lleva fecha y no es anterior al último cambio del código —si el proyecto lo pide (`veredictos.*`, apagado por defecto) | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Ningún agente —tampoco la coordinadora— ejecuta git destructivo: `clean -f`, `reset --hard`, `checkout .`, `restore .`, `stash` (`git.prohibidos`) | §10 | `guard-git` | `Bash` |
 
@@ -360,6 +362,17 @@ bloquear: `ask` detendría la llamada.
 presentación: la puerta y `tools/arnes-lectura.sh` leen el valor entero. Un bloque de
 continuidad en el que cuatro veredictos largos ocupan un tercio —y rompen la tabla— deja
 de servir para lo único que existe.
+
+**La invariante manda sobre cualquier preferencia de herramienta.** Si una preferencia de sesión
+—una instrucción de estilo, una costumbre, un ajuste de configuración— empuja a hacer por la
+**consola** lo que las herramientas de edición hacen, esa preferencia **cede**: las puertas de
+este documento están cableadas a `Edit`/`Write`/`MultiEdit`, y sobre `Bash` la cobertura es
+**parcial a propósito** (arriba). Preferir la consola no es una opinión sobre estilo: **apaga
+una puerta**. Y nace medido —una preferencia por la consola desactivó un guardián sin que nadie
+relacionara las dos cosas—, así que va escrito aquí y no en la cabeza de nadie:
+**quien configura una sesión no suele ser quien lee esta sección**. Regla operativa: para tocar un
+archivo que alguna invariante protege se usan las herramientas de edición; si hace falta la
+consola, se dice **por qué** y se asume que ninguna puerta lo va a medir.
 
 **Es una barandilla, no una jaula.** El hook impide que el modelo **se desvíe por descuido**;
 no contiene a un agente decidido a rodearlo. Concretamente:
@@ -408,8 +421,16 @@ el arnés reescribe en `docs/ESTADO.md`, entre marcadores, un bloque **derivado*
 estado y veredictos de cada REQ, cola de aprobaciones, rama y limpieza del árbol. No permite ni
 impide nada — existe porque **un resumen redactado por el modelo miente justo cuando más falta
 hace**, que es cuando le queda poco contexto. Por eso no se redacta: se deriva, y cada línea
-sale de leer un archivo. Nunca bloquea la parada, no toca nada fuera de los marcadores, y se
-apaga con `estado_derivado.activo: false`.
+sale de leer un archivo. Nunca bloquea la parada y se apaga con
+`estado_derivado.activo: false`. **Y sobre el texto que hay fuera de los marcadores, las dos
+mitades — porque una se afirmó sin condición y estaba medida falsa.** *Sí:* fuera de los
+marcadores no se modifica nada; si eso no se puede **leer** no se escribe nada y se avisa; y
+cada parada publica por un temporal **propio de su proceso** y lo mueve encima, así que dos
+paradas simultáneas no comparten archivo (hasta 1.32.0 el temporal tenía **nombre fijo** y por
+ahí se perdió texto humano **1 de 25** vueltas del banco; cerrado en 1.32.1, REQ-015). *No:*
+no hay **serialización ni orden** — con dos paradas a la vez gana la última que publica, y es
+conforme porque el bloque es derivado del mismo disco; y si al proceso lo **matan** sin darle
+salida, su temporal puede sobrevivir hasta la parada siguiente, que lo retira.
 
 La consecuencia práctica: el enforcement por runtime es la última red, no la primera. La regla
 sigue siendo la de §5, y saltársela por otra vía es un incumplimiento aunque ningún hook grite.

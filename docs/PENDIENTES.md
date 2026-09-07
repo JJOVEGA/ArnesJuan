@@ -375,3 +375,132 @@ de qué herramienta se elija.
 cobertura de `Bash` que esta vía deja por debajo de lo que un lector razonable entendería. Dueño:
 REQ-011, ventana 1.33.0. Cierra cuando la puerta posterior detecte este mismo caso.
 
+
+## Una nota al margen desactiva el bloqueo de la cola de aprobaciones (medido el 2026-09-07, QA de 1.32.1)
+
+**Qué se midió.** `arnes_cola_pendientes` descuenta **la línea entera que contiene `<!--`**, así que
+una entrada de la cola con una nota detrás deja de contar:
+
+| `PENDING_APPROVAL.md` | 1.32.0 | 1.32.1 |
+|---|---|---|
+| `### Fusionar el PR 41` | DENY | DENY |
+| `### Fusionar el PR 41 <!-- pendiente de Juan -->` | **ALLOW** | **ALLOW** |
+
+**Idéntico en las dos versiones: 1.32.1 no lo introdujo ni lo tocó.** Es la respuesta a la pregunta
+que le hice a QA sobre la tercera desviación del desarrollador: la decisión de **no** unificar
+`arnes_cola_pendientes` con la noción de cita de REQ-016 fue **correcta**, y no crea ninguna
+divergencia nueva. Su noción de comentario es de grano de **línea** y la documenta REQ-009
+(CA-04/CA-07); unificarla habría cambiado el **conteo** de la cola, y un cambio de conteo en la cola
+es un cambio de veredicto en la puerta.
+
+**Dónde está el defecto entonces.** No entre dos lectores, sino entre el **documento y el código**:
+`PENDING_APPROVAL.md` línea 15 promete que «lo que **caiga dentro** de un comentario HTML no cuenta»,
+y en `### Pendiente real <!-- nota -->` la entrada **no cae dentro** de nada — y deja de contar igual.
+Quien escriba una nota al margen desactivará el gate de `AGENTS.md` §6 sin saberlo, y el gate existe
+justo para lo que menos conviene perder: la fusión a `main`, el tag y la publicación.
+
+**Clase `contrato`** — la prosa que un humano lee promete algo más estrecho que lo que el código hace.
+**Nace ≤1.30.x. Dueño y ventana: sin asignar, y NO va en `Hallazgos abiertos:` de REQ-015 ni de
+REQ-016** — bloquear una ventana por un defecto que no introdujo es exactamente lo que la tabla de
+clases de `requirements/README.md` existe para evitar.
+
+**Las dos salidas, y la asimetría entre ellas.** Alinear el código con la prosa (contar la entrada y
+descontar sólo lo citado) cambia el **conteo** y por tanto los veredictos: es un cambio de conducta de
+un gate, con su REQ y su fail-before. Alinear la prosa con el código es un párrafo. La segunda no
+arregla el descuido —seguirá bastando una nota al margen—, pero al menos deja de mentir. La decisión
+es de quien tome la ventana.
+
+## Dos cosas que el write-back de 1.32.1 dejó decididas para 1.33.0 (2026-09-07)
+
+### El informe calla cuando un campo existe SÓLO dentro de un comentario — decisión (b): fuera de la ventana
+
+**Qué se midió.** Un REQ cuya cabecera dice en letra `Hallazgos abiertos: SEC-9 (usuario/dinero)`
+dentro de un comentario **cierra**, y `tools/arnes-lectura.sh` responde «Ningún valor anómalo» con
+`rc=0`. El estado alcanzable **no es nuevo** —comentar equivale a borrar, y la ausencia se perdona por
+compatibilidad—, pero la vía de visibilidad que el registro de la ventana daba por existente **no
+existe**: CA-05 habla de claves **decoradas** y CA-06 de **dos** declaraciones del mismo campo, y un
+campo declarado sólo dentro de un comentario no es ninguna de las dos.
+
+**Por qué se aplaza, y las razones son del analista, que las dio mejor que yo.** El write-back queda
+honesto escribiendo la verdad —CA-11 de REQ-016, «comentar retira»— y no añadiendo una función; la
+visibilidad es defensa en profundidad, no la corrección de la promesa falsa. Y sobre todo: **el aviso
+mal acotado enterraría lo real bajo lo inofensivo**, que es justo lo que CA-06 existe para evitar. Lo
+anómalo **no** es que haya veredictos citados —esa es la práctica que REQ-016 protege—, sino que la
+**única** declaración de un campo viva dentro de un comentario. Ese discriminante hay que decidirlo,
+no improvisarlo en una vuelta de parche.
+
+**Consecuencia asumida y escrita:** ningún criterio de 1.32.1 promete visibilidad, y CA-02 ya no se
+apoya en ella. Dueño: `analista-requerimientos`. Ventana **1.33.0**.
+
+### Una promesa sin condición que es falsa cuando el campo no se declara — va a la pasada de conformidad
+
+**Qué se midió** (lo encontró el analista con el control D1/D2 de QA, y a QA se le había escapado):
+`requirements/README.md` dice que el hook **impide** marcar `completado` sin `QA: aprobado`, y la fila
+de `AGENTS.md` §13 promete lo mismo **sin condición**. Es falso cuando el campo **no se declara**: la
+ausencia se perdona por compatibilidad con los REQ anteriores a que los veredictos existieran.
+
+**Clase `contrato`**, y es **superficie heredada más ancha que el código** — la misma clase que
+`ADR-002` (el alcance honesto de la guarda estática) y que CA-08 de REQ-015. Nace ≤1.29.0; **esta
+ventana no lo introdujo**.
+
+**Decisión de la coordinadora: no entra en 1.32.1.** Son dos líneas de prosa, pero viven en dos
+archivos con **dos dueños distintos** —`AGENTS.md` es alcance de desarrollo en esta ventana,
+`requirements/README.md` es del analista—, así que meterlo en la vuelta 1 cuesta una comisión más para
+arreglar un defecto que el parche no causó, y un parche que crece es cómo se descontroló el ciclo
+anterior. Va a la **pasada de conformidad anticipada de 1.33.0**, que existe exactamente para esta
+clase: recorrer la superficie heredada y estrechar cada promesa hasta lo que el código hace. Junto a
+`ADR-002`/REQ-011 y a la decisión (b) de arriba, ya son **tres** en la misma pasada, y eso la hace
+barata en vez de cara.
+
+## SEC-029: el nombre de un proyecto consumidor estuvo publicado, y el control no podía verlo (decisión del propietario, 2026-09-07)
+
+**Qué pasó.** `CHANGELOG.md:1615` nombraba a un proyecto consumidor en el repositorio **público**.
+Aparición **única**, introducida por `73f9452` (PR #26), presente en `origin/main` y en los tags
+**v1.29.3, v1.31.0 y v1.32.0**. Lo encontró el `auditor-seguridad` en R-007, **fuera de su guion**.
+
+**El presente está corregido** (la línea dice ahora «un proyecto real»), y en el contenido no había
+datos, ni REQ, ni hallazgos del cliente: sólo que una medición se hizo allí.
+
+**Decisión del propietario (Juan, 2026-09-07): el historial y los tags se quedan como están, con el
+residual declarado.** Reescribir el historial rompe toda clonación existente, choca con la regla
+`non_fast_forward` del ruleset, obliga a mover tres tags de los que cuelga la instalación del plugin
+y **no recupera ninguna copia que ya exista**. Se paga el residual y se cierra la vía.
+
+**La causa raíz no es el descuido, y esto es lo único que hay que construir.** `docs/seguridad/
+gobernanza-datos.md` §3 definía su verificación como `git diff origin/main..HEAD` — **diferencial**.
+Un control diferencial **no puede encontrar, por construcción, lo que ya está en la base**: la
+auditoría de REQ-001 informó «sin hallazgos» **con razón**. Es el mismo defecto que SEC-025 en otro
+sitio: **preguntar por el cambio cuando la propiedad es de estado.** Van tres en una sola ventana —el
+barrido de migración, este control, y los cinco casos de banco que medían el cambio y no el estado—,
+y esa coincidencia ya no parece coincidencia.
+
+**Lo que se construye, y va a 1.33.0:** un **barrido de base** (no diferencial) sobre el árbol
+completo, como NFR de gobernanza de datos, junto a la comprobación por estado de SEC-025 y a la
+puerta de «¿la prueba mide algo?». Las tres son la misma pregunta con tres caras, y por eso salen
+baratas juntas. Dueño: `auditor-seguridad` para el NFR, `desarrollador` para el mecanismo.
+
+## Cinco decisiones de la coordinadora, con potestad expresa del propietario (2026-09-07)
+
+1. **El rigor pasa de declaración a propiedad comprobable.** Hoy `Rigor:` y `Sensible a seguridad:` los
+   escribe una persona y **ninguna puerta los verifica** — misma clase que `arnes_version`, un campo sin
+   comprobar que acaba mintiendo. Por eso este repositorio dejó todo en `critico`: bajarlo era un acto
+   de fe. **En 1.33.0**, al cerrar, la máquina compara el rigor declarado con las **rutas realmente
+   tocadas**; si declaró `estandar` y el diff toca `hooks/`, `tools/`, `tests/`, `.github/`, `.arnes/`
+   o `.claude-plugin/`, **DENY**. Es una **pregunta de estado**, así que entra en la columna vertebral
+   de la ventana sin coste de diseño propio. Con eso, bajar el rigor deja de ser peligroso y **quita un
+   eslabón de la cadena** —el más caro, ~20 min— en las ventanas de documentación y plantillas.
+2. **1.33.0 abre por las palancas de coste, no por los REQ.** Matar la vuelta y partir la sección
+   caliente del banco valen **124 de los 145 minutos** medidos de ahorro, y son una comisión cada una.
+3. **Presupuestos desde la mediana medida.** Nueve de diez comisiones de 1.32.1 se pasaron; las dos
+   únicas que no fueron los write-back. Y **toda comisión declara su working set al empezar** — qué va a
+   leer y **qué no**. Medido: el analista pasó de 124 804 a **59 647** tokens (y de 11 a 3 minutos)
+   declarando que no leía entero ni el registro de seguridad ni el otro REQ.
+4. **Publicación de 1.32.1:** si la vuelta 2 cierra SEC-024 y SEC-025 y el auditor firma, **la
+   coordinadora publica bajo la delegación permanente**. El `auditor-seguridad` sostiene en R-007 que el
+   `contrato` del agujero del intérprete invalida la condición «todo en verde»; **la coordinadora
+   discrepa y queda escrito**: ese hallazgo tiene dueño (REQ-011) y ventana (1.33.0), y aplicar ese
+   criterio significaría que el arnés no puede publicar **ninguna** versión hasta que exista la puerta
+   posterior — un estándar que ninguna versión anterior cumplió.
+5. **Lo que la coordinadora NO decide, con potestad o sin ella:** si el auditor **retira la firma o
+   veta**, no se publica y la decisión vuelve al propietario. Un veto que el coordinador puede levantar
+   no es un veto, y el veto existe justamente para no depender de que el coordinador esté de acuerdo.

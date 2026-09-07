@@ -17,8 +17,15 @@
 # - NUNCA bloquea. Un hook Stop que falla deja la sesion colgada, y una herramienta
 #   de continuidad que impide terminar es peor que no tenerla. Sale 0 pase lo que pase.
 # - IDEMPOTENTE. Reescribe entre marcadores; correrlo dos veces da lo mismo.
-# - NO TOCA LO QUE ESCRIBIO UNA PERSONA. Fuera de los marcadores no se modifica nada,
-#   y el bloque se anade al final si no existia.
+# - NO TOCA LO QUE ESCRIBIO UNA PERSONA, y esto tiene DOS MITADES porque una de ellas se
+#   midio falsa. SI: fuera de los marcadores no se modifica nada; el bloque se anade al
+#   final si no existia; si lo de fuera no se puede LEER no se escribe nada; y cada parada
+#   publica por un temporal PROPIO DE SU PROCESO, asi que dos paradas simultaneas no se
+#   pisan (hasta 1.32.0 el temporal tenia nombre fijo y por ahi se perdio texto humano
+#   1 de 25 vueltas del banco: H-12/SEC-015, cerrado en REQ-015). NO: no hay
+#   serializacion ni orden entre paradas simultaneas --gana la ultima que publica, y es
+#   conforme porque el bloque es derivado del mismo disco--, y si al proceso lo matan sin
+#   darle salida su temporal puede sobrevivir hasta la parada siguiente, que lo retira.
 # - INERTE sin `.arnes/config.json`, como los demas hooks.
 set -uo pipefail
 DIR="${BASH_SOURCE[0]%/*}"
@@ -234,7 +241,18 @@ $filas"
   # que habia fallado. La regla es: si no se puede leer lo de fuera de los marcadores, NO SE
   # ESCRIBE NADA y se avisa. Un bloque de continuidad que no se escribe es un inconveniente;
   # uno que borra el documento es una perdida.
-  tmp="$destino.arnes.tmp"
+  # Y LA TERCERA PATA DE ESA MISMA INVARIANTE, QUE LAS DOS DE ARRIBA NO CUBRIAN: dos
+  # paradas A LA VEZ. El temporal se llamaba igual siempre --se derivaba solo de la ruta
+  # del destino--, asi que dos procesos escribian el mismo archivo y, tras el `mv` de uno,
+  # la escritura tardia del otro caia sobre el destino desde el byte 0: exactamente donde
+  # vive el texto de la persona. Medido: 1 perdida en 25 vueltas del banco (H-12/SEC-015).
+  # El nombre lo forma ahora `arnes_tmp_publicacion`, propio de este proceso y junto al
+  # destino (las dos condiciones de REQ-015 CA-01, que se verifican juntas).
+  if ! arnes_tmp_publicacion "$destino"; then
+    arnes_warn "no se pudo formar un nombre de temporal propio de este proceso ('BASHPID' vacio o no numerico): NO se escribe nada y '$ARNES_ESTADO_ARCHIVO' queda como estaba. Caer al nombre compartido reintroduciria la carrera de dos paradas simultaneas, que es como se perdio texto humano de este archivo (REQ-015)."
+    return 0
+  fi
+  tmp="$ARNES_TMP"
   if [ -f "$destino" ]; then
     local texto='' fuera='' saltando=0
     if [ ! -r "$destino" ]; then
@@ -272,6 +290,12 @@ $cuerpo"
 }
 
 # Publicacion: se escribe COMPLETO en un temporal y solo entonces se mueve encima.
+#
+# EL TEMPORAL LO NOMBRA QUIEN LLAMA, con `arnes_tmp_publicacion` (lib.sh): un nombre por
+# PROCESO, junto al destino. Sigue llegando por parametro a proposito --el banco puede
+# apuntar esta funcion a un temporal concreto para medir un fallo de escritura (ENOSPC)
+# sin adivinar el pid del hook--, pero en produccion no hay mas de un llamador y ninguno
+# construye el nombre a mano.
 #
 # El `mv` es lo que hace que el destino nunca quede a medias: si el temporal no se pudo
 # escribir entero —disco lleno, carpeta sin permiso—, el `&&` no llega al `mv` y el

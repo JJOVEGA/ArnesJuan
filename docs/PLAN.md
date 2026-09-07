@@ -43,7 +43,104 @@ cociente reloj/tiempo de agente (base ~1,0) y agentes de QA simultáneos (base 1
 
 ---
 
-## 1.33.0 — las puertas que faltan
+## 1.33.0 — preguntas de estado, no preguntas de vía
+
+> **Reescrita el 2026-09-07, al cerrar la ventana 1.32.1, y aprobada por el propietario.** Antes esta
+> ventana era una lista de huecos. Dejó de serlo cuando el parche 1.32.1 produjo, sin buscarlo,
+> **cuatro instancias del mismo defecto de forma** en cuatro sitios con cuatro dueños distintos.
+
+### El tema, porque una ventana con tema cuesta menos que un cajón
+
+| Dónde apareció | Preguntaba por la **vía** | La pregunta que no envejece, por **estado** |
+|---|---|---|
+| Los 5 casos de banco vacíos (H-02) | «¿el documento tiene un rango?» | «¿la puerta llegó a juzgar una transición?» |
+| El barrido de migración (SEC-025) | «¿hay un `<!--`?» | «¿cuáles de mis REQ en estado terminal **no cerrarían hoy**?» |
+| El control de datos de cliente (SEC-029) | `git diff origin/main..HEAD` | «¿qué hay **en el árbol**?» |
+| El guardián del intérprete (REQ-011) | «¿este comando va a escribir?» | «¿cambió algo protegido?» |
+
+**Interrogar al mecanismo tiene una vía nueva cada vez; interrogar a la propiedad no envejece.** Es la
+misma familia que las **cinco** derrotas de «ensanchar el patrón», y por eso la salida es la misma:
+pregunta cerrada o gramática restringida. Las cuatro comparten mecanismo y comparten pruebas: juntas
+cuestan bastante menos que por separado, y ese es el motivo de agruparlas, no la estética.
+
+### Orden: las palancas de coste van PRIMERO, antes que ningún REQ
+
+Decisión del propietario, 2026-09-07. Esta ventana va a tener muchas comisiones, y las tres palancas
+están **medidas** en 1.32.1:
+
+| Palanca | Medido | Lo que devuelve |
+|---|---|---|
+| Partir la sección caliente del banco | Ver la corrección de abajo: la ruta crítica es **`32-huecos-auditoria-r001`**, no `36-2` | El banco lo corre **cada** comisión que mide, decenas de veces |
+| `tests/util/` con las tres sondas | Tres comisiones las reconstruyeron en esta ventana, **dos mal la primera vez** (`$BASHPID` dentro de `$( )`; `command -v` sobre un binario sombreado) | ~150 k tokens por ventana, y dos clases de prueba-que-miente |
+| La nota de migración **una vez al cerrar** | `skills/arnes-upgrade/SKILL.md` colisionaba en 15 de 15 pares | Paralelismo real entre comisiones |
+
+**Y el dato que ordena todo lo demás:** las comisiones que **miden** corren a 6 200–7 500 tokens por
+minuto de reloj; las que **piensan** (análisis y write-back), a 12 000–17 000. No miden más despacio:
+**esperan al banco**. Una comisión que lo corre ~20 veces se pasa 13 de sus 39 minutos mirándolo correr.
+
+> **Corrección de la coordinadora (2026-09-07, al cerrar la ventana). El «31,3 s de 39 en la sección
+> 36-2» que esta tabla traía era una medición MAL MUESTREADA, y la escribí como si fuera un dato.**
+> Medí cinco secciones **elegidas a ojo** y la ruta crítica no estaba entre ellas. Con las 41 medidas,
+> con la máquina limpia y sabiendo que **el corredor ya paraleliza secciones** (`&` + `wait -n`, de ahí
+> el ~200 % de CPU), el reparto real es:
+>
+> | Sección | Reloj |
+> |---|---|
+> | **`32-huecos-auditoria-r001.sh`** | **75,7 s** ← la ruta crítica |
+> | `36-2-los-lectores` | 26,6 s |
+> | `25-presupuesto-de-analisis` | 16,7 s |
+> | Las otras 38 juntas | ~40 s |
+>
+> Con paralelismo, el banco entero ≈ la sección más lenta, así que **partir la 36-2 no habría movido el
+> reloj**: la palanca es la 32. Y hay una segunda mitad, medida aparte y anotada como hallazgo de coste:
+> la 32 pasó de **7,6 s con los hooks de 1.32.0 a 75,7 s con los de 1.32.1** — 10×, introducido por este
+> parche, acotado a los casos con **caracteres de control** y **sin efecto en una llamada normal**
+> (0,166 → 0,171 s por llamada, medido).
+>
+> **Las dos lecciones, y la segunda es la que duele.** Primera: un muestreo no es una medición, y
+> presentarlo como tal contamina un plan entero. Segunda: **CA-08 se cumplía.** Ese criterio mide
+> **procesos** por llamada —4 = 4, correcto— y lo que se degradó fue **tiempo**. Un criterio de coste
+> que fija la magnitud equivocada da verde sobre una regresión de 10×. La pasada de conformidad tiene
+> que ensanchar CA-08 a **reloj**, no sólo a forks.
+
+### El núcleo
+
+| Trabajo | Qué cierra | Clase |
+|---|---|---|
+| **REQ-011 — la puerta posterior** | Deja de preguntar **antes** si un comando escribe y pregunta **después** si algo protegido cambió. Tiene ya **dos forzadores medidos**: el cierre por heredoc de `python3` y una preferencia de sesión por la consola que reapareció **tres veces** en 1.32.1, después de escribirse la regla | `contrato` |
+| **SEC-025 — el barrido por estado** | «De mis REQ en estado terminal, ¿cuáles no cerrarían hoy?». Cubre la cita, el delimitador fabricado, la clave fabricada y las vías que nadie ha descubierto, porque no describe ninguna. Barato: `arnes_campos_req "$disco" ""` | `instrumento` |
+| **SEC-029 — el barrido de base** | Un control **diferencial** no puede encontrar, por construcción, lo que ya está en la base. NFR de gobernanza de datos sobre el árbol completo | `contrato` |
+| **La puerta de «¿esta prueba mide algo?»** | **Adelantada desde 1.34.0.** Un caso nuevo tiene que **fallar** contra los hooks de la versión anterior. Habría cazado los cinco casos vacíos el día que nacieron — y sin ellos no hay vuelta 1, que costó **685 000 tokens y 1 h 35** | `instrumento` |
+| **REQ-007 bloques B y C, y CA-64.1-bis/2-bis** | Lo que ya estaba planificado: la cabecera que se sale de alcance, el destino entrecomillado, el texto humano que sube y el archivo en sólo lectura. Con esto **cierra REQ-007** | — |
+
+### La pasada de conformidad, que ahora recoge cinco cosas y por eso sale barata
+
+1. Las **tres promesas incondicionales más anchas que el código**: `ADR-002`, la visibilidad que el
+   informe no da, y el «el hook impide cerrar sin `QA: aprobado`» que es falso cuando el campo no se
+   declara.
+2. **SEC-020** — la gramática de `Archivos:` y el desenvoltorio por elemento.
+3. **SEC-028** — que la enumeración de los descuentos de CR sea **por construcción y no por
+   inspección**, y el fuzz diferencial con semillas fijas **dentro** del banco (hoy la medición más
+   fuerte sobre esa clase es de QA y el CI no la puede repetir).
+4. **H-06** — la nota al margen que desactiva el bloqueo de la cola de aprobaciones. **Sigue sin
+   dueño**; le corresponde `desarrollador`.
+5. **La vía de fuga del modelo de clases, encontrada por el analista el 2026-09-07:** se puede volver
+   **bloqueante** un hallazgo `instrumento` escribiéndolo dentro de un criterio de aceptación, **sin
+   firmar la reclasificación**. `AGENTS.md` §6 dice que el defecto de un control no puede ser condición
+   para cerrar la función que vigila; un criterio que exige el control consigue justo eso por la puerta
+   de atrás. Hay que nombrarlo donde vive la tabla de clases.
+
+### Lo que se saca de esta ventana, a propósito
+
+**El canal de informes y las plantillas de issue van a 1.34.0.** Es valioso y no es urgente, y meterlo
+aquí es exactamente cómo se descontroló el ciclo 3. La decisión de accesos ya está tomada y medida
+(SEC-026/SEC-027): los informes entran como issues en el repositorio **público**, con una **gramática
+restringida** en la plantilla en vez de muros de permisos — un repositorio de cuenta personal no tiene
+roles granulares, así que la privacidad se resuelve por la **forma** del formulario y no por el rol.
+
+---
+
+## 1.33.0 — detalle heredado de la planificación anterior
 
 **Qué entra:** lo que cierra huecos del mecanismo. Todo toca `hooks/`, así que es una ventana coherente
 y va en serie por colisión de archivo.

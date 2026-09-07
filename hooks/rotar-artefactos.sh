@@ -27,6 +27,13 @@
 #   ni las demas secciones: los criterios de un REQ son el CONTRATO, y una rotacion que
 #   pudiera alterar la cabecera seria un camino para cerrar o firmar un REQ sin pasar por
 #   ninguna puerta.
+# - EL "TODO O NADA" AGUANTA TAMBIEN CON DOS PARADAS A LA VEZ (REQ-015): los cuatro
+#   temporales de publicacion de este archivo llevan una componente PROPIA DEL PROCESO,
+#   asi que dos paradas simultaneas no comparten archivo. Con nombre fijo si lo
+#   compartian, y tras el `mv` de una la escritura tardia de la otra caia encima del
+#   destino ya publicado -- en la rotacion de seccion, encima de un REQ o de ESTADO.md.
+#   Lo que NO se promete: no hay serializacion; si dos paradas rotan el mismo artefacto,
+#   una de las dos no encontrara nada que mover, y eso es conforme.
 # - NUNCA BLOQUEA la parada, como el resto de hooks Stop.
 set -uo pipefail
 DIR="${BASH_SOURCE[0]%/*}"
@@ -133,14 +140,24 @@ arnes_rotar_uno() {
   #
   # Ahora el destino se arma en un temporal y solo se publica si la verificacion pasa.
   # Todo o nada: ni se pierde contenido ni se duplica.
-  local marca tmp_dest
+  #
+  # Y LOS DOS TEMPORALES SE NOMBRAN AQUI, ANTES DE PUBLICAR NADA: son propios de este
+  # proceso (REQ-015 CA-01), porque con nombre fijo dos paradas simultaneas escribian el
+  # mismo archivo y, tras el `mv` de una, la escritura tardia de la otra caia sobre el
+  # destino ya publicado. Se piden los dos ANTES del primer `mv` a proposito: si el nombre
+  # unico no se puede formar hay que salir SIN HABER TOCADO nada, porque abortar entre el
+  # destino y el recorte del origen es justo la duplicacion que CA-07 prohibe.
+  local marca tmp_dest tmp_orig
   marca="<!-- ARNES:ROTADO $(date '+%Y-%m-%d %H:%M') -->"
-  tmp_dest="$destino.arnes.tmp"
+  if ! arnes_tmp_publicacion "$destino"; then arnes_rot_sin_tmp "$f"; return 0; fi
+  tmp_dest="$ARNES_TMP"
+  if ! arnes_tmp_publicacion "$f"; then arnes_rot_sin_tmp "$f"; return 0; fi
+  tmp_orig="$ARNES_TMP"
   if [ -f "$destino" ]; then
-    cat "$destino" > "$tmp_dest" || return 0
+    cat "$destino" > "$tmp_dest" || { rm -f "$tmp_dest"; return 0; }
   else
     printf '# Archivo de %s\n\n> Secciones retiradas de `%s` para que no crezca sin tope.\n> Se MOVIERON tal cual: aqui no hay resumen ni reescritura.\n\n' \
-      "$(basename "$f")" "$(basename "$f")" > "$tmp_dest" || return 0
+      "$(basename "$f")" "$(basename "$f")" > "$tmp_dest" || { rm -f "$tmp_dest"; return 0; }
   fi
   printf '%s\n%s\n' "$marca" "$viejo" >> "$tmp_dest" || { rm -f "$tmp_dest"; return 0; }
 
@@ -165,8 +182,18 @@ arnes_rotar_uno() {
 
   # --- 2) Solo ahora se recorta el origen ---
   local puntero="> Las secciones anteriores se movieron a [\`$(basename "$destino")\`]($(basename "$destino")) — el arnés las rota para que este archivo no crezca sin tope."
-  printf '%s%s\n\n%s' "$preambulo" "$puntero" "$nuevo" > "$f.arnes.tmp" && mv -f "$f.arnes.tmp" "$f"
+  printf '%s%s\n\n%s' "$preambulo" "$puntero" "$nuevo" > "$tmp_orig" && mv -f "$tmp_orig" "$f"
+  # Si el `printf` fallo, el temporal no se queda de resto. El `[ -f ]` es un builtin y en el
+  # camino bueno el `mv` ya se lo llevo, asi que el `rm` --el unico proceso de esta linea--
+  # solo se paga cuando de verdad hay algo que retirar (REQ-015 CA-11).
+  [ -f "$tmp_orig" ] && rm -f "$tmp_orig" 2>/dev/null
   return 0
+}
+
+# El aviso de que no hay componente unica para el temporal, en un solo sitio: los cuatro
+# puntos de publicacion de este archivo dicen lo mismo porque el motivo es el mismo.
+arnes_rot_sin_tmp() {   # <archivo de origen>
+  arnes_warn "rotacion: no se pudo formar un nombre de temporal propio de este proceso ('BASHPID' vacio o no numerico); NO se rota nada en '${1#"$ARNES_PROJ/"}' y ni el destino ni el origen se tocan. Caer al nombre compartido reintroduciria la carrera de dos paradas simultaneas (REQ-015)."
 }
 
 # arnes_rotar_seccion <archivo> <seccion> <orden> <umbral> <conservar> <archivo_dir>
@@ -309,9 +336,16 @@ arnes_rotar_seccion() {
   # 6) TODO O NADA, exactamente como en `arnes_rotar_uno`: el destino se arma en un
   #    temporal, se RELEE para comprobar que el texto llego, y solo entonces se publica y
   #    se recorta el origen. Se prefiere un archivo grande a un archivo perdido.
-  local marca tmp_dest sonda
+  #    Los DOS temporales son propios de este proceso y se piden ANTES de publicar nada
+  #    (REQ-015 CA-01/CA-07): con nombre fijo, dos paradas simultaneas compartian archivo y
+  #    la escritura tardia de una caia sobre lo que la otra ya habia publicado. Y aqui el
+  #    origen puede ser `docs/ESTADO.md` o un REQ, asi que lo que se pisaria es el contrato.
+  local marca tmp_dest tmp_orig sonda
   marca="<!-- ARNES:ROTADO $(date '+%Y-%m-%d %H:%M') -->"
-  tmp_dest="$destino.arnes.tmp"
+  if ! arnes_tmp_publicacion "$destino"; then arnes_rot_sin_tmp "$f"; return 0; fi
+  tmp_dest="$ARNES_TMP"
+  if ! arnes_tmp_publicacion "$f"; then arnes_rot_sin_tmp "$f"; return 0; fi
+  tmp_orig="$ARNES_TMP"
   if [ -f "$destino" ]; then
     cat "$destino" > "$tmp_dest" 2>/dev/null || { rm -f "$tmp_dest"; return 0; }
   else
@@ -333,8 +367,8 @@ arnes_rotar_seccion() {
   case "$pre" in *"$rel_dest"*) ;; *) pre+="$puntero"$'\n\n' ;; esac
   local salida="$antes$cab$pre$nuevo$despues"
   [ "$fin_nl" -eq 1 ] || salida="${salida%$'\n'}"
-  printf '%s' "$salida" > "$f.arnes.tmp" && mv -f "$f.arnes.tmp" "$f"
-  rm -f "$f.arnes.tmp"
+  printf '%s' "$salida" > "$tmp_orig" && mv -f "$tmp_orig" "$f"
+  [ -f "$tmp_orig" ] && rm -f "$tmp_orig" 2>/dev/null   # solo si quedo algo (CA-11)
   return 0
 }
 
