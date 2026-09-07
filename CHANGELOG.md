@@ -123,6 +123,46 @@ Archivos: `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-ca
 `tests/escenarios/hooks/README.md`, `.github/workflows/banco.yml`, `docs/PENDIENTES.md`,
 `docs/qa/1.33.0.md`, `requirements/REQ-017.md`.
 
+## [Interno] — 2026-09-07 · La tarde del canal: nueve piezas de un proyecto consumidor, y una lección de clasificación
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Intercambio largo con un proyecto consumidor por el canal entre sesiones, cada lado **ejecutando** con
+control propio. Todo el material va a **1.34.0** salvo una pieza, que entra en la ventana en curso.
+Detalle completo en `docs/PENDIENTES.md`; aquí lo que decide algo:
+
+- **La regla del literal, y entra YA en el REQ de la palanca de 1.33.0:** *una igualdad entre dos
+  magnitudes que pueden encogerse juntas no es una cota; hace falta un literal, y el literal **es** el
+  control.* La encontraron mutando su propio guardián: con el corpus vacío, `comparadas === corpus.length`
+  es `0 === 0` y da verde. Verificado aquí que el banco la cumple —`CASOS_ESPERADOS=845` es un literal
+  tecleado— y que ese número, que parecía deuda, **es la pieza que delata el borrado de una sección entera**.
+- **Y por eso el `845` NO se automatiza.** Ellos ya lo habían hecho y midieron el precio: su piso lleva
+  **seis días** congelado (+28 archivos, +749 pruebas de hueco) porque el trinquete sólo sube sobre corrida
+  válida y su suite está en rojo. Un literal falla **por desidia** y se ve; un derivado falla **porque una
+  precondición dejó de cumplirse** y no se ve.
+- **La palanca «¿esta prueba mide algo?» pasa de dos casos a cuatro**, y gana la mitad que le faltaba: el
+  declarado tiene que estar acotado contra algo que no se mueva.
+- **«Acreditado por mutación» tiene que decir POR QUIÉN.** Dos corpus, misma dirección: allí, la mutación
+  de un tercero encontró el doble que la del autor; aquí, ninguno de los cuatro fallos en abierto de
+  1.32.1 lo encontró quien escribió el código.
+- **El borde de la familia del caso J es una lista de caracteres, no una propiedad**, y su corpus tiene
+  25 líneas hoy inertes **sólo por su primer carácter**.
+- **La ceguera del autoalojamiento, medida:** los 17 REQ de aquí declaran los cinco campos; allí, dos se
+  omiten en 47 de 47. Un arreglo de «campo ausente ⇒ denegar» diseñado contra el corpus propio habría
+  dejado a ese proyecto sin poder cerrar ni un REQ. Con su matiz, que corrige una entrada previa: un
+  corpus externo sólo prueba en la dimensión en que es **indisciplinado**.
+- **Nuestra promesa falsa viaja en la plantilla:** `templates/AGENTS.md.tpl:309` promete que no se cierra
+  sin `QA: aprobado`, y medido: con el campo **ausente**, la puerta **permite**. Es el único de los cuatro
+  campos cuya ausencia calla.
+- **Dos correcciones firmadas de la coordinadora** (dije que dos cosas no estaban en su informe y sí
+  estaban) y **una suya** (`Seguridad: n/a` sí está en nuestro vocabulario, verificado en tres archivos:
+  no tienen nada que migrar).
+
+**La lección que ordena las nueve, y es suya:** *un dato puede estar medido, ser correcto, y estar
+clasificado en la categoría equivocada* — el `845` como deuda, el reparto de hallazgos como «el bucle
+funciona», su piso congelado como «el trinquete ya funciona». **Ninguna se descubre midiendo mejor.** Se
+descubren cuando alguien de fuera pregunta por otra cosa. El canal de informes deja de ser higiene y pasa
+a ser el único instrumento que tenemos contra el error de clasificación.
+
 ## [Interno] — 2026-09-07 · Caso J: el bisecado que lo explica, y dos formas medidas al revés
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 

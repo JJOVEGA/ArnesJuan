@@ -994,3 +994,301 @@ H-08 separaron **lo medido de lo no medido** —«revisé 3 de las 11 y las tres
 otras 8 no las he mirado**; nuestra exposición es *probablemente pequeña y no medida*»— en vez de
 redondear a «cubierto». Es la forma correcta de reportar una cobertura parcial, y es justo lo que aquí
 falló el 2026-09-07 con el muestreo de cinco secciones presentado como medición.
+
+### El campo ausente que calla: nuestra instancia, medida (2026-09-07)
+
+**El patrón, aportado por el proyecto consumidor y encontrado en su propio guardián:** una comprobación
+escrita como *«si el campo **está** y dice algo malo, protesta»* **falla en abierto cuando el campo
+desaparece**. La forma que no falla así es *«si el campo no está, protesta; si está y dice algo malo,
+protesta»*.
+
+**Y la señal de revisión que lo acompaña, que es lo más reutilizable de todo el intercambio:** la
+**inconsistencia dentro de un mismo archivo**. Cuando cinco comprobaciones hermanas reportan la
+ausencia y una no, **esa una es sospechosa por sí sola** — sin saber nada del dominio, sin medir, y en
+tiempo de revisión. Es barato y va a la lista del `auditor-seguridad` y del `qa-tester`.
+
+**Nuestra instancia, medida contra 1.32.1 instalado** (no leída del código, no recordada):
+
+| Cabecera de un REQ `critico` con `Estado: completado` | Veredicto |
+|---|---|
+| `QA: pendiente` declarado | DENIEGA |
+| **campo `QA:` AUSENTE** | **PERMITE** 🔴 |
+| campo `Seguridad:` ausente | DENIEGA |
+| `Hallazgos abiertos:` con un hallazgo **sin clase** | DENIEGA |
+
+**`QA:` es el único de los cuatro cuya ausencia calla.** Su señal de inconsistencia lo habría
+señalado sin conocer el arnés. Y `AGENTS.md` §13 promete literalmente *«No completar sin
+`QA: aprobado` (salvo `Rigor: ligero`)»*, promesa que es **falsa cuando el campo no se declara** — ya
+estaba anotada como una de las **tres promesas incondicionales más anchas que el código**, pero
+estaba escrita como observación y ahora **está medida, tiene nombre y tiene patrón general**.
+
+Va a la **pasada de conformidad de 1.34.0**, que ya la recogía. Lo que cambia es que deja de ser una
+frase que corregir y pasa a ser un **defecto con forma reconocible**: o la puerta exige el campo, o
+`AGENTS.md` deja de prometer lo que no cumple. Clase `contrato` — la promesa está en el documento que
+los proyectos heredan.
+
+> **La otra mitad, y es la respuesta a la pregunta que dejamos abierta arriba sobre el cuadre total
+> suspendido: ellos NO suspenden la comprobación, RECHAZAN la corrida.** Su sello registra **los
+> argumentos con que se lanzó el proceso** y la puerta de integridad **falla** si hay alguno: *«una
+> corrida parcial no es evidencia de integridad»*. La diferencia de diseño es la que importa — no se
+> decide comparando **conteos**, que pueden encogerse junto con el universo (nuestro caso 2), sino
+> leyendo **cómo se invocó el proceso**, que es un hecho **anterior** a la corrida y no depende de lo
+> que la corrida mida. Es la forma correcta y es la que le falta a nuestro §7, que hoy pide la vuelta
+> completa **en prosa**. Va al REQ de la palanca.
+>
+> *(Ellos lo declararon como **leído, no ejercido** —tenían una comisión corriendo y el sello es un
+> archivo compartido: ejercerlo habría contaminado las dos corridas—. La distinción se conserva
+> aquí.)*
+
+### El arreglo ingenuo del campo ausente rompería a los proyectos, y nuestro corpus no lo habría dicho (medido a dos bandas, 2026-09-07)
+
+**Aviso del proyecto consumidor, con cifras, antes de que se redacte el arreglo.** «Campo ausente ⇒
+denegar» aplicado a **todos** los campos deja a un proyecto real **sin poder cerrar ni un REQ**. Medido
+allí con nuestro propio `campos-req.awk` de 1.32.1 sobre sus 47 REQ:
+
+| Campo | Los omiten allí (47 REQ) | Los omiten **aquí** (17 REQ) |
+|---|---|---|
+| `QA:` | 0 | 0 |
+| `Seguridad:` | 0 | 0 |
+| `Sensible a seguridad:` | 0 | 0 |
+| **`Hallazgos abiertos:`** | **47 de 47** | **0** |
+| **`Rigor:`** | **47 de 47** | **0** |
+
+**La ausencia no significa lo mismo en todos los campos: en dos de ellos la ausencia ES el valor.**
+`Hallazgos abiertos:` ausente significa *«ninguno»* por nuestro propio §6. Y `Rigor:` ausente es allí
+una **decisión escrita del dueño**, cuyo mapeo coincide con nuestra derivación por defecto, así que
+declararlo sería redundancia que envejece.
+
+**El criterio que lo separa, y es suyo:** la ausencia es un **hueco** cuando el campo es un
+**veredicto que alguien debe emitir** (`QA:`, `Seguridad:`); es un **valor** cuando el campo es un
+**inventario que puede estar vacío** (`Hallazgos abiertos:`) o un **derivado con regla propia**
+(`Rigor:`). No sale del código: sale de **qué promete cada campo**.
+
+> ⚠️ **La lección que es nuestra y no suya, y es la más incómoda del día: nuestro corpus no es
+> representativo, y por eso no nos habría avisado.** Aquí los 17 REQ declaran los cinco campos —**0
+> omisiones**—; allí, dos campos se omiten en **el 100 %** de los archivos. Si hubiéramos diseñado el
+> arreglo midiendo contra nuestro propio corpus, la conclusión habría sido *«denegar ante ausencia no
+> rompe nada»* — con la medición bien hecha, la lógica interna correcta y el resultado catastrófico
+> aguas abajo. **Es la ceguera específica del autoalojamiento:** el repositorio que se desarrolla a sí
+> mismo mide sobre el corpus más disciplinado que existe, porque es el suyo. Cualquier REQ que decida
+> sobre la **forma de los REQ** necesita un corpus externo, y hoy sólo hay uno disponible.
+
+**Y la mitad que multiplica el coste: la promesa falsa viajó con la plantilla.** `templates/AGENTS.md.tpl`
+línea 309 lleva escrito *«No completar sin `QA: aprobado` (salvo `Rigor: ligero`)…»*, así que **todo
+proyecto que haya hecho `arnes-init` o `arnes-upgrade` la tiene**. Consecuencia operativa para 1.34.0:
+**esa fila de la plantilla es parte del arreglo, no documentación del arreglo** — y la migración tiene
+que nombrarla, porque un proyecto migrado no releerá la plantilla por su cuenta.
+
+*(El proyecto consumidor ya corrigió su copia aguas abajo, conservando el texto anterior, y midió su
+exposición al fail-open: **cero** — su único archivo sin `QA:` es el README, que no declara `Estado:` y
+por tanto no puede transicionar. Pero aplica a cualquier REQ nuevo.)*
+
+### Perfil del corpus externo, y el criterio que limita lo que prueba (2026-09-07)
+
+**Tres datos del proyecto consumidor sobre sus 47 REQ, con lo que cada uno rompe.**
+
+**1. Un valor de campo llega a 16 135 caracteres en una sola línea**, y doce líneas de campo pasan de
+1 KB. Máximos por campo: `Estado` 1 653, `QA` 2 378, `Seguridad` 16 135. De los 47, **28** tienen
+`Estado:` de más de 60 caracteres.
+
+> **Medido aquí, y acota el problema a un solo sitio:** el coste del lector **no depende** de la
+> longitud del valor. `campos-req.awk` sobre una cabecera con un valor de 1 000, 2 000, 4 000, 8 000 y
+> 16 000 caracteres da ~4,0 ms en los cinco casos —el tiempo es arranque de `awk`, no lectura—.
+> *(Método declarado: media de 3 corridas, no el mínimo de k que exige el propio banco; con una serie
+> plana en 16× de rango la conclusión aguanta, pero el estadístico no es el contratado.)*
+>
+> ⇒ **El único sitio donde 16 KB duele es el MENSAJE DE DENEGACIÓN.** Una puerta de ambigüedad que
+> deniegue citando *«línea 12 («…») frente a línea 47 («…»)»* con los valores completos escupiría
+> **32 KB** por una cabecera contradictoria. El bloque derivado ya recorta a 40 caracteres y lo
+> declara como presentación; **el mensaje de deny no tiene esa regla escrita en ninguna parte**, y el
+> REQ de 1.34.0 tiene que dársela. *(El reportante tiene ese defecto en su propio guardián ahora mismo
+> y lo dice para que no se herede.)*
+
+**2. `Seguridad: n/a` — y aquí el reportante se equivoca, verificado.** Dice que usa «un valor que no
+está en vuestro vocabulario». **Sí está:** `requirements/README.md:39` lo lista como el **primer**
+valor de `Seguridad:` (`n/a | pendiente | aprobado | …`), y `AGENTS.md:354` y
+`templates/AGENTS.md.tpl:319` lo nombran en el vocabulario del hook que avisa. Sus tres REQ están bien
+escritos y no hay nada que migrar. **Lo que sí queda en pie es su pregunta de diseño**, que es nuestra
+y no está contestada en la plantilla: `n/a` está en el vocabulario pero **no está documentado cuándo
+usarlo**, y ellos lo escribieron sin preguntar porque el campo no tenía dueño declarado para ese caso.
+Los tres que lo usan son exactamente los tres que declaran `Sensible a seguridad: no`. Eso es
+**precisamente el uso correcto** y merece decirse en la plantilla.
+
+**3. Cabeceras de mediana 15 líneas y máximos de 109 y 100**, con la historia del veredicto en prosa
+citada con `>`. Combinado con el punto 1: una cabecera real puede ser **cien líneas con una de ellas de
+16 KB**. Cualquier supuesto de «cabecera = unas pocas líneas cortas» falla ahí.
+
+> **Y el criterio que ellos mismos ponen, que limita lo que su corpus prueba — hay que respetarlo o
+> repetimos el error un nivel más arriba.** Para un REQ que decide sobre la **forma** de los REQ no
+> basta un corpus externo: hace falta que el corpus externo sea **indisciplinado en la dimensión que
+> el REQ toca**. Ellos son indisciplinados en **longitud y prosa dentro de la cabecera** ⇒ su corpus
+> sirve para eso. **No lo son en ausencia de campos** —los 47 declaran los tres veredictos—, así que
+> para **esa** dimensión su corpus es tan cómodo como el nuestro.
+>
+> **Corrección a la entrada anterior de este archivo:** el «0 de 17 aquí frente a 47 de 47 allí»
+> sigue siendo válido para `Hallazgos abiertos:` y `Rigor:`, que es donde ellos son indisciplinados. **No
+> es evidencia sobre `QA:` ni `Seguridad:` ausentes**, donde los dos corpus coinciden en declararlo
+> siempre. Para esa dimensión seguimos sin corpus, y el arreglo no puede apoyarse en una muestra que
+> no la contiene.
+>
+> Su formulación, que conviene conservar: **«un corpus de uno no es mucho mejor que autoalojarse; este
+> canal no arregla la asimetría de la muestra, la reduce a dos.»**
+
+### La regla que le falta a la palanca: una igualdad entre magnitudes que encogen juntas no es una cota (2026-09-07)
+
+**Aportada por el proyecto consumidor, encontrada MUTANDO su propio guardián**, no leyéndolo. Habían
+protegido su comparador con una aserción —«el número de formas comparadas es igual al tamaño del
+corpus»— que es exactamente la forma que aquí se recomendaba. La rompieron en cuatro sitios; **dos
+sobrevivieron**. La primera es la que importa:
+
+> **Vaciaron el corpus y el archivo dio 11 de 11 en verde**, porque `comparadas === CORPUS.length` con
+> el corpus vacío es `0 === 0`. La igualdad protege contra *«la comprobación se suspendió»* pero **no**
+> contra *«el corpus se vació o se filtró»*: **las dos cantidades se encogen juntas.**
+
+**La regla, que es generalizable y va al REQ de la palanca:** *una igualdad entre dos magnitudes que
+pueden encogerse juntas no es una cota; hace falta un **literal**, y el literal **es** el control.* Un
+número derivado del propio artefacto no puede vigilar al artefacto. Es la **excepción nombrada** a la
+regla de no teclear números a mano, y hay que escribirla como excepción o alguien la «arreglará»
+derivándolo.
+
+Y ordena los cuatro casos: el caso 2 (H-08) era *el universo se encogió y el informe se leyó como
+verde*; **éste es el caso 1 comiéndose al vigilante del caso 2** — el universo se encogió **y la
+comprobación que vigila el tamaño se encogió con él**. Si el REQ dijera «exige que el número de casos
+ejecutados coincida con el declarado», le faltaría la mitad: **el declarado también tiene que estar
+acotado por abajo contra algo que no se mueva.**
+
+**Comprobado en nuestro banco, y lo pasa — pero conviene saber por qué, porque no era obvio:**
+
+| Nivel | Contra qué se compara | ¿Puede encogerse con el universo? |
+|---|---|---|
+| Por sección | `CASOS_ESPERADOS_SECCION` leído **del texto del archivo**, no de la corrida | No |
+| Total | **`CASOS_ESPERADOS=845`, un literal tecleado** (`run.sh:711`) | No |
+
+Si alguien **borra un archivo de sección entero**, la vuelta no se vuelve parcial —el inventario
+encoge con él— y **el literal total es lo único que lo delata**. O sea: el banco ya aplica la regla que
+ellos acaban de derivar, y el literal que parecía un descuido de mantenimiento es **la pieza que
+sostiene el cuadre**. Escrito aquí para que nadie lo «mejore» derivándolo.
+
+**El hueco sigue siendo el mismo y ya está anotado:** con filtro o vuelta parcial ese literal **se
+suspende diciéndolo**. La salida propuesta sigue siendo la suya — rechazar la corrida en vez de
+suspender la comprobación, leyendo cómo se invocó el proceso.
+
+*(Su segunda mutación superviviente es nuestro caso 3 en su propio banco: rompieron la réplica de
+nuestra regla de selección para que devolviera siempre la primera aparición y **nadie protestó**,
+porque su corpus no contiene ninguna forma con un campo no-`Estado` declarado dos veces con valores
+distintos. Fijaba sólo el lado que hoy falla.)*
+
+### Por qué NO automatizar el `845`: un umbral derivado falla invisible, uno tecleado falla visible (2026-09-07)
+
+**La continuación de la regla del literal, y va directa contra la «mejora» que ese hallazgo invita a
+hacer.** Después de que aquí se verificara que `CASOS_ESPERADOS=845` es la pieza que sostiene el
+cuadre, el proyecto consumidor fue a mirar su equivalente —que ellos **ya habían automatizado**— y
+midió un agujero abierto de seis días: su piso declara 303 archivos / 5 880 pruebas, el disco trae 331
+y la corrida 6 629. **Hueco de +28 archivos y +749 pruebas**: hoy podrían perder eso sin que ninguna
+puerta enrojezca (el piso sólo muerde hacia abajo, que es correcto por diseño).
+
+**La causa es la que importa, y es un aviso de diseño para nosotros.** Sustituyeron el número tecleado
+por un **trinquete monótono** que sube solo, *«sin que ningún agente teclee»* — bien escrito, y funcionó:
+subió el piso una vez. Pero **sólo sube sobre una corrida válida, y válida exige salida 0**, y su suite
+lleva seis días en rojo por fallos ajenos y declarados. ⇒ **el trinquete no puede subir el piso mientras
+la suite esté rota**, o sea que *la protección deja de mejorar exactamente cuando el sistema está en el
+estado en que más probable es que algo cambie*.
+
+> **El contraste, que es la pieza:**
+>
+> | | Cómo se queda rancio | ¿Se ve? |
+> |---|---|---|
+> | **Literal tecleado** (nuestro `845`) | por **desidia** — alguien tiene que acordarse | **Sí**: el número está ahí, viejo, y se compara con la realidad de un vistazo |
+> | **Trinquete derivado** (el suyo) | porque una **precondición dejó de cumplirse** | **No**: el mecanismo está bien escrito, corrió, hizo su trabajo la última vez, y **nada parece averiado** |
+>
+> **Automatizar el `845` cambiaría un control que falla por descuido por uno que falla por precondición
+> no cumplida, y el segundo es más difícil de ver.** Es la misma familia que H-08 una vez más: la
+> condición no se cumple, el mecanismo **se abstiene con toda la razón**, y el resultado agregado se
+> lee como normalidad.
+
+**Consecuencia para el REQ de la palanca, que es donde esto entra:** si llega a proponer derivar el
+umbral —que es lo natural después de la regla del literal—, **tiene que escribir con él qué pasa cuando
+la condición de validez no se cumple, y ese caso tiene que ser RUIDOSO.** Un derivador que se abstiene
+en silencio es un control que se apaga solo. Y mientras tanto, el literal **no se toca**.
+
+**Y una segunda mitad, de gobernanza, que aquí no teníamos mirada:** el bloqueo que mantiene su suite
+en rojo es **una decisión pendiente de su dueño en otro frente**. O sea: *un bloqueo pendiente en un
+frente estaba degradando en silencio un control de otro frente*, y nadie había mirado los dos juntos.
+Aquí `PENDING_APPROVAL.md` bloquea el cierre de REQ de forma **visible**, así que no tenemos hoy esa
+forma — pero **la pregunta no está escrita en ninguna parte**: *¿qué controles de este proyecto dejan de
+funcionar mientras una decisión humana está pendiente?* Va a la pasada de conformidad de 1.34.0 como
+pregunta, no como hallazgo.
+
+*(Segunda vez en la misma tarde que este intercambio destapa un hueco real en el proyecto que reporta,
+y las dos veces por el mismo mecanismo: una pregunta nuestra les hizo leer con otra intención. Vale como
+evidencia de para qué sirve el canal, más allá de transportar informes.)*
+
+### Dos piezas finales del intercambio: quién muta, y qué deja de crecer (2026-09-07)
+
+**1. «Acreditado por mutación» no dice bastante: hay que decir POR QUIÉN.** El proyecto consumidor
+acreditó su comparador rompiéndolo en cuatro sitios; su autor ya lo había acreditado por mutación
+antes. **Dos de las cuatro sobrevivían.** El motivo es estructural y no de competencia:
+
+> *El autor rompe donde sabe que importa; sólo un tercero rompe donde no ha mirado.*
+
+Medido allí: la mutación de un tercero encontró **el doble** que la del autor. ⇒ el REQ de la palanca,
+donde diga «acreditado por mutación», tiene que decir **de quién** — mutación del autor y mutación de un
+tercero **no son el mismo control**. Encaja con nuestra propia estructura: en 1.32.1 ninguno de los
+cuatro fallos en abierto lo encontró quien escribió el código.
+
+*(Su comparador pasa ya las cuatro y está acreditado, con 16 formas y 16 invocaciones del `.awk` real.
+El compromiso de avisarles si 1.34.0 mueve la normalización **no se retira igualmente**: se acordó sin
+caducidad y por un motivo —el punto ciego del corpus— que no cambia porque las mutaciones pasen.)*
+
+**2. La pregunta de gobernanza, afinada por ellos, y ya contestada de nuestro lado.** Yo la había
+escrito como *«¿qué controles dejan de funcionar mientras una decisión humana está pendiente?»*. Su
+versión estrecha es la que se puede contestar:
+
+> **¿Hay algún umbral, piso o inventario que se actualice solo, y qué le pasa mientras su precondición
+> no se cumple?**
+
+Y su observación de por qué la ancha no rinde: *«la pregunta que paga no es qué se BLOQUEA, sino qué
+deja de CRECER. Un control que se detiene en el nivel que tenía no da ninguna señal, porque sigue
+haciendo exactamente lo que hacía ayer.»*
+
+**Respuesta medida para este repositorio: cero instancias.** Lo único que se actualiza solo es el
+**bloque derivado** de `docs/ESTADO.md` (`estado_derivado.activo: true`), y **no está condicionado a
+ninguna corrida válida**: `stop.sh` no consulta las quality gates ni ningún código de retorno para
+decidir si escribe. La **rotación** —lo otro que se actualizaría solo— está **apagada**
+(`artefactos: []`). Así que hoy no tenemos la forma «crece sólo si la corrida es válida», y el `845` es
+un literal que falla por desidia, que es visible.
+
+> **Método declarado, con la misma franqueza que ellos aplicaron al suyo:** esto es una lectura del
+> manifiesto más un `grep` sobre `stop.sh`, no una revisión exhaustiva. La respuesta correcta es
+> **«cero encontradas con este método»**, no «cero y sólo cero». La pregunta merece mejor instrumento
+> del que se le ha dado hoy, y por eso entra en la pasada de conformidad de 1.34.0 **con las dos
+> formulaciones**: la estrecha para contestarla, la ancha para no perderla.
+
+### La lección de la tarde, que no es ninguno de los hallazgos (2026-09-07)
+
+Formulada por el proyecto consumidor al cerrar el intercambio, y es la que ordena todo lo anterior:
+
+> **Un dato puede estar medido, ser correcto, y estar clasificado en la categoría equivocada.**
+
+Tres instancias del mismo día, dos nuestras y una suya:
+
+| Dato | Cómo estaba clasificado | Qué era en realidad |
+|---|---|---|
+| `CASOS_ESPERADOS=845` | deuda de mantenimiento — «habría que derivarlo» | **el control** que sostiene el cuadre, y que derivarlo destruiría |
+| Los 4 fallos en abierto de 1.32.1, ninguno hallado por su autor | «el bucle funciona» | una **propiedad del método**: sólo un tercero rompe donde el autor no ha mirado |
+| Su piso congelado seis días | «el trinquete ya funciona» | un control que **dejó de crecer** porque su precondición no se cumple |
+
+**Y lo que las tres comparten, que es lo operativo: ninguna se descubre midiendo mejor.** Las tres
+estaban medidas y las tres eran correctas. Se descubrieron **cuando alguien de fuera preguntó por otra
+cosa** — dos veces aquí y una allí, siempre porque una pregunta ajena obligó a releer un archivo con
+otra intención.
+
+**Consecuencia para el arnés, y va más allá de 1.34.0:** el canal con un proyecto consumidor no es
+sólo una vía de informes de defecto. Es el **único mecanismo que tenemos hoy contra el error de
+clasificación**, que ninguna puerta puede detectar por construcción: una puerta comprueba que el dato
+sea cierto, nunca que esté guardado en la categoría correcta. Eso pesa en cómo se prioriza el canal de
+informes (1.34.0) — deja de ser higiene y pasa a ser instrumento.
+
+*(Y por simetría, porque este registro ha ido lleno de hallazgos: allí el `pre-commit` rechazó un commit
+suyo por no traer registro de cambio, y la salida fue añadir la entrada, no `--no-verify`. El control
+mordió a quien lo mantiene. Conviene que quede escrito junto a los aciertos.)*
