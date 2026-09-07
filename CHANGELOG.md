@@ -40,6 +40,19 @@ se deniega citando `git.prohibidos: 'clean -f'` del manifiesto, y `git stash lis
 Quality gates en verde tras el cambio: `bash -n` sobre los 9 `hooks/*.sh` y `tools/*.sh`, y `jq -e` sobre
 `hooks/hooks.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` y `.arnes/config.json`.
 
+## [Interno] — 2026-09-06 · cuánto cuesta un ciclo, medido, y las tres palancas
+> Origen: Interno · usuario: Juan · modelo de IA: Opus 5 · agente: sesión coordinadora.
+
+- `docs/PENDIENTES.md`: la **línea base** del ciclo 2 —25 comisiones, ~5 h 23 de tiempo de agente,
+  cuatro vueltas del bucle a unos 50 minutos cada una—, sin la cual «mejoramos» es una sensación.
+- El diagnóstico con los hallazgos delante: **siete de veinte fueron que el criterio decía algo falso
+  sobre lo construido**, no que el código fallara, y uno de ellos costó una vuelta entera.
+- Queda dicho también **lo que no es el problema**, para no optimizar la parte equivocada: el orden
+  QA→auditor no se puede paralelizar sin producir una firma falsa, y las corridas de control de la
+  coordinadora suman seis minutos en todo el ciclo. El cuello son dos archivos monolíticos.
+- Y el contexto que evita la conclusión equivocada: este repositorio se impone la **ceremonia máxima**
+  a propósito. Las cinco horas son el techo de quien construye el mecanismo, no lo que paga quien lo usa.
+
 ## [Interno] — 2026-09-06 · cierre del ciclo 2 del autoalojamiento
 > Origen: Interno (documentación de gobernanza) · usuario: Juan · modelo de IA: Opus 5 · agente: sesión coordinadora.
 

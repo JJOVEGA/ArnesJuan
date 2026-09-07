@@ -258,3 +258,40 @@ plugin 1.31.0.
   fue `Edit` o `MultiEdit`—; el reportante dice que molesta a diario, así que merece cerrarse en cuanto
   llegue. **No se redacta REQ hasta tener la reproducción:** un criterio escrito sobre un defecto que no
   se ha visto describe lo que imaginamos, no lo que pasa.
+
+### 1.32.0 — el ciclo cuesta demasiado, y la causa dominante es evitable
+
+**Línea base medida (ciclo 2, siete REQ, cuatro vueltas del bucle).** Tiempo de reloj de cada agente,
+tomado de su propia entrega; no incluye la orquestación ni las corridas de control de la coordinadora:
+
+| Rol | Comisiones | Tiempo | Notas |
+|---|---:|---:|---|
+| `desarrollador` | 8 | ~2 h 22 | de 3,5 a 27 min cada una |
+| `qa-tester` | 4 | ~1 h 32 | de 18 a 31 min |
+| `analista-requerimientos` | ~11 | ~1 h 03 | de 2 a 12 min |
+| `auditor-seguridad` | 2 | ~26 min | 13 min cada una |
+| **Total de agente** | **25** | **~5 h 23** | más orquestación y ~20 corridas de banco a 18 s |
+
+**Una vuelta del bucle cuesta unos 50 minutos** entre desarrollador, QA, control y write-back. Cuatro
+vueltas son tres horas y media: **la mayor parte del ciclo**.
+
+**El diagnóstico, con los hallazgos delante.** De los veinte hallazgos del ciclo, **siete fueron que el
+criterio decía algo falso sobre lo construido**, no que el código estuviera mal: enumeraba tres
+envoltorios cuando el código toleraba siete; fijaba un número que la medición desmintió; exigía
+igualdad de coste donde debía exigir techo, convirtiendo una mejora en un fallo. **Uno de ellos costó
+una vuelta entera.** Es la clase de hallazgo más frecuente del ciclo y es evitable escribiendo distinto.
+
+**Lo que NO es el problema, para no optimizar la parte equivocada:** que QA vaya antes que el auditor no
+se puede paralelizar —su firma acreditaría un árbol sin validar, que es justo el fallo que la regla
+evita— y las corridas de banco de la coordinadora suman seis minutos en todo el ciclo. El cuello real
+son **dos archivos monolíticos**, `hooks/lib.sh` y el banco, por los que pasa casi todo: mientras lo
+sean, dos comisiones en paralelo colisionan.
+
+**Y el contexto que evita la conclusión equivocada:** este repositorio se impone la **ceremonia máxima**
+a propósito —todo REQ es crítico y sensible, así que pasa por los cuatro agentes—. Un proyecto con rigor
+`estandar` se salta al auditor y con `ligero` también al QA. Las cinco horas son el techo de quien
+construye el mecanismo, no lo que paga quien lo usa.
+
+**Tres cambios, en orden de rendimiento, para medir en 1.32.0 contra esta línea base:** criterios por
+mecanismo y no por enumeración; paralelizar por REQ con un mapa explícito de qué archivo toca cada
+comisión; y partir el banco en archivos por sección para que el QA también pueda paralelizarse.

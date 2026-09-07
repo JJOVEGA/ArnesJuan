@@ -36,7 +36,7 @@ instalación estable ya en 1.31.0. El guardián de la sesión **siguiente** ser�
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-06 15:49
+## Estado derivado — 2026-09-06 18:14
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -46,25 +46,18 @@ instalación estable ya en 1.31.0. El guardián de la sesión **siguiente** ser�
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.31.0-mecanismos` @ `62d27c2` — CON CAMBIOS SIN COMITEAR
-**Arnés:** plugin instalado `1.30.3`
+**Repositorio:** `main` @ `c9e588d` — CON CAMBIOS SIN COMITEAR
+**Arnés:** plugin instalado `1.31.0`
 **Aprobaciones pendientes:** 0
-**REQ:** 11 — completado 1 · en-revisión 7 · en-progreso 1 · bloqueado 0 · otros 2
+**REQ:** 11 — completado 8 · en-revisión 0 · en-progreso 1 · bloqueado 0 · otros 2
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
-_Sólo los REQ abiertos; los 1 completados no se listan._
+_Sólo los REQ abiertos; los 8 completados no se listan._
 
 | REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
 |---|---|---|---|---|---|
-| REQ-002 | en-revisión | aprobado | aprobado | critico | qa-106(instrumento) |
-| REQ-003 | en-revisión | aprobado | aprobado | critico | (ninguno) |
-| REQ-004 | en-revisión | aprobado | aprobado | critico | qa-109(instrumento,conductaimplementadaymedidael2026-09-06;faltasucriterioenelreq—dueñoanalista-requerimientos) |
-| REQ-005 | en-revisión | aprobado | aprobado | critico | qa-113(instrumento,dueñodesarrollador,ventana1.32.0;untokenentrecomilladooescapadonoseve—lim-10,declaradoenca-21.5yen«fueradealcance»,condictamenconcurrentedelauditorensec-012;nobloqueaelcierre),sec-013(instrumento,dueñodesarrollador,ventana1.32.0;lanotade`skills/arnes-upgrade`quelosproyectosheredanenumera`nohup`peronoloscuatroenvoltoriosnuevos—`xargs`,`setsid`,`ionice`,`doas`—,asiqueunproyectocon`xargsgitclean`enunguionrecibiraunadenegacionquelanotanoleanuncio;direccionseguraydenegacionruidosaconmotivo,poresonobloquea;verr-003) |
-| REQ-006 | en-revisión | aprobado | aprobado | critico | (ninguno) |
-| REQ-007 | en-progreso | pendiente | pendiente | critico | qa-114(contrato,dueñoanalista-requerimientos;ca-59exigea`gitstatus`unconteoquereq-005ca-26/ca-27declaraimposible,ysumargenderelojnodiscrimina),qa-116(contrato,dueñodesarrollador,ventana1.32.0;heredadodev1.30.3yreproducidoporelauditorenr-003enlasdosversiones:con`docs/estado.md`enmodo444ylacarpetaescribibleelbloqueseescribeigualyelmodopasaa644ensilencio,sinperdercontenidohumano.laverdadyaestaescritaenca-64.2yelarreglo—conservarelmodo—exigidoenca-64.2-bis;nocierrahastaqueelcodigoloimplemente),qa-117(contrato,dueñodesarrollador,ventana1.32.0;heredadodev1.30.3yreproducidoporelauditorenr-003enlasdosversiones:eltextohumanoposterioralosmarcadoressubeporencimadelbloqueencadaparada—sinperderunbyte,4de4lineas,eidempotente—.laverdadyaestaescritaenca-64.1yelarreglodelordenexigidoenca-64.1-bis;nocierrahastaqueelcodigoloimplemente) |
+| REQ-007 | en-progreso | pendiente | pendiente | critico | qa-114(contrato,dueñoanalista-requerimie… |
 | REQ-008 | pendiente | pendiente | pendiente | critico | (ninguno) |
-| REQ-009 | en-revisión | aprobado | aprobado | critico | (ninguno) |
-| REQ-010 | en-revisión | aprobado | aprobado | critico | qa-108(instrumento) |
 | REQ-011 | pendiente | pendiente | pendiente | critico | (ninguno) |
 
 <!-- ARNES:DERIVADO fin -->
