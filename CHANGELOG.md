@@ -40,6 +40,20 @@ se deniega citando `git.prohibidos: 'clean -f'` del manifiesto, y `git stash lis
 Quality gates en verde tras el cambio: `bash -n` sobre los 9 `hooks/*.sh` y `tools/*.sh`, y `jq -e` sobre
 `hooks/hooks.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` y `.arnes/config.json`.
 
+## [Interno] — 2026-09-06 · disciplina de coste, y lo que se decide NO construir
+> Origen: Interno · usuario: Juan · modelo de IA: Opus 5 · agente: sesión coordinadora.
+
+- `docs/gobernanza/autoalojamiento.md`: la disciplina de coste, obligatoria desde el ciclo 3. La
+  fórmula que gobierna todo lo demás, medida sobre 3.384 turnos: **el coste de una comisión es
+  turnos por contexto**. La más cara fue de 138 turnos y 12,48 USD; la más barata que hizo trabajo
+  real, de 8 turnos y 0,06 USD.
+- Consecuencias: el encargo declara presupuesto y el agente lo reporta; lo grande se lee tarde y en
+  trozos; y la elección de modelo casi no mueve la aguja, porque el 87 % del gasto es caché.
+- **Y una decisión de no construir:** el arnés no llevará un medidor de coste. Medirlo exige leer las
+  transcripciones del anfitrión, cuyo formato no está documentado y puede cambiar; meterlo en el
+  plugin haría que todos los proyectos heredaran esa dependencia. Se documenta el **método**, que es
+  estable, y mide la coordinadora.
+
 ## [Interno] — 2026-09-06 · la ventana 1.32.0 se dedica al coste, y el resto se aplaza
 > Origen: Interno · usuario: Juan · modelo de IA: Opus 5 · agentes: sesión coordinadora y `analista-requerimientos`.
 
