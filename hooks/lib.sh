@@ -1638,9 +1638,23 @@ arnes_sin_cita() {   # <linea> -> ARNES_LINEA ; usa y actualiza ARNES_CITA / ARN
   # La linea se escanea CRUDA, con sus retornos de carro: descontarlos aqui FABRICABA los
   # delimitadores (ver la regla, arriba). Los quita `arnes_norm_clave`, aguas abajo.
   local l="$1" out=''
-  # ANTES DE TOCAR NADA. Se descuenta UN solo CR final —el de transporte— y si queda
-  # alguno, la linea no se puede medir. Dos expansiones y un `case`: ni un fork.
-  case "${l%$'\r'}" in *$'\r'*)
+  # ANTES DE TOCAR NADA. La pregunta es la MISMA de siempre: descontado el CR final —el de
+  # transporte—, ¿queda alguno? Y se hace SIN descontarlo, porque preguntar «hay un CR con
+  # al menos un caracter detras» es la MISMA pregunta y cuesta lineal en vez de cuadratico:
+  # `${l%$CR}` es eliminacion de sufijo CON PATRON, y bash la resuelve PROBANDO CADA
+  # POSICION —O(n) intentos de O(n) cada uno—, asi que sobre una linea sin CR final recorre
+  # la linea entera una vez por caracter. Medido (10 llamadas, 140 000 bytes, REQ-017):
+  # `${l%$CR}` 3,63 s frente a 0,036 s de este glob, y el banco entero 92 s -> 39 s.
+  # La EQUIVALENCIA es por construccion, no por casuistica: `*$CR?*` dice «existe un CR en
+  # una posicion que no es la ultima», que es exactamente «tras quitar UN CR final todavia
+  # queda un CR» — el CR final es el unico que la eliminacion podia retirar, y solo se
+  # retira si esta al final. Frontera dura verificada de todos modos por comparacion
+  # diferencial contra el arbol heredado (seccion 37 del banco, CA-01 de REQ-017).
+  # Lo que NO cambia, y es la restriccion que gobierna esta linea: sigue siendo la PRIMERA
+  # sentencia del UNICO escaner. Se abarata CUANDO se paga, no DONDE vive la comprobacion:
+  # moverla a una de las cuatro bocas dejaria las otras tres abiertas (ver la regla arriba,
+  # y REQ-016). Una expansion y un `case`: ni un fork.
+  case "$l" in *$'\r'?*)
       # Se recuerda la PRIMERA, para que el motivo pueda citarla. El CR se muestra como
       # `\r`: un motivo con un CR crudo dentro se pisa a si mismo en cualquier terminal.
       [ "$ARNES_CR" -eq 1 ] || ARNES_CR_LINEA="${l//$'\r'/\\r}"

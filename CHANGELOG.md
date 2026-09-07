@@ -2,6 +2,86 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-07 · 1.33.0 se parte: las palancas primero, el núcleo a 1.34.0
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+**Decisión del propietario.** La ventana 1.33.0 había crecido durante la ventana anterior hasta **nueve
+trabajos** —tres palancas de coste, la cuarta, REQ-011, dos barridos por estado, el rigor comprobable,
+el caso J y una pasada de conformidad con cinco piezas—, ~8–10 h de reloj de agente. Es la forma exacta
+en que se descontroló el ciclo 3. Se parte: **1.33.0 = las cuatro palancas de coste** (REQ-017 en curso,
+la puerta de «¿esta prueba mide algo?», `tests/util/` y el adelgazamiento de `AGENTS.md`), ≈3 h, que
+caben en un ciclo semanal; **1.34.0 = el núcleo por estado** más lo que ya tenía, ≈6 h.
+
+**El motivo no es el calendario: es la atribución.** Las palancas abaratan el núcleo, así que medirlas
+**antes** de empezarlo es la única forma de saber cuánto abaratan de verdad; juntas, ahorro y gasto se
+mezclan — el mismo error que la línea base envenenada por la sonda desbocada de 1.32.1.
+
+**El adelgazamiento de `AGENTS.md` se adelanta desde 1.34.0** y cierra la pregunta que quedaba abierta
+en la cola de `docs/ESTADO.md`: son ~9 k tokens de impuesto fijo en **cada** subagente —una comisión de
+subida de versión gastó 28 500 tokens para ~3 000 de trabajo real—, y 1.34.0 es la ventana con más
+comisiones: adelgazarlo después sería pagarlo entero primero.
+
+**El paralelismo entra en 1.34.0, y la palanca 3 es lo que lo desbloquea.** Hoy casi nada se despacha en
+paralelo porque `skills/arnes-upgrade/SKILL.md` colisionaba en **15 de 15** pares de comisiones. Retirada
+esa colisión, `tools/arnes-paralelo.sh` puede declarar `disjunto` de verdad — condición **necesaria y no
+suficiente** mientras **SEC-020** siga abierto, y sin tocar el orden de fases, que no se paraleliza en
+ningún caso. Archivos: `docs/PLAN.md`, `docs/ESTADO.md`.
+
+## [Interno] — 2026-09-07 · REQ-017 implementado: una sentencia, y la magnitud que no miente
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador`.
+
+**El arreglo es una sentencia.** `arnes_sin_cita` (`hooks/lib.sh`) abre ahora con
+`case "$l" in *$'\r'?*)` en vez de `case "${l%$'\r'}" in *$'\r'*)`. La eliminación de sufijo **con
+patrón** la resuelve bash probando cada posición —O(n) intentos de O(n)—, y preguntar «¿hay un CR con
+al menos un carácter detrás?» es **la misma proposición**: el único CR que la eliminación podía retirar
+es el final, y sólo si está al final. La guarda **no se movió**: sigue siendo la **primera sentencia del
+único escáner**, que es la restricción anti-deriva que REQ-016 contrató — se abarata *cuándo* se paga,
+no *dónde* vive. Medido: cociente de duplicación **3,95 → 1,90** (lineal); sección 32 **76,19 s →
+9,60 s** (0,125×); banco completo **95,66 s → 45,14 s**; e inventario ordenado de 828 casos **idéntico
+byte a byte**. Y las dos magnitudes de CA-08 juntas: **0 procesos añadidos** (5 = 5) **y** reloj
+**0,998×** / **1,000×** en el camino de una cabecera normal — el arreglo no compró tiempo con un `fork`.
+
+**Lo que sobrevive al arreglo.** `requirements/README.md` y su plantilla heredable ganan la **cuarta
+forma prohibida** de criterio: **«(d) fijar la magnitud equivocada»**, con su caso medido —`CA-08` de
+REQ-016 **se cumplía**, midiendo procesos correctamente, sobre una regresión de **10×** de reloj—, la
+regla por propiedad (un criterio de coste declara **qué magnitud mide y por qué es ésa la que se
+degrada**, y se escribe como **razón o propiedad estructural**, nunca como reloj absoluto), la tabla de
+cómo se contrata cada pregunta, el **mínimo de k** como estadístico y su línea en la Definition of
+Ready. `CA-08` de REQ-016 **no se reescribe**: está `completado` y se cumplió tal como estaba escrito.
+
+**Banco:** dos secciones nuevas, `37-coste-del-escaner-1-escala` y `37-coste-del-escaner-2-la-seccion-caliente`
+(17 casos; total **845**), que miden contra los árboles **v1.32.1** y **v1.32.0** materializados desde su
+tag en la misma corrida, con **fail-before** en CA-03 y CA-04. Invariante nueva del corredor (CA-06):
+**nada de una sección sobrevive a su sección** — al cerrarla se mira `jobs -pr`, se mata lo que quede y
+la vuelta **aborta nombrando el archivo**; nació de la sonda que en 1.32.1 vivió 3 h 41 min y falseó una
+línea base. **CA-09 medido, no movido:** la pared de los 60 s pasa de **≈ 0,94 MB** a **≈ 1,60 MB**;
+sigue cuadrática por `arnes_norm_clave`, que es `SEC-030` y tiene dueño propio.
+
+**Coste declarado, y va en rojo a propósito:** la sección 37/2 cuesta **~120 s** —76 de ellos son la
+corrida heredada, que cuesta lo que costaba el defecto porque **es** el defecto corriendo—, así que el
+banco completo pasa de 45 s a **~145 s**. CA-05 tal como está contratado hace la puerta requerida de
+`main` **más lenta que la regresión que certifica**. Se implementa como está escrito y se escala la
+decisión; el detalle y la alternativa, en `docs/qa/1.33.0.md`.
+
+## [Interno] — 2026-09-07 · REQ-017: la primera palanca de coste de 1.33.0
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
+
+Se abre la ventana **1.33.0** (gobernada por la instalación estable 1.32.1) con **REQ-017** en
+`pendiente`, `Rigor: critico`, `Sensible a seguridad: sí`: `arnes_sin_cita` es **cuadrática** en la
+longitud de línea por la eliminación de sufijo `${l%$'\r'}` (`hooks/lib.sh:1643`), que bash resuelve
+probando cada posición — el banco pasa de 39 s a **92 s** y su ruta crítica de 7,6 s a **75,7 s**. Una
+llamada normal **no** se resiente (0,1195 → 0,1188 s), y queda escrito para que nadie lo lea como una
+regresión de usuario.
+
+**La segunda mitad, que es la que importa:** `CA-08` de REQ-016 **se cumplía** —medía **procesos**, 4 = 4,
+correctamente— mientras se degradaba el **reloj** 10×. Un criterio de coste que fija la magnitud
+equivocada da verde sobre una regresión. REQ-017 contrata la corrección **y** el ojo: criterios de coste
+como **cociente de duplicación** (el coste no crece más que linealmente) y como **razón contra una línea
+base medida en la misma corrida**, nunca como reloj absoluto —un umbral en segundos lo falsea la carga de
+la máquina, y esta ventana ya midió una sonda que sobrevivió 3 h 41 min a su comisión y envenenó una
+línea base—. Causa: `H-07` (`instrumento`) de `docs/qa/1.32.1-hallazgos-vuelta-3.md` §5. `SEC-030` (la
+pared de 60 s) queda **enlazado y fuera de alcance**: preexiste en los dos árboles y tiene dueño propio.
+
 ## [Cierre] — 2026-09-07 · Cierre documental de la ventana 1.32.1
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 

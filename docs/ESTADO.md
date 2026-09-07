@@ -6,75 +6,92 @@
 > edites, se sobrescribe. Lo de fuera de esos marcadores no se toca nunca.
 
 ## Fase actual
-Fase 0 — autoalojamiento. **v1.32.1 publicada** (tag verificado contra los tres manifiestos, instalación
-estable actualizada, hooks idénticos al tag). REQ-015 y REQ-016 `completado` por la puerta. La sesión
-que abra 1.33.0 la gobernará **1.32.1** — pero sólo si se reinicia antes.
+Fase 0 — autoalojamiento. **v1.32.1 publicada.** Ventana **1.33.0 abierta**, gobernada por 1.32.1.
+
+**Partida el 2026-09-07 por decisión del propietario: 1.33.0 son SÓLO las cuatro palancas de coste**
+—REQ-017 (en curso), la puerta de «¿esta prueba mide algo?», `tests/util/` y adelgazar `AGENTS.md`—,
+≈3 h de reloj de agente, que caben en un ciclo semanal. **El núcleo por estado** (REQ-011, SEC-025,
+SEC-029, REQ-007 B/C, la pasada de conformidad y el canal de informes) **pasa a 1.34.0**, ≈6 h.
+
+El motivo no es sólo el calendario: **las palancas abaratan el núcleo, y medirlas antes de empezarlo es
+la única forma de saber cuánto abaratan.** Juntas, el ahorro y el gasto se mezclan y no se pueden
+atribuir — el mismo error que la línea base envenenada por la sonda desbocada. Los nueve trabajos
+juntos salían a ~8–10 h, y una ventana que no cabe en el ciclo se corta a mitad de una comisión.
+
+**El paralelismo entra en 1.34.0, no antes, y por una razón medida:** hoy casi nada se puede despachar
+en paralelo porque `skills/arnes-upgrade/SKILL.md` colisionaba en **15 de 15** pares. La palanca de la
+nota de migración retira esa colisión; después, `tools/arnes-paralelo.sh` puede declarar `disjunto` de
+verdad. Sigue siendo condición **necesaria y no suficiente** mientras SEC-020 esté abierto, y el orden
+de fases no se paraleliza nunca.
 
 ## En progreso
-**Nada en curso.** Dieciséis comisiones, ~2,3 M de tokens medidos, **tres vueltas dev↔QA agotadas**, y
-el banco de 683 a **828 casos** en 41 secciones.
+**REQ-017 — `en-progreso`, con delta de implementación pendiente.** Se detuvo por **presupuesto de
+tokens**, no por un bloqueo técnico: el semanal iba al 81 % con 2 h para el reset, y las tres comisiones
+que faltan suman ~410 k. Parar antes es más barato que quedarse sin cupo a mitad de una comisión.
 
-**Lo que de verdad pasó en esta ventana, porque no es lo que dice el título:** el parche **no parcheaba
-a la primera**. Se cerraron **cuatro** fallos en abierto y **tres los introdujo el propio arreglo**. El
-retorno de carro se descontaba **antes** de escanear el rango, y `-\r->` se convierte en `-->`; tenía
-**cuatro bocas** —el lector de línea, la extracción del `tool_input`, la reconstrucción del `Edit` con
-el CR en disco, y el mapa de paralelismo—. Se cerraron con una sola pregunta cerrada: *una línea de
-cabecera con un CR que no es el que la termina no se puede medir, y una puerta que no puede medir no
-deja pasar* (CA-12).
+**Lo conseguido y medido:**
 
-**Y ninguno de los cuatro se encontró leyendo código.** QA rompió el arreglo del desarrollador; el
-desarrollador se rompió a sí mismo midiendo; el auditor rompió **dos veces** lo que QA ya había
-aprobado — la segunda sin tocar el código, viendo que *«CA-02 contrata el agujero; nada contrata el
-tapón»*. Los cuatro salieron de **medir la consecuencia** en vez de creerse el diff.
-
-**Lo que cruza a 1.33.0, con dueño y ventana:**
-
-| Hallazgo | Clase | Qué es |
+| | Antes | Después |
 |---|---|---|
-| **SEC-020** | `contrato` | El marcado por elemento corrompe el mapa de `arnes-paralelo.sh`: `disjunto` con rc 0. La respuesta es **restringir la gramática**, no un octavo parche |
-| **SEC-030** | `contrato` | La pared de 60 s del hook se alcanza hacia **1,5 MB de un documento normal**, y `AGENTS.md` §13 no la enumera entre los huecos conocidos. Preexistente en los dos árboles |
-| **H-07** | `instrumento` | `arnes_sin_cita` es **cuadrática** sobre líneas largas: el banco pasa de 39 s a 92 s. Una llamada normal **no** se resiente (0,166 → 0,171 s). Arreglo de **una sentencia** |
-| El bloque derivado | `instrumento` | Publica `Seguridad: aprobado` sobre una cabecera que la puerta se **niega a medir**. Sube a `contrato` y **bloquea** si llega a la firma de 1.33.0 sin guarda |
-| H-06 | `contrato` | Una nota al margen en `PENDING_APPROVAL.md` desactiva el bloqueo de la cola. **Sigue sin dueño**; le corresponde `desarrollador` |
-| SEC-017, SEC-021, SEC-028, QA-205, QA-213..216 | `instrumento` | Deuda con dueño, ventana 1.33.0 |
+| Cociente de duplicación de `arnes_sin_cita` | 3,95 — **cuadrático** | **1,90 — lineal** |
+| Sección `32-huecos-auditoria-r001` | 76,19 s | **9,60 s** |
+| Banco (las 42 secciones de antes) | 95,66 s | **45,14 s** |
+| Pared de los 60 s del hook | 0,94 MB | **1,60 MB** |
 
-**La lección del ciclo, y ya van cinco:** cuando un mecanismo interpreta texto humano libre, ensanchar
-el patrón no gana la clase. La salida es **restringir la gramática** o **preguntar después**.
+La última fila es un **beneficio no buscado**: subir la pared de agotamiento es `SEC-030`, con dueño
+propio, y sale gratis al quitar la cuadraticidad. Medido y anotado.
 
-**Y la lección nueva, que apareció cuatro veces en una sola ventana:** *interrogar al mecanismo tiene
-una vía nueva cada vez; interrogar a la propiedad no envejece.* Los cinco casos de banco vacíos, el
-barrido de migración, el control de datos de cliente y el guardián del intérprete son **el mismo error
-de forma**: preguntar por la **vía** cuando la propiedad es de **estado**. Es la columna vertebral de
-1.33.0.
+**El arreglo es una sentencia**, con equivalencia por construcción:
+`case "${l%$CR}" in *$CR*)` → `case "$l" in *$CR?*)`. La guarda **no se movió**: sigue siendo la
+primera sentencia del único escáner, como REQ-016 contrató. Se abarató *cuándo* se paga, no *dónde*
+vive.
+
+**Lo que falta, en este orden exacto:**
+1. **Delta del desarrollador** (~80 k): invertir el defecto de `ARNES_COSTE_RUTA_CRITICA` y añadir el
+   `timeout`, derivado de `mín(este árbol)` medido **en la misma corrida y después del numerador** —
+   una constante en segundos reintroduciría el reloj absoluto que todo el REQ combate—, y con el
+   **vencimiento como resultado positivo, nunca como SKIP**.
+2. **QA (Opus)** sobre los 9 criterios (~180 k). Vuelta 0 de 3.
+3. **Auditor** (~150 k). `critico` y `Sensible a seguridad: sí`: sin su firma no cierra.
+
+**La lección de esta media ventana, que vale más que el arreglo:** `CA-05` exigía comparar contra un
+**tag congelado en cada corrida**, y eso parecía rigor. Es una puerta que **mide una vez y luego
+envejece hacia el lado que abre** — el banco crece a propósito, así que la igualdad de inventario
+contra v1.32.1 será falsa en la primera sección de 1.34.0, y entonces alguien la re-fija corriendo el
+propio banco que dice validar. **Una comprobación contra línea base congelada es acreditación de
+fail-before, no puerta permanente.** Lo permanente tiene que ser **auto-anclado**: `CA-03`, el orden de
+crecimiento, que no depende de ningún tag, cuesta milisegundos y habría visto H-07.
+
+**Y un error de aritmética que cometimos tres.** La corrida heredada de 76 s servía a la igualdad de
+inventario **y** a la razón de reloj; contarla como ahorro en las dos mitades daba «~45 s» cuando el
+número real era **~107 s**, por encima de los 92 s que el REQ venía a arreglar. Lo vio el analista al
+rehacer la resta. Nadie la había comprobado.
 
 ## Próximo paso concreto
-1. **Reiniciar la sesión.** Los hooks se cargan al arrancar el proceso: hasta que se reinicie sigue
-   gobernando 1.32.0, que es la versión con el agujero que este parche cierra.
-2. **Avisar a los proyectos que corrieron 1.31.0 o 1.32.0**: pudieron cerrar un REQ `critico` sin
-   auditoría aprobada. El procedimiento está en `skills/arnes-upgrade/SKILL.md` § `Hacia 1.32.1`, y
-   declara **qué encuentra y qué no puede encontrar**.
-3. **Abrir 1.33.0 por las palancas de coste, no por los REQ** (decisión del propietario): la puerta de
-   «¿esta prueba mide algo?», el punto caliente del banco —que es `32-huecos-auditoria-r001`, 75,7 s de
-   los 92, **no** el que la coordinadora dijo primero— y `tests/util/` con las sondas compartidas.
-4. Núcleo de 1.33.0: REQ-011 (la puerta posterior), el barrido por estado de SEC-025, el barrido de base
-   de SEC-029, y el **rigor comprobable por máquina** contra las rutas realmente tocadas.
+1. **Retomar tras el reset del semanal** por el delta del desarrollador, luego QA, luego auditor.
+2. **REQ-018 — el canal de informes, NO lanzado a propósito.** Es el único trabajo del backlog
+   genuinamente **disjunto** de 1.33.0 (vive en `.github/` y `templates/`, no en `hooks/`), y sería el
+   primer `disjunto` real de la herramienta de paralelismo. Se aplaza por **presupuesto**, no por
+   colisión. Y va **partido en dos**: las plantillas y las etiquetas son disjuntas; la línea dentro de
+   los mensajes de los hooks **no lo es** y espera a que 1.33.0 suelte `hooks/lib.sh`.
+3. Después de REQ-017, **y con eso cierra 1.33.0**: las otras tres palancas —la puerta de «¿esta prueba
+   mide algo?», `tests/util/` y el adelgazamiento de `AGENTS.md`—. El núcleo ya **no** va aquí.
 
 ## Bloqueos
-- Ninguno. La fusión, el tag y la publicación se ejecutaron por delegación con todo en verde. El auditor
-  sostuvo en R-007 y R-008 que la decisión volvía al propietario; en R-009 declaró que **la salvedad
-  decae**. La discrepancia queda escrita en `docs/PENDIENTES.md`, decisión 4.
+- Ninguno técnico. La parada es de **presupuesto de tokens** y es una decisión del propietario.
 
 ## Pendientes (cola)
 - [ ] Decisión editorial del propietario: nombres de proyectos consumidores en el árbol público, y las
       dos cuentas de GitHub nombradas en `AGENTS.md` (hallazgo informativo SEC-008; la salida propuesta
       es sustituir nombres por roles).
-- [ ] **1.35.0 — working set explícito**: análisis y reglas de diseño en `docs/PENDIENTES.md`. Sigue
-      abierta la pregunta de si adelantar sólo el adelgazamiento de `AGENTS.md`, que es el mayor coste
-      fijo de contexto y no depende de ninguna medición.
+- [ ] **1.35.0 — working set explícito**: análisis y reglas de diseño en `docs/PENDIENTES.md`. La
+      pregunta de si adelantar el adelgazamiento de `AGENTS.md` **queda resuelta** (2026-09-07): se
+      adelanta a 1.33.0 como cuarta palanca, porque es el mayor coste fijo de contexto —~9 k tokens en
+      cada subagente— y 1.34.0 es la ventana con más comisiones. El resto del working set sigue en 1.35.0.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-07 12:45
+## Estado derivado — 2026-09-07 14:36
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -84,13 +101,13 @@ de forma**: preguntar por la **vía** cuando la propiedad es de **estado**. Es l
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.32.1` @ `06b6340` — CON CAMBIOS SIN COMITEAR
-**Arnés:** plugin instalado `1.32.0` · el proyecto declara `1.32.1` — **migración pendiente** (`/arnes-upgrade`)
+**Repositorio:** `main` @ `cf2009e` — CON CAMBIOS SIN COMITEAR
+**Arnés:** plugin instalado `1.32.1`
 **Aprobaciones pendientes:** 0
-**REQ:** 16 — completado 10 · en-revisión 3 · en-progreso 1 · bloqueado 0 · otros 2
+**REQ:** 17 — completado 12 · en-revisión 1 · en-progreso 2 · bloqueado 0 · otros 2
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
-_Sólo los REQ abiertos; los 10 completados no se listan._
+_Sólo los REQ abiertos; los 12 completados no se listan._
 
 | REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
 |---|---|---|---|---|---|
@@ -98,7 +115,6 @@ _Sólo los REQ abiertos; los 10 completados no se listan._
 | REQ-008 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-011 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-013 | en-revision | con-hallazgos | con-hallazgos | critico | sec-014(contrato),sec-020(contrato),qa-2… |
-| REQ-015 | en-revision | aprobado | aprobado | critico | (ninguno) |
-| REQ-016 | en-revision | aprobado | aprobado | critico | h-07(instrumento) |
+| REQ-017 | en-progreso | pendiente | pendiente | critico | (ninguno) |
 
 <!-- ARNES:DERIVADO fin -->

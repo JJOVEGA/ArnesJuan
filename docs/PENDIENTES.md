@@ -504,3 +504,187 @@ baratas juntas. Dueño: `auditor-seguridad` para el NFR, `desarrollador` para el
 5. **Lo que la coordinadora NO decide, con potestad o sin ella:** si el auditor **retira la firma o
    veta**, no se publica y la decisión vuelve al propietario. Un veto que el coordinador puede levantar
    no es un veto, y el veto existe justamente para no depender de que el coordinador esté de acuerdo.
+
+## El caso J: acotar el rango no ganó la clase (reportado por un proyecto consumidor, 2026-09-07)
+
+**Qué reportaron, verificado por la coordinadora sobre los hooks de 1.32.1 ya publicados:**
+
+| Caso | 1.32.0 | 1.32.1 |
+|---|---|---|
+| **I** — `**Seguridad:** aprobado` **dentro** de `<!-- -->` | permite | **DENIEGA** |
+| **J** — la misma línea **fuera** de todo comentario | permite | **PERMITE** |
+
+Un `critico` con `Seguridad: pendiente` vigente cierra si más abajo en la cabecera aparece
+`**Seguridad:** aprobado` sin comentar. Control: sin esa línea, **DENY**.
+
+**No es un descuido: está contratado.** `CA-04` de REQ-016 declara que la tolerancia a la clave
+decorada **fuera** de los rangos no se restringe, y el analista **rechazó** en 1.32.1 la propuesta de
+que una ocurrencia decorada no pudiera desbancar a una limpia, con tres razones — la mejor: cambiaría
+la semántica de documentos **bien formados** para arreglar uno malformado. La decisión está escrita.
+
+**Y aun así el reportante tiene razón en lo que importa, con nuestra propia lección:** *acotar el
+rango tampoco gana la clase*. Es la quinta aparición de la misma forma, y la primera aplicada a un
+arreglo nuestro.
+
+**La salida propuesta, que no es ninguna de las dos que ya se descartaron.** Ni prohibir el decorado
+ni rankear formas — las dos preguntan por la **vía**. La pregunta de **estado**: *si la cabecera
+declara el mismo campo dos veces con valores distintos, la puerta no puede saber cuál gobierna* →
+**no es medible → DENY**. Misma familia que CA-03 y CA-12. No toca ningún documento bien formado, que
+declara cada campo una vez. Y el arnés **ya lo sabe**: `CA-06` de REQ-016 hace que el informe marque
+justo ese caso como anomalía con rc≠0; el conocimiento existe y la puerta no lo usa.
+
+**El coste que tiene que decidir el REQ, no la coordinadora:** un proyecto que corrija veredictos
+**añadiendo** la línea nueva en vez de editarla se rompe. Hay que saber si alguno lo hace antes de
+elegir entre denegar y avisar.
+
+**Clase `contrato`** — `AGENTS.md` §13 promete que un `critico` no cierra sin `Seguridad: aprobado`, y
+por esta vía cierra con el veredicto vigente en `pendiente`. **Nace ≤1.31.0** (la tolerancia a la
+clave decorada), no lo introdujo 1.32.1. Dueño: `analista-requerimientos` para la decisión de diseño,
+`desarrollador` para el mecanismo. **Ventana 1.33.0**, con el núcleo de preguntas de estado.
+
+## Una bitácora puede perder una entrada entera sin que ningún archivo parezca roto (medido por un proyecto consumidor, 2026-09-07)
+
+**Qué encontraron, auditándose a sí mismos:** cruzaron **toda** cabecera de bitácora que existió alguna
+vez en git contra las de hoy — 410 vistas, 404 presentes. Cinco ausencias eran títulos editados
+después. La sexta era una pérdida real de hace tres semanas: al escribir una entrada nueva se
+**sustituyó** el título de la anterior en vez de insertar encima. Restaurada verbatim desde git.
+
+**Lo que la hace peligrosa y por qué ninguna puerta la ve:** lo que se pierde es **la línea del borde**.
+El cuerpo sigue ahí y se lee como parte de la entrada vecina — **atribuido a otro agente, otra fecha y
+otro encargo**. No hay archivo corrupto, no hay diff sospechoso, no hay tamaño que baje.
+
+**Y es otra vez la misma forma:** la comprobación que lo cazó es de **una línea**, es una pregunta de
+**estado** —«¿toda cabecera que existió alguna vez sigue existiendo?»— y **no estaba escrita en
+ninguna parte**. Ninguna de las seis puertas del arnés mira esto.
+
+**Clase `instrumento`** (el arnés no promete integridad de bitácoras; hoy no promete nada sobre
+ellas). Candidata a **1.33.0** junto al barrido de base de SEC-029 y al barrido por estado de SEC-025:
+las tres son la misma pregunta sobre tres artefactos distintos, y por eso salen baratas juntas.
+
+### Lo que midió el proyecto consumidor sobre el caso J, y las tres cosas que cambia (2026-09-07)
+
+**1. La pregunta de diseño está contestada, y con un corpus real.** Contaron las 6 claves de cabecera
+sobre sus **48 REQ**, normalizando el decorado igual que `arnes_norm_clave` y **contando también dentro
+de los rangos**: **0 archivos** declaran un campo dos veces. La práctica de «corregir un veredicto
+**añadiendo** la línea nueva» **no existe allí**; cuando reabren, editan en su sitio y el veredicto
+viejo va en prosa aparte. ⇒ **denegar ante campo duplicado no rompe nada** en ese corpus. Es **un**
+proyecto, no una ley: antes de cerrarlo conviene el mismo conteo en los demás.
+
+**2. Y una pregunta de diseño que no habíamos visto, mejor que la nuestra.** Su caso real **no era un
+duplicado de clave: era una clave FABRICADA por un corte de párrafo.** El texto decía
+``el `Seguridad: aprobado` de R-020`` y al reflowarse dejó `Seguridad:` a columna cero. No había dos
+declaraciones compitiendo — había una declaración y un **accidente tipográfico**.
+
+De ahí la pregunta que hay que decidir **explícitamente** y que no está decidida: **¿la guarda cuenta
+ocurrencias ANTES o DESPUÉS de descontar los rangos de comentario?**
+- **Antes:** caza el accidente aunque viva dentro de un comentario — y marca como duplicado la
+  práctica **legítima** que REQ-016 existe para proteger (documentar la historia dentro de un rango).
+- **Después:** respeta esa práctica y **no ve** el accidente si cayó dentro del rango.
+
+Las dos son defendibles y dan **puertas distintas**. Elegir sin nombrar la disyuntiva es cómo nace el
+próximo fallo en abierto.
+
+**3. Corrección a una expectativa nuestra sobre el impacto de campo.** Su única colisión real **falló
+CERRADO, no abierto**: el fragmento que pisaba no terminaba en paréntesis balanceado, así que
+`arnes_norm_campo` no lo resolvió y la puerta **habría denegado**.
+
+| `REQ-008` reconstruido antes de su arreglo | `Seguridad:` resuelto | ¿autoriza? |
+|---|---|---|
+| leído por 1.31.0 | ``aprobado` (R-020, 2026-08-12) han visto estos criterios, que son **pos…`` | **NO** |
+| leído por 1.32.1 | `aprobado` | sí |
+
+**La dirección del fallo depende de qué texto quede pisando**, y un párrafo de prosa normalmente **no
+resuelve**. El caso peligroso es el que pisa con un veredicto **limpio y bien formado** — justo el del
+comentario rotulado «Historial». **Consecuencia: nuestra estimación de proyectos dañados es
+probablemente más alta que la realidad.** El fail-open es real y reproducible; su frecuencia de campo,
+menor de lo que temíamos.
+
+**4. Su exposición: cero, medida por tres vías** — diferencial de lectores (los 48 REQ dan salida
+byte-idéntica en 1.31.0 y 1.32.1), fechas (ningún `Estado:` se movió con una versión vulnerable
+cargada), y comprobación de estado sobre los 9 cerrados (ninguno cerraría distinto hoy). Es la
+**comprobación por estado** de SEC-025 hecha a mano antes de que exista la herramienta.
+
+### La comprobación de integridad de bitácora, y el aviso que la acompaña
+
+No la tenían verbatim y **lo dijeron en vez de reconstruirla disfrazada de original** — la re-derivaron
+y la dan con su salida:
+
+```bash
+RE='^## \[[0-9]{4}-[0-9]{2}-[0-9]{2}\].*Origen: (GitHub|Interno)'
+for F in CHANGELOG.md CHANGELOG-archivo.md; do
+  tot=$(grep -cE '^## ' "$F"); ok=$(grep -cE "$RE" "$F")
+  printf "%-24s %3d/%3d %s\n" "$F" "$ok" "$tot" "$([ "$tot" = "$ok" ] && echo OK || echo FALTA)"
+done
+```
+
+**La idea:** toda cabecera de entrada tiene que llevar su **borde completo**. Si el borde se pierde, la
+cabecera degrada a un `## ` suelto, `tot` sube, `ok` no, y el cuerpo huérfano queda contado.
+**Complemento barato:** `entradas(vivo) + entradas(archivo)` **nunca puede bajar** entre commits — que
+es la invariante que la rotación debería garantizar y hoy no comprueba nadie.
+
+> ⚠️ **Y el aviso, que vale más que el script.** Su primera versión anclaba en ` - Origen: ` con guion y
+> marcó **166 de 359 entradas como malformadas** — todas **falsos positivos**: usaban raya (`—`). Si
+> esto se publica como puerta, hay que anclar en `Origen:` y **no en la puntuación**. Su frase, que es
+> la nuestra dicha mejor: ***una comprobación que cría lobos se apaga, y entonces protege lo mismo que
+> ninguna.*** Es el mismo principio por el que `AGENTS.md` §13 rechaza perseguir shell arbitrario.
+
+### Y una nota de gobernanza que conviene conservar
+
+El proyecto consumidor **se negó a correr `/arnes-upgrade` porque se lo pidiera otra sesión**: reescribe
+`AGENTS.md`, `CLAUDE.md` y `requirements/README.md`, y esa decisión es de su dueño. **Un par no puede
+conceder una escalada.** Es la misma regla por la que la coordinadora de este repositorio no puede
+levantar un veto del auditor: un control que el interesado puede desactivar no es un control.
+
+### El conteo de campos duplicados: dos corpus, mismo script, misma respuesta (2026-09-07)
+
+**El dato se propaga en una sola dirección, y eso lo hace más fuerte de lo que parecía.** El proyecto
+consumidor midió en la rama **estricta** —contando las ocurrencias **antes** de descontar los rangos
+`<!-- -->`, o sea incluyendo las comentadas—, que es la que marca **de más**. Contar «después» ve un
+**subconjunto estricto**: si en la rama estricta salen 0 duplicados, en la permisiva salen 0
+**necesariamente, sin volver a medir**. Así que ese corpus contesta **NO a las dos ramas**.
+
+**Segundo corpus, este repositorio, mismo script, misma corrida:** **17 REQ, 0 archivos** con un campo
+declarado dos veces. Y el control de la advertencia de abajo: **0 REQ** cuya cabecera no corte con
+`## `.
+
+| Corpus | REQ | Duplicados (rama estricta) |
+|---|---:|---|
+| Proyecto consumidor | 48 | **0** |
+| ArnesJuan | 17 | **0** |
+
+**Dos corpus, 65 REQ, cero.** Denegar ante campo duplicado sigue saliendo barato, y ahora con dos
+mediciones independientes hechas **con el mismo script**, que era la condición para poder sumarlas.
+
+**El script, verbatim, para que los conteos futuros sean el mismo conteo** (transcribe
+`arnes_norm_clave` —retira espacio y énfasis, descuenta CR— y corta en el primer `## ` como
+`campos-req.awk`):
+
+```bash
+for f in requirements/*.md; do
+  out=$(awk '
+    /^## /{exit}
+    {
+      linea=$0; gsub(/\r/,"",linea)
+      p=index(linea,":"); if(p==0) next
+      sub(/^[ \t]+/,"",linea); sub(/[ \t]+$/,"",linea)
+      p=index(linea,":"); if(p==0) next
+      k=substr(linea,1,p-1); gsub(/[*_`]/,"",k)
+      sub(/^[ \t]+/,"",k); sub(/[ \t]+$/,"",k)
+      if(k=="Estado"||k=="QA"||k=="Seguridad"||k=="Sensible a seguridad"||k=="Hallazgos abiertos"||k=="Rigor") c[k]++
+    }
+    END{for(k in c) if(c[k]>1) printf "  %s x%d\n", k, c[k]}
+  ' "$f")
+  [ -n "$out" ] && { echo "$(basename $f):"; echo "$out"; }
+done
+```
+
+Para medir la rama permisiva se inserta `sincita()` **antes** del `gsub(/\r/…)` — **y en ese orden**,
+que es la corrección que `campos-req.awk` ya lleva desde 1.32.1: descontar el CR antes de escanear
+puede **fabricar** un delimitador. Nuestra propia lección, devuelta por quien la sufrió.
+
+> ⚠️ **Advertencia sobre el instrumento, de la familia de los 166 lobos.** Si al correrlo en otro
+> proyecto sale un número **alto** de duplicados, la primera sospecha es el `/^## /{exit}`: un REQ cuya
+> cabecera esté separada del cuerpo por algo que **no** sea `## ` —una regla horizontal, un `###`—
+> entrega **el archivo entero** al contador, y entonces **todo** REQ con historial parece duplicado. Se
+> comprueba antes de creerse el número, y el control cuesta una línea. Los dos corpus medidos cortan
+> limpio; no se da por hecho para un tercero.

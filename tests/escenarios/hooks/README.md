@@ -77,7 +77,7 @@ guarda ni les hace falta. La obligación de la invariante 1 cae sobre **el que d
 Qué ayudante hace cada cosa se lee en el corredor, que es donde está escrito.
 
 ## Invariantes del banco
-Cuatro reglas que el banco se aplica **a sí mismo**. No son estilo: cada una nació de una vuelta
+Cinco reglas que el banco se aplica **a sí mismo**. No son estilo: cada una nació de una vuelta
 en verde que no medía lo que decía medir.
 
 1. **Un JSON vacío es un FAIL, nunca un `allow`.** Si el emisor de un caso se queda mudo —`jq`
@@ -121,6 +121,15 @@ en verde que no medía lo que decía medir.
    como sección de cero casos. Y ningún archivo de sección hace `source` de otro ni depende del
    estado que otro deje: la única dependencia admitida es del corredor hacia abajo. Un banco
    partido cuyos archivos se llaman entre sí es el mismo monolito con más archivos.
+5. **Nada de una sección sobrevive a su sección** (desde 1.33.0, REQ-017 CA-06). Al cerrar cada
+   sección el corredor mira `jobs -pr`: si quedó algún proceso vivo lo **mata**, lo anota y
+   **aborta la vuelta nombrando el archivo**. Nació medido: en 1.32.1 una sonda de QA —un
+   envoltorio de `grep` construido con `command -v` sobre un binario **sombreado por una función
+   de shell**, que por eso se resolvía a sí mismo— vivió **3 h 41 min** después de su comisión
+   comiéndose un núcleo entero, y **falseó la línea base de otra medición**, que concluyó «dentro
+   del ruido» con toda lógica interna. El corolario para quien escriba una sonda: las rutas de los
+   binarios se resuelven **con `type -P` y ANTES de tocar el `PATH`** —`command -v` ve funciones de
+   shell, `type -P` no— y se comprueba que ninguna caiga dentro del propio envoltorio.
 
 ## Cómo se escribe un caso que sirva
 Tres reglas nacidas de fallos reales:
@@ -187,6 +196,28 @@ Tres reglas nacidas de fallos reales:
 | Cita | los dos lectores (`lib.sh` y `campos-req.awk`) sobre el mismo documento | valores idénticos |
 | `arnes-lectura` | la línea decorada que gobierna un campo | se nombra, rc **0** |
 | `arnes-lectura` | dos declaraciones del mismo campo y gobierna la decorada | anomalía + rc ≠ 0 |
+| Coste (37/1) | el escáner de cabecera contra v1.32.1 sobre 214 entradas con semilla fija | estado **idéntico byte a byte** |
+| Coste (37/1) | doblar la longitud de línea (70 000 → 140 000 bytes) | cociente ≤ **2,6** (lineal ≈ 2) |
+| Coste (37/1) | el mismo cociente **contra v1.32.1** | > 2,6 — la sonda distingue el defecto |
+| Coste (37/1) | el camino de campo contra el de v1.32.0 (140 000 bytes sin CR) | razón ≤ **2,0×** |
+| Coste (37/1) | la sonda sin línea base, o bajo el suelo de 50 ms | **SKIP con motivo**, nunca PASS |
+| Coste (37/1) | el tamaño en que el hook alcanza los 60 s, en los tres árboles | se **mide y se imprime** (SEC-030) |
+| Coste (37/2) | la sección 32 aislada contra los dos árboles | mismo inventario **y** reloj ≤ **0,25×** |
+| Coste (37/2) | una cabecera normal (6 líneas y 200 líneas) contra v1.32.1 | **0 procesos añadidos y** reloj ≤ **1,25×** |
+| Coste (37/2) | una sección sintética que deja un proceso vivo | el corredor la **acusa por su nombre** |
+
+**Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
+falsea la máquina, el runner del CI y la carga. Los de arriba son **cocientes de duplicación**
+—donde la velocidad de la máquina se cancela algebraicamente— o **razones contra una línea base
+materializada desde su tag en la misma corrida**; el estadístico es el **mínimo** de k
+repeticiones, nunca la media, porque la carga sólo puede **añadir** tiempo. La metodología completa
+—y el caso medido que la obligó— está en `requirements/README.md`, forma **(d)**: «fijar la
+magnitud equivocada».
+
+**La sección 37/2 es cara y se dice: ~120 s, y ~76 s de ellos son la corrida heredada**, que cuesta
+lo que costaba el defecto porque **es** el defecto corriendo. Se paga por defecto —una puerta que
+no se ejecuta no mide— y se apaga con `ARNES_COSTE_RUTA_CRITICA=0` cuando se está diagnosticando
+otra cosa; apagada, sus dos casos dicen **SKIP con ese motivo**, nunca PASS.
 
 ## Por qué importa
 - La distinción coordinadora vs. subagente se apoya en el campo `agent_id` del input del hook

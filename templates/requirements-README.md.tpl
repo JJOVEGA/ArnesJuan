@@ -209,11 +209,13 @@ generan un **ADR**. Si un REQ `completado` cambia, vuelve a `en-progreso`/`en-re
 **Medido, no opinado:** en un ciclo de trabajo de este arnés, **7 de 20** hallazgos no fueron que
 el código estuviera mal, sino que el **criterio decía algo falso sobre lo construido** —clase
 `contrato`—. Uno costó una **vuelta entera del bucle** (~50 min entre desarrollador, QA, control y
-write-back). Las tres formas de abajo son exactamente las que se midieron, y las tres se evitan
-escribiendo la **regla** que el código implementa en vez de la **lista** de casos que se le
-ocurrieron a quien redactó ese día.
+write-back). Las tres primeras formas de abajo son exactamente las que se midieron en ese ciclo;
+**la cuarta se midió después, en la ventana 1.32.1, y sobre un criterio escrito ya con esta
+sección delante** — de ahí que no baste con escribir la **regla** que el código implementa en vez
+de la **lista** de casos que se le ocurrieron a quien redactó ese día: hay que además estar
+midiendo la magnitud que se degrada.
 
-Las tres están **prohibidas por nombre**. Un criterio que caiga en cualquiera de ellas está **mal
+Las cuatro están **prohibidas por nombre**. Un criterio que caiga en cualquiera de ellas está **mal
 formado**: el QA lo reporta como hallazgo de clase `contrato` contra el REQ **antes** de ejecutar
 la prueba, y quien lo reescribe es el analista (write-back, `AGENTS.md` §9).
 
@@ -267,7 +269,50 @@ del bucle.
   **menos** es conforme y **no** es hallazgo.»
 
 **Regla.** Todo criterio sobre **coste** —procesos, tiempo, bytes, lecturas— se enuncia como
-**techo con la dirección admitida declarada**, y **nunca** como igualdad.
+**techo con la dirección admitida declarada**, y **nunca** como igualdad. Y un techo bien puesto
+sobre la magnitud equivocada sigue sin ver nada: ésa es la forma (d), que viene justo debajo.
+
+### (d) Fijar la magnitud equivocada
+
+**Caso medido — y lo que importa es que el criterio SE CUMPLÍA.** `CA-08` de REQ-016 contrataba el
+coste de la noción de cita en **procesos por llamada**: 4 = 4, medido correctamente, criterio en
+verde. Mientras tanto el reloj de la ruta crítica del banco se multiplicaba por **diez** (7,6 s →
+75,7 s) y el banco entero —que es la **puerta requerida de `main`**— pasaba de 39 s a 92 s. No hubo
+ningún número mal puesto ni ninguna medición mal hecha: la magnitud era correcta, medible sin ruido
+y **ortogonal a lo que se degradó**. La pregunta era la que no era. Un criterio de coste que fija
+la magnitud equivocada **da verde sobre una regresión de 10×**, y lo hace con toda la autoridad de
+una medición correcta — que es peor que no medir, porque además tranquiliza.
+
+- **Mal:** «Entonces el hook gasta **no más de 0 procesos añadidos** respecto a la línea base.»
+  (bien formado según (c), y ciego a un factor de diez en el reloj)
+- **Bien:** «Entonces (i) **no más de 0 procesos añadidos** respecto a la línea base **y** (ii) el
+  **mínimo** de reloj es de **no más de 1,25×** el de la línea base, medidas **las dos en la misma
+  corrida** — el arreglo no vale si compra tiempo con un `fork`, y el `fork` no se ve en el reloj
+  ni el reloj se ve en los procesos.»
+
+**Regla.** Todo criterio de **coste** declara **qué magnitud mide y por qué es ésa la que se
+degrada**; si el mecanismo puede degradarse por más de una vía, **contrata todas las vías en el
+mismo criterio y en la misma corrida** —dos magnitudes en dos criterios distintos se cumplen por
+separado mientras el sistema empeora—. Y se enuncia como **razón o propiedad estructural**, **nunca
+como un reloj absoluto**: un número de segundos lo falsea la máquina, lo falsea el runner del CI y
+lo falsea la carga. Donde haga falta un absoluto, va como **razón contra una línea base medida en
+la misma corrida**, no como una cifra: un runner lento sube el numerador y el denominador.
+
+**Cómo se contrata una magnitud que no miente:**
+
+| Lo que se quiere saber | Cómo se contrata | Por qué no miente |
+|---|---|---|
+| ¿El coste crece más que linealmente? | **Cociente de duplicación**: doblar la entrada y comparar los dos costes. Lineal ≈ 2, cuadrático ≈ 4 | La velocidad de la máquina **se cancela algebraicamente**: está en el numerador y en el denominador |
+| ¿Cuesta más que antes? | **Razón contra una línea base medida en la MISMA corrida** (un tag anterior, la implementación previa) | Un runner lento o cargado sube los dos términos; la razón no se mueve |
+| ¿Cabe en un límite duro de fuera (un `timeout`, una cuota)? | Se **mide y se anota** el margen; **mover** el límite es otro REQ con su dueño | El límite no lo elige este sistema, así que el criterio no puede fijarlo: sólo puede medirlo |
+
+**El estadístico es el MÍNIMO de k repeticiones, nunca la media**, y k se elige para que el mínimo
+de cada serie supere el suelo por debajo del cual el reloj no distingue del ruido (en este arnés,
+50 ms). La carga sólo puede **añadir** tiempo, así que el mínimo es la mejor estimación del coste
+real y la media es una mezcla del coste y de los vecinos. Y **una sonda que no llega a ese suelo, o
+que no encuentra su línea base, emite SKIP con el motivo y con el número que sí obtuvo — nunca
+PASS**: un instrumento que ante la ausencia de datos responde «verde» es la misma familia de
+defecto que la magnitud equivocada.
 
 ### Cuando el código cubre MÁS de lo que el criterio promete
 
@@ -286,7 +331,7 @@ el hallazgo **contra el código**. La regla de arriba aplica **sólo** cuando el
 
 ### Dónde se anota la forma del hallazgo
 
-La **forma** (`enumeración` · `número` · `igualdad` · `otra`) se anota **sólo** en el log de QA
+La **forma** (`enumeración` · `número` · `igualdad` · `magnitud` · `otra`) se anota **sólo** en el log de QA
 (`docs/qa/<versión>.md`), y **nunca** dentro del paréntesis de la clase del campo `Hallazgos
 abiertos:`. Ese paréntesis es lo que lee `guard-completado` para decidir si un hallazgo bloquea:
 meterle una segunda dimensión cambiaría la entrada de la puerta por un motivo de contabilidad.
@@ -297,6 +342,19 @@ La regla rige para todo criterio **escrito o modificado desde que esta sección 
 REQ en estado `completado` **no** se reabren ni se reescriben para conformarlos: reescribir
 contratos cerrados por un motivo de redacción es editar el contrato por comodidad, y multiplica el
 coste que esta sección existe para bajar.
+
+La forma **(d)** se incorpora con **el mismo alcance temporal** que las tres anteriores: rige para
+los criterios escritos o modificados desde la ventana en que se adopta, y no reabre ninguno de los
+ya cerrados.
+
+### En la Definition of Ready del analista
+
+Un REQ no se entrega como `pendiente` si alguno de sus criterios habla de **coste** sin decir **qué
+magnitud mide y por qué es ésa la que se degrada**, o si lo fija como un **reloj absoluto** en vez
+de como una razón o una propiedad estructural. Es la línea que añade la forma (d), y se comprueba
+en la misma revisión humana que el mapa de archivos: ninguna de las dos es una comprobación de
+runtime.
+
 
 ## Plantilla
 ```markdown

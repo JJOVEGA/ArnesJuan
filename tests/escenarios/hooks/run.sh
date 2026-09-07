@@ -586,6 +586,20 @@ for ((sec_i = 0; sec_i < N_SEC; sec_i++)); do
       ARNES_MARCA_FIN="$RAIZ/fin-$sec_i"
       source "${SECCIONES[sec_i]}"
       ARNES_RC_SEC=$?
+      # CA-06 de REQ-017: NADA DE UNA SECCION SOBREVIVE A SU SECCION. Medido en 1.32.1:
+      # una sonda de QA —un envoltorio de `grep` que, construido con `command -v` sobre un
+      # binario sombreado por una funcion de shell, se llamaba a si mismo— vivio 3 h 41 min
+      # comiendose un nucleo, y falseo la linea base de OTRA medicion, que concluyo «dentro
+      # del ruido» con toda logica interna. El instrumento mentia, y nadie relaciono las dos
+      # cosas. Se anota QUE quedo vivo (para que el cuadre pueda acusar a esta seccion por
+      # su nombre) y se mata: un banco que deja procesos detras envenena la vuelta siguiente.
+      # `jobs -pr` es builtin y se redirige a un archivo: dentro de `$( )` el job control no
+      # cruza el subshell de la sustitucion y devuelve vacio con trabajos vivos.
+      jobs -pr > "$RAIZ/vivos-$sec_i" 2>/dev/null || :
+      while IFS= read -r ARNES_PID_VIVO; do
+        [ -n "$ARNES_PID_VIVO" ] || continue
+        kill -9 "$ARNES_PID_VIVO" 2>/dev/null || :
+      done < "$RAIZ/vivos-$sec_i"
       printf '%s\n' "$ARNES_RC_SEC" > "$ARNES_MARCA_FIN"
       exit "$ARNES_RC_SEC"
     ) > "$RAIZ/out-$sec_i" 2>&1
@@ -658,6 +672,21 @@ for ((i = 0; i < N_SEC; i++)); do
     echo "       producen las mismas cero líneas, y sólo esto las distingue."
     PROBLEMAS=$((PROBLEMAS + 1)); continue
   fi
+  # CA-06 de REQ-017, la mitad del corredor: una sección que deja un proceso vivo no es
+  # una sección que pasó, es una sección que va a falsear el reloj de la siguiente. Se
+  # dice CON EL NOMBRE del archivo — un núcleo comido por un huérfano anónimo es lo que
+  # costó 3 h 41 min de diagnóstico en 1.32.1.
+  if [ -s "$RAIZ/vivos-$i" ]; then
+    pids_vivos=''
+    while IFS= read -r pid_vivo; do
+      [ -n "$pid_vivo" ] || continue
+      pids_vivos="$pids_vivos $pid_vivo"
+    done < "$RAIZ/vivos-$i"
+    echo "ABORT: la sección $base terminó dejando procesos vivos (PID$pids_vivos); el banco los mató."
+    echo "       Una sonda que sobrevive a su sección se come un núcleo y envenena el reloj"
+    echo "       de la siguiente, que concluirá 'dentro del ruido' con toda lógica interna."
+    PROBLEMAS=$((PROBLEMAS + 1))
+  fi
   PASS=$((PASS + NPASS[i])); FAIL=$((FAIL + NFAIL[i])); SKIP=$((SKIP + NSKIP[i]))
   if ! lee_casos_declarados "$archivo"; then
     echo "ABORT: la sección $base no declara CASOS_ESPERADOS_SECCION."
@@ -680,7 +709,7 @@ done
 
 # --- Cuadre 2: el número total de casos sigue siendo una invariante del banco -
 # Si alguien añade o quita un caso, actualiza el número de SU archivo y este total.
-CASOS_ESPERADOS=828
+CASOS_ESPERADOS=845
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
