@@ -709,7 +709,7 @@ done
 
 # --- Cuadre 2: el número total de casos sigue siendo una invariante del banco -
 # Si alguien añade o quita un caso, actualiza el número de SU archivo y este total.
-CASOS_ESPERADOS=845
+CASOS_ESPERADOS=847
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

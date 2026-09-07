@@ -123,6 +123,55 @@ Archivos: `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-ca
 `tests/escenarios/hooks/README.md`, `.github/workflows/banco.yml`, `docs/PENDIENTES.md`,
 `docs/qa/1.33.0.md`, `requirements/REQ-017.md`.
 
+## [Interno] — 2026-09-07 · Auditoría preventiva R-010 y su write-back: seis `contrato` antes de escribir código
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `auditor-seguridad`, `analista-requerimientos`.
+
+**`Seguridad: preventiva (R-010)` en REQ-019 y REQ-021** —la excepción nombrada de §6, declarada al
+emitirla y **sin cubrir el código posterior**—. Seis hallazgos `contrato` y uno `instrumento`, **todos
+antes de que exista una línea**: con los dos REQ en `pendiente`, cada uno cuesta **una edición de
+criterio y no una vuelta del bucle**.
+
+**`SEC-031` — se puede perder el LÍMITE de una obligación sin borrar una letra.** El filtro de REQ-019
+tiene dos cajones —lo que *manda* se queda, lo que *explica* se va— y una **acotación** («la cobertura
+sobre `Bash` es parcial a propósito», «un hook muerto no deniega», «es una barandilla, no una jaula»)
+**no ordena nada**, así que se delega **por construcción**. La tabla de §13, conservada byte a byte, es
+**una lista de promesas de cobertura**: separada de su acotación, **lo escrito queda más fuerte que la
+verdad**. El criterio de no-pérdida era asimétrico —prohibía **añadir** una obligación y no decía nada
+de **restar** un límite—. Cerrado con `CA-14` nuevo: *una acotación no se separa de la promesa que
+acota*; se delega la casuística, nunca el enunciado.
+
+**Y el cruce de calendario que nadie había hecho:** `SEC-030` está abierto en esta misma ventana y su
+remediación exige **añadir** el hueco del temporizador a §13. Si REQ-019 delega esa enumeración antes,
+la declaración de un fail-open de la puerta de cierre **aterriza en un archivo que nadie lee por
+defecto**. El write-back no lo resuelve ordenando —«un orden vive en la cabeza de quien despacha»— sino
+por propiedad: CA-14 hace **los dos órdenes seguros**.
+
+**Segundo cruce, encontrado al escribirlo:** `CA-02.1` exigía la tabla de §13 «idéntica **byte a byte**»
+y `CA-04` lo mismo para la plantilla. La remediación de SEC-030 **añade** a las dos sedes → los dos
+criterios habrían declarado **incumplido un trabajo ajeno y correcto**. Es la forma prohibida **(c)**
+—igualdad donde corresponde dirección— sobre un criterio escrito con esa sección delante. CA-02.1 pasa
+a prohibir **restar**; CA-04 pasa a ser propiedad de **autoría**, no de inmovilidad.
+
+**`SEC-035` — el propio REQ-021 estrechaba la red que hoy existe.** Las sondas viven dentro del archivo
+de sección, así que lo que dejan vivo *es* un job de ese shell y el corredor lo alcanza; convertirlas en
+**programas invocados** deja lo que quede vivo **reparentado y fuera de la red**. La vigilancia se mudaba
+del **juez** al **instrumento** — el artefacto que se decide no proteger — y no estaba dicho. Además el
+criterio decía «ningún proceso **que ella lanzara**» cuando el incidente medido fue un **descendiente**:
+declaraba conforme el caso que lo origina. Reescrito por **descendencia en cualquier nivel**, con
+acreditación **con un nieto** y el plazo de arranque partido del derivado, porque la circularidad estaba
+ahí.
+
+**`SEC-036` — separación de funciones, y señala a la coordinadora.** Fuera de `codigo_app.globs`,
+`guard-codigo` deja escribir `tests/util/` a **cualquier** agente, incluida la sesión que **acredita,
+decide y publica** por delegación. Y la calibración **viajaba dentro del artefacto que certifica**. La
+expectativa pasa al **juez** (`run.sh`), se contrata **identidad de camino** entre calibración y
+medición, y el sustituto se acredita **por mutación de un tercero**.
+
+**Consecuencia de despacho asumida:** REQ-019 declara ahora `requirements/REQ-*.md` —**21 de 21 REQ
+citan `AGENTS.md`**— y por tanto **va en serie** con toda comisión que escriba en `requirements/`.
+La alternativa del auditor (acotar el criterio en vez del mapa) queda escrita como **decisión del
+propietario**, sin aplicar, porque reduce el ahorro que justifica el REQ.
+
 ## [Interno] — 2026-09-07 · QA vuelta 1 de REQ-017: tres criterios fallan, y se corrige lo que esta bitácora afirmó
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
 

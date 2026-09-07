@@ -204,6 +204,8 @@ Tres reglas nacidas de fallos reales:
 | Coste (37/1) | el tamaño en que el hook alcanza los 60 s, en los tres árboles | se **mide y se imprime** (SEC-030) |
 | Coste (37/2) | la sección 32 aislada, **sólo con `ARNES_COSTE_RUTA_CRITICA=1`** | la heredada **no termina** en 4 × mín(este árbol) ⇒ reloj ≤ **0,25×** |
 | Coste (37/2) | las 3 corridas cronometradas de este árbol, entre sí | **mismo inventario** caso→veredicto |
+| Coste (37/2) | una corrida del numerador que termina **en rojo** (rc ≠ 0) o sin casos | **no cuenta como medición**: SKIP con motivo, nunca PASS |
+| Coste (37/2) | la heredada muerta por **señal** (137), o un `124` que el reloj no corrobora | **SKIP con motivo**; sólo `124` **+ reloj ≥ plazo** demuestra la cota |
 | Coste (37/2) | una cabecera normal (6 líneas y 200 líneas) contra v1.32.1 | **0 procesos añadidos y** reloj ≤ **1,25×** |
 | Coste (37/2) | una sección sintética que deja un proceso vivo | el corredor la **acusa por su nombre** |
 
@@ -237,6 +239,31 @@ combaten. Si el plazo **vence**, heredada > 4 × este y el cociente es ≤ 0,25�
 **demostrada**, no estimada, y lo único que se deja de conocer es el *valor* de la razón, que el
 criterio no pide. **El vencimiento es un PASS**, nunca un SKIP: un SKIP ahí convertiría el hallazgo
 en silencio. Si la heredada **termina** dentro del plazo, el caso **FALLA**.
+
+**Pero antes de leer un veredicto hay que saber si esa corrida midió, y eso son dos preguntas que
+la vuelta 0 no hacía** (QA-017-03 y QA-017-04, cerrados en la vuelta 1):
+
+1. **El numerador tiene que terminar en verde.** Una corrida que acaba **en rojo** no midió lo que
+   cuesta correr la sección: midió lo que cuesta fallarla, y falla **antes**, así que mide **menos**
+   — y un numerador más pequeño produce un plazo más corto, que la heredada rebasa con más
+   facilidad. Medido: con los hooks sustituidos por un sello que siempre permite, la sección 32 sale
+   en **14 FAIL, rc 1 y 3,79 s** en vez de ~9,6 s, el plazo cae a 16 s y las **dos** mitades daban
+   PASS — incluida la que se llama «la comparación no se compra dejando de probar». Ahora las dos
+   dicen **SKIP con el motivo y el recuento**. La señal es el `rc` del corredor, que sale 0 sólo con
+   0 FAIL, el cuadre por archivo cerrado y sin procesos vivos.
+2. **Sólo `124` prueba que el plazo venció, y el reloj tiene que corroborarlo.** El `137` es
+   «murió por SIGKILL», y eso lo produce igual el OOM killer, un `kill` de fuera o el `-k` del
+   propio `timeout`; matando al hijo desde fuera a los **0,6 s de un plazo de 60 s** el rc es 137 y
+   el caso lo leía como «≤ 0,250× — DEMOSTRADO». La corrida heredada **es** el camino cuadrático, el
+   que más memoria pide, así que el OOM kill es su modo de muerte más probable en un runner
+   apretado. El PASS exige ahora **dos instrumentos de acuerdo**: `timeout` diciendo 124 y el reloj
+   de pared ≥ plazo. Cualquier otra muerte es **SKIP con motivo** — no un FAIL: que la heredada
+   muriera no prueba que sea rápida.
+
+Las dos decisiones viven en funciones **puras** (`valida47`, `veredicto47`) y por eso el banco las
+prueba **siempre**, con entradas sintéticas y en milisegundos, aunque la comparación de 76 s esté
+apagada: una puerta que sólo se ejerce cuando alguien enciende una palanca es una puerta de la que
+nadie sabe si cierra.
 
 ## Por qué importa
 - La distinción coordinadora vs. subagente se apoya en el campo `agent_id` del input del hook
