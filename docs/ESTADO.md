@@ -6,42 +6,63 @@
 > edites, se sobrescribe. Lo de fuera de esos marcadores no se toca nunca.
 
 ## Fase actual
-Fase 0 — autoalojamiento. **Ciclo 3: v1.32.0 lista para publicar.** La ventana del coste: REQ-012 y
-REQ-014 con QA y Seguridad aprobados; **REQ-013 cruza a 1.33.0** con SEC-020 abierto (`contrato`).
-El guardián de la sesión siguiente será 1.32.0.
+Fase 0 — autoalojamiento. **v1.32.1 publicada** (tag verificado contra los tres manifiestos, instalación
+estable actualizada, hooks idénticos al tag). REQ-015 y REQ-016 `completado` por la puerta. La sesión
+que abra 1.33.0 la gobernará **1.32.1** — pero sólo si se reinicia antes.
 
 ## En progreso
-**Nada en curso.** Diecisiete comisiones, tres vueltas dev-QA agotadas en los tres REQ, 28 hallazgos de
-QA y 9 de seguridad. Banco de 4.096 líneas en un archivo a un corredor de 680 más 37 secciones, de 683
-a 742 casos, sin que ninguna línea del inventario anterior cambiara de veredicto.
+**Nada en curso.** Dieciséis comisiones, ~2,3 M de tokens medidos, **tres vueltas dev↔QA agotadas**, y
+el banco de 683 a **828 casos** en 41 secciones.
+
+**Lo que de verdad pasó en esta ventana, porque no es lo que dice el título:** el parche **no parcheaba
+a la primera**. Se cerraron **cuatro** fallos en abierto y **tres los introdujo el propio arreglo**. El
+retorno de carro se descontaba **antes** de escanear el rango, y `-\r->` se convierte en `-->`; tenía
+**cuatro bocas** —el lector de línea, la extracción del `tool_input`, la reconstrucción del `Edit` con
+el CR en disco, y el mapa de paralelismo—. Se cerraron con una sola pregunta cerrada: *una línea de
+cabecera con un CR que no es el que la termina no se puede medir, y una puerta que no puede medir no
+deja pasar* (CA-12).
+
+**Y ninguno de los cuatro se encontró leyendo código.** QA rompió el arreglo del desarrollador; el
+desarrollador se rompió a sí mismo midiendo; el auditor rompió **dos veces** lo que QA ya había
+aprobado — la segunda sin tocar el código, viendo que *«CA-02 contrata el agujero; nada contrata el
+tapón»*. Los cuatro salieron de **medir la consecuencia** en vez de creerse el diff.
 
 **Lo que cruza a 1.33.0, con dueño y ventana:**
 
 | Hallazgo | Clase | Qué es |
 |---|---|---|
-| **SEC-020** | `contrato` | Séptimo fail-open de `arnes-paralelo.sh`: el marcado de Markdown por elemento corrompe el mapa y da `disjunto` con rc 0. **La respuesta es restringir la gramática del campo, no un octavo parche** |
-| SEC-017, SEC-021, QA-213, QA-214, QA-215, QA-216, QA-205 | `instrumento` | Deuda con dueño `desarrollador`, ventana 1.33.0 |
-| H-03 | `instrumento` | Residual declarado con ADR-002; dueño REQ-011, vencimiento cierre de 1.33.0 |
-| H-12 | `instrumento` | La carrera del temporal de nombre fijo en `hooks/estado-derivado.sh`. **REQ-015, parche 1.32.1** |
-| SEC-019 | `instrumento` | 54 de 742 casos pasan con su hook a `exit 0`. Ventana 1.35.0 |
+| **SEC-020** | `contrato` | El marcado por elemento corrompe el mapa de `arnes-paralelo.sh`: `disjunto` con rc 0. La respuesta es **restringir la gramática**, no un octavo parche |
+| **SEC-030** | `contrato` | La pared de 60 s del hook se alcanza hacia **1,5 MB de un documento normal**, y `AGENTS.md` §13 no la enumera entre los huecos conocidos. Preexistente en los dos árboles |
+| **H-07** | `instrumento` | `arnes_sin_cita` es **cuadrática** sobre líneas largas: el banco pasa de 39 s a 92 s. Una llamada normal **no** se resiente (0,166 → 0,171 s). Arreglo de **una sentencia** |
+| El bloque derivado | `instrumento` | Publica `Seguridad: aprobado` sobre una cabecera que la puerta se **niega a medir**. Sube a `contrato` y **bloquea** si llega a la firma de 1.33.0 sin guarda |
+| H-06 | `contrato` | Una nota al margen en `PENDING_APPROVAL.md` desactiva el bloqueo de la cola. **Sigue sin dueño**; le corresponde `desarrollador` |
+| SEC-017, SEC-021, SEC-028, QA-205, QA-213..216 | `instrumento` | Deuda con dueño, ventana 1.33.0 |
 
-**La lección del ciclo, y es la tercera vez que la aprendemos:** cuando un mecanismo interpreta texto
-humano libre, ensanchar el patrón no gana la clase. Pasó con el detector de escrituras por Bash, con la
-guarda estática del banco (ADR-002) y ahora con el campo `Archivos:`. La salida es **restringir la
-gramática** o **preguntar después** en vez de antes, nunca un patrón más largo.
+**La lección del ciclo, y ya van cinco:** cuando un mecanismo interpreta texto humano libre, ensanchar
+el patrón no gana la clase. La salida es **restringir la gramática** o **preguntar después**.
+
+**Y la lección nueva, que apareció cuatro veces en una sola ventana:** *interrogar al mecanismo tiene
+una vía nueva cada vez; interrogar a la propiedad no envejece.* Los cinco casos de banco vacíos, el
+barrido de migración, el control de datos de cliente y el guardián del intérprete son **el mismo error
+de forma**: preguntar por la **vía** cuando la propiedad es de **estado**. Es la columna vertebral de
+1.33.0.
 
 ## Próximo paso concreto
-1. Publicar: PR, `hooks-en-linux`, fusión squash, tag `v1.32.0`, verificar tag contra `plugin.json`,
-   actualizar la instalación estable.
-2. Cerrar REQ-012 y REQ-014 (`Estado: completado`) **después** de publicar y verificar, como exige su CA-26.
-3. **REQ-015 en el parche 1.32.1**: la carrera de `ESTADO.md`. Es `usuario/dinero` en su REQ propio.
-4. **Reiniciar la sesión** antes de abrir 1.33.0, para que 1.32.0 gobierne.
-5. Abrir 1.33.0 con las tres reglas nuevas de la coordinadora: tope de ~12 criterios por REQ, un defecto
-   de forma no cuesta vuelta, y la re-validación verifica cierre en vez de volver a atacar.
+1. **Reiniciar la sesión.** Los hooks se cargan al arrancar el proceso: hasta que se reinicie sigue
+   gobernando 1.32.0, que es la versión con el agujero que este parche cierra.
+2. **Avisar a los proyectos que corrieron 1.31.0 o 1.32.0**: pudieron cerrar un REQ `critico` sin
+   auditoría aprobada. El procedimiento está en `skills/arnes-upgrade/SKILL.md` § `Hacia 1.32.1`, y
+   declara **qué encuentra y qué no puede encontrar**.
+3. **Abrir 1.33.0 por las palancas de coste, no por los REQ** (decisión del propietario): la puerta de
+   «¿esta prueba mide algo?», el punto caliente del banco —que es `32-huecos-auditoria-r001`, 75,7 s de
+   los 92, **no** el que la coordinadora dijo primero— y `tests/util/` con las sondas compartidas.
+4. Núcleo de 1.33.0: REQ-011 (la puerta posterior), el barrido por estado de SEC-025, el barrido de base
+   de SEC-029, y el **rigor comprobable por máquina** contra las rutas realmente tocadas.
 
 ## Bloqueos
-- Ninguno. La fusión, el tag y la publicación están delegados cuando todo está en verde; un veto del
-  auditor o un hallazgo bloqueante devuelven la decisión al propietario, y así ocurrió en este ciclo.
+- Ninguno. La fusión, el tag y la publicación se ejecutaron por delegación con todo en verde. El auditor
+  sostuvo en R-007 y R-008 que la decisión volvía al propietario; en R-009 declaró que **la salvedad
+  decae**. La discrepancia queda escrita en `docs/PENDIENTES.md`, decisión 4.
 
 ## Pendientes (cola)
 - [ ] Decisión editorial del propietario: nombres de proyectos consumidores en el árbol público, y las

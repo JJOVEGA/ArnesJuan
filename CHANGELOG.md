@@ -2,6 +2,21 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Cierre] — 2026-09-07 · Cierre documental de la ventana 1.32.1
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+`REQ-015` y `REQ-016` a `completado` **por la puerta**, con `Edit` y nunca por consola. `v1.32.1`
+publicada, tag verificado contra los tres manifiestos, instalación estable actualizada con los hooks
+**idénticos al tag**. Se registra lo que cruza a 1.33.0 con dueño y ventana: `SEC-020`, `SEC-030`,
+`H-07`, `H-06` y el bloque derivado que publica un veredicto sobre una cabecera que la puerta se niega
+a medir.
+
+**La lección nueva, y apareció cuatro veces en una sola ventana:** *interrogar al mecanismo tiene una
+vía nueva cada vez; interrogar a la propiedad no envejece.* Los cinco casos de banco vacíos, el barrido
+de migración, el control de datos de cliente y el guardián del intérprete son el **mismo error de
+forma** — preguntar por la **vía** cuando la propiedad es de **estado**. Es la columna vertebral de
+1.33.0.
+
 ## [1.32.1] — 2026-09-07 · El parche que no parcheaba a la primera
 > Origen: GitHub (commit de la ventana) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos`, `desarrollador`, `qa-tester` (Opus), `auditor-seguridad` · gobernado por la instalación estable **1.32.0**.
 
