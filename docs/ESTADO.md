@@ -36,10 +36,22 @@ que faltan suman ~410 k. Parar antes es más barato que quedarse sin cupo a mita
 | Cociente de duplicación de `arnes_sin_cita` | 3,95 — **cuadrático** | **1,90 — lineal** |
 | Sección `32-huecos-auditoria-r001` | 76,19 s | **9,60 s** |
 | Banco (las 42 secciones de antes) | 95,66 s | **45,14 s** |
-| Pared de los 60 s del hook | 0,94 MB | **1,60 MB** |
+| Pared de los 60 s del hook | 0,94 MB | **sube — magnitud RETIRADA, ver abajo** |
 
 La última fila es un **beneficio no buscado**: subir la pared de agotamiento es `SEC-030`, con dueño
-propio, y sale gratis al quitar la cuadraticidad. Medido y anotado.
+propio, y sale gratis al quitar la cuadraticidad.
+
+> **Corrección (2026-09-07, QA-017-05). La cifra «1,60 MB» se retira: la sonda no repite.** Seis
+> corridas del mismo árbol dan **1,08 · 1,32 · 1,78 · 2,64 · 2,65 · 3,98 MB**. Las dos series que
+> creíamos discordantes —2,01 y 1,46— **no discrepan: son dos extracciones de la misma distribución**, y
+> la serie de QA las contiene a las dos. Causa medida: los tres tiempos base son **una sola muestra cada
+> uno** —contra la regla del mínimo de k que la propia sección enuncia—, dos de ellos entran como
+> diferencia de muestras únicas, y el exponente resultante va **en el exponente** de la extrapolación;
+> además el arranque que se resta osciló 0,10–0,21 s según hubiera vecinos. **La dirección del beneficio
+> se sostiene 6 de 6; la magnitud, no.** Dueño: `SEC-030`. Lo que hay que retener no es el número: es
+> que **lo publicamos como medido en el CHANGELOG y en este tablero**, y lo cazó el endurecimiento que
+> el analista había metido esa misma tarde —obligar a que cada cifra nombre su corrida—, que **se pagó
+> a sí mismo en su primera validación**.
 
 **El arreglo es una sentencia**, con equivalencia por construcción:
 `case "${l%$CR}" in *$CR*)` → `case "$l" in *$CR?*)`. La guarda **no se movió**: sigue siendo la
@@ -95,7 +107,7 @@ rehacer la resta. Nadie la había comprobado.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-07 15:27
+## Estado derivado — 2026-09-07 16:02
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -105,7 +117,7 @@ rehacer la resta. Nadie la había comprobado.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.33.0` @ `bf8ca8f` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.33.0` @ `06dea21` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.32.1`
 **Aprobaciones pendientes:** 0
 **REQ:** 17 — completado 12 · en-revisión 1 · en-progreso 2 · bloqueado 0 · otros 2
@@ -119,6 +131,6 @@ _Sólo los REQ abiertos; los 12 completados no se listan._
 | REQ-008 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-011 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-013 | en-revision | con-hallazgos | con-hallazgos | critico | sec-014(contrato),sec-020(contrato),qa-2… |
-| REQ-017 | en-progreso | pendiente | pendiente | critico | (ninguno) |
+| REQ-017 | en-progreso | con-hallazgos | pendiente | critico | qa-017-01(contrato),qa-017-02(instrument… |
 
 <!-- ARNES:DERIVADO fin -->

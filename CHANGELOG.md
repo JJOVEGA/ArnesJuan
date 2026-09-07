@@ -123,6 +123,50 @@ Archivos: `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-ca
 `tests/escenarios/hooks/README.md`, `.github/workflows/banco.yml`, `docs/PENDIENTES.md`,
 `docs/qa/1.33.0.md`, `requirements/REQ-017.md`.
 
+## [Interno] — 2026-09-07 · QA de REQ-017: `con-hallazgos`, y se retira una cifra que publicamos como medida
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+**Veredicto `QA: con-hallazgos`, vuelta 0 de 3.** Ocho de los nueve criterios PASS; banco `842 PASS ·
+0 FAIL · 3 SKIP` en tres vueltas sin un caso flaky, y los tres SKIP verificados uno a uno —los dos de
+CA-05 **sí miden al encenderlos** (PASS en 84,29 s), o sea que no son la clase de H-08—.
+
+**Sólo bloquea uno, y es bueno: `QA-017-01` (`contrato`).** CA-01 promete que el comportamiento «no
+cambia» para una línea cualquiera, y **hay contraejemplo reproducible**: bajo locale UTF-8,
+`${l%$'\r'}` en bash 5.3.9 **no devuelve un sufijo sino basura distinta en cada evaluación de la misma
+entrada**. La sentencia nueva es determinista y correcta ⇒ **REQ-017 cierra un fallo en abierto de
+v1.32.1**, y eso hay que declararlo en el REQ como se declaró la pared de los 60 s. *(QA dice también
+lo que no consiguió: no reprodujo una decisión distinta del guardián, porque la puerta recorre la
+cabecera dos veces y el segundo recorrido lo cazaba.)*
+
+**CORRECCIÓN — se retira la cifra «≈ 1,60 MB» publicada más abajo en esta misma bitácora
+(`QA-017-05`).** La sonda de CA-09 **no repite**: seis corridas del mismo árbol dan 1,08 · 1,32 · 1,78 ·
+2,64 · 2,65 · 3,98 MB. Las dos series que se creían discordantes —2,01 y 1,46— **no discrepan: son dos
+extracciones de la misma distribución**. Causa: los tiempos base son **una sola muestra cada uno**
+—contra la regla del mínimo de k que la propia sección enuncia—, y el exponente resultante va en el
+**exponente** de la extrapolación. **La dirección del beneficio se sostiene 6 de 6; la magnitud, no.**
+Dueño `SEC-030`. Lo cazó el endurecimiento que el analista había metido esa misma tarde —que cada cifra
+nombre su corrida—: **se pagó a sí mismo en su primera validación.**
+
+**Dos hallazgos que hacen mentir a la prueba, y por eso se arreglan ahora aunque sean `instrumento`:**
+`QA-017-03` — CA-05 **concede PASS a un numerador que falló** (con los hooks sustituidos por un sello
+que siempre permite, la sección sale en 14 FAIL y rc 1, el rc se descarta, el plazo cae a 16 s y las dos
+mitades dan PASS, incluida la que se llama *«la comparación no se compra dejando de probar»*); y
+`QA-017-04` — **`rc=137` no prueba vencimiento**: matar al hijo desde fuera a los 0,6 s de un plazo de
+60 s devuelve 137 y el caso lo lee como demostrado; en un camino cuadrático el OOM kill es el modo de
+muerte más probable. Sólo 124 prueba expiración.
+
+**Escalado al auditor (`QA-017-07`):** `arnes_norm_clave`, **idéntica en los dos árboles**, devuelve una
+clave **distinta en cada llamada con la misma entrada** bajo UTF-8 con un byte multibyte inválido al
+principio de línea. Un lector no determinista dentro de un guardián. REQ-017 **reduce** la exposición y
+no la introduce.
+
+**Y lo que QA miró sin encontrar nada, que aquí cuenta como evidencia:** la equivalencia atacada de
+cinco maneras —exhaustivo hasta longitud 3 sobre 21 símbolos con todos los metacaracteres de glob
+(**9 724 entradas, 0 divergencias**), 40 000 aleatorias bajo dos locales × cinco combinaciones de
+`shopt`, fronteras a escala, cadenas de 1–10 CR finales, los 255 bytes tras un CR—. La única familia
+divergente es la de `QA-017-01`, **y ahí gana la implementación nueva**. Coste: 33 min de reloj,
+~205 k tokens declarados (256–283 k con la corrección de subestimación).
+
 ## [Interno] — 2026-09-07 · La tarde del canal: nueve piezas de un proyecto consumidor, y una lección de clasificación
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 
