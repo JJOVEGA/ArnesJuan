@@ -29,6 +29,7 @@ arnes_guard_completado() {
   local disk qa seg sens rigor hall h id clase pending abiertas tmp cmd out rc disk_medible acc c prof ci
   local -a piezas=()
   local modo resultante reconstruido np k old new ra done_norm est_antes est_despues
+  local cita_desp est_citado cr_desp cr_linea
 
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
@@ -196,13 +197,22 @@ arnes_guard_completado() {
   if [ "$modo" = "W" ]; then
     nuevo="${piezas[2]:-}"; resultante="$nuevo"
   else
-    # Sin CR: los proyectos en Windows guardan CRLF y la herramienta casa el `old_string`
-    # igual; si aqui no casara, se caeria a los fragmentos y el bypass volveria por la
-    # puerta de atras. Los lectores de campos ya quitan el CR, asi que nada cambia.
-    resultante="${disk//$'\r'/}"; reconstruido=1
+    # CRLF -> LF, y SOLO eso: los proyectos en Windows guardan CRLF y la herramienta casa
+    # el `old_string` con LF; si aqui no casara, se caeria a los fragmentos y el bypass
+    # volveria por la puerta de atras. Los lectores de campos descuentan el resto del CR.
+    #
+    # POR QUE NO SE RETIRA TODO CR, que es lo que hacia hasta 1.32.1: el texto resultante
+    # es lo que LEE el lector de cabecera, y ese lector escanea el rango `<!-- … -->` sobre
+    # la linea cruda precisamente porque retirar un caracter puede FABRICAR un delimitador
+    # (`-\r->` -> `-->`). Retirarlo aqui reintroducia la misma fabricacion un paso antes,
+    # por la via del `Edit`: medido, un REQ `critico` con `-\r->` en DISCO cerraba con
+    # `Seguridad: pendiente` vigente (H-01, `docs/qa/1.32.1-hallazgos.md`; CA-02 de REQ-016
+    # nombra esta clase). Un CR seguido de LF es un fin de linea y se normaliza; un CR
+    # suelto en mitad de una linea NO lo es, y ya no se toca aqui. Pregunta cerrada.
+    resultante="${disk//$'\r\n'/$'\n'}"; reconstruido=1
     # k arranca en 2: piezas[0] es la bandera de bytes de control y piezas[1] el modo.
     for ((k = 2; k + 2 < np; k += 3)); do
-      old="${piezas[k]//$'\r'/}"; new="${piezas[k+1]//$'\r'/}"; ra="${piezas[k+2]}"
+      old="${piezas[k]//$'\r\n'/$'\n'}"; new="${piezas[k+1]//$'\r\n'/$'\n'}"; ra="${piezas[k+2]}"
       nuevo+="$new"$'\n'
       if [ -z "$old" ] || [[ "$resultante" != *"$old"* ]]; then reconstruido=0; continue; fi
       # Sustitucion literal: patron y reemplazo entre comillas, asi `*`, `[` o `&` en
@@ -287,8 +297,46 @@ arnes_guard_completado() {
     # cabecera del documento que quedara escrito. Por eso una linea de historia
     # `Estado: completado (revertido)` no es una transicion, y reabrir un REQ ya cerrado
     # tampoco.
-    arnes_estado_cabecera "$resultante"; est_despues="$ARNES_ESTADO"
+    arnes_estado_cabecera "$resultante"
+    est_despues="$ARNES_ESTADO"; cita_desp="$ARNES_ESTADO_CITA"; est_citado="$ARNES_ESTADO_CITADO"
+    cr_desp="$ARNES_ESTADO_CR"; cr_linea="$ARNES_ESTADO_CR_LINEA"
     arnes_estado_cabecera "$disk";       est_antes="$ARNES_ESTADO"
+    # UN CR QUE NO TERMINA LA LINEA: tampoco se juzga, se DENIEGA. Es la MISMA regla que el
+    # rango sin cerrar, aplicada al caracter: la cabecera no se puede MEDIR (SEC-024,
+    # R-007). El motivo cita la linea con el CR escrito `\r`, porque un renderizador de
+    # HTML puede ESCONDER el bloque entero —trata `<!` seguido de algo que no sea `--` como
+    # bogus comment y lo consume hasta el primer `>`—, asi que decir «hay un CR» sin decir
+    # DONDE deja a la persona buscando texto que su editor no le muestra.
+    #
+    # Y AQUI NO SE EXIGE QUE EL ESTADO CAMBIE, a diferencia del rango sin cerrar, que si lo
+    # exige. No es una inconsistencia: el CR puede FABRICAR el propio estado terminal
+    # —`Estado: comple\rtado` se lee `completado` porque la normalizacion de la clave
+    # descuenta el CR—, asi que sobre una cabecera que no se puede medir el «ya estaba
+    # cerrado» puede ser un artefacto del mismo defecto que se esta midiendo, y usarlo como
+    # eximente seria preguntarle al defecto si hay defecto. La friccion queda acotada a los
+    # REQ que DECLARAN el estado terminal, y la salida es de una linea: retirar el CR (la
+    # edicion que lo retira no lleva CR y no se deniega). Reabrir un REQ nunca se bloquea.
+    if [ "$cr_desp" = "1" ] && [ "$est_despues" = "$done_norm" ]; then
+      arnes_deny "ARNES: no se puede completar '$rel': su cabecera lleva un retorno de carro (CR) que NO termina la linea, en «$cr_linea». Un CR suelto en mitad de una linea no es un fin de linea: es un caracter invisible que puede FABRICAR delimitadores para unos lectores y no para otros —un '<!'+CR+'--' que un renderizador de HTML esconde y esta puerta no lee como comentario, o un 'Seg'+CR+'uridad:' que se lee como la clave 'Seguridad'—, asi que la cabecera no se puede MEDIR y una puerta que no puede medir no deja pasar (AGENTS.md 1). Salida: retira ese CR. El CR que TERMINA una linea es transporte (CRLF de Windows) y no cuenta: un REQ guardado entero en CRLF cierra igual que en LF."
+    fi
+    # UN RANGO DE COMENTARIO QUE ABRE Y NO CIERRA EN LA CABECERA: no se juzga, se DENIEGA.
+    #
+    # El interior de un `<!-- ... -->` no declara campo (arnes_sin_cita, lib.sh), y eso
+    # cierra el fail-open por el que un veredicto CITADO gobernaba. Pero si el rango no
+    # cierra, la cabecera deja de poder MEDIRSE: no se sabe cuantos veredictos se trago ni
+    # cual gobierna. Ahi la regla es la de siempre —una puerta que no puede medir no deja
+    # pasar— y, sobre todo, NUNCA se permite por AUSENCIA del campo que el rango se trago:
+    # un campo vacio significa «no lo declara», y eso es justo lo que la puerta perdona.
+    #
+    # Se exige que HAYA un intento de cierre, no cualquier edicion: el estado terminal
+    # leido de la cabecera, o —cuando el rango se trago la propia linea del estado— el que
+    # esa linea declaraba desde dentro de la cita. Denegar toda edicion de un REQ con un
+    # comentario mal cerrado seria friccion constante sobre algo que no cierra nada, y la
+    # friccion termina con alguien apagando el guard (AGENTS.md 13).
+    if [ "$cita_desp" = "1" ] && [ "$est_antes" != "$done_norm" ] &&
+       { [ "$est_despues" = "$done_norm" ] || [ "$est_citado" = "$done_norm" ]; }; then
+      arnes_deny "ARNES: no se puede completar '$rel': su cabecera ABRE un rango de comentario '<!--' que NO se cierra con '-->' antes del fin de la cabecera (el primer '## '). Lo que cae dentro de un comentario no declara campo, asi que con el rango abierto esta puerta no puede saber que veredictos se han quedado dentro ni cual gobierna — y no permite por AUSENCIA de un campo que un comentario se trago. Salida: cierra el comentario con '-->' dentro de la cabecera, o saca la nota fuera de ella. Un veredicto historico se documenta en el Historial de cambios, no en la cabecera."
+    fi
     [ "$est_despues" = "$done_norm" ] || return 0
     [ "$est_antes" != "$done_norm" ] || return 0
   else
@@ -297,6 +345,19 @@ arnes_guard_completado() {
     # siempre —el banco fabrica ediciones asi y tiene que seguir midiendo lo mismo—.
     # Here-string en vez de `printf | grep`: la tuberia costaba un fork de mas.
     grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" <<< "$nuevo" || return 0
+    # Y el mismo criterio sobre el FRAGMENTO: si la cabecera que se leyo —en disco o en lo
+    # entrante— dejo un rango de comentario abierto (`ARNES_CITA_ABIERTA`, lo publica
+    # `arnes_campos_req`), los campos que siguen a ese rango no se han leido y el cierre no
+    # se puede medir.
+    if [ "${ARNES_CITA_ABIERTA:-0}" = "1" ]; then
+      arnes_deny "ARNES: no se puede completar '$rel': la cabecera que esta puerta pudo leer ABRE un rango de comentario '<!--' que no se cierra con '-->' antes del primer '## ', asi que los campos que vienen detras no se han leido y el cierre no se puede medir. Una puerta que no puede medir no deja pasar. Salida: cierra el comentario dentro de la cabecera, o saca la nota fuera de ella."
+    fi
+    # Y el mismo criterio para el CR que no termina la linea (`ARNES_CR_INTERIOR`, lo
+    # publica `arnes_campos_req` por la misma via que el rango abierto): si la cabecera que
+    # esta puerta pudo leer —en disco o en lo entrante— lleva uno, no se puede medir.
+    if [ "${ARNES_CR_INTERIOR:-0}" = "1" ]; then
+      arnes_deny "ARNES: no se puede completar '$rel': la cabecera que esta puerta pudo leer lleva un retorno de carro (CR) que NO termina la linea, en «${ARNES_CR_INTERIOR_LINEA}». Un CR suelto en mitad de una linea es un caracter invisible que puede FABRICAR delimitadores para unos lectores y no para otros, asi que la cabecera no se puede MEDIR y una puerta que no puede medir no deja pasar (AGENTS.md 1). Salida: retira ese CR. El CR que TERMINA una linea es transporte (CRLF de Windows) y no cuenta."
+    fi
   fi
 
   # --- Nivel de rigor: cuanta ceremonia exige ESTE requerimiento ---

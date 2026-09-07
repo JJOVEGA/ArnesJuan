@@ -106,9 +106,14 @@ cd -- "$PROY" || no_medido "no se pudo entrar en $PROY."
 lee_campo_archivos() {   # <texto> -> ARNES_ARCH_CRUDO ; 1 si el REQ no declara el campo
   ARNES_ARCH_CRUDO=''
   local l hallado=1
+  # `arnes_campo_linea` y no `arnes_norm_clave` a secas: el lector de cabecera es UNO, y
+  # desde 1.32.1 incluye la noción de CITA —lo que vive dentro de un `<!-- … -->` no
+  # declara campo—. Este análisis leía el interior de un comentario como una declaración
+  # de `Archivos:`, así que un mapa comentado seguía gobernando el reparto.
+  ARNES_CITA=0
   while IFS= read -r l; do
     case "$l" in '## '*) break ;; esac
-    arnes_norm_clave "$l" || continue
+    arnes_campo_linea "$l" || continue
     case "$ARNES_CLAVE" in 'Archivos') ARNES_ARCH_CRUDO="$ARNES_VALOR"; hallado=0 ;; esac
   done <<< "$1"
   return "$hallado"
@@ -291,6 +296,21 @@ for f in "${ARCHIVOS_REQ[@]}"; do
   fi
   texto="$ARNES_TEXTO"
   arnes_estado_cabecera "$texto"; est="$ARNES_ESTADO"
+  # UN CR QUE NO TERMINA LA LINEA: la cabecera no se puede medir, y de lo que no se sabe
+  # esta herramienta no dice «disjunto» (misma regla que el archivo ilegible, arriba). Lo
+  # publica el lector de cabecera de `hooks/lib.sh`, que es el mismo que usa la puerta, así
+  # que aquí no hay una segunda opinión sobre qué es medible.
+  #
+  # SE JUZGA ANTES QUE EL `Estado:`, y a propósito: el CR puede FABRICAR la clave o un
+  # delimitador de comentario, así que el propio `Estado:` que se acaba de leer es lo que
+  # está en duda — saltarse un REQ por «ya está cerrado» sería creerle a la lectura que se
+  # está declarando no medible. Efecto lateral declarado: un REQ en estado terminal con un
+  # CR suelto aparece en la lista y colisiona. Es la dirección segura y sale nombrado.
+  if [ "$ARNES_ESTADO_CR" = "1" ]; then
+    ID[n]="${base%.md}"; ESTADO[n]="${est:-?}"; DECL[n]=no; PATRONES[n]=''
+    MOTIVO[n]="su cabecera lleva un retorno de carro (CR) que NO termina la línea, en «$ARNES_ESTADO_CR_LINEA»: no se puede medir (la puerta de cierre también la deniega)"
+    n=$((n+1)); continue
+  fi
   if [ "${#IDS[@]}" -eq 0 ]; then
     # Sin argumentos se evalúan los REQ ABIERTOS: los que NO están en el estado terminal
     # que declara el manifiesto. Un REQ cerrado ya no se despacha, y saltarlo no esconde

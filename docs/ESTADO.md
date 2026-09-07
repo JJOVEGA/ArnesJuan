@@ -53,7 +53,7 @@ gramática** o **preguntar después** en vez de antes, nunca un patrón más lar
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-07 05:45
+## Estado derivado — 2026-09-07 12:45
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -63,21 +63,21 @@ gramática** o **preguntar después** en vez de antes, nunca un patrón más lar
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.32.0` @ `9e04e56` — CON CAMBIOS SIN COMITEAR
-**Arnés:** plugin instalado `1.31.0` · el proyecto declara `1.32.0` — **migración pendiente** (`/arnes-upgrade`)
+**Repositorio:** `cand/1.32.1` @ `06b6340` — CON CAMBIOS SIN COMITEAR
+**Arnés:** plugin instalado `1.32.0` · el proyecto declara `1.32.1` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 0
-**REQ:** 14 — completado 8 · en-revisión 3 · en-progreso 1 · bloqueado 0 · otros 2
+**REQ:** 16 — completado 10 · en-revisión 3 · en-progreso 1 · bloqueado 0 · otros 2
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
-_Sólo los REQ abiertos; los 8 completados no se listan._
+_Sólo los REQ abiertos; los 10 completados no se listan._
 
 | REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
 |---|---|---|---|---|---|
 | REQ-007 | en-progreso | pendiente | pendiente | critico | qa-114(contrato,dueñoanalista-requerimie… |
 | REQ-008 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-011 | pendiente | pendiente | pendiente | critico | (ninguno) |
-| REQ-012 | en-revision | aprobado | aprobado | critico | (ninguno) |
 | REQ-013 | en-revision | con-hallazgos | con-hallazgos | critico | sec-014(contrato),sec-020(contrato),qa-2… |
-| REQ-014 | en-revision | aprobado | aprobado | critico | h-03(instrumento),h-07(instrumento),h-12… |
+| REQ-015 | en-revision | aprobado | aprobado | critico | (ninguno) |
+| REQ-016 | en-revision | aprobado | aprobado | critico | h-07(instrumento) |
 
 <!-- ARNES:DERIVADO fin -->

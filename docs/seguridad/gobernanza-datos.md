@@ -2,7 +2,8 @@
 
 > Documento del `auditor-seguridad`. Política de clasificación, acceso, retención y
 > cumplimiento. Se actualiza cuando cambia el alcance o los datos que el repositorio maneja.
-> Última revisión: 2026-09-05 (auditoría de REQ-001, candidata 1.30.3).
+> Última revisión: **2026-09-07** (R-007, ventana 1.32.1: cambio de accesos y canal privado
+> con repositorio propio — SEC-026 y SEC-027). Revisión anterior: 2026-09-05 (REQ-001, 1.30.3).
 
 ## 1. Qué es este repositorio, a efectos de datos
 
@@ -24,9 +25,9 @@ ausencia de superficie**, no por descuido.
 | Clase | Qué es | Dónde vive | Regla |
 |---|---|---|---|
 | **Público** | Código del plugin, `AGENTS.md`, `requirements/`, `docs/`, `CHANGELOG.md`, informes de QA y de seguridad **de este repositorio** | Repositorio público `JJOVEGA/ArnesJuan` | Se publica. Redactado en español y sin datos de terceros |
-| **Privado — de cliente** | Informes de defectos del arnés que llegan **desde proyectos reales**: nombres de proyecto, identificadores de sus REQ, rutas, extractos de su código o de sus datos | **Fuera** del repositorio: canal privado; `mejoras-arnes-*.md` e `insumos/` están en `.gitignore` | **Nunca** entra al repositorio, ni citado literalmente. Se traduce a una **clase de defecto** genérica y esa clase, ya anónima, es lo que se convierte en REQ |
+| **Privado — de cliente** | Informes de defectos del arnés que llegan **desde proyectos reales**: nombres de proyecto, identificadores de sus REQ, rutas, extractos de su código o de sus datos | **Fuera** de este repositorio: canal privado; `mejoras-arnes-*.md`, `reporte-arnes-*.md` e `insumos/` están en `.gitignore`. **Desde el 2026-09-07** tienen sitio propio: `JJOVEGA/ArnesJuan-informes`, **privado**, con issues y sin colaboradores más que el dueño (SEC-026) | **Nunca** entra a **este** repositorio, ni citado literalmente. Se traduce a una **clase de defecto** genérica y esa clase, ya anónima, es lo que se convierte en REQ. **Que ahora haya un repositorio privado del mismo propietario NO relaja esta regla: la facilita de romper** — el traslado literal está a un copiar y pegar, y es exactamente lo que §3 prohíbe |
 | **Local de máquina** | `.mcp.json` real, `.claude/settings.local.json`, `memory/` | Disco de la máquina | En `.gitignore`. No se versiona |
-| **Identidad operativa** | Dos cuentas de GitHub: una con permiso de push sin administración y otra propietaria (rulesets, publicación) | GitHub | Sin secretos en el repositorio. La autenticación la gestiona `gh`; ningún token vive en el árbol |
+| **Identidad operativa** | **Dos** cuentas de GitHub con acceso al repositorio público: `jvega-habitat` (push, sin administración) y `JJOVEGA` (propietaria: rulesets, publicación). Verificado con `gh` el 2026-09-07 | GitHub | Sin secretos en el repositorio. La autenticación la gestiona `gh`; ningún token vive en el árbol. **Mínimo privilegio, y aquí no es una frase:** `write` sobre este repositorio es acceso al **mecanismo que gobierna a todos los proyectos que instalan el plugin**, no a un repositorio. El 2026-09-07 se retiró el `write` de `jvega-consisa` y una invitación caducada (SEC-026) |
 
 ## 3. Regla del canal privado (es la regla que más importa aquí)
 
@@ -35,9 +36,27 @@ privado y contiene contexto del cliente. **La traducción a este repositorio con
 defecto y descarta el contexto**: se escribe la forma del fallo (qué se rodeaba y por dónde),
 nunca el proyecto, el REQ ajeno, la ruta ajena ni el dato ajeno.
 
-Verificación en cada auditoría: `git diff origin/main..HEAD | grep '^+'` sobre lo añadido,
-buscando nombres de organización, de proyecto o de personas. Hecho en la auditoría de
-REQ-001 (2026-09-05): **sin hallazgos** de datos de cliente en las ~5.900 líneas añadidas.
+Verificación en cada auditoría, **en dos mitades, porque una sola no puede sostener la regla**:
+
+1. **Incremental:** `git diff origin/main..HEAD | grep '^+'` sobre lo añadido, buscando nombres de
+   organización, de proyecto o de personas. Hecho en la auditoría de REQ-001 (2026-09-05): **sin
+   hallazgos** en las ~5.900 líneas añadidas. Repetido en R-007 (2026-09-07) sobre lo añadido por la
+   ventana 1.32.1: **sin hallazgos**, y tampoco patrones de credencial, ni `insumos/` o
+   `reporte-arnes-*` en el índice.
+2. **De base, y es la mitad que faltaba:** una pasada sobre **todo** el árbol versionado. Un control
+   **diferencial no puede encontrar, por construcción, lo que ya está en la base** — y no es
+   hipotético: en R-007 el barrido de base encontró **`CHANGELOG.md:1615` nombrando a un proyecto
+   consumidor**, publicado desde el commit `73f9452` (PR #26) y por tanto **fuera del alcance de
+   todas** las verificaciones incrementales anteriores, que reportaron «sin hallazgos» con razón. Es
+   **SEC-029**. La propiedad que hay que sostener es de **estado** («ninguna ruta versionada nombra un
+   proyecto consumidor, una organización ni una persona ajena»), no de cambio. La lista de nombres a
+   buscar vive en **un solo sitio y FUERA de este repositorio** (`insumos/`, en `.gitignore`): una
+   lista de nombres de cliente publicada para poder buscarlos sería el mismo fallo con más pasos.
+
+**Y el residual que no se deshace:** lo que ya se publicó en el historial de un repositorio público
+**no se retira reescribiendo el historial** —rompe toda clonación, choca con `non_fast_forward` y no
+recupera las copias distribuidas—. Se corrige el presente, se declara el residual y se cierra la vía
+(SEC-029).
 
 ## 4. Secretos
 
@@ -66,6 +85,17 @@ REQ-001 (2026-09-05): **sin hallazgos** de datos de cliente en las ~5.900 línea
   humano de fusión y publicación es **política declarada** en `AGENTS.md` §4 y §6 —delegada al
   coordinador por el propietario el 2026-09-05—, no una restricción de la plataforma. Queda
   dicho aquí para que nadie lo confunda con enforcement.
+- **Medido el 2026-09-07 (SEC-027), y el residual queda `aceptado` con condiciones.** Leído el
+  ruleset con `gh`: `pull_request` activa (todo por PR) pero con
+  `required_approving_review_count: 0`, `require_last_push_approval: false` y
+  `require_code_owner_review: false`; `deletion` y `non_fast_forward` activas; el check
+  `hooks-en-linux` **requerido y estricto**. Ejercicio real: los PR **#37, #38, #39 y #40** fueron
+  abiertos y fusionados por la misma cuenta sin admin, con **0 revisiones**; el push directo a `main`
+  sí se rechaza. Es decir: **una cuenta con `write` puede abrir y fusionar su propio cambio del
+  plugin** en cuanto el banco pase en Linux. **No se exige el control**, por la asimetría razonada en
+  SEC-027 —con dos cuentas, la única revisión posible la firmaría quien ya decide, así que compraría
+  un turno y no independencia—, y **las tres condiciones que sostienen ese `aceptado`** viven en esa
+  entrada; la primera es que **el número de cuentas con `write` no crezca**.
 - Dentro del árbol, el mapeo de quién edita qué vive en `.arnes/config.json`
   (`codigo_app.globs`) y lo aplica `guard-codigo`.
 - **Actualizado el 2026-09-06 (candidata 1.31.0, SEC-006 parte a).** El manifiesto ya está

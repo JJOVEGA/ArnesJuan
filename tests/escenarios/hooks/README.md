@@ -29,7 +29,7 @@ bash tests/escenarios/hooks/run.sh secciones/07-*.sh     # sólo esa sección, m
 bash tests/escenarios/hooks/run.sh bash                  # sólo los casos cuyo nombre contenga "bash"
 bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del corredor
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **735 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **828 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`).
 
 En vuelta parcial —con un selector de archivos o con filtro de nombre— el cuadre **total** queda
@@ -177,6 +177,16 @@ Tres reglas nacidas de fallos reales:
 | `arnes-paralelo` | el campo nuevo NO cambia ningún veredicto de `guard-completado` | allow |
 | `arnes-paralelo` | un archivo aún por crear, contra el glob o el directorio que lo alcanza | **colisiona** en los **dos** órdenes |
 | `arnes-paralelo` | un REQ del que no se puede leer el `Estado:` de la cabecera | `sin declarar` + rc ≠ 0 |
+| Cita | un veredicto autorizante citado dentro de un `<!-- … -->` de la cabecera | **deny** por el vigente |
+| Cita | el mismo, con las seis formas de énfasis en la clave | **deny**, mismo motivo |
+| Cita | un rango que abre y no cierra dentro de la cabecera | **deny** + cita el rango |
+| Cita | el rango sin cerrar se traga el campo que faltaba | **deny**, nunca allow por ausencia |
+| Cita | el veredicto vigente SÍ autoriza y la cabecera trae la misma cita | allow |
+| Cita | clave decorada o sangrada FUERA de todo rango | sigue gobernando |
+| Cita | insertar un rango en cualquier cabecera del corpus del banco | ningún `deny` → `allow` |
+| Cita | los dos lectores (`lib.sh` y `campos-req.awk`) sobre el mismo documento | valores idénticos |
+| `arnes-lectura` | la línea decorada que gobierna un campo | se nombra, rc **0** |
+| `arnes-lectura` | dos declaraciones del mismo campo y gobierna la decorada | anomalía + rc ≠ 0 |
 
 ## Por qué importa
 - La distinción coordinadora vs. subagente se apoya en el campo `agent_id` del input del hook

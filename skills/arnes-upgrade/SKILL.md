@@ -251,19 +251,21 @@ nada.
      `docs/ESTADO.md` **en cada parada de agente y de subagente**. Es un archivo que él mantiene y
      que a partir de ahora tiene una parte que se reescribe sola. Se apaga con
      `estado_derivado.activo: false`.
-     **Lo que garantiza y lo que no, dicho exacto** (corregido en 1.32.0; antes esta nota decía
-     «idempotentes, no se corrompen», y estaba **medido falso**):
+     **Lo que garantiza y lo que no, dicho exacto** (corregido dos veces: en 1.32.0 esta nota decía
+     «idempotentes, no se corrompen», **medido falso**; en 1.32.1 su mitad «No» declaraba abierta la
+     carrera de publicación, que ya está cerrada):
      - **Sí:** el bloque es **derivado**, se recalcula entero desde el disco y no acumula estado, así
        que dos paradas seguidas escriben lo mismo; el hook sólo toca lo que hay **entre sus
        marcadores** y publica con un `mv` sobre el destino, así que una parada aislada no deja el
-       archivo a medias.
-     - **No:** dos paradas **simultáneas** no están serializadas. El temporal de publicación tiene
-       **nombre fijo**, así que dos procesos que paran a la vez escriben el mismo temporal y pueden
-       pisarse: medido en este arnés, **1 de 25** vueltas perdió el texto **humano** del archivo. Si
-       vas a despachar **agentes en paralelo** —que es justo lo que 1.32.0 facilita—, ten
-       `docs/ESTADO.md` **versionado en git** (así lo perdido se recupera del historial) o apaga el
-       bloque mientras dure el paralelo. El arreglo —temporal único por proceso y publicación por `rename`— va en
-       **1.32.1** (REQ-015).
+       archivo a medias; y **desde 1.32.1** el temporal de publicación lleva una componente propia
+       del **proceso**, así que dos paradas **simultáneas** tampoco comparten archivo ni se pisan
+       (hasta 1.32.0 el temporal tenía **nombre fijo** y por ahí se perdió el texto **humano** del
+       archivo **1 de 25** vueltas del banco — si venías de una versión anterior, lee «Hacia
+       1.32.1»).
+     - **No:** dos paradas simultáneas **no están serializadas**, y no se pretende que lo estén: si
+       dos publican a la vez **gana la última**, y eso es conforme porque el bloque se deriva del
+       mismo disco. Y si al proceso lo **matan** sin darle salida, su temporal puede sobrevivir
+       hasta la parada siguiente, que lo retira.
   2. La rotación **viene apagada**. Si sus bitácoras pesan (medido: 1,4 MB y 1,3 MB en un
      proyecto), es donde más gana — pero la enciende él, con su `orden`.
 
@@ -611,6 +613,127 @@ este repositorio). Lo que la partición cambia es dónde se cumplen, no si se cu
 índice de bucle. Seis secciones usaban `i` como contador propio y lo pisaban, así que el corredor
 escribía la marca de otra sección y declaraba muertas a seis que habían pasado limpias. Todo lo que
 el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
+
+### Hacia 1.32.1
+- **Nada que migrar en archivos del proyecto, pero MÍRATE tu `docs/ESTADO.md` antes de seguir.** Esta
+  versión cierra una carrera de publicación del hook de continuidad: el temporal por el que publicaba
+  se llamaba **igual siempre** —se derivaba sólo de la ruta del destino—, así que **dos paradas de
+  agente simultáneas escribían el mismo archivo** y, tras el `mv` de una, la escritura tardía de la
+  otra caía sobre el destino ya publicado **desde el primer byte**. En `docs/ESTADO.md` el primer
+  byte es justo donde vive lo que escribiste tú, que es lo único del archivo que el arnés **no puede
+  volver a derivar**.
+- **Qué puede haberte pasado, y no es hipotético:** si corriste una versión afectada **despachando
+  agentes en paralelo** (o con subagentes que paran a la vez), **pudiste perder texto de tu
+  `docs/ESTADO.md`** sin ningún aviso — el bloque derivado se reescribe solo y aparece completo, así
+  que el archivo no *parece* roto. Medido en este arnés: **1 pérdida en 25** vueltas completas de su
+  banco de pruebas, y **0 en 92** ejecuciones dirigidas — el perfil de una carrera, que es por lo que
+  no salta cuando lo buscas.
+- **Cómo recuperarlo si tenías el archivo versionado en git** (y si no lo tenías, ésta es la razón
+  para tenerlo):
+  ```
+  git log --oneline -- docs/ESTADO.md          # busca la última versión con tu texto
+  git show <sha>:docs/ESTADO.md > /tmp/estado-antes.md
+  diff /tmp/estado-antes.md docs/ESTADO.md     # lo tuyo vive FUERA de los marcadores ARNES:DERIVADO
+  ```
+  Se recupera **a mano** y sólo lo de fuera de los marcadores: el bloque de dentro se vuelve a
+  derivar en la parada siguiente, así que no hace falta restaurarlo. **No** uses `git checkout` del
+  archivo entero si desde entonces escribiste cosas nuevas.
+- **Qué versiones están afectadas.** La pertenencia **no es una lista escrita a mano**: se decide por
+  el historial de `hooks/estado-derivado.sh`, es decir **toda versión publicada cuyo temporal de
+  publicación tiene nombre fijo**. Comprobado tag a tag en este repositorio: desde **1.23.0** —donde
+  nació el hook— hasta **1.32.0** inclusive; ejemplos **no exhaustivos** de las más recientes:
+  **1.30.3, 1.31.0, 1.32.0**. Se verifica en un comando:
+  ```
+  git show v1.31.0:hooks/estado-derivado.sh | grep -n 'destino.arnes.tmp'   # afectada si aparece
+  ```
+- **Y si tienes la ROTACIÓN encendida, mírate también sus artefactos.** `hooks/rotar-artefactos.sh`
+  tenía la misma forma en sus cuatro puntos de publicación, así que el origen recortado (tu
+  `CHANGELOG.md`, o el documento cuya sección rotas) y el archivo de historia podían recibir la
+  escritura tardía de otra parada. Viene **apagada** por defecto: si nunca la encendiste, aquí no
+  tienes nada que revisar.
+- **Qué cambia en el código, y qué no.** El temporal pasa a llamarse
+  `<destino>.arnes.tmp.<pid del proceso>`, **sigue en el directorio del destino** —un `mv` entre
+  sistemas de archivos deja de ser atómico— y si un temporal sobrevive a su dueño lo retira la parada
+  siguiente, comprobando antes que ese proceso ya no está vivo. **El contenido del bloque no cambia
+  ni una línea**, la idempotencia es la misma, el hook sigue sin bloquear la parada, sigue inerte sin
+  `.arnes/config.json` y sigue apagándose con `estado_derivado.activo: false`. **No hay llave nueva
+  en el manifiesto y no hay nada que decidir.**
+- **Y no se añadió ningún `flock` ni ninguna serialización**, a propósito: el bloque es **derivado**,
+  así que con dos paradas a la vez **gana la última** y eso es conforme. Un candado traería una
+  dependencia y un modo de fallo nuevos para proteger un contenido que se recalcula solo.
+
+- **Y AUDITA TUS REQ CERRADOS.** Sin eufemismos, y es la frase entera:
+  **en una versión afectada pudiste cerrar un REQ `critico` sin auditoría de seguridad aprobada.**
+  El mecanismo: la puerta de cierre leía el interior de un
+  comentario HTML de la cabecera como si fuera una declaración de campo, así que un
+  `Seguridad: aprobado` **citado** dentro de un `<!-- … -->` —incluso diciendo el comentario que era
+  histórico— desbancaba al veredicto vigente y el REQ cerraba. Vale para **cualquier** campo de la
+  cabecera por el mismo camino: el veredicto de QA, la clase de un hallazgo bloqueante, el nivel de
+  rigor, la sensibilidad. **Y el sitio lo empeora:** el lugar donde alguien escribe «este veredicto
+  es histórico» es precisamente un comentario, así que quien mejor documentaba la historia de sus
+  veredictos se exponía más.
+- **QUÉ HAY QUE AUDITAR, Y SE DICE ANTES QUE NINGÚN COMANDO: la pregunta es de ESTADO, no de vía.**
+  Lo que tienes que revisar es una **propiedad** de tus requerimientos:
+  **cuáles de tus REQ en estado terminal NO cerrarían hoy**, leídos con el lector de esta versión.
+  Ésa —y no la presencia de una forma concreta de escritura en el documento— es la pregunta que
+  acredita que no estuviste expuesto: es una discrepancia entre «está cerrado» y «hoy no cerraría»,
+  así que **no envejece con la vía siguiente que alguien descubra**, porque no describe ninguna vía.
+
+  **Ningún comando de este apartado la responde todavía.** La comprobación por estado —un modo de
+  `tools/arnes-lectura.sh` que conteste «REQ en estado terminal que hoy no cerrarían»— llega en
+  **1.33.0**. Hasta entonces se hace a mano y así: para cada REQ en estado terminal, lee su cabecera
+  —lo que hay antes del primer `## `— y comprueba que el veredicto **vigente** autorizaba ese cierre.
+  Si no lo autorizaba, ese REQ cerró sin la firma que decía tener: reábrelo (`AGENTS.md` §9 — un
+  cambio de requerimiento reabre el trabajo) y que la auditoría lo firme de verdad. **No borres el
+  texto y sigas:** el cierre indebido ya ocurrió, y lo que hay que rehacer es la revisión.
+- **Los barridos POR VÍA que sí puedes correr hoy — y lo que cada uno NO encuentra.** Ayudan a
+  empezar por los sospechosos; **no** sustituyen a la pregunta de arriba:
+  ```
+  # Barrido POR VÍA (una sola): los REQ cuya cabecera abre un comentario BIEN ESCRITO.
+  awk 'FNR==1 { cab=1 } /^## / { cab=0 } cab && /<!--/ { print FILENAME": "FNR": "$0 }' requirements/*.md
+  # Y el informe del arnés, que lee la cabecera como la lee la puerta y nombra lo que no se lee
+  # como está escrito (incluidas las dos vías del retorno de carro, desde 1.32.1).
+  tools/arnes-lectura.sh
+  ```
+  **Estos comandos interrogan una VÍA, no la propiedad**, y el mecanismo tiene una vía nueva cada
+  vez: **no hallar nada NO acredita ausencia de exposición.** Vías conocidas al publicar esta versión
+  que el `awk` de arriba **no encuentra** —ejemplos **no exhaustivos**; el sitio único donde viven es
+  `docs/seguridad/registro-seguridad.md`, SEC-024 y SEC-025—, las dos por un retorno de carro suelto,
+  invisible en tu editor y que un renderizador de HTML puede además **esconder** entero:
+  - el **delimitador de apertura fabricado**, `<!` + CR + `--`: no hay ningún `<!--` que casar, y lo
+    que el autor aparcó dentro del comentario gobernaba;
+  - la **clave fabricada**, `Seg` + CR + `uridad: aprobado`: no necesita comentario ninguno y cerraba
+    un REQ `critico` desde **1.30.3**.
+
+  Las dos las **deniega** 1.32.1 de aquí en adelante. Si el `awk` no saca nada, **no has terminado**:
+  vuelve a la pregunta de estado.
+- **Qué versiones están afectadas.** La pertenencia **no es una lista escrita a mano**: se decide por
+  el historial del **lector de cabecera** (`arnes_norm_clave` en `hooks/lib.sh`), es decir **toda
+  versión publicada que tolera el énfasis de Markdown en la CLAVE del campo y no tiene noción de
+  cita**. Comprobado tag a tag en este repositorio: desde **1.31.0** —donde nació esa tolerancia—
+  hasta **1.32.0** inclusive; las anteriores no leían la clave decorada, así que la cita no las
+  alcanzaba. Se verifica en un comando, tag a tag:
+  ```
+  git show v1.31.0:hooks/lib.sh | grep -c 'arnes_norm_clave'   # >0 = tolera la clave decorada
+  git show v1.31.0:hooks/lib.sh | grep -c 'arnes_sin_cita'     # 0  = sin noción de cita -> AFECTADA
+  ```
+  Las dos condiciones a la vez: la primera sin la segunda es la ventana del defecto.
+- **Qué cambia en el código, y qué no.** El interior de un rango `<!-- … -->` de la cabecera **no
+  declara campo**, en los dos lectores del arnés a la vez (`hooks/lib.sh` y su transcripción
+  `hooks/campos-req.awk`). Un rango que **abre y no cierra** dentro de la cabecera deja una cabecera
+  que no se puede medir, y la puerta **deniega** citando el rango — nunca permite por *ausencia* del
+  campo que el comentario se tragó. **Lo que NO cambia:** la tolerancia de la clave decorada sigue
+  gobernando **fuera** de los rangos (cerró un fail-open real y recortarla lo reabriría), la regla de
+  «última aparición» de los campos y la de «primera» para el estado se conservan, y un `## ` sigue
+  terminando la cabecera aunque viva dentro de un comentario. **No hay llave nueva en el manifiesto y
+  no hay nada que decidir.**
+- **Un aviso nuevo en `tools/arnes-lectura.sh`, y a propósito NO es una anomalía.** El informe nombra
+  ahora la línea que **gobierna** un campo cuando esa línea trae la clave decorada o sangrada,
+  aunque su valor sea impecable — el caso típico lo produce el **corte de un párrafo**, no su
+  contenido. Va en su propio bloque y **no cambia el código de salida**: si además existe **otra**
+  declaración del mismo campo y la que manda es la decorada, entonces sí es anomalía y el informe
+  sale ≠ 0, porque el documento dice dos cosas y la máquina elige una. Un informe que grita por lo
+  inofensivo deja de leerse, y con él lo que sí importa.
 
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 

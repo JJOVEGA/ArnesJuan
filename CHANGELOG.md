@@ -2,6 +2,325 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.32.1] — 2026-09-07 · El parche que no parcheaba a la primera
+> Origen: GitHub (commit de la ventana) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos`, `desarrollador`, `qa-tester` (Opus), `auditor-seguridad` · gobernado por la instalación estable **1.32.0**.
+
+**Dos fallos en abierto en el mecanismo que gobierna a los demás proyectos.**
+
+- **REQ-015 — `usuario/dinero`.** El temporal de **nombre fijo** de la continuidad destruía texto
+  humano de `docs/ESTADO.md` con dos paradas simultáneas. El recurso compartido no era «el momento»:
+  era el **inodo**, y un descriptor abierto mantiene esa ventana el tiempo que uno quiera. De ahí una
+  reproducción **determinista** que sustituye a un caso que fallaba 1 de cada 25 veces.
+- **REQ-016 — `contrato`.** Una **regresión bisecada**: 1.30.2 y 1.30.3 deniegan, **1.31.0 permite**,
+  1.32.0 lo hereda. Un veredicto citado dentro de un comentario HTML de la cabecera cerraba un REQ
+  `critico` **sin auditoría de seguridad aprobada**. Llegó por el informe de un proyecto consumidor.
+
+**Lo que costó, y por qué se cuenta.** 15 comisiones, ~2,3 M de tokens medidos y **3 vueltas dev↔QA
+agotadas**. El primer arreglo **no cerró el agujero**: el retorno de carro se descontaba **antes** de
+escanear el rango, y `-\r->` se convierte en `-->`. Resultó tener **cuatro bocas** —el lector de
+línea, la extracción del `tool_input`, la reconstrucción del `Edit` con el CR en disco y el mapa de
+paralelismo—, y las cuatro se cerraron con una sola **pregunta cerrada**: *una línea de cabecera con
+un CR que no es el que la termina no se puede medir, y una puerta que no puede medir no deja pasar.*
+
+**Tres de los cuatro fallos en abierto de esta ventana los introdujo el propio parche**, y ninguno
+salió de leer el código: los cuatro salieron de **medir la consecuencia**. QA rompió el arreglo del
+desarrollador; el desarrollador se rompió a sí mismo midiendo; el auditor rompió lo que QA había
+aprobado — dos veces.
+
+**Añadido**
+- Publicación concurrente sin colisión: temporal propio de cada proceso, **fail-closed** si no puede
+  componer un nombre propio, y purga que retira sólo lo huérfano (REQ-015).
+- El lector de cabecera tiene **noción de cita**: lo que vive dentro de un rango `<!-- … -->` no
+  declara campo, con la misma regla en los **cuatro** lectores (REQ-016).
+- **CA-12:** una cabecera con un CR interior no se puede medir → **DENY**, por medibilidad y no por
+  veredicto. Con su fila en `AGENTS.md` §13 y en la plantilla heredable.
+- El banco pasa de **683 a 828 casos**, en 41 secciones.
+
+**Corregido**
+- `arnes-paralelo.sh` ya no responde `disjunto` sobre un mapa citado dentro de un comentario.
+- `arnes-lectura.sh` nombra la línea decorada que gobierna, sin cambiar el código de salida por eso.
+- **Cinco casos del banco que no medían nada** y pasaban contra la versión con el agujero.
+- El nombre de un proyecto consumidor, que estaba publicado en este archivo desde el PR #26.
+
+**Residuales declarados, con dueño y ventana 1.33.0:** `H-07` (`arnes_sin_cita` es cuadrática sobre
+líneas largas: el banco pasa de 39 s a 92 s; una llamada normal no se resiente, medido), `SEC-030` (la
+pared de 60 s del hook se alcanza hacia 1,5 MB y `AGENTS.md` §13 no la enumera entre sus huecos), y el
+bloque derivado publicando un veredicto que la puerta se niega a medir.
+
+**Si corriste 1.31.0 o 1.32.0, audita tus REQ cerrados.** El parche cierra la puerta de aquí en
+adelante; **no revisa lo que ya cerró**. El procedimiento está en `skills/arnes-upgrade/SKILL.md`
+§ `Hacia 1.32.1`, y declara qué encuentra y qué **no** puede encontrar.
+
+## [Interno] — 2026-09-07 · Write-back de SEC-024: el tapón, contratado (CA-12) — rama `cand/1.32.1`
+> Origen: Interno (sin commit propio; entra en el commit de la ventana) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (REQ-016, `Rigor: critico`; origen: **hallazgo del auditor de seguridad** `docs/seguridad/registro-seguridad.md` § R-008, SEC-024, clase `contrato`).
+
+**«CA-02 contrata el agujero; nada contrata el tapón.»** El auditor verificó que el código de SEC-024
+cierra las dos caras del retorno de carro y aun así no firmó: el control vivía **sólo** en el código,
+en 19 casos de banco y en el registro de seguridad, así que podía retirarse en la ventana siguiente
+sin que ningún contrato lo notara — la deriva que `AGENTS.md` §9 prohíbe. Prosa de analista, cero
+código, sin vuelta dev↔QA.
+
+- **CA-12 (nuevo), por propiedad y no por sitio:** *una línea de la cabecera con un retorno de carro
+  que no es el que la termina deja una cabecera que **no se puede medir**, y una puerta que no puede
+  medir **no deja pasar** → DENY citando la línea*. Las dos caras —delimitador fabricado y clave
+  fabricada— son **la misma** propiedad, marcadas como ejemplos no exhaustivos, con el sitio único de
+  la lista de caracteres de control (`hooks/lib.sh`).
+- **La denegación es por MEDIBILIDAD, no por veredicto, y eso es lo que se comprueba:**
+  `Estado: comple\rtado` con todo en verde deniega **por la guarda**; resolverlo como **ausencia**
+  incumple, porque la ausencia es lo que la puerta perdona.
+- **Las tres fronteras dichas, para que nadie «arregle» esto rompiendo Windows:** el CR final es
+  transporte (CRLF decide idéntico a LF), el cuerpo no se restringe y **reabrir** no se bloquea.
+- **CA-04 acotada sin perder fuerza:** la tolerancia a la clave decorada fuera de los rangos sigue sin
+  restringirse; se le añade la frontera de que opera sobre una cabecera **medible**.
+- **Una fila nueva en la tabla de invariantes** de `AGENTS.md` §13 y **la misma** en
+  `templates/AGENTS.md.tpl`: dejar una puerta nueva fuera de ese mapa es deriva. Sin ADR (describe lo
+  construido; no cambia alcance ni decisión base).
+
+## [Interno] — 2026-09-07 · Vuelta 2 del bucle dev↔QA de 1.32.1: la otra cara del CR, la que abre (rama `cand/1.32.1`)
+> Origen: Interno (sin commit propio; entra en el commit de la ventana) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (REQ-016, `Rigor: critico`; origen: **hallazgos del auditor de seguridad** `docs/seguridad/registro-seguridad.md` § R-007, SEC-024 y SEC-025, vuelta 2 de 3).
+
+**«No fabricar» tiene dos consecuencias opuestas, y la vuelta 1 sólo tenía caso para una.** Al dejar
+de descontar el retorno de carro antes de escanear el rango, un `-\r->` deja de leerse como `-->` y el
+rango queda **abierto** → deniega. Correcto. Pero para el **abre** la misma decisión se **invierte**:
+un `<!\r--` deja de leerse como `<!--`, el rango **nunca se abre** y lo que el autor aparcó dentro del
+comentario **gobierna**. Medido por el auditor sobre una cabecera base del corpus —`critico`, sin
+ninguna declaración de `Seguridad:`—: añadirle un rango con el abre fabricado y un `Seguridad:
+aprobado` dentro convertía un `deny` en `allow`. Con su control: la misma forma con `pendiente` dentro
+denegaba, así que el `allow` venía **de la cita gobernando**. Y el sitio lo empeora igual que el
+defecto original: un analizador de HTML trata `<!` seguido de algo que no sea `--` como *bogus
+comment* y lo consume hasta el primer `>`, así que un renderizador puede **esconder** el bloque
+mientras la puerta lo lee.
+
+- **El remedio describe el ESTADO, no la vía** (sexta instancia de la misma lección): **una línea de
+  la cabecera que contiene un CR que no es el que la termina deja una cabecera que no se puede medir
+  → DENY**, citando la línea con el CR escrito `\r`. Cubre las dos caras y cualquier objetivo futuro
+  del mismo carácter, porque no habla del objetivo sino del carácter.
+- **De paso cierra la CLAVE fabricada**, que **no nace en esta ventana**: `Seg\ruridad: aprobado`
+  cerraba un REQ `critico` desde **≤1.30.3** —`arnes_norm_clave` retira el CR después de la cita y
+  fabrica la clave—, y los dos lectores coincidían, así que ningún criterio lo desmentía.
+- **La guarda vive en el ESCÁNER, no en una boca.** Es la primera sentencia de `arnes_sin_cita`, el
+  único escáner de cabecera del arnés, así que las cuatro bocas —lector de línea, `arnes_jq_str`, la
+  reconstrucción del `Edit` con el CR en disco y `tools/arnes-paralelo.sh`— llegan a él con la línea
+  cruda y ninguna puede alcanzarlo «ya limpia». El orden es **por construcción**, no por inspección.
+- **No estrecha ninguna tolerancia y no toca el CRLF.** El CR que termina la línea sigue siendo
+  transporte: un REQ guardado entero en CRLF cierra igual que en LF, con casos en las dos direcciones
+  y el cruce que faltaba (CRLF **con** un comentario bien escrito en la cabecera). `Estado:
+  comple\rtado` deja de leerse como estado terminal **por denegación, no por ausencia**, que es la
+  dirección que el descarte de la vuelta 1 exigía.
+- **Los informes dejan de mentir.** `tools/arnes-lectura.sh` decía «ningún valor anómalo», rc 0, sobre
+  un documento que cerraba un `critico`: ahora lo nombra como anomalía y enseña la línea. Y
+  `tools/arnes-paralelo.sh` respondía `disjunto` con rc 0 sobre una cabecera no medible: ahora
+  **colisiona con motivo**, que es la dirección segura.
+- **SEC-025 — una frase que prometía completitud y era falsa.** El barrido de migración busca `<!--`,
+  así que no encuentra ni el delimitador de apertura fabricado ni la clave fabricada. **No se ensanchó
+  el patrón**: la guía enuncia ahora la pregunta que no envejece —de **estado**, «cuáles de mis REQ en
+  estado terminal NO cerrarían hoy»— **antes** de ofrecer ningún comando, y cada barrido por vía
+  declara, junto al comando, que interroga una vía, qué vías conocidas no encuentra y que **no hallar
+  nada no acredita ausencia de exposición**. La comprobación por estado va a **1.33.0** como
+  `instrumento` y el texto lo dice.
+- **Banco: 803 → 828 casos.** Sección 36 partida en **cinco** (la mitad 1 iba por 347 líneas y el
+  límite es 400): la nueva trae los cuatro casos del auditor con su control, la clave fabricada, las
+  dos bocas, la frontera bajo el primer `## `, reabrir, el CRLF en tres formas, los dos informes y un
+  **diferencial `lib.sh` ↔ `campos-req.awk` de 80 cabeceras con CR por enumeración fija** (no semilla).
+  Fail-before **contra el árbol de la vuelta 2**, no contra 1.32.0: **9 FAIL de 19**, y los 10 que
+  pasan en los dos árboles son los controles. **0 forks añadidos** (4 = 4 procesos por llamada en el
+  mismo camino de decisión) y el reloj del banco dentro del ruido (93,6 s contra 92,6–95,0 s).
+- **Lo que NO se hizo, con su medida:** el fuzz ancho dentro del banco que pide **SEC-028** cuesta
+  **45 s** para 2 700 cabeceras (+48 % sobre el banco), así que **no entra**; entra su rebanada del CR.
+  SEC-028 sigue abierto y `instrumento` para 1.33.0. Fuera del banco se midieron **2 700 cabeceras con
+  semilla fija y 0 divergencias**, más tres semillas de 900 y un control contra el árbol de la vuelta 2
+  —también 0—, que es lo que prueba que la guarda **observa y no cambia lo que el escáner devuelve**.
+
+Archivos: `hooks/lib.sh`, `hooks/guard-completado.sh`, `tools/arnes-lectura.sh`,
+`tools/arnes-paralelo.sh`, `skills/arnes-upgrade/SKILL.md`, `tests/escenarios/hooks/run.sh`,
+`tests/escenarios/hooks/README.md`, `tests/escenarios/hooks/secciones/36-*` (cinco archivos),
+`docs/qa/1.32.1.md`.
+
+## [Interno] — 2026-09-07 · Vuelta 1 del bucle dev↔QA de 1.32.1: el fail-open del CR, y cinco casos que no medían (rama `cand/1.32.1`)
+> Origen: Interno (sin commit propio; entra en el commit de la ventana) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (REQ-016 y REQ-015, `Rigor: critico`; origen: **hallazgos de QA** `docs/qa/1.32.1-hallazgos.md`, vuelta 1 de 3).
+
+**El parche de 1.32.1 no cerraba el fail-open que existía para cerrar, y QA lo midió.** Un **retorno
+de carro suelto** en mitad de una línea **fabricaba** los delimitadores del comentario: los lectores
+descontaban *todos* los CR **antes** de escanear el rango, así que `-\r->` llegaba al escaneo como
+`-->` y `<!\r--` como `<!--`. Consecuencias medidas: un REQ `critico` **cerraba** con su
+`Seguridad: pendiente` vigente y el veredicto autorizante **dentro** del comentario (`allow` también
+contra 1.32.0: por esa vía el fail-open de 1.31.0 nunca se cerró), y un rango que **nunca** cierra
+parecía cerrado, tragándose el `QA: pendiente` y cerrando por *ausencia* — esto último una
+**regresión nueva** del propio parche, que 1.32.0 denegaba.
+
+- **Se arreglan TRES bocas, no una.** El texto llega al lector por tres caminos y cada uno tenía su
+  propio descuento global de CR: el lector de línea (`arnes_sin_cita`), la extracción del `tool_input`
+  (`arnes_jq_str`, la vía `Write`) y la reconstrucción del documento resultante (`guard-completado.sh`,
+  la vía `Edit` con el CR en disco). **La tercera no la había reportado nadie**: se encontró al
+  arreglar la primera y ver que el ataque seguía dando `allow`.
+- **La salida es una pregunta cerrada, no un patrón que ensanchar** (quinta instancia de la misma
+  lección): el descuento del CR ocurre **después** del escaneo del rango, donde ya no hay delimitador
+  que fabricar. Ninguna tolerancia cambia — el CRLF legítimo decide igual que el LF, con casos en las
+  dos direcciones. En `arnes_jq*` el descuento no se retira (Windows entrega `jq` en modo texto) sino
+  que se **estrecha** a lo que de verdad es transporte: el CRLF que termina cada línea y el CR final
+  suelto que la sustitución de comandos deja colgando. Vive en `arnes_sin_cr_transporte`, **una** vez.
+- **Las dos transcripciones, alineadas por el ORDEN.** `hooks/campos-req.awk` pierde su
+  `sub(/\r$/,"")` de nivel de línea y gana un `gsub(/\r/,"")` justo donde bash lo hace. De paso se
+  cierra una divergencia que **nadie había reportado** y venía de antes de esta ventana: un CR dentro
+  de la **clave** (`Seg\ruridad:`) lo leía bash y no el awk. Cae del lado cerrado.
+- **CA-11, nuevo: comentar una declaración la RETIRA.** La conducta existía y ningún criterio la
+  decía. Su caso **compara** las dos formas —línea comentada y línea borrada— en vez de fijar qué
+  campos perdona la ausencia: esa lista vive en un solo sitio, y esta ventana existe por una
+  transcripción duplicada. Claves derivadas del lector, 15 parejas, y la excepción medida
+  (`Seguridad:` en un REQ `critico` **deniega** igual que borrada). Fail-before real: **3 FAIL de 6**
+  contra 1.32.0, donde la equivalencia no se cumplía.
+- **Cinco casos del banco no medían nada** (`instrumento`, no afectaba al producto): la propiedad de
+  CA-02 escribía el documento en disco **ya `completado`**, así que la puerta salía sin juzgar ninguna
+  transición y las **62** bases eran todas `allow` — «ningún `deny` se volvió `allow`» era cierto **por
+  vacío** en las 186 variantes; la paridad de los dos lectores comparaba **vacío contra vacío** (un
+  `$BASHPID` evaluado dentro de un `$( )`); el caso del hueco afirmaba lo que una lectura vacía siempre
+  da; y la guarda de CA-08 pasaba sobre una función que **no existe** en 1.32.0. El tell estaba a la
+  vista en los cuatro: **pasaban contra los hooks con el fail-open**.
+- **La guarda que faltaba, y ahora es criterio:** una propiedad «ningún `deny` se volvió `allow`»
+  **aborta** si el número de bases que deniegan es **0**. La anterior miraba el *tamaño* de la cosecha,
+  no si tenía dientes.
+- **El banco:** **803 casos** (era 791) y la sección 36 en **cuatro** archivos por el límite de 400
+  líneas que el propio banco se impone. Y **más barato que antes**: **39,1–42,4 s** contra 44,2 s, con 12
+  casos más y la propiedad midiendo de verdad — porque sólo se varían las **42** cabeceras que
+  deniegan, y una base que ya permite **no puede** violar la propiedad. Fail-before por sección contra
+  1.32.0: 19/28, 2/4, 3/6 y 6/17. Pass-after: **802 PASS · 0 FAIL · 1 SKIP** en **5 vueltas
+  completas** sin una intermitencia, autoprueba **73 PASS**, cuadre en verde.
+- **Coste, sin subir:** **5** procesos por llamada en el mismo camino de decisión (1.32.0, sin el
+  parche y con él) y **6** por parada en régimen. REQ-015 comprobado y sin tocar: fail-closed 5/5, los
+  cinco puntos de publicación, y la carrera determinista 7 FAIL contra 1.32.0 · 23 PASS en 5 vueltas.
+
+Detalle de las mediciones, con las **dos retractaciones** de la vuelta 1: `docs/qa/1.32.1.md`.
+
+## [GitHub] — 2026-09-07 · REQ-016: la cabecera tiene noción de cita — un veredicto citado dentro de un comentario HTML ya no cierra un REQ (rama `cand/1.32.1`)
+> Origen: GitHub (rama `cand/1.32.1`) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (REQ-016, `Rigor: critico`, origen: **informe de regresión de un proyecto consumidor**, clase `contrato`).
+
+**El defecto, sin eufemismo.** Un REQ **`critico`** cuyo veredicto de seguridad vigente **no**
+autorizaba el cierre **cerraba** si en su cabecera había un rango `<!-- … -->` con una línea que
+empezara por la clave del campo y un valor autorizante — **incluso diciendo el propio comentario que
+era histórico**. Vale para cualquier campo de la cabecera por el mismo camino: el veredicto de QA, la
+clase de un hallazgo bloqueante, el nivel de rigor, la sensibilidad. Llegó **bisecado** por el
+reportante ejecutando cuatro guardianes instalados contra el mismo payload: **1.30.2 y 1.30.3
+deniegan, 1.31.0 permite, 1.32.0 lo hereda**.
+
+- **Tres reglas correctas por separado, y el sitio lo empeora.** La tolerancia de énfasis en la
+  **clave** (nacida en 1.31.0, y que cerró un fail-open real), que estos campos toman la **última**
+  aparición de la cabecera, y que el lector **no tenía noción de cita**. Juntas: cualquier línea que
+  **empiece** por la clave —viva donde viva— era el veredicto vigente. Y el lugar donde un proyecto
+  disciplinado escribe «este veredicto es histórico» es precisamente un comentario HTML: **quien mejor
+  documentaba la historia de sus veredictos se exponía más**.
+- **El arreglo es una pregunta cerrada, no más tolerancia.** `arnes_sin_cita` (nueva, en
+  `hooks/lib.sh`) retira los rangos `<!-- … -->` de la línea antes de normalizar la clave, y
+  `arnes_campo_linea` es **la única puerta de entrada** de un lector de cabecera, para que ningún
+  recorrido pueda quedarse con la mitad de la regla — que es exactamente cómo nació el defecto. El
+  hueco del rango se sustituye por **un espacio, nunca por nada**: pegar los dos extremos fabricaría
+  una clave que nadie escribió. Es la cuarta instancia de una lección propia (`AGENTS.md` §13,
+  `ADR-002`, SEC-020): cuando un mecanismo interpreta texto humano libre, ensanchar la tolerancia no
+  gana la clase; el rango, en cambio, está **delimitado**.
+- **Un rango que abre y no cierra: DENY, y nunca allow por ausencia.** Con el rango abierto la cabecera
+  no se puede **medir** —no se sabe qué veredictos se quedaron dentro— y una puerta que no puede medir
+  no deja pasar. Y hubo que hacer explícito el caso en que el rango se traga **la propia línea del
+  estado**: si no, se resolvía como *ausencia*, y la ausencia es justo lo que la puerta perdona. La
+  denegación exige que **haya un intento de cierre**: denegar toda edición de un REQ con un comentario
+  mal cerrado sería friccion constante, y la fricción termina con alguien apagando el guard.
+- **Lo que NO se recortó, y es un criterio (CA-04).** La tolerancia de la clave decorada sigue
+  gobernando **fuera** de los rangos. Exigir la clave a columna cero y sin decorar reabría por
+  construcción el fail-open que esa tolerancia cerró. Lo que faltaba no era la tolerancia: era **acotar
+  dónde se aplica**.
+- **Un lector, dos bocas, y se comprueba.** `hooks/campos-req.awk` recibe la transcripción declarada de
+  la misma regla, y el banco alimenta el **mismo documento** a los dos lectores y compara los seis
+  campos ya normalizados por la misma cola. Se arrastró `tools/arnes-paralelo.sh` al lector único: leía
+  el interior de un comentario como una declaración de `Archivos:`.
+- **`tools/arnes-lectura.sh` nombra la línea que gobierna, y NO es una anomalía.** El residual que
+  queda tras acotar: una línea decorada **fuera** de todo rango puede gobernar, y la produce el **corte
+  de un párrafo**, no su contenido. Se hace visible en su propio bloque y **sin cambiar el código de
+  salida**; sólo cuando existe **otra** declaración del mismo campo y manda la decorada es anomalía con
+  salida ≠ 0. Meterlo entre las anomalías repetiría el caso medido de **28 de 42 anomalías falsas
+  enterrando las 14 reales**: un informe que grita por lo inofensivo deja de leerse. Y el conjunto de
+  campos ya **no se enumera** en el informe: se deriva del lector de `hooks/lib.sh`.
+- **La invariante se ejerce sobre el corpus, no sobre un ejemplo.** «Insertar un rango en una cabecera
+  no convierte ningún `deny` en `allow`»: **58 cabeceras** cosechadas por glob del directorio de
+  secciones —el sitio único del corpus, con las claves derivadas de `lib.sh`— × 3 posiciones = **174
+  variantes**. Las dos fronteras que la propiedad **no** cubre están escritas y tienen su caso:
+  *comentar* una línea que ya existía es **retirar** una declaración, no añadir un rango; y un `## `
+  dentro de un rango sigue terminando la cabecera, así que lo de detrás no es cabecera para nadie.
+- **El banco:** dos secciones nuevas (`36-…-1-la-puerta`, `36-…-2-los-lectores`; partido porque su
+  propia autoprueba no admite un archivo de sección de más de 400 líneas), **43 casos**, total
+  **791**. Fail-before contra el árbol heredado: **20 FAIL de 43**, y ningún caso marcado «(era
+  ALLOW)» pasa. Pass-after: **790 PASS · 0 FAIL · 1 SKIP** (rutas Windows, sin `cygpath`) y
+  `autoprueba-corredor.sh` **73 PASS · 0 FAIL**. Coste del lector: **5 procesos por llamada antes y
+  después** (medido con los binarios instrumentados en el `PATH`, misma decisión en los dos lados).
+- **Los textos que hereda un proyecto.** `skills/arnes-upgrade/SKILL.md` §`Hacia 1.32.1` dice sin
+  eufemismo que **pudo cerrarse un REQ `critico` sin auditoría aprobada**, trae el comando que barre
+  las cabeceras con comentario y deriva la pertenencia de versiones **del historial del lector**, no de
+  una lista a mano. Y `templates/AGENTS.md.tpl` (con `AGENTS.md` §13) incorpora la regla **«la
+  invariante manda sobre cualquier preferencia de herramienta»**, con su motivo medido: una preferencia
+  por la consola desactivó una puerta sin que nadie relacionara las dos cosas — y **quien configura una
+  sesión no suele ser quien lee §13**.
+
+## [GitHub] — 2026-09-07 · REQ-015: la publicación concurrente ya no pisa el texto de una persona (rama `cand/1.32.1`)
+> Origen: GitHub (rama `cand/1.32.1`) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (REQ-015, `Rigor: critico`, origen **H-12** / **SEC-015**).
+
+**El defecto, y su alcance real.** `hooks/estado-derivado.sh` y `hooks/rotar-artefactos.sh` publicaban
+por un temporal cuyo nombre se derivaba **sólo de la ruta del destino** —cinco sitios—, así que dos
+paradas de agente simultáneas escribían **el mismo archivo**. Tras el `mv` de una, el inodo que la otra
+tenía abierto con `O_TRUNC` **era ya el destino**, y su escritura tardía caía sobre él desde el byte 0:
+justo donde vive lo que escribió una persona. Medido: **1 pérdida en 25** vueltas completas del banco,
+**0 en 92** dirigidas — clase **`usuario/dinero`**, el único hallazgo de esa clase que ha producido
+este arnés.
+
+- **La causa medida es UNA de las cinco, y se atribuyó antes de arreglar.** La pérdida se observó en la
+  sección 28-2, que corre rotación **y** derivación con cuatro paradas a la vez, así que el culpable no
+  era deducible: la hipótesis del analista era que podían ser los dos. No lo eran. El
+  `MANIFIESTO_BASE` del banco **no declara `rotacion`**, así que en ese caso `arnes_rotar_artefactos`
+  sale en `ARNES_ROT_ACTIVO=false` **antes de tocar ningún archivo** (verificado con `bash -x`: cero
+  temporales del rotador en ese escenario). La causa medida es el temporal de
+  **`hooks/estado-derivado.sh`**. Los cuatro del rotador tienen la misma forma y el mismo riesgo —el
+  origen que recortan puede ser un REQ o `ESTADO.md`— y entran por CA-01/CA-07, no por atribución.
+- **El arreglo: el nombre del temporal es del PROCESO, no sólo del destino.** `arnes_tmp_publicacion`
+  (nuevo, en `hooks/lib.sh`) forma `<destino>.arnes.tmp.<BASHPID>` **en el directorio del destino** —las
+  dos condiciones de CA-01, que se verifican juntas: acreditar la ubicación sin la colisión es el error
+  medido de R-003—. Sin componente única **no se cae al nombre compartido**: no se escribe nada y se
+  avisa. La componente es `BASHPID` y no `mktemp` **por coste** (CA-11): una variable que el intérprete
+  ya tiene, no un fork en el camino más caliente del arnés. Medido: **mismos procesos por parada** que
+  1.32.0, en la parada que rota (14 externos) y en la de régimen (6).
+- **El reverso, pagado: `arnes_purga_tmp`.** Un nombre único convierte un archivo que se sobrescribía a
+  sí mismo en una familia de nombres, así que un temporal que sobreviva a su dueño ya no lo retira la
+  parada siguiente. Se retira, y **sólo el que no tiene dueño vivo** (`kill -0`, builtin): borrar el de
+  un proceso que sigue publicando sería crear el problema que este REQ cierra. También retira el nombre
+  **compartido** que dejaron las versiones ≤1.32.0.
+- **La reproducción es determinista, y eso era el trabajo (CA-05).** El caso que encontró el defecto
+  falla **1 de 25** vueltas, y una prueba intermitente no acredita un arreglo. El punto de
+  sincronización no es el reloj: es **el descriptor de archivo**. El caso hace de otra parada, abre el
+  temporal compartido con `exec 9> …` (el `printf > "$tmp"` del hook partido en su apertura y su
+  escritura), deja correr la parada real **entera** y sólo después completa su escritura — que con
+  nombre compartido cae sobre el destino ya publicado. Tres pasos en orden fijo, sin nada que
+  temporizar: **falla en todas las vueltas contra 1.32.0 y pasa en todas con el arreglo**.
+- **Y el caso de ENOSPC se reescribió por el mismo motivo, sin perder el end-to-end.** Ya no se puede
+  plantar el enlace a `/dev/full` en una ruta que aún no se conoce, así que el hook se lanza **con su
+  stdin en una FIFO**: queda bloqueado en lo primero que hace —leer la entrada— mientras el caso planta
+  el enlace usando `$!`, que es exactamente su `BASHPID`. El caso mide ahora dos cosas y ninguna por
+  casualidad: la rama ENOSPC y que el temporal que el hook usa de verdad es el de su propio proceso.
+- **Banco: 6 casos nuevos** en `tests/escenarios/hooks/secciones/28-rotacion-seccion-2-el-estado.sh`
+  (741 → **747 PASS, 0 FAIL, 1 SKIP** explicado, cuadre por archivo y total). Los siete casos tocados
+  **fallan con los hooks de 1.32.0 y pasan con éstos**, verificado con `ARNES_HOOKS_DIR`. Inventario
+  contra `v1.32.0`: **seis adiciones y nada más** — ninguna línea suprimida, modificada ni cambiada de
+  veredicto. El caso «CA-64.2 cuatro paradas a la vez» se conserva porque mide cuatro procesos de
+  verdad, y **deja de tener causa conocida de inestabilidad abierta** (CA-06).
+- **La superficie heredada, corregida en sus dos mitades (CA-08/CA-09).** `AGENTS.md` §13 y
+  `templates/AGENTS.md.tpl` afirmaban **sin condición** que la continuidad «no toca nada fuera de los
+  marcadores»; ahora dicen qué garantiza la máquina y qué no —no hay serialización, gana la última, y
+  un proceso muerto puede dejar un temporal hasta la parada siguiente—. Y en el mismo cambio,
+  `skills/arnes-upgrade/SKILL.md` deja de declarar el defecto **abierto** en «Hacia 1.24.0» y gana
+  **«Hacia 1.32.1»**: que un proyecto **pudo perder texto de su `docs/ESTADO.md`** si despachó agentes
+  en paralelo, cómo recuperarlo de git, y qué versiones están afectadas — la pertenencia se **deriva**
+  del historial de `hooks/estado-derivado.sh` (comprobado tag a tag: **1.23.0 a 1.32.0**), con
+  1.30.3/1.31.0/1.32.0 como ejemplos **no exhaustivos**.
+- **`tests/escenarios/hooks/README.md`**: el total de casos decía **735** y ya eran 742 antes de este
+  trabajo; queda en **748**, que es lo que declaran los cuadres.
+- **Fuera de alcance, y sin tocar:** `tools/`, `.github/`, `agents/`, `.arnes/config.json`, `docs/` y
+  el bump de `.claude-plugin/` (va al final de la ventana). No se añadió ningún `flock`: CA-04 no exige
+  serialización y el contenido del bloque es derivado.
+
 ## [GitHub] — 2026-09-07 · v1.32.0 publicada, y el agujero del intérprete medido en carne propia
 > Origen: GitHub (PR #39, fusión `ca6047a`, tag `v1.32.0`) · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos`, `desarrollador`, `qa-tester` (Opus), `auditor-seguridad` y la coordinadora.
 
@@ -1427,7 +1746,7 @@ cuenta admin vía `gh auth switch` y verificado releyendo el ruleset. **Un PR ro
 fusionar.** No cambia el plugin; cambia quién decide si algo entra en `main`: el banco.
 
 ### Corregido — el bloque derivado costaba 92 segundos por parada en un proyecto real
-**Medido en Adelantos, con el control de plataforma hecho** (`bash -c true` = 2,4 s allí):
+**Medido en un proyecto real, con el control de plataforma hecho** (`bash -c true` = 2,4 s allí):
 `stop.sh` **125 s por turno**, de los que **92 eran la continuidad** y 12,6 la rotación *sin nada
 que rotar*. Reproducido aquí con un fixture del mismo tamaño —47 REQ, 3,7 MB, uno de 231 KB—:
 **126 818 ms**.
