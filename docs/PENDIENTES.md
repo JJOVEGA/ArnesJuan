@@ -688,3 +688,42 @@ puede **fabricar** un delimitador. Nuestra propia lección, devuelta por quien l
 > entrega **el archivo entero** al contador, y entonces **todo** REQ con historial parece duplicado. Se
 > comprueba antes de creerse el número, y el control cuesta una línea. Los dos corpus medidos cortan
 > limpio; no se da por hecho para un tercero.
+
+## H-08 — el CI da verde sobre REQ-017 sin haber medido ni uno de sus criterios (2026-09-07)
+
+**Clase: `instrumento`.** Dueño: `desarrollador`. Medido en el PR #43, ejecución
+`hooks-en-linux` de 51 s.
+
+**Qué pasó.** El banco salió `833 PASS, 0 FAIL, 12 SKIP`. **Once de esos doce SKIP son los
+criterios de REQ-017**: CA-01 (las dos formas), CA-03, CA-04 (las dos), CA-05 (i) y (ii) y CA-08
+(las cuatro). Todos con el mismo motivo declarado: *«no hay línea base: el tag v1.32.1 no está en
+este clon»*. La causa es de una línea: `actions/checkout@v4` clona con `fetch-depth: 1` **y sin
+tags**, así que los árboles congelados que esos criterios materializan no existen ahí.
+
+**Por qué importa más que un arreglo de CI.** La puerta requerida de `main` dio verde sobre el
+único REQ del PR **sin haber ejecutado ninguna de sus comprobaciones**. No es un fallo del
+corredor ni de las sondas —de hecho `CA-06` **pasó**, que es justo el criterio que exige *«sin
+línea base, SKIP con motivo, nunca PASS»*: la sonda se comportó exactamente como se contrató—.
+El defecto está una capa más arriba: **un SKIP honesto, agregado a un resultado global, se lee
+como verde.**
+
+**Tres consecuencias, y la tercera es la que decide.**
+
+1. **Confirma la lección de CA-05 desde el otro lado.** Ya sabíamos que una comprobación contra
+   línea base congelada *envejece hacia el lado que abre*. Esto añade que **ni siquiera hace
+   falta que envejezca**: basta con que el entorno no tenga el tag para que se abra hoy mismo.
+   Lo auto-anclado (CA-03, el orden de crecimiento) no depende de ningún tag y es lo único que
+   habría medido algo aquí.
+2. **El coste declarado en rojo no se ha pagado ni una vez.** Los ~120 s de la sección 37/2 no
+   ocurrieron: la corrida heredada es justo lo que se salta. La estimación de «~145 s de puerta
+   requerida» sigue **sin medir en CI**, y el 51 s de esta ejecución no la desmiente.
+3. **Es un forzador medido para la palanca «¿esta prueba mide algo?»**, que ya está en 1.33.0.
+   Esa palanca se pensó para casos **vacíos**; este es un caso **lleno que no se ejecuta**, y la
+   propiedad que los cubre a los dos es la misma: *un caso que no llegó a juzgar nada no puede
+   contribuir al verde global*. La forma no es prohibir el SKIP —el SKIP con motivo es correcto y
+   está contratado—, sino que **el resultado global declare qué criterios quedaron sin medir**, y
+   que una sección pueda exigir que los suyos se midan **en la plataforma que es puerta**.
+
+**Lo barato, y no lo hago yo porque `.github/` es `codigo_app.globs`:** `fetch-depth: 0` (o
+`fetch-tags: true`) en el checkout. Va con el delta del desarrollador de REQ-017, no antes, porque
+encarece la puerta requerida y esa decisión ya estaba escalada.

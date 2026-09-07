@@ -51,6 +51,10 @@ vive.
    `timeout`, derivado de `mín(este árbol)` medido **en la misma corrida y después del numerador** —
    una constante en segundos reintroduciría el reloj absoluto que todo el REQ combate—, y con el
    **vencimiento como resultado positivo, nunca como SKIP**.
+   Y ahora también **H-08**: `fetch-depth: 0` en el checkout del CI, porque sin tags **once de los
+   criterios de REQ-017 salieron SKIP y el PR #43 dio verde sin medir ninguno** (detalle y las tres
+   consecuencias en `docs/PENDIENTES.md`). Va en el mismo delta, no antes: encarece la puerta
+   requerida y esa decisión ya estaba escalada con CA-05.
 2. **QA (Opus)** sobre los 9 criterios (~180 k). Vuelta 0 de 3.
 3. **Auditor** (~150 k). `critico` y `Sensible a seguridad: sí`: sin su firma no cierra.
 
@@ -91,7 +95,7 @@ rehacer la resta. Nadie la había comprobado.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-07 14:36
+## Estado derivado — 2026-09-07 14:44
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -101,7 +105,7 @@ rehacer la resta. Nadie la había comprobado.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `main` @ `cf2009e` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.33.0` @ `ed56f9a` — limpio
 **Arnés:** plugin instalado `1.32.1`
 **Aprobaciones pendientes:** 0
 **REQ:** 17 — completado 12 · en-revisión 1 · en-progreso 2 · bloqueado 0 · otros 2

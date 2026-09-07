@@ -2,6 +2,28 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-07 · H-08: el CI dio verde sobre REQ-017 sin medir ninguno de sus criterios
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+**Medido en el PR #43 (borrador), ejecución `hooks-en-linux` de 51 s: `833 PASS, 0 FAIL, 12 SKIP`.**
+**Once de esos doce SKIP son los criterios de REQ-017** —CA-01 (las dos formas), CA-03, CA-04 (las
+dos), CA-05 (i) y (ii) y CA-08 (las cuatro)—, todos con el mismo motivo declarado: *«no hay línea
+base: el tag v1.32.1 no está en este clon»*. Causa de una línea: `actions/checkout@v4` clona con
+`fetch-depth: 1` y **sin tags**, así que los árboles congelados que esos criterios materializan no
+existen ahí. La **puerta requerida de `main`** dio verde sobre el único REQ del PR sin ejecutar
+ninguna de sus comprobaciones.
+
+**Las sondas no fallaron: `CA-06` pasó**, que es exactamente el criterio de «sin línea base, SKIP con
+motivo, nunca PASS». El defecto está una capa más arriba — **un SKIP honesto, agregado a un resultado
+global, se lee como verde**. Confirma CA-05 desde el otro lado: una comprobación contra línea base
+congelada no necesita **envejecer** para abrirse; basta con que el entorno no tenga el tag. Y es un
+forzador medido para la palanca «¿esta prueba mide algo?», que ya estaba en 1.33.0: se pensó para
+casos **vacíos** y esto es un caso **lleno que no se ejecuta**, con la misma propiedad detrás.
+
+Clase `instrumento`, dueño `desarrollador`. El arreglo (`fetch-depth: 0`) va con el delta de REQ-017,
+no antes: encarece la puerta requerida y esa decisión ya estaba escalada con CA-05. Archivos:
+`docs/PENDIENTES.md`, `docs/ESTADO.md`.
+
 ## [Interno] — 2026-09-07 · 1.33.0 se parte: las palancas primero, el núcleo a 1.34.0
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 
