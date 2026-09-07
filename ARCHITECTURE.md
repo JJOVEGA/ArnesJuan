@@ -34,7 +34,11 @@ son **inertes**; sin `jq` también, con aviso por stderr.
 | `hooks/rotar-artefactos.sh` | **Mueve** (nunca resume) las secciones viejas de un artefacto de bitácora, o las entradas viejas de **una sección** declarada de un documento | `rotacion.*` del manifiesto | archivo de historia + puntero |
 | `hooks/campos-req.awk` | Extrae en **una** pasada los campos de cabecera de todos los REQ | `requirements/*.md` | registros separados por `\001` |
 | `tools/arnes-lectura.sh` | Informe en frío: qué lee la máquina en cada REQ. Usa **el mismo lector y el mismo vocabulario** que las puertas (`lib.sh`) | `requirements/*.md`, manifiesto | informe; rc 1 si hay anomalías |
-| `tests/escenarios/hooks/run.sh` | El banco: ejecuta los hooks **reales** con JSON fabricado, en secciones paralelas con proyecto efímero propio | — | PASS/FAIL/SKIP + cuadre de casos |
+| `tools/arnes-paralelo.sh` | Despacho: dice si dos REQ son **disjuntos** o **colisionan** por su campo `Archivos:`, expandiendo los globs contra el árbol real. Reutiliza la **normalización** de `lib.sh` sin entrar en el lector de las puertas; ningún hook la invoca | `requirements/*.md`, manifiesto, árbol del repo | `disjunto`/`colisiona` (texto o `--json`); rc 1 si colisiona, 2 si no pudo medir |
+| `tests/escenarios/hooks/run.sh` | El **corredor** del banco: ayudantes compartidos, canario global, descubrimiento de las secciones (glob de bash, sin forks) y despacho en paralelo con proyecto efímero propio | `secciones/NN-<slug>.sh` | PASS/FAIL/SKIP + cuadre **por archivo y total** |
+| `tests/escenarios/hooks/secciones/` | El banco: los casos, **una sección por archivo**, descubiertos por el corredor. Cada uno declara su `CASOS_ESPERADOS_SECCION`; ninguno hace `source` de otro | hooks reales con JSON fabricado | líneas PASS/FAIL/SKIP |
+| `tests/escenarios/hooks/autoprueba-corredor.sh` | Certifica al corredor contra directorios de secciones **sintéticos**; sus casos no entran en el inventario del banco | `ARNES_SECCIONES_DIR` | PASS/FAIL |
+| `tests/escenarios/hooks/inventario.sh` | Inventario ordenado `veredicto · caso` de una salida del banco: lo que se compara vuelta a vuelta al reorganizarlo | salida del banco | una línea ordenada por caso |
 
 ## Flujo de datos
 

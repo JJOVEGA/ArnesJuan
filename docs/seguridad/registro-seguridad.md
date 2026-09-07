@@ -943,3 +943,682 @@ nota de `arnes-upgrade`.
 - **REQ-007 entero**, **REQ-008** y **REQ-011**: no llevan mi firma.
 - **Los bloques B y C de REQ-007** (1.32.0): no se auditaron. Cuando el Bloque C aterrice, **LIM-10
   debe cerrarse en voz alta o es regresión**; lo mismo para LIM-16 con CA-64.1-bis y CA-64.2-bis.
+
+---
+
+## Revisión R-004 — ventana 1.32.0 (REQ-012, REQ-013, REQ-014) — 2026-09-06
+
+**Alcance.** `cand/1.32.0` completa: la regla de redacción de criterios y lo que de ella heredan los
+proyectos (REQ-012), el campo `Archivos:` y `tools/arnes-paralelo.sh` (REQ-013), la partición del
+banco en 37 archivos de sección más el cambio de `.github/workflows/banco.yml` (REQ-014), y
+`ADR-002`. Línea base de no-regresión: **v1.31.0 publicada**. Plataforma: Linux (WSL2).
+Orden respetado: audito un árbol con `QA: aprobado` en los tres REQ (`AGENTS.md` §6).
+
+**Método.** No repito la validación funcional de QA. Verifico (a) la superficie de promesas —qué
+afirma lo que los proyectos heredan frente a lo que la máquina hace—, (b) el fail-closed de la
+herramienta nueva por sondas propias sobre proyectos efímeros del scratchpad, (c) la no-regresión
+del mecanismo. `git diff v1.31.0 -- hooks/` = **0 líneas**, confirmado por mí; `tools/` sólo suma
+`arnes-paralelo.sh`. Barrido de secretos sobre todo el diff de la ventana: **cero coincidencias**.
+Ninguna sonda escribió fuera del scratchpad.
+
+### Hallazgos
+
+#### SEC-014 — `contrato` · **abierto** · REQ-013 · severidad alta · dueño `desarrollador`
+
+**El sexto fail-open de `tools/arnes-paralelo.sh`: un paréntesis intermedio borra el resto del mapa
+y la herramienta responde `disjunto` con rc 0.**
+
+`Archivos:` es un valor de **lista**, y se le aplica `arnes_veredicto` (`tools/arnes-paralelo.sh:334`),
+que es una regla de **valor único**: si el valor termina en `)`, trunca en el **primer** `(`
+(`hooks/lib.sh:1339`, `v="${v%%(*}"`). Todo elemento posterior desaparece **antes** de llegar a
+`norm_ruta`, sin motivo, sin bajar el recuento y sin cambiar el código de salida.
+
+Medido (proyecto efímero, `hooks/lib.sh` y `tools/x.sh` reales en el árbol):
+
+| `Archivos:` de REQ-A | REQ-B | Mapa que la herramienta usa | Respuesta | Verdad |
+|---|---|---|---|---|
+| `tools/x.sh (nuevo), hooks/lib.sh (modificado)` | `hooks/lib.sh` | `tools/x.sh` | `disjunto` · **rc 0** | colisiona |
+| `docs/a.md (nuevo), hooks/lib.sh, hooks/guard.sh, tools/x.sh (CI)` | `hooks/lib.sh` | `docs/a.md` | `disjunto` · **rc 0** | colisiona |
+| `requirements/README.md (campo Archivos en la cabecera), tools/x.sh (nuevo), hooks/lib.sh (reutilizado)` | `hooks/lib.sh` | `requirements/README.md` | `disjunto` · **rc 0** | colisiona |
+| `tools/x.sh (nuevo), hooks/lib.sh` *(sin anotar el último)* | `hooks/lib.sh` | — | `SIN DECLARAR` · rc 1 | **fail-closed, correcto** |
+| `hooks/lib.sh, tools/x.sh (medido 6/9)` *(paréntesis final)* | `hooks/lib.sh` | los dos | `colisiona` · rc 1 | **correcto** |
+
+**La asimetría es lo grave y va en la dirección insegura:** anotar *todos* los elementos —lo prolijo—
+abre; anotar sólo algunos y dejar el último desnudo cierra. La tercera fila es el `Módulo:` de
+**REQ-013 escrito con la sintaxis de `Archivos:`**: la casa ya anota así el campo hermano, y
+`templates/requirements-README.md.tpl` enseña «un paréntesis final de evidencia» como tolerancia sin
+advertir que uno intermedio destruye la cola. No es una forma exótica: es la primera que se escribirá.
+
+**Criterios que desmiente**, los tres enunciados **por propiedad** y a propósito:
+- **CA-13** — «Dado **cualquier** modo en que la herramienta **no pudo medir** …**sin excepción por el
+  tipo de impedimento que sea**… lo **dice** con el motivo concreto, sale con código **≠ 0** y **no**
+  afirma que ningún par sea disjunto». Aquí no lo dice, sale 0 y afirma `disjunto`.
+- **CA-11 (ii)** — «toda forma que no sea una ruta relativa a la raíz se **rechaza con mensaje propio**
+  y el REQ pasa a `sin declarar`». `hooks/lib.sh (modificado)` lleva blancos —forma que la propia
+  herramienta rechaza cuando le llega— y no se rechaza: se borra.
+- **CA-04** — «un valor que no se puede interpretar → `sin declarar`, colisiona con todos, rc ≠ 0».
+
+Por eso es **`contrato`** y no `instrumento`, y no por analogía: es la definición literal del cuadro
+de clases —el requerimiento dice algo falso sobre lo construido—. Se distingue de **QA-205**
+(`instrumento`), donde CA-11 **dejaba fuera** las tres formas por enumerar; aquí el criterio las
+**incluye** por propiedad. Y se distingue por su alcance: QA-205 no cambia el veredicto de ningún REQ
+real porque nadie escribe `~` ni enlaces simbólicos; SEC-014 se dispara con la sintaxis que la
+plantilla enseña.
+
+**El banco comparte la ceguera:** `secciones/34-arnes-paralelo.sh:136` prueba **sólo** la forma segura
+(paréntesis final). Ningún caso cubre la anotación por elemento.
+
+**Remediación (las tres, o el hallazgo no cierra — `AGENTS.md` §9):**
+1. **Código.** Ningún elemento declarado puede desaparecer en silencio. La regla del paréntesis, sobre
+   un campo de lista, se aplica **después del último separador** y nunca trunca elementos; todo lo que
+   quede entre comas pasa por `norm_ruta` y lo que no se entienda manda el REQ a `SIN DECLARAR`.
+2. **Criterio.** CA-03 exige «exactamente la misma normalización… la misma función» y es lo que produjo
+   el defecto: la regla de veredicto único aplicada a una lista. La tensión CA-03 vs CA-11/CA-13 la
+   resuelve el `analista-requerimientos` por escrito (write-back), no el código en silencio.
+3. **Herencia.** `templates/requirements-README.md.tpl` §«El mapa de archivos» enseña la tolerancia del
+   paréntesis; tiene que decir dónde vale y dónde no. Y el banco gana el caso de la forma que abre.
+
+#### SEC-015 — `contrato` · **abierto** · alcance de la publicación (no de un REQ) · severidad alta · dueño `desarrollador`
+
+**El arnés promete a los proyectos que las reescrituras concurrentes de `docs/ESTADO.md` «no se
+corrompen», y está medido que sí.**
+
+`skills/arnes-upgrade/SKILL.md:252`, texto que el agente **le dice al usuario** al actualizar:
+«Con agentes en paralelo hay reescrituras concurrentes: **idempotentes, no se corrompen**, pero es un
+archivo que él mantiene.» Falso: `hooks/estado-derivado.sh:237` publica por un temporal de **nombre
+fijo** (`"$destino.arnes.tmp"`) y con dos paradas simultáneas los dos procesos escriben el mismo
+archivo antes del `mv`. QA lo midió: pérdida del texto **humano** de `ESTADO.md` **1 vez de 25**.
+
+**No es regresión de esta ventana** —`git diff v1.31.0 -- hooks/` vacío; el defecto vive en 1.30.3 y
+1.31.0 publicadas— y por eso **no bloquea ningún REQ**. Lo que sí es de esta ventana: **REQ-013 existe
+para que se despachen comisiones en paralelo**, es decir, esta versión **sube la frecuencia** del
+escenario que dispara el defecto mientras el documento que la acompaña afirma que ese escenario es
+seguro.
+
+**Autocrítica de este registro:** R-003 miró ese mismo temporal —«el temporal es `"$destino.arnes.tmp"`,
+junto al destino y dentro del proyecto»— y lo dio por bueno. Comprobó la **ubicación** y no la
+**colisión**. Queda anotado para que la próxima revisión de un `mv` atómico pregunte por el nombre.
+
+**Remediación.** (1) La frase se corrige **antes de publicar 1.32.0**: es una línea, en un archivo que
+no es `hooks/`, y publicar `ADR-002` —cuyo asunto es exactamente que una promesa no puede ser más
+ancha que la máquina— junto a esta frase es contradictorio. (2) El defecto de código va a **REQ-015 /
+1.32.1** como decidió el propietario: temporal de nombre único por proceso más publicación por
+`rename`, con `AGENTS.md` §13 y `templates/AGENTS.md.tpl` diciendo qué garantiza y qué no.
+
+#### SEC-016 — `instrumento` · **abierto** · REQ-014 · severidad media-baja · dueño `desarrollador`
+
+**El «límite honesto» de `ADR-002` llegó al criterio y al README del banco, pero no a la superficie
+que leen los terceros.**
+
+`ADR-002` estrecha CA-06: la guarda estática es **barandilla y no jaula**. `tests/escenarios/hooks/README.md:100`
+lo dice («es una barandilla, no una jaula»). `skills/arnes-upgrade/SKILL.md` —lo único de esto que un
+proyecto lee— enuncia la invariante 1 en su forma **ancha**: «El corredor comprueba sobre el texto de
+cada archivo que ninguna sección define su propio juez sin guarda», sin límite; y **CA-28** le promete
+a quien copie el patrón «las **tres invariantes intactas**».
+
+Reach limitado —ningún proyecto hereda el banco, y la nota es para quien **copie** el patrón—, por eso
+`instrumento` y **no bloquea**. Pero es, una carpeta más allá, la misma deriva que `ADR-002` corrige.
+**Remediación:** una frase en esa nota. Recomiendo que viaje **en 1.32.0**, con SEC-015, en el mismo
+archivo y por la misma causa.
+
+#### SEC-017 — `instrumento` · **abierto** · REQ-013 · severidad baja · dueño `desarrollador`
+
+**Un `Estado:` duplicado cuyo primer valor sea el terminal saca al REQ de la población, sin una
+palabra.** `arnes_estado_cabecera` (`hooks/lib.sh:1587`) **retorna en la primera** aparición;
+`lee_campo_archivos` (`tools/arnes-paralelo.sh:106`) hace ganar a la **última**, y su propio comentario
+declara que dos lectores del mismo campo con precedencias distintas es lo que CA-03 prohíbe. Medido:
+`Estado: completado` seguido de `Estado: en-progreso` → «**1 REQ evaluados**», `disjunto`, **rc 0**.
+Es la clase de QA-211 por otra puerta. Agravante menor: los REQ saltados por terminales **no se nombran
+en la salida**, así que la caída del recuento no es visible.
+
+#### SEC-018 — `instrumento` · **abierto** · REQ-013 · severidad baja · dueño `desarrollador`
+
+**`--json` puede emitir JSON inválido.** `jstr` (`tools/arnes-paralelo.sh:447`) escapa `\` y `"` y **no**
+los caracteres de control. Su comentario afirma «sólo `\` y `"` pueden aparecer en una ruta ya
+validada», cierto para los patrones declarados y **no** para los motivos ni para las rutas que salen de
+expandir contra el árbol. Medido: `Archivos: /tmp/a<TAB>b.sh` → salida que `jq` rechaza («Invalid
+string: control characters… must be escaped»). En lo medido rc = 1, así que **no** es fail-open hoy;
+lo abro porque el modo JSON es el que consume una máquina y un consumidor que no falle cerrado
+convierte esto en uno.
+
+#### SEC-019 — `instrumento` · **abierto** · sin dueño hasta ahora · severidad media
+
+**54 casos del banco (de 735) pasan en verde con el hook al que apuntan reducido a `exit 0`.** Medido
+por QA en las vueltas 1 y 2 y registrado **dentro** del párrafo del residual de H-03
+(`requirements/REQ-014.md:150`), donde queda como dato de apoyo de otro hallazgo. Es exposición
+**preexistente** (`git diff v1.31.0 -- hooks/` vacío) y CA-13 de REQ-014 le prohíbe tocarla, lo cual es
+el acotamiento correcto de ese REQ — pero el 7,3 % del banco que no distingue «el mecanismo funciona»
+de «el mecanismo no está» **no tiene dueño ni ventana propios**, y el banco es la puerta requerida de
+`main` para todos los proyectos que dependen de este plugin. Lo abro para que salga del párrafo ajeno
+y reciba dueño y ventana.
+
+### Observaciones sin hallazgo
+
+- **CI (`.github/workflows/banco.yml`).** Sin `permissions:` explícito en el workflow; con
+  `on: pull_request` un PR de fork ya corre con token de sólo lectura, pero un `permissions: contents: read`
+  al nivel del job lo haría verdadero también para los PR internos. Y `actions/checkout@v4` está anclado
+  por **etiqueta**, no por SHA. Las dos son **preexistentes** y no las trae esta ventana.
+- **Herencia, `templates/requirements-README.md.tpl`.** El ejemplo «Bien» cita `hooks/guard-git.sh`,
+  una ruta del plugin que el árbol de un proyecto consumidor no contiene. Es ilustrativo y sigue la
+  convención ya existente de citar `tools/arnes-lectura.sh`; no lo abro, pero es el borde de CA-31.
+- **`requirements/README.md`.** La tabla índice sigue declarando REQ-012/013/014 como `pendiente` con
+  QA y Seguridad `pendiente`, cuando están `en-revisión` con `QA: aprobado`. Documentación del propio
+  repositorio, no heredable.
+
+### Verificaciones de gobernanza de R-004, con su resultado
+
+| Verificación | Resultado |
+|---|---|
+| **No-regresión del mecanismo** | **Cumple.** `git diff v1.31.0 -- hooks/` = 0 líneas (verificado por mí). `tools/` sólo añade `arnes-paralelo.sh`; `hooks/hooks.json` no lo registra: **0 procesos** añadidos a `Bash`, `Edit`, `Write` ni a la parada |
+| **Nada del autoalojamiento filtrado a lo que heredan los proyectos** | **Cumple.** El diff de `agents/` (los tres) y de `templates/AGENTS.md.tpl` y `templates/requirements-README.md.tpl` no introduce **ni un** rol, glob, versión, rigor por defecto, nombre de proyecto consumidor ni cuenta de GitHub de este repositorio. `{{MAX_REINTENTOS}}` se conserva como marcador. La medición «7 de 20 hallazgos» va anonimizada («un ciclo de este arnés») |
+| **Ninguna afirmación nueva promete más de lo que la máquina cumple** | **NO cumple del todo.** Tres desvíos: **SEC-014** (la tolerancia del paréntesis, enseñada sin su límite, abre el mapa), **SEC-015** (la promesa de no-corrupción concurrente) y **SEC-016** (la invariante 1 sin su límite honesto). El resto es honesto y lo dice: «es una regla de redacción; la puerta no la comprueba», «su ausencia no bloquea nada», «evalúa archivos y no el orden de fases» |
+| **La herramienta no despacha, no es puerta y no escribe** | **Cumple.** Sin `eval`, sin sustitución de comandos, sin redirección a archivo; no invoca agentes ni toca `PENDING_APPROVAL.md` ni ningún REQ. El árbol queda idéntico tras ejecutarla. Sin inyección desde el contenido de un REQ: los patrones se expanden con globbing, nunca se evalúan |
+| **La advertencia del orden de fases sale siempre** | **Cumple.** En texto y en JSON, también cuando el veredicto es `colisiona` |
+| **Cambio del workflow de CI** | **Seguro.** No añade secretos, ni acciones de terceros, ni `pull_request_target`. `bash -n` no ejecuta; `git ls-files -s` lee el índice. El paso nuevo ejecuta código del propio PR, que el paso preexistente del banco ya ejecutaba: **no abre una clase nueva**. Las dos aserciones nuevas cuadran hoy sobre el árbol (5/5 puntos de entrada `100755`, 37/37 secciones `100644`, `bash -n` en verde) |
+| **Repositorio público: sin datos de cliente ni secretos** | **Cumple.** Barrido de credenciales sobre todo el diff de la ventana: cero. `.gitignore` sigue cubriendo `mejoras-arnes-*.md` e `insumos/` |
+| **Cola de aprobaciones** | **1** entrada bajo `## Pendientes` (el gate humano del workflow de CI). Correcto: ningún REQ puede pasar a `completado` hoy |
+| **Rigor** | Los tres ya son `critico` con `Sensible a seguridad: sí`. **Nada que subir** |
+
+### Dictamen sobre `ADR-002` y el residual de H-03: **se acepta el estrechamiento**
+
+No lo veto, y el argumento no es de conveniencia:
+
+1. **No se debilitó ninguna máquina; se estrechó una promesa hasta hacerla cierta.** La guarda ganó el
+   cierre transitivo sobre la cadena de llamadas y su control positivo. Lo que se recortó es la frase.
+   Un criterio que promete un guardián que nadie tiene es **más** peligroso que uno que declara su
+   límite: alguien lo lee y deja de mirar.
+2. **La oración que de verdad protege sigue intacta y verificada por mutación en todos los archivos:**
+   JSON vacío es FAIL. Lo que se estrecha es la **segunda** capa.
+3. **Es la misma pregunta que `AGENTS.md` §13 ya declaró no ganada** para el detector de escrituras por
+   `Bash`, y este repositorio no puede tenerla de las dos maneras. Ensanchar el patrón compraría dos
+   **formas** fingiendo comprar la **clase** —una variable, `eval`, una llamada indirecta la
+   reproducen— y ya produjo falsos positivos sobre código correcto; un guardián que grita sobre código
+   bueno acaba apagado, y uno apagado protege menos que uno parcial.
+4. **El residual cumple `AGENTS.md` §6 punto por punto:** forzador **medido** (dos evasiones
+   reproducidas, no conjeturadas), dueño **REQ-011**, vencimiento **cierre de 1.33.0** y cláusula de
+   no-renovación silenciosa.
+5. **El modelo de amenaza está acotado:** sólo alcanza a quien escriba una sección del banco con
+   ofuscación deliberada, y quien escribe secciones del banco es este equipo. No hay actor externo en
+   esa ruta, ni dinero, ni datos personales; ningún proyecto hereda el banco.
+
+**Suscribo también la reclasificación de H-03 a `instrumento`**, con la **condición que el propio QA
+escribió**: es `instrumento` *porque* CA-06 describe hoy su alcance real. **Esa condición no la vigila
+ninguna máquina**, así que la registro abajo como estado aprobado: si en una ventana futura el
+«límite honesto» de CA-06 desaparece o la promesa se ensancha sin ensanchar la máquina, es
+**regresión** y H-03 vuelve a `contrato` sin discusión.
+
+**Lo que el estrechamiento no cubre y queda dicho:** SEC-016 —la promesa ancha sobrevive en la nota
+de `arnes-upgrade`— y SEC-019 —los 54 casos—.
+
+### Estado de seguridad aprobado por REQ — ventana 1.32.0
+
+| REQ | Veredicto | Fecha | Versión | Controles acreditados (contra esto se compara la próxima auditoría) |
+|---|---|---|---|---|
+| **REQ-012** | **`aprobado`** | 2026-09-06 | candidata 1.32.0 (`cand/1.32.0`) | (1) La regla de redacción **no toca la máquina**: ninguno de los 11 elementos de su `Archivos:` vive bajo `hooks/`, `tools/`, `tests/`, `.github/` ni `.arnes/`; 0 procesos añadidos; ninguna llave nueva del manifiesto. (2) Lo que heredan los proyectos —`templates/requirements-README.md.tpl`, `templates/AGENTS.md.tpl`, los tres `agents/*.md`— entra **sin nada del autoalojamiento**: ni roles, ni globs, ni versiones, ni rigor por defecto, ni nombres de proyectos o cuentas. (3) Declara su propio límite en voz alta («es una regla de redacción; la puerta no la comprueba»). (4) `agents/auditor-seguridad.md` gana la obligación de describir **todo control por propiedad**, incluidos los NFR de write-back y los hallazgos de este registro |
+| **REQ-013** | **`con-hallazgos`** | 2026-09-06 | candidata 1.32.0 (`cand/1.32.0`) | **No firmo.** **SEC-014** (`contrato`) queda abierto: la herramienta responde `disjunto`/rc 0 sobre un mapa que truncó en silencio, desmintiendo CA-04, CA-11(ii) y CA-13. Sí quedan acreditados y son línea base de no-regresión: (1) el fail-closed por **modo degradado** (sin `jq`, sin manifiesto, sin REQ, REQ ilegible, `Estado:` ausente, marcador de posición) sale por `no_medido`/rc 2 o `SIN DECLARAR`/rc 1, nunca por `disjunto`; (2) la clave del par se **ordena al escribirla**, sin asimetrías; (3) la herramienta **no es puerta**, no despacha, no escribe y no añade procesos; (4) la **advertencia del orden de fases sale siempre**. Si alguno de estos cuatro se debilita en una ventana futura, es regresión |
+| **REQ-014** | **`aprobado`** | 2026-09-06 | candidata 1.32.0 (`cand/1.32.0`) | (1) La partición **no pierde poder de medida**: 0 líneas suprimidas o de veredicto cambiado en el inventario frente a v1.31.0, cuadre por archivo **y** total, marca de fin de sección para que una sección muerta no se confunda con una limpia. (2) La invariante «JSON vacío es FAIL» se verifica **por mutación en todos** los archivos, sin cifra en el criterio. (3) La guarda estática propaga «ejecuta un hook» y «lleva guarda» por la **cadena de llamadas** hasta punto fijo, con control positivo y sin falsos positivos. (4) **CA-06 declara su límite honesto** — y esa declaración **es** la condición de que H-03 sea `instrumento`: borrarla o ensanchar la promesa sin ensanchar la máquina es **regresión**. (5) El workflow de CI **endurece**: `bash -n` sobre las 37 secciones y modos en el índice en sus dos mitades (`100755` puntos de entrada, `100644` secciones). Deudas declaradas: **SEC-016**, **SEC-019** |
+
+### Obligación de write-back (`AGENTS.md` §9)
+
+- **SEC-014** no se cierra —ni levanto el `con-hallazgos` de REQ-013— hasta que estén **las tres**
+  cosas: el código deja de descartar elementos, el criterio dice cómo se aplica la regla del
+  paréntesis a un campo de **lista** (lo escribe el `analista-requerimientos`; hay tensión real entre
+  CA-03 y CA-11/CA-13 y la resuelve él, no el código en silencio) y la plantilla heredada deja de
+  enseñar la tolerancia sin su límite. Un arreglo que viva sólo en el código es deriva.
+- **SEC-015** exige, además del arreglo de código en REQ-015, que `AGENTS.md` §13 y
+  `templates/AGENTS.md.tpl` digan qué garantiza la escritura concurrente del bloque derivado y qué no.
+- **SEC-016**, **SEC-017**, **SEC-018** y **SEC-019**: deuda `instrumento` con dueño `desarrollador`;
+  ventana propuesta **1.33.0**, salvo SEC-016, que recomiendo en 1.32.0 con SEC-015.
+
+### Pendientes que esta firma NO cubre
+
+- **El banco completo en Windows/MSYS**, plataforma del `desarrollador`. Todo lo mío es Linux/WSL2, y
+  `AGENTS.md` §7 lo exige antes de pedir la fusión. Es la **tercera** revisión seguida en que no me
+  consta. Importa más en esta ventana: **QA-205 (mayúsculas) sube a `contrato`** sobre un sistema de
+  archivos que no distinga mayúsculas, y ahí vive el `desarrollador`.
+- **CI en verde en el PR** (`hooks-en-linux`), la fusión, el tag `v1.32.0`, la publicación y la
+  actualización de la instalación estable: de la coordinadora y del propietario.
+- **El bump de `arnes_version` y de los dos manifiestos a `1.32.0`**: hoy declaran `1.31.0`, que es lo
+  correcto hoy. Si se olvida, el manifiesto miente sobre qué versión gobierna.
+- **REQ-007, REQ-008 y REQ-011**: no llevan mi firma en esta revisión.
+- **La eficacia real del despacho en paralelo** (CA-24 de REQ-013: cero conflictos sobre pares
+  declarados `disjunto`) sólo se puede medir **usando** la herramienta durante un ciclo. Con SEC-014
+  abierto, esa medición no debe empezar.
+
+---
+
+## Re-verificación de R-004 — cierre de hallazgos, candidata 1.32.0 (`cand/1.32.0`) — 2026-09-06
+
+**Mandato distinto del de R-004: se verifica CIERRE, no se vuelve a auditar.** Se comprueban los
+hallazgos que R-004 dejó abiertos, con la evidencia de cada uno; lo que aparezca de clase
+`usuario/dinero` o `contrato` se reporta, y lo `instrumento` va a deuda de la ventana siguiente sin
+gastar presupuesto buscando más. Todo lo medido aquí es Linux/WSL2, sobre proyectos efímeros en el
+scratchpad; ninguna sonda escribió en el árbol del repositorio.
+
+### Hallazgo por hallazgo
+
+| Hallazgo | Clase | Estado tras la re-verificación |
+|---|---|---|
+| **SEC-014** | `contrato` | **EN MITIGACIÓN — no cierra.** Patas 1 (código) y 2 (criterio) **cerradas y medidas**; la pata 3 (**herencia**) está escrita pero **dice lo contrario de lo que hace la máquina** — ver abajo |
+| **SEC-015** | `contrato` | **MITIGADO.** La frase de `skills/arnes-upgrade/SKILL.md` dice ahora la verdad, en dos mitades («Sí» / «No»), y no promete de menos |
+| **SEC-016** | `instrumento` | **MITIGADO.** El límite honesto llegó a `skills/arnes-upgrade/SKILL.md`, en el mismo párrafo de la invariante 1 |
+| **SEC-017** | `instrumento` | **ABIERTO**, registrado en `requirements/REQ-013.md` (cabecera + historial) con clase y dueño `desarrollador`. **Sin ventana escrita** — ver pendientes |
+| **SEC-018** | `instrumento` | **MITIGADO.** `--json` sobrevive a `\t`, `\x01`, `\x1f`, `\x7f`, `\` y `"`: `jq -e .` acepta las seis salidas |
+| **SEC-019** | `instrumento` | **ABIERTO**, con bloque propio en `requirements/REQ-014.md:187`, dueño `desarrollador`, ventana **1.35.0** y vencimiento medible. Correctamente registrado |
+| **SEC-020** *(nuevo)* | `contrato` | **ABIERTO.** Séptimo fail-open de `tools/arnes-paralelo.sh`: el marcado por elemento corrompe el mapa y responde `disjunto`/rc 0 |
+| **SEC-021** *(nuevo)* | `instrumento` | **ABIERTO.** Un archivo real cuyo nombre acabe en `)` se reescribe a otra ruta, en silencio |
+
+### SEC-014 — patas 1 y 2 cerradas, pata 3 invertida
+
+**Lo que sí está cerrado, medido en las ocho formas que el arreglo tenía que cubrir** (REQ-A contra
+REQ-B, con `hooks/lib.sh`, `tools/x.sh` y `docs/a.md` reales en el árbol del proyecto efímero):
+
+| Forma de `Archivos:` en REQ-A | Antes (R-004) | Ahora |
+|---|---|---|
+| `tools/x.sh (nuevo), hooks/lib.sh` — paréntesis en la **primera** | `disjunto` · rc 0 | **`colisiona hooks/lib.sh` · rc 1**, mapa completo |
+| `docs/a.md, hooks/lib.sh (modificado), tools/x.sh` — **intermedia** | `disjunto` · rc 0 | **`colisiona`** · rc 1, los tres elementos en el mapa |
+| `hooks/lib.sh, tools/x.sh (medido 6/9)` — **última** | correcto | correcto, sin regresión |
+| `docs/a.md (nuevo), hooks/lib.sh (mod), tools/x.sh (CI)` — **todas** | `disjunto` · rc 0 | **`colisiona`** · rc 1, los tres elementos |
+| `hooks/lib.sh (medido el 6/9, 2 archivos), tools/x.sh` — **coma dentro** del paréntesis | — | **`colisiona`** en las dos direcciones; la coma de la evidencia no parte la lista |
+| `hooks/lib.sh (mod, tools/x.sh` — paréntesis **sin cerrar** | — | **`SIN DECLARAR` con motivo propio** · colisiona con todos |
+| `hooks/lib.sh, (medido 6/9)` — anotación **suelta** entre comas | — | **`SIN DECLARAR` con motivo propio** · colisiona con todos |
+| `docs/nota (v2).md` — **archivo real** con paréntesis en el nombre | — | **`SIN DECLARAR` con motivo propio** · efecto lateral declarado en el código, dirección segura |
+
+El banco recoge la propiedad, no sólo el caso: `secciones/35-arnes-paralelo-fail-open.sh:337` mide el
+veredicto en **las dos direcciones** y `:344` mira el **mapa** —los dos elementos, en orden, y nada
+más en la línea—, que es lo que impide acertar por el camino equivocado declarando el REQ ilegible.
+
+**La pata 3 no cierra, y no por omisión: por inversión.** `requirements/README.md:151` y
+`templates/requirements-README.md.tpl:151` —el archivo que **heredan todos los proyectos**— dicen
+hoy:
+
+> «**Anotar elemento por elemento —`tools/x.sh (nuevo), hooks/lib.sh (modificado)`— no es una forma
+> admitida:** un elemento con paréntesis no es una ruta, la herramienta lo **dice con su motivo** y el
+> REQ pasa a `sin declarar`, que colisiona con todos.»
+
+Es **falso sobre lo construido**: esa línea exacta es la primera fila de la tabla de arriba y la
+herramienta la **lee**, declarando los dos archivos. La nota describe la variante que este registro
+propuso al despachar la comisión —«la regla vale sólo tras el último separador»—, no el CA-03 que el
+analista escribió y que el código implementa. Mi condición de cierre de R-004 era «la plantilla
+heredada deja de enseñar la tolerancia sin su límite»: hay un límite escrito, pero es el de otra
+máquina. Dirección del error: la documentación es **más estrecha** que el código, así que no produce
+un `disjunto` falso; lo que produce es que el documento que gobierna cómo se escribe el campo mienta
+sobre la máquina, en la ventana cuyo tema es `ADR-002` —ninguna afirmación más ancha que lo
+construido—, y que quien «arregle» el código para que cuadre con la nota **regrese SEC-014 entero**.
+
+**Remediación (write-back del `analista-requerimientos`, `AGENTS.md` §9):** el párrafo de
+`requirements/README.md` y de `templates/requirements-README.md.tpl` dice lo que CA-03 exige —la
+evidencia es **de cada elemento**, en cualquier posición; la coma **dentro** de un paréntesis no
+separa; una anotación **suelta** entre comas y un paréntesis **sin cerrar** salen `sin declarar` con
+su motivo— y declara el residual del párrafo siguiente. Mientras la nota diga lo contrario, SEC-014
+sigue **abierto** y REQ-013 no lleva mi firma.
+
+### Juicio sobre el grano «por elemento» — de acuerdo, y con las dos superficies que abre dichas
+
+**Estoy de acuerdo con la decisión del `desarrollador`, y la precedencia que aplicó es la correcta.**
+Mi instrucción al despachar era un **mecanismo**; CA-03, reescrito por el analista, es el
+**contrato** — y la remediación 2 de SEC-014 pedía exactamente eso: que la tensión CA-03 vs
+CA-11/CA-13 la resolviera el analista por escrito y no el código en silencio. Implementar el criterio
+y **declararlo** es cumplir la regla, no saltársela. En el fondo también tiene razón: mi variante
+habría **rechazado** la forma prolija —la que la plantilla enseñaba— convirtiéndola en un
+`sin declarar` permanente, y no satisface la verificación **por conteo** que CA-03 exige, porque un
+rechazo no evalúa elementos: los deja de evaluar.
+
+**Y sí abre dos superficies que la mía no abría. Las dos, medidas:**
+
+1. **La coma deja de ser un separador incondicional.** Para no partir `(medido el 6/9, 2 archivos)`
+   hay ahora una profundidad de paréntesis (`tools/arnes-paralelo.sh:381`). Consecuencia medida:
+   `Archivos: docs/a.md (nota, hooks/lib.sh)` declara **sólo** `docs/a.md` y responde `disjunto`/rc 0
+   frente a un REQ que declare `hooks/lib.sh`. Con mi variante esa cadena se habría partido por esa
+   coma y la cola `hooks/lib.sh)` habría caído en `sin declarar` — **fail-closed**. Aquí no es un
+   fallo: es la convención —lo que va dentro del paréntesis es **evidencia**, no declaración— y la
+   dirección la fija esa convención, no la máquina. **Residual aceptado**, con una condición: la
+   convención tiene que estar **escrita donde se escribe el campo**, y hoy ese párrafo dice otra cosa
+   (pata 3 de SEC-014). Sin esa frase, el residual no está aceptado: está escondido.
+2. **La regla del paréntesis se aplica en todas las posiciones, no sólo en la última.** Lo que antes
+   sólo podía pasarle al último elemento le puede pasar ahora a cualquiera. En la forma segura eso es
+   justo lo que se quería; en el borde produce SEC-021.
+
+**Lo que NO es culpa del grano por elemento:** el fail-open que abro abajo (SEC-020) vive en el
+`arnes_desenvuelve` **del valor entero** (`tools/arnes-paralelo.sh:329`), que es anterior a la
+separación y que CA-03 no autoriza en ese punto — mi variante lo habría tenido igual.
+
+### La propiedad declarada, puesta a prueba: la entrada que la viola
+
+CA-03 declara «**ningún elemento declarado desaparece nunca en silencio**» y la verifica **por
+conteo**. La entrada que la viola pasa el conteo:
+
+```
+REQ-A ->  Archivos: `hooks/lib.sh`, `tools/x.sh`      (acentos graves POR ELEMENTO)
+REQ-B ->  Archivos: hooks/lib.sh
+Respuesta: disjunto · rc 0        Verdad: colisionan en hooks/lib.sh
+Mapa que la herramienta usó:  «hooks/lib.sh`»   «`tools/x.sh»
+```
+
+El **conteo cuadra** —dos elementos declarados, dos evaluados— y aun así **los dos archivos
+declarados desaparecen del mapa**, sustituidos por dos fantasmas que no existen ni casan con nada, sin
+motivo y sin bajar el recuento. La lección para el criterio: la verificación por conteo es
+**necesaria y no suficiente**; la propiedad que hay que medir es que **ningún archivo declarado
+desaparece**, y eso sólo lo ve la comprobación del **mapa** (la de `:344`), que hoy no cubre el
+marcado.
+
+### SEC-020 — `contrato` · **abierto** · REQ-013 · severidad alta · dueño `desarrollador`
+
+**Séptimo fail-open de `tools/arnes-paralelo.sh`: el marcado de Markdown escrito POR ELEMENTO
+corrompe todas las rutas del mapa y la herramienta responde `disjunto` con rc 0.**
+
+`tools/arnes-paralelo.sh:329` aplica `arnes_desenvuelve` al **valor entero antes de separar la
+lista**. Cuando el valor empieza y acaba con el mismo marcador —que es lo que pasa siempre que el
+marcado se pone **elemento por elemento**— esa pasada arranca el par **exterior**, que pertenece a
+dos elementos distintos, y deja a los de dentro con un marcador impar. El desenvoltorio **por
+elemento** de `norm_ruta:153` ya no puede repararlo (el marcador quedó sin pareja) y `norm_ruta` lo
+acepta como **ruta futura literal**: tiene extensión, así que pasa la propiedad de «no designa nada».
+
+Medido, con `hooks/lib.sh`, `tools/x.sh` y `docs/a.md` reales en el árbol:
+
+| `Archivos:` de REQ-A | REQ-B | Mapa usado | Respuesta | Verdad |
+|---|---|---|---|---|
+| `` `hooks/lib.sh`, `tools/x.sh` `` | `hooks/lib.sh` | ``hooks/lib.sh` `` · `` `tools/x.sh `` | **`disjunto` · rc 0** | colisiona |
+| `_hooks/lib.sh_, _tools/x.sh_` | `hooks/lib.sh` | `hooks/lib.sh_` · `_tools/x.sh` | **`disjunto` · rc 0** | colisiona |
+| `` `docs/a.md`, `hooks/lib.sh`, `tools/x.sh` `` | `tools/x.sh` | `docs/a.md`` · `hooks/lib.sh` · `` `tools/x.sh `` | **`disjunto` · rc 0** | colisiona |
+| `` `docs/a.md`, `hooks/lib.sh`, `tools/x.sh` `` | `hooks/lib.sh` | igual que arriba | `colisiona` · rc 1 | correcto **por casualidad**: el elemento del **medio** conserva su par |
+| `**hooks/lib.sh**, **tools/x.sh**` | `hooks/lib.sh` | `hooks/lib.sh**` · `**tools/x.sh` | `colisiona` · rc 1 | correcto **por accidente**: `*` es un carácter de glob y la expansión contra el árbol vuelve a casar |
+| `` `hooks/lib.sh`, tools/x.sh `` — marcado **sólo en el primero** | `hooks/lib.sh` | los dos, limpios | `colisiona` · rc 1 | correcto |
+
+Los dos aciertos son casualidad de la forma, no de la regla: `*` y `**` se salvan porque son globs, y
+el elemento intermedio se salva porque el par que se arranca es el exterior. Los acentos graves y el
+subrayado —que **no** son caracteres de glob— abren.
+
+**Criterios que desmiente** —los mismos tres de SEC-014, por eso es la misma clase y no `instrumento`:
+- **CA-03** — fija el **orden obligado**: (1) recorte de cabecera y desenvoltura de **la clave** sobre
+  el texto del campo, (2) **separación de la lista**, (3) la normalización de **valor** —blancos y
+  marcado— **a cada elemento**. La pasada de `:329` desenvuelve el **valor** en el paso (1), que es
+  justo donde el criterio no la pone, y es la que corrompe.
+- **CA-11 (ii)** — «toda forma que no sea una ruta relativa a la raíz se **rechaza con mensaje
+  propio** y el REQ pasa a `sin declarar`». ``hooks/lib.sh` `` con un acento grave impar no es una
+  ruta y no se rechaza: se acepta como literal futuro.
+- **CA-13** — la herramienta **no pudo medir** y no lo dice, sale 0 y afirma `disjunto`.
+
+**Y la forma no es exótica:** `requirements/README.md` admite «el valor entre acentos graves» como
+tolerancia, CA-03 manda aplicar el desenvoltorio **por elemento**, y este repositorio escribe cada
+ruta entre acentos graves en todas sus prosas. Escribir `` Archivos: `a.sh`, `b.sh` `` es al menos tan
+natural como envolver la línea entera. **El banco comparte la ceguera** de nuevo, y por el mismo
+sitio: `secciones/34-arnes-paralelo.sh:128` prueba el acento grave **sólo en el primer elemento** —la
+única colocación que no dispara el defecto—.
+
+**Remediación (las dos, o el hallazgo no cierra):**
+1. **Código, enunciado por propiedad y no por caso:** después de la normalización, **un elemento que
+   conserve un marcador de marcado impar no es una ruta** y sale con su motivo, exactamente como ya
+   hace el paréntesis en `norm_ruta:171`. Ensanchar el desenvoltorio para que «entienda» el marcado
+   por elemento sin fallar cerrado compraría formas, no la clase. Si se prefiere, la alternativa
+   equivalente es no desenvolver el **valor** antes de separar (CA-03 no lo pide ahí) y fallar cerrado
+   sobre el marcador impar que quede; hay que conservar el caso de la lista envuelta **entera**
+   (`` `a.sh, b.sh` ``), que hoy funciona.
+2. **Banco:** los casos que faltan son las colocaciones que abren —acento grave y subrayado en
+   **todos** los elementos, y en el **primero y el último** de tres—, medidos sobre el **mapa** y en
+   las dos direcciones, no sólo sobre el veredicto.
+
+### SEC-021 — `instrumento` · **abierto** · REQ-013 · severidad baja · dueño `desarrollador`
+
+**Un archivo real cuyo nombre acabe en `)` se reescribe a otra ruta, en silencio.** La regla del
+paréntesis se aplica ahora a cada elemento, así que `Archivos: docs/x (1)` —con `docs/x (1)` existiendo
+de verdad— declara `docs/x`. El elemento no desaparece (el conteo cuadra) pero **el archivo declarado
+sí**: se sustituye por una ruta que no existe. Medido: contra `docs/*` sale `colisiona`, que es la
+dirección segura, y por eso es `instrumento` y no bloquea. Su hermano cerrado va en la dirección
+correcta: `docs/nota (v2).md` —paréntesis que no está al final— sale `SIN DECLARAR` **con motivo**.
+La asimetría entre los dos es lo que conviene arreglar cuando se toque SEC-020, y el arreglo es el
+mismo: lo que tras la regla siga sin designar el archivo declarado se **dice**.
+
+### Estado de seguridad aprobado por REQ — re-verificación de la ventana 1.32.0
+
+| REQ | Veredicto | Fecha | Versión | Motivo / controles acreditados |
+|---|---|---|---|---|
+| **REQ-012** | **`aprobado`** | 2026-09-06 | candidata 1.32.0 (`cand/1.32.0`) | Se **confirma** el `aprobado` de R-004: ninguno de sus controles acreditados se ha debilitado, y nada de lo re-verificado aquí toca sus criterios. El párrafo falso de `requirements/README.md:151` es entrega de **REQ-013** (CA-31), no suya |
+| **REQ-013** | **`con-hallazgos`** | 2026-09-06 | candidata 1.32.0 (`cand/1.32.0`) | **No firmo, por dos causas independientes.** **SEC-014** sigue abierto por su pata de **herencia**: el documento que heredan los proyectos afirma que la herramienta **rechaza** la anotación por elemento y la herramienta la **lee**. **SEC-020** (`contrato`, nuevo): el marcado por elemento produce `disjunto`/rc 0 sobre un mapa corrompido, desmintiendo CA-03, CA-11 (ii) y CA-13. **Sí quedan acreditados y son línea base de no-regresión**, además de los cuatro de R-004: (5) la separación de la lista respeta la **coma dentro de la evidencia**; (6) la anotación **suelta** y el paréntesis **sin cerrar** salen `SIN DECLARAR` **con motivo propio**, nunca en silencio; (7) `--json` es JSON válido con caracteres de control (SEC-018) |
+| **REQ-014** | **`aprobado`** | 2026-09-06 | candidata 1.32.0 (`cand/1.32.0`) | Se **confirma** el `aprobado` de R-004 y se **cierra SEC-016**: `skills/arnes-upgrade/SKILL.md` enuncia ahora la invariante 1 con su límite —«la comprobación es **estática y sobre funciones**… una **barandilla contra el descuido, no una jaula**»— y remite a `ADR-002`; la promesa a quien copie el patrón deja de ser más ancha que la máquina. Los cinco controles acreditados en R-004 siguen intactos. Deuda declarada que **no** bloquea: **SEC-019** (dueño `desarrollador`, ventana 1.35.0, vencimiento medible) |
+
+### Comprobación de SEC-015, con su texto
+
+`skills/arnes-upgrade/SKILL.md:254-266` sustituye «idempotentes, no se corrompen» por dos mitades
+nombradas. **Es cierta, y no promete de menos:** el «**Sí**» sigue acreditando lo que la máquina
+hace —bloque derivado, se recalcula entero del disco, sólo entre marcadores, `mv` sobre el destino
+para que una parada **aislada** no deje el archivo a medias—, y el «**No**» declara el defecto con su
+medida (**1 de 25** paradas simultáneas perdió el texto humano), su causa (**temporal de nombre
+fijo**), la mitigación mientras tanto (versionar `docs/ESTADO.md` o apagar el bloque durante el
+paralelo) y la ventana del arreglo (**REQ-015 / 1.32.1**). Es exactamente el tipo de frase que
+`ADR-002` pide: ni una palabra más ancha que la máquina, ni una más estrecha.
+
+### Pendientes que esta re-verificación NO cubre
+
+- **QA no ha validado el árbol actual.** El `QA: aprobado` de la vuelta 3 se emitió sobre un banco de
+  **735** casos (`docs/qa/1.32.0-hallazgos-req012-013.md:1157`); el arreglo posterior de SEC-014 y
+  SEC-018 lo dejó en **742** y cambió `tools/arnes-paralelo.sh`, `requirements/README.md` y
+  `templates/requirements-README.md.tpl`. Aunque SEC-014 y SEC-020 no existieran, **mi firma sobre
+  REQ-013 sería inválida por orden** (`AGENTS.md` §6): acreditaría un árbol que la puerta de calidad
+  no ha visto. El delta necesita un pase de QA. Dato, no veredicto: el banco corre hoy en verde en
+  Linux —`741 PASS, 0 FAIL, 1 SKIP`, rc 0—, lo cual no sustituye ese pase.
+- **SEC-017 no tiene ventana escrita.** Clase y dueño (`desarrollador`) sí constan en
+  `requirements/REQ-013.md`; la ventana que R-004 propuso (**1.33.0**) no aparece en ningún artefacto.
+  Una deuda sin ventana es una deuda sin vencimiento.
+- **`Hallazgos abiertos:` de los REQ, al día:** REQ-013 aún declara `SEC-018 (instrumento)`, que aquí
+  queda **mitigado**, y le faltan `SEC-020 (contrato)` y `SEC-021 (instrumento)`; REQ-014 aún declara
+  `SEC-016 (instrumento)`, también **mitigado**. Lo escribe el `analista-requerimientos`; yo no toco
+  `requirements/`.
+- **El banco completo en Windows/MSYS**, plataforma del `desarrollador`: sigue sin constarme. Es la
+  **cuarta** revisión seguida. Con QA-205 subiendo a `contrato` sobre un sistema de archivos que no
+  distinga mayúsculas, importa más en esta ventana que en las anteriores.
+- **CI (`.github/workflows/banco.yml`) — se confirma el dictamen de R-004.** El cambio no ha variado
+  desde entonces y **endurece**: `bash -n` sobre `hooks/`, `tools/` y las 37 secciones (una sección
+  con sintaxis rota no falla, **desaparece**), y el bit de ejecución comprobado en sus **dos**
+  mitades (`100755` los puntos de entrada, `100644` las secciones, para que nadie corra una sección
+  suelta sin ayudantes ni canario y la vea verde). **No hay objeción de seguridad a ese cambio.** Las
+  dos observaciones de R-004 siguen siendo **preexistentes** y **no las trae esta ventana**: no hay
+  `permissions:` explícito en el workflow (un `contents: read` a nivel de job lo haría verdadero
+  también para los PR internos) y `actions/checkout@v4` está anclado por **etiqueta**, no por SHA.
+  Ninguna de las dos bloquea la aprobación por delegación.
+
+## Revisión R-006 — cierre de la pata 3 de SEC-014 y firma final de la ventana 1.32.0 (`cand/1.32.0`) — 2026-09-06
+
+**Alcance declarado, y por qué es estrecho:** verificación de **cierre**, no auditoría nueva. Se
+comprueba (1) que el párrafo heredado del campo `Archivos:` dice **lo que la máquina hace**,
+ejecutando; (2) que el párrafo del límite no promete nada en ninguna dirección; (3) que lo que cruza
+la ventana está registrado con **clase, dueño y ventana**; y (4) que ningún control acreditado en
+R-004/R-005 se ha debilitado. Lo que esta revisión **no** rehace: el análisis de código de
+`tools/arnes-paralelo.sh` (R-004, R-005), el banco caso a caso y las quality gates, que son de QA.
+
+### Pata 3 de SEC-014 — **CERRADA**, verificada ejecutando
+
+La condición que R-005 dejó escrita era: «la plantilla deja de enseñar la tolerancia sin su límite».
+`requirements/README.md:151-163` y `templates/requirements-README.md.tpl:151-163` son ahora **dos**
+bloques, y los dos archivos son **byte a byte idénticos** en ese tramo (`diff` vacío en 140-170): lo
+que se lee aquí es exactamente lo que hereda un proyecto.
+
+**Bloque 1 — cada afirmación, contrastada contra la herramienta** (proyecto de prueba con
+`hooks/lib.sh`, `hooks/guard.sh`, `tools/x.sh` y `tools/arnes-lectura.sh` reales; `--json`):
+
+| Afirmación del párrafo | Sonda | Resultado medido |
+|---|---|---|
+| Anotar elemento por elemento **sí es admitida**, declara **dos** archivos | `tools/x.sh (nuevo), hooks/lib.sh (modificado)` | `archivos:["tools/x.sh","hooks/lib.sh"]` |
+| …y **colisiona con quien declare cualquiera de los dos** | vs `hooks/lib.sh` · vs `tools/x.sh` | `colisiona`/rc 1 en **ambos**; vs `hooks/guard.sh` `disjunto`/rc 0 |
+| La evidencia vale en la **primera**, una **intermedia**, la **última** o **todas** | las cuatro colocaciones, con 2 y 3 elementos | conteo evaluado = conteo declarado en las **cuatro** |
+| `hooks/lib.sh, tools/arnes-lectura.sh (medido el 6/9)` declara **dos**, no tres | idem | `["hooks/lib.sh","tools/arnes-lectura.sh"]` |
+| Dentro de un paréntesis **la coma no separa** | `hooks/lib.sh (medido el 6/9, 2 archivos), tools/x.sh` | **2** elementos, `disjunto` correcto |
+| Lo que va **dentro** del paréntesis **no declara nada** | `hooks/lib.sh (junto a tools/arnes-lectura.sh, ver nota), tools/x.sh` vs `tools/arnes-lectura.sh` | `disjunto`: la ruta de dentro **no** entra al mapa |
+| Un paréntesis **sin cerrar** se **dice con su motivo** → `SIN DECLARAR` | `hooks/lib.sh (x, tools/x.sh` | `declarado:false` + motivo nombrando el paréntesis; `colisiona`/rc 1 |
+| Una anotación **suelta** entre dos comas, igual | `hooks/lib.sh, (medido el 6/9), tools/x.sh` | `declarado:false` + motivo propio; `colisiona`/rc 1 |
+| `SIN DECLARAR` **colisiona con todos**, nunca `disjunto` | tres REQ, uno sin campo | salida literal `SIN DECLARAR … (colisiona con todos)`, 2 pares `colisiona`, rc 1 |
+| El campo vale **sólo en la cabecera** | `Archivos:` debajo del primer `## ` | no se lee: `no declara el campo` + colisiona |
+| Envolver la **línea entera** sí se lee bien | `` `hooks/lib.sh, tools/x.sh` `` | dos rutas correctas; colisión real detectada nombrando `tools/x.sh` |
+| Ruta **absoluta** fuera de la forma | `/home/…/hooks/lib.sh` | rechazada con motivo; `colisiona`/rc 1 |
+| `(ninguno)` es **declaración**, no omisión | `(ninguno)` vs `hooks/lib.sh` | `declarado:true`, `archivos:[]`, `disjunto`/rc 0 |
+
+**Trece afirmaciones, trece medidas coincidentes. El bloque 1 dice la verdad.** Y dice la que
+importaba: la nota anterior afirmaba que la anotación por elemento «no es una forma admitida», de
+modo que el riesgo no era un falso `disjunto` sino que alguien «arreglara» el código para cuadrar con
+la nota y **regresara SEC-014 entero**. Ese riesgo queda retirado.
+
+**Bloque 2 — no promete en ninguna dirección, y es un fallo declarado.** Dice «**no es fiable
+hoy**», nombra la causa (el desenvoltorio arranca el par **exterior**, que pertenece a dos elementos
+distintos), nombra el hallazgo (**SEC-020**, `contrato`, **abierto**, ventana **1.33.0**), escribe
+literalmente «**no es una promesa de la máquina en ninguna dirección —es un fallo declarado, no una
+regla**» y da la conducta: ruta **desnuda**, y un `disjunto` sobre campo decorado **no se toma por
+bueno**. Reproducido: `` `hooks/lib.sh`, `tools/x.sh` `` → mapa `["hooks/lib.sh`","`tools/x.sh"]`,
+`disjunto`/rc 0 **contra un REQ que declara `hooks/lib.sh`**; idéntico con `_a_, _b_`. La descripción
+del bloque 2 coincide con lo medido, ni una palabra más ancha ni más estrecha.
+
+**Consecuencia de no-regresión, y es la condición de que la nota sea honesta:** el bloque 1 enuncia
+«lo que no se entiende … **nunca** `disjunto`» como propiedad, y bajo SEC-020 esa propiedad tiene
+**una** excepción — la que el bloque 2 declara **a continuación**. Los dos bloques son honestos
+**juntos**; separarlos, mover el bloque 2 a otro documento o borrarlo cuando SEC-020 se cierre **sin**
+que el código lo cierre **regresa la pata 3**. Queda anotado como remediación 3 de SEC-020.
+
+### Respuesta a la pregunta de la instrucción heredada: **acotar basta; suspender empeoraría**
+
+`AGENTS.md:136-153` y `templates/AGENTS.md.tpl:102-119` son idénticos en ese tramo y conservan la
+instrucción («**sólo** despacha en paralelo lo que la herramienta declare disjunto») más el límite
+(«necesaria y no suficiente»). **Me basta**, por tres razones medidas y no por criterio:
+
+1. **Suspenderla devolvería el despacho a la intuición, que no tiene fail-closed ninguno.** El
+   fail-open de SEC-020 es **una forma** del campo; el resto del espacio —sin campo, valor ilegible,
+   marcador de posición, `Estado:` ausente, REQ ilegible, paréntesis roto, ruta absoluta— sigue
+   saliendo `SIN DECLARAR`/rc 1 o `no_medido`/rc 2, verificado arriba y en R-004. Cambiar «pregunta
+   siempre, y desconfía de un campo decorado» por «no preguntes» retira la parte que funciona.
+2. **La segunda condición es inspeccionable, no un juicio.** «El campo no lleva marcado por
+   elemento» se mira; no hay que estimar nada. Un límite que exige criterio sí habría que suspenderlo.
+3. **El coste de equivocarse es un conflicto de fusión, no una firma falsa.** Verificado: **nada
+   automático la consume** —0 referencias en `hooks/hooks.json`, ningún otro invocador en el árbol—,
+   no es puerta, no despacha y no escribe; y las dos reglas cuyo incumplimiento **sí** produce una
+   firma falsa (orden de fases) están escritas como **no relajables en ningún caso** y no dependen de
+   la herramienta, que además lo dice en su propia salida.
+
+**Lo que sí exige el acotamiento, y es su condición de validez:** vive **adyacente** a la
+instrucción, en los dos documentos. Retirar el aviso dejando la instrucción es la asimetría que
+convierte una barandilla en una promesa.
+
+### Lo que cruza la ventana: clase, dueño y ventana
+
+| Hallazgo | Clase | Dueño | Ventana | Dónde consta |
+|---|---|---|---|---|
+| **SEC-020** | `contrato` · abierto | `desarrollador` | **1.33.0** | `AGENTS.md:146`, `templates/AGENTS.md.tpl:112`, `requirements/README.md:168`, `templates/requirements-README.md.tpl:168`, `CHANGELOG.md:26`, y §SEC-020 de este registro |
+| **SEC-021** | `instrumento` · abierto | `desarrollador` | **1.33.0**, con SEC-020 (se fija aquí) | §SEC-021 de este registro; **no consta en ningún otro artefacto** |
+| **SEC-017** | `instrumento` · abierto | `desarrollador` | **1.33.0** | **ventana ya escrita**: `CHANGELOG.md:125`; clase y dueño en `requirements/REQ-013.md:10` y §SEC-017 |
+| **SEC-019** | `instrumento` · abierto | `desarrollador` | **1.35.0** | `requirements/REQ-014.md:187` + `CHANGELOG.md:126` |
+
+- **SEC-017: el aviso de R-005 queda RESUELTO.** Ya tiene ventana escrita (`CHANGELOG.md:125`,
+  «1.33.0»). Era la única deuda sin vencimiento y deja de serlo.
+- **SEC-021: le fijo la ventana aquí, porque faltaba.** Su bloque decía «conviene arreglarlo cuando se
+  toque SEC-020» y eso es una dependencia, no un vencimiento: **1.33.0**, con SEC-020 y por el mismo
+  arreglo (lo que tras aplicar la regla del paréntesis siga sin designar el archivo declarado **se
+  dice**). Sigue siendo `instrumento` y en dirección segura (`colisiona`).
+- **SEC-020 está registrado en cinco artefactos, incluidos los dos heredados; SEC-021, sólo aquí.**
+  Para un `instrumento` de severidad baja lo acepto, pero lo dejo dicho.
+- **Write-back pendiente (`AGENTS.md` §9), y no lo escribo yo:** `requirements/REQ-013.md:10` declara
+  `SEC-014 (contrato), SEC-017, SEC-018` y **le faltan `SEC-020 (contrato)` y `SEC-021
+  (instrumento)`**; además sigue declarando `SEC-018`, que quedó **mitigado**, y `REQ-014.md:10`
+  declara `SEC-016`, también **mitigado**. `CHANGELOG.md:41` afirma «SEC-020 sigue declarado abierto»
+  y en la cabecera del REQ **no está declarado**. No abre nada —la puerta ya deniega el cierre por
+  `SEC-014 (contrato)`— pero es deriva y es la causa por la que REQ-013 no lleva firma.
+
+### Remediación 3 de SEC-020 (nueva, documental)
+
+Cuando el código cierre SEC-020, la nota heredada se toca **en este orden y no en el contrario**:
+primero el código deja de responder `disjunto` sobre un marcador impar, y sólo entonces desaparece el
+bloque 2. Borrar el bloque 2 antes es regresar la pata 3 con el signo invertido —esta vez hacia el
+lado que **abre**—.
+
+### SEC-022 — `instrumento` · **abierto** · REQ-013 · severidad media · dueño `desarrollador` · ventana **1.32.0 (una frase) o 1.33.0**
+
+**La nota de `arnes-upgrade` —la única superficie que un proyecto lee para saber qué cambia— presenta
+la herramienta nueva como fail-closed y NO menciona su fail-open abierto.**
+`skills/arnes-upgrade/SKILL.md:536-546` anuncia el campo `Archivos:` y afirma en 544 «**El
+fail-closed vive en la herramienta**, donde el coste de equivocarse es volver a la serie», sin una
+palabra sobre SEC-020: `grep` de `SEC-020`, `decorado`, `sin decoración` y `acentos graves` en ese
+archivo no devuelve **nada** del tramo. `requirements/README.md` y `AGENTS.md` sí llevan el límite y
+también se heredan, así que la información existe —pero en la superficie que se lee **al decidir
+actualizar** la promesa es más ancha que la máquina.
+
+**Es la tercera vez en esta misma ventana y en el mismo archivo:** SEC-015 (la no-corrupción
+concurrente) y SEC-016 (el límite de la guarda estática) eran esta clase exacta y se corrigieron
+**antes de publicar**, con una frase cada una. Por eso la clase: `instrumento` —igual que SEC-016, y
+por el mismo motivo: la consecuencia es un conflicto de fusión en el trabajo del propio proyecto, no
+pérdida de datos, ni una puerta evadida, ni una firma falsa—; y por eso la severidad **media** y no
+baja: la reincidencia dice que la superficie se actualiza con lo que la ventana **añade** y no con lo
+que la ventana **debe** al usuario.
+
+**Remediación (una frase, sin código y sin pase de QA nuevo):** en el punto de `SKILL.md` que dice
+que el fail-closed vive en la herramienta, añadir el límite con su causa y su ventana —el marcado de
+Markdown **por elemento** en el campo produce `disjunto`/rc 0 sobre un mapa corrompido (**SEC-020**,
+abierto, 1.33.0); las rutas se escriben **sin decoración** y un `disjunto` sobre campo decorado no
+autoriza nada—. **No bloquea la publicación** (`instrumento`), y lo recomiendo **antes del tag** por
+el precedente de sus dos hermanas.
+
+### No-regresión, medida hoy sobre `cand/1.32.0`
+
+- **`git diff --exit-code v1.31.0 -- hooks/` → rc 0: el mecanismo que gobierna a los demás proyectos
+  es byte a byte el publicado.** Es el hecho más importante de esta firma: esta ventana no cambia
+  **ningún** veredicto de `guard-codigo` ni de `guard-completado`. Confirma CA-02-bis.
+- **Banco completo: `741 PASS · 0 FAIL · 1 SKIP`, rc 0** (el SKIP es el caso de contrabarras, de otra
+  plataforma), en dos corridas; y deja el árbol **idéntico** (`git status` sin cambios no previstos).
+  Coincide con lo declarado en `CHANGELOG.md`. Los cinco casos `paralelo/SEC-014` —incluida la
+  anotación suelta y la coma dentro de la evidencia, en los dos órdenes— salen PASS.
+- **Autoprueba del corredor: `73 PASS · 0 FAIL`.**
+- **Quality gates del manifiesto:** `bash -n` en verde sobre los 10 `hooks/*.sh` y `tools/*.sh`;
+  `jq -e` en verde sobre `hooks/hooks.json`, `plugin.json` (versión **1.32.0**) y `marketplace.json`.
+- **CI (`.github/workflows/banco.yml`):** conserva el endurecimiento acreditado en R-004/R-005
+  —`bash -n` sobre `hooks/`, `tools/` y el banco entero, y el bit de ejecución en sus **dos** mitades
+  (`100755` los tres puntos de entrada, `100644` las secciones)—. Verificado además que los tres
+  puntos de entrada están hoy en `100755`.
+- **Documentación heredada, sin supresiones:** `git diff HEAD --stat` sobre `AGENTS.md`,
+  `requirements/README.md`, `templates/` y `agents/` da **430 inserciones y 0 supresiones**. Ni una
+  línea de la línea base publicada se retiró: no hay regresión de herencia. El añadido a
+  `agents/auditor-seguridad.md` (un control se describe **por propiedad**, nunca por enumeración)
+  **endurece** mi propio mandato y no lo relaja.
+- **Controles de R-004/R-005 que sigo acreditando intactos:** el fail-closed por modo degradado
+  (`no_medido`/rc 2 y `SIN DECLARAR`/rc 1, nunca `disjunto`), la clave del par ordenada al escribirla,
+  «no es puerta / no despacha / no escribe», la advertencia del orden de fases **siempre** en la
+  salida, la coma dentro de la evidencia, el motivo propio de la anotación suelta y del paréntesis sin
+  cerrar, y `--json` válido con caracteres de control. Debilitar cualquiera es regresión.
+
+### Estado de seguridad aprobado por REQ — firma final de la ventana 1.32.0
+
+| REQ | Veredicto | Fecha | Versión | Motivo / controles acreditados |
+|---|---|---|---|---|
+| **REQ-012** | **`aprobado`** | 2026-09-06 | candidata 1.32.0 (`cand/1.32.0`) | Tercera confirmación (R-004, R-005, R-006). Su sección de `requirements/README.md` se hereda **idéntica** en `templates/requirements-README.md.tpl` (el único diff del archivo son el marcador de nombre, el índice de REQ y el párrafo de adopción, que son propios de este repo); `0 supresiones` en toda la documentación heredada; los tres agentes que la aplican reciben cambios **aditivos**. Los dos bloques reescritos del campo `Archivos:` son entrega de **REQ-013** (CA-31) y **cumplen** su regla: enuncian la propiedad primero y marcan los ejemplos como ilustración. **Hallazgos abiertos: (ninguno).** |
+| **REQ-013** | **`con-hallazgos`** | 2026-09-06 | candidata 1.32.0 (`cand/1.32.0`) | **No firmo, y no es por la pata 3: ésa queda CERRADA** (trece afirmaciones verificadas ejecutando; ver arriba). No firmo por **SEC-020** (`contrato`, abierto): el marcado por elemento produce `disjunto`/rc 0 sobre un mapa corrompido, desmintiendo CA-03, CA-11 (ii) y CA-13 — la clase `contrato` la fija el propio criterio, no mi preferencia, y el arreglo de fondo (restringir la gramática del campo) es de **1.33.0** por decisión de la coordinadora, que comparto: siete fail-open en tres vueltas sobre el mismo archivo dicen que la clase no se gana ensanchando. Se añade **SEC-022** (`instrumento`, la nota de `arnes-upgrade` sin el límite) y **SEC-021** recibe ventana. Deriva pendiente de write-back: la cabecera no declara SEC-020 ni SEC-021. **Acreditado y línea base de no-regresión:** los siete controles de R-004/R-005 más la honestidad **conjunta** de los dos bloques heredados. |
+| **REQ-014** | **`aprobado`** | 2026-09-06 | candidata 1.32.0 (`cand/1.32.0`) | Tercera confirmación, con medida propia **hoy**: banco `741/0/1` rc 0 con cuadre, autoprueba `73/0`, `bash -n` sobre los 40 archivos del banco, bits de ejecución correctos y el endurecimiento del CI intacto. El delta que R-005 no cubría (`735 → 742` casos) vive en `secciones/34-arnes-paralelo.sh` y `35-arnes-paralelo-fail-open.sh`, **archivos declarados por REQ-013**, no en la partición ni en el corredor que este REQ entrega: su entregable no ha cambiado desde el `QA: aprobado`. Deudas declaradas que **no** bloquean: **SEC-019** (1.35.0) y `H-03`/`H-07`/`H-12` (`instrumento`); su cabecera aún declara `SEC-016`, ya **mitigado** (dirección inocua). **CA-06 sigue declarando su límite honesto: borrarlo o ensanchar la promesa sin ensanchar la máquina es regresión.** |
+
+### ¿Veto la publicación de 1.32.0? — **NO**, y con las condiciones dichas
+
+**No veto.** El razonamiento, en el orden en que pesa:
+
+1. **`hooks/` es byte a byte v1.31.0.** Lo que gobierna a los demás proyectos no cambia. Un fallo en
+   abierto aquí sería un fallo en abierto en todos ellos y en silencio: no lo hay.
+2. **El fail-open abierto no tiene consumidor automático.** 0 referencias en `hooks/hooks.json`,
+   ningún invocador en el árbol, no es puerta y no escribe. Su coste máximo es un conflicto de fusión
+   en el trabajo del propio repositorio. No toca dinero, ni datos personales, ni identidad, ni acceso,
+   ni produce una firma falsa: las dos reglas de orden de fases no dependen de la herramienta.
+3. **Se publica declarada como no fiable donde se escribe el campo y donde se manda usarla**, en los
+   cuatro archivos (dos del repo y sus dos plantillas, verificado idéntico), con clase, dueño y
+   ventana. Un fallo declarado con vencimiento no es un fallo oculto.
+4. **REQ-013 no cierra**, así que la clase `contrato` no se salta ninguna puerta: `guard-completado`
+   seguiría denegando su cierre, y con razón.
+5. **El resto de la ventana está verificado y en verde**, con medida propia de hoy.
+
+**Y dos cosas que no son un veto pero condicionan la publicación, y no las decido yo:**
+
+- **La decisión ya es de Juan, por la regla del propio proyecto.** `AGENTS.md` §4/§6 delega la
+  fusión, el tag y la publicación en la coordinadora **«cuando todo está en verde»**, y añade que
+  «cualquier rojo o **hallazgo abierto** las devuelve al humano». **SEC-020 está abierto y es
+  `contrato`.** Mi no-veto retira el obstáculo de seguridad; **no** convierte este estado en el
+  «todo en verde» que habilita la delegación.
+- **`PENDING_APPROVAL.md` tiene una pendiente viva** (REQ-014 toca `tests/` y el workflow de CI, gate
+  humano explícito de §6). Mientras esté ahí, `guard-completado` deniega marcar **cualquier** REQ como
+  `completado`: REQ-012 y REQ-014 no pueden cerrar sin que un humano la resuelva. Es el mecanismo
+  funcionando, no un hallazgo.
+
+**Condiciones bajo las que mi no-veto sigue valiendo** —si alguna cambia, no las cubre—: (i) `git
+diff v1.31.0 -- hooks/` sigue vacío en el commit que se etiquete; (ii) los dos bloques del campo
+`Archivos:` viajan **juntos** y el aviso de `AGENTS.md` viaja **adyacente** a la instrucción, en el
+repo **y** en las dos plantillas; (iii) `tools/arnes-paralelo.sh` no adquiere ningún consumidor
+automático mientras SEC-020 esté abierto. **Recomendación, no condición:** que la frase de SEC-022
+viaje antes del tag, como viajaron las de SEC-015 y SEC-016.

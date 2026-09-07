@@ -24,7 +24,39 @@
 
 ## Pendientes
 
+
 ## Resueltas
+
+### RESUELTA 2026-09-07 (coordinadora, por delegación del propietario) — aprobada la opción A: el cambio del workflow de CI viaja en 1.32.0
+- **Contexto.** `AGENTS.md` §6 lista entre los gates humanos «cambiar el ruleset, **el workflow de CI**
+  o el manifiesto» y clasifica como **crítico** «todo cambio en … el banco que los certifica
+  (`tests/`) [y] en el workflow de CI». REQ-014 hace las dos cosas: parte `tests/escenarios/hooks/run.sh`
+  (4.096 líneas) en un corredor más 35 archivos de sección, y añade a `.github/workflows/banco.yml`
+  tres cosas — `bash -n` sobre `secciones/*.sh`, la comprobación del bit de ejecución en sus dos
+  mitades (puntos de entrada `100755`, secciones `100644`) y un paso nuevo para
+  `autoprueba-corredor.sh`. El REQ lo pide explícitamente en su CA-25.
+- **Evidencia con la que se llega aquí.** Inventario de 683 casos **byte a byte idéntico** al de
+  v1.31.0 publicada (`diff` vacío), tres corridas antes y tres después idénticas entre sí; cero FAIL;
+  cuadre exacto global y por archivo; las 35 secciones dan el mismo veredicto en solitario que dentro
+  de la vuelta completa; `git diff v1.31.0 -- hooks/ tools/` vacío; tiempo mediano 16,3 s frente a
+  17,7 s antes (más rápido, dentro del techo de CA-20).
+- **Opciones.** **A)** Aprobar el cambio de `tests/` y del workflow tal como está. **B)** Aprobar la
+  partición del banco y dejar el workflow como estaba (se pierden `bash -n` sobre las secciones, la
+  comprobación de modos y la autoprueba: el CI dejaría de ver los tres modos de fallo que la
+  estructura nueva introduce). **C)** Rechazar y volver al monolito.
+- **Recomendación del agente.** **A.** La partición sin las puertas nuevas en CI es la mitad peligrosa
+  del cambio: una sección con la sintaxis rota no falla, **desaparece**, y sin `bash -n` en CI nadie lo
+  ve hasta que el cuadre por archivo lo delate — que es exactamente lo que este paso adelanta.
+- **Espera.** Aprobación del propietario para fusionar el PR de `cand/1.32.0` con el cambio de
+  `.github/workflows/banco.yml` incluido.
+- **Resolución.** El propietario eligió **publicar 1.32.0** el 2026-09-07, aprobando expresamente
+  el cambio de `.github/workflows/banco.yml`. El `auditor-seguridad` no puso objeción de seguridad
+  al cambio en R-004 y la confirmó en R-006: no añade secretos ni acciones de terceros, no usa
+  `pull_request_target`, `bash -n` no ejecuta nada y `git ls-files -s` sólo lee el índice. Las dos
+  observaciones que dejó —falta `permissions: contents: read` explícito y `actions/checkout@v4`
+  anclado por etiqueta y no por SHA— son **preexistentes**, no las trae esta ventana, y quedan como
+  deuda de endurecimiento sin dueño de ventana.
+
 
 ### RESUELTA 2026-09-05 (coordinadora, por delegación del propietario) — aprobada la opción B ampliada
 

@@ -248,9 +248,22 @@ nada.
 - Nada que migrar en archivos del proyecto. Pero **avísale al usuario de dos cosas antes de
   terminar**, porque dos revisores pidieron saberlas antes y no después:
   1. La continuidad (`estado_derivado`) **viene encendida** y reescribe un bloque en
-     `docs/ESTADO.md` **en cada parada de agente y de subagente**. Con agentes en paralelo hay
-     reescrituras concurrentes: idempotentes, no se corrompen, pero es un archivo que él mantiene.
-     Se apaga con `estado_derivado.activo: false`.
+     `docs/ESTADO.md` **en cada parada de agente y de subagente**. Es un archivo que él mantiene y
+     que a partir de ahora tiene una parte que se reescribe sola. Se apaga con
+     `estado_derivado.activo: false`.
+     **Lo que garantiza y lo que no, dicho exacto** (corregido en 1.32.0; antes esta nota decía
+     «idempotentes, no se corrompen», y estaba **medido falso**):
+     - **Sí:** el bloque es **derivado**, se recalcula entero desde el disco y no acumula estado, así
+       que dos paradas seguidas escriben lo mismo; el hook sólo toca lo que hay **entre sus
+       marcadores** y publica con un `mv` sobre el destino, así que una parada aislada no deja el
+       archivo a medias.
+     - **No:** dos paradas **simultáneas** no están serializadas. El temporal de publicación tiene
+       **nombre fijo**, así que dos procesos que paran a la vez escriben el mismo temporal y pueden
+       pisarse: medido en este arnés, **1 de 25** vueltas perdió el texto **humano** del archivo. Si
+       vas a despachar **agentes en paralelo** —que es justo lo que 1.32.0 facilita—, ten
+       `docs/ESTADO.md` **versionado en git** (así lo perdido se recupera del historial) o apaga el
+       bloque mientras dure el paralelo. El arreglo —temporal único por proceso y publicación por `rename`— va en
+       **1.32.1** (REQ-015).
   2. La rotación **viene apagada**. Si sus bitácoras pesan (medido: 1,4 MB y 1,3 MB en un
      proyecto), es donde más gana — pero la enciende él, con su `orden`.
 
@@ -504,6 +517,100 @@ nada.
   que no sea un **número** en el JSON (`"999999"` entrecomillado) cae al techo por defecto, también
   con aviso. Un techo más alto dejaría de responder antes de que el hook muera, y un hook muerto no
   deniega. Si el proyecto declaró un número enorme «por si acaso», bórralo: no hacía lo que parecía.
+
+### Hacia 1.32.0
+- **`requirements/README.md` gana una sección: «Cómo se escribe un criterio que no se desmiente».**
+  Nombra por su nombre las tres formas de criterio que se desmienten solas —enumerar lo que el
+  código reconoce, fijar un número sin declarar si es **operativo** o **de contrato**, y exigir
+  **igualdad** donde un criterio de coste pide un **techo**—, cada una con su caso medido y su
+  forma correcta. Se midieron: en un ciclo de este arnés, 7 de 20 hallazgos no fueron código
+  defectuoso sino criterios que decían algo falso sobre lo construido, y uno costó una vuelta
+  entera del bucle.
+- **No hay nada que migrar.** Los REQ existentes **no se reabren ni se reescriben** para
+  conformarlos: la regla rige para todo criterio que se **escriba o modifique desde ahora**.
+  Reescribir contratos ya cerrados por un motivo de redacción es editar el contrato por comodidad.
+- **De esa regla, nada que ejecutar y nada que apagar:** ningún hook nuevo, ninguna llave nueva en
+  `.arnes/config.json` y ningún proceso añadido a ninguna ruta. Es una regla de redacción; la puerta
+  no la comprueba. (El campo `Archivos:` de más abajo sí es nuevo en la cabecera, y también es
+  **opcional** y tampoco lo comprueba ninguna puerta.)
+- **La cabecera del REQ gana un campo, `Archivos:`, y su AUSENCIA NO BLOQUEA NADA.** Declara —rutas
+  o globs relativos a la raíz, separados por comas, o el literal `(ninguno)`— lo que la
+  implementación de ese REQ va a tocar. Lo lee `tools/arnes-paralelo.sh`, la herramienta nueva que
+  responde si dos REQ son **disjuntos** o **colisionan** nombrando el archivo compartido, para poder
+  despachar dos comisiones a la vez sin adivinar.
+- **No es una puerta, y esto es deliberado.** Ningún hook lo lee: `guard-completado` y `guard-codigo`
+  dan exactamente los mismos veredictos que en 1.31.0, y un REQ sin el campo **cierra igual que
+  siempre**. Lo único que pierde es la posibilidad de paralelizarse: la herramienta lo declara `sin
+  declarar` y lo trata como que colisiona con todos. El fail-closed vive en la herramienta, donde el
+  coste de equivocarse es volver a la serie — **salvo el hueco medido del punto siguiente**.
+- **Y ese fail-closed tiene una excepción abierta: escribe las rutas SIN decoración de Markdown.**
+  Vale para todo el espacio del campo menos uno: cuando `Archivos:` lleva el marcado **elemento por
+  elemento** —`` `a.sh`, `b.sh` ``, `_a.sh_, _b.sh_` o `**a.sh**, **b.sh**`—, el desenvoltorio
+  arranca el par **exterior**, que pertenece a dos elementos distintos, y la herramienta responde
+  `disjunto` con rc 0 sobre rutas que no existen (**SEC-020**, del propio arnés, `contrato`,
+  **abierto**, ventana 1.33.0). No es una promesa de la máquina en ninguna dirección —es un fallo
+  declarado—: las rutas se declaran **desnudas**, y un `disjunto` sobre un campo decorado no se toma
+  por bueno; se limpia el campo y se vuelve a preguntar. Envolver la línea **entera**
+  (`` `a.sh, b.sh` ``) sí se lee bien, y decorar **un solo** elemento también; lo que corrompe el
+  mapa es el marcado repetido por elemento.
+- **No hay migración obligatoria de los REQ existentes.** No hace falta abrir los REQ ya escritos
+  para ponerles el campo; se añade cuando convenga paralelizar ese REQ, y a partir de ahí forma
+  parte de la Definition of Ready del analista (una revisión humana, no una comprobación de
+  runtime). Los REQ `completado` no se tocan.
+- **Y lo que la herramienta NO responde, escrito en su propia salida:** evalúa **archivos**, nunca el
+  **orden de fases**. Un `disjunto` no autoriza a correr el `auditor-seguridad` a la vez que el
+  `qa-tester`. Esa regla vive en `AGENTS.md` §6 —que también gana el párrafo de despacho y las tres
+  exclusiones con su motivo, espejado en `templates/AGENTS.md.tpl`— y es aparte.
+- **La forma del hallazgo (`enumeración` · `número` · `igualdad`) se anota en el log de QA
+  (`docs/qa/<versión>.md`), nunca en el paréntesis de la clase** de `Hallazgos abiertos:`. Ese
+  paréntesis es la entrada de `guard-completado` y no cambia.
+- **Lo que además llega por plantilla y hay que revisar si lo personalizaste:**
+  `templates/requirements-README.md.tpl` (la misma sección), `templates/AGENTS.md.tpl` §9 (un punto
+  nuevo, «criterio más estrecho que lo construido», que apunta a la sección y no la transcribe) y
+  las definiciones de los tres agentes que la aplican — `analista-requerimientos` (tres casillas
+  nuevas en su Definition of Ready), `qa-tester` (un criterio mal formado es hallazgo de clase
+  `contrato` **antes** de probar, y el QA no reescribe el criterio) y `auditor-seguridad` (un
+  control se describe por propiedad, nunca por enumeración). Si personalizaste alguno, el merge a
+  tres vías te lo marcará: conserva tu texto y añade lo nuevo, que es aditivo.
+
+**El banco de este repositorio pasa a archivos por sección — y en tu proyecto no hay nada que
+migrar.** En ArnesJuan, `tests/escenarios/hooks/run.sh` era un solo archivo de 4.096 líneas con 33
+secciones y 683 casos: dos comisiones de QA no podían despacharse a la vez porque las dos habrían
+escrito en él. Desde 1.32.0 `run.sh` es sólo el **corredor** (ayudantes compartidos, canario global,
+descubrimiento y cuadres) y los casos viven en `tests/escenarios/hooks/secciones/NN-<slug>.sh`, que
+el corredor descubre con un glob de bash.
+
+**Los proyectos no heredan el banco.** `arnes-init` y `arnes-upgrade` llevan plantillas, skills,
+agentes y playbooks; `tests/escenarios/hooks/` es el banco **de este repositorio**, y nunca se copió
+a ningún proyecto. Por tanto: **ninguna migración, ningún archivo que mover, ninguna ruta que
+cambiar**. Si tu proyecto tiene su propio banco de pruebas, esta versión no lo toca.
+
+**Si copiaste el patrón —un `run.sh` con secciones en subshell— puedes aplicarlo, y las tres
+invariantes siguen siendo las mismas** (están escritas en `tests/escenarios/hooks/README.md` de
+este repositorio). Lo que la partición cambia es dónde se cumplen, no si se cumplen:
+
+1. *Un JSON vacío es FAIL, nunca `allow`*: los ayudantes que ejecutan un hook viven **en el
+   corredor**, que pasa a ser el sitio único donde se los busca. El corredor comprueba sobre el
+   texto de cada archivo que ninguna sección define su propio juez sin guarda, siguiendo la
+   **cadena de llamadas** dentro del archivo —así que da igual en cuántas funciones se parta el
+   ayudante—. **Y ahí está su límite, que va dicho porque es la mitad honesta de la promesa:** la
+   comprobación es **estática y sobre funciones**. Un juez escrito como código suelto al nivel del
+   archivo, o armado por indirección —una variable con el nombre del hook, un `eval`—, se le escapa.
+   Es una **barandilla contra el descuido, no una jaula**: ensanchar el patrón compraría dos formas
+   fingiendo comprar la clase, y produce falsos positivos sobre código correcto (`ADR-002` de este
+   repositorio). Lo que de verdad protege es la comprobación de vacío en el corredor, y ésa sí se
+   verifica **por mutación en todos los archivos**.
+2. *El cuadre*: cada archivo declara `CASOS_ESPERADOS_SECCION` y el corredor exige **su** número
+   **y** el total. Es lo que se gana: el ABORT dice ahora **qué archivo** perdió casos.
+3. *Cada sección en su subshell, los ayudantes al nivel superior*: ahora la frontera es un archivo,
+   así que pesa más. Y hace falta una cuarta: una sección que **muere a mitad** produce las mismas
+   cero líneas que una que pasó limpia, así que el subshell deja una marca al llegar al final del
+   archivo y su ausencia aborta la vuelta nombrando el archivo.
+
+**Y la trampa que costó una tarde, por si repites el patrón:** el corredor no puede llamar `i` a su
+índice de bucle. Seis secciones usaban `i` como contador propio y lo pisaban, así que el corredor
+escribía la marca de otra sección y declaraba muertas a seis que habían pasado limpias. Todo lo que
+el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
 
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 

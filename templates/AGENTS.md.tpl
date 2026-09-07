@@ -99,6 +99,39 @@ que nadie emitió. Buscar paralelismo aquí no ahorra tiempo: produce una firma 
 > cuando hace falta no es una excepción, es una salida. Esa firma **no** cubre el código
 > posterior: cuando el código exista, la auditoría se repite en su turno.
 
+**Despacho en paralelo: sólo lo que la máquina declara disjunto, nunca por intuición.** La
+coordinadora **sólo** despacha comisiones en paralelo sobre REQ que `tools/arnes-paralelo.sh`
+declare **disjuntos** por su campo `Archivos:` (forma y fail-closed en `requirements/README.md`), y
+**nunca** por intuición. Un despacho paralelo sin esa comprobación es lo que produce **conflictos de
+fusión y trabajo perdido**. Y el modo de fallo no es que falte paralelismo: es que se despache «a
+ojo» y salga bien tres veces, porque a la cuarta el conflicto cuesta más que toda la serie que se
+ahorró.
+
+> **Necesaria y no suficiente: un `disjunto` no se toma por bueno sobre un campo decorado.** La
+> instrucción de arriba no se relaja —preguntar sigue siendo obligatorio—, pero mientras el hallazgo
+> **SEC-020** del propio arnés siga abierto (`contrato`, ventana 1.33.0) la herramienta puede
+> responder `disjunto` con rc 0 sobre un mapa corrompido: cuando el campo `Archivos:` lleva el marcado
+> de Markdown **elemento por elemento** —`` `a.sh`, `b.sh` `` o `_a.sh_, _b.sh_`— el desenvoltorio
+> arranca un par de marcadores que pertenece a **dos elementos distintos** y sustituye las rutas
+> declaradas por otras que no existen. De ahí las dos consecuencias operativas: las rutas del campo se
+> declaran **sin decoración** (`requirements/README.md`), y un `disjunto` sobre un campo decorado no
+> autoriza nada — se limpia el campo y se vuelve a preguntar. Una herramienta con un fail-open abierto
+> da condición **necesaria**, no suficiente.
+
+**Lo que NO se paraleliza, con su motivo — no es una lista suelta:**
+1. **El `auditor-seguridad` nunca antes ni a la vez que el `qa-tester` sobre el mismo REQ**, porque
+   su firma acreditaría un árbol sin validar: convierte una revisión parcial en un sello de calidad
+   que nadie emitió. Única salida, y declarada al emitirla: `Seguridad: preventiva`.
+2. **El `qa-tester` nunca antes que el `desarrollador` sobre el mismo REQ**, porque validaría un
+   árbol que todavía no contiene aquello que dice validar.
+3. **Dos comisiones que tocan el mismo archivo**, aunque sean de fases distintas: un conflicto de
+   fusión no sabe de fases, sabe de líneas.
+
+Las dos primeras son de **orden de fases** y no se relajan **en ningún caso**: son la condición de
+validez de la firma, no una preferencia de calendario. `tools/arnes-paralelo.sh` **no las
+comprueba** —responde sobre archivos, y lo dice en su propia salida—, así que un `disjunto` nunca es
+permiso para saltárselas.
+
 **Loop de error:** si QA o seguridad encuentran fallos, el REQ vuelve al desarrollador.
 Máximo **{{MAX_REINTENTOS}}** vueltas dev↔QA **por REQ**, y el contador **NO se reinicia con
 cada hallazgo nuevo**. Esto es deliberado: un tope por hallazgo no acota nada, porque cada
@@ -205,6 +238,13 @@ cambio de legislación, una limitación detectada en pruebas, un parche de depen
 - **DERIVA** (el código terminó distinto de lo que dice el REQ): **no se deja en silencio**. Se
   actualiza el REQ para reflejar la realidad implementada, con su trazabilidad y causa; si el
   desvío fue de fondo, además un ADR.
+- **CRITERIO MÁS ESTRECHO QUE LO CONSTRUIDO** (el código cubre **más** de lo que el criterio
+  promete: tolera siete formas y el criterio nombra tres): es la otra cara de la deriva y se
+  corrige **en el mismo cambio que lo descubre**, con su entrada de Historial (antes → después) y
+  la causa — no se deja para un hallazgo posterior. Cómo se redacta para que no vuelva a pasar
+  —propiedad en vez de lista, número declarado, coste como techo— está en `requirements/README.md`
+  §«Cómo se escribe un criterio que no se desmiente», que es su **único** sitio. Ojo al reverso:
+  ampliar un criterio que el código **no** cumple, para que encaje, es deriva, no corrección.
 - **CAMBIOS POR HALLAZGO** (un hallazgo de QA o de seguridad obliga a cambiar comportamiento o a
   añadir un control): es la deriva más común en este arnés, porque los agentes hallan cosas por
   diseño. El hallazgo **no se cierra** hasta que el requerimiento lo refleje — un **criterio de

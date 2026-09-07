@@ -25,15 +25,40 @@ jobs:
       - name: bit de ejecución en todo punto de entrada
         # Propiedad cerrada: lo que un hook o el usuario invoca directamente es 100755.
         # `git ls-files -s` lee el modo del índice, que es lo que llega al clonar.
+        #
+        # Y su mitad simétrica (1.32.0): los archivos de `secciones/` NO se invocan, se
+        # hacen `source` desde el corredor, así que son 100644. Un bit de ejecución ahí
+        # invita a correr una sección suelta, y una sección suelta no tiene ni ayudantes
+        # ni canario: correría cero casos y saldría verde.
         run: |
           set -e
           malos=0
-          for f in hooks/*.sh tools/*.sh templates/githooks/pre-commit tests/escenarios/hooks/run.sh; do
+          for f in hooks/*.sh tools/*.sh templates/githooks/pre-commit \
+                   tests/escenarios/hooks/run.sh tests/escenarios/hooks/autoprueba-corredor.sh \
+                   tests/escenarios/hooks/inventario.sh; do
             modo="$(git ls-files -s -- "$f" | awk '{print $1}')"
             if [ "$modo" != "100755" ]; then echo "NO EJECUTABLE ($modo): $f"; malos=$((malos+1)); fi
           done
-          [ "$malos" -eq 0 ] || { echo "$malos archivo(s) sin bit de ejecución: en Unix el hook no arranca y Claude Code sigue adelante."; exit 1; }
-          echo "todos los puntos de entrada son 100755"
+          for f in tests/escenarios/hooks/secciones/*.sh; do
+            modo="$(git ls-files -s -- "$f" | awk '{print $1}')"
+            if [ "$modo" != "100644" ]; then echo "EJECUTABLE Y NO DEBE ($modo): $f"; malos=$((malos+1)); fi
+          done
+          [ "$malos" -eq 0 ] || { echo "$malos archivo(s) con el bit de ejecución inconsistente: en Unix el hook no arranca y Claude Code sigue adelante."; exit 1; }
+          echo "modos correctos: puntos de entrada 100755, secciones del banco 100644"
+
+      - name: sintaxis de todo el mecanismo y de todas las secciones del banco
+        # `bash -n` no ejecuta nada: sólo dice si el archivo es analizable. Una sección con
+        # un error de sintaxis no falla, DESAPARECE — y una sección que desaparece produce
+        # las mismas cero líneas que una que pasó limpia.
+        run: |
+          set -e
+          for f in hooks/*.sh tools/*.sh tests/escenarios/hooks/run.sh \
+                   tests/escenarios/hooks/autoprueba-corredor.sh \
+                   tests/escenarios/hooks/inventario.sh \
+                   tests/escenarios/hooks/secciones/*.sh; do
+            bash -n "$f" || { echo "SINTAXIS ROTA: $f"; exit 1; }
+          done
+          echo "bash -n en verde sobre hooks/, tools/ y el banco entero"
 
       - name: jq
         run: command -v jq >/dev/null || sudo apt-get install -y jq
@@ -45,3 +70,9 @@ jobs:
         # verde más pequeño. Si el total no cuadra en Linux pero sí en Windows, hay un caso
         # dependiente de plataforma, y eso también hay que saberlo.
         run: bash tests/escenarios/hooks/run.sh
+
+      - name: autoprueba del corredor del banco
+        # El banco certifica los hooks; esto certifica al banco. Va DESPUÉS y aparte, con
+        # su propio punto de entrada, porque sus casos no forman parte del inventario del banco
+        # que se compara vuelta a vuelta contra la versión publicada anterior.
+        run: bash tests/escenarios/hooks/autoprueba-corredor.sh

@@ -60,6 +60,15 @@ Su evidencia es distinguible **por construcción**: uno decide en `PreToolUse` y
 `PostToolUse`, así que un veredicto que cambie sólo puede venir del primero. Colisionan por archivo, no
 por semántica, y por eso van en serie.
 
+**Palanca propuesta por el analista al cerrar 1.32.0, y aceptada: pasada de conformación anticipada.**
+Antes de abrir la ventana, una **única** comisión del analista pasa la regla de REQ-012 sobre REQ-007 y
+REQ-011, que son del ciclo 2 y traen su propio stock de números sin declarar. Paga la migración en una
+comisión en vez de descubrirla como hallazgos y una vuelta del bucle. Respeta el «0 comisiones nuevas
+**por REQ**» que CA-21 declara de contrato, porque es una pasada única y no un paso del pipeline.
+
+**Predicción registrada para medir contra ella:** 2 a 4 hallazgos de forma (a)/(b)/(c), `número`
+predominante otra vez, y 0 o 1 vueltas del bucle. El objetivo de ≤ 3 es alcanzable y no está asegurado.
+
 ---
 
 ## 1.34.0 — lo que los proyectos leen
@@ -73,6 +82,53 @@ proyecto sin abrir diez archivos.
 | **Índice de `requirements/` derivado** | Sus columnas se desfasaron **cuatro veces en dos días**. Pasa a bloque derivado entre marcadores, con el mismo lector que usan la puerta y el informe. Misma función, escrita una vez |
 | **Rotación que reconoce filas de tabla** | Hoy la rotación de la historia de un REQ **no rota nada** en este repositorio: 0 entradas reconocidas y 94 filas de tabla. Es su caso de uso principal y no funciona |
 | **`AGENTS.md` adelgazado**, aquí y en la plantilla | Se conserva lo que **gobierna** y el resto se delega a archivos que se leen bajo demanda. Lo lee todo agente al arrancar |
+
+**Alcance añadido por el propietario el 2026-09-06 — el coste entra en el informe.** El informe de
+REQ-008 lleva además **qué costó** el proyecto: tokens por REQ, por fase y en total; tiempo de agente,
+reloj del ciclo y su cociente; y una comparación con lo que le habría llevado a una persona. Diseño
+acordado, para que el analista lo escriba como criterios cuando se abra la ventana:
+
+1. **Tres clases de número, nunca mezcladas y siempre etiquetadas: `medido`, `derivado`, `estimado`.**
+   Un informe que mezcla los tres deja de ser creíble entero, no sólo en la fila dudosa.
+2. **La fuente es el libro de comisiones** (`docs/qa/<versión>.md`), que se anota **al volver cada
+   comisión** porque el dato no se puede reconstruir después. El informe lo lee con el mismo lector que
+   las puertas; no lo recalcula ni lo estima.
+3. **El coste de la coordinadora se declara aparte y no se omite.** Medido en el ciclo 2 fue el **39 %**
+   del gasto. Un informe que sólo suma comisiones se equivoca en un tercio largo y hacia abajo.
+4. **Tres relojes distintos, con nombres distintos:** tiempo de agente (suma de comisiones), reloj del
+   ciclo (de abrir la rama a publicar) y su **cociente**, que es la única medida honesta de cuánto
+   paralelismo hubo de verdad.
+5. **La comparación con una persona se expresa como rango con su base escrita**, nunca como un múltiplo
+   suelto. La base son unidades que el lector puede comprobar —líneas de shell, casos de banco,
+   criterios, documentos— y la suposición se escribe al lado («persona que ya conoce el código, sin
+   interrupciones»), porque es la suposición que siempre infla el resultado.
+6. **La cifra que decide no es el coste, es el coste por resultado:** por REQ cerrado y por hallazgo
+   atrapado antes de publicar. 253 USD por veinte defectos encontrados antes de que salieran es una
+   frase distinta de 253 USD a secas.
+7. **Una sección de lo que el número NO incluye:** la ceremonia máxima que este repositorio se impone a
+   propósito, el tiempo de revisión del humano y las vueltas fallidas.
+
+**Segundo uso declarado por el propietario el 2026-09-06: justificar el licenciamiento.** El informe
+tiene dos lectores, no uno. El primero gobierna el proyecto; el segundo aprueba un presupuesto y llega
+con escepticismo. Reglas de diseño para el segundo, y son distintas:
+
+- **El caso NO se construye sobre este repositorio.** ArnesJuan se impone la ceremonia máxima a
+  propósito —todo REQ `critico` y sensible, los cuatro agentes— y por eso es el ejemplo **más caro por
+  unidad entregada** que existe. Presentarlo como muestra hunde el caso. El caso se construye sobre el
+  proyecto consumidor, que corre en `estandar` o `ligero` y entrega valor de negocio.
+- **La tarifa es un dato de entrada, no una afirmación del informe.** El informe **no** declara cuánto
+  cuesta una hora de desarrollo: la recibe y la usa. Así la cifra resultante es de la organización, no
+  del modelo, y no hay nada que discutirle a quien la lee.
+- **Tres escenarios, no un número:** conservador, central y optimista, cada uno con su base escrita. Un
+  múltiplo suelto («fue 12 veces más rápido») no sobrevive a la primera pregunta; un rango con método sí.
+- **El coste se declara completo o el caso se cae.** Licencia **más** gasto de modelo **más** tiempo de
+  revisión del humano. El primer movimiento de un escéptico es «os habéis dejado el consumo fuera».
+- **La evidencia más fuerte disponible es la propia historia del proyecto consumidor**: el mismo
+  desarrollador, el mismo código, antes y después de instalar el arnés. No supone tarifas ni
+  productividades ajenas — es su `git log`.
+- **El caso de una segunda cuenta es OTRO argumento y no se mezcla:** no es eficiencia, es
+  **concurrencia**. Dos cuentas no hacen un proyecto más rápido; permiten que dos avancen a la vez. Se
+  sostiene con la cola de trabajo que hoy no se hace, no con el ahorro por hora.
 
 ---
 
