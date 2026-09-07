@@ -2,6 +2,44 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-06 · migración del andamiaje de este repositorio: 1.30.3 → 1.31.0
+> Origen: Interno (migración de andamiaje, sin commit de versión) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` (la parte del manifiesto) sobre el plan de `/arnes-upgrade` de la sesión coordinadora.
+
+`arnes-upgrade` llevó este repositorio del andamiaje 1.30.3 al de 1.31.0. Plan y acreditación del
+origen en `.arnes/migracion.md` (las 11 plantillas de `.arnes/plantillas-origen/` idénticas a
+`v1.30.3:templates/`, sin `UNKNOWN` ni `CONFLICTO`).
+
+- `AGENTS.md` §13 y `requirements/README.md`: cinco añadidos cada uno (coordinadora, ya aplicados).
+  `PENDING_APPROVAL.md` ya traía su sección desde REQ-009.
+- `.arnes/config.json`: bloques `veredictos` y `git` nuevos, y `rotacion._doc_artefactos` actualizado
+  al texto de 1.31.0 (documenta la forma de sección: `glob` + `seccion`). Se copió el texto y el `_doc`
+  de `templates/arnes-config.json.tpl` sin adaptaciones: los tres son idénticos a la plantilla.
+- `.arnes/config.json`: `arnes_version` a `1.31.0` (Fase 5, al final y sólo tras verificar lo anterior;
+  subirla antes haría creer a la ejecución siguiente que la migración está hecha).
+- **Lo hizo el agente de código, no la coordinadora.** Desde 1.31.0 `.arnes/config.json` está dentro de
+  `codigo_app.globs` de este repositorio (SEC-006 parte a, REQ-007 CA-53), así que la coordinadora ya no
+  puede escribirlo. Es la consecuencia aceptada de esa decisión, y la Fase 5 va con ella.
+
+**Lo que se dejó apagado a propósito, y por qué:**
+
+- `veredictos.exigir_fecha` y `veredictos.caducan_con_codigo` en `false`. Los veredictos de este
+  repositorio sí llevan fecha, pero encenderlas es una decisión de política: se toma en su propia
+  ventana y con la medición delante, no dentro de una migración de andamiaje.
+- `rotacion.activo` sigue en `false`. La rotación de la historia de un REQ no reconoce filas de tabla
+  —medido: 0 entradas y 94 filas en los REQ de este repositorio—, así que encenderla hoy no rotaría
+  nada. Queda en `docs/PENDIENTES.md` para 1.32.0 con su alcance.
+- `limites` **no se declara**. Su propio `_doc` dice que es opcional, que el valor por defecto vive en
+  el código y que se borre si no hace falta; ningún comando legítimo ha topado con el techo aquí.
+
+**Lo único que nace encendido:** `git.activo: true` con la lista por defecto de la plantilla
+(`clean -f`, `reset --hard`, `checkout .`, `restore .` y las cinco formas de `stash`). Este repositorio
+la quiere porque aquí trabajan varios agentes en paralelo sobre el mismo árbol, que es exactamente el
+escenario que la motiva. Verificado en vivo contra el guardián estable 1.31.0 (2fecae1): `git clean -fd`
+se deniega citando `git.prohibidos: 'clean -f'` del manifiesto, y `git stash list` pasa.
+
+Quality gates en verde tras el cambio: `bash -n` sobre los 9 `hooks/*.sh` y `tools/*.sh`, y `jq -e` sobre
+`hooks/hooks.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` y `.arnes/config.json`.
+
 ## [Interno] — 2026-09-06 · cierre del ciclo 2 del autoalojamiento
 > Origen: Interno (documentación de gobernanza) · usuario: Juan · modelo de IA: Opus 5 · agente: sesión coordinadora.
 

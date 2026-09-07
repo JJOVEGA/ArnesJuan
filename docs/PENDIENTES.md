@@ -240,3 +240,21 @@ Todo lo de aquí tiene **criterio en su REQ** y no depende de que nadie lo recue
 tiene andamiaje que poner al día con `/arnes-upgrade` — y su Fase 5 la ejecuta ahora el `desarrollador`,
 porque el manifiesto entró en su propia frontera. Se hace en la sesión siguiente, que es la que corre el
 plugin 1.31.0.
+
+### 1.32.0 — dos cosas que llegaron de un proyecto real después de publicar 1.31.0
+
+- **La skill de actualización no dice que hay que reiniciar la sesión, y eso vale para todos.**
+  Comprobado con `grep`: ni `skills/arnes-upgrade/SKILL.md` ni ninguna plantilla lo mencionan; sólo lo
+  dice `docs/gobernanza/autoalojamiento.md`, que **los proyectos no heredan**. Consecuencia medida por
+  un consumidor: actualizó a 1.31.0, la migración quedó aplicada y verificada, y las puertas nuevas
+  **no estaban en vigor** — lo descubrió con una sonda que 1.30.3 permite y 1.31.0 deniega, con control
+  positivo en la misma tanda para descartar que los hooks estuvieran caídos. Un proyecto que no lo sepa
+  cree que está protegido por reglas que no corren. Es barato: un aviso al final de la migración, y una
+  línea en la plantilla de `AGENTS.md` §13. Es lo que más rinde de esta lista por lo poco que cuesta.
+- **Falso positivo de la regla del orden, sin reproducir aún.** El mismo proyecto reporta que la puerta
+  deniega cuando el veredicto de **QA** menciona la cadena `Seguridad:` en su evidencia, aunque no toque
+  ese campo. No pude reproducirlo: con un REQ cuyo `QA: aprobado` nombra el campo en el paréntesis, sale
+  **permitido** en 1.30.3 y en 1.31.0. Falta el fragmento exacto —la línea del `new_string` tal cual y si
+  fue `Edit` o `MultiEdit`—; el reportante dice que molesta a diario, así que merece cerrarse en cuanto
+  llegue. **No se redacta REQ hasta tener la reproducción:** un criterio escrito sobre un defecto que no
+  se ha visto describe lo que imaginamos, no lo que pasa.

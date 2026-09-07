@@ -312,6 +312,21 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 | La transición a `completado` no se hace por shell | §6 | `guard-completado` | `Bash` (parcial) |
 | Seguridad no firma lo que QA no ha validado (salvo `Seguridad: preventiva`) | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Los campos del REQ valen sólo en la cabecera: una línea igual dentro de una sección no es un veredicto | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| Un veredicto lleva fecha y no es anterior al último cambio del código —si el proyecto lo pide (`veredictos.*`, apagado por defecto) | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| Ningún agente —tampoco la coordinadora— ejecuta git destructivo: `clean -f`, `reset --hard`, `checkout .`, `restore .`, `stash` (`git.prohibidos`) | §10 | `guard-git` | `Bash` |
+
+**Un hook que avisa sin decidir.** Al escribir `QA:` o `Seguridad:` con un valor fuera del
+vocabulario (`pendiente` \| `aprobado` \| `con-hallazgos`; y en seguridad además `n/a`,
+`preventiva`, `vetado`), el arnés lo dice **en ese momento** con un mensaje a la persona y
+**no deniega** la edición: ese REQ no podrá cerrarse y, sin el aviso, nadie lo sabría hasta
+el cierre. Un matiz va entre paréntesis (`aprobado (R-045, 2026-09-01)`); un veredicto
+distinto es **otro valor**, no un paréntesis. Es la única vía documentada para avisar sin
+bloquear: `ask` detendría la llamada.
+
+**Las celdas de veredicto del bloque derivado salen recortadas a 40 caracteres.** Es
+presentación: la puerta y `tools/arnes-lectura.sh` leen el valor entero. Un bloque de
+continuidad en el que cuatro veredictos largos ocupan un tercio —y rompen la tabla— deja
+de servir para lo único que existe.
 
 **Es una barandilla, no una jaula.** El hook impide que el modelo **se desvíe por descuido**;
 no contiene a un agente decidido a rodearlo. Concretamente:
@@ -349,6 +364,11 @@ de seguridad— crece sin tope, y todo lo que crece sin tope acaba entrando ente
 de contexto. Con `rotacion.activo: true`, al parar un agente el arnés **mueve** las secciones
 sobrantes a `<nombre>-archivo.md` y deja un puntero. **Mueve; no resume** — un resumen
 convertiría la bitácora en la versión que el modelo recuerda de ella. Viene apagada.
+También puede archivar **una sección** de un documento —típicamente la historia de un REQ— a
+`historial/<nombre>.md`, dejando **el resto intacto**: la cabecera con sus veredictos y los
+criterios de aceptación no se tocan nunca, porque son el contrato. Qué sección es historia lo
+declara este proyecto en `rotacion.artefactos` (`glob` + `seccion`); el arnés no trae ninguna por
+defecto, y el nombre se compara **exacto**, nunca por prefijo.
 
 **Un hook que no decide nada: la continuidad.** Al parar un agente (`Stop` / `SubagentStop`),
 el arnés reescribe en `docs/ESTADO.md`, entre marcadores, un bloque **derivado** del disco:
