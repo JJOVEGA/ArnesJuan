@@ -202,7 +202,8 @@ Tres reglas nacidas de fallos reales:
 | Coste (37/1) | el camino de campo contra el de v1.32.0 (140 000 bytes sin CR) | razón ≤ **2,0×** |
 | Coste (37/1) | la sonda sin línea base, o bajo el suelo de 50 ms | **SKIP con motivo**, nunca PASS |
 | Coste (37/1) | el tamaño en que el hook alcanza los 60 s, en los tres árboles | se **mide y se imprime** (SEC-030) |
-| Coste (37/2) | la sección 32 aislada contra los dos árboles | mismo inventario **y** reloj ≤ **0,25×** |
+| Coste (37/2) | la sección 32 aislada, **sólo con `ARNES_COSTE_RUTA_CRITICA=1`** | la heredada **no termina** en 4 × mín(este árbol) ⇒ reloj ≤ **0,25×** |
+| Coste (37/2) | las 3 corridas cronometradas de este árbol, entre sí | **mismo inventario** caso→veredicto |
 | Coste (37/2) | una cabecera normal (6 líneas y 200 líneas) contra v1.32.1 | **0 procesos añadidos y** reloj ≤ **1,25×** |
 | Coste (37/2) | una sección sintética que deja un proceso vivo | el corredor la **acusa por su nombre** |
 
@@ -214,10 +215,28 @@ repeticiones, nunca la media, porque la carga sólo puede **añadir** tiempo. La
 —y el caso medido que la obligó— está en `requirements/README.md`, forma **(d)**: «fijar la
 magnitud equivocada».
 
-**La sección 37/2 es cara y se dice: ~120 s, y ~76 s de ellos son la corrida heredada**, que cuesta
-lo que costaba el defecto porque **es** el defecto corriendo. Se paga por defecto —una puerta que
-no se ejecuta no mide— y se apaga con `ARNES_COSTE_RUTA_CRITICA=0` cuando se está diagnosticando
-otra cosa; apagada, sus dos casos dicen **SKIP con ese motivo**, nunca PASS.
+**La comparación contra la ruta crítica NO corre por defecto, y ese defecto está medido al revés
+que el resto del banco.** Corriéndola en cada vuelta, la sección 37/2 cuesta ~120 s —~76 s de ellos
+la corrida heredada, que cuesta lo que costaba el defecto porque **es** el defecto corriendo— y
+deja el banco en **~145 s**: la puerta requerida de `main` más lenta que la regresión de 92 s que
+REQ-017 arregla, y de forma **permanente**, porque su línea base es un tag congelado. Una razón
+contra un tag es **acreditación de fail-before, no puerta permanente**: acreditada una vez, deja de
+medir la evolución de este árbol y envejece hacia el lado que abre. La vigilancia permanente la da
+**CA-03** —el cociente de duplicación, auto-anclado, sin tag y en milisegundos—, que es lo único
+que habría visto H-07.
+
+Por eso se enciende a mano con **`ARNES_COSTE_RUTA_CRITICA=1`** (por defecto **apagada**: 37/2 baja
+de ~120 s a ~12 s, y a ~76 s encendida). Apagada, sus dos casos dicen **SKIP citando el número
+acreditado y su fecha**, nunca PASS. El resto de 37/2 —CA-08 y las dos mitades de CA-06— corre
+siempre.
+
+**Y el denominador no se mide: se acota, con un plazo derivado del numerador.** La corrida heredada
+se lanza bajo `timeout` de **4 × mín(este árbol)**, calculado en esa misma corrida y **después** del
+numerador — un plazo escrito en segundos a mano sería el reloj absoluto que estos criterios
+combaten. Si el plazo **vence**, heredada > 4 × este y el cociente es ≤ 0,25×: la desigualdad queda
+**demostrada**, no estimada, y lo único que se deja de conocer es el *valor* de la razón, que el
+criterio no pide. **El vencimiento es un PASS**, nunca un SKIP: un SKIP ahí convertiría el hallazgo
+en silencio. Si la heredada **termina** dentro del plazo, el caso **FALLA**.
 
 ## Por qué importa
 - La distinción coordinadora vs. subagente se apoya en el campo `agent_id` del input del hook

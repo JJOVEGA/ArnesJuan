@@ -2,6 +2,66 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-07 · REQ-017, delta de CA-05: el plazo se deriva del numerador, y el CI vuelve a tener tags (H-08)
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador`.
+
+**Delta de implementación del write-back de CA-05, más el cierre de H-08 por ampliación de comisión
+aprobada por el propietario (gate humano de `AGENTS.md` §6: el workflow de CI es decisión humana).**
+El `Estado:` de REQ-017 **no se toca**: sigue `en-progreso` hasta que firmen QA y el auditor.
+
+**1 · `ARNES_COSTE_RUTA_CRITICA` invierte su defecto: apagada salvo `=1`.** Corriéndola en cada
+vuelta, la sección 37/2 costaba ~120 s —~76 s de ellos la corrida heredada, que cuesta lo que
+costaba el defecto porque **es** el defecto corriendo— y dejaba el banco en ~145 s: **la puerta
+requerida de `main` más lenta que la regresión de 92 s que REQ-017 arregla**, y de forma permanente,
+porque su línea base es un tag congelado. Una razón contra un tag es **acreditación de fail-before,
+no puerta permanente**. La vigilancia permanente la da CA-03, auto-anclada y en milisegundos.
+Apagada, los dos casos dicen **SKIP citando el número acreditado y su fecha** (0,125× — 9,60 s
+frente a 76,19 s), nunca PASS. 37/2 baja de ~120 s a **12,5 s**; encendida cuesta **76,1 s**.
+
+**2 · El denominador ya no se mide: se acota, con un plazo DERIVADO del numerador.** La corrida
+heredada se lanza bajo `timeout` de **4 × mín(este árbol)**, calculado en la misma corrida y
+**después** del numerador (`⌈4 × u_este / 10⁶⌉` s, redondeo **hacia arriba** — abajo probaría una
+desigualdad más floja que la contratada). Un plazo escrito a mano en segundos sería el **reloj
+absoluto** que todo REQ-017 combate: lo falsea la máquina, el runner y `nice`. Derivado, la máquina
+se cancela igual que en una razón. **El vencimiento es un PASS, nunca un SKIP:** si el plazo vence,
+`heredada > 4 × este` y el cociente contratado (≤ 0,25×) queda **demostrado**, no estimado — un SKIP
+ahí convertiría el hallazgo en silencio. Sin `--foreground`, `timeout` señala al **grupo de
+procesos** entero, así que no queda una corrida de 76 s huérfana envenenando el reloj de la sección
+siguiente (CA-06, el fallo de 3 h 41 min de 1.32.1).
+
+**Fail-before / pass-after de la rama nueva, las dos medidas:** con este árbol la heredada **no**
+termina en 36 s = 4 × 8,81 s → **PASS**; con `ARNES_HOOKS_DIR` := v1.32.1 —«este árbol» *es* el
+enfermo— la heredada **termina** dentro de 285 s = 4 × 71,17 s → **FAIL**. La mitad (ii) pasa a ser
+**auto-anclada**: las 3 corridas cronometradas dan el mismo inventario **entre sí** (40 casos); la
+igualdad contra el árbol heredado la cierra CA-02 sobre el banco entero.
+
+**3 · H-08 cerrado: `fetch-depth: 0` en el checkout del CI.** Sin tags, el árbol congelado que once
+criterios materializan no existe en CI y todos salían SKIP: la puerta requerida dio verde en el PR
+#43 sobre el único REQ del PR sin ejecutar ni una de sus comprobaciones. **Lo aprobado es la
+combinación de 1 y 3**, y ése es el punto: recuperar los tags sin apagar 37/2 añadiría sus ~120 s a
+la puerta requerida; apagar 37/2 sin recuperar los tags dejaría el resto en SKIP igual que hoy.
+
+**El coste, medido y no estimado, porque era la condición de la aprobación:** banco **sin** tags
+`833 PASS · 0 FAIL · 12 SKIP · 45,85 s` —que reproduce **exactamente** el resultado del PR #43— →
+**con** tags y 37/2 apagada `842 PASS · 0 FAIL · 3 SKIP · 55,98 s`. **+10,1 s (+22 %) compran nueve
+criterios que pasan de no medirse a medirse**, CA-03 incluida, que es la única auto-anclada.
+Checkout: 0,202 s superficial y sin tags → 0,346 s completo (**+0,14 s**; `.git` 1,2 → 1,6 MB, 40
+tags). Se eligió `fetch-depth: 0` y no `fetch-tags: true` porque éste mantiene la profundidad 1 y
+deja la prueba colgando de las semánticas del clon superficial, cuyo modo de fallo **es H-08**:
+medio funciona y se lee como verde.
+
+**Sigue abierto**, y se dice: la tercera consecuencia de H-08 —un SKIP honesto agregado a un
+resultado global se lee como verde— no la cierra esto. Que hoy en CI queden tres es una propiedad
+del entorno, no del corredor. Es la palanca «¿esta prueba mide algo?» de 1.33.0.
+
+Quality gates en verde: `bash -n` sobre `hooks/`, `tools/` y el banco entero; `jq -e` sobre
+`hooks.json`, `plugin.json` y `marketplace.json`; banco `842 PASS · 0 FAIL · 3 SKIP` con el cuadre
+de 845 casos cerrado; autoprueba del corredor `73 PASS · 0 FAIL`.
+
+Archivos: `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-caliente.sh`,
+`tests/escenarios/hooks/README.md`, `.github/workflows/banco.yml`, `docs/PENDIENTES.md`,
+`docs/qa/1.33.0.md`, `requirements/REQ-017.md`.
+
 ## [Interno] — 2026-09-07 · Caso J: el bisecado que lo explica, y dos formas medidas al revés
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 

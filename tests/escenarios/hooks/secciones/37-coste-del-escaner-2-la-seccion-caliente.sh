@@ -9,6 +9,13 @@
 # medible sin ruido y ORTOGONAL a lo que se degradó. Por eso las dos aquí y en la misma
 # corrida: los procesos, porque el arreglo no vale si compra tiempo con un `fork`; y el
 # reloj, porque es lo que se degradó.
+#
+# QUÉ CORRE POR DEFECTO Y QUÉ NO. CA-08 y las dos mitades de CA-06 corren SIEMPRE: son
+# baratas (~13 s) y auto-ancladas o de instrumento. La comparación de CA-05 contra la
+# ruta crítica NO corre por defecto —cuesta lo que costaba el defecto, porque ES el
+# defecto corriendo— y se enciende con `ARNES_COSTE_RUTA_CRITICA=1`; apagada dice SKIP
+# citando el número acreditado y su fecha, nunca PASS. El árbol heredado se materializa
+# igual, porque CA-08 lo necesita.
 CASOS_ESPERADOS_SECCION=8
 seccion_nueva "--- 37/2 · la ruta crítica del banco y el camino de una cabecera normal (REQ-017) ---"
 
@@ -42,19 +49,34 @@ mat47 v1.32.1 "$HER47" && HER47_OK=si
 # en línea, cada corrida guardaba su salida en un archivo con otro nombre y el inventario
 # leía uno vacío. Salía «no se comparó nada» —fail-closed, que es la dirección correcta—
 # pero por un motivo que no era el suyo.
-OUT_ESTE47="$RAIZ/s32-este-$BASHPID.txt"
+OUT_ESTE47="$RAIZ/s32-este-$BASHPID"      # se le añade "-<vuelta>.txt": son TRES corridas
 OUT_HER47="$RAIZ/s32-her-$BASHPID.txt"
 
-# ---------- CA-05 · LA RUTA CRÍTICA, CONTRA LA MISMA SECCIÓN EN EL ÁRBOL HEREDADO ----------
+# ---------- CA-05 · LA RUTA CRÍTICA: ACREDITACIÓN DE FAIL-BEFORE, NO PUERTA DE CADA PR ----------
 # La sección 32 corrida AISLADA y con `ARNES_JOBS=1` contra los dos árboles, en la misma
 # máquina y la misma corrida: así la velocidad de la máquina se cancela y lo que queda es
-# la razón. Se comparan las dos cosas, y el orden importa: PRIMERO el inventario —la
-# velocidad no se compra dejando de probar— y sólo después el reloj.
+# la razón.
 #
-# ESTA MEDICIÓN ES CARA Y SE DICE: la corrida del árbol heredado cuesta lo que costaba el
-# defecto (~75 s en Linux), porque es literalmente el defecto corriendo. Se paga entera
-# por defecto —una puerta que no se ejecuta no mide— y se puede apagar con
-# `ARNES_COSTE_RUTA_CRITICA=0` cuando se está diagnosticando otra cosa, diciéndolo.
+# APAGADA POR DEFECTO, Y EL MOTIVO ESTÁ MEDIDO. La corrida heredada cuesta lo que costaba
+# el defecto (~76 s en Linux) porque ES el defecto corriendo: pagarla en cada vuelta deja
+# el banco en ~145 s, es decir la PUERTA REQUERIDA de `main` más lenta que la regresión de
+# 92 s que este REQ arregla, y de forma permanente. Además la línea base es un TAG
+# CONGELADO: acreditada la razón, deja de medir la evolución de este árbol y envejece
+# hacia el lado que abre. La vigilancia permanente del coste la contrata CA-03 —el orden
+# de crecimiento, auto-anclado, sin tag y en milisegundos—. Aquí se acredita una vez, con
+# su número y su fecha, y se repite a mano con `ARNES_COSTE_RUTA_CRITICA=1`.
+#
+# EL DENOMINADOR NO SE MIDE: SE ACOTA, Y LA COTA QUEDA PROBADA. La heredada se lanza bajo
+# `timeout` de 4 × mín(este árbol), derivado en ESTA misma corrida y DESPUÉS del
+# numerador. Un plazo en segundos escrito a mano sería el reloj absoluto que todo este REQ
+# combate —lo falsea la máquina, el runner y `nice`—; derivado del numerador, la máquina se
+# cancela igual que en una razón. Si el plazo VENCE, entonces heredada > 4 × este y el
+# cociente es ≤ 0,25×: la desigualdad contratada queda DEMOSTRADA, no estimada, y lo único
+# que se deja de conocer es el VALOR de la razón, que el criterio no pide. Por eso el
+# vencimiento es un resultado POSITIVO —PASS— y nunca un SKIP: un SKIP ahí convertiría el
+# hallazgo en silencio. Si la heredada TERMINA dentro del plazo, el cociente es > 0,25× y
+# el caso FALLA.
+ACRED47='0,125× — 9,60 s frente a 76,19 s, medido el 2026-09-07'
 corre47() {   # <dir de hooks> <archivo de salida> -> imprime microsegundos, o vacío
   local hd="$1" salida="$2" t0 t1
   [ -n "${EPOCHREALTIME:-}" ] || return 1
@@ -62,55 +84,99 @@ corre47() {   # <dir de hooks> <archivo de salida> -> imprime microsegundos, o v
   ARNES_JOBS=1 ARNES_HOOKS_DIR="$hd" bash "$BANCO47" secciones/32-huecos-auditoria-r001.sh > "$salida" 2>&1
   t1=${EPOCHREALTIME/./}
   # UNA CORRIDA QUE NO PRODUJO CASOS NO ES UNA CORRIDA RÁPIDA: es una que no midió.
-  grep -q '^  \(PASS\|FAIL\|SKIP\)  ' "$salida" || return 1
+  casos47 "$salida" || return 1
   printf '%s\n' "$((t1 - t0))"
 }
-u_este47=''; u_her47=''; motivo47=''
-if [ "${ARNES_COSTE_RUTA_CRITICA:-1}" = 0 ]; then
-  motivo47="apagada a mano con ARNES_COSTE_RUTA_CRITICA=0"
+casos47() { grep -q '^  \(PASS\|FAIL\|SKIP\)  ' "$1"; }
+
+# La palanca viene de FUERA y se escribe a mano, así que se normaliza antes de comparar
+# —espacios y mayúsculas— y un valor que no se reconoce NO enciende la medición... pero
+# tampoco se calla: se dice en el motivo del SKIP. Un fail-closed silencioso es un bug de
+# diagnóstico, y aquí se leería como «no lo pedí» cuando la verdad es «lo pediste mal».
+_pide47="${ARNES_COSTE_RUTA_CRITICA-}"
+_pide47="${_pide47#"${_pide47%%[![:space:]]*}"}"
+_pide47="${_pide47%"${_pide47##*[![:space:]]}"}"
+PIDE47=no; RARO47=''
+case "${_pide47,,}" in
+  1|si|sí|yes|true|on) PIDE47=si ;;
+  ''|0|no|false|off)   : ;;
+  *)                   RARO47="$_pide47" ;;
+esac
+
+u_este47=''; inv47=''; inv47_igual=si; ncasos47=0
+plazo47=''; rc_her47=''; motivo47=''
+TIMEOUT47="$(type -P timeout 2>/dev/null || true)"
+if [ "$PIDE47" != si ]; then
+  motivo47="no se pide: evidencia acreditada en el Historial de REQ-017 ($ACRED47); es acreditación de fail-before, no puerta de cada PR — se repite con ARNES_COSTE_RUTA_CRITICA=1"
+  [ -z "$RARO47" ] || motivo47="ARNES_COSTE_RUTA_CRITICA=<$RARO47> no se reconoce y NO enciende la medición; $motivo47"
 elif [ "$HER47_OK" != si ]; then
   motivo47="no hay línea base: el tag v1.32.1 no está en este clon"
+elif [ -z "$TIMEOUT47" ]; then
+  # CA-06 nombra este caso: sin `timeout` el denominador sólo se puede MEDIR, y medirlo es
+  # justo lo que cuesta 76 s. Antes que estimar la cota, se dice que no se puede acotar.
+  motivo47="no hay 'timeout' en el PATH, y el denominador se ACOTA con él en vez de medirse"
 elif [ ! -r "$BANCO47" ] || [ ! -r "$INV47" ]; then
   motivo47="no encuentro el corredor o el inventario junto a esta sección"
 else
+  # EL NUMERADOR PRIMERO, Y LAS TRES CORRIDAS A ARCHIVOS DISTINTOS: de ellas salen las dos
+  # mitades del criterio —el mínimo para (i) y el inventario para (ii)—, y (ii) es
+  # AUTO-ANCLADO: compara este árbol consigo mismo, no contra el tag.
   for _r47 in 1 2 3; do
-    _u47="$(corre47 "$HOOKS_DIR" "$OUT_ESTE47")" || { motivo47="la corrida de este árbol no produjo casos"; u_este47=''; break; }
+    _o47="$OUT_ESTE47-$_r47.txt"
+    _u47="$(corre47 "$HOOKS_DIR" "$_o47")" || { motivo47="la corrida $_r47 de este árbol no produjo casos: no es una corrida rápida, es una que no midió"; u_este47=''; break; }
     if [ -z "$u_este47" ] || [ "$_u47" -lt "$u_este47" ]; then u_este47="$_u47"; fi
-  done
-  # UNA sola corrida heredada, y es deliberado: la carga sólo puede AÑADIR tiempo, así que
-  # un denominador inflado sólo puede hacer la razón MÁS pequeña... que es la dirección que
-  # ABRE. Se compensa con el margen: el techo es 0,25× y lo medido ronda 0,12×, así que
-  # haría falta que la línea base se inflara al DOBLE para que un verde fuera falso. Tres
-  # corridas heredadas costarían 150 s más para cerrar un hueco que el margen ya cierra.
-  [ -n "$u_este47" ] && { u_her47="$(corre47 "$HER47/hooks" "$OUT_HER47")" || motivo47="la corrida heredada no produjo casos"; }
-fi
-
-if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-05 inventario" | grep -qi -- "$FILTRO"; then
-  if [ -z "$u_este47" ] || [ -z "$u_her47" ]; then
-    echo "  SKIP  REQ-017 CA-05 (i) la sección 32 decide lo mismo contra los dos árboles  ${motivo47:-no se pudo medir}"
-  else
-    a47="$(bash "$INV47" "$OUT_HER47"  2>/dev/null)"
-    b47="$(bash "$INV47" "$OUT_ESTE47" 2>/dev/null)"
-    if [ -z "$a47" ] || [ -z "$b47" ]; then
-      echo "  FAIL  REQ-017 CA-05 (i) uno de los dos inventarios salió vacío (heredado=${#a47}B, este=${#b47}B): no se comparó nada"; FAIL=$((FAIL+1))
-    elif [ "$a47" = "$b47" ]; then
-      echo "  PASS  REQ-017 CA-05 (i) la sección 32 da el MISMO inventario caso→veredicto en los dos árboles ($(printf '%s\n' "$b47" | grep -c '^') casos)"; PASS=$((PASS+1))
-    else
-      echo "  FAIL  REQ-017 CA-05 (i) el inventario de la sección 32 cambió: la velocidad se compró dejando de probar"; FAIL=$((FAIL+1))
-      diff <(printf '%s\n' "$a47") <(printf '%s\n' "$b47") 2>/dev/null | head -6 | sed 's/^/          /'
+    _i47="$(bash "$INV47" "$_o47" 2>/dev/null)"
+    if [ -z "$_i47" ]; then motivo47="el inventario de la corrida $_r47 de este árbol salió vacío: no se comparó nada"; u_este47=''; break; fi
+    if [ -z "$inv47" ]; then
+      inv47="$_i47"
+      while IFS= read -r _l47; do ncasos47=$((ncasos47 + 1)); done <<< "$_i47"
+    elif [ "$_i47" != "$inv47" ]; then
+      inv47_igual=no; inv47_dif="$_i47"
     fi
+  done
+  # EL SUELO DE 50 ms, aquí y no sólo en las sondas de 37/1: un numerador dentro del ruido
+  # produciría un plazo dentro del ruido, y la cota se apoyaría en él.
+  if [ -n "$u_este47" ] && [ "$u_este47" -lt 50000 ]; then
+    motivo47="el mínimo de este árbol se queda en ${u_este47}µs, bajo el suelo de 50 ms donde el reloj no distingue del ruido"
+    u_este47=''
+  fi
+  if [ -n "$u_este47" ]; then
+    # 4 × mín(este árbol), EN SEGUNDOS Y REDONDEADO ARRIBA. La dirección del redondeo no es
+    # cosmética: con el plazo >= 4×este, que venza sigue probando heredada > 4×este.
+    # Redondear ABAJO probaría una desigualdad más floja que la contratada.
+    plazo47=$(( (u_este47 * 4 + 999999) / 1000000 ))
+    [ "$plazo47" -ge 1 ] || plazo47=1
+    # Sin `--foreground`, `timeout` pone al hijo en SU PROPIO grupo de procesos y señala al
+    # grupo entero: el corredor heredado muere con sus subshells, y no queda una corrida de
+    # 76 s huérfana envenenando el reloj de la sección siguiente (CA-06).
+    ARNES_JOBS=1 ARNES_HOOKS_DIR="$HER47/hooks" \
+      "$TIMEOUT47" -k 5 "$plazo47" bash "$BANCO47" secciones/32-huecos-auditoria-r001.sh > "$OUT_HER47" 2>&1
+    rc_her47=$?
   fi
 fi
+
 if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-05 reloj" | grep -qi -- "$FILTRO"; then
-  if [ -z "$u_este47" ] || [ -z "$u_her47" ]; then
-    echo "  SKIP  REQ-017 CA-05 (ii) el reloj de la ruta crítica  ${motivo47:-no se pudo medir} (este=<${u_este47:-vacío}>µs heredada=<${u_her47:-vacío}>µs)"
+  nom47="REQ-017 CA-05 (i) la ruta crítica cuesta no más de 0,250× lo de v1.32.1"
+  if [ -z "$u_este47" ]; then
+    echo "  SKIP  $nom47  ${motivo47:-no se pudo medir}"
+  elif [ "$rc_her47" = 124 ] || [ "$rc_her47" = 137 ]; then
+    echo "  PASS  $nom47  la heredada NO terminó en ${plazo47}s = 4 × mín(este árbol) ($(awk -v u=$u_este47 'BEGIN{printf "%.2f", u/1e6}') s): heredada > 4 × este, luego el cociente es ≤ 0,250× — DEMOSTRADO, no estimado"; PASS=$((PASS+1))
+  elif ! casos47 "$OUT_HER47"; then
+    # Terminó, pero sin juzgar nada: eso no acota nada. Es el SKIP que CA-06 sí cubre.
+    echo "  SKIP  $nom47  la corrida heredada terminó (rc=$rc_her47) sin producir un solo caso: una cota sobre una corrida que no midió no es una cota"
   else
-    r47=$(( u_este47 * 1000 / u_her47 ))
-    if [ "$r47" -le 250 ]; then
-      echo "  PASS  REQ-017 CA-05 (ii) la ruta crítica cuesta $(awk -v c=$r47 'BEGIN{printf "%.3f", c/1000}')× lo de v1.32.1 (techo 0,250×; $(awk -v u=$u_este47 'BEGIN{printf "%.2f", u/1e6}') s frente a $(awk -v u=$u_her47 'BEGIN{printf "%.2f", u/1e6}') s)"; PASS=$((PASS+1))
-    else
-      echo "  FAIL  REQ-017 CA-05 (ii) la ruta crítica cuesta $(awk -v c=$r47 'BEGIN{printf "%.3f", c/1000}')× lo de v1.32.1 y el techo es 0,250× ($(awk -v u=$u_este47 'BEGIN{printf "%.2f", u/1e6}') s frente a $(awk -v u=$u_her47 'BEGIN{printf "%.2f", u/1e6}') s)"; FAIL=$((FAIL+1))
-    fi
+    echo "  FAIL  $nom47  la heredada TERMINÓ dentro de ${plazo47}s = 4 × mín(este árbol) (rc=$rc_her47, este=$(awk -v u=$u_este47 'BEGIN{printf "%.2f", u/1e6}') s): heredada < 4 × este, luego el cociente es > 0,250×"; FAIL=$((FAIL+1))
+  fi
+fi
+if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-05 inventario" | grep -qi -- "$FILTRO"; then
+  nom47="REQ-017 CA-05 (ii) la comparación no se compra dejando de probar"
+  if [ -z "$u_este47" ]; then
+    echo "  SKIP  $nom47  ${motivo47:-no se pudo medir}"
+  elif [ "$inv47_igual" = si ]; then
+    echo "  PASS  $nom47  las 3 corridas cronometradas produjeron casos y dan el MISMO inventario ordenado caso→veredicto ENTRE SÍ ($ncasos47 casos); la igualdad contra el árbol heredado la cierra CA-02 sobre el banco entero"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nom47  el inventario cambió ENTRE corridas del MISMO árbol: la medición del numerador no es reproducible"; FAIL=$((FAIL+1))
+    diff <(printf '%s\n' "$inv47") <(printf '%s\n' "${inv47_dif:-}") 2>/dev/null | head -6 | sed 's/^/          /'
   fi
 fi
 
@@ -263,4 +329,4 @@ if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-06 el corredor acusa" | grep -qi 
   rm -rf "$sint47"
 fi
 
-rm -rf "$HER47" "$SONDA47" "$OUT_ESTE47" "$OUT_HER47"
+rm -rf "$HER47" "$SONDA47" "$OUT_HER47" "$OUT_ESTE47"-1.txt "$OUT_ESTE47"-2.txt "$OUT_ESTE47"-3.txt
