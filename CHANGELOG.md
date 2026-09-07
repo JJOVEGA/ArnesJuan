@@ -2,6 +2,33 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-07 · v1.32.0 publicada, y el agujero del intérprete medido en carne propia
+> Origen: GitHub (PR #39, fusión `ca6047a`, tag `v1.32.0`) · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos`, `desarrollador`, `qa-tester` (Opus), `auditor-seguridad` y la coordinadora.
+
+**Publicada.** Tag `v1.32.0` sobre `ca6047a`, verificado contra los tres manifiestos, e instalación
+estable actualizada de 1.31.0 a 1.32.0. `hooks-en-linux` en verde en 21 s.
+
+- **REQ-012 y REQ-014 pasan a `completado`** con QA y Seguridad `aprobado`, cola de aprobaciones vacía
+  y quality gates en verde. **REQ-013 queda en `en-revisión`** y cruza a 1.33.0 con `SEC-020` abierto
+  (`contrato`): siete fail-open en tres vueltas sobre el mismo archivo dicen que la respuesta es
+  **restringir la gramática** del campo, no un octavo parche. La herramienta se publica declarada como
+  no fiable en los cuatro documentos que la nombran, y nada automático la consume.
+- **La cola de aprobación resuelta por delegación**: el propietario aprobó publicar el 2026-09-07,
+  incluido el cambio de `.github/workflows/banco.yml`, sobre el que el auditor no puso objeción de
+  seguridad en R-004 y lo confirmó en R-006.
+- **El agujero del intérprete, ejecutado por la coordinadora y registrado** (`docs/PENDIENTES.md`). Al
+  cerrar los dos REQ escribió el estado terminal con un heredoc de `python3`: **`guard-completado` no
+  lo vio**, porque el detector lee el texto del comando y la ruta vivía dentro del script. Se revirtió
+  y se repitió con `Edit`, que sí pasa por la puerta y aceptó — el cierre era legítimo, lo que faltó
+  fue que alguien lo comprobara. `AGENTS.md` §13 ya declaraba esa clase como el mayor hueco que queda;
+  hasta hoy estaba **argumentada y no medida**. Es el forzador que le faltaba a **REQ-011, la puerta
+  posterior** (1.33.0). Agravante nombrado: una instrucción de sesión que prefería `Bash` a las
+  herramientas de edición acabó desactivando una puerta sin que nadie relacionara las dos cosas.
+- **`docs/ESTADO.md`**: el tablero refleja el cierre, los diez hallazgos que cruzan con dueño y
+  ventana, y la lección del ciclo — cuando un mecanismo interpreta texto humano libre, ensanchar el
+  patrón no gana la clase. Tercera vez: detector de escrituras por `Bash`, guarda estática del banco
+  (`ADR-002`) y campo `Archivos:`.
+
 ## [Interno] — 2026-09-07 · SEC-022: el documento que ANUNCIA el campo `Archivos:` prometía un fail-closed sin hueco (rama `cand/1.32.0`, sin commit)
 > Origen: Interno (árbol de `cand/1.32.0` sin comitear) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` (SEC-022, `instrumento`, de `auditor-seguridad` R-006; precisiones de QA-216).
 
