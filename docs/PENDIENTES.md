@@ -258,3 +258,61 @@ plugin 1.31.0.
   fue `Edit` o `MultiEdit`—; el reportante dice que molesta a diario, así que merece cerrarse en cuanto
   llegue. **No se redacta REQ hasta tener la reproducción:** un criterio escrito sobre un defecto que no
   se ha visto describe lo que imaginamos, no lo que pasa.
+
+### 1.32.0 — el ciclo cuesta demasiado, y la causa dominante es evitable
+
+**Línea base medida (ciclo 2, siete REQ, cuatro vueltas del bucle).** Tiempo de reloj de cada agente,
+tomado de su propia entrega; no incluye la orquestación ni las corridas de control de la coordinadora:
+
+| Rol | Comisiones | Tiempo | Notas |
+|---|---:|---:|---|
+| `desarrollador` | 8 | ~2 h 22 | de 3,5 a 27 min cada una |
+| `qa-tester` | 4 | ~1 h 32 | de 18 a 31 min |
+| `analista-requerimientos` | ~11 | ~1 h 03 | de 2 a 12 min |
+| `auditor-seguridad` | 2 | ~26 min | 13 min cada una |
+| **Total de agente** | **25** | **~5 h 23** | más orquestación y ~20 corridas de banco a 18 s |
+
+**Una vuelta del bucle cuesta unos 50 minutos** entre desarrollador, QA, control y write-back. Cuatro
+vueltas son tres horas y media: **la mayor parte del ciclo**.
+
+**El diagnóstico, con los hallazgos delante.** De los veinte hallazgos del ciclo, **siete fueron que el
+criterio decía algo falso sobre lo construido**, no que el código estuviera mal: enumeraba tres
+envoltorios cuando el código toleraba siete; fijaba un número que la medición desmintió; exigía
+igualdad de coste donde debía exigir techo, convirtiendo una mejora en un fallo. **Uno de ellos costó
+una vuelta entera.** Es la clase de hallazgo más frecuente del ciclo y es evitable escribiendo distinto.
+
+**Lo que NO es el problema, para no optimizar la parte equivocada:** que QA vaya antes que el auditor no
+se puede paralelizar —su firma acreditaría un árbol sin validar, que es justo el fallo que la regla
+evita— y las corridas de banco de la coordinadora suman seis minutos en todo el ciclo. El cuello real
+son **dos archivos monolíticos**, `hooks/lib.sh` y el banco, por los que pasa casi todo: mientras lo
+sean, dos comisiones en paralelo colisionan.
+
+**Y el contexto que evita la conclusión equivocada:** este repositorio se impone la **ceremonia máxima**
+a propósito —todo REQ es crítico y sensible, así que pasa por los cuatro agentes—. Un proyecto con rigor
+`estandar` se salta al auditor y con `ligero` también al QA. Las cinco horas son el techo de quien
+construye el mecanismo, no lo que paga quien lo usa.
+
+**Tres cambios, en orden de rendimiento, para medir en 1.32.0 contra esta línea base:** criterios por
+mecanismo y no por enumeración; paralelizar por REQ con un mapa explícito de qué archivo toca cada
+comisión; y partir el banco en archivos por sección para que el QA también pueda paralelizarse.
+
+### Decisión pendiente de aplicar al abrir 1.33.0 (tomada 2026-09-06, no cuesta nada hasta entonces)
+
+Al mover REQ-011 y los bloques B y C de REQ-007 a la misma ventana 1.33.0, el analista señaló que se
+pierde una propiedad: REQ-011 iba a medirse contra un árbol donde el detector de REQ-007 ya estuviera
+**publicado**, para que un veredicto que cambiara fuera inequívocamente suyo.
+
+**Decisión: van los dos en 1.33.0, REQ-007 bloques B y C primero dentro de la ventana**, y los dos se
+miden contra **v1.32.0 publicada**. La propiedad que preocupaba **no se pierde de verdad**, y ésta es la
+razón: los dos mecanismos viven en **eventos distintos**. REQ-007 corrige el detector que decide *antes*
+(`PreToolUse`); REQ-011 construye la puerta que pregunta *después* (`PostToolUse`). Un veredicto de
+permitir o denegar que cambie sólo puede venir del primero; la evidencia del segundo es de otra
+naturaleza — «algo protegido cambió en disco y la puerta posterior lo reportó»—, y eso ningún arreglo
+del detector previo puede producir. Son distinguibles por construcción, no por orden.
+
+Sí colisionan por archivo (`hooks/lib.sh` y `hooks/hooks.json`), así que **no se despachan a la vez**:
+es la primera aplicación real del mapa de archivos de REQ-013, y conviene que lo sea.
+
+**Aplicación:** el write-back va en el REQ cuando se abra 1.33.0, no ahora. Escribirlo hoy costaría una
+comisión de analista (~4 USD medidos) para un texto que nadie lee hasta entonces, y la decisión ya está
+escrita aquí con su razón. Es la disciplina de coste aplicada a nosotros mismos.

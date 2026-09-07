@@ -40,6 +40,37 @@ se deniega citando `git.prohibidos: 'clean -f'` del manifiesto, y `git stash lis
 Quality gates en verde tras el cambio: `bash -n` sobre los 9 `hooks/*.sh` y `tools/*.sh`, y `jq -e` sobre
 `hooks/hooks.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` y `.arnes/config.json`.
 
+## [Interno] — 2026-09-06 · la ventana 1.32.0 se dedica al coste, y el resto se aplaza
+> Origen: Interno · usuario: Juan · modelo de IA: Opus 5 · agentes: sesión coordinadora y `analista-requerimientos`.
+
+- **REQ-012, REQ-013 y REQ-014** redactados para 1.32.0: criterios por mecanismo y no por enumeración,
+  mapa de archivos para poder paralelizar, y el banco en archivos por sección. Cada uno con su forma de
+  medirse contra la línea base del ciclo 2.
+- **1.32.0 pasa a ser la ventana del coste y nada más.** Los bloques B y C de REQ-007 y la puerta
+  posterior se mueven a 1.33.0. El motivo: las palancas de coste **componen** y lo demás no, así que
+  primero se abarata el bucle y después se construye con él; al revés se paga el precio completo y se
+  mejora cuando ya no sirve para ese trabajo. Lo que se retrasa exige ofuscación deliberada.
+- **REQ-013 deja de tocar el lector de las puertas.** Su propio criterio declara que el campo nuevo no
+  es puerta, y si ninguna puerta lo lee, el lector que gobierna no tiene por qué conocerlo. Reutiliza la
+  normalización compartida y exige diff vacío. Con eso desaparecen dos conflictos que ya estaban escritos.
+- **Y una decisión aplazada a propósito, que es la disciplina de coste aplicada a nosotros mismos:** el
+  write-back de cómo conviven REQ-007 y REQ-011 en 1.33.0 queda escrito en `docs/PENDIENTES.md` con su
+  razón, y se lleva al REQ cuando esa ventana se abra. Escribirlo hoy costaría una comisión de analista
+  medida en cuatro dólares para un texto que nadie lee hasta entonces.
+
+## [Interno] — 2026-09-06 · cuánto cuesta un ciclo, medido, y las tres palancas
+> Origen: Interno · usuario: Juan · modelo de IA: Opus 5 · agente: sesión coordinadora.
+
+- `docs/PENDIENTES.md`: la **línea base** del ciclo 2 —25 comisiones, ~5 h 23 de tiempo de agente,
+  cuatro vueltas del bucle a unos 50 minutos cada una—, sin la cual «mejoramos» es una sensación.
+- El diagnóstico con los hallazgos delante: **siete de veinte fueron que el criterio decía algo falso
+  sobre lo construido**, no que el código fallara, y uno de ellos costó una vuelta entera.
+- Queda dicho también **lo que no es el problema**, para no optimizar la parte equivocada: el orden
+  QA→auditor no se puede paralelizar sin producir una firma falsa, y las corridas de control de la
+  coordinadora suman seis minutos en todo el ciclo. El cuello son dos archivos monolíticos.
+- Y el contexto que evita la conclusión equivocada: este repositorio se impone la **ceremonia máxima**
+  a propósito. Las cinco horas son el techo de quien construye el mecanismo, no lo que paga quien lo usa.
+
 ## [Interno] — 2026-09-06 · cierre del ciclo 2 del autoalojamiento
 > Origen: Interno (documentación de gobernanza) · usuario: Juan · modelo de IA: Opus 5 · agente: sesión coordinadora.
 
