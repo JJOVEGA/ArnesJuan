@@ -346,3 +346,32 @@ colisión en vez de repartirla.
 **Clase `instrumento`.** No bloquea nada; es una palanca de coste. Candidata a 1.33.0 si la ventana lo
 admite, y si no, a 1.34.0 junto al resto de lo que los proyectos leen.
 
+## El agujero del intérprete, ejecutado por la coordinadora (medido el 2026-09-07)
+
+**Qué pasó.** Al cerrar la ventana 1.32.0, la coordinadora escribió el estado terminal de dos REQ con
+un heredoc de `python3` que abre el archivo y lo reescribe. **`guard-completado` no lo vio**: la
+escritura pasó sin que ninguna puerta juzgara veredictos, cola ni quality gates. Se revirtió y se
+repitió con `Edit`, que sí pasa por la puerta y esta vez aceptó — los veredictos estaban en su sitio,
+así que el cierre era legítimo. Lo que falló no fue el cierre: fue que **nadie lo comprobó**.
+
+**Por qué no es un fallo del hook.** `AGENTS.md` §13 ya declara esta clase como el agujero más grande
+de los que quedan: «los **intérpretes** —`node script.mjs`, `python x.py`: la ruta vive dentro del
+archivo y el detector sólo lee el texto del comando». El detector leyó `python3 - <<PY` y no vio
+ninguna de las formas que reconoce.
+
+**Por qué vale registrarlo.** Hasta hoy esa clase estaba **argumentada** y no **medida**. Ahora hay un
+caso real, con fecha, ejecutado por el agente que más ha insistido este ciclo en que las puertas se
+respetan — que es exactamente el perfil de quien se salta una barandilla por costumbre y no por
+intención. Es el **forzador medido** que le faltaba a **REQ-011, la puerta posterior** (ventana 1.33.0):
+deja de preguntar *antes* si un comando va a escribir y pregunta *después* si algo protegido cambió.
+Ningún patrón más largo cubre esta clase; un intérprete siempre puede esconder la ruta.
+
+**Y un factor agravante que conviene nombrar:** la coordinadora tenía instrucción de sesión de preferir
+`Bash` sobre las herramientas de edición. Una preferencia de herramienta que nadie relacionó con el
+enforcement acabó desactivando una puerta. Cuando exista la puerta posterior, esto dejará de depender
+de qué herramienta se elija.
+
+**Clase `contrato`** — no porque el cierre fuera indebido, sino porque `AGENTS.md` §13 describe una
+cobertura de `Bash` que esta vía deja por debajo de lo que un lector razonable entendería. Dueño:
+REQ-011, ventana 1.33.0. Cierra cuando la puerta posterior detecte este mismo caso.
+
