@@ -123,6 +123,51 @@ Archivos: `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-ca
 `tests/escenarios/hooks/README.md`, `.github/workflows/banco.yml`, `docs/PENDIENTES.md`,
 `docs/qa/1.33.0.md`, `requirements/REQ-017.md`.
 
+## [Interno] — 2026-09-07 · Primer despacho paralelo real: tres comisiones, y el diseño del paralelismo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` ×2, `desarrollador`, coordinadora.
+
+**Tres comisiones a la vez, y lo que lo hizo posible no fue la herramienta.** `tools/arnes-paralelo.sh`
+habría dicho «colisiona» sobre cualquier par: **8 de los REQ abiertos declaran `CHANGELOG.md`** en
+`Archivos:`. Se les retiró el libro mayor **y el commit**, y se les asignó un ámbito de archivos
+exclusivo. Ahorro de la tanda: ~25 min sobre la serie.
+
+**Write-back de los siete hallazgos de QA sobre REQ-017**, con el argumento que decide el REQ:
+**`CA-01` no era exigente, era insatisfacible** — si la operación heredada devuelve basura distinta en
+cada evaluación de la misma entrada, la igualdad byte a byte **no la cumple ni v1.32.1 consigo misma**.
+Eso separa el estrechamiento de la coartada que `requirements/README.md` prohíbe. El dominio se define
+**por propiedad medida en la corrida** (las entradas donde la heredada es determinista), no por lista
+de locales ni de bytes. **CA-10** declara el fallo en abierto de v1.32.1 que este parche cierra, y
+deliberadamente **no** afirma que cambie el veredicto de la puerta —QA midió que no cambia— ni contrata
+el texto publicado fuera del dominio, porque se construye con la misma familia de operación que hace no
+determinista a `arnes_norm_clave`. **CA-09 deja de acreditar magnitud alguna**: exige medición,
+procedencia y **dispersión**, y contrata sólo la dirección, **pareada dentro de la misma corrida**.
+
+**REQ-019 — adelgazar `AGENTS.md`**, con un criterio de no-pérdida mejor que el que pidió la
+coordinadora: **el adelgazamiento es un MOVIMIENTO, no una reescritura** — todo bloque que sale aparece
+**literalmente** en exactamente un destino declarado, cero sin localizar, de contrato. *No se puede
+perder una regla que nadie borró*, y la reescritura es el mecanismo por el que se pierde; es además la
+doctrina que el arnés ya se aplica en la rotación (*mueve; no resume*). Y el ahorro se mide como **peso
+de gobierno de lectura obligatoria** con **dos vías a la vez** (≤ 0,60× **y** ≤ 2 documentos), porque
+mover texto a un archivo igualmente obligatorio baja los bytes sin bajar el coste y repartirlo en muchos
+**lo sube** — la familia exacta de la magnitud equivocada.
+
+**`ADR-003` — la plantilla y la migración se quedan fuera de 1.33.0** (gate humano, aprobado por el
+propietario el 2026-09-07). Motivo de mecanismo y no de tamaño: `arnes-upgrade` clasifica **por sección**
+y **no tiene estado** para «la sección desapareció del destino» ⇒ `UNKNOWN` ⇒ **detiene la migración de
+todos los proyectos**; y la delegación **crea archivos**, que esa skill tampoco sabe clasificar. Más el
+argumento de coste: los ~9 000 tokens se pagan en los subagentes de **este** repositorio, así que
+adelgazar la plantilla **no ahorra ni un token** de las comisiones de 1.34.0, que es para lo que se
+adelantó la palanca. Divergencia acotada por dos invariantes comprobables, con dueño y vencimiento.
+
+**Diseño del paralelismo escrito para 1.34.0** (`docs/PENDIENTES.md`, resumen en `docs/PLAN.md`), con
+tres hallazgos que ninguna herramienta de archivos puede ver: la **colisión universal** del libro mayor;
+**la máquina** como segunda dimensión de colisión —dos comisiones que miden se invalidan los números en
+silencio, y la coordinadora lo hizo hoy con su propio despacho—; y que **dos agentes sobre el mismo
+archivo en el mismo árbol no dan conflicto de fusión, dan escritura perdida**: git no protege de eso.
+Más la regla completa del campo, en sus dos mitades: **declara exactamente el conjunto de escritura, ni
+más ni menos** — de más fabrica colisiones falsas (barato e invisible), de menos fabrica `disjunto`
+falsos (caro: escritura perdida).
+
 ## [Interno] — 2026-09-07 · QA de REQ-017: `con-hallazgos`, y se retira una cifra que publicamos como medida
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
 

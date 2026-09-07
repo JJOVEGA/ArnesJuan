@@ -201,6 +201,27 @@ predominante otra vez, y 0 o 1 vueltas del bucle. El objetivo de ≤ 3 es alcanz
 
 ## 1.34.0 — lo que los proyectos leen, **más el núcleo por estado**
 
+> ### Bloque de apertura: **el paralelismo**, antes que el núcleo (encargo del propietario, 2026-09-07)
+>
+> Mismo argumento que puso las palancas primero en 1.33.0: **el paralelismo abarata la ventana grande,
+> así que hacerlo antes es la única forma de cobrarlo** — y ésta es la que más comisiones tiene.
+> Diseño completo, con lo medido el día del primer despacho paralelo real, en `docs/PENDIENTES.md`
+> § «Trabajar con agentes en paralelo». Cinco piezas, de más barata a más cara:
+>
+> | | Pieza | Qué desbloquea |
+> |---|---|---|
+> | 1 | El **libro mayor es de la coordinadora**: ninguna comisión escribe `CHANGELOG.md` ni comitea, y esos artefactos salen de `Archivos:` | Quita la colisión universal — **8 de los REQ abiertos declaran `CHANGELOG.md`**, así que la herramienta dice «colisiona» sobre **cualquier** par |
+> | 2 | **Ámbito asignado** en el despacho; `arnes-paralelo.sh` pasa a **segunda opinión** que puede desmentir, no a autorización | Asignar falla visible (la comisión desobedece y se ve en el diff); comprobar falla en abierto (campo incompleto o decorado, **SEC-020**) |
+> | 3 | **`Mide: sí/no`** en la cabecera: **dos comisiones que miden no se despachan a la vez** | La segunda dimensión de colisión — **la máquina**, que ninguna herramienta de archivos puede ver, y cuyo fallo es silencioso: cifras mal, sin conflicto ni error |
+> | 4 | **Puerta posterior de ámbito**: al cerrar una comisión, *¿cambió algo fuera de su ámbito?* | La **escritura perdida** — dos agentes sobre el mismo archivo en el mismo árbol **no dan conflicto de fusión, dan pérdida silenciosa**; git no protege de esto |
+> | 5 | **SEC-020** + la convención de artefactos de gobierno en `Archivos:` | Que la segunda opinión valga algo |
+>
+> **La pieza 1 se adelanta a 1.33.0**, y sólo como redacción: ya está **en vigor de facto** desde el
+> despacho del 2026-09-07, y una práctica en vigor sin escribir es deuda desde el primer día.
+>
+> **Lo que no cambia:** el orden de fases no se paraleliza nunca — no es calendario, es la condición de
+> validez de la firma.
+
 > **Recibe el núcleo de 1.33.0 (propietario, 2026-09-07):** REQ-011, SEC-025, SEC-029, la puerta de
 > «¿esta prueba mide algo?», REQ-007 B/C, la pasada de conformidad con sus cinco piezas y el canal de
 > informes. Su justificación y su tema —estado, no vía— viven arriba, en 1.33.0, y no se repiten aquí.

@@ -1292,3 +1292,147 @@ informes (1.34.0) — deja de ser higiene y pasa a ser instrumento.
 *(Y por simetría, porque este registro ha ido lleno de hallazgos: allí el `pre-commit` rechazó un commit
 suyo por no traer registro de cambio, y la salida fue añadir la entrada, no `--no-verify`. El control
 mordió a quien lo mantiene. Conviene que quede escrito junto a los aciertos.)*
+
+## Trabajar con agentes en paralelo: el diseño, con lo medido el 2026-09-07
+
+> **Encargo del propietario.** Escrito el día del **primer despacho paralelo real** de este proyecto
+> —tres comisiones a la vez—, así que todo lo de aquí viene de esa tanda o de mediciones de esa tarde,
+> no de principios generales. Destino propuesto al final.
+
+### 0. El resumen en una línea
+
+`tools/arnes-paralelo.sh` contesta bien la pregunta que se le hace, y **es la pregunta equivocada**:
+responde *«¿estos dos REQ declaran archivos comunes?»*. Las tres cosas que hoy impiden el paralelismo
+—y la que lo rompe en silencio— **no son ésa**.
+
+### 1. La colisión universal, medida: `CHANGELOG.md`
+
+**8 de los REQ abiertos declaran `CHANGELOG.md` en su campo `Archivos:`.** ⇒ la herramienta responde
+**colisiona** para prácticamente **cualquier par**, y tiene razón. No es un defecto de la herramienta:
+es que **el libro mayor es un destino de escritura compartido por construcción**, igual que
+`skills/arnes-upgrade/SKILL.md` colisionaba en **15 de 15** pares por la nota de migración.
+
+**La solución está probada hoy y funcionó: el libro mayor es de la coordinadora.** A las tres
+comisiones del 2026-09-07 se les retiró `CHANGELOG.md` **y el commit**; la coordinadora escribió la
+entrada y comiteó al final. Con eso, tres comisiones que la herramienta habría declarado colisionantes
+corrieron sin pisarse.
+
+⇒ **Regla propuesta:** una comisión **nunca** escribe los artefactos de bitácora y continuidad
+(`CHANGELOG.md`, `docs/ESTADO.md`, `docs/PENDIENTES.md`) ni comitea. Los escribe quien orquesta. Y en
+consecuencia, **esos archivos dejan de declararse en `Archivos:`** — hoy ocho REQ los declaran y por eso
+el campo dice «colisiona» sobre una colisión que la disciplina ya evita.
+
+> ⚠️ **Con su contrapartida, que hay que escribir o el arreglo abre un agujero:** el `pre-commit`
+> exige registro de cambio **en el mismo commit**. Si las comisiones dejan de escribirlo, **la
+> coordinadora tiene que escribirlo por las tres**, y una entrada olvidada ya no la caza nadie hasta el
+> commit. Es un traslado de responsabilidad, no una supresión: hay que decir dónde queda.
+
+### 2. La colisión que ninguna herramienta de archivos puede ver: **la máquina**
+
+**Éste es el hallazgo nuevo del día, y me lo hice a mí mismo.** Despaché en paralelo dos analistas y
+**un desarrollador que mide**. Medido en ese momento: 7 procesos de banco vivos, `load average` 0,80.
+
+Los archivos eran disjuntos y aun así el despacho era defectuoso: **una comisión que mide y otra que
+consume CPU se invalidan mutuamente los números**, y el fallo es **silencioso** — no hay conflicto, no
+hay error, sólo cifras mal. Este repositorio ya tiene el caso extremo documentado: una sonda que
+sobrevivió **3 h 41 min al 99,6 % de CPU** y envenenó la línea base de la tarde siguiente, donde el
+desarrollador midió 92,6 s donde había 39 y concluyó «dentro del ruido» con lógica interna perfecta.
+
+⇒ **Segunda dimensión de colisión, y hay que declararla igual que la de archivos:** un REQ declara si
+su verificación **mide** (`Mide: sí/no`). **Dos comisiones que miden no se despachan a la vez**, aunque
+sus archivos sean disjuntos. Las que no miden, sí.
+
+⇒ **Y la mitad barata que sirve mientras eso no exista:** toda cifra que una comisión escriba como
+medida declara **en qué condiciones se tomó** —sola o acompañada—. Es una línea, y convierte un número
+falso en un número con su condición. *(Aplicado hoy en caliente: se avisó al desarrollador a mitad de
+comisión.)*
+
+### 3. Lo que git NO protege, y casi todo el mundo cree que sí
+
+**Dos agentes editando el mismo archivo en el mismo árbol de trabajo no producen un conflicto de
+fusión: producen una escritura perdida.** No hay ramas, no hay merge, no hay aviso. El segundo escribe
+sobre el resultado del primero y git ve un único archivo cambiado.
+
+Esto invierte la intuición de por qué se pide la comprobación de disjunción. En `AGENTS.md` §6 está
+escrito que el riesgo son *«conflictos de fusión y trabajo perdido»*; **de los dos, el que realmente
+ocurre en un despacho paralelo dentro del mismo árbol es el segundo, y es el invisible.** Merece
+frase propia, porque un conflicto se ve y una escritura perdida no.
+
+### 4. Asignar el ámbito es mejor que comprobarlo
+
+Lo que de hecho hizo posible la tanda de hoy no fue preguntarle a la herramienta: fue **darle a cada
+comisión un ámbito de archivos explícito y exclusivo, y prohibirle el resto**. Es una garantía más
+fuerte, y la diferencia es la de siempre en este repositorio:
+
+| | Qué es | Modo de fallo |
+|---|---|---|
+| **Comprobar** (`arnes-paralelo.sh`) | inferir de lo declarado que no se pisan | el campo miente, o está incompleto, o decorado (**SEC-020**) ⇒ **falso `disjunto`**, fail-open |
+| **Asignar** (lo de hoy) | imponer a cada comisión dónde puede escribir | la comisión desobedece ⇒ visible en el diff |
+
+⇒ **Propuesta:** el despacho paralelo lleva **ámbito asignado**, y la comprobación pasa a ser lo que
+siempre debió ser — una **segunda opinión** que puede desmentir, no la autorización. Y con eso el
+`Archivos:` deja de cargar solo con un peso que no aguanta: hoy es simultáneamente el mapa de
+coordinación, un campo que **ningún hook lee** y cuya única forma de error —el falso `disjunto`— cuesta
+trabajo perdido.
+
+> **Y la regla de higiene del campo, en su forma completa — aportada por el analista de REQ-019 el
+> 2026-09-07 y que no estaba escrita en ninguna parte:**
+>
+> > **`Archivos:` declara exactamente el conjunto de ESCRITURA: ni más, ni menos.** Lo que sólo se lee
+> > va en el cuerpo del REQ.
+>
+> Es **una** regla con dos mitades, y cada mitad produce un error distinto — por eso escribir sólo una
+> deja el campo tan roto como estaba:
+>
+> | Mitad | Qué produce | Coste |
+> |---|---|---|
+> | **De más** — declarar lo que sólo se lee (REQ-019 lee `templates/AGENTS.md.tpl` y **no** lo declara) | **Colisión falsa** | Devuelve a la serie un trabajo que podía ir en paralelo. Barato y **invisible**: nadie audita el paralelismo que no ocurrió |
+> | **De menos** — omitir lo que sí se escribe (`CHANGELOG.md`, el registro de QA) | **`disjunto` falso** | Dos comisiones que van a escribir las dos ahí. **Caro**: escritura perdida |
+>
+> Con las dos convenciones vivas a la vez —la inclusiva de REQ-019 y la corta de REQ-017— el campo
+> comete **los dos** errores a la vez. Y nótese que la regla **no contradice** la pieza 1: el libro
+> mayor sale del campo porque deja de ser conjunto de escritura de la comisión —pasa a serlo de la
+> coordinadora—, no por excepción.
+
+### 5. La puerta posterior que falta: *¿cambió algo fuera de mi ámbito?*
+
+Todo lo anterior es **prevención**, y este repositorio ya aprendió que preguntar *antes* si algo va a
+escribir tiene una vía nueva cada vez. La pregunta de estado equivalente es barata y no envejece:
+
+> **Al cerrar una comisión con ámbito asignado: ¿cambió en el árbol algún archivo fuera de su ámbito?**
+
+Se contesta con un inventario de marcas de tiempo o hashes antes y después; no necesita saber nada de
+lo que la comisión hizo. Es la misma forma que **REQ-011** (la puerta posterior sobre `codigo_app`) y
+la misma que **CA-06** del banco (*nada de una sección sobrevive a su sección*), un nivel más arriba.
+**Detecta la escritura perdida del punto 3**, que es justo lo que ninguna otra pieza ve.
+
+### 6. Lo que NO se paraleliza, y no cambia
+
+El orden de fases —QA nunca antes que el desarrollador, seguridad nunca antes que QA— **no es una
+preferencia de calendario, es la condición de validez de la firma**. La herramienta lo dice en su
+propia salida y con razón: *«un «disjunto» no autoriza a correr el auditor a la vez que el QA»*. Nada
+de este diseño lo toca. La única salida sigue siendo la excepción nombrada: `Seguridad: preventiva`,
+declarada **al emitirla**.
+
+### 7. Orden propuesto y destino
+
+Cinco piezas, de más barata a más cara, y **las tres primeras se pagan solas en la ventana siguiente**:
+
+| | Pieza | Coste | Qué desbloquea |
+|---|---|---|---|
+| 1 | El **libro mayor es de la coordinadora** (y sale de `Archivos:`) | documental | quita la colisión que afecta a **8 REQ de 8** |
+| 2 | **Ámbito asignado** en el despacho paralelo; la herramienta pasa a segunda opinión | documental | convierte un fail-open en un fail-visible |
+| 3 | **`Mide: sí/no`** en la cabecera del REQ, y dos que miden no van a la vez | 1 campo + regla | la colisión que hoy nadie ve |
+| 4 | La **puerta posterior de ámbito** (¿cambió algo fuera?) | mecanismo | la escritura perdida |
+| 5 | Arreglar **SEC-020** y la convención de artefactos de gobierno en `Archivos:` | ya planificado | que la segunda opinión valga |
+
+**Destino: bloque de apertura de 1.34.0, antes del núcleo por estado** — con el mismo argumento que
+puso las palancas primero en 1.33.0: **el paralelismo abarata la ventana grande, así que hacerlo antes
+es la única forma de cobrarlo**, y 1.34.0 es la que más comisiones tiene. **No se mete en 1.33.0**: esa
+ventana se partió hoy justamente para no repetir cómo se descontroló el ciclo 3, y meterle una quinta
+palanca sería repetirlo con otro nombre.
+
+**Excepción, y es una sola:** la **pieza 1 ya está en vigor de facto** desde el despacho de hoy —las
+tres comisiones corren sin CHANGELOG y sin comitear—. Una práctica en vigor que no está escrita es
+deuda desde el primer día, así que **eso se escribe en `AGENTS.md` §6 dentro de 1.33.0**, como
+documentación de lo que ya se hace, no como mecanismo nuevo.
