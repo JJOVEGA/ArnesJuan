@@ -36,7 +36,7 @@ instalación estable ya en 1.31.0. El guardián de la sesión **siguiente** ser�
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-06 18:14
+## Estado derivado — 2026-09-06 18:40
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -46,10 +46,10 @@ instalación estable ya en 1.31.0. El guardián de la sesión **siguiente** ser�
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `main` @ `c9e588d` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `docs/coste-ciclo-2` @ `23bc018` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.31.0`
 **Aprobaciones pendientes:** 0
-**REQ:** 11 — completado 8 · en-revisión 0 · en-progreso 1 · bloqueado 0 · otros 2
+**REQ:** 14 — completado 8 · en-revisión 0 · en-progreso 1 · bloqueado 0 · otros 5
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
 _Sólo los REQ abiertos; los 8 completados no se listan._
@@ -59,5 +59,8 @@ _Sólo los REQ abiertos; los 8 completados no se listan._
 | REQ-007 | en-progreso | pendiente | pendiente | critico | qa-114(contrato,dueñoanalista-requerimie… |
 | REQ-008 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-011 | pendiente | pendiente | pendiente | critico | (ninguno) |
+| REQ-012 | pendiente | pendiente | pendiente | critico | (ninguno) |
+| REQ-013 | pendiente | pendiente | pendiente | critico | (ninguno) |
+| REQ-014 | pendiente | pendiente | pendiente | critico | (ninguno) |
 
 <!-- ARNES:DERIVADO fin -->

@@ -295,3 +295,24 @@ construye el mecanismo, no lo que paga quien lo usa.
 **Tres cambios, en orden de rendimiento, para medir en 1.32.0 contra esta línea base:** criterios por
 mecanismo y no por enumeración; paralelizar por REQ con un mapa explícito de qué archivo toca cada
 comisión; y partir el banco en archivos por sección para que el QA también pueda paralelizarse.
+
+### Decisión pendiente de aplicar al abrir 1.33.0 (tomada 2026-09-06, no cuesta nada hasta entonces)
+
+Al mover REQ-011 y los bloques B y C de REQ-007 a la misma ventana 1.33.0, el analista señaló que se
+pierde una propiedad: REQ-011 iba a medirse contra un árbol donde el detector de REQ-007 ya estuviera
+**publicado**, para que un veredicto que cambiara fuera inequívocamente suyo.
+
+**Decisión: van los dos en 1.33.0, REQ-007 bloques B y C primero dentro de la ventana**, y los dos se
+miden contra **v1.32.0 publicada**. La propiedad que preocupaba **no se pierde de verdad**, y ésta es la
+razón: los dos mecanismos viven en **eventos distintos**. REQ-007 corrige el detector que decide *antes*
+(`PreToolUse`); REQ-011 construye la puerta que pregunta *después* (`PostToolUse`). Un veredicto de
+permitir o denegar que cambie sólo puede venir del primero; la evidencia del segundo es de otra
+naturaleza — «algo protegido cambió en disco y la puerta posterior lo reportó»—, y eso ningún arreglo
+del detector previo puede producir. Son distinguibles por construcción, no por orden.
+
+Sí colisionan por archivo (`hooks/lib.sh` y `hooks/hooks.json`), así que **no se despachan a la vez**:
+es la primera aplicación real del mapa de archivos de REQ-013, y conviene que lo sea.
+
+**Aplicación:** el write-back va en el REQ cuando se abra 1.33.0, no ahora. Escribirlo hoy costaría una
+comisión de analista (~4 USD medidos) para un texto que nadie lee hasta entonces, y la decisión ya está
+escrita aquí con su razón. Es la disciplina de coste aplicada a nosotros mismos.
