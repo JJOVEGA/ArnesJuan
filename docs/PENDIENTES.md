@@ -1,5 +1,10 @@
 # Pendientes del arnés — lo que sigue, en orden
 
+> **AVISO (2026-09-06): los rótulos de versión de este archivo están desfasados.** La reordenación de
+> hoy reservó 1.32.0 para las palancas de coste y movió el resto una ventana. **El reparto vigente por
+> versión vive en `docs/PLAN.md`**, que es el que manda; aquí queda la cola cruda con su evidencia y su
+> medición, que sigue siendo válida aunque el número de versión de un bloque no lo sea.
+
 > **Qué es esto.** La cola de trabajo del arnés, escrita para que sobreviva a cualquier sesión.
 > Cada punto nace de una medición en un proyecto real que usa el arnés; **aquí va la forma del
 > hallazgo, nunca su instancia** (este repositorio es público; los informes de los proyectos

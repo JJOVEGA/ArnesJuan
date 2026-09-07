@@ -40,6 +40,19 @@ se deniega citando `git.prohibidos: 'clean -f'` del manifiesto, y `git stash lis
 Quality gates en verde tras el cambio: `bash -n` sobre los 9 `hooks/*.sh` y `tools/*.sh`, y `jq -e` sobre
 `hooks/hooks.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` y `.arnes/config.json`.
 
+## [Interno] — 2026-09-06 · el plan maestro hasta que el arnés esté terminado
+> Origen: Interno · usuario: Juan · modelo de IA: Opus 5 · agente: sesión coordinadora.
+
+- `docs/PLAN.md` (nuevo): qué entra en cada ventana de 1.32.0 a 1.36.0, qué cierra y **por qué va ahí
+  y no antes**. La regla de orden que explica el reparto: lo que **compone** va primero — una palanca
+  que abarata el ciclo se paga en todas las ventanas siguientes; un mecanismo que cierra un hueco se
+  paga una vez.
+- Con una definición explícita de **«terminado»**: ningún hallazgo `contrato` abierto, ninguna promesa
+  más fuerte que lo que la máquina cumple, y un ciclo que cabe en un presupuesto declarado. Lo que
+  quede después es backlog, no obra pendiente.
+- `docs/PENDIENTES.md` gana el aviso de que sus rótulos de versión quedaron desfasados por la
+  reordenación y de que manda el plan. La cola cruda sigue siendo válida; el número de versión no.
+
 ## [Interno] — 2026-09-06 · disciplina de coste, y lo que se decide NO construir
 > Origen: Interno · usuario: Juan · modelo de IA: Opus 5 · agente: sesión coordinadora.
 
