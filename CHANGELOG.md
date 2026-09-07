@@ -123,6 +123,48 @@ Archivos: `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-ca
 `tests/escenarios/hooks/README.md`, `.github/workflows/banco.yml`, `docs/PENDIENTES.md`,
 `docs/qa/1.33.0.md`, `requirements/REQ-017.md`.
 
+## [Interno] — 2026-09-07 · REQ-017: el dominio se traza por invariancia de locale, y ADR-004
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
+
+**El dominio de `CA-01` pasa de «donde la heredada es determinista» a «donde publica el mismo estado
+bajo el locale del entorno Y bajo `LC_ALL=C`»** — determinismo **e** invariancia de locale. Y el
+argumento es **de construcción**, no un ajuste hasta que el rojo desapareció: bajo `LC_ALL=C` la
+heredada **es** la pregunta byte a byte («¿hay un CR que no sea el último byte?»), y este árbol la
+implementa en **todos** los locales porque no elimina sufijo con patrón ⇒ **los dos árboles divergen
+exactamente donde la heredada se aparta de su propia semántica**. El determinismo nunca fue esa
+propiedad: era un síntoma del valor **intermedio**, y el criterio contrata sobre el **publicado**.
+
+| | Dominio anterior | Dominio nuevo |
+|---|---|---|
+| Dentro y divergente (`CA-01` exige 0) | **6–7 de 106**, 4 de 4 → FALLA | **0** |
+| Sujeto de `CA-10` (entradas fuera) | **0 en 3 de 4** → SKIP perpetuo | **≥ 7 en 4 de 4** |
+
+**Y con la regla anti-coartada dentro del criterio:** el dominio se traza por una propiedad de la
+**heredada sola**, clasificando **sin haber evaluado este árbol**. Un dominio definido como «donde los
+dos coinciden» haría un criterio **incapaz de fallar**.
+
+**`CA-08` (ii): lectura (a) —la varianza es del procedimiento— con un argumento que no era el de la
+carga.** El estimando y el estimador **se contradicen**: en aislamiento la misma razón da
+**0,821–1,010**, y un coste real **no puede ser negativo**; un recorrido de 0,821–1,443 sobre el mismo
+estimando es **ruido del instrumento**. Y contra subir el techo: ponerlo por encima del ruido (≥ 1,5×)
+**dejaría de ver la regresión de 10× para la que el criterio existe** — fijar el umbral por encima de
+la resolución del instrumento. El techo **≤ 1,25× queda intacto**, con **cláusula de convergencia**
+nueva: si `segundo mínimo / mínimo` de un árbol supera el propio techo —*un instrumento tiene que
+resolver al menos el factor que vigila*— la sonda emite **SKIP citando sus dos razones**, nunca PASS ni
+FAIL. No tapa una regresión real: **una regresión sube los dos mínimos del mismo árbol por igual; lo
+que separa una serie de sí misma es el vecino.**
+
+**`ADR-004`** registra el dominio como cambio **DE FONDO**, aceptando el dictamen de QA: la
+clasificación «menor» de la vuelta 0 queda **revocada** — cambia el significado de `CA-01`, que es donde
+el REQ define «equivalencia», y **la decisión nueva era justo la que salió mal**, tomada dentro de un
+write-back donde nadie tenía que justificar la elección de la propiedad.
+
+**Choque de numeración, resuelto y con su causa dicha:** REQ-021 tenía **reservado** `ADR-004` para un
+archivo **que no existe**; el analista tomó el número **mirando el disco**. Se renumera el de REQ-021 a
+`ADR-005` —`pendiente`, sin archivo que mover, referencias de texto— por la coordinadora, sin comisión.
+**Causa raíz: el número de ADR no tiene asignador**, y «reparto de identificadores con reserva atómica»
+llevaba en el backlog sin versión desde antes: acaba de cobrarse su **primera colisión real**.
+
 ## [Interno] — 2026-09-07 · Auditoría preventiva R-010 y su write-back: seis `contrato` antes de escribir código
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `auditor-seguridad`, `analista-requerimientos`.
 
