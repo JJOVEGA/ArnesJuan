@@ -37,8 +37,36 @@ de ser de este arnés.
 > una sola cosa.
 - `QA:` — veredicto del `qa-tester`: `pendiente` | `aprobado` | `con-hallazgos`.
 - `Seguridad:` — veredicto del `auditor-seguridad`: `n/a` | `pendiente` | `aprobado` |
-  `preventiva` | `vetado` (al marcar el REQ `Sensible a seguridad: sí`, pásalo de
-  `n/a` a `pendiente`).
+  `con-hallazgos` | `preventiva` | `vetado` (al marcar el REQ `Sensible a seguridad: sí`,
+  pásalo de `n/a` a `pendiente`).
+  - `con-hallazgos` es **lo intermedio**: ni «no he mirado» (`pendiente`) ni el freno
+    formal con remedio, dueño y umbral (`vetado`). Es el estado más común de una
+    auditoría real, y **no cierra** un REQ crítico: como todo valor distinto de
+    `aprobado`, sirve para decir la verdad, no para firmar.
+
+**Un valor fuera de estos vocabularios se avisa al escribirlo.** Si escribes un veredicto
+que la máquina no reconoce, el arnés te lo dice en ese momento —sin denegar la edición— y
+te enseña la lista de valores válidos. No es una regla nueva: es que antes un REQ podía
+pasar semanas con un campo que ninguna puerta leía, y nadie se enteraba hasta que fallaba
+el cierre.
+
+**La fecha del veredicto también va en el paréntesis, con su ronda:**
+`QA: aprobado (R-045, 2026-09-01)`. Un veredicto es una foto, y una foto sólo vale si el
+sujeto estaba quieto: un `aprobado` sin fecha sobrevive a los cambios del código que
+juzga. Si el proyecto enciende `veredictos.exigir_fecha` en `.arnes/config.json`, un
+`aprobado` sin fecha `AAAA-MM-DD` no cierra; con `veredictos.caducan_con_codigo` tampoco
+cierra un veredicto anterior al último commit que tocó el código de la app, ni con
+cambios sin comitear en ese código. Las dos vienen **apagadas**.
+
+**Tu historia puede archivarse; tus criterios no.** Si el proyecto lo activa, el arnés
+mueve las entradas viejas de la sección de historia de este REQ a un archivo aparte y
+deja un puntero. **Mueve, no resume, y no toca ni una línea del resto del documento** —ni
+la cabecera con sus veredictos, ni los criterios de aceptación, que son el contrato.
+
+**En el bloque derivado de `docs/ESTADO.md` los veredictos se muestran recortados a 40
+caracteres** con un `…` al final. Es sólo presentación: la puerta lee el valor **entero**,
+así que un `Hallazgos abiertos:` largo no pierde su clase por salir recortado en la
+tabla.
 
 **El orden importa:** `Seguridad: aprobado` no se escribe mientras `QA:` siga en `pendiente` o
 `con-hallazgos` — el auditor no mira las quality gates, así que su firma sobre un árbol sin
