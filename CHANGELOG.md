@@ -2,6 +2,21 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-08 · `v1.31.0` ratificada; y `REQ-019` protegido por escrito como primer e ÚNICO trabajo de 1.34.0
+> Origen: Interno · usuario: Juan · modelo de IA: Sonnet 5 · agente: coordinadora.
+
+**Ratificación.** El propietario confirmó `v1.31.0` como publicada de autoridad no acreditada (R-016),
+misma resolución que ya dio para `v1.32.1`. Registrado en `PENDING_APPROVAL.md` → `## Resueltas`; el
+auditor cierra el residual de `SEC-053` en su propio registro.
+
+**Protección de `REQ-019`.** Con `≈30` comisiones despachadas en la sesión de hoy y `REQ-019` —la única
+de las cuatro palancas de coste que reduce **tokens** y no reloj— sin haber avanzado ni una línea de
+código pese a llevar **dos** salidas de ventana, `docs/PLAN.md` §1.34.0 gana una nota de apertura: la
+ventana **empieza** con `REQ-019` y **nada más** entra hasta que cierre, ni el bloque de paralelismo ni
+el núcleo por estado, salvo lo que bloquee la publicación misma. Corregida además una celda **stale** de
+la misma tabla que seguía diciendo «adelantado a 1.33.0» — la clase de desfase que el resto de la sesión
+llevaba cazando en otros documentos, encontrada aquí en el propio plan.
+
 ## [GitHub] — 2026-09-08 · R-016: la frontera del permiso para publicar, escrita por quien no se beneficia de ella — y 2 de 40 tags salieron de autoridad no acreditada
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad` (Opus). Lectura **GLOBAL** ratificada por el propietario el 2026-09-08.
 

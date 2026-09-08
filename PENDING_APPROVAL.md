@@ -27,6 +27,18 @@
 
 ## Resueltas
 
+### RESUELTA 2026-09-08 (propietario) — ratificación de `v1.31.0`, publicada de autoridad no acreditada
+
+- **Contexto.** R-016 (`auditor-seguridad`) barrió los 40 tags publicados y encontró que `v1.31.0` se
+  publicó por delegación con **tres `contrato` abiertos** —`QA-114`, `QA-116`, `QA-117`—, declarados en
+  las dos sedes del tag, sin entrada en la cola de aprobaciones. No se había visto en R-015 porque ese
+  barrido buscó prefijos `SEC-` y estos tres son `QA-`. `SEC-053` quedó en `en-mitigación` con esta
+  ratificación como su **único residual pendiente**, vencimiento antes del tag de `v1.33.0`.
+- **Decisión del propietario, 2026-09-08: ratificada.** Misma resolución que ya dio para `v1.32.1`. El
+  auditor cierra el residual de `SEC-053` en su registro; la coordinadora no lo hace por sí misma —es la
+  misma frontera que ya se aplicó al escribir la propia regla de escalada.
+
+
 ### RESUELTA 2026-09-08 (propietario) — La partición autorizada es IMPOSIBLE: se reabre REQ-014 y se re-deriva CA-18
 
 - **Contexto.** Autorizaste partir las secciones sobre 400 líneas con **desarrollador + QA**, sin analista

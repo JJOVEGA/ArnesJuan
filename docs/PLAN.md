@@ -251,6 +251,23 @@ predominante otra vez, y 0 o 1 vueltas del bucle. El objetivo de ≤ 3 es alcanz
 
 ## 1.34.0 — lo que los proyectos leen, **más el núcleo por estado**
 
+> ### `REQ-019` va PRIMERO, sin excepción — decisión del propietario, 2026-09-08
+>
+> **`REQ-019` —adelgazar `AGENTS.md` y `requirements/README.md`, la única de las cuatro palancas de
+> coste que reduce TOKENS y no reloj— lleva sacado de la ventana en curso DOS VECES** (06-07 y 08-09):
+> primero de 1.33.0 por su propia estimación (~2h → 7-11h), y su ejecución en código **no avanzó ni una
+> línea en toda la sesión del 08-09** pese a estar planificada como «primer trabajo de 1.34.0» desde el
+> primer día. En su lugar, esa sesión gastó ~30 comisiones en cerrar REQ-017, agotar y bloquear REQ-021,
+> reabrir REQ-014, y cazar cuatro hallazgos de gobernanza (`SEC-052`→`055`) sobre la propia delegación de
+> publicación — trabajo real y necesario, pero **no** el que reduce coste.
+>
+> **Por eso esta vez la protección se escribe, no se supone:** 1.34.0 **empieza** con `REQ-019` y **nada
+> más** entra en la ventana hasta que cierre — ni el bloque de paralelismo de abajo, ni el núcleo por
+> estado, ni un hallazgo nuevo que aparezca a mitad de camino, salvo que bloquee la publicación misma
+> (la clase de `SEC-05x` de hoy). Un hallazgo que no bloquea se **anota y se enruta**, exactamente como
+> `REQ-019` CA-10 ya contrata para su propio trabajo — no se atiende dentro. Si algo obliga a romper esta
+> regla, se escribe aquí el motivo, con la misma disciplina que esta nota documenta el porqué de hoy.
+
 > ### Bloque de apertura: **el paralelismo**, antes que el núcleo (encargo del propietario, 2026-09-07)
 >
 > Mismo argumento que puso las palancas primero en 1.33.0: **el paralelismo abarata la ventana grande,
@@ -285,7 +302,7 @@ de un proyecto sin abrir diez archivos.
 | **REQ-008 — informe de proyecto** | Lo que pidió el propietario: resumen de cada REQ, NFR, hallazgo y decisión, con **porcentaje de avance**, **qué lo detiene**, decisiones humanas pendientes y recomendaciones; en HTML, siguiendo la guía de marca del proyecto si existe. Evolución de `arnes-panel`, con la cuenta hecha por `tools/arnes-avance.sh` y no por el modelo |
 | **Índice de `requirements/` derivado** | Sus columnas se desfasaron **cuatro veces en dos días**. Pasa a bloque derivado entre marcadores, con el mismo lector que usan la puerta y el informe. Misma función, escrita una vez |
 | **Rotación que reconoce filas de tabla** | Hoy la rotación de la historia de un REQ **no rota nada** en este repositorio: 0 entradas reconocidas y 94 filas de tabla. Es su caso de uso principal y no funciona |
-| ~~**`AGENTS.md` adelgazado**~~ | **Adelantado a 1.33.0** como cuarta palanca de coste (2026-09-07): son ~9 k tokens de impuesto fijo en cada subagente, y 1.34.0 es precisamente la ventana con más comisiones. Adelgazarlo después sería pagarlo entero primero |
+| **`AGENTS.md` + `requirements/README.md` adelgazados — `REQ-019`** | **Sale de 1.33.0 el 2026-09-08**, cuando su estimación pasó de ~2h a **7–11h en 7 fases** — no cabe en una comisión. Es el impuesto de arranque real (**≈17-20 k tokens por subagente**, no ~9 k) y 1.34.0 es precisamente la ventana con más comisiones: adelgazarlo después es pagarlo entero primero |
 
 **Alcance añadido por el propietario el 2026-09-06 — el coste entra en el informe.** El informe de
 REQ-008 lleva además **qué costó** el proyecto: tokens por REQ, por fase y en total; tiempo de agente,
