@@ -2,6 +2,82 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-07 · REQ-017 `completado`: la auditoría firma atacando el contrato y no la gemela, y encuentra que un carácter invisible apaga el enforcement entero
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `auditor-seguridad` (R-012), coordinadora (cierre).
+
+**REQ-017 pasa a `completado`.** Primera palanca de coste de 1.33.0 cerrada, con el ciclo entero
+recorrido: analista → desarrollador → QA (tres vueltas, las diez CA en verde) → auditor. La puerta
+`guard-completado` midió la transición y la permitió: `SEG=<aprobado>`, `RIGOR=<critico>`, cola de
+aprobaciones 0, quality gates en verde, y los siete hallazgos abiertos del campo son `instrumento`.
+
+**`Seguridad: aprobado (R-012, 2026-09-07)`.** El método del auditor es lo que vale la pena registrar:
+comparó el árbol nuevo contra un **oráculo de bytes**, no contra la sentencia heredada — *da igual que
+los dos árboles coincidan si los dos se apartan del contrato*. **160 015 entradas propias, 0
+divergencias**, bajo el locale del entorno y bajo `LC_ALL=C`. La duda concreta que traía era que el
+`?` de `*$CR?*` es un **carácter y no un byte**, y que bajo UTF-8 pudiera no casar contra un byte
+multibyte inválido dejando `cr=0` donde la verdad es `cr=1`. Medido: **sí casa**. No está.
+
+**Un hallazgo que nadie buscaba, en la dirección contraria a la temida.** Fuera del dominio de
+equivalencia de `ADR-004` hay 17 divergencias, y **16 son «la heredada abría de más»**. Es decir que
+v1.32.1 tiene una **puerta no determinista** que puede denegar un REQ válido al azar, y este REQ la
+retira. La afirmación de CA-10 sobrevivió a 120 invocaciones por árbol con la cabecera diseñada para
+maximizar el efecto: 0 deny en los dos.
+
+### Tres hallazgos nuevos, los tres `instrumento`, ninguno introducido por este cambio
+
+- **`SEC-047` · severidad crítica · latente.** Un **carácter invisible borra un campo de la cabecera**,
+  y para dos campos la **ausencia abre**. Ejecutado contra el `guard-completado` real: un **BOM**
+  delante de `Sensible a seguridad: sí`, con `Rigor: ligero`, cierra a `completado` un REQ con `QA:
+  pendiente` y `Seguridad: pendiente`; sin el BOM, deniega. Un `0xc3` o un U+200B delante de
+  `Hallazgos abiertos:` retira un hallazgo `contrato` que bloqueaba. Es el **bypass completo del
+  enforcement con un carácter que ningún revisor ve en el diff**, y no hace falta malicia: PowerShell
+  añade BOM al redirigir y los proyectos consumidores trabajan en Windows.
+
+  **Presente e idéntico en v1.30.3, v1.31.0, v1.32.0, v1.32.1 y este árbol** — REQ-017 no lo
+  introduce, no lo agrava y ningún criterio suyo podía verlo. **Latente:** barrido todo el historial
+  de `requirements/`, ningún REQ llevó jamás un carácter invisible, así que no hay cierres
+  contaminados ni nada que reabrir.
+
+  **La causa es reutilizable y es la tercera aparición de la misma familia.** La guarda del CR está
+  **bien construida** —propiedad y no sitio, primera sentencia del único escáner, contratada en
+  REQ-016 CA-12 y firmada en R-009— pero su **extensión está mal trazada**: nombra *el CR* cuando la
+  propiedad es «un carácter que no se representa y que la normalización no retira». Descripción **por
+  enumeración** donde tocaba **por propiedad**, que es el defecto exacto que REQ-012 prohibió en los
+  criterios, reaparecido en el código que esos criterios gobiernan. Ensanchar la enumeración pierde
+  igual: es la sexta derrota de esa vía. **Decisión del propietario (2026-09-07): entra como REQ
+  propio en 1.33.0**, por delante de la recomendación del auditor de ponerlo primero en 1.34.0.
+
+- **`SEC-048` · severidad alta.** `fetch-depth: 0` (H-08) sí abre algo, y **no** lo que se teme por
+  defecto: barridos los 128 commits, la historia completa no contiene secretos ni material de cliente,
+  nunca los contuvo y nada se borró jamás. Lo que abre es que las secciones 37 **materializan y
+  ejecutan** `hooks/` y `tools/` desde los tags — antes salían SKIP. Y el repositorio tiene **un solo
+  ruleset, `proteger-main`, con `target: branch`**: **no hay ruleset de tags**. La puerta requerida de
+  `main` ejecuta código identificado por **referencias mutables**, y **mover un tag no aparece en el
+  diff de ningún PR**. Esa asimetría es todo el hallazgo. Se cierra con un ajuste de repositorio del
+  propietario (prohibir actualizar y borrar `v*`), sin REQ ni ventana.
+
+- **`SEC-049` · severidad baja.** CA-10 declara la divergencia en **un solo sentido**; es
+  bidireccional.
+
+**No medido, y declarado como tal en vez de supuesto:** `banco.yml` no lleva bloque `permissions:`, y
+el auditor recibió `403` al pedir los permisos por defecto del `GITHUB_TOKEN` (hace falta admin), así
+que **no acota el radio** de una ejecución hostil en el runner.
+
+### Corregida una colisión de identificador antes de cerrar
+
+R-011 terminaba en `SEC-046` y R-012 arrancó un número por debajo: durante unos minutos hubo **dos
+hallazgos distintos numerados `SEC-046`**, y la ambigüedad ya estaba escrita en el campo `Hallazgos
+abiertos:` de REQ-017, que **lee la máquina**. Renumerados los tres de R-012 a `SEC-047`/`SEC-048`/
+`SEC-049`, con las sustituciones acotadas al tramo de R-012 para no tocar ningún id ajeno; `SEC-046`
+(R-011, REQ-020) queda intacto.
+
+**Y la comprobación que la coordinadora dio para verificarlo estaba mal escrita, con la misma forma que
+el hallazgo que acababa de leer.** Pedía que no hubiera **encabezados `SEC-` repetidos**, y eso marca
+en falso los siete hallazgos que reaparecen para **cambiar de estado** (`SEC-024 — abierto →
+en-mitigación → mitigado`), que es el registro funcionando como debe. Enumeración otra vez donde tocaba
+propiedad. La que discrimina cuenta sólo las líneas donde el id **declara** un hallazgo (id + clase +
+estado) y sale vacía; el inventario va de `SEC-001` a `SEC-049`, monótono y sin huecos.
+
 ## [Interno] — 2026-09-07 · REQ-017: write-back del mapa de archivos tras H-08, y CA-04 corregida antes de despachar QA (medía una función que no existe en su línea base)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
 

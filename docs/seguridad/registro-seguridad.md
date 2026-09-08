@@ -3541,3 +3541,259 @@ lo asumo como residual con forzador observable en 1.34.0 — no lo declaro resue
 **Alcance de esta firma.** Cubre el texto de REQ-020 tal como está hoy y las afirmaciones que hace
 sobre el árbol actual. **No cubre el código posterior.** Cuando exista, la auditoría se repite
 **después del `qa-tester`**, como manda `AGENTS.md` §6.
+
+---
+
+## Revisión R-012 — firma de **REQ-017** (auditoría del código, **después** de QA), ventana 1.33.0 (`cand/1.33.0` @ `b6e581b`) — 2026-09-07
+
+**Turno correcto, y por eso esta firma vale.** `QA: aprobado (2026-09-07)` estaba escrito antes de que
+yo empezara, los 10 criterios pasan y QA verificó que el árbol de código no se movió entre la vuelta 2
+y este commit. Esta **no** es una preventiva: hay código y lo audito. Mi firma acredita **la revisión
+de seguridad**, no las quality gates — que no miro (`AGENTS.md` §6).
+
+**Medí a solas.** Fui la única comisión corriendo, así que las sondas de reloj de otros no me
+falsearon nada ni yo a nadie. Aun así **ninguna cifra mía es de reloj**: son recuentos y comparaciones
+de decisión, que no dependen de la carga.
+
+**Alcance leído:** `requirements/REQ-017.md` entero, `docs/decisions/ADR-004-…`, `docs/qa/1.33.0.md`
+(vueltas 0, 1 y 2), `hooks/lib.sh` (el escáner, la boca única y `arnes_norm_clave`),
+`hooks/guard-completado.sh` (las ramas de CR, de veredictos y de clase de hallazgo),
+`hooks/campos-req.awk`, `tools/arnes-lectura.sh`, `tools/arnes-paralelo.sh`,
+`.github/workflows/banco.yml`, las dos secciones 37 del banco, `.arnes/config.json`, y mis R-010 y
+R-011.
+
+**Método: ejecutar, no leer.** Este REQ nombra en su propio texto la clase «una afirmación sobre cómo
+se comporta el mecanismo, escrita sin ejecutarla», y la cuenta **tres veces dentro de sí mismo**. No
+iba a aportar la cuarta: todo lo que afirmo abajo lo corrí contra el árbol, y lo que no pude medir lo
+digo.
+
+---
+
+### Lo que verifiqué y **sostiene**
+
+**1. La equivalencia de la sentencia, atacada por donde QA no atacó: contra la verdad de BYTES, no
+contra la heredada.** QA comparó los dos árboles entre sí. Yo comparé el árbol nuevo contra el
+**oráculo de bytes** —«¿hay un CR que no sea el último byte?»—, que es la propiedad que `AGENTS.md`
+§13 contrata. Es la pregunta que importa para seguridad: da igual que los dos árboles coincidan si los
+dos se apartan del contrato.
+
+| Sonda | Entradas | Divergencias `nueva` vs oráculo de bytes |
+|---|---|---|
+| Adversarias a mano (CR final, CR + byte inválido, `?` contra byte inválido, `\xe2\x82` truncado) | 15 | **0** |
+| Fuzz aleatorio, alfabeto denso en CR y multibyte inválido, locale del entorno | 20 000 | **0** |
+| El mismo corpus bajo `LC_ALL=C` (invariancia de locale de **este** árbol) | 20 000 | **0** |
+| Fuzz dirigido con metacaracteres de glob (`\`, `[`, `]`, `*`, `?`), 2 semillas | 120 000 | **0** |
+
+La duda concreta que traía —que `?` en `*$CR?*` es **un carácter** y no un byte, y que bajo UTF-8
+pudiera **no casar** contra un byte multibyte inválido, dejando `cr=0` donde la verdad es `cr=1`— está
+**medida y no ocurre** en bash 5.3.9 con `C.UTF-8`: `?` casa el byte inválido. Ésa era la única vía por
+la que este cambio podía **abrir** una puerta, y no está.
+
+**2. La dirección de las divergencias con la heredada, incluida la que nadie había buscado.** Busqué
+explícitamente el sentido peligroso (heredada deniega → este árbol permite) y **existe**: sobre
+`e2 5c 0d` (1 de 60 000). Pero es la heredada la que está equivocada — el único CR de esa línea es el
+**final**, que el contrato llama transporte —, así que este árbol acierta y la heredada producía un
+**falso positivo**. De 17 divergencias observadas, 16 son «la heredada abría» y 1 «la heredada cerraba
+de más». En las dos, **este árbol coincide con el oráculo**. Consecuencia que conviene retener: v1.32.1
+tenía una **puerta no determinista** que podía denegar un REQ válido al azar, y este REQ la retira.
+
+**3. La afirmación de CA-10 que más me interesaba falsar, y no pude.** El REQ dice: «*no afirma que el
+veredicto de la puerta cambie en esa clase. Está medido que no cambia*». Construí la cabecera diseñada
+para maximizarlo —120 líneas de relleno multibyte inválido antes de la línea envenenada, para que el
+proceso llegue a ella con el asignador sucio, que es la condición en que la heredada falla— y corrí
+`guard-completado` **120 veces por árbol**: **0 deny / 120 allow en los dos**. El veredicto de la
+puerta no cambia. La afirmación del REQ **sobrevive a un intento serio de tumbarla**.
+
+**4. Sin regresión contra el estado aprobado en R-009 (REQ-016).** La guarda sigue siendo la **primera
+sentencia** del **único** escáner (verificado sobre el texto de la función, no sobre el comentario que
+lo dice); las cuatro bocas siguen entrando por `arnes_campo_linea` (`arnes-lectura.sh:139`,
+`arnes-paralelo.sh:116`); la guarda no se duplicó en `campos-req.awk`; y la denegación por CR interior
+sigue **citando la línea** (reproducido: `Nota: hola\rmundo` deniega en los dos árboles con el mismo
+motivo). El cambio es **observacional** —sólo escribe `ARNES_CR` y `ARNES_CR_LINEA`, no toca
+`ARNES_LINEA`—, así que ningún lector aguas abajo puede cambiar de opinión: ésa es la propiedad que
+contiene el radio de este cambio, y es la razón técnica por la que una sola línea es auditable.
+
+**5. El delta de producto es el que se dice.** Contra `v1.32.1`, `hooks/` y `tools/` cambian en
+**una línea de código** (verificado por `git diff --stat` y filtrando comentarios). No hay nada más
+que auditar en el producto.
+
+**6. `fetch-depth: 0` no materializa nada sensible.** Barrí **toda** la historia (128 commits): sin
+claves ni tokens (patrones AWS/GitHub/PEM/Slack/OpenAI), **ningún** archivo de `insumos/`,
+`mejoras-arnes-*` ni `reporte-arnes-*` estuvo jamás versionado, y **ningún** archivo fue borrado nunca
+de la historia. La preocupación estándar del clon completo —el secreto retirado que el clon superficial
+escondía— **no aplica aquí**, y ahora está medido en vez de supuesto.
+
+**7. Ningún REQ, presente o pasado, lleva un carácter invisible en su cabecera** (BOM, U+200B–U+200F,
+U+2060, UTF-8 inválido, CR interior): barrido sobre el árbol y sobre toda la historia de
+`requirements/`. Importa por SEC-047: la vulnerabilidad es **latente**, no un incidente vivo, y **no
+hay que reabrir ningún cierre**.
+
+---
+
+### SEC-047 — `instrumento` · **abierto** · severidad **crítica** · dueño `analista-requerimientos` (el criterio) y `desarrollador` (la guarda)
+
+**Un carácter que no se ve y que el normalizador no retira borra un campo de la cabecera, y para dos campos la ausencia ABRE la puerta**
+
+- **Ubicación:** `hooks/lib.sh:1689` (`arnes_norm_clave`, que **este REQ no toca**) y
+  `hooks/guard-completado.sh:486-489` (`case "$hall" in ''|ninguno|…) hall='' ;;` — la ausencia se
+  resuelve como «no hay hallazgos»).
+- **Preexistente y ajeno a REQ-017:** medido **idéntico** en `v1.30.3`, `v1.31.0`, `v1.32.0`, `v1.32.1`
+  y este árbol. Este REQ no lo introduce, no lo agrava y no podía verlo ningún criterio suyo.
+- **Medido (ejecutado contra `guard-completado.sh` real, proyecto de prueba, todo lo demás en verde):**
+
+  | Cabecera | Veredicto de la puerta |
+  |---|---|
+  | `Hallazgos abiertos: SEC-999 (contrato)` intacta | **DENY** (correcto) |
+  | la misma con `0xc3` delante | **ALLOW** |
+  | la misma con **BOM** (`EF BB BF`) delante | **ALLOW** |
+  | la misma con **U+200B** (anchura cero) delante | **ALLOW** |
+  | `Sensible a seguridad: sí` con **BOM** delante + `Rigor: ligero`, con **`QA: pendiente` y `Seguridad: pendiente`** | **ALLOW** |
+  | la misma **sin** BOM | **DENY** (correcto) |
+
+- **Riesgo, dicho sin adorno.** La última fila cierra a `completado` un REQ que **nadie validó y nadie
+  auditó**, porque un carácter invisible retira el suelo de rigor que `Sensible a seguridad: sí` impone
+  y deja gobernar a `Rigor: ligero`. La penúltima retira un hallazgo `contrato` que bloqueaba. Es el
+  **bypass completo de la capa de enforcement**, con un carácter que **ningún revisor humano puede ver
+  en el diff**, y no hace falta malicia: un BOM lo añade PowerShell al redirigir, y este proyecto
+  desarrolla en Windows/MSYS. Es exactamente la forma que `AGENTS.md` §13 ya documenta —«una preferencia
+  por la consola desactivó un guardián sin que nadie relacionara las dos cosas»—, una vuelta más.
+- **Por qué el arnés no lo ve, y es la parte reutilizable.** La guarda del CR es correcta y está bien
+  construida —propiedad, no sitio; primera sentencia; escáner único (R-009)—, pero su **extensión está
+  mal trazada**: nombra **el CR**. La propiedad verdadera es más ancha: *una línea de cabecera que lleva
+  un carácter que **no se representa** y que la normalización **no retira** no se puede medir, y una
+  puerta que no puede medir no deja pasar*. Es la misma lección que este repositorio lleva escrita cinco
+  veces —perseguir el objetivo en vez del estado— aplicada al carácter en vez de al delimitador. Y
+  encaja en la doctrina de `requirements/README.md`: el control está descrito **por enumeración de un
+  carácter** cuando debía estarlo **por propiedad**.
+- **Remediación (write-back, `analista-requerimientos`; implementación, `desarrollador`).**
+  1. **Enunciar la propiedad, no el carácter**, extendiendo la guarda que ya existe y **en el mismo
+     sitio** (primera sentencia del escáner único, para no reabrir la clase de las cuatro bocas): la
+     cabecera no se puede medir si una de sus líneas lleva un carácter no representable o de anchura
+     cero que la normalización no retira. La lista exhaustiva vive **en un solo sitio** —la función— y
+     los ejemplos del criterio se marcan **no exhaustivos** (BOM/U+FEFF, U+200B–U+200F, U+2060, C0
+     distintos de tab/LF/CR, UTF-8 mal formado).
+  2. **Y la mitad que no es del lector:** que la **ausencia** de `Hallazgos abiertos:` y de `Sensible a
+     seguridad:` deje de resolverse en la dirección que abre. Hoy `hall=''` se lee «no hay hallazgos»;
+     debería distinguirse «declarado vacío» de «no declarado», con la misma doctrina que ya rige el
+     rango de cita: *nunca permitir por AUSENCIA del campo que algo se tragó*
+     (`hooks/lib.sh:1571-1575`). **Las dos mitades hacen falta**: la (1) sin la (2) deja abierta
+     cualquier otra vía futura de hacer desaparecer una línea.
+- **No bloquea REQ-017** —`AGENTS.md` §6: un defecto de un guardián del propio arnés es `instrumento` y
+  no puede ser condición para cerrar otro REQ— **pero no es deuda de las baratas.** *Forzador:* es el
+  primer trabajo de 1.34.0, por delante del núcleo por estado. *Vencimiento:* el cierre de 1.34.0. Si
+  1.34.0 cierra sin esto, vuelve a la mesa **subido a `contrato`**, porque entonces `AGENTS.md` §13
+  estaría describiendo una guarda que el árbol no tiene en la extensión que la sección promete.
+
+---
+
+### SEC-048 — `instrumento` · **abierto** · severidad alta · dueño **propietario** (el ruleset) y `desarrollador` (el workflow)
+
+**`fetch-depth: 0` convierte un SKIP inerte en EJECUCIÓN: la puerta requerida de `main` ahora ejecuta código identificado por referencias MUTABLES, y ninguna aparece en ningún diff revisado**
+
+- **Ubicación:** `.github/workflows/banco.yml:23-43` (el `fetch-depth: 0` que **este REQ introduce**),
+  contra `tests/escenarios/hooks/secciones/37-…-1-escala.sh:36-52,377-378,445-446` y
+  `…-2-la-seccion-caliente.sh:39-55,252-253`.
+- **Lo que cambió, y es exactamente la pregunta que la comisión me hizo.** Las secciones 37
+  **materializan** `hooks/` y `tools/` desde los tags `v1.32.1` y `v1.32.0` (`git ls-tree` + `git show`)
+  y después los **ejecutan**: `bash "$EVA37" "$HER37/hooks/lib.sh" …` los carga, y
+  `ARNES_HOOKS_DIR="$HER47/hooks" … bash "$BANCO47"` corre el banco **con los hooks del tag**. Sin tags
+  —el estado anterior— esos casos salían **SKIP** y no se ejecutaba nada. Con `fetch-depth: 0`
+  **se ejecutan**. El hallazgo H-08 era real y la corrección es correcta; lo que no se declaró es que la
+  corrección **enciende una ruta de ejecución** en la puerta requerida.
+- **Medido:** el repositorio tiene **un solo ruleset**, `proteger-main`, con `"target": "branch"`
+  (`gh api repos/JJOVEGA/ArnesJuan/rulesets`). **No hay ruleset de tags.** Los tags son, por tanto,
+  creables y **reescribibles con force-push** por cualquiera con permiso de push —`jvega-habitat` lo
+  tiene—, sin pasar por PR ni por revisión.
+- **La propiedad, que es una y tiene dos instancias (no una lista):** *la puerta requerida ejecuta
+  código identificado por una referencia que puede cambiar sin dejar rastro en ningún diff.* Instancias
+  **no exhaustivas** de hoy: los tags `v1.32.1`/`v1.32.0` del propio repositorio, y `actions/checkout@v4`
+  (tag mayor móvil, no fijado por SHA).
+- **Riesgo.** Mover un tag **no aparece en el diff de ningún PR**, y la puerta requerida es justamente
+  la evidencia sobre la que el humano decide fusionar. Es código no revisado dentro de la ruta de
+  confianza. El actor necesita permiso de push, sí — pero un cambio en `tests/` se **ve** en el PR y un
+  tag movido **no**, y esa asimetría es todo el hallazgo. Es la estructura de SEC-045 (`tests/` sin
+  custodia) una capa más afuera: allí el juez de las sondas no lo vigila nadie; aquí **el árbol contra
+  el que se mide** tampoco.
+- **No medido, y se dice:** los permisos por defecto del `GITHUB_TOKEN` del repositorio (`gh api …
+  /actions/permissions/workflow` → **403**, hace falta admin). El workflow **no declara** bloque
+  `permissions:`, así que hereda el defecto del repositorio, que no pude leer. Sin ese dato **no puedo
+  acotar el radio** de una ejecución hostil en el runner, y por eso no lo acoto.
+- **Remediación, por coste creciente.**
+  1. **Ruleset de tags** que prohíba actualizar y borrar `v*` (ajuste de repositorio del **propietario**,
+     minutos, **no necesita REQ ni ventana**). Cierra la instancia principal.
+  2. **Declarar `permissions:` explícito** en `banco.yml` con el mínimo (`contents: read`): acota el
+     radio aunque se ejecute algo hostil, y no depende de (1).
+  3. Fijar `actions/checkout` por SHA. Menor: es acción oficial de GitHub.
+- **No bloquea REQ-017**, y por el mismo motivo que acepté en SEC-045: (1) es un **gate humano**
+  (`AGENTS.md` §6, «cambiar el ruleset») y una entrada en `PENDING_APPROVAL.md` **denegaría el cierre de
+  cualquier REQ, incluido éste**; bloquear la ventana por custodiar el instrumento es peor negocio que
+  declararlo. *Forzador:* la pasada de conformidad de **1.34.0**. *Vencimiento:* el cierre de 1.34.0.
+  Aplico aquí la misma regla que a mí mismo en R-011; usar una distinta para un hallazgo que encontré yo
+  sería elegir la vara según quién sostiene el espejo.
+
+---
+
+### SEC-049 — `instrumento` · **abierto** · severidad baja · dueño `analista-requerimientos`
+
+**CA-10 declara la divergencia en un solo sentido, y está medida en los dos**
+
+- **Ubicación:** `requirements/REQ-017.md`, CA-10 § «Qué queda cerrado con esto».
+- **Descripción.** El criterio declara el sentido que **cierra** («la heredada publica `cr=0` sobre una
+  línea que sí lleva un CR interior») y lo presenta, con razón, como beneficio no buscado. No declara
+  que la divergencia es **bidireccional**: existe la clase en que la heredada **denegaba** y este árbol
+  **permite** —`e2 5c 0d`, 1 de 60 000 en mi fuzz dirigido—, correctamente, porque ahí el único CR es el
+  de transporte y la heredada producía un falso positivo.
+- **Riesgo.** Bajo, y es de **coste futuro**: quien mida el otro sentido en una ventana posterior lo
+  leerá como un fallo en abierto introducido por REQ-017, gastará una vuelta en descartarlo, o
+  «arreglará» la relajación reintroduciendo el falso positivo de la heredada. Es el reverso exacto del
+  argumento que el propio REQ usa para declarar el primer sentido: *un beneficio no declarado es una
+  propiedad que nadie sabe que tiene y que la próxima refactorización retira sin enterarse.*
+- **Remediación.** Una frase en CA-10: la divergencia es bidireccional, en los dos sentidos este árbol
+  coincide con el oráculo de bytes, y en el sentido que relaja la heredada tenía un **falso positivo**
+  (una puerta no determinista que podía denegar un documento válido). *Vencimiento:* el próximo
+  write-back que toque REQ-017 o el cierre de 1.33.0, lo que ocurra antes.
+
+---
+
+### La pregunta de gobernanza de R-011, contestada para **este** cierre
+
+**Sí cambia algo, y no cambia la decisión.** REQ-017 **entrega** dos secciones de banco y toca el
+corredor, así que por primera vez el artefacto sin custodia de SEC-045 —`tests/`, fuera de
+`codigo_app.globs`, escribible por cualquier agente **incluida la sesión que acredita, decide y
+publica**— no es una hipótesis de diseño: es código entregado dentro de la firma que estoy dando.
+
+Y ya tiene **instancia medida**: **QA-017-11**. `CA-01` guarda con cuidado las dos formas de quedarse
+sin entradas **de fuera** y **no guarda `dentro = 0`**; QA lo demostró truncando la evaluación de la
+heredada — el dominio cae de 312 a 10 entradas y el caso **sigue en verde**. Es decir: el juez de las
+sondas de este REQ **puede dar verde sobre un universo colapsado**, exactamente el riesgo que SEC-045
+describe, en el artefacto que SEC-045 dice que nadie custodia.
+
+**Aun así no cambio la disposición, y por tres razones que no son de comodidad:** (a) la partición se
+**publica en el mensaje del caso**, así que un colapso se ve **leyendo** —lo que falta es que lo vea la
+máquina—; (b) el dominio real medido es 97–99 de 106 en 4 de 4 corridas, así que hoy no oculta ningún
+defecto; y (c) el remedio —meter `tests/` en `codigo_app.globs`— toca `.arnes/config.json`, que es
+**gate humano**, y su entrada en `PENDING_APPROVAL.md` **denegaría este mismo cierre**. Sigue valiendo
+**acreditar > custodiar**, con el forzador de SEC-045 intacto en 1.34.0, y ahora con **un número
+delante** en vez de un argumento: si la mutación de tercero de 1.34.0 no caza QA-017-11, la decisión de
+no custodiar `tests/` vuelve a la mesa.
+
+---
+
+### Rigor
+
+**`critico`, y se queda.** `Sensible a seguridad: sí` lo impone como suelo y no hay nada que subir.
+**Nada se baja.** No reabro ningún REQ cerrado: el barrido de invisibles sobre toda la historia de
+`requirements/` salió limpio, así que SEC-047 no contamina ningún cierre pasado.
+
+### Estado de seguridad aprobado por REQ — R-012 (línea base de no-regresión)
+
+| REQ | Estado de seguridad | Fecha | Árbol | Controles acreditados / regresiones a vigilar |
+|---|---|---|---|---|
+| **REQ-017** | **`aprobado`** | 2026-09-07 | `cand/1.33.0` @ `b6e581b` (con mi edición de cabecera encima) | **Acreditado:** (a) `case "$l" in *$CR?*)` coincide con el **oráculo de bytes** en 160 015 entradas propias, 0 divergencias, bajo el locale del entorno y bajo `LC_ALL=C`; (b) `?` **sí** casa un byte multibyte inválido en bash 5.3.9/`C.UTF-8`, que era la única vía de fallo en abierto de este cambio; (c) el veredicto de `guard-completado` **no cambia** en la clase divergente (120 invocaciones por árbol, cabecera diseñada para maximizarlo, 0 deny en los dos); (d) las invariantes de REQ-016 intactas —guarda como primera sentencia del escáner único, cuatro bocas por `arnes_campo_linea`, sin duplicar en `campos-req.awk`—; (e) el cambio es **observacional** (no toca `ARNES_LINEA`), así que ningún lector aguas abajo puede cambiar de opinión; (f) delta de producto = **una línea**; (g) la historia completa que `fetch-depth: 0` materializa **no contiene** secretos ni material de cliente, nunca los contuvo y nada se borró jamás. **Regresiones a vigilar:** que la guarda deje de ser la primera sentencia o se mude a una de las cuatro bocas; que el escáner pase de **observar** a **modificar** `ARNES_LINEA`; que aparezca una segunda transcripción de la guarda del CR fuera de `arnes_sin_cita`; que `*$CR?*` se «optimice» a una forma que dependa del locale; y que alguna sección del banco deje de materializar la línea base y pase a un inventario congelado. |
+
+**Lo que esta firma acredita y lo que NO — dicho aparte porque es la mitad que se olvida.**
+*Acredita:* que revisé la seguridad del código de este REQ y que la sentencia que lo justifica hace lo
+que dice, medido contra el contrato y no contra su gemela. *No acredita:* las **quality gates** —no las
+miro, y por eso firmo después de QA—; el **valor** de la pared de los 60 s (`SEC-030`); el
+comportamiento de `arnes_norm_clave`, que este REQ no toca y que arrastra **QA-017-07** y ahora
+**SEC-047**; ni que `tests/` esté custodiado (**SEC-045**, residual mío, abierto).
