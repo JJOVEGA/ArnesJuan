@@ -123,6 +123,47 @@ Archivos: `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-ca
 `tests/escenarios/hooks/README.md`, `.github/workflows/banco.yml`, `docs/PENDIENTES.md`,
 `docs/qa/1.33.0.md`, `requirements/REQ-017.md`.
 
+## [Interno] — 2026-09-07 · REQ-022 sale de borrador: el registro de QA ya muerde más que el libro mayor
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
+
+**Medición nueva que cambia la prioridad: `7 de los 8 REQ abiertos declaran el mismo `docs/qa/1.33.0.md`
+⇒ los 21 pares que forman esos siete colisionan por UN SOLO archivo.** La pregunta no era «antes de que
+muerda»: **ya muerde, y más fuerte que la colisión del libro mayor** (5 de 8). *(21 **pares**; no
+confundir con los «21 de 21 **REQ**» de R-010.)*
+
+**Decisión: un archivo de registro de QA por REQ.** Y el corte del argumento cae exacto: **la analogía
+del libro mayor aguanta para el índice y se rompe para la evidencia.** La entrada del CHANGELOG es
+*resumen de orquestación* —que la coordinadora ya tiene—; el registro de QA es **evidencia primaria que
+sólo posee quien la midió**, y centralizarla exigiría una **segunda transcripción** —el modo de fallo
+que el propio REQ prohíbe un piso más abajo— arrancándole a cada cifra su condición. Por eso
+`docs/qa/<versión>.md` **sí** se queda, pero como **índice de ventana**.
+
+**Y no estrena convención: reconcilia una deriva.** `templates/AGENTS.md.tpl` §12 y `agents/qa-tester.md`
+**ya dicen «por REQ»**, y `docs/qa/REQ-001.md` la sigue — es **la práctica** la que derivó. Ese mismo
+archivo de agente lleva **las dos convenciones vivas** en dos líneas distintas: **tercera vez** que este
+repositorio mide ese patrón. Consecuencia útil: `arnes-upgrade` **no lleva migración**.
+
+**Un `disjunto` falso YA EJECUTADO, encontrado al medir:** REQ-017 **no declara** `requirements/REQ-017.md`
+y su write-back del 2026-09-07 **escribió en él**.
+
+⚠️ **Y la consecuencia que hay que decidir: mover el registro de QA REABRE `REQ-012`, que está
+`completado` y `critico`.** Su `CA-09` nombra literalmente `docs/qa/<versión>.md` como sitio donde el QA
+anota la forma; al moverlo, ese criterio **dice algo falso** y §9 obliga a devolverlo a revisión. **No
+cabe la exención de «alcance temporal»**: ésa exime de reescribir contratos cerrados para conformarlos a
+una regla de formas, y aquí **cambia el árbol que el criterio describe**. El write-back es de **una
+ruta**; el ciclo que reabre es **completo**. Segundo gate: el REQ escribe `.arnes/config.json`, que §6
+reserva al propietario — a la cola **antes** de implementar, no al cerrar.
+
+**La cuarta dimensión entra, pero NO como dimensión.** Va como bloque propio, y el motivo es fino: las
+tres de la regla principal son propiedades de un **par** de comisiones y se comprueban comparando dos
+declaraciones; la de la comisión interrumpida es de **una sola** y no se comprueba comparando nada.
+Llamarla cuarta haría que **un veredicto de despacho pareciera responder por algo por lo que no
+responde** — que es el error de origen de la herramienta que este REQ corrige.
+
+**El par REQ-019/REQ-022 queda escrito como el único del corpus donde saltan las tres dimensiones a la
+vez**, con la lectura que importa: **si SEC-034 no se hubiera levantado, ese par habría salido
+`disjunto` con rc 0** y las dos comisiones habrían leído **dos versiones de la misma regla**.
+
 ## [Interno] — 2026-09-07 · Preventiva R-011 sobre REQ-020: el juez de todas las sondas no lo vigila nadie
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad`.
 
