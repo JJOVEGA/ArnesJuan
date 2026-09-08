@@ -123,6 +123,44 @@ Archivos: `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-ca
 `tests/escenarios/hooks/README.md`, `.github/workflows/banco.yml`, `docs/PENDIENTES.md`,
 `docs/qa/1.33.0.md`, `requirements/REQ-017.md`.
 
+## [Interno] — 2026-09-07 · QA vuelta 2: los diez criterios pasan, y lo que bloquea es una frase
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+**`QA: con-hallazgos`, vuelta 2 de 3 — pero los diez criterios PASAN.** Lo único que impide `aprobado`
+es un hallazgo `contrato` **sobre una frase**. Cerrados: QA-017-01, -02, -05, -06, -08, -09 y -10.
+
+**Lo que verificó en vez de asumir:**
+- **CA-08: 38 medidas, 38 PASS**, razones **0,890–1,139×** contra techo 1,250. La abstención por
+  convergencia se activó **0 de 38** (máximo observado 1,227×) — no es un SKIP disfrazado. Y lo
+  decisivo: **inyectó una regresión real** (un `fork` por línea) y el caso dio **FAIL en las cuatro
+  mitades**, con el mensaje «*y la sonda SÍ convergió: esto es una regresión, no ruido*».
+- **El dominio, falsado por su cuenta con 3 300 entradas propias** —2 000 aleatorias de cinco semillas
+  y 1 300 adversariales sistemáticas—: **0 divergencias dentro del dominio**.
+- **Construyó el fail-before de extremo a extremo** de la rama «no clasificables» que el desarrollador
+  había declarado que no tenía. Deja de ser residual.
+
+**`QA-017-12` (`contrato`, bloquea): la justificación del residual del acoplamiento es falsa.** CA-05
+afirma que romper la disposición del corredor falla «**ruidoso** — el único PASS de (i) desaparece del
+banco en la primera corrida». Medido: **en el modo por defecto no cambia nada** — los veredictos son
+idénticos y `rc 0`; no hay PASS que desaparecer, porque ya es SKIP por «no se pide». Se cierra con
+write-back sobre **esa frase**, sin código y sin re-medición.
+
+**`QA-017-13` (`instrumento`): el banco no es puerta estable bajo carga, y la culpa no es de REQ-017.**
+Salió rojo **2 de 12** veces, siempre por el **mismo caso ajeno** —`25-presupuesto-de-analisis.sh`—
+que contrata **un reloj absoluto** de 4 000 ms: 4 333 ms bajo `JOBS=6`, y **aislado 12 de 12 verde**,
+con este árbol si acaso **más barato** que v1.32.1. Es contención, no regresión, y es **la forma (d)
+que `CA-07` acaba de prohibir**, viva en otro archivo.
+
+**`QA-017-11` (`instrumento`): `CA-01` da PASS sobre un dominio vacío o colapsado.** Hay guarda para
+`fuera = 0` y para `no clasificables ≠ 0`, **no para `dentro = 0`**. Con la evaluación de la heredada
+truncada el dominio cae de **312 a 10** y sigue verde. No muerde hoy (312/320 en 14 de 14).
+
+**Y una corrección al desarrollador que vale la pena conservar:** declaró márgenes de CA-09 de
+«1,25–3,40×» y la medición da **1,154×–2,523×**. El suelo real está **por debajo** del declarado —
+*un colchón declarado de más es cómo un residual aceptado se vuelve un rojo sorpresa*.
+
+Coste: 1 h 10 de reloj, ~240 k declarados (300–331 k con la corrección), ~35 min de máquina midiendo.
+
 ## [Interno] — 2026-09-07 · CA-05: la guarda pasa de inerte a discriminadora, y por qué eso NO es relajarla
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
 
