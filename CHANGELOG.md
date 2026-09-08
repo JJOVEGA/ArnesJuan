@@ -2,6 +2,48 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · QA de REQ-014 reabierto: los dos `contrato` del desarrollador CERRADOS, y un `contrato` nuevo que es un párrafo
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+Veredicto **`QA: con-hallazgos`**, vuelta **0 de 3** consumida. El código de `b9afa01` no vuelve al
+desarrollador: lo que bloquea es texto del REQ.
+
+- **`DEV-014-01` cerrado.** Seis mutaciones sobre **copias del árbol real** —no sobre las secciones
+  sintéticas, que era lo único acreditado—: exceso por `N`, exceso por `piso×k`, derivación ilegible,
+  declaración ausente, términos que no suman, `piso > líneas`. Las seis fallan nombrando lo que deben.
+  Con esto el par discriminante **(iii)** de CA-18 queda acreditado sobre el árbol real **en sus dos
+  ramas**, que es lo que el criterio dejaba pendiente por escrito.
+- **`DEV-014-02` cerrado.** Forzador medido cerrado (74.046 vs 74.047 bytes; 20-25 líneas de MEDIDA
+  volátiles), con los tres negativos reproducidos sobre salida real del banco.
+- **CA-12 limpio.** Inventario de **antes** de la partición (`9809fc2`, 45 secciones) e inventario de
+  **después** (`b9afa01`, 50): **idénticos byte a byte** — 884 líneas, 73.508 bytes, `diff` vacío. **56
+  casos cambiaron de archivo y ninguno cambió de identidad ni de veredicto.**
+- **CA-20 sin regresión:** mediana 48,63 s → 48,94 s (**+0,6 %**, techo 20 %).
+
+**Hallazgos nuevos.** **`H-13` (`contrato`)** — CA-14 FALLA: `REQ-017 CA-09 la pared de los 60 s` es
+inestable **en su veredicto** (PASS↔SKIP) y el REQ no lo declara; al contrario, lo nombra entre las
+líneas cuya volatilidad *era de medida*. La atribución a `SEC-030` se sostiene y **mejor de lo que él
+podía demostrar**: sus 4 corridas limpias no acreditaban nada (con tasa 1/9, ver 4 limpias tiene
+probabilidad 0,62), así que QA lo rehízo **6 y 6, en serie, misma máquina** — `9809fc2` da 3 PASS/3 SKIP
+y `b9afa01` da 4 PASS/2 SKIP. **Oscila antes de la partición, con tasa igual o mayor.** Su remedio es
+declarar el caso por su nombre y enunciar el positivo **módulo esa línea declarada**.
+`H-14`/`H-15`/`H-16` (`instrumento`): piso sobredeclarado en `37-…-4` (463 vs 389, y no compra el
+techo), término de preámbulo **autofinanciado** en CA-18, y una cota con decimal en el **nombre** de un
+caso que el oráculo normaliza a `N`.
+
+**Los pisos, término a término.** Los ocho suman y sus rangos son ciertos; los seis gobernados por `N`
+no compran nada. De los dos gobernados por `piso×k`, `37-…-1` **no compra el techo** (461 → 577, y el
+archivo mide 577) y `37-…-4` **sí está sobredeclarado en 74** — pero tampoco compra (con 389 el techo
+sale 487 y el archivo mide 468).
+
+**El árbol se movió durante la comisión** (`b9afa01` → `d01aea1`) y QA lo comprobó antes de firmar:
+`git diff b9afa01 d01aea1 -- tests/ hooks/ tools/ .github/` está **vacío**. Todas las mediciones son del
+árbol que dicen ser.
+
+**Nota de enforcement, registrada por QA:** su primer intento de escribir el veredicto **agrupó las tres
+líneas de cabecera** y `guard-completado` lo **denegó correctamente** (`Seguridad: aprobado` conviviendo
+con `QA: con-hallazgos`); separando ediciones pasó. Es exactamente el alcance que el hook declara.
+
 ## [GitHub] — 2026-09-08 · Versión 1.32.1 → **1.33.0** en los cuatro sitios, y las menciones que NO se tocan
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
 
