@@ -1617,3 +1617,29 @@ acoplamiento de `CA-05` estaba descrito como que falla **«ruidoso — el único
 la primera corrida»**, y QA midió que **en el modo por defecto no cambia nada**: veredictos idénticos,
 `rc 0`. Es **silencioso**, y los dos forzadores declarados lo verían **verde**. Un lector calculaba el
 riesgo al revés exactamente como describen. Se está corrigiendo ahora.
+
+### `git add -A` con comisiones vivas: la coordinadora se salta su propia regla (medido 2026-09-07)
+
+**Encontrado por QA al cerrar REQ-017, sobre un commit de la coordinadora.** El commit `7335586`
+—titulado «Preventiva R-011…»— **arrastró 192 líneas de `docs/qa/1.33.0.md`** que eran la entrada de
+confirmación que QA estaba escribiendo **en ese momento**, bajo un mensaje que **no la menciona**. El
+contenido sobrevivió íntegro; lo que quedó falso es **el mensaje del commit**, que es el registro de qué
+cambió y por qué.
+
+**La causa es un `git add -A` mientras corrían cuatro comisiones**, y es una instancia exacta de lo que
+este mismo documento contrata dos secciones más arriba: el despacho paralelo exige ámbitos disjuntos, y
+**quien comitea es una comisión más** — la única, además, que puede tocar **todos** los ámbitos a la vez.
+
+⇒ **Regla, y es barata: mientras haya comisiones vivas, la coordinadora comitea RUTAS NOMBRADAS, nunca
+`-A`.** Lo que no sabe nombrar, no lo comitea: está en curso.
+
+**Y la mitad que la hace peor de lo que parece:** el efecto no es una escritura perdida —el contenido
+llegó entero— sino un **registro que atribuye mal**. Una bitácora que dice que un commit trae una cosa
+cuando trae dos es exactamente el modo de fallo que la rotación existe para no cometer, y el mismo que
+midió el proyecto consumidor cuando una entrada de bitácora perdió su título y **su cuerpo quedó
+atribuido a otro agente, otra fecha y otro encargo**.
+
+*(Segunda observación de QA en la misma comisión, también de la coordinadora: se le dijo que el árbol
+estaba limpio y **no lo estaba** —cuatro archivos modificados y uno sin seguir—. No contaminó la firma,
+porque ninguno tocaba el `Archivos:` de REQ-017, pero **la premisa del encargo era falsa** y eso lo tuvo
+que descubrir el agente. Un encargo que afirma el estado del árbol debería derivarlo, no recordarlo.)*

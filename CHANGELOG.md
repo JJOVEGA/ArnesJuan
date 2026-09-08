@@ -123,6 +123,34 @@ Archivos: `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-ca
 `tests/escenarios/hooks/README.md`, `.github/workflows/banco.yml`, `docs/PENDIENTES.md`,
 `docs/qa/1.33.0.md`, `requirements/REQ-017.md`.
 
+## [Interno] — 2026-09-07 · REQ-017: `QA: aprobado`, y la coordinadora se salta su propia regla de paralelismo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+**`QA: aprobado`.** Los **diez** criterios pasan; `QA-017-12` y `QA-017-14` cerrados. Quedan cuatro
+residuales `instrumento` con dueño: `QA-017-07` (escalado al auditor), `-11`, `-13` y `-15`.
+
+**Y lo hizo sin medir nada, por una comprobación que lo hace innecesario:** `git diff --stat` entre los
+dos commits **sobre `hooks/`, `tools/`, `tests/` y `.github/` sale vacío** — el árbol de código es byte a
+byte el que validó en la vuelta 2. Verificó además **mecánicamente** que ningún criterio cambió: la
+sección de criterios ocupa las **mismas líneas 20–91** en las dos versiones y difiere en **una sola**, y
+las diez líneas que llevan el `Dado/Cuando/Entonces` y los techos son **idénticas incluso en su número
+de línea**.
+
+**`QA-017-15` (`instrumento`): cuarta instancia de la clase, en el párrafo que la nombra.** El
+write-back escribió «con la palanca encendida **no está medido**» — y **sí lo estaba**, en tres sitios
+del registro que la propia frase cita. Con una variante: las tres anteriores se escribieron sin ejecutar
+**el mecanismo**; ésta, sin leer **el registro de evidencia citado en la misma frase**. Y una segunda
+mitad: una frase compone «9 de 9» de una corrida con los márgenes de **otra** — cada mitad cierta, **la
+frase describe una corrida que no existió**.
+
+**⚠️ Y un fallo de la coordinadora que encontró QA:** el commit `7335586` **arrastró 192 líneas del
+registro de QA** que se estaban escribiendo en ese momento, bajo un mensaje que no las menciona. Causa:
+un **`git add -A` con cuatro comisiones vivas**. El contenido sobrevivió; lo falso es **el mensaje del
+commit**. Regla nueva y barata: **mientras haya comisiones vivas se comitean rutas nombradas, nunca
+`-A`** — *quien comitea es una comisión más, y la única que puede tocar todos los ámbitos a la vez*.
+Segunda observación suya, también de la coordinadora: **se le dijo que el árbol estaba limpio y no lo
+estaba**; no contaminó la firma, pero la premisa del encargo era falsa.
+
 ## [Interno] — 2026-09-07 · REQ-022 sale de borrador: el registro de QA ya muerde más que el libro mayor
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
 
