@@ -1789,3 +1789,64 @@ catch-all a propósito. **Con el catch-all encendido ya se cuelan tres escritura
 filtro, la superficie sería mayor.** El coste medido del guardián es de ~20 ms por comando y ~35 s en
 una sesión de ocho horas: **un 0,1 %**, y en la categoría equivocada. Donde mirar, si el coste
 molesta, es cuántos subagentes se despachan.
+
+
+---
+
+## Las dos banderas del manifiesto que ahorran contexto (medido 2026-09-08, coordinadora)
+
+**Decisión: las dos SÍ, ninguna hoy.** El propietario delegó la decisión («decide tú», 2026-09-08) tras
+leer las dos opciones con su coste. No se aplican en la ventana 1.33.0 por un motivo **medido, no de
+calendario**: `.arnes/config.json` está dentro de `codigo_app.globs`
+(`hooks/*`, `tools/*`, `.github/*`, **`.arnes/config.json`**, `.claude-plugin/*`), así que no es
+«encender un flag» — es cambio de mecanismo, con REQ y ciclo de cuatro agentes. Y la rotación reescribe
+sus artefactos **en cada parada de agente**, incluidas las dos comisiones que deben cerrar 1.33.0.
+
+**Van detrás de `REQ-019`**, que `docs/PLAN.md` protege como primer trabajo ÚNICO de 1.34.0.
+
+### Por qué valen la pena: el peso real del contexto, medido hoy
+
+| Archivo | KB | ≈ tokens |
+|---|---:|---:|
+| `CHANGELOG.md` | 467 | ~120 k |
+| `docs/seguridad/registro-seguridad.md` | 458 | ~120 k |
+| `docs/qa/1.33.0.md` | 226 | ~58 k |
+| `requirements/REQ-014.md` | 128 | ~33 k |
+| `AGENTS.md` | 34 | ~9 k |
+| **`requirements/` entero** | **1 759** | ~450 k |
+
+**El número que cierra el argumento:** un auditor que lee `registro-seguridad.md` entero carga ~120 k que
+paga **en cada turno posterior**. Veinte turnos × 120 k = **2,4 M**. Una comisión de auditoría medida el
+2026-09-08 en una sesión de Codex consumió **2,56 M de lectura de caché**. **El número reproduce**, y la
+causa no era el nivel de esfuerzo: era un archivo de 458 KB dentro de la ventana.
+
+### (a) `rotacion.activo: true` — y los dos artefactos crecen en DIRECCIONES OPUESTAS
+
+Esto es lo caro de averiguar y por eso queda escrito: **la clave `orden` global no sirve aquí**, y usarla
+archivaría lo más reciente del registro de seguridad. Medido por lectura, no supuesto:
+
+| Artefacto | Evidencia | `orden` correcto |
+|---|---|---|
+| `CHANGELOG.md` | la entrada más nueva está en la **línea 5**; la anterior en la 47 | **`nuevo-primero`** |
+| `docs/seguridad/registro-seguridad.md` | `R-001` en la línea **14**; `R-018` en la **5311** | **`nuevo-al-final`** |
+
+Los dos superan el `umbral_bytes` actual (262 144): 467 176 y 458 433. Rotarían en la primera parada.
+Es exactamente el modo de fallo que la skill `arnes-upgrade` describe para 1.26.0 —artefactos que
+comparten un solo `orden`—, así que **cada uno se declara como objeto con el suyo**.
+
+### (b) `veredictos.exigir_fecha` y `veredictos.caducan_con_codigo` — el remedio de `SEC-060`
+
+`SEC-060` (`contrato`, auditor, 2026-09-08) dice que un REQ reabierto **conserva los veredictos de la
+ventana anterior y ninguna puerta los caduca**. El remedio ya existe en el plugin y viene apagado.
+
+**Coste de encenderlo, medido como pide su propia documentación:** de **25** veredictos `aprobado` en
+cabecera, **20 llevan fecha y 5 no** — `REQ-001` (×2), `REQ-012` (×2), `REQ-014` (×1). Y el coste real es
+**casi cero**, porque la puerta muerde en la **transición** a `completado`:
+
+- `REQ-001` y `REQ-012` están `completado` y no vuelven a transicionar; sólo les mordería si se reabren
+  — que es precisamente cuando debe morder.
+- El de `REQ-014` es el `Seguridad: aprobado` sin fecha del 2026-09-06 que **el propio Historial del REQ
+  declara nulo**, y que el `auditor-seguridad` retira en su turno de esta misma ventana.
+
+Encenderlo **no bloquea ningún cierre pendiente**. Esa medición es la parte cara del REQ futuro y ya está
+hecha: no se vuelve a derivar, se cita.

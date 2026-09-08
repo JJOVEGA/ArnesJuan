@@ -2,6 +2,43 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · Las dos banderas que ahorran contexto: decididas, medidas y APLAZADAS con su motivo
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+El propietario delegó la decisión («decide tú»). **Las dos sí; ninguna hoy.** Y el motivo del aplazamiento
+lo dio una medición que corrigió la decisión antes de tomarla: **`.arnes/config.json` está dentro de
+`codigo_app.globs`**, así que no es «encender un flag» — es cambio de mecanismo con REQ y ciclo de cuatro
+agentes. Encenderlas dentro de la ventana 1.33.0 sería el atajo que `AGENTS.md` §5 prohíbe por nombre; y
+la rotación reescribe sus artefactos **en cada parada de agente**, incluidas las dos comisiones que deben
+cerrar esta ventana.
+
+**Lo que sí se hace hoy es dejar medido lo caro**, para que el REQ que las aplique no lo vuelva a derivar
+(`docs/PENDIENTES.md`):
+
+- **El peso real del contexto.** `CHANGELOG.md` 467 KB · `registro-seguridad.md` 458 KB ·
+  `docs/qa/1.33.0.md` 226 KB · `REQ-014.md` 128 KB · `AGENTS.md` 34 KB · **`requirements/` entero
+  1 759 KB**. Un auditor que lee el registro entero carga ~120 k tokens que paga **en cada turno
+  posterior**: 20 turnos × 120 k = **2,4 M**. Una comisión de auditoría medida hoy en una sesión de Codex
+  consumió **2,56 M de lectura de caché**. **El número reproduce**, y la causa no era el nivel de
+  esfuerzo: era un archivo de 458 KB dentro de la ventana.
+- **Los dos artefactos crecen en direcciones OPUESTAS**, y ésa es la parte que se paga por averiguar:
+  `CHANGELOG.md` es `nuevo-primero` (entrada más nueva en la línea 5) y `registro-seguridad.md` es
+  `nuevo-al-final` (`R-001` en la 14, `R-018` en la 5311). La clave `orden` global **archivaría lo más
+  reciente del registro**. Es el modo de fallo que `arnes-upgrade` documenta para 1.26.0.
+- **Encender `veredictos.*` no bloquea ningún cierre pendiente.** De **25** veredictos `aprobado` en
+  cabecera, **20 llevan fecha y 5 no** (`REQ-001` ×2, `REQ-012` ×2, `REQ-014` ×1). Los cuatro primeros
+  están en REQ `completado` que no vuelven a transicionar —sólo mordería al reabrirlos, que es cuando
+  debe morder— y el quinto es el `Seguridad: aprobado` sin fecha que **el propio Historial de `REQ-014`
+  declara nulo**.
+
+**Y una regla de redacción, decidida hoy y con causa medida.** `docs/qa/1.33.0.md` pesaba 0 KB hace tres
+días y hoy pesa 226 KB: lo que un agente escribe hoy es contexto que otro paga **en cada turno de
+mañana**. El reparto: **el contrato va íntegro** —qué se midió, contra qué, veredicto y clase—, **la
+evidencia va citada** (`archivo:línea`), nunca transcrita. La prueba para decidir el lado: *¿se puede
+desmentir sin abrir otro archivo?* La recomendación venía de Codex apuntando al gasto de **salida**; los
+números la desmienten en su razón (109,5 k de salida sobre 5,5 M, el **2 %**) y la refuerzan en la
+contraria: el coste no es escribirlo, es **releerlo para siempre**.
+
 ## [GitHub] — 2026-09-08 · QA de REQ-014 reabierto: los dos `contrato` del desarrollador CERRADOS, y un `contrato` nuevo que es un párrafo
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
 
