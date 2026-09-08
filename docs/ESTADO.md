@@ -126,11 +126,22 @@ tautológica, los 21 procesos que hicieron insatisfacible `CA-08 (i)` y el `+6` 
 1. **Analista** — Historial de `REQ-014` documentando la comisión del desarrollador (máquina de `CA-18` +
    oráculo de `CA-12`): corregir el desfase de piso (461/468, no 460/467; `k` sigue conforme) y anotar
    que `38-sondas-compartidas.sh` necesita **tres** archivos, no dos.
-2. **Auditor** — retomar la evaluación de si `REQ-014` admite rigor menor que `critico`. Quedó
-   **interrumpida sin veredicto** (parada por presupuesto, no por decisión): había encontrado «dos
-   hallazgos concretos» y estaba verificando «la aritmética del techo autodeclarado y la numeración del
-   registro» cuando se detuvo. Empezar de cero, no asumir ningún resultado previo.
-3. **Desarrollador** — partir los tres archivos (autorización ya extendida a la 38).
+2. ~~**Auditor** — evaluación de rigor de `REQ-014`.~~ **HECHO: `R-018` del 2026-09-08, con veredicto.**
+   La comisión se rehízo **desde cero** (no se asumió nada de la interrumpida). **La excepción de rigor
+   NO aplica y no hay decisión pendiente del propietario:** falla **2 de 3** condiciones de
+   `autoalojamiento.md` §«Excepción medida» **por medición** —`Archivos:` declara `tests/…` y
+   `.github/…`, y el diff de `9809fc2` toca 48 archivos bajo `tests/`—, la excepción es **fail-closed** y
+   `Sensible a seguridad: sí` impone `critico` como suelo. **`REQ-014` se queda en `critico` y recorre el
+   ciclo completo.** Veredicto emitido: **`Seguridad: con-hallazgos`** — no `aprobado` (QA no ha validado
+   `9809fc2`) y no `preventiva` (el código ya existe). Cuatro hallazgos nuevos: **`SEC-057`**
+   (`instrumento`, alta — el verde de CA-18 lo puede comprar el sujeto declarando su propio piso),
+   **`SEC-058`** (`contrato` — el «≈424» de la 38 son ≈442; la conclusión «TRES» no cambia),
+   **`SEC-059`** (`instrumento`, baja — «42 de 45» sobrevive en `autoprueba-corredor.sh:558`) y
+   **`SEC-060`** (`contrato`, alta — la cabecera reabierta conserva los veredictos de 1.32.0 y ninguna
+   puerta los caduca). La aritmética del write-back **cuadra entera** salvo esa cifra.
+3. **Desarrollador** — partir los tres archivos (autorización ya extendida a la 38). **Y con el control
+   de procedimiento de `SEC-057`: el verde de CA-18 no acredita nada por sí solo** — cada archivo nuevo
+   registra `líneas` y su derivación término a término, y la verifica quien no la escribió.
 4. **QA** de `REQ-014` completo.
 5. **Auditor** de `REQ-014` (si el veredicto del punto 2 dice que aplica el ciclo completo).
 6. Los dos ADR pendientes (re-derivación de `CA-18`; mandato de `ADR-005`).
@@ -183,6 +194,17 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
   acreditado (**gate humano**: los ADR no se reescriben) más una línea en el README. Mitad buena, medida
   por objeto de árbol: **`hooks/` en HEAD es el mismo objeto (`88c1465…`) que firmó R-012** y no hay
   diferencia en `hooks/ tools/ .github/ .arnes/`, así que **no hay regresión de enforcement**.
+- **`R-018` añade DOS `contrato` abiertos** (`SEC-058`, `SEC-060`), los dos de `REQ-014` y los dos con
+  remediación **barata y sin código** (write-back del analista). El índice contable de `R-016` sube de
+  **30** a **32**, así que el tag sigue siendo del propietario por el mismo motivo que ya estaba escrito
+  — no por uno nuevo. **`SEC-057`** (`instrumento`, alta) **no** bloquea por `AGENTS.md` §6, pero sí
+  condiciona la lectura de un verde: mientras siga abierto, un PASS de CA-18 sobre el árbol real **no
+  acredita** que el banco quepa bajo su propio criterio, que es lo que `CA-31 (a)` pide.
+- **NO se abrió entrada en `PENDING_APPROVAL.md`, y es deliberado.** La única decisión que `R-018` eleva
+  al propietario es *opcional* (encender `veredictos.caducan_con_codigo`, que mediría `SEC-060`); una
+  entrada en la cola **deniega el `completado` de cualquier REQ**, incluido el de `REQ-021` en su vuelta 3
+  de 3, y bloquear el ciclo entero por una propuesta que no urge sería un daño mayor que el hallazgo. La
+  cola sigue en **0**.
 - Ninguno de presupuesto.
 
 ## Pendientes (cola)
@@ -221,7 +243,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-08 14:19
+## Estado derivado — 2026-09-08 15:16
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -231,7 +253,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.33.0` @ `2af89a9` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `work/req014-codex` @ `b79c6cc` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.32.1`
 **Aprobaciones pendientes:** 0
 **REQ:** 25 — completado 12 · en-revisión 1 · en-progreso 2 · bloqueado 1 · otros 9
@@ -245,7 +267,7 @@ _Sólo los REQ abiertos; los 12 completados no se listan._
 | REQ-008 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-011 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-013 | en-revision | con-hallazgos | con-hallazgos | critico | sec-014(contrato),sec-020(contrato),qa-2… |
-| REQ-014 | en-progreso | aprobado | aprobado | critico | h-03(instrumento),h-07(instrumento),h-12… |
+| REQ-014 | en-progreso | aprobado | con-hallazgos | critico | h-03(instrumento),h-07(instrumento),h-12… |
 | REQ-018 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-019 | pendiente | pendiente | preventiva | critico | sec-033(contrato) |
 | REQ-020 | pendiente | pendiente | preventiva | critico | sec-038(contrato),sec-039(contrato),sec-… |

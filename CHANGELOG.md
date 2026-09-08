@@ -9,6 +9,30 @@
 `REQ-014` marcado explícitamente como **interrumpido sin resultado** (no asumir nada de lo que la
 comisión detenida alcanzó a ver). Árbol limpio, cola en 0, nada en vuelo.
 
+## [GitHub] — 2026-09-08 · R-018 del worktree `work/req014-codex`: archivada TAL CUAL, con su colisión de número declarada
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (sesión Codex, **sin hooks del arnés**) · agente: `auditor-seguridad`.
+
+Commit de **archivo**, no de integración. Preserva el write-back del analista sobre `requirements/REQ-014.md`
+y la revisión de seguridad sobre `docs/seguridad/registro-seguridad.md` que hasta ahora sólo vivían sin
+comitear en `/tmp`.
+
+**Tres cosas que quien lo integre tiene que saber, y por eso van aquí y no en una nota suelta:**
+
+1. **Colisión de número.** Esta revisión se llama `R-018` y en `cand/1.33.0` ya existe **otra** `R-018`
+   («consulta de gobernanza», sin firma). **Renumerar es acto del `auditor-seguridad`**, no de quien
+   archiva. Los hallazgos `SEC-057`…`SEC-060` heredan la duda: hay que comprobar que no chocan también.
+2. **Base vieja.** La rama sale de `9809fc2`, **anterior** a la partición (`b9afa01`) y al bump de
+   versión (`d01aea1`). Su `git diff` contra `main` **borra** las seis secciones nuevas. No se fusiona:
+   se cosecha por partes.
+3. **La cabecera de `REQ-014.md` de esta rama NO se integra.** Declara `QA: aprobado` (de 1.32.0) y es
+   justo el defecto que su propio `SEC-060` denuncia. `QA` emitió `con-hallazgos` fechado el 2026-09-08
+   sobre el árbol nuevo; esa cabecera es la buena.
+
+**Procedencia, dicha entera:** producido en una sesión de **Codex**, que **no dispara los hooks del
+arnés** (`hooks/hooks.json` registra `PreToolUse` vía `${CLAUDE_PLUGIN_ROOT}`). Ninguna puerta midió
+estas ediciones. Ninguna de ellas cierra un REQ ni toca `codigo_app.globs`, así que ninguna puerta
+habría denegado — pero eso se afirma por lectura, no porque un guardián lo dijera.
+
 ## [GitHub] — 2026-09-08 · REQ-014: la máquina de `CA-18` deriva el techo por archivo, y el oráculo de `CA-12` normaliza por propiedad — verificado independientemente
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
 

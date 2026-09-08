@@ -5305,3 +5305,255 @@ por eso firmo después de QA—; **ningún REQ**; el código de 1.33.0; ni el wr
 `034`, `035` y `036`, que por eso siguen `en-mitigación`. Y **no despeja `v1.33.0`**: la fusión, el tag
 y la publicación siguen siendo decisión del propietario, con **30** `contrato` abiertos, **dos**
 discrepancias entre sedes y **tres** hallazgos que apuntan a la publicación misma.
+
+---
+
+## Revisión R-018 — **auditoría de la reapertura de REQ-014**: si admite rigor menor que `critico`, y verificación de la aritmética re-derivada — 2026-09-08
+
+**Mandato y sus límites, dichos antes que los hallazgos.** Comisión acotada: (1) decidir si la
+reapertura de `REQ-014` puede acogerse a la excepción de rigor de `docs/gobernanza/autoalojamiento.md`
+§«Excepción medida»; (2) verificar el **diff real** y la **aritmética/contrato** vigentes tras el
+write-back del analista del 2026-09-08. **Se empezó de cero**: no se asumió ningún resultado de la
+auditoría interrumpida que `docs/ESTADO.md` menciona, y nada de lo que aquí se afirma procede de ella.
+Árbol: worktree aislado `work/req014-codex` @ `b79c6cc`, con `docs/ESTADO.md` y `requirements/REQ-014.md`
+modificados sin comitear (el write-back del analista, que **se conserva**).
+
+**Esto NO es la auditoría de código de REQ-014 y no firma su cierre.** El código de la reapertura existe
+(commit `9809fc2`: `autoprueba-corredor.sh` +297, `inventario.sh` +102, 45 secciones +1) y **QA no lo ha
+validado** — el `QA: aprobado` de la cabecera es de la ventana 1.32.0 (ver `SEC-060`). Por `AGENTS.md` §6
+no firmo `aprobado` sobre un árbol sin validar, y **tampoco declaro `preventiva`**: la excepción
+preventiva es para una revisión hecha **antes de que exista el código**, y aquí el código ya está en el
+árbol. Veredicto emitido: **`Seguridad: con-hallazgos`**. La auditoría del código de la reapertura se
+hace **en su turno**, después de QA.
+
+### 1. La excepción de rigor NO aplica, y no hace falta que nadie lo decida: falla por medición
+
+`docs/gobernanza/autoalojamiento.md` §«Excepción medida» exige **las tres condiciones a la vez** y es
+**fail-closed**. Medidas sobre este árbol:
+
+| Condición | Medición | Resultado |
+|---|---|---|
+| `Archivos:` no declara ninguna ruta bajo `hooks/`, `tools/`, `tests/`, `.github/`, `.arnes/`, `.claude-plugin/` | El campo declara literalmente `tests/escenarios/hooks/` **y** `.github/workflows/` | **FALLA** |
+| El diff del REQ sobre esas rutas es **vacío** (`git diff` **y** `git status --short`) | `git diff --name-only 2af89a9 9809fc2 -- tests/ .github/ …` devuelve **48 archivos**, todos bajo `tests/escenarios/hooks/` | **FALLA** |
+| El banco corre **idéntico** | No se llega a evaluar: la excepción ya está cerrada por las dos anteriores | n/a |
+
+**Y hay una razón anterior a la aritmética:** lo que la reapertura entrega **es** el mecanismo.
+`AGENTS.md` §6 define `critico` en este proyecto como «todo cambio en `hooks/`, en `tools/` …, **en el
+banco que los certifica (`tests/`)**, en el workflow de CI o en el ruleset». Las dos piezas de código de
+la reapertura son la **máquina de CA-18** en la autoprueba y el **oráculo del inventario**: no es que
+toquen el mecanismo de pasada, es que son mecanismo. Súmese `Sensible a seguridad: sí`, que impone
+`critico` como **suelo**.
+
+**Conclusión, y por qué no abro entrada en la cola.** El rigor de `REQ-014` **se queda en `critico`** y
+el ciclo completo de la reapertura sigue siendo obligatorio (`desarrollador → qa-tester →
+auditor-seguridad`). No registro pendiente para el propietario porque **no hay decisión pendiente**: la
+excepción delegada es de máquina y sale negativa, y el fail-closed significa precisamente que el nivel se
+queda donde estaba sin que nadie tenga que ratificarlo. El propietario conserva, como siempre, la
+facultad de bajarlo por **autorización expresa**; **no lo recomiendo**, y la medición de arriba es el
+motivo. Yo puedo subir el rigor y no bajarlo: aquí no hay nada que subir, ya está en el techo.
+
+### 2. La aritmética re-derivada por el analista: verificada término a término, y **cuadra**
+
+Medido por lectura de las **45** declaraciones del árbol y replicando la comprobación (b) de la máquina
+con un `awk` propio (los 45 archivos, `nterm ≥ 3`, suma exacta):
+
+- **Pisos** `37/1` = 27+122+312 = **461** ✔ · `37/2` = 33+92+269+74 = **468** ✔ (cuatro términos; la
+  máquina admite `nterm ≥ 3`, así que el cuarto no la rompe) · `38` = 19+36+78 = **133** ✔.
+- **Las 45 derivaciones suman su valor declarado y ninguna sale ILEGIBLE.** Cero discrepancias.
+- **Techos:** `⌈461×1,25⌉` = **577** ✔ · `468×1,25` = **585** ✔ · `38`: `⌈133×1,25⌉` = 167 < 400 ⇒ lo
+  gobierna `N` = **400** ✔. El redondeo **hacia arriba** de la máquina (`(piso×125+99)/100`) coincide.
+- **Frontera derivada:** `⌈piso×1,25⌉ > 400 ⇔ piso ≥ 321`, luego `N` gobierna todo `piso ≤ 320` ✔ (en
+  `piso = 320` hay empate exacto en 400 y `max(…)` lo resuelve por `N`, como dice el REQ).
+- **Reparto:** medido **43** gobernados por `N` y **2** por `piso × k` ⇒ **43 + 2 = 45** ✔. La cifra
+  «42 + 2» que el analista señala en `CHANGELOG.md` es, en efecto, errónea — y **sobrevive en un tercer
+  sitio**, ver `SEC-059`.
+- **Conformidad:** **42 de 45** conformes con `max(…)`; los 3 que exceden son `849>577`, `679>585`,
+  `828>400` ✔ (coincide dígito a dígito con el único FAIL de la autoprueba).
+- **Estrago del `max(…)`:** sólo **13 de 45** cumplirían `líneas ≤ ⌈piso×k⌉` ⇒ 32 rojos, de los que 3 ya
+  lo son ⇒ **29 de los 42 hoy conformes** enrojecerían ✔.
+- **`k` re-derivado:** `565/461 = 1,2256` es el mayor cociente; al siguiente múltiplo de 0,05 ⇒ **1,25**,
+  y por la vía anterior (`564/461 = 1,2234`) también ⇒ **1,25** ✔. `k` **no cambia**, y el REQ tiene
+  razón en que el resultado no depende del `+1`.
+
+**Una sola cifra del write-back no se deriva de sus propios términos: el «≈424» de la sección 38** — es
+`SEC-058`.
+
+### 3. Hallazgos
+
+#### SEC-057 — **El techo de CA-18 lo decide el sujeto: `piso` autodeclarado sin cota superior, y la conformidad se compra editando un comentario** · `instrumento` · severidad **alta** · **abierto**
+
+**Ubicación:** `tests/escenarios/hooks/autoprueba-corredor.sh:93-160` (`ca18_deriva()`) y las **45**
+líneas `PISO_AUTONOMO_SECCION=` de `tests/escenarios/hooks/secciones/`; contrato en
+`requirements/REQ-014.md` CA-18 §«Cómo se obtiene `piso(f)`» y §«Límite honesto».
+
+**Riesgo, medido y no estimado.** El techo de un archivo se deriva de un número que **ese mismo archivo
+escribe sobre sí mismo**, y las cuatro comprobaciones de máquina no acotan ese número por arriba: (a)
+que exista, (b) que sea legible y que los términos **sumen**, (c) que `piso ≤ líneas(f)`. Consecuencia:
+**cualquier archivo se vuelve conforme declarando `piso = ⌈líneas/1,25⌉`**, sin tocar un solo caso.
+
+**Demostrado sobre el código real, no sobre una réplica.** Se extrajo `ca18_deriva()` **verbatim** del
+árbol a `/tmp` (sin escribir nada en el repositorio, sin ejecutar el banco) y se le dieron dos secciones
+sintéticas de **500 líneas cada una**, idénticas salvo su declaración:
+
+```
+01-autocertificado.sh   lineas= 500 piso= 400 techo= 500 (gobierna piso*k)   → CONFORME
+02-piso-honesto.sh      lineas= 500 piso= 133 techo= 400 (gobierna N)        → EXCEDE
+SIN_PISO=[] ILEGIBLE=[] SUMA_MAL=[] PISO_IMPOSIBLE=[]
+```
+
+Mismo archivo, mismo tamaño, veredicto opuesto, y **las cuatro comprobaciones en verde en los dos
+casos**. Aplicado al árbol: `37/1` (849 líneas) sale verde declarando `piso 679`; `38` (828) declarando
+`663`. Es decir: **el único FAIL de la puerta requerida `hooks-en-linux` —el que bloquea la fusión de
+1.33.0— se retira editando tres comentarios**, con la autoprueba entera en verde y sin que ninguna
+puerta grite. CA-18 (ii) prohíbe por nombre las dos formas conocidas de apagar la señal
+(`continue-on-error`, sacar CA-18 del CI); **esta tercera no está nombrada y es más barata que las dos**.
+
+**Clase, y la tensión que lleva dentro.** Se declara **`instrumento`** por la letra de `AGENTS.md` §6
+—un defecto de un guardián del propio arnés—, así que **no bloquea** el cierre de REQ-014 y va a deuda
+con dueño. Queda dicho que la clasificación es discutible en este REQ concreto, porque aquí el
+instrumento **es** el entregable; si QA o el propietario la leen como `contrato`, la reclasificación no
+necesita hallazgo nuevo.
+
+**Es la clase que este repositorio ya midió tres veces**, y por eso no se trata como sorpresa:
+`QA-021-10` («el testigo lo escribe la propia sonda»), `QA-021-01` (`2N/N = 2000`) y la lección de
+`CA-03 (a.4)` de REQ-021 — *quien escribe el instrumento diseña el control que sabe pasar*—, con su
+reparto de sedes: la **forma** la fija el criterio, el **valor** lo obtiene el juez, la **acreditación**
+la ejerce quien no escribió la sonda. CA-18 hoy deja las tres en el sujeto.
+
+**Remediación exigida, por propiedad y no por lista.**
+1. **Control de procedimiento, aplicable YA y sin código** (es lo que gobierna la partición pendiente
+   del punto 3 de `docs/ESTADO.md`): el verde de CA-18 **no acredita** que un archivo quepa bajo su
+   techo. La entrada de Historial de la partición debe registrar, **por archivo nuevo**, sus `líneas` y
+   su derivación **término a término**, y esa derivación la **verifica quien no la escribió**. Sin eso,
+   `CA-31 (a)` se cumpliría con una firma que el propio instrumento puede emitirse.
+2. **Write-back del criterio** (dueño `analista-requerimientos`): el «Límite honesto» de CA-18 declara
+   hoy **un** término no verificable («bloque indivisible mayor») y describe la exposición como «un piso
+   inflado **afloja** el techo». Medido, **los tres términos** son autodeclarados y la propiedad real es
+   más fuerte: *existe un valor declarable que hace conforme a cualquier archivo, con todas las
+   comprobaciones en verde*. Un límite que se describe más pequeño que su medición envejece **hacia el
+   lado que abre** (`requirements/README.md` §«Cómo se escribe un criterio que no se desmiente»).
+3. **Propiedad que el mecanismo debe cumplir cuando se ataque** (dueño `desarrollador`, ventana a
+   decidir; **no** en 1.33.0 salvo decisión del propietario, porque es cambio del mecanismo):
+   *el valor del que depende el techo de un archivo no puede provenir únicamente de ese archivo*. La
+   forma concreta no se prescribe aquí; se anota que `ca18_deriva()` **ya calcula** una magnitud
+   independiente del sujeto (las líneas duplicadas) y hoy la publica sin compararla.
+
+**Dueño:** `desarrollador` (mecanismo) + `analista-requerimientos` (write-back del criterio).
+**Vencimiento:** el write-back (punto 2) y el control de procedimiento (punto 1), **antes de que la
+partición pendiente se dé por acreditada**; el punto 3, cierre de **1.34.0**.
+
+#### SEC-058 — **El «≈424 líneas» de la sección 38 no se deriva de los términos que el propio árbol declara: son ≈442, y la cifra está subestimada** · `contrato` · severidad **media** · **abierto**
+
+**Ubicación:** `requirements/REQ-014.md` CA-18 (ii) («las dos mitades autónomas salen a ≈**424** líneas
+cada una»), repetido en §«Notas / alcance» y en la fila de Historial del 2026-09-08.
+
+**Riesgo.** CA-18 (ii) enuncia correctamente la regla —«partir **no reparte** las líneas: cada archivo
+nuevo **duplica** el preámbulo —la declaración del piso incluida— y la maquinaria compartida»— y acto
+seguido la aplica mal a su propia instancia. Con los términos que `38-sondas-compartidas.sh:18` declara,
+el coste de duplicación por archivo extra es `19 preámbulo + 36 maquinaria = **55**`, luego dos mitades
+suman `828 + 55 = 883` y **la mayor no baja de ≈442**, no de ≈424. Verificado además por estructura: el
+preámbulo (líneas 1-19) y los ayudantes compartidos de la sección (`num38`, `UTILES38`, `INST38`) los
+necesitan **las dos** mitades. El **424** sólo sale de contar como duplicado el preámbulo y **no** la
+maquinaria (`(828+20)/2 = 424`), que es exactamente el error que la regla acaba de prohibir.
+
+**La conclusión del write-back NO cambia y conviene decirlo:** `38` **necesita tres archivos**; con 442
+el caso es más fuerte, no más débil (`442 > 424 > 400`), y con tres el reparto queda en
+`(828 + 2×55)/3 ≈ **313**` por archivo, holgado bajo 400. Lo que falla es la cifra publicada, y falla
+**hacia el lado que abre**: quien lea «≈424 contra un techo de 400» puede intentar recortar 24 líneas y
+caber en dos: trabajo perdido y una segunda vuelta roja en la puerta requerida.
+
+**Remediación:** write-back del analista corrigiendo la cifra a **≈442** (o retirándola y dejando la
+**propiedad** —`m` es el menor entero tal que existe reparto con `líneas(p) ≤ max(N, piso(p)×k)`—, con la
+duplicación citada al único sitio donde vive: la declaración de la propia sección). **Dueño:**
+`analista-requerimientos`. **Vencimiento:** antes de que el `desarrollador` ejecute la partición, porque
+es su plan de trabajo.
+
+#### SEC-059 — **«42 de 45» sobrevive en un TERCER sitio, y es código: el comentario de la máquina que publica la tabla que lo desmiente** · `instrumento` · severidad **baja** · **abierto**
+
+**Ubicación:** `tests/escenarios/hooks/autoprueba-corredor.sh:558`; y `CHANGELOG.md:23` y `:250`.
+
+El write-back del analista corrigió el reparto a **43 + 2** en el REQ y anotó que `CHANGELOG.md` escribió
+«42 + 2». Medido, la cifra desmentida vive además **dentro de la máquina**, en el comentario que introduce
+el par discriminante de CA-18 («la de N para los archivos de piso pequeño (42 de 45 el 2026-09-08)») —a
+tres líneas de la función que **publica la tabla** de la que sale el 43—. Es la forma de `SEC-054`: un
+texto firmado que la propia medición del árbol desmiente, y el analista no puede tocarlo porque es código.
+**Remediación:** el `desarrollador`, en la comisión de la partición (que ya toca ese archivo), sustituye
+la cifra por la propiedad —el reparto lo publica `ca18_deriva()` en cada corrida— o la fecha como
+medición. **Dueño:** `desarrollador`. **Vencimiento:** cierre de **1.33.0**.
+
+#### SEC-060 — **REQ-014 reabierto conserva en su cabecera los veredictos `QA: aprobado` y `Seguridad: aprobado` de 1.32.0, y ninguna puerta los caduca** · `contrato` · severidad **alta** · **abierto**
+
+**Ubicación:** `requirements/REQ-014.md` cabecera (`Estado: en-progreso`, `QA: aprobado`,
+`Seguridad: aprobado`); `.arnes/config.json` → `veredictos.exigir_fecha: false`,
+`veredictos.caducan_con_codigo: false`.
+
+**Riesgo.** `AGENTS.md` §9 (REGLA DE ESTADO) dice que un REQ `completado` que cambia **re-recorre el
+ciclo**. La reapertura se hizo —el `Estado:` volvió a `en-progreso`— pero **los dos veredictos se
+quedaron en `aprobado`**, y desde entonces el árbol ganó el commit `9809fc2` (399 líneas de instrumento).
+Con `veredictos.caducan_con_codigo` en `false`, `guard-completado` **acepta** un `aprobado` anterior al
+código que juzga: el día que los dos `contrato` de la cabecera se cierren o reclasifiquen, `REQ-014`
+podría pasar a `completado` **acreditado por firmas que no miraron este árbol** — una de ellas mía. Hoy la
+exposición es **latente**, no viva, porque `DEV-014-01`/`DEV-014-02` (`contrato`) ya deniegan el cierre; se
+escribe precisamente porque el bloqueo que la tapa es accidental y no la puerta que debería medirla.
+Es además la **regresión de seguridad silenciosa** que este registro existe para detectar: el bloque
+derivado de `docs/ESTADO.md` publica hoy `REQ-014 · aprobado · aprobado` sobre trabajo sin validar.
+
+**Remediación (barata, sin código):**
+1. `QA:` y `Seguridad:` de `REQ-014` vuelven a **`pendiente`** —el veredicto de 1.32.0 no se borra: queda
+   en el Historial del REQ y en `R-004`/`R-006` de este registro—. El `Seguridad:` lo pongo yo en esta
+   revisión, con su valor real: **`con-hallazgos`**. `QA:` **no es mío**: lo restablece el
+   `analista-requerimientos` en el write-back, o `qa-tester` al emitir el suyo.
+2. `CA-31` ya exige veredictos **posteriores al 2026-09-08**; eso es prosa y **ninguna máquina lo mide**.
+   Encender `veredictos.caducan_con_codigo` lo haría medible, pero es **cambio de `.arnes/config.json`**
+   ⇒ **gate humano** (`AGENTS.md` §6) y tiene coste medido: los REQ ya firmados **sin fecha** no volverían
+   a cerrar hasta re-validarse. Se **propone al propietario**, no se hace; y no abro entrada en la cola
+   por esto, porque no bloquea nada hoy.
+
+**Dueño:** `analista-requerimientos` (punto 1, campo `QA:`) · **PROPIETARIO** (punto 2, si se decide).
+**Vencimiento:** el punto 1, **antes** de que QA emita su veredicto de la reapertura.
+
+#### SEC-061 — **La numeración de este registro tiene un hueco: `R-005` se cita siete veces y ninguna sección lo lleva** · `instrumento` · severidad **baja** · **mitigado en esta revisión**
+
+**Ubicación:** `docs/seguridad/registro-seguridad.md:1190` (encabezado «Re-verificación de R-004 …») y
+las citas de `R-005` en `:1426`, `:1427`, `:1431`, `:1507`, `:1567`, `:1576`, `:1586`, `:1587`.
+
+**Riesgo.** Verificado: los identificadores `SEC-001…SEC-056` son **contiguos y sin hueco** (56 únicos; los
+que aparecen más de una vez son re-verificaciones que reusan su id a propósito) y las revisiones van
+`R-001…R-017` **sin hueco en las citas** — pero la sección que ocupa el lugar de `R-005` se tituló
+«**Re-verificación de R-004**». Siete citas posteriores la nombran `R-005`, incluida la línea base de
+no-regresión «los siete controles de R-004/R-005», y un auditor que compare el estado aprobado contra
+este registro **no puede localizar por número** la sección que se le cita. Es exactamente la función que
+`AGENTS.md` §«Regresión de seguridad» le asigna a esta bitácora.
+
+**Mitigación, aplicada aquí y sin reescribir historia** (los hallazgos y las revisiones no se borran ni se
+retitulan): **`R-005` ≡ la sección «Re-verificación de R-004 — cierre de hallazgos, candidata 1.32.0
+(`cand/1.32.0`) — 2026-09-06»** (línea 1190). Toda cita de `R-005` en este archivo resuelve ahí. **Y la
+regla para adelante, que es lo que evita la repetición:** toda revisión —también una re-verificación—
+**abre con su número** `R-0NN` en el encabezado. **Dueño:** `auditor-seguridad`. **Estado:** `mitigado`.
+
+**Numeración vigente tras esta revisión:** última revisión **R-018**; último hallazgo **SEC-061**;
+próximos libres **R-019** y **SEC-062**.
+
+### 4. Regresión de enforcement: no hay
+
+`hooks/`, `tools/`, `.github/` y `.arnes/config.json` **no cambian** entre `2af89a9` y `b79c6cc`: el
+commit `9809fc2` toca sólo `tests/`, `docs/` y `CHANGELOG.md`. Sigue vigente la medición de `R-017`:
+`hooks/` es el mismo objeto de árbol que firmó `R-012`. Ningún control acreditado en `R-001…R-017` se ha
+debilitado en este worktree, y no se detecta ninguna otra desaparición de control aprobado.
+
+### 5. Estado de seguridad aprobado por REQ — actualización de R-018
+
+| REQ | Veredicto | Fecha | Alcance | Nota |
+|---|---|---|---|---|
+| **REQ-014** (reapertura 1.33.0) | **`con-hallazgos`** | 2026-09-08 | `work/req014-codex` @ `b79c6cc` + write-back sin comitear | **NO firmo `aprobado`, y por dos motivos independientes.** (1) **Orden**: `QA` no ha validado el código de la reapertura (`9809fc2`) — el `QA: aprobado` de la cabecera es de 1.32.0, `SEC-060`—, y por `AGENTS.md` §6 mi firma acreditaría un árbol sin validar; **tampoco es `preventiva`**, porque el código ya existe. (2) **Sustancia**: `SEC-057` (`instrumento`, alta) mide que el verde de CA-18 lo puede comprar el sujeto, y `SEC-058` (`contrato`) que una cifra del criterio no se deriva de sus términos. **Rigor: se queda en `critico`** — la excepción de `autoalojamiento.md` falla **2 de 3** condiciones por medición (§1) y `Sensible a seguridad: sí` impone `critico` como suelo. Lo aprobado en **1.32.0** (`R-004`, `R-006`) **no se retira**: cubre el árbol de entonces y **no cubre** `9809fc2`. |
+
+**Hallazgos que esta revisión deja abiertos en `REQ-014`:** `SEC-057` (`instrumento`), `SEC-058`
+(`contrato`), `SEC-059` (`instrumento`), `SEC-060` (`contrato`). `SEC-061` es de este registro y queda
+`mitigado`. **Los cuatro anteriores del REQ —`H-03`, `H-07`, `H-12`, `SEC-019`, todos `instrumento`— no
+se tocan, no se cierran y no se reclasifican**, y tampoco `DEV-014-01`/`DEV-014-02`, cuyo cierre o
+reclasificación es de **QA**.
+
+**Y lo que esta revisión NO miró, tabulado como NO MIRADO y nunca como PASA:** el oráculo de CA-12 en
+`inventario.sh` (su propiedad, sus tres negativos y la dirección de su error) más allá de comprobar que
+existe donde el REQ dice; los criterios de REQ-014 fuera de CA-12/CA-13/CA-14/CA-18; las quality gates
+(no son mías, `AGENTS.md` §6); y el banco completo, que no se ejecutó en esta comisión.
