@@ -2,6 +2,79 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · Una condición de escalada que sólo existía en el REQ al que beneficiaba: SEC-052, y REQ-023 sale de 1.33.0 por decisión del propietario
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (write-back de REQ-023) y `auditor-seguridad` (R-014, Opus).
+
+### Lo que decidió el propietario
+
+Con el coste de REQ-023 ya medido —**cuatro comisiones en serie** tras REQ-021: cata del desarrollador,
+implementación, QA con una vuelta dev↔QA **por diseño** y auditoría—, el propietario decidió que
+**1.33.0 se publica sin REQ-023**, que pasa a **1.34.0**. No es un incumplimiento de ningún
+vencimiento: el de SEC-047 es el cierre de **1.34.0**, así que meterlo en 1.33.0 había sido un
+**adelanto**, y desandar un adelanto no incumple nada.
+
+### `SEC-052` — `contrato`, media: el REQ citaba al auditor una cláusula que el auditor no emitió
+
+`requirements/REQ-023.md:450-452` y `:566` afirmaban que el auditor había dejado dicho que **SEC-047
+sube a `contrato` si 1.33.0 cierra sin REQ-023**. No existe. El auditor lo trazó con
+`git log --all -S`: la frase aparece en **un solo commit**, `721cb71` —el borrador de REQ-023 mismo—, y
+el blob de R-012 donde nació SEC-047 ya decía **1.34.0**. Su registro nunca dijo otra cosa, y el propio
+REQ-023 se desmiente en su línea 431.
+
+**Son dos cosas falsas, no una,** y por la segunda la clase es `contrato` y no `instrumento`: *(i)* la
+atribución, y *(ii)* la consecuencia de máquina —«un `contrato` abierto bloquea el cierre de la
+ventana»—. `guard-completado` lee el campo `Hallazgos abiertos:` **del REQ que se cierra**, no un
+barrido del proyecto: bloquea el REQ que lo declara, y lo que devuelve la publicación al propietario es
+la gobernanza (`docs/gobernanza/autoalojamiento.md`), no la puerta.
+
+**La forma, que es lo reutilizable:** una condición de escalada que sólo vive en el documento cuyo
+aplazamiento castiga **no es un forzador, es un argumento con la firma de otro**. Es la misma familia
+que ya se había medido tres veces en REQ-021 —quien escribe el instrumento diseña el control que sabe
+pasar—, aquí aplicada a un forzador en vez de a una sonda.
+
+**Enmienda del auditor para no dejar la escalada colgada de una fecha** (R-014 §4): la mitad (1) de
+SEC-047 sube a `contrato` en la primera de tres — que 1.34.0 cierre sin ella; que **deje de ser
+latente** (se mida el carácter en la cabecera de algún REQ, de cualquier árbol o de la historia); o que
+**un texto firmado empiece a prometer la propiedad y no el carácter** mientras el código guarde sólo el
+CR. Formas no exhaustivas, manda la propiedad. Y explícito: **la ventana en que el propietario decida
+hacer el trabajo no la sube.**
+
+### Y una afirmación de la coordinadora que la medición desmiente
+
+Al presentar la decisión se dijo que publicar sin REQ-023 «publica una ventana más una promesa falsa en
+`AGENTS.md` §6 y §13». **R-013 §2 ya había medido que no:** cerrar la vía del carácter **no cierra la
+clase**, porque el comentario y el borrado siguen abiertos; las filas son falsas **desde `v1.30.3`**, en
+cinco versiones, de forma **latente** (ningún REQ de toda la historia llevó un carácter invisible en
+cabecera). Y en sentido contrario: si se aplaza, la fila del CR de §13 **no** se reescribe —CA-10 es de
+REQ-023— y sigue nombrando el CR, que es exactamente lo que el árbol tiene. **Aplazar deja §13 igual de
+honesta.** La decisión no cambia; el motivo con que se presentó estaba inflado.
+
+### Write-back de REQ-023 (`analista-requerimientos`)
+
+- **`SEC-051` va aparte, a REQ-024**, y no por tamaño: `hooks/lib.sh:1577-1583` declara **por escrito**
+  la frontera con `arnes_cola_pendientes` y deja escrito el precio de cruzarla — unificar la noción de
+  cita cambia el **conteo** de la cola, que es un cambio de **veredicto** de la puerta, que es un cambio
+  del contrato de REQ-009 (`completado`) **sin ADR**. Verificado leyendo el código.
+- **`CA-12` nuevo, y es lo más valioso de la comisión:** la noción de cita de la cabecera gana **no más
+  de 0** transcripciones; `arnes_cola_pendientes` cuenta y devuelve **exactamente igual** antes y
+  después; y ningún artefacto del REQ afirma que la clase quede cerrada. Existe porque la deriva es
+  **previsible**: quien implemente REQ-023 estará editando esa misma función en la misma ventana con
+  SEC-051 sugiriéndole unificar, y hacerlo «de paso» es cambio de alcance sin ADR.
+- **Seis enumeraciones corregidas.** El REQ llevaba **cinco** listas de dos campos y un «un solo sitio»
+  seguido de dos sitios. La propiedad de CA-02 se **deriva midiendo** —campo de cabecera cuya ausencia
+  la puerta resuelve del lado que abre— y el recuento va al Historial, nunca al criterio.
+- **La frontera de CA-11 estaba medida falsa** y se habría desmentido sola el día que QA la probara:
+  decía «¿el documento lo declara **en letra**?», y bajo esa letra `<!-- Sensible a seguridad: sí -->`
+  declara en letra. Reescrita por propiedad: *¿la retirada la decide una regla contratada del lector, o
+  no la decide nadie?*
+
+### Deuda del auditor descargada en la misma revisión
+
+La remediación (2) de SEC-047 estaba escrita **por enumeración de dos campos** cuando la superficie
+medida son cuatro. Queda reescrita **por propiedad** (R-014 §5). `docs/seguridad/gobernanza-datos.md` no
+cambia y **ningún estado de seguridad aprobado se mueve**: la línea base de no-regresión de REQ-017
+sigue siendo R-012.
+
 ## [GitHub] — 2026-09-08 · QA vuelta 1 de REQ-021: la tautología sobrevivió a la reducción de alcance, y esta vez el testigo lo escribe la sonda
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
 

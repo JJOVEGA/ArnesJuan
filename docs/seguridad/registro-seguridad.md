@@ -4174,3 +4174,221 @@ ni que las **cinco versiones publicadas** anteriores a 1.32.1 se comporten igual
 gobiernan hoy, y la conducta que las explica (el perdón de la ausencia) es anterior a los niveles de
 rigor, así que **es de esperar** que estén afectadas, pero *esperar* no es *medir* y aquí no lo he
 medido.
+
+---
+
+## Revisión R-014 — **consulta de trazabilidad sobre SEC-047** (no es auditoría de ningún REQ; no firma nada) — 2026-09-08
+
+**Qué se preguntó.** `requirements/REQ-023.md` me atribuye **dos veces** una cláusula de escalada que
+la coordinadora no encuentra en este registro: que la mitad (1) de **SEC-047** sube a `contrato` si la
+ventana **1.33.0** cierra sin ella (`requirements/REQ-023.md:451` y `:566`).
+
+**Esto no firma nada, y hay que decirlo antes que el resultado.** No he tocado la línea `Seguridad:`
+de ningún REQ —REQ-023 sigue `borrador` con `Seguridad: pendiente`, REQ-021 en su vuelta de QA—, ni
+`AGENTS.md`, ni `PENDING_APPROVAL.md`, ni ningún archivo de `requirements/`. Lo único que escribo es
+este registro, que es mío.
+
+### 1. La cláusula NO existe en este registro, y nunca existió
+
+**Método: barridos y historia, no recuerdo.**
+
+1. **Único condicional de escalada de SEC-047 en este registro:** `docs/seguridad/registro-seguridad.md:3682-3685`
+   — «*Forzador:* es el primer trabajo de 1.34.0 … *Vencimiento:* el cierre de 1.34.0. Si **1.34.0**
+   cierra sin esto, vuelve a la mesa **subido a `contrato`**». Dice **1.34.0**, no 1.33.0.
+2. **Nunca dijo otra cosa.** `git log --all -S` sobre esa frase devuelve **un solo** commit,
+   `bbe3209` (R-012, 2026-09-07), y en **ese blob** la línea ya decía 1.34.0. No hay una versión
+   anterior que REQ-023 pudiera estar citando de buena fe.
+3. **Dónde nace la frase que me la atribuye:** `git log --all -S "SEC-047 sube a"` y
+   `-S "el auditor dejó dicho"` devuelven, cada uno, **un único** commit: `721cb71` («REQ-023
+   (borrador)», 2026-09-08, `analista-requerimientos`). La cláusula aparece por primera vez **en el
+   documento que se beneficia de ella**, no en el mío.
+4. **Ningún otro artefacto la contiene.** Barrido de `cierra sin|cerrara sin|cierre sin` en todos los
+   `*.md` del árbol: las escaladas condicionales que existen son la de SEC-047 (**1.34.0**, línea
+   3684), la de SEC-051 (**1.34.0**, línea 4143) y la del residual del bloque derivado (1.33.0, línea
+   2614 — otro hallazgo). `SEC-047` fuera de `*.md`: **cero**. En mensajes de commit: los tres que ya
+   se conocen (`bbe3209`, `721cb71`, `8333464`), ninguno con esa condición.
+5. **Y REQ-023 se desmiente a sí mismo 20 líneas antes:** `requirements/REQ-023.md:431` — «*el
+   vencimiento que SEC-047 se fijó a sí mismo es el cierre de **1.34.0***». Ésa es la lectura correcta
+   de este registro; la de `:451` y `:566` no.
+
+**Veredicto: el tercero de los tres resultados posibles. No emití esa cláusula** — ni en R-012, donde
+nació SEC-047, ni en R-013, que es la única revisión posterior que lo toca y que se limitó a subir el
+forzador de su **mitad (2)** dejando dicho, literal, que «*sigue `abierto`, sigue `instrumento` …
+sigue severidad crítica*» (línea 3993). No hay hueco en el barrido de la coordinadora: no hay nada que
+encontrar.
+
+**Y la estructura importa tanto como el hecho.** Una condición de escalada que sólo vive en el
+documento cuyo aplazamiento castiga **no es un forzador: es un argumento con la firma de otro**. Es la
+misma forma que este registro ya lleva nombrada dos veces —quien escribe el instrumento diseña el
+control que sabe pasar (SEC-045)—, aquí aplicada al calendario en vez de a la prueba. No le atribuyo
+intención al analista: la frase parece la contracción de un hecho real (**el propietario metió REQ-023
+en 1.33.0**, `CHANGELOG.md:816`) con una consecuencia que nadie declaró (que salirse de 1.33.0 cambie
+la clase). Pero una contracción así, dentro de un contrato, se convierte en cita **firmada** en la
+ventana siguiente.
+
+### 2. Forzador y vencimiento REALES de la mitad (1) de SEC-047, tal como los sostengo hoy
+
+| Qué | Valor vigente | Dónde está escrito |
+|---|---|---|
+| Clase | **`instrumento`** (defecto de un guardián del propio arnés, `AGENTS.md` §6) | líneas 3633 y 3993 |
+| Severidad | **crítica** (no es lo mismo que bloqueante: la clase decide el bloqueo, la severidad no) | 3633, 3993 |
+| Estado | **abierto** | 3993 |
+| Dueños | `analista-requerimientos` (el criterio) y `desarrollador` (la guarda) | 3633 |
+| **Forzador** | **el primer trabajo de 1.34.0, por delante del núcleo por estado** | 3683-3684 |
+| **Vencimiento** | **el cierre de 1.34.0** | 3684 |
+| **Escalada** | sube a `contrato` **si 1.34.0 cierra sin ella** — y por eso: entonces `AGENTS.md` §13 describiría una guarda que el árbol no tiene en la extensión que promete | 3684-3685 |
+
+**Que REQ-023 esté en 1.33.0 es una decisión del propietario del 2026-09-08** (`CHANGELOG.md:816`,
+`docs/PLAN.md:94-99`, `docs/ESTADO.md:12-16`), tomada **adelantando** el trabajo respecto a mi
+vencimiento. Adelantar por decisión de quien manda no crea un vencimiento nuevo, y desandar el
+adelanto no incumple ninguno.
+
+### 3. La pregunta operativa: si REQ-023 se aplaza a 1.34.0, ¿cambia la clase, bloquea 1.33.0, o nada?
+
+**Respuesta a la clase, que es lo que `guard-completado` mira: sigue `instrumento`. Aplazar no la
+cambia.** Y desgloso los tres sentidos de «bloquear», porque se confunden y sólo uno lo mide la
+máquina:
+
+- **(a) Puerta de cierre de un REQ (máquina): no bloquea nada, ni hoy ni si se aplaza.**
+  `hooks/guard-completado.sh:486-527` lee **el campo `Hallazgos abiertos:` del REQ que se está
+  cerrando**, no un barrido del proyecto. SEC-047 está declarado en **un solo** campo de cabecera de
+  todo el árbol —`requirements/REQ-017.md:9`, como `instrumento`— y REQ-017 ya está `completado`. Aun
+  si SEC-047 fuera `contrato` mañana, no habría ninguna transición que denegar en 1.33.0: sólo
+  impediría **volver a cerrar** REQ-017 si algo lo reabriera. Por eso la frase de `REQ-023:451` —«un
+  hallazgo `contrato` abierto **bloquea el cierre de la ventana**»— dice también algo falso **sobre lo
+  construido**: la puerta bloquea el cierre de **un REQ que lo declara**, no de una ventana.
+- **(b) Publicación delegada (gobernanza, no máquina): la decisión ya no es automática, y no por
+  SEC-047.** `docs/gobernanza/autoalojamiento.md:148-155` exige, para que la coordinadora fusione,
+  etiquete y publique sin preguntar, que los hallazgos abiertos sean «*sólo de clase `instrumento`,
+  con dueño*». Con SEC-047 en `instrumento` eso se cumple. Lo que **no** se cumple es otra cosa que
+  nace de R-013 y es independiente de REQ-023: **SEC-050 está abierto y es `contrato`**. Aplico la
+  lectura acotada a la ventana (si el criterio se leyera global, la delegación estaría muerta desde
+  hace dos ventanas por SEC-014/SEC-020/SEC-033/SEC-038…045), y con esa lectura SEC-050 —hallazgo
+  sobre REQ-016, publicado en 1.32.1, enrutado a 1.34.0— **no es de esta ventana**; lo dejo dicho
+  porque la frontera de ese criterio no está escrita y la decisión de publicar es del propietario,
+  no mía.
+- **(c) Lo que 1.33.0 publica: aplazar REQ-023 no empeora la promesa publicada, y está medido.**
+  El argumento de subir la clase por «publicar una promesa falsa una ventana más» supone que cerrar
+  REQ-023 la haría verdadera. **R-013 §2 mide que no** (línea 3890): «*cerrar la vía del carácter
+  (REQ-023) no cierra la clase, porque el comentario y el borrado siguen abiertos*». Las filas de
+  `AGENTS.md` §6/§13 que hoy son falsas siguen siéndolo con REQ-023 dentro —eso es SEC-050, `contrato`,
+  1.34.0— y son falsas **desde `v1.30.3`**, en cinco versiones publicadas, de forma **latente** (ningún
+  REQ de toda la historia llevó jamás un carácter invisible en cabecera: líneas 3626-3629). Y en la
+  dirección contraria: si REQ-023 se aplaza, la fila del CR de `AGENTS.md` §13 **no** se reescribe
+  (CA-10 es suya) y sigue nombrando el CR, que es exactamente lo que el árbol tiene. Aplazar deja §13
+  **igual de honesta**, no menos.
+
+**Lo que sí cambiaría si se aplaza, y no es de clase sino de concentración:** 1.34.0 quedaría con
+SEC-047 (1) y (2), las tres remediaciones de SEC-050, SEC-051, SEC-045 y SEC-048 **todos con
+vencimiento en su cierre**. Eso no bloquea nada hoy y no lo convierto en veto; lo pongo por escrito
+porque una ventana con siete vencimientos simultáneos es la forma en que un vencimiento deja de
+significar algo, y quien decide es el propietario.
+
+**Efecto colateral en la letra de REQ-023 que el analista tiene que rehacer, no sólo borrar.** El
+argumento **3** de «por qué SEC-051 no entra aquí» (`REQ-023:564-569`) se apoya en que los dos
+vencimientos son de ventanas distintas. Con los reales —**1.34.0 los dos**— ese argumento no tiene
+fuerza: no hay vencimiento holgado que importar dentro de uno que no puede resbalar. Los otros dos
+(son tres cosas de naturaleza distinta; el coste marginal no es de dos líneas) se sostienen solos y
+bastan. Quien haga el write-back debe **rederivar o retirar** el 3, no sustituir «1.33.0» por
+«1.34.0», que lo dejaría diciendo lo contrario de lo que argumenta.
+
+### 4. La cláusula de escalada, reescrita por PROPIEDAD (enmienda a R-012, y la bitácora no se edita hacia atrás)
+
+Mi cláusula de R-012 está atada a **una fecha**, y una escalada atada a una sola fecha es una
+enumeración con los mismos años que cualquier otra: envejece hacia el lado que abre en cuanto pasa
+algo que no es el calendario. La reescribo por propiedad. **Ésta es la vigente**; la de la línea 3684
+queda superada por ella y **no la reescribo en su sitio**, porque esta bitácora no se edita hacia
+atrás (misma práctica que R-013 §6).
+
+> **La mitad (1) de SEC-047 sube a `contrato` cuando ocurra cualquiera de estas tres, y la primera que
+> ocurra manda** (formas **no exhaustivas** de las dos últimas; la propiedad es la que decide, no la
+> lista):
+> 1. **1.34.0 cierra sin ella** (la de R-012, intacta).
+> 2. **Deja de ser latente:** se mide un carácter no representable en la cabecera de cualquier REQ de
+>    cualquier árbol o de la historia, o un cierre que pasó por esa vía. Entonces no es deuda de
+>    instrumento: es un cierre contaminado.
+> 3. **Un texto firmado empieza a prometer la PROPIEDAD y no el carácter** mientras el código siga
+>    guardando sólo el CR —en `AGENTS.md` §6/§13, en `templates/AGENTS.md.tpl`, en la skill de
+>    migración o en un criterio de aceptación cerrado—. Es la razón que ya daba la cláusula de R-012,
+>    liberada de la fecha: lo que la dispara es **la promesa**, no el almanaque.
+>
+> **Y lo que NO la sube, dicho para que no vuelva a inventarse:** en qué ventana decida el propietario
+> hacer el trabajo. Adelantar el arreglo no crea vencimiento y desandar el adelanto no incumple
+> ninguno.
+
+### SEC-052 — `contrato` · **abierto** · severidad **media** · dueño `analista-requerimientos`
+
+**REQ-023 cita, dos veces y como hecho externo, una cláusula de escalada que el auditor nunca emitió — y la consecuencia de máquina que le atribuye tampoco existe**
+
+- **Ubicación:** `requirements/REQ-023.md:450-452` («*Si **1.33.0 cerrara sin él**, el auditor dejó
+  dicho que **SEC-047 sube a `contrato`** … y un hallazgo `contrato` abierto **bloquea el cierre** de
+  la ventana*») y `:566` («*La mitad (1) de `SEC-047` escala a `contrato` si cierra **1.33.0** sin
+  ella*»).
+- **Qué es falso, y son dos cosas distintas.** *(i)* La **atribución**: la cláusula no existe en este
+  registro ni existió nunca (§1 de esta revisión, con la historia). *(ii)* La **consecuencia de
+  máquina**: `guard-completado` no bloquea «el cierre de una ventana»; bloquea la transición de **un
+  REQ cuyo propio campo `Hallazgos abiertos:` declara** el hallazgo (`hooks/guard-completado.sh:486-527`),
+  y SEC-047 sólo está declarado en la cabecera de REQ-017, ya `completado`. Por *(ii)* la clase es
+  `contrato` y no `instrumento`: el REQ dice algo falso **sobre lo construido**
+  (`requirements/README.md:116`), igual que SEC-050, cuyo defecto es también de **alcance de la
+  descripción** y no de conducta.
+- **Riesgo, y no es el error en sí.** Es que la frase **fabrica un forzador**. Si REQ-023 cerrara
+  llevándola, la atribución quedaría **firmada** y la ventana siguiente la leería como una decisión de
+  seguridad; cualquier discusión sobre aplazar el REQ tendría enfrente un bloqueo inventado con la
+  firma del auditor, que es precisamente la asimetría que ningún documento debería poder darse a sí
+  mismo. Y en la dirección contraria es igual de caro: quien descubra que la cláusula no existe puede
+  concluir que **ninguna** de las condiciones de este registro es fiable.
+- **Remediación (write-back, `analista-requerimientos`).**
+  1. **Retirar la atribución** en `:450-452` y `:566`. El forzador y el vencimiento reales son los de
+     la tabla de §2, y la cláusula vigente es la de §4 de esta revisión; si REQ-023 quiere citarla,
+     que cite **este registro con su línea**, no un recuerdo.
+  2. **Corregir la consecuencia de máquina** allí donde se afirme: un hallazgo `contrato` bloquea el
+     cierre del **REQ que lo declara en su cabecera**; lo que devuelve al propietario la publicación de
+     una ventana es el criterio de `docs/gobernanza/autoalojamiento.md:148-155`, que es **gobernanza y
+     no puerta**.
+  3. **Rederivar o retirar el argumento 3** de «por qué SEC-051 no entra aquí» (motivo en §3 de esta
+     revisión). Sustituir la fecha sin tocar el argumento lo deja diciendo lo contrario.
+  4. **Y una regla de redacción que sale de aquí, para el README de requerimientos si el analista la
+     ve general:** un REQ no declara la clase, el forzador ni el vencimiento de un hallazgo de
+     seguridad; los **cita** con archivo y línea. Un contrato que reescribe de memoria la condición que
+     lo obliga acaba escribiéndose la que le conviene, y nadie lo nota porque suena a cita.
+- **Efecto en el cierre.** `contrato`, así que **bloquea el cierre de REQ-023** hasta el write-back
+  (`requirements/README.md:116`) — y sólo el de REQ-023: no toca REQ-017 ni REQ-021, no toca ninguna
+  quality gate y no es motivo de veto de la ventana. *Forzador:* **no firmo `Seguridad:` de REQ-023
+  mientras la atribución esté en el documento**; es la aplicación literal de `AGENTS.md` §9 con los
+  papeles invertidos —aquí no falta el write-back de un hallazgo, sobra una cláusula que nadie emitió—.
+  *Vencimiento:* **antes del cierre de REQ-023, en la ventana en que ocurra**; si REQ-023 se aplaza, el
+  hallazgo se aplaza con él, porque su daño se materializa al firmar. *Coste:* dos frases y un
+  párrafo rederivado.
+- **No reabro nada.** REQ-023 está en `borrador` y ningún REQ `completado` cita la cláusula: barrido de
+  `SEC-047` en todos los `*.md` (§1, punto 4). No hay cierre contaminado.
+
+### 5. Deuda propia que esta revisión descarga: la remediación (2) de SEC-047, dicha por propiedad
+
+R-013 dejó anotada como **mía** la corrección de mi propia remediación (2), que estaba escrita **por
+enumeración de dos campos** cuando la superficie medida son cuatro (tabla de líneas 3893-3902). La
+escribo aquí por propiedad, y con esto esa fila de la tabla de deudas de R-013 queda **descargada**:
+
+> **Remediación (2) de SEC-047, vigente.** *Ningún campo de cabecera cuya **ausencia** el lector
+> resuelva del lado que **abre** puede seguir resolviéndose así: la puerta debe distinguir «declarado
+> vacío» de «no declarado», y ante «no declarado» no permitir —la misma doctrina que ya rige el rango
+> de cita (`hooks/lib.sh:1571-1575`)*. **Qué campos tienen hoy esa propiedad se DERIVA del lector, no
+> se lista en el criterio**, y la lista exhaustiva vive en **un solo sitio**, que hoy son **dos
+> funciones y hay que decirlo así**: `hooks/guard-completado.sh` (`QA:`, `Hallazgos abiertos:`) y
+> `hooks/lib.sh` (`arnes_sens_efectiva`, `arnes_rigor_efectivo`: `Sensible a seguridad:` y `Rigor:`) —
+> unificarlas es parte de la remediación de SEC-050. Ejemplos **no exhaustivos** de la superficie
+> medida el 2026-09-08: `Sensible a seguridad:`, `QA:`, `Hallazgos abiertos:`, `Rigor:`.
+
+### Rigor y estado de los REQ — R-014
+
+**No subo ni bajo el rigor de ningún REQ, y no firmo ninguno.** REQ-023 ya es `Rigor: critico` con
+`Sensible a seguridad: sí`, que es su suelo; no hay nada que subir y nada se baja. No hay líneas
+`QA:` ni `Seguridad:` tocadas por esta revisión, y **ningún estado de seguridad aprobado cambia**: la
+línea base de no-regresión sigue siendo la de R-012 para REQ-017 y la de R-009/R-008 para lo anterior.
+
+**Lo que esta revisión acredita y lo que NO.** *Acredita:* que la cláusula de escalada atribuida al
+auditor no existe en este registro y nunca existió, medido por barrido del árbol y por historia de
+git; que el forzador y el vencimiento vigentes de la mitad (1) de SEC-047 son los de la tabla de §2; y
+que la clase de SEC-047 **no** depende de en qué ventana se haga el trabajo. *No acredita:* ninguna
+quality gate (no las miro); ningún REQ, en particular **ni REQ-023 ni REQ-021**; ni el código de
+1.33.0, que se auditará en su turno, después de QA.
