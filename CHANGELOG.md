@@ -123,6 +123,34 @@ Archivos: `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-ca
 `tests/escenarios/hooks/README.md`, `.github/workflows/banco.yml`, `docs/PENDIENTES.md`,
 `docs/qa/1.33.0.md`, `requirements/REQ-017.md`.
 
+## [Interno] — 2026-09-07 · CA-05: la guarda pasa de inerte a discriminadora, y por qué eso NO es relajarla
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
+
+**Write-back de deriva sobre `CA-05` (c).** La guarda exigía que la corrida heredada «produjera al menos
+un caso — su salida existe y no está vacía», y en este corredor **la salida no existe hasta que todas
+las secciones terminan**: una corrida matada por `timeout` deja 0 bytes **siempre**. Ahora contrata el
+**recuento de casos que dejó escritos mientras corría** —la sonda le fija la raíz de ese trabajo antes
+de lanzarla—, con las fuentes marcadas **no exhaustivas** y con puntero al sitio único, *porque lo que
+se contrata es el recuento, no dónde se lee*. El `1` se declara **de contrato**: es la definición de
+«esta corrida midió», no una magnitud ajustable. Referencias medidas: **37** casos matada a los 12 s,
+**0** si no arranca.
+
+**MENOR, y el argumento es el que impide leerlo como una relajación:** *la versión anterior no era
+estricta, era **inerte** — nunca podía dar PASS. Sustituir un always-SKIP por un discriminador real
+(0 vs 37) **aumenta** la capacidad de fallar, no la reduce.* La propiedad contratada no cambia
+—«un plazo agotado por una corrida que no arrancó no acota nada»—; cambia el observable.
+
+**Y el origen del error, que es reutilizable:** el hallazgo de QA proponía el remedio como «que la
+heredada haya producido al menos un caso **o** que su salida exista y no esté vacía», y el write-back
+de la vuelta 1 **tomó la glosa por la señal**, sin comprobar que en este corredor la salida no existe
+hasta el final.
+
+**Dos residuales con dueño y vencimiento**, ninguno bloquea: el **acoplamiento** entre la guarda y la
+disposición en disco del corredor —falla **cerrado y ruidoso**, dueño `desarrollador`, forzador el
+primero de REQ-014 o REQ-021 que entre— y la **resolución de la sonda de CA-09** con dos árboles
+idénticos (SKIP/FAIL/PASS en tres corridas), que **no muerde hoy** porque el banco compara contra el tag
+congelado con márgenes 1,25–3,40×; dueño **SEC-030**.
+
 ## [Interno] — 2026-09-07 · REQ-017 vuelta final implementada: CA-08 deja de ser flaky, y CA-05 nombra una señal que no existe
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador`.
 
