@@ -196,17 +196,22 @@ Tres reglas nacidas de fallos reales:
 | Cita | los dos lectores (`lib.sh` y `campos-req.awk`) sobre el mismo documento | valores idénticos |
 | `arnes-lectura` | la línea decorada que gobierna un campo | se nombra, rc **0** |
 | `arnes-lectura` | dos declaraciones del mismo campo y gobierna la decorada | anomalía + rc ≠ 0 |
-| Coste (37/1) | el escáner de cabecera contra v1.32.1 sobre 214 entradas con semilla fija | estado **idéntico byte a byte** |
+| Coste (37/1) | el escáner **dentro del dominio de equivalencia**, línea a línea y en secuencia | estado **idéntico byte a byte** a v1.32.1 |
+| Coste (37/1) | el corpus (320 entradas, semilla fija): fronteras nombradas **y** la clase de byte inválido | si el corpus la **pierde**, **FAIL** |
+| Coste (37/1) | **fuera** del dominio: la decisión de este árbol, k=6 por locale | determinista **e invariante al locale** |
+| Coste (37/1) | **fuera** del dominio: esa decisión contra el **oráculo** (la heredada bajo `LC_ALL=C`) | **coincide**; sin esto (i) la cumpliría una constante |
+| Coste (37/1) | **fuera** del dominio: lo que la heredada incumple bajo el locale del entorno | se **registra** (fail-before) y **no falla** por ello |
 | Coste (37/1) | doblar la longitud de línea (70 000 → 140 000 bytes) | cociente ≤ **2,6** (lineal ≈ 2) |
 | Coste (37/1) | el mismo cociente **contra v1.32.1** | > 2,6 — la sonda distingue el defecto |
 | Coste (37/1) | el camino de campo contra el de v1.32.0 (140 000 bytes sin CR) | razón ≤ **2,0×** |
 | Coste (37/1) | la sonda sin línea base, o bajo el suelo de 50 ms | **SKIP con motivo**, nunca PASS |
-| Coste (37/1) | el tamaño en que el hook alcanza los 60 s, en los tres árboles | se **mide y se imprime** (SEC-030) |
+| Coste (37/1) | la pared de los 60 s, **pareada** con v1.32.1 en la misma corrida (2 pasadas por árbol) | este árbol **no menor**; rangos que **solapan** ⇒ SKIP |
 | Coste (37/2) | la sección 32 aislada, **sólo con `ARNES_COSTE_RUTA_CRITICA=1`** | la heredada **no termina** en 4 × mín(este árbol) ⇒ reloj ≤ **0,25×** |
 | Coste (37/2) | las 3 corridas cronometradas de este árbol, entre sí | **mismo inventario** caso→veredicto |
 | Coste (37/2) | una corrida del numerador que termina **en rojo** (rc ≠ 0) o sin casos | **no cuenta como medición**: SKIP con motivo, nunca PASS |
-| Coste (37/2) | la heredada muerta por **señal** (137), o un `124` que el reloj no corrobora | **SKIP con motivo**; sólo `124` **+ reloj ≥ plazo** demuestra la cota |
-| Coste (37/2) | una cabecera normal (6 líneas y 200 líneas) contra v1.32.1 | **0 procesos añadidos y** reloj ≤ **1,25×** |
+| Coste (37/2) | la heredada muerta por **señal** (137), un `124` que el reloj no corrobora, o un `124` **sin un solo caso** | **SKIP con motivo**; sólo `124` **+ reloj ≥ plazo + casos** demuestra la cota |
+| Coste (37/2) | una cabecera normal (6 líneas y 200 líneas) contra v1.32.1, **6 series intercaladas** por árbol | **0 procesos añadidos y** reloj ≤ **1,25×** |
+| Coste (37/2) | la misma sonda cuando **no converge** (2.º mínimo / mínimo > 1,25×) | **SKIP**, nunca PASS y nunca FAIL |
 | Coste (37/2) | una sección sintética que deja un proceso vivo | el corredor la **acusa por su nombre** |
 
 **Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
@@ -216,6 +221,65 @@ materializada desde su tag en la misma corrida**; el estadístico es el **mínim
 repeticiones, nunca la media, porque la carga sólo puede **añadir** tiempo. La metodología completa
 —y el caso medido que la obligó— está en `requirements/README.md`, forma **(d)**: «fijar la
 magnitud equivocada».
+
+### La equivalencia se afirma sobre un DOMINIO, y la partición se mide en cada corrida
+
+`ADR-004`. Bajo un locale UTF-8, la eliminación de sufijo **con patrón** de v1.32.1
+(`${l%$'\r'}`) no se comporta byte a byte sobre secuencias multibyte inválidas: ahí «el estado de
+la heredada» **no designa un objeto único** —depende del locale—, y una igualdad contra él no está
+definida hasta decir bajo cuál. Por eso 37/1 **clasifica** cada entrada del corpus en la propia
+corrida, con una sola pasada que alimenta a los dos criterios:
+
+| Clase | Cómo se decide (con la **heredada sola**, k = 6 por locale) | Qué se contrata |
+|---|---|---|
+| **dentro** | publica **un único y el mismo estado** en las k del locale del entorno **y** en las k de `LC_ALL=C` | **igualdad byte a byte** de los cuatro valores |
+| **fuera** | falla el determinismo **o** la invariancia de locale | **la dirección** contra el oráculo, sólo la decisión |
+| **no clasificable** | tampoco publica una decisión única bajo `LC_ALL=C` | nada: un oráculo que no repite no es un oráculo ⇒ **SKIP** |
+
+Tres cosas que no son detalles de implementación:
+
+1. **La partición se calcula sin haber mirado este árbol.** Las dos evaluaciones de la heredada van
+   primero en el archivo, y sólo después las de este árbol. Un dominio definido como «donde los dos
+   árboles coinciden» haría un criterio que **no puede fallar**.
+2. **El oráculo es `LC_ALL=C`**, y no por comodidad: ahí la heredada **es** la pregunta byte a byte,
+   así que es el único sitio donde existe un valor «correcto» contra el que medir. Este árbol la
+   implementa en **todos** los locales, luego los dos divergen **exactamente** donde la heredada se
+   aparta de su propia semántica.
+3. **La asimetría FALLA / SKIP es deliberada.** Si el **corpus** pierde la clase de byte inválido,
+   los cinco casos del dominio **FALLAN** —y eso se comprueba sobre el corpus, sin depender de la
+   máquina—; si es la **máquina** la que no tiene el defecto (otra versión de bash, o un locale del
+   entorno que ya sea `C`/`POSIX`, donde el conjunto de fuera es vacío **por construcción**), dicen
+   **SKIP citando bash, locale y los recuentos**, nunca PASS. Un corpus estrechado es trabajo
+   retirado y tiene que doler; una máquina sin el defecto es falta de sujeto, y poner rojo ahí acaba
+   con alguien apagando el caso.
+
+Medido aquí (bash 5.3.9, `C.UTF-8`, corpus de 320 entradas): **dentro 312 · fuera 8 · no
+clasificables 0**, con **0** divergencias dentro, **0** violaciones de este árbol fuera, y la
+heredada incumpliendo la invariancia de locale en **7 de 8** y el determinismo en **0–1**.
+
+### Una sonda declara su RESOLUCIÓN antes de juzgar, o se abstiene
+
+Vale para las dos sondas comparativas de esta sección, y nace de un rojo medido, no de una
+precaución. **CA-08 (ii)** corre en la **puerta requerida de `main`**: con las series en **bloque**
+(este entero, luego el heredado entero) cada árbol ve vecinos distintos, y la contención que el
+propio banco fabrica con `JOBS=6` se cuela entera en la razón — **1 de cada 4** vueltas completas
+salía roja con `load` 0,91 al arrancar, sobre un estimando que en aislamiento vale ≈ 1,0. Por eso:
+
+- las series se **intercalan** (a, b, a, b, …), **6 por árbol**, estadístico el **mínimo**;
+- y en la misma corrida se comprueba que ese mínimo **convergió**: `2.º mínimo / mínimo` de **cada**
+  árbol contra **el propio techo** (1,25× — no es un número nuevo: *un instrumento tiene que
+  resolver al menos el factor que vigila*). Si lo supera, **SKIP citando las dos convergencias y la
+  razón que sí obtuvo**, nunca PASS y **nunca FAIL**.
+
+La misma regla, con la forma que le toca, en la **pared de los 60 s**: dos pasadas por árbol
+intercaladas y comparación **por rangos** — se afirma la dirección si el peor de este árbol supera
+al mejor de v1.32.1, se niega si el mejor queda por debajo del peor, y **si los rangos se solapan
+el caso se abstiene**. Con una sola pasada por árbol salía **rojo 1 de cada 6** sin que existiera
+regresión: la dispersión de esa sonda es un factor ~3,7 sobre el mismo árbol y su arreglo es de
+**SEC-030**, no de REQ-017. Lo que sí es de aquí es **declarar que no resuelve** en vez de firmar.
+
+**La abstención no tapa una regresión real:** una regresión sube los dos mínimos del árbol nuevo por
+igual y **no** separa su serie de sí misma; lo que separa una serie de sí misma es el vecino.
 
 **La comparación contra la ruta crítica NO corre por defecto, y ese defecto está medido al revés
 que el resto del banco.** Corriéndola en cada vuelta, la sección 37/2 cuesta ~120 s —~76 s de ellos
@@ -228,7 +292,7 @@ medir la evolución de este árbol y envejece hacia el lado que abre. La vigilan
 que habría visto H-07.
 
 Por eso se enciende a mano con **`ARNES_COSTE_RUTA_CRITICA=1`** (por defecto **apagada**: 37/2 baja
-de ~120 s a ~12 s, y a ~76 s encendida). Apagada, sus dos casos dicen **SKIP citando el número
+de ~120 s a ~14 s, y a ~76 s encendida). Apagada, sus dos casos dicen **SKIP citando el número
 acreditado y su fecha**, nunca PASS. El resto de 37/2 —CA-08 y las dos mitades de CA-06— corre
 siempre.
 
@@ -259,11 +323,21 @@ la vuelta 0 no hacía** (QA-017-03 y QA-017-04, cerrados en la vuelta 1):
    apretado. El PASS exige ahora **dos instrumentos de acuerdo**: `timeout` diciendo 124 y el reloj
    de pared ≥ plazo. Cualquier otra muerte es **SKIP con motivo** — no un FAIL: que la heredada
    muriera no prueba que sea rápida.
+3. **Y el plazo agotado sólo acota si esa corrida produjo algún caso** (QA-017-09). El arreglo de la
+   vuelta 1 preguntó «¿esta corrida midió?» **sólo al numerador**; sobre el denominador bastaba con
+   `rc = 124` y el reloj. Una heredada que **se cuelga sin imprimir un caso** —o cuyo archivo de
+   salida ni siquiera existe— agota el plazo y publicaba «≤ 0,250× — **DEMOSTRADO**». Hay precedente
+   en esta misma ventana: el árbol heredado extraído **sin bit de ejecución** no arrancaba el
+   corredor hijo; allí *terminaba* y caía en SKIP, pero un **bloqueo** —un hook esperando en
+   `stdin`, un cerrojo, un `read` sin `</dev/null`— lo convierte en vencimiento. **Una corrida que
+   no midió no es una corrida lenta**, igual que una corrida rota no es una corrida rápida.
 
-Las dos decisiones viven en funciones **puras** (`valida47`, `veredicto47`) y por eso el banco las
-prueba **siempre**, con entradas sintéticas y en milisegundos, aunque la comparación de 76 s esté
-apagada: una puerta que sólo se ejerce cuando alguien enciende una palanca es una puerta de la que
-nadie sabe si cierra.
+Las tres decisiones viven en funciones **puras** (`caso47`, `valida47`, `veredicto47`,
+`veredicto08_47`) y por eso el banco las prueba **siempre**, con entradas sintéticas y en
+milisegundos, aunque la comparación de 76 s esté apagada: una puerta que sólo se ejerce cuando
+alguien enciende una palanca es una puerta de la que nadie sabe si cierra. Y con la de convergencia
+el argumento es aún más fuerte: en una corrida sana la sonda **converge**, así que el camino que
+importa —la abstención— no se recorrería nunca.
 
 ## Por qué importa
 - La distinción coordinadora vs. subagente se apoya en el campo `agent_id` del input del hook

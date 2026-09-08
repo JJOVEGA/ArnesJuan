@@ -13,11 +13,17 @@
 # máquina por construcción. Y el estadístico es el MÍNIMO de k repeticiones, nunca la
 # media: la carga sólo puede AÑADIR tiempo, así que el mínimo es la mejor estimación del
 # coste real y la media es una mezcla de coste y de vecinos.
-CASOS_ESPERADOS_SECCION=9
+CASOS_ESPERADOS_SECCION=13
 seccion_nueva "--- 37/1 · el coste del escáner: escala, equivalencia y la pared de los 60 s (REQ-017) ---"
 
 REPO37="$(cd "${SEC_DIR%/}/../../../.." 2>/dev/null && pwd || true)"
 CR37=$'\r'
+# El contexto de la máquina viaja EN EL MENSAJE de cada caso del dominio, y no es adorno:
+# la partición dentro/fuera de CA-01 depende de la versión de bash y del locale, así que un
+# SKIP que no los nombre no se puede distinguir de un verde vacío (CA-01, CA-10).
+LOC37="${LC_ALL:-${LC_CTYPE:-${LANG:-(sin declarar)}}}"
+CTX37="bash $BASH_VERSION, locale del entorno $LOC37"
+num37() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
 
 # --- Árboles heredados: la línea base se materializa, no se supone --------------
 # Sin `tar` ni `git archive`: `git show` archivo a archivo, que es lo que hay en toda
@@ -101,14 +107,40 @@ razon37() {
   fi
 }
 
-# ---------- CA-01 · LA EQUIVALENCIA, POR COMPARACIÓN DIFERENCIAL ----------
+# ---------- CA-01 Y CA-10 · EL CORPUS ÚNICO Y LA PARTICIÓN QUE SE MIDE EN LA CORRIDA ----
 # No se enumeran salidas esperadas a mano: se corre la implementación de este árbol y la
-# heredada sobre el MISMO corpus y se comparan sus estados BYTE A BYTE. Enumerar a mano
-# es cómo se escribe una prueba que acredita lo que el autor creía, no lo que la función
-# hace. El corpus vive AQUÍ y sólo aquí (CA-01), con semilla fija para que el CI repita
-# la misma corrida, y lleva ADEMÁS las fronteras nombradas: si el azar no las produce,
-# están igual.
+# heredada sobre el MISMO corpus y se comparan sus estados BYTE A BYTE. Enumerar a mano es
+# cómo se escribe una prueba que acredita lo que el autor creía, no lo que la función hace.
+# El corpus vive AQUÍ y sólo aquí (CA-01), con semilla fija para que el CI repita la misma
+# corrida, y lleva ADEMÁS las fronteras nombradas: si el azar no las produce, están igual.
+#
+# PERO LA EQUIVALENCIA NO SE AFIRMA SOBRE TODA ENTRADA, Y ESO ES EL CRITERIO, NO UNA COARTADA
+# (`ADR-004`). Bajo un locale UTF-8 la eliminación de sufijo CON PATRÓN de la heredada no se
+# comporta byte a byte sobre secuencias multibyte inválidas: ahí «el estado de la heredada»
+# NO DESIGNA UN OBJETO ÚNICO —depende del locale—, así que una igualdad contra él no está
+# definida hasta decir bajo cuál. El DOMINIO DE EQUIVALENCIA es el conjunto de entradas
+# sobre las que la heredada publica UN ÚNICO Y EL MISMO estado en k evaluaciones bajo el
+# locale del entorno Y k bajo `LC_ALL=C`: determinismo E invariancia de locale, las dos, y
+# basta que falle una para quedar fuera. Lo de fuera no se deja sin contratar: se contrata
+# APARTE, en CA-10, como DIRECCIÓN contra un ORÁCULO —la heredada bajo `LC_ALL=C`, único
+# sitio donde existe un valor correcto contra el que medir—.
+#
+# LA PARTICIÓN SE CALCULA CON LA HEREDADA SOLA, Y ESO ES PARTE DEL CRITERIO. Un dominio
+# definido como «las entradas donde los dos árboles coinciden» convierte CA-01 en un criterio
+# que NO PUEDE FALLAR, y un criterio que no puede fallar no es una puerta. Por eso el orden de
+# aquí abajo no es estilo: las dos evaluaciones de la HEREDADA van primero, la partición se
+# calcula con ellas y sólo DESPUÉS se evalúa este árbol.
+#
+# Y EL CORPUS NO SE ESTRECHA HASTA QUE LA CLASE DESAPAREZCA — que es la forma de verde que
+# esta ventana persigue (QA-017-02, y la alternativa D de `ADR-004`). El alfabeto del
+# generador lleva fichas de byte >= 0x80 que NO forman UTF-8 válido, y hay además un bloque
+# SISTEMÁTICO —el corpus que QA midió— para que la clase no dependa del azar. Si el corpus la
+# PIERDE, los casos FALLAN; si es la MÁQUINA la que no tiene el defecto, dicen SKIP. La
+# asimetría es deliberada: un corpus estrechado es trabajo retirado y tiene que doler; una
+# máquina sin el defecto es falta de sujeto, y poner rojo ahí acaba con alguien apagando el
+# caso.
 CORPUS37="$RAIZ/corpus37-$BASHPID"
+BINV37=$'\xc3\x5c\x0d\x5d\x0d'   # la línea exacta de QA-017-01: c3 5c CR ] CR
 {
   printf '%s\n' ''                               # línea vacía
   printf '%s\n' "$CR37"                          # sólo el carácter
@@ -124,72 +156,370 @@ CORPUS37="$RAIZ/corpus37-$BASHPID"
   printf '%s\n' '<!-- rango que abre'
   printf '%s\n' 'dentro del rango'
   printf '%s\n' 'y aquí --> Seguridad: aprobado'
+  printf '%s\n' "$BINV37"                        # byte multibyte inválido y CR interior
+  # EL BLOQUE SISTEMÁTICO, y por qué no basta con el azar: la clase que separa las dos
+  # mitades de este REQ tiene que estar en el corpus SIEMPRE, no cuando la semilla quiera.
+  # Son las 7 cabezas × 5 colas × 3 prefijos que QA midió (QA-017-01): `c3a9` está entre las
+  # cabezas a propósito —es UTF-8 VÁLIDO— para que el corpus no confunda «multibyte» con
+  # «inválido», que son la propiedad de la máquina y la propiedad que aquí importa.
+  for _pre37 in '' 'Estado: ' 'QA: '; do
+    for _cab37 in $'\xc3' $'\xc3\x5c' $'\xe2' $'\xf0' $'\xc3\xa9' $'\xff' $'\xc3\x5c\x0d\x5d'; do
+      for _col37 in $'\x0d' $'\x0d\x5d\x0d' $'\x5d\x0d' $'\x0d\x0d' ''; do
+        printf '%s\n' "$_pre37$_cab37$_col37"
+      done
+    done
+  done
   RANDOM=20260907   # semilla fija: el CI repite la misma corrida
   for _i37 in $(seq 1 200); do
     _l37=''; _n37=$(( RANDOM % 40 ))
     for _j37 in $(seq 0 "$_n37"); do
-      case $(( RANDOM % 8 )) in
-        0) _l37+="$CR37" ;;   1) _l37+='<!--' ;;  2) _l37+='-->' ;;
-        3) _l37+='Estado: ' ;; 4) _l37+='x' ;;    5) _l37+=' ' ;;
-        6) _l37+='<!' ;;      *) _l37+='--' ;;
+      case $(( RANDOM % 12 )) in
+        0) _l37+="$CR37" ;;    1) _l37+='<!--' ;;  2) _l37+='-->' ;;
+        3) _l37+='Estado: ' ;; 4) _l37+='x' ;;     5) _l37+=' ' ;;
+        6) _l37+='<!' ;;       7) _l37+='--' ;;
+        # Las cuatro fichas de la clase, TAMBIÉN en el azar: sin ellas el generador produce
+        # 200 líneas que acreditan la equivalencia sobre el caso fácil (QA-017-02).
+        8) _l37+=$'\xc3' ;;    9) _l37+=$'\xc3\x5c' ;;
+        10) _l37+=$'\xff' ;;   *) _l37+=$'\xe2' ;;
       esac
     done
     printf '%s\n' "$_l37"
   done
 } > "$CORPUS37"
 
-DIF37="$RAIZ/dif37-$BASHPID.sh"
-cat > "$DIF37" <<'DIF37FIN'
-LIB="$1"; CORPUS="$2"; MODO="$3"
+# ¿EL CORPUS CONSERVA LA CLASE? Se le pregunta AL CORPUS, byte a byte y bajo `LC_ALL=C`, así
+# que la respuesta no depende de la versión de bash ni del locale de la máquina — que es
+# justo lo que CA-01 exige de esta mitad: «se comprueba sobre el corpus, sin depender de la
+# máquina». La gramática de UTF-8 cabe en una expresión regular sobre CLASES de byte: se
+# traduce cada byte a su clase (A = ASCII, c = continuación, 2/3/4 = cabecera de n bytes,
+# X = byte imposible) y una línea es UTF-8 válido si y sólo si su traducción casa
+# `^(A|2c|3cc|4ccc)*$`. Cada `tr` posterior sólo puede tocar bytes >= 0x80, porque el primero
+# ya mandó TODO lo ASCII a la 'A': no hay colisión entre las clases y sus propias letras.
+NINV37="$( LC_ALL=C tr '\000-\011\013-\177' 'A' < "$CORPUS37" \
+         | LC_ALL=C tr '\200-\277' 'c' \
+         | LC_ALL=C tr '\300-\301\365-\377' 'X' \
+         | LC_ALL=C tr '\302-\337' '2' \
+         | LC_ALL=C tr '\340-\357' '3' \
+         | LC_ALL=C tr '\360-\364' '4' \
+         | LC_ALL=C grep -Evc '^(A|2c|3cc|4ccc)*$' || true )"
+FALTA37=''
+for _p37 in "$CR37" "${CR37}Estado" "completado$CR37" "Esta${CR37}do" "<!$CR37--" "<!--$CR37" \
+            "-->" '<!-- rango que abre' "$BINV37" $'\xff' $'\xc3\x5c' $'\xe2' $'\xf0'; do
+  LC_ALL=C grep -qF -- "$_p37" "$CORPUS37" || FALTA37="$FALTA37 <$(printf '%s' "$_p37" | cat -v)>"
+done
+N37="$(grep -c '^' "$CORPUS37" || true)"
+CLASE37_FALTA=no
+{ [ -n "$FALTA37" ] || ! num37 "$NINV37" || [ "$NINV37" -lt 1 ]; } && CLASE37_FALTA=si
+
+# --- El evaluador: k evaluaciones dentro del MISMO proceso ---------------------
+# El no determinismo que aquí se busca aparece ENTRE LLAMADAS, no entre procesos, así que k
+# evaluaciones en procesos distintos no medirían la propiedad que CA-01 nombra. El locale es
+# el del proceso —lo fija quien invoca—, y por eso hay una invocación por locale.
+#
+# NO SE TOCA LO MEDIDO. El estado se imprime CRUDO, sin sustituir ni recortar: escapar aquí el
+# CR con `${l//...}` metería EN EL INSTRUMENTO la misma familia de operación con patrón que
+# hace no determinista a `arnes_norm_clave` (QA-017-07), y entonces la clasificación estaría
+# midiendo la sonda. Quien quiera leerlo lo pasa por `cat -v`, y eso hace el diagnóstico.
+EVA37="$RAIZ/eva37-$BASHPID.sh"
+cat > "$EVA37" <<'EVA37FIN'
+LIB="$1"; CORPUS="$2"; K="$3"; MODO="$4"
 source "$LIB" >/dev/null 2>&1 || { printf 'SIN-LIB\n'; exit 1; }
 declare -F arnes_sin_cita >/dev/null 2>&1 || { printf 'SIN-FN\n'; exit 1; }
-ARNES_CITA=0; ARNES_CR=0; ARNES_CR_LINEA=''; n=0
-while IFS= read -r l || [ -n "$l" ]; do
-  n=$((n+1))
-  [ "$MODO" = indep ] && { ARNES_CITA=0; ARNES_CR=0; ARNES_CR_LINEA=''; }
-  ARNES_LINEA='__sin_tocar__'
-  arnes_sin_cita "$l"
-  printf '%s|cita=%s|cr=%s|linea=<%s>|crlinea=<%s>\n' "$n" "$ARNES_CITA" "$ARNES_CR" "$ARNES_LINEA" "$ARNES_CR_LINEA"
-done < "$CORPUS"
-[ "$n" -gt 0 ] || { printf 'CORPUS-VACIO\n'; exit 1; }
-DIF37FIN
-
-# dif37 <nombre> <modo> — la comparación diferencial de un modo de recorrido.
-dif37() {
-  local nombre="$1" modo="$2" a b n
-  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
-  if [ "$HER37_OK" != si ]; then
-    echo "  SKIP  $nombre  no hay línea base: el tag v1.32.1 no está en este clon"; return 0
-  fi
-  a="$(bash "$DIF37" "$HER37/hooks/lib.sh" "$CORPUS37" "$modo" 2>/dev/null)"
-  b="$(bash "$DIF37" "$LIB37" "$CORPUS37" "$modo" 2>/dev/null)"
-  # Un diferencial sobre dos salidas VACÍAS sale idéntico y no ha comparado nada.
-  if [ -z "$a" ] || [ -z "$b" ]; then
-    echo "  FAIL  $nombre  una de las dos corridas no produjo salida (heredada=${#a} bytes, este árbol=${#b} bytes): no se comparó nada"; FAIL=$((FAIL+1)); return 0
-  fi
-  n="$(printf '%s\n' "$b" | grep -c '^' || true)"
-  if [ "$a" = "$b" ]; then
-    echo "  PASS  $nombre  ($n entradas, estado idéntico byte a byte)"; PASS=$((PASS+1))
-  else
-    echo "  FAIL  $nombre  el estado difiere de v1.32.1:"; FAIL=$((FAIL+1))
-    diff <(printf '%s\n' "$a") <(printf '%s\n' "$b") 2>/dev/null | head -6 | sed 's/^/          /'
-  fi
-}
-dif37 "REQ-017 CA-01 diferencial contra v1.32.1: cada línea por separado (ARNES_LINEA/CITA/CR/CR_LINEA)" indep
-dif37 "REQ-017 CA-01 ...y en secuencia, que es donde el estado de cita y de CR cruza líneas" secuencia
-
-# El corpus tiene que CONTENER las fronteras que CA-01 nombra: un corpus generado que no
-# las produjera dejaría la equivalencia acreditada sobre el caso fácil.
-if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-01 fronteras" | grep -qi -- "$FILTRO"; then
-  falta37=''
-  for _p37 in "$CR37" "${CR37}Estado" "completado$CR37" "Esta${CR37}do" "<!$CR37--" "<!--$CR37" "-->" '<!-- rango que abre'; do
-    grep -qF -- "$_p37" "$CORPUS37" || falta37="$falta37 <$(printf '%s' "$_p37" | cat -v)>"
+n=0
+if [ "$MODO" = indep ]; then
+  # `<n>:<r>:<cita>,<cr>:<ARNES_LINEA>|<ARNES_CR_LINEA>` — los dos primeros campos no pueden
+  # llevar ':' ni ',', así que el resto se recupera entero por muy raro que sea el texto.
+  while IFS= read -r l || [ -n "$l" ]; do
+    n=$((n+1)); r=0
+    while [ "$r" -lt "$K" ]; do
+      r=$((r+1))
+      ARNES_CITA=0; ARNES_CR=0; ARNES_CR_LINEA=''; ARNES_LINEA='__sin_tocar__'
+      arnes_sin_cita "$l"
+      printf '%s:%s:%s,%s:%s|%s\n' "$n" "$r" "$ARNES_CITA" "$ARNES_CR" "$ARNES_LINEA" "$ARNES_CR_LINEA"
+    done
+  done < "$CORPUS"
+else
+  # En SECUENCIA el estado cruza líneas, así que la unidad no es la entrada sino el
+  # RECORRIDO entero: se repite k veces y se dice si el recorrido REPITE, que es la misma
+  # propiedad del dominio aplicada a un documento en vez de a una línea.
+  primera=''; repite=si; r=0
+  while [ "$r" -lt "$K" ]; do
+    r=$((r+1)); n=0; acc=''
+    ARNES_CITA=0; ARNES_CR=0; ARNES_CR_LINEA=''
+    while IFS= read -r l || [ -n "$l" ]; do
+      n=$((n+1)); ARNES_LINEA='__sin_tocar__'
+      arnes_sin_cita "$l"
+      acc+="$n:$ARNES_CITA,$ARNES_CR:$ARNES_LINEA|$ARNES_CR_LINEA"$'\n'
+    done < "$CORPUS"
+    [ "$n" -gt 0 ] || { printf 'CORPUS-VACIO\n'; exit 1; }
+    if [ "$r" -eq 1 ]; then primera="$acc"; elif [ "$acc" != "$primera" ]; then repite=no; fi
   done
-  n37="$(grep -c '^' "$CORPUS37" || true)"
-  if [ -z "$falta37" ] && [ "${n37:-0}" -ge 200 ]; then
-    echo "  PASS  REQ-017 CA-01 fronteras nombradas presentes en el corpus ($n37 entradas, semilla fija)"; PASS=$((PASS+1))
+  printf 'REPITE %s\n' "$repite"
+  printf '%s' "$primera"
+fi
+[ "$n" -gt 0 ] || { printf 'CORPUS-VACIO\n'; exit 1; }
+EVA37FIN
+
+# --- El clasificador: una sola pasada que alimenta a CA-01 Y a CA-10 -----------
+# SE PAGA UNA VEZ. Las dos mitades del dominio necesitan exactamente la misma medición, y
+# hacerla dos veces sería además dos transcripciones de la misma regla, que se desfasan.
+CLA37="$RAIZ/cla37-$BASHPID.sh"
+cat > "$CLA37" <<'CLA37FIN'
+# <her-env> <her-C> <este-env> <este-C> <k> <salida: índices DENTRO>
+HE="$1"; HC="$2"; EE="$3"; EC="$4"; K="$5"; OUT="$6"
+declare -A hed het hcd hct eed eet ecd ect CLASE
+N=0
+carga() {   # <archivo> <array de decisiones> <array de textos>
+  local -n _d="$2" _t="$3"
+  local linea idx s rep dec txt
+  while IFS= read -r linea || [ -n "$linea" ]; do
+    idx="${linea%%:*}"; s="${linea#*:}"
+    case "$idx" in ''|*[!0-9]*) continue ;; esac
+    rep="${s%%:*}"; s="${s#*:}"
+    dec="${s%%:*}"; txt="${s#*:}"
+    _d["$idx $rep"]="$dec"; _t["$idx $rep"]="$txt"
+    [ "$idx" -le "$N" ] || N="$idx"
+  done < "$1"
+}
+
+# --- PASO 1: LA PARTICIÓN, CON LA HEREDADA SOLA -------------------------------
+# Aquí todavía no se ha leído ni un byte de este árbol, y no es una casualidad del orden en
+# que se escribió: es la regla 3 de `ADR-004`. Un dominio que mirase a este árbol para
+# decidir la pertenencia haría de CA-01 un criterio que no puede fallar.
+carga "$HE" hed het
+carga "$HC" hcd hct
+[ "$N" -gt 0 ] || { printf 'VACIO\n'; exit 1; }
+dentro=0; fuera=0; noclas=0; ids=''
+for ((i = 1; i <= N; i++)); do
+  # (a) ¿HAY ORÁCULO? Un oráculo que no repite no es un oráculo: si la heredada tampoco
+  # publica UNA decisión bajo `LC_ALL=C`, la entrada NO ES CLASIFICABLE y se cuenta aparte,
+  # en vez de comparar contra un valor que no existe.
+  o="${hcd[$i 1]-}"; ok=si
+  for ((r = 2; r <= K; r++)); do [ "${hcd[$i $r]-}" = "$o" ] || { ok=no; break; }; done
+  if [ "$ok" != si ]; then CLASE[$i]=noclas; noclas=$((noclas + 1)); continue; fi
+  # (b) ¿UN ÚNICO Y EL MISMO ESTADO en las 2k evaluaciones? Las dos propiedades a la vez:
+  # que repita (determinismo) y que decida lo mismo en los dos locales (invariancia).
+  e0="${hed[$i 1]-}:${het[$i 1]-}"; ok=si
+  for ((r = 1; r <= K; r++)); do
+    [ "${hed[$i $r]-}:${het[$i $r]-}" = "$e0" ] || { ok=no; break; }
+    [ "${hcd[$i $r]-}:${hct[$i $r]-}" = "$e0" ] || { ok=no; break; }
+  done
+  if [ "$ok" = si ]; then CLASE[$i]=dentro; dentro=$((dentro + 1)); ids+="$i"$'\n'
+  else CLASE[$i]=fuera; fuera=$((fuera + 1)); fi
+done
+printf '%s' "$ids" > "$OUT"
+
+# --- PASO 2: AHORA SÍ, ESTE ÁRBOL ---------------------------------------------
+carga "$EE" eed eet
+carga "$EC" ecd ect
+ca01div=0; ca01nodet=0; ca10i=0; ca10ii=0; herdet=0; herinv=0; ej01=''; ej10=''
+for ((i = 1; i <= N; i++)); do
+  case "${CLASE[$i]-}" in
+    dentro)
+      # CA-01: este árbol determinista sobre el dominio, y su estado IGUAL byte a byte al de
+      # la heredada — los CUATRO valores, no sólo la decisión.
+      e0="${eed[$i 1]-}:${eet[$i 1]-}"; ok=si
+      for ((r = 2; r <= K; r++)); do [ "${eed[$i $r]-}:${eet[$i $r]-}" = "$e0" ] || { ok=no; break; }; done
+      if [ "$ok" != si ]; then
+        ca01nodet=$((ca01nodet + 1))
+        [ -n "$ej01" ] || ej01="entrada $i: este árbol NO repite dentro del dominio (<$e0> frente a <${eed[$i 2]-}:${eet[$i 2]-}>)"
+      fi
+      h0="${hed[$i 1]-}:${het[$i 1]-}"
+      if [ "$e0" != "$h0" ]; then
+        ca01div=$((ca01div + 1))
+        [ -n "$ej01" ] || ej01="entrada $i: heredada <$h0> · este <$e0>"
+      fi ;;
+    fuera)
+      # CA-10 (i): la DECISIÓN de este árbol, determinista E invariante al locale. Fuera del
+      # dominio NO se contrata el valor del texto (`ARNES_LINEA`, `ARNES_CR_LINEA`): se
+      # construye con las mismas operaciones con patrón de QA-017-07, y contratarlo sería
+      # contratar un defecto ajeno y preexistente.
+      d0="${eed[$i 1]-}"; ok=si
+      for ((r = 2; r <= K; r++)); do [ "${eed[$i $r]-}" = "$d0" ] || { ok=no; break; }; done
+      if [ "$ok" = si ]; then
+        for ((r = 1; r <= K; r++)); do [ "${ecd[$i $r]-}" = "$d0" ] || { ok=no; break; }; done
+      fi
+      if [ "$ok" != si ]; then
+        ca10i=$((ca10i + 1))
+        [ -n "$ej10" ] || ej10="entrada $i: este árbol no decide siempre lo mismo (<$d0> · env <${eed[$i 2]-}> · C <${ecd[$i 1]-}>)"
+      fi
+      # CA-10 (ii): y esa decisión es la DEL ORÁCULO. Sin esto, (i) lo cumpliría también una
+      # implementación que decidiera siempre lo mismo: constante, no correcta.
+      if [ "$d0" != "${hcd[$i 1]-}" ]; then
+        ca10ii=$((ca10ii + 1))
+        [ -n "$ej10" ] || ej10="entrada $i: oráculo <${hcd[$i 1]-}> · este <$d0>"
+      fi
+      # CA-10 (iii): lo que la HEREDADA incumple bajo el locale del entorno. Se REGISTRA y no
+      # se falla por ello: es el fail-before de este criterio, no su puerta.
+      hd0="${hed[$i 1]-}"; ok=si
+      for ((r = 2; r <= K; r++)); do [ "${hed[$i $r]-}" = "$hd0" ] || { ok=no; break; }; done
+      [ "$ok" = si ] || herdet=$((herdet + 1))
+      [ "$hd0" = "${hcd[$i 1]-}" ] || herinv=$((herinv + 1)) ;;
+  esac
+done
+printf 'N %s\nDENTRO %s\nFUERA %s\nNOCLAS %s\nCA01DIV %s\nCA01NODET %s\nCA10I %s\nCA10II %s\nHERDET %s\nHERINV %s\n' \
+  "$N" "$dentro" "$fuera" "$noclas" "$ca01div" "$ca01nodet" "$ca10i" "$ca10ii" "$herdet" "$herinv"
+[ -z "$ej01" ] || printf 'EJ01 %s\n' "$ej01"
+[ -z "$ej10" ] || printf 'EJ10 %s\n' "$ej10"
+CLA37FIN
+
+K37=6   # k >= 3 en CA-01 y CA-10, y es OPERATIVO: se sube con la medición. QA midió con 6.
+EVHE37="$RAIZ/ev37-her-env-$BASHPID"; EVHC37="$RAIZ/ev37-her-c-$BASHPID"
+EVEE37="$RAIZ/ev37-este-env-$BASHPID"; EVEC37="$RAIZ/ev37-este-c-$BASHPID"
+DENTRO37="$RAIZ/ev37-dentro-$BASHPID"; RES37="$RAIZ/ev37-resumen-$BASHPID"
+CORPD37="$RAIZ/corpus37-dentro-$BASHPID"
+declare -A CNT37
+CLAS37_OK=no; CLAS37_MOTIVO=''
+if [ "$HER37_OK" != si ]; then
+  CLAS37_MOTIVO="no hay línea base: el tag v1.32.1 no está en este clon"
+else
+  # LA HEREDADA PRIMERO, LOS DOS LOCALES, Y LA PARTICIÓN SALE DE AHÍ. Sólo después este árbol.
+  bash          "$EVA37" "$HER37/hooks/lib.sh" "$CORPUS37" "$K37" indep > "$EVHE37" 2>/dev/null
+  LC_ALL=C bash "$EVA37" "$HER37/hooks/lib.sh" "$CORPUS37" "$K37" indep > "$EVHC37" 2>/dev/null
+  bash          "$EVA37" "$LIB37"              "$CORPUS37" "$K37" indep > "$EVEE37" 2>/dev/null
+  LC_ALL=C bash "$EVA37" "$LIB37"              "$CORPUS37" "$K37" indep > "$EVEC37" 2>/dev/null
+  if bash "$CLA37" "$EVHE37" "$EVHC37" "$EVEE37" "$EVEC37" "$K37" "$DENTRO37" > "$RES37" 2>/dev/null; then
+    while IFS=' ' read -r _k37 _v37; do CNT37[$_k37]="$_v37"; done < "$RES37"
+    if num37 "${CNT37[N]:-}" && [ "${CNT37[N]:-0}" -gt 0 ]; then CLAS37_OK=si
+    else CLAS37_MOTIVO="el clasificador no devolvió una partición legible"; fi
   else
-    echo "  FAIL  REQ-017 CA-01 al corpus ($n37 entradas) le faltan fronteras:$falta37"; FAIL=$((FAIL+1))
+    CLAS37_MOTIVO='el clasificador no pudo leer las cuatro evaluaciones (¿corpus vacío, o un lib.sh que no carga?)'
+  fi
+fi
+
+# El corpus DENTRO del dominio, en el orden del corpus: es sobre él, y sólo sobre él, sobre
+# el que CA-01 afirma la igualdad byte a byte.
+if [ "$CLAS37_OK" = si ]; then
+  declare -A ESDENTRO37
+  while IFS= read -r _i37; do [ -n "$_i37" ] && ESDENTRO37[$_i37]=1; done < "$DENTRO37"
+  { _n37=0
+    while IFS= read -r _l37 || [ -n "$_l37" ]; do
+      _n37=$((_n37 + 1))
+      [ -z "${ESDENTRO37[$_n37]:-}" ] || printf '%s\n' "$_l37"
+    done < "$CORPUS37"
+  } > "$CORPD37"
+fi
+
+# guarda37 <nombre> — LAS DOS DECISIONES QUE COMPARTEN CA-01 Y CA-10, en un solo sitio:
+# FALLA si el corpus perdió la clase (culpa de este banco, y tiene que doler) y SKIP CITANDO
+# bash, locale y recuentos si es la máquina la que no tiene el defecto (falta de sujeto).
+# Devuelve 1 cuando ya ha emitido veredicto.
+guarda37() {
+  local nombre="$1"
+  if [ "$CLASE37_FALTA" = si ]; then
+    echo "  FAIL  $nombre  el corpus ($N37 entradas) perdió la clase que CA-01 declara: $NINV37 líneas con UTF-8 inválido y faltan${FALTA37:- (ninguna ficha nombrada)}"; FAIL=$((FAIL + 1)); return 1
+  fi
+  if [ "$CLAS37_OK" != si ]; then
+    echo "  SKIP  $nombre  no se pudo clasificar el corpus: ${CLAS37_MOTIVO:-sin motivo} ($CTX37)"; return 1
+  fi
+  if [ "${CNT37[FUERA]:-0}" -eq 0 ]; then
+    echo "  SKIP  $nombre  esta máquina no tiene el defecto — $CTX37; dentro ${CNT37[DENTRO]:-0} · fuera 0 · no clasificables ${CNT37[NOCLAS]:-0} de ${CNT37[N]:-0}. Con locale C/POSIX el conjunto de fuera es vacío POR CONSTRUCCIÓN: el entorno y el oráculo son el mismo locale"; return 1
+  fi
+  return 0
+}
+PART37="dentro ${CNT37[DENTRO]:-0} · fuera ${CNT37[FUERA]:-0} · no clasificables ${CNT37[NOCLAS]:-0} de ${CNT37[N]:-0}"
+ej37() { [ -z "${1:-}" ] || printf '%s\n' "$1" | cat -v | head -3 | sed 's/^/          /'; }
+
+# ---------- CA-01 · LA EQUIVALENCIA, DENTRO DEL DOMINIO ----------
+if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-01 diferencial dentro del dominio" | grep -qi -- "$FILTRO"; then
+  nom37="REQ-017 CA-01 diferencial dentro del dominio: cada línea por separado (ARNES_LINEA/CITA/CR/CR_LINEA)"
+  if guarda37 "$nom37"; then
+    if [ "${CNT37[CA01DIV]:-1}" -eq 0 ] && [ "${CNT37[CA01NODET]:-1}" -eq 0 ]; then
+      echo "  PASS  $nom37  ($PART37; estado idéntico byte a byte y este árbol repite k=$K37)"; PASS=$((PASS + 1))
+    else
+      echo "  FAIL  $nom37  ${CNT37[CA01DIV]:-?} divergencias y ${CNT37[CA01NODET]:-?} no determinismos DENTRO del dominio, donde CA-01 exige 0 ($PART37):"; FAIL=$((FAIL + 1))
+      ej37 "${CNT37[EJ01]:-}"
+    fi
+  fi
+fi
+
+if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-01 en secuencia" | grep -qi -- "$FILTRO"; then
+  nom37="REQ-017 CA-01 ...y en secuencia, que es donde el estado de cita y de CR cruza líneas"
+  if guarda37 "$nom37"; then
+    # EL DOMINIO, APLICADO AL RECORRIDO. La pertenencia se calculó línea a línea con el
+    # estado en cero; en secuencia una línea puede evaluarse con la cita abierta, que es OTRO
+    # camino. Así que la MISMA propiedad se le exige al recorrido entero antes de comparar:
+    # si la heredada no lo repite en los dos locales, el recorrido no está en el dominio.
+    sqhe37="$RAIZ/sq37-her-env-$BASHPID"; sqhc37="$RAIZ/sq37-her-c-$BASHPID"
+    sqee37="$RAIZ/sq37-este-env-$BASHPID"
+    bash          "$EVA37" "$HER37/hooks/lib.sh" "$CORPD37" "$K37" secuencia > "$sqhe37" 2>/dev/null
+    LC_ALL=C bash "$EVA37" "$HER37/hooks/lib.sh" "$CORPD37" "$K37" secuencia > "$sqhc37" 2>/dev/null
+    bash          "$EVA37" "$LIB37"              "$CORPD37" "$K37" secuencia > "$sqee37" 2>/dev/null
+    rhe37=''; rhc37=''; ree37=''
+    IFS= read -r rhe37 < "$sqhe37" || true
+    IFS= read -r rhc37 < "$sqhc37" || true
+    IFS= read -r ree37 < "$sqee37" || true
+    if [ "$rhe37" != 'REPITE si' ] || [ "$rhc37" != 'REPITE si' ] || ! cmp -s "$sqhe37" "$sqhc37"; then
+      echo "  SKIP  $nom37  el RECORRIDO no está en el dominio: la heredada no lo repite igual en los dos locales (env <${rhe37:-vacío}> · C <${rhc37:-vacío}>) — $CTX37, $PART37"
+    elif [ "$ree37" != 'REPITE si' ]; then
+      echo "  FAIL  $nom37  este árbol NO repite el recorrido en k=$K37 pasadas del mismo proceso (<${ree37:-vacío}>)"; FAIL=$((FAIL + 1))
+    elif cmp -s "$sqhe37" "$sqee37"; then
+      echo "  PASS  $nom37  ($PART37; el recorrido de las ${CNT37[DENTRO]:-0} entradas del dominio sale idéntico byte a byte)"; PASS=$((PASS + 1))
+    else
+      echo "  FAIL  $nom37  el recorrido difiere de v1.32.1 dentro del dominio:"; FAIL=$((FAIL + 1))
+      diff "$sqhe37" "$sqee37" 2>/dev/null | cat -v | head -6 | sed 's/^/          /'
+    fi
+    rm -f "$sqhe37" "$sqhc37" "$sqee37"
+  fi
+fi
+
+# El corpus tiene que CONTENER las fronteras que CA-01 nombra Y la clase de la que depende la
+# partición entera: un corpus generado que no las produjera dejaría la equivalencia acreditada
+# sobre el caso fácil, y la mitad de CA-10 sin sujeto para siempre.
+if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-01 el corpus conserva" | grep -qi -- "$FILTRO"; then
+  if [ "$CLASE37_FALTA" != si ]; then
+    echo "  PASS  REQ-017 CA-01 el corpus conserva las fronteras nombradas y la clase que no puede perder ($N37 entradas, $NINV37 con UTF-8 inválido, semilla fija)"; PASS=$((PASS + 1))
+  else
+    echo "  FAIL  REQ-017 CA-01 el corpus ($N37 entradas, $NINV37 con UTF-8 inválido) perdió trabajo:${FALTA37:- ninguna ficha nombrada falta, pero no queda ni una entrada de la clase}"; FAIL=$((FAIL + 1))
+  fi
+fi
+
+# ---------- CA-10 · FUERA DEL DOMINIO SE CONTRATA LA DIRECCIÓN, CONTRA UN ORÁCULO ----------
+# Tres casos, uno por mitad, de la MISMA pasada de clasificación. Cada uno publica bash,
+# locale y el recuento de la partición: ése es el dato con el que un SKIP se distingue de un
+# verde vacío. Un caso que no pueda nombrar su recuento no está midiendo la partición.
+ora37() {   # <nombre> — la guarda del ORÁCULO, además de las dos de `guarda37`
+  local nombre="$1"
+  guarda37 "$nombre" || return 1
+  if [ "${CNT37[NOCLAS]:-0}" -ne 0 ]; then
+    echo "  SKIP  $nombre  ${CNT37[NOCLAS]} entradas NO son clasificables: la heredada tampoco publica una decisión única bajo LC_ALL=C, y un oráculo que no repite no es un oráculo — $CTX37, $PART37"; return 1
+  fi
+  return 0
+}
+if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-10 (i)" | grep -qi -- "$FILTRO"; then
+  nom37="REQ-017 CA-10 (i) fuera del dominio este árbol decide siempre lo mismo, y lo mismo en los dos locales"
+  if ora37 "$nom37"; then
+    if [ "${CNT37[CA10I]:-1}" -eq 0 ]; then
+      echo "  PASS  $nom37  0 de ${CNT37[FUERA]} violaciones de determinismo o invariancia de la DECISIÓN (k=$K37 por locale) — $CTX37, $PART37"; PASS=$((PASS + 1))
+    else
+      echo "  FAIL  $nom37  ${CNT37[CA10I]} de ${CNT37[FUERA]} entradas de fuera en que este árbol no decide siempre lo mismo — $CTX37, $PART37:"; FAIL=$((FAIL + 1))
+      ej37 "${CNT37[EJ10]:-}"
+    fi
+  fi
+fi
+if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-10 (ii)" | grep -qi -- "$FILTRO"; then
+  nom37="REQ-017 CA-10 (ii) ...y esa decisión es la del ORÁCULO: la heredada bajo LC_ALL=C"
+  if ora37 "$nom37"; then
+    if [ "${CNT37[CA10II]:-1}" -eq 0 ]; then
+      echo "  PASS  $nom37  las ${CNT37[FUERA]} entradas de fuera coinciden con el oráculo; sin esta mitad, (i) la cumpliría también una implementación CONSTANTE — $CTX37, $PART37"; PASS=$((PASS + 1))
+    else
+      echo "  FAIL  $nom37  ${CNT37[CA10II]} de ${CNT37[FUERA]} entradas de fuera en que este árbol se aparta del oráculo — $CTX37, $PART37:"; FAIL=$((FAIL + 1))
+      ej37 "${CNT37[EJ10]:-}"
+    fi
+  fi
+fi
+if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-10 (iii)" | grep -qi -- "$FILTRO"; then
+  nom37="REQ-017 CA-10 (iii) fail-before: la heredada bajo el locale del entorno NO cumple (i) o (ii), y se registra sin fallar por ello"
+  if ora37 "$nom37"; then
+    _inc37=$(( ${CNT37[HERDET]:-0} + ${CNT37[HERINV]:-0} ))
+    if [ "$_inc37" -ge 1 ]; then
+      # NUNCA FAIL: lo que la heredada incumpla no es un defecto de este árbol. Y nunca PASS
+      # vacío: si no incumpliera nada, (i) y (ii) las cumpliría cualquier implementación y
+      # este criterio no tendría sujeto — que es falta de sujeto, o sea SKIP.
+      echo "  PASS  $nom37  la heredada incumple el DETERMINISMO en ${CNT37[HERDET]:-0} de ${CNT37[FUERA]} y la INVARIANCIA DE LOCALE en ${CNT37[HERINV]:-0} de ${CNT37[FUERA]}; este árbol, 0 y 0 — $CTX37, $PART37"; PASS=$((PASS + 1))
+    else
+      echo "  SKIP  $nom37  en esta máquina la heredada cumple las dos propiedades sobre las ${CNT37[FUERA]} entradas de fuera: sin incumplimiento no hay fail-before que registrar — $CTX37, $PART37"
+    fi
   fi
 fi
 
@@ -305,42 +635,127 @@ t1=${EPOCHREALTIME/./}
 printf '%s\n' "$((t1-t0))"
 PARED37FIN
 printf '# REQ-900\nEstado: en-revisión\n' > "$PROJ/requirements/REQ-900.md"
-pared37() {   # <dir de hooks> -> imprime el tamaño de los 60 s, o un motivo
+pared37() {   # <dir de hooks> -> imprime los KB extrapolados (rc 0), o el motivo (rc 1)
   # EL COSTE FIJO SE RESTA ANTES DE MEDIR EL ORDEN, y sin eso la sonda MIENTE. A 96 KB el
   # arranque del hook (bash + jq + manifiesto) todavía pesa tanto como el escaneo, así que
   # el cociente de duplicación crudo sale ~1,3 sobre un camino que es cuadrático: la
   # extrapolación resultante colocaba la pared en 4,25 MB donde la medición directa a
   # 256/512/1024 KB la pone en 1,5. Se mide el término que crece —t(n) menos t(0)— que es
   # lo único de lo que depende el orden.
-  local hd="$1" u0 ua ub n=98304
+  #
+  # DEVUELVE UN NÚMERO, NO UN TEXTO CON FORMA DE MB, y eso no es estilo: mientras esta sonda
+  # imprimía «1,60 MB» el caso daba PASS por la FORMA de la cadena y nunca comparó nada
+  # (QA-017-10). Un número se puede comparar con el de al lado; una cadena bonita, no.
+  local hd="$1" u0 ua ub n=98304 kb x
   u0="$(bash "$PARED37" "$hd" "$PROJ" 0            2>/dev/null)"
   ua="$(bash "$PARED37" "$hd" "$PROJ" "$n"         2>/dev/null)"
   ub="$(bash "$PARED37" "$hd" "$PROJ" "$(( n*2 ))" 2>/dev/null)"
-  case "$u0$ua$ub" in ''|*[!0-9]*) printf 'no medible (<%s> <%s> <%s>)' "${u0:-vacío}" "${ua:-vacío}" "${ub:-vacío}"; return 1 ;; esac
+  # Uno a uno y no concatenados: con "$u0$ua$ub" un valor VACÍO desaparece dentro de los
+  # dígitos del vecino y la guarda deja pasar la basura que existe para atrapar.
+  for x in "$u0" "$ua" "$ub"; do
+    num37 "$x" || { printf 'la sonda no devolvió un número (<%s> <%s> <%s>)' "${u0:-vacío}" "${ua:-vacío}" "${ub:-vacío}"; return 1; }
+  done
   if [ "$(( ua - u0 ))" -lt 20000 ] || [ "$(( ub - u0 ))" -le "$(( ua - u0 ))" ]; then
-    printf 'no medible en este rango: a %d KB el coste todavía lo domina el arranque (%.0f ms de %.0f ms)' \
-      "$(( n*2/1024 ))" "$(awk -v x="$u0" 'BEGIN{print x/1000}')" "$(awk -v x="$ub" 'BEGIN{print x/1000}')"
+    printf 'no medible en este rango: a %d KB el coste todavía lo domina el arranque (%d ms de arranque sobre %d ms)' \
+      "$(( n*2/1024 ))" "$(( u0/1000 ))" "$(( ub/1000 ))"
     return 1
   fi
-  awk -v u0="$u0" -v ua="$ua" -v ub="$ub" -v n="$(( n*2 ))" 'BEGIN{
+  kb="$(awk -v u0="$u0" -v ua="$ua" -v ub="$ub" -v n="$(( n*2 ))" 'BEGIN{
     a = ua - u0; b = ub - u0
     p = log(b/a)/log(2)
-    mb = (n * exp(log((60e6 - u0)/b)/p))/1048576
-    if (mb > 1024) printf "> 1 GB (orden medido %.2f, coste casi independiente del tamaño; %.2f s a %d KB)", p, ub/1e6, n/1024
-    else printf "%.2f MB (orden medido %.2f; %.2f s a %d KB, arranque %.2f s)", mb, p, ub/1e6, n/1024, u0/1e6 }'
-}
-if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-09" | grep -qi -- "$FILTRO"; then
-  este37="$(pared37 "$HOOKS_DIR")"
-  her09_37="(sin línea base v1.32.1)"; [ "$HER37_OK" = si ] && her09_37="$(pared37 "$HER37/hooks")"
-  bas09_37="(sin línea base v1.32.0)"; [ "$BAS37_OK" = si ] && bas09_37="$(pared37 "$BAS37/hooks")"
-  echo "          medición CA-09 · tamaño de documento en que el hook alcanza los 60 s (una sola línea de cabecera):"
-  echo "            este árbol : $este37"
-  echo "            v1.32.1    : $her09_37"
-  echo "            v1.32.0    : $bas09_37"
-  case "$este37" in
-    *MB*) echo "  PASS  REQ-017 CA-09 la pared de los 60 s queda MEDIDA y escrita para SEC-030 (no se mueve aquí)"; PASS=$((PASS+1)) ;;
-    *)    echo "  SKIP  REQ-017 CA-09 la pared de los 60 s no se pudo medir: $este37" ;;
+    if (p <= 0.05) { print "ORDEN-PLANO"; exit }
+    kb = (n * exp(log((60e6 - u0)/b)/p))/1024
+    if (kb > 1048576) print "FUERA-DE-RANGO"; else printf "%d", kb }')"
+  case "$kb" in
+    ORDEN-PLANO)    printf 'el orden medido es plano: en este rango el coste no depende del tamaño'; return 1 ;;
+    FUERA-DE-RANGO) printf 'la extrapolación se va por encima de 1 GB: no hay régimen de crecimiento que medir'; return 1 ;;
+    ''|*[!0-9]*)    printf 'la extrapolación no dio un número (<%s>)' "${kb:-vacío}"; return 1 ;;
   esac
+  printf '%s' "$kb"
+}
+
+# LO ÚNICO QUE CA-09 CONTRATA SOBRE LA PARED ES LA DIRECCIÓN, Y PAREADA DENTRO DE SU PROPIA
+# CORRIDA. La MAGNITUD y su dispersión (>= 6 corridas por árbol y rango) son del Historial de
+# REQ-017 y de SEC-030, y aquí no se acreditan: la sonda NO REPITE —1,08 · 1,32 · 1,78 · 2,64
+# · 2,65 · 3,98 MB en seis corridas del mismo árbol (QA-017-05)— y una cifra sin rango no se
+# puede auditar. Lo que sí se sostiene es la dirección. Por eso lo que se publica aquí es una
+# RAZÓN, que es la forma en que este REQ contrata todo lo demás, y no un tamaño.
+#
+# Y LA SONDA DECLARA SU RESOLUCIÓN ANTES DE JUZGAR, POR LA MISMA REGLA QUE CA-08 (ii) Y CON EL
+# MISMO MOTIVO MEDIDO. Con UNA medida por árbol este caso salió ROJO 1 de cada 6 corridas
+# —0,632× sobre un árbol cuya pared está de verdad más lejos, y con la máquina en reposo—,
+# que es un rojo espurio en la PUERTA REQUERIDA de `main` y el camino más corto a que alguien
+# lo apague. La causa no es el arreglo: es la sonda, que es de SEC-030 y cuya dispersión
+# medida es un factor ~3,7 sobre el mismo árbol. Arreglarla NO es de este REQ; declarar que
+# no resuelve, SÍ — y CA-09 lo nombra por su nombre: «si la sonda no converge, SKIP».
+#
+# Por eso se toman DOS medidas por árbol, INTERCALADAS (este, her, este, her) —en bloque los
+# dos árboles ven vecinos distintos, que es la lección de QA-017-06—, y se compara por
+# RANGOS, no por puntos:
+#   * la dirección se afirma sólo si el PEOR de este árbol supera al MEJOR de la heredada;
+#   * se niega sólo si el MEJOR de este árbol queda por debajo del PEOR de la heredada;
+#   * y si los rangos SE SOLAPAN, la sonda no distingue la dirección de su propio ruido y el
+#     caso se ABSTIENE con motivo. Un rojo tiene que significar regresión.
+#
+# Sin `FILTRO` dentro: la decisión se prueba abajo con entradas sintéticas llamándola por otro
+# nombre, y un filtro comprobado aquí dentro dejaría esa prueba muda en cuanto alguien filtre.
+dir09_37() {   # <nombre> <KB este·1> <KB este·2> <KB v1.32.1·1> <KB v1.32.1·2> (o motivos)
+  local nombre="$1" e1="${2:-}" e2="${3:-}" h1="${4:-}" h2="${5:-}" emin emax hmin hmax x
+  for x in "$e1" "$e2"; do
+    num37 "$x" && [ "$x" -gt 0 ] && continue
+    echo "  SKIP  $nombre  la sonda no midió este árbol en las dos pasadas: ${x:-sin motivo}"; return 0
+  done
+  for x in "$h1" "$h2"; do
+    num37 "$x" && [ "$x" -gt 0 ] && continue
+    echo "  SKIP  $nombre  la sonda no midió v1.32.1 al lado, y una comparación pareada necesita las dos: ${x:-sin motivo}"; return 0
+  done
+  if [ "$e1" -le "$e2" ]; then emin="$e1"; emax="$e2"; else emin="$e2"; emax="$e1"; fi
+  if [ "$h1" -le "$h2" ]; then hmin="$h1"; hmax="$h2"; else hmin="$h2"; hmax="$h1"; fi
+  if [ "$emin" -ge "$hmax" ]; then
+    echo "  PASS  $nombre  el PEOR de este árbol vale $(awk -v c=$(( emin * 1000 / hmax )) 'BEGIN{printf "%.3f", c/1000}')× el MEJOR de v1.32.1 medido EN ESTA MISMA corrida (>= 1,000×; los rangos no se solapan, así que la dirección no es ruido). La magnitud es del Historial y de SEC-030"; PASS=$((PASS+1))
+  elif [ "$emax" -lt "$hmin" ]; then
+    echo "  FAIL  $nombre  el MEJOR de este árbol vale $(awk -v c=$(( emax * 1000 / hmin )) 'BEGIN{printf "%.3f", c/1000}')× el PEOR de v1.32.1: la pared BAJÓ en todos los emparejamientos, que es lo contrario de lo único que CA-09 contrata"; FAIL=$((FAIL+1))
+  else
+    echo "  SKIP  $nombre  los rangos de las dos pasadas SE SOLAPAN (este $(awk -v c=$(( emin * 1000 / hmax )) 'BEGIN{printf "%.3f", c/1000}')×–$(awk -v c=$(( emax * 1000 / hmin )) 'BEGIN{printf "%.3f", c/1000}')× de v1.32.1): la sonda no distingue la dirección de su propio ruido, y su dispersión (~3,7 sobre el mismo árbol) es de SEC-030, no de este REQ"
+  fi
+}
+
+nom09_37="REQ-017 CA-09 la pared de los 60 s de este árbol NO es menor que la de v1.32.1, pareado en la misma corrida"
+if [ -z "$FILTRO" ] || printf '%s' "$nom09_37" | grep -qi -- "$FILTRO"; then
+  sinher09_37='no hay línea base: el tag v1.32.1 no está en este clon'
+  e1_37="$(pared37 "$HOOKS_DIR")" || true
+  h1_37="$sinher09_37"; [ "$HER37_OK" != si ] || h1_37="$(pared37 "$HER37/hooks")" || true
+  e2_37="$(pared37 "$HOOKS_DIR")" || true
+  h2_37="$sinher09_37"; [ "$HER37_OK" != si ] || h2_37="$(pared37 "$HER37/hooks")" || true
+  dir09_37 "$nom09_37" "$e1_37" "$e2_37" "$h1_37" "$h2_37"
 fi
 
-rm -rf "$HER37" "$BAS37" "$CORPUS37" "$MED37" "$DIF37" "$PARED37"
+# La DECISIÓN de arriba, con entradas sintéticas y en milisegundos. Sin esto, la única
+# propiedad que CA-09 contrata no tiene puerta: el caso anterior daba PASS porque el número
+# impreso tenía forma de MB, así que habría seguido en verde con este árbol POR DEBAJO de la
+# heredada — que es exactamente lo contrario de lo contratado (QA-017-10). Y probar la
+# decisión aquí es además la única forma de acreditar la rama FAIL sin fabricar una regresión
+# real de la pared, que no hay de dónde sacar.
+if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-09 la dirección se COMPRUEBA" | grep -qi -- "$FILTRO"; then
+  nom37="REQ-017 CA-09 la dirección se COMPRUEBA por rangos, no se publica: por debajo es FAIL y el solapamiento es SKIP"
+  obs09_37="$( {
+    dir09_37 sonda-de-prueba 2048 2200 1000 1100   # rangos disjuntos por arriba: la dirección
+    dir09_37 sonda-de-prueba 1100 1200 1000 1100   # se tocan justo: «no menor» incluye la igualdad
+    dir09_37 sonda-de-prueba  800  900 1000 1100   # disjuntos POR DEBAJO: aquí el caso viejo daba PASS
+    dir09_37 sonda-de-prueba  900 1200 1000 1100   # SOLAPAN: la sonda no resuelve, se abstiene
+    dir09_37 sonda-de-prueba 'no medible' 1200 1000 1100   # sin una de las dos pasadas de este árbol
+    dir09_37 sonda-de-prueba 1000 1200 'no medible' 1100   # sin la heredada al lado: no hay pareja
+    dir09_37 sonda-de-prueba 1000 1200 0 1100      # un cero no es una medida
+  } 2>&1 | sed -nE 's/^  (PASS|FAIL|SKIP)  .*/\1/p' | tr '\n' ' ' )"
+  esp09_37='PASS PASS FAIL SKIP SKIP SKIP SKIP '
+  if [ "$obs09_37" = "$esp09_37" ]; then
+    echo "  PASS  $nom37  (7 pares de rangos → $obs09_37)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nom37  se esperaba <$esp09_37> y se obtuvo <$obs09_37>"; FAIL=$((FAIL+1))
+  fi
+fi
+# Los contadores no se tocan de más: `dir09_37` corrió dentro de una sustitución de comandos,
+# que es un subshell, y sus PASS/FAIL murieron con él.
+
+rm -rf "$HER37" "$BAS37" "$CORPUS37" "$CORPD37" "$MED37" "$EVA37" "$CLA37" "$PARED37" \
+       "$EVHE37" "$EVHC37" "$EVEE37" "$EVEC37" "$DENTRO37" "$RES37"

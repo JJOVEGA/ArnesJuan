@@ -123,6 +123,36 @@ Archivos: `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-ca
 `tests/escenarios/hooks/README.md`, `.github/workflows/banco.yml`, `docs/PENDIENTES.md`,
 `docs/qa/1.33.0.md`, `requirements/REQ-017.md`.
 
+## [Interno] — 2026-09-07 · REQ-017 vuelta final implementada: CA-08 deja de ser flaky, y CA-05 nombra una señal que no existe
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador`.
+
+**El síntoma que veníamos a matar, medido antes y después.** Reproducido en HEAD: **1 de 6** vueltas del
+banco completo en rojo, con `1,255×` contra el techo `1,250×`. Con el procedimiento nuevo —**6 series
+intercaladas** en vez de 3 en bloque, más la **cláusula de convergencia**— **0 rojas de 9**, y el margen
+al techo pasa de **0,3 %** a **10,4 %**. La abstención por convergencia **no se activó ni una vez** en 18
+medidas reales: el caso **sigue midiendo**, no se ha convertido en un SKIP permanente. Y salió gratis:
+6 series × k=4 son **las mismas llamadas al hook** que 3 × 8.
+
+**El dominio nuevo, ejercido:** corpus de **320 entradas, 281 con UTF-8 inválido**; clasificación en una
+sola pasada que evalúa la **heredada antes** que este árbol; medido **dentro 312 · fuera 8 · no
+clasificables 0**, con la heredada incumpliendo **invariancia en 7 de 8** y determinismo en 0–1. Estable
+en 9 corridas. Casos del banco **847 → 852**, con los tres literales actualizados a mano.
+
+**DESVIACIÓN DECLARADA, y es la que importa: la guarda (c) de `CA-05` es insatisfacible tal como está
+escrita.** `run.sh` **no imprime ni un byte** hasta que todas sus secciones terminan, así que la corrida
+heredada matada por `timeout` deja **0 bytes siempre**, trabaje o no. Implementada al pie de la letra
+convierte el único PASS de CA-05 (i) en **SKIP permanente** — verificado encendiendo la palanca. **Es la
+misma clase que `ADR-004` acaba de diagnosticar en CA-01: una comprobación correcta sobre la señal
+equivocada.** Se implementó la **intención** con la señal que sí discrimina —contar los casos escritos
+*mientras* corría—: matada a los 12 s deja **37 casos**; una que no arranca deja **0**. **Pendiente de
+write-back del analista**, porque el criterio nombra una señal que no existe.
+
+**Aviso para la vuelta 2 de QA:** el patrón de exclusión de CA-02 (`REQ-017 CA-0`) **ya no basta** —los
+tres casos de CA-10 dan FAIL contra v1.32.1 **por diseño**, que es su fail-before—; con `REQ-017 CA-`
+cierra, y el inventario vuelve a dar **828 casos idénticos, md5 `31400a13e34f`**, el mismo de la vuelta 1.
+
+Coste: 1 h 09 de reloj, ~340 k tokens **medidos del contador** (no estimados), ~30 min de máquina midiendo.
+
 ## [Interno] — 2026-09-07 · REQ-017: el dominio se traza por invariancia de locale, y ADR-004
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
 
