@@ -2,6 +2,76 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · REQ-025 (borrador): el arnés vigila también a quien orquesta — el par discriminante y el denominador publicado
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
+
+REQ nuevo, ventana **1.34.0**, `Rigor: critico`, por decisión del propietario tras catalogar **20
+errores de la sesión coordinadora** en una jornada. La coordinadora —que orquesta, **acredita, decide y
+publica**— es el único actor sobre el que no apunta ninguna puerta de contenido.
+
+**`CA-04`, el criterio central: el par discriminante con inventario auto-anclado.** Cada pregunta que la
+herramienta declara tiene en el banco un caso positivo *y* uno negativo; el negativo se obtiene
+**mutando el fixture positivo en la única propiedad que la comprobación dice vigilar**, y **tiene que
+nombrar el defecto inyectado** — `rc≠0` no basta, porque una comprobación que **siempre** falla también
+«pasaría» un negativo que sólo mire el `rc`.
+
+Ataca **la propiedad, no las cinco instancias**: lo que las une no es el descuido, es que **ninguna se
+probó con el caso malo**, y una comprobación que sólo se prueba con el caso bueno **no distingue**.
+Enumerarlas habría sido el defecto atacándose a sí mismo. Y es **auto-anclado**: el inventario de pares
+se **deriva del sitio único** donde la herramienta enumera sus preguntas, así que **añadir una
+comprobación sin par rompe el banco nombrando la que falta** — aplicando la lección de `CA-05` de
+REQ-017, que una comprobación contra línea base congelada mide una vez y luego envejece **hacia el lado
+que abre**. **La cardinalidad no se fija**: los 20 y los 5 van como **operativos**, con corrida,
+dirección hacia abajo y la frase de que **menos no acredita nada**.
+
+**`CA-05`, y es la línea más barata del REQ: se publica el denominador.** El caso medido —«8» donde eran
+**5 de 8**— es un veredicto **sin población**, y *un veredicto sin denominador no se puede desmentir
+leyéndolo*. La misma línea habría delatado los **7 falsos positivos** de la comprobación de ids. **Una
+línea, dos de las cinco instancias muertas.**
+
+**El reparto máquina / acreditable / disciplina va DENTRO del REQ (`CA-01`), con lo que cada nivel NO
+promete.** Máquina: par discriminante, denominador, marca de procedencia — **propiedades léxicas o de
+inventario**, y por eso una puerta puede decidirlas. Acreditable: que la afirmación sea **cierta**, por
+un tercero que repite o muta, nunca por quien la escribió. Disciplina declarada: la lista previa al
+despacho y el juicio de qué comprobación hace falta, con dueño.
+
+`CA-01` dice **literalmente** que **ninguna puerta de este REQ detecta «esta cifra no la mediste»** —es
+semántica, y §13 ya declara ese techo—; lo que sí se detecta es la **ausencia** de procedencia, que es
+otra cosa. Y la consecuencia incómoda queda escrita y no disfrazada de puerta: la comprobación posterior
+de `CA-08` es **de máquina pero su ejecución es ritual** — *si nadie la corre, no protege*.
+
+**El libro de comisiones sirve, pero no como está, y se midió antes de diseñar.** Hoy registra
+**duración sin instante**, y una duración **no permite calcular solape**. Peor: el **único** solape
+registrado de todo el corpus vive como **prosa libre en una celda de Notas**, así que depende de que
+alguien se acuerde. `CA-10` añade **instante de inicio y de fin**, con lo que «¿algo mide ahora mismo?»
+pasa de memoria a **aritmética** — y cubre de paso «¿hay comisiones vivas?», la que faltaba antes del
+`git add -A`. Con la lección de la premisa falsa dentro: *un encargo que afirma el estado del árbol lo
+**deriva**, no lo recuerda.*
+
+**`CA-11` contrata que la acreditación NO sea de la coordinadora**, con cuatro condiciones que ninguna
+puede satisfacer ella: QA verifica los pares **mutando él** el sujeto con sus propios fixtures
+—re-ejecutar los del desarrollador no acredita—; la comprobación de `CA-08` la corre **quien no escribió
+la entrada**; y el auditor revisa **expresamente** si alguna de las tres quedó satisfecha por una
+afirmación suya. **Residual declarado:** el libro que `CA-10` usa **lo escribe la coordinadora**;
+mitigación por **cotejo** contra artefactos ajenos, y lo que queda fuera —una entrada completa y falsa—
+es semántica, con dueño `auditor-seguridad` y vencimiento al cierre de 1.34.0.
+
+**Un agujero medido y NO absorbido, que va como pregunta abierta:** `requirements/` **no está en
+`codigo_app.globs`**, así que `guard-codigo` no cubre esos archivos y **la sesión coordinadora puede
+escribir `QA: aprobado` en un REQ** sin que ninguna puerta lo impida (y `veredictos.exigir_fecha` está en
+`false`, así que no hay fecha que cotejar). Es la concentración en su forma más pura, y `CA-11` sólo la
+cubre **por procedimiento**. No se absorbió porque **un mecanismo nuevo en un hook es gate humano**.
+
+**`Archivos:` con dos decisiones dichas por su nombre:** `run.sh` va dentro **aunque las secciones se
+descubran por glob**, porque `CASOS_ESPERADOS=873` es un literal de `run.sh:1173` y omitirlo habría
+fabricado un **`disjunto` falso**; y `docs/arnes/*.md` va declarado **de más a propósito**, porque no se
+sabe aún dónde aterrizan §6 y §8 tras el reparto de REQ-019 — *bajo incertidumbre se elige el error
+barato (colisión falsa) sobre el caro*. Colisiona con REQ-019, REQ-021 y REQ-022; escribir `AGENTS.md` lo
+manda **en solitario**, y va **después** de los tres.
+
+**Estimación: 5–8 h.** Y el grueso **no es el script**: es **el par negativo por pregunta**, que es
+exactamente lo que las cinco sondas de la línea base se ahorraron.
+
 ## [GitHub] — 2026-09-08 · REQ-019 se amplía al README y pasa a 1.34.0 — y la premisa de la coordinadora era falsa: ninguna máquina del arnés lee ese documento
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
 
