@@ -2,6 +2,55 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · Gráficos de cierres contratados en `REQ-008`; y la enumeración B encontró tres defectos en los criterios del propio `REQ-019`
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` ×2 (REQ-008 y F1-B).
+
+### `REQ-008` — 21 criterios nuevos (`CA-60`…`CA-80`) para el encargo del propietario
+
+*«Gráficos de cuántos cierres por día, mes o semana. Que todo sea interactivo.»* Queda **contratado y en
+cola**: el REQ dice explícitamente que **no autoriza abrir comisión de desarrollo** y que `REQ-019` es el
+primer y único trabajo de 1.34.0.
+
+**Dos decisiones que el analista tomó en vez de dejarlas abiertas:**
+
+**La fecha de cierre sale de la historia de git, y se etiqueta `derivado`, nunca `medido`** — el commit
+más antiguo del tramo final en que la cabecera ya declara el estado terminal, en UTC. Descartado el
+paréntesis del veredicto: con `veredictos.exigir_fecha` en `false` es opcional, y **la serie dependería
+de una convención cuyas ausencias caen del lado que abre**. Efecto lateral útil: desacopla `REQ-008` de
+`SEC-057`. Lo irrecuperable —git caído, clon superficial, historia reescrita— se publica como «sin
+fecha» **con cuenta, denominador y motivo**, nunca se omite el punto.
+
+**CDN: no**, y no por preferencia — `CA-38` **ya contrataba** cero recursos externos y «con la red
+desconectada se ve idéntico». Lo que eso acota, dicho por su nombre: barras en **SVG en línea**,
+generables con `awk` y verificables con texto; fuera zoom continuo y animaciones, que no responden
+«cuántos cierres».
+
+Y el par discriminante (`CA-72`) con `esperado.txt` escrito **antes** de correr nada: semanas en domingo
+rompen dos construcciones, año de calendario rompe otra. Más `CA-73`, que exige que **la geometría
+concuerde con el número** — lo único del informe que se lee sin leer una cifra.
+
+### `REQ-019` F1 — las dos enumeraciones ciegas, y la diferencia ES el resultado
+
+**A encontró 106 invariantes; B encontró 164.** Ninguna era completa, que es exactamente por lo que
+`CA-15.2` exige dos. Las dos coinciden en el titular: **el suelo forzado excede el techo en los DOS
+documentos** (0,63-0,70× contra `≤0,60×`), no sólo en el README como el REQ predecía; y las dos midieron
+que **su línea base está desfasada** (declara 433 líneas de README; hay 522).
+
+**Y B encontró tres defectos en los criterios de `REQ-019` mismo:**
+
+- **`D-3`** — `CA-02.4.1` contrata las anclas citadas por el mecanismo **sólo para el README**. Pero **§1
+  de `AGENTS.md` se cita en 11 mensajes de denegación**, y §5/§6/§7/§9 en otros nueve. §1 es el caso
+  peor: **la sección más citada de todo el mecanismo y la que más parece un lema**.
+- **`D-5`** — un marcador de `arnes-upgrade` **ya no resuelve**: busca `(preventiva)` con paréntesis y el
+  texto vigente dice `Seguridad: preventiva`. **Cero apariciones, no puede dispararse nunca.** Es la
+  demostración medida de que un marcador se muere sin que nadie lo note.
+- **`D-9`** — `CA-02.2` manda conservar «la primera frase» de cada bloque `🔒`, y en **4 de los 7** esa
+  frase es un **rótulo** («Cumplido por máquina:»). Aplicado literalmente, **conserva el rótulo y delega
+  la obligación**.
+
+Todo archivado en `docs/PENDIENTES.md` bajo la regla de acumulación. **`REQ-019` no está listo para
+repartir**, y ahora se sabe **antes** de gastar 8-13 h — que es la lección de `CA-18` aplicada a tiempo.
+
 ## [GitHub] — 2026-09-08 · Regla de acumulación del propietario, y las 11 discrepancias de `REQ-019` F1 archivadas sin resolver
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (F1, enumeración ciega A) y coordinadora.
 

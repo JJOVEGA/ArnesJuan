@@ -119,6 +119,31 @@ en el README**. En bytes será peor que en líneas, porque las dos poblaciones d
 tabla de §13 y el `## Índice`— son suelo al 100%. Además la línea base del REQ está **desfasada**:
 declara el README en **433** líneas y tiene **522**. Renegociar ese techo es firma del propietario.
 
+### Acumulado del 2026-09-08 — `REQ-019` F1, enumeración B: **tres defectos en los criterios del propio `REQ-019`**
+
+La segunda enumeración ciega encontró **164** invariantes (103 + 61) contra las **106** de la primera.
+**La diferencia es el resultado**: ninguna de las dos era completa, y `CA-15.2` exige la unión
+precisamente por eso. Las dos coinciden en el titular —**el suelo excede el techo en los DOS
+documentos**, no sólo en el README como el REQ predecía— y las dos midieron por separado que la línea
+base del REQ está desfasada (declara el README en **433** líneas; tiene **522**).
+
+**Y encontró tres defectos en los criterios de `REQ-019` mismo, que hay que arreglar ANTES de repartir:**
+
+| # | Defecto en el criterio | Por qué importa |
+|---|---|---|
+| **D-3** | `CA-02.4.1` contrata las **anclas citadas por el mecanismo** sólo para el README. Pero `AGENTS.md` **también** las tiene: **§1 se cita en 11 mensajes de denegación** (`guard-completado.sh` L55, 138, 160, 192, 320, 359, 436, 443, 452, 459, 539), y §5, §6, §7 y §9 en otros nueve | **§1 es el caso peor**: es la sección más citada de todo el mecanismo **y la que más parece un lema** —«Principio rector», siete líneas—. El filtro la mandaría fuera sin que nadie se equivocara, y once mensajes de runtime quedarían apuntando a una sección que ya no existe |
+| **D-5** | Un marcador de versión de `arnes-upgrade` **ya no resuelve**: busca `(preventiva)` con paréntesis, y el texto vigente dice `Seguridad: preventiva`. **Cero apariciones.** No puede dispararse nunca | Es la demostración **medida** de que un marcador se muere sin que nadie lo note — el riesgo exacto que `CA-02.4.2` existe para acotar, ocurriendo ya |
+| **D-9** | `CA-02.2` manda conservar **«la primera frase»** de cada bloque `🔒`. En **4 de los 7** esa primera frase es un **rótulo**: «Cumplido por máquina:», «Vigilado por máquina:» | Aplicado literalmente, **conserva el rótulo y delega la obligación** — lo contrario de lo que el criterio busca |
+
+**Más `D-2`**, que es de forma: diez elementos son **mixtos** —una sub-promesa que sí cumple una máquina
+dentro de un bloque cuyo resto no cumple nadie— y `CA-17.1` exige **un** valor por fila. El campo no
+tiene forma de decir «parcial».
+
+**Lectura para cuando se retome:** `REQ-019` no está listo para repartir. Necesita, en este orden,
+(1) renegociar el techo de `CA-07` con firma del propietario —el suelo es 0,63-0,68× contra un techo de
+0,60×—, (2) corregir `D-3`, `D-5` y `D-9` en sus propios criterios, y (3) re-medir su línea base contra
+el commit real. Es la misma lección de `CA-18`: **comprobar la factibilidad antes de construir**.
+
 ## Backlog sin versión
 
 - **Marcas de carencia** (versión mínima del «sustrato declarado»): el proyecto declara marcas
