@@ -27,6 +27,48 @@
 
 ## Resueltas
 
+### RESUELTA 2026-09-08 (propietario) — La auto-auditoría se congela: los hallazgos `instrumento` sobre el propio arnés dejan de abrir REQ y de entrar en la ventana en curso
+
+- **Contexto, con los números que la motivan.** En un solo día: **9 hallazgos de seguridad abiertos**
+  (`SEC-047`…`SEC-057`), **2 REQ nuevos** (`REQ-024`, `REQ-025`), **1 REQ cerrado** (`REQ-017`) y **2 que
+  fueron hacia atrás** (`REQ-021` a `bloqueado`, `REQ-014` reabierto desde `completado`). Última versión
+  publicada: **v1.32.1, hace más de un día**. El propietario lo nombró así: *«siento que cada corrida de
+  QA y Seguridad traen un requerimiento nuevo, y me preocupa que estemos en círculos»*.
+
+- **La causa, y no es que los agentes sean quisquillosos.** El arnés se audita a sí mismo, y la
+  auto-auditoría **no tiene punto fijo**: el estándar que aplica —*«¿este criterio mide lo que dice
+  medir?»*— **se aplica también al criterio que audita**. Siempre hay una capa más abajo. Y la
+  consecuencia que importa: **esto es un plugin para otros proyectos y lleva más de un día sin entregarles
+  nada**, mientras consume toda la capacidad en mirarse.
+
+- **Qué sí fue círculo y qué no, porque la distinción decide el remedio.** Círculo: `REQ-021`, cuatro
+  variantes de la **misma** tautología, cada arreglo destapando la siguiente — y el arnés lo paró solo,
+  que es para lo que existe el tope de 3 vueltas. **No** círculo: `REQ-017` retiró una puerta no
+  determinista que corría en producción; `CA-18` en verde desbloqueó la fusión; `SEC-053` descubrió que
+  **`v1.31.0` se publicó fuera de delegación** sin que nadie lo supiera.
+
+- **DECISIÓN — la regla, y su alcance exacto.** Un hallazgo de clase **`instrumento`** sobre los textos o
+  los instrumentos del propio arnés:
+  1. **se registra igual** en `docs/seguridad/registro-seguridad.md` — no se deja de mirar ni de anotar;
+  2. **no abre un REQ nuevo** ni entra en la ventana en curso;
+  3. **se acumula en un solo backlog** que se revisa **una vez por ventana**, al planificarla.
+
+  **Lo que la regla NO toca, dicho para que no se estire:** los hallazgos `contrato` y `usuario/dinero`
+  siguen bloqueando el cierre y siguen exigiendo write-back, exactamente como hoy. Esto no baja ningún
+  rigor ni apaga ninguna puerta: sólo impide que un defecto **que ya está declarado como no bloqueante**
+  genere trabajo de ventana.
+
+- **Corrección de la coordinadora sobre su propia recomendación, hecha antes de aplicarla.** Al proponer
+  esta regla afirmé que **«7 de los 9 hallazgos de hoy son `instrumento`»**. Es falso: medidos, son
+  **4 `instrumento` y 5 `contrato`**. La regla, por tanto, **habría frenado menos de la mitad** de lo que
+  se abrió hoy — es una palanca real pero **más pequeña de lo que la vendí**, y las cinco de clase
+  `contrato` habrían entrado igual. Se aplica sabiendo eso.
+
+- **Consecuencia operativa inmediata:** 1.33.0 se publica con lo que hay —`REQ-017` cerrado y la partición
+  de `CA-18` en verde— y **no entra ningún hallazgo nuevo en esta ventana**. `REQ-019` sigue siendo el
+  primer y único trabajo de 1.34.0, con la protección ya escrita en `docs/PLAN.md`.
+
+
 ### RESUELTA 2026-09-08 (propietario) — ratificación de `v1.31.0`, publicada de autoridad no acreditada
 
 - **Contexto.** R-016 (`auditor-seguridad`) barrió los 40 tags publicados y encontró que `v1.31.0` se

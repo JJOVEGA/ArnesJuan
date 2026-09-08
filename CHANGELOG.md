@@ -2,6 +2,47 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · `ADR-006` y `ADR-007`; y el segundo ADR «pendiente» llevaba dos días escrito
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `desarrollador` (ADR) y coordinadora (decisión de alcance).
+
+**`ADR-006` — el techo sobre el excedente, no sobre el total.** Captura la re-derivación de `CA-18` con
+lo que el REQ no conserva: el defecto de origen (`400` fijado **sin comprobar factibilidad**), por qué el
+piso es **estructural** (`CA-04` + `CA-19` + `H-04` se multiplican y no dejan tercera vía), por qué **no**
+se compró el techo con una cifra nueva, y por qué `max(…)` y no sólo la razón —comprobado **antes**: con
+sólo `piso×k`, ~42 archivos hoy conformes saldrían rojos—. El **límite honesto** va como sección propia,
+con la cita del código (*«un piso INFLADO afloja el techo sin que ninguna puerta grite»*) **y su
+validación el mismo día**: al partir `37/1`, piso honesto **295** contra los **345** necesarios, mayor
+bloque indivisible real **146** contra ≥196 — se partió en tres en vez de declarar el número que
+cuadraba.
+
+**`ADR-007` — medida frente a identidad.** El oráculo de `CA-12` (b)(c)(d) y su arrastre sobre `CA-14`.
+Incluye el remedio literal de `CA-14` que **era peor que el defecto** —habría ordenado borrar 20 líneas
+de medición que REQ-017 y REQ-021 existen para publicar— y la dirección del error declarada: ante la
+duda, **rojo**.
+
+### El hallazgo que no estaba en el encargo
+
+Se le pidieron **dos** ADR: la re-derivación de `CA-18` y «el de H-03». El segundo **ya existía**:
+**`ADR-002`, del 2026-09-06, `aceptada`**, y su decisión es literalmente la de la fila del Historial.
+En sus palabras: *«no es un ADR parecido: es **ese** ADR. Lo que faltaba no era escribirlo, era
+enlazarlo. Escribir uno nuevo habría sido el ADR de relleno, y además ilegal aquí — un ADR no se
+reescribe.»*
+
+Consecuencia: **tres textos de `REQ-014` quedan desmentidos** —«son ya **dos** ADR pendientes», «esta
+comisión no puede escribirlo: queda pendiente y **bloquea el cierre**», y el recuento literal de
+`CA-31 (d)`—. El REQ afirmaba un bloqueo que llevaba dos días sin existir. El enlazado de las **nueve**
+filas del Historial queda enrutado al analista, **después** de que QA suelte el archivo.
+
+### Y la decisión de alcance del propietario, registrada
+
+**La auto-auditoría se congela:** un hallazgo de clase `instrumento` sobre los textos o instrumentos del
+propio arnés **se registra igual**, pero **no abre REQ nuevo ni entra en la ventana en curso** — se
+acumula en un backlog revisado una vez por ventana. **No toca** `contrato` ni `usuario/dinero`, que
+siguen bloqueando. Motivo medido: en un día, **9 hallazgos abiertos contra 1 REQ cerrado**, y la última
+versión publicada llevaba **más de un día**. Con la corrección de la coordinadora sobre su propia
+recomendación escrita en la misma entrada: dijo «7 de 9 son `instrumento`» y son **4 de 9**, así que la
+regla frena **menos de la mitad** de lo que se abrió hoy.
+
 ## [GitHub] — 2026-09-08 · `CA-18` en VERDE: los tres archivos partidos en ocho, y el piso que se midió en vez de declararse dijo que no cabían en dos
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
 
