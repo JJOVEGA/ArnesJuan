@@ -72,6 +72,53 @@
   siguiente; **nunca** en el alijo de git; y **fuera de las seis puertas**, porque es cara y no debe
   bloquear un cierre por lentitud. Se valida contra un proyecto real antes de publicarse.
 
+## Regla de acumulación (propietario, 2026-09-08) — qué se resuelve ya y qué espera aquí
+
+**Las mejoras se acumulan; los errores críticos se resuelven de inmediato.** Dicho por el propietario
+tras un día en que se abrieron **9 hallazgos y se cerró 1 REQ**.
+
+**Se resuelve ya** —y sólo esto— lo que hace que **el mecanismo falle en abierto para un proyecto
+consumidor**: una puerta que no cierra lo que dice cerrar, un guardián que se puede rodear en silencio,
+un veredicto que se firma sin acreditar. Es lo que ya bloquea por máquina: clase `usuario/dinero` o
+`contrato`.
+
+**Se acumula aquí, sin excepción:** discrepancias de documentación, criterios mejorables, defectos de
+instrumento, y toda mejora de eficiencia. Se **registran igual** en su sede (`registro-seguridad.md`,
+`docs/qa/`), **no abren REQ nuevo** y **no entran en la ventana en curso**. Se revisan **una vez por
+ventana**, al planificarla.
+
+> **La distinción que hace útil la regla:** un hallazgo que dice *«el documento describe mal lo que el
+> código hace»* **no es crítico** si el error va en la dirección segura —el papel promete **menos** de lo
+> que la máquina cumple—. Sí lo es si va al revés: el papel promete una protección que no existe, porque
+> alguien la usará creyendo que está cubierto.
+
+### Acumulado del 2026-09-08 — `REQ-019` F1, enumeración A (11 discrepancias, **ninguna crítica**)
+
+Medidas por una enumeración ciega de invariantes sobre `AGENTS.md` (66 elementos) y
+`requirements/README.md` (40). Clasificadas contra la regla de arriba: **ninguna hace fallar el mecanismo
+en abierto para un consumidor**, así que **todas esperan**.
+
+| # | Qué | Por qué NO es crítica |
+|---|---|---|
+| **D-04** | `AGENTS.md` §8/§13 prometen que el hook `pre-commit` exige el CHANGELOG. Existe y funciona (`.githooks/pre-commit:6`), pero **`.githooks/` no está en `codigo_app.globs`**: cualquier agente puede editarlo sin que `guard-codigo` lo vea | Es gobernanza interna del repositorio, no una puerta que proteja a un consumidor; y una edición ahí **aparece en el diff**. Es la de mayor prioridad del lote |
+| **D-03** | §4 describe la superficie protegida **más estrecha que la real**: omite `.arnes/config.json` y `.claude-plugin/*`, que `codigo_app.globs` sí protege | **Dirección segura**: el papel promete menos de lo que la máquina cumple. Un lector cree que no puede editar el manifiesto, y en efecto no puede |
+| **D-10** | El tope de 3 vueltas dev↔QA se enuncia como límite duro con consecuencia mecánica, y **ningún hook cuenta vueltas** | Lo cumple la coordinadora, y hoy funcionó: `REQ-021` paró en la tercera |
+| **D-01** | El candado `🔒` marca 7 bloques y **2 no los cumple ninguna máquina** (el modelo de QA, la política de autoalojamiento) | Los dos son decisiones del propietario, correctamente descritas; el candado es lo que sobra |
+| **D-02** | Un bloque `🔒` con dos obligaciones y **una sin ejecutor**: «mantén la lista de gates idéntica aquí y en el manifiesto» no la comprueba nada | Hoy coinciden **byte a byte**, verificado. El riesgo es futuro |
+| **D-05** | El README dice que la puerta exige `Seguridad: aprobado` por **sensibilidad**; el código lo exige por **rigor efectivo `critico`** | Hoy coinciden porque la sensibilidad impone `critico` como suelo |
+| **D-06** | La tabla de Estados es una **segunda transcripción** de `.arnes/config.json`; sólo `completado` llega a una puerta | Los otros cinco valores sólo los mira el informe, que **avisa y no deniega** |
+| **D-07** | La acotación de `SEC-020` («rutas sin decoración») tiene **dos sedes** con redacciones distintas del mismo fallo | Es la familia de la doble transcripción, ya nombrada; `SEC-020` sigue con su propio dueño |
+| **D-08 / D-08b** | El `## Índice` anuncia que «está previsto convertirlo en bloque derivado» y **no hay marcadores ni herramienta**. Y los marcadores de versión de `arnes-upgrade` sobre el README son **3 filas**, sin cubrir la sección del criterio | Anuncio sin dueño; el desfase del índice ya está contratado para 1.34.0 |
+| **D-09** | **Dos enumeraciones del mismo conjunto dentro de `AGENTS.md`**: §5 lista el detector de Bash más **estrecho** que §13, sin marca de `no exhaustivo` ni puntero al sitio único | Si §13 se delega y §5 se queda, lo que sobrevive es **la lista corta** — riesgo del reparto de `REQ-019`, no del árbol de hoy |
+| **D-11** | Tres pares §13-fila ↔ `🔒` comparten **el mismo ejecutor** en dos sedes. Parecen redundantes y **no lo son** | Trampa para el reparto de `REQ-019`, no defecto del árbol |
+
+**Y el dato que cambia la planificación de `REQ-019`, medido y sin decidir:** el **suelo forzado** es
+**≈0,70×** en `AGENTS.md` y **≈0,66×** en el README (**≈0,68×** total) contra el techo de **≤0,60×** que
+`CA-07` contrata. **El techo no se alcanza**, y la predicción del propio REQ esperaba el problema **sólo
+en el README**. En bytes será peor que en líneas, porque las dos poblaciones de líneas más largas —la
+tabla de §13 y el `## Índice`— son suelo al 100%. Además la línea base del REQ está **desfasada**:
+declara el README en **433** líneas y tiene **522**. Renegociar ese techo es firma del propietario.
+
 ## Backlog sin versión
 
 - **Marcas de carencia** (versión mínima del «sustrato declarado»): el proyecto declara marcas

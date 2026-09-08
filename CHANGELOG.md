@@ -2,6 +2,39 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · Regla de acumulación del propietario, y las 11 discrepancias de `REQ-019` F1 archivadas sin resolver
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (F1, enumeración ciega A) y coordinadora.
+
+**Regla del propietario, 2026-09-08:** *«las mejoras se acumulan, no las resolvemos de inmediato; los
+errores críticos sí»*. Escrita en `docs/PENDIENTES.md` con la distinción que la hace utilizable: un
+hallazgo de tipo «el documento describe mal lo que el código hace» **no es crítico si el error va en la
+dirección segura** —el papel promete **menos** de lo que la máquina cumple—; **sí lo es si va al revés**,
+porque alguien usará esa protección creyendo que existe.
+
+### `REQ-019` F1 — enumeración ciega A: 106 invariantes, 11 discrepancias, **ninguna crítica**
+
+66 elementos en `AGENTS.md` y 40 en `requirements/README.md`, con el **ejecutor resuelto por búsqueda
+literal sobre el mecanismo** y nunca por la decoración. Reparto medido: **61 resueltos**, 14 parciales,
+**28 `ninguna máquina`**, 3 `no resuelto`.
+
+Las 11 quedan archivadas con el motivo de por qué esperan. La de mayor prioridad del lote es **`D-04`**:
+`AGENTS.md` promete que el hook `pre-commit` exige el CHANGELOG, el hook existe y funciona, pero
+**`.githooks/` no está en `codigo_app.globs`** — cualquier agente podría editarlo sin que `guard-codigo`
+lo viera. No es crítica porque es gobernanza interna, no una puerta que proteja a un consumidor, y una
+edición ahí **aparece en el diff**.
+
+### El dato que cambia la planificación de `REQ-019`
+
+**El suelo forzado excede el techo que el propio REQ contrata.** `AGENTS.md` **≈0,70×**, README
+**≈0,66×**, total **≈0,68×** — contra el `≤0,60×` de `CA-07`. Y la predicción del REQ esperaba el
+problema **sólo en el README**; con `AGENTS.md` no había ni estimación. En bytes será **peor** que en
+líneas, porque las dos poblaciones de líneas más largas —la tabla de §13 y el `## Índice`— son suelo al
+100%. La línea base del REQ además está **desfasada**: declara el README en 433 líneas y tiene **522**.
+
+Consecuencia práctica: `REQ-019` **no ahorraría el ~40% que promete**; ahorraría ~32%, y sólo
+renegociando su propio techo, que es firma del propietario. Es exactamente el paso —comprobar la
+factibilidad **antes** de construir— que faltó en `CA-18` y costó la reapertura de `REQ-014`.
+
 ## [GitHub] — 2026-09-08 · `ADR-006` y `ADR-007`; y el segundo ADR «pendiente» llevaba dos días escrito
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `desarrollador` (ADR) y coordinadora (decisión de alcance).
 
