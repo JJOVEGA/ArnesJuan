@@ -2,6 +2,154 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · REQ-019: el trinquete protegía el NÚMERO y no la propiedad, medido en las dos direcciones. Nace CA-17
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Comisión previa que `CA-15` exige antes de repartir. **DoR: sí**, con el índice como único pendiente
+—y es de la coordinadora, no devuelve el REQ a `borrador`—.
+
+### El riesgo que se le planteó era real, y el propio inventario no lo distinguía
+
+Se le pidió comprobar si `CA-15` separa «texto que describe una invariante **cumplida por máquina**» de
+«texto explicativo», porque si no lo hace **el trinquete cuenta líneas y no protege nada**. Lo midió, y
+falla en **las dos** direcciones:
+
+- El carácter `🔒` marca **7** bloques de `AGENTS.md` y **2 de los 7 no los cumple ninguna máquina**: son
+  decisiones del propietario (el modelo con que corre el QA; la política de autoalojamiento).
+- Y al revés: **§13 describe conducta de máquina en bloques que no están en la tabla ni llevan `🔒`** —el
+  aviso que no deniega ante un veredicto fuera de vocabulario, el recorte de celdas a 40 caracteres, la
+  rotación que mueve y no resume, el bloque de continuidad, «sin manifiesto los hooks son inertes»—.
+  Entraban en el inventario sólo como **promesa genérica**, **indistinguibles** de «secretos sólo en
+  variables de entorno» de §10, que no cumple nadie.
+
+### `CA-17` — cada fila del inventario declara **su ejecutor**
+
+Ruta del archivo del mecanismo con su función, fila o cadena literal; o la marca literal
+`ninguna máquina`. Cinco cosas lo hacen algo más que una columna: **(1)** el ejecutor se determina por
+**búsqueda literal sobre el mecanismo** —sitio único: `codigo_app.globs` más `skills/*/SKILL.md`— y
+**nunca por la decoración del documento**, que es un campo escrito por una persona y que ninguna puerta
+verifica (la clase de `arnes_version` y de `Rigor:`); **(2) fail-closed**: un ejecutor declarado tiene
+que resolver, y uno **fabricado es peor que `ninguna máquina`**, porque afirma que el árbol hace algo que
+no hace **dentro del artefacto que acredita la no-pérdida**; **(3) trinquete asimétrico**: retirar un
+elemento **con** ejecutor exige además **citar el código que dejó de cumplirlo**; **(4)** la discrepancia
+**se anota y se enruta, no se arregla** — lo que compra `CA-17` no es la corrección, es que **deje de ser
+invisible**; **(5)** declarado **acreditación única, no puerta permanente**, con su acotación entera,
+que es lo que `SEC-033` reprochaba no decir.
+
+### El reparto en fases, y por qué «cuatro fases» era un número falso
+
+Son **siete**, y la estimación anterior omitía **tres comisiones estructuralmente necesarias**: `F3-bis`
+(`CA-13` obliga a que las preguntas de trabajo las escriba **quien no repartió**, así que no caben en la
+comisión que reparte), `F5` (QA) y `F6` (auditoría, obligatoria por §6 y donde el registro cierra
+`SEC-033`). Total honesto: **9–11 comisiones y ≈8,5–14 h**, con lo añadido marcado como **estimación**
+desde las medianas medidas del ciclo 2. Cada fase declara precondición, entregable con su sede, agente,
+solitario, **qué detiene la ventana** y **puerta de salida**. Y una cláusula **«la ventana no crece»**:
+lo que el reparto descubra se anota y se enruta, no se arregla dentro; una fase que no cabe **se parte**,
+no se amplía la comisión en curso.
+
+### Dos defectos de criterio que habrían llegado a QA como `contrato`
+
+- **`CA-03`** tenía el único número del conjunto **sin declarar su tipo**. Ahora es `no menos de 1`,
+  **operativo**, con dirección de subir.
+- **`CA-04`** exigía igualdad de esqueletos **sin sujeto**: leída como inmovilidad del archivo,
+  **declaraba incumplido un trabajo ajeno y correcto** — la familia de la forma **(c)**, ya corregida en
+  `CA-02.1` y para las plantillas, pero no para el esqueleto del propio documento.
+
+**Y se aplicó la regla a sí mismo:** había escrito «se validan **diecisiete** criterios» en dos sitios —
+una cardinalidad que el criterio siguiente desmiente. Sustituida por «el conjunto entero de criterios de
+este REQ (sitio único: este archivo)».
+
+### `SEC-033` cierra dentro de este REQ, en `F4`
+
+Lo cierran `CA-05` puntos 5 y 6 (cero afirmaciones de detección continua, cero rangos cerrados de
+criterios sobrevivientes en `ADR-003`, los dos **de contrato**). Falta una edición de `ADR-003`, dueño
+`desarrollador`, y el auditor cierra la entrada del registro en `F6`. **Con una restricción sobre el
+arreglo:** `ADR-003` tiene que corregirse **por propiedad** —«cada documento en alcance y su plantilla,
+en las dos direcciones»—; corregido nombrando `AGENTS.md.tpl`, el hallazgo cierra y **vuelve a abrirse**
+con el segundo documento.
+
+## [GitHub] — 2026-09-08 · R-015: SEC-052 cierra, y el permiso para publicar por delegación no tiene frontera escrita — con una publicación pasada que lo prueba
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad` (Opus).
+
+### `SEC-052` → `mitigado`, verificado resolviendo cada cita y no aceptando el reporte
+
+Barrido de las cuatro formas de la atribución retirada (`auditor dejó dicho`, `1.33.0 cerrara sin`,
+`bloquea el cierre de la ventana`, `escala a contrato si cierra 1.33.0`): **cero** en el cuerpo. La
+cláusula ahora se **cita** contra `registro-seguridad.md:4303-4317` y las dos citas resuelven exactas. La
+consecuencia de máquina está corregida y comprobada **en el código**: el bloque de
+`guard-completado.sh:486-527` lee el campo del REQ **que se cierra**. Y el punto que más importaba —el
+argumento 3— está **rederivado, no corregido de fecha**: retira por escrito el argumento de calendario y
+lo sustituye por un hecho del árbol. **Write-back pendiente de enrutar:** retirar `SEC-052 (contrato)` de
+`Hallazgos abiertos:` de REQ-023.
+
+### `SEC-053` — `contrato`, alta, dueño **propietario**: son TRES lecturas, y la que se aplicó no está escrita
+
+El criterio de publicación delegada (`docs/gobernanza/autoalojamiento.md:148-155`) dice *«**cualquier** …
+hallazgo abierto de clase `usuario/dinero` o `contrato` … devuelve la decisión al propietario»* y **no
+declara sobre qué conjunto**. Medido, y sale peor de lo planteado:
+
+- **`v1.32.1` (`973448f`) se publicó por delegación con un `contrato` abierto.**
+  `git show v1.32.1:docs/seguridad/registro-seguridad.md` trae `### SEC-020 — contrato · abierto` en su
+  línea 1305, y la entrada que anuncia la publicación (`CHANGELOG.md:2343-2350`, **agente:
+  coordinadora**) **nombra a SEC-020** entre lo que cruza. Sin entrada en la cola.
+- `v1.32.0` sí tuvo aprobación expresa (`CHANGELOG.md:2688`), así que es conforme — pero **no por
+  delegación**.
+- Lectura **(a) global**: 17 `contrato` abiertos hoy → la delegación estaría muerta desde que se firmó.
+  **(b) por ventana**: **tampoco salva a v1.32.0**, porque SEC-020 *es* de la ventana 1.32.0.
+  **(c) por los REQ que la ventana cierra**: sólo ésta hace conformes las dos publicaciones, y **no
+  aparece en ningún documento**.
+
+**La prueba de que no se puede aplicar como está, y la dio el auditor sobre sí mismo:** *«no sé decir si
+mi propio hallazgo cuenta»* — bajo (a) devuelve el tag al propietario, bajo (b) y (c) no, porque no
+cuelga de ningún REQ.
+
+> **Y la forma reutilizable, que es lo peor:** sin frontera escrita, **la lectura se elige en el momento
+> de publicar la parte que se quiere publicar, y siempre hay una que concede el permiso.** Es `SEC-045` y
+> `SEC-052` aplicados al **permiso para publicar el mecanismo que gobierna a los demás proyectos**.
+
+*Forzador:* la primera publicación en que se pretenda ejercer la delegación. *Vencimiento:* antes de ese
+tag. *Escalada:* si se publica por delegación con la frontera sin escribir, esa publicación se anota como
+**de autoridad no acreditada** y se pide ratificación expresa a posteriori.
+
+### `SEC-054` — `contrato`, alta: 1.33.0 publicaría tres textos firmados que la medición desmiente
+
+Primero la mitad buena, medida **por objeto de árbol**: **`hooks/` en `HEAD` es el mismo objeto
+(`88c1465…`) que se firmó en R-012**, y `hooks/ tools/ .github/ .arnes/` no tienen **ninguna** diferencia
+con `b6e581b`. No hay regresión en la capa de enforcement y la línea base de R-012 sigue vigente sin
+re-auditar.
+
+Lo que hay que declarar: **todo el delta de código desde esa firma es de REQ-021**, y con él se
+publicarían tres textos que afirman lo que QA midió falso —
+
+- `docs/decisions/ADR-005-…md:42` — «**Cada corrida acredita que el instrumento responde al sujeto**», en
+  un ADR con `Estado: aceptada` y `Versión: 1.33.0`;
+- `tests/util/README.md:50` — la misma afirmación;
+- `secciones/38-sondas-compartidas.sh` — publica **PASS** sobre esa acreditación **en la puerta requerida
+  de `main`**.
+
+Contra `docs/qa/1.33.0.md:2448-2454`: *«la acreditación del propio banco certifica UNA aritmética, no la
+propiedad»*. **No es duplicado de `QA-021-10`**: ése bloquea el cierre de REQ-021 y funciona; lo que nada
+cubre es que **el texto firmado se publique igual** — `guard-completado` no mira ADRs ni READMEs. Y el
+plugin se distribuye con `source: "./"`, **así que el ADR y el README llegan a los consumidores**. Es
+literalmente la **condición 3** de la cláusula de escalada de SEC-047, en otra superficie.
+
+**Remediación barata y sin revertir código:** nota fechada en ADR-005 declarando su punto 4 **no
+acreditado** —los ADR no se reescriben, así que es **gate humano**— más una línea en
+`tests/util/README.md:50` diciendo qué certifica y qué no.
+
+**Agravante que el auditor cita y NO reclasifica:** `QA-021-06` mide 5/30 calibraciones fuera de banda —2
+en reposo— y la vuelta 3 añade `CA-03 (d)` en **9 de 16** bajo saturación. Publicar eso hace **no
+determinista la única puerta automática de `main`**, y la consecuencia humana está medida en `AGENTS.md`
+§13: *la fricción termina con alguien apagando el guard*.
+
+### Y el auditor se negó a fabricar un forzador, que es la parte que más vale
+
+Preguntado si esto debe detener la publicación: **no hay veto de seguridad.** La clase `contrato` de
+SEC-053 y SEC-054 gobierna el cierre de **un REQ que las declare**, no la publicación de una ventana.
+Que el tag vuelva al propietario **no lo decide su hallazgo** — lo decide el criterio de
+`autoalojamiento.md:148-155`, cuya frontera es precisamente SEC-053. En sus palabras: *«afirmar lo
+contrario sería fabricar un forzador, que es lo que SEC-052 castiga»*.
+
 ## [GitHub] — 2026-09-08 · REQ-021 a `bloqueado`: el tope de 3 vueltas se agota y la clase sobrevive a su cuarta variante. Escalado al propietario
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (**Opus**, por decisión del propietario).
 

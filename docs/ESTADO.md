@@ -9,21 +9,61 @@
 Fase 0 — autoalojamiento. **v1.32.1 publicada.** Ventana **1.33.0 abierta**, gobernada por 1.32.1.
 Rama `cand/1.33.0`, PR **#43** en borrador.
 
-**Alcance vigente, fijado por el propietario el 2026-09-08: REQ-017 + REQ-021 + REQ-023.** `REQ-019`,
-`REQ-020` y `REQ-025` van a **1.34.0**, y REQ-019 es su primer trabajo.
+**Alcance vigente, fijado por el propietario el 2026-09-08 (segunda decisión del mismo día): REQ-017 +
+REQ-021 + la partición de las tres secciones sobre 400 líneas.** `REQ-019`, `REQ-020`, `REQ-023`,
+`REQ-024` y `REQ-025` van a **1.34.0**, y REQ-019 es su primer trabajo.
 
-**Esta ventana creció tres veces en un día, y conviene tenerlo escrito.** Nació el 2026-09-07 con
+**Esta ventana se movió cuatro veces en dos días, y conviene tenerlo escrito.** Nació el 2026-09-07 con
 `REQ-017 + REQ-019 + REQ-021`; el 2026-09-08 entró **REQ-023** —el carácter invisible— y salió
-**REQ-019** al pasar su estimación de ~2 h a **7–11 h en cuatro fases**. Es exactamente el mecanismo con
-que `docs/PLAN.md` explica el descontrol del ciclo 3.
+**REQ-019** al pasar su estimación de ~2 h a **7–11 h en cuatro fases**; y ese mismo día **salió también
+REQ-023**, cuando su coste se midió *después* de meterlo: cuatro comisiones en serie tras REQ-021, sin
+paralelismo, con dos precondiciones ajenas. Es exactamente el mecanismo con que `docs/PLAN.md` explica
+el descontrol del ciclo 3.
+
+> **Aplazar REQ-023 no incumple ningún vencimiento**, y esto hubo que comprobarlo porque el REQ decía lo
+> contrario: el vencimiento de `SEC-047` es el cierre de **1.34.0** (`registro-seguridad.md:3684`), así
+> que meterlo en 1.33.0 había sido un **adelanto**. La cláusula que afirmaba lo contrario —«sube a
+> `contrato` si 1.33.0 cierra sin él», atribuida al auditor— **no existía**: es `SEC-052`, y el auditor
+> la trazó a un solo commit, el del propio REQ-023.
 
 > **Y lo que esta ventana NO entrega: la reducción de tokens.** REQ-017 abarató el **reloj** del banco
 > (95,66 s → 45,14 s), y esperar al banco es gratis en tokens. REQ-021 ahorra ~150 k por ventana **cuando
 > exista**. La palanca de tokens es **REQ-019**, y está en 1.34.0.
 
 ## En progreso
-**REQ-021 — `pendiente`, `QA: con-hallazgos`. Vuelta 1 de QA rendida (interrumpida por reinicio de la
-máquina) con un `contrato` nuevo. QUEDA UNA VUELTA.**
+**REQ-021 — `pendiente`, `QA: con-hallazgos`. VUELTA 3 DE 3, con el desarrollador trabajando. Es la
+última.**
+
+> **Y ya no hay salida de residual.** El write-back del 2026-09-08 declaró `QA-021-10` en
+> `Hallazgos abiertos:` como **`contrato`**, así que `guard-completado` **deniega** el cierre mientras
+> siga abierto. Después de esta vuelta hay exactamente dos finales: la vuelta trae código **y**
+> acreditación ejercida por quien no escribió la sonda → cierra; o el REQ pasa a `bloqueado` y se escala
+> al propietario. Un residual sólo sería viable si QA o el auditor **reclasifican** el hallazgo, y eso no
+> es de la coordinadora.
+>
+> **El delta está medido y es más barato que la vuelta 2:** cinco archivos, ~115 líneas, y la sonda de
+> procesos **pierde** código (fuera `sp_cal_disc`, `SP_DISC_VECES`, `--rastro`, el campo `disc_veces=`).
+> La anterioridad del testigo **cuesta cero procesos**: es un cambio de orden. Y el fail-before sale
+> gratis, porque las dos sondas de hoy **abortan con sólo mover el orden**.
+>
+> **La propiedad nueva de `(a.3)` tiene cinco condiciones**, y la tercera es la que carga el peso:
+> **el juez obtiene el testigo ANTES de invocar la sonda** — *lo que no existe antes de que el sujeto
+> corra, pudo haberlo producido el sujeto*. Las otras cuatro: tamaño del sujeto en un rango que el
+> parámetro no puede alcanzar por construcción; el **valor** lo produce el juez, nunca un artefacto que
+> la sonda pueda escribir; el sujeto discordante lo fija el juez y la sonda no lo declara; y el umbral no
+> se lee del registro del juzgado (hoy la sonda de reloj podía **comprarse su propia abstención**).
+>
+> **`(a.4)` nombra la lección estructural:** *quien escribe el instrumento diseña el control que sabe
+> pasar* — con las tres instancias medidas del mismo día y su consecuencia de sedes: la **forma** del
+> camino la fija el criterio (analista), el **valor** lo obtiene el juez, la **acreditación** la ejerce
+> quien no escribió la sonda.
+>
+> **Límite declarado, para no repetir la afirmación de eficacia que QA desmintió:** `(a.3)` cierra que el
+> testigo *salga* de la sonda; **no** cierra una sonda que **lea el sujeto que el juez le entrega** y
+> publique su cuenta sin ejercerlo — eso es falsificación deliberada, no descuido, y su respuesta es la
+> barandilla (§13) más la custodia y el tercero.
+
+**Lo que la vuelta 1 de QA encontró y motivó todo esto:**
 
 > **`QA-021-10` (`contrato`, alta) — la tautología sobrevivió a la reducción de alcance.** En
 > `tests/util/sonda-procesos.sh` **el testigo lo escribe la propia sonda**, que es lo que `CA-03 (a.3)`
@@ -39,10 +79,9 @@ máquina) con un `contrato` nuevo. QUEDA UNA VUELTA.**
 > El arreglo: el testigo tiene que obtenerlo **el juez, por un camino que la sonda no pueda alimentar**.
 > Write-back del analista primero (el REQ afirma dos cosas falsas sobre lo construido), luego código.
 
-**Conteo de vueltas dev↔QA: 2 de 3 gastadas, y el contador NO se reinicia.** La vuelta 1 cuenta aunque
-quedara interrumpida, porque **produjo un bloqueante que obliga a volver al desarrollador** — que es lo
-que define una vuelta, no cuántos criterios se alcanzaron a validar. Si la vuelta 3 no cierra: o cierre
-con residual declarado (dueño, forzador medido, vencimiento) o `bloqueado` y escalada al propietario.
+**Conteo de vueltas dev↔QA: 3 de 3, la última en curso, y el contador NO se reinicia.** La vuelta 1
+cuenta aunque quedara interrumpida, porque **produjo un bloqueante que obliga a volver al
+desarrollador** — que es lo que define una vuelta, no cuántos criterios se alcanzaron a validar.
 
 **Lo que QA NO llegó a mirar, y está tabulado como NO MIRADO —nunca como PASA—:** la banda de `(d)` bajo
 carga provocada, `(ii)` y `(d)` con `r=3`, la honestidad de `(i.1)`, `QA-021-04`/`05`, `DEV-021-08`, el
@@ -80,19 +119,44 @@ tautológica, los 21 procesos que hicieron insatisfacible `CA-08 (i)` y el `+6` 
    en sí es neutra en reloj, y lo que cuesta es capacidad **que ninguna línea base tiene**.
 
 ## Próximo paso concreto
-1. **QA vuelta 1 de REQ-021** *(corriendo)* → auditor → cerrar REQ-021.
+1. **REQ-021 vuelta 3 de 3: desarrollador** *(corriendo)* → **QA vuelta 3** → auditor → cerrar REQ-021.
 2. **Partir las tres secciones que pasan de 400 líneas** (`848 / 678 / 722`). `CA-18` es el **único FAIL
    de la autoprueba** y **bloquea la fusión**, porque `hooks-en-linux` es la puerta requerida. Lleva roja
    desde el delta final de REQ-017 y el CI nunca lo había medido: el verde del PR era sobre un árbol de
    **346 y 266** líneas. Autorizado con **desarrollador + QA** por firma expresa del propietario
    (`PENDING_APPROVAL.md`, resuelta del 2026-09-08); va **después** de cerrar REQ-021, porque `CA-07.2`
    congela los `CASOS_ESPERADOS_SECCION` de las 37.
-3. **Implementar REQ-023** — el carácter invisible.
-4. Versión, PR, CI, **tag `v1.33.0`** e instalación estable.
+3. Versión, PR, CI, **tag `v1.33.0`** e instalación estable — con el gate de abajo.
+
+*(REQ-023 ya no está en esta lista: salió de la ventana el 2026-09-08.)*
 
 ## Bloqueos
 - **La fusión está bloqueada por `CA-18`** (punto 2 de arriba). No es un bloqueo de decisión: está
-  autorizado y sólo falta hacerlo.
+  autorizado y sólo falta hacerlo. Verificado en CI el 2026-09-08 a las 17:59: es el **único** rojo del
+  árbol — `Autoprueba: 72 PASS, 1 FAIL`, y el FAIL nombra los tres archivos (`848 / 678 / 722`).
+- **El tag vuelve al propietario, y NO por REQ-021.** `docs/gobernanza/autoalojamiento.md:148-155`:
+  «**Cualquier** … hallazgo abierto de clase `usuario/dinero` o `contrato` … devuelve la decisión al
+  propietario». **Corregido tras R-015:** los `contrato` abiertos ajenos a esta ventana son `SEC-050`
+  (de REQ-016) y **`SEC-053`**; `SEC-052` pasó a **`mitigado`**; y **`SEC-054` SÍ es de esta ventana** y
+  trata precisamente de lo que este tag publicaría. Ninguno bloquea una puerta de máquina —bloquean el
+  REQ que los declara— pero por gobernanza la coordinadora **no fusiona ni etiqueta por delegación**:
+  presenta la evidencia y para.
+- **`SEC-053` (`contrato`, dueño PROPIETARIO) — el permiso para publicar no tiene frontera escrita, y hay
+  una publicación pasada que lo prueba.** Medido en R-015: **`v1.32.1` se publicó por delegación con un
+  `contrato` abierto** —`git show v1.32.1:…registro-seguridad.md` trae `SEC-020 · contrato · abierto`, y
+  la entrada que anuncia la publicación **lo nombra**—, sin entrada en la cola. Son **tres** lecturas
+  posibles y la única que hace conformes las publicaciones pasadas **no aparece en ningún documento**. La
+  prueba de que no se puede aplicar como está la dio el auditor sobre sí mismo: *«no sé decir si mi
+  propio hallazgo cuenta»*. Y la forma: **sin frontera escrita, la lectura se elige en el momento de
+  publicar la parte que se quiere publicar, y siempre hay una que concede el permiso.**
+- **`SEC-054` (`contrato`, alta) — 1.33.0 publicaría tres textos firmados que la medición desmiente:**
+  `ADR-005:42` («cada corrida acredita que el instrumento responde al sujeto», con `Estado: aceptada`),
+  `tests/util/README.md:50`, y la sección 38 publicando **PASS** sobre eso **en la puerta requerida**. El
+  plugin se distribuye con `source: "./"`, así que **el ADR y el README llegan a los consumidores**.
+  Remediación **barata y sin revertir código**: nota fechada en ADR-005 declarando su punto 4 no
+  acreditado (**gate humano**: los ADR no se reescriben) más una línea en el README. Mitad buena, medida
+  por objeto de árbol: **`hooks/` en HEAD es el mismo objeto (`88c1465…`) que firmó R-012** y no hay
+  diferencia en `hooks/ tools/ .github/ .arnes/`, así que **no hay regresión de enforcement**.
 - Ninguno de presupuesto.
 
 ## Pendientes (cola)
@@ -106,11 +170,19 @@ tautológica, los 21 procesos que hicieron insatisfacible `CA-08 (i)` y el `+6` 
 - [ ] **Dos preguntas de REQ-025 para el propietario, aplazadas a propósito hasta cerrar 1.33.0:** si
       `CA-08` entra en CI, y si `requirements/` entra en `codigo_app.globs` —hoy **no está**, así que la
       sesión coordinadora **puede escribir `QA: aprobado`** y ninguna puerta lo impide.
-- [ ] **`SEC-050` y `SEC-051`** (R-013), sin ventana asignada. `SEC-051` **pierde el gate humano
-      escribiendo bien la aprobación**: `arnes_cola_pendientes` descarta la línea completa que contenga
-      los delimitadores de comentario **en cualquier posición**, así que una flecha corriente en una
-      pendiente la hace desaparecer. Es un arreglo de dos líneas en `hooks/lib.sh`, archivo que REQ-023
-      ya declara.
+- [x] **`SEC-050` y `SEC-051`** (R-013) — **enrutados el 2026-09-08, los dos a 1.34.0.** `SEC-050` va al
+      write-back de **REQ-023** (`CA-02`/`CA-03`) más la reparación del puntero de REQ-016 en
+      **REQ-024**. `SEC-051` va **entero a REQ-024** (`CA-08`/`CA-09`), y **no** a REQ-023, por un motivo
+      que salió de leer el código y que ningún documento decía: `hooks/lib.sh:1577-1583` declara **por
+      escrito** la frontera con `arnes_cola_pendientes` y deja escrito el precio de cruzarla — unificar
+      la noción de cita cambia el **conteo** de la cola, que es un cambio de **veredicto** de la puerta,
+      que es un cambio del contrato de **REQ-009** (`completado`) **sin ADR**. Corrección a la
+      estimación que estaba aquí escrita: **no era «un arreglo de dos líneas»** — la remediación de
+      R-013 pide una transcripción compartida, conducta nueva cuadrada en **tres** lectores y casos
+      fail-before/pass-after en un archivo que REQ-023 **no** declara en `Archivos:`.
+- [ ] **`SEC-052`** (R-014, `contrato`, dueño `analista-requerimientos`) — write-back **hecho** el
+      2026-09-08 y declarado en `Hallazgos abiertos:` de REQ-023; **falta que el auditor lo verifique y
+      lo cierre**. Bloquea el `completado` de REQ-023 y de nada más.
 - [ ] **El `_doc` del manifiesto es documentación que ninguna migración toca** (reportado por un
       proyecto consumidor). `arnes-upgrade` clasifica **secciones de Markdown** y un valor JSON no es una
       sección, así que los diez `_doc` de la plantilla derivan para siempre. Análisis en
@@ -123,7 +195,7 @@ tautológica, los 21 procesos que hicieron insatisfacible `CA-08 (i)` y el `+6` 
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-08 10:50
+## Estado derivado — 2026-09-08 13:31
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -133,10 +205,10 @@ tautológica, los 21 procesos que hicieron insatisfacible `CA-08 (i)` y el `+6` 
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.33.0` @ `61063d0` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.33.0` @ `6e98a9c` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.32.1`
 **Aprobaciones pendientes:** 0
-**REQ:** 24 — completado 13 · en-revisión 1 · en-progreso 1 · bloqueado 0 · otros 9
+**REQ:** 25 — completado 13 · en-revisión 1 · en-progreso 1 · bloqueado 1 · otros 9
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
 _Sólo los REQ abiertos; los 13 completados no se listan._
@@ -150,9 +222,10 @@ _Sólo los REQ abiertos; los 13 completados no se listan._
 | REQ-018 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-019 | pendiente | pendiente | preventiva | critico | sec-033(contrato) |
 | REQ-020 | pendiente | pendiente | preventiva | critico | sec-038(contrato),sec-039(contrato),sec-… |
-| REQ-021 | pendiente | con-hallazgos | preventiva | critico | dev-021-05(instrumento,dueñoanalista-req… |
+| REQ-021 | bloqueado | con-hallazgos | preventiva | critico | dev-021-05(instrumento,dueñoanalista-req… |
 | REQ-022 | pendiente | pendiente | pendiente | critico | (ninguno) |
-| REQ-023 | borrador | pendiente | pendiente | critico | (ninguno) |
+| REQ-023 | borrador | pendiente | pendiente | critico | sec-052(contrato) |
+| REQ-024 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-025 | borrador | pendiente | pendiente | critico | (ninguno) |
 
 <!-- ARNES:DERIVADO fin -->

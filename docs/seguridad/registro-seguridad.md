@@ -4392,3 +4392,298 @@ git; que el forzador y el vencimiento vigentes de la mitad (1) de SEC-047 son lo
 que la clase de SEC-047 **no** depende de en qué ventana se haga el trabajo. *No acredita:* ninguna
 quality gate (no las miro); ningún REQ, en particular **ni REQ-023 ni REQ-021**; ni el código de
 1.33.0, que se auditará en su turno, después de QA.
+
+---
+
+## Revisión R-015 — verificación del write-back de **SEC-052** y **consecuencias de gobernanza de publicar 1.33.0** (no es auditoría de ningún REQ; no firma nada) — 2026-09-08
+
+**Qué es y qué no, antes que el resultado.** Verifico **leyendo el árbol** el write-back que el
+`analista-requerimientos` reporta sobre SEC-052 (`requirements/REQ-023.md`, comiteado en `36a70ed`), y
+registro dos consecuencias que hoy viven sólo en el cuerpo de una revisión o en `docs/ESTADO.md`.
+**No firmo nada:** no toco la línea `Seguridad:` de ningún REQ —REQ-023 sigue `borrador` con
+`Seguridad: pendiente`; REQ-021 está `bloqueado` con `QA: con-hallazgos` y su
+`Seguridad: preventiva (R-010)`, que **no cubre el código posterior**—, y **no audito REQ-021**: no me
+corresponde hasta que QA apruebe (`AGENTS.md` §6). Lo único que escribo es este registro. Árbol:
+`cand/1.33.0` @ `6e98a9c`, con `PENDING_APPROVAL.md`, `docs/ESTADO.md` y `requirements/REQ-021.md`
+modificados sin comitear por otras comisiones vivas; **el mecanismo y el banco están limpios**
+(`git status` sobre `hooks/ tools/ .github/ .arnes/ tests/`: vacío).
+
+### 1. SEC-052 — verificado punto por punto contra el árbol, y **CIERRA**
+
+**Método: leer el árbol y resolver cada cita, no la palabra de nadie.** Los cuatro puntos de la
+remediación, con su sede y su veredicto:
+
+| Remediación (R-014) | Dónde está hoy | Veredicto |
+|---|---|---|
+| **1.** Retirar la atribución en `:450-452` y `:566`; si el REQ quiere la cláusula, que **cite** este registro con su línea | Barrido del documento: `auditor dejó dicho`, `1.33.0 cerrara sin`, `bloquea el cierre de la ventana` y `escala a contrato si cierra 1.33.0` → **cero** ocurrencias en el cuerpo. La cláusula pasa a citarse en `requirements/REQ-023.md:625-634` contra `docs/seguridad/registro-seguridad.md:4303-4317`, y el forzador/vencimiento contra `:4229-4239` | **cumple** |
+| **2.** Corregir la consecuencia de máquina: un `contrato` bloquea el **REQ que lo declara**, no «una ventana»; lo que devuelve la publicación al propietario es **gobernanza** | `requirements/REQ-023.md:636-640`, con `hooks/guard-completado.sh:486-527` para la puerta y `docs/gobernanza/autoalojamiento.md:148-155` para la gobernanza. **Las dos citas resuelven:** en `guard-completado.sh` el bloque que empieza en `hall="$ARNES_HALL"` lee el campo del REQ que se cierra y deniega en `usuario/dinero|contrato`; en `autoalojamiento.md` está el criterio de delegación | **cumple** |
+| **3.** **Rederivar** el argumento 3 de «por qué SEC-051 no entra aquí», no sustituir la fecha | `requirements/REQ-023.md:820-833`. El párrafo **retira por escrito** el argumento de calendario («*los vencimientos reales… son el cierre de 1.34.0 los dos*», con `:4238` y `:4143`) y lo sustituye por un **hecho del árbol**: la remediación de SEC-051 ya está contratada en REQ-024 CA-08/CA-09 con su ADR, así que absorberla aquí escribiría **dos** contratos sobre la misma conducta | **cumple, y es el punto que más me importaba** |
+| **4.** Regla de redacción —un REQ **cita** clase, forzador y vencimiento; no los declara— aplicada al documento, y subida al README **si el analista la ve general** | Aplicada: las citas a `SEC-020` (`:704`→`:1305`), `SEC-024` (`:848`→`:2570`), `SEC-048` (`:251`→`:3689`), `SEC-050` (`:653`/`:677`→`:4014`) y `SEC-051` (`:796`→`:4139-4145`) resuelven **todas** al ancla que nombran. La propuesta general para `requirements/README.md` queda declarada con dueño en `requirements/REQ-023.md:878` | **cumple** (la propuesta queda como deuda declarada, abajo) |
+
+**Comprobado también que el rastro del error no se borró donde debe quedarse.** El texto retirado
+sobrevive **sólo** en la fila del Historial que documenta el cambio
+(`requirements/REQ-023.md:969`, con antes → después y la causa enlazada a SEC-052). Es lo correcto: un
+write-back que borra la huella del defecto impide auditar la siguiente reaparición de la clase. Misma
+práctica que este registro, que no se edita hacia atrás.
+
+### SEC-052 — Estado: `abierto` → **`mitigado`**. La atribución se retiró, y la cláusula se cita con su línea
+
+**El forzador que declaré era literal —«no firmo `Seguridad:` de REQ-023 mientras la atribución esté en
+el documento»— y ya no se cumple su antecedente: la atribución no está.** Las tres remediaciones
+vinculantes están hechas y verificadas leyendo, no aceptando el reporte. **Retirar `SEC-052` del campo
+`Hallazgos abiertos:` de REQ-023 queda autorizado**; el write-back lo enruta la coordinadora, no yo, y
+por el mismo motivo por el que el analista no se lo retiró a sí mismo: quien se beneficia de cerrar un
+hallazgo no lo cierra.
+
+**Lo que este cierre acredita y lo que no.** *Acredita:* que las dos frases falsas —la atribución y la
+consecuencia de máquina— salieron del contrato, y que el argumento 3 fue rederivado sobre un hecho del
+árbol en vez de sobre una fecha corregida. *No acredita:* nada sobre los criterios de REQ-023 como
+contrato (eso es la auditoría de REQ-023, que no ha ocurrido y que irá **después** de QA), ni sobre el
+código que aún no existe.
+
+**Una observación declarada que NO abre hallazgo, y por qué no.** La cita de
+`requirements/REQ-023.md:628-632` reproduce las tres condiciones de mi cláusula pero **omite el
+calificador de la fuente**: en `:4303-4305` las dos últimas son «formas **no exhaustivas** … la
+propiedad es la que decide, no la lista», y el resumen del REQ se lee como una lista de tres cerrada.
+Es la forma **(a)** en pequeño, y envejece hacia el lado que abre. No abre hallazgo porque *(i)* la cita
+con archivo y rango está **al lado** y este registro es el sitio único, *(ii)* vive en prosa de
+«Notas / alcance» y **ningún criterio de aceptación ni ninguna puerta** se apoya en ella, y *(iii)*
+corregirlo son dos palabras. **Qué lo convertiría en hallazgo:** que esa paráfrasis pase a un criterio
+de aceptación, o que se cite sin el rango. Se corrige cuando el documento se toque por cualquier otra
+causa.
+
+**Deuda declarada que este cierre NO lleva consigo, con dueño y vencimiento.** La remediación 4 tenía
+dos mitades: aplicar la regla al documento (**hecha**) y **subirla a doctrina** si es general. El
+analista la ve general y la propone en `requirements/REQ-023.md:878`, pero no puede escribirla desde su
+comisión. Queda así, y no retiene SEC-052 porque mi remediación 4 era condicional y de alcance
+**general**, no del sujeto del hallazgo:
+
+> **Deuda R-015-01 — la regla de redacción no está en doctrina.** *Qué falta:* en
+> `requirements/README.md` § «Cómo se escribe un criterio que no se desmiente», la regla *un REQ **cita**
+> la clase, el forzador y el vencimiento de un hallazgo con archivo y línea; no los **declara***.
+> *Dueño:* `analista-requerimientos` (redacción), coordinadora (enrutado). *Forzador:* mientras no esté,
+> la única defensa contra la clase es que el auditor trace la frase a mano, y eso costó una revisión
+> entera. *Vencimiento:* **antes de que REQ-023 salga de `borrador`** —ése es el momento en que su texto
+> pasa a ser contrato entregado a desarrollo—. *Clase si venciera:* `instrumento` (doctrina del arnés,
+> sin efecto en el producto).
+
+### 2. SEC-053 — la frontera del criterio de publicación delegada **no está escrita**, y ya se publicaron versiones bajo él
+
+### SEC-053 — `contrato` · **abierto** · severidad **alta** · dueño **propietario** (la decisión y su firma)
+
+**El criterio que autoriza a la coordinadora a fusionar, etiquetar y publicar sin preguntar habla de
+«cualquier hallazgo abierto de clase `usuario/dinero` o `contrato`» y no dice ABIERTO DÓNDE — y bajo esa
+ambigüedad ya se publicó**
+
+- **Ubicación:** `docs/gobernanza/autoalojamiento.md:148-155` — «*…`QA: aprobado` y `Seguridad:
+  aprobado` (o hallazgos abiertos sólo de clase `instrumento`, con dueño)… **Cualquier** `FAIL`, un
+  `SKIP` sin explicar, **un hallazgo abierto de clase `usuario/dinero` o `contrato`**, o un veto del
+  auditor devuelve la decisión al propietario*».
+- **El defecto no es la ambigüedad en abstracto: es que el texto no permite decidir si se cumplió.** Y
+  se mide sobre lo publicado, no se argumenta:
+
+  | Tag | Fecha | `contrato` abierto en el registro **de ese tag** | Cómo se decidió publicar |
+  |---|---|---|---|
+  | `v1.32.0` (`ca6047a`) | 2026-09-07 | **sí** — `git show v1.32.0:docs/seguridad/registro-seguridad.md` trae `### SEC-020 — contrato · abierto` en su línea 1305 | `CHANGELOG.md:2688` deja constancia de **aprobación expresa del propietario** («*el propietario aprobó publicar el 2026-09-07*») y nombra a `SEC-020` como lo que cruza. Conforme bajo **cualquier** lectura: la decisión la tomó el propietario |
+  | `v1.32.1` (`973448f`) | 2026-09-07 | **sí** — mismo blob, `SEC-020` sigue `contrato` · `abierto` | Entrada de cierre `CHANGELOG.md:2343-2350`, **agente: coordinadora**, sin entrada en la cola: `git log -- PENDING_APPROVAL.md` no registra nada entre `ca6047a` (v1.32.0) y ese cierre. Y la propia entrada **nombra `SEC-020`** entre lo que cruza a 1.33.0 |
+
+  De donde sale el hecho incómodo: **`v1.32.1` se publicó con un hallazgo `contrato` abierto, nombrado en
+  la misma entrada que anuncia la publicación, y sin que el criterio devolviera la decisión al
+  propietario.** Es conforme bajo la lectura estrecha e **incumplimiento bajo la literal**. El texto, tal
+  como está, no dice cuál rige.
+- **Y son TRES lecturas, no dos — la que se aplicó en la práctica es la tercera, y no está escrita en
+  ninguna parte.** *(a)* **Global**: cualquier `contrato` abierto del registro. Hoy hay **17**
+  (`SEC-020`, `SEC-031`…`036`, `SEC-038`…`045`, `SEC-050`, `SEC-052`), así que la delegación llevaría
+  muerta desde que se firmó y `v1.32.1` se habría publicado fuera de ella. *(b)* **Por ventana**: los
+  hallazgos de la ventana que se publica. `SEC-020` **es** de la ventana 1.32.0 (nació en R-004 sobre
+  REQ-013, que cruzó sin cerrar), así que ni esta lectura salva a `v1.32.0`. *(c)* **Por los REQ que la
+  ventana CIERRA**: `SEC-020` cuelga de REQ-013, que no cerró, luego no cuenta. **Sólo la (c) hace
+  conformes las dos publicaciones**, y la (c) no aparece en ningún documento del árbol: se dedujo de la
+  práctica.
+- **Riesgo, y no es el error de redacción.** Es **quién elige la lectura**. Sin frontera escrita, la
+  escoge, en el momento de publicar, la parte que quiere publicar — y siempre habrá una lectura que
+  concede el permiso. Es exactamente la forma que este registro ya lleva nombrada tres veces —*quien
+  escribe el instrumento diseña el control que sabe pasar* (SEC-045), *una condición de escalada que
+  sólo vive en el documento cuyo aplazamiento castiga es un argumento con la firma de otro* (SEC-052)—
+  aquí aplicada al **permiso para publicar el mecanismo que gobierna a los demás proyectos**. Y el
+  segundo riesgo es de precedente: cada publicación sin frontera escrita **crea práctica**, y la
+  práctica sustituye en silencio al criterio firmado.
+- **Por qué `contrato` y qué NO significa eso.** Es la clase de `SEC-050`: un **texto firmado describe
+  un control con un alcance que no tiene** —bajo la lectura estrecha el criterio *promete más de lo que
+  se aplica*, y bajo la literal *ya se incumplió*—, no una conducta defectuosa de la máquina. **Efecto de
+  máquina: ninguno**, y lo digo aplicándome la distinción que SEC-052 me obligó a escribir:
+  `guard-completado` sólo lee el campo `Hallazgos abiertos:` **del REQ que se cierra**
+  (`hooks/guard-completado.sh:486-527`), y este hallazgo no cuelga de ningún REQ. **No es un veto** y no
+  bloquea ninguna quality gate.
+- **Y aquí está la prueba de que el criterio no se puede aplicar como está: no sé decir si ESTE hallazgo
+  cuenta.** Bajo la lectura *(a)* cuenta y devuelve el tag de 1.33.0 al propietario; bajo *(b)* y *(c)*
+  no cuenta, porque no cuelga de ningún REQ de la ventana. **Un criterio bajo el que un hallazgo no
+  puede clasificarse como dentro o fuera es un criterio que no se puede medir**, y el principio rector
+  de este proyecto ya dice qué hacer entonces: *una puerta que no puede medir no deja pasar*. Aplicado a
+  la delegación, eso significa —y es lectura mía, no decisión— que **mientras la frontera no esté
+  escrita, la coordinadora no puede acreditar que la delegación la cubre, así que la decisión es del
+  propietario por defecto**. Es lo que la coordinadora ya hizo al parar (`docs/ESTADO.md`, «Bloqueos»),
+  y esta entrada existe para que eso deje de depender de su prudencia.
+- **NO lo resuelvo: es del propietario, y lo digo por escrito para no fabricar un forzador.** Ninguna de
+  las dos salidas es mía:
+  1. **Si la lectura correcta es la global**, entonces hay **publicaciones pasadas fuera de delegación**
+     —`v1.32.1` medida arriba— y eso hay que **decirlo y ratificarlo a posteriori**, no descubrirlo en
+     una auditoría futura. Y la delegación queda inoperante hasta que bajen los 17 `contrato`, lo que
+     equivale a retirarla de hecho.
+  2. **Si la correcta es la de ventana (o la de los REQ que cierran)**, entonces el texto **promete más
+     de lo que se aplica** y se reescribe para decir lo que se hace, con la palabra «cualquier»
+     acotada. Ésa es la clase de `SEC-050`, y el arreglo es el mismo: enunciar el alcance por
+     **propiedad** —«hallazgo abierto **de los REQ que esta publicación cierra**», o la que el
+     propietario decida— y citar el **sitio único** donde se cuenta.
+- **Dueño:** **propietario** (la delegación es suya y su cambio lleva su firma: `AGENTS.md` §6 y
+  `docs/gobernanza/autoalojamiento.md`). *Redacción y write-back:* coordinadora, o
+  `analista-requerimientos` si la decisión pasa a ser un NFR.
+- **Forzador:** *la primera publicación en la que se pretenda ejercer la delegación* —hoy, el tag
+  `v1.33.0`—. Enunciado por propiedad y no por fecha a propósito: no lo dispara el calendario, lo
+  dispara que alguien vaya a apoyarse en el criterio.
+- **Vencimiento:** **antes de ese tag**. Es el primer momento en que la respuesta cambia lo que alguien
+  está autorizado a hacer; después del tag la respuesta ya no es una decisión, es una justificación.
+- **Escalada:** si se publica **por delegación** con la frontera sin escribir, este hallazgo **no sube de
+  clase** —ya es la que bloquea— sino que **cambia de naturaleza**: deja de ser deuda de redacción y esa
+  publicación se anota aquí como **de autoridad no acreditada**, con petición de **ratificación expresa**
+  del propietario a posteriori. Un permiso que se ejerce sin poder demostrar que existía no se arregla
+  hacia atrás; sólo se puede reconocer.
+- **No reabro nada.** `v1.32.0` y `v1.32.1` están publicadas y no propongo revertir ni retirar nada: lo
+  que pido es que la frontera se escriba y que, si la lectura global es la correcta, la publicación de
+  `v1.32.1` quede **ratificada por escrito**. Ningún REQ `completado` depende de este criterio, que es de
+  gobernanza y no de contrato de REQ.
+
+### 3. SEC-054 — 1.33.0 publicaría una **acreditación firmada** que la medición desmiente, y **todo el delta de código sin firma de seguridad es de un REQ `bloqueado`**
+
+**Primero la mitad buena, porque es la que decide que esto no sea un veto: el mecanismo que 1.33.0
+publica es exactamente el que audité.** Medido por objeto de árbol, no por diff leído:
+
+| Qué | Árbol firmado en R-012 (`b6e581b`) | `HEAD` (`6e98a9c`) | Veredicto |
+|---|---|---|---|
+| `hooks/` | `88c146536f21fa03d3c8fdad8063b645fb0162bc` | **el mismo objeto** | idéntico byte a byte |
+| `hooks/ tools/ .github/ .arnes/` | — | `git diff --name-only b6e581b HEAD --` sobre las cuatro rutas: **vacío** | sin cambios |
+
+Es decir: **no hay regresión de seguridad en la capa de enforcement** entre mi firma de REQ-017 y lo que
+esta ventana publicaría, y la línea base de no-regresión de R-012 sigue vigente **sin re-auditar**.
+
+**Y la mitad que hay que registrar. Lo único que cambió desde mi firma es el código de REQ-021**
+(`git log b6e581b..HEAD -- tests/`: `1e3424f`, `87d2609`, `7180739`, `2ce7804`), es decir
+`tests/util/sonda-reloj.sh`, `tests/util/sonda-procesos.sh`, `tests/util/README.md`,
+`tests/escenarios/hooks/run.sh`, las dos secciones 37 y la 38 — **más `docs/decisions/ADR-005`**. REQ-021
+está `bloqueado`, va a 1.34.0 por decisión del propietario, su código **se queda**, y su
+`Seguridad: preventiva (R-010)` dice de sí misma que **no cubre el código posterior**. Nada de esto es
+irregular por sí solo; lo que sí hay que declarar es lo que se publica con él.
+
+### SEC-054 — `contrato` · **abierto** · severidad **alta** · dueño `desarrollador` y `analista-requerimientos` (los dos textos), coordinadora (la publicación)
+
+**Un ADR `aceptada` y el README del instrumento afirman, en el árbol que se etiquetaría como `v1.33.0`,
+que «cada corrida acredita que el instrumento responde al sujeto» — y QA midió que no**
+
+- **Ubicación de la afirmación, en los tres sitios que se publican:**
+  1. `docs/decisions/ADR-005-instrumentos-compartidos-en-tests-util.md:42` — «***4. Cada corrida acredita
+     que el instrumento responde al sujeto: la calibración.***», en un ADR cuya cabecera dice
+     `Estado: aceptada` (`:3`) y `REQ: REQ-021 · Versión: 1.33.0` (`:4`).
+  2. `tests/util/README.md:50` — «*La calibración: cada corrida acredita que el instrumento responde al
+     sujeto*», en el README del propio instrumento.
+  3. `tests/escenarios/hooks/secciones/38-sondas-compartidas.sh` — la sección que **publica PASS** sobre
+     esa acreditación en la puerta requerida de `main`.
+- **Qué la desmiente, medido por QA y no por lectura mía:** `docs/qa/1.33.0.md:2448-2454` — «*la
+  acreditación del propio banco certifica UNA aritmética, no la propiedad*»: el `STUB38` del fail-before
+  es exactamente la única aritmética que falla, y **cuatro** mutaciones tautológicas pasan al juez real,
+  **tres sin leer el sujeto**, porque el testigo es predecible por construcción en toda máquina
+  (`SP_RESOLUCION=1`, `SP_CAL_MARGEN=4`, `SONDA_DISC_PROC_VECES=2` son literales, así que
+  `testigo = parámetro / 2`; en el reloj la ventana de 625× hace que el discordante **no pueda** fallar).
+  Estado del REQ que lo contrata: `bloqueado`, con `QA-021-10` y `QA-021-11` **abiertos** y de clase
+  `contrato` (`requirements/REQ-021.md`, cabecera).
+- **Por qué es un hallazgo MÍO y no un duplicado de `QA-021-10`.** `QA-021-10` bloquea **el cierre de
+  REQ-021**, y funciona: el REQ no cierra. Lo que ninguna puerta ni ningún hallazgo cubre es que el
+  **texto firmado se publique igual**: un ADR con `Estado: aceptada` y `Versión: 1.33.0`, y el README del
+  instrumento, salen en el tag afirmando la propiedad. `guard-completado` no mira ADRs ni READMEs.
+- **Riesgo, y es el de siempre en este repositorio, una vuelta más.** *(i)* **Una acreditación publicada
+  que no acredita es peor que ninguna, porque sustituye a la pregunta**: `requirements/REQ-023.md` ya
+  escribe sus criterios de coste apoyados en «*instrumentos en `tests/util/` cuando REQ-021 suelte*»
+  (CA-09), así que la ventana siguiente medirá con un instrumento cuyo verde certifica una aritmética.
+  *(ii)* Es literalmente la condición **3** de mi propia cláusula de escalada de SEC-047
+  (`:4310-4313`) en otra superficie: *un texto firmado empieza a prometer la propiedad mientras el
+  código no la tiene*. *(iii)* El plugin se distribuye con `source: "./"`
+  (`.claude-plugin/marketplace.json`), así que los proyectos consumidores reciben el ADR y el README —no
+  sólo este repositorio.
+- **Agravante que NO clasifico yo y que cito para que no se pierda:** `QA-021-06` (`instrumento`, dueño
+  `desarrollador`) mide que la calibración del reloj queda fuera de banda **5 de 30** veces —2 en
+  reposo— y que «*cada una pone en rojo la puerta requerida*»; la vuelta 3 añade `CA-03 (d)` fallando en
+  **9 de 16** corridas bajo saturación. Publicar eso hace **no determinista la única puerta automática
+  de `main`**, y la consecuencia humana está medida y escrita en este mismo proyecto: *la fricción
+  termina con alguien apagando el guard* (`AGENTS.md` §13). Un rojo que aparece al azar deja de leerse
+  como señal. La clase `instrumento` es correcta por `AGENTS.md` §6 —es una prueba del propio arnés— y
+  **no la disputo**; lo que registro es que su **consecuencia de gobernanza** al publicarse no estaba
+  anotada en ningún sitio.
+- **Remediación, y es barata a propósito: no exige revertir código ni retener el tag.** Basta que los
+  textos digan lo que el árbol tiene:
+  1. **`ADR-005`**: no se reescribe hacia atrás (`AGENTS.md` §10: los ADR no se borran). Se le añade una
+     **nota fechada** que declare que su punto 4 **no está acreditado** en el árbol que se publica,
+     citando `QA-021-10` y `docs/qa/1.33.0.md:2448-2454`; o se supersede con un ADR nuevo si la decisión
+     de fondo cambia. *Dueño:* `desarrollador` (es documentación técnica suya); gate humano por ser una
+     decisión firmada.
+  2. **`tests/util/README.md:50`**: que diga **qué certifica** la calibración (una aritmética, sobre una
+     entrada) y **qué no** (que el instrumento distinga), citando la medición. El README del instrumento
+     es donde lo lee quien lo vaya a usar.
+  3. **Write-back (`AGENTS.md` §9), y sin él no cierro:** la propiedad —*un instrumento compartido no
+     publica una acreditación que su propia mutación tautológica no desmienta*— tiene que quedar como
+     **criterio de REQ-021** (donde `QA-021-10` ya la empuja) y, si se quiere que valga para todo
+     instrumento futuro, como **NFR**. Mientras viva sólo aquí y en `docs/qa/`, es deriva.
+- **Efecto en el cierre y en la publicación, dicho con la distinción de SEC-052 aplicada a mí mismo.**
+  `contrato`, así que si se declara en la cabecera de REQ-021 **bloquea el cierre de REQ-021** —donde
+  `QA-021-10` ya bloquea— y **de nada más**: no toca REQ-017 (`completado`, `Seguridad: aprobado (R-012)`,
+  y su código es idéntico al que firmé), no toca ninguna quality gate, y **no es un veto de la ventana**.
+  Si esta clase devuelve o no al propietario la publicación de 1.33.0 **no lo decide este hallazgo**: lo
+  decide el criterio de `docs/gobernanza/autoalojamiento.md:148-155`, cuya frontera es `SEC-053` y cuya
+  respuesta es del propietario. **Lo digo así porque lo contrario sería fabricar un forzador**, que es
+  precisamente lo que SEC-052 castiga.
+- **Forzador:** el tag `v1.33.0` — a partir de él la afirmación está **firmada y distribuida**, y
+  desmentirla cuesta un ADR nuevo en vez de una nota. *Vencimiento:* **antes de ese tag** para los
+  puntos 1 y 2 (dos párrafos); el punto 3 (write-back), **antes del cierre de REQ-021** en 1.34.0.
+- **No reabro nada, y esto sí conviene decirlo.** REQ-017 (`completado`) **no se reabre**: `hooks/`,
+  `tools/`, `.github/` y `.arnes/` son el mismo objeto de árbol que firmé en R-012, así que no hay
+  regresión que perseguir. Lo que se publica sin firma de seguridad es el código de REQ-021, que **no
+  está `completado`** y por tanto no necesitaba la mía; lo que faltaba era decir que su acreditación no
+  lo está.
+
+### 4. Clases ajenas que ratifico, para que no las fije en solitario quien se beneficia
+
+Lo hago porque la lección de SEC-052 es exactamente ésta: cuando un documento declara la clase del
+hallazgo que le conviene no bloquear, alguien de fuera tiene que mirarla.
+
+- **La vía del **NUL** y del archivo en **UTF-16** que `requirements/REQ-023.md` declara en «Fuera de
+  alcance» como `instrumento`, dueño `desarrollador`, ventana 1.35.0 — nace en ese documento y no en
+  este registro. **Concurro con `instrumento`**, y con motivo, no por cortesía: es un defecto de un
+  guardián del propio arnés (`AGENTS.md` §6), bash descarta los NUL antes de que ninguna guarda los vea,
+  y el REQ **declara por escrito** que ningún criterio suyo promete cubrir esa vía —«*el silencio de esta
+  guarda ante un NUL no acredita nada*»—, así que no hay promesa falsa y no hay `contrato`. **Qué la
+  subiría a `contrato`:** que cualquier texto firmado —`AGENTS.md` §13, la plantilla, la skill de
+  migración o un criterio cerrado— empiece a prometer cobertura de la clase «cabecera no medible» **sin
+  acotar** esa vía. Es la misma condición 3 de `:4310-4313`, y queda anotada aquí para que la clase no
+  dependa de que el REQ siga existiendo con esa sección.
+- **`QA-021-06`** (reloj flaky que enrojece la puerta requerida): **concurro con `instrumento`**; su
+  consecuencia de gobernanza al publicarse queda anotada arriba, en `SEC-054`.
+- **`QA-021-10` y `QA-021-11`** (`contrato`, de QA): **no los toco**. Están bien clasificados y su sede
+  es el bucle dev↔QA de REQ-021, que no es mío hasta que QA apruebe.
+
+### Rigor y estado de los REQ — R-015
+
+**No subo ni bajo el rigor de ningún REQ.** REQ-021 y REQ-023 ya son `Rigor: critico` con `Sensible a
+seguridad: sí`, que es su suelo: no hay nada que subir y nada se baja. **No firmo ningún REQ**: ninguna
+línea `QA:` ni `Seguridad:` se toca en esta revisión.
+
+**Estado de seguridad aprobado — línea base de no-regresión, sin cambios y ahora medida por objeto de
+árbol.** Para REQ-017 y para toda la capa de enforcement sigue vigente la de **R-012**, y queda anclada
+así: `hooks/` = `88c146536f21fa03d3c8fdad8063b645fb0162bc`, con `tools/`, `.github/` y `.arnes/` sin
+diferencias respecto a `b6e581b`. Cualquier auditoría futura que encuentre otro objeto en `hooks/` sin
+una firma nueva entre medias está mirando una regresión. Para lo anterior, R-009/R-008.
+
+**Lo que esta revisión acredita y lo que NO.** *Acredita:* que el write-back de SEC-052 está hecho en sus
+cuatro puntos, verificado resolviendo cada cita contra el árbol; que la frontera del criterio de
+publicación delegada no está escrita y que `v1.32.1` se publicó con un `contrato` abierto nombrado en su
+propia entrada de CHANGELOG; y que el mecanismo que 1.33.0 publicaría es idéntico al que firmé en R-012.
+*No acredita:* ninguna quality gate (no las miro); **ningún REQ** —en particular ni REQ-021 ni REQ-023—;
+ni los criterios de REQ-023 como contrato; ni el código de REQ-021, que se auditará en su turno, después
+de QA.

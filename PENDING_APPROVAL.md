@@ -24,7 +24,114 @@
 
 ## Pendientes
 
-### [2026-09-08] (coordinadora) — REQ-021 agota el tope de 3 vueltas sin poder cerrar: qué hace 1.33.0
+
+## Resueltas
+
+### RESUELTA 2026-09-08 (propietario) — La partición autorizada es IMPOSIBLE: se reabre REQ-014 y se re-deriva CA-18
+
+- **Contexto.** Autorizaste partir las secciones sobre 400 líneas con **desarrollador + QA**, sin analista
+  ni auditor, sobre dos premisas escritas: *«el cambio es **mecánico** —mismo contenido, mismos casos,
+  menos líneas por archivo—»* y *«su acreditación **ya existe y es fuerte**: un inventario ordenado de
+  caso y veredicto **idéntico byte a byte**»*. El desarrollador **paró antes de tocar `tests/`** y midió
+  las dos. **Las dos son falsas.**
+
+- **Premisa 1 falsa: no es mecánico, es aritméticamente imposible.** Tres invariantes se multiplican —
+  cada sección corre en **su propio subshell y en paralelo** (`run.sh:1168`, invariante `CA-04`), así que
+  todo archivo partido tiene que ser **autocontenido**; `CA-19` **prohíbe** que una sección haga `source`
+  de otra; y `H-04` **aborta** ante cualquier archivo de `secciones/` que no case `NN-*.sh`, así que
+  tampoco cabe un auxiliar. La maquinaria compartida **no se puede factorizar**. Mínimo autónomo medido,
+  **antes de meter un solo caso**:
+
+  | | preámbulo | maquinaria | bloque indivisible | mínimo |
+  |---|---|---|---|---|
+  | `37/1` | 26 | 122 | 312 | **460** |
+  | `37/2` | 32 | 92 | 269 + 74 | **467** |
+
+  **El límite de `CA-18` es 400. No hay ninguna partición conforme que lo cumpla.** Y la mejor posible
+  deja `CA-18` **rojo igual**: `37/1`-A **564**, `37/2`-A **467**, más `38-sondas-compartidas.sh` **827**.
+  Duplicar el clasificador para separar `CA-01` de `CA-10` da **516 y 511** —las dos siguen fuera— y
+  además duplica cuatro evaluaciones y la clasificación, coste que `CA-08 (i)` presupuesta. Recortar
+  comentarios tampoco basta: con el código puro, el archivo del clasificador sigue en **~410**.
+
+  > **Esto es la clase de `DEV-021-05`, y conviene nombrarla:** un criterio **derivado sin comprobar su
+  > factibilidad**. `CA-18` fijó 400 sin medir cuánto mide una sección autónoma mínima. Es el mismo
+  > defecto que `CA-08 (iii)`, cuyo techo de `4×` contaba cuatro ejercicios como si costaran lo mismo y
+  > hubo que **re-derivarlo término a término a 6×**. Y aplica la regla que salió de ahí: **un techo no
+  > se compra deformando el sujeto**, y aquí el sujeto ya no se puede deformar más — el mínimo es
+  > estructural, no de estilo.
+
+- **Premisa 2 falsa: la acreditación en la que se apoyó tu firma ya no discrimina.** Medido con **dos
+  corridas intactas del banco, sin tocar nada**: 884 casos las dos, **74.046 y 74.047 bytes**, y `cmp`
+  **difiere en el byte 42.659, línea 548**. **20 de 884 líneas son volátiles** —µs, razones, PID, sellos
+  epoch— en `REQ-017 CA-03/04/08/09` y `REQ-021 CA-02/03/04/08`. La causa está verificada en una línea:
+  `tests/escenarios/hooks/inventario.sh:24` normaliza **sólo** `[0-9]+ms` → `Nms`, y estas cifras no son
+  ms.
+
+  **Consecuencia:** el `cmp` crudo que exige `REQ-014 CA-12` **ya no puede distinguir «la partición
+  cambió algo» de «el reloj avanzó»**. Es decir, la acreditación que sustituía al analista y al auditor
+  **no es aplicable en este árbol**. El desarrollador construyó un oráculo **normalizado** y lo validó
+  —dos corridas intactas **sí** salen idénticas bajo él: 884 líneas, 72.108 bytes, `cmp` limpio—, así que
+  la acreditación es **factible**; pero el criterio, tal como está escrito, no lo es.
+
+  > Y la sospecha del desarrollador, que suena correcta: **es probablemente la causa real de que la
+  > partición se ordenara «después de cerrar REQ-021»** — las secciones que hay que partir son justo las
+  > que publican las cifras volátiles.
+
+- **Lo que el desarrollador NO hizo, y estuvo bien:** no tocó `tests/`, no comiteó, no tocó el índice, y
+  **no escribió `Estado: bloqueado` en ningún REQ**. `CA-18` es de **`REQ-014`, que está `completado` con
+  `QA: aprobado` y `Seguridad: aprobado`**; reabrirlo es la **REGLA DE ESTADO** de §9 y una decisión de
+  gobernanza, no un efecto colateral de una comisión. Gates en verde: las tres de §7, `bash -n` sobre las
+  **45** secciones con **0 rotas**, banco **880 PASS · 0 FAIL · 4 SKIP · rc 0**, y `git diff HEAD --
+  tests/` **vacío**.
+
+- **Opciones.**
+  - **A) Reabrir `REQ-014` para re-derivar `CA-18` y arreglar el oráculo del inventario, y partir
+    después.** Absorbe las dos premisas falsas en un solo trabajo: el analista **re-deriva el límite
+    término a término** —como se hizo con `CA-08 (iii)`— desde el mínimo autónomo **medido**, y lo escribe
+    como **propiedad y no como número**; y `inventario.sh` normaliza los campos volátiles, con el oráculo
+    que ya está construido y validado. Después la partición es posible y su acreditación vuelve a
+    discriminar. **No toca el mecanismo del corredor.** Reabre un REQ `completado`, que es exactamente lo
+    que §9 manda cuando un criterio cambia.
+  - **B) Mover los ayudantes compartidos a `run.sh`.** La única salida que hace `CA-18` verde **sin**
+    tocar el límite. Pero es **cambio de mecanismo** → `critico` con analista y auditor, y **cambia el
+    conjunto que `autoprueba-corredor.sh` deriva y vigila en `H-01`**. Más riesgo por el mismo precio.
+  - **C) No fusionar 1.33.0.** `CA-18` se queda rojo y la candidata entera espera a 1.34.0, junto con
+    REQ-021. Deja sin publicar el trabajo de REQ-017, que retira una puerta **no determinista** que hoy
+    está publicada en `v1.32.1`.
+
+- **Recomendación de la coordinadora: A.** El número estaba mal derivado y el árbol lo demuestra con
+  aritmética, no con opinión. Re-derivar un techo infactible **no es debilitar una puerta**: es lo que
+  este REQ ya hizo una vez, con el número delante. Y B cambia el corredor para no tener que admitir que
+  el 400 estaba mal.
+
+- **Lo que NO recomiendo y digo por qué, para que no aparezca luego como atajo:** poner
+  `continue-on-error` en el paso de la autoprueba, o sacar `CA-18` del CI. Haría verde la puerta
+  requerida **apagando la señal**, que es exactamente el modo de fallo que `AGENTS.md` §13 describe —
+  *«un guard apagado protege menos que uno parcial»*— y que el propio `CA-18` existe para evitar.
+
+- **Espera.** Tu elección entre A, B y C. **Nota de honestidad sobre el calendario:** cualquiera de las
+  tres deja `v1.33.0` **fuera de hoy**, porque A y B son ciclos de cuatro agentes (~2 h cada uno) y C no
+  publica. La estimación de «≈1 h al tag» que la coordinadora venía dando **era falsa**, y lo era porque
+  se apoyaba en que la partición era mecánica — la misma premisa que acaba de caer.
+
+- **RESOLUCIÓN del propietario, 2026-09-08: opción A.** Se reabre `REQ-014` por la **REGLA DE ESTADO**
+  de §9: el analista re-deriva `CA-18` **término a término** desde el mínimo autónomo medido y lo enuncia
+  **por propiedad, no por número**, y `inventario.sh` pasa a normalizar **lo que es medida y no
+  identidad** —la propiedad que su propio comentario ya declara y cuya extensión envejeció al nombrar una
+  unidad—. Los dos criterios ganan **par discriminante**: un límite que nadie puede exceder y un oráculo
+  que normaliza todo no miden nada. Después la partición es posible, incluida la de
+  `38-sondas-compartidas.sh`, cuya firma el propietario ya dio hoy.
+
+- **Corrección de la coordinadora a su propia estimación, hecha en el mismo día:** el «fuera de hoy» de
+  arriba **también era pesimista**. Medido con las duraciones reales de las comisiones de esta sesión
+  —analista 13–21 min, desarrollador 9–43 min, QA 45 min, auditor 8–20 min—, la reapertura completa sale
+  a **≈2 h 45** y `v1.33.0` **sí cabe hoy**, con **≈3 h 45** si hay una vuelta dev↔QA. Se deja escrito
+  porque las dos estimaciones del día —la de «≈1 h» y la de «fuera de hoy»— fallaron en direcciones
+  opuestas y ninguna publicó el dato del que salían.
+
+### RESUELTA 2026-09-08 (propietario) — REQ-021 sale de 1.33.0: se publica sin él y su código se queda
+
+### RESUELTA 2026-09-08 (propietario) — REQ-021 sale de 1.33.0: se publica sin él y su código se queda
 
 - **Contexto.** `AGENTS.md` §6: máximo **3 vueltas dev↔QA por REQ**, el contador **no se reinicia**, y
   agotado el tope el REQ **o cierra con residual declarado o pasa a `bloqueado` y se escala al humano**.
@@ -94,9 +201,41 @@
   1.33.0 o se revierte. **El pipeline está detenido**: mientras esta entrada esté aquí,
   `guard-completado` deniega marcar **cualquier** REQ como `completado`.
 
-## Resueltas
+- **RESOLUCIÓN del propietario, 2026-09-08: opción A, y el código de la vuelta 3 SE QUEDA.** 1.33.0 se
+  publica con **REQ-017** y la partición de secciones; **REQ-021 pasa a 1.34.0** con las dos piezas que
+  QA nombró (tamaño del discordante sorteado por corrida, y la terna fuera de todo directorio que la
+  sonda reciba), las dos a coste cero procesos. El código de `2ce7804` **no se revierte**: el árbol con
+  él es medible mejor que sin él y el banco lo certifica (880/0/4, `rc 0`).
+
+- **Dos cosas que esta resolución NO decide, y quedan nombradas para que nadie las resuelva por su
+  cuenta:**
+  1. **`Estado:` de REQ-021 se queda en `bloqueado`**, no vuelve a `pendiente`. El tope de vueltas
+     **sigue agotado** y nada de esta decisión lo cambia; ponerlo en `pendiente` borraría ese hecho.
+  2. **Si el contador de vueltas se reinicia al cambiar de ventana, NO está escrito en `AGENTS.md` §6.**
+     La sección sólo dice que no se reinicia «con cada hallazgo nuevo». Es una pregunta abierta con
+     efecto real —decide si 1.34.0 tiene tres vueltas o cero— y la resuelve el `analista-requerimientos`
+     en el write-back, con **ADR** si es cambio de fondo. La coordinadora no la interpreta.
 
 ### RESUELTA 2026-09-08 (propietario, autorización expresa) — partir las dos secciones 37 paga desarrollador + QA, sin analista ni auditor
+
+> **AMPLIACIÓN del propietario, 2026-09-08, misma firma extendida a `38-sondas-compartidas.sh`.** La
+> vuelta 3 de REQ-021 hizo crecer esa sección de **722 a 827** líneas, así que `CA-18` la nombra junto a
+> las dos 37 y **la fusión seguía bloqueada aunque las 37 se partieran**. La autorización original decía
+> «las dos secciones 37» y excluía por escrito «ninguna otra edición de `tests/`»: **extenderla por
+> analogía habría sido la reclasificación automática que §6 prohíbe**, así que se preguntó. Mismo trato y
+> mismo motivo —el cambio es mecánico y su acreditación es el inventario ordenado de caso y veredicto
+> **idéntico byte a byte**, criterio central de REQ-014— y **los mismos límites**: ninguna otra edición
+> de `tests/`, ningún cambio de lógica, y ningún ajuste de `CASOS_ESPERADOS` (hoy **884**) ni de
+> `CASOS_ESPERADOS_SECCION` más allá del reparto aritmético que la partición obliga.
+>
+> **Va en comisión aparte y en SERIE, no en paralelo:** las dos particiones escriben
+> `tests/escenarios/hooks/run.sh`, `tests/escenarios/hooks/README.md` y `CHANGELOG.md`, así que
+> `AGENTS.md` §6 punto 3 las hace colisionar por líneas, con independencia de que sean la misma fase.
+>
+> **Y una nota que la ampliación obliga a dejar escrita:** la sección 38 es la de **REQ-021**, que acaba
+> de quedar `bloqueado`. Partirla **no toca su lógica** ni sus veredictos —es el mismo contenido en menos
+> líneas por archivo— pero el REQ vuelve a 1.34.0 con sus secciones ya repartidas, y quien retome allí
+> las dos piezas que QA nombró se las encontrará en archivos distintos de los que su Historial cita.
 
 - **Contexto.** La autoprueba del corredor sale `rc=1`: `CA-18` limita los archivos de sección a **400
   líneas** y `37-coste-del-escaner-1-escala.sh` mide **751** y `37-…-2-la-seccion-caliente.sh` **614**.
