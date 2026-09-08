@@ -2,6 +2,45 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · Write-back de REQ-014: `H-13` reflejado, tres ADR enlazados y CUATRO textos del cuerpo que eran falsos
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+- **`H-13`.** `CA-14` declara ahora **`REQ-017 CA-09 la pared de los 60 s`** por su nombre como inestable
+  **en su veredicto**, con la medición de QA, su dueño `SEC-030`, y la conclusión que sostiene el
+  acotamiento: **oscila antes de la partición, con tasa igual o mayor ⇒ la partición no lo empeora.** Los
+  positivos de `CA-14` y `CA-12 (d)` quedan enunciados **módulo esa línea declarada**, con cláusula
+  anti-fuga: cualquier otra diferencia es FALLO, y **una línea nueva que oscile no se acota sola**.
+- **`SEC-058`.** `CA-18 (ii)`: **≈424 → ≈442**, con su derivación (`19 + 36 = 55` de duplicación por
+  archivo extra) y la frase de que **la conclusión no dependía de la cifra** — `442 > 424 > 400`, sigue
+  sin caber en dos y salieron tres.
+- **`CA-31 (d)`.** `ADR-002` (H-03), `ADR-006` (CA-18) y `ADR-007` (CA-12/CA-14) enlazados desde las
+  **siete** filas que los causaron. Y el criterio se reescribe **por relación** en vez de por recuento
+  —«todo ADR que el Historial declare como causa, enlazado desde la fila que lo causó»— porque «dos
+  pendientes» pasó a «tres enlazados» **el mismo día**: un criterio que cuenta envejece en horas.
+- **Cuatro textos del cuerpo que eran falsos**, no tres. El cuarto lo halló el analista: **`CA-18 (iii)`**
+  fechaba su negativo sobre un árbol de 45 secciones con «105 PASS · 1 FAIL» y daba **el positivo real
+  por pendiente** — cuando ya estaba acreditado sobre el árbol real en sus dos ramas (106 PASS · 0 FAIL,
+  las seis mutaciones de QA). Y entre los otros tres, **el bloque «ADR PENDIENTE … bloquea el cierre»
+  afirmaba un bloqueo que no existía desde hacía dos días** (`ADR-002` es del 2026-09-06).
+- **`Hallazgos abiertos:`** pasa a **12 entradas, todas con clase**, verificado parseando la línea como lo
+  hace la puerta. Tres `contrato`: `H-13`, `SEC-058`, `SEC-060`.
+
+**Lo que el analista NO hizo, y lo dijo:** el cuerpo afirmaba «REQ-021, que está `bloqueado`»; **retiró la
+afirmación en vez de sustituirla**, porque no podía verificarla sin leer un REQ fuera de su lista de
+lectura. *(Confirmado después por la coordinadora: `REQ-021` **sí** está `bloqueado`. El dato se puede
+reponer; retirar en vez de adivinar fue la conducta correcta.)*
+
+**Coste: ≈154 k tokens, 54 llamadas, 11,5 min** — frente a los **229 k / 95 / 28,4 min** de la comisión de
+QA de esta misma mañana. La diferencia no es el modelo ni el agente: es que este encargo llevaba **lista
+de lectura cerrada con rangos de línea**. Primera medición del modo austero.
+
+**Peaje de `SEC-060`, y ya no es anécdota: dos agentes hoy.** QA y el analista recibieron un `deny` de
+`guard-completado` sobre ediciones cuyo texto **nuevo** contenía el literal `Seguridad:`. La causa de
+fondo es que la cabecera está en estado contradictorio —`Seguridad: aprobado` sin fecha, del 2026-09-06 y
+declarado nulo por el propio Historial, sobre `QA: con-hallazgos`—, así que la puerta se planta, y con
+razón. Cada `deny` cuesta un reintento. Es `instrumento` y **acumula** (regla del propietario), pero se
+registra con sus dos ocurrencias porque una clase con dos casos el mismo día ya no se descarta por rara.
+
 ## [GitHub] — 2026-09-08 · Las dos banderas que ahorran contexto: decididas, medidas y APLAZADAS con su motivo
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 
