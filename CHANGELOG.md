@@ -2,6 +2,69 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · R-013: confirmado el bypass del campo comentado, y aparece uno peor — se pierde el gate humano escribiendo BIEN la aprobación
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad`.
+
+**Investigación del guardián publicado, no auditoría de ningún REQ.** No se firmó nada. Medido
+ejecutando el entrypoint real (`hooks/guard.sh`) con JSON de `PreToolUse`, control positivo y negativo en
+cada tanda, fixtures fuera del repositorio. **23 filas con veredicto idéntico en la instalada 1.32.1 y en
+la candidata** —`guard-completado.sh`, `campos-req.awk`, `guard.sh` y `hooks.json` byte a byte iguales;
+`lib.sh` difiere en **una** línea—: **nada que atribuir a 1.33.0**.
+
+**Confirmada la hipótesis que el analista de REQ-023 dejó sin ejecutar:** un `<!-- Sensible a seguridad:
+sí -->` junto a `Rigor: ligero` **cierra a `completado` un REQ con `QA: pendiente` y `Seguridad:
+pendiente` escritos a la vista**, en silencio total — ni deny, ni `systemMessage`, ni aviso de
+vocabulario. Dos variantes nuevas: `<!-- Rigor: critico -->` y `<!-- QA: pendiente -->`.
+
+**Pero la hipótesis en sí NO es defecto nuevo**, y el auditor lo probó con un control de equivalencia
+—comentar y borrar dan el **mismo** ALLOW—: es `REQ-016 CA-11` funcionando como se contrató, más la
+decisión que él firmó en `R-009`. **No abrió `SEC` para ella.** Alcance, sin exagerarlo: ese `ligero` no
+salta la clase del hallazgo, ni las quality gates, ni la cola.
+
+**La clase, contratable:** *un campo de la cabecera cuya **ausencia** la puerta resuelve del lado que
+**abre** queda satisfecho haciendo desaparecer su línea, **por cualquier vía** —carácter invisible, rango
+de comentario, borrado—; la vía no cambia el veredicto, porque la puerta no mide la vía, mide la
+ausencia.* Se cumple en **cuatro** de los seis campos; la única que cierra es `Seguridad:` en `critico`.
+
+### `SEC-050` — `contrato`, alta
+
+Tres cosas que **ningún documento dice**: (1) la superficie son **cuatro** campos y los tres textos que
+la describen nombran **dos** —incluida **la propia remediación de `SEC-047` del auditor**, que se aplica
+a sí mismo la prohibición de enumerar—; (2) **el puntero «un solo sitio» de `CA-11` es falso para el
+campo que más pesa**: manda a `guard-completado.sh` y la regla del suelo de rigor vive en `hooks/lib.sh`,
+así que quien audite siguiendo el contrato concluirá que el suelo está a salvo; (3) la variante `<!--
+Rigor: critico -->` **desmiente una promesa sin condición** de §6/§13 — aquí lo tapa la política de
+autoalojamiento, **en los proyectos consumidores no**.
+
+### `SEC-051` — `instrumento`, alta, independiente, y peor
+
+`arnes_cola_pendientes` (`hooks/lib.sh:1161-1162`) descarta la **línea completa** que contenga `<!--` o
+`-->` **en cualquier posición**, con un `continue` **incondicional**:
+
+| Entrada bajo `## Pendientes` | cola | Puerta |
+|---|---|---|
+| `### Fusionar el PR a main` — control | **1** | **DENY** |
+| `### Fusionar el PR a main <!-- pedido a Juan el 8/9 -->` | **0** | **ALLOW** |
+| `### Migrar A --> B` — **sin comentario ninguno** | **0** | **ALLOW** |
+| `<!-- Nota` sin cerrar + 2 entradas reales detrás | **0**, `rc=0` | **ALLOW** |
+
+**Se pierde el gate humano sin acto deliberado: escribiendo BIEN la aprobación.** Y los **tres** canales
+de observabilidad coinciden en el número equivocado —`arnes-lectura.sh` añade «*Ningún valor anómalo*»—:
+la propiedad de «una sola regla» de `REQ-009` **se cumple y propaga el error**. *Consistencia no es
+corrección.* La asimetría que prueba que es defecto y no decisión: **en la cabecera un rango sin cerrar
+DENIEGA; en la cola cuenta cero en silencio.**
+
+**Latente:** barridos **133 blobs únicos** de `requirements/*.md` (136 commits, 24 rutas) y los **4** de
+`PENDING_APPROVAL.md`, con control positivo del barrido: **cero comentarios en cabecera**, ningún cierre
+pasado contaminado.
+
+**`SEC-045` y la custodia no cambian, y el motivo es bueno:** `SEC-051` existe porque al banco le **falta
+un caso**, y **custodia y completitud son ortogonales** — un guardián sobre `secciones/` habría impedido
+*debilitar* un caso, no *escribir* el que nunca existió. Es evidencia **a favor** del alcance estrecho
+que eligió el propietario.
+
+**Inventario verificado `SEC-001`…`SEC-051`, monótono y sin huecos.**
+
 ## [GitHub] — 2026-09-08 · Write-back de R-010 en REQ-019: el criterio de inventario de invariantes NO existía, y el universo lo cerraba quien se beneficiaba de dejarlo corto
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
 
