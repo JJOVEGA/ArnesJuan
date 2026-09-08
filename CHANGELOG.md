@@ -2,6 +2,36 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · Versión 1.32.1 → **1.33.0** en los cuatro sitios, y las menciones que NO se tocan
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+`.claude-plugin/plugin.json` `.version`; `.claude-plugin/marketplace.json` en sus **dos** campos
+(`.metadata.version` y `.plugins[0].version`); `.arnes/config.json` `.arnes_version`. Las tres
+comprobaciones `jq` en verde, más `bash -n` sobre `hooks/*.sh` y `tools/*.sh`. `source: "./"` intacto.
+
+**Es `minor` y no `patch`** porque la ventana entrega comportamiento que los consumidores heredan:
+`REQ-017` retira una puerta **no determinista** del mecanismo, y el banco pasa de 45 a **50** secciones.
+
+### La comprobación que valió la comisión: 370 menciones de `1.32.1`, y algunas son FUNCIONALES
+
+De 51 archivos con menciones, la mayoría son históricas —describen lo que pasó— pero **hay un grupo que
+es código ejecutable y aun así debe seguir diciendo `1.32.1`**:
+
+> `tests/escenarios/hooks/secciones/37-coste-del-escaner-{1..5}.sh` usan `v1.32.1` como **tag de línea
+> base** (`git show v1.32.1:<f>`). Es el árbol «antes» contra el que `REQ-017` mide: **subirlo haría que
+> el criterio se comparase consigo mismo, y `CA-05`, `CA-08` y `CA-09` pasarían por tautología.**
+
+Un `sed` global sobre la versión habría convertido tres criterios en verdades vacías **sin romper ni una
+prueba** — exactamente la clase que esta ventana lleva todo el día cazando, encontrada esta vez **antes**
+de cometerla. El desarrollador lo enumeró archivo por archivo en vez de sustituir a ciegas.
+
+### Aviso esperado en el bloque derivado
+
+`docs/ESTADO.md` dice ahora *«plugin instalado 1.32.1 · el proyecto declara 1.33.0 — migración
+pendiente»*. **No es un defecto:** es el estado real del autoalojamiento — la instalación estable sigue
+en 1.32.1 y **es la que gobierna esta sesión**. El aviso se apaga solo cuando se publique y se actualice
+la instalación.
+
 ## [GitHub] — 2026-09-08 · Gráficos de cierres contratados en `REQ-008`; y la enumeración B encontró tres defectos en los criterios del propio `REQ-019`
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` ×2 (REQ-008 y F1-B).
 
