@@ -2,6 +2,91 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · QA de REQ-021: `con-hallazgos`, y DOS cifras que esta bitácora publicó como medidas se RETIRAN
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+**Veredicto `QA: con-hallazgos`, vuelta 0 de 3.** Nueve hallazgos nuevos, **tres `contrato`**. Tres
+criterios FALLAN (`CA-01`, `CA-04`, `CA-06`, `CA-10`), uno es **FLAKY** (`CA-03`) y `CA-08` sale **no
+concluyente** en tres de sus cuatro mitades. Banco **870/0/3, rc 0, 49,5 s**; las tres quality gates de
+§7 en verde.
+
+### Retractación 1 — «los factores salieron EXACTOS» era la firma de una tautología, no de un sujeto bueno
+
+La entrada de esta bitácora del 2026-09-07 sobre la implementación de REQ-021 dice que en la sonda de
+procesos y la de línea base «los factores salieron **exactos** (2,000 y 1,000) en todas las corridas», y
+lo presenta como evidencia de un sujeto de calibración **bueno**. **Es lo contrario, y está medido**
+(`QA-021-01`, `contrato`):
+
+Una `sonda-linea-base.sh` **mutada, que no materializa ni verifica nada**, publica `cal_a=2000
+cal_b=1000` y **el juez real dice `PASS`**, con el mismo texto que la original. El factor sale de
+`SLB_ARCHIVOS_EJ`, que en la mitad sensible **es el parámetro**: `2N/N = 2000` **por aritmética**, haga
+la sonda algo o nada. **Un número que no puede salir mal no está midiendo nada**, y una exactitud
+perfecta en un instrumento sujeto a ruido debió leerse como sospecha, no como calidad.
+
+**Y lo que eso desmiente no es un criterio, es una decisión de gobernanza.** El sustituto con el que se
+justificó **no poner `tests/` en `codigo_app.globs`** —«acreditar la medida en vez de custodiar el
+instrumento», `ADR-005`, residual `SEC-045` del auditor— descansa en que *una sonda alterada no da
+verde*. Se ejerció su forzador **antes de su vencimiento** y **no aguantó**.
+
+### Retractación 2 — el `−56` de CA-08 (i.1) no es una medición: cabe dentro del ruido
+
+La misma entrada publica **«(i.1) −56 procesos añadidos»** con su operación al lado. `QA-021-03`
+(`contrato`) mide que **el suelo del oráculo se calibró mal**: se declaró **0 forks (12/12)** tomando dos
+lecturas **seguidas** de `/proc/stat`, y se aplicó a ventanas de **~50 s**, donde el suelo en reposo es
+**184 · 225 · 246 · 247** forks. Con una amplitud de ruido de ~63, un delta de 56 **no se distingue de
+cero**: por `CA-06.5` corresponde **rango observado**, nunca un valor.
+
+**La calibración del oráculo midió la magnitud correcta sobre la ventana equivocada.** Es la forma (d), y
+van tres hoy.
+
+### Los otros hallazgos
+
+- **`QA-021-02` (`contrato`)** — `CA-04` habla del «`vivos=<n>` publicado **que el juez lee por CA-10**»,
+  y `sonda_usable` **no lo lee**. Su único lector es el caso dedicado de la sección 38.
+- **`QA-021-04`** (alta) — la puerta de `CA-10` se evade por espacio, por **expansión de glob desde el
+  `cwd`** y por clave repetida.
+- **`QA-021-05`** (alta) — un descendiente **reparentado** sobrevive con `vivos=0 estado=ok`. Tres formas,
+  una con `ppid=850`.
+- **`QA-021-06`** (alta) — **`CA-03` es flaky**: `cal_a` **1,093–2,444** y `cal_b` **0,757–1,385** en 30
+  corridas, **5 fuera de banda y 2 de ellas en reposo**. Y cada fallo **pone en rojo la puerta requerida
+  de `main`** — verificado end-to-end: 3 FAIL, rc 1. **No se ensanchó la banda**: por `CA-03 (a)` vuelve
+  como «se cambia el sujeto». Causa de fondo: el insensible se fijó a `N/4` **para caber en `CA-08
+  (iii)`** — dos criterios del mismo REQ en tensión.
+- **`QA-021-07`** (media) — **`SR_PROCS` nunca se incrementa**, así que el `procesos=` de la sonda de
+  reloj es siempre 0: **121 forks reales** contra `procesos=0`. Y `CA-08 (iii)` en procesos es **0/0
+  presentado como `0.000×`**.
+- **`QA-021-08`**, **`QA-021-09`** (bajas).
+
+### Dos reclasificaciones de los hallazgos del desarrollador
+
+- **`DEV-021-11` pasa de `instrumento` a `contrato`.** `CA-07.2` dice «ningún caso **cambia de
+  veredicto**» **sin condición**, y uno cambió (medido: `37/1` pasó de `12 PASS·1 SKIP` a `13 PASS·0
+  SKIP`). Un criterio insatisfacible por construcción es exactamente la forma por la que
+  `DEV-021-01`…`04` fueron `contrato`. Y además describe sólo `PASS→SKIP` cuando lo ocurrido fue
+  `SKIP→PASS`.
+- **`DEV-021-10`**: clase correcta, **magnitud subestimada** y dueño equivocado. Lo absorbe `QA-021-06`.
+
+`DEV-021-05`, `07`, `08` y `09` **bien clasificados**, y el `09` **confirmado ejecutando**: con
+`ARNES_SONDA_PLAZO=2`, un `--sujeto 'sleep 30'` deja la sonda viva a los 12 s.
+
+### Lo que sí quedó acreditado
+
+`CA-07.1`: **828 líneas idénticas byte a byte** contra un **worktree** de `794fa4c`, `diff` vacío.
+`CA-02`, `CA-05` y `CA-09` **pasan**. Los **3 SKIP** del banco son **todos por diseño** y ninguno por
+avería: uno de plataforma (`cygpath`/Windows) y dos de `REQ-017 CA-05` con la palanca
+`ARNES_COSTE_RUTA_CRITICA` apagada, con el motivo en la propia línea. **`DEV-021-07` es el único rojo**
+(`grep -c '^ABORT'` = 0 en las dos corridas).
+
+**Dato incómodo:** la sección 38 mide **exactamente 400 líneas**, justo en el límite de `CA-18`.
+
+**Y una advertencia del propio QA sobre el método de la coordinadora:** el árbol se movió a mitad de su
+comisión (`3511929` → `721cb71`, el borrador de REQ-023). Comprobó que ese commit sólo toca `CHANGELOG.md`
+y `requirements/REQ-023.md` y que esa comisión **no mide**, así que sus números siguen válidos — **pero
+si hubiera medido, se habrían invalidado en silencio**. Es la segunda dimensión de la colisión de
+despacho (la máquina) y esta vez salió gratis por suerte, no por diseño.
+
+**Coste:** ~190 k tokens.
+
 ## [GitHub] — 2026-09-08 · REQ-023 (borrador): el carácter invisible, enunciado por ESTADO y con un criterio redactado para que una lista de prohibidos lo incumpla
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
 
