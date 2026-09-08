@@ -2,6 +2,54 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-07 · REQ-021: el write-back estaba hecho en los criterios y no en la cabecera, y la obligación heredada de REQ-017 necesitaba un quinto punto para haber cazado su propio caso
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
+
+**Write-back de los hallazgos preventivos de R-010 en `requirements/REQ-021.md`, cambio MENOR.** Se
+despachó antes que el código a propósito: `SEC-035` y `SEC-036` son `contrato`, y `guard-completado`
+deniega el cierre de un REQ con un `contrato` abierto. Para eso existe la auditoría **preventiva**
+(`AGENTS.md` §6) — para que sus hallazgos sean contrato **antes** de construir, no después.
+
+**Lo que el analista encontró antes de escribir nada:** el write-back **ya estaba hecho a nivel de
+criterio**. REQ-021 nació después de R-010 y su propio autor lo incorporó (CA-03, CA-04, CA-06.4,
+CA-10 y el residual con forzador observable). Verificadas una por una las **cuatro** remediaciones de
+`SEC-035` y las **tres** de `SEC-036` contra el registro: están todas. **Lo que faltaba era el campo de
+la cabecera**, que es lo único que la máquina lee. Un contrato correcto con el campo sin actualizar
+habría bloqueado el cierre sin que nadie supiera por qué.
+
+`Hallazgos abiertos:` queda en `SEC-037 (instrumento, dueño desarrollador, se cierra con la
+implementación, R-010)`. `SEC-035` y `SEC-036` cerrados por write-back; sus entradas en
+`docs/seguridad/registro-seguridad.md` siguen diciendo `abierto` y **cerrarlas es del
+`auditor-seguridad`** —ese archivo no está en el `Archivos:` de REQ-021—, anotado en la Trazabilidad
+para que no se pierda.
+
+**La obligación heredada de REQ-017, y por qué necesitaba un punto que no existía.** REQ-017 cerró con
+la regla de que toda cifra publicada nombre su corrida, y REQ-021 construye **las tres sondas que
+producen esas cifras** para todo el arnés: si no está aquí, no está en ningún sitio. El analista amplió
+CA-06.3 (la corrida se nombra con invocación, árbol y plataforma, y `desconocido` nunca se omite) y
+añadió **CA-06.5**: una cifra **derivada** —diferencia, cociente, extrapolación, agregado— sólo es
+publicable si **cada entrada** lleva su registro, la operación queda escrita junto a la cifra y ninguna
+entrada se tomó fuera de la disciplina de CA-02; si alguna no cumple, se publica **rango observado** y
+nunca un valor.
+
+El motivo de que el punto 5 no fuera opcional es el que importa: **los puntos 1 a 4 no habrían visto el
+caso de REQ-017**. La última medida podía llevar su registro impecable — la cifra publicada («≈1,60 MB»)
+no era esa medida, era una extrapolación cuyas entradas eran muestras únicas. Es la forma (d) —medir
+correctamente la magnitud equivocada— **desplazada un paso río abajo**.
+
+**Y una magnitud sin nombrar en CA-08 (iii):** decía `0,25×` a secas, y con (i) midiendo procesos y (ii)
+midiendo reloj admitía **dos lecturas que dan verde por separado**. Ahora dice «el coste **de reloj** de
+calibrar … no más de 0,25× el **de reloj** de la medición». Ningún número se mueve.
+
+**Sin ADR: es MENOR.** `SEC-035` y `SEC-036` cambian **cómo** se contrata el sustituto, no **qué** se
+decide — la decisión base sigue siendo «acreditar la medida en vez de custodiar el instrumento», que
+`ADR-005` ya registra con su condicionamiento.
+
+**Una pregunta abierta que el desarrollador tiene que resolver midiendo, antes de construir:** CA-08 (i)
+exige «no más de 0 procesos añadidos … calibración incluida», y la calibración corre dos sujetos
+sintéticos en cada corrida. Si no cabe, es un hallazgo `contrato` **contra el criterio**, y el número se
+renegocia con el analista — **nunca dentro de la comisión que lo incumple**.
+
 ## [GitHub] — 2026-09-07 · REQ-017 `completado`: la auditoría firma atacando el contrato y no la gemela, y encuentra que un carácter invisible apaga el enforcement entero
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `auditor-seguridad` (R-012), coordinadora (cierre).
 
