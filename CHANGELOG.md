@@ -2,6 +2,36 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · QA confirma el write-back: `H-13` CERRADO, y el cierre pasa a depender sólo del auditor
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+`QA: aprobado (2026-09-08)`. `H-13` retirado de `Hallazgos abiertos:`, que queda en **11 entradas** con
+**2 bloqueantes**, los dos del auditor: `SEC-058` y `SEC-060`.
+
+**Las cuatro comprobaciones, y la que importaba.** La segunda —«el acotamiento no abre una fuga»— es la
+que decidía si el write-back cerraba el hallazgo o lo convertía en permiso. Cumple en **dos** sedes
+(`REQ-014.md:52` y `:66`): cualquier **otra** línea que difiera es FALLO, y una línea nueva que oscile
+**no se acota sola** — se declara con nombre, tasa y dueño, o el criterio falla. **El descuento es de una
+línea nombrada, no de una categoría.**
+
+**Riesgo residual que QA anotó y no estaba pedido:** descontar una línea nombrada de ambos lados
+ocultaría también su **desaparición**. No abre fuga hoy porque `CA-13` y el cuerpo de `CA-12` no llevan
+descuento — y el residual es exactamente que **el descuento no se extienda nunca a ellos**.
+
+**Coste: ≈64 k tokens, 25 llamadas, 4,4 min.** La curva del día con el mismo modelo y agentes de la misma
+familia: **229 k → 154 k → 64 k**. Lo que cambió no fue el modelo: fue el encargo. A esta comisión se le
+dieron **cinco tramos de líneas** de un archivo de 546, su propio log por rango, y una instrucción
+explícita de **no correr el banco** —tras verificar con un solo `git diff --stat` que `tests/`, `hooks/`,
+`tools/` y `.github/` no habían cambiado desde su medición de la mañana—. Ahí estaban los 28 minutos de
+la primera comisión.
+
+**Colisión de numeración medida por la coordinadora, para el auditor.** El registro principal ya tiene
+`R-018` **y** `SEC-057` (`:5437`, `instrumento`, dueño `desarrollador` + propietario). La revisión
+archivada en `work/req014-codex` numeró **otra** `R-018` y **otro** `SEC-057` (`:5383`, `instrumento`,
+severidad alta, «el techo de CA-18 lo decide el sujeto»), más `SEC-058`…`SEC-061`. Consecuencia en el
+contrato: `REQ-014` declara hoy `SEC-057 (instrumento)` y **la línea no distingue cuál de los dos es** —
+la puerta lee la clase y pasa; un humano no puede saberlo. Renumerar es acto del `auditor-seguridad`.
+
 ## [GitHub] — 2026-09-08 · Write-back de REQ-014: `H-13` reflejado, tres ADR enlazados y CUATRO textos del cuerpo que eran falsos
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 
