@@ -2,6 +2,75 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · REQ-021 reduce alcance: sale `sonda-linea-base.sh`, y lo que la reducción deja descubierto se escribe sin endulzar
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
+
+**Decisión del propietario:** `sonda-linea-base.sh` **sale del alcance**; sólo se mudan a `tests/util/`
+la sonda de reloj y la de procesos. **Es la cláusula que el contrato ya tenía pre-decidida** —*«si (i.1)
+o (ii) no caben, no se sube el techo, se reduce el alcance»*—, así que ejercerla es **cumplir** el
+contrato, no cambiarlo. Y esa sonda era la causa de los tres problemas más duros **a la vez**: la
+calibración tautológica de `QA-021-01`, los 21 procesos que hicieron insatisfacible `CA-08 (i)` y el `+6`
+de `(i.2)` con los internos de `git`.
+
+**Sin ADR nuevo, y con la condición que lo desmentiría escrita**, para que no sea coartada reutilizable:
+*si `ADR-005` ya existiera, esto sería ADR nuevo, sin discusión.* Los tres motivos: no hay a qué suceder
+—un ADR que supersede a un archivo que nadie ha escrito es contabilidad, no registro—; las dos
+decisiones base no cambian; y la salida estaba escrita **antes** de medir. `ADR-005` amplía mandato con
+`(i)`…`(l)`, incluido **lo que la reducción deja descubierto**, porque *un ADR que registra una reducción
+sin su residual documenta un alivio, no una decisión*.
+
+**Reparto de criterios, y dos que se salvaron por poco:**
+
+- **`CA-05` se queda**, gobernando la versión inline, con el sujeto reescrito: «el **materializador de
+  línea base**, **donde viva**». **El criterio se enuncia sobre la función, no sobre un archivo**, así
+  que la reducción no lo deroga. Hereda formato y parser único; **no** hereda `CA-03` ni `CA-09`. Y
+  resuelve `DEV-021-08` dentro: el bit pasa a ser **el modo del objeto en el árbol**.
+- **`CA-08 (0)` se queda y se refuerza**, dicho por su nombre **porque era lo más fácil de perder**:
+  exige una **propiedad del resultado**, no un instrumento. **`H-08` sigue cerrado en el criterio.**
+- **`CA-07` punto 4: la materialización SALE del guardián de segunda sede.** Sin eso, la reducción deja
+  el banco **abortando la vuelta entera** sobre `mat37`/`mat47` —medido: hoy los **acusa** como control
+  positivo—. *Un guardián que acusa la única sede que hay es la forma (a) al revés.*
+- **`CA-10` punto 2** corregido: `vivos` obligatorio **en el registro de un instrumento de
+  `tests/util/`**, enunciado sobre **el emisor** y no sobre el formato — exigir un campo a quien no puede
+  observarlo es un **FAIL garantizado**, la clase de criterio insatisfacible que este REQ ya pagó dos
+  veces.
+- **`CA-03` entera, sin una coma menos**, aplicada a las dos sondas: **la tautología es una clase, no un
+  defecto de esa sonda**. Con la observación de por qué era estructuralmente posible justo ahí: en las
+  dos que quedan la magnitud observada **ya es una medición**; la que sale era la única cuyo número **es
+  un recuento de cosas que el llamante eligió**.
+
+### `AN-021-01` — lo que la reducción deja descubierto, sin endulzar
+
+`instrumento`, dueños `desarrollador` + `analista-requerimientos`, ventana **1.34.0**. Cuatro cosas:
+(1) el materializador queda **sin calibración de ninguna clase** —mejora porque una tautología es un
+verde falso, empeora porque **nada acredita que responda al sujeto**—; (2) `mat37` y `mat47` siguen
+siendo **dos copias literales** y la duplicación era **uno de los forzadores del REQ**; (3) la clase
+«línea base a medias» queda sin instrumento compartido, así que parte del forzador de ~150 k/ventana
+**no se cierra**; (4) **si algún día se muda, vuelve con su tautología intacta**, y quien la mude paga
+primero ese write-back.
+
+### `QA-021-01` cierra, y el efecto real se dice sin adornos
+
+Cierra porque su segundo motivo desapareció —el propietario decidió **custodiar**— y porque **la
+instancia concreta sale del árbol con la sonda**. Pero: *el campo queda sin ningún hallazgo bloqueante
+por clase, y **la puerta sigue cerrada igual** — `QA: con-hallazgos` y `Seguridad: preventiva` sobre un
+`Rigor: critico` la cierran. Cerrarlo no adelanta nada; sólo deja de mentir sobre por qué está cerrada.*
+También cierra **`DEV-021-08`**.
+
+**Residual: de tres instrumentos a dos, y MÁS motivado.** Vence **antes de `completado`**, ahora con dos
+razones: un forzador ya ejercido y fallado no se vuelve a aplazar, y **hasta 1.34.0 no hay custodio**, así
+que en esta ventana el sustituto **es la única capa**. Queda escrito lo medido a favor —el `qa-tester`
+mutó los dos que quedan y el juez cazó las dos; el instrumento que reventó el sustituto **es exactamente
+el que se va**— y por qué **no** descarga el residual: *dos mutaciones que aciertan no acreditan la
+propiedad*, que es la forma (a) a nuestro favor, y es cuando más tienta darla por buena.
+
+**Estimación nueva: ≈150–250 k tokens y 1,5–2,5 h** (antes 250–400 k / 2–3 h), y **entra en una vuelta**.
+El riesgo está en dos sitios, los dos nombrados, y con una buena noticia de método: **la escalera de
+salida de `CA-03 (d)` está escrita y ordenada** —subir `r` → subir el margen sobre el suelo → cambiar el
+sujeto → sacarla de la puerta—, y **las tres primeras el desarrollador las aplica sin pasar por el
+analista**, así que `(d)` fallando **no cuesta una vuelta**. `r` es la palanca gratis: **`(iii)` es
+invariante a `r`**.
+
 ## [GitHub] — 2026-09-08 · Write-back de la QA de REQ-021: el techo estaba mal derivado y el desarrollador compró el encaje deformando el sujeto
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
 
