@@ -2,6 +2,77 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · Write-back de la QA de REQ-021: el techo estaba mal derivado y el desarrollador compró el encaje deformando el sujeto
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
+
+**`CA-03` gana la propiedad que faltaba, y con su mordida.** (a.1) **procedencia observada**: cada
+entrada del factor es una magnitud que la sonda **observa después de ejercer el sujeto**, y **un factor
+que se pueda calcular sin ejercer el sujeto INCUMPLE**. (a.2) la **mitad discordante**, que es lo que lo
+hace exigible: la procedencia **no se lee en el registro** —la sonda honesta y la tautológica publican el
+mismo número—, así que la calibración ejerce una entrada cuya magnitud observada **difiere del
+parámetro** y que el juez conoce **sin la sonda**, y contrasta la **magnitud publicada** contra un
+**testigo propio**. (a.3) anti-vacuidad: aborta si el testigo coincide con el parámetro o si **lo produce
+la propia sonda**, y la copia sin mutar tiene que pasar donde la mutada falla.
+
+**La tensión `CA-03` ↔ `CA-08 (iii)` se rompió por el techo, y la causa raíz es peor que el síntoma.** El
+`4` decía derivarse de «lo que CA-03 contrata — cuatro ejercicios del sujeto», contando cuatro ejercicios
+**iguales** cuando uno cuesta **el doble por construcción**: la suma del mismo contrato es `1+2+1+1 = 5`,
+y con la mitad discordante **6**. **El desarrollador hizo esa cuenta, vio que `5 > 4`, y en vez de
+escalar la contradicción compró el encaje deformando el sujeto** —insensible a `N/4` ≈ 72 ms, **1,4× el
+suelo**, donde domina el planificador—. De ahí los 5 de 30 fuera de banda.
+
+`(iii)` pasa de **4× a 6×** con la suma **término a término** escrita, y dos reglas nuevas: *un techo
+derivado de otro criterio se **re-deriva en la misma edición** que cambia ese criterio* —misma clase que
+`DEV-021-05`, que pasa a tener **dos** instancias medidas— y *el techo **no se compra deformando el
+sujeto***.
+
+Más: **`CA-03 (c)`** deriva el tamaño de cada mitad **del suelo medido en la corrida** y un env sólo
+puede **subirlo** —lo que cierra también el «máquina más rápida → `suelo` → banco rojo»—; y **`CA-03
+(d)`** exige **0** veredictos fuera de banda en **≥ 30** corridas y ≥ 2 regímenes, con el motivo dentro
+del criterio: *5 de cada 30 no es estricto, es inservible, porque el primer rojo espurio enseña a
+re-correr el CI*. **No se ensanchó la banda** ni se sacó la calibración de la corrida, y la salida
+pre-decidida queda ordenada, con un hallazgo útil de paso: **`(iii)` es invariante a `r`**, porque
+numerador y denominador llevan los mismos mandos.
+
+### El residual: la frase no se borra, se marca DESMENTIDA
+
+«Una sonda alterada no da verde» queda **citada y marcada `DESMENTIDA EJECUTANDO el 2026-09-08`** con su
+evidencia, en tres sitios del REQ. **Residual nuevo**, porque un forzador ya ejercido y fallado no se
+vuelve a aplazar: re-acreditación **sobre los tres instrumentos**, por mutación **de quien no escribió
+la sonda**, con **vencimiento antes de que el REQ pase a `completado`**. Y la lección estructural: *quien
+escribe el instrumento muta lo que se imagina* — el autor acreditó **1 de 3** y tituló «demostrado en vez
+de prometido»; el tercero rompió otro **a la primera**.
+
+**Corregido además un párrafo que habría nacido falso:** el REQ mandaba a `ADR-005` registrar «la
+decisión de no proteger con su sustituto». Escrito así, **el ADR nacería afirmando un argumento medido
+falso**. `ADR-005` amplía mandato con el desmentido, la procedencia observada, que una acreditación del
+autor sobre 1 de 3 instrumentos no acredita el mecanismo, y el techo que se re-deriva.
+
+### Decisión del propietario, y coincide con la recomendación del analista
+
+**`tests/util/*` entra en `codigo_app.globs`; `tests/` entero, NO.** El motivo que lo desbloquea no
+estaba en R-012: **la mutación de un tercero no necesita escribir la ruta protegida** —QA la hizo sobre
+una **copia fuera del árbol**, y `guard-codigo` deniega ediciones del glob, no copias—, y las
+**secciones** que escribe el `qa-tester` quedan fuera del glob. Así que custodiar los instrumentos **no
+le quita oficio al QA**, que era la objeción. Lo que **no** se hace, y queda nombrado sin recomendar:
+custodiar **el examen** exigiría alcanzar `run.sh`, y eso sí se lo quitaría. Ventana **1.34.0**: la cola
+humana decide **cuándo**, no **si**.
+
+Y una consecuencia honesta que estaba prometida y era falsa: sacar la expectativa al juez **no crea un
+custodio**, porque `run.sh` tampoco está en `codigo_app.globs`. Sube el coste del descuido; nada más.
+
+### Qué cierra
+
+`QA-021-02`, `QA-021-03` y `DEV-021-11` **cerrados** — este último porque `CA-07.2` pasa de **igualdad** a
+**techo con dirección** (`SKIP → PASS` es conforme **por nombre**), con identidad sólo sobre casos
+**deterministas** y el conjunto de excluidos **derivado de ≥4 corridas y publicado**. `DEV-021-10`
+**cerrado por absorción** en `QA-021-06`.
+
+**`QA-021-01` sigue ABIERTO y sigue `contrato`, a propósito.** La mitad del analista está hecha, pero
+cerrarlo dejaría pasar el REQ apoyado en un criterio **que nadie ha implementado** y con la decisión de
+gobernanza vigente **por silencio**. Fail-closed deliberado: `guard-completado` deniega el cierre, y eso
+es lo correcto.
+
 ## [GitHub] — 2026-09-08 · QA de REQ-021: `con-hallazgos`, y DOS cifras que esta bitácora publicó como medidas se RETIRAN
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
 
