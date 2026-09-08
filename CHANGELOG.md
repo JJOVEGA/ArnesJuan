@@ -2,6 +2,74 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · REQ-023 (borrador): el carácter invisible, enunciado por ESTADO y con un criterio redactado para que una lista de prohibidos lo incumpla
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
+
+**REQ nuevo para `SEC-047`**, por decisión del propietario de meterlo en 1.33.0. `Rigor: critico`,
+`Sensible a seguridad: sí`, `Estado: borrador`.
+
+**El criterio central se enuncia por estado, no por carácter.** `CA-01`: *si la cabecera declara un
+campo en letra y el lector no lo resuelve como ese campo, la cabecera no se puede medir → DENY citando
+la línea y el carácter en forma imprimible, y nunca allow por ausencia del campo que ese carácter
+borró.* Con `CA-02` encima: la denegación es **por medibilidad y no por veredicto** —un REQ con todo en
+verde deniega igual— y **resolverlo como ausencia incumple**, porque la ausencia es justo lo que la
+puerta perdona.
+
+**Y la pieza que impide que esto sea la sexta derrota de «ensanchar la lista» es `CA-03`:** el banco
+ejerce tres familias declaradas **más una entrada reservada extraída al azar en cada corrida** del
+complemento, publicada con su semilla. Está redactado **explícitamente para que una implementación por
+lista de prohibidos lo incumpla**. Así la propiedad «envejece hacia el lado que cierra» queda contratada
+de forma **observable**, sin dictar el código.
+
+**Dos criterios que `SEC-047` no pedía, con motivo medido cada uno:**
+
+- **`CA-05`, invariancia de locale.** La vía obvia para un conjunto positivo (`[:print:]`, `[A-Za-z]`)
+  está **sujeta a colación**, y `hooks/lib.sh` ya explica por qué sus tablas se escriben con escapes de
+  bytes. Una clasificación dependiente de `LC_CTYPE` **deniega en el CI de Linux y permite en
+  Windows/MSYS** — que es justo de donde sale el BOM. Fail-open por entorno, invisible en la puerta
+  requerida.
+- **`CA-09 (iii)`, cociente de duplicación ≤ 2,2.** La forma natural de «comprobar cada carácter» en
+  bash es un bucle con `${l:i:1}`, **cuadrático por construcción**: exactamente la regresión de 10× que
+  REQ-017 acaba de pagar y que el `CA-08` de REQ-016 no vio **por medir la magnitud equivocada**. Las
+  tres vías —forks, reloj y orden de crecimiento— van en **un solo criterio y una sola corrida**.
+
+**`CA-04` es la mitad que decide si el arreglo sirve:** equivalencia campo a campo sobre el corpus del
+banco *y* las cabeceras reales del árbol, con **anti-vacuidad** (aborta si el corpus no trae una cabecera
+no-ASCII y una con clave decorada). Sin ella, un conjunto admitido estrecho convierte la guarda en una
+prohibición de escribir en español.
+
+### «La ausencia abre» va a REQ-024, y la coordinadora se equivocaba
+
+La coordinadora lo leyó como «dos hallazgos en uno». **Son un defecto y una decisión**, y el analista lo
+desmintió con la evidencia: que un campo ausente se perdone fue decidido **a propósito**
+(`arnes_sens_efectiva`: «AUSENTE sigue siendo no, y eso no se toca»), está **contratado en REQ-016
+CA-11** y **firmado en R-009**. Cambiarlo exige **ADR** y nota de migración, porque si la ausencia deja
+de perdonarse, **todo REQ heredado de todo proyecto consumidor** que no declare el campo deja de cerrar.
+
+Y la frontera entre las dos es **verificable, no cómoda**: lo que §13 promete —y el BOM falsifica— son
+la fila del suelo de rigor y la de hallazgos, y **las dos hablan de un documento que declara el campo**.
+Con BOM el documento lo declara y la puerta no lo impone: la fila es **falsa**. Sin el campo no hay `sí`
+que imponga nada y la fila **no promete nada**. Cerrar REQ-023 restituye la verdad de las dos.
+
+**Pregunta abierta con medición pendiente, no afirmación:** leyendo `arnes_rigor_efectivo` +
+`arnes_sens_efectiva` + la rama `if [ "$rigor" != "ligero" ]`, un `<!-- Sensible a seguridad: sí -->`
+junto a `Rigor: ligero` **parece** cerrar hoy con QA y Seguridad pendientes —comentar equivale a borrar
+(REQ-016 CA-11, medido), sin `sí` no hay suelo, y `ligero` salta los dos veredictos—. **No se ejecutó, a
+propósito**, para no falsear las sondas de reloj de la comisión de QA viva. Si se confirma, sube el
+forzador de REQ-024; el reparto no depende de ello.
+
+**`Archivos:` declarado de verdad y sin maquillar:** colisiona con REQ-021 (`run.sh`, el `README.md` del
+banco), REQ-017 (+`hooks/lib.sh`), REQ-007 (+`guard-completado.sh`, `arnes-lectura.sh`), REQ-020 (su
+glob `secciones/*.sh` cubre las tres secciones nuevas) y con casi todo vía `AGENTS.md`. **Implementación
+en serie.** Dos omisiones deliberadas con motivo: los artefactos de gobierno, por REQ-016 H-05 —si se
+declaran, cualquier par colisiona por una bitácora—; y `hooks/campos-req.awk`, porque `CA-06` exige que
+la guarda sea **observacional** y no debería necesitar ni una línea allí: **si hay que tocarlo, es la
+señal de que dejó de serlo**, y va como desviación declarada, no como cambio silencioso del campo.
+
+**Estimación del analista:** ~250–350 k de desarrollo, **≈600–700 k con QA y auditor**, y predice **dónde
+muere la primera vuelta**: `CA-04` o `CA-09 (iii)`, porque la implementación intuitiva falla una de las
+dos **por construcción**. Los dos criterios existen para cazarlas antes de `main`.
+
 ## [GitHub] — 2026-09-08 · REQ-021: cuando la misma cifra se desmiente dos veces, lo que sobra es el número — el total ilustrado sale de CA-08
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
 
