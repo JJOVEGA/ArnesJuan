@@ -2,6 +2,54 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · REQ-021: cuando la misma cifra se desmiente dos veces, lo que sobra es el número — el total ilustrado sale de CA-08
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
+
+**Write-back de `DEV-021-06`, el único `contrato` que impedía cerrar REQ-021.** `CA-08 (i.2)` ilustraba
+los procesos comprados con «hoy: 2»; medidos **6** (`sonda-linea-base.sh` 17 → 23), desglosados en **+1**
+por CA-01.1 y **+5** por CA-05.1 — **1** del `git hash-object --stdin-paths` del lote y **~4 que ese
+`git` gasta por dentro**. Corrida `ca08-1788843906`, árbol `794fa4c`.
+
+**Y la decisión: el paréntesis se va.** El criterio pasa a acotar **las invocaciones compradas** —una de
+la sonda por CA-01.1, una sola de `git hash-object` por lote por CA-05.1— y declara explícitamente que
+**no** acota los procesos que cada invocación gasta por dentro. Tres motivos, y el segundo es el que
+manda:
+
+1. Es la forma **(b)** que REQ-012 proscribió, y **este mismo criterio la ha pagado dos veces en un
+   día**: el `0` de `DEV-021-01` y el `2` de `DEV-021-06`.
+2. **El número no es del sistema.** Cuatro de los seis son internos de `git`: no los elige el REQ ni
+   quien lo implementa, y no se pueden bajar sin quitarle a CA-05.1 lo que verifica. Un total ilustrado
+   quedaría desmentido **sin que nadie hubiera tocado el código** — y por eso tampoco resolvía nada
+   fijar la versión de `git`: sería un contrato que caduca con un `apt upgrade` ajeno.
+3. Era una **segunda transcripción** de una cifra cuya sede ya existía (el Historial), que es lo que
+   **CA-01 punto 4** prohíbe por nombre. Y se desfasó exactamente como ese punto anuncia.
+
+**Lo que NO se relajó:** el techo de 0 añadidos, la obligación de declarar el comprador de cada proceso
+y el incumplimiento del proceso sin comprador siguen literales. Lo que sustituye al total es **más**
+exigible: contar invocaciones es verificable y estable donde un total no lo era. Y la mordida
+anti-cheque-en-blanco se conserva porque el conjunto de criterios compradores sigue **cerrado** — sin
+marca de «no exhaustivo», porque si se abriera, «comprado» volvería a ser la coartada.
+
+**Barrido de coherencia, extendido a propósito.** El mismo criterio llevaba otras cuatro cifras del
+**prototipo** que la misma corrida desmiente; fijar sólo el `2` habría dejado `(i.2)` diciendo `+2` tres
+líneas más abajo. Salen del **texto de criterio** las de `(i.1)` y `(iii)`, sustituidas por la propiedad
+más el puntero; las de la prosa quedan **marcadas como del prototipo** y no se borran, porque son el
+registro de por qué el número se re-derivó. Ningún techo, alcance ni dirección admitida se movió.
+
+**`ADR-005` gana el punto (d) de su mandato:** *un criterio de coste acota las invocaciones que compra,
+no los procesos internos de un programa de terceros.* Doctrina reutilizable, y por eso va al ADR y no al
+criterio.
+
+**`Hallazgos abiertos:` queda con seis, todos `instrumento`** — `DEV-021-05` … `DEV-021-11` menos el 06.
+Ninguno bloquea. Y **`CA-07 punto 2 no se relajó** para hacerle sitio a `DEV-021-07`: esa congelación es
+lo que hace acreditable la mudanza, y queda escrito en el REQ.
+
+**Una observación abierta, no legislada:** el `+5` depende de los internos del `git` de esa corrida, y el
+registro de condiciones (`bash=`, `nucleos=`, `carga=`, `arbol=`, `oraculo=`) **no captura la versión de
+`git`**, así que esa cifra del Historial no es del todo reproducible en el sentido de CA-06.3. No se tocó
+CA-06 —su conjunto exhaustivo de campos vive en el parser de `run.sh` y añadir uno sería alcance nuevo—;
+queda como candidato para el desarrollador al implementar el parser.
+
 ## [GitHub] — 2026-09-07 · REQ-021 implementado: `tests/util/` con las tres sondas, el banco a 873 casos, y el nieto que cazó un `vivos=0` con la descendencia viva
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador`.
 

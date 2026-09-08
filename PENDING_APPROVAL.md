@@ -27,6 +27,46 @@
 
 ## Resueltas
 
+### RESUELTA 2026-09-08 (propietario, autorización expresa) — partir las dos secciones 37 paga desarrollador + QA, sin analista ni auditor
+
+- **Contexto.** La autoprueba del corredor sale `rc=1`: `CA-18` limita los archivos de sección a **400
+  líneas** y `37-coste-del-escaner-1-escala.sh` mide **751** y `37-…-2-la-seccion-caliente.sh` **614**.
+  El CI la corre como paso propio, sin `continue-on-error`, así que `hooks-en-linux` —la puerta
+  requerida de `main`— se pone roja y **la fusión de 1.33.0 está bloqueada**.
+
+  Lleva roja **desde el delta final de REQ-017**, y nadie lo vio porque el CI que marcaba `pass` en el
+  PR #43 había medido `0bab7a1`, donde esas secciones median **346 y 266** líneas: la rama local estaba
+  **20 commits por delante**. Es H-08 con otra cara — un verde sobre un árbol que ya no existe.
+
+  `AGENTS.md` §6 clasifica como **crítico** «todo cambio en … el banco que los certifica (`tests/`)», y
+  el rigor `critico` exige analista, desarrollador, QA **y** auditor. Sólo el propietario puede bajar
+  ese nivel, y nunca por reclasificación automática de un agente.
+
+- **Opciones.** **A)** desarrollador + QA, con autorización expresa. **B)** ciclo completo de cuatro
+  agentes (~2 h). **C)** aplazar a 1.34.0 y no fusionar 1.33.0. *(Descartada de entrada: subir el límite
+  de `CA-18` derrota el propósito de REQ-014 — el banco se partió en archivos para que dos agentes de QA
+  puedan trabajar a la vez, y un archivo de 751 líneas es el cuello que eso vino a quitar.)*
+
+- **Decisión del propietario: opción A.** El cambio es **mecánico** —mismo contenido, mismos casos,
+  menos líneas por archivo— y su acreditación **ya existe y es fuerte**: un inventario ordenado de caso
+  y veredicto **idéntico byte a byte** antes y después, que es el criterio central de REQ-014. El
+  auditor no añade casi nada sobre una partición que no cambia lógica.
+
+- **Lo que la autorización NO cubre, dicho aquí para que no se estire:** ninguna otra edición de
+  `tests/`, ningún cambio de lógica dentro de las secciones partidas, y ningún ajuste de
+  `CASOS_ESPERADOS` total ni de `CASOS_ESPERADOS_SECCION` más allá del reparto aritmético que la
+  partición obliga. Cualquier cosa fuera de eso vuelve a `critico`.
+
+- **Contra-argumento que quedó sobre la mesa y no se resolvió:** la auditoría preventiva **R-011** midió
+  que `tests/` **no está en `codigo_app.globs`**, así que el juez de todas las sondas no lo vigila nadie
+  —tampoco contra esta sesión coordinadora, que acredita, decide y publica—. Es el residual `SEC-045`,
+  abierto, y esta autorización lo asume sabiéndolo.
+
+- **Orden, y por qué no se adelanta:** la partición va **después** de cerrar REQ-021, no antes. `CA-07
+  punto 2` de REQ-021 **congela** los `CASOS_ESPERADOS_SECCION` de esas dos secciones, y esa congelación
+  es lo que hace acreditable la mudanza de las sondas. Partirlas antes obligaría a re-medir la
+  acreditación de REQ-021 contra una línea base distinta.
+
 ### RESUELTA 2026-09-07 (coordinadora, por delegación del propietario) — aprobada la opción A: el cambio del workflow de CI viaja en 1.32.0
 - **Contexto.** `AGENTS.md` §6 lista entre los gates humanos «cambiar el ruleset, **el workflow de CI**
   o el manifiesto» y clasifica como **crítico** «todo cambio en … el banco que los certifica
