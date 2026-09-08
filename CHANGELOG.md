@@ -123,6 +123,53 @@ Archivos: `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-ca
 `tests/escenarios/hooks/README.md`, `.github/workflows/banco.yml`, `docs/PENDIENTES.md`,
 `docs/qa/1.33.0.md`, `requirements/REQ-017.md`.
 
+## [Interno] — 2026-09-07 · REQ-018, el canal de informes: la privacidad por la forma, y lo que la forma NO puede hacer
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
+
+**La regla que gobierna todos los campos está escrita como propiedad, no como lista:** *el dominio de
+respuesta natural de un campo no contiene ningún identificador del proyecto que reporta*. Versiones,
+desplegables, conteos y una cabecera ficticia cumplen; **«cuéntame tu caso» está prohibido por nombre**,
+porque es el campo por el que el nombre del proyecto entra **sin que nadie decida ponerlo** — distinto
+de teclearlo a propósito. Con `blank_issues_enabled: false`, sin lo cual la gramática no restringe nada.
+
+**Y el REQ se niega a fingir lo que no puede medir.** No existe propiedad comprobable de «el canal no
+filtra», y un criterio que lo afirmara estaría **midiendo la forma del formulario y llamándolo otra
+cosa** — la forma (d) aplicada a la seguridad, que *tranquiliza más que no medir*. Lo verificable es más
+estrecho y verdadero: **no hay ningún sitio donde el dato quepa sin que alguien lo teclee a propósito**.
+El resto es irreductiblemente humano y se gobierna **por respuesta**, no por prevención.
+
+**Cuatro decisiones con su motivo, y las cuatro nacen de errores medidos esta semana:**
+- **La cabecera mínima se pide como esqueleto pre-rellenado que se EDITA**, no como hueco: convierte
+  una tarea de **composición** en una de **transcripción**. No impide pegar; **hace que pegar cueste
+  más que editar**, y eso es todo lo que una forma puede hacer.
+- **Toda opción cerrada lleva «no lo sé»**: un desplegable sin salida **fabrica** una respuesta, y lo
+  que fabrica es un **error de clasificación** — justo la clase que ninguna puerta detecta y contra la
+  que este canal es el único instrumento. Un formulario sin escape envenenaría aquello para lo que existe.
+- **Vía de escape declarada**: si el informe no se puede escribir sin nombrar el proyecto, **no se abre
+  issue**. *Cerrar una puerta sin abrir otra no reduce la filtración: la concentra.*
+- **Un campo para conteos sobre el corpus ajeno**: la aportación más valiosa recibida hasta hoy fue un
+  conteo sobre 47 REQ ajenos que **desmintió una conclusión nuestra bien medida sobre 17 propios**, y un
+  conteo no lleva ningún dato de cliente. Es la **única mitigación conocida de la ceguera del
+  autoalojamiento**.
+
+**Hallazgo que el propio REQ destapa: una issue no es una ruta versionada.** El barrido de base de
+`docs/seguridad/gobernanza-datos.md` §3 sostiene que «ninguna ruta versionada nombra un proyecto
+consumidor»; abrir este canal crea una superficie de datos que ese control **no puede ver por
+construcción** — **exactamente la forma de SEC-029**, un año después y en otro sitio.
+
+**Y el error opuesto, que nadie estaba mirando:** una gramática tan estrecha que **ningún informe real
+cabe** es perfectamente segura e **inútil**. Se contrata la reconstrucción de los informes ya recibidos;
+el que no quepa es hallazgo `contrato` **contra la gramática**.
+
+**Nota de método del analista, que es de la casa:** descartó publicar el número de informes de campo del
+corpus porque su recuento dio 6 coincidencias **con 2 falsos positivos** y omitía aportaciones reales —
+*publicarlo habría sido publicar como medido un número cuyo método acababa de fallar delante de quien lo
+ejecutó*.
+
+Queda en `borrador`: **tal como está contratado NO es disjunto** —escribe `hooks/lib.sh`,
+`hooks/estado-derivado.sh` y `AGENTS.md`, así que iría en solitario y declara `Mide: sí`—, con dos
+palancas escritas para partirlo si se quiere el primer `disjunto` real.
+
 ## [Interno] — 2026-09-07 · El residual descrito al reves, y la clase que ya va tres veces en el mismo REQ
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
 

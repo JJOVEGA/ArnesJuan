@@ -3061,3 +3061,483 @@ nada se baja.
 **Alcance de las dos firmas.** Cubren el texto de los dos REQ y de ADR-003 tal como están hoy. **No
 cubren el código posterior.** Cuando exista, la auditoría se repite **después del `qa-tester`**, como
 manda `AGENTS.md` §6.
+
+---
+
+## Revisión R-011 — auditoría **PREVENTIVA** de REQ-020, ventana 1.33.0 (`cand/1.33.0`) — 2026-09-07
+
+**Qué es y qué no es.** Excepción nombrada de `AGENTS.md` §6: revisión hecha **antes de que exista el
+código**, sobre el diseño y el REQ. Se declara al emitirla —`Seguridad: preventiva`— y **no acredita
+nada construido**. REQ-020 está `pendiente`, `QA: pendiente`, y no hay una línea escrita: ni
+`SKIP_ADMITIDOS_SECCION`, ni la línea `Acredita:`, ni el inventario de casos sin medir existen en el
+árbol. Cuando el código exista, la auditoría se repite **después del `qa-tester`**.
+
+**Por qué esta preventiva no es de relleno.** REQ-020 no es un diseño en el vacío: la mitad de sus
+criterios hace **afirmaciones verificables sobre el árbol de hoy** («el cuadre por sección se sigue
+exigiendo», «la expresión vive única en dos sitios», «una sola pasada de lectura»). Esas se auditan
+leyendo, ahora, sin código nuevo. Cinco de los nueve hallazgos salen de ahí.
+
+**Alcance leído:** `requirements/REQ-020.md`, `requirements/README.md` §«Cómo se escribe un criterio
+que no se desmiente», `docs/PENDIENTES.md:977-1318` (los cuatro casos, la regla del literal, el
+trinquete congelado, quién muta), `docs/ESTADO.md`, `AGENTS.md` §§5-7 y 13, `.arnes/config.json`,
+`.github/workflows/banco.yml`, `tests/escenarios/hooks/run.sh` (entero),
+`tests/escenarios/hooks/inventario.sh`, `tests/escenarios/hooks/autoprueba-corredor.sh` (selección y
+cuadre), las 44 secciones (por `grep`, para contar ramas SKIP y declaraciones), y mi propia R-010.
+
+**Nada ejecutado del banco.** Hay tres comisiones más corriendo y una de ellas mide; una corrida ajena
+les falsea las cifras (regla de REQ-021 CA-06, incidente de 3 h 41 min). Las dos cifras que publico son
+**recuentos estáticos sobre el texto**, sin reloj: no perturban ni se perturban, y se reproducen con el
+comando que va junto a cada una.
+
+**Método.** Lectura de contrato: buscar la propiedad que cada criterio **no** asegura, y el enunciado
+que resulta **más fuerte que la verdad**. Y una pasada específica, porque es lo que la comisión pedía:
+*¿por qué vía se consigue una acreditación que no corresponde?* — se encontraron cuatro, y sólo dos las
+cubre el REQ.
+
+---
+
+### SEC-038 — `contrato` · **abierto** · REQ-020 · severidad alta · dueño `analista-requerimientos`
+
+**El literal está protegido en su ASIGNACIÓN, no en su USO: el control es una conjunción de tres términos y CA-04 contrata uno**
+
+- **Ubicación:** `requirements/REQ-020.md` CA-04 (i) y su párrafo «Cómo es testable», contra
+  `tests/escenarios/hooks/run.sh:712` (la asignación) y `run.sh:716-723` (el uso).
+- **La pregunta que contesta:** *¿alguien puede «arreglar» la regla del literal derivándola sin que
+  ningún criterio proteste?* **Sí, por tres vías, y ninguna toca la asignación.**
+- **Descripción.** El control que sostiene el cuadre total no es el literal: es la **conjunción**
+  (a) el término es un literal tecleado, (b) **ése** es el operando de la comparación, y (c) **la rama
+  de la comparación se ejecuta**. CA-04 contrata (a) y su caso lo comprueba «sobre el **texto** del
+  corredor que la asignación del total es un literal decimal». (b) y (c) quedan fuera:
+  1. **Cambiar el otro operando.** `CASOS_ESPERADOS=852` se queda intacto —CA-04 en verde— y la
+     comparación pasa a hacerse contra la **suma de los `CASOS_ESPERADOS_SECCION`**. Es una igualdad
+     entre dos magnitudes que **encogen juntas**: borrar un archivo de sección deja de verse, que es
+     exactamente lo que CA-04 (ii) dice que el literal es «lo único que delata».
+  2. **Añadir una rama derivada** y dejar el literal como código muerto. Mismo efecto, mismo verde.
+  3. **Ensanchar la condición de suspensión.** Hoy es `if [ -n "$FILTRO" ] || [ "$PARCIAL" = si ]`
+     (`run.sh:716`). Añadir un tercer término —una variable de entorno, una condición de plataforma—
+     apaga el cuadre total **sin tocar el literal ni la comparación**. Ningún criterio de REQ-020 mira
+     esa condición: CA-03 gobierna los tres estados, pero el código no los materializa como estados,
+     sino como un `if` dentro del cuadre.
+- **Riesgo.** El control declarado «lo único que delata» un archivo de sección borrado se puede apagar
+  con un cambio que pasa todos los criterios del REQ que existe para protegerlo. Y quien lo haga no
+  tiene por qué saberlo: la vía 1 es la «mejora» natural de alguien que lee «hay dos números que
+  mantener a mano».
+- **Remediación (write-back, `analista-requerimientos`).**
+  1. **Enunciar el control como la conjunción**, no como el literal: *el cuadre total exige que el
+     término esperado sea un literal tecleado, que **sea ése** el operando de la comparación, y que la
+     comparación **se ejecute** en toda corrida que acredita.* La lista de condiciones que la suspenden
+     es **exhaustiva y vive en un solo sitio**, y son exactamente los estados de CA-03 — ninguna más.
+  2. **Testable sin ejecutar el banco:** el caso comprueba sobre el texto (a) la asignación literal,
+     (b) que la comparación usa esa variable, y (c) que la condición de suspensión no tiene más
+     términos que los declarados. Es el mismo `grep` estructural que ya usa `autoprueba-corredor.sh`.
+  3. **Un testigo fuera de `tests/`:** el corredor **publica el total esperado en su salida**
+     (p. ej. `Casos esperados: 852 (literal)`), con el mismo argumento de contrato que la línea
+     `Acredita:`. La salida del banco se compara vuelta a vuelta contra la versión publicada anterior
+     (REQ-014 CA-12), así que un cambio del literal **se ve fuera del archivo que lo contiene**. No
+     entra en el inventario: `inventario.sh` sólo recoge `^  (PASS|FAIL|SKIP)  `.
+
+---
+
+### SEC-039 — `contrato` · **abierto** · REQ-020 · severidad alta · dueño `analista-requerimientos`
+
+**El techo de casos sin medir se calibra con el número que su propio ABORT imprime, y en la sección donde ocurrió H-08 ese número es 11 de 11 casos**
+
+- **Ubicación:** `requirements/REQ-020.md` CA-02 (el techo, su mensaje de aborto y su párrafo
+  «operativo»), contra `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-caliente.sh`
+  y `…-1-escala.sh`.
+- **Medido sobre el texto** (`grep -c 'SKIP'` y `grep -n 'CASOS_ESPERADOS_SECCION'`, sin ejecutar
+  nada):
+
+  | Sección | Casos declarados | Ramas que pueden emitir SKIP |
+  |---|---|---|
+  | `37-…-2-la-seccion-caliente.sh` | **11** | **26** |
+  | `37-…-1-escala.sh` | **13** | **29** |
+
+  Los **once** SKIP de H-08 salieron de ahí. Es decir: **la sección donde ocurrió el incidente puede
+  quedarse entera sin medir**, y el techo que la cubriría es `11`.
+- **Descripción, y son dos defectos que se refuerzan.**
+  1. **CA-02 no dice CÓMO se elige el techo.** El flujo natural es: el banco aborta, el mensaje
+     imprime «el número obtenido» —CA-02 lo exige explícitamente—, y ese número se pega en la sección.
+     Si el aborto ocurrió en el árbol roto, el techo queda calibrado **sobre la corrida que no midió**,
+     y `SKIP_ADMITIDOS_SECCION=11` declara **conforme** exactamente el incidente que originó el REQ. El
+     mensaje de remediación entrega el valor que apaga el control.
+  2. **Un solo escalar cubre dos clases de caso sin medir que no se parecen en nada:** el
+     **estructural** («esta plataforma no crea enlaces simbólicos», «no hay `/dev/full`») —estable,
+     contable por adelantado, techo pequeño y fijo— y el **contingente** («la sonda no convergió»,
+     «serie por debajo del suelo», «no hay línea base») —dependiente de la carga y del clon, sin cota
+     natural—. Un escalar único hay que fijarlo al peor caso del **contingente**, y H-08 es de esa
+     clase. Además contradice una decisión que este proyecto **ya tomó** para REQ-017 y que está en
+     `docs/ESTADO.md`: *el vencimiento del plazo es un resultado positivo, **nunca** un SKIP*.
+  3. **La dirección que abre no tiene firma.** CA-02 declara el valor «operativo: se **baja** con la
+     medición; **menos** es conforme», y dice que bajarlo es entrada de Historial. **No dice nada de
+     subirlo**, que es la única dirección peligrosa; y el número no vive en el REQ sino en un archivo
+     de `tests/`, donde ninguna entrada de Historial lo alcanza y ningún guardián lo mira (SEC-045).
+     Tampoco hay **cota global**: 44 techos pequeños suman un techo grande que nadie ve.
+- **Riesgo.** El control contra «el caso lleno que no se ejecuta» admite, tal como está contratado,
+  reproducir su propia instancia medida. Y se degrada por la vía barata: subir un número en un archivo
+  sin custodia, con el valor sugerido por el propio mensaje de error.
+- **Remediación (write-back, `analista-requerimientos`).**
+  1. **El techo se calibra sólo sobre una corrida que ACREDITA** (`Acredita: sí`, CA-03), y la sección
+     **registra en su propia declaración de qué corrida salió** (fecha y contexto), igual que CA-09
+     (iii) exige para su razón. Un techo calibrado sobre una corrida que no acreditó no vale.
+  2. **El mensaje del aborto NO ofrece el número como remedio.** Nombra los casos y dice qué hacer:
+     *o el caso vuelve a medir, o la sección declara el techo **con la corrida que lo justifica***.
+  3. **Separar las dos clases por propiedad** —«la plataforma no puede» frente a «el instrumento no
+     pudo esta vez»—: la primera admite techo declarado; la segunda es **resultado publicado con su
+     número** (`plazo-agotado`, `sin-convergencia`), nunca un SKIP mudo, que es la regla que REQ-017 ya
+     adoptó. Enunciado por propiedad y con el sitio único donde vive la clasificación; ejemplos **no
+     exhaustivos**.
+  4. **Subir un techo no es cambio menor:** lleva la corrida que lo justifica y **la firma de un rol
+     distinto del que lo sube**. Y se declara una **cota global** de casos sin medir para la vuelta que
+     acredita, con la misma naturaleza operativa (se baja con la medición).
+
+---
+
+### SEC-040 — `contrato` · **abierto** · REQ-020 · severidad alta · dueño `analista-requerimientos`
+
+**La acreditación cubre que el universo no se encoja, pero NO que el sujeto sea éste — y el caso 1 del propio REQ es una sustitución de sujeto**
+
+- **Ubicación:** `requirements/REQ-020.md` CA-03 (los tres estados y su párrafo «Qué cuenta como
+  entrada que estrecha»), contra `run.sh:21` (`ARNES_HOOKS_DIR`), `run.sh:56` (`jq`), `run.sh:452`
+  (`ARNES_SOLO_DESCUBRIR`), `run.sh:485-487` (el cálculo de `PARCIAL`) y
+  `autoprueba-corredor.sh:19` (`ARNES_CORREDOR`).
+- **Las cuatro vías por las que hoy se obtiene una acreditación que no corresponde. Dos las cubre
+  CA-03; dos no.**
+
+  | Vía | Qué pasa | ¿La cubre CA-03? |
+  |---|---|---|
+  | Selector de secciones / directorio alterno | `PARCIAL=si` → hoy suspende, con CA-03 **ABORT o declaración** | **Sí** |
+  | Filtro de caso | `FILTRO` → hoy suspende, con CA-03 **ABORT o declaración** | **Sí** (pero ver SEC-041) |
+  | **`ARNES_HOOKS_DIR` a otro árbol de hooks** | Los **852** casos corren, `PARCIAL=no`, `FILTRO` vacío → **`Acredita: sí`**, y lo que se certificó fueron **otros hooks** | **No** |
+  | **`jq` ausente** | `run.sh:56` → `echo "SKIP: jq no instalado"; exit 0` — **cero casos, rc 0**, sin `Resultado:` y sin inventario | **No** |
+
+- **Por qué la tercera es la que importa.** La instancia medida que el propio REQ pone al **caso 1**
+  es literalmente ésta: *«Los cinco casos de banco de 1.32.1 (H-02): pasaban **contra los hooks de
+  1.32.0**, la versión con el fail-open»*. El REQ nombra el incidente y luego contrata una
+  acreditación que **no lo modela**: CA-03 razona sobre *«el universo de una tanda puede encogerse»*,
+  y aquí el universo está entero — lo que cambió es **sobre qué se ejerció**. `ARNES_HOOKS_DIR` es
+  legítimo y necesario (es como se hace el fail-before), así que no se prohíbe: se **declara en la
+  acreditación**.
+- **Y la cuarta falsifica un «siempre» del REQ desde dentro del mismo archivo.** CA-01 contrata que el
+  inventario se imprima **siempre, también cuando el número es cero**, con el argumento —correcto— de
+  que un inventario que desaparece es indistinguible de uno no implementado. `run.sh:56` sale **0 sin
+  imprimir nada**. Es la forma «el caso lleno que no se ejecuta» aplicada al banco entero, y hoy no la
+  ve nadie: en CI el paso de `jq` la tapa, pero un fallo de `apt-get` la destapa.
+- **Y el sitio único citado no contiene la lista.** CA-03 dice que la lista exhaustiva de entradas que
+  estrechan vive «**única**, en el bloque de selección de `run.sh`». Ese bloque empieza en
+  `run.sh:458`. `ARNES_SOLO_DESCUBRIR` (línea 452, **sale 0 tras ejecutar cero casos**) y
+  `ARNES_HOOKS_DIR` (línea 21) están **fuera**. Un puntero a un sitio único que no es exhaustivo es la
+  forma (a) de `requirements/README.md` con la marca puesta en el sitio equivocado.
+- **Riesgo.** Una corrida que dice `Acredita: sí` sobre un mecanismo que no es el de este árbol, o una
+  corrida de cero casos con rc 0. El daño llega cuando la línea `Acredita:` tenga consumidor
+  automático (candidato a 1.34.0, el propio REQ lo dice): la puerta leerá `sí` y no habrá segunda
+  lectura.
+- **Remediación (write-back, `analista-requerimientos`).**
+  1. **Ampliar la propiedad de CA-03 a las dos dimensiones:** *toda entrada de invocación que pueda
+     **reducir el conjunto de casos ejecutados** respecto de la vuelta completa **o cambiar el sujeto
+     sobre el que se ejercen**.* Ejemplos **no exhaustivos**: selector de secciones, filtro de caso,
+     directorio de secciones alterno, **directorio de hooks alterno**, **corredor alterno**.
+  2. **La línea `Acredita:` nombra el sujeto resuelto** (directorio de hooks, directorio de secciones,
+     corredor), no sólo el recuento. Es la única forma de que una salida pegada como evidencia diga
+     contra qué se ejerció; y es el mismo argumento con el que el REQ ya hace que la línea viaje con
+     la salida.
+  3. **Mover la lista exhaustiva a un sitio que la contenga**, o mover al bloque de selección las
+     entradas que hoy quedan fuera. El puntero y el código tienen que coincidir.
+  4. **Ninguna salida del corredor es rc 0 con cero casos.** Una dependencia ausente es `ABORT`, ≠ 0,
+     con su motivo — la misma dirección fail-closed que CA-02 aplica a un techo ilegible.
+
+---
+
+### SEC-041 — `contrato` · **abierto** · REQ-020 · severidad media · dueño `analista-requerimientos`
+
+**«El cuadre de cada sección se sigue exigiendo» es falso con filtro, y como igualdad no es implementable: la fila promete una protección que la vuelta filtrada no tiene**
+
+- **Ubicación:** `requirements/REQ-020.md` CA-03, fila «Estrechada y declarada», y §«Notas / alcance»
+  (*«El de cada sección se sigue exigiendo, así que la protección no desaparece»*), contra
+  `run.sh:696-706`.
+- **Descripción.** El código dice `if [ -z "$FILTRO" ]` antes del cuadre por archivo, con su motivo
+  escrito y correcto: con filtro la sección corre **menos** casos de los que declara, así que la
+  igualdad no puede exigirse. Consecuencia: una vuelta **con filtro** no tiene **ningún** cuadre — ni
+  total (`run.sh:716`) ni por sección. CA-03 mete en **una sola fila** los dos mecanismos de
+  estrechamiento, y la frase es cierta para el selector de secciones y **falsa para el filtro**. La
+  frase de `Notas / alcance` la generaliza a las dos.
+- **Por qué es seguridad y no redacción.** Es la familia SEC-031: el lector se queda con un modelo del
+  sistema **más protegido de lo que está**, y la mitad que sobra es justo la que se usa a diario. Y no
+  se arregla implementando: la igualdad por sección **no puede** exigirse bajo filtro; un criterio que
+  la promete sólo se puede cumplir relajándolo después, que es deriva (`AGENTS.md` §9), o
+  reinterpretándolo en la implementación, que es peor.
+- **Remediación (write-back).** Partir la fila en los dos mecanismos y decir de cada uno **qué queda
+  vivo**: con selector de secciones, el cuadre por archivo se exige entero; con filtro, la igualdad
+  por archivo **no aplica** y lo que se exige es lo que sí sea exigible —como mínimo, que ninguna
+  sección seleccionada ejecute **cero** casos, y que el recuento por sección se imprima—. Y corregir la
+  frase de `Notas / alcance`, que hoy afirma sin condición.
+
+---
+
+### SEC-042 — `contrato` · **abierto** · REQ-020 · severidad media · dueño `analista-requerimientos`
+
+**«La expresión vive, única, en el awk y en el sed» son dos sitios con dos expresiones DISTINTAS, ya divergentes hoy — y el motivo que CA-01 manda imprimir no lo declara hoy ningún caso**
+
+- **Ubicación:** `requirements/REQ-020.md` CA-01 (tercer párrafo) y CA-10, contra `run.sh:635-637`
+  (`/^  PASS /`, `/^  FAIL /`, `/^  SKIP /` — **un** espacio) e `inventario.sh:24`
+  (`^  (PASS|FAIL|SKIP)  (.*)$` — **dos** espacios).
+- **Demostrado, sobre un archivo de dos líneas y sin tocar el banco:**
+
+  ```
+  printf '  SKIP un-espacio caso\n  SKIP  dos-espacios caso\n' > p.txt
+  awk '/^  SKIP / {c++} END{print c}' p.txt        -> 2
+  bash tests/escenarios/hooks/inventario.sh p.txt  -> 1  (sólo la de dos espacios)
+  ```
+
+- **Descripción, y las tres consecuencias.**
+  1. **«Única» no puede describir dos sitios.** El enunciado se contradice a sí mismo, y los dos
+     sitios **no coinciden**: el conjunto del `awk` contiene estrictamente al del `sed`.
+  2. **La divergencia tiene una dirección peligrosa y es la que CA-10 no ve.** Una línea con **un**
+     espacio **cuenta** para el recuento (rompe el cuadre por archivo y el total) y **no entra** en el
+     inventario — así que la comparación byte a byte de CA-10 sigue **verde** mientras el cuadre se
+     rompe. Hoy es latente: **ninguna** de las 44 secciones emite la forma de un espacio (verificado
+     por `grep`). Latente no es inexistente: CA-01 obliga a imprimir líneas nuevas cerca de esos
+     prefijos, que es justo cuando esto deja de ser latente.
+  3. **El «motivo que ese caso declaró» no existe como dato.** `run.sh` **no tiene ayudante `skip`**:
+     las 9 secciones que emiten SKIP lo hacen con `echo` a mano y el motivo va **dentro de la misma
+     cadena que forma la identidad del caso en el inventario**, en al menos tres formas distintas
+     (`nombre  (motivo)`, `nombre: motivo`, `nombre  motivo largo`). Extraer el motivo por análisis del
+     texto es la forma (a); normalizar las cadenas **cambia el inventario** y choca de frente con
+     CA-10, que lo exige idéntico **byte a byte**.
+- **Riesgo.** Un cuadre que se rompe mientras la comprobación que debería verlo sigue en verde; y un
+  criterio (CA-01) cuya implementación natural incumple otro (CA-10) del mismo REQ.
+- **Remediación (write-back).**
+  1. **Decir la verdad sobre los dos sitios:** hay **dos** lectores con **dos** expresiones, el del
+     recuento es más ancho que el del inventario, y la propiedad que se contrata es *ninguna línea que
+     el REQ añada casa **ninguna de las dos***. O se unifican —y entonces `inventario.sh` **entra en
+     `Archivos:`**, que hoy lo declara sólo-lectura; es la clase de SEC-034, mapa incompleto en origen
+     y `disjunto` falso—, o se citan las dos como el par que son.
+  2. **Contratar el CANAL por el que un caso declara su motivo**, separado de la línea de veredicto:
+     una línea propia con prefijo que **ninguno de los dos lectores** reconoce, emitida por un ayudante
+     **único** del corredor. Así el motivo es dato y no prosa, el inventario no se mueve y CA-10 se
+     cumple sin negociar.
+
+---
+
+### SEC-043 — `contrato` · **abierto** · REQ-020 · severidad media · dueño `analista-requerimientos`
+
+**CA-09 (ii) fija la magnitud equivocada —«pasadas», no «líneas»— y la pasada única cuesta 22,18× lo que hoy se lee; el fixture sintético es ciego a eso por construcción**
+
+- **Ubicación:** `requirements/REQ-020.md` CA-09 (ii) y (iii), contra `lee_casos_declarados`
+  (`run.sh:643-658`) y CA-02 («la ausencia del campo ES el valor»).
+- **Medido sobre el texto, sin reloj** (recuento estático; se reproduce recorriendo
+  `secciones/*.sh` y comparando `wc -l` con la línea del primer `^CASOS_ESPERADOS_SECCION=`):
+
+  | | Líneas |
+  |---|---|
+  | Total de las 44 secciones | **7 518** |
+  | Leídas hoy (el `while read` **retorna en la primera coincidencia**) | **339** |
+  | **Razón si hay que llegar a EOF** | **22,18×** |
+
+- **Descripción.** CA-09 (ii) contrata «**no más de 0 pasadas de lectura añadidas** … el techo y el
+  número de casos se leen en **una sola** pasada». Se cumple —una pasada— mientras el coste real se
+  multiplica por 22 en la magnitud que de verdad se paga: **líneas leídas en un bucle `read` de bash**,
+  el lector más caro que hay. Y lo fuerza el propio diseño: como CA-02 hace que **la ausencia sea el
+  valor**, una sección que (correctamente) **no** declara techo sólo puede saberlo **llegando al final
+  del archivo**. El defecto fail-closed que CA-02 acierta en elegir es exactamente lo que impide el
+  corte temprano.
+- **Y la tercera vía de CA-09 tampoco lo ve.** La mitad (iii) mide el reloj sobre «un directorio
+  sintético de secciones **triviales**»: secciones triviales son cortas, así que leerlas hasta EOF no
+  cuesta nada. El fixture **no contiene la propiedad que se degrada**. Es la forma (d) una capa más
+  arriba —no en la magnitud, en el material sobre el que se mide—, y es la misma lección que el propio
+  CA-09 invoca para justificar sus tres mitades.
+- **Lo que NO afirmo.** No he medido el impacto en reloj, ni podía: hay una comisión midiendo y una
+  corrida ajena le envenena la línea base. **7 200 líneas de más en un `while read` de bash son
+  probablemente milisegundos en Linux y no lo son en Windows/MSYS**, donde este proyecto tiene el coste
+  sin medir (`docs/ESTADO.md`). La razón 22,18× es cierta sobre la magnitud; su traducción a segundos
+  **no está medida** y le corresponde a quien implemente, en la misma corrida y con el mínimo de k.
+- **Remediación (write-back).**
+  1. **Cambiar la magnitud de (ii)** a **líneas (o bytes) leídos** sobre `secciones/`, no «pasadas»,
+     con su techo y su dirección admitida. Una pasada más larga es coste añadido aunque el recuento de
+     pasadas no se mueva.
+  2. **Medir la mitad de lectura sobre `secciones/` real**, no sobre el directorio sintético; el
+     sintético sigue valiendo para el reloj del corredor, que es otra cosa.
+  3. **Si se quiere conservar el corte temprano**, contratarlo por propiedad: *las dos declaraciones
+     viven en un bloque de cabecera acotado de la sección y la lectura termina al salir de él*, con el
+     sitio único donde ese bloque se define. Es un cambio de forma en 44 archivos y hay que decirlo por
+     delante, no descubrirlo al medir.
+
+---
+
+### SEC-044 — `contrato` · **abierto** · REQ-020 · severidad media · dueño `analista-requerimientos`
+
+**La regla del literal nombra un MECANISMO donde debe enunciar una PROPIEDAD, y por eso se puede satisfacer sin proteger nada y se puede incumplir protegiendo**
+
+- **Ubicación:** `requirements/REQ-020.md` CA-07 (la quinta forma prohibida) y CA-04 (iii), contra
+  `requirements/README.md` § (a) —la regla de enunciar por propiedad y no por lista— y § (b) —tipo del
+  número—.
+- **Descripción.** La forma se contrata como *«hace falta un **literal**, y el literal **es** el
+  control»*. «Literal» es **una** implementación admisible, no la propiedad. La propiedad es: *un
+  término **independiente del artefacto vigilado en el momento de la corrida**, cuya modificación sea
+  **visible en la revisión del cambio**.* Escrita como está, falla en las dos direcciones:
+  - **Satisface sin proteger:** un literal tecleado contra el que **nadie compara** —o cuya rama de
+    comparación está suspendida— cumple la regla al pie de la letra y no vigila nada. Es SEC-038.
+  - **Incumple protegiendo:** un término que no es un literal en el archivo pero **sí** es independiente
+    del artefacto —un número publicado en la salida de la versión anterior y comparado, un valor en un
+    archivo que la corrida no produce— queda declarado infractor por una regla que existe para
+    protegerlo.
+  Y es la ironía que hay que decir en voz alta: **CA-07 es el criterio que adopta una forma prohibida
+  nueva, y está escrito en la forma prohibida (a)** —nombrar el mecanismo en vez de la propiedad—, que
+  es la primera de las cuatro ya adoptadas.
+- **Sobre la mitad del derivado (CA-04 iii): es doctrina correcta, y hoy es una promesa sin puerta.**
+  El enunciado —*si algún día se deriva, el mismo cambio contrata el caso «precondición no cumplida» y
+  ese caso es **ruidoso***— es exactamente la lección del trinquete congelado seis días, y hay que
+  conservarlo. Pero su único cumplimiento efectivo es **un caso dentro de
+  `autoprueba-corredor.sh`** —el que comprueba que la asignación es literal—, en un archivo de
+  `tests/` sin custodia (SEC-045), cuyo propio contador `AUTOPRUEBA_CASOS_ESPERADOS=73` vive **en el
+  mismo archivo** y lo mueve **la misma mano en el mismo commit**. Quien derive el literal borra el
+  caso que lo prohíbe y baja el 73 a 72: dos ediciones en un archivo, cero señales fuera. La cláusula
+  no es de relleno —fija la doctrina y hace visible la intención—, pero **no es una puerta**, y el REQ
+  la presenta como si lo fuera.
+- **Remediación (write-back).**
+  1. **Reescribir la forma (e) por propiedad**, con el literal como **instancia más barata** y marcado
+     «no exhaustivo», y nombrando que el control es la **conjunción** de SEC-038 y no el término
+     suelto. Va igual en `requirements/README.md` y en `templates/requirements-README.md.tpl`, con el
+     mismo alcance temporal que las cuatro adoptadas.
+  2. **Declarar qué es CA-04 (iii):** doctrina con **forzador observable** —*toda comisión que edite la
+     asignación del total, su comparación o su condición de suspensión la re-ejerce*— y no una puerta
+     permanente. Un residual cuyo disparador es «que alguien se acuerde» no vence (misma corrección
+     que SEC-033).
+  3. Y el testigo externo de SEC-038 (3) es lo que convierte la doctrina en señal: publicado en la
+     salida, el número cambia **fuera** del archivo que lo contiene.
+
+---
+
+### SEC-045 — `contrato` · **abierto** · REQ-020 · severidad alta · dueño `analista-requerimientos` (el criterio) y `auditor-seguridad` (el residual)
+
+**REQ-020 es el control que decide si las pruebas miden, y vive entero fuera de toda custodia: quien lo escribe, quien lo acredita y quien publica pueden ser el mismo actor — y «mutación de un tercero» importa evidencia de un entorno con independencia real**
+
+- **Ubicación:** `requirements/REQ-020.md` CA-08 (i) y (ii), contra `.arnes/config.json`
+  (`codigo_app.globs`), `AGENTS.md` §3, §4 y §6, y `docs/PENDIENTES.md:1249-1268`.
+- **Lo medido, y es la respuesta a la pregunta de gobernanza que abrió esta comisión.**
+  `codigo_app.globs` es `["hooks/*", "tools/*", ".github/*", ".arnes/config.json",
+  ".claude-plugin/*"]`. **`tests/` no está.** Todo lo que REQ-020 construye —el literal, la línea
+  `Acredita:`, los techos de SKIP, el inventario de lo no medido, la autoprueba que los certifica—
+  aterriza en `tests/escenarios/hooks/`, donde `guard-codigo` **no deniega a nadie**: cualquier
+  subagente y **la sesión coordinadora** pueden escribirlo. Y esa misma sesión es la que reúne la
+  evidencia de «todo en verde» y la que **fusiona, etiqueta y publica por delegación permanente** del
+  propietario (2026-09-05). `AGENTS.md` §6 llama a `tests/` **crítico** en prosa; ninguna máquina lo
+  respalda, y tampoco hay gate humano (§6 lo pone sobre el ruleset, el workflow y el manifiesto, **no**
+  sobre el banco).
+  **Es la estructura de SEC-036 una capa más arriba y con más palanca:** allí el artefacto sin custodia
+  era **una sonda**; aquí es **el juez de todas las sondas**.
+- **Y el sustituto que el REQ propone —la mutación de un tercero— importa su evidencia de un sitio que
+  no se parece a éste.** El dato es bueno y está medido: allí la mutación de un tercero encontró **el
+  doble** que la del autor, y **2 de 4** sobrevivían. Pero ese «tercero» era **otro proyecto y otra
+  persona**. Aquí los roles son **sombreros de la misma sesión**: mismo modelo, mismo disco, mismo
+  despachante, y el `qa-tester` lee el mismo `AGENTS.md` y el mismo REQ que el `desarrollador`. La
+  segunda evidencia que el REQ cita —*ninguno de los cuatro fallos en abierto de 1.32.1 lo encontró
+  quien escribió el código*— **sí** es de esta casa y **sí** sostiene que el bucle de roles aporta algo;
+  pero es evidencia sobre **el bucle**, no sobre **la mutación**, y no es evidencia de independencia
+  epistémica. CA-08 (ii) contrata «un rol **distinto** del que escribió el código», que es lo único
+  comprobable, y **presenta** esa exigencia con el respaldo del «doble», que mide otra cosa.
+- **Riesgo.** El control que certifica que todos los demás controles miden se acredita a sí mismo, con
+  un procedimiento cuya fuerza se apoya en una propiedad —independencia— que aquí no está contratada ni
+  es verificable. Si falla en abierto, **todas** las puertas que certifica quedan sin certificar y no
+  hay segunda lectura.
+- **Remediación (write-back), y con ella acepto el residual.**
+  1. **Decirlo en el REQ.** Una frase: *`tests/` está fuera de `codigo_app.globs`; el mecanismo de
+     REQ-020 lo puede escribir cualquier agente, incluida la sesión coordinadora, que además acredita
+     y publica.* Lo que no está escrito no se puede vigilar, y hoy no está en ninguna parte.
+  2. **Contratar qué HACE tercero a un tercero**, ya que la independencia no se puede garantizar: (a)
+     no haber escrito ni revisado el mecanismo bajo mutación en esta ventana; (b) **el conjunto de
+     mutaciones se deriva del CRITERIO, no del código** —se redacta leyendo qué propiedad promete el
+     CA y dónde tendría que morder, antes de leer la implementación—, que es lo que impide «romper
+     donde el autor ya miró»; (c) se publica en `docs/qa/1.33.0.md` la mutación, quién la ejerció, y
+     **qué caso pasó de PASS a FAIL**; (d) las supervivientes no se cierran (el REQ ya lo dice, y es lo
+     que lo convierte en control).
+  3. **Declarar el alcance honesto de CA-08:** dentro de una sola sesión esto es un control
+     **procedimental**, no una garantía de independencia; su valor medido es el del bucle de roles, no
+     el del «doble» del proyecto ajeno. Separar las dos citas en el texto del criterio.
+  4. **NO meter `tests/` en `codigo_app.globs` en esta ventana**, y por el mismo motivo que acepté en
+     SEC-036: tocar `.arnes/config.json` abre gate humano, y una entrada en `PENDING_APPROVAL.md`
+     **deniega el cierre de cualquier REQ**, incluido REQ-017. Bloquear la ventana entera por custodiar
+     el instrumento es peor negocio que acreditarlo. **Concurro con acreditar > custodiar**, con el
+     mismo forzador observable: en la pasada de conformidad de **1.34.0** se ejerce una mutación de
+     tercero **contra el propio mecanismo de REQ-020** —se altera el literal, o el operando, o la
+     condición de suspensión— y se exige que la autoprueba **no dé verde**. Si pasa inadvertida, la
+     decisión de no custodiar `tests/` vuelve a la mesa **con el número delante**.
+- **Residual: lo asumo como dueño (`auditor-seguridad`)**, con las cuatro condiciones escritas en el
+  REQ y no antes. Un residual que sólo vive en este registro es deriva (`AGENTS.md` §9).
+
+---
+
+### SEC-046 — `instrumento` · **abierto** · REQ-020 · severidad media · dueño `desarrollador` · ventana 1.33.0 (con la implementación)
+
+**La declaración de estrechamiento se pone una vez en un perfil y silencia para siempre, y la salida no distingue una declaración TECLEADA de una HEREDADA**
+
+- **Ubicación:** `requirements/REQ-020.md` CA-03, borde (b) y §«Y por qué no cría lobos».
+- **Descripción.** El REQ ya reconoce la mitad —*«una variable exportada en la sesión puede volver
+  silenciosa una vuelta parcial»*— y lo que afirma es cierto: no puede fabricar acreditación. Pero el
+  único diente **nuevo** de CA-03 es el ABORT, y ese diente se retira **permanentemente** con una línea
+  en un perfil de shell, sin dejar rastro. El argumento del REQ —«dispara exactamente una vez sobre
+  cada estrechamiento no declarado»— supone que la declaración se **teclea cada vez**; si es una
+  variable de entorno, se teclea **una** vez en la vida.
+- **Por qué no bloquea.** No hace falso ningún enunciado del REQ y no afecta al producto: es una
+  propiedad del control nuevo. `instrumento`, con dueño y ventana.
+- **Remediación (para quien implemente).** La línea `Acredita: no` dice **de dónde vino la
+  declaración**: argumento de la invocación o entorno heredado. Es información sobre **cómo se invocó el
+  proceso**, que es el criterio del propio CA-03, y cuesta un campo. Una declaración heredada del
+  entorno en la salida es exactamente el tell que un revisor necesita para no aceptarla como evidencia.
+
+---
+
+### Lo que esta revisión NO puede decir — la mitad honesta de una preventiva
+
+- **Nada sobre el código de REQ-020: no existe.** No hay `SKIP_ADMITIDOS_SECCION` en ninguna sección,
+  no hay línea `Acredita:`, no hay inventario de casos sin medir, no hay ayudante `skip` en el
+  corredor. Esta firma **no acredita ninguna implementación**.
+- **Nada sobre si el ABORT de CA-03 se dispara donde debe**, ni sobre si la clasificación se hace de
+  verdad **antes de ejecutar nada**: hoy `PARCIAL` se calcula en `run.sh:485-487`, después del
+  descubrimiento y de la comprobación de huérfanos, y si eso basta para «antes de ejecutar nada» es una
+  pregunta sobre código que aún no está escrito.
+- **Nada sobre el coste en RELOJ de SEC-043.** La razón 22,18× es un recuento de líneas sobre el texto.
+  Su traducción a segundos —y sobre todo en Windows/MSYS, donde este proyecto no ha medido— **no está
+  hecha**, y no podía hacerse: hay una comisión midiendo.
+- **Nada sobre si CA-05 se puede cumplir sin abrir la vía que prohíbe.** Ejercer el cuadre **total** con
+  entradas sintéticas exige que el total esperado sea gobernable desde fuera de la corrida real; la
+  salida limpia es extraer la decisión a una función pura (precedente REQ-017) — pero **una prueba de
+  la decisión no prueba el cableado**, que es SEC-038. Si esa vía es suficiente se sabrá **leyendo la
+  implementación**, no antes.
+- **Nada sobre los otros REQ de la ventana.** Hay tres comisiones corriendo; no he tocado REQ-017,
+  REQ-018, REQ-021, REQ-022, `docs/qa/`, `tests/` ni `hooks/`. Lo que SEC-043 dice de
+  `lee_casos_declarados` **roza** el delta pendiente de REQ-017, y queda como observación para su
+  auditoría, **no** como hallazgo contra él: no es mi turno.
+- **Nada ejecutado del banco**, ni una corrida, ni un reloj.
+
+---
+
+### ¿Veto? — **NO. `Seguridad: preventiva`, y no autoriza a cerrar**
+
+No hay veto: no hay nada construido que vetar. Ocho hallazgos de **contrato** —que **bloquean el
+cierre** hasta el write-back del `analista-requerimientos`— y uno de `instrumento`, que no bloquea.
+Es barato y es el momento correcto: el REQ está `pendiente`, así que cada corrección cuesta **una
+edición de criterio** y no una vuelta del bucle. **Ninguno de los ocho pide construir nada nuevo:**
+siete piden enunciar por propiedad lo que ya se quería decir o corregir una afirmación sobre el árbol
+de hoy que la lectura desmiente, y uno (SEC-045) pide declarar una condición de gobernanza que existe y
+no está escrita.
+
+**Rigor:** ya está en `critico` con `Sensible a seguridad: sí`. **No hay nada que subir** —es el techo—
+y nada se baja. Y conviene decir por qué el techo está bien puesto aunque el REQ no toque dinero ni
+datos personales: **es un control sobre los controles**; si falla en abierto, todas las puertas que
+certifica quedan sin certificar y en silencio, que es la definición de `critico` de este proyecto.
+
+**Lo que NO firmo, dicho aparte porque es la pregunta que abrió la comisión.** No firmo que exista
+vigilancia sobre REQ-020. **No la hay**: el artefacto está fuera de `codigo_app.globs`, el sustituto es
+la mutación de un tercero, y ese tercero es hoy **otro sombrero de la misma sesión**. Eso es SEC-045, y
+lo asumo como residual con forzador observable en 1.34.0 — no lo declaro resuelto.
+
+### Estado de seguridad aprobado por REQ — R-011 (línea base de no-regresión, ventana 1.33.0)
+
+| REQ | Estado de seguridad | Fecha | Árbol | Controles acreditados / qué vigilar en la auditoría del código |
+|---|---|---|---|---|
+| **REQ-020** | **`preventiva`** (no es `aprobado`; no cierra) | 2026-09-07 | `cand/1.33.0` @ `93cff10`, **sin código** | Se acredita **el diseño**, con ocho huecos de contrato abiertos. Propiedades que la auditoría del código verificará: (a) el cuadre total es la **conjunción** término-literal ∧ operando ∧ rama ejecutada, y la lista de condiciones que lo suspenden es exhaustiva, única y coincide con los tres estados de CA-03 (SEC-038); (b) el techo de casos sin medir se calibra **sólo sobre corrida que acredita**, registra qué corrida lo justificó, separa la clase estructural de la contingente y **subirlo lleva firma ajena** (SEC-039); (c) la acreditación nombra **el sujeto** —directorio de hooks, de secciones, corredor— y ninguna salida del corredor es **rc 0 con cero casos** (SEC-040); (d) lo que sobrevive a una vuelta **con filtro** se dice sin generalizar desde el selector de secciones (SEC-041); (e) el motivo de un caso sin medir es **dato por canal propio**, no prosa dentro de la identidad del caso, y el inventario de CA-10 no se mueve (SEC-042); (f) la magnitud de coste de lectura es **líneas**, medida sobre `secciones/` real y no sobre el fixture trivial (SEC-043); (g) la forma (e) de `requirements/README.md` se enuncia **por propiedad** —término independiente del artefacto en el momento de la corrida— con el literal como instancia no exhaustiva (SEC-044); (h) **queda escrito** que `tests/` está fuera de `codigo_app.globs` y que la mutación de un tercero es, dentro de una sesión, un control **procedimental**; el residual es mío con forzador en 1.34.0 (SEC-045). **Regresiones a vigilar:** `CASOS_ESPERADOS` dejando de ser el operando de la comparación; un cuarto término en la condición de suspensión del cuadre total; `SKIP_ADMITIDOS_SECCION` subiendo sin corrida que lo justifique; y `AUTOPRUEBA_CASOS_ESPERADOS` bajando en el mismo commit que borra el caso del literal. |
+
+**Alcance de esta firma.** Cubre el texto de REQ-020 tal como está hoy y las afirmaciones que hace
+sobre el árbol actual. **No cubre el código posterior.** Cuando exista, la auditoría se repite
+**después del `qa-tester`**, como manda `AGENTS.md` §6.
