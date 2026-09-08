@@ -73,9 +73,32 @@ dos factores (`cal_a`, `cal_b`) y **no los compara con nada**.
   honesta y la que calcula sin medir publican el mismo número—, así que la calibración ejerce
   además una **mitad discordante**: una entrada cuya **magnitud observada** es distinta del
   parámetro con que se invoca la sonda, y que el **juez** contrasta contra un **testigo que él
-  mismo obtiene** (`disc_param`, `disc_obs` y, en el reloj, `disc_estado`). El caso **aborta**
-  —no pasa— si el testigo coincide con el parámetro o si lo produce la propia sonda: dos
-  instrumentos que se apartan de la verdad a la vez coinciden y no dicen nada.
+  mismo obtiene** (`disc_param`, `disc_obs` y, en el reloj, `disc_estado`).
+- **Y el testigo NO lo aporta la sonda por ningún canal, lo cual costó una vuelta entera de
+  medirlo (`QA-021-10`).** La primera versión de esta mitad decía lo de arriba y **no bastaba**:
+  el juez creaba un archivo de rastro vacío y contaba sus líneas, pero **las escribía la sonda**,
+  y el tamaño del sujeto discordante lo decidía y publicaba ella (`disc_veces = cal_n − 1`,
+  `disc_vueltas = cal_n / 50`). Los dos términos del contraste salían del **mismo parámetro**:
+  `3 = 3` se cumple por construcción, y una copia que **no invocaba `grep` ni una vez** obtuvo
+  **PASS** del juez real. *Crear el recipiente no es obtener el testigo: el testigo es el
+  **valor**.* Desde el 2026-09-08 el reparto es éste, y **cada pieza tiene su aborto nombrado**:
+  - **el sujeto lo construye el juez** y llega como snippet (`--disc-sujeto`, **obligatorio** en
+    `--calibrar`); la sonda no lo dimensiona y **no lo declara** en su registro;
+  - **el valor del testigo lo produce el juez** —el número de invocaciones que él metió en el
+    snippet; en el reloj, el mínimo de tres pasadas con **su** cronómetro—;
+  - **y lo tiene ANTES de invocar la sonda**, que es la forma en que esa independencia se
+    **comprueba** en vez de razonarse: el juez publica las dos marcas de reloj y el caso
+    **aborta** si la de obtención no es anterior a la de invocación. Cuesta cero procesos: es
+    un cambio de orden.
+  El caso **aborta** —no pasa, nunca— si el testigo coincide con el parámetro, si el juez no
+  acredita la anterioridad, si el registro declara el tamaño del sujeto discordante o si el
+  umbral con que se decide sale del registro **del instrumento juzgado**. Dos instrumentos que
+  se apartan de la verdad a la vez coinciden y no dicen nada, y eso vale con más fuerza cuando
+  el «segundo instrumento» **es la sonda otra vez** por otro canal de salida.
+- **Lo que esto NO cierra, dicho aquí porque afirmar lo contrario ya salió caro.** Una sonda que
+  **lea el snippet** que el juez le entrega y publique su cuenta **sin ejercerlo** sigue pasando
+  —medido—: eso ya no es un descuido sino **falsificación deliberada**, y su respuesta no es un
+  criterio más, sino la custodia de `tests/util/*` y la mutación **de un tercero**.
 - **El TAMAÑO de cada mitad se deriva del suelo medido en la propia corrida**, al mínimo que lo
   supere por el margen declarado, y se **publica** (`cal_n`, `cal_margen`, `cal_ns_vuelta`). Una
   variable de entorno sólo puede **subirlo**. Medido lo que costaba el absoluto: con un tamaño
@@ -128,10 +151,14 @@ tests/util/sonda-reloj.sh --k 4 --r 6 --sujeto-a '…' --sujeto-b '…'
 # Procesos: envoltorios en el PATH, resueltos con `type -P` antes de tocarlo.
 tests/util/sonda-procesos.sh --sujeto "bash hooks/guard-completado.sh < entrada.json"
 # La calibración de cada una, que el corredor toma una vez por corrida. NO se le pasa el
-# tamaño: lo DERIVA del suelo medido en la corrida (CA-03 c). El `--rastro` lo crea VACÍO
-# quien va a juzgar, porque de ahí sale el testigo de la mitad discordante.
-tests/util/sonda-reloj.sh    --calibrar --k 1 --r 5
-tests/util/sonda-procesos.sh --calibrar --rastro /tmp/rastro
+# tamaño de las mitades: lo DERIVA del suelo medido en la corrida (CA-03 c). El sujeto
+# DISCORDANTE, en cambio, es OBLIGATORIO y lo construye quien va a juzgar: de él sale el
+# testigo, y una sonda que se lo dimensionara a sí misma volvería a poner los dos términos
+# del contraste en la misma fuente. Sin `--disc-sujeto` la calibración falla con motivo.
+tests/util/sonda-reloj.sh    --calibrar --k 1 --r 5 \
+  --disc-sujeto 'for ((V = 0; V < 900; V++)); do :; done'   # bajo el suelo, cronometrado ANTES
+tests/util/sonda-procesos.sh --calibrar \
+  --disc-sujeto 'grep -q x /dev/null || :'                  # el testigo es cuántas metió el juez
 ```
 
 Los sujetos y la preparación se **evalúan dentro del proceso de la sonda**, así que todo

@@ -82,6 +82,43 @@ DoR que quedaba). Y corregida la de **REQ-021**, que decía `QA: pendiente` cuan
 tercera vez en dos días que estas celdas se desfasan**, y el arreglo real no es corregirlas: es REQ-019,
 que las convierte en bloque derivado entre marcadores leído por el mismo lector que la puerta.
 
+## [GitHub] — 2026-09-08 · REQ-021 vuelta 3 de 3: el testigo sale del juez por un camino que la sonda no puede alimentar, y la anterioridad lo hace comprobable
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+Tercera y última vuelta dev↔QA de `REQ-021`, contra `QA-021-10` (`contrato`): **la misma forma por
+cuarta vez —el testigo salía de la sonda que se juzgaba— y esta vez el arreglo es de reparto, no de
+aritmética.** El sujeto discordante lo **construye el juez** y llega a la sonda como snippet
+(`--disc-sujeto`, obligatorio en `--calibrar`); el **valor** del testigo lo pone el juez; y lo tiene
+**antes** de invocar, con las dos marcas de reloj publicadas para que la anterioridad se **compruebe**
+en vez de razonarse. Cuesta cero procesos: es un cambio de orden.
+
+- **`tests/util/sonda-procesos.sh`**: fuera `sp_cal_disc`, `SP_DISC_VECES`, `--rastro` y el campo
+  `disc_veces=`; el discordante pasa de 3 invocaciones (`cal_n − 1`, que decidía la sonda) a **2** del
+  juez, por el **camino único** que ejerce el sujeto.
+- **`tests/util/sonda-reloj.sh`**: fuera `SR_DISC_VUELTAS` (`cal_n / 50`) y el campo `disc_vueltas=`,
+  que el juez **leía** para construir su propio testigo.
+- **`run.sh`**: el juez deriva, cronometra y publica las ternas **antes** de la primera invocación;
+  `SONDA_SUELO_US` pasa al juez (quien es juzgado no aporta la vara) y `sonda_discordante` gana
+  **cinco abortos nombrados**.
+- **Sección 38**: el fail-before se re-ancla a la **definición** de la función que ejerce el sujeto y
+  no a un literal de su cuerpo, y entran **4 casos** (28 → 32; `CASOS_ESPERADOS` 880 → **884**).
+
+**Acreditación, con el par dentro de la corrida y contra el juez real sin tocarlo:** la copia con la
+observación quitada —la mutación que QA midió **pasando**— da `FAIL` nombrando la condición y los
+números (`disc_obs=4 · testigo=2 · parámetro=4`) y la misma copia sin mutar, `rc 0`. Banco
+**880 PASS · 0 FAIL · 4 SKIP, rc 0**, cuadre 884; `CA-08 (iii)` **3,571×** en procesos (de 3,714×) y
+**2,245×** en reloj (de 2,921×), techo 6×; autoprueba 72/1 con `CA-18` como único rojo.
+
+**Y dos afirmaciones desmentidas midiendo, la segunda contra el trabajo de esta propia comisión:**
+la sospecha que QA dejó sin medir sobre la banda del reloj es **cierta** —un `disc_obs` **calculado**
+(3998 µs) pasa contra un testigo de 639 µs, porque la banda es una ventana de 625×—; y **`CA-03 (d)`
+no es 0 de 30 fuera del reposo**: 0/16 en reposo, **6/16** con 4 de 12 núcleos ocupados y **13/16** en
+saturación, con el árbol anterior dando **7/16** y **17/16** bajo la misma carga. No es regresión: es
+el mismo instrumento, y el modo dominante es `CA-03 (c)` —`cal_n` derivado de un sondeo de 2 ms—, no
+la mitad discordante. `sonda-procesos.sh` sale exacto en las 32 corridas del muestreo en que se
+registró su valor, y sin un solo FAIL suyo en las 48. **`QA-021-10` no se cierra
+aquí**: la acreditación que lo cierra la ejerce quien no escribió la sonda.
+
 ## [GitHub] — 2026-09-08 · REQ-024 (borrador): la ausencia que abre, en el segundo lector; y un conflicto con REQ-023 que hay que anclar antes de implementarlo
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 

@@ -10,7 +10,11 @@
 # (CA-09): es código protegido bajo gate humano, y una entrada en `PENDING_APPROVAL.md`
 # deniega el cierre de cualquier REQ mientras exista. La cobertura se consigue donde ya hay
 # una puerta requerida corriendo, que es aquí.
-CASOS_ESPERADOS_SECCION=28
+# 28 → 32: entran los cuatro casos de las CINCO CONDICIONES del testigo de CA-03 (a.3), que
+# es lo que esta vuelta contrata —anterioridad, no vacuidad, tamaño declarado por la sonda y
+# el umbral que no sale del registro juzgado—. Este literal y el `CASOS_ESPERADOS` de
+# `run.sh` se actualizan A MANO y por separado: son el control (README del banco, invariante 2).
+CASOS_ESPERADOS_SECCION=32
 seccion_nueva "--- 38 · las dos sondas de tests/util/: calibración, procedencia, descendencia y el juez (REQ-021) ---"
 
 num38() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
@@ -221,19 +225,24 @@ if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
       # LAS DOS MITADES POR ENCIMA DEL SUELO CON MARGEN, que es lo que arregla la fragilidad:
       # se exige al menos margen−1 veces el suelo para dejar holgura de ruido a la propia
       # comprobación, y en particular al INSENSIBLE, que era el que derivaba.
-      esp38=$(( SONDA[suelo] * (SONDA[cal_margen] - 1) ))
+      # EL SUELO CON EL QUE SE DECIDE ES EL DEL JUEZ (`SONDA_SUELO_US`), no el `suelo=` que
+      # publica el instrumento juzgado: es la condición 5 de (a.3) —quien es juzgado no
+      # aporta la vara— y aquí valía igual, a una línea del sitio donde se midió el fallo.
+      # El campo se sigue exigiendo NUMÉRICO arriba (es condición de la medida, CA-06) y se
+      # sigue publicando en el veredicto; lo que no hace es decidir.
+      esp38=$(( SONDA_SUELO_US * (SONDA[cal_margen] - 1) ))
       [ "${SONDA[min_a]}" -ge "$esp38" ] || falla38="$falla38 el sensible base mide ${SONDA[min_a]}µs y no llega a ${esp38}µs;"
       [ "${SONDA[min_b]}" -ge "$esp38" ] || falla38="$falla38 el insensible base mide ${SONDA[min_b]}µs y no llega a ${esp38}µs (es el que derivaba a 1,4× del suelo);"
       # …Y EL TAMAÑO SE RE-DERIVA AQUÍ desde el coste por vuelta que la sonda publicó: si
       # `cal_n` fuera un absoluto escrito a mano, no cuadraría con `cal_ns_vuelta`. El env
       # sólo puede SUBIRLO, así que se exige `>=`, nunca igualdad.
-      der38=$(( SONDA[suelo] * SONDA[cal_margen] * 1000 / SONDA[cal_ns_vuelta] ))
+      der38=$(( SONDA_SUELO_US * SONDA[cal_margen] * 1000 / SONDA[cal_ns_vuelta] ))
       [ "${SONDA[cal_n]}" -ge $(( der38 * 7 / 10 )) ] \
         || falla38="$falla38 cal_n=${SONDA[cal_n]} queda por debajo de lo que su propio cal_ns_vuelta deriva (~$der38);"
     fi
   fi
   if [ -z "$falla38" ]; then
-    echo "  PASS  $nom38  (cal_n=${SONDA[cal_n]} derivado de ${SONDA[cal_ns_vuelta]}ns/vuelta para ${SONDA[cal_margen]}× el suelo de ${SONDA[suelo]}µs; sensible ${SONDA[min_a]}µs · insensible ${SONDA[min_b]}µs, ninguno pegado al suelo)"; PASS=$((PASS+1))
+    echo "  PASS  $nom38  (cal_n=${SONDA[cal_n]} derivado de ${SONDA[cal_ns_vuelta]}ns/vuelta para ${SONDA[cal_margen]}× el suelo de ${SONDA_SUELO_US}µs que declara el JUEZ —la sonda publica suelo=${SONDA[suelo]}µs y no decide—; sensible ${SONDA[min_a]}µs · insensible ${SONDA[min_b]}µs, ninguno pegado al suelo)"; PASS=$((PASS+1))
   else
     echo "  FAIL  $nom38 :$falla38"; FAIL=$((FAIL+1))
   fi
@@ -256,42 +265,65 @@ sonda_juzga_discordante "REQ-021 CA-03 (a.2) la magnitud de sonda-procesos.sh sa
 # tiene que FALLAR, y la misma entrada sin esa mutación, PASAR. Sin la segunda mitad un FAIL
 # no probaría que la comprobación distingue: probaría que falla (CA-03 (a.3)).
 #
-# PARA `procesos` SE MUTA LA SONDA DE VERDAD, en una COPIA y sin tocar el árbol: cuesta ~30
-# invocaciones de `grep`, o sea milisegundos. PARA `reloj` se neutraliza el REGISTRO en vez
-# del archivo, y el motivo no es comodidad: una segunda calibración de reloj completa
+# PARA `procesos` SE MUTA LA SONDA DE VERDAD, en una COPIA y sin tocar el árbol: cuesta unas
+# pocas invocaciones de `grep`, o sea milisegundos. PARA `reloj` se neutraliza el REGISTRO en
+# vez del archivo, y el motivo no es comodidad: una segunda calibración de reloj completa
 # duplicaría el reloj de esta sección en la puerta requerida, que es exactamente lo que
 # CA-08 (ii) existe para acotar y el final de camino que hace que alguien apague una
 # calibración. La mutación del ARCHIVO de reloj —hecha por un tercero, que es lo que la hace
 # valer— es el forzador del residual de `tests/util/`, y su evidencia va al Historial del REQ.
-nom38="REQ-021 CA-03 (a.2) fail-before: a sonda-procesos.sh se le quita la observación en una COPIA y el juez la caza; la misma copia sin mutar pasa"
+#
+# LA MUTACIÓN YA NO SE ANCLA A UN LITERAL DEL ARCHIVO, y esto es lo que cambia en esta vuelta.
+# Antes era un `sed` sobre la cadena `SP_DISC_OBS="$SP_CUENTA_EJ"` —fail-closed, sí, pero esa
+# línea se reescribió en esta misma vuelta y un ancla literal deja de probar lo que dice en
+# cuanto alguien la toca—. Ahora se sustituye, por su DEFINICIÓN y no por su cuerpo, la única
+# función que ejerce un sujeto (`sp_ejerce`, CA-03 punto 4): el reemplazo devuelve las cinco
+# magnitudes POR ARITMÉTICA sobre el parámetro sin evaluar el sujeto, sin invocar el binario
+# instrumentado ni una vez y sin leer el registro de los envoltorios. Es EXACTAMENTE la
+# mutación que QA midió pasando (QA-021-10, receta en `docs/qa/1.33.0.md`), no una elegida
+# aquí: sus factores salen 2,000 y 1,000 —en banda, indistinguibles de la honesta— y lo único
+# que la delata es el testigo del juez. Si la función se renombra, `awk` no encuentra la
+# definición, sale con rc 1 y el caso FALLA diciéndolo: fail-closed, que es lo correcto.
+nom38="REQ-021 CA-03 (a.2) fail-before: a sonda-procesos.sh se le quita la observación en una COPIA —el único camino que ejerce el sujeto pasa a ser aritmética— y el juez la caza; la misma copia sin mutar pasa"
 if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
   COPIA38="$RAIZ/copia38-$BASHPID"
   mkdir -p "$COPIA38" 2>/dev/null
   falla38=''
+  STUB38='sp_ejerce() {
+  case "${1:-}" in
+    sp_cal_sens)   SP_CUENTA_EJ="$SP_CAL_VECES" ;;
+    sp_cal_insens) SP_CUENTA_EJ="$SP_CAL_FIJO" ;;
+    *)             SP_CUENTA_EJ="$SP_CAL_N" ;;
+  esac
+}'
   if ! cp "$UTIL_DIR/sonda-procesos.sh" "$COPIA38/limpia.sh" 2>/dev/null; then
     falla38=' no se pudo copiar sonda-procesos.sh'
   else
     chmod +x "$COPIA38/limpia.sh"
-    # La mutación: `disc_obs` deja de salir del recuento OBSERVADO y pasa a ser el parámetro.
-    sed 's|SP_DISC_OBS="\$SP_CUENTA_EJ"|SP_DISC_OBS="$SP_DISC_PARAM"|' "$COPIA38/limpia.sh" > "$COPIA38/mutada.sh" 2>/dev/null
+    awk -v stub="$STUB38" '
+      !dentro && /^sp_ejerce\(\)[ \t]*\{/ { print stub; dentro = 1; hecho = 1; next }
+      dentro  && /^\}/                    { dentro = 0; next }
+      !dentro                             { print }
+      END { if (!hecho) exit 1 }
+    ' "$COPIA38/limpia.sh" > "$COPIA38/mutada.sh" 2>/dev/null \
+      || falla38=' la mutación NO se aplicó: no se encontró la definición de la función que ejerce el sujeto (¿la renombraron?), y sin mutación el fail-before no probaría nada'
     chmod +x "$COPIA38/mutada.sh" 2>/dev/null
-    if cmp -s "$COPIA38/limpia.sh" "$COPIA38/mutada.sh"; then
-      falla38=' la mutación NO se aplicó: el fail-before no probaría nada'
+    if [ -z "$falla38" ] && cmp -s "$COPIA38/limpia.sh" "$COPIA38/mutada.sh"; then
+      falla38=' la mutación NO cambió el archivo: el fail-before no probaría nada'
     fi
   fi
   if [ -z "$falla38" ]; then
-    : > "$COPIA38/rastro-limpia"; : > "$COPIA38/rastro-mutada"
-    reglim38="$("$COPIA38/limpia.sh"  --calibrar --rastro "$COPIA38/rastro-limpia"  --dir-trabajo "$COPIA38" 2>/dev/null)"
-    regmut38="$("$COPIA38/mutada.sh"  --calibrar --rastro "$COPIA38/rastro-mutada"  --dir-trabajo "$COPIA38" 2>/dev/null)"
-    sonda_testigo_procesos "$COPIA38/rastro-limpia"; tlim38="$SONDA_TESTIGO"
-    sonda_testigo_procesos "$COPIA38/rastro-mutada"; tmut38="$SONDA_TESTIGO"
-    sonda_discordante procesos "$regmut38" "$tmut38"; vmut38="$SONDA_DISC_VEREDICTO"; motmut38="$SONDA_DISC_MOTIVO"
-    sonda_discordante procesos "$reglim38" "$tlim38"; vlim38="$SONDA_DISC_VEREDICTO"
-    [ "$vmut38" = fail ] || falla38="$falla38 la copia MUTADA dio <$vmut38> en vez de fail;"
+    # A las dos copias se les entrega EL MISMO sujeto discordante del juez y se las juzga con
+    # LA MISMA terna, obtenida antes incluso de la calibración real de esta corrida.
+    reglim38="$("$COPIA38/limpia.sh" --calibrar --dir-trabajo "$COPIA38" --disc-sujeto "$SONDA_DISC_PROC_SUJ" 2>/dev/null)"
+    regmut38="$("$COPIA38/mutada.sh" --calibrar --dir-trabajo "$COPIA38" --disc-sujeto "$SONDA_DISC_PROC_SUJ" 2>/dev/null)"
+    sonda_discordante procesos "$regmut38" "$TSTPRO38"; vmut38="$SONDA_DISC_VEREDICTO"; motmut38="$SONDA_DISC_MOTIVO"
+    sonda_discordante procesos "$reglim38" "$TSTPRO38"; vlim38="$SONDA_DISC_VEREDICTO"
+    [ "$vmut38" = fail ] || falla38="$falla38 la copia MUTADA dio <$vmut38> en vez de fail (registro: <$regmut38>);"
     [ "$vlim38" = ok ]   || falla38="$falla38 la copia SIN mutar dio <$vlim38> en vez de ok (${SONDA_DISC_MOTIVO:-});"
   fi
   if [ -z "$falla38" ]; then
-    echo "  PASS  $nom38  (mutada: $motmut38 · sin mutar: pasa con testigo=$tlim38)"; PASS=$((PASS+1))
+    echo "  PASS  $nom38  (mutada: $motmut38 · sin mutar: pasa con la terna <$TSTPRO38>)"; PASS=$((PASS+1))
   else
     echo "  FAIL  $nom38 :$falla38"; FAIL=$((FAIL+1))
   fi
@@ -316,10 +348,83 @@ if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
     [ "$vlim38" = ok ]   || falla38="$falla38 el registro real dio <$vlim38> en vez de ok (${SONDA_DISC_MOTIVO:-});"
   fi
   if [ -z "$falla38" ]; then
-    echo "  PASS  $nom38  (neutralizado: $motmut38 · real: pasa con testigo=${TSTREL38}µs)"; PASS=$((PASS+1))
+    echo "  PASS  $nom38  (neutralizado: $motmut38 · real: pasa con la terna <$TSTREL38>)"; PASS=$((PASS+1))
   else
     echo "  FAIL  $nom38 :$falla38"; FAIL=$((FAIL+1))
   fi
+fi
+
+# ---------- CA-03 (a.3) · LAS CINCO CONDICIONES DEL TESTIGO: SI NO SE CUMPLEN, ABORTA ----
+# LO QUE FALLÓ NO FUE LA COMPARACIÓN, FUE EL TESTIGO (QA-021-10). El juez de antes sabía
+# comparar dos números, y dos números que salen de la misma fuente COINCIDEN SIEMPRE: `3 = 3`
+# con `disc_obs = cal_n − 1` y un testigo contado sobre las marcas que escribía la propia
+# sonda. Un juez que no comprueba de dónde sale su propio testigo no juzga: refleja. Así que
+# las condiciones de (a.3) se ejercen UNA A UNA contra el juez REAL, con entradas sintéticas y
+# en microsegundos —el precedente son `valida47`/`veredicto47` de `37/2`—, y su veredicto tiene
+# que ser ABORT: ni PASS ni SKIP. La condición 2 (el valor lo produce el juez) no se ejerce
+# aparte: su forma comprobable ES la 3, y así lo dice el criterio.
+#
+# Las piezas de las ternas reales se parten con el MISMO ayudante del juez (sede única), y si
+# no son legibles los casos FALLAN diciéndolo en vez de abortar en vacío: un caso que «aborta»
+# porque su entrada era basura acredita lo mismo que uno que no corrió.
+sonda_terna_parte "$TSTPRO38"; tvalpro38="$SONDA_T_VALOR"; tantpro38="$SONDA_T_ANTES"; tinvpro38="$SONDA_T_INVOCA"
+sonda_terna_parte "$TSTREL38"; tvalrel38="$SONDA_T_VALOR"; tantrel38="$SONDA_T_ANTES"; tinvrel38="$SONDA_T_INVOCA"
+ternas38=si
+for v38 in "$tvalpro38" "$tantpro38" "$tinvpro38" "$tvalrel38" "$tantrel38" "$tinvrel38"; do
+  num38 "$v38" || ternas38=no
+done
+falta38="las ternas de testigo de esta corrida no son legibles (procesos=<$TSTPRO38> reloj=<$TSTREL38>): sin ellas el caso no probaría nada"
+
+# CONDICIÓN 3 · ANTERIORIDAD. Es la que convierte «testigo independiente» en algo que se
+# comprueba: se le da al juez la terna real con las dos marcas INVERTIDAS —testigo obtenido
+# 1 µs DESPUÉS de la invocación— y todo lo demás intacto.
+nom38="REQ-021 CA-03 (a.3) cond. 3 ANTERIORIDAD: un testigo que el juez no tenía ANTES de invocar la sonda ABORTA el caso, no lo pasa"
+if [ "$ternas38" != si ]; then
+  if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
+    echo "  FAIL  $nom38  $falta38"; FAIL=$((FAIL+1))
+  fi
+else
+  sonda_juzga_discordante "$nom38" procesos "$CALPRO38" "$tvalpro38 $(( tinvpro38 + 1 )) $tinvpro38" aborta
+fi
+
+# CONDICIÓN 1 · NO VACUIDAD: el testigo no coincide con el parámetro. Se construye la
+# colisión a propósito, poniendo como testigo el `disc_param` que la sonda publicó.
+nom38="REQ-021 CA-03 (a.3) cond. 1 NO VACUIDAD: un testigo IGUAL al parámetro ABORTA —su verde sería cierto por vacío, y una colisión es un defecto del dimensionado—"
+ppro38=''
+sonda_lee "$CALPRO38" && ppro38="${SONDA[disc_param]:-}"
+if [ "$ternas38" != si ] || ! num38 "${ppro38:-}"; then
+  if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
+    echo "  FAIL  $nom38  $falta38 (disc_param=<${ppro38:-vacío}>)"; FAIL=$((FAIL+1))
+  fi
+else
+  sonda_juzga_discordante "$nom38" procesos "$CALPRO38" "$ppro38 $tantpro38 $tinvpro38" aborta
+fi
+
+# CONDICIÓN 4 · el tamaño del sujeto discordante lo fija el JUEZ y la sonda NO lo declara. Se
+# le devuelve al registro el campo que tenía hasta esta vuelta (`disc_veces=`), que es por
+# donde el parámetro y el testigo volvían a salir de la misma fuente.
+nom38="REQ-021 CA-03 (a.3) cond. 4: si el registro DECLARA el tamaño del sujeto discordante, el caso ABORTA —ese tamaño es del juez—"
+regdec38="${CALPRO38/ disc_param=/ disc_veces=3 disc_param=}"
+if [ "$ternas38" != si ] || [ -z "$CALPRO38" ] || [ "$regdec38" = "$CALPRO38" ]; then
+  if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
+    echo "  FAIL  $nom38  no se pudo construir el registro con el tamaño declarado (¿cambió el nombre del campo?): $falta38"; FAIL=$((FAIL+1))
+  fi
+else
+  sonda_juzga_discordante "$nom38" procesos "$regdec38" "$TSTPRO38" aborta
+fi
+
+# CONDICIÓN 5 · la vara no la aporta el juzgado. Se le da al juez el registro real del reloj
+# con un `suelo=` de 1 µs —un suelo con el que TODO queda por encima y el caso abortaría—: si
+# el veredicto NO cambia, es que el umbral con el que decide es el suyo. Es la dirección
+# comprobable de la condición: leer el campo cambiaría el veredicto, y no lo cambia.
+nom38="REQ-021 CA-03 (a.3) cond. 5: el umbral con que el juez decide NO sale del registro juzgado —un reloj que publique suelo=1µs no compra su propia abstención—"
+regsue38="${CALREL38% suelo=*} suelo=1"
+if [ "$ternas38" != si ] || [ -z "$CALREL38" ] || [ "$regsue38" = "$CALREL38" ]; then
+  if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
+    echo "  FAIL  $nom38  no se pudo reescribir el campo suelo= del registro del reloj: $falta38"; FAIL=$((FAIL+1))
+  fi
+else
+  sonda_juzga_discordante "$nom38" reloj "$regsue38" "$TSTREL38" pasa
 fi
 
 # ---------- CA-08 (iii) · CALIBRAR NO CUESTA MÁS DE 6× UNA MEDICIÓN ----------

@@ -19,7 +19,11 @@
 # Uso:
 #   sonda-reloj.sh --k K --r R --sujeto 'snippet' [--prep 'snippet'] [--etiqueta txt]
 #   sonda-reloj.sh --k K --r R --sujeto-a 'A' --sujeto-b 'B' [--prep 'snippet']
-#   sonda-reloj.sh --calibrar [--k K] [--r R] [--n N]
+#   sonda-reloj.sh --calibrar --disc-sujeto 'snippet' [--k K] [--r R] [--n N]
+#
+# EL SUJETO DISCORDANTE DE LA CALIBRACIÓN LO FIJA QUIEN JUZGA, y por eso es OBLIGATORIO en
+# `--calibrar` (CA-03 (a.3) condición 4). Esta sonda no lo dimensiona y no lo declara en su
+# registro: recibe el snippet y publica LO QUE MIDIÓ al ejercerlo.
 #
 # `--prep` y los sujetos se evalúan EN ESTE PROCESO. Por eso todo nombre propio de esta
 # sonda lleva prefijo `SR_`/`sr_`: un sujeto que use `i`, `l` o `s` no debe pisar nada.
@@ -47,7 +51,7 @@ SR_MIN_A=''; SR_MAX_A=''; SR_MIN2_A=''
 SR_MIN_B=''; SR_MAX_B=''; SR_MIN2_B=''
 SR_CAL_A=''; SR_CAL_B=''
 SR_CAL_N=''; SR_CAL_NS=''
-SR_DISC_PARAM=''; SR_DISC_VUELTAS=''; SR_DISC_OBS=''; SR_DISC_ESTADO='-'
+SR_DISC_PARAM=''; SR_DISC_SUJ=''; SR_DISC_OBS=''; SR_DISC_ESTADO='-'
 SR_VIVOS=desconocido; SR_DESC=ninguna
 SR_FOTO=''
 
@@ -85,7 +89,7 @@ sr_diag() { printf '%s\n' "$*" >&2; }
 sr_uso() {
   sr_diag "uso: sonda-reloj.sh --k K --r R --sujeto 'snippet' [--prep 'snippet']"
   sr_diag "     sonda-reloj.sh --k K --r R --sujeto-a A --sujeto-b B [--prep 'snippet']"
-  sr_diag "     sonda-reloj.sh --calibrar [--k K] [--r R] [--n N]"
+  sr_diag "     sonda-reloj.sh --calibrar --disc-sujeto 'snippet' [--k K] [--r R] [--n N]"
 }
 
 sr_num() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
@@ -112,6 +116,7 @@ while [ "$#" -gt 0 ]; do
     --sujeto)    SR_SUJ="${2:-}"; shift 2 ;;
     --sujeto-a)  SR_SUJ_A="${2:-}"; shift 2 ;;
     --sujeto-b)  SR_SUJ_B="${2:-}"; shift 2 ;;
+    --disc-sujeto) SR_DISC_SUJ="${2:-}"; shift 2 ;;
     --etiqueta)  SR_ETIQ="${2:-}"; shift 2 ;;
     --calibrar)  SR_MODO=calibracion; shift ;;
     -h|--ayuda)  sr_uso; exit 0 ;;
@@ -300,7 +305,13 @@ sr_emite() {
   sr_lim "$SR_ARBOL";   sr_arbol="$SR_LIM"
   sr_lim "$SR_CARGA";   sr_carga="$SR_LIM"
   sr_lim "$SR_JOBS";    sr_jobs="$SR_LIM"
-  printf 'sonda=%s modo=%s estado=%s motivo=%s corrida=%s invocacion=%s arbol=%s plataforma=%s carga=%s jobs=%s k=%s r=%s us=%s procesos=%s vivos=%s descendencia=%s instrumentada=%s plazo=%s plazo_origen=%s etiqueta=%s min=%s max=%s min2=%s disp=%s acompanada=%s min_a=%s max_a=%s min2_a=%s min_b=%s max_b=%s min2_b=%s razon=%s cal_a=%s cal_b=%s cal_n=%s cal_margen=%s cal_ns_vuelta=%s disc_param=%s disc_vueltas=%s disc_obs=%s disc_estado=%s suelo=%s\n' \
+  # EL REGISTRO NO DECLARA EL TAMAÑO DEL SUJETO DISCORDANTE, y su ausencia es criterio
+  # (CA-03 (a.3) condición 4, CA-10 punto 1): el campo `disc_vueltas=` existió hasta esta
+  # vuelta —lo decidía la sonda, `cal_n / 50`— y el juez LO LEÍA para cronometrar su propio
+  # testigo, así que no lo conocía ANTES de invocarla y el tamaño salía del juzgado. El juez
+  # ABORTA si el campo reaparece. `suelo=` se sigue publicando como condición de la medida
+  # (CA-06), pero el juez NO decide con él: quien es juzgado no aporta la vara (condición 5).
+  printf 'sonda=%s modo=%s estado=%s motivo=%s corrida=%s invocacion=%s arbol=%s plataforma=%s carga=%s jobs=%s k=%s r=%s us=%s procesos=%s vivos=%s descendencia=%s instrumentada=%s plazo=%s plazo_origen=%s etiqueta=%s min=%s max=%s min2=%s disp=%s acompanada=%s min_a=%s max_a=%s min2_a=%s min_b=%s max_b=%s min2_b=%s razon=%s cal_a=%s cal_b=%s cal_n=%s cal_margen=%s cal_ns_vuelta=%s disc_param=%s disc_obs=%s disc_estado=%s suelo=%s\n' \
     "$SR_SONDA" "$SR_MODO" "$SR_ESTADO" "$sr_motivo" "$sr_corrida" "$SR_INVOCACION" \
     "$sr_arbol" "$SR_PLATAFORMA" "$sr_carga" "$sr_jobs" "$SR_K" "$SR_R" \
     "$sr_us" "$SR_PROCS" "$SR_VIVOS" "$SR_DESC" "$SR_INSTRUMENTADA" \
@@ -311,7 +322,7 @@ sr_emite() {
     "${SR_RAZON:-desconocido}" \
     "${SR_CAL_A:-desconocido}" "${SR_CAL_B:-desconocido}" \
     "${SR_CAL_N:-desconocido}" "$SR_CAL_MARGEN" "${SR_CAL_NS:-desconocido}" \
-    "${SR_DISC_PARAM:-desconocido}" "${SR_DISC_VUELTAS:-desconocido}" \
+    "${SR_DISC_PARAM:-desconocido}" \
     "${SR_DISC_OBS:-desconocido}" "$SR_DISC_ESTADO" "$SR_SUELO_US"
 }
 # También en los caminos de error: un campo ausente y un cero no son lo mismo (CA-04.4).
@@ -443,6 +454,12 @@ if [ "$SR_MODO" = calibracion ]; then
   # La sonda publica los factores y la magnitud observada, y NO los compara contra ninguna
   # expectativa NI contra el testigo: eso es del juez (CA-03 puntos 1 y 2, CA-01 punto 3).
 
+  # El sujeto discordante es OBLIGATORIO y lo fija el juez (CA-03 (a.3) condición 4). Se
+  # falla en vez de omitir la mitad discordante: omitirla en silencio sería la ausencia que
+  # calla de CA-01 punto 5, y una calibración sin ella es la que pasó entera sobre una sonda
+  # que no ejercía nada.
+  [ -n "$SR_DISC_SUJ" ] || sr_falla error falta---disc-sujeto-el-sujeto-discordante-lo-fija-el-juez
+
   # --- CA-03 (c): el tamaño se DERIVA del suelo, en esta corrida ---------------
   # Se mide un bloque pequeño por el MISMO camino y se extrapola al mínimo que supere el
   # suelo por el margen declarado. El `--n` (o `ARNES_SONDA_CAL_N`) sólo puede SUBIRLO:
@@ -468,17 +485,20 @@ if [ "$SR_MODO" = calibracion ]; then
   # La procedencia NO SE LEE EN EL REGISTRO: la sonda honesta y la tautológica publican el
   # mismo número (QA-021-01: `2N/N = 2000` por aritmética, con una copia que no materializaba
   # nada dando PASS). Así que se ejerce una entrada cuya MAGNITUD OBSERVADA es distinta del
-  # parámetro y conocida por el juez SIN la sonda: un bucle de `cal_n/50` vueltas, que cuesta
-  # ~2 % del suelo. Una sonda que MIDE publica microsegundos muy por debajo del suelo y dice
-  # `disc_estado=suelo` sin factor (CA-02 punto 4); una que CALCULA sin medir publica el
-  # parámetro —un número ~50× mayor y por encima del suelo—, y ahí el juez la caza con su
-  # propio cronómetro. El testigo lo obtiene EL JUEZ: un testigo que produce la propia sonda
-  # no es un testigo (a.3).
-  SR_DISC_VUELTAS=$(( SR_CAL_N / 50 ))
-  [ "$SR_DISC_VUELTAS" -ge 1 ] || SR_DISC_VUELTAS=1
+  # parámetro y conocida por el juez SIN la sonda. Una sonda que MIDE publica microsegundos
+  # muy por debajo del suelo y dice `disc_estado=suelo` sin factor (CA-02 punto 4); una que
+  # CALCULA sin medir publica un número por encima del suelo, y ahí el juez la caza con su
+  # propio cronómetro.
+  #
+  # EL SUJETO LLEGA DEL JUEZ Y LA SONDA NO LO DIMENSIONA (QA-021-10, CA-03 (a.3)). Hasta esta
+  # vuelta lo decidía ella —`cal_n / 50`— y lo PUBLICABA, y el juez leía ese `disc_vueltas`
+  # del registro para cronometrar su testigo: no lo conocía ANTES de invocarla, y parámetro y
+  # testigo volvían a salir de la misma fuente. Ahora el juez deriva el tamaño con SU reloj,
+  # cronometra el snippet ANTES de invocar (condición 3) y se lo pasa por `--disc-sujeto`.
+  # Se mide por el MISMO camino que la medición —`sr_minimo`, CA-03 punto 4— y cuesta lo
+  # mismo que antes: el término de CA-08 (iii) sigue siendo 1.
   SR_DISC_PARAM="$SR_CAL_N"
-  sr_bucle "$SR_DISC_VUELTAS"
-  sr_minimo "$SR_BUCLE" U
+  sr_minimo "$SR_DISC_SUJ" U
   SR_DISC_OBS="$SR_MIN"
   if sr_bajo_suelo "$SR_DISC_OBS"; then SR_DISC_ESTADO=suelo; else SR_DISC_ESTADO=ok; fi
 

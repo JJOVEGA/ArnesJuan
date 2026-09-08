@@ -507,27 +507,59 @@ sonda_banda() {
 # `cal_a=2000 cal_b=1000` y EL JUEZ REAL DIJO PASS. La identidad de camino no protege de
 # esto: la mutación borra el camino entero y el factor no se mueve.
 # Por eso la calibración ejerce además una entrada cuya MAGNITUD OBSERVADA es distinta del
-# parámetro, y el juez contrasta esa magnitud contra UN TESTIGO QUE ÉL MISMO OBTIENE. Un
-# testigo que produce la propia sonda no es un testigo (a.3), así que:
-#   * `procesos` -> el testigo se CUENTA sobre el archivo de rastro que ESTE juez creó
-#     vacío y que el sujeto discordante fue rellenando por un camino distinto del registro
-#     de los envoltorios, que es de donde sale la magnitud publicada. Contraste EXACTO.
-#   * `reloj`    -> el testigo se MIDE aquí, con el cronómetro de este proceso, sobre el
-#     mismo sujeto. La sonda honesta publica microsegundos muy por debajo del suelo y lo
-#     DICE (`disc_estado=suelo`, sin factor, CA-02 punto 4); una que calcula sin medir
-#     publica el parámetro, que está ~50× por encima.
-# ANTI-VACUIDAD (a.3), y también es criterio: si el testigo COINCIDE con el parámetro, o si
-# el juez no pudo obtener testigo, el caso ABORTA —no PASA—, porque su verde sería cierto
-# por vacío. Se materializa como FAIL nombrado y no como el `ABORT:` del corredor: un
-# guardián que tumba la vuelta entera por una condición de vacuidad es la lección de
-# CA-07 punto 4, y un FAIL ya es «no PASA» y se ve.
+# parámetro, y el juez contrasta esa magnitud contra UN TESTIGO QUE ÉL MISMO OBTIENE.
+#
+# Y ESO NO BASTABA, MEDIDO (QA-021-10). Hasta el 2026-09-08 este juez «obtenía» el testigo de
+# `procesos` CONTANDO las líneas de un archivo de rastro que él creaba vacío y que la SONDA
+# rellenaba, y el de `reloj` cronometrando un sujeto cuyo tamaño LEÍA del registro de la
+# sonda. Los dos salían, por dos cuentas distintas, del MISMO parámetro: `3 = 3` se cumple
+# por construcción, así que una copia que no invocaba `grep` ni una vez y calculaba las cinco
+# magnitudes por aritmética obtuvo PASS de este juez sin tocarlo. *Crear el recipiente no es
+# obtener el testigo: el testigo es el VALOR.* Y dos canales de salida de la misma sonda no
+# son dos caminos.
+# Lo que lo cierra son las CINCO CONDICIONES de CA-03 (a.3), cada una con su ABORTO nombrado
+# —y la (3) es la que convierte «independiente» en algo que se COMPRUEBA en vez de razonarse:
+#   1. NO VACUIDAD    · el testigo no coincide con el parámetro.
+#   2. VALOR DEL JUEZ  · lo produce él, no un artefacto que la sonda pueda escribir.
+#   3. ANTERIORIDAD    · lo tiene ANTES de invocar la sonda. Se mide con dos marcas de reloj
+#                        del propio juez, cuesta CERO procesos y es sólo un cambio de orden.
+#   4. TAMAÑO DEL JUEZ · el sujeto discordante lo fija él y la sonda NO lo declara: un
+#                        `disc_veces=`/`disc_vueltas=` en el registro ABORTA el caso.
+#   5. LA VARA NO ES DEL JUZGADO · el umbral no se lee del registro del instrumento juzgado.
+# El aborto se materializa como FAIL nombrado y no como el `ABORT:` del corredor: un guardián
+# que tumba la vuelta entera por una condición de vacuidad es la lección de CA-07 punto 4, y
+# un FAIL ya es «no PASA» y se ve.
 # La banda del reloj es GENEROSA a propósito: lo que discrimina es el orden de magnitud
 # entre lo observado y el parámetro, no la precisión del cronómetro del juez. OPERATIVA: se
 # estrecha con la medición.
+#
+# EL SUELO, AQUÍ, POR LA CONDICIÓN 5. Antes se leía `suelo=` del registro del reloj, así que
+# una sonda que publicara un suelo generoso se compraba su propia abstención. Su sede
+# DOCUMENTAL sigue siendo `requirements/README.md` § «Cómo se escribe un criterio que no se
+# desmiente» (50 ms) y leerla desde el juez no es una segunda sede: es un lector más de la
+# misma, igual que la constante de la sonda.
+SONDA_SUELO_US=50000
+
+# Un TESTIGO es una TERNA: «<valor> <µs en que el juez lo obtuvo> <µs en que invocó la sonda>».
+# Las dos marcas son lo que hace COMPROBABLE la anterioridad; sin ellas el caso aborta, que es
+# lo correcto: un juez que no sabe cuándo obtuvo su testigo no puede afirmar que lo tenía antes.
+SONDA_T_VALOR=''; SONDA_T_ANTES=''; SONDA_T_INVOCA=''
+sonda_terna_parte() {   # <terna> -> SONDA_T_VALOR / SONDA_T_ANTES / SONDA_T_INVOCA
+  local t="${1-}"
+  SONDA_T_VALOR=''; SONDA_T_ANTES=''; SONDA_T_INVOCA=''
+  case "$t" in
+    *' '*' '*) ;;
+    *) return 0 ;;   # sin las dos marcas no hay terna, y una terna a medias no se completa
+  esac
+  SONDA_T_VALOR="${t%% *}";  t="${t#* }"
+  SONDA_T_ANTES="${t%% *}";  t="${t#* }"
+  SONDA_T_INVOCA="${t%% *}"
+}
+
 SONDA_DISC_VEREDICTO=''
 SONDA_DISC_MOTIVO=''
-sonda_discordante() {   # <instrumento> <registro de calibración> <testigo>
-  local inst="${1:-}" reg="${2:-}" testigo="${3-}" p o r suelo
+sonda_discordante() {   # <instrumento> <registro de calibración> <terna del testigo>
+  local inst="${1:-}" reg="${2:-}" terna="${3-}" p o r testigo clave declarado=''
   SONDA_DISC_VEREDICTO=fail; SONDA_DISC_MOTIVO=''
   if ! sonda_lee "$reg"; then
     SONDA_DISC_MOTIVO="el registro de calibración de '$inst' no se puede leer: $SONDA_MOTIVO"; return 0
@@ -537,32 +569,61 @@ sonda_discordante() {   # <instrumento> <registro de calibración> <testigo>
     SONDA_DISC_MOTIVO="'$inst' no publicó la mitad discordante (disc_param=<${p:-vacío}> disc_obs=<${o:-vacío}>): sin ella la procedencia del factor queda sin acreditar, y una sonda tautológica publica el mismo factor que una honesta"
     return 0
   fi
-  if ! sonda_num "${testigo:-}" || [ "$testigo" -le 0 ]; then
+  # CONDICIÓN 4 · el tamaño del sujeto discordante lo fija el JUEZ y la sonda no lo declara.
+  # Se comprueba sobre el registro porque ahí es donde se veía: `disc_veces = cal_n − 1` y
+  # `disc_vueltas = cal_n / 50` los decidía y publicaba la sonda, y de ahí salía también el
+  # testigo. Si el campo reaparece, el contraste ha vuelto a tener un solo lado.
+  for clave in disc_veces disc_vueltas disc_tamano disc_sujeto; do
+    [ -n "${SONDA[$clave]:-}" ] && declarado="$declarado $clave=${SONDA[$clave]}"
+  done
+  if [ -n "$declarado" ]; then
     SONDA_DISC_VEREDICTO=abort
-    SONDA_DISC_MOTIVO="el juez no obtuvo TESTIGO para '$inst' (<${testigo:-vacío}>), así que no hay con qué contrastar la magnitud publicada; un testigo que produce la propia sonda no es un testigo (CA-03 a.3)"
+    SONDA_DISC_MOTIVO="condición 4 de CA-03 (a.3): '$inst' DECLARA en su registro el tamaño del sujeto discordante ($declarado), y ese tamaño es del juez; si lo pone la sonda, el parámetro y el testigo vuelven a salir de la misma fuente y el contraste no puede fallar (QA-021-10)"
+    return 0
+  fi
+  # CONDICIÓN 3 · ANTERIORIDAD, que es la forma EJECUTABLE de las condiciones 1 y 2.
+  sonda_terna_parte "$terna"
+  if ! sonda_num "${SONDA_T_VALOR:-}" || ! sonda_num "${SONDA_T_ANTES:-}" || ! sonda_num "${SONDA_T_INVOCA:-}"; then
+    SONDA_DISC_VEREDICTO=abort
+    SONDA_DISC_MOTIVO="condición 3 de CA-03 (a.3): el juez no acredita CUÁNDO obtuvo el testigo de '$inst' (terna=<${terna:-vacía}>, se esperaba «valor antes invoca»), y un testigo sin esa marca es uno que la sonda PUDO alimentar"
+    return 0
+  fi
+  testigo="$SONDA_T_VALOR"
+  if [ "$SONDA_T_ANTES" -ge "$SONDA_T_INVOCA" ]; then
+    SONDA_DISC_VEREDICTO=abort
+    SONDA_DISC_MOTIVO="condición 3 de CA-03 (a.3) (ANTERIORIDAD): el juez obtuvo el testigo de '$inst' en ${SONDA_T_ANTES}µs y la sonda se invocó en ${SONDA_T_INVOCA}µs, así que el testigo NO existía antes de la invocación y la sonda pudo alimentarlo (testigo=$testigo)"
+    return 0
+  fi
+  if [ "$testigo" -le 0 ]; then
+    SONDA_DISC_VEREDICTO=abort
+    SONDA_DISC_MOTIVO="condición 2 de CA-03 (a.3): el juez no obtuvo TESTIGO para '$inst' (<$testigo>), así que no hay con qué contrastar la magnitud publicada; un testigo que produce la propia sonda no es un testigo"
     return 0
   fi
   if [ "$testigo" -eq "$p" ]; then
     SONDA_DISC_VEREDICTO=abort
-    SONDA_DISC_MOTIVO="el testigo de '$inst' COINCIDE con el parámetro ($testigo): el caso no distingue nada y su verde sería cierto POR VACÍO (CA-03 a.3)"
+    SONDA_DISC_MOTIVO="condición 1 de CA-03 (a.3) (NO VACUIDAD): el testigo de '$inst' COINCIDE con el parámetro ($testigo): el caso no distingue nada y su verde sería cierto POR VACÍO — una colisión es un defecto del dimensionado, no un veredicto"
     return 0
   fi
   case "$inst" in
     procesos)
+      # Contraste EXACTO: el testigo es el número de invocaciones del binario instrumentado
+      # que EL JUEZ metió en el snippet, y la magnitud publicada sale de contar el registro
+      # de los envoltorios. Una sonda que no ejerza el sujeto no puede llegar a ese número
+      # por aritmética sobre el parámetro, que es lo único que la mutación medida hacía.
       if [ "$o" -ne "$testigo" ]; then
-        SONDA_DISC_MOTIVO="'$inst' publica disc_obs=$o donde el testigo que el juez contó dice $testigo (parámetro con que se la invocó: $p): la magnitud no sale de observar el sujeto"
+        SONDA_DISC_MOTIVO="'$inst' publica disc_obs=$o donde el testigo del juez dice $testigo (parámetro con que se la invocó: $p): la magnitud no sale de observar el sujeto"
         return 0
       fi ;;
     reloj)
-      suelo="${SONDA[suelo]:-0}"
-      sonda_num "$suelo" || suelo=0
-      if [ "$testigo" -ge "$suelo" ]; then
+      # CONDICIÓN 5 · el umbral es el del JUEZ (`SONDA_SUELO_US`) y no el `suelo=` que
+      # publica el instrumento juzgado: quien es juzgado no aporta la vara.
+      if [ "$testigo" -ge "$SONDA_SUELO_US" ]; then
         SONDA_DISC_VEREDICTO=abort
-        SONDA_DISC_MOTIVO="el juez cronometró el sujeto discordante de '$inst' en ${testigo}µs, que NO queda bajo el suelo declarado (${suelo}µs): el caso no distingue nada (CA-03 a.3)"
+        SONDA_DISC_MOTIVO="condición 1 de CA-03 (a.3): el juez cronometró su sujeto discordante de '$inst' en ${testigo}µs, que NO queda bajo el suelo de ${SONDA_SUELO_US}µs que el JUEZ declara: el caso no distingue nada"
         return 0
       fi
       if [ "${SONDA[disc_estado]:-}" != suelo ]; then
-        SONDA_DISC_MOTIVO="'$inst' publica disc_estado=${SONDA[disc_estado]:-vacío} sobre un sujeto que el juez cronometró en ${testigo}µs, por debajo del suelo de ${suelo}µs: quien no mide no puede saber que está bajo el suelo (parámetro $p, disc_obs=$o)"
+        SONDA_DISC_MOTIVO="'$inst' publica disc_estado=${SONDA[disc_estado]:-vacío} sobre un sujeto que el juez cronometró en ${testigo}µs, por debajo del suelo de ${SONDA_SUELO_US}µs: quien no mide no puede saber que está bajo el suelo (parámetro $p, disc_obs=$o)"
         return 0
       fi
       r=$(( o * 1000 / testigo ))
@@ -579,47 +640,68 @@ sonda_discordante() {   # <instrumento> <registro de calibración> <testigo>
   return 0
 }
 
-# LOS TESTIGOS SON DEL JUEZ, Y ÉSTA ES SU SEDE ÚNICA (CA-03 (a.2)). Viven aquí y no en las
-# secciones por dos motivos: uno de contrato —el conjunto de testigos lo fija el ayudante de
-# veredicto— y uno medido: cronometrar dentro de una sección la convertiría en una SEGUNDA
-# SEDE del reloj y el guardián de CA-07 punto 4 la acusaría, con razón.
-SONDA_TESTIGO=''
-sonda_testigo_reloj() {   # <registro de calibración> -> SONDA_TESTIGO en µs (mínimo de 3)
-  local reg="${1-}" arnes_v='' arnes_s arnes_t0 arnes_t1 arnes_u arnes_m=''
-  SONDA_TESTIGO=0
-  sonda_lee "$reg" || return 0
-  # `disc_vueltas` es la DEFINICIÓN del sujeto, no su magnitud: lo que (a.3) prohíbe es que
-  # el TESTIGO lo produzca la sonda, y éste lo produce el reloj de ESTE proceso. Una sonda
-  # que mintiera sobre el tamaño del sujeto se delataría igual: el testigo se movería con
-  # ella y la razón se saldría de banda.
-  arnes_v="${SONDA[disc_vueltas]:-}"
-  sonda_num "${arnes_v:-}" && [ "$arnes_v" -ge 1 ] || return 0
+# EL SUJETO DISCORDANTE Y SU TESTIGO SON DEL JUEZ, Y ÉSTA ES SU SEDE ÚNICA (CA-03 (a.2) y
+# (a.3) condiciones 2 y 4). Viven aquí y no en las secciones por dos motivos: uno de contrato
+# —el conjunto lo fija el ayudante de veredicto— y uno medido: cronometrar dentro de una
+# sección la convertiría en una SEGUNDA SEDE del reloj y el guardián de CA-07 punto 4 la
+# acusaría, con razón.
+#
+# LO QUE ESTA VUELTA CAMBIA, Y ES TODO EL ARREGLO: el juez CONSTRUYE los dos sujetos y OBTIENE
+# los dos testigos ANTES de invocar cualquier sonda. Antes los obtenía después —el de
+# `procesos` contando líneas que la sonda escribía, el de `reloj` sobre un tamaño que leía del
+# registro de la sonda—, y un testigo que sólo existe DESPUÉS es uno que la sonda pudo
+# alimentar: `3 = 3` por construcción (QA-021-10). No cuesta un proceso: es orden.
+#
+# LO QUE ESTO NO CIERRA, dicho aquí y no en la cabeza de nadie (CA-03 (a.3)): los sujetos
+# llegan a la sonda como snippets, así que una sonda que LEA el snippet y publique su cuenta
+# sin ejercerlo sigue pasando. Eso ya no es aritmética disfrazada de medición —el descuido que
+# (a.1) persigue— sino falsificación deliberada, y su respuesta no es un criterio más: es la
+# custodia de `tests/util/*` en `codigo_app.globs` (1.34.0, P-01) y la mutación de un tercero.
+SONDA_DISC_PROC_VECES=2        # OPERATIVO: cualquier valor < 4 cumple la condición 1
+SONDA_DISC_RELOJ_SONDEO=2000   # vueltas del sondeo con que el juez deriva su tamaño
+SONDA_DISC_RELOJ_PARTE=50      # el discordante del reloj cuesta 1/50 del suelo
+SONDA_DISC_PROC_SUJ=''; SONDA_DISC_PROC_TESTIGO=0
+SONDA_DISC_RELOJ_SUJ=''; SONDA_DISC_RELOJ_TESTIGO=0
+SONDA_DISC_T_ANTES=0
+# sonda_disc_prepara — deja los dos sujetos, los dos testigos y la marca de anterioridad.
+sonda_disc_prepara() {
+  local arnes_u arnes_v arnes_s arnes_t0 arnes_t1 arnes_m=''
+  # (procesos) EL SUJETO: `SONDA_DISC_PROC_VECES` invocaciones del binario instrumentado, y
+  # el TESTIGO **es ese número**, que el juez conoce porque lo puso él. Se elige MENOR QUE 4
+  # a propósito (condición 1): el parámetro de esa sonda es `resolución × margen` con margen
+  # ≥ 4 por contrato, así que no puede coincidir POR CONSTRUCCIÓN — y cuesta menos que el
+  # `cal_n − 1` de antes, así que el término de CA-08 (iii) sólo se abarata.
+  SONDA_DISC_PROC_SUJ=''
+  for ((ARNES_DISC_I = 0; ARNES_DISC_I < SONDA_DISC_PROC_VECES; ARNES_DISC_I++)); do
+    SONDA_DISC_PROC_SUJ="${SONDA_DISC_PROC_SUJ}grep -q x /dev/null || :"$'\n'
+  done
+  SONDA_DISC_PROC_TESTIGO="$SONDA_DISC_PROC_VECES"
+  # (reloj) EL TAMAÑO SE DERIVA DEL SUELO CON EL RELOJ DEL JUEZ, en esta corrida y en esta
+  # máquina (CA-03 (c)): un absoluto escrito a mano lo falsean la máquina, el runner y la
+  # carga, y aquí decidiría además si el sujeto queda o no bajo el suelo — o sea, si el caso
+  # aborta. Se apunta a 1/50 del suelo, que deja 50× de holgura para el ruido.
+  arnes_t0=${EPOCHREALTIME/./}
+  for ((ARNES_DISC_I = 0; ARNES_DISC_I < SONDA_DISC_RELOJ_SONDEO; ARNES_DISC_I++)); do :; done
+  arnes_t1=${EPOCHREALTIME/./}
+  arnes_u=$(( arnes_t1 - arnes_t0 )); [ "$arnes_u" -ge 1 ] || arnes_u=1
+  arnes_v=$(( SONDA_SUELO_US * SONDA_DISC_RELOJ_SONDEO / (arnes_u * SONDA_DISC_RELOJ_PARTE) ))
+  [ "$arnes_v" -ge 1 ] || arnes_v=1
+  printf -v SONDA_DISC_RELOJ_SUJ 'for ((ARNES_DISC_J = 0; ARNES_DISC_J < %s; ARNES_DISC_J++)); do :; done' "$arnes_v"
+  # …Y EL TESTIGO: el mínimo de 3 pasadas con el cronómetro de ESTE proceso, sobre el mismo
+  # snippet que se le va a entregar. La sonda honesta lo mide muy por debajo del suelo y lo
+  # DICE (`disc_estado=suelo`, sin factor, CA-02 punto 4); una que calcula sin medir publica
+  # un número por encima del suelo y aquí se la caza.
   for arnes_s in 1 2 3; do
     arnes_t0=${EPOCHREALTIME/./}
-    for ((ARNES_T = 0; ARNES_T < arnes_v; ARNES_T++)); do :; done
+    eval "$SONDA_DISC_RELOJ_SUJ"
     arnes_t1=${EPOCHREALTIME/./}
     arnes_u=$(( arnes_t1 - arnes_t0 )); [ "$arnes_u" -ge 1 ] || arnes_u=1
     if [ -z "$arnes_m" ] || [ "$arnes_u" -lt "$arnes_m" ]; then arnes_m="$arnes_u"; fi
   done
-  SONDA_TESTIGO="$arnes_m"
-}
-sonda_testigo_procesos() {   # <archivo de rastro> -> SONDA_TESTIGO = líneas que el juez cuenta
-  local arch="${1-}" arnes_n=0 arnes_x
-  SONDA_TESTIGO=0
-  [ -r "$arch" ] || return 0
-  while IFS= read -r arnes_x || [ -n "$arnes_x" ]; do arnes_n=$((arnes_n + 1)); done < "$arch"
-  SONDA_TESTIGO="$arnes_n"
-}
-# sonda_testigos — los DOS testigos de la corrida, obtenidos UNA VEZ (el mismo grano que la
-# calibración, CA-03). Se guardan en archivo para que `sonda_calibracion_falla` —que corre
-# una vez por MEDICIÓN— no vuelva a cronometrar nada.
-sonda_testigos() {
-  local reg=''
-  sonda_testigo_procesos "$RAIZ/rastro-procesos"
-  printf '%s\n' "$SONDA_TESTIGO" > "$RAIZ/testigo-procesos"
-  [ -r "$RAIZ/cal-reloj" ] && { IFS= read -r reg < "$RAIZ/cal-reloj" 2>/dev/null || reg=''; }
-  sonda_testigo_reloj "$reg"
-  printf '%s\n' "$SONDA_TESTIGO" > "$RAIZ/testigo-reloj"
+  SONDA_DISC_RELOJ_TESTIGO="$arnes_m"
+  # LA MARCA DE ANTERIORIDAD: el instante en que el juez YA TIENE los dos testigos. Lo que
+  # la hace comprobable es que se compara con la marca de la invocación, tomada abajo.
+  SONDA_DISC_T_ANTES=${EPOCHREALTIME/./}
 }
 
 # sonda_calibracion_falla <instrumento> — deja SONDA_CAL_MOTIVO y devuelve 0 si la
@@ -627,8 +709,8 @@ sonda_testigos() {
 # por corrida» en algo verificable: la calibración y las mediciones comparten el
 # identificador de corrida (CA-03 punto 5).
 SONDA_CAL_MOTIVO=''
-sonda_calibracion_falla() {   # <instrumento> [<registro> <testigo>]
-  local inst="${1:-}" reg="${2-}" testigo="${3-}" archivo banda amin amax bmin bmax a b
+sonda_calibracion_falla() {   # <instrumento> [<registro> <terna del testigo>]
+  local inst="${1:-}" reg="${2-}" terna="${3-}" archivo banda amin amax bmin bmax a b
   SONDA_CAL_MOTIVO=''
   # Sin registro explícito se leen los de ESTA corrida. Con registro explícito se puede
   # juzgar una COPIA —lo que el residual de `tests/util/` exige: mutar la sonda en una copia
@@ -637,8 +719,10 @@ sonda_calibracion_falla() {   # <instrumento> [<registro> <testigo>]
     archivo="$RAIZ/cal-$inst"
     if [ ! -r "$archivo" ]; then SONDA_CAL_MOTIVO="esta corrida no calibró '$inst'"; return 0; fi
     reg=''; IFS= read -r reg < "$archivo" 2>/dev/null || reg=''
-    testigo=''
-    [ -r "$RAIZ/testigo-$inst" ] && { read -r testigo < "$RAIZ/testigo-$inst" 2>/dev/null || testigo=''; }
+    # La TERNA se lee del archivo que el juez escribió ANTES de invocar a la sonda: valor,
+    # marca de obtención y marca de invocación. Leerla no cronometra nada.
+    terna=''
+    [ -r "$RAIZ/testigo-$inst" ] && { IFS= read -r terna < "$RAIZ/testigo-$inst" 2>/dev/null || terna=''; }
   fi
   if ! sonda_lee "$reg"; then SONDA_CAL_MOTIVO="la calibración de '$inst' no se puede leer: $SONDA_MOTIVO"; return 0; fi
   if [ "${SONDA[corrida]}" != "$ARNES_CORRIDA" ]; then
@@ -667,7 +751,7 @@ sonda_calibracion_falla() {   # <instrumento> [<registro> <testigo>]
   # …y la MITAD DISCORDANTE (a.2): el par en banda dice «los factores salen»; la discordante
   # dice «y salen de OBSERVAR el sujeto». Sin ella, la calibración de una sonda tautológica
   # pasa entera, que es exactamente lo que se midió.
-  sonda_discordante "$inst" "$reg" "$testigo"
+  sonda_discordante "$inst" "$reg" "$terna"
   if [ "$SONDA_DISC_VEREDICTO" != ok ]; then
     SONDA_CAL_MOTIVO="$SONDA_DISC_MOTIVO"; sonda_lee "$reg"; return 0
   fi
@@ -745,13 +829,14 @@ sonda_juzga_calibracion() {
   echo "  PASS  $nombre  sensible $(awk -v c="${SONDA[cal_a]}" 'BEGIN{printf "%.3f", c/1000}')× · insensible $(awk -v c="${SONDA[cal_b]}" 'BEGIN{printf "%.3f", c/1000}')× (esperados 2,000 y 1,000, los dos en banda y distinguidos; tamaño derivado del suelo en esta corrida: cal_n=${SONDA[cal_n]:-?} a ${SONDA[cal_margen]:-?}× el suelo, r=${SONDA[r]:-?})"; PASS=$((PASS+1))
 }
 
-# sonda_juzga_discordante <nombre> <instrumento> <registro> <testigo> <esperado: pasa|falla>
+# sonda_juzga_discordante <nombre> <instrumento> <registro> <terna> <esperado: pasa|falla|aborta>
 # El caso EXPLÍCITO de la mitad discordante (CA-03 (a.2)), y también su FAIL-BEFORE: se le
-# da un registro y su testigo y se comprueba que el veredicto del juez REAL es el que se
-# espera. Con `falla` acredita que la comprobación DISTINGUE —sin esa mitad, un FAIL sólo
-# probaría que falla, no que distingue (a.3)—.
+# da un registro y la terna de su testigo y se comprueba que el veredicto del juez REAL es el
+# que se espera. Con `falla` acredita que la comprobación DISTINGUE —sin esa mitad, un FAIL
+# sólo probaría que falla, no que distingue (a.3)—; con `aborta`, que una de las cinco
+# condiciones del testigo incumplida NO se convierte en PASS (CA-10 punto 1).
 sonda_juzga_discordante() {
-  local nombre="$1" inst="${2:-}" reg="${3-}" testigo="${4-}" esperado="${5:-pasa}" obtenido
+  local nombre="$1" inst="${2:-}" reg="${3-}" terna="${4-}" esperado="${5:-pasa}" obtenido
   if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
   # Invariante 1 del banco: la guarda ANTES de juzgar. Un registro vacío y un registro que
   # miente producen el mismo silencio, y sin esta línea el caso lo llamaría «falla» y daría
@@ -759,14 +844,16 @@ sonda_juzga_discordante() {
   if [ -z "$reg" ]; then
     echo "  FAIL  $nombre  no hay registro de calibración de '$inst' que juzgar: no se ejecutó nada, así que ni el fail-before ni el pass-after significan nada"; FAIL=$((FAIL+1)); return 0
   fi
-  sonda_discordante "$inst" "$reg" "$testigo"
+  sonda_discordante "$inst" "$reg" "$terna"
   obtenido="$SONDA_DISC_VEREDICTO"
   case "$esperado:$obtenido" in
     pasa:ok)
       sonda_lee "$reg"
-      echo "  PASS  $nombre  (disc_param=${SONDA[disc_param]:-?} · disc_obs=${SONDA[disc_obs]:-?} · testigo del juez=$testigo: la magnitud publicada es la observada, y el testigo NO coincide con el parámetro)"; PASS=$((PASS+1)) ;;
+      echo "  PASS  $nombre  (disc_param=${SONDA[disc_param]:-?} · disc_obs=${SONDA[disc_obs]:-?} · testigo del juez=${terna%% *}, obtenido antes de invocar: terna <$terna>)"; PASS=$((PASS+1)) ;;
     falla:fail)
       echo "  PASS  $nombre  (el juez la caza: $SONDA_DISC_MOTIVO)"; PASS=$((PASS+1)) ;;
+    aborta:abort)
+      echo "  PASS  $nombre  (el juez ABORTA y no pasa: $SONDA_DISC_MOTIVO)"; PASS=$((PASS+1)) ;;
     *)
       echo "  FAIL  $nombre  se esperaba que la mitad discordante de '$inst' diera <$esperado> y el juez dijo <$obtenido>${SONDA_DISC_MOTIVO:+ ($SONDA_DISC_MOTIVO)}"; FAIL=$((FAIL+1)) ;;
   esac
@@ -1040,12 +1127,18 @@ fi
 # OPERATIVO: se sube con la medición; subirlo sólo cuesta reloj, y lo paga (ii).
 SONDA_CAL_R="${ARNES_SONDA_CAL_R:-3}"
 if [ "$SONDA_HACE_FALTA" = si ] && [ -d "$UTIL_DIR" ]; then
-  # El rastro de la mitad discordante lo crea EL JUEZ, vacío: la sonda sólo añade, no lo
-  # trunca y no lo lee. Así el testigo no lo produce la sonda (CA-03 (a.3)).
-  : > "$RAIZ/rastro-procesos"
-  "$UTIL_DIR/sonda-reloj.sh"    --calibrar --k 1 --r "$SONDA_CAL_R"                              > "$RAIZ/cal-reloj"    2>"$RAIZ/cal-reloj.err"    || :
-  "$UTIL_DIR/sonda-procesos.sh" --calibrar --rastro "$RAIZ/rastro-procesos" --dir-trabajo "$RAIZ" > "$RAIZ/cal-procesos" 2>"$RAIZ/cal-procesos.err" || :
-  sonda_testigos
+  # EL ORDEN ES EL ARREGLO (CA-03 (a.3) condición 3). El juez construye los sujetos, obtiene
+  # los dos testigos y DEJA LAS TERNAS EN DISCO **antes** de que exista una sola invocación de
+  # sonda; la marca de invocación se toma justo aquí, y `sonda_discordante` aborta si no es
+  # posterior a la de obtención. La versión anterior obtenía los testigos DESPUÉS de calibrar
+  # —de líneas que la sonda escribía y de un tamaño que la sonda publicaba—, y ahí `3 = 3` se
+  # cumplía por construcción, hiciera la sonda algo o nada (QA-021-10).
+  sonda_disc_prepara
+  SONDA_DISC_T_INVOCA=${EPOCHREALTIME/./}
+  printf '%s %s %s\n' "$SONDA_DISC_RELOJ_TESTIGO" "$SONDA_DISC_T_ANTES" "$SONDA_DISC_T_INVOCA" > "$RAIZ/testigo-reloj"
+  printf '%s %s %s\n' "$SONDA_DISC_PROC_TESTIGO"  "$SONDA_DISC_T_ANTES" "$SONDA_DISC_T_INVOCA" > "$RAIZ/testigo-procesos"
+  "$UTIL_DIR/sonda-reloj.sh"    --calibrar --k 1 --r "$SONDA_CAL_R" --disc-sujeto "$SONDA_DISC_RELOJ_SUJ" > "$RAIZ/cal-reloj"    2>"$RAIZ/cal-reloj.err"    || :
+  "$UTIL_DIR/sonda-procesos.sh" --calibrar --dir-trabajo "$RAIZ"    --disc-sujeto "$SONDA_DISC_PROC_SUJ"  > "$RAIZ/cal-procesos" 2>"$RAIZ/cal-procesos.err" || :
 fi
 
 # --- Despacho en paralelo -----------------------------------------------------
@@ -1201,9 +1294,13 @@ done
 # pasa de 21 a 28 casos —salen los 3 de `sonda-linea-base.sh`, que sale del alcance, y entran
 # 10: la mitad discordante de CA-03 (a.2) con su fail-before por instrumento, el tamaño
 # derivado del suelo de (c), el descendiente reparentado con su fail-before, las dos formas
-# de inyección del registro y las tres ramas de `vivos` en el juez—. Los dos literales, el de
-# esta línea y el del archivo, se actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=880
+# de inyección del registro y las tres ramas de `vivos` en el juez—. Y 880 → 884, también en
+# la 38 (28 → 32): los cuatro casos de las CINCO CONDICIONES del testigo de CA-03 (a.3), que
+# es lo que cierra el `3 = 3` de QA-021-10 —anterioridad, no vacuidad, tamaño declarado por la
+# sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
+# NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
+# actualizan a mano y por separado: son el control.
+CASOS_ESPERADOS=884
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
