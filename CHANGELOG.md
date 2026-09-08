@@ -123,6 +123,61 @@ Archivos: `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-ca
 `tests/escenarios/hooks/README.md`, `.github/workflows/banco.yml`, `docs/PENDIENTES.md`,
 `docs/qa/1.33.0.md`, `requirements/REQ-017.md`.
 
+## [Interno] — 2026-09-07 · Preventiva R-011 sobre REQ-020: el juez de todas las sondas no lo vigila nadie
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad`.
+
+**`Seguridad: preventiva` con nueve hallazgos, ocho `contrato`. Cinco salen de leer el árbol de hoy**,
+no de especular: la mitad de los criterios de REQ-020 hace **afirmaciones verificables sobre el código
+actual**, y varias son falsas.
+
+**`SEC-038` — el literal está protegido en su ASIGNACIÓN, no en su USO.** El control es una conjunción
+de tres términos —*(término literal) ∧ (es ése el operando) ∧ (la rama se ejecuta)*— y `CA-04` contrata
+**el primero**. Tres vías de «arreglarlo» derivándolo sin tocar la asignación, y la tercera es la fina:
+**ensanchar la condición de suspensión** del cuadre total apaga el control sin tocar ni el literal ni la
+comparación, y **ningún criterio mira esa condición**.
+
+**`SEC-039` — el techo de SKIP se puede subir para tapar, y el propio mensaje de error entrega el
+valor.** Recuento estático: la sección `37-…-2` declara **11 casos** y tiene **26 ramas que pueden emitir
+SKIP**; la `37-…-1`, 13 y 29. ⇒ **la sección donde ocurrió H-08 puede quedarse entera sin medir**, y el
+techo que la cubriría es **11**. Con `SKIP_ADMITIDOS_SECCION=11`, **H-08 reproduce y `CA-02` lo declara
+conforme**. Y el flujo natural lleva ahí: el banco aborta, el criterio obliga a imprimir «el número
+obtenido», y ese número se pega en la sección. Además **nadie firma subirlo**: el criterio declara cómo
+se **baja** y no dice nada de la única dirección que abre.
+
+**`SEC-040` — la acreditación cubre que el universo no encoja, NO que el sujeto sea éste.** Con
+`ARNES_HOOKS_DIR` apuntando a otro árbol corren los 852 casos, `PARCIAL=no`, y sale **`Acredita: sí`
+sobre otros hooks**. Y lo que lo hace grave: **la instancia que el propio REQ pone al caso 1 es
+exactamente ésa** —«pasaban contra los hooks de 1.32.0, la versión con el fail-open»—. El REQ nombra el
+incidente y contrata una acreditación que no lo modela. Segunda vía: **`jq` ausente** → `exit 0` con
+**cero casos y sin imprimir nada**, falsificando el «siempre» que `CA-01` contrata desde el mismo archivo.
+
+**`SEC-043` — un hallazgo de coste que nadie pidió:** la pasada única de clasificación tendría que leer
+**7 518 líneas** donde hoy se leen **339** (la función retorna en la primera coincidencia): **22,18×** en
+la magnitud que se paga. Y **la mitad que debía verlo es ciega por construcción**: mide el reloj sobre
+un directorio de secciones **triviales**, y leer secciones triviales hasta el final no cuesta nada — la
+forma (d) una capa más arriba, **no en la magnitud sino en el material**.
+
+**`SEC-045`, y contesta la pregunta que le hice: ¿quién vigila al vigilante? Nadie, y está medido.**
+`codigo_app.globs` **no incluye `tests/`**. Todo lo que REQ-020 construye —el literal, los techos, el
+inventario, la autoprueba que los certifica— aterriza donde `guard-codigo` **no deniega a nadie**:
+cualquier subagente y **la sesión coordinadora**, que es la misma que reúne la evidencia de «todo en
+verde» y **fusiona, etiqueta y publica por delegación**. `AGENTS.md` §6 llama a `tests/` **crítico en
+prosa** y ninguna máquina lo respalda; tampoco hay gate humano. **Es la estructura de SEC-036 una capa
+más arriba y con más palanca: allí el artefacto sin custodia era una sonda; aquí es el juez de todas las
+sondas.** A la pregunta exacta —*¿qué impide que ese «tercero» sea la misma sesión con otro sombrero?*—:
+**nada, y hoy es lo que ocurre.**
+
+Concurre con **acreditar > custodiar** y **no** mete `tests/` en el manifiesto en esta ventana, por el
+mismo motivo que aceptó en SEC-036: tocar el manifiesto abre gate humano y una entrada en la cola
+**deniega el cierre de cualquier REQ**, incluido REQ-017. Asume el residual con forzador observable —en
+la pasada de conformidad de 1.34.0 se muta el propio mecanismo de REQ-020 y se exige que la autoprueba
+**no dé verde**— y vencimiento.
+
+**Y una nota de método suya, que es la tercera instancia del mismo conflicto hoy:** la comisión llegó
+con la preferencia de sesión de «edita por `Bash`» activa y **no la siguió** para la cabecera del REQ,
+citando §13 — *editar la cabecera de un REQ por consola apaga una puerta*. Es literalmente el caso que
+§13 documenta: **«quien configura una sesión no suele ser quien lee esta sección»**.
+
 ## [Interno] — 2026-09-07 · REQ-018, el canal de informes: la privacidad por la forma, y lo que la forma NO puede hacer
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
 
