@@ -5305,3 +5305,184 @@ por eso firmo después de QA—; **ningún REQ**; el código de 1.33.0; ni el wr
 `034`, `035` y `036`, que por eso siguen `en-mitigación`. Y **no despeja `v1.33.0`**: la fusión, el tag
 y la publicación siguen siendo decisión del propietario, con **30** `contrato` abiertos, **dos**
 discrepancias entre sedes y **tres** hallazgos que apuntan a la publicación misma.
+
+---
+
+## Revisión R-018 — **consulta de gobernanza: ¿admite el ciclo restante de REQ-014 un rigor menor que `critico`?** (no es auditoría de ningún REQ; no firma nada) — 2026-09-08
+
+**Qué se me preguntó.** Si la comisión que queda de **REQ-014** —partir los tres archivos que exceden
+su techo, y validar— puede correr con menos ceremonia que `critico`, dado que lo ya implementado
+(`9809fc2`) es aritmético y estructural, está especificado desde datos medidos y ya lo verificó
+independientemente la coordinadora, y dado que hay presión de tiempo nombrada por el propietario.
+
+**Alcance de lo que leí.** `requirements/REQ-014.md` (cabecera, CA-12, CA-14, CA-18, CA-31, Notas y
+Historial), `requirements/README.md` §«Nivel de rigor», `AGENTS.md` §6 y §13, `.arnes/config.json`,
+`hooks/lib.sh:1905-1961` (`arnes_rigor_efectivo`), `hooks/guard-completado.sh:227-430`,
+`PENDING_APPROVAL.md`, `git blame` de la cabecera del REQ, y una corrida propia de
+`tests/escenarios/hooks/autoprueba-corredor.sh` para leer la tabla que publica CA-18.
+**No escribí en `requirements/REQ-014.md`** (había una comisión de analista viva sobre ese archivo).
+
+### Veredicto: NO. El ciclo restante se mantiene en `critico`, con auditoría después de QA
+
+**No bajo el rigor, y tampoco lo subo: ya está en el suelo que le corresponde.** Ninguna línea `QA:`
+ni `Seguridad:` de ningún REQ se toca en esta revisión.
+
+### El criterio con el que lo decido — tres preguntas, y la tercera es la que zanja
+
+**(1) ¿El cambio altera lo que una puerta deja pasar?** Sí, y directamente. La máquina de CA-18 decide
+qué archivos de `secciones/` aprueban la autoprueba, y la autoprueba corre dentro de `hooks-en-linux`,
+que es la **puerta requerida de `main`**. El carve-out editorial de `AGENTS.md` §6 —el único camino
+para bajar rigor sin mi firma— exige «sin efecto en la máquina ni en lo que los proyectos heredan».
+Falla en la primera condición. `AGENTS.md` §6 además declara `critico` **por categoría** exactamente
+esta superficie (`tests/`, el banco que certifica el mecanismo).
+
+**(2) Si yo no miro, ¿queda alguna máquina que cace la clase de defecto?** No, y las tres razones están
+medidas:
+
+- `codigo_app.globs` es `["hooks/*", "tools/*", ".github/*", ".arnes/config.json", ".claude-plugin/*"]`.
+  **`tests/` no está** (`SEC-045`, abierto): `guard-codigo` no deniega a nadie sobre este código.
+- **La máquina de CA-18 declara por escrito que no decide el término que la partición vuelve
+  portante.** Comprueba aritmética —(a) que todos declaren `PISO_AUTONOMO_SECCION`, (b) que los
+  términos sumen, (c) que el piso quepa— y publica las líneas duplicadas «sin compararlas». El término
+  **bloque indivisible mayor** es, en palabras del propio criterio y del propio código
+  (`tests/escenarios/hooks/autoprueba-corredor.sh:82-92`), «una afirmación sobre la estructura» que
+  «ninguna máquina de este banco decide», de modo que «un piso inflado afloja el techo sin que ninguna
+  puerta grite». Contra eso el REQ nombra **dos defensas y dice que ninguna es una puerta**: la
+  derivación escrita, *«que un lector puede falsificar término a término»*, y la regla de procedimiento.
+  **Ese lector es esta auditoría.** Quitarla deja una sola defensa, que es una frase.
+- `veredictos.exigir_fecha` y `veredictos.caducan_con_codigo` están los dos en **`false`** en
+  `.arnes/config.json` de este repositorio: ninguna puerta compara un veredicto contra la fecha del
+  código que dice acreditar (ver `SEC-057`, abajo).
+
+**(3) ¿Qué compra realmente el rigor menor?** Casi nada, y esto es lo que decide.
+
+- **Mecánicamente no compra nada.** `Sensible a seguridad: sí` impone `critico` como **suelo**
+  (`hooks/lib.sh:1938-1949`): escribir `Rigor: estandar` en esa cabecera **no baja nada**, la puerta lo
+  vuelve a subir. Para bajarlo de verdad hay que escribir `Sensible a seguridad: no`, y esa afirmación
+  la desmiente el propio REQ en sus Notas: *«Por qué es sensible a seguridad. El banco es lo que
+  acredita que las puertas de runtime deniegan lo que dicen denegar»*. Eso no es bajar rigor: es
+  escribir algo falso en un campo para obtener su efecto.
+- **Y lo que compraría es peor que ahorrar un paso: sería una firma falsa.** La cabecera de REQ-014
+  **ya lleva escrito** `QA: aprobado` y `Seguridad: aprobado` (`git blame`: `ca6047a2`, 2026-09-07;
+  emitidos según este registro el **2026-09-06** sobre la redacción **anterior** de CA-18 y CA-12). El
+  analista los dejó a propósito y los declaró nulos **en el Historial**, apoyando el bloqueo en que
+  `DEV-014-01` y `DEV-014-02` son `contrato`. Consecuencia: saltarse mi turno **no** produce «REQ-014
+  cerrado sin firma de seguridad»; produce **REQ-014 cerrado llevando mi firma sobre código que no
+  existía cuando la emití**. Y el único cerrojo que hoy lo impide es la clase de esos dos hallazgos,
+  cuyo cierre o reclasificación CA-31 (c) pone en manos de **QA**: una acción de otro rol y la firma
+  caduca pasa a ser la firma de cierre, sin que ninguna puerta objete.
+
+### Sobre la vía `preventiva`: tampoco
+
+`AGENTS.md` §6 la define como revisión hecha **antes de que exista el código**, declarada **al
+emitirla**, *«nunca al invocarla: una excepción que se inventa cuando hace falta no es una excepción,
+es una salida»*. El código existe y está comiteado (`9809fc2`: +297 en `autoprueba-corredor.sh`, +102
+en `inventario.sh`, declaración de piso en las 45 secciones), y la partición añadirá más. Emitir
+`preventiva` sobre este árbol sería usar la excepción nombrada como la salida que ella misma prohíbe.
+
+### Aritmética verificada por mí, que es lo que sostiene el «no» sin apelar a la prudencia
+
+Corrida propia de la autoprueba, tabla publicada por CA-18 (medición del 2026-09-08 sobre
+`cand/1.33.0`; cifras **operativas**):
+
+| archivo | líneas | piso | techo | gobierna | duplicadas |
+|---|---|---|---|---|---|
+| `37-coste-del-escaner-1-escala.sh` | 849 | 461 | **577** | `piso×k` | 150 |
+| `37-coste-del-escaner-2-la-seccion-caliente.sh` | 679 | 468 | **585** | `piso×k` | 135 |
+| `38-sondas-compartidas.sh` | 828 | 133 | **400** | `N` | 141 |
+
+Resultado: **105 PASS / 1 FAIL**, y el FAIL es el negativo de CA-18 nombrando los tres archivos con su
+tamaño y su techo. Reproduce lo que la coordinadora verificó.
+
+**(a) La sorpresa de las tres piezas en `38` es real, y sale de la aritmética, no del criterio.** Su
+piso es 133 (19 + 36 + 78) y por tanto su techo lo gobierna `N` = **400**. Dos mitades autónomas
+duplican preámbulo + maquinaria (55 líneas): 828 + 55 ≈ 883 ⇒ **≈ 441 cada una**, las dos fuera. Con
+tres: 828 + 110 ≈ 938 ⇒ **≈ 313 cada una**, conformes. **Confirmo el hallazgo del desarrollador de
+forma independiente: dos archivos es infactible, tres es la primera partición conforme.**
+
+**(b) Y hay un número que decide la partición de `37/1` y que NADIE ha medido — es el que va a llegar
+a mi turno.** Partir `37/1` en dos duplica 149 líneas: 849 + 149 ≈ **998**. La mitad que se queda el
+bloque indivisible de 312 tiene piso 461 y techo 577; con la mitad-A medida en **564**, la mitad-B
+queda en **≈ 434**, y su techo es `max(400, piso_B×1,25)`: conforme **sólo si `piso_B ≥ 348`**, es
+decir sólo si B contiene un bloque indivisible de **≈ 199 líneas o más**. Ese número **no está medido
+en ninguna parte**, y la derivación de `k` = 1,25 del criterio cita **únicamente mitades A**
+(`564/460`, `467/467`, `516/460`, `511/467`): **ninguna mitad B aparece en la derivación del literal
+que las va a juzgar**. Hay salida conforme —partir `37/1` en **tres**, ≈ 285 por archivo además de la
+mitad del bloque— pero también hay una salida barata y equivocada: **declarar `piso_B` alto para
+caber**, que CA-18 califica por su nombre como **regresión** que devuelve el hallazgo a `contrato`, y
+que las comprobaciones (a)(b)(c) de su máquina **dan por buena** si los términos suman. Es la misma
+clase que `DEV-014-01` —un término derivado sin comprobar su factibilidad— un nivel más abajo, y bajo
+presión de tiempo es exactamente el atajo disponible.
+
+**(c) `37/2` sí cabe en dos:** 679 + 125 ≈ 804, con A = 467 (piso 468, techo 585) y B ≈ 337 ≤ 400.
+
+### Alcance de la auditoría que haré en mi turno — nombrado ahora, para que no cueste tiempo de reloj
+
+No voy a re-auditar REQ-014 entero. Lo que mi firma va a exigir, y que el `desarrollador` y el
+`qa-tester` pueden preparar como evidencia desde ya:
+
+1. **La verdad de cada `PISO_AUTONOMO_SECCION`** de todo archivo que la partición cree o toque,
+   falsificada término a término contra el texto — es la defensa que la máquina declara no ser. Con
+   `piso_B` de `37/1` medido y escrito.
+2. **CA-12 / CA-13 bajo el oráculo**: cero líneas suprimidas o modificadas, toda adición atribuida
+   nombrando su REQ, y los **tres** negativos (suprimido, renombrado, veredicto invertido) nombrando el
+   cambio.
+3. **No-regresión de controles** contra la línea base de **R-004/R-009**: el «límite honesto» de CA-06
+   sigue escrito, el canario sigue **antes** del descubrimiento (CA-09), CA-22 (i) en sus **dos**
+   mitades (`git diff v1.31.0 -- hooks/` vacío **y** `git status --short -- hooks/` vacío), y ni
+   `continue-on-error` ni CA-18 fuera del CI (CA-18 (ii) lo prohíbe por nombre).
+4. **Los dos veredictos re-emitidos con fecha posterior al 2026-09-08** y los **dos ADR** de CA-31 (d)
+   existentes y enlazados.
+
+### SEC-057 — `instrumento` · **abierto** · severidad **media** · dueño `desarrollador` (el manifiesto) y **propietario** (el gate de §6)
+
+**Un REQ reabierto conserva sus veredictos viejos legibles-como-válidos: el arnés construyó la puerta
+para exactamente esto y no la tiene encendida sobre sí mismo**
+
+- **Ubicación.** `.arnes/config.json` → `veredictos.exigir_fecha: false`, `veredictos.caducan_con_codigo: false`,
+  contra `requirements/REQ-014.md:8-9` (`QA: aprobado` / `Seguridad: aprobado`, sin fecha, emitidos el
+  2026-09-06 sobre la redacción anterior de CA-18 y CA-12) y `requirements/REQ-014.md` CA-31 («los
+  veredictos que cierren este REQ tienen que ser **posteriores al 2026-09-08**»).
+- **Lo medido.** La `REGLA DE ESTADO` de `AGENTS.md` §9 devuelve el REQ a `en-progreso` y el analista
+  declara los dos veredictos nulos **en el Historial**, correctamente y por la razón correcta (no
+  reescribe el veredicto de otro rol). Pero la cabecera es lo que leen **la puerta** y **cualquier
+  lector que no baje al Historial**, y ahí siguen diciendo `aprobado`. Con las dos claves en `false`,
+  `guard-completado` acepta `Seguridad: aprobado` sin mirar ni su fecha ni el commit que tocó el
+  código. La condición de CA-31 es **prosa que ninguna puerta lee**. Hoy el cierre lo impide **sólo**
+  la clase `contrato` de `DEV-014-01`/`DEV-014-02`, cuya reclasificación CA-31 (c) asigna a **QA**:
+  un cerrojo de un solo punto, en manos de otro rol, para una firma que es mía.
+- **Riesgo.** Toda reapertura futura de este repositorio hereda la misma exposición: un REQ puede
+  cerrar acreditado por una firma que nadie emitió sobre el árbol que cierra. Es la clase de regresión
+  silenciosa que `AGENTS.md` §9 nombra, en el artefacto que la vigila.
+- **Por qué `instrumento` y no `contrato`.** El defecto es del mapeo de este repositorio sobre sí
+  mismo, no de un requerimiento que afirme algo falso sobre lo construido: `templates/` trae las claves
+  apagadas por decisión documentada y deliberada, y ningún proyecto instalado nota nada. **No bloquea
+  el cierre de REQ-014**, y lo digo explícitamente para que nadie lea aquí un blocker nuevo: la
+  instancia concreta la resuelve el ciclo normal cuando QA y yo re-emitimos con fecha.
+- **Remediación.** (1) Encender `veredictos.exigir_fecha` y `veredictos.caducan_con_codigo` en
+  `.arnes/config.json`; el propio `_doc` de la clave advierte que antes hay que medir con
+  `tools/arnes-lectura.sh` cuántos veredictos ya firmados llevan fecha, porque los que no la lleven no
+  volverán a cerrar hasta re-validarse — esa medición es parte de la remediación, no un obstáculo a
+  ella. (2) Es cambio del manifiesto: `codigo_app.globs` lo reserva al `desarrollador` y `AGENTS.md`
+  §6 lo pone entre los **gates humanos**, así que va con entrada en `PENDING_APPROVAL.md` antes de
+  tocarlo. (3) **Write-back (`analista-requerimientos`):** el control queda como criterio/NFR con la
+  propiedad —«un veredicto `aprobado` no cierra si es anterior al último cambio del código que
+  acredita»— citando `.arnes/config.json` como sitio único de la configuración; mientras viva sólo en
+  el manifiesto y en este registro es deriva (`AGENTS.md` §9), y **no cierro este hallazgo** hasta que
+  exista.
+
+### Rigor y estado de los REQ — R-018
+
+**No subo ni bajo el rigor de ningún REQ.** REQ-014 se queda en `critico`, que es además su **suelo**
+por `Sensible a seguridad: sí`. **No firmo nada:** esta revisión no audita código, no mira quality
+gates y no acredita nada construido; el orden de `AGENTS.md` §6 queda intacto y la auditoría del
+código de REQ-014 va **después de QA**, en su turno, con el alcance de arriba.
+
+**Estado de seguridad aprobado — línea base de no-regresión: sin cambios.** Sigue vigente la de
+**R-004/R-005/R-009** para `REQ-014` (`aprobado`, 2026-09-06, candidata 1.32.0) **con la advertencia
+de que esa línea base ya no cubre el árbol de 1.33.0**: es precisamente contra ella contra la que
+compararé en mi turno. Para `REQ-017` y la capa de enforcement sigue la de **R-012**, con el ancla de
+`hooks/` que R-016 re-midió; **no la re-mido hoy**.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** Esta consulta no altera clasificación de datos,
+acceso, retención ni cumplimiento, y este repositorio no maneja usuarios finales ni datos personales.

@@ -2,6 +2,51 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · REQ-014: corregido el desfase de un piso, `CA-18 (ii)` deja de mandar «en dos», y el rigor se queda en `critico` con un defecto real encontrado antes de cometerlo
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Sonnet 5 · agentes: `analista-requerimientos` (write-back) y `auditor-seguridad` (R-018, Opus).
+
+### El desfase de una línea, corregido con su causa exacta
+
+La línea de declaración de `PISO_AUTONOMO_SECCION` es ella misma **preámbulo** — verificado releyendo
+las dos secciones. `37/1`: piso **461** (no 460), techo **577** (no 575). `37/2`: piso **468** (no
+467), techo **585** (no 584). `k=1,25` **no cambia**: el cociente que lo gobierna pasa de `564/460` a
+`565/461 = 1,2256`, sigue conforme. Corrección **fechada, sin reescribir** la fila original del
+Historial — misma disciplina que el resto de la sesión.
+
+**`CA-18 (ii)` deja de decir «se parte en dos»**, que era la magnitud equivocada del remedio, y pasa a
+«**en tantas partes como haga falta para que cada una quepa bajo SU propio techo derivado**» — la regla
+general que la sección 38 necesitaba y que el texto viejo no permitía.
+
+### El rigor se queda en `critico`, con una prueba de tres preguntas
+
+El auditor evaluó desde cero (la consulta anterior había quedado interrumpida sin veredicto por un
+corte de presupuesto) y dio **NO**, con criterio y no por prudencia genérica:
+
+1. **¿El cambio altera lo que una puerta deja pasar?** Sí — `CA-18` decide qué archivos pasan la
+   autoprueba, que corre dentro de `hooks-en-linux`, la puerta requerida de `main`.
+2. **¿Queda una máquina que cace la clase sin el auditor?** No — el propio código de `CA-18` declara
+   por escrito que «un piso inflado afloja el techo sin que ninguna puerta grite», y nombra la
+   auditoría como su única defensa real.
+3. **¿Qué compra el rigor menor?** Casi nada: la cabecera **ya lleva** `QA: aprobado`/`Seguridad:
+   aprobado` del 2026-09-06, declarados nulos en el Historial. Saltarse el turno del auditor no ahorra
+   una firma — produce **una firma vigente sobre código que no existía cuando se emitió**.
+
+### Y encontró un defecto real antes de que nadie lo cometiera
+
+Partir `37/1` en dos duplica 149 líneas. Con la mitad-A medida en 564, **la mitad-B queda en ≈434**
+contra un techo que sólo la conforma si tiene un bloque indivisible de **≈199 líneas** — **ese número no
+existe en ninguna parte**, y la derivación de `k=1,25` sólo citó mitades-A. La salida barata sería
+**declarar** un `piso_B` que haga cuadrar la aritmética — exactamente `DEV-014-01` un nivel más abajo, y
+las comprobaciones (a)(b)(c) lo dan por bueno si los términos suman. Se pasó al desarrollador como
+instrucción explícita antes de que partiera nada: **medir `piso_B`, no declararlo**, y si la mitad
+honesta no llega, partir en tres en vez de forzar dos.
+
+### `SEC-057` — `instrumento`, media, no bloquea
+
+`veredictos.exigir_fecha` y `caducan_con_codigo` están **los dos en `false`**: la condición «veredictos
+posteriores al 2026-09-08» que `CA-31` exige es prosa que ninguna puerta lee, y toda reapertura futura
+hereda la exposición. Remediación enrutada a `PENDING_APPROVAL.md` (cambio de manifiesto = gate humano).
+
 ## [Interno] — 2026-09-08 · Sesión pausada por presupuesto de tokens: tablero de continuidad actualizado
 > Origen: Interno · usuario: Juan · modelo de IA: Sonnet 5 · agente: coordinadora.
 
