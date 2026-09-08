@@ -118,6 +118,32 @@ tautológica, los 21 procesos que hicieron insatisfacible `CA-08 (i)` y el `+6` 
 3. **La calibración es todo el exceso de `(ii)`.** Sin ella la corrida sale **≈0,98–1,00×**: la mudanza
    en sí es neutra en reloj, y lo que cuesta es capacidad **que ninguna línea base tiene**.
 
+## PAUSADA 2026-09-08 ~14:35 CST — presupuesto de tokens del usuario, no de decisión
+
+**Árbol limpio en `9809fc2`, empujado.** Nada en vuelo, ningún agente vivo, `PENDING_APPROVAL.md` en 0.
+
+**Lo próximo, en orden:**
+1. **Analista** — Historial de `REQ-014` documentando la comisión del desarrollador (máquina de `CA-18` +
+   oráculo de `CA-12`): corregir el desfase de piso (461/468, no 460/467; `k` sigue conforme) y anotar
+   que `38-sondas-compartidas.sh` necesita **tres** archivos, no dos.
+2. **Auditor** — retomar la evaluación de si `REQ-014` admite rigor menor que `critico`. Quedó
+   **interrumpida sin veredicto** (parada por presupuesto, no por decisión): había encontrado «dos
+   hallazgos concretos» y estaba verificando «la aritmética del techo autodeclarado y la numeración del
+   registro» cuando se detuvo. Empezar de cero, no asumir ningún resultado previo.
+3. **Desarrollador** — partir los tres archivos (autorización ya extendida a la 38).
+4. **QA** de `REQ-014` completo.
+5. **Auditor** de `REQ-014` (si el veredicto del punto 2 dice que aplica el ciclo completo).
+6. Los dos ADR pendientes (re-derivación de `CA-18`; mandato de `ADR-005`).
+7. Versión, PR, CI en verde, tag, instalación estable.
+
+**El tag es del propietario, no por delegación** (R-016, R-017): 30 `contrato` abiertos, dos
+discrepancias entre sedes, tres hallazgos apuntando a la publicación misma (`SEC-050`, `SEC-054`,
+`SEC-055`). Nada de esto lo resuelve el trabajo pendiente arriba.
+
+**Y la protección ya escrita para la próxima ventana:** `docs/PLAN.md` §1.34.0 — `REQ-019` es el
+primer trabajo y **el único** hasta que cierre, sin excepción salvo lo que bloquee la publicación
+misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
+
 ## Próximo paso concreto
 1. **REQ-021 vuelta 3 de 3: desarrollador** *(corriendo)* → **QA vuelta 3** → auditor → cerrar REQ-021.
 2. **Partir las tres secciones que pasan de 400 líneas** (`848 / 678 / 722`). `CA-18` es el **único FAIL
@@ -195,7 +221,7 @@ tautológica, los 21 procesos que hicieron insatisfacible `CA-08 (i)` y el `+6` 
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-08 13:56
+## Estado derivado — 2026-09-08 14:19
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -205,7 +231,7 @@ tautológica, los 21 procesos que hicieron insatisfacible `CA-08 (i)` y el `+6` 
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.33.0` @ `b199e08` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.33.0` @ `2af89a9` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.32.1`
 **Aprobaciones pendientes:** 0
 **REQ:** 25 — completado 12 · en-revisión 1 · en-progreso 2 · bloqueado 1 · otros 9

@@ -2,6 +2,13 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-08 · Sesión pausada por presupuesto de tokens: tablero de continuidad actualizado
+> Origen: Interno · usuario: Juan · modelo de IA: Sonnet 5 · agente: coordinadora.
+
+`docs/ESTADO.md` deja el orden exacto de los siete pasos pendientes, con el veredicto de rigor de
+`REQ-014` marcado explícitamente como **interrumpido sin resultado** (no asumir nada de lo que la
+comisión detenida alcanzó a ver). Árbol limpio, cola en 0, nada en vuelo.
+
 ## [GitHub] — 2026-09-08 · REQ-014: la máquina de `CA-18` deriva el techo por archivo, y el oráculo de `CA-12` normaliza por propiedad — verificado independientemente
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
 
