@@ -143,7 +143,7 @@ proyectos.
 vacío). Es una palanca pequeña; las grandes son el tope de criterios por REQ y que un defecto de forma
 deje de costar una vuelta.
 
-## Aprobación humana delegada (propietario, 2026-09-05)
+## Aprobación humana delegada (propietario, 2026-09-05) — con la frontera escrita el 2026-09-08
 
 El propietario autorizó de forma **permanente** que, cuando **todo** esté en verde, la coordinadora
 fusione, etiquete y publique sin volver a preguntar. «Todo en verde» significa, a la vez:
@@ -155,6 +155,146 @@ explicar, un hallazgo abierto de clase `usuario/dinero` o `contrato`, o un veto 
 la decisión al propietario: se presenta la evidencia y se para. La delegación cubre la fusión, el
 tag y la publicación; la instalación estable se actualiza después (`autoUpdate`) y gobierna la
 sesión siguiente.
+
+### La frontera del recuento — lectura GLOBAL (decisión del propietario, 2026-09-08)
+
+Hasta el 2026-09-08 el criterio decía «cualquier hallazgo abierto» y **no decía abierto dónde**. Ése
+era el defecto, y no es de redacción: sin frontera escrita, la lectura la elige —en el momento de
+publicar— la parte que quiere publicar, y **siempre hay una que concede el permiso** (`SEC-053`,
+`docs/seguridad/registro-seguridad.md`). El propietario eligió la lectura **global** y rechazó las
+otras dos —«por ventana» y «por los REQ que la ventana cierra»— por el motivo exacto que las hacía
+cómodas: eran las que concedían el permiso justo para lo que se quería publicar.
+
+**1. Qué se cuenta: por CLASE, no por origen.** Cuenta **todo** hallazgo cuya **clase** sea
+`usuario/dinero` o `contrato`, **del proyecto entero**: cuelgue o no de un REQ, lo haya levantado
+quien lo haya levantado, y sea cual sea el prefijo de su identificador — el prefijo **no dice nada
+de la clase** *(ejemplos, no exhaustivo: `SEC-`, `QA-`, `DEV-`, `AN-`, `H-`)*. La definición de las
+clases vive en `requirements/README.md:109`, §«Clases de hallazgo», y **sólo ahí**. `instrumento` es la
+única clase que no cuenta.
+
+**2. Qué cuenta como abierto: el complemento del cierre.** Cuenta como abierto **todo estado que no
+sea `mitigado` ni `aceptado`**. Se enuncia por el complemento, y no listando los estados que abren,
+porque **el conjunto que abre es el que crece**: el día que aparezca un estado nuevo contará como
+abierto sin que nadie tenga que acordarse de añadirlo. Y un hallazgo cuyo estado **no se pueda
+establecer** leyendo su sede cuenta como abierto, por la misma razón por la que una puerta que no
+puede medir no deja pasar.
+
+**3. Dónde se lee: dos sedes, por unión, y fail-closed en la discrepancia.**
+- El **«Índice de hallazgos de clase bloqueante»** de `docs/seguridad/registro-seguridad.md` — sitio
+  único de la lista **exhaustiva**, una fila por hallazgo, mantenido por el `auditor-seguridad`.
+- El campo `Hallazgos abiertos:` de **cada** archivo de `requirements/`, en la forma cerrada
+  `ID (clase)` que declara `requirements/README.md`.
+
+El recuento es la **unión** de las dos. Si un identificador sale bloqueante en una y cerrado en la
+otra, **cuenta como bloqueante** — y además **la discrepancia por sí sola devuelve la decisión al
+propietario**: un recuento que no cuadra no es un recuento. No es hipotético: hoy hay **dos**
+discrepancias declaradas —`SEC-052` y `SEC-014`, los dos `mitigado` en el registro y todavía
+declarados en los campos de `REQ-023` y `REQ-013`—, y la de `SEC-014` llevaba **dos ventanas** sin
+verse.
+
+**Y no se cuenta «a ojo» sobre la prosa del registro.** Medido el 2026-09-08: sus entradas usan
+encabezados de **dos** niveles distintos, unas declaran la clase en el encabezado y otras en una
+línea `- **Clase:**`, y el estado cambia en entradas **posteriores** a la de apertura. Contarlas
+leyendo exige interpretar, y un criterio que depende de interpretar prosa es el mismo defecto una
+capa más arriba. El índice existe **para poder contar**; la prosa sigue siendo dónde vive la
+evidencia.
+
+**4. Sobre qué árbol.** Sobre **el commit que se va a etiquetar**, leído del propio árbol
+(`git show <commit>:<archivo>`), nunca de la memoria de la sesión ni del estado de la rama de
+trabajo. Es lo que permite que un tercero repita la medición dentro de un año con los mismos
+comandos y obtenga el mismo número.
+
+**5. Cómo se acredita: publicando el recuento, no afirmando el resultado.** La delegación **no** se
+acredita diciendo que no había hallazgos bloqueantes. Se acredita **publicando el recuento** en la
+entrada de `CHANGELOG.md` que anuncia el tag: el número, la lista de identificadores si no es cero,
+y el commit sobre el que se leyeron las dos sedes. **Una publicación sin ese recuento publicado no
+está acreditada, aunque el recuento hubiera sido cero.** El motivo es el que importa dentro de un
+año: un veredicto sin cifras no se puede desmentir leyéndolo.
+
+**6. Lo que esta frontera NO es: una puerta.** Ninguna máquina la mide. `guard-completado` lee el
+campo `Hallazgos abiertos:` **del REQ que se cierra** y nada más
+(`hooks/guard-completado.sh:484-527`), y hoy **ninguna** herramienta enumera el conjunto: medido,
+`tools/arnes-lectura.sh` no reporta ese campo. Es una obligación de **escritura**; se cumple o se
+incumple por escrito, y por escrito se audita.
+
+### La consecuencia, hoy: la delegación no autoriza nada
+
+Medido el 2026-09-08 sobre `cand/1.33.0` (`b199e08`) con la regla de arriba: **30 hallazgos de clase
+`contrato` abiertos**, **0** de clase `usuario/dinero` — **31** contando `SEC-055`, que abre la propia
+revisión que escribe esta frontera. De los 31, **19** están declarados en campos `Hallazgos abiertos:`
+de REQ y **12** sólo en el registro; **5** esperan que el auditor verifique un write-back ya hecho y
+**2** son las discrepancias declaradas. Descontando esos siete discutibles quedan **24**. El detalle,
+hallazgo por hallazgo, está en el índice del registro de seguridad.
+
+**Con esa cifra, la delegación está en pie como texto y no autoriza nada: en la práctica queda
+retirada, y cada fusión, cada tag y cada publicación vuelven al propietario.** Queda dicho aquí, sin
+suavizar y en el mismo sitio que la concede, porque un texto que promete una delegación
+inejercitable **promete más de lo que se aplica** — que es exactamente la clase `contrato` que este
+proyecto lleva ventanas persiguiendo en los documentos de otros.
+
+**Qué la volvería a activar, en forma medible:** que el recuento del punto 3 dé **cero** en las dos
+sedes, sin discrepancias, sobre el commit que se va a etiquetar, y que ese cero se **publique** con
+el tag. No hay versión parcial de esta condición.
+
+**Y la evaluación honesta de si eso va a ocurrir: no, no en este proyecto mientras desarrolle su
+propio mecanismo.** No es pesimismo: es la forma de la cifra. Los 31 no son un atasco puntual, son
+el régimen. Este repositorio produce en cada ventana texto firmado que afirma algo sobre la máquina,
+y `contrato` es precisamente «un texto firmado describe un control con un alcance que no tiene»: las
+auditorías la encuentran **por diseño**. Medido en la ventana 1.33.0: las revisiones de seguridad
+abrieron **19** hallazgos `contrato` y se cerraron **6**; QA abrió otros dos. Se abren más rápido de
+lo que los write-backs los cierran, y eso es el mecanismo funcionando, no una avería. **Una
+delegación cuya condición de activación no se cumple nunca es mejor retirada que en pie:** en pie,
+cada publicación obliga a explicar por qué no se ejerció; retirada, no hay nada que explicar.
+**Retirarla del texto es decisión del propietario, y el auditor no la toma** — queda escrito aquí
+para que sea una decisión y no un olvido. Mientras siga en pie, rige el párrafo de arriba: hoy no
+autoriza nada.
+
+### Quién escribió esta frontera, y por qué no la coordinadora
+
+La escribió el **`auditor-seguridad`** —por decisión del propietario del 2026-09-08— y no la sesión
+coordinadora, que es quien se beneficia de ella. El motivo no es de cortesía. Redactar la regla que
+gobierna el propio permiso de publicar es la forma exacta de dos hallazgos que este proyecto ya
+tiene nombrados: `SEC-052`, *una condición de escalada escrita por quien se libra de ella es un
+argumento con la firma de otro*, y `SEC-053`, *sin frontera escrita la lectura la elige quien
+publica*. Así que la escribe quien levantó el hallazgo, que es además el único que no puede usarla
+para publicar nada. **La decisión de fondo —qué lectura rige— es del propietario; el auditor la
+redacta y la mide, y no puede ni ampliarla ni ejercerla.**
+
+### Publicaciones bajo este criterio — barrido completo de los 40 tags (2026-09-08)
+
+Mismo método para todos, y se publica el **denominador** para que el veredicto se pueda desmentir
+leyéndolo: `git show <tag>:docs/seguridad/registro-seguridad.md`, el campo `Hallazgos abiertos:` de
+cada REQ **de ese tag**, y la entrada de `CHANGELOG.md` que anuncia la publicación.
+
+| Tags examinados | Bajo este criterio | Conformes | De autoridad **no acreditada** |
+|---|---|---|---|
+| **40** (todos los publicados) | **4** — `v1.30.3`, `v1.31.0`, `v1.32.0`, `v1.32.1` | **2** | **2** — `v1.31.0` y `v1.32.1` |
+
+- **Los 36 anteriores a `v1.30.3` quedan fuera, y no es un tecnicismo:** en ninguno existía este
+  criterio —el bloque de delegación entra en el árbol **con** `v1.30.3`—, ni el registro de
+  seguridad, ni un solo `requirements/REQ-*.md`; medido: 0 en los tres. No hay nada que acreditar
+  contra una regla que no existía. Lo que **no** se afirma, para no prometer más de lo medido: quién
+  decidió cada una de esas 36 publicaciones.
+- **`v1.30.3` — conforme.** Cero hallazgos de clase bloqueante en las dos sedes de su propio árbol.
+- **`v1.31.0` — de autoridad NO acreditada.** Tres `contrato` abiertos contra REQ-007 (`QA-114`,
+  `QA-116`, `QA-117`), declarados en **las dos** sedes del propio tag, y ninguna constancia en el
+  árbol de una decisión expresa del propietario: la entrada que la anuncia es «*[Interno] —
+  2026-09-06 · cierre del ciclo 2 del autoalojamiento*», **agente: sesión coordinadora**, y
+  `PENDING_APPROVAL.md` no registra ninguna entrada de publicación. **Lo encontró este barrido**; no
+  estaba medido antes.
+- **`v1.32.0` — conforme, y no por delegación.** Tenía `SEC-020` (`contrato`) abierto, pero la
+  decisión fue **expresa del propietario**: la entrada resuelta de `PENDING_APPROVAL.md` dice «*El
+  propietario eligió publicar 1.32.0 el 2026-09-07*». Conforme bajo cualquiera de las tres lecturas.
+- **`v1.32.1` — de autoridad NO acreditada.** `SEC-020` seguía `contrato` · `abierto`, y la entrada
+  que anuncia la publicación —«*[Cierre] — 2026-09-07 · Cierre documental de la ventana 1.32.1*»,
+  **agente: coordinadora**— **lo nombra** entre lo que cruza a 1.33.0. Sin entrada en la cola.
+- **Ratificación.** El propietario **ratifica a posteriori `v1.32.1`** el 2026-09-08. No se revierte
+  ni se retira nada: lo que se corrige es que quedara sin acreditar. **`v1.31.0` queda anotada y su
+  ratificación está pendiente** — es del propietario, y el auditor no ratifica en su nombre. Las dos
+  quedan registradas como lo exige la cláusula de escalada del propio hallazgo, con cifras, blobs y
+  citas, en `docs/seguridad/registro-seguridad.md`, revisión **R-016**.
+- **`v1.33.0` NO está cubierto.** Con 31 `contrato` abiertos, la delegación no lo alcanza: su
+  fusión, su tag y su publicación son decisión del propietario.
 
 ## Disciplina de coste (medida el 2026-09-06, obligatoria desde el ciclo 3)
 

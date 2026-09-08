@@ -2,6 +2,81 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · R-016: la frontera del permiso para publicar, escrita por quien no se beneficia de ella — y 2 de 40 tags salieron de autoridad no acreditada
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad` (Opus). Lectura **GLOBAL** ratificada por el propietario el 2026-09-08.
+
+### La frontera, seis puntos y todos por propiedad
+
+1. **Qué se cuenta: por CLASE, no por origen.** Todo hallazgo de clase `usuario/dinero` o `contrato`,
+   del proyecto entero, **cuelgue o no de un REQ**, sea cual sea el prefijo del ID — porque **el prefijo
+   no dice nada de la clase** (`SEC-`, `QA-`, `DEV-`, `AN-`, `H-`, marcado **no exhaustivo**).
+2. **Qué es abierto: el complemento del cierre** — todo estado que no sea `mitigado` ni `aceptado`.
+   Enunciado por complemento **a propósito**: *el conjunto que abre es el que crece*. **Lo
+   indeterminable cuenta como abierto.**
+3. **Dónde se lee: dos sedes, por UNIÓN, fail-closed en la discrepancia.** Si un ID sale bloqueante en
+   una y cerrado en la otra, **cuenta como bloqueante**, y la discrepancia **por sí sola** devuelve la
+   decisión.
+4. **Sobre qué árbol:** el commit que se etiqueta, por `git show`.
+5. **Cómo se acredita: publicando el recuento** en la entrada de CHANGELOG del tag. Y la mitad que
+   importa: **sin recuento publicado la publicación no está acreditada, aunque el recuento hubiera sido
+   cero.**
+6. **Lo que no es: una puerta.** `guard-completado` sólo lee el campo del REQ que se cierra
+   (`hooks/guard-completado.sh:484-527`), y `tools/arnes-lectura.sh` **no reporta ese campo** — medido.
+
+**Por qué hizo falta construir un índice:** midió que **la prosa del registro no se puede contar** —
+encabezados `###` y `####` mezclados, clase en el encabezado o en una línea `- **Clase:**`, estado
+cambiado en entradas posteriores. *«Un criterio que depende de interpretar prosa es el mismo defecto en
+otra capa.»* Nace el **«Índice de hallazgos de clase bloqueante»**, 37 filas, sitio único de la lista
+exhaustiva.
+
+**La consecuencia, escrita en el mismo párrafo que concede la delegación:** hoy **no autoriza nada**.
+**Reactivación medible:** recuento cero en las dos sedes, sin discrepancias, sobre el commit a
+etiquetar, y **publicado**. Y su evaluación, con cifras: en la ventana 1.33.0 seguridad abrió **19**
+`contrato` y cerró **6**. *«Una delegación cuya condición nunca se cumple es mejor retirada que en
+pie»* — **retirarla es del propietario y no la tomó.**
+
+### El barrido: 40 tags · 4 bajo el criterio · 2 conformes · 2 de autoridad no acreditada
+
+| Tag | Veredicto |
+|---|---|
+| `v1.2.0`…`v1.30.2` (**36**) | **Fuera del criterio**: no existía el bloque de delegación, ni registro de seguridad, ni **un solo** `requirements/REQ-*.md`. Declara lo que **no** midió: quién decidió esas 36 |
+| `v1.30.3` | **Conforme** — cero bloqueantes en las dos sedes |
+| **`v1.31.0`** | **De autoridad NO acreditada, y es NUEVO.** Tres `contrato` —`QA-114`, `QA-116`, `QA-117`— declarados en **las dos** sedes del tag, publicación anunciada como «cierre del ciclo 2», agente sesión coordinadora, sin entrada en la cola. **Ratificación PENDIENTE** |
+| `v1.32.0` | **Conforme, y no por delegación**: decisión expresa del propietario en `PENDING_APPROVAL.md` |
+| `v1.32.1` | De autoridad no acreditada, **ratificada a posteriori por el propietario** el 2026-09-08 |
+
+**Por qué `v1.31.0` no se había visto: R-015 buscó prefijos `SEC-` y esos tres son `QA-`.** Y el auditor
+corrigió su propio recuento: los «17» de R-015 estaban **cortos por construcción** — el hueco eran
+**trece**, por **tres** motivos distintos (siete por el prefijo, cuatro por la sede, dos por
+autoexclusión). 17 + 13 = **30**. Su frase:
+
+> **«Quien enumeró sabía que enumerar falla y falló igual: eso es el argumento, no la anécdota.»**
+
+### `v1.33.0` NO está cubierto, y lo dice en la dirección incómoda
+
+**31** `contrato` abiertos sobre `b199e08` más `SEC-055`; **0** `usuario/dinero`; **24** descontando los
+siete discutibles. Cuatro apuntan a la publicación misma: `SEC-050`, `SEC-053`, `SEC-054`, `SEC-055`. Y
+la mitad que no le conviene: **descontando los 12 que no cuelgan de ningún REQ, quedan 19** declarados
+por QA, desarrollador y analista — **mismo resultado**. La fusión, el tag y la publicación son decisión
+del propietario.
+
+`SEC-053` pasa a **`en-mitigación`**, no a `mitigado`: residual único = la ratificación de `v1.31.0`,
+vencimiento antes del tag. *«Si se publica sin resolverlo, serán tres, y eso deja de ser descuido.»*
+
+### `SEC-055` — `AGENTS.md` promete una delegación que ya no existe
+
+`contrato` · abierto · severidad **media** · dueño `analista-requerimientos` (write-back) y
+**propietario** (decisión de fondo). `AGENTS.md:60` (§4) y `:120` (§6) arrastran la misma ambigüedad que
+la frontera acaba de cerrar. **No lo arregló**: `AGENTS.md` está en el `Archivos:` de `REQ-019` y una
+edición ahora colisiona. Lo que acota la severidad, **medido**: **no viaja a las plantillas** (`grep`
+sobre `templates/*.tpl` y `CLAUDE.md` da **cero**), así que ningún consumidor hereda la promesa falsa.
+
+### Y el caso real que justifica el índice entero
+
+**`SEC-014` estaba `mitigado` desde R-006 y `REQ-013` sigue declarándolo abierto.** Segunda discrepancia
+declarada, y llevaba **dos ventanas** sin que nadie la viera. No es un ejemplo inventado para defender
+el mecanismo: es el mecanismo encontrando lo que existía.
+
 ## [GitHub] — 2026-09-08 · `SEC-054` remediado: el ADR y el README dejan de afirmar lo que la medición desmiente — y aparece un TERCER sitio
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus). Autorización expresa del propietario, 2026-09-08.
 
