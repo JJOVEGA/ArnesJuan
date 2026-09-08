@@ -2,6 +2,104 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-07 · REQ-021 implementado: `tests/util/` con las tres sondas, el banco a 873 casos, y el nieto que cazó un `vivos=0` con la descendencia viva
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador`.
+
+**`tests/util/`**: `sonda-reloj.sh`, `sonda-procesos.sh`, `sonda-linea-base.sh` y su `README.md`.
+Programas `100755` con un registro `clave=valor` de una línea por invocación, diagnóstico por stderr y
+**ningún veredicto** — el juicio vive en `run.sh`, en sede única: un solo parser (`sonda_lee`), una sola
+banda (`sonda_banda`), la puerta de CA-10 (`sonda_usable`) y la calibración **una vez por instrumento y
+por corrida** antes del despacho. Sección nueva `38-sondas-compartidas.sh` con 21 casos;
+`CASOS_ESPERADOS` **852 → 873**, los dos literales a mano. `PARED37` **se queda a propósito**: es
+`SEC-030`, fuera del alcance declarado.
+
+**Banco: `869–870 PASS · 0 FAIL · 3–4 SKIP` sobre 873, rc 0, ~51 s.** Las tres quality gates de §7 en
+verde.
+
+### El sujeto lineal que faltaba, y por qué el anterior no servía
+
+CA-03 (a) exige un sujeto sensible de coste **realmente lineal**, y el candidato de la comisión anterior
+—apilado de cadenas en bash— es **superlineal** (factores 2,048 y 2,566 donde el contrato pide 2). El
+sustituto es un **bucle aritmético puro**, `for ((i=0;i<N;i++)); do :; done`: no reserva memoria, no hay
+`realloc`, y duplicar N duplica el coste **por construcción**.
+
+| | `cal_a` (esperado 2,000) | `cal_b` (esperado 1,000) |
+|---|---|---|
+| Máquina en reposo, 8 corridas | 1,916 – 2,065 | 0,924 – 1,009 |
+| Con carga ajena, 8 corridas | 1,663 – 2,362 | 0,779 – 1,058 |
+
+Banda en el juez: `a ∈ [1,600 · 2,400]`, `b ∈ [0,800 · 1,200]`, **33 % de separación**. **No se ensanchó
+nada para acomodar deriva**: el sujeto no deriva. `procesos` y `linea-base` dan 2,000 y 1,000 **exactos**.
+
+**Y el `4` de (iii) no cabía con la forma obvia del sujeto — se resolvió en el sujeto, no en el techo.**
+Los cuatro ejercicios no cuestan lo mismo (el sensible al doble cuesta el doble por construcción →
+`1+2+1+1 = 5`). Dimensionando el insensible a **un cuarto** del sensible base: `1+2+¼+¼ = 3,5`. El techo
+no se tocó.
+
+### CA-08 sobre la corrida real
+
+Corrida `ca08-1788843906`, árbol `794fa4c`, oráculo `/proc/stat:processes` (suelo **0/12**, factor
+**2,000** exacto, tasa de fondo 3,20–3,36 forks/s en tres ventanas de 25 s). **(0) acreditado:** la línea
+base se materializó con la propia `sonda-linea-base.sh` (`archivos=67`, `estado=ok`) y **contiene `37/1`
+y `37/2`**.
+
+- **(i.1) −56 procesos añadidos**, calibración excluida: `(2092 − 69) − 2079`, mínimos de **6 series
+  intercaladas**. **No gasta ni uno de los comprados.**
+- **(i.2)** reloj **−4**, procesos **−31**, línea base **+6** — con su comprador: +1 por CA-01.1 (se
+  invoca) y +5 por CA-05.1 (`git hash-object --stdin-paths` del lote: 1 de `git` y ~4 que `git` gasta por
+  dentro).
+- **(ii) 1,165×** (`26 032 011 / 22 350 191 µs`), techo 1,250×; convergencia 1,006×/1,004×.
+- **(iii)** reloj 1,666× · 0,312× · 1,431×; procesos 0,000× · 2,875× · 2,133×; techo 4,000×.
+
+### Dos defectos que la propia mudanza cometió, y el caso que los cazó
+
+- **`$BASHPID` dentro de `$( )`, otra vez** — el mismo error que este REQ existe para no repetir. El
+  archivo se escribió `…-3881596.json` y se leyó `…-3882892.json`: `cuenta=0`, FAIL.
+- **`/proc/<pid>/task/<tid>/children` no termina en salto de línea**, así que `read … || continue`
+  descartaba la lista **siempre** y la sonda publicaba `vivos=0` **con la descendencia viva**. Lo delató
+  el caso del **nieto**; **con un hijo directo habría dado verde.** Es la justificación medida de por qué
+  CA-04.1 exige acreditar por descendencia y no por hijo.
+
+### `SEC-037` cerrado
+
+Las cinco propiedades sobreviven a la mudanza **y cada una tiene un caso del banco que la interroga**:
+CA-02.5 (`estado=mixta`, `instrumentada=si`, sin número), CA-04.3 (`type -P`, sin `command -v`, y la
+comprobación **sobre la ruta escrita en el envoltorio generado**), CA-04.4 (camino de error real
+`sin-sujeto` y **0** directorios detrás), CA-04.5 (las cuatro formas `:x`, `x:`, `::`, `.` →
+`path-inseguro`) y la propiedad por descendencia con nieto, con su fail-before.
+
+### Seis hallazgos nuevos. Uno `contrato`, y uno que BLOQUEA LA FUSIÓN
+
+- **`DEV-021-06` (`contrato`)** — (i.2) ilustra **2** procesos comprados; medido **+6**. La **regla** se
+  cumple (cada uno con su comprador nombrado); el **paréntesis** del criterio, escrito sobre un
+  prototipo, es falso. Write-back del **número**, no de la regla. **Impide cerrar REQ-021.**
+- **`DEV-021-07` (`instrumento`) — la autoprueba del corredor sale `rc=1` y el CI la corre como paso
+  propio, sin `continue-on-error`.** `CA-18` exige que ningún archivo de sección pase de **400 líneas** y
+  las dos secciones 37 miden **751 y 614**. **No bloquea el cierre —es `instrumento`— pero bloquea la
+  fusión**, porque `hooks-en-linux` es la puerta requerida de `main`.
+
+  **Y lleva roja desde el delta final de REQ-017, que es lo que hay que retener.** El CI que marca
+  `pass` en el PR #43 midió `0bab7a1`, donde esas secciones median **346 y 266** líneas; local está **20
+  commits por delante**. Es **H-08 con otra cara: un verde sobre un árbol que ya no existe.** REQ-017
+  cerró por encima de esta roja, y no fue indebido —`CA-18` es `instrumento` y §6 no lo hace
+  bloqueante—, pero la ventana no puede fusionar sin partir esas dos secciones. La mudanza de REQ-021
+  **mejora y no arregla** (761→751, 646→614), y no se arregla aquí porque **CA-07.2 congela sus
+  `CASOS_ESPERADOS_SECCION`**.
+- **`DEV-021-08`** — CA-05.1 deja ejecutable **todo** `*.sh` materializado; al materializar `tests/`, la
+  copia rompe la CA-27 del propio banco.
+- **`DEV-021-09`** — el plazo de CA-04.2 se comprueba **entre** unidades de trabajo, no **dentro** de
+  una. Acotar una unidad colgada exige un vigilante en proceso aparte, y eso es justo lo que (i.2) no
+  admite: en bash no hay forma de esperar con plazo sin gastar un `fork`. **Declarado** en
+  `tests/util/README.md`, no prometido.
+- **`DEV-021-10`** — el margen superior de `cal_a` es del **1,6 %** bajo carga ajena (peor observado
+  2,362 contra 2,400). **Falla hacia FAIL, no hacia verde.**
+- **`DEV-021-11`** — CA-07.2 pide «ninguno pasa de PASS a SKIP» y el caso de la pared **se abstiene por
+  diseño**: 4 corridas dieron `SKIP·PASS·PASS·PASS` en la línea base y `PASS×4` en el nuevo.
+  Preexistente, dueño `SEC-030`.
+
+**Coste:** ≈430 k tokens y ~3 h de reloj — 3 corridas completas del banco, 12 de `37/*` intercaladas
+para (i.1) y (ii), 8 del corredor para la banda y 4+4 para DEV-021-11.
+
 ## [GitHub] — 2026-09-07 · REQ-021: el desarrollador midió antes de construir, CA-08 resultó insatisfacible, y la renegociación conservó el techo cambiando el grano
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `desarrollador` (medición), `analista-requerimientos` (renegociación).
 

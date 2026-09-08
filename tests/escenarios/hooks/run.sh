@@ -369,6 +369,172 @@ lec_check() {
   else echo "  FAIL  $nombre  rc=$rc (esperado $rc_esp), patron aparece=$hay (esperado $debe)"; diag; FAIL=$((FAIL+1)); fi
 }
 
+# --- LOS INSTRUMENTOS COMPARTIDOS DE `tests/util/` (REQ-021) -------------------
+# LA SONDA MIDE, EL CORREDOR JUZGA. Las sondas son PROGRAMAS que se invocan (no ayudantes
+# sourceados, así que la invariante 3 del README sigue intacta) y publican un registro de
+# una línea `clave=valor`. Aquí abajo vive TODO lo que juzga: el ÚNICO parser del registro,
+# la expectativa de la calibración —factor esperado y banda— y el veredicto de CA-10.
+#
+# POR QUÉ LA EXPECTATIVA VIVE AQUÍ Y NO EN LA SONDA (SEC-036, REQ-021 CA-03 punto 2). El
+# sustituto de no proteger `tests/util/` bajo `codigo_app.globs` es «una sonda alterada no
+# da verde», y eso sólo es cierto si la expectativa NO se puede alterar en el mismo
+# movimiento que la sonda. Con la banda dentro del archivo cuestionado —y siendo operativa,
+# o sea legítimamente editable— ensancharla es UNA LÍNEA EN LA MISMA EDICIÓN: la
+# calibración se autocertifica. Aquí, alterar el instrumento y alterar su examen son dos
+# ediciones en dos archivos, y la segunda cae en `run.sh`.
+case "${BASH_SOURCE[0]}" in */*) UTIL_DIR="${BASH_SOURCE[0]%/*}/../../util" ;; *) UTIL_DIR="../../util" ;; esac
+UTIL_DIR="${ARNES_UTIL_DIR:-$UTIL_DIR}"
+
+# El identificador de CORRIDA ata la calibración con las mediciones que habilita (CA-03
+# punto 5). Sin él, «una vez por corrida» sería la puerta por la que se reutiliza la
+# calibración de ayer, que es acreditación de fail-before otra vez.
+export ARNES_CORRIDA="corrida-$$-${EPOCHSECONDS:-0}"
+# El árbol medido, leído SIN gastar un proceso: en Windows cada fork cuesta 1,2–6 s.
+ARNES_ARBOL=desconocido
+ARNES_REPO_GIT="${BASH_SOURCE[0]%/*}/../../.."
+if [ -r "$ARNES_REPO_GIT/.git/HEAD" ]; then
+  ARNES_REF_HEAD=''
+  read -r ARNES_REF_HEAD < "$ARNES_REPO_GIT/.git/HEAD" 2>/dev/null || :
+  case "$ARNES_REF_HEAD" in
+    "ref: "*) ARNES_REF_HEAD="${ARNES_REF_HEAD#ref: }"
+              [ -r "$ARNES_REPO_GIT/.git/$ARNES_REF_HEAD" ] &&
+                { read -r ARNES_ARBOL < "$ARNES_REPO_GIT/.git/$ARNES_REF_HEAD" 2>/dev/null || ARNES_ARBOL=desconocido; } ;;
+    ?*)       ARNES_ARBOL="$ARNES_REF_HEAD" ;;
+  esac
+fi
+[ -n "$ARNES_ARBOL" ] || ARNES_ARBOL=desconocido
+export ARNES_ARBOL
+
+# sonda_lee <registro> — EL ÚNICO PARSER (CA-01 punto 4). `tests/util/README.md` apunta
+# aquí y NO lo transcribe: dos transcripciones de la misma regla se desfasan.
+# CADA CAMPO NUMÉRICO SE VALIDA POR SEPARADO y un campo obligatorio AUSENTE es un error con
+# motivo, NUNCA un cero (CA-01 punto 5). Concatenar campos antes de la guarda —`"$rc$ut"`—
+# hace desaparecer un valor vacío dentro de los dígitos del vecino, y escribir la clase como
+# `*[!0-9|]*` dentro de un `case` no dispara nunca, porque ahí `|` es el separador de
+# alternativas (comprobado en bash 5.3).
+declare -A SONDA=()
+SONDA_MOTIVO=''
+sonda_num() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
+sonda_lee() {
+  local reg="${1:-}" par clave valor
+  SONDA=(); SONDA_MOTIVO=''
+  if [ -z "$reg" ]; then SONDA_MOTIVO='el registro salió VACÍO: la sonda no se ejecutó'; return 1; fi
+  case "$reg" in *'='*) ;; *) SONDA_MOTIVO="el registro no tiene ningún campo clave=valor (<${reg:0:80}>)"; return 1 ;; esac
+  for par in $reg; do
+    case "$par" in
+      *'='*) clave="${par%%=*}"; valor="${par#*=}"; [ -n "$clave" ] && SONDA[$clave]="$valor" ;;
+    esac
+  done
+  # Los campos que TODO registro trae. Ausente no es cero: es un error con motivo.
+  for clave in sonda modo estado corrida invocacion us procesos vivos; do
+    if [ -z "${SONDA[$clave]:-}" ]; then SONDA_MOTIVO="al registro le falta el campo obligatorio '$clave'"; return 1; fi
+  done
+  # …y los que además tienen que ser números, UNO A UNO.
+  for clave in us procesos; do
+    if ! sonda_num "${SONDA[$clave]}"; then SONDA_MOTIVO="el campo '$clave' no es un número (<${SONDA[$clave]}>)"; return 1; fi
+  done
+  return 0
+}
+
+# sonda_banda <instrumento> — LA EXPECTATIVA DE LA CALIBRACIÓN, y ésta es su sede única
+# (CA-03 punto 2). Cuatro milésimas: mínimo y máximo del factor SENSIBLE (esperado 2,000) y
+# del INSENSIBLE (esperado 1,000). OPERATIVA: se ESTRECHA con la medición; ensancharla para
+# acomodar un sujeto cuyo factor DERIVA no es conforme — lo que se cambia es el sujeto.
+# Medido el 2026-09-07 (bash 5.3.9, linux, máquina CON carga ajena, 8 corridas): reloj
+# 1,663–2,080 y 0,779–1,054 —el sujeto es un bucle aritmético puro, REALMENTE lineal, y lo
+# que se ve es ruido de planificación, no deriva del sujeto—; `procesos` y `linea-base`,
+# EXACTOS (2,000 y 1,000) en todas. La banda del reloj se declara sobre eso y se ESTRECHA
+# cuando haya medición en máquina en reposo, que es donde el corredor la toma de verdad
+# (antes del despacho en paralelo).
+sonda_banda() {
+  case "${1:-}" in
+    reloj)      printf '%s' '1600 2400 800 1200' ;;
+    procesos)   printf '%s' '1900 2100 900 1100' ;;
+    linea-base) printf '%s' '1900 2100 900 1100' ;;
+    *)          return 1 ;;
+  esac
+}
+
+# sonda_calibracion_falla <instrumento> — deja SONDA_CAL_MOTIVO y devuelve 0 si la
+# calibración de ESTA corrida para ese instrumento NO sirve. Es lo que convierte «una vez
+# por corrida» en algo verificable: la calibración y las mediciones comparten el
+# identificador de corrida (CA-03 punto 5).
+SONDA_CAL_MOTIVO=''
+sonda_calibracion_falla() {
+  local inst="${1:-}" archivo="$RAIZ/cal-$1" reg='' banda amin amax bmin bmax a b
+  SONDA_CAL_MOTIVO=''
+  if [ ! -r "$archivo" ]; then SONDA_CAL_MOTIVO="esta corrida no calibró '$inst'"; return 0; fi
+  IFS= read -r reg < "$archivo" 2>/dev/null || reg=''
+  if ! sonda_lee "$reg"; then SONDA_CAL_MOTIVO="la calibración de '$inst' no se puede leer: $SONDA_MOTIVO"; return 0; fi
+  if [ "${SONDA[corrida]}" != "$ARNES_CORRIDA" ]; then
+    SONDA_CAL_MOTIVO="la calibración de '$inst' es de OTRA corrida (${SONDA[corrida]}); no se reutiliza la de ayer"; return 0
+  fi
+  if [ "${SONDA[estado]}" != ok ]; then
+    SONDA_CAL_MOTIVO="la calibración de '$inst' no pudo medir: estado=${SONDA[estado]} motivo=${SONDA[motivo]:-sin motivo}"; return 0
+  fi
+  a="${SONDA[cal_a]:-}"; b="${SONDA[cal_b]:-}"
+  if ! sonda_num "$a" || ! sonda_num "$b"; then
+    SONDA_CAL_MOTIVO="la calibración de '$inst' no publicó los dos factores (a=<${a:-vacío}> b=<${b:-vacío}>)"; return 0
+  fi
+  banda="$(sonda_banda "$inst")" || { SONDA_CAL_MOTIVO="no hay banda declarada para '$inst' en el juez"; return 0; }
+  read -r amin amax bmin bmax <<< "$banda"
+  if [ "$a" -lt "$amin" ] || [ "$a" -gt "$amax" ] || [ "$b" -lt "$bmin" ] || [ "$b" -gt "$bmax" ] || [ "$a" -le "$b" ]; then
+    SONDA_CAL_MOTIVO="la calibración de '$inst' NO distingue el sujeto sensible del insensible: a=$a b=$b (banda a [$amin,$amax] · b [$bmin,$bmax], en milésimas)"
+    return 0
+  fi
+  return 1
+}
+
+# sonda_usable <nombre> <registro> — LA PUERTA DE CA-10, en un solo sitio.
+#   * registro vacío o ilegible                       -> FAIL (no es una sonda que no pudo
+#                                                        medir: es una que no se ejecutó)
+#   * `estado` distinto de `ok`                       -> SKIP citando motivo y número
+#   * corrida sin calibración de SU instrumento, o
+#     calibración que no distingue                    -> FAIL (CA-03 punto 5)
+#   * si no, devuelve 0 SIN emitir nada y el llamador dicta su propio veredicto.
+sonda_usable() {
+  local nombre="$1" reg="${2:-}" inst
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 1; fi
+  if [ -z "$reg" ]; then
+    echo "  FAIL  $nombre  el registro de la sonda salió VACÍO: no es una sonda que no pudo medir, es una que no se ejecutó"; FAIL=$((FAIL+1)); return 1
+  fi
+  if ! sonda_lee "$reg"; then
+    echo "  FAIL  $nombre  $SONDA_MOTIVO"; FAIL=$((FAIL+1)); return 1
+  fi
+  inst="${SONDA[sonda]}"
+  if [ "${SONDA[estado]}" != ok ]; then
+    echo "  SKIP  $nombre  la sonda '$inst' no pudo medir: estado=${SONDA[estado]} motivo=${SONDA[motivo]:-sin motivo} (min=${SONDA[min]:-n/a} archivos=${SONDA[archivos]:-n/a} cuenta=${SONDA[cuenta]:-n/a} us=${SONDA[us]})"
+    return 1
+  fi
+  if [ "${SONDA[corrida]}" != "$ARNES_CORRIDA" ]; then
+    echo "  FAIL  $nombre  el registro es de otra corrida (${SONDA[corrida]} en vez de $ARNES_CORRIDA): una medición sin la calibración de SU corrida no es publicable"; FAIL=$((FAIL+1)); return 1
+  fi
+  if sonda_calibracion_falla "$inst"; then
+    echo "  FAIL  $nombre  $SONDA_CAL_MOTIVO — «no hay calibración» y «la calibración no distingue» dicen lo mismo: no sé si estoy midiendo el sujeto"; FAIL=$((FAIL+1))
+    sonda_lee "$reg"; return 1
+  fi
+  sonda_lee "$reg"
+  return 0
+}
+
+# sonda_juzga_calibracion <nombre> <instrumento> — el caso EXPLÍCITO de la calibración
+# (CA-03 punto 3): si (a) y (b) no se distinguen dentro de la banda, FAIL —nunca SKIP y
+# nunca PASS— nombrando el instrumento y los dos factores obtenidos.
+sonda_juzga_calibracion() {
+  local nombre="$1" inst="${2:-}" arch reg=''
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
+  arch="$RAIZ/cal-$inst"
+  [ -r "$arch" ] && { IFS= read -r reg < "$arch" 2>/dev/null || reg=''; }
+  if [ -z "$reg" ]; then
+    echo "  FAIL  $nombre  la calibración de '$inst' no dejó registro: un instrumento que no se ejecuta produce el mismo silencio que uno que miente"; FAIL=$((FAIL+1)); return 0
+  fi
+  if sonda_calibracion_falla "$inst"; then
+    echo "  FAIL  $nombre  $SONDA_CAL_MOTIVO"; FAIL=$((FAIL+1)); return 0
+  fi
+  sonda_lee "$reg"
+  echo "  PASS  $nombre  sensible $(awk -v c="${SONDA[cal_a]}" 'BEGIN{printf "%.3f", c/1000}')× · insensible $(awk -v c="${SONDA[cal_b]}" 'BEGIN{printf "%.3f", c/1000}')× (esperados 2,000 y 1,000; los dos en banda y distinguidos)"; PASS=$((PASS+1))
+}
+
 # --- CANARIO: si el hook no corre, todo caso `allow` sería un verde falso -------
 canario="$(corre guard-codigo.sh "$(emite_edit "$PROJ/src/app.ts" "" "" 'hola')")"
 if ! printf '%s' "$canario" | grep -Eq '"permissionDecision": *"deny"'; then
@@ -560,6 +726,66 @@ if [ -n "$GUARDA_ESTRUCTURA" ]; then
   exit 1
 fi
 
+# --- CA-07 punto 4 (REQ-021): NO QUEDA UNA SEGUNDA SEDE ------------------------
+# Se comprueba POR PROPIEDAD y sobre el TEXTO, como la invariante 1: una función de sección
+# que MATERIALICE un árbol desde una referencia de `git`, que CRONOMETRE REPETICIONES de un
+# sujeto o que CUENTE PROCESOS con envoltorios en el `PATH` reconstruye lo que una sonda de
+# `tests/util/` ya hace, y dos sedes de la misma regla se desfasan. La misma pasada dice si
+# esta vuelta usa algún instrumento: así la calibración de CA-03 no se le cobra a las
+# vueltas anidadas —la sección 32 que 37/2 cronometra, los directorios sintéticos de la
+# autoprueba— que no tocan `tests/util/`, y no cuesta un `grep` por sección (en Windows cada
+# fork cuesta 1,2–6 s).
+SONDA_HACE_FALTA=no
+SEGUNDA_SEDE="$(awk '
+  function cierra(   reloj, bucle) {
+    if (fn == "") return
+    if (cuerpo ~ /ls-tree/)
+      printf "%s: la funcion %s() materializa un arbol desde una referencia de git; eso es sonda-linea-base.sh\n", archivo, fn
+    reloj = (gsub(/EPOCHREALTIME/, "EPOCHREALTIME", cuerpo) >= 2) || (cuerpo ~ /date \+%s%N/)
+    bucle = (cuerpo ~ /for \(\(/) || (cuerpo ~ /(^|\n)[ \t]*while /)
+    if (reloj && bucle)
+      printf "%s: la funcion %s() cronometra repeticiones de un sujeto; eso es sonda-reloj.sh\n", archivo, fn
+    if (cuerpo ~ /chmod \+x/ && cuerpo ~ /PATH=/)
+      printf "%s: la funcion %s() cuenta procesos con envoltorios en el PATH; eso es sonda-procesos.sh\n", archivo, fn
+    fn = ""; cuerpo = ""
+  }
+  FNR == 1 { cierra(); archivo = FILENAME }
+  index($0, "sonda-reloj.sh") || index($0, "sonda-procesos.sh") || index($0, "sonda-linea-base.sh") { usa = 1 }
+  /^[A-Za-z_][A-Za-z_0-9]*\(\)[ \t]*\{/ { cierra(); fn = $0; sub(/\(\).*/, "", fn); cuerpo = $0; if ($0 ~ /\}[ \t]*$/) cierra(); next }
+  fn != "" { cuerpo = cuerpo "\n" $0; if ($0 ~ /^\}/) cierra(); next }
+  END { cierra(); if (usa) printf "USA-INSTRUMENTOS\n" }
+' "${SECCIONES[@]}")"
+case "$SEGUNDA_SEDE" in
+  *USA-INSTRUMENTOS*) SONDA_HACE_FALTA=si; SEGUNDA_SEDE="${SEGUNDA_SEDE%USA-INSTRUMENTOS}" ;;
+esac
+SEGUNDA_SEDE="${SEGUNDA_SEDE%"${SEGUNDA_SEDE##*[!$'\n']}"}"
+if [ -n "$SEGUNDA_SEDE" ]; then
+  echo "ABORT: hay una SEGUNDA SEDE de lo que una sonda de tests/util/ ya hace (REQ-021 CA-07.4):"
+  printf '%s\n' "$SEGUNDA_SEDE" | sed 's/^/       /'
+  echo "       Se invoca el instrumento; no se reescribe dentro de una sección."
+  exit 1
+fi
+
+# --- La calibración: UNA VEZ POR INSTRUMENTO Y POR CORRIDA (CA-03) ------------
+# Lo que acredita es una propiedad del INSTRUMENTO, no de la invocación: las tres sondas
+# mudas de la ventana 1.32.1 —`jq --arg` de 128 KB, `git show` sin bit de ejecución,
+# `$BASHPID` dentro de `$( )`— dejaron de responder al sujeto en TODAS sus invocaciones, y
+# el archivo no cambia entre dos invocaciones de la misma corrida. Por invocación costaría
+# 21 procesos CADA VEZ; por corrida, 21 una sola vez. Y una calibración cara es una
+# calibración que alguien apaga, que es el final de camino que CA-08 (iii) existe para
+# evitar.
+#
+# `ARNES_SONDA_CAL_N` es OPERATIVO. Con 200 000 vueltas, en la máquina de referencia (bash
+# 5.3.9, linux, 2026-09-07) el ejercicio SENSIBLE base mide ~290 ms y el INSENSIBLE ~72 ms:
+# el segundo es el que roza el suelo de 50 ms, con margen 1,4×. En una máquina bastante más
+# rápida hay que SUBIRLO, o la calibración dirá `suelo` y ninguna medición será publicable.
+SONDA_CAL_N_RELOJ="${ARNES_SONDA_CAL_N:-200000}"
+if [ "$SONDA_HACE_FALTA" = si ] && [ -d "$UTIL_DIR" ]; then
+  "$UTIL_DIR/sonda-reloj.sh"      --calibrar --k 1 --r 3 --n "$SONDA_CAL_N_RELOJ" > "$RAIZ/cal-reloj"      2>"$RAIZ/cal-reloj.err"      || :
+  "$UTIL_DIR/sonda-procesos.sh"   --calibrar --n 4 --dir-trabajo "$RAIZ"          > "$RAIZ/cal-procesos"   2>"$RAIZ/cal-procesos.err"   || :
+  "$UTIL_DIR/sonda-linea-base.sh" --calibrar --n 2 --dir-trabajo "$RAIZ"          > "$RAIZ/cal-linea-base" 2>"$RAIZ/cal-linea-base.err" || :
+fi
+
 # --- Despacho en paralelo -----------------------------------------------------
 # El canario ya corrió en el padre, solo y antes que nada: si el hook está muerto no se
 # lanza ni una sección, y tampoco se descubre ninguna.
@@ -709,7 +935,7 @@ done
 
 # --- Cuadre 2: el número total de casos sigue siendo una invariante del banco -
 # Si alguien añade o quita un caso, actualiza el número de SU archivo y este total.
-CASOS_ESPERADOS=852
+CASOS_ESPERADOS=873
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

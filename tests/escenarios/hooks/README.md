@@ -11,6 +11,7 @@ secciones/NN-<slug>.sh     los CASOS: una sección por archivo, descubiertas por
 autoprueba-corredor.sh     lo que certifica al corredor (aparte de los casos del banco);
                            declara su propio `AUTOPRUEBA_CASOS_ESPERADOS` y se aplica el cuadre
 inventario.sh              inventario ordenado de una salida, para comparar vuelta contra vuelta
+../../util/*.sh            los INSTRUMENTOS de medida, compartidos con todo el repositorio
 ```
 Hasta 1.31.0 todo esto era **un solo archivo de 4.096 líneas**. Dos comisiones de QA no podían
 trabajar a la vez —las dos escribían en `run.sh`— y tocar cuarenta líneas obligaba a leerlas
@@ -29,7 +30,7 @@ bash tests/escenarios/hooks/run.sh secciones/07-*.sh     # sólo esa sección, m
 bash tests/escenarios/hooks/run.sh bash                  # sólo los casos cuyo nombre contenga "bash"
 bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del corredor
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **828 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **873 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`).
 
 En vuelta parcial —con un selector de archivos o con filtro de nombre— el cuadre **total** queda
@@ -115,6 +116,12 @@ en verde que no medía lo que decía medir.
    Corolario medido al partir el banco: el corredor no puede llamar `i` a su índice de bucle —seis
    secciones usan `i` como contador propio y lo pisan—; lo que el corredor necesita **después** del
    `source` lleva prefijo `ARNES_`.
+   Desde 1.33.0 la misma pasada comprueba una segunda propiedad sobre el texto: **que ninguna
+   sección reconstruya lo que un instrumento de `tests/util/` ya hace** — materializar un árbol
+   desde una referencia de `git`, cronometrar repeticiones de un sujeto o contar procesos con
+   envoltorios en el `PATH`—. Si lo hace, la vuelta **aborta nombrando el archivo y la función**:
+   el materializador estaba **duplicado literalmente** en las dos secciones 37, y ahí es donde se
+   perdía media línea base sin que nadie mirara cuánto.
 4. **Una sección que muere se distingue de una sección que pasó limpia.** Las dos producen cero
    líneas. Al terminar el archivo entero, el subshell deja una marca; si no está, el corredor
    **aborta nombrando el archivo y su código de salida**, y la vuelta sale ≠ 0. Nunca se cuenta
@@ -213,6 +220,17 @@ Tres reglas nacidas de fallos reales:
 | Coste (37/2) | una cabecera normal (6 líneas y 200 líneas) contra v1.32.1, **6 series intercaladas** por árbol | **0 procesos añadidos y** reloj ≤ **1,25×** |
 | Coste (37/2) | la misma sonda cuando **no converge** (2.º mínimo / mínimo > 1,25×) | **SKIP**, nunca PASS y nunca FAIL |
 | Coste (37/2) | una sección sintética que deja un proceso vivo | el corredor la **acusa por su nombre** |
+| Sondas (38) | `bash -n` y los modos de cada `tests/util/*.sh` | ejecutable **y** con shebang, o **aborta nombrándolo** |
+| Sondas (38) | los registros de las tres sondas | **una** línea, y **ninguna** con la forma de un caso |
+| Sondas (38) | un campo obligatorio ausente, vacío o no numérico | **error con motivo**, nunca un cero |
+| Sondas (38) | la **calibración** de cada instrumento en esta corrida | sensible ≈ **2,000×**, insensible ≈ **1,000×**, y **distinguidos** o **FAIL** |
+| Sondas (38) | **calibrar** frente a **una medición** del mismo instrumento | ≤ **4×** en reloj **y** en procesos |
+| Sondas (38) | un sujeto que deja vivo un **NIETO** | la sonda lo **mata y publica `vivos=n`**; sin esa mitad, **sobrevive** |
+| Sondas (38) | el camino de **error** de la sonda de procesos | **0** directorios de envoltorios detrás |
+| Sondas (38) | un `PATH` con componente vacío o relativo (`:x`, `x:`, `::`, `.`) | **se dice**, nunca un número |
+| Sondas (38) | reloj **bajo instrumentación de procesos** | muestra **mixta**: no publicable |
+| Sondas (38) | una referencia de `git` que no resuelve | `sin-linea-base` **con motivo** y **sin árbol parcial** |
+| Sondas (38) | el ayudante de veredicto sobre 9 registros sintéticos | `estado≠ok` ⇒ **SKIP**; vacío, ilegible o sin su calibración ⇒ **FAIL** |
 
 **Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
 falsea la máquina, el runner del CI y la carga. Los de arriba son **cocientes de duplicación**
@@ -338,6 +356,34 @@ milisegundos, aunque la comparación de 76 s esté apagada: una puerta que sólo
 alguien enciende una palanca es una puerta de la que nadie sabe si cierra. Y con la de convergencia
 el argumento es aún más fuerte: en una corrida sana la sonda **converge**, así que el camino que
 importa —la abstención— no se recorrería nunca.
+
+### Los instrumentos de `tests/util/`: la sonda mide, el corredor juzga (desde 1.33.0)
+
+`ADR-005`. Las sondas de medida ya no se reconstruyen dentro de cada sección: viven una sola vez en
+`tests/util/` y se **invocan** como programas. Eso **no** deroga la invariante 3 —«un ayudante
+compartido va en el corredor»— porque separa dos cosas que iban juntas: los instrumentos **miden y
+no juzgan** (no se hacen `source`, no viven en el espacio de nombres de la sección, y la derivación
+por `awk` de arriba sigue siendo completa), y **quien juzga sigue viviendo en el corredor**. Lo que
+se añadió allí es el **único** parser del registro, el juez de «una sonda que no pudo medir no se
+convierte en PASS» y —deliberadamente— **el factor esperado y la banda de la calibración**: con la
+banda dentro del archivo que se cuestiona, ensancharla es una línea de la misma edición.
+
+**Cada corrida acredita que el instrumento responde al sujeto.** Antes del despacho, el corredor
+ejerce **una calibración por instrumento** con un par de sujetos sintéticos —uno cuyo coste cambia
+por un **factor conocido por construcción** al duplicar un parámetro, y uno que no depende de ese
+parámetro— y contrasta los dos factores contra la banda. Si no se distinguen, **FAIL**: nunca SKIP
+y nunca PASS. Y una medición cuya corrida **no** lleva calibración de su instrumento también es
+FAIL, porque «no hay calibración» y «la calibración no distingue» dicen lo mismo: *no sé si estoy
+midiendo el sujeto*. Se contrasta **el factor y nunca un coste absoluto**: las tres sondas mudas de
+esta ventana medían tiempo real y habían dejado de responder al sujeto, así que **una calibración
+por coste absoluto pasa en las tres**.
+
+Sólo se calibra si alguna sección de la vuelta usa un instrumento, y eso se deriva de la misma
+pasada de texto de la invariante 1: las vueltas **anidadas** —la sección 32 que 37/2 cronometra, los
+directorios sintéticos de la autoprueba— no tocan `tests/util/` y no pagan la calibración. Coste
+medido de la palanca (2026-09-07, bash 5.3.9, linux): **~3,4 s de reloj y 69 procesos por vuelta**,
+una sola vez. Los detalles de uso, los campos del registro y los ajustes operativos están en
+`tests/util/README.md`.
 
 ## Por qué importa
 - La distinción coordinadora vs. subagente se apoya en el campo `agent_id` del input del hook

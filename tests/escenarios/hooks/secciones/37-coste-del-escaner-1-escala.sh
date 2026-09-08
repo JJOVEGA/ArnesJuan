@@ -16,7 +16,6 @@
 CASOS_ESPERADOS_SECCION=13
 seccion_nueva "--- 37/1 · el coste del escáner: escala, equivalencia y la pared de los 60 s (REQ-017) ---"
 
-REPO37="$(cd "${SEC_DIR%/}/../../../.." 2>/dev/null && pwd || true)"
 CR37=$'\r'
 # El contexto de la máquina viaja EN EL MENSAJE de cada caso del dominio, y no es adorno:
 # la partición dentro/fuera de CA-01 depende de la versión de bash y del locale, así que un
@@ -25,62 +24,53 @@ LOC37="${LC_ALL:-${LC_CTYPE:-${LANG:-(sin declarar)}}}"
 CTX37="bash $BASH_VERSION, locale del entorno $LOC37"
 num37() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
 
-# --- Árboles heredados: la línea base se materializa, no se supone --------------
-# Sin `tar` ni `git archive`: `git show` archivo a archivo, que es lo que hay en toda
-# plataforma donde este banco corre. Si el tag no está (clon superficial, tarball), la
-# sonda NO puede medir y sus casos dicen SKIP con el motivo — CA-06.
-mat37() {   # <tag> <destino> -> 0 si el árbol quedó materializado
-  local tag="$1" dst="$2" f lista
-  [ -n "$REPO37" ] || return 1
-  git -C "$REPO37" rev-parse -q --verify "refs/tags/$tag" >/dev/null 2>&1 || return 1
-  lista="$(git -C "$REPO37" ls-tree -r --name-only "$tag" hooks tools 2>/dev/null)"
-  [ -n "$lista" ] || return 1
-  mkdir -p "$dst/hooks" "$dst/tools" 2>/dev/null || return 1
-  while IFS= read -r f; do
-    [ -n "$f" ] || continue
-    git -C "$REPO37" show "$tag:$f" > "$dst/$f" 2>/dev/null || return 1
-  done <<< "$lista"
-  [ -s "$dst/hooks/lib.sh" ] || return 1
-  # `git show` escribe el CONTENIDO, no el modo: sin el bit de ejecución un árbol heredado
-  # sirve para `source` y para `bash script`, pero no para invocarlo directamente.
-  chmod +x "$dst"/hooks/*.sh "$dst"/tools/*.sh 2>/dev/null || true
+# --- Árboles heredados: la línea base se materializa con el INSTRUMENTO COMPARTIDO ---
+# REQ-021 CA-07 punto 4. El materializador ya no vive aquí: estaba DUPLICADO LITERALMENTE
+# en esta sección y en 37/2 (`mat37` y `mat47`, la misma lógica escrita dos veces), y era
+# justo donde se perdía media línea base sin que nadie mirara CUÁNTO se había dejado de
+# materializar —el árbol copiado sin `.git` que dio 2,008× donde el trabajo entero da
+# 0,964×, y el `git show` sin bit de ejecución que dejaba al canario sin arrancar—.
+# `sonda-linea-base.sh` comprueba que lo materializado coincide con el objeto del árbol de
+# esa referencia, deja los scripts ejecutables y publica `archivos=<n>` (CA-05).
+MAT37_REG=''
+mat37() {   # <referencia> <destino> -> 0 si el árbol quedó materializado ENTERO
+  local ref="$1" dst="$2" reg
+  MAT37_REG=''
+  reg="$("$UTIL_DIR/sonda-linea-base.sh" --ref "$ref" --destino "$dst" --etiqueta "$ref" 2>/dev/null)"
+  MAT37_REG="$reg"
+  [ -n "$reg" ] || return 1
+  sonda_lee "$reg" || return 1
+  [ "${SONDA[estado]}" = ok ] || return 1
   return 0
 }
-HER37="$RAIZ/her37-321-$BASHPID"; HER37_OK=no
+HER37="$RAIZ/her37-321-$BASHPID"; HER37_OK=no; REGHER37=''
 mat37 v1.32.1 "$HER37" && HER37_OK=si
+REGHER37="$MAT37_REG"
 BAS37="$RAIZ/her37-320-$BASHPID"; BAS37_OK=no
 mat37 v1.32.0 "$BAS37" && BAS37_OK=si
 LIB37="$HOOKS_DIR/lib.sh"
 
-# --- El medidor, en su propio proceso -----------------------------------------
-# Cada árbol define las MISMAS funciones: medirlos en un solo proceso mediría el último
-# que se cargó. Un proceso por serie, y NADA que sobreviva a la sección (CA-06).
-MED37="$RAIZ/med37-$BASHPID.sh"
-cat > "$MED37" <<'MED37FIN'
-LIB="$1"; FN="$2"; N="$3"; K="$4"
-[ -n "${EPOCHREALTIME:-}" ] || { printf 'SIN-RELOJ\n'; exit 2; }
-source "$LIB" >/dev/null 2>&1 || { printf 'SIN-LIB\n'; exit 1; }
-declare -F "$FN" >/dev/null 2>&1 || { printf 'SIN-FN\n'; exit 1; }
-s=''; while [ ${#s} -lt 512 ]; do s+='Estado: en-revision -- relleno de cabecera '; done
-l=''; while [ ${#l} -lt "$N" ]; do l+="$s"; done; l="${l:0:N}"
-t0=${EPOCHREALTIME/./}
-for ((i=0;i<K;i++)); do ARNES_CITA=0; ARNES_CR=0; "$FN" "$l"; done
-t1=${EPOCHREALTIME/./}
-printf '%s\n' "$((t1-t0))"
-MED37FIN
-
-MED37_US=''; MED37_MOTIVO=''
+# --- El medidor: `sonda-reloj.sh`, que impone el estadístico ------------------
+# Cada árbol define las MISMAS funciones, así que medirlos en un solo proceso mediría el
+# último que se cargó: la sonda corre en SU PROPIO proceso y se le pasa la carga del árbol
+# en `--prep`, una vez por invocación en vez de una por serie. El mínimo de r series lo
+# impone ella (CA-02), no este archivo: la regla ya estaba escrita y se incumplió dos veces.
+MED37_US=''; MED37_MOTIVO=''; MED37_REG=''
 mide37() {   # <lib> <fn> <bytes> <k> -> MED37_US = mínimo de 3 series, en microsegundos
-  local lib="$1" fn="$2" n="$3" k="$4" r u
-  MED37_US=''; MED37_MOTIVO=''
+  local lib="$1" fn="$2" n="$3" k="$4" reg
+  MED37_US=''; MED37_MOTIVO=''; MED37_REG=''
   if [ ! -r "$lib" ]; then MED37_MOTIVO="no existe $lib"; return 1; fi
-  for r in 1 2 3; do
-    u="$(bash "$MED37" "$lib" "$fn" "$n" "$k" 2>/dev/null)"
-    case "$u" in
-      ''|*[!0-9]*) MED37_MOTIVO="el medidor no devolvió un número (<${u:-vacío}>)"; MED37_US=''; return 1 ;;
-    esac
-    if [ -z "$MED37_US" ] || [ "$u" -lt "$MED37_US" ]; then MED37_US="$u"; fi
-  done
+  reg="$("$UTIL_DIR/sonda-reloj.sh" --k "$k" --r 3 --etiqueta "$fn-$n" \
+    --prep "source '$lib' >/dev/null 2>&1 || :; s37=''; while [ \${#s37} -lt 512 ]; do s37+='Estado: en-revision -- relleno de cabecera '; done; l37=''; while [ \${#l37} -lt $n ]; do l37+=\"\$s37\"; done; l37=\"\${l37:0:$n}\"" \
+    --sujeto "ARNES_CITA=0; ARNES_CR=0; $fn \"\$l37\"" 2>/dev/null)"
+  MED37_REG="$reg"
+  if [ -z "$reg" ]; then MED37_MOTIVO='la sonda de reloj no dejó registro'; return 1; fi
+  if ! sonda_lee "$reg"; then MED37_MOTIVO="$SONDA_MOTIVO"; return 1; fi
+  if [ "${SONDA[estado]}" != ok ]; then
+    MED37_MOTIVO="la sonda no pudo medir: estado=${SONDA[estado]} motivo=${SONDA[motivo]:-sin motivo} (min=${SONDA[min]:-n/a}µs)"; return 1
+  fi
+  if ! num37 "${SONDA[min]:-}"; then MED37_MOTIVO="la sonda no publicó un mínimo (<${SONDA[min]:-vacío}>)"; return 1; fi
+  MED37_US="${SONDA[min]}"
   return 0
 }
 
@@ -757,5 +747,5 @@ fi
 # Los contadores no se tocan de más: `dir09_37` corrió dentro de una sustitución de comandos,
 # que es un subshell, y sus PASS/FAIL murieron con él.
 
-rm -rf "$HER37" "$BAS37" "$CORPUS37" "$CORPD37" "$MED37" "$EVA37" "$CLA37" "$PARED37" \
+rm -rf "$HER37" "$BAS37" "$CORPUS37" "$CORPD37" "$EVA37" "$CLA37" "$PARED37" \
        "$EVHE37" "$EVHC37" "$EVEE37" "$EVEC37" "$DENTRO37" "$RES37"

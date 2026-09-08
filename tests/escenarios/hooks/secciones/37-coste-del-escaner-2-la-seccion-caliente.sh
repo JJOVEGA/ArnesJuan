@@ -28,31 +28,29 @@
 CASOS_ESPERADOS_SECCION=11
 seccion_nueva "--- 37/2 · la ruta crítica del banco y el camino de una cabecera normal (REQ-017) ---"
 
-REPO47="$(cd "${SEC_DIR%/}/../../../.." 2>/dev/null && pwd || true)"
 BANCO47="${SEC_DIR%/}/../run.sh"
 INV47="${SEC_DIR%/}/../inventario.sh"
 
-mat47() {   # <tag> <destino> -> 0 si el árbol heredado quedó materializado
-  local tag="$1" dst="$2" f lista
-  [ -n "$REPO47" ] || return 1
-  git -C "$REPO47" rev-parse -q --verify "refs/tags/$tag" >/dev/null 2>&1 || return 1
-  lista="$(git -C "$REPO47" ls-tree -r --name-only "$tag" hooks tools 2>/dev/null)"
-  [ -n "$lista" ] || return 1
-  mkdir -p "$dst/hooks" "$dst/tools" 2>/dev/null || return 1
-  while IFS= read -r f; do
-    [ -n "$f" ] || continue
-    git -C "$REPO47" show "$tag:$f" > "$dst/$f" 2>/dev/null || return 1
-  done <<< "$lista"
-  [ -s "$dst/hooks/lib.sh" ] || return 1
-  # `git show` escribe el CONTENIDO, no el modo: sin esto los hooks heredados quedan sin
-  # bit de ejecución y el canario del corredor hijo no arranca. La corrida heredada salía
-  # entonces «sin casos» —un SKIP correcto pero por el motivo equivocado— y CA-05 dejaba
-  # de medir en silencio, que es exactamente lo que esta sección existe para no permitir.
-  chmod +x "$dst"/hooks/*.sh "$dst"/tools/*.sh 2>/dev/null || true
+# EL MATERIALIZADOR YA NO VIVE AQUÍ (REQ-021 CA-07 punto 4): era la MISMA LÓGICA ESCRITA
+# DOS VECES —`mat37` en 37/1 y `mat47` aquí—, y una de las dos formas de perder media línea
+# base sin que nadie mirara cuánto. `sonda-linea-base.sh` comprueba que lo materializado
+# coincide con el objeto del árbol de esa referencia, deja los scripts con su bit de
+# ejecución —sin él el canario del corredor hijo no arranca y la corrida sale «sin casos»,
+# un SKIP correcto por un motivo que no es el suyo— y publica `archivos=<n>`.
+MAT47_REG=''
+mat47() {   # <referencia> <destino> -> 0 si el árbol heredado quedó materializado ENTERO
+  local ref="$1" dst="$2" reg
+  MAT47_REG=''
+  reg="$("$UTIL_DIR/sonda-linea-base.sh" --ref "$ref" --destino "$dst" --etiqueta "$ref" 2>/dev/null)"
+  MAT47_REG="$reg"
+  [ -n "$reg" ] || return 1
+  sonda_lee "$reg" || return 1
+  [ "${SONDA[estado]}" = ok ] || return 1
   return 0
 }
-HER47="$RAIZ/her47-$BASHPID"; HER47_OK=no
+HER47="$RAIZ/her47-$BASHPID"; HER47_OK=no; REGHER47=''
 mat47 v1.32.1 "$HER47" && HER47_OK=si
+REGHER47="$MAT47_REG"
 # LOS NOMBRES SE FIJAN AQUÍ, FUERA DE TODA SUSTITUCIÓN, Y ESO NO ES ESTILO. `$BASHPID`
 # dentro de `$( )` es el PID del SUBSHELL DE LA SUSTITUCIÓN, no el de la sección: escrito
 # en línea, cada corrida guardaba su salida en un archivo con otro nombre y el inventario
@@ -416,45 +414,12 @@ json47() {   # <REQ> -> el Edit que cierra ese REQ
     '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.NADA,
       tool_input:{file_path:$fp,old_string:"Estado: en-revisión",new_string:"Estado: completado"}}'
 }
-SONDA47="$RAIZ/sonda47-$BASHPID.sh"
-cat > "$SONDA47" <<'SONDA47FIN'
-# <hooks> <proyecto> <json> -> "<procesos por llamada>"
-# SÓLO LOS PROCESOS. El reloj se mide arriba, en la sección, SERIE A SERIE — y esa separación
-# es el arreglo de QA-017-06: para INTERCALAR los dos árboles (a, b, a, b) hace falta poder
-# pedir UNA serie, y mientras la sonda devolvía «procesos y el mejor de tres series» sólo se
-# podía medir en BLOQUE. En bloque cada árbol ve vecinos distintos, y la contención que el
-# propio banco fabrica con JOBS=6 se colaba entera en la razón: 1,443× sobre un estimando que
-# en aislamiento vale ~1,0.
-HD="$1"; PR="$2"; JS="$3"
-[ -n "${EPOCHREALTIME:-}" ] || { printf 'SIN-RELOJ\n'; exit 2; }
-BIN="$PR/.bin47-$$"; rm -rf "$BIN"; mkdir -p "$BIN" || exit 1
-# CA-06, Y ESTO NO ES CEREMONIA. Las rutas reales se resuelven ANTES de tocar el PATH y con
-# `type -P`, que sólo mira ejecutables del PATH y NO ve funciones de shell. En 1.32.1 un
-# envoltorio de `grep` construido con `command -v` sobre un binario SOMBREADO POR UNA
-# FUNCIÓN se resolvió a sí mismo, se llamó a sí mismo y vivió 3 h 41 min comiéndose un
-# núcleo. Además se comprueba que ninguna ruta resuelta caiga dentro del propio envoltorio.
-declare -A REAL
-for b in jq awk grep sed tr date cat basename dirname mktemp wc head tail sort git; do
-  r="$(type -P "$b" 2>/dev/null || true)"; [ -n "$r" ] && REAL[$b]="$r"
-done
-[ "${#REAL[@]}" -gt 0 ] || { printf 'SIN-BINARIOS\n'; exit 1; }
-for b in "${!REAL[@]}"; do
-  case "${REAL[$b]}" in "$BIN"/*) printf 'ENVOLTORIO-RECURSIVO %s\n' "$b"; exit 9 ;; esac
-  printf '#!/bin/sh\necho %s >> "%s/reg"\nexec %s "$@"\n' "$b" "$BIN" "${REAL[$b]}" > "$BIN/$b" || exit 1
-  chmod +x "$BIN/$b" || exit 1
-done
-: > "$BIN/reg"
-printf '%s' "$JS" > "$BIN/in.json"
-[ -s "$BIN/in.json" ] || { rm -rf "$BIN"; printf 'SIN-JSON\n'; exit 3; }
-PATH="$BIN:$PATH" CLAUDE_PROJECT_DIR="$PR" bash "$HD/guard-completado.sh" < "$BIN/in.json" >/dev/null 2>&1
-procs=0; while IFS= read -r _; do procs=$((procs+1)); done < "$BIN/reg"
-rm -rf "$BIN"
-printf '%s\n' "$procs"
-SONDA47FIN
-
-# EL PROCEDIMIENTO DE MEDIDA ES PARTE DEL CRITERIO (CA-08), Y ESTO ES LO QUE LO IMPLEMENTA.
-# SER47 series por árbol, INTERCALADAS a, b, a, b, y el estadístico es el MÍNIMO. El reloj se
-# mide SIN la instrumentación de procesos: un envoltorio por proceso mide el envoltorio.
+# EL PROCEDIMIENTO DE MEDIDA ES PARTE DEL CRITERIO (CA-08), Y LOS DOS INSTRUMENTOS QUE LO
+# IMPLEMENTAN VIVEN AHORA EN `tests/util/` (REQ-021). SER47 series por árbol, INTERCALADAS
+# a, b, a, b, y el estadístico es el MÍNIMO: los impone `sonda-reloj.sh`, no este archivo
+# —«una disciplina que depende de que quien llama se acuerde no es una disciplina»—. Y el
+# reloj se toma SIN la instrumentación de procesos, que es otra invocación y otra sonda: un
+# envoltorio por proceso mide el envoltorio (CA-02 punto 5).
 #
 # K47=4: cada serie ronda medio segundo, diez veces por encima del suelo de 50 ms donde el
 # reloj deja de distinguir del ruido. Se baja de 8 a 4 porque las series se DUPLICAN de 3 a 6:
@@ -465,26 +430,6 @@ K47=4
 TECHO47=1250   # ‰. EL MISMO número para la razón y para la convergencia, y no es casualidad:
                # «un instrumento tiene que resolver al menos el factor que vigila». No es un
                # techo nuevo, es el de CA-08 (ii) leído sobre la propia sonda.
-U47=''
-serie47() {   # <dir de hooks> <archivo json> <k> -> U47 = µs de UNA serie de k llamadas
-  local hd="$1" js="$2" k="$3" t0 t1 i
-  U47=''
-  [ -n "${EPOCHREALTIME:-}" ] || return 1
-  t0=${EPOCHREALTIME/./}
-  for ((i = 0; i < k; i++)); do CLAUDE_PROJECT_DIR="$PROJ" bash "$hd/guard-completado.sh" < "$js" >/dev/null 2>&1; done
-  t1=${EPOCHREALTIME/./}
-  U47=$((t1 - t0)); return 0
-}
-# mete47 <mín actual> <2º mín actual> <muestra> -> MIN47 / MIN2_47 con la muestra dentro.
-# El SEGUNDO mínimo se mantiene junto al mínimo porque es lo que mide si el mínimo CONVERGIÓ:
-# dos series que caen cerca dicen que la sonda resuelve; un mínimo solitario no dice nada.
-MIN47=''; MIN2_47=''
-mete47() {
-  local m="${1:-}" m2="${2:-}" x="$3"
-  if [ -z "$m" ] || [ "$x" -lt "$m" ]; then MIN47="$x"; MIN2_47="$m"
-  elif [ -z "$m2" ] || [ "$x" -lt "$m2" ]; then MIN47="$m"; MIN2_47="$x"
-  else MIN47="$m"; MIN2_47="$m2"; fi
-}
 declare -A PROCS47 RELOJ47 RELOJ2_47
 falta47=''
 JSON47="$RAIZ/json47-$BASHPID.json"
@@ -495,22 +440,33 @@ for _cual47 in REQ-100 REQ-200; do
   for _arb47 in este heredado; do
     _hd47="$HOOKS_DIR"; [ "$_arb47" = heredado ] && _hd47="$HER47/hooks"
     if [ "$_arb47" = heredado ] && [ "$HER47_OK" != si ]; then falta47="sin línea base v1.32.1"; continue; fi
-    _p47="$(bash "$SONDA47" "$_hd47" "$PROJ" "$(cat "$JSON47")" 2>/dev/null)"
-    if num47 "$_p47"; then PROCS47["$_cual47-$_arb47"]="$_p47"; else falta47="la sonda de procesos respondió <${_p47:-vacío}>"; fi
-  done
-  # Y EL RELOJ, INTERCALADO. La alternancia cancela por construcción la contención que el
-  # banco fabrica: las dos series consecutivas de árboles distintos ven el mismo vecindario.
-  _me47=''; _me2_47=''; _mh47=''; _mh2_47=''
-  _s47=0
-  while [ "$_s47" -lt "$SER47" ]; do
-    _s47=$((_s47 + 1))
-    if serie47 "$HOOKS_DIR" "$JSON47" "$K47"; then mete47 "$_me47" "$_me2_47" "$U47"; _me47="$MIN47"; _me2_47="$MIN2_47"; fi
-    if [ "$HER47_OK" = si ]; then
-      if serie47 "$HER47/hooks" "$JSON47" "$K47"; then mete47 "$_mh47" "$_mh2_47" "$U47"; _mh47="$MIN47"; _mh2_47="$MIN2_47"; fi
+    _reg47="$("$UTIL_DIR/sonda-procesos.sh" --dir-trabajo "$RAIZ" --etiqueta "$_cual47-$_arb47" \
+      --sujeto "CLAUDE_PROJECT_DIR='$PROJ' bash '$_hd47/guard-completado.sh' < '$JSON47'" 2>/dev/null)"
+    if sonda_lee "$_reg47" && [ "${SONDA[estado]}" = ok ] && num47 "${SONDA[cuenta]:-}"; then
+      PROCS47["$_cual47-$_arb47"]="${SONDA[cuenta]}"
+    else
+      falta47="la sonda de procesos no midió (${SONDA_MOTIVO:-estado=${SONDA[estado]:-?} motivo=${SONDA[motivo]:-?}})"
     fi
   done
-  RELOJ47["$_cual47-este"]="$_me47";     RELOJ2_47["$_cual47-este"]="$_me2_47"
-  RELOJ47["$_cual47-heredado"]="$_mh47"; RELOJ2_47["$_cual47-heredado"]="$_mh2_47"
+  # Y EL RELOJ, INTERCALADO EN UNA SOLA INVOCACIÓN. La alternancia la hace la sonda: las dos
+  # series consecutivas de árboles distintos ven el mismo vecindario, y en bloque cada árbol
+  # veía vecinos distintos (QA-017-06: 1,217 en bloque frente a 1,012 intercalado).
+  if [ "$HER47_OK" = si ]; then
+    _reg47="$("$UTIL_DIR/sonda-reloj.sh" --k "$K47" --r "$SER47" --etiqueta "$_cual47" \
+      --sujeto-a "CLAUDE_PROJECT_DIR='$PROJ' bash '$HOOKS_DIR/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" \
+      --sujeto-b "CLAUDE_PROJECT_DIR='$PROJ' bash '$HER47/hooks/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" 2>/dev/null)"
+  else
+    _reg47="$("$UTIL_DIR/sonda-reloj.sh" --k "$K47" --r "$SER47" --etiqueta "$_cual47" \
+      --sujeto "CLAUDE_PROJECT_DIR='$PROJ' bash '$HOOKS_DIR/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" 2>/dev/null)"
+  fi
+  if sonda_lee "$_reg47" && [ "${SONDA[estado]}" = ok ]; then
+    RELOJ47["$_cual47-este"]="${SONDA[min_a]:-}";     RELOJ2_47["$_cual47-este"]="${SONDA[min2_a]:-}"
+    RELOJ47["$_cual47-heredado"]="${SONDA[min_b]:-}"; RELOJ2_47["$_cual47-heredado"]="${SONDA[min2_b]:-}"
+  else
+    falta47="la sonda de reloj no midió (${SONDA_MOTIVO:-estado=${SONDA[estado]:-?} motivo=${SONDA[motivo]:-?}})"
+    RELOJ47["$_cual47-este"]=''; RELOJ2_47["$_cual47-este"]=''
+    RELOJ47["$_cual47-heredado"]=''; RELOJ2_47["$_cual47-heredado"]=''
+  fi
 done
 rm -f "$JSON47"
 
@@ -607,14 +563,26 @@ fi
 if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-06 el envoltorio no se resuelve a sí mismo" | grep -qi -- "$FILTRO"; then
   trampa47="$RAIZ/trampa47-$BASHPID"; mkdir -p "$trampa47"
   printf '#!/bin/sh\nexit 0\n' > "$trampa47/grep"; chmod +x "$trampa47/grep"
-  sal47="$(PATH="$trampa47:$PATH" bash "$SONDA47" "$HOOKS_DIR" "$PROJ" "$(json47 REQ-100)" 2>/dev/null)"
+  # EL NOMBRE SE FIJA AQUÍ, FUERA DE TODA SUSTITUCIÓN, y esto no es estilo: `$BASHPID`
+  # dentro de `$( )` es el PID del SUBSHELL DE LA SUSTITUCIÓN, no el de la sección. Escrito
+  # en línea, el archivo que se escribe y el que se lee llevan nombres distintos y la sonda
+  # mide un sujeto que no existe. Volvió a ocurrir al mudar esta sección a `tests/util/`.
+  jsontrampa47="$RAIZ/trampa47-json-$BASHPID.json"
+  json47 REQ-100 > "$jsontrampa47" 2>/dev/null
+  sal47="$(PATH="$trampa47:$PATH" "$UTIL_DIR/sonda-procesos.sh" --dir-trabajo "$RAIZ" \
+    --sujeto "CLAUDE_PROJECT_DIR='$PROJ' bash '$HOOKS_DIR/guard-completado.sh' < '$jsontrampa47'" 2>/dev/null)"
   # `type -P` resuelve al PRIMER grep del PATH, que es la trampa; lo que se exige es que la
   # sonda no acabe apuntándose a su propio directorio ni devuelva basura.
-  case "$sal47" in
-    ENVOLTORIO-RECURSIVO*) echo "  PASS  REQ-017 CA-06 el envoltorio detecta y denuncia resolverse a sí mismo (<$sal47>)"; PASS=$((PASS+1)) ;;
-    ''|*[!0-9]*)           echo "  FAIL  REQ-017 CA-06 la sonda de procesos devolvió <${sal47:-vacío}> con un binario sombreado en el PATH"; FAIL=$((FAIL+1)) ;;
-    *)                     echo "  PASS  REQ-017 CA-06 el envoltorio resuelve rutas absolutas antes de tocar el PATH y no se llama a sí mismo (<$sal47> procesos)"; PASS=$((PASS+1)) ;;
-  esac
+  if ! sonda_lee "$sal47"; then
+    echo "  FAIL  REQ-017 CA-06 la sonda de procesos no dejó registro legible con un binario sombreado en el PATH: $SONDA_MOTIVO"; FAIL=$((FAIL+1))
+  elif [ "${SONDA[estado]}" = envoltorio-recursivo ]; then
+    echo "  PASS  REQ-017 CA-06 el envoltorio detecta y denuncia resolverse a sí mismo (<${SONDA[motivo]}>)"; PASS=$((PASS+1))
+  elif [ "${SONDA[estado]}" = ok ] && num47 "${SONDA[cuenta]:-}"; then
+    echo "  PASS  REQ-017 CA-06 el envoltorio resuelve rutas absolutas antes de tocar el PATH y no se llama a sí mismo (<${SONDA[cuenta]}> procesos)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  REQ-017 CA-06 la sonda de procesos respondió estado=${SONDA[estado]} motivo=${SONDA[motivo]:-} cuenta=<${SONDA[cuenta]:-vacío}> con un binario sombreado en el PATH"; FAIL=$((FAIL+1))
+  fi
+  rm -f "$jsontrampa47"
   rm -rf "$trampa47"
 fi
 
@@ -642,5 +610,5 @@ if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-06 el corredor acusa" | grep -qi 
   rm -rf "$sint47"
 fi
 
-rm -rf "$HER47" "$SONDA47" "$OUT_HER47" "$TRAB47" "$OUT_ESTE47"-1.txt "$OUT_ESTE47"-2.txt \
+rm -rf "$HER47" "$OUT_HER47" "$TRAB47" "$OUT_ESTE47"-1.txt "$OUT_ESTE47"-2.txt \
        "$OUT_ESTE47"-3.txt "$ROJO47" "$LIMPIO47" "$MUDO47" "$TRABSINT47" "$TRABVACIO47"
