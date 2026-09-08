@@ -2,6 +2,96 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · REQ-019 se amplía al README y pasa a 1.34.0 — y la premisa de la coordinadora era falsa: ninguna máquina del arnés lee ese documento
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
+
+**Dos decisiones del propietario:** `Versión destino: 1.34.0` **como primer trabajo de la ventana** —el
+campo **no existía**, y era un defecto en sí: la palanca que justificó partir la ventana no declaraba en
+qué ventana estaba— y **ampliación de alcance a `requirements/README.md`**.
+
+### Corrección: la coordinadora afirmó que las puertas leen el README. Es falso, y está medido
+
+`tools/arnes-paralelo.sh:288` y `tools/arnes-lectura.sh:119` lo **saltan explícitamente**
+(`case "$base" in README.md|readme.md) continue ;;`), y las dos apariciones en
+`hooks/guard-completado.sh` (líneas 519 y 524) están **dentro de cadenas de mensaje**. Las puertas no
+leen ese documento: **implementan** el mismo contrato en su código y en `.arnes/config.json`. El README
+es la **segunda transcripción**, la legible.
+
+**La premisa era falsa en la letra y verdadera en la consecuencia, y la diferencia importa.** Perder
+texto allí **no apaga ninguna puerta**; rompe dos cosas que **no salen en el banco**: (1) **el camino de
+remedio** —`guard-completado` deniega y manda a una sección concreta; si el contenido se fue, la
+denegación pierde su remedio—; y (2) **el marcador de versión** de `skills/arnes-upgrade/SKILL.md`
+(líneas 119-125), que usa **tres frases y nombres de sección del README** para **desmentir** la versión
+de origen: su ausencia no da error, da **DESMENTIDO → UNKNOWN → la migración para**.
+
+**Y el hallazgo útil: esos dos acoplamientos cuestan ≈0 bytes extra**, porque caen **dentro** del suelo
+que el contrato de forma ya obliga a conservar. El acoplamiento con la máquina no encarece el reparto —
+**convierte un error de juicio en un fallo silencioso**. Por eso va contratado (`CA-02.4`, `CA-15.iii`) y
+no dejado en la predicción.
+
+### El suelo cae encima del techo, y no se tocó ningún umbral
+
+Suelo inamovible: **≈233 de 433 líneas (54 %)**, y en bytes **≈58–64 %** —las filas del Índice pesan muy
+por encima de la media—. **`CA-07 (ii)` pide ≤ 60 %: el suelo estimado cae encima del techo.** El
+analista **no escribió ningún techo nuevo**: se aplicó `CA-15` a sí misma —*cardinalidad medida, nunca
+fijada*— y dejó la medición previa obligatoria de §CA-14 con la salida por firma del propietario ya
+cableada. **Ahorro real por movimiento: ≈11 000–13 000 B (36–42 %)** — no el doblado que la coordinadora
+anunció.
+
+**Y el bloque más caro queda fuera con su motivo:** el `## Índice` son ≈6 000 B, el **19 %** del archivo,
+y es **una copia a mano de lo que `tools/arnes-lectura.sh` ya deriva** —el propio documento lo dice—. Eso
+no es un movimiento, es un **mecanismo**: otro dueño y toca `codigo_app.globs`. *El 19 % más caro del
+documento no lo baja este REQ, y quien lo baje no necesita repartir nada.*
+
+### La forma (a) aplicada al propio REQ, y corregida
+
+Se **de-nombraron doce criterios**: donde decían `AGENTS.md` ahora dicen «cada documento en alcance», con
+§«Documentos en alcance» como **sede única del conjunto**. Ésa es la corrección de fondo: **el REQ tenía
+criterios que enumeraban su propio sujeto**, y por eso ampliar el alcance obligó a reescribir doce.
+
+Extensiones reales, no cosméticas: **`CA-02.4`** (sub-universo del README por propiedad, con tres sitios
+únicos: anclas citadas por mensajes, marcadores de versión de la skill, y contrato de forma de los
+campos); **`CA-04`** —la extracción de encabezados **ignora los bloques vallados**, porque la plantilla
+del REQ vive dentro de un fence con líneas `## ` y un `^## ` ingenuo devuelve **siete encabezados
+fantasma**, declarando siete secciones eliminadas sobre un reparto correcto—; **`CA-11`** de una vía a
+**tres**, y la nueva es la probable: *el arreglo natural cuando un analista «ya no encuentra las reglas»
+es añadir el archivo delegado a `agents/analista-requerimientos.md`; no rompe ningún puntero, cumple
+`CA-01` y `CA-03`, y **anula `CA-07` sin dejar rastro***; **`CA-15`** gana el universo (iii) con el
+argumento de por qué aquí es más necesario —el README **no tiene** `🔒` ni tabla de §13, así que `CA-15`
+no es un cinturón sobre `CA-02`: **es la única enumeración que existe**—.
+
+### `CA-16` estaba escrito por ARCHIVO, y su justificación era falsa para el segundo sujeto
+
+El `Entonces` era por propiedad, pero **el `Dado` nombraba `AGENTS.md`** y su justificación entera
+también. Al reformularlo apareció que la premisa *«casi ninguna comisión lo escribe»* es cierta de
+`AGENTS.md` y **falsa del README**: su `## Índice` lo actualiza **cada** comisión de analista. Se corrigió
+en vez de borrarse — para el README la herramienta **sí** ve buena parte del riesgo; lo que sigue sin ver
+son las comisiones de `desarrollador`, `qa-tester` y `auditor-seguridad`, que leen el documento entero y
+**no lo declaran nunca**. *Un criterio cuya justificación es falsa para uno de sus dos sujetos es clase
+`contrato` aunque su `Entonces` sea correcto.*
+
+### `ADR-006`, decidido con el test que el propio REQ ya tenía escrito
+
+El REQ dice que `CA-15` y `CA-16` no abren ADR «porque ninguno cambia el alcance ni la decisión base».
+**Éste cambia el alcance**: un documento → dos, una plantilla divergente → dos. Cambio **DE FONDO** →
+**`ADR-006`**, que **extiende y no supersede** a `ADR-003`, cuyos cuatro motivos se comprobaron **uno por
+uno** contra el segundo documento y **aguantan todos**. Registra lo que `ADR-003` no podía pesar: el
+**quinto motivo de migración** (adelgazar la plantilla del README obliga a **re-derivar y re-fechar** los
+marcadores de `arnes-upgrade`); que en el par del README **la divergencia se crea entera en vez de
+ampliarse** —los **18 encabezados coinciden uno a uno y en los mismos números de línea hasta la 350**,
+desfase total **6 líneas** frente a **113** en `AGENTS.md`—; y que el 19 % del Índice queda fuera a
+propósito.
+
+**Estimación nueva: 7–11 h, cuatro fases, ≥5 comisiones.** Con tres notas de orquestación: las dos
+enumeraciones de F1 **pueden ir en paralelo y salen mejor así** (`CA-15.2` exige no verse) pero **cada una
+escribe su propio artefacto** o se pierde una por escritura perdida; F2 y F3 son **un solo cambio** para
+`CA-05` y `CA-07`; y **F1 no necesita solitario**, que es lo que permite descubrir un techo insatisfacible
+**sin haber parado a nadie**.
+
+**`Archivos:` nuevo** con `+ requirements/README.md` y `docs/qa/1.33.0.md` → `docs/qa/1.34.0.md` —
+retirado a propósito: el REQ ya no escribe en esa ventana y dejarlo pondría en serie, **sin motivo**, a
+REQ-020 y al resto de 1.33.0.
+
 ## [GitHub] — 2026-09-08 · R-013: confirmado el bypass del campo comentado, y aparece uno peor — se pierde el gate humano escribiendo BIEN la aprobación
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad`.
 
