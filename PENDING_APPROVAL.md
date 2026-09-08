@@ -24,6 +24,75 @@
 
 ## Pendientes
 
+### [2026-09-08] (coordinadora) — REQ-021 agota el tope de 3 vueltas sin poder cerrar: qué hace 1.33.0
+
+- **Contexto.** `AGENTS.md` §6: máximo **3 vueltas dev↔QA por REQ**, el contador **no se reinicia**, y
+  agotado el tope el REQ **o cierra con residual declarado o pasa a `bloqueado` y se escala al humano**.
+  La vuelta 3 está gastada y **el residual no está disponible**: `QA-021-10` es `contrato`, y
+  `guard-completado` deniega el cierre con un `contrato` abierto. Sólo existiría si QA o el auditor lo
+  **reclasificaran**, y QA se negó expresamente con la evidencia delante.
+
+- **Lo que la vuelta 3 SÍ consiguió, para que la decisión no se tome sobre un fracaso que no lo es.** El
+  mecanismo cambió de razonable a comprobable: el juez obtiene el testigo **antes** de invocar la sonda,
+  a coste **cero procesos**. La mutación del forzador —no ejercer el binario ni una vez— **por fin
+  FALLA** (`rc 1 · 74/3`) mientras la misma copia sin mutar **PASA** (`rc 0 · 77/0`). `CA-08 (iii)`
+  **mejoró** en las dos magnitudes. Banco **880 PASS · 0 FAIL · 4 SKIP, rc 0**, cuadre 884 verificado por
+  QA contra 45 literales. `CA-07` acreditado en sus tres puntos (**828 casos, 61.287 bytes, `cmp`
+  idénticos** contra un worktree de `794fa4c`). Las tres gates de §7 en verde.
+
+- **Por qué no basta, y es una sola frase que conviene leer despacio.** QA reprodujo el forzador y
+  **cuatro mutaciones más, tres de las cuales no leen el sujeto, y las cuatro PASAN**. La causa:
+  `SP_RESOLUCION=1`, `SP_CAL_MARGEN=4` y `SONDA_DISC_PROC_VECES=2` son **literales**, así que
+  `testigo = parámetro / 2` se cumple **por construcción en toda máquina**. La condición 1 exige que el
+  testigo **no coincida** con el parámetro —y no coincide, 2 ≠ 4— pero **«no coincidir no es no ser
+  predecible»**: lo que hace que un contraste pueda fallar es que la sonda no pueda **saber** el testigo
+  sin trabajar. **El forzador nombraba un ejemplar; la clase sobrevive.** Es la **cuarta** variante de la
+  misma clase dentro del mismo REQ (`2N/N`, `N−1`, el rastro que la sonda escribe, y ahora el testigo
+  derivable).
+
+- **Y una cadena de acreditación que se rompe.** `CA-03 (d)` **falla** con la carga acreditada por su
+  **efecto** (tarea de referencia: 262–282 ms en reposo → 402–508 ms con 4/12 → 675–1426 ms con 12/12):
+  saturación **9 de 16 corridas** con FAIL, y **8 de 13 casos son `CA-03 (c)`**, no la mitad discordante.
+  El `0 de 30 en cuatro regímenes` de la vuelta 2 **se retira**: su registro **no publica ni una
+  evidencia de que sus cuatro regímenes existieran**, y un régimen declarado y no acreditado es un número
+  que no puede salir mal. Con él se retira **el permiso que autorizaba bajar `r` a 3** («sólo mientras
+  (d) siga en 0 de 30», `REQ-021.md:788`). Las dos ramas quedan cerradas: con `r=5`, `(ii)` da **1,2825×
+  > 1,25×**; con `r=3`, cumple **sobre un permiso inexistente**. **`CA-08 (ii)` no queda acreditado.**
+
+- **Lo que QA dejó nombrado y medido, que es lo que hace esta decisión barata en cualquier dirección:**
+  las dos piezas que faltan cuestan **cero procesos** — el tamaño del discordante **sorteado por
+  corrida**, y la terna **fuera de todo directorio que la sonda reciba**. Con ellas, el conjunto de
+  mutaciones que pasan se reduce exactamente a «lee el sujeto», y la frontera que el REQ declara
+  —«falsificación deliberada, no descuido»— pasa a ser **verdadera**. Hoy es una **salida**, porque
+  clasifica por la intención del autor, que ningún control mide.
+
+- **Opciones.**
+  - **A) Publicar 1.33.0 sin REQ-021.** La ventana entrega **REQ-017** —que retira una puerta **no
+    determinista** y baja el reloj del banco de 95,66 s a 45,14 s— más la **partición de las tres
+    secciones**. REQ-021 pasa a **1.34.0** con las dos piezas ya nombradas. *Sub-decisión que va con
+    esta opción y que no resuelvo yo:* **el código de la vuelta 3 ya está comiteado** (`2ce7804`) y el
+    banco está verde con él. ¿Se queda en 1.33.0 —con sus hallazgos declarados y su REQ `bloqueado`— o se
+    revierte? Se queda es lo que yo haría: el árbol con él es **mejor** que sin él y el banco lo
+    certifica, pero publicar código de un REQ `bloqueado` es una decisión de gobernanza tuya.
+  - **B) Autorizar una vuelta 4**, excediendo el tope de §6 por decisión expresa. QA nombró exactamente
+    qué falta y cuesta cero procesos, así que el trabajo está bien especificado. **El argumento en
+    contra está medido:** el tope existe *«porque cada arreglo cierra el hallazgo documentado y la vuelta
+    siguiente encuentra una variante»*, y ésta sería la **cuarta variante de la misma clase**. Autorizar
+    la vuelta 4 es apostar contra un patrón que este REQ ha exhibido tres veces.
+  - **C) A, más reducir el alcance de REQ-021 en 1.34.0** a **sólo la sonda de procesos** —**0 FAIL en
+    las 48 corridas** de QA, `cal_a=2,000`/`cal_b=1,000` exactos— sacando la de reloj, que es de donde
+    salen `(c)`, `(d)` y **todo** el coste que dejó `CA-08 (ii)` sin acreditar. Es el mismo patrón que ya
+    aplicaste una vez en este REQ: **reducir el sujeto en vez de debilitar el techo**. No unblokea nada
+    hoy —`QA-021-10` vive en la sonda de procesos— pero hace el REQ de 1.34.0 mucho más pequeño.
+
+- **Recomendación de la coordinadora: A, con el código quedándose, y la forma de C para 1.34.0.** El
+  motivo no es de calendario: es que **B apuesta contra la única cosa que este REQ ha medido tres veces
+  de sí mismo**. Y 1.33.0 no se va vacía — REQ-017 retira una puerta no determinista, que es exactamente
+  el tipo de defecto que este arnés existe para no publicar.
+
+- **Espera.** Tu elección entre A, B y C, y —si eliges A o C— si el código de la vuelta 3 se queda en
+  1.33.0 o se revierte. **El pipeline está detenido**: mientras esta entrada esté aquí,
+  `guard-completado` deniega marcar **cualquier** REQ como `completado`.
 
 ## Resueltas
 

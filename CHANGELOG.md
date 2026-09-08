@@ -2,6 +2,75 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · REQ-021 a `bloqueado`: el tope de 3 vueltas se agota y la clase sobrevive a su cuarta variante. Escalado al propietario
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (**Opus**, por decisión del propietario).
+
+**`AGENTS.md` §6 aplicado tal como está escrito:** agotado el tope de **3 vueltas dev↔QA por REQ** —el
+contador no se reinicia—, el REQ **o cierra con residual declarado o pasa a `bloqueado` y se escala al
+humano**. El residual **no está disponible**: `QA-021-10` es `contrato` y `guard-completado` deniega el
+cierre; sólo existiría si QA o el auditor lo **reclasificaran**, y QA se negó con la evidencia delante.
+Decisión en `PENDING_APPROVAL.md`, **pipeline detenido**.
+
+### La frase que cierra el REQ, y vale para cualquier control de este tipo
+
+QA reprodujo el forzador **y cuatro mutaciones más, tres de las cuales no leen el sujeto, y las cuatro
+PASAN**. La causa es aritmética: `SP_RESOLUCION=1`, `SP_CAL_MARGEN=4` y `SONDA_DISC_PROC_VECES=2` son
+**literales**, así que `testigo = parámetro / 2` se cumple **por construcción en toda máquina**. La
+condición 1 de `(a.3)` exige que el testigo **no coincida** con el parámetro —y no coincide, 2 ≠ 4—
+pero:
+
+> **«No coincidir no es no ser predecible.»** Lo que hace que un contraste pueda fallar es que la sonda
+> no pueda **saber** el testigo sin trabajar.
+
+**El forzador nombraba un ejemplar; la clase sobrevive.** Es la **cuarta** variante dentro del mismo
+REQ: `2N/N = 2000`, luego `N−1`, luego el rastro que el juez crea y la sonda escribe, y ahora un testigo
+**independiente en su origen pero derivable en su valor**. Cada vuelta cerró la instancia documentada y
+la siguiente encontró una variante — que es, literalmente, el motivo por el que §6 pone un tope que no
+se reinicia.
+
+### Lo que la vuelta 3 sí consiguió, porque no fue un fracaso
+
+El mecanismo pasó de **razonable a comprobable**: el juez obtiene el testigo **antes** de invocar la
+sonda —*lo que no existe antes de que el sujeto corra, pudo haberlo producido el sujeto*— a coste **cero
+procesos**, porque es un cambio de orden. La mutación del forzador **por fin FALLA** (`rc 1 · 74/3`)
+mientras la misma copia sin mutar **PASA** (`rc 0 · 77/0`). `CA-08 (iii)` **mejoró** en las dos
+magnitudes (procesos 3,714× → **3,571×**; reloj 2,921× → **2,245×**, techo 6×). Banco **880 PASS · 0
+FAIL · 4 SKIP, rc 0**, cuadre **884 = 884 = suma de 45 literales** verificado por QA. `CA-07` acreditado
+en sus tres puntos contra un worktree de `794fa4c`: **828 casos, 61.287 bytes, `cmp` idénticos**.
+
+### La cadena de acreditación que se rompe, y cómo se acredita una carga
+
+**`CA-03 (d)` falla**, con los regímenes acreditados **por su efecto** —una tarea de referencia medida:
+262–282 ms en reposo → 402–508 ms con 4 de 12 núcleos → 675–1426 ms con 12 de 12—. Saturación: **9 de 16
+corridas** con FAIL, y **8 de 13 casos son `CA-03 (c)`** (el sensible base mide 145.720 µs y no llega a
+los 150.000 que (c) exige), **no** la mitad discordante. `sonda-procesos.sh`: **0 FAIL en 48 corridas**.
+
+**El `0 de 30 en cuatro regímenes` de la vuelta 2 se retira**, y el motivo es de forma: su registro **no
+publica ni una evidencia de que sus cuatro regímenes existieran**. Un régimen declarado y no acreditado
+es un número que no puede salir mal — la misma clase que el REQ perseguía en sus sondas, esta vez en su
+propia acreditación. Con él se retira **el permiso que autorizaba bajar `r` a 3** («sólo mientras (d)
+siga en 0 de 30», `REQ-021.md:788`), y las dos ramas quedan cerradas: con `r=5`, `CA-08 (ii)` da
+**1,2825× > 1,25×**; con `r=3`, **cumple sobre un permiso inexistente**. **`CA-08 (ii)` no queda
+acreditado**, y salir de ahí es decisión de alcance del propietario.
+
+### Hallazgos
+
+| | Clase | Estado |
+|---|---|---|
+| `QA-021-10` el testigo derivable | **`contrato`** | **NO CIERRA** — analista (forma), desarrollador (valor), auditor (tercero) |
+| `QA-021-11` cifras publicadas que la medición desmiente, y la cadena que autorizaban | **`contrato`** | **nuevo** — analista + desarrollador + **propietario** |
+| `QA-021-12` `37/1` y `37/2` tienen **0 llamadas** a `sonda_usable` e invocan las sondas 2 y 5 veces | `instrumento` alta | **nuevo** — desarrollador |
+| `QA-021-13` `run.sh 'REQ-017'` da un **FAIL falso**; preexistente en `794fa4c` | `instrumento` baja | **nuevo** — desarrollador |
+| `QA-021-05` la sonda publica `vivos=0` y el `sleep 45` **sobrevivió** (QA lo mató) | `instrumento` alta | NO CIERRA |
+| `QA-021-06` acreditación «0 de 30» retirada | `instrumento` alta | NO CIERRA |
+
+**Y lo que hace la decisión barata en cualquier dirección:** QA nombró las dos piezas que faltan y las
+dos cuestan **cero procesos** — el tamaño del discordante **sorteado por corrida**, y la terna **fuera
+de todo directorio que la sonda reciba**. Con ellas, el conjunto de mutaciones que pasan se reduce
+exactamente a «lee el sujeto», y la frontera que el REQ declara —«falsificación deliberada, no
+descuido»— pasa a ser **verdadera**. Hoy es una **salida**, porque clasifica por la **intención del
+autor**, que ningún control mide.
+
 ## [GitHub] — 2026-09-08 · REQ-023 a 1.34.0 sin ADR: la cata desmintió la palanca y encontró un criterio que le habría dado PASS a una guarda cuadrática
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `desarrollador` (cata de viabilidad, sólo lectura) y `analista-requerimientos` (write-back), ambos Opus.
 
