@@ -43,6 +43,43 @@ corredor llega.
 sujetos sintéticos —uno **sensible**, cuyo coste cambia por un factor conocido **por construcción**
 al duplicar un parámetro, y uno **insensible**— y **el factor, nunca un coste absoluto**.
 
+> **Nota fechada — 2026-09-08: el punto 4 queda NO ACREDITADO.** Se **añade** sin tocar el texto de
+> arriba, que se deja visible tal como se aceptó el 2026-09-07: un ADR no se reescribe
+> (`AGENTS.md` §10), y lo que se decidió y lo que se midió después tienen que poder leerse juntos.
+>
+> **Causa:** `QA-021-10` (clase `contrato`, **abierto**; vuelta 3 de 3 de REQ-021, medido el
+> 2026-09-08, `docs/qa/1.33.0.md`), llevado al texto firmado por el hallazgo `SEC-054`. Sobre el
+> juez real y sin tocarlo, QA reprodujo **mutaciones de la sonda que PASAN sin observar el sujeto**.
+>
+> **Qué acredita hoy el verde de la calibración, dicho por su nombre:** que el control **falla sobre
+> la entrada nombrada en el forzador** — una aritmética concreta, **un ejemplar**. **No** acredita la
+> propiedad de la que habla el punto 4, «el instrumento responde al sujeto», porque el testigo contra
+> el que se contrasta es **predecible sin ejercer nada**: mientras el testigo y el parámetro sean
+> constantes del mismo sistema en **razón fija**, toda magnitud **alcanzable sin hacer el trabajo**
+> pasa la comprobación, en toda máquina y toda corrida. **No coincidir no es no ser predecible**, y
+> lo que hace que un contraste **pueda** fallar es que la sonda no pueda **saber** el testigo sin
+> trabajar. El par «mutada FALLA · sin mutar PASA» prueba que el control **falla sobre una entrada**;
+> no prueba que **distinga**, que es lo único que la calibración existía para aportar.
+>
+> **Qué haría falta**, ya nombrado y medido por QA, y las dos piezas cuestan **cero procesos**:
+> (1) el **tamaño del sujeto discordante sorteado por corrida**, dentro de un rango que el parámetro
+> no pueda alcanzar —hoy es un literal—; y (2) la **terna del testigo fuera de todo directorio que la
+> sonda reciba** —hoy vive en uno que recibe—. Con las dos, el conjunto de mutaciones que pasan se
+> reduce **exactamente** a «lee el sujeto», y entonces el residual que este ADR declara acotar queda
+> acotado de verdad. Sin ellas, ese conjunto es **estrictamente mayor**, así que el residual no se
+> puede clasificar por la intención del autor: incluye el **descuido**, que es lo que la calibración
+> perseguía, y ningún control mide intenciones.
+>
+> **Que nadie lea esta nota como un cierre, porque no lo es.** `REQ-021` está `bloqueado` —agotó el
+> tope de 3 vueltas— y va a **1.34.0** con su código quedándose en el árbol (`2ce7804`): **1.33.0 se
+> publica sabiendo que la acreditación de este punto no alcanza**, por decisión del propietario del
+> 2026-09-08. El **write-back** del control a criterio de aceptación o NFR va con el cierre de
+> REQ-021 en 1.34.0, y el `auditor-seguridad` **no cierra `SEC-054` sin él**.
+>
+> **Alcance de la nota.** Toca el punto 4 y nada más: los puntos 1, 2, 3, 5, 6 y 7, el residual
+> declarado y su forzador de 1.34.0 siguen como están, el `Estado:` de este ADR **no cambia** y
+> ningún ADR lo supersede — el propietario eligió la nota fechada.
+
 **5. La expectativa vive en el JUEZ, no en la sonda.**
 
 **6. `tests/util/` NO entra en `codigo_app.globs`**, y el sustituto es la calibración.

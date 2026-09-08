@@ -47,7 +47,24 @@ secciones. Quien la mude algún día paga **primero** aplicarle la mitad discord
    (comprobado en bash 5.3). La ausencia que calla es la misma forma que el campo `QA:`
    ausente, que **permite** donde `QA: pendiente` deniega.
 
-## La calibración: cada corrida acredita que el instrumento responde al sujeto
+## La calibración: qué acredita cada corrida, y qué NO
+
+> **Corregido el 2026-09-08** (`QA-021-10`, clase `contrato`, **abierto**; hallazgo `SEC-054`). Hasta
+> esta fecha este título afirmaba que cada corrida acredita que **el instrumento responde al sujeto**,
+> y la medición lo desmiente. Lo que el verde de la calibración acredita es que el control **falla
+> sobre la entrada nombrada en el forzador**: **una aritmética concreta, no la propiedad**. No
+> acredita que el control **distinga**, porque el testigo contra el que se contrasta es **predecible
+> sin ejercer el sujeto**: mientras el testigo y el parámetro sean constantes del mismo sistema en
+> **razón fija**, toda magnitud **alcanzable sin hacer el trabajo** pasa. **No coincidir no es no ser
+> predecible** — lo que hace que un contraste **pueda** fallar es que la sonda no pueda **saber** el
+> testigo sin trabajar. Lo que faltaría está nombrado y medido, y cuesta **cero procesos**: el
+> **tamaño del discordante sorteado por corrida**, dentro de un rango que el parámetro no pueda
+> alcanzar, y la **terna del testigo fuera de todo directorio que la sonda reciba**. Con las dos, el
+> conjunto de mutaciones que pasan se reduce **exactamente** a «lee el sujeto». El write-back a
+> criterio de aceptación o NFR va con el cierre de **REQ-021 en 1.34.0**, y el `auditor-seguridad`
+> **no cierra `SEC-054` sin él**. Nada de esto está resuelto hoy: 1.33.0 se publica con esta
+> acreditación **corta y dicha**. Lo que sigue en esta sección describe lo que la calibración
+> **hace**; no lo que acredita.
 
 Cada instrumento se ejerce **una vez por corrida** con un **par de sujetos sintéticos**: uno
 **sensible**, cuyo coste cambia por un factor conocido **por construcción** al duplicar un
@@ -86,19 +103,26 @@ dos factores (`cal_a`, `cal_b`) y **no los compara con nada**.
     `--calibrar`); la sonda no lo dimensiona y **no lo declara** en su registro;
   - **el valor del testigo lo produce el juez** —el número de invocaciones que él metió en el
     snippet; en el reloj, el mínimo de tres pasadas con **su** cronómetro—;
-  - **y lo tiene ANTES de invocar la sonda**, que es la forma en que esa independencia se
-    **comprueba** en vez de razonarse: el juez publica las dos marcas de reloj y el caso
-    **aborta** si la de obtención no es anterior a la de invocación. Cuesta cero procesos: es
-    un cambio de orden.
+  - **y lo tiene ANTES de invocar la sonda**, que es la forma en que ese orden se **comprueba** en
+    vez de razonarse: el juez publica las dos marcas de reloj y el caso **aborta** si la de
+    obtención no es anterior a la de invocación. Cuesta cero procesos: es un cambio de orden. *Y
+    acredita exactamente eso —que la sonda no pudo **alimentar** el testigo—, no que no pueda
+    **predecirlo**: la corrección del 2026-09-08 de arriba es justo esa distinción.*
   El caso **aborta** —no pasa, nunca— si el testigo coincide con el parámetro, si el juez no
   acredita la anterioridad, si el registro declara el tamaño del sujeto discordante o si el
   umbral con que se decide sale del registro **del instrumento juzgado**. Dos instrumentos que
   se apartan de la verdad a la vez coinciden y no dicen nada, y eso vale con más fuerza cuando
   el «segundo instrumento» **es la sonda otra vez** por otro canal de salida.
-- **Lo que esto NO cierra, dicho aquí porque afirmar lo contrario ya salió caro.** Una sonda que
-  **lea el snippet** que el juez le entrega y publique su cuenta **sin ejercerlo** sigue pasando
-  —medido—: eso ya no es un descuido sino **falsificación deliberada**, y su respuesta no es un
-  criterio más, sino la custodia de `tests/util/*` y la mutación **de un tercero**.
+- **Lo que esto NO cierra, y el 2026-09-08 se midió MÁS ANCHO de lo que esta línea decía**
+  (`QA-021-10`). Enunciado **por propiedad**, no por lista de mutaciones —una lista envejece con la
+  variante siguiente, y ésta ya lleva cuatro—: **pasa toda sonda cuya magnitud publicada sea
+  alcanzable sin ejercer el sujeto**, y no sólo la que lee el snippet del juez y publica su cuenta
+  sin ejercerlo. Mientras el testigo sea **predecible** —dos constantes del mismo sistema en razón
+  fija—, el conjunto que pasa es **estrictamente mayor** que «lee el sujeto», así que este residual
+  **no se puede clasificar por la intención del autor**: incluye el **descuido**, que es lo que el
+  criterio persigue, y ningún control mide intenciones. La custodia de `tests/util/*` y la mutación
+  **de un tercero** siguen siendo la respuesta a lo que quede **después** de las dos piezas de la
+  corrección de arriba; hoy **no** lo son a lo que se puede cerrar midiendo.
 - **El TAMAÑO de cada mitad se deriva del suelo medido en la propia corrida**, al mínimo que lo
   supere por el margen declarado, y se **publica** (`cal_n`, `cal_margen`, `cal_ns_vuelta`). Una
   variable de entorno sólo puede **subirlo**. Medido lo que costaba el absoluto: con un tamaño
@@ -112,11 +136,21 @@ dos factores (`cal_a`, `cal_b`) y **no los compara con nada**.
   así que es invariante a `r` y sólo cuesta reloj—; (2) subir el margen sobre el suelo;
   (3) cambiar el sujeto por uno cuyo factor sea exacto por conteo. **Ensanchar la banda o
   encoger el sujeto no son opciones**: las dos están prohibidas por nombre.
-  *Y lo medido el 2026-09-08, porque el orden de la escalera no dice cuál de las tres es la que
-  muerde: subir `r` de 3 a 5 **no movió la tasa** —0 de 30 en cuatro regímenes en los dos
-  casos— y sí encareció el reloj lo bastante para incumplir el techo de coste. La que arregló
-  la fragilidad fue la **(2) por la vía de (c)**: el tamaño derivado del suelo, que sacó al
-  ejercicio insensible de 1,4× a 4× el suelo, más el intercalado del par. `r` volvió a 3.*
+  *Y lo medido, con la corrección del 2026-09-08 delante, porque el orden de la escalera no dice
+  cuál de las tres es la que muerde. **El «0 de 30 en cuatro regímenes» con que se comparó `r=3`
+  contra `r=5` quedó RETIRADO**: su registro no publicaba ni una evidencia de que sus cuatro
+  regímenes existieran, y un régimen declarado y no acreditado es un número que no puede salir mal.
+  Así que hoy **no hay medición que sostenga «subir `r` no mueve la tasa»**, y la que sí existe
+  —48 corridas de la sección 38 con la carga acreditada **por su efecto**— dice que la tasa **no es
+  cero fuera del reposo**: 0 de 16 corridas con FAIL en reposo, 1 de 16 con carga moderada y 9 de 16
+  en saturación, y **8 de esos 13 casos son de (c)** —el tamaño derivado quedándose corto bajo
+  contención—, no de la mitad discordante; `sonda-procesos.sh` no produjo ni un FAIL en las 48. De
+  `r=5` lo que sigue medido es su **coste**: dejaba el reloj de la corrida en **1,2825×** contra un
+  techo de 1,25×, y por eso `r` está en 3. Lo que la vía (c) sí mejoró está medido **en reposo**
+  —el tamaño derivado del suelo sacó al ejercicio insensible de 1,4× a 4× el suelo, más el
+  intercalado del par—; **fuera del reposo la fragilidad persiste y no queda acreditada como
+  resuelta** (`QA-021-06`, abierto), y qué palanca de la escalera se aplica es decisión de alcance
+  del propietario en 1.34.0.*
 
 ## Publicar una cifra: lo que hay que llevar consigo
 
@@ -179,7 +213,7 @@ emisor**, no sobre el formato — exigírselo a quien no puede observarlo sería
 | `ARNES_ARBOL` | Árbol medido, para que el registro se pueda volver a visitar | informativa |
 | `ARNES_SONDA_CAL_N` | Suelo del tamaño del sujeto sintético de la calibración | **sólo SUBE** el tamaño derivado; un valor menor se **ignora** y se dice por la salida de error |
 | `ARNES_SONDA_CAL_MARGEN` | Cuántas veces el suelo tiene que superar cada mitad de la calibración | **sólo sube** de 4; bajarlo es lo que compró un techo con la discriminación del instrumento |
-| `ARNES_SONDA_CAL_R` | Series del mínimo con que el corredor calibra (`r`) | **se sube** con la medición. No es la palanca contra la fragilidad, y está medido: con `r=3` y con `r=5` la tasa de falsos rojos es la misma —**0 de 30 en cuatro regímenes**— mientras `r=5` dejaba el reloj de la corrida en **1,2825×** contra un techo de 1,25×. Lo que arregló la fragilidad fue el **tamaño derivado del suelo** y el **intercalado**; `r` sólo cuesta reloj |
+| `ARNES_SONDA_CAL_R` | Series del mínimo con que el corredor calibra (`r`) | **se sube** con la medición. No es la palanca contra la fragilidad, y **lo que de eso queda medido es el COSTE, no la tasa** (corregido el 2026-09-08): `r=5` dejaba el reloj de la corrida en **1,2825×** contra un techo de 1,25×, y por eso `r` está en 3. La comparación de tasas que antes iba aquí se apoyaba en un `0 de 30` que **quedó retirado**; el estado medido de la fragilidad está en la nota de la escalera, arriba |
 | `ARNES_SONDA_DISP_UMBRAL` | Dispersión (máximo/mínimo, en milésimas) por encima de la cual la medida se marca como acompañada | **se baja** con la medición |
 | `ARNES_SONDA_PLAZO` | Plazo de arranque, en segundos, de una invocación | **se baja** con la medición |
 

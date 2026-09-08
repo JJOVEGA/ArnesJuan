@@ -2,6 +2,62 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · `SEC-054` remediado: el ADR y el README dejan de afirmar lo que la medición desmiente — y aparece un TERCER sitio
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus). Autorización expresa del propietario, 2026-09-08.
+
+### La nota de `ADR-005`, añadida y no sustituida
+
+Bloque de cita **inmediatamente después del punto 4**, sin borrar ni editar una palabra del original y
+sin tocar `Estado:` — porque **un ADR no se reescribe** (`AGENTS.md` §10) y lo decidido el 2026-09-07 y
+lo medido después tienen que poder leerse **juntos**.
+
+Lo que dice, y la formulación es lo que vale:
+
+> **Qué acredita hoy el verde:** que el control **falla sobre la entrada nombrada en el forzador** —una
+> aritmética concreta, **un ejemplar**—; **no** la propiedad «el instrumento responde al sujeto», porque
+> el testigo es **predecible sin ejercer nada**. Mientras testigo y parámetro sean constantes del mismo
+> sistema en **razón fija**, **toda magnitud alcanzable sin hacer el trabajo pasa**, en toda máquina y
+> toda corrida. El par «mutada FALLA · sin mutar PASA» prueba que el control **falla sobre una entrada**,
+> no que **distinga**.
+
+Y una consecuencia que el desarrollador derivó y que corrige el propio hallazgo: **el residual no se
+puede clasificar por la intención del autor, porque el conjunto que pasa es estrictamente mayor que
+«lee el sujeto» — así que incluye el descuido.** La frontera «falsificación deliberada» sólo se vuelve
+verdadera **después** de las dos piezas de coste cero.
+
+### Cuatro afirmaciones más, corregidas en `tests/util/README.md`
+
+1. **El `0 de 30 en cuatro regímenes`, en DOS sitios** —la nota de la escalera de `CA-03 (d)` y la fila
+   de `ARNES_SONDA_CAL_R`—, sostenía «subir `r` de 3 a 5 no movió la tasa». QA lo retiró. Ahora dice que
+   **hoy no hay medición que sostenga esa frase** y publica la que sí existe: **0/16 · 1/16 · 9/16**, con
+   **8 de 13 casos en (c)** y `sonda-procesos.sh` **sin un solo FAIL en 48 corridas**. De `r=5` queda
+   medido **sólo el coste** (1,2825× contra techo 1,25×), y por eso `r` está en 3.
+2. «La palanca que arregló la fragilidad fue (c)» — desmentida **en su generalidad**: la mejora está
+   medida **en reposo**; fuera del reposo persiste y no queda acreditada como resuelta.
+3. «Lo que esto NO cierra» decía que sólo pasa la sonda que **lee** el snippet. Reescrito por propiedad:
+   pasa **toda** sonda cuya magnitud publicada sea **alcanzable sin ejercer el sujeto**.
+4. **La anterioridad del testigo** decía que comprueba «esa independencia». Ahora acredita lo que
+   acredita: que la sonda no pudo **alimentar** el testigo, **no** que no pueda **predecirlo**.
+
+### El tercer sitio, encontrado y NO tocado
+
+**`tests/escenarios/hooks/README.md:378`** lleva la misma afirmación **sin matizar, literal y en
+negrita**. `SEC-054` nombra **dos** sitios y hay **tres**, y el tercero también se distribuye con
+`source: "./"`. El desarrollador tenía ese directorio vedado y **no lo tocó**: queda enrutado a la
+comisión de partición de REQ-014, que sí lo declara en su huella, y el auditor tiene que ampliar el
+alcance de `SEC-054`.
+
+`requirements/REQ-021.md:130` —el título de `CA-03`— lleva la misma frase, y es del write-back del
+analista en 1.34.0.
+
+### Y una disciplina que conviene registrar
+
+**No corrió el banco completo, a propósito:** *«hay cuatro comisiones vivas y la regla de despacho dice
+que dos que miden no van a la vez»*. Comprobó en su lugar lo que sí podía sin medir —el caso `CA-01.4`
+replicado con su propio `awk`, **1** línea apuntando a `sonda_lee` y **0** transcripciones del parser— y
+las tres gates de §7. Y dejó **intactas** las cifras de coste del ADR que no pudo re-medir, diciéndolo:
+*«no las re-medí y el informe de QA no las desmiente»*.
+
 ## [GitHub] — 2026-09-08 · REQ-014 reabierto: el techo se re-deriva comprobando su factibilidad ANTES de escribirlo, que es el paso que faltó
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 
