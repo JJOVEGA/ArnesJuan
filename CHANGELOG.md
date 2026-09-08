@@ -2,6 +2,151 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · REQ-014 reabierto: el techo se re-deriva comprobando su factibilidad ANTES de escribirlo, que es el paso que faltó
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Reapertura por la **REGLA DE ESTADO** de §9, decidida por el propietario. `Estado: completado` →
+**`en-progreso`** — y no `en-revisión`, con el motivo escrito: ese estado significa «terminado, en
+validación» y hoy es falso, porque queda código por escribir. Vuelve al desarrollador, no a QA.
+
+`QA:` y `Seguridad:` sin tocar pero **declarados invalidados** en el Historial: se emitieron el
+2026-09-06 sobre la redacción anterior de `CA-18` y `CA-12`. Y el dato que hace la nota no decorativa:
+`DEV-014-01` y `DEV-014-02` son **`contrato`**, así que `guard-completado` **deniega** el cierre mientras
+lo sigan siendo. **Ningún `aprobado` viejo puede cerrar este REQ.**
+
+### El límite, enunciado como fórmula y no como número nuevo
+
+```
+líneas(f)  ≤  max( N , piso(f) × k )
+```
+
+- **`piso(f)`** = el mínimo autónomo, **la parte que ninguna partición baja** —partir produce *dos*
+  pisos, no medio—. Se declara por archivo en `PISO_AUTONOMO_SECCION` **con su derivación término a
+  término**, tres comprobaciones de máquina, y un **límite honesto** en la forma de `CA-06`: el término
+  «bloque indivisible mayor» es una afirmación sobre la estructura que **ninguna máquina decide**, e
+  inflarlo para caber es **regresión** que devuelve el hallazgo a `contrato`.
+- **`N` = 400 no cambia.** Mismo número, mismo tipo operativo, misma dirección. Cambia **a qué se
+  aplica**: gobierna los **42 de 45** archivos cuyo piso cabe por debajo.
+- **`k` = 1,25**, literal **con su derivación escrita**: `564/460`, `467/467`, `516/460`, `511/467` → el
+  mayor, redondeado al siguiente múltiplo de 0,05. Con obligación de **re-derivarse en la misma edición
+  que cambie cualquiera de sus términos**.
+
+**Y el paso que faltó la vez anterior, hecho esta vez:** comprobó la factibilidad **antes** de escribir.
+Con **sólo** la razón, un archivo de 12 líneas con piso ~5 tendría techo 6,25 y **~42 archivos hoy
+conformes saldrían rojos**. De ahí el `max(…)`. El defecto original era exactamente ése —fijar 400 sin
+medir cuánto mide una sección autónoma mínima— y repetirlo con otra cifra habría sido la misma clase.
+
+**Dos puntos que faltaban:** **(ii)** qué hacer cuando **ni partiendo cabe** —vuelve al analista, y las
+dos únicas salidas llevan gate—, porque su ausencia produjo el interbloqueo real de hoy: **puerta
+requerida roja sin ninguna acción conforme disponible**, con `continue-on-error` y sacar `CA-18` del CI
+**prohibidos por nombre**. Y **(iii) par discriminante**, con el negativo nombrando **archivo, tamaño y
+techo** y exigiendo que el positivo exista.
+
+**Dato nuevo que refuerza el argumento:** `37/1` tiene 13 casos declarados → **65,2 líneas por caso**,
+frente a **4,1** en `07-bash-falsos-positivos.sh`. Un factor **16×**: «líneas por caso» tampoco era la
+magnitud.
+
+### `CA-12` — el oráculo por propiedad
+
+«Todo campo que sea **MEDIDA o SORTEO** y no **IDENTIDAD**», sitio único en `inventario.sh` sin
+transcribir la lista, con la mitad que **no** se normaliza dicha aparte, y el negativo exigiendo **tres
+inyecciones necesarias** (suprimido, renombrado, veredicto invertido) — porque un oráculo que normalizara
+todo saldría idéntico siempre y no distinguiría nada.
+
+### Dos defectos que el analista encontró por su cuenta, y el primero es el mejor del día
+
+**`CA-14` estaba desmentido por la misma medición** (tres corridas intactas no eran idénticas) **y su
+remedio literal era peor que el defecto**: «se estabiliza antes de particionar» habría ordenado **borrar
+del banco las 20 líneas de medición que REQ-017 y REQ-021 existen para publicar**. Ahora corre bajo el
+oráculo de `CA-12` y «inestable» se define como *en su identidad o su veredicto*, **no en su medida**.
+
+**`CA-31` habría quedado cierto sobre un árbol que ya cambió**: todas sus condiciones se cumplen con
+1.32.0 publicada y ninguna miraba el trabajo de la reapertura. Gana cuatro condiciones y la exigencia de
+veredictos posteriores al 2026-09-08.
+
+### Y una conjetura fechada, no un hallazgo
+
+El orden «la partición va después de cerrar REQ-021» probablemente protegía **un oráculo que ya no
+discriminaba**, no la congelación de `CA-07 punto 2` — las secciones a partir son justo las que publican
+las cifras volátiles. Además ese orden es hoy **inoperante**: con REQ-021 `bloqueado` y en 1.34.0,
+«después de cerrarlo» sería nunca.
+
+**Coste: 5 comisiones, con riesgo real de 7.** Vueltas dev↔QA disponibles: **0 de 3 consumidas**.
+
+## [GitHub] — 2026-09-08 · REQ-021: el REQ deja de afirmar lo que la medición desmiente, y las cifras retiradas quedan marcadas como retiradas
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Write-back de la vuelta 3. `Estado: bloqueado` y `Versión destino: 1.34.0` sin tocar; `QA:` y
+`Seguridad:` tampoco.
+
+### El criterio que fallaba, corregido donde vivía
+
+`CA-03 (a.3)` condición 1 se parte en **(1.a) no coincidencia** y **(1.b) impredecibilidad** —
+*«**no coincidir no es no ser predecible**»*—, con las dos piezas de coste cero: tamaño **sorteado por
+corrida** y terna **fuera de todo directorio que la sonda reciba**. La condición 2 se extiende a «ni
+**LEER** el canal». El título pasa a «no pueda ALIMENTAR **ni PREDECIR**».
+
+**Y el forzador de `QA-021-10` deja de enumerar**, que era su defecto de forma: pasa de «la mutación
+tautológica medida» —un ejemplar— a un **conjunto de mutaciones por vía de predicción** (no menos de 3,
+**operativo**, ejemplos no exhaustivos con sede en el fail-before), en **dos corridas consecutivas con
+sorteos distintos**, ejercido por quien no escribió la sonda. La lección, medida tres veces en este
+REQ: **acreditar el ejemplar no acredita la clase.**
+
+La frontera de «falsificación deliberada» queda reescrita como **lo que era, una salida** —clasifica por
+la intención del autor, que ningún control mide— y sólo se vuelve verdadera con (1.b) y (2). Y se añade
+la **vigencia** de los «hoy» de las condiciones 2–5: describen el árbol previo; en `2ce7804` están
+implementadas y **aun así no distingue**.
+
+### Las cifras retiradas quedan marcadas como retiradas
+
+`CA-08 (ii)` queda **NO ACREDITADO** con las dos ramas cerradas, y **se borra de su palanca (1) la
+cláusula «bajar `r` sólo mientras (d) siga en 0 de 30»** — `r` vuelve a la lista de (d). `CA-03 (d)`
+publica el estado real (**0/16 · 1/16 · 9 de 16**), retira el «0 de 30», y declara que **todo rojo sin
+regresión cuenta**: antes decía «fuera de banda», que era **la forma (d) dentro del criterio escrito
+para cerrarla**. `(iii)` se publica como **rango** (2,568–4,382×, techo 6× cumplido).
+
+Y lo que más vale para quien lea esto en un año: el `0/30` de la vuelta 2, el `1,1734× → CUMPLE` y el
+`2,245×` quedan anotados como **RETIRADAS en sus propias filas del Historial**, para que el REQ no siga
+publicando cifras retiradas como si fueran medidas.
+
+### `CA-06` punto 6 — cómo se acredita un régimen
+
+**Por su efecto**: magnitud de referencia medida **dentro** del régimen, con rango, muestras y **el
+mecanismo de la carga escrito**. Nace de que el «0 de 30 en cuatro regímenes» de la vuelta 2 no publicó
+ni una evidencia de que sus cuatro regímenes existieran, y su generador **no está escrito en ninguna
+parte**, así que no se puede reproducir. Y `CA-03 (c)` gana la regla que faltaba: **un FAIL de (c) sin
+regresión cuenta como falso rojo para (d)**.
+
+### Dos criterios nuevos, y uno que deliberadamente NO se toca
+
+`CA-10` **punto 3**: la puerta se atraviesa en **todo camino** que consuma un registro de sonda,
+comprobado **sobre el texto**, con aborto nombrando el archivo (`QA-021-12`). **`CA-11`**: el FILTRO
+selecciona **qué casos corren**, no cambia el veredicto de los que corren (`QA-021-13`).
+
+**`QA-021-05` no cambia criterio, a propósito:** `CA-04` punto 1 ya está bien escrito y **ya ofrece dos
+mecanismos más fuertes que el elegido** — ampliarlo sería taparlo. Es la distinción entre un criterio
+débil y una implementación débil, y aquí es la segunda.
+
+### `Hallazgos abiertos:` — 14 entradas, y una diligencia que conviene copiar
+
+Entran `QA-021-11 (contrato)`, `QA-021-12` y `QA-021-13`; se actualizan `QA-021-05`, `06` y `10` con lo
+medido. **Todas con la clase primera dentro de su paréntesis, y el balanceo verificado entrada por
+entrada** — porque el parser de `hooks/guard-completado.sh` parte por comas a **profundidad 0** y toma la
+clase hasta la primera coma interna. Un paréntesis mal cerrado ahí no da error: **cambia la clase que la
+puerta lee**.
+
+### Dos cosas declaradas y no escritas, por estar fuera de la huella
+
+- **ADR para `P-02`** —si el contador de vueltas se reinicia al cambiar de ventana—: es **cambio de
+  fondo**, porque cambia el significado de un límite de `AGENTS.md` §6 que los proyectos heredan por
+  `templates/AGENTS.md.tpl`, y **aquí sí hay a qué suceder**. Decisión del propietario. Juicio del
+  analista, sin cerrarlo: la opción «reinicio sólo si el propietario cambia el alcance, con el gasto
+  anterior anotado» es la más fiel al motivo del tope; **«se reinicia al cambiar de ventana» convertiría
+  el aplazamiento en un mecanismo de reinicio, que es justo lo que el tope existe para impedir.**
+- **Write-back candidato a REQ-023**: su `CA-03` usa **el mismo patrón** «redactado para que una lista de
+  prohibidos falle la prueba», y la lección de este REQ es que eso acredita el ejemplar y no la clase.
+  Conviene que llegue **antes** de que REQ-023 se implemente.
+
 ## [GitHub] — 2026-09-08 · REQ-019: el trinquete protegía el NÚMERO y no la propiedad, medido en las dos direcciones. Nace CA-17
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 
