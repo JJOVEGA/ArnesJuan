@@ -2,6 +2,82 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · Write-back de R-010 en REQ-019: el criterio de inventario de invariantes NO existía, y el universo lo cerraba quien se beneficiaba de dejarlo corto
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
+
+**Cierran `SEC-031`, `SEC-032` y `SEC-034`**, verificados remediación por remediación contra el texto del
+REQ. **`SEC-033` NO cierra**, y el motivo está medido y no supuesto: su remediación 3 es una edición de
+`ADR-003`, cuyo dueño es el `desarrollador`, y ese archivo conserva hoy la formulación de **una sola
+dirección** (línea 60), el «**CA-05 lo detectará el día que ocurra**» (línea 68) y el rango cerrado
+«criterios **CA-01 a CA-13**» (línea 122). Mientras el ADR diga eso, la mitad de la ubicación del
+hallazgo sigue diciendo algo falso. `Hallazgos abiertos:` pasa de cuatro a **`SEC-033 (contrato)`**.
+
+### `CA-15` — el criterio de inventario de invariantes no existía, y el hueco tenía forma precisa
+
+`CA-01` **inventariaba texto, no invariantes**. `CA-02` sí enumera, pero **su universo son dos
+marcadores** (las filas de §13 y los bloques `🔒`), así que una obligación en prosa fuera de ellos —el
+tope de vueltas de §6, «secretos sólo en variables de entorno» de §10, las reglas del CHANGELOG de §8—
+**no pertenecía a ningún conjunto enumerado**. Y la tabla de `CA-13` tiene una fila por bloque
+**retirado**, así que una invariante que **se queda** no aparece nunca en ella.
+
+La propiedad entera se sostenía sobre los señalamientos de `CA-14` en **un universo que nadie cerraba
+antes del reparto** — y lo cerraba, **mientras repartía**, el agente al que le abarataba dejarlo corto.
+Es `SEC-032` aplicado a la propiedad entera: `CA-13` puso terceros ojos en las **preguntas**, no en el
+**universo**.
+
+`CA-15` contrata: inventario **cerrado y publicado antes de mover un byte**, sitio único anexo a
+`ADR-003`, universo **por propiedad**, **no menos de 2 enumeraciones independientes y sin verse**
+—una puede ser de quien reparte, la otra no—, universo por **unión** con reconciliación escrita, **un
+señalamiento por elemento** (`no más de 0 sin señalar`, de contrato), **trinquete** (crece libre;
+decrecer exige Historial y visto bueno del enumerador independiente), y borde que **no aprueba** si no se
+puede producir o cuadrar. **Cardinalidad medida, nunca fijada** — fijarla habría sido la forma (b).
+
+Con dos cosas escritas por lo aprendido hoy: el universo **se re-deriva en la misma edición** que cambie
+`CA-14`, `CA-01` o `CA-02`; y **se declara la clase de la comprobación** —acreditación única, no puerta—
+porque no declararla es literalmente el defecto que `SEC-033` acaba de medir en `CA-05`.
+
+### `CA-16` — el riesgo del sustrato de lectura no estaba contratado
+
+El REQ sólo contrataba serie respecto de quien **escribe** `AGENTS.md`, que es lo que
+`tools/arnes-paralelo.sh` mide. **El riesgo es de quien LEE.** Ahora: cero comisiones ajenas solapadas
+durante el reparto (de contrato), acreditado por el libro de comisiones de `docs/qa/1.33.0.md`, con borde
+que no aprueba si el libro no registra la ventana. **Escrito como propiedad y no como instrucción de
+despacho**, por la misma razón que el REQ ya usa con `SEC-030`: *un orden vive en la cabeza de quien
+despacha*.
+
+Más: **`CA-05` punto 6** — la corrección contratada del rango «CA-01 a CA-13» **no es actualizarlo**, es
+**retirarlo** y citar el REQ como sitio único: mata la clase, no la instancia. Y en `CA-14`, el
+**suelo forzado se mide antes de repartir**: si ya excede el techo de `0,60×`, es insatisfacible por
+construcción y se sabe a coste de **una medición**, no de una vuelta sobre el reparto entero. *(El
+`0,60×` de `CA-07` no se derivó del suelo que `CA-02` obliga a conservar — la misma trampa que hoy costó
+dos vueltas en REQ-021. No se tocó: subirlo exige firma del propietario.)*
+
+**Sin ADR nuevo, con motivo:** ni `CA-15` ni `CA-16` cambian el alcance ni la decisión base de `ADR-003`.
+**Y sin NFR nuevo**, también con motivo: los cuatro hallazgos son defectos de **formulación de criterio**,
+no umbrales de sistema, y el único NFR cuantificable ya vive en `CA-07` — inventar uno habría creado una
+**segunda sede del mismo umbral**.
+
+**Una cifra que el analista se NEGÓ a escribir:** el «cinco veces» que la coordinadora le pasó en el
+encargo. No pudo verificarlo, y las cuatro citas del registro (`SEC-015`, `023`, `025`, `030`) son de
+**otra clase** —la acotación que envejece, no la acreditación por lectura—. `CA-15` enuncia la propiedad
+**sin número**. Es la tercera cifra sin respaldo que un agente devuelve a la coordinadora hoy.
+
+### Y la observación que más incomoda
+
+**El REQ que existe para retirar el impuesto fijo es hoy uno de los documentos más caros del
+repositorio.** La entrada obligatoria del desarrollador antes de su primera acción: `AGENTS.md` (~9 k,
+medido) + REQ-019 —que **acaba de crecer un ~26 %** y ronda 14–16 k— + `requirements/README.md` (~7 k) +
+`ADR-003` (~4 k) ≈ **33–36 k sólo para arrancar**, y los paga enteros.
+
+**Estimación nueva: 500 k – 900 k tokens y 3–5 h de reloj, y NO cabe en una sola comisión** con fidelidad
+verbatim —agotar el contexto a mitad del reparto deja `AGENTS.md` inconsistente, y lo lee todo el mundo—.
+Reparto propuesto en cinco fases, con tres avisos: **`CA-15` obliga a una comisión de analista NUEVA
+antes del desarrollador** (el precio de la independencia del universo, dicho en vez de disimulado);
+**`CA-16` detiene la ventana durante dos de las fases**, y ese reloj entra íntegro en la ruta crítica; y
+**`CA-06` tiene una tensión de rol** —el write-back de REQ ajenos es trabajo de analista por §5/§9, no de
+desarrollador— cuyo endurecimiento es **decisión del propietario**, porque reduce lo delegable y con ello
+el ahorro.
+
 ## [GitHub] — 2026-09-08 · REQ-021 reduce alcance: sale `sonda-linea-base.sh`, y lo que la reducción deja descubierto se escribe sin endulzar
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
 
