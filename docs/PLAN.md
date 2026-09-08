@@ -91,8 +91,28 @@ Esta ventana va a tener muchas comisiones, y las tres primeras palancas están *
 | La nota de migración **una vez al cerrar** | `skills/arnes-upgrade/SKILL.md` colisionaba en 15 de 15 pares | Paralelismo real entre comisiones |
 | **Adelgazar `AGENTS.md`** (cuarta, propuesta por la coordinadora) | ~9 k tokens de impuesto fijo en **cada** subagente; una comisión de subida de versión gastó 28 500 tokens para ~3 000 de trabajo real | El impuesto lo paga cada comisión de 1.34.0, que son muchas |
 
-> **Alcance final de 1.33.0, fijado por el propietario el 2026-09-07 con los cuatro REQ ya escritos y
-> medidos: REQ-017 + REQ-019 + REQ-021. `REQ-020` pasa a 1.34.0.**
+> **Alcance vigente de 1.33.0, fijado por el propietario el 2026-09-08: REQ-017 + REQ-021 + REQ-023.
+> `REQ-019`, `REQ-020` y `REQ-025` van a 1.34.0, y REQ-019 es su primer trabajo.**
+>
+> **Y el historial de este alcance vale más que el alcance, porque es el registro de una ventana que
+> creció tres veces en un día.** Se fijó el 2026-09-07 en `REQ-017 + REQ-019 + REQ-021` con `REQ-020`
+> fuera. El 2026-09-08 entró **REQ-023** —el carácter invisible, un bypass completo del enforcement
+> presente en las cinco versiones publicadas, medido por `R-012`— y salió **REQ-019**, cuando su
+> estimación pasó de ~2 h a **7–11 h en cuatro fases**: no cabe en una comisión, obliga a una comisión de
+> analista previa por `CA-15`, y su `CA-16` **detiene la ventana** durante dos de sus fases. Sacarlo no
+> pierde su ahorro: el argumento para tenerlo aquí era que *1.34.0 es la ventana con más comisiones*, y
+> eso se cumple igual siendo **el primer trabajo de 1.34.0**.
+>
+> **Lo que esta ventana NO entrega, dicho por su nombre: la reducción de tokens.** REQ-017 abarató el
+> **reloj** del banco (95,66 s → 45,14 s) y esperar al banco es gratis en tokens; REQ-021 ahorra
+> ~150 k por ventana pero sólo cuando exista; **la palanca de tokens es REQ-019, y se fue a 1.34.0.**
+> Medido el 2026-09-08 y corrigiendo la cifra de la tabla de arriba: el impuesto de arranque **no son
+> ~9 k sino ≈17 000–20 000 tokens** por subagente, porque §0 obliga a **tres** documentos y
+> `requirements/README.md` pesa el **42 %** —bytes y palabras medidos con `wc`; la conversión a tokens es
+> **estimación**—. Y su parte movible es menor de lo que parece: **el suelo inamovible del README es el
+> 54 % de las líneas y ≈58–64 % de los bytes**, así que el ahorro real por movimiento son **≈11–13 kB**,
+> y el bloque más caro —el `## Índice`, 19 % del archivo— **no lo baja REQ-019**, porque es una copia a
+> mano de lo que `tools/arnes-lectura.sh` ya deriva: eso es un mecanismo, con otro dueño.
 >
 > Con los cuatro, la ventana salía a **~5–6 h** frente a las ~3 h con que se partió esa misma mañana —
 > REQ-021 solo son ~2 h y ~650 k tokens—. Y el corte no es sólo presupuestario: **REQ-020 depende de

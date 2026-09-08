@@ -2,6 +2,42 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-08 · Sincronizados `PLAN.md` y `ESTADO.md`, que llevaban dos ventanas de retraso — y la cifra del impuesto de arranque se corrige
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+**Deriva de calendario, corregida.** Los dos tableros situaban `REQ-019` en 1.33.0 y describían la
+ventana como «las cuatro palancas de coste», cuando su alcance vigente es **REQ-017 + REQ-021 +
+REQ-023**. Lo detectó la comisión de REQ-019 al cerrar su Definition of Ready: era el único punto que no
+podía cerrar ella, porque esos dos archivos no están en su `Archivos:`.
+
+**Y el historial del alcance queda escrito, porque vale más que el alcance:** esta ventana **creció tres
+veces en un día** —nació con `REQ-017 + REQ-019 + REQ-021`, entró `REQ-023` y salió `REQ-019`—, que es
+exactamente el mecanismo con el que este mismo plan explica el descontrol del ciclo 3. Sacar REQ-019 no
+pierde su ahorro: el argumento para tenerlo aquí era que *1.34.0 es la ventana con más comisiones*, y eso
+se cumple igual siendo **su primer trabajo**.
+
+**Se dice por su nombre lo que la ventana NO entrega: la reducción de tokens.** REQ-017 abarató el
+**reloj** del banco y esperar al banco es **gratis en tokens**; REQ-021 ahorra ~150 k por ventana **cuando
+exista**; la palanca de tokens es REQ-019 y está en 1.34.0.
+
+**Corrección de una cifra del propio plan.** La tabla de palancas atribuye **~9 k tokens** de impuesto
+fijo a `AGENTS.md`. Medido el 2026-09-08: **§0 obliga a tres documentos** y el arranque son **≈17 000–20 000
+tokens** —`AGENTS.md` 33 827 B, `requirements/README.md` 31 192 B, `docs/ESTADO.md` 9 707 B; bytes y
+palabras **medidos con `wc`**, la conversión a tokens **estimada**—. `requirements/README.md` pesa el
+**42 %** y ningún REQ lo tocaba.
+
+**Y la ampliación es menor de lo que la coordinadora anunció**, con dos correcciones suyas registradas: el
+**suelo inamovible del README es el 54 % de las líneas y ≈58–64 % de los bytes**, así que el ahorro real
+por movimiento son **≈11–13 kB (36–42 %)** y no el doblado que anunció; y **el bloque más caro no lo baja
+REQ-019** — el `## Índice`, **19 %** del archivo, es una **copia a mano** de lo que
+`tools/arnes-lectura.sh` ya deriva, así que es un **mecanismo** con otro dueño.
+
+**La cola de pendientes se rehace con lo que apareció hoy y no tenía sede:** el hueco (b) por enrutar
+(`37/1` y `37/2` no llaman a `sonda_usable`), `REQ-017 CA-03` flaky sobre un REQ ya `completado`, las dos
+preguntas de REQ-025 aplazadas a propósito hasta cerrar la ventana, `SEC-050`/`SEC-051` sin ventana, y el
+`_doc` del manifiesto que ninguna migración toca. **El bloqueo se nombra:** la fusión está bloqueada por
+`CA-18`, y no es un bloqueo de decisión —está autorizado— sino de trabajo por hacer.
+
 ## [GitHub] — 2026-09-08 · REQ-021 vuelta 2, medición: `CA-03 (d)` en 0 de 30, y el desarrollador desmiente su propia palanca
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador`.
 
