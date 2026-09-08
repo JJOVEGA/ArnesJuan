@@ -91,11 +91,29 @@ Esta ventana va a tener muchas comisiones, y las tres primeras palancas están *
 | La nota de migración **una vez al cerrar** | `skills/arnes-upgrade/SKILL.md` colisionaba en 15 de 15 pares | Paralelismo real entre comisiones |
 | **Adelgazar `AGENTS.md`** (cuarta, propuesta por la coordinadora) | ~9 k tokens de impuesto fijo en **cada** subagente; una comisión de subida de versión gastó 28 500 tokens para ~3 000 de trabajo real | El impuesto lo paga cada comisión de 1.34.0, que son muchas |
 
-> **Alcance vigente de 1.33.0, fijado por el propietario el 2026-09-08: REQ-017 + REQ-021 + REQ-023.
-> `REQ-019`, `REQ-020` y `REQ-025` van a 1.34.0, y REQ-019 es su primer trabajo.**
+> **Alcance vigente de 1.33.0, fijado por el propietario el 2026-09-08 (segunda decisión del mismo
+> día): REQ-017 + REQ-021, más la partición de las tres secciones sobre 400 líneas (`DEV-021-07`).
+> `REQ-019`, `REQ-020`, `REQ-023`, `REQ-024` y `REQ-025` van a 1.34.0, y REQ-019 es su primer trabajo.**
 >
-> **Y el historial de este alcance vale más que el alcance, porque es el registro de una ventana que
-> creció tres veces en un día.** Se fijó el 2026-09-07 en `REQ-017 + REQ-019 + REQ-021` con `REQ-020`
+> **REQ-023 salió el mismo día que entró, y el motivo es que su coste se midió después de meterlo.** El
+> analista lo evaluó y no cabía donde estaba: **cuatro comisiones en serie** tras REQ-021 —cata del
+> desarrollador para decidir `CA-03` frente a `CA-04`, implementación cuyo bulto es el banco, QA con
+> **una vuelta dev↔QA por diseño** (`CA-03` está escrito para que una implementación por lista falle) y
+> auditoría por `Rigor: critico`—, sin paralelismo posible y con dos precondiciones ajenas
+> (`CA-09 (iii)` espera a que REQ-021 suelte `tests/util/`; `CA-08` depende del tag). Y aplazarlo **no
+> incumple nada**: el vencimiento de `SEC-047` es el cierre de **1.34.0** (`registro-seguridad.md:3684`),
+> así que meterlo aquí había sido un **adelanto**, y desandar un adelanto no incumple un vencimiento.
+>
+> **El argumento con el que se justificó tenerlo aquí era falso, y conviene que quede escrito porque lo
+> escribió la coordinadora.** Se dijo que publicar sin él «publica una ventana más una promesa falsa en
+> `AGENTS.md` §6/§13». `R-013 §2` ya había **medido** que cerrar la vía del carácter **no cierra la
+> clase** —el comentario y el borrado siguen abiertos, y son `SEC-050` y `SEC-047 (2)`, los dos de
+> 1.34.0—; que las filas son falsas **desde `v1.30.3`**, en cinco versiones, de forma **latente**; y que
+> aplazar deja §13 **igual de honesta**, porque la fila del CR la reescribe `CA-10`, que es de REQ-023.
+> Una consecuencia inventada para sostener una prioridad es la misma forma que `SEC-052`.
+>
+> **Y el historial de este alcance vale más que el alcance, porque es el registro de una ventana que se
+> movió cuatro veces en dos días.** Se fijó el 2026-09-07 en `REQ-017 + REQ-019 + REQ-021` con `REQ-020`
 > fuera. El 2026-09-08 entró **REQ-023** —el carácter invisible, un bypass completo del enforcement
 > presente en las cinco versiones publicadas, medido por `R-012`— y salió **REQ-019**, cuando su
 > estimación pasó de ~2 h a **7–11 h en cuatro fases**: no cabe en una comisión, obliga a una comisión de

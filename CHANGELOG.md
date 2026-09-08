@@ -2,6 +2,45 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · REQ-024 (borrador): la ausencia que abre, en el segundo lector; y un conflicto con REQ-023 que hay que anclar antes de implementarlo
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Existe porque tres hallazgos sin archivo comparten **una** propiedad: la mitad (2) de **SEC-047** (el
+campo comentado, con forzador subido en R-013 a «bypass alcanzable con una edición visible»), las tres
+partes de **SEC-051** y la reparación del puntero de **REQ-016 CA-11**. `Versión destino: 1.34.0`,
+`Rigor: critico`, `Estado: borrador`.
+
+**Se queda en `borrador` a propósito: ocho preguntas abiertas, cuatro de fondo**, y las cuatro cuelgan
+de dos ADR que el propio REQ declara como entregables —cómo se **activa** la exigencia (fija el radio de
+migración entero), qué **dirección** de ausencia corresponde a cada campo, **dónde** vive el sitio único
+(decide si REQ-016 se reabre) y si ADR-007 cruza la frontera de grano de línea de la cola—. Ninguna se
+cierra desde la mesa del analista: son gates humanos.
+
+**Coste estimado: 9 comisiones en el camino feliz, 11–13 realista**, todas en serie (comparten
+`hooks/lib.sh` y nueve archivos con REQ-023). Dos precondiciones duras: no arranca hasta que REQ-023
+cierre, y `CA-07` no se puede medir hasta que existan las sondas de REQ-021.
+
+### Los dos conflictos con REQ-023, y el segundo hay que anclarlo ya
+
+1. **REQ-023 `CA-11` vs REQ-024 `CA-01`.** CA-11 contrata que la ausencia «se sigue perdonando
+   exactamente como antes». CA-01 cambia esa conducta. Compatibles **si y sólo si** ADR-006 elige
+   **activación explícita**; si la exigencia fuese el defecto, REQ-023 CA-11 pasaría a describir una
+   conducta que el árbol no tiene — hallazgo `contrato` y, si ya estuviera cerrado, reapertura.
+2. **REQ-023 `CA-12 (ii)` vs REQ-024 `CA-08`/`CA-09`.** CA-12 (ii) contrata que `arnes_cola_pendientes`
+   cuenta y devuelve **exactamente lo mismo**; CA-08 y CA-09 **cambian** el conteo y el `rc` para dos
+   formas. No hay contradicción **si** ese criterio queda anclado a **su** corpus y **su** versión — y
+   hoy no la hay, porque R-013 midió que ninguna de las formas que abren tiene caso en el banco de
+   1.33.0. **Sí** la hay si se implementa como no-regresión **abierta** («la cola nunca cambia su
+   conteo»): entonces la implementación de REQ-024 romperá una prueba de REQ-023. Se ancla en el
+   write-back de REQ-023, no en 1.34.0.
+
+### `docs/PLAN.md` — cuarta modificación del alcance de 1.33.0 en dos días
+
+Registrada con su motivo: REQ-023 salió el mismo día que entró porque su coste se midió **después** de
+meterlo. Y queda escrito que el argumento con el que la coordinadora justificó tenerlo dentro era
+**falso y ya estaba medido falso** (R-013 §2): aplazarlo deja `AGENTS.md` §13 igual de honesta. Una
+consecuencia inventada para sostener una prioridad es la misma forma que `SEC-052`.
+
 ## [GitHub] — 2026-09-08 · Una condición de escalada que sólo existía en el REQ al que beneficiaba: SEC-052, y REQ-023 sale de 1.33.0 por decisión del propietario
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (write-back de REQ-023) y `auditor-seguridad` (R-014, Opus).
 
