@@ -2,6 +2,74 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · REQ-014: la máquina de `CA-18` deriva el techo por archivo, y el oráculo de `CA-12` normaliza por propiedad — verificado independientemente
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+### `CA-18` — el literal `≤400` desaparece; `ca18_deriva()` con tres comprobaciones y fail-closed
+
+Una sola pasada de `awk` deriva `líneas(f) ≤ max(400, ceil(piso(f)×1,25))` y comprueba **(a)** todos
+declaran, **(b)** los términos suman el valor declarado —**una derivación que la máquina no puede leer
+es ILEGIBLE, fail-closed, no se da por buena**—, **(c)** `piso ≤ líneas`. Publica una fila por archivo:
+líneas / piso / techo / **quién gobierna el techo** / líneas duplicadas — publicado y **no comparado**,
+a propósito.
+
+**Los 45 techos derivados:** 42 archivos con techo `400` (gobernados por `N`); 2 con techo `piso×k`.
+Excedidos hoy, los tres que el REQ nombra: `37/1` **849→577**, `37/2` **679→585**, `38` **828→400**
+(su piso, 133, queda muy por debajo del umbral de 320 — lo gobierna `N`, no su piso).
+
+### `CA-12` — el oráculo por propiedad, sin nombrar una sola unidad
+
+Es identidad el numeral que **designa** (pegado a un nombre; ≥3 partes = versión o fecha; entre
+comillas = la entrada que el caso ejercita); es medida **toda la evidencia** publicada tras dos
+espacios, y en el nombre lo escrito en **notación de magnitud**. Los **tres negativos contratados**,
+automatizados en la autoprueba: suprimido → `cmp` falla y **nombra la línea**; renombrado → falla y
+**nombra los dos textos**; veredicto invertido → falla y **nombra el caso con los dos valores**. Control:
+inyectar en una sola línea de dos que colisionan bajo el oráculo también se detecta — la multiplicidad
+no la esconde.
+
+**Y el desarrollador desmintió sus dos primeras propuestas, midiendo:** «normalizar todo numeral que no
+sea identificador» destruía 138 líneas de identidad estable; «unidad = cualquier byte no ASCII»
+normalizaba las cotas normativas (`2×`, `6×`, `1µs`) dentro del nombre. La versión final las conserva.
+
+### Verificado independientemente antes de comitear
+
+`bash tests/escenarios/hooks/autoprueba-corredor.sh` corrido por la coordinadora, no aceptado de
+palabra: **105 PASS, 1 FAIL**, y el FAIL es exactamente `CA-18` nombrando los tres archivos con sus
+líneas y su techo — coincide al dígito con el reporte del desarrollador.
+
+**Banco: 4 corridas, todas 880 PASS · 0 FAIL · 4 SKIP · rc 0**, cuadre 884. `CA-12` de su propio
+cambio: inventario **byte a byte idéntico** antes y después (884 líneas, 73.508 bytes). `CA-14`
+acreditado entero. Gates de §7 en verde; `bash -n` en verde sobre las 45 secciones + corredor +
+autoprueba + inventario.
+
+### Un desfase de una línea, encontrado midiendo, y una consecuencia para la comisión siguiente
+
+**El piso de las dos secciones 37 sube en 1**: la línea de declaración de `PISO_AUTONOMO_SECCION` es
+ella misma preámbulo, así que `37/1` = 461 (no 460) y `37/2` = 468 (no 467). `k` no cambia — la mejor
+partición medida pasa a **565/461 = 1,2256 ≤ 1,25**, sigue conforme. Corrección de Historial, sin ADR.
+
+**Y un hallazgo nuevo para quien parta los archivos:** `37/1` y `37/2` caben en **dos** archivos cada
+una; **`38-sondas-compartidas.sh` no** — dos mitades salen a ~424 líneas contra un techo de 400, así
+que necesita **tres**.
+
+### `SEC-053` → `mitigado` (auditor, R-017)
+
+Residual único resuelto por la ratificación del propietario, re-verificada contra el árbol de `v1.31.0`.
+`SEC-056` nuevo (`instrumento`, no bloqueante): el índice de hallazgos vive dentro de una entrada
+fechada. `v1.33.0` sigue sin despejar: **30** `contrato` abiertos.
+
+**Sesión pausada por presupuesto de tokens del usuario.** La evaluación de si `REQ-014` admite rigor
+menor quedó **interrumpida sin veredicto** — no se aplicó ningún cambio de rigor. Pendiente para la
+próxima sesión.
+
+### Techo honesto de esta comisión
+
+No tocó `Estado:`, `Historial`, `CHANGELOG.md`, los dos ADR pendientes ni `docs/qa/1.33.0.md` — por
+instrucción, y no comiteó. Dos líneas de documentación quedan **incompletas, no falsas**:
+`tests/escenarios/hooks/README.md` («cómo se añade una sección», ahora cuatro pasos) y
+`ARCHITECTURE.md:39`. **Aviso operativo:** el oráculo nuevo invalida cualquier inventario ya
+normalizado que se guarde como línea base; hay que regenerarlo desde la salida cruda.
+
 ## [Interno] — 2026-09-08 · `v1.31.0` ratificada; y `REQ-019` protegido por escrito como primer e ÚNICO trabajo de 1.34.0
 > Origen: Interno · usuario: Juan · modelo de IA: Sonnet 5 · agente: coordinadora.
 

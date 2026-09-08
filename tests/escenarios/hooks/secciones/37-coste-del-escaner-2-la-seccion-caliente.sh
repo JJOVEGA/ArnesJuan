@@ -26,6 +26,7 @@
 # nadie comprobaba nunca que la puerta cerrase. Con la convergencia el argumento es todavía
 # más fuerte: en una corrida sana la sonda CONVERGE, así que su camino no se recorre nunca.
 CASOS_ESPERADOS_SECCION=11
+PISO_AUTONOMO_SECCION=468  # 33 preámbulo + 92 maquinaria compartida duplicada + 269 bloque indivisible mayor (CA-05, líneas 128-396) + 74 bloque atado a él (CA-06 prueba las dos puertas de CA-05) · REQ-014 CA-18
 seccion_nueva "--- 37/2 · la ruta crítica del banco y el camino de una cabecera normal (REQ-017) ---"
 
 BANCO47="${SEC_DIR%/}/../run.sh"

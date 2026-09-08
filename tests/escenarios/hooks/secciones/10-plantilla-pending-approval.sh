@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=1
+PISO_AUTONOMO_SECCION=22  # 8 preámbulo + 0 maquinaria compartida duplicada + 14 bloque indivisible mayor · REQ-014 CA-18
 
   seccion_nueva "Arranque limpio — plantilla de PENDING_APPROVAL:"
 cp "$TPL_DIR/PENDING_APPROVAL.md.tpl" "$PROJ/PENDING_APPROVAL.md"

@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=15
+PISO_AUTONOMO_SECCION=64  # 8 preámbulo + 0 maquinaria compartida duplicada + 56 bloque indivisible mayor · REQ-014 CA-18
 
 seccion_nueva "Formas decoradas (marcado de Markdown en el valor):"
 mkreq "$PROJ/requirements/REQ-060.md" "**sí**" "aprobado" "pendiente"

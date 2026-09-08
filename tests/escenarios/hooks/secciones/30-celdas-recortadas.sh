@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=13
+PISO_AUTONOMO_SECCION=99  # 9 preámbulo + 12 maquinaria compartida duplicada + 78 bloque indivisible mayor · REQ-014 CA-18
 
 # --- REQ-006: las celdas del bloque derivado, recortadas ------------------------------
   seccion_nueva "Celdas del bloque derivado recortadas (presentacion, no lectura):"

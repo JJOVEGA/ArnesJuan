@@ -22,7 +22,7 @@ PASS=0; FAIL=0
 # Cuántos casos corre esta autoprueba. Se comprueba al final: la misma invariante que
 # el banco exige a cada archivo de sección, aplicada al artefacto que certifica al
 # corredor (QA 1.32.0, H-06).
-AUTOPRUEBA_CASOS_ESPERADOS=73
+AUTOPRUEBA_CASOS_ESPERADOS=106
 
 command -v jq >/dev/null 2>&1 || { echo "SKIP: jq no instalado"; exit 0; }
 
@@ -57,6 +57,117 @@ pon_seccion() {
 SALIDA=''; RC=0
 corre_corredor() {
   SALIDA="$(ARNES_SECCIONES_DIR="$DIRSEC" ARNES_JOBS=4 bash "$CORREDOR" "$@" 2>&1)"; RC=$?
+}
+
+# --- CA-18 · el techo se DERIVA del piso de cada archivo, y se publica ---------
+# `líneas(f) ≤ max( N , piso(f) × k )`, con N = 400 y k = 1,25 (REQ-014 CA-18 (i), con la
+# derivación término a término de los dos literales escrita en el criterio). El techo NO es
+# un total absoluto y no puede serlo: `piso(f)` —el mínimo autónomo del archivo— lo imponen
+# CA-04 (cada sección en su subshell, con los ayudantes compartidos SÓLO en el corredor),
+# CA-19 (ninguna sección hace `source` de otra) y H-04 (el corredor aborta ante cualquier
+# entrada de `secciones/` que no case `NN-<slug>.sh`, así que tampoco cabe un archivo
+# auxiliar). Con esas tres, la maquinaria que dos mitades comparten SE DUPLICA: partir un
+# archivo produce DOS pisos, no medio piso. Medido el 2026-09-08: con el techo escrito en
+# 400 y los pisos de las dos secciones 37 en 460 y 467, NO existía ninguna partición
+# conforme y esta autoprueba dejaba la puerta requerida roja sin acción disponible
+# (DEV-014-01, `contrato`).
+#
+# POR QUÉ ESTO VIVE AQUÍ Y NO EN EL CORREDOR. El piso es una propiedad del TEXTO del
+# archivo, no de la corrida: sólo cambia cuando el archivo cambia, y derivarlo en `run.sh`
+# costaría una pasada sobre 45 archivos en CADA vuelta del banco. Además CA-18 (iii) sitúa
+# el caso «en `autoprueba-corredor.sh`», y el corredor tendría que exigir la declaración
+# también a los directorios de secciones SINTÉTICOS —los de esta autoprueba y el de la
+# sección 37/2—, que no son archivos que nadie tenga que leer para tocar una sección.
+#
+# LO QUE ESTA MÁQUINA NO DECIDE, dicho aquí porque es lo que hace. El término «bloque
+# indivisible mayor» es una AFIRMACIÓN SOBRE LA ESTRUCTURA y ninguna máquina de este banco
+# la decide: un piso INFLADO afloja el techo sin que ninguna puerta grite. Contra eso hay
+# dos cosas y ninguna es una puerta: la derivación ESCRITA en cada archivo, que un lector
+# puede falsificar término a término, y la regla de procedimiento del REQ —el techo no se
+# compra deformando el sujeto—. Lo que sí se comprueba es la aritmética: (a) que todos
+# declaren, (b) que los términos sumen el valor declarado, (c) que el piso quepa en el
+# archivo. Y como evidencia para quien lea se PUBLICA, sin compararla, cuántas líneas de
+# cada archivo aparecen también en el corredor o en otra sección: la duplicación es
+# exactamente lo que las tres invariantes imponen, y un ABORT ahí sería un rojo sobre
+# código correcto —la clase de rojo de H-11, la que enseña a desactivar el control—.
+CA18_N=400
+CA18_K_CENTESIMAS=125     # k = 1,25; se redondea HACIA ARRIBA (un techo es una cota)
+# ca18_deriva <dir-de-secciones> -> deja CA18_SIN_PISO, CA18_ILEGIBLE, CA18_SUMA_MAL,
+# CA18_PISO_IMPOSIBLE, CA18_LARGOS (los que exceden, con tamaño y techo), CA18_TABLA y
+# CA18_FILAS. Una sola pasada de awk sobre el corredor + las secciones: en esta plataforma
+# cada fork cuesta 1,2-6 s y aquí hay 45 archivos.
+ca18_deriva() {
+  local dir="$1" b lin piso suma nt legible techo dup gob fila
+  CA18_SIN_PISO=''; CA18_ILEGIBLE=''; CA18_SUMA_MAL=''; CA18_PISO_IMPOSIBLE=''
+  CA18_LARGOS=''; CA18_TABLA=''; CA18_FILAS=0
+  while IFS='|' read -r b lin piso suma nt legible techo dup gob; do
+    [ -n "$b" ] || continue
+    CA18_FILAS=$((CA18_FILAS + 1))
+    # `printf -v` y no `$(printf …)`: una sustitución de comando por archivo son 45 forks
+    # por corrida, y en esta plataforma cada fork cuesta entre 1,2 y 6 s.
+    printf -v fila '       %-56s lineas=%4d piso=%4d techo=%4d (gobierna %-8s) duplicadas=%4d\n' \
+      "$b" "$lin" "$piso" "$techo" "$gob" "$dup"
+    CA18_TABLA="$CA18_TABLA$fila"
+    if [ "$piso" -lt 0 ]; then CA18_SIN_PISO="$CA18_SIN_PISO $b"; continue; fi
+    if [ "$legible" -eq 0 ]; then CA18_ILEGIBLE="$CA18_ILEGIBLE $b"; continue; fi
+    [ "$suma" -eq "$piso" ] || CA18_SUMA_MAL="$CA18_SUMA_MAL $b(declara $piso, los $nt términos suman $suma)"
+    [ "$piso" -le "$lin" ] || CA18_PISO_IMPOSIBLE="$CA18_PISO_IMPOSIBLE $b(piso $piso > $lin líneas)"
+    [ "$lin" -le "$techo" ] || CA18_LARGOS="$CA18_LARGOS $b($lin líneas, techo $techo)"
+  done < <(LC_ALL=C awk -v n="$CA18_N" -v kc="$CA18_K_CENTESIMAS" '
+    FNR == 1 { nf++; tot[nf] = 0; piso[nf] = -1; suma[nf] = 0; nterm[nf] = 0; legible[nf] = 1
+               b = FILENAME; sub(/^.*\//, "", b); base[nf] = b }
+    {
+      tot[nf] = FNR
+      # La declaración es la PRIMERA que aparezca: una segunda no puede decidir contra qué
+      # se compara la primera (mismo motivo que `CASOS_ESPERADOS_SECCION` en el corredor).
+      if (piso[nf] < 0 && $0 ~ /^PISO_AUTONOMO_SECCION=[0-9]+/) {
+        v = $0; sub(/^PISO_AUTONOMO_SECCION=/, "", v); sub(/[^0-9].*$/, "", v); piso[nf] = v + 0
+        c = index($0, "#"); com = (c ? substr($0, c + 1) : "")
+        np = split(com, parte, /\+/)
+        for (i = 1; i <= np; i++) {
+          # Cada término es `<entero> <palabras>`. Lo que no case así deja la derivación
+          # ILEGIBLE, y una derivación que la máquina no puede leer no se da por buena:
+          # fail-closed, como el resto de este banco.
+          if (parte[i] ~ /^[ \t]*[0-9]+[ \t]+[^ \t]/) {
+            s = parte[i]; sub(/^[ \t]*/, "", s); sub(/[^0-9].*$/, "", s)
+            suma[nf] += s + 0; nterm[nf]++
+          } else legible[nf] = 0
+        }
+        # Los tres términos del criterio: preámbulo + maquinaria compartida duplicada +
+        # bloque indivisible mayor. Menos de tres no es una derivación, es el total otra vez.
+        if (nterm[nf] < 3) legible[nf] = 0
+      }
+      # Duplicación (se PUBLICA, no se compara): líneas no vacías que aparecen en más de un
+      # archivo de este conjunto —el corredor incluido—.
+      if ($0 !~ /^[ \t]*$/) {
+        if (!($0 in vistoen) || vistoen[$0] != nf) { nvis[$0]++; vistoen[$0] = nf }
+        nt++; t_arch[nt] = nf; t_linea[nt] = $0
+      }
+    }
+    END {
+      for (j = 1; j <= nt; j++) if (nvis[t_linea[j]] >= 2) dup[t_arch[j]]++
+      # nf = 1 es el corredor: entra en la cuenta de duplicación y NO lleva fila propia.
+      for (i = 2; i <= nf; i++) {
+        techo = n; gob = "N"
+        if (piso[i] > 0) {
+          c = int((piso[i] * kc + 99) / 100)
+          if (c > techo) { techo = c; gob = "piso*k" }
+        }
+        printf "%s|%d|%d|%d|%d|%d|%d|%d|%s\n", base[i], tot[i], piso[i], suma[i], nterm[i], legible[i], techo, dup[i] + 0, gob
+      }
+    }
+  ' "$CORREDOR" "$dir"/[0-9][0-9]-*.sh)
+}
+# pon_seccion_piso <archivo> <líneas-totales> <línea-de-declaración-o-vacío>
+# Secciones sintéticas para el par discriminante de CA-18: sólo se les mide el TEXTO, no se
+# ejecutan, así que el relleno es relleno.
+pon_seccion_piso() {
+  local k=3
+  { printf '# sección sintética de CA-18 (%s)\n' "$1"
+    printf 'CASOS_ESPERADOS_SECCION=1\n'
+    printf '%s\n' "$3"
+    while [ "$k" -lt "$2" ]; do k=$((k + 1)); printf '# relleno %s %d\n' "$1" "$k"; done
+  } > "$DIRSEC/$1"
 }
 
 echo "Autoprueba del corredor ($CORREDOR):"
@@ -411,22 +522,200 @@ for f in "$SECC_REAL"/*.sh; do
 done
 igual "CA-01 todos los archivos de secciones/ se llaman NN-<slug>.sh" "" "$MALOS"
 
-SIN_SINTAXIS=""; SIN_NUMERO=""; LARGOS=""; ACOPLADOS=""; MODO_RARO=""
+SIN_SINTAXIS=""; SIN_NUMERO=""; ACOPLADOS=""; MODO_RARO=""
 for f in "$SECC_REAL"/[0-9][0-9]-*.sh; do
   b="${f##*/}"
   bash -n "$f" 2>/dev/null || SIN_SINTAXIS="$SIN_SINTAXIS $b"
   grep -qE '^CASOS_ESPERADOS_SECCION=[0-9]+' "$f" || SIN_NUMERO="$SIN_NUMERO $b"
-  [ "$(grep -c '' "$f")" -le 400 ] || LARGOS="$LARGOS $b($(grep -c '' "$f"))"
   grep -qE '^[[:space:]]*(source|\.)[[:space:]]+.*secciones/' "$f" && ACOPLADOS="$ACOPLADOS $b"
   [ -x "$f" ] && MODO_RARO="$MODO_RARO $b"
 done
 igual "CA-11 bash -n pasa en todos los archivos de sección" "" "$SIN_SINTAXIS"
 igual "CA-07 todos declaran su CASOS_ESPERADOS_SECCION" "" "$SIN_NUMERO"
-igual "CA-18 ningún archivo de sección pasa de 400 líneas" "" "$LARGOS"
 igual "CA-19 ningún archivo de sección hace source de otro" "" "$ACOPLADOS"
 igual "CA-27 los archivos de sección no llevan bit de ejecución (se hacen source)" "" "$MODO_RARO"
 igual "CA-27 run.sh sí conserva su bit de ejecución" "si" \
   "$([ -x "$CORREDOR" ] && echo si || echo no)"
+
+# --- CA-18 sobre el ÁRBOL REAL: las tres comprobaciones del piso y el techo ----
+ca18_deriva "$SECC_REAL"
+igual "CA-18 (a) todos los archivos de sección declaran su PISO_AUTONOMO_SECCION" "" "$CA18_SIN_PISO"
+igual "CA-18 (b) la derivación de cada piso es legible (tres términos o más)" "" "$CA18_ILEGIBLE"
+igual "CA-18 (b) y sus términos SUMAN el valor declarado" "" "$CA18_SUMA_MAL"
+igual "CA-18 (c) el piso declarado cabe en el archivo" "" "$CA18_PISO_IMPOSIBLE"
+igual "CA-18 publica una fila por archivo de sección descubierto" \
+  "$(set -- "$SECC_REAL"/[0-9][0-9]-*.sh; echo $#)" "$CA18_FILAS"
+# ESTE es el caso del criterio, y su salida NOMBRA archivo, tamaño y techo: un `rc ≠ 0` a
+# secas lo daría igual una comprobación que falla siempre.
+igual "CA-18 ningún archivo excede max(N, piso × k) — con N=400 y k=1,25" "" "$CA18_LARGOS"
+echo "       --- CA-18 · techo derivado por archivo (se publica, no se compara) ---"
+printf '%s' "$CA18_TABLA"
+
+# --- CA-18 (iii) · el par discriminante, sobre secciones SINTÉTICAS ------------
+# Un techo que ningún archivo pueda exceder no mide nada, y uno que ninguno pueda cumplir
+# es el interbloqueo de DEV-014-01. Así que las dos configuraciones tienen que existir, y
+# las dos ramas de `max(…)` tienen que decidir: la de N para los archivos de piso pequeño
+# (42 de 45 el 2026-09-08) y la de `piso × k` para los que ya no se leen más barato
+# partiéndolos.
+DERIV_OK='PISO_AUTONOMO_SECCION=100  # 10 preambulo + 40 maquinaria compartida duplicada + 50 bloque indivisible mayor'
+DERIV_460='PISO_AUTONOMO_SECCION=460  # 26 preambulo + 122 maquinaria compartida duplicada + 312 bloque indivisible mayor'
+nuevo_dir
+pon_seccion_piso "01-cabe-por-n.sh"      399 "$DERIV_OK"
+pon_seccion_piso "02-cabe-por-piso-k.sh" 570 "$DERIV_460"
+ca18_deriva "$DIRSEC"
+igual "CA-18 (iii) POSITIVO: la configuración verde existe (399 con techo N, 570 con techo 575)" "" "$CA18_LARGOS"
+igual "CA-18 (iii) y el techo de piso 460 lo gobierna piso×k, no N" "si" \
+  "$(printf '%s' "$CA18_TABLA" | grep -q '02-cabe-por-piso-k.sh.*techo= 575 (gobierna piso\*k' && echo si || echo no)"
+igual "CA-18 (iii) mientras el de piso 100 lo sigue gobernando N=400" "si" \
+  "$(printf '%s' "$CA18_TABLA" | grep -q '01-cabe-por-n.sh.*techo= 400 (gobierna N' && echo si || echo no)"
+nuevo_dir
+pon_seccion_piso "01-excede-por-n.sh"      401 "$DERIV_OK"
+pon_seccion_piso "02-excede-por-piso-k.sh" 600 "$DERIV_460"
+ca18_deriva "$DIRSEC"
+casa "CA-18 (iii) NEGATIVO por N: nombra el archivo, su tamaño y su techo" \
+  '01-excede-por-n\.sh\(401 líneas, techo 400\)' "$CA18_LARGOS"
+casa "CA-18 (iii) NEGATIVO por piso×k: nombra el archivo, su tamaño y su techo" \
+  '02-excede-por-piso-k\.sh\(600 líneas, techo 575\)' "$CA18_LARGOS"
+# Y el control de que el negativo no es una comprobación que falla siempre: los mismos dos
+# archivos, un línea más cortos que su techo, no salen nombrados (arriba, POSITIVO).
+nuevo_dir
+pon_seccion_piso "01-sin-declaracion.sh" 20 ""
+pon_seccion_piso "02-no-suma.sh"         20 'PISO_AUTONOMO_SECCION=90  # 10 preambulo + 40 maquinaria compartida duplicada + 50 bloque indivisible mayor'
+pon_seccion_piso "03-ilegible.sh"        20 'PISO_AUTONOMO_SECCION=100  # medido a ojo'
+pon_seccion_piso "04-piso-imposible.sh"  20 'PISO_AUTONOMO_SECCION=100  # 10 preambulo + 40 maquinaria compartida duplicada + 50 bloque indivisible mayor'
+ca18_deriva "$DIRSEC"
+casa "CA-18 (a) NEGATIVO: el archivo que no declara su piso sale nombrado" \
+  '01-sin-declaracion\.sh' "$CA18_SIN_PISO"
+casa "CA-18 (b) NEGATIVO: la derivación que no suma sale nombrada CON los dos números" \
+  '02-no-suma\.sh\(declara 90, los 3 términos suman 100\)' "$CA18_SUMA_MAL"
+casa "CA-18 (b) NEGATIVO: una derivación sin términos es ILEGIBLE, no se da por buena" \
+  '03-ilegible\.sh' "$CA18_ILEGIBLE"
+casa "CA-18 (c) NEGATIVO: un piso mayor que el archivo sale nombrado" \
+  '04-piso-imposible\.sh\(piso 100 > 20 líneas\)' "$CA18_PISO_IMPOSIBLE"
+no_casa "CA-18 y el que sólo le falta la declaración no se acusa además de no sumar" \
+  '01-sin-declaracion' "$CA18_SUMA_MAL"
+
+# --- CA-12 (b)(c)(d) · EL ORÁCULO DEL INVENTARIO, con su par discriminante ----
+# El inventario es el criterio CENTRAL de REQ-014: «el banco pasa» no dice nada, porque dos
+# casos que intercambian PASS y FAIL dan el mismo total. Y el 2026-09-08 se midió que su
+# instrumento no podía dar la acreditación que el criterio afirmaba: tres corridas INTACTAS
+# daban 884 casos las tres y 74.047 · 74.055 · 74.047 bytes, con `cmp` distinto en el byte
+# 42.027, porque el oráculo normalizaba UNA unidad (`ms`) mientras 25 de 884 líneas
+# publicaban µs, cocientes, PID, sellos epoch y ternas sorteadas (DEV-014-02, `contrato`).
+#
+# Aquí se acredita con FIXTURES y no con dos corridas del banco —40 s cada una— por lo
+# mismo que el resto de esta autoprueba usa secciones sintéticas: lo que se prueba es el
+# ORÁCULO, y un fixture ejerce las dos mitades (lo que normaliza y lo que conserva) de
+# forma reproducible. Las dos corridas intactas del banco de verdad son la medición del
+# REQ, no la puerta de cada PR.
+#
+# LAS TRES INYECCIONES SON NECESARIAS Y NINGUNA SOBRA (CA-12 (d)): un caso SUPRIMIDO, uno
+# RENOMBRADO y uno con el VEREDICTO INVERTIDO son las tres formas en que un refactor del
+# banco pierde cobertura, y cubrir una no acredita las otras dos. Y un `rc ≠ 0` a secas no
+# acredita nada —lo daría igual una comparación que falla siempre—, así que de cada negativo
+# se exige que la salida NOMBRE el cambio.
+INVENTARIO="${ARNES_INVENTARIO:-$AQUI/inventario.sh}"
+cat > "$RAIZ/banco-A.txt" <<'FIN_A'
+Banco de escenarios del arnés (un proyecto efímero por sección):
+  PASS  REQ-017 CA-03 el escáner no crece más que linealmente  cociente (70000→140000 bytes, k=20) = 2.024× (techo 2.600×; 271741µs sobre 134200µs)
+  PASS  REQ-021 CA-04.1 fail-before: el mismo sujeto deja vivo al nieto  (PID 441822 y su descendencia siguen vivos)
+  PASS  REQ-021 CA-03 (a.3) cond. 3 ANTERIORIDAD: el testigo es anterior a la invocación  (terna <835 1788896582566936 1788896582566949>)
+  PASS  SEC-004 CA-50b enlace ROTO: responde deny (113ms), ni cuelga ni revienta
+  PASS  CA-05 '2026-13-05' no es una fecha -> deny  (deny)
+  PASS  CA-04 borde exacto: 40 intacto, 41 recortado
+  PASS  CA-16 conservar_entradas no numerico: se ignora y sale 0
+  PASS  CA-18 un estado que NO existe sigue siendo anomalia (sale 1)
+  FAIL  DEV 1.31.0 v2: QA-104 'ls -la' cuesta 1 proceso jq (como v1.30.3)
+  SKIP  REQ-017 CA-05 (i) la ruta crítica no se pide  evidencia del Historial: 0,125× — 9,60 s frente a 76,19 s
+       · REQ-017 CA-05 (i) la ruta crítica no se pide  recapitulación de un SKIP, que NO es un caso
+-------------------------------------------
+Resultado: 8 PASS, 1 FAIL, 1 SKIP — ninguna causa común: cada uno con su motivo
+FIN_A
+# Corrida B: EL MISMO banco, sin tocar nada. Sólo cambia lo que el reloj y el sorteo miden.
+cat > "$RAIZ/banco-B.txt" <<'FIN_B'
+Banco de escenarios del arnés (un proyecto efímero por sección):
+  PASS  REQ-017 CA-03 el escáner no crece más que linealmente  cociente (70000→140000 bytes, k=20) = 1.925× (techo 2.600×; 289033µs sobre 150075µs)
+  PASS  REQ-021 CA-04.1 fail-before: el mismo sujeto deja vivo al nieto  (PID 459165 y su descendencia siguen vivos)
+  PASS  REQ-021 CA-03 (a.3) cond. 3 ANTERIORIDAD: el testigo es anterior a la invocación  (terna <776 1788896622159045 1788896622159056>)
+  PASS  SEC-004 CA-50b enlace ROTO: responde deny (214ms), ni cuelga ni revienta
+  PASS  CA-05 '2026-13-05' no es una fecha -> deny  (deny)
+  PASS  CA-04 borde exacto: 40 intacto, 41 recortado
+  PASS  CA-16 conservar_entradas no numerico: se ignora y sale 0
+  PASS  CA-18 un estado que NO existe sigue siendo anomalia (sale 1)
+  FAIL  DEV 1.31.0 v2: QA-104 'ls -la' cuesta 1 proceso jq (como v1.30.3)
+  SKIP  REQ-017 CA-05 (i) la ruta crítica no se pide  evidencia del Historial: 0,131× — 9,80 s frente a 74,10 s
+       · REQ-017 CA-05 (i) la ruta crítica no se pide  recapitulación de un SKIP, que NO es un caso
+-------------------------------------------
+Resultado: 8 PASS, 1 FAIL, 1 SKIP — ninguna causa común: cada uno con su motivo
+FIN_B
+bash "$INVENTARIO" "$RAIZ/banco-A.txt" > "$RAIZ/inv-A.txt" 2>"$RAIZ/inv-A.err"
+bash "$INVENTARIO" "$RAIZ/banco-B.txt" > "$RAIZ/inv-B.txt" 2>"$RAIZ/inv-B.err"
+igual "CA-12 (d) POSITIVO: dos corridas intactas dan el inventario IDÉNTICO bajo el oráculo" "identico" \
+  "$(cmp -s "$RAIZ/inv-A.txt" "$RAIZ/inv-B.txt" && echo identico || echo distinto)"
+igual "CA-12 el inventario tiene una línea por CASO: lo que no es un caso no entra" "10" \
+  "$(grep -c '' "$RAIZ/inv-A.txt")"
+igual "CA-12 y sale en orden estable (LC_ALL=C)" "ordenado" \
+  "$(LC_ALL=C sort -c "$RAIZ/inv-A.txt" 2>/dev/null && echo ordenado || echo desordenado)"
+# (c) LA OTRA MITAD: un oráculo que normalizara TODO saldría idéntico siempre y no
+# distinguiría nada. Lo que es identidad se conserva CARÁCTER POR CARÁCTER.
+# El `.` de los patrones es el TABULADOR que separa veredicto e identificador: `\t` no es
+# tabulador en una ERE de POSIX, y un patrón que nunca casa deja el caso en verde por la
+# razón equivocada.
+casa "CA-12 (c) el entero suelto del nombre se conserva (es la cota del caso, no su medida)" \
+  '^PASS.CA-04 borde exacto: 40 intacto, 41 recortado$' "$(cat "$RAIZ/inv-A.txt")"
+casa "CA-12 (c) la entrada CITADA del caso se conserva (es lo que ejercita, no lo que midió)" \
+  "CA-05 '2026-13-05' no es una fecha" "$(cat "$RAIZ/inv-A.txt")"
+casa "CA-12 (c) la versión que el caso nombra se conserva" \
+  'DEV 1\.31\.0 v2: QA-104 .ls -la. cuesta 1 proceso jq \(como v1\.30\.3\)' "$(cat "$RAIZ/inv-A.txt")"
+igual "CA-12 (c) dos casos que sólo difieren en un entero del nombre siguen siendo dos" "2" \
+  "$(grep -c 'no numerico: se ignora y sale 0$\|sigue siendo anomalia (sale 1)$' "$RAIZ/inv-A.txt")"
+igual "CA-12 (c) los tres veredictos se conservan" "FAIL-PASS-SKIP" \
+  "$(cut -f1 "$RAIZ/inv-A.txt" | LC_ALL=C sort -u | tr '\n' '-' | sed 's/-$//')"
+# (b) Y LA PRIMERA MITAD: la medida se normaliza, sea cual sea su unidad, y sin que este
+# archivo ni el criterio nombren ninguna.
+igual "CA-12 (b) no queda ninguna magnitud sin normalizar (unidad pegada o tirada larga)" "0" \
+  "$(grep -c '[0-9][0-9]*ms\|[0-9][0-9]*µs\|[0-9]\{6,\}' "$RAIZ/inv-A.txt" || true)"
+casa "CA-12 (b) la unidad se conserva y la magnitud no: ms dentro del NOMBRE del caso" \
+  'responde deny \(Nms\)' "$(cat "$RAIZ/inv-A.txt")"
+casa "CA-12 (b) y lo mismo con µs, cocientes, PID y ternas sorteadas de la evidencia" \
+  'terna <N N N>' "$(cat "$RAIZ/inv-A.txt")"
+# LOS TRES NEGATIVOS. Cada uno sale de la corrida B intacta, con UN solo cambio.
+sed '/CA-04 borde exacto/d' "$RAIZ/banco-B.txt" > "$RAIZ/banco-sup.txt"
+sed 's/CA-16 conservar_entradas no numerico: se ignora y sale 0/CA-16 conservar_entradas no numerico: OTRO NOMBRE/' \
+  "$RAIZ/banco-B.txt" > "$RAIZ/banco-ren.txt"
+sed 's/^  PASS  CA-05 /  FAIL  CA-05 /' "$RAIZ/banco-B.txt" > "$RAIZ/banco-inv.txt"
+for iny in sup ren inv; do
+  bash "$INVENTARIO" "$RAIZ/banco-$iny.txt" > "$RAIZ/inv-$iny.txt"
+  DIF_INY="$(diff "$RAIZ/inv-A.txt" "$RAIZ/inv-$iny.txt")"; RC_INY=$?
+  case "$iny" in
+    sup) igual "CA-12 (d) NEGATIVO 1, caso SUPRIMIDO: la comparación falla" "no-cero" \
+           "$([ "$RC_INY" -ne 0 ] && echo no-cero || echo cero)"
+         casa "CA-12 (d) …y su salida NOMBRA la línea suprimida" \
+           '^< PASS.CA-04 borde exacto: 40 intacto, 41 recortado$' "$DIF_INY" ;;
+    ren) igual "CA-12 (d) NEGATIVO 2, caso RENOMBRADO: la comparación falla" "no-cero" \
+           "$([ "$RC_INY" -ne 0 ] && echo no-cero || echo cero)"
+         # Los DOS textos, y sin suponer en qué orden los saca `diff`: el inventario va
+         # ordenado, así que el nombre nuevo puede caer antes o después del viejo.
+         igual "CA-12 (d) …y su salida NOMBRA el identificador que cambió de texto (los dos)" "los-dos" \
+           "$(if printf '%s\n' "$DIF_INY" | grep -q '^< PASS.CA-16 conservar_entradas no numerico: se ignora y sale 0$' &&
+                 printf '%s\n' "$DIF_INY" | grep -q '^> PASS.CA-16 conservar_entradas no numerico: OTRO NOMBRE$'
+              then echo los-dos; else echo falta; fi)" ;;
+    inv) igual "CA-12 (d) NEGATIVO 3, VEREDICTO INVERTIDO: la comparación falla" "no-cero" \
+           "$([ "$RC_INY" -ne 0 ] && echo no-cero || echo cero)"
+         igual "CA-12 (d) …y su salida NOMBRA el caso que cambió de veredicto, con los dos" "los-dos" \
+           "$(if printf '%s\n' "$DIF_INY" | grep -q "^< PASS.CA-05 '2026-13-05' no es una fecha" &&
+                 printf '%s\n' "$DIF_INY" | grep -q "^> FAIL.CA-05 '2026-13-05' no es una fecha"
+              then echo los-dos; else echo falta; fi)" ;;
+  esac
+done
+# El control que impide que los tres negativos sean una comparación que falla siempre: la
+# corrida B SIN inyectar nada, contra A, sigue dando cero diferencias (arriba, POSITIVO), y
+# el inventario de cada inyección conserva TODOS los demás casos.
+igual "CA-12 (d) control: la inyección cambia UNA línea, no el inventario entero" "1-1-2" \
+  "$(printf '%s-%s-%s' \
+     "$(diff "$RAIZ/inv-A.txt" "$RAIZ/inv-sup.txt" | grep -c '^[<>]')" \
+     "$(diff "$RAIZ/inv-A.txt" "$RAIZ/inv-ren.txt" | grep -c '^<')" \
+     "$(diff "$RAIZ/inv-A.txt" "$RAIZ/inv-inv.txt" | grep -c '^[<>]')")"
 
 igual "H-06 la autoprueba declara su propio cuadre una sola vez" "1" \
   "$(grep -c '^AUTOPRUEBA_CASOS_ESPERADOS=' "${BASH_SOURCE[0]}")"

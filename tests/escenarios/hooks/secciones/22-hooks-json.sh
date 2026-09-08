@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=9
+PISO_AUTONOMO_SECCION=38  # 14 preámbulo + 5 maquinaria compartida duplicada + 19 bloque indivisible mayor · REQ-014 CA-18
 
 # --- hooks.json: la forma que hace que Bash de lectura NO arranque el guard -------
 # Los hooks del plugin se declaran en hooks.json y Claude Code evalua el `if` de cada

@@ -11,6 +11,7 @@
 # FAIL-BEFORE: con `ARNES_HOOKS_DIR` apuntando a los hooks de v1.31.0 la herramienta no
 # existe (`$HOOKS_DIR/../tools/arnes-paralelo.sh`) y los casos que la ejecutan fallan.
 CASOS_ESPERADOS_SECCION=33
+PISO_AUTONOMO_SECCION=85  # 16 preámbulo + 23 maquinaria compartida duplicada + 46 bloque indivisible mayor · REQ-014 CA-18
 
 seccion_nueva "tools/arnes-paralelo.sh (REQ-013): qué dos comisiones NO colisionan:"
 

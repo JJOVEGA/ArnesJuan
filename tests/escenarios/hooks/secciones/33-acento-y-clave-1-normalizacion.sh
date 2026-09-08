@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=45
+PISO_AUTONOMO_SECCION=174  # 14 preámbulo + 13 maquinaria compartida duplicada + 147 bloque indivisible mayor · REQ-014 CA-18
 
 # --- REQ-010 (el acento no es parte del valor) + REQ-007 bloque A (la clave tambien se
 # --- decora) + SEC-004 (enlace simbolico) + SEC-006 parte a (el manifiesto, en este repo)

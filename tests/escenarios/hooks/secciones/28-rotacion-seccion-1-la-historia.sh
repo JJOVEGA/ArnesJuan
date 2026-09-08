@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=32
+PISO_AUTONOMO_SECCION=87  # 9 preámbulo + 42 maquinaria compartida duplicada + 36 bloque indivisible mayor · REQ-014 CA-18
 
 # --- REQ-004: rotar UNA seccion; el contrato no se toca -------------------------------
   seccion_nueva "Rotacion de UNA seccion (la historia se archiva, el contrato no):"

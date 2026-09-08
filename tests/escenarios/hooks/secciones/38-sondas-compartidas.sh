@@ -15,6 +15,7 @@
 # el umbral que no sale del registro juzgado—. Este literal y el `CASOS_ESPERADOS` de
 # `run.sh` se actualizan A MANO y por separado: son el control (README del banco, invariante 2).
 CASOS_ESPERADOS_SECCION=32
+PISO_AUTONOMO_SECCION=133  # 19 preámbulo + 36 maquinaria compartida duplicada + 78 bloque indivisible mayor · REQ-014 CA-18
 seccion_nueva "--- 38 · las dos sondas de tests/util/: calibración, procedencia, descendencia y el juez (REQ-021) ---"
 
 num38() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }

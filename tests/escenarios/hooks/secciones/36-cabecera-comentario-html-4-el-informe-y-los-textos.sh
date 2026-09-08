@@ -22,6 +22,7 @@
 # propósito, para que apuntar el banco a una instalación anterior siga midiendo los hooks
 # viejos contra los textos de HOY.
 CASOS_ESPERADOS_SECCION=23
+PISO_AUTONOMO_SECCION=103  # 26 preámbulo + 18 maquinaria compartida duplicada + 59 bloque indivisible mayor · REQ-014 CA-18
   seccion_nueva "Noción de cita (4/5): lo que el informe dice, el coste y los textos heredados (REQ-016):"
 
 # ---------- CA-05 y CA-06 · EL INFORME NOMBRA LA LINEA QUE GOBIERNA ----------

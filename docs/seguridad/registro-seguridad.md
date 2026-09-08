@@ -4811,7 +4811,7 @@ regla.
 | `SEC-045` | contrato | **`abierto`** | R-011 (`:3411`) | `REQ-020` |
 | `SEC-050` | contrato | **`abierto`** | R-013 (`:4014`) | — (no cuelga de ningún REQ) |
 | `SEC-052` | contrato | `mitigado` | R-014 (`:4319`), cierre en R-015 (`:4429`) | **discrepancia:** sigue declarado en `REQ-023` |
-| `SEC-053` | contrato | **`en-mitigación`** | R-015 (`:4472`); estado en R-016 (`:4906`) | — (no cuelga de ningún REQ) |
+| `SEC-053` | contrato | `mitigado` | R-015 (`:4472`); estado en R-016 (`:4906`); **cierre en R-017** (`:5164`) | — (cerrado; nunca colgó de ningún REQ) |
 | `SEC-054` | contrato | **`abierto`** | R-015 (`:4577`) | — (no cuelga de ningún REQ) |
 | `SEC-055` | contrato | **`abierto`** | R-016 (`:4947`) | — (pendiente de enrutar a `REQ-019`) |
 | `QA-114` | contrato | **`abierto`** | `docs/qa/` (dueño `analista-requerimientos`) | `REQ-007` |
@@ -5108,3 +5108,200 @@ el write-back de `SEC-031`, `032`, `034`, `035` y `036`, que es justamente por l
 `en-mitigación`. No acredita el código de la ventana 1.33.0, que se audita en su turno, después de QA. Y
 no es una auditoría preventiva de nada: es la ejecución escrita de una decisión del propietario más su
 medición.
+
+---
+
+## Revisión R-017 — cierre del residual de `SEC-053`: la ratificación de `v1.31.0` (no es auditoría de ningún REQ; no firma nada) — 2026-09-08
+
+**Alcance.** Una sola cosa: el residual **único** que R-016 dejó vivo en `SEC-053` —la ratificación
+expresa del propietario sobre `v1.31.0`—, más lo que su cierre cambia y, sobre todo, lo que **no**
+cambia. **No audita ningún REQ, no mira ninguna quality gate y no toca ninguna línea `QA:` ni
+`Seguridad:`.** Tampoco es preventiva: es el registro de una decisión ajena, verificada donde está
+escrita.
+
+**Árbol.** `HEAD` = `b7ed615` en `cand/1.33.0`, con **49** archivos modificados sin comitear: hay una
+comisión viva del `desarrollador` sobre `tests/` (REQ-014 reabierto por resolución del propietario de
+hoy). **No leo ni mido `tests/`**, nada de esta revisión depende de él, y mi única escritura es este
+archivo.
+
+### 1. La ratificación, verificada donde está escrita — y una salvedad mecánica que no me callo
+
+**Lo que verifiqué, no lo que me contaron:**
+
+- **La decisión existe, con fecha y autor.** `PENDING_APPROVAL.md`, sección `## Resueltas`, entrada
+  «RESUELTA 2026-09-08 (propietario) — ratificación de `v1.31.0`, publicada de autoridad no
+  acreditada». Dice **ratificada**, y remite expresamente a la misma resolución que el propietario ya
+  dio para `v1.32.1`.
+- **El hecho que ratifica sigue siendo el que medí, re-comprobado hoy y no de memoria.** `v1.31.0` =
+  `2fecae1`. En **su propio árbol**: `git show v1.31.0:requirements/REQ-007.md` declara `QA-114`,
+  `QA-116` y `QA-117` como `contrato` en la línea 9, y `git show
+  v1.31.0:docs/seguridad/registro-seguridad.md` lo dice en dos sitios del blob (líneas 900 y 922). La
+  ratificación no cae sobre un hecho reinterpretado a conveniencia entre R-016 y hoy.
+- **La cola no queda con deuda nueva:** `## Pendientes` de `PENDING_APPROVAL.md` está **vacía**.
+
+**Y la salvedad, que es mecánica y no retórica: la ratificación hoy NO existe en ningún commit.**
+Medido: `git show HEAD:PENDING_APPROVAL.md` **no** contiene la entrada; vive sólo en el árbol de
+trabajo (`git diff --stat PENDING_APPROVAL.md` → 12 líneas añadidas). El **punto 4** de la frontera
+obliga a leer la acreditación **del árbol del commit que se etiqueta**, con `git show`, «nunca de la
+memoria de la sesión ni del estado de la rama de trabajo». Consecuencia exacta, sin dramatizarla: la
+ratificación es real y **la doy por buena hoy**, pero si el commit que se etiqueta como `v1.33.0` no la
+lleva dentro, un tercero que repita la medición dentro de un año leerá el árbol y **no la encontrará** —
+y entonces el cierre de esta fila descansa sobre algo que el árbol no dice. Con 49 archivos modificados
+y una comisión viva, eso no es una hipótesis remota.
+
+**Comprobación al tag, escrita para que no dependa de que alguien se acuerde.** Sobre el commit que se
+vaya a etiquetar, y no sobre la rama:
+
+```
+git show <commit-del-tag>:PENDING_APPROVAL.md                        # debe contener la entrada de ratificación de v1.31.0
+git show <commit-del-tag>:docs/seguridad/registro-seguridad.md       # debe contener esta entrada R-017 y la fila SEC-053 en `mitigado`
+```
+
+**Si esa comprobación falla, la fila vuelve a `en-mitigación`** y `v1.31.0` queda otra vez como
+publicación de autoridad no acreditada **sin** ratificación. Lo dejo decidido por delante y no para
+después: después del tag la respuesta ya no es una decisión, es una justificación.
+
+### SEC-053 — Estado: `en-mitigación` → **`mitigado`**. El residual único se resolvió; la fila se cierra y deja de contar
+
+**Sin maquillaje, y en el orden que importa:**
+
+1. **Lo que se ratificó, dicho en su forma más cruda.** `v1.31.0` se publicó el 2026-09-06 por la
+   **sesión coordinadora**, **por delegación**, con **tres** hallazgos de clase `contrato` abiertos
+   —`QA-114`, `QA-116`, `QA-117`— **declarados en las dos sedes de su propio tag**, y sin entrada en la
+   cola que devolviera la decisión al propietario. Bajo la lectura que el propietario ratificó
+   —**global**—, esa decisión era **suya y no se le pidió**. La ratificación **no convierte aquello en
+   conforme**: reconoce que se ejerció un permiso que no se podía acreditar. Es exactamente lo que mi
+   cláusula de escalada mandaba —*un permiso que se ejerce sin poder demostrar que existía no se arregla
+   hacia atrás; sólo se puede reconocer*— y es **todo** lo que puede hacer.
+2. **No se revierte, no se retira y no se propone retirar nada.** `v1.31.0` sigue publicada, y ningún
+   REQ `completado` depende de este criterio: es de gobernanza, no contrato de REQ.
+3. **La cifra completa del barrido se queda escrita, para que el cierre no la borre.** De los **40** tags
+   del repositorio, **4** caen bajo el criterio: **2 conformes** (`v1.30.3`, con recuento cero;
+   `v1.32.0`, por decisión expresa del propietario) y **2 de autoridad no acreditada** (`v1.31.0` y
+   `v1.32.1`). Las **dos** están ahora ratificadas a posteriori, con fecha 2026-09-08 y por el
+   propietario. El denominador se queda: un veredicto sin denominador no se puede desmentir leyéndolo.
+
+**Por qué `mitigado` y no un estado a medias.** El residual que R-016 declaró era **uno y sólo uno**
+—«la ratificación expresa del propietario sobre `v1.31.0`»— y está resuelto. Los seis puntos de
+cumplimiento que R-016 verificó contra el árbol siguen en pie: la frontera **escrita**, **por
+propiedad** en sus dos ejes, con **sitio único** citado y no transcrito, con su consecuencia dicha sin
+suavizar, con condición de reactivación **medible**, escrita por quien no se beneficia, y `v1.32.1`
+ratificada. No queda ninguna pieza de `SEC-053` esperando a nadie.
+
+**Lo que este cierre NO hace — y aquí es donde conviene leer despacio.**
+
+- **No despeja `v1.33.0`.** El veredicto de R-016 §7 —«la fusión, el tag `v1.33.0` y la publicación son
+  decisión del propietario»— **se mantiene íntegro**. Lo único que cambia es una cifra: el recuento
+  vigente pasa de **31** a **30** hallazgos de clase `contrato` abiertos, y `usuario/dinero` sigue en
+  **0**. Bajo la frontera, **cualquier** recuento distinto de cero devuelve la decisión: **30 devuelve
+  exactamente igual que 31.** Respecto a `SEC-053` **en particular**, y esto sí lo afirmo sin reservas:
+  **este hallazgo ya no es una de las razones por las que `v1.33.0` no está cubierto.** Era una de 31;
+  quedan 30, y tres de ellas apuntan a la publicación misma.
+- **El 30 es aritmética sobre la lectura de R-016, no una medición nueva.** Sale de restar **una** fila
+  al recuento de R-016 (`b199e08`, unión de las dos sedes). **No he re-medido** las dos sedes sobre
+  `b7ed615` ni sobre el árbol de trabajo, y no debo: el punto 4 obliga a medir sobre **el commit que se
+  etiqueta**, que hoy no existe. Quien vaya a publicar **re-mide**; este número no le sirve de
+  acreditación. **Lo que sí hice es cuadrarlo con su propia lista**, porque un recuento que no cuadra
+  con la suya no es un recuento: el índice de §2 queda con **28** filas de estado bloqueante —todo
+  estado que no sea `mitigado` ni `aceptado`— y la unión con las **2** discrepancias declaradas
+  (`SEC-014` y `SEC-052`, `mitigado` en el índice y aún declarados en campos) da **30**.
+- **De los cuatro que apuntaban a la publicación misma quedan tres, los tres abiertos:** `SEC-050`,
+  `SEC-054` y `SEC-055`. **Ninguno lo resuelve esta ratificación**, y no por casualidad: `SEC-054` dice
+  que 1.33.0 publicaría una **acreditación firmada que la medición desmiente**, y `SEC-055` que
+  `AGENTS.md` sigue prometiendo una delegación que **hoy no autoriza nada**. Son defectos de **otros
+  textos**, no del criterio de publicación que `SEC-053` corregía.
+- **Dos cosas vivían dentro de `SEC-053` y NO mueren con él. Van nombradas para que nadie las dé por
+  cerradas al ver la fila en `mitigado`:**
+  1. **La decisión de fondo «se acota o se retira la delegación» no era de `SEC-053` y sigue
+     pendiente.** R-016 §3 dejó escrito que la delegación **no autoriza nada hoy**, que su condición de
+     reactivación previsiblemente **no se va a cumplir** mientras este repositorio desarrolle su propio
+     mecanismo, y que **retirarla es decisión del propietario, no del auditor**. Esa decisión vive en
+     **`SEC-055`** —dueño `analista-requerimientos` para el write-back y **propietario** si la salida es
+     retirarla—, `abierto`, con vencimiento en el cierre de `REQ-019`. Cerrar `SEC-053` **no la
+     responde**.
+  2. **La obligación viva pasa a ser de escritura, tag a tag.** El **punto 5** de la frontera exige
+     **publicar el recuento** —la cifra, la lista de identificadores si no es cero, y el commit sobre el
+     que se leyeron las dos sedes— en la entrada de `CHANGELOG.md` que anuncia el tag, y **una
+     publicación sin ese recuento publicado no está acreditada, aunque el recuento hubiera sido cero**.
+     Eso no lo cierra ninguna ratificación: se cumple o se incumple en cada publicación.
+- **Y las dos discrepancias entre sedes siguen ahí, y por sí solas devuelven la decisión** aunque el
+  recuento llegara a cero: `SEC-014` y `SEC-052` están `mitigado` en el registro y **siguen declarados**
+  en los campos `Hallazgos abiertos:` de `REQ-013` y `REQ-023`. El write-back es del
+  `analista-requerimientos`; `requirements/` no es mío y no los retiro yo.
+
+**Línea base de no-regresión que `SEC-053` deja al cerrar.** Debilitar cualquiera de estas cinco
+propiedades es **regresión de este hallazgo** —no un hallazgo nuevo— y se mide contra esta entrada:
+
+(a) el criterio de publicación delegada dice **abierto dónde**, y lo dice **por propiedad**: por
+**clase** y no por prefijo del identificador, y por el **complemento del cierre** y no por lista de
+estados que abren;
+(b) existe **una** sede exhaustiva de los hallazgos de clase bloqueante, y el criterio la **cita** en
+vez de transcribirla —dos transcripciones de la misma regla se desfasan, y ésta ya se desfasó una vez—;
+(c) el recuento se lee del **árbol del commit que se etiqueta**, no de la rama de trabajo ni de la
+memoria de la sesión;
+(d) la acreditación se hace **publicando el recuento**, no afirmando el resultado;
+(e) la **falta** de acreditación no es un empate: **devuelve** la decisión al propietario, y la
+discrepancia entre sedes también.
+
+Volver a escribir «cualquier hallazgo abierto» **sin decir dónde** —en
+`docs/gobernanza/autoalojamiento.md`, en `AGENTS.md`, en `CLAUDE.md` o en cualquier plantilla que los
+proyectos hereden— es la regresión exacta que esta entrada existe para detectar.
+
+### 2. Hallazgo nuevo, `instrumento` y por tanto **NO bloqueante**: la sede exhaustiva vive dentro de una revisión fechada
+
+### SEC-056 — `instrumento` · **abierto** · severidad **media** · dueño `auditor-seguridad` (mío)
+
+**El «Índice de hallazgos de clase bloqueante» —la sede que la frontera cita como sitio único— está
+físicamente dentro de la entrada de una revisión fechada, en una bitácora cuya regla es no editarse
+hacia atrás**
+
+- **Ubicación:** el índice es §2 de la entrada `## Revisión R-016 … 2026-09-08` de este archivo. La
+  frontera lo cita **por su encabezado** —«el «Índice de hallazgos de clase bloqueante» de
+  `docs/seguridad/registro-seguridad.md`»—, no por sección ni por línea, y eso es lo único que hace el
+  defecto barato de arreglar.
+- **El defecto, medido hoy sobre mí mismo.** Para cumplir la regla de mantenimiento del propio índice
+  —«cada revisión que abra, cierre o cambie de estado un hallazgo bloqueante actualiza el índice **en la
+  misma revisión**»—, **esta** revisión ha tenido que editar una fila **dentro** de la entrada de R-016,
+  que es escritura hacia atrás en una bitácora que declara no hacerla. Las dos reglas no pueden
+  cumplirse a la vez mientras el índice viva ahí: o la fila envejece, o la entrada fechada se retoca.
+- **Dirección del error, y es lo que le quita severidad.** Si la fila envejece, la regla de **unión +
+  fail-closed** de la frontera hace que la desalineación **bloquee**: se falla hacia el lado que **no**
+  publica. Por eso es `instrumento` y no `contrato` —ningún texto firmado promete un alcance que no
+  tiene— y por eso **no condiciona ningún cierre**. **Ninguna máquina lee esto**: la frontera no es una
+  puerta (su punto 6).
+- **Remediación propuesta, NO aplicada hoy:** mover el índice a una sección propia de nivel `##`
+  **fuera** de la secuencia de revisiones, con el encabezado **idéntico** para que la cita de la
+  frontera siga resolviendo, y dejar en R-016 un puntero. No lo hago en esta revisión por coordinación y
+  no por criterio: mover la sede única de la lista exhaustiva el mismo día en que se cierra una fila, y
+  con una comisión viva en el árbol, mete dos cambios dentro de la misma medición.
+- **Forzador:** la primera revisión que tenga que cambiar **dos o más** filas del índice, o cualquier
+  reestructuración de este archivo —incluida su rotación—. **Vencimiento:** ventana 1.34.0. Va a deuda
+  técnica con dueño, como manda su clase.
+- **Lo digo también para que no se lea como inflar la cifra el día que cierro una fila:** este hallazgo
+  **no entra en el índice** ni en el recuento, porque `instrumento` es la única clase que no cuenta. El
+  recuento de hoy sigue siendo **30 `contrato` · 0 `usuario/dinero`** sobre la lectura de R-016.
+
+### Rigor y estado de los REQ — R-017
+
+**No subo ni bajo el rigor de ningún REQ, y no firmo ninguno.** Ninguna línea `QA:` ni `Seguridad:` se
+toca en esta revisión. No audita código, así que **no puede acreditar nada construido**: el orden de
+`AGENTS.md` §6 queda intacto y la auditoría del código de la ventana 1.33.0 va **después de QA**, en su
+turno.
+
+**Estado de seguridad aprobado — línea base de no-regresión: sin cambios.** Sigue vigente la de
+**R-012** para `REQ-017` y para toda la capa de enforcement, con el ancla que R-016 volvió a medir por
+objeto de árbol (`hooks/` = `88c146536f21fa03d3c8fdad8063b645fb0162bc`). **No la re-mido hoy**, y lo
+digo para que nadie lea aquí una re-confirmación: esta revisión no lee `hooks/`. Para lo anterior,
+R-009/R-008.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios, y por qué.** Esta ratificación no altera
+clasificación de datos, acceso, retención ni cumplimiento, y este repositorio no maneja usuarios finales
+ni datos personales. Nada que actualizar allí.
+
+**Lo que esta revisión acredita.** Una sola cosa: que el residual único de `SEC-053` está resuelto por
+decisión escrita del propietario del 2026-09-08, verificada donde está escrita, y que la fila pasa a
+`mitigado`. **Lo que NO acredita, dicho para que nadie lo estire:** ninguna quality gate —no las miro, y
+por eso firmo después de QA—; **ningún REQ**; el código de 1.33.0; ni el write-back de `SEC-031`, `032`,
+`034`, `035` y `036`, que por eso siguen `en-mitigación`. Y **no despeja `v1.33.0`**: la fusión, el tag
+y la publicación siguen siendo decisión del propietario, con **30** `contrato` abiertos, **dos**
+discrepancias entre sedes y **tres** hallazgos que apuntan a la publicación misma.

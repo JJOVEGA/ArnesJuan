@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=6
+PISO_AUTONOMO_SECCION=32  # 8 preámbulo + 0 maquinaria compartida duplicada + 24 bloque indivisible mayor · REQ-014 CA-18
 
   seccion_nueva "Parentesis = evidencia (el veredicto no cambia):"
 mkreq "$PROJ/requirements/REQ-080.md" "no" "aprobado (medido el 3/9, 42 pruebas)" "n/a"

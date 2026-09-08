@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=10
+PISO_AUTONOMO_SECCION=17  # 8 preámbulo + 0 maquinaria compartida duplicada + 9 bloque indivisible mayor · REQ-014 CA-18
 
   seccion_nueva "Identidad del agente (prefijo del plugin):"
 check "desarrollador CON prefijo de plugin -> allow" allow guard-codigo.sh "$(emite_edit "$PROJ/src/app.ts" "a3" "arnes-juan:desarrollador" 'hola')"

@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=25
+PISO_AUTONOMO_SECCION=49  # 9 preámbulo + 24 maquinaria compartida duplicada + 16 bloque indivisible mayor · REQ-014 CA-18
 
 # --- REQ-009: la cola de aprobaciones se cuenta UNA vez, con la regla de la puerta ----
   seccion_nueva "Cola de aprobaciones: una sola regla, la de la puerta (REQ-009):"

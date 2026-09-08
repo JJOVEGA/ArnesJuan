@@ -14,6 +14,7 @@
 # media: la carga sólo puede AÑADIR tiempo, así que el mínimo es la mejor estimación del
 # coste real y la media es una mezcla de coste y de vecinos.
 CASOS_ESPERADOS_SECCION=13
+PISO_AUTONOMO_SECCION=461  # 27 preámbulo + 122 maquinaria compartida duplicada + 312 bloque indivisible mayor · REQ-014 CA-18
 seccion_nueva "--- 37/1 · el coste del escáner: escala, equivalencia y la pared de los 60 s (REQ-017) ---"
 
 CR37=$'\r'
