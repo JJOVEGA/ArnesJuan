@@ -2,6 +2,86 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · REQ-023 a 1.34.0 sin ADR: la cata desmintió la palanca y encontró un criterio que le habría dado PASS a una guarda cuadrática
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `desarrollador` (cata de viabilidad, sólo lectura) y `analista-requerimientos` (write-back), ambos Opus.
+
+### La cata: sólo lectura, nada escrito en el árbol, y ahorra dos vueltas dev↔QA
+
+**Veredicto: `CA-03` y `CA-04` son satisfacibles a la vez, con el lector que existe, y sin ADR** — pero
+no con la palanca que se había estrechado, y sólo bajo una lectura de `CA-03` que el criterio no fijaba.
+
+**Premisa confirmada y más ancha de lo que decía:** el segmento de clave del corpus tiene **10 puntos de
+código no ASCII**, no sólo `Módulo:`/`Versión destino:` — también los `—`, `«»`, `¿` de las **líneas de
+título**, que llevan `:` y por tanto son «clave» para el lector.
+
+**Conclusión desmentida midiendo.** «Conjunto positivo sobre el alfabeto de la clave con escapes de
+bytes» tiene tres formas implementables sin procesos y **las tres mueren**:
+
+| Forma | Cómo muere, medido |
+|---|---|
+| Por **bytes** | `U+00AD` —de la familia **(ii) declarada**— entra, porque sus bytes se comparten con la `«` y la `í`. Y **diverge por locale**: `ZWSP` y `BOM` admiten bajo `C.UTF-8` y deniegan bajo `LC_ALL=C`, que es `CA-05` — y el fail-open cae del lado del locale que tienen el CI y MSYS |
+| Por **secuencias con sustracción** | **El veredicto depende del ORDEN de la tabla**, y para cada orden existe un malformado que admite. Es `H-01` aplicado al alfabeto: retirar no destruye un delimitador, lo **crea**. Iterar a punto fijo lo empeora |
+| Conjunto positivo **correcto** | **Cuadrático**: cociente 3,65 contra un techo de 2,2; 315,7 µs frente a 23,1 de la base, **×13,7** |
+
+**El mecanismo que sí pasa no enumera caracteres: enumera lo que ya estaba enumerado, que son las
+CLAVES.** *Retirado de la clave todo lo ajeno al alfabeto de las claves que el lector reconoce, ¿lo que
+queda **es** una de esas claves?* Dos expansiones y un `case`: **0 procesos** (el subshell más barato de
+esta máquina cuesta 675 µs; una guarda de 17,7 µs no puede esconder un fork), **0 falsos positivos en
+356 líneas** de cabecera, y veredicto **idéntico** bajo `LC_ALL=C` y `C.UTF-8` por razón estructural —el
+corchete contiene sólo bytes ASCII, así que no hay rangos ni clases sujetas a colación—. Denegó las tres
+familias completas y las **seis** entradas reservadas imprimibles (`Ω`, CJK, emoji, `U+FE0F`, tag,
+`U+2028`); calló sobre `Módulo:`, `Versión destino:`, los títulos decorados y las cinco tolerancias de
+`CA-04`.
+
+### Los dos defectos de criterio, que valen más que el mecanismo
+
+**1. `CA-09 (iii)` medía el sujeto equivocado — le habría dado PASS a una guarda cuadrática.** El
+criterio anclaba el cociente de duplicación en `arnes_sin_cita`, pero la guarda **no puede vivir ahí**:
+necesita el segmento de clave, y partirlo por `:` dentro sería una segunda transcripción de la regla de
+clave. Medido: `arnes_sin_cita` marca **1,06 con y sin guarda** —porque la guarda no está ahí— mientras
+el candidato cuadrático marca **2,63–3,65 en `arnes_norm_clave`, donde nadie mira**. Corregido a
+**propiedad**: el sujeto es *el escáner en el que la guarda resida, determinado por el código y no por
+este texto*. Margen sin maquillar: la guarda buena marca **2,05 contra 2,2**, estrecho, y sólo cumple
+porque se miden funciones distintas.
+
+**2. La guarda habría denegado un campo legítimamente COMENTADO, y el veredicto dependía de un
+espacio.** `arnes_campo_linea` **no es la única boca**: `arnes_estado_cabecera` llama a
+`arnes_norm_clave` directamente en `:1880` y `:1891`, y la primera le pasa la línea **cruda, pre-cita, a
+propósito**. Medido contra el lector real: `<!--Estado: completado -->` **dispara**;
+`<!-- Estado: completado -->` calla. Viola `CA-11` y `CA-04`. Y **las dos salidas tienen precio**, ahora
+declarado en el REQ: publicar desde `arnes_campo_linea` deja el campo `Estado` sin guarda en su propio
+lector; publicar desde `arnes_norm_clave` exige un interruptor por llamador y rompe la invariante
+«primera sentencia del único escáner» de REQ-016.
+
+### Y dos correcciones que el analista encontró fuera del encargo
+
+- **`CA-06` afirmaba algo medido falso**: «todas las bocas siguen entrando por el lector único
+  `arnes_campo_linea`». Retirado.
+- **El conjunto de claves vive en CUATRO sitios, no en tres**: también en `hooks/campos-req.awk:75-80`.
+  Escribir «se usa en las tres» habría sido **la forma (a) dentro del criterio que la prohíbe**. `CA-06`
+  enuncia ahora la propiedad, cita los cuatro, y declara que unificar el awk **no** se exige aquí.
+
+### Estado del REQ
+
+`Versión destino: 1.34.0`, `Hallazgos abiertos: SEC-052 (contrato)` —declarado, no cerrado: lo verifica
+el auditor—. `CA-03` gana el universo y el procedimiento (**R1, inserción**); el homóglifo (**R2**) y el
+sorteo sobre la clase (**R3**, nombrada como *la forma (d)* de REQ-021) van a «Fuera de alcance» con su
+motivo medido. `CA-12 (ii)` anclado a su corpus y su versión, con el conflicto de REQ-024 CA-08/CA-09
+registrado como resuelto. Añadida la sección **«El techo honesto de la cata»**: ruta crítica del banco,
+corpus de fixtures de `CA-04` y `guard-completado.sh` declarados **no medidos**.
+
+**Coste revisado: cinco o seis comisiones, no cuatro** — y no por «más criterios»: `CA-06` se partió en
+una decisión de diseño con radio que va **antes** de escribir la guarda, y la constante única de claves
+más el `CA-09 (iii)` corregido convierten la sonda de duplicación en trabajo real.
+
+### `requirements/README.md` — el índice, que es una copia a mano
+
+Añadidas las filas de **REQ-023** y **REQ-024** (faltaban las dos; la de REQ-023 era el único punto de
+DoR que quedaba). Y corregida la de **REQ-021**, que decía `QA: pendiente` cuando la cabecera dice
+`con-hallazgos`, y describía «las tres sondas» después de que el alcance se redujera a dos. **Es la
+tercera vez en dos días que estas celdas se desfasan**, y el arreglo real no es corregirlas: es REQ-019,
+que las convierte en bloque derivado entre marcadores leído por el mismo lector que la puerta.
+
 ## [GitHub] — 2026-09-08 · REQ-024 (borrador): la ausencia que abre, en el segundo lector; y un conflicto con REQ-023 que hay que anclar antes de implementarlo
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 
