@@ -1643,3 +1643,77 @@ atribuido a otro agente, otra fecha y otro encargo**.
 estaba limpio y **no lo estaba** —cuatro archivos modificados y uno sin seguir—. No contaminó la firma,
 porque ninguno tocaba el `Archivos:` de REQ-017, pero **la premisa del encargo era falsa** y eso lo tuvo
 que descubrir el agente. Un encargo que afirma el estado del árbol debería derivarlo, no recordarlo.)*
+
+---
+
+## El `_doc` del manifiesto es documentación que ninguna migración toca (reportado por un proyecto consumidor, 2026-09-07)
+
+**Medido en el proyecto que reporta, no aquí.** Su `.arnes/config.json` justifica haber apagado el
+bloque derivado porque contaba «completado 2 / otros 44» donde a mano salían 9. Comprobado hoy en ese
+proyecto: el bloque dice `completado 9 · en-revisión 16 · en-progreso 4 · otros 18` y **cuadra exacto
+con el conteo a mano**. El arnés lo arregló aguas arriba y **la justificación escrita sigue ahí**,
+describiendo un defecto que ya no existe.
+
+**Por qué es del arnés y no de ese proyecto.** `templates/arnes-config.json.tpl` lleva **diez**
+cadenas `_doc`. `arnes-init` las copia. Y `skills/arnes-upgrade/SKILL.md` sabe **añadir bloques
+nuevos** al manifiesto —`estado_derivado` (1.22.0), `rotacion` (1.22.0), `veredictos` y `git`
+(1.31.0)— pero **no tiene ningún concepto para el texto que ya está dentro**: su merge a tres vías
+clasifica **secciones de Markdown** en `NUEVO`/`INTACTO`/`MODIFICADO`/`ELIMINADO`, y un valor JSON no
+es una sección. No hay estado que asignarle, así que no se mira.
+
+**El resultado es una deriva garantizada y silenciosa**, de la misma familia que la que motivó
+`arnes-upgrade`: la máquina cambia de conducta y la prosa del proyecto sigue describiendo la anterior.
+Sólo que aquí es peor por **dónde vive**. Una prosa desfasada en un `.md` está a páginas del código;
+ésta está **a tres líneas del valor que describe**, dentro del archivo cuyo trabajo entero es ser la
+fuente de verdad legible por máquina. Un lector le da **más** crédito, no menos — y quien la lee suele
+estar decidiendo si encender o apagar la clave que tiene al lado.
+
+**Lo que NO es:** no es un fallo en abierto. El valor manda, los hooks leen el valor y el `_doc` no
+tiene efecto sobre ninguna puerta. Es `instrumento`.
+
+**Lo que hay que decidir, y no está decidido:**
+
+1. **¿El `_doc` es del arnés o del proyecto?** Si es del arnés, se puede sustituir sin preguntar en
+   cada migración y el problema desaparece. Si el proyecto puede anotarlo —y hoy nada se lo
+   impide—, entonces sustituirlo pisa trabajo humano y hace falta la misma base a tres vías que el
+   resto. **La respuesta cambia el diseño entero, y la barata es la primera**: declarar el `_doc`
+   propiedad del arnés y mover cualquier nota del proyecto a una clave hermana (`_nota`) que la
+   migración nunca toque.
+2. **Un `_doc` que cita una versión o una medida caduca por definición.** El de este caso citaba un
+   conteo. Regla candidata: el `_doc` describe **qué hace la clave**, nunca **qué se midió** ni
+   **por qué este proyecto la puso así** — eso último es `_nota`, y es del proyecto.
+
+**Dueño:** `desarrollador` (la plantilla y la skill). **Ventana:** sin fijar. Va con el bloque de
+plantillas y migración, no antes.
+
+**Y la observación que lo hace más urgente de lo que parece:** este hallazgo **no se podía producir
+desde dentro**. El manifiesto de este repositorio no tiene el `_doc` caducado —lo comprobé clave por
+clave y los tres bloques son consistentes—, así que ningún barrido del autoalojamiento lo habría
+encontrado nunca. Lo encontró un proyecto que lleva un año con el suyo. Es la segunda vez en dos días
+que **un corpus externo prueba algo en la dimensión en la que es indisciplinado**, y la primera fue la
+ceguera de los cinco campos de cabecera. Sube la prioridad de `REQ-018`, el canal de informes.
+
+## Tres instancias más del agujero del intérprete, en un proyecto real y en un día (2026-09-07)
+
+Amplía la sección «El agujero del intérprete, ejecutado por la coordinadora». El mismo proyecto
+reporta haber escrito **tres veces** en un archivo protegido a través del hueco del intérprete, **con
+el catch-all encendido**, en una sola sesión.
+
+**Lo que eso mide, y no es lo que parece.** No mide que el guardián esté mal: `AGENTS.md` §13 declara
+el hueco por escrito y lo llama «el agujero más grande de los que quedan». Mide **la frecuencia**, que
+nadie había puesto en números: una sesión de trabajo normal, sin intención de rodear nada, lo atraviesa
+**tres veces**. Hasta hoy el hueco tenía descripción y no tenía tasa.
+
+**Consecuencia sobre el orden de las ventanas.** `REQ-011` —la puerta que pregunta **después**— está
+hoy en 1.34.0 y es exactamente el mecanismo que cierra esta clase: deja de preguntar *antes* si un
+comando va a escribir y pregunta *después* si algo protegido cambió. Con una tasa medida de tres por
+sesión en un proyecto real, su prioridad relativa dentro de 1.34.0 sube.
+
+**Y confirma, con la evidencia en la dirección contraria, que no se debe filtrar.** La propuesta
+recurrente de ahorrar el proceso del guardián filtrando por patrón ya se probó en 1.25.0 y produjo
+tres versiones (1.25.0–1.27.0) en las que una redirección simple rodeaba las dos puertas, porque el
+filtro no ve lo que Claude Code separa del comando antes de evaluar el patrón. 1.28.0 volvió al
+catch-all a propósito. **Con el catch-all encendido ya se cuelan tres escrituras por sesión; con
+filtro, la superficie sería mayor.** El coste medido del guardián es de ~20 ms por comando y ~35 s en
+una sesión de ocho horas: **un 0,1 %**, y en la categoría equivocada. Donde mirar, si el coste
+molesta, es cuántos subagentes se despachan.

@@ -2,6 +2,84 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-07 · REQ-021: el desarrollador midió antes de construir, CA-08 resultó insatisfacible, y la renegociación conservó el techo cambiando el grano
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `desarrollador` (medición), `analista-requerimientos` (renegociación).
+
+**La comisión de desarrollo se despachó con una instrucción: medir `CA-08 (i)` antes de escribir una
+línea, y si no cabe, parar. No cabía. Paró.** No implementó nada, el árbol quedó intacto y todo su
+aparato de medida vive fuera del repositorio. Coste: ~135 k tokens y 15 minutos **para no construir** —
+contra una vuelta de desarrollo y una de QA, con un contador de tres que **no se reinicia**.
+
+**La medida, contra un oráculo y no contra la sonda gemela.** El contador de forks del kernel
+(`/proc/stat`, campo `processes`), leído sólo con builtins — leerlo no gasta un fork, así que no se mide
+a sí mismo. Calibrado antes de usarlo: suelo de ruido **0 forks** (12/12), sujeto sensible `n=10 → 10` y
+`n=20 → 20` (**factor 2,000 exacto**), insensible `0/0`. Corridas **C1** y **C2** nombradas y
+reproducibles.
+
+| Medición (una invocación) | Línea base | Sonda, calibración incluida | Añadidos |
+|---|---|---|---|
+| reloj | 6 | 4 (C1) · 5 (C2) | **−2 / −1** |
+| procesos | 45 (C1) · 46 (C2) | 43 | **−2 / −3** |
+| **línea base** | **18** | **41** | **+23** |
+
+Aislando la calibración: `sonda-linea-base.sh` **con** calibrar = 41, **sin** = 20 ⇒ **la calibración
+sola cuesta 21, contra un presupuesto total de 18**. Aunque la medición nueva costara cero, ya no cabe.
+Y no es de implementación: la calibración son cuatro materializaciones por el mismo camino, que es lo
+que **CA-03.4 exige**; abaratarlas obliga a quitar pasos del camino, que es lo que CA-03.4 prohíbe.
+
+### La renegociación: se conserva el techo, cambian el grano y el alcance
+
+La propiedad que el `0` protegía —**mudar las sondas no encarece la puerta requerida de `main`**— sigue
+en pie y **ahora está medida**. Lo que no se sostenía era el grano:
+
+- **El `0` se conserva**, en el grano en el que la puerta paga: **la corrida**. Medido **−2 en C1 y C2**.
+- **La calibración sale de (i)**: es capacidad nueva, ninguna línea base la tiene, y cargarla a la
+  cuenta de la no-regresión es lo que hacía el criterio insatisfacible. La acotan el grano de CA-03 y (iii).
+- **Lo comprado se declara con su comprador.** (i.2) admite `0 + los procesos que compre un criterio de
+  este REQ`, **cada uno nombrado con el criterio que lo compra** (hoy 2, por CA-01.1 y CA-05.1). *Un
+  proceso añadido sin criterio que lo compre incumple* — sin esa cláusula, «comprado» sería la coartada.
+- **(iii) cambia de denominador, no de holgura:** de `0,25× el reloj de la medición` a **`no más de 4×
+  una medición del mismo instrumento, en reloj y en procesos`**. **El 4 se deriva de lo que CA-03
+  contrata** —par sensible/insensible × dos tamaños = cuatro ejercicios—, no de lo que cuesta. Medido
+  **1,05×**. Y un efecto lateral que vale por sí solo: **(iii) pasa a ser el único indicador medible de
+  CA-03.4**, la identidad de camino, que hasta hoy se sostenía por inspección.
+- **(0) nuevo:** la línea base se acredita **antes** de medir y, si no contiene `37/1`/`37/2`, no hay
+  número — `sin-linea-base` + SKIP, **nunca verde**. Es **H-08 cerrada en el criterio**.
+- **La salida está pre-decidida:** si (i.1) o (ii) no caben sobre la corrida real, **no se sube el techo
+  — se reduce el alcance**, con residual declarado.
+
+**Cuatro hallazgos `contrato` cerrados por write-back**, los cuatro encontrados **antes del código**:
+`DEV-021-01` (el techo insatisfacible), `DEV-021-02` (la línea base nombrada no contiene lo que se mide:
+el commit base `cf2009e` no tiene las secciones 37, que las creó REQ-017 dentro de esta misma rama),
+`DEV-021-03` (CA-05 pedía un **tag** y CA-08 un **commit**; ahora admite cualquier referencia que `git`
+resuelva) y `DEV-021-04` (CA-03 no fijaba si la calibración es por invocación o por corrida — decidido
+**por instrumento y por corrida**, con el identificador de corrida atando calibración y mediciones).
+
+### `DEV-021-05` — una auditoría preventiva puede producir un criterio insatisfacible, y §6 no lo advierte
+
+`instrumento`, dueño `analista-requerimientos`, ventana 1.34.0. **No fue un descuido**, y la mecánica
+está precisada: (1) la redacción fijó el `0` **sin código y sin medición**; (2) **R-010 endureció CA-03
+—la identidad de camino— sin volver a mirar el techo que ese endurecimiento encarecía**. Dos criterios
+razonables por separado, **imposibles a la vez**.
+
+Es la segunda de las tres formas que **REQ-012** proscribió —«fijar un número que la medición
+desmiente»—, y la auditoría preventiva es exactamente la condición en la que se cuela: `AGENTS.md` §6 la
+presenta como puro adelanto y no dice que **endurecer un criterio puede volver insatisfacible a otro que
+nadie vuelve a mirar**. Su sede son `AGENTS.md` §6 y `requirements/README.md`, ninguna en el `Archivos:`
+del analista; el enrutado queda con la coordinadora.
+
+**Sin ADR:** `ADR-005` **todavía no existe** («a redactar con la implementación»), así que «sucesor» no
+tiene objeto, y no cambia alcance ni decisión base. Lo que cambia es su **mandato**, que se amplía con el
+grano y su coste medido, la doctrina de quién compra cada proceso, y que (iii) mide la identidad de camino.
+
+**Dos riesgos vivos, de diseño y no de contrato:** CA-03 (a) exige un **sujeto sensible de coste
+realmente lineal**, y el candidato medido —apilado de cadenas en bash— **no sirve** (factores 2,048 y
+2,566 donde debería haber 2); en procesos salió exacto. Y **(ii) es el único número de CA-08 sin
+medición detrás** (1,25×, nunca ejercido porque su línea base no existía): queda `operativo`.
+
+**Coste permanente declarado:** **21 procesos por corrida**, una sola vez, por la calibración de
+`sonda-linea-base.sh`.
+
 ## [GitHub] — 2026-09-07 · REQ-021: el write-back estaba hecho en los criterios y no en la cabecera, y la obligación heredada de REQ-017 necesitaba un quinto punto para haber cazado su propio caso
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
 
