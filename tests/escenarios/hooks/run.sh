@@ -1026,11 +1026,19 @@ fi
 # la que alguien acaba apagando. Ahora la sonda DERIVA el tamaño del suelo medido en esta
 # corrida (`cal_n`, publicado en el registro) y `ARNES_SONDA_CAL_N` sólo puede SUBIRLO.
 #
-# `r` ES LA PALANCA GRATIS de CA-03 (d): sube el número de series del mínimo y NO mueve
-# CA-08 (iii), porque el numerador y el denominador de (iii) llevan los MISMOS mandos —el
-# denominador se toma con el `r` que la calibración publica—. Sólo cuesta reloj, y eso lo
-# mide (ii). OPERATIVO: se sube con la medición.
-SONDA_CAL_R="${ARNES_SONDA_CAL_R:-5}"
+# `r` NO MUEVE CA-08 (iii) —numerador y denominador llevan los MISMOS mandos, porque el
+# denominador se toma con el `r` que la calibración publica—, así que sólo cuesta reloj y eso
+# lo mide (ii). Y AQUÍ ESTÁ EN 3 POR UNA MEDICIÓN, NO POR COSTUMBRE, en las dos direcciones:
+#   * la vuelta 2 lo subió a 5 CREYENDO que era la palanca de CA-03 (d), y la medición lo
+#     desmintió: (d) sale **0 de 30 en cuatro regímenes con r=3** igual que con r=5. Lo que
+#     arregló (d) fue el TAMAÑO derivado del suelo —el insensible pasa de 1,4× a 4× el
+#     suelo— y el INTERCALADO del par; `r` no aportó nada que se pueda medir;
+#   * y r=5 dejaba CA-08 (ii) en **1,2825×** contra un techo de 1,25×, con la calibración
+#     costando 5,6–6,0 s de los 25,6 s de la corrida. Bajarlo a 3 es la salida que (ii)
+#     tenía PRE-DECIDIDA —«bajar `r` sólo mientras (d) siga en 0 de 30»— y (d) sigue en 0.
+# Los rangos, las corridas y las cuatro regímenes están en el Historial de REQ-021.
+# OPERATIVO: se sube con la medición; subirlo sólo cuesta reloj, y lo paga (ii).
+SONDA_CAL_R="${ARNES_SONDA_CAL_R:-3}"
 if [ "$SONDA_HACE_FALTA" = si ] && [ -d "$UTIL_DIR" ]; then
   # El rastro de la mitad discordante lo crea EL JUEZ, vacío: la sonda sólo añade, no lo
   # trunca y no lo lee. Así el testigo no lo produce la sonda (CA-03 (a.3)).

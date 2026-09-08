@@ -74,7 +74,14 @@ mat37() {   # <referencia> <destino> -> 0 si el árbol quedó materializado ENTE
   local -a oids=() modos=() rutas=()
   MAT37_T0=${EPOCHREALTIME/./}
   MAT37_REF="${ref//[[:space:]]/_}"; MAT37_ETIQ="$MAT37_REF"; MAT37_REG=''
-  [ -d "$REPO37/.git" ] || { mat37_reg sin-linea-base no-hay-.git-en-el-repositorio desconocido "$procs"; return 1; }
+  # `-e` Y NO `-d`, Y ESTÁ MEDIDO: en un `git worktree` —y en un submódulo— `.git` es un
+  # ARCHIVO con un `gitdir:` dentro, no un directorio. Con `-d` este materializador decía
+  # `sin-linea-base` en un worktree mientras `git` resolvía el tag perfectamente, así que las
+  # dos secciones 37 se abstenían enteras: la copia haciendo la MITAD DEL TRABAJO, que es
+  # exactamente el caso que CA-05 existe para cerrar, reintroducido por la guarda. Lo cazó la
+  # medición de CA-08, que necesita dos árboles y por tanto un worktree. El código anterior a
+  # la mudanza no tenía esta guarda; la trajo la sonda que sale del alcance.
+  [ -e "$REPO37/.git" ] || { mat37_reg sin-linea-base no-hay-.git-en-el-repositorio desconocido "$procs"; return 1; }
   # Lo que decide es que `git` RESUELVA la referencia a un árbol, no de qué tipo sea: tag,
   # commit y rama dan exactamente el mismo trabajo (CA-05).
   procs=$((procs + 1))

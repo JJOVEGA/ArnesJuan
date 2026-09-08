@@ -54,7 +54,11 @@ mat47() {   # <referencia> <destino> -> 0 si el árbol heredado quedó materiali
   local -a oids=() modos=() rutas=()
   MAT47_T0=${EPOCHREALTIME/./}
   MAT47_REF="${ref//[[:space:]]/_}"; MAT47_ETIQ="$MAT47_REF"; MAT47_REG=''
-  [ -d "$REPO47/.git" ] || { mat47_reg sin-linea-base no-hay-.git-en-el-repositorio desconocido "$procs"; return 1; }
+  # `-e` y no `-d`: en un `git worktree` `.git` es un ARCHIVO. Con `-d`, las dos secciones 37
+  # se abstenían enteras dentro de un worktree —la copia haciendo la mitad del trabajo, el
+  # caso que CA-05 cierra— mientras `git` resolvía el tag sin problema. Medido al montar los
+  # dos árboles de CA-08; el motivo largo está en `37/1`, donde vive la copia gemela.
+  [ -e "$REPO47/.git" ] || { mat47_reg sin-linea-base no-hay-.git-en-el-repositorio desconocido "$procs"; return 1; }
   procs=$((procs + 1))
   git -C "$REPO47" rev-parse -q --verify "$ref^{tree}" >/dev/null 2>&1 \
     || { mat47_reg sin-linea-base "la-referencia-no-resuelve:$ref" desconocido "$procs"; return 1; }

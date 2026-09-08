@@ -85,10 +85,15 @@ dos factores (`cal_a`, `cal_b`) y **no los compara con nada**.
   Y en una máquina bastante más rápida el mismo absoluto habría dicho `suelo`: *una puerta
   requerida cuyo verde depende de la velocidad de la máquina es la que alguien acaba apagando.*
 - **Si la calibración resulta frágil, la salida está escrita y ordenada** (REQ-021 CA-03 (d)):
-  (1) subir `r`, que es la palanca **gratis** —el techo de coste compara numerador y denominador
-  con los **mismos mandos**, así que es invariante a `r`—; (2) subir el margen sobre el suelo;
+  (1) subir `r` —el techo de coste compara numerador y denominador con los **mismos mandos**,
+  así que es invariante a `r` y sólo cuesta reloj—; (2) subir el margen sobre el suelo;
   (3) cambiar el sujeto por uno cuyo factor sea exacto por conteo. **Ensanchar la banda o
   encoger el sujeto no son opciones**: las dos están prohibidas por nombre.
+  *Y lo medido el 2026-09-08, porque el orden de la escalera no dice cuál de las tres es la que
+  muerde: subir `r` de 3 a 5 **no movió la tasa** —0 de 30 en cuatro regímenes en los dos
+  casos— y sí encareció el reloj lo bastante para incumplir el techo de coste. La que arregló
+  la fragilidad fue la **(2) por la vía de (c)**: el tamaño derivado del suelo, que sacó al
+  ejercicio insensible de 1,4× a 4× el suelo, más el intercalado del par. `r` volvió a 3.*
 
 ## Publicar una cifra: lo que hay que llevar consigo
 
@@ -147,7 +152,7 @@ emisor**, no sobre el formato — exigírselo a quien no puede observarlo sería
 | `ARNES_ARBOL` | Árbol medido, para que el registro se pueda volver a visitar | informativa |
 | `ARNES_SONDA_CAL_N` | Suelo del tamaño del sujeto sintético de la calibración | **sólo SUBE** el tamaño derivado; un valor menor se **ignora** y se dice por la salida de error |
 | `ARNES_SONDA_CAL_MARGEN` | Cuántas veces el suelo tiene que superar cada mitad de la calibración | **sólo sube** de 4; bajarlo es lo que compró un techo con la discriminación del instrumento |
-| `ARNES_SONDA_CAL_R` | Series del mínimo con que el corredor calibra (`r`) | **se sube** con la medición: es la palanca **gratis** contra la fragilidad |
+| `ARNES_SONDA_CAL_R` | Series del mínimo con que el corredor calibra (`r`) | **se sube** con la medición. No es la palanca contra la fragilidad, y está medido: con `r=3` y con `r=5` la tasa de falsos rojos es la misma —**0 de 30 en cuatro regímenes**— mientras `r=5` dejaba el reloj de la corrida en **1,2825×** contra un techo de 1,25×. Lo que arregló la fragilidad fue el **tamaño derivado del suelo** y el **intercalado**; `r` sólo cuesta reloj |
 | `ARNES_SONDA_DISP_UMBRAL` | Dispersión (máximo/mínimo, en milésimas) por encima de la cual la medida se marca como acompañada | **se baja** con la medición |
 | `ARNES_SONDA_PLAZO` | Plazo de arranque, en segundos, de una invocación | **se baja** con la medición |
 

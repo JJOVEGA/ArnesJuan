@@ -2,6 +2,98 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · REQ-021 vuelta 2, medición: `CA-03 (d)` en 0 de 30, y el desarrollador desmiente su propia palanca
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador`.
+
+Máquina en reposo, **una sola comisión viva**, `arbol=87d2609`, bash 5.3.9, 12 núcleos, linux, 2026-09-08.
+Oráculo `/proc/stat:processes` leído sólo con builtins.
+
+**`CA-03 (d)`: 0 de 30 fuera de banda**, en cuatro regímenes (reposo · primera invocación en frío · 4 de
+12 núcleos al 100 % · 12 de 12 al 100 %). `cal_a` **1,781–2,215**, `cal_b` **0,930–1,154** con la banda
+del juez **sin tocar**. Contra el **5/30** que QA midió antes de esta vuelta, con 2 de ellos en reposo.
+`sonda-procesos.sh`: **0/30**, `cal_a=2,000` y `cal_b=1,000` **exactos en las 30**, y
+`disc_obs = testigo = 3 ≠ disc_param = 4` en las 30.
+
+**Y el desarrollador se desmiente a sí mismo, que es lo que hay que retener.** En la mitad de código
+declaró `r` 3→5 como la palanca de `(d)`. **La medición lo niega:** con `r=3` la tasa es la misma **0/30**
+en los cuatro regímenes. Lo que arregló la fragilidad fue el **tamaño derivado del suelo** —el insensible
+de **1,4× a 4×**— y el **intercalado del par**, que además tapaba una falta de **identidad de camino** (la
+calibración recorría `sr_minimo` mientras la medición de una razón recorre `sr_intercala`). Devolvió `r` a
+**3** y **corrigió `tests/util/README.md`**, donde él mismo había escrito que `r` era «la palanca gratis
+contra la fragilidad».
+
+Y resultó decisivo: **`CA-08 (ii)` NO cabía con `r=5`** —**1,2825×** contra el techo de 1,25×— y **el techo
+no se tocó**. Se aplicó la salida pre-decidida bajando `r`, **con `(d)` medido en 0/30 ANTES de bajarlo**,
+que es su condición literal: **1,1734×**, cumple.
+
+**El desglose que el criterio obligó a escribir antes de tocar nada dice algo que nadie había medido:** la
+calibración sola cuesta **5,635–6,049 s** con `r=5` y **2,103–3,462 s** con `r=3`, así que **la corrida sin
+calibración sale ≈0,98–1,00×**. *La mudanza en sí es neutra en reloj; todo el exceso es la calibración*, que
+es capacidad que ninguna línea base tiene. Con una nota de método: **al coste de la calibración no le aplica
+el mínimo de k**, porque su sujeto se **dimensiona por corrida** — el mínimo elegiría el sujeto más pequeño,
+no la muestra menos ruidosa. Se publica rango.
+
+**`(i.1)` — NO CONCLUYENTE, con rango, y sin afirmar el signo.** Resolución del oráculo **sobre la ventana
+que mide**: en reposo y ventanas de 25 s observa **31–78 forks ajenos** (6 lecturas, **amplitud 47**); el
+delta pareado sobre 7 pares es **+4 a +22**. `|delta| < 47` ⇒ **rango observado**, no concluyente, **y no se
+afirma el signo** — la disciplina que costó retirar el `−56`. Y una observación que vale por sí sola: la
+amplitud de las diferencias **pareadas** (18) es menor que la del suelo suelto (47), lo que indica que el
+pareado cancela deriva ambiental, **pero atenuar no es medir**, así que no mejora el veredicto.
+
+**`(i.2)` — cumple, con causa nombrada.** Sujeto idéntico **acreditado** (`cuenta=7` en los dos lados).
+`sonda-reloj.sh` **7 → 3 (−4)**, idéntico en 6/6; `sonda-procesos.sh` **51–52 → 21 (−30/−31)**. La causa: la
+línea base gastaba **un fork por binario** resolviendo con `type -P` dentro de `$( )` y **un `chmod` por
+envoltorio**; el instrumento redirige el builtin y hace **un solo `chmod` para el lote**. El del reloj queda
+bajo la amplitud del suelo, **así que lo sostiene la constancia 6/6 y el conteo estructural, no el oráculo**,
+y se dice así.
+
+**`(iii)` — cumple donde es medible**, techo 6×: reloj **2,921×** (5 corridas: 2,652–2,921×) y su mitad en
+procesos **SKIP citando el motivo**, nunca el `0,000×` de un contador que nunca se incrementaba; procesos
+**1,674×** y **3,714×** estable.
+
+**`CA-07`, los tres puntos, con el recorte ACREDITADO en vez de afirmado.** (1) inventario idéntico byte a
+byte, **828 casos / 61.287 bytes**, `cmp` sin diferencia — y `880−828 = 52`, `852−828 = 24`, **exactamente**
+los casos que esas secciones producen. (2) **4 corridas de cada árbol**: 24 casos en cada una de las 8, los
+24 deterministas, **0 cambian de veredicto, 0 desaparecen**, y la lista de excluidos —**derivada, no
+afirmada**— sale **vacía**; con la precisión de que el caso de la pared dio **9 PASS / 2 SKIP en 11**, así
+que su no-determinismo es real y medido y simplemente no se manifestó en el experimento pareado (`SEC-030`).
+(3) `CASOS_ESPERADOS` **852 → 880 = +28 exactos**, y los de 37/1 y 37/2 **sin cambio** (13 y 11 en los dos
+árboles).
+
+### Un defecto que su propia mitad de código introdujo, y que cazó su propia medición
+
+El materializador inline comprobaba `[ -d "$REPO/.git" ]`, y en un **`git worktree`** —y en un submódulo—
+`.git` es un **archivo**. Con `-d`, las dos secciones 37 decían `sin-linea-base` y **se abstenían enteras**
+dentro de un worktree mientras `git` resolvía el tag perfectamente: **«la copia haciendo la mitad del
+trabajo», el caso exacto que `CA-05` existe para cerrar**, reintroducido por la guarda. Pasa a `-e`. Y el
+código anterior a la mudanza **no tenía** esa guarda: la trajo la sonda que sale del alcance. Correr el banco
+desde un worktree es lo normal cuando trabajan dos comisiones.
+
+### Lo que NO cumple, dicho por él
+
+**`(i.1)` no queda demostrada como valor** —el oráculo no resuelve la magnitud sobre su ventana, y recuperar
+resolución exige acotar el conteo al subárbol de procesos, que no existe hoy—; **la banda de `(d)` tiene poca
+holgura** (`cal_b=1,154` a **3,8 %** del techo con `r=5`, `cal_a=2,336` a **2,7 %** con `r=3`): *0/30 no es
+0/300*; **la mitad en procesos de `(iii)` para el reloj no se mide**, y es un hueco porque `(iii)` es «el
+único indicador medible de la identidad de camino»; el **`Archivos:` sigue declarando
+`tests/util/sonda-linea-base.sh`**, que ya no existe —no lo tocó porque cambiar la frontera altera el mapa de
+colisiones y es del analista, y declarar un archivo inexistente es **conservador** para el despacho, no
+fail-open—; y **`CA-18` sigue rojo** (848 / 678 / 722).
+
+**El hueco (b) medido una vez más, gratis:** con la sonda de reloj mutada, `rc=1` con 5 FAIL en la 38
+mientras **las dos 37 publicaban `CA-03 fail-before 3,878×` y `CA-04 8,718×` como PASS** con la procedencia
+de la calibración **desmentida en la misma corrida**.
+
+**`REQ-017 CA-03` flaky, con tasa:** `3,878 / 3,791 / 2,508 / 3,316 / 3,890 / 3,901 / 3,916 / 4,057` contra
+techo 2,600× — **1 de 8 no alcanza a demostrar**, y es la de la máquina cargada. REQ-017 está `completado`.
+
+**Estado: banco `rc=0 · 876 PASS · 0 FAIL · 4 SKIP`**, cuadre 880 y por archivo OK, los 4 SKIP recapitulados
+con su motivo. Autoprueba **72 PASS · 1 FAIL** (`CA-18`). Las tres gates de §7 verdes. Worktrees retirados,
+`git worktree prune` hecho, **índice vacío** («lección aprendida», dice él). Write-back al Historial del REQ:
+**una sola entrada, con las cifras, su corrida y su ventana de resolución**.
+
+**Coste: ~503 k de contexto en total** (≈98 k en esta mitad).
+
 ## [GitHub] — 2026-09-08 · REQ-021 vuelta 2, mitad de código: la mitad discordante caza la tautología ejecutando, y la coordinadora comitea un borrado que no puso
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador`.
 
