@@ -10,11 +10,16 @@
 # (CA-09): es código protegido bajo gate humano, y una entrada en `PENDING_APPROVAL.md`
 # deniega el cierre de cualquier REQ mientras exista. La cobertura se consigue donde ya hay
 # una puerta requerida corriendo, que es aquí.
-CASOS_ESPERADOS_SECCION=21
-seccion_nueva "--- 38 · las tres sondas de tests/util/: calibración, descendencia y el juez (REQ-021) ---"
+CASOS_ESPERADOS_SECCION=28
+seccion_nueva "--- 38 · las dos sondas de tests/util/: calibración, procedencia, descendencia y el juez (REQ-021) ---"
 
 num38() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
 shopt -s nullglob; UTILES38=( "$UTIL_DIR"/*.sh ); shopt -u nullglob
+# Los instrumentos son DOS desde el 2026-09-08: `sonda-linea-base.sh` sale del alcance y su
+# trabajo se queda INLINE en las dos secciones 37 (REQ-021 CA-05, §«La reducción de alcance»).
+# La lista no se escribe a mano en cada caso: el conjunto lo define el DIRECTORIO, que es su
+# sitio único, y la propiedad de CA-01 rige para todo lo que haya ahí, no para una lista.
+INST38=( reloj procesos )
 
 # ---------- CA-09 · SINTAXIS Y MODOS DE TODO `tests/util/*.sh` ----------
 if [ "${#UTILES38[@]}" -eq 0 ]; then
@@ -44,12 +49,12 @@ else
 fi
 
 # ---------- CA-01 · UN REGISTRO POR INVOCACIÓN, Y NINGUNA DICTA VEREDICTO ----------
-# Se leen los TRES registros de calibración que el corredor ya tomó en esta corrida: no
-# cuesta un solo proceso, y son registros reales, no imitaciones. El diagnóstico va por la
-# salida de error, y tampoco ahí puede llevar la forma con la que el corredor cuenta casos:
-# una sonda es el brazo, no el juez.
+# Se leen los registros de calibración que el corredor ya tomó en esta corrida: no cuesta un
+# solo proceso, y son registros reales, no imitaciones. El diagnóstico va por la salida de
+# error, y tampoco ahí puede llevar la forma con la que el corredor cuenta casos: una sonda
+# es el brazo, no el juez.
 regs38=0; lineas38=0; veredicto38=''
-for inst38 in reloj procesos linea-base; do
+for inst38 in "${INST38[@]}"; do
   [ -r "$RAIZ/cal-$inst38" ] || continue
   regs38=$((regs38 + 1))
   n38=0
@@ -64,10 +69,10 @@ for inst38 in reloj procesos linea-base; do
     done < "$RAIZ/cal-$inst38.err"
   fi
 done
-if [ "$regs38" -eq 3 ] && [ "$lineas38" -eq 3 ] && [ -z "$veredicto38" ]; then
-  echo "  PASS  REQ-021 CA-01.2/CA-01.3 las tres sondas emiten UN registro de UNA línea y ninguna imprime una línea con la forma que el corredor usa para contar casos"; PASS=$((PASS+1))
+if [ "$regs38" -eq "${#INST38[@]}" ] && [ "$lineas38" -eq "${#INST38[@]}" ] && [ -z "$veredicto38" ]; then
+  echo "  PASS  REQ-021 CA-01.2/CA-01.3 las ${#INST38[@]} sondas emiten UN registro de UNA línea y ninguna imprime una línea con la forma que el corredor usa para contar casos"; PASS=$((PASS+1))
 else
-  echo "  FAIL  REQ-021 CA-01.2/CA-01.3 $regs38 registros y $lineas38 líneas (se esperaban 3 y 3); líneas con forma de caso:${veredicto38:- ninguna}"; FAIL=$((FAIL+1))
+  echo "  FAIL  REQ-021 CA-01.2/CA-01.3 $regs38 registros y $lineas38 líneas (se esperaban ${#INST38[@]} y ${#INST38[@]}); líneas con forma de caso:${veredicto38:- ninguna}"; FAIL=$((FAIL+1))
 fi
 
 # CA-01.5 · UN CAMPO OBLIGATORIO AUSENTE ES UN ERROR CON MOTIVO, NUNCA UN CERO — la misma
@@ -86,10 +91,82 @@ sonda_lee "sonda=reloj modo=medicion estado=ok corrida=x invocacion=y us=100 pro
   && falla38="$falla38 <un 'procesos' con la barra que rompe la clase de un case se aceptó>"
 sonda_lee "" && falla38="$falla38 <un registro vacío se aceptó>"
 sonda_lee "esto no es un registro" && falla38="$falla38 <un texto sin campos se aceptó>"
+# `vivos` es obligatorio SÓLO en el emisor que puede observarlo (CA-10 punto 2): ausente en
+# un instrumento de tests/util/ es ILEGIBLE; ausente en el materializador INLINE de CA-05 es
+# conforme, porque no hereda CA-04 y exigirle un campo que no puede observar sería un FAIL
+# garantizado. Y `procesos=no-aplica` se acepta y NO es un cero (QA-021-07).
+sonda_lee "sonda=reloj modo=medicion estado=ok corrida=x invocacion=y us=100 procesos=0" \
+  && falla38="$falla38 <un instrumento de tests/util/ SIN 'vivos' se aceptó>"
+sonda_lee "sonda=linea-base modo=medicion estado=ok corrida=x invocacion=y us=100 procesos=6 archivos=42" \
+  || falla38="$falla38 <el materializador inline, que NO puede observar 'vivos', se rechazó: $SONDA_MOTIVO>"
+sonda_lee "sonda=reloj modo=medicion estado=ok corrida=x invocacion=y us=100 procesos=no-aplica vivos=0" \
+  || falla38="$falla38 <procesos=no-aplica se rechazó, y es lo único honesto que el reloj puede publicar: $SONDA_MOTIVO>"
 if [ -z "$falla38" ]; then
-  echo "  PASS  REQ-021 CA-01.5 el parser valida cada campo POR SEPARADO: ausente, vacío y no numérico son errores con motivo, nunca un cero"; PASS=$((PASS+1))
+  echo "  PASS  REQ-021 CA-01.5/CA-10.2 el parser valida cada campo POR SEPARADO —ausente, vacío y no numérico son errores con motivo, nunca un cero—, exige 'vivos' sólo a quien puede observarlo y acepta procesos=no-aplica sin confundirlo con un cero"; PASS=$((PASS+1))
 else
-  echo "  FAIL  REQ-021 CA-01.5 el parser dejó pasar:$falla38"; FAIL=$((FAIL+1))
+  echo "  FAIL  REQ-021 CA-01.5/CA-10.2 el parser dejó pasar:$falla38"; FAIL=$((FAIL+1))
+fi
+
+# QA-021-04 · LA PUERTA DE CA-10 NO SE EVADE. Tres defectos que se COMPONÍAN y convertían
+# un `estado=sin-linea-base` en `estado=ok` —el juez dejaba pasar como MEDICIÓN una sonda que
+# no había podido medir—: (1) el registro no escapaba nada, así que un valor con un espacio
+# dejaba de ser un valor y sus palabras con `=` se volvían CAMPOS; (2) `for par in $reg` iba
+# sin comillas, así que sobre esas palabras se hacía además EXPANSIÓN DE NOMBRES DE ARCHIVO y
+# el significado del registro dependía del contenido del directorio de trabajo (medido con un
+# archivo llamado `estado=ok` en el `cwd`); y (3) el parser no detectaba CLAVE REPETIDA, y
+# dejaba ganar a la última aparición. La mitad del emisor se comprueba abajo, en el caso del
+# registro con espacios y saltos de línea.
+nom38="REQ-021 QA-021-04 el parser no se puede inyectar: clave repetida es ILEGIBLE, y un valor con metacaracteres de glob no se expande contra el directorio de trabajo"
+if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
+  falla38=''
+  base38="sonda=linea-base modo=medicion corrida=$ARNES_CORRIDA invocacion=i us=1 procesos=1"
+  # (1)+(3) La inyección por espacio produce `estado` DOS VECES: ambiguo, no legible.
+  sonda_lee "$base38 estado=sin-linea-base motivo=la-referencia-no-resuelve:zzz estado=ok archivos=desconocido" \
+    && falla38="$falla38 <la inyección por espacio se aceptó y dejó estado=${SONDA[estado]:-?}>"
+  case "${SONDA_MOTIVO:-}" in *REPETIDA*) ;; *) falla38="$falla38 <el motivo no dice que la clave esté repetida: ${SONDA_MOTIVO:-vacío}>" ;; esac
+  # …y la repetición se detecta también cuando los dos valores son iguales: lo ambiguo no es
+  # el valor, es que haya dos.
+  sonda_lee "$base38 estado=ok estado=ok archivos=1" \
+    && falla38="$falla38 <una clave repetida con el MISMO valor se aceptó>"
+  # (2) Un valor con `*` llega LITERAL: si hubiera glob, el campo valdría un nombre de archivo
+  # del `cwd` y el registro significaría cosas distintas según dónde se lea.
+  if sonda_lee "$base38 estado=ok etiqueta=* archivos=1"; then
+    [ "${SONDA[etiqueta]}" = '*' ] || falla38="$falla38 <etiqueta=* se expandió a <${SONDA[etiqueta]}>: el registro depende del cwd>"
+  else
+    falla38="$falla38 <un registro legítimo con un asterisco en un valor se rechazó: $SONDA_MOTIVO>"
+  fi
+  if [ -z "$falla38" ]; then
+    echo "  PASS  $nom38"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nom38 :$falla38"; FAIL=$((FAIL+1))
+  fi
+fi
+
+# QA-021-04, la mitad del EMISOR: el valor que transporta la inyección viene de FUERA
+# —`--etiqueta`, `--ref`, y un `motivo=…:<ruta>` con una ruta del árbol medido—, así que se
+# reduce a UN campo antes de emitir. Y con un salto de línea el registro salía en DOS y la
+# segunda la contaba el `awk` de recuento como un caso: una sonda dictando veredicto.
+nom38="REQ-021 CA-01.2/CA-01.3 un valor con espacios o saltos de línea no parte el registro ni fabrica un veredicto"
+if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
+  reg38="$("$UTIL_DIR/sonda-reloj.sh" --k 1 --r 1 --sujeto ':' --etiqueta "$(printf 'x\n  PASS  inyectado estado=ok')" 2>/dev/null)"
+  falla38=''
+  n38=0
+  while IFS= read -r linea38 || [ -n "$linea38" ]; do
+    n38=$((n38 + 1))
+    case "$linea38" in '  PASS  '*|'  FAIL  '*|'  SKIP  '*) falla38="$falla38 <el registro trae una línea con forma de caso>" ;; esac
+  done <<< "$reg38"
+  [ "$n38" -eq 1 ] || falla38="$falla38 <el registro salió en $n38 líneas>"
+  if sonda_lee "$reg38"; then
+    [ "${SONDA[estado]}" = suelo ] || falla38="$falla38 <la etiqueta inyectada cambió estado a ${SONDA[estado]}>"
+    case "${SONDA[etiqueta]}" in *' '*) falla38="$falla38 <la etiqueta conserva un espacio y sigue siendo dos campos>" ;; esac
+  else
+    falla38="$falla38 <el registro con la etiqueta inyectada no se puede leer: $SONDA_MOTIVO>"
+  fi
+  if [ -z "$falla38" ]; then
+    echo "  PASS  $nom38  (1 línea, etiqueta=${SONDA[etiqueta]}, estado=${SONDA[estado]} intacto)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nom38 :$falla38"; FAIL=$((FAIL+1))
+  fi
 fi
 
 # CA-01.4 · UN SOLO PARSER, Y EL README DE `tests/util/` APUNTA A ÉL SIN TRANSCRIBIRLO: dos
@@ -116,14 +193,150 @@ fi
 # dentro del archivo cuestionado, ensancharla es una línea de la misma edición (SEC-036).
 sonda_juzga_calibracion "REQ-021 CA-03 calibración de sonda-reloj.sh: el sujeto sensible responde al parámetro y el insensible no" reloj
 sonda_juzga_calibracion "REQ-021 CA-03 calibración de sonda-procesos.sh: el sujeto sensible responde al parámetro y el insensible no" procesos
-sonda_juzga_calibracion "REQ-021 CA-03 calibración de sonda-linea-base.sh: el sujeto sensible responde al parámetro y el insensible no" linea-base
 
-# ---------- CA-08 (iii) · CALIBRAR NO CUESTA MÁS DE 4× UNA MEDICIÓN ----------
+# Los registros y los testigos de ESTA corrida, leídos una vez. Cuestan cero procesos.
+CALREL38=''; CALPRO38=''; TSTREL38=''; TSTPRO38=''
+[ -r "$RAIZ/cal-reloj" ]       && { IFS= read -r CALREL38 < "$RAIZ/cal-reloj" 2>/dev/null || :; }
+[ -r "$RAIZ/cal-procesos" ]    && { IFS= read -r CALPRO38 < "$RAIZ/cal-procesos" 2>/dev/null || :; }
+[ -r "$RAIZ/testigo-reloj" ]   && { read -r TSTREL38 < "$RAIZ/testigo-reloj" 2>/dev/null || :; }
+[ -r "$RAIZ/testigo-procesos" ] && { read -r TSTPRO38 < "$RAIZ/testigo-procesos" 2>/dev/null || :; }
+
+# ---------- CA-03 (c) · EL TAMAÑO SE DERIVA DEL SUELO, NO SE ESCRIBE A MANO ----------
+# Medido lo que costaba el absoluto (QA-021-06): con `--n 200000` fijo el ejercicio
+# INSENSIBLE quedaba a ~72 ms, es decir a 1,4× del suelo de 50 ms, donde el ruido del
+# planificador domina — y 5 de 30 calibraciones caían fuera de banda, 2 con la máquina EN
+# REPOSO, cada una invalidando toda medición de reloj de la corrida y enrojeciendo la puerta
+# requerida. En una máquina bastante más rápida el mismo absoluto habría dicho `suelo`.
+nom38="REQ-021 CA-03 (c) el tamaño de cada mitad se DERIVA del suelo medido en esta corrida, se publica, y ninguna mitad queda pegada al suelo"
+if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
+  falla38=''
+  if ! sonda_lee "$CALREL38"; then falla38=" la calibración de reloj no se puede leer: $SONDA_MOTIVO"
+  elif [ "${SONDA[estado]}" != ok ]; then falla38=" la calibración no salió ok: ${SONDA[estado]}/${SONDA[motivo]:-}"
+  else
+    for c38 in cal_n cal_margen cal_ns_vuelta suelo min_a min_b; do
+      num38 "${SONDA[$c38]:-}" || falla38="$falla38 $c38=<${SONDA[$c38]:-vacío}> no es un número;"
+    done
+    if [ -z "$falla38" ]; then
+      [ "${SONDA[cal_margen]}" -ge 4 ] || falla38="$falla38 el margen sobre el suelo bajó a ${SONDA[cal_margen]}× (sólo puede subir de 4);"
+      # LAS DOS MITADES POR ENCIMA DEL SUELO CON MARGEN, que es lo que arregla la fragilidad:
+      # se exige al menos margen−1 veces el suelo para dejar holgura de ruido a la propia
+      # comprobación, y en particular al INSENSIBLE, que era el que derivaba.
+      esp38=$(( SONDA[suelo] * (SONDA[cal_margen] - 1) ))
+      [ "${SONDA[min_a]}" -ge "$esp38" ] || falla38="$falla38 el sensible base mide ${SONDA[min_a]}µs y no llega a ${esp38}µs;"
+      [ "${SONDA[min_b]}" -ge "$esp38" ] || falla38="$falla38 el insensible base mide ${SONDA[min_b]}µs y no llega a ${esp38}µs (es el que derivaba a 1,4× del suelo);"
+      # …Y EL TAMAÑO SE RE-DERIVA AQUÍ desde el coste por vuelta que la sonda publicó: si
+      # `cal_n` fuera un absoluto escrito a mano, no cuadraría con `cal_ns_vuelta`. El env
+      # sólo puede SUBIRLO, así que se exige `>=`, nunca igualdad.
+      der38=$(( SONDA[suelo] * SONDA[cal_margen] * 1000 / SONDA[cal_ns_vuelta] ))
+      [ "${SONDA[cal_n]}" -ge $(( der38 * 7 / 10 )) ] \
+        || falla38="$falla38 cal_n=${SONDA[cal_n]} queda por debajo de lo que su propio cal_ns_vuelta deriva (~$der38);"
+    fi
+  fi
+  if [ -z "$falla38" ]; then
+    echo "  PASS  $nom38  (cal_n=${SONDA[cal_n]} derivado de ${SONDA[cal_ns_vuelta]}ns/vuelta para ${SONDA[cal_margen]}× el suelo de ${SONDA[suelo]}µs; sensible ${SONDA[min_a]}µs · insensible ${SONDA[min_b]}µs, ninguno pegado al suelo)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nom38 :$falla38"; FAIL=$((FAIL+1))
+  fi
+fi
+
+# ---------- CA-03 (a.2) · LA MITAD DISCORDANTE: DE DÓNDE SALE EL FACTOR ----------
+# LA PROCEDENCIA NO SE LEE EN EL REGISTRO: la sonda honesta y la tautológica publican EL
+# MISMO NÚMERO. Medido (QA-021-01): el factor de `sonda-linea-base.sh` salía del PARÁMETRO
+# —`2N/N = 2000` por aritmética, hiciera la sonda algo o nada—, una copia mutada que no
+# materializaba, no verificaba y no comprobaba el bit publicó `cal_a=2000 cal_b=1000`, y EL
+# JUEZ REAL DIJO PASS. La identidad de camino no protege de eso: la mutación borra el camino
+# entero y el factor no se mueve. Así que el juez contrasta la MAGNITUD publicada contra un
+# TESTIGO QUE ÉL MISMO OBTIENE, y el caso publica los dos números para que un fallo se
+# reproduzca sin volver a montarlo.
+sonda_juzga_discordante "REQ-021 CA-03 (a.2) la magnitud de sonda-reloj.sh sale de OBSERVAR el sujeto: bajo el suelo dice suelo y no publica número" reloj "$CALREL38" "$TSTREL38" pasa
+sonda_juzga_discordante "REQ-021 CA-03 (a.2) la magnitud de sonda-procesos.sh sale de OBSERVAR el sujeto: coincide con el testigo que el juez contó, no con el parámetro" procesos "$CALPRO38" "$TSTPRO38" pasa
+
+# FAIL-BEFORE, Y SIN ÉL LO DE ARRIBA NO PRUEBA NADA: si a la sonda se le QUITA LA
+# OBSERVACIÓN —publicar el parámetro donde debería publicar lo medido—, la mitad discordante
+# tiene que FALLAR, y la misma entrada sin esa mutación, PASAR. Sin la segunda mitad un FAIL
+# no probaría que la comprobación distingue: probaría que falla (CA-03 (a.3)).
+#
+# PARA `procesos` SE MUTA LA SONDA DE VERDAD, en una COPIA y sin tocar el árbol: cuesta ~30
+# invocaciones de `grep`, o sea milisegundos. PARA `reloj` se neutraliza el REGISTRO en vez
+# del archivo, y el motivo no es comodidad: una segunda calibración de reloj completa
+# duplicaría el reloj de esta sección en la puerta requerida, que es exactamente lo que
+# CA-08 (ii) existe para acotar y el final de camino que hace que alguien apague una
+# calibración. La mutación del ARCHIVO de reloj —hecha por un tercero, que es lo que la hace
+# valer— es el forzador del residual de `tests/util/`, y su evidencia va al Historial del REQ.
+nom38="REQ-021 CA-03 (a.2) fail-before: a sonda-procesos.sh se le quita la observación en una COPIA y el juez la caza; la misma copia sin mutar pasa"
+if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
+  COPIA38="$RAIZ/copia38-$BASHPID"
+  mkdir -p "$COPIA38" 2>/dev/null
+  falla38=''
+  if ! cp "$UTIL_DIR/sonda-procesos.sh" "$COPIA38/limpia.sh" 2>/dev/null; then
+    falla38=' no se pudo copiar sonda-procesos.sh'
+  else
+    chmod +x "$COPIA38/limpia.sh"
+    # La mutación: `disc_obs` deja de salir del recuento OBSERVADO y pasa a ser el parámetro.
+    sed 's|SP_DISC_OBS="\$SP_CUENTA_EJ"|SP_DISC_OBS="$SP_DISC_PARAM"|' "$COPIA38/limpia.sh" > "$COPIA38/mutada.sh" 2>/dev/null
+    chmod +x "$COPIA38/mutada.sh" 2>/dev/null
+    if cmp -s "$COPIA38/limpia.sh" "$COPIA38/mutada.sh"; then
+      falla38=' la mutación NO se aplicó: el fail-before no probaría nada'
+    fi
+  fi
+  if [ -z "$falla38" ]; then
+    : > "$COPIA38/rastro-limpia"; : > "$COPIA38/rastro-mutada"
+    reglim38="$("$COPIA38/limpia.sh"  --calibrar --rastro "$COPIA38/rastro-limpia"  --dir-trabajo "$COPIA38" 2>/dev/null)"
+    regmut38="$("$COPIA38/mutada.sh"  --calibrar --rastro "$COPIA38/rastro-mutada"  --dir-trabajo "$COPIA38" 2>/dev/null)"
+    sonda_testigo_procesos "$COPIA38/rastro-limpia"; tlim38="$SONDA_TESTIGO"
+    sonda_testigo_procesos "$COPIA38/rastro-mutada"; tmut38="$SONDA_TESTIGO"
+    sonda_discordante procesos "$regmut38" "$tmut38"; vmut38="$SONDA_DISC_VEREDICTO"; motmut38="$SONDA_DISC_MOTIVO"
+    sonda_discordante procesos "$reglim38" "$tlim38"; vlim38="$SONDA_DISC_VEREDICTO"
+    [ "$vmut38" = fail ] || falla38="$falla38 la copia MUTADA dio <$vmut38> en vez de fail;"
+    [ "$vlim38" = ok ]   || falla38="$falla38 la copia SIN mutar dio <$vlim38> en vez de ok (${SONDA_DISC_MOTIVO:-});"
+  fi
+  if [ -z "$falla38" ]; then
+    echo "  PASS  $nom38  (mutada: $motmut38 · sin mutar: pasa con testigo=$tlim38)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nom38 :$falla38"; FAIL=$((FAIL+1))
+  fi
+  rm -rf "$COPIA38"
+fi
+
+nom38="REQ-021 CA-03 (a.2) fail-before: un registro de reloj SIN la observación —el parámetro donde va lo medido— lo caza el juez, y el real pasa"
+if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
+  falla38=''
+  if ! sonda_lee "$CALREL38"; then falla38=" la calibración de reloj no se puede leer: $SONDA_MOTIVO"
+  else
+    # Se construye EXACTAMENTE lo que publica una sonda que calcula sin medir: la magnitud
+    # pasa a ser el parámetro y, al quedar por encima del suelo, el estado deja de ser `suelo`.
+    mut38="${CALREL38/ disc_obs=${SONDA[disc_obs]} / disc_obs=${SONDA[disc_param]} }"
+    mut38="${mut38/ disc_estado=suelo / disc_estado=ok }"
+    if [ "$mut38" = "$CALREL38" ]; then falla38=' la neutralización no cambió el registro: el fail-before no probaría nada'; fi
+  fi
+  if [ -z "$falla38" ]; then
+    sonda_discordante reloj "$mut38" "$TSTREL38"; vmut38="$SONDA_DISC_VEREDICTO"; motmut38="$SONDA_DISC_MOTIVO"
+    sonda_discordante reloj "$CALREL38" "$TSTREL38"; vlim38="$SONDA_DISC_VEREDICTO"
+    [ "$vmut38" = fail ] || falla38="$falla38 el registro neutralizado dio <$vmut38> en vez de fail;"
+    [ "$vlim38" = ok ]   || falla38="$falla38 el registro real dio <$vlim38> en vez de ok (${SONDA_DISC_MOTIVO:-});"
+  fi
+  if [ -z "$falla38" ]; then
+    echo "  PASS  $nom38  (neutralizado: $motmut38 · real: pasa con testigo=${TSTREL38}µs)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nom38 :$falla38"; FAIL=$((FAIL+1))
+  fi
+fi
+
+# ---------- CA-08 (iii) · CALIBRAR NO CUESTA MÁS DE 6× UNA MEDICIÓN ----------
 # EN RELOJ Y EN PROCESOS, los dos en la misma corrida. Es la única mitad de CA-08 que no
 # depende de una referencia congelada, así que corre SIEMPRE — y es el único indicador
 # MEDIBLE de la identidad de camino de CA-03.4: una calibración que cuesta bastante más que
-# cuatro mediciones no está recorriendo el camino de la medición.
-TECHO38=4000   # ‰. OPERATIVO: se baja con la medición.
+# los ejercicios que CA-03 contrata no está recorriendo el camino de la medición.
+#
+# EL 6 NO ES UNA HOLGURA: ES LA SUMA TÉRMINO A TÉRMINO de lo que CA-03 contrata —1 el
+# sensible base, 2 el sensible al doble (que cuesta el doble POR CONSTRUCCIÓN), 1+1 el
+# insensible en los dos tamaños y 1 la mitad discordante, que puede costar menos y nunca
+# más—. El 4 anterior contaba «cuatro ejercicios» COMO SI COSTARAN LO MISMO: la suma correcta
+# del MISMO contrato era 5, y 6 con la discordante. Y ese techo mal derivado no ahorró coste:
+# compró su encaje con la capacidad de discriminar del instrumento —el insensible se fijó a
+# N/4, a 1,4× del suelo, y la calibración se volvió flaky en la puerta requerida—. Un techo
+# derivado de otro criterio se RE-DERIVA en la misma edición que cambia ese criterio.
+TECHO38=6000   # ‰. OPERATIVO: se baja con la medición.
 iii38() {   # <nombre> <instrumento> <registro de la medición de referencia>
   local nombre="$1" inst="$2" reg="${3:-}" cus cpr mus mpr rr rp
   if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
@@ -141,65 +354,46 @@ iii38() {   # <nombre> <instrumento> <registro de la medición de referencia>
   cus="${SONDA[us]}"; cpr="${SONDA[procesos]}"
   if [ "$mus" -le 0 ]; then echo "  SKIP  $nombre  el denominador de reloj es cero"; return 0; fi
   rr=$(( cus * 1000 / mus ))
-  # 0 sobre 0 es conforme y no es una razón: la sonda de reloj no lanza subprocesos propios.
-  if [ "$mpr" -eq 0 ]; then rp=$(( cpr == 0 ? 0 : TECHO38 + 1 )); else rp=$(( cpr * 1000 / mpr )); fi
+  # QA-021-07: la mitad en PROCESOS ya no se presenta como `0,000×` sobre un contador que
+  # nunca se incrementaba —0/0 pasando en vacío—. Si el instrumento publica `no-aplica`, esa
+  # mitad NO SE PUEDE MEDIR y se dice: SKIP con el motivo, nunca un cero disfrazado de razón.
+  case "$mpr:$cpr" in
+    *no-aplica*)
+      echo "  SKIP  $nombre  reloj $(awk -v c=$rr 'BEGIN{printf "%.3f", c/1000}')× (${cus}µs sobre ${mus}µs) cabe en el techo 6,000×, pero la mitad en PROCESOS no es medible en este instrumento: publica procesos=no-aplica (contarlos exigiría instrumentar, y una muestra mixta no es publicable, CA-02.5)"
+      return 0 ;;
+  esac
+  if [ "$mpr" -eq 0 ]; then
+    echo "  SKIP  $nombre  el denominador en procesos es cero: 0 sobre $cpr no es una razón"; return 0
+  fi
+  rp=$(( cpr * 1000 / mpr ))
   if [ "$rr" -le "$TECHO38" ] && [ "$rp" -le "$TECHO38" ]; then
-    echo "  PASS  $nombre  reloj $(awk -v c=$rr 'BEGIN{printf "%.3f", c/1000}')× (${cus}µs sobre ${mus}µs) y procesos $(awk -v c=$rp 'BEGIN{printf "%.3f", c/1000}')× ($cpr sobre $mpr), techo 4,000×"; PASS=$((PASS+1))
+    echo "  PASS  $nombre  reloj $(awk -v c=$rr 'BEGIN{printf "%.3f", c/1000}')× (${cus}µs sobre ${mus}µs) y procesos $(awk -v c=$rp 'BEGIN{printf "%.3f", c/1000}')× ($cpr sobre $mpr), techo 6,000×"; PASS=$((PASS+1))
   else
-    echo "  FAIL  $nombre  reloj $(awk -v c=$rr 'BEGIN{printf "%.3f", c/1000}')× (${cus}µs sobre ${mus}µs) y procesos $(awk -v c=$rp 'BEGIN{printf "%.3f", c/1000}')× ($cpr sobre $mpr) contra el techo 4,000×"; FAIL=$((FAIL+1))
+    echo "  FAIL  $nombre  reloj $(awk -v c=$rr 'BEGIN{printf "%.3f", c/1000}')× (${cus}µs sobre ${mus}µs) y procesos $(awk -v c=$rp 'BEGIN{printf "%.3f", c/1000}')× ($cpr sobre $mpr) contra el techo 6,000×"; FAIL=$((FAIL+1))
   fi
 }
-# La medición de referencia usa LOS MISMOS MANDOS y EL MISMO SUJETO BASE que la calibración:
-# es uno de los cuatro ejercicios, que es lo que «una medición de ese mismo instrumento»
-# designa cuando el denominador no se quiere elegir a conveniencia.
-mrel38="$("$UTIL_DIR/sonda-reloj.sh" --k 1 --r 3 --etiqueta referencia-iii \
-  --prep "SR_CAL_N=${ARNES_SONDA_CAL_N:-200000}" \
-  --sujeto 'for ((SR_CAL_I = 0; SR_CAL_I < SR_CAL_N; SR_CAL_I++)); do :; done' 2>/dev/null)"
-iii38 "REQ-021 CA-08 (iii) calibrar sonda-reloj.sh no cuesta más de 4× una medición suya, en reloj y en procesos" reloj "$mrel38"
-
-REQ38="$PROJ/requirements/REQ-380.md"
-printf '# REQ-380\nEstado: en-revisión\nSensible a seguridad: no\nQA: aprobado\nSeguridad: n/a\nRigor: estandar\n' > "$REQ38"
-JSON38="$RAIZ/json38-$BASHPID.json"
-jq -n --arg fp "$REQ38" '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.NADA,
-  tool_input:{file_path:$fp,old_string:"Estado: en-revisión",new_string:"Estado: completado"}}' > "$JSON38" 2>/dev/null
-mpro38="$("$UTIL_DIR/sonda-procesos.sh" --dir-trabajo "$RAIZ" --etiqueta referencia-iii \
-  --sujeto "CLAUDE_PROJECT_DIR='$PROJ' bash '$HOOKS_DIR/guard-completado.sh' < '$JSON38'" 2>/dev/null)"
-iii38 "REQ-021 CA-08 (iii) calibrar sonda-procesos.sh no cuesta más de 4× una medición suya, en reloj y en procesos" procesos "$mpro38"
-
-LB38="$RAIZ/lb38-$BASHPID"
-mlb38="$("$UTIL_DIR/sonda-linea-base.sh" --ref HEAD --destino "$LB38" --rutas hooks --etiqueta referencia-iii 2>/dev/null)"
-iii38 "REQ-021 CA-08 (iii) calibrar sonda-linea-base.sh no cuesta más de 4× una medición suya, en reloj y en procesos" linea-base "$mlb38"
-
-# ---------- CA-05 · MEDIA LÍNEA BASE ES PEOR QUE NINGUNA ----------
-nom38="REQ-021 CA-05 la sonda de línea base materializa entero, publica cuántos archivos dejó y dice con MOTIVO cuando no puede"
-if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
-  falla38=''
-  if ! sonda_lee "$mlb38"; then falla38=" la medición no se puede leer: $SONDA_MOTIVO"
-  elif [ "${SONDA[estado]}" != ok ]; then falla38=" la medición de HEAD no salió ok: ${SONDA[estado]}/${SONDA[motivo]:-}"
-  else
-    arch38="${SONDA[archivos]}"
-    reales38=0
-    shopt -s nullglob
-    for f38 in "$LB38"/hooks/*; do reales38=$((reales38 + 1)); done
-    shopt -u nullglob
-    num38 "$arch38" && [ "$arch38" -ge 1 ] || falla38="$falla38 archivos=<${arch38:-vacío}>;"
-    [ "$reales38" -eq "${arch38:-0}" ] || falla38="$falla38 dice $arch38 archivos y en disco hay $reales38;"
-    [ -x "$LB38/hooks/guard-codigo.sh" ] || falla38="$falla38 un script materializado quedó SIN bit de ejecución (git show escribe el contenido, no el modo);"
-  fi
-  reg38="$("$UTIL_DIR/sonda-linea-base.sh" --ref no-existe-esta-referencia-38 --destino "$RAIZ/lb38x" 2>/dev/null)"
-  if sonda_lee "$reg38"; then
-    [ "${SONDA[estado]}" = sin-linea-base ] || falla38="$falla38 una referencia que no resuelve dio estado=${SONDA[estado]};"
-    [ "${SONDA[motivo]}" != '-' ] || falla38="$falla38 sin-linea-base sin motivo;"
-    [ "${SONDA[archivos]}" = desconocido ] || falla38="$falla38 publicó archivos=${SONDA[archivos]} sin haber materializado;"
-  else falla38="$falla38 el registro de la referencia inexistente no se puede leer;"; fi
-  [ -e "$RAIZ/lb38x" ] && falla38="$falla38 dejó un árbol parcial detrás;"
-  if [ -z "$falla38" ]; then
-    echo "  PASS  $nom38  ($arch38 archivos verificados contra el objeto del árbol de HEAD, todos ejecutables; y la referencia que no resuelve da sin-linea-base con motivo y sin árbol)"; PASS=$((PASS+1))
-  else
-    echo "  FAIL  $nom38 :$falla38"; FAIL=$((FAIL+1))
-  fi
+# LA MEDICIÓN DE REFERENCIA USA LOS MANDOS QUE LA CALIBRACIÓN PUBLICÓ, y eso es lo que hace a
+# (iii) INVARIANTE A `r`: numerador y denominador llevan los mismos, así que subir `r` —la
+# palanca gratis de CA-03 (d)— no mueve esta razón y sólo cuesta reloj, que es lo que mide
+# (ii). Con los mandos escritos a mano en este archivo, subir `r` en el corredor habría
+# multiplicado la razón por 5/3 y (iii) habría salido en rojo sin que nada se degradara.
+nrel38=''; rrel38=''
+if sonda_lee "$CALREL38"; then nrel38="${SONDA[cal_n]:-}"; rrel38="${SONDA[r]:-}"; fi
+npro38=''
+if sonda_lee "$CALPRO38"; then npro38="${SONDA[cal_n]:-}"; fi
+mrel38=''
+if num38 "${nrel38:-}" && num38 "${rrel38:-}"; then
+  mrel38="$("$UTIL_DIR/sonda-reloj.sh" --k 1 --r "$rrel38" --etiqueta referencia-iii \
+    --sujeto "for ((SR_CAL_I = 0; SR_CAL_I < $nrel38; SR_CAL_I++)); do :; done" 2>/dev/null)"
 fi
-rm -rf "$LB38" "$RAIZ/lb38x"
+iii38 "REQ-021 CA-08 (iii) calibrar sonda-reloj.sh no cuesta más de 6× una medición suya con los MISMOS mandos" reloj "$mrel38"
+
+mpro38=''
+if num38 "${npro38:-}"; then
+  mpro38="$("$UTIL_DIR/sonda-procesos.sh" --dir-trabajo "$RAIZ" --etiqueta referencia-iii \
+    --sujeto "for ((SP_REF_I = 0; SP_REF_I < $npro38; SP_REF_I++)); do grep -q x /dev/null || :; done" 2>/dev/null)"
+fi
+iii38 "REQ-021 CA-08 (iii) calibrar sonda-procesos.sh no cuesta más de 6× una medición suya con los MISMOS mandos" procesos "$mpro38"
 
 # ---------- CA-04 · NINGUNA SONDA SOBREVIVE A SU INVOCACIÓN, POR DESCENDENCIA ----------
 # CON UN HIJO DIRECTO NO VALE: lo pasa una implementación ingenua, que es la que este
@@ -245,16 +439,104 @@ if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
 fi
 rm -f "$ABU38" "$PIDA38" "$PIDB38"
 
+# CA-04.1 · Y EL DESCENDIENTE REPARENTADO, que el caso del nieto NO ejerce (QA-021-05).
+# El sujeto del nieto deja al abuelo VIVO (`exec sleep 120`), así que la cadena de
+# `/proc/<pid>/task/<tid>/children` está intacta y el recorrido lo alcanza: acredita «nieto»,
+# no «reparentado». Con un DOBLE FORK el padre intermedio muere, el descendiente pasa a init
+# y SALE del recorrido — medido en tres formas, las tres con `estado=ok vivos=0` publicado y
+# el superviviente vivo. Es la tercera instancia de «un cero plausible con la descendencia
+# viva» en este mismo criterio, después del `$BASHPID` dentro de `$( )` y del
+# `read … || continue` sobre `children`; y el propio criterio nombra por su nombre la ceguera
+# («ni lo que quedó reparentado»). El mecanismo elegido es una MARCA DE ENTORNO única por
+# invocación: el entorno sobrevive a la reparentación y al cambio de sesión, así que caza las
+# tres formas donde el grupo de procesos sólo cazaría dos.
+MARCA38="$RAIZ/marca38-$BASHPID.sh"
+printf '#!/usr/bin/env bash\nsh -c "(sleep 1200 & echo \\$! > \\"$1\\") & exit 0"\nexit 0\n' > "$MARCA38"
+chmod +x "$MARCA38"
+PIDC38="$RAIZ/pid38-c-$BASHPID"; PIDD38="$RAIZ/pid38-d-$BASHPID"
+: > "$PIDC38"; : > "$PIDD38"
+nom38="REQ-021 CA-04.1 el descendiente REPARENTADO se ve y se mata: el recorrido por children no lo alcanza y la marca de entorno sí"
+if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
+  reg38="$("$UTIL_DIR/sonda-procesos.sh" --dir-trabajo "$RAIZ" --etiqueta reparentado \
+    --sujeto "bash '$MARCA38' '$PIDC38'; sleep 0.4; grep -q x /dev/null" 2>/dev/null)"
+  pid38=''; read -r pid38 < "$PIDC38" 2>/dev/null || :
+  falla38=''
+  if ! sonda_lee "$reg38"; then falla38=" el registro no se puede leer: $SONDA_MOTIVO"
+  else
+    [ "${SONDA[estado]}" = ok ] || falla38="$falla38 estado=${SONDA[estado]} motivo=${SONDA[motivo]:-};"
+    [ "${SONDA[vivos]:-0}" -ge 1 ] || falla38="$falla38 publicó vivos=${SONDA[vivos]:-?} con un descendiente reparentado vivo (el cero plausible);"
+    case "${SONDA[descendencia]:-}" in *marca*) ;; *) falla38="$falla38 el mecanismo publicado (${SONDA[descendencia]:-vacío}) no incluye la marca;" ;; esac
+  fi
+  if [ -n "$pid38" ] && kill -0 "$pid38" 2>/dev/null; then
+    falla38="$falla38 el reparentado (PID $pid38) SIGUIÓ VIVO tras la invocación;"
+    kill -9 "$pid38" 2>/dev/null || :
+  fi
+  if [ -z "$falla38" ]; then
+    echo "  PASS  $nom38  (vivos=${SONDA[vivos]}, mecanismo ${SONDA[descendencia]}; el doble fork lo reparenta a init y no sobrevive)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nom38 :$falla38"; FAIL=$((FAIL+1))
+  fi
+fi
+# FAIL-BEFORE del reparentado, sobre una COPIA y sin tocar el árbol: a la sonda se le quita
+# la mitad de la marca —se deja SÓLO el recorrido por `children`, que es lo que había hasta la
+# vuelta 1— y el mismo sujeto tiene que publicar `vivos=0` CON EL DESCENDIENTE VIVO. Sin esta
+# mitad, el caso de arriba probaría que la sonda mata algo, no que ve lo que antes no veía.
+nom38="REQ-021 CA-04.1 fail-before: sin la marca de entorno, el MISMO sujeto publica vivos=0 con el reparentado vivo"
+if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
+  CIEGA38="$RAIZ/ciega38-$BASHPID"
+  mkdir -p "$CIEGA38" 2>/dev/null
+  falla38=''
+  # La mutación deja el recorrido de `children` intacto y neutraliza la comparación de la
+  # marca, que es la única mitad que ve al reparentado.
+  if ! sed 's|\[ "\$sp_v" = "ARNES_SONDA_MARCA=\$SP_MARCA" \]|[ "$sp_v" = "ARNES_SONDA_MARCA=nunca-coincide" ]|' \
+        "$UTIL_DIR/sonda-procesos.sh" > "$CIEGA38/ciega.sh" 2>/dev/null; then
+    falla38=' no se pudo escribir la copia'
+  else
+    chmod +x "$CIEGA38/ciega.sh" 2>/dev/null
+    cmp -s "$UTIL_DIR/sonda-procesos.sh" "$CIEGA38/ciega.sh" \
+      && falla38=' la mutación NO se aplicó: el fail-before no probaría nada'
+  fi
+  if [ -z "$falla38" ]; then
+    reg38="$("$CIEGA38/ciega.sh" --dir-trabajo "$CIEGA38" --etiqueta reparentado-ciego \
+      --sujeto "bash '$MARCA38' '$PIDD38'; sleep 0.4; grep -q x /dev/null" 2>/dev/null)"
+    pidd38=''; read -r pidd38 < "$PIDD38" 2>/dev/null || :
+    if sonda_lee "$reg38"; then
+      [ "${SONDA[vivos]:-1}" -eq 0 ] || falla38="$falla38 la copia ciega ya declaró ${SONDA[vivos]} vivos: no reproduce el defecto;"
+    else falla38="$falla38 el registro de la copia ciega no se puede leer: $SONDA_MOTIVO;"; fi
+    if [ -n "$pidd38" ] && kill -0 "$pidd38" 2>/dev/null; then
+      kill -9 "$pidd38" 2>/dev/null || :
+    else
+      falla38="$falla38 sin la marca el reparentado tampoco sobrevivió: el caso de arriba no prueba nada;"
+    fi
+  fi
+  if [ -z "$falla38" ]; then
+    echo "  PASS  $nom38  (la copia sin la marca publica vivos=0 y deja el proceso vivo; esta sección lo recoge)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nom38 :$falla38"; FAIL=$((FAIL+1))
+  fi
+  rm -rf "$CIEGA38"
+fi
+rm -f "$MARCA38" "$PIDC38" "$PIDD38"
+
 # CA-04.4 · EL DIRECTORIO DE ENVOLTORIOS SE RETIRA TAMBIÉN EN LOS CAMINOS DE ERROR, y su
 # nombre sale de su propio proceso: con nombre fijo es la clase de REQ-015 aplicada a
 # EJECUTABLES, con el corredor corriendo secciones en paralelo.
 nom38="REQ-021 CA-04.4 el directorio de envoltorios es privado y se retira también en el camino de error"
 if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
-  reg38="$("$UTIL_DIR/sonda-procesos.sh" --dir-trabajo "$RAIZ" 2>/dev/null)"
+  # EL DIRECTORIO DE TRABAJO DE ESTE CASO ES PROPIO, y eso no es limpieza: es la condición
+  # para que el recuento signifique algo. Contado sobre `$RAIZ` —que 37/2 comparte y usa con
+  # esta misma sonda mientras el corredor corre las secciones EN PARALELO— el glob veía
+  # directorios de OTRA invocación viva y el caso salía rojo sin que nada estuviera roto
+  # (medido al añadir los casos de esta vuelta). Es la clase de REQ-015 —el temporal
+  # compartido— entrando esta vez por el LECTOR en vez de por el escritor.
+  TRAB38="$RAIZ/trab38-$BASHPID"
+  mkdir -p "$TRAB38" 2>/dev/null
+  reg38="$("$UTIL_DIR/sonda-procesos.sh" --dir-trabajo "$TRAB38" 2>/dev/null)"
   quedan38=0
   shopt -s nullglob
-  for f38 in "$RAIZ"/sonda-procesos-*; do quedan38=$((quedan38 + 1)); done
+  for f38 in "$TRAB38"/sonda-procesos-*; do quedan38=$((quedan38 + 1)); done
   shopt -u nullglob
+  rm -rf "$TRAB38"
   falla38=''
   sonda_lee "$reg38" || falla38=" el registro del camino de error no se puede leer: $SONDA_MOTIVO"
   [ "${SONDA[estado]:-}" = sin-sujeto ] || falla38="$falla38 el camino de error dio estado=${SONDA[estado]:-vacío};"
@@ -374,7 +656,7 @@ fi
 # sabe si cierra. `estado` distinto de `ok` dice «no pude medir» —instrumento funcionando,
 # SKIP—; un registro vacío o ilegible dice «no me ejecuté» —FAIL—; y una corrida sin
 # calibración de su instrumento dice «no sé si estoy midiendo el sujeto» —FAIL—.
-nom38="REQ-021 CA-10 el juez: estado≠ok es SKIP con motivo, registro vacío o ilegible es FAIL, y una corrida sin su calibración también"
+nom38="REQ-021 CA-10 el juez: estado≠ok es SKIP con motivo, registro vacío, ilegible o AMBIGUO es FAIL, y una corrida sin su calibración también"
 if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
   base38="sonda=reloj modo=medicion corrida=$ARNES_CORRIDA invocacion=i us=100000 procesos=0 vivos=0 min=90000"
   obs38="$( {
@@ -387,14 +669,54 @@ if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
     sonda_usable p "sonda=reloj modo=medicion estado=ok corrida=$ARNES_CORRIDA invocacion=i procesos=0 vivos=0" && echo "  PASS  no-deberia"
     sonda_usable p "sonda=reloj modo=medicion estado=ok corrida=de-ayer invocacion=i us=1 procesos=0 vivos=0"   && echo "  PASS  no-deberia"
     sonda_usable p "sonda=inventada modo=medicion estado=ok corrida=$ARNES_CORRIDA invocacion=i us=1 procesos=0 vivos=0" && echo "  PASS  no-deberia"
+    # QA-021-04, río abajo: el registro AMBIGUO por inyección —un `estado=ok` pisando el
+    # verdadero— ya no llega al juez como medición: es ilegible, y lo ilegible es FAIL.
+    sonda_usable p "$base38 estado=sin-linea-base motivo=la-ruta-no-existe estado=ok"      && echo "  PASS  no-deberia"
+    # CA-10 punto 2, las tres ramas de `vivos` en un instrumento de tests/util/:
+    # AUSENTE -> FAIL (ilegible, nunca un cero) · >0 en MEDICIÓN -> SKIP con el número.
+    sonda_usable p "sonda=reloj modo=medicion estado=ok corrida=$ARNES_CORRIDA invocacion=i us=1 procesos=0"    && echo "  PASS  no-deberia"
+    sonda_usable p "sonda=reloj modo=medicion estado=ok corrida=$ARNES_CORRIDA invocacion=i us=1 procesos=0 vivos=3" && echo "  PASS  no-deberia"
+    # …y el materializador INLINE de CA-05, que NO puede observar `vivos`, sí pasa sin él:
+    # el campo se enuncia sobre el EMISOR y no sobre el formato.
+    sonda_usable p "sonda=linea-base modo=medicion estado=ok corrida=$ARNES_CORRIDA invocacion=i us=1 procesos=6 archivos=42" && echo "  PASS  usable"
   } 2>&1 | sed -nE 's/^  (PASS|FAIL|SKIP)  .*/\1/p' | tr '\n' ' ' )"
-  esp38='PASS SKIP SKIP SKIP FAIL FAIL FAIL FAIL FAIL '
+  esp38='PASS SKIP SKIP SKIP FAIL FAIL FAIL FAIL FAIL FAIL FAIL SKIP PASS '
   if [ "$obs38" = "$esp38" ]; then
-    echo "  PASS  $nom38  (9 registros → $obs38)"; PASS=$((PASS+1))
+    echo "  PASS  $nom38  (13 registros → $obs38)"; PASS=$((PASS+1))
   else
     echo "  FAIL  $nom38  se esperaba <$esp38> y se obtuvo <$obs38>"; FAIL=$((FAIL+1))
   fi
 fi
+
+# CA-10 punto 2, la TERCERA rama: `vivos > 0` en un registro de CALIBRACIÓN es FAIL, no SKIP.
+# Una calibración tomada con descendencia viva no acredita que el instrumento responda al
+# sujeto, y por CA-03 punto 5 arrastra a todas las mediciones de su corrida — mientras una
+# MEDICIÓN con `vivos > 0` sólo se abstiene. La distinción no es un matiz: es la diferencia
+# entre «este número está contaminado» y «no sé si estoy midiendo el sujeto».
+nom38="REQ-021 CA-10.2 vivos>0 en una CALIBRACIÓN es FAIL y en una MEDICIÓN es SKIP: no es el mismo hecho"
+if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
+  falla38=''
+  if ! sonda_lee "$CALREL38"; then falla38=" la calibración de reloj no se puede leer: $SONDA_MOTIVO"
+  else
+    [ "${SONDA[vivos]}" = 0 ] || falla38="$falla38 la calibración real de esta corrida trae vivos=${SONDA[vivos]};"
+    vivo38="${CALREL38/ vivos=0 / vivos=2 }"
+    [ "$vivo38" != "$CALREL38" ] || falla38="$falla38 no se pudo construir el registro con descendencia viva;"
+  fi
+  if [ -z "$falla38" ]; then
+    if sonda_calibracion_falla reloj "$vivo38" "$TSTREL38"; then
+      case "$SONDA_CAL_MOTIVO" in *'descendientes VIVOS'*) ;; *) falla38="$falla38 falla, pero por otro motivo: $SONDA_CAL_MOTIVO;" ;; esac
+    else
+      falla38="$falla38 una calibración con vivos=2 se aceptó;"
+    fi
+    if sonda_calibracion_falla reloj "$CALREL38" "$TSTREL38"; then
+      falla38="$falla38 la calibración real se rechazó: $SONDA_CAL_MOTIVO;"
+    fi
+  fi
+  if [ -z "$falla38" ]; then
+    echo "  PASS  $nom38  (la misma calibración con vivos=2 es FAIL y con vivos=0 pasa; en medición el mismo hecho da SKIP, arriba)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nom38 :$falla38"; FAIL=$((FAIL+1))
+  fi
+fi
 # Los contadores no se tocan de más: `sonda_usable` corrió dentro de una sustitución de
 # comandos, que es un subshell, y sus PASS/FAIL murieron con él.
-rm -f "$JSON38" "$REQ38"

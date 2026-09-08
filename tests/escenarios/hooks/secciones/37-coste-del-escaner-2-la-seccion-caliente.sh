@@ -31,21 +31,81 @@ seccion_nueva "--- 37/2 · la ruta crítica del banco y el camino de una cabecer
 BANCO47="${SEC_DIR%/}/../run.sh"
 INV47="${SEC_DIR%/}/../inventario.sh"
 
-# EL MATERIALIZADOR YA NO VIVE AQUÍ (REQ-021 CA-07 punto 4): era la MISMA LÓGICA ESCRITA
-# DOS VECES —`mat37` en 37/1 y `mat47` aquí—, y una de las dos formas de perder media línea
-# base sin que nadie mirara cuánto. `sonda-linea-base.sh` comprueba que lo materializado
-# coincide con el objeto del árbol de esa referencia, deja los scripts con su bit de
-# ejecución —sin él el canario del corredor hijo no arranca y la corrida sale «sin casos»,
-# un SKIP correcto por un motivo que no es el suyo— y publica `archivos=<n>`.
-MAT47_REG=''
+# EL MATERIALIZADOR VUELVE A VIVIR AQUÍ, INLINE (REQ-021 CA-05, reducción de alcance del
+# 2026-09-08): `sonda-linea-base.sh` sale del alcance —calibración TAUTOLÓGICA y 21 procesos
+# de calibración por corrida— y el criterio se enuncia sobre LA FUNCIÓN QUE MATERIALIZA,
+# donde viva. Las cuatro propiedades portadas y los dos casos medidos que cierran están
+# escritos UNA vez, en `37/1`, y no se transcriben aquí. Lo que sí hay que tener delante: esto
+# y `mat37` son DOS COPIAS LITERALES de la misma lógica, nada comprueba que las dos conserven
+# CA-05, y el forzador observable de que una se desvíe es el RECUENTO DE SKIP de la corrida
+# —que es lo que delató el caso original, no el número—. Residual AN-021-01, ventana 1.34.0.
+REPO47="${SEC_DIR%/}/../../../.."   # sin `cd`+`pwd`: `git -C` acepta la ruta con `..`
+MAT47_RUTAS='hooks tools'
+MAT47_REG=''; MAT47_T0=0; MAT47_REF='-'; MAT47_ETIQ='-'
+mat47_reg() {   # <estado> <motivo> <archivos> <procesos> -> MAT47_REG, UNA sola línea
+  local est="$1" mot="$2" arch="$3" procs="$4" us
+  us=$(( ${EPOCHREALTIME/./} - MAT47_T0 ))
+  mot="${mot//[[:space:]]/_}"; [ -n "$mot" ] || mot='-'
+  MAT47_REG="sonda=linea-base modo=medicion estado=$est motivo=$mot corrida=${ARNES_CORRIDA:-desconocido} invocacion=$BASHPID-$MAT47_T0 arbol=${ARNES_ARBOL:-desconocido} k=1 r=1 us=$us procesos=$procs etiqueta=$MAT47_ETIQ ref=$MAT47_REF archivos=$arch"
+}
 mat47() {   # <referencia> <destino> -> 0 si el árbol heredado quedó materializado ENTERO
-  local ref="$1" dst="$2" reg
-  MAT47_REG=''
-  reg="$("$UTIL_DIR/sonda-linea-base.sh" --ref "$ref" --destino "$dst" --etiqueta "$ref" 2>/dev/null)"
-  MAT47_REG="$reg"
-  [ -n "$reg" ] || return 1
-  sonda_lee "$reg" || return 1
-  [ "${SONDA[estado]}" = ok ] || return 1
+  local ref="$1" dst="$2" lista l modo tipo oid ruta n=0 i calc obtenido
+  local dirs='' paths='' ejec='' procs=0
+  local -a oids=() modos=() rutas=()
+  MAT47_T0=${EPOCHREALTIME/./}
+  MAT47_REF="${ref//[[:space:]]/_}"; MAT47_ETIQ="$MAT47_REF"; MAT47_REG=''
+  [ -d "$REPO47/.git" ] || { mat47_reg sin-linea-base no-hay-.git-en-el-repositorio desconocido "$procs"; return 1; }
+  procs=$((procs + 1))
+  git -C "$REPO47" rev-parse -q --verify "$ref^{tree}" >/dev/null 2>&1 \
+    || { mat47_reg sin-linea-base "la-referencia-no-resuelve:$ref" desconocido "$procs"; return 1; }
+  procs=$((procs + 1))
+  lista="$(git -C "$REPO47" ls-tree -r "$ref" -- $MAT47_RUTAS 2>/dev/null)"
+  [ -n "$lista" ] || { mat47_reg sin-linea-base "la-referencia-no-tiene-esas-rutas:$ref" desconocido "$procs"; return 1; }
+  while IFS= read -r l || [ -n "$l" ]; do
+    [ -n "$l" ] || continue
+    modo="${l%% *}"; l="${l#* }"
+    tipo="${l%% *}"; l="${l#* }"
+    oid="${l%%$'\t'*}"; ruta="${l#*$'\t'}"
+    [ "$tipo" = blob ] || continue
+    n=$((n + 1))
+    dirs="$dirs $dst/${ruta%/*}"
+    paths="$paths$dst/$ruta"$'\n'
+    oids+=("$oid"); modos+=("$modo"); rutas+=("$dst/$ruta")
+    case "$modo" in *755) ejec="$ejec $dst/$ruta" ;; esac
+  done <<< "$lista"
+  [ "$n" -ge 1 ] || { mat47_reg sin-linea-base la-referencia-no-materializa-ningun-archivo desconocido "$procs"; return 1; }
+  procs=$((procs + 1))
+  mkdir -p $dirs 2>/dev/null || { mat47_reg sin-linea-base no-se-pudo-crear-el-destino desconocido "$procs"; return 1; }
+  while IFS= read -r ruta || [ -n "$ruta" ]; do
+    [ -n "$ruta" ] || continue
+    procs=$((procs + 1))
+    git -C "$REPO47" show "$ref:${ruta#"$dst"/}" > "$ruta" 2>/dev/null \
+      || { mat47_reg sin-linea-base "no-se-pudo-materializar:${ruta#"$dst"/}" desconocido "$procs"; return 1; }
+  done <<< "$paths"
+  if [ -n "$ejec" ]; then
+    procs=$((procs + 1))
+    chmod +x $ejec 2>/dev/null || { mat47_reg sin-linea-base no-se-pudo-fijar-el-modo-del-objeto desconocido "$procs"; return 1; }
+  fi
+  procs=$((procs + 1))
+  calc="$(git -C "$REPO47" hash-object --stdin-paths <<< "${paths%$'\n'}" 2>/dev/null)"
+  [ -n "$calc" ] || { mat47_reg sin-linea-base no-se-pudo-verificar-el-contenido-materializado desconocido "$procs"; return 1; }
+  i=0
+  while IFS= read -r obtenido || [ -n "$obtenido" ]; do
+    [ -n "$obtenido" ] || continue
+    [ "$i" -lt "$n" ] || { mat47_reg sin-linea-base la-verificacion-devolvio-mas-lineas-que-archivos desconocido "$procs"; return 1; }
+    [ "${oids[i]}" = "$obtenido" ] || { mat47_reg sin-linea-base "el-contenido-no-coincide-en:${rutas[i]##*/}" desconocido "$procs"; return 1; }
+    i=$((i + 1))
+  done <<< "$calc"
+  [ "$i" -eq "$n" ] || { mat47_reg sin-linea-base "se-verificaron-$i-de-$n-archivos" desconocido "$procs"; return 1; }
+  i=0
+  while [ "$i" -lt "$n" ]; do
+    case "${modos[i]}" in
+      *755) [ -x "${rutas[i]}" ] || { mat47_reg sin-linea-base "objeto-ejecutable-sin-bit:${rutas[i]##*/}" desconocido "$procs"; return 1; } ;;
+      *)    if [ -x "${rutas[i]}" ]; then mat47_reg sin-linea-base "objeto-no-ejecutable-con-bit:${rutas[i]##*/}" desconocido "$procs"; return 1; fi ;;
+    esac
+    i=$((i + 1))
+  done
+  mat47_reg ok - "$n" "$procs"
   return 0
 }
 HER47="$RAIZ/her47-$BASHPID"; HER47_OK=no; REGHER47=''

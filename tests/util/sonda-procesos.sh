@@ -14,7 +14,7 @@
 # Uso:
 #   sonda-procesos.sh --sujeto 'snippet' [--prep 'snippet'] [--binarios 'jq awk grep']
 #                     [--dir-trabajo DIR] [--etiqueta txt]
-#   sonda-procesos.sh --calibrar [--n N] [--binarios '...'] [--dir-trabajo DIR]
+#   sonda-procesos.sh --calibrar [--n N] [--rastro ARCHIVO] [--binarios '...'] [--dir-trabajo DIR]
 #
 # El sujeto se evalúa EN ESTE PROCESO con el PATH instrumentado delante. Todo nombre propio
 # de esta sonda lleva prefijo `SP_`/`sp_` para no pisar los del sujeto.
@@ -26,20 +26,41 @@ SP_SONDA=procesos
 SP_MODO=medicion
 SP_ESTADO=ok
 SP_MOTIVO='-'
-SP_N=4
+SP_N=0
 SP_PREP=''; SP_SUJ=''
 SP_ETIQ='-'
 SP_BIN_LISTA='jq awk grep sed tr date cat basename dirname mktemp wc head tail sort git'
 SP_TRABAJO="${TMPDIR:-/tmp}"
 SP_CUENTA=''
 SP_CAL_A=''; SP_CAL_B=''
+SP_CAL_N=''
+SP_RASTRO=''
+SP_DISC_PARAM=''; SP_DISC_VECES=''; SP_DISC_OBS=''
 SP_VIVOS=desconocido; SP_DESC=ninguna
 SP_DIR=''
+SP_FOTO=''
 SP_PLAZO=${ARNES_SONDA_PLAZO:-300}
 SP_PLAZO_ORIGEN=arranque
+# CA-03 (c): el tamaño de cada mitad se deriva de la RESOLUCIÓN del instrumento por un
+# margen declarado, en la propia corrida, y nunca de un absoluto escrito a mano. Aquí la
+# resolución NO es un suelo de ruido: es UNA INVOCACIÓN, exacta y sin dispersión —el factor
+# de esta sonda salió 2,000 y 1,000 EXACTOS en todas las corridas medidas—, así que el
+# tamaño derivado es el margen tal cual. El margen es OPERATIVO y sólo puede SUBIR.
+SP_RESOLUCION=1
+SP_CAL_MARGEN=${ARNES_SONDA_CAL_MARGEN:-4}
 
 sp_diag() { printf '%s\n' "$*" >&2; }
 sp_num() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
+
+# sp_lim <valor> -> SP_LIM: UN SOLO CAMPO del registro, y nunca vacío (QA-021-04).
+# El registro no escapaba nada, así que un valor con un espacio dejaba de ser un valor y
+# sus palabras con `=` se volvían CAMPOS —un `estado=ok` inyectado pisaba el estado
+# verdadero y el juez lo dejaba pasar como medición—, y un valor con un salto de línea
+# sacaba el registro en DOS líneas, la segunda con la forma que el `awk` de recuento cuenta
+# como caso: una sonda dictando veredicto (CA-01 puntos 2 y 3). Sin `$( )`: una sustitución
+# por campo es un fork por campo.
+SP_LIM=''
+sp_lim() { SP_LIM="${1-}"; SP_LIM="${SP_LIM//[[:space:]]/_}"; [ -n "$SP_LIM" ] || SP_LIM='-'; }
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -47,12 +68,13 @@ while [ "$#" -gt 0 ]; do
     --prep)         SP_PREP="${2:-}"; shift 2 ;;
     --binarios)     SP_BIN_LISTA="${2:-}"; shift 2 ;;
     --n)            SP_N="${2:-}"; shift 2 ;;
+    --rastro)       SP_RASTRO="${2:-}"; shift 2 ;;
     --dir-trabajo)  SP_TRABAJO="${2:-}"; shift 2 ;;
     --etiqueta)     SP_ETIQ="${2:-}"; shift 2 ;;
     --calibrar)     SP_MODO=calibracion; shift ;;
     -h|--ayuda)
       sp_diag "uso: sonda-procesos.sh --sujeto 'snippet' [--prep 'snippet'] [--binarios '...']"
-      sp_diag "     sonda-procesos.sh --calibrar [--n N]"
+      sp_diag "     sonda-procesos.sh --calibrar [--n N] [--rastro ARCHIVO]"
       exit 0 ;;
     *) sp_diag "argumento no reconocido: <$1>"; SP_ESTADO=error; SP_MOTIVO=argumento-no-reconocido; break ;;
   esac
@@ -72,6 +94,16 @@ if [ -r /proc/loadavg ]; then read -r SP_CARGA _ < /proc/loadavg 2>/dev/null || 
 # sujeto corre se exporta la marca que hace que `sonda-reloj.sh` se niegue a publicar.
 SP_INSTRUMENTADA=si
 
+# --- CA-04 punto 1: la MARCA que hace visible al descendiente REPARENTADO ------
+# QA-021-05, medido en tres formas —`( ( sleep 300 & ) & )`, `setsid sh -c`, doble fork—:
+# recorrer `children` hasta punto fijo tiene la tercera ceguera que el criterio nombra por
+# su nombre («ni lo que quedó reparentado»), y las tres publicaban `estado=ok vivos=0` con
+# el superviviente vivo. Una marca de ENTORNO única por invocación sobrevive a la
+# reparentación Y al cambio de sesión, así que caza las tres formas donde el grupo de
+# procesos sólo cazaría dos; y se lee con builtins, sin gastar un proceso.
+SP_MARCA="arnes-sonda-procesos-$$-${SP_T0_INV}"
+export ARNES_SONDA_MARCA="$SP_MARCA"
+
 # --- CA-04 punto 5: el PATH no lleva componentes vacíos ni relativos -----------
 sp_path_sano() {
   local sp_resto="${1:-}" sp_tramo
@@ -85,9 +117,23 @@ sp_path_sano() {
   return 0
 }
 
+# sp_foto — los PIDs que ya existían al arrancar. Sólo acota el coste del barrido: lo que
+# decide quién muere es la marca, que es única por invocación.
+sp_foto() {
+  local sp_d
+  SP_FOTO=' '
+  [ -d /proc ] || return 0
+  for sp_d in /proc/[0-9]*; do SP_FOTO="$SP_FOTO${sp_d#/proc/} "; done
+}
+
 # --- CA-04 punto 1: ningún DESCENDIENTE sobrevive, en el nivel que sea --------
+# Dos recorridos complementarios, los dos con builtins: (1) la cadena de `children` hasta
+# punto fijo —exacta mientras la cadena esté intacta— y (2) la MARCA entre los procesos que
+# no existían al arrancar, que es lo único que ve al reparentado. Se enumera entero y sólo
+# después se mata: al revés, matar al padre reparenta a los nietos y los saca del recorrido.
 sp_descendencia() {
-  local sp_yo=$$ sp_cola sp_pid sp_hijo sp_tid sp_n=0 sp_linea sp_ppid sp_d sp_vistos=''
+  local sp_yo=$$ sp_cola sp_pid sp_hijo sp_tid sp_n=0 sp_linea sp_ppid sp_d sp_v
+  local sp_vistos='' sp_por_marca=0
   SP_VIVOS=desconocido; SP_DESC=ninguna
   [ -d /proc ] || return 0
   if [ -r "/proc/$sp_yo/task/$sp_yo/children" ]; then
@@ -134,9 +180,24 @@ sp_descendencia() {
       done
     done
   fi
+  for sp_d in /proc/[0-9]*; do
+    sp_pid="${sp_d#/proc/}"
+    sp_num "$sp_pid" || continue
+    [ "$sp_pid" = "$sp_yo" ] && continue
+    case " $sp_vistos " in *" $sp_pid "*) continue ;; esac
+    if [ -n "$SP_FOTO" ]; then case "$SP_FOTO" in *" $sp_pid "*) continue ;; esac; fi
+    [ -r "$sp_d/environ" ] || continue
+    while IFS= read -r -d '' sp_v; do
+      [ "$sp_v" = "ARNES_SONDA_MARCA=$SP_MARCA" ] || continue
+      sp_vistos="$sp_vistos $sp_pid"
+      sp_n=$((sp_n + 1)); sp_por_marca=$((sp_por_marca + 1))
+      break
+    done < "$sp_d/environ" 2>/dev/null
+  done
+  [ "$SP_DESC" = ninguna ] || SP_DESC="$SP_DESC+marca"
   for sp_hijo in $sp_vistos; do kill -9 "$sp_hijo" 2>/dev/null || :; done
   SP_VIVOS="$sp_n"
-  [ "$sp_n" -eq 0 ] || sp_diag "sonda-procesos: quedaron $sp_n descendientes vivos; se han matado (CA-04.1)."
+  [ "$sp_n" -eq 0 ] || sp_diag "sonda-procesos: quedaron $sp_n descendientes vivos ($sp_por_marca sólo visibles por la marca); se han matado (CA-04.1)."
   return 0
 }
 
@@ -147,17 +208,27 @@ sp_emite() {
   sp_descendencia
   # CA-04 punto 4: el directorio de envoltorios se retira en la MISMA salida, INCLUIDOS los
   # caminos de error. Hoy los dos caminos medidos lo dejaban detrás: la salida
-  # ENVOLTORIO-RECURSIVO con rc 9 y el fallo de `chmod` con rc 1.
+  # ENVOLTORIO-RECURSIVO con rc 9 y el fallo de `chmod` con rc 1. Va DESPUÉS del barrido:
+  # el `rm` hereda la marca y no debe contarse como descendiente superviviente.
   if [ -n "$SP_DIR" ] && [ -d "$SP_DIR" ]; then
     rm -rf "$SP_DIR" 2>/dev/null || :
     SP_PROCS=$((SP_PROCS + 1))
   fi
   local sp_us=$(( ${EPOCHREALTIME/./} - SP_T0_INV ))
-  printf 'sonda=%s modo=%s estado=%s motivo=%s corrida=%s invocacion=%s arbol=%s plataforma=%s carga=%s jobs=%s k=1 r=1 us=%s procesos=%s vivos=%s descendencia=%s instrumentada=%s plazo=%s plazo_origen=%s etiqueta=%s cuenta=%s cal_a=%s cal_b=%s\n' \
-    "$SP_SONDA" "$SP_MODO" "$SP_ESTADO" "$SP_MOTIVO" "$SP_CORRIDA" "$SP_INVOCACION" \
-    "$SP_ARBOL" "$SP_PLATAFORMA" "$SP_CARGA" "$SP_JOBS" "$sp_us" "$SP_PROCS" \
-    "$SP_VIVOS" "$SP_DESC" "$SP_INSTRUMENTADA" "$SP_PLAZO" "$SP_PLAZO_ORIGEN" "$SP_ETIQ" \
-    "${SP_CUENTA:-desconocido}" "${SP_CAL_A:-desconocido}" "${SP_CAL_B:-desconocido}"
+  local sp_motivo sp_etiq sp_corrida sp_arbol sp_carga sp_jobs
+  sp_lim "$SP_MOTIVO";  sp_motivo="$SP_LIM"
+  sp_lim "$SP_ETIQ";    sp_etiq="$SP_LIM"
+  sp_lim "$SP_CORRIDA"; sp_corrida="$SP_LIM"
+  sp_lim "$SP_ARBOL";   sp_arbol="$SP_LIM"
+  sp_lim "$SP_CARGA";   sp_carga="$SP_LIM"
+  sp_lim "$SP_JOBS";    sp_jobs="$SP_LIM"
+  printf 'sonda=%s modo=%s estado=%s motivo=%s corrida=%s invocacion=%s arbol=%s plataforma=%s carga=%s jobs=%s k=1 r=1 us=%s procesos=%s vivos=%s descendencia=%s instrumentada=%s plazo=%s plazo_origen=%s etiqueta=%s cuenta=%s cal_a=%s cal_b=%s cal_n=%s cal_margen=%s cal_resolucion=%s disc_param=%s disc_veces=%s disc_obs=%s\n' \
+    "$SP_SONDA" "$SP_MODO" "$SP_ESTADO" "$sp_motivo" "$sp_corrida" "$SP_INVOCACION" \
+    "$sp_arbol" "$SP_PLATAFORMA" "$sp_carga" "$sp_jobs" "$sp_us" "$SP_PROCS" \
+    "$SP_VIVOS" "$SP_DESC" "$SP_INSTRUMENTADA" "$SP_PLAZO" "$SP_PLAZO_ORIGEN" "$sp_etiq" \
+    "${SP_CUENTA:-desconocido}" "${SP_CAL_A:-desconocido}" "${SP_CAL_B:-desconocido}" \
+    "${SP_CAL_N:-desconocido}" "$SP_CAL_MARGEN" "$SP_RESOLUCION" \
+    "${SP_DISC_PARAM:-desconocido}" "${SP_DISC_VECES:-desconocido}" "${SP_DISC_OBS:-desconocido}"
 }
 trap 'sp_emite' EXIT
 trap 'SP_ESTADO=interrumpida; SP_MOTIVO=señal; sp_emite; exit 130' INT TERM
@@ -165,8 +236,10 @@ sp_falla() { SP_ESTADO="$1"; SP_MOTIVO="$2"; sp_emite; exit 1; }
 
 [ "$SP_ESTADO" = ok ] || { sp_emite; exit 1; }
 [ -n "${EPOCHREALTIME:-}" ] || sp_falla sin-reloj no-hay-EPOCHREALTIME
-sp_num "$SP_N" && [ "$SP_N" -ge 1 ] || sp_falla error n-no-es-un-entero-positivo
+sp_num "$SP_N" || sp_falla error n-no-es-un-entero
+sp_num "$SP_CAL_MARGEN" && [ "$SP_CAL_MARGEN" -ge 4 ] || sp_falla error el-margen-sobre-la-resolucion-solo-puede-subir-de-4
 sp_path_sano "${PATH:-}" || sp_falla path-inseguro path-con-componente-vacio-o-relativo
+sp_foto
 
 # --- Las rutas reales, con `type -P` y ANTES de tocar el PATH (CA-04 punto 3) ---
 # `command -v` VE funciones de shell y `type -P` no: el envoltorio recursivo de 1.32.1
@@ -251,16 +324,52 @@ sp_ejerce() {
 if [ "$SP_MODO" = calibracion ]; then
   # (a) SUJETO SENSIBLE: N invocaciones de un binario instrumentado. El coste en procesos es
   #     EXACTAMENTE N, así que duplicar N da factor 2 POR CONSTRUCCIÓN — y medido: 2,000 en
-  #     las dos corridas de la comisión de medición previa.
+  #     todas las corridas.
   # (b) SUJETO INSENSIBLE: un número FIJO de invocaciones, que no mira N. Factor ≈ 1.
-  sp_cal_sens() { local sp_i; for ((sp_i = 0; sp_i < SP_CAL_N; sp_i++)); do grep -q x /dev/null || :; done; }
-  SP_CAL_FIJO="$SP_N"
-  sp_cal_insens() { local sp_i; for ((sp_i = 0; sp_i < SP_CAL_FIJO; sp_i++)); do grep -q x /dev/null || :; done; }
+  # (a.2) DISCORDANTE: ver abajo.
+  #
+  # CA-03 (c): el tamaño sale de la resolución del instrumento por el margen declarado, y no
+  # de un absoluto. El env sólo puede SUBIRLO.
+  SP_CAL_N=$(( SP_RESOLUCION * SP_CAL_MARGEN ))
+  if [ "$SP_N" -gt "$SP_CAL_N" ]; then
+    SP_CAL_N="$SP_N"
+  elif [ "$SP_N" -gt 0 ]; then
+    sp_diag "sonda-procesos: --n $SP_N es MENOR que el tamaño derivado ($SP_CAL_N); se ignora (CA-03 c)."
+  fi
   [ -n "${SP_REAL[grep]:-}" ] || sp_falla sin-binarios grep-no-esta-en-el-PATH
-  SP_CAL_N="$SP_N";          sp_ejerce 'sp_cal_sens';   SP_A1="$SP_CUENTA_EJ"
-  SP_CAL_N=$(( SP_N * 2 ));  sp_ejerce 'sp_cal_sens';   SP_A2="$SP_CUENTA_EJ"
-  SP_CAL_N="$SP_N";          sp_ejerce 'sp_cal_insens'; SP_B1="$SP_CUENTA_EJ"
-  SP_CAL_N=$(( SP_N * 2 ));  sp_ejerce 'sp_cal_insens'; SP_B2="$SP_CUENTA_EJ"
+
+  sp_cal_sens()   { local sp_i; for ((sp_i = 0; sp_i < SP_CAL_VECES; sp_i++)); do grep -q x /dev/null || :; done; }
+  sp_cal_insens() { local sp_i; for ((sp_i = 0; sp_i < SP_CAL_FIJO;  sp_i++)); do grep -q x /dev/null || :; done; }
+  # (a.2) LA MITAD DISCORDANTE — la procedencia del factor, acreditada de forma OBSERVABLE.
+  # La procedencia NO SE LEE EN EL REGISTRO: la sonda honesta y la tautológica publican el
+  # mismo número (QA-021-01). Así que el discordante ejerce el binario instrumentado un
+  # número de veces DISTINTO del parámetro —`cal_n - 1`, que además cuesta MENOS de una
+  # unidad, como CA-08 (iii) exige de este término— y deja, POR OTRO CAMINO, una marca por
+  # iteración en el archivo de rastro que EL JUEZ creó y pasó. La magnitud publicada
+  # (`disc_obs`) sale de contar el registro de los ENVOLTORIOS; el testigo lo cuenta el juez
+  # sobre SU archivo. Son dos caminos distintos a propósito: contar el testigo sobre el mismo
+  # registro de envoltorios lo haría producto de la propia sonda, que es lo que (a.3)
+  # prohíbe —y ese registro se retira en la misma salida por CA-04 punto 4—.
+  # La sonda NO trunca el rastro y NO lo lee: sólo añade. Quien lo crea vacío y quien lo
+  # cuenta es el juez.
+  sp_cal_disc() {
+    local sp_i
+    for ((sp_i = 0; sp_i < SP_DISC_VECES; sp_i++)); do
+      grep -q x /dev/null || :
+      [ -n "$SP_RASTRO" ] && printf 'x\n' >> "$SP_RASTRO"
+    done
+    return 0
+  }
+  SP_DISC_VECES=$(( SP_CAL_N - 1 ))
+  [ "$SP_DISC_VECES" -ge 1 ] || SP_DISC_VECES=1
+  SP_DISC_PARAM="$SP_CAL_N"
+
+  SP_CAL_FIJO="$SP_CAL_N"
+  SP_CAL_VECES="$SP_CAL_N";          sp_ejerce 'sp_cal_sens';   SP_A1="$SP_CUENTA_EJ"
+  SP_CAL_VECES=$(( SP_CAL_N * 2 ));  sp_ejerce 'sp_cal_sens';   SP_A2="$SP_CUENTA_EJ"
+  SP_CAL_VECES="$SP_CAL_N";          sp_ejerce 'sp_cal_insens'; SP_B1="$SP_CUENTA_EJ"
+  SP_CAL_VECES=$(( SP_CAL_N * 2 ));  sp_ejerce 'sp_cal_insens'; SP_B2="$SP_CUENTA_EJ"
+  sp_ejerce 'sp_cal_disc';           SP_DISC_OBS="$SP_CUENTA_EJ"
   SP_CUENTA="$SP_A1"
   if [ "${SP_A1:-0}" -lt 1 ] || [ "${SP_B1:-0}" -lt 1 ]; then
     sp_falla sin-cuenta el-sujeto-sintetico-no-gasto-ningun-proceso

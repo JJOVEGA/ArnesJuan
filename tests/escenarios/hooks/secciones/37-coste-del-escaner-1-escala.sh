@@ -24,23 +24,113 @@ LOC37="${LC_ALL:-${LC_CTYPE:-${LANG:-(sin declarar)}}}"
 CTX37="bash $BASH_VERSION, locale del entorno $LOC37"
 num37() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
 
-# --- Árboles heredados: la línea base se materializa con el INSTRUMENTO COMPARTIDO ---
-# REQ-021 CA-07 punto 4. El materializador ya no vive aquí: estaba DUPLICADO LITERALMENTE
-# en esta sección y en 37/2 (`mat37` y `mat47`, la misma lógica escrita dos veces), y era
-# justo donde se perdía media línea base sin que nadie mirara CUÁNTO se había dejado de
-# materializar —el árbol copiado sin `.git` que dio 2,008× donde el trabajo entero da
-# 0,964×, y el `git show` sin bit de ejecución que dejaba al canario sin arrancar—.
-# `sonda-linea-base.sh` comprueba que lo materializado coincide con el objeto del árbol de
-# esa referencia, deja los scripts ejecutables y publica `archivos=<n>` (CA-05).
-MAT37_REG=''
+# --- Árboles heredados: la línea base se materializa ENTERA o no se materializa ------
+# REQ-021 CA-05, con su sujeto reescrito el 2026-09-08: el criterio gobierna EL
+# MATERIALIZADOR DONDE VIVA, y desde la reducción de alcance vive AQUÍ, inline.
+# `sonda-linea-base.sh` SALE del alcance de REQ-021 (decisión del propietario) porque era la
+# causa de los tres problemas más duros a la vez: su calibración era TAUTOLÓGICA —el factor
+# salía del PARÁMETRO, así que `2N/N = 2000` por aritmética, hiciera la sonda algo o nada, y
+# una copia que no materializaba nada dio PASS (QA-021-01)—, sus 21 procesos de calibración
+# por corrida volvían insatisfacible CA-08 (i) contra un presupuesto total de 18, y cuatro de
+# los procesos de (i.2) eran internos de `git` que nadie elige.
+# Lo que se conserva son las PROPIEDADES de CA-05, portadas aquí:
+#   (1) cada archivo materializado coincide con el objeto DEL ÁRBOL DE ESA REFERENCIA y queda
+#       con EL MODO DEL OBJETO EN ESE ÁRBOL —no «todo `*.sh` es ejecutable», que al
+#       materializar `tests/` dejaba `secciones/*.sh` con bit y rompía la invariante CA-27 del
+#       propio banco EN LA COPIA (DEV-021-08); el modo del objeto es además lo que ya se está
+#       leyendo para comparar contra el árbol, así que enunciarlo así no añade trabajo: quita
+#       una excepción—;
+#   (2) publica `archivos=<n>`, para que un árbol A MEDIAS se vea sin abrirlo;
+#   (3) cuando NO puede, `estado=sin-linea-base` CON el motivo, y nunca un árbol parcial ni
+#       un `ok`;
+#   (4) publica en el registro de UNA línea de CA-01 punto 2 y lo lee el PARSER ÚNICO
+#       (`sonda_lee`), así que CA-08 (0), CA-06 y CA-10 siguen siendo exigibles sobre él. Lo
+#       que NO hereda es la calibración de CA-03 ni las comprobaciones de CA-09, y por eso NO
+#       declara `vivos`: el campo se enuncia sobre EL EMISOR y no sobre el formato
+#       (CA-10 punto 2), porque exigirle a quien no puede observarlo es un FAIL garantizado.
+# Los dos casos medidos que esto cierra: un árbol copiado SIN `.git` —el tag no se
+# materializaba, media comprobación salía SKIP y la razón dio 2,008× donde el trabajo entero
+# da 0,964×, y lo delató el RECUENTO DE SKIP, no el número— y `git show` sin bit de ejecución,
+# que dejaba al canario sin arrancar: la corrida salía «sin casos», un SKIP correcto por un
+# motivo que no era el suyo.
+# LO QUE ESTO NO TAPA: `mat37` y `mat47` siguen siendo DOS COPIAS LITERALES de la misma
+# lógica y nada comprueba que las dos conserven CA-05. Es el residual AN-021-01, con dueño y
+# ventana 1.34.0 — no algo que este código resuelva.
+REPO37="${SEC_DIR%/}/../../../.."   # sin `cd`+`pwd`: `git -C` acepta la ruta con `..` y no cuesta un fork
+MAT37_RUTAS='hooks tools'
+MAT37_REG=''; MAT37_T0=0; MAT37_REF='-'; MAT37_ETIQ='-'
+mat37_reg() {   # <estado> <motivo> <archivos> <procesos> -> MAT37_REG, UNA sola línea
+  local est="$1" mot="$2" arch="$3" procs="$4" us
+  us=$(( ${EPOCHREALTIME/./} - MAT37_T0 ))
+  # Todo valor que venga de fuera se reduce a UN campo: un espacio dentro de un valor
+  # convertía las palabras siguientes en CAMPOS del registro y el juez leía otro `estado`
+  # (QA-021-04), y un salto de línea sacaba el registro en dos líneas.
+  mot="${mot//[[:space:]]/_}"; [ -n "$mot" ] || mot='-'
+  MAT37_REG="sonda=linea-base modo=medicion estado=$est motivo=$mot corrida=${ARNES_CORRIDA:-desconocido} invocacion=$BASHPID-$MAT37_T0 arbol=${ARNES_ARBOL:-desconocido} k=1 r=1 us=$us procesos=$procs etiqueta=$MAT37_ETIQ ref=$MAT37_REF archivos=$arch"
+}
 mat37() {   # <referencia> <destino> -> 0 si el árbol quedó materializado ENTERO
-  local ref="$1" dst="$2" reg
-  MAT37_REG=''
-  reg="$("$UTIL_DIR/sonda-linea-base.sh" --ref "$ref" --destino "$dst" --etiqueta "$ref" 2>/dev/null)"
-  MAT37_REG="$reg"
-  [ -n "$reg" ] || return 1
-  sonda_lee "$reg" || return 1
-  [ "${SONDA[estado]}" = ok ] || return 1
+  local ref="$1" dst="$2" lista l modo tipo oid ruta n=0 i calc obtenido
+  local dirs='' paths='' ejec='' procs=0
+  local -a oids=() modos=() rutas=()
+  MAT37_T0=${EPOCHREALTIME/./}
+  MAT37_REF="${ref//[[:space:]]/_}"; MAT37_ETIQ="$MAT37_REF"; MAT37_REG=''
+  [ -d "$REPO37/.git" ] || { mat37_reg sin-linea-base no-hay-.git-en-el-repositorio desconocido "$procs"; return 1; }
+  # Lo que decide es que `git` RESUELVA la referencia a un árbol, no de qué tipo sea: tag,
+  # commit y rama dan exactamente el mismo trabajo (CA-05).
+  procs=$((procs + 1))
+  git -C "$REPO37" rev-parse -q --verify "$ref^{tree}" >/dev/null 2>&1 \
+    || { mat37_reg sin-linea-base "la-referencia-no-resuelve:$ref" desconocido "$procs"; return 1; }
+  # Una sola llamada da la lista, LOS MODOS y los identificadores de objeto: la comprobación
+  # del punto 1 no paga un recorrido aparte.
+  procs=$((procs + 1))
+  lista="$(git -C "$REPO37" ls-tree -r "$ref" -- $MAT37_RUTAS 2>/dev/null)"
+  [ -n "$lista" ] || { mat37_reg sin-linea-base "la-referencia-no-tiene-esas-rutas:$ref" desconocido "$procs"; return 1; }
+  while IFS= read -r l || [ -n "$l" ]; do
+    [ -n "$l" ] || continue
+    modo="${l%% *}"; l="${l#* }"
+    tipo="${l%% *}"; l="${l#* }"
+    oid="${l%%$'\t'*}"; ruta="${l#*$'\t'}"
+    [ "$tipo" = blob ] || continue
+    n=$((n + 1))
+    dirs="$dirs $dst/${ruta%/*}"
+    paths="$paths$dst/$ruta"$'\n'
+    oids+=("$oid"); modos+=("$modo"); rutas+=("$dst/$ruta")
+    case "$modo" in *755) ejec="$ejec $dst/$ruta" ;; esac
+  done <<< "$lista"
+  [ "$n" -ge 1 ] || { mat37_reg sin-linea-base la-referencia-no-materializa-ningun-archivo desconocido "$procs"; return 1; }
+  procs=$((procs + 1))
+  mkdir -p $dirs 2>/dev/null || { mat37_reg sin-linea-base no-se-pudo-crear-el-destino desconocido "$procs"; return 1; }
+  while IFS= read -r ruta || [ -n "$ruta" ]; do
+    [ -n "$ruta" ] || continue
+    procs=$((procs + 1))
+    git -C "$REPO37" show "$ref:${ruta#"$dst"/}" > "$ruta" 2>/dev/null \
+      || { mat37_reg sin-linea-base "no-se-pudo-materializar:${ruta#"$dst"/}" desconocido "$procs"; return 1; }
+  done <<< "$paths"
+  if [ -n "$ejec" ]; then
+    procs=$((procs + 1))
+    chmod +x $ejec 2>/dev/null || { mat37_reg sin-linea-base no-se-pudo-fijar-el-modo-del-objeto desconocido "$procs"; return 1; }
+  fi
+  # COMPRUEBA LO QUE DEJÓ, contenido y modo. Un solo `hash-object` para el lote entero.
+  procs=$((procs + 1))
+  calc="$(git -C "$REPO37" hash-object --stdin-paths <<< "${paths%$'\n'}" 2>/dev/null)"
+  [ -n "$calc" ] || { mat37_reg sin-linea-base no-se-pudo-verificar-el-contenido-materializado desconocido "$procs"; return 1; }
+  i=0
+  while IFS= read -r obtenido || [ -n "$obtenido" ]; do
+    [ -n "$obtenido" ] || continue
+    [ "$i" -lt "$n" ] || { mat37_reg sin-linea-base la-verificacion-devolvio-mas-lineas-que-archivos desconocido "$procs"; return 1; }
+    [ "${oids[i]}" = "$obtenido" ] || { mat37_reg sin-linea-base "el-contenido-no-coincide-en:${rutas[i]##*/}" desconocido "$procs"; return 1; }
+    i=$((i + 1))
+  done <<< "$calc"
+  [ "$i" -eq "$n" ] || { mat37_reg sin-linea-base "se-verificaron-$i-de-$n-archivos" desconocido "$procs"; return 1; }
+  i=0
+  while [ "$i" -lt "$n" ]; do
+    case "${modos[i]}" in
+      *755) [ -x "${rutas[i]}" ] || { mat37_reg sin-linea-base "objeto-ejecutable-sin-bit:${rutas[i]##*/}" desconocido "$procs"; return 1; } ;;
+      *)    if [ -x "${rutas[i]}" ]; then mat37_reg sin-linea-base "objeto-no-ejecutable-con-bit:${rutas[i]##*/}" desconocido "$procs"; return 1; fi ;;
+    esac
+    i=$((i + 1))
+  done
+  mat37_reg ok - "$n" "$procs"
   return 0
 }
 HER37="$RAIZ/her37-321-$BASHPID"; HER37_OK=no; REGHER37=''

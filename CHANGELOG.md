@@ -2,6 +2,108 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · REQ-021 vuelta 2, mitad de código: la mitad discordante caza la tautología ejecutando, y la coordinadora comitea un borrado que no puso
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador`.
+
+**Comisión partida a propósito: código ahora, medición después.** Ninguna de las 30 calibraciones de
+`CA-03 (d)` ni ninguna de las cuatro vías de `CA-08` se corrió — había otra comisión midiendo. Los
+números de abajo son **verificación funcional**, no magnitudes publicables, y ninguno va al Historial.
+
+### La mitad discordante, con fail-before/pass-after EJECUTADO
+
+Es la pieza que decide la vuelta. Mutación sobre una copia (`ARNES_UTIL_DIR`), sin tocar el árbol: se le
+**quita la observación** a la sonda de reloj. Los dos registros, **con el par en banda en los dos casos**
+—que es exactamente la firma de la tautología—:
+
+```
+SIN MUTAR  cal_a=1956 cal_b=995   disc_param=185614 disc_obs=4150    disc_estado=suelo
+MUTADA     cal_a=1919 cal_b=1010  disc_param=181159 disc_obs=181159  disc_estado=ok
+```
+
+Veredicto del juez real — **fail-before:** *«'reloj' publica `disc_estado=ok` sobre un sujeto que el juez
+cronometró en 7077µs, por debajo del suelo de 50000µs: **quien no mide no puede saber que está bajo el
+suelo**»*. **pass-after:** `PASS (disc_param=175361 · disc_obs=4267 · testigo del juez=7348)`. Y por
+`CA-03` punto 5, con la sonda mutada la **corrida entera** sale `rc=1` con **5 FAIL**.
+
+**Dos caminos distintos a propósito:** la magnitud publicada sale del registro de envoltorios y el
+testigo lo **cuenta el juez** sobre un archivo que él crea vacío — contarlo sobre el mismo registro
+haría que testigo y magnitud tuvieran **el mismo origen**, que es lo que `(a.3)` prohíbe. Y la
+**anti-vacuidad se materializa como FAIL nombrado**, no como `ABORT:` del corredor: *un guardián que
+tumba la vuelta por una condición de vacuidad* es la lección de `CA-07.4`, aprendida hace dos horas.
+
+**No hay dos criterios contradiciéndose.** Rehecha la cuenta de `(iii)`: `1+2+1+1 = 5` más el discordante
+—que por diseño cuesta **menos de una unidad**— **≤ 6**. Medido: reloj **2,7–3,3×**, procesos **3,7×**
+contra 6. Cabe sin deformar nada, que es lo que la vuelta pasada se compró indebidamente.
+
+**Las tres palancas de `(d)` usadas y declaradas, ninguna prohibida:** series **intercaladas** en la
+calibración —y ahí apareció que **no había identidad de camino**: la calibración recorría `sr_minimo`
+mientras la medición de una razón recorre `sr_intercala`, y es donde estaba la varianza (1,217 en bloque
+vs 1,012 intercalado)—; `r` de 3 a 5, la palanca gratis; y margen sobre el suelo de **1,4× a 4×**,
+derivado en la corrida. Con un efecto lateral medido: el sondeo va primero, así que **calienta** — el
+`cal_a=1,093` que QA vio en frío era la primera serie pagando páginas dentro del numerador. **La banda no
+se ensanchó y el sujeto no se encogió.**
+
+Más: `QA-021-04` (parser sin word-splitting **ni glob**, clave repetida → ilegible), `QA-021-05` (barrido
+por **marca de entorno**, que sobrevive a la reparentación **y** al cambio de sesión — verificado en las
+tres formas, `vivos=1` y **0 supervivientes**, donde el grupo sólo cazaría dos), `QA-021-07`
+(`procesos=no-aplica` en vez de contar con el oráculo del núcleo: `QA-021-03` ya obligó a retirar una
+cifra por meter ruido de sistema en un campo publicado), `vivos` en el juez con sus tres ramas, y
+`sonda_emisor_conocido()` fail-closed.
+
+### Un hueco contrato↔código que NO resolvió, y bien hecho
+
+**`37/1` y `37/2` no llaman a `sonda_usable` ni una vez** (`grep -c` → 0 y 0; en la 38, 14). Publican
+razones leyendo el registro con `sonda_lee` directo. **Medido:** con la sonda de reloj mutada, la 38 sale
+roja pero **`37/1` y `37/2` publican sus razones como PASS** con la procedencia de la calibración
+**desmentida en la misma corrida**. `CA-03` punto 5 dice que esa medición **no es publicable**. Es la
+misma clase que `QA-021-02`, un consumidor más arriba.
+
+**No lo tocó**, y el motivo es el correcto: no está en sus diez puntos, cablearlo convierte PASS en FAIL
+en casos de REQ-017 —superficie ajena— y *es exactamente la decisión unilateral que quemó la vuelta
+pasada*. Queda para enrutar.
+
+**Y una carrera del banco que sí arregló, porque era suya:** el caso `CA-04.4` contaba sobre el temporal
+**compartido** que `37/2` usa con la misma sonda, así que veía directorios de **otra invocación viva** y
+salía rojo sin que nada estuviera roto. *Es la clase de REQ-015 entrando por el lector.*
+
+**`REQ-017 CA-03` fail-before es flaky, y no es suyo:** cuatro corridas del mismo árbol dan `3,878 ·
+3,791 · 2,508 · 3,316` contra un techo de `2,600×` — **con la máquina cargada falla**. Misma clase que
+`QA-021-06`, otro criterio y otro dueño. Verificó que su cambio no puede causarlo (modos idénticos).
+
+### `CA-18` empeora, y ahora son tres archivos
+
+| | antes | ahora | límite |
+|---|---|---|---|
+| `37-…-1-escala.sh` | 751 | **841** | 400 |
+| `37-…-2-la-seccion-caliente.sh` | 614 | **674** | 400 |
+| `38-sondas-compartidas.sh` | 400 | **722** | 400 |
+
+Deshacer la mudanza devuelve líneas a las 37, y la 38 recibe el doble de casos. **No puede partir la 38**
+porque un `39-*.sh` está fuera de su `Archivos:`.
+
+**Banco: `rc=0 · 875 PASS · 0 FAIL · 5 SKIP`**, cuadre `880 = CASOS_ESPERADOS` y cuadre por archivo OK.
+`CASOS_ESPERADOS` **873 → 880** y el de la 38 **21 → 28**, los dos **a mano**; los de las 37 **no
+cambian**, como `CA-07.2` exige. Los cinco SKIP con su motivo en su línea. Autoprueba **72 PASS · 1
+FAIL**, y ese FAIL es `CA-18`.
+
+### Error de la coordinadora: comiteó un borrado que no puso
+
+El commit `64e88c8` —el de **REQ-019**— contiene el borrado de `tests/util/sonda-linea-base.sh`, que está
+declarado en el `Archivos:` de **REQ-021** y no en el de REQ-019. **No fue la comisión de REQ-019: fue la
+coordinadora.** El `git rm` del `desarrollador` dejó el borrado **preparado en el índice**, y el commit
+posterior lo arrastró.
+
+**La lección, y es una clase nueva:** *nombrar rutas en `git add` **no acota** lo que el commit contiene.*
+El índice es **estado compartido**, y una comisión viva puede dejar cosas preparadas ahí. La regla que la
+coordinadora adoptó hoy —«con comisiones vivas, rutas nombradas, nunca `-A`»— **se cumplió y no bastó**.
+Lo que hace falta es `git commit -- <rutas>` o **mirar el índice antes de comitear**. Va a `REQ-025`.
+
+*(Coincidió con lo que la comisión de REQ-021 pedía, así que no se perdió trabajo de nadie — por suerte,
+no por diseño.)*
+
+**Coste:** ~405 k de contexto, **de los cuales ~84 k son leer `REQ-021.md` entero**. Es un dato para
+REQ-019: el documento que contrata el ahorro cuesta 84 k por comisión que lo lea.
+
 ## [GitHub] — 2026-09-08 · REQ-025 (borrador): el arnés vigila también a quien orquesta — el par discriminante y el denominador publicado
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
 

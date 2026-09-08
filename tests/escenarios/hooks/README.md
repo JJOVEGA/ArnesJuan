@@ -221,16 +221,23 @@ Tres reglas nacidas de fallos reales:
 | Coste (37/2) | la misma sonda cuando **no converge** (2.º mínimo / mínimo > 1,25×) | **SKIP**, nunca PASS y nunca FAIL |
 | Coste (37/2) | una sección sintética que deja un proceso vivo | el corredor la **acusa por su nombre** |
 | Sondas (38) | `bash -n` y los modos de cada `tests/util/*.sh` | ejecutable **y** con shebang, o **aborta nombrándolo** |
-| Sondas (38) | los registros de las tres sondas | **una** línea, y **ninguna** con la forma de un caso |
+| Sondas (38) | los registros de las **dos** sondas de `tests/util/` | **una** línea, y **ninguna** con la forma de un caso |
 | Sondas (38) | un campo obligatorio ausente, vacío o no numérico | **error con motivo**, nunca un cero |
+| Sondas (38) | un valor con **espacios** o **saltos de línea** (`--etiqueta`, `--ref`, un motivo con ruta) | **un** campo y **una** línea: no fabrica campos ni veredictos |
+| Sondas (38) | una **clave repetida** o un valor con metacaracteres de glob | **ilegible ⇒ FAIL**, y el valor **no** se expande contra el `cwd` |
 | Sondas (38) | la **calibración** de cada instrumento en esta corrida | sensible ≈ **2,000×**, insensible ≈ **1,000×**, y **distinguidos** o **FAIL** |
-| Sondas (38) | **calibrar** frente a **una medición** del mismo instrumento | ≤ **4×** en reloj **y** en procesos |
+| Sondas (38) | el **tamaño** de cada mitad de la calibración | **derivado del suelo** en la propia corrida y **publicado**; un env sólo lo **sube** |
+| Sondas (38) | la **mitad discordante**: la magnitud publicada contra un **testigo del juez** | coincide con el **testigo**, no con el **parámetro**, o **FAIL** |
+| Sondas (38) | la misma sonda **sin la observación** (copia mutada, sin tocar el árbol) | la mitad discordante **FALLA**; sin la mutación, **pasa** |
+| Sondas (38) | **calibrar** frente a **una medición** del mismo instrumento y con **los mismos mandos** | ≤ **6×** en reloj **y** en procesos; `procesos=no-aplica` ⇒ **SKIP**, nunca un `0,000×` |
 | Sondas (38) | un sujeto que deja vivo un **NIETO** | la sonda lo **mata y publica `vivos=n`**; sin esa mitad, **sobrevive** |
+| Sondas (38) | un sujeto que deja un descendiente **REPARENTADO** (doble fork) | también lo **ve y lo mata** (marca de entorno); sin ella, `vivos=0` **con él vivo** |
 | Sondas (38) | el camino de **error** de la sonda de procesos | **0** directorios de envoltorios detrás |
 | Sondas (38) | un `PATH` con componente vacío o relativo (`:x`, `x:`, `::`, `.`) | **se dice**, nunca un número |
 | Sondas (38) | reloj **bajo instrumentación de procesos** | muestra **mixta**: no publicable |
-| Sondas (38) | una referencia de `git` que no resuelve | `sin-linea-base` **con motivo** y **sin árbol parcial** |
-| Sondas (38) | el ayudante de veredicto sobre 9 registros sintéticos | `estado≠ok` ⇒ **SKIP**; vacío, ilegible o sin su calibración ⇒ **FAIL** |
+| Sondas (38) | el ayudante de veredicto sobre 13 registros sintéticos | `estado≠ok` o `vivos>0` en medición ⇒ **SKIP**; vacío, ilegible, ambiguo, `vivos` ausente, emisor no declarado o sin su calibración ⇒ **FAIL** |
+| Sondas (38) | `vivos>0` en una **calibración** frente a `vivos>0` en una **medición** | **FAIL** y **SKIP**: no es el mismo hecho |
+| Coste (37/1 y 37/2) | el **materializador inline** de la línea base (`mat37`/`mat47`) | contenido **y modo del objeto del árbol**, `archivos=<n>` publicado, y `sin-linea-base` **con motivo** cuando no puede |
 
 **Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
 falsea la máquina, el runner del CI y la carga. Los de arriba son **cocientes de duplicación**

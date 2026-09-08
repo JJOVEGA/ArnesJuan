@@ -12,7 +12,17 @@ lógica es impecable, y no acredita nada.
 |---|---|---|
 | `sonda-reloj.sh` | El coste temporal de un sujeto repetido: **mínimo de k, r series, dos sujetos intercalados, suelo** | La muestra única (1,08–3,98 MB en seis corridas del mismo árbol); la varianza **de procedimiento** al medir en bloque en vez de intercalado |
 | `sonda-procesos.sh` | Cuántos procesos gasta una invocación, con envoltorios en el `PATH` | El envoltorio recursivo de `command -v` (3 h 41 min al 99,6 % de un núcleo, línea base envenenada); el `jq --arg` de 128 KB que dejaba el JSON vacío y la curva plana |
-| `sonda-linea-base.sh` | Materializar el árbol de una **referencia de `git`** (tag, commit o rama) y **decir con motivo** cuando no puede | El árbol copiado sin `.git` (2,008× frente a 0,964×); `git show` sin bit de ejecución; once criterios en SKIP con la puerta requerida en verde |
+
+**Aquí hay DOS instrumentos, y el tercero no está por un motivo medido.** Materializar el árbol de
+una referencia de `git` —la **línea base**— se queda **inline** en las dos secciones 37 del banco
+(`mat37` y `mat47`), por decisión del propietario del 2026-09-08: su calibración era **tautológica**
+—el factor salía del **parámetro** que se le entregaba, así que `2N/N = 2000` por aritmética, hiciera
+la sonda algo o nada, y una copia que no materializaba nada dio **PASS**— y su mudanza costaba **21
+procesos de calibración por corrida**. Las propiedades que la gobiernan siguen contratadas (contenido
+**y modo del objeto** del árbol, número de archivos publicado, `sin-linea-base` con motivo), y lo que
+la reducción deja descubierto está declarado con dueño y ventana en `requirements/REQ-021.md`
+(**AN-021-01**): sin instrumento compartido, sin calibración, y con la lógica **duplicada** en las dos
+secciones. Quien la mude algún día paga **primero** aplicarle la mitad discordante de abajo.
 
 ## Las cinco propiedades, y por qué son propiedades y no estilo
 
@@ -58,6 +68,27 @@ dos factores (`cal_a`, `cal_b`) y **no los compara con nada**.
 - **El camino es el mismo.** La calibración es *una invocación más del mismo programa*, con
   el sujeto sintético en lugar del real. Por eso su coste se puede **contar** y compararlo con
   el de una medición es el único indicador medible de esa identidad.
+- **Y un factor exacto en todas las corridas NO es evidencia de un sujeto bueno: puede ser la
+  firma de una TAUTOLOGÍA.** La procedencia del factor **no se lee en el registro** —la sonda
+  honesta y la que calcula sin medir publican el mismo número—, así que la calibración ejerce
+  además una **mitad discordante**: una entrada cuya **magnitud observada** es distinta del
+  parámetro con que se invoca la sonda, y que el **juez** contrasta contra un **testigo que él
+  mismo obtiene** (`disc_param`, `disc_obs` y, en el reloj, `disc_estado`). El caso **aborta**
+  —no pasa— si el testigo coincide con el parámetro o si lo produce la propia sonda: dos
+  instrumentos que se apartan de la verdad a la vez coinciden y no dicen nada.
+- **El TAMAÑO de cada mitad se deriva del suelo medido en la propia corrida**, al mínimo que lo
+  supere por el margen declarado, y se **publica** (`cal_n`, `cal_margen`, `cal_ns_vuelta`). Una
+  variable de entorno sólo puede **subirlo**. Medido lo que costaba el absoluto: con un tamaño
+  fijo el ejercicio insensible quedaba a **1,4× del suelo**, el ruido del planificador dominaba
+  y **5 de 30** calibraciones caían fuera de banda —2 con la máquina en reposo—, cada una
+  invalidando toda medición de reloj de la corrida y enrojeciendo la puerta requerida de `main`.
+  Y en una máquina bastante más rápida el mismo absoluto habría dicho `suelo`: *una puerta
+  requerida cuyo verde depende de la velocidad de la máquina es la que alguien acaba apagando.*
+- **Si la calibración resulta frágil, la salida está escrita y ordenada** (REQ-021 CA-03 (d)):
+  (1) subir `r`, que es la palanca **gratis** —el techo de coste compara numerador y denominador
+  con los **mismos mandos**, así que es invariante a `r`—; (2) subir el margen sobre el suelo;
+  (3) cambiar el sujeto por uno cuyo factor sea exacto por conteo. **Ensanchar la banda o
+  encoger el sujeto no son opciones**: las dos están prohibidas por nombre.
 
 ## Publicar una cifra: lo que hay que llevar consigo
 
@@ -91,15 +122,22 @@ tests/util/sonda-reloj.sh --k 20 --r 3 --prep 'source hooks/lib.sh' --sujeto 'ar
 tests/util/sonda-reloj.sh --k 4 --r 6 --sujeto-a '…' --sujeto-b '…'
 # Procesos: envoltorios en el PATH, resueltos con `type -P` antes de tocarlo.
 tests/util/sonda-procesos.sh --sujeto "bash hooks/guard-completado.sh < entrada.json"
-# Línea base: cualquier referencia que `git` resuelva a un árbol.
-tests/util/sonda-linea-base.sh --ref v1.32.1 --destino /tmp/heredado --rutas 'hooks tools'
-# La calibración de cada una, que el corredor toma una vez por corrida.
-tests/util/sonda-reloj.sh --calibrar --k 1 --r 3 --n 200000
+# La calibración de cada una, que el corredor toma una vez por corrida. NO se le pasa el
+# tamaño: lo DERIVA del suelo medido en la corrida (CA-03 c). El `--rastro` lo crea VACÍO
+# quien va a juzgar, porque de ahí sale el testigo de la mitad discordante.
+tests/util/sonda-reloj.sh    --calibrar --k 1 --r 5
+tests/util/sonda-procesos.sh --calibrar --rastro /tmp/rastro
 ```
 
 Los sujetos y la preparación se **evalúan dentro del proceso de la sonda**, así que todo
-nombre propio suyo lleva prefijo (`SR_`, `SP_`, `SLB_`): un sujeto que use `i`, `l` o `s` no
-pisa nada.
+nombre propio suyo lleva prefijo (`SR_`, `SP_`): un sujeto que use `i`, `l` o `s` no pisa nada.
+
+**Dos campos que no son lo que parecen.** `procesos=no-aplica` en el reloj **no es un cero**:
+contar los procesos del sujeto exigiría instrumentarlo, y una muestra mixta —reloj y conteo en la
+misma pasada— no es publicable; contarlos con el oráculo de forks del núcleo metería ruido ajeno en
+un campo publicado. Y `vivos=<n>` es **obligatorio en estos dos instrumentos** y no en el
+materializador inline de la línea base, que no puede observarlo: el campo se enuncia sobre **el
+emisor**, no sobre el formato — exigírselo a quien no puede observarlo sería un FAIL garantizado.
 
 ## Ajustes operativos (variables de entorno)
 
@@ -107,16 +145,26 @@ pisa nada.
 |---|---|---|
 | `ARNES_CORRIDA` | Identificador de corrida que ata la calibración con sus mediciones | obligatoria fuera del banco |
 | `ARNES_ARBOL` | Árbol medido, para que el registro se pueda volver a visitar | informativa |
-| `ARNES_SONDA_CAL_N` | Tamaño del sujeto sintético de la calibración de reloj | **se sube** en una máquina rápida, o la calibración dirá `suelo` |
+| `ARNES_SONDA_CAL_N` | Suelo del tamaño del sujeto sintético de la calibración | **sólo SUBE** el tamaño derivado; un valor menor se **ignora** y se dice por la salida de error |
+| `ARNES_SONDA_CAL_MARGEN` | Cuántas veces el suelo tiene que superar cada mitad de la calibración | **sólo sube** de 4; bajarlo es lo que compró un techo con la discriminación del instrumento |
+| `ARNES_SONDA_CAL_R` | Series del mínimo con que el corredor calibra (`r`) | **se sube** con la medición: es la palanca **gratis** contra la fragilidad |
 | `ARNES_SONDA_DISP_UMBRAL` | Dispersión (máximo/mínimo, en milésimas) por encima de la cual la medida se marca como acompañada | **se baja** con la medición |
 | `ARNES_SONDA_PLAZO` | Plazo de arranque, en segundos, de una invocación | **se baja** con la medición |
 
 ## Lo que estas sondas garantizan sobre lo que dejan detrás
 
-- **No sobrevive ningún descendiente**, en el nivel que sea —hijo, nieto o más lejano—, y el
-  registro publica `vivos=<n>` con lo que encontró y mató. La comprobación **no se apoya en
-  `jobs`**, que sólo lista los jobs del shell que la ejecuta: se recorre la descendencia por
-  `/proc`, con builtins y sin gastar un proceso.
+- **No sobrevive ningún descendiente**, en el nivel que sea —hijo, nieto, más lejano **o
+  reparentado**—, y el registro publica `vivos=<n>` con lo que encontró y mató. La comprobación
+  **no se apoya en `jobs`**, que sólo lista los jobs del shell que la ejecuta, y usa **dos**
+  recorridos porque uno solo no basta: la cadena de `/proc/<pid>/task/<tid>/children` hasta
+  punto fijo —exacta y barata mientras la cadena esté intacta— **más** una **marca de entorno**
+  única por invocación entre los procesos que no existían al arrancar. La marca es lo que ve al
+  **reparentado**: en cuanto un padre intermedio muere, el descendiente pasa a init y sale de la
+  cadena. Medido en tres formas —`( ( sleep & ) & )`, `setsid`, doble fork clásico—, las tres
+  publicaban `vivos=0` con el superviviente vivo, y era la **tercera** instancia de «un cero
+  plausible con la descendencia viva» en el mismo criterio. El entorno sobrevive a la
+  reparentación **y** al cambio de sesión; el grupo de procesos sólo habría cazado dos de las
+  tres. Los dos recorridos son builtins: no gastan un proceso.
 - **Sus temporales se nombran desde su propio proceso**, privados y recién creados, **nunca
   con nombre fijo**, y se retiran en la misma salida **incluidos los caminos de error**. El
   corredor corre las secciones en paralelo: un directorio de envoltorios de nombre fijo es un
