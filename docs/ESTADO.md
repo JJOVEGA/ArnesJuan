@@ -107,7 +107,7 @@ rehacer la resta. Nadie la había comprobado.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-07 20:32
+## Estado derivado — 2026-09-07 20:44
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -117,7 +117,7 @@ rehacer la resta. Nadie la había comprobado.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.33.0` @ `df22517` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.33.0` @ `903e10f` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.32.1`
 **Aprobaciones pendientes:** 0
 **REQ:** 21 — completado 12 · en-revisión 1 · en-progreso 2 · bloqueado 0 · otros 6

@@ -123,6 +123,40 @@ Archivos: `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-ca
 `tests/escenarios/hooks/README.md`, `.github/workflows/banco.yml`, `docs/PENDIENTES.md`,
 `docs/qa/1.33.0.md`, `requirements/REQ-017.md`.
 
+## [Interno] — 2026-09-07 · El residual descrito al reves, y la clase que ya va tres veces en el mismo REQ
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`.
+
+**`QA-017-12` cerrado: «ruidoso» → silencioso.** El acoplamiento de `CA-05` se declaraba fallando
+*«ruidoso — el único PASS desaparece del banco en la primera corrida»*, y está medido que **en el modo
+por defecto la rotura no se nota**: veredictos idénticos, `rc 0`, y las dos únicas líneas que difieren
+son cifras que cambian en toda corrida. **Se sigue del propio criterio:** sin la palanca, el caso de (i)
+ya es SKIP por «no se pide», así que la guarda (c) **no se ejercita** y **no hay PASS que desaparecer**.
+
+**Y la consecuencia que hace que valiera la pena escribirlo: hubo que cambiar el forzador.** El anterior
+—«quien cambie la disposición repunta la sonda»— **funcionaba sólo porque el fallo era ruidoso**. Siendo
+silencioso, REQ-014 y REQ-021 cambiarían la disposición, correrían el banco, **lo verían verde** y
+cerrarían: el residual **sobrevive a su propio vencimiento** y reaparece meses después, la primera vez
+que alguien encienda la palanca para acreditar algo. Ahora es **obligación** —esa comisión corre CA-05
+una vez con la palanca encendida— y el vencimiento queda **condicionado a que esa corrida conste en su
+evidencia**: *«sin ella el residual no vence: sólo cambia de dueño sin que nadie lo haya mirado»*.
+Precedente de esta misma ventana: **SEC-036** obligó a lo mismo — *un residual cuyo disparador es el
+daño que debía evitar no vence nunca*.
+
+**El analista se negó además a repetir el error por cuarta vez:** QA midió **el modo por defecto**, así
+que «recuento 0 → SKIP con la palanca encendida» queda marcado **esperado, no medido**.
+
+**La clase, escrita con nombre — va TRES veces en este mismo REQ:** *una afirmación sobre cómo se
+comporta el mecanismo, escrita sin ejecutarla.* `CA-04` apuntando a una función inexistente en el tag;
+la guarda (c) nombrando una señal constante-cero; y «ruidoso» medido silencioso. **Y lo que la separa de
+las cuatro formas prohibidas de `CA-07`: aquéllas se ven leyendo el criterio, y ésta no** — la única
+manera de verla es **correr contra el árbol lo que el criterio afirma**. Coste medido por tardanza,
+dentro del propio REQ: cuatro líneas → un write-back → un hallazgo `contrato` que **bloquea el cierre**.
+Propuesta para 1.34.0 como **línea de la Definition of Ready**, no como quinta forma prohibida.
+
+**`CA-09`, márgenes corregidos:** `1,25–3,40×` → **`1,154×–2,523×`**, con la consecuencia que el número
+obliga a escribir: la distancia al 1,0 —donde la sonda produce FAIL sobre razón verdadera— es **~0,15×,
+no ~0,25×**. *Un colchón declarado de más es cómo un residual aceptado se vuelve un rojo sorpresa.*
+
 ## [Interno] — 2026-09-07 · QA vuelta 2: los diez criterios pasan, y lo que bloquea es una frase
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
 
