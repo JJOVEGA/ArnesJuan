@@ -2,6 +2,60 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · QA vuelta 1 de REQ-021: la tautología sobrevivió a la reducción de alcance, y esta vez el testigo lo escribe la sonda
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+**Vuelta interrumpida por reinicio de la máquina, y cerrada en limpio: `QA:` sin tocar, registro
+encabezado como parcial, y lo no mirado tabulado como NO MIRADO — nunca como PASA.** Pero alcanzó a
+hacer el experimento que se le pidió primero, y encontró la pieza que decide la vuelta.
+
+### `QA-021-10` — `contrato`, alta: la mutación tautológica que el juez APRUEBA
+
+En `tests/util/sonda-procesos.sh` **el testigo lo escribe la propia sonda**, que es lo que `CA-03 (a.3)`
+prohíbe **por nombre**:
+
+```bash
+for ((sp_i = 0; sp_i < SP_DISC_VECES; sp_i++)); do
+  grep -q x /dev/null || :
+  [ -n "$SP_RASTRO" ] && printf 'x\n' >> "$SP_RASTRO"
+done
+```
+
+El juez **crea el archivo vacío y cuenta**, pero el **valor** lo pone la sonda. Con `disc_obs = cal_n−1`
+y el testigo saliendo de las mismas marcas, **`3 = 3` se cumple por construcción, haga la sonda algo o
+nada**. Es el `2N/N = 2000` de `QA-021-01` con otra aritmética: **`N−1`**.
+
+QA construyó una copia que **no invoca `grep` ni una vez**, no cuenta ningún proceso y calcula las cinco
+magnitudes por aritmética. El juez real, sin tocarlo:
+`PASS … (disc_param=4 · disc_obs=3 · testigo del juez=3)`.
+
+**La mutación del desarrollador era la estrecha** —`SP_DISC_OBS="$SP_DISC_PARAM"`, publicar el
+parámetro—, y ésa sí la caza. **La clase de `QA-021-01` salió del árbol con la sonda retirada y sobrevive
+en el instrumento que se quedó.** Es la lección de método del día en su forma más limpia: *quien escribe
+el instrumento muta lo que se imagina*, y por eso la acreditación por mutación tiene que decir **por
+quién**.
+
+Es `contrato` y no `instrumento` porque **el REQ afirma dos cosas falsas sobre lo construido**: que el
+testigo lo obtiene el juez **sin** la sonda, y que una implementación tautológica **incumple** `(a.2)`.
+QA **no reescribió el criterio** — el write-back es del analista.
+
+**Y una abstención que merece registro:** construyó también la mutación de `sonda-reloj.sh` y **no la
+ejecutó**, así que dejó su sospecha sobre la banda de 625× anotada **como no medida y por tanto no como
+hallazgo**.
+
+**Confirmado de paso:** `QA-021-09` cerrado de verdad —los 4 SKIP salen uno a uno con motivo propio y
+«ninguna causa común»—, y con él `QA-021-07`: donde salía `0,000×` ahora sale `procesos=no-aplica` con
+motivo. Quality gates §7 **3 de 3**, banco **876/0/4 rc 0**, y **`CA-18` confirmado como único FAIL** de
+la autoprueba.
+
+**Validez declarada:** midió sobre `7180739` y el HEAD avanzó a `61063d0` a mitad de comisión;
+comprobó que `git diff --stat 7180739..HEAD -- tests/ hooks/ tools/ requirements/REQ-021.md` sale
+**vacío**, así que las cifras valen, y lo dejó escrito en el registro en vez de callarlo.
+
+**Conteo de vueltas: 2 de 3 gastadas.** La coordinadora cuenta esta vuelta **aunque quedara
+interrumpida**, porque produjo un **bloqueante que obliga a volver al desarrollador** — que es lo que
+define una vuelta dev↔QA, no cuántos criterios se alcanzaron a validar.
+
 ## [Interno] — 2026-09-08 · Sincronizados `PLAN.md` y `ESTADO.md`, que llevaban dos ventanas de retraso — y la cifra del impuesto de arranque se corrige
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 

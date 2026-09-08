@@ -22,8 +22,31 @@ que `docs/PLAN.md` explica el descontrol del ciclo 3.
 > exista**. La palanca de tokens es **REQ-019**, y está en 1.34.0.
 
 ## En progreso
-**REQ-021 — `pendiente`, `QA: con-hallazgos`, vuelta 2 de 3 rendida y QA vuelta 1 corriendo.**
-Es la última pieza de código de la ventana.
+**REQ-021 — `pendiente`, `QA: con-hallazgos`. Vuelta 1 de QA rendida (interrumpida por reinicio de la
+máquina) con un `contrato` nuevo. QUEDA UNA VUELTA.**
+
+> **`QA-021-10` (`contrato`, alta) — la tautología sobrevivió a la reducción de alcance.** En
+> `tests/util/sonda-procesos.sh` **el testigo lo escribe la propia sonda**, que es lo que `CA-03 (a.3)`
+> prohíbe por nombre: el juez sólo crea el archivo vacío y cuenta, pero el **valor** lo pone la sonda.
+> Con `disc_obs = cal_n−1` y el testigo saliendo de las mismas marcas, **`3 = 3` se cumple por
+> construcción, haga la sonda algo o nada**. Es el `2N/N = 2000` de `QA-021-01` con otra aritmética:
+> `N−1`. QA construyó una copia que **no invoca `grep` ni una vez** y calcula las cinco magnitudes por
+> aritmética, y el juez real dijo **PASS**.
+>
+> **La clase de `QA-021-01` salió del árbol con la sonda retirada y sobrevive en el instrumento que se
+> quedó.** La mutación del desarrollador era la **estrecha** —publicar el parámetro—, y ésa sí la caza.
+>
+> El arreglo: el testigo tiene que obtenerlo **el juez, por un camino que la sonda no pueda alimentar**.
+> Write-back del analista primero (el REQ afirma dos cosas falsas sobre lo construido), luego código.
+
+**Conteo de vueltas dev↔QA: 2 de 3 gastadas, y el contador NO se reinicia.** La vuelta 1 cuenta aunque
+quedara interrumpida, porque **produjo un bloqueante que obliga a volver al desarrollador** — que es lo
+que define una vuelta, no cuántos criterios se alcanzaron a validar. Si la vuelta 3 no cierra: o cierre
+con residual declarado (dueño, forzador medido, vencimiento) o `bloqueado` y escalada al propietario.
+
+**Lo que QA NO llegó a mirar, y está tabulado como NO MIRADO —nunca como PASA—:** la banda de `(d)` bajo
+carga provocada, `(ii)` y `(d)` con `r=3`, la honestidad de `(i.1)`, `QA-021-04`/`05`, `DEV-021-08`, el
+cuadre de `CA-07`, el banco desde un worktree, y el hueco (b). La reanudación empieza por ahí.
 
 **Lo conseguido y medido en la vuelta 2** (árbol `87d2609`, máquina en reposo, una sola comisión viva,
 oráculo `/proc/stat:processes` con builtins):
@@ -100,7 +123,7 @@ tautológica, los 21 procesos que hicieron insatisfacible `CA-08 (i)` y el `+6` 
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-08 10:39
+## Estado derivado — 2026-09-08 10:50
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -110,7 +133,7 @@ tautológica, los 21 procesos que hicieron insatisfacible `CA-08 (i)` y el `+6` 
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.33.0` @ `87d2609` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.33.0` @ `61063d0` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.32.1`
 **Aprobaciones pendientes:** 0
 **REQ:** 24 — completado 13 · en-revisión 1 · en-progreso 1 · bloqueado 0 · otros 9
