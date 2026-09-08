@@ -1,21 +1,32 @@
-# ---------- 37 (1/2) · EL COSTE DEL ESCÁNER: ESCALA, EQUIVALENCIA Y LA PARED ----------
+# ---------- 37 (1/5) · EL COSTE DEL ESCÁNER: EL DOMINIO DE EQUIVALENCIA ----------
 # REQ-017. La guarda del CR de `arnes_sin_cita` era CUADRÁTICA en la longitud de línea:
 # `${l%$CR}` es eliminación de sufijo CON PATRÓN, y bash la resuelve probando cada
 # posición. El banco pagaba 92 s donde pagaba 39, y NINGÚN criterio lo veía porque el que
 # había (CA-08 de REQ-016) medía PROCESOS —4 = 4, medido bien— mientras el reloj se
-# multiplicaba por diez. Esta sección contrata la magnitud que sí se degradó.
+# multiplicaba por diez. Esta parte contrata la EQUIVALENCIA del arreglo: DENTRO del
+# dominio, el estado byte a byte (CA-01); FUERA, la dirección contra un oráculo (CA-10).
 #
-# POR QUÉ TODO AQUÍ SON RAZONES Y NO SEGUNDOS. Un techo en segundos lo falsea la máquina
-# y lo falsea la carga —esta misma ventana midió lo que pasa cuando una sonda desbocada
-# envenena el reloj de otra medición—. Un COCIENTE DE DUPLICACIÓN responde a la pregunta
-# que se degradó (el orden de crecimiento) y la velocidad de la máquina se cancela
-# algebraicamente; una RAZÓN contra una línea base medida en la MISMA corrida cancela la
-# máquina por construcción. Y el estadístico es el MÍNIMO de k repeticiones, nunca la
-# media: la carga sólo puede AÑADIR tiempo, así que el mínimo es la mejor estimación del
-# coste real y la media es una mezcla de coste y de vecinos.
-CASOS_ESPERADOS_SECCION=13
-PISO_AUTONOMO_SECCION=461  # 27 preámbulo + 122 maquinaria compartida duplicada + 312 bloque indivisible mayor · REQ-014 CA-18
-seccion_nueva "--- 37/1 · el coste del escáner: escala, equivalencia y la pared de los 60 s (REQ-017) ---"
+# PARTIDA POR REQ-014 CA-18, Y LA DUPLICACIÓN ES LO QUE EL TECHO CUENTA. `37/1` medía 849
+# líneas contra un techo derivado de 577 y no cabía en dos: la mitad de las razones y la
+# pared salían a 431 líneas contra un techo de 400, y para que cupieran habría que declarar
+# un piso de 345 —o sea un bloque indivisible de 196 líneas que no existe—, que es
+# exactamente el «techo comprado deformando el sujeto» que CA-18 llama regresión. Así que va
+# en tres: el dominio (aquí), las razones y la pared.
+# Las tres invariantes de REQ-014 —CA-04 (subshell propio y en paralelo), CA-19 (ninguna
+# sección hace `source` de otra) y H-04 (en `secciones/` no cabe un archivo auxiliar)— hacen
+# IMPOSIBLE factorizar lo que dos partes comparten: se duplica o se sube al corredor, y
+# subirlo es cambio de mecanismo y NO está autorizado. Por eso el materializador de la línea
+# base (`mat37`) viene DUPLICADO aquí y en las otras dos partes, con su motivo escrito —el
+# mismo precedente que los once renglones que `28-rotacion-seccion-2-el-estado.sh` copió de
+# `28-rotacion-seccion-1-la-historia.sh`—. Y aquí NO se materializa v1.32.0: sólo la usa
+# CA-04, que vive en `37-coste-del-escaner-2-las-razones.sh`.
+#
+# POR QUÉ NADA DE ESTE REQ SE MIDE EN SEGUNDOS está escrito donde viven las razones
+# (`37-coste-del-escaner-2-las-razones.sh`), y por qué la equivalencia NO se afirma sobre
+# toda entrada, más abajo, en el bloque de CA-01: ése es su sitio único.
+CASOS_ESPERADOS_SECCION=6
+PISO_AUTONOMO_SECCION=470  # 38 preámbulo (líneas 1-38, con CR37/LOC37/CTX37/num37) + 120 maquinaria compartida duplicada (mat37 y la línea base, líneas 39-158) + 312 bloque indivisible mayor (el corpus, el evaluador y el clasificador, que CA-01 y CA-10 comparten en UNA pasada, líneas 160-471) · REQ-014 CA-18
+seccion_nueva "--- 37/1 · el coste del escáner: el dominio de equivalencia, dentro y fuera (REQ-017 CA-01 y CA-10) ---"
 
 CR37=$'\r'
 # El contexto de la máquina viaja EN EL MENSAJE de cada caso del dominio, y no es adorno:
@@ -144,56 +155,7 @@ mat37() {   # <referencia> <destino> -> 0 si el árbol quedó materializado ENTE
 HER37="$RAIZ/her37-321-$BASHPID"; HER37_OK=no; REGHER37=''
 mat37 v1.32.1 "$HER37" && HER37_OK=si
 REGHER37="$MAT37_REG"
-BAS37="$RAIZ/her37-320-$BASHPID"; BAS37_OK=no
-mat37 v1.32.0 "$BAS37" && BAS37_OK=si
 LIB37="$HOOKS_DIR/lib.sh"
-
-# --- El medidor: `sonda-reloj.sh`, que impone el estadístico ------------------
-# Cada árbol define las MISMAS funciones, así que medirlos en un solo proceso mediría el
-# último que se cargó: la sonda corre en SU PROPIO proceso y se le pasa la carga del árbol
-# en `--prep`, una vez por invocación en vez de una por serie. El mínimo de r series lo
-# impone ella (CA-02), no este archivo: la regla ya estaba escrita y se incumplió dos veces.
-MED37_US=''; MED37_MOTIVO=''; MED37_REG=''
-mide37() {   # <lib> <fn> <bytes> <k> -> MED37_US = mínimo de 3 series, en microsegundos
-  local lib="$1" fn="$2" n="$3" k="$4" reg
-  MED37_US=''; MED37_MOTIVO=''; MED37_REG=''
-  if [ ! -r "$lib" ]; then MED37_MOTIVO="no existe $lib"; return 1; fi
-  reg="$("$UTIL_DIR/sonda-reloj.sh" --k "$k" --r 3 --etiqueta "$fn-$n" \
-    --prep "source '$lib' >/dev/null 2>&1 || :; s37=''; while [ \${#s37} -lt 512 ]; do s37+='Estado: en-revision -- relleno de cabecera '; done; l37=''; while [ \${#l37} -lt $n ]; do l37+=\"\$s37\"; done; l37=\"\${l37:0:$n}\"" \
-    --sujeto "ARNES_CITA=0; ARNES_CR=0; $fn \"\$l37\"" 2>/dev/null)"
-  MED37_REG="$reg"
-  if [ -z "$reg" ]; then MED37_MOTIVO='la sonda de reloj no dejó registro'; return 1; fi
-  if ! sonda_lee "$reg"; then MED37_MOTIVO="$SONDA_MOTIVO"; return 1; fi
-  if [ "${SONDA[estado]}" != ok ]; then
-    MED37_MOTIVO="la sonda no pudo medir: estado=${SONDA[estado]} motivo=${SONDA[motivo]:-sin motivo} (min=${SONDA[min]:-n/a}µs)"; return 1
-  fi
-  if ! num37 "${SONDA[min]:-}"; then MED37_MOTIVO="la sonda no publicó un mínimo (<${SONDA[min]:-vacío}>)"; return 1; fi
-  MED37_US="${SONDA[min]}"
-  return 0
-}
-
-# razon37 <nombre> <us_medido> <us_base> <techo_por_mil> <qué mide>
-# UNA SOLA puerta para las tres razones de esta sección, y con la regla de CA-06 metida
-# dentro: si falta cualquiera de los dos términos, o si alguna serie no llega al suelo de
-# 50 ms (donde el reloj deja de tener resolución frente al ruido), el caso dice SKIP CON
-# EL MOTIVO Y CON EL NÚMERO QUE SÍ OBTUVO, y NUNCA PASS. Un PASS de una sonda que no pudo
-# medir es exactamente el verde sobre una regresión que este REQ existe para no repetir.
-razon37() {
-  local nombre="$1" med="$2" base="$3" techo="$4" que="$5" coc
-  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
-  if [ -z "$med" ] || [ -z "$base" ]; then
-    echo "  SKIP  $nombre  no hay con qué medir: ${MED37_MOTIVO:-falta uno de los dos términos} (medido=<${med:-vacío}> base=<${base:-vacío}>)"; return 0
-  fi
-  if [ "$med" -lt 50000 ] || [ "$base" -lt 50000 ]; then
-    echo "  SKIP  $nombre  serie por debajo del suelo de 50 ms (medido=${med}µs base=${base}µs): el reloj no distingue del ruido"; return 0
-  fi
-  coc=$(( med * 1000 / base ))
-  if [ "$coc" -le "$techo" ]; then
-    echo "  PASS  $nombre  $que = $(awk -v c=$coc 'BEGIN{printf "%.3f", c/1000}')× (techo $(awk -v t=$techo 'BEGIN{printf "%.3f", t/1000}')×; ${med}µs sobre ${base}µs)"; PASS=$((PASS+1))
-  else
-    echo "  FAIL  $nombre  $que = $(awk -v c=$coc 'BEGIN{printf "%.3f", c/1000}')× > techo $(awk -v t=$techo 'BEGIN{printf "%.3f", t/1000}')× (${med}µs sobre ${base}µs)"; FAIL=$((FAIL+1))
-  fi
-}
 
 # ---------- CA-01 Y CA-10 · EL CORPUS ÚNICO Y LA PARTICIÓN QUE SE MIDE EN LA CORRIDA ----
 # No se enumeran salidas esperadas a mano: se corre la implementación de este árbol y la
@@ -611,239 +573,5 @@ if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-10 (iii)" | grep -qi -- "$FILTRO"
   fi
 fi
 
-# ---------- CA-03 · EL COCIENTE DE DUPLICACIÓN ----------
-# La propiedad estructural: doblar la entrada y comparar el cociente de los mínimos.
-# Lineal ≈ 2, cuadrático ≈ 4. La velocidad de la máquina se cancela.
-# k=20 sobre 70 000 bytes es lo que hace falta para pasar el suelo de 50 ms EN ESTE ÁRBOL
-# (con k=10 la serie corta se queda en ~49 ms y la sonda tendría que decir SKIP).
-S37=70000
-u1_37=''; u2_37=''
-mide37 "$LIB37" arnes_sin_cita "$S37"          20 && u1_37="$MED37_US"
-mide37 "$LIB37" arnes_sin_cita "$(( S37 * 2 ))" 20 && u2_37="$MED37_US"
-razon37 "REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica" \
-  "$u2_37" "$u1_37" 2600 "cociente de duplicación (${S37}→$(( S37 * 2 )) bytes, k=20)"
-
-# FAIL-BEFORE. Un cociente verde no prueba nada si la sonda daría verde también sobre el
-# árbol enfermo: se comprueba que sobre v1.32.1 el MISMO cociente se pasa del techo. Con
-# k=1 basta —el árbol cuadrático cruza el suelo de 50 ms de sobra— y así el fail-before
-# cuesta segundos en vez de medio minuto.
-h1_37=''; h2_37=''
-if [ "$HER37_OK" = si ]; then
-  mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$S37"           1 && h1_37="$MED37_US"
-  mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$(( S37 * 2 ))" 1 && h2_37="$MED37_US"
-fi
-if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-03 fail-before" | grep -qi -- "$FILTRO"; then
-  if [ -z "$h1_37" ] || [ -z "$h2_37" ]; then
-    echo "  SKIP  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  no hay línea base v1.32.1 (${MED37_MOTIVO:-tag ausente})"
-  elif [ "$h1_37" -lt 50000 ] || [ "$h2_37" -lt 50000 ]; then
-    echo "  SKIP  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  serie bajo el suelo de 50 ms (${h1_37}µs / ${h2_37}µs)"
-  else
-    coc37=$(( h2_37 * 1000 / h1_37 ))
-    if [ "$coc37" -gt 2600 ]; then
-      echo "  PASS  REQ-017 CA-03 fail-before: sobre v1.32.1 el mismo cociente da $(awk -v c=$coc37 'BEGIN{printf "%.3f", c/1000}')× y se pasa del techo 2,600×"; PASS=$((PASS+1))
-    else
-      echo "  FAIL  REQ-017 CA-03 fail-before: sobre v1.32.1 el cociente da $(awk -v c=$coc37 'BEGIN{printf "%.3f", c/1000}')× y NO se pasa: la sonda no distingue el defecto que este REQ arregla"; FAIL=$((FAIL+1))
-    fi
-  fi
-fi
-
-# ---------- CA-04 · LA RAZÓN CONTRA LA ÚLTIMA VERSIÓN SIN LA GUARDA ----------
-# DESVIACIÓN DECLARADA, y no es un atajo: v1.32.0 NO TIENE `arnes_sin_cita` —la noción de
-# cita nace en 1.32.1 (REQ-016)—, así que la comparación literal «su `arnes_sin_cita`» no
-# existe. Lo comparable es la MISMA BOCA: la función que recibe una línea cruda de
-# cabecera y devuelve un campo. En v1.32.0 es `arnes_norm_clave`; en este árbol es
-# `arnes_campo_linea`, que es `arnes_sin_cita` MÁS `arnes_norm_clave`. Se compara el
-# camino entero contra el camino entero, que además es la lectura ESTRICTA: mide el coste
-# que la guarda AÑADIÓ, incluyéndose a sí misma.
-c37=''; b37=''
-mide37 "$LIB37" arnes_campo_linea 140000 10 && c37="$MED37_US"
-[ "$BAS37_OK" = si ] && { mide37 "$BAS37/hooks/lib.sh" arnes_norm_clave 140000 10 && b37="$MED37_US"; }
-razon37 "REQ-017 CA-04 el camino de campo no cuesta más de 2× lo que costaba en v1.32.0 (140 000 bytes sin CR)" \
-  "$c37" "$b37" 2000 "razón contra v1.32.0"
-
-# FAIL-BEFORE de CA-04, con k=2: el árbol enfermo se pasa de 2× por goleada.
-ch37=''; cb37=''
-if [ "$HER37_OK" = si ] && [ "$BAS37_OK" = si ]; then
-  mide37 "$HER37/hooks/lib.sh" arnes_campo_linea 140000 2 && ch37="$MED37_US"
-  mide37 "$BAS37/hooks/lib.sh" arnes_norm_clave  140000 2 && cb37="$MED37_US"
-fi
-if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-04 fail-before" | grep -qi -- "$FILTRO"; then
-  if [ -z "$ch37" ] || [ -z "$cb37" ] || [ "$ch37" -lt 50000 ]; then
-    echo "  SKIP  REQ-017 CA-04 fail-before: la razón delata a v1.32.1  falta línea base o serie bajo el suelo (v1.32.1=<${ch37:-vacío}>µs v1.32.0=<${cb37:-vacío}>µs)"
-  else
-    r37=$(( ch37 * 1000 / cb37 ))
-    if [ "$r37" -gt 2000 ]; then
-      echo "  PASS  REQ-017 CA-04 fail-before: v1.32.1 cuesta $(awk -v c=$r37 'BEGIN{printf "%.3f", c/1000}')× lo de v1.32.0 y se pasa del techo 2,000×"; PASS=$((PASS+1))
-    else
-      echo "  FAIL  REQ-017 CA-04 fail-before: v1.32.1 cuesta $(awk -v c=$r37 'BEGIN{printf "%.3f", c/1000}')× y NO se pasa: el caso pasaría contra el árbol enfermo"; FAIL=$((FAIL+1))
-    fi
-  fi
-fi
-
-# ---------- CA-06 · UNA SONDA QUE NO PUEDE MEDIR DICE SKIP, NUNCA PASS ----------
-# Se comprueba sobre la sonda REAL, no sobre una imitación: se le pide una línea base que
-# no existe y se mira qué VEREDICTO habría emitido. Un instrumento que ante la ausencia
-# de datos responde PASS es peor que no tener instrumento, porque además tranquiliza.
-if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-06 sin línea base" | grep -qi -- "$FILTRO"; then
-  sal37="$( { razon37 "sonda-de-prueba" "" "123456" 2000 "x"; razon37 "sonda-de-prueba" "1000" "1000" 2000 "x"; } 2>&1 )"
-  nskip37="$(printf '%s\n' "$sal37" | grep -c '^  SKIP ' || true)"
-  npass37="$(printf '%s\n' "$sal37" | grep -c '^  PASS ' || true)"
-  if [ "${nskip37:-0}" -eq 2 ] && [ "${npass37:-0}" -eq 0 ]; then
-    echo "  PASS  REQ-017 CA-06 sin línea base y bajo el suelo de 50 ms la sonda emite SKIP con motivo, nunca PASS"; PASS=$((PASS+1))
-  else
-    echo "  FAIL  REQ-017 CA-06 sin línea base la sonda emitió $nskip37 SKIP y $npass37 PASS (se esperaban 2 y 0)"; FAIL=$((FAIL+1))
-  fi
-fi
-# Los contadores no se tocan: `razon37` corrió dentro de una sustitución de comandos, que
-# es un subshell, así que sus PASS/FAIL murieron con él. Se dice porque un lector que no
-# lo sepa creerá que este caso descuadra el recuento de la sección.
-
-# ---------- CA-09 · LA PARED DE LOS 60 s: SE MIDE, NO SE MUEVE ----------
-# Un hook `PreToolUse` muere a los 60 s y UN HOOK MUERTO NO DENIEGA. Mover esa pared es
-# SEC-030, preexistente en los DOS árboles y con dueño propio: aquí sólo se MIDE y se
-# deja escrito, que es lo que CA-09 exige. El tamaño de los 60 s se extrapola desde el
-# ORDEN DE CRECIMIENTO medido en la misma corrida (dos tamaños, cociente de duplicación),
-# que es exactamente la metodología que CA-07 escribe: nunca un reloj absoluto.
-PARED37="$RAIZ/pared37-$BASHPID.sh"
-cat > "$PARED37" <<'PARED37FIN'
-HD="$1"; PR="$2"; N="$3"
-[ -n "${EPOCHREALTIME:-}" ] || { printf 'SIN-RELOJ\n'; exit 2; }
-s=''; while [ ${#s} -lt 2048 ]; do s+='relleno de una sola linea de cabecera '; done
-l=''; while [ ${#l} -lt "$N" ]; do l+="$s"; done; l="${l:0:N}"
-printf '# REQ-900\nEstado: completado\n%s\n' "$l" > "$PR/doc37.txt"
-# El contenido va por STDIN: `jq --arg` revienta el límite de UN argumento (128 KB) y
-# devuelve JSON VACÍO — el hook no recibe nada, responde en 0,1 s y la sonda mide cero.
-jq -Rs --arg fp "$PR/requirements/REQ-900.md" \
-  '{hook_event_name:"PreToolUse",tool_name:"Write",cwd:env.NADA,tool_input:{file_path:$fp,content:.}}' \
-  < "$PR/doc37.txt" > "$PR/in37.json" 2>/dev/null
-[ -s "$PR/in37.json" ] || { printf 'SIN-JSON\n'; exit 3; }
-t0=${EPOCHREALTIME/./}
-CLAUDE_PROJECT_DIR="$PR" timeout 120 bash "$HD/guard-completado.sh" < "$PR/in37.json" >/dev/null 2>&1
-t1=${EPOCHREALTIME/./}
-printf '%s\n' "$((t1-t0))"
-PARED37FIN
-printf '# REQ-900\nEstado: en-revisión\n' > "$PROJ/requirements/REQ-900.md"
-pared37() {   # <dir de hooks> -> imprime los KB extrapolados (rc 0), o el motivo (rc 1)
-  # EL COSTE FIJO SE RESTA ANTES DE MEDIR EL ORDEN, y sin eso la sonda MIENTE. A 96 KB el
-  # arranque del hook (bash + jq + manifiesto) todavía pesa tanto como el escaneo, así que
-  # el cociente de duplicación crudo sale ~1,3 sobre un camino que es cuadrático: la
-  # extrapolación resultante colocaba la pared en 4,25 MB donde la medición directa a
-  # 256/512/1024 KB la pone en 1,5. Se mide el término que crece —t(n) menos t(0)— que es
-  # lo único de lo que depende el orden.
-  #
-  # DEVUELVE UN NÚMERO, NO UN TEXTO CON FORMA DE MB, y eso no es estilo: mientras esta sonda
-  # imprimía «1,60 MB» el caso daba PASS por la FORMA de la cadena y nunca comparó nada
-  # (QA-017-10). Un número se puede comparar con el de al lado; una cadena bonita, no.
-  local hd="$1" u0 ua ub n=98304 kb x
-  u0="$(bash "$PARED37" "$hd" "$PROJ" 0            2>/dev/null)"
-  ua="$(bash "$PARED37" "$hd" "$PROJ" "$n"         2>/dev/null)"
-  ub="$(bash "$PARED37" "$hd" "$PROJ" "$(( n*2 ))" 2>/dev/null)"
-  # Uno a uno y no concatenados: con "$u0$ua$ub" un valor VACÍO desaparece dentro de los
-  # dígitos del vecino y la guarda deja pasar la basura que existe para atrapar.
-  for x in "$u0" "$ua" "$ub"; do
-    num37 "$x" || { printf 'la sonda no devolvió un número (<%s> <%s> <%s>)' "${u0:-vacío}" "${ua:-vacío}" "${ub:-vacío}"; return 1; }
-  done
-  if [ "$(( ua - u0 ))" -lt 20000 ] || [ "$(( ub - u0 ))" -le "$(( ua - u0 ))" ]; then
-    printf 'no medible en este rango: a %d KB el coste todavía lo domina el arranque (%d ms de arranque sobre %d ms)' \
-      "$(( n*2/1024 ))" "$(( u0/1000 ))" "$(( ub/1000 ))"
-    return 1
-  fi
-  kb="$(awk -v u0="$u0" -v ua="$ua" -v ub="$ub" -v n="$(( n*2 ))" 'BEGIN{
-    a = ua - u0; b = ub - u0
-    p = log(b/a)/log(2)
-    if (p <= 0.05) { print "ORDEN-PLANO"; exit }
-    kb = (n * exp(log((60e6 - u0)/b)/p))/1024
-    if (kb > 1048576) print "FUERA-DE-RANGO"; else printf "%d", kb }')"
-  case "$kb" in
-    ORDEN-PLANO)    printf 'el orden medido es plano: en este rango el coste no depende del tamaño'; return 1 ;;
-    FUERA-DE-RANGO) printf 'la extrapolación se va por encima de 1 GB: no hay régimen de crecimiento que medir'; return 1 ;;
-    ''|*[!0-9]*)    printf 'la extrapolación no dio un número (<%s>)' "${kb:-vacío}"; return 1 ;;
-  esac
-  printf '%s' "$kb"
-}
-
-# LO ÚNICO QUE CA-09 CONTRATA SOBRE LA PARED ES LA DIRECCIÓN, Y PAREADA DENTRO DE SU PROPIA
-# CORRIDA. La MAGNITUD y su dispersión (>= 6 corridas por árbol y rango) son del Historial de
-# REQ-017 y de SEC-030, y aquí no se acreditan: la sonda NO REPITE —1,08 · 1,32 · 1,78 · 2,64
-# · 2,65 · 3,98 MB en seis corridas del mismo árbol (QA-017-05)— y una cifra sin rango no se
-# puede auditar. Lo que sí se sostiene es la dirección. Por eso lo que se publica aquí es una
-# RAZÓN, que es la forma en que este REQ contrata todo lo demás, y no un tamaño.
-#
-# Y LA SONDA DECLARA SU RESOLUCIÓN ANTES DE JUZGAR, POR LA MISMA REGLA QUE CA-08 (ii) Y CON EL
-# MISMO MOTIVO MEDIDO. Con UNA medida por árbol este caso salió ROJO 1 de cada 6 corridas
-# —0,632× sobre un árbol cuya pared está de verdad más lejos, y con la máquina en reposo—,
-# que es un rojo espurio en la PUERTA REQUERIDA de `main` y el camino más corto a que alguien
-# lo apague. La causa no es el arreglo: es la sonda, que es de SEC-030 y cuya dispersión
-# medida es un factor ~3,7 sobre el mismo árbol. Arreglarla NO es de este REQ; declarar que
-# no resuelve, SÍ — y CA-09 lo nombra por su nombre: «si la sonda no converge, SKIP».
-#
-# Por eso se toman DOS medidas por árbol, INTERCALADAS (este, her, este, her) —en bloque los
-# dos árboles ven vecinos distintos, que es la lección de QA-017-06—, y se compara por
-# RANGOS, no por puntos:
-#   * la dirección se afirma sólo si el PEOR de este árbol supera al MEJOR de la heredada;
-#   * se niega sólo si el MEJOR de este árbol queda por debajo del PEOR de la heredada;
-#   * y si los rangos SE SOLAPAN, la sonda no distingue la dirección de su propio ruido y el
-#     caso se ABSTIENE con motivo. Un rojo tiene que significar regresión.
-#
-# Sin `FILTRO` dentro: la decisión se prueba abajo con entradas sintéticas llamándola por otro
-# nombre, y un filtro comprobado aquí dentro dejaría esa prueba muda en cuanto alguien filtre.
-dir09_37() {   # <nombre> <KB este·1> <KB este·2> <KB v1.32.1·1> <KB v1.32.1·2> (o motivos)
-  local nombre="$1" e1="${2:-}" e2="${3:-}" h1="${4:-}" h2="${5:-}" emin emax hmin hmax x
-  for x in "$e1" "$e2"; do
-    num37 "$x" && [ "$x" -gt 0 ] && continue
-    echo "  SKIP  $nombre  la sonda no midió este árbol en las dos pasadas: ${x:-sin motivo}"; return 0
-  done
-  for x in "$h1" "$h2"; do
-    num37 "$x" && [ "$x" -gt 0 ] && continue
-    echo "  SKIP  $nombre  la sonda no midió v1.32.1 al lado, y una comparación pareada necesita las dos: ${x:-sin motivo}"; return 0
-  done
-  if [ "$e1" -le "$e2" ]; then emin="$e1"; emax="$e2"; else emin="$e2"; emax="$e1"; fi
-  if [ "$h1" -le "$h2" ]; then hmin="$h1"; hmax="$h2"; else hmin="$h2"; hmax="$h1"; fi
-  if [ "$emin" -ge "$hmax" ]; then
-    echo "  PASS  $nombre  el PEOR de este árbol vale $(awk -v c=$(( emin * 1000 / hmax )) 'BEGIN{printf "%.3f", c/1000}')× el MEJOR de v1.32.1 medido EN ESTA MISMA corrida (>= 1,000×; los rangos no se solapan, así que la dirección no es ruido). La magnitud es del Historial y de SEC-030"; PASS=$((PASS+1))
-  elif [ "$emax" -lt "$hmin" ]; then
-    echo "  FAIL  $nombre  el MEJOR de este árbol vale $(awk -v c=$(( emax * 1000 / hmin )) 'BEGIN{printf "%.3f", c/1000}')× el PEOR de v1.32.1: la pared BAJÓ en todos los emparejamientos, que es lo contrario de lo único que CA-09 contrata"; FAIL=$((FAIL+1))
-  else
-    echo "  SKIP  $nombre  los rangos de las dos pasadas SE SOLAPAN (este $(awk -v c=$(( emin * 1000 / hmax )) 'BEGIN{printf "%.3f", c/1000}')×–$(awk -v c=$(( emax * 1000 / hmin )) 'BEGIN{printf "%.3f", c/1000}')× de v1.32.1): la sonda no distingue la dirección de su propio ruido, y su dispersión (~3,7 sobre el mismo árbol) es de SEC-030, no de este REQ"
-  fi
-}
-
-nom09_37="REQ-017 CA-09 la pared de los 60 s de este árbol NO es menor que la de v1.32.1, pareado en la misma corrida"
-if [ -z "$FILTRO" ] || printf '%s' "$nom09_37" | grep -qi -- "$FILTRO"; then
-  sinher09_37='no hay línea base: el tag v1.32.1 no está en este clon'
-  e1_37="$(pared37 "$HOOKS_DIR")" || true
-  h1_37="$sinher09_37"; [ "$HER37_OK" != si ] || h1_37="$(pared37 "$HER37/hooks")" || true
-  e2_37="$(pared37 "$HOOKS_DIR")" || true
-  h2_37="$sinher09_37"; [ "$HER37_OK" != si ] || h2_37="$(pared37 "$HER37/hooks")" || true
-  dir09_37 "$nom09_37" "$e1_37" "$e2_37" "$h1_37" "$h2_37"
-fi
-
-# La DECISIÓN de arriba, con entradas sintéticas y en milisegundos. Sin esto, la única
-# propiedad que CA-09 contrata no tiene puerta: el caso anterior daba PASS porque el número
-# impreso tenía forma de MB, así que habría seguido en verde con este árbol POR DEBAJO de la
-# heredada — que es exactamente lo contrario de lo contratado (QA-017-10). Y probar la
-# decisión aquí es además la única forma de acreditar la rama FAIL sin fabricar una regresión
-# real de la pared, que no hay de dónde sacar.
-if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-09 la dirección se COMPRUEBA" | grep -qi -- "$FILTRO"; then
-  nom37="REQ-017 CA-09 la dirección se COMPRUEBA por rangos, no se publica: por debajo es FAIL y el solapamiento es SKIP"
-  obs09_37="$( {
-    dir09_37 sonda-de-prueba 2048 2200 1000 1100   # rangos disjuntos por arriba: la dirección
-    dir09_37 sonda-de-prueba 1100 1200 1000 1100   # se tocan justo: «no menor» incluye la igualdad
-    dir09_37 sonda-de-prueba  800  900 1000 1100   # disjuntos POR DEBAJO: aquí el caso viejo daba PASS
-    dir09_37 sonda-de-prueba  900 1200 1000 1100   # SOLAPAN: la sonda no resuelve, se abstiene
-    dir09_37 sonda-de-prueba 'no medible' 1200 1000 1100   # sin una de las dos pasadas de este árbol
-    dir09_37 sonda-de-prueba 1000 1200 'no medible' 1100   # sin la heredada al lado: no hay pareja
-    dir09_37 sonda-de-prueba 1000 1200 0 1100      # un cero no es una medida
-  } 2>&1 | sed -nE 's/^  (PASS|FAIL|SKIP)  .*/\1/p' | tr '\n' ' ' )"
-  esp09_37='PASS PASS FAIL SKIP SKIP SKIP SKIP '
-  if [ "$obs09_37" = "$esp09_37" ]; then
-    echo "  PASS  $nom37  (7 pares de rangos → $obs09_37)"; PASS=$((PASS+1))
-  else
-    echo "  FAIL  $nom37  se esperaba <$esp09_37> y se obtuvo <$obs09_37>"; FAIL=$((FAIL+1))
-  fi
-fi
-# Los contadores no se tocan de más: `dir09_37` corrió dentro de una sustitución de comandos,
-# que es un subshell, y sus PASS/FAIL murieron con él.
-
-rm -rf "$HER37" "$BAS37" "$CORPUS37" "$CORPD37" "$EVA37" "$CLA37" "$PARED37" \
+rm -rf "$HER37" "$CORPUS37" "$CORPD37" "$EVA37" "$CLA37" \
        "$EVHE37" "$EVHC37" "$EVEE37" "$EVEC37" "$DENTRO37" "$RES37"

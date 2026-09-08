@@ -1,33 +1,27 @@
-# ---------- 37 (2/2) · LA RUTA CRÍTICA DEL BANCO Y EL CAMINO NORMAL ----------
-# REQ-017. Aquí se mide lo que de verdad se paga en cada PR (`32-huecos-auditoria-r001`,
-# la ruta crítica) y lo que NO se puede pagar por arreglarlo (un `fork` en el camino de
-# lectura de una cabecera normal).
+# ---------- 37 (4/5) · LA RUTA CRÍTICA DEL BANCO ----------
+# REQ-017 CA-05 y la mitad de CA-06 que la prueba. Aquí se mide lo que de verdad se paga en
+# cada PR (`32-huecos-auditoria-r001`, la ruta crítica).
 #
-# LAS DOS MAGNITUDES DE CA-08 VAN JUNTAS, Y ESA ES LA LECCIÓN DE ESTA VENTANA. CA-08 de
-# REQ-016 contrataba PROCESOS por llamada: 4 = 4, medido correctamente, criterio en verde
-# — mientras el reloj de la ruta crítica se multiplicaba por diez. Una magnitud correcta,
-# medible sin ruido y ORTOGONAL a lo que se degradó. Por eso las dos aquí y en la misma
-# corrida: los procesos, porque el arreglo no vale si compra tiempo con un `fork`; y el
-# reloj, porque es lo que se degradó.
+# QUÉ CORRE POR DEFECTO Y QUÉ NO. La comparación de CA-05 contra la ruta crítica NO corre
+# por defecto —cuesta lo que costaba el defecto, porque ES el defecto corriendo— y se
+# enciende con `ARNES_COSTE_RUTA_CRITICA=1`; apagada dice SKIP citando el número acreditado
+# y su fecha, nunca PASS.
 #
-# QUÉ CORRE POR DEFECTO Y QUÉ NO. CA-08 y las dos mitades de CA-06 corren SIEMPRE: son
-# baratas (~14 s — las 6 series por árbol de k=4 que CA-08 contrata cuestan las mismas
-# llamadas al hook que las 3 de k=8 de antes, así que intercalar salió gratis) y auto-ancladas
-# o de instrumento. La comparación de CA-05 contra la ruta crítica NO corre por defecto
-# —cuesta lo que costaba el defecto, porque ES el defecto corriendo— y se enciende con
-# `ARNES_COSTE_RUTA_CRITICA=1`; apagada dice SKIP citando el número acreditado y su fecha,
-# nunca PASS. El árbol heredado se materializa igual, porque CA-08 lo necesita.
+# Y LAS PUERTAS DE CA-05 SE PRUEBAN AUNQUE LA COMPARACIÓN ESTÉ APAGADA. Las tres decisiones
+# —«¿produjo casos esta corrida?», «¿terminó en verde?» y «¿esta muerte prueba el
+# vencimiento?»— viven en funciones puras, así que se les dan entradas sintéticas y se
+# comprueba su veredicto en milisegundos. Es lo que faltaba en la vuelta 0 (QA-017-03 y
+# QA-017-04): la puerta corría sólo cuando se encendía la palanca, y nadie comprobaba nunca
+# que la puerta cerrase. Por eso el bloque de CA-06 va AQUÍ y no en la otra parte: es el
+# bloque atado a CA-05, y separarlo dejaría la puerta sin quien la ejerza.
 #
-# Y LAS PUERTAS DE CA-05 Y DE CA-08 SE PRUEBAN AUNQUE LA COMPARACIÓN ESTÉ APAGADA. Las cuatro
-# decisiones —«¿produjo casos esta corrida?», «¿terminó en verde?», «¿esta muerte prueba el
-# vencimiento?» y «¿convergió esta sonda?»— viven en funciones puras, así que se les dan
-# entradas sintéticas y se comprueba su veredicto en milisegundos. Es lo que faltaba en la
-# vuelta 0 (QA-017-03 y QA-017-04): la puerta corría sólo cuando se encendía la palanca, y
-# nadie comprobaba nunca que la puerta cerrase. Con la convergencia el argumento es todavía
-# más fuerte: en una corrida sana la sonda CONVERGE, así que su camino no se recorre nunca.
-CASOS_ESPERADOS_SECCION=11
-PISO_AUTONOMO_SECCION=468  # 33 preámbulo + 92 maquinaria compartida duplicada + 269 bloque indivisible mayor (CA-05, líneas 128-396) + 74 bloque atado a él (CA-06 prueba las dos puertas de CA-05) · REQ-014 CA-18
-seccion_nueva "--- 37/2 · la ruta crítica del banco y el camino de una cabecera normal (REQ-017) ---"
+# PARTE 4 DE 5 POR REQ-014 CA-18: `37/2` medía 679 líneas contra un techo de 585 y cabe en
+# DOS. Aquí van CA-05 y su CA-06; las dos magnitudes del camino normal (CA-08) van en
+# `37-coste-del-escaner-5-el-camino-normal.sh`. `mat47` viene DUPLICADO allí a propósito:
+# CA-04, CA-19 y H-04 de REQ-014 hacen imposible factorizarlo.
+CASOS_ESPERADOS_SECCION=4
+PISO_AUTONOMO_SECCION=463  # 28 preámbulo (líneas 1-28) + 92 maquinaria compartida duplicada (mat47 y la línea base, líneas 29-120) + 269 bloque indivisible mayor (CA-05 entero: caso47, valida47, corre47, la medición y veredicto47, líneas 122-390) + 74 bloque atado a él (CA-06 prueba las dos puertas de CA-05, líneas 392-465) · REQ-014 CA-18
+seccion_nueva "--- 37/4 · la ruta crítica del banco (REQ-017 CA-05, con la mitad de CA-06 que la prueba) ---"
 
 BANCO47="${SEC_DIR%/}/../run.sh"
 INV47="${SEC_DIR%/}/../inventario.sh"
@@ -469,211 +463,6 @@ fi
 # comandos, que es un subshell, y sus PASS/FAIL murieron con él. Se dice porque un lector
 # que no lo sepa creerá que estos casos descuadran el recuento de la sección.
 
-# ---------- CA-08 · LAS DOS MAGNITUDES DEL CAMINO NORMAL ----------
-mkreq_r REQ-100 no aprobado n/a estandar     # un REQ real: 6 líneas de cabecera
-{ printf '# REQ-200\nEstado: en-revisión\nSensible a seguridad: no\nQA: aprobado\nSeguridad: n/a\n'
-  _i47=1; while [ "$_i47" -le 195 ]; do printf 'Campo%03d: valor de relleno de cabecera\n' "$_i47"; _i47=$((_i47+1)); done
-} > "$PROJ/requirements/REQ-200.md"
-json47() {   # <REQ> -> el Edit que cierra ese REQ
-  jq -n --arg fp "$PROJ/requirements/$1.md" \
-    '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.NADA,
-      tool_input:{file_path:$fp,old_string:"Estado: en-revisión",new_string:"Estado: completado"}}'
-}
-# EL PROCEDIMIENTO DE MEDIDA ES PARTE DEL CRITERIO (CA-08), Y LOS DOS INSTRUMENTOS QUE LO
-# IMPLEMENTAN VIVEN AHORA EN `tests/util/` (REQ-021). SER47 series por árbol, INTERCALADAS
-# a, b, a, b, y el estadístico es el MÍNIMO: los impone `sonda-reloj.sh`, no este archivo
-# —«una disciplina que depende de que quien llama se acuerde no es una disciplina»—. Y el
-# reloj se toma SIN la instrumentación de procesos, que es otra invocación y otra sonda: un
-# envoltorio por proceso mide el envoltorio (CA-02 punto 5).
-#
-# K47=4: cada serie ronda medio segundo, diez veces por encima del suelo de 50 ms donde el
-# reloj deja de distinguir del ruido. Se baja de 8 a 4 porque las series se DUPLICAN de 3 a 6:
-# el coste total en llamadas al hook queda igual que antes del arreglo, y el reparto —más
-# series y más cortas— es el que reduce la varianza que este criterio venía a quitar.
-SER47=6   # >= 6 por árbol (CA-08, OPERATIVO: se sube con la medición)
-K47=4
-TECHO47=1250   # ‰. EL MISMO número para la razón y para la convergencia, y no es casualidad:
-               # «un instrumento tiene que resolver al menos el factor que vigila». No es un
-               # techo nuevo, es el de CA-08 (ii) leído sobre la propia sonda.
-declare -A PROCS47 RELOJ47 RELOJ2_47
-falta47=''
-JSON47="$RAIZ/json47-$BASHPID.json"
-for _cual47 in REQ-100 REQ-200; do
-  json47 "$_cual47" > "$JSON47" 2>/dev/null
-  if [ ! -s "$JSON47" ]; then falta47="el JSON de $_cual47 salió vacío: el hook no habría recibido entrada"; continue; fi
-  # Los procesos, una vez por árbol: es un recuento, no una medida de reloj, y no tiene ruido.
-  for _arb47 in este heredado; do
-    _hd47="$HOOKS_DIR"; [ "$_arb47" = heredado ] && _hd47="$HER47/hooks"
-    if [ "$_arb47" = heredado ] && [ "$HER47_OK" != si ]; then falta47="sin línea base v1.32.1"; continue; fi
-    _reg47="$("$UTIL_DIR/sonda-procesos.sh" --dir-trabajo "$RAIZ" --etiqueta "$_cual47-$_arb47" \
-      --sujeto "CLAUDE_PROJECT_DIR='$PROJ' bash '$_hd47/guard-completado.sh' < '$JSON47'" 2>/dev/null)"
-    if sonda_lee "$_reg47" && [ "${SONDA[estado]}" = ok ] && num47 "${SONDA[cuenta]:-}"; then
-      PROCS47["$_cual47-$_arb47"]="${SONDA[cuenta]}"
-    else
-      falta47="la sonda de procesos no midió (${SONDA_MOTIVO:-estado=${SONDA[estado]:-?} motivo=${SONDA[motivo]:-?}})"
-    fi
-  done
-  # Y EL RELOJ, INTERCALADO EN UNA SOLA INVOCACIÓN. La alternancia la hace la sonda: las dos
-  # series consecutivas de árboles distintos ven el mismo vecindario, y en bloque cada árbol
-  # veía vecinos distintos (QA-017-06: 1,217 en bloque frente a 1,012 intercalado).
-  if [ "$HER47_OK" = si ]; then
-    _reg47="$("$UTIL_DIR/sonda-reloj.sh" --k "$K47" --r "$SER47" --etiqueta "$_cual47" \
-      --sujeto-a "CLAUDE_PROJECT_DIR='$PROJ' bash '$HOOKS_DIR/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" \
-      --sujeto-b "CLAUDE_PROJECT_DIR='$PROJ' bash '$HER47/hooks/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" 2>/dev/null)"
-  else
-    _reg47="$("$UTIL_DIR/sonda-reloj.sh" --k "$K47" --r "$SER47" --etiqueta "$_cual47" \
-      --sujeto "CLAUDE_PROJECT_DIR='$PROJ' bash '$HOOKS_DIR/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" 2>/dev/null)"
-  fi
-  if sonda_lee "$_reg47" && [ "${SONDA[estado]}" = ok ]; then
-    RELOJ47["$_cual47-este"]="${SONDA[min_a]:-}";     RELOJ2_47["$_cual47-este"]="${SONDA[min2_a]:-}"
-    RELOJ47["$_cual47-heredado"]="${SONDA[min_b]:-}"; RELOJ2_47["$_cual47-heredado"]="${SONDA[min2_b]:-}"
-  else
-    falta47="la sonda de reloj no midió (${SONDA_MOTIVO:-estado=${SONDA[estado]:-?} motivo=${SONDA[motivo]:-?}})"
-    RELOJ47["$_cual47-este"]=''; RELOJ2_47["$_cual47-este"]=''
-    RELOJ47["$_cual47-heredado"]=''; RELOJ2_47["$_cual47-heredado"]=''
-  fi
-done
-rm -f "$JSON47"
-
-# EL VEREDICTO DE CA-08 (ii), EN UNA FUNCIÓN PURA — y pura para poder probar la abstención con
-# entradas sintéticas: en una corrida sana la sonda CONVERGE, así que el camino que más
-# importa es justamente el que nunca se recorrería.
-#
-# LA SONDA DECLARA SU RESOLUCIÓN ANTES DE JUZGAR. Medido en la vuelta 1 con el procedimiento
-# sin implementar: 26 medidas, 2 en rojo (1,252× y 1,443× contra 1,250×) y 1 de cada 4 vueltas
-# del banco completo EN EL MODO DE LA PUERTA REQUERIDA salió roja, con `load` 0,91 al arrancar
-# —así que la carga previa no lo explica—. Que la causa es el instrumento y no el arreglo lo
-# dice la misma serie: en aislamiento la razón da 0,821–1,010, y un coste real no puede ser
-# negativo, luego 0,821–1,443 sobre el MISMO estimando es varianza de la sonda.
-#
-# Por eso, además de intercalar, se compara el SEGUNDO MÍNIMO con el MÍNIMO de CADA árbol
-# contra el PROPIO techo, y si lo supera el caso se ABSTIENE: nunca PASS y nunca FAIL. La
-# abstención no tapa una regresión real —una regresión sube los dos mínimos del árbol nuevo
-# por igual y NO separa su serie de sí misma; lo que separa una serie de sí misma es el
-# vecino—. Y el techo NO se toca: es `operativo` y su dirección admitida es BAJAR.
-veredicto08_47() {   # <nombre> <mín este> <2º mín este> <mín her> <2º mín her>
-  local nombre="$1" ue="${2:-}" ue2="${3:-}" uh="${4:-}" uh2="${5:-}" ce ch r x
-  for x in "$ue" "$ue2" "$uh" "$uh2"; do
-    num47 "$x" && [ "$x" -gt 0 ] && continue
-    echo "  SKIP  $nombre  la sonda no dio $SER47 series por árbol con sus dos mínimos (este ${ue:-vacío}/${ue2:-vacío}µs · heredada ${uh:-vacío}/${uh2:-vacío}µs)"; return 0
-  done
-  if [ "$uh" -lt 50000 ] || [ "$ue" -lt 50000 ]; then
-    echo "  SKIP  $nombre  serie por debajo del suelo de 50 ms (este ${ue}µs · heredada ${uh}µs): el reloj no distingue del ruido"; return 0
-  fi
-  ce=$(( ue2 * 1000 / ue )); ch=$(( uh2 * 1000 / uh ))
-  r=$(( ue * 1000 / uh ))
-  if [ "$ce" -gt "$TECHO47" ] || [ "$ch" -gt "$TECHO47" ]; then
-    echo "  SKIP  $nombre  la sonda NO convergió: segundo mínimo / mínimo = $(awk -v c=$ce 'BEGIN{printf "%.3f", c/1000}')× (este) y $(awk -v c=$ch 'BEGIN{printf "%.3f", c/1000}')× (heredada), por encima de su propio techo $(awk -v t=$TECHO47 'BEGIN{printf "%.3f", t/1000}')× — no puede distinguir una regresión de su ruido. La razón que sí obtuvo es $(awk -v c=$r 'BEGIN{printf "%.3f", c/1000}')×, y sobre eso no se firma"
-    return 0
-  fi
-  if [ "$r" -le "$TECHO47" ]; then
-    echo "  PASS  $nombre  $(awk -v c=$r 'BEGIN{printf "%.3f", c/1000}')× ($(awk -v u=$ue -v k=$K47 'BEGIN{printf "%.4f", u/(k*1e6)}') s/llamada frente a $(awk -v u=$uh -v k=$K47 'BEGIN{printf "%.4f", u/(k*1e6)}') s; convergencia $(awk -v c=$ce 'BEGIN{printf "%.3f", c/1000}')×/$(awk -v c=$ch 'BEGIN{printf "%.3f", c/1000}')×)"; PASS=$((PASS+1))
-  else
-    echo "  FAIL  $nombre  $(awk -v c=$r 'BEGIN{printf "%.3f", c/1000}')× > $(awk -v t=$TECHO47 'BEGIN{printf "%.3f", t/1000}')× ($(awk -v u=$ue -v k=$K47 'BEGIN{printf "%.4f", u/(k*1e6)}') s/llamada frente a $(awk -v u=$uh -v k=$K47 'BEGIN{printf "%.4f", u/(k*1e6)}') s), y la sonda SÍ convergió ($(awk -v c=$ce 'BEGIN{printf "%.3f", c/1000}')×/$(awk -v c=$ch 'BEGIN{printf "%.3f", c/1000}')×): esto es una regresión, no ruido"; FAIL=$((FAIL+1))
-  fi
-}
-
-for _cual47 in REQ-100 REQ-200; do
-  _etq47="un REQ real de 6 líneas"; [ "$_cual47" = REQ-200 ] && _etq47="una cabecera de 200 líneas"
-  nom47="REQ-017 CA-08 (i) $_etq47: 0 procesos añadidos respecto a v1.32.1"
-  if [ -z "$FILTRO" ] || printf '%s' "$nom47" | grep -qi -- "$FILTRO"; then
-    pe47="${PROCS47[$_cual47-este]:-}"; ph47="${PROCS47[$_cual47-heredado]:-}"
-    if [ -z "$pe47" ] || [ -z "$ph47" ]; then
-      echo "  SKIP  $nom47  ${falta47:-no se pudo medir} (este=<${pe47:-vacío}> heredado=<${ph47:-vacío}>)"
-    elif [ "$pe47" -le "$ph47" ]; then
-      echo "  PASS  $nom47  $pe47 procesos frente a $ph47 (menos es conforme)"; PASS=$((PASS+1))
-    else
-      echo "  FAIL  $nom47  $pe47 procesos frente a $ph47: el arreglo compró tiempo con un fork"; FAIL=$((FAIL+1))
-    fi
-  fi
-  nom47="REQ-017 CA-08 (ii) $_etq47: el reloj no sube más de 1,25× el de v1.32.1"
-  if [ -z "$FILTRO" ] || printf '%s' "$nom47" | grep -qi -- "$FILTRO"; then
-    ue47="${RELOJ47[$_cual47-este]:-}"; uh47="${RELOJ47[$_cual47-heredado]:-}"
-    if [ -z "$ue47" ] || [ -z "$uh47" ]; then
-      echo "  SKIP  $nom47  ${falta47:-no se pudo medir} (este=<${ue47:-vacío}>µs heredado=<${uh47:-vacío}>µs)"
-    else
-      veredicto08_47 "$nom47" "$ue47" "${RELOJ2_47[$_cual47-este]:-}" "$uh47" "${RELOJ2_47[$_cual47-heredado]:-}"
-    fi
-  fi
-done
-
-# LA CLÁUSULA DE CONVERGENCIA, PROBADA CON ENTRADAS SINTÉTICAS Y EN MILISEGUNDOS. En una
-# corrida sana la sonda converge, así que el camino que de verdad importa —la abstención— no
-# se recorrería nunca y nadie sabría si cierra. Es la misma lección que cerró QA-017-03 y
-# QA-017-04 una capa más arriba: la puerta corría sólo cuando la palanca la encendía.
-if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-08 (ii) la sonda que no converge se ABSTIENE" | grep -qi -- "$FILTRO"; then
-  nom47="REQ-017 CA-08 (ii) la sonda que no converge se ABSTIENE: nunca PASS y nunca FAIL, y la abstención manda sobre el rojo"
-  obs08_47="$( {
-    veredicto08_47 sonda-de-prueba 1000000 1050000 1000000 1020000   # converge y está bajo el techo
-    veredicto08_47 sonda-de-prueba 1300000 1310000 1000000 1020000   # converge y lo CRUZA: eso sí es FAIL
-    veredicto08_47 sonda-de-prueba 1000000 1400000 1000000 1020000   # este árbol no converge (1,400×)
-    veredicto08_47 sonda-de-prueba 1000000 1050000 1000000 1400000   # la heredada no converge
-    veredicto08_47 sonda-de-prueba 1300000 1700000 1000000 1020000   # cruzaría el techo Y no converge (1,308×): manda la abstención
-    veredicto08_47 sonda-de-prueba      '' 1050000 1000000 1020000   # falta un número
-    veredicto08_47 sonda-de-prueba   40000   41000   40000   41000   # bajo el suelo de 50 ms
-  } 2>&1 | sed -nE 's/^  (PASS|FAIL|SKIP)  .*/\1/p' | tr '\n' ' ' )"
-  esp08_47='PASS FAIL SKIP SKIP SKIP SKIP SKIP '
-  if [ "$obs08_47" = "$esp08_47" ]; then
-    echo "  PASS  $nom47  (7 sondas → $obs08_47)"; PASS=$((PASS+1))
-  else
-    echo "  FAIL  $nom47  se esperaba <$esp08_47> y se obtuvo <$obs08_47>"; FAIL=$((FAIL+1))
-  fi
-fi
-# Los contadores no se tocan de más: `veredicto08_47` corrió dentro de una sustitución de
-# comandos, que es un subshell, y sus PASS/FAIL murieron con él.
-
-# La sonda de procesos se comprueba A SÍ MISMA: si el envoltorio se resolviera a sí mismo
-# —el fallo real de 1.32.1— la sonda tiene que DECIRLO y no dar un número. Se le da un
-# PATH que ya contiene un `grep` falso y se exige que no lo tome por el binario real.
-if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-06 el envoltorio no se resuelve a sí mismo" | grep -qi -- "$FILTRO"; then
-  trampa47="$RAIZ/trampa47-$BASHPID"; mkdir -p "$trampa47"
-  printf '#!/bin/sh\nexit 0\n' > "$trampa47/grep"; chmod +x "$trampa47/grep"
-  # EL NOMBRE SE FIJA AQUÍ, FUERA DE TODA SUSTITUCIÓN, y esto no es estilo: `$BASHPID`
-  # dentro de `$( )` es el PID del SUBSHELL DE LA SUSTITUCIÓN, no el de la sección. Escrito
-  # en línea, el archivo que se escribe y el que se lee llevan nombres distintos y la sonda
-  # mide un sujeto que no existe. Volvió a ocurrir al mudar esta sección a `tests/util/`.
-  jsontrampa47="$RAIZ/trampa47-json-$BASHPID.json"
-  json47 REQ-100 > "$jsontrampa47" 2>/dev/null
-  sal47="$(PATH="$trampa47:$PATH" "$UTIL_DIR/sonda-procesos.sh" --dir-trabajo "$RAIZ" \
-    --sujeto "CLAUDE_PROJECT_DIR='$PROJ' bash '$HOOKS_DIR/guard-completado.sh' < '$jsontrampa47'" 2>/dev/null)"
-  # `type -P` resuelve al PRIMER grep del PATH, que es la trampa; lo que se exige es que la
-  # sonda no acabe apuntándose a su propio directorio ni devuelva basura.
-  if ! sonda_lee "$sal47"; then
-    echo "  FAIL  REQ-017 CA-06 la sonda de procesos no dejó registro legible con un binario sombreado en el PATH: $SONDA_MOTIVO"; FAIL=$((FAIL+1))
-  elif [ "${SONDA[estado]}" = envoltorio-recursivo ]; then
-    echo "  PASS  REQ-017 CA-06 el envoltorio detecta y denuncia resolverse a sí mismo (<${SONDA[motivo]}>)"; PASS=$((PASS+1))
-  elif [ "${SONDA[estado]}" = ok ] && num47 "${SONDA[cuenta]:-}"; then
-    echo "  PASS  REQ-017 CA-06 el envoltorio resuelve rutas absolutas antes de tocar el PATH y no se llama a sí mismo (<${SONDA[cuenta]}> procesos)"; PASS=$((PASS+1))
-  else
-    echo "  FAIL  REQ-017 CA-06 la sonda de procesos respondió estado=${SONDA[estado]} motivo=${SONDA[motivo]:-} cuenta=<${SONDA[cuenta]:-vacío}> con un binario sombreado en el PATH"; FAIL=$((FAIL+1))
-  fi
-  rm -f "$jsontrampa47"
-  rm -rf "$trampa47"
-fi
-
-# ---------- CA-06 · EL CORREDOR ACUSA A LA SECCIÓN QUE DEJA UN PROCESO VIVO ----------
-# Se comprueba sobre el corredor REAL, con una sección sintética que deja un proceso
-# corriendo, igual que hace `autoprueba-corredor.sh`. Es la mitad de CA-06 que no vive en
-# la sonda sino en quien cierra la sección.
-if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-06 el corredor acusa" | grep -qi -- "$FILTRO"; then
-  sint47="$RAIZ/sint47-$BASHPID"; mkdir -p "$sint47"
-  { echo 'CASOS_ESPERADOS_SECCION=1'
-    echo 'sleep 120 &'
-    echo 'echo "  PASS  seccion sintetica que deja una sonda viva"'
-  } > "$sint47/90-deja-sonda-viva.sh"
-  out47="$(ARNES_SECCIONES_DIR="$sint47" bash "$BANCO47" 2>&1)"
-  rc47=$?
-  vivos47="$(printf '%s' "$out47" | grep -c 'dejando procesos vivos' || true)"
-  if [ -z "$out47" ]; then
-    echo "  FAIL  REQ-017 CA-06 el corredor acusa a la sección que deja un proceso vivo  la autoprueba no imprimió nada"; FAIL=$((FAIL+1))
-  elif [ "${vivos47:-0}" -ge 1 ] && [ "$rc47" -ne 0 ]; then
-    echo "  PASS  REQ-017 CA-06 el corredor acusa POR SU NOMBRE a la sección que deja un proceso vivo, y la vuelta sale en rojo"; PASS=$((PASS+1))
-  else
-    echo "  FAIL  REQ-017 CA-06 el corredor no acusó el proceso vivo (rc=$rc47, avisos=$vivos47): una sonda huérfana envenenaría la vuelta siguiente"; FAIL=$((FAIL+1))
-    printf '%s' "$out47" | tail -4 | sed 's/^/          /'
-  fi
-  rm -rf "$sint47"
-fi
 
 rm -rf "$HER47" "$OUT_HER47" "$TRAB47" "$OUT_ESTE47"-1.txt "$OUT_ESTE47"-2.txt \
        "$OUT_ESTE47"-3.txt "$ROJO47" "$LIMPIO47" "$MUDO47" "$TRABSINT47" "$TRABVACIO47"

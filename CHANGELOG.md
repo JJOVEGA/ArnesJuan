@@ -2,6 +2,66 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · `CA-18` en VERDE: los tres archivos partidos en ocho, y el piso que se midió en vez de declararse dijo que no cabían en dos
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+**La autoprueba pasa de `105 PASS · 1 FAIL` (rc 1) a `106 PASS · 0 FAIL` (rc 0)** — verificado
+independientemente por la coordinadora corriéndola, no aceptado de palabra. Es el rojo que bloqueaba la
+fusión desde el delta final de REQ-017.
+
+### La advertencia del auditor se confirmó midiendo, y cambió el resultado
+
+El auditor había avisado —antes de que nadie cortara nada— que partir `37/1` en dos dejaría la mitad-B
+en ≈434 líneas contra un techo que sólo la conforma con un bloque indivisible de ≈199, y que **ese
+número no existía medido en ninguna parte**. El desarrollador lo midió **antes** de cortar:
+
+| Mitad | Líneas | `piso` honesto | Techo | ¿Cabe? |
+|---|---|---|---|---|
+| A (CA-01 + CA-10) | 570 | 24 + 122 + **312** = 458 | 573 | sí |
+| B (CA-03/04/06/09) | 431 | 27 + 122 + **146** = **295** | `max(400, 369)` = 400 | **NO** |
+
+Para que B cupiera haría falta `piso_B ≥ 345`, o sea un bloque indivisible de ≥196 líneas. **El mayor
+bloque indivisible real de B mide 146.** No existe. Declarar 345 habría sido exactamente el techo
+comprado deformando el sujeto que `CA-18` llama regresión a `contrato` — y las comprobaciones (a)(b)(c)
+lo habrían dado por bueno, porque los términos suman.
+
+Así que `37/1` fue a **tres** partes, que es lo que `CA-18 (ii)` reescrito hoy permite. Las cifras del
+auditor y las del desarrollador difieren un poco (A=564 vs 570, B≈434 vs 431, umbral 348 vs 345) —
+**misma conclusión, y ninguno de los dos alcanzaba**. `37/2` sí cabía en dos, verificado con medición
+propia y no con la ajena.
+
+### Ocho archivos nuevos, tres retirados, 50 secciones
+
+`37/1` → dominio · razones · pared · ruta crítica · camino normal (los dos últimos salen de `37/2`).
+`38` → registro · calibración · descendencia. **Casos repartidos, no creados ni perdidos:** 6+5+2+4+7 =
+**24** (= 13+11 de los originales) y 7+13+12 = **32**; `CASOS_ESPERADOS=884` sin tocar. **48 de 50**
+archivos gobernados por `N`, 2 por `piso×k`.
+
+**Independencia verificada por dos vías, no afirmada:** un detector de nombres usados y no definidos,
+**calibrado contra los tres originales como control** —su único positivo, `_v37`, es un falso positivo
+del propio detector (`read -r _k37 _v37`) y **aparece igual en el original**—; y cobertura de líneas,
+con extracción mecánica por rango en vez de transcripción.
+
+### El inventario, y el único caso que difirió
+
+**8 de 9 corridas byte a byte idénticas** a las de antes (884 líneas, 73.508 bytes): cero suprimidas,
+cero modificadas, cero añadidas. La novena difirió en **una** línea —`REQ-017 CA-09 la pared de los
+60 s`, PASS→SKIP—, que es el no determinismo **preexistente con dueño (`SEC-030`)** que REQ-021 ya había
+medido en 9 PASS / 2 SKIP sobre el árbol anterior. El desarrollador lo acreditó con un `git worktree`
+sobre HEAD: 4 corridas del árbol sin partir, 4 PASS; después, 8 PASS + 1 SKIP en 9. **La partición no lo
+introduce ni lo empeora**, y lo dijo en vez de callarlo.
+
+**Sin regresión de reloj (`CA-20`):** mediana 39,8 s antes → **39,7 s** después.
+
+### Uso de consola declarado, con su motivo — `AGENTS.md` §13
+
+El desarrollador ensambló los ocho archivos por **extracción mecánica de rangos con `sed`** en vez de
+transcribirlos con las herramientas de edición, y lo declaró: son ~1.150 líneas copiadas, y una
+transcripción manual arriesga **precisamente la pérdida silenciosa de un caso que `CA-12`/`CA-13`
+existen para cazar**. La fidelidad queda acreditada por el inventario idéntico y la cobertura de líneas;
+las cabeceras nuevas y el README sí fueron por las herramientas de edición. Es la regla de §13 aplicada
+como está escrita: *si hace falta la consola, se dice por qué*.
+
 ## [GitHub] — 2026-09-08 · REQ-014: corregido el desfase de un piso, `CA-18 (ii)` deja de mandar «en dos», y el rigor se queda en `critico` con un defecto real encontrado antes de cometerlo
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Sonnet 5 · agentes: `analista-requerimientos` (write-back) y `auditor-seguridad` (R-018, Opus).
 

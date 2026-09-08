@@ -53,6 +53,34 @@ Tres líneas, y ninguna en `run.sh`:
 2. Declarar dentro `CASOS_ESPERADOS_SECCION=<n>` y escribir los casos.
 3. Sumar esos `<n>` a `CASOS_ESPERADOS` al final de `run.sh`.
 
+## Por qué hay secciones numeradas en partes (`NN-<slug>-<k>-<tema>.sh`)
+Las secciones 28, 33, 36, 37 y 38 viven repartidas en varios archivos. No es estilo: **REQ-014
+CA-18** pone un techo a lo que una comisión tiene que abrir para tocar una sección, y el techo se
+pone sobre el **excedente**, no sobre el total —`líneas(f) ≤ max(N, piso(f) × k)`, con `N` = 400 y
+`k` = 1,25—. Cada archivo declara, junto a su `CASOS_ESPERADOS_SECCION`, su
+`PISO_AUTONOMO_SECCION` **con la derivación término a término en la misma línea**
+(`preámbulo + maquinaria compartida duplicada + bloque indivisible mayor`), y
+`autoprueba-corredor.sh` comprueba que todos lo declaren, que los términos **sumen** el valor
+declarado y que el piso **quepa** en el archivo.
+
+**El piso no lo elige quien escribe la sección: lo imponen las invariantes 3 y 4 de aquí arriba.**
+Cada sección corre en su propio subshell y en paralelo, ninguna hace `source` de otra, y en
+`secciones/` no cabe un archivo auxiliar (el descubrimiento aborta ante lo que no case
+`NN-<slug>.sh`). No hay tercera vía: **la maquinaria que dos partes comparten se duplica o se sube
+al corredor**, y subirla es cambio de mecanismo. Por eso el materializador de la línea base viene
+copiado en las cinco partes de la 37, los dos ayudantes de comparación de `28-…-2-el-estado.sh`
+vienen copiados de `28-…-1-la-historia.sh`, y `num38` está en las tres partes de la 38: **once
+renglones copiados cuestan menos que una puerta trasera entre secciones**.
+
+**Al partir, los casos se reparten; no se crean ni se pierden.** Cada parte declara su propio
+`CASOS_ESPERADOS_SECCION`, la suma no cambia y `CASOS_ESPERADOS` de `run.sh` tampoco. El corte va
+**por tema** y en un punto **sin dependencias cruzadas** —ninguna parte usa un nombre, función o
+variable, definido en otra—, y eso se verifica, no se afirma. La prueba de que la partición no
+perdió nada es el **inventario** (regla 3 de «Cómo se escribe un caso que sirva»): idéntico byte a
+byte antes y después. Si un archivo no cabe **ni partiéndolo** —porque su techo derivado ya es
+menor que el piso de cualquier parte autónoma—, el defecto es del piso y **no se arregla subiendo
+el techo ni inflando el piso para caber**: vuelve al analista.
+
 ## Los ayudantes compartidos
 Una sección no define ayudantes propios cuando ya hay uno compartido. **El sitio único donde vive
 el conjunto es el corredor**: compartido es, por definición, **todo el que `run.sh` define al nivel
@@ -120,8 +148,9 @@ en verde que no medía lo que decía medir.
    sección reconstruya lo que un instrumento de `tests/util/` ya hace** — materializar un árbol
    desde una referencia de `git`, cronometrar repeticiones de un sujeto o contar procesos con
    envoltorios en el `PATH`—. Si lo hace, la vuelta **aborta nombrando el archivo y la función**:
-   el materializador estaba **duplicado literalmente** en las dos secciones 37, y ahí es donde se
-   perdía media línea base sin que nadie mirara cuánto.
+   el materializador estaba **duplicado literalmente** en las secciones 37, y ahí es donde se
+   perdía media línea base sin que nadie mirara cuánto. (Desde la partición de REQ-014 CA-18 son
+   **cinco** copias, no dos: ver «Por qué hay secciones numeradas en partes», abajo.)
 4. **Una sección que muere se distingue de una sección que pasó limpia.** Las dos producen cero
    líneas. Al terminar el archivo entero, el subshell deja una marca; si no está, el corredor
    **aborta nombrando el archivo y su código de salida**, y la vuelta sale ≠ 0. Nunca se cuenta
@@ -208,36 +237,36 @@ Tres reglas nacidas de fallos reales:
 | Coste (37/1) | **fuera** del dominio: la decisión de este árbol, k=6 por locale | determinista **e invariante al locale** |
 | Coste (37/1) | **fuera** del dominio: esa decisión contra el **oráculo** (la heredada bajo `LC_ALL=C`) | **coincide**; sin esto (i) la cumpliría una constante |
 | Coste (37/1) | **fuera** del dominio: lo que la heredada incumple bajo el locale del entorno | se **registra** (fail-before) y **no falla** por ello |
-| Coste (37/1) | doblar la longitud de línea (70 000 → 140 000 bytes) | cociente ≤ **2,6** (lineal ≈ 2) |
-| Coste (37/1) | el mismo cociente **contra v1.32.1** | > 2,6 — la sonda distingue el defecto |
-| Coste (37/1) | el camino de campo contra el de v1.32.0 (140 000 bytes sin CR) | razón ≤ **2,0×** |
-| Coste (37/1) | la sonda sin línea base, o bajo el suelo de 50 ms | **SKIP con motivo**, nunca PASS |
-| Coste (37/1) | la pared de los 60 s, **pareada** con v1.32.1 en la misma corrida (2 pasadas por árbol) | este árbol **no menor**; rangos que **solapan** ⇒ SKIP |
-| Coste (37/2) | la sección 32 aislada, **sólo con `ARNES_COSTE_RUTA_CRITICA=1`** | la heredada **no termina** en 4 × mín(este árbol) ⇒ reloj ≤ **0,25×** |
-| Coste (37/2) | las 3 corridas cronometradas de este árbol, entre sí | **mismo inventario** caso→veredicto |
-| Coste (37/2) | una corrida del numerador que termina **en rojo** (rc ≠ 0) o sin casos | **no cuenta como medición**: SKIP con motivo, nunca PASS |
-| Coste (37/2) | la heredada muerta por **señal** (137), un `124` que el reloj no corrobora, o un `124` **sin un solo caso** | **SKIP con motivo**; sólo `124` **+ reloj ≥ plazo + casos** demuestra la cota |
-| Coste (37/2) | una cabecera normal (6 líneas y 200 líneas) contra v1.32.1, **6 series intercaladas** por árbol | **0 procesos añadidos y** reloj ≤ **1,25×** |
-| Coste (37/2) | la misma sonda cuando **no converge** (2.º mínimo / mínimo > 1,25×) | **SKIP**, nunca PASS y nunca FAIL |
-| Coste (37/2) | una sección sintética que deja un proceso vivo | el corredor la **acusa por su nombre** |
-| Sondas (38) | `bash -n` y los modos de cada `tests/util/*.sh` | ejecutable **y** con shebang, o **aborta nombrándolo** |
-| Sondas (38) | los registros de las **dos** sondas de `tests/util/` | **una** línea, y **ninguna** con la forma de un caso |
-| Sondas (38) | un campo obligatorio ausente, vacío o no numérico | **error con motivo**, nunca un cero |
-| Sondas (38) | un valor con **espacios** o **saltos de línea** (`--etiqueta`, `--ref`, un motivo con ruta) | **un** campo y **una** línea: no fabrica campos ni veredictos |
-| Sondas (38) | una **clave repetida** o un valor con metacaracteres de glob | **ilegible ⇒ FAIL**, y el valor **no** se expande contra el `cwd` |
-| Sondas (38) | la **calibración** de cada instrumento en esta corrida | sensible ≈ **2,000×**, insensible ≈ **1,000×**, y **distinguidos** o **FAIL** |
-| Sondas (38) | el **tamaño** de cada mitad de la calibración | **derivado del suelo** en la propia corrida y **publicado**; un env sólo lo **sube** |
-| Sondas (38) | la **mitad discordante**: la magnitud publicada contra un **testigo del juez** | coincide con el **testigo**, no con el **parámetro**, o **FAIL** |
-| Sondas (38) | la misma sonda **sin la observación** (copia mutada, sin tocar el árbol) | la mitad discordante **FALLA**; sin la mutación, **pasa** |
-| Sondas (38) | **calibrar** frente a **una medición** del mismo instrumento y con **los mismos mandos** | ≤ **6×** en reloj **y** en procesos; `procesos=no-aplica` ⇒ **SKIP**, nunca un `0,000×` |
-| Sondas (38) | un sujeto que deja vivo un **NIETO** | la sonda lo **mata y publica `vivos=n`**; sin esa mitad, **sobrevive** |
-| Sondas (38) | un sujeto que deja un descendiente **REPARENTADO** (doble fork) | también lo **ve y lo mata** (marca de entorno); sin ella, `vivos=0` **con él vivo** |
-| Sondas (38) | el camino de **error** de la sonda de procesos | **0** directorios de envoltorios detrás |
-| Sondas (38) | un `PATH` con componente vacío o relativo (`:x`, `x:`, `::`, `.`) | **se dice**, nunca un número |
-| Sondas (38) | reloj **bajo instrumentación de procesos** | muestra **mixta**: no publicable |
-| Sondas (38) | el ayudante de veredicto sobre 13 registros sintéticos | `estado≠ok` o `vivos>0` en medición ⇒ **SKIP**; vacío, ilegible, ambiguo, `vivos` ausente, emisor no declarado o sin su calibración ⇒ **FAIL** |
-| Sondas (38) | `vivos>0` en una **calibración** frente a `vivos>0` en una **medición** | **FAIL** y **SKIP**: no es el mismo hecho |
-| Coste (37/1 y 37/2) | el **materializador inline** de la línea base (`mat37`/`mat47`) | contenido **y modo del objeto del árbol**, `archivos=<n>` publicado, y `sin-linea-base` **con motivo** cuando no puede |
+| Coste (37/2) | doblar la longitud de línea (70 000 → 140 000 bytes) | cociente ≤ **2,6** (lineal ≈ 2) |
+| Coste (37/2) | el mismo cociente **contra v1.32.1** | > 2,6 — la sonda distingue el defecto |
+| Coste (37/2) | el camino de campo contra el de v1.32.0 (140 000 bytes sin CR) | razón ≤ **2,0×** |
+| Coste (37/2) | la sonda sin línea base, o bajo el suelo de 50 ms | **SKIP con motivo**, nunca PASS |
+| Coste (37/3) | la pared de los 60 s, **pareada** con v1.32.1 en la misma corrida (2 pasadas por árbol) | este árbol **no menor**; rangos que **solapan** ⇒ SKIP |
+| Coste (37/4) | la sección 32 aislada, **sólo con `ARNES_COSTE_RUTA_CRITICA=1`** | la heredada **no termina** en 4 × mín(este árbol) ⇒ reloj ≤ **0,25×** |
+| Coste (37/4) | las 3 corridas cronometradas de este árbol, entre sí | **mismo inventario** caso→veredicto |
+| Coste (37/4) | una corrida del numerador que termina **en rojo** (rc ≠ 0) o sin casos | **no cuenta como medición**: SKIP con motivo, nunca PASS |
+| Coste (37/4) | la heredada muerta por **señal** (137), un `124` que el reloj no corrobora, o un `124` **sin un solo caso** | **SKIP con motivo**; sólo `124` **+ reloj ≥ plazo + casos** demuestra la cota |
+| Coste (37/5) | una cabecera normal (6 líneas y 200 líneas) contra v1.32.1, **6 series intercaladas** por árbol | **0 procesos añadidos y** reloj ≤ **1,25×** |
+| Coste (37/5) | la misma sonda cuando **no converge** (2.º mínimo / mínimo > 1,25×) | **SKIP**, nunca PASS y nunca FAIL |
+| Coste (37/5) | una sección sintética que deja un proceso vivo | el corredor la **acusa por su nombre** |
+| Sondas (38/1) | `bash -n` y los modos de cada `tests/util/*.sh` | ejecutable **y** con shebang, o **aborta nombrándolo** |
+| Sondas (38/1) | los registros de las **dos** sondas de `tests/util/` | **una** línea, y **ninguna** con la forma de un caso |
+| Sondas (38/1) | un campo obligatorio ausente, vacío o no numérico | **error con motivo**, nunca un cero |
+| Sondas (38/1) | un valor con **espacios** o **saltos de línea** (`--etiqueta`, `--ref`, un motivo con ruta) | **un** campo y **una** línea: no fabrica campos ni veredictos |
+| Sondas (38/1) | una **clave repetida** o un valor con metacaracteres de glob | **ilegible ⇒ FAIL**, y el valor **no** se expande contra el `cwd` |
+| Sondas (38/2) | la **calibración** de cada instrumento en esta corrida | sensible ≈ **2,000×**, insensible ≈ **1,000×**, y **distinguidos** o **FAIL** |
+| Sondas (38/2) | el **tamaño** de cada mitad de la calibración | **derivado del suelo** en la propia corrida y **publicado**; un env sólo lo **sube** |
+| Sondas (38/2) | la **mitad discordante**: la magnitud publicada contra un **testigo del juez** | coincide con el **testigo**, no con el **parámetro**, o **FAIL** |
+| Sondas (38/2) | la misma sonda **sin la observación** (copia mutada, sin tocar el árbol) | la mitad discordante **FALLA**; sin la mutación, **pasa** |
+| Sondas (38/2) | **calibrar** frente a **una medición** del mismo instrumento y con **los mismos mandos** | ≤ **6×** en reloj **y** en procesos; `procesos=no-aplica` ⇒ **SKIP**, nunca un `0,000×` |
+| Sondas (38/3) | un sujeto que deja vivo un **NIETO** | la sonda lo **mata y publica `vivos=n`**; sin esa mitad, **sobrevive** |
+| Sondas (38/3) | un sujeto que deja un descendiente **REPARENTADO** (doble fork) | también lo **ve y lo mata** (marca de entorno); sin ella, `vivos=0` **con él vivo** |
+| Sondas (38/3) | el camino de **error** de la sonda de procesos | **0** directorios de envoltorios detrás |
+| Sondas (38/3) | un `PATH` con componente vacío o relativo (`:x`, `x:`, `::`, `.`) | **se dice**, nunca un número |
+| Sondas (38/3) | reloj **bajo instrumentación de procesos** | muestra **mixta**: no publicable |
+| Sondas (38/3) | el ayudante de veredicto sobre 13 registros sintéticos | `estado≠ok` o `vivos>0` en medición ⇒ **SKIP**; vacío, ilegible, ambiguo, `vivos` ausente, emisor no declarado o sin su calibración ⇒ **FAIL** |
+| Sondas (38/3) | `vivos>0` en una **calibración** frente a `vivos>0` en una **medición** | **FAIL** y **SKIP**: no es el mismo hecho |
+| Coste (37/1 a 37/5) | el **materializador inline** de la línea base (`mat37`/`mat47`) | contenido **y modo del objeto del árbol**, `archivos=<n>` publicado, y `sin-linea-base` **con motivo** cuando no puede |
 
 **Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
 falsea la máquina, el runner del CI y la carga. Los de arriba son **cocientes de duplicación**
@@ -307,7 +336,7 @@ regresión: la dispersión de esa sonda es un factor ~3,7 sobre el mismo árbol 
 igual y **no** separa su serie de sí misma; lo que separa una serie de sí misma es el vecino.
 
 **La comparación contra la ruta crítica NO corre por defecto, y ese defecto está medido al revés
-que el resto del banco.** Corriéndola en cada vuelta, la sección 37/2 cuesta ~120 s —~76 s de ellos
+que el resto del banco.** Corriéndola en cada vuelta, la sección 37/4 cuesta ~120 s —~76 s de ellos
 la corrida heredada, que cuesta lo que costaba el defecto porque **es** el defecto corriendo— y
 deja el banco en **~145 s**: la puerta requerida de `main` más lenta que la regresión de 92 s que
 REQ-017 arregla, y de forma **permanente**, porque su línea base es un tag congelado. Una razón
@@ -316,10 +345,11 @@ medir la evolución de este árbol y envejece hacia el lado que abre. La vigilan
 **CA-03** —el cociente de duplicación, auto-anclado, sin tag y en milisegundos—, que es lo único
 que habría visto H-07.
 
-Por eso se enciende a mano con **`ARNES_COSTE_RUTA_CRITICA=1`** (por defecto **apagada**: 37/2 baja
-de ~120 s a ~14 s, y a ~76 s encendida). Apagada, sus dos casos dicen **SKIP citando el número
-acreditado y su fecha**, nunca PASS. El resto de 37/2 —CA-08 y las dos mitades de CA-06— corre
-siempre.
+Por eso se enciende a mano con **`ARNES_COSTE_RUTA_CRITICA=1`** (por defecto **apagada**: 37/4 baja
+de ~120 s a unos segundos encendiéndose sólo ella). Apagada, sus dos casos dicen **SKIP citando el
+número acreditado y su fecha**, nunca PASS. Lo que corre **siempre** son las dos puertas de CA-05
+probadas con entradas sintéticas —en el mismo archivo, porque separarlas dejaría la puerta sin
+quien la ejerza— y, en `37/5`, las dos magnitudes de CA-08 con las otras dos mitades de CA-06.
 
 **Y el denominador no se mide: se acota, con un plazo derivado del numerador.** La corrida heredada
 se lanza bajo `timeout` de **4 × mín(este árbol)**, calculado en esa misma corrida y **después** del
@@ -386,7 +416,7 @@ esta ventana medían tiempo real y habían dejado de responder al sujeto, así q
 por coste absoluto pasa en las tres**.
 
 Sólo se calibra si alguna sección de la vuelta usa un instrumento, y eso se deriva de la misma
-pasada de texto de la invariante 1: las vueltas **anidadas** —la sección 32 que 37/2 cronometra, los
+pasada de texto de la invariante 1: las vueltas **anidadas** —la sección 32 que 37/4 cronometra, los
 directorios sintéticos de la autoprueba— no tocan `tests/util/` y no pagan la calibración. Coste
 medido de la palanca (2026-09-07, bash 5.3.9, linux): **~3,4 s de reloj y 69 procesos por vuelta**,
 una sola vez. Los detalles de uso, los campos del registro y los ajustes operativos están en
