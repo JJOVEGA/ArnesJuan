@@ -2,6 +2,27 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · `REQ-026` cerrado con la cuarta corrección: el punto de equilibrio cuenta **cuatro** costes, no uno
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+`CA-17` queda contratando el punto de equilibrio contra el **gasto adicional total** de rotar un REQ:
+**revisión inicial + extracción/redacción de las decisiones vigentes + la rotación + su validación**.
+Leer la historia era sólo una de las cuatro, y presentarla como la única habría hecho que un REQ pareciera
+amortizable cuando no lo es. Con cuatro costes en vez de uno, **el umbral para que un REQ sea candidato
+sube** — y la consecuencia de `CA-17` (no se rotan todos) se sostiene con más razón.
+
+**17 criterios, 246 líneas. Coste total ≈56 k tokens incluidas las tres rondas de corrección en vuelo.**
+
+**Cierre de la ronda de revisión externa, por acuerdo del propietario: no hay más rondas.** De las
+cuatro afirmaciones de la coordinadora que esa revisión desmintió, **tres se corrigieron en el contrato**
+(el peso mal medido, «tokens ahorrados» por «estimados», y que rotar hiciera segura la lectura selectiva)
+y la cuarta —«una puerta permanente costaría un ciclo entero y cubriría lo mismo»— **se retira sin
+sustituirla por otra afirmación**: ni ese coste ni esa equivalencia están medidos, y aplicar hacia atrás
+una comprobación a tres fallos ya conocidos **no demuestra que los hubiera evitado**. Lo respaldado es
+usarla dentro del trabajo normal y **observar qué caza y qué se le escapa** — prueba prospectiva, no
+retrospectiva. Queda anotado como práctica, no como mecanismo, y **no sustituye lo previsto en
+`REQ-025`**.
+
 ## [GitHub] — 2026-09-09 · `REQ-026`: rotar los historiales de REQ — y el descubrimiento de que rotar hoy rompe la tabla **también en el origen**
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 
