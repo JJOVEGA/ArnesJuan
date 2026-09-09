@@ -751,7 +751,9 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   título.
 - **Antes de insertar se BUSCA, y ESO es la idempotencia: no la dan los marcadores.** Los marcadores
   hacen el bloque *identificable*; idempotente es la **conducta** de mirar primero. Se decide con la
-  **cuenta** de marcadores del `AGENTS.md` del proyecto, no con la impresión de haberlo visto:
+  **cuenta** de los marcadores del `AGENTS.md` del proyecto —**el marcador completo, con sus
+  delimitadores `<!--` y `-->`**, nunca la cadena desnuda: el porqué está medido más abajo—, no con
+  la impresión de haberlo visto:
 
   | inicio / fin | Estado | Acción |
   |---|---|---|
@@ -759,6 +761,13 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   | 1 / 1, contenido **idéntico** al de la plantilla destino | `INTACTO` | **no tocar nada** |
   | 1 / 1, contenido **distinto** | `MODIFICADO` | **conflicto: preguntar, no pisar** |
   | cualquier otra cuenta (2/1, 1/0, 0/1, o el cierre antes de la apertura) | `UNKNOWN` | **detenerse y preguntar** |
+
+  «Idéntico» se decide **tras quitar el `\r` final** de cada línea, si lo hay —la misma
+  normalización que `hooks/lib.sh` aplica (`linea="${linea%$'\r'}"`)—: un proyecto Windows cuyo
+  editor normaliza el archivo entero a CRLF tras migrar tiene el bloque **intacto** y sin esa
+  normalización se declara `MODIFICADO`, o sea un **conflicto falso** que hace preguntar por nada.
+  Es un `\r` **final**; los demás bytes se comparan tal cual, y la comprobación de idempotencia
+  entre dos corridas (`cmp`, abajo) sigue siendo **byte a byte**, sin normalizar nada.
 
   La fila `INTACTO` es la que hace que la **segunda** corrida no duplique nada, y la Fase 4 es la
   que lo acredita: correr, correr otra vez y comparar el archivo **byte a byte**.
@@ -770,12 +779,26 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
 - **Cómo se comprueba, sin fiarse de que el comando dijera que sí** (Fase 4, releyendo el disco):
   ```
   cp AGENTS.md /tmp/agents-antes.md
-  grep -c 'arnes:coordinacion:inicio' AGENTS.md    # 0 -> NUEVO ; 1 -> ya está ; >1 -> UNKNOWN
+  grep -c '<!-- arnes:coordinacion:inicio -->' AGENTS.md   # 0 -> NUEVO ; 1 -> ya está ; >1 -> UNKNOWN
+  grep -c '<!-- arnes:coordinacion:fin -->'    AGENTS.md   # la tabla decide con las DOS cuentas
   # ...aplicar sólo lo que el plan marcó SAFE, y volver a correr la migración...
   cmp /tmp/agents-tras-1a-corrida.md AGENTS.md     # sin salida = idempotente
-  grep -c 'arnes:coordinacion:inicio' AGENTS.md    # exactamente 1
+  grep -c '<!-- arnes:coordinacion:inicio -->' AGENTS.md   # exactamente 1
   diff <(grep '^## [0-9]' /tmp/agents-antes.md) <(grep '^## [0-9]' AGENTS.md)   # sólo la línea de §14
   ```
+- **Se cuenta el marcador COMPLETO, y es medido, no una preferencia de estilo.** Contar la cadena
+  desnuda (`grep -c 'arnes:coordinacion:inicio'`) cuenta **menciones, no marcadores**: un
+  `AGENTS.md` **sin** el bloque que cite esa cadena una vez —la nota de migración que el propio
+  proyecto se escribió— devuelve **1**, la tabla lee «ya está» y **el proyecto nunca recibe las
+  reglas, sin aviso**; con dos menciones devuelve `UNKNOWN` y detiene la migración sin motivo real.
+  Medido sobre maquetas (cadena desnuda → marcador completo): proyecto sin bloque que menciona la
+  cadena **1 → 0**; el mismo con dos menciones **2 → 0**; proyecto realmente migrado **1 → 1**;
+  migrado que además menciona la cadena **2 → 1**. **Tampoco se ancla el patrón a la línea entera**
+  (`^…-->$`): un espacio final dejado por un editor lo baja a **0**, y **0** manda a `NUEVO`, que
+  *añade* el bloque y deja **dos** — un fallo en abierto peor que el que se cerraba. El residuo que
+  queda con el marcador completo es un proyecto que **cite el marcador entero** en su prosa: da
+  **2** → `UNKNOWN`, se detiene y se pregunta, que es el destino correcto de la duda.
+  (Corridas y rutas: `docs/qa/REQ-027.md`, sección «Correcciones del desarrollador».)
 - **Lo que NO cambia, dicho para que nadie busque una puerta que no existe:** el bloque no toca
   ninguna sección existente de `AGENTS.md`, no hay llave nueva en `.arnes/config.json`, ningún hook
   lo lee y **ninguna puerta lo comprueba** — es una regla escrita para quien coordina, no

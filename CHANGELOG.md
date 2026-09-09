@@ -2,6 +2,81 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · La migración contaba menciones y no marcadores: un fallo en abierto que dejaba al proyecto sin las reglas, en silencio
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+**`QA-027-03`, cerrado en la conducta y medido en los dos sentidos.** La entrada «Hacia 1.34.0» de
+`skills/arnes-upgrade/SKILL.md` prescribía decidir con `grep -c 'arnes:coordinacion:inicio'`, **sin los
+delimitadores del comentario**: eso cuenta **menciones, no marcadores**. Un `AGENTS.md` de proyecto
+**sin** el bloque que cite la cadena desnuda **una vez** —la nota de migración que el propio proyecto
+se escribió— devolvía **1**, la tabla de decisión leía «ya está» y **el proyecto nunca recibía las
+reglas, sin aviso**. Ahora se cuenta el **marcador completo** y **también el de cierre**, que es lo que
+las filas `1/0`, `0/1` y `2/1` de la tabla ya necesitaban.
+
+**Fail-before / pass-after, con los comandos extraídos del texto literal de la skill** (antes:
+`6dd3f8a:773`; después: el árbol de hoy) sobre maquetas construidas desde
+`git show 4f647c7:templates/AGENTS.md.tpl`: proyecto sin bloque que menciona la cadena **1 → 0**
+(`NUEVO`, recibe las reglas); con dos menciones **2 → 0** (adiós al `UNKNOWN` espurio); proyecto **ya
+migrado 1 → 1** —el positivo sigue detectándose, sin regresión—; migrado que además menciona la cadena
+**2 → 1**.
+
+**La alternativa se midió y se descartó por su modo de fallo, que es la parte que no se adivina.**
+Anclar el patrón a la línea entera (`^…-->$`) arregla además el único residuo, pero un **espacio final**
+dejado por un editor lo baja a **0**, y `0` manda a `NUEVO`, que *añade* el bloque y deja **dos**:
+cambia un fallo en abierto por otro **peor** —el primero omite las reglas, el segundo rompe la
+idempotencia que `CA-10` contrata—. Entre dos detecciones imperfectas se elige la que **falla
+cerrada**. El residuo queda **declarado en la propia entrada**: un proyecto que cite el marcador
+**entero** en su prosa da **2 → `UNKNOWN`**, que se detiene y pregunta.
+
+**`QA-027-05` (CRLF) entra en el mismo tramo, y no queda como deuda.** «Contenido idéntico» se decide
+ahora **tras quitar el `\r` final** de cada línea —la misma normalización que `hooks/lib.sh` ya aplica—,
+así que un proyecto Windows que normaliza el archivo entero después de migrar deja de producir un
+`MODIFICADO` **falso**. Medido: `cmp` crudo **difiere**, `cmp` con el CR final quitado **idéntico**. Dos
+límites dichos: es el `\r` **final** y sólo él, y la comprobación de idempotencia **entre corridas**
+sigue siendo `cmp` byte a byte, sin normalizar.
+
+**Y lo que NO se acredita, que es la mitad del encargo: la vía real de `/arnes-upgrade` queda
+PENDIENTE.** El desarrollador reprodujo `CA-10` con su transcripción y QA con la suya, y **ninguno
+ejecutó `/arnes-upgrade`**: lo acreditado es *«el comportamiento contratado, tal como se transcribió»*,
+no *«la vía real funciona»*. Comprobado por qué no se puede desde aquí: `skills/arnes-upgrade/`
+contiene **un solo archivo** (`SKILL.md`), `plugin.json` **no** declara `commands`, y las herramientas
+de un subagente no despachan una skill. **No se acredita con un script — ni el propio ni el de QA.**
+Queda construida la maqueta para que la corrida pendiente no empiece de cero
+(`/tmp/arnes-maqueta-req027`, constructor re-derivable en `/tmp/construir-maqueta-req027.sh`, versión
+base `4f647c7`): repositorio git limpio, plantillas de origen para que la Fase 1 acredite el origen
+como **CONFIRMADO**, texto humano propio en `## 20.` y el caso negativo de `QA-027-03` en `## 21.`.
+Dueño: la coordinadora. Vencimiento: **antes de que un proyecto real migre a 1.34.0**.
+
+**`QA-027-02`: el desglose se rehizo entero en bytes, y ahora se ve sumar.** Ocho filas con su **rango
+de líneas** y su `wc -c`: 67 · 53 · 415 · 25 · 999 · 1.037 · 299 · 807 = **3.702 B** el bloque, **+1 B**
+el separador = **3.703 B** el delta del archivo. Faltaba una fila —el encabezado
+`**B. Las siete reglas:**`, 25 B— y tres iban en caracteres. **La causa era el instrumento, no la
+cuenta:** el método declarado era «`awk` sumando `length($0)+1`», y `awk` cuenta **caracteres** en
+locale UTF-8 mientras el total venía de `wc -c` (medido: 3.607 con `awk`, 3.702 con `LC_ALL=C awk`).
+El §0 del artefacto ya prohibía mezclar magnitudes y no bastó porque **la prohibición nombraba una
+magnitud y la tabla usaba otro instrumento**.
+
+**`QA-027-04`: las citas, contra un commit nombrado.** El negativo de `CA-04` apuntaba a
+`REQ-026.md:88-101`, que es el rango de **`81024c6`**; ahora cita `01dc927` con `CA-13` en la línea
+**149** y `CA-17` en la **268**, y dice contra qué commit se midió. Se encontró y corrigió **una
+segunda cita desfasada de la misma clase que el hallazgo no traía**: el Historial de `REQ-026` que
+registra la contradicción está en la línea **679**, no en la 629 (la 629 habla del coste de `CA-15`), y
+el commit corrector `097c50b` **no aparece nombrado** en el REQ: se identifica por su mensaje.
+
+`templates/AGENTS.md.tpl` **no** se tocó y el arreglo no lo exige: el marcador ya vive ahí en su forma
+completa (línea 420) y lo defectuoso era el comando que lo cuenta. `cmp` de las dos sedes sigue sin
+salida, 3.702 B cada una.
+
+**Banco completo, una corrida sobre el árbol de este tramo: 961 PASS · 0 FAIL · 4 SKIP, `rc=0` —
+total 965, 68 s.** Mismo total que la referencia del propietario (960/0/5 sobre `802b47d`): la
+diferencia es el caso de `REQ-017 CA-09`, que alterna PASS/SKIP por ruido. `skills/` **no** está en el
+banco, así que esta corrida es **testigo de no-regresión**, no acreditación del arreglo — eso lo dan
+las maquetas. Los 4 SKIP traen su motivo y ninguno es de este tramo.
+
+**Ningún hallazgo se cierra aquí:** cerrarlos es de QA al re-validar. `Estado: en-progreso`, `QA:` y
+`Seguridad:` sin tocar, y `CA-10` de `REQ-023` **deliberadamente fuera** de este tramo por haber un
+`qa-tester` vivo escribiendo `requirements/REQ-023.md`.
+
 ## [GitHub] — 2026-09-09 · Punto de continuidad vigente, y una sección del propio tablero marcada como falsa
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 
