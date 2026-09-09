@@ -214,12 +214,19 @@ rsec_check "DEV 1.31.0 v2: QA-102 control: con la seccion encontrada el bloque n
 rm -rf "$RP2"
 
 # QA 1.31.0 v2: HALLAZGO QA-109 — la seccion SI existe, pero no tiene ni una entrada
-# reconocible (`- `, `* `, `### `, `N. `): esta hecha SOLO de filas de tabla, que CA-07
-# cuenta como continuaciones. No se rota nada y NO SE DICE NADA — el mismo silencio que
-# CA-09 declara inaceptable para la seccion que no existe, en la rama hermana. No es
-# hipotetico: el `## Historial de cambios` de los REQ de ESTE repositorio es una tabla.
-# El caso fija la conducta MEDIDA hoy (silencio); si se decide avisar, este caso cambia
-# con el criterio que lo ordene.
+# reconocible: esta hecha SOLO de filas de tabla. No se rota nada y NO SE DICE NADA — el
+# mismo silencio que CA-09 declara inaceptable para la seccion que no existe, en la rama
+# hermana. No es hipotetico: el `## Historial de cambios` de los REQ de ESTE repositorio es
+# una tabla. El caso fijaba la conducta MEDIDA (silencio) y ya cambio una vez, en 1.31.0 v3,
+# cuando se decidio avisar.
+#
+# DEV REQ-026 CA-08: y cambia OTRA VEZ, porque el criterio que lo ordena volvio a cambiar.
+# Estas 60 filas no llevan fila separadora delante, asi que ya no son "una seccion sin
+# entradas": son una TABLA A MEDIO HACER, y de esa rama —la tercera— responde CA-08. Lo que
+# el caso exige sigue siendo lo mismo palabra por palabra (no rotar, avisar, distinguir la
+# rama), y sobre eso este REQ no relaja nada: lo unico que se mueve es CUAL de las tres
+# ramas responde. La rama "sin entradas" de verdad —cabecera y separadora sin ninguna fila—
+# la prueba el REQ-418 de mas abajo, y su caso positivo, la seccion 28-3.
 rsec_proj true 20 1000 nuevo-al-final
 mkdir -p "$RP2/docs"; printf '# ESTADO\n' > "$RP2/docs/ESTADO.md"
 { printf '# REQ-414\nEstado: en-revisión\n\n## Historial de cambios\n\n'
@@ -233,21 +240,23 @@ cp "$RP2/requirements/REQ-414.md" "$RP2/antes414.md"
 printf '%s' "$(CLAUDE_PROJECT_DIR="$RP2" jq -n '{hook_event_name:"Stop",cwd:env.CLAUDE_PROJECT_DIR}')" \
   | CLAUDE_PROJECT_DIR="$RP2" "$HOOKS_DIR/stop.sh" >/dev/null 2>"$ERRLOG"
 # DEV 1.31.0 v3 (QA-109): la conducta que este caso fijaba —silencio— era la medida, no
-# la querida. El criterio cambia: NO ROTAR sigue igual (sin entradas no hay limite seguro
-# donde cortar), pero se AVISA, como en la rama que ya avisaba.
-rsec_check "DEV 1.31.0 v3: QA-109 seccion sin entradas reconocibles: NO rota, pero AVISA" "iguales-aviso" \
+# la querida. El criterio cambia: NO ROTAR sigue igual (sin un limite seguro, cortar parte
+# una entrada en dos), pero se AVISA, como en la rama que ya avisaba.
+rsec_check "DEV REQ-026 CA-08: filas de tabla sin separadora: NO rota, pero AVISA" "iguales-aviso" \
   "$(cmp -s "$RP2/antes414.md" "$RP2/requirements/REQ-414.md" && echo iguales || echo distintos)-$(grep -q 'REQ-414.md' "$ERRLOG" && echo aviso || echo silencio)"
-# Los dos casos son ERRORES DE MAPEO DISTINTOS y piden acciones distintas: alli se
-# corrige el nombre de la seccion en el manifiesto, aqui el formato de la seccion o la
-# expectativa de rotarla. Un aviso que no los distinga manda a mirar el archivo
-# equivocado, asi que se exige que el texto diga que la seccion SI esta y que lo que
-# falta son ENTRADAS, y que NO reutilice el texto de la otra rama.
-rsec_check "DEV 1.31.0 v3: QA-109 el aviso DISTINGUE 'existe sin entradas' de 'no existe'" "si-si-no" \
-  "$(grep -q 'ENTRADA reconocible' "$ERRLOG" && echo si || echo no)-$(grep -q "SI contiene la seccion '## Historial de cambios'" "$ERRLOG" && echo si || echo no)-$(grep -q 'NO contiene la seccion' "$ERRLOG" && echo si || echo no)"
-# Y la segunda mitad de CA-09, igual que en la rama hermana: el bloque derivado lo
-# refleja, con el archivo de ejemplo, sin volver a mirar el disco.
-rsec_check "DEV 1.31.0 v3: QA-109 el bloque derivado refleja la seccion sin entradas" "si-si" \
-  "$(grep -q 'sin ninguna entrada reconocible' "$RP2/docs/ESTADO.md" && echo si || echo no)-$(grep -q 'REQ-414.md' "$RP2/docs/ESTADO.md" && echo si || echo no)"
+# Los casos son ERRORES DE MAPEO DISTINTOS y piden acciones distintas: en uno se corrige el
+# nombre de la seccion en el manifiesto, en otro el formato de la seccion o la expectativa de
+# rotarla. Un aviso que no los distinga manda a mirar el archivo equivocado, asi que se exige
+# que el texto diga que la seccion SI esta, que nombre la averia de ESTA rama —la estructura
+# de tabla ambigua (REQ-026 CA-08)— y que NO reutilice el texto de las otras dos.
+rsec_check "DEV REQ-026 CA-08: el aviso DISTINGUE 'tabla ambigua' de 'sin entradas' y de 'no existe'" "si-si-no-no" \
+  "$(grep -q 'ESTRUCTURA DE TABLA es AMBIGUA' "$ERRLOG" && echo si || echo no)-$(grep -q "SI contiene la seccion '## Historial de cambios'" "$ERRLOG" && echo si || echo no)-$(grep -q 'ENTRADA reconocible' "$ERRLOG" && echo si || echo no)-$(grep -q 'NO contiene la seccion' "$ERRLOG" && echo si || echo no)"
+# Y la segunda mitad de CA-09, igual que en las ramas hermanas: el bloque derivado lo
+# refleja, con el archivo de ejemplo, sin volver a mirar el disco. Aqui es lo que evita que
+# el fail-closed sea invisible: el stderr de una parada no sobrevive a la sesion, y sin esta
+# linea la seccion se queda sin rotar durante meses sin que nadie se entere.
+rsec_check "DEV REQ-026 CA-08: el bloque derivado refleja la estructura de tabla ambigua" "si-si-no" \
+  "$(grep -q 'estructura de tabla ambigua' "$RP2/docs/ESTADO.md" && echo si || echo no)-$(grep -q 'REQ-414.md' "$RP2/docs/ESTADO.md" && echo si || echo no)-$(grep -q 'sin ninguna entrada reconocible' "$RP2/docs/ESTADO.md" && echo si || echo no)"
 rm -rf "$RP2"
 
 # CONTROL de los tres de arriba: con la MISMA seccion y el MISMO umbral, pero con
@@ -295,8 +304,15 @@ mkdir -p "$RP2/docs"; printf '# ESTADO\n' > "$RP2/docs/ESTADO.md"
 { printf '# REQ-417\nEstado: en-revisión\n\n## Otra seccion cualquiera\n\n'
   i=1; while [ "$i" -le 40 ]; do printf -- '- relleno %s para pasar del umbral de mil bytes sin traer la seccion declarada\n' "$i"; i=$((i+1)); done
 } > "$RP2/requirements/REQ-417.md"
-{ printf '# REQ-418\nEstado: en-revisión\n\n## Historial de cambios\n\n'
-  i=1; while [ "$i" -le 40 ]; do printf '| 2026-01-01 | fila de tabla %s con relleno de sobra para pasar del umbral | causa | — |\n' "$i"; i=$((i+1)); done
+# DEV REQ-026 CA-08/CA-09: la seccion de REQ-418 se REESCRIBE para que siga siendo la rama
+# "sin entradas". Antes eran 40 filas sin separadora y esa forma ya la responde CA-08, asi
+# que la convivencia que este caso mide se habria mudado sola de par y la rama "sin
+# entradas" se habria quedado sin ninguna. Ahora es lo que de verdad no tiene ni una
+# entrada: prosa de relleno para pasar del umbral, y una tabla con cabecera y separadora
+# CORRECTAS y NINGUNA fila de datos (CA-09).
+{ printf '# REQ-418\nEstado: en-revisión\n\n## Historial de cambios\n'
+  i=1; while [ "$i" -le 40 ]; do printf 'prosa de relleno %s para pasar del umbral de mil bytes sin traer ni una entrada\n' "$i"; i=$((i+1)); done
+  printf '\n| Fecha | Causa |\n|---|---|\n'
 } > "$RP2/requirements/REQ-418.md"
 cp "$RP2/requirements/REQ-417.md" "$RP2/antes417.md"; cp "$RP2/requirements/REQ-418.md" "$RP2/antes418.md"
 : > "$ERRLOG"

@@ -196,6 +196,26 @@ arnes_rot_sin_tmp() {   # <archivo de origen>
   arnes_warn "rotacion: no se pudo formar un nombre de temporal propio de este proceso ('BASHPID' vacio o no numerico); NO se rota nada en '${1#"$ARNES_PROJ/"}' y ni el destino ni el origen se tocan. Caer al nombre compartido reintroduciria la carrera de dos paradas simultaneas (REQ-015)."
 }
 
+# arnes_rot_es_separadora <linea ya recortada> — ¿es la FILA SEPARADORA de una tabla?
+#
+# Que es una fila separadora NO lo define el arnes: es la de la tabla de Markdown (GFM), y
+# ahi vive su definicion. Aqui solo se usa: celdas hechas de guiones con dos puntos
+# opcionales a un lado, al otro o a los dos (`|---|`, `| :--- |`, `|:-:|`).
+#
+# Se comprueba por SUSTRACCION --se retiran los caracteres legales y tiene que no quedar
+# nada-- en vez de por una expresion regular celda a celda: sin forks, sin `grep`, y una
+# forma que no enumera. El guion es obligatorio: una fila de solo espacios y dos puntos no
+# es separadora. Y `— ` (raya, multibyte) NO es `-`, asi que una fila de datos con rayas
+# --como el `| — |` de la columna ADR de los REQ de este repositorio-- no se confunde con
+# una separadora. Nada de esto depende del locale: se compara texto, no clases de idioma.
+arnes_rot_es_separadora() {
+  local s="$1"
+  case "$s" in '|'*) ;; *) return 1 ;; esac
+  case "$s" in *-*) ;; *) return 1 ;; esac
+  [ -z "${s//[-|:[:space:]]/}" ] || return 1
+  return 0
+}
+
 # arnes_rotar_seccion <archivo> <seccion> <orden> <umbral> <conservar> <archivo_dir>
 #
 # Rota UNA SECCION de un documento —la que declare el proyecto— moviendo sus entradas
@@ -211,11 +231,30 @@ arnes_rot_sin_tmp() {   # <archivo de origen>
 # mecanismo (cuantas entradas conservar, adonde moverlas, en que orden); el mapeo lo pone
 # el manifiesto del proyecto.
 #
-# ENTRADA = lo que empieza a columna cero por `- `, `* `, `### ` o `N. `. Cualquier otra
-# linea pertenece a la entrada anterior (continuacion: una linea indentada, una fila de
-# tabla, un parrafo suelto) o, antes de la primera, al preambulo de la seccion, que se
-# conserva. Una seccion sin entradas reconocibles no se toca: no hay limite seguro donde
-# cortar, y cortar sin limite parte una entrada en dos.
+# QUE ES UNA ENTRADA. Dos formas, y la segunda existe porque la primera se pudrio contra
+# su propio corpus (REQ-026):
+#   (a) LISTA: lo que empieza a columna cero por `- `, `* `, `### ` o `N. `.
+#   (b) TABLA: las FILAS DE DATOS de la tabla, cuando esa tabla es LA ESTRUCTURA DE LA
+#       SECCION -- es decir, cuando su fila de cabecera y su fila separadora aparecen en el
+#       PREAMBULO, seguidas y antes de cualquier otra entrada. La cabecera y la separadora
+#       NUNCA son entradas: son preambulo, y el preambulo se queda en el documento.
+# Cualquier otra linea pertenece a la entrada anterior (continuacion: una linea indentada,
+# un parrafo suelto y, en una seccion de LISTA, tambien una fila de tabla) o, antes de la
+# primera, al preambulo.
+#
+# POR QUE POR PROPIEDAD Y NO CON UN PREFIJO MAS. Hasta 1.33.0 esto era una enumeracion de
+# prefijos, y el corpus contra el que corre son TABLAS: medido en tres REQ de este
+# repositorio, 30, 24 y 44 filas de tabla y CERO entradas reconocibles. El 23 % de
+# `requirements/` (409.699 B medidos) era historia que el rotador no sabia mover, y
+# encenderlo no habria hecho nada. Anadir `|` a la lista repetiria el error: lo que decide
+# no es con que caracter empieza una linea, es si la tabla ES la seccion o vive DENTRO de
+# una entrada (REQ-026 CA-07). De ahi que la regla se enuncie por propiedad.
+#
+# Y CUANDO LA PROPIEDAD NO SE PUEDE RESPONDER, NO SE ADIVINA (REQ-026 CA-08). Una seccion
+# sin entradas reconocibles no se toca --no hay limite seguro donde cortar, y cortar sin
+# limite parte una entrada en dos--, y una cuya estructura de tabla es AMBIGUA tampoco:
+# aqui adivinar mal no deja un archivo feo, mueve el contrato de un REQ. En los dos casos
+# se avisa, con textos distintos, porque piden acciones distintas.
 arnes_rotar_seccion() {
   local f="$1" sec="$2" orden="$3" umbral="$4" conservar="$5" adir="$6"
   local texto linea antes='' cab='' cuerpo='' despues='' fase=0 rec fin_nl=0
@@ -265,17 +304,118 @@ arnes_rotar_seccion() {
   [ "$tam_bytes" -gt "$umbral" ] 2>/dev/null || return 0
 
   # 3) Preambulo de la seccion + entradas con sus continuaciones.
+  #
+  # EL SALTO FINAL DE `cuerpo` SE APARTA ANTES DE TROCEAR, y desde REQ-026 eso no es
+  # cosmetica: `<<<` anade su propio salto al texto, asi que un `cuerpo` que ya termina en
+  # salto entrega UNA LINEA VACIA DE MAS a los dos bucles. Con el reconocedor de tablas esa
+  # linea fantasma decide: una seccion de cabecera + separadora y CERO filas (CA-09) parecia
+  # llevar una linea entre la separadora y los datos, y se habria denegado como ambigua en vez
+  # de avisar de que no tiene entradas. Antes solo colaba un salto de mas al final de la
+  # seccion en cada rotacion.
   local -a ent=()
-  local pre='' cur='' hay=0
+  local pre='' cur='' hay=0 cuerpo1="${cuerpo%$'\n'}"
+  # 3a) PRIMERO se decide QUE ESTRUCTURA tiene la seccion, mirando SOLO su preambulo: o es
+  #     una tabla (cabecera + separadora seguidas, antes de cualquier otra entrada) o es una
+  #     lista. Se decide aparte del troceado a proposito: la pregunta "¿de que esta hecha
+  #     esta seccion?" se responde una vez y con el preambulo entero delante; mezclarla con
+  #     el troceado es lo que convierte una regla en una lista de prefijos.
+  #
+  #     El preambulo llega hasta la PRIMERA ENTRADA, y por eso el estado 2 sigue leyendo
+  #     despues de encontrar la pareja: en `cabecera / separadora / separadora / filas` la
+  #     segunda separadora esta todavia en el preambulo, y esa es una de las dos formas
+  #     ambiguas que CA-08 nombra. Cortar en la pareja la habria tomado por fila de datos.
+  local modo=lista tab_cab='' tab_sep='' amb='' nlin=0 nsep=0 est=0 hueco=0
   while IFS= read -r linea || [ -n "$linea" ]; do
-    case "$linea" in
-      '- '*|'* '*|'### '*|[0-9]'. '*|[0-9][0-9]'. '*|[0-9][0-9][0-9]'. '*)
-        [ "$hay" -eq 1 ] && ent+=("$cur")
-        cur="$linea"$'\n'; hay=1 ;;
-      *)
-        if [ "$hay" -eq 1 ]; then cur+="$linea"$'\n'; else pre+="$linea"$'\n'; fi ;;
+    nlin=$((nlin+1))
+    rec="${linea%"${linea##*[![:space:]]}"}"
+    case "$est" in
+      0) # Buscando la fila de cabecera. Prosa y lineas vacias son preambulo y no deciden.
+        case "$rec" in
+          '|'*)
+            if arnes_rot_es_separadora "$rec"; then
+              amb="hay una fila separadora que no va detras de una fila de cabecera"; break
+            fi
+            tab_cab="$linea"; est=1 ;;
+          '- '*|'* '*|'### '*|[0-9]'. '*|[0-9][0-9]'. '*|[0-9][0-9][0-9]'. '*)
+            # Empieza una entrada de LISTA: el preambulo termina aqui, asi que la tabla que
+            # venga despues vive DENTRO de una entrada y no es la estructura de la seccion
+            # (CA-07). Estructura de lista, y no hay nada ambiguo.
+            break ;;
+        esac ;;
+      1) # La cabecera solo cuenta si la separadora es la linea SIGUIENTE (asi lo define
+         # GFM). Cualquier otra cosa --incluida una linea vacia-- deja una tabla a medias.
+        if arnes_rot_es_separadora "$rec"; then tab_sep="$linea"; nsep="$nlin"; est=2
+        elif [ "${rec:0:1}" = '|' ]; then
+          amb="hay filas a columna cero que empiezan por '|' sin una fila separadora que las preceda"; break
+        else
+          amb="hay una fila de cabecera de tabla sin su separadora detras"; break
+        fi ;;
+      *) # Pareja completa. La primera fila de datos confirma la estructura; una segunda
+         # separadora la vuelve ambigua; y entre la separadora y la primera fila NO cabe
+         # nada, porque el puntero y las filas conservadas tienen que quedar pegados a la
+         # separadora (CA-04) y aqui solo se reproduce lo que el documento ya trae.
+         #
+         # Un hueco NO decide por si mismo: `cabecera / separadora / vacia` y nada mas es
+         # una tabla SIN FILAS --de eso avisa CA-09-- mientras que `cabecera / separadora /
+         # vacia / filas` es ambiguo, porque en GFM esa linea vacia ya cerro la tabla y
+         # reproducirla dejaria las filas conservadas separadas de su separadora.
+        if arnes_rot_es_separadora "$rec"; then
+          amb="hay mas de una fila separadora en el preambulo"; break
+        fi
+        case "$rec" in
+          '|'*)
+            if [ "$hueco" -eq 1 ]; then amb="hay lineas entre la fila separadora y la primera fila de datos"
+            else modo=tabla; fi
+            break ;;
+          *) hueco=1 ;;
+        esac ;;
     esac
-  done <<< "$cuerpo"
+  done <<< "$cuerpo1"
+  # La seccion se acabo antes de resolver: una cabecera colgando sin separadora es ambigua;
+  # una pareja completa sin filas es una tabla vacia, y de eso avisa CA-09 mas abajo.
+  if [ -z "$amb" ] && [ "$modo" != tabla ]; then
+    case "$est" in
+      1) amb="hay una fila de cabecera de tabla sin su separadora detras" ;;
+      2) modo=tabla ;;
+    esac
+  fi
+
+  # ESTRUCTURA AMBIGUA: FAIL-CLOSED, Y NO EN SILENCIO (CA-08). Si no se puede decir cual es
+  # la cabecera, cual la separadora y cuales las filas de datos, no se archiva nada. Una
+  # comprobacion que no puede responder no dice "no se", dice "si" -- y aqui eso significa
+  # partir una tabla o mover el contrato de un REQ desde una parada, fuera de la via que
+  # vigila `guard-completado`. Se avisa con un texto DISTINTO del de "sin entradas
+  # reconocibles" porque la accion que pide es otra: alli falta formato o sobra expectativa;
+  # aqui hay una tabla a medio hacer que hay que arreglar antes de que se pueda rotar.
+  if [ -n "$amb" ]; then
+    arnes_warn "rotacion: '${f#"$ARNES_PROJ/"}' SI contiene la seccion '$sec' y supera el umbral, pero su ESTRUCTURA DE TABLA es AMBIGUA ($amb); no se archiva nada y el archivo queda igual. Para que las filas de una tabla cuenten como entradas, su fila de cabecera y su fila separadora ('|---|---|') tienen que ir SEGUIDAS y en el preambulo de la seccion, antes de cualquier otra entrada. Revisa el formato de la seccion."
+    ARNES_ROT_AMBIGUA=$(( ${ARNES_ROT_AMBIGUA:-0} + 1 ))
+    [ -n "${ARNES_ROT_AMBIGUA_EJ:-}" ] || ARNES_ROT_AMBIGUA_EJ="${f##*/}|$sec"
+    return 0
+  fi
+
+  # 3b) Ahora si, el troceado. En modo TABLA el preambulo llega hasta la separadora
+  #     (incluida) y cada fila de datos posterior abre una entrada; en modo LISTA manda el
+  #     prefijo de siempre. Las continuaciones viajan con su entrada en los dos modos.
+  nlin=0
+  while IFS= read -r linea || [ -n "$linea" ]; do
+    nlin=$((nlin+1))
+    if [ "$modo" = tabla ] && [ "$nlin" -le "$nsep" ]; then pre+="$linea"$'\n'; continue; fi
+    rec="${linea%"${linea##*[![:space:]]}"}"
+    case "$modo" in
+      tabla) case "$rec" in
+               '|'*) [ "$hay" -eq 1 ] && ent+=("$cur"); cur="$linea"$'\n'; hay=1 ;;
+               *)    if [ "$hay" -eq 1 ]; then cur+="$linea"$'\n'; else pre+="$linea"$'\n'; fi ;;
+             esac ;;
+      *)     case "$linea" in
+               '- '*|'* '*|'### '*|[0-9]'. '*|[0-9][0-9]'. '*|[0-9][0-9][0-9]'. '*)
+                 [ "$hay" -eq 1 ] && ent+=("$cur")
+                 cur="$linea"$'\n'; hay=1 ;;
+               *)
+                 if [ "$hay" -eq 1 ]; then cur+="$linea"$'\n'; else pre+="$linea"$'\n'; fi ;;
+             esac ;;
+    esac
+  done <<< "$cuerpo1"
   [ "$hay" -eq 1 ] && ent+=("$cur")
   local total="${#ent[@]}"
   # LA SECCION EXISTE PERO NO TIENE NI UNA ENTRADA RECONOCIBLE (CA-09, rama hermana;
@@ -283,9 +423,10 @@ arnes_rotar_seccion() {
   # cortar, y cortar sin limite parte una entrada en dos—, pero callarse repite EXACTAMENTE
   # el error que CA-09 declara inaceptable un parrafo mas arriba: el proyecto declaro una
   # seccion que crece, la seccion crece, y nadie se entera de que no se archiva nada. Es la
-  # otra mitad del mismo error de mapeo, y no es hipotetica: el `## Historial de cambios`
-  # de los REQ de este repositorio es una TABLA, y CA-07 cuenta las filas como
-  # continuaciones, no como entradas.
+  # otra mitad del mismo error de mapeo. Desde REQ-026 esta rama YA NO es la del corpus de
+  # este repositorio --el `## Historial de cambios` de los REQ es una tabla y ahora sus
+  # filas SI son entradas--; queda para lo que de verdad no tiene ni una: una tabla con
+  # cabecera y separadora y NINGUNA fila de datos (CA-09), o una seccion de prosa suelta.
   #
   # SOLO se avisa POR ENCIMA DEL UMBRAL, porque el paso 2 ya salio antes en caso contrario:
   # por debajo no se toca nada por diseno (CA-06) y avisar seria ruido en cada parada.
@@ -294,7 +435,7 @@ arnes_rotar_seccion() {
   # entradas"— porque la accion que pide cada uno es distinta: alli se corrige el nombre
   # en el manifiesto; aqui, o el formato de la seccion, o la expectativa de rotarla.
   if [ "$total" -eq 0 ]; then
-    arnes_warn "rotacion: '${f#"$ARNES_PROJ/"}' SI contiene la seccion '$sec' y supera el umbral, pero no tiene ni una ENTRADA reconocible; no se rota nada en ese archivo. Una entrada empieza a columna cero por '- ', '* ', '### ' o 'N. '; las filas de tabla, las lineas indentadas y los parrafos sueltos son continuaciones, no entradas. Revisa el formato de la seccion o la expectativa de rotarla."
+    arnes_warn "rotacion: '${f#"$ARNES_PROJ/"}' SI contiene la seccion '$sec' y supera el umbral, pero no tiene ni una ENTRADA reconocible; no se rota nada en ese archivo. Una entrada es una linea de lista a columna cero ('- ', '* ', '### ', 'N. ') o una FILA DE DATOS de la tabla que ES la seccion (cabecera y separadora seguidas en el preambulo); las lineas indentadas y los parrafos sueltos son continuaciones, y la cabecera y la separadora son preambulo. Revisa el formato de la seccion o la expectativa de rotarla."
     ARNES_ROT_SIN_ENTRADAS=$(( ${ARNES_ROT_SIN_ENTRADAS:-0} + 1 ))
     [ -n "${ARNES_ROT_SIN_ENTRADAS_EJ:-}" ] || ARNES_ROT_SIN_ENTRADAS_EJ="${f##*/}|$sec"
     return 0
@@ -352,7 +493,21 @@ arnes_rotar_seccion() {
     printf '# %s — historia archivada\n\n> Entradas retiradas de la sección `%s` de `%s` para que no crezca sin tope.\n> Se MOVIERON tal cual: aquí no hay resumen ni reescritura, y el resto del documento no se tocó.\n\n' \
       "${nombre%.md}" "$cab1" "$nombre" > "$tmp_dest" 2>/dev/null || { rm -f "$tmp_dest"; return 0; }
   fi
-  printf '%s\n%s\n' "$marca" "$viejo" >> "$tmp_dest" 2>/dev/null || { rm -f "$tmp_dest"; return 0; }
+  # EN MODO TABLA, CADA BLOQUE ARCHIVADO LLEVA SU PROPIA CABECERA Y SU SEPARADORA, y van
+  # PEGADAS a sus filas (REQ-026 CA-03). Un monton de filas sueltas debajo de una marca HTML
+  # no se lee como tabla en ningun visor: el destino existe para poder consultar la historia,
+  # y una historia ilegible es exactamente lo que este hook promete no hacer. Se copian las
+  # del ORIGEN tal cual --byte a byte, CR incluido si el archivo es CRLF-- en vez de
+  # fabricarlas, porque el numero y el nombre de las columnas son del documento, no del
+  # arnes. Y por bloque, no una vez por archivo: dos rotaciones pueden traer tablas con
+  # columnas distintas, y la marca de la segunda no puede quedar entre dos filas de la
+  # primera. La marca va ANTES de la cabecera: asi ninguna linea de texto se cuela dentro
+  # del bloque.
+  if [ "$modo" = tabla ]; then
+    printf '%s\n%s\n%s\n%s\n' "$marca" "$tab_cab" "$tab_sep" "$viejo" >> "$tmp_dest" 2>/dev/null || { rm -f "$tmp_dest"; return 0; }
+  else
+    printf '%s\n%s\n' "$marca" "$viejo" >> "$tmp_dest" 2>/dev/null || { rm -f "$tmp_dest"; return 0; }
+  fi
   # La prueba no es que el append no fallara: es que el texto ESTE en el disco. `grep -F`
   # y no `case`, porque una entrada puede llevar corchetes y en `case` son una clase de
   # caracteres. Y a la sonda se le retira el CR final (archivos CRLF: 92 bytes contra 91).
@@ -363,8 +518,18 @@ arnes_rotar_seccion() {
   # 7) Solo ahora se recorta el origen: lo de antes + la cabecera de la seccion + su
   #    preambulo + el puntero (una sola vez) + lo conservado + lo de despues. La cabecera
   #    del documento viaja dentro de `antes` y no se reescribe nunca.
+  #    Y EL PUNTERO VA FUERA DE LA TABLA (REQ-026 CA-04). En modo tabla el preambulo TERMINA
+  #    en la fila separadora, asi que anadirle el puntero al final lo mete entre la separadora
+  #    y las filas conservadas: eso rompe la tabla EN EL ORIGEN --en un REQ, no en un archivo
+  #    de bitacora-- y deja la historia conservada sin cabecera. Va DELANTE de la cabecera,
+  #    pegado al encabezado de la seccion; en modo lista sigue donde estaba (al final del
+  #    preambulo), que ahi no hay tabla que partir. La segunda pasada lo reconoce como prosa
+  #    del preambulo y el `case` evita duplicarlo, igual que antes.
   local puntero="> Entradas anteriores de esta sección en [\`$rel_dest\`]($rel_dest) — el arnés las movió para que este archivo no crezca sin tope; aquí quedan las $conservar más recientes y el resto del documento no se toca."
-  case "$pre" in *"$rel_dest"*) ;; *) pre+="$puntero"$'\n\n' ;; esac
+  case "$pre" in
+    *"$rel_dest"*) ;;
+    *) if [ "$modo" = tabla ]; then pre="$puntero"$'\n\n'"$pre"; else pre+="$puntero"$'\n\n'; fi ;;
+  esac
   local salida="$antes$cab$pre$nuevo$despues"
   [ "$fin_nl" -eq 1 ] || salida="${salida%$'\n'}"
   printf '%s' "$salida" > "$tmp_orig" && mv -f "$tmp_orig" "$f"

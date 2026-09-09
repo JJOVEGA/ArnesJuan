@@ -2,6 +2,53 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · `REQ-026`: el rotador ya sabe mover una TABLA, y cuando no la entiende no adivina
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+El reconocedor de entradas de `hooks/rotar-artefactos.sh` era una **enumeración de prefijos**
+(`- `, `* `, `### `, `N. `) y el corpus contra el que corre son **tablas**: medido en tres REQ,
+**30, 24 y 44 filas y CERO entradas reconocibles**. El 23 % de `requirements/` —**409.699 B
+medidos**, bytes, no tokens ahorrados— era historia que el mecanismo no podía mover, y encenderlo
+no habría hecho nada. Ahora una fila es entrada **sólo cuando la tabla ES la estructura de la
+sección** (cabecera y separadora seguidas y en el preámbulo): la regla se enuncia por **propiedad**
+(`REQ-012`) y no añadiendo `|` a la lista, porque una lista se vuelve a pudrir contra el siguiente
+corpus.
+
+**El segundo defecto era peor que no archivar:** el puntero se insertaba **entre la separadora y
+las filas conservadas**, o sea rompía la tabla **en el origen** —en un REQ, no en una bitácora—.
+Ahora va delante de la cabecera, y cada bloque archivado lleva **su propia** cabecera y separadora
+copiadas byte a byte del origen, así que las dos tablas se leen como tablas.
+
+**Y donde no se puede responder, no se contesta «sí»:** si la estructura es ambigua —filas sin
+separadora delante, dos separadoras, una línea entre cabecera y separadora, separadora sin
+cabecera— **no se archiva nada**, el archivo queda byte a byte igual, la parada sale 0 y se avisa
+con texto propio **y** con su línea en el bloque derivado de `docs/ESTADO.md`: el stderr de una
+parada no sobrevive a la sesión, y un fail-closed invisible es una sección que lleva meses sin
+rotar sin que nadie lo sepa.
+
+**Acreditación.** 19 casos nuevos (sección `28/3` del banco): **16 fallan** contra `c59fd83` y los
+**19 pasan** contra este árbol; los 3 que pasan en los dos lados fijan conducta conservada
+(CA-07, CA-09, CA-10) y son justo lo que un CA-08 descuidado rompe. Los que podían pasar **en
+vacío** —CA-05, CA-06, CA-12— llevan una componente que exige que la rotación **haya ocurrido**.
+Banco completo: **901 PASS · 0 FAIL · 5 SKIP** (total 906, `rc=0`, 1 m 04 s) y autoprueba del
+corredor 106 PASS. Se corrige `SEC-066`: el README del banco decía 886 casos con
+`CASOS_ESPERADOS` en 887.
+
+**`CA-15`, el techo que no se fijó por adelantado: se derivó midiendo.** Coste atribuido a la
+rotación ≤ **0,135 s** por parada. Juego base 121.192 µs de diferencia de medianas (25 artefactos,
+régimen estacionario **comprobado**), envolvente de su propia dispersión 130.676 µs, techo al paso
+de 5 ms; juego de validación independiente **123.312 µs — conforme**, 8,6 % de holgura. Un techo
+puesto en la mediana pelada lo habría incumplido el segundo juego: es la quinta aparición de la
+clase «criterio derivado sin comprobar su factibilidad» y la primera que se cierra con el margen
+**medido** en vez de elegido.
+
+**Lo que NO entra, y por qué:** `.arnes/config.json` y `templates/arnes-config.json.tpl` no se
+tocan —cambiarlos es **gate de aprobación humana** (§6) y la cola ya tiene una entrada abierta—,
+así que `CA-13`, `CA-14`, `CA-16` y `CA-17` siguen pendientes, **la rotación sigue apagada y no se
+rotó ningún REQ real**. El bloque `rotacion.artefactos` propuesto queda **fechado dentro del REQ**.
+Consecuencia declarada: hasta ese gate, la documentación del manifiesto y la del código
+**discrepan**, y manda la del código. `REQ-026` queda en `Estado: en-revisión`.
+
 ## [Interno] — 2026-09-08 · Cola de aprobaciones: el techo de `REQ-019 CA-07` vuelve al propietario
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 

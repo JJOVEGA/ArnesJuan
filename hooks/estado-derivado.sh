@@ -210,12 +210,24 @@ $aviso_version
   # La RAMA HERMANA (QA-109): la sección declarada SÍ está, pero no tiene ni una entrada
   # reconocible. Se enseña por separado —no se suma a la de arriba— porque lo que hay que
   # corregir es distinto: allí, el nombre en el manifiesto; aquí, el formato de la sección
-  # (una tabla son continuaciones, no entradas) o la expectativa de rotarla.
+  # o la expectativa de rotarla.
   if [ "${ARNES_ROT_SIN_ENTRADAS:-0}" -gt 0 ] 2>/dev/null; then
     local rot_ej2="${ARNES_ROT_SIN_ENTRADAS_EJ:-}"
     cuerpo+="**Rotación:** $ARNES_ROT_SIN_ENTRADAS archivo(s) contienen la sección declarada y superan el umbral, pero **sin ninguna entrada reconocible**"
     [ -z "$rot_ej2" ] || cuerpo+=" (p. ej. \`${rot_ej2%%|*}\` → \`${rot_ej2#*|}\`)"
-    cuerpo+=" — ahí tampoco se rota nada; una entrada empieza por \`- \`, \`* \`, \`### \` o \`N. \` y las filas de tabla son continuaciones.
+    cuerpo+=" — ahí tampoco se rota nada; una entrada es una línea de lista (\`- \`, \`* \`, \`### \`, \`N. \`) o una fila de datos de la tabla que ES la sección.
+"
+  fi
+  # LA TERCERA RAMA (REQ-026 CA-08): la sección está, supera el umbral, y su estructura de
+  # tabla es AMBIGUA. No se archiva nada —fail-closed— y aquí se DICE, por el mismo motivo
+  # que las dos de arriba: el aviso por stderr de una parada no sobrevive a la sesión, y un
+  # fail-closed que nadie ve es una sección que lleva meses sin rotar sin que nadie lo sepa.
+  # Contador propio y línea propia: lo que hay que arreglar es la tabla, no el manifiesto.
+  if [ "${ARNES_ROT_AMBIGUA:-0}" -gt 0 ] 2>/dev/null; then
+    local rot_ej3="${ARNES_ROT_AMBIGUA_EJ:-}"
+    cuerpo+="**Rotación:** $ARNES_ROT_AMBIGUA archivo(s) contienen la sección declarada y superan el umbral, pero con una **estructura de tabla ambigua**"
+    [ -z "$rot_ej3" ] || cuerpo+=" (p. ej. \`${rot_ej3%%|*}\` → \`${rot_ej3#*|}\`)"
+    cuerpo+=" — ahí no se archiva nada a propósito; la fila de cabecera y la separadora (\`|---|---|\`) tienen que ir seguidas y en el preámbulo de la sección.
 "
   fi
   if [ -n "$filas" ]; then
