@@ -735,6 +735,53 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   sale ≠ 0, porque el documento dice dos cosas y la máquina elige una. Un informe que grita por lo
   inofensivo deja de leerse, y con él lo que sí importa.
 
+### Hacia 1.34.0
+- **`AGENTS.md`: sección nueva `## 14. Reglas de trabajo de la sesión coordinadora`**, entre los
+  marcadores `<!-- arnes:coordinacion:inicio -->` y `<!-- arnes:coordinacion:fin -->` (nombres **de
+  contrato**: esta migración se hace **por** ellos, y cambiarlos exige ADR). Trae la comprobación de
+  antes de despachar, las siete reglas, la separación de responsabilidades y las **vías de lectura
+  con su estado de verificación**. Estado **`NUEVO`** según la tabla de «Clasificación: cuatro
+  estados» de esta misma skill —el bloque **no existía en ninguna base**, así que **se añade**—, y
+  por eso en la primera migración no hay `INTACTO` ni `ELIMINADO` que decidir.
+- **Se añade al FINAL del archivo, como sección propia, y no se renumera nada.** Las referencias
+  `§N` del propio `AGENTS.md`, de los agentes y de los REQ apuntan **por número**: insertar el
+  bloque en medio y correr los títulos las rompe **en silencio**, sin que falle nada. Y si el
+  `AGENTS.md` del proyecto ya tiene una sección `## 14.` propia, el número está tomado: **`UNKNOWN`,
+  se detiene y se pregunta** — no se renumera la sección del proyecto ni se cuelga el bloque sin
+  título.
+- **Antes de insertar se BUSCA, y ESO es la idempotencia: no la dan los marcadores.** Los marcadores
+  hacen el bloque *identificable*; idempotente es la **conducta** de mirar primero. Se decide con la
+  **cuenta** de marcadores del `AGENTS.md` del proyecto, no con la impresión de haberlo visto:
+
+  | inicio / fin | Estado | Acción |
+  |---|---|---|
+  | 0 / 0 | `NUEVO` | añadir el bloque al final |
+  | 1 / 1, contenido **idéntico** al de la plantilla destino | `INTACTO` | **no tocar nada** |
+  | 1 / 1, contenido **distinto** | `MODIFICADO` | **conflicto: preguntar, no pisar** |
+  | cualquier otra cuenta (2/1, 1/0, 0/1, o el cierre antes de la apertura) | `UNKNOWN` | **detenerse y preguntar** |
+
+  La fila `INTACTO` es la que hace que la **segunda** corrida no duplique nada, y la Fase 4 es la
+  que lo acredita: correr, correr otra vez y comparar el archivo **byte a byte**.
+- **El texto propio del proyecto no se pisa, tampoco el que esté DENTRO de los marcadores.** Un
+  proyecto que escribió sus propias reglas de coordinación ahí dentro es `MODIFICADO`, y
+  `MODIFICADO` es conflicto: se informa y se pregunta. **Una migración que sobrescribe ese texto no
+  es una migración con un detalle mejorable: es un fallo de esta entrada**, y así se comprueba —con
+  un caso que debe fallar si lo pisa.
+- **Cómo se comprueba, sin fiarse de que el comando dijera que sí** (Fase 4, releyendo el disco):
+  ```
+  cp AGENTS.md /tmp/agents-antes.md
+  grep -c 'arnes:coordinacion:inicio' AGENTS.md    # 0 -> NUEVO ; 1 -> ya está ; >1 -> UNKNOWN
+  # ...aplicar sólo lo que el plan marcó SAFE, y volver a correr la migración...
+  cmp /tmp/agents-tras-1a-corrida.md AGENTS.md     # sin salida = idempotente
+  grep -c 'arnes:coordinacion:inicio' AGENTS.md    # exactamente 1
+  diff <(grep '^## [0-9]' /tmp/agents-antes.md) <(grep '^## [0-9]' AGENTS.md)   # sólo la línea de §14
+  ```
+- **Lo que NO cambia, dicho para que nadie busque una puerta que no existe:** el bloque no toca
+  ninguna sección existente de `AGENTS.md`, no hay llave nueva en `.arnes/config.json`, ningún hook
+  lo lee y **ninguna puerta lo comprueba** — es una regla escrita para quien coordina, no
+  enforcement. Y mientras el proyecto no migre, **sus coordinadoras no tienen estas reglas**: cerrar
+  eso es exactamente para lo que existe esta entrada.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

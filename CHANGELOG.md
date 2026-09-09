@@ -2,6 +2,56 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · REQ-027: las reglas de la coordinadora salen de la conversación y entran en la sede canónica — y el techo que nadie había validado no cabía
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+`AGENTS.md` §14 y `templates/AGENTS.md.tpl` traen, **byte a byte idénticos** y entre los marcadores de
+contrato `<!-- arnes:coordinacion:inicio -->` / `<!-- arnes:coordinacion:fin -->`, las reglas de trabajo
+de la sesión coordinadora: la **comprobación de antes de despachar** (cuatro preguntas, por escrito en
+el encargo), las **siete reglas**, la **separación de responsabilidades** y las **vías de lectura con su
+estado de verificación**. `Estado: en-revisión`. `QA:` y `Seguridad:` sin tocar.
+
+**Las tres vías de distribución, todas entregadas — porque modificar una plantilla no actualiza los
+proyectos existentes, y ése era el punto entero.** Este repositorio (`AGENTS.md`), los proyectos nuevos
+(`templates/AGENTS.md.tpl` → `arnes-init`, verificado simulando la copia y la resolución de los 15
+`{{…}}`: **0** marcadores sin resolver, **0** dentro del bloque) y los **ya instalados**, con la entrada
+**«Hacia 1.34.0»** de `skills/arnes-upgrade/SKILL.md`, clasificada `NUEVO` y con su tabla de decisión.
+
+**La idempotencia se midió, no se prometió.** Los marcadores hacen el bloque *identificable*;
+idempotente es la conducta de contar antes de insertar. Tres corridas de la migración sobre un proyecto
+maqueta: `NUEVO` → `INTACTO` → `INTACTO`, **31 886 B y el mismo `md5` en las tres**, `cmp` sin salida,
+**exactamente un** bloque, y el `## 20. Instrucciones particulares` del proyecto intacto byte a byte. Y
+el **par discriminante**, que es lo que le da valor: una migración **ingenua** falla las mismas tres
+comprobaciones —deja **2** bloques y borra el texto propio de dentro de los marcadores—. Los negativos
+`MODIFICADO` (conflicto), `## 14.` propia, apertura sin cierre y doble apertura (`UNKNOWN`) salen con
+`rc` 2/3 y **el archivo sin tocar**.
+
+**Y el número que nadie había validado: NO cabía, así que se re-derivó el techo en vez de recortar el
+contrato.** `CA-05` proponía **2 600 B** declarándolo «límite propuesto sin validar». Medido al escribir
+el bloque: **3 703 B**, **1 103 B por encima (1,42×)**. Antes de rendirlo se hizo una pasada de recorte
+de relleno **medida** (3 930 → 3 703 B, **−227 B**: la tabla de las vías pasó a lista y salió la
+instancia ilustrativa de la regla C, cuyo sitio único es el REQ). Lo que queda son `B.7` (**1 036 B**) y
+`D` (**776 B**) —**el 49 % del bloque**—, enumerados componente a componente por `CA-11` y `CA-07`:
+recortarlos era eliminar contenido contratado, que es justo lo que `CA-05` prohíbe. Techo re-derivado
+**3 703 B**, ahora medición y no propuesta. **Línea base que hereda REQ-019: `AGENTS.md` = 37 530 B**
+(33 827 + 3 703), y el **resto del archivo byte a byte idéntico** en las dos sedes: nada creció por la
+puerta de atrás.
+
+**Codex y Cursor siguen `no verificada`, y se buscó.** La documentación del propio Codex instalado
+describe «Repository `AGENTS.md`: durable team conventions», pero eso es una **afirmación del
+proveedor**, no la observación de que este §14 llegue a una coordinadora suya; por la regla B.1 no basta
+para escribir `verificada`, y `CA-07` deja esa verificación fuera del REQ. De Cursor no hay nada.
+
+**Lo que NO queda acreditado, dicho aquí y no sólo en el informe:** `CA-08` está **incompleto por
+construcción** —su señal (c), tokens por resultado, se toma en la primera comisión despachada **ya con**
+el bloque, y ésta se despachó antes de que existiera—, así que **no se declara que las reglas sirven** y
+`REQ-025` no puede citar este REQ como evidencia de que bastan. **Ninguna puerta comprueba el bloque**:
+es regla escrita, y `CA-11` lo declara como límite.
+
+Evidencia en disco con **versión base (`4f647c7`), método y desglose elemento por elemento** —lo que la
+propia regla B.7 exige, aplicada a sí misma— en **`docs/qa/REQ-027.md`**. Banco completo: **920 PASS ·
+0 FAIL · 4 SKIP**, `rc=0`; quality gates de §7 en verde.
+
 ## [GitHub] — 2026-09-09 · `ADR-008`: dos residuos, dos preguntas, y hoy no hay nada que firmar
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus) + coordinadora.
 

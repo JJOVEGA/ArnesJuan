@@ -416,3 +416,55 @@ el hook `pre-commit` de git (§8).
 el prefijo del plugin que Claude Code añade en runtime (`arnes-juan:desarrollador`), así que no
 hay que escribirlo. Escribirlo es opcional y hace la comparación **estricta**: `agentes.agente_codigo`
 con prefijo sólo acepta a ese proveedor, útil si conviven dos plugins con un agente homónimo.
+
+<!-- arnes:coordinacion:inicio -->
+## 14. Reglas de trabajo de la sesión coordinadora
+
+**A. Comprobación de antes de despachar** — obligatoria y **por escrito en el propio encargo**:
+(1) ¿qué **resultado exacto** debe entregar?; (2) ¿los **criterios pueden cumplirse
+simultáneamente**?; (3) ¿qué **supuesto o cifra** necesita comprobarse primero?; (4) ¿qué queda
+**fuera**, y **cuándo debe detenerse**? Si falta algo, se resuelve **únicamente esa dependencia**;
+no se amplía el encargo.
+
+**B. Las siete reglas:**
+1. **Separar evidencia de interpretación** — dato medido / cálculo / estimación / hipótesis; una
+   medición correcta no valida la conclusión construida encima.
+2. **No convertir propuestas en compromisos** — ahorro, duración o cobertura son **hipótesis**
+   hasta medirlas.
+3. **Mantener visibles las decisiones vigentes** — consultarlas en una referencia breve (alcance
+   aprobado, prioridades, excepciones, pendientes), no reconstruirlas de conversaciones largas.
+4. **Corregir sin ampliar** — ante un defecto, comprobar su **efecto concreto**; los hallazgos
+   adicionales van a la cola salvo que impidan el trabajo en curso.
+5. **Cerrar cuando la evidencia alcance** — ante una observación externa, decidir si aporta
+   defecto nuevo, algo ya cubierto o mejora opcional, y no abrir una ronda por cada una; no es
+   permiso para cerrar con menos de lo que el criterio pide.
+6. **Responder con evidencia breve** — resultado, evidencia, limitación material, siguiente paso.
+7. **La evidencia intermedia se guarda en disco, no en la conversación** — **condición de
+   entrega: la entrega no está completa si la evidencia sólo existe en la conversación.** Todo
+   inventario, medición o evidencia que un trabajo posterior vaya a necesitar se escribe en un
+   **archivo antes de entregar**, con **versión base** (commit o tag sobre el que se midió o
+   enumeró) y **método** (cómo se obtuvo cada cifra, suficiente para re-derivarla sin preguntar)
+   **dentro del propio artefacto**; si lo guardado es un **inventario**, va la **lista elemento
+   por elemento** y no sólo el total. La **ruta** se cita además en el informe. Frontera **por
+   propiedad**: entra toda evidencia cuya ausencia obligaría a **re-medirla o re-enumerarla**
+   para cumplir algo **ya escrito** —un criterio, un REQ abierto, una fase pendiente— o para
+   **explicar una discrepancia** entre dos mediciones; queda fuera el cálculo de usar y tirar,
+   que se consume en la misma comisión y al que nada posterior vuelve.
+
+**C. Separación de responsabilidades** — la coordinadora **organiza y propone**; las
+**herramientas verifican lo mecánico**: toda afirmación cuya verdad se decide leyendo el disco o
+corriendo un comando (ejemplos **no exhaustivos**: fechas, versiones, archivos modificados,
+conteos, pruebas).
+
+**D. Vías de lectura y límites** — cada herramienta con su vía y su **estado de verificación**:
+- **Claude Code — `verificada`.** Vía: `CLAUDE.md` → `@AGENTS.md`. Evidencia: esa línea de
+  importación existe en `CLAUDE.md` y en `templates/CLAUDE.md.tpl`.
+- **Codex — `no verificada`.** Vía: la que declara el estándar `AGENTS.md`; esa frase es una
+  afirmación del repositorio, no una comprobación.
+- **Cursor — `no verificada`.** Vía sin determinar; no se comprobó.
+
+Y los dos límites: (a) **una herramienta cuya vía no está verificada no cuenta como cubierta**
+—esta sección no promete cobertura de todo coordinador—; (b) **un proyecto ya instalado tiene su
+`AGENTS.md` congelado**: hasta que `arnes-upgrade` migre este bloque, sus coordinadoras **no
+tienen estas reglas**.
+<!-- arnes:coordinacion:fin -->
