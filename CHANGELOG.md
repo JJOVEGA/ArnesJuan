@@ -66,6 +66,58 @@ son, y no consta que la regla del margen se fijara antes de ver el juego de vali
 cambio de `hooks/estado-derivado.sh`, que **no era alcance tomado por su cuenta** —el REQ lo declara
 en `Módulo:` y en `Archivos:`— pero le falta contrato (`QA-026-06`).
 
+## [GitHub] — 2026-09-09 · `REQ-026 CA-08`: la cuarta rama también se ve, y probar la propiedad encontró una forma más
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+**`CA-08 (v)` implementado — y el criterio tenía razón contra mí.** La entrega anterior dejó la
+rama de la **lectura no fiable** avisando sólo por `stderr`, con el argumento de que un NUL ya
+hace **denegar** a `guard-completado` en la siguiente edición de ese REQ. El criterio lo rechaza
+con un motivo mejor: esa denegación **depende de que alguien edite ese REQ** y de dónde caiga el
+NUL, mientras que el silencio de la rotación **no depende de nada** — un canal de visibilidad
+condicionado a un segundo suceso no es un canal. Ahora las **cuatro** ramas de «no se rota»
+—sin la sección, sin entradas, estructura ambigua y lectura no fiable— dejan contador y línea
+propios en el bloque derivado de `docs/ESTADO.md`, con texto que distingue su caso. `CA-10` sigue
+sin línea a propósito: no es un fail-closed. La nota de alcance que defendía la asimetría se
+reescribe, en vez de dejarse contradiciendo al criterio.
+
+**`CA-08 (i)` comprobado como propiedad — y ahí estaba otro defecto.** Los dos casos que pidió el
+analista (**tres** tablas; la segunda separadora en la **última** fila) **pasan contra `6b07f88` y
+contra este árbol**: ya estaban cubiertos por construcción, porque la comprobación vive dentro del
+bucle que recorre la sección entera. Eso queda **probado con casos**, no argumentado, que es lo que
+se pidió. Pero probando la propiedad apareció una forma que la enumeración no nombra: **una línea
+que no es fila de datos entre dos filas de datos**. Con un párrafo suelto, una línea vacía o una
+**segunda tabla indentada tres espacios** —GFM las admite, así que no llegan al reconocedor de
+columna cero— la sección se rotaba **en silencio** y el bloque del destino quedaba con esa línea
+**entre dos filas de datos**: dejaba de leerse como tabla, o sea `CA-03` roto. Medido en las tres
+formas. Ahora es fail-closed, con un aviso propio, y el arreglo mira la propiedad —un hueco después
+de la primera fila invalida la estructura— y no las tres formas.
+
+**Y su control, que es la mitad que impide pasarse de listo:** una continuación **tras la última**
+fila **no** corta ninguna tabla —no hay fila detrás— así que se sigue rotando y esa cola viaja con
+su entrada, que es exactamente lo que contrata `CA-07`. Sin ese control, el arreglo habría sido
+«cualquier línea rara detiene la rotación», y eso dejaría sin rotar media `requirements/`.
+
+**Comprobado que ningún REQ real cae en el fail-closed nuevo:** los 28 archivos de
+`requirements/` se escanearon buscando esa forma y **ninguno** la tiene. Sobre copias en `/tmp` de
+`REQ-017`, `REQ-021` y `REQ-014`: los dos primeros rotan con multiconjunto intacto y **cero**
+líneas intrusas en el bloque; el tercero, al que se le inyectó un NUL, queda **byte a byte igual**
+y aparece nombrado en la línea nueva del bloque derivado, con el texto humano de `ESTADO.md` fuera
+de los marcadores intacto.
+
+**Banco.** 6 casos nuevos → `28/3` de 23 a **29** y `CASOS_ESPERADOS` de 910 a **916**.
+Fail-before contra `6b07f88`: fallan **tres** —`CA-08 (v)` y las dos formas nuevas— y los otros
+tres pasan a los dos lados por diseño. Corrida completa: **912 PASS · 0 FAIL · 4 SKIP** (916,
+`rc=0`, 1 m 02 s); autoprueba 106 PASS; gates de §7 en verde.
+
+**`CA-15` no se re-mide, y se dice por qué:** los cambios de este tramo son de **camino de
+fallo** y en régimen estacionario **no se ejecutan** —la función sale en la comparación de tamaño
+antes de trocear, y la línea del bloque derivado sólo existe cuando algo falló—. El techo
+`≤ 0,140 s`, derivado con la regla fijada antes y con el estadístico nombrado, sigue en pie.
+
+**Aviso para la próxima comisión:** `28-rotacion-seccion-3-la-tabla.sh` queda **en el techo** de
+`REQ-014 CA-18` (400 de 400 líneas). El caso siguiente exige **partir la sección en una parte 4**,
+no alargarla; queda escrito en la propia línea del piso, donde se va a leer.
+
 ## [GitHub] — 2026-09-09 · `REQ-026` vuelta 1: el NUL que publicaba media lectura encima de un REQ, y la segunda tabla que nadie validaba
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
 

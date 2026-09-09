@@ -230,6 +230,23 @@ $aviso_version
     cuerpo+=" — ahí no se archiva nada a propósito; la fila de cabecera y la separadora (\`|---|---|\`) tienen que ir seguidas y en el preámbulo de la sección.
 "
   fi
+  # LA CUARTA RAMA (REQ-026 CA-08 (iii) y (v)): el documento NO SE PUDO LEER ENTERO. Está aquí
+  # por la misma razón que las otras tres, y por una más: es la única cuyo daño ya ocurrió en
+  # abierto (`QA-026-01`: −17.697 B publicados encima de un REQ), así que es la última que
+  # podría permitirse un canal que muere con la sesión. NO delega en `guard-completado`: esa
+  # denegación depende de que alguien edite ese REQ y de dónde caiga el NUL, mientras que este
+  # silencio no depende de nada, y un canal condicionado a un segundo suceso no es un canal.
+  # Contador y línea propios: aquí no se corrige el manifiesto ni el formato de la sección, se
+  # corrige EL ARCHIVO. Y el ejemplo es sólo el nombre: esta rama ocurre ANTES de saber si el
+  # documento tiene la sección declarada —no se pudo leer—, así que nombrar una sección aquí
+  # sería inventarse un dato que el hook no tiene.
+  if [ "${ARNES_ROT_NO_MEDIBLE:-0}" -gt 0 ] 2>/dev/null; then
+    local rot_ej4="${ARNES_ROT_NO_MEDIBLE_EJ:-}"
+    cuerpo+="**Rotación:** $ARNES_ROT_NO_MEDIBLE archivo(s) casan un artefacto declarado y **no se pueden leer enteros** (un byte NUL los trunca, o no hay permiso de lectura)"
+    [ -z "$rot_ej4" ] || cuerpo+=" (p. ej. \`$rot_ej4\`)"
+    cuerpo+=" — ahí no se rota nada y el archivo no se toca: publicar una lectura a medias borraría todo lo que viniera detrás. Salida: quita el byte NUL, o arregla los permisos.
+"
+  fi
   if [ -n "$filas" ]; then
     cuerpo+="
 _Sólo los REQ abiertos; los $hechos completados no se listan._

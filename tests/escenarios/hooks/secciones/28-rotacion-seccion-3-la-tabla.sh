@@ -2,13 +2,19 @@
 # Se ejecuta con `source` desde el corredor (`../run.sh`), en su propio subshell y con
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
-CASOS_ESPERADOS_SECCION=23
-PISO_AUTONOMO_SECCION=94  # 9 preámbulo + 40 maquinaria compartida duplicada + 45 bloque indivisible mayor · REQ-014 CA-18
+CASOS_ESPERADOS_SECCION=29
+PISO_AUTONOMO_SECCION=94  # 9 preámbulo + 40 maquinaria compartida duplicada + 45 bloque indivisible mayor · REQ-014 CA-18 · AVISO: este archivo está EN EL TECHO (400 de 400); el próximo caso exige partirlo en una parte 4, no alargarlo
 
 # FAIL-BEFORE MEDIDO, con `ARNES_HOOKS_DIR` apuntando a otra copia de los hooks:
 #   · contra `c59fd83` (antes del reconocedor de tablas): 16 de los 19 primeros FALLAN.
 #   · contra `b0774cd` (con el reconocedor y con los dos defectos de QA): FALLAN los dos
 #     casos de `QA-026-01` (NUL) y `QA-026-02` (dos tablas) -- y solo esos dos.
+#   · contra `6b07f88` (con CA-08 ya escrito y sin implementar (v)): FALLAN tres, y son los
+#     tres que este tramo cierra -- `CA-08 (v)` y las DOS formas nuevas de la propiedad--.
+#     Los dos casos de propiedad que pidio el analista (tres tablas, la separadora en la
+#     ultima fila) PASAN a los dos lados: la comprobacion vive dentro del bucle que recorre
+#     la seccion entera, asi que ya estaban cubiertos por construccion. Aqui esta la prueba
+#     en vez del argumento, que es lo que se pidio.
 # Los que pasan a los dos lados lo hacen por diseno y NO son vacuos: CA-07 (la tabla dentro
 # de una entrada) y CA-09/CA-10 (los dos bordes) fijan conducta que este REQ CONSERVA, y son
 # justamente lo que una implementacion descuidada de CA-08 rompe --el primer borrador de esta
@@ -194,8 +200,14 @@ tab_dos_tablas() {   # tab_dos_tablas <segunda tabla si/no>
       printf '| 2026-01-%02d | fila %s con relleno de sobra para pasar del umbral declarado | causa | — |\n' "$i" "$i"
       i=$((i+1))
     done
+    # SIN linea en blanco entre las dos tablas, a proposito: asi la primera cosa que
+    # desmiente la estructura es LA SEGUNDA SEPARADORA, y el caso puede exigir ESE motivo. Con
+    # una linea en blanco delante, el motivo que salta primero es el otro --"lineas que no son
+    # filas entre dos filas"--, igual de cierto y igual de fail-closed, y el caso estaria
+    # fijando cual de dos diagnosticos verdaderos se ve antes, que no es lo que se contrata.
+    # Es tambien la forma que deja el origen con dos separadoras seguidas.
     if [ "$1" = si ]; then
-      printf '\n| Otra | Tabla | Distinta |\n|---|---|---|\n'
+      printf '| Otra | Tabla | Distinta |\n|---|---|---|\n'
       printf '| 2026-02-01 | segunda tabla, fila A | tercera columna |\n'
       printf '| 2026-02-02 | segunda tabla, fila B | tercera columna |\n'
     fi
@@ -245,12 +257,78 @@ tab_nul si
 # caso pasaria por vacio.
 rsec_check "QA-026-01 con un NUL: no rota, avisa de que no se puede leer entero, byte a byte igual y sale 0" "iguales-si-30-0" \
   "$(cmp -s "$RP3/antes.md" "$RP3/requirements/REQ-430.md" && echo iguales || echo distintos)-$(grep -q 'NO SE PUEDE LEER ENTERO' "$ERRLOG" && echo si || echo no)-$(grep -ac '^| 2026-01-' "$RP3/requirements/REQ-430.md")-$TAB_RC"
+# CA-08 (v): LA SEDE DEL AVISO ES LA MISMA PARA LAS CUATRO RAMAS. El stderr de una parada no
+# sobrevive a la sesion, asi que esta rama deja tambien su linea --con su contador y con texto
+# que la DISTINGUE de las otras tres-- en el bloque derivado de `docs/ESTADO.md`. Y no delega
+# su visibilidad en `guard-completado`: esa denegacion depende de que alguien edite ese REQ y
+# de donde caiga el NUL, mientras que el silencio de la rotacion no depende de nada.
+rsec_check "CA-08 (v) el bloque derivado refleja la lectura no fiable, con texto propio" "si-si-no-no" \
+  "$(grep -q 'no se pueden leer enteros' "$RP3/docs/ESTADO.md" && echo si || echo no)-$(grep -q 'REQ-430.md' "$RP3/docs/ESTADO.md" && echo si || echo no)-$(grep -q 'estructura de tabla ambigua' "$RP3/docs/ESTADO.md" && echo si || echo no)-$(grep -qE 'sin ninguna entrada reconocible|no contienen la sección declarada' "$RP3/docs/ESTADO.md" && echo si || echo no)"
 rm -rf "$RP3"
 # EL CONTROL: el MISMO documento sin el NUL rota. Sin el, "no rota" tambien seria cierto de
 # un fixture que no llega al umbral, y el caso de arriba no distinguiria nada.
 tab_nul no
 rsec_check "QA-026-01 control: el mismo documento sin el NUL si rota y no avisa" "10-20-silencio" \
   "$(rsec_cnt '^| 2026-01-' "$RP3/requirements/REQ-430.md")-$(rsec_cnt '^| 2026-01-' "$RP3/requirements/historial/REQ-430.md")-$(grep -q 'NO SE PUEDE LEER ENTERO' "$ERRLOG" && echo aviso || echo silencio)"
+rm -rf "$RP3"
+
+# --- CA-08 (i): LA PROPIEDAD, NO LA LISTA ---------------------------------------------
+# `(ii)` dice que una implementacion que satisfaga la enumeracion y no `(i)` INCUMPLE, y que
+# la lista puede crecer sin que `(i)` cambie. Estas formas NO estan en la enumeracion: si la
+# comprobacion mirara la lista en vez de recorrer la seccion, pasarian por el hueco.
+#
+# `tab_forma <etiqueta> <cuerpo de la seccion, con \n>` — el cuerpo se escribe entero para
+# que cada forma sea legible al lado de su veredicto.
+tab_forma() {
+  tab_proj 4 1000 nuevo-al-final
+  { printf '# REQ-431\nEstado: en-revisión\n\n## Historial de cambios\n'
+    printf '%b' "$2"
+    printf '\n## Trazabilidad\nintacta\n'
+  } > "$RP3/requirements/REQ-431.md"
+  cp "$RP3/requirements/REQ-431.md" "$RP3/antes.md"
+  tab_corre; TAB_RC=$?
+  rsec_check "CA-08 (i) $1: no rota, avisa y sale 0" "iguales-si-no-0" \
+    "$(cmp -s "$RP3/antes.md" "$RP3/requirements/REQ-431.md" && echo iguales || echo distintos)-$(grep -q 'ESTRUCTURA DE TABLA es AMBIGUA' "$ERRLOG" && echo si || echo no)-$([ -e "$RP3/requirements/historial/REQ-431.md" ] && echo si || echo no)-$TAB_RC"
+  rm -rf "$RP3"
+}
+TAB_F=''   # 12 filas de datos, la materia prima de las tres formas de abajo
+for i in $(seq -w 1 12); do
+  TAB_F+="| 2026-01-$i | fila $i con relleno de sobra para pasar del umbral declarado | causa | — |\\n"
+done
+# (a) TRES tablas: la deteccion no puede pararse en la segunda.
+tab_forma "tres tablas en la seccion" \
+  "$TAB_CAB\\n$TAB_SEP\\n$TAB_F\\n| Segunda | Tabla |\\n|---|---|\\n| 2026-02-01 | de la segunda |\\n\\n| Tercera | Tabla | Mas |\\n|---|---|---|\\n| 2026-03-01 | de la tercera | y mas |\\n"
+# (b) la segunda separadora es LA ULTIMA fila de datos: el borde por el que se escapa una
+#     comprobacion que mire "la fila siguiente" en vez de todas.
+tab_forma "la segunda separadora es la ultima fila" "$TAB_CAB\\n$TAB_SEP\\n$TAB_F$TAB_SEP\\n"
+# (c) NO ES UNA TABLA DE MAS, ES UNA LINEA DE MAS, y la encontro esta comision probando la
+#     propiedad: una linea que no es fila de datos ENTRE dos filas corta la tabla ahi (en GFM
+#     una linea vacia o un parrafo la cierran). Medido antes del arreglo: rotaba EN SILENCIO y
+#     el bloque del destino quedaba con esa linea entre dos filas de datos, o sea dejaba de
+#     leerse como tabla (CA-03). Las tres formas que lo producen --una segunda tabla INDENTADA
+#     (GFM admite hasta tres espacios), un parrafo suelto y una linea vacia-- son la misma
+#     cosa vista tres veces, y por eso el arreglo no las enumera.
+tab_forma "una linea que no es fila entre dos filas (parrafo)" \
+  "$TAB_CAB\\n$TAB_SEP\\n| 2026-01-01 | primera fila con relleno de sobra | causa | — |\\nun parrafo suelto entre dos filas de datos\\n$TAB_F"
+tab_forma "una segunda tabla indentada tres espacios entre filas" \
+  "$TAB_CAB\\n$TAB_SEP\\n| 2026-01-01 | primera fila con relleno de sobra | causa | — |\\n   | Indentada | Tabla |\\n   |---|---|\\n$TAB_F"
+# EL CONTROL, y es el que separa la propiedad de una regla bruta: una continuacion DESPUES de
+# la ultima fila NO corta ninguna tabla --no hay ninguna fila detras de ella-- asi que se rota,
+# y esa cola viaja con su entrada, que es lo que CA-07 contrata. Sin este control, el arreglo
+# de (c) podria ser "cualquier linea rara detiene la rotacion", que romperia CA-07 y dejaria
+# sin rotar media `requirements/`.
+tab_proj 4 1000 nuevo-al-final
+{ printf '# REQ-432\nEstado: en-revisión\n\n## Historial de cambios\n%s\n%s\n' "$TAB_CAB" "$TAB_SEP"
+  i=1; while [ "$i" -le 12 ]; do
+    printf '| 2026-01-%02d | fila %s con relleno de sobra para pasar del umbral declarado | causa | — |\n' "$i" "$i"
+    i=$((i+1))
+  done
+  printf '   | Indentada | Tabla |\n   |---|---|\n   | 2026-02-01 | cola indentada |\n'
+  printf '\n## Trazabilidad\nintacta\n'
+} > "$RP3/requirements/REQ-432.md"
+tab_corre
+rsec_check "CA-08 (i) control: una continuacion TRAS la ultima fila no corta nada; se rota y viaja con su entrada" "4-8-silencio-3" \
+  "$(rsec_cnt '^| 2026-01-' "$RP3/requirements/REQ-432.md")-$(rsec_cnt '^| 2026-01-' "$RP3/requirements/historial/REQ-432.md")-$(grep -q 'AMBIGUA' "$ERRLOG" && echo aviso || echo silencio)-$(rsec_cnt '^   |' "$RP3/requirements/REQ-432.md")"
 rm -rf "$RP3"
 
 # --- CA-09: borde. Cabecera y separadora, y NINGUNA fila de datos ---------------------

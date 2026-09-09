@@ -209,6 +209,13 @@ arnes_rot_sin_tmp() {   # <archivo de origen>
 # regla se desfasan (la leccion del descuento de comillas de `guard-git`).
 arnes_rot_no_medible() {   # <archivo de origen>
   arnes_warn "rotacion: '${1#"$ARNES_PROJ/"}' NO SE PUEDE LEER ENTERO --un byte NUL lo trunca, o no hay permiso de lectura--; no se rota nada y el archivo no se toca. Rotar con una lectura truncada publicaria ESA MITAD encima del documento y borraria todo lo que viniera detras (SEC-002/R-001). Salida: quita el byte NUL del archivo, o arregla los permisos."
+  # CA-08 (v): las CUATRO ramas de "no se rota" dejan constancia por un canal que sobrevive a
+  # la sesion, y esta no delega su visibilidad en otra puerta. Que un NUL haga denegar a
+  # `guard-completado` es cierto y NO basta: esa denegacion depende de que alguien edite ese
+  # REQ y de donde caiga el NUL, mientras que el silencio de la rotacion no depende de nada.
+  # Un canal condicionado a un segundo suceso no es un canal.
+  ARNES_ROT_NO_MEDIBLE=$(( ${ARNES_ROT_NO_MEDIBLE:-0} + 1 ))
+  [ -n "${ARNES_ROT_NO_MEDIBLE_EJ:-}" ] || ARNES_ROT_NO_MEDIBLE_EJ="${1##*/}"
 }
 arnes_rot_ambigua() {      # <archivo de origen> <seccion> <motivo>
   arnes_warn "rotacion: '${1#"$ARNES_PROJ/"}' SI contiene la seccion '$2' y supera el umbral, pero su ESTRUCTURA DE TABLA es AMBIGUA ($3); no se archiva nada y el archivo queda igual. Para que las filas de una tabla cuenten como entradas, la seccion tiene que ser UNA tabla: su fila de cabecera y su fila separadora ('|---|---|') seguidas y en el preambulo, antes de cualquier otra entrada, y ninguna otra separadora despues. Revisa el formato de la seccion."
@@ -341,7 +348,7 @@ arnes_rotar_seccion() {
   # de avisar de que no tiene entradas. Antes solo colaba un salto de mas al final de la
   # seccion en cada rotacion.
   local -a ent=()
-  local pre='' cur='' hay=0 cuerpo1="${cuerpo%$'\n'}"
+  local pre='' cur='' hay=0 hueco2=0 cuerpo1="${cuerpo%$'\n'}"
   # 3a) PRIMERO se decide QUE ESTRUCTURA tiene la seccion, mirando SOLO su preambulo: o es
   #     una tabla (cabecera + separadora seguidas, antes de cualquier otra entrada) o es una
   #     lista. Se decide aparte del troceado a proposito: la pregunta "¿de que esta hecha
@@ -444,8 +451,22 @@ arnes_rotar_seccion() {
                    amb="hay otra fila separadora entre las filas de datos: la seccion tiene mas de una tabla, y la cabecera de la segunda no es una fila de datos de la primera"
                    break
                  fi
+                 # Y EL ESPEJO DEL `hueco` DEL PREAMBULO, que es la MISMA propiedad aplicada
+                 # al resto: una linea que no es fila de datos ENTRE dos filas corta la tabla
+                 # ahi --en GFM una linea vacia o un parrafo la cierran-- asi que lo de
+                 # despues ya no es la misma tabla. Medido: con un estorbo pegado a una fila
+                 # que se archiva, el bloque del destino quedaba con esa linea ENTRE dos
+                 # filas de datos, o sea dejaba de leerse como tabla (CA-03), y en silencio.
+                 # Las tres formas que lo producen --una segunda tabla INDENTADA (GFM admite
+                 # hasta tres espacios, asi que no llega a este `case`), un parrafo suelto y
+                 # una linea vacia-- son la misma cosa vista tres veces: por eso la
+                 # comprobacion no las enumera, mira la propiedad.
+                 if [ "$hueco2" -eq 1 ]; then
+                   amb="hay lineas que no son filas de datos entre dos filas de datos: la tabla se corta ahi y lo que viene despues ya no es la misma tabla"
+                   break
+                 fi
                  [ "$hay" -eq 1 ] && ent+=("$cur"); cur="$linea"$'\n'; hay=1 ;;
-               *)    if [ "$hay" -eq 1 ]; then cur+="$linea"$'\n'; else pre+="$linea"$'\n'; fi ;;
+               *)    if [ "$hay" -eq 1 ]; then hueco2=1; cur+="$linea"$'\n'; else pre+="$linea"$'\n'; fi ;;
              esac ;;
       *)     case "$linea" in
                '- '*|'* '*|'### '*|[0-9]'. '*|[0-9][0-9]'. '*|[0-9][0-9][0-9]'. '*)
