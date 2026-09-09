@@ -261,6 +261,45 @@ son, y no consta que la regla del margen se fijara antes de ver el juego de vali
 cambio de `hooks/estado-derivado.sh`, que **no era alcance tomado por su cuenta** —el REQ lo declara
 en `Módulo:` y en `Archivos:`— pero le falta contrato (`QA-026-06`).
 
+## [GitHub] — 2026-09-09 · `QA-026-04`: el manifiesto describía el mecanismo anterior, y la plantilla lo heredaba
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+**Gate humano levantado por el propietario, y sólo para esto:** *«Autorizo la decisión 2
+exclusivamente para actualizar `_doc_artefactos` en los dos archivos indicados, sin activar la
+rotación.»*
+
+`_doc_artefactos` seguía diciendo que una entrada es sólo `- `, `* `, `### ` o `N. ` — el
+mecanismo de antes de `REQ-026`. El código reconoce **filas de tabla** desde 1.34.0, así que ese
+texto envejecía **hacia el lado que abre**: **subestimaba lo que la máquina toca**, y vive en la
+plantilla que los proyectos heredan por `arnes-upgrade`. De ahí que `R-021` lo reclasificara de
+`instrumento` a **`contrato`**. Ahora describe lo que hace hoy: la entrada **por propiedad** —línea
+de lista **o** fila de datos de la tabla que ES la sección, con cabecera y separadora como
+preámbulo que se queda—, la tabla dentro de una entrada como continuación que viaja con ella, el
+puntero **fuera** de la tabla, las **cinco** ramas de «no se rota y se avisa» (sin la sección
+declarada, sin entradas reconocibles, estructura ambigua **en toda la extensión** de la sección,
+lectura no fiable y **lectura caducada**) con su línea en el bloque derivado, y que con
+`estado_derivado.activo: false` la rotación de sección **no rota**.
+
+**El límite de la autorización, verificado y no sólo respetado:** `rotacion.activo` sigue en
+`false`, `rotacion.artefactos` sigue **vacío** —eso es `CA-13`, que el propietario no autorizó— y
+**ninguna otra clave** cambió. Comprobado comparando los dos documentos con `_doc_artefactos`
+descontada (`diff` vacío) y con `git diff --numstat`: **1 línea** por archivo. Al terminar, la
+rotación sigue apagada y `requirements/historial/` no existe.
+
+**Los dos archivos quedan byte a byte idénticos** en esa clave, que era la mitad del defecto: dos
+copias de la misma frase se desfasan.
+
+**Un detalle de acreditación que conviene registrar:** `jq -e . templates/arnes-config.json.tpl`
+**no puede estar en verde** y no lo estaba antes de este cambio — la plantilla lleva tres
+marcadores (`{{ARNES_VERSION}}`, `{{CODIGO_APP_GLOBS}}`, `{{QUALITY_GATES_JSON}}`) y por diseño no
+es JSON válido; falla igual en `HEAD`. Lo que sí mide algo es sustituir los marcadores y validar
+**eso**, que es lo que se hizo: JSON válido, con `activo: false` y `artefactos: []`. El `jq` de §7
+cubre `hooks/hooks.json` y `.claude-plugin/*.json`, no la plantilla.
+
+Banco: **920 PASS · 0 FAIL · 4 SKIP** (924, `rc=0`, 1 m 02 s) — no se mueve, como debía ser: es
+texto de documentación dentro del JSON. `QA-026-04` **no se cierra aquí**: eso es de QA y del
+auditor.
+
 ## [GitHub] — 2026-09-09 · `REQ-026 CA-18`: la rotación no publica sobre una lectura caducada, y medir el guardián encontró su propia regresión
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
 
