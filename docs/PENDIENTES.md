@@ -1880,21 +1880,54 @@ falla el check **requerido y estricto** `hooks-en-linux` afirmando en su propia 
 —factor **1,40**— y el techo que vigila es **1,25**: el techo vive **dentro** del ruido, así que el caso
 no puede distinguir la regresión que dice medir de su propia varianza.
 
-### La causa, que es de una línea y no de calibración
+### La causa, medida — y NO es «el umbral está mal puesto»
 
-**El umbral de convergencia y el techo de regresión son el mismo número: `1,250×`.** Por eso la
-comprobación de convergencia declaró «convergido» en las **cuatro** corridas —1,138, 1,142, 1,232 y
-1,249, todas bajo 1,250—, **incluidas las dos que fallaron**. Una comprobación cuyo umbral iguala al del
-criterio que protege **no filtra nada**.
+**Corrección de la coordinadora (2026-09-08), escrita antes de que nadie trabaje sobre lo anterior.** Una
+primera lectura de estas cifras concluyó que el defecto era que el umbral de convergencia y el techo de
+regresión fueran el mismo número. **Es falso: son el mismo número A PROPÓSITO**, y `REQ-017 CA-08` lo
+argumenta por escrito — *«no es un número nuevo: es el mismo, porque un instrumento tiene que resolver al
+menos el factor que vigila»*. **El caso hace exactamente lo que su criterio prescribe**, y su hermano
+también: no está mal configurado, simplemente excedió el umbral y se abstuvo, que es lo previsto.
 
-### El remedio ya existe en el mismo archivo
+**Lo que las cuatro corridas muestran es otra cosa, y es peor: el remedio que `CA-08` YA prescribió está
+implementado y no basta.** `CA-08` documenta que en aislamiento la razón da **0,821–1,010**, que bajo
+`JOBS=6` sube de forma sistemática por contención que el propio banco fabrica, y prescribe la
+**intercalación** de series para cancelarla «por construcción», más la comprobación de convergencia. Todo
+eso está construido. Y aun así la razón recorre **0,973–1,364**.
 
-El caso hermano —`REQ-017 CA-08 (ii) un REQ real de 6 líneas`— hace lo correcto en esas mismas corridas:
-no converge (1,148× y 1,254×) y **hace `SKIP` con motivo**, sin dar veredicto. **El mecanismo está
-construido; sólo está mal el umbral.** Las dos formas conformes:
+**Dónde está el hueco.** La convergencia compara el **segundo mínimo de cada árbol con su propio mínimo**:
+mide si **cada serie** se asentó. Pero el ruido de la **razón** no procede de la dispersión interna de
+cada brazo — procede de las condiciones **entre brazos**. Dos series pueden converger cada una a 1,2× y su
+cociente oscilar 1,4×. La comprobación responde *«¿se asentó cada serie?»* cuando el criterio necesita
+*«¿puede este cociente distinguir 1,25×?»*.
 
-1. Exigir la convergencia **estrictamente más apretada** que el techo que protege (p. ej. `≤ techo/2`), o
-2. **`SKIP` con motivo** cuando la dispersión propia del caso supere el techo — idéntico al hermano.
+**Y los datos lo enseñan:** los **dos** rojos son justo aquellos en que un brazo converge **al borde**
+—1,232× y 1,249× contra el límite de 1,250×— mientras el otro converge holgado (1,025× y 1,002×). Los dos
+verdes tienen convergencias equilibradas. A 1,249× el instrumento resuelve **exactamente** 1,25 y ni un
+poco mejor, y sobre esa resolución afirma un 1,364×.
+
+**La clase, nombrada:** `CA-08` dice «**al menos** el factor que vigila», y eligió el valor **más flojo**
+compatible con ese argumento sin medir si alcanzaba. Es **un criterio derivado sin comprobar su
+factibilidad** — la misma clase que `DEV-021-05`, que el techo de 400 líneas de `CA-18` y que el techo de
+4× de `REQ-021 CA-08 (iii)` re-derivado a 6×. El argumento es correcto; el valor no se comprobó.
+
+### Las formas conformes, y la que ya no vale
+
+Lo que **no** sirve, porque ya está hecho: intercalar más, o repetir la comprobación de convergencia tal
+como está. Lo que queda, y hay que **medir antes de elegir**:
+
+1. **Convergencia estrictamente más apretada que el techo** —el «al menos» de `CA-08` admite margen; el
+   valor concreto **se deriva midiendo**, no se elige—, y `CA-08` se re-deriva en la misma edición.
+2. **Una cota sobre la dispersión de la RAZÓN**, no de cada brazo: repetir el par intercalado **k** veces
+   y exigir que el recorrido del cociente quepa bajo el techo antes de emitir veredicto; si no cabe,
+   `SKIP` con motivo.
+3. **Sacar (ii) de la puerta requerida y dejarlo como acreditación fechada** —la vía que `CA-05 (i)` y
+   `(ii)` ya usan en este mismo REQ, con `ARNES_COSTE_RUTA_CRITICA=1`—. **No es apagar la señal**: la
+   medición sigue existiendo y se exige al cerrar el REQ; lo que deja de hacer es decidir cada PR con un
+   instrumento que no resuelve. Requiere decisión del propietario y queda escrito.
+
+**La opción 2 es la única que ataca la magnitud correcta**, y por eso es la candidata; las otras dos
+acotan o rodean. Cuál se toma **se decide midiendo**, y esa medición es el primer trabajo.
 
 ### Lo prohibido por nombre
 

@@ -59,12 +59,27 @@ de v1.32.1`. Su salida dice literalmente *«esto es una regresión, no ruido»*.
 —factor **1,40**— y el techo que vigila es **1,25**: **el techo vive dentro del ruido del instrumento**,
 así que el caso no puede distinguir la regresión que dice medir de su propia varianza.
 
-**El defecto es estructural, no de calibración.** El umbral de convergencia y el techo de regresión son
-**el mismo número (1,250×)**. Por eso la comprobación de convergencia declaró «convergido» en las cuatro
-corridas —1,138, 1,142, 1,232 y 1,249, todas bajo 1,250— **incluidas las dos que fallaron**. Una
-comprobación cuyo umbral iguala al del criterio que protege no filtra nada. El caso hermano
-(`un REQ real de 6 líneas`) **sí** hace lo correcto: no converge y **SKIP con motivo**. El mecanismo
-existe; el umbral está mal puesto.
+**CORRECCIÓN (coordinadora, 2026-09-08): el defecto NO es «el umbral está mal puesto».** Una primera
+lectura concluyó eso; **es falso**. El umbral de convergencia y el techo son el mismo número **a
+propósito**, y `REQ-017 CA-08` lo argumenta: *«no es un número nuevo: es el mismo, porque un instrumento
+tiene que resolver al menos el factor que vigila»*. **El caso hace exactamente lo que su criterio
+prescribe**, y su hermano también.
+
+**Lo que las cuatro corridas muestran es peor:** `CA-08` ya había pagado esta lección —documenta el
+recorrido 0,821–1,010 en aislamiento y la subida sistemática bajo `JOBS=6`— y prescribió **intercalar las
+series** más la comprobación de convergencia. **Está todo implementado, y no basta.**
+
+**El hueco:** la convergencia compara el segundo mínimo de **cada árbol** con su propio mínimo —mide si
+cada **serie** se asentó—, mientras que el ruido de la **razón** viene de las condiciones **entre
+brazos**. Dos series pueden converger cada una a 1,2× y su cociente oscilar 1,4×. Los datos lo enseñan:
+**los dos rojos son justo aquellos en que un brazo converge al borde** (1,232× y 1,249× contra el límite
+de 1,250×) mientras el otro converge holgado (1,025× y 1,002×); los dos verdes están equilibrados. A
+1,249× el instrumento resuelve **exactamente** 1,25 y ni un poco mejor, y sobre esa resolución afirma un
+1,364×.
+
+**La clase:** `CA-08` dice «**al menos** el factor que vigila» y eligió el valor **más flojo** compatible
+con ese argumento **sin medir si alcanzaba**. Es *un criterio derivado sin comprobar su factibilidad*, la
+misma clase que ya se corrigió dos veces en esta ventana.
 
 **Clase: `instrumento`** —es un defecto de una prueba del propio arnés, no del producto—, pero **bloquea
 igual**, porque el ruleset `proteger-main` hace ese check **requerido y estricto**. Es el primer caso de

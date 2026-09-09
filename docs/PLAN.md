@@ -105,10 +105,23 @@ Esta ventana va a tener muchas comisiones, y las tres primeras palancas están *
 > **más rápido** que `v1.32.1`, y una regresión real no puede ser más rápida: la dispersión (factor
 > **1,40**) **cubre el techo (1,25)**.
 >
-> El defecto es **estructural**: el umbral de convergencia y el techo de regresión son **el mismo número
-> (1,250×)**, así que la convergencia declaró «convergido» en las cuatro corridas —1,138, 1,142, 1,232 y
-> 1,249— **incluidas las dos que fallaron**. Su caso hermano (`un REQ real de 6 líneas`) hace lo
-> correcto: no converge y **SKIP con motivo**. El mecanismo existe; el umbral está mal puesto.
+> **CORREGIDO el 2026-09-08, antes de que nadie trabajara sobre lo anterior.** Una primera lectura
+> concluyó que el defecto era que el umbral de convergencia y el techo fueran el mismo número. **Es
+> falso: lo son a propósito**, y `CA-08` lo argumenta — *«no es un número nuevo: es el mismo, porque un
+> instrumento tiene que resolver al menos el factor que vigila»*. **El caso hace lo que su criterio
+> prescribe.** Lo que las cuatro corridas muestran es peor: **el remedio que `CA-08` ya prescribió
+> —intercalar las series y comprobar convergencia— está IMPLEMENTADO y no basta.**
+>
+> **Dónde está el hueco:** la convergencia compara el segundo mínimo de **cada árbol** con su propio
+> mínimo, o sea mide si **cada serie** se asentó; el ruido de la **razón** viene de las condiciones
+> **entre brazos**. Dos series pueden converger cada una a 1,2× y su cociente oscilar 1,4×. Y los datos
+> lo enseñan: **los dos rojos son justo aquellos en que un brazo converge al borde** —1,232× y 1,249×
+> contra el límite de 1,250×—, mientras los dos verdes tienen convergencias equilibradas.
+>
+> **La clase, nombrada:** `CA-08` dice «**al menos** el factor que vigila» y eligió el valor **más flojo**
+> compatible con ese argumento **sin medir si alcanzaba**. Es *un criterio derivado sin comprobar su
+> factibilidad* — la misma clase que el techo de 400 líneas de `REQ-014 CA-18` y que el techo de 4× de
+> `REQ-021 CA-08 (iii)` re-derivado a 6×.
 >
 > **Por qué va DELANTE de `REQ-019` y no detrás:** mientras el techo viva dentro del ruido, **el verde de
 > esa puerta no acredita nada más que el rojo**. Toda publicación posterior —1.34.0 incluida— se firmaría

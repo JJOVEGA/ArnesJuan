@@ -2,6 +2,58 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-08 · **CORRECCIÓN del diagnóstico de la sonda**: el umbral no está «mal puesto», y lo que falla es peor
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Las entradas anteriores de hoy concluyeron que el defecto de `REQ-017 CA-08 (ii)` era **estructural: que
+el umbral de convergencia y el techo de regresión fueran el mismo número (1,250×)**. **Eso es falso**, y
+se corrige aquí antes de que sea la base del primer trabajo de 1.34.0. Las cifras medidas no cambian; el
+diagnóstico sí. *(No se reescriben las entradas anteriores: la corrección va fechada, que es la regla de
+este proyecto.)*
+
+**Son el mismo número a propósito, y `CA-08` lo argumenta por escrito:** *«no es un número nuevo: es el
+mismo, porque **un instrumento tiene que resolver al menos el factor que vigila**»*. **El caso hace
+exactamente lo que su criterio prescribe**, y su hermano también — no está mal configurado: excedió el
+umbral y se abstuvo, que es lo previsto.
+
+**Lo que las cuatro corridas muestran es peor.** `CA-08` **ya había pagado esta lección**: documenta que
+en aislamiento la razón recorre **0,821–1,010**, que bajo `JOBS=6` sube de forma sistemática por
+contención que el propio banco fabrica, y prescribe **intercalar las series** «a, b, a, b» para
+cancelarla «por construcción», más la comprobación de convergencia. **Todo eso está implementado. Y no
+basta:** la razón recorre **0,973–1,364**.
+
+**Dónde está el hueco.** La convergencia compara el **segundo mínimo de cada árbol con su propio
+mínimo** — mide si **cada serie** se asentó. Pero el ruido de la **razón** no procede de la dispersión
+interna de cada brazo, sino de las condiciones **entre brazos**: dos series pueden converger cada una a
+1,2× y su cociente oscilar 1,4×. La comprobación responde *«¿se asentó cada serie?»* cuando el criterio
+necesita *«¿puede este cociente distinguir 1,25×?»*.
+
+**Y los datos lo enseñan, que es lo que convierte esto en medición y no en teoría:**
+
+| Convergencia (2.º mín / mín) | Razón | Veredicto |
+|---|---:|---|
+| 1,012× / 1,142× | 1,131× | PASS |
+| 1,185× / 1,138× | 0,973× | PASS |
+| 1,025× / **1,232×** | 1,337× | **FAIL** |
+| 1,002× / **1,249×** | 1,364× | **FAIL** |
+
+**Los dos rojos son justo aquellos en que un brazo converge al borde** —1,232× y 1,249× contra el límite
+de 1,250×— mientras el otro converge holgado; los dos verdes tienen convergencias equilibradas. A 1,249×
+el instrumento resuelve **exactamente** 1,25 y ni un poco mejor, y sobre esa resolución afirma un 1,364×.
+
+**La clase, nombrada:** `CA-08` dice «**al menos** el factor que vigila» y eligió el valor **más flojo**
+compatible con ese argumento **sin medir si alcanzaba**. Es **un criterio derivado sin comprobar su
+factibilidad** — la misma clase que el techo de 400 líneas de `REQ-014 CA-18` y que el techo de 4× de
+`REQ-021 CA-08 (iii)` re-derivado a 6×, las dos corregidas en esta misma ventana. El argumento era
+correcto; **el valor no se comprobó**.
+
+**Consecuencia para la decisión del propietario: NO cambia, la refuerza.** Si el defecto hubiera sido un
+umbral mal puesto, sería una línea. Siendo que **el remedio prescrito ya está construido y es
+insuficiente**, hace falta **medir** cuál de las tres formas conformes alcanza —convergencia
+estrictamente más apretada, una cota sobre la dispersión de la **razón**, o sacar (ii) de la puerta
+requerida dejándolo como acreditación fechada, la vía que `CA-05` ya usa—. Las tres quedan escritas en
+`docs/PENDIENTES.md` con la nota de que **la 2 es la única que ataca la magnitud correcta**.
+
 ## [Interno] — 2026-09-08 · La puerta requerida está roja, y su rojo NO es evidencia: medido sobre código idéntico
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 
