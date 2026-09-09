@@ -144,6 +144,44 @@ enumeración independiente— y **la tabla por sección NO lo sustituye**: agreg
 invariante se pierde por **bloque**. Las dos enumeraciones de F1 (106 y 164) **no sobreviven en
 disco**, así que ese inventario hay que rehacerlo antes de F2, con firma o sin ella.
 
+### [2026-09-09] (auditor `R-022` · enrutado por la coordinadora) — `SEC-073`: `REQ-026` lleva CUATRO criterios contratados y sin implementar. ¿Cuál de las tres salidas?
+
+**Contexto: el agujero que pediste comprobar existía, y ya está tapado por máquina.** La puerta lee el
+**valor** `aprobado`; el alcance parcial vivía en el paréntesis, que `AGENTS.md` §13 define como
+**matiz** —«un veredicto distinto es otro valor, no un paréntesis»—, y `Hallazgos abiertos:` **no
+nombraba** los cuatro criterios. Con `SEC-067` en camino de cerrar y la cola vacía, nada legible por la
+máquina habría impedido marcar `REQ-026` como `completado` con cuatro criterios sin implementar. Es
+literalmente la **anti-deriva** que §13 declara que la máquina no puede verificar sola.
+
+El auditor eligió la vía **(a)**: `SEC-073`, clase **`contrato`**, en `Hallazgos abiertos:`. **Ahora
+bloquea por máquina y no por memoria.** Ninguna evidencia se retiró: lo acreditado por QA y por la
+auditoría sigue en pie; lo que faltaba era que el alcance parcial fuera **visible para la puerta**.
+
+**Los cuatro criterios sin implementar, y qué es cada uno:**
+- **`CA-13`** — declarar `rotacion.artefactos` en el manifiesto. **Es encender la rotación**, y no lo
+  autorizaste: le falta trabajo, no permiso.
+- **`CA-14`** — la magnitud contratada es la **lectura real**, no el tamaño de la sección.
+- **`CA-16`** — que ninguna decisión vigente quede sólo en el archivo.
+- **`CA-17`** — qué REQ son candidatos, por sus dos condiciones y su break-even.
+
+**Las tres salidas, y sólo una es mía.**
+- **A — Implementarlos en esta ventana.** Son cuatro criterios; `CA-13` además necesita `SEC-072`
+  cerrado antes (el auditor lo condiciona), y `CA-17` lleva un cálculo de break-even con cuatro costes.
+  **Amplía el trabajo 3** de «el mecanismo» a «el mecanismo encendido y calibrado».
+- **B — Reducir el alcance de `REQ-026` a lo entregado** (`CA-01`–`CA-12`, `CA-15`, `CA-18`) y llevar
+  `CA-13`/`CA-14`/`CA-16`/`CA-17` a un REQ propio de 1.35.0. El mecanismo queda **probado y apagado**,
+  que es exactamente su estado hoy. **Decisión de alcance: tuya.**
+- **C — Cerrar con los cuatro declarados como residual**, con dueño, forzador medido y vencimiento.
+
+**Recomendación de la coordinadora: B.** Motivo concreto, no de calendario: el mecanismo entregado
+**está validado y no está encendido**, así que cerrar el REQ por lo entregado no deja nada a medias en
+runtime; y `CA-13` —encenderlo— tiene por delante `SEC-072`, la publicación a medias, el poder
+estadístico del 27–49 % de `(iv)` y la dimensión de `REQ-022` que el analista mandó a su sede. Meter
+todo eso en esta ventana es el patrón que `docs/PLAN.md` culpa del descontrol del ciclo 3.
+
+**Espera.** Tu elección entre A, B y C. **Nada más de la ventana depende de esto**: `REQ-023` y
+`REQ-024` siguen su curso, y `REQ-019` espera su propia firma.
+
 ## Resueltas
 
 ### RESUELTA (propietario, 2026-09-09) — `REQ-027` entra en 1.34.0 como **quinto trabajo**, detrás de `REQ-019`

@@ -6304,3 +6304,257 @@ repositorio sigue sin manejar usuarios finales ni datos personales. Lo que sí c
 en §1— es **qué** puede escribir el arnés: el hook de parada pasa a poder reescribir documentos de
 `requirements/`, que son el contrato. Es gobernanza de **integridad**, no de datos personales, y su
 control es `SEC-067`.
+
+---
+
+## Revisión R-022 — **REQ-026, vuelta 2**: el testigo de vigencia de `CA-18`, **después** de QA, ventana 1.34.0 (`rel/registro-1.33.0` @ `4f51293`, rango `464e0ba..4f51293`) — 2026-09-09
+
+**Veredicto: `con-hallazgos`.** El código está bien y lo acredito. Lo que bloquea ya **no es
+código**: son dos defectos de **contrato** —una promesa escrita en absoluto y un alcance parcial que
+la máquina lee como completo—, y los dos se arreglan con write-back del analista.
+
+### 1. `SEC-067` — el testigo **cierra la clase en todo lo que el shell puede observar**, y pasa a `en-mitigación`, no a `mitigado`
+
+**Qué acredito del mecanismo** (`hooks/rotar-artefactos.sh:6b`, `:630-693`), leído línea a línea:
+
+- **Relectura y comparación byte a byte de los DOS archivos** —documento y archivo de historia—
+  en el último instante antes de la primera publicación. La comprobación del destino no es adorno:
+  `tmp_dest` se armó sobre lo que el destino decía al leerlo, y publicar encima de una lectura
+  caducada **de él** borra un bloque ya archivado.
+- **La duda decide hacia no rotar** (`CA-18 (ii)`): si `arnes_lee_archivo` no puede leer para
+  comprobar, no se publica y se avisa. Verificado en las **cuatro** salidas de la rama.
+- **La reconstrucción del testigo es exacta y no está normalizada de más.** `texto_ini="$texto"` +
+  `fin_nl` repone el único salto que la normalización quita, y la comparación **no** es
+  «normalizado contra normalizado» — eso habría hecho comparar iguales dos documentos que difieren
+  en el salto final, y devolver ese byte al estado viejo **también es una actualización perdida**.
+  Este detalle es el que separa un guardián de un guardián que aprueba lo que debía rechazar.
+- **Los temporales se retiran en todas las salidas nuevas** (`rm -f "$tmp_dest" "$tmp_orig"`),
+  incluidas las que antes sólo borraban uno.
+- **No hay cerrojos, y sostengo el argumento.** `(i)` incluye «*una persona*», y un cerrojo sólo
+  obliga a quien lo toma: habría dado garantía sobre las rotaciones y **ninguna** sobre el caso que
+  medí. Y un cerrojo huérfano deja un documento que **no vuelve a rotar nunca**, con la decisión de
+  «cuándo está rancio» que es adivinar. La relectura no obliga a nadie, no espera a nadie
+  (`(v)(b)`) y su coste es leer un archivo que se va a reescribir. **Decisión correcta.**
+- **La invariante falsa de `:34-36` está corregida y nombra su medición.** Era deriva y ya no lo es.
+- **Canal propio** (`hooks/estado-derivado.sh`, quinta rama) con texto que distingue «no roté» de
+  «roté y me comí tu cambio», que es exactamente la confusión con la que se midió `SEC-067`.
+
+**El residuo, y mi lectura de él.** La comprobación va en el último instante, así que queda la
+**ventana de publicar** —`mv` del destino, concatenación, `printf`, `mv` del origen—: de
+microsegundos a pocos milisegundos, frente a los 355–361 ms que medí. **Es la misma clase, no otra.**
+Y **no se puede cerrar aquí**: POSIX no ofrece un «renombra-si-no-ha-cambiado» atómico, y las dos
+alternativas que lo cerrarían —un cerrojo obligatorio para todo escritor, o sacar la rotación del
+hook de parada— cuestan más de lo que valen o no dan la propiedad. Reducir la ventana **cuatro o
+cinco órdenes de magnitud** no es cerrar la clase; es lo máximo que este mecanismo puede dar, y me
+vale.
+
+**Y una segunda frontera que encontré yo, no declarada en ninguna parte** (modelo determinista, no
+carrera): **la publicación a medias**. Si el `mv` del destino sale bien y el paso 7 falla —ENOSPC,
+permisos—, queda «bloque archivado, origen sin recortar», y `printf … > "$tmp_orig" && mv` **no
+tiene rama de error**. La parada siguiente vuelve a archivar las mismas filas y el testigo **no
+puede verlo**: sus dos lecturas son frescas y coherentes. Medido: destino con **2 bloques y 3 filas
+duplicadas**, `rc = 0`, **sin aviso**. La dirección es la que el archivo declara desde siempre
+(«se prefiere un archivo grande a un archivo perdido») y la acepto; lo que no acepto es que
+`CA-05` prometa «cero duplicadas … sin ninguna repetida» **sin condición**. Va a `SEC-072`.
+
+**Por qué `en-mitigación` y no `mitigado`.** La remediación de **código** está completa y
+acreditada. La de **contrato** no existe todavía, y mi propia regla —`AGENTS.md` §9— dice que un
+hallazgo no se cierra mientras su control viva sólo en el código. Aquí el control vive en el
+código y el criterio que lo describe **es falso**. `SEC-067` **se mantiene en `Hallazgos abiertos:`
+como `usuario/dinero`** y pasa a `mitigado` cuando `SEC-072` esté resuelto — ni un día antes, y me
+lo aplico a mí igual que se lo aplicaría a otro.
+
+*Condición exacta de cierre:* que la tolerancia de la ventana de publicar viva **dentro** de
+`CA-18 (i)` y que la excepción de la publicación a medias esté declarada en `CA-05`. Nada más.
+
+### 2. `SEC-072` — **`contrato` · abierto · severidad media** — dos promesas escritas en absoluto cuya excepción vive fuera del criterio
+
+**Confirmo el defecto que QA levantó y reclasifico su mitad.** `QA-026-10` punto 2 está clasificado
+`instrumento` y **no lo es**: `requirements/README.md` define `contrato` como que el REQ **dice algo
+falso sobre lo construido**, y `CA-18 (i)` dice *«entonces **no publica**: el documento conserva
+**byte a byte** el contenido de esa escritura ajena»* y *«**ninguna** publicación puede derivarse de
+una lectura que ya no describe el disco»* — en absoluto, sin tolerancia. En el residuo de la ventana
+de publicar **una publicación sí puede derivarse de una lectura caducada**. Leído al pie de la letra,
+como QA dice, `(i)` no se cumple. **La clase se deriva del defecto, no de la conveniencia**, y
+etiquetarlo `instrumento` no lo hace dejar de bloquear: bloquea.
+
+**Y una segunda instancia del mismo patrón, medida por mí** (§1): `CA-05` promete «cero filas
+perdidas, cero duplicadas … sin ninguna repetida» sin declarar que la promesa no sobrevive a una
+publicación a medias.
+
+Son el **mismo** defecto de redacción visto dos veces, y es el que `requirements/README.md`
+§«Cómo se escribe un criterio que no se desmiente» nombra: una promesa que **envejece hacia el lado
+que abre**. Aquí es peor que envejecer: nace falsa, y su excepción vive en «Notas / alcance», que es
+justo lo que nadie lee cuando cita un criterio.
+
+**Remediación (write-back, `analista-requerimientos`).** La tolerancia **dentro** de `(i)`, enunciada
+por propiedad y con su magnitud: *no se publica sobre una lectura caducada **salvo** una escritura
+ajena que caiga en la ventana de publicación misma —dos `mv` y un `printf`—, que no se puede cerrar
+en shell porque POSIX no ofrece renombrado condicional atómico*; y la excepción de la publicación a
+medias declarada en `CA-05`. *Vencimiento:* antes de cerrar `REQ-026`. **Bloquea.**
+
+### 3. `SEC-073` — **`contrato` · abierto · severidad alta** — la máquina lee una aprobación PARCIAL como aprobación COMPLETA
+
+Encargo del propietario, y **confirmo el agujero**. `requirements/REQ-026.md:8` declara
+`QA: aprobado (… alcance CA-01..CA-12, CA-15 y CA-18 — CA-13/14/16/17 sin implementar …)`.
+
+- La puerta lee el **valor**, `aprobado`. El alcance vive en el **paréntesis**, que `AGENTS.md` §13
+  define como **matiz**: *«un veredicto distinto es otro valor, no un paréntesis»*.
+- `Hallazgos abiertos:` **no nombra** `CA-13`, `CA-14`, `CA-16` ni `CA-17`. Verificado.
+- Consecuencia: vaciada la cola y cerrado lo demás, **nada legible por la máquina** impediría un
+  `Estado: completado` con **cuatro criterios contratados y sin implementar**. Es exactamente el
+  techo honesto que `AGENTS.md` §13 declara —la máquina no verifica la semántica— y la respuesta
+  del arnés a ese techo es el write-back, que aquí falta.
+
+**Elijo la vía (a) del propietario y digo por qué.** La (b) exige vocabulario nuevo y es doctrina, no
+mía. La (c) es alcance del propietario y **no la invento**. La (a) —un hallazgo `contrato` que
+declara los cuatro criterios— es la única que **no depende de que alguien se acuerde**: queda en el
+campo que la puerta lee y deniega el cierre. Es este hallazgo, y por eso está en
+`Hallazgos abiertos:`.
+
+**Remediación, y son alternativas, no una lista de tareas.** *(1)* implementar los cuatro; *o (2)*
+el propietario reduce formalmente el alcance de `REQ-026` —partiéndolo o moviéndolos a otro REQ—,
+con lo que dejan de estar contratados aquí; *o (3)* `Hallazgos abiertos:` los lleva declarados
+hasta que ocurra (1) o (2), que es el estado en que los dejo hoy. **Ninguna evidencia se retira:**
+lo acreditado por QA y por mí sobre `CA-01..CA-12`, `CA-15` y `CA-18` sigue en pie; lo que faltaba
+era que el alcance parcial fuera **visible para la puerta**. *Dueño:* `analista-requerimientos`
+(el campo) y **propietario** (la decisión de alcance). **Bloquea.**
+
+### 4. `QA-026-10`: las dos mitades **no** tienen la misma clase, y las separo
+
+| Mitad | Clase | Motivo |
+|---|---|---|
+| **`(i)` necesita su tolerancia dentro** | **`contrato`** — reclasificada, vive en `SEC-072` | El criterio, leído al pie de la letra, **no se cumple**. Promesa incumplida ⇒ bloquea |
+| **`(iv)` ya no está «modelado, no medido»** | **`instrumento`**, sostenido | Es **actualización de un hecho**, no promesa incumplida: el criterio declara un **estado de evidencia** y lo declara **peor** de lo que es. El código no falla; el registro va por detrás, y en la dirección conservadora. No bloquea |
+
+Con una nota para el analista, porque hoy el documento **se contradice consigo mismo**: `CA-18 (iv)`
+dice «modelado, no medido» y «Notas / alcance» dice «se midió», con frecuencias. Un REQ que se
+desmiente en dos páginas cuesta lo mismo que uno equivocado la primera vez que alguien lo cita.
+
+### 5. La abstención sobre el coste: **la acredito**, y digo qué deja sin resolver
+
+Auditado el razonamiento, no la medición (no la re-medí).
+
+- **Medir no era opcional y el desarrollador encontró su propia regresión**, en la única línea que
+  **no** era camino de fallo: guardar el testigo al leer copiaba el documento entero **por archivo y
+  por parada**, también donde no se iba a rotar. `140.583` contra `128.742 µs`, **+11.841 µs
+  (+9,2 %)**, **por encima** del techo de `CA-15`. Reconstruirlo en el punto de publicación lo deja
+  en **cero** fuera del camino de rotación. Que un guardián se midiera a sí mismo y se delatara es
+  lo contrario de lo que suele pasar, y lo hago constar.
+- **La abstención es la dirección conservadora, y la aritmética lo sostiene.** El brazo de control
+  —**código viejo, sin cambios**— se movió un **34 %** y midió **por encima de su propio techo**
+  (93.110–141.277 µs). Con el instrumento en ese estado, una comparación absoluta **condenaría
+  también al código que era conforme**, y re-derivar sólo podía **subir** el techo: la única
+  dirección que `CA-15` no admite sin medición válida. Falta la condición **(ii)** del propio
+  criterio —máquina en reposo, una sola comisión viva, sin el banco corriendo—. **No re-derivar era
+  lo correcto.**
+- **Lo que la abstención deja sin resolver, y hay que decirlo:** la conformidad del código de hoy
+  con el techo de `CA-15` **no está establecida**. Los `+3.261` y `+5.659 µs` sugieren que sigue por
+  debajo de 140.000, pero salen del mismo instrumento que se declaró no convergente, así que **no
+  los tomo por medida**. Es `QA-026-11` (`instrumento`), y estoy de acuerdo con esa clase: el techo
+  es cifra **operativa** con dirección **bajar**, y su derivación original tampoco se hizo en el
+  *runner* de la puerta requerida. **No bloquea, y no se da por verificado.**
+
+### 6. Estado de los `SEC-*` que traía de `R-021`
+
+- **`SEC-068`** (`instrumento`) — **sigue abierto, sin remediar.** Barrí `docs/qa/1.34.0.md`: no
+  aparece `hueco2` ni la distinción de las filas delimitadoras **sin barra inicial** o
+  **indentadas**. El argumento de clase sigue nombrando el conjunto de caracteres como portante, y
+  seguiría licenciando retirar la guarda que de verdad cierra la clase. *Dueño:* `qa-tester`.
+- **`SEC-069`** (`instrumento`) — **NO se cierra: `CA-18 (vii)` lo mitiga en parte, y lo medí.** El
+  paso `4b` está **después** de contar entradas y de `[ -n "$viejo" ]`, así que sólo protege el
+  camino que **iba a rotar**. Las otras tres ramas de «no se rota» —**ambigua**, **sin entradas
+  reconocibles** y **no medible**— retornan **antes** de `4b`. Medido con
+  `estado_derivado.activo: false`: la rama **ambigua** y la de **sin entradas** avisan por stderr,
+  **no** se escribe bloque derivado (`0`) y **no** salta el guardián de constancia; con el canal
+  encendido, `1` línea cada una. Es decir: con el canal apagado, **una sección mal formada sigue
+  produciendo un fail-closed invisible**, que es literalmente el daño que `SEC-069` describe.
+  El criterio `(vii)` se cumple **literalmente** —con el canal apagado la rotación nunca rota—; lo
+  que no se cumple es su **motivo**. *Remediación:* o la comprobación de constancia se decide justo
+  después del umbral, **antes** de las tres ramas, de modo que con el canal apagado el artefacto se
+  salte entero con un solo aviso; o `CA-08 (v)` declara que con el canal apagado esas tres ramas no
+  tienen canal duradero. *Dueño:* `analista-requerimientos` y `desarrollador`. **No bloquea**, y
+  **baja de severidad media a baja**: el camino que reescribe contratos ya está cubierto.
+- **`SEC-070`** y **`SEC-071`** (`instrumento`) — **sin cambios**, fuera de ventana, ya en
+  `docs/PENDIENTES.md`. El rango no los toca ni los agrava; `arnes_lee_archivo` gana **cuatro**
+  llamadores nuevos en el rotador, lo que refuerza la familia sin cerrar los dos sitios pendientes.
+- **`SEC-058`** (`instrumento`, alta) — **NO se agrava, y de hecho la parte 4 aplica su propia
+  remediación.** `PISO_AUTONOMO_SECCION=104` viene con la derivación **término a término y con las
+  fronteras** (`19` = 1-19, `57` = 20-76, `28` = 78-105; suma y fronteras cuadran, comprobado por
+  mí), que es exactamente lo que `SEC-058` propuso como remediación barata. Sigue abierto lo que ya
+  estaba: **ninguna máquina verifica el valor** —`autoprueba-corredor.sh:542` sólo comprueba que el
+  piso **exista**, no que sea cierto— y el tercer término sigue siendo un juicio. Y el piso **no
+  compra conformidad** aquí: el archivo tiene **184** líneas contra un techo de 400. Instancia
+  nueva del patrón, sí; agravamiento, no.
+- **`SEC-047`** (`instrumento`, crítica) — **vencimiento vivo y confirmado: el cierre de 1.34.0.**
+  No lo re-barrí y **no audité `REQ-023` ni `REQ-024`** (contratos cerrados, cero código), como se
+  me indicó. Sólo hago constar que sus remediaciones están despachables, lo que no es lo mismo que
+  cumplidas.
+
+### 7. Regresión de seguridad contra la línea base de `R-021` — ningún control retirado ni debilitado
+
+El rango toca `hooks/rotar-artefactos.sh`, `hooks/estado-derivado.sh`, la parte 4 del banco,
+`run.sh`, y `.arnes/config.json` + `templates/arnes-config.json.tpl` **sólo** en la frase de
+`_doc_artefactos` (cierre de `QA-026-04`, autorizado por el propietario). **Ninguna puerta cambia**:
+ni `guard-completado`, ni `guard-codigo`, ni `guard-git`, ni `lib.sh`, ni `hooks.json`, ni
+`.github/`.
+
+- **Se refuerza** el fail-closed: cinco ramas de «no se rota» donde había cuatro, todas con salida 0.
+- **Se refuerza** el uso del lector fiable: el destino pasa de `cat` a `arnes_lee_archivo` —`cat`
+  copiaba «feliz media lectura», y eso era un `SEC-002` latente en el destino que nadie había
+  nombrado, ni yo en `R-021`. **Lo hago constar como mejora que no pedí.**
+- **Se refuerza** la limpieza de temporales en las salidas de error.
+- **Intacto:** la contención léxica y física del destino, el nombre de temporal por proceso en los
+  cuatro puntos de publicación, y el orden `rotación → bloque derivado` en el mismo shell de
+  `stop.sh`, que es la condición para que los cinco contadores lleguen vivos.
+- **Verificado que el acoplamiento nuevo no abre nada:** `ARNES_ROT_CONSTANCIA` se inicializa a
+  `true` **antes** del bucle y sólo baja con un `false` **explícito** en el manifiesto; ausente o
+  `null` = encendido, que es el lado que no cambia la conducta de un proyecto que no declara nada, y
+  el lado que **no** impide rotar. Un manifiesto ilegible sigue retornando sin rotar.
+- **`QA-026-04` cerrado, y verifico la clase que le puse en `R-021`:** la frase corregida está en los
+  **dos** archivos, incluida la plantilla que heredan todos los proyectos, que es lo que hacía
+  `contrato` al hallazgo. **Correctamente cerrado.**
+
+### 8. Repositorio público — sin fuga
+
+Barrido del rango contra los patrones de material de cliente: **cero coincidencias**.
+
+### 9. Rigor
+
+`REQ-026` sigue **`critico`**, que es además su suelo por `Sensible a seguridad: sí`. **No subo ni
+bajo el rigor de nada.**
+
+### 10. Lo que esta revisión NO miró — tabulado como NO MIRADO, nunca como PASA
+
+| No mirado | Por qué |
+|---|---|
+| **El banco** | **No lo ejecuté.** Cito `920 PASS · 0 FAIL · 4 SKIP · rc 0` (total 924) de la coordinadora, verificado dos veces por ella sobre `43bfd47`. **Yo no lo verifiqué**, y el árbol que audito es `4f51293`, dos commits después — ninguno toca `hooks/` ni `tests/`, pero la cifra es de `43bfd47` |
+| **La carrera de `CA-18`, la intermitencia de `(iv)` y el coste** | Excluidos por el encargo. **No los re-medí.** Audité el razonamiento y su registro. Las cifras de 295–312 ms, 2/20 y 3/15, 0/20, y las cuatro del coste son **citadas**, no verificadas por mí |
+| **La conformidad con el techo de `CA-15` del código de hoy** | **Sin establecer**, por abstención acreditada (§5). No es un pase |
+| **El poder estadístico de `(iv)`** (27–49 %, `QA-026-09`) | No re-calculado. Acepto la clase `instrumento` y hago constar que un `0/20` con ese poder **no demuestra ausencia** |
+| **La rotación en ejecución sobre REQ reales** | **No la encendí.** Confirmado antes de empezar: `activo: false`, `artefactos: []`, y `requirements/historial/` **no existe**. Todo lo medido va sobre copias en `/tmp` |
+| **`CA-13`, `CA-14`, `CA-16`, `CA-17`** | Sin implementar. No los audité — y ése es justamente el objeto de `SEC-073` |
+| **`REQ-023` y `REQ-024`** | Excluidos: contratos cerrados, cero código |
+| **`SEC-047` condición 2** | Barrido de cabeceras no ejecutado |
+| **La ventana de publicar** | Su residuo está **razonado y acotado**, no **medido**: no intenté provocar una escritura dentro de ella, y un caso de reloj ahí sería intermitente (`SEC-030`). La frontera de la **publicación a medias** sí la medí, pero por **modelo determinista**, no por carrera |
+
+### 11. Estado de seguridad aprobado por REQ — línea base de no-regresión, actualizada en R-022
+
+| REQ | Veredicto | Fecha | Alcance acreditado | Nota |
+|---|---|---|---|---|
+| **REQ-026** (vuelta 2) | **`con-hallazgos`** | 2026-09-09 | `rel/registro-1.33.0` @ `4f51293`, rango `464e0ba..4f51293` | **Qué acredita:** que el testigo de vigencia de `CA-18` está **bien construido** —relectura y comparación byte a byte de los dos archivos, reconstrucción exacta con `fin_nl`, duda hacia no rotar, limpieza de temporales, canal propio— y que **cierra la clase de la actualización perdida en todo lo que el shell puede observar** (§1); que la elección de **no usar cerrojos** es correcta y la sostengo; que la **abstención** sobre el coste es la dirección conservadora (§5); que ningún control se retiró y **cuatro** se refuerzan, con el acoplamiento nuevo fail-safe hacia «encendido» (§7); que `QA-026-04` está **correctamente cerrado** en los dos archivos; y que no hay fuga (§8). **Qué NO acredita:** el banco, la carrera, la intermitencia, el coste, la conformidad con el techo de `CA-15`, y `CA-13`/`CA-14`/`CA-16`/`CA-17` (§10). **Bloqueantes abiertos:** `SEC-072` y `SEC-073`, los dos `contrato` y **ninguno de código**. **`SEC-067` pasa a `en-mitigación`** con su condición de cierre escrita. **Residuales:** `SEC-068`, `SEC-069` (baja a baja), `SEC-070`, `SEC-071`, y `QA-026-11` |
+| **REQ-026** (vuelta 1) | `con-hallazgos` | 2026-09-09 | `R-021`, `464e0ba` | **No se retira:** cubre el árbol de entonces. Deja de ser la línea base vigente |
+| **REQ-017** (reapertura 1.34.0) | `aprobado` | 2026-09-08 | `R-020` | Sin cambios |
+| **REQ-014** (reapertura 1.33.0) | `aprobado` | 2026-09-08 | `R-019` | Sin cambios |
+
+**Estado de mis hallazgos tras R-022:** `SEC-067` **`en-mitigación`** (código acreditado, falta el
+write-back de `SEC-072`); `SEC-068` **abierto**; `SEC-069` **abierto**, severidad media → **baja**;
+`SEC-070`, `SEC-071` **abiertos**, fuera de ventana; `SEC-072`, `SEC-073` **abiertos** y **bloquean**.
+
+**Numeración vigente tras esta revisión:** última revisión **R-022**; último hallazgo **SEC-073**;
+próximos libres **R-023** y **SEC-074**.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** El rango no altera clasificación de datos,
+acceso, retención ni cumplimiento. Lo que sí mejora es la **integridad** del único activo que este
+repositorio expone a escritura automática —los contratos de `requirements/`—, y su control es el
+testigo de `CA-18`, acreditado aquí.

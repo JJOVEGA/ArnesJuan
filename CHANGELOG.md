@@ -2,6 +2,63 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · Auditoría `R-022` de `REQ-026`: lo que bloquea ya no es código
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad` (Opus) + coordinadora.
+
+`Seguridad: con-hallazgos (R-022)`. **`SEC-067` pasa a `en-mitigación`** —no a `mitigado`— y el
+**código queda acreditado línea a línea**.
+
+**Lo que el auditor acredita, y es lo que separa un guardián de uno que aprueba lo que debía
+rechazar:** la comparación del testigo **no está normalizada de más**. `texto_ini="$texto"` más
+`fin_nl` repone el único salto que la normalización quita, y **no** se compara normalizado contra
+normalizado — eso habría hecho comparar iguales dos documentos que difieren en el salto final, y
+**devolver ese byte al estado viejo también es una actualización perdida**.
+
+**Segunda frontera, encontrada por el auditor y NO declarada por nadie: la publicación a medias.** Si
+el `mv` del destino sale bien y el paso 7 falla, queda «bloque archivado, origen sin recortar» —y
+`printf … > "$tmp_orig" && mv` **no tiene rama de error**—. La parada siguiente **vuelve a archivar** y
+el testigo **no puede verlo**: sus dos lecturas son frescas y coherentes. Medido por modelo
+determinista: **2 bloques, 3 filas duplicadas, `rc=0`, sin aviso**.
+
+**Y se aplicó su propia regla a sí mismo**, que es la frase que resume la revisión: *«un hallazgo no se
+cierra mientras su control viva sólo en el código, y aquí el control vive en el código y el criterio
+que lo describe es falso. Me la aplico igual que se la aplicaría a otro.»* Condición exacta de cierre:
+la tolerancia **dentro** de `CA-18 (i)` y la excepción de la publicación a medias declarada en `CA-05`.
+Nada más.
+
+**`SEC-072` (`contrato`, bloquea) — `QA-026-10` reclasificado, y con las dos mitades SEPARADAS.**
+- Mitad **`(i)` → `contrato`**: el criterio promete «*ninguna publicación puede derivarse de una
+  lectura que ya no describe el disco*», **en absoluto**, y en el residuo **sí puede**. La clase se
+  deriva del defecto, no de la conveniencia. Con la **segunda instancia del mismo patrón**: `CA-05`
+  promete «cero duplicadas» sin declarar la publicación a medias — la promesa que **nace falsa** con su
+  excepción en «Notas / alcance», que es justo lo que nadie lee al citar un criterio.
+- Mitad **`(iv)` → `instrumento`, sostenido**: declara un **estado de evidencia** y lo declara **peor**
+  de lo que es. Y hoy el documento **se contradice consigo mismo** — `(iv)` dice «modelado, no medido»
+  y las notas dicen «se midió».
+
+**`SEC-073` (`contrato`, bloquea) — el alcance parcial deja de ser invisible para la puerta.** La
+puerta lee el valor `aprobado`; el alcance vivía en el paréntesis, que §13 define como matiz, y
+`Hallazgos abiertos:` no nombraba `CA-13`/`CA-14`/`CA-16`/`CA-17`. Vía **(a)** elegida porque es la
+única que **no depende de que alguien se acuerde**. Las otras dos quedan escritas como alternativas y
+**no se inventan**: reducir el alcance es del propietario. Entrada en `PENDING_APPROVAL.md`.
+
+**`SEC-069` NO cierra, y lo midió:** el paso `4b` está **después** de contar entradas, así que sólo
+protege el camino que iba a rotar. Las ramas **ambigua**, **sin entradas** y **no medible** retornan
+antes: con `estado_derivado.activo: false` avisan por stderr y el bloque derivado sale **0**. `(vii)` se
+cumple **literalmente**; su **motivo**, no. Baja de severidad media a **baja** y no bloquea.
+
+**`SEC-058` no se agrava**, y la parte 4 aplica su propia remediación: piso derivado término a término
+**y con fronteras** (19+57+28 = 104). Sigue abierto que **ninguna máquina verifica el valor**.
+
+**La abstención sobre el coste queda acreditada también por el auditor**, con lo que él subraya y
+merece quedar escrito: **un guardián se midió a sí mismo y se delató** —+11.841 µs, +9,2 %, por encima
+de su propio techo— en la única línea que no era camino de fallo. Y lo que la abstención **deja sin
+resolver**: la conformidad del código de hoy con el techo de `CA-15` **no está establecida**.
+
+**Mejora que el auditor hace constar sin habérsela pedido nadie:** el destino pasó de `cat` a
+`arnes_lee_archivo`. `cat` copiaba media lectura — era un `SEC-002` **latente en el destino** que él
+mismo **no había nombrado en `R-021`**.
+
 ## [GitHub] — 2026-09-09 · `REQ-024` despachable y `REQ-026` con `QA: aprobado` en la vuelta 2
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus), `qa-tester` (Opus), coordinadora.
 
