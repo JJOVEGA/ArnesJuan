@@ -2,6 +2,80 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · `REQ-024` despachable y `REQ-026` con `QA: aprobado` en la vuelta 2
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus), `qa-tester` (Opus), coordinadora.
+
+### `REQ-024` — `borrador` → `pendiente`, contrato cerrado
+
+**La SEXTA instancia de «criterio derivado sin comprobar su factibilidad», y era insatisfacible por
+diseño:** `CA-01` abortaba con SKIP *«si la extracción devuelve menos claves que la plantilla»*. El
+lector reconoce **6** y la plantilla escribe **10**, así que la condición era cierta **hoy y siempre**:
+**el caso no podía dar PASS nunca.** Corregido.
+
+**Evitó que la implementación pisara dos ADR ajenos.** Este REQ declaraba `ADR-006` y `ADR-007` como
+suyos en `Archivos:` y en **seis** criterios, y los dos son de `REQ-014` y existen en disco. Ahora los
+ADR se identifican por su **papel** y toman el primer número libre al crearse. Y **no reservó
+`ADR-008`** a propósito: `REQ-019` (F4) y `REQ-026` lo declaran también candidato, y reservar es la
+forma **(b)** — la causa raíz sigue siendo que **el número de ADR no tiene asignador**.
+
+**Colisión entre sus propios criterios, encontrada y resuelta:** la salida barata para `CA-07 (iv)`
+cumpliría `CA-11 (i)` pero **viola `CA-10`**, porque su grano es de rango. Los tres se cumplen sólo por
+una tercera vía, ahora escrita.
+
+**El conflicto `CA-01` ↔ `REQ-023 CA-11` resuelto SIN el ADR**, vía `CA-05`, de modo que `REQ-023`
+**no** necesita write-back ni volver a `en-progreso`. El conflicto no se borra: se **traslada** a
+1.35.0 con dueño y forzador. Y **`SEC-050` NO reabre `REQ-016`** — revisión hecha con su resultado
+escrito; mover el hallazgo en el registro es del auditor.
+
+**No creó el ADR, a propósito:** sus decisiones no son del analista —la vía de activación es del
+`desarrollador` con gate del propietario, y cruzar el grano cambia un contrato terminal—, y escribirlas
+habría sido inventar alcance.
+
+### `REQ-026` — `QA: aprobado` en la vuelta 2, y `QA-026-04` CERRADO
+
+Alcance del veredicto: `CA-01`–`CA-12`, `CA-15` y **`CA-18`**. `SEC-067` sigue abierto y **bloquea
+correctamente**: lo cierra el auditor.
+
+**QA detectó un fallo de SU PROPIA sonda antes de publicar cifras.** Sus dos primeras mediciones
+apuntaban a `$REPO/hooks` con `$REPO` **vacío**, así que invocaban `/hooks/stop.sh`, **el hook no
+corría**, y el «no rota, no avisa» que obtuvo era **artefacto de la sonda**. Lo cazó volcando el stderr
+crudo y rehizo todo con ruta absoluta y un guardián `[ -f "$H/stop.sh" ]`. Los brazos contra el código
+viejo siempre fueron válidos, y por eso ahí sí salía el defecto.
+
+- **`(vi)`, par discriminante:** reproducción propia con 1.200 filas y escritor ajeno a 150 ms —
+  `1fe975f` **3/3** devuelve `Seguridad: aprobado` a `pendiente` **en silencio**; HEAD **3/3** lo
+  conserva, no rota y avisa por los dos canales. El control **no es vacuo**: exige cuenta exacta de
+  filas en los dos archivos.
+- **`(iv)` con su número, y es lo honesto:** la intermitencia medida es **2/20 y 3/15** (10–20 %), luego
+  tres rondas detectan una regresión con **27–49 %** de probabilidad — *«es una moneda al aire, y lo
+  digo con número»*. Aceptado porque el fail-before está medido **fuera** del banco con su frecuencia,
+  `SEC-030` prohíbe casos intermitentes aquí, y `(iv)` comparte testigo con `(vi)` y `(ii)`, que sí son
+  deterministas.
+- **`(c)` el residuo de la ventana de publicar:** leído al pie de la letra, `(i)` **no se cumple** en
+  ese subintervalo. No es hallazgo —la ventana baja de 295–312 ms a dos `mv` y un `printf`, es
+  irreducible en shell— pero **`(i)` está redactado en absoluto y su excepción vive en otra sección**:
+  la tolerancia va **dentro** de `(i)`.
+- **La abstención sobre el coste queda ACREDITADA**, con el argumento que la sostiene: la evidencia que
+  la invalida es **interna a la medición** —el brazo de control, código viejo sin cambios, se movió un
+  **34 %**— y **la afirmación que importa no necesita reloj**: «cero fuera del camino de rotación» es
+  propiedad de camino y se verifica leyendo. No re-derivar el techo era lo conservador, porque sólo
+  podía **subirlo**, la única dirección que `CA-15` no admite sin medición válida.
+
+**`QA-026-04` cerrado** con evidencia: 1 línea por archivo, `rotacion.activo` en `false`, `artefactos`
+en `[]`, `_doc_artefactos` **byte a byte idéntico** en los dos archivos (mismo hash), y la plantilla con
+marcadores sustituidos es JSON válido.
+
+**Cuatro `instrumento` nuevos, ninguno bloqueante:** falta un gate de §7 sobre
+`templates/arnes-config.json.tpl`, que es **lo que heredan todos los proyectos** (`QA-026-08`); el poder
+de `(iv)` más una rama sin caso (`QA-026-09`); dos write-backs para el analista (`QA-026-10`); y el techo
+de `CA-15` sin verificar contra el código de hoy (`QA-026-11`).
+
+### Índice sincronizado con el número MEDIDO
+
+Los dos analistas discreparon —uno dijo ocho rutas compartidas, el otro diez— así que se midió con
+`tools/arnes-paralelo.sh`: son **diez**. `requirements/README.md` queda con las dos celdas de `REQ-024`
+al día y la cifra atribuida a su medición.
+
 ## [GitHub] — 2026-09-09 · `REQ-023` despachable: `SEC-052` retirado y cinco defectos en sus propios criterios
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus) + coordinadora.
 
