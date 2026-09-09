@@ -2,6 +2,46 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · Alcance y orden de 1.34.0: dos correcciones que la medición impuso, y un techo desmentido
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+**Primera corrección: son CUATRO trabajos, no tres.** La recomendación de recortar 1.34.0 a tres olvidó
+un **plazo con dueño**: `SEC-047` es de severidad **crítica** y su vencimiento —el cierre de 1.34.0— está
+escrito en `docs/seguridad/registro-seguridad.md:3684`, **por el auditor y en su sede**. Cerrar sin
+`REQ-023` + `REQ-024` sube `SEC-047` y `SEC-051` a **`contrato`**. La diferencia con `SEC-052` —el
+forzador que resultó ser «un argumento con la firma de otro»— es exactamente esa sede: aquél vivía sólo
+en el REQ cuyo aplazamiento castigaba. **Un forzador en su sede no se negocia midiendo coste.**
+
+**Segunda corrección: el orden.** El propietario prioriza bajar el coste. La sonda estaba primera porque
+bloquea *publicar* — pero bloquea **al final**, y las palancas de tokens abaratan **todo lo de en medio**.
+Es la regla del encabezado de `docs/PLAN.md` («lo que compone va primero») aplicada bien.
+
+**El impuesto de arranque, medido y mayor de lo que se venía citando.** `AGENTS.md` 33.827 B +
+`requirements/README.md` 40.020 B + `CLAUDE.md` 408 B = **74.255 B ≈ 18.500 tokens en CADA comisión**. Se
+citaba ~9 k, que era sólo `AGENTS.md`. **El 72 % vive en seis secciones** ya identificadas por tamaño; la
+mayor es «Cómo se escribe un criterio que no se desmiente» (12.609 B) y la quinta es el `## Índice`
+(7.025 B), que es **una copia**.
+
+### Y el hallazgo que para la ventana: **el techo de `REQ-019` es INALCANZABLE**
+
+La enumeración F1 lo midió por **dos vías ciegas independientes** y las dos coinciden: el **suelo
+forzado** —lo que no se puede quitar sin perder una invariante— es **≈0,70×** en `AGENTS.md` y **≈0,66×**
+en el README, **≈0,68× total**, contra el **≤0,60×** que `CA-07` contrata. En bytes será **peor** que en
+líneas, porque las dos poblaciones de líneas más largas —la tabla de §13 y el `## Índice`— son suelo al
+**100 %**. Su línea base está además desfasada: declara el README en **433** líneas y tiene **522**.
+
+**Renegociar ese techo es firma del propietario**, así que `REQ-019` **no se despacha** hasta que exista:
+hacerlo sería pagar cuatro comisiones para chocar contra un número imposible. Y antes de repartir nada
+hay que arreglar `D-3`, `D-5` y `D-9` — tres defectos en sus **propios** criterios.
+
+**Consecuencia sobre el ahorro real, sin adornos:** con suelo 0,68×, `REQ-019` recorta como mucho
+**~32 %** del impuesto (**≈5.900 tokens/comisión**), no los ~7.400 que sugería el techo escrito.
+
+**Y la palanca mayor medida no es ninguna versión del plugin: es el ENCARGO.** Seis comisiones del
+2026-09-08/09 con el mismo modelo: **229 k → 154 k → 107 k → 64 k → 46 k → 58 k**. Lo único que cambió
+fue cerrar la lista de lectura. **Un factor 5, gratis y ya aplicado** — ninguna palanca contratada se le
+acerca, y conviene tenerlo escrito antes de invertir cuatro comisiones en recortar un 32 %.
+
 ## [GitHub] — 2026-09-09 · **PUBLICADA `v1.33.0`** — fusionada con cuenta SIN admin, y con su límite declarado
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 

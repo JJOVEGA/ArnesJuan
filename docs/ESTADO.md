@@ -6,12 +6,22 @@
 > edites, se sobrescribe. Lo de fuera de esos marcadores no se toca nunca.
 
 ## Fase actual
-Fase 0 — autoalojamiento. **v1.32.1 publicada.** Ventana **1.33.0 abierta**, gobernada por 1.32.1.
-Rama `cand/1.33.0`, PR **#43** en borrador.
+Fase 0 — autoalojamiento. **v1.33.0 PUBLICADA** el 2026-09-09 (merge `810128a`, tag y Release creados;
+instalación estable actualizada y verificada: 880 PASS · 0 FAIL en el banco completo). Ventana **1.34.0
+abierta**, gobernada por **1.33.0**. PR #43 y #44 fusionados y cerrados.
 
-**Alcance vigente, fijado por el propietario el 2026-09-08 (segunda decisión del mismo día): REQ-017 +
-REQ-021 + la partición de las tres secciones sobre 400 líneas.** `REQ-019`, `REQ-020`, `REQ-023`,
-`REQ-024` y `REQ-025` van a **1.34.0**, y REQ-019 es su primer trabajo.
+**Cómo se publicó, porque es parte del estado y no una anécdota:** la fusión se hizo con la cuenta
+`jvega-habitat`, que **no tiene admin**, teniendo la de propietario autorizada y disponible. Fusionar sin
+privilegios demuestra **por construcción** que la puerta requerida se satisfizo y no se saltó nada.
+**Límite declarado:** la evidencia de rendimiento de 1.33.0 es el `0,125×` acreditado de `REQ-017 CA-05`,
+**no** el verde de `CA-08 (ii)` — ese caso mide **0,973×–1,364× sobre código idéntico** contra un techo de
+1,25×, así que hoy no acredita nada en ninguna dirección.
+
+**Alcance de 1.34.0.** Su **primer trabajo es la sonda de `REQ-017 CA-08`** (enmienda del propietario del
+2026-09-08), **por delante de `REQ-019`**: mientras el techo viva dentro del ruido, ese caso decide cada
+publicación sin poder distinguir. Detrás van `REQ-019`, `REQ-020`, `REQ-023`, `REQ-024` y `REQ-025`.
+*(Recomendación de la coordinadora, pendiente de decisión: 1.34.0 son **tres** trabajos —la sonda,
+adelgazar el arranque y archivar las bitácoras—, no diez. Diez es el patrón que descontroló 1.33.0.)*
 
 **Esta ventana se movió cuatro veces en dos días, y conviene tenerlo escrito.** Nació el 2026-09-07 con
 `REQ-017 + REQ-019 + REQ-021`; el 2026-09-08 entró **REQ-023** —el carácter invisible— y salió
@@ -221,7 +231,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-08 20:25
+## Estado derivado — 2026-09-08 20:48
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -231,8 +241,8 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.33.0` @ `7dc0699` — limpio
-**Arnés:** plugin instalado `1.32.1` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
+**Repositorio:** `rel/registro-1.33.0` @ `5e53f12` — CON CAMBIOS SIN COMITEAR
+**Arnés:** plugin instalado `1.33.0`
 **Aprobaciones pendientes:** 0
 **REQ:** 25 — completado 13 · en-revisión 1 · en-progreso 1 · bloqueado 1 · otros 9
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
