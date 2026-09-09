@@ -2,6 +2,36 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · TRABAJO EN CURSO de `REQ-023`, detenido a media vuelta y **no acreditado**
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus), detenido · medición y consignación: coordinadora.
+
+**Esto NO es una entrega. Se comitea para que el trabajo viaje a otra máquina, no porque esté validado.**
+El `desarrollador` de `REQ-023` (vuelta 1 de 3) fue detenido a petición del propietario **justo antes de
+correr la sección 39** — sus últimas palabras fueron que iba a ejecutarla.
+
+**Qué hay dentro:** 294 inserciones y 111 borrados en `hooks/lib.sh` (+99), `hooks/guard-completado.sh`,
+`tools/arnes-lectura.sh`, `tests/escenarios/hooks/run.sh` y dos secciones del banco (39/1 y 39/2), sobre
+`QA-023-01` (`usuario/dinero`, crítica): el alfabeto se deriva de las seis claves, **dos son
+multi-palabra**, así que **contiene `0x20`**, y la guarda callaba en dos formas —cuando lo insertado
+pertenece al alfabeto y cuando sustituye al blanco interno—, resolviendo el campo como **ausencia**.
+
+**Medido por la coordinadora después de la parada**, que es lo único que hoy se puede afirmar:
+
+- Banco completo: **962 PASS · 0 FAIL · 4 SKIP**, `rc=0`. Los cuatro SKIP son los de siempre, con su
+  motivo declarado; **ninguno nuevo**.
+- Autoprueba del corredor: **105 PASS · 1 FAIL** (antes 106 · 0). El FAIL es **`CA-18`**:
+  `39-caracter-invisible-2-la-clase-y-el-corpus.sh` quedó en **402 líneas contra su techo de 400**. La
+  acción conforme es **partir la sección**, nunca subir el techo; el agente fue detenido antes de hacerlo.
+
+**Lo que un banco verde NO acredita, y hay que decirlo aquí o se lee al revés:** el **fail-before /
+pass-after**. Nadie ha comprobado que el caso nuevo **falle** contra el código anterior, así que el
+verde **no prueba todavía que el caso discrimine** — podría estar pasando por tautología, que es
+exactamente el defecto que la reescritura de `CA-03` existía para cerrar. Eso lo decide QA.
+
+**Al retomar:** partir la sección 39/2 para volver a poner `CA-18` en verde, acreditar el
+fail-before/pass-after, y sólo entonces pasar a QA. `Estado` de `REQ-023` sigue en `en-revisión` y sus
+cinco hallazgos siguen abiertos: **este commit no cierra ninguno**.
+
 ## [GitHub] — 2026-09-09 · `REQ-027` COMPLETADO: la cláusula que impide que un pendiente desaparezca al cerrar
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus) + `qa-tester` (Opus) + `auditor-seguridad` (Opus) + coordinadora.
 

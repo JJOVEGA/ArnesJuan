@@ -5,8 +5,9 @@
 #
 # REQ-023 · SEC-047 (mitad 1). LA PUERTA: `CA-01` (deny por MEDIBILIDAD, citando la línea y
 # el byte en forma imprimible), `CA-02` (el DOMINIO de campos cuya ausencia ABRE, DERIVADO
-# midiendo en cada corrida), `CA-08` (las dos filas medidas + los controles en las dos
-# direcciones) y `CA-11` (la frontera con lo que una regla contratada sí retira).
+# midiendo en cada corrida), `CA-05` (veredicto y motivo invariantes al locale, que llegó de la
+# parte 2 en 1.34.0), `CA-08` (las dos filas medidas + los controles en las dos direcciones) y
+# `CA-11` (la frontera con lo que una regla contratada sí retira).
 #
 # EL DEFECTO, medido por el auditor ejecutando la puerta real (R-012) e IDÉNTICO en `v1.30.3`,
 # `v1.31.0`, `v1.32.0`, `v1.32.1` y `4f647c7`: un carácter que no se ve y que el normalizador
@@ -24,8 +25,8 @@
 # §7):
 #   git archive 4f647c7 hooks | tar -x -C /tmp/her23 --strip-components=1
 #   ARNES_HOOKS_DIR=/tmp/her23 bash tests/escenarios/hooks/run.sh 'secciones/39-*1*.sh'
-CASOS_ESPERADOS_SECCION=20
-PISO_AUTONOMO_SECCION=146  # 28 preámbulo (líneas 1-28) + 8 maquinaria compartida duplicada (mk39/w39/e39 y BOM39/ZWSP39/C3_39, líneas 30-37) + 110 bloque indivisible mayor (CA-02 entero: la derivación del dominio, sus dos guardas de anti-vacuidad y el barrido con el carácter, líneas 96-205) · REQ-014 CA-18
+CASOS_ESPERADOS_SECCION=21
+PISO_AUTONOMO_SECCION=148  # 30 preámbulo (líneas 1-30) + 8 maquinaria compartida duplicada (mk39/w39/e39 y BOM39/ZWSP39/C3_39, líneas 32-39) + 110 bloque indivisible mayor (CA-02 entero: la derivación del dominio, sus dos guardas de anti-vacuidad y el barrido con el carácter, líneas 97-206) · REQ-014 CA-18
 seccion_nueva "Carácter invisible (1/3): la puerta deniega por MEDIBILIDAD (REQ-023 · SEC-047):"
 
 # --- Maquinaria: los tres caracteres y las tres bocas -------------------------------
@@ -354,3 +355,27 @@ check "REQ-023 CA-04 la clave DECORADA sigue gobernando y no dispara la guarda -
 **QA:** pendiente
 Rigor: critico
 ")"
+
+# ---------- CA-05 · EL VEREDICTO Y EL MOTIVO SON INVARIANTES AL LOCALE ----------
+# Vive aquí, con «la puerta», desde 1.34.0: el sorteo estratificado de `CA-03` dejó la parte 2
+# en el techo de `REQ-014 CA-18`. El motivo del criterio está medido dos veces en este arnés:
+# una clasificación que dependa de `LC_CTYPE` DENIEGA en el CI de Linux y PERMITE en
+# Windows/MSYS —donde viven los proyectos consumidores y de donde sale el BOM—, y sería un
+# fallo en abierto POR ENTORNO, invisible en la puerta requerida de `main`. Se compara la
+# salida ENTERA de las dos, en la misma corrida.
+if [ -z "$FILTRO" ] || printf '%s' "REQ-023 CA-05" | grep -qi -- "$FILTRO"; then
+  JSON39="$(w39 REQ-986 "# REQ-986
+Estado: completado
+${BOM39}Sensible a seguridad: sí
+QA: pendiente
+Seguridad: pendiente
+Rigor: ligero
+")"
+  u39="$(LC_ALL=C.UTF-8 corre guard-completado.sh "$JSON39")"
+  c39="$(LC_ALL=C       corre guard-completado.sh "$JSON39")"
+  if [ -n "$u39" ] && [ "$u39" = "$c39" ]; then
+    echo "  PASS  REQ-023 CA-05 el veredicto y el motivo son IDÉNTICOS bajo el locale del entorno y bajo LC_ALL=C"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  REQ-023 CA-05 la salida difiere por locale (C.UTF-8 vacía=$([ -z "$u39" ] && echo si || echo no)): un fail-open POR ENTORNO"; FAIL=$((FAIL+1))
+  fi
+fi

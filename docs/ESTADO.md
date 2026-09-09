@@ -46,10 +46,68 @@ el descontrol del ciclo 3.
 > Rama `rel/registro-1.33.0` @ `67eabfb`, **todo empujado**. Cola de aprobaciones: **`ARNES_COLA=0`**,
 > así que **la cola no bloquea ningún cierre**.
 
+### ⏸⏸ PAUSA — 2026-09-09, a petición del propietario. **Manda sobre todo lo que sigue**
+
+**Hay trabajo SIN VALIDAR en el árbol, y es del mecanismo. Nadie debe confiar en él ni comitearlo
+sin correr el banco.** El `desarrollador` de `REQ-023` (vuelta 1 de 3) fue detenido **justo antes de
+correr la sección 39** — sus últimas palabras fueron que iba a ejecutarla. Ya había escrito:
+
+| Archivo | Delta |
+|---|---:|
+| `hooks/lib.sh` | +99/−… |
+| `hooks/guard-completado.sh` | ±4 |
+| `tools/arnes-lectura.sh` | ±2 |
+| `tests/escenarios/hooks/run.sh` | ±7 |
+| `39-caracter-invisible-1-la-puerta.sh` | ±33 |
+| `39-caracter-invisible-2-la-clase-y-el-corpus.sh` | ±260 |
+
+**Total: 294 inserciones, 111 borrados.** No hay entrada de CHANGELOG y no hay commit.
+
+**MEDIDO por la coordinadora después de la parada** (esto ya no es «sin validar a ciegas»):
+
+| Puerta | Resultado |
+|---|---|
+| Banco completo (`run.sh`) | **962 PASS · 0 FAIL · 4 SKIP**, `rc=0`. Los cuatro SKIP son los de siempre, con su motivo; **ninguno nuevo** |
+| Autoprueba del corredor | **105 PASS · 1 FAIL** (antes 106 · 0) |
+
+**El único FAIL, y es pequeño y conocido:** `CA-18` — `39-caracter-invisible-2-la-clase-y-el-corpus.sh`
+quedó en **402 líneas contra su techo de 400**. El `desarrollador` fue detenido **antes** de partir la
+sección, que es lo que `CA-18` ordena (partir, **no** subir el techo). Es trabajo de minutos.
+
+**Lo que sigue SIN acreditar, y no lo arregla un banco verde:** el **fail-before / pass-after**. Nadie
+ha comprobado que el caso nuevo **falle** contra el código de hoy, así que **un verde no prueba todavía
+que el caso discrimine** — podría estar pasando por tautología. Eso lo decide QA, no esta medición.
+
+El trabajo no se descarta: `git` destructivo está prohibido (`git.prohibidos`).
+
+**Lo cerrado en esta sesión, que sí está firme:** `REQ-027` **`completado`** — ciclo completo en
+orden (analista → QA `aprobado` → auditor `aprobado`, `R-023`), quality gates verdes, cola 0, y sus
+cuatro hallazgos abiertos son `instrumento`. **Sin comitear todavía**, junto con `R-023` en el
+registro y el §S de QA.
+
+**Decisión del propietario pendiente, y no bloquea ningún cierre:** la **clase de `SEC-075`**. QA lo
+encoló como `instrumento`; el `auditor-seguridad` sostiene **`contrato`** (`R-023`), porque
+`arnes-upgrade` no mide nada, **es el canal de entrega**, y falta la entrada «Hacia 1.33.0» siendo
+1.33.0 la versión publicada e instalada que cambió andamiaje heredado. Si es `contrato`, hay que
+resolverlo **antes de publicar `v1.34.0`**. **No se metió en `PENDING_APPROVAL.md` a propósito:** una
+entrada ahí congela el cierre de **cualquier** REQ, y esta decisión sólo muerde al publicar.
+
 ### ⏸ SESIÓN DETENIDA — 2026-09-09, cambio de cuenta. **Retomar exactamente por aquí**
 
 **Cero pérdida.** El `desarrollador` de `REQ-023` (`a347fe27f3ac56805`) se detuvo **antes de escribir un
 byte**: `git status` no mostraba nada en `hooks/`, `tools/` ni `tests/`. **Ninguna comisión viva.**
+
+**▶ RETOMADA el 2026-09-09 tras el cambio de cuenta** (`jvega@habitat.org`, org *Habitat_LAC* →
+`juan.vega@sysvega.cr`, org *Consisa*). Dos hechos medidos al retomar, que cambian el plan de despacho:
+
+- **Ningún subagente sobrevivió al cambio de cuenta.** `ListAgents` sólo ve esta sesión y una sesión
+  par, así que **todos los IDs «reanudables» de la sección de agentes están muertos**: cada comisión
+  se abre nueva. Se pierde el ~4× de ahorro por reanudación; **no se pierde trabajo** — todo lo que
+  las comisiones anteriores produjeron está comiteado.
+- **Los dos frentes de cabeza van EN SERIE, no en paralelo.** `tools/arnes-paralelo.sh REQ-027 REQ-023`
+  responde **`colisiona` en `AGENTS.md`** (rc 1; los dos lo declaran en su campo `Archivos:`, junto a
+  `templates/AGENTS.md.tpl` y `skills/arnes-upgrade/SKILL.md`). Se empezó por **`REQ-027`**, que es lo
+  que manda el orden de abajo.
 
 **Lo primero al retomar, en este orden:**
 
@@ -107,6 +165,21 @@ y sólo lo ve quien despacha. Si esa cifra se pierde, la honesta es tomarla sobr
 número exista **con la desviación escrita**. Y `CA-08` **no define qué cuenta como «un resultado
 entregado»**, así que cualquier razón formada hoy sería **incomparable** con la de otra comisión.
 
+**Serie que continúa esa línea base — `subagent_tokens` medidos por la coordinadora el 2026-09-09,
+todas con lista de lectura cerrada por rangos:**
+
+| Comisión | `subagent_tokens` | Objetivo dado | Herramientas |
+|---|---:|---:|---:|
+| Analista · write-back `QA-027-06`/`-07` | **46 095** | < 60 k | 11 |
+| QA · 3.ª vuelta documental de `REQ-027` | **52 407** | < 50 k | 13 |
+
+**Dos límites que hay que leer con la cifra, o engaña.** (a) La comparación con los **140 349** de la
+1.ª vuelta de QA **no es una medida del bloque**: aquélla midió y reprodujo, éstas contrastan
+documentos, así que la caída mezcla el efecto del bloque con un cambio de trabajo — es justo lo que
+`CA-08` no puede separar mientras no defina «un resultado entregado». (b) **Las dos estimaciones que
+los agentes escribieron en sus informes (≈35–45 k y ≈32 k) quedaron por debajo del número real**:
+sirven de orden de magnitud, no de medición. La medida es la de esta tabla, y sólo la ve quien despacha.
+
 ### Alcance vigente: CUATRO trabajos (`docs/PLAN.md` §«ALCANCE VIGENTE DE 1.34.0»)
 
 `REQ-019` **aplazado a 1.35.0** por el propietario. `REQ-027` **entró como quinto y luego la ventana se
@@ -124,7 +197,11 @@ reordenó a cuatro**: sonda (`REQ-017`), `REQ-026`, `REQ-023`+`REQ-024`, `REQ-02
 | **REQ-019** | `bloqueado` | `SEC-033` (`contrato`). **Aplazado a 1.35.0** |
 | **REQ-021** | `bloqueado` | 3 vueltas agotadas, sin salida decidida |
 
-### Agentes — COMPROBAR antes de despachar. Reanudar cuesta ~4× menos que abrir nuevo
+### Agentes — ⚠ TODOS LOS IDs DE ABAJO ESTÁN MUERTOS desde el cambio de cuenta (2026-09-09)
+
+> Se conservan como **traza de quién midió qué**, no como direcciones: ninguno resuelve ya. La regla
+> «reanudar cuesta ~4× menos que abrir nuevo» sigue siendo cierta y vuelve a aplicar a los agentes
+> que se abran **a partir de ahora**, dentro de esta sesión.
 
 **VIVOS ahora:** `a581adc9758dd701d` (`qa-tester` · `REQ-023`) y `a67b1bb3ed3cd75c8`
 (`desarrollador` · `QA-027-03` + correcciones + vía real de `/arnes-upgrade`).
@@ -635,7 +712,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-09 09:41
+## Estado derivado — 2026-09-09 10:48
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -645,13 +722,13 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `rel/registro-1.33.0` @ `6f1eaa7` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `rel/registro-1.33.0` @ `81d260d` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.0`
 **Aprobaciones pendientes:** 0
-**REQ:** 27 — completado 13 · en-revisión 2 · en-progreso 3 · bloqueado 2 · otros 7
+**REQ:** 27 — completado 14 · en-revisión 2 · en-progreso 2 · bloqueado 2 · otros 7
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
-_Sólo los REQ abiertos; los 13 completados no se listan._
+_Sólo los REQ abiertos; los 14 completados no se listan._
 
 | REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
 |---|---|---|---|---|---|
@@ -668,6 +745,5 @@ _Sólo los REQ abiertos; los 13 completados no se listan._
 | REQ-024 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-025 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-026 | en-revision | aprobado | con-hallazgos | critico | qa-026-03(instrumento),qa-026-07(instrum… |
-| REQ-027 | en-progreso | con-hallazgos | pendiente | critico | qa-027-06(instrumento),qa-027-07(contrat… |
 
 <!-- ARNES:DERIVADO fin -->

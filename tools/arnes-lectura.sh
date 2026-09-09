@@ -164,7 +164,7 @@ for f in "$PROY/$REQ_DIR"/*.md; do
   # UNICA superficie donde una persona puede verlo antes de intentar cerrar (REQ-023 CA-07).
   if [ "${ARNES_OCULTA:-0}" != "0" ]; then
     avisa "${base%.md}" "${ARNES_OCULTA_CLAVE}:" "${ARNES_OCULTA_REPR}:" 'cabecera no medible' \
-      "esa clave lleva DENTRO uno o más bytes ajenos —se muestran como \`\\xNN\`; en el archivo son invisibles—: un BOM (\`\\xef\\xbb\\xbf\`, el que PowerShell añade al redirigir), un espacio de anchura cero (\`\\xe2\\x80\\x8b\`), un byte de control o un multibyte partido. Una persona lee ahí \`${ARNES_OCULTA_CLAVE}:\` y la máquina NO lo lee como ese campo, así que la cabecera no se puede medir y la puerta de cierre DENIEGA. Reescribe esa línea dejando la clave limpia."
+      "esa clave lleva DENTRO uno o más bytes ajenos —se muestran como \`\\xNN\`; en el archivo son invisibles—: un BOM (\`\\xef\\xbb\\xbf\`, el que PowerShell añade al redirigir), un espacio de anchura cero (\`\\xe2\\x80\\x8b\`), un byte de control, un multibyte partido, o un BLANCO de más o puesto en el sitio de otro (\`Sensible a  seguridad\`; los blancos salen en \`\\xNN\` sólo cuando alguno de ellos ES lo insertado). Una persona lee ahí \`${ARNES_OCULTA_CLAVE}:\` y la máquina NO lo lee como ese campo, así que la cabecera no se puede medir y la puerta de cierre DENIEGA. Reescribe esa línea dejando la clave limpia."
   fi
 
   cru_est="${CRU[$ARNES_CLAVE_ESTADO]:-}"; cru_qa="${CRU[$ARNES_CLAVE_QA]:-}"

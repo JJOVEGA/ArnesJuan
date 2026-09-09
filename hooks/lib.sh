@@ -1730,6 +1730,29 @@ _arnes_deriva_alfabeto() {   # ARNES_CLAVES -> ARNES_CLAVES_ALFA
 }
 _arnes_deriva_alfabeto
 
+# EL MAPA «CLAVE SIN BLANCOS -> CLAVE», TAMBIEN DERIVADO DE LA CONSTANTE Y POR EL MISMO
+# MOTIVO. La guarda tiene que reconstruir la clave cuando lo insertado ES un blanco o cuando
+# SUSTITUYO a uno (SEC-047 / QA-023-01, abajo), asi que compara sin blancos; pero el motivo de
+# denegacion y la rama del estado terminal necesitan la clave TAL CUAL se escribe. El mapa
+# guarda las dos, en pares `|sin-blancos|clave|`, y se construye UNA vez al cargar.
+#
+# LA BUSQUEDA ES INAMBIGUA POR CONSTRUCCION, no por casuistica: lo que se busca nunca lleva
+# blancos —se le acaban de quitar—, y toda clave que no lleve blancos es IDENTICA a su forma
+# sin blancos, asi que el primer `|x|` que aparece es siempre el primer campo de un par y el
+# campo siguiente es su clave. `|` ya era el delimitador de `ARNES_CLAVES`: no se supone nada
+# nuevo sobre lo que una clave puede contener.
+ARNES_CLAVES_MAPA=''
+_arnes_deriva_mapa() {   # ARNES_CLAVES -> ARNES_CLAVES_MAPA
+  local resto="$ARNES_CLAVES" k
+  ARNES_CLAVES_MAPA='|'
+  while :; do
+    k="${resto%%|*}"
+    ARNES_CLAVES_MAPA="$ARNES_CLAVES_MAPA${k//[[:blank:]]/}|$k|"
+    case "$resto" in *'|'*) resto="${resto#*|}" ;; *) break ;; esac
+  done
+}
+_arnes_deriva_mapa
+
 # LOS BYTES AJENOS DE UNA CLAVE, EN HEXADECIMAL -> ARNES_REPR.
 #
 # Un motivo de denegacion que lleva dentro el caracter invisible deja a la persona buscando
@@ -1742,11 +1765,23 @@ _arnes_deriva_alfabeto
 # — y un veredicto o un motivo que dependen de `LC_CTYPE` son un fallo en abierto POR
 # ENTORNO, invisible en la puerta requerida de `main` (REQ-023 CA-05). `printf -v` es un
 # builtin: cero procesos. Solo se ejecuta cuando la guarda ya ha disparado.
+# EL BLANCO PERTENECE AL ALFABETO —viene de las claves multi-palabra— asi que por defecto se
+# imprime tal cual, que es lo legible: `\xef\xbb\xbfSensible a seguridad`. Pero cuando lo
+# insertado ES un blanco o SUSTITUYO a uno, imprimirlo tal cual deja el motivo diciendo
+# exactamente la misma palabra que la persona cree haber escrito, y entonces el motivo no
+# diagnostica nada: «Sensible a  seguridad» y «Sensible a seguridad» son la misma linea en
+# cualquier terminal. El segundo argumento decide, y quien lo decide NO es una lista de casos:
+# es si retirar lo AJENO bastaba para reconstruir la clave (ver `_arnes_clave_oculta`). Si
+# bastaba, los blancos estan intactos y no son la insercion; si no bastaba, alguno de ellos
+# forma parte de lo insertado y se escribe en hexadecimal.
 ARNES_REPR=''
-_arnes_repr_clave() {   # <clave> -> ARNES_REPR
-  local LC_ALL=C s="$1" i c out='' n
+_arnes_repr_clave() {   # <clave> <blancos-en-hexadecimal: 0|1> -> ARNES_REPR
+  local LC_ALL=C s="$1" hexblanco="$2" i c out='' n
   for ((i = 0; i < ${#s}; i++)); do
     c="${s:i:1}"
+    if [ "$hexblanco" -eq 1 ]; then
+      case "$c" in [[:blank:]]) printf -v n '%02x' "'$c"; out+="\\x$n"; continue ;; esac
+    fi
     case "$c" in
       [$ARNES_CLAVES_ALFA]) out+="$c" ;;
       *) printf -v n '%02x' "'$c"; out+="\\x$n" ;;
@@ -1777,17 +1812,42 @@ _arnes_repr_clave() {   # <clave> -> ARNES_REPR
 # funcion `[[:blank:]]` y el recorte de blancos siguen decidiendo con el locale del entorno,
 # exactamente como antes de esta version. Cambiarlo alli seria mover una tolerancia que este
 # REQ no toca (CA-04).
+#
+# Y LA RECONSTRUCCION TIENE QUE IGNORAR LOS BLANCOS, porque EL ALFABETO CONTIENE EL BLANCO.
+# Sin eso la guarda falla EN ABIERTO para todo lo que pertenezca al alfabeto, y SEC-047 fila 1
+# y fila 2 seguian abiertas con un caracter distinto: medido en `QA-023-01`. El alfabeto se
+# DERIVA de las seis claves y dos son multi-palabra, asi que `0x20` esta dentro de el —
+# retirar «lo ajeno» no retira un blanco INSERTADO (`Est ado`, `Sensible a  seguridad`) y
+# retira el ajeno que SUSTITUYO a un blanco sin reponerlo (`Sensible a<NBSP>seguridad`,
+# `Hallazgos<TAB>abiertos`)—. En los dos casos lo que quedaba NO era una clave, la guarda
+# CALLABA, y la linea se resolvia como AUSENCIA del campo, que es justo lo que la puerta
+# perdona: un `allow` con otro nombre.
+#
+# La salida son DOS pasos y ninguna enumeracion: (1) se retira lo ajeno al alfabeto, (2) se
+# retiran TODOS los blancos, y se pregunta si lo que queda es una clave SIN SUS BLANCOS.
+# Insercion, sustitucion y duplicacion del blanco caen con la MISMA pregunta. Y no deniega de
+# mas: sigue denegando SOLO cuando la reconstruccion ES una clave del lector, asi que lo que
+# no reconstruye ninguna —`Modulo`, `Version destino`, `Archivos`, una linea de titulo— sigue
+# sin disparar nada (CA-04). Lo que queda FUERA, dicho aqui y no descubierto luego: sustituir
+# una LETRA (`Еstado` con la `Е` cirilica) no reconstruye nada, porque reponer *que* letra
+# exige elegir entre candidatos — reponer un blanco no elige (REQ-023, «Fuera de alcance»).
 _arnes_clave_oculta() {   # <clave normalizada> -> ARNES_CLAVE_OCULTA[_CLAVE|_REPR]
-  local LC_ALL=C limpio
-  case "$1" in
-    *[!$ARNES_CLAVES_ALFA]*) ;;
-    *) return 0 ;;                     # la clave es limpia: nada que preguntar
+  local LC_ALL=C ajeno limpio resto canon
+  # EL ATAJO YA NO PUEDE SER «no contiene nada ajeno»: `Sensible a  seguridad` no contiene
+  # nada ajeno y es exactamente uno de los dos casos que faltaban. Es «ES una clave», que
+  # ademas es mas barato —un `case` sobre una cadena corta contra un barrido de corchete— y
+  # deja fuera, por construccion, toda clave legitima: la que se escribe bien no se toca.
+  arnes_en_vocab "$1" "$ARNES_CLAVES" && return 0
+  ajeno="${1//[!$ARNES_CLAVES_ALFA]/}"      # (1) retirado lo ajeno al alfabeto...
+  limpio="${ajeno//[[:blank:]]/}"           # (2) ...y retirados los blancos
+  case "$ARNES_CLAVES_MAPA" in
+    *"|$limpio|"*) resto="${ARNES_CLAVES_MAPA#*"|$limpio|"}"; canon="${resto%%|*}" ;;
+    *) return 0 ;;                          # no reconstruye ninguna clave: aqui no hay nada
   esac
-  limpio="${1//[!$ARNES_CLAVES_ALFA]/}"
-  arnes_en_vocab "$limpio" "$ARNES_CLAVES" || return 0
   ARNES_CLAVE_OCULTA=1
-  ARNES_CLAVE_OCULTA_CLAVE="$limpio"
-  _arnes_repr_clave "$1"; ARNES_CLAVE_OCULTA_REPR="$ARNES_REPR"
+  ARNES_CLAVE_OCULTA_CLAVE="$canon"
+  if [ "$ajeno" = "$canon" ]; then _arnes_repr_clave "$1" 0; else _arnes_repr_clave "$1" 1; fi
+  ARNES_CLAVE_OCULTA_REPR="$ARNES_REPR"
   return 0
 }
 
@@ -1874,10 +1934,12 @@ arnes_norm_clave() {   # <linea> -> 0 + ARNES_CLAVE/ARNES_VALOR; 1 si la linea n
   #
   # LA PREGUNTA QUE NO ENVEJECE, y no enumera ningun caracter porque enumera lo que YA esta
   # enumerado, que son las CLAVES: retirado de la clave todo lo ajeno al ALFABETO de las
-  # claves que este lector reconoce, ¿lo que queda ES una de esas claves? Si lo es, alguien
-  # inserto algo DENTRO de una clave y la linea no se puede medir. Cubre las tres familias
-  # —bytes de control C0, puntos de codigo de anchura cero o de formato, y secuencias UTF-8
-  # mal formadas— y cualquier entrada que nadie haya nombrado todavia.
+  # claves que este lector reconoce Y TODOS SUS BLANCOS, ¿lo que queda ES una de esas claves
+  # sin sus blancos? Si lo es, alguien inserto algo DENTRO de una clave y la linea no se puede
+  # medir. Cubre las tres familias —bytes de control C0, puntos de codigo de anchura cero o de
+  # formato, y secuencias UTF-8 mal formadas—, cubre el BLANCO insertado, sustituido o
+  # duplicado (que pertenece al alfabeto y por eso se le escapaba: `QA-023-01`), y cubre
+  # cualquier entrada que nadie haya nombrado todavia.
   #
   # LO QUE NO TOCA, y por eso esta salida y no otra:
   #   * NO estrecha ninguna tolerancia, asi que no puede reabrir nada. La clave decorada o
@@ -1894,9 +1956,12 @@ arnes_norm_clave() {   # <linea> -> 0 + ARNES_CLAVE/ARNES_VALOR; 1 si la linea n
   #   * NO cambia NINGUN valor de campo: solo OBSERVA. Asi la transcripcion declarada de
   #     `hooks/campos-req.awk` sigue diciendo lo mismo y el bloque derivado no cambia de
   #     opinion.
-  #   * El ESPACIO pertenece al alfabeto (viene de `Sensible a seguridad`), asi que
-  #     `<!-- Estado` limpia a ` Estado` y NO es una clave: es lo que hace que un comentario
-  #     legitimo no dispare nada, y por eso la publicacion vive en `arnes_campo_linea`.
+  #   * Un comentario legitimo no dispara nada porque la publicacion vive en
+  #     `arnes_campo_linea`, DESPUES de retirar la cita — y no porque `<!-- Estado` limpie a
+  #     ` Estado`, que era lo que sostenia esta linea hasta que la reconstruccion empezo a
+  #     ignorar los blancos. Con el blanco fuera de la comparacion, `<!--Estado` y
+  #     `<!-- Estado` reconstruyen los DOS, asi que la unica cosa que separa un comentario de
+  #     una clave corrompida es el orden: primero la cita, despues la guarda.
   #
   # COSTE: la comparacion contra el alfabeto es la GUARDA, asi que una clave legitima paga
   # UNA expansion de corchete y ni una sustitucion. Cero procesos (REQ-023 CA-09).
