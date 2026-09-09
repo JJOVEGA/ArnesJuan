@@ -24,6 +24,72 @@
 
 ## Pendientes
 
+### La puerta requerida de `main` está ROJA, y su rojo no es evidencia — decisión del propietario (2026-09-08)
+
+**Qué detiene.** La fusión de `cand/1.33.0` a `main` y el tag `v1.33.0`. `REQ-014` está `completado`
+con los tres veredictos fechados hoy y **cero hallazgos `contrato`**; la cola estaba en 0 antes de esta
+entrada. Lo único que queda en rojo es el check requerido y estricto `hooks-en-linux`.
+
+**El caso que falla.** `REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el
+de v1.32.1`. Su salida dice literalmente *«esto es una regresión, no ruido»*.
+
+**Y está medido que no lo es.** Cuatro corridas de CI **sobre código idéntico** —ningún commit desde
+`b9afa01` toca `hooks/`, `tools/` ni `.github/`, verificado de forma independiente por el
+`auditor-seguridad` en `R-019`:
+
+| Corrida | Razón publicada | Convergencia | Veredicto |
+|---|---:|---|---|
+| 23:39 (`921dc74`) | **1,131×** | 1,012× / 1,142× | PASS |
+| 23:53 (`516e849`) | **0,973×** | 1,185× / 1,138× | PASS |
+| 00:00 (`d4e0033`) | **1,337×** | 1,025× / 1,232× | FAIL |
+| 00:24 (`eff143b`) | **1,364×** | 1,002× / 1,249× | FAIL |
+
+**El argumento que cierra la discusión: `0,973×` significa que este árbol salió MÁS RÁPIDO que
+`v1.32.1`.** Una regresión real no puede ser más rápida. La dispersión de la sonda va de 0,97 a 1,36
+—factor **1,40**— y el techo que vigila es **1,25**: **el techo vive dentro del ruido del instrumento**,
+así que el caso no puede distinguir la regresión que dice medir de su propia varianza.
+
+**El defecto es estructural, no de calibración.** El umbral de convergencia y el techo de regresión son
+**el mismo número (1,250×)**. Por eso la comprobación de convergencia declaró «convergido» en las cuatro
+corridas —1,138, 1,142, 1,232 y 1,249, todas bajo 1,250— **incluidas las dos que fallaron**. Una
+comprobación cuyo umbral iguala al del criterio que protege no filtra nada. El caso hermano
+(`un REQ real de 6 líneas`) **sí** hace lo correcto: no converge y **SKIP con motivo**. El mecanismo
+existe; el umbral está mal puesto.
+
+**Clase: `instrumento`** —es un defecto de una prueba del propio arnés, no del producto—, pero **bloquea
+igual**, porque el ruleset `proteger-main` hace ese check **requerido y estricto**. Es el primer caso de
+la ventana en que un `instrumento` detiene una publicación, y por eso no va a `docs/PENDIENTES.md` bajo
+la regla de acumulación: la regla dice que un `instrumento` no impide **cerrar un REQ**, y aquí no está
+impidiendo eso.
+
+### Las opciones, con su coste, y la que NO se hace
+
+**A) Arreglar la sonda.** Que la convergencia se exija **estrictamente más apretada** que el techo que
+protege, o que el caso haga **SKIP con motivo** cuando su propia dispersión supere ese techo — que es
+exactamente lo que ya hace su caso hermano. Es cambio en `tests/`, o sea `critico` por `AGENTS.md` §6:
+ciclo completo analista → desarrollador → QA → auditor. **Estimado: 4 comisiones, ~1–2 h.**
+
+**B) Publicar con el rojo, con autorización expresa y fechada del propietario.** El check es *requerido y
+estricto*, así que sólo `JJOVEGA` —dueño de los rulesets— puede saltarlo; `jvega-habitat` no tiene admin.
+Queda escrito que se publicó con la puerta en rojo y por qué.
+
+**C) Aplazar 1.33.0.** La rama queda empujada y verificada; el tag espera a que la sonda se arregle en
+1.34.0, detrás de `REQ-019`.
+
+**D) Lo que NO se hace, y se nombra para que no aparezca como atajo:** volver a lanzar el CI hasta que
+salga verde y fusionar en esa corrida. Con una sonda cuya dispersión cubre el techo, eso no es esperar a
+que pase: es **elegir la corrida que da la respuesta que se quiere**. Tampoco `continue-on-error` ni
+sacar el caso del CI — pondría la puerta en verde **apagando la señal**, que es el modo de fallo que
+`AGENTS.md` §13 nombra y que `REQ-014 CA-18 (ii)` prohíbe por escrito.
+
+**Recomendación de la coordinadora: (C), y (A) en 1.34.0 delante de `REQ-019`.** Motivo: el rojo no
+acredita ningún defecto del producto, pero **el verde tampoco acreditaría nada** mientras el techo viva
+dentro del ruido — así que publicar hoy no compra confianza, compra una firma vacía. Y (A) hecho antes de
+que la sonda vuelva a decidir una publicación evita repetir esta conversación en 1.34.0.
+
+**Estado del repositorio al escribir esto:** rama `cand/1.33.0` @ `eff143b`, empujada, árbol limpio.
+PR **#43** en `DRAFT`. `REQ-014` `completado`. Bloqueantes `contrato` en el repositorio: **12**, en
+`REQ-013` (2), `REQ-019` (1), `REQ-020` (8) y `REQ-023` (1) — ninguno en `REQ-014`.
 
 ## Resueltas
 

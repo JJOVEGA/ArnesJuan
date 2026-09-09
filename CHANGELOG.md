@@ -2,6 +2,43 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-08 · La puerta requerida está roja, y su rojo NO es evidencia: medido sobre código idéntico
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Entrada en `PENDING_APPROVAL.md`; el pipeline se detiene. `REQ-014` quedó `completado` con los tres
+veredictos fechados y **cero hallazgos `contrato`**, así que lo único que separa a 1.33.0 del tag es el
+check requerido y estricto `hooks-en-linux`.
+
+**Falla `REQ-017 CA-08 (ii)`, y su salida afirma «esto es una regresión, no ruido».** Cuatro corridas
+sobre **código idéntico** —ningún commit desde `b9afa01` toca `hooks/`, `tools/` ni `.github/`, verificado
+por el `auditor-seguridad` en `R-019`— dicen lo contrario:
+
+| Corrida | Razón | Convergencia | Veredicto |
+|---|---:|---|---|
+| 23:39 `921dc74` | **1,131×** | 1,012× / 1,142× | PASS |
+| 23:53 `516e849` | **0,973×** | 1,185× / 1,138× | PASS |
+| 00:00 `d4e0033` | **1,337×** | 1,025× / 1,232× | FAIL |
+| 00:24 `eff143b` | **1,364×** | 1,002× / 1,249× | FAIL |
+
+**`0,973×` significa que este árbol salió MÁS RÁPIDO que `v1.32.1`, y una regresión real no puede ser más
+rápida.** La dispersión va de 0,97 a 1,36 —factor **1,40**— y el techo que vigila es **1,25**: el techo
+vive **dentro** del ruido, así que el caso no distingue la regresión que dice medir de su propia varianza.
+
+**El defecto es estructural: el umbral de convergencia y el techo de regresión son el mismo número
+(1,250×).** Por eso la convergencia declaró «convergido» en las cuatro corridas —1,138, 1,142, 1,232 y
+1,249, todas bajo 1,250— **incluidas las dos que fallaron**. Una comprobación cuyo umbral iguala al del
+criterio que protege no filtra nada. Su caso hermano (`un REQ real de 6 líneas`) **sí** hace lo correcto:
+no converge y **SKIP con motivo**. El mecanismo existe; el umbral está mal puesto.
+
+Clase **`instrumento`**, y aun así **bloquea**: el ruleset hace ese check requerido y estricto. Es el
+primer caso de la ventana en que un `instrumento` detiene una **publicación** — no un cierre de REQ, que
+es lo que la regla de acumulación del propietario cubre.
+
+**Y queda nombrado el atajo que NO se toma:** relanzar el CI hasta que salga verde. Con una sonda cuya
+dispersión cubre el techo, eso no es esperar a que pase — es **elegir la corrida que da la respuesta que
+se quiere**. Tampoco `continue-on-error` ni sacar el caso del CI: pondría la puerta en verde **apagando
+la señal**, el modo de fallo que `AGENTS.md` §13 nombra y que `REQ-014 CA-18 (ii)` prohíbe por escrito.
+
 ## [GitHub] — 2026-09-08 · **`REQ-014` COMPLETADO**, y las cifras que la partición desfasó, corregidas antes de cerrar
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus) + coordinadora.
 
