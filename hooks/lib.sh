@@ -1678,17 +1678,166 @@ arnes_sin_cita() {   # <linea> -> ARNES_LINEA ; usa y actualiza ARNES_CITA / ARN
   ARNES_LINEA="$out$l"
 }
 
+# --- LAS CLAVES DE LA CABECERA: DECLARADAS UNA VEZ, Y DE AHI LAS DERIVA TODO -------
+#
+# POR QUE UNA CONSTANTE Y NO LOS BRAZOS DE UN `case`. Hasta 1.33.0 el conjunto de claves
+# que este lector reconoce NO EXISTIA en ninguna parte de bash: vivia como la UNION de dos
+# despachos DISJUNTOS —los cinco brazos de `arnes_campos_req` y el de
+# `arnes_estado_cabecera`, que es el unico sitio donde vive la clave del estado terminal—,
+# asi que nada podia preguntar «¿es esto un campo de cabecera?» sin volver a teclear la
+# lista. Y una guarda que teclee su propia copia envejece hacia el lado que ABRE: un campo
+# nuevo entra en los brazos, no entra en la guarda, y deja de estar protegido EN SILENCIO
+# — que es exactamente la clase de SEC-050.
+#
+# Cada clave se escribe UNA vez, en su propia constante, y de esas constantes salen las dos
+# cosas que antes se repetian: el CONJUNTO (`ARNES_CLAVES`, delimitado al estilo de
+# `ARNES_VOCAB_*`, con pertenencia exacta por `arnes_en_vocab`) y los BRAZOS de los dos
+# despachos, que siguen existiendo —cada uno asigna a SU variable, y la precedencia de cada
+# clave no se toca— pero ya no DECIDEN quien es campo: eso lo decide la constante. El numero
+# de transcripciones del conjunto BAJA de dos a una (REQ-023 CA-06).
+#
+# `Archivos:` NO esta aqui, y no es un hueco: lo resuelve `tools/arnes-paralelo.sh` con su
+# propio mapeo —declarado por escrito alli—, su ausencia se resuelve del lado que CIERRA
+# (`SIN DECLARAR` colisiona con todos y sale != 0) y NINGUNA puerta lo lee. Meterlo aqui
+# meteria un campo de COORDINACION dentro del mecanismo de la puerta.
+ARNES_CLAVE_QA='QA'
+ARNES_CLAVE_SEG='Seguridad'
+ARNES_CLAVE_SENS='Sensible a seguridad'
+ARNES_CLAVE_HALL='Hallazgos abiertos'
+ARNES_CLAVE_RIGOR='Rigor'
+ARNES_CLAVE_ESTADO='Estado'
+ARNES_CLAVES="$ARNES_CLAVE_QA|$ARNES_CLAVE_SEG|$ARNES_CLAVE_SENS|$ARNES_CLAVE_HALL|$ARNES_CLAVE_RIGOR|$ARNES_CLAVE_ESTADO"
+
+# EL ALFABETO DE LAS CLAVES SE DERIVA DE LA CONSTANTE, NUNCA SE TECLEA. Una clave futura que
+# llevara `-`, `]` o `^` romperia la expresion de corchete que la guarda construye, y una
+# expresion de corchete rota no deniega: CALLA. Los tres se colocan donde son literales —`]`
+# primero, `-` ultimo, `^` en cualquier posicion que no sea la primera— y de paso se
+# deduplica, que abarata la comparacion. Se hace UNA vez al cargar la biblioteca y no cuesta
+# ni un proceso: solo expansion de parametros.
+_arnes_deriva_alfabeto() {   # ARNES_CLAVES -> ARNES_CLAVES_ALFA
+  local resto="${ARNES_CLAVES//|/}" c letras='' cierra='' circun='' guion=''
+  while [ -n "$resto" ]; do
+    c="${resto:0:1}"; resto="${resto:1}"
+    case "$cierra$letras$circun$guion" in *"$c"*) continue ;; esac
+    case "$c" in
+      ']') cierra=']' ;;
+      '-') guion='-' ;;
+      '^') circun='^' ;;
+      *)   letras="$letras$c" ;;
+    esac
+  done
+  ARNES_CLAVES_ALFA="$cierra$letras$circun$guion"
+}
+_arnes_deriva_alfabeto
+
+# LOS BYTES AJENOS DE UNA CLAVE, EN HEXADECIMAL -> ARNES_REPR.
+#
+# Un motivo de denegacion que lleva dentro el caracter invisible deja a la persona buscando
+# texto que su editor no le muestra: es la misma leccion que el CR escrito `\r`. Aqui se
+# escribe cada byte que no pertenece al alfabeto como `\xNN` y se deja el resto legible, asi
+# que el motivo dice DONDE esta y QUE es.
+#
+# `local LC_ALL=C` y no una comparacion de rangos: en un locale UTF-8 `${s:i:1}` devuelve un
+# CARACTER y en locale C un BYTE, de modo que sin fijarlo el motivo cambiaria con el entorno
+# — y un veredicto o un motivo que dependen de `LC_CTYPE` son un fallo en abierto POR
+# ENTORNO, invisible en la puerta requerida de `main` (REQ-023 CA-05). `printf -v` es un
+# builtin: cero procesos. Solo se ejecuta cuando la guarda ya ha disparado.
+ARNES_REPR=''
+_arnes_repr_clave() {   # <clave> -> ARNES_REPR
+  local LC_ALL=C s="$1" i c out='' n
+  for ((i = 0; i < ${#s}; i++)); do
+    c="${s:i:1}"
+    case "$c" in
+      [$ARNES_CLAVES_ALFA]) out+="$c" ;;
+      *) printf -v n '%02x' "'$c"; out+="\\x$n" ;;
+    esac
+  done
+  ARNES_REPR="$out"
+}
+
+# La GUARDA, en su propia funcion y por dos motivos MEDIDOS, no por estilo -----------
+#
+# 1. EL LOCALE SE FIJA A `C`, Y ES LA DIFERENCIA ENTRE LINEAL Y CUADRATICO. La limpieza es
+#    `${clave//[!alfabeto]/}`, y esa sustitucion en un locale UTF-8 sale SUPERLINEAL:
+#    medido con `tests/util/sonda-reloj.sh` sobre una clave de tipo titulo, cociente de
+#    duplicacion **3,78 (1000→2000) y 5,59 (2000→4000)** contra un techo de 2,2, y **11,9 ms
+#    a 4 000 bytes**. La MISMA expresion con `LC_ALL=C` da **1,79 y 2,01** y baja el coste
+#    absoluto **17×** (33 µs contra 564 µs a 1 000 bytes). El motivo es que en UTF-8 cada
+#    posicion se decodifica; en C la comparacion es de bytes. Es exactamente la regresion de
+#    orden de crecimiento que `REQ-023 CA-09 (iii)` existe para cazar, y la cazo: la primera
+#    version de esta guarda no cumplia su propio techo.
+# 2. Y NO ES SOLO COSTE: EL VEREDICTO TIENE QUE SER INVARIANTE AL LOCALE (CA-05). Una
+#    clasificacion que dependa de `LC_CTYPE` deniega en el CI de Linux y permite en
+#    Windows/MSYS —que es donde viven los proyectos consumidores y de donde sale el BOM—:
+#    seria un fallo en abierto POR ENTORNO, invisible en la puerta requerida de `main`.
+#    Con bytes no hay nada que decodificar, asi que el resultado es el mismo por
+#    construccion, no por casuistica.
+#
+# EL LOCALE SE FIJA CON `local` Y AQUI DENTRO, no en `arnes_norm_clave`: fuera de esta
+# funcion `[[:blank:]]` y el recorte de blancos siguen decidiendo con el locale del entorno,
+# exactamente como antes de esta version. Cambiarlo alli seria mover una tolerancia que este
+# REQ no toca (CA-04).
+_arnes_clave_oculta() {   # <clave normalizada> -> ARNES_CLAVE_OCULTA[_CLAVE|_REPR]
+  local LC_ALL=C limpio
+  case "$1" in
+    *[!$ARNES_CLAVES_ALFA]*) ;;
+    *) return 0 ;;                     # la clave es limpia: nada que preguntar
+  esac
+  limpio="${1//[!$ARNES_CLAVES_ALFA]/}"
+  arnes_en_vocab "$limpio" "$ARNES_CLAVES" || return 0
+  ARNES_CLAVE_OCULTA=1
+  ARNES_CLAVE_OCULTA_CLAVE="$limpio"
+  _arnes_repr_clave "$1"; ARNES_CLAVE_OCULTA_REPR="$ARNES_REPR"
+  return 0
+}
+
+# --- UNA CABECERA QUE NO SE PUEDE MEDIR NO DEJA CERRAR: EL ESTADO ACUMULADO --------
+# Igual que `ARNES_CITA` y `ARNES_CR`: cruza lineas, asi que vive en el llamador. Se pone a
+# 0 antes de recorrer una cabecera y se consulta al terminarla.
+ARNES_OCULTA=0
+ARNES_OCULTA_CLAVE=''
+ARNES_OCULTA_REPR=''
+ARNES_OCULTA_ESTADO=''
+
 # La UNICA puerta de entrada de un lector de cabecera: retira las citas y normaliza la
 # clave. Existe para que ningun recorrido de cabecera pueda quedarse con la mitad de la
 # regla — que es exactamente como nacio este defecto.
 arnes_campo_linea() {   # <linea> -> 0 + ARNES_CLAVE/ARNES_VALOR; 1 si no declara campo
   arnes_sin_cita "$1"
-  arnes_norm_clave "$ARNES_LINEA"
+  arnes_norm_clave "$ARNES_LINEA" || return 1
+  # LA PUBLICACION DE LA GUARDA VIVE AQUI, EN LA PUERTA DE ENTRADA, Y NO EN
+  # `arnes_norm_clave` — y no es una preferencia, es lo que la medicion obliga.
+  # `arnes_estado_cabecera` llama a `arnes_norm_clave` TAMBIEN con la linea CRUDA, pre-cita
+  # y a proposito, para distinguir «aqui no hay estado» de «alguien declara el estado desde
+  # dentro de una cita». Publicando desde ahi, un campo LEGITIMAMENTE COMENTADO sin espacio
+  # —`<!--Estado: completado -->`— disparia la guarda y el de CON espacio no: un falso
+  # positivo cuyo veredicto depende de si quien escribio el comentario puso un espacio
+  # (medido; REQ-023 CA-06 y CA-11). Aqui la cita ya se retiro, asi que lo que llega es lo
+  # que el documento DECLARA.
+  if [ "$ARNES_CLAVE_OCULTA" -eq 1 ]; then
+    # La PRIMERA manda, para que el motivo pueda citarla.
+    if [ "$ARNES_OCULTA" -eq 0 ]; then
+      ARNES_OCULTA=1
+      ARNES_OCULTA_CLAVE="$ARNES_CLAVE_OCULTA_CLAVE"
+      ARNES_OCULTA_REPR="$ARNES_CLAVE_OCULTA_REPR"
+      # Y EL ESTADO QUE ESA LINEA DECLARABA, por el mismo motivo que `ARNES_ESTADO_CITADO`:
+      # sin esto, un caracter invisible sobre la clave del estado terminal se resolveria
+      # como AUSENCIA del estado —«aqui no hay transicion»— y la ausencia es justo lo que
+      # esta puerta perdona. El documento diria `completado` y ninguna puerta lo habria
+      # medido nunca: un `allow` con otro nombre.
+      case "$ARNES_OCULTA_CLAVE" in "$ARNES_CLAVE_ESTADO")
+        arnes_norm_campo "$ARNES_VALOR"; arnes_veredicto "$ARNES_CAMPO"
+        ARNES_OCULTA_ESTADO="$ARNES_VEREDICTO" ;;
+      esac
+    fi
+  fi
+  return 0
 }
 
 arnes_norm_clave() {   # <linea> -> 0 + ARNES_CLAVE/ARNES_VALOR; 1 si la linea no declara campo
   ARNES_CLAVE=''; ARNES_VALOR=''; ARNES_CLAVE_DECORADA=0
-  local l="${1//$'\r'/}" k r crudo
+  ARNES_CLAVE_OCULTA=0; ARNES_CLAVE_OCULTA_CLAVE=''; ARNES_CLAVE_OCULTA_REPR=''
+  local l="${1//$'\r'/}" k r crudo limpio
   case "$l" in *:*) ;; *) return 1 ;; esac
   crudo="${l%%:*}"
   _arnes_recorta_blancos "$l"; l="$ARNES_TRIM"
@@ -1705,6 +1854,54 @@ arnes_norm_clave() {   # <linea> -> 0 + ARNES_CLAVE/ARNES_VALOR; 1 si la linea n
   # `tools/arnes-lectura.sh` pueda NOMBRAR la linea que gobierna cuando la forma es
   # legitima pero el documento se lee distinto de como parece.
   [ "$ARNES_CLAVE" = "$crudo" ] || ARNES_CLAVE_DECORADA=1
+  # --- UNA CLAVE CON ALGO INSERTADO DENTRO NO SE PUEDE MEDIR (REQ-023 CA-01) --------
+  #
+  # EL DEFECTO QUE CIERRA, medido ejecutando la puerta real (SEC-047, R-012) e IDENTICO en
+  # `v1.30.3`, `v1.31.0`, `v1.32.0` y `v1.32.1`: un BOM delante de `Sensible a seguridad: si`
+  # —el que PowerShell añade al redirigir— con `Rigor: ligero` cerraba a `completado` un REQ
+  # con `QA: pendiente` y `Seguridad: pendiente`; sin el BOM, denegaba. Un `0xc3` suelto o un
+  # U+200B delante de `Hallazgos abiertos:` retiran un hallazgo `contrato` que bloqueaba. El
+  # caracter BORRA el campo, y para todo campo cuya AUSENCIA esta puerta resuelve del lado
+  # que abre, borrarlo es abrirla. Nada lo delata: el diff tampoco lo muestra.
+  #
+  # POR QUE NO SE PERSIGUE EL CARACTER SINO EL ESTADO. La guarda del CR (REQ-016 CA-12) esta
+  # bien construida y aun asi no ve esto: nombra EL CR cuando la propiedad verdadera es «una
+  # linea de la cabecera que la maquina no puede MEDIR». Añadir el BOM y el U+200B a una
+  # lista seria la SEXTA derrota medida de esa via en este repositorio (ADR-002, SEC-020,
+  # SEC-024, SEC-025, H-01): un `0xc3` suelto, un U+2060, un multibyte invalido o el que
+  # nadie ha pensado la reproducen, y una lista escrita en un contrato envejece hacia el lado
+  # que ABRE.
+  #
+  # LA PREGUNTA QUE NO ENVEJECE, y no enumera ningun caracter porque enumera lo que YA esta
+  # enumerado, que son las CLAVES: retirado de la clave todo lo ajeno al ALFABETO de las
+  # claves que este lector reconoce, ¿lo que queda ES una de esas claves? Si lo es, alguien
+  # inserto algo DENTRO de una clave y la linea no se puede medir. Cubre las tres familias
+  # —bytes de control C0, puntos de codigo de anchura cero o de formato, y secuencias UTF-8
+  # mal formadas— y cualquier entrada que nadie haya nombrado todavia.
+  #
+  # LO QUE NO TOCA, y por eso esta salida y no otra:
+  #   * NO estrecha ninguna tolerancia, asi que no puede reabrir nada. La clave decorada o
+  #     sangrada, el paréntesis de evidencia, el plegado de ortografia y un documento entero
+  #     en CRLF siguen gobernando idéntico: el CR se descuenta arriba, antes de llegar aqui.
+  #   * NO deniega por AUSENCIA: publica que la cabecera no se puede medir, y la puerta
+  #     deniega por eso. Un `deny` por «el campo falta» seria un `allow` con otro nombre en
+  #     cuanto el rigor declarado fuese `ligero`.
+  #   * CALLA sobre lo que no es una clave del lector: `Modulo:`, `Version destino:`,
+  #     `Archivos:`, `Prioridad:` y las lineas de titulo con `—` o `«»` llevan caracteres
+  #     ajenos al alfabeto y no quedan en ninguna clave al limpiarlas. Una guarda que
+  #     denegara `Modulo:` produciria friccion constante, y la friccion termina con alguien
+  #     apagando el guard (AGENTS.md 13) — un guard apagado protege menos que uno parcial.
+  #   * NO cambia NINGUN valor de campo: solo OBSERVA. Asi la transcripcion declarada de
+  #     `hooks/campos-req.awk` sigue diciendo lo mismo y el bloque derivado no cambia de
+  #     opinion.
+  #   * El ESPACIO pertenece al alfabeto (viene de `Sensible a seguridad`), asi que
+  #     `<!-- Estado` limpia a ` Estado` y NO es una clave: es lo que hace que un comentario
+  #     legitimo no dispare nada, y por eso la publicacion vive en `arnes_campo_linea`.
+  #
+  # COSTE: la comparacion contra el alfabeto es la GUARDA, asi que una clave legitima paga
+  # UNA expansion de corchete y ni una sustitucion. Cero procesos (REQ-023 CA-09).
+  _arnes_clave_oculta "$ARNES_CLAVE"
+  return 0
 }
 
 arnes_campos_normaliza() {   # <qa> <seg> <sens> <hall> <rigor> -> ARNES_QA/SEG/SENS/HALL/RIGOR
@@ -1815,6 +2012,9 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
   # de las dos cabeceras que esta funcion lee deja lo que se leyo sin medir, y da igual en
   # cual estaba.
   ARNES_CR=0; ARNES_CR_LINEA=''
+  # Y por el MISMO motivo la clave con algo insertado dentro: da igual en cual de las dos
+  # cabeceras estuviera, lo que se leyo se leyo sin poder medirlo.
+  ARNES_OCULTA=0; ARNES_OCULTA_CLAVE=''; ARNES_OCULTA_REPR=''; ARNES_OCULTA_ESTADO=''
   local texto l
   for texto in "$1" "$2"; do
     [ -n "$texto" ] || continue
@@ -1830,6 +2030,20 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
       # nombre de ninguna seccion, que seria mapeo del proyecto.
       case "$l" in '## '*) break ;; esac
       arnes_campo_linea "$l" || continue
+      # LA PERTENENCIA LA DECIDE `ARNES_CLAVES`, NO ESTOS BRAZOS — y esa es la mitad del
+      # arreglo de REQ-023 CA-06. Antes, quien era campo de cabecera lo decidia el `case` de
+      # abajo, asi que el conjunto no existia como lista en ninguna parte y una guarda no
+      # podia preguntar por el sin volver a teclearlo. Ahora se pregunta al sitio unico —con
+      # `arnes_en_vocab`, que es tambien el sitio unico de la pertenencia exacta— y el `case`
+      # se queda con lo que si es suyo: ENRUTAR cada clave a SU variable. Un campo que
+      # alguien añada al `case` y no a la constante no llega aqui, y eso se ve; al contrario
+      # —en la constante y no en el `case`— tampoco queda protegido en silencio, porque la
+      # guarda de medibilidad lo cubre desde el mismo sitio.
+      arnes_en_vocab "$ARNES_CLAVE" "$ARNES_CLAVES" || continue
+      # La precedencia heredada NO se toca: estos cinco toman la ULTIMA aparicion de la
+      # cabecera y `Estado` la primera (`arnes_estado_cabecera`, `hooks/campos-req.awk:74`).
+      # Un despacho unificado que la igualara decidiria distinto sin cambiar ningun valor «a
+      # proposito», y eso es lo que la comparacion campo a campo de CA-04 caza.
       case "$ARNES_CLAVE" in
         'QA')                   ARNES_QA="$ARNES_VALOR" ;;
         'Seguridad')            ARNES_SEG="$ARNES_VALOR" ;;
@@ -1878,7 +2092,10 @@ arnes_estado_cabecera() {   # <texto> -> ARNES_ESTADO
     # que es la unica forma en que este arreglo podria abrir lo que vino a cerrar.
     if [ "$visto" -eq 0 ] && [ -z "$ARNES_ESTADO_CITADO" ] && [ "$ARNES_LINEA" != "$crudo" ]; then
       if arnes_norm_clave "$crudo"; then
-        case "$ARNES_CLAVE" in 'Estado')
+        # La clave sale de `ARNES_CLAVES` (ver arriba) y no de un literal tecleado aqui:
+        # este era el UNICO sitio donde vivia la clave del estado terminal, y un puntero que
+        # lo dejara fuera dejaba sin proteger justo la clave que decide el cierre.
+        case "$ARNES_CLAVE" in "$ARNES_CLAVE_ESTADO")
           arnes_norm_campo "$ARNES_VALOR"; arnes_veredicto "$ARNES_CAMPO"
           ARNES_ESTADO_CITADO="$ARNES_VEREDICTO" ;;
         esac
@@ -1889,7 +2106,7 @@ arnes_estado_cabecera() {   # <texto> -> ARNES_ESTADO
     # las manos vacias en cuanto lo veia. Cambiar eso seria cambiar de opinion en
     # silencio sobre un malformado.
     if [ "$visto" -eq 0 ] && arnes_norm_clave "$ARNES_LINEA"; then
-      case "$ARNES_CLAVE" in 'Estado')
+      case "$ARNES_CLAVE" in "$ARNES_CLAVE_ESTADO")
         arnes_norm_campo "$ARNES_VALOR"; arnes_veredicto "$ARNES_CAMPO"; ARNES_ESTADO="$ARNES_VEREDICTO"
         visto=1 ;;
       esac

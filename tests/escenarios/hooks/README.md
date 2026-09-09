@@ -57,7 +57,7 @@ Tres líneas, y ninguna en `run.sh`:
 3. Sumar esos `<n>` a `CASOS_ESPERADOS` al final de `run.sh`.
 
 ## Por qué hay secciones numeradas en partes (`NN-<slug>-<k>-<tema>.sh`)
-Las secciones 28, 33, 36, 37 y 38 viven repartidas en varios archivos. No es estilo: **REQ-014
+Las secciones 28, 33, 36, 37, 38 y 39 viven repartidas en varios archivos. No es estilo: **REQ-014
 CA-18** pone un techo a lo que una comisión tiene que abrir para tocar una sección, y el techo se
 pone sobre el **excedente**, no sobre el total —`líneas(f) ≤ max(N, piso(f) × k)`, con `N` = 400 y
 `k` = 1,25—. Cada archivo declara, junto a su `CASOS_ESPERADOS_SECCION`, su
@@ -73,7 +73,9 @@ Cada sección corre en su propio subshell y en paralelo, ninguna hace `source` d
 al corredor**, y subirla es cambio de mecanismo. Por eso el materializador de la línea base viene
 copiado en las cinco partes de la 37, los dos ayudantes de comparación de `28-…-2-el-estado.sh`
 vienen copiados de `28-…-1-la-historia.sh`, y `num38` está en las tres partes de la 38: **once
-renglones copiados cuestan menos que una puerta trasera entre secciones**.
+renglones copiados cuestan menos que una puerta trasera entre secciones**. Por lo mismo, `mat`
+—el materializador de la línea base— viene copiado en **dos** de las cuatro partes de la 39: las
+que comparan contra `v1.33.0`.
 
 **Al partir, los casos se reparten; no se crean ni se pierden.** Cada parte declara su propio
 `CASOS_ESPERADOS_SECCION`, la suma no cambia y `CASOS_ESPERADOS` de `run.sh` tampoco. El corte va

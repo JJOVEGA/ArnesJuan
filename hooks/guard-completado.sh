@@ -337,6 +337,31 @@ arnes_guard_completado() {
        { [ "$est_despues" = "$done_norm" ] || [ "$est_citado" = "$done_norm" ]; }; then
       arnes_deny "ARNES: no se puede completar '$rel': su cabecera ABRE un rango de comentario '<!--' que NO se cierra con '-->' antes del fin de la cabecera (el primer '## '). Lo que cae dentro de un comentario no declara campo, asi que con el rango abierto esta puerta no puede saber que veredictos se han quedado dentro ni cual gobierna — y no permite por AUSENCIA de un campo que un comentario se trago. Salida: cierra el comentario con '-->' dentro de la cabecera, o saca la nota fuera de ella. Un veredicto historico se documenta en el Historial de cambios, no en la cabecera."
     fi
+    # UNA CLAVE DE LA CABECERA CON ALGO INSERTADO DENTRO: tampoco se juzga, se DENIEGA.
+    #
+    # Misma regla que el rango sin cerrar y que el CR interior, aplicada a la clase entera:
+    # la linea DECLARA el campo —una persona la lee y ve la clave de la plantilla—, ninguna
+    # regla contratada la retira, y este lector no la resuelve como ese campo. Entonces la
+    # cabecera no se puede MEDIR, y una puerta que no puede medir no deja pasar (AGENTS.md
+    # 1). Medido: un BOM delante de `Sensible a seguridad: si` con `Rigor: ligero` cerraba
+    # con los dos veredictos en `pendiente` (SEC-047, R-012).
+    #
+    # Y NUNCA SE PERMITE POR AUSENCIA DEL CAMPO QUE EL CARACTER BORRO: es exactamente lo que
+    # esta puerta perdona por compatibilidad, asi que resolver esto como «el campo falta»
+    # seria un `allow` con otro nombre en cuanto el rigor declarado fuese `ligero`.
+    #
+    # SE EXIGE QUE HAYA UN INTENTO DE CIERRE, y de las dos formas en que puede haberlo: el
+    # estado terminal leido de la cabecera, o —cuando el caracter cayo sobre la clave del
+    # ESTADO— el que esa misma linea declaraba (`ARNES_OCULTA_ESTADO`). Sin la segunda, un
+    # invisible sobre `Estado:` se resolveria como «aqui no hay transicion» y el documento
+    # quedaria diciendo `completado` sin que ninguna puerta lo hubiera medido nunca. Denegar
+    # toda edicion de un REQ con un invisible seria friccion constante sobre algo que no
+    # cierra nada, y la friccion termina con alguien apagando el guard (AGENTS.md 13).
+    # REABRIR nunca se bloquea: si el estado en disco ya era el terminal, aqui no se entra.
+    if [ "${ARNES_OCULTA:-0}" = "1" ] && [ "$est_antes" != "$done_norm" ] &&
+       { [ "$est_despues" = "$done_norm" ] || [ "${ARNES_OCULTA_ESTADO:-}" = "$done_norm" ]; }; then
+      arnes_deny "ARNES: no se puede completar '$rel': su cabecera declara el campo '${ARNES_OCULTA_CLAVE}:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puerta no puede leer como ese campo. La clave, con sus bytes ajenos en hexadecimal: «${ARNES_OCULTA_REPR}:». Puede ser un BOM (\\xef\\xbb\\xbf, el que PowerShell añade al redirigir), un espacio de anchura cero (\\xe2\\x80\\x8b), un byte de control o un multibyte partido: son invisibles y el diff tampoco los muestra. Una persona lee ahi un campo y la maquina no lo lee, asi que la cabecera no se puede MEDIR y una puerta que no puede medir no deja pasar (AGENTS.md 1) — y NUNCA permite por AUSENCIA del campo que ese caracter borro. Salida: reescribe esa linea de la cabecera dejando la clave limpia. 'tools/arnes-lectura.sh' la señala antes de que llegues a esta puerta."
+    fi
     [ "$est_despues" = "$done_norm" ] || return 0
     [ "$est_antes" != "$done_norm" ] || return 0
   else
@@ -357,6 +382,14 @@ arnes_guard_completado() {
     # esta puerta pudo leer —en disco o en lo entrante— lleva uno, no se puede medir.
     if [ "${ARNES_CR_INTERIOR:-0}" = "1" ]; then
       arnes_deny "ARNES: no se puede completar '$rel': la cabecera que esta puerta pudo leer lleva un retorno de carro (CR) que NO termina la linea, en «${ARNES_CR_INTERIOR_LINEA}». Un CR suelto en mitad de una linea es un caracter invisible que puede FABRICAR delimitadores para unos lectores y no para otros, asi que la cabecera no se puede MEDIR y una puerta que no puede medir no deja pasar (AGENTS.md 1). Salida: retira ese CR. El CR que TERMINA una linea es transporte (CRLF de Windows) y no cuenta."
+    fi
+    # Y el mismo criterio para la clave con algo insertado dentro (`ARNES_OCULTA`, lo publica
+    # `arnes_campo_linea` y lo acumula `arnes_campos_req`, por la misma via que las dos de
+    # arriba): si la cabecera que esta puerta pudo leer —en disco o en lo entrante— declara
+    # un campo que la maquina no lee como ese campo, no se puede medir. Aqui no hay documento
+    # que reconstruir, asi que el intento de cierre ya lo comprobo el `grep` de arriba.
+    if [ "${ARNES_OCULTA:-0}" = "1" ]; then
+      arnes_deny "ARNES: no se puede completar '$rel': la cabecera que esta puerta pudo leer declara el campo '${ARNES_OCULTA_CLAVE}:' con algo INSERTADO DENTRO DE LA CLAVE, que no se lee como ese campo. La clave, con sus bytes ajenos en hexadecimal: «${ARNES_OCULTA_REPR}:». Es un caracter invisible —un BOM, un espacio de anchura cero, un byte de control, un multibyte partido— y el diff no lo muestra: una persona lee ahi un campo y la maquina no, asi que la cabecera no se puede MEDIR y una puerta que no puede medir no deja pasar (AGENTS.md 1). Nunca permite por AUSENCIA del campo que ese caracter borro. Salida: reescribe esa linea dejando la clave limpia."
     fi
   fi
 

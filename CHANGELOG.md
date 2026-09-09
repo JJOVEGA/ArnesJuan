@@ -2,6 +2,59 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · REQ-023: el carácter que no se ve apaga el enforcement — la guarda pasa a nombrar la propiedad, y el techo de coste cazó la primera versión
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+**El defecto, medido idéntico en `v1.30.3`, `v1.31.0`, `v1.32.0`, `v1.32.1` y este árbol** (`SEC-047`,
+severidad crítica, mitad 1): un carácter que no se ve y que el normalizador no retira **borra un campo
+de la cabecera** de un REQ, y para todo campo cuya **ausencia** la puerta resuelve del lado que abre,
+borrarlo es abrirla. Un **BOM** delante de `Sensible a seguridad: sí` con `Rigor: ligero` cerraba a
+`completado` un REQ con `QA: pendiente` y `Seguridad: pendiente`. El diff no lo muestra, y PowerShell lo
+añade al redirigir: no hace falta malicia.
+
+**La guarda no persigue el carácter, persigue el estado** —una cabecera que no se puede **medir**— y no
+enumera ningún carácter porque enumera **lo que ya está enumerado, que son las claves**: retirado de la
+clave todo lo ajeno al **alfabeto** de las claves que el lector reconoce, ¿lo que queda **es** una de
+esas claves? Añadir el BOM y el U+200B a una lista habría sido la **sexta** derrota medida de esa vía en
+este repositorio.
+
+- `hooks/lib.sh` — las seis claves de la cabecera se declaran **una** vez (`ARNES_CLAVES`, al estilo de
+  `ARNES_VOCAB_*`); el **alfabeto** se **deriva** de ellas con escape de `]`, `-` y `^`, nunca se teclea.
+  La guarda vive en `_arnes_clave_oculta` y la **publicación** en `arnes_campo_linea`, la única puerta de
+  entrada — **no** en `arnes_norm_clave`, porque `arnes_estado_cabecera` la llama también con la línea
+  **cruda, pre-cita**, y desde ahí `<!--Rigor: ligero-->` disparaba un falso positivo cuyo veredicto
+  dependía de si quien escribió el comentario puso un espacio.
+- `hooks/guard-completado.sh` — **dos** ramas de denegación nuevas, una por cada rama que ya tenía, con
+  el motivo citando la línea y **los bytes ajenos en hexadecimal**: un carácter invisible dentro del
+  motivo deja a la persona buscando texto que su editor no le muestra.
+- `tools/arnes-lectura.sh` — lo reporta por su **vía única** (rc≠0), y el aviso va **antes** del descarte
+  de «archivo sin `Estado:`», que es donde se escondía el caso peor: con el carácter sobre la clave del
+  estado, el informe respondía `rc=0` sobre el documento más peligroso que hay. Su lista de campos deja
+  de derivarse con `sed` **del texto del código** y se lee de la constante.
+
+**Y lo que hay que llevarse de esta comisión: el criterio de coste cazó la primera versión de la
+guarda.** `${clave//[!alfabeto]/}` en un locale **UTF-8** es superlineal —cociente de duplicación
+**3,78** y **5,59** contra un techo de **2,2**—; con `LC_ALL=C` fijado con `local` **dentro** de la
+función queda en **2,098** / **2,050** (par 1000→2000) y **17× más barata**. El techo **no se tocó**: era
+un hallazgo contra el código. Medido además: **0 procesos** añadidos por evaluación y **1,002×** en el
+reloj de la ruta crítica contra `v1.33.0`, con los dos sujetos intercalados en la misma invocación.
+Método, versión base y **lo que cada número no acredita**: `docs/arnes/req-023-coste-y-dominio.md`.
+
+**El dominio de campos cuya ausencia abre mide 5 de 6, no 4** — el quinto es **`Estado`**, justo la clave
+que el puntero corregido de `CA-01` dejaba fuera. El banco lo **deriva midiendo en cada corrida**, no lo
+enumera: es la forma que `SEC-050` existe para no repetir.
+
+**Banco: 961 PASS · 0 FAIL · 4 SKIP** (`rc=0`, 924→965; los 4 SKIP son los heredados) con **41 casos
+nuevos** en **cuatro** partes de la sección 39 — cuatro y no tres porque los lectores y el coste juntos
+daban 422 líneas contra el techo de 400 de `REQ-014 CA-18`. Autoprueba del corredor **106 PASS · 0 FAIL**
+y las tres quality gates de §7 en verde.
+
+**Lo que NO entra, con su motivo, porque un verde parcial que se lee como completo es peor que un rojo:**
+`CA-08` no queda acreditado en su letra —el fail-before está medido y es reproducible, pero **no** se
+materializa `hooks/` desde un tag dentro del banco: su precondición es el gate humano de `SEC-048`, que
+sigue **abierto**—; y `CA-10` **no se escribe**, porque `AGENTS.md` y `templates/AGENTS.md.tpl` los está
+escribiendo otra comisión viva. `Estado: en-revisión`. `QA:` y `Seguridad:` sin tocar.
+
 ## [GitHub] — 2026-09-09 · REQ-027: las reglas de la coordinadora salen de la conversación y entran en la sede canónica — y el techo que nadie había validado no cabía
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
 

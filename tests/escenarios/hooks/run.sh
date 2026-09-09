@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=924   # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=965   # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1318,6 +1318,12 @@ CASOS_ESPERADOS=924   # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # 916 → 924: la sección `28/4` nueva, con los 8 casos de `CA-18` (la
                       # actualización perdida de `SEC-067`). Va en una parte 4 porque la 3
                       # está en 400 de 400 líneas, el techo exacto de `REQ-014 CA-18`.
+                      # 924 → 965: la sección 39 nueva, en CUATRO partes, con los 41 casos de
+                      # REQ-023 (el carácter invisible que borra un campo de la cabecera y
+                      # abre la puerta, SEC-047): 20 en la puerta y el dominio derivado, 10 en
+                      # la clase y el corpus, 7 en los lectores y 4 en el coste. Son cuatro
+                      # partes y no una porque los lectores y el coste juntos daban 422 líneas
+                      # contra el techo de 400 de `REQ-014 CA-18`.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

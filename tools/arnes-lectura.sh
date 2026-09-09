@@ -57,19 +57,22 @@ SEG_OK="|$ARNES_VOCAB_SEG|"
 RIG_OK="|$ARNES_VOCAB_RIGOR|"
 
 # EL CONJUNTO DE CAMPOS DE CABECERA NO SE ENUMERA AQUI: SE DERIVA de su sitio unico, que
-# es el lector de `hooks/lib.sh` (los brazos del `case` sobre `$ARNES_CLAVE`). Una lista
-# escrita a mano en el informe envejece el dia en que alguien añade un campo, y entonces el
-# informe deja de hablar de ese campo SIN DECIRLO — que es la forma de mentir que este
-# informe existe para no tener. Un fork en un informe no le cuesta nada a ninguna puerta.
+# es el lector de `hooks/lib.sh`. Una lista escrita a mano en el informe envejece el dia en
+# que alguien añade un campo, y entonces el informe deja de hablar de ese campo SIN DECIRLO
+# — que es la forma de mentir que este informe existe para no tener.
+#
+# DE DONDE SE DERIVA, y cambio en 1.34.0: hasta entonces se sacaba con `sed` DEL TEXTO de los
+# brazos del `case` sobre `$ARNES_CLAVE`, porque el conjunto no existia como lista en ninguna
+# parte de bash. Desde REQ-023 CA-06 existe: es la constante `ARNES_CLAVES`, de la que
+# derivan tambien esos brazos y la guarda de medibilidad. Se lee de ahi —una expansion, sin
+# un solo proceso— y no del texto del archivo: una derivacion que lee CODIGO se rompe con la
+# primera mudanza del codigo, y este informe tiene que seguir hablando de todos los campos.
 CAMPOS=(); vistos='|'
 while IFS= read -r c; do
   [ -n "$c" ] || continue
   case "$vistos" in *"|$c|"*) continue ;; esac
   vistos+="$c|"; CAMPOS+=("$c")
-done < <(sed -n \
-  -e "s/.*case \"\$ARNES_CLAVE\" in '\([^']*\)').*/\1/p" \
-  -e "s/^[[:space:]]*'\([A-Za-z][^']*\)')[[:space:]]*ARNES_[A-Z]*=\"\$ARNES_VALOR\".*/\1/p" \
-  "$DIR/../hooks/lib.sh")
+done <<< "${ARNES_CLAVES//|/$'\n'}"
 if [ "${#CAMPOS[@]}" -eq 0 ]; then
   printf 'No pude derivar los campos de cabecera de hooks/lib.sh: el informe no puede medir la forma.\n' >&2
   exit 2
@@ -127,6 +130,8 @@ for f in "$PROY/$REQ_DIR"/*.md; do
   # El rango de comentario cruza lineas: su estado se reinicia por documento. El CR que no
   # termina la linea tambien lo acumula el lector, y por el mismo motivo.
   ARNES_CITA=0; ARNES_CR=0; ARNES_CR_LINEA=''
+  # Y la clave con algo insertado dentro, que el lector acumula por la misma via.
+  ARNES_OCULTA=0; ARNES_OCULTA_CLAVE=''; ARNES_OCULTA_REPR=''; ARNES_OCULTA_ESTADO=''
   while IFS= read -r l; do
     # Solo la cabecera cuenta, como para la puerta: lo que haya en una seccion no es un campo.
     case "$l" in '## '*) break ;; esac
@@ -144,13 +149,27 @@ for f in "$PROY/$REQ_DIR"/*.md; do
     # asimetria heredada que aplican la puerta y `campos-req.awk`, y este informe la
     # respeta en vez de tener su propia opinion. Solo se nota en un REQ malformado — que
     # es, exactamente, el REQ que hay que mirar.
-    if [ "$k" != 'Estado' ] || [ "${CNT[$k]}" -eq 1 ]; then
+    if [ "$k" != "$ARNES_CLAVE_ESTADO" ] || [ "${CNT[$k]}" -eq 1 ]; then
       CRU[$k]="$ARNES_VALOR"; DEC[$k]="$ARNES_CLAVE_DECORADA"; LIN[$k]="$l"
     fi
   done <<< "$texto"
   cita_abierta="$ARNES_CITA"; cr_interior="$ARNES_CR"; cr_linea="$ARNES_CR_LINEA"
-  cru_est="${CRU[Estado]:-}"; cru_qa="${CRU[QA]:-}"; cru_seg="${CRU[Seguridad]:-}"
-  cru_sens="${CRU[Sensible a seguridad]:-}"; cru_rig="${CRU[Rigor]:-}"
+
+  # UNA CLAVE CON ALGO INSERTADO DENTRO ES ANOMALIA, y va ANTES de todo lo demas — incluido
+  # el descarte de los archivos sin `Estado:`— porque ese descarte es justamente donde se
+  # esconde el caso peor: si el caracter cayo sobre la clave del ESTADO, este informe leia
+  # «archivo sin Estado, no es un REQ», lo contaba como nota y salia con rc=0 sobre el
+  # documento mas peligroso que hay. Es LITERALMENTE «la maquina no lee este campo como esta
+  # escrito», y encima el caracter es invisible y el diff no lo muestra: este informe es la
+  # UNICA superficie donde una persona puede verlo antes de intentar cerrar (REQ-023 CA-07).
+  if [ "${ARNES_OCULTA:-0}" != "0" ]; then
+    avisa "${base%.md}" "${ARNES_OCULTA_CLAVE}:" "${ARNES_OCULTA_REPR}:" 'cabecera no medible' \
+      "esa clave lleva DENTRO uno o más bytes ajenos —se muestran como \`\\xNN\`; en el archivo son invisibles—: un BOM (\`\\xef\\xbb\\xbf\`, el que PowerShell añade al redirigir), un espacio de anchura cero (\`\\xe2\\x80\\x8b\`), un byte de control o un multibyte partido. Una persona lee ahí \`${ARNES_OCULTA_CLAVE}:\` y la máquina NO lo lee como ese campo, así que la cabecera no se puede medir y la puerta de cierre DENIEGA. Reescribe esa línea dejando la clave limpia."
+  fi
+
+  cru_est="${CRU[$ARNES_CLAVE_ESTADO]:-}"; cru_qa="${CRU[$ARNES_CLAVE_QA]:-}"
+  cru_seg="${CRU[$ARNES_CLAVE_SEG]:-}"; cru_sens="${CRU[$ARNES_CLAVE_SENS]:-}"
+  cru_rig="${CRU[$ARNES_CLAVE_RIGOR]:-}"
 
   # EL MISMO LECTOR QUE LA PUERTA, tambien para `Estado:`. La regla del parentesis de
   # evidencia se le aplica en la puerta desde 1.26.0 y este informe no lo hacia, asi que
