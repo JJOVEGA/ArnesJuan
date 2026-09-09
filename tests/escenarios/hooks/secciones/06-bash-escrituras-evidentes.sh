@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=19
+PISO_AUTONOMO_SECCION=44  # 8 preámbulo + 0 maquinaria compartida duplicada + 36 bloque indivisible mayor · REQ-014 CA-18
 
   seccion_nueva "Bash — escrituras evidentes (cobertura parcial):"
 check "coordinadora: redirección a código -> deny"      deny guard-codigo.sh "$(emite_bash 'cat > src/app.ts <<< "export const x = 1;"' "" "")"

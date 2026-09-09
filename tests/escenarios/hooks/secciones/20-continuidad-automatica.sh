@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=28
+PISO_AUTONOMO_SECCION=52  # 8 preámbulo + 13 maquinaria compartida duplicada + 31 bloque indivisible mayor · REQ-014 CA-18
 
   seccion_nueva "Continuidad automatica (hook Stop -> bloque derivado):"
 

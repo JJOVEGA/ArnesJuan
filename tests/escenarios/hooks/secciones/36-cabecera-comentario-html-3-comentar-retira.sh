@@ -10,6 +10,7 @@
 # QUÉ CERTIFICA: CA-11 de REQ-016 — «comentar una declaración la RETIRA», y la puerta
 # decide EXACTAMENTE lo mismo que si la línea se hubiera borrado.
 CASOS_ESPERADOS_SECCION=6
+PISO_AUTONOMO_SECCION=87  # 27 preámbulo + 17 maquinaria compartida duplicada + 43 bloque indivisible mayor · REQ-014 CA-18
 
 # --- REQ-016 CA-11: COMENTAR UNA DECLARACION LA RETIRA --------------------------------
 # La conducta existia y ningun criterio la decia, asi que nadie podia saber si era la regla

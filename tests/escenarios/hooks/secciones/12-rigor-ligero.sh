@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=4
+PISO_AUTONOMO_SECCION=29  # 9 preámbulo + 0 maquinaria compartida duplicada + 20 bloque indivisible mayor · REQ-014 CA-18
 
   # --- `ligero` salta los VEREDICTOS, no las PUERTAS -------------------------------
 seccion_nueva "Rigor ligero: salta veredictos, no puertas:"

@@ -13,6 +13,7 @@
 # del estado que deje. La 3 y la 4 nacieron en 1.32.1 al añadir CA-11 y las guardas de H-02
 # (este archivo llegó a 345 líneas y el de los lectores a 459); la 5, en su vuelta 2.
 CASOS_ESPERADOS_SECCION=28
+PISO_AUTONOMO_SECCION=138  # 37 preámbulo + 5 maquinaria compartida duplicada + 96 bloque indivisible mayor · REQ-014 CA-18
 
 # --- REQ-016: LA CABECERA TIENE NOCION DE CITA ---------------------------------------
 # La regresion que esta seccion certifica, dicha sin adornos: un REQ `critico` cuyo

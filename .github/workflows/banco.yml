@@ -21,6 +21,26 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          # LOS TAGS SON PARTE DE LA PRUEBA, NO DEL HISTORIAL. Varias secciones del banco
+          # MATERIALIZAN un árbol congelado desde su tag (`git ls-tree -r v1.32.1 hooks
+          # tools` + `git show v1.32.1:<f>`) para medir contra él en la MISMA corrida. El
+          # checkout por defecto clona con `fetch-depth: 1` y SIN tags, así que esos
+          # árboles no existen aquí: en el PR #43 once criterios de REQ-017 salieron SKIP
+          # —«no hay línea base»— y la puerta requerida de `main` dio verde sobre el único
+          # REQ del PR sin haber ejecutado ni una de sus comprobaciones. Es H-08
+          # (`docs/PENDIENTES.md`), y no es un fallo de las sondas: se comportaron como se
+          # contrataron. El defecto está una capa más arriba —un SKIP honesto, agregado a
+          # un resultado global, se lee como verde—.
+          #
+          # `fetch-depth: 0` y no `fetch-tags: true`, y el motivo es el mismo hallazgo:
+          # `fetch-tags` mantiene la profundidad 1 y trae los tags como refs superficiales.
+          # Hoy eso bastaría para `git show <tag>:<f>`, pero deja la prueba colgando de las
+          # semánticas del clon superficial, y el modo de fallo de esa apuesta ES H-08:
+          # medio funciona y se lee como verde. El repositorio empaquetado pesa 540 KiB, así
+          # que la historia completa no es un coste que haya que optimizar. Lo que esto le
+          # cuesta a la puerta requerida se mide y se anota en `docs/qa/1.33.0.md`.
+          fetch-depth: 0
 
       - name: bit de ejecución en todo punto de entrada
         # Propiedad cerrada: lo que un hook o el usuario invoca directamente es 100755.

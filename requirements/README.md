@@ -172,6 +172,66 @@ la cabecera**: una línea igual debajo del primer `## ` no declara nada.
 > **entera** (`` `hooks/lib.sh, tools/x.sh` ``) sí se lee bien, y por eso la tolerancia del párrafo
 > anterior sigue enunciada como está.
 
+**Lo que NO se declara: los artefactos de gobierno de quien orquesta, porque ninguna comisión los
+escribe.** La regla está **en vigor de facto desde el 2026-09-07** —desde el primer despacho paralelo
+real— y se escribe aquí por decisión del propietario del **2026-09-08**. Se escribe porque una regla que
+se aplica sin estar en el contrato **se reinterpreta cuando conviene**, que es la misma clase que
+`SEC-053` (`contrato`, **abierto**, severidad alta: un criterio de publicación aplicado sin su frontera
+escrita, y bajo el que ya se publicó una versión — `docs/seguridad/registro-seguridad.md:4470-4481`).
+
+**La propiedad, con sus dos caras, que es la única forma de que decida el caso siguiente:** un artefacto
+es **de gobierno** si su contenido es el **resumen de la orquestación** —lo que quien orquesta ya tiene
+por haber orquestado— y **no** evidencia que sólo posee quien la produjo. La cara que **saca** del campo:
+lo escribe quien orquesta, así que ninguna comisión lo toca y no entra en ningún conjunto de escritura.
+La cara que lo **deja dentro**, y sin ella la propiedad no sirve para decidir nada: la **evidencia
+primaria** —la reproducción, la cifra y las condiciones en que se tomó— sólo la tiene quien la midió, de
+modo que el registro de hallazgos de QA y `docs/seguridad/registro-seguridad.md` **sí** son conjunto de
+escritura de su comisión y **sí** se declaran; trasladarlos obligaría a una segunda transcripción del
+mismo contenido y le arrancaría a cada cifra su condición. Ejemplos **no exhaustivos** de la primera
+cara, ya decididos: `CHANGELOG.md`, `docs/ESTADO.md` —cuyo bloque entre marcadores **lo deriva el hook**
+y cuyo texto de fuera es de la coordinadora— y `PENDING_APPROVAL.md`, que es la cola de decisiones
+humanas. La **lista declarada** no existe todavía: llega con **REQ-022 CA-04** a `.arnes/config.json`
+(ventana 1.34.0), y hasta entonces decide la propiedad.
+
+**Quita el archivo del mapa, NO la obligación.** `AGENTS.md` §8 sigue exigiendo entrada de
+`CHANGELOG.md` en **todo** commit, y el hook `pre-commit` sigue denegando el commit sin ella: lo que
+cambia es **quién** la escribe —quien comitea, que es quien orquesta—, no si se escribe. Y por eso la
+objeción que esta regla responde era **correcta** mientras la regla no existía: omitir el libro mayor
+fabricaba un `disjunto` falso entre dos comisiones que iban a escribir las dos en él
+(`requirements/REQ-019.md:1446-1450`). Lo que la vuelve falsa no es una convención de higiene, es que
+ahora **ninguna** lo escribe.
+
+> **El límite, y va fuerte porque es donde esto se tuerce:** un campo se acota **sólo** cuando la
+> comisión de verdad no escribe ese archivo. **Acotarlo para ganar paralelismo corrompe el mapa**, y un
+> `disjunto` sobre un mapa corrompido no autoriza nada — que es exactamente **SEC-020**, abierto. La
+> regla existe para **dejar de declarar una colisión que no existe**, no para esconder una que sí. De ahí
+> el fail-closed, que aquí no lo puede llevar ninguna máquina: mientras un caso no esté decidido, **se
+> declara**. Los dos errores no cuestan igual —de más es un `colisiona` falso, que devuelve a la serie un
+> trabajo que podía ir en paralelo; de menos es un `disjunto` falso, que son dos comisiones escribiendo
+> el mismo archivo y una **escritura perdida** que git no señala—, así que la duda cae **siempre** hacia
+> declarar. Casos que la propiedad **no** cierra hoy, dichos por su nombre para que nadie los retire
+> leyendo lo de arriba: `docs/PENDIENTES.md` —donde REQ-017 escribe una medición **como producto**— y el
+> índice de ventana `docs/qa/<versión>.md`, cuya escritura el write-back de REQ-017 del 2026-09-07 hizo
+> contar **a propósito**. Los resuelve REQ-022 (CA-04 y CA-06-bis) en 1.34.0.
+
+**Y la limpieza de los campos ya escritos no la hace la comisión que escribe esta regla.** Hoy **11**
+archivos de `requirements/` declaran `CHANGELOG.md`: **6** abiertos (007, 008, 011, 013, 014, 019), **3**
+`completado` (012, 015, 016) y **2** en `borrador` (023, 024). Cada uno de los **abiertos** lo retira
+**cuando se le toque por otro motivo**, o en una comisión propia con su medición; los `completado` se
+quedan **idénticos**, por el mismo motivo que «Alcance temporal» más abajo, y los `borrador` al salir a
+`pendiente`. Retirarlo de once archivos desde aquí sería escribir en once archivos que esta comisión no
+tiene en su ámbito. *(Cifras **operativas**, corrida del 2026-09-08 sobre `cand/1.33.0`, `Estado:` leído
+REQ a REQ y **no** por el índice; dirección buscada: **hacia 0** en los abiertos. Se mueven solas al
+abrirse o cerrarse un REQ — el encargo de esta comisión traía **8** y REQ-022 CA-05 midió **9, 5 de 8
+abiertos** el 2026-09-07, y ninguna de las tres cifras estaba mal.)* Lo que esta regla compra está
+medido en la misma corrida: `tools/arnes-paralelo.sh` responde `colisiona` en **67 de 67** pares del
+proyecto y casi todo sale de cuatro archivos, de los cuales el libro mayor es **el único que se puede
+retirar sin mentir sobre el alcance**.
+
+**Lo que esta regla NO es:** la regla general del campo —que declara el conjunto de **escritura**, ni más
+ni menos, con el coste de cada uno de los dos errores— es **REQ-022 CA-07** y se escribe en su ventana.
+Aquí sólo se retira del mapa una clase de artefacto que ninguna comisión escribe.
+
 **Quién lo lee:** `tools/arnes-paralelo.sh`. Interseca los conjuntos de dos REQ **expandiendo los
 globs contra el árbol real** —no comparando cadenas— y responde `disjunto` o `colisiona` nombrando
 el archivo compartido. Comparar cadenas declararía disjuntos `hooks/lib.sh` y `hooks/*.sh`, que es
@@ -209,11 +269,13 @@ generan un **ADR**. Si un REQ `completado` cambia, vuelve a `en-progreso`/`en-re
 **Medido, no opinado:** en un ciclo de trabajo de este arnés, **7 de 20** hallazgos no fueron que
 el código estuviera mal, sino que el **criterio decía algo falso sobre lo construido** —clase
 `contrato`—. Uno costó una **vuelta entera del bucle** (~50 min entre desarrollador, QA, control y
-write-back). Las tres formas de abajo son exactamente las que se midieron, y las tres se evitan
-escribiendo la **regla** que el código implementa en vez de la **lista** de casos que se le
-ocurrieron a quien redactó ese día.
+write-back). Las tres primeras formas de abajo son exactamente las que se midieron en ese ciclo;
+**la cuarta se midió después, en la ventana 1.32.1, y sobre un criterio escrito ya con esta
+sección delante** — de ahí que no baste con escribir la **regla** que el código implementa en vez
+de la **lista** de casos que se le ocurrieron a quien redactó ese día: hay que además estar
+midiendo la magnitud que se degrada.
 
-Las tres están **prohibidas por nombre**. Un criterio que caiga en cualquiera de ellas está **mal
+Las cuatro están **prohibidas por nombre**. Un criterio que caiga en cualquiera de ellas está **mal
 formado**: el QA lo reporta como hallazgo de clase `contrato` contra el REQ **antes** de ejecutar
 la prueba, y quien lo reescribe es el analista (write-back, `AGENTS.md` §9).
 
@@ -267,7 +329,50 @@ del bucle.
   **menos** es conforme y **no** es hallazgo.»
 
 **Regla.** Todo criterio sobre **coste** —procesos, tiempo, bytes, lecturas— se enuncia como
-**techo con la dirección admitida declarada**, y **nunca** como igualdad.
+**techo con la dirección admitida declarada**, y **nunca** como igualdad. Y un techo bien puesto
+sobre la magnitud equivocada sigue sin ver nada: ésa es la forma (d), que viene justo debajo.
+
+### (d) Fijar la magnitud equivocada
+
+**Caso medido — y lo que importa es que el criterio SE CUMPLÍA.** `CA-08` de REQ-016 contrataba el
+coste de la noción de cita en **procesos por llamada**: 4 = 4, medido correctamente, criterio en
+verde. Mientras tanto el reloj de la ruta crítica del banco se multiplicaba por **diez** (7,6 s →
+75,7 s) y el banco entero —que es la **puerta requerida de `main`**— pasaba de 39 s a 92 s. No hubo
+ningún número mal puesto ni ninguna medición mal hecha: la magnitud era correcta, medible sin ruido
+y **ortogonal a lo que se degradó**. La pregunta era la que no era. Un criterio de coste que fija
+la magnitud equivocada **da verde sobre una regresión de 10×**, y lo hace con toda la autoridad de
+una medición correcta — que es peor que no medir, porque además tranquiliza.
+
+- **Mal:** «Entonces el hook gasta **no más de 0 procesos añadidos** respecto a la línea base.»
+  (bien formado según (c), y ciego a un factor de diez en el reloj)
+- **Bien:** «Entonces (i) **no más de 0 procesos añadidos** respecto a la línea base **y** (ii) el
+  **mínimo** de reloj es de **no más de 1,25×** el de la línea base, medidas **las dos en la misma
+  corrida** — el arreglo no vale si compra tiempo con un `fork`, y el `fork` no se ve en el reloj
+  ni el reloj se ve en los procesos.»
+
+**Regla.** Todo criterio de **coste** declara **qué magnitud mide y por qué es ésa la que se
+degrada**; si el mecanismo puede degradarse por más de una vía, **contrata todas las vías en el
+mismo criterio y en la misma corrida** —dos magnitudes en dos criterios distintos se cumplen por
+separado mientras el sistema empeora—. Y se enuncia como **razón o propiedad estructural**, **nunca
+como un reloj absoluto**: un número de segundos lo falsea la máquina, lo falsea el runner del CI y
+lo falsea la carga. Donde haga falta un absoluto, va como **razón contra una línea base medida en
+la misma corrida**, no como una cifra: un runner lento sube el numerador y el denominador.
+
+**Cómo se contrata una magnitud que no miente:**
+
+| Lo que se quiere saber | Cómo se contrata | Por qué no miente |
+|---|---|---|
+| ¿El coste crece más que linealmente? | **Cociente de duplicación**: doblar la entrada y comparar los dos costes. Lineal ≈ 2, cuadrático ≈ 4 | La velocidad de la máquina **se cancela algebraicamente**: está en el numerador y en el denominador |
+| ¿Cuesta más que antes? | **Razón contra una línea base medida en la MISMA corrida** (un tag anterior, la implementación previa) | Un runner lento o cargado sube los dos términos; la razón no se mueve |
+| ¿Cabe en un límite duro de fuera (un `timeout`, una cuota)? | Se **mide y se anota** el margen; **mover** el límite es otro REQ con su dueño | El límite no lo elige este sistema, así que el criterio no puede fijarlo: sólo puede medirlo |
+
+**El estadístico es el MÍNIMO de k repeticiones, nunca la media**, y k se elige para que el mínimo
+de cada serie supere el suelo por debajo del cual el reloj no distingue del ruido (en este arnés,
+50 ms). La carga sólo puede **añadir** tiempo, así que el mínimo es la mejor estimación del coste
+real y la media es una mezcla del coste y de los vecinos. Y **una sonda que no llega a ese suelo, o
+que no encuentra su línea base, emite SKIP con el motivo y con el número que sí obtuvo — nunca
+PASS**: un instrumento que ante la ausencia de datos responde «verde» es la misma familia de
+defecto que la magnitud equivocada.
 
 ### Cuando el código cubre MÁS de lo que el criterio promete
 
@@ -286,10 +391,34 @@ el hallazgo **contra el código**. La regla de arriba aplica **sólo** cuando el
 
 ### Dónde se anota la forma del hallazgo
 
-La **forma** (`enumeración` · `número` · `igualdad` · `otra`) se anota **sólo** en el log de QA
+La **forma** (`enumeración` · `número` · `igualdad` · `magnitud` · `otra`) se anota **sólo** en el log de QA
 (`docs/qa/<versión>.md`), y **nunca** dentro del paréntesis de la clase del campo `Hallazgos
 abiertos:`. Ese paréntesis es lo que lee `guard-completado` para decidir si un hallazgo bloquea:
 meterle una segunda dimensión cambiaría la entrada de la puerta por un motivo de contabilidad.
+
+### La clase, el forzador y el vencimiento se CITAN con archivo y línea; no se declaran
+
+**Regla.** Un REQ que mencione un hallazgo —propio o ajeno— **cita** su clase, su forzador y su
+vencimiento con **archivo y línea** del sitio único donde viven (`docs/seguridad/registro-seguridad.md`
+para los `SEC-xxx`; el registro de QA para los suyos), y **no** los transcribe como si el REQ los
+declarara. Dos transcripciones de la misma regla se desfasan, y ésta se desfasa hacia el lado que
+**abre**: un REQ que diga `instrumento` sobre un hallazgo que el registro tiene como `contrato` cambia
+la entrada de `guard-completado` por un motivo de redacción. Si las dos no coinciden, la equivocada es
+la del REQ.
+
+**La excepción, que no es una grieta: el campo `Hallazgos abiertos:` SÍ declara la clase.** Es la
+entrada de la puerta, y una cita no se puede leer por máquina (ver «Clases de hallazgo»). La regla rige
+para la **prosa** del REQ —criterios, notas, alcance—: el campo es el único sitio del REQ donde la clase
+se escribe como **valor**, y ese valor tiene que **coincidir** con el sitio único.
+
+**Y la forma (a) en pequeño, con su caso medido:** una cláusula del auditor citada **sin su calificador**
+—las tres condiciones eran «formas **no exhaustivas**… la propiedad es la que decide, no la lista»— se
+lee en el REQ como una lista cerrada de tres, y envejece hacia el lado que abre
+(`docs/seguridad/registro-seguridad.md:4444-4453`). Citar con el rango es lo que lo evita.
+
+**De dónde sale, y es la regla aplicada a sí misma:** es la deuda **`R-015-01`**, cuya clase, dueño,
+forzador y vencimiento viven en `docs/seguridad/registro-seguridad.md:4461-4468` y **no se transcriben
+aquí**. Mismo alcance temporal que el resto de esta sección: rige hacia delante.
 
 ### Alcance temporal
 
@@ -298,8 +427,26 @@ REQ en estado `completado` **no** se reabren ni se reescriben para conformarlos:
 contratos cerrados por un motivo de redacción es editar el contrato por comodidad, y multiplica el
 coste que esta sección existe para bajar.
 
+La forma **(d)** se incorpora con **el mismo alcance temporal** que las tres anteriores: rige para
+los criterios escritos o modificados desde la ventana en que se adopta, y no reabre ninguno de los
+ya cerrados.
+
+### En la Definition of Ready del analista
+
+Un REQ no se entrega como `pendiente` si alguno de sus criterios habla de **coste** sin decir **qué
+magnitud mide y por qué es ésa la que se degrada**, o si lo fija como un **reloj absoluto** en vez
+de como una razón o una propiedad estructural. Es la línea que añade la forma (d), y se comprueba
+en la misma revisión humana que el mapa de archivos: ninguna de las dos es una comprobación de
+runtime.
+
+
 **En este repositorio la sección se adopta en 1.32.0** (REQ-012): rige para los criterios que se
 escriban o modifiquen desde esa ventana, y los ocho REQ ya `completado` quedan **idénticos**.
+**La forma (d) se adopta en 1.33.0** (REQ-017), con el mismo alcance: `CA-08` de REQ-016 —el caso
+medido que la origina— **no** se reescribe, porque REQ-016 está `completado` y se cumplió tal como
+estaba escrito. Ése es justamente el punto.
+**La regla de «se citan, no se declaran» se adopta el 2026-09-08**, con el mismo alcance y sin dueño de
+REQ: es doctrina del proyecto, no un criterio de ninguno. Ningún REQ se reescribe para conformarlo.
 
 ## Plantilla
 ```markdown
@@ -359,7 +506,16 @@ Tocado por: (agente / fecha)
 | [REQ-010](REQ-010.md) | El acento no es parte del valor: `en-revision` y `en-revisión` son el mismo estado para la puerta, el informe y el bloque derivado | `completado` | critico | aprobado | aprobado |
 | [REQ-011](REQ-011.md) | La puerta que pregunta DESPUÉS: el estado terminal reconstruido entre dos expansiones sale allow, y preguntar antes no cierra la clase | `pendiente` | critico | pendiente | pendiente |
 | [REQ-012](REQ-012.md) | Criterios por mecanismo, no por enumeración: siete de veinte hallazgos del ciclo 2 fueron que el criterio decía algo falso sobre lo construido | `pendiente` | critico | pendiente | pendiente |
-| [REQ-013](REQ-013.md) | Paralelizar por REQ con un mapa explícito de archivos: el ciclo 2 corrió en serie porque nadie podía decir qué dos comisiones no colisionan | `pendiente` | critico | pendiente | pendiente |
-| [REQ-014](REQ-014.md) | El banco en archivos por sección: un `run.sh` de 4 096 líneas impide que dos agentes de QA trabajen a la vez y obliga a leerlo entero en cada comisión | `pendiente` | critico | pendiente | pendiente |
+| [REQ-013](REQ-013.md) | Paralelizar por REQ con un mapa explícito de archivos: el ciclo 2 corrió en serie porque nadie podía decir qué dos comisiones no colisionan | `en-revisión` | critico | con-hallazgos | con-hallazgos |
+| [REQ-014](REQ-014.md) | El banco en archivos por sección: un `run.sh` de 4 096 líneas impide que dos agentes de QA trabajen a la vez y obliga a leerlo entero en cada comisión. **REABIERTO el 2026-09-08** (§9): `CA-18` era insatisfacible y `CA-12` ya no discriminaba; los dos `aprobado` son del 2026-09-06 y quedan **invalidados** | `en-progreso` | critico | aprobado | aprobado |
 | [REQ-015](REQ-015.md) | Publicación concurrente sin pérdida: el temporal de nombre fijo destruyó texto humano de `docs/ESTADO.md` con dos paradas a la vez | `completado` | critico | aprobado | aprobado |
 | [REQ-016](REQ-016.md) | La cabecera tiene noción de cita: un veredicto citado dentro de un comentario HTML cerró un REQ crítico sin auditoría aprobada | `completado` | critico | aprobado | aprobado |
+| [REQ-017](REQ-017.md) | El coste que ningún criterio miraba: la guarda del CR es cuadrática en la longitud de línea, y CA-08 dio verde midiendo procesos sobre una regresión de 10× de reloj | `completado` | critico | aprobado | aprobado |
+| [REQ-018](REQ-018.md) | El canal por el que un proyecto reporta defectos DEL arnés: issues en el repo público con **gramática restringida** — sin campo donde quepa el nombre del proyecto, no hay decisión que tomar en caliente. **Ventana 1.34.0** | `borrador` | critico | pendiente | pendiente |
+| [REQ-019](REQ-019.md) | Adelgazar los **dos** documentos de arranque —`AGENTS.md` y `requirements/README.md`— sin perder una sola invariante: se adelgaza **moviendo**, no reescribiendo, porque no se puede perder una regla que nadie borró. **Ventana 1.34.0, primer trabajo**; 9–11 comisiones en 7 fases | `pendiente` | critico | pendiente | preventiva |
+| [REQ-020](REQ-020.md) | ¿Esta prueba mide algo? Cuatro formas de estar verde sin haber medido — el caso vacío, el que no se ejecuta, el que sólo fija lo que hoy falla y el universo encogido en silencio. **Ventana 1.34.0**: depende de las sondas de REQ-021 | `pendiente` | critico | pendiente | pendiente |
+| [REQ-021](REQ-021.md) | `tests/util/` con las sondas de reloj y de procesos, escritas una vez: se reconstruyen en cada comisión y dos se rompieron a la primera, una dejando un proceso vivo 3 h 41 min. Alcance reducido el 2026-09-08 (la sonda de línea base queda fuera). **BLOQUEADO el 2026-09-08**: agotó las 3 vueltas dev↔QA sin cerrar `QA-021-10` (`contrato`), y el propietario lo movió a **1.34.0** | `bloqueado` | critico | con-hallazgos | preventiva |
+| [REQ-022](REQ-022.md) | Despacho en paralelo: tres dimensiones de colisión y la herramienta sólo ve una. Bloque de apertura de **1.34.0** | `pendiente` | critico | pendiente | pendiente |
+| [REQ-023](REQ-023.md) | El carácter que no se ve apaga el enforcement: la guarda nombra el CR cuando la propiedad es «una cabecera que no se puede medir». **Ventana 1.34.0** (salió de 1.33.0 el 2026-09-08, decisión del propietario): depende de las sondas de REQ-021 y del gate de SEC-048 | `borrador` | critico | pendiente | pendiente |
+| [REQ-024](REQ-024.md) | La ausencia de un campo no se resuelve del lado que abre, y el mismo estado en el segundo lector: la cola que cuenta cero sobre lo que no pudo medir. **Ventana 1.34.0**: va después de REQ-023, con el que comparte nueve rutas | `borrador` | critico | pendiente | pendiente |
+| [REQ-025](REQ-025.md) | El arnés vigila también a quien orquesta: la sesión coordinadora acredita, decide y publica, y ninguna puerta la mide. **Ventana 1.34.0**; línea base = 20 errores de coordinación catalogados | `borrador` | critico | pendiente | pendiente |

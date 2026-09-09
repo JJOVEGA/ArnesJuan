@@ -9,6 +9,7 @@
 # Va en archivo propio porque `36-…-1-la-puerta.sh` ya estaba en 347 líneas y el banco se
 # exige a sí mismo no pasar de 400 (`autoprueba-corredor.sh`, CA-18).
 CASOS_ESPERADOS_SECCION=19
+PISO_AUTONOMO_SECCION=117  # 36 preámbulo + 3 maquinaria compartida duplicada + 78 bloque indivisible mayor · REQ-014 CA-18
 
 # --- POR QUÉ ESTA GUARDA, y es la parte que no se puede leer del código -------------
 # «No fabricar» tiene DOS CONSECUENCIAS OPUESTAS según qué delimitador esté en juego, y la

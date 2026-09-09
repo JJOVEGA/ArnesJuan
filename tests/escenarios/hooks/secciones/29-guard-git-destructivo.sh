@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=111
+PISO_AUTONOMO_SECCION=59  # 9 preámbulo + 0 maquinaria compartida duplicada + 50 bloque indivisible mayor · REQ-014 CA-18
 
 # --- REQ-005: git destructivo prohibido a TODOS los agentes ---------------------------
   seccion_nueva "guard-git: ningun agente ejecuta git destructivo:"

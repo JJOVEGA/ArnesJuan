@@ -11,6 +11,7 @@
 # cabeceras del banco. (La 5 trae ADEMÁS un diferencial propio, acotado a la rebanada del CR
 # que su guarda toca; no sustituye a éste, que recorre el corpus entero.)
 CASOS_ESPERADOS_SECCION=4
+PISO_AUTONOMO_SECCION=132  # 28 preámbulo + 19 maquinaria compartida duplicada + 85 bloque indivisible mayor · REQ-014 CA-18
 
 # --- REQ-016: LA CABECERA TIENE NOCION DE CITA ---------------------------------------
 # La regresion que esta seccion certifica, dicha sin adornos: un REQ `critico` cuyo

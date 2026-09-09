@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=3
+PISO_AUTONOMO_SECCION=13  # 8 preámbulo + 0 maquinaria compartida duplicada + 5 bloque indivisible mayor · REQ-014 CA-18
 
 seccion_nueva "INERTE — sin manifiesto, el hook no estorba:"
 PROJ2="$(mktemp -d)"; mkdir -p "$PROJ2/src"; export CLAUDE_PROJECT_DIR="$PROJ2"

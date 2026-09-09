@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=9
+PISO_AUTONOMO_SECCION=40  # 8 preámbulo + 0 maquinaria compartida duplicada + 32 bloque indivisible mayor · REQ-014 CA-18
 
 seccion_nueva "Orden del ciclo (seguridad tras QA):"
 mkreq_r "REQ-050" "no" "pendiente" "pendiente" ""

@@ -30,6 +30,7 @@
 # 6 de 19 fallan (los 6 nuevos), y los 3 controles pasan en las dos. Contra la que auditó
 # R-004: fallan los 5 nuevos (3 de SEC-014 y 2 de SEC-018) y pasan los 2 controles nuevos.
 CASOS_ESPERADOS_SECCION=26
+PISO_AUTONOMO_SECCION=171  # 35 preámbulo + 79 maquinaria compartida duplicada + 57 bloque indivisible mayor · REQ-014 CA-18
 
 seccion_nueva "tools/arnes-paralelo.sh: lo que no se puede medir no autoriza nada:"
 

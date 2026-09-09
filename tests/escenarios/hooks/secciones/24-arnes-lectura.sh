@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=3
+PISO_AUTONOMO_SECCION=36  # 8 preámbulo + 0 maquinaria compartida duplicada + 28 bloque indivisible mayor · REQ-014 CA-18
 
 seccion_nueva "tools/arnes-lectura.sh (el informe tiene que poder decir que algo esta mal):"
 # FALLO EN ABIERTO medido (1.30.1): el contador de anomalias se incrementaba dentro de un

@@ -63,16 +63,126 @@ misma familia que las **cinco** derrotas de «ensanchar el patrón», y por eso 
 pregunta cerrada o gramática restringida. Las cuatro comparten mecanismo y comparten pruebas: juntas
 cuestan bastante menos que por separado, y ese es el motivo de agruparlas, no la estética.
 
-### Orden: las palancas de coste van PRIMERO, antes que ningún REQ
+### Alcance: esta ventana son SÓLO las palancas de coste
 
-Decisión del propietario, 2026-09-07. Esta ventana va a tener muchas comisiones, y las tres palancas
-están **medidas** en 1.32.1:
+> **Partida el 2026-09-07 por decisión del propietario, y el motivo es el propio historial.** 1.33.0
+> empezó siendo «la skill de migración y las plantillas» y a media ventana tenía nueve trabajos: tres
+> palancas de coste, la cuarta, REQ-011, dos barridos, el rigor comprobable, el caso J y una pasada de
+> conformidad con cinco cosas dentro. **Creció durante la ventana anterior, que es exactamente cómo se
+> descontroló el ciclo 3.** Medido: los nueve juntos salen a ~8–10 h de reloj de agente, y una ventana
+> que no cabe en un ciclo se corta a mitad de una comisión.
+>
+> | Ventana | Contenido | Reloj de agente |
+> |---|---|---|
+> | **1.33.0** | Las cuatro palancas de coste (abajo). REQ-017 en curso | **~3 h** |
+> | **1.34.0** | El núcleo por estado, la pasada de conformidad y el canal de informes | ~6 h |
+>
+> **Se gana algo más que tiempo, y es el motivo real de este orden:** las palancas abaratan el núcleo,
+> así que medirlas **antes** de empezarlo es la única forma de saber cuánto abaratan de verdad. Si van
+> juntas, el ahorro queda mezclado con el gasto y no se puede atribuir — que es el error que se cometió
+> el 2026-09-07 con la línea base envenenada por la sonda desbocada.
+
+Esta ventana va a tener muchas comisiones, y las tres primeras palancas están **medidas** en 1.32.1:
 
 | Palanca | Medido | Lo que devuelve |
 |---|---|---|
 | Partir la sección caliente del banco | Ver la corrección de abajo: la ruta crítica es **`32-huecos-auditoria-r001`**, no `36-2` | El banco lo corre **cada** comisión que mide, decenas de veces |
 | `tests/util/` con las tres sondas | Tres comisiones las reconstruyeron en esta ventana, **dos mal la primera vez** (`$BASHPID` dentro de `$( )`; `command -v` sobre un binario sombreado) | ~150 k tokens por ventana, y dos clases de prueba-que-miente |
 | La nota de migración **una vez al cerrar** | `skills/arnes-upgrade/SKILL.md` colisionaba en 15 de 15 pares | Paralelismo real entre comisiones |
+| **Adelgazar `AGENTS.md`** (cuarta, propuesta por la coordinadora) | ~9 k tokens de impuesto fijo en **cada** subagente; una comisión de subida de versión gastó 28 500 tokens para ~3 000 de trabajo real | El impuesto lo paga cada comisión de 1.34.0, que son muchas |
+
+> **Alcance vigente de 1.33.0, fijado por el propietario el 2026-09-08 (segunda decisión del mismo
+> día): REQ-017 + REQ-021, más la partición de las tres secciones sobre 400 líneas (`DEV-021-07`).
+> `REQ-019`, `REQ-020`, `REQ-023`, `REQ-024` y `REQ-025` van a 1.34.0, y REQ-019 es su primer trabajo.**
+>
+> **ENMIENDA DEL 2026-09-08 (tercera decisión del propietario del mismo día): el tag `v1.33.0` se APLAZA,
+> y el primer trabajo de 1.34.0 pasa a ser la SONDA DE `REQ-017 CA-08`, por delante de `REQ-019`.**
+> Motivo, y es una medición, no una preferencia: el caso
+> `REQ-017 CA-08 (ii) una cabecera de 200 líneas` falla el check **requerido y estricto**
+> `hooks-en-linux` afirmando «esto es una regresión, no ruido», y **cuatro corridas sobre código
+> idéntico** —ningún commit desde `b9afa01` toca `hooks/`, `tools/` ni `.github/`, verificado por
+> `R-019`— publicaron **1,131× · 0,973× · 1,337× · 1,364×**. El **0,973×** dice que este árbol salió
+> **más rápido** que `v1.32.1`, y una regresión real no puede ser más rápida: la dispersión (factor
+> **1,40**) **cubre el techo (1,25)**.
+>
+> **CORREGIDO el 2026-09-08, antes de que nadie trabajara sobre lo anterior.** Una primera lectura
+> concluyó que el defecto era que el umbral de convergencia y el techo fueran el mismo número. **Es
+> falso: lo son a propósito**, y `CA-08` lo argumenta — *«no es un número nuevo: es el mismo, porque un
+> instrumento tiene que resolver al menos el factor que vigila»*. **El caso hace lo que su criterio
+> prescribe.** Lo que las cuatro corridas muestran es peor: **el remedio que `CA-08` ya prescribió
+> —intercalar las series y comprobar convergencia— está IMPLEMENTADO y no basta.**
+>
+> **Dónde está el hueco:** la convergencia compara el segundo mínimo de **cada árbol** con su propio
+> mínimo, o sea mide si **cada serie** se asentó; el ruido de la **razón** viene de las condiciones
+> **entre brazos**. Dos series pueden converger cada una a 1,2× y su cociente oscilar 1,4×. Y los datos
+> lo enseñan: **los dos rojos son justo aquellos en que un brazo converge al borde** —1,232× y 1,249×
+> contra el límite de 1,250×—, mientras los dos verdes tienen convergencias equilibradas.
+>
+> **La clase, nombrada:** `CA-08` dice «**al menos** el factor que vigila» y eligió el valor **más flojo**
+> compatible con ese argumento **sin medir si alcanzaba**. Es *un criterio derivado sin comprobar su
+> factibilidad* — la misma clase que el techo de 400 líneas de `REQ-014 CA-18` y que el techo de 4× de
+> `REQ-021 CA-08 (iii)` re-derivado a 6×.
+>
+> **Por qué va DELANTE de `REQ-019` y no detrás:** mientras el techo viva dentro del ruido, **el verde de
+> esa puerta no acredita nada más que el rojo**. Toda publicación posterior —1.34.0 incluida— se firmaría
+> sobre una señal que no distingue. Arreglarla antes evita repetir esta conversación en cada ventana.
+> Detalle completo y las opciones descartadas, en la entrada resuelta de `PENDING_APPROVAL.md`.
+>
+> **REQ-023 salió el mismo día que entró, y el motivo es que su coste se midió después de meterlo.** El
+> analista lo evaluó y no cabía donde estaba: **cuatro comisiones en serie** tras REQ-021 —cata del
+> desarrollador para decidir `CA-03` frente a `CA-04`, implementación cuyo bulto es el banco, QA con
+> **una vuelta dev↔QA por diseño** (`CA-03` está escrito para que una implementación por lista falle) y
+> auditoría por `Rigor: critico`—, sin paralelismo posible y con dos precondiciones ajenas
+> (`CA-09 (iii)` espera a que REQ-021 suelte `tests/util/`; `CA-08` depende del tag). Y aplazarlo **no
+> incumple nada**: el vencimiento de `SEC-047` es el cierre de **1.34.0** (`registro-seguridad.md:3684`),
+> así que meterlo aquí había sido un **adelanto**, y desandar un adelanto no incumple un vencimiento.
+>
+> **El argumento con el que se justificó tenerlo aquí era falso, y conviene que quede escrito porque lo
+> escribió la coordinadora.** Se dijo que publicar sin él «publica una ventana más una promesa falsa en
+> `AGENTS.md` §6/§13». `R-013 §2` ya había **medido** que cerrar la vía del carácter **no cierra la
+> clase** —el comentario y el borrado siguen abiertos, y son `SEC-050` y `SEC-047 (2)`, los dos de
+> 1.34.0—; que las filas son falsas **desde `v1.30.3`**, en cinco versiones, de forma **latente**; y que
+> aplazar deja §13 **igual de honesta**, porque la fila del CR la reescribe `CA-10`, que es de REQ-023.
+> Una consecuencia inventada para sostener una prioridad es la misma forma que `SEC-052`.
+>
+> **Y el historial de este alcance vale más que el alcance, porque es el registro de una ventana que se
+> movió cuatro veces en dos días.** Se fijó el 2026-09-07 en `REQ-017 + REQ-019 + REQ-021` con `REQ-020`
+> fuera. El 2026-09-08 entró **REQ-023** —el carácter invisible, un bypass completo del enforcement
+> presente en las cinco versiones publicadas, medido por `R-012`— y salió **REQ-019**, cuando su
+> estimación pasó de ~2 h a **7–11 h en cuatro fases**: no cabe en una comisión, obliga a una comisión de
+> analista previa por `CA-15`, y su `CA-16` **detiene la ventana** durante dos de sus fases. Sacarlo no
+> pierde su ahorro: el argumento para tenerlo aquí era que *1.34.0 es la ventana con más comisiones*, y
+> eso se cumple igual siendo **el primer trabajo de 1.34.0**.
+>
+> **Lo que esta ventana NO entrega, dicho por su nombre: la reducción de tokens.** REQ-017 abarató el
+> **reloj** del banco (95,66 s → 45,14 s) y esperar al banco es gratis en tokens; REQ-021 ahorra
+> ~150 k por ventana pero sólo cuando exista; **la palanca de tokens es REQ-019, y se fue a 1.34.0.**
+> Medido el 2026-09-08 y corrigiendo la cifra de la tabla de arriba: el impuesto de arranque **no son
+> ~9 k sino ≈17 000–20 000 tokens** por subagente, porque §0 obliga a **tres** documentos y
+> `requirements/README.md` pesa el **42 %** —bytes y palabras medidos con `wc`; la conversión a tokens es
+> **estimación**—. Y su parte movible es menor de lo que parece: **el suelo inamovible del README es el
+> 54 % de las líneas y ≈58–64 % de los bytes**, así que el ahorro real por movimiento son **≈11–13 kB**,
+> y el bloque más caro —el `## Índice`, 19 % del archivo— **no lo baja REQ-019**, porque es una copia a
+> mano de lo que `tools/arnes-lectura.sh` ya deriva: eso es un mecanismo, con otro dueño.
+>
+> Con los cuatro, la ventana salía a **~5–6 h** frente a las ~3 h con que se partió esa misma mañana —
+> REQ-021 solo son ~2 h y ~650 k tokens—. Y el corte no es sólo presupuestario: **REQ-020 depende de
+> REQ-021**, porque su criterio de coste pide exactamente las sondas que REQ-021 construye (series
+> intercaladas, mínimo de k, procesos por sección). El orden natural es **021 → 020**, y hacerlo al
+> revés obliga a escribir las sondas dos veces. **REQ-021 era el peor candidato a aplazarse** por su
+> propio argumento: paga ~150 k por ventana más dos clases de prueba-que-miente, y 1.34.0 es la que más
+> comisiones tiene.
+
+
+> **Y la palanca 3 es la que hace útil lo que viene después: el paralelismo.** Hoy no se puede
+> despachar en paralelo casi nada, y no por prudencia — `skills/arnes-upgrade/SKILL.md` colisionaba en
+> **15 de 15** pares de comisiones porque cada una escribía ahí su nota de migración. Retirada esa
+> colisión, el campo `Archivos:` de dos REQ puede salir **disjunto** de verdad. Con dos condiciones que
+> no se relajan: el paralelismo se autoriza sólo con `tools/arnes-paralelo.sh`, **nunca por intuición**
+> (§6), y mientras **SEC-020** siga abierto ese `disjunto` es condición **necesaria y no suficiente** —
+> sobre un campo decorado responde que sí con el mapa corrompido. Por eso SEC-020 está en la pasada de
+> conformidad de 1.34.0: es lo que convierte el permiso en fiable. Y el orden de fases (QA nunca antes
+> que el desarrollador, seguridad nunca antes que QA) no se paraleliza en ningún caso.
 
 **Y el dato que ordena todo lo demás:** las comisiones que **miden** corren a 6 200–7 500 tokens por
 minuto de reloj; las que **piensan** (análisis y write-back), a 12 000–17 000. No miden más despacio:
@@ -103,7 +213,11 @@ minuto de reloj; las que **piensan** (análisis y write-back), a 12 000–17 000
 > que fija la magnitud equivocada da verde sobre una regresión de 10×. La pasada de conformidad tiene
 > que ensanchar CA-08 a **reloj**, no sólo a forks.
 
-### El núcleo
+### El núcleo — MOVIDO A 1.34.0 (propietario, 2026-09-07)
+
+Se queda escrito aquí porque el **tema** de arriba es suyo: la tabla estado-vs-vía explica por qué
+estas cinco piezas se agrupan y por qué juntas cuestan menos que por separado. Lo que cambia es
+**cuándo**: ninguna de ellas se despacha en 1.33.0.
 
 | Trabajo | Qué cierra | Clase |
 |---|---|---|
@@ -113,7 +227,7 @@ minuto de reloj; las que **piensan** (análisis y write-back), a 12 000–17 000
 | **La puerta de «¿esta prueba mide algo?»** | **Adelantada desde 1.34.0.** Un caso nuevo tiene que **fallar** contra los hooks de la versión anterior. Habría cazado los cinco casos vacíos el día que nacieron — y sin ellos no hay vuelta 1, que costó **685 000 tokens y 1 h 35** | `instrumento` |
 | **REQ-007 bloques B y C, y CA-64.1-bis/2-bis** | Lo que ya estaba planificado: la cabecera que se sale de alcance, el destino entrecomillado, el texto humano que sube y el archivo en sólo lectura. Con esto **cierra REQ-007** | — |
 
-### La pasada de conformidad, que ahora recoge cinco cosas y por eso sale barata
+### La pasada de conformidad — también a 1.34.0; recoge cinco cosas y por eso sale barata
 
 1. Las **tres promesas incondicionales más anchas que el código**: `ADR-002`, la visibilidad que el
    informe no da, y el «el hook impide cerrar sin `QA: aprobado`» que es falso cuando el campo no se
@@ -168,17 +282,60 @@ predominante otra vez, y 0 o 1 vueltas del bucle. El objetivo de ≤ 3 es alcanz
 
 ---
 
-## 1.34.0 — lo que los proyectos leen
+## 1.34.0 — lo que los proyectos leen, **más el núcleo por estado**
 
-**Qué entra:** todo lo que cambia qué documentos entran en el contexto de un agente y qué se ve de un
-proyecto sin abrir diez archivos.
+> ### `REQ-019` va PRIMERO, sin excepción — decisión del propietario, 2026-09-08
+>
+> **`REQ-019` —adelgazar `AGENTS.md` y `requirements/README.md`, la única de las cuatro palancas de
+> coste que reduce TOKENS y no reloj— lleva sacado de la ventana en curso DOS VECES** (06-07 y 08-09):
+> primero de 1.33.0 por su propia estimación (~2h → 7-11h), y su ejecución en código **no avanzó ni una
+> línea en toda la sesión del 08-09** pese a estar planificada como «primer trabajo de 1.34.0» desde el
+> primer día. En su lugar, esa sesión gastó ~30 comisiones en cerrar REQ-017, agotar y bloquear REQ-021,
+> reabrir REQ-014, y cazar cuatro hallazgos de gobernanza (`SEC-052`→`055`) sobre la propia delegación de
+> publicación — trabajo real y necesario, pero **no** el que reduce coste.
+>
+> **Por eso esta vez la protección se escribe, no se supone:** 1.34.0 **empieza** con `REQ-019` y **nada
+> más** entra en la ventana hasta que cierre — ni el bloque de paralelismo de abajo, ni el núcleo por
+> estado, ni un hallazgo nuevo que aparezca a mitad de camino, salvo que bloquee la publicación misma
+> (la clase de `SEC-05x` de hoy). Un hallazgo que no bloquea se **anota y se enruta**, exactamente como
+> `REQ-019` CA-10 ya contrata para su propio trabajo — no se atiende dentro. Si algo obliga a romper esta
+> regla, se escribe aquí el motivo, con la misma disciplina que esta nota documenta el porqué de hoy.
+
+> ### Bloque de apertura: **el paralelismo**, antes que el núcleo (encargo del propietario, 2026-09-07)
+>
+> Mismo argumento que puso las palancas primero en 1.33.0: **el paralelismo abarata la ventana grande,
+> así que hacerlo antes es la única forma de cobrarlo** — y ésta es la que más comisiones tiene.
+> Diseño completo, con lo medido el día del primer despacho paralelo real, en `docs/PENDIENTES.md`
+> § «Trabajar con agentes en paralelo». Cinco piezas, de más barata a más cara:
+>
+> | | Pieza | Qué desbloquea |
+> |---|---|---|
+> | 1 | El **libro mayor es de la coordinadora**: ninguna comisión escribe `CHANGELOG.md` ni comitea, y esos artefactos salen de `Archivos:` | Quita la colisión universal — **8 de los REQ abiertos declaran `CHANGELOG.md`**, así que la herramienta dice «colisiona» sobre **cualquier** par |
+> | 2 | **Ámbito asignado** en el despacho; `arnes-paralelo.sh` pasa a **segunda opinión** que puede desmentir, no a autorización | Asignar falla visible (la comisión desobedece y se ve en el diff); comprobar falla en abierto (campo incompleto o decorado, **SEC-020**) |
+> | 3 | **`Mide: sí/no`** en la cabecera: **dos comisiones que miden no se despachan a la vez** | La segunda dimensión de colisión — **la máquina**, que ninguna herramienta de archivos puede ver, y cuyo fallo es silencioso: cifras mal, sin conflicto ni error |
+> | 4 | **Puerta posterior de ámbito**: al cerrar una comisión, *¿cambió algo fuera de su ámbito?* | La **escritura perdida** — dos agentes sobre el mismo archivo en el mismo árbol **no dan conflicto de fusión, dan pérdida silenciosa**; git no protege de esto |
+> | 5 | **SEC-020** + la convención de artefactos de gobierno en `Archivos:` | Que la segunda opinión valga algo |
+>
+> **La pieza 1 se adelanta a 1.33.0**, y sólo como redacción: ya está **en vigor de facto** desde el
+> despacho del 2026-09-07, y una práctica en vigor sin escribir es deuda desde el primer día.
+>
+> **Lo que no cambia:** el orden de fases no se paraleliza nunca — no es calendario, es la condición de
+> validez de la firma.
+
+> **Recibe el núcleo de 1.33.0 (propietario, 2026-09-07):** REQ-011, SEC-025, SEC-029, la puerta de
+> «¿esta prueba mide algo?», REQ-007 B/C, la pasada de conformidad con sus cinco piezas y el canal de
+> informes. Su justificación y su tema —estado, no vía— viven arriba, en 1.33.0, y no se repiten aquí.
+> Es una ventana grande: **se planifica con las palancas ya medidas**, no antes.
+
+**Qué entra además:** todo lo que cambia qué documentos entran en el contexto de un agente y qué se ve
+de un proyecto sin abrir diez archivos.
 
 | Trabajo | Qué cierra |
 |---|---|
 | **REQ-008 — informe de proyecto** | Lo que pidió el propietario: resumen de cada REQ, NFR, hallazgo y decisión, con **porcentaje de avance**, **qué lo detiene**, decisiones humanas pendientes y recomendaciones; en HTML, siguiendo la guía de marca del proyecto si existe. Evolución de `arnes-panel`, con la cuenta hecha por `tools/arnes-avance.sh` y no por el modelo |
 | **Índice de `requirements/` derivado** | Sus columnas se desfasaron **cuatro veces en dos días**. Pasa a bloque derivado entre marcadores, con el mismo lector que usan la puerta y el informe. Misma función, escrita una vez |
 | **Rotación que reconoce filas de tabla** | Hoy la rotación de la historia de un REQ **no rota nada** en este repositorio: 0 entradas reconocidas y 94 filas de tabla. Es su caso de uso principal y no funciona |
-| **`AGENTS.md` adelgazado**, aquí y en la plantilla | Se conserva lo que **gobierna** y el resto se delega a archivos que se leen bajo demanda. Lo lee todo agente al arrancar |
+| **`AGENTS.md` + `requirements/README.md` adelgazados — `REQ-019`** | **Sale de 1.33.0 el 2026-09-08**, cuando su estimación pasó de ~2h a **7–11h en 7 fases** — no cabe en una comisión. Es el impuesto de arranque real (**≈17-20 k tokens por subagente**, no ~9 k) y 1.34.0 es precisamente la ventana con más comisiones: adelgazarlo después es pagarlo entero primero |
 
 **Alcance añadido por el propietario el 2026-09-06 — el coste entra en el informe.** El informe de
 REQ-008 lleva además **qué costó** el proyecto: tokens por REQ, por fase y en total; tiempo de agente,
@@ -231,7 +388,18 @@ con escepticismo. Reglas de diseño para el segundo, y son distintas:
 
 ## 1.35.0 — el banco en el que se puede creer
 
-**Qué entra:** la puerta que pregunta si las pruebas **miden** algo, por cribado y mutación.
+**Qué entra:** el **runner de mutación** y el **cribado automático** de aserciones sobre los 847 casos.
+
+> **Ajuste del 2026-09-07, para que esta ventana y `REQ-020` no digan lo mismo.** La *puerta* que
+> pregunta si una prueba mide algo es **REQ-020**, y va en **1.34.0**. Lo que queda aquí es lo que ese
+> REQ dejó fuera **a propósito**: la herramienta de mutación —con sus invariantes de árbol limpio y una
+> mutación cada vez— y el cribado automático. En REQ-020 la mutación entra como **procedimiento
+> acreditado y registrado por un tercero**, no como herramienta; construir la herramienta allí habría
+> sido la quinta palanca y repetía el ciclo 3 con otro nombre.
+>
+> Y la regla que esta ventana hereda de la tarde del 2026-09-07: **«acreditado por mutación» tiene que
+> decir POR QUIÉN.** Dos corpus, misma dirección — el autor rompe donde sabe que importa; sólo un
+> tercero rompe donde no ha mirado.
 
 Es la ventana con más valor demostrado por la experiencia de este repositorio, y la razón está en la
 bitácora: un caso pasaba con el JSON vacío; otro decidía por reloj de pared; una sección entera

@@ -3,6 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=19
+PISO_AUTONOMO_SECCION=35  # 9 preámbulo + 4 maquinaria compartida duplicada + 22 bloque indivisible mayor · REQ-014 CA-18
 
 # --- REQ-003: un vocabulario, un lector, y un aviso al escribir ----------------------
   seccion_nueva "Vocabulario de veredictos, aviso y lectura (REQ-003):"

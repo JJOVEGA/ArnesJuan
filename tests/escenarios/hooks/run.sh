@@ -369,6 +369,496 @@ lec_check() {
   else echo "  FAIL  $nombre  rc=$rc (esperado $rc_esp), patron aparece=$hay (esperado $debe)"; diag; FAIL=$((FAIL+1)); fi
 }
 
+# --- LOS INSTRUMENTOS COMPARTIDOS DE `tests/util/` (REQ-021) -------------------
+# LA SONDA MIDE, EL CORREDOR JUZGA. Las sondas son PROGRAMAS que se invocan (no ayudantes
+# sourceados, así que la invariante 3 del README sigue intacta) y publican un registro de
+# una línea `clave=valor`. Aquí abajo vive TODO lo que juzga: el ÚNICO parser del registro,
+# la expectativa de la calibración —factor esperado y banda— y el veredicto de CA-10.
+#
+# POR QUÉ LA EXPECTATIVA VIVE AQUÍ Y NO EN LA SONDA (SEC-036, REQ-021 CA-03 punto 2). El
+# sustituto de no proteger `tests/util/` bajo `codigo_app.globs` es «una sonda alterada no
+# da verde», y eso sólo es cierto si la expectativa NO se puede alterar en el mismo
+# movimiento que la sonda. Con la banda dentro del archivo cuestionado —y siendo operativa,
+# o sea legítimamente editable— ensancharla es UNA LÍNEA EN LA MISMA EDICIÓN: la
+# calibración se autocertifica. Aquí, alterar el instrumento y alterar su examen son dos
+# ediciones en dos archivos, y la segunda cae en `run.sh`.
+case "${BASH_SOURCE[0]}" in */*) UTIL_DIR="${BASH_SOURCE[0]%/*}/../../util" ;; *) UTIL_DIR="../../util" ;; esac
+UTIL_DIR="${ARNES_UTIL_DIR:-$UTIL_DIR}"
+
+# El identificador de CORRIDA ata la calibración con las mediciones que habilita (CA-03
+# punto 5). Sin él, «una vez por corrida» sería la puerta por la que se reutiliza la
+# calibración de ayer, que es acreditación de fail-before otra vez.
+export ARNES_CORRIDA="corrida-$$-${EPOCHSECONDS:-0}"
+# El árbol medido, leído SIN gastar un proceso: en Windows cada fork cuesta 1,2–6 s.
+ARNES_ARBOL=desconocido
+ARNES_REPO_GIT="${BASH_SOURCE[0]%/*}/../../.."
+if [ -r "$ARNES_REPO_GIT/.git/HEAD" ]; then
+  ARNES_REF_HEAD=''
+  read -r ARNES_REF_HEAD < "$ARNES_REPO_GIT/.git/HEAD" 2>/dev/null || :
+  case "$ARNES_REF_HEAD" in
+    "ref: "*) ARNES_REF_HEAD="${ARNES_REF_HEAD#ref: }"
+              [ -r "$ARNES_REPO_GIT/.git/$ARNES_REF_HEAD" ] &&
+                { read -r ARNES_ARBOL < "$ARNES_REPO_GIT/.git/$ARNES_REF_HEAD" 2>/dev/null || ARNES_ARBOL=desconocido; } ;;
+    ?*)       ARNES_ARBOL="$ARNES_REF_HEAD" ;;
+  esac
+fi
+[ -n "$ARNES_ARBOL" ] || ARNES_ARBOL=desconocido
+export ARNES_ARBOL
+
+# sonda_lee <registro> — EL ÚNICO PARSER (CA-01 punto 4). `tests/util/README.md` apunta
+# aquí y NO lo transcribe: dos transcripciones de la misma regla se desfasan.
+# CADA CAMPO NUMÉRICO SE VALIDA POR SEPARADO y un campo obligatorio AUSENTE es un error con
+# motivo, NUNCA un cero (CA-01 punto 5). Concatenar campos antes de la guarda —`"$rc$ut"`—
+# hace desaparecer un valor vacío dentro de los dígitos del vecino, y escribir la clase como
+# `*[!0-9|]*` dentro de un `case` no dispara nunca, porque ahí `|` es el separador de
+# alternativas (comprobado en bash 5.3).
+declare -A SONDA=()
+SONDA_MOTIVO=''
+sonda_num() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
+
+# sonda_es_util <instrumento> — QUIÉN es un instrumento de `tests/util/`, y ésta es su sede
+# única. Decide qué campos son obligatorios: el materializador de línea base vive INLINE en
+# las secciones 37 (REQ-021 CA-05, tras la reducción de alcance del 2026-09-08) y HEREDA el
+# formato y este parser, pero NO hereda CA-04, así que no puede observar `vivos` y no lo
+# declara. Exigirle un campo que no puede observar no es rigor: es un FAIL garantizado, que
+# es la forma de criterio insatisfacible que este REQ ya ha pagado dos veces. Por eso el
+# campo se enuncia sobre EL EMISOR y no sobre el formato (CA-10 punto 2).
+sonda_es_util() { case "${1:-}" in reloj|procesos) return 0 ;; *) return 1 ;; esac; }
+# …y QUIÉNES son los emisores que este juez sabe juzgar. Los de `tests/util/` más el
+# materializador INLINE de CA-05. Un emisor que no esté aquí es un registro que nadie ha
+# declarado, y eso es FAIL: fail-closed, porque no hay forma de saber qué gates le aplican.
+sonda_emisor_conocido() { case "${1:-}" in reloj|procesos|linea-base) return 0 ;; *) return 1 ;; esac; }
+
+sonda_lee() {
+  local reg="${1:-}" resto par clave valor vistas=' '
+  SONDA=(); SONDA_MOTIVO=''
+  if [ -z "$reg" ]; then SONDA_MOTIVO='el registro salió VACÍO: la sonda no se ejecutó'; return 1; fi
+  case "$reg" in *'='*) ;; *) SONDA_MOTIVO="el registro no tiene ningún campo clave=valor (<${reg:0:80}>)"; return 1 ;; esac
+  # SIN `for par in $reg`, Y NO ES ESTILO (QA-021-04): esa forma parte por espacios —así que
+  # un valor con un espacio deja de ser un valor y sus palabras con `=` se vuelven CAMPOS— y
+  # además hace EXPANSIÓN DE NOMBRES DE ARCHIVO sobre lo que resulta, de modo que el
+  # significado de un registro dependía del contenido del directorio de trabajo (comprobado
+  # con un archivo llamado `estado=ok` en el `cwd`: el juez leía `estado=<ok>` y dejaba pasar
+  # como medición una sonda que no había podido medir). Se recorre con expansión de
+  # parámetros: no hay split, no hay glob y no cuesta un proceso.
+  resto="$reg"
+  while [ -n "$resto" ]; do
+    par="${resto%% *}"
+    if [ "$par" = "$resto" ]; then resto=''; else resto="${resto#* }"; fi
+    [ -n "$par" ] || continue
+    case "$par" in *'='*) ;; *) continue ;; esac
+    clave="${par%%=*}"; valor="${par#*=}"
+    [ -n "$clave" ] || continue
+    # CLAVE REPETIDA = registro AMBIGUO = ILEGIBLE (QA-021-04). Dejar ganar a la ÚLTIMA
+    # aparición es lo que convertía un `estado=sin-linea-base` en `estado=ok` en cuanto un
+    # valor traía un espacio. Ni CA-01 punto 5 («ausente es un error, nunca un cero») ni
+    # CA-10 («vacío o ilegible es FAIL») cubrían el registro AMBIGUO — y un registro
+    # ambiguo no es un registro: son dos, y elegir uno es adivinar.
+    case "$vistas" in *" $clave "*) SONDA_MOTIVO="el registro trae la clave '$clave' REPETIDA: es ambiguo, y un registro ambiguo no es legible"; return 1 ;; esac
+    vistas="$vistas$clave "
+    SONDA[$clave]="$valor"
+  done
+  # Los campos que TODO registro trae. Ausente no es cero: es un error con motivo.
+  for clave in sonda modo estado corrida invocacion us procesos; do
+    if [ -z "${SONDA[$clave]:-}" ]; then SONDA_MOTIVO="al registro le falta el campo obligatorio '$clave'"; return 1; fi
+  done
+  # …y los que además tienen que ser números, UNO A UNO.
+  if ! sonda_num "${SONDA[us]}"; then SONDA_MOTIVO="el campo 'us' no es un número (<${SONDA[us]}>)"; return 1; fi
+  # `procesos` es un número O EXACTAMENTE `no-aplica`, que NO es un cero (QA-021-07): el
+  # reloj no puede contar procesos sin instrumentar, y una muestra mixta no es publicable
+  # (CA-02 punto 5). Un cero publicado ahí era la mitad en procesos de CA-08 (iii)
+  # calculándose como 0/0 y saliendo `0,000×` — PASA en vacío.
+  case "${SONDA[procesos]}" in
+    no-aplica) ;;
+    *) if ! sonda_num "${SONDA[procesos]}"; then SONDA_MOTIVO="el campo 'procesos' no es un número ni 'no-aplica' (<${SONDA[procesos]}>)"; return 1; fi ;;
+  esac
+  # `vivos` es obligatorio SÓLO en el registro de un instrumento de `tests/util/`
+  # (CA-10 punto 2): ausente ahí es ilegible → FAIL, nunca un cero.
+  if sonda_es_util "${SONDA[sonda]}"; then
+    if [ -z "${SONDA[vivos]:-}" ]; then SONDA_MOTIVO="al registro de '${SONDA[sonda]}' le falta 'vivos', y es un instrumento de tests/util/: un cero publicado y un campo ausente no son lo mismo"; return 1; fi
+    if ! sonda_num "${SONDA[vivos]}"; then SONDA_MOTIVO="el campo 'vivos' no es un número (<${SONDA[vivos]}>)"; return 1; fi
+  fi
+  return 0
+}
+
+# sonda_banda <instrumento> — LA EXPECTATIVA DE LA CALIBRACIÓN, y ésta es su sede única
+# (CA-03 punto 2). Cuatro milésimas: mínimo y máximo del factor SENSIBLE (esperado 2,000) y
+# del INSENSIBLE (esperado 1,000). OPERATIVA: se ESTRECHA con la medición; ensancharla para
+# acomodar un sujeto cuyo factor DERIVA no es conforme — lo que se cambia es el sujeto.
+# Medido el 2026-09-07 (bash 5.3.9, linux, máquina CON carga ajena, 8 corridas): reloj
+# 1,663–2,080 y 0,779–1,054 —el sujeto es un bucle aritmético puro, REALMENTE lineal, y lo
+# que se ve es ruido de planificación, no deriva del sujeto—; `procesos` y `linea-base`,
+# EXACTOS (2,000 y 1,000) en todas. La banda del reloj se declara sobre eso y se ESTRECHA
+# cuando haya medición en máquina en reposo, que es donde el corredor la toma de verdad
+# (antes del despacho en paralelo).
+sonda_banda() {
+  case "${1:-}" in
+    reloj)      printf '%s' '1600 2400 800 1200' ;;
+    procesos)   printf '%s' '1900 2100 900 1100' ;;
+    *)          return 1 ;;
+  esac
+}
+
+# --- LA MITAD DISCORDANTE DE CA-03 (a.2), Y SU TESTIGO -------------------------
+# LA PROCEDENCIA DEL FACTOR NO SE LEE EN EL REGISTRO: la sonda honesta y la tautológica
+# publican EL MISMO NÚMERO. Medido (QA-021-01): el factor de `sonda-linea-base.sh` se
+# calculaba sobre el propio parámetro, así que `2N/N = 2000` salía POR ARITMÉTICA, y una
+# copia que no materializaba, no verificaba y no comprobaba el bit de ejecución publicó
+# `cal_a=2000 cal_b=1000` y EL JUEZ REAL DIJO PASS. La identidad de camino no protege de
+# esto: la mutación borra el camino entero y el factor no se mueve.
+# Por eso la calibración ejerce además una entrada cuya MAGNITUD OBSERVADA es distinta del
+# parámetro, y el juez contrasta esa magnitud contra UN TESTIGO QUE ÉL MISMO OBTIENE.
+#
+# Y ESO NO BASTABA, MEDIDO (QA-021-10). Hasta el 2026-09-08 este juez «obtenía» el testigo de
+# `procesos` CONTANDO las líneas de un archivo de rastro que él creaba vacío y que la SONDA
+# rellenaba, y el de `reloj` cronometrando un sujeto cuyo tamaño LEÍA del registro de la
+# sonda. Los dos salían, por dos cuentas distintas, del MISMO parámetro: `3 = 3` se cumple
+# por construcción, así que una copia que no invocaba `grep` ni una vez y calculaba las cinco
+# magnitudes por aritmética obtuvo PASS de este juez sin tocarlo. *Crear el recipiente no es
+# obtener el testigo: el testigo es el VALOR.* Y dos canales de salida de la misma sonda no
+# son dos caminos.
+# Lo que lo cierra son las CINCO CONDICIONES de CA-03 (a.3), cada una con su ABORTO nombrado
+# —y la (3) es la que convierte «independiente» en algo que se COMPRUEBA en vez de razonarse:
+#   1. NO VACUIDAD    · el testigo no coincide con el parámetro.
+#   2. VALOR DEL JUEZ  · lo produce él, no un artefacto que la sonda pueda escribir.
+#   3. ANTERIORIDAD    · lo tiene ANTES de invocar la sonda. Se mide con dos marcas de reloj
+#                        del propio juez, cuesta CERO procesos y es sólo un cambio de orden.
+#   4. TAMAÑO DEL JUEZ · el sujeto discordante lo fija él y la sonda NO lo declara: un
+#                        `disc_veces=`/`disc_vueltas=` en el registro ABORTA el caso.
+#   5. LA VARA NO ES DEL JUZGADO · el umbral no se lee del registro del instrumento juzgado.
+# El aborto se materializa como FAIL nombrado y no como el `ABORT:` del corredor: un guardián
+# que tumba la vuelta entera por una condición de vacuidad es la lección de CA-07 punto 4, y
+# un FAIL ya es «no PASA» y se ve.
+# La banda del reloj es GENEROSA a propósito: lo que discrimina es el orden de magnitud
+# entre lo observado y el parámetro, no la precisión del cronómetro del juez. OPERATIVA: se
+# estrecha con la medición.
+#
+# EL SUELO, AQUÍ, POR LA CONDICIÓN 5. Antes se leía `suelo=` del registro del reloj, así que
+# una sonda que publicara un suelo generoso se compraba su propia abstención. Su sede
+# DOCUMENTAL sigue siendo `requirements/README.md` § «Cómo se escribe un criterio que no se
+# desmiente» (50 ms) y leerla desde el juez no es una segunda sede: es un lector más de la
+# misma, igual que la constante de la sonda.
+SONDA_SUELO_US=50000
+
+# Un TESTIGO es una TERNA: «<valor> <µs en que el juez lo obtuvo> <µs en que invocó la sonda>».
+# Las dos marcas son lo que hace COMPROBABLE la anterioridad; sin ellas el caso aborta, que es
+# lo correcto: un juez que no sabe cuándo obtuvo su testigo no puede afirmar que lo tenía antes.
+SONDA_T_VALOR=''; SONDA_T_ANTES=''; SONDA_T_INVOCA=''
+sonda_terna_parte() {   # <terna> -> SONDA_T_VALOR / SONDA_T_ANTES / SONDA_T_INVOCA
+  local t="${1-}"
+  SONDA_T_VALOR=''; SONDA_T_ANTES=''; SONDA_T_INVOCA=''
+  case "$t" in
+    *' '*' '*) ;;
+    *) return 0 ;;   # sin las dos marcas no hay terna, y una terna a medias no se completa
+  esac
+  SONDA_T_VALOR="${t%% *}";  t="${t#* }"
+  SONDA_T_ANTES="${t%% *}";  t="${t#* }"
+  SONDA_T_INVOCA="${t%% *}"
+}
+
+SONDA_DISC_VEREDICTO=''
+SONDA_DISC_MOTIVO=''
+sonda_discordante() {   # <instrumento> <registro de calibración> <terna del testigo>
+  local inst="${1:-}" reg="${2:-}" terna="${3-}" p o r testigo clave declarado=''
+  SONDA_DISC_VEREDICTO=fail; SONDA_DISC_MOTIVO=''
+  if ! sonda_lee "$reg"; then
+    SONDA_DISC_MOTIVO="el registro de calibración de '$inst' no se puede leer: $SONDA_MOTIVO"; return 0
+  fi
+  p="${SONDA[disc_param]:-}"; o="${SONDA[disc_obs]:-}"
+  if ! sonda_num "$p" || ! sonda_num "$o"; then
+    SONDA_DISC_MOTIVO="'$inst' no publicó la mitad discordante (disc_param=<${p:-vacío}> disc_obs=<${o:-vacío}>): sin ella la procedencia del factor queda sin acreditar, y una sonda tautológica publica el mismo factor que una honesta"
+    return 0
+  fi
+  # CONDICIÓN 4 · el tamaño del sujeto discordante lo fija el JUEZ y la sonda no lo declara.
+  # Se comprueba sobre el registro porque ahí es donde se veía: `disc_veces = cal_n − 1` y
+  # `disc_vueltas = cal_n / 50` los decidía y publicaba la sonda, y de ahí salía también el
+  # testigo. Si el campo reaparece, el contraste ha vuelto a tener un solo lado.
+  for clave in disc_veces disc_vueltas disc_tamano disc_sujeto; do
+    [ -n "${SONDA[$clave]:-}" ] && declarado="$declarado $clave=${SONDA[$clave]}"
+  done
+  if [ -n "$declarado" ]; then
+    SONDA_DISC_VEREDICTO=abort
+    SONDA_DISC_MOTIVO="condición 4 de CA-03 (a.3): '$inst' DECLARA en su registro el tamaño del sujeto discordante ($declarado), y ese tamaño es del juez; si lo pone la sonda, el parámetro y el testigo vuelven a salir de la misma fuente y el contraste no puede fallar (QA-021-10)"
+    return 0
+  fi
+  # CONDICIÓN 3 · ANTERIORIDAD, que es la forma EJECUTABLE de las condiciones 1 y 2.
+  sonda_terna_parte "$terna"
+  if ! sonda_num "${SONDA_T_VALOR:-}" || ! sonda_num "${SONDA_T_ANTES:-}" || ! sonda_num "${SONDA_T_INVOCA:-}"; then
+    SONDA_DISC_VEREDICTO=abort
+    SONDA_DISC_MOTIVO="condición 3 de CA-03 (a.3): el juez no acredita CUÁNDO obtuvo el testigo de '$inst' (terna=<${terna:-vacía}>, se esperaba «valor antes invoca»), y un testigo sin esa marca es uno que la sonda PUDO alimentar"
+    return 0
+  fi
+  testigo="$SONDA_T_VALOR"
+  if [ "$SONDA_T_ANTES" -ge "$SONDA_T_INVOCA" ]; then
+    SONDA_DISC_VEREDICTO=abort
+    SONDA_DISC_MOTIVO="condición 3 de CA-03 (a.3) (ANTERIORIDAD): el juez obtuvo el testigo de '$inst' en ${SONDA_T_ANTES}µs y la sonda se invocó en ${SONDA_T_INVOCA}µs, así que el testigo NO existía antes de la invocación y la sonda pudo alimentarlo (testigo=$testigo)"
+    return 0
+  fi
+  if [ "$testigo" -le 0 ]; then
+    SONDA_DISC_VEREDICTO=abort
+    SONDA_DISC_MOTIVO="condición 2 de CA-03 (a.3): el juez no obtuvo TESTIGO para '$inst' (<$testigo>), así que no hay con qué contrastar la magnitud publicada; un testigo que produce la propia sonda no es un testigo"
+    return 0
+  fi
+  if [ "$testigo" -eq "$p" ]; then
+    SONDA_DISC_VEREDICTO=abort
+    SONDA_DISC_MOTIVO="condición 1 de CA-03 (a.3) (NO VACUIDAD): el testigo de '$inst' COINCIDE con el parámetro ($testigo): el caso no distingue nada y su verde sería cierto POR VACÍO — una colisión es un defecto del dimensionado, no un veredicto"
+    return 0
+  fi
+  case "$inst" in
+    procesos)
+      # Contraste EXACTO: el testigo es el número de invocaciones del binario instrumentado
+      # que EL JUEZ metió en el snippet, y la magnitud publicada sale de contar el registro
+      # de los envoltorios. Una sonda que no ejerza el sujeto no puede llegar a ese número
+      # por aritmética sobre el parámetro, que es lo único que la mutación medida hacía.
+      if [ "$o" -ne "$testigo" ]; then
+        SONDA_DISC_MOTIVO="'$inst' publica disc_obs=$o donde el testigo del juez dice $testigo (parámetro con que se la invocó: $p): la magnitud no sale de observar el sujeto"
+        return 0
+      fi ;;
+    reloj)
+      # CONDICIÓN 5 · el umbral es el del JUEZ (`SONDA_SUELO_US`) y no el `suelo=` que
+      # publica el instrumento juzgado: quien es juzgado no aporta la vara.
+      if [ "$testigo" -ge "$SONDA_SUELO_US" ]; then
+        SONDA_DISC_VEREDICTO=abort
+        SONDA_DISC_MOTIVO="condición 1 de CA-03 (a.3): el juez cronometró su sujeto discordante de '$inst' en ${testigo}µs, que NO queda bajo el suelo de ${SONDA_SUELO_US}µs que el JUEZ declara: el caso no distingue nada"
+        return 0
+      fi
+      if [ "${SONDA[disc_estado]:-}" != suelo ]; then
+        SONDA_DISC_MOTIVO="'$inst' publica disc_estado=${SONDA[disc_estado]:-vacío} sobre un sujeto que el juez cronometró en ${testigo}µs, por debajo del suelo de ${SONDA_SUELO_US}µs: quien no mide no puede saber que está bajo el suelo (parámetro $p, disc_obs=$o)"
+        return 0
+      fi
+      r=$(( o * 1000 / testigo ))
+      if [ "$r" -lt 40 ] || [ "$r" -gt 25000 ]; then
+        SONDA_DISC_MOTIVO="'$inst' publica disc_obs=${o}µs contra el testigo de ${testigo}µs que obtuvo el juez (razón ${r}‰, banda [40,25000]‰; parámetro $p): la magnitud publicada no es la que se observa"
+        return 0
+      fi ;;
+    *)
+      SONDA_DISC_VEREDICTO=abort
+      SONDA_DISC_MOTIVO="no hay testigo declarado para '$inst' en el juez, que es su sede única"
+      return 0 ;;
+  esac
+  SONDA_DISC_VEREDICTO=ok
+  return 0
+}
+
+# EL SUJETO DISCORDANTE Y SU TESTIGO SON DEL JUEZ, Y ÉSTA ES SU SEDE ÚNICA (CA-03 (a.2) y
+# (a.3) condiciones 2 y 4). Viven aquí y no en las secciones por dos motivos: uno de contrato
+# —el conjunto lo fija el ayudante de veredicto— y uno medido: cronometrar dentro de una
+# sección la convertiría en una SEGUNDA SEDE del reloj y el guardián de CA-07 punto 4 la
+# acusaría, con razón.
+#
+# LO QUE ESTA VUELTA CAMBIA, Y ES TODO EL ARREGLO: el juez CONSTRUYE los dos sujetos y OBTIENE
+# los dos testigos ANTES de invocar cualquier sonda. Antes los obtenía después —el de
+# `procesos` contando líneas que la sonda escribía, el de `reloj` sobre un tamaño que leía del
+# registro de la sonda—, y un testigo que sólo existe DESPUÉS es uno que la sonda pudo
+# alimentar: `3 = 3` por construcción (QA-021-10). No cuesta un proceso: es orden.
+#
+# LO QUE ESTO NO CIERRA, dicho aquí y no en la cabeza de nadie (CA-03 (a.3)): los sujetos
+# llegan a la sonda como snippets, así que una sonda que LEA el snippet y publique su cuenta
+# sin ejercerlo sigue pasando. Eso ya no es aritmética disfrazada de medición —el descuido que
+# (a.1) persigue— sino falsificación deliberada, y su respuesta no es un criterio más: es la
+# custodia de `tests/util/*` en `codigo_app.globs` (1.34.0, P-01) y la mutación de un tercero.
+SONDA_DISC_PROC_VECES=2        # OPERATIVO: cualquier valor < 4 cumple la condición 1
+SONDA_DISC_RELOJ_SONDEO=2000   # vueltas del sondeo con que el juez deriva su tamaño
+SONDA_DISC_RELOJ_PARTE=50      # el discordante del reloj cuesta 1/50 del suelo
+SONDA_DISC_PROC_SUJ=''; SONDA_DISC_PROC_TESTIGO=0
+SONDA_DISC_RELOJ_SUJ=''; SONDA_DISC_RELOJ_TESTIGO=0
+SONDA_DISC_T_ANTES=0
+# sonda_disc_prepara — deja los dos sujetos, los dos testigos y la marca de anterioridad.
+sonda_disc_prepara() {
+  local arnes_u arnes_v arnes_s arnes_t0 arnes_t1 arnes_m=''
+  # (procesos) EL SUJETO: `SONDA_DISC_PROC_VECES` invocaciones del binario instrumentado, y
+  # el TESTIGO **es ese número**, que el juez conoce porque lo puso él. Se elige MENOR QUE 4
+  # a propósito (condición 1): el parámetro de esa sonda es `resolución × margen` con margen
+  # ≥ 4 por contrato, así que no puede coincidir POR CONSTRUCCIÓN — y cuesta menos que el
+  # `cal_n − 1` de antes, así que el término de CA-08 (iii) sólo se abarata.
+  SONDA_DISC_PROC_SUJ=''
+  for ((ARNES_DISC_I = 0; ARNES_DISC_I < SONDA_DISC_PROC_VECES; ARNES_DISC_I++)); do
+    SONDA_DISC_PROC_SUJ="${SONDA_DISC_PROC_SUJ}grep -q x /dev/null || :"$'\n'
+  done
+  SONDA_DISC_PROC_TESTIGO="$SONDA_DISC_PROC_VECES"
+  # (reloj) EL TAMAÑO SE DERIVA DEL SUELO CON EL RELOJ DEL JUEZ, en esta corrida y en esta
+  # máquina (CA-03 (c)): un absoluto escrito a mano lo falsean la máquina, el runner y la
+  # carga, y aquí decidiría además si el sujeto queda o no bajo el suelo — o sea, si el caso
+  # aborta. Se apunta a 1/50 del suelo, que deja 50× de holgura para el ruido.
+  arnes_t0=${EPOCHREALTIME/./}
+  for ((ARNES_DISC_I = 0; ARNES_DISC_I < SONDA_DISC_RELOJ_SONDEO; ARNES_DISC_I++)); do :; done
+  arnes_t1=${EPOCHREALTIME/./}
+  arnes_u=$(( arnes_t1 - arnes_t0 )); [ "$arnes_u" -ge 1 ] || arnes_u=1
+  arnes_v=$(( SONDA_SUELO_US * SONDA_DISC_RELOJ_SONDEO / (arnes_u * SONDA_DISC_RELOJ_PARTE) ))
+  [ "$arnes_v" -ge 1 ] || arnes_v=1
+  printf -v SONDA_DISC_RELOJ_SUJ 'for ((ARNES_DISC_J = 0; ARNES_DISC_J < %s; ARNES_DISC_J++)); do :; done' "$arnes_v"
+  # …Y EL TESTIGO: el mínimo de 3 pasadas con el cronómetro de ESTE proceso, sobre el mismo
+  # snippet que se le va a entregar. La sonda honesta lo mide muy por debajo del suelo y lo
+  # DICE (`disc_estado=suelo`, sin factor, CA-02 punto 4); una que calcula sin medir publica
+  # un número por encima del suelo y aquí se la caza.
+  for arnes_s in 1 2 3; do
+    arnes_t0=${EPOCHREALTIME/./}
+    eval "$SONDA_DISC_RELOJ_SUJ"
+    arnes_t1=${EPOCHREALTIME/./}
+    arnes_u=$(( arnes_t1 - arnes_t0 )); [ "$arnes_u" -ge 1 ] || arnes_u=1
+    if [ -z "$arnes_m" ] || [ "$arnes_u" -lt "$arnes_m" ]; then arnes_m="$arnes_u"; fi
+  done
+  SONDA_DISC_RELOJ_TESTIGO="$arnes_m"
+  # LA MARCA DE ANTERIORIDAD: el instante en que el juez YA TIENE los dos testigos. Lo que
+  # la hace comprobable es que se compara con la marca de la invocación, tomada abajo.
+  SONDA_DISC_T_ANTES=${EPOCHREALTIME/./}
+}
+
+# sonda_calibracion_falla <instrumento> — deja SONDA_CAL_MOTIVO y devuelve 0 si la
+# calibración de ESTA corrida para ese instrumento NO sirve. Es lo que convierte «una vez
+# por corrida» en algo verificable: la calibración y las mediciones comparten el
+# identificador de corrida (CA-03 punto 5).
+SONDA_CAL_MOTIVO=''
+sonda_calibracion_falla() {   # <instrumento> [<registro> <terna del testigo>]
+  local inst="${1:-}" reg="${2-}" terna="${3-}" archivo banda amin amax bmin bmax a b
+  SONDA_CAL_MOTIVO=''
+  # Sin registro explícito se leen los de ESTA corrida. Con registro explícito se puede
+  # juzgar una COPIA —lo que el residual de `tests/util/` exige: mutar la sonda en una copia
+  # y comprobar que el juez REAL no la deja pasar (`ARNES_UTIL_DIR`, sin tocar el árbol)—.
+  if [ "$#" -lt 2 ]; then
+    archivo="$RAIZ/cal-$inst"
+    if [ ! -r "$archivo" ]; then SONDA_CAL_MOTIVO="esta corrida no calibró '$inst'"; return 0; fi
+    reg=''; IFS= read -r reg < "$archivo" 2>/dev/null || reg=''
+    # La TERNA se lee del archivo que el juez escribió ANTES de invocar a la sonda: valor,
+    # marca de obtención y marca de invocación. Leerla no cronometra nada.
+    terna=''
+    [ -r "$RAIZ/testigo-$inst" ] && { IFS= read -r terna < "$RAIZ/testigo-$inst" 2>/dev/null || terna=''; }
+  fi
+  if ! sonda_lee "$reg"; then SONDA_CAL_MOTIVO="la calibración de '$inst' no se puede leer: $SONDA_MOTIVO"; return 0; fi
+  if [ "${SONDA[corrida]}" != "$ARNES_CORRIDA" ]; then
+    SONDA_CAL_MOTIVO="la calibración de '$inst' es de OTRA corrida (${SONDA[corrida]}); no se reutiliza la de ayer"; return 0
+  fi
+  if [ "${SONDA[estado]}" != ok ]; then
+    SONDA_CAL_MOTIVO="la calibración de '$inst' no pudo medir: estado=${SONDA[estado]} motivo=${SONDA[motivo]:-sin motivo}"; return 0
+  fi
+  # CA-10 punto 2: `vivos > 0` en un registro de CALIBRACIÓN es FAIL. Una calibración tomada
+  # con descendencia viva no acredita que el instrumento responda al sujeto, y por CA-03
+  # punto 5 arrastra a todas las mediciones de su corrida.
+  if sonda_es_util "$inst" && sonda_num "${SONDA[vivos]:-}" && [ "${SONDA[vivos]}" -gt 0 ]; then
+    SONDA_CAL_MOTIVO="la calibración de '$inst' se tomó con ${SONDA[vivos]} descendientes VIVOS (los mató y lo declaró, pero la muestra ya estaba contaminada): no acredita que el instrumento responda al sujeto (CA-10 punto 2)"
+    return 0
+  fi
+  a="${SONDA[cal_a]:-}"; b="${SONDA[cal_b]:-}"
+  if ! sonda_num "$a" || ! sonda_num "$b"; then
+    SONDA_CAL_MOTIVO="la calibración de '$inst' no publicó los dos factores (a=<${a:-vacío}> b=<${b:-vacío}>)"; return 0
+  fi
+  banda="$(sonda_banda "$inst")" || { SONDA_CAL_MOTIVO="no hay banda declarada para '$inst' en el juez"; return 0; }
+  read -r amin amax bmin bmax <<< "$banda"
+  if [ "$a" -lt "$amin" ] || [ "$a" -gt "$amax" ] || [ "$b" -lt "$bmin" ] || [ "$b" -gt "$bmax" ] || [ "$a" -le "$b" ]; then
+    SONDA_CAL_MOTIVO="la calibración de '$inst' NO distingue el sujeto sensible del insensible: a=$a b=$b (banda a [$amin,$amax] · b [$bmin,$bmax], en milésimas)"
+    return 0
+  fi
+  # …y la MITAD DISCORDANTE (a.2): el par en banda dice «los factores salen»; la discordante
+  # dice «y salen de OBSERVAR el sujeto». Sin ella, la calibración de una sonda tautológica
+  # pasa entera, que es exactamente lo que se midió.
+  sonda_discordante "$inst" "$reg" "$terna"
+  if [ "$SONDA_DISC_VEREDICTO" != ok ]; then
+    SONDA_CAL_MOTIVO="$SONDA_DISC_MOTIVO"; sonda_lee "$reg"; return 0
+  fi
+  sonda_lee "$reg"
+  return 1
+}
+
+# sonda_usable <nombre> <registro> — LA PUERTA DE CA-10, en un solo sitio.
+#   * registro vacío o ilegible                       -> FAIL (no es una sonda que no pudo
+#                                                        medir: es una que no se ejecutó)
+#   * `estado` distinto de `ok`                       -> SKIP citando motivo y número
+#   * corrida sin calibración de SU instrumento, o
+#     calibración que no distingue                    -> FAIL (CA-03 punto 5)
+#   * si no, devuelve 0 SIN emitir nada y el llamador dicta su propio veredicto.
+sonda_usable() {
+  local nombre="$1" reg="${2:-}" inst
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 1; fi
+  if [ -z "$reg" ]; then
+    echo "  FAIL  $nombre  el registro de la sonda salió VACÍO: no es una sonda que no pudo medir, es una que no se ejecutó"; FAIL=$((FAIL+1)); return 1
+  fi
+  if ! sonda_lee "$reg"; then
+    echo "  FAIL  $nombre  $SONDA_MOTIVO"; FAIL=$((FAIL+1)); return 1
+  fi
+  inst="${SONDA[sonda]}"
+  if ! sonda_emisor_conocido "$inst"; then
+    echo "  FAIL  $nombre  el registro dice venir de '$inst', y este juez no declara ese emisor: no puede saber qué gates le aplican"; FAIL=$((FAIL+1)); return 1
+  fi
+  if [ "${SONDA[estado]}" != ok ]; then
+    echo "  SKIP  $nombre  la sonda '$inst' no pudo medir: estado=${SONDA[estado]} motivo=${SONDA[motivo]:-sin motivo} (min=${SONDA[min]:-n/a} archivos=${SONDA[archivos]:-n/a} cuenta=${SONDA[cuenta]:-n/a} us=${SONDA[us]})"
+    return 1
+  fi
+  if [ "${SONDA[corrida]}" != "$ARNES_CORRIDA" ]; then
+    echo "  FAIL  $nombre  el registro es de otra corrida (${SONDA[corrida]} en vez de $ARNES_CORRIDA): una medición sin la calibración de SU corrida no es publicable"; FAIL=$((FAIL+1)); return 1
+  fi
+  # LA CALIBRACIÓN SE EXIGE AL EMISOR QUE LA TIENE, y esa frontera es la misma que la de
+  # `vivos`: CA-03 rige sobre los instrumentos de `tests/util/` («Cuando una corrida usa un
+  # instrumento de tests/util/»), y CA-05 punto 4 dice de forma expresa que el materializador
+  # inline HEREDA el formato y el parser y NO hereda la calibración de CA-03. Pedírsela sería
+  # un FAIL garantizado sobre `mat37`/`mat47`, que es la forma de criterio insatisfacible que
+  # este REQ ya ha pagado dos veces. Sobre él siguen exigiéndose CA-08 (0), CA-06 y CA-10.
+  if sonda_es_util "$inst" && sonda_calibracion_falla "$inst"; then
+    echo "  FAIL  $nombre  $SONDA_CAL_MOTIVO — «no hay calibración» y «la calibración no distingue» dicen lo mismo: no sé si estoy midiendo el sujeto"; FAIL=$((FAIL+1))
+    sonda_lee "$reg"; return 1
+  fi
+  sonda_lee "$reg"
+  # CA-10 punto 2: `vivos > 0` en un registro de MEDICIÓN es SKIP citando el número que sí
+  # obtuvo y el `vivos=<n>`, nunca PASS. La sonda hizo lo correcto —encontró descendencia y
+  # la mató— pero LA MUESTRA SE TOMÓ CON ELLA VIVA, que es el incidente de las 3 h 41 min en
+  # miniatura: el que concluyó «dentro del ruido» con toda su lógica interna. Va DESPUÉS de
+  # la calibración para que un FAIL siga ganando a un SKIP.
+  # NECESARIO Y NO SUFICIENTE: leerlo cierra el fail-open de NO leerlo; que `vivos` cuente
+  # bien es de la sonda, y hasta la vuelta 1 subestimaba (QA-021-05, cerrado con la marca).
+  if sonda_es_util "$inst" && [ "${SONDA[vivos]:-0}" -gt 0 ]; then
+    echo "  SKIP  $nombre  la sonda '$inst' encontró y mató ${SONDA[vivos]} descendientes: la muestra se tomó con ellos VIVOS y el reloj estaba contaminado (min=${SONDA[min]:-n/a} cuenta=${SONDA[cuenta]:-n/a} us=${SONDA[us]} vivos=${SONDA[vivos]})"
+    return 1
+  fi
+  return 0
+}
+
+# sonda_juzga_calibracion <nombre> <instrumento> — el caso EXPLÍCITO de la calibración
+# (CA-03 punto 3): si (a) y (b) no se distinguen dentro de la banda, FAIL —nunca SKIP y
+# nunca PASS— nombrando el instrumento y los dos factores obtenidos.
+sonda_juzga_calibracion() {
+  local nombre="$1" inst="${2:-}" arch reg=''
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
+  arch="$RAIZ/cal-$inst"
+  [ -r "$arch" ] && { IFS= read -r reg < "$arch" 2>/dev/null || reg=''; }
+  if [ -z "$reg" ]; then
+    echo "  FAIL  $nombre  la calibración de '$inst' no dejó registro: un instrumento que no se ejecuta produce el mismo silencio que uno que miente"; FAIL=$((FAIL+1)); return 0
+  fi
+  if sonda_calibracion_falla "$inst"; then
+    echo "  FAIL  $nombre  $SONDA_CAL_MOTIVO"; FAIL=$((FAIL+1)); return 0
+  fi
+  sonda_lee "$reg"
+  echo "  PASS  $nombre  sensible $(awk -v c="${SONDA[cal_a]}" 'BEGIN{printf "%.3f", c/1000}')× · insensible $(awk -v c="${SONDA[cal_b]}" 'BEGIN{printf "%.3f", c/1000}')× (esperados 2,000 y 1,000, los dos en banda y distinguidos; tamaño derivado del suelo en esta corrida: cal_n=${SONDA[cal_n]:-?} a ${SONDA[cal_margen]:-?}× el suelo, r=${SONDA[r]:-?})"; PASS=$((PASS+1))
+}
+
+# sonda_juzga_discordante <nombre> <instrumento> <registro> <terna> <esperado: pasa|falla|aborta>
+# El caso EXPLÍCITO de la mitad discordante (CA-03 (a.2)), y también su FAIL-BEFORE: se le
+# da un registro y la terna de su testigo y se comprueba que el veredicto del juez REAL es el
+# que se espera. Con `falla` acredita que la comprobación DISTINGUE —sin esa mitad, un FAIL
+# sólo probaría que falla, no que distingue (a.3)—; con `aborta`, que una de las cinco
+# condiciones del testigo incumplida NO se convierte en PASS (CA-10 punto 1).
+sonda_juzga_discordante() {
+  local nombre="$1" inst="${2:-}" reg="${3-}" terna="${4-}" esperado="${5:-pasa}" obtenido
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
+  # Invariante 1 del banco: la guarda ANTES de juzgar. Un registro vacío y un registro que
+  # miente producen el mismo silencio, y sin esta línea el caso lo llamaría «falla» y daría
+  # verde en el fail-before sin que la sonda se hubiera ejecutado.
+  if [ -z "$reg" ]; then
+    echo "  FAIL  $nombre  no hay registro de calibración de '$inst' que juzgar: no se ejecutó nada, así que ni el fail-before ni el pass-after significan nada"; FAIL=$((FAIL+1)); return 0
+  fi
+  sonda_discordante "$inst" "$reg" "$terna"
+  obtenido="$SONDA_DISC_VEREDICTO"
+  case "$esperado:$obtenido" in
+    pasa:ok)
+      sonda_lee "$reg"
+      echo "  PASS  $nombre  (disc_param=${SONDA[disc_param]:-?} · disc_obs=${SONDA[disc_obs]:-?} · testigo del juez=${terna%% *}, obtenido antes de invocar: terna <$terna>)"; PASS=$((PASS+1)) ;;
+    falla:fail)
+      echo "  PASS  $nombre  (el juez la caza: $SONDA_DISC_MOTIVO)"; PASS=$((PASS+1)) ;;
+    aborta:abort)
+      echo "  PASS  $nombre  (el juez ABORTA y no pasa: $SONDA_DISC_MOTIVO)"; PASS=$((PASS+1)) ;;
+    *)
+      echo "  FAIL  $nombre  se esperaba que la mitad discordante de '$inst' diera <$esperado> y el juez dijo <$obtenido>${SONDA_DISC_MOTIVO:+ ($SONDA_DISC_MOTIVO)}"; FAIL=$((FAIL+1)) ;;
+  esac
+}
+
 # --- CANARIO: si el hook no corre, todo caso `allow` sería un verde falso -------
 canario="$(corre guard-codigo.sh "$(emite_edit "$PROJ/src/app.ts" "" "" 'hola')")"
 if ! printf '%s' "$canario" | grep -Eq '"permissionDecision": *"deny"'; then
@@ -560,6 +1050,97 @@ if [ -n "$GUARDA_ESTRUCTURA" ]; then
   exit 1
 fi
 
+# --- CA-07 punto 4 (REQ-021): NO QUEDA UNA SEGUNDA SEDE DE LO QUE SÍ SE MUDA ---
+# Se comprueba POR PROPIEDAD y sobre el TEXTO, como la invariante 1: una función de sección
+# que CRONOMETRE REPETICIONES de un sujeto o que CUENTE PROCESOS con envoltorios en el
+# `PATH` reconstruye lo que una sonda de `tests/util/` ya hace, y dos sedes de la misma
+# regla se desfasan. La misma pasada dice si esta vuelta usa algún instrumento: así la
+# calibración de CA-03 no se le cobra a las vueltas anidadas —la sección 32 que 37/2
+# cronometra, los directorios sintéticos de la autoprueba— que no tocan `tests/util/`, y no
+# cuesta un `grep` por sección (en Windows cada fork cuesta 1,2–6 s).
+#
+# Y LA MATERIALIZACIÓN DE UN ÁRBOL DESDE UNA REFERENCIA DE `git` SALE DE ESTA COMPROBACIÓN,
+# con su motivo y no en silencio: desde el 2026-09-08 la sede de esa propiedad ES la función
+# inline de `37/1` y `37/2` (REQ-021 CA-05, tras la reducción de alcance), así que acusarla
+# convertiría este guardián en un `ABORT` PERMANENTE sobre `mat37`/`mat47` — y un guardián
+# que acusa la única sede que hay enumera un artefacto en vez de enunciar la propiedad «no
+# hay dos sedes de lo mismo». Medido: la regla `cuerpo ~ /ls-tree/` acusaba a `mat37()`.
+# Lo que esto NO tapa —que `mat37` y `mat47` siguen siendo dos copias literales y que nada
+# comprueba que las dos conserven CA-05— está declarado en AN-021-01, con dueño y ventana.
+SONDA_HACE_FALTA=no
+SEGUNDA_SEDE="$(awk '
+  function cierra(   reloj, bucle) {
+    if (fn == "") return
+    reloj = (gsub(/EPOCHREALTIME/, "EPOCHREALTIME", cuerpo) >= 2) || (cuerpo ~ /date \+%s%N/)
+    bucle = (cuerpo ~ /for \(\(/) || (cuerpo ~ /(^|\n)[ \t]*while /)
+    if (reloj && bucle)
+      printf "%s: la funcion %s() cronometra repeticiones de un sujeto; eso es sonda-reloj.sh\n", archivo, fn
+    if (cuerpo ~ /chmod \+x/ && cuerpo ~ /PATH=/)
+      printf "%s: la funcion %s() cuenta procesos con envoltorios en el PATH; eso es sonda-procesos.sh\n", archivo, fn
+    fn = ""; cuerpo = ""
+  }
+  FNR == 1 { cierra(); archivo = FILENAME }
+  index($0, "sonda-reloj.sh") || index($0, "sonda-procesos.sh") { usa = 1 }
+  /^[A-Za-z_][A-Za-z_0-9]*\(\)[ \t]*\{/ { cierra(); fn = $0; sub(/\(\).*/, "", fn); cuerpo = $0; if ($0 ~ /\}[ \t]*$/) cierra(); next }
+  fn != "" { cuerpo = cuerpo "\n" $0; if ($0 ~ /^\}/) cierra(); next }
+  END { cierra(); if (usa) printf "USA-INSTRUMENTOS\n" }
+' "${SECCIONES[@]}")"
+case "$SEGUNDA_SEDE" in
+  *USA-INSTRUMENTOS*) SONDA_HACE_FALTA=si; SEGUNDA_SEDE="${SEGUNDA_SEDE%USA-INSTRUMENTOS}" ;;
+esac
+SEGUNDA_SEDE="${SEGUNDA_SEDE%"${SEGUNDA_SEDE##*[!$'\n']}"}"
+if [ -n "$SEGUNDA_SEDE" ]; then
+  echo "ABORT: hay una SEGUNDA SEDE de lo que una sonda de tests/util/ ya hace (REQ-021 CA-07.4):"
+  printf '%s\n' "$SEGUNDA_SEDE" | sed 's/^/       /'
+  echo "       Se invoca el instrumento; no se reescribe dentro de una sección."
+  exit 1
+fi
+
+# --- La calibración: UNA VEZ POR INSTRUMENTO Y POR CORRIDA (CA-03) ------------
+# Lo que acredita es una propiedad del INSTRUMENTO, no de la invocación: las tres sondas
+# mudas de la ventana 1.32.1 —`jq --arg` de 128 KB, `git show` sin bit de ejecución,
+# `$BASHPID` dentro de `$( )`— dejaron de responder al sujeto en TODAS sus invocaciones, y
+# el archivo no cambia entre dos invocaciones de la misma corrida. Y una calibración cara es
+# una calibración que alguien apaga, que es el final de camino que CA-08 (iii) existe para
+# evitar.
+#
+# NO SE LE PASA EL TAMAÑO, Y ESO ES EL ARREGLO (CA-03 (c), QA-021-06). Antes iba
+# `--n 200000` fijo: en esta máquina eso dejaba el ejercicio INSENSIBLE a ~72 ms, o sea a
+# 1,4× del suelo de 50 ms, donde el ruido del planificador domina — 5 de 30 calibraciones
+# fuera de banda, 2 con la máquina EN REPOSO, y cada una enrojeciendo `hooks-en-linux`. Y en
+# una máquina bastante más rápida el mismo absoluto habría dicho `suelo` hasta que alguien
+# subiera un env: una puerta requerida cuyo verde depende de la velocidad de la máquina es
+# la que alguien acaba apagando. Ahora la sonda DERIVA el tamaño del suelo medido en esta
+# corrida (`cal_n`, publicado en el registro) y `ARNES_SONDA_CAL_N` sólo puede SUBIRLO.
+#
+# `r` NO MUEVE CA-08 (iii) —numerador y denominador llevan los MISMOS mandos, porque el
+# denominador se toma con el `r` que la calibración publica—, así que sólo cuesta reloj y eso
+# lo mide (ii). Y AQUÍ ESTÁ EN 3 POR UNA MEDICIÓN, NO POR COSTUMBRE, en las dos direcciones:
+#   * la vuelta 2 lo subió a 5 CREYENDO que era la palanca de CA-03 (d), y la medición lo
+#     desmintió: (d) sale **0 de 30 en cuatro regímenes con r=3** igual que con r=5. Lo que
+#     arregló (d) fue el TAMAÑO derivado del suelo —el insensible pasa de 1,4× a 4× el
+#     suelo— y el INTERCALADO del par; `r` no aportó nada que se pueda medir;
+#   * y r=5 dejaba CA-08 (ii) en **1,2825×** contra un techo de 1,25×, con la calibración
+#     costando 5,6–6,0 s de los 25,6 s de la corrida. Bajarlo a 3 es la salida que (ii)
+#     tenía PRE-DECIDIDA —«bajar `r` sólo mientras (d) siga en 0 de 30»— y (d) sigue en 0.
+# Los rangos, las corridas y las cuatro regímenes están en el Historial de REQ-021.
+# OPERATIVO: se sube con la medición; subirlo sólo cuesta reloj, y lo paga (ii).
+SONDA_CAL_R="${ARNES_SONDA_CAL_R:-3}"
+if [ "$SONDA_HACE_FALTA" = si ] && [ -d "$UTIL_DIR" ]; then
+  # EL ORDEN ES EL ARREGLO (CA-03 (a.3) condición 3). El juez construye los sujetos, obtiene
+  # los dos testigos y DEJA LAS TERNAS EN DISCO **antes** de que exista una sola invocación de
+  # sonda; la marca de invocación se toma justo aquí, y `sonda_discordante` aborta si no es
+  # posterior a la de obtención. La versión anterior obtenía los testigos DESPUÉS de calibrar
+  # —de líneas que la sonda escribía y de un tamaño que la sonda publicaba—, y ahí `3 = 3` se
+  # cumplía por construcción, hiciera la sonda algo o nada (QA-021-10).
+  sonda_disc_prepara
+  SONDA_DISC_T_INVOCA=${EPOCHREALTIME/./}
+  printf '%s %s %s\n' "$SONDA_DISC_RELOJ_TESTIGO" "$SONDA_DISC_T_ANTES" "$SONDA_DISC_T_INVOCA" > "$RAIZ/testigo-reloj"
+  printf '%s %s %s\n' "$SONDA_DISC_PROC_TESTIGO"  "$SONDA_DISC_T_ANTES" "$SONDA_DISC_T_INVOCA" > "$RAIZ/testigo-procesos"
+  "$UTIL_DIR/sonda-reloj.sh"    --calibrar --k 1 --r "$SONDA_CAL_R" --disc-sujeto "$SONDA_DISC_RELOJ_SUJ" > "$RAIZ/cal-reloj"    2>"$RAIZ/cal-reloj.err"    || :
+  "$UTIL_DIR/sonda-procesos.sh" --calibrar --dir-trabajo "$RAIZ"    --disc-sujeto "$SONDA_DISC_PROC_SUJ"  > "$RAIZ/cal-procesos" 2>"$RAIZ/cal-procesos.err" || :
+fi
+
 # --- Despacho en paralelo -----------------------------------------------------
 # El canario ya corrió en el padre, solo y antes que nada: si el hook está muerto no se
 # lanza ni una sección, y tampoco se descubre ninguna.
@@ -586,6 +1167,20 @@ for ((sec_i = 0; sec_i < N_SEC; sec_i++)); do
       ARNES_MARCA_FIN="$RAIZ/fin-$sec_i"
       source "${SECCIONES[sec_i]}"
       ARNES_RC_SEC=$?
+      # CA-06 de REQ-017: NADA DE UNA SECCION SOBREVIVE A SU SECCION. Medido en 1.32.1:
+      # una sonda de QA —un envoltorio de `grep` que, construido con `command -v` sobre un
+      # binario sombreado por una funcion de shell, se llamaba a si mismo— vivio 3 h 41 min
+      # comiendose un nucleo, y falseo la linea base de OTRA medicion, que concluyo «dentro
+      # del ruido» con toda logica interna. El instrumento mentia, y nadie relaciono las dos
+      # cosas. Se anota QUE quedo vivo (para que el cuadre pueda acusar a esta seccion por
+      # su nombre) y se mata: un banco que deja procesos detras envenena la vuelta siguiente.
+      # `jobs -pr` es builtin y se redirige a un archivo: dentro de `$( )` el job control no
+      # cruza el subshell de la sustitucion y devuelve vacio con trabajos vivos.
+      jobs -pr > "$RAIZ/vivos-$sec_i" 2>/dev/null || :
+      while IFS= read -r ARNES_PID_VIVO; do
+        [ -n "$ARNES_PID_VIVO" ] || continue
+        kill -9 "$ARNES_PID_VIVO" 2>/dev/null || :
+      done < "$RAIZ/vivos-$sec_i"
       printf '%s\n' "$ARNES_RC_SEC" > "$ARNES_MARCA_FIN"
       exit "$ARNES_RC_SEC"
     ) > "$RAIZ/out-$sec_i" 2>&1
@@ -658,6 +1253,21 @@ for ((i = 0; i < N_SEC; i++)); do
     echo "       producen las mismas cero líneas, y sólo esto las distingue."
     PROBLEMAS=$((PROBLEMAS + 1)); continue
   fi
+  # CA-06 de REQ-017, la mitad del corredor: una sección que deja un proceso vivo no es
+  # una sección que pasó, es una sección que va a falsear el reloj de la siguiente. Se
+  # dice CON EL NOMBRE del archivo — un núcleo comido por un huérfano anónimo es lo que
+  # costó 3 h 41 min de diagnóstico en 1.32.1.
+  if [ -s "$RAIZ/vivos-$i" ]; then
+    pids_vivos=''
+    while IFS= read -r pid_vivo; do
+      [ -n "$pid_vivo" ] || continue
+      pids_vivos="$pids_vivos $pid_vivo"
+    done < "$RAIZ/vivos-$i"
+    echo "ABORT: la sección $base terminó dejando procesos vivos (PID$pids_vivos); el banco los mató."
+    echo "       Una sonda que sobrevive a su sección se come un núcleo y envenena el reloj"
+    echo "       de la siguiente, que concluirá 'dentro del ruido' con toda lógica interna."
+    PROBLEMAS=$((PROBLEMAS + 1))
+  fi
   PASS=$((PASS + NPASS[i])); FAIL=$((FAIL + NFAIL[i])); SKIP=$((SKIP + NSKIP[i]))
   if ! lee_casos_declarados "$archivo"; then
     echo "ABORT: la sección $base no declara CASOS_ESPERADOS_SECCION."
@@ -680,7 +1290,17 @@ done
 
 # --- Cuadre 2: el número total de casos sigue siendo una invariante del banco -
 # Si alguien añade o quita un caso, actualiza el número de SU archivo y este total.
-CASOS_ESPERADOS=828
+# A MANO, NUNCA DERIVADO DE UNA CORRIDA: es el control. 873 → 880 por la sección 38, que
+# pasa de 21 a 28 casos —salen los 3 de `sonda-linea-base.sh`, que sale del alcance, y entran
+# 10: la mitad discordante de CA-03 (a.2) con su fail-before por instrumento, el tamaño
+# derivado del suelo de (c), el descendiente reparentado con su fail-before, las dos formas
+# de inyección del registro y las tres ramas de `vivos` en el juez—. Y 880 → 884, también en
+# la 38 (28 → 32): los cuatro casos de las CINCO CONDICIONES del testigo de CA-03 (a.3), que
+# es lo que cierra el `3 = 3` de QA-021-10 —anterioridad, no vacuidad, tamaño declarado por la
+# sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
+# NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
+# actualizan a mano y por separado: son el control.
+CASOS_ESPERADOS=884
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
@@ -695,5 +1315,19 @@ elif [ $((PASS + FAIL + SKIP)) -ne "$CASOS_ESPERADOS" ]; then
 fi
 
 echo "-------------------------------------------"
-if [ "${SKIP:-0}" -gt 0 ]; then echo "Resultado: $PASS PASS, $FAIL FAIL, $SKIP SKIP (casos de otra plataforma)"; else echo "Resultado: $PASS PASS, $FAIL FAIL"; fi
+# EL TITULAR NO ATRIBUYE UNA CAUSA QUE NO MIDIÓ (QA-021-09). Decía «(casos de otra
+# plataforma)» de TODOS los SKIP, y de los tres de la corrida medida sólo UNO lo era: los
+# otros dos se abstenían porque su palanca está apagada. La delegación permanente de
+# publicación exige «SKIP explicados», y el titular del propio banco los explicaba mal.
+# Cada SKIP ya trae su motivo en su línea, así que en vez de inventar una causa común se
+# RECAPITULAN: es lo que hace falta para decidir si un SKIP es diseño o avería, y es la
+# clase de defecto que este REQ persigue —un resumen que dice más de lo que midió—.
+if [ "${SKIP:-0}" -gt 0 ]; then
+  echo "Resultado: $PASS PASS, $FAIL FAIL, $SKIP SKIP — ninguna causa común: cada uno con su motivo"
+  if [ "${#SALIDAS[@]}" -gt 0 ]; then
+    awk '/^  SKIP /{ sub(/^  SKIP[ \t]+/, ""); printf "       · %s\n", $0 }' "${SALIDAS[@]}"
+  fi
+else
+  echo "Resultado: $PASS PASS, $FAIL FAIL"
+fi
 [ "$FAIL" -eq 0 ] && [ "$PROBLEMAS" -eq 0 ]
