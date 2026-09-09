@@ -2,6 +2,74 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · `REQ-017` reabierto: `CA-08 (ii)` deja de acotar el brazo y pasa a acotar **la razón**
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Primer trabajo de 1.34.0 contratado. `REQ-017` vuelve a `en-progreso` con destino **1.34.0** (§9, REGLA
+DE ESTADO), y `REQ-011` y `REQ-020` corrigen su `Versión destino:` — declaraban 1.33.0, que se publicó
+sin ellos.
+
+**La forma elegida es la 2 de las tres conformes, y el motivo es la magnitud.** La convergencia por brazo
+acota la dispersión **dentro** de cada serie; el ruido del cociente viene de las condiciones **entre**
+brazos, y ninguna cota sobre los brazos lo acota. Los dos rojos lo enseñan: un brazo al borde —1,232× y
+1,249× contra el límite 1,250×— y **sobre esa resolución se afirma un 1,364×**. La forma 1 volvería a
+fijar un número sobre la magnitud equivocada; la 3 saca la señal de la puerta y es del propietario —queda
+escrita como **contingencia declarada** si el `k` necesario no cabe bajo el techo de coste, con ruta a
+`PENDING_APPROVAL.md`.
+
+**Lo que contrata ahora `CA-08 (ii)` — una propiedad, no un número.** *Un instrumento que no puede
+distinguir el factor que vigila se abstiene.* El par intercalado se repite **no menos de `k`** veces
+(`k` **operativo**, dirección **subir**, **derivado midiendo** por el `desarrollador`, `REQ-012 CA-03`);
+el caso publica las `k` razones, su recorrido `máx(r)/mín(r)` y el techo. **PASS** si `máx(r) ≤ techo`;
+**FAIL** si `mín(r) > techo`; **SKIP** en cuanto el techo cae **dentro** del recorrido. **La unanimidad de
+las `k` es de contrato** —es la definición de «la decisión no depende del ruido»—: sin mayoría, sin
+promedio y sin «la mejor de `k`». Y **la guarda paga su propio coste**, con techo `operativo` sobre lo
+que añade a la puerta requerida.
+
+**Par discriminante, con la segunda mitad que suele faltar.** *Negativo:* dispersión ensanchada sin
+regresión → **SKIP**; y con la guarda **desactivada**, esa **misma** entrada da PASS o FAIL según la
+corrida — sin esa mitad, un SKIP no prueba que lo causara la guarda. *Positivo:* regresión sintética de
+**no menos de 2×** → **FAIL**, no SKIP.
+
+### Lo que nadie le pidió y es lo mejor de la comisión
+
+`CA-08` llevaba escrita una **condición de disparo** con su consecuencia: *si se dispara, el número está
+mal fijado y subirlo es decisión del propietario con ADR*. **Se disparó** — y el analista comprobó que
+**la consecuencia era la equivocada**: el `0,973×` sitúa al árbol nuevo **por debajo** de la línea base,
+así que no hay techo que subir. Dejó la condición **declarada como cumplida**, **descartó el consecuente**
+y escribió una **condición de disparo nueva** (FAIL unánime sobre un árbol sin regresión). Sin eso, el
+siguiente que leyera ese párrafo tendría **permiso escrito** para relajar el criterio.
+
+**Decisión de juicio declarada:** añadió `docs/qa/1.34.0.md` al `Archivos:` de `REQ-017`. Sin declararlo,
+`tools/arnes-paralelo.sh` respondería `disjunto` **en falso** contra los REQ de 1.34.0 que sí lo declaren.
+Consecuencia asumida: `REQ-017` **colisiona** con todo REQ de la ventana que lo declare — fail-closed a
+propósito.
+
+**Coste: ≈95 k tokens, 23 llamadas.** 26 líneas cambiadas en `REQ-017` para reescribir un criterio.
+
+## [Interno] — 2026-09-09 · Mejora aplazada a versión futura por el propietario: el campo que no sabe decir «parcial»
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Registrada en `docs/PENDIENTES.md` bajo la regla de acumulación; **no entra en 1.34.0**.
+
+`CA-17.1` de `REQ-019` exige **un** valor por fila al clasificar cada promesa del arnés —«¿esto lo cumple
+una máquina?»—, pero **diez elementos son mixtos**: una sub-promesa que **sí** cumple una máquina dentro
+de un bloque cuyo resto **no lo cumple nadie**. El campo **no tiene forma de decir «parcial»**, así que
+quien clasifique elige entre dos respuestas y **las dos son falsas** para esos diez.
+
+Es la familia que ya costó caro dos veces aquí: **un campo cuya forma no admite el estado real obliga a
+escribir algo falso, y después alguien lee ese algo y decide.** `AGENTS.md` §13 tiene la versión buena de
+la lección —el hook que **avisa sin decidir** ante un veredicto fuera de vocabulario—; aquí falta el
+equivalente.
+
+**Y con su condición de ascenso, para que no se quede en la cola para siempre:** si alguna de esas diez
+filas se usa para **decidir** algo —un cierre, un reparto, una acreditación—, deja de ser deuda y sube de
+clase.
+
+**Actualizada también la medición de la sonda en `docs/PENDIENTES.md`:** eran **cuatro** corridas y son
+**cinco** (`7dc0699`, PASS, 1,017×). **No cambia la conclusión y la refuerza:** el recorrido sigue siendo
+0,973×–1,364× y sigue cubriendo el techo de 1,25×.
+
 ## [GitHub] — 2026-09-09 · Alcance y orden de 1.34.0: dos correcciones que la medición impuso, y un techo desmentido
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 

@@ -1865,7 +1865,7 @@ El caso `REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más d
 falla el check **requerido y estricto** `hooks-en-linux` afirmando en su propia salida
 *«esto es una regresión, no ruido»*.
 
-**Cuatro corridas de CI sobre código idéntico** —ningún commit desde `b9afa01` toca `hooks/`, `tools/` ni
+**Cinco corridas de CI sobre código idéntico** *(actualizado el 2026-09-09: eran cuatro; `7dc0699` añadió un PASS de **1,017×**, que **no cambia la conclusión y la refuerza** — el recorrido sigue siendo 0,973×–1,364× y sigue cubriendo el techo)* —ningún commit desde `b9afa01` toca `hooks/`, `tools/` ni
 `.github/`, verificado de forma independiente por el `auditor-seguridad` en `R-019`:
 
 | Corrida | Commit | Razón publicada | Convergencia (2.º mín / mín) | Veredicto |
@@ -1943,3 +1943,33 @@ Es cambio en `tests/`, o sea **`critico`** por `AGENTS.md` §6: ciclo completo
 `analista → desarrollador → qa-tester → auditor-seguridad`. Estimado al ritmo medido el 2026-09-08:
 **4 comisiones, ~1–2 h**. La medición de arriba es la parte cara del análisis y **ya está hecha**: se
 cita, no se rehace.
+
+
+---
+
+## Mejoras aplazadas A UNA VERSIÓN FUTURA por el propietario (2026-09-09)
+
+Registradas aquí, **no en la ventana actual**, por la regla de acumulación del 2026-09-08. Ninguna es
+`contrato`; ninguna bloquea nada hoy.
+
+### 1. El campo que no sabe decir «parcial» (`D-2` de `REQ-019` F1)
+
+**Qué pasa.** `CA-17.1` de `REQ-019` exige **un** valor por fila al clasificar cada promesa del arnés
+—«¿esto lo cumple una máquina o no?»—. Pero **diez elementos son mixtos**: una sub-promesa que **sí**
+cumple una máquina, dentro de un bloque cuyo resto **no lo cumple nadie**. **El campo no tiene forma de
+decir «parcial»**, así que quien clasifique tiene que elegir entre dos respuestas y **las dos son falsas**
+para esos diez.
+
+**Por qué importa y no es cosmético.** Es la misma familia que ya costó caro dos veces en este proyecto:
+un campo cuya **forma** no admite el estado real obliga a escribir algo falso, y después alguien lee ese
+algo y decide. `AGENTS.md` §13 ya describe la versión buena de esta lección —el hook que **avisa sin
+decidir** cuando un veredicto sale del vocabulario— y aquí falta el equivalente: **un valor para lo
+mixto**, o una forma declarada de partir la fila.
+
+**Por qué se aplaza.** Darle forma al campo obliga a tocar el criterio, el lector y las plantillas que
+los proyectos heredan — y **no bloquea** el reparto de `REQ-019`, que puede declararlos por su
+sub-promesa y anotarlo. **Dueño:** `analista-requerimientos` (la forma) y `desarrollador` (el lector).
+**Ventana:** sin fijar; se retoma cuando estorbe, que es la doctrina de este archivo.
+
+**Cómo se sabrá que estorba, para que no se quede aquí para siempre:** si alguna de esas diez filas se
+usa para **decidir** algo —un cierre, un reparto, una acreditación—, deja de ser deuda y sube de clase.
