@@ -2,6 +2,40 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · `REQ-027`: la distribución completa contratada, y la idempotencia deja de deducirse de una etiqueta
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Ajuste acotado sobre el REQ ya abierto —**16,6 k tokens**, sin reescribirlo—. Pasa de 8 a **10 criterios**.
+`skills/arnes-upgrade/SKILL.md` entra en `Archivos:`.
+
+**Crear el REQ no instala las reglas, y ahora el contrato lo refleja: las TRES vías están contratadas**,
+no dos y una nota. Este repositorio (`CA-01`) · proyectos **nuevos** (`CA-09`: nacen con el bloque
+completo entre marcadores y **sin ningún `{{…}}` dentro**) · proyectos **ya instalados** (`CA-10`).
+
+**`CA-10` convierte la migración en CONDICIÓN DE ENTREGA, no en pendiente.** Dueño `desarrollador`,
+ventana 1.34.0. **Puede escribirse al cerrar la versión, pero el REQ no pasa a `completado` sin sus tres
+partes**, y la diferencia no es formal: un pendiente se olvida sin que ninguna puerta grite.
+
+**Y la corrección que más vale, porque desmonta una afirmación de la coordinadora:** yo escribí que los
+marcadores «hacen la inserción idempotente». **Falso — hacen el bloque IDENTIFICABLE.** La idempotencia
+es una **conducta** de la migración y ahora se comprueba **directamente**: correr dos veces, comparar,
+**un solo bloque byte a byte igual**. Más `MODIFICADO` → conflicto que se pregunta y no se pisa,
+`UNKNOWN` → se detiene, y el **negativo obligatorio**: un caso en que la migración **sobrescriba texto
+propio del proyecto debe FALLAR**. Sin ese negativo, «preserva las instrucciones particulares» era una
+promesa que nadie podía desmentir.
+
+**`CA-07` pasa de enunciar vías a verificarlas, y el resultado es incómodo y honesto:** **sólo Claude
+Code queda `verificada`** —evidencia: la línea `@AGENTS.md` del `CLAUDE.md`, **no** la frase de
+`AGENTS.md:3-4`—; **Codex y Cursor quedan `no verificada`**. Límite contratado: *una vía no verificada no
+cuenta como cobertura*, con par discriminante — presentarla como cubierta es **no conforme aunque las
+reglas estén completas**.
+
+**`CA-05`: el techo de 2 600 B se declara límite propuesto SIN VALIDAR.** `operativo` dice cómo se mueve,
+**no que el contenido requerido quepa**. Se valida al escribir el bloque y, si no cabe, **se re-deriva con
+entrada en Historial — el contenido contratado no se recorta para que entre**.
+
+`REQ-025` queda como **dependencia explícita**, sin comisión y sin condicionar el cierre.
+
 ## [GitHub] — 2026-09-08 · `REQ-027`: las reglas de la coordinadora, en la sede canónica y con sus dos límites contratados
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 
