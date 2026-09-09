@@ -2,6 +2,71 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · `REQ-019` ejecutable, y **la palanca que nadie había medido**: los historiales pesan el 22 % y la rotación no los ve
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus) + coordinadora.
+
+**`REQ-019` queda ejecutable.** Techo de `CA-07` **`0,60×` → `0,72×`** con firma del propietario
+(2026-09-09) y por el procedimiento que el propio REQ exigía; derivados en bytes recalculados
+(total ≤ 46.813 B; `AGENTS.md` ≤ 24.355 B; README ≤ 22.458 B). Línea base corregida en sus **tres** sedes
+(**433 → 521**), con las derivaciones que colgaban de ella **declaradas obsoletas con fecha** en vez de
+maquilladas. `D-3`, `D-5` y `D-9` arreglados. **`D-2` resuelto**: `CA-17.1` gana un tercer valor,
+**`parcial`**, válido *sólo* con sus dos mitades en la misma fila. **62 k tokens.**
+
+*(El propietario pidió aplazar `D-2` a una versión futura y la comisión que lo arregla **ya estaba
+despachada** cuando llegó la instrucción. Queda resuelto, no aplazado; corregido en `docs/PENDIENTES.md`.)*
+
+**Y la clase, nombrada en el Historial por tercera vez en dos ventanas:** el `0,60×` era **un criterio
+derivado sin comprobar su factibilidad**, igual que el techo de 400 líneas de `REQ-014 CA-18` y el de 4×
+de `REQ-021 CA-08 (iii)`. Las tres con el argumento correcto y **el valor sin comprobar**.
+
+### Pero `REQ-019` NO cabe en 1.34.0, y está medido
+
+Se estima a sí mismo en **9–11 comisiones y ≈8,5–14 h**, con **F2 y F3 en SOLITARIO** (`CA-16`): mientras
+corren, nada más corre. **No es un trabajo de la ventana — es la ventana.** Y choca con un plazo que no
+se negocia: el vencimiento de `SEC-047` (severidad **crítica**) es **el cierre de 1.34.0**, escrito por el
+auditor en su sede. Aritmética completa: coste 0,9–1,1 M tokens; ahorro ≈5.200 de carga por comisión
+(≈300 k equivalentes por ventana con el efecto de caché); **retorno ≈3–4 ventanas**. Se paga, **pero no
+pronto**, y mientras se paga bloquea la ventana en la que vence un hallazgo crítico.
+
+### La palanca mejor, aportada de fuera y verificada aquí
+
+Un análisis externo (ChatGPT, aportado por el propietario) señaló que adelgazar `AGENTS.md` **pierde
+parte del beneficio si después se lee entero un REQ de 150.000 caracteres**. **Correcto — y el motivo es
+más preciso de lo que él podía demostrar.** Medido:
+
+| | |
+|---|---|
+| `## Historial de cambios` en todo `requirements/` | **399.182 B = 22 %** del directorio ≈ **99 k tokens** |
+| `REQ-014` | 67.133 B — el **43 %** de su archivo |
+| `REQ-021` | 75.943 B · `REQ-017` 39.672 B (su analista midió **~13 k tokens** sólo por él) |
+
+**El bloqueo, exacto:** `hooks/rotar-artefactos.sh` **ya sabe** archivar una sección dejando cabecera y
+criterios intactos —es invariante suya—, pero reconoce como entrada las líneas que empiezan por `- `,
+`* `, `### ` o `N. `, **y estos historiales son TABLAS**: sus filas empiezan por `|`. Medido en tres REQ:
+**30, 24 y 44 filas y CERO entradas reconocibles**. El propio hook lo avisa: *«SÍ contiene la sección y
+supera el umbral, pero no tiene ni una ENTRADA reconocible; no se rota»*. **El mecanismo existe, está
+apagado, y encenderlo hoy no haría nada sobre lo que más pesa.**
+
+**Va por delante de `REQ-019`, y no sólo por coste:** mientras los historiales pesen 99 k tokens, **el
+ahorro de `REQ-019` no se puede atribuir** —quedaría mezclado con qué REQ tocó cada comisión—, que es
+exactamente el error que `docs/PLAN.md` ya documenta como «la línea base envenenada».
+
+### Contradicción verificada sobre quién comitea
+
+Del mismo análisis. **Cierta:** `agents/desarrollador.md:59-60,69` manda al desarrollador comitear y
+actualizar `CHANGELOG.md` en el mismo commit; `requirements/README.md:197-198` dice que esa entrada la
+escribe **«quien comitea, que es quien orquesta»**. Dos documentos, el mismo trabajo, dos dueños — y
+`agents/desarrollador.md` **lo heredan todos los proyectos que instalan el arnés**, así que se propaga.
+
+### Lo que del análisis externo ya estaba aplicado, para no cobrarlo dos veces
+
+Sus puntos 3 (**devoluciones breves**) y 4 (**revisar por diferencia**) **ya se aplican desde ayer** y
+están medidos: los informes van con evidencia **citada, no transcrita**, y la vuelta de confirmación de
+QA sobre el delta costó **64 k** frente a los **229 k** de la validación completa. Lo que no están es
+**contratados** — son método de la coordinadora, no regla escrita, y ahí su observación sí añade.
+
+Su punto 1 (`REQ-019` primero) es el que la medición desmiente, arriba.
+
 ## [GitHub] — 2026-09-09 · `REQ-017` reabierto: `CA-08 (ii)` deja de acotar el brazo y pasa a acotar **la razón**
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 

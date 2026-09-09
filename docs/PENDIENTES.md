@@ -1952,7 +1952,18 @@ cita, no se rehace.
 Registradas aquí, **no en la ventana actual**, por la regla de acumulación del 2026-09-08. Ninguna es
 `contrato`; ninguna bloquea nada hoy.
 
-### 1. El campo que no sabe decir «parcial» (`D-2` de `REQ-019` F1)
+### 1. ~~El campo que no sabe decir «parcial»~~ — **RESUELTO el 2026-09-09, no aplazado**
+
+> **Corrección honesta del registro.** El propietario pidió aplazarlo a una versión futura, y cuando
+> llegó esa instrucción **la comisión que lo arregla ya estaba despachada** (iba como punto 4 de su
+> encargo). `CA-17.1` de `REQ-019` tiene desde hoy un tercer valor, **`parcial`**, válido *sólo* con sus
+> **dos mitades en la misma fila** —el ejecutor de la sub-promesa que sí cumple una máquina, y el texto
+> de la parte que no cumple ninguna—; a una fila `parcial` a la que le falte una mitad se la cuenta como
+> **sin ejecutor declarado**. `CA-17.3` (fail-closed) y `CA-17.4` (trinquete asimétrico) se extendieron a
+> la mitad con ejecutor. **Se deja escrito el diagnóstico de abajo** porque es el motivo del arreglo y
+> porque nombra una clase que reaparece; lo que ya no aplica es el aplazamiento.
+
+#### El diagnóstico que lo motivó (`D-2` de `REQ-019` F1)
 
 **Qué pasa.** `CA-17.1` de `REQ-019` exige **un** valor por fila al clasificar cada promesa del arnés
 —«¿esto lo cumple una máquina o no?»—. Pero **diez elementos son mixtos**: una sub-promesa que **sí**
@@ -1973,3 +1984,117 @@ sub-promesa y anotarlo. **Dueño:** `analista-requerimientos` (la forma) y `desa
 
 **Cómo se sabrá que estorba, para que no se quede aquí para siempre:** si alguna de esas diez filas se
 usa para **decidir** algo —un cierre, un reparto, una acreditación—, deja de ser deuda y sube de clase.
+
+
+---
+
+## MEDIDO el 2026-09-09: `REQ-019` no cabe en 1.34.0, y el motivo no es la pereza
+
+**`REQ-019` se estima a sí mismo en 9–11 comisiones y ≈8,5–14 h** (`requirements/REQ-019.md`, tabla de
+fases). **F2 y F3 son ventanas de SOLITARIO** por `CA-16`: mientras corren, **nada más puede correr**.
+`REQ-019` no es *un trabajo de* la ventana — **es la ventana**.
+
+**Y eso choca con un plazo que no es negociable.** El vencimiento de `SEC-047` (severidad **crítica**) es
+**el cierre de 1.34.0**, escrito por el `auditor-seguridad` en su sede
+(`docs/seguridad/registro-seguridad.md:3684`). Su remediación son `REQ-023` + `REQ-024`. Si `REQ-019` se
+come la ventana, esos dos no entran y **`SEC-047` y `SEC-051` suben a `contrato`**.
+
+### La aritmética del ahorro, hecha entera y sin adornos
+
+| | |
+|---|---|
+| **Coste** | 9–11 comisiones ≈ **0,9–1,1 M tokens** |
+| **Ahorro** | techo 0,72× sobre 18.500 → **≈5.200 tokens de carga por comisión** |
+| **Con el efecto de caché** | ≈5.200 × ~30 turnos ≈ 156 k de lectura de caché por comisión ≈ **15 k equivalentes en fresco** |
+| **Por ventana** (~20 comisiones) | **≈300 k equivalentes** |
+| **Retorno** | **≈3–4 ventanas** |
+
+**Se paga, pero no pronto.** Y mientras se paga, bloquea la ventana en la que vence un hallazgo crítico.
+
+### Lo que esto NO desmiente
+
+`REQ-019` **sigue siendo la palanca correcta**; lo que se desmiente es que sea la **barata**. Su sitio es
+una ventana **propia**, no compartida con un plazo ajeno.
+
+### Y el dato que conviene tener delante antes de invertir 9 comisiones en recortar un 28 %
+
+**La palanca mayor medida en este proyecto no fue ninguna versión del plugin: fue el ENCARGO.** Seis
+comisiones del 2026-09-08/09 con el mismo modelo y los mismos agentes: **229 k → 154 k → 107 k → 64 k →
+46 k → 58 k**, y las dos del 2026-09-09 en **95 k** y **62 k**. Lo único que cambió fue cerrar la lista de
+lectura —rangos de línea en vez de archivos, cifras entregadas ya medidas, prohibiciones explícitas—.
+**Un factor 5, gratis, sin ceremonia y ya aplicado.** Ninguna palanca contratada se le acerca.
+
+
+---
+
+## LA PALANCA QUE NADIE HABÍA MEDIDO: los historiales de REQ pesan el 22 % y la rotación no puede tocarlos
+
+**Origen:** análisis externo (ChatGPT, aportado por el propietario el 2026-09-09). Señaló que adelgazar
+`AGENTS.md` **pierde parte del beneficio si después se lee entero un REQ de 150.000 caracteres**.
+Verificado y medido por la coordinadora; **es correcto, y el motivo es más preciso de lo que él podía
+demostrar**.
+
+### La medición
+
+| | |
+|---|---|
+| `## Historial de cambios` en todo `requirements/` | **399.182 B de 1.771.828 B = 22 %** ≈ **99 k tokens** |
+| `REQ-014` | 67.133 B — el **43 %** de su archivo |
+| `REQ-021` | 75.943 B |
+| `REQ-017` | 39.672 B — su analista midió que le costó **~13 k tokens** él solo |
+| `REQ-013` / `REQ-012` | 43 % y 42 % de sus archivos |
+
+### El bloqueo, medido y exacto
+
+`hooks/rotar-artefactos.sh` **sabe archivar una sección de un documento** —está construido y `AGENTS.md`
+§13 lo describe: mueve la historia a `historial/<nombre>.md` y **no toca la cabecera ni los criterios**,
+que son el contrato—. Pero reconoce como **entrada** las líneas que empiezan por `- `, `* `, `### ` o
+`N. `, **y los historiales de este proyecto son TABLAS**: sus filas empiezan por `|`.
+
+**Medido en tres REQ: 30, 24 y 44 filas de tabla y CERO entradas reconocibles.** El propio hook lo dice
+en su aviso: *«SÍ contiene la sección y supera el umbral, pero no tiene ni una ENTRADA reconocible; no se
+rota»*.
+
+**Conclusión: el mecanismo existe, está apagado, y encenderlo hoy NO HARÍA NADA** sobre lo que más pesa.
+
+### Por qué esto va por delante de `REQ-019`
+
+| | `REQ-019` | Rotación de historiales |
+|---|---|---|
+| Coste | **9–11 comisiones, 8,5–14 h**, con F2/F3 en solitario | **una función** de `rotar-artefactos.sh` + su declaración en el manifiesto |
+| Ahorro | ≈**5.200 tokens** de carga por comisión | **10–17 k tokens** en cada comisión que toque un REQ grande |
+| Riesgo | reparto de los dos documentos de gobierno | la cabecera y los criterios **no se tocan nunca** (ya es invariante del hook) |
+| Retorno | ≈3–4 ventanas | **la primera comisión que lea un REQ rotado** |
+
+**No sustituye a `REQ-019`: lo precede.** Y hay una razón de método, no sólo de coste — mientras los
+historiales pesen 99 k tokens, **el ahorro de `REQ-019` no se puede atribuir**: quedaría mezclado con el
+ruido de qué REQ tocó cada comisión. Es exactamente el error que `docs/PLAN.md` ya documenta («la línea
+base envenenada por la sonda desbocada»).
+
+### Alcance del trabajo, para que no crezca
+
+Es cambio en `hooks/`, o sea **`critico`**: ciclo completo. Necesita **REQ nuevo** (no existe). Dos
+piezas y ninguna más: **(1)** que el reconocedor de entradas admita la **fila de tabla** —con su
+cabecera y su separador conservados como preámbulo, que es lo que ya hace con el preámbulo de sección—;
+**(2)** declarar el artefacto en `rotacion.artefactos` con `glob: requirements/REQ-*.md`,
+`seccion: "## Historial de cambios"` y su `archivo_dir`. La forma exacta ya está documentada en
+`AGENTS.md` §13 y en el `_doc_artefactos` del manifiesto: **no hay que diseñarla, hay que implementarla.**
+
+---
+
+## Contradicción de instrucciones sobre quién comitea (verificada, 2026-09-09)
+
+**Origen:** el mismo análisis externo. **Verificada y cierta.**
+
+- `agents/desarrollador.md:59-60` y su lista de comprobación `:69` le dicen al desarrollador que **haga
+  el commit** y actualice `CHANGELOG.md` **en el mismo commit**.
+- `requirements/README.md:197-198` dice que la entrada de `CHANGELOG.md` la escribe **«quien comitea, que
+  es quien orquesta»** — la coordinadora.
+
+**Dos documentos asignan el mismo trabajo a dos actores distintos.** Consecuencia práctica: consultas,
+trabajo duplicado y correcciones — que es justo lo que se quiere dejar de pagar.
+
+**Y agrava, que es lo que lo saca de «erratita»:** `agents/desarrollador.md` **lo heredan todos los
+proyectos que instalan el arnés**, así que la contradicción no es local — se propaga. Clase
+`instrumento`; **dueño:** `analista-requerimientos` (decidir cuál manda) y `desarrollador` (el texto del
+agente). Resolverlo es barato y va con la ventana de coste.
