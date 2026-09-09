@@ -119,6 +119,23 @@ en el README**. En bytes será peor que en líneas, porque las dos poblaciones d
 tabla de §13 y el `## Índice`— son suelo al 100%. Además la línea base del REQ está **desfasada**:
 declara el README en **433** líneas y tiene **522**. Renegociar ese techo es firma del propietario.
 
+### Acumulado del 2026-09-09 — `R-015-01` VENCIÓ y se registra sin abrirlo (`instrumento`, no bloquea)
+
+Su vencimiento era literalmente **«antes de que `REQ-023` salga de `borrador`»**
+(`docs/seguridad/registro-seguridad.md:4461-4468`), y `REQ-023` salió a `pendiente` el 2026-09-09.
+Lo que pide: subir a `requirements/README.md` la regla **«un REQ *cita* clase, forzador y
+vencimiento; no los *declara*»**.
+
+**Ya está aplicada a todo `REQ-023`**; lo que falta es subirla a **doctrina**, y eso exige una
+comisión con ámbito sobre el README. Clase **`instrumento`** → **no bloquea el cierre** (`AGENTS.md`
+§6), así que por la **regla de acumulación del propietario** se registra aquí y **no entra en la
+ventana actual**. Lo detectó el analista de `REQ-023` al cerrar su contrato y lo dejó escrito **en el
+propio REQ** para que no se descubriera después.
+
+**Vencimiento nuevo, para que no quede sin fecha:** la próxima comisión con ámbito sobre
+`requirements/README.md` — que hoy es el **reparto de `REQ-019`**, ya que ese documento es uno de los
+dos que adelgaza.
+
 ### Acumulado del 2026-09-08 — `REQ-019` F1, enumeración B: **tres defectos en los criterios del propio `REQ-019`**
 
 La segunda enumeración ciega encontró **164** invariantes (103 + 61) contra las **106** de la primera.

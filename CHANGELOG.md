@@ -2,6 +2,61 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · `REQ-023` despachable: `SEC-052` retirado y cinco defectos en sus propios criterios
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus) + coordinadora.
+
+`REQ-023` pasa de **`borrador` a `pendiente`**: contrato cerrado y despachable. Es la **mitad (1) de
+la remediación de `SEC-047`**, severidad crítica, cuyo vencimiento es el cierre de 1.34.0.
+
+**`SEC-052` retirado del campo `Hallazgos abiertos:`** citando la autorización literal del auditor
+(`registro-seguridad.md:4429-4436`), y con un párrafo que escribe **lo que ese cierre NO acredita**,
+con las palabras del propio auditor: nada sobre los criterios de `REQ-023` como contrato — esa
+auditoría no ha ocurrido y va **después** de QA.
+
+**Cinco defectos hallados en sus propios criterios, y el primero es de la clase que el REQ existe
+para corregir:**
+
+1. **`CA-01` llevaba un puntero MEDIDO FALSO, y la clave que dejaba fuera era `Estado`.** Decía
+   «`arnes_campo_linea` **y sus llamadores**», y `arnes_estado_cabecera` **no** es llamador suyo:
+   llama a `arnes_norm_clave` directamente (`hooks/lib.sh:1880`, `:1891`) y es la **única boca** donde
+   vive la clave del estado terminal. **Quien auditara la clase siguiendo ese puntero habría concluido
+   que la clave que decide el cierre estaba cubierta.** Es la clase de `SEC-050` **dentro** del
+   criterio escrito para corregirla, y el propio `CA-06` ya lo desmentía.
+2. **El «no más de 0 transcripciones» de `CA-06` NO era satisfacible por la vía obvia:** los dos
+   sitios de bash son **disjuntos** —uno enumera 5 claves y despacha, el otro 1— así que **el conjunto
+   de las 6 no existe hoy como lista en ninguna parte**: es la *unión* de dos despachos. Una constante
+   nueva que esos dos no **usen** sería la tercera transcripción.
+3. **Un radio que nadie había escrito:** `tools/arnes-lectura.sh:69-72` deriva la lista con `sed`
+   **del texto de los brazos `case`** y **sale 2** si no encuentra ninguna. Reescribirlos **rompe el
+   informe** —y con él `CA-07`— salvo que la derivación se re-apunte. El archivo ya estaba declarado;
+   **descubrirlo implementando no lo era.**
+4. **La séptima clave** (`Archivos:`, resuelta con el mismo normalizador en `arnes-paralelo.sh`) queda
+   **fuera** de la constante **con motivo escrito**: su ausencia es fail-closed en su propio lector.
+   Antes era un hueco silencioso; ahora es una frontera.
+5. **`CA-09 (iii)` fijaba `2,2` sin decir entre qué dos longitudes.** Un cociente de duplicación
+   depende del par, así que dos implementaciones podían medir pares distintos y **contradecirse sin
+   mentir**. Ahora el caso publica el par, `k` y los dos tiempos, con el punto conforme nombrado.
+
+**Los seis números que el contrato fija llevan o medición o cota con premisas comprobables, y NINGUNO
+se convirtió en «derivar midiendo».** `CA-09 (ii)` pasa de un `≤ 1,25×` sin medir a una **cota
+algebraica** con sus **tres premisas escritas** para comprobarse.
+
+**`Archivos:` cambia por regla, no por alcance:** sale `CHANGELOG.md` —la regla del propietario del
+2026-09-08 dice que los REQ en `borrador` lo retiran al salir a `pendiente`— y entran
+`docs/qa/1.34.0*.md` y `docs/seguridad/registro-seguridad.md`, que esa misma regla declara **evidencia
+primaria**, con fail-closed **hacia declarar**.
+
+**Registrado sin abrirlo:** `R-015-01` **venció** con esta transición —su vencimiento era literalmente
+«antes de que `REQ-023` salga de `borrador`»— y pide subir a doctrina la regla «un REQ *cita* clase,
+forzador y vencimiento; no los *declara*». Es `instrumento`, **no bloquea**, y por la regla de
+acumulación del propietario queda en `docs/PENDIENTES.md` con **vencimiento nuevo**: la próxima
+comisión con ámbito sobre `requirements/README.md`, que hoy es el reparto de `REQ-019`.
+
+Sincronizada la celda de `REQ-023` en el índice de `requirements/README.md`. **No** se tocó la que
+dice «comparte nueve rutas»: el contrato de `REQ-024` está reescribiendo su `Archivos:` en este
+momento, así que ese número se calcula con `tools/arnes-paralelo.sh` cuando los dos estén quietos, en
+vez de escribir un dato que va a ser falso.
+
 ## [GitHub] — 2026-09-09 · `REQ-027` entra como quinto trabajo, el techo de `REQ-019` calculado, y la deuda de fechas cerrada por falsa
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus) ×2, `desarrollador` (Opus), coordinadora.
 
