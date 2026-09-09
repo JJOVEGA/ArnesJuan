@@ -2,6 +2,55 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · `REQ-026`: rotar los historiales de REQ — y el descubrimiento de que rotar hoy rompe la tabla **también en el origen**
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+REQ nuevo, `pendiente`, ventana 1.34.0, `Rigor: critico`. **17 criterios en 235 líneas y 19 KB** — un REQ
+que existe para que los REQ pesen menos, y que practica su tesis.
+
+**El descubrimiento que nadie encargó y que decide si el trabajo sale bien.** Con el código actual el
+puntero se inserta **al final del preámbulo** (`hooks/rotar-artefactos.sh:367-368`), es decir **entre la
+fila separadora y las filas conservadas**: rotar **rompe la tabla también en el ORIGEN**, no sólo en el
+destino —que además se abre con un preámbulo de título sin cabecera ni separadora (`:352-353`)—. Por eso
+el REQ lleva **dos** criterios de legibilidad, `CA-03` (destino) y `CA-04` (origen), y no uno.
+
+**Esto zanja una afirmación de la coordinadora que ya había retirado.** Dije que arreglar el rotador «es
+una función». Un revisor externo objetó que **eso no estaba medido**; tenía razón, y la medición del
+analista lo confirma con creces: no es reconocer `|`, es reconstruir la tabla en dos sedes sin perder ni
+duplicar filas.
+
+**Y `orden: nuevo-al-final` está MEDIDO, no supuesto:** `requirements/REQ-017.md:436` es
+`| 2026-09-07 | (creación) |` y las filas de `:462-463` son del 2026-09-08. Lo más antiguo está arriba.
+Equivocar ese campo archiva **lo más reciente**, que es el modo de fallo que `arnes-upgrade` documenta
+para 1.26.0.
+
+### Las cuatro correcciones que entraron en vuelo, todas de una revisión externa verificada aquí
+
+1. **El peso, re-medido: 409.699 B / 23 %.** La cifra anterior (399.182 B) estaba **por debajo**: el
+   `awk` usaba `length()`, que cuenta **caracteres**, y el español lleva acentos multibyte; además sumaba
+   la línea del encabezado siguiente antes de cortar.
+2. **Las cifras por comisión se renombran «tokens ESTIMADOS DEL HISTORIAL»**, no «ahorrados»: salen de
+   bytes ÷ 4 y miden **tamaño**. `CA-14` contrata la **lectura real antes/después sobre la práctica
+   vigente** y **admite explícitamente ahorro 0** — porque si una comisión no leía ese historial, **no
+   hay ahorro atribuible**.
+3. **`CA-16`, el criterio que hace segura la rotación:** *toda decisión **vigente** queda reflejada en el
+   contrato activo o lleva en él una referencia explícita de cuándo consultarla en el archivo*. Corrige
+   otra afirmación de la coordinadora: archivar conserva la **evidencia**, pero **no** vuelve seguro
+   dejar de leer — sin este criterio, rotar convierte «una decisión difícil de encontrar» en «una
+   decisión que nadie sabe que existe».
+4. **`CA-17`: no se rotan todos los REQ.** Dos condiciones de candidatura —que su historia **se lea de
+   verdad** y que el REQ **siga abriéndose**— y el punto de equilibrio como **propiedad**, contando el
+   gasto **completo**: revisión inicial, **extracción de las decisiones vigentes**, la rotación y su
+   validación. Leer la historia es sólo una parte. Un REQ enorme y cerrado que nadie abre **no ahorra
+   nada al rotarse**, y el `glob` se ajusta a los candidatos.
+
+**Gate humano pendiente:** `CA-13` pone `rotacion.activo` en `true` para este repo, y eso es cambio del
+manifiesto (`AGENTS.md` §6). **Consecuencia operativa declarada:** al activarse, cada parada reescribe la
+historia de todos los REQ que casen, así que esa comisión **no se despacha en paralelo con ninguna otra
+que edite un REQ**.
+
+**Coste: ≈46 k tokens, 27 llamadas.**
+
 ## [GitHub] — 2026-09-09 · `REQ-019` ejecutable, y **la palanca que nadie había medido**: los historiales pesan el 22 % y la rotación no los ve
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus) + coordinadora.
 
