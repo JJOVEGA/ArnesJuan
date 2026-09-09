@@ -2,6 +2,53 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · `REQ-017 CA-08 (ii)`: la resolución se comprueba sobre la RAZÓN, con `k` derivado midiendo
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+La sonda que decide la puerta requerida `hooks-en-linux` ya no firma sobre **una** razón. El par
+intercalado se repite **k = 4** veces, cada repetición produce **su** razón, y el caso publica **las k
+razones, su recorrido `máx(r)/mín(r)` y el techo** antes de decidir: **PASS** si `máx(r) ≤ techo`,
+**FAIL** si `mín(r) > techo`, **SKIP** en cuanto el techo cae **dentro** del recorrido. La unanimidad es
+de contrato — sin mayoría, sin promedio, sin «la mejor de k». El techo **≤ 1,25× no se toca**.
+
+**La unidad, definida una sola vez, porque las cifras que circulaban no encajaban.** Una **repetición** es
+**un par intercalado completo**: una invocación de `sonda-reloj.sh` con `--r 6 --k 4` y los dos sujetos,
+o sea 6 series alternadas a,b por árbol × 4 llamadas al hook por serie = **48 llamadas**, y produce
+**exactamente una razón**. Cuesta **≈ 4,1 s** con el REQ de 6 líneas y **≈ 6,0 s** con la cabecera de 200:
+son **dos casos distintos**, no los dos brazos de uno. El **5,1 s** que circulaba era el **promedio de los
+dos casos** en el arnés de medición (102 s / 20 repeticiones) — otra unidad, y por eso no cuadraba.
+
+**La aritmética del coste, para que se recalcule sin volver a medir.** Sección = *constante* + *k* ×
+(4,1 + 6,0) s. La constante ≈ **4,9 s** (materializar v1.32.1, sonda de procesos, los dos casos de CA-06 y
+el arranque del corredor) sale de la sección medida a k = 1: **15,04 s − 10,1 s**. Con k = 4 → 4,9 + 40,4 =
+**45,3 s** previstos, **48,84 s** medidos aislada. Queda **fuera** de esa cuenta lo que el resto del banco
+paga por competir con ella bajo `JOBS=6`, que es justo lo que hay que acotar: **banco entero, mínimo de 3
+vueltas, 49,19 s sin la guarda y 77,19 s con ella → +28,0 s = 0,569×**, bajo un techo **operativo** de
+**0,750×** (dirección **bajar**). **Cabe: no se activa la salida del propietario**, y la regresión que este
+criterio vigila valía **92 s** en esa misma puerta.
+
+**`k` se derivó midiendo, que es lo que el criterio manda.** 56 repeticiones reales, **56 válidas de 56
+intentadas**, en tres entornos: ociosa, con 5 vecinos del tipo que el banco fabrica, y con todo fijado a
+**2 CPU con 6 procesos encima**. El recorrido observado **crece y satura**: k = 4 es el **menor** tamaño de
+ventana cuya **peor** ventana ya alcanza el recorrido de la muestra entera en las cuatro series
+(**1,268× de 1,268×**, **1,262× de 1,262×**); con k = 3 una veía **1,178× de 1,262×** e **infradeclaraba su
+propio ruido**. Se descarta el criterio «el menor k con el recorrido bajo el techo»: el recorrido es
+**no decreciente** en k, así que lo cumple k = 1 — la sonda ciega que produjo los dos rojos.
+
+**Emulación ≠ validación, declarado como límite y no como equivalencia.** Los 2 CPU **acotan** el
+comportamiento bajo carga; **el CI real es quien decide la puerta**. El recorrido **1,40** y los dos rojos
+vienen de `hooks-en-linux`; aquí **ninguna** de las 56 razones cruzó el techo (máx. **1,087×**), así que `k`
+está derivado sobre la **saturación del recorrido**, no sobre la frecuencia del rojo, que localmente es 0.
+
+**Y la guarda se entrega con su par discriminante, ejecutado y no argumentado** (`37/5`, casos 7 → **9**;
+total del banco 884 → **886**): **(a) negativo** — dispersión ensanchada **sin** regresión → **SKIP**, y con
+la guarda **desactivada** la misma entrada da **PASS PASS FAIL PASS**, que es lo que demuestra que el rojo lo
+quita la guarda y no la entrada; **(b) positivo** — regresión sintética de **2×** sobre esa misma entrada con
+ruido → **FAIL**, y sin regresión ni forzador → **PASS**. La convergencia por brazo **se queda como estaba**
+—mismo umbral, mismo SKIP— marcada **necesaria y no suficiente**.
+
+Banco **882 PASS · 0 FAIL · 4 SKIP** (los 4 preexistentes) y autoprueba **106 PASS · 0 FAIL**.
+
 ## [GitHub] — 2026-09-08 · Punto de continuidad de la ventana 1.34.0 en `docs/ESTADO.md`
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 

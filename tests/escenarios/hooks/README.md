@@ -30,7 +30,7 @@ bash tests/escenarios/hooks/run.sh secciones/07-*.sh     # sólo esa sección, m
 bash tests/escenarios/hooks/run.sh bash                  # sólo los casos cuyo nombre contenga "bash"
 bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del corredor
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **873 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **886 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`).
 
 En vuelta parcial —con un selector de archivos o con filtro de nombre— el cuadre **total** queda
@@ -324,6 +324,29 @@ salía roja con `load` 0,91 al arrancar, sobre un estimando que en aislamiento v
   árbol contra **el propio techo** (1,25× — no es un número nuevo: *un instrumento tiene que
   resolver al menos el factor que vigila*). Si lo supera, **SKIP citando las dos convergencias y la
   razón que sí obtuvo**, nunca PASS y **nunca FAIL**.
+
+**Esa comprobación es necesaria y NO suficiente, y desde el 2026-09-08 está medido por qué.**
+Acota la dispersión **dentro** de cada brazo, y el ruido del cociente viene de las condiciones
+**entre** brazos: dos series pueden converger **cada una** bajo el techo y su **cociente** oscilar
+por encima. Sobre **cinco** corridas de la puerta requerida con **código idéntico** la razón
+recorrió **0,973–1,364** (factor **1,40**) contra un techo de 1,25 —el techo vive **dentro** del
+ruido del instrumento—, y los **dos** rojos fueron aquellos en que **un** brazo convergía al borde
+(1,232× y 1,249×) mientras el otro convergía holgado. Por eso, **encima** de ella, la resolución se
+comprueba sobre la **razón**, que es la magnitud que (ii) juzga:
+
+- el par intercalado entero se repite **k = 4** veces, cada repetición con **su** razón;
+- el caso publica **las k razones, su recorrido `máx(r)/mín(r)` y el techo**, y decide por
+  **unanimidad**: **PASS** si `máx(r) ≤ techo`, **FAIL** si `mín(r) > techo`, y **SKIP** en cuanto
+  el techo cae **dentro** del recorrido. Sin mayoría, sin promedio y sin «la mejor de k»;
+- **k se derivó midiendo** (56 repeticiones reales en tres entornos, incluida la forma del runner
+  —2 CPU con 6 procesos encima—): el recorrido observado **crece y satura**, y k = 4 es el menor
+  tamaño de ventana cuya peor ventana ya alcanza el recorrido de la muestra entera. Con k = 3 una
+  de las cuatro series veía 1,178× de 1,262×, es decir **infradeclaraba su propio ruido**;
+- y la guarda se entrega con su **par discriminante** —negativo (dispersión ensanchada sin
+  regresión → SKIP, y **sin** la guarda la misma entrada da PASS o FAIL) y positivo (regresión
+  sintética de 2× → **FAIL**, no SKIP)—, porque un SKIP sin la otra mitad no demuestra quién lo
+  causó. **Cuesta**: la guarda añade **+28,0 s** sobre los 49,19 s que la puerta requerida medía
+  sin ella (mínimo de 3 vueltas, `JOBS=6`, 2026-09-08), bajo un techo declarado de **0,750×**.
 
 La misma regla, con la forma que le toca, en la **pared de los 60 s**: dos pasadas por árbol
 intercaladas y comparación **por rangos** — se afirma la dirección si el peor de este árbol supera

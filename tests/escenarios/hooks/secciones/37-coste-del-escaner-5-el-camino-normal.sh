@@ -13,8 +13,8 @@
 # PARTE 5 DE 5 POR REQ-014 CA-18: `mat47` viene DUPLICADO de
 # `37-coste-del-escaner-4-la-ruta-critica.sh`, donde está escrito su motivo largo, porque
 # CA-08 necesita el árbol heredado y CA-04 + CA-19 + H-04 hacen imposible factorizarlo.
-CASOS_ESPERADOS_SECCION=7
-PISO_AUTONOMO_SECCION=273  # 21 preámbulo (líneas 1-21) + 100 maquinaria compartida duplicada (num47 y mat47 con la línea base, líneas 22-121) + 152 bloque indivisible mayor (CA-08 entero: la medición de las dos magnitudes, veredicto08_47 y los casos que lo usan, líneas 123-274) · REQ-014 CA-18
+CASOS_ESPERADOS_SECCION=9
+PISO_AUTONOMO_SECCION=411  # 21 preámbulo (líneas 1-21) + 100 maquinaria compartida duplicada (num47 y mat47 con la línea base, líneas 22-121) + 290 bloque indivisible mayor (CA-08 entero: la medición de las dos magnitudes, razon08_47/veredicto08_47 y los casos que lo usan —incluido el par discriminante, que TIENE que ejercer la función que decide y no una copia suya, líneas 123-412) · REQ-014 CA-18
 seccion_nueva "--- 37/5 · el camino de una cabecera normal: procesos y reloj (REQ-017 CA-08 y CA-06) ---"
 
 BANCO47="${SEC_DIR%/}/../run.sh"
@@ -142,11 +142,43 @@ json47() {   # <REQ> -> el Edit que cierra ese REQ
 # el coste total en llamadas al hook queda igual que antes del arreglo, y el reparto —más
 # series y más cortas— es el que reduce la varianza que este criterio venía a quitar.
 SER47=6   # >= 6 por árbol (CA-08, OPERATIVO: se sube con la medición)
-K47=4
+K47=4     # repeticiones del sujeto DENTRO de cada serie
+# KRAZ47 ES EL `k` DEL CONTRATO: repeticiones del PAR INTERCALADO ENTERO, cada una con SU
+# propia razón. No se confunde con K47. OPERATIVO: se sube con la medición, y su valor se
+# DERIVA MIDIENDO (REQ-012 CA-03), no se elige — la clase de defecto que este REQ arregla
+# nació de fijar un número compatible con un argumento correcto sin comprobar que alcanzaba.
+# Derivado el 2026-09-08 sobre 56 repeticiones reales en tres entornos: máquina ociosa, con 5
+# vecinos del mismo tipo que el banco fabrica, y con TODO fijado a 2 CPU y 6 procesos encima
+# para reproducir la FORMA del runner de la puerta requerida. El recorrido observado CRECE con
+# las repeticiones y SATURA: k=4 es el menor tamaño de ventana cuya PEOR ventana ya alcanza el
+# recorrido de la muestra entera en las cuatro series (2 CPU: 1,268× de 1,268× y 1,262× de
+# 1,262×; con k=3 la segunda sólo veía 1,178× de 1,262×, o sea que INFRADECLARABA su ruido).
+# Menos repeticiones no ven la dispersión que tienen que juzgar; más sólo cuestan reloj.
+KRAZ47=4
 TECHO47=1250   # ‰. EL MISMO número para la razón y para la convergencia, y no es casualidad:
                # «un instrumento tiene que resolver al menos el factor que vigila». No es un
                # techo nuevo, es el de CA-08 (ii) leído sobre la propia sonda.
-declare -A PROCS47 RELOJ47 RELOJ2_47
+FACTOR47=2000  # ‰. La regresión SINTÉTICA del par discriminante (b): no menos de 2×
+               # (OPERATIVO: se baja con la medición, siempre estrictamente por encima del
+               # techo). Suelo derivado: techo × el peor recorrido medido de la razón
+               # (1,250 × 1,400, las cinco corridas de CI sobre código idéntico) = 1,750.
+# EL TECHO DE COSTE DE LA GUARDA, porque (ii) corre en la puerta requerida de `main`. Lo que
+# la guarda AÑADE son las repeticiones 2..KRAZ47: con k=1 no hay recorrido que juzgar. Medido
+# el 2026-09-08, banco entero con `JOBS=6`, mínimo de 3 vueltas: 49,19 s sin la guarda y
+# 77,19 s con ella, o sea +28,0 s = 0,569× de lo que la puerta costaba. TECHO 0,750×
+# (OPERATIVO: se BAJA con la medición; es techo y nunca igualdad), que deja ~32 % de margen
+# sobre lo medido y SÍ muerde: subir k a 6 lo pondría en ~0,95× y el techo lo vería.
+# NO lo vigila un caso, y el motivo se escribe en vez de omitirse: el numerador sólo se puede
+# medir cronometrando la puerta ENTERA desde dentro de una de sus secciones —circular—, y toda
+# versión local del cociente sale fijada por construcción en (KRAZ47-1)/1, que no mide nada.
+# Se acredita en el Historial del REQ con su corrida, como CA-05 (i) y (ii). Y cabe frente a
+# lo que protege: la regresión que este REQ arregla valía 92 s en esa misma puerta. No se
+# declara como constante a propósito: una constante que nadie lee finge ser una palanca.
+# Milésimas -> texto, SIN fork: `printf -v` es builtin y no abre subshell. Un `$(awk …)` por
+# número eran ~10 forks por caso en el archivo que mide forks.
+FMT47=''
+fmt47() { printf -v FMT47 '%d.%03d×' $(( ${1} / 1000 )) $(( ${1} % 1000 )); }
+declare -A PROCS47 REPS47
 falta47=''
 JSON47="$RAIZ/json47-$BASHPID.json"
 for _cual47 in REQ-100 REQ-200; do
@@ -167,21 +199,29 @@ for _cual47 in REQ-100 REQ-200; do
   # Y EL RELOJ, INTERCALADO EN UNA SOLA INVOCACIÓN. La alternancia la hace la sonda: las dos
   # series consecutivas de árboles distintos ven el mismo vecindario, y en bloque cada árbol
   # veía vecinos distintos (QA-017-06: 1,217 en bloque frente a 1,012 intercalado).
-  if [ "$HER47_OK" = si ]; then
-    _reg47="$("$UTIL_DIR/sonda-reloj.sh" --k "$K47" --r "$SER47" --etiqueta "$_cual47" \
-      --sujeto-a "CLAUDE_PROJECT_DIR='$PROJ' bash '$HOOKS_DIR/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" \
-      --sujeto-b "CLAUDE_PROJECT_DIR='$PROJ' bash '$HER47/hooks/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" 2>/dev/null)"
+  #
+  # Y EL PAR ENTERO SE REPITE KRAZ47 VECES, cada repetición con SU razón: la dispersión que
+  # (ii) tiene que juzgar es la de la RAZÓN entre pares, y una sola invocación no la puede
+  # exhibir —da un punto, y un punto no tiene recorrido—. Sin línea base no se mide: el
+  # veredicto necesita los dos brazos, y medir uno solo sería pagar KRAZ47 pares para acabar
+  # igualmente en SKIP.
+  REPS47["$_cual47"]=''
+  if [ "$HER47_OK" != si ]; then
+    falta47="sin línea base v1.32.1"
   else
-    _reg47="$("$UTIL_DIR/sonda-reloj.sh" --k "$K47" --r "$SER47" --etiqueta "$_cual47" \
-      --sujeto "CLAUDE_PROJECT_DIR='$PROJ' bash '$HOOKS_DIR/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" 2>/dev/null)"
-  fi
-  if sonda_lee "$_reg47" && [ "${SONDA[estado]}" = ok ]; then
-    RELOJ47["$_cual47-este"]="${SONDA[min_a]:-}";     RELOJ2_47["$_cual47-este"]="${SONDA[min2_a]:-}"
-    RELOJ47["$_cual47-heredado"]="${SONDA[min_b]:-}"; RELOJ2_47["$_cual47-heredado"]="${SONDA[min2_b]:-}"
-  else
-    falta47="la sonda de reloj no midió (${SONDA_MOTIVO:-estado=${SONDA[estado]:-?} motivo=${SONDA[motivo]:-?}})"
-    RELOJ47["$_cual47-este"]=''; RELOJ2_47["$_cual47-este"]=''
-    RELOJ47["$_cual47-heredado"]=''; RELOJ2_47["$_cual47-heredado"]=''
+    for ((_n47 = 1; _n47 <= KRAZ47; _n47++)); do
+      _reg47="$("$UTIL_DIR/sonda-reloj.sh" --k "$K47" --r "$SER47" --etiqueta "$_cual47-r$_n47" \
+        --sujeto-a "CLAUDE_PROJECT_DIR='$PROJ' bash '$HOOKS_DIR/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" \
+        --sujeto-b "CLAUDE_PROJECT_DIR='$PROJ' bash '$HER47/hooks/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" 2>/dev/null)"
+      if sonda_lee "$_reg47" && [ "${SONDA[estado]}" = ok ]; then
+        REPS47["$_cual47"]="${REPS47[$_cual47]} ${SONDA[min_a]:-}:${SONDA[min2_a]:-}:${SONDA[min_b]:-}:${SONDA[min2_b]:-}"
+      else
+        # La repetición entra IGUAL, vacía: una repetición que no midió no se descarta en
+        # silencio —eso encogería la k sin decirlo—, se lleva el caso entero a SKIP.
+        falta47="la sonda de reloj no midió en la repetición $_n47 (${SONDA_MOTIVO:-estado=${SONDA[estado]:-?} motivo=${SONDA[motivo]:-?}})"
+        REPS47["$_cual47"]="${REPS47[$_cual47]} :::"
+      fi
+    done
   fi
 done
 rm -f "$JSON47"
@@ -198,29 +238,83 @@ rm -f "$JSON47"
 # negativo, luego 0,821–1,443 sobre el MISMO estimando es varianza de la sonda.
 #
 # Por eso, además de intercalar, se compara el SEGUNDO MÍNIMO con el MÍNIMO de CADA árbol
-# contra el PROPIO techo, y si lo supera el caso se ABSTIENE: nunca PASS y nunca FAIL. La
-# abstención no tapa una regresión real —una regresión sube los dos mínimos del árbol nuevo
-# por igual y NO separa su serie de sí misma; lo que separa una serie de sí misma es el
-# vecino—. Y el techo NO se toca: es `operativo` y su dirección admitida es BAJAR.
-veredicto08_47() {   # <nombre> <mín este> <2º mín este> <mín her> <2º mín her>
-  local nombre="$1" ue="${2:-}" ue2="${3:-}" uh="${4:-}" uh2="${5:-}" ce ch r x
+# contra el PROPIO techo, y si lo supera el caso se ABSTIENE: nunca PASS y nunca FAIL. Esa
+# comprobación SE QUEDA COMO ESTABA —mismo umbral, mismo SKIP— y desde el 2026-09-08 está
+# marcada NECESARIA Y NO SUFICIENTE: responde «¿se asentó CADA serie?», no «¿puede ESTE
+# COCIENTE distinguir el factor que vigila?». Acota la dispersión DENTRO de cada brazo, y el
+# ruido de la razón viene de las condiciones ENTRE brazos: dos series pueden converger cada
+# una bajo el techo y su cociente oscilar por encima. Medido sobre CINCO corridas de la puerta
+# requerida con CÓDIGO IDÉNTICO —ningún commit tocó `hooks/`, `tools/` ni `.github/`, R-019—:
+# la razón recorre 0,973–1,364 (factor 1,40) contra un techo de 1,25, o sea que el techo VIVE
+# DENTRO del ruido del instrumento; el 0,973× cierra la discusión, porque una regresión real
+# no puede ser MÁS RÁPIDA que la línea base. Y los dos rojos son justo aquellos en que UN
+# brazo converge al borde (1,232× y 1,249× contra 1,250×) mientras el otro converge holgado.
+#
+# ENCIMA DE ELLA, LA RESOLUCIÓN SOBRE LA RAZÓN, que es la magnitud que (ii) juzga: KRAZ47
+# repeticiones del par, y el veredicto sólo se emite si NO depende del ruido. PASS si máx(r)
+# <= techo (conforme en TODAS), FAIL si mín(r) > techo (excedido en TODAS, así que no lo puso
+# ahí el vecino) y SKIP en cuanto el techo cae DENTRO del recorrido. La unanimidad es DE
+# CONTRATO: es la definición de «la decisión no depende del ruido», y no admite mayoría,
+# promedio ni «la mejor de k». El techo NO se toca: es `operativo` y su dirección es BAJAR.
+R47=''; MOT47=''; CONV47=0
+razon08_47() {   # <ue:ue2:uh:uh2 en µs> -> R47 y CONV47, o R47 vacío y MOT47 con el motivo
+  local rep="$1" ue ue2 uh uh2 ce ch x
+  R47=''; MOT47=''; CONV47=0
+  ue="${rep%%:*}"; x="${rep#*:}"; ue2="${x%%:*}"; x="${x#*:}"; uh="${x%%:*}"; uh2="${x##*:}"
   for x in "$ue" "$ue2" "$uh" "$uh2"; do
     num47 "$x" && [ "$x" -gt 0 ] && continue
-    echo "  SKIP  $nombre  la sonda no dio $SER47 series por árbol con sus dos mínimos (este ${ue:-vacío}/${ue2:-vacío}µs · heredada ${uh:-vacío}/${uh2:-vacío}µs)"; return 0
+    MOT47="la sonda no dio $SER47 series por árbol con sus dos mínimos (este ${ue:-vacío}/${ue2:-vacío}µs · heredada ${uh:-vacío}/${uh2:-vacío}µs)"; return 0
   done
   if [ "$uh" -lt 50000 ] || [ "$ue" -lt 50000 ]; then
-    echo "  SKIP  $nombre  serie por debajo del suelo de 50 ms (este ${ue}µs · heredada ${uh}µs): el reloj no distingue del ruido"; return 0
+    MOT47="serie por debajo del suelo de 50 ms (este ${ue}µs · heredada ${uh}µs): el reloj no distingue del ruido"; return 0
   fi
   ce=$(( ue2 * 1000 / ue )); ch=$(( uh2 * 1000 / uh ))
-  r=$(( ue * 1000 / uh ))
-  if [ "$ce" -gt "$TECHO47" ] || [ "$ch" -gt "$TECHO47" ]; then
-    echo "  SKIP  $nombre  la sonda NO convergió: segundo mínimo / mínimo = $(awk -v c=$ce 'BEGIN{printf "%.3f", c/1000}')× (este) y $(awk -v c=$ch 'BEGIN{printf "%.3f", c/1000}')× (heredada), por encima de su propio techo $(awk -v t=$TECHO47 'BEGIN{printf "%.3f", t/1000}')× — no puede distinguir una regresión de su ruido. La razón que sí obtuvo es $(awk -v c=$r 'BEGIN{printf "%.3f", c/1000}')×, y sobre eso no se firma"
+  CONV47="$ce"; [ "$ch" -gt "$ce" ] && CONV47="$ch"
+  if [ "$CONV47" -gt "$TECHO47" ]; then
+    fmt47 "$ce"; x="$FMT47"; fmt47 "$ch"; ce="$FMT47"; fmt47 "$TECHO47"; ch="$FMT47"
+    MOT47="la sonda NO convergió: segundo mínimo / mínimo = $x (este) y $ce (heredada), por encima de su propio techo $ch — no puede distinguir una regresión de su ruido, y sobre eso no se firma"
     return 0
   fi
-  if [ "$r" -le "$TECHO47" ]; then
-    echo "  PASS  $nombre  $(awk -v c=$r 'BEGIN{printf "%.3f", c/1000}')× ($(awk -v u=$ue -v k=$K47 'BEGIN{printf "%.4f", u/(k*1e6)}') s/llamada frente a $(awk -v u=$uh -v k=$K47 'BEGIN{printf "%.4f", u/(k*1e6)}') s; convergencia $(awk -v c=$ce 'BEGIN{printf "%.3f", c/1000}')×/$(awk -v c=$ch 'BEGIN{printf "%.3f", c/1000}')×)"; PASS=$((PASS+1))
+  R47=$(( ue * 1000 / uh ))
+}
+# `guarda` = no reproduce la regla ANTERIOR —una razón, un veredicto— y existe sólo para la
+# segunda mitad del par discriminante (a): sin ella, un SKIP no demuestra que lo haya causado
+# la guarda. No toca los contadores: no es un caso, es el testigo de uno.
+veredicto08_47() {   # <nombre> <guarda: si|no> <rep...>, rep = ue:ue2:uh:uh2 en µs
+  local nombre="$1" guarda="$2"; shift 2
+  local rep n=0 rmin='' rmax='' cmax=0 lista='' techo mn mx rec
+  fmt47 "$TECHO47"; techo="$FMT47"
+  if [ "$guarda" = no ]; then
+    for rep in "$@"; do
+      razon08_47 "$rep"
+      if [ -z "$R47" ]; then echo "  SKIP  $nombre  $MOT47"; continue; fi
+      fmt47 "$R47"
+      if [ "$R47" -le "$TECHO47" ]; then echo "  PASS  $nombre  $FMT47 <= $techo"
+      else echo "  FAIL  $nombre  $FMT47 > $techo"; fi
+    done
+    return 0
+  fi
+  for rep in "$@"; do
+    n=$((n + 1))
+    razon08_47 "$rep"
+    [ -n "$R47" ] || { echo "  SKIP  $nombre  repetición $n de $#: $MOT47"; return 0; }
+    if [ "$CONV47" -gt "$cmax" ]; then cmax="$CONV47"; fi
+    fmt47 "$R47"; lista="$lista $FMT47"
+    if [ -z "$rmin" ] || [ "$R47" -lt "$rmin" ]; then rmin="$R47"; fi
+    if [ -z "$rmax" ] || [ "$R47" -gt "$rmax" ]; then rmax="$R47"; fi
+  done
+  [ "$n" -ge 1 ] || { echo "  SKIP  $nombre  no llegó ninguna repetición del par intercalado"; return 0; }
+  rec=$(( rmax * 1000 / rmin ))
+  fmt47 "$rmin"; mn="$FMT47"; fmt47 "$rmax"; mx="$FMT47"; fmt47 "$rec"; rec="$FMT47"; fmt47 "$cmax"; cmax="$FMT47"
+  # Las k razones, el recorrido y el techo se publican SIEMPRE, decida lo que decida: son la
+  # evidencia de que la decisión no depende del ruido, no el adorno del SKIP.
+  lista="$n razones:$lista · recorrido $rec · techo $techo · peor convergencia $cmax"
+  if [ "$rmax" -le "$TECHO47" ]; then
+    echo "  PASS  $nombre  máx(r) $mx <= techo en las $lista"; PASS=$((PASS+1))
+  elif [ "$rmin" -gt "$TECHO47" ]; then
+    echo "  FAIL  $nombre  mín(r) $mn > techo en TODAS: es regresión, no ruido — $lista"; FAIL=$((FAIL+1))
   else
-    echo "  FAIL  $nombre  $(awk -v c=$r 'BEGIN{printf "%.3f", c/1000}')× > $(awk -v t=$TECHO47 'BEGIN{printf "%.3f", t/1000}')× ($(awk -v u=$ue -v k=$K47 'BEGIN{printf "%.4f", u/(k*1e6)}') s/llamada frente a $(awk -v u=$uh -v k=$K47 'BEGIN{printf "%.4f", u/(k*1e6)}') s), y la sonda SÍ convergió ($(awk -v c=$ce 'BEGIN{printf "%.3f", c/1000}')×/$(awk -v c=$ch 'BEGIN{printf "%.3f", c/1000}')×): esto es una regresión, no ruido"; FAIL=$((FAIL+1))
+    echo "  SKIP  $nombre  el techo cae DENTRO del recorrido observado [$mn, $mx]: el instrumento no distingue el factor que vigila — $lista"
   fi
 }
 
@@ -239,11 +333,11 @@ for _cual47 in REQ-100 REQ-200; do
   fi
   nom47="REQ-017 CA-08 (ii) $_etq47: el reloj no sube más de 1,25× el de v1.32.1"
   if [ -z "$FILTRO" ] || printf '%s' "$nom47" | grep -qi -- "$FILTRO"; then
-    ue47="${RELOJ47[$_cual47-este]:-}"; uh47="${RELOJ47[$_cual47-heredado]:-}"
-    if [ -z "$ue47" ] || [ -z "$uh47" ]; then
-      echo "  SKIP  $nom47  ${falta47:-no se pudo medir} (este=<${ue47:-vacío}>µs heredado=<${uh47:-vacío}>µs)"
+    reps47="${REPS47[$_cual47]:-}"
+    if [ -z "${reps47// /}" ]; then
+      echo "  SKIP  $nom47  ${falta47:-no se pudo medir}: no llegó ninguna repetición del par intercalado"
     else
-      veredicto08_47 "$nom47" "$ue47" "${RELOJ2_47[$_cual47-este]:-}" "$uh47" "${RELOJ2_47[$_cual47-heredado]:-}"
+      veredicto08_47 "$nom47" si $reps47   # SIN comillas a propósito: una palabra por repetición
     fi
   fi
 done
@@ -255,13 +349,13 @@ done
 if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-08 (ii) la sonda que no converge se ABSTIENE" | grep -qi -- "$FILTRO"; then
   nom47="REQ-017 CA-08 (ii) la sonda que no converge se ABSTIENE: nunca PASS y nunca FAIL, y la abstención manda sobre el rojo"
   obs08_47="$( {
-    veredicto08_47 sonda-de-prueba 1000000 1050000 1000000 1020000   # converge y está bajo el techo
-    veredicto08_47 sonda-de-prueba 1300000 1310000 1000000 1020000   # converge y lo CRUZA: eso sí es FAIL
-    veredicto08_47 sonda-de-prueba 1000000 1400000 1000000 1020000   # este árbol no converge (1,400×)
-    veredicto08_47 sonda-de-prueba 1000000 1050000 1000000 1400000   # la heredada no converge
-    veredicto08_47 sonda-de-prueba 1300000 1700000 1000000 1020000   # cruzaría el techo Y no converge (1,308×): manda la abstención
-    veredicto08_47 sonda-de-prueba      '' 1050000 1000000 1020000   # falta un número
-    veredicto08_47 sonda-de-prueba   40000   41000   40000   41000   # bajo el suelo de 50 ms
+    veredicto08_47 sonda-de-prueba si 1000000:1050000:1000000:1020000   # converge y está bajo el techo
+    veredicto08_47 sonda-de-prueba si 1300000:1310000:1000000:1020000   # converge y lo CRUZA: eso sí es FAIL
+    veredicto08_47 sonda-de-prueba si 1000000:1400000:1000000:1020000   # este árbol no converge (1,400×)
+    veredicto08_47 sonda-de-prueba si 1000000:1050000:1000000:1400000   # la heredada no converge
+    veredicto08_47 sonda-de-prueba si 1300000:1700000:1000000:1020000   # cruzaría el techo Y no converge (1,308×): manda la abstención
+    veredicto08_47 sonda-de-prueba si        '':1050000:1000000:1020000 # falta un número
+    veredicto08_47 sonda-de-prueba si   40000:41000:40000:41000         # bajo el suelo de 50 ms
   } 2>&1 | sed -nE 's/^  (PASS|FAIL|SKIP)  .*/\1/p' | tr '\n' ' ' )"
   esp08_47='PASS FAIL SKIP SKIP SKIP SKIP SKIP '
   if [ "$obs08_47" = "$esp08_47" ]; then
@@ -272,6 +366,50 @@ if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-08 (ii) la sonda que no converge 
 fi
 # Los contadores no se tocan de más: `veredicto08_47` corrió dentro de una sustitución de
 # comandos, que es un subshell, y sus PASS/FAIL murieron con él.
+
+# EL PAR DISCRIMINANTE, SIN EL CUAL LA GUARDA NO ACREDITA NADA — Y SE EJECUTA, NO SE ARGUMENTA.
+# «La abstención no tapa una regresión real» es una afirmación sobre cómo se comporta el
+# mecanismo, y este REQ lleva TRES de esa clase que resultaron falsas al ejecutarlas.
+#
+# EL FORZADOR ES SINTÉTICO Y AFECTA SÓLO A PARTE DE LAS REPETICIONES, que es la vía que el
+# criterio admite al lado de la contención real con `JOBS=6`. Se toma ésta porque es
+# DETERMINISTA y no le cuesta reloj a la puerta requerida: una contención real que unas veces
+# dispersa y otras no sería un rojo intermitente en la puerta requerida, que es exactamente el
+# modo de fallo que este REQ existe para quitar. La razón VERDADERA es 1,0 —el árbol medido
+# contra sí mismo— en las cuatro repeticiones, y el forzador infla el brazo «este» de UNA de
+# ellas hasta 1,364×, la magnitud del rojo real medido en CI sobre código idéntico. Los dos
+# brazos CONVERGEN en las cuatro (1,010×), así que la abstención no puede venir de la guarda
+# anterior: si sale, sale de la del recorrido.
+DISP47='1000000:1010000:1000000:1010000 1000000:1010000:1000000:1010000 1364000:1374000:1000000:1010000 1000000:1010000:1000000:1010000'
+LIMPIO47='1000000:1010000:1000000:1010000 1000000:1010000:1000000:1010000 1000000:1010000:1000000:1010000 1000000:1010000:1000000:1010000'
+if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-08 (ii) par discriminante NEGATIVO" | grep -qi -- "$FILTRO"; then
+  nom47="REQ-017 CA-08 (ii) par discriminante NEGATIVO: dispersión ensanchada SIN regresión da SKIP, y con la guarda desactivada la MISMA entrada da PASS o FAIL según la repetición"
+  con47="$(veredicto08_47 sonda-de-prueba si $DISP47 2>&1 | sed -nE 's/^  (PASS|FAIL|SKIP)  .*/\1/p' | tr '\n' ' ')"
+  sin47="$(veredicto08_47 sonda-de-prueba no $DISP47 2>&1 | sed -nE 's/^  (PASS|FAIL|SKIP)  .*/\1/p' | tr '\n' ' ')"
+  if [ "$con47" = 'SKIP ' ] && [ "$sin47" = 'PASS PASS FAIL PASS ' ]; then
+    echo "  PASS  $nom47  (con la guarda: $con47· sin ella: $sin47— el rojo lo quita la guarda, no la entrada)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nom47  con la guarda se esperaba <SKIP > y salió <$con47>; sin ella se esperaba <PASS PASS FAIL PASS > y salió <$sin47>"; FAIL=$((FAIL+1))
+  fi
+fi
+if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-08 (ii) par discriminante POSITIVO" | grep -qi -- "$FILTRO"; then
+  nom47="REQ-017 CA-08 (ii) par discriminante POSITIVO: una regresión sintética de 2× da FAIL y no SKIP, y sin regresión ni forzador da PASS"
+  # La regresión se aplica SOBRE la entrada dispersa del caso (a) —forzador incluido—, no
+  # sobre una limpia: lo que hay que demostrar es que la abstención no se traga una regresión
+  # ESTANDO el ruido presente, que es cuando la abstención sería la respuesta cómoda.
+  reg47=''
+  for _r47 in $DISP47; do
+    _ue47="${_r47%%:*}"; _x47="${_r47#*:}"
+    reg47="$reg47 $(( _ue47 * FACTOR47 / 1000 )):$(( ${_x47%%:*} * FACTOR47 / 1000 )):${_x47#*:}"
+  done
+  obsreg47="$(veredicto08_47 sonda-de-prueba si $reg47 2>&1 | sed -nE 's/^  (PASS|FAIL|SKIP)  .*/\1/p' | tr '\n' ' ')"
+  obslim47="$(veredicto08_47 sonda-de-prueba si $LIMPIO47 2>&1 | sed -nE 's/^  (PASS|FAIL|SKIP)  .*/\1/p' | tr '\n' ' ')"
+  if [ "$obsreg47" = 'FAIL ' ] && [ "$obslim47" = 'PASS ' ]; then
+    echo "  PASS  $nom47  (con la regresión de 2×: $obsreg47· sin ella y sin forzador: $obslim47)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nom47  con la regresión se esperaba <FAIL > y salió <$obsreg47>; sin ella se esperaba <PASS > y salió <$obslim47>"; FAIL=$((FAIL+1))
+  fi
+fi
 
 # La sonda de procesos se comprueba A SÍ MISMA: si el envoltorio se resolviera a sí mismo
 # —el fallo real de 1.32.1— la sonda tiene que DECIRLO y no dar un número. Se le da un
