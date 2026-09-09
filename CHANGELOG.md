@@ -2,6 +2,43 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · `REQ-026 CA-18`: no se publica sobre una lectura caducada
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Write-back de **`SEC-067`** (`usuario/dinero`) y **`SEC-069`**. Criterio nuevo en siete partes, con
+la **propiedad** por delante y **sin nombrar ningún mecanismo**:
+
+- **(i)** Si otra escritura modifica el documento **después** de que la rotación lo leyó y **antes**
+  de que publique, la rotación **no publica**: el documento conserva **byte a byte** esa escritura
+  ajena y se avisa. *Ninguna publicación puede derivarse de una lectura que ya no describe el disco.*
+- **(ii)** Dirección hacia **no rotar**, y **ninguna condición bajo la que la duda autorice publicar**.
+- **(iii)** El fallo **nombrado**, que es lo que faltaba: **actualización perdida** —escritura completa
+  y válida que pisa un cambio posterior a la lectura— **≠ escritura desgarrada** —la que cierra el
+  temporal propio del proceso de `REQ-015`—, y **una no implica la otra**. Contrata además que la
+  invariante de `hooks/rotar-artefactos.sh:34-36` **es falsa** y se corrige o se retira: un
+  comentario que afirma una invariante falsa es deriva (§9).
+- **(iv)** Concurrencia: a lo sumo una publica y el destino **no** recibe el mismo bloque dos veces.
+  Declarado **modelado, no medido**, frente a (iii) que **sí** se midió 3/3.
+- **(v)** Lo único acotado del **cómo**, y por propiedad: ni estado intermedio, ni bloquear la parada,
+  ni obligar a superar el techo de `CA-15` — si lo superara, se re-deriva por la vía que `CA-15` ya
+  define, **no aflojando esta propiedad**.
+- **(vi)** Par discriminante con **sus dos mitades**, y su sede: **parte 4** del banco, porque
+  `28-rotacion-seccion-3-la-tabla.sh` está en **400 de 400 líneas**. **No se propone subir el techo.**
+- **(vii)** El canal: sede de `CA-08 (v)` **más** el cierre de `SEC-069` — **la rotación no rota
+  cuando no puede dejar constancia duradera**. Motivo: un fail-closed invisible es indistinguible de
+  una sección que lleva meses sin archivarse.
+
+**Marcado como candidata a `ADR-008`** por el propio analista, con su alternativa declarada, porque
+`(vii)` acopla dos ajustes del manifiesto hoy independientes: *«eso lo decide quien firma, no yo»*.
+
+**La consecuencia de gobernanza NO entra en este REQ, y el motivo es correcto:** que
+`tools/arnes-paralelo.sh` no conozca a este escritor **no es defecto del rotador**, y `REQ-026` no
+puede contratar el comportamiento de una herramienta que no toca ni declara en su `Archivos:`. Sede
+**`REQ-022`**, con el texto redactado y esta dependencia anotada: la cadena es
+`CA-18` + su control → `CA-13`, y **esa dimensión de `REQ-022` debería resolverse —o quedar como
+residual con dueño— ANTES de encender la rotación**, porque encenderla es justo lo que pone al hook
+a escribir en `requirements/`.
+
 ## [Interno] — 2026-09-09 · `REQ-026`: auditoría de seguridad **R-021** — `con-hallazgos`, y el rotador que ahora escribe contratos
 > Origen: Interno (manual, sin commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad` (Opus).
 
