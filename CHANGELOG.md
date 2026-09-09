@@ -2,6 +2,73 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · QA de `REQ-027`: el techo re-derivado es legítimo, y dos magnitudes sumadas no lo son
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus) + coordinadora.
+
+`QA: con-hallazgos`. `Estado: en-revisión → en-progreso`. Un bloqueante y cuatro `instrumento`.
+
+**Cómo aisló la medición, y por qué importa:** usó un **`git worktree`** en vez de `stash`,
+`checkout .`, `restore .`, `reset --hard` o `clean -f` —los cinco de `git.prohibidos`— y con eso
+**probó por construcción** que los **5 FAIL** que la coordinadora había medido en el árbol de trabajo
+**no eran de `REQ-027`**: en el worktree limpio sobre `6dd3f8a`, **920 PASS · 0 FAIL · 4 SKIP**,
+`rc=0`. Después comprobó que sus tres archivos **no cambian** entre `6dd3f8a` y HEAD, así que el
+veredicto vale sobre el árbol actual. Es la respuesta correcta a un árbol con comisiones vivas.
+
+**El re-derivado del techo queda ACREDITADO, con sus tres condiciones verificadas:** que `CA-05` lo
+ordena textualmente y prohíbe recortar contratado; que el recorte fue **de relleno** —comprobado
+**componente a componente**: `B.7` trae los seis que exige `CA-11` y `D` las tres vías con estado más
+los dos límites de `CA-07`, **no falta nada contratado**—; y que el número **sale de una medición**:
+37.530 − 33.827 = **3.703 exactos**, en los dos archivos, sin holgura.
+
+**Y resolvió el «3.702 vs 3.703» que parecía una cifra que no cuadraba: son DOS magnitudes.** 3.702 es
+**el bloque**, que es lo que compara `CA-01`; 3.703 es **lo que añade al archivo**, que es la magnitud
+que `CA-05` contrata — bloque más la línea en blanco separadora. Verificado quitando tramo **y** línea:
+el archivo vuelve a `4f647c7` byte a byte.
+
+**Idempotencia REPRODUCIDA con transcripción propia**, no reusando el script del desarrollador: tres
+corridas `NUEVO`→`INTACTO`→`INTACTO` con **el mismo md5**, `cmp` sin salida, **5** negativos con
+archivo intacto —incluido **uno que el desarrollador no probó**: cierre antes de apertura— y el
+fail-before donde un reemplazo ciego **borra el texto humano del proyecto**. Sus bytes absolutos **no**
+coinciden con los del desarrollador, y explica por qué es correcto: el artefacto **no registra qué
+texto humano puso**, así que **ese md5 no es re-derivable por nadie**. Lo que reproduce es lo
+contratado.
+
+### `QA-027-01` (`contrato`, bloqueante) — dos magnitudes sumadas
+
+`REQ-027:84` y `:312` afirman `D` = **776 B** y `B.7`+`D` = **1.812 B** = «el 49 %». Medido:
+**`D` = 807 B**, total **1.843 B**, **49,8 %**. Los 776 son **caracteres** (`wc -m`), no bytes, de modo
+que **1.812 = 1.036 bytes + 776 caracteres** — exactamente la mezcla de magnitudes que el §0 del propio
+artefacto declara no hacer. **No invalida el techo** (los 3.703 B están reproducidos) y **refuerza** la
+conclusión: hay **más** contenido contratado, no menos.
+
+**La coordinadora propagó esa cifra al `CHANGELOG` de `802b47d`**, escribiendo «`D` (776 B) — 1.812 B,
+el 49 %». **Queda rectificado aquí**, sin reescribir aquella entrada (§9): los números correctos son
+**807 B**, **1.843 B** y **49,8 %**.
+
+### `QA-027-03` (`instrumento`) — el más consecuente: un fail-open silencioso en la migración
+
+`skills/arnes-upgrade/SKILL.md:773,777` prescribe `grep -c 'arnes:coordinacion:inicio'` **sin los
+delimitadores**, así que **cuenta menciones, no marcadores**. Medido: un `AGENTS.md` de proyecto **sin
+el bloque** que cite la cadena desnuda una vez da **1** ⇒ la tabla de decisión lee «ya está» y **el
+proyecto nunca recibe las reglas, en silencio**. Dos menciones dan `UNKNOWN` sin motivo. El arreglo es
+**una línea** —contar el marcador completo—, verificado que así resiste.
+
+### Los otros tres, y lo que declaran
+
+`QA-027-02`: el desglose del artefacto suma **3.626 B** y no 3.703 —falta una fila de 25 B y tres van
+en caracteres—; correcto en bytes da 3.702. `QA-027-04`: una cita de rango apunta a las líneas de
+`81024c6` y no de `6dd3f8a`. `QA-027-05`: un proyecto Windows que normaliza a **CRLF** tras migrar da
+`MODIFICADO`/conflicto **falso** — fail-closed y sin pérdida.
+
+### Lo que este REQ NO entrega, dicho con claridad
+
+**`CA-08` señal (c)** sigue sin tomar, y QA acredita que **nadie escribió lo contrario**: el REQ, el
+artefacto y el `CHANGELOG` dicen los tres **«no se declara que las reglas sirven»**. Y el descarte de
+Codex es **correcto** —una afirmación del proveedor no es la observación de que el bloque llegue a una
+coordinadora—, luego **el REQ entrega su objetivo para UNA de las tres herramientas**, y así hay que
+decirlo. Cursor no está instalado. Que una coordinadora **aplique** las reglas **ninguna puerta lo
+mide, y ninguna debía**.
+
 ## [GitHub] — 2026-09-09 · `REQ-026` ajuste de alcance, `REQ-027` entregado y `REQ-023` entregado
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus), `desarrollador` (Opus) ×2, coordinadora.
 

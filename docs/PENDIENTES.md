@@ -2305,3 +2305,5 @@ el primer archivo que se acerque a su techo. No urge: hoy hay un solo archivo go
 > fail-closed— y `hooks/estado-derivado.sh:294` es una **segunda transcripción** de
 > `arnes_lee_archivo`, hoy correcta, en un punto que **sí escribe**. Clase `instrumento`, dueño
 > `desarrollador`; detalle en `SEC-070` y `SEC-071` del registro de seguridad.
+
+- **`skills/arnes-upgrade/SKILL.md` no tiene entrada «Hacia 1.33.0»** — la lista salta de 1.32.1 a la 1.34.0 que añadió REQ-027; un proyecto que migre desde 1.32.1 no sabe qué cambió 1.33.0 en sus archivos. Visto por QA al validar REQ-027 (2026-09-09), **fuera de su alcance**; dueño `desarrollador`, clase `instrumento`.
