@@ -2242,3 +2242,13 @@ registra para que `REQ-025` lo evalúe con el resto.
 Tres señales, todas ya observables sin instrumentar nada nuevo: **encargos corregidos en vuelo** (hoy:
 cuatro sobre `REQ-026`), **reaperturas** y **tokens por resultado entregado**. Si las reglas sirven, las
 tres bajan; si no, se sabrá con la misma evidencia con la que se propusieron.
+
+## `REQ-021` declara en `Archivos:` dos rutas que no existen (QA, 2026-09-08)
+
+Fuera del alcance de `REQ-017`, encontrado al validarlo: `requirements/REQ-021.md` declara
+`tests/escenarios/hooks/secciones/37-coste-del-escaner-1-escala.sh` y `…-2-la-seccion-caliente.sh`,
+que **no existen** — las secciones reales son `…-1-el-dominio.sh` y `…-2-las-razones.sh`. Es el
+mismo defecto que `QA-017-22` abre contra `REQ-017`, y hoy los dos se tapan mutuamente: como ambos
+declaran los **mismos** nombres fantasma, `tools/arnes-paralelo.sh` los ve colisionar igual. El
+primer REQ que declare esas secciones por su nombre **real** obtendrá un `disjunto` en falso contra
+los dos. Dueño: `analista-requerimientos`; se cierra con `SEC-020` o antes.

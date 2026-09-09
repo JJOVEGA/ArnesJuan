@@ -107,8 +107,49 @@ que llegue su informe.**
 
 ### Siguiente acción
 
-**Esperar el informe del desarrollador de `REQ-017`** con las cinco magnitudes pedidas. Después: QA y
-auditor de `REQ-017`, en ese orden (§6, no se relaja). **No despachar nada más hasta entonces.**
+Esperar al `desarrollador` de la vuelta 1 (`QA-017-16`). Después **QA otra vez**, y sólo entonces el
+`auditor-seguridad` (§6, no se relaja). El auditor **no puede firmar** mientras `QA:` diga
+`con-hallazgos`.
+
+### ACTUALIZACIÓN — 2026-09-08, noche (sesión autónoma)
+
+**Desarrollador entregó `19b1822`; QA lo validó y lo devolvió.**
+
+- `REQ-017`: `Estado: en-revisión`, `QA: con-hallazgos (2026-09-08)`. **Siete hallazgos nuevos**,
+  `QA-017-16` a `QA-017-22`, en `docs/qa/1.34.0.md` (creado).
+- **`QA-017-16` es clase `contrato` y bloquea el cierre.** `razon08_47` retorna en la comprobación
+  de convergencia (`37/5:276`) y la razón se calcula **después** (`:278`), así que el SKIP por
+  no-convergencia **no puede citar la tercera cifra** que `REQ-017.md:80` contrata. Ningún caso del
+  banco lo habría visto: la autoprueba reduce cada salida a la palabra del veredicto y **descarta el
+  mensaje**. Los otros seis son `instrumento` y no entran en esta ventana.
+- **Verificado de forma independiente por la coordinadora y reproducido por QA:** banco
+  `881 PASS · 0 FAIL · 5 SKIP`, `rc=0`, total 886. El desarrollador había informado `882/4`: el caso
+  `REQ-017 CA-09` alterna PASS/SKIP según el ruido, así que **su cifra no es reproducible**. No es
+  defecto.
+- **`0,750×` es un techo y muerde**: QA calculó que `k = 5` daría 0,759×–0,821×, por encima. No es un
+  número puesto para que cupiera el `0,569×`.
+
+**LECTURA DE LA COORDINADORA sobre el tope de vueltas — no es una decisión del propietario y se puede
+revertir.** `REQ-017.md:455` dice que la vuelta 2 fue «la última que permite `AGENTS.md`». Esas vueltas
+0/1/2 pertenecen al ciclo de **1.33.0**, que **cerró** (`completado`, QA y seguridad aprobados,
+publicado). El REQ se reabrió por **§9** porque cambió el criterio, no porque QA hallara un defecto. Si
+el contador sobreviviera a una reapertura de §9, la REGLA DE ESTADO —«re-recorre el ciclo»— sería
+**inoperante** para todo REQ que hubiera gastado su tope: nacería bloqueado. Por eso se cuenta la
+corrección de `QA-017-16` como **vuelta 1 de 3 del ciclo nuevo**, y quedan 2. **`AGENTS.md` §6 no
+resuelve el caso por escrito**: si el propietario lee el tope como acumulativo entre ventanas, la
+salida correcta era `Estado: bloqueado` con entrada en `PENDING_APPROVAL.md`, y revertir cuesta una
+comisión.
+
+**Deuda medida que NO se toca, con su motivo:** `QA-017-22` dice que el `Archivos:` de `REQ-017` nombra
+dos secciones que **no existen** (`-1-escala.sh`, `-2-la-seccion-caliente.sh`; son `-1-el-dominio.sh` y
+`-2-las-razones.sh`). **`REQ-021` declara los mismos dos nombres fantasma**, de modo que hoy los dos
+defectos se tapan mutuamente y corregir **sólo uno** puede producir un `disjunto` **en falso** entre
+ellos. Se corrigen juntos o no se corrigen.
+
+**Sin medir, dicho expresamente:** si `k = 4` basta en el CI real **no está medido** — todo lo anterior
+es local, y sólo lo dirán las corridas siguientes de `hooks-en-linux`. La derivación de `k` (56
+repeticiones) **no se reprodujo**: QA auditó el razonamiento, no las cifras. El techo de coste
+`+28,0 s = 0,569×` está **acreditado por el desarrollador y no verificado por QA**.
 
 ### Deuda anotada y NO resuelta
 
@@ -309,7 +350,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-08 21:54
+## Estado derivado — 2026-09-08 22:31
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -319,7 +360,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `rel/registro-1.33.0` @ `19b1822` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `rel/registro-1.33.0` @ `538c266` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.0`
 **Aprobaciones pendientes:** 0
 **REQ:** 27 — completado 12 · en-revisión 2 · en-progreso 1 · bloqueado 1 · otros 11
@@ -333,7 +374,7 @@ _Sólo los REQ abiertos; los 12 completados no se listan._
 | REQ-008 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-011 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-013 | en-revision | con-hallazgos | con-hallazgos | critico | sec-014(contrato),sec-020(contrato),qa-2… |
-| REQ-017 | en-revision | aprobado | aprobado | critico | qa-017-07(instrumento),qa-017-11(instrum… |
+| REQ-017 | en-revision | con-hallazgos | aprobado | critico | qa-017-07(instrumento),qa-017-11(instrum… |
 | REQ-018 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-019 | pendiente | pendiente | preventiva | critico | sec-033(contrato) |
 | REQ-020 | pendiente | pendiente | preventiva | critico | sec-038(contrato),sec-039(contrato),sec-… |

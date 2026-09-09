@@ -2,6 +2,29 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · QA de `REQ-017` en la ventana 1.34.0: siete hallazgos, uno de clase `contrato`
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+Validación de `19b1822`. `QA: con-hallazgos`. Se crea `docs/qa/1.34.0.md` con `QA-017-16` a
+`QA-017-22`, cada uno con su clase.
+
+- **`QA-017-16`** (`contrato`, ya corregido en `538c266`): el SKIP por no-convergencia había perdido
+  la tercera cifra que `CA-08` contrata. **Ningún caso del banco podía verlo** — la autoprueba
+  reduce cada salida a la palabra del veredicto y descarta el mensaje.
+- **Seis `instrumento`**, registrados con dueño y vencimiento, fuera de esta ventana por la regla de
+  acumulación del propietario: la abstención tira las razones ya calculadas (`-17`), no se comprueba
+  que llegaran las `k` repeticiones (`-18`), el parser acepta registros de 2 o 6 campos (`-19`), las
+  56 repeticiones existen sólo como prosa y `k = 4` no es auditable sin re-derivarlo (`-20`), el
+  techo de coste y `k` salen de campañas distintas (`-21`), y `Archivos:` nombra dos secciones que
+  no existen (`-22`).
+- **`0,750×` es un techo y muerde:** `k = 5` daría 0,759×–0,821×. No se puso para que cupiera el
+  `0,569×`.
+
+Se anota en `docs/PENDIENTES.md` que `REQ-021` declara los **mismos** dos nombres fantasma, de modo
+que hoy los dos defectos se tapan mutuamente: corregir sólo uno puede producir un `disjunto` en
+falso. Y en `docs/ESTADO.md`, el punto de continuidad de la sesión autónoma, con la lectura del
+tope de vueltas declarada como **revocable**.
+
 ## [GitHub] — 2026-09-08 · `REQ-017` / `QA-017-16`: el SKIP que perdió su tercera cifra, y el caso que ahora lee el mensaje
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
 
