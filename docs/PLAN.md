@@ -95,7 +95,36 @@ Esta ventana va a tener muchas comisiones, y las tres primeras palancas están *
 > día): REQ-017 + REQ-021, más la partición de las tres secciones sobre 400 líneas (`DEV-021-07`).
 > `REQ-019`, `REQ-020`, `REQ-023`, `REQ-024` y `REQ-025` van a 1.34.0, y REQ-019 es su primer trabajo.**
 >
-> ## ALCANCE DE 1.34.0 — CINCO trabajos: cuatro fijados el 2026-09-08 y el quinto el 2026-09-09
+> ## ALCANCE VIGENTE DE 1.34.0 — CUATRO trabajos, reordenado el 2026-09-09
+>
+> **Decisión del propietario (2026-09-09), literal:** *«Decido aplazar `REQ-019` a 1.35.0 para
+> reevaluarlo. Conservá lo trabajado; no lo marques completado ni inviertas más en su reparto ahora.
+> Para 1.34.0, priorizá las correcciones pendientes de `REQ-026` y la remediación de `REQ-023`/`024`.
+> Mantené `REQ-027` en la ventana e implementalo sobre la estructura actual.»*
+>
+> | # | Trabajo | Estado |
+> |---|---|---|
+> | **1** | La sonda de `REQ-017 CA-08` | **CERRADO** (`completado`, `496068c`) |
+> | **2** | `REQ-026` — correcciones pendientes | Mecanismo validado; bloquean `SEC-072` y `SEC-073` |
+> | **3** | `REQ-023` + `REQ-024` — remediación de `SEC-047` | Contratos cerrados; `REQ-023` en implementación |
+> | **4** | `REQ-027` — reglas de coordinadora, **sobre la estructura actual** | Contratado, 11 criterios |
+> | — | ~~`REQ-019` — adelgazar los documentos de arranque~~ | **APLAZADO a 1.35.0.** Lo trabajado se conserva |
+>
+> **Por qué `REQ-027` ya NO va detrás de `REQ-019`, y la coordinadora se corrige:** recomendó ponerlo
+> detrás por **retrabajo** —`REQ-019` movería texto de `AGENTS.md` y `REQ-027` inserta un bloque en él—.
+> Comprobado el 2026-09-09, **no existe dependencia técnica y el propio REQ contrata lo contrario**:
+> `requirements/REQ-027.md:258` dice *«Preferencia: que este REQ entre **antes**, porque añade 2 600 B»*,
+> y su `CA-05` existe para **dar a `REQ-019` un número contra el que medir**. Con `REQ-019` aplazado, la
+> colisión desaparece y la preferencia del contrato manda.
+>
+> **Lo que el aplazamiento de `REQ-019` deja escrito, para que 1.35.0 no reempiece:** el techo `0,72×`
+> es **insatisfacible en bytes** (suelo medido `0,810×`); la propuesta con punteros incluidos está en
+> `docs/arnes/req-019-techo-propuesto.md` (**≤ 0,91×**, **−7.188 B** de lectura obligatoria, etiquetada
+> como **proyección**); las dos enumeraciones de F1 **no sobreviven en disco**, así que `CA-15` exige
+> rehacer el inventario por bloques; y el `## Índice` del README **pesa 7.867 B y está fuera de
+> alcance**, retirando más bytes que el reparto completo. `SEC-033` sigue abierto (`contrato`).
+>
+> ## ALCANCE ANTERIOR (histórico) — CINCO trabajos: cuatro fijados el 2026-09-08 y el quinto el 2026-09-09
 >
 > «Aplica tu recomendación» (2026-09-08). La recomendación era **tres**; la medición la corrigió a
 > **cuatro**, y la corrección va escrita porque es el tipo de error que este plan existe para no repetir.

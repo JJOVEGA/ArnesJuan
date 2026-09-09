@@ -2,6 +2,70 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · `REQ-026`: la excepción vuelve a ser PROPUESTA, y la lista de «sin implementar» era falsa
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus), `desarrollador` (Opus), coordinadora.
+
+**Decisión del propietario (2026-09-09):** *«No doy por aprobadas las nuevas excepciones. Conservá la
+evidencia de los límites encontrados, pero mantené abiertos los hallazgos correspondientes hasta
+resolver el cambio de garantía por el procedimiento aplicable.»* Y la prohibición que ordena el resto:
+**no usar «máximo posible» ni una duración no medida como justificación.**
+
+**El analista RETIRÓ su propia lectura de «cambio menor»** y lo declaró **de fondo**: admitir una
+excepción en una promesa absoluta **cambia la decisión base**, que es el disparador de ADR en
+`AGENTS.md` §9. En los dos criterios la garantía **absoluta vuelve a ser la vigente**, con la excepción
+debajo rotulada **«PROPUESTA de cambio de garantía — NO ES CONTRATO VIGENTE»**, y escrito que hasta la
+firma **el código no la cumple y `SEC-072` es un hallazgo, no una tolerancia**.
+
+**Las dos justificaciones retiradas, y con qué se sustituyen:**
+1. «El máximo que este mecanismo puede dar» → fuera. En su lugar, **qué garantiza y qué no**: garantiza
+   el intervalo del **cálculo**, que es el medido —**295–312 ms** en la medición del desarrollador,
+   **355–361 ms** en la de la auditoría—; **no garantiza nada** en el intervalo de **publicar**.
+2. La duración residual «en microsegundos», y el «cuatro o cinco órdenes de magnitud» → fuera. Queda
+   escrito que **está SIN MEDIR** y que **lo medido es el intervalo que sustituye, no el que queda**. El
+   motivo técnico se queda sin valoración: POSIX no ofrece renombrado condicional atómico, y eso
+   **describe el sustrato; no autoriza la excepción — quien la autoriza es la firma**.
+
+**Conservado íntegro:** la ventana medida, el modelo determinista de la publicación a medias (2
+bloques, 3 filas duplicadas, `rc=0`, sin aviso), el recorte **sin rama de error** y la incapacidad del
+testigo de verlo. **Y añadido lo que rige sin excepción:** **ninguna fila se pierde**, así que la
+dirección del fallo es hacia el **duplicado declarado**, nunca hacia la pérdida.
+
+### La lista de «sin implementar» era FALSA en sus tres puntos, y la causa está nombrada
+
+Reconciliada contra el código por la coordinadora:
+
+| Lo que el informe daba por pendiente | Comprobado |
+|---|---|
+| Parte 4 del banco | **Existe** — `28-rotacion-seccion-4-la-carrera.sh`, commit `8248e58` |
+| Retirada del comentario `:34-36` | **Hecha** — el texto cita la afirmación vieja y la **refuta**: «Las dos SÍ encuentran qué mover» |
+| `CA-08 (v)` en la rama del NUL | **Implementada** — `ARNES_ROT_NO_MEDIBLE` en los dos hooks, cuatro ramas publicando |
+
+**Causa, escrita por el propio analista:** repitió una lista de una pasada anterior **habiendo
+declarado que no leyó el código**. Es exactamente la clase que este REQ persigue.
+
+**Sin implementar de verdad:** `CA-13`, `CA-14`, `CA-16`, `CA-17` = `SEC-073`, alcance del propietario.
+**Sin contratar:** la **idempotencia del re-archivado**, con dueño `desarrollador` y vencimiento
+**antes de que se declare `CA-13`** — porque encenderla es lo que lo vuelve alcanzable.
+
+### `ADR-008` asignado por la coordinadora
+
+**Tres REQ lo reclamaban** —`REQ-026`, `REQ-024`, `REQ-019`— y no existe en disco. Se asigna a este
+ADR **por decisión de coordinación y no por carrera**, que es lo que produjo la colisión de `REQ-019`
+con los ADR de `REQ-014`. La causa raíz sigue viva y sin dueño: **el número de ADR no tiene asignador**.
+
+### `REQ-024`: factibilidad resuelta con medición, sin reabrir ningún criterio
+
+**Sí existe vía de activación a 0 procesos añadidos**, y es la llave de manifiesto: se pliega en la
+llamada a `jq` **que ya existe** en `arnes_parse_manifest` (`hooks/lib.sh:52-102`), memoizada y con 10
+claves, que corre **antes** de la resolución de la ausencia. La premisa de `CA-07 (i)` era **cierta pero
+incompleta** —sólo miraba el `jq` de las quality gates, que corre después— y lo que faltaba **invierte
+la conclusión**. Medido con la sonda del banco y **control discriminante** (+1 proceso con `jq` propio),
+así que el `0` no es ceguera del instrumento. Evidencia en
+`docs/arnes/req-024-activacion-cero-procesos.md`, con versión base `4f51293` y método.
+
+**Y un defecto que el implementador debe cerrar:** la llave escrita como cadena `"true"` cae a
+**no-activado y ALLOW sin aviso** (medido) — la clase `QA-106`/`QA-107`. El arreglo cuesta 0 procesos.
+
 ## [GitHub] — 2026-09-09 · Auditoría `R-022` de `REQ-026`: lo que bloquea ya no es código
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad` (Opus) + coordinadora.
 
