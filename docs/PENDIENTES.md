@@ -2252,3 +2252,14 @@ mismo defecto que `QA-017-22` abre contra `REQ-017`, y hoy los dos se tapan mutu
 declaran los **mismos** nombres fantasma, `tools/arnes-paralelo.sh` los ve colisionar igual. El
 primer REQ que declare esas secciones por su nombre **real** obtendrá un `disjunto` en falso contra
 los dos. Dueño: `analista-requerimientos`; se cierra con `SEC-020` o antes.
+
+## El tercer término del piso de `REQ-014 CA-18` no lo verifica ninguna máquina (QA, 2026-09-08)
+
+`autoprueba-corredor.sh` comprueba que la derivación sea legible, que los términos **sumen** el piso
+declarado, que `piso ≤ líneas` y que `líneas ≤ max(N, piso × k)`. Las cuatro pasarían igual con el
+**bloque indivisible mayor** declarado de más: basta escribir un número más grande y el resto de la
+suma cuadra sola. Es decir, el techo de tamaño de un archivo de sección se puede **ensanchar sin
+causa** y la puerta no lo vería — sólo lo ve alguien midiendo las fronteras del bloque a mano, como
+se hizo con `37/5` al validar `538c266` (411 → 448, justificado). Dueño: `desarrollador`. Forzador:
+el primer archivo que se acerque a su techo. No urge: hoy hay un solo archivo gobernado por
+`piso × k`.

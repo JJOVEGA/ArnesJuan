@@ -2,6 +2,30 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · `REQ-017`: `QA: aprobado` sobre `538c266`, con el piso de `CA-18` verificado
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+Re-validación acotada de la vuelta 1. `QA-017-16` (`contrato`) **cerrado**: el SKIP por
+no-convergencia recupera su tercera cifra y un caso lee el **contenido** del mensaje.
+
+- **Cerrado con mutantes, no leyendo el commit.** Cinco mutaciones, cinco detecciones, cada cifra
+  con su nombre propio: quitar `$x`, `$ce` o `$rob` del mensaje, dejar de vaciar `R47`, y envolver
+  la llamada en `$( )`. Ninguna cifra se da por presente por casar con otra.
+- **El mensaje vuelve a ser byte a byte el anterior al defecto**, así que los tres artefactos que
+  lo declaraban se vuelven verdaderos **sin tocarlos** — código verdadero, no texto más laxo
+  (`REQ-012 CA-06`).
+- **`PISO_AUTONOMO_SECCION` 411 → 448 queda justificado con evidencia.** Fronteras medidas
+  (123-449 = 327), crecimiento igual a lo añadido (`290+37`), y las 30 líneas del caso nuevo son
+  indivisibles **por medición**: envueltas en `$( )` la aserción muere. El techo pasa de 514 a 560
+  porque la fórmula lo pone ahí con el bloque real; el archivo queda en 504 y **ya cabía bajo 514**,
+  así que no compró margen para esta entrega.
+
+Quedan **seis** hallazgos `instrumento`, ninguno bloqueante.
+
+**Hueco anotado en `docs/PENDIENTES.md`:** el tercer término de un piso de `CA-18` **no lo verifica
+ninguna máquina** — un techo se podría ensanchar sin causa y la puerta no lo vería. Hoy sólo `37/5`
+está gobernado por `piso × k`.
+
 ## [GitHub] — 2026-09-08 · QA de `REQ-017` en la ventana 1.34.0: siete hallazgos, uno de clase `contrato`
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
 
