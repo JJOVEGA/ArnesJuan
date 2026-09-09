@@ -1850,3 +1850,63 @@ cabecera, **20 llevan fecha y 5 no** — `REQ-001` (×2), `REQ-012` (×2), `REQ-
 
 Encenderlo **no bloquea ningún cierre pendiente**. Esa medición es la parte cara del REQ futuro y ya está
 hecha: no se vuelve a derivar, se cita.
+
+
+---
+
+## PRIMER TRABAJO DE 1.34.0 — la sonda de `REQ-017 CA-08` (propietario, 2026-09-08)
+
+**Va por DELANTE de `REQ-019`**, por enmienda al alcance en `docs/PLAN.md`. No es deuda acumulada bajo la
+regla de acumulación: es la condición para que cualquier publicación posterior signifique algo.
+
+### El defecto, con la medición hecha — no se vuelve a derivar
+
+El caso `REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1`
+falla el check **requerido y estricto** `hooks-en-linux` afirmando en su propia salida
+*«esto es una regresión, no ruido»*.
+
+**Cuatro corridas de CI sobre código idéntico** —ningún commit desde `b9afa01` toca `hooks/`, `tools/` ni
+`.github/`, verificado de forma independiente por el `auditor-seguridad` en `R-019`:
+
+| Corrida | Commit | Razón publicada | Convergencia (2.º mín / mín) | Veredicto |
+|---|---|---:|---|---|
+| 23:39 | `921dc74` | **1,131×** | 1,012× / 1,142× | PASS |
+| 23:53 | `516e849` | **0,973×** | 1,185× / 1,138× | PASS |
+| 00:00 | `d4e0033` | **1,337×** | 1,025× / 1,232× | FAIL |
+| 00:24 | `eff143b` | **1,364×** | 1,002× / 1,249× | FAIL |
+
+**El dato que cierra la discusión:** `0,973×` significa que este árbol salió **más rápido** que
+`v1.32.1`. Una regresión real no puede ser más rápida. La dispersión de la sonda va de **0,97 a 1,36**
+—factor **1,40**— y el techo que vigila es **1,25**: el techo vive **dentro** del ruido, así que el caso
+no puede distinguir la regresión que dice medir de su propia varianza.
+
+### La causa, que es de una línea y no de calibración
+
+**El umbral de convergencia y el techo de regresión son el mismo número: `1,250×`.** Por eso la
+comprobación de convergencia declaró «convergido» en las **cuatro** corridas —1,138, 1,142, 1,232 y
+1,249, todas bajo 1,250—, **incluidas las dos que fallaron**. Una comprobación cuyo umbral iguala al del
+criterio que protege **no filtra nada**.
+
+### El remedio ya existe en el mismo archivo
+
+El caso hermano —`REQ-017 CA-08 (ii) un REQ real de 6 líneas`— hace lo correcto en esas mismas corridas:
+no converge (1,148× y 1,254×) y **hace `SKIP` con motivo**, sin dar veredicto. **El mecanismo está
+construido; sólo está mal el umbral.** Las dos formas conformes:
+
+1. Exigir la convergencia **estrictamente más apretada** que el techo que protege (p. ej. `≤ techo/2`), o
+2. **`SKIP` con motivo** cuando la dispersión propia del caso supere el techo — idéntico al hermano.
+
+### Lo prohibido por nombre
+
+**No** `continue-on-error`, **no** sacar el caso del CI, y **no** relanzar hasta obtener un verde para
+fusionar en esa corrida. Los dos primeros ponen la puerta en verde **apagando la señal** —modo de fallo
+que `AGENTS.md` §13 nombra y que `REQ-014 CA-18 (ii)` prohíbe por escrito—; el tercero, con una sonda cuya
+dispersión cubre el techo, no es esperar a que pase: es **elegir la corrida que da la respuesta que se
+quiere**.
+
+### Coste y ceremonia
+
+Es cambio en `tests/`, o sea **`critico`** por `AGENTS.md` §6: ciclo completo
+`analista → desarrollador → qa-tester → auditor-seguridad`. Estimado al ritmo medido el 2026-09-08:
+**4 comisiones, ~1–2 h**. La medición de arriba es la parte cara del análisis y **ya está hecha**: se
+cita, no se rehace.

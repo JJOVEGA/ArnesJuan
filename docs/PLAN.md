@@ -95,6 +95,26 @@ Esta ventana va a tener muchas comisiones, y las tres primeras palancas están *
 > día): REQ-017 + REQ-021, más la partición de las tres secciones sobre 400 líneas (`DEV-021-07`).
 > `REQ-019`, `REQ-020`, `REQ-023`, `REQ-024` y `REQ-025` van a 1.34.0, y REQ-019 es su primer trabajo.**
 >
+> **ENMIENDA DEL 2026-09-08 (tercera decisión del propietario del mismo día): el tag `v1.33.0` se APLAZA,
+> y el primer trabajo de 1.34.0 pasa a ser la SONDA DE `REQ-017 CA-08`, por delante de `REQ-019`.**
+> Motivo, y es una medición, no una preferencia: el caso
+> `REQ-017 CA-08 (ii) una cabecera de 200 líneas` falla el check **requerido y estricto**
+> `hooks-en-linux` afirmando «esto es una regresión, no ruido», y **cuatro corridas sobre código
+> idéntico** —ningún commit desde `b9afa01` toca `hooks/`, `tools/` ni `.github/`, verificado por
+> `R-019`— publicaron **1,131× · 0,973× · 1,337× · 1,364×**. El **0,973×** dice que este árbol salió
+> **más rápido** que `v1.32.1`, y una regresión real no puede ser más rápida: la dispersión (factor
+> **1,40**) **cubre el techo (1,25)**.
+>
+> El defecto es **estructural**: el umbral de convergencia y el techo de regresión son **el mismo número
+> (1,250×)**, así que la convergencia declaró «convergido» en las cuatro corridas —1,138, 1,142, 1,232 y
+> 1,249— **incluidas las dos que fallaron**. Su caso hermano (`un REQ real de 6 líneas`) hace lo
+> correcto: no converge y **SKIP con motivo**. El mecanismo existe; el umbral está mal puesto.
+>
+> **Por qué va DELANTE de `REQ-019` y no detrás:** mientras el techo viva dentro del ruido, **el verde de
+> esa puerta no acredita nada más que el rojo**. Toda publicación posterior —1.34.0 incluida— se firmaría
+> sobre una señal que no distingue. Arreglarla antes evita repetir esta conversación en cada ventana.
+> Detalle completo y las opciones descartadas, en la entrada resuelta de `PENDING_APPROVAL.md`.
+>
 > **REQ-023 salió el mismo día que entró, y el motivo es que su coste se midió después de meterlo.** El
 > analista lo evaluó y no cabía donde estaba: **cuatro comisiones en serie** tras REQ-021 —cata del
 > desarrollador para decidir `CA-03` frente a `CA-04`, implementación cuyo bulto es el banco, QA con

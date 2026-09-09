@@ -39,6 +39,28 @@ dispersión cubre el techo, eso no es esperar a que pase — es **elegir la corr
 se quiere**. Tampoco `continue-on-error` ni sacar el caso del CI: pondría la puerta en verde **apagando
 la señal**, el modo de fallo que `AGENTS.md` §13 nombra y que `REQ-014 CA-18 (ii)` prohíbe por escrito.
 
+## [Interno] — 2026-09-08 · **Decisión del propietario: se APLAZA el tag `v1.33.0`** y la sonda se arregla en 1.34.0, delante de `REQ-019`
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Opción **C** de la entrada de `PENDING_APPROVAL.md`, ahora resuelta. Descartadas **(A)** arreglar la sonda
+dentro de esta ventana y **(B)** publicar con el rojo bajo autorización expresa. **No se ejerció (D)** —
+relanzar el CI hasta obtener un verde y fusionar en esa corrida.
+
+**El argumento, en una línea:** mientras el techo viva **dentro** del ruido de la sonda, **el verde de esa
+puerta no acredita nada más que el rojo**. Publicar hoy no compraría confianza: compraría una firma vacía.
+
+**Enmienda al alcance de 1.34.0** (`docs/PLAN.md`): su primer trabajo pasa a ser **la sonda de
+`REQ-017 CA-08`**, por delante de `REQ-019`. El motivo de ponerla delante y no detrás es que **toda
+publicación posterior se firmaría sobre una señal que no distingue**, así que arreglarla antes evita
+repetir esta conversación en cada ventana. La medición completa —las cuatro corridas, la causa de una
+línea y las dos formas conformes de remediarla— queda en `docs/PENDIENTES.md` para que 1.34.0 la **cite y
+no la rehaga**: es la parte cara del análisis y ya está pagada.
+
+**Estado al cerrar la ventana:** `cand/1.33.0` empujada y verificada, árbol limpio, PR **#43** en `DRAFT`
+sin fusionar. `REQ-014` **`completado`** con `QA: aprobado` y `Seguridad: aprobado` fechados el
+2026-09-08 y **cero hallazgos `contrato`**. Cola de aprobaciones en **0**. Bloqueantes `contrato` en el
+repositorio: **12** — `REQ-013` (2), `REQ-019` (1), `REQ-020` (8), `REQ-023` (1).
+
 ## [GitHub] — 2026-09-08 · **`REQ-014` COMPLETADO**, y las cifras que la partición desfasó, corregidas antes de cerrar
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus) + coordinadora.
 
