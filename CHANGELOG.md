@@ -2,6 +2,35 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · `REQ-026 CA-08`: la propiedad por delante de la lista, y el aviso simétrico
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Write-back de `QA-026-01`, `QA-026-02` y `QA-026-06` (§9: un hallazgo no se cierra hasta que el
+requerimiento lo refleje). `CA-08` pasa de una viñeta a cinco partes:
+
+- **(i) La propiedad, y manda sobre cualquier lista.** La estructura se reconoce sin ambigüedad **en
+  toda la extensión de la sección, no sólo en su preámbulo**, con la frase que cierra el hueco:
+  *«la comprobación recorre la sección completa: detenerla en la primera fila de datos no satisface
+  este criterio»*.
+- **(ii) La enumeración son ejemplos.** Entra la quinta forma y se escribe *«una implementación que
+  satisfaga esta lista y no (i) incumple; la lista puede crecer sin que (i) cambie»*. Queda escrito
+  además lo que la hizo invisible: **`CA-05` se conserva** en esa forma, así que ninguna comprobación
+  de pérdida veía el dato reetiquetado.
+- **(iii) Lectura no fiable**, rama nueva contratada: documento que no se puede leer entero → no se
+  rota, no se toca, se avisa, y **nunca** se publica una lectura a medias.
+- **(iv)** Todas las ramas salen con código 0: la parada no se bloquea.
+- **(v) El aviso es SIMÉTRICO en las cuatro ramas** de «no se rota»: stderr **más** línea con
+  contador en el bloque derivado. **Se rechazó la asimetría acotada que proponía el desarrollador**
+  —que la rama del NUL bastara con stderr porque `guard-completado` ya denegaría— con este motivo:
+  esa denegación está **condicionada a que alguien edite ese REQ**, mientras el silencio de la
+  rotación no está condicionado a nada, y **un canal de visibilidad que depende de un segundo suceso
+  no es un canal**. `CA-10` queda excluido expresamente: no es fail-closed y por diseño no avisa.
+
+**Consecuencia declarada:** `CA-08 (v)` queda **contratado y NO implementado** en la rama del NUL.
+Y el analista declara que **no leyó el código**: que los arreglos satisfagan **(i)** como propiedad
+—y no otra vez la enumeración ampliada— **está sin comprobar**. Sugiere un caso con **tres** tablas
+o con la segunda separadora en la última fila.
+
 ## [GitHub] — 2026-09-09 · QA de `REQ-026`: dos hallazgos `usuario/dinero` en el rotador de tablas
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
 
