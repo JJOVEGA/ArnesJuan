@@ -2,6 +2,24 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · Lista de traslado a otra instancia de WSL: lo que NO viaja con el repositorio
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Consignado en `docs/ESTADO.md`, dentro del bloque de pausa. Los dos apagados **silenciosos** que un
+clon nuevo produce si nadie los previene: **sin `jq` los hooks del arnés quedan inertes con un aviso**
+—el enforcement se apaga sin que nada falle—, y **`core.hooksPath` es configuración local y no se
+versiona**, así que la puerta del CHANGELOG queda apagada hasta que alguien corra
+`git config core.hooksPath .githooks`. En esta máquina `jq`, `gh` y `node` viven en `~/.local`, no en
+el sistema.
+
+Se añaden el plugin estable a instalar (**1.33.0**, `810128a`, del marketplace `JJOVEGA/ArnesJuan` —
+por autoalojamiento se instala **la publicada**, nunca el árbol de trabajo), la cuenta de Claude Code
+en uso y las dos cuentas de `gh`.
+
+**Y la comprobación de que el traslado quedó bien**, que es la misma que acredita que el arnés está
+vivo: banco **962 PASS · 0 FAIL · 4 SKIP** y autoprueba **105 PASS · 1 FAIL** (el `CA-18` conocido).
+**Un resultado mejor que ése es sospechoso**: significaría que algo no se está midiendo.
+
 ## [GitHub] — 2026-09-09 · TRABAJO EN CURSO de `REQ-023`, detenido a media vuelta y **no acreditado**
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus), detenido · medición y consignación: coordinadora.
 

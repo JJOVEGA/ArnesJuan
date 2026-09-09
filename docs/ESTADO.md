@@ -80,6 +80,28 @@ que el caso discrimine** — podría estar pasando por tautología. Eso lo decid
 
 El trabajo no se descarta: `git` destructivo está prohibido (`git.prohibidos`).
 
+#### Traslado a otra instancia de WSL — lo que NO viaja con el repositorio
+
+Todo el trabajo está en `origin/rel/registro-1.33.0` @ **`29b06eb`** (dos commits: el cierre de
+`REQ-027` y el WIP marcado). Lo que **no** viaja, en orden de daño si se olvida:
+
+1. **`jq`, `gh` y `node` viven en `~/.local`, no en el sistema.** Una WSL nueva no los tiene. **Y sin
+   `jq` los hooks del arnés quedan INERTES con un aviso: el enforcement se apaga sin que nada falle.**
+   Es el olvido más caro de esta lista, porque no se manifiesta como error sino como silencio.
+2. **`core.hooksPath` es configuración LOCAL y no se versiona.** En el clon nuevo hay que correr
+   `git config core.hooksPath .githooks` o **la puerta del CHANGELOG queda apagada**, también en silencio.
+3. **El plugin estable.** Instalado desde el marketplace `JJOVEGA/ArnesJuan`, versión **1.33.0**
+   (`gitCommitSha 810128a`). Por autoalojamiento, **la 1.33.0 publicada gobierna el desarrollo de
+   1.34.0**: se instala la publicada, **nunca el árbol de trabajo**.
+4. **Sesión de Claude Code**: la cuenta activa es `juan.vega@sysvega.cr` (org *Consisa*).
+5. **`gh` con dos cuentas**: `jvega-habitat` (activa, push sin admin) y `JJOVEGA` (dueño, rulesets).
+   Hay que volver a autenticar las dos; `gh auth switch` alterna.
+
+**Comprobación de que el traslado quedó bien hecho** —y es la misma que acredita que el arnés está
+vivo—: correr el banco (`bash tests/escenarios/hooks/run.sh`) y la autoprueba, y obtener **962 PASS ·
+0 FAIL · 4 SKIP** y **105 PASS · 1 FAIL** (el `CA-18` conocido de arriba). Un resultado **mejor** que
+ése es sospechoso: significaría que algo no se está midiendo.
+
 **Lo cerrado en esta sesión, que sí está firme:** `REQ-027` **`completado`** — ciclo completo en
 orden (analista → QA `aprobado` → auditor `aprobado`, `R-023`), quality gates verdes, cola 0, y sus
 cuatro hallazgos abiertos son `instrumento`. **Sin comitear todavía**, junto con `R-023` en el
