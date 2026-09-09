@@ -1988,7 +1988,15 @@ usa para **decidir** algo —un cierre, un reparto, una acreditación—, deja d
 
 ---
 
-## MEDIDO el 2026-09-08: `REQ-019` no cabe en 1.34.0, y el motivo no es la pereza
+## ESTIMADO (no medido) el 2026-09-08: cuánto ocuparía `REQ-019` en 1.34.0
+
+> **CORRECCIÓN de la coordinadora, 2026-09-08.** Esta sección se tituló «MEDIDO … no cabe» y las dos
+> cosas eran falsas. **(1)** Las 9–11 comisiones y las 8,5–14 h son **estimación del propio REQ**, que lo
+> declara así en `requirements/REQ-019.md:1375`: *«Es estimación, no medición, y se declara como tal»*.
+> **(2)** «No cabe» era una **conclusión de la coordinadora**, no una decisión del propietario: el alcance
+> aprobado el 2026-09-08 (`docs/PLAN.md`, ALCANCE DE 1.34.0) lista `REQ-019` como **trabajo #2 de los
+> cuatro**, no lo incluye en «Lo que SALE de 1.34.0», y el propio REQ declara `Versión destino: 1.34.0`.
+> **`REQ-019` SIGUE EN 1.34.0 por decisión vigente.** Lo de abajo es insumo para decidir, no la decisión.
 
 **`REQ-019` se estima a sí mismo en 9–11 comisiones y ≈8,5–14 h** (`requirements/REQ-019.md`, tabla de
 fases). **F2 y F3 son ventanas de SOLITARIO** por `CA-16`: mientras corren, **nada más puede correr**.
@@ -2186,3 +2194,51 @@ analista fechó en local, correctamente.
 las del repositorio son **locales**; a partir de las 18:00 CST son días distintos. Leer un sello de
 GitHub y escribirlo como fecha del proyecto es un error que **sólo aparece de noche**, que es cuando
 nadie lo revisa.
+
+
+---
+
+## Reglas para la coordinadora — entrada para `REQ-025`, NO un REQ nuevo (2026-09-08)
+
+**Origen:** propuesta del propietario. `REQ-025` ya existe (`borrador`, «el arnés vigila también a quien
+orquesta: la coordinadora es el único actor sin puerta de contenido»). Esto **no abre trabajo nuevo**: es
+material para su diseño, y **la propuesta explícitamente NO pide otro agente revisor**.
+
+**La comprobación de antes de despachar, que es la que más rinde** — cuatro preguntas, por escrito en el
+propio encargo, y no se despacha sin ellas:
+
+1. ¿Qué **resultado exacto** debe entregar?
+2. ¿Los **criterios pueden cumplirse simultáneamente**?
+3. ¿Qué **supuesto o cifra** necesita comprobarse primero?
+4. ¿Qué queda **fuera**, y **cuándo debe detenerse**?
+
+**Está comprobada contra los fallos del 2026-09-08, y por eso se registra:** la 3 habría cazado el techo
+`0,60×` de `REQ-019 CA-07` (insatisfacible con suelo medido 0,68×) y el `≤ 1,5 s` de `REQ-026 CA-15`
+(escrito sin medición que lo fundara); la 2, la contradicción entre `CA-13` y `CA-17`.
+
+**Las otras seis reglas**, en una línea cada una: separar **dato medido / cálculo / estimación /
+hipótesis** —que una medición sea correcta **no valida la conclusión**—; **no convertir propuestas en
+compromisos** (nada de prometer ahorro, duración o cobertura sin base); **mantener visibles las decisiones
+vigentes** en una referencia breve en vez de reconstruirlas de conversaciones largas; **corregir sin
+ampliar** (lo demás a esta cola salvo que impida el trabajo en curso); **cerrar cuando la evidencia
+alcance** —decidir si una observación externa aporta defecto nuevo, algo ya cubierto o mejora opcional, en
+vez de abrir otra ronda—; y **responder con evidencia breve** (resultado, evidencia, limitación material,
+siguiente paso).
+
+### La separación de responsabilidades, que es la parte accionable hoy
+
+**La coordinadora organiza y propone; las herramientas verifican lo mecánico** — fechas, versiones,
+archivos modificados, conteos y pruebas. Pedirle a un modelo que recuerde y calcule todo eso multiplica
+las ocasiones de error, y hay una instancia medida del mismo día: **el desfase UTC↔local propagado a 45
+sitios**, que una comprobación de tres líneas en `tools/` habría cazado al instante.
+
+**Candidato concreto, sin diseñar aquí:** un comprobador en `tools/` que contraste la fecha de las
+entradas nuevas contra la fecha local del último commit, y la versión declarada en los cuatro sitios
+(`plugin.json`, los dos campos de `marketplace.json`, `.arnes/config.json`). **No entra en 1.34.0** — se
+registra para que `REQ-025` lo evalúe con el resto.
+
+### Cómo se sabrá si sirven, porque sin eso es opinión
+
+Tres señales, todas ya observables sin instrumentar nada nuevo: **encargos corregidos en vuelo** (hoy:
+cuatro sobre `REQ-026`), **reaperturas** y **tokens por resultado entregado**. Si las reglas sirven, las
+tres bajan; si no, se sabrá con la misma evidencia con la que se propusieron.

@@ -2,6 +2,30 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-08 · CORRECCIÓN: `REQ-019` sigue en 1.34.0, y su coste es una ESTIMACIÓN, no una medición
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Corrige dos afirmaciones de la coordinadora del mismo día. **La entrada anterior no se reescribe**
+(`CHANGELOG.md:178`, «Pero `REQ-019` NO cabe en 1.34.0, y está medido»): la corrección va fechada.
+
+**1. No estaba medido: es la estimación del propio REQ.** `requirements/REQ-019.md:1375` dice
+literalmente *«Es estimación, no medición, y se declara como tal»* sobre las 9–11 comisiones y las
+8,5–14 h. Presentarlo como medición convirtió un insumo en un hecho.
+
+**2. «No cabe» era una conclusión de la coordinadora, no una decisión.** El alcance aprobado por el
+propietario el 2026-09-08 (`docs/PLAN.md`, ALCANCE DE 1.34.0) lista `REQ-019` como **trabajo #2 de los
+cuatro**; **no** aparece en «Lo que SALE de 1.34.0»; y el REQ declara `Versión destino: 1.34.0`.
+**`REQ-019` sigue en 1.34.0 por decisión vigente**, y los dos documentos ya coincidían.
+
+**Y la discrepancia que la coordinadora reportó entre `PLAN.md` y el REQ no existía**: fue inventada al
+reconstruir el alcance de memoria en vez de consultarlo. `docs/PENDIENTES.md` queda reetiquetado
+—«ESTIMADO (no medido)»— con la conclusión de ventana retirada y el insumo conservado.
+
+**Regla que queda en vigor:** antes de despachar o recomendar un cambio de ventana, **consultar la última
+decisión aprobada y reconciliar el plan con los REQ afectados**. Si la decisión existe, se **sincronizan
+los documentos**; sólo se pregunta cuando falte una decisión real. Y **ninguna estimación de coste o
+desplazamiento se presenta como hecho comprobado**.
+
 ## [Interno] — 2026-09-08 · Desfase de fechas de la coordinadora: 25 corregidas, 20 anotadas, y la lección que sólo aparece de noche
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 
