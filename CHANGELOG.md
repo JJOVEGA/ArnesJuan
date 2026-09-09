@@ -2,6 +2,55 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · `REQ-027` COMPLETADO: la cláusula que impide que un pendiente desaparezca al cerrar
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus) + `qa-tester` (Opus) + `auditor-seguridad` (Opus) + coordinadora.
+
+Ciclo de §6 recorrido **en orden y completo** en una sola sesión, después de un cambio de cuenta que
+mató todos los subagentes reanudables: analista → QA → auditor. Ninguna fase se solapó.
+
+**Los dos write-backs, de una cláusula cada uno.** `QA-027-06` (`instrumento`): `CA-05` pasa a
+**1.037 B** y **1.844 B**, nombrando la convención —cada blanco se atribuye al tramo que cierra— que es
+la única con la que **suma** el desglose que el propio criterio cita como su corrida. Las dos cifras
+eran ciertas sobre rangos distintos; lo que no puede ser es que el número del criterio no aparezca en
+su propia corrida. El **49,8 %** y el techo de **3.703 B** no se mueven, y eso queda escrito.
+
+**`QA-027-07`** (`contrato`, el que bloqueaba): `CA-10` declara ahora **qué se acreditó y qué no**. Lo
+acreditado es la **conducta transcrita**, con dos corridas independientes; la **vía real
+—`/arnes-upgrade` invocado— queda pendiente**, con dueño **coordinadora**, vencimiento «antes de que un
+proyecto real migre a 1.34.0» y puntero al artefacto. Sin esa cláusula el pendiente **desaparecía al
+cerrar**, porque su dueño no es el REQ: deriva por omisión que `guard-completado` no puede ver.
+
+**QA aprobó en confirmación documental** (3.ª vuelta) sin re-medir nada, apoyada en que `AGENTS.md`, la
+plantilla y la skill no cambian desde `a41f8ea`. Y falsó lo que había que falsar: la cláusula nueva se
+inserta **antes** del párrafo de condición de entrega, que **no aparece en el diff** y sigue siendo la
+última palabra de `CA-10`. Un pendiente bien declarado que aflojara la puerta habría convertido su
+propio hallazgo en un permiso.
+
+**Auditoría `R-023`, primera de este REQ**, y corrigió dos cosas de su encargo: el primer `SEC` libre
+era **074** y no 075 (la línea «próximos libres» de `R-022` no es un hallazgo), y el rango que se le dio
+para comprobar que el REQ no toca el mecanismo era la ventana 1.33.0 entera — sobre la base correcta
+(`6dd3f8a`+`cd5dc0c`) la afirmación se sostiene: **cero archivos** de `hooks/`, `tools/`, `.github/`,
+`.arnes/` y `tests/`. Acreditó que la tabla de decisión de la migración es **fail-closed en todas las
+cuentas** —`UNKNOWN` es globalmente terminal y la fila de descarte está escrita **por propiedad**— y que
+**no existe camino a «no tocar y no avisar» con el bloque ausente**. Las dos sedes son idénticas
+(`md5` coincidente, 3.702 B), y el único `verificada` de `CA-07` **lo está de verdad**.
+
+**Aceptó el residual de `CA-10` para cerrar**, con su motivo: el criterio contrata una conducta, se
+comprobó dos veces, la vía real es **imposible de acreditar con un script** en este árbol, y el
+write-back ya la llevó al contrato. *Vetar habría sido pedir una firma falsa.*
+
+**Abierto y no bloqueante:** `SEC-074`, `SEC-076`, `SEC-077` (`instrumento`) más `QA-027-08`. Por la
+regla de acumulación del propietario se registran sin abrir REQ ni entrar en la ventana.
+
+**Aparte, y es decisión del propietario:** `SEC-075`. El auditor **discrepa de la clase** que le puso QA
+—dice `contrato`, no `instrumento`— porque falta la entrada «Hacia 1.33.0» en `arnes-upgrade` siendo
+1.33.0 la versión **publicada e instalada** que cambió andamiaje heredado, y porque el archivo ya declara
+qué versiones no requieren migración: **un hueco sin nota no se lee como hueco**. `arnes-upgrade` no mide
+nada, **es el canal de entrega**. No bloquea este REQ; debe resolverse **antes de publicar `v1.34.0`**.
+
+**Cierre comprobado por la coordinadora en el momento de hacerlo:** quality gates en verde, cola de
+aprobaciones en **0** entradas, y los cuatro hallazgos abiertos con su clase declarada.
+
 ## [GitHub] — 2026-09-09 · Re-validación de `REQ-027`: los cinco cerrados, tres nuevos, y una cita que se corrigió a sí misma
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus) + coordinadora.
 

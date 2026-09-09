@@ -6558,3 +6558,303 @@ próximos libres **R-023** y **SEC-074**.
 acceso, retención ni cumplimiento. Lo que sí mejora es la **integridad** del único activo que este
 repositorio expone a escritura automática —los contratos de `requirements/`—, y su control es el
 testigo de `CA-18`, acreditado aquí.
+
+---
+
+## Revisión R-023 — **REQ-027, primera auditoría**: las reglas de la coordinadora en la sede canónica, **después** de QA, ventana 1.34.0 (`rel/registro-1.33.0` @ `81d260d`, delta real `6dd3f8a` + `cd5dc0c`) — 2026-09-09
+
+**Veredicto: `aprobado`.** No hay código de aplicación aquí: el entregable es **texto de
+gobernanza** y **una tabla de decisión** que un agente ejecuta. Audité la tabla como se audita un
+guardián —¿qué hace en la duda?— y **es fail-closed**. Los cuatro hallazgos que abro son
+`instrumento` salvo uno, y el `contrato` **no es de este REQ**: pertenece a la publicación de
+1.33.0 y lo digo explícitamente para que nadie lo aparque en la cabecera equivocada ni lo
+reclasifique para desbloquear.
+
+**Corrección de la numeración con la que me despacharon.** El encargo fijaba `SEC-075` como primer
+libre porque leyó `SEC-074` como hallazgo. `SEC-074` aparece **una sola vez** en este archivo
+(`:6555`), y es la línea «próximos libres» de `R-022`, no un hallazgo. El último **usado** es
+`SEC-073` (`:6396`). Numero desde **`SEC-074`**. Es la regla **C** del bloque que este REQ entrega,
+aplicada al encargo que lo audita: la medición venía dada y era comprobable, así que se comprobó.
+
+**Corrección de la base del delta.** El encargo pedía re-afirmar que `hooks/`, `tools/`, `.github/`
+y `.arnes/config.json` **no cambian** en `973448f..HEAD`. **Cambian, y mucho** —ese rango es la
+ventana 1.33.0+1.34.0 entera: `hooks/lib.sh` +245, `hooks/rotar-artefactos.sh` +419,
+`tools/arnes-lectura.sh` +41, `.arnes/config.json` ±4, más 39 secciones del banco—. Lo que sí es
+cierto, y es lo que importa, va en §5: el delta **de este REQ** son dos commits y **no tocan nada
+del mecanismo**.
+
+### 1. Frente 1 — el fail-open de la migración: **la conducta resultante es fail-closed**, y lo acredito
+
+`QA-027-03` está cerrado por QA sobre la **cuenta** (menciones → marcadores). Mi pregunta era otra:
+**¿a dónde va la duda?** Auditada la tabla de `skills/arnes-upgrade/SKILL.md:757-762` con su
+entorno (`:738-809`):
+
+| Propiedad auditada | Resultado |
+|---|---|
+| **`UNKNOWN` es terminal, y no sólo local** | **Acreditado.** `SKILL.md:144`: «**Si hay algún `UNKNOWN`, no se aplica nada**». No es un `UNKNOWN` que degrada a saltarse una sección: aborta el plan completo. Un `UNKNOWN` que para y pregunta protege; éste para |
+| **La fila de descarte está escrita por PROPIEDAD, no por enumeración** | **Acreditado.** «**cualquier otra cuenta** (2/1, 1/0, 0/1, o el cierre antes de la apertura)» — la propiedad manda y los ejemplos van entre paréntesis. Por eso `2/2`, `3/1` y cualquier par futuro caen en `UNKNOWN` sin que nadie tenga que añadir una fila. Es exactamente el estándar de `requirements/README.md` §«Cómo se escribe un criterio que no se desmiente», cumplido |
+| **¿Existe un camino a «no tocar nada y no avisar» con el bloque AUSENTE?** | **No.** El único terminal silencioso es `INTACTO`, que exige `1/1` **y** contenido idéntico al bloque de la plantilla destino (3 702 B). Un archivo sin el bloque no puede tener 3 702 B idénticos entre sus marcadores. **La entrega no se puede evaporar por esta vía** |
+| **La normalización del `\r` final, ¿ensancha `INTACTO` de más?** | **No.** Sólo absorbe diferencias que son *puramente* `\r` finales; no hay texto propio de un proyecto que quepa ahí. Y el `cmp` de idempotencia sigue **byte a byte sin normalizar** (`SKILL.md:770-772`), que es donde ensanchar sí habría dolido |
+| **Los dos residuos de prosa** | Los dos son terminales y dejan el archivo intacto: cita del marcador entero en un proyecto migrado → `2/2` → `UNKNOWN`; en uno sin migrar → `1/1` distinto → `MODIFICADO` → conflicto. Medidos por QA (§R4) y **coincido en aceptarlos**: la alternativa es distinguir un marcador real de uno citado, o sea interpretar contexto Markdown, que es la clase de detección que produce falsos positivos y acaba con alguien apagando el guardián |
+
+**Conclusión del frente 1:** la conducta es fail-closed en todas las cuentas, y la única dirección
+que abría —una cuenta que mandaba a «ya está» sin que el bloque estuviera— es la que `cd5dc0c`
+cerró. Lo que queda es `SEC-074`, que es de **coherencia del texto**, no de dirección del fallo.
+
+#### `SEC-074` — **`instrumento` · abierto · severidad baja** — la guarda del `## 14.` vive FUERA de la tabla que se declara «la» decisión
+
+**Ubicación:** `skills/arnes-upgrade/SKILL.md:746-751` (la guarda) contra `:754-762` (la tabla).
+
+**Qué pasa.** La entrada dice «Se decide con la **cuenta** de los marcadores del `AGENTS.md` del
+proyecto» y a continuación pone la tabla de cuatro estados. Pero **hay una segunda regla sobre la
+misma entrada**, tres bullets antes: si el proyecto ya tiene una sección `## 14.` propia, el número
+está tomado → `UNKNOWN`, parar y preguntar. Para el par de cuentas `0/0` con un `## 14.` ajeno, la
+**tabla** dice `NUEVO` → *append*, y la **prosa** dice `UNKNOWN` → parar. Dos reglas sobre la misma
+entrada, y la operativa —la que se presenta como el procedimiento de decisión— es la permisiva.
+
+**Riesgo, y por qué es bajo hoy y no mañana.** Hoy es bajo: la guarda está en la misma entrada y
+**las dos transcripciones independientes la incluyeron** (`docs/qa/REQ-027.md` §R0 declara «2 cuentas
++ guarda de `## 14.` + comparación con `\r` final quitado»), así que nadie la ha leído de menos.
+Sube en el momento en que esta entrada se convierta en **script** —y `CA-10` deja pendiente
+exactamente esa vía—, porque quien implemente «la tabla» implementará la tabla. El daño no es
+perder las reglas: es un `## 14.` duplicado en el documento canónico del proyecto, que rompe **en
+silencio** las referencias `§N` que la propia entrada nombra como el motivo de no renumerar.
+
+**Remediación (write-back de una fila, no de un párrafo):** llevar la guarda **dentro** de la
+tabla, como precondición de la fila `0/0` —«`0/0` **y** ningún `## 14.` propio | `NUEVO` | añadir al
+final»— y una fila `0/0` **con** `## 14.` propio → `UNKNOWN`. Dueño **`desarrollador`**. **No
+bloquea** este REQ: no cambia la dirección del fallo en ninguna cuenta ya cubierta y es un texto
+del propio arnés (regla de acumulación del propietario, 2026-09-08).
+
+### 2. Frente 1, segunda mitad — **sí queda otra vía de no-entrega silenciosa, y no es de este REQ**
+
+#### `SEC-075` — **`contrato` · abierto · severidad media** — no existe entrada «Hacia 1.33.0», y la ausencia es indistinguible de «no hacía falta»
+
+**Ubicación:** `skills/arnes-upgrade/SKILL.md` — `### Hacia 1.32.1` (`:617`) salta directo a
+`### Hacia 1.34.0` (`:738`). Cero apariciones de una entrada 1.33.0.
+
+**Medido, no supuesto.** `v1.33.0` **es un tag existente** y **es la versión del plugin instalado**
+(`.claude-plugin/plugin.json` → `1.33.0`). Y esa versión **sí cambió andamiaje que los proyectos
+heredan**: `git diff --stat v1.32.1..v1.33.0 -- templates/ agents/ skills/ playbooks/` →
+`templates/requirements-README.md.tpl | 64 ++ / 6 --`, y lo añadido es doctrina, no cosmética
+(«Fijar la magnitud equivocada», «techo con la dirección admitida declarada, y **nunca** como
+igualdad», «el estadístico es el **MÍNIMO** de k repeticiones, nunca la media», una sección nueva
+«En la Definition of Ready del analista»).
+
+**Consecuencia:** un proyecto que migre de 1.32.1 a 1.33.0 —la migración que **hoy** correría
+cualquiera, porque 1.33.0 es la publicada— **no recibe nada de eso, y nadie se lo dice**. Y el
+archivo establece la convención contraria explícitamente: «*(1.17.0 y 1.18.0 no requieren
+migración: sólo tocaron el plugin.)*». Con esa convención en pie, un hueco sin nota **no se lee como
+hueco**: se lee como «no hacía falta».
+
+**Subo la clase, y digo contra quién.** QA lo vio y lo encoló en `docs/PENDIENTES.md:2309` como
+`instrumento`, fuera de alcance. **Discrepo de la clase, no del alcance.** Aplico el forzador que el
+propietario usó el 2026-09-08 para reclasificar `QA-027-03`: *un fail-open que hace que un proyecto
+nunca reciba lo contratado, sin aviso, no daña un control que mide el producto — **derrota la
+entrega***. Aquí lo evaporado es doctrina de gobernanza sobre cómo se escriben los criterios de
+coste, entregada por contrato a proyectos instalados. La cláusula de `AGENTS.md` §6 que manda a
+`instrumento` habla de **guardianes, lectores y pruebas**; `arnes-upgrade` no mide nada: **es el
+canal de entrega**. Y el repositorio ya tiene la demostración **medida** de que estos marcadores
+mueren sin que nadie lo note: `docs/PENDIENTES.md:152` (`D-5`, «cero apariciones, no puede
+dispararse nunca»).
+
+**Alcance del bloqueo, escrito para que no se pueda malinterpretar en ninguna de las dos
+direcciones:**
+- **NO bloquea `REQ-027`** y **no va a su `Hallazgos abiertos:`**. No falsea ningún criterio suyo:
+  su entrada `Hacia 1.34.0` existe, es correcta y es fail-closed. Bloquear este REQ por la omisión
+  de otra versión sería tomarlo como rehén, contra la regla **B.4** («corregir sin ampliar») del
+  bloque que él mismo entrega.
+- **SÍ debe resolverse antes de publicar `v1.34.0`**, porque ese tag hace de 1.33.0 una versión
+  intermedia que ya nadie volverá a mirar, y el hueco queda enterrado. La decisión del tag es del
+  propietario (lectura global del 2026-09-08) y **no** de esta firma; esto es insumo para ella.
+
+**Remediación:** o una entrada `### Hacia 1.33.0` con la migración real de
+`templates/requirements-README.md.tpl`, o —si se juzga que no la necesita— **la nota explícita**, con
+la forma que el propio archivo ya usa para 1.17.0/1.18.0. Lo que no vale es el silencio, porque el
+silencio ya significa otra cosa en este archivo. Dueño **`desarrollador`**.
+
+### 3. Frente 2 — el residual de `CA-10`: **aceptable para cerrar**, y las dos grietas que registro sin vetar
+
+**Decisión: el residual es aceptable.** Lo que se cierra declara que la **invocación real de
+`/arnes-upgrade` nunca se ejecutó**, que lo acreditado es la **conducta transcrita** (dos
+transcripciones independientes, `desarrollador` y QA, con los patrones extraídos del **texto
+literal** de la skill), y que la vía real queda **pendiente** con dueño `coordinadora`, vencimiento
+«antes de que un proyecto real migre a 1.34.0» y puntero a `docs/qa/REQ-027.md` §D3.
+
+**Por qué lo acepto, en tres pasos:**
+1. **`CA-10` contrata una conducta, y la conducta se comprobó.** El criterio dice él mismo que «la
+   idempotencia es la **conducta** de buscarlo antes de insertar, y **es lo que se comprueba**». Dos
+   transcripciones independientes coincidieron. Lo acreditado es lo contratado.
+2. **La imposibilidad está probada, no alegada.** `skills/arnes-upgrade/` tiene un solo `SKILL.md`,
+   `.claude-plugin/plugin.json` no declara `commands`, no existe `commands/`. **Ningún script puede
+   acreditar la vía real**; hace falta una sesión. Exigir en esta firma algo que el árbol no permite
+   producir sería pedir una firma falsa, no más seguridad.
+3. **El write-back ya hizo lo que un veto habría exigido.** `QA-027-07` era exactamente esto —deriva
+   por omisión— y se cerró llevando el pendiente **al contrato** (`requirements/REQ-027.md:176-187`),
+   no a un log. La cláusula se inserta **antes** del párrafo que fija la condición de entrega, y ese
+   párrafo llega intacto y sigue siendo la última palabra de `CA-10`. Verificado.
+
+**Lo que NO acredita esta aprobación, dicho aquí para que no se pueda citar de más:** que
+`/arnes-upgrade` funcione. Cuando esa corrida exista, **se audita en su turno**; esta firma no la
+cubre.
+
+#### `SEC-076` — **`instrumento` · abierto · severidad media** — el pendiente de `CA-10` sobrevive sólo donde nadie va a mirar
+
+Dos mitades, y las dos son sobre **dónde vive** el pendiente, no sobre si está declarado:
+
+**(a) No está en la cola que el repositorio lee antes de actuar.** `grep 'REQ-027'
+docs/PENDIENTES.md` → **2 apariciones**, y ninguna es ésta (son el hueco de 1.33.0 y el de
+`:717-718`). El pendiente vive en `CA-10` de un REQ que va a pasar a `completado`, en
+`docs/qa/REQ-027.md` §D3 y en el `CHANGELOG.md`. **Ninguno de los tres es la cola.** Un vencimiento
+—«antes de que un proyecto real migre a 1.34.0»— que **ningún observador puede disparar** necesita
+estar donde se mira, y un REQ cerrado no se relee.
+
+**(b) El mecanismo de re-derivación está en `/tmp`, y `/tmp` es volátil por definición.**
+`docs/qa/REQ-027.md:681` cita el constructor como `/tmp/construir-maqueta-req027.sh` y **sólo cita la
+ruta**: comprobado, el archivo existe (2 701 B, 09:21 de hoy) y **su contenido no está en ninguna
+parte del repositorio** (`grep -rn 'construir-maqueta-req027' docs/ requirements/` → una sola línea,
+la de la cita). Es la regla **B.7 / `CA-11`** que **este REQ entrega**, incumplida sobre su propio
+pendiente, y por la **propiedad** que `CA-11` enuncia, no por su enumeración: «entra toda evidencia
+cuya ausencia obligaría a re-medirla o re-enumerarla para cumplir algo ya escrito —un criterio, un
+REQ abierto, **una fase pendiente**—». La corrida de la vía real es esa fase pendiente. Un reinicio
+y la maqueta se rehace desde cero.
+
+**Remediación:** (a) una línea en `docs/PENDIENTES.md` con dueño, vencimiento y puntero a §D3 —dueño
+`coordinadora`—; (b) el **contenido** del constructor dentro de `docs/qa/REQ-027.md` (o en el
+repositorio), con su versión base `4f647c7`, que ya está declarada —dueño `qa-tester`—.
+
+**Por qué `instrumento` y no `contrato`:** el pendiente **sí está declarado en el contrato**, que es
+lo que `AGENTS.md` §9 exige y lo que `QA-027-07` cerró; esto hace la ejecución más cara y más
+olvidable, no la borra del contrato. **Recomiendo hacer (b) antes de la fusión humana**, porque
+cuesta un `cat` hoy y una comisión dentro de un mes.
+
+#### `SEC-077` — **`instrumento` · abierto · severidad baja** — rutas de `/tmp` con nombre fijo en el fragmento de verificación que los proyectos copian
+
+**Ubicación:** `skills/arnes-upgrade/SKILL.md:781`, `:785`, `:787` (`/tmp/agents-antes.md`,
+`/tmp/agents-tras-1a-corrida.md`) y la misma forma preexistente en `:635-636`
+(`/tmp/estado-antes.md`).
+
+**Dos riesgos, los dos conocidos en esta casa.** (i) Es **la misma clase que este repositorio ya
+pagó**: hasta 1.32.0 el temporal del hook de continuidad tenía **nombre fijo** y por ahí se perdió
+texto humano **1 de 25** vueltas del banco (`AGENTS.md` §13, `REQ-015`). Aquí el efecto no es
+perder el `AGENTS.md` del proyecto —el fragmento sólo **lee** el destino— sino un **veredicto de
+idempotencia falso**: dos migraciones concurrentes comparten el archivo «antes», y el `cmp` puede
+declarar idempotente lo que no lo es, o lo contrario. (ii) Es un nombre **predecible en un
+directorio compartido y escribible por todos**: en una máquina multiusuario o un runner compartido,
+un `cp` sobre un `/tmp/agents-antes.md` pre-creado como enlace simbólico escribe donde apunte el
+enlace. Clásico, barato de cerrar.
+
+**Remediación:** `mktemp` (o un sufijo con el PID) en los tres sitios, que es lo que `hooks/` ya hace
+desde 1.32.1. Dueño **`desarrollador`**. **No bloquea:** el fragmento es guía de verificación, no el
+publicador, y el arreglo es de una línea por sitio.
+
+### 4. Frente 3 — `CA-07`: la cobertura declarada es **honesta**, y lo verifiqué en los dos sentidos
+
+Auditado el texto del bloque desde el disco (`AGENTS.md:492-502`):
+
+| Propiedad | Resultado |
+|---|---|
+| Cada herramienta con **vía y estado** | **PASA.** Claude Code `verificada`; Codex `no verificada`; Cursor `no verificada` |
+| La única `verificada` **lo está de verdad** | **PASA, y lo comprobé yo**: `CLAUDE.md:6` y `templates/CLAUDE.md.tpl:6` contienen `@AGENTS.md`. Un estado `verificada` falso habría sido el hallazgo grave de este frente, y no lo es |
+| Codex se declara con su **motivo** | **PASA.** «Vía: la que declara el estándar `AGENTS.md`; esa frase es una **afirmación del repositorio, no una comprobación**». Es la distinción correcta: el archivo diciendo de sí mismo que Codex lo lee no es evidencia de que Codex lo lea |
+| Límite (a) escrito | **PASA.** «una herramienta cuya vía no está verificada **no cuenta como cubierta** —esta sección **no promete cobertura de todo coordinador**—» |
+| Límite (b) escrito | **PASA.** «un proyecto ya instalado tiene su `AGENTS.md` **congelado**: hasta que `arnes-upgrade` migre este bloque, sus coordinadoras **no tienen estas reglas**» |
+| **Barrido activo de sobreafirmación** | **PASA.** Leído el bloque entero buscando la frase que promete de más: no hay ninguna que insinúe cobertura universal, ni que presente una vía no comprobada como cubierta, ni que dé por hecho que los proyectos instalados ya tienen las reglas. El límite (b) se repite además en la propia skill (`:807-809`) |
+
+**Y un refuerzo que merece constar, porque es el riesgo que el propio REQ nombra como su motivo de
+`critico`.** La regla **B.5** del bloque —«cerrar cuando la evidencia alcance»— es la que el REQ
+teme leída como permiso para cerrar antes (`requirements/REQ-027.md:310-312`). El texto entregado
+cierra esa puerta **explícitamente**: `AGENTS.md:471-473` añade «**no es permiso para cerrar con
+menos de lo que el criterio pide**», cláusula que **no** está en la lista del REQ (`:240-241`). El
+bloque es más seguro que su propia especificación, y en la dirección correcta. No es hallazgo:
+`CA-02` contrata los **títulos** y el REQ declara que «el texto final vive en el bloque».
+
+### 5. Frentes 4 y 5 — doble sede idéntica, y el mecanismo intacto
+
+**`CA-01` — las dos copias no han divergido. Verificado por identidad, no por parecido:**
+
+| Comprobación | Resultado |
+|---|---|
+| `diff` de los dos tramos | **vacío** |
+| `md5sum` | **idéntico** en los dos: `89cea66e4cea6575026252566350f18c` |
+| `wc -c` | **3 702 B** los dos — cuadra con la distinción de `CA-05` (3 702 el bloque / 3 703 lo que añade al archivo) |
+| Marcadores | **exactamente 1** de apertura y **1** de cierre en cada archivo (`AGENTS.md:453,503`; `templates/AGENTS.md.tpl:420,470`) |
+| `{{…}}` **dentro** del bloque de la plantilla | **0** — `CA-09` no puede entregar un marcador literal en la sede canónica |
+| `{{…}}` del **resto** de la plantilla | **15**, intactos |
+| `CA-06`, renumeración | **Ninguna.** `grep -oE '^## [0-9]+\.' AGENTS.md \| sort \| uniq -d` → **vacío**; 15 títulos (§0–§14), el bloque entra como sección propia al final |
+
+**El mecanismo NO se toca — re-afirmado sobre la base correcta.** El delta de este REQ son
+`6dd3f8a` y `cd5dc0c`. `git show --name-only 6dd3f8a cd5dc0c` filtrado por
+`hooks/|tools/|.github/|.arnes/|tests/` → **cero archivos**. Los seis tocados son `AGENTS.md`,
+`templates/AGENTS.md.tpl`, `skills/arnes-upgrade/SKILL.md`, `requirements/REQ-027.md`,
+`docs/qa/REQ-027.md` y `CHANGELOG.md`. **Ningún hook lee este bloque, ninguna clave nueva en
+`.arnes/config.json`, ninguna puerta lo comprueba** — y la skill lo dice de sí misma (`:806-807`),
+que es la forma honesta de entregar una regla sin enforcement.
+
+### 6. Regresión de seguridad — **ningún control retirado ni debilitado**
+
+Primera auditoría de `REQ-027`: **cero apariciones** previas en este archivo, confirmado. No hay
+`R-0xx` anterior contra la que comparar, así que la comparación va contra los controles **vigentes**
+que este delta podría haber tocado:
+
+- **Ningún control retirado.** El delta es **+174 / −0** en los tres archivos de producto. Nada se
+  borró.
+- **Un control reforzado:** `cd5dc0c` no sólo cambió menciones por marcadores; añadió **la cuenta
+  del cierre**, que las filas `1/0`, `0/1` y `2/1` de la tabla siempre necesitaron y **ningún
+  comando calculaba**. Con las dos cuentas, incluso la forma vieja del patrón deja de fallar en
+  abierto. El mérito es del `desarrollador` y QA lo acreditó; lo hago constar porque una auditoría
+  que sólo anota lo que empeora no mide la dirección del cambio.
+- **`SEC-047`, `SEC-048`, `SEC-049`, `SEC-058`, `SEC-064`, `SEC-067`, `SEC-072`, `SEC-073`:** este
+  rango **no los introduce ni los agrava**. No toca `hooks/`, `tools/` ni `tests/`, que es donde
+  viven todos.
+- **Fuga de material de cliente:** barrido del delta contra los patrones de material de cliente y
+  de secretos —**cero coincidencias**. El repositorio es público y el delta es doctrina de
+  coordinación; no hay credencial, ruta interna ni dato de cliente. Lo único citado son rutas de
+  `/tmp` de este propio repositorio (`SEC-077`).
+
+### 7. Rigor
+
+`REQ-027` sigue **`critico`**, que es además su suelo por `Sensible a seguridad: sí`. **No subo ni
+bajo el rigor de nada.** Comprobado que la sensibilidad es la correcta: no toca autenticación,
+autorización, datos personales ni secretos, pero gobierna **el documento canónico que leen los
+agentes de todos los proyectos que instalan el arnés**, y una regla mal redactada ahí debilita el
+criterio de cierre en todos ellos y en silencio — la propiedad de fallo en abierto que `AGENTS.md`
+§6 usa para llamar crítico a algo.
+
+### 8. Lo que esta revisión NO miró — tabulado como NO MIRADO, nunca como PASA
+
+| No mirado | Por qué |
+|---|---|
+| **El banco** | **No lo ejecuté.** Y no lo cito de nadie: QA declara expresamente que **no suscribe** ninguna de las dos cifras en circulación (`961/0/4` y `960/0/5`) y que `skills/` **no está en el banco**. Así que sobre este delta el banco **no acredita nada** en ninguna dirección, y no lo presento como verde |
+| **La vía real de `/arnes-upgrade`** | **Imposible desde aquí** y es el objeto de §3. Ningún script la acredita; hace falta una sesión. Lo acreditado es la conducta transcrita |
+| **Codex y Cursor** | Siguen `no verificada`. **No las verifiqué** —está fuera de este REQ por `CA-07`—, y la consecuencia es la que el bloque ya declara: el objetivo se entrega, verificado, para **una** de las tres herramientas |
+| **`CA-03` y `CA-04`** | Siguen **sin mecanismo**: son reglas para quien coordina y ninguna puerta las mide. Auditado el **texto**, no su cumplimiento futuro. `REQ-025` es la puerta candidata y no entra aquí |
+| **`CA-08`** | **Incompleto por construcción**, su señal (c) pendiente con dueño `coordinadora`. No lo audité y **no lo doy por bueno**; su consecuencia contratada sigue vigente: **no se declara que las reglas sirven** |
+| **El desglose por tramos de `CA-05`** | **No lo re-medí.** Verifiqué sólo las dos magnitudes que sostienen `CA-01`/`CA-05` (3 702 y la identidad de las copias). Las cifras de `1 037` / `807` / `1 844` / `49,8 %` son de QA (`§R2`), **citadas** |
+| **`docs/PENDIENTES.md`, `docs/PLAN.md`, `docs/ESTADO.md`, `CHANGELOG.md`, otros REQ** | **No leídos** (excluidos por coste). Sobre `PENDIENTES.md` sólo corrí `grep` dirigido, cuyo resultado está citado en `SEC-075` y `SEC-076`; de `CHANGELOG.md` no leí nada y sus contenidos los cito **de QA**, no verificados por mí |
+| **Si 1.33.0 requería además otras migraciones** | **No lo determiné.** Medí `templates/`, `agents/`, `skills/` y `playbooks/` entre `v1.32.1` y `v1.33.0`, que basta para que `SEC-075` exista; **no** enumeré qué migración concreta hace falta. Eso es del dueño del hallazgo |
+
+### 9. Estado de seguridad aprobado por REQ — línea base de no-regresión, actualizada en R-023
+
+| REQ | Veredicto | Fecha | Alcance acreditado | Nota |
+|---|---|---|---|---|
+| **REQ-027** (1.ª auditoría) | **`aprobado`** | 2026-09-09 | `rel/registro-1.33.0` @ `81d260d`; delta real `6dd3f8a` + `cd5dc0c` (+174 / −0) | **Qué acredita:** que la tabla de decisión de la migración es **fail-closed** en todas las cuentas, con `UNKNOWN` **globalmente** terminal (`SKILL.md:144`) y la fila de descarte escrita **por propiedad** (§1); que **no existe camino a «no tocar y no avisar» con el bloque ausente** (§1); que `CA-07` es **honesta** y que su único estado `verificada` **lo está de verdad**, con los dos límites escritos y sin sobreafirmación de cobertura (§4); que las **dos sedes son idénticas** por `md5` y `diff`, con un solo par de marcadores, 3 702 B, sin `{{…}}` dentro y **sin renumerar** ninguna sección (§5); que el **mecanismo no se toca** (§5); que **ningún control se retiró** y uno se **reforzó** —la cuenta del cierre— (§6); y que **no hay fuga** de material de cliente (§6). **Qué NO acredita:** el banco, la **vía real de `/arnes-upgrade`**, Codex/Cursor, `CA-03`/`CA-04` (sin mecanismo), `CA-08` (incompleto) y el desglose de `CA-05` (§8). **Bloqueantes abiertos de este REQ: ninguno.** **Residuales:** `SEC-074`, `SEC-076`, `SEC-077` (los tres `instrumento`) y `QA-027-08` (`instrumento`, de QA). **`SEC-075` es `contrato` y NO es de este REQ**: es de la publicación de 1.33.0, no va a su `Hallazgos abiertos:` y **no lo bloquea** |
+| **REQ-026** (vuelta 2) | `con-hallazgos` | 2026-09-09 | `R-022`, `4f51293` | Sin cambios. `SEC-072` y `SEC-073` siguen abiertos y **siguen bloqueando** ese REQ |
+| **REQ-017** (reapertura 1.34.0) | `aprobado` | 2026-09-08 | `R-020` | Sin cambios |
+| **REQ-014** (reapertura 1.33.0) | `aprobado` | 2026-09-08 | `R-019` | Sin cambios |
+
+**Estado de mis hallazgos tras R-023:** `SEC-074` **abierto** (`instrumento`, baja, dueño
+`desarrollador`); `SEC-075` **abierto** (`contrato`, media, dueño `desarrollador`, **contra la
+publicación de 1.34.0, no contra REQ-027**); `SEC-076` **abierto** (`instrumento`, media, dueños
+`coordinadora` y `qa-tester`); `SEC-077` **abierto** (`instrumento`, baja, dueño `desarrollador`).
+Sin cambios en `SEC-067`..`SEC-073`.
+
+**Numeración vigente tras esta revisión:** última revisión **R-023**; último hallazgo **SEC-077**;
+próximos libres **R-024** y **SEC-078**.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** Este delta no altera clasificación de datos,
+acceso, retención ni cumplimiento: no hay datos personales, credenciales ni activos nuevos. Lo que
+cambia es **gobernanza de proceso** —cómo se despachan y cierran las comisiones—, cuya sede es
+`AGENTS.md`, no el documento de datos. La única propiedad de seguridad con la que este REQ se
+relaciona es la **integridad de la entrega a proyectos instalados**, y su control es la tabla de
+decisión de `arnes-upgrade`, acreditada fail-closed en §1 con la excepción de `SEC-075`.
