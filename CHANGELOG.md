@@ -2,7 +2,65 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
-## [Interno] — 2026-09-09 · Cuatro precisiones sobre `REQ-026` registradas para su implementación (sin abrir otra ronda)
+## [Interno] — 2026-09-08 · Desfase de fechas de la coordinadora: 25 corregidas, 20 anotadas, y la lección que sólo aparece de noche
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Tras publicar `v1.33.0` leí los sellos de GitHub —`mergedAt: 2026-09-09T02:31:08Z`— y empecé a fechar en
+**UTC**. El repositorio usa **fecha local**: 42 entradas del 09-08 contra 8 del 09-09, y el merge y el tag
+llevan `2026-09-08 20:31 -0600`. Eran las 21:26 CST del 08 con UTC ya en el 09.
+
+**Lo detectó el `analista-requerimientos`**, no yo: al cerrar `REQ-026` avisó de que el sistema declaraba
+09-08 y el REQ estaba fechado 09-09, y **fechó sus filas nuevas en 09-09 a propósito** para no dejar una
+corrección anterior a la creación en la misma tabla — decisión correcta con la información que tenía, y
+lo dijo en vez de callarlo.
+
+**Corregidas 25** (`CHANGELOG.md` 10, `docs/PENDIENTES.md` 8, `docs/PLAN.md` 5, `PENDING_APPROVAL.md` 1,
+`docs/ESTADO.md` 1), **enumeradas una por una antes de sustituir** y comprobando que ninguna fuera una
+referencia legítima a un sello UTC. No en bloque: un `sed` global sin mirar es lo que esta misma mañana
+estuvo a punto de hacer que `CA-05`, `CA-08` y `CA-09` pasaran **por tautología**. En `docs/ESTADO.md` se
+verificó además que la mención estuviera **fuera** de los marcadores del bloque derivado.
+
+**Quedan 20 anotadas** en `REQ-019` (12) y `REQ-026` (8): son contrato del analista y se corrigen en la
+próxima comisión que toque cada archivo — una comisión dedicada a dos sustituciones cuesta más de lo que
+arregla. `REQ-017` no está afectado.
+
+**La lección:** las horas de las APIs vienen en **UTC** y las del repositorio son **locales**; a partir de
+las 18:00 CST son días distintos. Leer un sello de GitHub y escribirlo como fecha del proyecto es un error
+que **sólo aparece de noche**, que es cuando nadie lo revisa.
+
+## [Interno] — 2026-09-08 · Prioridades de ahorro reordenadas por el propietario, con dos precisiones que invierten el orden anterior
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Sobre un análisis externo aportado por el propietario, con sus cifras **verificadas** (`agents/auditor-seguridad.md`
+17.459 B, `agents/qa-tester.md` 10.834 B, el 39 % en `docs/PLAN.md:442`, el tope de 200 k en `AGENTS.md:231`).
+
+**Orden acordado:** (1) **comprobar la factibilidad de los criterios nuevos** y (2) **reducir el contexto
+de la coordinadora**, **por delante de** adelgazar las definiciones de agente.
+
+**El primero tiene cuatro instancias medidas en dos ventanas** —400 líneas de `REQ-014 CA-18`, 4× de
+`REQ-021 CA-08 (iii)`, `0,60×` de `REQ-019 CA-07` y el `1,5 s` de `REQ-026 CA-15` de hoy—: cuatro veces el
+argumento correcto y **el valor sin comprobar**. Una comprobación de factibilidad **dentro del análisis
+que ya se hace** las habría cazado las cuatro; es una regla, no un mecanismo nuevo.
+
+### Dos precisiones del propietario que corrigen afirmaciones de la coordinadora
+
+1. **El 39 % es del ciclo documentado, no de esta sesión.** No se sabe cuánto representa la coordinadora
+   hoy, y **no se ha medido**: las cifras que sí existen son las de los subagentes (≈1,0 M tokens en diez
+   comisiones), y el consumo propio de la coordinadora **no está instrumentado**. Decirlo así en vez de
+   estimarlo.
+2. **El tamaño de un documento indica contenido potencialmente reducible, NO ahorro efectivo.** Y de ahí
+   una **inversión del orden que la coordinadora no había visto**: la definición de agente se carga
+   **siempre**, incondicionalmente; el historial de un REQ **sólo cuando se lee**, y la lectura selectiva
+   —ya activa— **ya lo evita a menudo**. Así que **el ahorro MARGINAL de adelgazar los agentes puede
+   superar al de rotar historiales**, aunque su tamaño sea menor. Es exactamente el principio que
+   `REQ-026 CA-14` contrata —la magnitud es la lectura real antes/después, no el tamaño— aplicado a la
+   propia priorización.
+
+**Y el `1,5 s` está SIN FUNDAMENTAR, no demostrado imposible.** La distinción importa: la medición dirá
+si es alcanzable. Lo que la comprobación previa habría detectado es **la falta de evidencia**, no la
+imposibilidad.
+
+## [Interno] — 2026-09-08 · Cuatro precisiones sobre `REQ-026` registradas para su implementación (sin abrir otra ronda)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 
 Revisión externa verificada contra el REQ. **No se abre otra ronda de análisis** —decisión del
@@ -30,7 +88,7 @@ prudente en la decisión de rotarlo todo. Y `orden: nuevo-al-final` está acredi
 **Corrección de coste para el registro:** la comisión de `REQ-026` costó **≈56 k tokens**, no los ≈46 k
 del informe preliminar — la diferencia son las tres rondas de corrección en vuelo.
 
-## [Interno] — 2026-09-09 · `REQ-026` cerrado con la cuarta corrección: el punto de equilibrio cuenta **cuatro** costes, no uno
+## [Interno] — 2026-09-08 · `REQ-026` cerrado con la cuarta corrección: el punto de equilibrio cuenta **cuatro** costes, no uno
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 
 `CA-17` queda contratando el punto de equilibrio contra el **gasto adicional total** de rotar un REQ:
@@ -51,7 +109,7 @@ usarla dentro del trabajo normal y **observar qué caza y qué se le escapa** �
 retrospectiva. Queda anotado como práctica, no como mecanismo, y **no sustituye lo previsto en
 `REQ-025`**.
 
-## [GitHub] — 2026-09-09 · `REQ-026`: rotar los historiales de REQ — y el descubrimiento de que rotar hoy rompe la tabla **también en el origen**
+## [GitHub] — 2026-09-08 · `REQ-026`: rotar los historiales de REQ — y el descubrimiento de que rotar hoy rompe la tabla **también en el origen**
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 
 REQ nuevo, `pendiente`, ventana 1.34.0, `Rigor: critico`. **17 criterios en 235 líneas y 19 KB** — un REQ
@@ -100,11 +158,11 @@ que edite un REQ**.
 
 **Coste: ≈46 k tokens, 27 llamadas.**
 
-## [GitHub] — 2026-09-09 · `REQ-019` ejecutable, y **la palanca que nadie había medido**: los historiales pesan el 22 % y la rotación no los ve
+## [GitHub] — 2026-09-08 · `REQ-019` ejecutable, y **la palanca que nadie había medido**: los historiales pesan el 22 % y la rotación no los ve
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus) + coordinadora.
 
 **`REQ-019` queda ejecutable.** Techo de `CA-07` **`0,60×` → `0,72×`** con firma del propietario
-(2026-09-09) y por el procedimiento que el propio REQ exigía; derivados en bytes recalculados
+(2026-09-08) y por el procedimiento que el propio REQ exigía; derivados en bytes recalculados
 (total ≤ 46.813 B; `AGENTS.md` ≤ 24.355 B; README ≤ 22.458 B). Línea base corregida en sus **tres** sedes
 (**433 → 521**), con las derivaciones que colgaban de ella **declaradas obsoletas con fecha** en vez de
 maquilladas. `D-3`, `D-5` y `D-9` arreglados. **`D-2` resuelto**: `CA-17.1` gana un tercer valor,
@@ -165,7 +223,7 @@ QA sobre el delta costó **64 k** frente a los **229 k** de la validación compl
 
 Su punto 1 (`REQ-019` primero) es el que la medición desmiente, arriba.
 
-## [GitHub] — 2026-09-09 · `REQ-017` reabierto: `CA-08 (ii)` deja de acotar el brazo y pasa a acotar **la razón**
+## [GitHub] — 2026-09-08 · `REQ-017` reabierto: `CA-08 (ii)` deja de acotar el brazo y pasa a acotar **la razón**
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 
 Primer trabajo de 1.34.0 contratado. `REQ-017` vuelve a `en-progreso` con destino **1.34.0** (§9, REGLA
@@ -210,7 +268,7 @@ propósito.
 
 **Coste: ≈95 k tokens, 23 llamadas.** 26 líneas cambiadas en `REQ-017` para reescribir un criterio.
 
-## [Interno] — 2026-09-09 · Mejora aplazada a versión futura por el propietario: el campo que no sabe decir «parcial»
+## [Interno] — 2026-09-08 · Mejora aplazada a versión futura por el propietario: el campo que no sabe decir «parcial»
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 
 Registrada en `docs/PENDIENTES.md` bajo la regla de acumulación; **no entra en 1.34.0**.
@@ -233,7 +291,7 @@ clase.
 **cinco** (`7dc0699`, PASS, 1,017×). **No cambia la conclusión y la refuerza:** el recorrido sigue siendo
 0,973×–1,364× y sigue cubriendo el techo de 1,25×.
 
-## [GitHub] — 2026-09-09 · Alcance y orden de 1.34.0: dos correcciones que la medición impuso, y un techo desmentido
+## [GitHub] — 2026-09-08 · Alcance y orden de 1.34.0: dos correcciones que la medición impuso, y un techo desmentido
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 
 **Primera corrección: son CUATRO trabajos, no tres.** La recomendación de recortar 1.34.0 a tres olvidó
@@ -273,10 +331,10 @@ hay que arreglar `D-3`, `D-5` y `D-9` — tres defectos en sus **propios** crite
 fue cerrar la lista de lectura. **Un factor 5, gratis y ya aplicado** — ninguna palanca contratada se le
 acerca, y conviene tenerlo escrito antes de invertir cuatro comisiones en recortar un 32 %.
 
-## [GitHub] — 2026-09-09 · **PUBLICADA `v1.33.0`** — fusionada con cuenta SIN admin, y con su límite declarado
+## [GitHub] — 2026-09-08 · **PUBLICADA `v1.33.0`** — fusionada con cuenta SIN admin, y con su límite declarado
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 
-Decisión del propietario del 2026-09-09, que **revierte el aplazamiento acordado horas antes**. Merge
+Decisión del propietario del 2026-09-08, que **revierte el aplazamiento acordado horas antes**. Merge
 commit `810128a`; tag `v1.33.0` sobre él.
 
 **Qué entrega.** `REQ-017` — la guarda del CR era **cuadrática** en la longitud de línea; ganancia

@@ -6,7 +6,7 @@
 > edites, se sobrescribe. Lo de fuera de esos marcadores no se toca nunca.
 
 ## Fase actual
-Fase 0 — autoalojamiento. **v1.33.0 PUBLICADA** el 2026-09-09 (merge `810128a`, tag y Release creados;
+Fase 0 — autoalojamiento. **v1.33.0 PUBLICADA** el 2026-09-08 (merge `810128a`, tag y Release creados;
 instalación estable actualizada y verificada: 880 PASS · 0 FAIL en el banco completo). Ventana **1.34.0
 abierta**, gobernada por **1.33.0**. PR #43 y #44 fusionados y cerrados.
 
@@ -231,7 +231,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-08 21:17
+## Estado derivado — 2026-09-08 21:25
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -241,7 +241,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `rel/registro-1.33.0` @ `9102ceb` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `rel/registro-1.33.0` @ `c2114c4` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.0`
 **Aprobaciones pendientes:** 0
 **REQ:** 26 — completado 12 · en-revisión 1 · en-progreso 2 · bloqueado 1 · otros 10

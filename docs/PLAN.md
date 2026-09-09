@@ -95,9 +95,9 @@ Esta ventana va a tener muchas comisiones, y las tres primeras palancas están *
 > día): REQ-017 + REQ-021, más la partición de las tres secciones sobre 400 líneas (`DEV-021-07`).
 > `REQ-019`, `REQ-020`, `REQ-023`, `REQ-024` y `REQ-025` van a 1.34.0, y REQ-019 es su primer trabajo.**
 >
-> ## ALCANCE DE 1.34.0 — CUATRO trabajos, fijado el 2026-09-09 por decisión del propietario
+> ## ALCANCE DE 1.34.0 — CUATRO trabajos, fijado el 2026-09-08 por decisión del propietario
 >
-> «Aplica tu recomendación» (2026-09-09). La recomendación era **tres**; la medición la corrigió a
+> «Aplica tu recomendación» (2026-09-08). La recomendación era **tres**; la medición la corrigió a
 > **cuatro**, y la corrección va escrita porque es el tipo de error que este plan existe para no repetir.
 >
 > | # | Trabajo | Por qué NO se puede cortar |
@@ -119,14 +119,14 @@ Esta ventana va a tener muchas comisiones, y las tres primeras palancas están *
 > cumple en cualquier orden **dentro** de ella. **La sonda va primera** porque es la única que bloquea
 > *publicar*, y lo demás de esta ventana se publica a través de ella.
 >
-> ### CORRECCIÓN DEL ORDEN (2026-09-09): el propietario prioriza **bajar el coste**
+> ### CORRECCIÓN DEL ORDEN (2026-09-08): el propietario prioriza **bajar el coste**
 >
 > «Me interesa dar prioridad a bajar el costo del Arnés, para que la cuenta me rinda más.» El orden
 > anterior ponía **la sonda primero** porque bloquea *publicar*. Pero bloquea **al final**; las palancas
 > de tokens abaratan **todo lo que pasa en medio**. Es la regla de orden del encabezado de este plan —
 > *lo que compone va primero*— aplicada correctamente.
 >
-> **El impuesto de arranque, medido el 2026-09-09 y mayor de lo que se venía citando:**
+> **El impuesto de arranque, medido el 2026-09-08 y mayor de lo que se venía citando:**
 > `AGENTS.md` 33.827 B + `requirements/README.md` 40.020 B + `CLAUDE.md` 408 B = **74.255 B ≈ 18.500
 > tokens, en CADA comisión** (se citaba ~9 k, que era sólo `AGENTS.md`).
 >
@@ -183,7 +183,7 @@ Esta ventana va a tener muchas comisiones, y las tres primeras palancas están *
 > ventana tenía **nueve trabajos**. Diez trabajos no caben en una ventana, y una ventana que no cabe **se
 > corta a mitad de una comisión** — que es como se descontroló el ciclo 3.
 
-> **ENMIENDA DEL 2026-09-08, REVERTIDA EN PARTE EL 2026-09-09.** El propietario aplazó el tag y luego
+> **ENMIENDA DEL 2026-09-08, REVERTIDA EN PARTE EL 2026-09-08.** El propietario aplazó el tag y luego
 > **decidió publicar**: `v1.33.0` está publicada (merge `810128a`, puerta requerida en verde y fusión con
 > cuenta **sin admin**), con su límite declarado — la evidencia de rendimiento es el `0,125×` de `CA-05`,
 > **no** el verde de `CA-08 (ii)`. **Lo que NO se revierte: el primer trabajo de 1.34.0 sigue siendo la

@@ -1865,7 +1865,7 @@ El caso `REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más d
 falla el check **requerido y estricto** `hooks-en-linux` afirmando en su propia salida
 *«esto es una regresión, no ruido»*.
 
-**Cinco corridas de CI sobre código idéntico** *(actualizado el 2026-09-09: eran cuatro; `7dc0699` añadió un PASS de **1,017×**, que **no cambia la conclusión y la refuerza** — el recorrido sigue siendo 0,973×–1,364× y sigue cubriendo el techo)* —ningún commit desde `b9afa01` toca `hooks/`, `tools/` ni
+**Cinco corridas de CI sobre código idéntico** *(actualizado el 2026-09-08: eran cuatro; `7dc0699` añadió un PASS de **1,017×**, que **no cambia la conclusión y la refuerza** — el recorrido sigue siendo 0,973×–1,364× y sigue cubriendo el techo)* —ningún commit desde `b9afa01` toca `hooks/`, `tools/` ni
 `.github/`, verificado de forma independiente por el `auditor-seguridad` en `R-019`:
 
 | Corrida | Commit | Razón publicada | Convergencia (2.º mín / mín) | Veredicto |
@@ -1947,12 +1947,12 @@ cita, no se rehace.
 
 ---
 
-## Mejoras aplazadas A UNA VERSIÓN FUTURA por el propietario (2026-09-09)
+## Mejoras aplazadas A UNA VERSIÓN FUTURA por el propietario (2026-09-08)
 
 Registradas aquí, **no en la ventana actual**, por la regla de acumulación del 2026-09-08. Ninguna es
 `contrato`; ninguna bloquea nada hoy.
 
-### 1. ~~El campo que no sabe decir «parcial»~~ — **RESUELTO el 2026-09-09, no aplazado**
+### 1. ~~El campo que no sabe decir «parcial»~~ — **RESUELTO el 2026-09-08, no aplazado**
 
 > **Corrección honesta del registro.** El propietario pidió aplazarlo a una versión futura, y cuando
 > llegó esa instrucción **la comisión que lo arregla ya estaba despachada** (iba como punto 4 de su
@@ -1988,7 +1988,7 @@ usa para **decidir** algo —un cierre, un reparto, una acreditación—, deja d
 
 ---
 
-## MEDIDO el 2026-09-09: `REQ-019` no cabe en 1.34.0, y el motivo no es la pereza
+## MEDIDO el 2026-09-08: `REQ-019` no cabe en 1.34.0, y el motivo no es la pereza
 
 **`REQ-019` se estima a sí mismo en 9–11 comisiones y ≈8,5–14 h** (`requirements/REQ-019.md`, tabla de
 fases). **F2 y F3 son ventanas de SOLITARIO** por `CA-16`: mientras corren, **nada más puede correr**.
@@ -2020,7 +2020,7 @@ una ventana **propia**, no compartida con un plazo ajeno.
 
 **La palanca mayor medida en este proyecto no fue ninguna versión del plugin: fue el ENCARGO.** Seis
 comisiones del 2026-09-08/09 con el mismo modelo y los mismos agentes: **229 k → 154 k → 107 k → 64 k →
-46 k → 58 k**, y las dos del 2026-09-09 en **95 k** y **62 k**. Lo único que cambió fue cerrar la lista de
+46 k → 58 k**, y las dos del 2026-09-08 en **95 k** y **62 k**. Lo único que cambió fue cerrar la lista de
 lectura —rangos de línea en vez de archivos, cifras entregadas ya medidas, prohibiciones explícitas—.
 **Un factor 5, gratis, sin ceremonia y ya aplicado.** Ninguna palanca contratada se le acerca.
 
@@ -2029,7 +2029,7 @@ lectura —rangos de línea en vez de archivos, cifras entregadas ya medidas, pr
 
 ## LA PALANCA QUE NADIE HABÍA MEDIDO: los historiales de REQ pesan el 22 % y la rotación no puede tocarlos
 
-**Origen:** análisis externo (ChatGPT, aportado por el propietario el 2026-09-09). Señaló que adelgazar
+**Origen:** análisis externo (ChatGPT, aportado por el propietario el 2026-09-08). Señaló que adelgazar
 `AGENTS.md` **pierde parte del beneficio si después se lee entero un REQ de 150.000 caracteres**.
 Verificado y medido por la coordinadora; **es correcto, y el motivo es más preciso de lo que él podía
 demostrar**.
@@ -2082,7 +2082,7 @@ cabecera y su separador conservados como preámbulo, que es lo que ya hace con e
 
 ---
 
-## Contradicción de instrucciones sobre quién comitea (verificada, 2026-09-09)
+## Contradicción de instrucciones sobre quién comitea (verificada, 2026-09-08)
 
 **Origen:** el mismo análisis externo. **Verificada y cierta.**
 
@@ -2102,7 +2102,7 @@ agente). Resolverlo es barato y va con la ventana de coste.
 
 ---
 
-## Cuatro precisiones sobre `REQ-026`, para su comisión de implementación (2026-09-09)
+## Cuatro precisiones sobre `REQ-026`, para su comisión de implementación (2026-09-08)
 
 **Origen:** revisión externa aportada por el propietario, verificada por la coordinadora contra el REQ.
 **No se abre otra ronda de análisis ahora** (decisión del propietario: cerrar el contrato y seguir con la
@@ -2153,3 +2153,36 @@ que `skills/arnes-upgrade` documenta para 1.26.0.
 
 El coste de la comisión que escribió `REQ-026` es **≈56 k tokens**, no los ≈46 k del informe preliminar:
 la diferencia son las **tres rondas de corrección en vuelo**. La cifra buena es la de cierre.
+
+
+---
+
+## Desfase de fechas introducido por la coordinadora (2026-09-08) — 20 menciones pendientes en dos REQ
+
+**Causa:** tras publicar `v1.33.0` leí los sellos de GitHub —`mergedAt: 2026-09-09T02:31:08Z`— y empecé a
+fechar en **UTC**. El repositorio usa **fecha local**, y lo dice su propio recuento: **42 entradas del
+09-08 contra 8 del 09-09**, y el merge y el tag están fechados `2026-09-08 20:31 -0600`. A esa hora eran
+las **21:26 CST del 08**, con UTC ya en el 09.
+
+**Corregido (25 menciones):** `CHANGELOG.md` (10), `docs/PENDIENTES.md` (8), `docs/PLAN.md` (5),
+`PENDING_APPROVAL.md` (1), `docs/ESTADO.md` (1). Ninguna era una referencia legítima a un sello UTC — se
+enumeraron una por una antes de sustituir, y no en bloque: **un `sed` global sin mirar es lo que esta
+misma mañana estuvo a punto de hacer que tres criterios pasaran por tautología**.
+
+**PENDIENTE (20 menciones), y no se toca aquí porque es contrato ajeno:**
+
+| Archivo | Menciones | Quién |
+|---|---:|---|
+| `requirements/REQ-019.md` | **12** | `analista-requerimientos` |
+| `requirements/REQ-026.md` | **8** | `analista-requerimientos` |
+
+**Se corrigen en la próxima comisión que toque cada archivo**, no en una propia: son fechas, no
+contenido, y una comisión dedicada a dos sustituciones cuesta más de lo que arregla. **Pero no se dejan
+sin corregir:** una fila de Historial fechada un día por delante rompe el orden temporal contra todo lo
+demás, y este proyecto usa ese orden para saber qué corrigió a qué. `REQ-017` **no está afectado** — su
+analista fechó en local, correctamente.
+
+**Clase:** `instrumento`. **Y la lección, que es la que vale:** las horas de las APIs vienen en **UTC** y
+las del repositorio son **locales**; a partir de las 18:00 CST son días distintos. Leer un sello de
+GitHub y escribirlo como fecha del proyecto es un error que **sólo aparece de noche**, que es cuando
+nadie lo revisa.

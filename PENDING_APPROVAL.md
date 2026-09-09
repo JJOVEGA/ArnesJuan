@@ -26,7 +26,7 @@
 
 ## Resueltas
 
-### RESUELTA (propietario, 2026-09-09) — **se PUBLICA `v1.33.0`**: revierte el aplazamiento de ayer, con límite declarado
+### RESUELTA (propietario, 2026-09-08) — **se PUBLICA `v1.33.0`**: revierte el aplazamiento de ayer, con límite declarado
 
 **Decisión posterior y explícita del propietario**, tomada con un dato que la primera no tenía: la puerta
 requerida `hooks-en-linux` está **en verde sobre el commit exacto** (`7dc0699`: 875 PASS · 0 FAIL · 9
