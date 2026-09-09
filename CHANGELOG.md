@@ -2,6 +2,32 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · Decisiones del propietario: `_doc_artefactos` autorizado, techo de `REQ-019` por presentar
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+**Resuelta la entrada de `REQ-026`.** El propietario autoriza **exclusivamente** actualizar
+`_doc_artefactos` en `.arnes/config.json:48` y `templates/arnes-config.json.tpl:53`, **sin activar la
+rotación**. Cierra `QA-026-04` (`contrato`) y retira el vencimiento que expiraba antes del tag
+`v1.34.0`. `rotacion.activo` y `rotacion.artefactos` quedan **fuera** de lo autorizado; `CA-13` no se
+declara, y no hacía falta decidirla — le falta trabajo, no permiso.
+
+**Sigue pendiente la de `REQ-019`, con dirección dada:** mantener el alcance y **ajustar el objetivo**
+(opción A), con el número **por presentar** — una propuesta de techo que **incluya los punteros
+obligatorios de `CA-03`**, que la medición de F1 dejó fuera declarándose cota inferior. El resultado
+se expresa como **reducción de bytes de lectura obligatoria**, nunca como ahorro de tokens.
+
+**Advertencia registrada en la propia entrada, porque «el inventario existente» no está donde
+parece:** las dos enumeraciones de F1 (106 y 164 elementos) se entregaron **por informe** y **no
+sobreviven en disco**. Lo que sí hay, y basta para dimensionar el reparto sin re-enumerar, es la tabla
+**por sección** de §«El suelo forzado MEDIDO EN BYTES», con `base`/`delegable`/`suelo` de cada
+sección. **No se abre enumeración nueva.**
+
+**Corrección de algo que la coordinadora había sobreestimado:** la cola sólo cierra la puerta **A2**
+—transiciones a `completado`—, no el trabajo. Y ningún REQ estaba listo para cerrar de todas formas:
+los tres abiertos ya tenían su propio bloqueante. Verificado además con el lector del arnés
+(`arnes_cola_pendientes`), que cuenta las entradas correctamente y por tanto **`SEC-051` no afecta a
+éstas**: ninguna usa comentarios HTML.
+
 ## [GitHub] — 2026-09-09 · Cierre de la sesión autónoma: punto de continuidad y el segundo gate de `REQ-026`
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 

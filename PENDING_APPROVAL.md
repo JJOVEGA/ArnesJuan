@@ -61,44 +61,50 @@ ahorro entre documentos, y el número sale de una medición reproducible. **No l
 lo firmaste tú, y ajustarlo dentro de la comisión que lo incumple es justo lo que este proyecto
 prohíbe por escrito.
 
-**Espera.** Tu firma sobre el techo nuevo, por documento. `REQ-019` está en `Estado: bloqueado` y
-**F2 no se despacha** hasta que exista. Nada más de la ventana depende de esto.
+**DIRECCIÓN DADA POR EL PROPIETARIO (2026-09-09), literal:** *«Para `REQ-019`, prefiero mantener el
+alcance y ajustar el objetivo, pero antes presentá una propuesta concreta de techo que incluya los
+punteros obligatorios. Usá el inventario existente para preparar el reparto y calcular su tamaño; no
+abras otra investigación extensa. Expresá el resultado como **reducción de bytes de lectura
+obligatoria**, no como ahorro real de tokens.»*
 
-### [2026-09-09] (coordinadora) — `REQ-026`: los DOS cambios del manifiesto, y el orden entre ellos
+Es decir: **opción A**, con el alcance intacto —nada de la vía B, que exigía sacar de `AGENTS.md`
+bloques que la predicción del propio REQ dice que se quedan—, y con el número **por presentar**, no
+por firmar todavía. El techo propuesto tiene que incluir el coste de los punteros de `CA-03`, que la
+medición de F1 dejó fuera declarándose **cota inferior**.
 
-**Contexto.** El mecanismo de rotación de historias **existe, está probado y está apagado**:
-`QA: aprobado` sobre `CA-01`–`CA-12` y `CA-15`, 29 casos nuevos, banco en 912 PASS · 0 FAIL. Lo que
-falta es tocar `.arnes/config.json` y `templates/arnes-config.json.tpl`, y **§6 hace de eso un gate
-tuyo**. Son **dos** cambios distintos con urgencias distintas:
+**Advertencia que debe ir con el encargo, porque «el inventario existente» no está donde parece:** las
+dos enumeraciones de F1 (**106** y **164** elementos) se entregaron **por informe** y **no
+sobreviven en disco** — sólo quedan sus discrepancias en `docs/PENDIENTES.md`. Lo que **sí** hay es la
+tabla **por sección** de §«El suelo forzado MEDIDO EN BYTES», con `base` / `delegable` / `suelo` de
+cada sección de los dos documentos, y ésa **sí** permite dimensionar el reparto sin re-enumerar. Se
+usa ésa. **No se abre una enumeración nueva.**
 
-**A — Corregir `_doc_artefactos` (`QA-026-04`, reclasificado a `contrato` por `R-021`).** Ese texto
-sigue diciendo que una entrada es sólo `- `, `* `, `### ` o `N. `, que es el mecanismo **viejo**. Vive
-también en `templates/arnes-config.json.tpl:53`, **que los proyectos heredan**, y
-`requirements/README.md:316` hace «de contrato» lo que se anuncia en una plantilla. Envejece hacia el
-lado que abre: **subestima lo que la máquina toca**. Su forzador **no es `CA-13`** sino la
-**publicación de 1.34.0**, porque el rotador corregido y la plantilla obsoleta **viajan juntos**.
-**Vencimiento: antes del tag `v1.34.0`.** No depende de nada más y no enciende nada.
-
-**B — Declarar `CA-13` (encender la rotación).** El auditor pone una condición explícita, y la
-sostengo: **no se declara hasta que exista el criterio de concurrencia Y su control.** El criterio ya
-existe —`CA-18`, escrito hoy—; **el control no**. Con `SEC-067` abierto, encenderla pone al hook de
-parada a **reescribir contratos sin red**: medido 3/3, un `Seguridad: aprobado` escrito durante la
-rotación **volvió a `pendiente`**, con `rc=0` y stderr vacío.
-
-Y una dependencia que conviene resolver **antes** de encenderla, no después: en cuanto el hook
-escriba en `requirements/`, el modelo de paralelismo de §6 **deja de cubrirlo** — el escritor será un
-hook, que no figura en ningún `Archivos:`, y `tools/arnes-paralelo.sh` seguirá respondiendo
-`disjunto` **con razón y sin alcance**. Sede: `REQ-022`, con el texto ya redactado en el informe del
-analista.
-
-**Recomendación de la coordinadora: aprobar A ahora y NO aprobar B todavía.** A cierra un `contrato`
-que bloquea el tag y no enciende nada. B necesita `CA-18` implementado, su par discriminante en una
-parte 4 del banco, y la dimensión de `REQ-022` resuelta o declarada como residual con dueño.
-
-**Espera.** Tu visto bueno para **A**, que un `desarrollador` aplicaría en una comisión corta. Para
-**B**, nada que decidir hoy: falta trabajo, no permiso.
+**Espera.** Tu firma sobre el techo nuevo, por documento, **una vez veas la propuesta con punteros
+incluidos**. `REQ-019` sigue en `Estado: bloqueado` y **F2 no se despacha** hasta entonces. Nada más
+de la ventana depende de esto.
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-09-09) — `REQ-026`: se autoriza **sólo** `_doc_artefactos`, sin activar la rotación
+
+**Lo autorizado, literal:** *«Autorizo la decisión 2 exclusivamente para actualizar `_doc_artefactos`
+en los dos archivos indicados, sin activar la rotación.»*
+
+**Alcance exacto, para que nadie lo estire:** editar el texto de `_doc_artefactos` en
+`.arnes/config.json:48` y en `templates/arnes-config.json.tpl:53`, que sigue describiendo el
+mecanismo **viejo** —que una entrada es sólo `- `, `* `, `### ` o `N. `— cuando el código ya reconoce
+filas de tabla. **Fuera de esta autorización:** `rotacion.activo`, `rotacion.artefactos` y cualquier
+otra clave. La rotación **sigue apagada**.
+
+**Efecto:** cierra `QA-026-04` (`contrato`, reclasificado en `R-021`) y retira el vencimiento que
+expiraba antes del tag `v1.34.0`. **No enciende nada.**
+
+**`CA-13` (la opción B) NO queda autorizada, y no hacía falta decidirla:** le falta trabajo, no
+permiso — `CA-18` implementado, su par discriminante en una parte 4 del banco, y la dimensión de
+`REQ-022` (que `tools/arnes-paralelo.sh` no conoce a los escritores **no-comisión**) resuelta o
+declarada como residual con dueño. Con `SEC-067` abierto, encenderla pondría al hook de parada a
+reescribir contratos sin red: medido 3/3, un `Seguridad: aprobado` escrito durante la rotación
+**volvió a `pendiente`**, con `rc=0` y stderr vacío.
 
 ### RESUELTA (propietario, 2026-09-08) — **se PUBLICA `v1.33.0`**: revierte el aplazamiento de ayer, con límite declarado
 
