@@ -2,6 +2,26 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · `REQ-026`: la selección de qué historiales se rotan deja de copiarse de `Archivos:`
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Write-back del analista que quedó **sin comitear** en el árbol. Dos correcciones de contrato en
+`REQ-026`, ninguna de código:
+
+- **`CA-13` contradecía a `CA-17`.** El `glob` declaraba «la forma `requirements/REQ-*.md`», que casa
+  con **todos** los REQ, mientras `CA-17` exige que el conjunto case **exactamente** con los
+  candidatos. Pasa a **selección explícita**: un elemento de `rotacion.artefactos` por candidato.
+  El origen del error queda escrito — el literal se copió de `Archivos:`, que declara ámbito de
+  **escritura** para `tools/arnes-paralelo.sh` y **no** el conjunto a rotar. Aviso añadido en los dos
+  sitios.
+- **`CA-15` fijaba `≤ 1,5 s` sin ninguna medición detrás.** Se retira el número y el criterio pasa a
+  **derivar el techo midiendo**, con condiciones completas (plataforma, reposo, corpus, definición de
+  «parada», coste = diferencia de medianas con `activo` true/false) y validación contra un **segundo**
+  juego de paradas. Es la **cuarta** vez de la clase *criterio derivado sin comprobar su
+  factibilidad* en dos ventanas.
+
+Se registra también el bloque derivado de `docs/ESTADO.md`, que reescribe el hook en cada parada.
+
 ## [GitHub] — 2026-09-08 · `REQ-017 CA-08 (ii)`: la resolución se comprueba sobre la RAZÓN, con `k` derivado midiendo
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
 
