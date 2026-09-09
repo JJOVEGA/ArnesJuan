@@ -2,6 +2,24 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · Cierre de la sesión autónoma: punto de continuidad y el segundo gate de `REQ-026`
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Punto de continuidad en `docs/ESTADO.md` **fuera de los marcadores derivados** (comprobado:
+posición 10.615 contra el bloque `[31.392, 33.669]`, tres marcadores intactos), con terminado /
+bloqueado / no verificado separados, los once agentes reanudables con su identificador, y la
+deuda anotada.
+
+Entrada nueva en `PENDING_APPROVAL.md` con los **dos** cambios del manifiesto de `REQ-026` y el
+orden entre ellos: **A** corregir `_doc_artefactos` —`contrato`, vence **antes del tag `v1.34.0`**,
+no enciende nada— y **B** declarar `CA-13`, que **no** se aprueba hoy porque falta trabajo, no
+permiso: `CA-18` existe y su control no.
+
+**Lo que la ventana entrega y lo que no, sin adorno.** `REQ-017` cerrado. El mecanismo de rotación
+existe, está probado con 29 casos y está **apagado**. `REQ-019` bloqueado por un techo que su propia
+medición desmintió. `REQ-023`/`REQ-024` sin empezar. Y el tag de 1.34.0 **vuelve al propietario** por
+§6: hay un `usuario/dinero` y un `contrato` abiertos.
+
 ## [GitHub] — 2026-09-09 · `REQ-026 CA-18`: no se publica sobre una lectura caducada
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 

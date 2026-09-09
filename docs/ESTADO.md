@@ -62,8 +62,8 @@ ventana por petición expresa, y **su implementación no tiene ventana decidida*
 
 | REQ | Estado | Qué hay hecho de verdad |
 |---|---|---|
-| **REQ-017** | `en-progreso` | **CONTRATADO** (`CA-08 (ii)` reescrito: cota sobre la razón). **Código EN CURSO.** `QA:`/`Seguridad:` de la cabecera son de **1.33.0** y **no cubren** este trabajo |
-| **REQ-026** | `pendiente` | **CONTRATADO** (17 criterios). Nada implementado |
+| **REQ-017** | **`completado`** (2026-09-08, `496068c`) | **TERMINADO.** `QA: aprobado` y `Seguridad: aprobado (R-020)` **re-emitidos sobre este árbol**. Nueve hallazgos abiertos, los nueve `instrumento` |
+| **REQ-026** | `en-revisión` | **MECANISMO IMPLEMENTADO Y VALIDADO** (`CA-01`–`CA-12`, `CA-15`): `QA: aprobado`, `Seguridad: con-hallazgos (R-021)`. **NO cierra**: `SEC-067` (`usuario/dinero`) y `QA-026-04` (`contrato`). `CA-13`, `CA-14`, `CA-16`, `CA-17` y `CA-18` **contratados y sin implementar** |
 | **REQ-027** | `pendiente` | **CONTRATADO** (10 criterios). Nada implementado. **Crear el REQ no instala las reglas** |
 | **REQ-019** | `pendiente` | Contrato **corregido** (techo `0,72×`, línea base 521, `D-2/3/5/9`). `SEC-033` (`contrato`) **abierto**. Sin implementar |
 | **REQ-023 / REQ-024** | `borrador` | Sin contrato cerrado. Son la remediación de `SEC-047` |
@@ -150,6 +150,98 @@ ellos. Se corrigen juntos o no se corrigen.
 es local, y sólo lo dirán las corridas siguientes de `hooks-en-linux`. La derivación de `k` (56
 repeticiones) **no se reprodujo**: QA auditó el razonamiento, no las cifras. El techo de coste
 `+28,0 s = 0,569×` está **acreditado por el desarrollador y no verificado por QA**.
+
+## PUNTO DE CONTINUIDAD — 2026-09-09, cierre de la sesión autónoma
+
+> **Léelo antes de actuar.** Sustituye a lo de arriba donde discrepe. Rama `rel/registro-1.33.0`,
+> **todo empujado**, árbol limpio.
+
+### Terminado
+
+- **`REQ-017` — `completado`** (`496068c`). El ciclo entero en **una** vuelta: analista → desarrollador
+  (`19b1822`) → QA (`con-hallazgos`, 7 hallazgos) → desarrollador (`538c266`) → QA (`aprobado`) →
+  auditoría (`R-020`). `CA-08 (ii)` decide ahora por **unanimidad de `k = 4`** razones, con `k`
+  derivado por **saturación** sobre 56 repeticiones y el techo `≤ 1,25×` intacto.
+- **`REQ-026` — mecanismo implementado y validado.** El rotador **ya sabe mover una tabla**: 29 casos
+  nuevos, `CA-01`–`CA-12` y `CA-15` acreditados, banco de 887 → **916 casos**.
+- **Deuda cerrada de paso:** `SEC-066` (el README del banco desfasado) y la colisión `ADR-006`, que
+  `REQ-019` reclamaba y era de `REQ-014`.
+
+### Bloqueado, y por qué exactamente
+
+| Qué | Clase | Quién lo desbloquea |
+|---|---|---|
+| **`REQ-019`** — el techo `CA-07 0,72×` es **insatisfacible en bytes** (suelo `0,810×`, exceso 6.705 B) | decisión | **Tú**, `PENDING_APPROVAL.md`, entrada del 09-08 |
+| **`REQ-026`** — `SEC-067` (`usuario/dinero`): actualización perdida en concurrencia | defecto | `CA-18` implementado + parte 4 del banco |
+| **`REQ-026`** — `QA-026-04` (`contrato`): `_doc_artefactos` describe el mecanismo viejo, y vive en la **plantilla que los proyectos heredan** | decisión | **Tú**, entrada del 09-09 opción **A**. **Vence antes del tag `v1.34.0`** |
+| **`REQ-023` + `REQ-024`** — `borrador`, sin contrato | trabajo | analista, no empezado |
+| **Tag `v1.34.0`** | — | vuelve a ti por §6: hay `usuario/dinero` y `contrato` abiertos |
+
+### Decisiones vigentes que se aplicaron esta sesión
+
+1. **El tope dev↔QA se cuenta por CICLO, no por REQ, cuando §9 reabre.** Lectura **de la
+   coordinadora**, revocable: si el contador sobreviviera a una reapertura, la REGLA DE ESTADO
+   —«re-recorre el ciclo»— sería inoperante para todo REQ que hubiera gastado su tope. `AGENTS.md` §6
+   **no resuelve el caso por escrito**. Si lo lees como acumulativo, `REQ-017` debió pasar a
+   `bloqueado` en vez de cerrar, y revertirlo cuesta una comisión.
+2. **La medición de factibilidad va ANTES del trabajo, no al final.** Se aplicó a `REQ-019` y ahorró
+   7–11 h de reparto hacia un blanco inalcanzable. Es la quinta aparición de *«criterio derivado sin
+   comprobar su factibilidad»*.
+3. **Reanudar agentes en vez de abrir nuevos.** Medido: la re-validación de QA de `REQ-017` costó
+   **39 k** de delta contra los **148 k** de una validación completa.
+
+### Agentes — comprobar antes de despachar
+
+Todos **terminados y reanudables**. Reanudar cuesta mucho menos que abrir nuevo.
+
+| Id | Rol · trabajo |
+|---|---|
+| `ae0b88aa7187979d4` | `desarrollador` · `REQ-026`, el rotador. **Es quien tiene que implementar `CA-18`** |
+| `a7cfac0c040308909` | `qa-tester` · `REQ-026` |
+| `abeaf052ce49ea3a2` | `auditor-seguridad` · `R-021`. **Es quien cierra `SEC-067`** |
+| `afc7860e40e10399b` | `analista` · `REQ-026`, autor de `CA-08` y `CA-18` |
+| `a4453da209b8dd7e5` | `desarrollador` · `REQ-019` F1, midió el suelo en bytes |
+| `a515fa2cde6a9d5d4` | `analista` · `REQ-019`, tiene el plan por fases |
+| `a3f8b1dcaceab4f10`, `a67c98b758286fd20`, `ad6299cb1acaca246`, `a22f39d25dbc01323`, `a98ae536310d73d8a` | `REQ-017` y `REQ-027`, cerrados |
+
+### Siguiente acción
+
+**Con la rotación APAGADA no hay riesgo vivo: nada de esto es urgente.**
+
+1. Resolver la entrada **A** de la cola (`_doc_artefactos`) — comisión corta, cierra un `contrato`
+   que bloquea el tag.
+2. Firmar el techo de `REQ-019` o elegir otra opción. Sin eso, F2 no se despacha.
+3. Implementar **`CA-18`** con su par discriminante en una **parte 4** del banco —
+   `28-rotacion-seccion-3-la-tabla.sh` está en **400 de 400 líneas**, el techo exacto de
+   `REQ-014 CA-18`, así que **el próximo caso obliga a partir, no a alargar** — y que el auditor
+   cierre `SEC-067`.
+4. `REQ-022`: la dimensión que el analista dejó redactada — `arnes-paralelo.sh` no conoce a los
+   escritores **no-comisión**. **Antes** de encender la rotación, no después.
+
+### Lo NO verificado, dicho expresamente
+
+- **Que `k = 4` resuelva en el runner de `hooks-en-linux`: SIN MEDIR.** Todo lo verificado es local.
+  Y su modo de fallo es **silencioso** — es `SEC-064`.
+- **El techo de coste de `REQ-017`** (`+28,0 s = 0,569×`): acreditado por el desarrollador, **no
+  verificado por nadie**.
+- **El techo de `CA-15`** (`≤ 0,140 s`): QA auditó estadístico, aritmética y orden; **no re-midió** la
+  campaña. Sin medir en el runner real ni en Windows/MSYS.
+- **Con la rotación encendida sobre `requirements/` no hay NINGUNA medición, de nadie.** Todo el
+  trabajo fue sobre copias en `/tmp`, y ningún REQ real se rotó.
+- **`(iv)` de `CA-18`** —que dos paradas dupliquen el bloque— es **modelado, no medido**.
+- **La ausencia de una séptima forma ambigua es evidencia acotada, no demostración**, y lo declaran
+  los dos: QA y el auditor.
+- **Mi propio consumo sigue sin instrumentar.** Lo único medido son los subagentes.
+
+### Deuda anotada y NO resuelta
+
+**20 fechas** un día por delante (`REQ-019` 12, `REQ-026` 8) — nadie abrió pasada; se corrigen en la
+comisión que toque cada zona. `SEC-070` y `SEC-071`: un **tercer y cuarto** sitio con la forma cruda
+de lectura, uno de ellos en un punto que **sí escribe**. `SEC-058`: el tercer término de un piso de
+`CA-18` **no lo verifica ninguna máquina**. El epígrafe de `REQ-026` que dice «Dos decisiones» y
+lista tres. Y el `Archivos:` de `REQ-017` nombra **dos secciones que no existen** — se corrige
+**junto con `REQ-021`**, que declara los mismos nombres fantasma, porque arreglar sólo uno puede
+producir un `disjunto` en falso.
 
 ### Deuda anotada y NO resuelta
 

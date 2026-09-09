@@ -64,6 +64,40 @@ prohíbe por escrito.
 **Espera.** Tu firma sobre el techo nuevo, por documento. `REQ-019` está en `Estado: bloqueado` y
 **F2 no se despacha** hasta que exista. Nada más de la ventana depende de esto.
 
+### [2026-09-09] (coordinadora) — `REQ-026`: los DOS cambios del manifiesto, y el orden entre ellos
+
+**Contexto.** El mecanismo de rotación de historias **existe, está probado y está apagado**:
+`QA: aprobado` sobre `CA-01`–`CA-12` y `CA-15`, 29 casos nuevos, banco en 912 PASS · 0 FAIL. Lo que
+falta es tocar `.arnes/config.json` y `templates/arnes-config.json.tpl`, y **§6 hace de eso un gate
+tuyo**. Son **dos** cambios distintos con urgencias distintas:
+
+**A — Corregir `_doc_artefactos` (`QA-026-04`, reclasificado a `contrato` por `R-021`).** Ese texto
+sigue diciendo que una entrada es sólo `- `, `* `, `### ` o `N. `, que es el mecanismo **viejo**. Vive
+también en `templates/arnes-config.json.tpl:53`, **que los proyectos heredan**, y
+`requirements/README.md:316` hace «de contrato» lo que se anuncia en una plantilla. Envejece hacia el
+lado que abre: **subestima lo que la máquina toca**. Su forzador **no es `CA-13`** sino la
+**publicación de 1.34.0**, porque el rotador corregido y la plantilla obsoleta **viajan juntos**.
+**Vencimiento: antes del tag `v1.34.0`.** No depende de nada más y no enciende nada.
+
+**B — Declarar `CA-13` (encender la rotación).** El auditor pone una condición explícita, y la
+sostengo: **no se declara hasta que exista el criterio de concurrencia Y su control.** El criterio ya
+existe —`CA-18`, escrito hoy—; **el control no**. Con `SEC-067` abierto, encenderla pone al hook de
+parada a **reescribir contratos sin red**: medido 3/3, un `Seguridad: aprobado` escrito durante la
+rotación **volvió a `pendiente`**, con `rc=0` y stderr vacío.
+
+Y una dependencia que conviene resolver **antes** de encenderla, no después: en cuanto el hook
+escriba en `requirements/`, el modelo de paralelismo de §6 **deja de cubrirlo** — el escritor será un
+hook, que no figura en ningún `Archivos:`, y `tools/arnes-paralelo.sh` seguirá respondiendo
+`disjunto` **con razón y sin alcance**. Sede: `REQ-022`, con el texto ya redactado en el informe del
+analista.
+
+**Recomendación de la coordinadora: aprobar A ahora y NO aprobar B todavía.** A cierra un `contrato`
+que bloquea el tag y no enciende nada. B necesita `CA-18` implementado, su par discriminante en una
+parte 4 del banco, y la dimensión de `REQ-022` resuelta o declarada como residual con dueño.
+
+**Espera.** Tu visto bueno para **A**, que un `desarrollador` aplicaría en una comisión corta. Para
+**B**, nada que decidir hoy: falta trabajo, no permiso.
+
 ## Resueltas
 
 ### RESUELTA (propietario, 2026-09-08) — **se PUBLICA `v1.33.0`**: revierte el aplazamiento de ayer, con límite declarado
