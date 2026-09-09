@@ -26,6 +26,28 @@
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-09-09) — **se PUBLICA `v1.33.0`**: revierte el aplazamiento de ayer, con límite declarado
+
+**Decisión posterior y explícita del propietario**, tomada con un dato que la primera no tenía: la puerta
+requerida `hooks-en-linux` está **en verde sobre el commit exacto** (`7dc0699`: 875 PASS · 0 FAIL · 9
+SKIP), así que **no hacía falta saltarse nada** — la opción B (autorización para publicar en rojo) quedó
+sin objeto.
+
+**Fusionado con `jvega-habitat`, que NO tiene admin, deliberadamente.** La cuenta `JJOVEGA` estaba
+autorizada por el propietario y disponible (`admin=true`, verificado), y **no se usó**: fusionar con la
+cuenta sin privilegios demuestra **por construcción** que el control se satisfizo de verdad. Merge
+`810128a`; tag `v1.33.0` sobre él.
+
+**El límite bajo el que se publicó, que es la parte que importa.** La evidencia de rendimiento es el
+`0,125×` acreditado de `REQ-017 CA-05` (9,60 s frente a 76,19 s, 2026-09-07), **NO** el verde de
+`CA-08 (ii)`. Ese caso mide **0,973×–1,364× sobre código idéntico** contra un techo de 1,25×: su verde y
+su rojo son igual de poco informativos. **No se fusionó porque el semáforo se pusiera verde** —eso habría
+sido elegir la corrida que conviene, el atajo que esta misma entrada nombró y descartó— sino porque la
+sustancia está acreditada por otra vía y el banco entero pasa.
+
+**Lo que NO se revierte:** arreglar la sonda sigue siendo el **primer trabajo de 1.34.0**, por delante de
+`REQ-019`. Detalle y las tres formas conformes, en `docs/PENDIENTES.md`.
+
 ### RESUELTA (propietario, 2026-09-08) — **se APLAZA el tag `v1.33.0`; la sonda se arregla en 1.34.0 por DELANTE de `REQ-019`**
 
 Opción **C** elegida. Descartadas: **(A)** arreglar la sonda ahora dentro de esta ventana —ciclo completo, ~4 comisiones— y **(B)** publicar con el rojo bajo autorización expresa. **No se ejerció (D)**: relanzar el CI hasta obtener un verde y fusionar en esa corrida, que con una sonda cuya dispersión cubre el techo no es esperar a que pase, sino elegir la corrida que da la respuesta que se quiere.
