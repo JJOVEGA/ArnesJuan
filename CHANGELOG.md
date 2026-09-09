@@ -2,6 +2,80 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · Re-validación de `REQ-027`: los cinco cerrados, tres nuevos, y una cita que se corrigió a sí misma
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus) + coordinadora.
+
+Segunda vuelta, aislada con `git worktree` sobre `a41f8ea`. Antes de decidir qué no repetir, comprobó
+`git diff --stat 6dd3f8a a41f8ea -- AGENTS.md templates/AGENTS.md.tpl` → **vacío**: el bloque es el
+mismo, **y eso es lo que autoriza** a no re-validar `CA-01`/`06`/`07`/`09`/`10`/`11`. Y extrajo los dos
+comandos **del texto literal de la skill** con `grep -o`, pasándolos por argumento a una transcripción
+**nueva** — ni la del desarrollador ni la suya anterior.
+
+**Los cinco hallazgos, CERRADOS.** `QA-027-01`: coherencia interna comprobada (1.036 + 807 = 1.843).
+`QA-027-03`: las cuatro transiciones reproducidas exactas, y **la mitad que de verdad mata el fail-open
+es contar también el marcador de CIERRE** — con las dos cuentas, incluso la cadena desnuda pasa a
+`1/0 → UNKNOWN`, **fail-closed**. `QA-027-05`: `cmp` crudo difiere, sin el `\r` final idéntico.
+
+**`QA-027-02` cerrado sobre la propiedad y no sobre tres celdas**, y con la frase que lo resume:
+re-midió fila por fila hasta **3.702 = `wc -c`** y **reprodujo la causa** —`awk '{s+=length($0)+1}'`
+da **3.607** (= `wc -m`), con `LC_ALL=C` da **3.702** (= `wc -c`)—. *«Encontrar que el defecto era el
+instrumento, no el número, es mejor que el arreglo.»*
+
+**`QA-027-04` cerrado, y QA se corrigió a sí misma:** su «629» **era correcta sobre `6dd3f8a`**, el
+commit que midió, y se desfasó **porque `REQ-026` creció**. *«La lección —la línea sin su commit no
+basta— aplica a mi cita igual que a la suya.»*
+
+**Y suscribió la reclasificación de `-03` a `contrato` retirando su propio argumento:** la cláusula de
+§6 que había invocado habla de **guardianes, lectores y pruebas**, y ésta era **la migración, que es el
+entregable**. *«Un proyecto que nunca recibe las reglas tiene una coordinadora que decide distinto.»*
+
+### Tres hallazgos nuevos
+
+- **`QA-027-07`** (**`contrato`**, bloquea): el REQ **no declara** que la vía real de `/arnes-upgrade`
+  no se ejecutó. Comprobado y no supuesto: `has("commands")` → **`false`**, no existe `commands/`, un
+  solo archivo en la skill. **No retira la acreditación de `CA-10`** —el criterio dice que lo que se
+  comprueba es **la conducta**, y se comprobó dos veces con transcripciones independientes— pero sin la
+  cláusula el pendiente **desaparece al cerrar**, porque su dueño es la **coordinadora** y no el REQ.
+- **`QA-027-06`** (`instrumento`): en `CA-05` deben quedar **1.037 B / 1.844 B**. Las dos cifras son
+  ciertas sobre rangos distintos, pero **`CA-05` cita ese desglose como su corrida**, y la única
+  convención con la que **suma** es la que atribuye cada blanco al tramo que cierra. *«Un criterio cuyo
+  número no aparece en la corrida que él mismo cita es la forma leve del defecto que `QA-027-01` fue en
+  su forma grave.»* El **49,8 % no se mueve**.
+- **`QA-027-08`** (`instrumento`): **el motivo escrito para descartar el anclaje es falso contra su
+  propia tabla nueva.** Medido: con las **dos** cuentas, un espacio final da `0/1 → UNKNOWN` con **1**
+  bloque, y tras los dos marcadores `0/0` salta la guarda de `## 14.` → `UNKNOWN`, **1** bloque.
+  **El anclaje nunca produce `NUEVO` ni dos bloques** con la conducta de este tramo: ese escenario sólo
+  existía con la de **una** cuenta, que este mismo tramo eliminó. **La decisión de no anclar sigue
+  siendo correcta por otra razón que sí se sostiene.** Pesa porque la skill **la heredan los
+  proyectos** y porque la regla **`B.1`** del bloque que este REQ entrega dice exactamente esto.
+
+### `CA-08` señal (c): PENDIENTE, y no se inventa
+
+QA explica por qué no puede tomarla: el **numerador** es el `subagent_tokens` que el arnés reporta **al
+terminar su proceso**, así que **existe fuera de ella** y sólo lo ve quien despacha. Y un hecho que
+cambia quién es «la primera»: el bloque existe desde `6dd3f8a`, luego la primera comisión despachada ya
+con él fue **su 1.ª vuelta**, cuyo `subagent_tokens` es **140.349** — dato conservado en
+`docs/ESTADO.md` para que no se pierda. Además **`CA-08` no define qué cuenta como «un resultado
+entregado»**, así que cualquier razón formada hoy sería **incomparable** con la de otra comisión.
+
+### Dos residuos juzgados, y un forzador que QA corrigió a la coordinadora
+
+Citar el marcador entero en prosa es **aceptable**: medidas **las dos** formas, ambas terminales y con
+archivo intacto (`2/2 UNKNOWN` rc 3 y `1/1 MODIFICADO` rc 2); la alternativa exigiría interpretar
+contexto Markdown, «la clase de detección que termina con alguien apagando el guardián». Y sobre que
+ninguna puerta lo vigile: **no comparte** que la candidata sea `REQ-025` —`skills/` no está en el banco
+y esperar un comprobador completo es **desproporcionado**—; el forzador barato es **la aserción de una
+línea que ella misma corrió**.
+
+**Con los dos write-backs de una cláusula hechos y sin re-medir nada más, QA aprueba.** El cierre
+además exige `Seguridad: aprobado`, hoy `pendiente`.
+
+### Sesión detenida por cambio de cuenta
+
+El `desarrollador` de `REQ-023` se detuvo **antes de escribir un byte** — cero pérdida, ninguna
+comisión viva. El punto de retomada, con los cuatro pasos en orden y el encargo de la vuelta 1
+resumido, queda en `docs/ESTADO.md` §«⏸ SESIÓN DETENIDA».
+
 ## [GitHub] — 2026-09-09 · `REQ-023 CA-03`: un sorteo que puede fallar, y `CA-12 (iii)` fuera de alcance con su nombre
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus), `desarrollador` (Opus).
 

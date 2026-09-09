@@ -46,6 +46,67 @@ el descontrol del ciclo 3.
 > Rama `rel/registro-1.33.0` @ `67eabfb`, **todo empujado**. Cola de aprobaciones: **`ARNES_COLA=0`**,
 > así que **la cola no bloquea ningún cierre**.
 
+### ⏸ SESIÓN DETENIDA — 2026-09-09, cambio de cuenta. **Retomar exactamente por aquí**
+
+**Cero pérdida.** El `desarrollador` de `REQ-023` (`a347fe27f3ac56805`) se detuvo **antes de escribir un
+byte**: `git status` no mostraba nada en `hooks/`, `tools/` ni `tests/`. **Ninguna comisión viva.**
+
+**Lo primero al retomar, en este orden:**
+
+1. **`REQ-027` — dos write-backs de UNA CLÁUSULA cada uno, y QA ya dijo que con ellos aprueba.**
+   Analista `a22f39d25dbc01323` (reanudable):
+   - **`QA-027-06`** (`instrumento`): en `CA-05` deben quedar **`1.037 B` y `1.844 B`**, no 1.036/1.843.
+     Las dos cifras son ciertas sobre rangos distintos, pero **`CA-05` cita ese desglose como su
+     corrida**, y la única convención con la que el desglose **suma** es la que atribuye cada blanco al
+     tramo que cierra. El **49,8 % no se mueve**.
+   - **`QA-027-07`** (**`contrato`**, bloquea): el REQ **no declara** que la vía real de
+     `/arnes-upgrade` **no se ejecutó**. `CA-10` se acredita por **conducta** —comprobada dos veces con
+     transcripciones independientes— pero el contrato debe decir **qué se acreditó y qué queda
+     pendiente**, con dueño **coordinadora**. Sin esa cláusula, el pendiente **desaparece al cerrar**.
+   Después: QA re-valida **sólo eso** (`a6dc6356bb177db68`) y **luego el auditor**
+   (`abeaf052ce49ea3a2`). Orden §6, no se relaja.
+
+2. **`REQ-023` — vuelta 1 de 3 al `desarrollador`** (`a347fe27f3ac56805`, reanudable con su contexto).
+   El encargo ya estaba escrito; lo esencial:
+   - **`QA-023-01`** (`usuario/dinero`, **crítica**): **`SEC-047` NO está cerrado.** El alfabeto se
+     deriva de las seis claves, **dos son multi-palabra**, así que **contiene `0x20`**. La guarda borra
+     lo **ajeno** y pregunta si lo que queda **es** una clave ⇒ si lo insertado **pertenece** al
+     alfabeto no se borra, y si **sustituye** al blanco interno **se borra y el blanco no se repone**.
+     En los dos casos **calla** y se resuelve como **ausencia**. Medido: `U+0020`, **NBSP** y **TAB**
+     dan **allow en las dos versiones**; `U+FEFF` y `Ω` dan deny.
+   - **Mecanismo conforme ya derivado por el analista** (leyendo, **no ejecutado**): **reponer un
+     blanco en el sitio de la retirada y colapsar blancos repetidos** antes de preguntar si lo que
+     queda es una clave. Cubre sustitución y duplicación sin denegar nada legítimo.
+   - **`CA-03` fue reescrito** y ahora su caso **puede fallar**: sorteo **estratificado** en E1/E2
+     derivados de la constante de claves, **tres** procedimientos (insertar · sustituir el blanco ·
+     **duplicarlo**), veredicto **por rama**, y **anti-tautología como criterio** — publica las tiradas
+     por rama junto a la semilla, **SKIP y nunca PASS** si una rama de DENY se queda sin tirada, y **un
+     pool escrito a mano incumple**.
+   - **`QA-023-04`**: arreglar la derivación que pasó de **6 a 5** claves y **perdió `Estado`**
+     (`36-…-2-los-lectores.sh:228`). **PARADA:** ese archivo y `36-…-3-comentar-retira.sh:33` **NO
+     están en el `Archivos:`** del REQ — si el arreglo los escribe, **para y avisa**; ampliar el campo
+     es enrutado de la coordinadora.
+   - **Fuera de esta vuelta:** `CA-12 (iii)` (fuera de alcance con dueño, ventana propuesta 1.35.0 y
+     forzador), `CA-08` (gate humano de `SEC-048`) y `CA-10`.
+
+3. **`CA-10` de `REQ-023`** — fila de `AGENTS.md` §13 y su apartado en la skill. `AGENTS.md` está
+   **libre** ahora.
+
+4. **`REQ-024`** — contrato cerrado y despachable. **Colisiona con `REQ-023`** en `hooks/lib.sh`,
+   `hooks/guard-completado.sh`, `tools/arnes-lectura.sh`, `run.sh` y `README.md`, y **dentro del
+   primero, la misma región de funciones**. Su factibilidad **ya está resuelta y medida**: hay vía a
+   **0 procesos añadidos** plegando la llave en el `jq` que ya existe en `arnes_parse_manifest`
+   (`docs/arnes/req-024-activacion-cero-procesos.md`). Defecto a cerrar al implementar: la llave como
+   cadena `"true"` cae a **ALLOW sin aviso**.
+
+**Dato que hay que conservar o se pierde — línea base de `CA-08 (c)` de `REQ-027`:** la señal se fija
+en la **primera comisión despachada ya con el bloque**, y el bloque existe desde `6dd3f8a`. Esa
+comisión fue la **1.ª vuelta de QA de `REQ-027`** (`a6dc6356bb177db68`), y su
+**`subagent_tokens` = 140.349**. QA no puede tomarla porque el numerador **existe fuera de su proceso**
+y sólo lo ve quien despacha. Si esa cifra se pierde, la honesta es tomarla sobre la primera cuyo
+número exista **con la desviación escrita**. Y `CA-08` **no define qué cuenta como «un resultado
+entregado»**, así que cualquier razón formada hoy sería **incomparable** con la de otra comisión.
+
 ### Alcance vigente: CUATRO trabajos (`docs/PLAN.md` §«ALCANCE VIGENTE DE 1.34.0»)
 
 `REQ-019` **aplazado a 1.35.0** por el propietario. `REQ-027` **entró como quinto y luego la ventana se
@@ -574,7 +635,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-09 09:39
+## Estado derivado — 2026-09-09 09:41
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -584,7 +645,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `rel/registro-1.33.0` @ `a41f8ea` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `rel/registro-1.33.0` @ `6f1eaa7` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.0`
 **Aprobaciones pendientes:** 0
 **REQ:** 27 — completado 13 · en-revisión 2 · en-progreso 3 · bloqueado 2 · otros 7
@@ -607,6 +668,6 @@ _Sólo los REQ abiertos; los 13 completados no se listan._
 | REQ-024 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-025 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-026 | en-revision | aprobado | con-hallazgos | critico | qa-026-03(instrumento),qa-026-07(instrum… |
-| REQ-027 | en-progreso | con-hallazgos | pendiente | critico | qa-027-01(contrato),qa-027-02(instrument… |
+| REQ-027 | en-progreso | con-hallazgos | pendiente | critico | qa-027-06(instrumento),qa-027-07(contrat… |
 
 <!-- ARNES:DERIVADO fin -->
