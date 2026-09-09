@@ -40,7 +40,81 @@ el descontrol del ciclo 3.
 > (95,66 s → 45,14 s), y esperar al banco es gratis en tokens. REQ-021 ahorra ~150 k por ventana **cuando
 > exista**. La palanca de tokens es **REQ-019**, y está en 1.34.0.
 
-## PUNTO DE CONTINUIDAD — 2026-09-08, ventana 1.34.0
+## ★ PUNTO DE CONTINUIDAD VIGENTE — 2026-09-09, antes de compactar
+
+> **Éste es el bueno.** Todo lo que siga por debajo es **anterior** y, donde discrepe, **manda éste**.
+> Rama `rel/registro-1.33.0` @ `67eabfb`, **todo empujado**. Cola de aprobaciones: **`ARNES_COLA=0`**,
+> así que **la cola no bloquea ningún cierre**.
+
+### Alcance vigente: CUATRO trabajos (`docs/PLAN.md` §«ALCANCE VIGENTE DE 1.34.0»)
+
+`REQ-019` **aplazado a 1.35.0** por el propietario. `REQ-027` **entró como quinto y luego la ventana se
+reordenó a cuatro**: sonda (`REQ-017`), `REQ-026`, `REQ-023`+`REQ-024`, `REQ-027`.
+
+### Estado por REQ, medido ahora
+
+| REQ | Estado | Bloqueantes |
+|---|---|---|
+| **REQ-017** | **`completado`** | — |
+| **REQ-023** | `en-revisión` | ninguno declarado; **QA en curso** |
+| **REQ-024** | `pendiente` | contrato cerrado y **despachable**; espera archivos |
+| **REQ-026** | `en-revisión` | **`SEC-072`** (`contrato`), **`SEC-073`** (`contrato`), y `usuario/dinero` |
+| **REQ-027** | `en-progreso` | **`QA-027-01`** (`contrato`) + `QA-027-03` en corrección |
+| **REQ-019** | `bloqueado` | `SEC-033` (`contrato`). **Aplazado a 1.35.0** |
+| **REQ-021** | `bloqueado` | 3 vueltas agotadas, sin salida decidida |
+
+### Agentes — COMPROBAR antes de despachar. Reanudar cuesta ~4× menos que abrir nuevo
+
+**VIVOS ahora:** `a581adc9758dd701d` (`qa-tester` · `REQ-023`) y `a67b1bb3ed3cd75c8`
+(`desarrollador` · `QA-027-03` + correcciones + vía real de `/arnes-upgrade`).
+
+**Reanudables:** `afc7860e40e10399b` (analista `REQ-026`, autor de `CA-08`/`CA-18`/`ADR-008`) ·
+`a22f39d25dbc01323` (analista `REQ-027`) · `a0926dca26256f347` (analista `REQ-024`) ·
+`a053fc8da6af7d93b` (analista `REQ-023`) · `a515fa2cde6a9d5d4` (analista `REQ-019`, tiene el plan por
+fases) · `ae0b88aa7187979d4` (dev `REQ-026`) · `a347fe27f3ac56805` (dev `REQ-023`) ·
+`ad9d3d84a75b0d243` (dev `REQ-027`) · `a4453da209b8dd7e5` (dev `REQ-019`) ·
+`a7cfac0c040308909` (QA `REQ-026`) · `a6dc6356bb177db68` (QA `REQ-027`) ·
+`abeaf052ce49ea3a2` (auditor, `R-021`/`R-022`) · `a67c98b758286fd20`, `ad6299cb1acaca246`,
+`a3f8b1dcaceab4f10`, `aab196e5d94807e0c`, `a98ae536310d73d8a`, `a80898cb0a6602cbf` (`REQ-017`, `REQ-024`).
+
+### Evidencia en disco — enlazada, no copiada
+
+`docs/decisions/ADR-008-…-escrituras-concurrentes.md` (`propuesta`) · `docs/arnes/req-019-techo-propuesto.md`
+· `docs/arnes/req-019-fechas-desfasadas.md` · `docs/arnes/req-024-activacion-cero-procesos.md` ·
+`docs/arnes/req-023-coste-y-dominio.md` · `docs/arnes/req-023-registro-ruta-critica.txt` ·
+`docs/qa/1.34.0.md` · `docs/qa/REQ-027.md` · `docs/seguridad/registro-seguridad.md` (`R-020`–`R-022`).
+
+### Siguiente acción, en este orden
+
+1. Esperar a los **dos frentes vivos**.
+2. **QA re-valida sólo lo afectado** de `REQ-027`, y **luego seguridad**. Orden §6, no se relaja.
+3. **`CA-10` de `REQ-023`** —fila de `AGENTS.md` §13 y su apartado en la skill— **en cuanto QA suelte
+   `requirements/REQ-023.md`**. Es la única dependencia de escritura pendiente.
+4. **`REQ-024` implementación**: colisiona con `REQ-023` en `hooks/lib.sh`, `guard-completado.sh`,
+   `tools/arnes-lectura.sh`, `run.sh` y `README.md` — y **dentro del primero, la misma región de
+   funciones**. Entra cuando `REQ-023` suelte esos archivos.
+5. `CA-08 (c)` de `REQ-027`: **de oportunidad**, como subproducto del próximo encargo. Nunca con
+   comisión propia.
+
+### Lo que NO se puede hacer, y por qué
+
+**`v1.34.0` NO se publica.** No sólo por `REQ-026`: hay **`contrato` abiertos** en `REQ-007` (tres),
+`REQ-013` (dos), `REQ-020` (**ocho**), `REQ-019`, `REQ-021`, `REQ-026` y `REQ-027`. Por la regla global
+del propietario (2026-09-08) **cualquiera devuelve el tag a él**, y su instrucción vigente es no
+publicar sin resolver **o aceptar explícitamente**. La decisión que llegará al cerrar el trabajo no es
+«publicamos», sino **cuáles se resuelven, cuáles se declaran residuales con dueño y vencimiento, y
+cuáles se aceptan**.
+
+**No hay riesgo vivo en `REQ-026`**: la rotación está **apagada** (`activo: false`, `artefactos: []`) y
+**ningún REQ real se ha rotado nunca**.
+
+### Coste
+
+**≈3,1 M tokens en 19 comisiones cerradas**, por `subagent_tokens`, que es **acumulado por agente** —
+no se suma dos veces al reanudar; ese error se cometió y está corregido. **El consumo de la
+coordinadora sigue sin instrumentar.**
+
+## PUNTO DE CONTINUIDAD — 2026-09-08, ventana 1.34.0 [ANTERIOR]
 
 > **Léelo antes de actuar, junto con las reglas vigentes.** Y **comprueba el estado de los agentes de
 > abajo antes de despachar ninguno**: varios siguen reanudables y despachar de nuevo duplica trabajo.
@@ -247,6 +321,32 @@ Todos **terminados y reanudables**. Reanudar cuesta mucho menos que abrir nuevo.
    lectura obligatoria** por comisión. **Falta sólo su firma.**
 4. **Revisión de fechas CERRADA por el propietario**, sin convertir las dudas en bloqueantes.
 
+### Instrucciones vigentes del propietario que ejecutan OTROS agentes, más tarde (2026-09-09)
+
+**1. `REQ-027 CA-08` señal (c) — se toma DE OPORTUNIDAD, nunca con una comisión propia.**
+*«Aprovechá el próximo encargo autorizado que cargue el bloque; no abras una comisión solo para
+producir esa señal.»* El criterio la fija en la primera comisión despachada **ya con** el bloque `§14`
+de `AGENTS.md`, y `REQ-027` se entregó en `6dd3f8a`, así que **toda comisión posterior es candidata**.
+Va **como subproducto** en el encargo de la próxima que corra, y el numerador ya existe sin medir nada
+nuevo: el `subagent_tokens` que el arnés reporta al terminar cada comisión.
+
+**Mientras la señal no se tome, la consecuencia es de contrato y está escrita en tres sitios**
+—`REQ-027:127-128`, `docs/qa/REQ-027.md` §5 y el `CHANGELOG`—: **NO se declara que las reglas
+sirven**, y `REQ-025` no puede citar este REQ como evidencia de que bastan.
+
+**2. Las limitaciones de Codex y Cursor se CONSERVAN explícitamente**, y no se tocan sin evidencia
+nueva:
+
+| Herramienta | Estado | Por qué |
+|---|---|---|
+| **Claude Code** | `verificada` | `@AGENTS.md` en `CLAUDE.md:6` y `templates/CLAUDE.md.tpl:6`, comprobado por el desarrollador **y** por QA |
+| **Codex** | **`no verificada`** | Sólo hay una **afirmación del proveedor** (`codex-self-knowledge.md:52`). QA validó el descarte: una afirmación del fabricante **no es** la observación de que el bloque llegue a una coordinadora de Codex, y la regla `B.1` no la acepta |
+| **Cursor** | **`no verificada`** | **No está instalado** y no hay configuración suya en el repositorio: no hay nada que observar |
+
+**La consecuencia, dicha como es:** `REQ-027` entrega su objetivo **para UNA de las tres herramientas**.
+Quien escriba `verificada` en las otras dos necesita **la observación**, no la promesa del fabricante —
+y ése es exactamente el fallo que este REQ persigue.
+
 ### Deuda anotada y NO resuelta
 
 ~~20 fechas un día por delante~~ — **cerrado el 2026-09-09, y el número era falso.** La deuda decía
@@ -264,13 +364,24 @@ lista tres. Y el `Archivos:` de `REQ-017` nombra **dos secciones que no existen*
 **junto con `REQ-021`**, que declara los mismos nombres fantasma, porque arreglar sólo uno puede
 producir un `disjunto` en falso.
 
-### Deuda anotada y NO resuelta
+### [SECCIÓN OBSOLETA — sustituida el 2026-09-09; sus tres primeros datos son FALSOS]
 
-`REQ-019` y `REQ-026` conservan **20 fechas** un día por delante (12 y 8) — se corrigen en la próxima
-comisión que toque cada archivo. Falta la entrada de «Migraciones conocidas» de `arnes-upgrade`
-(contratada en `REQ-027 CA-10` como **condición de entrega**). El techo de **2.600 B** de `REQ-027 CA-05`
-es un **límite propuesto sin validar**. **El consumo de la coordinadora sigue sin instrumentar**: lo
-único medido son **≈1,10 M tokens en 11 comisiones** de subagente.
+Escrita por la coordinadora el 2026-09-08 y **contradice** la sección «Deuda anotada y NO resuelta» de
+arriba, que es la vigente. Se marca en vez de borrarse porque el defecto —dos versiones del mismo
+tablero, una falsa— es la clase que este proyecto persigue, y verlo señalado enseña más que verlo
+desaparecer. Qué era falso, punto por punto:
+
+- **«20 fechas un día por delante»** — la deuda **nunca se comprobó**. Medido el 2026-09-09: **15**
+  apariciones en `REQ-019`, **0 desfasadas confirmadas**, 13 indeterminadas, y `git blame` **no sirve**
+  en 14 de 15. **Cerrada por el propietario**, sin convertir las dudas en bloqueantes.
+- **«Falta la entrada de Migraciones conocidas de `arnes-upgrade`»** — **ya existe**, añadida en
+  `6dd3f8a` (`skills/arnes-upgrade/SKILL.md`, entrada «Hacia 1.34.0»).
+- **«El techo de 2.600 B de `REQ-027 CA-05` es un límite propuesto sin validar»** — **se validó y no
+  cabía**: el bloque mide **3.703 B**, y el techo se **re-derivó** con entrada en Historial, como el
+  propio criterio ordena.
+- Lo único que **sigue siendo cierto**: **el consumo de la coordinadora no está instrumentado**. La
+  cifra de «≈1,10 M en 11 comisiones» sí está superada — hoy van **≈3,1 M en 19 comisiones cerradas**,
+  contadas por `subagent_tokens`, que es **acumulado por agente** y no se suma dos veces al reanudar.
 
 ## En progreso
 **REQ-021 — `pendiente`, `QA: con-hallazgos`. VUELTA 3 DE 3, con el desarrollador trabajando. Es la
@@ -463,7 +574,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-09 09:15
+## Estado derivado — 2026-09-09 09:18
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -473,7 +584,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `rel/registro-1.33.0` @ `01dc927` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `rel/registro-1.33.0` @ `67eabfb` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.0`
 **Aprobaciones pendientes:** 0
 **REQ:** 27 — completado 13 · en-revisión 3 · en-progreso 2 · bloqueado 2 · otros 7

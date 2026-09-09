@@ -2,6 +2,33 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · Punto de continuidad vigente, y una sección del propio tablero marcada como falsa
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Punto de continuidad consolidado en `docs/ESTADO.md`, **fuera de los marcadores derivados** y marcado
+`★ VIGENTE` porque el tablero acumulaba **tres** secciones de continuidad solapadas. Lleva: alcance
+vigente, estado por REQ **medido en el momento**, los **dos agentes vivos y los dieciocho reanudables
+con su identificador**, la evidencia **enlazada y no copiada**, la siguiente acción en cinco pasos con
+su dependencia concreta, y el coste.
+
+**Y un defecto del propio tablero, marcado en vez de borrado:** la sección «Deuda anotada» del
+2026-09-08 **contradecía** a la vigente y tenía **tres datos falsos** — «20 fechas un día por delante»
+(la deuda **nunca se comprobó**; medido: 15 apariciones, **0 desfasadas confirmadas**, y `git blame` no
+sirve en 14 de 15), «falta la entrada de Migraciones conocidas» (**existe** desde `6dd3f8a`) y «el
+techo de 2.600 B sin validar» (**se validó, no cabía, se re-derivó**). Se marca con el desglose de qué
+era falso: verlo señalado enseña más que verlo desaparecer. Lo único que seguía siendo cierto es que
+**el consumo de la coordinadora no está instrumentado**.
+
+**Dos instrucciones del propietario registradas donde las ejecutará quien deba:**
+- **`REQ-027 CA-08` señal (c) se toma DE OPORTUNIDAD**, como subproducto del próximo encargo que cargue
+  el bloque, **nunca con una comisión propia**; y el numerador ya existe sin medir nada nuevo — el
+  `subagent_tokens` que el arnés reporta al terminar cada comisión. Mientras no se tome, la consecuencia
+  contratada sigue en tres sitios: **no se declara que las reglas sirven**.
+- **Las limitaciones de Codex y Cursor se conservan en tabla con su motivo**, para que nadie las
+  ascienda por descuido: de Codex sólo hay una **afirmación del fabricante**, que la regla `B.1` no
+  acepta como observación; Cursor **no está instalado**. Consecuencia dicha como es: **el REQ entrega su
+  objetivo para UNA de las tres herramientas**.
+
 ## [GitHub] — 2026-09-09 · `REQ-027 CA-05`: los bytes en bytes, y las dos magnitudes separadas donde se confundían
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 
