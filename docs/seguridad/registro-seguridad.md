@@ -5777,3 +5777,261 @@ próximos libres **R-020** y **SEC-064**.
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.** Esta revisión no altera clasificación de datos,
 acceso, retención ni cumplimiento; este repositorio sigue sin manejar usuarios finales ni datos
 personales, y el único apunte de higiene (`SEC-063`) es preventivo.
+
+---
+
+## Revisión R-020 — **firma de REQ-017**: auditoría del código de la reapertura de `CA-08 (ii)`, **después** de QA, ventana 1.34.0 (`rel/registro-1.33.0` @ `ef94cb5`, código en `538c266`) — 2026-09-08
+
+**Orden y legitimidad de la firma.** `QA: aprobado (2026-09-08 … sobre 538c266)` está emitido sobre
+este árbol (`requirements/REQ-017.md:7`, evidencia en `docs/qa/1.34.0.md`), así que el orden de
+`AGENTS.md` §6 se cumple y esta firma acredita lo que dice acreditar: la revisión de seguridad del
+código de esta reapertura, **no** las quality gates ni la ejecución del banco, que no son mías.
+
+**Por qué esta revisión existe y no bastaba la anterior.** `requirements/REQ-017.md:8` llevaba
+`Seguridad: aprobado (R-012, 2026-09-07)`, emitida sobre el árbol de 1.33.0 y **anterior** a
+`19b1822` y `538c266`. `.arnes/config.json` tiene `veredictos.caducan_con_codigo: false` y
+`exigir_fecha: false` (verificado con `jq`), de modo que `guard-completado` **habría aceptado**
+cerrar `REQ-017` con una firma que no auditó este trabajo. La máquina no lo impide; lo impide
+re-firmar. Ésta es esa re-firma, y **sustituye** a la de `R-012` como veredicto vigente del REQ (la
+de `R-012` no se retira: cubre el árbol de entonces).
+
+### 1. Alcance: qué es y qué no es este cambio
+
+`git diff 19b1822^..HEAD --stat` sobre los tres commits del rango (`19b1822`, `097c50b` de REQ-026,
+`538c266`) toca `CHANGELOG.md`, `docs/ESTADO.md`, `docs/PENDIENTES.md`, `docs/qa/1.34.0.md`,
+`requirements/REQ-017.md`, `requirements/REQ-026.md`, `tests/escenarios/hooks/README.md`,
+`tests/escenarios/hooks/run.sh` y `tests/escenarios/hooks/secciones/37-coste-del-escaner-5-el-camino-normal.sh`.
+
+**Comprobado por mí y no por lectura del encargo:**
+`git diff 19b1822^..HEAD --stat -- hooks/ tools/ .github/ .arnes/ templates/ skills/ agents/ .claude-plugin/`
+sale **vacío**. El mecanismo que gobierna a los demás proyectos **no cambia**, el manifiesto no
+cambia, y **nada de lo que `arnes-upgrade` hereda** cambia. La superficie de esta auditoría es el
+**banco**: una guarda de un caso de prueba que decide en la puerta requerida de `main`.
+
+`git status --porcelain` deja un solo archivo sin comitear (`docs/ESTADO.md`), que no es código.
+
+### 2. Regresión de seguridad contra la línea base de `R-019` — ningún control retirado ni debilitado
+
+Comparado contra el estado aprobado en `R-019` §8 y contra `19b1822^`:
+
+| Control | Antes | Después | Veredicto |
+|---|---|---|---|
+| Techo de `CA-08 (ii)` | `TECHO47=1250` | `TECHO47=1250` | **intacto**, verificado con `git show 19b1822^:…` contra `HEAD` |
+| Series por árbol | `SER47=6` | `SER47=6` | intacto |
+| Repeticiones del sujeto por serie | `K47=4` | `K47=4` | intacto |
+| Convergencia por brazo | `ce>techo \|\| ch>techo` → SKIP | `CONV47=max(ce,ch); CONV47>techo` → SKIP | equivalente, **mismo umbral y mismo SKIP** |
+| Contenido del SKIP de no-convergencia | tres cifras | tres cifras | **restaurado** en `538c266` (era la regresión `QA-017-16`) |
+| Techo de coste de la guarda | no existía | `0,750×` declarado como techo, dirección **bajar** | añadido, no relajado |
+| `hooks/`, `tools/`, `.github/`, `.arnes/config.json` | — | sin cambios | **intacto** |
+
+**No hay ningún control que estuviera presente y aprobado y hoy no esté.** El único número que se
+movió al alza es `PISO_AUTONOMO_SECCION` (411 → 448) y su techo derivado de `REQ-014 CA-18`
+(514 → 560); no es un control de seguridad que se relaje, y su gobernanza va abajo en `SEC-058`.
+
+### 3. La pregunta que gobierna esta auditoría: ¿puede la guarda nueva emitir PASS o SKIP donde tocaba FAIL?
+
+**Hacia PASS: no, y lo verifiqué sobre la regla, no sobre la prosa.** `veredicto08_47` emite PASS
+sólo si `máx(r) ≤ techo` (`37/5:312-318`). Una regresión real presente en cualquiera de las
+repeticiones sube `máx(r)` por encima del techo, y a partir de ahí el único camino es FAIL o SKIP.
+No existe promedio, mayoría ni «la mejor de k» que pudiera ahogar una repetición roja.
+
+**Hacia SKIP: sí, y es lo contratado — con un residual que nadie había escrito.** Con unanimidad, una
+regresión real que no sea unánime produce **SKIP**, y un SKIP no bloquea. `CA-08` lo acepta por
+diseño y acota su alcance: el criterio existe para la clase de **10× de reloj**, que sí sale unánime.
+Lo que **no** está escrito en ninguna parte es qué pasa si esa abstención se vuelve el estado
+estable. Va como **`SEC-064`**.
+
+**Verificación independiente de la inalcanzabilidad que QA declara en `QA-017-18` y `QA-017-19`.** No
+la tomé de su informe; la medí sobre el árbol, y por la vía que su informe no examina —el
+**separador de campos**, porque el llamador pasa las repeticiones **sin comillas** (`37/5:347`):
+
+1. **El bucle de recolección empuja siempre `KRAZ47` palabras** (`37/5:208-224`): mide, o mete el
+   testigo `:::`, que **no es la cadena vacía** y por tanto sobrevive a la división en palabras. No
+   hay camino por el que lleguen menos de `k` repeticiones.
+2. **`IFS` no se reasigna nunca de forma global** en el banco: `grep -rn "IFS=" tests/` da
+   **únicamente** usos con ámbito de comando (`IFS= read`, `IFS='|' read`). Si alguna sección dejara
+   `IFS` con `:`, la división partiría cada registro en cuatro palabras de un solo número, cada una
+   parsearía como `ue=ue2=uh=uh2` y **daría razón 1,000× — un PASS fabricado**. Hoy no ocurre; queda
+   escrito porque es el forzador que nadie había nombrado.
+3. **`sonda_lee` NO valida `min_a`/`min2_a`/`min_b`/`min2_b`** (`run.sh:461-480` valida `us`,
+   `procesos` y `vivos`, no éstos), así que la contención está entera en `razon08_47`: cuatro trozos
+   numéricos, `> 0`, y suelo de 50 ms. Un valor con `:` o vacío rompe alguna de las tres y va a
+   **SKIP**, nunca a PASS. Lo comprobé caso por caso sobre las formas que el productor puede emitir.
+
+**Conclusión:** `QA-017-18` y `QA-017-19` **son inalcanzables desde el llamador de hoy** y su clase
+`instrumento` es correcta. **No cambio su clase y no bloqueo por ellos.**
+
+**Y un matiz que sube el coste de arreglar `QA-017-18`, medido aquí y no en el informe de QA:** la
+autoprueba de la propia guarda (`37/5:359-365`) invoca `veredicto08_47 … si <UNA repetición>` siete
+veces y **espera PASS en la primera**. Es decir que el banco no sólo deja sin exigir la llegada de
+las `k`: **depende** de que no se exija. La remediación «que la función se niegue a firmar con menos
+de `k`» no es una línea — obliga a separar la regla por registro de la regla de unanimidad, o a dar
+a la autoprueba una vía declarada. Queda anotado contra `QA-017-18`, cuyo dueño es el
+`desarrollador`; no abro identificador propio.
+
+### 4. Hallazgos
+
+#### SEC-064 — **La abstención de `CA-08 (ii)` no tiene cota: la mitad de reloj de la puerta requerida puede dejar de decidir indefinidamente, en verde** · `instrumento` · severidad **alta** · **abierto** *(nuevo)*
+
+**Ubicación.** `tests/escenarios/hooks/secciones/37-coste-del-escaner-5-el-camino-normal.sh:312-318`
+(la regla de emisión) y `requirements/REQ-017.md` `CA-08 (ii)` §«La resolución se comprueba sobre la
+RAZÓN»; agregación en `tests/escenarios/hooks/run.sh:1309-1315` y en `.github/workflows/banco.yml`.
+
+**Qué medí.** La regla nueva emite **SKIP** en cuanto el techo cae dentro del recorrido de las `k`
+razones, y el SKIP **no cuenta como fallo**: el cuadre suma `PASS + FAIL + SKIP` —así que abstenerse
+tampoco rompe el total— y el `rc` es 0 salvo que haya `FAIL` o `PROBLEMAS` de estructura
+(`run.sh:1333`), **ninguno de los cuales lo mueve un SKIP**. Sobre las **cinco** corridas de `hooks-en-linux` con código idéntico que el propio REQ
+cita, la razón recorre **0,973–1,364** (factor **1,40**) contra un techo de **1,25**. Con ese ruido,
+el estado estable de una regresión real situada **entre ~1,25× y ~1,40×** es **SKIP corrida tras
+corrida**: ni PASS (hay repeticiones por encima) ni FAIL (no todas lo están). **Nada cuenta las
+abstenciones consecutivas**, ni el banco, ni el workflow, ni el criterio. La puerta requerida seguiría
+verde con su mitad de reloj apagada, y el apagado no se anuncia.
+
+**Por qué es hallazgo y no el residual ya aceptado.** El proyecto **ya tiene nombrada esta clase**:
+`H-08` (`docs/PENDIENTES.md:789`) la escribió como «*un SKIP honesto, agregado a un resultado global,
+se lee como verde*», y `.github/workflows/banco.yml:29-33` la conserva escrita. `H-08` se cerró
+arreglando **su instancia** (`fetch-depth: 0`), no la clase. Y el propio `REQ-017` ya pagó esta
+factura una vez en otro criterio: el Historial del 2026-09-07 registra que `CA-05` implementado al
+pie de la letra convertía su único PASS en **«SKIP permanente»**, y eso se trató entonces como
+**defecto**, no como abstención legítima. La guarda de `538c266` reintroduce la clase **por diseño**,
+que es peor que por accidente: no hay error que arreglar, hay una cota que nadie escribió.
+
+**Lo que este hallazgo NO dice.** No dice que la unanimidad esté mal —es la respuesta correcta a un
+instrumento que no resuelve—, ni que el techo `≤ 1,25×` deba moverse (sigue `operativo`, dirección
+**bajar**), ni que la guarda tape la clase de **10×** para la que el criterio existe: no la tapa.
+
+**Remediación (por propiedad, no por enumeración).** *Toda abstención de un criterio que corra en la
+puerta requerida declara su cota*: un número de corridas consecutivas tras el cual la abstención deja
+de ser un veredicto y pasa a ser un **hallazgo con dueño**, y una señal que lo publique sin depender
+de que alguien lea la salida. Dónde vive la cota y cómo se publica lo decide el write-back; este
+registro no fija la cifra. **Dueño:** `analista-requerimientos` (la cláusula en `CA-06` o en
+`CA-08 (ii)`, que es su sede única) y `desarrollador` (la señal). **Forzador:** la primera corrida de
+`hooks-en-linux` en que `CA-08 (ii)` emita SKIP —medido: la dispersión que lo produce ya se observó
+5 de 5 veces—. **Vencimiento:** el cierre de `SEC-030` (que es de quien es la dispersión de la sonda)
+o la ventana **1.35.0**, lo que llegue antes.
+
+**Por qué no bloquea.** Es `instrumento` por la letra de `AGENTS.md` §6 —el defecto está en una
+prueba del propio arnés, no en lo que un usuario ve o cobra— y entra en la regla de acumulación del
+propietario del 2026-09-08: se registra, no abre REQ y no entra en esta ventana.
+
+#### SEC-065 — **La exposición de `SEC-058` se registró por segunda vez, más floja y sin vencimiento, en `docs/PENDIENTES.md`** · `instrumento` · severidad **media** · **abierto** *(nuevo)*
+
+**Ubicación.** `docs/PENDIENTES.md` § «El tercer término del piso de `REQ-014 CA-18` no lo verifica
+ninguna máquina (QA, 2026-09-08)» frente a `docs/seguridad/registro-seguridad.md:5618` (`SEC-058`).
+
+**Qué medí.** Son **el mismo hallazgo**: que el techo de tamaño de un archivo de sección lo decide un
+número que el propio archivo declara y que ninguna máquina puede contrastar. `SEC-058` lo tiene como
+`instrumento`, severidad **alta**, **abierto**, dueño `desarrollador`, con **remediación 3
+(propiedad de máquina) vencida en 1.34.0** — esta ventana. La entrada nueva de `PENDIENTES` no lo
+cita, no le pone vencimiento y añade «**No urge**». Dos registros de un hallazgo divergen siempre, y
+divergen hacia el lado que abre: el que la gente lee es el que dice que no urge.
+
+**Remediación.** La entrada de `PENDIENTES` **cita** `SEC-058` y hereda su severidad, su dueño y su
+vencimiento, o se retira en favor del registro —`requirements/README.md` §«La clase, el forzador y el
+vencimiento se CITAN con archivo y línea» ya lo exige para los REQ; aquí se aplica al mismo texto en
+otro documento—. **Dueño:** `qa-tester` (la entrada) y `auditor-seguridad` (la referencia cruzada,
+que ejerzo abajo). **Forzador:** la primera vez que alguien planifique la ventana leyendo
+`PENDIENTES` y no este registro. **Vencimiento:** el cierre de 1.34.0.
+
+#### SEC-066 — **El README del banco quedó en 886 casos cuando el total es 887** · `instrumento` · severidad **baja** · **abierto** *(nuevo)*
+
+**Ubicación.** `tests/escenarios/hooks/README.md:33` («**886 casos**») frente a
+`tests/escenarios/hooks/run.sh:1303` (`CASOS_ESPERADOS=887`) y la corrida verificada
+(882 PASS · 0 FAIL · 5 SKIP = **887**).
+
+**Qué medí.** `19b1822` dejó los dos números **coherentes** en 886. `538c266` subió
+`CASOS_ESPERADOS` a 887 y **no tocó el README**. Es la clase de `SEC-060` —una cifra que sobrevive a
+la medición que la desmiente— reaparecida dentro del mismo rango de commits que la produjo, y en el
+archivo que un recién llegado lee primero. No afecta a ninguna puerta: el cuadre lo hace
+`CASOS_ESPERADOS`, no el README. **Dueño:** `desarrollador`. **Remediación:** que el README deje de
+publicar la cifra y remita a `CASOS_ESPERADOS` —la fuente única, que ya nombra—, o que se actualice
+en el mismo commit que la mueva. **Forzador:** el próximo caso que se añada. **Vencimiento:** la
+ventana 1.35.0.
+
+#### SEC-058 — actualización: **sigue `abierto`**, con instancia nueva ejercida y remediación 3 **venciendo en esta ventana**
+
+No cambia de clase ni de severidad. Se le añade lo medido en esta revisión:
+
+- **Instancia nueva, y es exactamente la que el hallazgo describe.** `PISO_AUTONOMO_SECCION` pasó de
+  **411 a 448** —y con él el techo de **514 a 560**— en la **misma comisión que entregaba el código**
+  que engordó el bloque. Las cuatro comprobaciones de `ca18_deriva()` (legibilidad, suma,
+  `piso ≤ líneas`, `líneas ≤ techo`) habrían pasado igual con el tercer término inflado.
+- **Remediación 1 (control de procedimiento): EJERCIDA otra vez**, ahora por el `qa-tester`
+  (`docs/qa/1.34.0.md` § «El piso de `REQ-014 CA-18` pasó de 411 a 448»), con fronteras medidas
+  (123-449 = 327), crecimiento igual a lo añadido (+37) e indivisibilidad demostrada con un mutante.
+  **Lo comprobé yo por el lado que decide si compró margen:** el archivo queda en **504 líneas** y ya
+  cabía bajo el techo **anterior** de 514. El movimiento **no compró conformidad**. Como en `R-019`,
+  esto cierra **esta** instancia, no el hallazgo.
+- **La formulación de QA es más precisa que la mía y se adopta:** el término no verificable es el
+  **tercero** —el tamaño del bloque indivisible—, y basta escribirlo de más para que la suma cuadre
+  sola. Con eso, la remediación 3 tiene forma barata y verificable, que dejo propuesta: **que la
+  derivación declare las FRONTERAS del bloque y no sólo su tamaño** (`inicio-fin`), de modo que la
+  máquina compruebe `fin − inicio + 1 == término` y que las dos fronteras existan en el archivo. Un
+  número inventado deja de cuadrar contra el archivo que lo declara.
+- **Remediación 3: vence al cerrar 1.34.0** y **no está hecha**. No bloquea (es `instrumento`), pero
+  un vencimiento que pasa se re-fija **por escrito** —como ya ocurrió con la remediación 2— y no en
+  silencio. Es decisión de planificación, no mía.
+
+### 5. `SEC-047`, `SEC-048` y `SEC-049` — ninguno lo introduce ni lo agrava este cambio, y uno tiene consecuencia de publicación
+
+Los tres siguen **abiertos** e **`instrumento`**, con la clase, el dueño y el forzador que les puso
+`R-012`, ratificados en `R-014`. Comprobado contra este rango de commits:
+
+- **Ninguno se agrava.** Los tres viven en el lector de cabecera, en el ruleset/workflow y en el texto
+  de `CA-10`; el rango **no toca** `hooks/`, `.github/` ni `AGENTS.md`.
+- **`SEC-047`, condición de escalada 3 — NO disparada por este rango.** `git diff … | grep` sobre las
+  formas que prometerían la **propiedad** en vez del carácter («retorno de carro», «carácter no
+  representable», «no representable») **no encuentra ninguna línea añadida**. Ningún texto firmado
+  empezó a prometer más de lo que el código guarda.
+- **`SEC-047`, condición 1 — pendiente y con consecuencia directa sobre el tag.** Dice: *«1.34.0
+  cierra sin ella»*. **Cerrar `REQ-017` no es cerrar 1.34.0**, así que esta firma no la dispara y el
+  REQ puede cerrar con `SEC-047` en `instrumento`. Pero **publicar 1.34.0 sin la remediación la sube
+  a `contrato`**, y con un `contrato` abierto la fusión y el tag vuelven al propietario
+  (`AGENTS.md` §6). No lo remedio aquí —es de `REQ-023`/`REQ-024`—; lo dejo escrito para que la
+  decisión no se tome sin verlo.
+- **`SEC-047`, condición 2 — NO MEDIDA por mí.** No barrí las cabeceras del árbol ni de la historia
+  buscando un carácter no representable. Se declara como **no mirado**, nunca como «no ocurre».
+
+### 6. Repositorio público — sin fuga
+
+Barrido del rango completo (`git diff 19b1822^..HEAD`) buscando nombres de cliente, dominios,
+correos, rutas de `insumos/` y referencias a `mejoras-arnes-*`: **nada**. Los únicos aciertos son
+fragmentos de código (`for rep in "$@"`) y cabeceras de *hunk*. Lo añadido describe el arnés y su
+propio banco; ningún hallazgo de cliente aparece descrito ni citado.
+
+### 7. Lo que esta revisión NO miró — tabulado como NO MIRADO, nunca como PASA
+
+| No mirado | Por qué |
+|---|---|
+| **Quality gates y ejecución del banco** | No son mías (`AGENTS.md` §6). **No ejecuté `run.sh` ni la autoprueba.** El `882 PASS · 0 FAIL · 5 SKIP · rc 0` lo cito de QA y de la coordinadora; no lo re-medí |
+| **La derivación de `k = 4`** | 56 repeticiones, 30+ min. Excluida por el encargo y ya registrada sin verificar (`QA-017-20`). Audité que el **criterio de selección** es el correcto —la peor ventana alcanza el recorrido de la muestra— y que `k` está declarado `operativo` con dirección **subir**; **no** que 4 baste en el runner real |
+| **El techo de coste `0,750×` y el `+28,0 s`** | Excluido por el encargo; acreditado por el `desarrollador` y **no verificado por nadie** (`QA-017-21`). Sólo comprobé que está escrito como **techo** con dirección **bajar** y que no se movió en el rango |
+| **El comportamiento en el CI real** | Todo lo mirado es lectura de código y de evidencia local. Si `k = 4` resuelve en `hooks-en-linux` sigue **SIN MEDIR**, y `SEC-064` existe justamente porque el modo de fallo de que no resuelva es silencioso |
+| **Los otros nueve criterios de `REQ-017`** | El rango no toca `hooks/`. Su acreditación sigue siendo la de `R-012`, que **no se retira** |
+| **`SEC-047` condición 2** | Barrido de cabeceras no ejecutado (§5) |
+| **`REQ-026` (`097c50b`), que cae dentro del rango de commits** | No es mi REQ. No lo audité y esta firma **no lo cubre** |
+| **La cola de aprobaciones y los tags** | Comprobado como contexto de cierre, no como alcance: `PENDING_APPROVAL.md` sigue siendo el gate y no lo evalúo aquí |
+
+### 8. Estado de seguridad aprobado por REQ — línea base de no-regresión, actualizada en R-020
+
+| REQ | Veredicto | Fecha | Alcance acreditado | Nota |
+|---|---|---|---|---|
+| **REQ-017** (reapertura 1.34.0) | **`aprobado`** | 2026-09-08 | `rel/registro-1.33.0` @ `ef94cb5`; código en `19b1822` + `538c266` | **Qué acredita:** que el rango **no toca** el mecanismo (`hooks/`, `tools/`, `.github/`, `.arnes/`) ni nada heredable (§1); que ningún control aprobado se retiró ni se debilitó y que `TECHO47=1250` está intacto (§2); que la guarda nueva **no puede emitir PASS donde tocaba FAIL** y que `QA-017-18`/`QA-017-19` son **inalcanzables** desde el llamador de hoy, verificado por mí incluida la vía del separador de campos (§3); y que no hay fuga en repositorio público (§6). **Qué NO acredita:** quality gates, ejecución del banco, la derivación de `k`, el techo de coste ni el comportamiento en el CI real (§7). **Residuales declarados:** `SEC-064` (`instrumento`, alta) — la abstención no tiene cota; `SEC-047` (`instrumento`) sigue abierto y **escala a `contrato` si 1.34.0 se publica sin su remediación** |
+| **REQ-017** (1.33.0) | `aprobado` | 2026-09-07 | `R-012`, re-anclado en `R-016` y `R-019` | **No se retira:** cubre el árbol de entonces. **Deja de ser la línea base vigente**: la sustituye la fila de arriba |
+| **REQ-014** (reapertura 1.33.0) | `aprobado` | 2026-09-08 | `R-019`, `cand/1.33.0` @ `d4e0033` | Sin cambios en esta revisión. Su residual `SEC-058` **sí** se actualiza (§4) |
+
+**Rigor:** `REQ-017` se queda en **`critico`**, que es además su suelo por `Sensible a seguridad: sí`.
+**No subo ni bajo el rigor de ningún REQ**; aquí no hay nada que subir, ya está en el techo.
+
+**Hallazgos que esta revisión deja abiertos en `REQ-017`:** `SEC-047`, `SEC-048`, `SEC-049`
+(preexistentes, `instrumento`) y `SEC-064`, `SEC-065`, `SEC-066` (nuevos, `instrumento`). **Ninguno
+de mis hallazgos es de clase `contrato`, y por tanto ninguno bloquea el cierre.** Los de QA
+(`QA-017-07` … `QA-017-22`) **no se tocan, no se cierran y no se reclasifican**: no son míos, y
+verifiqué la inalcanzabilidad de dos de ellos sin cambiarles la clase.
+
+**Numeración vigente tras esta revisión:** última revisión **R-020**; último hallazgo **SEC-066**;
+próximos libres **R-021** y **SEC-067**.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** Esta revisión no altera clasificación de datos,
+acceso, retención ni cumplimiento: el rango no introduce datos, ni credenciales, ni superficie de red,
+y este repositorio sigue sin manejar usuarios finales ni datos personales.

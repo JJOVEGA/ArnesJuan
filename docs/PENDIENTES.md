@@ -2263,3 +2263,13 @@ causa** y la puerta no lo vería — sólo lo ve alguien midiendo las fronteras 
 se hizo con `37/5` al validar `538c266` (411 → 448, justificado). Dueño: `desarrollador`. Forzador:
 el primer archivo que se acerque a su techo. No urge: hoy hay un solo archivo gobernado por
 `piso × k`.
+
+> **Referencia cruzada añadida por el `auditor-seguridad` (R-020, 2026-09-08) — `SEC-065`.** Esto **no
+> es un pendiente nuevo**: es el hallazgo **`SEC-058`** (`docs/seguridad/registro-seguridad.md:5618`),
+> `instrumento`, severidad **alta**, **abierto**, cuya **remediación 3 (propiedad de máquina) vence al
+> cerrar 1.34.0** — esta ventana. La severidad, el dueño y el vencimiento que mandan son los del
+> registro, no los de esta entrada; el «no urge» de arriba queda **desmentido** y se conserva sin
+> reescribir porque estos textos no se editan hacia atrás. La formulación de QA —que el término no
+> verificable es el **tercero**— se adopta en `SEC-058`, junto con una remediación barata: **declarar
+> las fronteras del bloque (`inicio-fin`) y no sólo su tamaño**, para que la máquina compruebe
+> `fin − inicio + 1 == término` contra el archivo que lo declara.

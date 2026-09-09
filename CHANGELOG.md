@@ -2,6 +2,38 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · `REQ-017` **completado**: auditoría `R-020` y cierre del ciclo reabierto por §9
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad` (Opus) + coordinadora.
+
+`Seguridad: aprobado (R-020, 2026-09-08)` sobre `538c266`, **sin veto**. Con `QA: aprobado` ya
+firmado, `REQ-017` pasa a `completado`: cola de aprobaciones vacía, cero hallazgos `contrato` o
+`usuario/dinero`, quality gates en verde.
+
+**El agujero que el auditor cerró de camino:** la cabecera llevaba `Seguridad: aprobado (R-012,
+2026-09-07)`, firma del árbol de **1.33.0**. Como `veredictos.caducan_con_codigo` está en `false`,
+`guard-completado` **habría aceptado cerrar el REQ con una auditoría que no auditó este trabajo**.
+La máquina no obliga; el auditor la re-emitió y lo dejó escrito.
+
+**Verificado, no citado:** `TECHO47=1250`, `SER47=6` y `K47=4` idénticos entre `19b1822^` y HEAD, y
+`git diff` vacío sobre `hooks/`, `tools/`, `.github/`, `.arnes/`, `templates/`, `skills/`, `agents/`
+y `.claude-plugin/`. No se relajó nada para obtener verde.
+
+**Tres hallazgos nuevos, los tres `instrumento`:**
+
+- **`SEC-064`** (severidad **alta**) — **la abstención no tiene cota.** Con el ruido del instrumento
+  (0,973–1,364) **mayor** que el techo que vigila (1,25), el estado estable de una regresión real
+  entre ~1,25× y ~1,40× es **SKIP corrida tras corrida**, y nada cuenta las abstenciones
+  consecutivas: la puerta requerida sigue verde con su mitad de reloj apagada. El proyecto ya tenía
+  la clase nombrada en `H-08`, cerrada arreglando su instancia y no la clase.
+- **`SEC-065`** (media) — `SEC-058` estaba registrado dos veces, la segunda más floja y sin
+  vencimiento.
+- **`SEC-066`** (baja) — `tests/escenarios/hooks/README.md:33` dice **886 casos** y
+  `CASOS_ESPERADOS` vale **887**.
+
+**Lo que este cierre NO acredita:** que `k = 4` resuelva en el runner de `hooks-en-linux` —todo lo
+medido es **local**— ni el techo de coste `+28,0 s = 0,569×`, acreditado por el desarrollador y no
+verificado por nadie.
+
 ## [GitHub] — 2026-09-08 · `REQ-017`: `QA: aprobado` sobre `538c266`, con el piso de `CA-18` verificado
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
 
