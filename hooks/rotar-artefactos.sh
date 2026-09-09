@@ -83,7 +83,14 @@ arnes_rotar_uno() {
   # dejo de rotar en 1.29.3. Lo midio una revision externa. LC_ALL=C solo para la
   # cuenta, y se restaura: el resto de la funcion no depende del locale, pero no hay
   # razon para cambiarselo a `date` ni a `grep`.
-  IFS= read -r -d '' texto < "$f"
+  #
+  # Y SE LEE CON `arnes_lee_archivo`, NO CON `read -d ''` A PELO (SEC-002/R-001, QA-026-01).
+  # `read -d ''` se detiene en el PRIMER NUL y devuelve 0: la variable queda TRUNCADA y el
+  # llamador cree tener el documento entero. Aqui eso no es leer mal, es ESCRIBIR mal --el
+  # paso final publica lo leido encima del original--, asi que un solo byte NUL borraba todo
+  # lo que viniera detras. Si la lectura no es fiable, NO SE ROTA y se avisa.
+  if ! arnes_lee_archivo "$f"; then arnes_rot_no_medible "$f"; return 0; fi
+  texto="$ARNES_TEXTO"
   local _lc_prev="${LC_ALL-__sin__}" tam_bytes
   LC_ALL=C; tam_bytes="${#texto}"
   if [ "$_lc_prev" = "__sin__" ]; then unset LC_ALL; else LC_ALL="$_lc_prev"; fi
@@ -196,6 +203,19 @@ arnes_rot_sin_tmp() {   # <archivo de origen>
   arnes_warn "rotacion: no se pudo formar un nombre de temporal propio de este proceso ('BASHPID' vacio o no numerico); NO se rota nada en '${1#"$ARNES_PROJ/"}' y ni el destino ni el origen se tocan. Caer al nombre compartido reintroduciria la carrera de dos paradas simultaneas (REQ-015)."
 }
 
+# Los dos avisos de "no se rota", cada uno en UN solo sitio. `arnes_rot_ambigua` se emite
+# desde DOS puntos --antes de trocear y durante el troceado-- porque la estructura se puede
+# desmentir en los dos; el texto vive aqui una vez, porque dos transcripciones de la misma
+# regla se desfasan (la leccion del descuento de comillas de `guard-git`).
+arnes_rot_no_medible() {   # <archivo de origen>
+  arnes_warn "rotacion: '${1#"$ARNES_PROJ/"}' NO SE PUEDE LEER ENTERO --un byte NUL lo trunca, o no hay permiso de lectura--; no se rota nada y el archivo no se toca. Rotar con una lectura truncada publicaria ESA MITAD encima del documento y borraria todo lo que viniera detras (SEC-002/R-001). Salida: quita el byte NUL del archivo, o arregla los permisos."
+}
+arnes_rot_ambigua() {      # <archivo de origen> <seccion> <motivo>
+  arnes_warn "rotacion: '${1#"$ARNES_PROJ/"}' SI contiene la seccion '$2' y supera el umbral, pero su ESTRUCTURA DE TABLA es AMBIGUA ($3); no se archiva nada y el archivo queda igual. Para que las filas de una tabla cuenten como entradas, la seccion tiene que ser UNA tabla: su fila de cabecera y su fila separadora ('|---|---|') seguidas y en el preambulo, antes de cualquier otra entrada, y ninguna otra separadora despues. Revisa el formato de la seccion."
+  ARNES_ROT_AMBIGUA=$(( ${ARNES_ROT_AMBIGUA:-0} + 1 ))
+  [ -n "${ARNES_ROT_AMBIGUA_EJ:-}" ] || ARNES_ROT_AMBIGUA_EJ="${1##*/}|$2"
+}
+
 # arnes_rot_es_separadora <linea ya recortada> — ¿es la FILA SEPARADORA de una tabla?
 #
 # Que es una fila separadora NO lo define el arnes: es la de la tabla de Markdown (GFM), y
@@ -260,7 +280,15 @@ arnes_rotar_seccion() {
   local texto linea antes='' cab='' cuerpo='' despues='' fase=0 rec fin_nl=0
   [ -f "$f" ] || return 0
   arnes_dir_interno "${f%/*}" || return 0
-  texto=''; IFS= read -r -d '' texto < "$f"
+  # LA LECTURA TIENE QUE DECIR SI NO PUDO LEER (SEC-002/R-001, QA-026-01). Con
+  # `read -d ''` a pelo, un byte NUL detiene la lectura, devuelve 0, y el paso 7 publica
+  # ESA MITAD encima del REQ: medido sobre una copia de `REQ-007`, -17.697 B y cinco filas
+  # de historia que desaparecen del documento Y del archivo, con rc 0 y sin un aviso. La via
+  # existia desde antes, pero una seccion en forma de tabla no daba entradas y la funcion
+  # salia antes de llegar aqui; reconocer tablas la hizo alcanzable en cada rotacion.
+  # Fail-closed, la misma direccion que CA-08: si no se puede leer, no se rota y se avisa.
+  if ! arnes_lee_archivo "$f"; then arnes_rot_no_medible "$f"; return 0; fi
+  texto="$ARNES_TEXTO"
   # El salto FINAL se aparta y se repone tal cual. Si no, el troceado por lineas lo
   # devuelve como una linea vacia de mas y el documento reconstruido gana un salto en cada
   # pasada: CA-03 exige que todo lo que no es la seccion quede byte a byte igual, y "casi
@@ -387,16 +415,23 @@ arnes_rotar_seccion() {
   # vigila `guard-completado`. Se avisa con un texto DISTINTO del de "sin entradas
   # reconocibles" porque la accion que pide es otra: alli falta formato o sobra expectativa;
   # aqui hay una tabla a medio hacer que hay que arreglar antes de que se pueda rotar.
-  if [ -n "$amb" ]; then
-    arnes_warn "rotacion: '${f#"$ARNES_PROJ/"}' SI contiene la seccion '$sec' y supera el umbral, pero su ESTRUCTURA DE TABLA es AMBIGUA ($amb); no se archiva nada y el archivo queda igual. Para que las filas de una tabla cuenten como entradas, su fila de cabecera y su fila separadora ('|---|---|') tienen que ir SEGUIDAS y en el preambulo de la seccion, antes de cualquier otra entrada. Revisa el formato de la seccion."
-    ARNES_ROT_AMBIGUA=$(( ${ARNES_ROT_AMBIGUA:-0} + 1 ))
-    [ -n "${ARNES_ROT_AMBIGUA_EJ:-}" ] || ARNES_ROT_AMBIGUA_EJ="${f##*/}|$sec"
-    return 0
-  fi
+  if [ -n "$amb" ]; then arnes_rot_ambigua "$f" "$sec" "$amb"; return 0; fi
 
   # 3b) Ahora si, el troceado. En modo TABLA el preambulo llega hasta la separadora
   #     (incluida) y cada fila de datos posterior abre una entrada; en modo LISTA manda el
   #     prefijo de siempre. Las continuaciones viajan con su entrada en los dos modos.
+  #
+  #     Y AQUI SE VALIDA EL RESTO DE LA SECCION, NO SOLO SU PREAMBULO (QA-026-02). El paso
+  #     3a decide la estructura y para en la primera fila de datos, asi que por si solo NO
+  #     mira nada de lo que venga despues: con DOS tablas en la seccion, la cabecera y la
+  #     separadora de la segunda se contaban como filas de datos de la primera y sus filas
+  #     acababan bajo las columnas de otra tabla --dato REETIQUETADO en silencio, y sin
+  #     perder ni duplicar ninguna fila, asi que ninguna comprobacion de perdida lo veia--.
+  #     La propiedad que se contrata no es la enumeracion de CA-08 (que se declara "no
+  #     exhaustiva"), es esta: si no se reconoce la estructura de TODA la seccion, no se rota
+  #     y se avisa. La comprobacion vive DENTRO de este bucle --que ya recorre la seccion
+  #     entera-- y no en una tercera pasada, porque el coste de una pasada mas se paga en
+  #     CADA parada y esta pregunta se responde con lo que ya se esta leyendo.
   nlin=0
   while IFS= read -r linea || [ -n "$linea" ]; do
     nlin=$((nlin+1))
@@ -404,7 +439,12 @@ arnes_rotar_seccion() {
     rec="${linea%"${linea##*[![:space:]]}"}"
     case "$modo" in
       tabla) case "$rec" in
-               '|'*) [ "$hay" -eq 1 ] && ent+=("$cur"); cur="$linea"$'\n'; hay=1 ;;
+               '|'*)
+                 if arnes_rot_es_separadora "$rec"; then
+                   amb="hay otra fila separadora entre las filas de datos: la seccion tiene mas de una tabla, y la cabecera de la segunda no es una fila de datos de la primera"
+                   break
+                 fi
+                 [ "$hay" -eq 1 ] && ent+=("$cur"); cur="$linea"$'\n'; hay=1 ;;
                *)    if [ "$hay" -eq 1 ]; then cur+="$linea"$'\n'; else pre+="$linea"$'\n'; fi ;;
              esac ;;
       *)     case "$linea" in
@@ -416,6 +456,10 @@ arnes_rotar_seccion() {
              esac ;;
     esac
   done <<< "$cuerpo1"
+  # La ambiguedad vista durante el troceado decide igual que la del preambulo: no se ha
+  # escrito nada todavia --el destino no se toca hasta el paso 6-- asi que salir aqui deja
+  # el archivo byte a byte igual, que es justo lo que promete el fail-closed.
+  if [ -n "$amb" ]; then arnes_rot_ambigua "$f" "$sec" "$amb"; return 0; fi
   [ "$hay" -eq 1 ] && ent+=("$cur")
   local total="${#ent[@]}"
   # LA SECCION EXISTE PERO NO TIENE NI UNA ENTRADA RECONOCIBLE (CA-09, rama hermana;

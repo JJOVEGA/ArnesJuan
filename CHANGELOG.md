@@ -37,6 +37,57 @@ son, y no consta que la regla del margen se fijara antes de ver el juego de vali
 cambio de `hooks/estado-derivado.sh`, que **no era alcance tomado por su cuenta** —el REQ lo declara
 en `Módulo:` y en `Archivos:`— pero le falta contrato (`QA-026-06`).
 
+## [GitHub] — 2026-09-09 · `REQ-026` vuelta 1: el NUL que publicaba media lectura encima de un REQ, y la segunda tabla que nadie validaba
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+Los dos hallazgos `usuario/dinero` de QA sobre la entrega anterior, cerrados. Los dos eran
+deterministas y los dos están reproducidos en el banco con **su control**.
+
+**`QA-026-01` — la lectura no fiable.** `read -r -d ''` se detiene en el **primer NUL y devuelve
+0**: lo leído es media lectura, y el paso final la publicaba **encima del original**. Medido por QA
+sobre copia de `REQ-007`: **−17.697 B, 5 filas de historia fuera del documento Y del archivo,
+`rc 0`, stderr vacío**; reproducido aquí en −1.631 B. Ahora las **dos** funciones de rotación leen
+con `arnes_lee_archivo` (`hooks/lib.sh`, la función que nació de `SEC-002`/`R-001` para esto
+exacto y cuyo único llamador era `guard-completado`), y si el archivo no se puede leer entero **no
+se rota, no se toca y se avisa** — misma dirección que `CA-08`. La contención es **por archivo**:
+en una parada con tres REQ, el del NUL se queda quieto y los otros dos rotan.
+
+**Atribución exacta, porque importa:** la lectura cruda era **anterior** a la entrega anterior,
+pero con el reconocedor viejo una sección en forma de tabla daba **cero entradas** y la función
+salía antes de llegar a escribir. No es un defecto que introdujera el reconocedor de tablas: es
+uno que **activó**, en cada rotación de un REQ.
+
+**`QA-026-02` — la quinta forma, y la causa era una línea.** La pasada que decide la estructura
+hacía `break` en la primera fila de datos, así que **nada posterior a esa fila se validaba jamás**.
+Con **dos tablas** en la sección, la cabecera y la separadora de la segunda se archivaban **como
+filas de datos de la primera** y sus filas quedaban bajo las columnas de otra tabla: **dato
+reetiquetado en silencio**. Lo que lo hacía invisible es que en esa forma **`CA-05` se conserva**
+—ni se pierde ni se duplica ninguna fila—, así que ninguna comprobación de pérdida lo veía, y la
+cobertura del banco con dos tablas era **cero**. Ahora la validación cubre **toda** la sección, y
+vive dentro del bucle que ya la recorría (no en una tercera pasada: eso se paga en cada parada).
+
+**La lección, que es la que se repite:** `CA-08` declara su enumeración «**no exhaustivos**», y la
+implementación cubrió la **enumeración** en vez de la **propiedad**. La propiedad es *si no se
+reconoce la estructura de TODA la sección, no se rota y se avisa*.
+
+**Banco.** 4 casos nuevos (2 de defecto + 2 controles) → `28/3` pasa de 19 a 23 y
+`CASOS_ESPERADOS` de 906 a **910**. Fail-before contra `b0774cd`: fallan **exactamente** los dos
+casos de defecto y ninguno más. Corrida completa: **906 PASS · 0 FAIL · 4 SKIP** (910, `rc=0`,
+1 m 03 s); autoprueba del corredor 106 PASS; gates de §7 en verde.
+
+**`QA-026-05` — el registro del techo, arreglado en las dos cosas que se pedían.** `CA-15` dice
+ahora **qué estadístico** son sus cifras (diferencia de **medianas** de 5 paradas; sin eso el
+criterio no se podía verificar contra su propio registro) y **cuándo** se fijó la regla del margen:
+escrita en la cabecera del arnés de medición **antes de medir**, con base y validación en
+**invocaciones separadas**. Techo re-medido tras los arreglos: base 128.881 µs, envolvente 136.059,
+**techo 0,140 s**, validación independiente **125.944 µs — conforme** (10,0 % de holgura). Y se
+dice lo que no se puede afirmar: la subida desde `0,135 s` **no** se atribuye a los arreglos —las
+cuatro medianas de las dos vueltas caen entre 121.192 y 128.881 µs— y en la vuelta anterior la
+regla, aunque usaba sólo muestras del juego base, se eligió con el número de validación delante.
+
+Sigue fuera: `CA-13`, `CA-14`, `CA-16`, `CA-17`, el manifiesto y su plantilla (gate humano). **La
+rotación sigue apagada y no se rotó ningún REQ real.** `REQ-026` queda en `Estado: en-revisión`.
+
 ## [GitHub] — 2026-09-08 · `REQ-026`: el rotador ya sabe mover una TABLA, y cuando no la entiende no adivina
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
 

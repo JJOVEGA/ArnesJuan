@@ -1300,11 +1300,16 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=906   # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=910   # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
                       # se perdió ninguno.
+                      # 906 → 910: los dos hallazgos `usuario/dinero` de la vuelta 1 de QA
+                      # (`QA-026-01` el NUL que truncaba la lectura y se publicaba encima del
+                      # REQ, `QA-026-02` la segunda tabla que se archivaba como filas de la
+                      # primera), cada uno con SU CONTROL — sin el control, «no rota» también
+                      # lo cumple un fixture que se quedó bajo el umbral.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

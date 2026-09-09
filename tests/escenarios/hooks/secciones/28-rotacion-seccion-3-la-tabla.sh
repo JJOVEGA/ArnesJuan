@@ -2,14 +2,18 @@
 # Se ejecuta con `source` desde el corredor (`../run.sh`), en su propio subshell y con
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
-CASOS_ESPERADOS_SECCION=19
+CASOS_ESPERADOS_SECCION=23
 PISO_AUTONOMO_SECCION=94  # 9 preámbulo + 40 maquinaria compartida duplicada + 45 bloque indivisible mayor · REQ-014 CA-18
 
-# FAIL-BEFORE MEDIDO (contra los hooks de c59fd83, con `ARNES_HOOKS_DIR`): 16 de los 19
-# casos FALLAN. Los TRES que pasan antes y despues lo hacen por diseno y no son vacuos:
-# CA-07 (la tabla dentro de una entrada) y CA-09/CA-10 (los dos bordes) fijan conducta que
-# este REQ CONSERVA, y son justamente lo que una implementacion descuidada de CA-08 rompe
-# --el primer borrador de esta comision mandaba CA-09 a la rama de la ambiguedad--. Los que
+# FAIL-BEFORE MEDIDO, con `ARNES_HOOKS_DIR` apuntando a otra copia de los hooks:
+#   · contra `c59fd83` (antes del reconocedor de tablas): 16 de los 19 primeros FALLAN.
+#   · contra `b0774cd` (con el reconocedor y con los dos defectos de QA): FALLAN los dos
+#     casos de `QA-026-01` (NUL) y `QA-026-02` (dos tablas) -- y solo esos dos.
+# Los que pasan a los dos lados lo hacen por diseno y NO son vacuos: CA-07 (la tabla dentro
+# de una entrada) y CA-09/CA-10 (los dos bordes) fijan conducta que este REQ CONSERVA, y son
+# justamente lo que una implementacion descuidada de CA-08 rompe --el primer borrador de esta
+# comision mandaba CA-09 a la rama de la ambiguedad--; y los dos CONTROLES de QA-026 existen
+# para que su pareja no pueda pasar por un fixture que se quedara bajo el umbral. Los que
 # podrian haber pasado en vacio --CA-05, CA-06 y CA-12-- llevan una componente que exige que
 # la rotacion HAYA OCURRIDO: sin ella, un hook que no mueve nada los pasa todos.
 # --- REQ-026: la historia de los REQ es una TABLA, y sus filas son entradas ------------
@@ -171,6 +175,83 @@ tab_amb "filas sin separadora delante" ""
 tab_amb "dos separadoras en el preambulo" "$TAB_CAB\\n$TAB_SEP\\n|:---:|---:|---|---|\\n"
 tab_amb "una linea entre la cabecera y la separadora" "$TAB_CAB\\n\\n$TAB_SEP\\n"
 tab_amb "separadora sin cabecera delante" "$TAB_SEP\\n"
+
+# --- QA-026-02: LA QUINTA FORMA. Dos tablas en la seccion -----------------------------
+# La enumeracion de CA-08 se declara "NO exhaustiva", y la implementacion cubrio la
+# enumeracion en vez de la propiedad: el paso que decide la estructura paraba en la primera
+# fila de datos, asi que NADA posterior a esa fila se validaba. Con dos tablas rotaba, sin
+# aviso, y la cabecera y la separadora de la SEGUNDA se archivaban como filas de datos de la
+# PRIMERA: las filas conservadas quedaban bajo las columnas de otra tabla y el lector leia
+# `Causa` donde el documento decia otra cosa. DATO REETIQUETADO EN SILENCIO.
+#
+# Lo que lo hacia invisible: en esta forma NO se pierde ni se duplica ninguna fila, asi que
+# CA-05 se conserva y ninguna comprobacion de perdida lo ve. Por eso el caso no mira filas:
+# mira que no se rote y que se avise.
+tab_dos_tablas() {   # tab_dos_tablas <segunda tabla si/no>
+  tab_proj 4 1000 nuevo-al-final
+  { printf '# REQ-429\nEstado: en-revisión\n\n## Historial de cambios\n%s\n%s\n' "$TAB_CAB" "$TAB_SEP"
+    i=1; while [ "$i" -le 20 ]; do
+      printf '| 2026-01-%02d | fila %s con relleno de sobra para pasar del umbral declarado | causa | — |\n' "$i" "$i"
+      i=$((i+1))
+    done
+    if [ "$1" = si ]; then
+      printf '\n| Otra | Tabla | Distinta |\n|---|---|---|\n'
+      printf '| 2026-02-01 | segunda tabla, fila A | tercera columna |\n'
+      printf '| 2026-02-02 | segunda tabla, fila B | tercera columna |\n'
+    fi
+    printf '\n## Trazabilidad\nintacta\n'
+  } > "$RP3/requirements/REQ-429.md"
+  cp "$RP3/requirements/REQ-429.md" "$RP3/antes.md"
+  tab_corre; TAB_RC=$?
+}
+tab_dos_tablas si
+rsec_check "QA-026-02 dos tablas en la seccion: no rota, avisa de la ambiguedad y sale 0" "iguales-si-no-0" \
+  "$(cmp -s "$RP3/antes.md" "$RP3/requirements/REQ-429.md" && echo iguales || echo distintos)-$(grep -q 'mas de una tabla' "$ERRLOG" && echo si || echo no)-$([ -e "$RP3/requirements/historial/REQ-429.md" ] && echo si || echo no)-$TAB_RC"
+rm -rf "$RP3"
+# EL CONTROL, sin el que "no rota" no dice nada: el MISMO documento con UNA sola tabla si
+# rota y no avisa. Asi se sabe que lo que detiene la rotacion es la segunda tabla y no que
+# el fixture se quedara por debajo del umbral.
+tab_dos_tablas no
+rsec_check "QA-026-02 control: el mismo documento con UNA tabla si rota y no avisa" "16-4-silencio" \
+  "$(rsec_cnt '^| 2026-01-' "$RP3/requirements/historial/REQ-429.md")-$(rsec_cnt '^| 2026-01-' "$RP3/requirements/REQ-429.md")-$(grep -q 'AMBIGUA' "$ERRLOG" && echo aviso || echo silencio)"
+rm -rf "$RP3"
+
+# --- QA-026-01: un NUL en el documento. NO SE ROTA, y no se publica media lectura ------
+# `read -r -d ''` se detiene en el primer NUL y devuelve 0: lo leido es MEDIA lectura y el
+# paso final la publicaba encima del original. Medido sobre una copia de `REQ-007`:
+# -17.697 B y cinco filas de historia desaparecidas del documento Y del archivo, con rc 0 y
+# sin un aviso (SEC-002/R-001, la misma clase que dejo `guard-completado` en abierto).
+# El NUL va DESPUES de la seccion: con el NUL delante, el texto truncado ya no contiene la
+# seccion y el hook sale por otra rama --el caso no probaria esto--.
+tab_nul() {   # tab_nul <con nul si/no>
+  tab_proj 10 1000 nuevo-al-final
+  { printf '# REQ-430\nEstado: en-revisión\nQA: pendiente\n\n'
+    printf '## Historial de cambios\n%s\n%s\n' "$TAB_CAB" "$TAB_SEP"
+    i=1; while [ "$i" -le 30 ]; do
+      printf '| 2026-01-%02d | fila %s con relleno de sobra para pasar del umbral declarado | causa | — |\n' "$i" "$i"
+      i=$((i+1))
+    done
+    printf '\n## Trazabilidad\ntexto antes del byte cero '
+    [ "$1" = si ] && printf '\000'
+    printf ' y texto despues\nultima linea, que tampoco se pierde\n'
+  } > "$RP3/requirements/REQ-430.md"
+  cp "$RP3/requirements/REQ-430.md" "$RP3/antes.md"
+  tab_corre; TAB_RC=$?
+}
+tab_nul si
+# Las tres componentes son las tres mitades del defecto: el archivo IGUAL (no se publico la
+# media lectura), el AVISO (no fue en silencio) y las 30 filas todavia en el documento. Se
+# cuenta con `grep -a`: sin el, `grep -c` sobre un archivo con un NUL no imprime nada y el
+# caso pasaria por vacio.
+rsec_check "QA-026-01 con un NUL: no rota, avisa de que no se puede leer entero, byte a byte igual y sale 0" "iguales-si-30-0" \
+  "$(cmp -s "$RP3/antes.md" "$RP3/requirements/REQ-430.md" && echo iguales || echo distintos)-$(grep -q 'NO SE PUEDE LEER ENTERO' "$ERRLOG" && echo si || echo no)-$(grep -ac '^| 2026-01-' "$RP3/requirements/REQ-430.md")-$TAB_RC"
+rm -rf "$RP3"
+# EL CONTROL: el MISMO documento sin el NUL rota. Sin el, "no rota" tambien seria cierto de
+# un fixture que no llega al umbral, y el caso de arriba no distinguiria nada.
+tab_nul no
+rsec_check "QA-026-01 control: el mismo documento sin el NUL si rota y no avisa" "10-20-silencio" \
+  "$(rsec_cnt '^| 2026-01-' "$RP3/requirements/REQ-430.md")-$(rsec_cnt '^| 2026-01-' "$RP3/requirements/historial/REQ-430.md")-$(grep -q 'NO SE PUEDE LEER ENTERO' "$ERRLOG" && echo aviso || echo silencio)"
+rm -rf "$RP3"
 
 # --- CA-09: borde. Cabecera y separadora, y NINGUNA fila de datos ---------------------
 # Comportamiento vigente que este REQ CONSERVA: no se rota y se avisa de que no hay ni una
