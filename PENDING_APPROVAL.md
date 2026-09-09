@@ -24,6 +24,46 @@
 
 ## Pendientes
 
+### [2026-09-08] (coordinadora) — `REQ-019 CA-07`: el techo `0,72×` es INSATISFACIBLE en bytes y hay que re-firmarlo
+
+**Contexto.** Firmaste `0,72×` sobre una medición hecha en **líneas**. F1 lo midió ahora en **bytes**
+—la magnitud que de verdad se paga en cada comisión— y el suelo forzado no cabe:
+
+| | base | techo `0,72×` | suelo medido | razón | exceso |
+|---|---:|---:|---:|---:|---:|
+| `AGENTS.md` | 33.827 | ≤ 24.355 | 27.730 | **0,820×** | +3.375 B |
+| `requirements/README.md` | 40.767 | ≤ 29.352 | 32.682 | **0,802×** | +3.330 B |
+| **total** | **74.594** | **≤ 53.707** | **60.412** | **0,810×** | **+6.705 B** |
+
+El suelo es **cota inferior**: no cuenta los punteros que `CA-03` obliga a añadir (≈700 B + ≈400 B)
+ni los resúmenes de `CA-10`. La derivación va término a término por sección en
+`requirements/REQ-019.md` §«El suelo forzado MEDIDO EN BYTES», así que se puede auditar sin
+re-medirla. El veredicto descansa en la tabla de §13, el `## Índice` del README y los contratos de
+forma: suelo al 100 % en cualquier lectura.
+
+**Y la línea base cambió en contra.** El README pasó de 31.192 B (commit `d266e8f`) a 40.767 B,
+**+9.575 B**, y **7.570 de ellos (79 %) cayeron en suelo** — el contrato de forma del campo
+`Archivos:` (+5.406 B, `CA-02.4.3`) y el `## Índice` (+2.164 B, fuera de alcance) — contra un techo
+que sólo subió 6.894 B. Crecer no dio holgura: la quitó.
+
+**Opciones.**
+- **A — Re-firmar el techo** en ≥ **0,82×** (`AGENTS.md`), ≥ **0,81×** (README), ≥ **0,82×** total
+  contando punteros. Es el precedente exacto de esta misma ventana: el `0,60×` original ya se
+  re-firmó a `0,72×` cuando se midió su suelo.
+- **B — Ampliar el alcance** para bajar el suelo: sacar de `AGENTS.md` lo que la predicción del
+  propio REQ dice que **se queda** (§2, §3, §4, §12 y «qué es crítico» = 4.325 B). Deja
+  `AGENTS.md` en 0,692×, con un margen de 1.010 B **que los punteros se comen**, y **el README no
+  tiene equivalente**: no resuelve el total.
+- **C — Cerrar `REQ-019` sin el ahorro contratado**, declarando el residual con dueño y vencimiento.
+
+**Recomendación de la coordinadora: A.** Es la única que no relaja `CA-02`/`CA-14` ni traslada el
+ahorro entre documentos, y el número sale de una medición reproducible. **No la aplico yo**: el techo
+lo firmaste tú, y ajustarlo dentro de la comisión que lo incumple es justo lo que este proyecto
+prohíbe por escrito.
+
+**Espera.** Tu firma sobre el techo nuevo, por documento. `REQ-019` está en `Estado: bloqueado` y
+**F2 no se despacha** hasta que exista. Nada más de la ventana depende de esto.
+
 ## Resueltas
 
 ### RESUELTA (propietario, 2026-09-08) — **se PUBLICA `v1.33.0`**: revierte el aplazamiento de ayer, con límite declarado

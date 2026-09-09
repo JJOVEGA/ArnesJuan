@@ -2,6 +2,20 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-08 · Cola de aprobaciones: el techo de `REQ-019 CA-07` vuelve al propietario
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Entrada en `PENDING_APPROVAL.md` con la medición de F1, las tres opciones y la recomendación. El
+techo `0,72×` se firmó sobre líneas y **en bytes no se alcanza**: suelo `0,820×` en `AGENTS.md` y
+`0,802×` en el README, exceso de **6.705 B**, y es cota inferior porque no cuenta los punteros de
+`CA-03`. `REQ-019` queda en `Estado: bloqueado` y **F2 no se despacha** sin la firma nueva.
+
+**Por qué esto es un acierto del arnés y no un retraso:** la medición se pidió **antes** del reparto
+precisamente porque era la quinta vez de la clase *«criterio derivado sin comprobar su
+factibilidad»*. Sin ella, 7–11 h de reparto en solitario habrían apuntado a un blanco inalcanzable
+y el techo se habría «descubierto» mal fijado al final, dentro de la comisión que lo incumplía —el
+modo de fallo que `CA-08` de `REQ-017` describe y prohíbe.
+
 ## [GitHub] — 2026-09-08 · `REQ-019` F1: el techo `0,72×` **no es alcanzable en bytes**, y se sabe sin haber movido un byte
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
 
