@@ -2,6 +2,43 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · `REQ-026`: `QA: aprobado` sobre el mecanismo, con la clase de fallo cerrada por argumento
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+Re-validación de la vuelta 1. **Los dos hallazgos `usuario/dinero` cerrados, verificados por
+medición propia de QA y no leyendo el commit:**
+
+- **`QA-026-01`** — la forma exacta que destruía 17.697 B deja el archivo en **158.598 → 158.598 B**,
+  no rota, avisa citando `SEC-002`/`R-001`, `rc=0`. Contención **por archivo**: `REQ-013` con NUL
+  queda intacto y citado mientras `REQ-007` y `REQ-019` rotan en la misma parada.
+- **`QA-026-02`** — las dos variantes quedan byte a byte iguales y avisan.
+
+**El argumento que cierra la clase donde vivían la quinta y la sexta forma**, y que vale más que
+cualquier caso: `arnes_rot_es_separadora` acepta **exactamente** el conjunto de caracteres que GFM
+admite en una fila delimitadora (`-`, `:`, `|`, espacios y tabs) y exige un `-`. Luego **no existe
+fila que GFM lea como separadora y el hook lea como dato**: la dirección peligrosa está cerrada y
+todo desacuerdo cae del lado seguro. Verificado sobre 9 formas. **Séptima forma: no la hay** —
+doce formas probadas, y la ausencia se declara **evidencia acotada, no demostración**.
+
+**Cero regresión sobre corpus real:** 10 REQ en copia, 8 rotan con multiconjunto exacto y todo fuera
+de la sección byte a byte; los 2 que no rotan están bajo umbral y **no avisan**, que es `CA-10`.
+Ningún fail-closed falso.
+
+`QA-026-05` y `QA-026-06` **cerrados**. El primero porque el registro del techo ya nombra su
+estadístico y su orden es **estructuralmente** verificable —regla escrita antes de medir, dos juegos
+en invocaciones separadas—; y QA acredita expresamente lo que el desarrollador **no estaba obligado
+a escribir**: que la vuelta anterior eligió la regla con el número de validación delante, que la
+subida de `0,135` a `0,140` **no** se atribuye a los arreglos, y que lo afirmable es de **camino, no
+de reloj**.
+
+**Hallazgo nuevo `QA-026-07`** (`instrumento`, dueño `analista-requerimientos`): el único hueco que
+rota sin avisar —una continuación **tras la última** fila— **no incumple `CA-08 (i)`** y su inocuidad
+está **verificada en tres configuraciones**, pero ningún criterio lo dice, y es justo la frontera
+donde este REQ falló dos veces. Merece cláusula.
+
+**Alcance declarado del veredicto:** `CA-01`–`CA-12` y `CA-15`. `CA-13`, `CA-14`, `CA-16` y `CA-17`
+**sin implementar y fuera de ventana**. El veredicto acredita **el mecanismo**, no el cierre.
+
 ## [GitHub] — 2026-09-09 · `REQ-026 CA-08`: la propiedad por delante de la lista, y el aviso simétrico
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 
