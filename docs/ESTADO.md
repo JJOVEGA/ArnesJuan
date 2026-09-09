@@ -40,6 +40,84 @@ el descontrol del ciclo 3.
 > (95,66 s → 45,14 s), y esperar al banco es gratis en tokens. REQ-021 ahorra ~150 k por ventana **cuando
 > exista**. La palanca de tokens es **REQ-019**, y está en 1.34.0.
 
+## PUNTO DE CONTINUIDAD — 2026-09-08, ventana 1.34.0
+
+> **Léelo antes de actuar, junto con las reglas vigentes.** Y **comprueba el estado de los agentes de
+> abajo antes de despachar ninguno**: varios siguen reanudables y despachar de nuevo duplica trabajo.
+> Rama `rel/registro-1.33.0` @ `0019598`, empujada, sin commits pendientes.
+
+### Alcance aprobado de 1.34.0 (propietario, 2026-09-08) — CUATRO trabajos
+
+Fijado en `docs/PLAN.md` §«ALCANCE DE 1.34.0». **No se ha ampliado**: `REQ-027` se escribió dentro de la
+ventana por petición expresa, y **su implementación no tiene ventana decidida**.
+
+1. **La sonda de `REQ-017 CA-08`** — primero, por enmienda del propietario.
+2. **`REQ-019`** — adelgazar los dos documentos de arranque.
+3. **La rotación de historiales (`REQ-026`)**.
+4. **`REQ-023` + `REQ-024`** — remediación de `SEC-047`, cuyo **vencimiento es el cierre de 1.34.0**
+   (`docs/seguridad/registro-seguridad.md:3684`, escrito por el auditor **en su sede**). Cerrar sin ellos
+   sube `SEC-047` y `SEC-051` a `contrato`.
+
+### Estado por REQ — implementado / contratado / pendiente de verificar
+
+| REQ | Estado | Qué hay hecho de verdad |
+|---|---|---|
+| **REQ-017** | `en-progreso` | **CONTRATADO** (`CA-08 (ii)` reescrito: cota sobre la razón). **Código EN CURSO.** `QA:`/`Seguridad:` de la cabecera son de **1.33.0** y **no cubren** este trabajo |
+| **REQ-026** | `pendiente` | **CONTRATADO** (17 criterios). Nada implementado |
+| **REQ-027** | `pendiente` | **CONTRATADO** (10 criterios). Nada implementado. **Crear el REQ no instala las reglas** |
+| **REQ-019** | `pendiente` | Contrato **corregido** (techo `0,72×`, línea base 521, `D-2/3/5/9`). `SEC-033` (`contrato`) **abierto**. Sin implementar |
+| **REQ-023 / REQ-024** | `borrador` | Sin contrato cerrado. Son la remediación de `SEC-047` |
+| **REQ-021** | `bloqueado` | 3 vueltas agotadas. **No se retoma sin decisión del propietario** |
+| **REQ-025** | `borrador` | Fuera de esta ventana. `REQ-027` lo enlaza como **continuación**, sin condicionar su cierre |
+
+### Agentes — comprobar antes de despachar
+
+| Id | Rol / trabajo | Estado |
+|---|---|---|
+| `a3f8b1dcaceab4f10` | `desarrollador` · sonda de `REQ-017` | **ACTIVO**, >1 h. Tiene `run.sh` y `37-coste-del-escaner-5-el-camino-normal.sh` modificados sin comitear |
+| `a22f39d25dbc01323` | `analista` · `REQ-027` | Terminado, **reanudable** |
+| `afc7860e40e10399b` | `analista` · `REQ-026` | Terminado, reanudable |
+| `a515fa2cde6a9d5d4` | `analista` · `REQ-019` | Terminado, reanudable |
+| `a98ae536310d73d8a` | `analista` · `REQ-017` | Terminado, reanudable |
+
+### Métricas de `REQ-017` — PENDIENTES DE VERIFICAR, no confirmadas por la coordinadora
+
+El propietario mencionó del desarrollador: **~5,1 s**, un **4 s + 6 s**, **~55 s para `k=4`** y una
+**emulación de 2 CPU**. **La coordinadora NO las ha visto ni verificado**, y **no encajan entre sí** bajo
+una misma definición de «repetición» (4+6 = 10, no 5,1). Se le pidieron por escrito: qué es exactamente
+una repetición, la **aritmética** de los ~55 s, y separar **emulación** de **validación en el CI real**.
+Más tanda terminada, **repeticiones válidas** y tiempo acumulado. **Nada de esto se da por bueno hasta
+que llegue su informe.**
+
+### Condiciones de parada vigentes
+
+- **`REQ-017`**: si el `k` necesario **no cabe bajo el techo de coste**, el desarrollador **para y lo
+  dice**. La salida —sacar `CA-08 (ii)` de la puerta requerida y dejarlo como acreditación fechada, la
+  vía que `CA-05` ya usa— **es decisión del propietario**, no de la coordinadora ni del agente.
+- **`REQ-017`** (vigilancia): si **repeticiones válidas** se estancan o el tiempo acumulado crece sin
+  acercarse a un `k` conforme, se aplica la parada. **No editar archivos no es señal de bloqueo, y crear
+  y limpiar temporales no es señal de progreso.**
+- **Tope de vueltas** dev↔QA: **3 por REQ**, sin reiniciarse.
+- **Publicación**: con `contrato` abiertos en el repositorio, **el tag vuelve al propietario**.
+
+### Decisiones pendientes del propietario
+
+1. **Ventana de implementación de `REQ-027`** — no decidida. Compite con `REQ-019` por `AGENTS.md`.
+2. **`REQ-021`** sigue `bloqueado` sin salida decidida.
+
+### Siguiente acción
+
+**Esperar el informe del desarrollador de `REQ-017`** con las cinco magnitudes pedidas. Después: QA y
+auditor de `REQ-017`, en ese orden (§6, no se relaja). **No despachar nada más hasta entonces.**
+
+### Deuda anotada y NO resuelta
+
+`REQ-019` y `REQ-026` conservan **20 fechas** un día por delante (12 y 8) — se corrigen en la próxima
+comisión que toque cada archivo. Falta la entrada de «Migraciones conocidas» de `arnes-upgrade`
+(contratada en `REQ-027 CA-10` como **condición de entrega**). El techo de **2.600 B** de `REQ-027 CA-05`
+es un **límite propuesto sin validar**. **El consumo de la coordinadora sigue sin instrumentar**: lo
+único medido son **≈1,10 M tokens en 11 comisiones** de subagente.
+
 ## En progreso
 **REQ-021 — `pendiente`, `QA: con-hallazgos`. VUELTA 3 DE 3, con el desarrollador trabajando. Es la
 última.**
@@ -231,7 +309,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-08 21:25
+## Estado derivado — 2026-09-08 21:46
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -241,10 +319,10 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `rel/registro-1.33.0` @ `c2114c4` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `rel/registro-1.33.0` @ `0019598` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.0`
 **Aprobaciones pendientes:** 0
-**REQ:** 26 — completado 12 · en-revisión 1 · en-progreso 2 · bloqueado 1 · otros 10
+**REQ:** 27 — completado 12 · en-revisión 1 · en-progreso 2 · bloqueado 1 · otros 11
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
 _Sólo los REQ abiertos; los 12 completados no se listan._
@@ -265,5 +343,6 @@ _Sólo los REQ abiertos; los 12 completados no se listan._
 | REQ-024 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-025 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-026 | pendiente | pendiente | pendiente | critico | (ninguno) |
+| REQ-027 | pendiente | pendiente | pendiente | critico | (ninguno) |
 
 <!-- ARNES:DERIVADO fin -->

@@ -2,6 +2,24 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · Punto de continuidad de la ventana 1.34.0 en `docs/ESTADO.md`
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Escrito **fuera** de los marcadores del bloque derivado (comprobado antes de editar). Recoge: alcance
+aprobado de 1.34.0, estado por REQ **distinguiendo implementado / contratado / pendiente de verificar**,
+los **identificadores de los agentes** para reanudarlos en vez de duplicarlos, las condiciones de parada,
+las decisiones pendientes del propietario y la siguiente acción. Evidencia **enlazada**, no copiada.
+
+**Lo que el punto deja explícito y conviene no perder:** `REQ-017` tiene `QA:` y `Seguridad:` en verde en
+su cabecera, pero **son de 1.33.0 y no cubren** el trabajo en curso. `REQ-026` y `REQ-027` están
+**contratados y sin implementar** — crear un REQ no instala nada. Y las cifras de la sonda que circulan
+(~5,1 s, 4 s + 6 s, ~55 s para `k=4`, emulación de 2 CPU) están marcadas **pendientes de verificar**: la
+coordinadora **no las ha visto**, y **no encajan entre sí** bajo una misma definición de «repetición»
+(4+6 = 10, no 5,1).
+
+**Regla de reanudación registrada:** comprobar el estado de los agentes existentes **antes** de despachar
+otros. Cinco quedan reanudables por identificador; despachar de nuevo duplicaría trabajo ya pagado.
+
 ## [GitHub] — 2026-09-08 · `REQ-027`: la distribución completa contratada, y la idempotencia deja de deducirse de una etiqueta
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 
