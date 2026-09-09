@@ -2,6 +2,34 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · Cuatro precisiones sobre `REQ-026` registradas para su implementación (sin abrir otra ronda)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Revisión externa verificada contra el REQ. **No se abre otra ronda de análisis** —decisión del
+propietario: cerrar el contrato y seguir con la sonda—; van a `docs/PENDIENTES.md` para que la comisión
+de implementación no las descubra a mitad.
+
+**Dos son defectos reales del contrato:**
+
+1. **`CA-15` fija «≤ 1,5 s de reloj» SIN declarar plataforma.** Aquí eso no es menor: `AGENTS.md` §7
+   registra que el mismo banco tarda **~30 min en Windows y segundos en Linux**. Un techo de reloj sin
+   plataforma **no se puede desmentir ni acreditar**, y la primera medición que lo supere no distinguirá
+   una rotación cara de un runner cargado — el modo de fallo que `REQ-017 CA-08` acaba de costar una
+   ventana entera.
+2. **Tensión entre `CA-13` y `CA-17`:** el primero pide el `glob` «con la forma `requirements/REQ-*.md`,
+   ajustado a los candidatos»; el segundo, que case **exactamente** con los candidatos. **Un glob con esa
+   forma casa con todos**, así que las dos frases sólo son ciertas a la vez si todos los REQ son
+   candidatos — que es lo que `CA-17` niega. **No se resuelve implementando: se resuelve en el REQ.**
+
+**Dos son avisos que evitan un error de lectura:** `Archivos:` declara `requirements/REQ-*.md` como
+ámbito **de escritura** —para que `arnes-paralelo.sh` no autorice paralelismo en falso—, y **no** como
+conjunto a rotar; los dos campos llevan el mismo literal y confundirlos convertiría una declaración
+prudente en la decisión de rotarlo todo. Y `orden: nuevo-al-final` está acreditado en **un** archivo
+(`REQ-017`), no en todos: **se comprueba por candidato**, porque equivocarlo archiva lo más reciente.
+
+**Corrección de coste para el registro:** la comisión de `REQ-026` costó **≈56 k tokens**, no los ≈46 k
+del informe preliminar — la diferencia son las tres rondas de corrección en vuelo.
+
 ## [Interno] — 2026-09-09 · `REQ-026` cerrado con la cuarta corrección: el punto de equilibrio cuenta **cuatro** costes, no uno
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 

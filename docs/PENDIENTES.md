@@ -2098,3 +2098,58 @@ trabajo duplicado y correcciones — que es justo lo que se quiere dejar de paga
 proyectos que instalan el arnés**, así que la contradicción no es local — se propaga. Clase
 `instrumento`; **dueño:** `analista-requerimientos` (decidir cuál manda) y `desarrollador` (el texto del
 agente). Resolverlo es barato y va con la ventana de coste.
+
+
+---
+
+## Cuatro precisiones sobre `REQ-026`, para su comisión de implementación (2026-09-09)
+
+**Origen:** revisión externa aportada por el propietario, verificada por la coordinadora contra el REQ.
+**No se abre otra ronda de análisis ahora** (decisión del propietario: cerrar el contrato y seguir con la
+sonda). Se registran aquí para que quien implemente `REQ-026` **no las descubra a mitad**.
+
+### 1. `CA-15` fija un techo de reloj SIN declarar plataforma — hay que arreglarlo
+
+Dice *«la rotación añade **≤ 1,5 s de reloj** al tiempo de parada (mediana de 5 paradas, medida con la
+misma medición de reloj que usa el banco)»* y **no dice en qué máquina**. En este proyecto eso no es una
+omisión menor: `AGENTS.md` §7 registra que **el mismo banco tarda ~30 min en Windows y segundos en
+Linux**, y ése es el motivo por el que corre en CI y no como puerta del hook. Un techo de reloj sin
+plataforma **no se puede desmentir ni acreditar**.
+
+**Qué falta, en concreto:** la plataforma de referencia, y las condiciones —máquina en reposo o no, número
+de comisiones vivas, y si la mediana se toma en frío o en caliente—. Sin eso, la primera medición que lo
+supere no distinguirá una rotación cara de un runner cargado, que es exactamente el modo de fallo que
+`REQ-017 CA-08` acaba de costar una ventana entera.
+
+### 2. Tensión latente entre `CA-13` y `CA-17`: la forma del `glob` contradice la candidatura
+
+- **`CA-13`** pide el `glob` *«con la forma `requirements/REQ-*.md`, ajustado a los candidatos de CA-17»*.
+- **`CA-17`** exige que el `glob` *«case **exactamente** con los REQ así justificados, de modo que ningún
+  REQ no candidato se rota»*.
+
+**Un glob con la forma `requirements/REQ-*.md` casa con TODOS.** Las dos frases sólo son ciertas a la vez
+si todos los REQ son candidatos — que es justo lo que `CA-17` niega. Quien implemente tiene que elegir, y
+**la elección es de contrato**: o `glob` enumerado por candidato, o varios elementos en
+`rotacion.artefactos`, o una forma que el hook admita y que hoy no está documentada. **No se resuelve
+implementando: se resuelve en el REQ**, y quien lo toque debe decirlo antes de escribir código.
+
+### 3. `Archivos:` NO es el conjunto que se rota, y conviene que quede dicho
+
+`REQ-026` declara `requirements/REQ-*.md` en su campo `Archivos:` **a propósito y de forma
+conservadora**: al activarse la rotación, cada parada puede reescribir la historia de cualquier REQ que
+case, y el campo existe para que `tools/arnes-paralelo.sh` **no autorice paralelismo en falso**. **Eso es
+ámbito de ESCRITURA, no ámbito de ROTACIÓN.** Confundirlos convertiría una declaración prudente en la
+decisión de rotarlo todo — lo contrario de `CA-17`. Va escrito aquí porque los dos campos llevan el mismo
+literal y **la confusión es de una sola lectura distraída**.
+
+### 4. `orden: nuevo-al-final` está acreditado en UN archivo, no en todos
+
+Medido en `requirements/REQ-017.md` (`:436` es la fila de creación, `:462-463` las recientes). **Un
+archivo no demuestra el orden de los demás.** Antes de aplicar la rotación a cada candidato hay que
+**comprobar su orden**, no heredarlo — y equivocarlo **archiva lo más reciente**, que es el modo de fallo
+que `skills/arnes-upgrade` documenta para 1.26.0.
+
+### Corrección de coste, para el registro
+
+El coste de la comisión que escribió `REQ-026` es **≈56 k tokens**, no los ≈46 k del informe preliminar:
+la diferencia son las **tres rondas de corrección en vuelo**. La cifra buena es la de cierre.
