@@ -2,6 +2,90 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · `REQ-026` ajuste de alcance, `REQ-027` entregado y `REQ-023` entregado
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus), `desarrollador` (Opus) ×2, coordinadora.
+
+### `REQ-026` — ajuste de alcance por decisión del propietario (2026-09-09)
+
+`CA-18 (i)` y `CA-05` conservan su garantía **absoluta y vigente**; `ADR-008` queda en `Estado:
+propuesta` **y sin aplicar**; `SEC-072` y `SEC-073` **abiertos**; `Estado: en-revisión` intacto por
+instrucción expresa. Todo el código y toda la evidencia **se conservan**: mecanismo, testigo, 37
+casos, mediciones, ADR y artefactos. La idempotencia del re-archivado queda **aplazada** y la rotación
+de `requirements/` **desactivada**.
+
+**La cadena de publicación, escrita con su fuente:** los dos hallazgos son `contrato` y están en
+`Hallazgos abiertos:` ⇒ `guard-completado` **deniega** el cierre (§6/§13) ⇒ con cualquier `contrato`
+abierto **el tag vuelve al propietario** (su decisión del 2026-09-08; la delegación **no aplica**) ⇒ su
+instrucción vigente de no publicar sin resolver o aceptar ⇒ **`v1.34.0` no se publica y `REQ-026` no
+llega a su estado terminal**. Y en la misma frase: **no hay riesgo vivo** — rotación apagada, **ningún
+REQ real rotado nunca**, los dos residuos **latentes**.
+
+El vencimiento de la idempotencia **no queda sin fecha**: sigue anclado a «antes de que se declare
+`CA-13`», que es correcto **porque `CA-13` también queda aplazado** — el día que se encienda, vence.
+El analista **propone** sede propia en 1.35.0 para los cuatro criterios más la idempotencia, y **no la
+creó**: abrir un REQ es abrir trabajo.
+
+### `REQ-027` — las reglas en su sede canónica, y el techo que no cabía
+
+`§14` en `AGENTS.md` y en `templates/AGENTS.md.tpl` entre marcadores, más la entrada «Hacia 1.34.0» en
+`skills/arnes-upgrade/SKILL.md`. **Nueve de once criterios acreditados.**
+
+**El bloque no cabía: 3.703 B contra 2.600 B propuestos (1,42×).** Se hizo una pasada de recorte de
+**relleno**, medida (3.930 → 3.703 B), y después se **re-derivó el techo con entrada en Historial,
+porque `CA-05` lo ordena y dice cómo**. Lo que no se recortó es `B.7` (1.036 B) y `D` (776 B) —
+**1.812 B, el 49 % del bloque**— porque es **contenido contratado** que `CA-05` prohíbe recortar. En
+palabras del desarrollador: *«no cambié ningún umbral para obtener verde: cambié el umbral porque el
+criterio manda cambiarlo y dice cómo»*.
+
+**Idempotencia MEDIDA**, que era condición de entrega: tres corridas con **el mismo md5**,
+`NUEVO`/`INTACTO`/`INTACTO`, `cmp` sin salida, el `## 20. Instrucciones particulares` del proyecto
+**intacto**; cuatro negativos con **archivo sin tocar**; y **fail-before** con una migración ingenua
+que deja **2 bloques y borra el texto propio del proyecto**.
+
+**`CA-08` señal (c) NO acreditada, y su consecuencia es contrato:** se fija en la primera comisión
+despachada **ya con** el bloque, y ésta se despachó antes de que existiera ⇒ **no se declara que las
+reglas sirven**. **Codex y Cursor siguen `no verificada`**: se encontró una **afirmación del
+proveedor** y se descartó por insuficiente según la propia regla `B.1`.
+
+**Línea base nueva que hereda 1.35.0:** `AGENTS.md` = **37.530 B**, verificado.
+
+### `REQ-023` — la guarda nombra la propiedad, no el carácter (mitad 1 de `SEC-047`)
+
+**Diez de doce criterios acreditados y medidos.** Banco **960 PASS · 0 FAIL · 5 SKIP**, total **965**
+(de 924), `rc=0`, verificado por la coordinadora.
+
+**El aviso de radio de la coordinadora era correcto pero INCOMPLETO, y el desarrollador lo completó
+midiendo.** El inventario del contrato nombraba `tools/arnes-lectura.sh:69-72`; hay **dos derivaciones
+más** por `sed` sobre el texto de los brazos `case` —`36-…-2-los-lectores.sh:228` y
+`36-…-3-comentar-retira.sh:33`— y **ninguna estaba en `Archivos:`**. Su primera forma las rompió: son
+los **5 FAIL** que la coordinadora midió en el árbol de trabajo. Forma final: los cinco brazos
+conservan su literal y la **pertenencia** se pregunta a `ARNES_CLAVES`, así que el despacho existe pero
+**ya no decide** quién es campo — que es literalmente lo que la factibilidad de `CA-06` pedía. **Radio
+final: cero archivos fuera de su conjunto de escrituras.**
+
+**El criterio de coste cazó un defecto en su propio código, y no se tocó el techo.**
+`${clave//[!alfabeto]/}` en locale **UTF-8 es superlineal**: cociente **3,78** (1000→2000) y **5,59**
+(2000→4000) contra techo **2,2**, y **5,053** sobre `arnes_norm_clave`. Con `LC_ALL=C` fijado con
+`local` **dentro** de la guarda: **2,098** y **2,050**, y **17× más barata**. Era hallazgo contra su
+propio código, así que el techo **queda intacto**.
+
+**`CA-02`: el dominio es 5 de 6, no 4** — y la quinta clave es **exactamente `Estado`**, la que el
+puntero medido falso de `CA-01` dejaba fuera. El defecto que el analista corrigió en el contrato
+**tenía consecuencia medible**.
+
+**Y una premisa declarada como NO cumplida entera:** la cota algebraica de `CA-09 (ii)` suponía la
+guarda contenida en la función medida; la publicación añade una comparación **por línea** fuera de
+ella y **dos llamadas** (builtins). Medido `1,002×` contra techo `1,25×`, con sujetos intercalados.
+
+**No acreditados, por precondición ajena y sin forzarlos:** `CA-08` en su letra —espera el gate humano
+de **`SEC-048`**, que sigue abierto— y **`CA-10`**, que necesita `AGENTS.md` y la plantilla, en manos
+de la otra comisión. Queda por enrutar.
+
+**Nota de mecanismo:** `guard-completado` **denegó** el primer intento de commit de la coordinadora
+porque el comando escribía en `requirements/` y su texto mencionaba el estado terminal. Falso positivo
+—no había transición— y es la **anchura deliberada** que §13 documenta. Se resolvió separando el
+comando, sin alterar el contenido ni rodear ninguna puerta.
+
 ## [GitHub] — 2026-09-09 · REQ-023: el carácter que no se ve apaga el enforcement — la guarda pasa a nombrar la propiedad, y el techo de coste cazó la primera versión
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
 

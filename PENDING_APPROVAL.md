@@ -24,7 +24,21 @@
 
 ## Pendientes
 
-### [2026-09-08] (coordinadora) — `REQ-019 CA-07`: el techo `0,72×` es INSATISFACIBLE en bytes y hay que re-firmarlo
+## Resueltas
+
+### APLAZADA CON SU REQ (propietario, 2026-09-09) — `REQ-019 CA-07`: el techo viaja a 1.35.0 con su evidencia
+
+**Sale de la cola porque el REQ salió de la ventana**, no porque se haya decidido. El propietario:
+*«Decido aplazar `REQ-019` a 1.35.0 para reevaluarlo. Conservá lo trabajado; no lo marques completado
+ni inviertas más en su reparto ahora.»*
+
+**Por qué se mueve y no se deja viva:** una entrada en «Pendientes» hace que `guard-completado`
+deniegue el cierre de **cualquier** REQ, y `REQ-023`, `REQ-024` y `REQ-027` van hacia el cierre en esta
+ventana. Dejarla aquí bloquearía tres trabajos por una decisión que ya no pertenece a esta ventana.
+**La pregunta no se resuelve: se traslada**, y toda su evidencia queda escrita abajo y en
+`docs/arnes/req-019-techo-propuesto.md`. `SEC-033` (`contrato`) sigue abierto en `REQ-019`.
+
+### [2026-09-08] (coordinadora) — [TRASLADADA A 1.35.0] `REQ-019 CA-07`: el techo `0,72×` es INSATISFACIBLE en bytes
 
 **Contexto.** Firmaste `0,72×` sobre una medición hecha en **líneas**. F1 lo midió ahora en **bytes**
 —la magnitud que de verdad se paga en cada comisión— y el suelo forzado no cabe:
@@ -144,6 +158,7 @@ enumeración independiente— y **la tabla por sección NO lo sustituye**: agreg
 invariante se pierde por **bloque**. Las dos enumeraciones de F1 (106 y 164) **no sobreviven en
 disco**, así que ese inventario hay que rehacerlo antes de F2, con firma o sin ella.
 
+
 ### [2026-09-09] (auditor `R-022` · enrutado por la coordinadora) — `SEC-073`: `REQ-026` lleva CUATRO criterios contratados y sin implementar. ¿Cuál de las tres salidas?
 
 **Contexto: el agujero que pediste comprobar existía, y ya está tapado por máquina.** La puerta lee el
@@ -231,7 +246,6 @@ distingue.
 
 **Espera.** Tu sí/no al trabajo de la vía B sobre `CA-05`. Nada más de la ventana depende de esto.
 
-## Resueltas
 
 ### RESUELTA (propietario, 2026-09-09) — `REQ-027` entra en 1.34.0 como **quinto trabajo**, detrás de `REQ-019`
 

@@ -463,7 +463,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-09 08:33
+## Estado derivado — 2026-09-09 09:03
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -473,10 +473,10 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `rel/registro-1.33.0` @ `8d39bb4` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `rel/registro-1.33.0` @ `e406202` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.0`
-**Aprobaciones pendientes:** 2
-**REQ:** 27 — completado 13 · en-revisión 2 · en-progreso 1 · bloqueado 2 · otros 9
+**Aprobaciones pendientes:** 0
+**REQ:** 27 — completado 13 · en-revisión 4 · en-progreso 1 · bloqueado 2 · otros 7
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
 _Sólo los REQ abiertos; los 13 completados no se listan._
@@ -492,10 +492,10 @@ _Sólo los REQ abiertos; los 13 completados no se listan._
 | REQ-020 | pendiente | pendiente | preventiva | critico | sec-038(contrato),sec-039(contrato),sec-… |
 | REQ-021 | bloqueado | con-hallazgos | preventiva | critico | dev-021-05(instrumento,dueñoanalista-req… |
 | REQ-022 | pendiente | pendiente | pendiente | critico | (ninguno) |
-| REQ-023 | pendiente | pendiente | pendiente | critico | (ninguno) |
+| REQ-023 | en-revision | pendiente | pendiente | critico | (ninguno) |
 | REQ-024 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-025 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-026 | en-revision | aprobado | con-hallazgos | critico | qa-026-03(instrumento),qa-026-07(instrum… |
-| REQ-027 | pendiente | pendiente | pendiente | critico | (ninguno) |
+| REQ-027 | en-revision | pendiente | pendiente | critico | (ninguno) |
 
 <!-- ARNES:DERIVADO fin -->
