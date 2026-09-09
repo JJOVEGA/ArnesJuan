@@ -261,6 +261,83 @@ son, y no consta que la regla del margen se fijara antes de ver el juego de vali
 cambio de `hooks/estado-derivado.sh`, que **no era alcance tomado por su cuenta** —el REQ lo declara
 en `Módulo:` y en `Archivos:`— pero le falta contrato (`QA-026-06`).
 
+## [GitHub] — 2026-09-09 · `REQ-026 CA-18`: la rotación no publica sobre una lectura caducada, y medir el guardián encontró su propia regresión
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+**El defecto: `SEC-067`, `usuario/dinero`.** La rotación leía el documento entero, calculaba, y
+lo reescribía **desde esa lectura**, sin comprobar que nadie lo hubiera cambiado en medio.
+Reproducido **3/3** con una ventana de **295–312 ms** (el auditor: 355–361 ms): un
+`Seguridad: aprobado` escrito durante la rotación **volvía a `pendiente`**, con `rc 0`, stderr
+vacío y sin línea en el bloque derivado. Es la **actualización perdida** —una escritura completa
+y válida que pisa un cambio posterior a la lectura— y **no** la escritura desgarrada que cierra
+`REQ-015` con el temporal propio del proceso: el arnés sólo tenía defensa para la segunda.
+
+**El mecanismo, que `CA-18 (v)` dejaba a mi elección: un testigo de vigencia por relectura del
+documento **y** del archivo de historia, justo antes de publicar. Sin cerrojos.** Y el motivo
+importa más que la elección: `(i)` incluye expresamente a **una persona** con su editor, y un
+cerrojo sólo obliga a quien lo respeta —habría dado garantía sobre las rotaciones y **ninguna**
+sobre el caso que se midió—; además un cerrojo huérfano deja un documento que **no vuelve a rotar
+nunca**, y decidir cuándo está rancio es adivinar. Se comprueban los dos archivos porque el
+bloque nuevo se arma sobre lo que el archivo de historia decía al leerlo, y publicar encima de
+una lectura caducada **de él** borra un bloque ya archivado. Comprueba y **cede**: no espera a
+nadie, como exige `(v)(b)`.
+
+**Medir no era opcional, y ahí estaba la lección.** El encargo daba por hecho —y yo también— que
+estos cambios eran de camino de fallo y no había que re-medir. **Una línea no lo era:** guardar el
+testigo justo después de leer copiaba el documento entero **por archivo y por parada**, también en
+los que no se iban a rotar. Medido **pareado** (misma máquina, mismo minuto, montaje de `CA-15`):
+**140.583 µs** contra **128.742 µs** del código anterior, **+11.841 µs (+9,2 %)** en régimen
+estacionario y **por encima del techo de 140.000 µs**. Corregido reconstruyendo el testigo en el
+punto de publicación, con lo que fuera del camino de rotación cuesta **cero**. Un guardián que se
+paga en cada parada aunque no haga nada es exactamente lo que `CA-15` existe para no dejar pasar.
+
+**Y el residual se declara NO MEDIDO, en vez de publicar una cifra cómoda.** Tras la corrección,
+tres pareados dieron +3.261 µs, +5.659 µs y uno **inválido** (+48.377 µs con el brazo de control
+del **mismo código viejo** moviéndose un 34 %, entre 93.110 y 141.277 µs). Con el código anterior
+midiendo hoy por encima del propio techo, una comparación absoluta **condenaría también al código
+que era conforme**: la máquina no está en el estado en que se derivó. La sonda se **abstiene**
+(`REQ-021`), **el techo no se re-deriva**, y lo que falta para publicarlo es la condición (ii) de
+`CA-15` —máquina en reposo y **sin el banco corriendo**—, que es justo lo que una comisión no
+puede ofrecer al final de su sesión. El protocolo pareado queda escrito en el REQ.
+
+**`CA-18 (iv)` deja de estar «modelado»: se midió.** Dos paradas simultáneas sobre el mismo
+documento, contra `1fe975f`: **1 de cada 5** y **1 de cada 10** vueltas dejaron **dos bloques** en
+el destino y **1.190 filas duplicadas**, con `CA-05` roto sobre la unión. Con el testigo, **10 de
+10** conformes. Consecuencia que se declara en vez de disimularse: como el duplicado es
+**intermitente**, el caso del banco es de **conformidad y no un discriminante** —una vuelta suelta
+pasa también contra el código viejo— y por eso corre **tres** vueltas.
+
+**`CA-18 (iii)`: retirada una invariante falsa.** El comentario de `hooks/rotar-artefactos.sh:34-36`
+afirmaba que con dos paradas «una de las dos no encontrará nada que mover, y eso es conforme». Las
+dos **sí** encuentran qué mover. Es la tercera afirmación de esta comisión sobre el mecanismo que
+resultó falsa al ejecutarla, y las tres se han cerrado con una medición.
+
+**`CA-18 (vii)` (`SEC-069`): la rotación de sección no rota cuando no puede dejar constancia
+duradera.** Con `estado_derivado.activo: false` ninguna línea de «no se rota» se escribe, así que
+el fail-closed se volvía invisible por una opción ajena a él. Ahora, con el canal apagado, no rota
+y lo dice por stderr; y la rama de la carrera añade su contador y su **quinta** línea al bloque
+derivado. El ajuste se lee en la rotación —que corre antes del bloque— con el mismo cuidado con
+`//` que `estado-derivado.sh`: sólo un `false` explícito apaga. La decisión se toma después de
+saber que había algo que mover (`CA-10`: nada de ruido en cada parada) y antes del `mkdir -p`, para
+no crear `historial/` y luego no rotar.
+
+**Banco: parte 4 nueva** (`28-rotacion-seccion-4-la-carrera.sh`, 8 casos, `piso` 104 derivado
+término a término) y `CASOS_ESPERADOS` 916 → **924**. La sede la fija `CA-18 (vi)`: la parte 3 está
+en 400 de 400 líneas y el criterio no propone subir el techo. Fail-before contra `1fe975f`: **5 de
+8** fallan; los 3 que pasan son los **dos controles obligatorios** —que deben pasar a los dos
+lados o no controlan nada— y el de `(iv)`. Corrida completa: **920 PASS · 0 FAIL · 4 SKIP** (924,
+`rc=0`, 1 m 10 s, +7 s por los fixtures de 1.200 filas); autoprueba 106 PASS; gates de §7 en verde.
+Sobre copias en `/tmp` de `REQ-017` y `REQ-021`: rotan, multiconjunto intacto, un bloque, un
+puntero, y la segunda parada no dice nada (idempotencia).
+
+**Dos residuos declarados, ninguno escondido en el código:** (1) la ventana **no** se cierra del
+todo —lo que queda es la de publicar, microsegundos en vez de 300 ms— porque no existe un
+«renombra-si-no-ha-cambiado» atómico en POSIX; (2) la rama «el archivo de historia cambió entre su
+lectura y su publicación» está implementada y **sin caso**, porque su ventana es ese residuo y un
+caso de reloj ahí sería intermitente — sí tiene caso determinista la otra mitad: que su vigencia
+**no se pueda comprobar**. Y una nota de gobernanza que no me toca: `(vii)` acopla `rotacion` con
+`estado_derivado` y el propio criterio lo declara candidato a **ADR-008**.
+
 ## [GitHub] — 2026-09-09 · `REQ-026 CA-08`: la cuarta rama también se ve, y probar la propiedad encontró una forma más
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
 

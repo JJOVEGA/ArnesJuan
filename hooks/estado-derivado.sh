@@ -247,6 +247,20 @@ $aviso_version
     cuerpo+=" — ahí no se rota nada y el archivo no se toca: publicar una lectura a medias borraría todo lo que viniera detrás. Salida: quita el byte NUL, o arregla los permisos.
 "
   fi
+  # LA QUINTA RAMA (REQ-026 CA-18): el documento cambió MIENTRAS se calculaba su rotación.
+  # No es un error del manifiesto ni del formato ni del archivo: es una CARRERA, y lo que hay
+  # que poder ver es que la escritura ajena ganó y que por eso no se archivó nada. Línea
+  # propia porque la acción que pide es distinta de las otras cuatro: aquí no hay nada que
+  # corregir —el arnés hizo lo correcto— y se archivará en una parada posterior. Sin esta
+  # línea, «no roté» y «roté y me comí tu cambio» se ven igual desde fuera, que es
+  # exactamente como se midió `SEC-067`: rc 0 y silencio.
+  if [ "${ARNES_ROT_CADUCADA:-0}" -gt 0 ] 2>/dev/null; then
+    local rot_ej5="${ARNES_ROT_CADUCADA_EJ:-}"
+    cuerpo+="**Rotación:** $ARNES_ROT_CADUCADA archivo(s) **cambiaron en el disco mientras se calculaba su rotación**"
+    [ -z "$rot_ej5" ] || cuerpo+=" (p. ej. \`${rot_ej5%%|*}\` → \`${rot_ej5#*|}\`)"
+    cuerpo+=" — no se publicó nada y se conserva la escritura ajena byte a byte: la rotación cede siempre ante un cambio posterior a su lectura, y esa sección se archivará en una parada posterior. No hay nada que corregir.
+"
+  fi
   if [ -n "$filas" ]; then
     cuerpo+="
 _Sólo los REQ abiertos; los $hechos completados no se listan._

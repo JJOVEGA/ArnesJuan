@@ -32,9 +32,17 @@
 #   asi que dos paradas simultaneas no comparten archivo. Con nombre fijo si lo
 #   compartian, y tras el `mv` de una la escritura tardia de la otra caia encima del
 #   destino ya publicado -- en la rotacion de seccion, encima de un REQ o de ESTADO.md.
-#   Lo que NO se promete: no hay serializacion; si dos paradas rotan el mismo artefacto,
-#   una de las dos no encontrara nada que mover, y eso es conforme.
-# - NUNCA BLOQUEA la parada, como el resto de hooks Stop.
+#   LO QUE ESTA LINEA DECIA HASTA 1.34.0 ERA FALSO, y lo dijo una medicion: "si dos paradas
+#   rotan el mismo artefacto, una de las dos no encontrara nada que mover, y eso es
+#   conforme". Las dos SI encuentran que mover --leen el mismo documento antes de que
+#   ninguna publique-- y la segunda publicaba encima de la primera. Ese era el agujero de
+#   SEC-067: no una escritura desgarrada (que es la que cierra el temporal propio del
+#   proceso, arriba), sino una ACTUALIZACION PERDIDA, completa y valida, sobre una lectura
+#   ya caducada. Se cierra en el paso 6b de `arnes_rotar_seccion` con un testigo de
+#   vigencia; no se promete serializacion, se promete que nadie publica sobre una lectura
+#   que ya no describe el disco.
+# - NUNCA BLOQUEA la parada, como el resto de hooks Stop. Y el control de vigencia tampoco
+#   espera a nadie: comprueba y cede (CA-18 (v)(b)); no hay cerrojos.
 set -uo pipefail
 DIR="${BASH_SOURCE[0]%/*}"
 [ "$DIR" = "${BASH_SOURCE[0]}" ] && DIR=.
@@ -221,6 +229,22 @@ arnes_rot_ambigua() {      # <archivo de origen> <seccion> <motivo>
   arnes_warn "rotacion: '${1#"$ARNES_PROJ/"}' SI contiene la seccion '$2' y supera el umbral, pero su ESTRUCTURA DE TABLA es AMBIGUA ($3); no se archiva nada y el archivo queda igual. Para que las filas de una tabla cuenten como entradas, la seccion tiene que ser UNA tabla: su fila de cabecera y su fila separadora ('|---|---|') seguidas y en el preambulo, antes de cualquier otra entrada, y ninguna otra separadora despues. Revisa el formato de la seccion."
   ARNES_ROT_AMBIGUA=$(( ${ARNES_ROT_AMBIGUA:-0} + 1 ))
   [ -n "${ARNES_ROT_AMBIGUA_EJ:-}" ] || ARNES_ROT_AMBIGUA_EJ="${1##*/}|$2"
+}
+# LECTURA CADUCADA (CA-18). No es un error del documento ni del manifiesto: es una carrera, y
+# lo que hay que saber es que la escritura ajena GANO --se conserva-- y que por eso esta
+# rotacion no se hizo. Sin este aviso, "no rote" y "rote y me comi tu cambio" se ven igual
+# desde fuera: rc 0 y silencio, que es exactamente como se midio SEC-067.
+arnes_rot_caducada() {     # <archivo de origen> <seccion> <que cambio>
+  arnes_warn "rotacion: '${1#"$ARNES_PROJ/"}' cambio en el disco MIENTRAS se calculaba su rotacion ($3 ya no es el que se leyo); NO se ha publicado nada y se conserva la escritura ajena byte a byte, sin rotar. No es un error: es una carrera, y la rotacion cede siempre. Publicar habria pisado un cambio posterior a la lectura --una actualizacion perdida, y en un REQ eso puede devolver un veredicto a 'pendiente' (SEC-067)--. La seccion '$2' se archivara en una parada posterior."
+  ARNES_ROT_CADUCADA=$(( ${ARNES_ROT_CADUCADA:-0} + 1 ))
+  [ -n "${ARNES_ROT_CADUCADA_EJ:-}" ] || ARNES_ROT_CADUCADA_EJ="${1##*/}|$2"
+}
+# SIN CANAL DE CONSTANCIA DURADERA (CA-18 (vii), SEC-069). Aqui NO se cuenta para el bloque
+# derivado a proposito: el bloque derivado esta apagado, que es justo el motivo de no rotar.
+# Este aviso vive y muere con la sesion, y es lo unico que hay -- por eso dice como recuperar
+# el canal en la misma frase.
+arnes_rot_sin_constancia() {   # <archivo de origen> <seccion>
+  arnes_warn "rotacion: '${1#"$ARNES_PROJ/"}' tiene la seccion '$2' por encima del umbral y habria que archivarla, pero 'estado_derivado.activo' es false: con el bloque derivado apagado, NINGUNA de las ramas de 'no se rota' puede dejar constancia que sobreviva a la sesion, y un fail-closed invisible es indistinguible de una seccion que lleva meses sin archivarse (SEC-069). NO se rota nada. Salida: pon 'estado_derivado.activo: true' en .arnes/config.json, o quita este artefacto de 'rotacion.artefactos'."
 }
 
 # arnes_rot_es_separadora <linea ya recortada> — ¿es la FILA SEPARADORA de una tabla?
@@ -522,6 +546,21 @@ arnes_rotar_seccion() {
   fi
   [ -n "$viejo" ] || return 0
 
+  # 4b) SIN CANAL DE CONSTANCIA DURADERA, NO SE ROTA (CA-18 (vii), SEC-069). Las cuatro ramas
+  #     de "no se rota" publican su linea en el bloque derivado, y con
+  #     `estado_derivado.activo: false` NINGUNA se escribe: la constancia que sobrevive a la
+  #     sesion desaparece por una opcion ajena a este fail-closed, y entonces un fail-closed
+  #     invisible es indistinguible de una seccion que lleva meses sin archivarse. Se decide
+  #     AQUI, y no al entrar en la funcion, por CA-10: si no habia nada que mover no hay nada
+  #     que decir, y avisar en cada parada seria ruido. Va tambien ANTES del `mkdir -p` del
+  #     destino: no se crea `historial/` para luego no rotar.
+  #     Solo afecta a la rotacion DE SECCION, que es la que reescribe contratos; el artefacto
+  #     entero (`arnes_rotar_uno`) no se toca.
+  if [ "${ARNES_ROT_CONSTANCIA:-true}" = "false" ]; then
+    arnes_rot_sin_constancia "$f" "$sec"
+    return 0
+  fi
+
   # 5) Destino: `<archivo_dir>/<nombre>`, o `historial/<nombre>` junto al documento. Las
   #    DOS contenciones, como en `estado_derivado.archivo` desde 1.29.1: LEXICA sobre lo
   #    declarado (relativa, sin `..`, sin `~`, sin barra invertida) y FISICA sobre el
@@ -546,17 +585,28 @@ arnes_rotar_seccion() {
   #    (REQ-015 CA-01/CA-07): con nombre fijo, dos paradas simultaneas compartian archivo y
   #    la escritura tardia de una caia sobre lo que la otra ya habia publicado. Y aqui el
   #    origen puede ser `docs/ESTADO.md` o un REQ, asi que lo que se pisaria es el contrato.
-  local marca tmp_dest tmp_orig sonda
+  local marca tmp_dest tmp_orig sonda dest_ini='' dest_habia=0
   marca="<!-- ARNES:ROTADO $(date '+%Y-%m-%d %H:%M') -->"
   if ! arnes_tmp_publicacion "$destino"; then arnes_rot_sin_tmp "$f"; return 0; fi
   tmp_dest="$ARNES_TMP"
   if ! arnes_tmp_publicacion "$f"; then arnes_rot_sin_tmp "$f"; return 0; fi
   tmp_orig="$ARNES_TMP"
+  # El destino se lee A UNA VARIABLE, no con `cat` al temporal, por tres razones y ninguna
+  # es de estilo: (1) hace falta GUARDAR lo que el destino decia al leerlo, para poder
+  # comprobar su vigencia antes de publicar (CA-18: el destino tambien puede cambiar debajo,
+  # y publicar sobre una lectura caducada de EL pierde un bloque archivado); (2) el lector
+  # fiable dice si no pudo leer entero, y `cat` copiaria feliz media lectura; (3) se ahorra
+  # un fork en un camino que ya paga varios.
   if [ -f "$destino" ]; then
-    cat "$destino" > "$tmp_dest" 2>/dev/null || { rm -f "$tmp_dest"; return 0; }
+    dest_habia=1
+    if ! arnes_lee_archivo "$destino"; then
+      rm -f "$tmp_dest" "$tmp_orig"; arnes_rot_no_medible "$destino"; return 0
+    fi
+    dest_ini="$ARNES_TEXTO"
+    printf '%s' "$dest_ini" > "$tmp_dest" 2>/dev/null || { rm -f "$tmp_dest" "$tmp_orig"; return 0; }
   else
     printf '# %s — historia archivada\n\n> Entradas retiradas de la sección `%s` de `%s` para que no crezca sin tope.\n> Se MOVIERON tal cual: aquí no hay resumen ni reescritura, y el resto del documento no se tocó.\n\n' \
-      "${nombre%.md}" "$cab1" "$nombre" > "$tmp_dest" 2>/dev/null || { rm -f "$tmp_dest"; return 0; }
+      "${nombre%.md}" "$cab1" "$nombre" > "$tmp_dest" 2>/dev/null || { rm -f "$tmp_dest" "$tmp_orig"; return 0; }
   fi
   # EN MODO TABLA, CADA BLOQUE ARCHIVADO LLEVA SU PROPIA CABECERA Y SU SEPARADORA, y van
   # PEGADAS a sus filas (REQ-026 CA-03). Un monton de filas sueltas debajo de una marca HTML
@@ -577,8 +627,70 @@ arnes_rotar_seccion() {
   # y no `case`, porque una entrada puede llevar corchetes y en `case` son una clase de
   # caracteres. Y a la sonda se le retira el CR final (archivos CRLF: 92 bytes contra 91).
   sonda="${viejo%%"$NL"*}"; sonda="${sonda%"$CR"}"
-  grep -qF -- "$sonda" "$tmp_dest" || { rm -f "$tmp_dest"; return 0; }
-  mv -f "$tmp_dest" "$destino" || { rm -f "$tmp_dest"; return 0; }
+  grep -qF -- "$sonda" "$tmp_dest" || { rm -f "$tmp_dest" "$tmp_orig"; return 0; }
+
+  # 6b) TESTIGO DE VIGENCIA: NO SE PUBLICA SOBRE UNA LECTURA CADUCADA (CA-18, SEC-067).
+  #
+  # QUE FALLO CIERRA. La ACTUALIZACION PERDIDA: esta funcion lee el documento entero,
+  # calcula, y reescribe el documento entero DESDE ESA LECTURA. Si alguien --otra parada, una
+  # persona, otra herramienta-- escribe en el medio, la publicacion lo pisa con contenido
+  # completo y valido. Medido 3/3 en carrera real: un `Seguridad: aprobado` escrito durante
+  # la rotacion volvio a `pendiente`, con rc 0 y sin un aviso. NO es la escritura DESGARRADA
+  # que cierra REQ-015 con el temporal propio del proceso --dos escrituras entrelazadas a
+  # mitad de archivo--, y una no implica la otra: el arnes solo tenia defensa para la segunda.
+  #
+  # POR QUE RELEER Y COMPARAR, Y NO UN CERROJO. Un cerrojo solo obliga a quien lo respeta, y
+  # la escritura ajena que hay que sobrevivir incluye A UNA PERSONA con su editor: un cerrojo
+  # no puede dar esta propiedad. Ademas anade un modo de fallo peor que el que arregla --un
+  # cerrojo huerfano deja un documento que no vuelve a rotar nunca-- y obligaria a decidir
+  # cuando esta rancio, que es adivinar. La relectura no obliga a nadie a nada, no espera a
+  # nadie (CA-18 (v)(b)) y cuesta una lectura de un archivo que estamos a punto de reescribir.
+  #
+  # POR QUE AQUI Y NO ANTES. Este es el ultimo instante antes de la primera publicacion. La
+  # ventana que queda es la de publicar (dos `mv` y un `printf`), no la del calculo: la
+  # medida era de 355-361 ms y lo que queda es de microsegundos. NO se cierra del todo, y no
+  # se puede en shell: no existe un "renombra-si-no-ha-cambiado" atomico. Lo que se contrata
+  # es que ninguna publicacion se derive de una lectura ya caducada, y eso es lo que se
+  # comprueba; el residuo queda declarado en el REQ, no escondido aqui.
+  #
+  # SE COMPRUEBAN LOS DOS ARCHIVOS. El origen, porque es el contrato. Y el destino, porque
+  # `tmp_dest` se armo sobre lo que el destino decia al leerlo: si otro lo cambio en medio,
+  # publicar encima BORRA su bloque --perdida de historia, y CA-05 roto sobre la union--.
+  # Y en los dos, la duda decide igual que en CA-08: si no se puede leer para comprobar, no
+  # se rota (CA-18 (ii)); no hay ninguna condicion bajo la que la duda autorice publicar.
+  # EL TESTIGO SE RECONSTRUYE AQUI, NO SE GUARDA AL LEER, y no es un detalle de estilo:
+  # guardar una copia del documento entero justo despues de leerlo costaba una copia POR
+  # ARCHIVO Y POR PARADA, tambien en los que no se iban a rotar. Medido pareado sobre la
+  # misma maquina y en el mismo instante, con el montaje de CA-15: 140.583 us contra 128.742
+  # del codigo anterior, +11.841 us (+9,2 %) en REGIMEN ESTACIONARIO, donde este control no
+  # tiene nada que hacer -- y por encima del techo de 140.000 us de CA-15. Reconstruirlo aqui
+  # lo deja en CERO fuera del camino de rotacion.
+  # La reconstruccion es exacta: la normalizacion de arriba quita UN salto final y solo uno,
+  # y `fin_nl` recuerda si lo habia. No se compara "normalizado contra normalizado" a
+  # proposito: dos documentos que solo difieren en el salto final compararian IGUAL, y
+  # publicar encima devolveria ese byte al estado viejo -- una actualizacion perdida de un
+  # byte sigue siendo una actualizacion perdida, y CA-18 (i) dice BYTE A BYTE.
+  local texto_ini="$texto"
+  [ "$fin_nl" -eq 1 ] && texto_ini+=$'\n'
+  if ! arnes_lee_archivo "$f"; then
+    rm -f "$tmp_dest" "$tmp_orig"; arnes_rot_no_medible "$f"; return 0
+  fi
+  if [ "$ARNES_TEXTO" != "$texto_ini" ]; then
+    rm -f "$tmp_dest" "$tmp_orig"; arnes_rot_caducada "$f" "$sec" "el documento"; return 0
+  fi
+  if [ "$dest_habia" -eq 1 ]; then
+    if ! arnes_lee_archivo "$destino"; then
+      rm -f "$tmp_dest" "$tmp_orig"; arnes_rot_no_medible "$destino"; return 0
+    fi
+    if [ "$ARNES_TEXTO" != "$dest_ini" ]; then
+      rm -f "$tmp_dest" "$tmp_orig"; arnes_rot_caducada "$f" "$sec" "el archivo de historia"; return 0
+    fi
+  elif [ -e "$destino" ]; then
+    # No existia cuando se leyo y ahora si: otra rotacion lo publico en el medio. Publicar
+    # encima se llevaria su bloque por delante.
+    rm -f "$tmp_dest" "$tmp_orig"; arnes_rot_caducada "$f" "$sec" "el archivo de historia"; return 0
+  fi
+  mv -f "$tmp_dest" "$destino" || { rm -f "$tmp_dest" "$tmp_orig"; return 0; }
 
   # 7) Solo ahora se recorta el origen: lo de antes + la cabecera de la seccion + su
   #    preambulo + el puntero (una sola vez) + lo conservado + lo de despues. La cabecera
@@ -624,7 +736,15 @@ arnes_parse_manifest_rotacion() {
     | ($m.rotacion.umbral_bytes // 262144) as $u
     | ($m.rotacion.conservar_secciones // 12) as $c
     | (if $m.rotacion.orden == "nuevo-al-final" then "nuevo-al-final" else "nuevo-primero" end) as $o
-    | [ (if $m.rotacion.activo == true then "true" else "false" end) ]
+    | [ ((if $m.rotacion.activo == true then "true" else "false" end)
+         # SEGUNDO CAMPO DE LA PRIMERA FILA: si el canal de constancia duradera esta
+         # encendido (CA-18 (vii)). La rotacion corre ANTES del bloque derivado --tiene que,
+         # para que el bloque pueda contar lo que la rotacion vio-- asi que este ajuste se
+         # lee AQUI y no se hereda de alli. Y con el mismo cuidado con `//` que
+         # `estado-derivado.sh`: `false` se trata igual que ausente, asi que se compara
+         # contra `false` EXPLICITO. Ausente o null = encendido, que es como se comporta el
+         # bloque derivado, y con el encendido la rotacion no se estorba.
+         + "\t" + (if $m.estado_derivado.activo == false then "false" else "true" end)) ]
       + [ ($m.rotacion.artefactos // [])[]
           | if type == "object" then
               (if (.glob // "") != "" and (.seccion // "") != "" then
@@ -646,8 +766,15 @@ arnes_parse_manifest_rotacion() {
 ")' 2>/dev/null || return 1   # manifiesto ilegible: no se rota nada, y el aviso lo da el bloque derivado (SEC-011)
   local primera=1 l
   ARNES_ROT_LISTA=''
+  ARNES_ROT_CONSTANCIA='true'
   while IFS= read -r l; do
-    if [ "$primera" = 1 ]; then ARNES_ROT_ACTIVO="$l"; primera=0; continue; fi
+    if [ "$primera" = 1 ]; then
+      ARNES_ROT_ACTIVO="${l%%$'\t'*}"
+      # Si por lo que sea no viniera el segundo campo, se queda en `true`: el lado que NO
+      # cambia la conducta de un proyecto que no declara nada.
+      case "$l" in *$'\t'*) ARNES_ROT_CONSTANCIA="${l#*$'\t'}" ;; esac
+      primera=0; continue
+    fi
     ARNES_ROT_LISTA+="$l"$'
 '
   done <<< "$ARNES_JQ"
