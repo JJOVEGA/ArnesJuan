@@ -2,6 +2,23 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · `REQ-019`: el ADR que este REQ anunciaba **ya estaba ocupado**
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+`REQ-019` citaba **ADR-006** como suyo y su fase F4 anunciaba «ADR-006 nuevo». Ese número lo tiene
+`REQ-014`: existen en disco `ADR-006-techo-sobre-el-excedente-no-sobre-el-total.md` y
+`ADR-007-oraculo-del-inventario-medida-frente-a-identidad.md`. El ADR de `REQ-019` **no existe**.
+Corregido por write-back fechado, sin reescribir las filas del 2026-09-08, y el entregable de F4 pasa
+a «ADR nuevo, primer número libre al crearlo». Sin esto, F4 pisaba el ADR de `REQ-014`.
+
+Es la **misma causa raíz** que ya se registró en `REQ-017`: el número de ADR **no tiene asignador**,
+así que quien escribe uno mira el disco y no las reservas de los REQ `pendiente`.
+
+**Verificado además, y es lo que gobierna el trabajo siguiente:** las tres dimensiones de `SEC-033`
+(`contrato`) **están cubiertas en `CA-05`** — documento entero, las dos direcciones y acreditación
+única con forzador observable. Lo que falta es la **remediación 3**, que es del `desarrollador` y
+vive en `ADR-003`, en **más sitios de los que el hallazgo nombra**.
+
 ## [GitHub] — 2026-09-08 · `REQ-017` **completado**: auditoría `R-020` y cierre del ciclo reabierto por §9
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad` (Opus) + coordinadora.
 
