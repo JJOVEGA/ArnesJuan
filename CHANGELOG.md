@@ -2,6 +2,65 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · `ADR-008`: dos residuos, dos preguntas, y hoy no hay nada que firmar
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus) + coordinadora.
+
+`docs/decisions/ADR-008-garantia-de-la-rotacion-de-seccion-frente-a-escrituras-concurrentes.md`,
+`Estado: propuesta`, enlazado desde `CA-18 (i)`, `CA-05` y el Historial. Sólo evidencia existente.
+
+**El propietario impuso el reencuadre que hizo útil este ADR:** *«`SEC-072` no depende necesariamente
+de aceptar una excepción: también podría resolverse corrigiendo el mecanismo y verificándolo. El ADR
+debe presentar ambas alternativas, sin convertir tu firma en la única salida.»* El marco que la
+coordinadora había dado —«qué garantía se contrata»— **convertía la firma en la única puerta**, y no lo
+es.
+
+**Lo que se evaluó y salió NO, con evidencia del estado actual del árbol:** se preguntó si `3+5`
+—sacar la rotación del hook de parada más idempotencia del re-archivado— cumple las **dos** promesas
+absolutas sin excepción. **No.** La `5` cierra el residuo de interrupción; la `3` **no** cierra el de
+publicación **por mecanismo** —el intervalo sigue ahí; el sustrato no cambia porque cambie quién
+invoca—, sólo bajo la precondición «nadie más está editando», que **el arnés no puede medir** y que en
+el momento de escribirlo **era falsa por observación directa: dos `desarrollador` escribiendo a la vez
+en este mismo árbol**. La única vía B que cumple las dos por mecanismo es **no rotar `requirements/`**,
+eliminando el caso.
+
+**La decisión se parte en dos, porque los dos residuos no son la misma pregunta:**
+- **`CA-05`** tiene arreglo **por mecanismo** (idempotencia del re-archivado): vía B, **sin firma de
+  garantía**, y el criterio vuelve a ser absoluto.
+- **`CA-18 (i)`** no tiene ninguno en este sustrato. Su vía A exige aceptar un riesgo cuya magnitud
+  **nadie ha medido**, así que la alternativa «medir el intervalo residual» se **reclasifica como
+  precondición**, no como alternativa. Y hoy esa medición **no está disponible**: el instrumento se
+  declaró **no convergente** y depende de `REQ-021`, `bloqueado`. **La decisión queda abierta y
+  escrita, no resuelta por silencio.**
+
+**Motivo de la partición, escrito por el analista:** meter los dos en una sola firma **convertiría un
+problema con solución en una excepción permanente**; y las dos salidas finales para el segundo son
+**opuestas** —aceptar el riesgo, o renunciar a los 409.699 B— y hoy se decidirían **sin el único dato
+que las distingue**.
+
+**Descartes con motivo:** el **cerrojo** no es vía A ni B —no da la propiedad que dice dar, porque
+`(i)` incluye «una persona» cuyo editor no lo toma, y un cerrojo huérfano deja un documento que no
+vuelve a rotar nunca—; **sacar del hook** pierde además la automaticidad, y `CA-14` mide el ahorro
+sobre la **lectura real**, así que una rotación que nadie ejecuta ahorra **0**; **no rotar
+`requirements/`** queda **viva** como la alternativa real. Y se nombra la **puerta posterior** de
+`AGENTS.md` §13 para que no parezca inexplorada: **detectaría** la pérdida, no la evitaría.
+
+### Las dos correcciones que el propietario exigió, aplicadas
+
+1. **«Ninguna fila se pierde» queda ACOTADA** al estado intermedio de `CA-05`, con su evidencia, y en
+   **los dos** criterios queda escrito que en el residuo de la ventana de publicación **la pérdida sí
+   es posible** — y que si lo perdido era una fila de historia, **la fila se pierde**. Presentarla como
+   garantía general era falso, y la coordinadora la propagó así en el informe y en el `CHANGELOG` de
+   `8d39bb4`: **queda rectificado aquí, sin reescribir aquella entrada** (§9).
+2. **Los «microsegundos» retirados en los dos sitios.** Ahora dicen que ese intervalo **no está medido**
+   y que lo medido es el que **sustituye** — 295–312 ms del desarrollador y 355–361 ms de la auditoría,
+   las **dos** mediciones. El analista rectifica además su propio informe anterior, donde afirmó que
+   esas cifras estaban fuera de su rebanada **sin comprobarlo**.
+3. La fila `:622` del Historial **no se borra**: abre con `[FILA RECTIFICADA …]` y remite a las
+   posteriores.
+
+**`ADR-008` se asignó por coordinación**, no por carrera: tres REQ lo reclamaban y no existía en disco.
+La causa raíz sigue viva y sin dueño — **el número de ADR no tiene asignador**.
+
 ## [GitHub] — 2026-09-09 · `REQ-026`: la excepción vuelve a ser PROPUESTA, y la lista de «sin implementar» era falsa
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus), `desarrollador` (Opus), coordinadora.
 

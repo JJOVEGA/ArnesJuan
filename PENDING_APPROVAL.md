@@ -182,6 +182,55 @@ todo eso en esta ventana es el patrón que `docs/PLAN.md` culpa del descontrol d
 **Espera.** Tu elección entre A, B y C. **Nada más de la ventana depende de esto**: `REQ-023` y
 `REQ-024` siguen su curso, y `REQ-019` espera su propia firma.
 
+### [2026-09-09] (analista vía `ADR-008` · enrutado por la coordinadora) — `REQ-026`: la única decisión que hoy tiene sentido, y NO es firmar una excepción
+
+**El ADR está escrito y su recomendación es que hoy no firmes ninguna garantía nueva.**
+`docs/decisions/ADR-008-garantia-de-la-rotacion-de-seccion-frente-a-escrituras-concurrentes.md`,
+`Estado: propuesta`, enlazado desde `CA-18 (i)`, `CA-05` y el Historial.
+
+**Por qué la decisión se parte en dos: los dos residuos NO son la misma pregunta.**
+
+| Residuo | Tiene arreglo por mecanismo | Qué se pierde |
+|---|---|---|
+| **Interrupción** — `mv` del destino bien, recorte falla ⇒ la parada siguiente re-archiva | **Sí**: idempotencia del re-archivado | 2 bloques, 3 filas **duplicadas**, `rc=0`, sin aviso |
+| **Ventana de publicar** — escritura ajena entre la relectura y el fin | **No en este sustrato** | La escritura ajena **se pierde**, y si era una fila de historia, **la fila se pierde** |
+
+Meter los dos en una sola firma **convertiría un problema con solución en una excepción
+permanente**.
+
+**Lo que se evaluó y salió NO, con su evidencia:** se preguntó si `3+5` —sacar la rotación del hook de
+parada más idempotencia— cumple las dos promesas sin excepción. **No.** La `5` cierra la interrupción;
+la `3` **no** cierra la ventana de publicar **por mecanismo** —el intervalo sigue ahí; el sustrato no
+cambia porque cambie quién invoca—, sólo bajo la precondición «nadie más está editando», que **el arnés
+no puede medir** y que **hoy es falsa por observación directa: dos `desarrollador` escribiendo a la vez
+en este árbol**. La única vía B que cumple las dos por mecanismo es **no rotar `requirements/`**,
+eliminando el caso.
+
+**LA DECISIÓN QUE TE TOCA, y es una sola:** ¿se autoriza el trabajo de la **vía B sobre `CA-05`** en
+esta ventana — contratar y verificar la **idempotencia del re-archivado**?
+
+- **Sí** → `CA-05` vuelve a ser **absoluto por mecanismo**, sin excepción que aprobar. Cuesta un
+  criterio nuevo (analista) más su implementación y caso determinista (dev), y **necesita tu permiso
+  porque dijiste «no agregues más criterios por ahora»**. Dueño y vencimiento ya están escritos:
+  `desarrollador`, antes de que se declare `CA-13`.
+- **No / más tarde** → `CA-05` sigue con su promesa absoluta **incumplida** y `SEC-072` sigue abierto.
+  No se rompe nada hoy: **la rotación está apagada.**
+
+**`CA-18 (i)` no necesita nada tuyo hoy, y eso es deliberado.** Su vía A exige aceptar un riesgo cuya
+magnitud **nadie ha medido**, así que medir el intervalo residual pasa a ser **precondición**, no
+alternativa. Y esa medición **hoy no está disponible**: el instrumento de reloj se declaró **no
+convergente** (el brazo de control se movió un 34 %) y depende de `REQ-021`, que está `bloqueado`. La
+decisión queda **abierta y escrita**, no resuelta por silencio.
+
+**Cuando ese número exista, la elección real será entre dos opuestos:** aceptar el residuo declarado, o
+**renunciar a rotar `requirements/`** —los 409.699 B—. Hoy se decidiría sin el único dato que las
+distingue.
+
+**Variante examinada y no propuesta, para que no parezca inexplorada:** la «puerta posterior» de
+`AGENTS.md` §13 **detectaría** la pérdida, no la evitaría, y el arnés no la tiene.
+
+**Espera.** Tu sí/no al trabajo de la vía B sobre `CA-05`. Nada más de la ventana depende de esto.
+
 ## Resueltas
 
 ### RESUELTA (propietario, 2026-09-09) — `REQ-027` entra en 1.34.0 como **quinto trabajo**, detrás de `REQ-019`
