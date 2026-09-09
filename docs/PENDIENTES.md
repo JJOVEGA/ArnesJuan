@@ -2273,3 +2273,10 @@ el primer archivo que se acerque a su techo. No urge: hoy hay un solo archivo go
 > verificable es el **tercero**— se adopta en `SEC-058`, junto con una remediación barata: **declarar
 > las fronteras del bloque (`inicio-fin`) y no sólo su tamaño**, para que la máquina compruebe
 > `fin − inicio + 1 == término` contra el archivo que lo declara.
+
+> **Añadido por el `qa-tester` (QA de `REQ-026`, 2026-09-09) — fuera del alcance de su REQ.**
+> `conservar_entradas` **negativo** en `rotacion.artefactos` mata el hook de parada
+> (`hooks/rotar-artefactos.sh:452`, `ent[$i]: unbound variable`, `rc=1`) y, medido, **el bloque
+> derivado de `docs/ESTADO.md` no se escribe** en esa parada. El guardián vigente sólo cubre lo **no
+> numérico**. **No es una regresión**: reproducido igual contra `c59fd83` (allí `:311`). Clase
+> `instrumento`, dueño `desarrollador`; detalle y reproducción en `docs/qa/1.34.0.md` (QA-026-03).

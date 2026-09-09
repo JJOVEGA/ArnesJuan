@@ -2,6 +2,41 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · QA de `REQ-026`: dos hallazgos `usuario/dinero` en el rotador de tablas
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+`QA: con-hallazgos`. `REQ-026` vuelve al `desarrollador` (vuelta 1 de 3). **La rotación NO se
+enciende hasta cerrar los dos primeros.**
+
+- **`QA-026-01`** (`usuario/dinero`) — `hooks/rotar-artefactos.sh:263` lee con
+  `IFS= read -r -d '' texto < "$f"`, que **se detiene en el primer NUL y devuelve 0**; el paso 7
+  escribe esa mitad encima del REQ. Medido sobre copia de `REQ-007`, determinista 3/3:
+  **−17.697 B, 5 filas de historia desaparecidas de documento y archivo, `rc=0`, stderr vacío**.
+  **El arnés ya tiene el lector que lo evita** —`arnes_lee_archivo` (`hooks/lib.sh:1120`), nacido de
+  `SEC-002`/`R-001` por este fallo exacto, que devuelve rc 1— y su único llamador es
+  `guard-completado.sh:150`, que ante un NUL **deniega**. El rotador, que además **escribe**, se
+  quedó con la forma cruda. **Atribución precisa:** la lectura cruda es anterior, pero contra
+  `c59fd83` una sección en forma de tabla daba cero entradas y se retornaba antes del paso 7 — sobre
+  `requirements/` la vía **no era alcanzable**. Este REQ la hace alcanzable en cada rotación.
+- **`QA-026-02`** (`usuario/dinero`) — **la quinta forma de `CA-08`, y existe.** La pasada de
+  validación hace `break` en la primera fila de datos, así que **nada posterior a ella se valida**.
+  Con dos tablas en la sección, la cabecera y la separadora de la segunda se **archivan como filas
+  de datos** y sus filas conservadas quedan **bajo las columnas de otra tabla**: dato
+  **reetiquetado en silencio**. Y `CA-05` **se conserva** en esa forma, así que ninguna comprobación
+  de pérdida lo ve. Cobertura del banco: **cero** casos con dos tablas.
+
+**Ningún criterio está mal formado, y esto importa:** `QA-026-02` existe **porque `CA-08` está bien
+escrito** —marca su enumeración «no exhaustivos»—; la implementación cubrió la **enumeración** y no
+la **propiedad**.
+
+Cuatro `instrumento` más: `conservar_entradas: -1` mata el hook y deja el bloque derivado sin
+escribir (`QA-026-03`, preexistente); `_doc_artefactos` obsoleto (`QA-026-04`, viaja con `CA-13`);
+dos defectos del **registro** del techo de `CA-15` —las cifras de validación no dicen qué estadístico
+son, y no consta que la regla del margen se fijara antes de ver el juego de validación, así que
+«techo derivado» y «número ajustado» son indistinguibles desde el registro (`QA-026-05`)—; y el
+cambio de `hooks/estado-derivado.sh`, que **no era alcance tomado por su cuenta** —el REQ lo declara
+en `Módulo:` y en `Archivos:`— pero le falta contrato (`QA-026-06`).
+
 ## [GitHub] — 2026-09-08 · `REQ-026`: el rotador ya sabe mover una TABLA, y cuando no la entiende no adivina
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
 
