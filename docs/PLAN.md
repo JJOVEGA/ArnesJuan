@@ -95,8 +95,12 @@ Esta ventana va a tener muchas comisiones, y las tres primeras palancas están *
 > día): REQ-017 + REQ-021, más la partición de las tres secciones sobre 400 líneas (`DEV-021-07`).
 > `REQ-019`, `REQ-020`, `REQ-023`, `REQ-024` y `REQ-025` van a 1.34.0, y REQ-019 es su primer trabajo.**
 >
-> **ENMIENDA DEL 2026-09-08 (tercera decisión del propietario del mismo día): el tag `v1.33.0` se APLAZA,
-> y el primer trabajo de 1.34.0 pasa a ser la SONDA DE `REQ-017 CA-08`, por delante de `REQ-019`.**
+> **ENMIENDA DEL 2026-09-08, REVERTIDA EN PARTE EL 2026-09-09.** El propietario aplazó el tag y luego
+> **decidió publicar**: `v1.33.0` está publicada (merge `810128a`, puerta requerida en verde y fusión con
+> cuenta **sin admin**), con su límite declarado — la evidencia de rendimiento es el `0,125×` de `CA-05`,
+> **no** el verde de `CA-08 (ii)`. **Lo que NO se revierte: el primer trabajo de 1.34.0 sigue siendo la
+> SONDA DE `REQ-017 CA-08`, por delante de `REQ-019`** — y con más motivo, porque ese caso ya está
+> decidiendo cada PR sin poder distinguir.**
 > Motivo, y es una medición, no una preferencia: el caso
 > `REQ-017 CA-08 (ii) una cabecera de 200 líneas` falla el check **requerido y estricto**
 > `hooks-en-linux` afirmando «esto es una regresión, no ruido», y **cuatro corridas sobre código

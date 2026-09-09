@@ -2,6 +2,48 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · **PUBLICADA `v1.33.0`** — fusionada con cuenta SIN admin, y con su límite declarado
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Decisión del propietario del 2026-09-09, que **revierte el aplazamiento acordado horas antes**. Merge
+commit `810128a`; tag `v1.33.0` sobre él.
+
+**Qué entrega.** `REQ-017` — la guarda del CR era **cuadrática** en la longitud de línea; ganancia
+acreditada por `CA-05` el 2026-09-07: **0,125× — 9,60 s frente a 76,19 s** en la ruta crítica. Y
+`REQ-014` — el banco pasa de un `run.sh` monolítico a **50 archivos de sección** con cuadre exacto por
+archivo, con los inventarios de antes (45) y después (50) **idénticos byte a byte**: 56 casos cambiaron
+de archivo y **ninguno** cambió de identidad ni de veredicto.
+
+**Se fusionó con `jvega-habitat`, que NO tiene admin, y eso es parte del registro.** La puerta requerida
+`hooks-en-linux` dio **875 PASS · 0 FAIL · 9 SKIP** sobre `7dc0699`, y la fusión pasó con una cuenta sin
+privilegios de administración: queda demostrado **por construcción** que el control se satisfizo y no se
+saltó. Usar la cuenta de dueño —autorizada por el propietario y disponible— habría dejado esa duda
+abierta para siempre; por eso no se usó.
+
+### El límite declarado, que es la condición bajo la que se publicó
+
+**La evidencia de rendimiento de esta versión es el `0,125×` de `CA-05`, NO el verde de `CA-08 (ii)`.**
+Ese caso tiene una dispersión **medida** de **0,973× a 1,364× sobre código idéntico** —cinco corridas,
+dos rojas y tres verdes, incluida una que dice que el árbol nuevo es **más rápido**— contra un techo de
+**1,25×**: vive **dentro de su propio ruido**, así que hoy no acredita nada en ninguna dirección, ni el
+rojo ni el verde.
+
+**Por qué eso no impide publicar, y dónde estaría el atajo si lo fuera.** La ganancia que 1.33.0 promete
+**está medida por otro criterio y fechada**; lo que `CA-08 (ii)` no puede certificar es algo más
+estrecho: que no haya regresión en ese camino concreto, comprobada **en cada PR**. Fusionar *porque el
+semáforo se puso verde* habría sido elegir la corrida que conviene — el atajo que esta bitácora nombró
+por escrito hace horas y que **no se tomó**. Se fusionó porque la sustancia está acreditada por otra vía
+y el banco entero pasa; el verde de ese caso concreto se declara **irrelevante para la decisión**, en las
+dos direcciones.
+
+**Arreglar la sonda sigue siendo el primer trabajo de 1.34.0, por delante de `REQ-019`** — y ahora con
+más motivo, no con menos: mientras el techo viva dentro del ruido, ese caso decide cada PR sin poder
+distinguir. Las tres formas conformes y la medición completa están en `docs/PENDIENTES.md`.
+
+**Pendiente inmediato:** actualizar la instalación estable del plugin a 1.33.0 y verificarla. Hasta que
+eso ocurra, el bloque derivado de `docs/ESTADO.md` seguirá avisando de que la instalación corre 1.32.1
+—**correcto, no es defecto**: esa instalación es la que gobierna esta sesión.
+
 ## [Interno] — 2026-09-08 · **CORRECCIÓN del diagnóstico de la sonda**: el umbral no está «mal puesto», y lo que falla es peor
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 
