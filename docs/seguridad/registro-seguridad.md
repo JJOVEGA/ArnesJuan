@@ -6035,3 +6035,272 @@ próximos libres **R-021** y **SEC-067**.
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.** Esta revisión no altera clasificación de datos,
 acceso, retención ni cumplimiento: el rango no introduce datos, ni credenciales, ni superficie de red,
 y este repositorio sigue sin manejar usuarios finales ni datos personales.
+
+---
+
+## Revisión R-021 — **auditoría de REQ-026**: el rotador que ya escribe dentro de `requirements/`, **después** de QA, ventana 1.34.0 (`rel/registro-1.33.0` @ `464e0ba`, rango `2a91c82^..464e0ba`) — 2026-09-09
+
+**Veredicto: `con-hallazgos`.** No es un veto: el mecanismo entregado está **apagado** y no puede
+disparar hoy. Es un `con-hallazgos` porque queda **un hallazgo `usuario/dinero` abierto** (SEC-067) y
+porque su control no existe todavía ni en el código ni en ningún criterio, así que firmar `aprobado`
+sería exactamente la deriva que `AGENTS.md` §9 prohíbe: dejar el control viviendo en un registro.
+
+**Turno correcto:** `QA: aprobado (2026-09-09)` está firmado sobre este mismo árbol; audito después.
+
+### 1. Por qué esta auditoría cambia de naturaleza, dicho una vez
+
+Hasta `2a91c82` el rotador **no podía** tocar un REQ: su reconocedor era una lista de prefijos y las
+historias son tablas, así que daba cero entradas y salía. Ese blindaje era **accidental** y ya no
+existe. Desde este rango, el hook de parada es un **escritor de `requirements/`**, y lo que hay ahí
+es el contrato que gobierna a todos los proyectos que instalan el arnés.
+
+### 2. La pregunta 1 del encargo: el fail-closed de `arnes_rot_es_separadora` — **se sostiene, y el argumento que lo sostiene NO es el que está escrito**
+
+Verifiqué el argumento de clase de QA (`docs/qa/1.34.0.md:843-851`): «*acepta exactamente el conjunto
+de caracteres que GFM admite en una fila delimitadora … luego no existe fila que GFM lea como
+separadora y el hook lea como dato*».
+
+**La conclusión la confirmo. El argumento, no: nombra el mecanismo equivocado como portante.**
+
+- `arnes_rot_es_separadora` (`hooks/rotar-artefactos.sh:238-244`) sólo se consulta sobre líneas que ya
+  pasaron `case "$rec" in '|'*)`, y `rec` recorta **sólo el espacio final** (`:365`): la comparación
+  es a **columna cero y con barra inicial**.
+- GFM admite dos formas de fila delimitadora que **nunca llegan** a ese predicado: **sin barra
+  inicial** (`:---|:---` — la barra de los extremos es opcional en GFM) y **indentada hasta tres
+  espacios**. Sobre esas dos, el conjunto de caracteres no decide nada porque el predicado no se
+  ejecuta.
+- Lo que de verdad cierra la clase es **otro** mecanismo, el que añadió `931218b`: `hueco`/`hueco2`
+  (`:400-404` y `:456-461`) — *cualquier* línea que no sea fila a columna cero, apareciendo **entre
+  dos filas de datos**, invalida la estructura. Y se compone con un hecho de GFM: una segunda tabla
+  **exige** una línea en blanco o una interrupción de bloque, y esa línea es precisamente lo que
+  dispara `hueco2`.
+
+**Medido por mí** (sondas en `/tmp`, ningún REQ real, rotación no encendida):
+
+| Forma probada (ninguna en las doce de QA) | Resultado |
+|---|---|
+| 2ª tabla **sin barra inicial** en cabecera y separadora, **en medio** de las filas | **fail-closed** + aviso |
+| 2ª tabla sin barra inicial **tras la última fila**, `orden: nuevo-al-final` | rota; la línea viaja con la entrada **conservada**; multiconjunto exacto |
+| lo mismo con `orden` **distinto de** `nuevo-al-final` (se archiva la cola) | rota; el bloque del destino queda **legible como tabla**; multiconjunto exacto |
+| fila de datos hecha **sólo** de guiones y barras (`\| - \| - \|`) | falso positivo del predicado → **fail-closed** (lado seguro) |
+| barrido del **corpus real**: filas de `## Historial de cambios` que el predicado tomaría por separadora | **cero** en los 26 archivos |
+
+Conclusión: **no encontré séptima forma, y la dirección peligrosa está cerrada por construcción.** El
+residual que QA declara (segunda tabla tras la última fila) lo reproduje en tres configuraciones y es
+**inocuo**, como QA dice. Lo que queda es SEC-068: el argumento escrito licenciaría retirar
+`hueco2`, que es justo la guarda que cierra la clase.
+
+### 3. La pregunta 3 del encargo: la concurrencia — **NO la cubre el temporal propio del proceso, y sí puede dejar un contrato mutilado**
+
+Respuesta directa: **el temporal por proceso de `REQ-015` cubre la escritura desgarrada, no la
+actualización perdida.** Son dos modos de fallo distintos y sólo el primero está cerrado. Detalle y
+medición en **SEC-067**.
+
+### 4. Hallazgos
+
+#### SEC-067 — **La rotación reescribe el documento ENTERO desde una lectura previa, sin comprobar si cambió: una firma que caiga en esa ventana se pierde en silencio** · `usuario/dinero` · severidad **alta** · **abierto**
+
+**Dónde.** `hooks/rotar-artefactos.sh:297` (la lectura) y `:596-598` (la publicación). Entre las dos
+no hay ninguna comprobación de concurrencia: ni relectura, ni comparación de mtime, ni bloqueo. El
+paso 7 hace `printf '%s' "$salida" > "$tmp_orig" && mv -f "$tmp_orig" "$f"` con un `salida` derivado
+de lo que se leyó al principio.
+
+**Medido, 3 de 3 intentos, sonda en `/tmp` sobre un REQ de prueba de 4.000 filas:** con la rotación
+en vuelo se escribió `Seguridad: aprobado (2026-09-09, R-021)` sobre la cabecera; al terminar la
+rotación el disco decía otra vez `Seguridad: pendiente`. **Ventana medida: 355–361 ms.** `rc = 0`,
+**stderr vacío**, y **ninguna línea en el bloque derivado**: el arnés no tiene ni un canal por el que
+se sepa que ocurrió. La rotación no *altera* la cabecera: la **republica como la leyó**, y el efecto
+observable es que un veredicto —o un veto, o un criterio nuevo— **retrocede**.
+
+**Segunda consecuencia del mismo origen, modelada** (entrelazado reproducido de forma determinista:
+B leyó el origen antes del recorte de A y el destino después de la publicación de A): el bloque
+archivado **se duplica**. De 5 filas originales quedaron 2 en el documento y **6** en el archivo,
+**3 repetidas**. `CA-05` promete «cero filas perdidas, cero duplicadas … sin ninguna repetida» **sin
+declarar ninguna condición**.
+
+**Y una invariante del propio archivo que es falsa.** `hooks/rotar-artefactos.sh:34-36` afirma: «*si
+dos paradas rotan el mismo artefacto, una de las dos no encontrara nada que mover, y eso es
+conforme*». Sólo es cierto si la segunda **lee después** del recorte de la primera. Con simultaneidad
+real ambas leen el mismo estado y la segunda sí encuentra qué mover.
+
+**Alcance honesto — no es un incidente vivo.** No puede ocurrir hoy: `rotacion.activo` es `false`,
+`rotacion.artefactos` está vacío, y encenderlo es `CA-13`, **gate humano** de `AGENTS.md` §6. Lo que
+este rango cambia es que el blindaje accidental desapareció. **Es latente, no explotado.**
+
+**Consecuencia de gobernanza que no se puede resolver con disciplina.** Encendida la rotación, el
+escritor de `requirements/` es el **hook de parada**, que no figura en el campo `Archivos:` de ningún
+REQ. `tools/arnes-paralelo.sh` responde sobre **comisiones**, así que un `disjunto` seguirá siendo
+verdadero y **seguirá siendo insuficiente**: hay un tercer escritor que el mapa no ve. `REQ-026`
+acertó a medias al declarar `requirements/REQ-*.md` en su propio `Archivos:` — eso protege a la
+comisión que lo desarrolla, no a cada sesión futura en la que un agente pare mientras otro edita un
+REQ.
+
+**Remediación (write-back OBLIGATORIO antes de `CA-13`; `AGENTS.md` §9).**
+1. **Criterio nuevo** en `REQ-026`, enunciado por **propiedad** y no por enumeración de
+   entrelazados: *si el documento cambió en disco entre la lectura y la publicación, no se publica,
+   no se toca nada y se avisa por las cuatro sedes de `CA-08 (v)`*; y *el archivado es idempotente:
+   dos rotaciones del mismo estado no dejan una fila repetida en el destino*.
+2. **Control en el código** (`desarrollador`): comprobar inmediatamente antes del `mv` que `$f` sigue
+   siendo lo que se leyó, y abortar si no; y hacer el bloque del destino idempotente o serializar por
+   bloqueo. La dirección es la de todo el archivo: **preferir no rotar a publicar una reversión**.
+3. **Declarar en `CA-05`** que su promesa es sobre **una** parada, en vez de dejarla incondicional.
+4. **`CA-13` no se declara** —ni en este repositorio ni en la plantilla— mientras 1 y 2 no existan.
+
+*Dueño:* `analista-requerimientos` (los criterios) y `desarrollador` (el control).
+*Forzador:* el commit que declare `rotacion.activo: true` sobre `requirements/` (`CA-13`).
+*Vencimiento:* **antes** de ese commit. Mientras no exista, `REQ-026` no puede cerrar.
+
+#### SEC-068 — **El argumento que cierra la clase nombra el mecanismo equivocado como portante** · `instrumento` · severidad media · **abierto**
+
+Detalle en §2. El argumento de `docs/qa/1.34.0.md:843-851` es correcto en su conclusión y falso en su
+razón: el conjunto de caracteres no puede cerrar nada sobre las dos formas de fila delimitadora que
+GFM admite y que el predicado **nunca ve** (sin barra inicial; indentada). Quien lea ese argumento
+concluirá que `arnes_rot_es_separadora` es lo que sostiene el fail-closed y podrá **retirar
+`hueco2`** —añadido en `931218b`, y que es lo que de verdad lo sostiene— sin creer que quita nada.
+
+*Remediación:* reescribir el argumento donde vive, citando `hueco`/`hueco2` como la guarda portante y
+el hecho de GFM que la completa (una segunda tabla exige línea en blanco o interrupción de bloque), y
+declarando que el predicado sólo decide sobre filas a columna cero con barra inicial.
+*Dueño:* `qa-tester`. *Vencimiento:* el cierre de 1.34.0.
+
+#### SEC-069 — **El canal único de `CA-08 (v)` está condicionado a otra clave del manifiesto** · `instrumento` · severidad media · **abierto**
+
+`CA-08 (v)` exige que las cuatro ramas de «no se rota» dejen constancia «por un canal que **sobrevive
+a la sesión**», y lo nombra: una línea en el bloque derivado de `docs/ESTADO.md`. **Medido por mí:**
+con `estado_derivado.activo: false` en el manifiesto **no se escribe ninguna de las cuatro líneas** y
+sólo queda el `stderr` — que es exactamente el canal que el propio criterio declara insuficiente.
+Sin declarar la clave el canal funciona (viene encendido), y verifiqué además que el aviso **se
+re-deriva en cada parada** mientras la causa persista, que es la semántica correcta y desmiente mi
+sospecha inicial de que la parada siguiente lo borraba.
+
+Es la misma forma que el analista rechazó con razón en `QA-026-06`: un canal condicionado. Aquí la
+condición no es un suceso sino una clave que elige el proyecto, y por eso es `instrumento` y no
+bloquea; pero un proyecto puede encender la rotación y tener el bloque derivado apagado, y entonces
+los cuatro fail-closed son invisibles.
+
+*Remediación:* o `CA-08 (v)` declara la dependencia, o la rotación de sección **no corre** cuando su
+única sede superviviente está apagada. *Dueño:* `analista-requerimientos` y `desarrollador`.
+
+#### SEC-070 — **El tercer sitio de la familia `SEC-002`/`R-001`: `tools/arnes-lectura.sh` lee con la forma cruda y no lo dice** · `instrumento` · severidad baja · **abierto**
+
+Barrido de `hooks/` y `tools/` (pregunta 2 del encargo). `arnes_lee_archivo` nació en `SEC-002`/`R-001`
+y hasta `ade924e` tenía **un** llamador (`hooks/guard-completado.sh:150`); el rotador era el segundo y
+nadie lo notó en varias versiones. **Hay un tercero:** `tools/arnes-lectura.sh:120` hace
+`texto=''; IFS= read -r -d '' texto < "$f"` **sin mirar el código de retorno**.
+
+**Distinción que cambia la severidad: no escribe.** No puede mutilar nada. Lo que puede es
+**informar** sobre una lectura truncada sin decir que lo es: con un NUL en la cabecera, el informe
+enseña los campos que sobrevivieron al corte y la puerta —que sí es fail-closed— lee otra cosa. Sus
+propios comentarios (`:105-114`) afirman que los campos «salen del MISMO lector que la puerta», y en
+la lectura del archivo completo eso **no** es cierto.
+
+*Remediación:* usar `arnes_lee_archivo` y, si devuelve «no medible», nombrar el archivo como **no
+medido** en vez de informar campos. *Dueño:* `desarrollador`. *No entra en esta ventana* (regla de
+acumulación del propietario, 2026-09-08); va a `docs/PENDIENTES.md`.
+
+#### SEC-071 — **`hooks/estado-derivado.sh` es una segunda transcripción de `arnes_lee_archivo`** · `instrumento` · severidad baja · **abierto**
+
+`hooks/estado-derivado.sh:294` reimplementa la regla del NUL en línea, **correctamente hoy** (avisa y
+no escribe; comprobado también el caso «contenido en disco, lectura vacía» y el `[ ! -r ]` previo), y
+además **escribe** el destino. No es un fallo en abierto: es la segunda transcripción de una regla que
+`AGENTS.md` §13 y `hooks/lib.sh:1130-1140` declaran que debe ser **una**, en el punto donde ese
+desfase costaría texto humano.
+
+*Remediación:* llamar a `arnes_lee_archivo`. *Dueño:* `desarrollador`. Fuera de ventana.
+
+#### QA-026-04 — **corrijo la clase: `instrumento` → `contrato`** (pregunta 4 del encargo)
+
+QA dejó `QA-026-04` como `instrumento` con forzador `CA-13`. **Corrijo las dos cosas.**
+
+`_doc_artefactos` describe el mecanismo viejo en `.arnes/config.json:48` **y en
+`templates/arnes-config.json.tpl:53`**: «*mueve sus entradas viejas —líneas que empiezan por `- `,
+`* `, `### ` o `N. `, con sus continuaciones—*». El código ya mueve **filas de tabla**.
+
+Por qué `contrato` y no `instrumento`: `requirements/README.md:316` define un valor **de contrato**
+como aquel por el que «*alguien de fuera elige su conducta*: … un límite anunciado en una plantilla».
+Esto es exactamente eso, y **envejece hacia el lado que abre**: la plantilla **subestima** lo que la
+máquina va a tocar. Un proyecto que la lea concluirá que su sección en forma de tabla es inerte
+—cierto hasta 1.33.0— declarará la rotación creyéndolo, y encontrará **sus tablas reescritas**. La
+frase no describe mal un instrumento: promete a un tercero que la máquina no toca algo que sí toca.
+
+Y el forzador **no** es `CA-13`: la frase ya es falsa hoy, con independencia de que este repositorio
+encienda la rotación, porque el rotador corregido y la plantilla obsoleta **viajan juntos** a los
+proyectos por `arnes-upgrade`. *Forzador real:* la **publicación de 1.34.0**. *Vencimiento:* antes de
+ese tag. *Dueño:* `desarrollador` (los dos archivos), **tras el gate humano de §6** — que es donde
+`REQ-026` ya dijo que quedaba, y ahora con la clase que corresponde.
+
+### 5. Regresión de seguridad contra la línea base de `R-020` — ningún control retirado ni debilitado
+
+El rango toca **dos** archivos de `hooks/` (`rotar-artefactos.sh`, `estado-derivado.sh`) y **ninguna**
+puerta: no toca `guard-completado.sh`, `guard-codigo.sh`, `guard-git.sh`, `lib.sh`, `hooks.json`,
+`.arnes/config.json`, `templates/` ni `.github/`. Verificado sobre el `--stat` del rango.
+
+- **Se refuerza** un control aprobado: la lectura del rotador pasa de la forma cruda a
+  `arnes_lee_archivo` en sus **dos** funciones (`:92` y `:297`), con fail-closed y aviso.
+- **Se refuerza** la validación de estructura: cubre la sección entera, no sólo el preámbulo.
+- **Se refuerza** la visibilidad: las cuatro ramas de «no se rota» publican en el bloque derivado.
+- **Contención de rutas intacta:** `arnes_ruta_interna` sobre `archivo_dir` (léxica) más
+  `arnes_dir_interno` sobre el directorio resuelto (física, contra enlaces simbólicos), `:534-539`.
+  **Medido por mí:** con `archivo_dir` en `../../fuera`, en `/tmp/fuera-absoluto` y con barra
+  invertida (`requirements\historial`) **no se rota, no se crea nada y no se escribe fuera del
+  proyecto**; con el valor legítimo rota. Cuatro formas, control positivo incluido.
+- **Temporales:** los cuatro puntos de publicación usan `arnes_tmp_publicacion` (componente propia
+  del proceso, `REQ-015 CA-01`). Verificado en `:159-162` y `:551-554`.
+- **Orden en `stop.sh`:** la rotación corre **antes** del bloque derivado y en el **mismo** shell
+  (`:36-37`, ambos por `source`), que es la condición para que los contadores de `CA-08 (v)`
+  lleguen vivos. Si alguna de las dos cosas cambiara, el canal quedaría muerto **en silencio**.
+
+### 6. `SEC-047`, `SEC-048`, `SEC-049`, `SEC-058`, `SEC-064` — ninguno lo introduce ni lo agrava este rango
+
+- **`SEC-047`** (`instrumento`, crítica) — **sigue en pie**, sin cambio de clase por este rango, y su
+  vencimiento sigue siendo el **cierre de 1.34.0**. No lo re-barrí (§7).
+- **`SEC-048`** (ruleset/workflow) — el rango no toca `.github/` ni el ruleset.
+- **`SEC-049`** — sin relación con el rango.
+- **`SEC-058`** (el piso autodeclarado sin cota) — **tocado de lado y no agravado**:
+  `28-rotacion-seccion-3-la-tabla.sh` declara `PISO_AUTONOMO_SECCION=94` y queda en **400 de 400**
+  líneas, el techo exacto de `REQ-014 CA-18`. Es la forma que `SEC-058` describe (el sujeto declara
+  el número del que depende su propio techo), pero aquí no compró conformidad: el archivo está **en**
+  el techo, no por debajo gracias al piso. **Si mi revisión pidiera un caso más, exijo partir la
+  sección en una parte 4** y **no** subir el techo.
+- **`SEC-064`** (la abstención sin cota) — sin relación con el rango.
+
+### 7. Lo que esta revisión NO miró — tabulado como NO MIRADO, nunca como PASA
+
+| No mirado | Por qué |
+|---|---|
+| **Quality gates y el banco** | No son mías (`AGENTS.md` §6). **No ejecuté `run.sh` ni una sola vez.** El `912 PASS · 0 FAIL · 4 SKIP · rc 0` (total 916) lo **cito** de la coordinadora, que lo reprodujo dos veces sobre `464e0ba`; no lo re-medí |
+| **La campaña de `CA-15`** (techo `≤ 0,140 s`) | Excluida por el encargo. **No la re-medí.** Sólo comprobé que está declarada **operativa** con dirección **bajar** y que el rango no la mueve. Sigue en pie lo que su propio registro admite: no se traslada al *runner* de `hooks-en-linux` |
+| **La rotación en ejecución sobre REQ reales** | **No la encendí, ni para probar.** Todo lo medido va sobre copias en `/tmp`. Con la rotación encendida sobre `requirements/` no hay **ninguna** medición, ni mía ni de nadie |
+| **`CA-13`, `CA-14`, `CA-16`, `CA-17`** | Sin implementar por diseño; excluidos por el encargo y **no** contados como fallo |
+| **`SEC-047` condición 2** | Barrido de cabeceras no ejecutado |
+| **La concurrencia REAL de dos paradas simultáneas** | Lo que medí en carrera real es la **actualización perdida** (3/3). La **duplicación del bloque** la reproduje por un **modelo determinista del entrelazado**, no por una carrera: queda declarada como modelo, no como medición de carrera |
+| **Otros REQ** | No amplié. Lo que vi fuera va a `docs/PENDIENTES.md` en una línea (SEC-070, SEC-071) |
+
+### 8. Repositorio público — sin fuga
+
+Barrido del rango entero contra los patrones de material de cliente (`mejoras-arnes*`, `insumos/`,
+nombre del proyecto cliente, rutas de otro repositorio): **cero coincidencias**. Los defectos citados
+son del propio arnés y están descritos por su mecanismo.
+
+### 9. Rigor
+
+`REQ-026` se queda en **`critico`**, que además es su suelo por `Sensible a seguridad: sí`. **No hay
+nada que subir: ya está en el techo, y no bajo el rigor de nada.**
+
+### 10. Estado de seguridad aprobado por REQ — línea base de no-regresión, actualizada en R-021
+
+| REQ | Veredicto | Fecha | Alcance acreditado | Nota |
+|---|---|---|---|---|
+| **REQ-026** | **`con-hallazgos`** | 2026-09-09 | `rel/registro-1.33.0` @ `464e0ba`, rango `2a91c82^..464e0ba` | **Qué acredita:** que el fail-closed del reconocedor de tablas **se sostiene** y la dirección peligrosa (una separadora de GFM leída como dato) está cerrada **por construcción**, verificado por mí con cinco formas que no estaban en las doce de QA y con un barrido del corpus real (§2); que la contención de rutas del destino, los temporales por proceso y el orden de `stop.sh` están intactos (§5); que ningún control aprobado se retiró y **tres** se refuerzan (§5); y que no hay fuga en repositorio público (§8). **Qué NO acredita:** quality gates, banco, la campaña de `CA-15`, el comportamiento con la rotación encendida, ni `CA-13`/`CA-14`/`CA-16`/`CA-17` (§7). **Bloqueante abierto:** `SEC-067` (`usuario/dinero`) — la rotación republica el documento desde una lectura previa sin comprobar concurrencia. **Residuales:** `SEC-068`, `SEC-069`, `SEC-070`, `SEC-071` (`instrumento`) y `QA-026-04`, **reclasificado a `contrato`** |
+| **REQ-017** (reapertura 1.34.0) | `aprobado` | 2026-09-08 | `R-020` | Sin cambios en esta revisión |
+| **REQ-014** (reapertura 1.33.0) | `aprobado` | 2026-09-08 | `R-019` | Sin cambios en esta revisión |
+
+**Numeración vigente tras esta revisión:** última revisión **R-021**; último hallazgo **SEC-071**;
+próximos libres **R-022** y **SEC-072**.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** El rango no altera clasificación de datos,
+acceso, retención ni cumplimiento: no introduce datos, ni credenciales, ni superficie de red, y este
+repositorio sigue sin manejar usuarios finales ni datos personales. Lo que sí cambia —y queda dicho
+en §1— es **qué** puede escribir el arnés: el hook de parada pasa a poder reescribir documentos de
+`requirements/`, que son el contrato. Es gobernanza de **integridad**, no de datos personales, y su
+control es `SEC-067`.

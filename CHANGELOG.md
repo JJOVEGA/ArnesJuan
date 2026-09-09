@@ -2,6 +2,32 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · `REQ-026`: auditoría de seguridad **R-021** — `con-hallazgos`, y el rotador que ahora escribe contratos
+> Origen: Interno (manual, sin commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad` (Opus).
+
+Auditoría del rango `2a91c82^..464e0ba`, **después** de QA. Veredicto **`con-hallazgos`**: el
+mecanismo está apagado y no puede disparar hoy, pero queda un bloqueante abierto y su control no
+existe ni en el código ni en ningún criterio.
+
+- **`SEC-067` (`usuario/dinero`, alta, abierto)** — la rotación de sección reescribe el documento
+  **entero** desde una lectura previa sin ninguna comprobación de concurrencia entre la lectura
+  (`:297`) y la publicación (`:596-598`). **Medido 3/3 en carrera real:** un `Seguridad: aprobado`
+  escrito durante la rotación volvió a `pendiente`, `rc=0`, stderr vacío y **sin línea en el bloque
+  derivado**; ventana 355–361 ms. Segunda consecuencia, **modelada**: dos paradas simultáneas
+  **duplican** el bloque archivado (3 filas repetidas de 5), contra el «cero duplicadas» de `CA-05`.
+  La invariante del propio archivo (`:34-36`) que dice que eso «es conforme» es **falsa**.
+- **El fail-closed del reconocedor de tablas se sostiene** — pero el argumento de clase escrito
+  nombra el mecanismo equivocado: lo portante es `hueco`/`hueco2`, no el conjunto de caracteres
+  (`SEC-068`). Cinco formas nuevas probadas, ninguna rompe nada; barrido del corpus real limpio.
+- **`QA-026-04` reclasificado `instrumento` → `contrato`**: `_doc_artefactos` de la **plantilla**
+  anuncia a terceros un mecanismo que ya no existe, y **subestima** lo que la máquina toca. Forzador
+  real: la publicación de 1.34.0, no `CA-13`.
+- **`SEC-069`/`SEC-070`/`SEC-071` (`instrumento`)** — el canal único de `CA-08 (v)` depende de
+  `estado_derivado.activo` (medido); y los dos sitios restantes de la familia `SEC-002`/`R-001`.
+- **Sin regresión de enforcement**: el rango no toca ninguna puerta; tres controles se refuerzan.
+  Contención de rutas del destino medida con cuatro formas. Sin fuga en repositorio público.
+- **No ejecuté el banco ni una vez**, no re-medí `CA-15` y **no encendí la rotación**.
+
 ## [GitHub] — 2026-09-09 · `REQ-026`: `QA: aprobado` sobre el mecanismo, con la clase de fallo cerrada por argumento
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
 

@@ -2280,3 +2280,11 @@ el primer archivo que se acerque a su techo. No urge: hoy hay un solo archivo go
 > derivado de `docs/ESTADO.md` no se escribe** en esa parada. El guardián vigente sólo cubre lo **no
 > numérico**. **No es una regresión**: reproducido igual contra `c59fd83` (allí `:311`). Clase
 > `instrumento`, dueño `desarrollador`; detalle y reproducción en `docs/qa/1.34.0.md` (QA-026-03).
+
+> **Añadido por el `auditor-seguridad` (R-021, auditoría de `REQ-026`, 2026-09-09) — fuera del
+> alcance de ese REQ.** Los dos sitios restantes de la familia `SEC-002`/`R-001` (leer un archivo
+> entero sin decir que no se pudo): `tools/arnes-lectura.sh:120` lee con la forma cruda **sin mirar
+> el rc** —no escribe, así que informa sobre una lectura truncada sin decirlo, mientras la puerta es
+> fail-closed— y `hooks/estado-derivado.sh:294` es una **segunda transcripción** de
+> `arnes_lee_archivo`, hoy correcta, en un punto que **sí escribe**. Clase `instrumento`, dueño
+> `desarrollador`; detalle en `SEC-070` y `SEC-071` del registro de seguridad.
