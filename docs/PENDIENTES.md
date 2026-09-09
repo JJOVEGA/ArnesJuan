@@ -2307,3 +2307,5 @@ el primer archivo que se acerque a su techo. No urge: hoy hay un solo archivo go
 > `desarrollador`; detalle en `SEC-070` y `SEC-071` del registro de seguridad.
 
 - **`skills/arnes-upgrade/SKILL.md` no tiene entrada «Hacia 1.33.0»** — la lista salta de 1.32.1 a la 1.34.0 que añadió REQ-027; un proyecto que migre desde 1.32.1 no sabe qué cambió 1.33.0 en sus archivos. Visto por QA al validar REQ-027 (2026-09-09), **fuera de su alcance**; dueño `desarrollador`, clase `instrumento`.
+
+- **`arnes_norm_clave` ya era superlineal en la longitud de la CLAVE antes de `REQ-023`** — cociente de duplicación **2,412** en `4f647c7` y **2,364** en `e406202` (par 1 015→2 015, k=200, r=6, mínimo de k, sujetos intercalados); doblando el **valor** en vez de la clave sale 1,845/1,826. La guarda de `REQ-023` no lo empeora (es marginalmente más barata), así que el exceso sobre el techo de 2,2 es **heredado** y queda fuera del alcance de ese REQ. Visto por QA al validar `REQ-023` (2026-09-09); dueño `desarrollador`, clase `instrumento`. Detalle en `docs/qa/1.34.0.md` (QA-023-05).

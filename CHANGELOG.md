@@ -2,6 +2,75 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · QA de `REQ-023`: `SEC-047` NO está cerrado, y el alfabeto contiene un espacio
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+`QA: con-hallazgos`. `Estado: en-revisión → en-progreso`. Cinco hallazgos, **tres bloquean**. Vuelta
+**1 de 3**.
+
+### `QA-023-01` (`usuario/dinero`, severidad crítica) — la remediación no cierra su propia fila 1
+
+El alfabeto se deriva de las seis claves y **dos son multi-palabra**, así que **contiene `0x20`**. La
+guarda borra lo **ajeno** al alfabeto y pregunta si lo que queda **es** una clave:
+
+- si lo insertado **pertenece** al alfabeto, **no se borra**;
+- si **sustituye** al espacio interno, **se borra y el espacio no se repone**.
+
+En los dos casos `arnes_en_vocab` dice no y **la guarda calla** ⇒ se resuelve como **ausencia**, que es
+justo lo que la puerta perdona. Medido con controles en la misma tanda: `U+0020`, **NBSP** y **TAB**
+dan **allow en las dos versiones**; `U+FEFF` y `Ω` dan **deny** sólo en la nueva. Es **la fila 1 de
+`SEC-047` con otro carácter**: cierra a `completado` con `QA: pendiente` y `Seguridad: pendiente`.
+
+**No lo tapa el «fuera de alcance» del homóglifo:** la premisa de ese apartado —«la clave resultante no
+contiene nada ajeno al alfabeto»— es **falsa** para NBSP y TAB; y el caso del espacio es el
+**procedimiento de inyección** que `CA-03` fija, con una entrada de **su propio universo declarado**.
+Y **`instrumento` no aplica**: la tabla lo reserva para defectos «sin efecto en el producto», y aquí el
+producto **es** la guarda.
+
+### `QA-023-02` (`contrato`) — un sorteo que no puede fallar, y una tensión insatisfacible
+
+El sorteo de la entrada **reservada** no ejerce el universo que `CA-03` declara: `RES93_POOL` son
+**doce imprimibles escogidos a mano**, todos fuera del alfabeto, así que las ocho tiradas **deniegan por
+construcción**. Medido que no es un detalle: **si el pool contuviera `U+0020`, el caso habría fallado**.
+Y la tensión que el write-back tiene que resolver: **universo literal + «DENY en todas» no es
+satisfacible**.
+
+### `QA-023-03` (`contrato`) — `CA-12 (iii)` incumplido
+
+Un `U+FEFF` delante del `## ` que termina la cabecera hace que **una línea del cuerpo se lea como
+veredicto** (base allow / nuevo allow; **sin** el BOM deniega; **sin** la línea en el cuerpo deniega).
+Misma propiedad, **no es regresión**, y **no está nombrada** en «Fuera de alcance».
+
+### `QA-023-04` (`instrumento`) — un guardián que envejeció hacia el lado que abre
+
+**No hay cuarta derivación**: son tres, las tres nombradas. Pero **una se estrechó**:
+`36-…-2-los-lectores.sh:228` pasó de **6 a 5** claves y **perdió `Estado`**, porque su `sed` casa
+literales entre comillas simples y los brazos ahora usan `"$ARNES_CLAVE_ESTADO"`. **Ninguna prueba
+falló**: la anti-vacuidad sólo distingue vacío de no vacío. Un guardián que envejeció hacia el lado que
+abre, **sobre la clave que decide el cierre** — y es consecuencia directa del arreglo que la
+coordinadora pidió.
+
+### Lo que QA reprodujo, y lo que sostiene la cota
+
+**Doce casos** de fail-before/pass-after, no dos, con **cuatro controles**; el del control «sin el
+carácter» es **md5 idéntico** en las dos versiones. **`LC_ALL=C` es `local` de verdad**: tras la guarda
+`LC_ALL` no existe en el ámbito global y `${#"áé"}` sigue siendo 2. **Dominio 5 de 6 confirmado**, con
+`Estado` dentro y `Seguridad` fuera. **`CA-04`: 0 divergencias** sobre 3.687 líneas y **0 falsos
+positivos** sobre 382 cabeceras reales.
+
+**La cota de `CA-09 (ii)` no sigue en pie como demostración, y ceden DOS premisas, no una:** la guarda
+no queda contenida —comparación por línea en `arnes_campo_linea` **más** `arnes_en_vocab` por línea en
+`arnes_campos_req`— y añade dos llamadas. Lo que sostiene la conclusión es **medición**, y la de QA es
+**más estricta** que la del desarrollador: **1,116×** sobre el camino de cabecera entero aislado
+(k=100, r=6, mínimo de k) contra techo 1,25×. **No es hallazgo** — el criterio exige medición y la
+medición cumple. Pero queda dicho que **la cota no es reutilizable: está rota, no debilitada**.
+
+**Y el despacho ya no decide quién es campo**, verificado: `arnes_en_vocab … || continue` va **antes**
+del `case`, y las transcripciones del conjunto pasan de 2 a 1.
+
+**Vencimiento de `SEC-047` EN RIESGO:** su fila 1 sigue cerrando un REQ `critico` sin validar ni
+auditar, y el vencimiento es **el cierre de 1.34.0**.
+
 ## [GitHub] — 2026-09-09 · La migración contaba menciones y no marcadores: un fallo en abierto que dejaba al proyecto sin las reglas, en silencio
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
 
