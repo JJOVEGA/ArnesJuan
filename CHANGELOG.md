@@ -2,6 +2,57 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · **`REQ-014` COMPLETADO**, y las cifras que la partición desfasó, corregidas antes de cerrar
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus) + coordinadora.
+
+`Estado: completado`. La transición la **aceptó `guard-completado`**, que es la confirmación por máquina
+de lo verificado a mano: `QA: aprobado` y `Seguridad: aprobado` fechados hoy, **11 hallazgos abiertos y
+cero de clase `contrato`**, cola de aprobaciones en 0 y quality gates en verde.
+
+### Por qué hubo dos comisiones más antes de cerrar, y por qué no son un círculo
+
+`b9afa01` llevó el árbol de **45 a 50** archivos de sección. En ese instante **toda cifra del REQ que
+contara archivos o pisos quedó desfasada** — no son hallazgos que aparecen uno tras otro, es **un solo
+evento con varias sedes en el texto**. Se buscaron **todas de golpe** y se verificaron **contra el
+árbol**, no contra el texto: 50 secciones · 2 gobernadas por `piso × k` (pisos **470** y **463**) · 48 por
+`N` · **ninguna** por encima de su techo.
+
+Cerrar `REQ-014` —cuya reapertura existía **precisamente** para re-derivar `CA-18`— con `CA-18` citando
+cifras anteriores a la partición habría sido cerrar sobre la clase de defecto que lo reabrió. Y su propio
+criterio lo obliga: *«`k` se re-deriva **en la misma edición** que cambia ese término»*.
+
+- **`k` re-derivado sobre lo construido:** el mayor cociente pasa de `565/461 = 1,2256` (partición
+  **prevista**) a **`577/470 = 1,2277`** (árbol **construido**) ⇒ **`k` sigue en 1,25**. Dos caminos
+  independientes dan el mismo número: la re-derivación del auditor en `R-019` y la medición de la
+  coordinadora leyendo las 50 declaraciones `PISO_AUTONOMO_SECCION`.
+- **El bullet de `N`:** «43 de 45» → **48 de 50**, con los pisos **470**/**463**. La frontera derivada
+  —`piso × k > N ⇔ piso ≥ 321`— **no se mueve**, y ahora está marcada como lo que no cambia.
+- **El «Forzador medido»:** su frase en presente pasa a llevar fecha y a decir **«ANTES de la
+  partición»**, con las cifras históricas intactas; el «después» va en un bullet nuevo con su commit.
+  **La historia no se reescribe: se fecha.**
+
+**Y el analista se negó a fabricar una cifra, que es el detalle que más vale de estas dos comisiones.**
+El argumento de `max(…)` decía «~42 archivos **hoy** conformes saldrían rojos». Esa magnitud **no es** la
+misma que «gobernados por `N`» (48), así que las cifras verificadas que se le entregaron **no la
+cubrían**: la fechó sobre el árbol de 45 y escribió que **no se ha rehecho**, en vez de poner un 48 que
+habría parecido correcto y habría sido inventado.
+
+### La curva del día, mismo modelo en todas
+
+| Comisión | Tokens | Reloj |
+|---|---:|---:|
+| `qa-tester`, validación completa | **229 k** | 28,4 min |
+| `analista`, write-back | **154 k** | 11,5 min |
+| `auditor-seguridad`, `R-019` | **107 k** | 13,3 min |
+| `qa-tester`, confirmación | **64 k** | 4,4 min |
+| `analista`, re-derivación de `k` | **46 k** | 1,5 min |
+| `analista`, las dos sedes restantes | **58 k** | 2,8 min |
+
+**No cambió el modelo ni el agente: cambió el encargo.** Rangos de línea en vez de archivos, cifras
+entregadas ya medidas, y prohibiciones explícitas —«no corras el banco» tras comprobar con un solo
+`git diff --stat` que nada medible había cambiado; «no leas los 458 KB del registro de seguridad, tienes
+`grep`»—. Es la primera ventana con el modo austero aplicado, y queda medida para poder desmentirla.
+
 ## [GitHub] — 2026-09-08 · `R-019` firma REQ-014, resuelve la doble numeración y halla dos rojos que no son de REQ-014
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad` (Opus).
 
