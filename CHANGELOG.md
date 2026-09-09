@@ -2,6 +2,47 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · `REQ-017` / `QA-017-16`: el SKIP que perdió su tercera cifra, y el caso que ahora lee el mensaje
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+**El defecto.** La abstención por convergencia de brazo de `CA-08 (ii)` **retornaba con `R47` sin
+asignar**, y la razón se calculaba **después** del retorno. El SKIP citaba dos cifras donde `CA-08`
+contrata **tres** —«las dos razones de convergencia **y la razón que sí obtuvo**»—:
+
+```
+antes:    … por encima de su propio techo 1.250×, y sobre eso no se firma
+después:  … por encima de su propio techo 1.250× — no puede distinguir una regresión de su
+          ruido. La razón que sí obtuvo es 1.600×, y sobre eso no se firma
+```
+
+**El arreglo.** La razón se calcula **antes** de abstenerse y se publica en `MOT47`, **nunca en
+`R47`**: `R47` no vacío significa «hay razón válida para juzgar» y así lo lee `veredicto08_47`, de
+modo que la abstención lo sigue dejando **vacío**. El mensaje resultante es **byte a byte** el de
+`19b1822^` (comprobado con `cmp` sobre la misma entrada). **Nada de lo que decide se mueve:**
+`TECHO47 = 1250` intacto, `máx(ce,ch) > TECHO47` intacto, `k = 4` intacto, techo de coste `0,750×`
+intacto.
+
+**Y el segundo defecto, que es el que dejó pasar al primero.** La autoprueba de la cláusula reducía
+cada salida a la **palabra** del veredicto con `sed -nE 's/^  (PASS|FAIL|SKIP)  .*/\1/p'` y
+descartaba el mensaje: **nada del banco miraba el contenido**. Una guarda cuyo contrato es *lo que
+dice* estaba verificada sólo por *lo que decide*. Se añade un caso que llama a `razon08_47` —la
+función que decide, no una copia— y exige las **tres** cifras, con valores elegidos **distintos entre
+sí y del techo** (1,400× · 1,020× · 1,600× frente a 1,250×) para que ninguna se dé por presente por
+casar con otra, más que `R47` quede vacío.
+
+**Acreditación.** Fail-before: contra el código de `19b1822` el caso da **FAIL** nombrando la cifra
+ausente. Pass-after: **PASS** contra este árbol. Banco completo **882 PASS · 0 FAIL · 5 SKIP · rc 0**,
+total **887** (era 886); autoprueba del corredor **106 PASS · 0 FAIL**; quality gates de `AGENTS.md`
+§7 en verde. `CASOS_ESPERADOS_SECCION` 9 → 10, `CASOS_ESPERADOS` 886 → 887 y
+`PISO_AUTONOMO_SECCION` 411 → **448** —el bloque indivisible crece 37 líneas—; el techo **no se
+compra**: el archivo queda en **504** líneas, que ya cabían bajo el techo **anterior** de 514.
+
+**Lo que NO se toca, y por qué.** Los tres artefactos que el hallazgo señalaba como falsos
+—`REQ-017.md:80` «mismo umbral, mismo SKIP», `tests/escenarios/hooks/README.md:325-326` y la entrada
+de `19b1822` de este mismo archivo— **vuelven a ser verdaderos con el arreglo**, así que se dejan
+como están. `QA-017-17` (`instrumento`) **sigue abierto**: las repeticiones 2..k continúan sin
+publicarse cuando la primera no converge.
+
 ## [GitHub] — 2026-09-08 · `REQ-026`: la selección de qué historiales se rotan deja de copiarse de `Archivos:`
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 

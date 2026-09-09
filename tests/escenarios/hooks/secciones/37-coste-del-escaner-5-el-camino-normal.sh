@@ -13,8 +13,8 @@
 # PARTE 5 DE 5 POR REQ-014 CA-18: `mat47` viene DUPLICADO de
 # `37-coste-del-escaner-4-la-ruta-critica.sh`, donde está escrito su motivo largo, porque
 # CA-08 necesita el árbol heredado y CA-04 + CA-19 + H-04 hacen imposible factorizarlo.
-CASOS_ESPERADOS_SECCION=9
-PISO_AUTONOMO_SECCION=411  # 21 preámbulo (líneas 1-21) + 100 maquinaria compartida duplicada (num47 y mat47 con la línea base, líneas 22-121) + 290 bloque indivisible mayor (CA-08 entero: la medición de las dos magnitudes, razon08_47/veredicto08_47 y los casos que lo usan —incluido el par discriminante, que TIENE que ejercer la función que decide y no una copia suya, líneas 123-412) · REQ-014 CA-18
+CASOS_ESPERADOS_SECCION=10
+PISO_AUTONOMO_SECCION=448  # 21 preámbulo (líneas 1-21) + 100 maquinaria compartida duplicada (num47 y mat47 con la línea base, líneas 22-121) + 327 bloque indivisible mayor (CA-08 entero: la medición de las dos magnitudes, razon08_47/veredicto08_47 y los casos que lo usan —incluido el par discriminante, que TIENE que ejercer la función que decide y no una copia suya, líneas 123-449) · REQ-014 CA-18
 seccion_nueva "--- 37/5 · el camino de una cabecera normal: procesos y reloj (REQ-017 CA-08 y CA-06) ---"
 
 BANCO47="${SEC_DIR%/}/../run.sh"
@@ -258,7 +258,7 @@ rm -f "$JSON47"
 # promedio ni «la mejor de k». El techo NO se toca: es `operativo` y su dirección es BAJAR.
 R47=''; MOT47=''; CONV47=0
 razon08_47() {   # <ue:ue2:uh:uh2 en µs> -> R47 y CONV47, o R47 vacío y MOT47 con el motivo
-  local rep="$1" ue ue2 uh uh2 ce ch x
+  local rep="$1" ue ue2 uh uh2 ce ch x rob
   R47=''; MOT47=''; CONV47=0
   ue="${rep%%:*}"; x="${rep#*:}"; ue2="${x%%:*}"; x="${x#*:}"; uh="${x%%:*}"; uh2="${x##*:}"
   for x in "$ue" "$ue2" "$uh" "$uh2"; do
@@ -271,8 +271,15 @@ razon08_47() {   # <ue:ue2:uh:uh2 en µs> -> R47 y CONV47, o R47 vacío y MOT47 
   ce=$(( ue2 * 1000 / ue )); ch=$(( uh2 * 1000 / uh ))
   CONV47="$ce"; [ "$ch" -gt "$ce" ] && CONV47="$ch"
   if [ "$CONV47" -gt "$TECHO47" ]; then
+    # LA RAZÓN OBTENIDA SE CALCULA AQUÍ, ANTES DE ABSTENERSE, Y VA EN `MOT47` — NUNCA EN
+    # `R47`. `R47` no vacío significa «hay razón válida para juzgar» y así lo usa quien
+    # llama, de modo que la abstención tiene que dejarlo vacío; pero un SKIP sin la cifra
+    # que sí se obtuvo no dice DE QUÉ se abstiene la sonda, y ése es el tercer elemento que
+    # CA-08 contrata. Se perdió al mover este cálculo detrás del `return` (QA-017-16,
+    # `contrato`): el umbral era el mismo, el mensaje no.
+    fmt47 $(( ue * 1000 / uh )); rob="$FMT47"
     fmt47 "$ce"; x="$FMT47"; fmt47 "$ch"; ce="$FMT47"; fmt47 "$TECHO47"; ch="$FMT47"
-    MOT47="la sonda NO convergió: segundo mínimo / mínimo = $x (este) y $ce (heredada), por encima de su propio techo $ch — no puede distinguir una regresión de su ruido, y sobre eso no se firma"
+    MOT47="la sonda NO convergió: segundo mínimo / mínimo = $x (este) y $ce (heredada), por encima de su propio techo $ch — no puede distinguir una regresión de su ruido. La razón que sí obtuvo es $rob, y sobre eso no se firma"
     return 0
   fi
   R47=$(( ue * 1000 / uh ))
@@ -366,6 +373,36 @@ if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-08 (ii) la sonda que no converge 
 fi
 # Los contadores no se tocan de más: `veredicto08_47` corrió dentro de una sustitución de
 # comandos, que es un subshell, y sus PASS/FAIL murieron con él.
+
+# ---------- CA-08 (ii) · EL CONTENIDO DEL SKIP, Y NO SÓLO SU PALABRA ----------
+# LA AUTOPRUEBA DE ARRIBA REDUCE CADA SALIDA A LA PALABRA DEL VEREDICTO y descarta el
+# mensaje entero, así que una guarda cuyo contrato es LO QUE DICE quedaba verificada sólo
+# por LO QUE DECIDE. Por ese hueco se perdió, sin que nada del banco lo viera, el tercer
+# elemento del SKIP de no-convergencia (QA-017-16, `contrato`): el umbral seguía siendo el
+# mismo y el mensaje ya no citaba la razón obtenida. CA-08 contrata TRES cifras —«las dos
+# razones de convergencia y la razón que sí obtuvo»— y la tercera no es adorno: es la única
+# que dice DE QUÉ se abstiene la sonda.
+#
+# Las cifras de la entrada se eligen DISTINTAS ENTRE SÍ y distintas del techo —1,400× ·
+# 1,020× · 1,600× frente al techo 1,250×—: con dos que coincidieran, una podría darse por
+# presente porque casó con la otra, y el caso mediría menos de lo que dice.
+if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-08 (ii) el SKIP por no convergencia cita las TRES cifras" | grep -qi -- "$FILTRO"; then
+  nom47="REQ-017 CA-08 (ii) el SKIP por no convergencia cita las TRES cifras: las dos razones de convergencia y la razón que sí obtuvo"
+  # Sin subshell A PROPÓSITO: la abstención también contrata que `R47` quede VACÍO —el
+  # llamador lo lee como «hay razón válida para juzgar»—, y dentro de `$( )` ese estado
+  # moriría con el subshell y no se podría comprobar.
+  razon08_47 1000000:1400000:625000:637500   # este 1,400× · heredada 1,020× · razón 1,600×
+  falta08cif47=''
+  [ -z "$R47" ] || falta08cif47="$falta08cif47 R47-no-quedó-vacío(<$R47>)"
+  case "$MOT47" in *'1.400×'*) ;; *) falta08cif47="$falta08cif47 la-convergencia-de-este(1.400×)" ;; esac
+  case "$MOT47" in *'1.020×'*) ;; *) falta08cif47="$falta08cif47 la-convergencia-de-la-heredada(1.020×)" ;; esac
+  case "$MOT47" in *'1.600×'*) ;; *) falta08cif47="$falta08cif47 la-razón-que-sí-obtuvo(1.600×)" ;; esac
+  if [ -z "$falta08cif47" ]; then
+    echo "  PASS  $nom47  <$MOT47>"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nom47  al mensaje le falta:$falta08cif47 — salió <$MOT47>"; FAIL=$((FAIL+1))
+  fi
+fi
 
 # EL PAR DISCRIMINANTE, SIN EL CUAL LA GUARDA NO ACREDITA NADA — Y SE EJECUTA, NO SE ARGUMENTA.
 # «La abstención no tapa una regresión real» es una afirmación sobre cómo se comporta el
