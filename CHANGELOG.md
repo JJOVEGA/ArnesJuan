@@ -2,6 +2,32 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · `REQ-019` F1: el techo `0,72×` **no es alcanzable en bytes**, y se sabe sin haber movido un byte
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+El techo `CA-07` de `REQ-019` sólo estaba medido en **líneas** (≈0,70× y ≈0,66×) y el propio REQ
+predecía que **en bytes sería peor**. Se midió en la magnitud contratada, bloque a bloque y con el
+filtro que el REQ registra como suyo: el suelo forzado es **27 730 B (0,820×)** en `AGENTS.md` y
+**32 682 B (0,802×)** en `requirements/README.md` — **+6 705 B por encima** del techo. **No se repartió
+nada y no se tocó el `0,72×`**: re-firmarlo es del propietario, y ya hay precedente (`0,60× → 0,72×`).
+La medición queda por sección en el REQ, para que se audite sin re-medirla.
+
+**Y la línea base había cambiado:** `requirements/README.md` pasó de **31 192 B** (`d266e8f`) a
+**40 767 B**, +30,7 %. El crecimiento **no dio holgura, la quitó**: **7 570 de esos 9 575 B (79 %)
+cayeron en suelo** —el contrato de forma del campo `Archivos:` y el `## Índice`— contra un techo que
+sólo subió 6 894 B. Los derivados quedan en **≤ 53 707 B** (total), **≤ 24 355 B** y **≤ 29 352 B**.
+
+Es la **cuarta vez** en este proyecto de la clase «criterio derivado sin comprobar su factibilidad»
+—el techo de 400 líneas de `REQ-014 CA-18`, el `4×` de `REQ-021 CA-08 (iii)`, el `0,60×` de este mismo
+criterio— y la **primera** que se descubre **antes** de gastar el reparto: 7–11 h de trabajo que no se
+repartieron hacia un techo inalcanzable. La remediación 3 de `SEC-033` en `ADR-003` **no se ejecutó**:
+la puerta de salida de F1 detiene el trabajo hasta que el propietario decida sobre el techo.
+
+`REQ-019` pasa a **`Estado: bloqueado`** con el motivo en el campo, porque eso es lo que hay: detenido
+por una decisión que no es del `desarrollador`. Dejarlo en `pendiente` habría dejado el disco diciendo
+«confirmado, aún no iniciado» sobre un REQ que **no puede despachar F2**, y la parada sólo viviría en
+el informe de una comisión.
+
 ## [GitHub] — 2026-09-08 · `REQ-019`: el ADR que este REQ anunciaba **ya estaba ocupado**
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
 
