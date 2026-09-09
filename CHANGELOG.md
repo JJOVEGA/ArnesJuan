@@ -2,6 +2,45 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · `REQ-027`: las reglas de la coordinadora, en la sede canónica y con sus dos límites contratados
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+REQ nuevo, `pendiente`, 1.34.0, **`Rigor: critico`**. 8 criterios en 210 líneas. Contrata que las reglas
+de trabajo de la coordinadora —la comprobación de cuatro preguntas antes de despachar, las seis reglas
+compactas y la separación coordinadora/herramientas— vivan en **`AGENTS.md`** y **`templates/AGENTS.md.tpl`**,
+entre los marcadores `<!-- arnes:coordinacion:inicio/fin -->` (nombres **de contrato**, para que la
+migración sea idempotente).
+
+**La sede se corrigió en vuelo, y el motivo importa.** El encargo inicial las mandaba a
+`templates/CLAUDE.md.tpl` para no chocar con `REQ-019`. **Comprobado: `REQ-019` estaba `pendiente`, sin
+comisión viva y sin el archivo modificado — la colisión era hipotética**, y evitarla dejaba fuera a los
+coordinadores de Codex y Cursor, que leen `AGENTS.md` y no `CLAUDE.md`. Con la sede canónica, el rigor
+subió de `estandar` a **`critico`** y la sensibilidad a **sí**.
+
+**`CA-07` contrata las vías de lectura y los dos límites**, con par discriminante: un texto que **insinúe
+cobertura universal**, o que **dé por migrados los proyectos ya instalados**, es **no conforme aunque
+contenga las reglas completas**. Cambiar una plantilla no actualiza a nadie: `templates/` sólo alimenta
+`arnes-init`, y un proyecto instalado tiene su `AGENTS.md` congelado hasta que migre.
+
+**`CA-06` añade una propiedad que nadie había pedido y evita un fallo silencioso:** *el conjunto de
+títulos `## N.` no cambia*. El bloque entra **sin renumerar**, o se rompen a la vez **todas** las
+referencias `§N` que agentes y REQ llevan escritas.
+
+**`CA-05` mide el delta en bytes sobre `AGENTS.md`** (≤ 2 600 B, **operativo**) y obliga a anotarlo en el
+Historial, **para que `REQ-019` mida contra un número** en vez de contra un archivo que cambió de tamaño
+por debajo.
+
+**Limitación declarada por el propio analista:** no re-midió ninguna cifra —`33 827 B`, `74 255 B`,
+`0,60×/0,68×`, `≤ 1,5 s`— y entran **citadas como dato del encargo**; y sin herramienta de shell, el techo
+de 2 600 B es **una estimación**, declarada `operativo` por eso.
+
+**Pendiente que NO se escribió y queda anotado:** la entrada de «Migraciones conocidas» en
+`skills/arnes-upgrade/SKILL.md` para 1.34.0. Sin ella, ningún proyecto instalado recibe las reglas.
+
+**Coste: 74,5 k tokens** —por encima del objetivo de 50 k—, y la causa está declarada: la corrección de
+sede obligó a reescribir el REQ entero, y el contador acumula el reenvío del contexto de arranque (~18 k)
+en cada llamada.
+
 ## [Interno] — 2026-09-08 · CORRECCIÓN: `REQ-019` sigue en 1.34.0, y su coste es una ESTIMACIÓN, no una medición
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 
