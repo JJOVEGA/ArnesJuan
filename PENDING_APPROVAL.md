@@ -79,11 +79,94 @@ tabla **por sección** de §«El suelo forzado MEDIDO EN BYTES», con `base` / `
 cada sección de los dos documentos, y ésa **sí** permite dimensionar el reparto sin re-enumerar. Se
 usa ésa. **No se abre una enumeración nueva.**
 
-**Espera.** Tu firma sobre el techo nuevo, por documento, **una vez veas la propuesta con punteros
-incluidos**. `REQ-019` sigue en `Estado: bloqueado` y **F2 no se despacha** hasta entonces. Nada más
-de la ventana depende de esto.
+#### LA PROPUESTA, YA CALCULADA (2026-09-09) — `docs/arnes/req-019-techo-propuesto.md`
+
+Versión base leída: commit **`d6620ea`**, con `git show`, nunca el árbol vivo. Método dentro del
+archivo, con un anexo de los **38 bloques delegados** (sección, bytes, gobierno/narrativo, nombre) y
+la regla «todo bloque que no aparezca aquí es suelo», para que la clasificación sea reproducible sin
+re-medirla.
+
+| | base **(medido, `wc -c`)** | suelo | punteros | resultante **(PROYECCIÓN)** | **techo propuesto** |
+|---|---:|---:|---:|---:|:---:|
+| `AGENTS.md` | 33.827 | 27.730 | 3.497 | 31.227 | **≤ 0,93×** |
+| `requirements/README.md` | 40.767 | 32.682 | 3.497 | 36.179 | **≤ 0,89×** |
+| **total** | **74.594** | **60.412** | **6.994** | **67.406** | **≤ 0,91×** |
+
+> **Qué está medido y qué es proyección, porque no es lo mismo y la columna no lo decía.** *Medido con
+> `wc -c`:* las dos **bases**, y los **tres punteros reales** escritos para este cálculo (269 / 243 /
+> 161 B, `docs/arnes/req-019-techo-propuesto.md:57-65`), de los que se usa el **peor caso**. *Derivado:*
+> el **suelo**, que es la clasificación por sección de los bytes del documento actual —bytes medidos,
+> con **juicio** encima sobre qué se queda—. **PROYECCIÓN:** las columnas `resultante` y `techo`.
+> **31.227 y 36.179 son suma aritmética de suelo + punteros, NO `wc -c` sobre archivos candidatos**:
+> esos archivos **no existen**, porque no se ha repartido nada. El número real sólo se puede medir
+> **después** del reparto, y `CA-07` obliga a medirlo entonces.
+>
+> **El reparto de los 26 punteros es 13 + 13, y NO es una división por la mitad** — sale igual por
+> coincidencia, con el grano de `CA-12` (una pregunta por bloque de gobierno, una por sección
+> narrativa):
+>
+> | | bloques delegados | gobierno | narrativos | secciones que los agrupan | punteros |
+> |---|---:|---:|---:|---:|---:|
+> | `AGENTS.md` | 18 | 6 | 12 | **7** | 6+7 = **13** |
+> | `requirements/README.md` | 20 | 9 | 11 | **4** | 9+4 = **13** |
+>
+> De ahí que los bytes coincidan (13 × 269 = 3.497 cada uno). Si el total se hubiera partido por dos
+> sería un artefacto del cálculo; aquí es que los **conteos** coinciden.
+
+**Reducción de bytes de lectura obligatoria: de 74.594 B a 67.406 B = −7.188 B por comisión
+(−9,6 %)** — −2.600 B en `AGENTS.md`, −4.588 B en el README. **No se traduce a tokens ni se llama
+ahorro de tokens.** En el extremo optimista (grano `CA-03`, puntero corto): 62.183 B, `≤ 0,84×`,
+−12.411 B; la horquilla completa está en el archivo.
+
+**Por qué `0,91×` y no el `≈0,82×` estimado en F1, que es lo que hay que decidir:** los **punteros de
+`CA-03` se comen el 49 %** de lo que se libera —6.994 B añadidos contra 14.182 B delegados—, y en
+`AGENTS.md` el **57 %**, porque su texto delegable está repartido en **siete** secciones y cada una
+paga los suyos. La estimación previa contaba **11** punteros de ~150 B; el grano que manda es el de
+**`CA-12`** —una pregunta por bloque que enuncia o acota gobierno, una por sección narrativa— que da
+**26**, y el tamaño sale de **tres punteros reales escritos y medidos** (269 / 243 / 161 B), usando el
+**peor caso**. `CA-10` no reserva nada: ningún resumen es obligatorio.
+
+**UN DATO DE RENTABILIDAD QUE NO PIDE CAMBIAR EL ALCANCE, PERO QUE CONVIENE VER ANTES DE FIRMAR.** El
+`## Índice` del README pesa **7.867 B**, está **fuera de alcance** y tiene **otro dueño**. Convertirlo
+en bloque derivado **no reparte nada y no añade un solo puntero**, y retira **más** bytes de lectura
+obligatoria (7.867 B) que el reparto completo de los dos documentos en el peor caso (**7.188 B**), que
+cuesta **7–11 h** y mueve **38 bloques, 15 de ellos de gobierno**. Lo registra el propio desarrollador
+y **no propone cambiar el alcance**, porque ya decidiste mantenerlo. Queda aquí como información para
+tu firma, no como recomendación.
+
+**Espera.** Tu firma sobre `≤ 0,93×` / `≤ 0,89×` / `≤ 0,91×`, por documento — o el número que
+prefieras por encima del suelo medido. `REQ-019` sigue en `Estado: bloqueado` y **F2 no se despacha**
+hasta entonces.
+
+**Y una precondición que la firma no resuelve:** `CA-15` exige el **inventario por bloques** —«una fila
+por elemento», anexado a `ADR-003`, sitio único, cardinalidad cuadrada, ejecutores de `CA-17`, doble
+enumeración independiente— y **la tabla por sección NO lo sustituye**: agrega por sección, y una
+invariante se pierde por **bloque**. Las dos enumeraciones de F1 (106 y 164) **no sobreviven en
+disco**, así que ese inventario hay que rehacerlo antes de F2, con firma o sin ella.
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-09-09) — `REQ-027` entra en 1.34.0 como **quinto trabajo**, detrás de `REQ-019`
+
+**Lo autorizado, literal:** *«Autorizo incorporar `REQ-027` como quinto trabajo de 1.34.0. Ejecutá su
+implementación después de `REQ-019`, sobre la estructura resultante. Incluí plantilla, instalación y
+migración de proyectos existentes, con sus verificaciones. Actualizá el plan y el estado para reflejar
+esta decisión.»*
+
+**Consecuencias registradas:**
+- La ventana pasa de **cuatro** trabajos a **cinco**. `docs/PLAN.md` y `docs/ESTADO.md` actualizados.
+- **Orden fijado: `REQ-027` va DESPUÉS de `REQ-019`, sobre la estructura resultante.** Resuelve la
+  competencia por `AGENTS.md` que motivaba la pregunta: `REQ-019` mueve el texto de sitio y `REQ-027`
+  inserta su bloque **en el resultado**, no en el original. Escribirlo antes habría significado
+  escribir el bloque y luego moverlo.
+- **`requirements/REQ-027.md:7` (`Versión destino: 1.34.0`) queda ratificado** — era una afirmación del
+  analista y ahora es decisión del propietario. No hay que corregirlo.
+- Alcance de la implementación, confirmado: **plantilla + instalación (`arnes-init`) + migración de
+  proyectos existentes (`arnes-upgrade`), con sus verificaciones**. Es lo que ya contrata `CA-09` y
+  `CA-10`, este último como **condición de entrega**, no como pendiente.
+- **Dependencia que sigue viva y no la resuelve esta firma:** `REQ-019` está `bloqueado` esperando el
+  techo, así que `REQ-027` hereda ese bloqueo por transitividad.
+
 
 ### RESUELTA (propietario, 2026-09-09) — `REQ-026`: se autoriza **sólo** `_doc_artefactos`, sin activar la rotación
 

@@ -95,10 +95,18 @@ Esta ventana va a tener muchas comisiones, y las tres primeras palancas están *
 > día): REQ-017 + REQ-021, más la partición de las tres secciones sobre 400 líneas (`DEV-021-07`).
 > `REQ-019`, `REQ-020`, `REQ-023`, `REQ-024` y `REQ-025` van a 1.34.0, y REQ-019 es su primer trabajo.**
 >
-> ## ALCANCE DE 1.34.0 — CUATRO trabajos, fijado el 2026-09-08 por decisión del propietario
+> ## ALCANCE DE 1.34.0 — CINCO trabajos: cuatro fijados el 2026-09-08 y el quinto el 2026-09-09
 >
 > «Aplica tu recomendación» (2026-09-08). La recomendación era **tres**; la medición la corrigió a
 > **cuatro**, y la corrección va escrita porque es el tipo de error que este plan existe para no repetir.
+>
+> **Y el 2026-09-09 el propietario añadió el quinto**, con su orden fijado: *«Autorizo incorporar
+> `REQ-027` como quinto trabajo de 1.34.0. Ejecutá su implementación **después de `REQ-019`, sobre la
+> estructura resultante**. Incluí plantilla, instalación y migración de proyectos existentes, con sus
+> verificaciones.»* La coordinadora había recomendado **1.35.0**; el propietario decidió **1.34.0 con
+> orden explícito**, que resuelve el motivo de la recomendación —la competencia por `AGENTS.md`— sin
+> aplazar el trabajo. Queda escrito porque una recomendación desatendida con motivo es información, no
+> ruido.
 >
 > | # | Trabajo | Por qué NO se puede cortar |
 > |---|---|---|
@@ -106,6 +114,7 @@ Esta ventana va a tener muchas comisiones, y las tres primeras palancas están *
 > | **2** | **`REQ-019` — adelgazar los dos documentos de arranque** | El **87 %** de los bytes del ritual se leen en **cada comisión**. Es la palanca de tokens, y 1.34.0 es la ventana con más comisiones |
 > | **3** | **Archivar las bitácoras** (`rotacion` + `veredictos.*` del manifiesto) | `CHANGELOG.md` 467 KB + `registro-seguridad.md` 458 KB ≈ **240 k tokens** de ventana potencial. Medido: un auditor que cargó uno entero consumió **2,56 M** de lectura de caché. **Necesita REQ: no existe** |
 > | **4** | **`REQ-023` + `REQ-024` — la remediación de `SEC-047`** | **No es elegible.** `SEC-047` es de severidad **crítica** y su vencimiento —**el cierre de 1.34.0**— está escrito en `docs/seguridad/registro-seguridad.md:3684`, **por el auditor y en su sede**. Cerrar 1.34.0 sin esto sube `SEC-047` y `SEC-051` a **`contrato`** |
+> | **5** | **`REQ-027` — las reglas de coordinadora, con plantilla, instalación y migración** | Entra el **2026-09-09** por decisión del propietario, y **después de `REQ-019`, sobre la estructura resultante**. El orden no es preferencia: `REQ-019` **mueve de sitio** buena parte de `AGENTS.md` y `REQ-027` **inserta un bloque nuevo** en ese mismo archivo; al revés habría que escribirlo y luego moverlo. Alcance confirmado: plantilla + `arnes-init` + `arnes-upgrade` **con sus verificaciones** (`CA-09` y `CA-10`, éste como **condición de entrega**). **Crear el REQ no instala nada**: hoy hay 11 criterios contratados y cero implementado |
 >
 > **Por qué el 4 entra aunque yo recomendara tres.** La recomendación inicial contaba coste y olvidó un
 > **plazo con dueño**. La diferencia con `SEC-052` —el forzador que resultó ser «un argumento con la firma

@@ -2,6 +2,57 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · `REQ-027` entra como quinto trabajo, el techo de `REQ-019` calculado, y la deuda de fechas cerrada por falsa
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus) ×2, `desarrollador` (Opus), coordinadora.
+
+**Decisión del propietario: `REQ-027` es el QUINTO trabajo de 1.34.0**, con su implementación
+**después de `REQ-019`, sobre la estructura resultante** —plantilla, `arnes-init` y `arnes-upgrade`
+con sus verificaciones—. `docs/PLAN.md` §«ALCANCE DE 1.34.0» pasa de cuatro trabajos a cinco.
+La coordinadora había recomendado 1.35.0; el propietario decidió 1.34.0 **con orden explícito**, que
+resuelve el motivo de la recomendación —`REQ-019` mueve el texto de `AGENTS.md` y `REQ-027` inserta un
+bloque en él— sin aplazar el trabajo. Queda escrito porque **una recomendación desatendida con motivo
+es información, no ruido**.
+
+**Techo de `REQ-019` calculado y ETIQUETADO COMO PROYECCIÓN** (`docs/arnes/req-019-techo-propuesto.md`,
+versión base `d6620ea` leída con `git show`, nunca el árbol vivo):
+**≤ 0,93× / ≤ 0,89× / ≤ 0,91×**, es decir **de 74.594 B a 67.406 B = −7.188 B de lectura obligatoria
+por comisión (−9,6 %)**. Expresado en bytes y **no traducido a tokens**.
+
+- **Medido con `wc -c`:** las dos bases y **tres punteros reales escritos para el cálculo** (269/243/161 B,
+  peor caso usado). **Proyección:** el resultante y el techo — los archivos candidatos **no existen**,
+  porque no se ha repartido nada, así que no hay `wc -c` posible sobre ellos.
+- **Por qué 0,91× y no el ≈0,82× estimado en F1:** los punteros se comen el **49 %** de lo liberado
+  (6.994 B contra 14.182 B delegados) y en `AGENTS.md` el **57 %**. El grano que manda es el de `CA-12`
+  —26 punteros, **13 + 13**, y no es una división por la mitad: `AGENTS.md` 6 de gobierno + 7 secciones
+  narrativas, README 9 + 4—, no los 11 de grano `CA-03` que suponía la estimación previa.
+- **Dato de rentabilidad registrado sin proponer cambio de alcance:** el `## Índice` del README pesa
+  **7.867 B**, está fuera de alcance y su conversión en bloque derivado **no reparte nada ni añade un
+  puntero**, retirando **más** bytes que el reparto completo (7.188 B), que cuesta 7–11 h.
+- **Límite declarado:** la tabla por sección **no sustituye** al inventario por bloques de `CA-15`.
+  Agrega por sección, y una invariante se pierde por **bloque**.
+
+**La deuda de «20 fechas desfasadas» queda CERRADA, y era falsa.** El número nunca se comprobó.
+Medido: **15** apariciones en `REQ-019` —no 12—, **0 desfasadas confirmadas**, 2 correctas por
+evidencia no-git, **13 indeterminadas**. Y el método que la coordinadora prescribió **no sirve**:
+`git blame` devuelve `Not Committed Yet` en **14 de las 15**. Evidencia en
+`docs/arnes/req-019-fechas-desfasadas.md`. **El propietario decidió no editarlas y que no bloqueen.**
+El agente **revirtió** la única fila que había escrito, porque sus 15 veredictos eran `indeterminada`
+y documentaba dentro del contrato una comisión ya cancelada.
+
+**`REQ-027` gana la regla `B.7` y `CA-11`:** la evidencia intermedia se guarda **en disco**, con
+**versión base** y **método** dentro del artefacto y la **ruta** citada en el informe. Nace medido: las
+dos enumeraciones de `REQ-019` F1 (106 y 164 elementos) se entregaron por informe y **no sobreviven**,
+así que hoy `CA-15.2` no se puede reconciliar sin repetirlas. El analista **se la aplicó a sí mismo** y
+declaró qué **no** hizo puerta —el cumplimiento por comisiones futuras, que desde un REQ no se puede
+medir—, nombrando el comprobador de `REQ-025` como candidata: *«un pendiente disfrazado de criterio
+habría sido peor que un límite declarado»*.
+
+**Corrección de la coordinadora sobre su propio contador de coste:** el `subagent_tokens` que reporta
+el arnés es **acumulado por agente**, y se estaban sumando los dos informes de un mismo agente
+reanudado. Lo gastado en comisiones cerradas es **≈2,02 M**, no los ≈2,2 M reportados antes. Y el
+contador que los agentes citan (14.9xx k y bajando) es **presupuesto restante compartido**, no consumo
+propio: con varias comisiones vivas, su delta **no es atribuible** a ninguna.
+
 ## [Interno] — 2026-09-09 · Decisiones del propietario: `_doc_artefactos` autorizado, techo de `REQ-019` por presentar
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 

@@ -233,10 +233,31 @@ Todos **terminados y reanudables**. Reanudar cuesta mucho menos que abrir nuevo.
   los dos: QA y el auditor.
 - **Mi propio consumo sigue sin instrumentar.** Lo único medido son los subagentes.
 
+### Decisiones del propietario del 2026-09-09 — YA APLICADAS
+
+1. **`REQ-026`: autorizado SÓLO `_doc_artefactos`** en `.arnes/config.json:48` y
+   `templates/arnes-config.json.tpl:53`, **sin activar la rotación**. `rotacion.activo` y
+   `rotacion.artefactos` quedan fuera. Cierra `QA-026-04` (`contrato`) cuando se aplique.
+2. **`REQ-027` entra como QUINTO trabajo de 1.34.0**, y su implementación va **después de `REQ-019`,
+   sobre la estructura resultante** — plantilla + `arnes-init` + `arnes-upgrade` con sus
+   verificaciones. `docs/PLAN.md` §«ALCANCE DE 1.34.0» actualizado; `REQ-027.md:7` queda **ratificado**.
+   Hereda el bloqueo de `REQ-019` por transitividad.
+3. **`REQ-019`: mantener el alcance y ajustar el objetivo.** El techo propuesto está calculado en
+   `docs/arnes/req-019-techo-propuesto.md`: **≤ 0,93× / ≤ 0,89× / ≤ 0,91×**, es decir **−7.188 B de
+   lectura obligatoria** por comisión. **Falta sólo su firma.**
+4. **Revisión de fechas CERRADA por el propietario**, sin convertir las dudas en bloqueantes.
+
 ### Deuda anotada y NO resuelta
 
-**20 fechas** un día por delante (`REQ-019` 12, `REQ-026` 8) — nadie abrió pasada; se corrigen en la
-comisión que toque cada zona. `SEC-070` y `SEC-071`: un **tercer y cuarto** sitio con la forma cruda
+~~20 fechas un día por delante~~ — **cerrado el 2026-09-09, y el número era falso.** La deuda decía
+«12 en `REQ-019` y 8 en `REQ-026`» y **nadie lo había comprobado**. Medido ahora en `REQ-019`:
+**15** apariciones del literal, **0 desfasadas confirmadas**, 2 correctas por evidencia no-git y **13
+indeterminadas**. Y el método que la coordinadora prescribió **no sirve**: `git blame` devuelve
+`Not Committed Yet` en **14 de las 15**, porque son posteriores al último commit; comprometer primero
+daría la fecha del día en que se comprometa, no del día en que se escribió. Evidencia conservada en
+`docs/arnes/req-019-fechas-desfasadas.md`, con dos avisos para quien alguna vez las toque: **cuatro**
+son la fecha de la **firma del propietario** sobre `0,72×`, y **seis** viven dentro de texto de
+criterio. **Decisión del propietario: no se editan y no bloquean.** `SEC-070` y `SEC-071`: un **tercer y cuarto** sitio con la forma cruda
 de lectura, uno de ellos en un punto que **sí escribe**. `SEC-058`: el tercer término de un piso de
 `CA-18` **no lo verifica ninguna máquina**. El epígrafe de `REQ-026` que dice «Dos decisiones» y
 lista tres. Y el `Archivos:` de `REQ-017` nombra **dos secciones que no existen** — se corrige
@@ -442,7 +463,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-09 05:55
+## Estado derivado — 2026-09-09 06:14
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -452,9 +473,9 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `rel/registro-1.33.0` @ `1fe975f` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `rel/registro-1.33.0` @ `f1eae12` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.0`
-**Aprobaciones pendientes:** 2
+**Aprobaciones pendientes:** 1
 **REQ:** 27 — completado 13 · en-revisión 2 · en-progreso 1 · bloqueado 2 · otros 9
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
@@ -471,7 +492,7 @@ _Sólo los REQ abiertos; los 13 completados no se listan._
 | REQ-020 | pendiente | pendiente | preventiva | critico | sec-038(contrato),sec-039(contrato),sec-… |
 | REQ-021 | bloqueado | con-hallazgos | preventiva | critico | dev-021-05(instrumento,dueñoanalista-req… |
 | REQ-022 | pendiente | pendiente | pendiente | critico | (ninguno) |
-| REQ-023 | borrador | pendiente | pendiente | critico | sec-052(contrato) |
+| REQ-023 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-024 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-025 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-026 | en-revision | aprobado | con-hallazgos | critico | qa-026-03(instrumento),qa-026-04(contrat… |
