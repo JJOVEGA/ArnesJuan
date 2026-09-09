@@ -5486,3 +5486,294 @@ compararé en mi turno. Para `REQ-017` y la capa de enforcement sigue la de **R-
 
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.** Esta consulta no altera clasificación de datos,
 acceso, retención ni cumplimiento, y este repositorio no maneja usuarios finales ni datos personales.
+
+---
+
+## Revisión R-019 — **firma de REQ-014**: auditoría del código de la reapertura, **después** de QA, ventana 1.33.0 (`cand/1.33.0` @ `d4e0033`) — 2026-09-08
+
+**Orden y legitimidad de la firma.** `QA: aprobado (2026-09-08)` está emitido sobre este árbol
+(`requirements/REQ-014.md:8`, evidencia en `docs/qa/1.33.0.md:3042`), así que el orden de
+`AGENTS.md` §6 está satisfecho y esta firma acredita lo que dice acreditar: la revisión de
+seguridad, no las quality gates —que no son mías y no miré—.
+
+### 0. Renumeración: había DOS `R-018` y DOS `SEC-057` distintos, y el REQ citaba un identificador ambiguo
+
+La auditoría del 2026-09-08 se emitió en el worktree aislado `work/req014-codex` y numeró contra
+la copia archivada de este registro, que no incluía la consulta de gobernanza que se escribió en
+paralelo. Resultado medido antes de tocar nada (`grep -n '^## Revisión R-'` y
+`grep -o 'SEC-[0-9]\{3\}' | sort -u`): última revisión **R-018**, último hallazgo **SEC-057**,
+5 488 líneas. `SEC-999` no es hallazgo: es el control negativo del banco.
+
+| Worktree | Aquí | Sujeto |
+|---|---|---|
+| `R-018` | **`R-019`** | esta revisión |
+| `SEC-057` | **`SEC-058`** | el piso autodeclarado sin cota superior |
+| `SEC-058` | **`SEC-059`** | el «≈424» que no se derivaba de sus términos |
+| `SEC-059` | **`SEC-060`** | el «42 de 45» que sobrevive dentro de la máquina |
+| `SEC-060` | **≡ `SEC-057` ya existente** | *no recibe número nuevo*: es **el mismo hallazgo** que el `SEC-057` de este registro (veredictos viejos legibles-como-válidos, con las dos claves de `veredictos.*` apagadas). Dos identificadores para un hallazgo son la misma ambigüedad que esta sección viene a cerrar |
+| `SEC-061` | **`SEC-061`** | el hueco de `R-005` (`mitigado`) |
+| — | **`SEC-062`**, **`SEC-063`** | nuevos de esta revisión |
+
+**Por qué importaba y no era cosmético:** `requirements/REQ-014.md:10` declaraba `SEC-057
+(instrumento)` en el campo que gobierna el cierre. `guard-completado` lee la **clase** y pasa; un
+humano no podía saber a cuál de los dos hallazgos se refería. Corregido en esta revisión.
+
+### 1. Rigor: no se repite lo ya medido
+
+La excepción de rigor de `docs/gobernanza/autoalojamiento.md` §«Excepción medida» **no aplica**
+—falla 2 de 3 condiciones, medido en **R-018** §1— y `REQ-014` se queda en **`critico`**, que es
+además su **suelo** por `Sensible a seguridad: sí`. **No subo ni bajo el rigor de ningún REQ:**
+aquí no hay nada que subir, ya está en el techo.
+
+### 2. CA-18 re-derivado sobre los **50** archivos, por mí y no por lectura del write-back
+
+Replicado con un recorrido propio sobre `tests/escenarios/hooks/secciones/*.sh`, sin ejecutar el
+banco y sin escribir en el árbol. Resultados, que **coinciden dígito a dígito** con lo que declara
+`requirements/REQ-014.md:106`:
+
+| Magnitud | Medido |
+|---|---|
+| Archivos de sección | **50** |
+| Gobernados por `N` = 400 | **48** |
+| Gobernados por `piso × k` | **2** |
+| Que exceden su techo | **0** |
+| Declaraciones cuyos términos **suman** el piso | **50 de 50** |
+| Declaraciones con `nterm ≥ 3` (no ILEGIBLE) | **50 de 50** |
+| `piso > líneas` | **0** |
+
+Los dos gobernados por `piso × k` son `37-coste-del-escaner-1-el-dominio.sh` (577 líneas, piso 470,
+techo 588) y `37-coste-del-escaner-4-la-ruta-critica.sh` (468, piso 463, techo 579).
+
+**`k` sigue valiendo 1,25 después de la partición, y lo comprobé porque CA-18 obliga a re-derivarlo
+cuando cambia la mejor partición medida.** El mayor cociente `líneas/piso` entre los archivos que
+gobierna el piso es **577/470 = 1,2277**, que redondeado al siguiente múltiplo de 0,05 da **1,25**:
+**`k` no cambia**. *(Observación para el `analista-requerimientos`, y no es hallazgo: el texto de
+`REQ-014.md:96` sigue citando `565/461 = 1,2256`, que es el cociente **previo** a la partición. El
+resultado es el mismo y la cifra está marcada como medición fechada, pero CA-18 pide la
+re-derivación «en la misma edición que cambia ese término» y esa entrada de Historial no está. Una
+línea la cierra.)*
+
+### 3. El techo **no** se compró inflando el piso — que es lo que `SEC-058` obliga a comprobar a mano
+
+`SEC-058` mide que el techo de un archivo depende de un número que ese mismo archivo declara sobre
+sí mismo, sin cota superior de máquina. Su remediación 1 es un **control de procedimiento**: el
+verde de CA-18 no acredita que un archivo quepa, y la derivación la verifica **quien no la
+escribió**. Lo ejerzo aquí, sobre los únicos dos archivos cuyo techo depende del piso:
+
+- `37-coste-del-escaner-1-el-dominio.sh`: piso **470** (38 + 120 + 312). Su antecesor
+  `37-coste-del-escaner-1-escala.sh` declaraba **461** (27 + 122 + 312) en `9809fc2`. El término que
+  sube es el **preámbulo** (27 → 38), que es exactamente lo que CA-18 (ii) predice al partir. **Y la
+  conformidad no depende de la subida:** con el piso **viejo** el techo sería 577 y el archivo mide
+  **577** ⇒ conforme igual. El techo no está comprado.
+- `37-coste-del-escaner-4-la-ruta-critica.sh`: piso **463**, **por debajo** del 468 de su antecesor.
+  Un piso que **baja** no compra nada.
+
+Ningún otro de los 50 tiene el techo gobernado por su piso, así que en ninguno más puede la
+declaración comprar conformidad. **La remediación 1 de `SEC-058` queda ejercida para esta
+partición**; la propiedad de máquina (remediación 3) sigue abierta y con vencimiento en 1.34.0.
+
+### 4. La vía por la que esta partición podía haber roto el aislamiento: medida, y está limpia
+
+Partir una sección en tres crea la ocasión de que las partes se pasen estado, que es lo que **CA-19**
+prohíbe («ninguno hace `source` de otro archivo de sección, **ni depende del estado que otro
+deje**»). Es la mitad de CA-19 que la autoprueba **no** mide —comprueba `source`, no el estado—, así
+que se comprueba leyendo. Medido:
+
+- **Ninguna** sección hace `source` ni `.` de otra (`grep` sobre los 50 archivos: cero).
+- `38-sondas-compartidas-2-la-calibracion.sh:29-32` y `-3-la-descendencia.sh:24-25` **leen**
+  `$RAIZ/cal-reloj`, `cal-procesos`, `testigo-reloj` y `testigo-procesos`. **Los produce el
+  corredor**, no otra sección: `tests/escenarios/hooks/run.sh:1138-1141`; y **ninguna** sección los
+  escribe (`grep '> *"\?\$RAIZ/\(cal-\|testigo-\)' secciones/*.sh` sale vacío). Es dependencia **del
+  corredor hacia abajo**, que es la única que CA-19 admite. **No hay violación.**
+- Temporales: los seis archivos nuevos derivan sus rutas de `$RAIZ/...-$BASHPID`. La partición
+  **duplicó** plantillas entre archivos que corren **en paralelo** —`her37-321-$BASHPID` vive ahora
+  en `37-…-1-el-dominio.sh:155` y en `37-…-3-la-pared.sh:135`—, y lo único que impide la colisión es
+  el sufijo por proceso. **Correcto hoy y no es hallazgo**, pero queda escrito porque es la clase que
+  ya costó texto humano en 1.32.0 (temporal de nombre fijo, REQ-015): *toda plantilla de temporal
+  duplicada entre secciones tiene que conservar su sufijo por proceso*, y ninguna puerta lo mide.
+- Barrido de los seis archivos nuevos: sin `eval` sobre entrada no confiable, sin red
+  (`curl`/`wget`/`nc`/`ssh`), sin escrituras fuera de `$RAIZ`, sin `rm -rf` sobre ruta no derivada
+  del temporal de la corrida.
+
+### 5. Regresión de enforcement — con una **corrección a `R-018` §4**
+
+`R-018` §4 afirmó que `hooks/`, `tools/`, `.github/` y `.arnes/config.json` no cambiaban. Sobre el
+árbol de hoy (`9809fc2` → `d4e0033`) eso es cierto para los tres primeros —**cero** archivos— y
+**falso para el cuarto**: `.arnes/config.json` **sí** cambió. Leído el diff completo, el cambio es
+**una línea**, `arnes_version` `1.32.1` → `1.33.0` (commit `d01aea1`, junto con `plugin.json` y
+`marketplace.json`, los tres coherentes en `1.33.0`). **Ninguna clave de política se toca**:
+`agentes`, `codigo_app.globs`, `quality_gates`, `veredictos`, `git.prohibidos` y `rotacion` quedan
+idénticas. No hay debilitamiento de ningún control acreditado en `R-001`…`R-018`.
+
+**Anclas.** `hooks/` no cambia desde `9809fc2` (cero archivos). Respecto de **v1.31.0** sí difiere —5
+archivos, +489 líneas— y **ninguna** de esas líneas es de `REQ-014`: vienen de `973448f` (1.32.1,
+REQ-015) y `ed56f9a` (REQ-017). La sustancia de CA-22 —«este REQ no toca el mecanismo»— **se
+cumple**; lo que no se cumple es su forma literal, y eso es `SEC-062`.
+
+**Barrido de secretos** sobre las 3 603 líneas añadidas del delta: **cero** patrones de credencial,
+clave privada o token. Ningún archivo de secretos rastreado.
+
+### 6. Hallazgos
+
+#### SEC-058 — **El techo de CA-18 lo decide el sujeto: `piso` autodeclarado sin cota superior** · `instrumento` · severidad **alta** · **abierto** *(era `SEC-057` en el worktree)*
+
+Texto íntegro, demostración sobre el código real y remediación en tres puntos: se conserva tal como
+se emitió, y **no se relaja**. Ubicación:
+`tests/escenarios/hooks/autoprueba-corredor.sh:93-160` (`ca18_deriva()`) y las **50** —ya no 45—
+líneas `PISO_AUTONOMO_SECCION=` de `tests/escenarios/hooks/secciones/`; contrato en
+`requirements/REQ-014.md` CA-18 §«Cómo se obtiene `piso(f)`» y §«Límite honesto».
+
+**Estado tras esta revisión:**
+- **Remediación 1 (control de procedimiento): EJERCIDA** para la partición de `b9afa01` — §3 de esta
+  revisión, por quien no escribió la derivación. La conformidad de los 50 archivos **no** está
+  comprada. Esto no cierra el hallazgo: lo cierra sólo para **esta** partición, y la próxima vuelve a
+  necesitar la verificación a mano hasta que exista la remediación 3.
+- **Remediación 2 (write-back del «Límite honesto»): NO HECHA**, y el analista la declara fuera de
+  alcance por escrito en `requirements/REQ-014.md:546`, junto con `H-15`, que pide lo mismo. El
+  criterio sigue nombrando **un** término no verificable cuando son **tres**, y describe la
+  exposición como «afloja el techo» cuando lo medido es *existe un valor declarable que hace conforme
+  a cualquier archivo con las cuatro comprobaciones en verde*. **Vencimiento incumplido:** decía
+  «antes de que la partición se dé por acreditada», y la partición ya está acreditada. Se re-fija en
+  **la próxima edición de CA-18, sea cual sea su causa**.
+- **Remediación 3 (propiedad de máquina): abierta**, vencimiento **1.34.0**, dueño `desarrollador`.
+
+**Por qué no bloquea, dicho explícitamente para que nadie lo lea como un sello.** Es `instrumento`
+por la letra de `AGENTS.md` §6 y entra en la regla de acumulación del propietario del 2026-09-08. Mi
+firma de abajo **no** dice que CA-18 sea inatacable: dice que **este** árbol no la atacó, y eso lo
+medí.
+
+#### SEC-059 — **El «≈424» de la sección 38 no se derivaba de sus términos** · `contrato` · severidad media · **MITIGADO (2026-09-08)** *(era `SEC-058` en el worktree)*
+
+**Verificado sobre el árbol, no sobre el texto del write-back.** La declaración previa a la
+partición, `9809fc2:tests/escenarios/hooks/secciones/38-sondas-compartidas.sh:18`, dice
+`PISO_AUTONOMO_SECCION=133  # 19 preámbulo + 36 maquinaria compartida duplicada + 78 bloque
+indivisible mayor` ⇒ coste de duplicación por archivo extra `19 + 36 = **55**`, dos mitades
+`828 + 55 = 883` ⇒ la mayor **≥ 442**. El analista corrigió la cifra a **≈442** con esa derivación
+escrita y dejó dicho que la conclusión no dependía de ella (`requirements/REQ-014.md:104`, Historial
+`:543`). **Y el árbol real la confirma por el otro lado:** la partición en tres da 198 + 327 + 351 =
+**876** líneas, máximo **351 < 400** ⇒ cabe; y el crecimiento real por duplicación fue **48 líneas en
+total**, con lo que dos mitades habrían dado (828 + 48)/2 = **438 > 400** ⇒ tampoco cabían. La
+predicción era **conservadora** y la conclusión se sostiene por las dos vías. **Cerrado.**
+
+#### SEC-060 — **«42 de 45» sobrevive dentro de la máquina** · `instrumento` · severidad baja · **abierto, y hoy MÁS desmentido** *(era `SEC-059` en el worktree)*
+
+`tests/escenarios/hooks/autoprueba-corredor.sh:558` sigue diciendo «(42 de 45 el 2026-09-08)». El
+archivo **no se tocó** entre `9809fc2` y `d4e0033`, así que el comentario ha sobrevivido a la
+partición y ahora está desmentido **dos veces**: el reparto real es **48 de 50**, medido en §2 por la
+propia función que vive tres líneas más abajo. El vencimiento era «cierre de 1.33.0» y se está
+consumiendo. **Dueño:** `desarrollador`. **Remediación:** sustituir la cifra por la propiedad —el
+reparto lo publica `ca18_deriva()` en cada corrida— o fecharla como medición. Se corrige en la
+próxima comisión que abra ese archivo; no bloquea.
+
+#### SEC-057 (existente) — **veredictos viejos legibles-como-válidos** · `instrumento` · **abierto**, con la instancia de `REQ-014` **resuelta**
+
+El `SEC-060` del worktree es **el mismo hallazgo** y se refunde aquí en vez de recibir número nuevo.
+Estado tras esta revisión:
+
+- **La instancia concreta está resuelta.** `QA:` se re-emitió **fechado** el 2026-09-08 sobre el árbol
+  nuevo (`requirements/REQ-014.md:8`) y `Seguridad:` se re-emite **fechado** en esta revisión. Ya no
+  queda ningún veredicto de 1.32.0 acreditando el árbol de 1.33.0, que era lo que hacía `contrato` a
+  la mitad del hallazgo. **Esa mitad se cierra.**
+- **El mecanismo sigue apagado y el hallazgo sigue abierto.** `.arnes/config.json` →
+  `veredictos.exigir_fecha: false`, `veredictos.caducan_con_codigo: false`. Encenderlo es cambio del
+  manifiesto ⇒ `codigo_app.globs` + gate humano de `AGENTS.md` §6, y está **aplazado a 1.34.0 por
+  decisión del propietario**, registrada en `docs/PENDIENTES.md`. **El aplazamiento me parece
+  aceptable y digo por qué:** la coordinadora midió que encenderlo hoy no bloquearía ningún cierre
+  pendiente —20 de 25 `aprobado` en cabecera llevan fecha; de los 5 sin ella, 4 están en REQ
+  `completado` que no vuelven a transicionar—, así que el coste del aplazamiento es una **ventana** de
+  exposición conocida y acotada, no una exposición indefinida. Con esa medición sobre la mesa,
+  aplazarlo a la ventana siguiente es una decisión informada del propietario y no la contradigo.
+- **Y no firmo sobre un control que viva sólo en el registro.** Para **este** REQ el control existe
+  como criterio: `requirements/REQ-014.md:136` (CA-31) exige que los veredictos que lo cierren sean
+  **posteriores al 2026-09-08**, y los dos lo son. Lo que falta es el control **general**, que es la
+  remediación 3 de este hallazgo (write-back del `analista-requerimientos`) y sigue pendiente con el
+  encendido de 1.34.0.
+
+#### SEC-061 — **hueco de `R-005` en la numeración de este registro** · `instrumento` · severidad baja · **mitigado**
+
+Sin cambios: `R-005` ≡ la sección «Re-verificación de R-004 …» de la línea 1190. La regla para
+adelante —toda revisión abre con su número— se aplica en esta misma sección (`R-019`) y es también lo
+que habría evitado la colisión de §0.
+
+#### SEC-062 — **CA-22 fija su línea base en un tag congelado, y la ventana ya pasó por encima: su prueba literal sale ROJA sobre un árbol correcto** · `instrumento` · severidad **media** · **abierto** *(nuevo)*
+
+**Ubicación.** `requirements/REQ-014.md:122` (CA-22, mitad **(i)**); misma clase en `:132` (CA-29,
+que fija el literal `1.32.0`) y en la mitad **(ii)** de CA-22 para el ritual de versión.
+
+**Lo medido.** CA-22 (i) exige que «`git diff v1.31.0 -- hooks/` es **vacío** **y** `git status
+--short -- hooks/` no muestra ninguna entrada». Sobre `d4e0033`: `git status` sale **vacío** ✔, pero
+el diff contra `v1.31.0` da **5 archivos y +489 líneas** (`campos-req.awk`, `estado-derivado.sh`,
+`guard-completado.sh`, `lib.sh`, `rotar-artefactos.sh`). **Ninguna es de `REQ-014`**: vienen de
+`973448f` (1.32.1 / REQ-015) y `ed56f9a` (REQ-017). Añádase que `.claude-plugin/*` y
+`.arnes/config.json` cambiaron en `d01aea1` **sin nombrar REQ alguno**, porque son el **ritual de
+versión** y no pertenecen a ningún REQ — forma que CA-22 (ii) («cada cambio queda atribuido
+**nombrando el REQ que lo trae**») no contempla; y que CA-29 exige leer `1.32.0` donde el árbol dice
+`1.33.0`.
+
+**Riesgo, y su dirección.** Falla hacia el lado que **cierra**, no hacia el que abre: produce un
+**rojo sobre código correcto**. Es exactamente la clase que este mismo REQ nombra como dañina en
+CA-18 (i) —«la clase de rojo que ya produjo **H-11** y la que enseña a desactivar el control»— y la
+que `AGENTS.md` §13 resume en «un guard apagado protege menos que uno parcial». Un auditor futuro que
+re-corra CA-22 al pie de la letra concluirá que el mecanismo se tocó, y el modo de fallo probable no
+es que lo investigue: es que descuente el criterio.
+
+**Y es media, no baja, por un motivo concreto:** la mitad **(ii)** de CA-22 **ya recibió esta misma
+corrección** por `H-09` —el texto lo explica: exigir el diff vacío «le atribuía a este REQ una
+propiedad del **árbol entero** de una ventana que comparte con REQ-012 y REQ-013»—. Se arregló la
+mitad de `tools/` y se dejó intacta la de `hooks/`, que el propio criterio llama «lo que este control
+de verdad protege». El defecto ya estaba diagnosticado y se corrigió sólo donde se había manifestado.
+
+**Remediación (dueño `analista-requerimientos`), por propiedad y no por lista.** CA-22 (i) adopta la
+misma forma que ya tiene (ii): lo exigido no es un diff vacío contra un tag congelado, sino que
+**ningún cambio bajo `hooks/` sea atribuible a este REQ**, con la atribución citada al **único sitio**
+donde vive —el campo `Archivos:` de cada REQ— y admitiendo explícitamente el **ritual de versión**
+como origen sin REQ. CA-29, cuyo sujeto es un commit pasado, se marca como **medición fechada** para
+que un cierre no la lea como prueba viva. **No bloquea** el cierre de `REQ-014`: la **sustancia** del
+control está verificada en §5 de esta revisión por la vía correcta, y lo que falla es el instrumento.
+
+#### SEC-063 — **`.gitignore` no cubre `.env*`** · `instrumento` · severidad **baja** · **abierto** *(nuevo)*
+
+**Ubicación:** `.gitignore` (cubre `.mcp.json`, `.claude/settings.local.json`, `memory/`, `insumos/`,
+`mejoras-arnes-*.md`, `node_modules/`, `.arnes-initialized`; **no** `.env*`).
+
+**Lo medido:** ningún archivo `.env` ni de credenciales está rastreado hoy (`git ls-files`: cero), y
+este repositorio no tiene runtime de aplicación ni usuarios finales, así que **la exposición actual es
+nula**. Se registra porque el repositorio es **público** y el modo de fallo es un `git add -A`
+distraído durante una prueba local —el mismo que el propio `.gitignore` advierte en su cabecera para
+otros artefactos—. **Remediación:** una línea, `.env*` (con la negación de `.env.example` si se
+quiere versionar un ejemplo). **Dueño:** `desarrollador`. **Vencimiento:** cualquier comisión que abra
+`.gitignore`; no bloquea nada.
+
+### 7. Lo que esta revisión NO miró — tabulado como NO MIRADO, nunca como PASA
+
+| No mirado | Por qué |
+|---|---|
+| **Quality gates y ejecución del banco** | No son mías (`AGENTS.md` §6). No ejecuté `run.sh` ni la autoprueba: el positivo `106 PASS · 0 FAIL` y los seis negativos son de QA (`docs/qa/1.33.0.md:2780`, `:2812`) y los **cito**, no los re-mido |
+| **El oráculo de CA-12 en `inventario.sh`** | Su propiedad, sus tres negativos y la dirección de su error siguen sin auditarse por mí más allá de comprobar que el archivo no cambió desde `9809fc2`. Lo validó QA |
+| **La identidad byte a byte de los inventarios 45 ↔ 50** | Es medición de QA (884 líneas, cero suprimidas/modificadas). No la repliqué |
+| **Los criterios de `REQ-014` fuera de CA-18, CA-19, CA-22, CA-29 y CA-31** | Fuera del alcance de esta comisión |
+| **`CHANGELOG.md`, `docs/PENDIENTES.md`, `docs/ESTADO.md` y los demás REQ** | Excluidos por la comisión para acotar coste de contexto. Lo que necesité de `PENDIENTES.md` (el aplazamiento de `veredictos.*` a 1.34.0) lo tomo **de la comisión**, no de lectura propia, y queda dicho aquí que no lo verifiqué en su archivo |
+| **La cola de aprobaciones y los tags** | Sí comprobados, y son lo único que miré fuera del alcance: `PENDING_APPROVAL.md` tiene **0** entradas bajo `## Pendientes` y `v1.32.0` existe (CA-31); `v1.33.0` **no** existe todavía, que es lo correcto antes de publicar |
+
+### 8. Estado de seguridad aprobado por REQ — línea base de no-regresión, actualizada en R-019
+
+| REQ | Veredicto | Fecha | Alcance acreditado | Nota |
+|---|---|---|---|---|
+| **REQ-014** (reapertura 1.33.0) | **`aprobado`** | 2026-09-08 | `cand/1.33.0` @ `d4e0033` — partición `b9afa01`, bump `d01aea1`, write-back `516e849`, confirmación de QA `d4e0033` | **Qué acredita:** que CA-18 se re-deriva correctamente sobre los 50 archivos (§2), que la conformidad **no** se compró inflando ningún piso (§3), que la partición **no** creó dependencia entre secciones y CA-19 se cumple en sus **dos** mitades (§4), y que el mecanismo (`hooks/`, `tools/`, `.github/`) no cambió, con la corrección de que `.arnes/config.json` sí lo hizo y **sólo** en su literal de versión (§5). **Qué NO acredita:** las quality gates ni la ejecución del banco (§7). **Residual declarado:** `SEC-058` (`instrumento`, alta) sigue abierto — el techo de CA-18 es atacable por el sujeto; medí que **este** árbol no lo atacó, no que sea inatacable |
+| **REQ-014** (1.32.0) | `aprobado` | 2026-09-06 | `R-004`/`R-005`/`R-009` | **No se retira:** cubre el árbol de entonces. Deja de ser la línea base vigente: la sustituye la fila de arriba |
+| **REQ-017** y capa de enforcement | `aprobado` | 2026-09-07 | `R-012`, ancla re-medida en `R-016` | Sigue vigente. En esta revisión re-anclada por el otro lado: `hooks/` no cambia desde `9809fc2` |
+
+**Rigor:** `REQ-014` se queda en **`critico`**. No subo ni bajo ninguno.
+
+**Hallazgos que esta revisión deja abiertos en `REQ-014`:** `SEC-057` (`instrumento`), `SEC-058`
+(`instrumento`), `SEC-060` (`instrumento`), `SEC-062` (`instrumento`). **Cerrado:** `SEC-059`
+(`contrato`) → `mitigado`. **Ninguno de mis hallazgos es ya de clase `contrato`.** Los anteriores del
+REQ —`H-03`, `H-07`, `H-12`, `SEC-019`, `H-14`, `H-15`, `H-16`— **no se tocan, no se cierran y no se
+reclasifican**: no son míos. `SEC-061` y `SEC-063` no son de `REQ-014` y no entran en su campo.
+
+**Numeración vigente tras esta revisión:** última revisión **R-019**; último hallazgo **SEC-063**;
+próximos libres **R-020** y **SEC-064**.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** Esta revisión no altera clasificación de datos,
+acceso, retención ni cumplimiento; este repositorio sigue sin manejar usuarios finales ni datos
+personales, y el único apunte de higiene (`SEC-063`) es preventivo.

@@ -2,6 +2,56 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-08 · `R-019` firma REQ-014, resuelve la doble numeración y halla dos rojos que no son de REQ-014
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad` (Opus).
+
+**`Seguridad: aprobado (2026-09-08, R-019, cand/1.33.0 @ d4e0033)`.** Con esto `REQ-014` queda en **11
+hallazgos abiertos, CERO de clase `contrato`**, cola de aprobaciones en 0 y quality gates en verde.
+
+**Qué acredita la firma, dicho por el auditor:** la re-derivación de `CA-18` hecha **por él** sobre los 50
+archivos; que la conformidad **no se compró inflando ningún piso**; que `CA-19` se cumple en las dos
+mitades; que el mecanismo no cambió. **Qué NO acredita:** quality gates ni ejecución del banco — son de
+QA, y las cita en vez de re-medirlas.
+
+**La doble numeración, resuelta.** Su revisión pasa a **`R-019`** (`registro-seguridad.md:5492`) y sus
+hallazgos se corren: `SEC-057→058`, `058→059`, `059→060`. Y una decisión que evita el defecto que la
+comisión venía a cerrar: **el `SEC-060` del worktree NO recibió número nuevo** porque *es* el `SEC-057`
+que ya existía — «dos ids para un hallazgo son la misma ambigüedad».
+
+**`SEC-059` (ex-`SEC-058`, `contrato`) → `mitigado`, verificado contra el árbol y no contra el texto.**
+`9809fc2:…/38-sondas-compartidas.sh:18` declara `19 + 36 + 78`, luego 55 por archivo extra y ≥442. Y el
+árbol real lo confirma **por el otro lado**: los tres archivos suman 198+327+351 = 876, máximo **351 <
+400**; el crecimiento real fue de 48 líneas, con lo que dos mitades habrían dado **438 > 400** — tampoco
+cabían. La predicción era conservadora y la conclusión aguanta por las dos vías.
+
+### Los dos hallazgos nuevos, los dos `instrumento`
+
+**`SEC-062` (media) — `CA-22 (i)` sale ROJA sobre un árbol correcto.** `REQ-014.md:122` exige
+`git diff v1.31.0 -- hooks/` **vacío**; da **5 archivos, +489 líneas**, y **ninguna es de REQ-014**:
+vienen de `973448f` (REQ-015) y `ed56f9a` (REQ-017). La **sustancia** se cumple —verificada por la vía
+correcta—, falla la **forma**. Lo que lo sube a media: la mitad (ii) **ya recibió esta misma corrección
+por `H-09`**, se arregló `tools/` y se dejó intacta la de `hooks/`, que el propio criterio llama «lo que
+este control de verdad protege». Es la clase de rojo que enseña a desactivar el control (`H-11`).
+
+**`SEC-063` (baja)** — `.gitignore` no cubre `.env*`. Exposición actual **nula**; se registra por ser
+repositorio público.
+
+### Corrección del auditor a su propia `R-018`
+
+Afirmó que `.arnes/config.json` no cambiaba. **Falso sobre este árbol:** cambió en `d01aea1`. Leyó el
+hunk entero — **una línea**, `arnes_version` 1.32.1 → 1.33.0, ninguna clave de política tocada.
+`hooks/`, `tools/` y `.github/`: **cero** archivos desde `9809fc2`.
+
+**Y midió a fondo la vía por la que la partición podía haber roto el aislamiento:** los tres `38-*` leen
+`$RAIZ/cal-*` y `testigo-*`, pero **los produce el corredor** (`run.sh:1138-1141`) y ninguna sección los
+escribe — dependencia del corredor hacia abajo, la única que `CA-19` admite. **No hay violación.** Anotó
+sin convertirlo en hallazgo que la partición duplicó `her37-321-$BASHPID` entre dos secciones paralelas y
+que **sólo el sufijo por proceso impide la colisión** (clase REQ-015).
+
+**Coste: ≈107 k tokens, 35 llamadas, 13,3 min**, con el registro de 458 KB consultado **sólo** por
+`grep -n` y `sed -n` de rangos, nunca entero. Es la instrucción que hoy costó $3,26 en una sesión de
+Codex por no estar escrita.
+
 ## [GitHub] — 2026-09-08 · QA confirma el write-back: `H-13` CERRADO, y el cierre pasa a depender sólo del auditor
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
 
