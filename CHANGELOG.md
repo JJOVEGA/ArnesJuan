@@ -2,6 +2,31 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · `REQ-027 CA-05`: los bytes en bytes, y las dos magnitudes separadas donde se confundían
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Write-back de **`QA-027-01`** (`contrato`). Los dos números corregidos **en los dos sitios y en bytes**:
+`D` **776 → 807 B**, y `B.7` + `D` **1.812 → 1.843 B**, con «el 49 %» → **«el 49,8 %»**. `B.7` = 1.036 B
+no se toca: ése ya estaba en bytes, y es **la mitad que hacía la suma inválida**.
+
+**La causa queda nombrada en el Historial, no sólo corregida:** los **776 eran caracteres** (`wc -m`)
+sumados a **1.036 bytes**. Es la misma clase que hoy obligó a corregir `REQ-019` —suelo medido en
+**líneas** contra un techo que se paga en **bytes**— y por eso se escribe la causa y no sólo el número.
+
+**Y queda escrito que el techo NO se invalida:** los **3.703 B** siguen en pie, reproducidos por QA en
+los dos archivos, y la corrección **refuerza** el criterio — hay **más** contenido contratado de lo que
+se decía, no menos, así que el argumento de `CA-05` para no recortar es más sólido.
+
+**La distinción de las dos magnitudes queda en el cuerpo de `CA-05`**, con su sede elegida y
+justificada: **3.702 B es el bloque** —lo que compara `CA-01`— y **3.703 B es lo que añade al archivo**
+—lo que contrata `CA-05`—, es decir el bloque más su línea en blanco separadora. Las dos correctas. Se
+puso ahí, y no en `CA-01`, porque **es el único punto donde las dos cifras se leen juntas, que es donde
+se confunden**.
+
+**`QA-027-01` sigue ABIERTO:** cerrarlo es de QA al re-validar. Y el analista declara que **no
+comprobó por su cuenta** los 807 B ni los 3.702/3.703 — los toma de la medición de QA, **citada y
+atribuida** en el REQ.
+
 ## [GitHub] — 2026-09-09 · QA de `REQ-027`: el techo re-derivado es legítimo, y dos magnitudes sumadas no lo son
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus) + coordinadora.
 
