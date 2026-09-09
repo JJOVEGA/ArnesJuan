@@ -2,6 +2,68 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-09 · `REQ-023 CA-03`: un sorteo que puede fallar, y `CA-12 (iii)` fuera de alcance con su nombre
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus), `desarrollador` (Opus).
+
+Write-back de **`QA-023-02`** y **`QA-023-03`** (los dos `contrato`). Ningún hallazgo cerrado: los
+cinco siguen en el campo, y `CA-03` **sigue en rojo** hasta que el `desarrollador` arregle
+`QA-023-01` — la rama 2 es, **por diseño**, la que hace fallar el caso hoy.
+
+### `CA-03`: veredicto por rama, sorteo estratificado, tres procedimientos
+
+**Por qué ninguna vía sola servía**, escrito por el analista: hacer el criterio satisfacible **no
+garantiza que el sorteo LLEGUE** a la rama que hoy abre; y acotar el universo por propiedad vuelve a
+ser *«seleccionado para no intersecar la guarda»* — **la tautología un paso más allá**, que es lo que
+QA condenó. Y descartó el SKIP como respuesta principal con un motivo fino: la rama de `a`→`QaA` **no
+es una abstención por falta de datos**, es una tirada sobre la que `CA-01` **no promete nada**, y
+llamarla SKIP confundiría «no medí» con «no exige».
+
+- **Universo sin acotar.** Lo que cambia es que el sorteo se **estratifica** en **E1** (complemento del
+  alfabeto) y **E2** (el alfabeto mismo), los dos **derivados de la constante única de claves de
+  `CA-06`** y **ninguno escrito a mano**, con no menos de una tirada por estrato.
+- **Tres procedimientos:** insertar · sustituir un **blanco interno** · **duplicarlo**, y en éste **la
+  entrada se toma de la clave misma** — ni sorteo ni lista. Es la tirada que hoy abre.
+- **Veredicto por rama:** E1 → **DENY**. P3, y E2 cuando la entrada es el blanco → **DENY** (hoy abre).
+  E2 no-blanco → **ningún veredicto exigido**, publicado y etiquetado «fuera de la propiedad de
+  `CA-01`» y **no juzgado**, porque ahí una persona ya no lee una declaración de ese campo.
+- **Anti-tautología COMO CRITERIO:** publica cuántas tiradas cayeron en cada rama **junto a la
+  semilla**; **SKIP con motivo, nunca PASS**, si alguna rama de DENY se queda sin tirada; y **un pool
+  escrito a mano o elegido para no intersecar el alfabeto INCUMPLE** el criterio, con `QA-023-02`
+  citado.
+- **Satisfacibilidad comprobada, no supuesta:** existe un mecanismo conforme —reponer un blanco en el
+  sitio de la retirada y **colapsar blancos repetidos** antes de preguntar si lo que queda **es** una
+  clave—, que cubre la sustitución (NBSP/TAB) y la duplicación **sin denegar nada legítimo**. Derivado
+  **leyendo, no ejecutado**; la elección del mecanismo es del `desarrollador`.
+
+**Y una premisa medida FALSA, corregida dentro del propio criterio:** el homóglifo no queda fuera
+porque «la clave resultante no contenga nada ajeno al alfabeto» —**lo contiene y la guarda lo ve**—
+sino porque **retirar lo ajeno no repone lo sustituido**. El reparto no cambia; lo que separa el
+blanco (dentro) de la letra (fuera) es que **reponer un blanco no elige entre candidatos y reponer una
+letra sí**.
+
+### `CA-12 (iii)`: este REQ NO la cierra, y el motivo no es de calendario
+
+La superficie **no es el segmento de clave** —donde esta guarda se ejerce— sino la regla de **corte**
+de la cabecera: el `## ` no tiene clave ni valor, así que es **otra comprobación en otro punto** del
+escáner, y arrastra la fila de `AGENTS.md` §13 que promete ese corte, **superficie heredada con gate
+humano**. Meterla ahora sería alcance nuevo **por delante de `QA-023-01`**, que es lo que bloquea.
+
+Ítem en «Fuera de alcance» con motivo, la medición y **sus dos controles en las dos versiones**,
+dueños repartidos, **ventana propuesta 1.35.0 — la decide el propietario**, clase `instrumento`
+**declarada ahí porque ningún `SEC` la abrió**, y **forzador**: que un texto firmado prometa **sin
+condición** que los campos valen sólo en la cabecera mientras esto siga abierto.
+
+**Y un cambio que vuelve mecánica la verificación:** `CA-12 (iii)` ahora dice **cuáles** son las
+superficies nombradas —**tres**: homóglifo, NUL/UTF-16 y ésta— para que comprobarlo sea **contarlas**
+contra el apartado, en vez de **leer intención**.
+
+### Aviso de enrutado que el analista deja explícito, y no resuelve por su cuenta
+
+`QA-023-04` vive en **dos derivaciones que NO están en `Archivos:`** (`36-…-2-los-lectores.sh:228` y
+`36-…-3-comentar-retira.sh:33`). Si el arreglo del `desarrollador` las escribe, **el campo se queda
+corto**. *«Dilo tú al despachar; yo no lo amplío porque no sé si el arreglo elegido las toca.»* Va en
+el encargo como condición de parada.
+
 ## [GitHub] — 2026-09-09 · QA de `REQ-023`: `SEC-047` NO está cerrado, y el alfabeto contiene un espacio
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
 
