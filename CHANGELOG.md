@@ -2,6 +2,96 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Las dos discrepancias documentales resueltas: la cifra firme baja de 34 a 32, y el cuadre sale exacto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (el despacho y el cuadre) y analista-requerimientos (las ediciones).
+
+**Coordinación prescrita, no decisión nueva** —y no la pedí otra vez porque el propietario ya la había
+declarado tal: *«actualiza los estados desfasados… eso es coordinación, no una nueva decisión mía»*—.
+Las filas **215-216** del artefacto del auditor prescribían el acto con dueño y archivos.
+
+**No se cerró ningún hallazgo.** Los dos ya estaban **`mitigado`** por firma del `auditor-seguridad`,
+verificado **en la fuente** por el analista y no por transcripción: `SEC-014` en `R-006`
+(`registro-seguridad.md:1429`, **trece** afirmaciones y **trece** medidas coincidentes, verificadas
+ejecutando) y `SEC-083` en `R-027` §3 (`:8156`, con 12 celdas del acto de firmar sin fallo y **7 de 7**
+formas del lado QA en DENY). Lo que estaba mal era **el espejo** del campo.
+
+### El cuadre sale exacto, y por eso vale
+
+El conteo por campo da ahora **21** — **la misma cifra** que `R-028` midió como «los ve la puerta»
+**antes** de alinear. Es decir: las dos discrepancias eran **justo** lo que sobraba, y las dos
+mediciones, hechas por vías distintas, coinciden.
+
+**34 → 32**, compuesto: **21** los ve la puerta · **5** sólo en el registro **por diseño** · **4** sin
+REQ atribuible · **1** que debería estar en un campo (`SEC-055`) · **1** `SEC-085`. Y sigue valiendo
+lo que dijo el auditor: **bajo la frontera, 32 devuelve la decisión igual que 17**.
+
+**Ninguno de los dos REQ se volvió cerrable**, comprobado con el lector real y no por mí:
+`REQ-013` → `QA=<con-hallazgos> SEG=<con-hallazgos>` y conserva `SEC-020` (`contrato`);
+`REQ-024` → `QA=<con-hallazgos> SEG=<pendiente>` y conserva `QA-024-19` y `SEC-084`. Cola en **16**.
+
+### Un fallo que el analista evitó y yo no había previsto
+
+Pedí dejar la traza del hallazgo retirado «en su lugar». La puso en el **cuerpo** del REQ y **no dentro
+de la línea del campo**, con motivo mecánico: `hooks/guard-completado.sh:685-703` parte esa línea por
+las comas de fuera del paréntesis y **cada elemento sin paréntesis de clase deniega el cierre**. Prosa
+de traza dentro del campo habría fabricado un hallazgo **sin clase** — un DENY producido por un
+artefacto de redacción. Buena lectura del mecanismo antes de obedecer la instrucción.
+
+### Y la lección del auditor, que queda escrita en `REQ-024`
+
+El desfase de `SEC-083` nació así: `R-027` §2 escribió «se retira del campo» para `SEC-082` y **§3
+omitió la frase**. Subsanado en `R-028` §3. ***Un cierre no está completo hasta que dice de qué campo
+sale.***
+
+**Sigue sin hacer, de la misma reconciliación y con su dueño:** `SEC-055 (contrato)` al campo de
+`REQ-019`, el NFR que cierra `SEC-085`, y el `Estado:` de `REQ-023` que declara bloqueante un
+`QA-023-15` que QA retiró el 2026-09-09.
+
+## [Interno] — 2026-09-10 · Dos espejos alineados con firmas que ya existían: un cierre no está completo hasta que dice de qué campo sale
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos (las dos retiradas y su traza); prescrito por `auditor-seguridad` en `R-028` §3 y en `docs/seguridad/reconciliacion-campos-2026-09-10.md` §6.
+
+**Qué cambió, en una línea:** el campo `Hallazgos abiertos:` de `REQ-013` deja de declarar
+`SEC-014 (contrato)` y el de `REQ-024` deja de declarar `SEC-083 (contrato)`, porque **los dos están
+`mitigado` en el registro de seguridad** desde antes de esta edición.
+
+**Y lo que NO cambió, que es el fondo de la entrada.** Ningún hallazgo se cerró aquí. `SEC-014` está
+`mitigado` desde **`R-006`** (pata 3 —la de herencia— cerrada con **trece afirmaciones medidas
+ejecutando**) y `SEC-083` desde **`R-027` §3** (por su causa medida, el `[ -n "$qa" ]`, con 12 celdas
+del acto de firmar sin un fallo y **7 de 7** formas del lado `QA` en DENY). El estado lo fijó el
+`auditor-seguridad`; el analista **transcribe** una decisión firmada y **no dicta veredictos ni
+cierres**. Lo que estaba mal era el **espejo**: el campo declaraba abierto lo que el registro tiene
+cerrado. La distinción importa porque la forma de este trabajo **se parece** a lo que el propietario
+tiene expresamente prohibido —cerrar hallazgos o aceptar residuales para conseguir verde—, y no lo es:
+allí se **decide**, aquí se **copia**.
+
+**Por qué existió el desfase, que es la lección de forma y no un descuido suelto.** `R-027` §2 escribió
+«se **retira** del campo de `REQ-016`» al cerrar `SEC-082`; **§3 omitió la frase equivalente** para
+`SEC-083`. El auditor lo declara defecto de su propio cierre en `R-028` §3 y lo resume así:
+***un cierre no está completo hasta que dice de qué campo sale.*** `SEC-014` es la misma forma
+repetida **dos ventanas**: la discrepancia la encontró `R-016` §2 el 2026-09-08 y seguía viva. La
+dirección del error es la **segura** —sobre-cuenta, no permite—, pero **cuenta**: la frontera de
+publicación mide la **unión** de las dos sedes (`R-028` §4).
+
+**La traza no se borra al retirar la entrada.** Cada REQ conserva, fuera del campo que lee la máquina,
+dónde vive ahora el hallazgo, con qué revisión lo cerró y con qué evidencia: `REQ-013` en
+«Trazabilidad», `REQ-024` en § «El reparto de `Hallazgos abiertos:`» (dos viñetas: la sede vigente y la
+causa del desfase). Va **fuera** del campo a propósito: `guard-completado` parte esa línea por comas y
+un elemento sin paréntesis de clase **deniega el cierre**, así que la prosa de traza dentro del campo
+habría fabricado un hallazgo sin clase. Y en `REQ-024` queda dicho que el **residual** de `SEC-083`
+**no desapareció con él**: `R-027` §3 lo re-asentó en **`SEC-084`**, que sigue declarado.
+
+**Ninguno de los dos REQ se vuelve cerrable, comprobado antes de escribir.** `REQ-013` sigue
+`en-revisión` con `SEC-020 (contrato)` abierto; `REQ-024` sigue `bloqueado` (`D14`) con
+`QA-024-19` y `SEC-084` (`contrato`) abiertos y su veredicto de seguridad en **`pendiente`** —la
+auditoría nunca se hizo—; y la cola tiene **16** entradas bajo «## Pendientes», de modo que
+`guard-completado` denegaría cualquier cierre de todos modos.
+
+**Fuera de alcance, y no se tocó:** las otras filas del artefacto del auditor (`SEC-055` hacia el campo
+de `REQ-019`, el NFR de `SEC-085`, el `Estado:` de `REQ-023`) van a la cola con su dueño;
+`requirements/README.md` y `REQ-017` son de la coordinadora; `docs/seguridad/` es del auditor. Ningún
+`Estado:` y ningún veredicto de cabecera se editó. Hecho **leyendo** el registro y las dos cabeceras,
+**sin ejecutar nada**.
+
 ## [Interno] — 2026-09-10 · El ciclo se rompe enumerando ANTES, no corrigiendo después: las ocho sedes de la promesa de `CA-03`, en la mano del analista
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (la enumeración y el despacho) y analista-requerimientos (la corrección).
 

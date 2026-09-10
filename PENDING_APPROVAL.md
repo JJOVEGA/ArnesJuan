@@ -149,6 +149,36 @@ residual** (dueño, forzador medido y vencimiento) o **aceptar explícitamente**
 >    cerrar; y `SEC-083` (`mitigado` desde `R-027`) sigue en el de `REQ-024`. Alinearlos **no es
 >    cerrar un hallazgo**: es poner el campo de acuerdo con una firma que ya existe.
 >
+> **LAS DOS DISCREPANCIAS RESUELTAS — 2026-09-10, y la cifra firme baja a 32.** Las filas 215-216 del
+> artefacto del auditor prescribían el acto con dueño y archivos; se ejecutó. `SEC-014` sale del campo
+> de `REQ-013` (`mitigado` desde `R-006`: trece afirmaciones, trece medidas coincidentes, verificadas
+> ejecutando) y `SEC-083` sale del de `REQ-024` (`mitigado` desde `R-027` §3, con 12 celdas del acto de
+> firmar sin fallo y **7 de 7** formas del lado QA en DENY). **No se cerró ningún hallazgo:** los dos
+> ya estaban `mitigado` por firma del auditor; lo que estaba mal era el espejo.
+>
+> **Cuadre, y sale exacto:** el conteo por campo da ahora **21**, que es la misma cifra que `R-028`
+> midió como «los ve la puerta» **antes** de alinear — así que las dos discrepancias eran justo lo que
+> sobraba. **34 → 32**, compuesto: **21** los ve la puerta · **5** sólo en el registro **por diseño** ·
+> **4** sin REQ atribuible · **1** que debería estar en un campo (`SEC-055`, sin hacer) · **1**
+> `SEC-085`. Y sigue valiendo lo que dijo el auditor: **bajo la frontera, 32 devuelve la decisión igual
+> que 17**; lo que cambia es que se puede desmentir fila por fila.
+>
+> **Ninguno de los dos REQ se volvió cerrable**, comprobado con el lector real: `REQ-013` conserva
+> `SEC-020` (`contrato`) y su seguridad está en `con-hallazgos`; `REQ-024` conserva `QA-024-19` y
+> `SEC-084` y su seguridad en **`pendiente`** —la auditoría nunca se hizo—; y la cola sigue en **16**,
+> que deniega cualquier cierre de todos modos.
+>
+> **Un fallo que el analista evitó y yo no había previsto:** la traza del hallazgo retirado va en el
+> **cuerpo** del REQ y **no dentro de la línea del campo**, porque `hooks/guard-completado.sh:685-703`
+> parte esa línea por las comas de fuera del paréntesis y **un elemento sin paréntesis de clase
+> deniega el cierre**. Prosa de traza dentro del campo habría fabricado un hallazgo **sin clase**: un
+> DENY por un artefacto de redacción.
+>
+> **Sigue sin hacer, de la misma reconciliación:** meter `SEC-055 (contrato)` en el campo de `REQ-019`
+> (recomendación 1), el NFR que cierra `SEC-085` (recomendación 6) y el `Estado:` de `REQ-023` que
+> declara bloqueante un `QA-023-15` que QA retiró (recomendación 7). Los tres son del
+> `analista-requerimientos` y quedan aquí con su dueño.
+
 > **Informe de traspaso completo:** `docs/TRASPASO-2026-09-10.md`. Y la decisión **separada** sobre
 > las dos pruebas de techo de reloj que **no discriminan** —`REQ-023 CA-09 (iii)` y, nueva,
 > `REQ-024 CA-07 (ii)`— está en `docs/propuesta-cierre-1.34.0.md` §10, con mi recomendación (B):
