@@ -1,6 +1,6 @@
 # Regresiones del port de v1.33.1: rigor con evidencia y firma por lector común.
 CASOS_ESPERADOS_SECCION=15
-PISO_AUTONOMO_SECCION=20
+PISO_AUTONOMO_SECCION=20  # 5 preámbulo (líneas 1-5) + 0 maquinaria compartida duplicada + 15 bloque indivisible mayor (la matriz de firma decorada, líneas 13-27) · REQ-014 CA-18
 
 seccion_nueva "Estabilizacion: rigor y firma por lector comun:"
 mkreq_r "REQ-940" "no" "aprobado" "pendiente" "critico (por suelo)"
