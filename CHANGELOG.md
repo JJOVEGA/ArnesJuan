@@ -2,6 +2,53 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · `CA-03` contrata el modo intercalado, y §9 reabre `REQ-017`: el mapa del propio REQ nombraba dos archivos que no existen
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · reapertura y corrección del mapa: coordinadora. **Bajo delegación de 24 h.**
+
+**`CA-03` gana el modo de medición en su cláusula `Cuando`:** «*con las series de los dos tamaños
+**INTERCALADAS** —a, b, a, b, …— dentro de la **MISMA** invocación de la sonda*», vía `sr_intercala`
+(`--sujeto-a`/`--sujeto-b`) como **sede única**, y rige **en las dos mediciones a la vez** — la directa y
+el fail-before contra `v1.32.1`. **Techo 2,6, suelo 50 ms, estadístico mínimo, par S/2S y la constricción
+de `k` sólo por el suelo: intactos.** `CA-04` no se toca.
+
+**Y la razón de mover las dos y no una está escrita:** cambiar el instrumento de **una sola** sí habría
+sido de fondo, porque cambia **qué acredita** el fail-before. Mover las dos es precisión de sonda —misma
+clase y mismo modo que el write-back de `CA-08 (ii)` del 2026-09-07, que adoptó el intercalado y se
+clasificó menor—. **Menor, sin ADR.**
+
+**La abstención gana una regla que no cuesta nada, y es elegante:** con el mínimo y el máximo de cada
+término **ya publicados**, la corrida acota la **banda de cocientes compatible** con lo medido
+—`mín(2S)/máx(S)` … `máx(2S)/mín(S)`—: **PASS** sólo si **toda** la banda cae del lado conforme, **FAIL**
+sólo si **toda** cae del lado no conforme, y si el techo cae **dentro** de la banda, **SKIP** citando
+banda, cociente y techo. La unanimidad es **de contrato**, sale de cifras que la sonda **ya emite**, y la
+guarda sólo puede **estrechar**: no puede convertir un FAIL en PASS. Con **cota**: no más de **2** corridas
+consecutivas abstenidas antes de pasar a hallazgo y escalar, más **de qué máquina** es la medición.
+
+**§9 reabre `REQ-017`, y lo aplico yo porque es una regla, no una decisión discrecional.** El analista
+concluyó que el modo «*no se acredita editando texto*» y **se paró ahí**, dejándolo escrito como decisión
+escalada. Lo aplico: `Estado: completado` → **`en-progreso`**. La alternativa era dejar **un contrato
+cambiado sobre un REQ cerrado**, que es exactamente la deriva que §9 prohíbe dejar en silencio. **Los dos
+`aprobado` del 2026-09-08 NO se retiran** —desfirmar por otro es la misma falta que firmar por otro— pero
+cubren el árbol `538c266` y **no** el modo nuevo: los renueva quien revalide.
+
+**Y el mapa del propio REQ estaba roto, con una consecuencia que no es cosmética.** `Archivos:` declaraba
+`37-coste-del-escaner-1-escala.sh` y `…-2-la-seccion-caliente.sh`, que **no existen en disco**, y **el
+archivo que esta implementación tiene que tocar —`…-2-las-razones.sh`— no estaba en el mapa**.
+`tools/arnes-paralelo.sh` decide el despacho paralelo por ese campo, y **un `disjunto` sobre rutas que no
+existen es la misma familia fail-open que `SEC-020`**. Lo detectó el analista y **no lo corrigió**, porque
+la corrección pertenece al **acto de reapertura**. Re-derivado: las **cinco** secciones `37-*` que existen,
+verificadas una por una.
+
+**Con su límite medido, y esto importa:** el riesgo es **latente y NO se materializó** en el par que
+probé — `REQ-017` contra `REQ-024` responde `colisiona hooks/lib.sh`, así que **otra coincidencia real
+tapaba el hueco**. Se habría manifestado en un par cuyo único solape fueran esas secciones. Corregido
+**antes** de cualquier despacho paralelo tras la reapertura, que es cuando el campo vuelve a gobernar.
+
+**A la cola, no abierto aquí:** la carencia de publicación de `razon37` —da los dos mínimos y **no** los
+máximos— alcanza a **5 casos más**, y la regla nueva de la banda los necesita. El analista dejó escrito
+que ampliar el mensaje compartido es **coste de implementación, no motivo para publicar menos**, y que lo
+que no quepa en una comisión se declara **con dueño y vencimiento**.
+
 ## [Interno] — 2026-09-09 · `CA-06` cumplido y `CA-04` detenido en su gate: el `desarrollador` no asumió que la delegación lo cubriera
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de 24 h.**
 
