@@ -342,13 +342,57 @@ incluso con los veredictos **ya cruzados en disco** — el caso que el `-n` reti
 **Qué firmas:** (a) aceptar la salida (b) con su sorpresa para proyectos sin migrar; o (b) pedir la
 salida (a) y aceptar que `SEC-083` siga abierto para quien no encienda la llave.
 
-**Y su obligación pendiente, que el criterio ata a esta decisión:** la salida (b) **exige write-back en
-`REQ-024 CA-05`** —que contrata la equivalencia sobre el juicio de **cierre**— y ese write-back **va en la
-misma comisión que la implemente, no después**. Lo despacho al `analista` en cuanto esto tenga tu firma;
-si eliges la (a), el write-back no hace falta y el código se ajusta.
+**Y su obligación, que NO espera tu firma — corrijo lo que escribí primero aquí:** la salida (b) **exige
+write-back en `REQ-024 CA-05`**, y el criterio dice que va **en la misma comisión que la implemente, no
+después**. Escribí que lo despacharía «en cuanto esto tenga tu firma», y estaba mal: el código **ya
+aterrizó**, así que retrasar el write-back deja el contrato describiendo un árbol que ya no existe —la
+deriva que §9 prohíbe—. **Lo despacho ya.** Si eliges la salida (a), se revierten **las dos** cosas juntas,
+código y texto, que es más limpio que tener el código sin su contrato.
 
 **Nota:** el `ADR-011` que `CA-12` exigía **ya está escrito** (`01cb7e2`) y su gate es **`D11`**. El
 `desarrollador` no podía saberlo: nació mientras trabajaba.
+
+
+### D13 · **Otro bloqueo en `REQ-023`**, y tu instrucción para este caso es explícita: evidencia y decisión concreta
+
+Me dijiste: «*Si aparece otro bloqueo, entregá la evidencia y la decisión concreta necesaria*». Apareció.
+**No lo arreglo por mi cuenta** porque `REQ-023` está `bloqueado` y su extensión excepcional estaba
+**limitada a tres cosas**, y esto no es ninguna de las tres.
+
+**El hecho.** `REQ-023 CA-11` está enunciado así: «*Dado un campo de la clase de su `CA-02` que no llega a
+declararse … **Cuando la puerta lo juzga**, Entonces decide exactamente lo mismo … la ausencia se sigue
+perdonando*». **Sin acto.** Y `QA:` es un campo de esa clase. Desde el arreglo de `SEC-083`, la firma de
+seguridad sobre un REQ sin `QA:` **deniega**, así que **leído como está escrito, `CA-11` es falso sobre
+este árbol**.
+
+**Y la asimetría dice exactamente dónde está el defecto:** `REQ-016 CA-11` **no** se rompe, porque
+**nombra su acto** —«la puerta de **cierre**»— y el cierre **no cambió** (24 de 24 celdas idénticas).
+`REQ-023 CA-11` **no nombra el acto** y por eso se rompe. **Dos criterios de la misma clase; sobrevive el
+que dice sobre qué acto habla.** Es la tercera vez hoy que la falta de sujeto produce un hallazgo — como
+`SEC-083` y como `CA-05`.
+
+**Lo que esto le hace a lo que ya firmamos, y es lo que más pesa:** `REQ-023` tiene `QA: aprobado` y
+`Seguridad: aprobado` conseguidos ayer con tres vueltas y dos auditorías. **Esas firmas cubren un árbol en
+el que `CA-11` era cierto.** Hoy no lo es. No es que las firmas estén mal emitidas: es que **el criterio
+que amparaban cambió de valor de verdad debajo**, igual que pasó con `REQ-016` y `REQ-017` — y ésos los
+reabrí yo aplicando §9, porque eran regla y no criterio. **Aquí no lo hago**, porque tu decisión sobre
+`REQ-023` fue expresa y su alcance también.
+
+**El hallazgo ya tiene sede y no se va a perder:** está registrado en «Conflictos registrados» de
+`REQ-024`, con dueño (`analista-requerimientos` sobre `REQ-023` + coordinadora para el despacho). El
+analista **no tocó `requirements/REQ-023.md`** y **se paró ahí**, que era lo correcto.
+
+**Las dos salidas, y ninguna es cómoda:**
+- **(a)** Ampliar la extensión excepcional de `REQ-023` a este write-back: `CA-11` gana su **acto** —«la
+  puerta de cierre»—, con lo que pasa a ser cierto y **queda alineado con el de `REQ-016`**. Es un write-back
+  de texto, del analista, y **reabre el ciclo de `REQ-023`** por §9: QA re-valida y el auditor re-firma.
+  Coste estimado: ~1 h de ejecución.
+- **(b)** Dejarlo declarado como conflicto vivo con dueño y vencimiento, **sin tocar `REQ-023`**, aceptando
+  que uno de sus criterios es falso sobre el árbol de hoy mientras lleva dos firmas verdes.
+
+**Mi recomendación es (a)**, y el motivo no es pulcritud: un criterio falso con firma verde encima es
+exactamente la forma que este proyecto persigue —lo llamó `SEC-079` en superficie heredada y `QA-023-18`
+en la titular—, y aquí está **dentro del REQ que existe para cerrar esa clase**.
 
 ## Resueltas
 

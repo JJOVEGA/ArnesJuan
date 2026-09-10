@@ -2,6 +2,61 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `CA-05` no se cumplía por su propio texto, y la asimetría que lo explica: sobrevive el criterio que nombra su acto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · escalada: coordinadora. **Bajo delegación de 24 h.**
+
+### La asimetría, que es el hallazgo conceptual del día
+
+**`REQ-016 CA-11` sobrevive y `REQ-023 CA-11` se rompe**, y la diferencia entre los dos es **una palabra**:
+el primero **nombra su acto** —«la puerta de **cierre**»— y el cierre no cambió; el segundo dice «*Cuando
+**la puerta** lo juzga*», **sin acto**, y por eso es **falso sobre este árbol** desde que la firma de
+seguridad sobre un REQ sin `QA:` deniega.
+
+**Dos criterios de la misma clase; sobrevive el que dice sobre qué acto habla.** Es la **tercera** vez hoy
+que la falta de sujeto produce un hallazgo: `SEC-083` («un acto» contra «cualquier acto»), `CA-05` y ahora
+éste.
+
+### `CA-05` no se cumplía igual — y no por el acto que cambió, sino por lo que su texto decía
+
+El analista lo resolvió **leyendo** y no por analogía, que era justo lo que le pedí: su `Cuando` era
+«*cuando **la puerta** de esta versión los juzga*» y su titular «*un proyecto que no hace nada **no nota
+nada***» — **las dos sin acto**, y la titular se juzga aislada por `CA-10`. **La equivalencia que estaba
+medida es la del cierre —24 de 24 celdas idénticas— y ésa se cumple entera**; lo que abarcaba de más era
+el **enunciado**.
+
+Así que `CA-05` pasa a enunciarse **sobre el acto de cierre**, con el acto que **sí** cambió **dentro del
+criterio** —firma de seguridad sobre un REQ sin `QA:`, ALLOW→DENY en los dos estados de la llave— y con
+**tres exigencias para que no sea un descargo**: dirección **restrictiva** (un `deny`→`allow` incumple en
+**cualquier** acto), divergencia **declarada en el criterio** —«*si vive sólo en código o en un log es
+deriva §9*»— y escrita **donde la ve quien migra**. **De fondo, con `ADR-011` ya existente y enlazado**; no
+creó un segundo ADR sobre la misma decisión.
+
+**Y declaró la consecuencia que le costaba, en vez de callarla: `CA-06` deja de estar acreditado** por lo
+entregado el 2026-09-09 — su punto **(v) no existía**, así que debe una viñeta en
+`skills/arnes-upgrade/SKILL.md` y su caso en `40/3`.
+
+### `CA-11` de `REQ-016`: verificado leyendo, no por analogía
+
+La cita corregida dice que la entrada de `Seguridad:` **era** código muerto y **ya no lo es**. Y sobre si
+«lo aplica la rama `critico`» sigue cierto: **sí, y lo comprobó en el código** — la llamada
+`arnes_resuelve_ausencia "$ARNES_CLAVE_SEG"` está **dentro** del brazo `critico`, con `seg_ef` comparado
+contra `aprobado` inmediatamente después. Con la llave **apagada** —el estado de fábrica— la tabla **no
+llega a consultarse** y lo que deniega en `critico` es la exigencia del **veredicto**, con un motivo que
+habla del veredicto y no de la declaración. **Menor, sin ADR.**
+
+### Y se paró donde debía
+
+`REQ-023 CA-11` **reabre**, y **no tocó `requirements/REQ-023.md`**: está `bloqueado` y fuera de su
+alcance. Dejó el hallazgo **registrado con dueño** en «Conflictos registrados» de `REQ-024`. Escalado como
+**`D13`**, porque el propietario dijo expresamente que otro bloqueo en `REQ-023` se le entrega **con la
+evidencia y la decisión concreta**, y ésta es la tercera vez que un agente se detiene ante ese límite en
+vez de ampliarlo.
+
+**Lo que pesa de `D13`:** `REQ-023` lleva dos firmas verdes conseguidas ayer con tres vueltas y dos
+auditorías, y **cubren un árbol en el que `CA-11` era cierto**. Hoy no lo es. Un criterio falso con firma
+verde encima es **exactamente** la forma que este proyecto persigue — y está **dentro del REQ que existe
+para cerrar esa clase**.
+
 ## [Interno] — 2026-09-10 · `SEC-083` cerrado en código, y la «opción barata» de `SEC-082` resultó ser la bloqueada
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de 24 h.**
 
