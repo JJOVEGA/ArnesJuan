@@ -3,6 +3,16 @@
 > **Versión base de toda cifra de este documento:** rama `rel/registro-1.33.0`, HEAD `7db3cfc`,
 > 2026-09-10. `plugin.json` = `1.33.0`; el tag `v1.33.0` **existe** (`git tag --list 'v1.3*'`).
 > PR #45: **borrador**, 90 commits.
+> **Actualizado por TERCERA vez (2026-09-10, `af01436`) — y la cifra que publiqué dos veces no era
+> firme.** La reconciliación del auditor (`R-028`,
+> `docs/seguridad/reconciliacion-campos-2026-09-10.md`) da **33 bloqueantes sobre `b55347e` y 34 a
+> partir de `R-028`**, no 17 ni 23. Mi `comm -23` reproducía los once **exacto**, pero leía el estado
+> en la **cabecera de apertura** cuando el estado vigente es *la última declaración que nombra el
+> hallazgo* —cabecera, sección `Estado: X → Y`, o **prosa sin encabezado**—: sobraban cinco y
+> **faltaban cuatro**. Reparto de los 34: **21** los ve la puerta · **5** sólo en el registro **por
+> diseño** · **4** sin REQ atribuible · **1** que debería estar en un campo · **2** discrepancias. Y
+> la observación honesta del auditor: **bajo la frontera, 34 devuelve la decisión igual que 17**; lo
+> que cambia es que ahora se puede **desmentir fila por fila**.
 > **Actualizado por segunda vez (vuelta 3 de 3 de `REQ-017`, 2026-09-10, `f4a5f1f`):** `QA-017-24`
 > quedó **cerrado** y en su lugar entró **`QA-017-31`** (`contrato`) — el mismo defecto **movido**, no
 > desaparecido. El total sigue en **23**. `REQ-017` pasó a **`bloqueado`** por la salida de §6 y está
@@ -305,3 +315,164 @@ QA o del auditor, no de la coordinadora; y §14.B.4 dice **corregir sin ampliar*
 que toque ese archivo no tenga que volver a encontrarlo.
 
 *Verificado:* `sed -n '651p' hooks/rotar-artefactos.sh` sobre `b55347e`.
+
+---
+
+## 8. La rotación se aplaza — qué se aplaza, qué se publica y qué queda vivo
+
+Instrucción del propietario: mantener la rotación **apagada** y preparar su aplazamiento explícito,
+**sin** encargar otro párrafo ni otro NFR para intentar cerrar `SEC-067`. Nada de esta sección cambia
+garantías, cierra hallazgos, retira código ni publica.
+
+### 8.a Qué parte de `REQ-026` se aplazaría
+
+**Los cuatro criterios que ya están declarados sin implementar**, en su propio campo `QA:`
+(*«alcance CA-01..CA-12, CA-15 y CA-18 — CA-13/14/16/17 sin implementar, fuera de ventana»*):
+**`CA-13`, `CA-14`, `CA-16`, `CA-17`**.
+
+`CA-13` es el que importa: es **la declaración en el manifiesto**, es decir **lo que enciende la
+rotación**. Aplazarlo y dejar `rotacion.activo: false` con `artefactos: []` son la misma decisión
+vista desde dos sitios.
+
+### 8.b Qué código se publica en 1.34.0, y en qué estado
+
+| Artefacto | Tamaño | Estado al publicar |
+|---|---|---|
+| `hooks/rotar-artefactos.sh` | **788 líneas** | se publica; el manifiesto lo lee (`rotacion.activo`, `hooks/rotar-artefactos.sh:739`) y llega **con `activo: false`** |
+| `hooks/estado-derivado.sh` | **446 líneas** | se publica **activo** (`estado_derivado.activo: true`) — es el bloque de continuidad, no la rotación |
+| Banco: `21-rotacion-de-artefactos.sh`, `28-rotacion-seccion-1..4` | 5 secciones | se publican y corren en CI |
+
+**Precisión de estado, porque no es lo mismo:** que el mecanismo llegue **inerte** con `activo: false`
+está **implementado** —la clave se lee, y el banco tiene secciones para ello—; que llegue inerte
+**está acreditado por el banco en la forma exacta en que se publica** es algo que **no he verificado
+yo** y no lo afirmo: lo diría QA. Aquí sólo digo lo que leí en el manifiesto y en el código.
+
+### 8.c Qué riesgos siguen presentes
+
+1. **El riesgo de `SEC-067` no desaparece: se vuelve condicional al interruptor.** La ventana de
+   publicar existe **cuando la rotación corre**. Con `activo: false` no corre, así que en este
+   repositorio —único consumidor verificado— el defecto queda **latente**. Pero el **código se
+   publica**, y `CA-13` —el criterio que contrata cómo se enciende— **es justo el que se aplaza**:
+   un proyecto que ponga `activo: true` obtiene la ventana **sin ningún criterio que contrate su
+   salvaguarda**. Ése es el riesgo que se acepta al aplazar, y no es el mismo que aceptar el residual.
+2. **`SEC-072` y `SEC-073` siguen abiertos** y son `contrato`. `SEC-073` es de **código** (la máquina
+   lee una aprobación **parcial** como **completa**), no de texto.
+3. **`SEC-067` no se cierra por texto, y eso ya está demostrado y escrito** (`NFR-026-01 (6)`): su
+   *condición exacta de cierre* pasa por `SEC-072`. La vía A de `ADR-008` exige medir el intervalo
+   residual y **su precondición es hoy inalcanzable**; la vía B es código del `desarrollador`.
+
+### 8.d Qué hallazgos permanecen abiertos si se aplaza
+
+| ID | Clase | Efecto |
+|---|---|---|
+| `SEC-067` | **`usuario/dinero`** | **bloquea el cierre de `REQ-026`**. `en-mitigación`, write-back hecho |
+| `SEC-072` | `contrato` | bloquea. Es la **puerta** del cierre de `SEC-067` |
+| `SEC-073` | `contrato` | bloquea. **Código**, no redacción |
+| `QA-026-03`, `-07` … `-11`, `SEC-068`…`SEC-071` | `instrumento` | deuda con dueño; **no** bloquean |
+
+**Consecuencia que hay que decir sin adornos:** aplazar `CA-13/14/16/17` **no desbloquea `REQ-026`**.
+Los tres bloqueantes siguen ahí. El aplazamiento acota el **trabajo**, no los **hallazgos**.
+
+---
+
+## 9. El paquete de las guardas: `REQ-023`, `REQ-024`, `D16` y `SEC-084`
+
+### 9.a Correcciones del mecanismo (código, dueño `desarrollador`)
+
+| Qué | Sede | Estado |
+|---|---|---|
+| `SEC-084` — el disparador `grep -q 'Seguridad:'` es **literal** y `CA-04` **exige** tolerar la decoración | `hooks/guard-completado.sh` | pendiente. Arreglo: **enrutar por el lector que ya existe** (retira una transcripción, no añade otra) |
+| `QA-016-04` — `Rigor:` **no** tolera el paréntesis que `QA:`/`Seguridad:` sí toleran | `hooks/lib.sh:2394-2400` | pendiente. Arreglo: **tolerar el paréntesis**, no denegar (ver 9.b) |
+| `QA-024-19` | `REQ-024` | pendiente |
+| `SEC-083` — fail-open en la guarda que protege la firma del auditor | `hooks/guard-completado.sh` | **cerrado en código**; `mitigado` desde `R-027`. Su campo está desfasado (9.d) |
+
+### 9.b Cambios de conducta que necesitan tu autorización
+
+Ésta es la casilla donde la distinción cambia el diseño del arreglo:
+
+1. **`QA-016-04` — el arreglo «obvio» era el equivocado, y está medido.** Yo propuse **fail-closed**:
+   un rigor no reconocido deniega. Eso **cambia conducta heredada** — un proyecto que hoy escribe
+   `critico (por suelo)`, forma que **§13 le enseña**, pasaría a ver una denegación donde hoy cierra.
+   El arreglo correcto es **tolerar el paréntesis** como ya hacen los otros dos campos: corrige la
+   asimetría, **no** cambia la conducta de ningún proyecto conforme, y sólo afecta a valores
+   genuinamente basura. **Con ese arreglo, esta casilla queda vacía para `QA-016-04`** y no necesita
+   tu firma más allá del gate de `hooks/`.
+2. **`SEC-084` sí cambia conducta, y es el cambio que se quiere.** Un proyecto que hoy cierra con
+   `_Seguridad_: aprobado` sobre `QA: pendiente` **dejará de poder**. Es **restitución** del contrato
+   de §6, no una regla nueva — pero es un `deny` que antes no existía, y por eso va aquí.
+3. **El precio de la salida (b) de `CA-12`** (`D12`): un proyecto que no ha migrado nada ve una
+   denegación nueva **en un acto que no es el cierre**.
+
+### 9.c Actualizaciones de contratos y plantillas — y son más de las que yo decía
+
+Medido con `grep -rl` sobre `AGENTS.md`, `templates/`, `requirements/README.md`, `skills/` y `hooks/`:
+el vocabulario de `Rigor:` está transcrito en **9 archivos** y el de `Seguridad:` en **7**, e
+**incluyen lo que los proyectos heredan**: `templates/AGENTS.md.tpl`,
+`templates/requirements-README.md.tpl`, `templates/arnes-config.json.tpl` y
+`skills/arnes-upgrade/SKILL.md`.
+
+Yo había dicho «una sede». Era cierto **del código** y falso **del contrato**. Añadir a la lista:
+
+- **La fila de §13 que `D11` autorizó escribir y que hoy es FALSA** — anuncia un fail-open que la
+  salida (b) retiró.
+- **El NFR que cierra `SEC-085`** (dueño `analista-requerimientos`): *ningún hallazgo bloqueante
+  existe sin estar en al menos una sede; si su sede legítima no es un campo, entra en el índice con
+  su sede real declarada*. El auditor **no da `SEC-085` por cerrado sin él**.
+
+### 9.d QA y auditoría que faltan
+
+| Qué falta | Dueño | Nota |
+|---|---|---|
+| **La auditoría de `REQ-024`** | `auditor-seguridad` | `Seguridad: pendiente`: **nunca se hizo**. Espera tu firma (decisión 4) |
+| Re-validación de `REQ-024` tras sus correcciones | `qa-tester` | tope agotado; necesita la decisión 4 |
+| `REQ-023` / `D13` | — | `CA-11` falso bajo dos firmas verdes |
+| Re-auditoría de `REQ-017` | `auditor-seguridad` | su `aprobado` es del 2026-09-08 sobre `538c266` |
+| **Dos campos desfasados que bloquean de verdad** | `analista-requerimientos` | `SEC-014` (`mitigado` desde `R-006`) sigue en `REQ-013`, que por eso **no puede cerrar**; `SEC-083` (`mitigado` desde `R-027`) sigue en `REQ-024`. **No es cerrar un hallazgo: es alinear el campo con una firma que ya existe.** En cola serial: `REQ-013`/`REQ-024` **colisionan** con `REQ-017` según `tools/arnes-paralelo.sh` |
+
+### 9.e ¿Conviene un 1.33.1 antes de 1.34.0? — y no doy por hecho el commit único
+
+**Compartir causa no obliga a compartir vehículo.** Los dos son de la causa C5, y ahí se acaba el
+parecido:
+
+| | `SEC-084` | `QA-016-04` |
+|---|---|---|
+| **Exposición** | **no depende** del suelo de sensibilidad | **exige** un REQ **no** marcado `Sensible a seguridad: sí` |
+| En este repositorio (único consumidor verificado) | expuesto | **0 REQ no sensibles** (`grep -L`) → **latente** |
+| Naturaleza del arreglo | **restituye** un contrato | **corrige una asimetría** del lector |
+| Radio de conducta | un `deny` nuevo, querido | ninguno, con el arreglo de 9.b |
+| Evidencia | `docs/arnes/d16-alcance-real/` | ídem |
+
+**Recomendación, con su condición:** un **1.33.1 con `SEC-084` solo** es defendible y pequeño;
+`QA-016-04` puede viajar en 1.34.0 sin coste. Y lo que **decide** es un dato nuevo: el auditor
+dictaminó que **`SEC-075` debe resolverse antes de publicar `v1.34.0`**. Si 1.34.0 se aleja, un
+1.33.1 para `SEC-084` **gana** valor; si 1.34.0 estuviera a la vuelta, no valdría dos tags, dos CI y
+dos gates. **Como hoy 1.34.0 está lejos —cuatro REQ con el tope agotado y `SEC-075` por delante—,
+recomiendo el 1.33.1 con `SEC-084` solo.**
+
+Meterlos juntos tiene además un coste que no se ve: un problema en la mitad **sin exposición
+verificada** bloquearía la mitad **expuesta**.
+
+---
+
+## 10. La prueba de `REQ-023 CA-09 (iii)` — decisión separada, y corrijo cómo la presenté
+
+**Me corrijo primero.** Escribí que *«el `FAIL` del banco no es una regresión»*. **Eso no se sigue de
+la evidencia**, y el propietario lo señaló: *«la variabilidad no demuestra por sí sola que un FAIL sea
+falso»*. Lo que la medición demuestra es que **la prueba no discrimina**, y una prueba que no
+discrimina **no acredita nada en ninguna de sus dos direcciones**: ni el PASS ni el FAIL. Tomar la
+oscilación como prueba de que el FAIL era espurio es quedarse con la mitad cómoda de la misma
+evidencia.
+
+**La evidencia se conserva** en `docs/qa/evidencia-req-017-writeback-f4a5f1f/` (`FAIL → SKIP → PASS →
+PASS` sobre código idéntico, `loadavg` 3,36 / 1,44 / 2,61 / 2,79, techo `1,000×` dentro del ruido) y
+**no se ha re-corrido buscando verde**.
+
+**La decisión que hace falta, y es sólo tuya** — tres opciones, con lo que cada una deja abierto:
+
+| | Qué se hace | Qué queda |
+|---|---|---|
+| **(A)** | Reparar la prueba: el techo no puede vivir dentro del ruido del instrumento | Es la patología que `REQ-017 CA-08 (ii)` ya describe, y **medir mejor depende de `REQ-021`, que está `bloqueado`** |
+| **(B)** | Declararla **no acreditante** con dueño, forzador y vencimiento, sin retirarla | `CA-09 (iii)` queda sin acreditar y `REQ-023` no cierra por ese criterio |
+| **(C)** | Aceptar el `rc=1` del banco como conocido y documentado | **No lo recomiendo:** el banco es la **puerta requerida** de `main`; un `rc=1` tolerado por costumbre desactiva la puerta para todo lo demás |
+
+**Recomiendo (B)** — es lo único que no afirma nada que no esté medido, y no toca la puerta requerida.

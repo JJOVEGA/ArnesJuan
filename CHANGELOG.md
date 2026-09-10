@@ -2,6 +2,59 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Cierre ordenado de sesión: un solo punto de continuidad, informe de traspaso en disco, y el verde del CI que NO acredita
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **A petición del propietario.**
+
+**Nada de este cierre cierra un REQ, cierra un hallazgo, acepta un residual, cambia una garantía,
+relaja una prueba, fusiona ni publica.** Cerrar la sesión no fue cerrar la versión.
+
+**Un solo punto de continuidad.** `docs/ESTADO.md` tenía **cuatro** bloques compitiendo, tres de
+ellos diciendo «*manda sobre todo lo que sigue*» o «*retomar exactamente por aquí*». Ahora hay **uno**
+—§«★★ RETOMAR AQUÍ»— y los cinco anteriores quedan marcados **[HISTÓRICO]**, conservados y sin
+mandar. Regla escrita dentro: si dos textos del archivo se contradicen, gana el vigente.
+
+**Informe de traspaso, nuevo:** `docs/TRASPASO-2026-09-10.md` — rama y commit remoto, versiones,
+trabajo terminado con su evidencia, trabajo incompleto con archivos y siguiente acción, hallazgos
+reconciliados **separando discrepancias documentales de defectos sin corregir**, las decisiones
+agrupadas con recomendación, el último CI y el estado de agentes y worktrees.
+
+### El hallazgo de este cierre: el CI pasó, falló y volvió a pasar sobre código idéntico
+
+| Commit | `hooks-en-linux` | Mecanismo cambiado |
+|---|---|---|
+| `b55347e` | success | — |
+| `67b06fe` | **failure** | **0 archivos** |
+| `af01436` | success | **0 archivos** |
+
+El rojo fue **`REQ-024 CA-07 (ii)`** —*el reloj de la ruta crítica = 1.320× > techo 1.250× (76072µs
+sobre 57589µs)*—, y **no** `REQ-023 CA-09 (iii)`: es un **segundo** criterio de techo de reloj, en
+otro REQ. `git diff --name-only` sobre `hooks/ tools/ tests/ .github/ .arnes/ templates/
+.claude-plugin/` devuelve **cero archivos** en los dos saltos.
+
+**Y me corrijo, porque el propietario lo señaló:** dije que «*el `FAIL` del banco no es una
+regresión*». **Eso no se sigue de la evidencia.** La variabilidad no demuestra por sí sola que un FAIL
+sea falso. Lo demostrado es que la comprobación **no discrimina**, y una prueba que no discrimina
+**no acredita en ninguna de sus dos direcciones**: por tanto **el `success` de `af01436` NO acredita
+`REQ-024 CA-07 (ii)`**. Tomar el verde como acreditación es el mismo error con el signo cambiado. La
+evidencia se conserva y **no se re-corrió buscando verde**: `docs/arnes/ci-1.34.0-no-discrimina/`.
+
+Consecuencia, y no es menor: `hooks-en-linux` es la puerta **requerida y estricta** de `main`, así que
+mientras esto siga así ninguna afirmación de la forma «el CI está en verde, luego X» tiene fundamento
+**para los criterios de reloj**.
+
+### Cola y plan actualizados con lo entregado, sin inflar la cola
+
+`D2` recoge la reconciliación cerrada (**34** firmes, no 23), `SEC-085`, **`SEC-075` que debe
+resolverse antes de publicar `v1.34.0`**, y las **dos discrepancias documentales** que bloquean sin
+ser defectos. **No se abrió ninguna entrada nueva**: la cola sigue en **16**, comprobado con
+`tools/arnes-lectura.sh`. `docs/PLAN.md` apunta al punto vigente y al traspaso.
+
+### Registrado y NO investigado, con su siguiente paso
+
+`REQ-024 CA-07 (ii)` (arriba) · `hooks/rotar-artefactos.sh:651` con una cifra no medida que ya se
+retiró del REQ · `guard-completado` denegando editar `REQ-017` cuando el texto **menciona** los tokens
+`QA:`/`Seguridad:` · la numeración de las mitades de `SEC-064`.
+
 ## [Interno] — 2026-09-10 · La cifra firme no era 17 ni 23: son **34**, y el índice que la frontera de publicación cita como exhaustivo no lo es (`SEC-085`)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad (`R-028`) y coordinadora. **Bajo delegación de 24 h.**
 

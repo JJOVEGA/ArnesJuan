@@ -120,6 +120,40 @@ residual** (dueño, forzador medido y vencimiento) o **aceptar explícitamente**
 > hallazgos**, que baja los bloqueantes de la ventana de 17 a 9. Ninguna de las quince entradas de
 > esta cola se borra ni se funde; la propuesta sólo dice **cuáles se firman juntas**.
 >
+> **RECONCILIACIÓN CERRADA — 2026-09-10, `R-028`.** El desfase que este bloque anunciaba **ya se
+> resolvió**, y el resultado corrige la cifra de arriba: **la firme es 33 sobre `b55347e` y 34 a
+> partir de `R-028`**, no 20 ni 22 ni 23. Artefacto con las once filas, su método y su versión base:
+> `docs/seguridad/reconciliacion-campos-2026-09-10.md`.
+>
+> Mi `comm -23` reproducía los once **exacto**, pero leía el estado en la **cabecera de apertura**
+> cuando el vigente es *la última declaración que nombra el hallazgo* —cabecera, sección
+> `Estado: X → Y`, o **prosa sin encabezado**—: sobraban cinco (ya `mitigado`) y **faltaban cuatro**
+> (`SEC-023`, `SEC-029`, `SEC-030` y `SEC-075`, cuyo encabezado lleva el id entre acentos graves).
+> Reparto de los 34: **21** los ve la puerta · **5** sólo en el registro **por diseño** · **4** sin
+> REQ atribuible · **1** que debería estar en un campo (`SEC-055`) · **2** discrepancias documentales.
+> Y la observación honesta del auditor: **bajo la frontera, 34 devuelve la decisión igual que 17.**
+> Lo que cambia es que ahora se puede **desmentir fila por fila**.
+>
+> **Tres cosas que salieron de ahí y afectan a esta decisión:**
+>
+> 1. **`SEC-085`** (`contrato`, alta) — el «Índice de hallazgos de clase bloqueante» se declara
+>    **sitio único de la lista exhaustiva** y **la frontera de publicación lo cita como tal**; no lo
+>    es. `R-016` argumentó por escrito que la unión de las dos sedes protege, y ese argumento vale
+>    sólo si cada hallazgo está en **al menos una** — nunca se comprobó.
+> 2. **`SEC-075` debe resolverse ANTES de publicar `v1.34.0`** (dictamen del auditor). Es el
+>    contraejemplo medido de `SEC-085`: `contrato`, `abierto`, en **ninguna** de las dos sedes, por
+>    una decisión *correcta*. Remediación del `desarrollador`; el tag es tuyo. **No abro entrada
+>    aparte: queda aquí, en la decisión que ya gobierna el inventario.**
+> 3. **Dos discrepancias documentales** que no son defectos sin corregir y que **sí** bloquean:
+>    `SEC-014` (`mitigado` desde `R-006`) sigue en el campo de `REQ-013`, que por eso no puede
+>    cerrar; y `SEC-083` (`mitigado` desde `R-027`) sigue en el de `REQ-024`. Alinearlos **no es
+>    cerrar un hallazgo**: es poner el campo de acuerdo con una firma que ya existe.
+>
+> **Informe de traspaso completo:** `docs/TRASPASO-2026-09-10.md`. Y la decisión **separada** sobre
+> las dos pruebas de techo de reloj que **no discriminan** —`REQ-023 CA-09 (iii)` y, nueva,
+> `REQ-024 CA-07 (ii)`— está en `docs/propuesta-cierre-1.34.0.md` §10, con mi recomendación (B):
+> declararlas **no acreditantes** con dueño y vencimiento, **sin retirarlas**.
+
 > **Y un desfase que hay que reconciliar antes de dar por firme cualquier recuento, incluido el 23
 > de arriba.** Hay **once** hallazgos `contrato` en estado **`abierto`** en
 > `docs/seguridad/registro-seguridad.md` que **ningún** campo `Hallazgos abiertos:` declara —

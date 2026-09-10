@@ -40,13 +40,41 @@ el descontrol del ciclo 3.
 > (95,66 s → 45,14 s), y esperar al banco es gratis en tokens. REQ-021 ahorra ~150 k por ventana **cuando
 > exista**. La palanca de tokens es **REQ-019**, y está en 1.34.0.
 
-## ★ PUNTO DE CONTINUIDAD VIGENTE — 2026-09-09, antes de compactar
+## ★★ RETOMAR AQUÍ — 2026-09-10, cierre ordenado de sesión
+
+> **Esta es la ÚNICA sección de continuidad vigente.** Todas las de abajo quedan marcadas
+> **[HISTÓRICO]**: se conservan por trazabilidad y **ninguna manda**. Si dos textos de este archivo
+> se contradicen, gana **éste**.
+
+**El informe de traspaso completo está en disco:** `docs/TRASPASO-2026-09-10.md`. Ahí van rama,
+commit remoto, versiones, evidencia, agentes, CI y las decisiones agrupadas. Este bloque es sólo el
+puntero y la primera acción.
+
+| | |
+|---|---|
+| **Rama** | `rel/registro-1.33.0` |
+| **Publicado** | **`v1.33.0`** (tag existe; `plugin.json` = `1.33.0`) |
+| **En desarrollo** | **1.34.0**, sin publicar |
+| **Cola de aprobaciones** | **16 pendientes** → ningún REQ puede cerrarse (`tools/arnes-lectura.sh`) |
+| **Bloqueantes reconciliados** | **34** desde `R-028` (`docs/seguridad/reconciliacion-campos-2026-09-10.md`) |
+
+**Primera acción al retomar, y sólo ésta:** leer `docs/TRASPASO-2026-09-10.md` §«Decisiones» y
+resolver **`D18`** —`REQ-017` está `bloqueado` esperándola— junto con las **seis** decisiones
+consolidadas de `docs/propuesta-cierre-1.34.0.md`. **No hay trabajo autorizado que no dependa de una
+firma**, salvo el tramo que el traspaso marca como «en cola serial».
+
+**Lo que NO se hace al retomar:** no se cierra ningún REQ ni hallazgo para limpiar el tablero, no se
+aceptan residuales, no se relajan pruebas, no se fusiona y no se publica. Cerrar la sesión no fue
+cerrar la versión.
+
+
+## ☾ PUNTO DE CONTINUIDAD — 2026-09-09, antes de compactar · **[HISTÓRICO]** — lo sustituye «★★ RETOMAR AQUÍ» de arriba
 
 > **Éste es el bueno.** Todo lo que siga por debajo es **anterior** y, donde discrepe, **manda éste**.
 > Rama `rel/registro-1.33.0` @ `67eabfb`, **todo empujado**. Cola de aprobaciones: **`ARNES_COLA=0`**,
 > así que **la cola no bloquea ningún cierre**.
 
-### ⏸ PARADA LIMPIA — 2026-09-09, cambio de red del propietario. **Manda sobre todo lo que sigue**
+### ☾ PARADA LIMPIA — 2026-09-09, cambio de red · **[HISTÓRICO]** — ya NO manda; ver «★★ RETOMAR AQUÍ»
 
 **El árbol quedó consistente y medido, no a medias.** Se detuvo a propósito la comisión del
 `desarrollador` sobre la mitad de código de `QA-023-05`, antes de que una caída de sesión la cortara a
@@ -110,7 +138,7 @@ medición). Sobrevive a un reinicio porque está en disco; **no** sobrevive a un
 por eso está prohibido en `git.prohibidos`. `gh` **sigue sin autenticar** en esta máquina: hace falta
 para el PR, no para trabajar.
 
-### ⏸⏸ PAUSA — 2026-09-09, a petición del propietario. **Manda sobre todo lo que sigue**
+### ☾ PAUSA — 2026-09-09, a petición del propietario · **[HISTÓRICO]** — ya NO manda; ver «★★ RETOMAR AQUÍ»
 
 **Hay trabajo SIN VALIDAR en el árbol, y es del mecanismo. Nadie debe confiar en él ni comitearlo
 sin correr el banco.** El `desarrollador` de `REQ-023` (vuelta 1 de 3) fue detenido **justo antes de
@@ -227,7 +255,7 @@ encoló como `instrumento`; el `auditor-seguridad` sostiene **`contrato`** (`R-0
 resolverlo **antes de publicar `v1.34.0`**. **No se metió en `PENDING_APPROVAL.md` a propósito:** una
 entrada ahí congela el cierre de **cualquier** REQ, y esta decisión sólo muerde al publicar.
 
-### ⏸ SESIÓN DETENIDA — 2026-09-09, cambio de cuenta. **Retomar exactamente por aquí**
+### ☾ SESIÓN DETENIDA — 2026-09-09, cambio de cuenta · **[HISTÓRICO]** — NO se retoma por aquí; ver «★★ RETOMAR AQUÍ»
 
 **Cero pérdida.** El `desarrollador` de `REQ-023` (`a347fe27f3ac56805`) se detuvo **antes de escribir un
 byte**: `git status` no mostraba nada en `hooks/`, `tools/` ni `tests/`. **Ninguna comisión viva.**
@@ -498,7 +526,7 @@ es local, y sólo lo dirán las corridas siguientes de `hooks-en-linux`. La deri
 repeticiones) **no se reprodujo**: QA auditó el razonamiento, no las cifras. El techo de coste
 `+28,0 s = 0,569×` está **acreditado por el desarrollador y no verificado por QA**.
 
-## PUNTO DE CONTINUIDAD — 2026-09-09, cierre de la sesión autónoma
+## ☾ PUNTO DE CONTINUIDAD — 2026-09-09, cierre de la sesión autónoma · **[HISTÓRICO]**
 
 > **Léelo antes de actuar.** Sustituye a lo de arriba donde discrepe. Rama `rel/registro-1.33.0`,
 > **todo empujado**, árbol limpio.
