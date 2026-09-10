@@ -29,7 +29,7 @@ arnes_guard_completado() {
   local disk qa seg sens rigor hall h id clase pending abiertas tmp cmd out rc disk_medible acc c prof ci
   local -a piezas=()
   local modo resultante reconstruido np k old new ra done_norm est_antes est_despues
-  local cita_desp est_citado cr_desp cr_linea seg_ef seg_falta cruce qa_falta
+  local cita_desp est_citado cr_desp cr_linea seg_ef seg_falta cruce qa_falta seg_antes
 
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
@@ -273,12 +273,11 @@ arnes_guard_completado() {
   # maquina no daba)—, y se declara AL EMITIRLA, no al invocarla: una excepcion que se
   # inventa cuando hace falta no es una excepcion.
   #
-  # Solo se juzga si esta edicion TOCA el campo: reordenar un REQ viejo que ya
-  # tuviera los veredictos cruzados no debe bloquearse por algo que no hizo. Y QUIEN SIRVE
-  # ESA INTENCION ES EL `grep` DE DENTRO, no el estado del campo `QA:`: esta medido en las
-  # dos direcciones (13-orden-del-ciclo.sh) con los veredictos YA cruzados en disco —`$qa`
-  # no vacio, que es el caso que el `-n` de abajo no cubria— y la edicion que no escribe
-  # `Seguridad:` pasa igual.
+  # Sólo se juzga si la edición cambia el campo de cabecera: reordenar un REQ
+  # viejo que ya tuviera los veredictos cruzados no debe bloquearse por algo
+  # que no hizo. Se compara el valor crudo leído, no se busca el nombre en el
+  # fragmento: Edit puede sustituir sólo el valor y la clave puede estar
+  # decorada. Cambiar la evidencia también renueva la firma.
   #
   # POR ESO LA AUSENCIA DE `QA:` TAMBIEN DENIEGA (SEC-083). Hasta 1.34.0 esta condicion
   # llevaba un `[ -n "$qa" ]`, y ese `-n` era un fail-open en la puerta que protege la firma
@@ -331,7 +330,8 @@ arnes_guard_completado() {
     esac
   fi
   if [ "$seg" = "aprobado" ] && [ "$cruce" = "1" ]; then
-    if grep -q 'Seguridad:' <<< "$nuevo"; then
+    arnes_seguridad_cabecera "$disk"; seg_antes="$ARNES_SEG_CABECERA"
+    if [ "$ARNES_SEG_CRUDO" != "$seg_antes" ]; then
       # LA AUSENCIA SE DENIEGA NOMBRANDOLA, no con el motivo del veredicto equivocado: un
       # deny que dice «su 'QA:' es ''» deja a la persona buscando un valor que no existe.
       if [ -n "$qa_falta" ]; then
