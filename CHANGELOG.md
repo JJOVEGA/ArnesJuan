@@ -2,6 +2,50 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · El FAIL desaparece por DECLARACIÓN: la precondición de `CA-12 (ii)` dice que no puede atribuir, y lo publica con huellas
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de decisión del propietario por 24 h.**
+
+**Sección 39 aislada: 39 PASS · 0 FAIL · 3 SKIP.** El único FAIL del banco se fue **por declaración y no
+por relajación**, que es la diferencia entera entre este arreglo y el que no se hizo.
+
+**`CA-12 (ii)` da SKIP porque la precondición de atribuibilidad NO se cumple, y está medido con huellas:**
+el cuerpo de `arnes_cola_pendientes` difiere entre este árbol (`a060be56`, 3883 B, 72 líneas) y `v1.33.0`
+(`008683e6`, 1103 B, 28 líneas), mientras `arnes_lee_archivo` —su **única** llamada externa, **enumerada
+y no supuesta**— es **idéntico** (`e9fedaa8`, 408 B en las dos). Confirma midiendo lo que el analista
+había derivado leyendo `119e853`.
+
+Y el SKIP **publica lo que cambió, elemento por elemento**: `rango-sin-cerrar` (`0|rc=0` → `|rc=1`,
+`REQ-024 CA-08`) y `cierre-huerfano` (`0|rc=0` → `1|rc=0`, `REQ-024 CA-09`) — las **2 de 7** formas que
+el comentario del caso ya nombraba. Un instrumento que dice **cuándo no puede medir y por qué** vale más
+que uno que da un número.
+
+**`QA-023-19` se queda sin sede.** El fragmento del mecanismo queda **byte a byte idéntico** —165 B,
+`md5` corto `596a237f`— en sus **2 apariciones por sede** (oraciones 3 y 5) y en la skill, con **0**
+restos de la redacción vieja. Las dos sedes siguen idénticas entre sí, con huella recalculada
+**`3ead3bd3…` / 2545 B**: `02756e87…` deja de ser la referencia.
+
+**La skill también queda verdadera leída sola**, con la acotación **dentro de la misma oración** —«*dentro
+de lo que la guarda alcanza, que no es toda la clase: la vía del homóglifo de arriba PERMITE, y permite
+por ausencia del campo que el homóglifo borró*»— y el fragmento literalmente igual que en las filas. Era
+el artefacto que migra a los proyectos, así que es donde más importaba.
+
+**`CA-10 (v)` ejecutando la puerta real:** BOM, blanco borrado y NBSP interno → **DENY** por medibilidad
+(«algo INSERTADO DENTRO DE LA CLAVE») **incluso con todos los veredictos en verde**; homóglifo →
+**ALLOW**. Y los controles **discriminan por motivo**: clave limpia con `QA: pendiente` deniega **por el
+veredicto**, no por medibilidad, y clave limpia en verde permite.
+
+**Dos decisiones que el `desarrollador` declaró en vez de callar:** re-derivó
+`PISO_AUTONOMO_SECCION` de 181 a **232** porque el bloque indivisible de `CA-12` creció —y de paso
+corrigió los rangos de línea de los otros dos términos, que ya estaban desfasados—, con el archivo en 360
+líneas contra techo 400 y las seis de `CA-18` en verde; y dejó dicho que **la preferencia de sesión por
+editar en consola cedió** ante `AGENTS.md` §13, porque preferir la consola ahí habría apagado una puerta.
+
+**No corrió el banco entero, y lo argumentó:** hay otra comisión con la sección 37 a medio editar, y «*un
+banco completo sobre un árbol con edición ajena viva no mide lo que dice medir*». Correcto.
+
+`SEC-079`, `QA-023-18` y `QA-023-19` **siguen abiertos**: falta `qa-tester` y después
+`auditor-seguridad`. `Estado:` sigue `bloqueado`.
+
 ## [Interno] — 2026-09-09 · `CA-12 (ii)` queda anclada con una precondición que la degrada declarándolo, y la oración 5 no sólo difería en letra: incumplía (v)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de decisión del propietario por 24 h (2026-09-09).**
 

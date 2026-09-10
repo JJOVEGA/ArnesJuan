@@ -7,7 +7,11 @@
 # guarda es OBSERVACIONAL: no cambia NINGÚN valor de campo, así que la transcripción declarada
 # de `hooks/campos-req.awk` sigue diciendo lo mismo), `CA-07` (el informe no calla sobre lo que
 # la puerta se niega a medir) y `CA-12` (la noción de cita no gana una transcripción y la cola
-# de aprobaciones cuenta exactamente lo mismo, anclado a ESTE corpus y a ESTA comparación).
+# de aprobaciones cuenta exactamente lo mismo, anclado a ESTE corpus y a ESTA comparación, y
+# con la PRECONDICIÓN DE ATRIBUIBILIDAD delante: si el cuerpo del lector de la cola no es el
+# mismo en las dos versiones, la comparación no puede atribuir y el caso se degrada a SKIP
+# DECLARÁNDOLO —nunca PASS y nunca FAIL—, que es lo que vuelve el anclaje una propiedad en vez
+# de una fecha).
 #
 # EL COSTE —`CA-09`, con sus tres vías— vive en la parte 4, y no por gusto: con las cuatro cosas
 # juntas este archivo llegaba a 422 líneas contra el techo de 400 de `REQ-014 CA-18`. El corte
@@ -16,7 +20,7 @@
 # que en las cinco partes de la 37, escrito UNA vez en `37-coste-del-escaner-1-el-dominio.sh`;
 # residual `AN-021-01`). Los casos se reparten: no se crean ni se pierden.
 CASOS_ESPERADOS_SECCION=7
-PISO_AUTONOMO_SECCION=181  # 18 preámbulo (líneas 1-18) + 77 maquinaria compartida duplicada (mat93 y la línea base, líneas 20-96) + 86 bloque indivisible mayor (CA-12 entero: el contador de la cola, su corpus de siete formas y la comparación contra la heredada, líneas 179-264) · REQ-014 CA-18
+PISO_AUTONOMO_SECCION=232  # 24 preámbulo (líneas 1-24) + 76 maquinaria compartida duplicada (mat93 y la línea base, líneas 26-101) + 132 bloque indivisible mayor (CA-12 entero: la precondición de atribuibilidad con su extractor, el contador de la cola, su corpus de siete formas nombradas y la comparación contra la heredada, líneas 226-357) · REQ-014 CA-18
 seccion_nueva "--- 39/3 · el carácter invisible: los lectores (REQ-023 CA-06, CA-07 y CA-12) ---"
 
 num93() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
@@ -241,59 +245,113 @@ set -uo pipefail
 . "$1" >/dev/null 2>&1 || exit 3
 if arnes_cola_pendientes "$2"; then printf '%s|rc=0\n' "$ARNES_COLA"; else printf '%s|rc=%s\n' "${ARNES_COLA:-}" "$?"; fi
 CUENTA93
+    # LA PRECONDICIÓN DE ATRIBUIBILIDAD, que es lo que vuelve el anclaje una PROPIEDAD en vez
+    # de una fecha. ANTES de comparar conteos se comprueba que el LECTOR DE LA COLA —el cuerpo
+    # de `arnes_cola_pendientes` Y el de cualquier función que ese cuerpo llame, hoy sólo
+    # `arnes_lee_archivo`— sea BYTE A BYTE el mismo en las dos versiones, extraído con el MISMO
+    # procedimiento en las dos y con su huella PUBLICADA. Entonces:
+    #   idéntico → cualquier diferencia de conteo o de `rc` viene de FUERA de ese cuerpo, es
+    #     decir de lo que ESTA guarda tocó: es FAIL, y el hallazgo es contra el código;
+    #   distinto → otro REQ cambió ese lector A PROPÓSITO (hoy REQ-024 CA-08/CA-09, con su
+    #     ADR), la comparación ya no puede ATRIBUIR, y el caso emite SKIP con su motivo —nunca
+    #     PASS y nunca FAIL—, publicando QUÉ difiere y QUÉ FORMAS se movieron, una por una.
+    # Un FAIL ahí no mediría ningún defecto de este REQ: mediría que el instrumento compara EL
+    # PAR DE ÁRBOLES EQUIVOCADO —magnitud correcta, medición correcta, veredicto sobre algo que
+    # este REQ no introdujo—, la forma (d) de `requirements/README.md` una vuelta más.
+    cuerpo93() {   # <archivo> <función> -> CUERPO93 ; 1 = no se pudo extraer ENTERO
+      local l on=0
+      CUERPO93=''
+      while IFS= read -r l || [ -n "$l" ]; do
+        if [ "$on" -eq 0 ]; then
+          case "$l" in "$2() {"*) on=1 ;; *) continue ;; esac
+        fi
+        CUERPO93="$CUERPO93$l"$'\n'
+        if [ "$l" = '}' ]; then return 0; fi   # el `}` a columna cero cierra la definición
+      done < "$1"
+      CUERPO93=''
+      return 1
+    }
+    # `wc -c` y no `${#var}`: el cuerpo lleva comentarios acentuados y `${#}` cuenta
+    # CARACTERES, así que publicaría un tamaño que no es el que se comparó.
+    huella93() {   # <texto> -> HUELLA93 = <md5 corto>/<bytes>B
+      local h n
+      h="$(printf '%s' "$1" | md5sum)"; n="$(printf '%s' "$1" | wc -c)"
+      HUELLA93="${h:0:8}/${n//[[:space:]]/}B"
+    }
+    DIF93=''; FALTA93=''; HUE93=''
+    for fn93 in arnes_cola_pendientes arnes_lee_archivo; do
+      if cuerpo93 "$HOOKS_DIR/lib.sh" "$fn93"; then hoy93="$CUERPO93"; else hoy93=''; FALTA93="$FALTA93 este-arbol:$fn93"; fi
+      if cuerpo93 "$HER93/hooks/lib.sh" "$fn93"; then base93="$CUERPO93"; else base93=''; FALTA93="$FALTA93 v1.33.0:$fn93"; fi
+      huella93 "$hoy93";  hh93="$HUELLA93"
+      huella93 "$base93"; bh93="$HUELLA93"
+      HUE93="$HUE93 $fn93[hoy=$hh93 v1.33.0=$bh93]"
+      [ "$hoy93" = "$base93" ] || DIF93="$DIF93 $fn93"
+    done
+
     # El corpus de colas: las formas que el banco ya ejerce, incluidas las dos que REQ-024
-    # cambiará a propósito (el rango sin cerrar y el cierre huérfano). Aquí se comprueba que
-    # ESTE REQ no las movió.
-    CQ93=(); cq93() { CQ93+=("$1"); }
-    cq93 '## Pendientes
+    # cambia a propósito (el rango sin cerrar y el cierre huérfano). Cada forma lleva NOMBRE
+    # porque el SKIP tiene que publicar qué formas se movieron ELEMENTO POR ELEMENTO, y una
+    # lista de índices no le dice nada a quien la lea después.
+    CQ93=(); NQ93=(); cq93() { NQ93+=("$1"); CQ93+=("$2"); }
+    cq93 vacia '## Pendientes
 
 ## Resueltas'
-    cq93 '## Pendientes
+    cq93 dos-entradas '## Pendientes
 
 ### [2026-09-09] (dev) — una
 
 ### [2026-09-09] (dev) — dos
 
 ## Resueltas'
-    cq93 '## Pendientes
+    cq93 nota-inline '## Pendientes
 
 ### Real <!-- nota al margen -->
 
 ## Resueltas'
-    cq93 '## Pendientes
+    cq93 rango-cerrado '## Pendientes
 
 <!--
 ### comentada
 -->
 
 ## Resueltas'
-    cq93 '## Pendientes
+    cq93 rango-sin-cerrar '## Pendientes
 
 <!-- rango que abre y no cierra
 ### tragada
 
 ## Resueltas'
-    cq93 '## Pendientes
+    cq93 cierre-huerfano '## Pendientes
 
 ### Migrar A --> B
 
 ## Resueltas'
-    cq93 '## Pendientes
+    cq93 pegada-al-encabezado '## Pendientes
 ### pegada al encabezado
 ## Resueltas'
-    mal93=0; n93=0
+    # El corpus se mide EN LOS DOS CASOS: cuando la precondición no se cumple, el SKIP tiene
+    # que decir qué formas cambiaron y A QUÉ, y para eso hay que haberlas medido igual.
+    mal93=0; n93=0; MOV93=''
     for c93 in "${CQ93[@]}"; do
-      n93=$((n93 + 1))
       printf '%s\n' "$c93" > "$PROJ/PENDING_APPROVAL.md"
       x93="$(bash "$COLA93" "$HOOKS_DIR/lib.sh"  "$PROJ/PENDING_APPROVAL.md" 2>/dev/null)"
       y93="$(bash "$COLA93" "$HER93/hooks/lib.sh" "$PROJ/PENDING_APPROVAL.md" 2>/dev/null)"
-      [ -n "$x93" ] && [ "$x93" = "$y93" ] || mal93=$((mal93 + 1))
+      if [ -n "$x93" ] && [ "$x93" = "$y93" ]; then :; else
+        mal93=$((mal93 + 1)); MOV93="$MOV93 ${NQ93[n93]}[v1.33.0=${y93:-sin-salida} -> hoy=${x93:-sin-salida}]"
+      fi
+      n93=$((n93 + 1))
     done
     printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
-    if [ "$n93" -ge 5 ] && [ "$mal93" -eq 0 ]; then
-      echo "  PASS  REQ-023 CA-12 la cola cuenta lo mismo y devuelve el mismo rc en las $n93 formas del corpus, contra v1.33.0"; PASS=$((PASS+1))
+    if [ -n "$FALTA93" ]; then
+      echo "  SKIP  REQ-023 CA-12 la cola cuenta exactamente lo mismo que la versión heredada  el lector de la cola no se pudo extraer ENTERO de:$FALTA93 — sin el cuerpo no hay precondición que comprobar y la comparación no acredita (huellas:$HUE93)"
+    elif [ -n "$DIF93" ]; then
+      echo "  SKIP  REQ-023 CA-12 la cola cuenta exactamente lo mismo que la versión heredada  la PRECONDICIÓN DE ATRIBUIBILIDAD no se cumple: el cuerpo del lector DIFIERE en:$DIF93 (huellas:$HUE93) — formas movidas $mal93 de $n93:${MOV93:- ninguna} — otro REQ cambió ese lector a propósito (REQ-024 CA-08/CA-09, con su ADR), así que esta comparación ya no puede ATRIBUIR la diferencia a esta guarda: ni PASS ni FAIL"
+    elif [ "$n93" -lt 5 ]; then
+      echo "  SKIP  REQ-023 CA-12 la cola cuenta exactamente lo mismo que la versión heredada  el corpus ejerce $n93 formas y el suelo de anti-vacuidad es 5: por debajo, un verde no diría nada"
+    elif [ "$mal93" -eq 0 ]; then
+      echo "  PASS  REQ-023 CA-12 el lector de la cola es byte a byte el mismo (huellas:$HUE93) y cuenta lo mismo y devuelve el mismo rc en las $n93 formas del corpus, contra v1.33.0"; PASS=$((PASS+1))
     else
-      echo "  FAIL  REQ-023 CA-12 $mal93 de $n93 formas de la cola cambiaron de conteo o de rc: esta guarda movió lo que REQ-009 contrata"; FAIL=$((FAIL+1))
+      echo "  FAIL  REQ-023 CA-12 el lector de la cola es byte a byte el mismo (huellas:$HUE93) y aun así $mal93 de $n93 formas cambiaron de conteo o de rc:$MOV93 — la diferencia viene de FUERA de ese cuerpo, o sea de esta guarda: movió lo que REQ-009 contrata"; FAIL=$((FAIL+1))
     fi
   fi
 fi

@@ -819,10 +819,17 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   filas que abren en `v1.30.3`, `v1.31.0`, `v1.32.0` y `v1.32.1`. La guarda nace en **1.34.0**.
 - **Qué cambia en el código, y qué no.** Una línea de la cabecera cuya **clave** lleva algo insertado
   dentro deja la cabecera **sin medir**, y la puerta **deniega** citando esa línea y lo insertado en
-  `\xNN` — **nunca** permite por *ausencia* del campo que ese carácter borró. La clase **no** se
-  cierra con una lista de caracteres: retirado de la clave lo ajeno al alfabeto de las claves y sus
-  blancos, si lo que queda **es** una clave del lector, entonces alguien insertó algo dentro. **Lo
-  que NO cambia, que son las tres fronteras:** el CR/LF **final** sigue siendo transporte —un REQ
+  `\xNN` — **dentro de lo que la guarda alcanza, que no es toda la clase: la vía del homóglifo de
+  arriba PERMITE, y permite por ausencia del campo que el homóglifo borró.** Donde la guarda sí
+  alcanza, **no** permite por *ausencia* del campo que ese carácter borró. Y qué alcanza lo decide una
+  propiedad y no una lista de caracteres:
+  retirado de la clave lo ajeno al alfabeto de las claves **y después todos sus blancos**, **si lo que queda es una clave del lector leída también sin sus blancos**,
+  entonces alguien insertó algo dentro; si esa reconstrucción **no** devuelve ninguna clave —porque lo
+  retirado **sustituía una letra**, y reponer *qué* letra exigiría **elegir entre candidatos**— la
+  guarda **calla** y la puerta resuelve por **ausencia**. Sitio único de las vías abiertas y de las
+  fronteras, con su clase, dueño y vencimiento: `docs/seguridad/registro-seguridad.md` § **R-024**
+  (**SEC-078** la vía, **SEC-079** la promesa que se midió falsa). **Lo
+  que NO cambia, tres fronteras deliberadas y lista no exhaustiva:** el CR/LF **final** sigue siendo transporte —un REQ
   guardado entero en CRLF cierra igual que en LF—, el **cuerpo** del REQ no se restringe (esto es la
   cabecera y nada más) y **reabrir** un REQ no se bloquea nunca. Y una clave legítima no cambia de
   veredicto: `Módulo:`, `Versión destino:` y la clave **decorada** o sangrada siguen gobernando
