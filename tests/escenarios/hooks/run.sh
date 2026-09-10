@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1047  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1054  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1386,6 +1386,19 @@ CASOS_ESPERADOS=1047  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # formulación que exigía —«la resolución de la ausencia … decide
                       # exactamente lo mismo que 1.33.0»— quedó MEDIDA FALSA: las celdas que
                       # divergen son resoluciones de la ausencia de `QA:`, en otro acto.
+                      # 1047 → 1054: `CA-05`, que quedó SIN CASO al ser reenunciado POR ACTO
+                      # (`ADR-011`): desde el write-back contrata la equivalencia del CIERRE **y**
+                      # la divergencia declarada del otro acto, y sólo lo primero estaba medido.
+                      # `40/5` nueva con 7 casos: el instrumento (la línea base es OTRO árbol),
+                      # la equivalencia del cierre con su denominador y su anti-vacuidad, la
+                      # EXISTENCIA de la divergencia del otro acto —que es a la vez el CONTROL
+                      # POSITIVO de la equivalencia—, su DIRECCIÓN restrictiva sobre todas las
+                      # celdas, y las dos exigencias de texto: declarada en el criterio y en las
+                      # dos sedes que ve quien migra. Va en una parte 5 y no en la 2 porque la 2
+                      # está en 400 de 400 líneas: `REQ-014 CA-18` manda partir, no alargar. Los
+                      # `CASOS_ESPERADOS_SECCION` de `40/1`–`40/4` NO se tocan: no se retira ni
+                      # se mueve ningún caso, y el de la parte 2 —el cierre sobre el corpus REAL
+                      # de `requirements/`— conserva sitio, fixture y veredicto.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

@@ -2,6 +2,68 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · El caso de `CA-05`: «24 de 24 iguales» ya no puede salir verde contra sí mismo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**Banco 1047 PASS · 0 FAIL · 7 SKIP = 1054**, cuadre exacto (`CASOS_ESPERADOS` 1047 → 1054 con su
+derivación), `rc=0`, 64 s, `loadavg` 0,26 → 2,37. Autoprueba 106 · 0. Tres quality gates verdes.
+
+### La prueba que le pedí, y la trajo
+
+Le advertí que un caso que sólo comprobara «24 de 24 iguales» **pasaría también si el materializador
+fallara y comparase el árbol contra sí mismo**. Su par lo cierra: con **`ARNES_CA05_BASE=8b06cd6`** —la
+base **es** el árbol— el caso da **0 PASS · 2 FAIL · 5 SKIP**. **La vacuidad ya no puede salir verde.**
+
+**Y midió su propio denominador en vez de reutilizar el mío:** 10 formas × 2 actos × 2 estados de la llave
+= **40 celdas**, las dos versiones en la misma corrida. `cierre` con llave apagada = **10 de 10
+idénticas**; `firma-seguridad` = **5 + 5 divergentes**, todas sobre cabeceras sin `QA:`; **13 divergencias
+y las 13 de ALLOW a DENY**. Las formas 1-5 **derivadas** de `ARNES_AUSENCIA`, no escritas a mano.
+
+**Y su fixture es cota INFERIOR a propósito:** «*hace el suelo más difícil, no más fácil*». Es la elección
+contraria a la que abarata un verde.
+
+### Los cinco pares, cada uno aislando una exigencia
+
+Fallan **1** y siguen verdes **6**, que es lo que hace que cada par pruebe **una** cosa:
+
+| exigencia | cómo se rompe | veredicto |
+|---|---|---|
+| **(i) dirección** | mutar `ARNES_CLAVE_QA\|deniega` → `gobierna:aprobado` | **FAIL** nombrando las celdas `DENY→ALLOW` |
+| **(i) existencia** | la base **es** el árbol | **0 PASS · 2 FAIL · 5 SKIP** |
+| **(ii) declarada en el criterio** | `REQ-024` de `00b8cb4` | **FAIL** citando el primer patrón que no casa |
+| **(iii) donde la ve quien migra** | skill de `de84b4a` | **FAIL** |
+| **(iii) ídem, la cola** | `PENDING_APPROVAL` de antes de `D12` | **FAIL** |
+
+**Y la abstención cubre las dos formas de no poder medir:** base no materializable → **7 SKIP** citando el
+motivo del materializador; **denominador 0** → el caso del cierre **abstiene y nunca da PASS**, con el
+mensaje «*la clase derivada por cota inferior tiene 0 campo(s) y 0 de las 10 formas omiten uno*».
+
+### Y no se acreditó a sí mismo
+
+**«`CA-05` NO queda acreditado por esta entrega»** — el caso existe y mide, pero «*el veredicto acreditante
+es del `qa-tester`*», y además el criterio **cuelga de `ADR-011` y de la ratificación de `D12`**, que son
+del propietario. Podía haber dicho «cumplido» y nadie lo habría discutido esta noche.
+
+**Y declaró la limitación de sus propios casos (ii) y (iii):** reconocen **por cadena literal**, así que
+«*una redacción distinta que dijera lo mismo los pondría rojos*» — clase de `QA-024-05`, y la vía conforme
+es **añadir la forma a la huella, no retirar el caso**. Lo que sí es fail-closed es lo contrario: **un acto
+que mida divergencia y no tenga huella hace FALLAR el caso nombrándolo**.
+
+**`REQ-017 CA-08 (ii)` no flotó** esta vez: PASS con máx(r) **1,217×** bajo el techo 1,250×. Y el
+inventario sólo añade sus 7 casos; lo demás son contadores de corpus que **cosechan los propios archivos
+de sección** y la semilla del sorteo.
+
+**Y notó que el árbol avanzó a `a9c4f2d` a mitad de su comisión**, comprobó que `hooks/` y `tools/` son
+**idénticos** entre las dos puntas y que el cambio ajeno no toca el bloque de `CA-05`, **y corrió la vuelta
+final después**. Nadie le pidió esa comprobación.
+
+### Un patrón que anoto y no arreglo
+
+**Tres secciones del banco están en 400 líneas exactas**, el techo de `CA-18`: `40/2`, `40/5` y la que ya
+estaba. Cada una falla ruidosamente si se pasa —está medido— pero **tres archivos clavados en el techo no
+son tres coincidencias**: es una señal de que el techo aprieta donde la puerta es única y los casos tienen
+que ejercerla. Queda como `instrumento` sin abrir, para el analista.
+
 ## [Interno] — 2026-09-10 · Tres notas al pie sobre la misma afirmación: corregir sede por sede es lo que `ADR-011` acaba de prohibir, aplicado al texto
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de 24 h.**
 
