@@ -2,6 +2,31 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · «¿Cuánto falta para cerrar?» destapa que DOS sedes declaran alcances distintos de 1.34.0: cuatro trabajos o doce REQ
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+**El propietario preguntó cuánto falta y la medición destapó un desacuerdo que yo no estaba
+reportando.** `docs/PLAN.md` recoge su decisión del 2026-09-09: **cuatro trabajos**. Los campos
+`Versión destino:` de los REQ declaran **doce** en la ventana 1.34.0 — y **seis de esos doce no se han
+empezado** (`REQ-020`, `REQ-008`, `REQ-011`, `REQ-022` en `pendiente`; `REQ-018` y `REQ-025` en
+`borrador`).
+
+*Método:* `grep -l 'Versión destino: 1.34.0'`, descartando el falso positivo de `REQ-019` (su línea
+dice «1.35.0 (APLAZADO **desde 1.34.0**…)»), y leyendo los cuatro campos de cada uno. Sobre `ce79fe7`.
+
+**Con la sede del propietario faltan 6 bloqueantes; con la de los campos, 16 y seis REQ sin empezar.**
+Un factor de tres. Y los cinco que muestran **0 bloqueantes** no están limpios: están **sin
+construir**, así que nadie ha podido encontrarles nada — un `0` ahí significa lo contrario de lo que
+parece.
+
+**Es la misma patología que `SEC-085`**, abierto ayer por el auditor: un inventario que dos sedes
+declaran distinto, y la decisión se toma leyendo la que uno tiene a mano. Yo he estado citando la sede
+del propietario en todos mis informes, y la máquina leería la otra.
+
+**No doy cifra de cuánto falta, y el motivo no es que me falte medir:** es un desacuerdo de sedes cuya
+resolución es **alcance de versión**, que el propietario se reservó expresamente. Recomendado y **no
+ejecutado**: reconciliar las dos sedes REQ por REQ. Detalle en `docs/TRASPASO-2026-09-10.md` §10.
+
 ## [Interno] — 2026-09-10 · Las dos discrepancias documentales resueltas: la cifra firme baja de 34 a 32, y el cuadre sale exacto
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (el despacho y el cuadre) y analista-requerimientos (las ediciones).
 
