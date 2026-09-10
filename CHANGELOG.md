@@ -2,6 +2,15 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `QA-017-33` incorpora su cuarta sede, sin cerrar el hallazgo
+> Origen: Interno (commit) · usuario: Juan · modelo de IA: Codex · agente: qa-tester.
+
+Se amplía `docs/qa/1.34.0.md` con
+`docs/arnes/req-017-ca-03-modo-de-medicion/04-evidencia-del-intercalado.md:131-133`. El contexto de
+esa sede sí mide la abstención concreta; permanece falso generalizarlo a «cada cifra» y presentarlo como
+la remediación (ii) de `SEC-064`. `QA-017-33` sigue abierto, de clase `instrumento`; no cambia ningún
+requerimiento, código ni veredicto.
+
 ## [Interno] — 2026-09-10 · Cierre, última pieza: quedan DOS tramos que no necesitan firma, y se dejan sin despachar por la propia instrucción de cierre
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
 
