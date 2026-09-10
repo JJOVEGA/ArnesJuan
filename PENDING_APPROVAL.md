@@ -62,6 +62,88 @@ El analista **propone** 1.35.0 y **no la fija**: las ventanas las decides tú. E
 código que `REQ-023` no introdujo.
 
 
+
+
+### D6 · La puerta requerida está ROJA por `REQ-017 CA-03 fail-before` — **análisis completo, y la recomendación NO es hacerlo opcional**
+
+**El propietario rechazó la primera lectura con razón:** «*Que `v1.32.1` sea inmutable no demuestra que
+sólo cambió la máquina*». Correcto, y la comprobación encontró **una causa concreta** que no es la máquina.
+
+#### 1. ¿Cambiaron la sonda, el corredor o la configuración? — **No, y está medido**
+
+| Qué se comparó | `6ad9752`→`808f9ca` | `808f9ca`→`1154417` |
+|---|---|---|
+| `37-coste-del-escaner-2-las-razones.sh`, `run.sh`, `tests/escenarios/hooks/util` | sin cambios | sin cambios |
+| `hooks/`, `tools/`, `.arnes/config.json`, `.github/` | sin cambios | sin cambios |
+| Imagen del runner del CI | `ubuntu-24.04` | `ubuntu-24.04` |
+
+Y la entrada medida **no es ningún archivo del repositorio**: es una cadena **sintética** de 70 000 y
+140 000 bytes (`S37=70000`), así que el crecimiento del corpus (`AGENTS.md`, `REQ-023.md`) es irrelevante.
+
+**Límite honesto de esta comprobación:** «misma imagen» **no** es «mismo hardware». `ubuntu-24.04` no fija
+CPU ni vecindad de la máquina virtual, y eso **no** lo puedo verificar.
+
+#### 2. La causa real: **el fail-before usa `k=1`, y eso apaga el estadístico que el criterio ordena**
+
+`CA-03` contrata, con estas palabras: «*k tal que el **mínimo** de cada serie supere 50 ms*» y «*por eso
+el estadístico es el **mínimo**, no la media*», **porque «la carga sólo puede subir los dos términos»**.
+
+Y el caso mide con dos `k` distintas:
+
+| Medición | `k` | Líneas |
+|---|---|---|
+| Directa, sobre este árbol | **20** | `:202-203` |
+| **Fail-before**, sobre `v1.32.1` | **1** | `:213-214` |
+
+**Con `k=1` no hay mínimo que tomar: el «mínimo de la serie» ES la única muestra.** El mecanismo de
+cancelación de ruido que el criterio contrata **está desactivado justamente en ese caso**. El comentario
+del código dice por qué se eligió —«*así el fail-before cuesta segundos en vez de medio minuto*»—: fue un
+compromiso de **coste**, no un descuido.
+
+**Medido, sobre el MISMO árbol inmutable:** `808f9ca` → **3,379×** (PASS) · `1154417` → **2,329×** (FAIL),
+contra techo 2,600×. **Dos muestras únicas de la misma distribución a distinto lado del techo.** No hace
+falta que cambiara nada para que ocurra: es lo que `k=1` predice.
+
+#### 3. ¿Qué cobertura automática se pierde al hacerlo opcional?
+
+**La única prueba automática de que la sonda de `CA-03` DISCRIMINA.** Sin ella, el verde de la medición
+directa de cada PR pasa a ser **inacreditado**: nada automático detectaría una sonda que dejó de medir —un
+`mide37` que devolviera una constante, un `LIB37` apuntando al archivo equivocado, un `arnes_sin_cita`
+renombrado o vaciado—. El caso existe precisamente porque «un cociente verde no prueba nada si la sonda
+daría verde también sobre el árbol enfermo».
+
+**Y el propietario tiene razón en lo que más importa: los dos PASS anteriores son evidencia de esas dos
+ejecuciones, no garantía de reproducibilidad** — y con `k=1` son **dos muestras únicas**. No acreditan que
+la sonda discrimine **de forma reproducible**; acreditan que discriminó dos veces. Congelar eso como
+«acreditado» sería declarar establecido algo que **nunca se midió con el estadístico que el criterio
+exige**. Hacerlo opcional **hoy** convertiría un defecto de medición en una exención permanente.
+
+#### 4. Recomendación concreta — **arreglar el caso, no hacerlo opcional**
+
+**Subir la `k` del fail-before hasta que el mínimo de cada serie supere el suelo con holgura**, que es
+**implementar `CA-03` tal como está escrito**, no relajarlo: el criterio ya exige «k tal que el mínimo
+supere 50 ms» y «el estadístico es el mínimo». Y **publicar las k muestras**, no sólo el cociente.
+
+- **No cambia ningún umbral** — el techo sigue en 2,600×.
+- **No retira ninguna prueba** — la vuelve obligatoria y reproducible.
+- **No es repetir hasta obtener verde** — es tomar el estadístico que el criterio manda; si con `k` suficiente el cociente **sigue** por debajo de 2,600×, entonces la sonda **de verdad** no discrimina y **eso es el hallazgo**, no un rojo que se esquiva.
+- **Precio: ~30 s de CI**, que es exactamente lo que el comentario dice que se quiso ahorrar.
+- **Puede no reabrir `REQ-017`:** `k` no está fijada por el criterio, que la **constriñe** («k tal que…»). Si se juzga que `k=1` ya incumple esa constricción, es un **defecto del caso** y no un cambio de contrato. **Esa lectura la decides tú**, no yo.
+
+#### 5. Cuándo sería obligatoria la acreditación, y dónde queda su evidencia
+
+**Obligatoria en:** (i) cualquier cambio en la ruta de escaneo de `hooks/lib.sh` —`arnes_sin_cita`,
+`arnes_norm_clave`, `arnes_campo_linea`—; (ii) cualquier cambio en la sonda o su andamiaje —`37-*.sh`,
+`mide37`, `mat37`—; (iii) **el commit de versión de cada release**, antes del tag; y (iv) cuando la
+medición directa de `CA-03` se mueva más que su propio margen declarado.
+
+**Mecanismo:** el interruptor que ya existe (`ARNES_COSTE_RUTA_CRITICA=1`, precedente de `CA-05`) **más un
+paso de CI que lo active por rutas tocadas**, para que sea automático donde importa y barato donde no.
+
+**Dónde queda la evidencia:** en el **Historial de `REQ-017`** —el precedente exacto de `CA-05 (i)`/`(ii)`,
+que ya acreditan ahí su fail-before—, con la **URL de la corrida de CI**, la `k` empleada y **las k
+muestras**, no sólo el cociente. Un número sin su `k` y sin su dispersión es lo que nos trajo aquí.
+
 ## Resueltas
 
 ### D5 · `SEC-079` — **RESUELTA el 2026-09-09: opción (a), y con un matiz del propietario que cambia el arreglo**

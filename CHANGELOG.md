@@ -2,6 +2,61 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · El rojo de la puerta requerida tiene causa concreta: el fail-before mide con `k=1` y apaga el estadístico que su criterio ordena
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (trabajo de coordinación, sin abrir comisión).
+
+**El propietario rechazó la primera lectura y tenía razón:** «*Que `v1.32.1` sea inmutable no demuestra
+que sólo cambió la máquina*». La comprobación que pidió encontró **una causa concreta**, y no es la máquina.
+
+**Lo que NO cambió, medido:** entre las tres corridas del CI no cambiaron
+`37-coste-del-escaner-2-las-razones.sh`, `run.sh`, `tests/escenarios/hooks/util`, `hooks/`, `tools/`,
+`.arnes/config.json` ni `.github/` —`git diff --stat` vacío en los dos saltos—, y la **imagen del runner
+fue `ubuntu-24.04` en las tres**. La entrada medida tampoco es un archivo del repositorio: es una cadena
+**sintética** de 70 000 y 140 000 bytes, así que el crecimiento del corpus es irrelevante. **Límite
+honesto:** «misma imagen» no es «mismo hardware», y la CPU o la vecindad de la máquina virtual no se
+pueden verificar desde aquí.
+
+**La causa: el fail-before mide con `k=1`.** `CA-03` contrata «*k tal que el **mínimo** de cada serie
+supere 50 ms*» y «*por eso el estadístico es el **mínimo**, no la media*». El caso usa **k=20** en la
+medición directa (`:202-203`) y **k=1** en el fail-before (`:213-214`), por un compromiso de coste que su
+propio comentario declara: «*así el fail-before cuesta segundos en vez de medio minuto*». **Con `k=1` no
+hay mínimo que tomar —el mínimo ES la única muestra—, así que la cancelación de ruido que el criterio
+contrata está desactivada justo en ese caso.** Medido sobre el mismo árbol inmutable: **3,379×** (PASS) y
+**2,329×** (FAIL) contra techo 2,600×. Dos muestras únicas a distinto lado del techo: es lo que `k=1`
+predice, sin que haga falta que cambiara nada.
+
+**Y la objeción del propietario sobre los dos PASS anteriores era la clave:** son evidencia de **esas dos
+ejecuciones**, no garantía de reproducibilidad — y con `k=1` son **dos muestras únicas**. No acreditan que
+la sonda discrimine de forma reproducible; acreditan que discriminó dos veces. Hacer el caso opcional
+**hoy** congelaría como «acreditado» algo que **nunca se midió con el estadístico que el criterio exige**:
+convertiría un defecto de medición en una exención permanente.
+
+**Qué cobertura automática se perdería al hacerlo opcional:** la **única** prueba automática de que la
+sonda de `CA-03` **discrimina**. Sin ella, el verde de la medición directa de cada PR queda
+**inacreditado**, y nada detectaría una sonda que dejó de medir —un `mide37` devolviendo una constante, un
+`LIB37` apuntando al archivo equivocado, un `arnes_sin_cita` renombrado o vaciado—.
+
+**Recomendación, y NO es hacerlo opcional: subir la `k` del fail-before** hasta que el mínimo de cada
+serie supere el suelo con holgura, y **publicar las k muestras**. Eso es **implementar `CA-03` tal como
+está escrito**, no relajarlo: no cambia ningún umbral, no retira ninguna prueba, y no es repetir hasta
+obtener verde — si con `k` suficiente el cociente **sigue** bajo 2,600×, entonces la sonda de verdad no
+discrimina y **eso es el hallazgo**. Precio: los ~30 s de CI que el comentario quiso ahorrar. Puede **no
+reabrir `REQ-017`**, porque `k` no está fijada por el criterio sino **constreñida** por él; si `k=1` ya
+incumple esa constricción, es defecto del caso y no cambio de contrato — **esa lectura la decide el
+propietario**.
+
+**Cuándo sería obligatoria la acreditación y dónde su evidencia:** obligatoria al tocar la ruta de escaneo
+de `hooks/lib.sh`, al tocar la sonda o su andamiaje, en el **commit de versión de cada release** antes del
+tag, y cuando la medición directa se mueva más que su margen declarado; con el interruptor que ya existe
+(`ARNES_COSTE_RUTA_CRITICA=1`, precedente de `CA-05`) **más un paso de CI que lo active por rutas
+tocadas**. La evidencia, en el **Historial de `REQ-017`** —donde `CA-05 (i)`/`(ii)` ya acreditan el
+suyo—, con la URL de la corrida, la `k` y **las k muestras**: un número sin su `k` y sin su dispersión es
+lo que nos trajo aquí.
+
+**`CA-03` NO se convierte en opt-in**: el propietario no lo autorizó y la comprobación desaconseja hacerlo
+antes de arreglar la medición. El PR queda **sin fusionar**, que no detiene el trabajo independiente ni
+invalida la corrección documental de `SEC-079`.
+
 ## [Interno] — 2026-09-09 · `SEC-079`: la promesa absoluta se BORRA, no se anota — y el control negativo lo hace comprobable
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos` (`CA-10`) y `desarrollador` (las dos filas) · verificación y consolidación: coordinadora.
 
