@@ -225,10 +225,22 @@ fi
 # borrar la linea. Aqui se acota, no se ignora; y NO se dice que el informe lo haga visible,
 # porque QA midio que calla (un campo declarado solo dentro de un comentario no es una clave
 # decorada ni una doble declaracion, que son las dos cosas de las que habla CA-05/CA-06).
-CLAVES36="$(sed -n \
-  -e "s/.*case \"\$ARNES_CLAVE\" in '\([^']*\)').*/\1/p" \
-  -e "s/^[[:space:]]*'\([A-Za-z][^']*\)')[[:space:]]*ARNES_[A-Z]*=\"\$ARNES_VALOR\".*/\1/p" \
-  "$HOOKS_DIR/lib.sh" | sort -u | paste -sd'|' -)"
+# LAS CLAVES SALEN DE LA CONSTANTE DEL LECTOR, NO DEL TEXTO DE SU CODIGO (QA-023-04) -------
+# Hasta 1.34.0 esta derivacion leia con `sed` los brazos del `case "$ARNES_CLAVE" in 'X')`,
+# porque el conjunto no existia como lista en ninguna parte de bash. Cuando `REQ-023 CA-06` lo
+# unifico en `ARNES_CLAVES`, los dos brazos de `arnes_estado_cabecera` pasaron a
+# `case "$ARNES_CLAVE" in "$ARNES_CLAVE_ESTADO")` y el patron dejo de casar: la derivacion se
+# estrecho de 6 claves a 5 EN SILENCIO y la que perdio fue justo `Estado`, la del estado
+# terminal. El corpus seguia trayendo mas de 10 cabeceras, asi que ningun caso se puso rojo —
+# simplemente dejo de cubrir el campo que decide el cierre. Medido con el mismo `sed`:
+#   v1.33.0 -> 6  [Estado|Hallazgos abiertos|QA|Rigor|Seguridad|Sensible a seguridad]
+#   95764db -> 5  y este arbol -> 5, sin `Estado`
+# Es la leccion que `tools/arnes-lectura.sh:64-69` ya tenia escrita: «una derivacion que lee
+# CODIGO se rompe con la primera mudanza del codigo». Se lee la CONSTANTE, que ya viene
+# delimitada por `|` —el separador que la expresion de alternancia de abajo necesita—, y asi
+# estrecharse deja de ser posible: la constante ES el conjunto, no una huella suya.
+# Un solo proceso (el subshell) contra los tres de antes (`sed`, `sort`, `paste`).
+CLAVES36="$( . "$HOOKS_DIR/lib.sh" >/dev/null 2>&1; printf '%s' "${ARNES_CLAVES:-}" )"
 CABS36=()
 if [ -n "$CLAVES36" ] && [ -n "${SEC_DIR:-}" ]; then
   while IFS= read -r cab36; do
@@ -246,9 +258,9 @@ fi
 # Un control que cosecha cero sale verde sin haber medido nada: es el fallo que este banco
 # existe para no tener, asi que el tamaño del corpus es un caso por su cuenta.
 if [ "${#CABS36[@]}" -ge 10 ]; then
-  echo "  PASS  REQ-016 CA-02 el corpus de cabeceras se cosecha por glob del corredor (${#CABS36[@]} cabeceras)"; PASS=$((PASS+1))
+  echo "  PASS  REQ-016 CA-02 el corpus de cabeceras se cosecha por glob del corredor (${#CABS36[@]} cabeceras, sobre las claves derivadas de ARNES_CLAVES: ${CLAVES36//|/ · })"; PASS=$((PASS+1))
 else
-  echo "  FAIL  REQ-016 CA-02 la cosecha del corpus devolvió ${#CABS36[@]} cabeceras: la propiedad no mediría nada"; FAIL=$((FAIL+1))
+  echo "  FAIL  REQ-016 CA-02 la cosecha del corpus devolvió ${#CABS36[@]} cabeceras: la propiedad no mediría nada. Claves derivadas de ARNES_CLAVES: <${CLAVES36:-vacío}> — si está vacío, el lector de \$HOOKS_DIR no declara la constante (¿hooks anteriores a 1.34.0?) y la cosecha no puede tener corpus"; FAIL=$((FAIL+1))
 fi
 
 # Los rangos que se INSERTAN. Ninguno lleva una linea que empiece por `## `: eso no es

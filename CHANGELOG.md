@@ -2,10 +2,5823 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
-## [GitHub] — 2026-09-09 · **PUBLICADA `v1.33.0`** — fusionada con cuenta SIN admin, y con su límite declarado
+## [Interno] — 2026-09-10 · Cierre, última pieza: quedan DOS tramos que no necesitan firma, y se dejan sin despachar por la propia instrucción de cierre
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+**Para que el registro no diga algo más fuerte que la verdad.** He escrito varias veces que «todo
+depende de tu firma». **No es exacto:** quedan **dos** actos que no necesitan ninguna decisión
+reservada al propietario, y no se despacharon porque su instrucción de cierre lo prohíbe
+expresamente —*«No despaches nuevas comisiones… Después detente»*—, no porque estén bloqueados.
+
+| Tramo | Dueño | Por qué no necesita firma |
+|---|---|---|
+| **Ampliar `QA-017-33`** con la cuarta sede (`04-evidencia-del-intercalado.md:131-133`) | `qa-tester` | es su propio registro y el hallazgo ya existe; `instrumento`, **no bloquea** |
+| **El índice de sede de `SEC-056`** | `auditor-seguridad` | deuda que **él mismo** declaró al entregar `R-028`, con vencimiento 1.34.0; es su documento |
+
+Los dos quedan escritos en `docs/TRASPASO-2026-09-10.md` §11.b y en el puntero de continuidad, con su
+dueño y su siguiente acción, para que al retomar se puedan despachar **sin esperar al propietario**.
+
+**Y `QA-017-33` faltaba en el traspaso**, que es el entregable de cierre: añadido, con el matiz que el
+analista dejó para quien lo arregle —el contexto inmediato de esa sede **sí** es una abstención
+habiendo medido, así que allí la cifra sí es de esa medición; lo falso es la **generalización** y la
+equiparación con la exigencia (ii)—.
+
+Lo demás sí depende de la firma del propietario, y en cuatro casos porque `AGENTS.md` §4 y §6 le
+reservan el acto por escrito: el manifiesto, el tope de vueltas, la excepción de `ADR-008` y la
+publicación. **La delegación de 24 h da potestad para decidir, no para concederse lo que las propias
+reglas del proyecto atribuyen al propietario.**
+
+## [Interno] — 2026-09-10 · Primera base real para estimar: once comisiones medidas, y el rol que hace el código no tiene ni una
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+**El propietario pidió tiempo estimado y por primera vez hay base para una parte.** Nueva:
+`docs/arnes/coste-de-comision/` — las **once** comisiones de esta sesión con su duración de reloj
+**real** (`duration_ms` del orquestador), con **mediana y MAD** por rol, no rango: el rango es
+monotónicamente no decreciente y no compara.
+
+| Rol | n | Mediana | MAD |
+|---|---|---|---|
+| `analista-requerimientos` | **7** | **7,1 min** | 1,5 min |
+| `qa-tester` | **3** | **22,2 min** | 5,3 min |
+| `auditor-seguridad` | **1** | 18,3 min | — (**n=1**) |
+| `desarrollador` | **0** | — | **SIN BASE** |
+
+**Y el hueco es exactamente donde más duele:** `desarrollador` **no tiene ni una medición** en esta
+sesión, y es el rol de las cuatro correcciones de código que quedan (`SEC-073`, `SEC-084`,
+`QA-024-19`, `SEC-075`).
+
+**La cifra:** con la sede A del alcance, ≈ **20 comisiones** (5 analista · 7 QA · 4 auditor · 4 dev)
+→ **264 min ≈ 4,4 h de ejecución de agente**, **en serie** —y la serie está **medida**, no supuesta:
+`tools/arnes-paralelo.sh` declaró que `REQ-017`, `REQ-013` y `REQ-024` **colisionan** en `run.sh` y
+`hooks/lib.sh`—, **más** 4 comisiones sin base, **más** CI, **más** el tiempo de decisión del
+propietario, que no tiene base ninguna.
+
+**Lo que no se convierte en «4,4 h y listo»:** esta ventana lleva **cuatro REQ con el tope de tres
+vueltas agotado** y la cadena de «misma forma» tiene **nueve eslabones**. El coste histórico no ha
+sido una pasada limpia por comisión, sino dos o tres. Multiplicar por ese factor sería honesto; **no
+se hace porque no hay medida del factor**, sólo el recuento de que ocurrió. Y con la **sede B** no hay
+estimación en absoluto: no existe ni descomposición en comisiones para `REQ-020` ni para los cinco REQ
+sin empezar.
+
+Separado como manda §14.B.1: **medido** el coste por comisión; **estimado** el número de comisiones;
+**sin base** el rol `desarrollador`, el CI y la espera humana.
+
+## [Interno] — 2026-09-10 · Cierre: `SEC-055` deja de ser invisible para la puerta (21 → 22) y el `Estado:` de `REQ-023` deja de afirmar algo falso
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (el cierre) y analista-requerimientos (los dos actos).
+
+**Los dos actos que el artefacto del auditor prescribía con dueño y archivo, hechos.** Y el analista
+verificó **cinco fuentes en el disco**, no mi resumen — con una corroboración que yo no le había dado:
+la propia entrada de `SEC-055` (`registro-seguridad.md:5016-5019`) **enruta el write-back por
+`REQ-019`** explícitamente, con su motivo. La prescripción no descansaba sólo en una tabla.
+
+**Acto 1 — dirección estricta.** `SEC-055 (contrato)` entra en el campo de `REQ-019`, que pasa a
+declarar **dos** `contrato`. Era un bloqueante **abierto** que **la puerta no podía ver**, porque
+`guard-completado` lee el campo y no el registro: la familia de `SEC-085`. Los bloqueantes visibles
+para la puerta suben de **21 a 22**; el total firme sigue en **32** —`SEC-055` ya estaba contado como
+«el que debería estar en un campo»—, y lo que cambia es que ahora **la máquina lo ve**.
+Comprobado: `Estado=<bloqueado>` y ventana **1.35.0** intactas, así que el aplazamiento no se altera;
+y el vencimiento de `SEC-055` es el cierre de `REQ-019`, con el que viaja sin incumplir nada.
+
+**Acto 2 — un texto que dejó de mentir.** El `Estado:` de `REQ-023` afirmaba que bloqueaba
+`QA-023-15`, y QA lo **retiró** el 2026-09-09 («*se retira, y no por simpatía con el esfuerzo*»). La
+cláusula falsa **se conserva literal como rastro** y la anotación fechada declara que quedó falsa,
+citando la evidencia. **El bloqueo no se levantó** y el rastro de las tres vueltas se **confirmó**, no
+se sustituyó. Dato que estrechó el acto: el **campo** de `REQ-023` ya **no** declaraba ese hallazgo —
+el desfase vivía **sólo** en la línea 2.
+
+### Tres cosas que quedan para el propietario, ninguna resuelta
+
+1. **La mitad de fondo de `SEC-055`:** acotar o **retirar** la delegación de publicación
+   (recomendación 4 del artefacto). Con una escalada que conviene leer: si `REQ-019` cierra sin tocar
+   las dos frases, el hallazgo **no sube de clase** pero pasa a **regresión de reparto**.
+2. **La causa vigente del bloqueo de `REQ-023`:** el texto ya no afirma nada falso, pero **hoy no hay
+   causa enunciada**. Re-enunciarla es afirmación de **alcance**, y no se escribió. `D13` está en la
+   cola y **no** se puso ahí.
+3. **El NFR de `SEC-085` — conflicto real de instrucciones.** El artefacto lo prescribe (fila 220) y
+   el auditor **no da el hallazgo por cerrado sin él**; el propietario **prohibió NFR nuevos** en esta
+   ventana. No se empezó. O entra como **excepción nombrada**, o `SEC-085` queda abierto con dueño y
+   vencimiento.
+
+**Comprobado con el lector real y no por mí:** `REQ-019` → `Estado=<bloqueado> QA=<pendiente>
+SEG=<preventiva> RIGOR=<critico>`; `REQ-023` → `Estado=<bloqueado> QA=<aprobado> SEG=<aprobado>`.
+Cola en **16**. **Ningún REQ ni hallazgo se cerró, ningún residual se aceptó, ninguna prueba se
+relajó, no se fusionó y no se publicó.**
+
+## [Interno] — 2026-09-10 · Dos estados desfasados, y los dos aprietan: `SEC-055` entra en el campo de `REQ-019` y el `Estado:` de `REQ-023` deja de declarar bloqueante un hallazgo retirado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos (las dos ediciones y sus dos filas de Historial).
+
+**Coordinación prescrita, no decisión nueva** —el propietario ya la había declarado tal: *«actualiza
+los estados desfasados… eso es coordinación, no una nueva decisión mía»*—. Las filas **214** y **219**
+del artefacto del auditor (`docs/seguridad/reconciliacion-campos-2026-09-10.md`) prescriben los dos
+actos con dueño y sede. **Ninguno afloja nada:** el primero **añade** un bloqueante, el segundo
+**retira una afirmación falsa** de un texto.
+
+**Acto 1 — `REQ-019`, campo `Hallazgos abiertos:`: `SEC-033 (contrato)` → `SEC-033 (contrato),
+SEC-055 (contrato)`.** Verificado **en la fuente** y no por transcripción: `SEC-055` está `contrato` ·
+**`abierto`** · severidad media (`registro-seguridad.md:4975-5028`, índice `:4824`), y **le pertenece a
+este REQ porque `AGENTS.md` está en su `Archivos:`** (`REQ-019.md:4`) — el propio registro enruta el
+write-back por aquí (`:5016-5019`) para no colisionar por archivo con el reparto. **Por qué importa:**
+`guard-completado` lee **el campo**, no el registro, así que un `contrato` abierto que ningún campo
+declara es un bloqueante que **la puerta no puede ver** — la familia de `SEC-085`, cuya omisión falla
+hacia el lado que **publica**. Declararlo **restituye** una barrera. En §Trazabilidad se añade la cita
+del hallazgo (clase, dueños, forzador y vencimiento **citados**, no transcritos) y **la mitad de fondo
+queda NOMBRADA como pendiente del propietario**: acotar o retirar la delegación de publicación es
+decisión con firma, sede `PENDING_APPROVAL.md` (`:5020-5021`, recomendación 4 `:217`), y esta edición
+**no la resuelve ni la insinúa resuelta**. Se recogió además la autocorrección del auditor: las dos
+frases de `AGENTS.md` **sí** citan el documento de gobernanza desde `6c1b58a` (v1.30.3); lo que queda
+en pie es que **no citan la frontera ni su regla de recuento** y que no declaran que hoy no autoriza
+nada. **`REQ-019` no se movió en nada más:** sigue `bloqueado` y sigue **aplazado a 1.35.0**.
+
+**Acto 2 — `REQ-023`, línea `Estado:`: anotado que `QA-023-15` fue RETIRADO.** El texto declaraba
+bloqueante un `usuario/dinero` que su dueño retiró el **2026-09-09** —`qa-tester`, medido:
+`docs/qa/1.34.0-req023-revalidacion-acotada-metodo.md:221` «se retira» y §4 en `:229-248`, con los
+**dos brazos** de su clase comprobados—, y el campo `Hallazgos abiertos:` ya no lo declaraba. La
+cláusula falsa **se conserva literal como rastro** y se le añade la anotación fechada con su
+evidencia. **Lo que NO se hizo, y es la mayor parte:** no se levantó ni se acotó el bloqueo —sigue
+`bloqueado` por **decisión del propietario**, que no depende de ningún hallazgo—, **no se reescribió el
+rastro de las TRES vueltas agotadas** (se confirma íntegro, por instrucción expresa del propietario), y
+**no se re-enunció la causa vigente** — eso es afirmación de alcance del propietario y queda escalada.
+
+**No se cerró ningún hallazgo** (`SEC-055`, `SEC-033`, `SEC-085`, `SEC-064` y el resto siguen como
+estaban), **no se marcó nada `completado`** (la cola tiene **16** entradas), y **no se escribió el NFR
+de la fila 220**: el auditor lo exige para cerrar `SEC-085` y el propietario prohibió NFR nuevos en esta
+ventana — **conflicto escalado, no resuelto por el analista**. Ninguno de los dos actos es una vuelta de
+ningún REQ y **no reinicia ningún contador**.
+
+## [Interno] — 2026-09-10 · «¿Cuánto falta para cerrar?» destapa que DOS sedes declaran alcances distintos de 1.34.0: cuatro trabajos o doce REQ
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+**El propietario preguntó cuánto falta y la medición destapó un desacuerdo que yo no estaba
+reportando.** `docs/PLAN.md` recoge su decisión del 2026-09-09: **cuatro trabajos**. Los campos
+`Versión destino:` de los REQ declaran **doce** en la ventana 1.34.0 — y **seis de esos doce no se han
+empezado** (`REQ-020`, `REQ-008`, `REQ-011`, `REQ-022` en `pendiente`; `REQ-018` y `REQ-025` en
+`borrador`).
+
+*Método:* `grep -l 'Versión destino: 1.34.0'`, descartando el falso positivo de `REQ-019` (su línea
+dice «1.35.0 (APLAZADO **desde 1.34.0**…)»), y leyendo los cuatro campos de cada uno. Sobre `ce79fe7`.
+
+**Con la sede del propietario faltan 6 bloqueantes; con la de los campos, 16 y seis REQ sin empezar.**
+Un factor de tres. Y los cinco que muestran **0 bloqueantes** no están limpios: están **sin
+construir**, así que nadie ha podido encontrarles nada — un `0` ahí significa lo contrario de lo que
+parece.
+
+**Es la misma patología que `SEC-085`**, abierto ayer por el auditor: un inventario que dos sedes
+declaran distinto, y la decisión se toma leyendo la que uno tiene a mano. Yo he estado citando la sede
+del propietario en todos mis informes, y la máquina leería la otra.
+
+**No doy cifra de cuánto falta, y el motivo no es que me falte medir:** es un desacuerdo de sedes cuya
+resolución es **alcance de versión**, que el propietario se reservó expresamente. Recomendado y **no
+ejecutado**: reconciliar las dos sedes REQ por REQ. Detalle en `docs/TRASPASO-2026-09-10.md` §10.
+
+## [Interno] — 2026-09-10 · Las dos discrepancias documentales resueltas: la cifra firme baja de 34 a 32, y el cuadre sale exacto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (el despacho y el cuadre) y analista-requerimientos (las ediciones).
+
+**Coordinación prescrita, no decisión nueva** —y no la pedí otra vez porque el propietario ya la había
+declarado tal: *«actualiza los estados desfasados… eso es coordinación, no una nueva decisión mía»*—.
+Las filas **215-216** del artefacto del auditor prescribían el acto con dueño y archivos.
+
+**No se cerró ningún hallazgo.** Los dos ya estaban **`mitigado`** por firma del `auditor-seguridad`,
+verificado **en la fuente** por el analista y no por transcripción: `SEC-014` en `R-006`
+(`registro-seguridad.md:1429`, **trece** afirmaciones y **trece** medidas coincidentes, verificadas
+ejecutando) y `SEC-083` en `R-027` §3 (`:8156`, con 12 celdas del acto de firmar sin fallo y **7 de 7**
+formas del lado QA en DENY). Lo que estaba mal era **el espejo** del campo.
+
+### El cuadre sale exacto, y por eso vale
+
+El conteo por campo da ahora **21** — **la misma cifra** que `R-028` midió como «los ve la puerta»
+**antes** de alinear. Es decir: las dos discrepancias eran **justo** lo que sobraba, y las dos
+mediciones, hechas por vías distintas, coinciden.
+
+**34 → 32**, compuesto: **21** los ve la puerta · **5** sólo en el registro **por diseño** · **4** sin
+REQ atribuible · **1** que debería estar en un campo (`SEC-055`) · **1** `SEC-085`. Y sigue valiendo
+lo que dijo el auditor: **bajo la frontera, 32 devuelve la decisión igual que 17**.
+
+**Ninguno de los dos REQ se volvió cerrable**, comprobado con el lector real y no por mí:
+`REQ-013` → `QA=<con-hallazgos> SEG=<con-hallazgos>` y conserva `SEC-020` (`contrato`);
+`REQ-024` → `QA=<con-hallazgos> SEG=<pendiente>` y conserva `QA-024-19` y `SEC-084`. Cola en **16**.
+
+### Un fallo que el analista evitó y yo no había previsto
+
+Pedí dejar la traza del hallazgo retirado «en su lugar». La puso en el **cuerpo** del REQ y **no dentro
+de la línea del campo**, con motivo mecánico: `hooks/guard-completado.sh:685-703` parte esa línea por
+las comas de fuera del paréntesis y **cada elemento sin paréntesis de clase deniega el cierre**. Prosa
+de traza dentro del campo habría fabricado un hallazgo **sin clase** — un DENY producido por un
+artefacto de redacción. Buena lectura del mecanismo antes de obedecer la instrucción.
+
+### Y la lección del auditor, que queda escrita en `REQ-024`
+
+El desfase de `SEC-083` nació así: `R-027` §2 escribió «se retira del campo» para `SEC-082` y **§3
+omitió la frase**. Subsanado en `R-028` §3. ***Un cierre no está completo hasta que dice de qué campo
+sale.***
+
+**Sigue sin hacer, de la misma reconciliación y con su dueño:** `SEC-055 (contrato)` al campo de
+`REQ-019`, el NFR que cierra `SEC-085`, y el `Estado:` de `REQ-023` que declara bloqueante un
+`QA-023-15` que QA retiró el 2026-09-09.
+
+## [Interno] — 2026-09-10 · Dos espejos alineados con firmas que ya existían: un cierre no está completo hasta que dice de qué campo sale
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos (las dos retiradas y su traza); prescrito por `auditor-seguridad` en `R-028` §3 y en `docs/seguridad/reconciliacion-campos-2026-09-10.md` §6.
+
+**Qué cambió, en una línea:** el campo `Hallazgos abiertos:` de `REQ-013` deja de declarar
+`SEC-014 (contrato)` y el de `REQ-024` deja de declarar `SEC-083 (contrato)`, porque **los dos están
+`mitigado` en el registro de seguridad** desde antes de esta edición.
+
+**Y lo que NO cambió, que es el fondo de la entrada.** Ningún hallazgo se cerró aquí. `SEC-014` está
+`mitigado` desde **`R-006`** (pata 3 —la de herencia— cerrada con **trece afirmaciones medidas
+ejecutando**) y `SEC-083` desde **`R-027` §3** (por su causa medida, el `[ -n "$qa" ]`, con 12 celdas
+del acto de firmar sin un fallo y **7 de 7** formas del lado `QA` en DENY). El estado lo fijó el
+`auditor-seguridad`; el analista **transcribe** una decisión firmada y **no dicta veredictos ni
+cierres**. Lo que estaba mal era el **espejo**: el campo declaraba abierto lo que el registro tiene
+cerrado. La distinción importa porque la forma de este trabajo **se parece** a lo que el propietario
+tiene expresamente prohibido —cerrar hallazgos o aceptar residuales para conseguir verde—, y no lo es:
+allí se **decide**, aquí se **copia**.
+
+**Por qué existió el desfase, que es la lección de forma y no un descuido suelto.** `R-027` §2 escribió
+«se **retira** del campo de `REQ-016`» al cerrar `SEC-082`; **§3 omitió la frase equivalente** para
+`SEC-083`. El auditor lo declara defecto de su propio cierre en `R-028` §3 y lo resume así:
+***un cierre no está completo hasta que dice de qué campo sale.*** `SEC-014` es la misma forma
+repetida **dos ventanas**: la discrepancia la encontró `R-016` §2 el 2026-09-08 y seguía viva. La
+dirección del error es la **segura** —sobre-cuenta, no permite—, pero **cuenta**: la frontera de
+publicación mide la **unión** de las dos sedes (`R-028` §4).
+
+**La traza no se borra al retirar la entrada.** Cada REQ conserva, fuera del campo que lee la máquina,
+dónde vive ahora el hallazgo, con qué revisión lo cerró y con qué evidencia: `REQ-013` en
+«Trazabilidad», `REQ-024` en § «El reparto de `Hallazgos abiertos:`» (dos viñetas: la sede vigente y la
+causa del desfase). Va **fuera** del campo a propósito: `guard-completado` parte esa línea por comas y
+un elemento sin paréntesis de clase **deniega el cierre**, así que la prosa de traza dentro del campo
+habría fabricado un hallazgo sin clase. Y en `REQ-024` queda dicho que el **residual** de `SEC-083`
+**no desapareció con él**: `R-027` §3 lo re-asentó en **`SEC-084`**, que sigue declarado.
+
+**Ninguno de los dos REQ se vuelve cerrable, comprobado antes de escribir.** `REQ-013` sigue
+`en-revisión` con `SEC-020 (contrato)` abierto; `REQ-024` sigue `bloqueado` (`D14`) con
+`QA-024-19` y `SEC-084` (`contrato`) abiertos y su veredicto de seguridad en **`pendiente`** —la
+auditoría nunca se hizo—; y la cola tiene **16** entradas bajo «## Pendientes», de modo que
+`guard-completado` denegaría cualquier cierre de todos modos.
+
+**Fuera de alcance, y no se tocó:** las otras filas del artefacto del auditor (`SEC-055` hacia el campo
+de `REQ-019`, el NFR de `SEC-085`, el `Estado:` de `REQ-023`) van a la cola con su dueño;
+`requirements/README.md` y `REQ-017` son de la coordinadora; `docs/seguridad/` es del auditor. Ningún
+`Estado:` y ningún veredicto de cabecera se editó. Hecho **leyendo** el registro y las dos cabeceras,
+**sin ejecutar nada**.
+
+## [Interno] — 2026-09-10 · El ciclo se rompe enumerando ANTES, no corrigiendo después: las ocho sedes de la promesa de `CA-03`, en la mano del analista
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (la enumeración y el despacho) y analista-requerimientos (la corrección).
+
+**Y me corrijo primero, porque el error era mío y de método.** Al cerrar la sesión dije que la
+primera acción al retomar era que el propietario **autorizara** el paréntesis de `CA-03:62`. **Ya
+estaba autorizado:** su texto de `D18` dice «*revisa la promesa **completa***», y `:62` es parte de la
+promesa de `CA-03`. Pedirlo otra vez era pedir un permiso ya concedido, que él **prohibió
+expresamente**. Ejecutado sin volver a preguntar.
+
+**Lo que rompe el ciclo no es más texto: es el orden.** Tres veces seguidas se corrigió la frase
+señalada y apareció la misma forma en otra sede. Esta vez **enumeré todas las sedes del árbol antes de
+despachar** —`grep -rnE 'de qué máquina|mitad \(ii\)|exigencia \(ii\)'` sobre `requirements/ docs/
+tests/ hooks/ tools/ templates/ AGENTS.md`, sobre `071cf8a`— y **entregué la lista dentro del
+encargo**, con qué hacer en cada una. **Ocho sedes:** cinco en `REQ-017.md` y tres ajenas.
+
+**Salió una cuarta que QA no había listado:**
+`docs/arnes/req-017-ca-03-modo-de-medicion/04-evidencia-del-intercalado.md:131-133` — «*De qué máquina
+es **cada cifra** va publicado en la propia línea… que es la exigencia (ii) de la remediación de
+`SEC-064`*». La misma forma, y **en absoluto**. **Amplía el alcance de `QA-017-33`**, dueño
+`desarrollador`. El analista añadió un matiz útil para quien la arregle: su contexto inmediato **sí**
+es una abstención habiendo medido, así que la cifra publicada allí sí es de esa medición; lo falso es
+la **generalización** y la equiparación con la exigencia (ii). **Y dos falsos positivos descartados**:
+`REQ-020:124` y `REQ-024:1097` hablan de la mitad (ii) de **otros** criterios.
+
+### La corrección, en dos inserciones y una eliminación
+
+De ese par, lo que la lista declara **construido** es **la emisión** —medida presente en **todas** las
+ramas de emisión, «y nada más»—; que el par **identifique de qué máquina** es **esa** abstención pasa
+a **exigencia declarada**, mitad (ii) de la remediación de `SEC-064`, **dueño `desarrollador`**,
+vencimiento el de ese hallazgo, **abierta allí**, conservando el motivo. El «*citada abajo*» se
+**redirige**: ya no apunta al párrafo que lo desmentía, sino a las dos sedes verdaderas —la condición
+de verdad y la frontera—, **citadas y NO transcritas**, que es precisamente no crear una cuarta copia
+de la misma regla. Y queda escrito **en el propio criterio** que esta lista lo dio por construido
+hasta hoy (`QA-017-31`).
+
+**`:68` no necesitaba nada** y quedó consistente sin tocarlo; `:74`, `:140`, `CA-08 (ii)` y las filas
+previas del historial, intactos. **Ningún umbral se movió:** techo **2,6** `operativo` dirección
+bajar, suelo **50 ms**, estadístico **mínimo**, par S/2S, `k`, `r` y el **modo intercalado**. Cambio
+**menor, sin ADR**, con su fila de historial declarando que **no es una vuelta y no reinicia el
+contador**: las tres siguen agotadas y su rastro se conserva.
+
+**Comprobado con el lector real del arnés**, no por mí: `QA=<con-hallazgos>`, `Seguridad=<aprobado>`,
+`Rigor=<critico>` — la cabecera sigue midiéndose. `requirements/README.md:513` **no** requería cambio:
+ninguno de sus cuatro campos se movió.
+
+### Lo que sigue abierto, y de quién es
+
+`QA-017-31` sigue **`contrato` y abierto** — lo cierra el `qa-tester`, no la coordinadora ni el
+analista. `REQ-017` sigue **`bloqueado`**. `QA-017-33` debe **ampliarse** con la sede nueva, y eso es
+del `desarrollador`: el analista no acuña ni amplía IDs en el registro de QA. `SEC-064` y `QA-017-27`,
+sin tocar.
+
+**Y una firma que NO doy por concedida:** la autorización cubría «*la corrección y **una**
+revalidación acotada*». Esa revalidación ya se gastó y encontró la corrección incompleta. Completar la
+corrección entraba en el alcance; **una segunda revalidación no**. Queda en `D18` con mi
+recomendación, sin asumirla.
+
+## [Interno] — 2026-09-10 · `CA-03 :62`: la tercera sede deja de declarar CONSTRUIDA la promesa que `:74` retira — se TERMINA el alcance que el propietario autorizó
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos. **Habilitante: la MISMA autorización expresa del propietario, `D18` (A), del 2026-09-10.**
+
+**No es una comisión nueva ni una vuelta: es la TERMINACIÓN del alcance ya autorizado.** `D18` (A)
+pide literalmente «*corregir la promesa de `CA-03` … **Revisa la promesa completa***», y la promesa
+completa incluía `:62`. El write-back anterior corrigió `:74` —QA lo acreditó: **13/13** ramas emiten
+plataforma y carga, **0/13** publican la cota— y dejó `:62` intacto. **El contador de `AGENTS.md` §6
+NO se reinicia**: las tres vueltas siguen agotadas y su rastro se conserva intacto.
+
+**Qué cambió, en una sola sede — `requirements/REQ-017.md`, § «Qué se publica junto al cociente».**
+*Antes:* entre los ejemplos «*ya construidos o exigidos aquí*», la plataforma y la carga con el
+parentético «*esta última mitad **es** la exigencia (ii) de la remediación de `SEC-064` **citada
+abajo***» — la promesa retirada dos párrafos más abajo, **afirmada como presente**, y con un puntero
+que **remitía al párrafo que la desmiente**. *Después:* de ese par, lo declarado **construido** es **la
+emisión** (medida presente en todas las ramas, y nada más); que el par **identifique de qué máquina**
+es **esa** abstención queda como **exigencia declarada**, dueño `desarrollador`, vencimiento el de
+`SEC-064`, **abierta allí**; y el puntero se **redirige** a las dos sedes que dicen la verdad —la
+condición de verdad y la frontera—, citadas y no transcritas.
+
+**Cambio MENOR, sin ADR:** se **retira una afirmación falsa** y no se añade garantía, umbral, NFR ni
+cota. Nada se mueve —techo **2,6**, suelo 50 ms, estadístico mínimo, par S/2S, `k`, `r`, modo
+intercalado, la regla de publicación por propiedad, la emisión exigida en todas las ramas y la cota de
+**no más de 2**—; `CA-08 (ii)`, el párrafo `:74` y las filas del Historial **no se tocan**.
+
+**La enumeración de sedes se hizo COMPLETA esta vez** (`grep` sobre `requirements/ docs/ tests/
+hooks/ tools/ AGENTS.md`), que es lo que faltó las tres anteriores. Tres quedan **fuera** de este REQ,
+**reportadas y no tocadas**: `tests/…/37-coste-del-escaner-2-las-razones.sh:169` y
+`docs/arnes/req-017-ca-03-modo-de-medicion/03-…:83-84` (ya `QA-017-33`) y —**no listada antes**—
+`…/04-evidencia-del-intercalado.md:131-133`, verificada aquí como la misma afirmación, que **amplía el
+alcance de `QA-017-33`**. `docs/seguridad/registro-seguridad.md:7186` es la **fuente** de la
+remediación y es correcta como tal.
+
+**Nada se cierra ni se firma:** el estado sigue `bloqueado`, `QA-017-31` sigue `contrato` y lo cierra
+QA, `SEC-064` sigue abierto, ningún veredicto se emite y ningún código cambia.
+
+## [Interno] — 2026-09-10 · Tercera sede de la misma promesa, y esta vez DENTRO del mismo criterio: `QA-017-31` no cierra
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (la revalidación) y coordinadora (el registro). **Autorización expresa del propietario, `D18` (A).**
+
+**Revalidación acotada FUERA DEL CONTADOR de §6** —por autorización expresa del propietario, no por
+reclasificación— sobre `af01436`. **Las tres vueltas siguen agotadas y su rastro se conserva
+intacto**: el veredicto nuevo se prefija al anterior en el campo, sin sustituirlo, y se declara
+explícitamente que **no es una vuelta**.
+
+**Veredicto: `con-hallazgos`. `QA-017-31` NO se cierra** y sigue de clase `contrato`.
+
+**Lo que pasó, y no es poco.** El `git diff` de mecanismo entre `f4a5f1f` y `af01436` sale **vacío**,
+las tres quality gates en verde y el banco **1057 PASS · 0 FAIL · 7 SKIP · rc 0**, cuadrando con la
+vuelta 3 (1064 casos en ambas). Y las tres piezas de la promesa corregida pasan, cada una juzgada
+aparte:
+
+- **lo declarado PRESENTE queda ACREDITADO, no sólo implementado:** 13 de 13 ramas de emisión
+  ejercitadas con las funciones reales extraídas por rango de línea — **13/13 emiten plataforma y
+  carga, 0/13 publican la cota**;
+- **la condición de verdad es cierta en las CUATRO ramas y está medida** (el par pasa de `0.55` a
+  `3.28` con carga forzada; es el de la directa sin línea base; sale `n/a` si no llega a leer el
+  registro). El **cuarto** caso —el suelo de 50 ms, que el analista encontró y yo no le había
+  nombrado— es **alcanzable** (8457 y 4220 µs bajo el suelo) y el criterio **no afirma nada de más**;
+- **la frontera de la exigencia pendiente es honesta**, y `CA-03:74` y `CA-08 (ii):140` dicen **ahora
+  lo mismo**: las dos mitades abiertas, dueño `desarrollador`, cierran la instancia y no la clase.
+
+### Y bloquea una TERCERA sede, dentro del propio `CA-03`
+
+`REQ-017.md:62` lista la promesa entre «*ejemplos no exhaustivos, **ya construidos** o exigidos
+aquí*», y su «*citada **abajo***» **apunta al párrafo `:74` que la desmiente literalmente**. La
+medición da la razón a `:74`. Verificado: `:62` contiene *«exigencia (ii) de la remediación de
+`SEC-064` citada abajo»* dentro de la lista de «ya construidos».
+
+**Es la misma forma por tercera vez, con la sede cambiada:** `QA-017-24` → `QA-017-31` (`CA-03` contra
+`CA-08`) → ahora `:62` contra `:74` **dentro de `CA-03`**. Aplica el refinamiento del propietario en
+`D5` por analogía: **corregir un párrafo no basta si otro del mismo criterio sostiene la promesa
+retirada.** QA **no abrió número nuevo**: es `QA-017-31` sin cerrar. Remedio: **un paréntesis**, del
+analista, sin código — **no despachado**, porque el propietario pidió no abrir comisiones en el cierre.
+
+**Dos `instrumento` con dueño y vencimiento, que NO bloquean:** `QA-017-33` —la promesa retirada se
+declara presente en `37-coste-del-escaner-2-las-razones.sh:169-171` y en
+`docs/arnes/req-017-ca-03-modo-de-medicion/03-…:83-85`— y, a la cola, el caso guardián de `CA-03`
+(`:536-550`) que comprueba banda, cociente y techo **pero no el par**, y lo invoca con el **noveno
+argumento vacío**: la publicación de plataforma y carga **no la ejerce ningún caso del banco**. Es el
+mismo hueco que ese caso dice cerrar, sobre otro campo.
+
+**Limitación material declarada por QA:** una sola corrida sin warm-up, en WSL2 de 8 núcleos y **no en
+el runner** (4 vCPU, `ARNES_JOBS=6`): acredita **cuadre, no rendimiento**. Y su extracto de
+`sonda_lee` no incluye `sonda_es_util`, así que salta la validación del campo `vivos` —más permisivo
+que el real, en un campo que no toca plataforma ni carga—, declarado en el artefacto.
+
+`REQ-023 CA-09 (iii)` salió **SKIP** esta vez. **Anotado y nada más:** no se usa para justificar nada
+y no se re-corrió buscando verde.
+
+**Comprobado con el lector real del arnés** tras escribir el campo: `QA=<con-hallazgos>`,
+`Seguridad=<aprobado>`, `Rigor=<critico>` — la cabecera sigue midiéndose. Cola en **16**.
+
+## [Interno] — 2026-09-10 · Re-validación ACOTADA de `REQ-017 CA-03`: la promesa de la máquina es cierta en las cuatro ramas, y la promesa vieja sobrevive en el párrafo de al lado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. **Fuera del contador de `AGENTS.md` §6, por autorización EXPRESA del propietario del 2026-09-10 (`D18` opción (A)).**
+
+**Las tres vueltas dev↔QA de `REQ-017` siguen agotadas y no se reescriben.** Esto no es la vuelta 4
+ni una vuelta 3 repetida: es una **excepción expresamente autorizada**, declarada como tal para que el
+contador siga siendo auditable desde el disco.
+
+**Veredicto: `con-hallazgos`. `QA-017-31` NO se cierra** — sigue `contrato`, dueño
+`analista-requerimientos`. **`requirements/REQ-017.md` no se modificó**: el REQ sigue `bloqueado` y su
+desbloqueo, la escritura del campo de veredicto y la escalada son de la coordinadora.
+
+**Lo mecánico, comprobado.** `git diff f4a5f1f..af01436` sobre `hooks/ tools/ tests/ .github/ .arnes/
+templates/ .claude-plugin/` sale **VACÍO**, así que no se re-midieron banda, techo, umbrales, modo ni
+las cinco corridas aisladas. Quality gates de §7: **3 de 3 en verde**. Banco completo: **1057 PASS ·
+0 FAIL · 7 SKIP · rc 0**, que cuadra con la vuelta 3 (1064 casos en las dos). El `FAIL` de
+`REQ-023 CA-09 (iii)` salió **SKIP** en esta corrida y **no se usa para justificar nada**: no se
+re-corrió el banco buscando verde, y una corrida en verde no demuestra que el FAIL anterior fuera falso.
+
+**Lo que la corrección SÍ logró, acreditado por ejecución y no por lectura.** Las **13 ramas de
+emisión** del caso emiten `plataforma=` y `carga=` y **ninguna** publica la cota; y la **condición de
+verdad** del par es cierta en las **cuatro** ramas: el par cambia con la medición cuando se ha medido
+(`0.55`→`3.28` con carga forzada), es el de la **directa** cuando no hay línea base —`QA-017-27`,
+abierto, que el REQ describe y no cierra—, sale `n/a` cuando la sonda no llega a leer su registro, y el
+**cuarto caso** —el suelo de 50 ms— **existe, es alcanzable** (8457 µs y 4220 µs con `k=1`) y el REQ
+**no afirma nada de más** de él. Las funciones se extrajeron **literalmente por rango de línea** del
+archivo real, sin transcribirlas.
+
+**Y lo que la deja sin cerrar: la promesa retirada sigue viva en OTRO párrafo del MISMO criterio.**
+`CA-03` § «Qué se publica junto al cociente» (`REQ-017.md:62`) presenta la plataforma y la carga, entre
+los ejemplos «**ya construidos**», como «la exigencia (ii) de la **remediación** de `SEC-064` citada
+**abajo**» — mientras el párrafo nuevo de abajo (`:74`) dice que eso es «una **exigencia declarada**,
+**no una propiedad ya presente**». La contradicción es objetiva por tres razones independientes: el
+puntero interno apunta al párrafo que lo desmiente; una sede lo lista como construido y la otra lo niega
+literalmente; y **la medición le da la razón a la segunda**. Es la **misma forma por tercera vez** con
+la sede cambiada —`QA-017-24` cambió de objeto, ahora `QA-017-31` cambia de párrafo dentro del mismo
+criterio—, y aplica el refinamiento del propietario en `D5`: corregir un párrafo no basta si otro del
+mismo criterio sostiene la promesa retirada. **No se abre número nuevo para esto**: es `QA-017-31` sin
+cerrar, con una sede que la vuelta 3 no había nombrado.
+
+**Dos hallazgos que NO bloquean, con dueño.** `QA-017-33` (`instrumento`, dueño `desarrollador`): la
+promesa retirada también se declara **presente** en el comentario de
+`tests/escenarios/hooks/secciones/37-coste-del-escaner-2-las-razones.sh:169-171` y en
+`docs/arnes/req-017-ca-03-modo-de-medicion/03-…md:83-85`. Y a la cola: el caso guardián del SKIP de la
+banda comprueba banda, cociente y techo pero **no** el par, **y lo invoca con el argumento vacío**, así
+que la publicación de plataforma y carga **no la ejerce ningún caso del banco** — el mismo hueco que ese
+caso dice cerrar (`QA-017-16`), sobre otro campo.
+
+**No se firmó seguridad, no se cerró `SEC-064` ni `QA-017-27`, no se reclasificó nada, no se tocó
+código, umbral, NFR ni cota, y no se marcó `completado`.** Detalle, reproducción y limitaciones en
+`docs/qa/1.34.0.md` § «re-validación ACOTADA» y en
+`docs/qa/evidencia-req-017-ca03-revalidacion-af01436/`.
+
+## [Interno] — 2026-09-10 · Cierre ordenado de sesión: un solo punto de continuidad, informe de traspaso en disco, y el verde del CI que NO acredita
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **A petición del propietario.**
+
+**Nada de este cierre cierra un REQ, cierra un hallazgo, acepta un residual, cambia una garantía,
+relaja una prueba, fusiona ni publica.** Cerrar la sesión no fue cerrar la versión.
+
+**Un solo punto de continuidad.** `docs/ESTADO.md` tenía **cuatro** bloques compitiendo, tres de
+ellos diciendo «*manda sobre todo lo que sigue*» o «*retomar exactamente por aquí*». Ahora hay **uno**
+—§«★★ RETOMAR AQUÍ»— y los cinco anteriores quedan marcados **[HISTÓRICO]**, conservados y sin
+mandar. Regla escrita dentro: si dos textos del archivo se contradicen, gana el vigente.
+
+**Informe de traspaso, nuevo:** `docs/TRASPASO-2026-09-10.md` — rama y commit remoto, versiones,
+trabajo terminado con su evidencia, trabajo incompleto con archivos y siguiente acción, hallazgos
+reconciliados **separando discrepancias documentales de defectos sin corregir**, las decisiones
+agrupadas con recomendación, el último CI y el estado de agentes y worktrees.
+
+### El hallazgo de este cierre: el CI pasó, falló y volvió a pasar sobre código idéntico
+
+| Commit | `hooks-en-linux` | Mecanismo cambiado |
+|---|---|---|
+| `b55347e` | success | — |
+| `67b06fe` | **failure** | **0 archivos** |
+| `af01436` | success | **0 archivos** |
+
+El rojo fue **`REQ-024 CA-07 (ii)`** —*el reloj de la ruta crítica = 1.320× > techo 1.250× (76072µs
+sobre 57589µs)*—, y **no** `REQ-023 CA-09 (iii)`: es un **segundo** criterio de techo de reloj, en
+otro REQ. `git diff --name-only` sobre `hooks/ tools/ tests/ .github/ .arnes/ templates/
+.claude-plugin/` devuelve **cero archivos** en los dos saltos.
+
+**Y me corrijo, porque el propietario lo señaló:** dije que «*el `FAIL` del banco no es una
+regresión*». **Eso no se sigue de la evidencia.** La variabilidad no demuestra por sí sola que un FAIL
+sea falso. Lo demostrado es que la comprobación **no discrimina**, y una prueba que no discrimina
+**no acredita en ninguna de sus dos direcciones**: por tanto **el `success` de `af01436` NO acredita
+`REQ-024 CA-07 (ii)`**. Tomar el verde como acreditación es el mismo error con el signo cambiado. La
+evidencia se conserva y **no se re-corrió buscando verde**: `docs/arnes/ci-1.34.0-no-discrimina/`.
+
+Consecuencia, y no es menor: `hooks-en-linux` es la puerta **requerida y estricta** de `main`, así que
+mientras esto siga así ninguna afirmación de la forma «el CI está en verde, luego X» tiene fundamento
+**para los criterios de reloj**.
+
+### Cola y plan actualizados con lo entregado, sin inflar la cola
+
+`D2` recoge la reconciliación cerrada (**34** firmes, no 23), `SEC-085`, **`SEC-075` que debe
+resolverse antes de publicar `v1.34.0`**, y las **dos discrepancias documentales** que bloquean sin
+ser defectos. **No se abrió ninguna entrada nueva**: la cola sigue en **16**, comprobado con
+`tools/arnes-lectura.sh`. `docs/PLAN.md` apunta al punto vigente y al traspaso.
+
+### Registrado y NO investigado, con su siguiente paso
+
+`REQ-024 CA-07 (ii)` (arriba) · `hooks/rotar-artefactos.sh:651` con una cifra no medida que ya se
+retiró del REQ · `guard-completado` denegando editar `REQ-017` cuando el texto **menciona** los tokens
+`QA:`/`Seguridad:` · la numeración de las mitades de `SEC-064`.
+
+## [Interno] — 2026-09-10 · La cifra firme no era 17 ni 23: son **34**, y el índice que la frontera de publicación cita como exhaustivo no lo es (`SEC-085`)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad (`R-028`) y coordinadora. **Bajo delegación de 24 h.**
+
+**Reconciliación cerrada.** Artefacto: `docs/seguridad/reconciliacion-campos-2026-09-10.md` (once filas
++ método + versión base dentro del propio artefacto). Revisión `R-028`.
+
+**Mi lista de once estaba bien medida y mal compuesta, y el auditor explicó por qué:** mi `comm -23`
+reproduce los once **exacto**, pero lee el estado en la **cabecera de apertura**, mientras el estado
+vigente de ese registro es *la última declaración que nombra el hallazgo* —cabecera, una sección
+`### SEC-0NN — Estado: X → Y`, o **prosa sin encabezado**—. No es un error de método: es la prueba de
+que la sede contable no estaba mantenida. Sobraban cinco (ya `mitigado`) y **faltaban cuatro**
+(`SEC-023`, `SEC-029`, `SEC-030` y **`SEC-075`**, cuyo encabezado lleva el id entre acentos graves y
+ningún patrón alcanzaba).
+
+**La cifra firme: 33 sobre `b55347e`, 34 a partir de `R-028`.** Reparto: **21** los ve la puerta · **5**
+sólo en el registro **por diseño** (`en-mitigación`, con el residual viajando por `Seguridad:`) · **4**
+sin REQ atribuible · **1** que debería estar en un campo (`SEC-055`) · **2** discrepancias. Y la
+observación honesta del auditor: **bajo la frontera, 34 devuelve la decisión igual que 33, que 31 o
+que 17.** Lo que cambia es que ahora se puede desmentir **fila por fila**.
+
+**`SEC-085` (`contrato`, alta) — y es el hallazgo que importa.** El «Índice de hallazgos de clase
+bloqueante» se declara **sitio único de la lista exhaustiva** y **la frontera de publicación lo cita
+como tal**; no lo es: última actualización `R-017`, y entre `R-018` y `R-027` se abrieron **nueve**
+bloqueantes que nunca entraron. Lo grave no es el desfase: `R-016` argumentó **por escrito** que la
+unión de las dos sedes más fail-closed protege, y ese argumento vale sólo si cada hallazgo está en **al
+menos una** sede — algo que nunca se comprobó. **`SEC-075` es el contraejemplo medido:** `contrato`,
+`abierto`, en **ninguna** de las dos, y por una decisión *correcta*. Un recuento derivado de la
+frontera **no puede encontrarlo**, y la falta va hacia el lado que **publica**.
+
+**Dos discrepancias que bloquean de verdad, y una es un defecto del propio cierre del auditor:**
+`SEC-014` está `mitigado` desde `R-006` y sigue en el campo de `REQ-013`, que por eso no puede cerrar;
+y `SEC-083` está `mitigado` desde `R-027` y sigue en el de `REQ-024` porque `R-027` §2 escribió «se
+retira del campo» para `SEC-082` y §3 **omitió la frase** para `SEC-083`. Subsanado en `R-028` §3. La
+lección quedó escrita: **un cierre no está completo hasta que dice de qué campo sale.**
+
+### `D16`: la corrección de mi propia caracterización, medida
+
+Venía diciendo que `QA-016-04` y `SEC-084` están los dos «en la 1.33.0 publicada» como si tuvieran la
+misma exposición. **El defecto sí; la exposición no.** Sondeado con el lector real
+(`docs/arnes/d16-alcance-real/`, con su sonda y su salida): `Rigor: critico (por suelo)` cae a
+**`estandar`** —indistinguible de `basura` y de la **ausencia**— **sólo cuando el REQ NO está marcado
+`Sensible a seguridad: sí`**; con `sí`, el suelo de §6 lo rescata. Y en este repositorio, que es el
+**único consumidor verificado**, `grep -L` da **0 REQ no sensibles**: aquí el defecto es **latente, no
+activo**. Quien queda expuesto es un proyecto instalado con un REQ no sensible que escriba el rigor con
+un paréntesis —la forma que §13 **le enseña**—, y que eso haya ocurrido **no está comprobado**.
+
+Consecuencia de método, y va contra lo que yo había afirmado: **compartir causa no obliga a compartir
+commit.** `SEC-084` restituye un contrato y no depende del suelo; `QA-016-04` sólo se manifiesta en REQ
+no sensibles, y su arreglo correcto es **tolerar el paréntesis** como ya hacen `QA:` y `Seguridad:`, no
+denegar por valor no reconocido — denegar cambiaría la conducta heredada de cualquier proyecto que hoy
+escribe un matiz.
+
+### Y una deriva que dejé yo
+
+`requirements/README.md:513` decía `en-progreso` mientras `REQ-017.md` decía `bloqueado`: nació con mi
+propia edición de bloqueo y el analista la encontró. Corregida.
+
+Nueva también: `docs/propuesta-reglas-coordinacion.md` — la mejora mínima de las reglas de
+coordinación, con su delta de tamaño medido y sin prometer ahorro no medido.
+
+## [Interno] — 2026-09-10 · `QA-017-31`: la promesa de `CA-03` deja de ser absoluta y gana su condición de verdad — y aparece una CUARTA rama de abstención que nadie había nombrado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos. **Bajo autorización EXPRESA del propietario del 2026-09-10** (opción **(A)** de `D18` en `PENDING_APPROVAL.md`), tras agotarse las tres vueltas de `AGENTS.md` §6.
+
+**Qué se corrigió.** `CA-03` de `REQ-017` afirmaba, **absoluto y sin frontera**, que «*toda abstención
+de este caso publica de qué máquina es la medición que la produjo*», y con ello **declaraba CUMPLIDA**
+una mitad de `SEC-064` que **`CA-08 (ii)` declara ABIERTA**. Alineado `CA-03` con `CA-08 (ii)`, que es
+**la que dice la verdad**; **`CA-08` no se tocó**. La promesa **principal** pasa a ser verdadera —no se
+le colgó un «no exhaustiva» dejando el «toda» en pie, que es la trampa que el propietario nombró en
+`D5`—: el caso **emite** plataforma y carga en todas sus ramas de emisión, y ese par identifica la
+máquina de **esa** abstención **sólo cuando la abstención ocurre habiendo medido**.
+
+**Revisada contra las ramas disponibles, y son CUATRO, no tres.** Verificadas por mí las tres que traía
+el encargo (`docs/qa/evidencia-req-017-writeback-f4a5f1f/00-metodo-y-base.md` §5 y §6): medición propia
+(se cumple) · **sin línea base** (emite `carga=2.67`, la de la medición **directa** — `QA-017-27`,
+**abierto**, descrito y **no cerrado**) · **fallo antes de leer el registro** (`plataforma=n/a
+carga=n/a`). Y una **cuarta** que `CA-03` contrata vía `CA-06` y que no estaba nombrada: el **suelo de
+50 ms** no alcanzado, **de la que no hay medición** de lo que el par vale — así que **no se afirma nada**
+de ella. Por eso las ramas se enuncian **por propiedad** con la lista exhaustiva **citada** en su sitio
+único y los ejemplos marcados **no exhaustivos**.
+
+**Lo que NO se hizo, para que se pueda auditar:** `QA-017-31` sigue **`contrato`** con su dueño y lo
+cierra **QA**; `SEC-064` **no se cierra** —la señal y el «de qué máquina» siguen abiertas allí con dueño
+`desarrollador`—; **ningún umbral se movió** (techo **2,6**, suelo 50 ms, estadístico mínimo, par S/2S,
+`k`, `r`, modo intercalado); **ningún NFR ni cota nueva**; **ningún código**; y **ningún veredicto ni el
+estado** — `REQ-017` sigue **`bloqueado`**, y el desbloqueo es de la coordinadora cuando QA re-valide
+**fuera del contador**, según la misma autorización. Cambio **menor** con su fila de `Historial de
+cambios` (antes → después literal, causa y habilitante); **sin ADR**.
+
+## [Interno] — 2026-09-10 · `SEC-067` tiene su write-back y sigue sin poder cerrarse: su condición exacta de cierre es `SEC-072`, que no está autorizado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (la consolidación) y analista-requerimientos (el NFR). **Bajo delegación de 24 h.**
+
+**El write-back de `SEC-067` está hecho** y `REQ-026` estrena su primer NFR — **`NFR-026-01`**, porque
+el REQ no tenía ninguno y **no existe ni un `requirements/NFR-*.md`** en todo el proyecto: no había
+qué actualizar, hubo que crearlo. Lleva la cobertura **por propiedad** (los escritores como ejemplos
+**no exhaustivos**), la eficacia con su procedencia y un **discriminador** sin el cual el umbral no se
+podría desmentir, la constancia con su fail-before, **el residuo con sus tres campos**, y el coste sin
+re-derivar el techo de `CA-15`.
+
+**Comprobado por máquina, no por mí:** el campo conserva `SEC-067 (usuario/dinero — en-mitigación …)`
+con su clase y su estado intactos, y el recuento de bloqueantes **sigue en 23**. El write-back **no
+relajó nada**. La cola sigue en **16** (`tools/arnes-lectura.sh`).
+
+**Y el hallazgo que reordena la versión.** `SEC-067` es `usuario/dinero` y **bloquea**, y su
+*condición exacta de cierre* está escrita literal en el registro (`:6367-6368`): que la tolerancia de
+la ventana de publicar viva **dentro** de `CA-18 (i)` y que la excepción de la publicación a medias
+esté declarada en `CA-05`. «**Nada más.**» Eso **es** el write-back de `SEC-072`, que el propietario
+**no ha autorizado** (`ADR-008` en **`propuesta`**). Consecuencia, escrita en `NFR-026-01 (6)`:
+**ningún write-back que un analista pueda escribir cierra `SEC-067`.** Cierra por **firma** (vía A) o
+por **código** (vía B, dueño `desarrollador`). Y **la precondición de la vía A es hoy inalcanzable**:
+exige medir el intervalo residual, con el instrumento no convergente, `REQ-021` `bloqueado` y la
+investigación fuera del alcance autorizado.
+
+### Corrección de mi propia consolidación, y el error importa
+
+Clasifiqué **`D3` como informativa** con este argumento: «ya instruiste que no se cierran por
+redacción — queda como trabajo autorizado». **Estaba mal.** La instrucción del propietario es una
+**prohibición** —dice cómo **no** se cierran—, no una resolución de qué se hace con ellos. Y lo que
+acaba de demostrarse es que está en la **ruta crítica**: sin ella `REQ-026` no cierra, y no por falta
+de trabajo. `D3` pasa a ser la **decisión 6** de `docs/propuesta-cierre-1.34.0.md`, que ahora son
+**seis** decisiones sobre **dieciséis** entradas. La clasificación anterior queda citada dentro del
+documento, no borrada.
+
+También reordenado el orden recomendado de `REQ-026`: el re-enunciado de `SEC-072` **no es el último
+de la lista, es la puerta de los tres**.
+
+### Un candidato a hallazgo que NO abrí
+
+`hooks/rotar-artefactos.sh:651` conserva en un comentario la cifra **no medida** —«*la medida era de
+355-361 ms y lo que queda es de microsegundos*»— que ya fue **retirada del REQ** por instrucción del
+propietario, precisamente por no estar medida. Sigue viva en el código. No lo abrí: es archivo del
+`desarrollador`, abrir hallazgos es de QA o del auditor, y §14.B.4 dice **corregir sin ampliar**.
+Queda escrito en §7 de la propuesta para que la comisión que toque ese archivo no lo redescubra.
+
+## [Interno] — 2026-09-10 · Write-back de `SEC-067` en `REQ-026`: `NFR-026-01`, con la cota medida del testigo y la ventana de publicar nombrada
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos.
+
+**`AGENTS.md` §9 exige que un hallazgo de seguridad se refleje como NFR, y `REQ-026` no tenía
+ninguno** (`NFR relacionados: (ninguno separado…)`). `SEC-067` estaba `en-mitigación` con el
+**código acreditado línea a línea** por el auditor (`R-022` §1) y sin write-back, que es la
+definición de deriva de §9: el control vivía sólo en el código.
+
+**Se escribe `NFR-026-01`** con lo que el mecanismo **da** y está medido —relectura y comparación
+byte a byte de los **dos** archivos antes de publicar, la duda hacia **no rotar**, y el canal
+duradero que distingue «no roté» de «roté y me comí tu cambio»— con **0 reproducciones** como cifra
+**de contrato** frente a las **3/3** de la reversión de un `Seguridad: aprobado` en una ventana de
+**355–361 ms**. Y **la ventana de publicar va nombrada dentro del mismo enunciado**, con dueño,
+forzador medido y vencimiento, no colgada como matiz: *«una promesa principal absoluta con un matiz
+colgado sigue siendo una promesa absoluta»*. La lectura no medida del residuo («microsegundos») se
+cita **atribuida** y **no funda ningún umbral**, por la instrucción del propietario del 2026-09-09.
+
+**Nada se relajó y nada se cerró.** `CA-18 (i)` y `CA-05` siguen **absolutos**; `SEC-072` y
+`SEC-073` **no se tocaron**; `Estado:`, `QA:` y `Seguridad:` intactos; `SEC-067` sigue en
+`Hallazgos abiertos:` como `usuario/dinero`. **Y queda dicho un bloqueo que no lo resuelve ningún
+analista:** la *condición exacta de cierre* que el auditor fija para `SEC-067` es meter la
+tolerancia dentro de `CA-18 (i)` y la excepción dentro de `CA-05` —o sea el write-back de
+`SEC-072`, que el propietario **no autorizó**—, así que `SEC-067` sólo cierra por **firma** (vía A
+de `ADR-008`, con su precondición hoy incumplida) o por **código** (vía B).
+
+## [Interno] — 2026-09-10 · `REQ-017` a `bloqueado` por la salida de §6, y la prueba de `REQ-023 CA-09 (iii)` medida como no acreditante
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (la escalada) y qa-tester (la vuelta 3). **Bajo delegación de 24 h.**
+
+**La vuelta 3 de 3 de `REQ-017` se agotó**, y esta vez el número de vuelta **va declarado en el
+campo**: el veredicto anterior lo omitía y sin él el contador de §6 no se podía auditar desde el
+disco, que es donde tiene que poder auditarse. QA lo verificó contra `git show`, no lo aceptó de mí.
+
+**`QA-017-24` quedó CERRADO**, y las cuatro comprobaciones le dieron la razón al write-back —la
+decisiva: imprimir la cota **no** cerraría `SEC-064`, cuya remediación pide «*una señal que lo
+publique sin depender de que alguien lea la salida*»—. Pero al cerrarlo apareció **`QA-017-31`**
+(`contrato`): **el defecto se movió, no desapareció.** `CA-03` afirma en absoluto que *«toda
+abstención publica de qué máquina es»* y declara **cumplida** la mitad (ii) de `SEC-064`;
+`CA-08 (ii)`, dos commits después, declara **esa misma mitad abierta** con dueño y vencimiento. No
+pueden ser las dos verdaderas, y la medición da la razón a `CA-08`: la abstención **no mide nada** y
+publica la carga de la **directa**. Misma forma que `QA-017-24` con el objeto cambiado, y **sin
+siquiera un «no exhaustiva»** — se aplica el refinamiento del propietario en `D5`.
+
+**Aplicada la salida de `AGENTS.md` §6, no una decisión discrecional:** agotado el tope, la vía del
+residual declarado **no está disponible** con un `contrato` abierto, y la reclasificación a errata
+editorial **la reserva §6 al propietario**. Así que `REQ-017` pasa a **`bloqueado`** y se escala como
+**`D18`**; la cola sube a **16**, comprobado con `tools/arnes-lectura.sh`. El remedio está
+identificado y es **una** cláusula del mismo autor en el mismo REQ —copiar a `CA-03` la frontera que
+`CA-08 (ii)` ya escribió—, sin código. **No lo tomé yo, y la razón importa: es barato y evidente, y
+eso es justamente lo que hace tentador saltarse la puerta.**
+
+### La respuesta medida a «prueba corregida» vs «criterio acreditado»
+
+El propietario pidió el 2026-09-09 distinguir las dos cosas para `REQ-023 CA-09 (iii)`. La misma
+comisión lo midió, y la respuesta es que **la prueba está corregida y el criterio NO está acreditado**:
+
+| Corrida | `loadavg` | `arnes_campo_linea` | mediana |
+|---|---|---|---|
+| banco completo | 3,36 | **FAIL** | 1,159× |
+| 1 | 1,44 | **SKIP** | 0,988× |
+| 2 | 2,61 | **PASS** | ~0,93× |
+| 3 | 2,79 | **PASS** | ~0,93× |
+
+**`FAIL → SKIP → PASS → PASS` sobre código idéntico**, y el veredicto sigue a la carga. El techo
+`1,000×` **vive dentro del ruido del instrumento** — la misma patología que `REQ-017 CA-08 (ii)`
+describe con esas palabras. Dos consecuencias, y ninguna es «ruido»: el `FAIL` que el banco da hoy
+**no es una regresión** y el `rc=1` no acusa al código; y **una prueba cuyo veredicto oscila sobre
+código idéntico no acredita nada, ni cuando sale PASS**. `REQ-023` sigue `bloqueado`; esto no lo
+desbloquea, lo explica.
+
+También abierto por la vuelta 3: **`QA-017-32`** (`instrumento`, `desarrollador`) — el banco da FAIL
+espurios **con filtro** porque `razon37:296` lleva su propia guarda de `FILTRO`. Es **fail-closed** y
+el CI no usa filtro, así que no bloquea. Las tres quality gates en verde y la autoprueba del corredor
+**106 PASS · 0 FAIL**: el write-back de texto no rompió `CA-18` ni el `CASOS_ESPERADOS`.
+
+Los ocho `instrumento` de `REQ-017` siguen abiertos con su dueño; **ninguno se cerró**. No se firmó
+`Seguridad:` —su `aprobado` es del 2026-09-08 sobre `538c266`, anterior al modo, así que el auditor
+vuelve de todas formas—, no se marcó `completado`, no se reescribió ningún criterio y no se tocó
+`hooks/`, `tools/`, `tests/` ni `.github/`.
+
+## [Interno] — 2026-09-10 · `REQ-017` vuelta 3 de 3: `QA-017-24` cerrado, y la promesa absoluta que el write-back movió de objeto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (Opus, por la política de autoalojamiento de §5).
+
+**Re-validación acotada del write-back de la cota sobre `f4a5f1f`, en sus dos tramos (`a139155` =
+`CA-03`, `f4a5f1f` = `CA-08 (ii)`). Veredicto: `con-hallazgos`, y el campo `QA:` declara su número de
+vuelta** — el de la vuelta 2 no lo declaraba, así que el contador de `AGENTS.md` §6 no se podía
+auditar desde el disco, que es donde tiene que poder auditarse.
+
+- **Precondición verificada, no supuesta:** `git diff 86a44c8..f4a5f1f` sobre `hooks/ tools/ tests/
+  .github/ .arnes/ templates/ .claude-plugin/` sale **vacío**. Los dos tramos son texto, así que se
+  reusa la medición de la vuelta 2 y **no** se re-midieron banda, techo, umbrales ni modo.
+- **`QA-017-24` (`contrato`) CERRADO.** Sus dos mitades quedan resueltas, y la razón decisiva del
+  write-back se comprobó **contra la sede del hallazgo**: la remediación de `SEC-064` pide
+  literalmente «*una señal que lo publique sin depender de que alguien lea la salida*», luego
+  imprimir la cota en un `SKIP` **no** la cerraría. También se verificaron la sede (`SEC-064` ofrece
+  `CA-06` **o** `CA-08 (ii)`), las **dos** bases de la cifra `1`, y que ninguna de las dos cotas cae
+  en las tres formas prohibidas de `requirements/README.md`.
+- **`QA-017-31` (`contrato`, dueño `analista-requerimientos`) ABIERTO — y es el mismo defecto con el
+  objeto cambiado.** `CA-03` afirma sin frontera que «*toda abstención de este caso publica de qué
+  máquina es la medición que la produjo*» y declara **cumplida** la mitad (ii) de `SEC-064`, mientras
+  `CA-08 (ii)` declara **esa misma mitad abierta** con dueño y vencimiento. La medición le da la
+  razón a `CA-08`: reproducido con las funciones reales extraídas en sólo lectura, con el tag
+  v1.32.1 ausente la abstención del fail-before publica la **carga de la medición directa**
+  (`QA-017-27`), y si `mide37i` falla antes de leer el registro publica `plataforma=n/a carga=n/a`.
+  Aplica la regla del propietario: *añadir «no exhaustiva» no basta si la promesa sigue siendo
+  absoluta* — y aquí no hay ni eso.
+- **`QA-017-32` (`instrumento`, dueño `desarrollador`) ABIERTO:** el banco da **FAIL espurios con
+  filtro** (2 con `CA-03`, 3 con `REQ-017`), porque `razon37` lleva su propia guarda de `FILTRO` y
+  los autotests la invocan con nombre sintético. **Fail-closed**, y el CI no usa filtro.
+- **El banco NO está verde, y no es de este REQ:** **1057 PASS · 1 FAIL · 6 SKIP, `rc=1`**. El `FAIL`
+  es `REQ-023 CA-09 (iii)`, medido **flaky** en cuatro corridas sobre código idéntico —**FAIL, SKIP,
+  PASS, PASS**— con el techo `1,000×` **dentro** del ruido. No se amplía ni se cierra, pero con
+  `rc=1` ninguna quality gate de §7 acepta un cierre.
+- Las **tres** quality gates en verde y autoprueba **106 PASS · 0 FAIL**: el write-back **no** rompió
+  el cuadre de `CA-18` ni el `CASOS_ESPERADOS`.
+- **Tope de §6 agotado y lo que queda es `contrato`**, así que la vía del residual declarado no está
+  disponible: **se recomienda escalar al propietario**. Nada se cerró, ninguna clase se bajó para
+  conseguir verde, y `Seguridad:` no se firmó (va después de QA, §6).
+
+Evidencia con versión base y método: `docs/qa/evidencia-req-017-writeback-f4a5f1f/00-metodo-y-base.md`.
+Detalle y reproducción: `docs/qa/1.34.0.md`.
+
+## [Interno] — 2026-09-10 · La cola re-derivada: `D2` decía 20 bloqueantes y son 23, y su «casi la mitad es deuda» era el 22 %
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **Bajo delegación de 24 h.**
+
+**Coordinación, no decisión.** `PENDING_APPROVAL.md` sigue con **15 pendientes** —comprobado con la
+regla de §6 y con `tools/arnes-lectura.sh`, que es la que la puerta usa—: no se añadió, borró ni
+fundió ninguna entrada. Lo re-derivado del disco:
+
+- **`D2`: de 20 bloqueantes a 23, de siete REQ a ocho.** Entran `REQ-024` (`QA-024-19`, `SEC-083`,
+  `SEC-084`) y `REQ-017` (`QA-017-24`); sale el de `REQ-023`, porque `SEC-079` se cerró por `D5`. El
+  inventario anterior **no se borra**: queda tachado con su fecha y el método para re-derivarlo.
+- **Una proporción que la entrada afirmaba mal, y es la segunda vez que caigo en la misma forma de
+  error.** Decía «*casi la mitad es deuda de 1.31.0 y 1.32.0*». No lo es: `REQ-007` (3) + `REQ-013`
+  (2) = **5 de 23, el 22 %**; lo de la ventana son **17 de 23**. El propietario ya me había corregido
+  exactamente esto —«*los ocho de deuda enumerada son el 36 % de 22, no la mitad*»—, así que la
+  corrección va **dentro de la entrada**, citando la frase anterior, y no sólo aquí.
+- **`REQ-020` no figuraba en la tabla de estado de la cola** pese a tener ventana 1.34.0 y aportar
+  **8 de los 23**. Añadido con sus tres campos reales: `pendiente`, `QA: pendiente`,
+  `Seguridad: preventiva` —que **no** cubre el código posterior.
+- **`REQ-017`**: la fila decía «QA en curso», y QA **cerró**. Queda dicho lo que gobierna el coste:
+  **la próxima validación es la vuelta 3 de 3 —la última— del ciclo que §9 reabrió**, porque la 1 fue
+  el `aprobado` del 2026-09-08 y la 2 el `con-hallazgos` del 2026-09-10. Por eso el write-back se
+  agrupó en **una** comisión de dos tramos antes de llamar a QA, en vez de dos comisiones.
+- **Un desfase que ninguna de las dos partes ve sola**, anotado en `D2` con su re-derivación: once
+  hallazgos `contrato` están **`abierto`** en el registro de seguridad y en **ningún** campo
+  `Hallazgos abiertos:`. `guard-completado` lee el campo, no el registro. Seis tocan 1.34.0.
+- **Puntero a la consolidación**: las quince entradas son **cinco** decisiones
+  (`docs/propuesta-cierre-1.34.0.md`), con las tres autorizaciones separadas por naturaleza.
+  Publicación **no se pide**: ni `v1.33.1` ni `v1.34.0`.
+
+**Y una cifra que estuve a punto de «corregir» mal, la tercera de la sesión.** `SEC-014` figura
+`mitigado` en el registro y abierto en el campo de `REQ-013`. Antes de declararlo desfase conté el
+vocabulario del registro —`abierto` 78, `mitigado` 6, `cerrado` 1— y **`mitigado` es un estado
+propio, distinto de `cerrado`**: el campo estaba bien y no se tocó. Anotado en `D2`.
+
+## [Interno] — 2026-09-10 · La cota de `SEC-064` llega a su sede declarada, `CA-08 (ii)`, y con cifra propia: 1 y no 2, porque ahí la abstención es el estado estable
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos. **Tramo 2, despachado por la coordinadora bajo la delegación de 24 h.**
+
+**Causa: `SEC-064`** (`instrumento`, severidad **alta**), **no `QA-017-24`**. Su remediación fija la
+sede —«*la cláusula en `CA-06` o en `CA-08 (ii)`, que es su sede única*»— y el write-back del
+2026-09-09 la escribió **sólo en `CA-03`**: la abstención de `CA-08 (ii)`, que es el **sujeto medido**
+del hallazgo, seguía **sin cota**.
+
+**Sede elegida: `CA-08 (ii)`, no `CA-06`.** `CA-06` es la regla **transversal** del SKIP para las
+sondas de `CA-03`, `CA-04` y `CA-05`; una cota escrita allí sería genérica y cubriría con **una sola
+cifra** actos cuyas dispersiones están medidas **distintas**. Es la doctrina de **`ADR-011`** —el
+alcance se enuncia **por acto**, no por puerta—.
+
+**Cifra propia, derivada y no copiada: no más de 1 corrida consecutiva** (`operativo`, dirección
+**bajar**, con **suelo 1** declarado y su motivo). En `CA-03` la abstención es **ocasional y depende
+de la carga** (1 de 16 corridas del banco, 2 de 5 saturado), así que la segunda consecutiva
+**informa**. En `CA-08 (ii)` no informa: sobre **código idéntico**, la razón recorre **0,973–1,364**
+—factor **1,40**— con el techo **1,25** **dentro** del recorrido en **5 de 5** corridas de la puerta
+requerida, de modo que la abstención es el **estado estable**. Y `SEC-064` pone su **forzador** en la
+**primera** corrida con SKIP: una cota de 2 habría sido **más floja que el forzador del propio
+hallazgo**.
+
+**Se añade también cómo se comprueba** —el **historial** de `hooks-en-linux`, observable **externo a
+la corrida**, porque ninguna corrida puede contar a sus predecesoras; incumple la **segunda**
+consecutiva sin hallazgo con dueño, y hoy el hallazgo **existe**— y, **declarado con dueño y
+vencimiento y no en silencio**, lo que falta para poder **sumar** dos abstenciones: la **señal** y
+**de qué máquina** es cada una. Esto último se **comprobó antes de escribirlo**: ningún mensaje de
+`tests/escenarios/hooks/secciones/37-coste-del-escaner-5-el-camino-normal.sh` —incluidos sus **seis**
+de abstención— emite plataforma ni carga, así que entra como **exigencia con dueño `desarrollador`**
+y no como propiedad ya presente. Afirmarla como presente habría reproducido `QA-017-24` en el
+criterio vecino.
+
+**Nada se mueve de `CA-08 (ii)`:** techo **≤ 1,25×**, unanimidad de las `k`, ≥ 6 series intercaladas,
+convergencia por brazo, par discriminante, techo de coste 0,750× y la mitad (i) de **0 procesos
+añadidos**. La cota es **más estricta** que la de `CA-03`, no más floja. `SEC-064` **no se cierra**:
+el párrafo cierra **su instancia**, no la clase, y sus dos mitades siguen abiertas allí.
+
+**Archivos:** `requirements/REQ-017.md` (`CA-08` + fila de Historial). **`CA-03` no se tocó**; ni
+`QA:`, ni `Seguridad:`, ni `Estado:`, ni `Hallazgos abiertos:`. Sin código.
+
+## [Interno] — 2026-09-10 · Write-back de `QA-017-24`: la cota vive en el criterio, no en el mensaje — y una cota que nadie puede comprobar es la misma nada
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos.
+
+**Causa: `QA-017-24`** (`contrato`, `docs/qa/1.34.0.md`), cuyo dueño declarado es el analista. `CA-03`
+de `REQ-017` **se contradecía consigo mismo** sobre la abstención: un párrafo decía que *declara* su
+**cota** y su **máquina**, y el párrafo de publicación —enunciado **por propiedad**: parámetros del
+valor del cociente y condiciones de la toma— **no incluye la cota** y mapea a la publicación **sólo**
+la máquina. La lectura decidía si el arreglo era de **código** o de **texto**.
+
+**Decisión: vale la lectura de que la cota vive en el criterio; el arreglo es de TEXTO** y el código
+de la abstención queda **invariante**. Cambio **menor, sin ADR** (`SEC-064` delega expresamente en el
+write-back «dónde vive la cota y cómo se publica», con dueño `analista-requerimientos`). La otra
+lectura cede por tres razones medidas, no por coste: el propio `CA-03` distingue la mitad publicada
+(«*que es lo que el caso publica arriba*») y el **sujeto** de la cota es la **puerta requerida**, que
+ninguna corrida ve; imprimirla sería la **segunda transcripción** de una cifra `operativo` sin nada
+que cuadre las dos —la clase que **`QA-017-23`** acaba de medir en el `modo=` del mismo caso—; y
+`SEC-064` pide «*una señal que lo publique **sin depender de que alguien lea la salida***», así que
+una línea impresa no la cierra y **lo parecería**.
+
+**Nada se relaja:** la cifra (**no más de 2** consecutivas, `operativo`, dirección **bajar**), la
+escalada a hallazgo con dueño y al propietario y los umbrales de `CA-03` quedan intactos, y ningún
+caso se retira ni se hace opt-in. **Se añade lo que faltaba:** la **forma de comprobar** la cota
+—sobre el **historial** de `hooks-en-linux`, observable externo a la corrida; incumple la **tercera**
+consecutiva sin hallazgo con dueño— y la declaración de que hoy **nadie la cuenta por máquina**, que
+es la **segunda mitad** de `SEC-064`, **dueño `desarrollador`**, abierta allí. Y se **retira una
+sobreafirmación**: el párrafo cierra **la instancia** de `SEC-064`, no su clase.
+
+**Archivos:** `requirements/REQ-017.md` (`CA-03` + fila de Historial) y `requirements/README.md`
+(fila del índice **re-derivada de la cabecera**: `completado`→`en-progreso` y QA
+`aprobado`→`con-hallazgos`; **ningún veredicto se emite ni se retira aquí**). `QA-017-24` **sigue
+abierto**: lo cierra el `qa-tester` al re-validar.
+
+## [Interno] — 2026-09-10 · Propuesta de cierre de 1.34.0: quince entradas de la cola son CINCO decisiones, y los 23 bloqueantes son SIETE causas
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **Bajo delegación de 24 h.**
+
+**A petición del propietario**, que pidió una propuesta concreta para terminar 1.34.0 y decidir si
+antes hace falta un parche 1.33.1. Nueva: `docs/propuesta-cierre-1.34.0.md`. **No se abrió comisión
+de análisis y no se tomó ninguna medición nueva:** toda cifra se re-deriva del disco con el comando
+que la acompaña, sobre `7db3cfc`.
+
+### Lo que cambió respecto de lo que yo venía diciendo
+
+- **Los bloqueantes son 23, no 22.** El veredicto de QA de `REQ-017` cerró en esta misma ventana
+  (`con-hallazgos` sobre `86a44c8`) y aportó **`QA-017-24`** (`contrato`). La cifra 22 **no se borra**:
+  queda dicho en el documento de dónde a dónde se movió, y el **36 %** que el propietario corrigió
+  sigue siendo el correcto para el recuento con el que se enunció (8 ÷ 22); sobre 23 es el **35 %**.
+- **Aparece un desfase que ninguna de las dos partes puede ver sola.** Hay **once** hallazgos
+  `contrato` en estado `abierto` en `docs/seguridad/registro-seguridad.md` que **ningún** campo
+  `Hallazgos abiertos:` declara — y `guard-completado` lee **el campo**, no el registro. Seis de los
+  once tocan la ventana 1.34.0. Es la **misma familia que `SEC-073`**: un inventario parcial leído
+  como completo, esta vez aplicado a la cola misma. No lo resuelvo yo: el registro es del auditor y
+  el campo del analista.
+- **`REQ-020` nunca se implementó, y eso está medido, no inferido:** la línea `Acredita:` que sus
+  criterios contratan existe en **0 de 63** secciones del banco.
+- **Un `mitigado` que casi «corrijo» mal.** `SEC-014` figura `mitigado` en el registro y abierto en el
+  campo de `REQ-013`. Lo iba a declarar desfase; comprobé el vocabulario del registro (`abierto` 78,
+  `mitigado` 6, `cerrado` 1) y **`mitigado` es un estado propio, distinto de `cerrado`**: el campo
+  está bien y no se toca. Es la **tercera** vez en esta sesión que estoy a punto de sobrescribir una
+  cifra correcta; queda anotado por eso.
+
+### Estados desfasados del plan, re-derivados (coordinación, no decisión)
+
+`docs/PLAN.md`, tabla de alcance de 1.34.0 — las **cuatro** filas estaban desfasadas y el texto
+anterior queda **tachado, no borrado**: la 1 declaraba `CERRADO` un REQ que §9 **reabrió**; la 2 no
+decía que `CA-13/14/16/17` siguen **sin implementar** ni que `SEC-067` es `usuario/dinero`; la 3
+decía «`REQ-023` en implementación» cuando los dos están **`bloqueado`** con las tres vueltas
+agotadas y `REQ-024` con la **auditoría sin hacer**; la 4 decía «contratado» de un REQ `completado`.
+Y se anota que `REQ-020` **no figuraba** en la tabla pese a tener ventana 1.34.0.
+
+## [Interno] — 2026-09-10 · Índice de la cola para leerla desde GitHub, y una corrección: dije «hay proyectos corriendo 1.33.0» y eso lo inferí
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **Bajo delegación de 24 h.**
+
+**A petición del propietario, que preguntó si la 1.33.0 estaba publicada.** Lo está, y queda comprobado:
+tag **`810128a`** en el remoto (anotado `367516b`), contenido en **`origin/main`**, declarado en
+`.claude-plugin/marketplace.json` y en `plugin.json`, e **instalado en esta máquina** (sha `5f37946`, del
+2026-09-09). Lo que se desarrolla es **1.34.0**, que sigue sin publicar.
+
+### La corrección, y es sobre una frase que puse delante del propietario
+
+En `D17` escribí «*hay proyectos corriendo `v1.33.0` con esto abierto*». **Eso lo inferí, no lo medí**, y
+`AGENTS.md` lo dice de sí mismo («*lo usan proyectos reales*») — que es una afirmación del repositorio, no
+una comprobación mía.
+
+**Y lo medido resulta peor que lo que había escrito:** el consumidor **comprobado** de `v1.33.0` es **este
+propio repositorio**. Los hooks que han gobernado esta sesión —los que denegaron, avisaron y midieron
+durante toda la jornada— **corren desde el plugin 1.33.0 instalado**, por autoalojamiento. Así que el
+fail-open de `SEC-084` **ha estado vivo en las puertas que vigilaban el trabajo de hoy**.
+
+Eso cambia la forma de `D17`: no es «avisar a terceros que quizá existan», es «**el arnés que se desarrolla
+a sí mismo lleva abierto un fail-open en la guarda que valida su propio desarrollo**» — y eso **sí** está
+medido. La entrada queda reescrita con lo verificado y lo inferido **separados**.
+
+### Índice de la cola
+
+`PENDING_APPROVAL.md` tenía **quince** entradas sin índice, y así no se lee. Ahora abre con: las **tres
+que más desatascan** —`D17`, `D12` y `D11`, ésta con su aviso de no firmar la parte (b)—, el **estado de
+los cuatro REQ** de la ventana con qué espera cada uno, y **las quince en orden** con una línea cada una.
+No cambia ninguna decisión ni ningún dato: cambia que se pueda recorrer sin leerla entera.
+
+## [Interno] — 2026-09-10 · `R-027`: `SEC-082` y `SEC-083` cerrados, y un fail-open VIVO en lo publicado — la firma se puede colar decorando una clave
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `auditor-seguridad` (Opus) · enrutado: coordinadora. **Bajo delegación de 24 h.**
+
+**`Seguridad: aprobado` en `REQ-016`.** `SEC-082` **cerrado** (`mitigado`), `SEC-083` **cerrado**
+(`mitigado`), **`SEC-084` abierto** (`contrato`, alta) y **`QA-024-19` subido a `contrato`**.
+
+**Derivó su rango por cuarta vez y lo cuadró desde dos puntos:** código `ce714c7..aece716` **restringido
+por ruta** a los cinco globs = **122/9**, dos archivos, dos commits; texto `de84b4a` + `aece716`. Y arranca
+en `ce714c7` **y no en `a57eecc`** porque el diff de los globs sale **vacío en los dos extremos**, así que
+«*mi rango de código y el de QA son el mismo árbol medido desde dos puntos*». **Verificó él** que el delta
+de `lib.sh` es sólo comentario — «*no lo cité de QA*».
+
+### El hallazgo del día: la firma se cuela decorando la clave
+
+`SEC-084`. El disparador es `grep -q 'Seguridad:'` —**cadena literal**—, pero **el lector reconoce la
+clave decorada, y eso lo contrata `CA-04`**. Así que **`_Seguridad_: aprobado`** hace que **la firma pase
+sobre un `QA: pendiente` y el REQ cierre después**, en los **dos** estados de la llave, **sin deny y sin
+aviso** (salida vacía, `rc 0`), con la forma limpia denegando como control, **en cuatro árboles incluido
+`v1.33.0` publicado**.
+
+**Y la relación con `QA-024-19` es la lección:** QA lo había puesto `instrumento` porque «*el cierre sigue
+fail-closed*» — **cierto para la minúscula, falso para la clase**. Misma causa, **dirección del daño
+opuesta**. «*No es un desacuerdo de criterio: su premisa está medida falsa.*»
+
+**Y el defecto no está donde parece:** «*`CA-04` **exige** que la forma decorada gobierne —cosa que
+hace—*». El fallo es que **una guarda la tolera y la otra no**. Arreglarlo quitando la tolerancia
+**rompería `CA-04`**.
+
+### Contestó mi pregunta de `SEC-083` al revés de como la hice — y evitó que se escribiera una mentira
+
+Pregunté si `SEC-083` podía cerrarse **con la fila de §13 sin transcribir**. Su respuesta: **su cierre no
+depende de esa fila; la fila prescrita quedó FALSA** cuando el `desarrollador` tomó la salida (b), porque
+**anuncia un fail-open que ya no existe**. «*Transcribirla metería la promesa AL REVÉS en superficie
+heredada.*»
+
+**Verificado por mí:** `REQ-024:889` dice «*esta guarda **no deniega**»* y `guard-completado.sh:326-330`
+**sí deniega**. **Así que `D11` autorizaba escribir una promesa falsa**, y le he puesto el aviso en la
+propia entrada: su parte (b) **no se firma como está**; su parte (a) —ratificar `ADR-011`— sigue en pie.
+Sin esa pregunta, el gate se habría firmado y la mentira habría viajado a todos los proyectos.
+
+### Y declaró que su propia acreditación cuelga de un hallazgo que no audita
+
+«*Mi revisión sí toca la superficie de `QA-016-04` y lo digo: ninguna de mis **236** celdas ejerce un
+`Rigor:` no reconocido, y si esa vía cae abierta a `estandar`, **el brazo `critico` que acabo de acreditar
+no se ejecuta**.*» Y la frase que lo cierra: «**el suelo de mi propia excepción depende de un hallazgo que
+no audito**».
+
+### Evidencia propia, y con las dos guardas separadas
+
+**No corrió el banco ni reusó el de QA**: escribió su harness y **separó CIERRE de FIRMA, que son dos
+guardas distintas**. Ocho cláusulas de `CA-11` **todas ciertas**; la entrada **4/5 mueven en `ce714c7`,
+5/5 hoy**, con la mutación verificada **por su efecto en la tabla derivada y nunca por el `rc` del `sed`
+— el error que cometió en `R-026`**. **0 de 216** cabeceras convierten DENY→ALLOW al encender la llave,
+**con 19 ALLOW/ALLOW para que el cero no sea cierto por sondas muertas**. Y **verificó su propio acto**:
+la cabecera como la deja → ALLOW, con control positivo en las dos direcciones.
+
+### Un juicio que declaró como juicio, y una cuarta vuelta que decidió no ganar
+
+El titular de `CA-11`, leído aislado, enumera **una** excepción y la máquina tiene **dos**. Lo juzgó
+**acotado** porque el cuerpo nombra «la puerta de cierre» **cuatro veces**, y **no lo convirtió en
+hallazgo** «*para no ganar una cuarta vuelta de texto sobre un criterio cuya conducta pasa*» — con dueño y
+ventana escritos, y la corrección de una línea nombrada por si se lee del otro modo. **Escribió el
+veredicto de `R-026` comentado y no borrado**, porque «*comentar retira la declaración, que es lo que este
+REQ entrega*».
+
+**Escalado como `D17`, aparte de todo lo demás:** hay proyectos corriendo `v1.33.0` con `SEC-084` abierto,
+y qué hacer con un fail-open **ya distribuido** no es una decisión de ventana.
+
+## [Interno] — 2026-09-10 · QA refuta la premisa de mi propia escalada, y encuentra que la convención del arnés produce un valor que cae abierto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus) · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`QA: aprobado` sobre `7e19537`** —y **no** sobre `a57eecc`—, que era el punto de la comisión. «*La
+elección de commit es el veredicto*»: midió `a57eecc..7e19537` sobre `hooks/ tools/ .arnes/` = **122
+inserciones / 9 borrados**, comprobó que el delta de `lib.sh` es **sólo comentario** —así que toda la
+conducta nueva vive en `guard-completado.sh`— y firmó con `git status --porcelain` **vacío en los cinco
+globs**, «*para que el árbol que audite seguridad sea byte a byte el que validé*».
+
+**`SEC-082` queda listo para la firma del auditor**, con su write-back cierto **cláusula por cláusula
+medido ejecutando**. Y las cinco mitades del alcance: equivalencia comentado ≡ borrado **100 pares · 0
+divergencias · 30 discriminantes**, e **idéntico 100/0/30 en `a57eecc`** —así que **no se movió**—; la
+excepción en `critico` **26 casos · 0 fallos** incluido el `critico` **por suelo**; la entrada **era**
+código muerto y ya no lo es (**no mueve en `a57eecc` / mueve en `7e19537`**); «lo aplica la rama `critico`»
+**respondido ejecutando**; y no-regresión **14 casos · 0 fallos**.
+
+### Refutó la premisa de mi propia escalada, y me la corrigió antes de que la firmaras
+
+Escalé que encender `veredictos.caducan_con_codigo` **habría impedido** mi despacho sobre una firma
+vencida. **Es falso.** La comparación es **estrictamente anterior con resolución de DÍA**, y mi caso tenía
+veredicto del 2026-09-10 con código tocado el **mismo día**: **ALLOW**. Medido con fecha inyectada y
+verificada, con sus dos controles (2026-09-09 → DENY, sin fecha → DENY).
+
+**La guarda es ciega por construcción en el mismo día, no por estar apagada.** Y en un proyecto que hoy
+lleva **quince commits** al mecanismo, el mismo día **es** la unidad en la que ocurren los desfases. Coste
+de encenderla: **28 de 29 veredictos caducarían** (24 por fecha anterior + 4 sin fecha). **Cuesta casi todo
+el árbol y no compra la protección que motivó la pregunta.**
+
+La sostiene en `instrumento` —nada cambia de decisión hoy, y la resolución de día está **declarada en tres
+sedes**, luego **no hay texto falso**— y a la vez nombra la tensión con una frase que se queda: «**aquí el
+guardián ES el producto**». `D15` queda reescrita con la premisa corregida **antes** de que el propietario
+la lea.
+
+### `QA-016-04` (`contrato`): la documentación del arnés desactiva su propia auditoría
+
+```
+Sensible a seguridad: no  +  Rigor: critico              ->  DENY
+Sensible a seguridad: no  +  Rigor: critico (por suelo)  ->  ALLOW   ← cierra sin auditoría
+```
+
+**Un `Rigor:` que no se reconoce cae ABIERTO a `estandar`, y en silencio: cero avisos.** Y lo dispara **la
+convención del propio arnés** —`AGENTS.md` §13: «*un matiz va entre paréntesis*»—, la misma que este
+proyecto usa en todas partes. **Un usuario que siga la documentación al pie de la letra desactiva su
+auditoría.**
+
+**La asimetría lo confirma como defecto y no como decisión:** la **ausencia** del mismo campo **sí está
+guardada** y `Sensible a seguridad:` falla **cerrado**. Sólo este valor cae abierto. Texto heredado falso
+en **tres** sedes, **preexistente**, y reproducido **en el plugin estable 1.33.0 instalado** — el que
+gobierna este desarrollo. **Exposición viva aquí: ninguna**, comprobado sobre los 26 REQ que declaran el
+campo.
+
+**Y no lo colgó de `REQ-016`** —«*no es lo que `CA-11` contrata*»—, con la misma precedencia con la que el
+auditor no colgó `SEC-083` ahí. **Así que hoy no tiene sede en ningún campo, y sin sede ninguna puerta lo
+mide.** Escalado como **`D16`**, con la recomendación de un REQ nuevo en 1.35.0: colgarlo de `REQ-024`
+—`bloqueado` y con las tres vueltas agotadas— lo congelaría.
+
+**Banco dos veces:** 1056/0/8 y 1057/0/7, cuadre **1064** las dos, listas diferidas en **exactamente uno**
+—el oscilador—. **Cero SKIP dentro de su alcance.** Tres quality gates verdes.
+
+**Y una limitación que declara en vez de omitir:** su harness vivió en el scratchpad y **no se conserva**,
+con receta de re-derivación escrita en el informe.
+
+## [Interno] — 2026-09-10 · Vuelta 3 de 3: QA construyó la tercera forma de envejecer en DOS variantes, y `REQ-024` queda `bloqueado`
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus, vuelta 3 de 3) · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`QA: con-hallazgos` sobre `9ba3b1f`.** **Diez de los once criterios pasan.** Banco en **cuatro**
+corridas: `1058/0/6`, `1057/0/7`, `1057/0/7` y `1056/0/8` — **`PASS+SKIP = 1064` en las cuatro y 0 FAIL en
+las cuatro**, con `loadavg` publicado por corrida. La última varía porque **editó la cabecera del REQ y
+`40/1` y `40/5` LEEN ese archivo**: lo dijo en vez de dejar que pareciera flakiness.
+
+**Y leyó el CI en vez de citar el anterior:** `pending` sobre `9ba3b1f`, «*entre las dos bases hay ocho
+commits sin puerta*».
+
+### Construyó la tercera forma de envejecer — en dos variantes, y refutó la afirmación central
+
+Le pedí buscar el hueco que el `desarrollador` declaró no cubrir. Lo **construyó**:
+
+- **E1 — una comilla.** `grep -q 'Seguridad:'` → `grep -q "Seguridad:"` en `guard-completado.sh:334`.
+  Actos derivados **3 → 2**, **justo el suelo**, y la sección sigue en **10 PASS · 0 FAIL · 0 SKIP**.
+- **E2 — un acto nuevo con el `-n` de `SEC-083` dentro**, con la guarda escrita en `case` y **antes** de la
+  frontera: `QA:` declarado → DENY, **ausente → ALLOW**, **comentado → ALLOW**. El aparato **publica 3
+  actos de 37 ramas, ejerce 2, cumple el suelo y da 10 PASS**. **El acto nuevo no se ejerce nunca.**
+
+**Y el diagnóstico es más grave que el ejemplo:** la frase «**FALLA RUIDOSAMENTE, NUNCA EN SILENCIO**» es
+**cierta para la frontera y FALSA para el campo**, porque `sin-transicion/-` y `transicion/-` **no son
+actos: son cubos**. Así que el límite declarado **subestima la mitad** — la absorción ocurre en **las dos
+zonas**. Y esa frase **vive en el archivo de pruebas**, no en `ADR-011` ni en el REQ (`QA-024-17`).
+
+Es la diferencia entre discutir una afirmación y **fabricar su contraejemplo**.
+
+### `CA-12 (ii)` no está implementado, y el matiz que lo hace peor
+
+`QA-024-16`: la fila prescrita **no está** en `AGENTS.md` ni en su gemela —**verificado por mí: 0 y 0**—,
+**ninguno** de los 11 casos que citan `CA-12` mide texto heredado, y **hoy la fila vieja es verdadera por
+la salida elegida, no por construcción**: si `D12` se firmara por la salida (a), **volvería a ser falsa el
+mismo día y nada lo mediría**.
+
+**Una imprecisión suya, corregida:** dice que «*el gate que el propio criterio nombra no está en la cola*».
+**Sí está: es `D11`**, que autoriza exactamente la reescritura de esa fila de §13, y estaba escrito antes
+de que empezara. Su sustancia se sostiene entera; el dato, no.
+
+### Dos hallazgos más, y los dos son del instrumento compartido
+
+**`QA-024-18`** — el «verde por no ejercer» de `emite_edit`, **inventariado**: **122 usos en 22 secciones**
++ 2 inline, y **el centinela existe sólo en `40/6`**. Verificó de forma **independiente** que `40/4` y
+`40/5` están limpias hoy (**0 ocurrencias de `x` en sus 11 cabeceras**). Y la vía conforme: el centinela
+**en `emite_edit`**, **una vez para las 122**, en vez de 122 parches — la misma doctrina de `ADR-011`
+aplicada al banco.
+
+**`QA-024-19`** — **`seguridad: aprobado` en minúscula da ALLOW en los dos estados de la llave**, porque el
+disparador es sensible a mayúsculas. El cierre sigue fail-closed, pero **se pierde el guardián del orden y
+el aviso**: «*un auditor puede escribir una firma que nadie mide y nada comenta*».
+
+### Y los SKIP flotantes son TRES, no dos
+
+Apareció **`REQ-024 CA-07 (iii)`**, y lo midió **7 veces aislado**: **7 PASS**, mediana de medianas
+**2,061×**, MAD **0,019×** contra techo 2,200×. **10 de 11 observaciones PASS y la undécima una
+abstención** → el criterio **pasa** y su abstención es **miembro nuevo** de la familia de reloj de
+`SEC-080`.
+
+### Retiradas, y otra vez mirando qué queda después
+
+Retira **`QA-024-12`** —verificando **por mutación propia** que la tabla ya decide, y que **la trampa
+latente no se activó**—, **`QA-024-13`** y **`QA-024-14`**. **No retira `SEC-083`**, por dos motivos:
+retirar un hallazgo de seguridad es **acto del auditor**, y su remediación (2) está escrita «*mientras (1)
+no exista*» — y **(1) ya existe**, así que hay que releerla contra el texto más estricto de `CA-12 (ii)`,
+**que no está transcrito**. Y aplicó su propia lección: «*retirarlo repetiría exactamente el ALLOW sobre
+firma vencida de la vuelta anterior*».
+
+**Y cazó dos de sus propias mutaciones que no tomaron efecto** —descartó esas corridas y lo declaró—:
+«*sin esa regla habrían pasado por «no discrimina»*».
+
+### `REQ-024` → `bloqueado`, y por qué lo aplico yo
+
+**Lo aplico porque describe la realidad**, no porque elija: lo que queda **no es un residual**, es
+`CA-12 (ii)` **contratado y sin implementar**, y **su redacción no puede escribirse** hasta que el
+propietario firme `D12`, porque **el REQ prescribe dos textos alternativos**. «*El trabajo son horas, pero
+está aguas abajo de una firma humana que no ha llegado. Esa es la definición de bloqueado.*»
+
+**Lo que NO aplico es la alternativa:** cierre con residual declarado es **una decisión de aceptación** y
+es del propietario. Escalado como **`D14`**.
+
+## [Interno] — 2026-09-10 · `CA-12` medible: el extractor envejece RUIDOSAMENTE, medido — y un «verde por no ejercer» cazado en su propio fixture
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**Banco 1058 PASS · 0 FAIL · 6 SKIP = 1064**, cuadre total y por archivo en verde, `rc=0`, 1 min 04 s,
+`loadavg` 1,06 → 2,69. Autoprueba 106 · 0 (incluidas las cinco comprobaciones de `CA-18`). Tres quality
+gates verdes. **+10 casos, ninguno movido.**
+
+### Deriva los actos, no los nombra
+
+**3 actos derivados de las 36 ramas de denegación** de `hooks/guard-completado.sh` —`sin-transicion/-`
+(8), `sin-transicion/Seguridad` (3), `transicion/-` (25)—, con la **zona** fijada por la frontera de la
+transición (línea 448, la última que devuelve 0 cuando el estado resultante no es el terminal) y el
+**campo exigido** por la guarda que **domina la rama por sangría**. **Ejerce 2 de los 3.** Y el detalle
+que lo hace derivación y no etiqueta: **cuál ejerce cada sonda lo dice el ancla de la rama que denegó**,
+no una cadena escrita en el banco.
+
+### Y probó que su extractor envejece RUIDOSAMENTE, que es lo único que le pedí
+
+`ADR-011` aceptó a propósito que este extractor **se rompería cuando el código cambiara de forma sin
+cambiar de conducta**. Él lo **midió**: una copia con `done_norm`/`estado_done` **renombrados** —cambio de
+forma, conducta idéntica— da **5 PASS · 0 FAIL · 5 SKIP**, y los SKIP dicen «*no se pudo DERIVAR la
+frontera de la transición*». **Ni un verde que ya no mide, ni un rojo que no es del sujeto.**
+
+Y **construyó el envejecimiento dentro del informe**: publica aparte las denegaciones **sin mapear** y las
+**ambiguas**, «*que son las dos formas de envejecer del extractor*». No se limitó a aceptar que envejecerá:
+hizo que se vea cuándo empieza.
+
+### El hallazgo que más vale: un «verde por no ejercer» en su propio fixture
+
+Con la convención `old_string: "x"` de `emite_edit`, **un fixture cuyo texto contenga una `x`** —su título
+decía «fixture»— hace la edición **reconstruible**, el `Seguridad: aprobado` **cae a mitad de línea** y
+**las seis celdas del acto de firmar salen ALLOW**. Un verde **por no ejercer**, en el caso que existe para
+medir esa misma clase de cosa.
+
+Lo cerró con un **centinela que no puede estar en el documento**, lo **declaró en el archivo**, y
+**comprobó que `40/4` y `40/5` usan `"x"` y hoy NO están afectadas** —ninguno de sus fixtures lleva `x`—
+pero que el riesgo es **latente para cualquier fixture futuro**. Candidato a `instrumento`, y **no lo abrió
+él**: lo deja a QA.
+
+### Discriminó los dos SKIP flotantes en vez de suponerlos
+
+Tres pares alternados **con** y **sin** su sección (63 y 62 enlaces, vía `ARNES_SECCIONES_DIR`):
+`REQ-023 CA-09 (iii)` sobre `arnes_campo_linea` abstiene **2 de 3 con** y **1 de 3 sin**, y
+`REQ-017 CA-08 (ii)` flotó en el par 2 **en las dos ramas** → los dos son de reloj (`SEC-080`) y **no
+atribuibles**. El brazo `sin` cuadró **1054** las tres vueltas y el `con` **1064** las tres. **Y sus 10
+casos: PASS en 6 de 6 vueltas, 0 SKIP y 0 FAIL propios.**
+
+### Reuso dicho en voz alta, con su precio y su límite
+
+`mat12` es copia **reducida** de `mat05` —**33 líneas frente a ~44**— y **suelta la verificación por hash
+a cambio de algo más fuerte**: un **control positivo de conducta** (la base tiene que **morder**) más el
+**código de salida** del hook. `duplicadas=72`, por debajo de sus pares (80–129).
+
+Y explicó **qué no se puede reusar y por qué**: las invariantes 3 y 4 del banco **prohíben** `source` entre
+secciones y un archivo auxiliar en `secciones/`, así que la única reutilización real sería **subirlo al
+corredor** — cambio de mecanismo **decidido al contrario** en `AN-021-01`. Es la diferencia entre «no lo
+reusé» y «no se puede reusar, y aquí está la decisión que lo prohíbe».
+
+### El límite que declara
+
+Lo derivado es una **cota inferior**: un tercer acto que naciera **sin guarda de campo y después de la
+frontera** **no se vería** —se publicaría 3 y el suelo se seguiría cumpliendo—. Escrito en el caso.
+
+**`CA-12` queda MEDIBLE, no acreditado** — «*eso es de QA*». Su suelo, sus tres controles en los dos
+estados y su fail-before se publican **en cada corrida**, con fail-before propio **en las dos
+direcciones**.
+
+## [Interno] — 2026-09-10 · El caso de `CA-05`: «24 de 24 iguales» ya no puede salir verde contra sí mismo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**Banco 1047 PASS · 0 FAIL · 7 SKIP = 1054**, cuadre exacto (`CASOS_ESPERADOS` 1047 → 1054 con su
+derivación), `rc=0`, 64 s, `loadavg` 0,26 → 2,37. Autoprueba 106 · 0. Tres quality gates verdes.
+
+### La prueba que le pedí, y la trajo
+
+Le advertí que un caso que sólo comprobara «24 de 24 iguales» **pasaría también si el materializador
+fallara y comparase el árbol contra sí mismo**. Su par lo cierra: con **`ARNES_CA05_BASE=8b06cd6`** —la
+base **es** el árbol— el caso da **0 PASS · 2 FAIL · 5 SKIP**. **La vacuidad ya no puede salir verde.**
+
+**Y midió su propio denominador en vez de reutilizar el mío:** 10 formas × 2 actos × 2 estados de la llave
+= **40 celdas**, las dos versiones en la misma corrida. `cierre` con llave apagada = **10 de 10
+idénticas**; `firma-seguridad` = **5 + 5 divergentes**, todas sobre cabeceras sin `QA:`; **13 divergencias
+y las 13 de ALLOW a DENY**. Las formas 1-5 **derivadas** de `ARNES_AUSENCIA`, no escritas a mano.
+
+**Y su fixture es cota INFERIOR a propósito:** «*hace el suelo más difícil, no más fácil*». Es la elección
+contraria a la que abarata un verde.
+
+### Los cinco pares, cada uno aislando una exigencia
+
+Fallan **1** y siguen verdes **6**, que es lo que hace que cada par pruebe **una** cosa:
+
+| exigencia | cómo se rompe | veredicto |
+|---|---|---|
+| **(i) dirección** | mutar `ARNES_CLAVE_QA\|deniega` → `gobierna:aprobado` | **FAIL** nombrando las celdas `DENY→ALLOW` |
+| **(i) existencia** | la base **es** el árbol | **0 PASS · 2 FAIL · 5 SKIP** |
+| **(ii) declarada en el criterio** | `REQ-024` de `00b8cb4` | **FAIL** citando el primer patrón que no casa |
+| **(iii) donde la ve quien migra** | skill de `de84b4a` | **FAIL** |
+| **(iii) ídem, la cola** | `PENDING_APPROVAL` de antes de `D12` | **FAIL** |
+
+**Y la abstención cubre las dos formas de no poder medir:** base no materializable → **7 SKIP** citando el
+motivo del materializador; **denominador 0** → el caso del cierre **abstiene y nunca da PASS**, con el
+mensaje «*la clase derivada por cota inferior tiene 0 campo(s) y 0 de las 10 formas omiten uno*».
+
+### Y no se acreditó a sí mismo
+
+**«`CA-05` NO queda acreditado por esta entrega»** — el caso existe y mide, pero «*el veredicto acreditante
+es del `qa-tester`*», y además el criterio **cuelga de `ADR-011` y de la ratificación de `D12`**, que son
+del propietario. Podía haber dicho «cumplido» y nadie lo habría discutido esta noche.
+
+**Y declaró la limitación de sus propios casos (ii) y (iii):** reconocen **por cadena literal**, así que
+«*una redacción distinta que dijera lo mismo los pondría rojos*» — clase de `QA-024-05`, y la vía conforme
+es **añadir la forma a la huella, no retirar el caso**. Lo que sí es fail-closed es lo contrario: **un acto
+que mida divergencia y no tenga huella hace FALLAR el caso nombrándolo**.
+
+**`REQ-017 CA-08 (ii)` no flotó** esta vez: PASS con máx(r) **1,217×** bajo el techo 1,250×. Y el
+inventario sólo añade sus 7 casos; lo demás son contadores de corpus que **cosechan los propios archivos
+de sección** y la semilla del sorteo.
+
+**Y notó que el árbol avanzó a `a9c4f2d` a mitad de su comisión**, comprobó que `hooks/` y `tools/` son
+**idénticos** entre las dos puntas y que el cambio ajeno no toca el bloque de `CA-05`, **y corrió la vuelta
+final después**. Nadie le pidió esa comprobación.
+
+### Un patrón que anoto y no arreglo
+
+**Corrección de mi propia nota, medida después de escribirla:** dije «tres secciones y la que ya estaba»
+sin nombrarla, y el patrón es más nítido de lo que escribí. **Tres están en 400 líneas EXACTAS** —el techo
+de `CA-18`—: `28-rotacion-seccion-3-la-tabla.sh`, `40-ausencia-que-abre-2-migracion-y-punteros.sh` y
+`40-ausencia-que-abre-5-el-radio-por-acto.sh`; y una cuarta, `35-arnes-paralelo-fail-open.sh`, está en
+**399**. Cuatro archivos apiñados contra el techo.
+
+Y el contraste dice de dónde viene: **las cuatro secciones de la familia `37-*` lo superan con holgura**
+—577, 552, 504 y 468 líneas— porque ahí gobierna el **piso** y no `N`. O sea que el techo aprieta
+**exactamente donde el piso no lo protege**, que es donde la puerta es única y los casos tienen que
+ejercerla y no una copia. **Cuatro archivos clavados en el techo no son cuatro coincidencias.** Queda como
+`instrumento` sin abrir, para el analista.
+
+## [Interno] — 2026-09-10 · Tres notas al pie sobre la misma afirmación: corregir sede por sede es lo que `ADR-011` acaba de prohibir, aplicado al texto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`REQ-024:1249`** gana el acto: `CA-05` contrata que **en el acto de CIERRE** un proyecto que no activa
+nada decide idéntico REQ a REQ, **y nombra dentro del propio criterio el acto que sí diverge** — la
+escritura de `Seguridad: aprobado` sobre un REQ que no declara `QA:`. Con el motivo de por qué el acto va
+**dentro** (se lee aislada, `CA-10`) y con la promesa «sobre todos los actos que la puerta juzga»
+declarada **retirada por `ADR-011`**.
+
+### La respuesta a «¿sigue bastando la nota al pie?», que es mejor que la pregunta
+
+**«Basta para esta corrección y no debería usarse una cuarta vez sobre la misma afirmación» — y la
+acumulación sí dice algo.** Son **tres** frases del mismo documento precisadas el mismo día —`:41`
+Contexto, `:131` Consecuencias, `:101` Alternativas—, **las tres dicen lo mismo**, y **ninguna la encontró
+quien la buscaba**: las tres aparecieron **de rebote**, al implementar otra cosa.
+
+Y el argumento que lo cierra: **corregir sede por sede una misma afirmación es exactamente la forma que
+`ADR-011` acaba de prohibir para el código, aplicada al texto** — «*la cuarta llegará*». El ADR que
+decidió «enunciar **por acto** y no por puerta» estaba siendo incumplido en su documento hermano por
+**corregir instancia a instancia en vez de en la fuente**.
+
+**Y nombró la salida proporcionada sin tomarla**, porque «*es una decisión sobre `ADR-009` que `ADR-009` no
+puede tomar*»: **retirar de él la magnitud del radio de migración y remitirla UNA sola vez a
+`CA-01`/`CA-05`**, que es quien la mide, dejando en el ADR **la decisión**. Añadido a `D8`, con el dato que
+ese gate necesita: **ratificar `ADR-009` hoy es ratificar un texto que se lee con tres condiciones**.
+
+### Por qué una segunda nota y no ampliar la primera
+
+Tres motivos, y el segundo aplica una lección de hace dos horas: ampliar la primera obligaba a **reescribir
+el texto fechado de otro analista** y, peor, **su título con cuenta** («*dos* frases … precisadas») — **un
+número sobre una magnitud que sube**, que es **exactamente** la forma que el write-back de `QA-024-13`
+castigó en este mismo REQ y que envejecería a la corrección siguiente. Un ADR nuevo **no cabe** porque aquí
+**no se decide nada**. Y «inocua» **sería falso**, porque es la forma que produjo `SEC-083`.
+
+**Y cerró una deuda ajena con la forma que su dueño había nombrado:** la nota **pone el puntero que
+faltaba**, declarando que el alcance de `ADR-009` quedó extendido por `ADR-011` — lo que cierra la
+consecuencia (−) que `ADR-011` había dejado escrita como «*lo digo y no lo hago*». **Y declara el residual
+que eso crea:** esa viñeta de `ADR-011` queda vieja, y `ADR-011` estaba fuera de su alcance.
+
+### Y dos veces aplicó la doctrina del Historial sin que nadie la invocara
+
+**Detectó una tercera sede dentro de `REQ-024` y NO la editó:** la fila del Historial del **2026-09-09**
+repite la promesa, pero es una fila **fechada** que dice **qué se sabía ese día** y está superada por las
+posteriores de la misma tabla — «*editarla borraría con qué se decidió*». Mismo criterio para la fila del
+2026-09-10 que dice «`ADR-009` no se toca»: **describe el acto de aquella comisión y sigue siendo verdad**.
+
+**Nada nuevo reabre ningún REQ**, y lo argumenta: `REQ-024` ya estaba `en-progreso`, y la reapertura de
+`REQ-023` por su `CA-11` **ya estaba declarada** por la comisión anterior — «*mis ediciones sólo dejan de
+contradecirla*». No tocó ese archivo; sigue escalado como `D13`.
+
+## [Interno] — 2026-09-10 · `CA-06 (v)`: un caso DERIVADO en vez de literal, y por eso cazó dos frases que nadie había mirado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**Banco 1040 PASS · 0 FAIL · 7 SKIP = 1047**, cuadre exacto (`CASOS_ESPERADOS` 1041 → 1047, con su
+derivación), `rc=0`, 63 s, `loadavg` 0,37 → 2,17. Autoprueba 106 · 0. Tres quality gates verdes.
+**Par fail-before/pass-after: 19 PASS · 7 FAIL → 26 PASS · 0 FAIL.**
+
+### El sexto caso mide una propiedad, no una cadena — y eso es lo que lo hace útil
+
+Cinco de sus seis casos reconocen **por cadena** y **lo dicen**, con denominador publicado. **El sexto es
+derivado**: exige que **toda promesa de equivalencia del apartado lleve el acto DENTRO de la promesa**. Y
+por eso encontró lo que nadie buscaba — **dos frases del mismo apartado que el write-back de `CA-05` dejó
+medidas falsas**, y que violaban la cláusula final de `CA-06`:
+
+- «*la resolución de la ausencia de un campo de cabecera **decide exactamente lo mismo que 1.33.0**»* —
+  falsa **por construcción**, porque **las celdas que divergen SON resoluciones de la ausencia de `QA:`**,
+  sólo que en otro acto. Ahora: «**en el acto de CIERRE** tu proyecto **cierra exactamente como cerraba**».
+- «*sin la llave, 1.34.0 **decide como las anteriores**»* → «*…sólo actúa **en el CIERRE si la enciendes**:
+  sin la llave, 1.34.0 **cierra como las anteriores**»*.
+
+Es la respuesta a `QA-024-05`, que había medido que un caso de esa misma sección seguía en **PASS** con un
+barrido inyectado de **cero** declaraciones porque reconocía **por cadena literal**. Un caso derivado
+encuentra la clase; uno literal encuentra la instancia.
+
+**Y su par discriminante lo prueba en las dos direcciones:** inyectada **una promesa sin acto**, el
+derivado pasa a **FAIL** («4 vistas y 2 enunciadas SIN acto») **mientras los cinco literales siguen
+verdes**; retiradas **todas** las promesas, **`SKIP` con su motivo, no PASS**.
+
+### Discriminó un SKIP flotante en vez de suponerlo
+
+Apareció un **octavo** SKIP **justo después** de editar `hooks/lib.sh` — la coincidencia más sospechosa
+posible. En vez de atribuirlo, lo **midió emparejado y alternado** contra un árbol de hooks **idéntico
+salvo `lib.sh` revertido**: medias **1,169×** contra **1,167×**, n=16 por lado, **8/8 en PASS**. Es
+`REQ-017 CA-08 (ii)`, la abstención del instrumento bajo carga, con el techo `1,250×` a un **3 %** de la
+razón típica `1,17×`. **Ni suyo, ni de este REQ, y no lo arregló.**
+
+Eso es exactamente lo que este día ha enseñado a hacer, y lo hizo sin que se le pidiera.
+
+### El barrido de `CA-10` le corrigió dos oraciones propias
+
+**S1** decía «cada edición» **sin la cobertura parcial de `Bash`** (§13); **S3** decía «uno de los dos
+valores», que **no nombra la salida**. Las dos las cazó **su propio barrido**, aplicado a su propio texto —
+que es la tercera vez hoy que ese barrido caza a alguien que ya conocía la regla.
+
+**La titular queda verdadera leída sola:** «*escribir `Seguridad: aprobado` sobre un REQ cuya cabecera NO
+declara `QA:` pasa a DENEGAR, y DENIEGA con la llave APAGADA*» — medido en **7 celdas**, sin condición
+oculta de `Estado:` ni de `Rigor:`, y con «**un** acto» indefinido, que **no promete exhaustividad**.
+
+### Fuera de alcance, hecho y declarado
+
+**Los dos comentarios gemelos de `hooks/lib.sh` (`:1527` y `:1905`)** con la misma promesa **sin acto** —
+sólo comentarios, **0 líneas de código**— y una referencia posicional **ya falsa antes** de esta comisión.
+
+**Y dos sedes más que NO tocó por dueño:** `docs/decisions/ADR-009…:101` y `requirements/REQ-024.md:1249`
+(«*un proyecto que no activa nada decide idéntico*»). Son del analista, y **`ADR-011` ya decidió el
+sujeto**, así que la corrección tiene doctrina y no hace falta inventarla.
+
+**`CA-05` sigue sin acreditar:** su caso de equivalencia del **cierre**, con su anti-vacuidad y publicando
+la divergencia del otro acto, está pendiente.
+
+## [Interno] — 2026-09-10 · `CA-05` no se cumplía por su propio texto, y la asimetría que lo explica: sobrevive el criterio que nombra su acto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · escalada: coordinadora. **Bajo delegación de 24 h.**
+
+### La asimetría, que es el hallazgo conceptual del día
+
+**`REQ-016 CA-11` sobrevive y `REQ-023 CA-11` se rompe**, y la diferencia entre los dos es **una palabra**:
+el primero **nombra su acto** —«la puerta de **cierre**»— y el cierre no cambió; el segundo dice «*Cuando
+**la puerta** lo juzga*», **sin acto**, y por eso es **falso sobre este árbol** desde que la firma de
+seguridad sobre un REQ sin `QA:` deniega.
+
+**Dos criterios de la misma clase; sobrevive el que dice sobre qué acto habla.** Es la **tercera** vez hoy
+que la falta de sujeto produce un hallazgo: `SEC-083` («un acto» contra «cualquier acto»), `CA-05` y ahora
+éste.
+
+### `CA-05` no se cumplía igual — y no por el acto que cambió, sino por lo que su texto decía
+
+El analista lo resolvió **leyendo** y no por analogía, que era justo lo que le pedí: su `Cuando` era
+«*cuando **la puerta** de esta versión los juzga*» y su titular «*un proyecto que no hace nada **no nota
+nada***» — **las dos sin acto**, y la titular se juzga aislada por `CA-10`. **La equivalencia que estaba
+medida es la del cierre —24 de 24 celdas idénticas— y ésa se cumple entera**; lo que abarcaba de más era
+el **enunciado**.
+
+Así que `CA-05` pasa a enunciarse **sobre el acto de cierre**, con el acto que **sí** cambió **dentro del
+criterio** —firma de seguridad sobre un REQ sin `QA:`, ALLOW→DENY en los dos estados de la llave— y con
+**tres exigencias para que no sea un descargo**: dirección **restrictiva** (un `deny`→`allow` incumple en
+**cualquier** acto), divergencia **declarada en el criterio** —«*si vive sólo en código o en un log es
+deriva §9*»— y escrita **donde la ve quien migra**. **De fondo, con `ADR-011` ya existente y enlazado**; no
+creó un segundo ADR sobre la misma decisión.
+
+**Y declaró la consecuencia que le costaba, en vez de callarla: `CA-06` deja de estar acreditado** por lo
+entregado el 2026-09-09 — su punto **(v) no existía**, así que debe una viñeta en
+`skills/arnes-upgrade/SKILL.md` y su caso en `40/3`.
+
+### `CA-11` de `REQ-016`: verificado leyendo, no por analogía
+
+La cita corregida dice que la entrada de `Seguridad:` **era** código muerto y **ya no lo es**. Y sobre si
+«lo aplica la rama `critico`» sigue cierto: **sí, y lo comprobó en el código** — la llamada
+`arnes_resuelve_ausencia "$ARNES_CLAVE_SEG"` está **dentro** del brazo `critico`, con `seg_ef` comparado
+contra `aprobado` inmediatamente después. Con la llave **apagada** —el estado de fábrica— la tabla **no
+llega a consultarse** y lo que deniega en `critico` es la exigencia del **veredicto**, con un motivo que
+habla del veredicto y no de la declaración. **Menor, sin ADR.**
+
+### Y se paró donde debía
+
+`REQ-023 CA-11` **reabre**, y **no tocó `requirements/REQ-023.md`**: está `bloqueado` y fuera de su
+alcance. Dejó el hallazgo **registrado con dueño** en «Conflictos registrados» de `REQ-024`. Escalado como
+**`D13`**, porque el propietario dijo expresamente que otro bloqueo en `REQ-023` se le entrega **con la
+evidencia y la decisión concreta**, y ésta es la tercera vez que un agente se detiene ante ese límite en
+vez de ampliarlo.
+
+**Lo que pesa de `D13`:** `REQ-023` lleva dos firmas verdes conseguidas ayer con tres vueltas y dos
+auditorías, y **cubren un árbol en el que `CA-11` era cierto**. Hoy no lo es. Un criterio falso con firma
+verde encima es **exactamente** la forma que este proyecto persigue — y está **dentro del REQ que existe
+para cerrar esa clase**.
+
+## [Interno] — 2026-09-10 · `SEC-083` cerrado en código, y la «opción barata» de `SEC-082` resultó ser la bloqueada
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**Banco 1034 PASS · 0 FAIL · 7 SKIP = 1041**, `rc=0`, 63 s; autoprueba 106 · 0; tres quality gates verdes.
+`loadavg` 0,35 → 2,53 con `nproc`=12. **Delta +17 casos** y `CASOS_ESPERADOS` **1024 → 1041** — «*lo toqué
+y lo digo, nadie más estaba en `run.sh`*».
+
+### `SEC-083`: el par en las dos direcciones, y el caso que el `-n` no cubría
+
+| caso | base `493fb44` | árbol |
+|---|---|---|
+| **sin línea `QA:`** + firma | **ALLOW** | **DENY** |
+| **`QA:` comentada** + firma | **ALLOW** | **DENY** |
+| `Seguridad: preventiva` sin `QA:` | ALLOW | ALLOW |
+| **inocente: veredictos cruzados EN DISCO, no toca `Seguridad:`** | ALLOW | **ALLOW** |
+
+**En los dos estados de la llave.** Diferencial completo: **34 celdas, 28 idénticas, 6 divergentes — y las
+6 son exactamente la firma sobre un REQ sin veredicto de QA**. **Las 24 celdas del acto de cierre deciden
+idéntico.**
+
+Y comprobó **antes de tocar** lo que yo le pedí comprobar: la intención legítima la sirve el
+`grep -q 'Seguridad:'` **de dentro**, no el `-n`. El caso inocente lo prueba con `$qa` **no vacío** —
+veredictos ya cruzados en disco—, que es **precisamente lo que el `-n` retirado no cubría**.
+
+### `SEC-082`: la opción «barata» era la bloqueada, y sólo se ve mirando
+
+Elegí decirle que (a) era el arreglo real y (b) el barato. **Se equivocaba mi etiqueta:** el `_doc` de
+`.arnes/config.json` **y su gemela del template** ya prometen que «`Seguridad:` **también DENIEGA**… su
+veredicto sólo se lee cuando el rigor efectivo es `critico`», así que **acotar el comentario exigía editar
+dos archivos que él tenía prohibidos**. **(b) no era la barata: era la bloqueada.** Tomó **(a)**: 6 líneas,
+la entrada queda **viva y medible por mutación**, y la conducta salió **idéntica en las 24 celdas** del
+cierre.
+
+**Mutación con control positivo, verificada por su efecto y no por el `rc` del `sed`:** omitiendo
+`Seguridad`, la mutación **no movía** el veredicto en la base y **lo mueve** en el árbol; las otras cuatro
+claves se mueven **4 de 4** en las dos versiones.
+
+### La cascada: su arreglo invalidó una medición escrita media hora antes
+
+`REQ-016 CA-11` —del **mismo** commit— dice que «alterar la entrada de `Seguridad:` en la tabla **no
+mueve** el veredicto». **Ya lo mueve.** Ninguna exigencia de conducta se incumple —la equivalencia
+comentado ≡ borrado y la excepción del `critico` siguen exactas y medidas—, pero su **cita de medición
+describe un estado que dejó de existir**. Lo detectó él y lo enrutó al `analista` en vez de retocar el REQ.
+
+**Y `CA-12` nació mientras trabajaba** (`73822fa`, 02:10) y **le obligó a reescribir el arreglo**: prohíbe
+resolver la ausencia «*por una comprobación local del tipo el campo está*», que es **exactamente** lo que
+había escrito primero. Hoy la guarda pregunta la **dirección declarada** al sitio único y actúa según ella;
+mutar `QA|deniega` **mueve** el veredicto del acto de firmar.
+
+### Un hallazgo colateral que el banco encontró y él arregló
+
+Su denegación por ausencia **se adelantaba** a la guarda de medibilidad de `REQ-023` con un BOM dentro de
+`QA:`. **El veredicto era DENY en los dos casos; el diagnóstico era falso** —«no declara ningún `QA:`»
+sobre una línea que **está ahí**—. Hoy manda la medibilidad. Y como el caso de `REQ-023 CA-02` **pasa
+ahora por su rama**, eso **desplaza su cobertura**: añadió un caso explícito que fija la precedencia y que
+**falla también contra `493fb44`**.
+
+Es la clase de consecuencia que se pierde si sólo se mira el veredicto: **dos DENY con motivos distintos
+no son el mismo DENY.**
+
+### Disciplina y límites
+
+Escribió `hooks/guard-completado.sh` con **`Edit` y no con `sed -i`**, citando §13: la preferencia de
+sesión por consola **cede** para un archivo que una invariante protege. **`CA-12` no queda acreditado** por
+lo entregado —su aparato de anti-vacuidad exige el materializador de línea base, y su mitad (ii) es texto
+con gate humano—. Y corrigió un comentario **ya falso en `493fb44`** dentro del bloque que tocaba, dejando
+dicho que **queda una gemela sin tocar** en `hooks/lib.sh:1538`, fuera de sus dos hallazgos.
+
+**Los 7 SKIP con su motivo, ninguno nuevo. Y `REQ-017 CA-08 (ii)` no está en la lista: saltó en su primera
+corrida y pasó en las tres siguientes** — el oscilador documentado, y la razón por la que el recuento se
+lee **por lista y no por total**.
+
+## [Interno] — 2026-09-10 · `ADR-011`: complementa a `ADR-009` en vez de superarlo, y su gate entra en la cola porque el propio analista lo pidió contra sí mismo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · sede del gate: coordinadora. **Bajo delegación de 24 h.**
+
+**`ADR-011` COMPLEMENTA a `ADR-009` extendiendo su alcance: no lo supersede ni lo precisa**, y el
+razonamiento es de manual. **No lo supersede** porque **ninguna** de las tres decisiones de `ADR-009` se
+revierte —el sitio único sigue en `hooks/lib.sh`, la tabla campo a campo sigue correcta, la llave sigue en
+pie con sus 0 procesos medidos—; y marcarlo superado «*retiraría de vigencia algo medido y, peor,
+sugeriría que el defecto estaba en la decisión y no en **la extensión que se le atribuyó**»*. **Y no lo
+«precisa»** porque precisar es lo que hizo la nota al pie sobre dos **magnitudes** medidas falsas: aquí
+cambia el **sujeto** de la propiedad y **nace una obligación nueva**, y «*una decisión escondida al pie de
+otro documento no la encuentra quien busca decisiones*».
+
+**No copió el gate de `ADR-009` por inercia: lo verificó.** Comprobó que **ninguna** de las dos salidas de
+`CA-12` añade llave —la condicionada usa `campos.ausencia_exige`, que ya existe en las dos sedes; la
+independiente **no lee el manifiesto**— así que el motivo del gate **no es el manifiesto**. Sus dos
+motivos propios: **una decisión sobre una decisión no puede estar más firme que su base** —y `ADR-009`
+sigue en `propuesta`— y **habilita la reescritura de la fila de §13 y su gemela**, superficie heredada con
+gate previo por §6 y precedente en `D7`.
+
+**Y señaló contra sí mismo el hueco que quedaba:** el gate vivía **sólo dentro del ADR**, porque
+`PENDING_APPROVAL.md` estaba fuera de su encargo — «*un gate que no está en la cola no lo mide ninguna
+puerta*». Es la deriva de §9 aplicada al mecanismo de los propios gates. Le he dado sede como **`D11`**.
+
+**La consecuencia más cara, escrita como (−) y aceptada a propósito:** enunciar por acto **obliga a
+derivar la lista de actos del código**, y eso es un **extractor** que hay que escribir, mantener y probar
+con fail-before, y que **se rompe cuando el código cambia de forma aunque no cambie de conducta**. Con
+precedente **medido y en este árbol**: `tools/arnes-lectura.sh:69-72` deriva las claves del **texto** de
+los brazos `case` con `sed`, y el Historial de `REQ-024` ya declaró que reescribir esa forma literal
+**rompe el informe**. Se paga porque «*la alternativa barata es una lista que envejece hacia el lado que
+abre*» — que es **exactamente cómo nació `SEC-083`**.
+
+**Y una decisión que NO tomó, con tres motivos y ninguno es pereza:** la elección entre las dos salidas de
+`CA-12` queda abierta con dueño, porque la propiedad **por acto no depende de ella**, porque elegirla
+exige una medición de `CA-07 (i)` **que nadie ha tomado**, y porque la salida (b) arrastra un write-back
+en `CA-05` que su comisión tenía prohibido — «*decidirla habría dejado su obligación colgando*».
+
+**Y no tocó `ADR-009`**, dejando **declarado como consecuencia (−)** que no lleva puntero a `ADR-011`, con
+la forma proporcionada ya identificada en el repo si el propietario la quiere: una nota al pie fechada. Un
+ADR no se reescribe encima, ni siquiera para añadirle un enlace útil.
+
+## [Interno] — 2026-09-10 · `SEC-083`: «el campo no llega a declararse» no es una vía, es un ESTADO — y por eso `ADR-009` pasó por al lado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+### La generalización que impide que la próxima mitigación falle igual
+
+`ADR-009` enunció su alcance sobre «**la puerta de cierre y el lector de campos**» —o sea sobre **un acto
+y un lector**—, y ahí está el hueco: «*el campo no llega a declararse*» **no es una vía: es un ESTADO**, y
+un estado **consume más de un acto**. Esta guarda corre en **cualquier edición** y decide **antes** del
+cierre, así que la mitigación **no podía alcanzarla por construcción**.
+
+De ahí que el criterio nuevo se enuncie **POR ACTO y no por puerta**, con la lista de actos **derivada del
+código** y un suelo publicado de **no menos de 2 actos ejercidos**. Eso es lo que convierte un arreglo
+puntual en una propiedad: sin ese cambio de sujeto, la siguiente mitigación volvería a cubrir «la puerta»
+y volvería a dejar fuera lo que no es una puerta.
+
+### `CA-12` de `REQ-024`, nuevo — con las dos salidas y su precio, y la tercera prohibida
+
+Exige que la ausencia de `QA:` **en el acto de escribir `Seguridad: aprobado`** se resuelva por el **sitio
+único de `CA-02`** y **nunca** por una comprobación local. Dos salidas admitidas, **cada una con su
+precio escrito**: **(a)** condicionada a la llave —compatible con `CA-05`, y entonces la mitad de texto es
+**obligatoria**—; **(b)** independiente de la llave, más restrictiva, que **exige write-back en `CA-05`**.
+Y **prohíbe la tercera**: aceptar la firma **porque el campo no está**, o denegar **sin nombrar** el campo.
+
+**Cambio DE FONDO: exige ADR.** No lo escribió —`docs/decisions/` estaba fuera de su encargo— y dejó el
+número libre leído hoy: **`ADR-011`**, con dueño, contenido y gate ya escritos en `REQ-024` § «El TERCER
+ADR». Lo enruto yo.
+
+### `CA-11` de `REQ-016`: la conducta no se toca, la declaración sí
+
+Ahora dice que **la dirección de la ausencia se DECLARA en un solo sitio pero quién la APLICA depende del
+campo**, y que la de `Seguridad:` la aplica la **rama `critico` de la puerta de cierre** —también cuando
+ese `critico` viene del **suelo**, y aunque el REQ declare un `Rigor:` menor—, de modo que **por debajo de
+ese nivel la ausencia de `Seguridad:` no deniega, en los dos estados de la llave**. Retira «lo decide un
+solo sitio» y el «declara `deniega`… así que la conducta no se relaja» leído sin condición.
+
+**Y ninguna exigencia sobre la conducta cambia:** la equivalencia comentado ≡ borrado y la excepción del
+`critico` **siguen exactas**, y siguen siendo **12 criterios**. La mutación se **cita por archivo y
+sección**, sin transcribir clase ni vencimiento — la disciplina del sitio único aplicada a su propia
+prosa. **Menor, sin ADR.**
+
+### Tres precisiones que evitan escribir mentiras
+
+- **`CA-03` fila 3 dice ahora `EJECUTADA, NO ACREDITADA`**, nunca «aprobado», con las dos firmas del
+  re-recorrido en su orden y el motivo: **el re-recorrido se hizo y su resultado son hallazgos**.
+- **No tocó ningún campo `Hallazgos abiertos:`**: `SEC-082` y `SEC-083` ya estaban asentados donde debían.
+- **Y un aviso para quien transcriba la fila de §13:** la fila gemela de `templates/AGENTS.md.tpl` se
+  comprobó idéntica el 2026-09-09 **sólo para la fila del rigor**, no para ésta — así que **hay que
+  comparar las dos sedes antes de escribir**, y no dar por buena una igualdad que se midió sobre otra
+  fila. Queda escrito en «Qué queda SIN VERIFICAR».
+
+**Ninguno de los dos reabre ningún REQ**, con el razonamiento: los dos afectados ya están `en-progreso`,
+`REQ-003 CA-08` queda **explícitamente preservado**, `REQ-023 CA-11` sigue cierto, y **ningún criterio de
+ningún REQ contrataba esa fila de §13**. La única reapertura **futura y condicional** va declarada dentro
+de `CA-12`: si el ADR elige la salida (b), `CA-05` recibe write-back **en la misma comisión que la
+implemente, no después**.
+
+Y el forzador de banco de `SEC-083` cae en `tests/escenarios/hooks/secciones/11-nivel-de-rigor.sh`, donde
+**ya viven** los casos de esa guarda.
+
+## [Interno] — 2026-09-10 · `R-026`: el auditor se niega a firmar verde, y encuentra que la puerta que protege su propia firma se puede rodear borrando una línea
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `auditor-seguridad` (Opus) · enrutado: coordinadora. **Bajo delegación de 24 h.**
+
+**`Seguridad: con-hallazgos` (R-026), no `aprobado`** — y la distinción es exacta: **acredita la conducta**
+de `CA-11` y **no su texto**. La conducta es real y la midió: equivalencia comentado ≡ borrado **10/10** en
+los dos estados de la llave, la excepción de `Seguridad:` en `critico` **también cuando el `critico` viene
+del suelo**, las **6** claves declarando dirección en el sitio único (frente a **2** del puntero viejo), y
+que encender la llave **no abre nada: 0 de 243**.
+
+**Y derivó su propio rango, después de que se lo diera mal dos veces.** Esta vez no se lo di: le di el
+hecho. Resultado: **texto** `9d007ca` + `ce714c7`; **código** `119e853^..ce714c7` **restringido por ruta**,
+con motivo **medido y no estético**: `ARNES_AUSENCIA`, `arnes_ausencia`, `arnes_resuelve_ausencia` y la
+llave **nacen todas en `119e853`**, así que `R-009` (2026-09-07) **no pudo ver nada de lo que `CA-11`
+nombra hoy**. Y comprobó que `a57eecc..ce714c7` sobre `hooks/`, `tools/` y `.arnes/` sale **vacío**: el
+árbol de código que auditó es **byte a byte el de QA**.
+
+### `SEC-082` (`contrato`, alta): «lo decide un solo sitio» es falso para `Seguridad:`
+
+Probado **por mutación**: mutar `Seguridad|deniega` → `gobierna:aprobado` **no mueve** el veredicto, y la
+**misma** mutación mueve **4 de 4** en los otros campos. Y la declaración es **incondicional** mientras la
+conducta es **condicional al rigor**: con la llave encendida, `Rigor: estandar` sin línea `Seguridad:` da
+**ALLOW**. **Sin write-back no levanta el `con-hallazgos`.**
+
+### `SEC-083` (`contrato`, alta): un fail-open que no estaba en ningún papel
+
+La invariante «*seguridad no firma lo que QA no ha validado*» (`AGENTS.md` §13, cumplida por máquina)
+**falla en abierto cuando la línea `QA:` no llega a declararse**. Verificado por mí leyendo
+`guard-completado.sh:274`: el **`[ -n "$qa" ]`** es la puerta abierta — si `QA:` **no existe**, la
+condición es falsa y **no deniega**.
+
+**Es `SEC-047` sobreviviendo a su propia mitigación**, y el propio `lib.sh` describe ese patrón como el
+defecto de `SEC-047`. `campos.ausencia_exige` **no lo cierra en ninguno de sus dos estados**, porque
+`ADR-009` alcanza «la puerta de cierre y el lector de campos» y **esta guarda corre en cualquier
+edición**: la mitigación **pasó por al lado**.
+
+**Y la ironía que conviene no perder:** es la guarda que hace del `QA: aprobado` una **precondición
+mecánica** de que el auditor pueda firmar. **El auditor encontró que la puerta que protege su propia firma
+se puede rodear borrando una línea.**
+
+### Tres veces le salvó el control positivo, y la tercera es contra sí mismo
+
+1. Su primera sonda dio «ALLOW» por un **`$0` mal resuelto** que impedía escribir el fixture.
+2. **Tres de sus cinco mutaciones no aplicaron** por un choque de delimitador en `sed` — lo vio porque
+   **lee `ARNES_AUSENCIA` antes de cada tanda**.
+3. **Su primera redacción de la línea `Seguridad:` contenía un `<!--` literal** y dejó la cabecera de
+   `REQ-016` con **un rango sin cerrar que se tragó `Hallazgos abiertos:`**. Lo cazó
+   **`tools/arnes-lectura.sh` en dos líneas**.
+
+**La tercera es la más elocuente del día entero:** el instrumento que `REQ-023` construyó **cazó al
+auditor de `REQ-016` creando exactamente el defecto que `REQ-023` existe para cerrar**. El control
+funcionó, y él lo dejó escrito «*porque casi lo escribo yo*».
+
+### Clases: sube una, mantiene otra, y las dos con motivo
+
+**Sube `QA-024-12` a `contrato`** —un comentario que afirma exclusividad falsa sobre el sitio que gobierna
+la ausencia es, en superficie de código, la misma forma que `SEC-079` en superficie heredada— y
+**mantiene `QA-016-01` en `instrumento`**, **atado** a `SEC-082` como su remediación (3). Nadie baja una
+clase sin su firma, y él no bajó ninguna.
+
+**`QA-016-02` se cierra** (`mitigado`): la exposición que nombraba **ya no existe**, verificada en la
+puerta con su propio control — y **no dejó el campo sin nada bloqueante**, que era justo el agujero que él
+mismo había señalado.
+
+### Lo que enruto yo, y por qué
+
+**`SEC-083` entra en el campo `Hallazgos abiertos:` de `REQ-024`**: mientras viviera **sólo** en el
+registro, **ninguna puerta lo mide** — la deriva de §9, y el auditor no podía escribirlo porque ese
+archivo no es suyo. **Y la subida de `QA-024-12` a `contrato` llega al campo**, por lo mismo. Escalado
+además como **`D10`**, informativa: un fail-open en el mecanismo de enforcement es lo que el propietario
+querría saber, aunque el trabajo ya vaya en marcha.
+
+**Y una precisión del auditor que evita escribir algo falso:** la tercera obligación de `CA-03 (ii)` queda
+**EJECUTADA, no aprobada**. El re-recorrido se hizo; **su resultado son hallazgos**. Si la celda de
+`CA-03` se actualizara esperando un `aprobado`, escribiría una mentira.
+
+## [Interno] — 2026-09-10 · `QA-024-13` y `-14`: un título por propiedad, y una distinción sobre qué es deriva y qué es historia
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`REQ-024` se queda sólo con hallazgos `instrumento`** una vez cerradas estas dos.
+
+**`QA-024-13`** — el encabezado «*Por qué `Hallazgos abiertos:` está en `(ninguno)`, con tres hallazgos
+encima*», falso en sus **dos** mitades, pasa a: «*El reparto de `Hallazgos abiertos:`: el ORIGEN de un REQ
+de remediación no es un hallazgo contra él —mientras no venza—, y va en «Trazabilidad»*».
+
+**Tres cosas que hizo bien sin que se le pidieran:** el título nombra la **propiedad** —qué entra en el
+campo y qué no— en vez de un estado; **no lleva ningún número**, así que no envejece con el siguiente
+hallazgo (un título con «diez» habría envejecido igual que el de «tres»); y **mete la condición dentro de
+la propia frase** —«mientras no venza»— **porque se lee aislado**, aplicando `REQ-023 CA-10` por su
+cuenta a un texto que no es superficie heredada.
+
+**`QA-024-14`** — la celda de evidencia de `CA-03` fila 3 dice ahora que `REQ-016` **ya lleva
+`QA: aprobado`** del 2026-09-10 sobre `a57eecc` y que **falta el veredicto del auditor**, cuyo
+`Seguridad: aprobado` sigue siendo **del 2026-09-07**, emitido sobre un `CA-11` distinto del vigente.
+**La columna `Estado` sigue PENDIENTE, la cuenta 2 de 3 no cambia y `CA-03` sigue sin acreditar** — sólo
+se actualizó lo que venció, que es exactamente lo que el `qa-tester` había delimitado.
+
+### La distinción que más vale de esta entrega
+
+Encontró que **la fila del Historial del 2026-09-08 sigue diciendo** «`Hallazgos abiertos:` en `(ninguno)`
+con tres hallazgos encima» — y **declaró que NO es deriva**, con el motivo: «*era cierto ese día, así que
+no se reescribe; **el Historial es el rastro del cambio, no una afirmación sobre el árbol de hoy**»*.
+
+Es la misma línea que el propio proyecto trazó ayer al anotar dos filas viejas en vez de corregirlas
+encima, aplicada aquí por su cuenta. Y es la diferencia entre un historial y una foto retocada.
+
+**Y una deriva que sí observó y NO tocó, citando §14.B.4:** el párrafo posterior a la tabla nombra todavía
+al `qa-tester` como **dueño pendiente** de la obligación 3, cuando su mitad ya está firmada; hoy el único
+dueño vivo es el **auditor**. No la tocó porque el encargo acotaba a la celda, y **se cierra sola** cuando
+el auditor renueve y la fila 3 pase a «hecha».
+
+Las dos correcciones son **menores, sin ADR**: la primera cambia un encabezado y su marco sin tocar una
+coma del cuerpo; la segunda, una celda de evidencia dejando `Estado`, cuenta y veredicto idénticos. Y las
+clases van **citadas con archivo y línea**, no declaradas en prosa.
+
+## [Interno] — 2026-09-10 · `CA-11` validado ejecutando, los tres `contrato` retirados, y QA caza el agujero que su propio retiro iba a abrir
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus) · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**CI `hooks-en-linux` PASÓ sobre `a57eecc`** (1 min 42 s) — estaba `pending` al abrir la comisión y QA
+**lo releyó** en vez de citar el anterior. Banco **1017 PASS · 0 FAIL · 7 SKIP**, cuadre **1024**;
+autoprueba 106 · 0; tres quality gates verdes; **dos corridas con diff de veredictos VACÍO**, así que
+nada flaky y sus ediciones no movieron ninguna cifra.
+
+**`CA-11` de `REQ-016` VALIDADO, ejecutando y no leyendo:** los cuatro campos de la clase declaran su
+dirección en `hooks/lib.sh`, con la constante (`ARNES_AUSENCIA`) y la función (`arnes_ausencia`) **ambas
+ahí**, y **20 de 20** pares comentado/borrado equivalen **en los dos estados de la llave**, incluida la
+excepción de `Seguridad:` en `critico`. Es la **tercera obligación** de `CA-03 (ii)` y ya puede pasar a
+seguridad.
+
+**Los tres `contrato` de `REQ-024` se retiran**, y verificó lo que el analista había dejado sin verificar:
+la fila `Seguridad:` de la glosa nueva es cierta **en las seis combinaciones**.
+
+### El hallazgo que más vale: el agujero que su propio retiro iba a abrir
+
+**`QA-016-02` (`contrato`, alta).** `QA-024-02` era **el único hallazgo bloqueante de `REQ-016`**, y
+retirarlo **a secas** dejaba su cierre **medidamente en ALLOW** sobre un `Seguridad: aprobado` del
+**2026-09-07** emitido sobre **otro `CA-11`**. Con **control positivo** que descarta un instrumento ciego y
+**remedio verificado en la puerta**. Y la frase que lo cierra: «*hoy lo tapa la cola de 7, pero **la cola
+es transitoria y la firma vencida no***».
+
+Es la clase de cosa que sólo ve quien piensa **qué queda después** de su propio veredicto, en vez de
+limitarse a decidir sobre lo que le pusieron delante.
+
+### Dos correcciones a sí mismo, las dos habrían sido hallazgos falsos
+
+1. Contó **4 pares de `Estado`** como incumplimiento. Es un **límite de su sonda**: sin línea `Estado:` no
+   hay transición que juzgar, y `Estado` está **fuera del `Dado`** de `CA-11`.
+2. Declaró **muertas las cinco** entradas del sitio único — y era falso: **`bash` se comió el `${1}` de
+   `perl`** y la mutación **no tomaba efecto**. Con la mutación verificada, `Sensible a seguridad` resultó
+   **viva**: su mutación la **absorbe el tercer estado fail-closed**.
+
+**Cuarto agente del día que caza su propio instrumento antes de acusar al árbol.** Y el segundo cuya sonda
+falla por una expansión que el shell se traga.
+
+### La vía (c) de `CA-01` no es falsable, y la clase está bien puesta
+
+**`QA-024-11` (`instrumento`).** Ningún caso publica la igualdad, y (c) **no se ejercita en absoluto**:
+`OTROS24['Seguridad']` fija `Rigor: critico`, así que **el único campo al que (c) aplica se mide sólo donde
+aplica (b)**. Y en vez de dejarlo en duda, **midió la igualdad él mismo: existe en el producto, 6 de 6**.
+Por eso la clase es `instrumento` y no `contrato`: **el contrato dice la verdad y el que no puede fallar es
+el instrumento.** Ésa es la distinción que este proyecto lleva todo el día afinando.
+
+### Y dos más que valen
+
+**`QA-024-12`:** la entrada `Seguridad` del sitio único es **código muerto** —probado **por mutación con
+control positivo**— y el comentario «*EL UNICO SITIO QUE DECIDE*» es **falso para ese campo**.
+**`QA-016-01`:** el control de `40/2` afirma **en su PASS** que el write-back «*no se ha hecho*» — y **se
+hizo**. Un caso que pasa afirmando algo falso.
+
+**Y escribió con `Edit` y no por consola, con el motivo:** `requirements/` está cableado a
+`guard-completado`, y hacerlo por Bash «*habría apagado la puerta que mide justo esa transición*» (§13).
+
+**Límites que declara:** sin umbral de rendimiento en `AGENTS.md` **no hay prueba de carga**, así que
+`REQ-024 CA-07 (ii)` sale **no concluyente**; no ejercitó concurrencia; y `REQ-017 CA-08 (ii)` sigue con el
+techo dentro del recorrido — **«un SKIP repetido no es un verde acumulado»**.
+
+**`REQ-024` sigue `en-progreso` con `QA: con-hallazgos`: vuelta 2 de 3 consumida, queda una.**
+
+## [Interno] — 2026-09-10 · Los cinco write-back, y el CI PASA sobre nueve commits incluida la puerta movida
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`hooks-en-linux` PASA** sobre el HEAD actual (run 34446492519, 2 min 1 s) — **nueve commits** desde el
+último verde, y traen lo más arriesgado del día: la resolución de la ausencia de `QA:` **movida fuera del
+corto-circuito** en `guard-completado.sh`, el **modo intercalado** de `CA-03`, la **regla de la banda** y
+**tres secciones nuevas**. Es la primera vez que el juez de 4 vCPU con `ARNES_JOBS=6` mira todo eso.
+
+**Y la abstención que los dos `desarrollador` anunciaron como probable allí NO ocurrió:** se midió 1 de 16
+en esta máquina y 2 de 5 con CPU saturada; en el CI la banda no contuvo el techo. No lo tomo como
+acreditación —una corrida no acredita una frecuencia— pero queda registrado con su cifra.
+
+### Los cinco write-back
+
+1. **`REQ-024:994`** — «`CA-03` **resuelve**» → «`CA-03` **ELIGE** su salida (ii)», con **2 de 3**
+   obligaciones hechas y **falta el re-recorrido**. Y la cuenta correcta —**una premisa + tres
+   obligaciones**— queda en **tabla dentro de `CA-03`**, no sólo en el Historial, con la nota de que
+   `QA-024-02` cuenta la premisa como obligación y omite el re-recorrido.
+2. **Glosa de `CA-01`** — «vacía» pasa a ser **relativa al valor declarado del mismo campo**, y las vías
+   admitidas son **tres**: gobierna · deniega nombrando el campo · **no decide nada a ese nivel, con
+   igualdad medida en la misma corrida**. Con la tabla de los seis campos y **el caso medido que CIERRA**
+   omitiendo `Sensible a seguridad:` y `Rigor:`. Corregida **también en su segunda sede** (glosa de
+   `CA-05`) — nadie había pedido esa segunda.
+3. **`QA-024-03` / `D8`** — el REQ **ya no afirma que el gate se cumplió**: bloque `campos` en el árbol
+   desde `119e853` sin entrada previa, los dos ADR en `propuesta`, llave en `false`. Cita el hallazgo y
+   declara la decisión **del propietario**, sin tomarla.
+4. **Párrafo de referencia de `CA-03` de `REQ-017` (`D9`)** — reescrito a lo medido: el modo se adopta por
+   **coherencia de instrumento** y por la dispersión **entre corridas**, **no** por una anchura de banda
+   que no se estrecha; la tabla que **movía dos variables** queda **nombrada como clase**, y el **+7,6 %**
+   escrito con su consecuencia (margen ~25 % → **~19 %**).
+5. **`ADR-009`** — **nota al pie fechada**, ni reescritura ni ADR nuevo. Y **la mitad del argumento la
+   comprobó leyendo**: `arnes-init` crea `docs/decisions/` **vacía** (`skills/arnes-init/SKILL.md:33`), así
+   que `ADR-009` **no** es superficie heredada. Encontró además que la frase imprecisa está en **dos**
+   sitios (`:41` y `:131`) y no en uno —el `desarrollador` reportó sólo el primero— y que **`ADR-010` está
+   limpio**.
+
+**Ninguno de los cinco reabre otro REQ**, con el razonamiento escrito. Y **no hay hallazgo `contrato`
+nuevo contra terceros**: comprobó que `REQ-021 CA-02` punto 2 contrata el **procedimiento** y funda su
+justificación en `QA-017-06` sobre **dos árboles** (1,217 vs 1,012), magnitud que esta evidencia **no**
+toca. La frontera queda escrita dentro de `CA-03`.
+
+**Una deriva que detectó y NO corrigió, citando §14.B.4:** el título de sección de `REQ-024` «*Por qué
+`Hallazgos abiertos:` está en `(ninguno)`, con tres hallazgos encima*» es **falso hoy** — el campo lleva
+**diez**. Su cuerpo sigue correcto; envejecieron el encabezado y el marco. A la cola.
+
+### Y una corrección mía, del mismo turno
+
+Al ver que existe un caso llamado «*siguiendo `REQ-016 CA-11` al pie de la letra*» (`40/2:192`) dije que
+el primer analista se equivocaba al afirmar que el re-recorrido **no** necesita `desarrollador`. **Lo
+comprobé y me equivoqué yo:** ese caso **no lee `CA-11`**, codifica el puntero viejo como **literal**, así
+que hacer cierto el criterio no exigía ni una línea de código. **El primer analista tenía razón.**
+
+Lo que queda de ese caso es otra cosa: es un **control que demuestra un defecto que el write-back acaba de
+corregir**, así que hoy está **desfasado**. No lo toco: clasificarlo es de `qa-tester`, y el CI lo ve pasar
+porque mide el literal y no el criterio.
+
+## [Interno] — 2026-09-10 · `QA-024-01` cerrado en sus dos mitades, el cuadre reconciliado a 1024, y casi sobrescribo una cifra correcta con mi propio mal conteo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `desarrollador` (`QA-024-01`) y `desarrollador` (modo intercalado) · reconciliación: coordinadora. **Bajo delegación de 24 h.**
+
+**Banco 1016 PASS · 0 FAIL · 8 SKIP = 1024**, cuadre exacto, sin `ABORT`; autoprueba **106 · 0**; tres
+quality gates verdes; `loadavg` 2,57.
+
+### `QA-024-01` cerrado, y la mitad de texto era peor de lo que QA vio
+
+**Código** (`hooks/guard-completado.sh`): la resolución de la ausencia de `QA:` sale **fuera** del
+corto-circuito `if [ "$rigor" != "ligero" ]`, a la misma altura que `Hallazgos abiertos:`. La
+comprobación del **valor** se queda **dentro**: `ligero` sigue sin pedir veredicto, y sólo se le exige que
+el campo esté **declarado**. Par medido: la entrada que daba **ALLOW sin motivo** hoy da **DENY nombrando
+`'QA:'`**, y el control con `estandar` deniega igual.
+
+**Y midiendo campo a campo descubrió que la promesa era falsa en 2 de 4 incluso DESPUÉS del arreglo de
+código:** `QA:` ausente → DENY · `Hallazgos abiertos:` ausente → DENY · **`Sensible a seguridad:` ausente
+→ ALLOW (gobierna)** · **`Rigor:` ausente → ALLOW (gobierna)** · `Seguridad:` ausente con `estandar` →
+ALLOW, con `critico` → DENY. Así que «*Todo REQ … deja de cerrar*» **no** se arreglaba arreglando el
+código: había que **decir lo que la máquina hace**, que es denegar en dos campos y **gobernar** en otros
+dos.
+
+**`CA-05` verificado con 48 decisiones** (4 niveles × 3 estados de `QA:` × 2 de sensibilidad × 2 llaves):
+con la llave **apagada, 24 de 24 idénticas**; encendida cambia **exactamente 1 celda**, la del defecto.
+Corpus real: **27 REQ, 0 divergencias** con la llave en los dos estados.
+
+**Y las vías no las enumeró: las colapsó.** Con la llave encendida, `qa:`, `Qa:`, `QÁ:` y `QА:` (А
+cirílica) dan las cuatro **DENY nombrando `'QA:'`**. Las enumeraciones van marcadas **NO EXHAUSTIVOS** con
+puntero al registro, y **dos inyecciones del banco lo vigilan** — se ven en la salida: «*devuelta la
+promesa absoluta, la comprobación FALLA nombrándola*» y «*retirada la marca NO EXHAUSTIVOS, FALLA
+nombrándola*».
+
+**Su propio barrido le corrigió tres frases de su borrador**, y las nombra: la titular prometía «decide lo
+mismo» **sin acotar el sujeto** —la cola cambia sin llave—; el «ninguno abre» le faltaba la condición de
+la llave; y la remisión a `arnes-lectura.sh` ahora dice que da **el nivel, la mitad de la respuesta**.
+
+**Y no tocó la tercera sede porque no hacía falta, medido:** la skill ya tenía las **dos ramas**
+—denegar en dos campos, gobernar en otros dos— y con el arreglo de código **pasa a ser verdadera**.
+Alineó su `_doc` a esas mismas dos ramas en vez de imponer una redacción nueva.
+
+**`ADR-009:41` (Contexto) arrastra una forma más débil de la misma imprecisión** y **lo reportó sin
+editarlo**, con el motivo correcto: «*un ADR no se reescribe encima*» (§9). Dueño: analista.
+
+### La reconciliación, y mi quinto error del día
+
+Puse `CASOS_ESPERADOS` en **1024**, que es lo que el `desarrollador` dijo. **Primero puse 1025, porque
+conté mal**: sumé **todas** las coincidencias de `CASOS_ESPERADOS_SECCION` en vez de **una por archivo**, y
+`37-coste-del-escaner-5-el-camino-normal.sh` lo declara **dos veces** — la segunda en su línea 486, **dentro
+de un `echo`**, porque es un **fixture** que el caso escribe a una sección sintética. No es un defecto del
+archivo: es un contador ingenuo, el mío.
+
+**Casi sobrescribo una cifra correcta con mi propio mal conteo**, y lo único que lo evitó fue comprobar en
+vez de asumir: `HEAD` tenía `run.sh` = 1012 y suma = 1012 —**cuadrados**—, y los tres deltas declarados
+suman **+12** (`37/2` 5→8, `40/1` 7→12, `40/3` 16→20). 1012 + 12 = **1024**. El banco lo confirma.
+
+**Los dos `desarrollador` se negaron a reconciliar y tenían razón los dos:** «*no puse 1024: sería
+certificar 9 casos ajenos a medio escribir*». Quien tenía que hacerlo era quien ve las dos comisiones, y
+sólo cuando aterrizaran las dos.
+
+**Nota para quien construya un cuadre automático:** contar ese literal con `grep -r` **sobre-cuenta**,
+porque un caso legítimo lo escribe dentro de un `echo`. Clase `instrumento`, sin abrir.
+
+### Añadido al mapa
+
+`Archivos:` de `REQ-017` ahora incluye **`docs/arnes/req-017-ca-03-modo-de-medicion/`**, donde vive toda la
+evidencia del modo. El `desarrollador` lo señaló como suyo del analista; lo hago yo, que es quien reabrió
+el REQ y reconcilió su mapa hace unas horas.
+
+## [Interno] — 2026-09-10 · El modo intercalado no estrecha lo que dije: la evidencia que fundó mi decisión movía dos variables
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · corrección de la decisión: coordinadora. **Bajo delegación de 24 h.**
+
+
+**Esto corrige una decisión que tomé yo bajo la delegación, y es la corrección más importante del día.**
+En `D6` adopté el **modo intercalado** para `CA-03` apoyándome en una tabla que comparaba
+**`intercalado k=2/3 r=9` contra `bloque k=1 r=3`**. **Cambiaba dos variables a la vez**: el modo **y**
+`k`/`r`. Verificado por mí en `docs/arnes/req-017-ca-03-modo-de-medicion/01-evidencia.md:72-74`.
+
+**Aislado el modo —round-robin con `k` y `r` fijos, N=5, `loadavg` fila a fila— el estrechamiento no se
+reproduce**, y el `desarrollador` lo dijo con las cifras **sin cambiar su umbral pre-declarado**:
+anchura de banda mediana en reposo **1,090 → 1,086** en la directa (diferencia 0,004 < su umbral 0,022 ⇒
+**no discriminado**) y **1,075 → 1,101** en el fail-before, **más ancha**. Bajo CPU saturada **las dos
+empeoran**.
+
+**Lo que el modo SÍ hace, medido:** estrecha la dispersión **entre corridas** del cociente en **3 de 4**
+comparaciones (rango 4,3 → 3,0 %, 5,1 → 3,9 %, 77,1 → 52,5 %; MAD del fail-before 0,065 → 0,023 en reposo
+y 0,508 → 0,160 saturado). Y **un efecto no buscado**: **sube** el valor de la directa 1,955× → 2,104×
+(**+7,6 %**), porque intercalado el término corto sale **caliente**, así que el margen al techo baja de
+~25 % a **~19 %**.
+
+**Decisión: el modo se QUEDA, y la justificación se corrige.** Motivos: el fail-before **discrimina en las
+16 corridas sin excepción**; la **regla de la banda** que vino con él está probada y es independiente del
+modo; y `REQ-021 CA-02` ya contrata el intercalado para una razón. **Lo que no se sostiene es el párrafo
+de referencia de `CA-03`**, que cita una comparación con dos variables movidas — y eso es exactamente lo
+que este proyecto llama un criterio que dice algo falso sobre lo medido.
+
+**Las dos preguntas para el `analista-requerimientos`, ninguna resoluble por el `desarrollador`:**
+1. **Write-back del párrafo de referencia de `CA-03`**: la evidencia que fundó el modo confundía modo con
+   `k`/`r`, y aislado el modo el estrechamiento **no se reproduce en esta máquina**. Hay que decir lo que
+   se sabe: el modo se adopta por **coherencia con `REQ-021 CA-02`** y por la dispersión **entre
+   corridas**, no por una anchura de banda que no se midió como se dijo. Y el **+7,6 % de la directa** hay
+   que escribirlo: reduce el margen al techo y nadie lo había previsto.
+2. **`CA-18` degenerado en `37/2`**: el piso re-derivado (**551**) queda a **una línea** del total (552),
+   porque la puerta es **única** y los tres casos que la acreditan tienen que ejercerla y no una copia
+   —mismo patrón que el piso 448 de `37/5`—. Es honesto y deja el techo casi libre. Clase **instrumento**,
+   con aviso ya escrito en el propio archivo.
+
+**Y una tercera, mía, que no le pido a nadie:** el `Archivos:` de `REQ-017` **no incluye**
+`docs/arnes/req-017-ca-03-modo-de-medicion/`, donde vive **toda** la evidencia del modo. Lo añado al
+reconciliar, junto al `CASOS_ESPERADOS`.
+
+**Y lo que el `desarrollador` entregó, que es mucho más que una medición incómoda:** la **regla de la
+banda** en una sola puerta con la dirección como dato, `razon37` publicando en **todas** sus ramas mínimo
+**y** máximo, modo, `k`, series, techo, **plataforma y carga** —los **5** casos de la sección, ninguno
+recortado y ninguno declarado «no cabe»—, y `37/2` de 5 a **8 casos**.
+
+**El par discriminante está EJECUTADO, no argumentado:** un **oráculo independiente escrito en el propio
+caso** calcula el veredicto del cociente solo y se compara entrada por entrada — **7 entradas: 0 de FAIL a
+PASS · 1 de FAIL a abstención · 2 de PASS a abstención**. Y las dos mitades son de contrato, con su
+motivo: «*sin la segunda, «no convierte un FAIL en PASS» lo cumpliría una guarda que no hiciera nada*».
+Un tercer caso comprueba el **contenido** del SKIP, porque una autoprueba que reduce la salida a la
+palabra del veredicto **ya perdió** el tercer elemento de `CA-08 (ii)` una vez (`QA-017-16`).
+
+**La abstención ocurrió de verdad y no en teoría:** corrida 9, cociente **2,133×** —cabía de sobra— pero
+banda **[2,000×, 2,817×]** por un máximo disparado del término largo → **SKIP citando banda, cociente,
+techo, plataforma y carga**. Frecuencia **1 de 16** aquí y **2 de 5** con CPU saturada; máximo consecutivo
+**1** contra la cota de 2 — no agotada, y **viva como riesgo** porque el runner tiene 4 vCPU y esta
+máquina 12.
+
+**Y cazó un defecto propio que ningún caso vio, sino el inventario:** el fail-before de `CA-04` no tenía
+el separador de dos espacios, así que `inventario.sh` leía su línea entera como **nombre** y los µs recién
+publicados **sobrevivían crudos** — tres corridas, tres inventarios distintos. Corregido, y una segunda
+variante igual (`carga v1.32.1=2.46` **designa**; se publica `carga heredada=…`). Tras ambos, las 8 líneas
+de `37/2` salen **idénticas byte a byte** entre corridas.
+
+**No reconcilió `CASOS_ESPERADOS` y explicó por qué:** sus 9 primeras corridas cerraron en **1015** con
+`rc 0` y **0 FAIL**; entre la 9 y la 10 otra comisión viva añadió **9 casos** sin actualizar `run.sh`, y
+las corridas 10-11 dan `ABORT: corrieron 1024 y se esperaban 1015` — **1024 = 1015 + 9 exactamente**, con
+0 FAIL y sin ningún `ABORT` de sección. **«No puse 1024: sería certificar 9 casos ajenos a medio
+escribir.»** La coordinadora tampoco reconcilia todavía: `run.sh` va en 1015 y las secciones suman ya
+**1025**, así que el blanco sigue moviéndose.
+
+## [Interno] — 2026-09-10 · `CA-11` deja de apuntar a la puerta, §9 reabre `REQ-016`, y el analista corrige la cuenta de QA
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · reapertura: coordinadora. **Bajo delegación de 24 h.**
+
+**`CA-11` de `REQ-016` nombra el sitio único POR PROPIEDAD y no por archivo de conveniencia.** Deja de
+citar `hooks/guard-completado.sh` y remite a «*la tabla de la dirección de la ausencia de `hooks/lib.sh`
+—la constante que la declara y la función que la consulta—*». Y dice **por qué el puntero viejo era
+peligroso, no sólo viejo**: en `guard-completado.sh` viven las comprobaciones de `QA:` y `Hallazgos
+abiertos:`, y **no** las de `Sensible a seguridad:` ni `Rigor:` —**los dos que retiran el suelo y el
+nivel**—, que están en `lib.sh`. Seguir ese puntero al pie de la letra **dejaba fuera precisamente los
+campos peligrosos**. Eso es lo que `SEC-050` midió.
+
+**Tres decisiones suyas que son de fondo y no de estilo:**
+- **No cita ninguna línea.** `ARNES_AUSENCIA` está hoy en `hooks/lib.sh:1873` y hay un `desarrollador`
+  vivo en ese archivo: «*un puntero por línea nace envejecido*».
+- **El número «2 de 4» no entra en el criterio**: lo **publica el banco en cada corrida**, porque «*sube o
+  baja con cada campo del lector y no es umbral de nada*».
+- **Leer `CA-11` entero destapó una SEGUNDA promesa sin condición** que el árbol de hoy ya desmiente: «*la
+  ausencia **se perdona***» era incondicional, y ahora sólo vale **mientras `campos.ausencia_exige` esté
+  apagada**; activada, **gobierna o deniega**. Nadie la había pedido: apareció por leer el criterio
+  completo en vez de la línea del hallazgo.
+
+Lo que **no** cambió es lo que `CA-11` realmente contrata —la **equivalencia** comentado ≡ borrado—, ahora
+declarada válida **en los dos estados** de la llave. **Cambio de fondo**, con `ADR-009` **ya existente**
+enlazado y **sin crear uno nuevo**: «*un segundo ADR sobre la misma decisión sería la transcripción que
+este repositorio persigue*».
+
+**§9 reabre `REQ-016`, y el forzador es concreto y no genérico:** sus dos `aprobado` del 2026-09-07 se
+emitieron sobre **un `CA-11` distinto del que hay hoy en el archivo**, así que **no acreditan el criterio
+vigente**. El analista **se paró** en la reapertura; la aplico yo. Los dos veredictos **no se retiran**.
+
+**Y añado `QA-024-02 (contrato)` a su campo `Hallazgos abiertos:`, que lo propuso él y no ejecutó.** Hasta
+ahora la puerta **no veía esta deuda en este REQ** —el campo sólo llevaba `H-07 (instrumento)`—, así que
+`REQ-016` podía cerrarse **sin el re-recorrido** que `CA-03 (ii)` exige. Con la clase declarada,
+`guard-completado` lo impide **por máquina y no por prosa**.
+
+### La corrección a la cuenta de QA, que es fina
+
+QA dijo «*de las tres obligaciones sólo una está hecha*». El analista leyó `CA-03 (ii)` literal y reparte
+distinto: son **tres obligaciones sobre una PREMISA**, y «el sitio único es otro» es la **premisa** —que
+cumplió el código con `ARNES_AUSENCIA`—, **no** una obligación. La tabla de `QA-024-02` cuenta la premisa
+**como** primera obligación **y omite el re-recorrido**. Al pie de la letra: **antes de hoy estaban hechas
+CERO de tres**; hoy queda hecha **una** (la reescritura). Faltan **dos**: la reapertura —hecha en este
+commit— y el **re-recorrido**, donde «*dev no tiene nada que hacer: el cambio es de contrato; QA re-valida
+`CA-11` contra el árbol, y seguridad firma después*».
+
+### La frase falsa del Historial de `REQ-024`
+
+`requirements/REQ-024.md:994`: «**`CA-03` resuelve** por su salida (ii)…». Lo *medido y no elegido* es
+correcto y queda acreditado; lo falso es **«resuelve»** — ejecuta **un tercio** de la salida, y **la propia
+celda se desmiente sola nueve palabras después** («y dice expresamente que **NO acredita `CA-03`**»). La
+forma honesta: «`CA-03` **ELIGE** su salida (ii) … y ejecuta la **primera** de sus tres obligaciones».
+
+**Y una recomendación de coordinación que acepto:** `QA-024-01`, `QA-024-02` y `QA-024-03` son **los tres**
+write-back de analista **sobre el mismo archivo**, así que van en **una sola comisión** — «*un solo encargo
+evita tres pasadas y tres conflictos de fusión sobre `REQ-024.md`*». Se despachará cuando el
+`desarrollador` de `QA-024-01` suelte ese archivo.
+
+## [Interno] — 2026-09-10 · QA de `REQ-024`: tres `contrato`, y uno es un gate que la coordinadora se saltó
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus, vuelta 1 de 3) · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`QA: con-hallazgos (vuelta 1 de 3)` sobre `d54761e`.** De los 10 criterios implementados, **9 pasan** y
+**`CA-03` no está acreditado**. Banco **1004 PASS · 0 FAIL · 8 SKIP**, cuadre **1012**, en dos corridas
+idénticas (63,2 s con `loadavg` 0,19→2,45 y 72,3 s con 4,04→3,93). Autoprueba 106 · 0.
+
+**El desvío frente al `1005 · 0 · 7` publicado está explicado y no es regresión:** `REQ-017 CA-08 (ii)`
+oscila PASS↔SKIP con la carga —1005−1 = 1004, 7+1 = 8—, y lo había declarado el propio `desarrollador`.
+**Inventario por identidad y no por conteo** (`comm -23`): **+18 identidades, 0 suprimidas**.
+
+**Verificó ejecutando la puerta, no leyendo el banco:** 5 campos ausentes con la llave encendida, 8 casos
+borde de cabecera, `CA-05` contra un manifiesto **sin el bloque `campos` en absoluto**, y **25 formas** de
+cola en los tres lectores.
+
+**Y avisó de un modo de fallo de su propio instrumento que casi le hace publicar un desvío falso:**
+materializar la base con `git archive v1.33.0 hooks` **sin `tools`** da **15 FAIL en vez de 9**, y seis
+eran su instrumento (`rc=127` del informe ausente). Es la tercera vez hoy que un agente caza su propia
+sonda antes de acusar al árbol.
+
+### Los tres bloqueantes
+
+**`QA-024-01` (`contrato`) — la forma de `SEC-079` en superficie NUEVA.** Con la llave encendida y
+`Rigor: ligero`, un REQ que omite `QA:` **cierra en ALLOW sin diagnóstico** (control con `estandar` →
+DENY), porque la resolución de `QA` cae **dentro** del corto-circuito `if [ "$rigor" != "ligero" ]` y la de
+`Hallazgos abiertos` queda **fuera**. Y el `_doc` de **las dos sedes** promete **sin condición**: «*Todo
+REQ heredado que omita uno de esos cuatro campos deja de cerrar*». Defecto de código **y** promesa de más,
+en el mismo sitio, el mismo día que cerramos `SEC-079` por exactamente eso.
+
+**`QA-024-02` (`contrato`) — `CA-03` no acreditado, y el caso es más honesto que el REQ.** La salida (ii)
+tiene **tres** obligaciones y sólo una está hecha: `REQ-016` sigue `Estado: completado` y su `CA-11:152-153`
+sigue citando `hooks/guard-completado.sh` como lista **exhaustiva**. El árbol está hoy en **la tercera
+salida que `CA-03` prohíbe**. Y el detalle que más dice: **el caso del banco declara que no acredita
+`CA-03`, mientras el Historial del REQ afirma que «resuelve por su salida (ii)»**.
+
+**`QA-024-03` (`contrato`) — el gate que me salté, escalado como `D8`.** El bloque `campos` entró en
+`119e853`, mi commit, y **`ADR-009` declara en su línea 3 «gate humano pendiente: toca
+`.arnes/config.json`»**. Riesgo vivo **cero** —nace `false` en las dos sedes, verificado—, pero es un fallo
+de **orden de gate** en el repositorio cuyo producto es el orden de los gates. Y el contraste no me
+favorece: **el `desarrollador` sí se detuvo bien para `AGENTS.md`** en el mismo trabajo.
+
+### Lo que probó rompiendo
+
+**Ninguno de los tres PASS de `CA-06` es tautología**, y no lo argumentó: los **rompió** por inyección
+—comando adelantado → FAIL; declaración retirada → FAIL nombrando viñeta y defecto; «lista exhaustiva» →
+FAIL «5 negadas de 6»—. Y el par declarado es **complementario**: la inyección que rompe el caso del
+apartado deja el del sub-bloque en PASS y al revés. **Un límite sí es hallazgo:** inyectó un tercer barrido
+escrito «barrido por via» con **cero** declaraciones y el caso siguió en PASS con denominador 2 — el
+conjunto se reconoce por **cadena literal**.
+
+**Y midió lo que `SEC-081` sólo insinuaba:** con la llave apagada, `qa: pendiente` **y** `QÁ: pendiente`
+también dan **ALLOW**, así que «las tres vías —comentar, borrar, no escribir—» del párrafo del residual son
+**al menos cinco** (`QA-024-06`).
+
+**Los siete `instrumento` no bloquean.** El más útil, `QA-024-04`: la línea PASS de `40/2:329` no lleva el
+doble espacio que separa nombre de evidencia, y **`µ` no es `[A-Za-z]` para `inventario.sh`**, así que
+`69779µs sobre 64569µs` entra en la **identidad** del caso — dos corridas del mismo árbol dan **22 líneas
+de diff de inventario** cuando `REQ-014 CA-12` promete `cmp` limpio. Probado con línea sintética.
+
+**`40-ausencia-que-abre-2` en 400 líneas: bomba anotada, no defecto.** Verificado: 401 → `FAIL CA-18` y
+autoprueba `rc 1`; piso 194, así que manda `N=400` **sin holgura**. Falla ruidosamente y ya forzó la
+decisión correcta. Lo único: el aviso vive en el Historial y no en el preámbulo de `40/2`.
+
+**Límites que declara:** no corrió el CI; **ningún techo de reloj de esta validación acredita nada más allá
+de esta máquina**, y los cuatro números de `CA-07` son **no concluyentes** aquí porque su sonda de (ii)
+**abstuvo por suelo**. Y no escribió `docs/usuario/`: «*con tres `contrato` abiertos sobre la nota de
+migración, documentar el flujo sería documentar algo que va a cambiar*».
+
+## [Interno] — 2026-09-09 · `CA-03` contrata el modo intercalado, y §9 reabre `REQ-017`: el mapa del propio REQ nombraba dos archivos que no existen
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · reapertura y corrección del mapa: coordinadora. **Bajo delegación de 24 h.**
+
+**`CA-03` gana el modo de medición en su cláusula `Cuando`:** «*con las series de los dos tamaños
+**INTERCALADAS** —a, b, a, b, …— dentro de la **MISMA** invocación de la sonda*», vía `sr_intercala`
+(`--sujeto-a`/`--sujeto-b`) como **sede única**, y rige **en las dos mediciones a la vez** — la directa y
+el fail-before contra `v1.32.1`. **Techo 2,6, suelo 50 ms, estadístico mínimo, par S/2S y la constricción
+de `k` sólo por el suelo: intactos.** `CA-04` no se toca.
+
+**Y la razón de mover las dos y no una está escrita:** cambiar el instrumento de **una sola** sí habría
+sido de fondo, porque cambia **qué acredita** el fail-before. Mover las dos es precisión de sonda —misma
+clase y mismo modo que el write-back de `CA-08 (ii)` del 2026-09-07, que adoptó el intercalado y se
+clasificó menor—. **Menor, sin ADR.**
+
+**La abstención gana una regla que no cuesta nada, y es elegante:** con el mínimo y el máximo de cada
+término **ya publicados**, la corrida acota la **banda de cocientes compatible** con lo medido
+—`mín(2S)/máx(S)` … `máx(2S)/mín(S)`—: **PASS** sólo si **toda** la banda cae del lado conforme, **FAIL**
+sólo si **toda** cae del lado no conforme, y si el techo cae **dentro** de la banda, **SKIP** citando
+banda, cociente y techo. La unanimidad es **de contrato**, sale de cifras que la sonda **ya emite**, y la
+guarda sólo puede **estrechar**: no puede convertir un FAIL en PASS. Con **cota**: no más de **2** corridas
+consecutivas abstenidas antes de pasar a hallazgo y escalar, más **de qué máquina** es la medición.
+
+**§9 reabre `REQ-017`, y lo aplico yo porque es una regla, no una decisión discrecional.** El analista
+concluyó que el modo «*no se acredita editando texto*» y **se paró ahí**, dejándolo escrito como decisión
+escalada. Lo aplico: `Estado: completado` → **`en-progreso`**. La alternativa era dejar **un contrato
+cambiado sobre un REQ cerrado**, que es exactamente la deriva que §9 prohíbe dejar en silencio. **Los dos
+`aprobado` del 2026-09-08 NO se retiran** —desfirmar por otro es la misma falta que firmar por otro— pero
+cubren el árbol `538c266` y **no** el modo nuevo: los renueva quien revalide.
+
+**Y el mapa del propio REQ estaba roto, con una consecuencia que no es cosmética.** `Archivos:` declaraba
+`37-coste-del-escaner-1-escala.sh` y `…-2-la-seccion-caliente.sh`, que **no existen en disco**, y **el
+archivo que esta implementación tiene que tocar —`…-2-las-razones.sh`— no estaba en el mapa**.
+`tools/arnes-paralelo.sh` decide el despacho paralelo por ese campo, y **un `disjunto` sobre rutas que no
+existen es la misma familia fail-open que `SEC-020`**. Lo detectó el analista y **no lo corrigió**, porque
+la corrección pertenece al **acto de reapertura**. Re-derivado: las **cinco** secciones `37-*` que existen,
+verificadas una por una.
+
+**Con su límite medido, y esto importa:** el riesgo es **latente y NO se materializó** en el par que
+probé — `REQ-017` contra `REQ-024` responde `colisiona hooks/lib.sh`, así que **otra coincidencia real
+tapaba el hueco**. Se habría manifestado en un par cuyo único solape fueran esas secciones. Corregido
+**antes** de cualquier despacho paralelo tras la reapertura, que es cuando el campo vuelve a gobernar.
+
+**A la cola, no abierto aquí:** la carencia de publicación de `razon37` —da los dos mínimos y **no** los
+máximos— alcanza a **5 casos más**, y la regla nueva de la banda los necesita. El analista dejó escrito
+que ampliar el mensaje compartido es **coste de implementación, no motivo para publicar menos**, y que lo
+que no quepa en una comisión se declara **con dueño y vencimiento**.
+
+## [Interno] — 2026-09-09 · `CA-06` cumplido y `CA-04` detenido en su gate: el `desarrollador` no asumió que la delegación lo cubriera
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`REQ-024` queda en 10 de 11 criterios.** Banco **1005 PASS · 0 FAIL · 7 SKIP**, cuadre **1012** (de
+996: **16 casos nuevos**), rc 0, sin `ABORT`; autoprueba 106 · 0; tres quality gates verdes. **65 s de
+reloj con `loadavg` 0,82 al arrancar y 3,05 al terminar** — publicó la carga, como se le pidió.
+
+**Y el inventario cuadra sin pérdidas, comprobado en worktree:** diff de **32** líneas y **ninguna** es
+una pérdida — +16 casos nuevos, +1 `REQ-017 CA-08 (ii)` que pasa de SKIP a PASS por carga del host
+(988+16+1 = 1005; 8−1 = 7), 2 de semilla del sorteo de `CA-03` y 2 de denominador del corpus de `CA-04`
+(5611 → 5660 líneas con campo, y **subir es conforme**). **Ninguno de sus 16 casos abstuvo.**
+
+**`CA-06` cumplido con discriminante en las dos direcciones:** fail-before **3 PASS · 13 FAIL** →
+pass-after **16 PASS · 0 FAIL**, con un método que merece nota — un caso **sobre texto** no se puede
+mover con `ARNES_HOOKS_DIR`, así que introdujo `ARNES_SKILL_UPGRADE` apuntando a la versión anterior de
+la skill. Y **los 3 que pasan en las dos corridas están declarados con su discriminante dentro del
+mensaje**: el orden en el apartado ya era cierto (por eso se mide **dos veces**, y restringido a su
+sub-bloque **falla** antes), «los barridos declaran las tres cosas» es derivado con denominador (1 → 2, y
+**SKIP si 0**), y «ninguna frase afirma completitud» es una invariante que no puede romperse (3/3 → 5/5).
+Un PASS que pasa antes y después, **explicado**, vale; callado sería tautología.
+
+**`CA-04` NO se implementó, y es la decisión correcta.** Su gate humano es **previo**, y el
+`desarrollador` lo confirmó **leyendo** en vez de asumir que la delegación de 24 h lo cubría:
+`REQ-024.md:191-195` dice que «*el cambio **se detiene** en `PENDING_APPROVAL.md` … este REQ **nombra**
+ese gate; **no lo sustituye***», §6 pone el gate **antes** del acto, y `D5` dejó la fila del **rigor**
+fuera por su propia letra. **No tocó `AGENTS.md`, `templates/AGENTS.md.tpl` ni `PENDING_APPROVAL.md`.**
+
+**Y el proyecto había anticipado este atajo:** `REQ-023` dejó escrito que quien reescribiera la fila del
+CR tendría **delante** la fila del rigor y que arreglarla «de paso» sería un cambio de `AGENTS.md` sin
+gate y sin su REQ. *Su REQ es éste.* Escalado como **`D7`**, con el paquete **medido** para que el gate no
+cueste re-derivar nada.
+
+**Su texto heredado sí es verdadero leído solo:** la promesa de compatibilidad de la skill va **acotada al
+sujeto** —«*la resolución de la ausencia de un campo de cabecera decide exactamente lo mismo que
+1.33.0*»— y **acompañada** de qué sí cambia sin llave, con **un caso de máquina para cada mitad**. Si se
+escribiera absoluta **sería falsa**, porque el bloque B cambia la cola **sin llave y para todos**.
+
+**Y retiró un punto de su propia lista de dudas:** releyó `templates/AGENTS.md.tpl` y **no divergen** —
+párrafo y fila son idénticos línea a línea a `AGENTS.md`—, así que el arreglo de `CA-04`, cuando se
+autorice, es el mismo texto en dos archivos. Verificó también que la fila de `SEC-079` sigue byte a byte
+(`md5 3ead3bd3…`, 2545 B).
+
+**`SEC-081`: no creó una cuarta instancia del defecto, y tampoco lo cerró.** No escribió la fila, así que
+no reprodujo la forma; su remediación en `requirements/README.md` sigue siendo del analista.
+
+## [Interno] — 2026-09-09 · `SEC-079` cerrado (`R-025`), y por segunda vez el auditor corrige un rango que le di mal
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `auditor-seguridad` (Opus) · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`SEC-079` se cierra**, marcado `mitigado` —su entrada **no se borra**—, retirado del campo, y
+**`Seguridad: aprobado`** firmado. **`REQ-023` queda sin ningún bloqueante de QA ni de seguridad: 0.**
+Sigue `bloqueado` por la decisión del propietario, y la firma no lo desbloquea.
+
+**Qué acredita la firma, y sólo eso:** que el texto que los proyectos **heredan** —las dos sedes de la
+fila y el apartado de la skill— **ya no promete más cobertura de la que la máquina tiene**, y que **cada
+afirmación de hecho de esa fila es verdadera medida** contra `fcbb7b1`. **No** acredita el mecanismo de
+este árbol, ni `REQ-024`, ni que la clase esté cerrada, ni el banco.
+
+**Segundo error de rango de la coordinadora, y es el CONTRARIO al de `R-024`.** Propuse
+`1154417..fcbb7b1`, que **excluye `1154417`** — el commit donde la fila se reescribió por primera vez y
+donde `CA-10` recibió **135 líneas** de su primer write-back (verificado). El rango dejaba fuera la mayor
+parte de la remediación que pedía acreditar. El auditor auditó **`390a0a2..fcbb7b1`** y, además, **lo
+restringió por RUTA** con un motivo que no es comodidad: ese mismo rango trae **+270/−22 de mecanismo**
+(`hooks/lib.sh` +192, `guard-completado.sh` +42, `estado-derivado.sh` +11, `arnes-lectura.sh` +47, de
+`REQ-024`), y «*un rango declarado sólo por commits habría hecho pasar ese delta por revisado*». **Dos
+veces he dado el rango mal: una vez corto por delante y otra por detrás. El rango es un parámetro de la
+firma y lo estoy tratando como un adorno.**
+
+**El par que decide, con dos documentos idénticos salvo dos bytes:** `Sensible a seguridad: sí` con
+`Rigor: ligero` → **DENY** («*su rigor efectivo es `critico`*»); el mismo con `а` cirílica → **ALLOW**; y
+el mismo homóglifo con `Rigor: critico` **declarado a mano** → **DENY**. La denegación que desaparece es
+**exactamente** la que producía el campo borrado, y vuelve al declarar el rigor. Y «*ninguna versión lo
+deniega, tampoco 1.34.0*» queda verificado en **`v1.31.0`, `v1.32.1`, `v1.33.0` y este árbol**, con
+control latino DENY en los cuatro.
+
+**Su propio control negativo, contra la fila que él mismo declaró falsa:** incumple por **cuatro sitios
+independientes** —titular sin condición, «nunca se permite por ausencia» universal y medida falsa, «Tres
+fronteras» cerrada sin marca ni puntero, y cero menciones de la vía—, y la de hoy corrige los cuatro. **El
+arreglo es aditivo**: la promesa universal no se borró, se **condicionó** (5 → 8 oraciones, **cero
+retiradas**). Y **no-regresión medida**: las 10 fixtures de `R-024` dan veredicto **idéntico** en
+`390a0a2` y `fcbb7b1` pese al delta de mecanismo.
+
+**Y se cazó a sí mismo, que es lo que más vale del informe:** su entrada de `SEC-079` nombraba tres
+ubicaciones y **elogiaba la skill por honesta** — cierto sobre la vía y **falso sobre el mecanismo**,
+porque `SKILL.md` llevaba **los dos** defectos. Localizó por «las sedes que `CA-10` nombra» en vez de
+**derivarlas del texto**: la forma (a) cometida **por el auditor sobre sus propias ubicaciones**. Queda
+escrito en `R-025` §3.
+
+**`SEC-081` (`instrumento`, media, dueño `analista-requerimientos`) — nuevo, y su diagnóstico es fino:**
+la Regla de `requirements/README.md` cubre la lista de fronteras **por propiedad**, así que no hay laguna
+doctrinal, **pero sus tres ejemplos marcados son todos de la dirección que ABRE**, y `SEC-079` pasó **tres
+filtros** porque «excepto estas tres fronteras» **suena a propiedad y tranquiliza**. Hoy la lección vive
+sólo en `CA-10`, **que muere con su REQ**. Remediación: una frase que declare que la propiedad alcanza
+**las dos direcciones**. **Su forzador ya está en cola: `REQ-024 CA-04`**, misma tabla y misma forma.
+
+**Dos límites que declara y respeto:** el delta de mecanismo del rango **no está auditado** —su
+comprobación fue no-regresión sobre 10 fixtures, «*cota inferior, no auditoría*»—, y de la llave nueva
+sólo verificó que **nace apagada**. Y `guard-completado.sh:363`/`:392` conservan «**NUNCA** permite por
+AUSENCIA»: mantiene la clase `instrumento` de `QA-023-21` porque **la frase sólo se muestra al denegar**,
+donde es localmente cierta, y jamás llega a la persona en el caso expuesto — «*pero quien la lea de más se
+equivocará igual*».
+
+**Medido sin ensanchar `SEC-078`:** `tools/arnes-lectura.sh` —el lector **proactivo**— señala el NBSP y
+**no** señala el homóglifo: publica ese REQ como normal con `rigor efectivo: ligero`.
+
+## [Interno] — 2026-09-09 · `QA-023-18` y `QA-023-19` retirados, el SKIP de `CA-12 (ii)` probado legítimo con tres ramas vivas, y `SEC-079` listo para firma
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus) · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`QA: aprobado` sobre `b5a29d9`.** Banco local **988 PASS · 0 FAIL · 8 SKIP** (996 casos, sin descuadre),
+tres quality gates OK, y **CI `hooks-en-linux` en PASS** sobre `b5a29d9`.
+
+**Los dos hallazgos se retiran, medidos.** La titular lleva su condición dentro y **juzgada aislada es
+verdadera**; el barrido de `(iii)` sobre las **8** oraciones no encuentra ninguna que prometa sin
+condición. Y el **control negativo discrimina cuatro candidatas**: `89440e9` (`721abd51`) incumple,
++«no exhaustivas» incumple, `1154417` (`1f4384ed`) incumple **por su titular**, y `b5a29d9`
+(`3ead3bd3`) cumple. Detalle que importa: el delta `1154417`→`b5a29d9` es **aditivo** —8 oraciones antes
+y 8 después—, así que **ninguno de los dos defectos se arregló borrando la oración incómoda**.
+
+`QA-023-19` reproducido entero: fragmento **165 B** / `596a237f`, **2+2+1** apariciones, **0** restos
+viejos en las tres sedes, sedes idénticas (`3ead3bd3`, 2545 B). Y el punto **(v) ejecutando la puerta**:
+las tres entradas dan **DENY** con su byte imprimible y el texto **deriva DENY para las tres en las dos
+apariciones**; la oración 6 también es verdadera medida — el homóglifo da **allow**.
+
+**Y coincide con el analista sobre «fragmento, no oración», por razón medible:** «frases equivalentes»
+admite cualquier **paráfrasis**, y una paráfrasis es **exactamente** lo que causó `QA-023-19`. La apódosis
+libre no afloja porque el mecanismo vive en la prótasis y la consecuencia la clava `(v)`.
+
+**El SKIP de `CA-12 (ii)` es legítimo, y lo prueba con las tres ramas vivas** — que era la pregunta que
+importaba, porque un SKIP que sustituye a un rojo es la forma que tomaría un atajo:
+
+| Corrida | Cuerpos | Conteos | Veredicto |
+|---|---|---|---|
+| `b5a29d9` contra `v1.33.0` | difieren | 2 de 7 movidas | **SKIP** |
+| `v1.33.0` contra sí mismo | idénticos | 7 de 7 iguales | **PASS** |
+| **sintético** (`v1.33.0` + redefinición **fuera** del cuerpo) | **idénticos** | **7 de 7 movidas** | **FAIL** |
+
+La enumeración de llamadas la comprobó **mecánicamente** completa (único token `arnes_*` del cuerpo:
+`arnes_lee_archivo`, idéntico `e9fedaa8`/408 B), las huellas reproducen, y el SKIP es **determinista**:
+byte a byte igual en su corrida y en el CI.
+
+**Un detalle mecánico que sólo se ve mirando el código de la puerta:** puso `QA: aprobado` porque
+`hooks/guard-completado.sh:274` **deniega `Seguridad: aprobado` si `QA != aprobado`** — dejarlo en
+`con-hallazgos` habría **bloqueado al auditor**. No cerró `SEC-079`, no firmó `Seguridad:` y no tocó
+`Estado:`.
+
+**Y corrigió su propio instrumento a mitad de camino, dejándolo escrito:** su primera tanda de falsación
+corrió en un proyecto sintético **sin `hooks/`**, así que las quality gates fallaban y **todo** salía
+`deny` **por un motivo ajeno** — un falso «la puerta cierra». Repobló y repitió todo. Es el mismo modo de
+fallo que este proyecto persigue, cazado por quien lo estaba cometiendo.
+
+**Hallazgo nuevo — `QA-023-22` (`instrumento`, dueño `desarrollador`):** la precondición **fija a mano** la
+lista que compara (`for fn93 in arnes_cola_pendientes arnes_lee_archivo`, `39-…-3:282`) en vez de
+**derivarla**; una llamada nueva daría **PASS** sin comparar el tercer cuerpo. Es `instrumento` y no
+`contrato` porque el REQ dice «hoy sólo `arnes_lee_archivo`» y **hoy es verdad**, comprobado. Forzador que
+se arma solo; vencimiento propuesto 1.35.0.
+
+**Aviso de la coordinadora, y es material:** la puerta requerida está verde sobre **`b5a29d9`**, **no**
+sobre `48b7808`. QA verificó que `48b7808` no toca las tres sedes, `hooks/`, `tools/` ni la sección 39/3,
+pero **el CI tendrá que volver a correr**. `CA-09 (iii)` sigue **sin acreditar** (`SEC-080`).
+
+## [Interno] — 2026-09-09 · Mi diagnóstico de `k=1` era falso en su mecanismo: el estadístico nunca estuvo apagado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación y corrección: coordinadora. **Bajo delegación de 24 h.**
+
+
+**Corrección de hecho, y es la segunda vez hoy que construyo una explicación correcta-en-la-medida y
+falsa-en-el-mecanismo.** Escribí que «*con `k=1` no hay mínimo que tomar: el mínimo ES la única
+muestra*». **Es falso, y está verificado por mí:** `tests/util/sonda-reloj.sh` tiene **dos** parámetros
+—`--k` son las repeticiones **dentro** de una serie (`sr_serie:347`) y `--r` son las **series**, que es
+sobre lo que se toma el mínimo (`sr_minimo:381`)— y `mide37` pasa **`--r 3` FIJO** en todas sus llamadas
+(`37/2:163`). Así que el fail-before con `k=1` **sí** toma el mínimo de **3** muestras, **las mismas que
+la medición directa con `k=20`**. **El estadístico nunca estuvo apagado.** La medición de `D6`
+(3,379× → 2,329×) sigue siendo correcta; la explicación que construí encima, no.
+
+**El mecanismo real, medido con round-robin controlado (N=5, `loadavg` publicado fila a fila):** los dos
+términos del cociente se miden en **dos invocaciones distintas, dos procesos y dos instantes**, así que
+la dispersión la domina **cuál de las dos pilló al vecino**. Y de ahí lo importante: **subir `k` o `r`
+alarga cada invocación, las separa MÁS en el tiempo y EMPEORA.**
+
+| configuración | rango, carga 17,6–23,3 | rango, carga baja | coste |
+|---|---|---|---|
+| `k=1 r=3` (la de hoy) | 64,4 % (mín **2,879×**) | 13,3 % | 1,5–4,6 s |
+| `k=1 r=15` | 52,8 % | — | 21 s |
+| `k=2 r=9` | 23,9 % | — | 26 s |
+| `k=3 r=9` | — | **66,0 %** | 13 s |
+| `k=8 r=3` | 50,0 % | — | 31 s |
+| **intercalado `k=2/3 r=9`** | **18,4 %** | **9,4 %** | 13–23 s |
+
+**Y lo que hizo el `desarrollador` es exactamente lo que se le pidió y merece quedar escrito:** declaró su
+criterio **antes de medir** (escalera fija, variable de decisión = suelo + dispersión, **nunca** el
+cociente), el criterio seleccionó **`k=3`**, **midió esa configuración, salió peor, y NO la envió** —
+«*enviarla habría sido enviar una regresión medida*». No subió la `k`. Eso es lo contrario de repetir
+hasta obtener verde.
+
+**Lo que sí entregó:** el caso ahora **publica** `k`, las series y, de cada término, su **mínimo y su
+máximo**, y tiene **un solo nombre** en sus cinco ramas — antes cada rama nombraba un caso distinto, así
+que un PASS→FAIL se leía como un caso que desaparece y otro que nace. Eso es lo que impidió atribuir el
+rojo la primera vez.
+
+**El remedio medido es el modo INTERCALADO, y no es alcance nuevo: ya está implementado y ya está
+contratado.** `sr_intercala` existe en `tests/util/sonda-reloj.sh:399` y su propio comentario cita
+**`REQ-021 CA-02` punto 2** —«*con DOS sujetos las series van a, b, a, b, … dentro*»—, con su motivo
+medido en `QA-017-06`: **1,217 en bloque contra 1,012 intercalado**, que es **exactamente** nuestro modo
+de fallo. Fue la **única** configuración más estrecha en **las dos** cargas y además **más barata** que su
+equivalente en bloque.
+
+**Decisión tomada bajo la delegación de 24 h:** se adopta el **modo intercalado** para `CA-03`, **en sus
+dos mediciones** —la directa y el fail-before—, porque mover sólo una rompería la coherencia de «el
+**mismo** cociente» que el fail-before acredita. **No relaja nada:** el techo sigue en 2,600×, no se
+retira ninguna prueba, y la práctica ya la contrata `REQ-021 CA-02`. Cambia **qué instrumento** mide, así
+que el orden es **`analista-requerimientos`** (precisar el modo en `CA-03`) → **`desarrollador`** (~20
+líneas) → **`qa-tester`** → **CI**.
+
+**Lo que sigue sin certificar, y lo digo yo, no el agente:** **esta máquina no es el juez y nadie puede
+afirmar hoy que el CI se ponga verde.** El `2,329×` no se reproduce aquí ni con 12 quemadores; lo que se
+reproduce es la **anchura** que lo hace posible. El CI corre con `ARNES_JOBS=6` sobre 4 vCPU, varias
+secciones midiendo a la vez. **El intercalado es el remedio con mejor evidencia, no una garantía.**
+
+**Evidencia salvada al repositorio** (era efímera, en scratchpad): **29 archivos** en
+`docs/arnes/req-017-ca-03-modo-de-medicion/`, con el criterio declarado antes de medir, las cinco tablas
+de medidas, las cinco corridas, los inventarios y los guiones de sonda. Las cifras que deciden quedan
+además dentro del comentario del propio archivo del caso.
+
+**A la cola, no abiertos aquí:** `razon37` tiene la **misma** carencia de publicación —da los dos mínimos
+y no los máximos— y afecta a **5 casos más**; se dejó intacto a propósito.
+
+## [Interno] — 2026-09-09 · El FAIL desaparece por DECLARACIÓN: la precondición de `CA-12 (ii)` dice que no puede atribuir, y lo publica con huellas
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de decisión del propietario por 24 h.**
+
+**Sección 39 aislada: 39 PASS · 0 FAIL · 3 SKIP.** El único FAIL del banco se fue **por declaración y no
+por relajación**, que es la diferencia entera entre este arreglo y el que no se hizo.
+
+**`CA-12 (ii)` da SKIP porque la precondición de atribuibilidad NO se cumple, y está medido con huellas:**
+el cuerpo de `arnes_cola_pendientes` difiere entre este árbol (`a060be56`, 3883 B, 72 líneas) y `v1.33.0`
+(`008683e6`, 1103 B, 28 líneas), mientras `arnes_lee_archivo` —su **única** llamada externa, **enumerada
+y no supuesta**— es **idéntico** (`e9fedaa8`, 408 B en las dos). Confirma midiendo lo que el analista
+había derivado leyendo `119e853`.
+
+Y el SKIP **publica lo que cambió, elemento por elemento**: `rango-sin-cerrar` (`0|rc=0` → `|rc=1`,
+`REQ-024 CA-08`) y `cierre-huerfano` (`0|rc=0` → `1|rc=0`, `REQ-024 CA-09`) — las **2 de 7** formas que
+el comentario del caso ya nombraba. Un instrumento que dice **cuándo no puede medir y por qué** vale más
+que uno que da un número.
+
+**`QA-023-19` se queda sin sede.** El fragmento del mecanismo queda **byte a byte idéntico** —165 B,
+`md5` corto `596a237f`— en sus **2 apariciones por sede** (oraciones 3 y 5) y en la skill, con **0**
+restos de la redacción vieja. Las dos sedes siguen idénticas entre sí, con huella recalculada
+**`3ead3bd3…` / 2545 B**: `02756e87…` deja de ser la referencia.
+
+**La skill también queda verdadera leída sola**, con la acotación **dentro de la misma oración** —«*dentro
+de lo que la guarda alcanza, que no es toda la clase: la vía del homóglifo de arriba PERMITE, y permite
+por ausencia del campo que el homóglifo borró*»— y el fragmento literalmente igual que en las filas. Era
+el artefacto que migra a los proyectos, así que es donde más importaba.
+
+**`CA-10 (v)` ejecutando la puerta real:** BOM, blanco borrado y NBSP interno → **DENY** por medibilidad
+(«algo INSERTADO DENTRO DE LA CLAVE») **incluso con todos los veredictos en verde**; homóglifo →
+**ALLOW**. Y los controles **discriminan por motivo**: clave limpia con `QA: pendiente` deniega **por el
+veredicto**, no por medibilidad, y clave limpia en verde permite.
+
+**Dos decisiones que el `desarrollador` declaró en vez de callar:** re-derivó
+`PISO_AUTONOMO_SECCION` de 181 a **232** porque el bloque indivisible de `CA-12` creció —y de paso
+corrigió los rangos de línea de los otros dos términos, que ya estaban desfasados—, con el archivo en 360
+líneas contra techo 400 y las seis de `CA-18` en verde; y dejó dicho que **la preferencia de sesión por
+editar en consola cedió** ante `AGENTS.md` §13, porque preferir la consola ahí habría apagado una puerta.
+
+**No corrió el banco entero, y lo argumentó:** hay otra comisión con la sección 37 a medio editar, y «*un
+banco completo sobre un árbol con edición ajena viva no mide lo que dice medir*». Correcto.
+
+`SEC-079`, `QA-023-18` y `QA-023-19` **siguen abiertos**: falta `qa-tester` y después
+`auditor-seguridad`. `Estado:` sigue `bloqueado`.
+
+## [Interno] — 2026-09-09 · `CA-12 (ii)` queda anclada con una precondición que la degrada declarándolo, y la oración 5 no sólo difería en letra: incumplía (v)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de decisión del propietario por 24 h (2026-09-09).**
+
+**(1) `CA-12 (ii)`: se contrata la lectura ANCLADA contra el tag `v1.33.0` materializado, con una
+precondición que es la parte buena.** Antes de comparar conteos, el caso comprobará que **el cuerpo de
+`arnes_cola_pendientes` y el de cualquier función que ese cuerpo llame** (hoy sólo `arnes_lee_archivo`) es
+**byte a byte el mismo** en las dos versiones. Si es idéntico, cualquier diferencia de conteo o `rc` es
+**FAIL contra el código**. Si difiere, la comparación **no puede atribuir** y el caso emite **SKIP con su
+motivo —nunca PASS y nunca FAIL—**, publicando qué difiere y qué formas cambiaron, elemento por elemento.
+
+**Por qué anclada y no abierta:** la abierta dice «hoy cuento igual que aquella versión», y **el proyecto
+ya decidió que eso es falso** — `REQ-024 CA-08`/`CA-09` cambian conteo y `rc` de esas dos formas **a
+propósito**, y `ADR-010` los declara defectos que `REQ-024` sí arregla «sin tocar el grano». Hacerla
+satisfacible exigiría **perseguir las expectativas de otro REQ dentro de un criterio ajeno**, que es la
+coartada que `requirements/README.md` § «Y el reverso» prohíbe, y dejaría de proteger nada. La anclada
+protege lo único que este REQ **puede** afirmar: «yo no moví el conteo que `REQ-009` contrata».
+
+**Y la consecuencia medida, leyendo `119e853` sin ejecutar:** `hooks/lib.sh` ya lleva el cambio de
+`REQ-024` **dentro** del cuerpo, así que **la precondición habría dado SKIP en este árbol**. El caso **se
+degrada solo, declarándolo** — no se retira y no se relaja—, y la propiedad sigue cubierta por
+construcción. Es la diferencia entre un rojo que se esquiva y un instrumento que dice cuándo no puede medir.
+
+**La cláusula de `CA-12` se disparó contra sí misma:** decía «si sale abierto es un hallazgo `contrato`
+contra este REQ», y salió abierto. Queda **registrado y vivo** en § «Conflictos registrados».
+
+**(2) Punto 1 de `CA-10`: salida (a), y el hallazgo dentro del hallazgo.** La oración 5 no sólo difería en
+letra del fragmento de la oración 3: **incumplía (v)**. De «*y sus blancos, si lo que queda **es** una
+clave del lector*» —sin «leída también sin sus blancos»— un lector deriva que ante el **blanco borrado**
+(`Sensibleaseguridad`) la guarda **calla**, y la máquina **deniega**. O sea que `QA-023-19` estaba
+**sobreviviendo en la segunda aparición**, y el residual que el transcriptor nombró sin cerrar era más
+grave de lo que parecía.
+
+**Y la precisión que lo vuelve satisfacible:** la unidad de identidad pasa a ser **el fragmento** —la
+prótasis, marcado incluido—, byte a byte en todas sus apariciones, **con la apódosis libre**. Exigir «la
+misma frase» donde las apódosis difieren sólo se cumplía **borrando** una de las dos apariciones, que es
+justo lo que no se quiere. No relaja: la identidad del fragmento es **más estrecha** que «frases
+equivalentes», y el fondo lo sigue cerrando **(v)**.
+
+**(3) Enrutado por la coordinadora: la skill lleva los DOS defectos.** El analista lo observó y no lo
+actuó por ámbito; verificado por mí en `skills/arnes-upgrade/SKILL.md:820-824`, que contiene **la promesa
+absoluta** («*la puerta **deniega** … **nunca** permite por *ausencia* del campo que ese carácter
+borró*») **y** la redacción vieja del mecanismo («*y sus blancos, si lo que queda **es** una clave del
+lector*»). Es `QA-023-18` y `QA-023-19` **en el artefacto que migra a los proyectos**, y `CA-10` lo nombra
+entre sus sedes. Entra en la comisión de transcripción. **Queda además una observación para el analista:**
+`CA-10` **no** somete hoy la skill al test de la titular aislada, y por ahí el defecto pudo sobrevivir.
+
+Las dos decisiones son **menores, sin ADR**, con su «qué lo volvería de fondo» escrito. `SEC-079`,
+`QA-023-18` y `QA-023-19` **siguen abiertos**: falta `desarrollador` → `qa-tester` → `auditor-seguridad`.
+
+## [Interno] — 2026-09-09 · `REQ-024` implementado (9 de 11) y las dos filas de `SEC-079` transcritas, con dos residuales que ninguno de los dos agentes quiso cerrar solo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `desarrollador` (`REQ-024`) y `desarrollador` (transcripción) · consolidación: coordinadora. **Bajo delegación de decisión del propietario por 24 h (2026-09-09).**
+
+### `REQ-024` — 9 de 11 criterios, con sus pruebas
+
+Banco **988 PASS · 1 FAIL · 7 SKIP**, cuadre **996** (de 966: **30 casos nuevos**). Autoprueba 106 · 0.
+Tres quality gates verdes. Fail-before/pass-after de las tres secciones contra `v1.33.0`: **44 PASS · 9
+FAIL · 2 SKIP** antes, **55 · 0 · 0** después.
+
+**La tensión de fondo se resolvió midiendo, no eligiendo.** `CA-02` (sitio único) contra `CA-03 (i)`: el
+dato que decide es que `hooks/lib.sh` lo cargan **siete** puntos de entrada y sólo uno es la puerta; tres
+de ellos resuelven la ausencia al derivar el rigor. Una tabla en `guard-completado.sh` sería **invisible
+para los otros seis**, y el informe diría `estandar` donde la puerta dice `critico`. Sitio único =
+`hooks/lib.sh`, y `CA-03` sale por su salida **(ii)**.
+
+**`CA-01` reproduce la medición del auditor sin heredarla:** M = 6 claves, **N = 4 contra `v1.33.0`** y
+**0 en esta versión** — coincide con `R-013` §2. Y **`CA-03` reproduce `SEC-050`**: el puntero no encuentra
+**2 de 4**, justo los que retiran el suelo y el nivel.
+
+**Coste (`CA-07`):** 0 procesos añadidos (2 vs 2 en la puerta, 5 vs 5 en la parada), ruta crítica
+**1,077×** contra techo 1,25×, duplicación **1,860×** (MAD 0,010) y **1,994×** (MAD 0,022). **Estadístico:
+mediana de 5 tomas + MAD, no el rango** — el `desarrollador` aplicó por su cuenta la lección de `QA-023-12`.
+
+**La llave `campos.ausencia_exige` queda en `false`.** Encenderla es política, no implementación, y toca
+`.arnes/config.json`, que §6 declara **gate humano**: queda como decisión del propietario, no ejecutada.
+
+**No escribió el caso de banco de `REQ-023 CA-10`**, por la instrucción de secuencia: su redacción de
+referencia estaba cambiando.
+
+### El único FAIL es un `contrato` contra `REQ-023`, y el REQ-024 lo había predicho
+
+`REQ-023 CA-12 2 de 7 formas de la cola cambiaron de conteo o de rc`. El caso de `CA-12 (ii)`
+(`39-…-3-los-lectores-y-el-coste.sh:284-297`) compara el **árbol actual** contra `v1.33.0` —la afirmación
+**abierta**—, mientras su propio comentario (`:230-233`) y el criterio vigente contratan una no-regresión
+**anclada a esa versión**. Las 2 formas son exactamente las dos que ese comentario nombra. **El
+`desarrollador` no lo resolvió**, y explicó por qué: `REQ-023` está `bloqueado`, su caso lleva firma de QA
+sobre ese árbol, y elegir entre «anclada» y «abierta» sería decidir una pregunta de contrato ajena.
+
+### Las dos filas de `SEC-079`, transcritas
+
+`md5 02756e87…`, **2494 B**, `cmp` idénticas, **1/1** por sede. La titular ya lleva su condición **dentro
+de la propia oración**. El transcriptor hizo el barrido que `CA-10 (iii)` ahora exige —**8 oraciones,
+la 1 juzgada aislada**— y el punto **(v)** ejecutando la puerta en un worktree sobre `8754d98`: BOM,
+blanco borrado y NBSP interno dan **DENY** con su motivo citado; el homóglifo da **ALLOW**; y el control
+latino idéntico da **DENY**, así que **la única diferencia que decide es la `а` cirílica**.
+
+**Y nombró un residual en vez de cerrarlo por su cuenta**, que es la conducta correcta: `CA-10` punto 1
+exige que si el mecanismo aparece dos veces en la celda sean «**literalmente la misma frase**», y tras el
+cambio las oraciones 3 y 5 son **equivalentes en contenido pero no idénticas en letra**. Unificarlas
+exigía **redactar**, que es del analista y su comisión se lo prohibía. **`QA-023-19` puede quedar abierto
+por la letra del punto 1 aunque su defecto de fondo esté corregido.**
+
+### Deudas enrutadas y desviaciones declaradas
+
+`REGHER94` **hecho** en `39-…-4`, y el mismo defecto **existe en tres sitios más** (`39-…-2:100`,
+`39-…-3:96`, `39-…-5:105`), preexistentes y de `REQ-023`. **Desviación declarada:**
+`hooks/estado-derivado.sh` recibió **un renglón** y no estaba en `Archivos:` — sin él el bloque derivado
+publicaría `estandar` donde la puerta dice `critico`. **`40-ausencia-que-abre-2` está en 400 líneas, su
+techo exacto**: quien añada un caso ahí **parte** la sección, y hay aviso en su preámbulo.
+
+**`CA-04` y `CA-06` de `REQ-024` NO se tocan ni se acreditan**: exigen la superficie heredada que estaba
+reservada para `SEC-079`. Los dos ADR nuevos (`ADR-009`, `ADR-010`) quedan en **`propuesta`**.
+
+## [Interno] — 2026-09-09 · El write-back que convierte el error de verificación de la coordinadora en una guarda del criterio
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de decisión del propietario por 24 h (2026-09-09).**
+
+Segundo pase de write-back sobre `CA-10`, para `QA-023-18` y `QA-023-19`. Un solo archivo tocado:
+`requirements/REQ-023.md`.
+
+**Lo mejor del pase no es lo que arregla, sino lo que impide que vuelva.** «Cómo se comprueba» gana un
+apartado de **cómo NO se comprueba**, y cita el fallo real: *el `grep` de la cadena dio 0 sobre una fila
+que seguía prometiendo*. Ése fue el error de la coordinadora —verificar una **cadena** en vez de una
+**propiedad**— y ahora es una **anti-forma escrita en el criterio**. El barrido de `(iii)` pasa a ser
+**enumerativo obligatorio**: oraciones numeradas y **la 1 juzgada aislada**. Además entra un punto **(v)**:
+la descripción se comprueba **ejecutando** —las tres entradas dan DENY, así que el texto tiene que derivar
+DENY para las tres—, y una **cuarta candidata** al control negativo: la fila de `1154417` **también
+incumple**, por su titular.
+
+**`QA-023-18`:** el `Entonces` de `CA-10` pasa de «*no deja cerrar*» a «*no deja cerrar **dentro de lo que
+la guarda alcanza, acotado en la propia celda***», y la exigencia de «ninguna frase» gana **dónde**: «*la
+PRIMERA —la oración titular— se juzga AISLADA del resto de la celda y tiene que ser verdadera leída
+sola*». Eso cierra exactamente la puerta que el `qa-tester` había dejado como **condición** de su veredicto
+de «honesto, no coartada».
+
+**`QA-023-19`:** el mecanismo se reescribe **como el código lo hace** —«*retirado lo ajeno **y después
+todos sus blancos**… clave **leída también sin sus blancos**»—, con el motivo correcto del silencio (lo
+retirado **sustituía una letra**, y reponer *qué* letra exigiría **elegir entre candidatos**). Y se añade
+el **sitio único de la conducta** (`hooks/lib.sh`, `_arnes_clave_oculta`) con una regla que vale para todo
+el proyecto: **si el texto y el código divergen, el equivocado es el texto**. Más «una sola descripción por
+celda»: si el mecanismo aparece dos veces, las dos han de ser **literalmente la misma frase**.
+
+**Y el punto 4 nombra los dos casos que incumplen**, para que no haya que deducirlos: (a) acotación
+completa **con titular absoluta**; (b) describir un mecanismo que el código no hace **aunque describa
+menos**.
+
+**Las dos entradas del Historial que repetían la descripción falsa NO se reescriben:** quedan **anotadas
+en su sitio** con la corrección fechada y su causa, conservando la letra original como rastro. Es la forma
+correcta —un historial que se corrige encima deja de ser historial— y conviene que quede dicha.
+
+**Clasificación: menor, sin ADR.** No cambia alcance (12 criterios siguen siendo 12), ni la decisión base,
+ni el rigor, ni ningún techo, ni lo que la puerta hace. Corrige **dónde** va una condición que el criterio
+ya contrataba y **alinea una descripción con el código** en la dirección que `requirements/README.md` §
+«Cuando el código cubre MÁS de lo que el criterio promete» manda arreglar en el mismo cambio que lo
+descubre. Lo volvería de fondo: meter el homóglifo en esta ventana, mover el reparto blanco/letra, o
+cambiar `hooks/` para que reponga y colapse.
+
+`SEC-079`, `QA-023-18` y `QA-023-19` **siguen abiertos**: faltan `desarrollador` → `qa-tester` →
+`auditor-seguridad`. `CA-09 (iii)` sin acreditar; `SEC-078`, `SEC-080`, `QA-023-20` y `QA-023-21` con sus
+dueños.
+
+## [Interno] — 2026-09-09 · La promesa absoluta no se había borrado: sobrevivía en la oración titular, y la coordinadora había verificado una cadena en vez de una propiedad
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus, revisión acotada al cambio) · consolidación: coordinadora.
+
+**`QA: con-hallazgos` sobre `1154417`**, validado en `git worktree --detach` con el padre `89440e9` como
+línea base A/B — la forma correcta, porque el árbol de trabajo tiene trabajo vivo de `REQ-024`.
+
+**El hallazgo que más enseña, y va contra la coordinadora: `QA-023-18` (`contrato`).** La promesa absoluta
+se borró de la **oración 2**, sí, pero **sigue palabra por palabra en la oración 1**, la titular: «*Una
+línea de la cabecera que la máquina **no puede medir** no deja cerrar*», sin condición — mientras la
+**oración 6 de la misma celda** dice que el homóglifo **permite**. La celda se contradice consigo misma.
+Medido ejecutando la puerta: `Еstado: completado` → **ALLOW** con salida vacía, y
+`Sensible а seguridad: sí` + `Rigor: ligero` → **ALLOW**.
+
+**Y la lección es sobre cómo verifiqué yo.** Dije «la promesa absoluta está **borrada**» apoyándome en un
+`grep` de la frase «*y **nunca** se permite por **ausencia***», que efectivamente da **0**. Pero eso
+**comprueba una cadena, no una propiedad**: la promesa vivía en otra oración con otras palabras. Es
+exactamente el modo de fallo que este proyecto persigue —confundir la forma con el estado— y lo cometí
+verificando el arreglo de un hallazgo que era, precisamente, una promesa sin condición. El método de QA
+—barrer la celda **oración a oración**, que es lo que el propio `CA-10 (iii)` prescribe— es el que sí
+mide, y el mío no lo era.
+
+**`QA-023-19` (`contrato`)**: `CA-10` punto 1, las dos filas y el Historial describen «*repuesto un blanco
+en el sitio de la retirada y colapsados los repetidos*», y el código hace otra cosa
+(`hooks/lib.sh:2005`): `limpio="${ajeno//[[:blank:]]/}"` — **retira TODOS los blancos**, como dice su
+propio comentario. Divergen en tres entradas, entre ellas **el BOM que la propia fila nombra primero**, y
+la celda se contradice con su oración 12, que sí lo describe bien. Describe **menos** cobertura de la que
+hay, así que **no reabre ningún fail-open**.
+
+**Y el control negativo funciona: discrimina de verdad.** QA construyó tres candidatas y las barrió oración
+a oración: la fila anterior **incumple**; añadirle sólo «no exhaustivas» **sigue incumpliendo**; añadirle
+además el puntero **también**; la fila nueva cumple en sus oraciones 2–3. Separa tres textos distintos —y
+separa justo lo que el propietario quería separar—. **Pero el mismo barrido caza la fila nueva por su
+oración 1**, que es el hallazgo de arriba. Un control negativo que también condena el arreglo es la mejor
+prueba de que no es decorativo.
+
+**Acotar la fila en vez de `CA-01` queda declarado HONESTO, con una condición.** `CA-01` es byte a byte
+idéntico (`md5 4d0d1495…`), el incumplimiento sigue vivo y **contable** en `CA-11`, `CA-12 (iii)` (3/3) y
+«Fuera de alcance» (9 ítems), y la fila ahora **publica** que la vía permite. **La condición:** mientras la
+oración titular siga prometiendo sin condición, la fila conserva la única lectura que hace quien escanea la
+columna «Invariante», y **por ahí «acotar la fila» sí se convertiría en la coartada**.
+
+**El cambio de texto no mueve el banco, confirmado por QA por su vía:** cuadre **966** en las tres
+corridas; el único efecto medible es el censo del corpus de `CA-04` (5336→5356 líneas con campo), que va
+hacia el lado que **refuerza** la anti-vacuidad; y por construcción no puede mover un veredicto por la vía
+de las filas porque **ninguna sección del banco las lee** — que es `QA-023-20`.
+
+**Más evidencia para `D6`, y refuerza el diagnóstico de `k=1`:** el mismo caso del fail-before le dio a QA
+**4,667×** sobre el padre y **3,562×** sobre este commit, mismos sujetos, dos corridas — junto a los
+**3,379×** y **2,329×** del CI. Cuatro muestras de un sujeto **inmutable** entre 2,3 y 4,7: es el retrato
+de una medición de una sola muestra, no de una máquina que cambió.
+
+**Dos `instrumento` nuevos con dueño:** `QA-023-20` (ninguna sección del banco lee las dos filas) y
+`QA-023-21` (la promesa absoluta sobrevive en el mensaje de la puerta, `guard-completado.sh:363` y `:392`).
+
+`Hallazgos abiertos:` queda con **13** entradas, **todas con clase**. `Estado:` `bloqueado`, `Seguridad:`
+intacto, **`SEC-079` no cerrado**. QA resolvió además la cuenta que el analista dejó abierta: **extendió su
+veredicto a la cláusula nueva y no pasa**, conservando dentro del campo lo acreditado sobre `808f9ca`.
+
+## [Interno] — 2026-09-09 · El rojo de la puerta requerida tiene causa concreta: el fail-before mide con `k=1` y apaga el estadístico que su criterio ordena
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (trabajo de coordinación, sin abrir comisión).
+
+**El propietario rechazó la primera lectura y tenía razón:** «*Que `v1.32.1` sea inmutable no demuestra
+que sólo cambió la máquina*». La comprobación que pidió encontró **una causa concreta**, y no es la máquina.
+
+**Lo que NO cambió, medido:** entre las tres corridas del CI no cambiaron
+`37-coste-del-escaner-2-las-razones.sh`, `run.sh`, `tests/escenarios/hooks/util`, `hooks/`, `tools/`,
+`.arnes/config.json` ni `.github/` —`git diff --stat` vacío en los dos saltos—, y la **imagen del runner
+fue `ubuntu-24.04` en las tres**. La entrada medida tampoco es un archivo del repositorio: es una cadena
+**sintética** de 70 000 y 140 000 bytes, así que el crecimiento del corpus es irrelevante. **Límite
+honesto:** «misma imagen» no es «mismo hardware», y la CPU o la vecindad de la máquina virtual no se
+pueden verificar desde aquí.
+
+**La causa: el fail-before mide con `k=1`.** `CA-03` contrata «*k tal que el **mínimo** de cada serie
+supere 50 ms*» y «*por eso el estadístico es el **mínimo**, no la media*». El caso usa **k=20** en la
+medición directa (`:202-203`) y **k=1** en el fail-before (`:213-214`), por un compromiso de coste que su
+propio comentario declara: «*así el fail-before cuesta segundos en vez de medio minuto*». **Con `k=1` no
+hay mínimo que tomar —el mínimo ES la única muestra—, así que la cancelación de ruido que el criterio
+contrata está desactivada justo en ese caso.** Medido sobre el mismo árbol inmutable: **3,379×** (PASS) y
+**2,329×** (FAIL) contra techo 2,600×. Dos muestras únicas a distinto lado del techo: es lo que `k=1`
+predice, sin que haga falta que cambiara nada.
+
+**Y la objeción del propietario sobre los dos PASS anteriores era la clave:** son evidencia de **esas dos
+ejecuciones**, no garantía de reproducibilidad — y con `k=1` son **dos muestras únicas**. No acreditan que
+la sonda discrimine de forma reproducible; acreditan que discriminó dos veces. Hacer el caso opcional
+**hoy** congelaría como «acreditado» algo que **nunca se midió con el estadístico que el criterio exige**:
+convertiría un defecto de medición en una exención permanente.
+
+**Qué cobertura automática se perdería al hacerlo opcional:** la **única** prueba automática de que la
+sonda de `CA-03` **discrimina**. Sin ella, el verde de la medición directa de cada PR queda
+**inacreditado**, y nada detectaría una sonda que dejó de medir —un `mide37` devolviendo una constante, un
+`LIB37` apuntando al archivo equivocado, un `arnes_sin_cita` renombrado o vaciado—.
+
+**Recomendación, y NO es hacerlo opcional: subir la `k` del fail-before** hasta que el mínimo de cada
+serie supere el suelo con holgura, y **publicar las k muestras**. Eso es **implementar `CA-03` tal como
+está escrito**, no relajarlo: no cambia ningún umbral, no retira ninguna prueba, y no es repetir hasta
+obtener verde — si con `k` suficiente el cociente **sigue** bajo 2,600×, entonces la sonda de verdad no
+discrimina y **eso es el hallazgo**. Precio: los ~30 s de CI que el comentario quiso ahorrar. Puede **no
+reabrir `REQ-017`**, porque `k` no está fijada por el criterio sino **constreñida** por él; si `k=1` ya
+incumple esa constricción, es defecto del caso y no cambio de contrato — **esa lectura la decide el
+propietario**.
+
+**Cuándo sería obligatoria la acreditación y dónde su evidencia:** obligatoria al tocar la ruta de escaneo
+de `hooks/lib.sh`, al tocar la sonda o su andamiaje, en el **commit de versión de cada release** antes del
+tag, y cuando la medición directa se mueva más que su margen declarado; con el interruptor que ya existe
+(`ARNES_COSTE_RUTA_CRITICA=1`, precedente de `CA-05`) **más un paso de CI que lo active por rutas
+tocadas**. La evidencia, en el **Historial de `REQ-017`** —donde `CA-05 (i)`/`(ii)` ya acreditan el
+suyo—, con la URL de la corrida, la `k` y **las k muestras**: un número sin su `k` y sin su dispersión es
+lo que nos trajo aquí.
+
+**`CA-03` NO se convierte en opt-in**: el propietario no lo autorizó y la comprobación desaconseja hacerlo
+antes de arreglar la medición. El PR queda **sin fusionar**, que no detiene el trabajo independiente ni
+invalida la corrección documental de `SEC-079`.
+
+## [Interno] — 2026-09-09 · `SEC-079`: la promesa absoluta se BORRA, no se anota — y el control negativo lo hace comprobable
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos` (`CA-10`) y `desarrollador` (las dos filas) · verificación y consolidación: coordinadora.
+
+**Las dos mitades de texto de `SEC-079`, hechas en ese orden.** El propietario autorizó la opción (a) con
+un matiz que descartó la solución obvia: «*Añadir solamente «no exhaustiva» no basta si la promesa
+principal sigue siendo absoluta*».
+
+**El analista convirtió ese matiz en un criterio FALSABLE, y eso es lo mejor de este cambio.** `CA-10`
+gana un bloque de cuatro puntos con **control negativo escrito**: la fila anterior incumple, **y
+añadirle sólo «no exhaustivas» sigue incumpliendo**. Así el arreglo se puede **medir** en vez de opinar
+sobre si suena suficiente. Y acotó la promesa **por la propiedad que decide la cobertura**: deniega
+cuando, retirado lo ajeno al alfabeto, repuesto el blanco y colapsados los repetidos, **lo que queda es
+una clave del lector**; si la reconstrucción **no** devuelve clave, la guarda **calla** y la puerta
+resuelve por **ausencia**.
+
+**Y evitó que el write-back fuera una coartada.** Acotó **la fila de §13** y **no `CA-01`**, con el
+motivo escrito: un criterio dice cómo se quiere el mundo, una fila de §13 **describe lo que la máquina
+hace hoy**. De modo que **`CA-01` sigue exigiendo DENY y el homóglifo sigue siendo incumplimiento
+abierto** de esa exigencia. Relajar `CA-01` habría hecho desaparecer el problema por definición — lo que
+`requirements/README.md` § «Y el reverso» prohíbe, y él lo nombró así.
+
+**Las dos filas, medidas por el `desarrollador` y verificadas por la coordinadora:** `AGENTS.md:349` y
+`templates/AGENTS.md.tpl:314` quedan **byte a byte idénticas** (md5 `1f4384ed…`, **2287 B**, `cmp` sin
+diferencias), **una sola fila por archivo** —la anterior **sustituida**, no acompañada— y **1/1** de
+delta en cada sede. La promesa absoluta vieja está **borrada**: `grep` de «*y **nunca** se permite por
+**ausencia***» da **0** en las dos. Ése es el control negativo cumplido: una fila que sólo hubiera
+añadido «no exhaustivas» conservaría esa cláusula y el `grep` la seguiría encontrando.
+
+**Dos detalles del `desarrollador` que merecen quedar escritos:**
+- **La `Е` del ejemplo es cirílica de verdad** (`d0 95` = U+0415, verificado en hexdump por él y por la
+  coordinadora), no una `E` latina. Escribir *sobre* un homóglifo con el carácter equivocado habría
+  dejado un ejemplo que no ejemplifica nada.
+- **Cita el registro por ID y NO por número de línea** (`SEC-078`, `SEC-079`, `R-024`), porque **en el
+  proyecto que nace del template esas líneas no existen**: el ancla estable es el identificador. Es
+  exactamente la clase de detalle que distingue una plantilla que funciona de una que se hereda rota.
+- Usó `Edit` y no `sed` **a propósito**, citando §13: la preferencia por consola **cede** cuando apagaría
+  una puerta cableada a `Edit`/`Write`, y `requirements/REQ-023.md` la tiene.
+
+**Commit SELECTIVO, y el motivo es coordinación real.** Hay un `desarrollador` trabajando en **`REQ-024`
+ahora mismo**, con `hooks/lib.sh` (+192), `tools/arnes-lectura.sh` (+47), `hooks/guard-completado.sh`,
+`hooks/estado-derivado.sh`, `.arnes/config.json` y su plantilla **a medio hacer**. Nada de eso entra
+aquí. Y una precisión que pidió el propio `desarrollador` de las filas, que se respeta: de las ~137
+inserciones de `requirements/REQ-023.md`, **una sola es suya** (su fila de Historial); el resto es el
+write-back de `CA-10` del analista. Su `bash -n` en verde acredita **el árbol de trabajo del otro**, no
+su cambio, que no toca shell — lo dijo él, y es la clase de precisión que hace utilizable una medición.
+
+**`SEC-079` NO se cierra con esto**, por condición del propietario: se cierra **únicamente** tras
+`qa-tester` y `auditor-seguridad`. Sigue en el campo `Hallazgos abiertos:`, con `SEC-078` y `SEC-080`
+**abiertos** y con sus responsables. `Estado:` sigue `bloqueado`, `CA-09 (iii)` **sin acreditar**.
+
+## [Interno] — 2026-09-09 · D5 autorizada, opción (a) — y el matiz del propietario descarta la solución obvia
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (registro de la decisión y despacho de la cadena).
+
+El propietario autoriza corregir `CA-10` y las dos filas heredadas para que **describan la cobertura
+real**, manteniendo **fuera de esta ventana** la vía del homóglifo ya declarada. Y añade el matiz que
+convierte esto en un arreglo de verdad y no en un parche:
+
+> «*La redacción debe nombrar explícitamente esa limitación y enlazar su evidencia en el registro.
+> **Añadir solamente «no exhaustiva» no basta si la promesa principal sigue siendo absoluta.***»
+
+**Eso descarta la salida obvia**, que era marcar la lista de tres fronteras como «no exhaustiva» y dejar
+intacta la promesa. Lo que tiene que cambiar es la **promesa principal**: la fila afirma la clase **por
+estado y sin condición**, y eso es lo que `R-024` midió falso. La promesa nueva ha de ser **verdadera
+tal como está escrita**, con la limitación **nombrada dentro** y su evidencia **enlazada** al registro
+(`SEC-078`/`SEC-079`, revisión `R-024`).
+
+**Condiciones que fija y quedan escritas en `D5`:** `SEC-078` y `SEC-080` **siguen abiertos** con sus
+responsables; la autorización **no acepta riesgos nuevos** y **no acredita el criterio de rendimiento**
+—`CA-09 (iii)` sigue sin acreditar—; la cadena es **analista → desarrollador → QA → auditor** con
+**revisión acotada al cambio** y **reutilizando la evidencia que siga siendo válida**; y **`SEC-079` se
+cierra únicamente tras esa validación**, no al escribir el texto.
+
+**Coordinación con `REQ-024`, que corre en paralelo.** Por instrucción del propietario, **las pruebas de
+`CA-10` deben comprobar la redacción corregida**, así que ese tramo va **en secuencia**: se avisó al
+`desarrollador` de `REQ-024` de que **no escriba** el caso de banco de `CA-10` —lo habría escrito contra
+un texto que va a cambiar— y de que la reserva de `AGENTS.md`, `templates/AGENTS.md.tpl` y
+`skills/arnes-upgrade/SKILL.md` sigue firme, ahora con dos comisiones comprometidas sobre esa
+superficie. **El resto de su encargo no se pausa**: `hooks/`, `tools/`, las dos secciones `40-*`,
+`run.sh`, el manifiesto y su plantilla siguen siendo suyos, y `REGHER94` también, porque no depende de
+ninguna redacción. Reparto por **escrituras reales**: el analista sólo toca `requirements/REQ-023.md`,
+así que no colisiona con él.
+
+`D5` pasa a «Resueltas» con la decisión y sus condiciones. La cola baja de **4 a 3**.
+
+## [Interno] — 2026-09-09 · Primera auditoría de la guarda (R-024): el REQ se disparó su propio forzador, y el rango que le dio la coordinadora no contenía el mecanismo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `auditor-seguridad` (Opus) · consolidación: coordinadora.
+
+**Veredicto: `Seguridad: con-hallazgos` (R-024).** Acredita **la revisión de seguridad de la guarda de
+medibilidad** —que no abre nada que antes cerrara, que la duda va al lado que cierra, que no hay
+inyección ni fail-open por entorno, que ningún control aprobado se retiró y que **dos se refuerzan**— y
+**no** acredita el banco, las quality gates, `CA-09` ni el fail-before de `CA-08`.
+
+**Un error de la coordinadora, corregido por el auditor y anotado aquí porque es instructivo.** Se le
+dio el rango `5305de9..390a0a2`, y `git diff --stat` de ese rango sobre `hooks/` y `tools/` sale
+**VACÍO**: la guarda vive en `e406202` y en el WIP `29b06eb`, los dos **anteriores**. Con
+`Seguridad: pendiente`, eso significa que **nadie la había auditado nunca**. El auditor amplió por su
+cuenta al delta real (`43bfd47..390a0a2`: **349 inserciones** en `lib.sh`, `guard-completado.sh` y
+`arnes-lectura.sh`) y lo dijo: firmar sólo el rango recibido habría sido **una firma sin el mecanismo
+dentro**. Un rango es un parámetro de la firma, y darlo mal la vacía.
+
+**`SEC-079` (`contrato`, alta) BLOQUEA, y lo hace por máquina, no por prosa:** con los cuatro veredictos
+en verde, `guard-completado` responde `deny :: el hallazgo 'sec-079' es de clase 'contrato' y bloquea el
+cierre`. La fila heredada de `AGENTS.md` §13 y de `templates/AGENTS.md.tpl` promete la clase **por estado
+y sin condición**, con una lista **cerrada** de tres fronteras que **no incluye la vía abierta** del
+homóglifo. Medido ejecutando la puerta con su JSON real: `Sensible <U+0430> seguridad: sí` +
+`Rigor: ligero` responde **ALLOW**, y eso **reproduce entera la fila 1 de `SEC-047`**. También abren
+`Q<U+0430>: pendiente`, `Hallazg<U+043E>s abiertos: SEC-999 (contrato)` y `<U+0415>stado: completado`,
+mientras el control limpio deniega.
+
+**El defecto no es que la vía esté abierta —está declarada fuera de alcance con dueño y ventana— sino
+que el documento canónico lo promete sin condición mientras sigue abierta. Y el forzador lo escribió
+este REQ contra sí mismo:** «*que algún texto de este REQ o de la superficie heredada afirme sin
+condición que la guarda cubre la clase … mientras esta vía siga abierta*». Se disparó solo, que es
+exactamente para lo que se escriben los forzadores. Reparto justo: **la skill es honesta** —dice que
+«ninguna versión lo deniega, tampoco 1.34.0»—; el que promete de más es el documento canónico, así que
+el write-back es del **analista** sobre `CA-10`, no una culpa del `desarrollador`.
+
+**Lo que el auditor acredita A FAVOR de la guarda, ejercitándola y no leyéndola:** la clase **no puede
+fabricar** una clave del lector, sólo destruirla —lo que **justifica** su asimetría con la guarda del
+CR—; el mapa de claves es **inambiguo por construcción**; `arnes_deny` usa `jq --arg`, así que un
+`\xNN` no rompe el JSON; **`ARNES_CLAVES` es asignación incondicional**, así que el entorno no puede
+vaciarla (lo miró porque vaciarla habría apagado a la vez la guarda y los cinco brazos de
+`arnes_campos_req`); la clase de caracteres no contiene `-`, `]` ni `^`; y **cero falsos positivos**
+sobre los 27 REQ reales. Y **dos controles quedan reforzados**: la clave del estado terminal ya está
+cubierta, y el informe emite la anomalía **antes** del descarte «este archivo no tiene `Estado:`».
+
+**`SEC-078`** (`instrumento`, alta): la vía del homóglifo reproduce `SEC-047` entero, y el puntero de la
+skill —«clase abierta **con dueño en el registro**»— **no resolvía**: `grep 'homógl'` sobre el registro
+daba **0**. La entrada nueva lo hace cierto. **`SEC-080`** (`instrumento`, media): un umbral de la puerta
+requerida cuyo veredicto **lo decide el ruido de la máquina**, y cuya abstención sale con el **mismo
+`rc`** que un verde; extiende `SEC-064` sin duplicarlo. Ninguno de los dos condiciona el cierre.
+
+**Y una honestidad que conviene subrayar: el auditor NO se apropió del `957 · 0 · 9`.** Dice que es de
+QA y de la coordinadora, y que es sobre `808f9ca` y no sobre `390a0a2` — verificando, eso sí, que
+`808f9ca..390a0a2` no toca `hooks/`, `tools/`, `.github/`, `tests/` ni `.arnes/`, así que la cifra sigue
+siendo aplicable «pero no es mía». Tampoco subió la clase de `QA-023-17`: coincide con `instrumento`
+porque la guarda medida es lineal y hoy no hay daño.
+
+**Escalado: `D5` en `PENDING_APPROVAL.md`** con las dos salidas —(a) barata y recomendada: cláusula de
+lista «no exhaustiva» en `CA-10` que cite el sitio único, y luego la fila en las dos sedes, con el orden
+analista → desarrollador → QA → auditor; (b) cara: meter el homóglifo en esta ventana, con sus tres
+salidas ya medidas como malas—. La cola sube de **3 a 4**. La fila de `REQ-023` en `D2` queda con
+`SEC-079`: es el **tercer relevo** del bloqueante, tras `QA-023-05` y `QA-023-15`, los dos cerrados.
+
+## [Interno] — 2026-09-09 · CI en verde y `QA: aprobado`, con la distinción que lo hace honesto: la prueba está corregida y el criterio NO está acreditado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus, revalidación acotada) · verificación y consolidación: coordinadora.
+
+**`hooks-en-linux` PASA sobre `808f9ca`** (run 34427423326, PR #45): **957 PASS · 0 FAIL · 9 SKIP**,
+contra los 955 · 1 · 10 de `6ad9752`. **Cuadre 966 en las dos: nada se retiró.** La puerta requerida y
+estricta de `main` deja de estar roja.
+
+**Y aquí va la distinción que el propietario pidió expresamente, porque sin ella el verde miente:**
+
+- **La prueba está CORREGIDA.** Mide la relación emparejada contra `v1.33.0` con sus cuatro parámetros
+  publicados, y ya no la magnitud retirada.
+- **El criterio NO está ACREDITADO.** `CA-09 (iii)` **abstiene en los dos sujetos en la máquina más
+  limpia disponible**: `arnes_norm_clave` mediana 0,986 con margen **0,014** contra rango 0,229;
+  `arnes_campo_linea` mediana 0,952 con margen **0,048** contra rango 0,055. Y el **1 PASS de 10**
+  corridas locales era **flaky**: un rango que cayó bajo el margen por suerte.
+
+**El FAIL anterior era un ROJO FALSO, y no se deduce: se mide.** El caso nuevo publica los absolutos
+como control en la misma tanda, y la base heredada `v1.33.0` paga **2,571 · 2,519 · 2,642** en
+`arnes_campo_linea` contra el techo retirado de 2,200×. O sea que el `2,365× > 2,200×` que puso rojo el
+CI **condenaba una propiedad que el código heredado ya pagaba más caro**.
+
+**`CA-10` validado y `QA-023-15` (`usuario/dinero`) RETIRADO — por sus dos brazos, no por el texto.**
+Par por cláusulas reproducido con script propio: **7/26 → 26/26**, 19 voltean. Las dos filas byte a byte
+idénticas (md5 `721abd51…`, 1274 B) y **una sola** por archivo: la del CR fue **sustituida**, no
+acompañada, así que ningún documento dice dos cosas. El consumidor ahora **sí** se entera, y la fila que
+su coordinadora lee **sí** describe lo que la máquina hace — comprobado **ejerciéndolo**: la puerta
+deniega un **guion ASCII** insertado en la clave, que ninguna lista de invisibles contiene, mientras el
+control limpio abre. El homóglifo cirílico lo ve el barrido y la puerta lo permite, **tal como el
+apartado declara**. Y la completitud de versiones se comprobó sobre **los 41 tags publicados**, no sobre
+la muestra de 7. **`QA-023-10` también cierra.**
+
+**El hallazgo nuevo es del criterio y es estructural: `QA-023-17` (`instrumento`, dueño analista).**
+`margen = 1,000 − mediana`, y **la mediana no es un parámetro de diseño**. La consecuencia es
+incómoda y elegante: **el resultado ideal —que la guarda no añada nada, relación = 1,000— es exactamente
+el inafirmable**, porque el margen se hace cero. Cuanto mejor se porta el código, menos acreditable es
+el criterio. Con 0,986 haría falta reproducibilidad mejor del **1,4 %** sobre una relación de relaciones
+que compone **cuatro** cronometrajes, o sea **< 0,7 %** por cronometraje.
+
+**Y «más tomas» NO puede funcionar**, por una razón que estaba a la vista y nadie había mirado: el
+estadístico de dispersión sigue siendo el **rango** (`disp=$(( hi - lo ))`), que es **monótono no
+decreciente** — añadir tomas sólo puede ensancharlo. Sólo dos cosas lo mitigan: un **par mayor**, que
+fabrica margen, y un **estadístico robusto**. La evidencia exacta que falta, con protocolo y números:
+**par 2000→4000, `k`=600, 5 tomas, dispersión por IQR o MAD en vez del rango, corrido en el CI** (≈2-3
+min de job).
+
+**Las tres prohibiciones del propietario, medidas y respetadas:** techo `1000` por mil = **1,000×**;
+nota de falsación intacta (`39-…-4-el-coste.sh:236-237`); `CASOS_ESPERADOS_SECCION=4` antes y ahora.
+**Ninguna prueba retirada, ningún umbral movido.**
+
+**Veredicto: `QA: aprobado` con residual declarado**, nombrando expresamente que `CA-09 (iii)` **no está
+acreditado**. Se marca así porque el tope de vueltas está agotado y el residual **no es `usuario/dinero`
+ni `contrato`**: los seis hallazgos vivos (`QA-023-11` a `-14`, `-16`, `-17`) son **todos
+`instrumento`**. `QA-023-12` se mantiene y **baja de severidad alta a media**: su primera mitad sigue
+viva (el rango sin tocar) y la segunda se disuelve, porque el rojo que «ocultaba» era falso.
+
+**`REQ-023` NO se cierra**: sigue `bloqueado` por decisión del propietario y la cola está en **3**.
+Siguiente paso: el `auditor-seguridad` en su turno, que ahora sí es su turno.
+
+**Nota de instrumento anotada y no abierta como hallazgo:** el comando de extracción del barrido
+documentado en §12.1 del `desarrollador` **no acota el apartado**, así que casa también el de «Hacia
+1.32.1» y devuelve 168 líneas en vez de 53. El entregable es correcto; lo que no re-deriva es ese
+comando de la nota.
+
+## [Interno] — 2026-09-09 · Extensión acotada de REQ-023: CA-10 cumplido por estado y la prueba de CA-09 (iii) midiendo lo que el contrato pide
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` (Opus, extensión excepcional) · verificación y consolidación: coordinadora.
+
+Las tres cosas que el propietario autorizó, y **sólo** esas tres.
+
+**`CA-10` cumplido, y la forma importa más que el hecho:** la fila de `AGENTS.md` §13 y la de
+`templates/AGENTS.md.tpl` ya **no definen la invariante por el retorno de carro**. La enuncian **por
+estado** —«una línea de la cabecera que la máquina **no puede medir** no deja cerrar»— con el CR como
+**instancia**, las demás nombradas (BOM, anchura cero, control C0, multibyte partido, blanco de más o
+puesto en el sitio de otro) y la clase cerrada **por reconstrucción de la clave, no por lista de
+caracteres**. Verificado por la coordinadora: las dos filas son **byte a byte idénticas**. Y
+`skills/arnes-upgrade/SKILL.md` gana el apartado de migración que faltaba, con la pregunta **por estado
+antes de cualquier comando** y las tres declaraciones de `REQ-016 CA-09 (ii)` **en el mismo sitio que
+el comando**, diciendo además **lo cierto hoy**: ningún comando responde esa pregunta, y el modo de
+`tools/arnes-lectura.sh` que «Hacia 1.32.1» anunciaba para 1.33.0 **no llegó**.
+
+**Par fail-before/pass-after de `CA-10`, por cláusulas: 7 de 26 en `v1.33.0` → 26 de 26 en este árbol**
+(19 voltean). Y las dos vías del apartado se **midieron antes de escribirlas**: el barrido `awk` **no
+ve** `QA-: aprobado` —guion ASCII que la puerta **sí** deniega— y sobre los 27 REQ saca 53 líneas, las
+53 legítimas.
+
+**La prueba de `CA-09 (iii)` deja de medir la magnitud retirada.** Ahora mide la **relación emparejada**
+`cociente(candidata)/cociente(base)` dentro de cada toma, con las versiones intercaladas al nivel de
+`n`, orden alternado **y publicado**, y los **cuatro** parámetros en la línea del veredicto —par, `k`,
+forma y **línea base `v1.33.0`**—. Los cocientes absolutos pasan a **«CONTROL no acreditativo»**, que
+es exactamente su nuevo papel. Dos precondiciones nuevas abstienen en vez de mentir: base no
+materializable, y tag que no define el sujeto.
+
+**Ningún umbral se movió y ninguna prueba se retiró**, que eran dos de las tres prohibiciones del
+propietario. Verificado por la coordinadora: el techo de la relación es **1000 por mil = 1,000×**, y la
+nota de falsación sigue escrita —«si las medianas emparejadas salieran 1,05, el techo seguiría siendo
+1,000»—. El piso de la sección subió de 267 a 330 porque el archivo pasó de 327 a 388 líneas, y **no
+para comprar techo**: 388 ya cabía bajo el 400 anterior.
+
+**Resultado de la prueba: 10 veredictos en 5 corridas — 1 PASS · 9 SKIP · 0 FAIL**, con las diez
+medianas de la relación en 1,000× o por debajo (0,883 a 1,000). Dispersión 0,053–0,112 aislada y hasta
+0,889 con el banco entero. Banco **dos veces 960 PASS · 0 FAIL · 6 SKIP**, cuadre **966**; autoprueba
+106 · 0; tres quality gates verdes. **El `desarrollador` NO afirma que el CI saldrá verde** —no lo
+corrió— sólo que el caso ya no mide la magnitud retirada. Lo dirá el CI.
+
+**Dos residuales anotados y no arreglados, los dos `instrumento`:** `CA-10` **no tiene caso de banco**,
+porque añadirlo obliga a mover `CASOS_ESPERADOS` en `run.sh`, que está en el `Archivos:` de `REQ-024`
+(`tools/arnes-paralelo.sh` responde `colisiona hooks/lib.sh`); y `REGHER94` nunca se asigna, así que los
+SKIP de `(i)`/`(ii)` publican un paréntesis vacío en vez del registro. Los dos se enrutan con `REQ-024`.
+
+## [GitHub] — 2026-09-09 · Extensión excepcional de REQ-023: la superficie heredada nombra la propiedad, y la prueba del coste deja de medir el techo retirado
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` (Opus, extensión de alcance CERRADO autorizada por el propietario; **no** es una cuarta vuelta y **no** reinicia el contador).
+
+**Las dos cosas que el propietario autorizó, y nada más.** `REQ-023` sigue `bloqueado`: no se firmó
+`QA:` ni `Seguridad:`, no se movió `Estado:`, no se retiró ningún hallazgo —`QA-023-15` sigue
+abierto—, no se eliminó ninguna prueba y **no se relajó ningún umbral**: el techo de la relación
+sigue en `1,000×`, el de (ii) en `1,25×`, `k` en 200, el par en 1000→2000 y las tomas en 3.
+
+**(1) `CA-10` — la invariante deja de definirse por el retorno de carro** (`QA-023-15`,
+`usuario/dinero`). La fila de `AGENTS.md` §13 y **la misma fila** de `templates/AGENTS.md.tpl`
+—idénticas byte a byte— pasan a enunciar la propiedad **por estado**: *una línea de la cabecera que
+la máquina no puede medir no deja cerrar*, con el CR como **instancia** y no como definición, con
+las otras instancias nombradas (BOM, anchura cero, control C0, multibyte partido, **blanco de más o
+puesto en el sitio de otro**), con la frase de que la clase **no** se cierra por lista de caracteres
+sino por **reconstrucción de la clave**, y con las **tres fronteras** intactas: CR/LF final =
+transporte, el cuerpo del REQ no se restringe, **reabrir** no se bloquea. Por qué importaba y por
+qué era `usuario/dinero`: el efecto **sale del repositorio** — un proyecto consumidor con su
+`AGENTS.md` congelado no se enteraba de que pudo cerrar un REQ `critico` sin validación ni
+auditoría, y ningún guardián cubre esos archivos.
+
+**Y el apartado de migración de `skills/arnes-upgrade/SKILL.md`** («Hacia 1.34.0») dice **sin
+eufemismo** que en una versión afectada *pudiste cerrar un REQ `critico` sin validación de QA y sin
+auditoría de seguridad aprobada*; enuncia la pregunta **por estado** —«cuáles de tus REQ en estado
+terminal NO cerrarían hoy»— **antes** de ofrecer ningún comando; y acompaña **cada** barrido por vía,
+en el mismo sitio que el comando, de las tres declaraciones de `REQ-016 CA-09 (ii)`. **Dice lo que
+es cierto hoy sobre los comandos, y eso incluye una promesa vencida:** ninguno responde la pregunta
+por estado, el modo de `tools/arnes-lectura.sh` que lo haría sigue en «Fuera de alcance» de
+`REQ-016` (`instrumento`, dueño `desarrollador`) y el apartado «Hacia 1.32.1» lo anunciaba para
+1.33.0, que se publicó sin él. **Las dos vías se midieron antes de escribirlas** sobre seis
+fixtures: el barrido `awk` **no ve** `QA-: aprobado` —un guion ASCII que la puerta **sí** deniega— y
+**sí** nombra `Módulo:`, que es legítimo; sobre los 27 REQ de este árbol saca 53 líneas y las 53 son
+legítimas. Ese es el material de las declaraciones, y por eso van con nombre y no como advertencia
+genérica.
+
+**(2) `CA-09 (iii)` — la prueba re-apuntada a la magnitud del contrato VIGENTE** (`QA-023-12`). El
+caso seguía midiendo el **cociente absoluto** contra el **techo absoluto de 2,2**, la magnitud que
+el write-back del 2026-09-09 retiró por estar medida insatisfacible **también para el código
+heredado**. Ahora mide la **relación emparejada** `cociente(candidata)/cociente(base)` **dentro de
+cada toma**, con las dos versiones **intercaladas al nivel de `n`** y el **orden alternado por toma
+y publicado**, contra techo **1,000×** y con los **cuatro** parámetros en la misma línea del
+veredicto: par, `k`, forma y **línea base `v1.33.0`** (el cuarto, nuevo — dos relaciones tomadas
+contra bases distintas no son comparables). Los cocientes absolutos siguen publicándose etiquetados
+**«CONTROL no acreditativo»**: sin ellos nadie rederiva la relación. **La dispersión que decide es
+la de la serie contratada** —la de la relación—, no la de los absolutos, que es la confusión que el
+criterio nombra. Y **dos precondiciones nuevas abstienen en vez de mentir:** si la línea base no se
+materializa, SKIP con el registro del materializador (el cociente absoluto **no** la sustituye); y
+si el tag **no define** el sujeto, SKIP diciendo eso — sin ella un sujeto ausente se cronometraría
+como «orden no encontrada», caería bajo el suelo y el caso abstendría **citando el suelo en vez del
+motivo verdadero**.
+
+**Lo medido, con dispersión y sin promedios: diez veredictos de (iii) en cinco corridas — 1 PASS, 9
+SKIP, 0 FAIL**, y **todas** las medianas de la relación en `1,000×` o por debajo (0,883 · 0,896 ·
+0,911 · 0,916 · 0,929 · 0,950 · 0,960 · 0,976 · 0,983 · 1,000). Las corridas **aisladas** dan
+dispersión 0,053–0,112; el **banco entero** —57 secciones a la vez— la infla hasta 0,889, y ahí se
+ve por qué: una toma con base 1,505 es carga cayendo sobre el término corto. **Y la lección de las
+nueve corridas anteriores sigue en pie: una abstención repetida no es un verde acumulado.** Lo único
+acreditado es que **el caso no produce FAIL**; quién afirma el techo es el **CI**, y esta comisión
+**no lo corrió** porque no comitea ni empuja.
+
+**Puertas:** las tres quality gates en verde; `bash -n` sobre el corredor, su autoprueba y las 57
+secciones, rc 0; autoprueba del corredor **106 PASS · 0 FAIL** (incluye la derivación de `CA-18`);
+banco entero **dos veces**, **960 PASS · 0 FAIL · 6 SKIP**, cuadre **966** — los 6 SKIP van
+enumerados uno por uno en la evidencia, y ninguno es nuevo. `CASOS_ESPERADOS_SECCION` sigue en 4 y
+`CASOS_ESPERADOS` en 966: **no se creó ni se perdió ningún caso**. La sección pasa de 327 a 388
+líneas y su `PISO_AUTONOMO_SECCION` de 267 a **330** (31 + 78 + 221, término a término); **el piso no
+se sube para comprar techo**: 388 ya cabía bajo el techo anterior de 400.
+
+**Y las dos limitaciones que van aquí y no en una nota al pie.** *(a)* **`CA-10` no tiene caso de
+banco**: añadirlo obliga a mover `CASOS_ESPERADOS` en `tests/escenarios/hooks/run.sh`, que está en
+el `Archivos:` de **`REQ-024`** (`arnes-paralelo.sh` responde `colisiona hooks/lib.sh`), así que el
+par fail-before/pass-after se tomó con `grep` contra el tag —**7 de 26** cláusulas en `v1.33.0`
+frente a **26 de 26** en este árbol, 19 volteadas— y queda **residual `instrumento`** con el
+precedente de que sí se automatiza (`36-…-4-el-informe-y-los-textos.sh` ya lo hace para `REQ-016`).
+*(b)* `arnes_norm_clave` **sigue sin resolverse por ninguna vía** (abstenía incluso en el CI con
+dispersión 1,088×), y esta comisión no lo resuelve. Evidencia, método re-derivable y las cifras
+elemento por elemento: `docs/qa/1.34.0-req023-vuelta3-metodo.md` §12, sobre `710e3e7`.
+
+## [Interno] — 2026-09-09 · REQ-023 pasa a `bloqueado` por decisión del propietario, con una extensión excepcional de alcance cerrado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (registro de la decisión).
+
+El propietario resuelve `D1` sobre la recomendación de la vuelta 3 del `qa-tester`: **`REQ-023` queda
+`bloqueado` mientras se corrige**, y **no** cierra con residual — porque `AGENTS.md` §6 no admite
+residual sobre un `usuario/dinero` y `QA-023-15` es de esa clase.
+
+**Autoriza una extensión excepcional limitada a tres cosas:** completar **`CA-10`**, corregir la prueba
+de **`CA-09 (iii)`** *conforme al contrato vigente*, y consolidar el write-back pendiente en un commit
+coherente. Después: **QA revalida lo afectado**, se ejecuta el **CI requerido** y **seguridad revisa
+cuando corresponda**. Manda **conservar el registro de las tres vueltas agotadas**, y así queda: las
+tres se nombran una por una en la fila de Historial y el campo `QA:` sigue declarando «vuelta 3 de 3
+—la última—». **La extensión no reabre ni reinicia el contador.**
+
+**Y las tres cosas que NO autoriza, escritas porque son exactamente lo que una prisa convertiría en
+atajo:** cerrar con `QA-023-15` abierto, eliminar pruebas, y **relajar umbrales para obtener verde**.
+Esa última importa de forma concreta: el rojo del CI viene de un techo absoluto que está medido
+insatisfacible **también para el código heredado** (la base `v1.33.0` paga **2,446** contra el **2,365**
+que el CI marca), así que la tentación no sería subir el techo por pereza sino por un argumento que
+suena razonable. No se hace: lo que el contrato vigente pide es **re-apuntar la prueba a la relación
+emparejada**, cuyo techo es `1,00×` y cuya medida es `0,856×` y `0,906×`.
+
+`D1` pasa a «Resueltas» con la decisión y sus tres prohibiciones; la cola baja de **4 a 3** y sigue
+impidiendo cerrar cualquier REQ. La fila de `REQ-023` en `D2` queda con el hallazgo vigente,
+`QA-023-15`, y no con el ya cerrado `QA-023-05`.
+
+## [Interno] — 2026-09-09 · La abstención ocultó un rojo real durante nueve corridas, y el bloqueante de REQ-023 resultó ser otro
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `qa-tester` (Opus, vuelta 3 de 3) y coordinadora (verificación y escalada).
+
+**La lección de la sesión, y no es agradable: nueve corridas verdes entre tres personas eran
+abstenciones, no verdes.** El caso de `CA-09 (iii)` publica `SKIP` cuando la dispersión alcanza al
+margen —conducta correcta, escrita en el criterio, «nunca PASS»—, y en la máquina del desarrollo la
+dispersión es grande. El `desarrollador`, el `qa-tester` y la coordinadora leímos cinco «0 FAIL de
+REQ-023» como evidencia de que el caso estaba bien. **El CI del PR #45, sobre una máquina quieta,
+resolvió con holgura y salió ROJO:** `arnes_campo_linea` a **2,365× > 2,200×** con **dispersión 0,023×
+contra margen 0,165×**. La dispersión del CI es **17× más estrecha** que la local, y el archivo del caso
+es **byte a byte idéntico** en las dos partes, así que la diferencia no era de código.
+
+**Una abstención repetida no es un verde acumulado**, y comparar la dispersión **entre hosts** era el
+paso que faltaba. Queda escrito porque el mecanismo funcionó a medias: protegió contra el PASS falso y
+mantuvo invisible el rojo.
+
+**Y el rojo, medido, confirma el diagnóstico del analista en vez de contradecirlo:** el techo absoluto
+de 2,2 es insatisfacible **también para el código heredado** —la base `v1.33.0` paga mediana **2,446**
+en ese mismo sujeto, peor que el 2,365 del CI—. No es una regresión de `REQ-023`. Por eso el arreglo no
+es bajar el cociente ni subir el techo, sino **re-apuntar el caso a la relación emparejada** que el
+criterio nuevo ya contrata (medida: 0,856× y 0,906× contra techo 1,00×).
+
+**Veredicto de la vuelta 3: `QA: con-hallazgos`.** 10 de 12 criterios pasan. `QA-023-05` (`contrato`)
+**cerrado**, y el `qa-tester` **corrigió su propio veredicto de la vuelta 2** diciendo por qué se
+equivocó: su argumento de entonces («el producto no se degrada») contestaba a la pregunta de
+`usuario/dinero`, no a la de `contrato`. `CA-12 (iii)` pasa contando **3 = 3**. Los cuatro `instrumento`
+del `desarrollador` se retiran **tras verificarlos**, incluido un doble par discriminante propio para
+`QA-023-08`. La abstención sobre las dos instancias de `28-rotacion-seccion-{1,4}` se declara
+**correcta**: viven en el `Archivos:` de `REQ-026`, que tiene `QA: aprobado` sobre otro árbol.
+
+**El bloqueante de `REQ-023` resultó ser otro, y de clase más grave: `QA-023-15` (`usuario/dinero`).**
+`CA-10` no está implementado y su precondición **ha vencido**. Verificado por la coordinadora:
+`AGENTS.md:349` y `templates/AGENTS.md.tpl:314` siguen definiendo la invariante **por el retorno de
+carro** cuando la puerta ya deniega por una propiedad **más ancha** (9 de 20 formas voltean
+`allow`→`deny`); `skills/arnes-upgrade/SKILL.md` sólo habla del retorno de carro (`:695`, `:701`); y
+los tres archivos **no** están en `codigo_app.globs`, así que ningún guardián los cubre. **El efecto
+sale del repositorio:** un proyecto consumidor con su `AGENTS.md` congelado no se entera de que pudo
+cerrar un REQ `critico` sin validación ni auditoría.
+
+**`QA-023-12` es `instrumento` y a la vez bloquea el gate de fusión**, y las dos cosas son verdad: no
+retiene el cierre del REQ —§6 nombra «una prueba» por su nombre— pero mantiene roja la puerta requerida
+y estricta de `main`.
+
+**Escalado al propietario en `PENDING_APPROVAL.md`:** `D1` pasa de «espera el veredicto» a la
+recomendación de QA —**`Estado: bloqueado` con escalada, NO cierre con residual**, porque §6 no admite
+residual sobre un `usuario/dinero`— y la fila de `REQ-023` en `D2` se corrige: el bloqueante ya no es
+`QA-023-05` (`contrato`, cerrado) sino `QA-023-15`. La cola sigue en **4** y ningún REQ puede cerrarse.
+
+## [Interno] — 2026-09-09 · REQ-023 vuelta 3 de 3: cuatro hallazgos cerrados, la clase de `QA-023-05` reconciliada, y `CA-10` que deja de ser un pendiente para ser un incumplimiento
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester.
+
+**Veredicto: `QA: con-hallazgos`.** Tercera y última vuelta del ciclo dev↔QA de `REQ-023`
+(`AGENTS.md` §6: el contador es por REQ y no se reinicia). **10 de 12 criterios pasan**;
+`CA-09 (iii)` queda **no acreditado** y `CA-10` **no cumple**. Veredicto dado sobre `hooks/` y
+`tests/` tal como quedan en **`6ad9752`** —el commit aterrizó a mitad de la comisión y comiteó
+**exactamente los bytes que ya estaban** en el árbol de trabajo; `hooks/` no entró en él y no se tocó—,
+más el write-back del analista a `REQ-023.md`, sin comitear.
+
+**1. La reconciliación que se encargó: `QA-023-05` es `contrato`, y queda CERRADO.** Se confirma la
+subida del analista y se **corrige el veredicto propio de la vuelta 2** (que decía `instrumento`): el
+argumento de entonces —«el producto no se degrada»— responde a la pregunta de `usuario/dinero`, no a la
+de `contrato`, que es si el REQ afirma algo falso sobre lo construido; y lo afirmaba. El write-back del
+analista lo cierra, con su **prueba de falsación escrita literalmente** («si las medianas emparejadas
+hubieran salido 1,05, el techo seguiría siendo 1,00 y habría hallazgo contra el código») y su
+**aritmética verificada** (0,515 · 0,382 contra márgenes 0,144 · 0,094: las cuatro cuadran).
+
+**2. Los cuatro `instrumento` del `desarrollador`, RETIRADOS del campo tras verificarlos.**
+`QA-023-04` (`ARNES_CLAVES` da **6** claves con `Estado` dentro), `QA-023-06` (**2** ocurrencias
+restantes, **0** en las cinco secciones `39-*`, con el mecanismo de muerte por `set -u` **ejecutado**)
+y `QA-023-08`, éste con **doble par discriminante propio**: la sobre-denegación sintética pone en
+**FAIL** la mitad (2) nombrando `REQ-001.md`, y la guarda neutralizada pone en **FAIL** el cuarto suelo
+de anti-vacuidad. La abstención del dev sobre `28-rotacion-seccion-{1,4}` **fue la correcta** —son del
+`Archivos:` de `REQ-026`, con `QA: aprobado` dado sobre otro árbol— y su residual va a `QA-023-11`.
+
+**3. `CA-10` pasa de «pendiente declarado» a INCUMPLIDO, y es lo único que bloquea (`QA-023-15`,
+`usuario/dinero`).** Los tres archivos siguen sin tocar (`AGENTS.md:349` y
+`templates/AGENTS.md.tpl:314` definen la invariante por el **retorno de carro**;
+`skills/arnes-upgrade/SKILL.md` no menciona nada), y la precondición que el Historial declaró —«otra
+comisión viva» escribiendo `AGENTS.md`— **ha vencido**: `6dd3f8a` está fusionado y `REQ-027` cerró en
+`95764db`. Los tres archivos **no** están en `codigo_app.globs`. La clase no es `instrumento` porque el
+efecto **sale del repositorio**: sin el apartado de migración, el dueño de un proyecto consumidor no se
+entera de que pudo cerrar un REQ `critico` sin validación ni auditoría —y por tanto no barre su
+corpus—, y su `AGENTS.md` congelado (`§14.D`) seguirá hablando sólo del CR mientras la puerta deniega
+por una propiedad más ancha: **9 de 20 formas medidas voltean `allow`→`deny`**, entre ellas un BOM, un
+NBSP, un TAB, un blanco duplicado y un **emoji** dentro de la clave.
+
+**4. Cinco hallazgos nuevos más, todos `instrumento` y ninguno bloqueante del CAMPO — pero uno de ellos
+tiene la puerta requerida de `main` en ROJO.** `QA-023-10` (severidad **crítica**): el caso del banco de
+`CA-09 (iii)` mide la magnitud **retirada** (cociente absoluto contra techo 2,200×, tres parámetros y
+ningún tag), así que el criterio **no está ejercido por nada** — y en el **CI**, donde la máquina está
+quieta, ese caso **resuelve y FALLA**: `hooks-en-linux` sobre `6ad9752` da **955 · 1 · 10** con
+`arnes_campo_linea` en mediana **2,365× > 2,200×** y dispersión **0,023×**, entre 10× y 34× más estrecha
+que la mía. **No es regresión de `REQ-023`** —falla contra el techo que el write-back retiró por
+insatisfacible, y la base heredada paga **2,446** en ese mismo sujeto—, pero **bloquea el gate humano de
+fusión** mientras el caso siga apuntado ahí. Verificado por mí: el archivo del caso es byte a byte
+idéntico entre `6ad9752` y el local, el techo está codificado literal (`:271`), y el criterio que viajó
+en `6ad9752` es el **viejo** (0 apariciones de «relación emparejada» allí, 8 en el local pendiente) — de
+donde **el cierre de `QA-023-05` queda CONDICIONADO a que el write-back se comitee**. `QA-023-11`: la abstención
+que **mata la sección** sigue viva detrás de un umbral de **reloj** en `28/4:87` — dispara en la máquina
+**rápida**, y el arnés está abaratando esa misma ruta. `QA-023-12` (severidad **alta**): la dispersión es el **rango**, y eso hace dos cosas — invalida la vía
+conforme que el criterio pone primera («más tomas»), porque el rango es monótono no decreciente, **y
+enmascara el rojo en cuanto el host tiene ruido**: las nueve corridas locales «en verde» de tres
+personas distintas eran **abstenciones**, no verdes, y la máquina quieta del CI resolvió a la primera.
+La cláusula del margen cumple su mitad buena —nunca da un PASS falso— y paga un precio que nadie había
+escrito. `QA-023-13`: la
+superlinealidad heredada, abierta con ID **por encargo del propio REQ**. `QA-023-14`: **el banco no
+está en verde de forma reproducible en este host** — **3 de 4** corridas rojas (1, 4, 1 y **0** FAIL),
+**ninguna** de REQ-023; la cuarta, tomada sobre el árbol que se entrega, sale en **verde** (rc 0). El
+total cuadra en **966** las cuatro veces y los 42 casos del REQ dan **40 PASS · 0 FAIL · 2 SKIP**
+idénticos en las cuatro.
+
+**Y una cifra del encargo que no se sostuvo, medida y explicada:** la cola de `PENDING_APPROVAL.md`
+**no está en 0 sino en 4** (`D1`–`D4`), así que hoy `guard-completado` deniega el cierre de **cualquier**
+REQ. **No es un defecto del lector**: el archivo se reescribió a mitad de la comisión (18:56:54 → `0`;
+19:00:33 reescritura; 19:06:25 → `4`) y su contenido es exactamente el de `HEAD`; 30 lecturas
+consecutivas dan 4 con el hash y el `mtime` intactos.
+
+**Lo que NO se acredita, dicho expresamente:** `CA-09 (iii)`, `CA-10`, y **el banco en verde de
+`AGENTS.md` §7** —la puerta requerida de `main` se decide en CI, en otro host, que no se midió—. No se
+firmó `Seguridad:`, no se tocó `Estado:`, no se hizo write-back, no se fijó ninguna ventana y no se
+escribió en `hooks/`, `tools/`, `.github/`, `.arnes/`, `.claude-plugin/` ni `tests/`. Método y
+evidencia re-derivable: `docs/qa/1.34.0-req023-vuelta3-qa-metodo.md`.
+
+## [Interno] — 2026-09-09 · El índice cuadrado, la ventana de REQ-019 al día y cuatro decisiones escritas donde la máquina las ve
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+Tres trabajos de coordinación, ninguno de código, todos por instrucción expresa del propietario.
+
+**1. El índice de `requirements/README.md` estaba desfasado en SIETE filas** y ahora las 27 coinciden
+con su cabecera, comprobado fila a fila. Lo grave no era el número: `REQ-012`, `REQ-014`, `REQ-017` y
+`REQ-027` figuraban como **pendientes** estando **`completado`**, `REQ-026` como pendiente con QA ya
+aprobado, `REQ-019` como pendiente estando **`bloqueado`** y `REQ-023` como pendiente. Es justo la
+referencia que `AGENTS.md` §14.B.3 existe para que nadie reconstruya el estado de una conversación
+larga, y decía lo contrario de la verdad en una cuarta parte de sus filas.
+
+**2. La ventana de `REQ-019` deja de mentir.** Su cabecera declaraba `Versión destino: 1.34.0`
+(«primer trabajo de la ventana») cuando el propietario lo **aplazó a 1.35.0** el 2026-09-09 y
+`docs/PLAN.md` lo recoge **literal**. Y la cabecera es lo que **lee la máquina**: `arnes-lectura.sh` y
+el bloque derivado lo contaban dentro de la ventana en curso. Corregidos el campo —con la cita del
+aplazamiento dentro— y la fila del índice, con su fila de Historial. **No** se reabre el aplazamiento,
+**no** se toca `Estado: bloqueado` ni `SEC-033` (`contrato`, abierto), y el texto que explicaba el
+movimiento a 1.34.0 **no se borra**: queda marcado como historia, no como ventana vigente.
+
+**3. Cuatro decisiones del propietario escritas en `PENDING_APPROVAL.md`**, y con ellas la cola pasa de
+**0 a 4**, así que **`guard-completado` deniega ahora el cierre de cualquier REQ**. Es el mecanismo
+funcionando, no un efecto colateral: las cuatro decisiones **bloquean de verdad**. Son **D1** el cierre
+de `REQ-023` con residual declarado o `bloqueado` —agotadas las tres vueltas, y marcada como *no
+firmar hasta que QA entregue*—; **D2** los **20 hallazgos bloqueantes** de siete REQ, casi la mitad
+deuda de 1.31.0 y 1.32.0; **D3** `SEC-072` y `SEC-073`, que **no se cierran por redacción ni por
+aceptación implícita** por instrucción expresa del propietario, precisamente porque el informe los
+describe como «de redacción, no de código» y eso los hace tentadores de cerrar reescribiendo un
+párrafo; y **D4** la ventana **propuesta** 1.35.0 para la superlinealidad heredada, que el analista
+propone y no fija.
+
+## [Interno] — 2026-09-09 · Write-back de `QA-023-05`: `CA-09 (iii)` deja de contratar el nivel absoluto del escáner y contrata el DELTA que REQ-023 introduce
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos (write-back; sin código, sin pruebas, sin firmar veredictos).
+
+Cierra la **mitad de analista** de `QA-023-05` (`contrato`), el único hallazgo que bloqueaba el
+cierre de **REQ-023**. La medición de la entrada anterior desmintió la premisa que el propio REQ
+tenía escrita: `CA-09 (iii)` contrataba un **techo absoluto** (cociente de duplicación ≤ 2,2) que la
+**línea base heredada `v1.33.0` ya pagaba** —medianas **2,492** y **2,446**—, de modo que **ningún
+código que este REQ pueda escribir lo satisfacía**. Un criterio incumplible por construcción no
+acredita ni desacredita nada.
+
+**Qué cambia en el criterio.** La magnitud pasa a ser la **relación emparejada** entre el cociente de
+la candidata y el de la base, **dentro de cada toma** de una **única tanda** y con las dos versiones
+**intercaladas al nivel de `n`**: **no más de 1,00×** (**operativo**, hacia abajo). Gana un **cuarto
+parámetro** obligatorio —la **línea base**, el tag—; los **cocientes absolutos** quedan como
+**control publicado y no acreditativo**; y la dispersión que decide la afirmabilidad es la de la
+**serie emparejada**, no la de cada cociente. Factibilidad con sus dos mitades: **conforme y medida
+en relación** (medianas **0,856** y **0,906**, **9 de 10** pares) pero **no afirmable** todavía
+(dispersión 0,515 y 0,382 frente a márgenes 0,144 y 0,094), así que **SKIP con los cuatro
+parámetros, nunca PASS**, con la vía conforme escrita **antes** de medir: más tomas, `k` mayor o par
+mayor — **nunca** cambiar la forma ni subir el techo.
+
+**El 1,00× no sale de esas cifras, y la falsación lo prueba:** es la propiedad estructural «la guarda
+no empeora el orden de crecimiento del camino en el que se inserta», escrita como razón contra una
+línea base de la misma corrida. Con medianas de 1,05 el techo seguiría siendo 1,00 y habría
+**hallazgo contra el código**. Tampoco se declara conforme el 2,295 de la candidata: se declara **no
+contratado por este REQ**.
+
+**El precio, dicho y no escondido:** (iii) **deja de ser auto-anclado** y hereda la ruta de
+materialización del tag que `CA-08` ya declara (**SEC-048**, citado, no arreglado); si la base no se
+materializa, **SKIP**. Y la **superlinealidad heredada no desaparece**: entra en «Fuera de alcance»
+con clase `instrumento` declarada allí —ningún `SEC` la abrió—, dueños `desarrollador` (el arreglo
+descrito y **no aplicado** en §11.6 del método) y `analista-requerimientos` (el criterio), forzador
+propio y **ventana propuesta 1.35.0 que decide el propietario**.
+
+Refrescadas las tres citas que el cambio dejaba falsas: la premisa de la cota algebraica de **(ii)**
+—ahora apoyada en la medición `r` = 1,206× a n=1000 y 1,108× a n=2000, con el techo de (ii)
+**intacto**—, la frase de `CA-03` que daba la cata como acreditación de (iii), y la fila de
+`SEC-048`. **Sin ADR:** no cambia el alcance, la decisión base, el rigor ni los techos de (i) y (ii);
+corrige **qué magnitud** mide un número declarado **operativo**, que es cambio menor (`AGENTS.md`
+§9). **No** se firmó `QA:` ni `Seguridad:`, **no** se movió `Estado:` y **no** se tocó el valor de
+`Hallazgos abiertos:` —`QA-023-05 (contrato)` sigue ahí—: bajar la clase del hallazgo que bloquea el
+propio documento sería firmar por otro, y la retirada la enruta `qa-tester`, como con `SEC-052`.
+Archivos: `requirements/REQ-023.md`, `CHANGELOG.md`.
+
+## [Interno] — 2026-09-09 · La base heredada `v1.33.0` paga el cociente de `CA-09 (iii)`: `QA-023-05` es un hallazgo contra el CRITERIO, no contra el código
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (una sola medición, sin arreglo).
+
+Comisión de **una sola medición**, la que quedó a medio hacer al parar la anterior. Se midió el
+cociente de duplicación de la **`v1.33.0` heredada** sobre la **misma forma «clave»**, con el
+**mismo par** (1000→2000), el **mismo `k`** (200) y los **mismos dos sujetos**, **en la misma tanda**
+que la candidata y con base/candidata **intercaladas al nivel de `n`** (así una deriva de carga cae
+sobre las dos por igual, `REQ-007 CA-59`). 5 tomas, 40 invocaciones de la sonda, 118 s.
+
+| sujeto | versión | tomas | mediana | dispersión | margen al techo 2,2 |
+|---|---|---|---|---|---|
+| `arnes_norm_clave` | **base `v1.33.0`** | 5,815 · 2,979 · 2,392 · 2,474 · 2,492 | **2,492** | 3,423 | 0,292 |
+| `arnes_norm_clave` | candidata | 2,532 · 2,257 · 2,048 · 2,295 · 2,367 | **2,295** | 0,484 | 0,095 |
+| `arnes_campo_linea` | **base `v1.33.0`** | 2,528 · 2,135 · 2,587 · 2,446 · 2,318 | **2,446** | 0,452 | 0,246 |
+| `arnes_campo_linea` | candidata | 2,291 · 2,586 · 2,145 · 2,237 · 2,022 | **2,237** | 0,564 | 0,037 |
+
+**La base heredada paga tanto o MÁS que la candidata.** Lo robusto en un cociente no es cada cifra
+suelta sino la **relación emparejada dentro de la misma toma**: mediana **0,856** en
+`arnes_norm_clave` y **0,906** en `arnes_campo_linea`, con la candidata por **debajo** de la base en
+**9 de los 10 pares** y en las cinco tomas de `arnes_norm_clave` sin excepción. El mecanismo: la
+guarda añade ~20 % de coste absoluto a 1000 bytes y ~10 % a 2000, así que su peso relativo **baja**
+al alargar la línea y **diluye** el cociente en vez de empeorarlo.
+
+**Consecuencia, y es quién resuelve el hallazgo:** `CA-09 (iii)` tal como está redactado **no mide
+lo que REQ-023 añade** — mide una superlinealidad que `arnes_norm_clave` ya tenía en `v1.33.0`. Un
+criterio de aceptación de este REQ que la línea heredada **también** incumple no puede acreditar ni
+desacreditar la guarda. **`QA-023-05` es un hallazgo contra el CRITERIO y su dueño es el
+`analista-requerimientos`**; no sube al propietario por agotamiento de vueltas, porque **no hay nada
+que arreglar en `hooks/`**.
+
+**La mitad que NO se afirma.** Las cuatro series tienen **dispersión ≥ margen**, así que por la regla
+del propio caso **ninguna es afirmable** hoy: no se afirma que el techo se supere, ni el de la base
+ni el de la candidata. Esta medición resuelve **de quién es el número**, no dónde debe estar el techo
+— eso es del analista. Y la máquina daba reloj alto (`DEV v3: heredoc CITADO de ~300 KB` en 4835 ms
+contra techo 4000, veredicto `allow` correcto): la `t1` de la base (5,815) es una ráfaga sobre el
+término largo, se **publica y no se descarta**, y retirando de cada serie su toma más alta **ninguna
+mediana se mueve**.
+
+**Nada se arregló y nada se firmó**: no se tocó `hooks/`, no se subió el techo, no se cambió la forma
+ni `k` ni el par, no se firmó `QA:` ni `Seguridad:`, el `Estado:` sigue `en-progreso` y no se retiró
+ningún hallazgo. Un arreglo posible se **describe con su coste y no se aplica** (§11.6): tocaría el
+camino **heredado** de `arnes_norm_clave`, que es alcance nuevo sobre código que este REQ no
+introdujo. Evidencia, método re-derivable y limitaciones en
+`docs/qa/1.34.0-req023-vuelta3-metodo.md` **§11**. Quality gates en verde; el banco **no** se
+re-corre porque esta comisión no toca ningún caso ni `hooks/`.
+
+## [Interno] — 2026-09-09 · Parada limpia por cambio de red, con `CA-09 (iii)` abstenido por primera vez y una pista que reorienta el hallazgo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (parada y verificación) sobre trabajo parcial del `desarrollador`.
+
+Se detuvo **a propósito** la comisión del `desarrollador` sobre la mitad de código de `QA-023-05`,
+antes de que el cambio de red cortara la sesión a media escritura y dejara el caso a medio editar.
+**El árbol quedó consistente, no a medias**, y está verificado después de la parada: `bash -n` sobre
+las 57 secciones más `run.sh`, `hooks/*.sh` y `tools/*.sh` compila todo; las tres quality gates en
+verde; cero worktrees huérfanos; autoprueba **106 PASS · 0 FAIL**; banco **960 PASS · 0 FAIL · 6 SKIP**
+con el total cuadrando en **966**.
+
+**Los dos SKIP nuevos (4 → 6) no son una regresión: son la cláusula del margen ejecutándose por primera
+vez.** El caso de `CA-09 (iii)` ya mide la **forma contratada** por el write-back del analista —crece el
+segmento de **clave** desde una clave que el lector reconoce— y **abstiene en vez de pasar**, publicando
+las tomas y la dispersión, que es exactamente lo que el criterio ordena:
+
+| sujeto | tomas | mediana | dispersión | margen al techo 2,2 |
+|---|---|---|---|---|
+| `arnes_norm_clave` | 2,943 · 2,136 · 2,277 | **2,277** | 0,807 | 0,077 |
+| `arnes_campo_linea` | 2,563 · 2,318 · 2,211 | **2,318** | 0,352 | 0,118 |
+
+Las dos medianas quedan **por encima** del techo, pero la dispersión es mayor que el margen, así que el
+criterio **prohíbe afirmarlo** y abstiene: ni pasa en falso ni suspende por ruido. `(iii)` queda **sin
+acreditar**, y eso es lo que hay que resolver, no ocultar.
+
+**La pista que vale más que las cifras**, dejada por el agente en su última línea antes de la parada:
+«*la candidata apenas mueve el número, así que el coste puede no estar en la guarda*». Si la `v1.33.0`
+heredada paga el **mismo** cociente sobre la **misma** forma, entonces `CA-09 (iii)` **no mide lo que
+este REQ añade** y el hallazgo es contra el **criterio**, no contra el código — lo que cambia por
+completo quién lo resuelve. Medir la base heredada sobre la forma «clave» es el siguiente paso concreto,
+y era justo lo que el agente iba a hacer. Sin ese número, la decisión de §6 se tomaría a ciegas.
+
+Queda anotado en `docs/ESTADO.md` que el índice de `requirements/README.md` está desfasado en **siete
+filas** y por qué no se corrigió en caliente: el corpus del banco hace `cat requirements/*.md`, así que
+editarlo mientras un agente mide **mueve sus cifras**.
+
+## [Interno] — 2026-09-09 · REQ-023 write-back de la vuelta 3: el motivo del homóglifo que se desmentía, el parámetro que decidía el veredicto de `CA-09 (iii)`, y la capitalización decidida
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos.
+
+Write-back de los tres hallazgos con dueño en el analista, sobre `requirements/REQ-023.md` (más una
+anotación en `requirements/REQ-024.md`). **Sin código y sin pruebas**; el `Estado:` sigue
+`en-progreso` y no se firma ningún veredicto. **No se comitea y no se empuja.**
+
+**`QA-023-07` (`contrato`, el único que bloqueaba) — trasladado el motivo ya corregido.** El apartado
+«Fuera de alcance» seguía sosteniendo el homóglifo sobre una premisa que `CA-03` declara **medida
+falsa** veinte pantallas antes: «la clave resultante no contiene nada ajeno al alfabeto —es *otra*
+clave—». Las dos cláusulas son falsas y QA lo remidió ejecutando el lector sobre `Еstado` (`Е` =
+U+0415): la clave **sí** contiene algo ajeno, la guarda lo **ve** y lo retira, y lo que queda
+(`stado`) **no es** ninguna clave. El motivo pasa a ser el que ya estaba escrito —**retirar lo ajeno
+no repone lo sustituido**— con el reparto blanco/letra intacto. **La decisión de fondo no cambia:**
+este REQ no cierra la clase del homóglifo, y las superficies que `CA-12 (iii)` cuenta siguen siendo
+**tres**.
+
+**`QA-023-05` — `CA-09 (iii)` gana el tercer parámetro del cociente, y el hallazgo sube a
+`contrato`.** Con el mismo par (1000→2000), el mismo `k` y el mismo sujeto, tres formas de línea
+**todas conformes** con la redacción anterior reparten sus cocientes a los dos lados del techo
+(título 2,042 · valor 1,727 · clave real 2,235–2,284, cinco tomas), y la sesión de QA del mismo día
+ordena las dos formas de clave **al revés**: el parámetro ausente **decidía el veredicto**. El techo
+de **2,2 no se toca** y la forma no se elige por su resultado: el criterio fija ahora **qué forma
+mide** (crece el segmento de **clave** partiendo de una clave que el lector reconoce; el **valor** es
+control y la **línea de título** queda fuera), obliga a **publicarla** con el par y `k`, declara que
+dos cocientes de formas distintas **no son comparables**, y sólo permite **afirmar** el techo con
+margen mayor que la reproducibilidad demostrada en la misma corrida —si no, **SKIP, nunca PASS**—.
+Consecuencia declarada: la factibilidad de (iii) se **re-deriva** y hoy **no hay solución conforme
+medida** sobre la forma contratada. La clase sube porque la doctrina no deja margen (un criterio mal
+formado se reporta como `contrato` contra el REQ), así que **bloquea el cierre**; su otra mitad es del
+`desarrollador` y no la retira el analista.
+
+**`QA-023-09` — decidido, no arreglado.** La clave con otra capitalización (`sensible a seguridad:
+sí`) se resuelve como **ausencia** y abre, igual en las dos versiones. Entra en la superficie de
+**REQ-024** como **instancia** de su `CA-01` —no como criterio nuevo—, porque cerrada la dirección de
+la ausencia la vía se cierra por construcción, sin tablas de capitalizaciones. Anotado allí con su
+cita; retirado del campo de REQ-023.
+
+`Hallazgos abiertos:` de REQ-023 queda en `QA-023-04 (instrumento), QA-023-05 (contrato),
+QA-023-06 (instrumento), QA-023-08 (instrumento)`: se retiran los dos que cierro (07 y 09) y **no** se
+retiran los tres que cerró el `desarrollador`, porque el analista no firma por otro.
+
+## [Interno] — 2026-09-09 · REQ-023 vuelta 3 de 3: los cuatro hallazgos `instrumento`, y la cláusula anti-tautología de `CA-03` ejecutándose por primera vez
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador.
+
+`REQ-023`, **vuelta 3 de 3** (la última), sobre el **árbol de trabajo** (`5305de9` + la partición de
+la sección 39 sin comitear). **Ninguno de los cuatro arreglos toca `hooks/`**: los cuatro son del
+instrumento que mide al arnés, y ninguno bloquea el cierre. **No se comitea y no se empuja**: `gh`
+no está autenticado y la fusión es un gate humano.
+
+**`QA-023-06` — la abstención mataba la sección, y con ella un criterio de aceptación.** Retirados
+**13** de los **15** `SKIP=$((SKIP+1))` del banco (el informe de QA decía 14; el recuento propio da
+15). El corredor define `PASS` y `FAIL` antes del despacho pero **no `SKIP`** (`run.sh:23`) y las
+secciones corren bajo `set -u`, así que cada rama de abstención mataba su sección en la **primera**
+que emitía. Se **retiran** en vez de definir la variable, y no es estilo: el recuento sale **del
+texto** (`run.sh:1218`) y los ayudantes del propio corredor ya lo hacen así (`:783`, `:808`) —
+definirla dejaría vivo un segundo número que nadie lee. Medido con copias en
+`ARNES_SECCIONES_DIR` y la línea base apuntada a un tag inexistente para forzar la abstención:
+**fail-before** 4 muertes, 4 `ABORT:` y `Resultado: 21 PASS, 0 FAIL` **con 29 PASS y 6 FAIL en
+pantalla**; **pass-after** 0 muertes y **7 SKIP** donde había 4. Entre los tres nuevos está la
+**cláusula anti-tautología que `CA-03` eleva a criterio de aceptación** —«aborta con SKIP y su
+motivo, nunca PASS, si alguna de las dos ramas que exigen DENY se queda sin ninguna tirada»—, que
+**nunca se había ejecutado** porque la rama 1 abstenía primero y la sección moría antes de llegar a
+la 2.
+
+**`QA-023-08` — el único criterio que vigila la sobre-denegación no podía fallar en su eje.** El
+evaluador de `CA-04` publica ahora la guarda en las **dos** mitades, y con la variable que le toca a
+cada una: `ARNES_CLAVE_OCULTA` por línea y `ARNES_OCULTA` por documento —**en los dos** recorridos de
+cabecera, porque cada uno la reinicia—. Las columnas observacionales se siguen comparando estrictas
+(CA-06) y la de la guarda se **cuenta y se publica**, con un **cuarto suelo** de anti-vacuidad: al
+menos **una** línea del corpus donde la guarda dispare, o el «0 divergencias» es cierto por vacío.
+Par discriminante contra una **sobre-denegación sintética** (retirado el atajo de `lib.sh:1840` en
+una copia): el evaluador ciego da **3 PASS · 0 FAIL** y el arreglado **2 PASS · 1 FAIL** nombrando el
+primer REQ divergente. Sobre los hooks reales: 32 líneas del corpus donde la guarda dispara, **0**
+divergencias sobre los 27 REQ del árbol.
+
+**`QA-023-04` — la derivación de claves que se estrechó de 6 a 5 y perdió justo `Estado`.**
+`36-…-2-los-lectores.sh` deja de raspar el **texto** del `case` con `sed` y lee la **constante**
+`ARNES_CLAVES` (1 proceso contra 3). Es la lección que `tools/arnes-lectura.sh` ya tenía escrita para
+su propia derivación. Cobertura medida sobre el glob real: **0 de 127** rachas cosechadas contenían
+una línea `Estado:` antes; **102 de 154** después.
+
+**`QA-023-05` — la forma de la línea, publicada; y un número que sube la apuesta.** `CA-09 (iii)`
+publica ahora la **forma** además del par, con el esqueleto en una sola variable —lo que la sonda
+repite es lo que el caso publica—. Y medido con el mismo par (1000→2000) y el mismo `k`: la forma
+**clave** (`Sensible a <n> seguridad: sí`, una clave **real** del lector) da **2,235 · 2,284 · 2,260
+· 2,255 · 2,240**, cinco tomas **por encima** del techo de 2,2, mientras la forma **título** que el
+caso mide da 2,042 y la de **valor** 1,727. El parámetro que falta no es cosmético: **decide el
+veredicto**. El techo **no se toca** y la forma que el caso mide **no se cambia** —elegir la que pasa
+sería `QA-023-02` un eje más allá—.
+
+**Lo que NO se cierra, dicho con nombre y línea.** Los **2** `SKIP=$((SKIP+1))` restantes viven en
+`28-rotacion-seccion-{1,4}.sh`, que están en el `Archivos:` de **REQ-026** con `QA: aprobado` sobre
+ese árbol: tocarlos dejaría una firma ajena sobre un árbol que ya no es. El de `28/4:87` depende del
+**reloj** (la carrera que no se provoca) y puede matar esa sección en cualquier corrida cargada — va
+con dueño, no como hallazgo nuevo. **Y dos defectos DISTINTOS anotados sin arreglar:** la línea
+`Resultado:` **descuenta** los casos de una sección muerta (`run.sh:1248-1255`, el `continue` va
+antes de la acumulación de `:1271`) y `run.sh` está en el `Archivos:` de REQ-024; y el caso de
+`36-…-2` no tiene suelo de anti-vacuidad sobre **las bases que deniegan**, que son las únicas que su
+propiedad puede violar.
+
+Puertas propias: las tres quality gates **rc 0**; `bash -n` sobre las 57 secciones **rc 0**; banco
+completo **962 PASS · 0 FAIL · 4 SKIP · rc 0** en **dos** corridas (43,8 s y 44,7 s) con la **LISTA**
+de SKIP idéntica a la de QA (`cygpath` · `REQ-017 CA-05 (i)` · `REQ-017 CA-05 (ii)` ·
+`REQ-021 CA-08 (iii)`); `autoprueba-corredor.sh` **106 PASS · 0 FAIL · rc 0**;
+`tools/arnes-lectura.sh .` **rc 0**. Método, árboles de referencia y re-derivación en
+`docs/qa/1.34.0-req023-vuelta3-metodo.md`. **No se firma `QA:` ni `Seguridad:`, no se toca `Estado:`
+y no se hace write-back**: `QA-023-07` (`contrato`, el único que bloquea) es del
+`analista-requerimientos`.
+
+## [Interno] — 2026-09-09 · QA de REQ-023 vuelta 2: los tres bloqueantes cerrados con fail-before medido, y un cuarto que es una premisa que el propio REQ ya declaró falsa
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: qa-tester.
+
+`REQ-023`, **vuelta 2 de 3**, sobre el **árbol de trabajo** (`5305de9` + la partición de la sección
+39 sin comitear). Se valida el árbol sucio a propósito, no un commit.
+
+**La pieza que faltaba y ahora existe: el fail-before / pass-after.** Un banco verde no acredita que
+un caso discrimine. Medido con el mecanismo del propio banco (`ARNES_HOOKS_DIR`), semilla fija
+(`ARNES_SEM_39=508269595`) y árboles montados con `git worktree add --detach` y `git archive`, sin
+mover nunca el árbol de trabajo. Los **dos** casos nuevos de `CA-03` **fallan** contra `29b06eb^`
+(`95764db`): la rama 1 por un punto de código de cuatro bytes que sustituye al blanco interno
+(`<P2:f0b4ae98>`) y la rama 2 por el blanco insertado y duplicado (`<P1:20>` y cuatro `<P3:20>`) —
+40 PASS · 2 FAIL · rc 1 antes, 42 PASS · 0 FAIL · rc 0 después. Y los **cuatro** casos marcados
+«(era ALLOW)» de `CA-08` fallan contra el **tag** `v1.33.0` (11 PASS · 10 FAIL), mientras los nueve
+controles que deben decidir igual —`CA-08 (ii)/(iii)`, los cuatro de `CA-11` y los dos de `CA-04`—
+pasan en las dos versiones: el rojo lo produce la guarda y no otra rama.
+
+**Los tres bloqueantes, cerrados con evidencia propia.** `QA-023-01` (`usuario/dinero`): banco propio
+de 20 formas de la clase del blanco —insertado, sustituido, duplicado, retirado, NBSP, TAB, ZWSP, al
+borde y en clave de una palabra—, **todas deniegan** y **13 eran `allow`**; el motivo saca los blancos
+en hexadecimal sólo cuando alguno de ellos **es** lo insertado, que es lo que lo vuelve
+diagnosticable. Se buscó una tercera forma dentro de la familia y **no se encontró**, con el
+argumento que cierra el hueco escrito. `QA-023-02` y `QA-023-03` (`contrato`): el **write-back existe**
+en el Historial del REQ, el sorteo deriva sus dos estratos de la constante única en cada corrida
+(6 claves, alfabeto de 21), publica semilla y tiradas por rama, y **aborta con SKIP y no con PASS**
+cuando una rama de DENY se queda sin tirada — provocado, no leído; `CA-12 (iii)` se comprueba
+contando y cuentan 3 = 3.
+
+**La partición: cuadre verificado de forma independiente.** 966 = 966 líneas de inventario, 42 casos
+de `REQ-023` antes y después, reparto **10 = 7 + 3** comprobado **por nombre de caso** y no por total,
+y `diff` vacío tras normalizar los cuatro volátiles. El cuadre del `desarrollador` es correcto.
+
+**Cuatro hallazgos nuevos, uno bloqueante.** `QA-023-07` (`contrato`): el apartado «Fuera de alcance»
+sigue justificando la exclusión del homóglifo con la premisa que `CA-03` ya declara **medida falsa**
+en el mismo documento —medido ejecutando el lector: `Еstado` **sí** contiene algo ajeno, la guarda lo
+ve y lo retira, y lo que queda **no** es otra clave—; el texto correcto ya existe literal en `CA-03`,
+el write-back es trasladarlo. `QA-023-06` (`instrumento`): toda ruta de SKIP de las secciones hace
+`SKIP=$((SKIP+1))` y el corredor **no define `SKIP`** antes de ejecutar una sección, así que con
+`set -u` la sección **muere** en su primera abstención — la cláusula anti-tautología que `CA-03` eleva
+a criterio nunca se había ejecutado; no es fail-open (ABORT y rc 1), pero la línea `Resultado:`
+publicó `0 FAIL` con seis FAIL en pantalla. `QA-023-08` (`instrumento`): el caso de `CA-04` **no
+imprime `ARNES_OCULTA`** en ninguna de sus dos mitades, que es la única variable por la que la guarda
+puede cambiar una decisión, así que el único criterio que vigila la sobre-denegación no puede fallar
+en su propio eje; medidas **131 líneas** del repositorio donde la guarda dispara hoy y no antes, y un
+documento real (`docs/gobernanza/autoalojamiento.md:3`) cuya lectura de cabecera cambia de opinión —
+ninguna, dentro de `requirements/`. `QA-023-09` (`instrumento`): la clave con otra capitalización se
+resuelve como ausencia y abre, igual en las dos versiones; se anota con dueño y **no** se reclama como
+incumplimiento, porque la clase de este REQ es la del carácter que nadie ve en el diff.
+
+**Y se retira un número propio.** El «el techo de `CA-09 (iii)` se supera» de la vuelta 1 (2,412 /
+2,364) **no se reproduce** con la construcción de hoy: cuatro mediciones conformes del mismo criterio
+dan 1,689 · 2,008 · 2,069 · 2,181, la peor al 99,1 % del techo. `QA-023-05` no se debilita, se
+confirma: el defecto es que dos mediciones conformes no son comparables porque falta declarar la
+**forma** de la línea.
+
+Puertas propias: las tres quality gates en verde; banco **962 PASS · 0 FAIL · 4 SKIP · rc 0** en
+**dos** corridas con la **lista** de SKIP idéntica e inventario normalizado idéntico; autoprueba
+**106 PASS · 0 FAIL**; `tools/arnes-lectura.sh` rc 0 sobre los 27 REQ. `QA: con-hallazgos`;
+`Estado:` sigue en `en-progreso` y no se firma `Seguridad:` (va después de QA, `AGENTS.md` §6).
+Hallazgos en `docs/qa/1.34.0.md` § REQ-023; método y evidencia re-derivable en
+`docs/qa/1.34.0-req023-vuelta2-metodo.md`.
+
+## [Interno] — 2026-09-09 · La sección 39 pasa a cinco partes: el techo de CA-18 se paga partiendo, no subiéndolo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: desarrollador.
+
+`REQ-023`, vuelta 1 de 3. Al entrar el sorteo estratificado de `CA-03` (write-back de `QA-023-02`),
+`39-caracter-invisible-2-la-clase-y-el-corpus.sh` quedó en **402 líneas contra su techo de 400** y
+dejaba la autoprueba del corredor en **105 PASS · 1 FAIL**. Su piso (**294**) está por debajo de
+`N / k` = 320, así que quien gobierna ese techo es **`N`** y no `piso × k`, y `N` sólo admite bajar:
+la única acción conforme era **partir**, que es lo que `REQ-014 CA-18 (ii)` ordena. No se subió el
+techo, no se re-derivó `k` y no se infló el piso para caber —esa última es la **regresión** que ese
+criterio nombra por su nombre—.
+
+El corte va por la frontera que el propio nombre del archivo declaraba: la **clase** (`CA-03`) se
+queda en `39-caracter-invisible-2-la-clase.sh` (**302** líneas, piso 294) y el **corpus** (`CA-04`)
+sale a `39-caracter-invisible-5-el-corpus.sh` (**213** líneas, piso 165 = 30 preámbulo + 76
+maquinaria duplicada + 59 bloque indivisible), con el materializador de la línea base duplicado
+porque las dos mitades comparan contra `v1.33.0`. Se numera **5** y no 3 para no dejar desfasadas
+las citas por nombre y línea a las partes 3 y 4 que ya viven en `requirements/REQ-023.md` y en
+`docs/qa/1.34.0.md`: una cita rota cuesta más que un número no contiguo.
+
+**El cuadre, que es la parte que no se puede afirmar sin medirla.** Reparto de casos **10 = 7 + 3**,
+y `CASOS_ESPERADOS` de `run.sh` **no cambia** (966): partir reparte, no crea ni pierde. El
+inventario da **966 líneas antes y 966 después**, y bajo el oráculo de `CA-12` más los dos volátiles
+conocidos —la semilla del sorteo y los conteos del corpus, que crecen porque el corpus se descubre
+por glob sobre `secciones/`— los dos salen **idénticos**, `diff` vacío. Puertas: autoprueba
+**105 PASS · 1 FAIL → 106 PASS · 0 FAIL**; banco **961/1/4 → 962/0/4**, rc 0; las tres quality gates
+en verde. Cuadre completo, con método y versión base, en
+`docs/qa/1.34.0-req023-particion-39.md`.
+
+**Lo que este verde NO acredita:** el fail-before/pass-after de los casos de `REQ-023`. Nadie ha
+comprobado aún que fallen contra el código anterior, así que no prueba que discriminen; eso lo
+decide el `qa-tester`. Y tres observaciones que van a la cola sin bloquear: el caso de reloj de la
+sección 25 oscila FAIL↔PASS con la carga (4036 ms contra un techo holgado de 4000, veredicto
+correcto) y **no** está declarado en `CA-14`; la semilla de `CA-03` se publica como entero suelto
+**dentro del nombre** del caso, justo donde el oráculo del inventario declara que no normaliza; y
+`REGHER92`/`REGHER93` nunca se asignan, así que el SKIP por falta de línea base imprimiría un
+paréntesis vacío el día que haga falta el diagnóstico. De paso, el total de referencia del
+`README.md` del banco decía **924** con el literal ya en **966** —segunda reincidencia de
+`SEC-066`—: se corrigió el número; cerrar el hallazgo no es del `desarrollador`.
+
+## [Interno] — 2026-09-09 · Traslado ejecutado en la WSL nueva: tres puntos de la lista no resistieron el contacto con la máquina
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Se instaló y configuró lo necesario para seguir trabajando en el clon nuevo (`sysvega-dev`), y la
+propia lista de traslado consignada horas antes **se corrigió con lo medido**. Lo que se hizo:
+`git config --local user.name/user.email` con la identidad del historial
+(`Juan Vega <jvega@habitat.org>`). Nada más hacía falta instalar.
+
+**Lo que la lista decía y la máquina desmintió** —las tres correcciones ya escritas en `docs/ESTADO.md`:
+
+1. **`node` no es dependencia del arnés** y figuraba en la lista junto a `jq`. Está **ausente** en
+   este clon y no se echó en falta: las tres quality gates piden sólo `bash` y `jq`, y las únicas
+   apariciones de `node`/`npm` en el árbol son prosa y **cadenas de caso** que el guardián juzga como
+   texto. Listar una dependencia falsa al lado de la única que apaga el enforcement **abarata la que
+   sí importa**.
+2. **La identidad de git faltaba en la lista**, y es el **tercer apagado silencioso de la misma
+   familia** que `jq` y `core.hooksPath`: un clon nuevo no tiene `user.name` ni `user.email`, el
+   commit **no falla**, sale firmado con lo que el sistema derive (`juan@sysvega-dev`) y la autoría
+   del historial se parte sin que nada avise.
+3. **El `gitCommitSha` de la instalación es `5f37946`, no el `810128a` que la lista anotó.** No es un
+   error: `810128a` es el **tag** `v1.33.0` y `5f37946` es `origin/main` (#44, «Registro de la
+   publicacion de v1.33.0»), posterior; el marketplace instala desde `main`. Lo que decide no es el
+   sha sino si **el mecanismo difiere**, y no difiere: entre los dos commits sólo cambian
+   `CHANGELOG.md`, `PENDING_APPROVAL.md`, `docs/ESTADO.md` y `docs/PLAN.md`, y comparado archivo por
+   archivo contra el tag, todo el mecanismo instalado coincide **byte a byte**. Esa comparación
+   —y no la igualdad de shas— es la que se repite en el próximo traslado.
+
+**CORRECCIÓN, escrita el mismo día y sobre esta misma entrada: el número de SKIP oscila entre 4 y 5
+en la MISMA máquina, y no es la plataforma.** Esta entrada afirmó primero que los **961 PASS · 0 FAIL ·
+5 SKIP** medidos aquí, frente a los 962/0/4 de la máquina anterior, se debían al SKIP de `cygpath`, y
+concluyó que «la cifra esperada no es una constante del proyecto sino de la máquina». **Es falso.** La
+segunda corrida, sobre el árbol ya partido, dio **962 · 0 · 4** en esta misma WSL, y el SKIP de
+`cygpath` —`ruta estilo Windows con backslashes -> deny`— **aparece en las dos listas**, de modo que
+estaba también entre los 4 SKIP de la máquina anterior y nunca pudo ser la diferencia. El caso que
+**entra y sale** es `REQ-017 CA-08 (ii)`, cuyo propio motivo de SKIP declara que «*el techo cae DENTRO
+del recorrido observado [1.010×, 1.302×]: el instrumento no distingue el factor que vigila*»: salta
+cuando no converge y pasa cuando sí, según la carga. La lección que queda **no es sobre plataformas**:
+**una diferencia de una unidad en el recuento se explica leyendo la LISTA de SKIP, nunca el total** —
+comparar totales invita a inventarle una causa a un caso que sólo estaba oscilando, que es exactamente
+lo que ocurrió aquí. El total cuadró en **966** las tres corridas.
+
+Lo que sí es cierto sobre `cygpath` y se conserva: está **ausente** en esta máquina —interop de WSL
+activo (`/mnt/c` montado, `WSLInterop` `enabled`) pero el host **sin Git para Windows** y el `PATH` sin
+ninguna ruta `/mnt/c`—, el caso es de Windows y el banco lo salta **declarando su motivo**, que es lo
+que se le pide. No hay nada que arreglar ahí.
+
+La autoprueba dio **105 PASS · 1 FAIL** al llegar (4 s), con el FAIL en el `CA-18` conocido
+(`39-caracter-invisible-2-la-clase-y-el-corpus.sh`, 402 líneas contra el techo de 400), y **106 PASS ·
+0 FAIL** después de que el `desarrollador` partiera la sección.
+
+**El arnés está vivo:** `jq` presente (los hooks **no** están inertes), `core.hooksPath` ya en
+`.githooks` (la puerta del CHANGELOG responde), las tres quality gates en **verde** y la cola de
+`PENDING_APPROVAL.md` en **0**.
+
+**Pendiente, y es del humano:** `gh` no tiene ninguna cuenta autenticada. `gh auth login` es
+interactivo y el token no está en disco, así que ningún agente lo cierra solo. Sin las dos cuentas
+(`jvega-habitat` para push, `JJOVEGA` para rulesets) no hay PR ni fusión a `main`.
+
+## [Interno] — 2026-09-09 · Lista de traslado a otra instancia de WSL: lo que NO viaja con el repositorio
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Consignado en `docs/ESTADO.md`, dentro del bloque de pausa. Los dos apagados **silenciosos** que un
+clon nuevo produce si nadie los previene: **sin `jq` los hooks del arnés quedan inertes con un aviso**
+—el enforcement se apaga sin que nada falle—, y **`core.hooksPath` es configuración local y no se
+versiona**, así que la puerta del CHANGELOG queda apagada hasta que alguien corra
+`git config core.hooksPath .githooks`. En esta máquina `jq`, `gh` y `node` viven en `~/.local`, no en
+el sistema.
+
+Se añaden el plugin estable a instalar (**1.33.0**, `810128a`, del marketplace `JJOVEGA/ArnesJuan` —
+por autoalojamiento se instala **la publicada**, nunca el árbol de trabajo), la cuenta de Claude Code
+en uso y las dos cuentas de `gh`.
+
+**Y la comprobación de que el traslado quedó bien**, que es la misma que acredita que el arnés está
+vivo: banco **962 PASS · 0 FAIL · 4 SKIP** y autoprueba **105 PASS · 1 FAIL** (el `CA-18` conocido).
+**Un resultado mejor que ése es sospechoso**: significaría que algo no se está midiendo.
+
+## [GitHub] — 2026-09-09 · TRABAJO EN CURSO de `REQ-023`, detenido a media vuelta y **no acreditado**
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus), detenido · medición y consignación: coordinadora.
+
+**Esto NO es una entrega. Se comitea para que el trabajo viaje a otra máquina, no porque esté validado.**
+El `desarrollador` de `REQ-023` (vuelta 1 de 3) fue detenido a petición del propietario **justo antes de
+correr la sección 39** — sus últimas palabras fueron que iba a ejecutarla.
+
+**Qué hay dentro:** 294 inserciones y 111 borrados en `hooks/lib.sh` (+99), `hooks/guard-completado.sh`,
+`tools/arnes-lectura.sh`, `tests/escenarios/hooks/run.sh` y dos secciones del banco (39/1 y 39/2), sobre
+`QA-023-01` (`usuario/dinero`, crítica): el alfabeto se deriva de las seis claves, **dos son
+multi-palabra**, así que **contiene `0x20`**, y la guarda callaba en dos formas —cuando lo insertado
+pertenece al alfabeto y cuando sustituye al blanco interno—, resolviendo el campo como **ausencia**.
+
+**Medido por la coordinadora después de la parada**, que es lo único que hoy se puede afirmar:
+
+- Banco completo: **962 PASS · 0 FAIL · 4 SKIP**, `rc=0`. Los cuatro SKIP son los de siempre, con su
+  motivo declarado; **ninguno nuevo**.
+- Autoprueba del corredor: **105 PASS · 1 FAIL** (antes 106 · 0). El FAIL es **`CA-18`**:
+  `39-caracter-invisible-2-la-clase-y-el-corpus.sh` quedó en **402 líneas contra su techo de 400**. La
+  acción conforme es **partir la sección**, nunca subir el techo; el agente fue detenido antes de hacerlo.
+
+**Lo que un banco verde NO acredita, y hay que decirlo aquí o se lee al revés:** el **fail-before /
+pass-after**. Nadie ha comprobado que el caso nuevo **falle** contra el código anterior, así que el
+verde **no prueba todavía que el caso discrimine** — podría estar pasando por tautología, que es
+exactamente el defecto que la reescritura de `CA-03` existía para cerrar. Eso lo decide QA.
+
+**Al retomar:** partir la sección 39/2 para volver a poner `CA-18` en verde, acreditar el
+fail-before/pass-after, y sólo entonces pasar a QA. `Estado` de `REQ-023` sigue en `en-revisión` y sus
+cinco hallazgos siguen abiertos: **este commit no cierra ninguno**.
+
+## [GitHub] — 2026-09-09 · `REQ-027` COMPLETADO: la cláusula que impide que un pendiente desaparezca al cerrar
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus) + `qa-tester` (Opus) + `auditor-seguridad` (Opus) + coordinadora.
+
+Ciclo de §6 recorrido **en orden y completo** en una sola sesión, después de un cambio de cuenta que
+mató todos los subagentes reanudables: analista → QA → auditor. Ninguna fase se solapó.
+
+**Los dos write-backs, de una cláusula cada uno.** `QA-027-06` (`instrumento`): `CA-05` pasa a
+**1.037 B** y **1.844 B**, nombrando la convención —cada blanco se atribuye al tramo que cierra— que es
+la única con la que **suma** el desglose que el propio criterio cita como su corrida. Las dos cifras
+eran ciertas sobre rangos distintos; lo que no puede ser es que el número del criterio no aparezca en
+su propia corrida. El **49,8 %** y el techo de **3.703 B** no se mueven, y eso queda escrito.
+
+**`QA-027-07`** (`contrato`, el que bloqueaba): `CA-10` declara ahora **qué se acreditó y qué no**. Lo
+acreditado es la **conducta transcrita**, con dos corridas independientes; la **vía real
+—`/arnes-upgrade` invocado— queda pendiente**, con dueño **coordinadora**, vencimiento «antes de que un
+proyecto real migre a 1.34.0» y puntero al artefacto. Sin esa cláusula el pendiente **desaparecía al
+cerrar**, porque su dueño no es el REQ: deriva por omisión que `guard-completado` no puede ver.
+
+**QA aprobó en confirmación documental** (3.ª vuelta) sin re-medir nada, apoyada en que `AGENTS.md`, la
+plantilla y la skill no cambian desde `a41f8ea`. Y falsó lo que había que falsar: la cláusula nueva se
+inserta **antes** del párrafo de condición de entrega, que **no aparece en el diff** y sigue siendo la
+última palabra de `CA-10`. Un pendiente bien declarado que aflojara la puerta habría convertido su
+propio hallazgo en un permiso.
+
+**Auditoría `R-023`, primera de este REQ**, y corrigió dos cosas de su encargo: el primer `SEC` libre
+era **074** y no 075 (la línea «próximos libres» de `R-022` no es un hallazgo), y el rango que se le dio
+para comprobar que el REQ no toca el mecanismo era la ventana 1.33.0 entera — sobre la base correcta
+(`6dd3f8a`+`cd5dc0c`) la afirmación se sostiene: **cero archivos** de `hooks/`, `tools/`, `.github/`,
+`.arnes/` y `tests/`. Acreditó que la tabla de decisión de la migración es **fail-closed en todas las
+cuentas** —`UNKNOWN` es globalmente terminal y la fila de descarte está escrita **por propiedad**— y que
+**no existe camino a «no tocar y no avisar» con el bloque ausente**. Las dos sedes son idénticas
+(`md5` coincidente, 3.702 B), y el único `verificada` de `CA-07` **lo está de verdad**.
+
+**Aceptó el residual de `CA-10` para cerrar**, con su motivo: el criterio contrata una conducta, se
+comprobó dos veces, la vía real es **imposible de acreditar con un script** en este árbol, y el
+write-back ya la llevó al contrato. *Vetar habría sido pedir una firma falsa.*
+
+**Abierto y no bloqueante:** `SEC-074`, `SEC-076`, `SEC-077` (`instrumento`) más `QA-027-08`. Por la
+regla de acumulación del propietario se registran sin abrir REQ ni entrar en la ventana.
+
+**Aparte, y es decisión del propietario:** `SEC-075`. El auditor **discrepa de la clase** que le puso QA
+—dice `contrato`, no `instrumento`— porque falta la entrada «Hacia 1.33.0» en `arnes-upgrade` siendo
+1.33.0 la versión **publicada e instalada** que cambió andamiaje heredado, y porque el archivo ya declara
+qué versiones no requieren migración: **un hueco sin nota no se lee como hueco**. `arnes-upgrade` no mide
+nada, **es el canal de entrega**. No bloquea este REQ; debe resolverse **antes de publicar `v1.34.0`**.
+
+**Cierre comprobado por la coordinadora en el momento de hacerlo:** quality gates en verde, cola de
+aprobaciones en **0** entradas, y los cuatro hallazgos abiertos con su clase declarada.
+
+## [GitHub] — 2026-09-09 · Re-validación de `REQ-027`: los cinco cerrados, tres nuevos, y una cita que se corrigió a sí misma
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus) + coordinadora.
+
+Segunda vuelta, aislada con `git worktree` sobre `a41f8ea`. Antes de decidir qué no repetir, comprobó
+`git diff --stat 6dd3f8a a41f8ea -- AGENTS.md templates/AGENTS.md.tpl` → **vacío**: el bloque es el
+mismo, **y eso es lo que autoriza** a no re-validar `CA-01`/`06`/`07`/`09`/`10`/`11`. Y extrajo los dos
+comandos **del texto literal de la skill** con `grep -o`, pasándolos por argumento a una transcripción
+**nueva** — ni la del desarrollador ni la suya anterior.
+
+**Los cinco hallazgos, CERRADOS.** `QA-027-01`: coherencia interna comprobada (1.036 + 807 = 1.843).
+`QA-027-03`: las cuatro transiciones reproducidas exactas, y **la mitad que de verdad mata el fail-open
+es contar también el marcador de CIERRE** — con las dos cuentas, incluso la cadena desnuda pasa a
+`1/0 → UNKNOWN`, **fail-closed**. `QA-027-05`: `cmp` crudo difiere, sin el `\r` final idéntico.
+
+**`QA-027-02` cerrado sobre la propiedad y no sobre tres celdas**, y con la frase que lo resume:
+re-midió fila por fila hasta **3.702 = `wc -c`** y **reprodujo la causa** —`awk '{s+=length($0)+1}'`
+da **3.607** (= `wc -m`), con `LC_ALL=C` da **3.702** (= `wc -c`)—. *«Encontrar que el defecto era el
+instrumento, no el número, es mejor que el arreglo.»*
+
+**`QA-027-04` cerrado, y QA se corrigió a sí misma:** su «629» **era correcta sobre `6dd3f8a`**, el
+commit que midió, y se desfasó **porque `REQ-026` creció**. *«La lección —la línea sin su commit no
+basta— aplica a mi cita igual que a la suya.»*
+
+**Y suscribió la reclasificación de `-03` a `contrato` retirando su propio argumento:** la cláusula de
+§6 que había invocado habla de **guardianes, lectores y pruebas**, y ésta era **la migración, que es el
+entregable**. *«Un proyecto que nunca recibe las reglas tiene una coordinadora que decide distinto.»*
+
+### Tres hallazgos nuevos
+
+- **`QA-027-07`** (**`contrato`**, bloquea): el REQ **no declara** que la vía real de `/arnes-upgrade`
+  no se ejecutó. Comprobado y no supuesto: `has("commands")` → **`false`**, no existe `commands/`, un
+  solo archivo en la skill. **No retira la acreditación de `CA-10`** —el criterio dice que lo que se
+  comprueba es **la conducta**, y se comprobó dos veces con transcripciones independientes— pero sin la
+  cláusula el pendiente **desaparece al cerrar**, porque su dueño es la **coordinadora** y no el REQ.
+- **`QA-027-06`** (`instrumento`): en `CA-05` deben quedar **1.037 B / 1.844 B**. Las dos cifras son
+  ciertas sobre rangos distintos, pero **`CA-05` cita ese desglose como su corrida**, y la única
+  convención con la que **suma** es la que atribuye cada blanco al tramo que cierra. *«Un criterio cuyo
+  número no aparece en la corrida que él mismo cita es la forma leve del defecto que `QA-027-01` fue en
+  su forma grave.»* El **49,8 % no se mueve**.
+- **`QA-027-08`** (`instrumento`): **el motivo escrito para descartar el anclaje es falso contra su
+  propia tabla nueva.** Medido: con las **dos** cuentas, un espacio final da `0/1 → UNKNOWN` con **1**
+  bloque, y tras los dos marcadores `0/0` salta la guarda de `## 14.` → `UNKNOWN`, **1** bloque.
+  **El anclaje nunca produce `NUEVO` ni dos bloques** con la conducta de este tramo: ese escenario sólo
+  existía con la de **una** cuenta, que este mismo tramo eliminó. **La decisión de no anclar sigue
+  siendo correcta por otra razón que sí se sostiene.** Pesa porque la skill **la heredan los
+  proyectos** y porque la regla **`B.1`** del bloque que este REQ entrega dice exactamente esto.
+
+### `CA-08` señal (c): PENDIENTE, y no se inventa
+
+QA explica por qué no puede tomarla: el **numerador** es el `subagent_tokens` que el arnés reporta **al
+terminar su proceso**, así que **existe fuera de ella** y sólo lo ve quien despacha. Y un hecho que
+cambia quién es «la primera»: el bloque existe desde `6dd3f8a`, luego la primera comisión despachada ya
+con él fue **su 1.ª vuelta**, cuyo `subagent_tokens` es **140.349** — dato conservado en
+`docs/ESTADO.md` para que no se pierda. Además **`CA-08` no define qué cuenta como «un resultado
+entregado»**, así que cualquier razón formada hoy sería **incomparable** con la de otra comisión.
+
+### Dos residuos juzgados, y un forzador que QA corrigió a la coordinadora
+
+Citar el marcador entero en prosa es **aceptable**: medidas **las dos** formas, ambas terminales y con
+archivo intacto (`2/2 UNKNOWN` rc 3 y `1/1 MODIFICADO` rc 2); la alternativa exigiría interpretar
+contexto Markdown, «la clase de detección que termina con alguien apagando el guardián». Y sobre que
+ninguna puerta lo vigile: **no comparte** que la candidata sea `REQ-025` —`skills/` no está en el banco
+y esperar un comprobador completo es **desproporcionado**—; el forzador barato es **la aserción de una
+línea que ella misma corrió**.
+
+**Con los dos write-backs de una cláusula hechos y sin re-medir nada más, QA aprueba.** El cierre
+además exige `Seguridad: aprobado`, hoy `pendiente`.
+
+### Sesión detenida por cambio de cuenta
+
+El `desarrollador` de `REQ-023` se detuvo **antes de escribir un byte** — cero pérdida, ninguna
+comisión viva. El punto de retomada, con los cuatro pasos en orden y el encargo de la vuelta 1
+resumido, queda en `docs/ESTADO.md` §«⏸ SESIÓN DETENIDA».
+
+## [GitHub] — 2026-09-09 · `REQ-023 CA-03`: un sorteo que puede fallar, y `CA-12 (iii)` fuera de alcance con su nombre
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus), `desarrollador` (Opus).
+
+Write-back de **`QA-023-02`** y **`QA-023-03`** (los dos `contrato`). Ningún hallazgo cerrado: los
+cinco siguen en el campo, y `CA-03` **sigue en rojo** hasta que el `desarrollador` arregle
+`QA-023-01` — la rama 2 es, **por diseño**, la que hace fallar el caso hoy.
+
+### `CA-03`: veredicto por rama, sorteo estratificado, tres procedimientos
+
+**Por qué ninguna vía sola servía**, escrito por el analista: hacer el criterio satisfacible **no
+garantiza que el sorteo LLEGUE** a la rama que hoy abre; y acotar el universo por propiedad vuelve a
+ser *«seleccionado para no intersecar la guarda»* — **la tautología un paso más allá**, que es lo que
+QA condenó. Y descartó el SKIP como respuesta principal con un motivo fino: la rama de `a`→`QaA` **no
+es una abstención por falta de datos**, es una tirada sobre la que `CA-01` **no promete nada**, y
+llamarla SKIP confundiría «no medí» con «no exige».
+
+- **Universo sin acotar.** Lo que cambia es que el sorteo se **estratifica** en **E1** (complemento del
+  alfabeto) y **E2** (el alfabeto mismo), los dos **derivados de la constante única de claves de
+  `CA-06`** y **ninguno escrito a mano**, con no menos de una tirada por estrato.
+- **Tres procedimientos:** insertar · sustituir un **blanco interno** · **duplicarlo**, y en éste **la
+  entrada se toma de la clave misma** — ni sorteo ni lista. Es la tirada que hoy abre.
+- **Veredicto por rama:** E1 → **DENY**. P3, y E2 cuando la entrada es el blanco → **DENY** (hoy abre).
+  E2 no-blanco → **ningún veredicto exigido**, publicado y etiquetado «fuera de la propiedad de
+  `CA-01`» y **no juzgado**, porque ahí una persona ya no lee una declaración de ese campo.
+- **Anti-tautología COMO CRITERIO:** publica cuántas tiradas cayeron en cada rama **junto a la
+  semilla**; **SKIP con motivo, nunca PASS**, si alguna rama de DENY se queda sin tirada; y **un pool
+  escrito a mano o elegido para no intersecar el alfabeto INCUMPLE** el criterio, con `QA-023-02`
+  citado.
+- **Satisfacibilidad comprobada, no supuesta:** existe un mecanismo conforme —reponer un blanco en el
+  sitio de la retirada y **colapsar blancos repetidos** antes de preguntar si lo que queda **es** una
+  clave—, que cubre la sustitución (NBSP/TAB) y la duplicación **sin denegar nada legítimo**. Derivado
+  **leyendo, no ejecutado**; la elección del mecanismo es del `desarrollador`.
+
+**Y una premisa medida FALSA, corregida dentro del propio criterio:** el homóglifo no queda fuera
+porque «la clave resultante no contenga nada ajeno al alfabeto» —**lo contiene y la guarda lo ve**—
+sino porque **retirar lo ajeno no repone lo sustituido**. El reparto no cambia; lo que separa el
+blanco (dentro) de la letra (fuera) es que **reponer un blanco no elige entre candidatos y reponer una
+letra sí**.
+
+### `CA-12 (iii)`: este REQ NO la cierra, y el motivo no es de calendario
+
+La superficie **no es el segmento de clave** —donde esta guarda se ejerce— sino la regla de **corte**
+de la cabecera: el `## ` no tiene clave ni valor, así que es **otra comprobación en otro punto** del
+escáner, y arrastra la fila de `AGENTS.md` §13 que promete ese corte, **superficie heredada con gate
+humano**. Meterla ahora sería alcance nuevo **por delante de `QA-023-01`**, que es lo que bloquea.
+
+Ítem en «Fuera de alcance» con motivo, la medición y **sus dos controles en las dos versiones**,
+dueños repartidos, **ventana propuesta 1.35.0 — la decide el propietario**, clase `instrumento`
+**declarada ahí porque ningún `SEC` la abrió**, y **forzador**: que un texto firmado prometa **sin
+condición** que los campos valen sólo en la cabecera mientras esto siga abierto.
+
+**Y un cambio que vuelve mecánica la verificación:** `CA-12 (iii)` ahora dice **cuáles** son las
+superficies nombradas —**tres**: homóglifo, NUL/UTF-16 y ésta— para que comprobarlo sea **contarlas**
+contra el apartado, en vez de **leer intención**.
+
+### Aviso de enrutado que el analista deja explícito, y no resuelve por su cuenta
+
+`QA-023-04` vive en **dos derivaciones que NO están en `Archivos:`** (`36-…-2-los-lectores.sh:228` y
+`36-…-3-comentar-retira.sh:33`). Si el arreglo del `desarrollador` las escribe, **el campo se queda
+corto**. *«Dilo tú al despachar; yo no lo amplío porque no sé si el arreglo elegido las toca.»* Va en
+el encargo como condición de parada.
+
+## [GitHub] — 2026-09-09 · QA de `REQ-023`: `SEC-047` NO está cerrado, y el alfabeto contiene un espacio
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+`QA: con-hallazgos`. `Estado: en-revisión → en-progreso`. Cinco hallazgos, **tres bloquean**. Vuelta
+**1 de 3**.
+
+### `QA-023-01` (`usuario/dinero`, severidad crítica) — la remediación no cierra su propia fila 1
+
+El alfabeto se deriva de las seis claves y **dos son multi-palabra**, así que **contiene `0x20`**. La
+guarda borra lo **ajeno** al alfabeto y pregunta si lo que queda **es** una clave:
+
+- si lo insertado **pertenece** al alfabeto, **no se borra**;
+- si **sustituye** al espacio interno, **se borra y el espacio no se repone**.
+
+En los dos casos `arnes_en_vocab` dice no y **la guarda calla** ⇒ se resuelve como **ausencia**, que es
+justo lo que la puerta perdona. Medido con controles en la misma tanda: `U+0020`, **NBSP** y **TAB**
+dan **allow en las dos versiones**; `U+FEFF` y `Ω` dan **deny** sólo en la nueva. Es **la fila 1 de
+`SEC-047` con otro carácter**: cierra a `completado` con `QA: pendiente` y `Seguridad: pendiente`.
+
+**No lo tapa el «fuera de alcance» del homóglifo:** la premisa de ese apartado —«la clave resultante no
+contiene nada ajeno al alfabeto»— es **falsa** para NBSP y TAB; y el caso del espacio es el
+**procedimiento de inyección** que `CA-03` fija, con una entrada de **su propio universo declarado**.
+Y **`instrumento` no aplica**: la tabla lo reserva para defectos «sin efecto en el producto», y aquí el
+producto **es** la guarda.
+
+### `QA-023-02` (`contrato`) — un sorteo que no puede fallar, y una tensión insatisfacible
+
+El sorteo de la entrada **reservada** no ejerce el universo que `CA-03` declara: `RES93_POOL` son
+**doce imprimibles escogidos a mano**, todos fuera del alfabeto, así que las ocho tiradas **deniegan por
+construcción**. Medido que no es un detalle: **si el pool contuviera `U+0020`, el caso habría fallado**.
+Y la tensión que el write-back tiene que resolver: **universo literal + «DENY en todas» no es
+satisfacible**.
+
+### `QA-023-03` (`contrato`) — `CA-12 (iii)` incumplido
+
+Un `U+FEFF` delante del `## ` que termina la cabecera hace que **una línea del cuerpo se lea como
+veredicto** (base allow / nuevo allow; **sin** el BOM deniega; **sin** la línea en el cuerpo deniega).
+Misma propiedad, **no es regresión**, y **no está nombrada** en «Fuera de alcance».
+
+### `QA-023-04` (`instrumento`) — un guardián que envejeció hacia el lado que abre
+
+**No hay cuarta derivación**: son tres, las tres nombradas. Pero **una se estrechó**:
+`36-…-2-los-lectores.sh:228` pasó de **6 a 5** claves y **perdió `Estado`**, porque su `sed` casa
+literales entre comillas simples y los brazos ahora usan `"$ARNES_CLAVE_ESTADO"`. **Ninguna prueba
+falló**: la anti-vacuidad sólo distingue vacío de no vacío. Un guardián que envejeció hacia el lado que
+abre, **sobre la clave que decide el cierre** — y es consecuencia directa del arreglo que la
+coordinadora pidió.
+
+### Lo que QA reprodujo, y lo que sostiene la cota
+
+**Doce casos** de fail-before/pass-after, no dos, con **cuatro controles**; el del control «sin el
+carácter» es **md5 idéntico** en las dos versiones. **`LC_ALL=C` es `local` de verdad**: tras la guarda
+`LC_ALL` no existe en el ámbito global y `${#"áé"}` sigue siendo 2. **Dominio 5 de 6 confirmado**, con
+`Estado` dentro y `Seguridad` fuera. **`CA-04`: 0 divergencias** sobre 3.687 líneas y **0 falsos
+positivos** sobre 382 cabeceras reales.
+
+**La cota de `CA-09 (ii)` no sigue en pie como demostración, y ceden DOS premisas, no una:** la guarda
+no queda contenida —comparación por línea en `arnes_campo_linea` **más** `arnes_en_vocab` por línea en
+`arnes_campos_req`— y añade dos llamadas. Lo que sostiene la conclusión es **medición**, y la de QA es
+**más estricta** que la del desarrollador: **1,116×** sobre el camino de cabecera entero aislado
+(k=100, r=6, mínimo de k) contra techo 1,25×. **No es hallazgo** — el criterio exige medición y la
+medición cumple. Pero queda dicho que **la cota no es reutilizable: está rota, no debilitada**.
+
+**Y el despacho ya no decide quién es campo**, verificado: `arnes_en_vocab … || continue` va **antes**
+del `case`, y las transcripciones del conjunto pasan de 2 a 1.
+
+**Vencimiento de `SEC-047` EN RIESGO:** su fila 1 sigue cerrando un REQ `critico` sin validar ni
+auditar, y el vencimiento es **el cierre de 1.34.0**.
+
+## [GitHub] — 2026-09-09 · La migración contaba menciones y no marcadores: un fallo en abierto que dejaba al proyecto sin las reglas, en silencio
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+**`QA-027-03`, cerrado en la conducta y medido en los dos sentidos.** La entrada «Hacia 1.34.0» de
+`skills/arnes-upgrade/SKILL.md` prescribía decidir con `grep -c 'arnes:coordinacion:inicio'`, **sin los
+delimitadores del comentario**: eso cuenta **menciones, no marcadores**. Un `AGENTS.md` de proyecto
+**sin** el bloque que cite la cadena desnuda **una vez** —la nota de migración que el propio proyecto
+se escribió— devolvía **1**, la tabla de decisión leía «ya está» y **el proyecto nunca recibía las
+reglas, sin aviso**. Ahora se cuenta el **marcador completo** y **también el de cierre**, que es lo que
+las filas `1/0`, `0/1` y `2/1` de la tabla ya necesitaban.
+
+**Fail-before / pass-after, con los comandos extraídos del texto literal de la skill** (antes:
+`6dd3f8a:773`; después: el árbol de hoy) sobre maquetas construidas desde
+`git show 4f647c7:templates/AGENTS.md.tpl`: proyecto sin bloque que menciona la cadena **1 → 0**
+(`NUEVO`, recibe las reglas); con dos menciones **2 → 0** (adiós al `UNKNOWN` espurio); proyecto **ya
+migrado 1 → 1** —el positivo sigue detectándose, sin regresión—; migrado que además menciona la cadena
+**2 → 1**.
+
+**La alternativa se midió y se descartó por su modo de fallo, que es la parte que no se adivina.**
+Anclar el patrón a la línea entera (`^…-->$`) arregla además el único residuo, pero un **espacio final**
+dejado por un editor lo baja a **0**, y `0` manda a `NUEVO`, que *añade* el bloque y deja **dos**:
+cambia un fallo en abierto por otro **peor** —el primero omite las reglas, el segundo rompe la
+idempotencia que `CA-10` contrata—. Entre dos detecciones imperfectas se elige la que **falla
+cerrada**. El residuo queda **declarado en la propia entrada**: un proyecto que cite el marcador
+**entero** en su prosa da **2 → `UNKNOWN`**, que se detiene y pregunta.
+
+**`QA-027-05` (CRLF) entra en el mismo tramo, y no queda como deuda.** «Contenido idéntico» se decide
+ahora **tras quitar el `\r` final** de cada línea —la misma normalización que `hooks/lib.sh` ya aplica—,
+así que un proyecto Windows que normaliza el archivo entero después de migrar deja de producir un
+`MODIFICADO` **falso**. Medido: `cmp` crudo **difiere**, `cmp` con el CR final quitado **idéntico**. Dos
+límites dichos: es el `\r` **final** y sólo él, y la comprobación de idempotencia **entre corridas**
+sigue siendo `cmp` byte a byte, sin normalizar.
+
+**Y lo que NO se acredita, que es la mitad del encargo: la vía real de `/arnes-upgrade` queda
+PENDIENTE.** El desarrollador reprodujo `CA-10` con su transcripción y QA con la suya, y **ninguno
+ejecutó `/arnes-upgrade`**: lo acreditado es *«el comportamiento contratado, tal como se transcribió»*,
+no *«la vía real funciona»*. Comprobado por qué no se puede desde aquí: `skills/arnes-upgrade/`
+contiene **un solo archivo** (`SKILL.md`), `plugin.json` **no** declara `commands`, y las herramientas
+de un subagente no despachan una skill. **No se acredita con un script — ni el propio ni el de QA.**
+Queda construida la maqueta para que la corrida pendiente no empiece de cero
+(`/tmp/arnes-maqueta-req027`, constructor re-derivable en `/tmp/construir-maqueta-req027.sh`, versión
+base `4f647c7`): repositorio git limpio, plantillas de origen para que la Fase 1 acredite el origen
+como **CONFIRMADO**, texto humano propio en `## 20.` y el caso negativo de `QA-027-03` en `## 21.`.
+Dueño: la coordinadora. Vencimiento: **antes de que un proyecto real migre a 1.34.0**.
+
+**`QA-027-02`: el desglose se rehizo entero en bytes, y ahora se ve sumar.** Ocho filas con su **rango
+de líneas** y su `wc -c`: 67 · 53 · 415 · 25 · 999 · 1.037 · 299 · 807 = **3.702 B** el bloque, **+1 B**
+el separador = **3.703 B** el delta del archivo. Faltaba una fila —el encabezado
+`**B. Las siete reglas:**`, 25 B— y tres iban en caracteres. **La causa era el instrumento, no la
+cuenta:** el método declarado era «`awk` sumando `length($0)+1`», y `awk` cuenta **caracteres** en
+locale UTF-8 mientras el total venía de `wc -c` (medido: 3.607 con `awk`, 3.702 con `LC_ALL=C awk`).
+El §0 del artefacto ya prohibía mezclar magnitudes y no bastó porque **la prohibición nombraba una
+magnitud y la tabla usaba otro instrumento**.
+
+**`QA-027-04`: las citas, contra un commit nombrado.** El negativo de `CA-04` apuntaba a
+`REQ-026.md:88-101`, que es el rango de **`81024c6`**; ahora cita `01dc927` con `CA-13` en la línea
+**149** y `CA-17` en la **268**, y dice contra qué commit se midió. Se encontró y corrigió **una
+segunda cita desfasada de la misma clase que el hallazgo no traía**: el Historial de `REQ-026` que
+registra la contradicción está en la línea **679**, no en la 629 (la 629 habla del coste de `CA-15`), y
+el commit corrector `097c50b` **no aparece nombrado** en el REQ: se identifica por su mensaje.
+
+`templates/AGENTS.md.tpl` **no** se tocó y el arreglo no lo exige: el marcador ya vive ahí en su forma
+completa (línea 420) y lo defectuoso era el comando que lo cuenta. `cmp` de las dos sedes sigue sin
+salida, 3.702 B cada una.
+
+**Banco completo, una corrida sobre el árbol de este tramo: 961 PASS · 0 FAIL · 4 SKIP, `rc=0` —
+total 965, 68 s.** Mismo total que la referencia del propietario (960/0/5 sobre `802b47d`): la
+diferencia es el caso de `REQ-017 CA-09`, que alterna PASS/SKIP por ruido. `skills/` **no** está en el
+banco, así que esta corrida es **testigo de no-regresión**, no acreditación del arreglo — eso lo dan
+las maquetas. Los 4 SKIP traen su motivo y ninguno es de este tramo.
+
+**Ningún hallazgo se cierra aquí:** cerrarlos es de QA al re-validar. `Estado: en-progreso`, `QA:` y
+`Seguridad:` sin tocar, y `CA-10` de `REQ-023` **deliberadamente fuera** de este tramo por haber un
+`qa-tester` vivo escribiendo `requirements/REQ-023.md`.
+
+## [GitHub] — 2026-09-09 · Punto de continuidad vigente, y una sección del propio tablero marcada como falsa
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 
-Decisión del propietario del 2026-09-09, que **revierte el aplazamiento acordado horas antes**. Merge
+Punto de continuidad consolidado en `docs/ESTADO.md`, **fuera de los marcadores derivados** y marcado
+`★ VIGENTE` porque el tablero acumulaba **tres** secciones de continuidad solapadas. Lleva: alcance
+vigente, estado por REQ **medido en el momento**, los **dos agentes vivos y los dieciocho reanudables
+con su identificador**, la evidencia **enlazada y no copiada**, la siguiente acción en cinco pasos con
+su dependencia concreta, y el coste.
+
+**Y un defecto del propio tablero, marcado en vez de borrado:** la sección «Deuda anotada» del
+2026-09-08 **contradecía** a la vigente y tenía **tres datos falsos** — «20 fechas un día por delante»
+(la deuda **nunca se comprobó**; medido: 15 apariciones, **0 desfasadas confirmadas**, y `git blame` no
+sirve en 14 de 15), «falta la entrada de Migraciones conocidas» (**existe** desde `6dd3f8a`) y «el
+techo de 2.600 B sin validar» (**se validó, no cabía, se re-derivó**). Se marca con el desglose de qué
+era falso: verlo señalado enseña más que verlo desaparecer. Lo único que seguía siendo cierto es que
+**el consumo de la coordinadora no está instrumentado**.
+
+**Dos instrucciones del propietario registradas donde las ejecutará quien deba:**
+- **`REQ-027 CA-08` señal (c) se toma DE OPORTUNIDAD**, como subproducto del próximo encargo que cargue
+  el bloque, **nunca con una comisión propia**; y el numerador ya existe sin medir nada nuevo — el
+  `subagent_tokens` que el arnés reporta al terminar cada comisión. Mientras no se tome, la consecuencia
+  contratada sigue en tres sitios: **no se declara que las reglas sirven**.
+- **Las limitaciones de Codex y Cursor se conservan en tabla con su motivo**, para que nadie las
+  ascienda por descuido: de Codex sólo hay una **afirmación del fabricante**, que la regla `B.1` no
+  acepta como observación; Cursor **no está instalado**. Consecuencia dicha como es: **el REQ entrega su
+  objetivo para UNA de las tres herramientas**.
+
+## [GitHub] — 2026-09-09 · `REQ-027 CA-05`: los bytes en bytes, y las dos magnitudes separadas donde se confundían
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Write-back de **`QA-027-01`** (`contrato`). Los dos números corregidos **en los dos sitios y en bytes**:
+`D` **776 → 807 B**, y `B.7` + `D` **1.812 → 1.843 B**, con «el 49 %» → **«el 49,8 %»**. `B.7` = 1.036 B
+no se toca: ése ya estaba en bytes, y es **la mitad que hacía la suma inválida**.
+
+**La causa queda nombrada en el Historial, no sólo corregida:** los **776 eran caracteres** (`wc -m`)
+sumados a **1.036 bytes**. Es la misma clase que hoy obligó a corregir `REQ-019` —suelo medido en
+**líneas** contra un techo que se paga en **bytes**— y por eso se escribe la causa y no sólo el número.
+
+**Y queda escrito que el techo NO se invalida:** los **3.703 B** siguen en pie, reproducidos por QA en
+los dos archivos, y la corrección **refuerza** el criterio — hay **más** contenido contratado de lo que
+se decía, no menos, así que el argumento de `CA-05` para no recortar es más sólido.
+
+**La distinción de las dos magnitudes queda en el cuerpo de `CA-05`**, con su sede elegida y
+justificada: **3.702 B es el bloque** —lo que compara `CA-01`— y **3.703 B es lo que añade al archivo**
+—lo que contrata `CA-05`—, es decir el bloque más su línea en blanco separadora. Las dos correctas. Se
+puso ahí, y no en `CA-01`, porque **es el único punto donde las dos cifras se leen juntas, que es donde
+se confunden**.
+
+**`QA-027-01` sigue ABIERTO:** cerrarlo es de QA al re-validar. Y el analista declara que **no
+comprobó por su cuenta** los 807 B ni los 3.702/3.703 — los toma de la medición de QA, **citada y
+atribuida** en el REQ.
+
+## [GitHub] — 2026-09-09 · QA de `REQ-027`: el techo re-derivado es legítimo, y dos magnitudes sumadas no lo son
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus) + coordinadora.
+
+`QA: con-hallazgos`. `Estado: en-revisión → en-progreso`. Un bloqueante y cuatro `instrumento`.
+
+**Cómo aisló la medición, y por qué importa:** usó un **`git worktree`** en vez de `stash`,
+`checkout .`, `restore .`, `reset --hard` o `clean -f` —los cinco de `git.prohibidos`— y con eso
+**probó por construcción** que los **5 FAIL** que la coordinadora había medido en el árbol de trabajo
+**no eran de `REQ-027`**: en el worktree limpio sobre `6dd3f8a`, **920 PASS · 0 FAIL · 4 SKIP**,
+`rc=0`. Después comprobó que sus tres archivos **no cambian** entre `6dd3f8a` y HEAD, así que el
+veredicto vale sobre el árbol actual. Es la respuesta correcta a un árbol con comisiones vivas.
+
+**El re-derivado del techo queda ACREDITADO, con sus tres condiciones verificadas:** que `CA-05` lo
+ordena textualmente y prohíbe recortar contratado; que el recorte fue **de relleno** —comprobado
+**componente a componente**: `B.7` trae los seis que exige `CA-11` y `D` las tres vías con estado más
+los dos límites de `CA-07`, **no falta nada contratado**—; y que el número **sale de una medición**:
+37.530 − 33.827 = **3.703 exactos**, en los dos archivos, sin holgura.
+
+**Y resolvió el «3.702 vs 3.703» que parecía una cifra que no cuadraba: son DOS magnitudes.** 3.702 es
+**el bloque**, que es lo que compara `CA-01`; 3.703 es **lo que añade al archivo**, que es la magnitud
+que `CA-05` contrata — bloque más la línea en blanco separadora. Verificado quitando tramo **y** línea:
+el archivo vuelve a `4f647c7` byte a byte.
+
+**Idempotencia REPRODUCIDA con transcripción propia**, no reusando el script del desarrollador: tres
+corridas `NUEVO`→`INTACTO`→`INTACTO` con **el mismo md5**, `cmp` sin salida, **5** negativos con
+archivo intacto —incluido **uno que el desarrollador no probó**: cierre antes de apertura— y el
+fail-before donde un reemplazo ciego **borra el texto humano del proyecto**. Sus bytes absolutos **no**
+coinciden con los del desarrollador, y explica por qué es correcto: el artefacto **no registra qué
+texto humano puso**, así que **ese md5 no es re-derivable por nadie**. Lo que reproduce es lo
+contratado.
+
+### `QA-027-01` (`contrato`, bloqueante) — dos magnitudes sumadas
+
+`REQ-027:84` y `:312` afirman `D` = **776 B** y `B.7`+`D` = **1.812 B** = «el 49 %». Medido:
+**`D` = 807 B**, total **1.843 B**, **49,8 %**. Los 776 son **caracteres** (`wc -m`), no bytes, de modo
+que **1.812 = 1.036 bytes + 776 caracteres** — exactamente la mezcla de magnitudes que el §0 del propio
+artefacto declara no hacer. **No invalida el techo** (los 3.703 B están reproducidos) y **refuerza** la
+conclusión: hay **más** contenido contratado, no menos.
+
+**La coordinadora propagó esa cifra al `CHANGELOG` de `802b47d`**, escribiendo «`D` (776 B) — 1.812 B,
+el 49 %». **Queda rectificado aquí**, sin reescribir aquella entrada (§9): los números correctos son
+**807 B**, **1.843 B** y **49,8 %**.
+
+### `QA-027-03` (`instrumento`) — el más consecuente: un fail-open silencioso en la migración
+
+`skills/arnes-upgrade/SKILL.md:773,777` prescribe `grep -c 'arnes:coordinacion:inicio'` **sin los
+delimitadores**, así que **cuenta menciones, no marcadores**. Medido: un `AGENTS.md` de proyecto **sin
+el bloque** que cite la cadena desnuda una vez da **1** ⇒ la tabla de decisión lee «ya está» y **el
+proyecto nunca recibe las reglas, en silencio**. Dos menciones dan `UNKNOWN` sin motivo. El arreglo es
+**una línea** —contar el marcador completo—, verificado que así resiste.
+
+### Los otros tres, y lo que declaran
+
+`QA-027-02`: el desglose del artefacto suma **3.626 B** y no 3.703 —falta una fila de 25 B y tres van
+en caracteres—; correcto en bytes da 3.702. `QA-027-04`: una cita de rango apunta a las líneas de
+`81024c6` y no de `6dd3f8a`. `QA-027-05`: un proyecto Windows que normaliza a **CRLF** tras migrar da
+`MODIFICADO`/conflicto **falso** — fail-closed y sin pérdida.
+
+### Lo que este REQ NO entrega, dicho con claridad
+
+**`CA-08` señal (c)** sigue sin tomar, y QA acredita que **nadie escribió lo contrario**: el REQ, el
+artefacto y el `CHANGELOG` dicen los tres **«no se declara que las reglas sirven»**. Y el descarte de
+Codex es **correcto** —una afirmación del proveedor no es la observación de que el bloque llegue a una
+coordinadora—, luego **el REQ entrega su objetivo para UNA de las tres herramientas**, y así hay que
+decirlo. Cursor no está instalado. Que una coordinadora **aplique** las reglas **ninguna puerta lo
+mide, y ninguna debía**.
+
+## [GitHub] — 2026-09-09 · `REQ-026` ajuste de alcance, `REQ-027` entregado y `REQ-023` entregado
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus), `desarrollador` (Opus) ×2, coordinadora.
+
+### `REQ-026` — ajuste de alcance por decisión del propietario (2026-09-09)
+
+`CA-18 (i)` y `CA-05` conservan su garantía **absoluta y vigente**; `ADR-008` queda en `Estado:
+propuesta` **y sin aplicar**; `SEC-072` y `SEC-073` **abiertos**; `Estado: en-revisión` intacto por
+instrucción expresa. Todo el código y toda la evidencia **se conservan**: mecanismo, testigo, 37
+casos, mediciones, ADR y artefactos. La idempotencia del re-archivado queda **aplazada** y la rotación
+de `requirements/` **desactivada**.
+
+**La cadena de publicación, escrita con su fuente:** los dos hallazgos son `contrato` y están en
+`Hallazgos abiertos:` ⇒ `guard-completado` **deniega** el cierre (§6/§13) ⇒ con cualquier `contrato`
+abierto **el tag vuelve al propietario** (su decisión del 2026-09-08; la delegación **no aplica**) ⇒ su
+instrucción vigente de no publicar sin resolver o aceptar ⇒ **`v1.34.0` no se publica y `REQ-026` no
+llega a su estado terminal**. Y en la misma frase: **no hay riesgo vivo** — rotación apagada, **ningún
+REQ real rotado nunca**, los dos residuos **latentes**.
+
+El vencimiento de la idempotencia **no queda sin fecha**: sigue anclado a «antes de que se declare
+`CA-13`», que es correcto **porque `CA-13` también queda aplazado** — el día que se encienda, vence.
+El analista **propone** sede propia en 1.35.0 para los cuatro criterios más la idempotencia, y **no la
+creó**: abrir un REQ es abrir trabajo.
+
+### `REQ-027` — las reglas en su sede canónica, y el techo que no cabía
+
+`§14` en `AGENTS.md` y en `templates/AGENTS.md.tpl` entre marcadores, más la entrada «Hacia 1.34.0» en
+`skills/arnes-upgrade/SKILL.md`. **Nueve de once criterios acreditados.**
+
+**El bloque no cabía: 3.703 B contra 2.600 B propuestos (1,42×).** Se hizo una pasada de recorte de
+**relleno**, medida (3.930 → 3.703 B), y después se **re-derivó el techo con entrada en Historial,
+porque `CA-05` lo ordena y dice cómo**. Lo que no se recortó es `B.7` (1.036 B) y `D` (776 B) —
+**1.812 B, el 49 % del bloque**— porque es **contenido contratado** que `CA-05` prohíbe recortar. En
+palabras del desarrollador: *«no cambié ningún umbral para obtener verde: cambié el umbral porque el
+criterio manda cambiarlo y dice cómo»*.
+
+**Idempotencia MEDIDA**, que era condición de entrega: tres corridas con **el mismo md5**,
+`NUEVO`/`INTACTO`/`INTACTO`, `cmp` sin salida, el `## 20. Instrucciones particulares` del proyecto
+**intacto**; cuatro negativos con **archivo sin tocar**; y **fail-before** con una migración ingenua
+que deja **2 bloques y borra el texto propio del proyecto**.
+
+**`CA-08` señal (c) NO acreditada, y su consecuencia es contrato:** se fija en la primera comisión
+despachada **ya con** el bloque, y ésta se despachó antes de que existiera ⇒ **no se declara que las
+reglas sirven**. **Codex y Cursor siguen `no verificada`**: se encontró una **afirmación del
+proveedor** y se descartó por insuficiente según la propia regla `B.1`.
+
+**Línea base nueva que hereda 1.35.0:** `AGENTS.md` = **37.530 B**, verificado.
+
+### `REQ-023` — la guarda nombra la propiedad, no el carácter (mitad 1 de `SEC-047`)
+
+**Diez de doce criterios acreditados y medidos.** Banco **960 PASS · 0 FAIL · 5 SKIP**, total **965**
+(de 924), `rc=0`, verificado por la coordinadora.
+
+**El aviso de radio de la coordinadora era correcto pero INCOMPLETO, y el desarrollador lo completó
+midiendo.** El inventario del contrato nombraba `tools/arnes-lectura.sh:69-72`; hay **dos derivaciones
+más** por `sed` sobre el texto de los brazos `case` —`36-…-2-los-lectores.sh:228` y
+`36-…-3-comentar-retira.sh:33`— y **ninguna estaba en `Archivos:`**. Su primera forma las rompió: son
+los **5 FAIL** que la coordinadora midió en el árbol de trabajo. Forma final: los cinco brazos
+conservan su literal y la **pertenencia** se pregunta a `ARNES_CLAVES`, así que el despacho existe pero
+**ya no decide** quién es campo — que es literalmente lo que la factibilidad de `CA-06` pedía. **Radio
+final: cero archivos fuera de su conjunto de escrituras.**
+
+**El criterio de coste cazó un defecto en su propio código, y no se tocó el techo.**
+`${clave//[!alfabeto]/}` en locale **UTF-8 es superlineal**: cociente **3,78** (1000→2000) y **5,59**
+(2000→4000) contra techo **2,2**, y **5,053** sobre `arnes_norm_clave`. Con `LC_ALL=C` fijado con
+`local` **dentro** de la guarda: **2,098** y **2,050**, y **17× más barata**. Era hallazgo contra su
+propio código, así que el techo **queda intacto**.
+
+**`CA-02`: el dominio es 5 de 6, no 4** — y la quinta clave es **exactamente `Estado`**, la que el
+puntero medido falso de `CA-01` dejaba fuera. El defecto que el analista corrigió en el contrato
+**tenía consecuencia medible**.
+
+**Y una premisa declarada como NO cumplida entera:** la cota algebraica de `CA-09 (ii)` suponía la
+guarda contenida en la función medida; la publicación añade una comparación **por línea** fuera de
+ella y **dos llamadas** (builtins). Medido `1,002×` contra techo `1,25×`, con sujetos intercalados.
+
+**No acreditados, por precondición ajena y sin forzarlos:** `CA-08` en su letra —espera el gate humano
+de **`SEC-048`**, que sigue abierto— y **`CA-10`**, que necesita `AGENTS.md` y la plantilla, en manos
+de la otra comisión. Queda por enrutar.
+
+**Nota de mecanismo:** `guard-completado` **denegó** el primer intento de commit de la coordinadora
+porque el comando escribía en `requirements/` y su texto mencionaba el estado terminal. Falso positivo
+—no había transición— y es la **anchura deliberada** que §13 documenta. Se resolvió separando el
+comando, sin alterar el contenido ni rodear ninguna puerta.
+
+## [GitHub] — 2026-09-09 · REQ-023: el carácter que no se ve apaga el enforcement — la guarda pasa a nombrar la propiedad, y el techo de coste cazó la primera versión
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+**El defecto, medido idéntico en `v1.30.3`, `v1.31.0`, `v1.32.0`, `v1.32.1` y este árbol** (`SEC-047`,
+severidad crítica, mitad 1): un carácter que no se ve y que el normalizador no retira **borra un campo
+de la cabecera** de un REQ, y para todo campo cuya **ausencia** la puerta resuelve del lado que abre,
+borrarlo es abrirla. Un **BOM** delante de `Sensible a seguridad: sí` con `Rigor: ligero` cerraba a
+`completado` un REQ con `QA: pendiente` y `Seguridad: pendiente`. El diff no lo muestra, y PowerShell lo
+añade al redirigir: no hace falta malicia.
+
+**La guarda no persigue el carácter, persigue el estado** —una cabecera que no se puede **medir**— y no
+enumera ningún carácter porque enumera **lo que ya está enumerado, que son las claves**: retirado de la
+clave todo lo ajeno al **alfabeto** de las claves que el lector reconoce, ¿lo que queda **es** una de
+esas claves? Añadir el BOM y el U+200B a una lista habría sido la **sexta** derrota medida de esa vía en
+este repositorio.
+
+- `hooks/lib.sh` — las seis claves de la cabecera se declaran **una** vez (`ARNES_CLAVES`, al estilo de
+  `ARNES_VOCAB_*`); el **alfabeto** se **deriva** de ellas con escape de `]`, `-` y `^`, nunca se teclea.
+  La guarda vive en `_arnes_clave_oculta` y la **publicación** en `arnes_campo_linea`, la única puerta de
+  entrada — **no** en `arnes_norm_clave`, porque `arnes_estado_cabecera` la llama también con la línea
+  **cruda, pre-cita**, y desde ahí `<!--Rigor: ligero-->` disparaba un falso positivo cuyo veredicto
+  dependía de si quien escribió el comentario puso un espacio.
+- `hooks/guard-completado.sh` — **dos** ramas de denegación nuevas, una por cada rama que ya tenía, con
+  el motivo citando la línea y **los bytes ajenos en hexadecimal**: un carácter invisible dentro del
+  motivo deja a la persona buscando texto que su editor no le muestra.
+- `tools/arnes-lectura.sh` — lo reporta por su **vía única** (rc≠0), y el aviso va **antes** del descarte
+  de «archivo sin `Estado:`», que es donde se escondía el caso peor: con el carácter sobre la clave del
+  estado, el informe respondía `rc=0` sobre el documento más peligroso que hay. Su lista de campos deja
+  de derivarse con `sed` **del texto del código** y se lee de la constante.
+
+**Y lo que hay que llevarse de esta comisión: el criterio de coste cazó la primera versión de la
+guarda.** `${clave//[!alfabeto]/}` en un locale **UTF-8** es superlineal —cociente de duplicación
+**3,78** y **5,59** contra un techo de **2,2**—; con `LC_ALL=C` fijado con `local` **dentro** de la
+función queda en **2,098** / **2,050** (par 1000→2000) y **17× más barata**. El techo **no se tocó**: era
+un hallazgo contra el código. Medido además: **0 procesos** añadidos por evaluación y **1,002×** en el
+reloj de la ruta crítica contra `v1.33.0`, con los dos sujetos intercalados en la misma invocación.
+Método, versión base y **lo que cada número no acredita**: `docs/arnes/req-023-coste-y-dominio.md`.
+
+**El dominio de campos cuya ausencia abre mide 5 de 6, no 4** — el quinto es **`Estado`**, justo la clave
+que el puntero corregido de `CA-01` dejaba fuera. El banco lo **deriva midiendo en cada corrida**, no lo
+enumera: es la forma que `SEC-050` existe para no repetir.
+
+**Banco: 961 PASS · 0 FAIL · 4 SKIP** (`rc=0`, 924→965; los 4 SKIP son los heredados) con **41 casos
+nuevos** en **cuatro** partes de la sección 39 — cuatro y no tres porque los lectores y el coste juntos
+daban 422 líneas contra el techo de 400 de `REQ-014 CA-18`. Autoprueba del corredor **106 PASS · 0 FAIL**
+y las tres quality gates de §7 en verde.
+
+**Lo que NO entra, con su motivo, porque un verde parcial que se lee como completo es peor que un rojo:**
+`CA-08` no queda acreditado en su letra —el fail-before está medido y es reproducible, pero **no** se
+materializa `hooks/` desde un tag dentro del banco: su precondición es el gate humano de `SEC-048`, que
+sigue **abierto**—; y `CA-10` **no se escribe**, porque `AGENTS.md` y `templates/AGENTS.md.tpl` los está
+escribiendo otra comisión viva. `Estado: en-revisión`. `QA:` y `Seguridad:` sin tocar.
+
+## [GitHub] — 2026-09-09 · REQ-027: las reglas de la coordinadora salen de la conversación y entran en la sede canónica — y el techo que nadie había validado no cabía
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+`AGENTS.md` §14 y `templates/AGENTS.md.tpl` traen, **byte a byte idénticos** y entre los marcadores de
+contrato `<!-- arnes:coordinacion:inicio -->` / `<!-- arnes:coordinacion:fin -->`, las reglas de trabajo
+de la sesión coordinadora: la **comprobación de antes de despachar** (cuatro preguntas, por escrito en
+el encargo), las **siete reglas**, la **separación de responsabilidades** y las **vías de lectura con su
+estado de verificación**. `Estado: en-revisión`. `QA:` y `Seguridad:` sin tocar.
+
+**Las tres vías de distribución, todas entregadas — porque modificar una plantilla no actualiza los
+proyectos existentes, y ése era el punto entero.** Este repositorio (`AGENTS.md`), los proyectos nuevos
+(`templates/AGENTS.md.tpl` → `arnes-init`, verificado simulando la copia y la resolución de los 15
+`{{…}}`: **0** marcadores sin resolver, **0** dentro del bloque) y los **ya instalados**, con la entrada
+**«Hacia 1.34.0»** de `skills/arnes-upgrade/SKILL.md`, clasificada `NUEVO` y con su tabla de decisión.
+
+**La idempotencia se midió, no se prometió.** Los marcadores hacen el bloque *identificable*;
+idempotente es la conducta de contar antes de insertar. Tres corridas de la migración sobre un proyecto
+maqueta: `NUEVO` → `INTACTO` → `INTACTO`, **31 886 B y el mismo `md5` en las tres**, `cmp` sin salida,
+**exactamente un** bloque, y el `## 20. Instrucciones particulares` del proyecto intacto byte a byte. Y
+el **par discriminante**, que es lo que le da valor: una migración **ingenua** falla las mismas tres
+comprobaciones —deja **2** bloques y borra el texto propio de dentro de los marcadores—. Los negativos
+`MODIFICADO` (conflicto), `## 14.` propia, apertura sin cierre y doble apertura (`UNKNOWN`) salen con
+`rc` 2/3 y **el archivo sin tocar**.
+
+**Y el número que nadie había validado: NO cabía, así que se re-derivó el techo en vez de recortar el
+contrato.** `CA-05` proponía **2 600 B** declarándolo «límite propuesto sin validar». Medido al escribir
+el bloque: **3 703 B**, **1 103 B por encima (1,42×)**. Antes de rendirlo se hizo una pasada de recorte
+de relleno **medida** (3 930 → 3 703 B, **−227 B**: la tabla de las vías pasó a lista y salió la
+instancia ilustrativa de la regla C, cuyo sitio único es el REQ). Lo que queda son `B.7` (**1 036 B**) y
+`D` (**776 B**) —**el 49 % del bloque**—, enumerados componente a componente por `CA-11` y `CA-07`:
+recortarlos era eliminar contenido contratado, que es justo lo que `CA-05` prohíbe. Techo re-derivado
+**3 703 B**, ahora medición y no propuesta. **Línea base que hereda REQ-019: `AGENTS.md` = 37 530 B**
+(33 827 + 3 703), y el **resto del archivo byte a byte idéntico** en las dos sedes: nada creció por la
+puerta de atrás.
+
+**Codex y Cursor siguen `no verificada`, y se buscó.** La documentación del propio Codex instalado
+describe «Repository `AGENTS.md`: durable team conventions», pero eso es una **afirmación del
+proveedor**, no la observación de que este §14 llegue a una coordinadora suya; por la regla B.1 no basta
+para escribir `verificada`, y `CA-07` deja esa verificación fuera del REQ. De Cursor no hay nada.
+
+**Lo que NO queda acreditado, dicho aquí y no sólo en el informe:** `CA-08` está **incompleto por
+construcción** —su señal (c), tokens por resultado, se toma en la primera comisión despachada **ya con**
+el bloque, y ésta se despachó antes de que existiera—, así que **no se declara que las reglas sirven** y
+`REQ-025` no puede citar este REQ como evidencia de que bastan. **Ninguna puerta comprueba el bloque**:
+es regla escrita, y `CA-11` lo declara como límite.
+
+Evidencia en disco con **versión base (`4f647c7`), método y desglose elemento por elemento** —lo que la
+propia regla B.7 exige, aplicada a sí misma— en **`docs/qa/REQ-027.md`**. Banco completo: **920 PASS ·
+0 FAIL · 4 SKIP**, `rc=0`; quality gates de §7 en verde.
+
+## [GitHub] — 2026-09-09 · `ADR-008`: dos residuos, dos preguntas, y hoy no hay nada que firmar
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus) + coordinadora.
+
+`docs/decisions/ADR-008-garantia-de-la-rotacion-de-seccion-frente-a-escrituras-concurrentes.md`,
+`Estado: propuesta`, enlazado desde `CA-18 (i)`, `CA-05` y el Historial. Sólo evidencia existente.
+
+**El propietario impuso el reencuadre que hizo útil este ADR:** *«`SEC-072` no depende necesariamente
+de aceptar una excepción: también podría resolverse corrigiendo el mecanismo y verificándolo. El ADR
+debe presentar ambas alternativas, sin convertir tu firma en la única salida.»* El marco que la
+coordinadora había dado —«qué garantía se contrata»— **convertía la firma en la única puerta**, y no lo
+es.
+
+**Lo que se evaluó y salió NO, con evidencia del estado actual del árbol:** se preguntó si `3+5`
+—sacar la rotación del hook de parada más idempotencia del re-archivado— cumple las **dos** promesas
+absolutas sin excepción. **No.** La `5` cierra el residuo de interrupción; la `3` **no** cierra el de
+publicación **por mecanismo** —el intervalo sigue ahí; el sustrato no cambia porque cambie quién
+invoca—, sólo bajo la precondición «nadie más está editando», que **el arnés no puede medir** y que en
+el momento de escribirlo **era falsa por observación directa: dos `desarrollador` escribiendo a la vez
+en este mismo árbol**. La única vía B que cumple las dos por mecanismo es **no rotar `requirements/`**,
+eliminando el caso.
+
+**La decisión se parte en dos, porque los dos residuos no son la misma pregunta:**
+- **`CA-05`** tiene arreglo **por mecanismo** (idempotencia del re-archivado): vía B, **sin firma de
+  garantía**, y el criterio vuelve a ser absoluto.
+- **`CA-18 (i)`** no tiene ninguno en este sustrato. Su vía A exige aceptar un riesgo cuya magnitud
+  **nadie ha medido**, así que la alternativa «medir el intervalo residual» se **reclasifica como
+  precondición**, no como alternativa. Y hoy esa medición **no está disponible**: el instrumento se
+  declaró **no convergente** y depende de `REQ-021`, `bloqueado`. **La decisión queda abierta y
+  escrita, no resuelta por silencio.**
+
+**Motivo de la partición, escrito por el analista:** meter los dos en una sola firma **convertiría un
+problema con solución en una excepción permanente**; y las dos salidas finales para el segundo son
+**opuestas** —aceptar el riesgo, o renunciar a los 409.699 B— y hoy se decidirían **sin el único dato
+que las distingue**.
+
+**Descartes con motivo:** el **cerrojo** no es vía A ni B —no da la propiedad que dice dar, porque
+`(i)` incluye «una persona» cuyo editor no lo toma, y un cerrojo huérfano deja un documento que no
+vuelve a rotar nunca—; **sacar del hook** pierde además la automaticidad, y `CA-14` mide el ahorro
+sobre la **lectura real**, así que una rotación que nadie ejecuta ahorra **0**; **no rotar
+`requirements/`** queda **viva** como la alternativa real. Y se nombra la **puerta posterior** de
+`AGENTS.md` §13 para que no parezca inexplorada: **detectaría** la pérdida, no la evitaría.
+
+### Las dos correcciones que el propietario exigió, aplicadas
+
+1. **«Ninguna fila se pierde» queda ACOTADA** al estado intermedio de `CA-05`, con su evidencia, y en
+   **los dos** criterios queda escrito que en el residuo de la ventana de publicación **la pérdida sí
+   es posible** — y que si lo perdido era una fila de historia, **la fila se pierde**. Presentarla como
+   garantía general era falso, y la coordinadora la propagó así en el informe y en el `CHANGELOG` de
+   `8d39bb4`: **queda rectificado aquí, sin reescribir aquella entrada** (§9).
+2. **Los «microsegundos» retirados en los dos sitios.** Ahora dicen que ese intervalo **no está medido**
+   y que lo medido es el que **sustituye** — 295–312 ms del desarrollador y 355–361 ms de la auditoría,
+   las **dos** mediciones. El analista rectifica además su propio informe anterior, donde afirmó que
+   esas cifras estaban fuera de su rebanada **sin comprobarlo**.
+3. La fila `:622` del Historial **no se borra**: abre con `[FILA RECTIFICADA …]` y remite a las
+   posteriores.
+
+**`ADR-008` se asignó por coordinación**, no por carrera: tres REQ lo reclamaban y no existía en disco.
+La causa raíz sigue viva y sin dueño — **el número de ADR no tiene asignador**.
+
+## [GitHub] — 2026-09-09 · `REQ-026`: la excepción vuelve a ser PROPUESTA, y la lista de «sin implementar» era falsa
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus), `desarrollador` (Opus), coordinadora.
+
+**Decisión del propietario (2026-09-09):** *«No doy por aprobadas las nuevas excepciones. Conservá la
+evidencia de los límites encontrados, pero mantené abiertos los hallazgos correspondientes hasta
+resolver el cambio de garantía por el procedimiento aplicable.»* Y la prohibición que ordena el resto:
+**no usar «máximo posible» ni una duración no medida como justificación.**
+
+**El analista RETIRÓ su propia lectura de «cambio menor»** y lo declaró **de fondo**: admitir una
+excepción en una promesa absoluta **cambia la decisión base**, que es el disparador de ADR en
+`AGENTS.md` §9. En los dos criterios la garantía **absoluta vuelve a ser la vigente**, con la excepción
+debajo rotulada **«PROPUESTA de cambio de garantía — NO ES CONTRATO VIGENTE»**, y escrito que hasta la
+firma **el código no la cumple y `SEC-072` es un hallazgo, no una tolerancia**.
+
+**Las dos justificaciones retiradas, y con qué se sustituyen:**
+1. «El máximo que este mecanismo puede dar» → fuera. En su lugar, **qué garantiza y qué no**: garantiza
+   el intervalo del **cálculo**, que es el medido —**295–312 ms** en la medición del desarrollador,
+   **355–361 ms** en la de la auditoría—; **no garantiza nada** en el intervalo de **publicar**.
+2. La duración residual «en microsegundos», y el «cuatro o cinco órdenes de magnitud» → fuera. Queda
+   escrito que **está SIN MEDIR** y que **lo medido es el intervalo que sustituye, no el que queda**. El
+   motivo técnico se queda sin valoración: POSIX no ofrece renombrado condicional atómico, y eso
+   **describe el sustrato; no autoriza la excepción — quien la autoriza es la firma**.
+
+**Conservado íntegro:** la ventana medida, el modelo determinista de la publicación a medias (2
+bloques, 3 filas duplicadas, `rc=0`, sin aviso), el recorte **sin rama de error** y la incapacidad del
+testigo de verlo. **Y añadido lo que rige sin excepción:** **ninguna fila se pierde**, así que la
+dirección del fallo es hacia el **duplicado declarado**, nunca hacia la pérdida.
+
+### La lista de «sin implementar» era FALSA en sus tres puntos, y la causa está nombrada
+
+Reconciliada contra el código por la coordinadora:
+
+| Lo que el informe daba por pendiente | Comprobado |
+|---|---|
+| Parte 4 del banco | **Existe** — `28-rotacion-seccion-4-la-carrera.sh`, commit `8248e58` |
+| Retirada del comentario `:34-36` | **Hecha** — el texto cita la afirmación vieja y la **refuta**: «Las dos SÍ encuentran qué mover» |
+| `CA-08 (v)` en la rama del NUL | **Implementada** — `ARNES_ROT_NO_MEDIBLE` en los dos hooks, cuatro ramas publicando |
+
+**Causa, escrita por el propio analista:** repitió una lista de una pasada anterior **habiendo
+declarado que no leyó el código**. Es exactamente la clase que este REQ persigue.
+
+**Sin implementar de verdad:** `CA-13`, `CA-14`, `CA-16`, `CA-17` = `SEC-073`, alcance del propietario.
+**Sin contratar:** la **idempotencia del re-archivado**, con dueño `desarrollador` y vencimiento
+**antes de que se declare `CA-13`** — porque encenderla es lo que lo vuelve alcanzable.
+
+### `ADR-008` asignado por la coordinadora
+
+**Tres REQ lo reclamaban** —`REQ-026`, `REQ-024`, `REQ-019`— y no existe en disco. Se asigna a este
+ADR **por decisión de coordinación y no por carrera**, que es lo que produjo la colisión de `REQ-019`
+con los ADR de `REQ-014`. La causa raíz sigue viva y sin dueño: **el número de ADR no tiene asignador**.
+
+### `REQ-024`: factibilidad resuelta con medición, sin reabrir ningún criterio
+
+**Sí existe vía de activación a 0 procesos añadidos**, y es la llave de manifiesto: se pliega en la
+llamada a `jq` **que ya existe** en `arnes_parse_manifest` (`hooks/lib.sh:52-102`), memoizada y con 10
+claves, que corre **antes** de la resolución de la ausencia. La premisa de `CA-07 (i)` era **cierta pero
+incompleta** —sólo miraba el `jq` de las quality gates, que corre después— y lo que faltaba **invierte
+la conclusión**. Medido con la sonda del banco y **control discriminante** (+1 proceso con `jq` propio),
+así que el `0` no es ceguera del instrumento. Evidencia en
+`docs/arnes/req-024-activacion-cero-procesos.md`, con versión base `4f51293` y método.
+
+**Y un defecto que el implementador debe cerrar:** la llave escrita como cadena `"true"` cae a
+**no-activado y ALLOW sin aviso** (medido) — la clase `QA-106`/`QA-107`. El arreglo cuesta 0 procesos.
+
+## [GitHub] — 2026-09-09 · Auditoría `R-022` de `REQ-026`: lo que bloquea ya no es código
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad` (Opus) + coordinadora.
+
+`Seguridad: con-hallazgos (R-022)`. **`SEC-067` pasa a `en-mitigación`** —no a `mitigado`— y el
+**código queda acreditado línea a línea**.
+
+**Lo que el auditor acredita, y es lo que separa un guardián de uno que aprueba lo que debía
+rechazar:** la comparación del testigo **no está normalizada de más**. `texto_ini="$texto"` más
+`fin_nl` repone el único salto que la normalización quita, y **no** se compara normalizado contra
+normalizado — eso habría hecho comparar iguales dos documentos que difieren en el salto final, y
+**devolver ese byte al estado viejo también es una actualización perdida**.
+
+**Segunda frontera, encontrada por el auditor y NO declarada por nadie: la publicación a medias.** Si
+el `mv` del destino sale bien y el paso 7 falla, queda «bloque archivado, origen sin recortar» —y
+`printf … > "$tmp_orig" && mv` **no tiene rama de error**—. La parada siguiente **vuelve a archivar** y
+el testigo **no puede verlo**: sus dos lecturas son frescas y coherentes. Medido por modelo
+determinista: **2 bloques, 3 filas duplicadas, `rc=0`, sin aviso**.
+
+**Y se aplicó su propia regla a sí mismo**, que es la frase que resume la revisión: *«un hallazgo no se
+cierra mientras su control viva sólo en el código, y aquí el control vive en el código y el criterio
+que lo describe es falso. Me la aplico igual que se la aplicaría a otro.»* Condición exacta de cierre:
+la tolerancia **dentro** de `CA-18 (i)` y la excepción de la publicación a medias declarada en `CA-05`.
+Nada más.
+
+**`SEC-072` (`contrato`, bloquea) — `QA-026-10` reclasificado, y con las dos mitades SEPARADAS.**
+- Mitad **`(i)` → `contrato`**: el criterio promete «*ninguna publicación puede derivarse de una
+  lectura que ya no describe el disco*», **en absoluto**, y en el residuo **sí puede**. La clase se
+  deriva del defecto, no de la conveniencia. Con la **segunda instancia del mismo patrón**: `CA-05`
+  promete «cero duplicadas» sin declarar la publicación a medias — la promesa que **nace falsa** con su
+  excepción en «Notas / alcance», que es justo lo que nadie lee al citar un criterio.
+- Mitad **`(iv)` → `instrumento`, sostenido**: declara un **estado de evidencia** y lo declara **peor**
+  de lo que es. Y hoy el documento **se contradice consigo mismo** — `(iv)` dice «modelado, no medido»
+  y las notas dicen «se midió».
+
+**`SEC-073` (`contrato`, bloquea) — el alcance parcial deja de ser invisible para la puerta.** La
+puerta lee el valor `aprobado`; el alcance vivía en el paréntesis, que §13 define como matiz, y
+`Hallazgos abiertos:` no nombraba `CA-13`/`CA-14`/`CA-16`/`CA-17`. Vía **(a)** elegida porque es la
+única que **no depende de que alguien se acuerde**. Las otras dos quedan escritas como alternativas y
+**no se inventan**: reducir el alcance es del propietario. Entrada en `PENDING_APPROVAL.md`.
+
+**`SEC-069` NO cierra, y lo midió:** el paso `4b` está **después** de contar entradas, así que sólo
+protege el camino que iba a rotar. Las ramas **ambigua**, **sin entradas** y **no medible** retornan
+antes: con `estado_derivado.activo: false` avisan por stderr y el bloque derivado sale **0**. `(vii)` se
+cumple **literalmente**; su **motivo**, no. Baja de severidad media a **baja** y no bloquea.
+
+**`SEC-058` no se agrava**, y la parte 4 aplica su propia remediación: piso derivado término a término
+**y con fronteras** (19+57+28 = 104). Sigue abierto que **ninguna máquina verifica el valor**.
+
+**La abstención sobre el coste queda acreditada también por el auditor**, con lo que él subraya y
+merece quedar escrito: **un guardián se midió a sí mismo y se delató** —+11.841 µs, +9,2 %, por encima
+de su propio techo— en la única línea que no era camino de fallo. Y lo que la abstención **deja sin
+resolver**: la conformidad del código de hoy con el techo de `CA-15` **no está establecida**.
+
+**Mejora que el auditor hace constar sin habérsela pedido nadie:** el destino pasó de `cat` a
+`arnes_lee_archivo`. `cat` copiaba media lectura — era un `SEC-002` **latente en el destino** que él
+mismo **no había nombrado en `R-021`**.
+
+## [GitHub] — 2026-09-09 · `REQ-024` despachable y `REQ-026` con `QA: aprobado` en la vuelta 2
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus), `qa-tester` (Opus), coordinadora.
+
+### `REQ-024` — `borrador` → `pendiente`, contrato cerrado
+
+**La SEXTA instancia de «criterio derivado sin comprobar su factibilidad», y era insatisfacible por
+diseño:** `CA-01` abortaba con SKIP *«si la extracción devuelve menos claves que la plantilla»*. El
+lector reconoce **6** y la plantilla escribe **10**, así que la condición era cierta **hoy y siempre**:
+**el caso no podía dar PASS nunca.** Corregido.
+
+**Evitó que la implementación pisara dos ADR ajenos.** Este REQ declaraba `ADR-006` y `ADR-007` como
+suyos en `Archivos:` y en **seis** criterios, y los dos son de `REQ-014` y existen en disco. Ahora los
+ADR se identifican por su **papel** y toman el primer número libre al crearse. Y **no reservó
+`ADR-008`** a propósito: `REQ-019` (F4) y `REQ-026` lo declaran también candidato, y reservar es la
+forma **(b)** — la causa raíz sigue siendo que **el número de ADR no tiene asignador**.
+
+**Colisión entre sus propios criterios, encontrada y resuelta:** la salida barata para `CA-07 (iv)`
+cumpliría `CA-11 (i)` pero **viola `CA-10`**, porque su grano es de rango. Los tres se cumplen sólo por
+una tercera vía, ahora escrita.
+
+**El conflicto `CA-01` ↔ `REQ-023 CA-11` resuelto SIN el ADR**, vía `CA-05`, de modo que `REQ-023`
+**no** necesita write-back ni volver a `en-progreso`. El conflicto no se borra: se **traslada** a
+1.35.0 con dueño y forzador. Y **`SEC-050` NO reabre `REQ-016`** — revisión hecha con su resultado
+escrito; mover el hallazgo en el registro es del auditor.
+
+**No creó el ADR, a propósito:** sus decisiones no son del analista —la vía de activación es del
+`desarrollador` con gate del propietario, y cruzar el grano cambia un contrato terminal—, y escribirlas
+habría sido inventar alcance.
+
+### `REQ-026` — `QA: aprobado` en la vuelta 2, y `QA-026-04` CERRADO
+
+Alcance del veredicto: `CA-01`–`CA-12`, `CA-15` y **`CA-18`**. `SEC-067` sigue abierto y **bloquea
+correctamente**: lo cierra el auditor.
+
+**QA detectó un fallo de SU PROPIA sonda antes de publicar cifras.** Sus dos primeras mediciones
+apuntaban a `$REPO/hooks` con `$REPO` **vacío**, así que invocaban `/hooks/stop.sh`, **el hook no
+corría**, y el «no rota, no avisa» que obtuvo era **artefacto de la sonda**. Lo cazó volcando el stderr
+crudo y rehizo todo con ruta absoluta y un guardián `[ -f "$H/stop.sh" ]`. Los brazos contra el código
+viejo siempre fueron válidos, y por eso ahí sí salía el defecto.
+
+- **`(vi)`, par discriminante:** reproducción propia con 1.200 filas y escritor ajeno a 150 ms —
+  `1fe975f` **3/3** devuelve `Seguridad: aprobado` a `pendiente` **en silencio**; HEAD **3/3** lo
+  conserva, no rota y avisa por los dos canales. El control **no es vacuo**: exige cuenta exacta de
+  filas en los dos archivos.
+- **`(iv)` con su número, y es lo honesto:** la intermitencia medida es **2/20 y 3/15** (10–20 %), luego
+  tres rondas detectan una regresión con **27–49 %** de probabilidad — *«es una moneda al aire, y lo
+  digo con número»*. Aceptado porque el fail-before está medido **fuera** del banco con su frecuencia,
+  `SEC-030` prohíbe casos intermitentes aquí, y `(iv)` comparte testigo con `(vi)` y `(ii)`, que sí son
+  deterministas.
+- **`(c)` el residuo de la ventana de publicar:** leído al pie de la letra, `(i)` **no se cumple** en
+  ese subintervalo. No es hallazgo —la ventana baja de 295–312 ms a dos `mv` y un `printf`, es
+  irreducible en shell— pero **`(i)` está redactado en absoluto y su excepción vive en otra sección**:
+  la tolerancia va **dentro** de `(i)`.
+- **La abstención sobre el coste queda ACREDITADA**, con el argumento que la sostiene: la evidencia que
+  la invalida es **interna a la medición** —el brazo de control, código viejo sin cambios, se movió un
+  **34 %**— y **la afirmación que importa no necesita reloj**: «cero fuera del camino de rotación» es
+  propiedad de camino y se verifica leyendo. No re-derivar el techo era lo conservador, porque sólo
+  podía **subirlo**, la única dirección que `CA-15` no admite sin medición válida.
+
+**`QA-026-04` cerrado** con evidencia: 1 línea por archivo, `rotacion.activo` en `false`, `artefactos`
+en `[]`, `_doc_artefactos` **byte a byte idéntico** en los dos archivos (mismo hash), y la plantilla con
+marcadores sustituidos es JSON válido.
+
+**Cuatro `instrumento` nuevos, ninguno bloqueante:** falta un gate de §7 sobre
+`templates/arnes-config.json.tpl`, que es **lo que heredan todos los proyectos** (`QA-026-08`); el poder
+de `(iv)` más una rama sin caso (`QA-026-09`); dos write-backs para el analista (`QA-026-10`); y el techo
+de `CA-15` sin verificar contra el código de hoy (`QA-026-11`).
+
+### Índice sincronizado con el número MEDIDO
+
+Los dos analistas discreparon —uno dijo ocho rutas compartidas, el otro diez— así que se midió con
+`tools/arnes-paralelo.sh`: son **diez**. `requirements/README.md` queda con las dos celdas de `REQ-024`
+al día y la cifra atribuida a su medición.
+
+## [GitHub] — 2026-09-09 · `REQ-023` despachable: `SEC-052` retirado y cinco defectos en sus propios criterios
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus) + coordinadora.
+
+`REQ-023` pasa de **`borrador` a `pendiente`**: contrato cerrado y despachable. Es la **mitad (1) de
+la remediación de `SEC-047`**, severidad crítica, cuyo vencimiento es el cierre de 1.34.0.
+
+**`SEC-052` retirado del campo `Hallazgos abiertos:`** citando la autorización literal del auditor
+(`registro-seguridad.md:4429-4436`), y con un párrafo que escribe **lo que ese cierre NO acredita**,
+con las palabras del propio auditor: nada sobre los criterios de `REQ-023` como contrato — esa
+auditoría no ha ocurrido y va **después** de QA.
+
+**Cinco defectos hallados en sus propios criterios, y el primero es de la clase que el REQ existe
+para corregir:**
+
+1. **`CA-01` llevaba un puntero MEDIDO FALSO, y la clave que dejaba fuera era `Estado`.** Decía
+   «`arnes_campo_linea` **y sus llamadores**», y `arnes_estado_cabecera` **no** es llamador suyo:
+   llama a `arnes_norm_clave` directamente (`hooks/lib.sh:1880`, `:1891`) y es la **única boca** donde
+   vive la clave del estado terminal. **Quien auditara la clase siguiendo ese puntero habría concluido
+   que la clave que decide el cierre estaba cubierta.** Es la clase de `SEC-050` **dentro** del
+   criterio escrito para corregirla, y el propio `CA-06` ya lo desmentía.
+2. **El «no más de 0 transcripciones» de `CA-06` NO era satisfacible por la vía obvia:** los dos
+   sitios de bash son **disjuntos** —uno enumera 5 claves y despacha, el otro 1— así que **el conjunto
+   de las 6 no existe hoy como lista en ninguna parte**: es la *unión* de dos despachos. Una constante
+   nueva que esos dos no **usen** sería la tercera transcripción.
+3. **Un radio que nadie había escrito:** `tools/arnes-lectura.sh:69-72` deriva la lista con `sed`
+   **del texto de los brazos `case`** y **sale 2** si no encuentra ninguna. Reescribirlos **rompe el
+   informe** —y con él `CA-07`— salvo que la derivación se re-apunte. El archivo ya estaba declarado;
+   **descubrirlo implementando no lo era.**
+4. **La séptima clave** (`Archivos:`, resuelta con el mismo normalizador en `arnes-paralelo.sh`) queda
+   **fuera** de la constante **con motivo escrito**: su ausencia es fail-closed en su propio lector.
+   Antes era un hueco silencioso; ahora es una frontera.
+5. **`CA-09 (iii)` fijaba `2,2` sin decir entre qué dos longitudes.** Un cociente de duplicación
+   depende del par, así que dos implementaciones podían medir pares distintos y **contradecirse sin
+   mentir**. Ahora el caso publica el par, `k` y los dos tiempos, con el punto conforme nombrado.
+
+**Los seis números que el contrato fija llevan o medición o cota con premisas comprobables, y NINGUNO
+se convirtió en «derivar midiendo».** `CA-09 (ii)` pasa de un `≤ 1,25×` sin medir a una **cota
+algebraica** con sus **tres premisas escritas** para comprobarse.
+
+**`Archivos:` cambia por regla, no por alcance:** sale `CHANGELOG.md` —la regla del propietario del
+2026-09-08 dice que los REQ en `borrador` lo retiran al salir a `pendiente`— y entran
+`docs/qa/1.34.0*.md` y `docs/seguridad/registro-seguridad.md`, que esa misma regla declara **evidencia
+primaria**, con fail-closed **hacia declarar**.
+
+**Registrado sin abrirlo:** `R-015-01` **venció** con esta transición —su vencimiento era literalmente
+«antes de que `REQ-023` salga de `borrador`»— y pide subir a doctrina la regla «un REQ *cita* clase,
+forzador y vencimiento; no los *declara*». Es `instrumento`, **no bloquea**, y por la regla de
+acumulación del propietario queda en `docs/PENDIENTES.md` con **vencimiento nuevo**: la próxima
+comisión con ámbito sobre `requirements/README.md`, que hoy es el reparto de `REQ-019`.
+
+Sincronizada la celda de `REQ-023` en el índice de `requirements/README.md`. **No** se tocó la que
+dice «comparte nueve rutas»: el contrato de `REQ-024` está reescribiendo su `Archivos:` en este
+momento, así que ese número se calcula con `tools/arnes-paralelo.sh` cuando los dos estén quietos, en
+vez de escribir un dato que va a ser falso.
+
+## [GitHub] — 2026-09-09 · `REQ-027` entra como quinto trabajo, el techo de `REQ-019` calculado, y la deuda de fechas cerrada por falsa
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus) ×2, `desarrollador` (Opus), coordinadora.
+
+**Decisión del propietario: `REQ-027` es el QUINTO trabajo de 1.34.0**, con su implementación
+**después de `REQ-019`, sobre la estructura resultante** —plantilla, `arnes-init` y `arnes-upgrade`
+con sus verificaciones—. `docs/PLAN.md` §«ALCANCE DE 1.34.0» pasa de cuatro trabajos a cinco.
+La coordinadora había recomendado 1.35.0; el propietario decidió 1.34.0 **con orden explícito**, que
+resuelve el motivo de la recomendación —`REQ-019` mueve el texto de `AGENTS.md` y `REQ-027` inserta un
+bloque en él— sin aplazar el trabajo. Queda escrito porque **una recomendación desatendida con motivo
+es información, no ruido**.
+
+**Techo de `REQ-019` calculado y ETIQUETADO COMO PROYECCIÓN** (`docs/arnes/req-019-techo-propuesto.md`,
+versión base `d6620ea` leída con `git show`, nunca el árbol vivo):
+**≤ 0,93× / ≤ 0,89× / ≤ 0,91×**, es decir **de 74.594 B a 67.406 B = −7.188 B de lectura obligatoria
+por comisión (−9,6 %)**. Expresado en bytes y **no traducido a tokens**.
+
+- **Medido con `wc -c`:** las dos bases y **tres punteros reales escritos para el cálculo** (269/243/161 B,
+  peor caso usado). **Proyección:** el resultante y el techo — los archivos candidatos **no existen**,
+  porque no se ha repartido nada, así que no hay `wc -c` posible sobre ellos.
+- **Por qué 0,91× y no el ≈0,82× estimado en F1:** los punteros se comen el **49 %** de lo liberado
+  (6.994 B contra 14.182 B delegados) y en `AGENTS.md` el **57 %**. El grano que manda es el de `CA-12`
+  —26 punteros, **13 + 13**, y no es una división por la mitad: `AGENTS.md` 6 de gobierno + 7 secciones
+  narrativas, README 9 + 4—, no los 11 de grano `CA-03` que suponía la estimación previa.
+- **Dato de rentabilidad registrado sin proponer cambio de alcance:** el `## Índice` del README pesa
+  **7.867 B**, está fuera de alcance y su conversión en bloque derivado **no reparte nada ni añade un
+  puntero**, retirando **más** bytes que el reparto completo (7.188 B), que cuesta 7–11 h.
+- **Límite declarado:** la tabla por sección **no sustituye** al inventario por bloques de `CA-15`.
+  Agrega por sección, y una invariante se pierde por **bloque**.
+
+**La deuda de «20 fechas desfasadas» queda CERRADA, y era falsa.** El número nunca se comprobó.
+Medido: **15** apariciones en `REQ-019` —no 12—, **0 desfasadas confirmadas**, 2 correctas por
+evidencia no-git, **13 indeterminadas**. Y el método que la coordinadora prescribió **no sirve**:
+`git blame` devuelve `Not Committed Yet` en **14 de las 15**. Evidencia en
+`docs/arnes/req-019-fechas-desfasadas.md`. **El propietario decidió no editarlas y que no bloqueen.**
+El agente **revirtió** la única fila que había escrito, porque sus 15 veredictos eran `indeterminada`
+y documentaba dentro del contrato una comisión ya cancelada.
+
+**`REQ-027` gana la regla `B.7` y `CA-11`:** la evidencia intermedia se guarda **en disco**, con
+**versión base** y **método** dentro del artefacto y la **ruta** citada en el informe. Nace medido: las
+dos enumeraciones de `REQ-019` F1 (106 y 164 elementos) se entregaron por informe y **no sobreviven**,
+así que hoy `CA-15.2` no se puede reconciliar sin repetirlas. El analista **se la aplicó a sí mismo** y
+declaró qué **no** hizo puerta —el cumplimiento por comisiones futuras, que desde un REQ no se puede
+medir—, nombrando el comprobador de `REQ-025` como candidata: *«un pendiente disfrazado de criterio
+habría sido peor que un límite declarado»*.
+
+**Corrección de la coordinadora sobre su propio contador de coste:** el `subagent_tokens` que reporta
+el arnés es **acumulado por agente**, y se estaban sumando los dos informes de un mismo agente
+reanudado. Lo gastado en comisiones cerradas es **≈2,02 M**, no los ≈2,2 M reportados antes. Y el
+contador que los agentes citan (14.9xx k y bajando) es **presupuesto restante compartido**, no consumo
+propio: con varias comisiones vivas, su delta **no es atribuible** a ninguna.
+
+## [Interno] — 2026-09-09 · Decisiones del propietario: `_doc_artefactos` autorizado, techo de `REQ-019` por presentar
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+**Resuelta la entrada de `REQ-026`.** El propietario autoriza **exclusivamente** actualizar
+`_doc_artefactos` en `.arnes/config.json:48` y `templates/arnes-config.json.tpl:53`, **sin activar la
+rotación**. Cierra `QA-026-04` (`contrato`) y retira el vencimiento que expiraba antes del tag
+`v1.34.0`. `rotacion.activo` y `rotacion.artefactos` quedan **fuera** de lo autorizado; `CA-13` no se
+declara, y no hacía falta decidirla — le falta trabajo, no permiso.
+
+**Sigue pendiente la de `REQ-019`, con dirección dada:** mantener el alcance y **ajustar el objetivo**
+(opción A), con el número **por presentar** — una propuesta de techo que **incluya los punteros
+obligatorios de `CA-03`**, que la medición de F1 dejó fuera declarándose cota inferior. El resultado
+se expresa como **reducción de bytes de lectura obligatoria**, nunca como ahorro de tokens.
+
+**Advertencia registrada en la propia entrada, porque «el inventario existente» no está donde
+parece:** las dos enumeraciones de F1 (106 y 164 elementos) se entregaron **por informe** y **no
+sobreviven en disco**. Lo que sí hay, y basta para dimensionar el reparto sin re-enumerar, es la tabla
+**por sección** de §«El suelo forzado MEDIDO EN BYTES», con `base`/`delegable`/`suelo` de cada
+sección. **No se abre enumeración nueva.**
+
+**Corrección de algo que la coordinadora había sobreestimado:** la cola sólo cierra la puerta **A2**
+—transiciones a `completado`—, no el trabajo. Y ningún REQ estaba listo para cerrar de todas formas:
+los tres abiertos ya tenían su propio bloqueante. Verificado además con el lector del arnés
+(`arnes_cola_pendientes`), que cuenta las entradas correctamente y por tanto **`SEC-051` no afecta a
+éstas**: ninguna usa comentarios HTML.
+
+## [GitHub] — 2026-09-09 · Cierre de la sesión autónoma: punto de continuidad y el segundo gate de `REQ-026`
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Punto de continuidad en `docs/ESTADO.md` **fuera de los marcadores derivados** (comprobado:
+posición 10.615 contra el bloque `[31.392, 33.669]`, tres marcadores intactos), con terminado /
+bloqueado / no verificado separados, los once agentes reanudables con su identificador, y la
+deuda anotada.
+
+Entrada nueva en `PENDING_APPROVAL.md` con los **dos** cambios del manifiesto de `REQ-026` y el
+orden entre ellos: **A** corregir `_doc_artefactos` —`contrato`, vence **antes del tag `v1.34.0`**,
+no enciende nada— y **B** declarar `CA-13`, que **no** se aprueba hoy porque falta trabajo, no
+permiso: `CA-18` existe y su control no.
+
+**Lo que la ventana entrega y lo que no, sin adorno.** `REQ-017` cerrado. El mecanismo de rotación
+existe, está probado con 29 casos y está **apagado**. `REQ-019` bloqueado por un techo que su propia
+medición desmintió. `REQ-023`/`REQ-024` sin empezar. Y el tag de 1.34.0 **vuelve al propietario** por
+§6: hay un `usuario/dinero` y un `contrato` abiertos.
+
+## [GitHub] — 2026-09-09 · `REQ-026 CA-18`: no se publica sobre una lectura caducada
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Write-back de **`SEC-067`** (`usuario/dinero`) y **`SEC-069`**. Criterio nuevo en siete partes, con
+la **propiedad** por delante y **sin nombrar ningún mecanismo**:
+
+- **(i)** Si otra escritura modifica el documento **después** de que la rotación lo leyó y **antes**
+  de que publique, la rotación **no publica**: el documento conserva **byte a byte** esa escritura
+  ajena y se avisa. *Ninguna publicación puede derivarse de una lectura que ya no describe el disco.*
+- **(ii)** Dirección hacia **no rotar**, y **ninguna condición bajo la que la duda autorice publicar**.
+- **(iii)** El fallo **nombrado**, que es lo que faltaba: **actualización perdida** —escritura completa
+  y válida que pisa un cambio posterior a la lectura— **≠ escritura desgarrada** —la que cierra el
+  temporal propio del proceso de `REQ-015`—, y **una no implica la otra**. Contrata además que la
+  invariante de `hooks/rotar-artefactos.sh:34-36` **es falsa** y se corrige o se retira: un
+  comentario que afirma una invariante falsa es deriva (§9).
+- **(iv)** Concurrencia: a lo sumo una publica y el destino **no** recibe el mismo bloque dos veces.
+  Declarado **modelado, no medido**, frente a (iii) que **sí** se midió 3/3.
+- **(v)** Lo único acotado del **cómo**, y por propiedad: ni estado intermedio, ni bloquear la parada,
+  ni obligar a superar el techo de `CA-15` — si lo superara, se re-deriva por la vía que `CA-15` ya
+  define, **no aflojando esta propiedad**.
+- **(vi)** Par discriminante con **sus dos mitades**, y su sede: **parte 4** del banco, porque
+  `28-rotacion-seccion-3-la-tabla.sh` está en **400 de 400 líneas**. **No se propone subir el techo.**
+- **(vii)** El canal: sede de `CA-08 (v)` **más** el cierre de `SEC-069` — **la rotación no rota
+  cuando no puede dejar constancia duradera**. Motivo: un fail-closed invisible es indistinguible de
+  una sección que lleva meses sin archivarse.
+
+**Marcado como candidata a `ADR-008`** por el propio analista, con su alternativa declarada, porque
+`(vii)` acopla dos ajustes del manifiesto hoy independientes: *«eso lo decide quien firma, no yo»*.
+
+**La consecuencia de gobernanza NO entra en este REQ, y el motivo es correcto:** que
+`tools/arnes-paralelo.sh` no conozca a este escritor **no es defecto del rotador**, y `REQ-026` no
+puede contratar el comportamiento de una herramienta que no toca ni declara en su `Archivos:`. Sede
+**`REQ-022`**, con el texto redactado y esta dependencia anotada: la cadena es
+`CA-18` + su control → `CA-13`, y **esa dimensión de `REQ-022` debería resolverse —o quedar como
+residual con dueño— ANTES de encender la rotación**, porque encenderla es justo lo que pone al hook
+a escribir en `requirements/`.
+
+## [Interno] — 2026-09-09 · `REQ-026`: auditoría de seguridad **R-021** — `con-hallazgos`, y el rotador que ahora escribe contratos
+> Origen: Interno (manual, sin commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad` (Opus).
+
+Auditoría del rango `2a91c82^..464e0ba`, **después** de QA. Veredicto **`con-hallazgos`**: el
+mecanismo está apagado y no puede disparar hoy, pero queda un bloqueante abierto y su control no
+existe ni en el código ni en ningún criterio.
+
+- **`SEC-067` (`usuario/dinero`, alta, abierto)** — la rotación de sección reescribe el documento
+  **entero** desde una lectura previa sin ninguna comprobación de concurrencia entre la lectura
+  (`:297`) y la publicación (`:596-598`). **Medido 3/3 en carrera real:** un `Seguridad: aprobado`
+  escrito durante la rotación volvió a `pendiente`, `rc=0`, stderr vacío y **sin línea en el bloque
+  derivado**; ventana 355–361 ms. Segunda consecuencia, **modelada**: dos paradas simultáneas
+  **duplican** el bloque archivado (3 filas repetidas de 5), contra el «cero duplicadas» de `CA-05`.
+  La invariante del propio archivo (`:34-36`) que dice que eso «es conforme» es **falsa**.
+- **El fail-closed del reconocedor de tablas se sostiene** — pero el argumento de clase escrito
+  nombra el mecanismo equivocado: lo portante es `hueco`/`hueco2`, no el conjunto de caracteres
+  (`SEC-068`). Cinco formas nuevas probadas, ninguna rompe nada; barrido del corpus real limpio.
+- **`QA-026-04` reclasificado `instrumento` → `contrato`**: `_doc_artefactos` de la **plantilla**
+  anuncia a terceros un mecanismo que ya no existe, y **subestima** lo que la máquina toca. Forzador
+  real: la publicación de 1.34.0, no `CA-13`.
+- **`SEC-069`/`SEC-070`/`SEC-071` (`instrumento`)** — el canal único de `CA-08 (v)` depende de
+  `estado_derivado.activo` (medido); y los dos sitios restantes de la familia `SEC-002`/`R-001`.
+- **Sin regresión de enforcement**: el rango no toca ninguna puerta; tres controles se refuerzan.
+  Contención de rutas del destino medida con cuatro formas. Sin fuga en repositorio público.
+- **No ejecuté el banco ni una vez**, no re-medí `CA-15` y **no encendí la rotación**.
+
+## [GitHub] — 2026-09-09 · `REQ-026`: `QA: aprobado` sobre el mecanismo, con la clase de fallo cerrada por argumento
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+Re-validación de la vuelta 1. **Los dos hallazgos `usuario/dinero` cerrados, verificados por
+medición propia de QA y no leyendo el commit:**
+
+- **`QA-026-01`** — la forma exacta que destruía 17.697 B deja el archivo en **158.598 → 158.598 B**,
+  no rota, avisa citando `SEC-002`/`R-001`, `rc=0`. Contención **por archivo**: `REQ-013` con NUL
+  queda intacto y citado mientras `REQ-007` y `REQ-019` rotan en la misma parada.
+- **`QA-026-02`** — las dos variantes quedan byte a byte iguales y avisan.
+
+**El argumento que cierra la clase donde vivían la quinta y la sexta forma**, y que vale más que
+cualquier caso: `arnes_rot_es_separadora` acepta **exactamente** el conjunto de caracteres que GFM
+admite en una fila delimitadora (`-`, `:`, `|`, espacios y tabs) y exige un `-`. Luego **no existe
+fila que GFM lea como separadora y el hook lea como dato**: la dirección peligrosa está cerrada y
+todo desacuerdo cae del lado seguro. Verificado sobre 9 formas. **Séptima forma: no la hay** —
+doce formas probadas, y la ausencia se declara **evidencia acotada, no demostración**.
+
+**Cero regresión sobre corpus real:** 10 REQ en copia, 8 rotan con multiconjunto exacto y todo fuera
+de la sección byte a byte; los 2 que no rotan están bajo umbral y **no avisan**, que es `CA-10`.
+Ningún fail-closed falso.
+
+`QA-026-05` y `QA-026-06` **cerrados**. El primero porque el registro del techo ya nombra su
+estadístico y su orden es **estructuralmente** verificable —regla escrita antes de medir, dos juegos
+en invocaciones separadas—; y QA acredita expresamente lo que el desarrollador **no estaba obligado
+a escribir**: que la vuelta anterior eligió la regla con el número de validación delante, que la
+subida de `0,135` a `0,140` **no** se atribuye a los arreglos, y que lo afirmable es de **camino, no
+de reloj**.
+
+**Hallazgo nuevo `QA-026-07`** (`instrumento`, dueño `analista-requerimientos`): el único hueco que
+rota sin avisar —una continuación **tras la última** fila— **no incumple `CA-08 (i)`** y su inocuidad
+está **verificada en tres configuraciones**, pero ningún criterio lo dice, y es justo la frontera
+donde este REQ falló dos veces. Merece cláusula.
+
+**Alcance declarado del veredicto:** `CA-01`–`CA-12` y `CA-15`. `CA-13`, `CA-14`, `CA-16` y `CA-17`
+**sin implementar y fuera de ventana**. El veredicto acredita **el mecanismo**, no el cierre.
+
+## [GitHub] — 2026-09-09 · `REQ-026 CA-08`: la propiedad por delante de la lista, y el aviso simétrico
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Write-back de `QA-026-01`, `QA-026-02` y `QA-026-06` (§9: un hallazgo no se cierra hasta que el
+requerimiento lo refleje). `CA-08` pasa de una viñeta a cinco partes:
+
+- **(i) La propiedad, y manda sobre cualquier lista.** La estructura se reconoce sin ambigüedad **en
+  toda la extensión de la sección, no sólo en su preámbulo**, con la frase que cierra el hueco:
+  *«la comprobación recorre la sección completa: detenerla en la primera fila de datos no satisface
+  este criterio»*.
+- **(ii) La enumeración son ejemplos.** Entra la quinta forma y se escribe *«una implementación que
+  satisfaga esta lista y no (i) incumple; la lista puede crecer sin que (i) cambie»*. Queda escrito
+  además lo que la hizo invisible: **`CA-05` se conserva** en esa forma, así que ninguna comprobación
+  de pérdida veía el dato reetiquetado.
+- **(iii) Lectura no fiable**, rama nueva contratada: documento que no se puede leer entero → no se
+  rota, no se toca, se avisa, y **nunca** se publica una lectura a medias.
+- **(iv)** Todas las ramas salen con código 0: la parada no se bloquea.
+- **(v) El aviso es SIMÉTRICO en las cuatro ramas** de «no se rota»: stderr **más** línea con
+  contador en el bloque derivado. **Se rechazó la asimetría acotada que proponía el desarrollador**
+  —que la rama del NUL bastara con stderr porque `guard-completado` ya denegaría— con este motivo:
+  esa denegación está **condicionada a que alguien edite ese REQ**, mientras el silencio de la
+  rotación no está condicionado a nada, y **un canal de visibilidad que depende de un segundo suceso
+  no es un canal**. `CA-10` queda excluido expresamente: no es fail-closed y por diseño no avisa.
+
+**Consecuencia declarada:** `CA-08 (v)` queda **contratado y NO implementado** en la rama del NUL.
+Y el analista declara que **no leyó el código**: que los arreglos satisfagan **(i)** como propiedad
+—y no otra vez la enumeración ampliada— **está sin comprobar**. Sugiere un caso con **tres** tablas
+o con la segunda separadora en la última fila.
+
+## [GitHub] — 2026-09-09 · QA de `REQ-026`: dos hallazgos `usuario/dinero` en el rotador de tablas
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+`QA: con-hallazgos`. `REQ-026` vuelve al `desarrollador` (vuelta 1 de 3). **La rotación NO se
+enciende hasta cerrar los dos primeros.**
+
+- **`QA-026-01`** (`usuario/dinero`) — `hooks/rotar-artefactos.sh:263` lee con
+  `IFS= read -r -d '' texto < "$f"`, que **se detiene en el primer NUL y devuelve 0**; el paso 7
+  escribe esa mitad encima del REQ. Medido sobre copia de `REQ-007`, determinista 3/3:
+  **−17.697 B, 5 filas de historia desaparecidas de documento y archivo, `rc=0`, stderr vacío**.
+  **El arnés ya tiene el lector que lo evita** —`arnes_lee_archivo` (`hooks/lib.sh:1120`), nacido de
+  `SEC-002`/`R-001` por este fallo exacto, que devuelve rc 1— y su único llamador es
+  `guard-completado.sh:150`, que ante un NUL **deniega**. El rotador, que además **escribe**, se
+  quedó con la forma cruda. **Atribución precisa:** la lectura cruda es anterior, pero contra
+  `c59fd83` una sección en forma de tabla daba cero entradas y se retornaba antes del paso 7 — sobre
+  `requirements/` la vía **no era alcanzable**. Este REQ la hace alcanzable en cada rotación.
+- **`QA-026-02`** (`usuario/dinero`) — **la quinta forma de `CA-08`, y existe.** La pasada de
+  validación hace `break` en la primera fila de datos, así que **nada posterior a ella se valida**.
+  Con dos tablas en la sección, la cabecera y la separadora de la segunda se **archivan como filas
+  de datos** y sus filas conservadas quedan **bajo las columnas de otra tabla**: dato
+  **reetiquetado en silencio**. Y `CA-05` **se conserva** en esa forma, así que ninguna comprobación
+  de pérdida lo ve. Cobertura del banco: **cero** casos con dos tablas.
+
+**Ningún criterio está mal formado, y esto importa:** `QA-026-02` existe **porque `CA-08` está bien
+escrito** —marca su enumeración «no exhaustivos»—; la implementación cubrió la **enumeración** y no
+la **propiedad**.
+
+Cuatro `instrumento` más: `conservar_entradas: -1` mata el hook y deja el bloque derivado sin
+escribir (`QA-026-03`, preexistente); `_doc_artefactos` obsoleto (`QA-026-04`, viaja con `CA-13`);
+dos defectos del **registro** del techo de `CA-15` —las cifras de validación no dicen qué estadístico
+son, y no consta que la regla del margen se fijara antes de ver el juego de validación, así que
+«techo derivado» y «número ajustado» son indistinguibles desde el registro (`QA-026-05`)—; y el
+cambio de `hooks/estado-derivado.sh`, que **no era alcance tomado por su cuenta** —el REQ lo declara
+en `Módulo:` y en `Archivos:`— pero le falta contrato (`QA-026-06`).
+
+## [GitHub] — 2026-09-09 · `QA-026-04`: el manifiesto describía el mecanismo anterior, y la plantilla lo heredaba
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+**Gate humano levantado por el propietario, y sólo para esto:** *«Autorizo la decisión 2
+exclusivamente para actualizar `_doc_artefactos` en los dos archivos indicados, sin activar la
+rotación.»*
+
+`_doc_artefactos` seguía diciendo que una entrada es sólo `- `, `* `, `### ` o `N. ` — el
+mecanismo de antes de `REQ-026`. El código reconoce **filas de tabla** desde 1.34.0, así que ese
+texto envejecía **hacia el lado que abre**: **subestimaba lo que la máquina toca**, y vive en la
+plantilla que los proyectos heredan por `arnes-upgrade`. De ahí que `R-021` lo reclasificara de
+`instrumento` a **`contrato`**. Ahora describe lo que hace hoy: la entrada **por propiedad** —línea
+de lista **o** fila de datos de la tabla que ES la sección, con cabecera y separadora como
+preámbulo que se queda—, la tabla dentro de una entrada como continuación que viaja con ella, el
+puntero **fuera** de la tabla, las **cinco** ramas de «no se rota y se avisa» (sin la sección
+declarada, sin entradas reconocibles, estructura ambigua **en toda la extensión** de la sección,
+lectura no fiable y **lectura caducada**) con su línea en el bloque derivado, y que con
+`estado_derivado.activo: false` la rotación de sección **no rota**.
+
+**El límite de la autorización, verificado y no sólo respetado:** `rotacion.activo` sigue en
+`false`, `rotacion.artefactos` sigue **vacío** —eso es `CA-13`, que el propietario no autorizó— y
+**ninguna otra clave** cambió. Comprobado comparando los dos documentos con `_doc_artefactos`
+descontada (`diff` vacío) y con `git diff --numstat`: **1 línea** por archivo. Al terminar, la
+rotación sigue apagada y `requirements/historial/` no existe.
+
+**Los dos archivos quedan byte a byte idénticos** en esa clave, que era la mitad del defecto: dos
+copias de la misma frase se desfasan.
+
+**Un detalle de acreditación que conviene registrar:** `jq -e . templates/arnes-config.json.tpl`
+**no puede estar en verde** y no lo estaba antes de este cambio — la plantilla lleva tres
+marcadores (`{{ARNES_VERSION}}`, `{{CODIGO_APP_GLOBS}}`, `{{QUALITY_GATES_JSON}}`) y por diseño no
+es JSON válido; falla igual en `HEAD`. Lo que sí mide algo es sustituir los marcadores y validar
+**eso**, que es lo que se hizo: JSON válido, con `activo: false` y `artefactos: []`. El `jq` de §7
+cubre `hooks/hooks.json` y `.claude-plugin/*.json`, no la plantilla.
+
+Banco: **920 PASS · 0 FAIL · 4 SKIP** (924, `rc=0`, 1 m 02 s) — no se mueve, como debía ser: es
+texto de documentación dentro del JSON. `QA-026-04` **no se cierra aquí**: eso es de QA y del
+auditor.
+
+## [GitHub] — 2026-09-09 · `REQ-026 CA-18`: la rotación no publica sobre una lectura caducada, y medir el guardián encontró su propia regresión
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+**El defecto: `SEC-067`, `usuario/dinero`.** La rotación leía el documento entero, calculaba, y
+lo reescribía **desde esa lectura**, sin comprobar que nadie lo hubiera cambiado en medio.
+Reproducido **3/3** con una ventana de **295–312 ms** (el auditor: 355–361 ms): un
+`Seguridad: aprobado` escrito durante la rotación **volvía a `pendiente`**, con `rc 0`, stderr
+vacío y sin línea en el bloque derivado. Es la **actualización perdida** —una escritura completa
+y válida que pisa un cambio posterior a la lectura— y **no** la escritura desgarrada que cierra
+`REQ-015` con el temporal propio del proceso: el arnés sólo tenía defensa para la segunda.
+
+**El mecanismo, que `CA-18 (v)` dejaba a mi elección: un testigo de vigencia por relectura del
+documento **y** del archivo de historia, justo antes de publicar. Sin cerrojos.** Y el motivo
+importa más que la elección: `(i)` incluye expresamente a **una persona** con su editor, y un
+cerrojo sólo obliga a quien lo respeta —habría dado garantía sobre las rotaciones y **ninguna**
+sobre el caso que se midió—; además un cerrojo huérfano deja un documento que **no vuelve a rotar
+nunca**, y decidir cuándo está rancio es adivinar. Se comprueban los dos archivos porque el
+bloque nuevo se arma sobre lo que el archivo de historia decía al leerlo, y publicar encima de
+una lectura caducada **de él** borra un bloque ya archivado. Comprueba y **cede**: no espera a
+nadie, como exige `(v)(b)`.
+
+**Medir no era opcional, y ahí estaba la lección.** El encargo daba por hecho —y yo también— que
+estos cambios eran de camino de fallo y no había que re-medir. **Una línea no lo era:** guardar el
+testigo justo después de leer copiaba el documento entero **por archivo y por parada**, también en
+los que no se iban a rotar. Medido **pareado** (misma máquina, mismo minuto, montaje de `CA-15`):
+**140.583 µs** contra **128.742 µs** del código anterior, **+11.841 µs (+9,2 %)** en régimen
+estacionario y **por encima del techo de 140.000 µs**. Corregido reconstruyendo el testigo en el
+punto de publicación, con lo que fuera del camino de rotación cuesta **cero**. Un guardián que se
+paga en cada parada aunque no haga nada es exactamente lo que `CA-15` existe para no dejar pasar.
+
+**Y el residual se declara NO MEDIDO, en vez de publicar una cifra cómoda.** Tras la corrección,
+tres pareados dieron +3.261 µs, +5.659 µs y uno **inválido** (+48.377 µs con el brazo de control
+del **mismo código viejo** moviéndose un 34 %, entre 93.110 y 141.277 µs). Con el código anterior
+midiendo hoy por encima del propio techo, una comparación absoluta **condenaría también al código
+que era conforme**: la máquina no está en el estado en que se derivó. La sonda se **abstiene**
+(`REQ-021`), **el techo no se re-deriva**, y lo que falta para publicarlo es la condición (ii) de
+`CA-15` —máquina en reposo y **sin el banco corriendo**—, que es justo lo que una comisión no
+puede ofrecer al final de su sesión. El protocolo pareado queda escrito en el REQ.
+
+**`CA-18 (iv)` deja de estar «modelado»: se midió.** Dos paradas simultáneas sobre el mismo
+documento, contra `1fe975f`: **1 de cada 5** y **1 de cada 10** vueltas dejaron **dos bloques** en
+el destino y **1.190 filas duplicadas**, con `CA-05` roto sobre la unión. Con el testigo, **10 de
+10** conformes. Consecuencia que se declara en vez de disimularse: como el duplicado es
+**intermitente**, el caso del banco es de **conformidad y no un discriminante** —una vuelta suelta
+pasa también contra el código viejo— y por eso corre **tres** vueltas.
+
+**`CA-18 (iii)`: retirada una invariante falsa.** El comentario de `hooks/rotar-artefactos.sh:34-36`
+afirmaba que con dos paradas «una de las dos no encontrará nada que mover, y eso es conforme». Las
+dos **sí** encuentran qué mover. Es la tercera afirmación de esta comisión sobre el mecanismo que
+resultó falsa al ejecutarla, y las tres se han cerrado con una medición.
+
+**`CA-18 (vii)` (`SEC-069`): la rotación de sección no rota cuando no puede dejar constancia
+duradera.** Con `estado_derivado.activo: false` ninguna línea de «no se rota» se escribe, así que
+el fail-closed se volvía invisible por una opción ajena a él. Ahora, con el canal apagado, no rota
+y lo dice por stderr; y la rama de la carrera añade su contador y su **quinta** línea al bloque
+derivado. El ajuste se lee en la rotación —que corre antes del bloque— con el mismo cuidado con
+`//` que `estado-derivado.sh`: sólo un `false` explícito apaga. La decisión se toma después de
+saber que había algo que mover (`CA-10`: nada de ruido en cada parada) y antes del `mkdir -p`, para
+no crear `historial/` y luego no rotar.
+
+**Banco: parte 4 nueva** (`28-rotacion-seccion-4-la-carrera.sh`, 8 casos, `piso` 104 derivado
+término a término) y `CASOS_ESPERADOS` 916 → **924**. La sede la fija `CA-18 (vi)`: la parte 3 está
+en 400 de 400 líneas y el criterio no propone subir el techo. Fail-before contra `1fe975f`: **5 de
+8** fallan; los 3 que pasan son los **dos controles obligatorios** —que deben pasar a los dos
+lados o no controlan nada— y el de `(iv)`. Corrida completa: **920 PASS · 0 FAIL · 4 SKIP** (924,
+`rc=0`, 1 m 10 s, +7 s por los fixtures de 1.200 filas); autoprueba 106 PASS; gates de §7 en verde.
+Sobre copias en `/tmp` de `REQ-017` y `REQ-021`: rotan, multiconjunto intacto, un bloque, un
+puntero, y la segunda parada no dice nada (idempotencia).
+
+**Dos residuos declarados, ninguno escondido en el código:** (1) la ventana **no** se cierra del
+todo —lo que queda es la de publicar, microsegundos en vez de 300 ms— porque no existe un
+«renombra-si-no-ha-cambiado» atómico en POSIX; (2) la rama «el archivo de historia cambió entre su
+lectura y su publicación» está implementada y **sin caso**, porque su ventana es ese residuo y un
+caso de reloj ahí sería intermitente — sí tiene caso determinista la otra mitad: que su vigencia
+**no se pueda comprobar**. Y una nota de gobernanza que no me toca: `(vii)` acopla `rotacion` con
+`estado_derivado` y el propio criterio lo declara candidato a **ADR-008**.
+
+## [GitHub] — 2026-09-09 · `REQ-026 CA-08`: la cuarta rama también se ve, y probar la propiedad encontró una forma más
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+**`CA-08 (v)` implementado — y el criterio tenía razón contra mí.** La entrega anterior dejó la
+rama de la **lectura no fiable** avisando sólo por `stderr`, con el argumento de que un NUL ya
+hace **denegar** a `guard-completado` en la siguiente edición de ese REQ. El criterio lo rechaza
+con un motivo mejor: esa denegación **depende de que alguien edite ese REQ** y de dónde caiga el
+NUL, mientras que el silencio de la rotación **no depende de nada** — un canal de visibilidad
+condicionado a un segundo suceso no es un canal. Ahora las **cuatro** ramas de «no se rota»
+—sin la sección, sin entradas, estructura ambigua y lectura no fiable— dejan contador y línea
+propios en el bloque derivado de `docs/ESTADO.md`, con texto que distingue su caso. `CA-10` sigue
+sin línea a propósito: no es un fail-closed. La nota de alcance que defendía la asimetría se
+reescribe, en vez de dejarse contradiciendo al criterio.
+
+**`CA-08 (i)` comprobado como propiedad — y ahí estaba otro defecto.** Los dos casos que pidió el
+analista (**tres** tablas; la segunda separadora en la **última** fila) **pasan contra `6b07f88` y
+contra este árbol**: ya estaban cubiertos por construcción, porque la comprobación vive dentro del
+bucle que recorre la sección entera. Eso queda **probado con casos**, no argumentado, que es lo que
+se pidió. Pero probando la propiedad apareció una forma que la enumeración no nombra: **una línea
+que no es fila de datos entre dos filas de datos**. Con un párrafo suelto, una línea vacía o una
+**segunda tabla indentada tres espacios** —GFM las admite, así que no llegan al reconocedor de
+columna cero— la sección se rotaba **en silencio** y el bloque del destino quedaba con esa línea
+**entre dos filas de datos**: dejaba de leerse como tabla, o sea `CA-03` roto. Medido en las tres
+formas. Ahora es fail-closed, con un aviso propio, y el arreglo mira la propiedad —un hueco después
+de la primera fila invalida la estructura— y no las tres formas.
+
+**Y su control, que es la mitad que impide pasarse de listo:** una continuación **tras la última**
+fila **no** corta ninguna tabla —no hay fila detrás— así que se sigue rotando y esa cola viaja con
+su entrada, que es exactamente lo que contrata `CA-07`. Sin ese control, el arreglo habría sido
+«cualquier línea rara detiene la rotación», y eso dejaría sin rotar media `requirements/`.
+
+**Comprobado que ningún REQ real cae en el fail-closed nuevo:** los 28 archivos de
+`requirements/` se escanearon buscando esa forma y **ninguno** la tiene. Sobre copias en `/tmp` de
+`REQ-017`, `REQ-021` y `REQ-014`: los dos primeros rotan con multiconjunto intacto y **cero**
+líneas intrusas en el bloque; el tercero, al que se le inyectó un NUL, queda **byte a byte igual**
+y aparece nombrado en la línea nueva del bloque derivado, con el texto humano de `ESTADO.md` fuera
+de los marcadores intacto.
+
+**Banco.** 6 casos nuevos → `28/3` de 23 a **29** y `CASOS_ESPERADOS` de 910 a **916**.
+Fail-before contra `6b07f88`: fallan **tres** —`CA-08 (v)` y las dos formas nuevas— y los otros
+tres pasan a los dos lados por diseño. Corrida completa: **912 PASS · 0 FAIL · 4 SKIP** (916,
+`rc=0`, 1 m 02 s); autoprueba 106 PASS; gates de §7 en verde.
+
+**`CA-15` no se re-mide, y se dice por qué:** los cambios de este tramo son de **camino de
+fallo** y en régimen estacionario **no se ejecutan** —la función sale en la comparación de tamaño
+antes de trocear, y la línea del bloque derivado sólo existe cuando algo falló—. El techo
+`≤ 0,140 s`, derivado con la regla fijada antes y con el estadístico nombrado, sigue en pie.
+
+**Aviso para la próxima comisión:** `28-rotacion-seccion-3-la-tabla.sh` queda **en el techo** de
+`REQ-014 CA-18` (400 de 400 líneas). El caso siguiente exige **partir la sección en una parte 4**,
+no alargarla; queda escrito en la propia línea del piso, donde se va a leer.
+
+## [GitHub] — 2026-09-09 · `REQ-026` vuelta 1: el NUL que publicaba media lectura encima de un REQ, y la segunda tabla que nadie validaba
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+Los dos hallazgos `usuario/dinero` de QA sobre la entrega anterior, cerrados. Los dos eran
+deterministas y los dos están reproducidos en el banco con **su control**.
+
+**`QA-026-01` — la lectura no fiable.** `read -r -d ''` se detiene en el **primer NUL y devuelve
+0**: lo leído es media lectura, y el paso final la publicaba **encima del original**. Medido por QA
+sobre copia de `REQ-007`: **−17.697 B, 5 filas de historia fuera del documento Y del archivo,
+`rc 0`, stderr vacío**; reproducido aquí en −1.631 B. Ahora las **dos** funciones de rotación leen
+con `arnes_lee_archivo` (`hooks/lib.sh`, la función que nació de `SEC-002`/`R-001` para esto
+exacto y cuyo único llamador era `guard-completado`), y si el archivo no se puede leer entero **no
+se rota, no se toca y se avisa** — misma dirección que `CA-08`. La contención es **por archivo**:
+en una parada con tres REQ, el del NUL se queda quieto y los otros dos rotan.
+
+**Atribución exacta, porque importa:** la lectura cruda era **anterior** a la entrega anterior,
+pero con el reconocedor viejo una sección en forma de tabla daba **cero entradas** y la función
+salía antes de llegar a escribir. No es un defecto que introdujera el reconocedor de tablas: es
+uno que **activó**, en cada rotación de un REQ.
+
+**`QA-026-02` — la quinta forma, y la causa era una línea.** La pasada que decide la estructura
+hacía `break` en la primera fila de datos, así que **nada posterior a esa fila se validaba jamás**.
+Con **dos tablas** en la sección, la cabecera y la separadora de la segunda se archivaban **como
+filas de datos de la primera** y sus filas quedaban bajo las columnas de otra tabla: **dato
+reetiquetado en silencio**. Lo que lo hacía invisible es que en esa forma **`CA-05` se conserva**
+—ni se pierde ni se duplica ninguna fila—, así que ninguna comprobación de pérdida lo veía, y la
+cobertura del banco con dos tablas era **cero**. Ahora la validación cubre **toda** la sección, y
+vive dentro del bucle que ya la recorría (no en una tercera pasada: eso se paga en cada parada).
+
+**La lección, que es la que se repite:** `CA-08` declara su enumeración «**no exhaustivos**», y la
+implementación cubrió la **enumeración** en vez de la **propiedad**. La propiedad es *si no se
+reconoce la estructura de TODA la sección, no se rota y se avisa*.
+
+**Banco.** 4 casos nuevos (2 de defecto + 2 controles) → `28/3` pasa de 19 a 23 y
+`CASOS_ESPERADOS` de 906 a **910**. Fail-before contra `b0774cd`: fallan **exactamente** los dos
+casos de defecto y ninguno más. Corrida completa: **906 PASS · 0 FAIL · 4 SKIP** (910, `rc=0`,
+1 m 03 s); autoprueba del corredor 106 PASS; gates de §7 en verde.
+
+**`QA-026-05` — el registro del techo, arreglado en las dos cosas que se pedían.** `CA-15` dice
+ahora **qué estadístico** son sus cifras (diferencia de **medianas** de 5 paradas; sin eso el
+criterio no se podía verificar contra su propio registro) y **cuándo** se fijó la regla del margen:
+escrita en la cabecera del arnés de medición **antes de medir**, con base y validación en
+**invocaciones separadas**. Techo re-medido tras los arreglos: base 128.881 µs, envolvente 136.059,
+**techo 0,140 s**, validación independiente **125.944 µs — conforme** (10,0 % de holgura). Y se
+dice lo que no se puede afirmar: la subida desde `0,135 s` **no** se atribuye a los arreglos —las
+cuatro medianas de las dos vueltas caen entre 121.192 y 128.881 µs— y en la vuelta anterior la
+regla, aunque usaba sólo muestras del juego base, se eligió con el número de validación delante.
+
+Sigue fuera: `CA-13`, `CA-14`, `CA-16`, `CA-17`, el manifiesto y su plantilla (gate humano). **La
+rotación sigue apagada y no se rotó ningún REQ real.** `REQ-026` queda en `Estado: en-revisión`.
+
+## [GitHub] — 2026-09-08 · `REQ-026`: el rotador ya sabe mover una TABLA, y cuando no la entiende no adivina
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+El reconocedor de entradas de `hooks/rotar-artefactos.sh` era una **enumeración de prefijos**
+(`- `, `* `, `### `, `N. `) y el corpus contra el que corre son **tablas**: medido en tres REQ,
+**30, 24 y 44 filas y CERO entradas reconocibles**. El 23 % de `requirements/` —**409.699 B
+medidos**, bytes, no tokens ahorrados— era historia que el mecanismo no podía mover, y encenderlo
+no habría hecho nada. Ahora una fila es entrada **sólo cuando la tabla ES la estructura de la
+sección** (cabecera y separadora seguidas y en el preámbulo): la regla se enuncia por **propiedad**
+(`REQ-012`) y no añadiendo `|` a la lista, porque una lista se vuelve a pudrir contra el siguiente
+corpus.
+
+**El segundo defecto era peor que no archivar:** el puntero se insertaba **entre la separadora y
+las filas conservadas**, o sea rompía la tabla **en el origen** —en un REQ, no en una bitácora—.
+Ahora va delante de la cabecera, y cada bloque archivado lleva **su propia** cabecera y separadora
+copiadas byte a byte del origen, así que las dos tablas se leen como tablas.
+
+**Y donde no se puede responder, no se contesta «sí»:** si la estructura es ambigua —filas sin
+separadora delante, dos separadoras, una línea entre cabecera y separadora, separadora sin
+cabecera— **no se archiva nada**, el archivo queda byte a byte igual, la parada sale 0 y se avisa
+con texto propio **y** con su línea en el bloque derivado de `docs/ESTADO.md`: el stderr de una
+parada no sobrevive a la sesión, y un fail-closed invisible es una sección que lleva meses sin
+rotar sin que nadie lo sepa.
+
+**Acreditación.** 19 casos nuevos (sección `28/3` del banco): **16 fallan** contra `c59fd83` y los
+**19 pasan** contra este árbol; los 3 que pasan en los dos lados fijan conducta conservada
+(CA-07, CA-09, CA-10) y son justo lo que un CA-08 descuidado rompe. Los que podían pasar **en
+vacío** —CA-05, CA-06, CA-12— llevan una componente que exige que la rotación **haya ocurrido**.
+Banco completo: **901 PASS · 0 FAIL · 5 SKIP** (total 906, `rc=0`, 1 m 04 s) y autoprueba del
+corredor 106 PASS. Se corrige `SEC-066`: el README del banco decía 886 casos con
+`CASOS_ESPERADOS` en 887.
+
+**`CA-15`, el techo que no se fijó por adelantado: se derivó midiendo.** Coste atribuido a la
+rotación ≤ **0,135 s** por parada. Juego base 121.192 µs de diferencia de medianas (25 artefactos,
+régimen estacionario **comprobado**), envolvente de su propia dispersión 130.676 µs, techo al paso
+de 5 ms; juego de validación independiente **123.312 µs — conforme**, 8,6 % de holgura. Un techo
+puesto en la mediana pelada lo habría incumplido el segundo juego: es la quinta aparición de la
+clase «criterio derivado sin comprobar su factibilidad» y la primera que se cierra con el margen
+**medido** en vez de elegido.
+
+**Lo que NO entra, y por qué:** `.arnes/config.json` y `templates/arnes-config.json.tpl` no se
+tocan —cambiarlos es **gate de aprobación humana** (§6) y la cola ya tiene una entrada abierta—,
+así que `CA-13`, `CA-14`, `CA-16` y `CA-17` siguen pendientes, **la rotación sigue apagada y no se
+rotó ningún REQ real**. El bloque `rotacion.artefactos` propuesto queda **fechado dentro del REQ**.
+Consecuencia declarada: hasta ese gate, la documentación del manifiesto y la del código
+**discrepan**, y manda la del código. `REQ-026` queda en `Estado: en-revisión`.
+
+## [Interno] — 2026-09-08 · Cola de aprobaciones: el techo de `REQ-019 CA-07` vuelve al propietario
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Entrada en `PENDING_APPROVAL.md` con la medición de F1, las tres opciones y la recomendación. El
+techo `0,72×` se firmó sobre líneas y **en bytes no se alcanza**: suelo `0,820×` en `AGENTS.md` y
+`0,802×` en el README, exceso de **6.705 B**, y es cota inferior porque no cuenta los punteros de
+`CA-03`. `REQ-019` queda en `Estado: bloqueado` y **F2 no se despacha** sin la firma nueva.
+
+**Por qué esto es un acierto del arnés y no un retraso:** la medición se pidió **antes** del reparto
+precisamente porque era la quinta vez de la clase *«criterio derivado sin comprobar su
+factibilidad»*. Sin ella, 7–11 h de reparto en solitario habrían apuntado a un blanco inalcanzable
+y el techo se habría «descubierto» mal fijado al final, dentro de la comisión que lo incumplía —el
+modo de fallo que `CA-08` de `REQ-017` describe y prohíbe.
+
+## [GitHub] — 2026-09-08 · `REQ-019` F1: el techo `0,72×` **no es alcanzable en bytes**, y se sabe sin haber movido un byte
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+El techo `CA-07` de `REQ-019` sólo estaba medido en **líneas** (≈0,70× y ≈0,66×) y el propio REQ
+predecía que **en bytes sería peor**. Se midió en la magnitud contratada, bloque a bloque y con el
+filtro que el REQ registra como suyo: el suelo forzado es **27 730 B (0,820×)** en `AGENTS.md` y
+**32 682 B (0,802×)** en `requirements/README.md` — **+6 705 B por encima** del techo. **No se repartió
+nada y no se tocó el `0,72×`**: re-firmarlo es del propietario, y ya hay precedente (`0,60× → 0,72×`).
+La medición queda por sección en el REQ, para que se audite sin re-medirla.
+
+**Y la línea base había cambiado:** `requirements/README.md` pasó de **31 192 B** (`d266e8f`) a
+**40 767 B**, +30,7 %. El crecimiento **no dio holgura, la quitó**: **7 570 de esos 9 575 B (79 %)
+cayeron en suelo** —el contrato de forma del campo `Archivos:` y el `## Índice`— contra un techo que
+sólo subió 6 894 B. Los derivados quedan en **≤ 53 707 B** (total), **≤ 24 355 B** y **≤ 29 352 B**.
+
+Es la **cuarta vez** en este proyecto de la clase «criterio derivado sin comprobar su factibilidad»
+—el techo de 400 líneas de `REQ-014 CA-18`, el `4×` de `REQ-021 CA-08 (iii)`, el `0,60×` de este mismo
+criterio— y la **primera** que se descubre **antes** de gastar el reparto: 7–11 h de trabajo que no se
+repartieron hacia un techo inalcanzable. La remediación 3 de `SEC-033` en `ADR-003` **no se ejecutó**:
+la puerta de salida de F1 detiene el trabajo hasta que el propietario decida sobre el techo.
+
+`REQ-019` pasa a **`Estado: bloqueado`** con el motivo en el campo, porque eso es lo que hay: detenido
+por una decisión que no es del `desarrollador`. Dejarlo en `pendiente` habría dejado el disco diciendo
+«confirmado, aún no iniciado» sobre un REQ que **no puede despachar F2**, y la parada sólo viviría en
+el informe de una comisión.
+
+## [GitHub] — 2026-09-08 · `REQ-019`: el ADR que este REQ anunciaba **ya estaba ocupado**
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+`REQ-019` citaba **ADR-006** como suyo y su fase F4 anunciaba «ADR-006 nuevo». Ese número lo tiene
+`REQ-014`: existen en disco `ADR-006-techo-sobre-el-excedente-no-sobre-el-total.md` y
+`ADR-007-oraculo-del-inventario-medida-frente-a-identidad.md`. El ADR de `REQ-019` **no existe**.
+Corregido por write-back fechado, sin reescribir las filas del 2026-09-08, y el entregable de F4 pasa
+a «ADR nuevo, primer número libre al crearlo». Sin esto, F4 pisaba el ADR de `REQ-014`.
+
+Es la **misma causa raíz** que ya se registró en `REQ-017`: el número de ADR **no tiene asignador**,
+así que quien escribe uno mira el disco y no las reservas de los REQ `pendiente`.
+
+**Verificado además, y es lo que gobierna el trabajo siguiente:** las tres dimensiones de `SEC-033`
+(`contrato`) **están cubiertas en `CA-05`** — documento entero, las dos direcciones y acreditación
+única con forzador observable. Lo que falta es la **remediación 3**, que es del `desarrollador` y
+vive en `ADR-003`, en **más sitios de los que el hallazgo nombra**.
+
+## [GitHub] — 2026-09-08 · `REQ-017` **completado**: auditoría `R-020` y cierre del ciclo reabierto por §9
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `auditor-seguridad` (Opus) + coordinadora.
+
+`Seguridad: aprobado (R-020, 2026-09-08)` sobre `538c266`, **sin veto**. Con `QA: aprobado` ya
+firmado, `REQ-017` pasa a `completado`: cola de aprobaciones vacía, cero hallazgos `contrato` o
+`usuario/dinero`, quality gates en verde.
+
+**El agujero que el auditor cerró de camino:** la cabecera llevaba `Seguridad: aprobado (R-012,
+2026-09-07)`, firma del árbol de **1.33.0**. Como `veredictos.caducan_con_codigo` está en `false`,
+`guard-completado` **habría aceptado cerrar el REQ con una auditoría que no auditó este trabajo**.
+La máquina no obliga; el auditor la re-emitió y lo dejó escrito.
+
+**Verificado, no citado:** `TECHO47=1250`, `SER47=6` y `K47=4` idénticos entre `19b1822^` y HEAD, y
+`git diff` vacío sobre `hooks/`, `tools/`, `.github/`, `.arnes/`, `templates/`, `skills/`, `agents/`
+y `.claude-plugin/`. No se relajó nada para obtener verde.
+
+**Tres hallazgos nuevos, los tres `instrumento`:**
+
+- **`SEC-064`** (severidad **alta**) — **la abstención no tiene cota.** Con el ruido del instrumento
+  (0,973–1,364) **mayor** que el techo que vigila (1,25), el estado estable de una regresión real
+  entre ~1,25× y ~1,40× es **SKIP corrida tras corrida**, y nada cuenta las abstenciones
+  consecutivas: la puerta requerida sigue verde con su mitad de reloj apagada. El proyecto ya tenía
+  la clase nombrada en `H-08`, cerrada arreglando su instancia y no la clase.
+- **`SEC-065`** (media) — `SEC-058` estaba registrado dos veces, la segunda más floja y sin
+  vencimiento.
+- **`SEC-066`** (baja) — `tests/escenarios/hooks/README.md:33` dice **886 casos** y
+  `CASOS_ESPERADOS` vale **887**.
+
+**Lo que este cierre NO acredita:** que `k = 4` resuelva en el runner de `hooks-en-linux` —todo lo
+medido es **local**— ni el techo de coste `+28,0 s = 0,569×`, acreditado por el desarrollador y no
+verificado por nadie.
+
+## [GitHub] — 2026-09-08 · `REQ-017`: `QA: aprobado` sobre `538c266`, con el piso de `CA-18` verificado
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+Re-validación acotada de la vuelta 1. `QA-017-16` (`contrato`) **cerrado**: el SKIP por
+no-convergencia recupera su tercera cifra y un caso lee el **contenido** del mensaje.
+
+- **Cerrado con mutantes, no leyendo el commit.** Cinco mutaciones, cinco detecciones, cada cifra
+  con su nombre propio: quitar `$x`, `$ce` o `$rob` del mensaje, dejar de vaciar `R47`, y envolver
+  la llamada en `$( )`. Ninguna cifra se da por presente por casar con otra.
+- **El mensaje vuelve a ser byte a byte el anterior al defecto**, así que los tres artefactos que
+  lo declaraban se vuelven verdaderos **sin tocarlos** — código verdadero, no texto más laxo
+  (`REQ-012 CA-06`).
+- **`PISO_AUTONOMO_SECCION` 411 → 448 queda justificado con evidencia.** Fronteras medidas
+  (123-449 = 327), crecimiento igual a lo añadido (`290+37`), y las 30 líneas del caso nuevo son
+  indivisibles **por medición**: envueltas en `$( )` la aserción muere. El techo pasa de 514 a 560
+  porque la fórmula lo pone ahí con el bloque real; el archivo queda en 504 y **ya cabía bajo 514**,
+  así que no compró margen para esta entrega.
+
+Quedan **seis** hallazgos `instrumento`, ninguno bloqueante.
+
+**Hueco anotado en `docs/PENDIENTES.md`:** el tercer término de un piso de `CA-18` **no lo verifica
+ninguna máquina** — un techo se podría ensanchar sin causa y la puerta no lo vería. Hoy sólo `37/5`
+está gobernado por `piso × k`.
+
+## [GitHub] — 2026-09-08 · QA de `REQ-017` en la ventana 1.34.0: siete hallazgos, uno de clase `contrato`
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (Opus).
+
+Validación de `19b1822`. `QA: con-hallazgos`. Se crea `docs/qa/1.34.0.md` con `QA-017-16` a
+`QA-017-22`, cada uno con su clase.
+
+- **`QA-017-16`** (`contrato`, ya corregido en `538c266`): el SKIP por no-convergencia había perdido
+  la tercera cifra que `CA-08` contrata. **Ningún caso del banco podía verlo** — la autoprueba
+  reduce cada salida a la palabra del veredicto y descarta el mensaje.
+- **Seis `instrumento`**, registrados con dueño y vencimiento, fuera de esta ventana por la regla de
+  acumulación del propietario: la abstención tira las razones ya calculadas (`-17`), no se comprueba
+  que llegaran las `k` repeticiones (`-18`), el parser acepta registros de 2 o 6 campos (`-19`), las
+  56 repeticiones existen sólo como prosa y `k = 4` no es auditable sin re-derivarlo (`-20`), el
+  techo de coste y `k` salen de campañas distintas (`-21`), y `Archivos:` nombra dos secciones que
+  no existen (`-22`).
+- **`0,750×` es un techo y muerde:** `k = 5` daría 0,759×–0,821×. No se puso para que cupiera el
+  `0,569×`.
+
+Se anota en `docs/PENDIENTES.md` que `REQ-021` declara los **mismos** dos nombres fantasma, de modo
+que hoy los dos defectos se tapan mutuamente: corregir sólo uno puede producir un `disjunto` en
+falso. Y en `docs/ESTADO.md`, el punto de continuidad de la sesión autónoma, con la lectura del
+tope de vueltas declarada como **revocable**.
+
+## [GitHub] — 2026-09-08 · `REQ-017` / `QA-017-16`: el SKIP que perdió su tercera cifra, y el caso que ahora lee el mensaje
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+**El defecto.** La abstención por convergencia de brazo de `CA-08 (ii)` **retornaba con `R47` sin
+asignar**, y la razón se calculaba **después** del retorno. El SKIP citaba dos cifras donde `CA-08`
+contrata **tres** —«las dos razones de convergencia **y la razón que sí obtuvo**»—:
+
+```
+antes:    … por encima de su propio techo 1.250×, y sobre eso no se firma
+después:  … por encima de su propio techo 1.250× — no puede distinguir una regresión de su
+          ruido. La razón que sí obtuvo es 1.600×, y sobre eso no se firma
+```
+
+**El arreglo.** La razón se calcula **antes** de abstenerse y se publica en `MOT47`, **nunca en
+`R47`**: `R47` no vacío significa «hay razón válida para juzgar» y así lo lee `veredicto08_47`, de
+modo que la abstención lo sigue dejando **vacío**. El mensaje resultante es **byte a byte** el de
+`19b1822^` (comprobado con `cmp` sobre la misma entrada). **Nada de lo que decide se mueve:**
+`TECHO47 = 1250` intacto, `máx(ce,ch) > TECHO47` intacto, `k = 4` intacto, techo de coste `0,750×`
+intacto.
+
+**Y el segundo defecto, que es el que dejó pasar al primero.** La autoprueba de la cláusula reducía
+cada salida a la **palabra** del veredicto con `sed -nE 's/^  (PASS|FAIL|SKIP)  .*/\1/p'` y
+descartaba el mensaje: **nada del banco miraba el contenido**. Una guarda cuyo contrato es *lo que
+dice* estaba verificada sólo por *lo que decide*. Se añade un caso que llama a `razon08_47` —la
+función que decide, no una copia— y exige las **tres** cifras, con valores elegidos **distintos entre
+sí y del techo** (1,400× · 1,020× · 1,600× frente a 1,250×) para que ninguna se dé por presente por
+casar con otra, más que `R47` quede vacío.
+
+**Acreditación.** Fail-before: contra el código de `19b1822` el caso da **FAIL** nombrando la cifra
+ausente. Pass-after: **PASS** contra este árbol. Banco completo **882 PASS · 0 FAIL · 5 SKIP · rc 0**,
+total **887** (era 886); autoprueba del corredor **106 PASS · 0 FAIL**; quality gates de `AGENTS.md`
+§7 en verde. `CASOS_ESPERADOS_SECCION` 9 → 10, `CASOS_ESPERADOS` 886 → 887 y
+`PISO_AUTONOMO_SECCION` 411 → **448** —el bloque indivisible crece 37 líneas—; el techo **no se
+compra**: el archivo queda en **504** líneas, que ya cabían bajo el techo **anterior** de 514.
+
+**Lo que NO se toca, y por qué.** Los tres artefactos que el hallazgo señalaba como falsos
+—`REQ-017.md:80` «mismo umbral, mismo SKIP», `tests/escenarios/hooks/README.md:325-326` y la entrada
+de `19b1822` de este mismo archivo— **vuelven a ser verdaderos con el arreglo**, así que se dejan
+como están. `QA-017-17` (`instrumento`) **sigue abierto**: las repeticiones 2..k continúan sin
+publicarse cuando la primera no converge.
+
+## [GitHub] — 2026-09-08 · `REQ-026`: la selección de qué historiales se rotan deja de copiarse de `Archivos:`
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Write-back del analista que quedó **sin comitear** en el árbol. Dos correcciones de contrato en
+`REQ-026`, ninguna de código:
+
+- **`CA-13` contradecía a `CA-17`.** El `glob` declaraba «la forma `requirements/REQ-*.md`», que casa
+  con **todos** los REQ, mientras `CA-17` exige que el conjunto case **exactamente** con los
+  candidatos. Pasa a **selección explícita**: un elemento de `rotacion.artefactos` por candidato.
+  El origen del error queda escrito — el literal se copió de `Archivos:`, que declara ámbito de
+  **escritura** para `tools/arnes-paralelo.sh` y **no** el conjunto a rotar. Aviso añadido en los dos
+  sitios.
+- **`CA-15` fijaba `≤ 1,5 s` sin ninguna medición detrás.** Se retira el número y el criterio pasa a
+  **derivar el techo midiendo**, con condiciones completas (plataforma, reposo, corpus, definición de
+  «parada», coste = diferencia de medianas con `activo` true/false) y validación contra un **segundo**
+  juego de paradas. Es la **cuarta** vez de la clase *criterio derivado sin comprobar su
+  factibilidad* en dos ventanas.
+
+Se registra también el bloque derivado de `docs/ESTADO.md`, que reescribe el hook en cada parada.
+
+## [GitHub] — 2026-09-08 · `REQ-017 CA-08 (ii)`: la resolución se comprueba sobre la RAZÓN, con `k` derivado midiendo
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (Opus).
+
+La sonda que decide la puerta requerida `hooks-en-linux` ya no firma sobre **una** razón. El par
+intercalado se repite **k = 4** veces, cada repetición produce **su** razón, y el caso publica **las k
+razones, su recorrido `máx(r)/mín(r)` y el techo** antes de decidir: **PASS** si `máx(r) ≤ techo`,
+**FAIL** si `mín(r) > techo`, **SKIP** en cuanto el techo cae **dentro** del recorrido. La unanimidad es
+de contrato — sin mayoría, sin promedio, sin «la mejor de k». El techo **≤ 1,25× no se toca**.
+
+**La unidad, definida una sola vez, porque las cifras que circulaban no encajaban.** Una **repetición** es
+**un par intercalado completo**: una invocación de `sonda-reloj.sh` con `--r 6 --k 4` y los dos sujetos,
+o sea 6 series alternadas a,b por árbol × 4 llamadas al hook por serie = **48 llamadas**, y produce
+**exactamente una razón**. Cuesta **≈ 4,1 s** con el REQ de 6 líneas y **≈ 6,0 s** con la cabecera de 200:
+son **dos casos distintos**, no los dos brazos de uno. El **5,1 s** que circulaba era el **promedio de los
+dos casos** en el arnés de medición (102 s / 20 repeticiones) — otra unidad, y por eso no cuadraba.
+
+**La aritmética del coste, para que se recalcule sin volver a medir.** Sección = *constante* + *k* ×
+(4,1 + 6,0) s. La constante ≈ **4,9 s** (materializar v1.32.1, sonda de procesos, los dos casos de CA-06 y
+el arranque del corredor) sale de la sección medida a k = 1: **15,04 s − 10,1 s**. Con k = 4 → 4,9 + 40,4 =
+**45,3 s** previstos, **48,84 s** medidos aislada. Queda **fuera** de esa cuenta lo que el resto del banco
+paga por competir con ella bajo `JOBS=6`, que es justo lo que hay que acotar: **banco entero, mínimo de 3
+vueltas, 49,19 s sin la guarda y 77,19 s con ella → +28,0 s = 0,569×**, bajo un techo **operativo** de
+**0,750×** (dirección **bajar**). **Cabe: no se activa la salida del propietario**, y la regresión que este
+criterio vigila valía **92 s** en esa misma puerta.
+
+**`k` se derivó midiendo, que es lo que el criterio manda.** 56 repeticiones reales, **56 válidas de 56
+intentadas**, en tres entornos: ociosa, con 5 vecinos del tipo que el banco fabrica, y con todo fijado a
+**2 CPU con 6 procesos encima**. El recorrido observado **crece y satura**: k = 4 es el **menor** tamaño de
+ventana cuya **peor** ventana ya alcanza el recorrido de la muestra entera en las cuatro series
+(**1,268× de 1,268×**, **1,262× de 1,262×**); con k = 3 una veía **1,178× de 1,262×** e **infradeclaraba su
+propio ruido**. Se descarta el criterio «el menor k con el recorrido bajo el techo»: el recorrido es
+**no decreciente** en k, así que lo cumple k = 1 — la sonda ciega que produjo los dos rojos.
+
+**Emulación ≠ validación, declarado como límite y no como equivalencia.** Los 2 CPU **acotan** el
+comportamiento bajo carga; **el CI real es quien decide la puerta**. El recorrido **1,40** y los dos rojos
+vienen de `hooks-en-linux`; aquí **ninguna** de las 56 razones cruzó el techo (máx. **1,087×**), así que `k`
+está derivado sobre la **saturación del recorrido**, no sobre la frecuencia del rojo, que localmente es 0.
+
+**Y la guarda se entrega con su par discriminante, ejecutado y no argumentado** (`37/5`, casos 7 → **9**;
+total del banco 884 → **886**): **(a) negativo** — dispersión ensanchada **sin** regresión → **SKIP**, y con
+la guarda **desactivada** la misma entrada da **PASS PASS FAIL PASS**, que es lo que demuestra que el rojo lo
+quita la guarda y no la entrada; **(b) positivo** — regresión sintética de **2×** sobre esa misma entrada con
+ruido → **FAIL**, y sin regresión ni forzador → **PASS**. La convergencia por brazo **se queda como estaba**
+—mismo umbral, mismo SKIP— marcada **necesaria y no suficiente**.
+
+Banco **882 PASS · 0 FAIL · 4 SKIP** (los 4 preexistentes) y autoprueba **106 PASS · 0 FAIL**.
+
+## [GitHub] — 2026-09-08 · Punto de continuidad de la ventana 1.34.0 en `docs/ESTADO.md`
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Escrito **fuera** de los marcadores del bloque derivado (comprobado antes de editar). Recoge: alcance
+aprobado de 1.34.0, estado por REQ **distinguiendo implementado / contratado / pendiente de verificar**,
+los **identificadores de los agentes** para reanudarlos en vez de duplicarlos, las condiciones de parada,
+las decisiones pendientes del propietario y la siguiente acción. Evidencia **enlazada**, no copiada.
+
+**Lo que el punto deja explícito y conviene no perder:** `REQ-017` tiene `QA:` y `Seguridad:` en verde en
+su cabecera, pero **son de 1.33.0 y no cubren** el trabajo en curso. `REQ-026` y `REQ-027` están
+**contratados y sin implementar** — crear un REQ no instala nada. Y las cifras de la sonda que circulan
+(~5,1 s, 4 s + 6 s, ~55 s para `k=4`, emulación de 2 CPU) están marcadas **pendientes de verificar**: la
+coordinadora **no las ha visto**, y **no encajan entre sí** bajo una misma definición de «repetición»
+(4+6 = 10, no 5,1).
+
+**Regla de reanudación registrada:** comprobar el estado de los agentes existentes **antes** de despachar
+otros. Cinco quedan reanudables por identificador; despachar de nuevo duplicaría trabajo ya pagado.
+
+## [GitHub] — 2026-09-08 · `REQ-027`: la distribución completa contratada, y la idempotencia deja de deducirse de una etiqueta
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Ajuste acotado sobre el REQ ya abierto —**16,6 k tokens**, sin reescribirlo—. Pasa de 8 a **10 criterios**.
+`skills/arnes-upgrade/SKILL.md` entra en `Archivos:`.
+
+**Crear el REQ no instala las reglas, y ahora el contrato lo refleja: las TRES vías están contratadas**,
+no dos y una nota. Este repositorio (`CA-01`) · proyectos **nuevos** (`CA-09`: nacen con el bloque
+completo entre marcadores y **sin ningún `{{…}}` dentro**) · proyectos **ya instalados** (`CA-10`).
+
+**`CA-10` convierte la migración en CONDICIÓN DE ENTREGA, no en pendiente.** Dueño `desarrollador`,
+ventana 1.34.0. **Puede escribirse al cerrar la versión, pero el REQ no pasa a `completado` sin sus tres
+partes**, y la diferencia no es formal: un pendiente se olvida sin que ninguna puerta grite.
+
+**Y la corrección que más vale, porque desmonta una afirmación de la coordinadora:** yo escribí que los
+marcadores «hacen la inserción idempotente». **Falso — hacen el bloque IDENTIFICABLE.** La idempotencia
+es una **conducta** de la migración y ahora se comprueba **directamente**: correr dos veces, comparar,
+**un solo bloque byte a byte igual**. Más `MODIFICADO` → conflicto que se pregunta y no se pisa,
+`UNKNOWN` → se detiene, y el **negativo obligatorio**: un caso en que la migración **sobrescriba texto
+propio del proyecto debe FALLAR**. Sin ese negativo, «preserva las instrucciones particulares» era una
+promesa que nadie podía desmentir.
+
+**`CA-07` pasa de enunciar vías a verificarlas, y el resultado es incómodo y honesto:** **sólo Claude
+Code queda `verificada`** —evidencia: la línea `@AGENTS.md` del `CLAUDE.md`, **no** la frase de
+`AGENTS.md:3-4`—; **Codex y Cursor quedan `no verificada`**. Límite contratado: *una vía no verificada no
+cuenta como cobertura*, con par discriminante — presentarla como cubierta es **no conforme aunque las
+reglas estén completas**.
+
+**`CA-05`: el techo de 2 600 B se declara límite propuesto SIN VALIDAR.** `operativo` dice cómo se mueve,
+**no que el contenido requerido quepa**. Se valida al escribir el bloque y, si no cabe, **se re-deriva con
+entrada en Historial — el contenido contratado no se recorta para que entre**.
+
+`REQ-025` queda como **dependencia explícita**, sin comisión y sin condicionar el cierre.
+
+## [GitHub] — 2026-09-08 · `REQ-027`: las reglas de la coordinadora, en la sede canónica y con sus dos límites contratados
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+REQ nuevo, `pendiente`, 1.34.0, **`Rigor: critico`**. 8 criterios en 210 líneas. Contrata que las reglas
+de trabajo de la coordinadora —la comprobación de cuatro preguntas antes de despachar, las seis reglas
+compactas y la separación coordinadora/herramientas— vivan en **`AGENTS.md`** y **`templates/AGENTS.md.tpl`**,
+entre los marcadores `<!-- arnes:coordinacion:inicio/fin -->` (nombres **de contrato**, para que la
+migración sea idempotente).
+
+**La sede se corrigió en vuelo, y el motivo importa.** El encargo inicial las mandaba a
+`templates/CLAUDE.md.tpl` para no chocar con `REQ-019`. **Comprobado: `REQ-019` estaba `pendiente`, sin
+comisión viva y sin el archivo modificado — la colisión era hipotética**, y evitarla dejaba fuera a los
+coordinadores de Codex y Cursor, que leen `AGENTS.md` y no `CLAUDE.md`. Con la sede canónica, el rigor
+subió de `estandar` a **`critico`** y la sensibilidad a **sí**.
+
+**`CA-07` contrata las vías de lectura y los dos límites**, con par discriminante: un texto que **insinúe
+cobertura universal**, o que **dé por migrados los proyectos ya instalados**, es **no conforme aunque
+contenga las reglas completas**. Cambiar una plantilla no actualiza a nadie: `templates/` sólo alimenta
+`arnes-init`, y un proyecto instalado tiene su `AGENTS.md` congelado hasta que migre.
+
+**`CA-06` añade una propiedad que nadie había pedido y evita un fallo silencioso:** *el conjunto de
+títulos `## N.` no cambia*. El bloque entra **sin renumerar**, o se rompen a la vez **todas** las
+referencias `§N` que agentes y REQ llevan escritas.
+
+**`CA-05` mide el delta en bytes sobre `AGENTS.md`** (≤ 2 600 B, **operativo**) y obliga a anotarlo en el
+Historial, **para que `REQ-019` mida contra un número** en vez de contra un archivo que cambió de tamaño
+por debajo.
+
+**Limitación declarada por el propio analista:** no re-midió ninguna cifra —`33 827 B`, `74 255 B`,
+`0,60×/0,68×`, `≤ 1,5 s`— y entran **citadas como dato del encargo**; y sin herramienta de shell, el techo
+de 2 600 B es **una estimación**, declarada `operativo` por eso.
+
+**Pendiente que NO se escribió y queda anotado:** la entrada de «Migraciones conocidas» en
+`skills/arnes-upgrade/SKILL.md` para 1.34.0. Sin ella, ningún proyecto instalado recibe las reglas.
+
+**Coste: 74,5 k tokens** —por encima del objetivo de 50 k—, y la causa está declarada: la corrección de
+sede obligó a reescribir el REQ entero, y el contador acumula el reenvío del contexto de arranque (~18 k)
+en cada llamada.
+
+## [Interno] — 2026-09-08 · CORRECCIÓN: `REQ-019` sigue en 1.34.0, y su coste es una ESTIMACIÓN, no una medición
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Corrige dos afirmaciones de la coordinadora del mismo día. **La entrada anterior no se reescribe**
+(`CHANGELOG.md:178`, «Pero `REQ-019` NO cabe en 1.34.0, y está medido»): la corrección va fechada.
+
+**1. No estaba medido: es la estimación del propio REQ.** `requirements/REQ-019.md:1375` dice
+literalmente *«Es estimación, no medición, y se declara como tal»* sobre las 9–11 comisiones y las
+8,5–14 h. Presentarlo como medición convirtió un insumo en un hecho.
+
+**2. «No cabe» era una conclusión de la coordinadora, no una decisión.** El alcance aprobado por el
+propietario el 2026-09-08 (`docs/PLAN.md`, ALCANCE DE 1.34.0) lista `REQ-019` como **trabajo #2 de los
+cuatro**; **no** aparece en «Lo que SALE de 1.34.0»; y el REQ declara `Versión destino: 1.34.0`.
+**`REQ-019` sigue en 1.34.0 por decisión vigente**, y los dos documentos ya coincidían.
+
+**Y la discrepancia que la coordinadora reportó entre `PLAN.md` y el REQ no existía**: fue inventada al
+reconstruir el alcance de memoria en vez de consultarlo. `docs/PENDIENTES.md` queda reetiquetado
+—«ESTIMADO (no medido)»— con la conclusión de ventana retirada y el insumo conservado.
+
+**Regla que queda en vigor:** antes de despachar o recomendar un cambio de ventana, **consultar la última
+decisión aprobada y reconciliar el plan con los REQ afectados**. Si la decisión existe, se **sincronizan
+los documentos**; sólo se pregunta cuando falte una decisión real. Y **ninguna estimación de coste o
+desplazamiento se presenta como hecho comprobado**.
+
+## [Interno] — 2026-09-08 · Desfase de fechas de la coordinadora: 25 corregidas, 20 anotadas, y la lección que sólo aparece de noche
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Tras publicar `v1.33.0` leí los sellos de GitHub —`mergedAt: 2026-09-09T02:31:08Z`— y empecé a fechar en
+**UTC**. El repositorio usa **fecha local**: 42 entradas del 09-08 contra 8 del 09-09, y el merge y el tag
+llevan `2026-09-08 20:31 -0600`. Eran las 21:26 CST del 08 con UTC ya en el 09.
+
+**Lo detectó el `analista-requerimientos`**, no yo: al cerrar `REQ-026` avisó de que el sistema declaraba
+09-08 y el REQ estaba fechado 09-09, y **fechó sus filas nuevas en 09-09 a propósito** para no dejar una
+corrección anterior a la creación en la misma tabla — decisión correcta con la información que tenía, y
+lo dijo en vez de callarlo.
+
+**Corregidas 25** (`CHANGELOG.md` 10, `docs/PENDIENTES.md` 8, `docs/PLAN.md` 5, `PENDING_APPROVAL.md` 1,
+`docs/ESTADO.md` 1), **enumeradas una por una antes de sustituir** y comprobando que ninguna fuera una
+referencia legítima a un sello UTC. No en bloque: un `sed` global sin mirar es lo que esta misma mañana
+estuvo a punto de hacer que `CA-05`, `CA-08` y `CA-09` pasaran **por tautología**. En `docs/ESTADO.md` se
+verificó además que la mención estuviera **fuera** de los marcadores del bloque derivado.
+
+**Quedan 20 anotadas** en `REQ-019` (12) y `REQ-026` (8): son contrato del analista y se corrigen en la
+próxima comisión que toque cada archivo — una comisión dedicada a dos sustituciones cuesta más de lo que
+arregla. `REQ-017` no está afectado.
+
+**La lección:** las horas de las APIs vienen en **UTC** y las del repositorio son **locales**; a partir de
+las 18:00 CST son días distintos. Leer un sello de GitHub y escribirlo como fecha del proyecto es un error
+que **sólo aparece de noche**, que es cuando nadie lo revisa.
+
+## [Interno] — 2026-09-08 · Prioridades de ahorro reordenadas por el propietario, con dos precisiones que invierten el orden anterior
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Sobre un análisis externo aportado por el propietario, con sus cifras **verificadas** (`agents/auditor-seguridad.md`
+17.459 B, `agents/qa-tester.md` 10.834 B, el 39 % en `docs/PLAN.md:442`, el tope de 200 k en `AGENTS.md:231`).
+
+**Orden acordado:** (1) **comprobar la factibilidad de los criterios nuevos** y (2) **reducir el contexto
+de la coordinadora**, **por delante de** adelgazar las definiciones de agente.
+
+**El primero tiene cuatro instancias medidas en dos ventanas** —400 líneas de `REQ-014 CA-18`, 4× de
+`REQ-021 CA-08 (iii)`, `0,60×` de `REQ-019 CA-07` y el `1,5 s` de `REQ-026 CA-15` de hoy—: cuatro veces el
+argumento correcto y **el valor sin comprobar**. Una comprobación de factibilidad **dentro del análisis
+que ya se hace** las habría cazado las cuatro; es una regla, no un mecanismo nuevo.
+
+### Dos precisiones del propietario que corrigen afirmaciones de la coordinadora
+
+1. **El 39 % es del ciclo documentado, no de esta sesión.** No se sabe cuánto representa la coordinadora
+   hoy, y **no se ha medido**: las cifras que sí existen son las de los subagentes (≈1,0 M tokens en diez
+   comisiones), y el consumo propio de la coordinadora **no está instrumentado**. Decirlo así en vez de
+   estimarlo.
+2. **El tamaño de un documento indica contenido potencialmente reducible, NO ahorro efectivo.** Y de ahí
+   una **inversión del orden que la coordinadora no había visto**: la definición de agente se carga
+   **siempre**, incondicionalmente; el historial de un REQ **sólo cuando se lee**, y la lectura selectiva
+   —ya activa— **ya lo evita a menudo**. Así que **el ahorro MARGINAL de adelgazar los agentes puede
+   superar al de rotar historiales**, aunque su tamaño sea menor. Es exactamente el principio que
+   `REQ-026 CA-14` contrata —la magnitud es la lectura real antes/después, no el tamaño— aplicado a la
+   propia priorización.
+
+**Y el `1,5 s` está SIN FUNDAMENTAR, no demostrado imposible.** La distinción importa: la medición dirá
+si es alcanzable. Lo que la comprobación previa habría detectado es **la falta de evidencia**, no la
+imposibilidad.
+
+## [Interno] — 2026-09-08 · Cuatro precisiones sobre `REQ-026` registradas para su implementación (sin abrir otra ronda)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Revisión externa verificada contra el REQ. **No se abre otra ronda de análisis** —decisión del
+propietario: cerrar el contrato y seguir con la sonda—; van a `docs/PENDIENTES.md` para que la comisión
+de implementación no las descubra a mitad.
+
+**Dos son defectos reales del contrato:**
+
+1. **`CA-15` fija «≤ 1,5 s de reloj» SIN declarar plataforma.** Aquí eso no es menor: `AGENTS.md` §7
+   registra que el mismo banco tarda **~30 min en Windows y segundos en Linux**. Un techo de reloj sin
+   plataforma **no se puede desmentir ni acreditar**, y la primera medición que lo supere no distinguirá
+   una rotación cara de un runner cargado — el modo de fallo que `REQ-017 CA-08` acaba de costar una
+   ventana entera.
+2. **Tensión entre `CA-13` y `CA-17`:** el primero pide el `glob` «con la forma `requirements/REQ-*.md`,
+   ajustado a los candidatos»; el segundo, que case **exactamente** con los candidatos. **Un glob con esa
+   forma casa con todos**, así que las dos frases sólo son ciertas a la vez si todos los REQ son
+   candidatos — que es lo que `CA-17` niega. **No se resuelve implementando: se resuelve en el REQ.**
+
+**Dos son avisos que evitan un error de lectura:** `Archivos:` declara `requirements/REQ-*.md` como
+ámbito **de escritura** —para que `arnes-paralelo.sh` no autorice paralelismo en falso—, y **no** como
+conjunto a rotar; los dos campos llevan el mismo literal y confundirlos convertiría una declaración
+prudente en la decisión de rotarlo todo. Y `orden: nuevo-al-final` está acreditado en **un** archivo
+(`REQ-017`), no en todos: **se comprueba por candidato**, porque equivocarlo archiva lo más reciente.
+
+**Corrección de coste para el registro:** la comisión de `REQ-026` costó **≈56 k tokens**, no los ≈46 k
+del informe preliminar — la diferencia son las tres rondas de corrección en vuelo.
+
+## [Interno] — 2026-09-08 · `REQ-026` cerrado con la cuarta corrección: el punto de equilibrio cuenta **cuatro** costes, no uno
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+`CA-17` queda contratando el punto de equilibrio contra el **gasto adicional total** de rotar un REQ:
+**revisión inicial + extracción/redacción de las decisiones vigentes + la rotación + su validación**.
+Leer la historia era sólo una de las cuatro, y presentarla como la única habría hecho que un REQ pareciera
+amortizable cuando no lo es. Con cuatro costes en vez de uno, **el umbral para que un REQ sea candidato
+sube** — y la consecuencia de `CA-17` (no se rotan todos) se sostiene con más razón.
+
+**17 criterios, 246 líneas. Coste total ≈56 k tokens incluidas las tres rondas de corrección en vuelo.**
+
+**Cierre de la ronda de revisión externa, por acuerdo del propietario: no hay más rondas.** De las
+cuatro afirmaciones de la coordinadora que esa revisión desmintió, **tres se corrigieron en el contrato**
+(el peso mal medido, «tokens ahorrados» por «estimados», y que rotar hiciera segura la lectura selectiva)
+y la cuarta —«una puerta permanente costaría un ciclo entero y cubriría lo mismo»— **se retira sin
+sustituirla por otra afirmación**: ni ese coste ni esa equivalencia están medidos, y aplicar hacia atrás
+una comprobación a tres fallos ya conocidos **no demuestra que los hubiera evitado**. Lo respaldado es
+usarla dentro del trabajo normal y **observar qué caza y qué se le escapa** — prueba prospectiva, no
+retrospectiva. Queda anotado como práctica, no como mecanismo, y **no sustituye lo previsto en
+`REQ-025`**.
+
+## [GitHub] — 2026-09-08 · `REQ-026`: rotar los historiales de REQ — y el descubrimiento de que rotar hoy rompe la tabla **también en el origen**
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+REQ nuevo, `pendiente`, ventana 1.34.0, `Rigor: critico`. **17 criterios en 235 líneas y 19 KB** — un REQ
+que existe para que los REQ pesen menos, y que practica su tesis.
+
+**El descubrimiento que nadie encargó y que decide si el trabajo sale bien.** Con el código actual el
+puntero se inserta **al final del preámbulo** (`hooks/rotar-artefactos.sh:367-368`), es decir **entre la
+fila separadora y las filas conservadas**: rotar **rompe la tabla también en el ORIGEN**, no sólo en el
+destino —que además se abre con un preámbulo de título sin cabecera ni separadora (`:352-353`)—. Por eso
+el REQ lleva **dos** criterios de legibilidad, `CA-03` (destino) y `CA-04` (origen), y no uno.
+
+**Esto zanja una afirmación de la coordinadora que ya había retirado.** Dije que arreglar el rotador «es
+una función». Un revisor externo objetó que **eso no estaba medido**; tenía razón, y la medición del
+analista lo confirma con creces: no es reconocer `|`, es reconstruir la tabla en dos sedes sin perder ni
+duplicar filas.
+
+**Y `orden: nuevo-al-final` está MEDIDO, no supuesto:** `requirements/REQ-017.md:436` es
+`| 2026-09-07 | (creación) |` y las filas de `:462-463` son del 2026-09-08. Lo más antiguo está arriba.
+Equivocar ese campo archiva **lo más reciente**, que es el modo de fallo que `arnes-upgrade` documenta
+para 1.26.0.
+
+### Las cuatro correcciones que entraron en vuelo, todas de una revisión externa verificada aquí
+
+1. **El peso, re-medido: 409.699 B / 23 %.** La cifra anterior (399.182 B) estaba **por debajo**: el
+   `awk` usaba `length()`, que cuenta **caracteres**, y el español lleva acentos multibyte; además sumaba
+   la línea del encabezado siguiente antes de cortar.
+2. **Las cifras por comisión se renombran «tokens ESTIMADOS DEL HISTORIAL»**, no «ahorrados»: salen de
+   bytes ÷ 4 y miden **tamaño**. `CA-14` contrata la **lectura real antes/después sobre la práctica
+   vigente** y **admite explícitamente ahorro 0** — porque si una comisión no leía ese historial, **no
+   hay ahorro atribuible**.
+3. **`CA-16`, el criterio que hace segura la rotación:** *toda decisión **vigente** queda reflejada en el
+   contrato activo o lleva en él una referencia explícita de cuándo consultarla en el archivo*. Corrige
+   otra afirmación de la coordinadora: archivar conserva la **evidencia**, pero **no** vuelve seguro
+   dejar de leer — sin este criterio, rotar convierte «una decisión difícil de encontrar» en «una
+   decisión que nadie sabe que existe».
+4. **`CA-17`: no se rotan todos los REQ.** Dos condiciones de candidatura —que su historia **se lea de
+   verdad** y que el REQ **siga abriéndose**— y el punto de equilibrio como **propiedad**, contando el
+   gasto **completo**: revisión inicial, **extracción de las decisiones vigentes**, la rotación y su
+   validación. Leer la historia es sólo una parte. Un REQ enorme y cerrado que nadie abre **no ahorra
+   nada al rotarse**, y el `glob` se ajusta a los candidatos.
+
+**Gate humano pendiente:** `CA-13` pone `rotacion.activo` en `true` para este repo, y eso es cambio del
+manifiesto (`AGENTS.md` §6). **Consecuencia operativa declarada:** al activarse, cada parada reescribe la
+historia de todos los REQ que casen, así que esa comisión **no se despacha en paralelo con ninguna otra
+que edite un REQ**.
+
+**Coste: ≈46 k tokens, 27 llamadas.**
+
+## [GitHub] — 2026-09-08 · `REQ-019` ejecutable, y **la palanca que nadie había medido**: los historiales pesan el 22 % y la rotación no los ve
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos` (Opus) + coordinadora.
+
+**`REQ-019` queda ejecutable.** Techo de `CA-07` **`0,60×` → `0,72×`** con firma del propietario
+(2026-09-08) y por el procedimiento que el propio REQ exigía; derivados en bytes recalculados
+(total ≤ 46.813 B; `AGENTS.md` ≤ 24.355 B; README ≤ 22.458 B). Línea base corregida en sus **tres** sedes
+(**433 → 521**), con las derivaciones que colgaban de ella **declaradas obsoletas con fecha** en vez de
+maquilladas. `D-3`, `D-5` y `D-9` arreglados. **`D-2` resuelto**: `CA-17.1` gana un tercer valor,
+**`parcial`**, válido *sólo* con sus dos mitades en la misma fila. **62 k tokens.**
+
+*(El propietario pidió aplazar `D-2` a una versión futura y la comisión que lo arregla **ya estaba
+despachada** cuando llegó la instrucción. Queda resuelto, no aplazado; corregido en `docs/PENDIENTES.md`.)*
+
+**Y la clase, nombrada en el Historial por tercera vez en dos ventanas:** el `0,60×` era **un criterio
+derivado sin comprobar su factibilidad**, igual que el techo de 400 líneas de `REQ-014 CA-18` y el de 4×
+de `REQ-021 CA-08 (iii)`. Las tres con el argumento correcto y **el valor sin comprobar**.
+
+### Pero `REQ-019` NO cabe en 1.34.0, y está medido
+
+Se estima a sí mismo en **9–11 comisiones y ≈8,5–14 h**, con **F2 y F3 en SOLITARIO** (`CA-16`): mientras
+corren, nada más corre. **No es un trabajo de la ventana — es la ventana.** Y choca con un plazo que no
+se negocia: el vencimiento de `SEC-047` (severidad **crítica**) es **el cierre de 1.34.0**, escrito por el
+auditor en su sede. Aritmética completa: coste 0,9–1,1 M tokens; ahorro ≈5.200 de carga por comisión
+(≈300 k equivalentes por ventana con el efecto de caché); **retorno ≈3–4 ventanas**. Se paga, **pero no
+pronto**, y mientras se paga bloquea la ventana en la que vence un hallazgo crítico.
+
+### La palanca mejor, aportada de fuera y verificada aquí
+
+Un análisis externo (ChatGPT, aportado por el propietario) señaló que adelgazar `AGENTS.md` **pierde
+parte del beneficio si después se lee entero un REQ de 150.000 caracteres**. **Correcto — y el motivo es
+más preciso de lo que él podía demostrar.** Medido:
+
+| | |
+|---|---|
+| `## Historial de cambios` en todo `requirements/` | **399.182 B = 22 %** del directorio ≈ **99 k tokens** |
+| `REQ-014` | 67.133 B — el **43 %** de su archivo |
+| `REQ-021` | 75.943 B · `REQ-017` 39.672 B (su analista midió **~13 k tokens** sólo por él) |
+
+**El bloqueo, exacto:** `hooks/rotar-artefactos.sh` **ya sabe** archivar una sección dejando cabecera y
+criterios intactos —es invariante suya—, pero reconoce como entrada las líneas que empiezan por `- `,
+`* `, `### ` o `N. `, **y estos historiales son TABLAS**: sus filas empiezan por `|`. Medido en tres REQ:
+**30, 24 y 44 filas y CERO entradas reconocibles**. El propio hook lo avisa: *«SÍ contiene la sección y
+supera el umbral, pero no tiene ni una ENTRADA reconocible; no se rota»*. **El mecanismo existe, está
+apagado, y encenderlo hoy no haría nada sobre lo que más pesa.**
+
+**Va por delante de `REQ-019`, y no sólo por coste:** mientras los historiales pesen 99 k tokens, **el
+ahorro de `REQ-019` no se puede atribuir** —quedaría mezclado con qué REQ tocó cada comisión—, que es
+exactamente el error que `docs/PLAN.md` ya documenta como «la línea base envenenada».
+
+### Contradicción verificada sobre quién comitea
+
+Del mismo análisis. **Cierta:** `agents/desarrollador.md:59-60,69` manda al desarrollador comitear y
+actualizar `CHANGELOG.md` en el mismo commit; `requirements/README.md:197-198` dice que esa entrada la
+escribe **«quien comitea, que es quien orquesta»**. Dos documentos, el mismo trabajo, dos dueños — y
+`agents/desarrollador.md` **lo heredan todos los proyectos que instalan el arnés**, así que se propaga.
+
+### Lo que del análisis externo ya estaba aplicado, para no cobrarlo dos veces
+
+Sus puntos 3 (**devoluciones breves**) y 4 (**revisar por diferencia**) **ya se aplican desde ayer** y
+están medidos: los informes van con evidencia **citada, no transcrita**, y la vuelta de confirmación de
+QA sobre el delta costó **64 k** frente a los **229 k** de la validación completa. Lo que no están es
+**contratados** — son método de la coordinadora, no regla escrita, y ahí su observación sí añade.
+
+Su punto 1 (`REQ-019` primero) es el que la medición desmiente, arriba.
+
+## [GitHub] — 2026-09-08 · `REQ-017` reabierto: `CA-08 (ii)` deja de acotar el brazo y pasa a acotar **la razón**
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` (Opus).
+
+Primer trabajo de 1.34.0 contratado. `REQ-017` vuelve a `en-progreso` con destino **1.34.0** (§9, REGLA
+DE ESTADO), y `REQ-011` y `REQ-020` corrigen su `Versión destino:` — declaraban 1.33.0, que se publicó
+sin ellos.
+
+**La forma elegida es la 2 de las tres conformes, y el motivo es la magnitud.** La convergencia por brazo
+acota la dispersión **dentro** de cada serie; el ruido del cociente viene de las condiciones **entre**
+brazos, y ninguna cota sobre los brazos lo acota. Los dos rojos lo enseñan: un brazo al borde —1,232× y
+1,249× contra el límite 1,250×— y **sobre esa resolución se afirma un 1,364×**. La forma 1 volvería a
+fijar un número sobre la magnitud equivocada; la 3 saca la señal de la puerta y es del propietario —queda
+escrita como **contingencia declarada** si el `k` necesario no cabe bajo el techo de coste, con ruta a
+`PENDING_APPROVAL.md`.
+
+**Lo que contrata ahora `CA-08 (ii)` — una propiedad, no un número.** *Un instrumento que no puede
+distinguir el factor que vigila se abstiene.* El par intercalado se repite **no menos de `k`** veces
+(`k` **operativo**, dirección **subir**, **derivado midiendo** por el `desarrollador`, `REQ-012 CA-03`);
+el caso publica las `k` razones, su recorrido `máx(r)/mín(r)` y el techo. **PASS** si `máx(r) ≤ techo`;
+**FAIL** si `mín(r) > techo`; **SKIP** en cuanto el techo cae **dentro** del recorrido. **La unanimidad de
+las `k` es de contrato** —es la definición de «la decisión no depende del ruido»—: sin mayoría, sin
+promedio y sin «la mejor de `k`». Y **la guarda paga su propio coste**, con techo `operativo` sobre lo
+que añade a la puerta requerida.
+
+**Par discriminante, con la segunda mitad que suele faltar.** *Negativo:* dispersión ensanchada sin
+regresión → **SKIP**; y con la guarda **desactivada**, esa **misma** entrada da PASS o FAIL según la
+corrida — sin esa mitad, un SKIP no prueba que lo causara la guarda. *Positivo:* regresión sintética de
+**no menos de 2×** → **FAIL**, no SKIP.
+
+### Lo que nadie le pidió y es lo mejor de la comisión
+
+`CA-08` llevaba escrita una **condición de disparo** con su consecuencia: *si se dispara, el número está
+mal fijado y subirlo es decisión del propietario con ADR*. **Se disparó** — y el analista comprobó que
+**la consecuencia era la equivocada**: el `0,973×` sitúa al árbol nuevo **por debajo** de la línea base,
+así que no hay techo que subir. Dejó la condición **declarada como cumplida**, **descartó el consecuente**
+y escribió una **condición de disparo nueva** (FAIL unánime sobre un árbol sin regresión). Sin eso, el
+siguiente que leyera ese párrafo tendría **permiso escrito** para relajar el criterio.
+
+**Decisión de juicio declarada:** añadió `docs/qa/1.34.0.md` al `Archivos:` de `REQ-017`. Sin declararlo,
+`tools/arnes-paralelo.sh` respondería `disjunto` **en falso** contra los REQ de 1.34.0 que sí lo declaren.
+Consecuencia asumida: `REQ-017` **colisiona** con todo REQ de la ventana que lo declare — fail-closed a
+propósito.
+
+**Coste: ≈95 k tokens, 23 llamadas.** 26 líneas cambiadas en `REQ-017` para reescribir un criterio.
+
+## [Interno] — 2026-09-08 · Mejora aplazada a versión futura por el propietario: el campo que no sabe decir «parcial»
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Registrada en `docs/PENDIENTES.md` bajo la regla de acumulación; **no entra en 1.34.0**.
+
+`CA-17.1` de `REQ-019` exige **un** valor por fila al clasificar cada promesa del arnés —«¿esto lo cumple
+una máquina?»—, pero **diez elementos son mixtos**: una sub-promesa que **sí** cumple una máquina dentro
+de un bloque cuyo resto **no lo cumple nadie**. El campo **no tiene forma de decir «parcial»**, así que
+quien clasifique elige entre dos respuestas y **las dos son falsas** para esos diez.
+
+Es la familia que ya costó caro dos veces aquí: **un campo cuya forma no admite el estado real obliga a
+escribir algo falso, y después alguien lee ese algo y decide.** `AGENTS.md` §13 tiene la versión buena de
+la lección —el hook que **avisa sin decidir** ante un veredicto fuera de vocabulario—; aquí falta el
+equivalente.
+
+**Y con su condición de ascenso, para que no se quede en la cola para siempre:** si alguna de esas diez
+filas se usa para **decidir** algo —un cierre, un reparto, una acreditación—, deja de ser deuda y sube de
+clase.
+
+**Actualizada también la medición de la sonda en `docs/PENDIENTES.md`:** eran **cuatro** corridas y son
+**cinco** (`7dc0699`, PASS, 1,017×). **No cambia la conclusión y la refuerza:** el recorrido sigue siendo
+0,973×–1,364× y sigue cubriendo el techo de 1,25×.
+
+## [GitHub] — 2026-09-08 · Alcance y orden de 1.34.0: dos correcciones que la medición impuso, y un techo desmentido
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+**Primera corrección: son CUATRO trabajos, no tres.** La recomendación de recortar 1.34.0 a tres olvidó
+un **plazo con dueño**: `SEC-047` es de severidad **crítica** y su vencimiento —el cierre de 1.34.0— está
+escrito en `docs/seguridad/registro-seguridad.md:3684`, **por el auditor y en su sede**. Cerrar sin
+`REQ-023` + `REQ-024` sube `SEC-047` y `SEC-051` a **`contrato`**. La diferencia con `SEC-052` —el
+forzador que resultó ser «un argumento con la firma de otro»— es exactamente esa sede: aquél vivía sólo
+en el REQ cuyo aplazamiento castigaba. **Un forzador en su sede no se negocia midiendo coste.**
+
+**Segunda corrección: el orden.** El propietario prioriza bajar el coste. La sonda estaba primera porque
+bloquea *publicar* — pero bloquea **al final**, y las palancas de tokens abaratan **todo lo de en medio**.
+Es la regla del encabezado de `docs/PLAN.md` («lo que compone va primero») aplicada bien.
+
+**El impuesto de arranque, medido y mayor de lo que se venía citando.** `AGENTS.md` 33.827 B +
+`requirements/README.md` 40.020 B + `CLAUDE.md` 408 B = **74.255 B ≈ 18.500 tokens en CADA comisión**. Se
+citaba ~9 k, que era sólo `AGENTS.md`. **El 72 % vive en seis secciones** ya identificadas por tamaño; la
+mayor es «Cómo se escribe un criterio que no se desmiente» (12.609 B) y la quinta es el `## Índice`
+(7.025 B), que es **una copia**.
+
+### Y el hallazgo que para la ventana: **el techo de `REQ-019` es INALCANZABLE**
+
+La enumeración F1 lo midió por **dos vías ciegas independientes** y las dos coinciden: el **suelo
+forzado** —lo que no se puede quitar sin perder una invariante— es **≈0,70×** en `AGENTS.md` y **≈0,66×**
+en el README, **≈0,68× total**, contra el **≤0,60×** que `CA-07` contrata. En bytes será **peor** que en
+líneas, porque las dos poblaciones de líneas más largas —la tabla de §13 y el `## Índice`— son suelo al
+**100 %**. Su línea base está además desfasada: declara el README en **433** líneas y tiene **522**.
+
+**Renegociar ese techo es firma del propietario**, así que `REQ-019` **no se despacha** hasta que exista:
+hacerlo sería pagar cuatro comisiones para chocar contra un número imposible. Y antes de repartir nada
+hay que arreglar `D-3`, `D-5` y `D-9` — tres defectos en sus **propios** criterios.
+
+**Consecuencia sobre el ahorro real, sin adornos:** con suelo 0,68×, `REQ-019` recorta como mucho
+**~32 %** del impuesto (**≈5.900 tokens/comisión**), no los ~7.400 que sugería el techo escrito.
+
+**Y la palanca mayor medida no es ninguna versión del plugin: es el ENCARGO.** Seis comisiones del
+2026-09-08/09 con el mismo modelo: **229 k → 154 k → 107 k → 64 k → 46 k → 58 k**. Lo único que cambió
+fue cerrar la lista de lectura. **Un factor 5, gratis y ya aplicado** — ninguna palanca contratada se le
+acerca, y conviene tenerlo escrito antes de invertir cuatro comisiones en recortar un 32 %.
+
+## [GitHub] — 2026-09-08 · **PUBLICADA `v1.33.0`** — fusionada con cuenta SIN admin, y con su límite declarado
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Decisión del propietario del 2026-09-08, que **revierte el aplazamiento acordado horas antes**. Merge
 commit `810128a`; tag `v1.33.0` sobre él.
 
 **Qué entrega.** `REQ-017` — la guarda del CR era **cuadrática** en la longitud de línea; ganancia

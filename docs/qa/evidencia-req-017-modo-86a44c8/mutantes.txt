@@ -1,0 +1,29 @@
+# Mutantes de banda37 sobre 37/2 · base 86a44c8 · 2026-09-10T12:27:41Z
+# control sin mutar: 8 PASS, 0 FAIL
+etiqueta|resultado|casos que lo cazaron
+M1 no-excede -le -> -lt (frontera del techo)|Resultado: 8 PASS, 0 FAIL|NINGUNO
+M2 direccion no reconocida return 1 -> return 0|Resultado: 8 PASS, 0 FAIL|NINGUNO
+M3 LO con el MINIMO del denominador|Resultado: 5 PASS, 3 FAIL|REQ-017 CA-03 la banda;REQ-017 CA-03 par discriminante:;REQ-017 CA-03 el SKIP;
+M4 HI con el MINIMO del numerador|Resultado: 6 PASS, 2 FAIL|REQ-017 CA-03 la banda;REQ-017 CA-03 el SKIP;
+M5 excede -gt -> -ge (frontera invertida)|Resultado: 8 PASS, 0 FAIL|NINGUNO
+
+# --- Los dos mutantes que no son un sed de una linea (receta en el log de QA) ---
+# M6 la medicion DIRECTA vuelve a BLOQUE (dos invocaciones de mide37, tomando SONDA[min]
+#    y SONDA[max] de cada una) y NADIE toca la cadena literal "modo=intercalado":
+#    Resultado: 8 PASS, 0 FAIL  ·  cazado por: NINGUNO
+#    y la linea publicada sigue diciendo:
+#      "... techo 2.600x · modo=intercalado k=20 series=3 · plataforma=... carga=0.67"
+#    -> el valor de `modo=` es una CONSTANTE del llamador, no se deriva del instrumento.
+#
+# M7 sin linea base v1.32.1 (clon sin tags): se envuelve la materializacion en
+#    { [ -z "${ARNES_SIMULA_SIN_TAG:-}" ] && mat37 v1.32.1 "$HER37"; } && HER37_OK=si
+#    Resultado: 6 PASS, 0 FAIL, 2 SKIP  ·  los dos fail-before se ABSTIENEN con su motivo
+#    (CA-06 honrado: nunca PASS). PERO la abstencion de CA-03 publica
+#    "plataforma=linux-gnu-x86_64-bash5.3 carga=0.51", que es la carga de la medicion
+#    DIRECTA: en esa rama mide37i no se invoca y MED37_PLAT/MED37_CARGA no se reinician.
+#    Control negativo hecho: sin la variable, la misma copia da 8 PASS (identica al original).
+#
+# AVISO DE METODO: el primer intento de M7 uso DOS `sed` y solo el segundo caso. `cmp`
+# decia "difiere" y el resultado parecia valido (fail-before en PASS con 3.864x) cuando en
+# realidad la mutacion era inerte. Se rehizo comprobando la presencia de la linea NUEVA
+# *y* la ausencia de la VIEJA. Comprobar que el comando devuelve 0 no es comprobar el efecto.

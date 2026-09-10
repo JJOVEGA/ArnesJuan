@@ -119,6 +119,23 @@ en el README**. En bytes será peor que en líneas, porque las dos poblaciones d
 tabla de §13 y el `## Índice`— son suelo al 100%. Además la línea base del REQ está **desfasada**:
 declara el README en **433** líneas y tiene **522**. Renegociar ese techo es firma del propietario.
 
+### Acumulado del 2026-09-09 — `R-015-01` VENCIÓ y se registra sin abrirlo (`instrumento`, no bloquea)
+
+Su vencimiento era literalmente **«antes de que `REQ-023` salga de `borrador`»**
+(`docs/seguridad/registro-seguridad.md:4461-4468`), y `REQ-023` salió a `pendiente` el 2026-09-09.
+Lo que pide: subir a `requirements/README.md` la regla **«un REQ *cita* clase, forzador y
+vencimiento; no los *declara*»**.
+
+**Ya está aplicada a todo `REQ-023`**; lo que falta es subirla a **doctrina**, y eso exige una
+comisión con ámbito sobre el README. Clase **`instrumento`** → **no bloquea el cierre** (`AGENTS.md`
+§6), así que por la **regla de acumulación del propietario** se registra aquí y **no entra en la
+ventana actual**. Lo detectó el analista de `REQ-023` al cerrar su contrato y lo dejó escrito **en el
+propio REQ** para que no se descubriera después.
+
+**Vencimiento nuevo, para que no quede sin fecha:** la próxima comisión con ámbito sobre
+`requirements/README.md` — que hoy es el **reparto de `REQ-019`**, ya que ese documento es uno de los
+dos que adelgaza.
+
 ### Acumulado del 2026-09-08 — `REQ-019` F1, enumeración B: **tres defectos en los criterios del propio `REQ-019`**
 
 La segunda enumeración ciega encontró **164** invariantes (103 + 61) contra las **106** de la primera.
@@ -1865,7 +1882,7 @@ El caso `REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más d
 falla el check **requerido y estricto** `hooks-en-linux` afirmando en su propia salida
 *«esto es una regresión, no ruido»*.
 
-**Cuatro corridas de CI sobre código idéntico** —ningún commit desde `b9afa01` toca `hooks/`, `tools/` ni
+**Cinco corridas de CI sobre código idéntico** *(actualizado el 2026-09-08: eran cuatro; `7dc0699` añadió un PASS de **1,017×**, que **no cambia la conclusión y la refuerza** — el recorrido sigue siendo 0,973×–1,364× y sigue cubriendo el techo)* —ningún commit desde `b9afa01` toca `hooks/`, `tools/` ni
 `.github/`, verificado de forma independiente por el `auditor-seguridad` en `R-019`:
 
 | Corrida | Commit | Razón publicada | Convergencia (2.º mín / mín) | Veredicto |
@@ -1943,3 +1960,354 @@ Es cambio en `tests/`, o sea **`critico`** por `AGENTS.md` §6: ciclo completo
 `analista → desarrollador → qa-tester → auditor-seguridad`. Estimado al ritmo medido el 2026-09-08:
 **4 comisiones, ~1–2 h**. La medición de arriba es la parte cara del análisis y **ya está hecha**: se
 cita, no se rehace.
+
+
+---
+
+## Mejoras aplazadas A UNA VERSIÓN FUTURA por el propietario (2026-09-08)
+
+Registradas aquí, **no en la ventana actual**, por la regla de acumulación del 2026-09-08. Ninguna es
+`contrato`; ninguna bloquea nada hoy.
+
+### 1. ~~El campo que no sabe decir «parcial»~~ — **RESUELTO el 2026-09-08, no aplazado**
+
+> **Corrección honesta del registro.** El propietario pidió aplazarlo a una versión futura, y cuando
+> llegó esa instrucción **la comisión que lo arregla ya estaba despachada** (iba como punto 4 de su
+> encargo). `CA-17.1` de `REQ-019` tiene desde hoy un tercer valor, **`parcial`**, válido *sólo* con sus
+> **dos mitades en la misma fila** —el ejecutor de la sub-promesa que sí cumple una máquina, y el texto
+> de la parte que no cumple ninguna—; a una fila `parcial` a la que le falte una mitad se la cuenta como
+> **sin ejecutor declarado**. `CA-17.3` (fail-closed) y `CA-17.4` (trinquete asimétrico) se extendieron a
+> la mitad con ejecutor. **Se deja escrito el diagnóstico de abajo** porque es el motivo del arreglo y
+> porque nombra una clase que reaparece; lo que ya no aplica es el aplazamiento.
+
+#### El diagnóstico que lo motivó (`D-2` de `REQ-019` F1)
+
+**Qué pasa.** `CA-17.1` de `REQ-019` exige **un** valor por fila al clasificar cada promesa del arnés
+—«¿esto lo cumple una máquina o no?»—. Pero **diez elementos son mixtos**: una sub-promesa que **sí**
+cumple una máquina, dentro de un bloque cuyo resto **no lo cumple nadie**. **El campo no tiene forma de
+decir «parcial»**, así que quien clasifique tiene que elegir entre dos respuestas y **las dos son falsas**
+para esos diez.
+
+**Por qué importa y no es cosmético.** Es la misma familia que ya costó caro dos veces en este proyecto:
+un campo cuya **forma** no admite el estado real obliga a escribir algo falso, y después alguien lee ese
+algo y decide. `AGENTS.md` §13 ya describe la versión buena de esta lección —el hook que **avisa sin
+decidir** cuando un veredicto sale del vocabulario— y aquí falta el equivalente: **un valor para lo
+mixto**, o una forma declarada de partir la fila.
+
+**Por qué se aplaza.** Darle forma al campo obliga a tocar el criterio, el lector y las plantillas que
+los proyectos heredan — y **no bloquea** el reparto de `REQ-019`, que puede declararlos por su
+sub-promesa y anotarlo. **Dueño:** `analista-requerimientos` (la forma) y `desarrollador` (el lector).
+**Ventana:** sin fijar; se retoma cuando estorbe, que es la doctrina de este archivo.
+
+**Cómo se sabrá que estorba, para que no se quede aquí para siempre:** si alguna de esas diez filas se
+usa para **decidir** algo —un cierre, un reparto, una acreditación—, deja de ser deuda y sube de clase.
+
+
+---
+
+## ESTIMADO (no medido) el 2026-09-08: cuánto ocuparía `REQ-019` en 1.34.0
+
+> **CORRECCIÓN de la coordinadora, 2026-09-08.** Esta sección se tituló «MEDIDO … no cabe» y las dos
+> cosas eran falsas. **(1)** Las 9–11 comisiones y las 8,5–14 h son **estimación del propio REQ**, que lo
+> declara así en `requirements/REQ-019.md:1375`: *«Es estimación, no medición, y se declara como tal»*.
+> **(2)** «No cabe» era una **conclusión de la coordinadora**, no una decisión del propietario: el alcance
+> aprobado el 2026-09-08 (`docs/PLAN.md`, ALCANCE DE 1.34.0) lista `REQ-019` como **trabajo #2 de los
+> cuatro**, no lo incluye en «Lo que SALE de 1.34.0», y el propio REQ declara `Versión destino: 1.34.0`.
+> **`REQ-019` SIGUE EN 1.34.0 por decisión vigente.** Lo de abajo es insumo para decidir, no la decisión.
+
+**`REQ-019` se estima a sí mismo en 9–11 comisiones y ≈8,5–14 h** (`requirements/REQ-019.md`, tabla de
+fases). **F2 y F3 son ventanas de SOLITARIO** por `CA-16`: mientras corren, **nada más puede correr**.
+`REQ-019` no es *un trabajo de* la ventana — **es la ventana**.
+
+**Y eso choca con un plazo que no es negociable.** El vencimiento de `SEC-047` (severidad **crítica**) es
+**el cierre de 1.34.0**, escrito por el `auditor-seguridad` en su sede
+(`docs/seguridad/registro-seguridad.md:3684`). Su remediación son `REQ-023` + `REQ-024`. Si `REQ-019` se
+come la ventana, esos dos no entran y **`SEC-047` y `SEC-051` suben a `contrato`**.
+
+### La aritmética del ahorro, hecha entera y sin adornos
+
+| | |
+|---|---|
+| **Coste** | 9–11 comisiones ≈ **0,9–1,1 M tokens** |
+| **Ahorro** | techo 0,72× sobre 18.500 → **≈5.200 tokens de carga por comisión** |
+| **Con el efecto de caché** | ≈5.200 × ~30 turnos ≈ 156 k de lectura de caché por comisión ≈ **15 k equivalentes en fresco** |
+| **Por ventana** (~20 comisiones) | **≈300 k equivalentes** |
+| **Retorno** | **≈3–4 ventanas** |
+
+**Se paga, pero no pronto.** Y mientras se paga, bloquea la ventana en la que vence un hallazgo crítico.
+
+### Lo que esto NO desmiente
+
+`REQ-019` **sigue siendo la palanca correcta**; lo que se desmiente es que sea la **barata**. Su sitio es
+una ventana **propia**, no compartida con un plazo ajeno.
+
+### Y el dato que conviene tener delante antes de invertir 9 comisiones en recortar un 28 %
+
+**La palanca mayor medida en este proyecto no fue ninguna versión del plugin: fue el ENCARGO.** Seis
+comisiones del 2026-09-08/09 con el mismo modelo y los mismos agentes: **229 k → 154 k → 107 k → 64 k →
+46 k → 58 k**, y las dos del 2026-09-08 en **95 k** y **62 k**. Lo único que cambió fue cerrar la lista de
+lectura —rangos de línea en vez de archivos, cifras entregadas ya medidas, prohibiciones explícitas—.
+**Un factor 5, gratis, sin ceremonia y ya aplicado.** Ninguna palanca contratada se le acerca.
+
+
+---
+
+## LA PALANCA QUE NADIE HABÍA MEDIDO: los historiales de REQ pesan el 22 % y la rotación no puede tocarlos
+
+**Origen:** análisis externo (ChatGPT, aportado por el propietario el 2026-09-08). Señaló que adelgazar
+`AGENTS.md` **pierde parte del beneficio si después se lee entero un REQ de 150.000 caracteres**.
+Verificado y medido por la coordinadora; **es correcto, y el motivo es más preciso de lo que él podía
+demostrar**.
+
+### La medición
+
+| | |
+|---|---|
+| `## Historial de cambios` en todo `requirements/` | **399.182 B de 1.771.828 B = 22 %** ≈ **99 k tokens** |
+| `REQ-014` | 67.133 B — el **43 %** de su archivo |
+| `REQ-021` | 75.943 B |
+| `REQ-017` | 39.672 B — su analista midió que le costó **~13 k tokens** él solo |
+| `REQ-013` / `REQ-012` | 43 % y 42 % de sus archivos |
+
+### El bloqueo, medido y exacto
+
+`hooks/rotar-artefactos.sh` **sabe archivar una sección de un documento** —está construido y `AGENTS.md`
+§13 lo describe: mueve la historia a `historial/<nombre>.md` y **no toca la cabecera ni los criterios**,
+que son el contrato—. Pero reconoce como **entrada** las líneas que empiezan por `- `, `* `, `### ` o
+`N. `, **y los historiales de este proyecto son TABLAS**: sus filas empiezan por `|`.
+
+**Medido en tres REQ: 30, 24 y 44 filas de tabla y CERO entradas reconocibles.** El propio hook lo dice
+en su aviso: *«SÍ contiene la sección y supera el umbral, pero no tiene ni una ENTRADA reconocible; no se
+rota»*.
+
+**Conclusión: el mecanismo existe, está apagado, y encenderlo hoy NO HARÍA NADA** sobre lo que más pesa.
+
+### Por qué esto va por delante de `REQ-019`
+
+| | `REQ-019` | Rotación de historiales |
+|---|---|---|
+| Coste | **9–11 comisiones, 8,5–14 h**, con F2/F3 en solitario | **una función** de `rotar-artefactos.sh` + su declaración en el manifiesto |
+| Ahorro | ≈**5.200 tokens** de carga por comisión | **10–17 k tokens** en cada comisión que toque un REQ grande |
+| Riesgo | reparto de los dos documentos de gobierno | la cabecera y los criterios **no se tocan nunca** (ya es invariante del hook) |
+| Retorno | ≈3–4 ventanas | **la primera comisión que lea un REQ rotado** |
+
+**No sustituye a `REQ-019`: lo precede.** Y hay una razón de método, no sólo de coste — mientras los
+historiales pesen 99 k tokens, **el ahorro de `REQ-019` no se puede atribuir**: quedaría mezclado con el
+ruido de qué REQ tocó cada comisión. Es exactamente el error que `docs/PLAN.md` ya documenta («la línea
+base envenenada por la sonda desbocada»).
+
+### Alcance del trabajo, para que no crezca
+
+Es cambio en `hooks/`, o sea **`critico`**: ciclo completo. Necesita **REQ nuevo** (no existe). Dos
+piezas y ninguna más: **(1)** que el reconocedor de entradas admita la **fila de tabla** —con su
+cabecera y su separador conservados como preámbulo, que es lo que ya hace con el preámbulo de sección—;
+**(2)** declarar el artefacto en `rotacion.artefactos` con `glob: requirements/REQ-*.md`,
+`seccion: "## Historial de cambios"` y su `archivo_dir`. La forma exacta ya está documentada en
+`AGENTS.md` §13 y en el `_doc_artefactos` del manifiesto: **no hay que diseñarla, hay que implementarla.**
+
+---
+
+## Contradicción de instrucciones sobre quién comitea (verificada, 2026-09-08)
+
+**Origen:** el mismo análisis externo. **Verificada y cierta.**
+
+- `agents/desarrollador.md:59-60` y su lista de comprobación `:69` le dicen al desarrollador que **haga
+  el commit** y actualice `CHANGELOG.md` **en el mismo commit**.
+- `requirements/README.md:197-198` dice que la entrada de `CHANGELOG.md` la escribe **«quien comitea, que
+  es quien orquesta»** — la coordinadora.
+
+**Dos documentos asignan el mismo trabajo a dos actores distintos.** Consecuencia práctica: consultas,
+trabajo duplicado y correcciones — que es justo lo que se quiere dejar de pagar.
+
+**Y agrava, que es lo que lo saca de «erratita»:** `agents/desarrollador.md` **lo heredan todos los
+proyectos que instalan el arnés**, así que la contradicción no es local — se propaga. Clase
+`instrumento`; **dueño:** `analista-requerimientos` (decidir cuál manda) y `desarrollador` (el texto del
+agente). Resolverlo es barato y va con la ventana de coste.
+
+
+---
+
+## Cuatro precisiones sobre `REQ-026`, para su comisión de implementación (2026-09-08)
+
+**Origen:** revisión externa aportada por el propietario, verificada por la coordinadora contra el REQ.
+**No se abre otra ronda de análisis ahora** (decisión del propietario: cerrar el contrato y seguir con la
+sonda). Se registran aquí para que quien implemente `REQ-026` **no las descubra a mitad**.
+
+### 1. `CA-15` fija un techo de reloj SIN declarar plataforma — hay que arreglarlo
+
+Dice *«la rotación añade **≤ 1,5 s de reloj** al tiempo de parada (mediana de 5 paradas, medida con la
+misma medición de reloj que usa el banco)»* y **no dice en qué máquina**. En este proyecto eso no es una
+omisión menor: `AGENTS.md` §7 registra que **el mismo banco tarda ~30 min en Windows y segundos en
+Linux**, y ése es el motivo por el que corre en CI y no como puerta del hook. Un techo de reloj sin
+plataforma **no se puede desmentir ni acreditar**.
+
+**Qué falta, en concreto:** la plataforma de referencia, y las condiciones —máquina en reposo o no, número
+de comisiones vivas, y si la mediana se toma en frío o en caliente—. Sin eso, la primera medición que lo
+supere no distinguirá una rotación cara de un runner cargado, que es exactamente el modo de fallo que
+`REQ-017 CA-08` acaba de costar una ventana entera.
+
+### 2. Tensión latente entre `CA-13` y `CA-17`: la forma del `glob` contradice la candidatura
+
+- **`CA-13`** pide el `glob` *«con la forma `requirements/REQ-*.md`, ajustado a los candidatos de CA-17»*.
+- **`CA-17`** exige que el `glob` *«case **exactamente** con los REQ así justificados, de modo que ningún
+  REQ no candidato se rota»*.
+
+**Un glob con la forma `requirements/REQ-*.md` casa con TODOS.** Las dos frases sólo son ciertas a la vez
+si todos los REQ son candidatos — que es justo lo que `CA-17` niega. Quien implemente tiene que elegir, y
+**la elección es de contrato**: o `glob` enumerado por candidato, o varios elementos en
+`rotacion.artefactos`, o una forma que el hook admita y que hoy no está documentada. **No se resuelve
+implementando: se resuelve en el REQ**, y quien lo toque debe decirlo antes de escribir código.
+
+### 3. `Archivos:` NO es el conjunto que se rota, y conviene que quede dicho
+
+`REQ-026` declara `requirements/REQ-*.md` en su campo `Archivos:` **a propósito y de forma
+conservadora**: al activarse la rotación, cada parada puede reescribir la historia de cualquier REQ que
+case, y el campo existe para que `tools/arnes-paralelo.sh` **no autorice paralelismo en falso**. **Eso es
+ámbito de ESCRITURA, no ámbito de ROTACIÓN.** Confundirlos convertiría una declaración prudente en la
+decisión de rotarlo todo — lo contrario de `CA-17`. Va escrito aquí porque los dos campos llevan el mismo
+literal y **la confusión es de una sola lectura distraída**.
+
+### 4. `orden: nuevo-al-final` está acreditado en UN archivo, no en todos
+
+Medido en `requirements/REQ-017.md` (`:436` es la fila de creación, `:462-463` las recientes). **Un
+archivo no demuestra el orden de los demás.** Antes de aplicar la rotación a cada candidato hay que
+**comprobar su orden**, no heredarlo — y equivocarlo **archiva lo más reciente**, que es el modo de fallo
+que `skills/arnes-upgrade` documenta para 1.26.0.
+
+### Corrección de coste, para el registro
+
+El coste de la comisión que escribió `REQ-026` es **≈56 k tokens**, no los ≈46 k del informe preliminar:
+la diferencia son las **tres rondas de corrección en vuelo**. La cifra buena es la de cierre.
+
+
+---
+
+## Desfase de fechas introducido por la coordinadora (2026-09-08) — 20 menciones pendientes en dos REQ
+
+**Causa:** tras publicar `v1.33.0` leí los sellos de GitHub —`mergedAt: 2026-09-09T02:31:08Z`— y empecé a
+fechar en **UTC**. El repositorio usa **fecha local**, y lo dice su propio recuento: **42 entradas del
+09-08 contra 8 del 09-09**, y el merge y el tag están fechados `2026-09-08 20:31 -0600`. A esa hora eran
+las **21:26 CST del 08**, con UTC ya en el 09.
+
+**Corregido (25 menciones):** `CHANGELOG.md` (10), `docs/PENDIENTES.md` (8), `docs/PLAN.md` (5),
+`PENDING_APPROVAL.md` (1), `docs/ESTADO.md` (1). Ninguna era una referencia legítima a un sello UTC — se
+enumeraron una por una antes de sustituir, y no en bloque: **un `sed` global sin mirar es lo que esta
+misma mañana estuvo a punto de hacer que tres criterios pasaran por tautología**.
+
+**PENDIENTE (20 menciones), y no se toca aquí porque es contrato ajeno:**
+
+| Archivo | Menciones | Quién |
+|---|---:|---|
+| `requirements/REQ-019.md` | **12** | `analista-requerimientos` |
+| `requirements/REQ-026.md` | **8** | `analista-requerimientos` |
+
+**Se corrigen en la próxima comisión que toque cada archivo**, no en una propia: son fechas, no
+contenido, y una comisión dedicada a dos sustituciones cuesta más de lo que arregla. **Pero no se dejan
+sin corregir:** una fila de Historial fechada un día por delante rompe el orden temporal contra todo lo
+demás, y este proyecto usa ese orden para saber qué corrigió a qué. `REQ-017` **no está afectado** — su
+analista fechó en local, correctamente.
+
+**Clase:** `instrumento`. **Y la lección, que es la que vale:** las horas de las APIs vienen en **UTC** y
+las del repositorio son **locales**; a partir de las 18:00 CST son días distintos. Leer un sello de
+GitHub y escribirlo como fecha del proyecto es un error que **sólo aparece de noche**, que es cuando
+nadie lo revisa.
+
+
+---
+
+## Reglas para la coordinadora — entrada para `REQ-025`, NO un REQ nuevo (2026-09-08)
+
+**Origen:** propuesta del propietario. `REQ-025` ya existe (`borrador`, «el arnés vigila también a quien
+orquesta: la coordinadora es el único actor sin puerta de contenido»). Esto **no abre trabajo nuevo**: es
+material para su diseño, y **la propuesta explícitamente NO pide otro agente revisor**.
+
+**La comprobación de antes de despachar, que es la que más rinde** — cuatro preguntas, por escrito en el
+propio encargo, y no se despacha sin ellas:
+
+1. ¿Qué **resultado exacto** debe entregar?
+2. ¿Los **criterios pueden cumplirse simultáneamente**?
+3. ¿Qué **supuesto o cifra** necesita comprobarse primero?
+4. ¿Qué queda **fuera**, y **cuándo debe detenerse**?
+
+**Está comprobada contra los fallos del 2026-09-08, y por eso se registra:** la 3 habría cazado el techo
+`0,60×` de `REQ-019 CA-07` (insatisfacible con suelo medido 0,68×) y el `≤ 1,5 s` de `REQ-026 CA-15`
+(escrito sin medición que lo fundara); la 2, la contradicción entre `CA-13` y `CA-17`.
+
+**Las otras seis reglas**, en una línea cada una: separar **dato medido / cálculo / estimación /
+hipótesis** —que una medición sea correcta **no valida la conclusión**—; **no convertir propuestas en
+compromisos** (nada de prometer ahorro, duración o cobertura sin base); **mantener visibles las decisiones
+vigentes** en una referencia breve en vez de reconstruirlas de conversaciones largas; **corregir sin
+ampliar** (lo demás a esta cola salvo que impida el trabajo en curso); **cerrar cuando la evidencia
+alcance** —decidir si una observación externa aporta defecto nuevo, algo ya cubierto o mejora opcional, en
+vez de abrir otra ronda—; y **responder con evidencia breve** (resultado, evidencia, limitación material,
+siguiente paso).
+
+### La separación de responsabilidades, que es la parte accionable hoy
+
+**La coordinadora organiza y propone; las herramientas verifican lo mecánico** — fechas, versiones,
+archivos modificados, conteos y pruebas. Pedirle a un modelo que recuerde y calcule todo eso multiplica
+las ocasiones de error, y hay una instancia medida del mismo día: **el desfase UTC↔local propagado a 45
+sitios**, que una comprobación de tres líneas en `tools/` habría cazado al instante.
+
+**Candidato concreto, sin diseñar aquí:** un comprobador en `tools/` que contraste la fecha de las
+entradas nuevas contra la fecha local del último commit, y la versión declarada en los cuatro sitios
+(`plugin.json`, los dos campos de `marketplace.json`, `.arnes/config.json`). **No entra en 1.34.0** — se
+registra para que `REQ-025` lo evalúe con el resto.
+
+### Cómo se sabrá si sirven, porque sin eso es opinión
+
+Tres señales, todas ya observables sin instrumentar nada nuevo: **encargos corregidos en vuelo** (hoy:
+cuatro sobre `REQ-026`), **reaperturas** y **tokens por resultado entregado**. Si las reglas sirven, las
+tres bajan; si no, se sabrá con la misma evidencia con la que se propusieron.
+
+## `REQ-021` declara en `Archivos:` dos rutas que no existen (QA, 2026-09-08)
+
+Fuera del alcance de `REQ-017`, encontrado al validarlo: `requirements/REQ-021.md` declara
+`tests/escenarios/hooks/secciones/37-coste-del-escaner-1-escala.sh` y `…-2-la-seccion-caliente.sh`,
+que **no existen** — las secciones reales son `…-1-el-dominio.sh` y `…-2-las-razones.sh`. Es el
+mismo defecto que `QA-017-22` abre contra `REQ-017`, y hoy los dos se tapan mutuamente: como ambos
+declaran los **mismos** nombres fantasma, `tools/arnes-paralelo.sh` los ve colisionar igual. El
+primer REQ que declare esas secciones por su nombre **real** obtendrá un `disjunto` en falso contra
+los dos. Dueño: `analista-requerimientos`; se cierra con `SEC-020` o antes.
+
+## El tercer término del piso de `REQ-014 CA-18` no lo verifica ninguna máquina (QA, 2026-09-08)
+
+`autoprueba-corredor.sh` comprueba que la derivación sea legible, que los términos **sumen** el piso
+declarado, que `piso ≤ líneas` y que `líneas ≤ max(N, piso × k)`. Las cuatro pasarían igual con el
+**bloque indivisible mayor** declarado de más: basta escribir un número más grande y el resto de la
+suma cuadra sola. Es decir, el techo de tamaño de un archivo de sección se puede **ensanchar sin
+causa** y la puerta no lo vería — sólo lo ve alguien midiendo las fronteras del bloque a mano, como
+se hizo con `37/5` al validar `538c266` (411 → 448, justificado). Dueño: `desarrollador`. Forzador:
+el primer archivo que se acerque a su techo. No urge: hoy hay un solo archivo gobernado por
+`piso × k`.
+
+> **Referencia cruzada añadida por el `auditor-seguridad` (R-020, 2026-09-08) — `SEC-065`.** Esto **no
+> es un pendiente nuevo**: es el hallazgo **`SEC-058`** (`docs/seguridad/registro-seguridad.md:5618`),
+> `instrumento`, severidad **alta**, **abierto**, cuya **remediación 3 (propiedad de máquina) vence al
+> cerrar 1.34.0** — esta ventana. La severidad, el dueño y el vencimiento que mandan son los del
+> registro, no los de esta entrada; el «no urge» de arriba queda **desmentido** y se conserva sin
+> reescribir porque estos textos no se editan hacia atrás. La formulación de QA —que el término no
+> verificable es el **tercero**— se adopta en `SEC-058`, junto con una remediación barata: **declarar
+> las fronteras del bloque (`inicio-fin`) y no sólo su tamaño**, para que la máquina compruebe
+> `fin − inicio + 1 == término` contra el archivo que lo declara.
+
+> **Añadido por el `qa-tester` (QA de `REQ-026`, 2026-09-09) — fuera del alcance de su REQ.**
+> `conservar_entradas` **negativo** en `rotacion.artefactos` mata el hook de parada
+> (`hooks/rotar-artefactos.sh:452`, `ent[$i]: unbound variable`, `rc=1`) y, medido, **el bloque
+> derivado de `docs/ESTADO.md` no se escribe** en esa parada. El guardián vigente sólo cubre lo **no
+> numérico**. **No es una regresión**: reproducido igual contra `c59fd83` (allí `:311`). Clase
+> `instrumento`, dueño `desarrollador`; detalle y reproducción en `docs/qa/1.34.0.md` (QA-026-03).
+
+> **Añadido por el `auditor-seguridad` (R-021, auditoría de `REQ-026`, 2026-09-09) — fuera del
+> alcance de ese REQ.** Los dos sitios restantes de la familia `SEC-002`/`R-001` (leer un archivo
+> entero sin decir que no se pudo): `tools/arnes-lectura.sh:120` lee con la forma cruda **sin mirar
+> el rc** —no escribe, así que informa sobre una lectura truncada sin decirlo, mientras la puerta es
+> fail-closed— y `hooks/estado-derivado.sh:294` es una **segunda transcripción** de
+> `arnes_lee_archivo`, hoy correcta, en un punto que **sí escribe**. Clase `instrumento`, dueño
+> `desarrollador`; detalle en `SEC-070` y `SEC-071` del registro de seguridad.
+
+- **`skills/arnes-upgrade/SKILL.md` no tiene entrada «Hacia 1.33.0»** — la lista salta de 1.32.1 a la 1.34.0 que añadió REQ-027; un proyecto que migre desde 1.32.1 no sabe qué cambió 1.33.0 en sus archivos. Visto por QA al validar REQ-027 (2026-09-09), **fuera de su alcance**; dueño `desarrollador`, clase `instrumento`.
+
+- **`arnes_norm_clave` ya era superlineal en la longitud de la CLAVE antes de `REQ-023`** — cociente de duplicación **2,412** en `4f647c7` y **2,364** en `e406202` (par 1 015→2 015, k=200, r=6, mínimo de k, sujetos intercalados); doblando el **valor** en vez de la clave sale 1,845/1,826. La guarda de `REQ-023` no lo empeora (es marginalmente más barata), así que el exceso sobre el techo de 2,2 es **heredado** y queda fuera del alcance de ese REQ. Visto por QA al validar `REQ-023` (2026-09-09); dueño `desarrollador`, clase `instrumento`. Detalle en `docs/qa/1.34.0.md` (QA-023-05).
+- **`skills/arnes-upgrade/SKILL.md:717-718` cuenta identificadores desnudos** (`grep -c 'arnes_norm_clave'`, `grep -c 'arnes_sin_cita'`) — misma forma que el fail-open de `QA-027-03`, pero su entrada es un archivo **del plugin en un tag**, no texto que escriba un proyecto, así que el forzador no aplica igual. Reportado por el `desarrollador` y **confirmado por QA** al re-validar REQ-027 (2026-09-09); fuera de alcance. Dueño `desarrollador`, clase `instrumento`.
+- **Nada vigila los comandos de conteo de las skills:** `skills/` no está en el banco, así que la cadena desnuda de `QA-027-03` puede volver sin que nada grite. Forzador barato propuesto por QA (2026-09-09), **una línea**: `grep -n "grep -c '[a-z]*arnes:coordinacion" skills/arnes-upgrade/SKILL.md | grep -v '<!--'` debe salir vacía salvo la prosa. Dueño `desarrollador`, clase `instrumento`; **no** requiere esperar a `REQ-025`.

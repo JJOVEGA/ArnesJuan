@@ -1,0 +1,12 @@
+Rigor:critico                Sens:no   normalizado=<critico   >  EFECTIVO=<critico>
+Rigor:critico (por suelo)    Sens:no   normalizado=<estandar  >  EFECTIVO=<estandar>
+Rigor:**critico**            Sens:no   normalizado=<critico   >  EFECTIVO=<critico>
+Rigor:estandar               Sens:no   normalizado=<estandar  >  EFECTIVO=<estandar>
+Rigor:basura                 Sens:no   normalizado=<estandar  >  EFECTIVO=<estandar>
+Rigor:                       Sens:no   normalizado=<estandar  >  EFECTIVO=<estandar>
+Rigor:critico                Sens:sí  normalizado=<critico   >  EFECTIVO=<critico>
+Rigor:critico (por suelo)    Sens:sí  normalizado=<critico   >  EFECTIVO=<critico>
+Rigor:**critico**            Sens:sí  normalizado=<critico   >  EFECTIVO=<critico>
+Rigor:estandar               Sens:sí  normalizado=<critico   >  EFECTIVO=<critico>
+Rigor:basura                 Sens:sí  normalizado=<critico   >  EFECTIVO=<critico>
+Rigor:                       Sens:sí  normalizado=<critico   >  EFECTIVO=<critico>

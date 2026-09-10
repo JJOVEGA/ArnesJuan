@@ -1,0 +1,8 @@
+############ GAP 2 — la sonda no puede medir: la abstencion NO dice de que maquina es
+   [MED37_PLAT=<>  MED37_CARGA=<>]
+  SKIP  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  no hay con qué medir: no existe /no/existe/lib.sh (medido=<vacío> base=<vacío>) · mín/máx n/a/n/aµs sobre n/a/n/aµs · techo 2.600× · modo=intercalado k=20 series=3 · plataforma=n/a carga=n/a
+
+############ GAP 1 — la directa mide OK; el fail-before NO mide (tag ausente): carga PRESTADA
+/tmp/claude-1000/-home-juan-dev-ArnesJuan/23a8ee5a-8587-4923-8f15-1fc9bf03aaf2/scratchpad/harness.sh: line 117: sonda_lee: command not found
+   tras la DIRECTA: MED37_PLAT=<> MED37_CARGA=<>
+  SKIP  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  no hay con qué medir: no hay línea base v1.32.1 (tag ausente o árbol a medias) (medido=<vacío> base=<vacío>) · mín/máx n/a/n/aµs sobre n/a/n/aµs · techo 2.600× · modo=intercalado k=1 series=3 · plataforma=n/a carga=n/a

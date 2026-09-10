@@ -1,0 +1,9 @@
+--- 37/2 · el coste del escáner: la escala y las razones (REQ-017 CA-03, CA-04 y CA-06) ---
+  PASS  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  cociente de duplicación (70000→140000 bytes, k=20) = 1.949× (techo 2.600×; 212115µs sobre 108811µs)
+  PASS  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  sobre v1.32.1 el mismo cociente da 4.140× y se pasa del techo 2,600× · k=1 series=3 · 70000B min=91567µs max=101286µs · 140000B min=379090µs max=428564µs
+  PASS  REQ-017 CA-04 el camino de campo no cuesta más de 2× lo que costaba en v1.32.0 (140 000 bytes sin CR)  razón contra v1.32.0 = 1.299× (techo 2.000×; 667594µs sobre 513858µs)
+  PASS  REQ-017 CA-04 fail-before: v1.32.1 cuesta 7.368× lo de v1.32.0 y se pasa del techo 2,000×
+  PASS  REQ-017 CA-06 sin línea base y bajo el suelo de 50 ms la sonda emite SKIP con motivo, nunca PASS
+aviso: vuelta parcial (1 de 59 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 5 PASS, 0 FAIL

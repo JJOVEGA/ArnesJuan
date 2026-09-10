@@ -1,0 +1,32 @@
+=== A. Las 7 entradas del desarrollador (reproduccion) ===
+1 banda bajo techo                 mn=200000  xn=210000  md=100000  xd=105000  no-excede sin=PASS con=PASS
+2 banda encima                     mn=400000  xn=410000  md=100000  xd=102000  no-excede sin=FAIL con=FAIL
+3 techo dentro, coc conforme       mn=250000  xn=300000  md=100000  xd=120000  no-excede sin=PASS con=SKIP
+4 techo dentro, coc no conf        mn=270000  xn=320000  md=100000  xd=120000  no-excede sin=FAIL con=SKIP
+5 fail-before toda encima          mn=400000  xn=410000  md=100000  xd=102000  excede    sin=PASS con=PASS
+6 fail-before ninguna              mn=200000  xn=210000  md=100000  xd=105000  excede    sin=FAIL con=FAIL
+7 techo dentro invertido           mn=270000  xn=320000  md=100000  xd=120000  excede    sin=PASS con=SKIP
+
+=== B. Lo que su tabla NO contiene: max < min (precondicion no comprobada) ===
+B1 xn<mn (max num absurdo)         mn=270000  xn=100000  md=100000  xd=100000  no-excede sin=FAIL con=PASS  <<<< FAIL->PASS
+B2 xd<md (max den absurdo)         mn=270000  xn=270000  md=100000  xd=60000   no-excede sin=FAIL con=FAIL
+B3 xn<mn extremo                   mn=400000  xn=90000   md=100000  xd=100000  no-excede sin=FAIL con=PASS  <<<< FAIL->PASS
+B4 xd<md en fail-before            mn=200000  xn=200000  md=100000  xd=50000   excede    sin=FAIL con=PASS  <<<< FAIL->PASS
+
+=== C. Cero y vacio en el maximo (num37 acepta 0) ===
+C2 xn=0                            mn=270000  xn=0       md=100000  xd=120000  no-excede sin=FAIL con=PASS  <<<< FAIL->PASS
+
+=== D. Frontera exacta del techo ===
+D1 HI == techo justo               mn=260000  xn=260000  md=100000  xd=100000  no-excede sin=PASS con=PASS
+D2 HI un pelo encima               mn=260001  xn=260100  md=100000  xd=100000  no-excede sin=PASS con=SKIP
+D3 LO == techo (excede)            mn=260000  xn=260000  md=100000  xd=100000  excede    sin=FAIL con=FAIL
+D4 LO un pelo encima               mn=260100  xn=260100  md=100000  xd=100000  excede    sin=PASS con=PASS
+
+=== E. Banda de anchura cero (min==max): debe decidir igual que sin guarda ===
+E1                                 mn=270000  xn=270000  md=100000  xd=100000  no-excede sin=FAIL con=FAIL
+E2                                 mn=250000  xn=250000  md=100000  xd=100000  no-excede sin=PASS con=PASS
+E3                                 mn=270000  xn=270000  md=100000  xd=100000  excede    sin=PASS con=PASS
+
+=== F. Desbordamiento ===
+F1 cerca de 2^63/1000              mn=9223372036854775 xn=9223372036854775 md=100000  xd=100000  no-excede sin=FAIL con=FAIL
+F2 lo pasa                         mn=92233720368547758 xn=92233720368547758 md=100000  xd=100000  no-excede sin=PASS con=PASS

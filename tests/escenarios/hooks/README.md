@@ -30,8 +30,12 @@ bash tests/escenarios/hooks/run.sh secciones/07-*.sh     # sólo esa sección, m
 bash tests/escenarios/hooks/run.sh bash                  # sólo los casos cuyo nombre contenga "bash"
 bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del corredor
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **873 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1015 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`).
+Este número se escribe a mano en los dos sitios y **hay que cuadrarlo al añadir casos**: decía
+886 con `CASOS_ESPERADOS` ya en 887, y luego 924 con el literal ya en 966 (`SEC-066`, las dos
+veces), y un total de referencia desfasado en la documentación es justo lo que hace dudar del
+cuadre cuando el cuadre tiene razón.
 
 En vuelta parcial —con un selector de archivos o con filtro de nombre— el cuadre **total** queda
 suspendido **diciéndolo en la salida**, y el cuadre **de cada sección** se sigue exigiendo. Un
@@ -53,8 +57,20 @@ Tres líneas, y ninguna en `run.sh`:
 2. Declarar dentro `CASOS_ESPERADOS_SECCION=<n>` y escribir los casos.
 3. Sumar esos `<n>` a `CASOS_ESPERADOS` al final de `run.sh`.
 
+**Una abstención se ESCRIBE, no se cuenta: `echo "  SKIP …"` y nada más.** El recuento sale del
+**texto** de la salida (`run.sh:1218`), así que un `SKIP=$((SKIP+1))` en una sección no suma nada
+—y **mata la sección**: el corredor define `PASS` y `FAIL` antes del despacho pero **no** `SKIP`
+(`run.sh:23`), y las secciones corren bajo `set -u`. Medido (`QA-023-06`, vuelta 2 de QA sobre
+REQ-023): **cuatro** partes de la sección 39 morían en su **primera** abstención, la cláusula
+anti-tautología que `REQ-023 CA-03` eleva a criterio de aceptación **nunca se había ejecutado**, y
+la línea `Resultado:` publicó `21 PASS, 0 FAIL` con **29 PASS y 6 FAIL en pantalla** (una sección
+muerta se descuenta del total en `run.sh:1248-1255`). Los ayudantes compartidos ya lo hacen así
+(`run.sh:783`, `:808`): emiten la línea y no incrementan nada. Con `PASS`/`FAIL` el incremento es
+igual de inútil —el padre los ve a cero, cada subshell se llevó los suyos— pero **no es letal**;
+con `SKIP` lo es.
+
 ## Por qué hay secciones numeradas en partes (`NN-<slug>-<k>-<tema>.sh`)
-Las secciones 28, 33, 36, 37 y 38 viven repartidas en varios archivos. No es estilo: **REQ-014
+Las secciones 28, 33, 36, 37, 38, 39 y 40 viven repartidas en varios archivos. No es estilo: **REQ-014
 CA-18** pone un techo a lo que una comisión tiene que abrir para tocar una sección, y el techo se
 pone sobre el **excedente**, no sobre el total —`líneas(f) ≤ max(N, piso(f) × k)`, con `N` = 400 y
 `k` = 1,25—. Cada archivo declara, junto a su `CASOS_ESPERADOS_SECCION`, su
@@ -70,7 +86,26 @@ Cada sección corre en su propio subshell y en paralelo, ninguna hace `source` d
 al corredor**, y subirla es cambio de mecanismo. Por eso el materializador de la línea base viene
 copiado en las cinco partes de la 37, los dos ayudantes de comparación de `28-…-2-el-estado.sh`
 vienen copiados de `28-…-1-la-historia.sh`, y `num38` está en las tres partes de la 38: **once
-renglones copiados cuestan menos que una puerta trasera entre secciones**.
+renglones copiados cuestan menos que una puerta trasera entre secciones**. Por lo mismo, `mat`
+—el materializador de la línea base— viene copiado en **cuatro** de las cinco partes de la 39: las
+que comparan contra `v1.33.0` (todas menos la 1). Decía «dos de las cuatro» y eran **tres de
+cuatro** desde que nació la parte 4; la quinta las deja en cuatro de cinco. Y en **cuatro de las
+seis** de la 40, por lo mismo — decía «dos de las tres», luego «tres de las cinco», y la 40 tiene
+**seis** partes desde 1.34.0: no materializan línea base la 3, que es sobre TEXTO heredado, ni la
+4, que mide por MUTACIÓN de la tabla del árbol. Las copias de las partes 5 y 6 van además
+**reducidas**, cada una con su reducción dicha en su propio archivo y las dos distintas: la 5 se
+queda en `hooks/` y suelta las ramas del bit de ejecución; la 6 suelta también la verificación
+del contenido **por hash**, y a cambio exige que la línea base **muerda** —un control positivo de
+conducta, más el código de salida del hook— porque verificar bytes acredita la copia y morder
+acredita que corre. **Una reducción no se hereda: se declara.**
+
+**Y una sección puede repartirse en archivos que NO comparten su número.** La 40 (REQ-024) llega
+a su techo de 400 líneas con el bloque A, así que su bloque B —los casos de la cola— vive en
+`31-cola-una-sola-regla.sh`. No es un apaño de tamaño: es donde ya están los casos de **REQ-009**
+cuyos controles de no-regresión reutiliza, y un caso que mide una no-regresión lejos del caso que
+la contrata se desfasa del suyo. El cuadre no se entera —cada archivo declara su propio
+`CASOS_ESPERADOS_SECCION`— y el criterio se sigue leyendo entero: cada caso lleva su `REQ-0NN
+CA-NN` en el nombre.
 
 **Al partir, los casos se reparten; no se crean ni se pierden.** Cada parte declara su propio
 `CASOS_ESPERADOS_SECCION`, la suma no cambia y `CASOS_ESPERADOS` de `run.sh` tampoco. El corte va
@@ -181,6 +216,16 @@ Tres reglas nacidas de fallos reales:
    Si un caso nuevo pasa con los hooks viejos, no está probando lo que crees. La ruta de los
    hooks bajo prueba es **independiente** de cómo esté partido el banco: el corredor nuevo se
    puede apuntar a una instalación estable anterior sin más.
+
+   **Y si el caso mide TEXTO en vez de hooks, `ARNES_HOOKS_DIR` no le da su fail-before:** el
+   documento vive en el repositorio y no en la instalación. Esos casos derivan su ruta de
+   `$SEC_DIR` —para que apuntar el banco a una instalación anterior siga midiendo los hooks
+   viejos contra los textos de HOY— y aceptan una variable propia con el documento de antes, la
+   misma técnica y el mismo motivo que `ARNES_README_BANCO` en `autoprueba-corredor.sh`:
+   ```
+   ARNES_SKILL_UPGRADE=/ruta/a/la/skill/de/antes bash tests/escenarios/hooks/run.sh secciones/40-*-3-*.sh
+   ```
+   Con la variable puesta la vuelta **no acredita el árbol**: mide otro archivo, y eso se dice.
 3. **Al reorganizar el banco se compara el INVENTARIO, no el total.** Dos casos que intercambian
    PASS y FAIL dan el mismo total: es la forma en que un refactor pierde cobertura en silencio.
    ```
@@ -237,10 +282,13 @@ Tres reglas nacidas de fallos reales:
 | Coste (37/1) | **fuera** del dominio: la decisión de este árbol, k=6 por locale | determinista **e invariante al locale** |
 | Coste (37/1) | **fuera** del dominio: esa decisión contra el **oráculo** (la heredada bajo `LC_ALL=C`) | **coincide**; sin esto (i) la cumpliría una constante |
 | Coste (37/1) | **fuera** del dominio: lo que la heredada incumple bajo el locale del entorno | se **registra** (fail-before) y **no falla** por ello |
-| Coste (37/2) | doblar la longitud de línea (70 000 → 140 000 bytes) | cociente ≤ **2,6** (lineal ≈ 2) |
-| Coste (37/2) | el mismo cociente **contra v1.32.1** | > 2,6 — la sonda distingue el defecto |
+| Coste (37/2) | doblar la longitud de línea (70 000 → 140 000 bytes), series **intercaladas** en una invocación | cociente ≤ **2,6** (lineal ≈ 2) y **toda** la banda del lado conforme |
+| Coste (37/2) | el mismo cociente **contra v1.32.1**, con el **mismo** instrumento intercalado | > 2,6 — la sonda distingue el defecto |
 | Coste (37/2) | el camino de campo contra el de v1.32.0 (140 000 bytes sin CR) | razón ≤ **2,0×** |
 | Coste (37/2) | la sonda sin línea base, o bajo el suelo de 50 ms | **SKIP con motivo**, nunca PASS |
+| Coste (37/2) | el techo **dentro** de la banda `mín(2S)/máx(S) … máx(2S)/mín(S)` | **SKIP** citando banda, cociente y techo; nunca PASS ni FAIL |
+| Coste (37/2) | el **par discriminante** de la banda, con oráculo independiente | **ninguna** entrada pasa de FAIL a PASS, y la guarda **sí** decide |
+| Coste (37/2) | el **contenido** del SKIP de la banda, no sólo su palabra | cita las **tres** cifras: banda, cociente y techo |
 | Coste (37/3) | la pared de los 60 s, **pareada** con v1.32.1 en la misma corrida (2 pasadas por árbol) | este árbol **no menor**; rangos que **solapan** ⇒ SKIP |
 | Coste (37/4) | la sección 32 aislada, **sólo con `ARNES_COSTE_RUTA_CRITICA=1`** | la heredada **no termina** en 4 × mín(este árbol) ⇒ reloj ≤ **0,25×** |
 | Coste (37/4) | las 3 corridas cronometradas de este árbol, entre sí | **mismo inventario** caso→veredicto |
@@ -267,6 +315,10 @@ Tres reglas nacidas de fallos reales:
 | Sondas (38/3) | el ayudante de veredicto sobre 13 registros sintéticos | `estado≠ok` o `vivos>0` en medición ⇒ **SKIP**; vacío, ilegible, ambiguo, `vivos` ausente, emisor no declarado o sin su calibración ⇒ **FAIL** |
 | Sondas (38/3) | `vivos>0` en una **calibración** frente a `vivos>0` en una **medición** | **FAIL** y **SKIP**: no es el mismo hecho |
 | Coste (37/1 a 37/5) | el **materializador inline** de la línea base (`mat37`/`mat47`) | contenido **y modo del objeto del árbol**, `archivos=<n>` publicado, y `sin-linea-base` **con motivo** cuando no puede |
+| Actos (40/6) | la **lista de actos** que `guard-completado` juzga, **derivada** de sus ramas de denegación | **no menos de 2** derivados y **no menos de 2 ejercidos**, publicados con su denominador; si no puede derivarla, **SKIP con su motivo** y nunca PASS |
+| Actos (40/6) | el código cambia de **forma** sin cambiar de conducta (renombrado puro) | el extractor **abstiene nombrándolo** —`no se pudo DERIVAR la frontera`—, no un verde que ya no mide |
+| Actos (40/6) | los **tres controles** de `SEC-083` sobre el acto de **firmar**, en los **dos** estados de la llave | `pendiente` y `con-hallazgos` ⇒ **deny** nombrando el cruce; `aprobado` ⇒ allow; **ausente o comentada** ⇒ **deny** nombrando el campo, y por una rama **distinta** |
+| Actos (40/6) | el **mismo par** (ausente, comentada) contra la versión **heredada**, en la misma corrida | **cuatro ALLOW**; y la base tiene que **denegar** con el campo declarado, o el fail-before mide la nada |
 
 **Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
 falsea la máquina, el runner del CI y la carga. Los de arriba son **cocientes de duplicación**
@@ -324,6 +376,29 @@ salía roja con `load` 0,91 al arrancar, sobre un estimando que en aislamiento v
   árbol contra **el propio techo** (1,25× — no es un número nuevo: *un instrumento tiene que
   resolver al menos el factor que vigila*). Si lo supera, **SKIP citando las dos convergencias y la
   razón que sí obtuvo**, nunca PASS y **nunca FAIL**.
+
+**Esa comprobación es necesaria y NO suficiente, y desde el 2026-09-08 está medido por qué.**
+Acota la dispersión **dentro** de cada brazo, y el ruido del cociente viene de las condiciones
+**entre** brazos: dos series pueden converger **cada una** bajo el techo y su **cociente** oscilar
+por encima. Sobre **cinco** corridas de la puerta requerida con **código idéntico** la razón
+recorrió **0,973–1,364** (factor **1,40**) contra un techo de 1,25 —el techo vive **dentro** del
+ruido del instrumento—, y los **dos** rojos fueron aquellos en que **un** brazo convergía al borde
+(1,232× y 1,249×) mientras el otro convergía holgado. Por eso, **encima** de ella, la resolución se
+comprueba sobre la **razón**, que es la magnitud que (ii) juzga:
+
+- el par intercalado entero se repite **k = 4** veces, cada repetición con **su** razón;
+- el caso publica **las k razones, su recorrido `máx(r)/mín(r)` y el techo**, y decide por
+  **unanimidad**: **PASS** si `máx(r) ≤ techo`, **FAIL** si `mín(r) > techo`, y **SKIP** en cuanto
+  el techo cae **dentro** del recorrido. Sin mayoría, sin promedio y sin «la mejor de k»;
+- **k se derivó midiendo** (56 repeticiones reales en tres entornos, incluida la forma del runner
+  —2 CPU con 6 procesos encima—): el recorrido observado **crece y satura**, y k = 4 es el menor
+  tamaño de ventana cuya peor ventana ya alcanza el recorrido de la muestra entera. Con k = 3 una
+  de las cuatro series veía 1,178× de 1,262×, es decir **infradeclaraba su propio ruido**;
+- y la guarda se entrega con su **par discriminante** —negativo (dispersión ensanchada sin
+  regresión → SKIP, y **sin** la guarda la misma entrada da PASS o FAIL) y positivo (regresión
+  sintética de 2× → **FAIL**, no SKIP)—, porque un SKIP sin la otra mitad no demuestra quién lo
+  causó. **Cuesta**: la guarda añade **+28,0 s** sobre los 49,19 s que la puerta requerida medía
+  sin ella (mínimo de 3 vueltas, `JOBS=6`, 2026-09-08), bajo un techo declarado de **0,750×**.
 
 La misma regla, con la forma que le toca, en la **pared de los 60 s**: dos pasadas por árbol
 intercaladas y comparación **por rangos** — se afirma la dirección si el peor de este árbol supera

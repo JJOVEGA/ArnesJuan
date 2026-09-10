@@ -210,12 +210,55 @@ $aviso_version
   # La RAMA HERMANA (QA-109): la sección declarada SÍ está, pero no tiene ni una entrada
   # reconocible. Se enseña por separado —no se suma a la de arriba— porque lo que hay que
   # corregir es distinto: allí, el nombre en el manifiesto; aquí, el formato de la sección
-  # (una tabla son continuaciones, no entradas) o la expectativa de rotarla.
+  # o la expectativa de rotarla.
   if [ "${ARNES_ROT_SIN_ENTRADAS:-0}" -gt 0 ] 2>/dev/null; then
     local rot_ej2="${ARNES_ROT_SIN_ENTRADAS_EJ:-}"
     cuerpo+="**Rotación:** $ARNES_ROT_SIN_ENTRADAS archivo(s) contienen la sección declarada y superan el umbral, pero **sin ninguna entrada reconocible**"
     [ -z "$rot_ej2" ] || cuerpo+=" (p. ej. \`${rot_ej2%%|*}\` → \`${rot_ej2#*|}\`)"
-    cuerpo+=" — ahí tampoco se rota nada; una entrada empieza por \`- \`, \`* \`, \`### \` o \`N. \` y las filas de tabla son continuaciones.
+    cuerpo+=" — ahí tampoco se rota nada; una entrada es una línea de lista (\`- \`, \`* \`, \`### \`, \`N. \`) o una fila de datos de la tabla que ES la sección.
+"
+  fi
+  # LA TERCERA RAMA (REQ-026 CA-08): la sección está, supera el umbral, y su estructura de
+  # tabla es AMBIGUA. No se archiva nada —fail-closed— y aquí se DICE, por el mismo motivo
+  # que las dos de arriba: el aviso por stderr de una parada no sobrevive a la sesión, y un
+  # fail-closed que nadie ve es una sección que lleva meses sin rotar sin que nadie lo sepa.
+  # Contador propio y línea propia: lo que hay que arreglar es la tabla, no el manifiesto.
+  if [ "${ARNES_ROT_AMBIGUA:-0}" -gt 0 ] 2>/dev/null; then
+    local rot_ej3="${ARNES_ROT_AMBIGUA_EJ:-}"
+    cuerpo+="**Rotación:** $ARNES_ROT_AMBIGUA archivo(s) contienen la sección declarada y superan el umbral, pero con una **estructura de tabla ambigua**"
+    [ -z "$rot_ej3" ] || cuerpo+=" (p. ej. \`${rot_ej3%%|*}\` → \`${rot_ej3#*|}\`)"
+    cuerpo+=" — ahí no se archiva nada a propósito; la fila de cabecera y la separadora (\`|---|---|\`) tienen que ir seguidas y en el preámbulo de la sección.
+"
+  fi
+  # LA CUARTA RAMA (REQ-026 CA-08 (iii) y (v)): el documento NO SE PUDO LEER ENTERO. Está aquí
+  # por la misma razón que las otras tres, y por una más: es la única cuyo daño ya ocurrió en
+  # abierto (`QA-026-01`: −17.697 B publicados encima de un REQ), así que es la última que
+  # podría permitirse un canal que muere con la sesión. NO delega en `guard-completado`: esa
+  # denegación depende de que alguien edite ese REQ y de dónde caiga el NUL, mientras que este
+  # silencio no depende de nada, y un canal condicionado a un segundo suceso no es un canal.
+  # Contador y línea propios: aquí no se corrige el manifiesto ni el formato de la sección, se
+  # corrige EL ARCHIVO. Y el ejemplo es sólo el nombre: esta rama ocurre ANTES de saber si el
+  # documento tiene la sección declarada —no se pudo leer—, así que nombrar una sección aquí
+  # sería inventarse un dato que el hook no tiene.
+  if [ "${ARNES_ROT_NO_MEDIBLE:-0}" -gt 0 ] 2>/dev/null; then
+    local rot_ej4="${ARNES_ROT_NO_MEDIBLE_EJ:-}"
+    cuerpo+="**Rotación:** $ARNES_ROT_NO_MEDIBLE archivo(s) casan un artefacto declarado y **no se pueden leer enteros** (un byte NUL los trunca, o no hay permiso de lectura)"
+    [ -z "$rot_ej4" ] || cuerpo+=" (p. ej. \`$rot_ej4\`)"
+    cuerpo+=" — ahí no se rota nada y el archivo no se toca: publicar una lectura a medias borraría todo lo que viniera detrás. Salida: quita el byte NUL, o arregla los permisos.
+"
+  fi
+  # LA QUINTA RAMA (REQ-026 CA-18): el documento cambió MIENTRAS se calculaba su rotación.
+  # No es un error del manifiesto ni del formato ni del archivo: es una CARRERA, y lo que hay
+  # que poder ver es que la escritura ajena ganó y que por eso no se archivó nada. Línea
+  # propia porque la acción que pide es distinta de las otras cuatro: aquí no hay nada que
+  # corregir —el arnés hizo lo correcto— y se archivará en una parada posterior. Sin esta
+  # línea, «no roté» y «roté y me comí tu cambio» se ven igual desde fuera, que es
+  # exactamente como se midió `SEC-067`: rc 0 y silencio.
+  if [ "${ARNES_ROT_CADUCADA:-0}" -gt 0 ] 2>/dev/null; then
+    local rot_ej5="${ARNES_ROT_CADUCADA_EJ:-}"
+    cuerpo+="**Rotación:** $ARNES_ROT_CADUCADA archivo(s) **cambiaron en el disco mientras se calculaba su rotación**"
+    [ -z "$rot_ej5" ] || cuerpo+=" (p. ej. \`${rot_ej5%%|*}\` → \`${rot_ej5#*|}\`)"
+    cuerpo+=" — no se publicó nada y se conserva la escritura ajena byte a byte: la rotación cede siempre ante un cambio posterior a su lectura, y esa sección se archivará en una parada posterior. No hay nada que corregir.
 "
   fi
   if [ -n "$filas" ]; then
@@ -349,6 +392,7 @@ arnes_parse_manifest_estado() {
   # ninguna ruta puede dejar una variable sin definir con `set -u` activo.
   ARNES_ESTADO_ARCHIVO='docs/ESTADO.md'; ARNES_ESTADO_ACTIVO='true'
   ARNES_REQ_DIR='requirements'; ARNES_PENDING_REL='PENDING_APPROVAL.md'
+  ARNES_AUSENCIA_EXIGE=false
   arnes_norm_campo 'completado'; ARNES_ESTADO_DONE="$ARNES_CAMPO"
   ARNES_ESTADO_MANIF_ROTO=0
   arnes_jq_file "$ARNES_MANIFEST" -r 'if type != "object" then error("no-objeto") else . end |
@@ -361,7 +405,14 @@ arnes_parse_manifest_estado() {
       (if .estado_derivado.activo == false then "false" else "true" end),
       (.requirements_dir          // "requirements"),
       (.estados.completado        // "completado"),
-      (.pending_approval          // "PENDING_APPROVAL.md") ] | join("\n")' 2>/dev/null || ARNES_JQ=''
+      (.pending_approval          // "PENDING_APPROVAL.md"),
+      # `campos.ausencia_exige` viaja en la MISMA llamada: este bloque publica el RIGOR
+      # EFECTIVO en su tabla, y sin leer la llave lo derivaria del lado HEREDADO mientras la
+      # puerta lo deriva del lado que cierra — el tablero diria `estandar` donde la puerta
+      # dice `critico`. Cero procesos añadidos (REQ-024 CA-07 i). DESVIACION DECLARADA:
+      # este archivo no esta en el `Archivos:` de REQ-024, que lo dejo fuera porque el
+      # bloque B no lo necesitaba; el bloque A si, y por un solo renglon.
+      (if .campos.ausencia_exige == true then "true" else "false" end) ] | join("\n")' 2>/dev/null || ARNES_JQ=''
   # Un archivo VACIO no hace fallar a jq: no produce entrada, asi que rc=0 y la salida es
   # vacia. Rc cero no es lectura buena — es la misma trampa que ya cerro `arnes_parse_manifest`.
   # Y cuando jq falla, `ARNES_JQ` conserva el valor de la lectura ANTERIOR (aqui, la de la
@@ -379,6 +430,7 @@ arnes_parse_manifest_estado() {
       2) ARNES_REQ_DIR="$l" ;;
       3) arnes_norm_campo "$l"; ARNES_ESTADO_DONE="$ARNES_CAMPO" ;;
       4) ARNES_PENDING_REL="$l" ;;
+      5) ARNES_AUSENCIA_EXIGE="$l" ;;
     esac
     i=$((i+1))
   done <<< "$ARNES_JQ"

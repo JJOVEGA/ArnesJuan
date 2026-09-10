@@ -1300,7 +1300,125 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=884
+CASOS_ESPERADOS=1064  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+                      # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
+                      # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
+                      # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
+                      # se perdió ninguno.
+                      # 906 → 910: los dos hallazgos `usuario/dinero` de la vuelta 1 de QA
+                      # (`QA-026-01` el NUL que truncaba la lectura y se publicaba encima del
+                      # REQ, `QA-026-02` la segunda tabla que se archivaba como filas de la
+                      # primera), cada uno con SU CONTROL — sin el control, «no rota» también
+                      # lo cumple un fixture que se quedó bajo el umbral.
+                      # 910 → 916: `CA-08 (v)` —la cuarta rama de «no se rota» también deja su
+                      # línea en el bloque derivado— y los cinco casos de la PROPIEDAD de
+                      # `CA-08 (i)`: tres tablas, la separadora en la última fila, las dos
+                      # formas de «una línea que no es fila entre dos filas» (párrafo y tabla
+                      # indentada) y el control que las separa de CA-07.
+                      # 916 → 924: la sección `28/4` nueva, con los 8 casos de `CA-18` (la
+                      # actualización perdida de `SEC-067`). Va en una parte 4 porque la 3
+                      # está en 400 de 400 líneas, el techo exacto de `REQ-014 CA-18`.
+                      # 924 → 965: la sección 39 nueva, en CUATRO partes, con los 41 casos de
+                      # REQ-023 (el carácter invisible que borra un campo de la cabecera y
+                      # abre la puerta, SEC-047): 20 en la puerta y el dominio derivado, 10 en
+                      # la clase y el corpus, 7 en los lectores y 4 en el coste. Son cuatro
+                      # partes y no una porque los lectores y el coste juntos daban 422 líneas
+                      # contra el techo de 400 de `REQ-014 CA-18`.
+                      # 965 → 966: la vuelta 1 de QA sobre REQ-023. La parte 2 no cambia de
+                      # total (10) —salen la entrada RESERVADA del pool tecleado (`QA-023-02`) y
+                      # `CA-05`, entran las dos ramas de DENY del sorteo estratificado— y la
+                      # parte 1 pasa de 20 a 21 al recibir `CA-05`, que se mudó porque el sorteo
+                      # dejó la parte 2 en el techo de `REQ-014 CA-18`.
+                      # 966 → 966: la sección 39 pasa a CINCO partes. La 2 quedó en 402 líneas
+                      # contra su techo de 400 y `CA-04` —el corpus— sale a la parte 5. El total
+                      # NO cambia porque partir REPARTE: 10 = 7 + 3. Que este literal siga en
+                      # 966 es la comprobación de que no se creó ni se perdió ningún caso.
+                      # 966 → 996: los 30 casos de REQ-024 (la ausencia de un campo de cabecera
+                      # resuelta del lado que ABRE, SEC-047 mitad 2 / SEC-050 / SEC-051). Se
+                      # reparten en tres archivos y no en dos, y el motivo está medido: la
+                      # sección 40 nueva llega a su techo de 400 líneas con `CA-01`, `CA-02`,
+                      # `CA-03`, `CA-05`, `CA-07` y `CA-11 (ii)`, así que el bloque B —los 14
+                      # casos de la cola de `CA-08`, `CA-09`, `CA-10` y `CA-11 (i)`— va a la
+                      # sección 31, que es donde ya viven los casos de REQ-009 cuyos controles de
+                      # no-regresión `CA-09` reutiliza. Reparto: `31` 25 → 39, `40/1` 7 nuevos,
+                      # `40/2` 9 nuevos. Los `CASOS_ESPERADOS_SECCION` de la 39 NO se tocan: el
+                      # arreglo de `REGHER94` cambia un TEXTO de SKIP y no crea ni pierde casos.
+                      # 996 → 1012: los 16 casos de `REQ-024 CA-06` —la nota de migración de
+                      # `skills/arnes-upgrade/SKILL.md`— en la sección `40/3` nueva. Va en una
+                      # parte 3 y no en la 2 porque la 2 está en 400 de 400 líneas, su techo
+                      # exacto de `REQ-014 CA-18`, y porque el corte va POR TEMA: la 3 no mide
+                      # los hooks, mide TEXTO heredado, y por eso deriva su ruta de `$SEC_DIR` y
+                      # su fail-before de `ARNES_SKILL_UPGRADE` en vez de `ARNES_HOOKS_DIR`.
+                      # `CA-04` —la fila del rigor de `AGENTS.md` §6/§13— NO tiene casos aquí:
+                      # su cambio espera el gate humano que el propio criterio declara.
+                      # 1012 → 1015: los 3 casos que ACREDITAN la banda de `REQ-017 CA-03`
+                      # (write-back del modo intercalado, 2026-09-09) en `37/2`, que pasa de 5
+                      # a 8: la tabla de veredictos en las DOS direcciones, el par
+                      # discriminante —la banda sólo puede estrechar, nunca convierte un FAIL
+                      # en PASS— y el contenido del SKIP, que cita banda, cociente y techo.
+                      # Los cinco casos de antes NO se crean ni se pierden: los dos de CA-03
+                      # cambian de instrumento y de puerta, y los de CA-04 y CA-06 sólo
+                      # publican más evidencia en el mismo veredicto.
+                      # 1015 → 1041: las dos mitades de código de `SEC-082` y `SEC-083`
+                      # (`contrato`, altos, abiertos por `R-026`). Reparto: `13` 9 → 15 (+6)
+                      # con el par de `SEC-083` en las DOS direcciones —la ausencia de `QA:`
+                      # deniega la firma de seguridad y la nombra; la edición que NO toca el
+                      # campo sigue pasando, también con los veredictos ya CRUZADOS en disco—,
+                      # y `40/4` nueva con 11 casos para `SEC-082` (la entrada `Seguridad` del
+                      # sitio único ya no es código muerto: se mide por MUTACIÓN, con la
+                      # mutación verificada por su efecto en la tabla derivada y con control
+                      # positivo sobre `QA` en la misma corrida, más cinco celdas que acreditan
+                      # que la conducta condicional al rigor NO se movió, en los dos estados de
+                      # la llave). NINGÚN caso se retira: el de `13` que pedía ALLOW sobre una
+                      # firma sin `QA:` conserva fixture y sitio, y lo que cambia es el
+                      # veredicto que se le exige — era la codificación del fail-open. Va en una
+                      # parte 4 y no en la 1 porque la 1 está en 387 de 400 y la 2 en 400 de
+                      # 400: `REQ-014 CA-18` manda partir, no alargar.
+                      # 1041 → 1047: `CA-06 (v)`, que nació con el write-back del PRECIO de la
+                      # salida (b) de `CA-12` (2026-09-10) y dejó `CA-06` SIN ACREDITAR por lo
+                      # entregado el 2026-09-09. `40/3` pasa de 20 a 26: cinco casos para la
+                      # viñeta nueva del skill —el acto, su dirección con el estado de la llave,
+                      # las dos salidas de una línea, la remisión a `CA-05` como sitio de la
+                      # lista, y los ejemplos marcados no exhaustivos— y uno DERIVADO que
+                      # publica su denominador: toda promesa de equivalencia del apartado lleva
+                      # el ACTO dentro de la promesa. Ningún caso se retira: el de `CA-06 (iv)`
+                      # conserva sitio y veredicto y lo que cambia es su patrón, porque la
+                      # formulación que exigía —«la resolución de la ausencia … decide
+                      # exactamente lo mismo que 1.33.0»— quedó MEDIDA FALSA: las celdas que
+                      # divergen son resoluciones de la ausencia de `QA:`, en otro acto.
+                      # 1047 → 1054: `CA-05`, que quedó SIN CASO al ser reenunciado POR ACTO
+                      # (`ADR-011`): desde el write-back contrata la equivalencia del CIERRE **y**
+                      # la divergencia declarada del otro acto, y sólo lo primero estaba medido.
+                      # `40/5` nueva con 7 casos: el instrumento (la línea base es OTRO árbol),
+                      # la equivalencia del cierre con su denominador y su anti-vacuidad, la
+                      # EXISTENCIA de la divergencia del otro acto —que es a la vez el CONTROL
+                      # POSITIVO de la equivalencia—, su DIRECCIÓN restrictiva sobre todas las
+                      # celdas, y las dos exigencias de texto: declarada en el criterio y en las
+                      # dos sedes que ve quien migra. Va en una parte 5 y no en la 2 porque la 2
+                      # está en 400 de 400 líneas: `REQ-014 CA-18` manda partir, no alargar. Los
+                      # `CASOS_ESPERADOS_SECCION` de `40/1`–`40/4` NO se tocan: no se retira ni
+                      # se mueve ningún caso, y el de la parte 2 —el cierre sobre el corpus REAL
+                      # de `requirements/`— conserva sitio, fixture y veredicto.
+                      # 1054 → 1064: el APARATO DE ANTI-VACUIDAD de `CA-12`, que su dueño
+                      # declaró NO ENTREGADO al cerrar el código de `SEC-083`: el criterio pide,
+                      # ADEMÁS del cumplimiento, publicar cuántos ACTOS ejerce la corrida con
+                      # suelo de 2 y la lista DERIVADA de las ramas de denegación (`ADR-011`),
+                      # los tres controles en los DOS estados de la llave, y el fail-before
+                      # contra la heredada EN LA MISMA CORRIDA. `40/6` nueva con 10 casos: el
+                      # instrumento (la base es otro árbol Y muerde), los actos DERIVADOS con su
+                      # denominador, los actos EJERCIDOS identificados por el ancla de la rama
+                      # que denegó —no por una etiqueta escrita en el banco—, los tres controles
+                      # (`pendiente`, `con-hallazgos`, `aprobado`), la salida (b) por sus dos
+                      # vías (ausente y comentada) con la rama DISTINTA de la del veredicto
+                      # equivocado, el fail-before de cuatro ALLOW y la ASIMETRÍA por acto sobre
+                      # el mismo estado. Va en una parte 6 y no en la 4 —que está en 176 de 400—
+                      # porque el corte va POR TEMA: la 4 mide DE DÓNDE SALE LA DECISIÓN por
+                      # mutación de la tabla, y ésta mide SOBRE CUÁNTOS ACTOS rige, con un
+                      # extractor y una línea base que la 4 no necesita. Los
+                      # `CASOS_ESPERADOS_SECCION` de `40/1`–`40/5` NO se tocan: no se retira ni
+                      # se mueve ningún caso, y el único de `CA-12` que ya existía —`40/4`, la
+                      # tabla que mueve el veredicto del acto de firmar— conserva sitio, fixture
+                      # y veredicto.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

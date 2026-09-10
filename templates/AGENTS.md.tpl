@@ -311,7 +311,7 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 | Seguridad no firma lo que QA no ha validado (salvo `Seguridad: preventiva`) | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Los campos del REQ valen sólo en la cabecera: una línea igual dentro de una sección no es un veredicto | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Lo que vive dentro de un `<!-- … -->` de la cabecera **no declara campo**; un rango que abre y no cierra en la cabecera no la deja medir y no deja cerrar | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
-| Una línea de la cabecera con un **retorno de carro que no es el que la termina** no se puede medir y no deja cerrar — se deniega por eso, citando la línea, aunque los veredictos estén en verde. El CR **final** es transporte (CRLF decide igual que LF), el cuerpo no se toca y **reabrir** no se bloquea | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| Una línea de la cabecera que la máquina **no puede medir** no deja cerrar **dentro de lo que la guarda alcanza (acotado en esta misma celda; hay vías medidas que hoy PERMITEN)** — la propiedad es el **estado**, no el carácter: la línea lleva dentro algo que nadie ve en el diff y que cambia lo que el lector resuelve, así que una persona lee ahí un campo y la máquina no lo lee como ese campo (o el carácter le **fabrica** un delimitador). Se **deniega** citando **esa línea** y lo insertado en forma **imprimible** (`\xNN`), aunque los veredictos estén en verde. **La promesa está acotada a lo que la guarda alcanza, y la acota una propiedad y no una lista:** retirado de la clave lo ajeno al alfabeto de las claves **y después todos sus blancos**, **si lo que queda es una clave del lector leída también sin sus blancos** la línea no se puede medir, se deniega y **no** se permite por **ausencia** del campo que ese carácter borró; si esa reconstrucción **no** devuelve ninguna clave —porque lo retirado **sustituía una letra**, y reponer *qué* letra exigiría **elegir entre candidatos**— la guarda **calla** y la puerta resuelve por **ausencia**. El **retorno de carro** que no termina la línea es una **instancia**, no la definición; también lo son un BOM (`\xef\xbb\xbf`, el que PowerShell añade al redirigir), un espacio de anchura cero, un byte de control C0, un multibyte partido y un **blanco de más o puesto en el sitio de otro** (`Sensible a  seguridad`). La clase **no** se cierra con una lista de caracteres: retirado de la clave lo ajeno al alfabeto de las claves **y después todos sus blancos**, **si lo que queda es una clave del lector leída también sin sus blancos**, alguien insertó algo dentro. **Y lo que la guarda NO alcanza va nombrado aquí, no en otro documento** — ejemplo **no exhaustivo**: la **sustitución de una letra de la clave por un homóglifo** (`Еstado`, con la `Е` cirílica) **permite, y permite por ausencia** del campo que el homóglifo borró; **ninguna** versión lo deniega, **tampoco 1.34.0**. Tres fronteras **deliberadas**, lista **no exhaustiva**: el CR/LF **final** es transporte (CRLF decide igual que LF), el **cuerpo** del REQ no se restringe y **reabrir** no se bloquea. Sitio único de las vías abiertas y de las fronteras, con su evidencia, clase, dueño y vencimiento: `docs/seguridad/registro-seguridad.md` § **R-024** — **SEC-078** (la vía) y **SEC-079** (la promesa medida falsa) | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Un veredicto lleva fecha y no es anterior al último cambio del código —si el proyecto lo pide (`veredictos.*`, apagado por defecto) | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Ningún agente —tampoco la coordinadora— ejecuta git destructivo: `clean -f`, `reset --hard`, `checkout .`, `restore .`, `stash` (`git.prohibidos`) | §10 | `guard-git` | `Bash` |
 
@@ -416,3 +416,55 @@ el hook `pre-commit` de git (§8).
 el prefijo del plugin que Claude Code añade en runtime (`arnes-juan:desarrollador`), así que no
 hay que escribirlo. Escribirlo es opcional y hace la comparación **estricta**: `agentes.agente_codigo`
 con prefijo sólo acepta a ese proveedor, útil si conviven dos plugins con un agente homónimo.
+
+<!-- arnes:coordinacion:inicio -->
+## 14. Reglas de trabajo de la sesión coordinadora
+
+**A. Comprobación de antes de despachar** — obligatoria y **por escrito en el propio encargo**:
+(1) ¿qué **resultado exacto** debe entregar?; (2) ¿los **criterios pueden cumplirse
+simultáneamente**?; (3) ¿qué **supuesto o cifra** necesita comprobarse primero?; (4) ¿qué queda
+**fuera**, y **cuándo debe detenerse**? Si falta algo, se resuelve **únicamente esa dependencia**;
+no se amplía el encargo.
+
+**B. Las siete reglas:**
+1. **Separar evidencia de interpretación** — dato medido / cálculo / estimación / hipótesis; una
+   medición correcta no valida la conclusión construida encima.
+2. **No convertir propuestas en compromisos** — ahorro, duración o cobertura son **hipótesis**
+   hasta medirlas.
+3. **Mantener visibles las decisiones vigentes** — consultarlas en una referencia breve (alcance
+   aprobado, prioridades, excepciones, pendientes), no reconstruirlas de conversaciones largas.
+4. **Corregir sin ampliar** — ante un defecto, comprobar su **efecto concreto**; los hallazgos
+   adicionales van a la cola salvo que impidan el trabajo en curso.
+5. **Cerrar cuando la evidencia alcance** — ante una observación externa, decidir si aporta
+   defecto nuevo, algo ya cubierto o mejora opcional, y no abrir una ronda por cada una; no es
+   permiso para cerrar con menos de lo que el criterio pide.
+6. **Responder con evidencia breve** — resultado, evidencia, limitación material, siguiente paso.
+7. **La evidencia intermedia se guarda en disco, no en la conversación** — **condición de
+   entrega: la entrega no está completa si la evidencia sólo existe en la conversación.** Todo
+   inventario, medición o evidencia que un trabajo posterior vaya a necesitar se escribe en un
+   **archivo antes de entregar**, con **versión base** (commit o tag sobre el que se midió o
+   enumeró) y **método** (cómo se obtuvo cada cifra, suficiente para re-derivarla sin preguntar)
+   **dentro del propio artefacto**; si lo guardado es un **inventario**, va la **lista elemento
+   por elemento** y no sólo el total. La **ruta** se cita además en el informe. Frontera **por
+   propiedad**: entra toda evidencia cuya ausencia obligaría a **re-medirla o re-enumerarla**
+   para cumplir algo **ya escrito** —un criterio, un REQ abierto, una fase pendiente— o para
+   **explicar una discrepancia** entre dos mediciones; queda fuera el cálculo de usar y tirar,
+   que se consume en la misma comisión y al que nada posterior vuelve.
+
+**C. Separación de responsabilidades** — la coordinadora **organiza y propone**; las
+**herramientas verifican lo mecánico**: toda afirmación cuya verdad se decide leyendo el disco o
+corriendo un comando (ejemplos **no exhaustivos**: fechas, versiones, archivos modificados,
+conteos, pruebas).
+
+**D. Vías de lectura y límites** — cada herramienta con su vía y su **estado de verificación**:
+- **Claude Code — `verificada`.** Vía: `CLAUDE.md` → `@AGENTS.md`. Evidencia: esa línea de
+  importación existe en `CLAUDE.md` y en `templates/CLAUDE.md.tpl`.
+- **Codex — `no verificada`.** Vía: la que declara el estándar `AGENTS.md`; esa frase es una
+  afirmación del repositorio, no una comprobación.
+- **Cursor — `no verificada`.** Vía sin determinar; no se comprobó.
+
+Y los dos límites: (a) **una herramienta cuya vía no está verificada no cuenta como cubierta**
+—esta sección no promete cobertura de todo coordinador—; (b) **un proyecto ya instalado tiene su
+`AGENTS.md` congelado**: hasta que `arnes-upgrade` migre este bloque, sus coordinadoras **no
+tienen estas reglas**.
+<!-- arnes:coordinacion:fin -->

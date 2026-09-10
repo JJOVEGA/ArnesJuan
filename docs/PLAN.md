@@ -95,7 +95,140 @@ Esta ventana va a tener muchas comisiones, y las tres primeras palancas están *
 > día): REQ-017 + REQ-021, más la partición de las tres secciones sobre 400 líneas (`DEV-021-07`).
 > `REQ-019`, `REQ-020`, `REQ-023`, `REQ-024` y `REQ-025` van a 1.34.0, y REQ-019 es su primer trabajo.**
 >
-> **ENMIENDA DEL 2026-09-08, REVERTIDA EN PARTE EL 2026-09-09.** El propietario aplazó el tag y luego
+> ## ALCANCE VIGENTE DE 1.34.0 — CUATRO trabajos, reordenado el 2026-09-09
+> *(estados re-derivados del disco el **2026-09-10**, actualizados sobre `af01436` al cerrar la
+> sesión — **el punto de continuidad vigente es `docs/ESTADO.md` §«★★ RETOMAR AQUÍ»** y el informe de
+> traspaso es `docs/TRASPASO-2026-09-10.md`. Cifra firme de bloqueantes: **34** (`R-028`), no 23.
+> **`SEC-075` debe resolverse ANTES de publicar `v1.34.0`.** Es coordinación: ninguna
+> decisión del propietario se cambia, y el texto anterior se conserva tachado. `REQ-020`, cuya
+> ventana destino es 1.34.0 y que aporta **8 de los 23** bloqueantes, **no figura en esta tabla**:
+> su ventana es la decisión 1 de `docs/propuesta-cierre-1.34.0.md`.)*
+>
+> **Decisión del propietario (2026-09-09), literal:** *«Decido aplazar `REQ-019` a 1.35.0 para
+> reevaluarlo. Conservá lo trabajado; no lo marques completado ni inviertas más en su reparto ahora.
+> Para 1.34.0, priorizá las correcciones pendientes de `REQ-026` y la remediación de `REQ-023`/`024`.
+> Mantené `REQ-027` en la ventana e implementalo sobre la estructura actual.»*
+>
+> | # | Trabajo | Estado |
+> |---|---|---|
+> | **1** | La sonda de `REQ-017 CA-08` | ~~CERRADO (`completado`, `496068c`)~~ → **REABIERTO** el 2026-09-09 por §9 REGLA DE ESTADO (write-back de `CA-03`). Hoy `en-progreso`; **`QA: con-hallazgos`** (2026-09-10, `86a44c8`): 1 `contrato` (`QA-017-24`) + 7 `instrumento`. El `Seguridad: aprobado` vigente es del 2026-09-08 sobre `538c266` — **anterior al modo medido**. **2026-09-10: `bloqueado`** por la salida de §6 (vuelta 3 de 3 agotada, `QA-017-31` `contrato`), escalado como `D18`; el propietario **autorizó** la corrección y una revalidación **fuera del contador**, ambas ejecutadas |
+> | **2** | `REQ-026` — correcciones pendientes | `en-revisión`. Bloquean **`SEC-067`** (`usuario/dinero`, `en-mitigación`: código acreditado, **falta write-back**), `SEC-072` y `SEC-073`. Y **`CA-13`, `CA-14`, `CA-16`, `CA-17` siguen SIN IMPLEMENTAR** (declarado en su propio campo `QA:`) — no es redacción pendiente |
+> | **3** | `REQ-023` + `REQ-024` — remediación de `SEC-047` | ~~`REQ-023` en implementación~~ → **los dos `bloqueado`**, cada uno tras **agotar las tres vueltas** de §6. `REQ-023`: cero bloqueantes en el campo, **pero `CA-11` es falso sobre este árbol bajo dos firmas verdes** (`D13`). `REQ-024`: `QA-024-19`, `SEC-083`, `SEC-084`, y **`Seguridad: pendiente` — la auditoría nunca se hizo** |
+> | **4** | `REQ-027` — reglas de coordinadora, **sobre la estructura actual** | **`completado`** (`95764db`, 2026-09-09). QA y Seguridad `aprobado`. Quedan 4 `instrumento` abiertos (`QA-027-08`, `SEC-074`, `SEC-076`, `SEC-077`), que **no** bloquean |
+> | — | ~~`REQ-019` — adelgazar los documentos de arranque~~ | **APLAZADO a 1.35.0.** Lo trabajado se conserva |
+>
+> **Por qué `REQ-027` ya NO va detrás de `REQ-019`, y la coordinadora se corrige:** recomendó ponerlo
+> detrás por **retrabajo** —`REQ-019` movería texto de `AGENTS.md` y `REQ-027` inserta un bloque en él—.
+> Comprobado el 2026-09-09, **no existe dependencia técnica y el propio REQ contrata lo contrario**:
+> `requirements/REQ-027.md:258` dice *«Preferencia: que este REQ entre **antes**, porque añade 2 600 B»*,
+> y su `CA-05` existe para **dar a `REQ-019` un número contra el que medir**. Con `REQ-019` aplazado, la
+> colisión desaparece y la preferencia del contrato manda.
+>
+> **Lo que el aplazamiento de `REQ-019` deja escrito, para que 1.35.0 no reempiece:** el techo `0,72×`
+> es **insatisfacible en bytes** (suelo medido `0,810×`); la propuesta con punteros incluidos está en
+> `docs/arnes/req-019-techo-propuesto.md` (**≤ 0,91×**, **−7.188 B** de lectura obligatoria, etiquetada
+> como **proyección**); las dos enumeraciones de F1 **no sobreviven en disco**, así que `CA-15` exige
+> rehacer el inventario por bloques; y el `## Índice` del README **pesa 7.867 B y está fuera de
+> alcance**, retirando más bytes que el reparto completo. `SEC-033` sigue abierto (`contrato`).
+>
+> ## ALCANCE ANTERIOR (histórico) — CINCO trabajos: cuatro fijados el 2026-09-08 y el quinto el 2026-09-09
+>
+> «Aplica tu recomendación» (2026-09-08). La recomendación era **tres**; la medición la corrigió a
+> **cuatro**, y la corrección va escrita porque es el tipo de error que este plan existe para no repetir.
+>
+> **Y el 2026-09-09 el propietario añadió el quinto**, con su orden fijado: *«Autorizo incorporar
+> `REQ-027` como quinto trabajo de 1.34.0. Ejecutá su implementación **después de `REQ-019`, sobre la
+> estructura resultante**. Incluí plantilla, instalación y migración de proyectos existentes, con sus
+> verificaciones.»* La coordinadora había recomendado **1.35.0**; el propietario decidió **1.34.0 con
+> orden explícito**, que resuelve el motivo de la recomendación —la competencia por `AGENTS.md`— sin
+> aplazar el trabajo. Queda escrito porque una recomendación desatendida con motivo es información, no
+> ruido.
+>
+> | # | Trabajo | Por qué NO se puede cortar |
+> |---|---|---|
+> | **1** | **La sonda de `REQ-017 CA-08`** | Decide la **puerta requerida** de `main` con un instrumento cuyo ruido (0,973×–1,364×) **cubre su techo** (1,25×). Mientras siga así, toda publicación se firma sobre una señal que no distingue |
+> | **2** | **`REQ-019` — adelgazar los dos documentos de arranque** | El **87 %** de los bytes del ritual se leen en **cada comisión**. Es la palanca de tokens, y 1.34.0 es la ventana con más comisiones |
+> | **3** | **Archivar las bitácoras** (`rotacion` + `veredictos.*` del manifiesto) | `CHANGELOG.md` 467 KB + `registro-seguridad.md` 458 KB ≈ **240 k tokens** de ventana potencial. Medido: un auditor que cargó uno entero consumió **2,56 M** de lectura de caché. **Necesita REQ: no existe** |
+> | **4** | **`REQ-023` + `REQ-024` — la remediación de `SEC-047`** | **No es elegible.** `SEC-047` es de severidad **crítica** y su vencimiento —**el cierre de 1.34.0**— está escrito en `docs/seguridad/registro-seguridad.md:3684`, **por el auditor y en su sede**. Cerrar 1.34.0 sin esto sube `SEC-047` y `SEC-051` a **`contrato`** |
+> | **5** | **`REQ-027` — las reglas de coordinadora, con plantilla, instalación y migración** | Entra el **2026-09-09** por decisión del propietario, y **después de `REQ-019`, sobre la estructura resultante**. El orden no es preferencia: `REQ-019` **mueve de sitio** buena parte de `AGENTS.md` y `REQ-027` **inserta un bloque nuevo** en ese mismo archivo; al revés habría que escribirlo y luego moverlo. Alcance confirmado: plantilla + `arnes-init` + `arnes-upgrade` **con sus verificaciones** (`CA-09` y `CA-10`, éste como **condición de entrega**). **Crear el REQ no instala nada**: hoy hay 11 criterios contratados y cero implementado |
+>
+> **Por qué el 4 entra aunque yo recomendara tres.** La recomendación inicial contaba coste y olvidó un
+> **plazo con dueño**. La diferencia con `SEC-052` —el forzador que resultó ser «un argumento con la firma
+> de otro»— es exactamente la sede: aquel vivía sólo en el REQ cuyo aplazamiento castigaba; **éste está en
+> el registro de seguridad, firmado por quien podía firmarlo.** Un forzador en su sede no se negocia
+> midiendo coste.
+>
+> **Los DOS «primeros trabajos», y cómo se resuelve.** `SEC-047` se declara «primer trabajo de 1.34.0, por
+> delante del núcleo por estado» (`:3684`) y la enmienda del propietario declara primero **la sonda**. No
+> hay conflicto real: el vencimiento de `SEC-047` es **el cierre** de la ventana, no su apertura, y se
+> cumple en cualquier orden **dentro** de ella. **La sonda va primera** porque es la única que bloquea
+> *publicar*, y lo demás de esta ventana se publica a través de ella.
+>
+> ### CORRECCIÓN DEL ORDEN (2026-09-08): el propietario prioriza **bajar el coste**
+>
+> «Me interesa dar prioridad a bajar el costo del Arnés, para que la cuenta me rinda más.» El orden
+> anterior ponía **la sonda primero** porque bloquea *publicar*. Pero bloquea **al final**; las palancas
+> de tokens abaratan **todo lo que pasa en medio**. Es la regla de orden del encabezado de este plan —
+> *lo que compone va primero*— aplicada correctamente.
+>
+> **El impuesto de arranque, medido el 2026-09-08 y mayor de lo que se venía citando:**
+> `AGENTS.md` 33.827 B + `requirements/README.md` 40.020 B + `CLAUDE.md` 408 B = **74.255 B ≈ 18.500
+> tokens, en CADA comisión** (se citaba ~9 k, que era sólo `AGENTS.md`).
+>
+> **Y el 72 % vive en SEIS secciones**, medido sección a sección:
+>
+> | Documento | Sección | Bytes |
+> |---|---|---:|
+> | `requirements/README.md` | Cómo se escribe un criterio que no se desmiente | **12.609** |
+> | `AGENTS.md` | §13 Enforcement por runtime | **10.363** |
+> | `requirements/README.md` | El mapa de archivos: el campo `Archivos:` | **10.247** |
+> | `AGENTS.md` | §6 Orquestación, loops y gates | **9.796** |
+> | `requirements/README.md` | **`## Índice`** | **7.025** |
+> | `AGENTS.md` | §5 Equipo de agentes | 2.977 |
+> | | **suma** | **53.017 B ≈ 13.300 tokens/comisión** |
+>
+> ### PERO: el techo de `REQ-019` es INALCANZABLE, y esto para la ventana
+>
+> La enumeración F1 lo midió por **dos vías ciegas independientes** y las dos coinciden: el **suelo
+> forzado** —lo que no se puede quitar sin perder una invariante— es **≈0,70×** en `AGENTS.md` y
+> **≈0,66×** en el README, **≈0,68× total**, contra el **≤0,60×** que `CA-07` contrata. **El techo no se
+> alcanza**, y el propio REQ predecía el problema **sólo en el README**. En bytes será peor que en
+> líneas: las dos poblaciones de líneas más largas —la tabla de §13 y el `## Índice`— **son suelo al
+> 100 %**. Su línea base además está desfasada (declara el README en 433 líneas; tiene **522**).
+>
+> **Renegociar ese techo es firma del propietario**, y hasta que exista, despachar `REQ-019` es pagar
+> cuatro comisiones para chocar contra un número imposible. Más `D-3`, `D-5` y `D-9`: tres defectos en
+> sus **propios criterios**, que se arreglan **antes** de repartir nada.
+>
+> ### La consecuencia sobre el ahorro real, dicha sin adornos
+>
+> Con suelo 0,68×, `REQ-019` recorta como mucho **~32 %** del impuesto: **≈5.900 tokens por comisión**,
+> no los ~7.400 que sugería el techo escrito. Sigue pagándose en menos de una ventana, pero **no es la
+> palanca que parecía**.
+>
+> **Y la palanca mayor del día no fue ninguna versión del plugin: fue el ENCARGO.** Seis comisiones del
+> 2026-09-08/09 con el mismo modelo: **229 k → 154 k → 107 k → 64 k → 46 k → 58 k**. Lo único que cambió
+> fue cerrar la lista de lectura —rangos de línea en vez de archivos, cifras entregadas ya medidas, y
+> prohibiciones explícitas—. **Un factor 5, gratis y ya aplicado.** Ninguna de las palancas contratadas
+> se le acerca, y conviene tenerlo escrito antes de invertir cuatro comisiones en recortar un 32 %.
+>
+> ### Lo que SALE de 1.34.0, con su destino
+>
+> `REQ-020` (las pruebas que no miden) · `REQ-022` (el despacho en paralelo) · `REQ-025` (la puerta sobre
+> la coordinadora) · `REQ-018` (el canal de informes) · `REQ-008` (el informe con gráficos) · `REQ-011`
+> (la puerta que pregunta después) → **1.35.0**. `REQ-021` sigue **`bloqueado`** y no se retoma hasta que
+> el propietario decida su salida.
+>
+> **El criterio del corte, para que no se relaje solo:** entra lo que **devuelve dinero** (2 y 3), lo que
+> **devuelve una señal fiable** (1) y lo que **tiene plazo con dueño** (4). Todo lo demás son mejoras que
+> se pagan mejor **después** de abaratar el ciclo, no antes. Es la misma regla de orden del encabezado de
+> este plan: **lo que compone va primero.**
+>
+> **Y el motivo de cortar, medido y no intuido:** 1.33.0 empezó siendo «la skill de migración» y a media
+> ventana tenía **nueve trabajos**. Diez trabajos no caben en una ventana, y una ventana que no cabe **se
+> corta a mitad de una comisión** — que es como se descontroló el ciclo 3.
+
+> **ENMIENDA DEL 2026-09-08, REVERTIDA EN PARTE EL 2026-09-08.** El propietario aplazó el tag y luego
 > **decidió publicar**: `v1.33.0` está publicada (merge `810128a`, puerta requerida en verde y fusión con
 > cuenta **sin admin**), con su límite declarado — la evidencia de rendimiento es el `0,125×` de `CA-05`,
 > **no** el verde de `CA-08 (ii)`. **Lo que NO se revierte: el primer trabajo de 1.34.0 sigue siendo la
