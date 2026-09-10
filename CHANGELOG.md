@@ -2,6 +2,68 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · QA refuta la premisa de mi propia escalada, y encuentra que la convención del arnés produce un valor que cae abierto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus) · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`QA: aprobado` sobre `7e19537`** —y **no** sobre `a57eecc`—, que era el punto de la comisión. «*La
+elección de commit es el veredicto*»: midió `a57eecc..7e19537` sobre `hooks/ tools/ .arnes/` = **122
+inserciones / 9 borrados**, comprobó que el delta de `lib.sh` es **sólo comentario** —así que toda la
+conducta nueva vive en `guard-completado.sh`— y firmó con `git status --porcelain` **vacío en los cinco
+globs**, «*para que el árbol que audite seguridad sea byte a byte el que validé*».
+
+**`SEC-082` queda listo para la firma del auditor**, con su write-back cierto **cláusula por cláusula
+medido ejecutando**. Y las cinco mitades del alcance: equivalencia comentado ≡ borrado **100 pares · 0
+divergencias · 30 discriminantes**, e **idéntico 100/0/30 en `a57eecc`** —así que **no se movió**—; la
+excepción en `critico` **26 casos · 0 fallos** incluido el `critico` **por suelo**; la entrada **era**
+código muerto y ya no lo es (**no mueve en `a57eecc` / mueve en `7e19537`**); «lo aplica la rama `critico`»
+**respondido ejecutando**; y no-regresión **14 casos · 0 fallos**.
+
+### Refutó la premisa de mi propia escalada, y me la corrigió antes de que la firmaras
+
+Escalé que encender `veredictos.caducan_con_codigo` **habría impedido** mi despacho sobre una firma
+vencida. **Es falso.** La comparación es **estrictamente anterior con resolución de DÍA**, y mi caso tenía
+veredicto del 2026-09-10 con código tocado el **mismo día**: **ALLOW**. Medido con fecha inyectada y
+verificada, con sus dos controles (2026-09-09 → DENY, sin fecha → DENY).
+
+**La guarda es ciega por construcción en el mismo día, no por estar apagada.** Y en un proyecto que hoy
+lleva **quince commits** al mecanismo, el mismo día **es** la unidad en la que ocurren los desfases. Coste
+de encenderla: **28 de 29 veredictos caducarían** (24 por fecha anterior + 4 sin fecha). **Cuesta casi todo
+el árbol y no compra la protección que motivó la pregunta.**
+
+La sostiene en `instrumento` —nada cambia de decisión hoy, y la resolución de día está **declarada en tres
+sedes**, luego **no hay texto falso**— y a la vez nombra la tensión con una frase que se queda: «**aquí el
+guardián ES el producto**». `D15` queda reescrita con la premisa corregida **antes** de que el propietario
+la lea.
+
+### `QA-016-04` (`contrato`): la documentación del arnés desactiva su propia auditoría
+
+```
+Sensible a seguridad: no  +  Rigor: critico              ->  DENY
+Sensible a seguridad: no  +  Rigor: critico (por suelo)  ->  ALLOW   ← cierra sin auditoría
+```
+
+**Un `Rigor:` que no se reconoce cae ABIERTO a `estandar`, y en silencio: cero avisos.** Y lo dispara **la
+convención del propio arnés** —`AGENTS.md` §13: «*un matiz va entre paréntesis*»—, la misma que este
+proyecto usa en todas partes. **Un usuario que siga la documentación al pie de la letra desactiva su
+auditoría.**
+
+**La asimetría lo confirma como defecto y no como decisión:** la **ausencia** del mismo campo **sí está
+guardada** y `Sensible a seguridad:` falla **cerrado**. Sólo este valor cae abierto. Texto heredado falso
+en **tres** sedes, **preexistente**, y reproducido **en el plugin estable 1.33.0 instalado** — el que
+gobierna este desarrollo. **Exposición viva aquí: ninguna**, comprobado sobre los 26 REQ que declaran el
+campo.
+
+**Y no lo colgó de `REQ-016`** —«*no es lo que `CA-11` contrata*»—, con la misma precedencia con la que el
+auditor no colgó `SEC-083` ahí. **Así que hoy no tiene sede en ningún campo, y sin sede ninguna puerta lo
+mide.** Escalado como **`D16`**, con la recomendación de un REQ nuevo en 1.35.0: colgarlo de `REQ-024`
+—`bloqueado` y con las tres vueltas agotadas— lo congelaría.
+
+**Banco dos veces:** 1056/0/8 y 1057/0/7, cuadre **1064** las dos, listas diferidas en **exactamente uno**
+—el oscilador—. **Cero SKIP dentro de su alcance.** Tres quality gates verdes.
+
+**Y una limitación que declara en vez de omitir:** su harness vivió en el scratchpad y **no se conserva**,
+con receta de re-derivación escrita en el informe.
+
 ## [Interno] — 2026-09-10 · Vuelta 3 de 3: QA construyó la tercera forma de envejecer en DOS variantes, y `REQ-024` queda `bloqueado`
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus, vuelta 3 de 3) · consolidación: coordinadora. **Bajo delegación de 24 h.**
 

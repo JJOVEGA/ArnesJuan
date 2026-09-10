@@ -424,6 +424,89 @@ propia lección: «*retirarlo repetiría exactamente el ALLOW sobre firma vencid
 declarado** —con dueño, forzador medido y vencimiento—, que exigiría aceptar que un criterio queda
 contratado y sin implementar.
 
+
+### D15 · `veredictos.caducan_con_codigo` — **la premisa con la que iba a escribir esta entrada era FALSA, y la corrijo antes de que decidas**
+
+**Lo que iba a decirte:** que el arnés tiene una guarda contra veredictos rancios, que está **apagada** en
+este repositorio (`veredictos.caducan_con_codigo: false`), y que **encenderla habría impedido** que yo
+despachara al auditor sobre un `QA: aprobado` anterior al arreglo de `SEC-082`.
+
+**Lo que el `qa-tester` midió, y desmiente la mitad que importaba: NO lo habría impedido.** La comparación
+es `[[ "$ARNES_FECHA" < "$fecha_codigo" ]]` —**estrictamente anterior, resolución de DÍA**—, y mi caso
+tenía el veredicto del **2026-09-10** con el código tocado el **mismo día**. Medido con fecha de commit
+inyectada y verificada:
+
+| veredicto | código | llave encendida |
+|---|---|---|
+| **2026-09-10** | 2026-09-10 | **ALLOW** ← mi caso exacto |
+| 2026-09-09 | 2026-09-10 | DENY |
+| sin fecha | 2026-09-10 | DENY |
+
+**La guarda es ciega por construcción en el mismo día, no por estar apagada.** Y en un proyecto que
+cambia el mecanismo varias veces al día —como éste hoy: **quince commits**— el mismo día **es** la unidad
+en la que ocurren los desfases.
+
+**El coste, medido: caducarían 28 de 29 veredictos `aprobado`** (24 por fecha anterior + 4 sin fecha). Así
+que **cuesta casi todo el árbol y no compra la protección que motivó la pregunta.**
+
+**El `qa-tester` la sostiene en `instrumento`** —nada cambia de decisión hoy, y la resolución de día está
+**declarada en tres sedes**, luego no hay texto falso— **y a la vez nombra la tensión: «aquí el guardián
+ES el producto»**. Un arnés que se vende como enforcement por runtime lleva su propia guarda de frescura
+apagada y con una resolución que no distingue lo que a él le pasa a diario.
+
+**Qué decides, entonces, y ya no es lo que yo creía:** **no** «enciéndela o no», sino si la **resolución de
+día** es aceptable para este proyecto —el único que cambia su mecanismo varias veces por jornada— o si el
+criterio que la contrata debe **medir contra el commit y no contra el día**. Lo primero cuesta 28
+re-validaciones y sigue sin ver el caso frecuente; lo segundo es trabajo de `analista` + `desarrollador`.
+
+**Y hasta que exista, la protección real es la que funcionó hoy: comprobar la fecha a mano antes de
+despachar.** Funcionó porque la comprobé; no porque nada me lo impidiera.
+
+
+### D16 · `QA-016-04` (`contrato`) — la convención del propio arnés produce un valor que cae ABIERTO, y está en el plugin PUBLICADO
+
+**Te lo traigo porque no es de esta ventana: es preexistente y vive en la 1.33.0 que gobierna este
+desarrollo.** El `qa-tester` lo reprodujo **igual** en `7e19537`, en `a57eecc` y en **el plugin estable
+1.33.0 instalado**.
+
+**El hecho, medido:**
+
+```
+Sensible a seguridad: no  +  Rigor: critico              ->  DENY
+Sensible a seguridad: no  +  Rigor: critico (por suelo)  ->  ALLOW   ← cierra sin auditoría
+```
+
+**Un `Rigor:` que no se reconoce cae ABIERTO a `estandar`, y en SILENCIO: cero avisos.**
+
+**Y lo que lo vuelve grave no es el fallo, es quién lo dispara: la convención del propio arnés.**
+`AGENTS.md` §13 dice que «*un matiz va entre paréntesis*» —`aprobado (R-045, 2026-09-01)`— y es la
+convención que este proyecto usa **en todas partes**. Aplicada a `Rigor:`, produce un valor que **no se
+reconoce** y que **abre**. Un usuario que siga la documentación al pie de la letra desactiva su propia
+auditoría.
+
+**Y la asimetría lo confirma como defecto y no como decisión:** la **ausencia** del mismo campo **sí está
+guardada**, y `Sensible a seguridad:` falla **cerrado**. Sólo este valor cae abierto.
+
+**Texto heredado que queda falso leído aislado, en tres sedes:** `AGENTS.md:343`,
+`templates/AGENTS.md.tpl:308` y `requirements/README.md:101`.
+
+**Exposición viva aquí: ninguna** — los 26 REQ que declaran el campo llevan `critico` limpio, comprobado.
+**Pero en los proyectos consumidores no lo sé, y no puedo saberlo desde aquí.** Eso es lo que te traigo:
+un `contrato` que abre, silencioso, disparado por la documentación, y ya distribuido.
+
+**Y el `qa-tester` no lo colgó de `REQ-016`** —«*no es lo que `CA-11` contrata*»—, con la misma precedencia
+con la que el auditor no colgó `SEC-083` ahí. **Así que hoy no tiene sede en ningún campo, y sin sede
+ninguna puerta lo mide.** Enrutarlo es la decisión: su REQ natural sería uno nuevo de la ventana 1.35.0, o
+`REQ-024`, que ya contrata la dirección de la ausencia — **pero `REQ-024` está `bloqueado` y con sus tres
+vueltas agotadas**, así que colgarlo ahí lo congelaría.
+
+**Qué decides:** (a) REQ nuevo en 1.35.0 con este hallazgo como su origen; (b) colgarlo de `REQ-024` y
+aceptar que espera su desbloqueo; o (c) declararlo residual con dueño y vencimiento **sin sede en campo**,
+sabiendo que entonces **sólo lo vigila el registro y ninguna puerta**.
+
+**Mi recomendación es (a)**: es un defecto **publicado**, de clase `contrato`, cuya causa es la
+documentación del propio arnés — y eso no cabe como residual de un REQ que no puede avanzar.
+
 ## Resueltas
 
 ### D5 · `SEC-079` — **RESUELTA el 2026-09-09: opción (a), y con un matiz del propietario que cambia el arreglo**
