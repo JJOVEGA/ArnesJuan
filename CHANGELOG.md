@@ -2,6 +2,74 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `R-027`: `SEC-082` y `SEC-083` cerrados, y un fail-open VIVO en lo publicado — la firma se puede colar decorando una clave
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `auditor-seguridad` (Opus) · enrutado: coordinadora. **Bajo delegación de 24 h.**
+
+**`Seguridad: aprobado` en `REQ-016`.** `SEC-082` **cerrado** (`mitigado`), `SEC-083` **cerrado**
+(`mitigado`), **`SEC-084` abierto** (`contrato`, alta) y **`QA-024-19` subido a `contrato`**.
+
+**Derivó su rango por cuarta vez y lo cuadró desde dos puntos:** código `ce714c7..aece716` **restringido
+por ruta** a los cinco globs = **122/9**, dos archivos, dos commits; texto `de84b4a` + `aece716`. Y arranca
+en `ce714c7` **y no en `a57eecc`** porque el diff de los globs sale **vacío en los dos extremos**, así que
+«*mi rango de código y el de QA son el mismo árbol medido desde dos puntos*». **Verificó él** que el delta
+de `lib.sh` es sólo comentario — «*no lo cité de QA*».
+
+### El hallazgo del día: la firma se cuela decorando la clave
+
+`SEC-084`. El disparador es `grep -q 'Seguridad:'` —**cadena literal**—, pero **el lector reconoce la
+clave decorada, y eso lo contrata `CA-04`**. Así que **`_Seguridad_: aprobado`** hace que **la firma pase
+sobre un `QA: pendiente` y el REQ cierre después**, en los **dos** estados de la llave, **sin deny y sin
+aviso** (salida vacía, `rc 0`), con la forma limpia denegando como control, **en cuatro árboles incluido
+`v1.33.0` publicado**.
+
+**Y la relación con `QA-024-19` es la lección:** QA lo había puesto `instrumento` porque «*el cierre sigue
+fail-closed*» — **cierto para la minúscula, falso para la clase**. Misma causa, **dirección del daño
+opuesta**. «*No es un desacuerdo de criterio: su premisa está medida falsa.*»
+
+**Y el defecto no está donde parece:** «*`CA-04` **exige** que la forma decorada gobierne —cosa que
+hace—*». El fallo es que **una guarda la tolera y la otra no**. Arreglarlo quitando la tolerancia
+**rompería `CA-04`**.
+
+### Contestó mi pregunta de `SEC-083` al revés de como la hice — y evitó que se escribiera una mentira
+
+Pregunté si `SEC-083` podía cerrarse **con la fila de §13 sin transcribir**. Su respuesta: **su cierre no
+depende de esa fila; la fila prescrita quedó FALSA** cuando el `desarrollador` tomó la salida (b), porque
+**anuncia un fail-open que ya no existe**. «*Transcribirla metería la promesa AL REVÉS en superficie
+heredada.*»
+
+**Verificado por mí:** `REQ-024:889` dice «*esta guarda **no deniega**»* y `guard-completado.sh:326-330`
+**sí deniega**. **Así que `D11` autorizaba escribir una promesa falsa**, y le he puesto el aviso en la
+propia entrada: su parte (b) **no se firma como está**; su parte (a) —ratificar `ADR-011`— sigue en pie.
+Sin esa pregunta, el gate se habría firmado y la mentira habría viajado a todos los proyectos.
+
+### Y declaró que su propia acreditación cuelga de un hallazgo que no audita
+
+«*Mi revisión sí toca la superficie de `QA-016-04` y lo digo: ninguna de mis **236** celdas ejerce un
+`Rigor:` no reconocido, y si esa vía cae abierta a `estandar`, **el brazo `critico` que acabo de acreditar
+no se ejecuta**.*» Y la frase que lo cierra: «**el suelo de mi propia excepción depende de un hallazgo que
+no audito**».
+
+### Evidencia propia, y con las dos guardas separadas
+
+**No corrió el banco ni reusó el de QA**: escribió su harness y **separó CIERRE de FIRMA, que son dos
+guardas distintas**. Ocho cláusulas de `CA-11` **todas ciertas**; la entrada **4/5 mueven en `ce714c7`,
+5/5 hoy**, con la mutación verificada **por su efecto en la tabla derivada y nunca por el `rc` del `sed`
+— el error que cometió en `R-026`**. **0 de 216** cabeceras convierten DENY→ALLOW al encender la llave,
+**con 19 ALLOW/ALLOW para que el cero no sea cierto por sondas muertas**. Y **verificó su propio acto**:
+la cabecera como la deja → ALLOW, con control positivo en las dos direcciones.
+
+### Un juicio que declaró como juicio, y una cuarta vuelta que decidió no ganar
+
+El titular de `CA-11`, leído aislado, enumera **una** excepción y la máquina tiene **dos**. Lo juzgó
+**acotado** porque el cuerpo nombra «la puerta de cierre» **cuatro veces**, y **no lo convirtió en
+hallazgo** «*para no ganar una cuarta vuelta de texto sobre un criterio cuya conducta pasa*» — con dueño y
+ventana escritos, y la corrección de una línea nombrada por si se lee del otro modo. **Escribió el
+veredicto de `R-026` comentado y no borrado**, porque «*comentar retira la declaración, que es lo que este
+REQ entrega*».
+
+**Escalado como `D17`, aparte de todo lo demás:** hay proyectos corriendo `v1.33.0` con `SEC-084` abierto,
+y qué hacer con un fail-open **ya distribuido** no es una decisión de ventana.
+
 ## [Interno] — 2026-09-10 · QA refuta la premisa de mi propia escalada, y encuentra que la convención del arnés produce un valor que cae abierto
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus) · consolidación: coordinadora. **Bajo delegación de 24 h.**
 

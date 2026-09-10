@@ -282,6 +282,21 @@ pero un fail-open abierto en la guarda de las firmas me parecía peor que un com
 
 ### D11 · `ADR-011` — el gate que el propio ADR declara y que no estaba en la cola
 
+> ⚠️ **CORRECCIÓN URGENTE del 2026-09-10, ANTES de que firmes: la fila que esta entrada
+> autorizaba a escribir es HOY FALSA, y firmarla metería una promesa AL REVÉS en superficie heredada.**
+> El `auditor-seguridad` lo dictaminó en `R-027` y lo **verifiqué yo**: la fila de `REQ-024:889` anuncia
+> que «*si la línea `QA:` no llega a declararse … esta guarda **no deniega**»* — y desde que el
+> `desarrollador` tomó la **salida (b)** de `CA-12`, la guarda **SÍ deniega** (`guard-completado.sh:326-330`).
+> **La fila describe un fail-open que ya no existe.** Transcribirla diría a todos los proyectos
+> consumidores que pueden firmar seguridad sobre un REQ sin `QA:`, cuando no pueden.
+>
+> **Así que la parte (b) de este gate —autorizar la reescritura de esa fila— NO se firma como está.**
+> La parte (a) —ratificar `ADR-011` y su propiedad «por acto»— **sigue en pie y es independiente**.
+> Y el write-back que §9 exigía **ya existe y es otro**: el control vive como criterio en
+> `REQ-024 CA-12`, escrito **antes** del arreglo. Antes de tocar §13 hay que **reescribir el texto
+> prescrito**, y eso es trabajo del `analista-requerimientos` sobre un `REQ-024` que está `bloqueado`.
+
+
 **Lo señaló el `analista-requerimientos` contra su propio trabajo**, y tiene razón: `ADR-011` declara un
 gate humano **dentro del ADR**, y `PENDING_APPROVAL.md` estaba fuera de su encargo, así que el gate vivía
 **sólo ahí**. Su frase: «*un gate que no está en la cola no lo mide ninguna puerta*» — la deriva de §9
@@ -506,6 +521,38 @@ sabiendo que entonces **sólo lo vigila el registro y ninguna puerta**.
 
 **Mi recomendación es (a)**: es un defecto **publicado**, de clase `contrato`, cuya causa es la
 documentación del propio arnés — y eso no cabe como residual de un REQ que no puede avanzar.
+
+
+### D17 · `SEC-084` — un fail-open VIVO en el plugin PUBLICADO, en la guarda que protege la firma del auditor. **No es una ventana: es una pregunta sobre lo distribuido**
+
+**Esto no es de 1.34.0.** El `auditor-seguridad` lo midió en **cuatro árboles, incluido `v1.33.0`
+publicado** — el que gobierna este desarrollo y el que corren los proyectos consumidores.
+
+**El hecho, medido.** El disparador de la guarda es `grep -q 'Seguridad:'` — reconoce el campo por
+**cadena literal**. Pero el **lector** del arnés reconoce la clave **decorada**, y eso **no es un
+descuido: `CA-04` lo contrata** como tolerancia. Así que con **`_Seguridad_: aprobado`** —o la forma en
+negrita cuyo par de marcadores cruza los dos puntos— **la firma pasa sobre un `QA: pendiente`, y el REQ
+CIERRA después**. En los **dos** estados de la llave. **Sin deny y sin aviso**: salida vacía, `rc 0`. Con
+la forma limpia denegando como control.
+
+**Y la relación con `QA-024-19` es lo que lo vuelve serio.** QA había encontrado que
+`seguridad: aprobado` **en minúscula** da ALLOW y lo clasificó `instrumento` porque «*el cierre sigue
+fail-closed*». **Eso es cierto para la minúscula y falso para la clase:** misma causa —reconocer por
+cadena literal lo que el lector reconoce decorado— y **dirección del daño opuesta**. El auditor **subió
+`QA-024-19` a `contrato`** y abrió `SEC-084` como el caso **fail-OPEN** de la misma familia. No fue un
+desacuerdo de criterio: **la premisa de la clasificación estaba medida falsa.**
+
+**Por qué te lo traigo aparte de todo lo demás:** hay proyectos corriendo **`v1.33.0`** con esto abierto.
+La decisión de qué hacer con un fail-open **ya distribuido** —parche de 1.33.x, aviso a los consumidores,
+o esperar a 1.34.0— **no es una decisión de ventana, y no la tomo yo.**
+
+**Y lo he sentado en el campo de `REQ-024`** —`SEC-084 (contrato)`— porque sin sede **ninguna puerta lo
+mide**, y ahí no cambia nada: `REQ-024` ya está `bloqueado`. Lo que cambia es que la deuda **deja de estar
+clasificada como no bloqueante**.
+
+**El auditor tampoco lo colgó él, y por un motivo que conviene leer:** «*`CA-04` **exige** que la forma
+decorada gobierne —cosa que hace—*». O sea que **el defecto no está en tolerar la decoración**: está en
+que **una guarda la tolera y la otra no**. Arreglarlo mal —quitando la tolerancia— rompería `CA-04`.
 
 ## Resueltas
 
