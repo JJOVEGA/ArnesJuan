@@ -62,38 +62,33 @@ El analista **propone** 1.35.0 y **no la fija**: las ventanas las decides tú. E
 código que `REQ-023` no introdujo.
 
 
-### D5 · `SEC-079` (`contrato`, **BLOQUEA**) — dos salidas, y el auditor recomienda la barata
-
-**Apareció un bloqueante nuevo en la auditoría `R-024`, y te lo traigo con la evidencia y la decisión
-concreta, como pediste.** Ya bloquea **por máquina**: con los cuatro veredictos en verde,
-`guard-completado` responde `deny :: el hallazgo 'sec-079' es de clase 'contrato' y bloquea el cierre`.
-
-**Qué es.** La fila heredada de `AGENTS.md` §13 y de `templates/AGENTS.md.tpl` promete la clase **por
-estado y SIN condición**, con una lista **cerrada** de tres fronteras que **no incluye la vía abierta**
-del homóglifo. Medido ejecutando la puerta: `Sensible <U+0430> seguridad: sí` + `Rigor: ligero` con los
-veredictos en `pendiente` responde **ALLOW** — y eso **reproduce entera la fila 1 de `SEC-047`**, que es
-justo lo que este REQ existe para cerrar.
-
-**El defecto NO es que la vía esté abierta** —eso está declarado fuera de alcance con dueño, clase,
-motivo medido y ventana propuesta 1.35.0—: **es que el documento canónico lo promete sin condición
-mientras sigue abierta**. Y el forzador **lo escribió este REQ contra sí mismo**: «*que algún texto de
-este REQ o de la superficie heredada afirme sin condición que la guarda cubre la clase … mientras esta
-vía siga abierta*». Se disparó solo. Nota de reparto justa: **la skill es honesta** (dice que «ninguna
-versión lo deniega —tampoco 1.34.0—»); el que promete de más es el documento canónico.
-
-**(a) Salida barata — la que el auditor recomienda.** Una cláusula en `CA-10`: que la lista de fronteras
-se marque **«no exhaustiva»** y **cite el sitio único** (`docs/seguridad/registro-seguridad.md`) —
-exactamente la letra que `CA-10` ya le exige a la skill—, y luego la fila en **las dos** sedes. Orden
-obligatorio: write-back del `analista-requerimientos` → `desarrollador` → **QA re-valida** → **el
-auditor firma**. Estimado: ~1 h de ejecución.
-
-**(b) Salida cara.** Meter la vía del homóglifo en esta ventana, con sus **tres salidas ya medidas como
-malas** (estrechar el alfabeto admitido, y las otras dos que el REQ ya prohibió o encareció).
-
-**`SEC-078`** (`instrumento`, alta) y **`SEC-080`** (`instrumento`, media) son residuales con dueño y
-**no** condicionan el cierre.
-
 ## Resueltas
+
+### D5 · `SEC-079` — **RESUELTA el 2026-09-09: opción (a), y con un matiz del propietario que cambia el arreglo**
+
+**Autorizado:** corregir `CA-10` y las dos filas heredadas para que **describan la cobertura real**,
+manteniendo **fuera de esta ventana** la vía del homóglifo ya declarada.
+
+**El matiz, que es lo que hace este arreglo distinto de un parche cosmético — literal del propietario:**
+> «*La redacción debe nombrar explícitamente esa limitación y enlazar su evidencia en el registro.
+> Añadir solamente «no exhaustiva» no basta si la promesa principal sigue siendo absoluta.*»
+
+Es decir: **no se resuelve colgando una coletilla a una promesa absoluta.** La promesa **principal**
+tiene que dejar de ser absoluta, la limitación tiene que estar **nombrada**, y su evidencia
+**enlazada** al registro (`docs/seguridad/registro-seguridad.md`, `SEC-078`/`SEC-079`, revisión `R-024`).
+
+**Condiciones que el propietario fija:**
+- **`SEC-078` y `SEC-080` siguen abiertos**, con sus responsables. No los cierra esta autorización.
+- **Esta autorización NO acepta riesgos nuevos y NO acredita el criterio de rendimiento** — `CA-09 (iii)`
+  sigue **sin acreditar**, y eso no cambia aquí.
+- **Cadena obligatoria:** `analista-requerimientos` → `desarrollador` → `qa-tester` → `auditor-seguridad`,
+  con **revisión acotada al cambio** y **reutilizando la evidencia que siga siendo válida**.
+- **`SEC-079` se cierra ÚNICAMENTE tras esa validación** — no al escribir el texto.
+- **Coordinación con `REQ-024`:** las **pruebas de `CA-10` deben comprobar la redacción corregida**, así
+  que ese tramo se entrega **en secuencia** y no antes de que el texto exista.
+- **No se vuelve a pedir esta autorización.** Sólo se solicita otra decisión si aparece un **cambio
+  material fuera de este alcance**.
+
 
 ### D1 · `REQ-023` — **RESUELTA el 2026-09-09: `Estado: bloqueado`, con extensión excepcional de alcance cerrado**
 

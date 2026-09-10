@@ -2,6 +2,40 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · D5 autorizada, opción (a) — y el matiz del propietario descarta la solución obvia
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (registro de la decisión y despacho de la cadena).
+
+El propietario autoriza corregir `CA-10` y las dos filas heredadas para que **describan la cobertura
+real**, manteniendo **fuera de esta ventana** la vía del homóglifo ya declarada. Y añade el matiz que
+convierte esto en un arreglo de verdad y no en un parche:
+
+> «*La redacción debe nombrar explícitamente esa limitación y enlazar su evidencia en el registro.
+> **Añadir solamente «no exhaustiva» no basta si la promesa principal sigue siendo absoluta.***»
+
+**Eso descarta la salida obvia**, que era marcar la lista de tres fronteras como «no exhaustiva» y dejar
+intacta la promesa. Lo que tiene que cambiar es la **promesa principal**: la fila afirma la clase **por
+estado y sin condición**, y eso es lo que `R-024` midió falso. La promesa nueva ha de ser **verdadera
+tal como está escrita**, con la limitación **nombrada dentro** y su evidencia **enlazada** al registro
+(`SEC-078`/`SEC-079`, revisión `R-024`).
+
+**Condiciones que fija y quedan escritas en `D5`:** `SEC-078` y `SEC-080` **siguen abiertos** con sus
+responsables; la autorización **no acepta riesgos nuevos** y **no acredita el criterio de rendimiento**
+—`CA-09 (iii)` sigue sin acreditar—; la cadena es **analista → desarrollador → QA → auditor** con
+**revisión acotada al cambio** y **reutilizando la evidencia que siga siendo válida**; y **`SEC-079` se
+cierra únicamente tras esa validación**, no al escribir el texto.
+
+**Coordinación con `REQ-024`, que corre en paralelo.** Por instrucción del propietario, **las pruebas de
+`CA-10` deben comprobar la redacción corregida**, así que ese tramo va **en secuencia**: se avisó al
+`desarrollador` de `REQ-024` de que **no escriba** el caso de banco de `CA-10` —lo habría escrito contra
+un texto que va a cambiar— y de que la reserva de `AGENTS.md`, `templates/AGENTS.md.tpl` y
+`skills/arnes-upgrade/SKILL.md` sigue firme, ahora con dos comisiones comprometidas sobre esa
+superficie. **El resto de su encargo no se pausa**: `hooks/`, `tools/`, las dos secciones `40-*`,
+`run.sh`, el manifiesto y su plantilla siguen siendo suyos, y `REGHER94` también, porque no depende de
+ninguna redacción. Reparto por **escrituras reales**: el analista sólo toca `requirements/REQ-023.md`,
+así que no colisiona con él.
+
+`D5` pasa a «Resueltas» con la decisión y sus condiciones. La cola baja de **4 a 3**.
+
 ## [Interno] — 2026-09-09 · Primera auditoría de la guarda (R-024): el REQ se disparó su propio forzador, y el rango que le dio la coordinadora no contenía el mecanismo
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `auditor-seguridad` (Opus) · consolidación: coordinadora.
 
