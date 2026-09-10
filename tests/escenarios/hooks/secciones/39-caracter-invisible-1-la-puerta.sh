@@ -1,4 +1,4 @@
-# Sección 39 (1 de 3) del banco — 39-caracter-invisible-1-la-puerta
+# Sección 39 (1 de 5) del banco — 39-caracter-invisible-1-la-puerta
 # Se ejecuta con `source` desde el corredor (`../run.sh`), en su propio subshell y con los
 # ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de ninguna otra
 # sección (invariantes 3 y 4 del README del banco).

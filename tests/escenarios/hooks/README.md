@@ -30,11 +30,12 @@ bash tests/escenarios/hooks/run.sh secciones/07-*.sh     # sólo esa sección, m
 bash tests/escenarios/hooks/run.sh bash                  # sólo los casos cuyo nombre contenga "bash"
 bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del corredor
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **924 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **966 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`).
 Este número se escribe a mano en los dos sitios y **hay que cuadrarlo al añadir casos**: decía
-886 con `CASOS_ESPERADOS` ya en 887 (`SEC-066`), y un total de referencia desfasado en la
-documentación es justo lo que hace dudar del cuadre cuando el cuadre tiene razón.
+886 con `CASOS_ESPERADOS` ya en 887, y luego 924 con el literal ya en 966 (`SEC-066`, las dos
+veces), y un total de referencia desfasado en la documentación es justo lo que hace dudar del
+cuadre cuando el cuadre tiene razón.
 
 En vuelta parcial —con un selector de archivos o con filtro de nombre— el cuadre **total** queda
 suspendido **diciéndolo en la salida**, y el cuadre **de cada sección** se sigue exigiendo. Un
@@ -56,6 +57,18 @@ Tres líneas, y ninguna en `run.sh`:
 2. Declarar dentro `CASOS_ESPERADOS_SECCION=<n>` y escribir los casos.
 3. Sumar esos `<n>` a `CASOS_ESPERADOS` al final de `run.sh`.
 
+**Una abstención se ESCRIBE, no se cuenta: `echo "  SKIP …"` y nada más.** El recuento sale del
+**texto** de la salida (`run.sh:1218`), así que un `SKIP=$((SKIP+1))` en una sección no suma nada
+—y **mata la sección**: el corredor define `PASS` y `FAIL` antes del despacho pero **no** `SKIP`
+(`run.sh:23`), y las secciones corren bajo `set -u`. Medido (`QA-023-06`, vuelta 2 de QA sobre
+REQ-023): **cuatro** partes de la sección 39 morían en su **primera** abstención, la cláusula
+anti-tautología que `REQ-023 CA-03` eleva a criterio de aceptación **nunca se había ejecutado**, y
+la línea `Resultado:` publicó `21 PASS, 0 FAIL` con **29 PASS y 6 FAIL en pantalla** (una sección
+muerta se descuenta del total en `run.sh:1248-1255`). Los ayudantes compartidos ya lo hacen así
+(`run.sh:783`, `:808`): emiten la línea y no incrementan nada. Con `PASS`/`FAIL` el incremento es
+igual de inútil —el padre los ve a cero, cada subshell se llevó los suyos— pero **no es letal**;
+con `SKIP` lo es.
+
 ## Por qué hay secciones numeradas en partes (`NN-<slug>-<k>-<tema>.sh`)
 Las secciones 28, 33, 36, 37, 38 y 39 viven repartidas en varios archivos. No es estilo: **REQ-014
 CA-18** pone un techo a lo que una comisión tiene que abrir para tocar una sección, y el techo se
@@ -74,8 +87,9 @@ al corredor**, y subirla es cambio de mecanismo. Por eso el materializador de la
 copiado en las cinco partes de la 37, los dos ayudantes de comparación de `28-…-2-el-estado.sh`
 vienen copiados de `28-…-1-la-historia.sh`, y `num38` está en las tres partes de la 38: **once
 renglones copiados cuestan menos que una puerta trasera entre secciones**. Por lo mismo, `mat`
-—el materializador de la línea base— viene copiado en **dos** de las cuatro partes de la 39: las
-que comparan contra `v1.33.0`.
+—el materializador de la línea base— viene copiado en **cuatro** de las cinco partes de la 39: las
+que comparan contra `v1.33.0` (todas menos la 1). Decía «dos de las cuatro» y eran **tres de
+cuatro** desde que nació la parte 4; la quinta las deja en cuatro de cinco.
 
 **Al partir, los casos se reparten; no se crean ni se pierden.** Cada parte declara su propio
 `CASOS_ESPERADOS_SECCION`, la suma no cambia y `CASOS_ESPERADOS` de `run.sh` tampoco. El corte va

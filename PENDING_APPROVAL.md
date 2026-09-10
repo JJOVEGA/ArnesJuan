@@ -24,6 +24,57 @@
 
 ## Pendientes
 
+### D1 · `REQ-023` — cierre con residual declarado o `bloqueado`  ·  **espera el veredicto de QA**
+
+**Las tres vueltas dev↔QA están agotadas** (`QA:` declara «vuelta 2 de 3» y la tercera está en curso).
+Por `AGENTS.md` §6, agotado el tope el REQ **no se queda abierto**: o cierra con el **residual
+declarado** —dueño, forzador medido y vencimiento— o pasa a **`bloqueado`** y se escala. **La decisión
+es tuya y no la toma ningún agente.**
+
+Estado al preparar esta entrada: `Hallazgos abiertos:` = `QA-023-04` · `QA-023-05` (**`contrato`**) ·
+`QA-023-06` · `QA-023-08`. Los tres `instrumento` no bloquean; **`QA-023-05` sí**, y mientras el campo
+lo diga `guard-completado` **deniega el cierre**. Hay además una divergencia que el `qa-tester` está
+reconciliando ahora: el campo dice `contrato` y el log de la vuelta 2 dice `instrumento` que no bloquea
+(`docs/qa/1.34.0.md:2002`). **No firmes esta entrada hasta que QA entregue su recomendación**; la
+preparo para que la tengas escrita, no para que decidas a ciegas.
+
+### D2 · Los 20 hallazgos bloqueantes de siete REQ — resolver, declarar residual o aceptar
+
+Tu regla del 2026-09-08 dice que **cualquiera devuelve el tag a ti**. Inventario medido el 2026-09-09:
+
+| REQ | Ventana | Bloqueantes | Nota |
+|---|---|---|---|
+| `REQ-020` | 1.34.0 | **8** — `SEC-038`…`SEC-045` | el bulto |
+| `REQ-007` | 1.31.0 | 3 — `QA-114`, `QA-116`, `QA-117` | deuda de ventana ya publicada |
+| `REQ-026` | 1.34.0 | 3 — `SEC-067`, `SEC-072`, `SEC-073` | ver **D3** |
+| `REQ-013` | 1.32.0 | 2 — `SEC-014`, `SEC-020` | deuda de ventana ya publicada |
+| `REQ-021` | 1.34.0 | 2 — `QA-021-10`, `QA-021-11` | **3 vueltas agotadas, salida sin decidir** |
+| `REQ-019` | 1.35.0 | 1 — `SEC-033` | aplazado; su salida tampoco está decidida |
+| `REQ-023` | 1.34.0 | 1 — `QA-023-05` | ver **D1** |
+
+Casi la mitad es **deuda de 1.31.0 y 1.32.0**, no trabajo de esta ventana. Esto no es trabajo
+pendiente: es una decisión. Por cada uno hace falta **resolver**, **declarar residual** (dueño,
+forzador medido y vencimiento) o **aceptar explícitamente**.
+
+### D3 · `SEC-072` y `SEC-073` de `REQ-026` — **no se cierran por redacción ni por aceptación implícita**
+
+Los dos son `contrato` y el informe de seguridad (`R-022`) los describe como «de redacción/legibilidad,
+**no de código**». Esa descripción hace tentador cerrarlos reescribiendo un párrafo, y **por
+instrucción expresa del propietario (2026-09-09) eso no se hace**: no se cierran por redacción ni por
+aceptación implícita. Quedan a la espera de **tu firma** sobre qué son y qué se hace con ellos.
+`SEC-067` (`usuario/dinero`) está `en-mitigación` con el código acreditado y **le falta el
+write-back**; ése sí es trabajo, no decisión, y no lo mezclo aquí.
+
+### D4 · Ventana **propuesta** 1.35.0 para la superlinealidad heredada
+
+El write-back de `CA-09 (iii)` retiró del alcance de `REQ-023` la superlinealidad del camino
+**heredado** de `arnes_norm_clave`/`arnes_campo_linea` —medida: la base `v1.33.0` paga mediana **2,492**
+y **2,446** contra **2,295** y **2,237** de la candidata, así que **la guarda diluye el cociente en vez
+de empeorarlo**— y le dio casa propia en «Fuera de alcance» como `instrumento`, con dueños y forzador.
+El analista **propone** 1.35.0 y **no la fija**: las ventanas las decides tú. El arreglo está
+**descrito y no aplicado** en `docs/qa/1.34.0-req023-vuelta3-metodo.md` §11.6, y es alcance nuevo sobre
+código que `REQ-023` no introdujo.
+
 ## Resueltas
 
 ### APLAZADA CON SU REQ (propietario, 2026-09-09) — `REQ-019 CA-07`: el techo viaja a 1.35.0 con su evidencia

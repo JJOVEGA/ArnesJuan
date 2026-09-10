@@ -1,28 +1,28 @@
-# Sección 39 (2 de 4) del banco — 39-caracter-invisible-2-la-clase-y-el-corpus
+# Sección 39 (2 de 5) del banco — 39-caracter-invisible-2-la-clase
 # Se ejecuta con `source` desde el corredor (`../run.sh`), en su propio subshell y con los
 # ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de ninguna otra
 # sección (invariantes 3 y 4 del README del banco).
 #
-# REQ-023 · SEC-047 (mitad 1). LA CLASE Y EL CORPUS: `CA-03` (la clase se cierra por
-# CONSTRUCCIÓN, no por lista: tres familias declaradas MÁS un SORTEO ESTRATIFICADO en dos
-# estratos derivados de la constante de claves, tres procedimientos, veredicto POR RAMA y las
-# tiradas de cada rama publicadas junto a la semilla) y `CA-04` (no se estrecha NINGUNA
-# tolerancia: el corpus decide campo a campo y decisión a decisión lo mismo que la heredada,
-# medidas las dos en la misma corrida). `CA-05` se mudó a la parte 1 en 1.34.0.
+# REQ-023 · SEC-047 (mitad 1). LA CLASE: `CA-03` (la clase se cierra por CONSTRUCCIÓN, no por
+# lista: tres familias declaradas MÁS un SORTEO ESTRATIFICADO en dos estratos derivados de la
+# constante de claves, tres procedimientos, veredicto POR RAMA y las tiradas de cada rama
+# publicadas junto a la semilla). `CA-05` se mudó a la parte 1 y `CA-04` —el corpus— a la parte
+# 5, las dos en 1.34.0 y las dos por el techo de `REQ-014 CA-18`: el sorteo estratificado dejó
+# este archivo en 402 líneas contra las 400 de su techo.
 #
 # ESTE ARCHIVO ESTÁ ESCRITO PARA QUE UNA IMPLEMENTACIÓN POR LISTA DE PROHIBIDOS LO INCUMPLA
 # —ensanchar la lista sería la SEXTA derrota medida de esa vía aquí (`ADR-002`, SEC-020,
 # SEC-024, SEC-025, H-01)— Y PARA QUE UN SORTEO QUE NO PUEDE FALLAR LO INCUMPLA TAMBIÉN: el
 # pool tecleado que tuvo hasta 1.34.0 daba verde por construcción (`QA-023-02`).
 #
-# PARTE 2 DE 4 POR REQ-014 CA-18. El materializador de la línea base viene DUPLICADO de la
-# parte 3 y de las cinco partes de la 37 a propósito: cada sección corre en su propio subshell,
-# ninguna hace `source` de otra, y en `secciones/` no cabe un archivo auxiliar. Su motivo largo
-# y las cuatro propiedades de `REQ-021 CA-05` que porta están escritos UNA vez, en
+# PARTE 2 DE 5 POR REQ-014 CA-18. El materializador de la línea base viene DUPLICADO de las
+# partes 3, 4 y 5 y de las cinco partes de la 37 a propósito: cada sección corre en su propio
+# subshell, ninguna hace `source` de otra, y en `secciones/` no cabe un archivo auxiliar. Su
+# motivo largo y las cuatro propiedades de `REQ-021 CA-05` que porta están escritos UNA vez, en
 # `37-coste-del-escaner-1-el-dominio.sh`, y no se transcriben aquí. Residual `AN-021-01`.
-CASOS_ESPERADOS_SECCION=10
-PISO_AUTONOMO_SECCION=294  # 25 preámbulo (líneas 1-25) + 76 maquinaria compartida duplicada (mat93 y la línea base, líneas 27-102) + 193 bloque indivisible mayor (CA-03 entero: la derivación de los dos estratos y de las claves desde la constante, el sorteo del universo, los tres procedimientos, las tres cabeceras, las familias y las tiradas con su veredicto por rama, líneas 103-295) · REQ-014 CA-18
-seccion_nueva "--- 39/2 · el carácter invisible: la clase y el corpus (REQ-023 CA-03 y CA-04) ---"
+CASOS_ESPERADOS_SECCION=7
+PISO_AUTONOMO_SECCION=294  # 25 preámbulo (líneas 1-25) + 76 maquinaria compartida duplicada (mat92 y la línea base, líneas 27-102) + 193 bloque indivisible mayor (CA-03 entero: la derivación de los dos estratos y de las claves desde la constante, el sorteo del universo, los tres procedimientos, las tres cabeceras, las familias y las tiradas con su veredicto por rama, líneas 103-295) · REQ-014 CA-18
+seccion_nueva "--- 39/2 · el carácter invisible: la clase (REQ-023 CA-03) ---"
 
 REPO92="${SEC_DIR%/}/../../../.."   # sin `cd`+`pwd`: `git -C` acepta la ruta con `..`
 MAT92_RUTAS='hooks tools'
@@ -285,7 +285,7 @@ for _r93 in 1 2; do
   else n93="$R2_93"; m93="$MAL2_93"; d93="rama 2: el BLANCO duplicado (P3) o insertado (E2) DENIEGA"; fi
   if [ -n "$FILTRO" ] && ! printf '%s' "REQ-023 CA-03 $d93" | grep -qi -- "$FILTRO"; then continue; fi
   if [ "$n93" -lt 1 ]; then
-    echo "  SKIP  REQ-023 CA-03 $d93  esa rama se quedó sin ninguna tirada que abriera en la heredada (semilla $SEM93, descartadas $NOBASE_93$([ "$HER92_OK" = si ] || echo ", sin línea base v1.33.0: $REGHER92"))"; SKIP=$((SKIP+1))
+    echo "  SKIP  REQ-023 CA-03 $d93  esa rama se quedó sin ninguna tirada que abriera en la heredada (semilla $SEM93, descartadas $NOBASE_93$([ "$HER92_OK" = si ] || echo ", sin línea base v1.33.0: $REGHER92"))"
   elif [ -z "$m93" ]; then
     echo "  PASS  REQ-023 CA-03 $d93 — las $n93 tiradas de la rama (semilla $SEM93)"; PASS=$((PASS+1))
   else
@@ -295,108 +295,8 @@ done
 
 # CA-05 (veredicto y motivo invariantes al locale) VIVE EN LA PARTE 1 desde 1.34.0: el sorteo
 # estratificado de CA-03 dejó esta sección en el techo de `REQ-014 CA-18`.
-# ---------- CA-04 · Y NO SE ESTRECHA NINGUNA TOLERANCIA ----------
-# Las dos versiones juzgan el MISMO corpus en la MISMA corrida, y tiene que salir lo mismo
-# CAMPO A CAMPO y DECISIÓN A DECISIÓN. El corpus se descubre por GLOB en el directorio de
-# secciones del corredor —sitio único de ese corpus— más las cabeceras de los REQ del árbol.
-EVA93="$RAIZ/eva93-$BASHPID.sh"
-cat > "$EVA93" <<'EVA'
-#!/usr/bin/env bash
-# <lib> — lo que el lector resuelve por línea; con `-doc`, la DECISIÓN entera sobre un
-# documento. Un proceso por árbol: los dos definen las MISMAS funciones y se pisarían.
-set -uo pipefail
-. "$1" >/dev/null 2>&1 || exit 3
-if [ "${2:-}" = -doc ]; then
-  t=''; IFS= read -r -d '' t < "$3" || true
-  arnes_campos_req "$t" ''
-  printf 'qa=%s|seg=%s|sens=%s|hall=%s|rigor=%s|cita=%s|cr=%s|dudosa=%s\n' \
-    "$ARNES_QA" "$ARNES_SEG" "$ARNES_SENS" "$ARNES_HALL" "$ARNES_RIGOR" \
-    "$ARNES_CITA_ABIERTA" "$ARNES_CR_INTERIOR" "${ARNES_SENS_DUDOSA:-}"
-  arnes_estado_cabecera "$t"
-  printf 'estado=%s|citado=%s|cita=%s|cr=%s\n' "$ARNES_ESTADO" "$ARNES_ESTADO_CITADO" "$ARNES_ESTADO_CITA" "$ARNES_ESTADO_CR"
-  exit 0
-fi
-ARNES_CITA=0; ARNES_CR=0
-nk=0; nv=0; nd=0; n=0
-while IFS= read -r l; do
-  if arnes_campo_linea "$l"; then
-    printf 'CAMPO\t%s\t%s\t%s\n' "$ARNES_CLAVE" "$ARNES_VALOR" "$ARNES_CLAVE_DECORADA"
-    n=$((n+1))
-    case "$ARNES_CLAVE" in *[!$'\x20'-$'\x7e']*) nk=$((nk+1)) ;; esac
-    case "$ARNES_VALOR" in *[!$'\x20'-$'\x7e']*) nv=$((nv+1)) ;; esac
-    [ "$ARNES_CLAVE_DECORADA" = 1 ] && nd=$((nd+1))
-  else
-    printf 'NADA\t-\t-\t-\n'
-  fi
-done
-printf 'RESUMEN\t%s\t%s\t%s\t%s\n' "$n" "$nk" "$nv" "$nd" >&2
-EVA
-chmod +x "$EVA93"
-# El corpus: por GLOB en secciones/ (sitio único) MÁS los REQ del árbol (`$REPO92`, de arriba).
-COR93="$RAIZ/cor93-$BASHPID.txt"
-: > "$COR93"
-cat "$SEC_DIR"/[0-9][0-9]-*.sh >> "$COR93" 2>/dev/null || :
-cat "$REPO92"/requirements/*.md   >> "$COR93" 2>/dev/null || :
-
-# LOS TRES SUELOS DE ANTI-VACUIDAD DE CA-04, MEDIDOS y no afirmados: sin una clave no ASCII, un
-# valor no ASCII y una clave decorada, la equivalencia es cierta por vacío. Si faltara alguno,
-# la vía conforme es APORTAR el fixture en esta sección —que el glob recoge—, nunca rebajar el
-# suelo. Medido el 2026-09-09: 135 / 264 / 827 sólo con las secciones, así que no hizo falta.
-RES93=''; N93=0; NK93=0; NV93=0; ND93=0
-SAL93="$RAIZ/sal93-$BASHPID.txt"; ERR93="$RAIZ/err93-$BASHPID.txt"
-bash "$EVA93" "$HOOKS_DIR/lib.sh" < "$COR93" > "$SAL93" 2>"$ERR93" || :
-RES93="$(awk -F'\t' '$1 == "RESUMEN" { print $2, $3, $4, $5 }' "$ERR93")"
-read -r N93 NK93 NV93 ND93 <<< "${RES93:-0 0 0 0}"
-if [ -z "$FILTRO" ] || printf '%s' "REQ-023 CA-04 anti-vacuidad" | grep -qi -- "$FILTRO"; then
-  if [ "${N93:-0}" -ge 1 ] && [ "${NK93:-0}" -ge 1 ] && [ "${NV93:-0}" -ge 1 ] && [ "${ND93:-0}" -ge 1 ]; then
-    echo "  PASS  REQ-023 CA-04 anti-vacuidad: el corpus trae $N93 líneas con campo, $NK93 con clave no ASCII, $NV93 con valor no ASCII y $ND93 con clave decorada"; PASS=$((PASS+1))
-  else
-    echo "  FAIL  REQ-023 CA-04 anti-vacuidad: el corpus no llega a los tres suelos (campo=$N93 clave-no-ascii=$NK93 valor-no-ascii=$NV93 decorada=$ND93): la equivalencia sería cierta por vacío. Aporta el fixture que falte EN ESTA SECCIÓN; no se rebaja el suelo"; FAIL=$((FAIL+1))
-  fi
-fi
-
-# (1) CAMPO A CAMPO, las dos versiones sobre el mismo corpus y en la misma corrida.
-if [ -z "$FILTRO" ] || printf '%s' "REQ-023 CA-04 campo a campo" | grep -qi -- "$FILTRO"; then
-  if [ "$HER92_OK" != si ]; then
-    echo "  SKIP  REQ-023 CA-04 campo a campo: el corpus decide idéntico que la versión heredada  no hay línea base v1.33.0 ($REGHER92)"; SKIP=$((SKIP+1))
-  elif [ "${N93:-0}" -lt 1 ]; then
-    echo "  SKIP  REQ-023 CA-04 campo a campo: el corpus decide idéntico que la versión heredada  el corpus cosechó 0 líneas con campo"; SKIP=$((SKIP+1))
-  else
-    HSAL93="$RAIZ/hsal93-$BASHPID.txt"
-    bash "$EVA93" "$HER92/hooks/lib.sh" < "$COR93" > "$HSAL93" 2>/dev/null || :
-    DIF93="$(cmp -s "$SAL93" "$HSAL93" && echo 0 || echo 1)"
-    if [ "$DIF93" = 0 ]; then
-      echo "  PASS  REQ-023 CA-04 campo a campo: las dos versiones resuelven IGUAL las $N93 líneas con campo del corpus (clave, valor y decorada)"; PASS=$((PASS+1))
-    else
-      echo "  FAIL  REQ-023 CA-04 campo a campo: la guarda cambió lo que el lector resuelve — $(diff "$HSAL93" "$SAL93" 2>/dev/null | grep -c '^[<>]') líneas de diferencia. La guarda tiene que ser OBSERVACIONAL"; FAIL=$((FAIL+1))
-    fi
-  fi
-fi
-
-# (2) DECISIÓN A DECISIÓN sobre cada REQ del árbol: los cinco campos, el estado y su cita, el
-# rango abierto, el CR interior, la sensibilidad y el rigor efectivos. Es lo que caza un
-# despacho «unificado de paso»: `Estado` toma la PRIMERA aparición y los demás la ÚLTIMA.
-if [ -z "$FILTRO" ] || printf '%s' "REQ-023 CA-04 decisión a decisión" | grep -qi -- "$FILTRO"; then
-  if [ "$HER92_OK" != si ]; then
-    echo "  SKIP  REQ-023 CA-04 decisión a decisión sobre los REQ del árbol  no hay línea base v1.33.0 ($REGHER92)"; SKIP=$((SKIP+1))
-  else
-    ndoc93=0; mal93=0; primero93=''
-    for f93 in "$REPO92"/requirements/*.md; do
-      [ -f "$f93" ] || continue
-      case "${f93##*/}" in README.md) continue ;; esac
-      ndoc93=$((ndoc93 + 1))
-      x93="$(bash "$EVA93" "$HOOKS_DIR/lib.sh"      -doc "$f93" 2>/dev/null)"
-      y93="$(bash "$EVA93" "$HER92/hooks/lib.sh" -doc "$f93" 2>/dev/null)"
-      if [ "$x93" != "$y93" ]; then mal93=$((mal93 + 1)); [ -n "$primero93" ] || primero93="${f93##*/}"; fi
-    done
-    if [ "$ndoc93" -lt 1 ]; then
-      echo "  SKIP  REQ-023 CA-04 decisión a decisión sobre los REQ del árbol  no se encontró ningún REQ que juzgar"; SKIP=$((SKIP+1))
-    elif [ "$mal93" -eq 0 ]; then
-      echo "  PASS  REQ-023 CA-04 decisión a decisión: los $ndoc93 REQ del árbol deciden IGUAL en las dos versiones"; PASS=$((PASS+1))
-    else
-      echo "  FAIL  REQ-023 CA-04 decisión a decisión: $mal93 de $ndoc93 REQ deciden distinto (el primero, $primero93)"; FAIL=$((FAIL+1))
-    fi
-  fi
-fi
+# CA-04 (el corpus: la equivalencia campo a campo y decisión a decisión contra la heredada)
+# VIVE EN LA PARTE 5 desde 1.34.0, por el mismo techo: con la clase y el corpus juntos este
+# archivo quedó en 402 líneas contra 400.
 
 rm -rf "$HER92"

@@ -2,6 +2,431 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · El índice cuadrado, la ventana de REQ-019 al día y cuatro decisiones escritas donde la máquina las ve
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+Tres trabajos de coordinación, ninguno de código, todos por instrucción expresa del propietario.
+
+**1. El índice de `requirements/README.md` estaba desfasado en SIETE filas** y ahora las 27 coinciden
+con su cabecera, comprobado fila a fila. Lo grave no era el número: `REQ-012`, `REQ-014`, `REQ-017` y
+`REQ-027` figuraban como **pendientes** estando **`completado`**, `REQ-026` como pendiente con QA ya
+aprobado, `REQ-019` como pendiente estando **`bloqueado`** y `REQ-023` como pendiente. Es justo la
+referencia que `AGENTS.md` §14.B.3 existe para que nadie reconstruya el estado de una conversación
+larga, y decía lo contrario de la verdad en una cuarta parte de sus filas.
+
+**2. La ventana de `REQ-019` deja de mentir.** Su cabecera declaraba `Versión destino: 1.34.0`
+(«primer trabajo de la ventana») cuando el propietario lo **aplazó a 1.35.0** el 2026-09-09 y
+`docs/PLAN.md` lo recoge **literal**. Y la cabecera es lo que **lee la máquina**: `arnes-lectura.sh` y
+el bloque derivado lo contaban dentro de la ventana en curso. Corregidos el campo —con la cita del
+aplazamiento dentro— y la fila del índice, con su fila de Historial. **No** se reabre el aplazamiento,
+**no** se toca `Estado: bloqueado` ni `SEC-033` (`contrato`, abierto), y el texto que explicaba el
+movimiento a 1.34.0 **no se borra**: queda marcado como historia, no como ventana vigente.
+
+**3. Cuatro decisiones del propietario escritas en `PENDING_APPROVAL.md`**, y con ellas la cola pasa de
+**0 a 4**, así que **`guard-completado` deniega ahora el cierre de cualquier REQ**. Es el mecanismo
+funcionando, no un efecto colateral: las cuatro decisiones **bloquean de verdad**. Son **D1** el cierre
+de `REQ-023` con residual declarado o `bloqueado` —agotadas las tres vueltas, y marcada como *no
+firmar hasta que QA entregue*—; **D2** los **20 hallazgos bloqueantes** de siete REQ, casi la mitad
+deuda de 1.31.0 y 1.32.0; **D3** `SEC-072` y `SEC-073`, que **no se cierran por redacción ni por
+aceptación implícita** por instrucción expresa del propietario, precisamente porque el informe los
+describe como «de redacción, no de código» y eso los hace tentadores de cerrar reescribiendo un
+párrafo; y **D4** la ventana **propuesta** 1.35.0 para la superlinealidad heredada, que el analista
+propone y no fija.
+
+## [Interno] — 2026-09-09 · Write-back de `QA-023-05`: `CA-09 (iii)` deja de contratar el nivel absoluto del escáner y contrata el DELTA que REQ-023 introduce
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos (write-back; sin código, sin pruebas, sin firmar veredictos).
+
+Cierra la **mitad de analista** de `QA-023-05` (`contrato`), el único hallazgo que bloqueaba el
+cierre de **REQ-023**. La medición de la entrada anterior desmintió la premisa que el propio REQ
+tenía escrita: `CA-09 (iii)` contrataba un **techo absoluto** (cociente de duplicación ≤ 2,2) que la
+**línea base heredada `v1.33.0` ya pagaba** —medianas **2,492** y **2,446**—, de modo que **ningún
+código que este REQ pueda escribir lo satisfacía**. Un criterio incumplible por construcción no
+acredita ni desacredita nada.
+
+**Qué cambia en el criterio.** La magnitud pasa a ser la **relación emparejada** entre el cociente de
+la candidata y el de la base, **dentro de cada toma** de una **única tanda** y con las dos versiones
+**intercaladas al nivel de `n`**: **no más de 1,00×** (**operativo**, hacia abajo). Gana un **cuarto
+parámetro** obligatorio —la **línea base**, el tag—; los **cocientes absolutos** quedan como
+**control publicado y no acreditativo**; y la dispersión que decide la afirmabilidad es la de la
+**serie emparejada**, no la de cada cociente. Factibilidad con sus dos mitades: **conforme y medida
+en relación** (medianas **0,856** y **0,906**, **9 de 10** pares) pero **no afirmable** todavía
+(dispersión 0,515 y 0,382 frente a márgenes 0,144 y 0,094), así que **SKIP con los cuatro
+parámetros, nunca PASS**, con la vía conforme escrita **antes** de medir: más tomas, `k` mayor o par
+mayor — **nunca** cambiar la forma ni subir el techo.
+
+**El 1,00× no sale de esas cifras, y la falsación lo prueba:** es la propiedad estructural «la guarda
+no empeora el orden de crecimiento del camino en el que se inserta», escrita como razón contra una
+línea base de la misma corrida. Con medianas de 1,05 el techo seguiría siendo 1,00 y habría
+**hallazgo contra el código**. Tampoco se declara conforme el 2,295 de la candidata: se declara **no
+contratado por este REQ**.
+
+**El precio, dicho y no escondido:** (iii) **deja de ser auto-anclado** y hereda la ruta de
+materialización del tag que `CA-08` ya declara (**SEC-048**, citado, no arreglado); si la base no se
+materializa, **SKIP**. Y la **superlinealidad heredada no desaparece**: entra en «Fuera de alcance»
+con clase `instrumento` declarada allí —ningún `SEC` la abrió—, dueños `desarrollador` (el arreglo
+descrito y **no aplicado** en §11.6 del método) y `analista-requerimientos` (el criterio), forzador
+propio y **ventana propuesta 1.35.0 que decide el propietario**.
+
+Refrescadas las tres citas que el cambio dejaba falsas: la premisa de la cota algebraica de **(ii)**
+—ahora apoyada en la medición `r` = 1,206× a n=1000 y 1,108× a n=2000, con el techo de (ii)
+**intacto**—, la frase de `CA-03` que daba la cata como acreditación de (iii), y la fila de
+`SEC-048`. **Sin ADR:** no cambia el alcance, la decisión base, el rigor ni los techos de (i) y (ii);
+corrige **qué magnitud** mide un número declarado **operativo**, que es cambio menor (`AGENTS.md`
+§9). **No** se firmó `QA:` ni `Seguridad:`, **no** se movió `Estado:` y **no** se tocó el valor de
+`Hallazgos abiertos:` —`QA-023-05 (contrato)` sigue ahí—: bajar la clase del hallazgo que bloquea el
+propio documento sería firmar por otro, y la retirada la enruta `qa-tester`, como con `SEC-052`.
+Archivos: `requirements/REQ-023.md`, `CHANGELOG.md`.
+
+## [Interno] — 2026-09-09 · La base heredada `v1.33.0` paga el cociente de `CA-09 (iii)`: `QA-023-05` es un hallazgo contra el CRITERIO, no contra el código
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (una sola medición, sin arreglo).
+
+Comisión de **una sola medición**, la que quedó a medio hacer al parar la anterior. Se midió el
+cociente de duplicación de la **`v1.33.0` heredada** sobre la **misma forma «clave»**, con el
+**mismo par** (1000→2000), el **mismo `k`** (200) y los **mismos dos sujetos**, **en la misma tanda**
+que la candidata y con base/candidata **intercaladas al nivel de `n`** (así una deriva de carga cae
+sobre las dos por igual, `REQ-007 CA-59`). 5 tomas, 40 invocaciones de la sonda, 118 s.
+
+| sujeto | versión | tomas | mediana | dispersión | margen al techo 2,2 |
+|---|---|---|---|---|---|
+| `arnes_norm_clave` | **base `v1.33.0`** | 5,815 · 2,979 · 2,392 · 2,474 · 2,492 | **2,492** | 3,423 | 0,292 |
+| `arnes_norm_clave` | candidata | 2,532 · 2,257 · 2,048 · 2,295 · 2,367 | **2,295** | 0,484 | 0,095 |
+| `arnes_campo_linea` | **base `v1.33.0`** | 2,528 · 2,135 · 2,587 · 2,446 · 2,318 | **2,446** | 0,452 | 0,246 |
+| `arnes_campo_linea` | candidata | 2,291 · 2,586 · 2,145 · 2,237 · 2,022 | **2,237** | 0,564 | 0,037 |
+
+**La base heredada paga tanto o MÁS que la candidata.** Lo robusto en un cociente no es cada cifra
+suelta sino la **relación emparejada dentro de la misma toma**: mediana **0,856** en
+`arnes_norm_clave` y **0,906** en `arnes_campo_linea`, con la candidata por **debajo** de la base en
+**9 de los 10 pares** y en las cinco tomas de `arnes_norm_clave` sin excepción. El mecanismo: la
+guarda añade ~20 % de coste absoluto a 1000 bytes y ~10 % a 2000, así que su peso relativo **baja**
+al alargar la línea y **diluye** el cociente en vez de empeorarlo.
+
+**Consecuencia, y es quién resuelve el hallazgo:** `CA-09 (iii)` tal como está redactado **no mide
+lo que REQ-023 añade** — mide una superlinealidad que `arnes_norm_clave` ya tenía en `v1.33.0`. Un
+criterio de aceptación de este REQ que la línea heredada **también** incumple no puede acreditar ni
+desacreditar la guarda. **`QA-023-05` es un hallazgo contra el CRITERIO y su dueño es el
+`analista-requerimientos`**; no sube al propietario por agotamiento de vueltas, porque **no hay nada
+que arreglar en `hooks/`**.
+
+**La mitad que NO se afirma.** Las cuatro series tienen **dispersión ≥ margen**, así que por la regla
+del propio caso **ninguna es afirmable** hoy: no se afirma que el techo se supere, ni el de la base
+ni el de la candidata. Esta medición resuelve **de quién es el número**, no dónde debe estar el techo
+— eso es del analista. Y la máquina daba reloj alto (`DEV v3: heredoc CITADO de ~300 KB` en 4835 ms
+contra techo 4000, veredicto `allow` correcto): la `t1` de la base (5,815) es una ráfaga sobre el
+término largo, se **publica y no se descarta**, y retirando de cada serie su toma más alta **ninguna
+mediana se mueve**.
+
+**Nada se arregló y nada se firmó**: no se tocó `hooks/`, no se subió el techo, no se cambió la forma
+ni `k` ni el par, no se firmó `QA:` ni `Seguridad:`, el `Estado:` sigue `en-progreso` y no se retiró
+ningún hallazgo. Un arreglo posible se **describe con su coste y no se aplica** (§11.6): tocaría el
+camino **heredado** de `arnes_norm_clave`, que es alcance nuevo sobre código que este REQ no
+introdujo. Evidencia, método re-derivable y limitaciones en
+`docs/qa/1.34.0-req023-vuelta3-metodo.md` **§11**. Quality gates en verde; el banco **no** se
+re-corre porque esta comisión no toca ningún caso ni `hooks/`.
+
+## [Interno] — 2026-09-09 · Parada limpia por cambio de red, con `CA-09 (iii)` abstenido por primera vez y una pista que reorienta el hallazgo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (parada y verificación) sobre trabajo parcial del `desarrollador`.
+
+Se detuvo **a propósito** la comisión del `desarrollador` sobre la mitad de código de `QA-023-05`,
+antes de que el cambio de red cortara la sesión a media escritura y dejara el caso a medio editar.
+**El árbol quedó consistente, no a medias**, y está verificado después de la parada: `bash -n` sobre
+las 57 secciones más `run.sh`, `hooks/*.sh` y `tools/*.sh` compila todo; las tres quality gates en
+verde; cero worktrees huérfanos; autoprueba **106 PASS · 0 FAIL**; banco **960 PASS · 0 FAIL · 6 SKIP**
+con el total cuadrando en **966**.
+
+**Los dos SKIP nuevos (4 → 6) no son una regresión: son la cláusula del margen ejecutándose por primera
+vez.** El caso de `CA-09 (iii)` ya mide la **forma contratada** por el write-back del analista —crece el
+segmento de **clave** desde una clave que el lector reconoce— y **abstiene en vez de pasar**, publicando
+las tomas y la dispersión, que es exactamente lo que el criterio ordena:
+
+| sujeto | tomas | mediana | dispersión | margen al techo 2,2 |
+|---|---|---|---|---|
+| `arnes_norm_clave` | 2,943 · 2,136 · 2,277 | **2,277** | 0,807 | 0,077 |
+| `arnes_campo_linea` | 2,563 · 2,318 · 2,211 | **2,318** | 0,352 | 0,118 |
+
+Las dos medianas quedan **por encima** del techo, pero la dispersión es mayor que el margen, así que el
+criterio **prohíbe afirmarlo** y abstiene: ni pasa en falso ni suspende por ruido. `(iii)` queda **sin
+acreditar**, y eso es lo que hay que resolver, no ocultar.
+
+**La pista que vale más que las cifras**, dejada por el agente en su última línea antes de la parada:
+«*la candidata apenas mueve el número, así que el coste puede no estar en la guarda*». Si la `v1.33.0`
+heredada paga el **mismo** cociente sobre la **misma** forma, entonces `CA-09 (iii)` **no mide lo que
+este REQ añade** y el hallazgo es contra el **criterio**, no contra el código — lo que cambia por
+completo quién lo resuelve. Medir la base heredada sobre la forma «clave» es el siguiente paso concreto,
+y era justo lo que el agente iba a hacer. Sin ese número, la decisión de §6 se tomaría a ciegas.
+
+Queda anotado en `docs/ESTADO.md` que el índice de `requirements/README.md` está desfasado en **siete
+filas** y por qué no se corrigió en caliente: el corpus del banco hace `cat requirements/*.md`, así que
+editarlo mientras un agente mide **mueve sus cifras**.
+
+## [Interno] — 2026-09-09 · REQ-023 write-back de la vuelta 3: el motivo del homóglifo que se desmentía, el parámetro que decidía el veredicto de `CA-09 (iii)`, y la capitalización decidida
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos.
+
+Write-back de los tres hallazgos con dueño en el analista, sobre `requirements/REQ-023.md` (más una
+anotación en `requirements/REQ-024.md`). **Sin código y sin pruebas**; el `Estado:` sigue
+`en-progreso` y no se firma ningún veredicto. **No se comitea y no se empuja.**
+
+**`QA-023-07` (`contrato`, el único que bloqueaba) — trasladado el motivo ya corregido.** El apartado
+«Fuera de alcance» seguía sosteniendo el homóglifo sobre una premisa que `CA-03` declara **medida
+falsa** veinte pantallas antes: «la clave resultante no contiene nada ajeno al alfabeto —es *otra*
+clave—». Las dos cláusulas son falsas y QA lo remidió ejecutando el lector sobre `Еstado` (`Е` =
+U+0415): la clave **sí** contiene algo ajeno, la guarda lo **ve** y lo retira, y lo que queda
+(`stado`) **no es** ninguna clave. El motivo pasa a ser el que ya estaba escrito —**retirar lo ajeno
+no repone lo sustituido**— con el reparto blanco/letra intacto. **La decisión de fondo no cambia:**
+este REQ no cierra la clase del homóglifo, y las superficies que `CA-12 (iii)` cuenta siguen siendo
+**tres**.
+
+**`QA-023-05` — `CA-09 (iii)` gana el tercer parámetro del cociente, y el hallazgo sube a
+`contrato`.** Con el mismo par (1000→2000), el mismo `k` y el mismo sujeto, tres formas de línea
+**todas conformes** con la redacción anterior reparten sus cocientes a los dos lados del techo
+(título 2,042 · valor 1,727 · clave real 2,235–2,284, cinco tomas), y la sesión de QA del mismo día
+ordena las dos formas de clave **al revés**: el parámetro ausente **decidía el veredicto**. El techo
+de **2,2 no se toca** y la forma no se elige por su resultado: el criterio fija ahora **qué forma
+mide** (crece el segmento de **clave** partiendo de una clave que el lector reconoce; el **valor** es
+control y la **línea de título** queda fuera), obliga a **publicarla** con el par y `k`, declara que
+dos cocientes de formas distintas **no son comparables**, y sólo permite **afirmar** el techo con
+margen mayor que la reproducibilidad demostrada en la misma corrida —si no, **SKIP, nunca PASS**—.
+Consecuencia declarada: la factibilidad de (iii) se **re-deriva** y hoy **no hay solución conforme
+medida** sobre la forma contratada. La clase sube porque la doctrina no deja margen (un criterio mal
+formado se reporta como `contrato` contra el REQ), así que **bloquea el cierre**; su otra mitad es del
+`desarrollador` y no la retira el analista.
+
+**`QA-023-09` — decidido, no arreglado.** La clave con otra capitalización (`sensible a seguridad:
+sí`) se resuelve como **ausencia** y abre, igual en las dos versiones. Entra en la superficie de
+**REQ-024** como **instancia** de su `CA-01` —no como criterio nuevo—, porque cerrada la dirección de
+la ausencia la vía se cierra por construcción, sin tablas de capitalizaciones. Anotado allí con su
+cita; retirado del campo de REQ-023.
+
+`Hallazgos abiertos:` de REQ-023 queda en `QA-023-04 (instrumento), QA-023-05 (contrato),
+QA-023-06 (instrumento), QA-023-08 (instrumento)`: se retiran los dos que cierro (07 y 09) y **no** se
+retiran los tres que cerró el `desarrollador`, porque el analista no firma por otro.
+
+## [Interno] — 2026-09-09 · REQ-023 vuelta 3 de 3: los cuatro hallazgos `instrumento`, y la cláusula anti-tautología de `CA-03` ejecutándose por primera vez
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador.
+
+`REQ-023`, **vuelta 3 de 3** (la última), sobre el **árbol de trabajo** (`5305de9` + la partición de
+la sección 39 sin comitear). **Ninguno de los cuatro arreglos toca `hooks/`**: los cuatro son del
+instrumento que mide al arnés, y ninguno bloquea el cierre. **No se comitea y no se empuja**: `gh`
+no está autenticado y la fusión es un gate humano.
+
+**`QA-023-06` — la abstención mataba la sección, y con ella un criterio de aceptación.** Retirados
+**13** de los **15** `SKIP=$((SKIP+1))` del banco (el informe de QA decía 14; el recuento propio da
+15). El corredor define `PASS` y `FAIL` antes del despacho pero **no `SKIP`** (`run.sh:23`) y las
+secciones corren bajo `set -u`, así que cada rama de abstención mataba su sección en la **primera**
+que emitía. Se **retiran** en vez de definir la variable, y no es estilo: el recuento sale **del
+texto** (`run.sh:1218`) y los ayudantes del propio corredor ya lo hacen así (`:783`, `:808`) —
+definirla dejaría vivo un segundo número que nadie lee. Medido con copias en
+`ARNES_SECCIONES_DIR` y la línea base apuntada a un tag inexistente para forzar la abstención:
+**fail-before** 4 muertes, 4 `ABORT:` y `Resultado: 21 PASS, 0 FAIL` **con 29 PASS y 6 FAIL en
+pantalla**; **pass-after** 0 muertes y **7 SKIP** donde había 4. Entre los tres nuevos está la
+**cláusula anti-tautología que `CA-03` eleva a criterio de aceptación** —«aborta con SKIP y su
+motivo, nunca PASS, si alguna de las dos ramas que exigen DENY se queda sin ninguna tirada»—, que
+**nunca se había ejecutado** porque la rama 1 abstenía primero y la sección moría antes de llegar a
+la 2.
+
+**`QA-023-08` — el único criterio que vigila la sobre-denegación no podía fallar en su eje.** El
+evaluador de `CA-04` publica ahora la guarda en las **dos** mitades, y con la variable que le toca a
+cada una: `ARNES_CLAVE_OCULTA` por línea y `ARNES_OCULTA` por documento —**en los dos** recorridos de
+cabecera, porque cada uno la reinicia—. Las columnas observacionales se siguen comparando estrictas
+(CA-06) y la de la guarda se **cuenta y se publica**, con un **cuarto suelo** de anti-vacuidad: al
+menos **una** línea del corpus donde la guarda dispare, o el «0 divergencias» es cierto por vacío.
+Par discriminante contra una **sobre-denegación sintética** (retirado el atajo de `lib.sh:1840` en
+una copia): el evaluador ciego da **3 PASS · 0 FAIL** y el arreglado **2 PASS · 1 FAIL** nombrando el
+primer REQ divergente. Sobre los hooks reales: 32 líneas del corpus donde la guarda dispara, **0**
+divergencias sobre los 27 REQ del árbol.
+
+**`QA-023-04` — la derivación de claves que se estrechó de 6 a 5 y perdió justo `Estado`.**
+`36-…-2-los-lectores.sh` deja de raspar el **texto** del `case` con `sed` y lee la **constante**
+`ARNES_CLAVES` (1 proceso contra 3). Es la lección que `tools/arnes-lectura.sh` ya tenía escrita para
+su propia derivación. Cobertura medida sobre el glob real: **0 de 127** rachas cosechadas contenían
+una línea `Estado:` antes; **102 de 154** después.
+
+**`QA-023-05` — la forma de la línea, publicada; y un número que sube la apuesta.** `CA-09 (iii)`
+publica ahora la **forma** además del par, con el esqueleto en una sola variable —lo que la sonda
+repite es lo que el caso publica—. Y medido con el mismo par (1000→2000) y el mismo `k`: la forma
+**clave** (`Sensible a <n> seguridad: sí`, una clave **real** del lector) da **2,235 · 2,284 · 2,260
+· 2,255 · 2,240**, cinco tomas **por encima** del techo de 2,2, mientras la forma **título** que el
+caso mide da 2,042 y la de **valor** 1,727. El parámetro que falta no es cosmético: **decide el
+veredicto**. El techo **no se toca** y la forma que el caso mide **no se cambia** —elegir la que pasa
+sería `QA-023-02` un eje más allá—.
+
+**Lo que NO se cierra, dicho con nombre y línea.** Los **2** `SKIP=$((SKIP+1))` restantes viven en
+`28-rotacion-seccion-{1,4}.sh`, que están en el `Archivos:` de **REQ-026** con `QA: aprobado` sobre
+ese árbol: tocarlos dejaría una firma ajena sobre un árbol que ya no es. El de `28/4:87` depende del
+**reloj** (la carrera que no se provoca) y puede matar esa sección en cualquier corrida cargada — va
+con dueño, no como hallazgo nuevo. **Y dos defectos DISTINTOS anotados sin arreglar:** la línea
+`Resultado:` **descuenta** los casos de una sección muerta (`run.sh:1248-1255`, el `continue` va
+antes de la acumulación de `:1271`) y `run.sh` está en el `Archivos:` de REQ-024; y el caso de
+`36-…-2` no tiene suelo de anti-vacuidad sobre **las bases que deniegan**, que son las únicas que su
+propiedad puede violar.
+
+Puertas propias: las tres quality gates **rc 0**; `bash -n` sobre las 57 secciones **rc 0**; banco
+completo **962 PASS · 0 FAIL · 4 SKIP · rc 0** en **dos** corridas (43,8 s y 44,7 s) con la **LISTA**
+de SKIP idéntica a la de QA (`cygpath` · `REQ-017 CA-05 (i)` · `REQ-017 CA-05 (ii)` ·
+`REQ-021 CA-08 (iii)`); `autoprueba-corredor.sh` **106 PASS · 0 FAIL · rc 0**;
+`tools/arnes-lectura.sh .` **rc 0**. Método, árboles de referencia y re-derivación en
+`docs/qa/1.34.0-req023-vuelta3-metodo.md`. **No se firma `QA:` ni `Seguridad:`, no se toca `Estado:`
+y no se hace write-back**: `QA-023-07` (`contrato`, el único que bloquea) es del
+`analista-requerimientos`.
+
+## [Interno] — 2026-09-09 · QA de REQ-023 vuelta 2: los tres bloqueantes cerrados con fail-before medido, y un cuarto que es una premisa que el propio REQ ya declaró falsa
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: qa-tester.
+
+`REQ-023`, **vuelta 2 de 3**, sobre el **árbol de trabajo** (`5305de9` + la partición de la sección
+39 sin comitear). Se valida el árbol sucio a propósito, no un commit.
+
+**La pieza que faltaba y ahora existe: el fail-before / pass-after.** Un banco verde no acredita que
+un caso discrimine. Medido con el mecanismo del propio banco (`ARNES_HOOKS_DIR`), semilla fija
+(`ARNES_SEM_39=508269595`) y árboles montados con `git worktree add --detach` y `git archive`, sin
+mover nunca el árbol de trabajo. Los **dos** casos nuevos de `CA-03` **fallan** contra `29b06eb^`
+(`95764db`): la rama 1 por un punto de código de cuatro bytes que sustituye al blanco interno
+(`<P2:f0b4ae98>`) y la rama 2 por el blanco insertado y duplicado (`<P1:20>` y cuatro `<P3:20>`) —
+40 PASS · 2 FAIL · rc 1 antes, 42 PASS · 0 FAIL · rc 0 después. Y los **cuatro** casos marcados
+«(era ALLOW)» de `CA-08` fallan contra el **tag** `v1.33.0` (11 PASS · 10 FAIL), mientras los nueve
+controles que deben decidir igual —`CA-08 (ii)/(iii)`, los cuatro de `CA-11` y los dos de `CA-04`—
+pasan en las dos versiones: el rojo lo produce la guarda y no otra rama.
+
+**Los tres bloqueantes, cerrados con evidencia propia.** `QA-023-01` (`usuario/dinero`): banco propio
+de 20 formas de la clase del blanco —insertado, sustituido, duplicado, retirado, NBSP, TAB, ZWSP, al
+borde y en clave de una palabra—, **todas deniegan** y **13 eran `allow`**; el motivo saca los blancos
+en hexadecimal sólo cuando alguno de ellos **es** lo insertado, que es lo que lo vuelve
+diagnosticable. Se buscó una tercera forma dentro de la familia y **no se encontró**, con el
+argumento que cierra el hueco escrito. `QA-023-02` y `QA-023-03` (`contrato`): el **write-back existe**
+en el Historial del REQ, el sorteo deriva sus dos estratos de la constante única en cada corrida
+(6 claves, alfabeto de 21), publica semilla y tiradas por rama, y **aborta con SKIP y no con PASS**
+cuando una rama de DENY se queda sin tirada — provocado, no leído; `CA-12 (iii)` se comprueba
+contando y cuentan 3 = 3.
+
+**La partición: cuadre verificado de forma independiente.** 966 = 966 líneas de inventario, 42 casos
+de `REQ-023` antes y después, reparto **10 = 7 + 3** comprobado **por nombre de caso** y no por total,
+y `diff` vacío tras normalizar los cuatro volátiles. El cuadre del `desarrollador` es correcto.
+
+**Cuatro hallazgos nuevos, uno bloqueante.** `QA-023-07` (`contrato`): el apartado «Fuera de alcance»
+sigue justificando la exclusión del homóglifo con la premisa que `CA-03` ya declara **medida falsa**
+en el mismo documento —medido ejecutando el lector: `Еstado` **sí** contiene algo ajeno, la guarda lo
+ve y lo retira, y lo que queda **no** es otra clave—; el texto correcto ya existe literal en `CA-03`,
+el write-back es trasladarlo. `QA-023-06` (`instrumento`): toda ruta de SKIP de las secciones hace
+`SKIP=$((SKIP+1))` y el corredor **no define `SKIP`** antes de ejecutar una sección, así que con
+`set -u` la sección **muere** en su primera abstención — la cláusula anti-tautología que `CA-03` eleva
+a criterio nunca se había ejecutado; no es fail-open (ABORT y rc 1), pero la línea `Resultado:`
+publicó `0 FAIL` con seis FAIL en pantalla. `QA-023-08` (`instrumento`): el caso de `CA-04` **no
+imprime `ARNES_OCULTA`** en ninguna de sus dos mitades, que es la única variable por la que la guarda
+puede cambiar una decisión, así que el único criterio que vigila la sobre-denegación no puede fallar
+en su propio eje; medidas **131 líneas** del repositorio donde la guarda dispara hoy y no antes, y un
+documento real (`docs/gobernanza/autoalojamiento.md:3`) cuya lectura de cabecera cambia de opinión —
+ninguna, dentro de `requirements/`. `QA-023-09` (`instrumento`): la clave con otra capitalización se
+resuelve como ausencia y abre, igual en las dos versiones; se anota con dueño y **no** se reclama como
+incumplimiento, porque la clase de este REQ es la del carácter que nadie ve en el diff.
+
+**Y se retira un número propio.** El «el techo de `CA-09 (iii)` se supera» de la vuelta 1 (2,412 /
+2,364) **no se reproduce** con la construcción de hoy: cuatro mediciones conformes del mismo criterio
+dan 1,689 · 2,008 · 2,069 · 2,181, la peor al 99,1 % del techo. `QA-023-05` no se debilita, se
+confirma: el defecto es que dos mediciones conformes no son comparables porque falta declarar la
+**forma** de la línea.
+
+Puertas propias: las tres quality gates en verde; banco **962 PASS · 0 FAIL · 4 SKIP · rc 0** en
+**dos** corridas con la **lista** de SKIP idéntica e inventario normalizado idéntico; autoprueba
+**106 PASS · 0 FAIL**; `tools/arnes-lectura.sh` rc 0 sobre los 27 REQ. `QA: con-hallazgos`;
+`Estado:` sigue en `en-progreso` y no se firma `Seguridad:` (va después de QA, `AGENTS.md` §6).
+Hallazgos en `docs/qa/1.34.0.md` § REQ-023; método y evidencia re-derivable en
+`docs/qa/1.34.0-req023-vuelta2-metodo.md`.
+
+## [Interno] — 2026-09-09 · La sección 39 pasa a cinco partes: el techo de CA-18 se paga partiendo, no subiéndolo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: desarrollador.
+
+`REQ-023`, vuelta 1 de 3. Al entrar el sorteo estratificado de `CA-03` (write-back de `QA-023-02`),
+`39-caracter-invisible-2-la-clase-y-el-corpus.sh` quedó en **402 líneas contra su techo de 400** y
+dejaba la autoprueba del corredor en **105 PASS · 1 FAIL**. Su piso (**294**) está por debajo de
+`N / k` = 320, así que quien gobierna ese techo es **`N`** y no `piso × k`, y `N` sólo admite bajar:
+la única acción conforme era **partir**, que es lo que `REQ-014 CA-18 (ii)` ordena. No se subió el
+techo, no se re-derivó `k` y no se infló el piso para caber —esa última es la **regresión** que ese
+criterio nombra por su nombre—.
+
+El corte va por la frontera que el propio nombre del archivo declaraba: la **clase** (`CA-03`) se
+queda en `39-caracter-invisible-2-la-clase.sh` (**302** líneas, piso 294) y el **corpus** (`CA-04`)
+sale a `39-caracter-invisible-5-el-corpus.sh` (**213** líneas, piso 165 = 30 preámbulo + 76
+maquinaria duplicada + 59 bloque indivisible), con el materializador de la línea base duplicado
+porque las dos mitades comparan contra `v1.33.0`. Se numera **5** y no 3 para no dejar desfasadas
+las citas por nombre y línea a las partes 3 y 4 que ya viven en `requirements/REQ-023.md` y en
+`docs/qa/1.34.0.md`: una cita rota cuesta más que un número no contiguo.
+
+**El cuadre, que es la parte que no se puede afirmar sin medirla.** Reparto de casos **10 = 7 + 3**,
+y `CASOS_ESPERADOS` de `run.sh` **no cambia** (966): partir reparte, no crea ni pierde. El
+inventario da **966 líneas antes y 966 después**, y bajo el oráculo de `CA-12` más los dos volátiles
+conocidos —la semilla del sorteo y los conteos del corpus, que crecen porque el corpus se descubre
+por glob sobre `secciones/`— los dos salen **idénticos**, `diff` vacío. Puertas: autoprueba
+**105 PASS · 1 FAIL → 106 PASS · 0 FAIL**; banco **961/1/4 → 962/0/4**, rc 0; las tres quality gates
+en verde. Cuadre completo, con método y versión base, en
+`docs/qa/1.34.0-req023-particion-39.md`.
+
+**Lo que este verde NO acredita:** el fail-before/pass-after de los casos de `REQ-023`. Nadie ha
+comprobado aún que fallen contra el código anterior, así que no prueba que discriminen; eso lo
+decide el `qa-tester`. Y tres observaciones que van a la cola sin bloquear: el caso de reloj de la
+sección 25 oscila FAIL↔PASS con la carga (4036 ms contra un techo holgado de 4000, veredicto
+correcto) y **no** está declarado en `CA-14`; la semilla de `CA-03` se publica como entero suelto
+**dentro del nombre** del caso, justo donde el oráculo del inventario declara que no normaliza; y
+`REGHER92`/`REGHER93` nunca se asignan, así que el SKIP por falta de línea base imprimiría un
+paréntesis vacío el día que haga falta el diagnóstico. De paso, el total de referencia del
+`README.md` del banco decía **924** con el literal ya en **966** —segunda reincidencia de
+`SEC-066`—: se corrigió el número; cerrar el hallazgo no es del `desarrollador`.
+
+## [Interno] — 2026-09-09 · Traslado ejecutado en la WSL nueva: tres puntos de la lista no resistieron el contacto con la máquina
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
+
+Se instaló y configuró lo necesario para seguir trabajando en el clon nuevo (`sysvega-dev`), y la
+propia lista de traslado consignada horas antes **se corrigió con lo medido**. Lo que se hizo:
+`git config --local user.name/user.email` con la identidad del historial
+(`Juan Vega <jvega@habitat.org>`). Nada más hacía falta instalar.
+
+**Lo que la lista decía y la máquina desmintió** —las tres correcciones ya escritas en `docs/ESTADO.md`:
+
+1. **`node` no es dependencia del arnés** y figuraba en la lista junto a `jq`. Está **ausente** en
+   este clon y no se echó en falta: las tres quality gates piden sólo `bash` y `jq`, y las únicas
+   apariciones de `node`/`npm` en el árbol son prosa y **cadenas de caso** que el guardián juzga como
+   texto. Listar una dependencia falsa al lado de la única que apaga el enforcement **abarata la que
+   sí importa**.
+2. **La identidad de git faltaba en la lista**, y es el **tercer apagado silencioso de la misma
+   familia** que `jq` y `core.hooksPath`: un clon nuevo no tiene `user.name` ni `user.email`, el
+   commit **no falla**, sale firmado con lo que el sistema derive (`juan@sysvega-dev`) y la autoría
+   del historial se parte sin que nada avise.
+3. **El `gitCommitSha` de la instalación es `5f37946`, no el `810128a` que la lista anotó.** No es un
+   error: `810128a` es el **tag** `v1.33.0` y `5f37946` es `origin/main` (#44, «Registro de la
+   publicacion de v1.33.0»), posterior; el marketplace instala desde `main`. Lo que decide no es el
+   sha sino si **el mecanismo difiere**, y no difiere: entre los dos commits sólo cambian
+   `CHANGELOG.md`, `PENDING_APPROVAL.md`, `docs/ESTADO.md` y `docs/PLAN.md`, y comparado archivo por
+   archivo contra el tag, todo el mecanismo instalado coincide **byte a byte**. Esa comparación
+   —y no la igualdad de shas— es la que se repite en el próximo traslado.
+
+**CORRECCIÓN, escrita el mismo día y sobre esta misma entrada: el número de SKIP oscila entre 4 y 5
+en la MISMA máquina, y no es la plataforma.** Esta entrada afirmó primero que los **961 PASS · 0 FAIL ·
+5 SKIP** medidos aquí, frente a los 962/0/4 de la máquina anterior, se debían al SKIP de `cygpath`, y
+concluyó que «la cifra esperada no es una constante del proyecto sino de la máquina». **Es falso.** La
+segunda corrida, sobre el árbol ya partido, dio **962 · 0 · 4** en esta misma WSL, y el SKIP de
+`cygpath` —`ruta estilo Windows con backslashes -> deny`— **aparece en las dos listas**, de modo que
+estaba también entre los 4 SKIP de la máquina anterior y nunca pudo ser la diferencia. El caso que
+**entra y sale** es `REQ-017 CA-08 (ii)`, cuyo propio motivo de SKIP declara que «*el techo cae DENTRO
+del recorrido observado [1.010×, 1.302×]: el instrumento no distingue el factor que vigila*»: salta
+cuando no converge y pasa cuando sí, según la carga. La lección que queda **no es sobre plataformas**:
+**una diferencia de una unidad en el recuento se explica leyendo la LISTA de SKIP, nunca el total** —
+comparar totales invita a inventarle una causa a un caso que sólo estaba oscilando, que es exactamente
+lo que ocurrió aquí. El total cuadró en **966** las tres corridas.
+
+Lo que sí es cierto sobre `cygpath` y se conserva: está **ausente** en esta máquina —interop de WSL
+activo (`/mnt/c` montado, `WSLInterop` `enabled`) pero el host **sin Git para Windows** y el `PATH` sin
+ninguna ruta `/mnt/c`—, el caso es de Windows y el banco lo salta **declarando su motivo**, que es lo
+que se le pide. No hay nada que arreglar ahí.
+
+La autoprueba dio **105 PASS · 1 FAIL** al llegar (4 s), con el FAIL en el `CA-18` conocido
+(`39-caracter-invisible-2-la-clase-y-el-corpus.sh`, 402 líneas contra el techo de 400), y **106 PASS ·
+0 FAIL** después de que el `desarrollador` partiera la sección.
+
+**El arnés está vivo:** `jq` presente (los hooks **no** están inertes), `core.hooksPath` ya en
+`.githooks` (la puerta del CHANGELOG responde), las tres quality gates en **verde** y la cola de
+`PENDING_APPROVAL.md` en **0**.
+
+**Pendiente, y es del humano:** `gh` no tiene ninguna cuenta autenticada. `gh auth login` es
+interactivo y el token no está en disco, así que ningún agente lo cierra solo. Sin las dos cuentas
+(`jvega-habitat` para push, `JJOVEGA` para rulesets) no hay PR ni fusión a `main`.
+
 ## [Interno] — 2026-09-09 · Lista de traslado a otra instancia de WSL: lo que NO viaja con el repositorio
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 

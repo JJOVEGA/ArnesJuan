@@ -1,4 +1,4 @@
-# Sección 39 (3 de 4) del banco — 39-caracter-invisible-3-los-lectores-y-el-coste
+# Sección 39 (3 de 5) del banco — 39-caracter-invisible-3-los-lectores-y-el-coste
 # Se ejecuta con `source` desde el corredor (`../run.sh`), en su propio subshell y con los
 # ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de ninguna otra
 # sección (invariantes 3 y 4 del README del banco).
@@ -232,7 +232,7 @@ lec_check "REQ-023 CA-07 control: sin el carácter —y con 'Módulo:' y 'Versi�
 # cambiarla, con su ADR, y con el anclaje no rompe nada de aquí.
 if [ -z "$FILTRO" ] || printf '%s' "REQ-023 CA-12" | grep -qi -- "$FILTRO"; then
   if [ "$HER93_OK" != si ]; then
-    echo "  SKIP  REQ-023 CA-12 la cola cuenta exactamente lo mismo que la versión heredada  no hay línea base v1.33.0 ($REGHER93)"; SKIP=$((SKIP+1))
+    echo "  SKIP  REQ-023 CA-12 la cola cuenta exactamente lo mismo que la versión heredada  no hay línea base v1.33.0 ($REGHER93)"
   else
     COLA93="$RAIZ/cola93-$BASHPID.sh"
     cat > "$COLA93" <<'CUENTA93'

@@ -1329,6 +1329,10 @@ CASOS_ESPERADOS=966   # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # `CA-05`, entran las dos ramas de DENY del sorteo estratificado— y la
                       # parte 1 pasa de 20 a 21 al recibir `CA-05`, que se mudó porque el sorteo
                       # dejó la parte 2 en el techo de `REQ-014 CA-18`.
+                      # 966 → 966: la sección 39 pasa a CINCO partes. La 2 quedó en 402 líneas
+                      # contra su techo de 400 y `CA-04` —el corpus— sale a la parte 5. El total
+                      # NO cambia porque partir REPARTE: 10 = 7 + 3. Que este literal siga en
+                      # 966 es la comprobación de que no se creó ni se perdió ningún caso.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
