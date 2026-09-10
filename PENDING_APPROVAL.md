@@ -128,6 +128,43 @@ además dentro del comentario del propio archivo del caso.
 **A la cola, no abiertos aquí:** `razon37` tiene la **misma** carencia de publicación —da los dos mínimos
 y no los máximos— y afecta a **5 casos más**; se dejó intacto a propósito.
 
+
+### D7 · `REQ-024 CA-04` — gate humano **previo**, y la delegación de 24 h NO lo cubre
+
+**Lo traigo en vez de tomarlo, y el motivo no es cautela: es que el criterio contrata su propio gate.**
+`requirements/REQ-024.md:191-195` dice, literal: «*es `AGENTS.md`, así que el cambio **se detiene** en
+`PENDING_APPROVAL.md` y espera al propietario (`AGENTS.md` §6). Este REQ **nombra** ese gate; **no lo
+sustituye***». Y §6 pone el gate **antes** del acto. Una delegación general no revoca un gate que un
+criterio contrata: si lo hiciera, el gate no sería un gate.
+
+**Y el proyecto había anticipado exactamente este atajo.** `REQ-023` dejó escrito que quien estuviera
+reescribiendo la fila del CR tendría **delante** la fila del rigor, y que arreglarla «de paso» sería un
+cambio de `AGENTS.md` **sin gate humano y sin su REQ**. *Su REQ es éste.* El `desarrollador` llegó a esa
+conclusión por su cuenta, leyendo, y **se detuvo**.
+
+**Además, `D5` lo dejó fuera por su propia letra:** su última cláusula —«*sólo se solicita otra decisión
+si aparece un cambio material **fuera de este alcance***»— autorizaba las dos filas de `SEC-079`, no la
+del **rigor**.
+
+**Qué se decide.** Corregir en `AGENTS.md` §6/§13 y en `templates/AGENTS.md.tpl` **tres frases que son
+falsas leídas solas**: se cumplen sólo cuando hay **suelo**, y el suelo lo pone un campo cuya exigencia es
+**opt-in** (la llave `campos.ausencia_exige`, que nace **apagada**). Es la remediación **3 de `SEC-050`**.
+
+**El paquete está medido para que el gate no cueste re-derivar nada** —
+`docs/qa/1.34.0-req024-ca06-metodo.md` §1: las **cuatro sedes con ruta y línea**, por qué cada frase es
+falsa leída sola, y la salida propuesta que no promete lo que la máquina no tiene. Verificado además que
+`templates/AGENTS.md.tpl` **no divergió**: párrafo (`:167-173`) y fila (`:308`) son **idénticos línea a
+línea** a `AGENTS.md:203-209` y `:343`, así que el arreglo es el mismo texto en dos archivos.
+
+**Riesgo de esperar, dicho sin adornos:** `REQ-024` queda en **10 de 11** y **no puede pasar a
+`en-revisión`** con un criterio detenido, así que su QA y su auditoría esperan. No hay riesgo **vivo**: la
+llave nace apagada y ningún proyecto nota cambio sin encenderla.
+
+**Y una advertencia que vale más que la prisa:** esta fila es de la **misma clase** que causó `SEC-047` y
+`SEC-079` —texto heredado que promete de más—, y `SEC-081` acaba de mostrar que esa forma **pasa tres
+filtros porque tranquiliza**. Escribirla bajo una delegación general, cuando el criterio pide un humano,
+sería reproducir el patrón que hoy nos ha costado tres rondas.
+
 ## Resueltas
 
 ### D5 · `SEC-079` — **RESUELTA el 2026-09-09: opción (a), y con un matiz del propietario que cambia el arreglo**

@@ -902,6 +902,136 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   lo lee y **ninguna puerta lo comprueba** — es una regla escrita para quien coordina, no
   enforcement. Y mientras el proyecto no migre, **sus coordinadoras no tienen estas reglas**: cerrar
   eso es exactamente para lo que existe esta entrada.
+- **Y UNA SEGUNDA VÍA EN ESTA MISMA VERSIÓN, que no necesita ningún carácter raro: LA LÍNEA QUE
+  NO ESTÁ. Sin eufemismos, y es la frase entera: en una versión afectada pudiste cerrar un REQ
+  `critico` sin validación de QA y sin auditoría de seguridad aprobada haciendo desaparecer una
+  línea de la cabecera, POR CUALQUIER VÍA — comentarla, borrarla o no haberla escrito nunca.**
+  La puerta **no mide la vía, mide la ausencia**: para cuatro de los seis campos que el lector
+  reconoce —`QA`, `Sensible a seguridad`, `Hallazgos abiertos` y `Rigor`— «no está» equivalía a
+  «no exige nada», y al retirar `Sensible a seguridad: sí` desaparecía además el **suelo** de
+  rigor. Medido (`docs/seguridad/registro-seguridad.md`, **SEC-047** mitad 2 y **SEC-050**): un
+  REQ `critico` con `QA: pendiente` y `Seguridad: pendiente` cerraba a `completado` comentando
+  **una** línea. **Y el forzador, textual del auditor:** «un BOM en un diff es una anomalía; un
+  campo comentado en un diff parece higiene» — es una edición de **una** línea que **aparece** en
+  el diff y que un revisor humano lee como *«el REQ declara que es sensible»* mientras la máquina
+  lee *«no declara nada»*. Que se vea no la hace inocua: la hace **plausible**.
+- **QUÉ HAY QUE AUDITAR, Y SE DICE OTRA VEZ ANTES QUE NINGÚN COMANDO, porque para esta vía la
+  respuesta es la MISMA pregunta: la de ESTADO, no la de vía.** Lo que tienes que revisar es
+  **cuáles de tus REQ en estado terminal NO cerrarían hoy**, leídos con el lector de esta versión
+  y con la exigencia activada. No es «¿tengo algún campo comentado?»: un campo **borrado** y un
+  campo que **nunca se escribió** producen exactamente el mismo estado, así que una pregunta por
+  vía deja fuera dos de las tres formas — y son las dos más fáciles.
+
+  **Ningún comando de este apartado la responde, y el informe que la respondería no existe en
+  1.34.0:** «cuáles de mis REQ dejarían de cerrar si activo esto» queda en «Fuera de alcance» de
+  `REQ-024` como `instrumento`, con dueño `desarrollador` y ventana **1.35.0**. Hasta que exista,
+  se responde **a mano** con las dos herramientas de abajo y con la regla del sitio único
+  (`ARNES_AUSENCIA` en `hooks/lib.sh`, **ADR-009**), que tiene dos ramas y no una: si a un REQ en
+  estado terminal le falta `QA:` o `Hallazgos abiertos:`, con la llave encendida la puerta
+  **DENIEGA nombrando el campo que falta**; si le falta `Sensible a seguridad:` o `Rigor:`, el
+  campo **gobierna** con el valor que más restringe (`sí`, `critico`), así que ese REQ pasa a
+  exigir `Seguridad: aprobado` y deja de cerrar **si no lo tiene**. `Seguridad:` ya denegaba
+  antes y `Estado:` es el sujeto de la transición, no una exigencia. Si alguno de tus REQ
+  cerrados cae en una de esas dos ramas, cerró sin la firma que decía tener: reábrelo
+  (`AGENTS.md` §9 — un cambio de requerimiento reabre el trabajo) y que la validación y la
+  auditoría lo firmen de verdad. **No escribas la línea que falta y sigas:** el cierre indebido
+  ya ocurrió, y lo que hay que rehacer es la revisión.
+- **(1) El informe del arnés con la llave encendida en una COPIA, que da la mitad de la
+  respuesta —el nivel— y no la respuesta:**
+  ```
+  mkdir -p /tmp/arnes-copia/.arnes && cp -r requirements /tmp/arnes-copia/
+  cp PENDING_APPROVAL.md /tmp/arnes-copia/ 2>/dev/null
+  jq '.campos.ausencia_exige = true' .arnes/config.json > /tmp/arnes-copia/.arnes/config.json
+  tools/arnes-lectura.sh                    # con la llave como la tienes hoy
+  tools/arnes-lectura.sh /tmp/arnes-copia   # con la llave encendida
+  ```
+  La línea `rigor efectivo: critico N · estandar N · ligero N` del RESUMEN cambia entre las dos
+  corridas: los que se mueven a `critico` son los REQ que no declaran `Sensible a seguridad:` ni
+  `Rigor:`, y **cada uno de ellos deja de cerrar si su `Seguridad:` no está aprobado**. La copia
+  existe para no dejar el proyecto de verdad con la llave encendida a medias.
+- **(2) Un barrido POR VÍA, con lo que NO encuentra escrito aquí mismo y no en otra página:**
+  ```
+  # Barrido POR VÍA (una sola): REQ en estado terminal cuya cabecera no trae alguno de los
+  # cuatro campos de la clase, buscando la clave TAL COMO LA ESCRIBE LA PLANTILLA.
+  awk 'FNR==1 { cab = 1 } /^## / { cab = 0 }
+    cab && /^Estado:[ \t]*completado/ { term[FILENAME] = 1 }
+    cab && /^(QA|Sensible a seguridad|Hallazgos abiertos|Rigor):/ {
+      k = $0; sub(/:.*$/, "", k); hay[FILENAME "|" k] = 1 }
+    END { split("QA,Sensible a seguridad,Hallazgos abiertos,Rigor", c, ",")
+          for (f in term) { falta = ""
+            for (i = 1; i <= 4; i++) if (!((f "|" c[i]) in hay)) falta = falta " " c[i]
+            if (falta != "") printf "%s: no declara%s\n", f, falta } }' requirements/*.md
+  ```
+  `completado` es el estado terminal **por defecto**: si tu `.arnes/config.json` declara otro en
+  `estados.completado`, sustitúyelo en el patrón.
+  **Este comando interroga una VÍA, no la propiedad**, y el mecanismo tiene una vía nueva cada
+  vez: **no hallar nada NO acredita ausencia de exposición.** Vías conocidas al publicar esta
+  versión que este barrido **no** ve —ejemplos **no exhaustivos**; el sitio único donde viven es
+  `docs/seguridad/registro-seguridad.md`: **SEC-047** y **SEC-050** para la ausencia, **SEC-024**,
+  **SEC-025** y **SEC-078** para lo que se inserta en la clave—:
+  - **el campo dentro de un rango `<!-- … -->` de la cabecera:** el barrido **ve** la clave y
+    calla, mientras el lector la trata como **no declarada**. Es la vía que `SEC-047` midió, y
+    este barrido la pierde entera;
+  - **la clave decorada o sangrada** (`**QA**: aprobado`, `  QA: aprobado`): el lector **sí** la
+    lee y gobierna con ella, y este barrido la nombra como si faltara — es ruido suyo, no una
+    exposición;
+  - **la clave con algo insertado dentro** —un BOM, un blanco de más— o con **otra
+    capitalización** (`qa: aprobado`): el barrido la nombra, y ahí coincide con el lector, que
+    tampoco la resuelve como ese campo.
+- **CÓMO SE ACTIVA, QUÉ CUESTA, Y QUÉ PASA SI NO LA ACTIVAS.** La exigencia es **opt-in** y nace
+  **apagada**: se enciende con `campos.ausencia_exige: true` en el bloque `campos` de tu
+  `.arnes/config.json`, y su `_doc` —que llega con `templates/arnes-config.json.tpl`— la explica
+  dentro del propio manifiesto, que es donde alguien la va a leer. **Qué cuesta NO lleva cifra
+  escrita aquí, y no es pudor:** el número depende de tu corpus, y una cifra en este texto
+  envejecería hacia el lado que tranquiliza. Se responde con la pregunta de arriba —«cuáles de
+  mis REQ en estado terminal no cerrarían hoy»— y se mide con las dos herramientas de arriba
+  **antes** de encenderla. Todo REQ heredado que caiga en una de las dos ramas deja de cerrar
+  hasta que declare el campo, y **la fricción termina con alguien apagando el guard**
+  (`AGENTS.md` §13): se enciende cuando el corpus está listo, no el día de la actualización.
+  **Y mientras no la enciendas, la resolución de la ausencia de un campo de cabecera decide
+  exactamente lo mismo que 1.33.0**, REQ a REQ y decisión a decisión, medido en la misma corrida
+  contra `v1.33.0` (`REQ-024 CA-05`). Esa promesa es de **esta llave y de nada más**: la cola de
+  aprobaciones del punto siguiente cambia **sin llave y para todos**. Y al revés, dicho sin
+  maquillar: con la llave apagada tu proyecto **sigue expuesto** a las tres vías —comentar,
+  borrar, no escribir—; que la exigencia pase a ser el **defecto** es una decisión de **1.35.0**
+  que este arnés todavía no ha tomado. **No cuesta ni un proceso:** la llave viaja dentro de la
+  lectura del manifiesto que cada punto de entrada ya hacía (`REQ-024 CA-07 (i)`, medido: **2**
+  procesos por evaluación de la puerta contra los **2** de `v1.33.0`, y **5** contra **5** por
+  parada).
+- **Qué versiones están afectadas.** La pertenencia **no es una lista escrita a mano**: se decide
+  por el historial del sitio donde la dirección de la ausencia se declara (`ARNES_AUSENCIA` en
+  `hooks/lib.sh`), es decir **toda versión publicada en la que ese sitio no existe** — y en ellas
+  la ausencia se resuelve del lado que **ABRE**, sin llave que lo cambie. Se verifica tag a tag
+  en un comando:
+  ```
+  git show v1.33.0:hooks/lib.sh | grep -c 'ARNES_AUSENCIA'   # 0 = resuelve la ausencia ABRIENDO
+  ```
+  Comprobado así en este repositorio: **todas hasta 1.33.0 inclusive** dan **0** (ejemplos **no
+  exhaustivos** de las más recientes: **1.30.3, 1.31.0, 1.32.0, 1.32.1, 1.33.0**). El sitio nace
+  en **1.34.0**, y en 1.34.0 la exigencia sólo actúa **si la enciendes**: sin la llave, 1.34.0
+  decide como las anteriores.
+- **Y LA COLA DE APROBACIONES CAMBIA SIN LLAVE, para todos: dos formas que contaban CERO.** El
+  contador de `## Pendientes` de tu `PENDING_APPROVAL.md` es lo que impide cerrar **cualquier**
+  REQ mientras una decisión espera a una persona, y hasta 1.33.0 devolvía **`0`** —y la puerta
+  **permitía**— en dos formas medidas (`SEC-051`):
+  - un rango de comentario que **abre y no cierra** dentro de la sección descartaba en silencio
+    **todo** lo que viniera detrás. Ahora eso **no se puede medir**, y lo que no se puede medir
+    no cuenta cero: la función devuelve «no lo sé», la puerta **DENIEGA** citando el rango y la
+    línea donde abre, `tools/arnes-lectura.sh` sale **≠ 0** diciendo `sin datos` —y **deja de
+    afirmar** «Ningún valor anómalo»— y la celda del bloque derivado de `docs/ESTADO.md` dice
+    `sin datos` en vez de `0`. La parada **no** se bloquea;
+  - una línea de entrada que contiene la **secuencia de cierre** de comentario sin que ningún
+    rango esté abierto —`### Migrar A --> B`, un título ordinario— se descartaba entera. Ahora
+    **cuenta**: un cierre sin apertura no delimita nada, así que no puede retirar una aprobación
+    humana.
+  **Lo que NO cambia:** el ejemplo multilínea completamente comentado de
+  `templates/PENDING_APPROVAL.md.tpl` sigue contando **0**, y una entrada con una anotación de
+  comentario **cerrada dentro de su propia línea** sigue contando **lo que contaba** — la cola
+  tiene su propia noción de comentario, de grano de **línea**, y cruzar esa frontera es cambiar
+  un contrato en estado terminal: lo decide **`ADR-010`**, que en esta versión la **mantiene**.
+  **Qué te toca hacer:** si tu `PENDING_APPROVAL.md` tenía una de las dos formas, tu cola valía
+  más de lo que decía y algún cierre pudo pasar por delante de una decisión tuya. `tools/arnes-lectura.sh`
+  publica ahora el número que bloquea, y `sin datos` cuando no lo puede medir.
 
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 

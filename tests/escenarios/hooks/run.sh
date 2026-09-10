@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=996   # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1012  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1343,6 +1343,14 @@ CASOS_ESPERADOS=996   # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # no-regresión `CA-09` reutiliza. Reparto: `31` 25 → 39, `40/1` 7 nuevos,
                       # `40/2` 9 nuevos. Los `CASOS_ESPERADOS_SECCION` de la 39 NO se tocan: el
                       # arreglo de `REGHER94` cambia un TEXTO de SKIP y no crea ni pierde casos.
+                      # 996 → 1012: los 16 casos de `REQ-024 CA-06` —la nota de migración de
+                      # `skills/arnes-upgrade/SKILL.md`— en la sección `40/3` nueva. Va en una
+                      # parte 3 y no en la 2 porque la 2 está en 400 de 400 líneas, su techo
+                      # exacto de `REQ-014 CA-18`, y porque el corte va POR TEMA: la 3 no mide
+                      # los hooks, mide TEXTO heredado, y por eso deriva su ruta de `$SEC_DIR` y
+                      # su fail-before de `ARNES_SKILL_UPGRADE` en vez de `ARNES_HOOKS_DIR`.
+                      # `CA-04` —la fila del rigor de `AGENTS.md` §6/§13— NO tiene casos aquí:
+                      # su cambio espera el gate humano que el propio criterio declara.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

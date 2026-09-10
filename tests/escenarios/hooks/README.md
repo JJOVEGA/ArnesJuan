@@ -30,7 +30,7 @@ bash tests/escenarios/hooks/run.sh secciones/07-*.sh     # sólo esa sección, m
 bash tests/escenarios/hooks/run.sh bash                  # sólo los casos cuyo nombre contenga "bash"
 bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del corredor
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **996 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1012 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`).
 Este número se escribe a mano en los dos sitios y **hay que cuadrarlo al añadir casos**: decía
 886 con `CASOS_ESPERADOS` ya en 887, y luego 924 con el literal ya en 966 (`SEC-066`, las dos
@@ -89,8 +89,8 @@ vienen copiados de `28-…-1-la-historia.sh`, y `num38` está en las tres partes
 renglones copiados cuestan menos que una puerta trasera entre secciones**. Por lo mismo, `mat`
 —el materializador de la línea base— viene copiado en **cuatro** de las cinco partes de la 39: las
 que comparan contra `v1.33.0` (todas menos la 1). Decía «dos de las cuatro» y eran **tres de
-cuatro** desde que nació la parte 4; la quinta las deja en cuatro de cinco. Y en **las dos** de
-la 40, por lo mismo.
+cuatro** desde que nació la parte 4; la quinta las deja en cuatro de cinco. Y en **dos de las tres**
+de la 40, por lo mismo — la tercera es sobre TEXTO heredado y no materializa ninguna línea base.
 
 **Y una sección puede repartirse en archivos que NO comparten su número.** La 40 (REQ-024) llega
 a su techo de 400 líneas con el bloque A, así que su bloque B —los casos de la cola— vive en
@@ -209,6 +209,16 @@ Tres reglas nacidas de fallos reales:
    Si un caso nuevo pasa con los hooks viejos, no está probando lo que crees. La ruta de los
    hooks bajo prueba es **independiente** de cómo esté partido el banco: el corredor nuevo se
    puede apuntar a una instalación estable anterior sin más.
+
+   **Y si el caso mide TEXTO en vez de hooks, `ARNES_HOOKS_DIR` no le da su fail-before:** el
+   documento vive en el repositorio y no en la instalación. Esos casos derivan su ruta de
+   `$SEC_DIR` —para que apuntar el banco a una instalación anterior siga midiendo los hooks
+   viejos contra los textos de HOY— y aceptan una variable propia con el documento de antes, la
+   misma técnica y el mismo motivo que `ARNES_README_BANCO` en `autoprueba-corredor.sh`:
+   ```
+   ARNES_SKILL_UPGRADE=/ruta/a/la/skill/de/antes bash tests/escenarios/hooks/run.sh secciones/40-*-3-*.sh
+   ```
+   Con la variable puesta la vuelta **no acredita el árbol**: mide otro archivo, y eso se dice.
 3. **Al reorganizar el banco se compara el INVENTARIO, no el total.** Dos casos que intercambian
    PASS y FAIL dan el mismo total: es la forma en que un refactor pierde cobertura en silencio.
    ```

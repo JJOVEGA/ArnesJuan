@@ -2,6 +2,51 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · `CA-06` cumplido y `CA-04` detenido en su gate: el `desarrollador` no asumió que la delegación lo cubriera
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`REQ-024` queda en 10 de 11 criterios.** Banco **1005 PASS · 0 FAIL · 7 SKIP**, cuadre **1012** (de
+996: **16 casos nuevos**), rc 0, sin `ABORT`; autoprueba 106 · 0; tres quality gates verdes. **65 s de
+reloj con `loadavg` 0,82 al arrancar y 3,05 al terminar** — publicó la carga, como se le pidió.
+
+**Y el inventario cuadra sin pérdidas, comprobado en worktree:** diff de **32** líneas y **ninguna** es
+una pérdida — +16 casos nuevos, +1 `REQ-017 CA-08 (ii)` que pasa de SKIP a PASS por carga del host
+(988+16+1 = 1005; 8−1 = 7), 2 de semilla del sorteo de `CA-03` y 2 de denominador del corpus de `CA-04`
+(5611 → 5660 líneas con campo, y **subir es conforme**). **Ninguno de sus 16 casos abstuvo.**
+
+**`CA-06` cumplido con discriminante en las dos direcciones:** fail-before **3 PASS · 13 FAIL** →
+pass-after **16 PASS · 0 FAIL**, con un método que merece nota — un caso **sobre texto** no se puede
+mover con `ARNES_HOOKS_DIR`, así que introdujo `ARNES_SKILL_UPGRADE` apuntando a la versión anterior de
+la skill. Y **los 3 que pasan en las dos corridas están declarados con su discriminante dentro del
+mensaje**: el orden en el apartado ya era cierto (por eso se mide **dos veces**, y restringido a su
+sub-bloque **falla** antes), «los barridos declaran las tres cosas» es derivado con denominador (1 → 2, y
+**SKIP si 0**), y «ninguna frase afirma completitud» es una invariante que no puede romperse (3/3 → 5/5).
+Un PASS que pasa antes y después, **explicado**, vale; callado sería tautología.
+
+**`CA-04` NO se implementó, y es la decisión correcta.** Su gate humano es **previo**, y el
+`desarrollador` lo confirmó **leyendo** en vez de asumir que la delegación de 24 h lo cubría:
+`REQ-024.md:191-195` dice que «*el cambio **se detiene** en `PENDING_APPROVAL.md` … este REQ **nombra**
+ese gate; **no lo sustituye***», §6 pone el gate **antes** del acto, y `D5` dejó la fila del **rigor**
+fuera por su propia letra. **No tocó `AGENTS.md`, `templates/AGENTS.md.tpl` ni `PENDING_APPROVAL.md`.**
+
+**Y el proyecto había anticipado este atajo:** `REQ-023` dejó escrito que quien reescribiera la fila del
+CR tendría **delante** la fila del rigor y que arreglarla «de paso» sería un cambio de `AGENTS.md` sin
+gate y sin su REQ. *Su REQ es éste.* Escalado como **`D7`**, con el paquete **medido** para que el gate no
+cueste re-derivar nada.
+
+**Su texto heredado sí es verdadero leído solo:** la promesa de compatibilidad de la skill va **acotada al
+sujeto** —«*la resolución de la ausencia de un campo de cabecera decide exactamente lo mismo que
+1.33.0*»— y **acompañada** de qué sí cambia sin llave, con **un caso de máquina para cada mitad**. Si se
+escribiera absoluta **sería falsa**, porque el bloque B cambia la cola **sin llave y para todos**.
+
+**Y retiró un punto de su propia lista de dudas:** releyó `templates/AGENTS.md.tpl` y **no divergen** —
+párrafo y fila son idénticos línea a línea a `AGENTS.md`—, así que el arreglo de `CA-04`, cuando se
+autorice, es el mismo texto en dos archivos. Verificó también que la fila de `SEC-079` sigue byte a byte
+(`md5 3ead3bd3…`, 2545 B).
+
+**`SEC-081`: no creó una cuarta instancia del defecto, y tampoco lo cerró.** No escribió la fila, así que
+no reprodujo la forma; su remediación en `requirements/README.md` sigue siendo del analista.
+
 ## [Interno] — 2026-09-09 · `SEC-079` cerrado (`R-025`), y por segunda vez el auditor corrige un rango que le di mal
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `auditor-seguridad` (Opus) · consolidación: coordinadora. **Bajo delegación de 24 h.**
 
