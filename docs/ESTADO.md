@@ -73,6 +73,12 @@ lo exige para cerrarlo y tú prohibiste NFR nuevos en esta ventana.
 **Ya no queda trabajo de coordinación pendiente:** los tres actos que el artefacto del auditor
 prescribía con dueño y archivo están hechos.
 
+**Dos tramos NO necesitan tu firma y quedaron sin despachar sólo porque el cierre lo prohibía**
+(§11.b del traspaso): ampliar `QA-017-33` con su cuarta sede (`qa-tester`) y el índice de sede de
+`SEC-056` (`auditor-seguridad`, deuda que él mismo declaró con vencimiento 1.34.0). Los dos son
+`instrumento` o de documento propio: **ninguno bloquea**. Se pueden despachar al retomar sin
+esperarte.
+
 **Lo que NO se hace al retomar:** no se cierra ningún REQ ni hallazgo para limpiar el tablero, no se
 aceptan residuales, no se relajan pruebas, no se fusiona y no se publica. Cerrar la sesión no fue
 cerrar la versión.
@@ -885,7 +891,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-10 08:46
+## Estado derivado — 2026-09-10 08:50
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -895,7 +901,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `rel/registro-1.33.0` @ `0fcb80a` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `rel/registro-1.33.0` @ `9179d32` — limpio
 **Arnés:** plugin instalado `1.33.0`
 **Aprobaciones pendientes:** 16
 **REQ:** 27 — completado 12 · en-revisión 2 · en-progreso 2 · bloqueado 5 · otros 6

@@ -2,6 +2,32 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Cierre, última pieza: quedan DOS tramos que no necesitan firma, y se dejan sin despachar por la propia instrucción de cierre
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+**Para que el registro no diga algo más fuerte que la verdad.** He escrito varias veces que «todo
+depende de tu firma». **No es exacto:** quedan **dos** actos que no necesitan ninguna decisión
+reservada al propietario, y no se despacharon porque su instrucción de cierre lo prohíbe
+expresamente —*«No despaches nuevas comisiones… Después detente»*—, no porque estén bloqueados.
+
+| Tramo | Dueño | Por qué no necesita firma |
+|---|---|---|
+| **Ampliar `QA-017-33`** con la cuarta sede (`04-evidencia-del-intercalado.md:131-133`) | `qa-tester` | es su propio registro y el hallazgo ya existe; `instrumento`, **no bloquea** |
+| **El índice de sede de `SEC-056`** | `auditor-seguridad` | deuda que **él mismo** declaró al entregar `R-028`, con vencimiento 1.34.0; es su documento |
+
+Los dos quedan escritos en `docs/TRASPASO-2026-09-10.md` §11.b y en el puntero de continuidad, con su
+dueño y su siguiente acción, para que al retomar se puedan despachar **sin esperar al propietario**.
+
+**Y `QA-017-33` faltaba en el traspaso**, que es el entregable de cierre: añadido, con el matiz que el
+analista dejó para quien lo arregle —el contexto inmediato de esa sede **sí** es una abstención
+habiendo medido, así que allí la cifra sí es de esa medición; lo falso es la **generalización** y la
+equiparación con la exigencia (ii)—.
+
+Lo demás sí depende de la firma del propietario, y en cuatro casos porque `AGENTS.md` §4 y §6 le
+reservan el acto por escrito: el manifiesto, el tope de vueltas, la excepción de `ADR-008` y la
+publicación. **La delegación de 24 h da potestad para decidir, no para concederse lo que las propias
+reglas del proyecto atribuyen al propietario.**
+
 ## [Interno] — 2026-09-10 · Primera base real para estimar: once comisiones medidas, y el rol que hace el código no tiene ni una
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
 
