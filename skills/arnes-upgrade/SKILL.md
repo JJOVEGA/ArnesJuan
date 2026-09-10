@@ -988,16 +988,39 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   **antes** de encenderla. Todo REQ heredado que caiga en una de las dos ramas deja de cerrar
   hasta que declare el campo, y **la fricción termina con alguien apagando el guard**
   (`AGENTS.md` §13): se enciende cuando el corpus está listo, no el día de la actualización.
-  **Y mientras no la enciendas, la resolución de la ausencia de un campo de cabecera decide
-  exactamente lo mismo que 1.33.0**, REQ a REQ y decisión a decisión, medido en la misma corrida
-  contra `v1.33.0` (`REQ-024 CA-05`). Esa promesa es de **esta llave y de nada más**: la cola de
-  aprobaciones del punto siguiente cambia **sin llave y para todos**. Y al revés, dicho sin
+  **Y mientras no la enciendas, en el acto de CIERRE tu proyecto cierra exactamente como cerraba
+  en 1.33.0**, REQ a REQ y decisión a decisión, medido en la misma corrida contra `v1.33.0`
+  (`REQ-024 CA-05`). **La equivalencia se contrata sobre ese acto y no sobre «la puerta», que
+  juzga más de uno:** el acto que **sí** cambia sin llave es la **firma de seguridad**, y va
+  nombrado con su dirección y sus salidas en su propia viñeta de este mismo apartado —la
+  siguiente—. Y esa promesa es de **esta llave y de nada más**: la cola de aprobaciones
+  de este mismo apartado cambia **sin llave y para todos**. Y al revés, dicho sin
   maquillar: con la llave apagada tu proyecto **sigue expuesto** a las tres vías —comentar,
   borrar, no escribir—; que la exigencia pase a ser el **defecto** es una decisión de **1.35.0**
   que este arnés todavía no ha tomado. **No cuesta ni un proceso:** la llave viaja dentro de la
   lectura del manifiesto que cada punto de entrada ya hacía (`REQ-024 CA-07 (i)`, medido: **2**
   procesos por evaluación de la puerta contra los **2** de `v1.33.0`, y **5** contra **5** por
   parada).
+- **Y UN ACTO QUE CAMBIA SIN QUE ACTIVES NADA, dicho aquí porque sin él este apartado promete de
+  más: escribir `Seguridad: aprobado` sobre un REQ cuya cabecera NO declara `QA:` pasa a
+  DENEGAR, y DENIEGA con la llave APAGADA, que es como nace todo proyecto.** No es el cierre y no
+  cambia el cierre: es el acto de **firmar la seguridad**, que esta puerta juzga en **cada
+  edición que escribe esa línea con las herramientas de edición** —sobre `Bash` la cobertura es
+  parcial a propósito (`AGENTS.md` §13)— y no sólo al cerrar, y lo que ahí dejó de perdonarse
+  es la **ausencia** de la línea de QA — un campo que falta no es un campo aprobado, y el orden del
+  ciclo es «la condición de validez de la firma» (`AGENTS.md` §6), no una opción de proyecto; de
+  ahí que no dependa de la llave. **Tiene dos salidas de una línea, las dos escritas ya en el
+  propio motivo del rechazo:** declarar el `QA:` que corresponda, o —si es una auditoría
+  **preventiva**, sin código todavía— declarar la firma como `Seguridad: preventiva`. **Qué te
+  toca hacer:** si en tu proyecto la auditoría firma antes de que la validación escriba su línea,
+  ese hábito deja de pasar y hay que tomar una de las dos salidas de arriba **antes** de firmar.
+  No hay nada que migrar, y tampoco nada que apagar: esta guarda **no tiene llave**. **Y la lista
+  de actos que divergen no la fija este apartado: la fija `REQ-024 CA-05`, que es donde vive con
+  su medición fechada y su dirección** —aquí no se
+  transcribe su cifra, y no es pudor: es una **medición fechada y no un umbral**, y una segunda
+  transcripción se desfasa de la primera—. Ejemplos **no exhaustivos** de actos: el **cierre**,
+  que no cambia, y la **firma de seguridad**, que cambia. Sitio único del hallazgo que lo funda,
+  con su clase y su dueño: `docs/seguridad/registro-seguridad.md` § **SEC-083**.
 - **Qué versiones están afectadas.** La pertenencia **no es una lista escrita a mano**: se decide
   por el historial del sitio donde la dirección de la ausencia se declara (`ARNES_AUSENCIA` en
   `hooks/lib.sh`), es decir **toda versión publicada en la que ese sitio no existe** — y en ellas
@@ -1008,8 +1031,10 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   ```
   Comprobado así en este repositorio: **todas hasta 1.33.0 inclusive** dan **0** (ejemplos **no
   exhaustivos** de las más recientes: **1.30.3, 1.31.0, 1.32.0, 1.32.1, 1.33.0**). El sitio nace
-  en **1.34.0**, y en 1.34.0 la exigencia sólo actúa **si la enciendes**: sin la llave, 1.34.0
-  decide como las anteriores.
+  en **1.34.0**, y en 1.34.0 la exigencia de que los campos estén **declarados** sólo actúa **en
+  el CIERRE si la enciendes**: sin la llave, 1.34.0 **cierra como las anteriores**. Lo que no
+  espera a la llave es la **firma de seguridad** sobre un REQ sin línea de QA, que tiene su
+  propia viñeta en este apartado — ahí va, y no en una coletilla de esta viñeta.
 - **Y LA COLA DE APROBACIONES CAMBIA SIN LLAVE, para todos: dos formas que contaban CERO.** El
   contador de `## Pendientes` de tu `PENDING_APPROVAL.md` es lo que impide cerrar **cualquier**
   REQ mientras una decisión espera a una persona, y hasta 1.33.0 devolvía **`0`** —y la puerta

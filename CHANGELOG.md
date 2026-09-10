@@ -2,6 +2,66 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `CA-06 (v)`: un caso DERIVADO en vez de literal, y por eso cazó dos frases que nadie había mirado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**Banco 1040 PASS · 0 FAIL · 7 SKIP = 1047**, cuadre exacto (`CASOS_ESPERADOS` 1041 → 1047, con su
+derivación), `rc=0`, 63 s, `loadavg` 0,37 → 2,17. Autoprueba 106 · 0. Tres quality gates verdes.
+**Par fail-before/pass-after: 19 PASS · 7 FAIL → 26 PASS · 0 FAIL.**
+
+### El sexto caso mide una propiedad, no una cadena — y eso es lo que lo hace útil
+
+Cinco de sus seis casos reconocen **por cadena** y **lo dicen**, con denominador publicado. **El sexto es
+derivado**: exige que **toda promesa de equivalencia del apartado lleve el acto DENTRO de la promesa**. Y
+por eso encontró lo que nadie buscaba — **dos frases del mismo apartado que el write-back de `CA-05` dejó
+medidas falsas**, y que violaban la cláusula final de `CA-06`:
+
+- «*la resolución de la ausencia de un campo de cabecera **decide exactamente lo mismo que 1.33.0**»* —
+  falsa **por construcción**, porque **las celdas que divergen SON resoluciones de la ausencia de `QA:`**,
+  sólo que en otro acto. Ahora: «**en el acto de CIERRE** tu proyecto **cierra exactamente como cerraba**».
+- «*sin la llave, 1.34.0 **decide como las anteriores**»* → «*…sólo actúa **en el CIERRE si la enciendes**:
+  sin la llave, 1.34.0 **cierra como las anteriores**»*.
+
+Es la respuesta a `QA-024-05`, que había medido que un caso de esa misma sección seguía en **PASS** con un
+barrido inyectado de **cero** declaraciones porque reconocía **por cadena literal**. Un caso derivado
+encuentra la clase; uno literal encuentra la instancia.
+
+**Y su par discriminante lo prueba en las dos direcciones:** inyectada **una promesa sin acto**, el
+derivado pasa a **FAIL** («4 vistas y 2 enunciadas SIN acto») **mientras los cinco literales siguen
+verdes**; retiradas **todas** las promesas, **`SKIP` con su motivo, no PASS**.
+
+### Discriminó un SKIP flotante en vez de suponerlo
+
+Apareció un **octavo** SKIP **justo después** de editar `hooks/lib.sh` — la coincidencia más sospechosa
+posible. En vez de atribuirlo, lo **midió emparejado y alternado** contra un árbol de hooks **idéntico
+salvo `lib.sh` revertido**: medias **1,169×** contra **1,167×**, n=16 por lado, **8/8 en PASS**. Es
+`REQ-017 CA-08 (ii)`, la abstención del instrumento bajo carga, con el techo `1,250×` a un **3 %** de la
+razón típica `1,17×`. **Ni suyo, ni de este REQ, y no lo arregló.**
+
+Eso es exactamente lo que este día ha enseñado a hacer, y lo hizo sin que se le pidiera.
+
+### El barrido de `CA-10` le corrigió dos oraciones propias
+
+**S1** decía «cada edición» **sin la cobertura parcial de `Bash`** (§13); **S3** decía «uno de los dos
+valores», que **no nombra la salida**. Las dos las cazó **su propio barrido**, aplicado a su propio texto —
+que es la tercera vez hoy que ese barrido caza a alguien que ya conocía la regla.
+
+**La titular queda verdadera leída sola:** «*escribir `Seguridad: aprobado` sobre un REQ cuya cabecera NO
+declara `QA:` pasa a DENEGAR, y DENIEGA con la llave APAGADA*» — medido en **7 celdas**, sin condición
+oculta de `Estado:` ni de `Rigor:`, y con «**un** acto» indefinido, que **no promete exhaustividad**.
+
+### Fuera de alcance, hecho y declarado
+
+**Los dos comentarios gemelos de `hooks/lib.sh` (`:1527` y `:1905`)** con la misma promesa **sin acto** —
+sólo comentarios, **0 líneas de código**— y una referencia posicional **ya falsa antes** de esta comisión.
+
+**Y dos sedes más que NO tocó por dueño:** `docs/decisions/ADR-009…:101` y `requirements/REQ-024.md:1249`
+(«*un proyecto que no activa nada decide idéntico*»). Son del analista, y **`ADR-011` ya decidió el
+sujeto**, así que la corrección tiene doctrina y no hace falta inventarla.
+
+**`CA-05` sigue sin acreditar:** su caso de equivalencia del **cierre**, con su anti-vacuidad y publicando
+la divergencia del otro acto, está pendiente.
+
 ## [Interno] — 2026-09-10 · `CA-05` no se cumplía por su propio texto, y la asimetría que lo explica: sobrevive el criterio que nombra su acto
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · escalada: coordinadora. **Bajo delegación de 24 h.**
 

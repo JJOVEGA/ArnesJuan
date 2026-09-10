@@ -29,7 +29,7 @@
 # aplanar se conserva el NÚMERO DE LÍNEA de arranque de cada viñeta, que es lo que permite medir
 # el ORDEN que `CA-06 (ii)` contrata —la propiedad ANTES de cualquier comando— sin volver a
 # recorrer el archivo.
-CASOS_ESPERADOS_SECCION=20
+CASOS_ESPERADOS_SECCION=26
 PISO_AUTONOMO_SECCION=78  # 31 preámbulo con sus dos declaraciones y el titular (líneas 1-31) + 16 maquinaria compartida duplicada (`mira40c`, el mismo ayudante que `36-…-4-el-informe-y-los-textos.sh` define, duplicado porque en `secciones/` no cabe un auxiliar; líneas 61-76) + 31 bloque indivisible mayor (el aplanado del apartado, el sub-bloque anclado por su titular y `idx40`, líneas 33-59 y 77-80: ningún caso de CA-06 puede prescindir de ellos) · REQ-014 CA-18
 seccion_nueva "--- 40/3 · la ausencia que abre: los textos que un proyecto hereda (REQ-024 CA-06) ---"
 
@@ -174,16 +174,81 @@ if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-06 (iv) qué cuesta" | grep -qi -
   fi
 fi
 # «Sin activarla el proyecto se queda como está» tiene que ser VERDADERA LEÍDA SOLA, y por sí
-# sola NO lo es en 1.34.0: el bloque B cambia la cola de aprobaciones SIN llave y para todos. Así
-# que el criterio se cumple con el sujeto ACOTADO —la resolución de la ausencia de un campo— más
-# la frase que dice qué sí cambia sin llave. Es la lección de `SEC-079` aplicada aquí: no se
+# sola NO lo es en 1.34.0: el bloque B cambia la cola de aprobaciones SIN llave y para todos, y
+# la firma de seguridad sobre un REQ sin `QA:` DENIEGA también con la llave apagada (`SEC-083`).
+# Así que el criterio se cumple con el sujeto ACOTADO por DOS lados —la llave y el ACTO— más las
+# frases que dicen qué sí cambia sin llave. Es la lección de `SEC-079` aplicada aquí: no se
 # arregla colgando una coletilla a una promesa absoluta.
-mira40c "REQ-024 CA-06 (iv) la promesa de compatibilidad está ACOTADA a la llave y es verdadera leída sola" \
-  "$SUB40" 'la resolución de la ausencia de un campo de cabecera decide[ ]*exactamente lo mismo que 1\.33\.0'
+#
+# EL SUJETO ACOTADO ES EL ACTO DE CIERRE Y NO «la resolución de la ausencia de un campo», que es
+# lo que este caso exigía hasta el write-back de `CA-05`: esa formulación quedó MEDIDA FALSA —las
+# celdas que divergen son exactamente resoluciones de la ausencia de `QA:`, sólo que en otro
+# acto—, así que el patrón pide ahora el acto que `CA-06 (iv)` nombra.
+mira40c "REQ-024 CA-06 (iv) la promesa de compatibilidad está ACOTADA a la llave y al ACTO de cierre, y es verdadera leída sola" \
+  "$SUB40" 'en el acto de CIERRE tu proyecto cierra exactamente como cerraba[ ]*en 1\.33\.0'
 mira40c "REQ-024 CA-06 (iv) ...y dice qué SÍ cambia sin llave: la cola de aprobaciones, para todos" \
   "$SUB40" 'LA COLA DE APROBACIONES CAMBIA SIN LLAVE, para todos'
 mira40c "REQ-024 CA-06 (iv) ...y no maquilla el residual: con la llave apagada el proyecto sigue expuesto" \
   "$SUB40" 'con la llave apagada tu proyecto \*\*sigue expuesto\*\*'
+
+# ---------- CA-06 (v) · EL ACTO QUE CAMBIA SIN QUE EL PROYECTO ACTIVE NADA ----------
+# Un apartado que sólo dijera «sin la llave no cambia nada» promete de más, y la sorpresa la
+# descubriría el consumidor en producción: la firma de seguridad sobre un REQ que no declara
+# `QA:` pasa a DENEGAR en los DOS estados de la llave (`SEC-083`, salida (b) de `CA-12`). Los
+# cuatro casos siguientes miden las cuatro cosas que `CA-06 (v)` exige de esa viñeta —el acto,
+# su dirección con el estado de la llave, las dos salidas, y que la LISTA de actos la fije
+# `CA-05` y este apartado sólo la CITE—.
+#
+# TODOS RECONOCEN POR CADENA LITERAL, Y SE DICE AQUÍ (`QA-024-05`): miden que el sub-bloque DIGA
+# estas cosas, no que la puerta las haga. Quien mide la conducta es `13-orden-del-ciclo.sh`, y
+# quien mide la equivalencia del acto de cierre es la parte 2. El denominador de estos cuatro es
+# el sub-bloque entero (`$SUBN40` viñetas de las `$VIN40` del apartado), que `mira40c` publica en
+# cada FAIL: una viñeta nueva que dijera lo mismo con otras palabras los pondría rojos, y eso es
+# el residuo conocido de reconocer texto por cadena.
+mira40c "REQ-024 CA-06 (v) nombra el ACTO que cambia sin activar nada: firmar seguridad sobre un REQ sin QA:" \
+  "$SUB40" 'escribir .Seguridad: aprobado. sobre un REQ cuya cabecera NO declara .QA:.'
+mira40c "REQ-024 CA-06 (v) ...con su DIRECCIÓN y el estado de la llave en la MISMA viñeta: deniega con la llave APAGADA" \
+  "$SUB40" 'pasa a[ ]*DENEGAR, y DENIEGA con la llave APAGADA'
+mira40c "REQ-024 CA-06 (v) ...y las DOS salidas de una línea: declarar el QA: que corresponda, o Seguridad: preventiva" \
+  "$SUB40" 'declarar el .QA:. que corresponda, o .*declarar[ ]*la firma como .Seguridad: preventiva.'
+mira40c "REQ-024 CA-06 (v) ...y la LISTA de actos divergentes la fija CA-05, no este apartado, que la cita" \
+  "$SUB40" 'no la fija este apartado: la fija[ ]*.REQ-024 CA-05.'
+mira40c "REQ-024 CA-06 (v) ...con los ejemplos marcados NO exhaustivos y los dos actos por su nombre (cierre: no cambia; firma: cambia)" \
+  "$SUB40" 'Ejemplos \*\*no exhaustivos\*\* de actos: el \*\*cierre\*\*,[ ]*que no cambia, y la \*\*firma de seguridad\*\*, que cambia'
+
+# ---------- CA-06 · NINGUNA PROMESA DE EQUIVALENCIA SE ENUNCIA SIN SU ACTO ----------
+# La otra mitad de la cláusula final de `CA-06` —«ninguna frase afirma … que un proyecto que no
+# activa nada no note NADA»—, medida como PROPIEDAD y no buscando una frase mala. `CA-05` dejó de
+# contratar la equivalencia sobre «la puerta» y la contrata sobre el ACTO DE CIERRE (`ADR-011`),
+# así que en este apartado toda promesa de equivalencia con la versión heredada tiene que llevar
+# el acto DENTRO de la propia promesa. Con una coletilla al lado no vale: es exactamente la forma
+# que `SEC-079` midió, y quien lee la promesa sola se queda con la promesa.
+#
+# LA FAMILIA PROHIBIDA SE RECONOCE POR CADENA LITERAL, Y ES UN CONJUNTO ABIERTO (`QA-024-05`):
+# son las formas SIN acto medidas en este documento —dos de ellas vivían aquí hasta hoy: «la
+# resolución de la ausencia de un campo de cabecera decide exactamente lo mismo que 1.33.0» y
+# «sin la llave, 1.34.0 decide como las anteriores»—, no la lista de todas las maneras de
+# prometer equivalencia. Una tercera forma redactada con otras palabras se le escapa, y por eso
+# el caso PUBLICA su denominador —cuántas promesas ve y cuántas llevan su acto— en vez de decir
+# «ninguna»: un instrumento que no puede enumerar su clase tiene que enseñar su cuenta.
+# Y ABSTIENE con 0 promesas: «todas llevan su acto» es cierto por vacío cuando no hay ninguna, y
+# un verde por no medir es la familia que `REQ-020` existe para cazar.
+if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-06 promesas con su acto" | grep -qi -- "$FILTRO"; then
+  # Con acto DENTRO de la promesa (el verbo de la equivalencia es cerrar) / sin acto (sujeto
+  # abierto: «decide», «no nota nada», «se queda como está»).
+  con40='cierra exactamente como cerraba|cierra como las anteriores|cierra exactamente como cerró'
+  sin40='decide[ ]*exactamente lo mismo|decide como las anteriores|no nota nada|se queda[ ]*exactamente como está|se queda como está|resuelve como las anteriores'
+  c40p="$(grep -o -E -- "$con40" "$AP40" 2>/dev/null | grep -c . || true)"
+  s40p="$(grep -o -E -- "$sin40" "$AP40" 2>/dev/null | grep -c . || true)"
+  tot40p=$(( ${c40p:-0} + ${s40p:-0} ))
+  if [ "$tot40p" -lt 1 ]; then
+    echo "  SKIP  REQ-024 CA-06 promesas con su acto  el apartado no enuncia ninguna promesa de equivalencia de las formas conocidas ($VIN40 viñetas): «todas llevan su acto» sería cierto por vacío"
+  elif [ "${s40p:-0}" -eq 0 ]; then
+    echo "  PASS  REQ-024 CA-06 las $tot40p promesas de equivalencia del apartado llevan el ACTO dentro de la promesa (${c40p} con acto, 0 de sujeto abierto; formas reconocidas por cadena, conjunto ABIERTO)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  REQ-024 CA-06 promesas de equivalencia: $tot40p vistas y ${s40p} enunciadas SIN acto (sujeto abierto): $(grep -o -E -- "$sin40" "$AP40" | tr '\n' '|')"; FAIL=$((FAIL+1))
+  fi
+fi
 
 # ---------- CA-06 · NINGUNA FRASE DEL APARTADO AFIRMA COMPLETITUD SOBRE UN BARRIDO ----------
 # No se busca una frase mala —esa lista envejece—: se comprueba la PROPIEDAD sobre las dos

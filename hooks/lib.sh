@@ -1525,7 +1525,9 @@ arnes_sens_efectiva() {   # ARNES_SENS -> si|no ; ARNES_SENS_DUDOSA -> 0|1
   if [ -z "$ARNES_SENS" ]; then
     # AUSENTE. Sin la exigencia activada el sitio único devuelve la cadena vacía y manda el
     # valor heredado —`no`—, que es lo que `REQ-024 CA-05` contrata: un proyecto que no
-    # activa nada decide EXACTAMENTE lo mismo. Con la exigencia activada devuelve el valor
+    # activa nada CIERRA exactamente como cerraba. (La equivalencia se contrata sobre el
+    # acto de CIERRE y no sobre «la puerta», que juzga más de uno: `ADR-011`, `SEC-083`.)
+    # Con la exigencia activada devuelve el valor
     # que MÁS restringe (`si`), que CONSERVA el suelo de rigor en vez de retirarlo. La
     # bandera se publica para que un motivo de denegación pueda nombrar el campo que falta.
     ARNES_SENS_AUSENTE=1
@@ -1903,7 +1905,12 @@ arnes_ausencia() {   # <clave> -> ARNES_AUSENCIA_DIR ; 0 = declarada, 1 = NO dec
 # de todo proyecto instalado que no declare un campo dejaria de cerrar el dia de la
 # actualizacion, y la friccion termina con alguien apagando el guard (AGENTS.md 13) — un
 # guard apagado protege menos que uno parcial. `REQ-024 CA-05` lo contrata como criterio:
-# en ESTA version, un proyecto que no activa nada decide EXACTAMENTE lo mismo.
+# en ESTA version, un proyecto que no activa nada CIERRA exactamente como cerraba.
+#
+# Y EL SUJETO ES UN ACTO, NO «la puerta»: esta funcion es la que perdona la ausencia sin la
+# llave, pero la guarda del ORDEN de las firmas NO pasa por ella —pregunta la DIRECCION a
+# `arnes_ausencia` y deniega en los DOS estados de la llave (SEC-083, salida (b) de CA-12)—,
+# asi que la equivalencia contratada es la del CIERRE y no la de cualquier acto (ADR-011).
 arnes_resuelve_ausencia() {   # <clave> <valor leido> -> ARNES_AUSENCIA_APLICA ; 1 = DENIEGA
   ARNES_AUSENCIA_APLICA="$2"; ARNES_AUSENCIA_FALTA=''
   [ -z "$2" ] || return 0                                    # presente: nada que resolver

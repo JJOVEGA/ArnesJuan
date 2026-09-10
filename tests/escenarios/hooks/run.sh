@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1041  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1047  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1374,6 +1374,18 @@ CASOS_ESPERADOS=1041  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # veredicto que se le exige — era la codificación del fail-open. Va en una
                       # parte 4 y no en la 1 porque la 1 está en 387 de 400 y la 2 en 400 de
                       # 400: `REQ-014 CA-18` manda partir, no alargar.
+                      # 1041 → 1047: `CA-06 (v)`, que nació con el write-back del PRECIO de la
+                      # salida (b) de `CA-12` (2026-09-10) y dejó `CA-06` SIN ACREDITAR por lo
+                      # entregado el 2026-09-09. `40/3` pasa de 20 a 26: cinco casos para la
+                      # viñeta nueva del skill —el acto, su dirección con el estado de la llave,
+                      # las dos salidas de una línea, la remisión a `CA-05` como sitio de la
+                      # lista, y los ejemplos marcados no exhaustivos— y uno DERIVADO que
+                      # publica su denominador: toda promesa de equivalencia del apartado lleva
+                      # el ACTO dentro de la promesa. Ningún caso se retira: el de `CA-06 (iv)`
+                      # conserva sitio y veredicto y lo que cambia es su patrón, porque la
+                      # formulación que exigía —«la resolución de la ausencia … decide
+                      # exactamente lo mismo que 1.33.0»— quedó MEDIDA FALSA: las celdas que
+                      # divergen son resoluciones de la ausencia de `QA:`, en otro acto.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
