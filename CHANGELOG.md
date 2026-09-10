@@ -2,6 +2,61 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · `QA-023-18` y `QA-023-19` retirados, el SKIP de `CA-12 (ii)` probado legítimo con tres ramas vivas, y `SEC-079` listo para firma
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus) · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`QA: aprobado` sobre `b5a29d9`.** Banco local **988 PASS · 0 FAIL · 8 SKIP** (996 casos, sin descuadre),
+tres quality gates OK, y **CI `hooks-en-linux` en PASS** sobre `b5a29d9`.
+
+**Los dos hallazgos se retiran, medidos.** La titular lleva su condición dentro y **juzgada aislada es
+verdadera**; el barrido de `(iii)` sobre las **8** oraciones no encuentra ninguna que prometa sin
+condición. Y el **control negativo discrimina cuatro candidatas**: `89440e9` (`721abd51`) incumple,
++«no exhaustivas» incumple, `1154417` (`1f4384ed`) incumple **por su titular**, y `b5a29d9`
+(`3ead3bd3`) cumple. Detalle que importa: el delta `1154417`→`b5a29d9` es **aditivo** —8 oraciones antes
+y 8 después—, así que **ninguno de los dos defectos se arregló borrando la oración incómoda**.
+
+`QA-023-19` reproducido entero: fragmento **165 B** / `596a237f`, **2+2+1** apariciones, **0** restos
+viejos en las tres sedes, sedes idénticas (`3ead3bd3`, 2545 B). Y el punto **(v) ejecutando la puerta**:
+las tres entradas dan **DENY** con su byte imprimible y el texto **deriva DENY para las tres en las dos
+apariciones**; la oración 6 también es verdadera medida — el homóglifo da **allow**.
+
+**Y coincide con el analista sobre «fragmento, no oración», por razón medible:** «frases equivalentes»
+admite cualquier **paráfrasis**, y una paráfrasis es **exactamente** lo que causó `QA-023-19`. La apódosis
+libre no afloja porque el mecanismo vive en la prótasis y la consecuencia la clava `(v)`.
+
+**El SKIP de `CA-12 (ii)` es legítimo, y lo prueba con las tres ramas vivas** — que era la pregunta que
+importaba, porque un SKIP que sustituye a un rojo es la forma que tomaría un atajo:
+
+| Corrida | Cuerpos | Conteos | Veredicto |
+|---|---|---|---|
+| `b5a29d9` contra `v1.33.0` | difieren | 2 de 7 movidas | **SKIP** |
+| `v1.33.0` contra sí mismo | idénticos | 7 de 7 iguales | **PASS** |
+| **sintético** (`v1.33.0` + redefinición **fuera** del cuerpo) | **idénticos** | **7 de 7 movidas** | **FAIL** |
+
+La enumeración de llamadas la comprobó **mecánicamente** completa (único token `arnes_*` del cuerpo:
+`arnes_lee_archivo`, idéntico `e9fedaa8`/408 B), las huellas reproducen, y el SKIP es **determinista**:
+byte a byte igual en su corrida y en el CI.
+
+**Un detalle mecánico que sólo se ve mirando el código de la puerta:** puso `QA: aprobado` porque
+`hooks/guard-completado.sh:274` **deniega `Seguridad: aprobado` si `QA != aprobado`** — dejarlo en
+`con-hallazgos` habría **bloqueado al auditor**. No cerró `SEC-079`, no firmó `Seguridad:` y no tocó
+`Estado:`.
+
+**Y corrigió su propio instrumento a mitad de camino, dejándolo escrito:** su primera tanda de falsación
+corrió en un proyecto sintético **sin `hooks/`**, así que las quality gates fallaban y **todo** salía
+`deny` **por un motivo ajeno** — un falso «la puerta cierra». Repobló y repitió todo. Es el mismo modo de
+fallo que este proyecto persigue, cazado por quien lo estaba cometiendo.
+
+**Hallazgo nuevo — `QA-023-22` (`instrumento`, dueño `desarrollador`):** la precondición **fija a mano** la
+lista que compara (`for fn93 in arnes_cola_pendientes arnes_lee_archivo`, `39-…-3:282`) en vez de
+**derivarla**; una llamada nueva daría **PASS** sin comparar el tercer cuerpo. Es `instrumento` y no
+`contrato` porque el REQ dice «hoy sólo `arnes_lee_archivo`» y **hoy es verdad**, comprobado. Forzador que
+se arma solo; vencimiento propuesto 1.35.0.
+
+**Aviso de la coordinadora, y es material:** la puerta requerida está verde sobre **`b5a29d9`**, **no**
+sobre `48b7808`. QA verificó que `48b7808` no toca las tres sedes, `hooks/`, `tools/` ni la sección 39/3,
+pero **el CI tendrá que volver a correr**. `CA-09 (iii)` sigue **sin acreditar** (`SEC-080`).
+
 ## [Interno] — 2026-09-09 · Mi diagnóstico de `k=1` era falso en su mecanismo: el estadístico nunca estuvo apagado
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación y corrección: coordinadora. **Bajo delegación de 24 h.**
 
