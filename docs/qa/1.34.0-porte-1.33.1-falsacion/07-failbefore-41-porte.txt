@@ -1,0 +1,19 @@
+Estabilizacion: rigor y firma por lector comun:
+  PASS  D16: matiz no rebaja critico  (deny)
+  PASS  D16: ligero con matiz sigue ligero  (allow)
+  PASS  D16: desconocido conserva derivacion heredada  (allow)
+  PASS  SEC084: Edit solo valor decorado  (deny)
+  PASS  SEC084: MultiEdit decorado  (deny)
+  PASS  SEC084: Write decorado  (deny)
+  PASS  SEC084: preventiva decorada permitida  (allow)
+  PASS  SEC084: QA y seguridad aprobados en MultiEdit  (allow)
+  PASS  SEC084: prosa con Seguridad no firma  (allow)
+  PASS  SEC084: Write conserva firma vieja y cambia prosa  (allow)
+  PASS  SEC084: cambiar evidencia de firma requiere QA  (deny)
+  PASS  SEC084: ausencia QA conserva cierre fail-closed de 1.34  (deny)
+  PASS  SEC084: QA previo permite firma decorada  (allow)
+  PASS  D16: diagnostico nombra rigor critico
+  PASS  SEC084: diagnostico nombra el orden QA
+aviso: vuelta parcial (1 de 64 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 15 PASS, 0 FAIL

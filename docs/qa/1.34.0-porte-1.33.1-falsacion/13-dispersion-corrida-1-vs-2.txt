@@ -1,0 +1,56 @@
+598,599c598,599
+<   PASS  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  TODA la banda cae del lado conforme · cociente de duplicación (70000→140000 bytes), que NO debe pasar del techo = 1.989× · banda compatible [1.457×, 2.301×] · mín/máx 557563/644841µs sobre 280237/382439µs · techo 2.600× · modo=intercalado k=20 series=3 · plataforma=linux-gnu-x86_64-bash5.3 carga=2.00
+<   PASS  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  TODA la banda cae del lado conforme · el mismo cociente sobre v1.32.1 (70000→140000 bytes), que SÍ debe pasar del techo = 4.009× · banda compatible [3.598×, 4.533×] · mín/máx 843072/953267µs sobre 210273/234266µs · techo 2.600× · modo=intercalado k=1 series=3 · plataforma=linux-gnu-x86_64-bash5.3 carga=2.00
+---
+>   PASS  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  TODA la banda cae del lado conforme · cociente de duplicación (70000→140000 bytes), que NO debe pasar del techo = 2.052× · banda compatible [1.818×, 2.493×] · mín/máx 368147/447307µs sobre 179377/202407µs · techo 2.600× · modo=intercalado k=20 series=3 · plataforma=linux-gnu-x86_64-bash5.3 carga=2.21
+>   PASS  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  TODA la banda cae del lado conforme · el mismo cociente sobre v1.32.1 (70000→140000 bytes), que SÍ debe pasar del techo = 4.308× · banda compatible [3.480×, 5.185×] · mín/máx 725507/873231µs sobre 168389/208437µs · techo 2.600× · modo=intercalado k=1 series=3 · plataforma=linux-gnu-x86_64-bash5.3 carga=2.21
+602,603c602,603
+<   PASS  REQ-017 CA-04 el camino de campo no cuesta más de 2× lo que costaba en v1.32.0 (140 000 bytes sin CR)  razón contra v1.32.0 = 1.379× (techo 2.000×; 1606344µs sobre 1164696µs) · mín/máx 1606344/1673715µs sobre 1164696/1477591µs · techo 2.000× · modo=bloque k=10 series=3 · plataforma=linux-gnu-x86_64-bash5.3 carga medido=2.32 base=2.61
+<   PASS  REQ-017 CA-04 fail-before: la razón delata a v1.32.1  v1.32.1 cuesta 8.055× lo de v1.32.0 y se pasa del techo 2.000× · mín/máx v1.32.1 2067179/2166986µs sobre v1.32.0 256618/281468µs · techo 2.000× · modo=bloque k=2 series=3 · plataforma=linux-gnu-x86_64-bash5.3 carga heredada=2.97 base=3.29
+---
+>   PASS  REQ-017 CA-04 el camino de campo no cuesta más de 2× lo que costaba en v1.32.0 (140 000 bytes sin CR)  razón contra v1.32.0 = 1.421× (techo 2.000×; 1256583µs sobre 884203µs) · mín/máx 1256583/1299923µs sobre 884203/1038531µs · techo 2.000× · modo=bloque k=10 series=3 · plataforma=linux-gnu-x86_64-bash5.3 carga medido=2.60 base=2.87
+>   PASS  REQ-017 CA-04 fail-before: la razón delata a v1.32.1  v1.32.1 cuesta 8.304× lo de v1.32.0 y se pasa del techo 2.000× · mín/máx v1.32.1 1480148/1667707µs sobre v1.32.0 178233/197182µs · techo 2.000× · modo=bloque k=2 series=3 · plataforma=linux-gnu-x86_64-bash5.3 carga heredada=2.87 base=3.12
+615c615,616
+<   PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.161× <= techo en las 4 razones: 1.005× 1.155× 0.913× 1.161× · recorrido 1.271× · techo 1.250× · peor convergencia 1.126×
+---
+>   PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.174× <= techo en las 4 razones: 1.174× 1.063× 1.110× 1.042× · recorrido 1.126× · techo 1.250× · peor convergencia 1.105×
+>   PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.206× <= techo en las 4 razones: 1.206× 1.090× 1.051× 1.090× · recorrido 1.147× · techo 1.250× · peor convergencia 1.199×
+617c618
+<   PASS  REQ-017 CA-09 la pared de los 60 s de este árbol NO es menor que la de v1.32.1, pareado en la misma corrida  el PEOR de este árbol vale 2.383× el MEJOR de v1.32.1 medido EN ESTA MISMA corrida (>= 1,000×; los rangos no se solapan, así que la dirección no es ruido). La magnitud es del Historial y de SEC-030
+---
+>   PASS  REQ-017 CA-09 la pared de los 60 s de este árbol NO es menor que la de v1.32.1, pareado en la misma corrida  el PEOR de este árbol vale 1.325× el MEJOR de v1.32.1 medido EN ESTA MISMA corrida (>= 1,000×; los rangos no se solapan, así que la dirección no es ruido). La magnitud es del Historial y de SEC-030
+639c640
+<   PASS  REQ-021 CA-03 calibración de sonda-reloj.sh: el sujeto sensible responde al parámetro y el insensible no  sensible 1.941× · insensible 0.981× (esperados 2,000 y 1,000, los dos en banda y distinguidos; tamaño derivado del suelo en esta corrida: cal_n=184672 a 4× el suelo, r=3)
+---
+>   PASS  REQ-021 CA-03 calibración de sonda-reloj.sh: el sujeto sensible responde al parámetro y el insensible no  sensible 2.173× · insensible 1.020× (esperados 2,000 y 1,000, los dos en banda y distinguidos; tamaño derivado del suelo en esta corrida: cal_n=196947 a 4× el suelo, r=3)
+647c648
+<   PASS  REQ-021 CA-08 (iii) calibrar sonda-procesos.sh no cuesta más de 6× una medición suya con los MISMOS mandos  reloj 1.119× (67557µs sobre 60346µs) y procesos 3.571× (25 sobre 7), techo 6,000×
+---
+>   PASS  REQ-021 CA-08 (iii) calibrar sonda-procesos.sh no cuesta más de 6× una medición suya con los MISMOS mandos  reloj 1.316× (58690µs sobre 44573µs) y procesos 3.571× (25 sobre 7), techo 6,000×
+662,663c663,664
+<   PASS  REQ-023 CA-03 rama 1: entrada AJENA al alfabeto (E1) por P1 o P2 DENIEGA — las 3 tiradas de la rama (semilla 282436721)
+<   PASS  REQ-023 CA-03 rama 2: el BLANCO duplicado (P3) o insertado (E2) DENIEGA — las 5 tiradas de la rama (semilla 282436721)
+---
+>   PASS  REQ-023 CA-03 rama 1: entrada AJENA al alfabeto (E1) por P1 o P2 DENIEGA — las 2 tiradas de la rama (semilla 730505300)
+>   PASS  REQ-023 CA-03 rama 2: el BLANCO duplicado (P3) o insertado (E2) DENIEGA — las 5 tiradas de la rama (semilla 730505300)
+682c683
+<   PASS  REQ-023 CA-09 (ii) el reloj de la ruta crítica no pasa de 1,25× la línea base v1.33.0  razón de la evaluación entera de la puerta (k=4, r=6, sujetos intercalados) = 1.091× (techo 1.250×; 146847µs sobre 134594µs)
+---
+>   PASS  REQ-023 CA-09 (ii) el reloj de la ruta crítica no pasa de 1,25× la línea base v1.33.0  razón de la evaluación entera de la puerta (k=4, r=6, sujetos intercalados) = 1.064× (techo 1.250×; 152269µs sobre 143108µs)
+737,739c738,740
+<   PASS  REQ-024 CA-07 (ii) el reloj de la ruta crítica = 1.065× (techo 1.250×; 109206µs sobre 102471µs, k=4 r=6, sujetos intercalados)
+<   PASS  REQ-024 CA-07 (iii) doblar el NÚMERO DE ENTRADAS mantiene el lector de la cola lineal  mediana 2.063× (techo 2.200×; margen 0.137× > MAD 0.047×, 5 tomas de 1.991× a 2.398×) · par de tamaños: 400 → 800 entradas de '## Pendientes', longitud de línea constante
+<   PASS  REQ-024 CA-07 (iv) doblar la LONGITUD DE UNA LÍNEA de entrada mantiene el lector lineal  mediana 1.975× (techo 2.200×; margen 0.225× > MAD 0.047×, 5 tomas de 1.925× a 2.110×) · par de longitudes: 1000 → 2000 bytes de línea de entrada, 20 entradas constantes
+---
+>   PASS  REQ-024 CA-07 (ii) el reloj de la ruta crítica = 1.073× (techo 1.250×; 97720µs sobre 91067µs, k=4 r=6, sujetos intercalados)
+>   PASS  REQ-024 CA-07 (iii) doblar el NÚMERO DE ENTRADAS mantiene el lector de la cola lineal  mediana 1.967× (techo 2.200×; margen 0.233× > MAD 0.071×, 5 tomas de 1.896× a 2.206×) · par de tamaños: 400 → 800 entradas de '## Pendientes', longitud de línea constante
+>   PASS  REQ-024 CA-07 (iv) doblar la LONGITUD DE UNA LÍNEA de entrada mantiene el lector lineal  mediana 1.980× (techo 2.200×; margen 0.220× > MAD 0.077×, 5 tomas de 1.903× a 2.090×) · par de longitudes: 1000 → 2000 bytes de línea de entrada, 20 entradas constantes
+772c773
+<   PASS  SEC-004 CA-50b enlace ROTO: responde deny (117ms), ni cuelga ni revienta
+---
+>   PASS  SEC-004 CA-50b enlace ROTO: responde deny (118ms), ni cuelga ni revienta
+961c962
+<   PASS  paralelo: 60 REQ y 200 archivos en 394ms (techo 2000ms)
+---
+>   PASS  paralelo: 60 REQ y 200 archivos en 408ms (techo 2000ms)
+(diff de los 1071/1072 veredictos entre corridas)

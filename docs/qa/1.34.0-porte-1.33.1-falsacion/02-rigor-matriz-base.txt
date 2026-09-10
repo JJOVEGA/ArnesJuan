@@ -1,0 +1,55 @@
+Rigor declarado                            Sens   rigor EFECTIVO por conducta
+ligero                                     no     ligero
+ligero                                     sí    critico
+estandar                                   no     estandar
+estandar                                   sí    critico
+critico                                    no     critico
+critico                                    sí    critico
+LIGERO                                     no     ligero
+LIGERO                                     sí    critico
+Ligero                                     no     ligero
+Ligero                                     sí    critico
+ ligero                                    no     ligero
+ ligero                                    sí    critico
+**ligero**                                 no     ligero
+**ligero**                                 sí    critico
+_ligero_                                   no     ligero
+_ligero_                                   sí    critico
+`ligero`                                   no     ligero
+`ligero`                                   sí    critico
+ligero (local)                             no     estandar
+ligero (local)                             sí    critico
+ligero (D8, 2026-09-01)                    no     estandar
+ligero (D8, 2026-09-01)                    sí    critico
+estandar (matiz)                           no     estandar
+estandar (matiz)                           sí    critico
+critico (por suelo)                        no     estandar
+critico (por suelo)                        sí    critico
+critico (R-011, 2026-09-07)                no     estandar
+critico (R-011, 2026-09-07)                sí    critico
+**critico** (por suelo)                    no     estandar
+**critico** (por suelo)                    sí    critico
+ligero(sin espacio)                        no     estandar
+ligero(sin espacio)                        sí    critico
+ligero ()                                  no     estandar
+ligero ()                                  sí    critico
+ligero (                                   no     estandar
+ligero (                                   sí    critico
+ligero )                                   no     estandar
+ligero )                                   sí    critico
+ligero (critico)                           no     estandar
+ligero (critico)                           sí    critico
+critico (ligero)                           no     estandar
+critico (ligero)                           sí    critico
+(ligero)                                   no     estandar
+(ligero)                                   sí    critico
+() ligero                                  no     estandar
+() ligero                                  sí    critico
+basura                                     no     estandar
+basura                                     sí    critico
+basura (matiz)                             no     estandar
+basura (matiz)                             sí    critico
+ligero estandar                            no     estandar
+ligero estandar                            sí    critico
+ligero, estandar                           no     estandar
+ligero, estandar                           sí    critico

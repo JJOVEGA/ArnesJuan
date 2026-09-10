@@ -2,6 +2,86 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · QA del porte de 1.33.1 (#48): `con-hallazgos`, y la comprobación de después demuestra que el fail-open que encontró **vive en la 1.33.1 PUBLICADA**
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (el veredicto) y coordinadora (la atribución y el registro).
+
+**Entrada que además subsana `QA-P48-04`:** los commits `d1b3cc3` y `406f7e9` —los dos que **cambian
+el mecanismo**— no llevan `CHANGELOG.md`, y `AGENTS.md` §8 lo exige en todo commit. Comprobado:
+`core.hooksPath=.githooks` y `.githooks/pre-commit` rechaza el commit que no lo actualiza, así que se
+saltó sin rastro. Esta entrada describe el porte, que ninguna de las dos entradas previas describía.
+
+## Veredicto: `con-hallazgos` — vuelta **1 de 3** del ciclo del **porte**
+
+Unidad de trabajo: los cuatro commits, que ningún QA había validado. **No consume vuelta de `REQ-016`
+ni de `REQ-024`**, cuyos contadores están agotados — y QA lo dice explícitamente en vez de
+renombrarlo: si el propietario decide que el porte pertenece al ciclo de `REQ-024`, **no queda
+vuelta** y es escalada suya.
+
+### Lo que el porte hace bien, y más de lo que su propio banco afirma
+
+- **Los 15 casos NO son tautológicos**, y el par lo prueba en cuatro árboles: base del PR **5 PASS /
+  10 FAIL** · 1.33.0 publicada **5/10 idéntico** · 1.33.1 publicada **14/1** · porte **15/0**. El
+  único FAIL contra 1.33.1 es la mitad de `SEC-083`, correcto. QA **nombra los 5 que no discriminan**.
+- **El fail-open de la firma era MÁS ancho de lo documentado:** con la clave **limpia**, un `Edit` que
+  sustituye **sólo el valor** de `Seguridad:` daba **allow** en la base y en 1.33.0, y da **deny** en
+  el porte. Ésa es la forma más natural de firmar con `Edit`. 33 sondas —REQ nuevo, CRLF, duplicados,
+  comentario, cuerpo, idempotencia, BOM— todas conformes: **no hay vía por la que el porte permita
+  firmar donde la base denegaba con motivo**.
+- **Nada cerrado en silencio:** `QA-017-33` conserva clase y dueño con su cuarta sede citada exacta,
+  y `SEC-056`, `SEC-084` y `SEC-085` siguen abiertos.
+- Banco en dos corridas: **1071/0/8** y **1072/0/7**, y `1071+8 = 1072+7 = 1079`. **0 FAIL en las
+  dos.** Tres quality gates OK. QA **no** tomó la corrida más rápida como la buena.
+
+### `QA-P48-01` (`contrato`) — el arreglo también RELAJA, y no lo introduce el porte
+
+QA midió 27 valores × 2 sensibilidades = **54 celdas por conducta de la puerta**. El camino habitual:
+**18 de 18 idénticas**. `critico (por suelo)` sube `estandar`→`critico`. **Pero `ligero (<matiz>)`
+baja `estandar`→`ligero`**, y `ligero` es el **único** nivel exento de `QA: aprobado` (§6): un REQ
+**no** sensible con `Rigor: ligero (local)` cierra hoy **sin QA y sin seguridad**, donde la base
+denegaba.
+
+**La coordinadora midió después la atribución, porque el par base↔porte no la decide**, ejecutando
+los lectores **instalados** de las dos versiones publicadas: **el porte es FIEL y el defecto vive en
+la `v1.33.1` PUBLICADA**. En 1.33.0 `ligero (local)` daba `estandar`; en 1.33.1, `ligero`.
+
+Es **la misma forma que el defecto que 1.33.1 salió a corregir, con el signo cambiado**: el parche
+enrutó la forma con paréntesis por el lector común **para todos los valores**, y en `ligero` la
+conducta anterior —«*valor no reconocido: se ignora y se cae al defecto de la sensibilidad*»— era
+**protectora**.
+
+**Exposición, separada:** *defecto reproducido* sí, en lo publicado. *Exposición observada en este
+repositorio* **ninguna y es medible** — los 22 REQ son `Sensible a seguridad: sí` y el suelo los
+rescata (`grep -L` → 0). *Uso histórico* **no comprobado**, sin base para estimarlo.
+Evidencia y sonda re-ejecutable: `docs/qa/1.34.0-porte-1.33.1-falsacion/21-…` y `22-…`.
+
+### `QA-P48-02` (`contrato`) — el índice pasa la prueba pedida y falla su propia promesa
+
+Contra los campos de `requirements/`: **exhaustivo, 22 de 22, cero ausencias**, y las **32** filas
+bloqueantes con **22** vistas por la puerta cuadran **exactamente** con lo que publica
+`docs/ESTADO.md`. Contra su autodeclaración —«*la lista exhaustiva … de este proyecto*»— **no**:
+falta **`QA-016-04`**, `contrato` por su propia cabecera, vivo en `D16`, sin sede en ningún campo, y
+**el mismo patrón que `SEC-075`, que sí figura**.
+
+### Y lo que más pesa para la decisión del propietario: dos entradas de la cola son ahora FALSAS
+
+El porte deja **tres transcripciones de la conducta vieja**, y dos son entradas que el propietario va
+a leer para decidir: **`D16`** publica como hecho medido que `critico (por suelo)` + `Sensible: no`
+→ **ALLOW**, y hoy es **DENY**; **`D17`** publica que `_Seguridad_: aprobado` firma sobre
+`QA: pendiente`, y hoy **deniega**. `D16` pide además elegir la sede de `QA-016-04` sobre una
+medición que el porte **desmintió en parte**.
+
+### Los otros tres, con dueño
+
+`QA-P48-03` (`instrumento`) — tres celdas del índice falsas (`SEC-014`, `SEC-055`, `SEC-083`),
+**preexistentes en `1dfe31b` y movidas verbatim: el porte no las introdujo**. `QA-P48-04`
+(`instrumento`) — el §8 saltado, subsanado por esta entrada. `QA-P48-05` (`instrumento`) —
+**`REQ-017 CA-08 (ii)` alterna SKIP↔PASS sobre el mismo commit**, y **no** es el criterio que la
+coordinadora había advertido: `REQ-023 CA-09 (iii)` salió SKIP estable.
+
+**Rendimiento no acreditado:** 12 núcleos, `ARNES_JOBS=6`, `loadavg` 0,09→3,37 publicado, y esta
+máquina no es el runner. No se firmó `Seguridad:`, no se marcó nada `completado`, no se cerró ningún
+hallazgo, no se tocó código ni ningún REQ.
+
 ## [Interno] — 2026-09-10 · `QA-017-33` incorpora su cuarta sede, sin cerrar el hallazgo
 > Origen: Interno (commit) · usuario: Juan · modelo de IA: Codex · agente: qa-tester.
 

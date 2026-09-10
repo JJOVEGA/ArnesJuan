@@ -1,0 +1,12 @@
+  B2' Edit SOLO el valor (unico 'pendiente')                 -> allow
+  B3' Edit SOLO el valor con replace_all                     -> allow
+  H'  disk CRLF; Edit SOLO el valor                          -> allow
+  I'  old_string INEXISTENTE, new firma (disk=pend)          -> deny
+  T1 valor con espacio final anadido                         -> deny
+  T2 valor en MAYUSCULAS                                     -> deny
+  T3 valor decorado **aprobado**                             -> deny
+  T4 clave con espacio antes de los dos puntos               -> allow
+  T5 firma dentro de comentario <!-- -->                     -> allow
+  T6 inserta 2a linea Seguridad: aprobado DESPUES            -> deny
+  T7 inserta 2a linea Seguridad: aprobado ANTES              -> allow
+  T8 mueve la firma al cuerpo y aprueba alli                 -> allow
