@@ -17,17 +17,19 @@
 #
 # Y ESTO NO ES TEÓRICO EN ESTE REQ: LA PRIMERA VERSIÓN DE ESTA GUARDA NO CUMPLÍA SU PROPIO
 # TECHO, y este caso la cazó. `${clave//[!alfabeto]/}` en un locale UTF-8 sale superlineal
-# —cociente de duplicación 3,78 (1000→2000) y 5,59 (2000→4000) contra un techo de 2,2, y 11,9 ms
-# a 4 000 bytes—; con `LC_ALL=C` fijado dentro de la función de la guarda queda en 1,79 y 2,01 y
-# además 17× más barata en absoluto. El método, el par de longitudes y los registros están en
-# `docs/arnes/req-023-coste-y-dominio.md` §3.
+# —cociente de duplicación 3,78 (1000→2000) y 5,59 (2000→4000), y 11,9 ms a 4 000 bytes—; con
+# `LC_ALL=C` fijado dentro de la función de la guarda queda en 1,79 y 2,01 y además 17× más barata
+# en absoluto. El método, el par de longitudes y los registros están en
+# `docs/arnes/req-023-coste-y-dominio.md` §3. Esas cifras se juzgaron contra el techo ABSOLUTO de
+# 2,2 que (iii) contrataba entonces; desde el write-back del 2026-09-09 lo que (iii) contrata es la
+# RELACIÓN EMPAREJADA contra la línea base heredada, y esos números NO se reciclan como margen.
 #
 # PARTE 4 DE 5 POR REQ-014 CA-18: con los lectores y el coste en un solo archivo salían 422
 # líneas contra el techo de 400. El materializador de la línea base viene DUPLICADO de la parte
 # 3 y de las cinco partes de la 37 (motivo escrito UNA vez en
 # `37-coste-del-escaner-1-el-dominio.sh`; residual `AN-021-01`).
 CASOS_ESPERADOS_SECCION=4
-PISO_AUTONOMO_SECCION=267  # 29 preámbulo (líneas 1-29) + 77 maquinaria compartida duplicada (mat94 y la línea base, líneas 31-107) + 161 bloque indivisible mayor (el medidor y las dos puertas de veredicto —mide94, razon94 y coc94— con la FORMA de (iii), que no se puede separar de lo que la publica, líneas 112-272) · REQ-014 CA-18
+PISO_AUTONOMO_SECCION=330  # 31 preámbulo (líneas 1-31) + 78 maquinaria compartida duplicada (mat94 y la línea base, líneas 33-110) + 221 bloque indivisible mayor (el medidor y las dos puertas de veredicto —mide94, razon94 y coc94— con la FORMA y la LÍNEA BASE de (iii), que no se pueden separar de lo que las publica, líneas 113-333) · REQ-014 CA-18
 seccion_nueva "--- 39/4 · el carácter invisible: el coste por las tres vías (REQ-023 CA-09) ---"
 
 num94() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
@@ -117,9 +119,11 @@ MED94_US=''; MED94_MOTIVO=''
 # (CA-09 (iii), write-back de QA-023-05). Un cociente de duplicación depende de TRES cosas y no
 # de una: el PAR de longitudes, `k` y la FORMA de la línea —qué SEGMENTO crece y por qué camino
 # del lector pasa—. Medido con el mismo par, el mismo `k` y el mismo sujeto: título **2,042**,
-# clave **2,235**, valor **1,727** — un 29 % de dispersión repartido A LOS DOS LADOS del techo de
-# 2,2, así que el parámetro ausente DECIDÍA el veredicto y dos cocientes de formas distintas no
-# son comparables ni entre versiones ni entre corridas.
+# clave **2,235**, valor **1,727** — un 29 % de dispersión repartido A LOS DOS LADOS del techo
+# absoluto de 2,2 que (iii) contrataba entonces, así que el parámetro ausente DECIDÍA el veredicto
+# y dos cocientes de formas distintas no son comparables ni entre versiones ni entre corridas. La
+# forma sigue siendo parámetro con la relación emparejada: se toma sobre la MISMA forma en las dos
+# versiones, y ahí es donde el intercalado al nivel de `n` la vuelve comparable.
 #
 # QUÉ FORMA, POR PROPIEDAD Y NO POR NOMBRE: crece el SEGMENTO DE CLAVE, partiendo de una clave
 # QUE EL LECTOR RECONOCE (del conjunto único `ARNES_CLAVES`). Quedan FUERA, cada una con su
@@ -195,50 +199,105 @@ razon94() {   # <nombre> <us medido> <us base> <techo por mil> <qué mide>
 MIL94=''
 mil94() { printf -v MIL94 '%d.%03d' "$(( ${1} / 1000 ))" "$(( ${1} % 1000 ))"; }
 
-# (iii) EL COCIENTE DE DUPLICACIÓN, con SUS TRES PARÁMETROS PUBLICADOS —par, `k` y FORMA— y con
-# NO MENOS DE TRES TOMAS DEL PAR Y SU DISPERSIÓN. Un cociente depende del par con el que se toma,
-# así que «2,2» sin decir entre qué dos longitudes no es comparable con nada; y sin la forma,
-# tampoco (arriba). El par conforme conocido es 1000 → 2000, y la longitud menor es la primera a
-# la que el mínimo de k supera el suelo de ruido. Se mide sobre el escáner donde la guarda RESIDE
-# —hoy `arnes_norm_clave`— y sobre el de la publicación, `arnes_campo_linea`: si la guarda reside
-# en más de uno, sobre TODOS ellos.
+# (iii) LA RELACIÓN EMPAREJADA CONTRA LA LÍNEA BASE HEREDADA, con SUS CUATRO PARÁMETROS
+# PUBLICADOS —el PAR de longitudes, `k`, la FORMA y la LÍNEA BASE (el tag)— y con NO MENOS DE
+# TRES TOMAS Y LA DISPERSIÓN DE LA SERIE QUE EL CRITERIO CONTRATA. Sin los cuatro, la relación
+# NO acredita (iii).
+#
+# QUÉ MAGNITUD MIDE ESTE CASO, Y POR QUÉ YA NO ES EL COCIENTE ABSOLUTO CONTRA 2,2 (write-back
+# del criterio, 2026-09-09). El nivel absoluto del cociente lo paga el camino HEREDADO: con el
+# mismo par, el mismo `k` y la misma forma «clave», la base `v1.33.0` mide medianas 2,492
+# (`arnes_norm_clave`) y 2,446 (`arnes_campo_linea`) contra 2,295 y 2,237 de la candidata
+# (`docs/qa/1.34.0-req023-vuelta3-metodo.md` §11). Un techo absoluto sobre esa magnitud lo
+# incumple igual el código que este REQ NO ha escrito: no puede acreditar ni desacreditar la
+# guarda. La magnitud que (iii) contrata es el DELTA —«la guarda no empeora el orden de
+# crecimiento del camino en el que se inserta»— expresado como RELACIÓN EMPAREJADA entre el
+# cociente de la candidata y el de la base, tomada DENTRO DE CADA TOMA de una ÚNICA tanda, con
+# las dos versiones INTERCALADAS AL NIVEL DE `n`. Techo: no más de 1,000×.
+#
+# EL 1,000× NO SALE DE ESAS CIFRAS, Y ESA ES LA PRUEBA QUE HAY QUE PODER PASAR: es la propiedad
+# estructural expresada como razón contra una línea base medida en la misma corrida. Si las
+# medianas emparejadas salieran 1,05, el techo seguiría siendo 1,000 y lo que habría es un
+# HALLAZGO CONTRA EL CÓDIGO. Lo que (iii) sigue cazando: una guarda cuadrática sube la relación
+# a ≈ 1,10 (cálculo sobre las tomas publicadas), frente al 0,856 medido.
+#
+# LOS COCIENTES ABSOLUTOS SE PUBLICAN Y SON CONTROL: no acreditan (iii) ni lo desacreditan. Se
+# publican porque sin ellos nadie puede rederivar la relación ni ver de quién es el número.
 #
 # Y EL TECHO SÓLO SE PUEDE AFIRMAR CON MARGEN MAYOR QUE LA REPRODUCIBILIDAD DEMOSTRADA EN LA
 # MISMA CORRIDA. En un cociente la contaminación por carga NO es monótona —cae sobre los dos
-# términos, y no en la misma proporción—, así que una toma aislada por encima del techo no PRUEBA
-# que se supere y una por debajo no lo ACREDITA si la dispersión entre tomas es del orden del
-# margen. De ahí que el caso mida el par no menos de tres veces, publique las tres tomas y su
-# dispersión, y ABSTENGA con los tres parámetros y los números —nunca PASS y nunca FAIL— cuando la
-# dispersión alcanza al margen: la misma doctrina de la sonda que no llega a su suelo de ruido.
-# Esto no es holgura sobre el techo: el techo de 2,2 NO se toca, y si la forma contratada lo
+# términos, y no en la misma proporción—, así que una toma aislada por encima del techo no
+# PRUEBA que se supere y una por debajo no lo ACREDITA si la dispersión entre tomas es del orden
+# del margen. LA DISPERSIÓN QUE DECIDE ES LA DE LA SERIE CONTRATADA —la de la RELACIÓN
+# EMPAREJADA—, nunca la de los cocientes absolutos: son series distintas y con márgenes
+# distintos, y confundirlas afirmaría un techo con la reproducibilidad de otro número. Por eso
+# el caso mide la relación no menos de tres veces, publica las tomas y su dispersión, y ABSTIENE
+# con los cuatro parámetros y los números —nunca PASS y nunca FAIL— cuando la dispersión alcanza
+# al margen. Esto NO es holgura sobre el techo: el 1,000× no se toca, y si la forma contratada lo
 # supera con margen mayor que la dispersión, el caso FALLA y es hallazgo CONTRA EL CÓDIGO.
+#
+# Y SI LA LÍNEA BASE NO SE PUEDE MATERIALIZAR, (iii) EMITE SKIP CON SU MOTIVO — NUNCA PASS. Es el
+# precio declarado de haber corregido la magnitud: la relación exige un tag, así que este caso
+# deja de ser auto-anclado y depende de la misma ruta de ejecución que CA-08 (SEC-048).
 N94A=1000; N94B=2000; K94=200
-T94=3   # tomas del par. OPERATIVO: MÁS son conformes y no son hallazgo; MENOS, no.
-coc94() {   # <nombre> <fn> <techo por mil> -> PASS/FAIL/SKIP con las tomas, la dispersión y los tres parámetros
-  local nombre="$1" fn="$2" techo="$3" t a b crudo='' lo hi med disp margen que x j tmp
+BASE94=v1.33.0    # el CUARTO parámetro. Dos relaciones tomadas contra bases distintas NO son
+                  # comparables, así que el tag se publica con el número.
+T94=3   # tomas de la relación. OPERATIVO: MÁS son conformes y no son hallazgo; MENOS, no.
+hay94() {   # <lib> <fn> -> 0 si ESA lib define ESA función
+  # Sin esto, un sujeto que la base no define se cronometraría como «orden no encontrada»: barato,
+  # por debajo del suelo, y el caso abstendría citando el suelo en vez del motivo verdadero.
+  bash -c ". '$1' >/dev/null 2>&1; [ \"\$(type -t '$2')\" = function ]" >/dev/null 2>&1
+}
+coc94() {   # <nombre> <fn> <techo por mil> -> PASS/FAIL/SKIP con las tomas, la dispersión y los CUATRO parámetros
+  local nombre="$1" fn="$2" techo="$3" t lo hi med disp margen que x j tmp
+  local crudo='' ctrl='' orden='' ba bb ca cb qb qc rel
   if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
   local -a q=() s=()
+  que="par ${N94A}→${N94B} bytes, k=$K94, línea base $BASE94, $FORMA94"
+  if [ "$HER94_OK" != si ]; then
+    echo "  SKIP  $nombre  no hay línea base $BASE94 que emparejar (${MAT94_REG:-sin registro}), y el cociente ABSOLUTO no la sustituye: lo paga el camino heredado · $que"; return 0
+  fi
+  if ! hay94 "$HER94/hooks/lib.sh" "$fn"; then
+    echo "  SKIP  $nombre  la línea base $BASE94 no define «$fn»: no hay par que emparejar · $que"; return 0
+  fi
   for ((t = 1; t <= T94; t++)); do
-    a=''; b=''
-    # LOS DOS TÉRMINOS DE UNA TOMA SE MIDEN SEGUIDOS Y LAS TOMAS SE REPITEN ENTERAS: así una
-    # ráfaga de carga no cae sobre un solo término del cociente sin que ninguna otra toma lo
-    # delate. Es lo que hace de la dispersión una medida de reproducibilidad y no de ruido.
-    mide94 "$HOOKS_DIR/lib.sh" "$fn" "$N94A" "$K94" && a="$MED94_US"
-    mide94 "$HOOKS_DIR/lib.sh" "$fn" "$N94B" "$K94" && b="$MED94_US"
-    if [ -z "$a" ] || [ -z "$b" ]; then
-      crudo="$crudo t$t=<${a:-vacío}>/<${b:-vacío}>µs(no se pudo medir: ${MED94_MOTIVO:-sin motivo})"; continue
+    ba=''; bb=''; ca=''; cb=''
+    # EL INTERCALADO ES AL NIVEL DE `n`, NO AL NIVEL DE VERSIÓN: para cada longitud se miden las
+    # DOS versiones SEGUIDAS, así que una deriva de carga entre el bloque de 1000 y el de 2000
+    # cae sobre las dos por igual — y eso es lo que vuelve comparable la RELACIÓN entre ellas.
+    # Y EL ORDEN base/candidata SE ALTERNA POR TOMA Y SE PUBLICA, para que un sesgo sistemático
+    # de «la segunda mide caliente» no caiga siempre del mismo lado de la relación.
+    if [ $(( t % 2 )) -eq 1 ]; then
+      orden='base,cand'
+      mide94 "$HER94/hooks/lib.sh" "$fn" "$N94A" "$K94" && ba="$MED94_US"
+      mide94 "$HOOKS_DIR/lib.sh"   "$fn" "$N94A" "$K94" && ca="$MED94_US"
+      mide94 "$HER94/hooks/lib.sh" "$fn" "$N94B" "$K94" && bb="$MED94_US"
+      mide94 "$HOOKS_DIR/lib.sh"   "$fn" "$N94B" "$K94" && cb="$MED94_US"
+    else
+      orden='cand,base'
+      mide94 "$HOOKS_DIR/lib.sh"   "$fn" "$N94A" "$K94" && ca="$MED94_US"
+      mide94 "$HER94/hooks/lib.sh" "$fn" "$N94A" "$K94" && ba="$MED94_US"
+      mide94 "$HOOKS_DIR/lib.sh"   "$fn" "$N94B" "$K94" && cb="$MED94_US"
+      mide94 "$HER94/hooks/lib.sh" "$fn" "$N94B" "$K94" && bb="$MED94_US"
     fi
-    if [ "$a" -lt 50000 ] || [ "$b" -lt 50000 ]; then
-      # La abstención publica el número que SÍ obtuvo: un µs sin sus parámetros no es comparable
-      # con el de la vuelta siguiente (QA-023-05).
-      crudo="$crudo t$t=${a}/${b}µs(bajo el suelo de 50 ms)"; continue
+    if [ -z "$ba" ] || [ -z "$bb" ] || [ -z "$ca" ] || [ -z "$cb" ]; then
+      crudo="$crudo t$t($orden)=<no se pudo medir: ${MED94_MOTIVO:-sin motivo}>"; continue
     fi
-    q+=( "$(( b * 1000 / a ))" )
-    mil94 "${q[${#q[@]}-1]}"; crudo="$crudo t$t=${MIL94}×(${a}→${b}µs)"
+    if [ "$ba" -lt 50000 ] || [ "$bb" -lt 50000 ] || [ "$ca" -lt 50000 ] || [ "$cb" -lt 50000 ]; then
+      # La abstención publica los números que SÍ obtuvo: un µs sin sus parámetros no es
+      # comparable con el de la vuelta siguiente (QA-023-05).
+      crudo="$crudo t$t($orden)=base:${ba}→${bb}µs cand:${ca}→${cb}µs(bajo el suelo de 50 ms)"; continue
+    fi
+    qb=$(( bb * 1000 / ba )); qc=$(( cb * 1000 / ca ))
+    rel=$(( qc * 1000 / qb ))
+    q+=( "$rel" )
+    mil94 "$rel"; crudo="$crudo t$t($orden)=${MIL94}×"
+    mil94 "$qc"; ctrl="$ctrl t$t=cand ${MIL94}×"
+    mil94 "$qb"; ctrl="$ctrl/base ${MIL94}× (${ca}→${cb} sobre ${ba}→${bb}µs)"
   done
-  que="cociente de duplicación (${N94A}→${N94B} bytes, k=$K94, $FORMA94; $T94 tomas:$crudo)"
+  que="$que; $T94 tomas de la RELACIÓN:$crudo; CONTROL no acreditativo —cocientes absolutos, que paga el camino heredado—:$ctrl"
   if [ "${#q[@]}" -lt "$T94" ]; then
-    echo "  SKIP  $nombre  sólo ${#q[@]} de $T94 tomas del par son utilizables, y con menos no hay reproducibilidad que demostrar: $que"; return 0
+    echo "  SKIP  $nombre  sólo ${#q[@]} de $T94 tomas de la relación son utilizables, y con menos no hay reproducibilidad que demostrar: $que"; return 0
   fi
   # Orden por inserción, sin un proceso y sin suponer T94=3: la MEDIANA es el estadístico de las
   # tomas —una sola toma no decide nada— y con un número PAR de tomas se toma la superior, que es
@@ -258,17 +317,19 @@ coc94() {   # <nombre> <fn> <techo por mil> -> PASS/FAIL/SKIP con las tomas, la 
   if [ "$disp" -ge "$margen" ]; then
     # NO se puede AFIRMAR el techo: el criterio pide margen MAYOR que la reproducibilidad, así que
     # la igualdad también abstiene. Un SKIP con los números vale más que un PASS que la corrida
-    # siguiente desmiente con la misma implementación.
-    echo "  SKIP  $nombre  no se puede AFIRMAR el techo: dispersión ${vdisp}× (de ${vlo}× a ${vhi}×) >= margen ${vmargen}× contra el techo ${vtecho}× (mediana ${vmed}×) · $que"; return 0
+    # siguiente desmiente con la misma implementación. Vía conforme para llegar a afirmarlo: MÁS
+    # tomas, `k` MAYOR, un PAR mayor o un host menos cargado — NUNCA cambiar la forma, subir el
+    # techo ni afirmar con la dispersión de otra serie.
+    echo "  SKIP  $nombre  no se puede AFIRMAR el techo: dispersión de la RELACIÓN ${vdisp}× (de ${vlo}× a ${vhi}×) >= margen ${vmargen}× contra el techo ${vtecho}× (mediana ${vmed}×) · $que"; return 0
   fi
   if [ "$med" -le "$techo" ]; then
-    echo "  PASS  $nombre  mediana ${vmed}× (techo ${vtecho}×; margen ${vmargen}× > dispersión ${vdisp}×, de ${vlo}× a ${vhi}×) · $que"; PASS=$((PASS+1))
+    echo "  PASS  $nombre  mediana de la RELACIÓN ${vmed}× (techo ${vtecho}×; margen ${vmargen}× > dispersión ${vdisp}×, de ${vlo}× a ${vhi}×) · $que"; PASS=$((PASS+1))
   else
-    echo "  FAIL  $nombre  mediana ${vmed}× > techo ${vtecho}× (margen ${vmargen}× > dispersión ${vdisp}×, de ${vlo}× a ${vhi}×): el techo es OPERATIVO y no se sube — lo que baja es el coste de la guarda · $que"; FAIL=$((FAIL+1))
+    echo "  FAIL  $nombre  mediana de la RELACIÓN ${vmed}× > techo ${vtecho}× (margen ${vmargen}× > dispersión ${vdisp}×, de ${vlo}× a ${vhi}×): el techo es OPERATIVO y no se sube — lo que baja es el coste de la guarda · $que"; FAIL=$((FAIL+1))
   fi
 }
 for fn94 in arnes_norm_clave arnes_campo_linea; do
-  coc94 "REQ-023 CA-09 (iii) $fn94 no crece más que linealmente al doblar la línea" "$fn94" 2200
+  coc94 "REQ-023 CA-09 (iii) la guarda no empeora el orden de crecimiento de $fn94: relación emparejada contra $BASE94" "$fn94" 1000
 done
 
 # (ii) EL RELOJ DE LA RUTA CRÍTICA, contra la línea base medida EN LA MISMA CORRIDA y con los

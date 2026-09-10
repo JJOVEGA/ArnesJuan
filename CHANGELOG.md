@@ -2,6 +2,128 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · Extensión acotada de REQ-023: CA-10 cumplido por estado y la prueba de CA-09 (iii) midiendo lo que el contrato pide
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` (Opus, extensión excepcional) · verificación y consolidación: coordinadora.
+
+Las tres cosas que el propietario autorizó, y **sólo** esas tres.
+
+**`CA-10` cumplido, y la forma importa más que el hecho:** la fila de `AGENTS.md` §13 y la de
+`templates/AGENTS.md.tpl` ya **no definen la invariante por el retorno de carro**. La enuncian **por
+estado** —«una línea de la cabecera que la máquina **no puede medir** no deja cerrar»— con el CR como
+**instancia**, las demás nombradas (BOM, anchura cero, control C0, multibyte partido, blanco de más o
+puesto en el sitio de otro) y la clase cerrada **por reconstrucción de la clave, no por lista de
+caracteres**. Verificado por la coordinadora: las dos filas son **byte a byte idénticas**. Y
+`skills/arnes-upgrade/SKILL.md` gana el apartado de migración que faltaba, con la pregunta **por estado
+antes de cualquier comando** y las tres declaraciones de `REQ-016 CA-09 (ii)` **en el mismo sitio que
+el comando**, diciendo además **lo cierto hoy**: ningún comando responde esa pregunta, y el modo de
+`tools/arnes-lectura.sh` que «Hacia 1.32.1» anunciaba para 1.33.0 **no llegó**.
+
+**Par fail-before/pass-after de `CA-10`, por cláusulas: 7 de 26 en `v1.33.0` → 26 de 26 en este árbol**
+(19 voltean). Y las dos vías del apartado se **midieron antes de escribirlas**: el barrido `awk` **no
+ve** `QA-: aprobado` —guion ASCII que la puerta **sí** deniega— y sobre los 27 REQ saca 53 líneas, las
+53 legítimas.
+
+**La prueba de `CA-09 (iii)` deja de medir la magnitud retirada.** Ahora mide la **relación emparejada**
+`cociente(candidata)/cociente(base)` dentro de cada toma, con las versiones intercaladas al nivel de
+`n`, orden alternado **y publicado**, y los **cuatro** parámetros en la línea del veredicto —par, `k`,
+forma y **línea base `v1.33.0`**—. Los cocientes absolutos pasan a **«CONTROL no acreditativo»**, que
+es exactamente su nuevo papel. Dos precondiciones nuevas abstienen en vez de mentir: base no
+materializable, y tag que no define el sujeto.
+
+**Ningún umbral se movió y ninguna prueba se retiró**, que eran dos de las tres prohibiciones del
+propietario. Verificado por la coordinadora: el techo de la relación es **1000 por mil = 1,000×**, y la
+nota de falsación sigue escrita —«si las medianas emparejadas salieran 1,05, el techo seguiría siendo
+1,000»—. El piso de la sección subió de 267 a 330 porque el archivo pasó de 327 a 388 líneas, y **no
+para comprar techo**: 388 ya cabía bajo el 400 anterior.
+
+**Resultado de la prueba: 10 veredictos en 5 corridas — 1 PASS · 9 SKIP · 0 FAIL**, con las diez
+medianas de la relación en 1,000× o por debajo (0,883 a 1,000). Dispersión 0,053–0,112 aislada y hasta
+0,889 con el banco entero. Banco **dos veces 960 PASS · 0 FAIL · 6 SKIP**, cuadre **966**; autoprueba
+106 · 0; tres quality gates verdes. **El `desarrollador` NO afirma que el CI saldrá verde** —no lo
+corrió— sólo que el caso ya no mide la magnitud retirada. Lo dirá el CI.
+
+**Dos residuales anotados y no arreglados, los dos `instrumento`:** `CA-10` **no tiene caso de banco**,
+porque añadirlo obliga a mover `CASOS_ESPERADOS` en `run.sh`, que está en el `Archivos:` de `REQ-024`
+(`tools/arnes-paralelo.sh` responde `colisiona hooks/lib.sh`); y `REGHER94` nunca se asigna, así que los
+SKIP de `(i)`/`(ii)` publican un paréntesis vacío en vez del registro. Los dos se enrutan con `REQ-024`.
+
+## [GitHub] — 2026-09-09 · Extensión excepcional de REQ-023: la superficie heredada nombra la propiedad, y la prueba del coste deja de medir el techo retirado
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` (Opus, extensión de alcance CERRADO autorizada por el propietario; **no** es una cuarta vuelta y **no** reinicia el contador).
+
+**Las dos cosas que el propietario autorizó, y nada más.** `REQ-023` sigue `bloqueado`: no se firmó
+`QA:` ni `Seguridad:`, no se movió `Estado:`, no se retiró ningún hallazgo —`QA-023-15` sigue
+abierto—, no se eliminó ninguna prueba y **no se relajó ningún umbral**: el techo de la relación
+sigue en `1,000×`, el de (ii) en `1,25×`, `k` en 200, el par en 1000→2000 y las tomas en 3.
+
+**(1) `CA-10` — la invariante deja de definirse por el retorno de carro** (`QA-023-15`,
+`usuario/dinero`). La fila de `AGENTS.md` §13 y **la misma fila** de `templates/AGENTS.md.tpl`
+—idénticas byte a byte— pasan a enunciar la propiedad **por estado**: *una línea de la cabecera que
+la máquina no puede medir no deja cerrar*, con el CR como **instancia** y no como definición, con
+las otras instancias nombradas (BOM, anchura cero, control C0, multibyte partido, **blanco de más o
+puesto en el sitio de otro**), con la frase de que la clase **no** se cierra por lista de caracteres
+sino por **reconstrucción de la clave**, y con las **tres fronteras** intactas: CR/LF final =
+transporte, el cuerpo del REQ no se restringe, **reabrir** no se bloquea. Por qué importaba y por
+qué era `usuario/dinero`: el efecto **sale del repositorio** — un proyecto consumidor con su
+`AGENTS.md` congelado no se enteraba de que pudo cerrar un REQ `critico` sin validación ni
+auditoría, y ningún guardián cubre esos archivos.
+
+**Y el apartado de migración de `skills/arnes-upgrade/SKILL.md`** («Hacia 1.34.0») dice **sin
+eufemismo** que en una versión afectada *pudiste cerrar un REQ `critico` sin validación de QA y sin
+auditoría de seguridad aprobada*; enuncia la pregunta **por estado** —«cuáles de tus REQ en estado
+terminal NO cerrarían hoy»— **antes** de ofrecer ningún comando; y acompaña **cada** barrido por vía,
+en el mismo sitio que el comando, de las tres declaraciones de `REQ-016 CA-09 (ii)`. **Dice lo que
+es cierto hoy sobre los comandos, y eso incluye una promesa vencida:** ninguno responde la pregunta
+por estado, el modo de `tools/arnes-lectura.sh` que lo haría sigue en «Fuera de alcance» de
+`REQ-016` (`instrumento`, dueño `desarrollador`) y el apartado «Hacia 1.32.1» lo anunciaba para
+1.33.0, que se publicó sin él. **Las dos vías se midieron antes de escribirlas** sobre seis
+fixtures: el barrido `awk` **no ve** `QA-: aprobado` —un guion ASCII que la puerta **sí** deniega— y
+**sí** nombra `Módulo:`, que es legítimo; sobre los 27 REQ de este árbol saca 53 líneas y las 53 son
+legítimas. Ese es el material de las declaraciones, y por eso van con nombre y no como advertencia
+genérica.
+
+**(2) `CA-09 (iii)` — la prueba re-apuntada a la magnitud del contrato VIGENTE** (`QA-023-12`). El
+caso seguía midiendo el **cociente absoluto** contra el **techo absoluto de 2,2**, la magnitud que
+el write-back del 2026-09-09 retiró por estar medida insatisfacible **también para el código
+heredado**. Ahora mide la **relación emparejada** `cociente(candidata)/cociente(base)` **dentro de
+cada toma**, con las dos versiones **intercaladas al nivel de `n`** y el **orden alternado por toma
+y publicado**, contra techo **1,000×** y con los **cuatro** parámetros en la misma línea del
+veredicto: par, `k`, forma y **línea base `v1.33.0`** (el cuarto, nuevo — dos relaciones tomadas
+contra bases distintas no son comparables). Los cocientes absolutos siguen publicándose etiquetados
+**«CONTROL no acreditativo»**: sin ellos nadie rederiva la relación. **La dispersión que decide es
+la de la serie contratada** —la de la relación—, no la de los absolutos, que es la confusión que el
+criterio nombra. Y **dos precondiciones nuevas abstienen en vez de mentir:** si la línea base no se
+materializa, SKIP con el registro del materializador (el cociente absoluto **no** la sustituye); y
+si el tag **no define** el sujeto, SKIP diciendo eso — sin ella un sujeto ausente se cronometraría
+como «orden no encontrada», caería bajo el suelo y el caso abstendría **citando el suelo en vez del
+motivo verdadero**.
+
+**Lo medido, con dispersión y sin promedios: diez veredictos de (iii) en cinco corridas — 1 PASS, 9
+SKIP, 0 FAIL**, y **todas** las medianas de la relación en `1,000×` o por debajo (0,883 · 0,896 ·
+0,911 · 0,916 · 0,929 · 0,950 · 0,960 · 0,976 · 0,983 · 1,000). Las corridas **aisladas** dan
+dispersión 0,053–0,112; el **banco entero** —57 secciones a la vez— la infla hasta 0,889, y ahí se
+ve por qué: una toma con base 1,505 es carga cayendo sobre el término corto. **Y la lección de las
+nueve corridas anteriores sigue en pie: una abstención repetida no es un verde acumulado.** Lo único
+acreditado es que **el caso no produce FAIL**; quién afirma el techo es el **CI**, y esta comisión
+**no lo corrió** porque no comitea ni empuja.
+
+**Puertas:** las tres quality gates en verde; `bash -n` sobre el corredor, su autoprueba y las 57
+secciones, rc 0; autoprueba del corredor **106 PASS · 0 FAIL** (incluye la derivación de `CA-18`);
+banco entero **dos veces**, **960 PASS · 0 FAIL · 6 SKIP**, cuadre **966** — los 6 SKIP van
+enumerados uno por uno en la evidencia, y ninguno es nuevo. `CASOS_ESPERADOS_SECCION` sigue en 4 y
+`CASOS_ESPERADOS` en 966: **no se creó ni se perdió ningún caso**. La sección pasa de 327 a 388
+líneas y su `PISO_AUTONOMO_SECCION` de 267 a **330** (31 + 78 + 221, término a término); **el piso no
+se sube para comprar techo**: 388 ya cabía bajo el techo anterior de 400.
+
+**Y las dos limitaciones que van aquí y no en una nota al pie.** *(a)* **`CA-10` no tiene caso de
+banco**: añadirlo obliga a mover `CASOS_ESPERADOS` en `tests/escenarios/hooks/run.sh`, que está en
+el `Archivos:` de **`REQ-024`** (`arnes-paralelo.sh` responde `colisiona hooks/lib.sh`), así que el
+par fail-before/pass-after se tomó con `grep` contra el tag —**7 de 26** cláusulas en `v1.33.0`
+frente a **26 de 26** en este árbol, 19 volteadas— y queda **residual `instrumento`** con el
+precedente de que sí se automatiza (`36-…-4-el-informe-y-los-textos.sh` ya lo hace para `REQ-016`).
+*(b)* `arnes_norm_clave` **sigue sin resolverse por ninguna vía** (abstenía incluso en el CI con
+dispersión 1,088×), y esta comisión no lo resuelve. Evidencia, método re-derivable y las cifras
+elemento por elemento: `docs/qa/1.34.0-req023-vuelta3-metodo.md` §12, sobre `710e3e7`.
+
 ## [Interno] — 2026-09-09 · REQ-023 pasa a `bloqueado` por decisión del propietario, con una extensión excepcional de alcance cerrado
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (registro de la decisión).
 

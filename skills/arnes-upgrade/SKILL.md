@@ -736,6 +736,97 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   inofensivo deja de leerse, y con él lo que sí importa.
 
 ### Hacia 1.34.0
+- **Y AUDITA TUS REQ CERRADOS. Sin eufemismos, y es la frase entera: en una versión afectada
+  pudiste cerrar un REQ `critico` sin validación de QA y sin auditoría de seguridad aprobada.** El
+  mecanismo: un carácter que nadie ve en el diff, insertado **dentro de la clave** de una línea de la
+  cabecera, hacía que el lector **no** resolviera esa línea como el campo que declara — y la puerta
+  resolvía la **ausencia** de ese campo del lado que **abre**. Medido
+  (`docs/seguridad/registro-seguridad.md`, **SEC-047**): `Sensible a seguridad: sí` con un **BOM**
+  delante, más un `Rigor: ligero` escrito debajo, cerraba a `completado` un REQ con `QA: pendiente`
+  y `Seguridad: pendiente`, porque el **suelo de rigor** desaparecía junto con el campo; y un
+  carácter invisible delante de `Hallazgos abiertos:` retiraba un hallazgo de clase `contrato` que
+  bloqueaba el cierre. Vale para **cualquier** campo de la cabecera por el mismo camino: el
+  veredicto de QA, el de seguridad, la clase de un hallazgo, el nivel de rigor, la sensibilidad y el
+  propio `Estado:`. **Y no hace falta malicia:** un BOM lo añade PowerShell al redirigir a un
+  archivo, y un **blanco de más** —`Sensible a  seguridad`— lo teclea cualquiera y no se ve en
+  ningún editor.
+- **QUÉ HAY QUE AUDITAR, Y SE DICE ANTES QUE NINGÚN COMANDO: la pregunta es de ESTADO, no de vía.**
+  Lo que tienes que revisar es una **propiedad** de tus requerimientos: **cuáles de tus REQ en estado
+  terminal NO cerrarían hoy**, leídos con el lector de esta versión. Ésa —y no la presencia de un
+  carácter concreto en el documento— es la pregunta que acredita que no estuviste expuesto: es una
+  discrepancia entre «está cerrado» y «hoy no cerraría», así que **no envejece con la vía siguiente
+  que alguien descubra**, porque no describe ninguna vía.
+
+  **Ningún comando de este apartado la responde todavía, y el que se anunció no llegó.** La
+  comprobación por estado —un modo de `tools/arnes-lectura.sh` que conteste «REQ en estado terminal
+  que hoy no cerrarían»— **no existe en 1.34.0**: sigue en «Fuera de alcance» de `REQ-016` como
+  `instrumento` con dueño `desarrollador`, y el apartado «Hacia 1.32.1» de esta misma skill la
+  anunciaba para 1.33.0, que se publicó sin ella. Se dice aquí porque una guía que arrastra una
+  promesa vencida manda a buscar un comando que no existe. Hasta que exista, la pregunta se responde
+  **a mano** y en este orden, con las dos herramientas de abajo: el informe dice **qué líneas no se
+  pueden medir**, y para cada REQ en estado terminal que aparezca ahí, el campo que ese carácter
+  borró **no estaba gobernando cuando cerró** — reescribe la línea con la clave limpia y comprueba
+  si el veredicto **vigente** autorizaba ese cierre. Si no lo autorizaba, ese REQ cerró sin la firma
+  que decía tener: reábrelo (`AGENTS.md` §9 — un cambio de requerimiento reabre el trabajo) y que la
+  validación y la auditoría lo firmen de verdad. **No borres el carácter y sigas:** el cierre
+  indebido ya ocurrió, y lo que hay que rehacer es la revisión.
+- **(1) El informe del arnés, que lee la cabecera con EL MISMO lector que la puerta:**
+  ```
+  tools/arnes-lectura.sh          # sale ≠ 0 si hay anomalías; una de ellas es «cabecera no medible»
+  ```
+  Nombra el REQ, la clave tal como la declara, **lo insertado en `\xNN`** —en el archivo es
+  invisible y el diff no lo muestra— y la consecuencia («la puerta de cierre DENIEGA»). No es un
+  barrido por vía: pasa cada línea por el normalizador de los hooks, así que no depende de qué
+  carácter sea. **Y tampoco responde la pregunta de estado:** dice qué líneas no se pueden medir, no
+  qué REQ cerrados no cerrarían hoy — un cierre indebido también puede venir de un veredicto que ya
+  no autoriza, de una aprobación pendiente o de un hallazgo bloqueante, y de eso este informe no
+  habla.
+- **(2) Un barrido POR VÍA, con lo que NO encuentra escrito aquí mismo y no en otra página:**
+  ```
+  # Barrido POR VÍA (una sola): líneas de la cabecera cuyo SEGMENTO DE CLAVE lleva un byte no ASCII,
+  # un byte de control, un tabulador o un blanco de más. `cat -v` para VER lo invisible.
+  LC_ALL=C awk 'FNR==1 { cab = 1 } /^## / { cab = 0 }
+    cab && !/^#/ && index($0, ":") > 1 && index($0, ":") <= 32 {
+      k = substr($0, 1, index($0, ":") - 1)
+      if (k ~ /[\200-\377]|[\001-\010\013-\037]|\t|  /) printf "%s:%d: %s\n", FILENAME, FNR, $0
+    }' requirements/*.md | cat -v
+  ```
+  **Este comando interroga una VÍA, no la propiedad**, y el mecanismo tiene una vía nueva cada vez:
+  **no hallar nada NO acredita ausencia de exposición.** Vías conocidas al publicar esta versión que
+  este barrido **no encuentra** —ejemplos **no exhaustivos**; el sitio único donde viven es
+  `docs/seguridad/registro-seguridad.md`: **SEC-047** para la clave con algo insertado, **SEC-024**
+  y **SEC-025** para el retorno de carro suelto—:
+  - **un byte ASCII imprimible ajeno al alfabeto de las claves, que la puerta SÍ deniega.** Medido:
+    `QA-: aprobado` y `Q.A: aprobado` disparan la guarda de esta versión y este barrido **no los
+    ve**, porque no llevan ningún byte raro;
+  - la **sustitución de una letra por un homóglifo** (`Еstado:` con la `Е` cirílica), que el barrido
+    sí nombra y que **ninguna** versión deniega —tampoco 1.34.0—: es clase abierta con dueño en el
+    registro, así que verla aquí no significa que la puerta te proteja de ella.
+
+  **Y al revés, para que su ruido no se lea como hallazgo:** el barrido nombra líneas **legítimas**
+  —`Módulo:` y `Versión destino:` llevan letra no ASCII por plantilla—, así que una salida no vacía
+  tampoco es por sí misma una exposición: medido sobre los 27 REQ de este repositorio saca **53
+  líneas** —27 de `Módulo:` y 26 de `Versión destino:`— y **todas** son legítimas. Quien separa las
+  dos cosas es el informe de (1), porque lee con el lector de la puerta.
+- **Qué versiones están afectadas.** La pertenencia **no es una lista escrita a mano**: se decide por
+  el historial del **lector de cabecera** (`hooks/lib.sh`), es decir **toda versión publicada cuyo
+  lector no pregunta si algo se insertó dentro de la clave**. Se verifica tag a tag en un comando:
+  ```
+  git show v1.33.0:hooks/lib.sh | grep -c '_arnes_clave_oculta'   # 0 = AFECTADA
+  ```
+  Comprobado así en este repositorio: **todas hasta 1.33.0 inclusive** dan **0** (ejemplos **no
+  exhaustivos** de las más recientes: **1.31.0, 1.32.0, 1.32.1, 1.33.0**), y `SEC-047` midió las
+  filas que abren en `v1.30.3`, `v1.31.0`, `v1.32.0` y `v1.32.1`. La guarda nace en **1.34.0**.
+- **Qué cambia en el código, y qué no.** Una línea de la cabecera cuya **clave** lleva algo insertado
+  dentro deja la cabecera **sin medir**, y la puerta **deniega** citando esa línea y lo insertado en
+  `\xNN` — **nunca** permite por *ausencia* del campo que ese carácter borró. La clase **no** se
+  cierra con una lista de caracteres: retirado de la clave lo ajeno al alfabeto de las claves y sus
+  blancos, si lo que queda **es** una clave del lector, entonces alguien insertó algo dentro. **Lo
+  que NO cambia, que son las tres fronteras:** el CR/LF **final** sigue siendo transporte —un REQ
+  guardado entero en CRLF cierra igual que en LF—, el **cuerpo** del REQ no se restringe (esto es la
+  cabecera y nada más) y **reabrir** un REQ no se bloquea nunca. Y una clave legítima no cambia de
+  veredicto: `Módulo:`, `Versión destino:` y la clave **decorada** o sangrada siguen gobernando
+  exactamente como antes. **No hay llave nueva en el manifiesto y no hay nada que decidir.**
 - **`AGENTS.md`: sección nueva `## 14. Reglas de trabajo de la sesión coordinadora`**, entre los
   marcadores `<!-- arnes:coordinacion:inicio -->` y `<!-- arnes:coordinacion:fin -->` (nombres **de
   contrato**: esta migración se hace **por** ellos, y cambiarlos exige ADR). Trae la comprobación de
