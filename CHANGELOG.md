@@ -2,6 +2,56 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · `SEC-079`: la promesa absoluta se BORRA, no se anota — y el control negativo lo hace comprobable
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos` (`CA-10`) y `desarrollador` (las dos filas) · verificación y consolidación: coordinadora.
+
+**Las dos mitades de texto de `SEC-079`, hechas en ese orden.** El propietario autorizó la opción (a) con
+un matiz que descartó la solución obvia: «*Añadir solamente «no exhaustiva» no basta si la promesa
+principal sigue siendo absoluta*».
+
+**El analista convirtió ese matiz en un criterio FALSABLE, y eso es lo mejor de este cambio.** `CA-10`
+gana un bloque de cuatro puntos con **control negativo escrito**: la fila anterior incumple, **y
+añadirle sólo «no exhaustivas» sigue incumpliendo**. Así el arreglo se puede **medir** en vez de opinar
+sobre si suena suficiente. Y acotó la promesa **por la propiedad que decide la cobertura**: deniega
+cuando, retirado lo ajeno al alfabeto, repuesto el blanco y colapsados los repetidos, **lo que queda es
+una clave del lector**; si la reconstrucción **no** devuelve clave, la guarda **calla** y la puerta
+resuelve por **ausencia**.
+
+**Y evitó que el write-back fuera una coartada.** Acotó **la fila de §13** y **no `CA-01`**, con el
+motivo escrito: un criterio dice cómo se quiere el mundo, una fila de §13 **describe lo que la máquina
+hace hoy**. De modo que **`CA-01` sigue exigiendo DENY y el homóglifo sigue siendo incumplimiento
+abierto** de esa exigencia. Relajar `CA-01` habría hecho desaparecer el problema por definición — lo que
+`requirements/README.md` § «Y el reverso» prohíbe, y él lo nombró así.
+
+**Las dos filas, medidas por el `desarrollador` y verificadas por la coordinadora:** `AGENTS.md:349` y
+`templates/AGENTS.md.tpl:314` quedan **byte a byte idénticas** (md5 `1f4384ed…`, **2287 B**, `cmp` sin
+diferencias), **una sola fila por archivo** —la anterior **sustituida**, no acompañada— y **1/1** de
+delta en cada sede. La promesa absoluta vieja está **borrada**: `grep` de «*y **nunca** se permite por
+**ausencia***» da **0** en las dos. Ése es el control negativo cumplido: una fila que sólo hubiera
+añadido «no exhaustivas» conservaría esa cláusula y el `grep` la seguiría encontrando.
+
+**Dos detalles del `desarrollador` que merecen quedar escritos:**
+- **La `Е` del ejemplo es cirílica de verdad** (`d0 95` = U+0415, verificado en hexdump por él y por la
+  coordinadora), no una `E` latina. Escribir *sobre* un homóglifo con el carácter equivocado habría
+  dejado un ejemplo que no ejemplifica nada.
+- **Cita el registro por ID y NO por número de línea** (`SEC-078`, `SEC-079`, `R-024`), porque **en el
+  proyecto que nace del template esas líneas no existen**: el ancla estable es el identificador. Es
+  exactamente la clase de detalle que distingue una plantilla que funciona de una que se hereda rota.
+- Usó `Edit` y no `sed` **a propósito**, citando §13: la preferencia por consola **cede** cuando apagaría
+  una puerta cableada a `Edit`/`Write`, y `requirements/REQ-023.md` la tiene.
+
+**Commit SELECTIVO, y el motivo es coordinación real.** Hay un `desarrollador` trabajando en **`REQ-024`
+ahora mismo**, con `hooks/lib.sh` (+192), `tools/arnes-lectura.sh` (+47), `hooks/guard-completado.sh`,
+`hooks/estado-derivado.sh`, `.arnes/config.json` y su plantilla **a medio hacer**. Nada de eso entra
+aquí. Y una precisión que pidió el propio `desarrollador` de las filas, que se respeta: de las ~137
+inserciones de `requirements/REQ-023.md`, **una sola es suya** (su fila de Historial); el resto es el
+write-back de `CA-10` del analista. Su `bash -n` en verde acredita **el árbol de trabajo del otro**, no
+su cambio, que no toca shell — lo dijo él, y es la clase de precisión que hace utilizable una medición.
+
+**`SEC-079` NO se cierra con esto**, por condición del propietario: se cierra **únicamente** tras
+`qa-tester` y `auditor-seguridad`. Sigue en el campo `Hallazgos abiertos:`, con `SEC-078` y `SEC-080`
+**abiertos** y con sus responsables. `Estado:` sigue `bloqueado`, `CA-09 (iii)` **sin acreditar**.
+
 ## [Interno] — 2026-09-09 · D5 autorizada, opción (a) — y el matiz del propietario descarta la solución obvia
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (registro de la decisión y despacho de la cadena).
 
