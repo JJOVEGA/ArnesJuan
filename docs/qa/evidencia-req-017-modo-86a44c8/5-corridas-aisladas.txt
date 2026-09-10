@@ -1,0 +1,5 @@
+corrida 1 · carga_previa=0.39 · directa=PASS banda compatible [2.002×, 2.103×] techo = 2.049× · fail-before=PASS banda compatible [3.857×, 4.091×] · [8 PASS, 0 FAIL]
+corrida 2 · carga_previa=0.41 · directa=PASS banda compatible [2.035×, 2.106×] techo = 2.054× · fail-before=PASS banda compatible [3.709×, 4.144×] · [8 PASS, 0 FAIL]
+corrida 3 · carga_previa=0.58 · directa=PASS banda compatible [2.010×, 2.102×] techo = 2.062× · fail-before=PASS banda compatible [3.698×, 3.964×] · [8 PASS, 0 FAIL]
+corrida 4 · carga_previa=0.72 · directa=PASS banda compatible [1.800×, 2.133×] techo = 2.067× · fail-before=PASS banda compatible [3.600×, 4.126×] · [8 PASS, 0 FAIL]
+corrida 5 · carga_previa=0.86 · directa=PASS banda compatible [1.828×, 2.136×] techo = 2.107× · fail-before=PASS banda compatible [3.738×, 4.213×] · [8 PASS, 0 FAIL]

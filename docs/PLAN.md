@@ -96,6 +96,10 @@ Esta ventana va a tener muchas comisiones, y las tres primeras palancas están *
 > `REQ-019`, `REQ-020`, `REQ-023`, `REQ-024` y `REQ-025` van a 1.34.0, y REQ-019 es su primer trabajo.**
 >
 > ## ALCANCE VIGENTE DE 1.34.0 — CUATRO trabajos, reordenado el 2026-09-09
+> *(estados re-derivados del disco el **2026-09-10** sobre `7db3cfc`. Es coordinación: ninguna
+> decisión del propietario se cambia, y el texto anterior se conserva tachado. `REQ-020`, cuya
+> ventana destino es 1.34.0 y que aporta **8 de los 23** bloqueantes, **no figura en esta tabla**:
+> su ventana es la decisión 1 de `docs/propuesta-cierre-1.34.0.md`.)*
 >
 > **Decisión del propietario (2026-09-09), literal:** *«Decido aplazar `REQ-019` a 1.35.0 para
 > reevaluarlo. Conservá lo trabajado; no lo marques completado ni inviertas más en su reparto ahora.
@@ -104,10 +108,10 @@ Esta ventana va a tener muchas comisiones, y las tres primeras palancas están *
 >
 > | # | Trabajo | Estado |
 > |---|---|---|
-> | **1** | La sonda de `REQ-017 CA-08` | **CERRADO** (`completado`, `496068c`) |
-> | **2** | `REQ-026` — correcciones pendientes | Mecanismo validado; bloquean `SEC-072` y `SEC-073` |
-> | **3** | `REQ-023` + `REQ-024` — remediación de `SEC-047` | Contratos cerrados; `REQ-023` en implementación |
-> | **4** | `REQ-027` — reglas de coordinadora, **sobre la estructura actual** | Contratado, 11 criterios |
+> | **1** | La sonda de `REQ-017 CA-08` | ~~CERRADO (`completado`, `496068c`)~~ → **REABIERTO** el 2026-09-09 por §9 REGLA DE ESTADO (write-back de `CA-03`). Hoy `en-progreso`; **`QA: con-hallazgos`** (2026-09-10, `86a44c8`): 1 `contrato` (`QA-017-24`) + 7 `instrumento`. El `Seguridad: aprobado` vigente es del 2026-09-08 sobre `538c266` — **anterior al modo medido** |
+> | **2** | `REQ-026` — correcciones pendientes | `en-revisión`. Bloquean **`SEC-067`** (`usuario/dinero`, `en-mitigación`: código acreditado, **falta write-back**), `SEC-072` y `SEC-073`. Y **`CA-13`, `CA-14`, `CA-16`, `CA-17` siguen SIN IMPLEMENTAR** (declarado en su propio campo `QA:`) — no es redacción pendiente |
+> | **3** | `REQ-023` + `REQ-024` — remediación de `SEC-047` | ~~`REQ-023` en implementación~~ → **los dos `bloqueado`**, cada uno tras **agotar las tres vueltas** de §6. `REQ-023`: cero bloqueantes en el campo, **pero `CA-11` es falso sobre este árbol bajo dos firmas verdes** (`D13`). `REQ-024`: `QA-024-19`, `SEC-083`, `SEC-084`, y **`Seguridad: pendiente` — la auditoría nunca se hizo** |
+> | **4** | `REQ-027` — reglas de coordinadora, **sobre la estructura actual** | **`completado`** (`95764db`, 2026-09-09). QA y Seguridad `aprobado`. Quedan 4 `instrumento` abiertos (`QA-027-08`, `SEC-074`, `SEC-076`, `SEC-077`), que **no** bloquean |
 > | — | ~~`REQ-019` — adelgazar los documentos de arranque~~ | **APLAZADO a 1.35.0.** Lo trabajado se conserva |
 >
 > **Por qué `REQ-027` ya NO va detrás de `REQ-019`, y la coordinadora se corrige:** recomendó ponerlo

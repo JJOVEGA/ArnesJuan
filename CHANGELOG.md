@@ -2,6 +2,43 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Propuesta de cierre de 1.34.0: quince entradas de la cola son CINCO decisiones, y los 23 bloqueantes son SIETE causas
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **Bajo delegación de 24 h.**
+
+**A petición del propietario**, que pidió una propuesta concreta para terminar 1.34.0 y decidir si
+antes hace falta un parche 1.33.1. Nueva: `docs/propuesta-cierre-1.34.0.md`. **No se abrió comisión
+de análisis y no se tomó ninguna medición nueva:** toda cifra se re-deriva del disco con el comando
+que la acompaña, sobre `7db3cfc`.
+
+### Lo que cambió respecto de lo que yo venía diciendo
+
+- **Los bloqueantes son 23, no 22.** El veredicto de QA de `REQ-017` cerró en esta misma ventana
+  (`con-hallazgos` sobre `86a44c8`) y aportó **`QA-017-24`** (`contrato`). La cifra 22 **no se borra**:
+  queda dicho en el documento de dónde a dónde se movió, y el **36 %** que el propietario corrigió
+  sigue siendo el correcto para el recuento con el que se enunció (8 ÷ 22); sobre 23 es el **35 %**.
+- **Aparece un desfase que ninguna de las dos partes puede ver sola.** Hay **once** hallazgos
+  `contrato` en estado `abierto` en `docs/seguridad/registro-seguridad.md` que **ningún** campo
+  `Hallazgos abiertos:` declara — y `guard-completado` lee **el campo**, no el registro. Seis de los
+  once tocan la ventana 1.34.0. Es la **misma familia que `SEC-073`**: un inventario parcial leído
+  como completo, esta vez aplicado a la cola misma. No lo resuelvo yo: el registro es del auditor y
+  el campo del analista.
+- **`REQ-020` nunca se implementó, y eso está medido, no inferido:** la línea `Acredita:` que sus
+  criterios contratan existe en **0 de 63** secciones del banco.
+- **Un `mitigado` que casi «corrijo» mal.** `SEC-014` figura `mitigado` en el registro y abierto en el
+  campo de `REQ-013`. Lo iba a declarar desfase; comprobé el vocabulario del registro (`abierto` 78,
+  `mitigado` 6, `cerrado` 1) y **`mitigado` es un estado propio, distinto de `cerrado`**: el campo
+  está bien y no se toca. Es la **tercera** vez en esta sesión que estoy a punto de sobrescribir una
+  cifra correcta; queda anotado por eso.
+
+### Estados desfasados del plan, re-derivados (coordinación, no decisión)
+
+`docs/PLAN.md`, tabla de alcance de 1.34.0 — las **cuatro** filas estaban desfasadas y el texto
+anterior queda **tachado, no borrado**: la 1 declaraba `CERRADO` un REQ que §9 **reabrió**; la 2 no
+decía que `CA-13/14/16/17` siguen **sin implementar** ni que `SEC-067` es `usuario/dinero`; la 3
+decía «`REQ-023` en implementación» cuando los dos están **`bloqueado`** con las tres vueltas
+agotadas y `REQ-024` con la **auditoría sin hacer**; la 4 decía «contratado» de un REQ `completado`.
+Y se anota que `REQ-020` **no figuraba** en la tabla pese a tener ventana 1.34.0.
+
 ## [Interno] — 2026-09-10 · Índice de la cola para leerla desde GitHub, y una corrección: dije «hay proyectos corriendo 1.33.0» y eso lo inferí
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **Bajo delegación de 24 h.**
 

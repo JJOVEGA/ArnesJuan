@@ -1,0 +1,3 @@
+carga=6.93 · directa:   SKIP banda compatible [1.507×, 2.716×] banda compatible [1.507×, 2.716×]  · fail-before:   PASS banda compatible [3.767×, 4.127×]  · [7 PASS, 0 FAIL, 1 SKIP ]
+carga=10.58 · directa:   PASS banda compatible [1.452×, 2.389×]  · fail-before:   PASS banda compatible [2.958×, 4.773×]  · [8 PASS, 0 FAIL]
+carga=14.88 · directa:   PASS banda compatible [1.792×, 2.430×]  · fail-before:   SKIP banda compatible [2.240×, 8.188×] banda compatible [2.240×, 8.188×]  · [7 PASS, 0 FAIL, 1 SKIP ]
