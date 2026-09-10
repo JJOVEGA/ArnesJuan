@@ -2,6 +2,56 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Tres notas al pie sobre la misma afirmación: corregir sede por sede es lo que `ADR-011` acaba de prohibir, aplicado al texto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`REQ-024:1249`** gana el acto: `CA-05` contrata que **en el acto de CIERRE** un proyecto que no activa
+nada decide idéntico REQ a REQ, **y nombra dentro del propio criterio el acto que sí diverge** — la
+escritura de `Seguridad: aprobado` sobre un REQ que no declara `QA:`. Con el motivo de por qué el acto va
+**dentro** (se lee aislada, `CA-10`) y con la promesa «sobre todos los actos que la puerta juzga»
+declarada **retirada por `ADR-011`**.
+
+### La respuesta a «¿sigue bastando la nota al pie?», que es mejor que la pregunta
+
+**«Basta para esta corrección y no debería usarse una cuarta vez sobre la misma afirmación» — y la
+acumulación sí dice algo.** Son **tres** frases del mismo documento precisadas el mismo día —`:41`
+Contexto, `:131` Consecuencias, `:101` Alternativas—, **las tres dicen lo mismo**, y **ninguna la encontró
+quien la buscaba**: las tres aparecieron **de rebote**, al implementar otra cosa.
+
+Y el argumento que lo cierra: **corregir sede por sede una misma afirmación es exactamente la forma que
+`ADR-011` acaba de prohibir para el código, aplicada al texto** — «*la cuarta llegará*». El ADR que
+decidió «enunciar **por acto** y no por puerta» estaba siendo incumplido en su documento hermano por
+**corregir instancia a instancia en vez de en la fuente**.
+
+**Y nombró la salida proporcionada sin tomarla**, porque «*es una decisión sobre `ADR-009` que `ADR-009` no
+puede tomar*»: **retirar de él la magnitud del radio de migración y remitirla UNA sola vez a
+`CA-01`/`CA-05`**, que es quien la mide, dejando en el ADR **la decisión**. Añadido a `D8`, con el dato que
+ese gate necesita: **ratificar `ADR-009` hoy es ratificar un texto que se lee con tres condiciones**.
+
+### Por qué una segunda nota y no ampliar la primera
+
+Tres motivos, y el segundo aplica una lección de hace dos horas: ampliar la primera obligaba a **reescribir
+el texto fechado de otro analista** y, peor, **su título con cuenta** («*dos* frases … precisadas») — **un
+número sobre una magnitud que sube**, que es **exactamente** la forma que el write-back de `QA-024-13`
+castigó en este mismo REQ y que envejecería a la corrección siguiente. Un ADR nuevo **no cabe** porque aquí
+**no se decide nada**. Y «inocua» **sería falso**, porque es la forma que produjo `SEC-083`.
+
+**Y cerró una deuda ajena con la forma que su dueño había nombrado:** la nota **pone el puntero que
+faltaba**, declarando que el alcance de `ADR-009` quedó extendido por `ADR-011` — lo que cierra la
+consecuencia (−) que `ADR-011` había dejado escrita como «*lo digo y no lo hago*». **Y declara el residual
+que eso crea:** esa viñeta de `ADR-011` queda vieja, y `ADR-011` estaba fuera de su alcance.
+
+### Y dos veces aplicó la doctrina del Historial sin que nadie la invocara
+
+**Detectó una tercera sede dentro de `REQ-024` y NO la editó:** la fila del Historial del **2026-09-09**
+repite la promesa, pero es una fila **fechada** que dice **qué se sabía ese día** y está superada por las
+posteriores de la misma tabla — «*editarla borraría con qué se decidió*». Mismo criterio para la fila del
+2026-09-10 que dice «`ADR-009` no se toca»: **describe el acto de aquella comisión y sigue siendo verdad**.
+
+**Nada nuevo reabre ningún REQ**, y lo argumenta: `REQ-024` ya estaba `en-progreso`, y la reapertura de
+`REQ-023` por su `CA-11` **ya estaba declarada** por la comisión anterior — «*mis ediciones sólo dejan de
+contradecirla*». No tocó ese archivo; sigue escalado como `D13`.
+
 ## [Interno] — 2026-09-10 · `CA-06 (v)`: un caso DERIVADO en vez de literal, y por eso cazó dos frases que nadie había mirado
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de 24 h.**
 

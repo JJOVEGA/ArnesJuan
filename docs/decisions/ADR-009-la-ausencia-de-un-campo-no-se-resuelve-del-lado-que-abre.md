@@ -199,3 +199,86 @@ respuesta que no depende de que ninguna lista esté completa.
 Historial (fila del 2026-09-10); las dos sedes del `_doc` del manifiesto ya llevan las dos ramas.
 **El `Estado: propuesta` de la cabecera y su gate humano pendiente NO los toca esta nota**: siguen
 como estaban, y el gate del manifiesto está escalado como **`D8`** (`PENDING_APPROVAL.md:169`).
+
+---
+
+## Nota al pie · 2026-09-10 (`analista-requerimientos`) — la PROMESA SIN ACTO de § Alternativas, y el puntero a `ADR-011`
+
+**Por qué una SEGUNDA nota y no una ampliación de la primera, ni una edición, ni un ADR nuevo.** Un ADR
+**no se reescribe encima** (`AGENTS.md` §9), y la nota anterior —de otro analista, **fechada** y con su
+propia trazabilidad (`QA-024-01`)— tiene el mismo estatuto: su valor es decir qué se sabía **ese día** y
+con qué se corrigió. Ampliarla con un punto 3 obligaría además a reescribir su **título**, que lleva una
+cuenta («**dos** frases … precisadas»): un número sobre una magnitud que **sube**, es decir la forma que
+el write-back de `QA-024-13` acaba de castigar en `REQ-024`; envejecería otra vez a la corrección
+siguiente. **Y no es un ADR nuevo** porque aquí **no se decide nada**: el sujeto —«el alcance se enuncia
+**por acto y no por puerta**»— ya lo decidió **`ADR-011`**, que **complementa** a este documento sin
+superarlo; un segundo ADR sobre la misma decisión sería la transcripción que este repositorio persigue.
+**Tampoco es inocua**, y por eso no se declara así: es exactamente la forma que produjo `SEC-083`. Lo que
+**sí** acota su alcance —comprobado leyendo, y ya escrito en la nota anterior— es que `arnes-init` crea
+`docs/decisions/` **vacía** (`skills/arnes-init/SKILL.md:33`): este ADR **no es superficie heredada** y la
+imprecisión **no llega a ningún proyecto consumidor**.
+
+**Qué se precisa, y la frase se cita entera.** § Alternativas, viñeta «**Que la exigencia sea el DEFECTO
+en 1.34.0**»: «*Lo prohíbe `REQ-024 CA-05`, que contrata que en esta versión un proyecto que no activa
+nada decide **idéntico**, REQ a REQ y decisión a decisión.*»
+
+- **Lo que sigue en pie:** la alternativa está **bien descartada** y por el motivo correcto — `CA-05`
+  prohíbe que la exigencia pase a ser el **defecto** en esta versión, y eso no ha cambiado.
+- **Lo que es falso leído solo:** la garantía **citada**. `CA-05` ya **no** contrata equivalencia sobre
+  «la puerta», sino **sobre el acto de CIERRE**, y **nombra dentro del criterio** el acto que **sí**
+  diverge para un proyecto **sin migrar y sin encender nada**: la escritura de `Seguridad: aprobado`
+  sobre un REQ que **no declara `QA:`** pasa de **ALLOW** a **DENY**, en los **dos** estados de la llave.
+- **Y por qué es la misma familia y no una coincidencia:** lo que diverge **son resoluciones de la
+  ausencia de `QA:`** —el estado del que trata este ADR—, sólo que en un acto que **no es el cierre**.
+  Una garantía enunciada sobre «la puerta» abarca más actos de los que la medición sostiene.
+- **Lectura correcta:** *lo prohíbe `CA-05`, que contrata —de contrato— que en esta versión, **en el acto
+  de cierre**, un proyecto que no activa nada decide idéntico; sobre los demás actos que
+  `guard-completado` juzga, `CA-05` **no** promete equivalencia y exige que **cada divergencia** vaya
+  declarada en el propio criterio (`ADR-011`).*
+
+**Las cifras se citan y no se transcriben** (medición fechada, **no** umbral de nada): las **24** celdas
+del acto de cierre deciden **idéntico** y las **6** divergentes del diferencial completo son exactamente
+la firma sobre un REQ sin veredicto de QA. Sedes: informe del `desarrollador` en `CHANGELOG.md`
+§ «`SEC-083` cerrado en código…» y § «`CA-06 (v)`: un caso DERIVADO en vez de literal…»,
+`PENDING_APPROVAL.md` § **`D12`**, y `docs/seguridad/registro-seguridad.md` § **`SEC-083`** con `R-026`
+§5, donde siguen viviendo clase, severidad, dueños, forzador y vencimiento.
+
+**El puntero que faltaba, y aquí se pone.** `ADR-011` dejó **declarado como consecuencia (−)** que este
+documento no lo enlaza y que «quien lo abra solo no se enterará de que su alcance se extendió», nombrando
+como forma proporcionada **una nota al pie fechada**. Ésta lo es: **el alcance de este ADR —«la puerta de
+cierre y el lector de campos» (§ Contexto)— quedó EXTENDIDO por
+`docs/decisions/ADR-011-el-alcance-de-la-ausencia-se-enuncia-por-acto-no-por-puerta.md`**, que enuncia la
+propiedad **por acto**, deriva la lista de actos de las ramas de denegación del código y **no revierte
+ninguna** de las tres decisiones de aquí. `ADR-011` **no se toca** por esta nota.
+
+**Qué NO cambia esta nota, dicho para que no se lea de más.** Las **tres decisiones** de § Decisión se
+sostienen enteras —el sitio único en `hooks/lib.sh`, la tabla de direcciones campo a campo y la
+activación por `campos.ausencia_exige`, que sigue naciendo **apagada**—; la nota anterior sigue valiendo
+tal cual; el `Estado: propuesta` de la cabecera y su gate humano **siguen como estaban**; y no se cierra
+ningún hallazgo ni se firma ningún veredicto.
+
+**Y una señal que este ADR no puede leer sobre sí mismo, así que va escrita para su gate.** Con ésta son
+**tres** las frases de este documento precisadas en el mismo día, y las tres dicen lo mismo: **qué nota un
+proyecto que no hace nada** (`:41` en § Contexto, `:131` en § Consecuencias, `:101` en § Alternativas).
+Ninguna la encontró quien las buscaba: salieron de comisiones que medían otra cosa. Tres sedes de una
+misma afirmación corregidas **sede por sede** es la forma que este repositorio ha perdido cinco veces y
+que `ADR-011` acaba de prohibir **para el código** —enumerar sedes en vez de enunciar la propiedad—, así
+que la nota al pie **basta para esta corrección y no debería usarse una cuarta vez sobre esta misma
+afirmación**. La salida proporcionada, que **no se toma aquí porque es una decisión sobre este ADR y no
+puede tomarla este ADR**: retirar de este documento la **magnitud** del radio de migración y remitirla
+**una sola vez** al sitio que la mide y la mantiene —`REQ-024` `CA-01` y `CA-05`—, dejando aquí la
+decisión, que es lo que un ADR debe conservar. Dueño: el **propietario** en el gate de este ADR, o el
+`auditor-seguridad` si lo levanta antes. Y el dato que ese gate necesita saber: este documento sigue en
+`propuesta`, de modo que ratificarlo hoy es ratificar un texto que **se lee con tres condiciones**, y las
+tres están en sus notas.
+
+**Trazabilidad.** Causa: el **informe del `desarrollador` de `REQ-024 CA-06 (v)`** del 2026-09-10
+(`CHANGELOG.md` § «`CA-06 (v)`: un caso DERIVADO en vez de literal…», § «Fuera de alcance, hecho y
+declarado»), que encontró esta sede con un caso **derivado** —«toda promesa de equivalencia lleva el acto
+DENTRO de la promesa»—, la reportó **sin editarla por dueño** y remitió a la doctrina ya decidida; método
+y denominadores en `docs/qa/1.34.0-req024-ca06v-metodo.md`. Doctrina aplicada: **`ADR-011`** (el sujeto
+por acto) y **`REQ-023 CA-10`** (una oración titular se juzga **leída sola**). Write-back gemelo del mismo
+día en la otra sede: `requirements/REQ-024.md` § «Conflictos registrados» y las dos filas de su Historial.
+*(Escrito **leyendo** este ADR, `ADR-011`, `requirements/REQ-024.md` § `CA-05`/§ `CA-06`/§ «Conflictos
+registrados» y `CHANGELOG.md` en `rel/registro-1.33.0`, base `8b06cd6`; **sin ejecutar nada** — las cifras
+son las del `desarrollador` y esta nota no las re-deriva.)*

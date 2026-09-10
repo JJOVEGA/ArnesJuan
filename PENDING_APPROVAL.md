@@ -1203,3 +1203,21 @@ PR **#43** en `DRAFT`. `REQ-014` `completado`. Bloqueantes `contrato` en el repo
   ningún proyecto que instale el arnés puede heredarla.
 
 <!-- Mover aquí con: decisión tomada, quién, fecha. No borrar (histórico). -->
+
+**Añadido el 2026-09-10 — un dato que este gate necesita y que no existía cuando se escribió `D8`.**
+`ADR-009` sigue en `propuesta`, y hoy lleva **tres** imprecisiones precisadas por notas al pie: `:41`
+(Contexto), `:131` (Consecuencias) y `:101` (Alternativas). **Las tres dicen lo mismo** —*qué nota un
+proyecto que no hace nada*— y **ninguna la encontró quien la buscaba**: aparecieron de rebote, al
+implementar otra cosa. Así que **ratificar `ADR-009` hoy es ratificar un texto que se lee con tres
+condiciones**, y las tres viven en sus notas y no en su cuerpo.
+
+**Y el `analista-requerimientos` nombró la salida proporcionada sin tomarla, porque es una decisión sobre
+`ADR-009` que `ADR-009` no puede tomar:** **retirar de él la magnitud del radio de migración y remitirla
+UNA sola vez a `CA-01`/`CA-05` de `REQ-024`** —que es quien la mide y la mantiene—, dejando en el ADR la
+**decisión**, que es lo que un ADR debe conservar. Dueño: **tú** en este gate, o el `auditor-seguridad` si
+lo levanta antes.
+
+**Su argumento para no seguir parcheando, que me parece el mejor del día:** corregir **sede por sede** una
+misma afirmación es **exactamente la forma que `ADR-011` acaba de prohibir para el código, aplicada al
+texto** — «*la cuarta llegará*». El propio ADR que decidió «enunciar por acto y no por puerta» estaba
+siendo incumplido en su documento hermano por corregir instancia a instancia en vez de en la fuente.
