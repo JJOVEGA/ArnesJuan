@@ -2,6 +2,64 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · La promesa absoluta no se había borrado: sobrevivía en la oración titular, y la coordinadora había verificado una cadena en vez de una propiedad
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus, revisión acotada al cambio) · consolidación: coordinadora.
+
+**`QA: con-hallazgos` sobre `1154417`**, validado en `git worktree --detach` con el padre `89440e9` como
+línea base A/B — la forma correcta, porque el árbol de trabajo tiene trabajo vivo de `REQ-024`.
+
+**El hallazgo que más enseña, y va contra la coordinadora: `QA-023-18` (`contrato`).** La promesa absoluta
+se borró de la **oración 2**, sí, pero **sigue palabra por palabra en la oración 1**, la titular: «*Una
+línea de la cabecera que la máquina **no puede medir** no deja cerrar*», sin condición — mientras la
+**oración 6 de la misma celda** dice que el homóglifo **permite**. La celda se contradice consigo misma.
+Medido ejecutando la puerta: `Еstado: completado` → **ALLOW** con salida vacía, y
+`Sensible а seguridad: sí` + `Rigor: ligero` → **ALLOW**.
+
+**Y la lección es sobre cómo verifiqué yo.** Dije «la promesa absoluta está **borrada**» apoyándome en un
+`grep` de la frase «*y **nunca** se permite por **ausencia***», que efectivamente da **0**. Pero eso
+**comprueba una cadena, no una propiedad**: la promesa vivía en otra oración con otras palabras. Es
+exactamente el modo de fallo que este proyecto persigue —confundir la forma con el estado— y lo cometí
+verificando el arreglo de un hallazgo que era, precisamente, una promesa sin condición. El método de QA
+—barrer la celda **oración a oración**, que es lo que el propio `CA-10 (iii)` prescribe— es el que sí
+mide, y el mío no lo era.
+
+**`QA-023-19` (`contrato`)**: `CA-10` punto 1, las dos filas y el Historial describen «*repuesto un blanco
+en el sitio de la retirada y colapsados los repetidos*», y el código hace otra cosa
+(`hooks/lib.sh:2005`): `limpio="${ajeno//[[:blank:]]/}"` — **retira TODOS los blancos**, como dice su
+propio comentario. Divergen en tres entradas, entre ellas **el BOM que la propia fila nombra primero**, y
+la celda se contradice con su oración 12, que sí lo describe bien. Describe **menos** cobertura de la que
+hay, así que **no reabre ningún fail-open**.
+
+**Y el control negativo funciona: discrimina de verdad.** QA construyó tres candidatas y las barrió oración
+a oración: la fila anterior **incumple**; añadirle sólo «no exhaustivas» **sigue incumpliendo**; añadirle
+además el puntero **también**; la fila nueva cumple en sus oraciones 2–3. Separa tres textos distintos —y
+separa justo lo que el propietario quería separar—. **Pero el mismo barrido caza la fila nueva por su
+oración 1**, que es el hallazgo de arriba. Un control negativo que también condena el arreglo es la mejor
+prueba de que no es decorativo.
+
+**Acotar la fila en vez de `CA-01` queda declarado HONESTO, con una condición.** `CA-01` es byte a byte
+idéntico (`md5 4d0d1495…`), el incumplimiento sigue vivo y **contable** en `CA-11`, `CA-12 (iii)` (3/3) y
+«Fuera de alcance» (9 ítems), y la fila ahora **publica** que la vía permite. **La condición:** mientras la
+oración titular siga prometiendo sin condición, la fila conserva la única lectura que hace quien escanea la
+columna «Invariante», y **por ahí «acotar la fila» sí se convertiría en la coartada**.
+
+**El cambio de texto no mueve el banco, confirmado por QA por su vía:** cuadre **966** en las tres
+corridas; el único efecto medible es el censo del corpus de `CA-04` (5336→5356 líneas con campo), que va
+hacia el lado que **refuerza** la anti-vacuidad; y por construcción no puede mover un veredicto por la vía
+de las filas porque **ninguna sección del banco las lee** — que es `QA-023-20`.
+
+**Más evidencia para `D6`, y refuerza el diagnóstico de `k=1`:** el mismo caso del fail-before le dio a QA
+**4,667×** sobre el padre y **3,562×** sobre este commit, mismos sujetos, dos corridas — junto a los
+**3,379×** y **2,329×** del CI. Cuatro muestras de un sujeto **inmutable** entre 2,3 y 4,7: es el retrato
+de una medición de una sola muestra, no de una máquina que cambió.
+
+**Dos `instrumento` nuevos con dueño:** `QA-023-20` (ninguna sección del banco lee las dos filas) y
+`QA-023-21` (la promesa absoluta sobrevive en el mensaje de la puerta, `guard-completado.sh:363` y `:392`).
+
+`Hallazgos abiertos:` queda con **13** entradas, **todas con clase**. `Estado:` `bloqueado`, `Seguridad:`
+intacto, **`SEC-079` no cerrado**. QA resolvió además la cuenta que el analista dejó abierta: **extendió su
+veredicto a la cláusula nueva y no pasa**, conservando dentro del campo lo acreditado sobre `808f9ca`.
+
 ## [Interno] — 2026-09-09 · El rojo de la puerta requerida tiene causa concreta: el fail-before mide con `k=1` y apaga el estadístico que su criterio ordena
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (trabajo de coordinación, sin abrir comisión).
 
