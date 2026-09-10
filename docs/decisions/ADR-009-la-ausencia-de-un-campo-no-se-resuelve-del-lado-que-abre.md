@@ -139,3 +139,63 @@ Dos cosas más del contexto, porque acotan la decisión:
   REQ-024 y esta comisión le añadió **un renglón** (leer la llave en la llamada a `jq` que ya
   hacía), porque publica el **rigor efectivo** en su tabla y sin la llave el tablero diría
   `estandar` donde la puerta dice `critico`. Va al Historial de REQ-024 como desviación.
+
+---
+
+## Nota al pie · 2026-09-10 (`analista-requerimientos`) — dos frases de este ADR precisadas, no reescritas
+
+**Por qué una nota y no una edición, ni un ADR nuevo.** Un ADR **no se reescribe encima**
+(`AGENTS.md` §9): su valor es decir qué se decidió **y con qué se decidió**, así que corregir el
+texto original borraría la única prueba de con qué información se decidió. Y un **segundo ADR sobre
+la misma decisión** sería exactamente la transcripción que este repositorio persigue: dos sedes de
+una regla se desfasan, y se desfasan hacia el lado que abre. Tampoco es **superficie heredada**, y está
+comprobado leyendo: `arnes-init` crea `docs/decisions/` como **carpeta vacía**
+(`skills/arnes-init/SKILL.md:33`) y lo que viaja es `templates/ADR.md.tpl`, no los ADR concretos de este
+repositorio — así que la imprecisión **no llega a ningún proyecto consumidor**. La forma
+proporcionada es ésta: **la decisión, las alternativas y las consecuencias quedan intactas**, y la
+nota dice qué hay que leer con condición. La decisión de esta forma es del `analista-requerimientos`
+y va escrita con su motivo para que no parezca la salida cómoda.
+
+**Qué se precisa, y las dos frases se citan enteras.**
+
+1. **§ Contexto, viñeta «El radio de migración es el precio real»** (la segunda de las dos que
+   cierran esa sección): «*Si la ausencia dejara de perdonarse por defecto, **todo** REQ
+   heredado de **todo** proyecto instalado que no declare uno de esos cuatro campos **dejaría de
+   cerrar** el día de la actualización.*» Es un **condicional sobre una alternativa que este ADR
+   NO adopta** —«que la exigencia sea el DEFECTO en 1.34.0» está descartada en § Alternativas
+   porque `REQ-024 CA-05` lo prohíbe—, así que no gobierna nada de lo construido. Pero su
+   consecuente es **el mismo que está medido falso**: de los cuatro campos, dos **gobiernan** (y un
+   REQ que sólo omita ésos **sigue cerrando**) y dos **deniegan**. Lectura correcta: *dejaría de
+   cerrar **el REQ al que le falte uno de los dos campos que deniegan**; a quien le falte sólo uno
+   de los que gobiernan, se le aplicaría el valor más restrictivo y cerraría o no según ese valor*.
+2. **§ Consecuencias, viñeta «Activar tiene un coste de migración que se paga de golpe»:** «*Activar tiene un coste de migración que se paga de
+   golpe. **Todo** REQ heredado que omita uno de los cuatro campos **deja de cerrar** hasta
+   declararlo.*» Ésta **sí** habla de la decisión adoptada —encender la llave—, y es la misma
+   imprecisión en su forma fuerte. Lectura correcta, con la medición al lado
+   (`docs/qa/1.34.0.md` § `QA-024-01`; tabla campo a campo en `requirements/REQ-024.md` § `CA-01`):
+
+   | campo ausente, llave encendida | qué pasa |
+   |---|---|
+   | `QA:` · `Hallazgos abiertos:` | **DENY** nombrando el campo: **ahí sí** deja de cerrar hasta declararlo |
+   | `Sensible a seguridad:` · `Rigor:` | **GOBIERNAN** con el valor que más restringe (`sí`, `critico`): el REQ deja de cerrar **sólo si ese valor lo para** |
+   | `Seguridad:` | **DENY**, pero su veredicto se lee **sólo** cuando el rigor efectivo es `critico`; por debajo, su ausencia no para el cierre — igual que tampoco lo para su valor |
+
+   Medido y decisivo: un REQ que omite `Sensible a seguridad:` y `Rigor:` pero ya lleva
+   `QA: aprobado`, `Seguridad: aprobado` y `Hallazgos abiertos: (ninguno)` **CIERRA**, con rigor
+   efectivo `critico`.
+
+**Qué NO cambia esta nota, dicho para que no se lea de más.** Las **tres decisiones** de § Decisión
+se sostienen enteras, incluida la tabla de direcciones campo a campo, que es **correcta**: dice
+`gobierna` y `deniega` donde corresponde y nunca dijo que las cinco pararan el cierre. El coste de
+migración **existe** y sigue siendo el motivo de que la llave nazca **apagada**; lo que se corrige es
+su **magnitud declarada**, que era «todos» y es «los que deniegan». La consecuencia práctica para
+quien vaya a encender la llave **no se relaja**: se mide antes con `tools/arnes-lectura.sh` y se
+pregunta **por estado** —«cuáles de mis REQ en estado terminal no cerrarían hoy»—, que es la única
+respuesta que no depende de que ninguna lista esté completa.
+
+**Trazabilidad.** Causa: **`QA-024-01`** —clase, severidad y dueños **citados** y no declarados aquí:
+`docs/qa/1.34.0.md:3175` y `:3416`—, reportado por el `desarrollador` sobre este ADR
+**sin editarlo**. El write-back del criterio está en `requirements/REQ-024.md` § `CA-01` y en su
+Historial (fila del 2026-09-10); las dos sedes del `_doc` del manifiesto ya llevan las dos ramas.
+**El `Estado: propuesta` de la cabecera y su gate humano pendiente NO los toca esta nota**: siguen
+como estaban, y el gate del manifiesto está escalado como **`D8`** (`PENDING_APPROVAL.md:169`).

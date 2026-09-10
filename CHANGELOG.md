@@ -2,6 +2,62 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Los cinco write-back, y el CI PASA sobre nueve commits incluida la puerta movida
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`hooks-en-linux` PASA** sobre el HEAD actual (run 34446492519, 2 min 1 s) — **nueve commits** desde el
+último verde, y traen lo más arriesgado del día: la resolución de la ausencia de `QA:` **movida fuera del
+corto-circuito** en `guard-completado.sh`, el **modo intercalado** de `CA-03`, la **regla de la banda** y
+**tres secciones nuevas**. Es la primera vez que el juez de 4 vCPU con `ARNES_JOBS=6` mira todo eso.
+
+**Y la abstención que los dos `desarrollador` anunciaron como probable allí NO ocurrió:** se midió 1 de 16
+en esta máquina y 2 de 5 con CPU saturada; en el CI la banda no contuvo el techo. No lo tomo como
+acreditación —una corrida no acredita una frecuencia— pero queda registrado con su cifra.
+
+### Los cinco write-back
+
+1. **`REQ-024:994`** — «`CA-03` **resuelve**» → «`CA-03` **ELIGE** su salida (ii)», con **2 de 3**
+   obligaciones hechas y **falta el re-recorrido**. Y la cuenta correcta —**una premisa + tres
+   obligaciones**— queda en **tabla dentro de `CA-03`**, no sólo en el Historial, con la nota de que
+   `QA-024-02` cuenta la premisa como obligación y omite el re-recorrido.
+2. **Glosa de `CA-01`** — «vacía» pasa a ser **relativa al valor declarado del mismo campo**, y las vías
+   admitidas son **tres**: gobierna · deniega nombrando el campo · **no decide nada a ese nivel, con
+   igualdad medida en la misma corrida**. Con la tabla de los seis campos y **el caso medido que CIERRA**
+   omitiendo `Sensible a seguridad:` y `Rigor:`. Corregida **también en su segunda sede** (glosa de
+   `CA-05`) — nadie había pedido esa segunda.
+3. **`QA-024-03` / `D8`** — el REQ **ya no afirma que el gate se cumplió**: bloque `campos` en el árbol
+   desde `119e853` sin entrada previa, los dos ADR en `propuesta`, llave en `false`. Cita el hallazgo y
+   declara la decisión **del propietario**, sin tomarla.
+4. **Párrafo de referencia de `CA-03` de `REQ-017` (`D9`)** — reescrito a lo medido: el modo se adopta por
+   **coherencia de instrumento** y por la dispersión **entre corridas**, **no** por una anchura de banda
+   que no se estrecha; la tabla que **movía dos variables** queda **nombrada como clase**, y el **+7,6 %**
+   escrito con su consecuencia (margen ~25 % → **~19 %**).
+5. **`ADR-009`** — **nota al pie fechada**, ni reescritura ni ADR nuevo. Y **la mitad del argumento la
+   comprobó leyendo**: `arnes-init` crea `docs/decisions/` **vacía** (`skills/arnes-init/SKILL.md:33`), así
+   que `ADR-009` **no** es superficie heredada. Encontró además que la frase imprecisa está en **dos**
+   sitios (`:41` y `:131`) y no en uno —el `desarrollador` reportó sólo el primero— y que **`ADR-010` está
+   limpio**.
+
+**Ninguno de los cinco reabre otro REQ**, con el razonamiento escrito. Y **no hay hallazgo `contrato`
+nuevo contra terceros**: comprobó que `REQ-021 CA-02` punto 2 contrata el **procedimiento** y funda su
+justificación en `QA-017-06` sobre **dos árboles** (1,217 vs 1,012), magnitud que esta evidencia **no**
+toca. La frontera queda escrita dentro de `CA-03`.
+
+**Una deriva que detectó y NO corrigió, citando §14.B.4:** el título de sección de `REQ-024` «*Por qué
+`Hallazgos abiertos:` está en `(ninguno)`, con tres hallazgos encima*» es **falso hoy** — el campo lleva
+**diez**. Su cuerpo sigue correcto; envejecieron el encabezado y el marco. A la cola.
+
+### Y una corrección mía, del mismo turno
+
+Al ver que existe un caso llamado «*siguiendo `REQ-016 CA-11` al pie de la letra*» (`40/2:192`) dije que
+el primer analista se equivocaba al afirmar que el re-recorrido **no** necesita `desarrollador`. **Lo
+comprobé y me equivoqué yo:** ese caso **no lee `CA-11`**, codifica el puntero viejo como **literal**, así
+que hacer cierto el criterio no exigía ni una línea de código. **El primer analista tenía razón.**
+
+Lo que queda de ese caso es otra cosa: es un **control que demuestra un defecto que el write-back acaba de
+corregir**, así que hoy está **desfasado**. No lo toco: clasificarlo es de `qa-tester`, y el CI lo ve pasar
+porque mide el literal y no el criterio.
+
 ## [Interno] — 2026-09-10 · `QA-024-01` cerrado en sus dos mitades, el cuadre reconciliado a 1024, y casi sobrescribo una cifra correcta con mi propio mal conteo
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `desarrollador` (`QA-024-01`) y `desarrollador` (modo intercalado) · reconciliación: coordinadora. **Bajo delegación de 24 h.**
 
