@@ -1712,7 +1712,14 @@ arnes_campos_normaliza() {   # <qa> <seg> <sens> <hall> <rigor> -> ARNES_QA/SEG/
   arnes_norm_campo "$2"; arnes_veredicto "$ARNES_CAMPO"; ARNES_SEG="$ARNES_VEREDICTO"
   arnes_norm_campo "$3"; ARNES_SENS="$ARNES_CAMPO"
   arnes_norm_campo "$4"; ARNES_HALL="$ARNES_CAMPO"
-  arnes_norm_campo "$5"; arnes_veredicto "$ARNES_CAMPO"; ARNES_RIGOR="$ARNES_VEREDICTO"
+  arnes_norm_campo "$5"
+  # Los niveles simples ya quedaron normalizados arriba; sólo la evidencia
+  # parentética necesita el veredicto común. Así el camino habitual no paga
+  # una segunda desenvuelta por cada cabecera leída.
+  case "$ARNES_CAMPO" in
+    *'('*) arnes_veredicto "$ARNES_CAMPO"; ARNES_RIGOR="$ARNES_VEREDICTO" ;;
+    *) ARNES_RIGOR="$ARNES_CAMPO" ;;
+  esac
   arnes_sens_efectiva
   arnes_rigor_efectivo
 }

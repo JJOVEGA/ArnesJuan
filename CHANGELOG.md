@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Ajuste de coste del lector de Rigor
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Codex.
+
+Evita una segunda normalización en valores simples de `Rigor:`. Los matices parentéticos conservan el normalizador común. Corrige la ruta medida por REQ-017 CA-08 (ii); el CI decide el resultado.
+
 ## [Interno] — 2026-09-10 · Preparación de metadatos para 1.33.1
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Codex.
 
