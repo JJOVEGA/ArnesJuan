@@ -30,6 +30,7 @@ arnes_guard_completado() {
   local -a piezas=()
   local modo resultante reconstruido np k old new ra done_norm est_antes est_despues
   local cita_desp est_citado cr_desp cr_linea
+  local seg_antes
 
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
@@ -228,6 +229,10 @@ arnes_guard_completado() {
   # Reconstruido: los campos son los de la cabecera del documento que quedara en disco.
   # Sin reconstruir: se prefiere el fragmento entrante y se respalda en disco (pre-edicion),
   # porque QA/seguridad fijan su veredicto antes de la transicion a completado.
+  # Comparar el campo de cabecera, no buscar su nombre en el fragmento: el
+  # lector acepta decoración y Edit puede sustituir sólo el valor. El crudo
+  # incluye la evidencia: renovar la firma también requiere QA. Una firma
+  # idéntica conservada al editar prosa no es una firma nueva.
   if [ "$reconstruido" -eq 1 ]; then arnes_campos_req "$resultante" ''
   else arnes_campos_req "$disk" "$nuevo"; fi
   qa="$ARNES_QA"; seg="$ARNES_SEG"; sens="$ARNES_SENS"; rigor="$ARNES_RIGOR"
@@ -266,13 +271,14 @@ arnes_guard_completado() {
   #
   # EXCEPCION NOMBRADA: la auditoria PREVENTIVA —sin codigo todavia— si puede ir
   # por delante, porque no firma nada construido. Se declara escribiendo
-  # `Seguridad: aprobado (preventiva)`, y se declara AL EMITIRLA, no al invocarla:
+  # `Seguridad: preventiva`, y se declara AL EMITIRLA, no al invocarla:
   # una excepcion que se inventa cuando hace falta no es una excepcion.
   #
   # Solo se juzga si esta edicion TOCA el campo: reordenar un REQ viejo que ya
   # tuviera los veredictos cruzados no debe bloquearse por algo que no hizo.
   if [ "$seg" = "aprobado" ] && [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
-    if grep -q 'Seguridad:' <<< "$nuevo"; then
+    arnes_seguridad_cabecera "$disk"; seg_antes="$ARNES_SEG_CABECERA"
+    if [ "$ARNES_SEG_CRUDO" != "$seg_antes" ]; then
       arnes_deny "ARNES: '$rel' lleva 'Seguridad: aprobado' pero su 'QA:' es '$qa'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGENTS.md 6): la auditoria no firma sobre un arbol que QA no ha validado, porque no mira las quality gates. Si es una auditoria PREVENTIVA —sin codigo todavia— declarala con su propio veredicto: 'Seguridad: preventiva'."
     fi
   fi

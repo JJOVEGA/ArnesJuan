@@ -2,6 +2,16 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Candidato local de estabilización sobre v1.33.0
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Codex · agente: desarrollador + revisión independiente.
+
+Se prepara un candidato sin versión ni publicación. Normaliza los matices
+parentéticos de `Rigor:` mediante el lector común y compara el valor crudo de
+`Seguridad:` antes y después de una edición, para cubrir claves decoradas y cambios
+de sólo valor. Incluye 17 regresiones: fallan 11 en la base y pasan las 17 en la
+candidata. El banco completo local conserva tres fallos ya observados en la base;
+por eso este registro no declara una liberación ni cierra hallazgos.
+
 ## [Interno] — 2026-09-08 · **CORRECCIÓN del diagnóstico de la sonda**: el umbral no está «mal puesto», y lo que falla es peor
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 

@@ -1,0 +1,36 @@
+# Regresiones D16 y SEC-084 sobre documentos y ediciones reales.
+CASOS_ESPERADOS_SECCION=17
+PISO_AUTONOMO_SECCION=20  # preámbulo y bloque mayor; sin maquinaria duplicada
+
+seccion_nueva "Estabilizacion: rigor y firma por lector comun:"
+mkreq_r "REQ-940" "no" "aprobado" "pendiente" "critico (por suelo)"
+check "D16: matiz no rebaja critico" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-940.md" 'Estado: pendiente' 'Estado: completado')"
+mkreq_r "REQ-941" "no" "pendiente" "pendiente" "ligero (local)"
+check "D16: ligero con matiz sigue ligero" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-941.md" 'Estado: pendiente' 'Estado: completado')"
+mkreq_r "REQ-942" "no" "aprobado" "pendiente" "inventado"
+check "D16: desconocido conserva derivacion heredada" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-942.md" 'Estado: pendiente' 'Estado: completado')"
+
+mkreq_r "REQ-943" "no" "con-hallazgos" "pendiente" "estandar"
+sed -i 's/^Seguridad: pendiente/**Seguridad**: pendiente/' "$PROJ/requirements/REQ-943.md"
+check "SEC084: Edit solo valor decorado" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-943.md" '**Seguridad**: pendiente' '**Seguridad**: aprobado')"
+check "SEC084: Edit valor sin clave" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-943.md" 'pendiente' 'aprobado' true)"
+check "SEC084: MultiEdit decorado" deny guard-completado.sh "$(emite_multiedit "$PROJ/requirements/REQ-943.md" '**Seguridad**: pendiente' '**Seguridad**: aprobado')"
+contenido40="$(cat "$PROJ/requirements/REQ-943.md")"
+check "SEC084: Write decorado" deny guard-completado.sh "$(emite_write "$PROJ/requirements/REQ-943.md" "${contenido40/'**Seguridad**: pendiente'/'**Seguridad**: aprobado'}")"
+check "SEC084: preventiva decorada permitida" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-943.md" '**Seguridad**: pendiente' '**Seguridad**: preventiva')"
+check "SEC084: QA y seguridad aprobados en MultiEdit" allow guard-completado.sh "$(emite_multiedit "$PROJ/requirements/REQ-943.md" 'QA: con-hallazgos' 'QA: aprobado' '**Seguridad**: pendiente' '**Seguridad**: aprobado')"
+
+mkreq_r "REQ-944" "no" "pendiente" "aprobado" "estandar"
+printf '\n## Historia\nNota anterior\n' >> "$PROJ/requirements/REQ-944.md"
+check "SEC084: prosa con Seguridad no firma" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-944.md" 'Nota anterior' 'La nota menciona Seguridad: aprobado')"
+contenido40="$(cat "$PROJ/requirements/REQ-944.md")"
+check "SEC084: Write conserva firma vieja y cambia prosa" allow guard-completado.sh "$(emite_write "$PROJ/requirements/REQ-944.md" "${contenido40/'Nota anterior'/'Nota nueva'}")"
+check "SEC084: cambiar evidencia de firma requiere QA" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-944.md" 'Seguridad: aprobado' 'Seguridad: aprobado (revision nueva)')"
+mkreq_r "REQ-945" "no" "" "pendiente" "estandar"
+check "SEC084: ausencia QA conserva comportamiento heredado" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-945.md" 'Seguridad: pendiente' '**Seguridad**: aprobado')"
+mkreq_r "REQ-946" "no" "aprobado" "pendiente" "estandar"
+check "SEC084: QA previo permite firma decorada" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-946.md" 'Seguridad: pendiente' '`Seguridad`: aprobado')"
+mkreq_r "REQ-947" "no" "pendiente" "pendiente" "estandar"
+check "SEC084: nueva cabecera Write sin archivo" deny guard-completado.sh "$(emite_write "$PROJ/requirements/REQ-948.md" $'# REQ-948\nEstado: pendiente\nQA: pendiente\n**Seguridad**: aprobado\n')"
+check_motivo "D16: diagnostico nombra rigor critico" 'rigor efectivo.*critico' guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-940.md" 'Estado: pendiente' 'Estado: completado')"
+check_motivo "SEC084: diagnostico nombra el orden QA" 'QA.*con-hallazgos.*ciclo' guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-943.md" '**Seguridad**: pendiente' '**Seguridad**: aprobado')"

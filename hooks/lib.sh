@@ -1712,7 +1712,7 @@ arnes_campos_normaliza() {   # <qa> <seg> <sens> <hall> <rigor> -> ARNES_QA/SEG/
   arnes_norm_campo "$2"; arnes_veredicto "$ARNES_CAMPO"; ARNES_SEG="$ARNES_VEREDICTO"
   arnes_norm_campo "$3"; ARNES_SENS="$ARNES_CAMPO"
   arnes_norm_campo "$4"; ARNES_HALL="$ARNES_CAMPO"
-  arnes_norm_campo "$5"; ARNES_RIGOR="$ARNES_CAMPO"
+  arnes_norm_campo "$5"; arnes_veredicto "$ARNES_CAMPO"; ARNES_RIGOR="$ARNES_VEREDICTO"
   arnes_sens_efectiva
   arnes_rigor_efectivo
 }
@@ -1805,6 +1805,19 @@ _arnes_sin_cola_partida() {   # ARNES_CORTO -> sin una secuencia UTF-8 incomplet
     return 0
   done
   return 0
+}
+
+# Campo crudo anterior para distinguir una firma de una edición de prosa.
+# Se consulta sólo al juzgar el orden; no agrega otra lectura al cierre normal.
+arnes_seguridad_cabecera() {   # <documento> -> ARNES_SEG_CABECERA
+  local l ARNES_CITA=0 ARNES_CR=0 ARNES_CR_LINEA=''
+  local ARNES_LINEA ARNES_CLAVE ARNES_VALOR ARNES_CLAVE_DECORADA
+  ARNES_SEG_CABECERA=''
+  while IFS= read -r l; do
+    case "$l" in '## '*) break ;; esac
+    arnes_campo_linea "$l" || continue
+    [ "$ARNES_CLAVE" != 'Seguridad' ] || ARNES_SEG_CABECERA="$ARNES_VALOR"
+  done <<< "$1"
 }
 
 arnes_campos_req() {   # <texto en disco> <texto entrante>
