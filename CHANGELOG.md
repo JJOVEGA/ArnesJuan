@@ -2,6 +2,65 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `SEC-083`: «el campo no llega a declararse» no es una vía, es un ESTADO — y por eso `ADR-009` pasó por al lado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+### La generalización que impide que la próxima mitigación falle igual
+
+`ADR-009` enunció su alcance sobre «**la puerta de cierre y el lector de campos**» —o sea sobre **un acto
+y un lector**—, y ahí está el hueco: «*el campo no llega a declararse*» **no es una vía: es un ESTADO**, y
+un estado **consume más de un acto**. Esta guarda corre en **cualquier edición** y decide **antes** del
+cierre, así que la mitigación **no podía alcanzarla por construcción**.
+
+De ahí que el criterio nuevo se enuncie **POR ACTO y no por puerta**, con la lista de actos **derivada del
+código** y un suelo publicado de **no menos de 2 actos ejercidos**. Eso es lo que convierte un arreglo
+puntual en una propiedad: sin ese cambio de sujeto, la siguiente mitigación volvería a cubrir «la puerta»
+y volvería a dejar fuera lo que no es una puerta.
+
+### `CA-12` de `REQ-024`, nuevo — con las dos salidas y su precio, y la tercera prohibida
+
+Exige que la ausencia de `QA:` **en el acto de escribir `Seguridad: aprobado`** se resuelva por el **sitio
+único de `CA-02`** y **nunca** por una comprobación local. Dos salidas admitidas, **cada una con su
+precio escrito**: **(a)** condicionada a la llave —compatible con `CA-05`, y entonces la mitad de texto es
+**obligatoria**—; **(b)** independiente de la llave, más restrictiva, que **exige write-back en `CA-05`**.
+Y **prohíbe la tercera**: aceptar la firma **porque el campo no está**, o denegar **sin nombrar** el campo.
+
+**Cambio DE FONDO: exige ADR.** No lo escribió —`docs/decisions/` estaba fuera de su encargo— y dejó el
+número libre leído hoy: **`ADR-011`**, con dueño, contenido y gate ya escritos en `REQ-024` § «El TERCER
+ADR». Lo enruto yo.
+
+### `CA-11` de `REQ-016`: la conducta no se toca, la declaración sí
+
+Ahora dice que **la dirección de la ausencia se DECLARA en un solo sitio pero quién la APLICA depende del
+campo**, y que la de `Seguridad:` la aplica la **rama `critico` de la puerta de cierre** —también cuando
+ese `critico` viene del **suelo**, y aunque el REQ declare un `Rigor:` menor—, de modo que **por debajo de
+ese nivel la ausencia de `Seguridad:` no deniega, en los dos estados de la llave**. Retira «lo decide un
+solo sitio» y el «declara `deniega`… así que la conducta no se relaja» leído sin condición.
+
+**Y ninguna exigencia sobre la conducta cambia:** la equivalencia comentado ≡ borrado y la excepción del
+`critico` **siguen exactas**, y siguen siendo **12 criterios**. La mutación se **cita por archivo y
+sección**, sin transcribir clase ni vencimiento — la disciplina del sitio único aplicada a su propia
+prosa. **Menor, sin ADR.**
+
+### Tres precisiones que evitan escribir mentiras
+
+- **`CA-03` fila 3 dice ahora `EJECUTADA, NO ACREDITADA`**, nunca «aprobado», con las dos firmas del
+  re-recorrido en su orden y el motivo: **el re-recorrido se hizo y su resultado son hallazgos**.
+- **No tocó ningún campo `Hallazgos abiertos:`**: `SEC-082` y `SEC-083` ya estaban asentados donde debían.
+- **Y un aviso para quien transcriba la fila de §13:** la fila gemela de `templates/AGENTS.md.tpl` se
+  comprobó idéntica el 2026-09-09 **sólo para la fila del rigor**, no para ésta — así que **hay que
+  comparar las dos sedes antes de escribir**, y no dar por buena una igualdad que se midió sobre otra
+  fila. Queda escrito en «Qué queda SIN VERIFICAR».
+
+**Ninguno de los dos reabre ningún REQ**, con el razonamiento: los dos afectados ya están `en-progreso`,
+`REQ-003 CA-08` queda **explícitamente preservado**, `REQ-023 CA-11` sigue cierto, y **ningún criterio de
+ningún REQ contrataba esa fila de §13**. La única reapertura **futura y condicional** va declarada dentro
+de `CA-12`: si el ADR elige la salida (b), `CA-05` recibe write-back **en la misma comisión que la
+implemente, no después**.
+
+Y el forzador de banco de `SEC-083` cae en `tests/escenarios/hooks/secciones/11-nivel-de-rigor.sh`, donde
+**ya viven** los casos de esa guarda.
+
 ## [Interno] — 2026-09-10 · `R-026`: el auditor se niega a firmar verde, y encuentra que la puerta que protege su propia firma se puede rodear borrando una línea
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `auditor-seguridad` (Opus) · enrutado: coordinadora. **Bajo delegación de 24 h.**
 
