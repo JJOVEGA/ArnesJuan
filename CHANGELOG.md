@@ -2,6 +2,36 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Índice de la cola para leerla desde GitHub, y una corrección: dije «hay proyectos corriendo 1.33.0» y eso lo inferí
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **Bajo delegación de 24 h.**
+
+**A petición del propietario, que preguntó si la 1.33.0 estaba publicada.** Lo está, y queda comprobado:
+tag **`810128a`** en el remoto (anotado `367516b`), contenido en **`origin/main`**, declarado en
+`.claude-plugin/marketplace.json` y en `plugin.json`, e **instalado en esta máquina** (sha `5f37946`, del
+2026-09-09). Lo que se desarrolla es **1.34.0**, que sigue sin publicar.
+
+### La corrección, y es sobre una frase que puse delante del propietario
+
+En `D17` escribí «*hay proyectos corriendo `v1.33.0` con esto abierto*». **Eso lo inferí, no lo medí**, y
+`AGENTS.md` lo dice de sí mismo («*lo usan proyectos reales*») — que es una afirmación del repositorio, no
+una comprobación mía.
+
+**Y lo medido resulta peor que lo que había escrito:** el consumidor **comprobado** de `v1.33.0` es **este
+propio repositorio**. Los hooks que han gobernado esta sesión —los que denegaron, avisaron y midieron
+durante toda la jornada— **corren desde el plugin 1.33.0 instalado**, por autoalojamiento. Así que el
+fail-open de `SEC-084` **ha estado vivo en las puertas que vigilaban el trabajo de hoy**.
+
+Eso cambia la forma de `D17`: no es «avisar a terceros que quizá existan», es «**el arnés que se desarrolla
+a sí mismo lleva abierto un fail-open en la guarda que valida su propio desarrollo**» — y eso **sí** está
+medido. La entrada queda reescrita con lo verificado y lo inferido **separados**.
+
+### Índice de la cola
+
+`PENDING_APPROVAL.md` tenía **quince** entradas sin índice, y así no se lee. Ahora abre con: las **tres
+que más desatascan** —`D17`, `D12` y `D11`, ésta con su aviso de no firmar la parte (b)—, el **estado de
+los cuatro REQ** de la ventana con qué espera cada uno, y **las quince en orden** con una línea cada una.
+No cambia ninguna decisión ni ningún dato: cambia que se pueda recorrer sin leerla entera.
+
 ## [Interno] — 2026-09-10 · `R-027`: `SEC-082` y `SEC-083` cerrados, y un fail-open VIVO en lo publicado — la firma se puede colar decorando una clave
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `auditor-seguridad` (Opus) · enrutado: coordinadora. **Bajo delegación de 24 h.**
 

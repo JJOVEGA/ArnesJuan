@@ -24,6 +24,38 @@
 
 ## Pendientes
 
+> **Índice — 15 decisiones, agrupadas por lo que desatascan.** Escrito el 2026-09-10 para que la cola se
+> pueda leer desde GitHub sin recorrerla entera. Cada entrada lleva su evidencia y su recomendación;
+> ninguna se ha ejecutado.
+
+**Lo que más desatasca, si sólo lees tres:**
+
+| | Qué | Por qué urge |
+|---|---|---|
+| **`D17`** | `SEC-084`: un fail-open **vivo en la 1.33.0 publicada** cuela una firma de seguridad decorando la clave | Es lo distribuido, no la ventana. Y el consumidor **comprobado** es este propio repositorio |
+| **`D12`** | El precio de la salida (b) de `CA-12` | Sin ella `REQ-024` **no puede** escribir su criterio y sigue `bloqueado` |
+| **`D11`** | ⚠️ **NO firmar la parte (b) como está** | La fila que autorizaba escribir **es hoy falsa**; metería una promesa **al revés** en superficie heredada |
+
+**Estado de los cuatro REQ de la ventana:**
+
+| REQ | Estado | Espera |
+|---|---|---|
+| `REQ-016` | `en-progreso` · **QA y Seguridad aprobados** | sólo que la cola baje a 0 |
+| `REQ-017` | `en-progreso` · modo intercalado implementado | QA en curso, luego auditor |
+| `REQ-023` | **`bloqueado`** | **`D13`** — dos firmas verdes sobre un `CA-11` hoy falso |
+| `REQ-024` | **`bloqueado`**, tres vueltas agotadas | **`D14`** + `D12` |
+
+**Las quince, en orden de entrada:** `D2` los 20 hallazgos bloqueantes · `D3` `SEC-072`/`SEC-073` ·
+`D4` ventana 1.35.0 de la superlinealidad · `D6` el fail-before de `CA-03` (analizado: **no** era `k=1`) ·
+`D7` `CA-04` y su gate previo · `D8` el bloque `campos` y la llave (+ las tres condiciones de `ADR-009`) ·
+`D9` el párrafo de `CA-03` (mi evidencia movía dos variables) · `D10` `SEC-083`, informativa ·
+**`D11`** el gate de `ADR-011` — **con aviso** · **`D12`** el precio de la salida (b) ·
+**`D13`** `REQ-023`, otro bloqueo · **`D14`** `REQ-024` `bloqueado` o residual · `D15`
+`veredictos.caducan_con_codigo` (premisa corregida) · `D16` `QA-016-04`, la convención que abre ·
+**`D17`** `SEC-084` en lo publicado.
+
+**Resueltas** al final del archivo: `D1` (`REQ-023` a `bloqueado` con extensión) y `D5` (`SEC-079`).
+
 ### D2 · Los 20 hallazgos bloqueantes de siete REQ — resolver, declarar residual o aceptar
 
 Tu regla del 2026-09-08 dice que **cualquiera devuelve el tag a ti**. Inventario medido el 2026-09-09:
@@ -542,7 +574,17 @@ cadena literal lo que el lector reconoce decorado— y **dirección del daño op
 `QA-024-19` a `contrato`** y abrió `SEC-084` como el caso **fail-OPEN** de la misma familia. No fue un
 desacuerdo de criterio: **la premisa de la clasificación estaba medida falsa.**
 
-**Por qué te lo traigo aparte de todo lo demás:** hay proyectos corriendo **`v1.33.0`** con esto abierto.
+**Por qué te lo traigo aparte, con lo verificado y lo inferido separados —porque primero los mezclé.**
+Escribí «hay proyectos corriendo `v1.33.0` con esto abierto» y **eso lo inferí**. Lo **medido** es esto:
+`v1.33.0` está **publicada** —tag `810128a` en el remoto, en `origin/main`, declarada en el marketplace y
+en `plugin.json`—, y **el consumidor comprobado es ESTE repositorio**: los hooks que han gobernado toda
+esta sesión corren desde el **plugin 1.33.0 instalado**, por autoalojamiento.
+
+**Así que lo cierto y medido es peor que lo que había escrito:** el fail-open ha estado **vivo en las
+puertas que vigilaban el trabajo de hoy** — las mismas que denegaron, avisaron y midieron durante toda la
+jornada. Que haya **otros** consumidores es una afirmación de `AGENTS.md` («*lo usan proyectos reales*»),
+**no algo que yo haya comprobado**, y no debí presentarla como dato.
+
 La decisión de qué hacer con un fail-open **ya distribuido** —parche de 1.33.x, aviso a los consumidores,
 o esperar a 1.34.0— **no es una decisión de ventana, y no la tomo yo.**
 
