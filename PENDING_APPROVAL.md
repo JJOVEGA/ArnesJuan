@@ -236,6 +236,49 @@ que este proyecto llama un criterio que dice algo falso sobre lo medido.
 `docs/arnes/req-017-ca-03-modo-de-medicion/`, donde vive **toda** la evidencia del modo. Lo añado al
 reconciliar, junto al `CASOS_ESPERADOS`.
 
+
+### D10 · `SEC-083` — un fail-open en la guarda que protege la firma del auditor. **Informativa: el trabajo ya va en marcha**
+
+**No te pido permiso para arreglarlo** —es remediación de un `contrato` y dejarlo abierto es peor que
+tocarlo—, pero un fail-open **en el mecanismo de enforcement** es exactamente lo que querrías saber, así
+que va escrito aquí y no sólo en el registro.
+
+**Qué es.** La invariante «*seguridad no firma lo que QA no ha validado*» (`AGENTS.md` §13, cumplida por
+máquina en `hooks/guard-completado.sh:274`) **falla en abierto cuando la línea `QA:` no llega a
+declararse**. Verificado por mí leyendo el código:
+
+```bash
+if [ "$seg" = "aprobado" ] && [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
+```
+
+**El `[ -n "$qa" ]` es la puerta abierta:** si `QA:` **no existe**, la condición es falsa y la guarda **no
+deniega**. `Seguridad: aprobado` sin ninguna línea `QA:` **pasa**.
+
+**Y es `SEC-047` sobreviviendo a su propia mitigación.** El comentario del propio `lib.sh` describe ese
+patrón como el defecto de `SEC-047` —«*los `[ -n "$qa" ]` / `[ -n "$hall" ]` saltaban la comprobación
+entera*»— y `campos.ausencia_exige` **no lo cierra en ninguno de sus dos estados**, porque `ADR-009`
+alcanza «la puerta de cierre y el lector de campos» y **esta guarda corre en cualquier edición**. La
+mitigación pasó por al lado.
+
+**Lo midió el `auditor-seguridad` en `R-026` con tres controles:** `QA: pendiente` y `QA: con-hallazgos` →
+DENY; `QA: aprobado` → ALLOW correcto; **ausente o comentada → ALLOW**, también con la llave encendida.
+Clase `contrato`, severidad **alta**, dueños `desarrollador` (la guarda) y `analista-requerimientos` (la
+fila de §13 y el criterio).
+
+**La ironía que conviene no perder:** es la guarda que hace que el `QA: aprobado` del `qa-tester` sea
+**precondición mecánica** de que el auditor pueda firmar. O sea que **el auditor encontró que la puerta
+que protege su propia firma se puede rodear** borrando una línea.
+
+**Lo que hago bajo la delegación:** enruto `SEC-083` al campo `Hallazgos abiertos:` de `REQ-024` —sin sede
+en un campo, **ninguna puerta lo mide**, que es la deriva de §9— y despacho las dos mitades: código y
+write-back. **Lo que NO hago:** darlo por cerrado sin QA y sin auditor, ni tocar `AGENTS.md` §13 sin que el
+analista fije primero qué debe decir.
+
+**Y lo que sí es tuyo, si discrepas:** §6 lista «cualquier cambio en `hooks/`» entre los gates humanos.
+Toda esta sesión ha cambiado `hooks/` bajo autorización de REQ y con el ciclo completo, y lo sigo haciendo
+aquí por el mismo criterio; **si querías ese gate literal por cada cambio del mecanismo, dilo y paro** —
+pero un fail-open abierto en la guarda de las firmas me parecía peor que un commit de más.
+
 ## Resueltas
 
 ### D5 · `SEC-079` — **RESUELTA el 2026-09-09: opción (a), y con un matiz del propietario que cambia el arreglo**

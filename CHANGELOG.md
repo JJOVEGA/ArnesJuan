@@ -2,6 +2,81 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `R-026`: el auditor se niega a firmar verde, y encuentra que la puerta que protege su propia firma se puede rodear borrando una línea
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `auditor-seguridad` (Opus) · enrutado: coordinadora. **Bajo delegación de 24 h.**
+
+**`Seguridad: con-hallazgos` (R-026), no `aprobado`** — y la distinción es exacta: **acredita la conducta**
+de `CA-11` y **no su texto**. La conducta es real y la midió: equivalencia comentado ≡ borrado **10/10** en
+los dos estados de la llave, la excepción de `Seguridad:` en `critico` **también cuando el `critico` viene
+del suelo**, las **6** claves declarando dirección en el sitio único (frente a **2** del puntero viejo), y
+que encender la llave **no abre nada: 0 de 243**.
+
+**Y derivó su propio rango, después de que se lo diera mal dos veces.** Esta vez no se lo di: le di el
+hecho. Resultado: **texto** `9d007ca` + `ce714c7`; **código** `119e853^..ce714c7` **restringido por ruta**,
+con motivo **medido y no estético**: `ARNES_AUSENCIA`, `arnes_ausencia`, `arnes_resuelve_ausencia` y la
+llave **nacen todas en `119e853`**, así que `R-009` (2026-09-07) **no pudo ver nada de lo que `CA-11`
+nombra hoy**. Y comprobó que `a57eecc..ce714c7` sobre `hooks/`, `tools/` y `.arnes/` sale **vacío**: el
+árbol de código que auditó es **byte a byte el de QA**.
+
+### `SEC-082` (`contrato`, alta): «lo decide un solo sitio» es falso para `Seguridad:`
+
+Probado **por mutación**: mutar `Seguridad|deniega` → `gobierna:aprobado` **no mueve** el veredicto, y la
+**misma** mutación mueve **4 de 4** en los otros campos. Y la declaración es **incondicional** mientras la
+conducta es **condicional al rigor**: con la llave encendida, `Rigor: estandar` sin línea `Seguridad:` da
+**ALLOW**. **Sin write-back no levanta el `con-hallazgos`.**
+
+### `SEC-083` (`contrato`, alta): un fail-open que no estaba en ningún papel
+
+La invariante «*seguridad no firma lo que QA no ha validado*» (`AGENTS.md` §13, cumplida por máquina)
+**falla en abierto cuando la línea `QA:` no llega a declararse**. Verificado por mí leyendo
+`guard-completado.sh:274`: el **`[ -n "$qa" ]`** es la puerta abierta — si `QA:` **no existe**, la
+condición es falsa y **no deniega**.
+
+**Es `SEC-047` sobreviviendo a su propia mitigación**, y el propio `lib.sh` describe ese patrón como el
+defecto de `SEC-047`. `campos.ausencia_exige` **no lo cierra en ninguno de sus dos estados**, porque
+`ADR-009` alcanza «la puerta de cierre y el lector de campos» y **esta guarda corre en cualquier
+edición**: la mitigación **pasó por al lado**.
+
+**Y la ironía que conviene no perder:** es la guarda que hace del `QA: aprobado` una **precondición
+mecánica** de que el auditor pueda firmar. **El auditor encontró que la puerta que protege su propia firma
+se puede rodear borrando una línea.**
+
+### Tres veces le salvó el control positivo, y la tercera es contra sí mismo
+
+1. Su primera sonda dio «ALLOW» por un **`$0` mal resuelto** que impedía escribir el fixture.
+2. **Tres de sus cinco mutaciones no aplicaron** por un choque de delimitador en `sed` — lo vio porque
+   **lee `ARNES_AUSENCIA` antes de cada tanda**.
+3. **Su primera redacción de la línea `Seguridad:` contenía un `<!--` literal** y dejó la cabecera de
+   `REQ-016` con **un rango sin cerrar que se tragó `Hallazgos abiertos:`**. Lo cazó
+   **`tools/arnes-lectura.sh` en dos líneas**.
+
+**La tercera es la más elocuente del día entero:** el instrumento que `REQ-023` construyó **cazó al
+auditor de `REQ-016` creando exactamente el defecto que `REQ-023` existe para cerrar**. El control
+funcionó, y él lo dejó escrito «*porque casi lo escribo yo*».
+
+### Clases: sube una, mantiene otra, y las dos con motivo
+
+**Sube `QA-024-12` a `contrato`** —un comentario que afirma exclusividad falsa sobre el sitio que gobierna
+la ausencia es, en superficie de código, la misma forma que `SEC-079` en superficie heredada— y
+**mantiene `QA-016-01` en `instrumento`**, **atado** a `SEC-082` como su remediación (3). Nadie baja una
+clase sin su firma, y él no bajó ninguna.
+
+**`QA-016-02` se cierra** (`mitigado`): la exposición que nombraba **ya no existe**, verificada en la
+puerta con su propio control — y **no dejó el campo sin nada bloqueante**, que era justo el agujero que él
+mismo había señalado.
+
+### Lo que enruto yo, y por qué
+
+**`SEC-083` entra en el campo `Hallazgos abiertos:` de `REQ-024`**: mientras viviera **sólo** en el
+registro, **ninguna puerta lo mide** — la deriva de §9, y el auditor no podía escribirlo porque ese
+archivo no es suyo. **Y la subida de `QA-024-12` a `contrato` llega al campo**, por lo mismo. Escalado
+además como **`D10`**, informativa: un fail-open en el mecanismo de enforcement es lo que el propietario
+querría saber, aunque el trabajo ya vaya en marcha.
+
+**Y una precisión del auditor que evita escribir algo falso:** la tercera obligación de `CA-03 (ii)` queda
+**EJECUTADA, no aprobada**. El re-recorrido se hizo; **su resultado son hallazgos**. Si la celda de
+`CA-03` se actualizara esperando un `aprobado`, escribiría una mentira.
+
 ## [Interno] — 2026-09-10 · `QA-024-13` y `-14`: un título por propiedad, y una distinción sobre qué es deriva y qué es historia
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de 24 h.**
 
