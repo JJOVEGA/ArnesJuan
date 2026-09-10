@@ -2,6 +2,98 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · El ciclo se rompe enumerando ANTES, no corrigiendo después: las ocho sedes de la promesa de `CA-03`, en la mano del analista
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (la enumeración y el despacho) y analista-requerimientos (la corrección).
+
+**Y me corrijo primero, porque el error era mío y de método.** Al cerrar la sesión dije que la
+primera acción al retomar era que el propietario **autorizara** el paréntesis de `CA-03:62`. **Ya
+estaba autorizado:** su texto de `D18` dice «*revisa la promesa **completa***», y `:62` es parte de la
+promesa de `CA-03`. Pedirlo otra vez era pedir un permiso ya concedido, que él **prohibió
+expresamente**. Ejecutado sin volver a preguntar.
+
+**Lo que rompe el ciclo no es más texto: es el orden.** Tres veces seguidas se corrigió la frase
+señalada y apareció la misma forma en otra sede. Esta vez **enumeré todas las sedes del árbol antes de
+despachar** —`grep -rnE 'de qué máquina|mitad \(ii\)|exigencia \(ii\)'` sobre `requirements/ docs/
+tests/ hooks/ tools/ templates/ AGENTS.md`, sobre `071cf8a`— y **entregué la lista dentro del
+encargo**, con qué hacer en cada una. **Ocho sedes:** cinco en `REQ-017.md` y tres ajenas.
+
+**Salió una cuarta que QA no había listado:**
+`docs/arnes/req-017-ca-03-modo-de-medicion/04-evidencia-del-intercalado.md:131-133` — «*De qué máquina
+es **cada cifra** va publicado en la propia línea… que es la exigencia (ii) de la remediación de
+`SEC-064`*». La misma forma, y **en absoluto**. **Amplía el alcance de `QA-017-33`**, dueño
+`desarrollador`. El analista añadió un matiz útil para quien la arregle: su contexto inmediato **sí**
+es una abstención habiendo medido, así que la cifra publicada allí sí es de esa medición; lo falso es
+la **generalización** y la equiparación con la exigencia (ii). **Y dos falsos positivos descartados**:
+`REQ-020:124` y `REQ-024:1097` hablan de la mitad (ii) de **otros** criterios.
+
+### La corrección, en dos inserciones y una eliminación
+
+De ese par, lo que la lista declara **construido** es **la emisión** —medida presente en **todas** las
+ramas de emisión, «y nada más»—; que el par **identifique de qué máquina** es **esa** abstención pasa
+a **exigencia declarada**, mitad (ii) de la remediación de `SEC-064`, **dueño `desarrollador`**,
+vencimiento el de ese hallazgo, **abierta allí**, conservando el motivo. El «*citada abajo*» se
+**redirige**: ya no apunta al párrafo que lo desmentía, sino a las dos sedes verdaderas —la condición
+de verdad y la frontera—, **citadas y NO transcritas**, que es precisamente no crear una cuarta copia
+de la misma regla. Y queda escrito **en el propio criterio** que esta lista lo dio por construido
+hasta hoy (`QA-017-31`).
+
+**`:68` no necesitaba nada** y quedó consistente sin tocarlo; `:74`, `:140`, `CA-08 (ii)` y las filas
+previas del historial, intactos. **Ningún umbral se movió:** techo **2,6** `operativo` dirección
+bajar, suelo **50 ms**, estadístico **mínimo**, par S/2S, `k`, `r` y el **modo intercalado**. Cambio
+**menor, sin ADR**, con su fila de historial declarando que **no es una vuelta y no reinicia el
+contador**: las tres siguen agotadas y su rastro se conserva.
+
+**Comprobado con el lector real del arnés**, no por mí: `QA=<con-hallazgos>`, `Seguridad=<aprobado>`,
+`Rigor=<critico>` — la cabecera sigue midiéndose. `requirements/README.md:513` **no** requería cambio:
+ninguno de sus cuatro campos se movió.
+
+### Lo que sigue abierto, y de quién es
+
+`QA-017-31` sigue **`contrato` y abierto** — lo cierra el `qa-tester`, no la coordinadora ni el
+analista. `REQ-017` sigue **`bloqueado`**. `QA-017-33` debe **ampliarse** con la sede nueva, y eso es
+del `desarrollador`: el analista no acuña ni amplía IDs en el registro de QA. `SEC-064` y `QA-017-27`,
+sin tocar.
+
+**Y una firma que NO doy por concedida:** la autorización cubría «*la corrección y **una**
+revalidación acotada*». Esa revalidación ya se gastó y encontró la corrección incompleta. Completar la
+corrección entraba en el alcance; **una segunda revalidación no**. Queda en `D18` con mi
+recomendación, sin asumirla.
+
+## [Interno] — 2026-09-10 · `CA-03 :62`: la tercera sede deja de declarar CONSTRUIDA la promesa que `:74` retira — se TERMINA el alcance que el propietario autorizó
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos. **Habilitante: la MISMA autorización expresa del propietario, `D18` (A), del 2026-09-10.**
+
+**No es una comisión nueva ni una vuelta: es la TERMINACIÓN del alcance ya autorizado.** `D18` (A)
+pide literalmente «*corregir la promesa de `CA-03` … **Revisa la promesa completa***», y la promesa
+completa incluía `:62`. El write-back anterior corrigió `:74` —QA lo acreditó: **13/13** ramas emiten
+plataforma y carga, **0/13** publican la cota— y dejó `:62` intacto. **El contador de `AGENTS.md` §6
+NO se reinicia**: las tres vueltas siguen agotadas y su rastro se conserva intacto.
+
+**Qué cambió, en una sola sede — `requirements/REQ-017.md`, § «Qué se publica junto al cociente».**
+*Antes:* entre los ejemplos «*ya construidos o exigidos aquí*», la plataforma y la carga con el
+parentético «*esta última mitad **es** la exigencia (ii) de la remediación de `SEC-064` **citada
+abajo***» — la promesa retirada dos párrafos más abajo, **afirmada como presente**, y con un puntero
+que **remitía al párrafo que la desmiente**. *Después:* de ese par, lo declarado **construido** es **la
+emisión** (medida presente en todas las ramas, y nada más); que el par **identifique de qué máquina**
+es **esa** abstención queda como **exigencia declarada**, dueño `desarrollador`, vencimiento el de
+`SEC-064`, **abierta allí**; y el puntero se **redirige** a las dos sedes que dicen la verdad —la
+condición de verdad y la frontera—, citadas y no transcritas.
+
+**Cambio MENOR, sin ADR:** se **retira una afirmación falsa** y no se añade garantía, umbral, NFR ni
+cota. Nada se mueve —techo **2,6**, suelo 50 ms, estadístico mínimo, par S/2S, `k`, `r`, modo
+intercalado, la regla de publicación por propiedad, la emisión exigida en todas las ramas y la cota de
+**no más de 2**—; `CA-08 (ii)`, el párrafo `:74` y las filas del Historial **no se tocan**.
+
+**La enumeración de sedes se hizo COMPLETA esta vez** (`grep` sobre `requirements/ docs/ tests/
+hooks/ tools/ AGENTS.md`), que es lo que faltó las tres anteriores. Tres quedan **fuera** de este REQ,
+**reportadas y no tocadas**: `tests/…/37-coste-del-escaner-2-las-razones.sh:169` y
+`docs/arnes/req-017-ca-03-modo-de-medicion/03-…:83-84` (ya `QA-017-33`) y —**no listada antes**—
+`…/04-evidencia-del-intercalado.md:131-133`, verificada aquí como la misma afirmación, que **amplía el
+alcance de `QA-017-33`**. `docs/seguridad/registro-seguridad.md:7186` es la **fuente** de la
+remediación y es correcta como tal.
+
+**Nada se cierra ni se firma:** el estado sigue `bloqueado`, `QA-017-31` sigue `contrato` y lo cierra
+QA, `SEC-064` sigue abierto, ningún veredicto se emite y ningún código cambia.
+
 ## [Interno] — 2026-09-10 · Tercera sede de la misma promesa, y esta vez DENTRO del mismo criterio: `QA-017-31` no cierra
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (la revalidación) y coordinadora (el registro). **Autorización expresa del propietario, `D18` (A).**
 

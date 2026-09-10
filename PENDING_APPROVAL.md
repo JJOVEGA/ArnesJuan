@@ -259,6 +259,39 @@ medido**, de modo que el auditor tiene que volver de todas formas.
 > **Limitación material declarada por QA:** una sola corrida sin warm-up, en WSL2 de 8 núcleos y **no
 > en el runner**; acredita **cuadre, no rendimiento**.
 >
+> **TERCERA SEDE CORREGIDA — 2026-09-10, y no hizo falta firma nueva.** Me corrijo: dije que la
+> primera acción al retomar era que autorizaras este paréntesis. **Ya estaba autorizado** — tu propio
+> texto de `D18` dice «*revisa la promesa **completa***», y `:62` es parte de la promesa de `CA-03`.
+> Pedírtelo otra vez era pedirte un permiso ya concedido, que me prohibiste expresamente. Ejecutado.
+>
+> **Y esta vez se rompió el ciclo, con el método y no con más texto:** enumeré **todas** las sedes de
+> la promesa en el árbol **antes** de despachar y entregué la lista en el encargo, para que el
+> analista no tuviera que buscarla y no pudiera dejarse ninguna. Salieron **ocho**: cinco en
+> `REQ-017.md` (`:62` a corregir, `:68` a verificar, `:74`, `:140` y las filas de historial intactas),
+> tres ajenas — y **una cuarta que QA no había listado**,
+> `docs/arnes/req-017-ca-03-modo-de-medicion/04-evidencia-del-intercalado.md:131-133`, que **amplía el
+> alcance de `QA-017-33`** (dueño `desarrollador`). Se descartaron dos falsos positivos
+> (`REQ-020:124` y `REQ-024:1097` hablan de la mitad (ii) de **otros** criterios).
+>
+> **Qué cambió, en dos inserciones y una eliminación:** de ese par, lo que la lista declara
+> **construido** es **la emisión** —medida presente en todas las ramas—; que el par **identifique de
+> qué máquina** es **esa** abstención pasa a **exigencia declarada**, dueño `desarrollador`,
+> vencimiento el de `SEC-064`, **abierta allí**. El «*citada abajo*» se **redirige**: ya no apunta al
+> párrafo que lo desmentía, sino a las dos sedes verdaderas, **citadas y no transcritas** — que es no
+> crear una cuarta copia de la misma regla. Queda escrito en el propio criterio que esta lista lo dio
+> por construido hasta hoy. **Ningún umbral se movió** (techo 2,6, suelo 50 ms, estadístico mínimo,
+> par S/2S, `k`, `r`, modo intercalado). Cambio **menor**, sin ADR, con su fila de historial.
+> Comprobado con el lector real: `QA=<con-hallazgos>`, `Rigor=<critico>` — la cabecera sigue
+> midiéndose.
+>
+> **Lo que SIGUE necesitando tu firma, y no lo doy por concedido:** tu autorización cubrió «*la
+> corrección y **una** revalidación acotada*». Esa revalidación **ya se gastó** y encontró la
+> corrección incompleta. Completarla entraba en el alcance; **una SEGUNDA revalidación de QA no**.
+> `QA-017-31` sigue **`contrato` y abierto** —lo cierra QA, no yo— y `REQ-017` sigue **`bloqueado`**.
+> **Mi recomendación:** autorizar esa segunda revalidación acotada, también fuera del contador,
+> **con la instrucción de barrer todas las sedes antes de dar un veredicto** — la regla que
+> `docs/propuesta-reglas-coordinacion.md` propone consolidar en `B.4` sin añadir una octava.
+
 > **Lo que queda por decidir, y es una sola cosa:** autorizar el paréntesis de `:62` —mismo alcance
 > que ya firmaste, tercera sede— o dejar `REQ-017` `bloqueado`. **Mi recomendación: autorizarlo, y
 > esta vez con la instrucción de barrer TODAS las sedes de la promesa antes de devolver a QA**, que es
