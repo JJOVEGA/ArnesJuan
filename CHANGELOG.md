@@ -2,6 +2,74 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · QA de `REQ-024`: tres `contrato`, y uno es un gate que la coordinadora se saltó
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus, vuelta 1 de 3) · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`QA: con-hallazgos (vuelta 1 de 3)` sobre `d54761e`.** De los 10 criterios implementados, **9 pasan** y
+**`CA-03` no está acreditado**. Banco **1004 PASS · 0 FAIL · 8 SKIP**, cuadre **1012**, en dos corridas
+idénticas (63,2 s con `loadavg` 0,19→2,45 y 72,3 s con 4,04→3,93). Autoprueba 106 · 0.
+
+**El desvío frente al `1005 · 0 · 7` publicado está explicado y no es regresión:** `REQ-017 CA-08 (ii)`
+oscila PASS↔SKIP con la carga —1005−1 = 1004, 7+1 = 8—, y lo había declarado el propio `desarrollador`.
+**Inventario por identidad y no por conteo** (`comm -23`): **+18 identidades, 0 suprimidas**.
+
+**Verificó ejecutando la puerta, no leyendo el banco:** 5 campos ausentes con la llave encendida, 8 casos
+borde de cabecera, `CA-05` contra un manifiesto **sin el bloque `campos` en absoluto**, y **25 formas** de
+cola en los tres lectores.
+
+**Y avisó de un modo de fallo de su propio instrumento que casi le hace publicar un desvío falso:**
+materializar la base con `git archive v1.33.0 hooks` **sin `tools`** da **15 FAIL en vez de 9**, y seis
+eran su instrumento (`rc=127` del informe ausente). Es la tercera vez hoy que un agente caza su propia
+sonda antes de acusar al árbol.
+
+### Los tres bloqueantes
+
+**`QA-024-01` (`contrato`) — la forma de `SEC-079` en superficie NUEVA.** Con la llave encendida y
+`Rigor: ligero`, un REQ que omite `QA:` **cierra en ALLOW sin diagnóstico** (control con `estandar` →
+DENY), porque la resolución de `QA` cae **dentro** del corto-circuito `if [ "$rigor" != "ligero" ]` y la de
+`Hallazgos abiertos` queda **fuera**. Y el `_doc` de **las dos sedes** promete **sin condición**: «*Todo
+REQ heredado que omita uno de esos cuatro campos deja de cerrar*». Defecto de código **y** promesa de más,
+en el mismo sitio, el mismo día que cerramos `SEC-079` por exactamente eso.
+
+**`QA-024-02` (`contrato`) — `CA-03` no acreditado, y el caso es más honesto que el REQ.** La salida (ii)
+tiene **tres** obligaciones y sólo una está hecha: `REQ-016` sigue `Estado: completado` y su `CA-11:152-153`
+sigue citando `hooks/guard-completado.sh` como lista **exhaustiva**. El árbol está hoy en **la tercera
+salida que `CA-03` prohíbe**. Y el detalle que más dice: **el caso del banco declara que no acredita
+`CA-03`, mientras el Historial del REQ afirma que «resuelve por su salida (ii)»**.
+
+**`QA-024-03` (`contrato`) — el gate que me salté, escalado como `D8`.** El bloque `campos` entró en
+`119e853`, mi commit, y **`ADR-009` declara en su línea 3 «gate humano pendiente: toca
+`.arnes/config.json`»**. Riesgo vivo **cero** —nace `false` en las dos sedes, verificado—, pero es un fallo
+de **orden de gate** en el repositorio cuyo producto es el orden de los gates. Y el contraste no me
+favorece: **el `desarrollador` sí se detuvo bien para `AGENTS.md`** en el mismo trabajo.
+
+### Lo que probó rompiendo
+
+**Ninguno de los tres PASS de `CA-06` es tautología**, y no lo argumentó: los **rompió** por inyección
+—comando adelantado → FAIL; declaración retirada → FAIL nombrando viñeta y defecto; «lista exhaustiva» →
+FAIL «5 negadas de 6»—. Y el par declarado es **complementario**: la inyección que rompe el caso del
+apartado deja el del sub-bloque en PASS y al revés. **Un límite sí es hallazgo:** inyectó un tercer barrido
+escrito «barrido por via» con **cero** declaraciones y el caso siguió en PASS con denominador 2 — el
+conjunto se reconoce por **cadena literal**.
+
+**Y midió lo que `SEC-081` sólo insinuaba:** con la llave apagada, `qa: pendiente` **y** `QÁ: pendiente`
+también dan **ALLOW**, así que «las tres vías —comentar, borrar, no escribir—» del párrafo del residual son
+**al menos cinco** (`QA-024-06`).
+
+**Los siete `instrumento` no bloquean.** El más útil, `QA-024-04`: la línea PASS de `40/2:329` no lleva el
+doble espacio que separa nombre de evidencia, y **`µ` no es `[A-Za-z]` para `inventario.sh`**, así que
+`69779µs sobre 64569µs` entra en la **identidad** del caso — dos corridas del mismo árbol dan **22 líneas
+de diff de inventario** cuando `REQ-014 CA-12` promete `cmp` limpio. Probado con línea sintética.
+
+**`40-ausencia-que-abre-2` en 400 líneas: bomba anotada, no defecto.** Verificado: 401 → `FAIL CA-18` y
+autoprueba `rc 1`; piso 194, así que manda `N=400` **sin holgura**. Falla ruidosamente y ya forzó la
+decisión correcta. Lo único: el aviso vive en el Historial y no en el preámbulo de `40/2`.
+
+**Límites que declara:** no corrió el CI; **ningún techo de reloj de esta validación acredita nada más allá
+de esta máquina**, y los cuatro números de `CA-07` son **no concluyentes** aquí porque su sonda de (ii)
+**abstuvo por suelo**. Y no escribió `docs/usuario/`: «*con tres `contrato` abiertos sobre la nota de
+migración, documentar el flujo sería documentar algo que va a cambiar*».
+
 ## [Interno] — 2026-09-09 · `CA-03` contrata el modo intercalado, y §9 reabre `REQ-017`: el mapa del propio REQ nombraba dos archivos que no existen
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · reapertura y corrección del mapa: coordinadora. **Bajo delegación de 24 h.**
 

@@ -165,6 +165,36 @@ llave nace apagada y ningún proyecto nota cambio sin encenderla.
 filtros porque tranquiliza**. Escribirla bajo una delegación general, cuando el criterio pide un humano,
 sería reproducir el patrón que hoy nos ha costado tres rondas.
 
+
+### D8 · El manifiesto se cambió ANTES de su gate humano, y el fallo es de la coordinadora
+
+**`QA-024-03` (`contrato`) lo encontró QA y lo confirmo yo.** `.arnes/config.json` de este repositorio
+recibió el bloque `campos` en **`119e853`** —mi commit— y **`ADR-009` declara en su propia línea 3: «gate
+humano pendiente: toca `.arnes/config.json`»**. `AGENTS.md` §6 lo nombra entre los gates humanos, y
+`PENDING_APPROVAL.md` **no tenía entrada para él**: `D7` es sólo de `CA-04`.
+
+**Riesgo vivo: cero.** La llave nace **`false`** en las dos sedes —verificado por QA en
+`.arnes/config.json:37` y `templates/arnes-config.json.tpl:37`— y un manifiesto **sin el bloque** decide
+idéntico a `v1.33.0` en 5 fixtures. Ningún proyecto nota cambio sin encenderla.
+
+**Pero es un fallo de ORDEN de gate en el repositorio cuyo producto es el orden de los gates**, y eso es
+peor que su riesgo. Y hay un contraste que no me favorece: **el `desarrollador` sí se detuvo bien para
+`AGENTS.md`** —`CA-04`, `D7`— y en el mismo trabajo yo comité el manifiesto sin preguntar. Escribí en el
+CHANGELOG que «encenderla es política y queda como decisión del propietario», que es cierto sobre la
+**llave**, y a la vez comitié el **bloque** sin gate. Otra vez la forma en vez del estado.
+
+**Qué se decide, y son dos cosas separadas:**
+1. **Ratificar (o revertir) la presencia del bloque `campos`** en el manifiesto de este repositorio y en
+   `templates/arnes-config.json.tpl`, con la llave en **`false`**.
+2. **Encender o no `ausencia_exige`**, que es la decisión de política. El coste medido sería **0** —todos
+   los REQ del árbol declaran ya los cuatro campos— pero **no se enciende hasta que `QA-024-01` esté
+   arreglado**: con la llave encendida y `Rigor: ligero`, un REQ que omite `QA:` **cierra en ALLOW sin
+   diagnóstico**.
+
+**Recomendación:** ratificar (1) —el bloque es inerte y revertirlo perdería trabajo validado— y **no**
+tocar (2) hasta que `QA-024-01` cierre. **No lo ratifico yo**: el gate es del propietario y el problema
+aquí ha sido precisamente saltármelo.
+
 ## Resueltas
 
 ### D5 · `SEC-079` — **RESUELTA el 2026-09-09: opción (a), y con un matiz del propietario que cambia el arreglo**
