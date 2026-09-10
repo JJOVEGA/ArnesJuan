@@ -89,11 +89,15 @@ vienen copiados de `28-…-1-la-historia.sh`, y `num38` está en las tres partes
 renglones copiados cuestan menos que una puerta trasera entre secciones**. Por lo mismo, `mat`
 —el materializador de la línea base— viene copiado en **cuatro** de las cinco partes de la 39: las
 que comparan contra `v1.33.0` (todas menos la 1). Decía «dos de las cuatro» y eran **tres de
-cuatro** desde que nació la parte 4; la quinta las deja en cuatro de cinco. Y en **tres de las
-cinco** de la 40, por lo mismo — decía «dos de las tres» y la 40 tiene cinco partes desde
-1.34.0: no materializan línea base la 3, que es sobre TEXTO heredado, ni la 4, que mide por
-MUTACIÓN de la tabla del árbol. La copia de la parte 5 va además **reducida** —sólo `hooks/`, sin
-las ramas del bit de ejecución— y su reducción está dicha en el propio archivo.
+cuatro** desde que nació la parte 4; la quinta las deja en cuatro de cinco. Y en **cuatro de las
+seis** de la 40, por lo mismo — decía «dos de las tres», luego «tres de las cinco», y la 40 tiene
+**seis** partes desde 1.34.0: no materializan línea base la 3, que es sobre TEXTO heredado, ni la
+4, que mide por MUTACIÓN de la tabla del árbol. Las copias de las partes 5 y 6 van además
+**reducidas**, cada una con su reducción dicha en su propio archivo y las dos distintas: la 5 se
+queda en `hooks/` y suelta las ramas del bit de ejecución; la 6 suelta también la verificación
+del contenido **por hash**, y a cambio exige que la línea base **muerda** —un control positivo de
+conducta, más el código de salida del hook— porque verificar bytes acredita la copia y morder
+acredita que corre. **Una reducción no se hereda: se declara.**
 
 **Y una sección puede repartirse en archivos que NO comparten su número.** La 40 (REQ-024) llega
 a su techo de 400 líneas con el bloque A, así que su bloque B —los casos de la cola— vive en
@@ -311,6 +315,10 @@ Tres reglas nacidas de fallos reales:
 | Sondas (38/3) | el ayudante de veredicto sobre 13 registros sintéticos | `estado≠ok` o `vivos>0` en medición ⇒ **SKIP**; vacío, ilegible, ambiguo, `vivos` ausente, emisor no declarado o sin su calibración ⇒ **FAIL** |
 | Sondas (38/3) | `vivos>0` en una **calibración** frente a `vivos>0` en una **medición** | **FAIL** y **SKIP**: no es el mismo hecho |
 | Coste (37/1 a 37/5) | el **materializador inline** de la línea base (`mat37`/`mat47`) | contenido **y modo del objeto del árbol**, `archivos=<n>` publicado, y `sin-linea-base` **con motivo** cuando no puede |
+| Actos (40/6) | la **lista de actos** que `guard-completado` juzga, **derivada** de sus ramas de denegación | **no menos de 2** derivados y **no menos de 2 ejercidos**, publicados con su denominador; si no puede derivarla, **SKIP con su motivo** y nunca PASS |
+| Actos (40/6) | el código cambia de **forma** sin cambiar de conducta (renombrado puro) | el extractor **abstiene nombrándolo** —`no se pudo DERIVAR la frontera`—, no un verde que ya no mide |
+| Actos (40/6) | los **tres controles** de `SEC-083` sobre el acto de **firmar**, en los **dos** estados de la llave | `pendiente` y `con-hallazgos` ⇒ **deny** nombrando el cruce; `aprobado` ⇒ allow; **ausente o comentada** ⇒ **deny** nombrando el campo, y por una rama **distinta** |
+| Actos (40/6) | el **mismo par** (ausente, comentada) contra la versión **heredada**, en la misma corrida | **cuatro ALLOW**; y la base tiene que **denegar** con el campo declarado, o el fail-before mide la nada |
 
 **Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
 falsea la máquina, el runner del CI y la carga. Los de arriba son **cocientes de duplicación**

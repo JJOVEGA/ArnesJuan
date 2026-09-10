@@ -2,6 +2,73 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `CA-12` medible: el extractor envejece RUIDOSAMENTE, medido — y un «verde por no ejercer» cazado en su propio fixture
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**Banco 1058 PASS · 0 FAIL · 6 SKIP = 1064**, cuadre total y por archivo en verde, `rc=0`, 1 min 04 s,
+`loadavg` 1,06 → 2,69. Autoprueba 106 · 0 (incluidas las cinco comprobaciones de `CA-18`). Tres quality
+gates verdes. **+10 casos, ninguno movido.**
+
+### Deriva los actos, no los nombra
+
+**3 actos derivados de las 36 ramas de denegación** de `hooks/guard-completado.sh` —`sin-transicion/-`
+(8), `sin-transicion/Seguridad` (3), `transicion/-` (25)—, con la **zona** fijada por la frontera de la
+transición (línea 448, la última que devuelve 0 cuando el estado resultante no es el terminal) y el
+**campo exigido** por la guarda que **domina la rama por sangría**. **Ejerce 2 de los 3.** Y el detalle
+que lo hace derivación y no etiqueta: **cuál ejerce cada sonda lo dice el ancla de la rama que denegó**,
+no una cadena escrita en el banco.
+
+### Y probó que su extractor envejece RUIDOSAMENTE, que es lo único que le pedí
+
+`ADR-011` aceptó a propósito que este extractor **se rompería cuando el código cambiara de forma sin
+cambiar de conducta**. Él lo **midió**: una copia con `done_norm`/`estado_done` **renombrados** —cambio de
+forma, conducta idéntica— da **5 PASS · 0 FAIL · 5 SKIP**, y los SKIP dicen «*no se pudo DERIVAR la
+frontera de la transición*». **Ni un verde que ya no mide, ni un rojo que no es del sujeto.**
+
+Y **construyó el envejecimiento dentro del informe**: publica aparte las denegaciones **sin mapear** y las
+**ambiguas**, «*que son las dos formas de envejecer del extractor*». No se limitó a aceptar que envejecerá:
+hizo que se vea cuándo empieza.
+
+### El hallazgo que más vale: un «verde por no ejercer» en su propio fixture
+
+Con la convención `old_string: "x"` de `emite_edit`, **un fixture cuyo texto contenga una `x`** —su título
+decía «fixture»— hace la edición **reconstruible**, el `Seguridad: aprobado` **cae a mitad de línea** y
+**las seis celdas del acto de firmar salen ALLOW**. Un verde **por no ejercer**, en el caso que existe para
+medir esa misma clase de cosa.
+
+Lo cerró con un **centinela que no puede estar en el documento**, lo **declaró en el archivo**, y
+**comprobó que `40/4` y `40/5` usan `"x"` y hoy NO están afectadas** —ninguno de sus fixtures lleva `x`—
+pero que el riesgo es **latente para cualquier fixture futuro**. Candidato a `instrumento`, y **no lo abrió
+él**: lo deja a QA.
+
+### Discriminó los dos SKIP flotantes en vez de suponerlos
+
+Tres pares alternados **con** y **sin** su sección (63 y 62 enlaces, vía `ARNES_SECCIONES_DIR`):
+`REQ-023 CA-09 (iii)` sobre `arnes_campo_linea` abstiene **2 de 3 con** y **1 de 3 sin**, y
+`REQ-017 CA-08 (ii)` flotó en el par 2 **en las dos ramas** → los dos son de reloj (`SEC-080`) y **no
+atribuibles**. El brazo `sin` cuadró **1054** las tres vueltas y el `con` **1064** las tres. **Y sus 10
+casos: PASS en 6 de 6 vueltas, 0 SKIP y 0 FAIL propios.**
+
+### Reuso dicho en voz alta, con su precio y su límite
+
+`mat12` es copia **reducida** de `mat05` —**33 líneas frente a ~44**— y **suelta la verificación por hash
+a cambio de algo más fuerte**: un **control positivo de conducta** (la base tiene que **morder**) más el
+**código de salida** del hook. `duplicadas=72`, por debajo de sus pares (80–129).
+
+Y explicó **qué no se puede reusar y por qué**: las invariantes 3 y 4 del banco **prohíben** `source` entre
+secciones y un archivo auxiliar en `secciones/`, así que la única reutilización real sería **subirlo al
+corredor** — cambio de mecanismo **decidido al contrario** en `AN-021-01`. Es la diferencia entre «no lo
+reusé» y «no se puede reusar, y aquí está la decisión que lo prohíbe».
+
+### El límite que declara
+
+Lo derivado es una **cota inferior**: un tercer acto que naciera **sin guarda de campo y después de la
+frontera** **no se vería** —se publicaría 3 y el suelo se seguiría cumpliendo—. Escrito en el caso.
+
+**`CA-12` queda MEDIBLE, no acreditado** — «*eso es de QA*». Su suelo, sus tres controles en los dos
+estados y su fail-before se publican **en cada corrida**, con fail-before propio **en las dos
+direcciones**.
+
 ## [Interno] — 2026-09-10 · El caso de `CA-05`: «24 de 24 iguales» ya no puede salir verde contra sí mismo
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de 24 h.**
 
@@ -59,10 +126,17 @@ final después**. Nadie le pidió esa comprobación.
 
 ### Un patrón que anoto y no arreglo
 
-**Tres secciones del banco están en 400 líneas exactas**, el techo de `CA-18`: `40/2`, `40/5` y la que ya
-estaba. Cada una falla ruidosamente si se pasa —está medido— pero **tres archivos clavados en el techo no
-son tres coincidencias**: es una señal de que el techo aprieta donde la puerta es única y los casos tienen
-que ejercerla. Queda como `instrumento` sin abrir, para el analista.
+**Corrección de mi propia nota, medida después de escribirla:** dije «tres secciones y la que ya estaba»
+sin nombrarla, y el patrón es más nítido de lo que escribí. **Tres están en 400 líneas EXACTAS** —el techo
+de `CA-18`—: `28-rotacion-seccion-3-la-tabla.sh`, `40-ausencia-que-abre-2-migracion-y-punteros.sh` y
+`40-ausencia-que-abre-5-el-radio-por-acto.sh`; y una cuarta, `35-arnes-paralelo-fail-open.sh`, está en
+**399**. Cuatro archivos apiñados contra el techo.
+
+Y el contraste dice de dónde viene: **las cuatro secciones de la familia `37-*` lo superan con holgura**
+—577, 552, 504 y 468 líneas— porque ahí gobierna el **piso** y no `N`. O sea que el techo aprieta
+**exactamente donde el piso no lo protege**, que es donde la puerta es única y los casos tienen que
+ejercerla y no una copia. **Cuatro archivos clavados en el techo no son cuatro coincidencias.** Queda como
+`instrumento` sin abrir, para el analista.
 
 ## [Interno] — 2026-09-10 · Tres notas al pie sobre la misma afirmación: corregir sede por sede es lo que `ADR-011` acaba de prohibir, aplicado al texto
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de 24 h.**

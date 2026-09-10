@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1054  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1064  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1399,6 +1399,26 @@ CASOS_ESPERADOS=1054  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # `CASOS_ESPERADOS_SECCION` de `40/1`–`40/4` NO se tocan: no se retira ni
                       # se mueve ningún caso, y el de la parte 2 —el cierre sobre el corpus REAL
                       # de `requirements/`— conserva sitio, fixture y veredicto.
+                      # 1054 → 1064: el APARATO DE ANTI-VACUIDAD de `CA-12`, que su dueño
+                      # declaró NO ENTREGADO al cerrar el código de `SEC-083`: el criterio pide,
+                      # ADEMÁS del cumplimiento, publicar cuántos ACTOS ejerce la corrida con
+                      # suelo de 2 y la lista DERIVADA de las ramas de denegación (`ADR-011`),
+                      # los tres controles en los DOS estados de la llave, y el fail-before
+                      # contra la heredada EN LA MISMA CORRIDA. `40/6` nueva con 10 casos: el
+                      # instrumento (la base es otro árbol Y muerde), los actos DERIVADOS con su
+                      # denominador, los actos EJERCIDOS identificados por el ancla de la rama
+                      # que denegó —no por una etiqueta escrita en el banco—, los tres controles
+                      # (`pendiente`, `con-hallazgos`, `aprobado`), la salida (b) por sus dos
+                      # vías (ausente y comentada) con la rama DISTINTA de la del veredicto
+                      # equivocado, el fail-before de cuatro ALLOW y la ASIMETRÍA por acto sobre
+                      # el mismo estado. Va en una parte 6 y no en la 4 —que está en 176 de 400—
+                      # porque el corte va POR TEMA: la 4 mide DE DÓNDE SALE LA DECISIÓN por
+                      # mutación de la tabla, y ésta mide SOBRE CUÁNTOS ACTOS rige, con un
+                      # extractor y una línea base que la 4 no necesita. Los
+                      # `CASOS_ESPERADOS_SECCION` de `40/1`–`40/5` NO se tocan: no se retira ni
+                      # se mueve ningún caso, y el único de `CA-12` que ya existía —`40/4`, la
+                      # tabla que mueve el veredicto del acto de firmar— conserva sitio, fixture
+                      # y veredicto.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
