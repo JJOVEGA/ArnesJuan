@@ -2,6 +2,46 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `ADR-011`: complementa a `ADR-009` en vez de superarlo, y su gate entra en la cola porque el propio analista lo pidió contra sí mismo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · sede del gate: coordinadora. **Bajo delegación de 24 h.**
+
+**`ADR-011` COMPLEMENTA a `ADR-009` extendiendo su alcance: no lo supersede ni lo precisa**, y el
+razonamiento es de manual. **No lo supersede** porque **ninguna** de las tres decisiones de `ADR-009` se
+revierte —el sitio único sigue en `hooks/lib.sh`, la tabla campo a campo sigue correcta, la llave sigue en
+pie con sus 0 procesos medidos—; y marcarlo superado «*retiraría de vigencia algo medido y, peor,
+sugeriría que el defecto estaba en la decisión y no en **la extensión que se le atribuyó**»*. **Y no lo
+«precisa»** porque precisar es lo que hizo la nota al pie sobre dos **magnitudes** medidas falsas: aquí
+cambia el **sujeto** de la propiedad y **nace una obligación nueva**, y «*una decisión escondida al pie de
+otro documento no la encuentra quien busca decisiones*».
+
+**No copió el gate de `ADR-009` por inercia: lo verificó.** Comprobó que **ninguna** de las dos salidas de
+`CA-12` añade llave —la condicionada usa `campos.ausencia_exige`, que ya existe en las dos sedes; la
+independiente **no lee el manifiesto**— así que el motivo del gate **no es el manifiesto**. Sus dos
+motivos propios: **una decisión sobre una decisión no puede estar más firme que su base** —y `ADR-009`
+sigue en `propuesta`— y **habilita la reescritura de la fila de §13 y su gemela**, superficie heredada con
+gate previo por §6 y precedente en `D7`.
+
+**Y señaló contra sí mismo el hueco que quedaba:** el gate vivía **sólo dentro del ADR**, porque
+`PENDING_APPROVAL.md` estaba fuera de su encargo — «*un gate que no está en la cola no lo mide ninguna
+puerta*». Es la deriva de §9 aplicada al mecanismo de los propios gates. Le he dado sede como **`D11`**.
+
+**La consecuencia más cara, escrita como (−) y aceptada a propósito:** enunciar por acto **obliga a
+derivar la lista de actos del código**, y eso es un **extractor** que hay que escribir, mantener y probar
+con fail-before, y que **se rompe cuando el código cambia de forma aunque no cambie de conducta**. Con
+precedente **medido y en este árbol**: `tools/arnes-lectura.sh:69-72` deriva las claves del **texto** de
+los brazos `case` con `sed`, y el Historial de `REQ-024` ya declaró que reescribir esa forma literal
+**rompe el informe**. Se paga porque «*la alternativa barata es una lista que envejece hacia el lado que
+abre*» — que es **exactamente cómo nació `SEC-083`**.
+
+**Y una decisión que NO tomó, con tres motivos y ninguno es pereza:** la elección entre las dos salidas de
+`CA-12` queda abierta con dueño, porque la propiedad **por acto no depende de ella**, porque elegirla
+exige una medición de `CA-07 (i)` **que nadie ha tomado**, y porque la salida (b) arrastra un write-back
+en `CA-05` que su comisión tenía prohibido — «*decidirla habría dejado su obligación colgando*».
+
+**Y no tocó `ADR-009`**, dejando **declarado como consecuencia (−)** que no lleva puntero a `ADR-011`, con
+la forma proporcionada ya identificada en el repo si el propietario la quiere: una nota al pie fechada. Un
+ADR no se reescribe encima, ni siquiera para añadirle un enlace útil.
+
 ## [Interno] — 2026-09-10 · `SEC-083`: «el campo no llega a declararse» no es una vía, es un ESTADO — y por eso `ADR-009` pasó por al lado
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de 24 h.**
 

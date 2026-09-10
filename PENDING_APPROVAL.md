@@ -279,6 +279,43 @@ Toda esta sesión ha cambiado `hooks/` bajo autorización de REQ y con el ciclo 
 aquí por el mismo criterio; **si querías ese gate literal por cada cambio del mecanismo, dilo y paro** —
 pero un fail-open abierto en la guarda de las firmas me parecía peor que un commit de más.
 
+
+### D11 · `ADR-011` — el gate que el propio ADR declara y que no estaba en la cola
+
+**Lo señaló el `analista-requerimientos` contra su propio trabajo**, y tiene razón: `ADR-011` declara un
+gate humano **dentro del ADR**, y `PENDING_APPROVAL.md` estaba fuera de su encargo, así que el gate vivía
+**sólo ahí**. Su frase: «*un gate que no está en la cola no lo mide ninguna puerta*» — la deriva de §9
+aplicada al mecanismo de los propios gates. Le doy sede aquí.
+
+**Qué decide `ADR-011`:** que **el alcance de la dirección de la ausencia se enuncia POR ACTO y no POR
+PUERTA**, con la lista de actos **derivada del código** y suelo de **no menos de 2 actos ejercidos**. Es la
+decisión que cierra la clase de `SEC-083`, no sólo su instancia.
+
+**Los dos motivos del gate, y ninguno es el manifiesto** —lo verificó en vez de copiar por inercia el de
+`ADR-009`/`ADR-010`: ninguna de las dos salidas de `CA-12` añade llave—:
+1. **Una decisión sobre una decisión no puede estar más firme que su base**, y `ADR-009` sigue en
+   `propuesta`.
+2. **Habilita la reescritura de la fila de `AGENTS.md` §13 y su gemela del template** — superficie
+   heredada, gate **previo** por §6, con precedente en `D7`.
+
+**Qué firmas:** (a) ratificar `ADR-011` y con él la propiedad **por acto**; y (b) autorizar —o no— la
+reescritura de esa fila de §13, que es el mismo tipo de acto que `D7` y con el texto exacto **ya
+redactado** por el analista en `REQ-024` § «La fila de `AGENTS.md` §13 de `CA-12`».
+
+**El precio, escrito y aceptado a propósito:** enunciar por acto **obliga a derivar la lista de actos del
+código**, y eso es un **extractor** que hay que escribir, mantener y probar, y que **se rompe cuando el
+código cambia de forma aunque no cambie de conducta**. El precedente está **medido y en este árbol**:
+`tools/arnes-lectura.sh:69-72` deriva las claves del **texto** de los brazos `case` con `sed`, y el
+Historial de `REQ-024` ya declaró que una reescritura de esa forma literal **rompe el informe**. La
+alternativa barata es **una lista que envejece hacia el lado que abre** — que es exactamente cómo nació
+`SEC-083`.
+
+**Y una decisión que el analista NO tomó, con su motivo**, para que no la busques: la elección entre las
+dos salidas de `CA-12` queda abierta con dueño (`desarrollador`), porque la propiedad **por acto** no
+depende de ella, porque elegirla exige una medición de `CA-07 (i)` **que nadie ha tomado**, y porque la
+salida (b) arrastra un write-back en `CA-05` que su comisión tenía prohibido — «*decidirla habría dejado
+su obligación colgando*».
+
 ## Resueltas
 
 ### D5 · `SEC-079` — **RESUELTA el 2026-09-09: opción (a), y con un matiz del propietario que cambia el arreglo**
