@@ -2,6 +2,63 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `CA-11` deja de apuntar a la puerta, §9 reabre `REQ-016`, y el analista corrige la cuenta de QA
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · reapertura: coordinadora. **Bajo delegación de 24 h.**
+
+**`CA-11` de `REQ-016` nombra el sitio único POR PROPIEDAD y no por archivo de conveniencia.** Deja de
+citar `hooks/guard-completado.sh` y remite a «*la tabla de la dirección de la ausencia de `hooks/lib.sh`
+—la constante que la declara y la función que la consulta—*». Y dice **por qué el puntero viejo era
+peligroso, no sólo viejo**: en `guard-completado.sh` viven las comprobaciones de `QA:` y `Hallazgos
+abiertos:`, y **no** las de `Sensible a seguridad:` ni `Rigor:` —**los dos que retiran el suelo y el
+nivel**—, que están en `lib.sh`. Seguir ese puntero al pie de la letra **dejaba fuera precisamente los
+campos peligrosos**. Eso es lo que `SEC-050` midió.
+
+**Tres decisiones suyas que son de fondo y no de estilo:**
+- **No cita ninguna línea.** `ARNES_AUSENCIA` está hoy en `hooks/lib.sh:1873` y hay un `desarrollador`
+  vivo en ese archivo: «*un puntero por línea nace envejecido*».
+- **El número «2 de 4» no entra en el criterio**: lo **publica el banco en cada corrida**, porque «*sube o
+  baja con cada campo del lector y no es umbral de nada*».
+- **Leer `CA-11` entero destapó una SEGUNDA promesa sin condición** que el árbol de hoy ya desmiente: «*la
+  ausencia **se perdona***» era incondicional, y ahora sólo vale **mientras `campos.ausencia_exige` esté
+  apagada**; activada, **gobierna o deniega**. Nadie la había pedido: apareció por leer el criterio
+  completo en vez de la línea del hallazgo.
+
+Lo que **no** cambió es lo que `CA-11` realmente contrata —la **equivalencia** comentado ≡ borrado—, ahora
+declarada válida **en los dos estados** de la llave. **Cambio de fondo**, con `ADR-009` **ya existente**
+enlazado y **sin crear uno nuevo**: «*un segundo ADR sobre la misma decisión sería la transcripción que
+este repositorio persigue*».
+
+**§9 reabre `REQ-016`, y el forzador es concreto y no genérico:** sus dos `aprobado` del 2026-09-07 se
+emitieron sobre **un `CA-11` distinto del que hay hoy en el archivo**, así que **no acreditan el criterio
+vigente**. El analista **se paró** en la reapertura; la aplico yo. Los dos veredictos **no se retiran**.
+
+**Y añado `QA-024-02 (contrato)` a su campo `Hallazgos abiertos:`, que lo propuso él y no ejecutó.** Hasta
+ahora la puerta **no veía esta deuda en este REQ** —el campo sólo llevaba `H-07 (instrumento)`—, así que
+`REQ-016` podía cerrarse **sin el re-recorrido** que `CA-03 (ii)` exige. Con la clase declarada,
+`guard-completado` lo impide **por máquina y no por prosa**.
+
+### La corrección a la cuenta de QA, que es fina
+
+QA dijo «*de las tres obligaciones sólo una está hecha*». El analista leyó `CA-03 (ii)` literal y reparte
+distinto: son **tres obligaciones sobre una PREMISA**, y «el sitio único es otro» es la **premisa** —que
+cumplió el código con `ARNES_AUSENCIA`—, **no** una obligación. La tabla de `QA-024-02` cuenta la premisa
+**como** primera obligación **y omite el re-recorrido**. Al pie de la letra: **antes de hoy estaban hechas
+CERO de tres**; hoy queda hecha **una** (la reescritura). Faltan **dos**: la reapertura —hecha en este
+commit— y el **re-recorrido**, donde «*dev no tiene nada que hacer: el cambio es de contrato; QA re-valida
+`CA-11` contra el árbol, y seguridad firma después*».
+
+### La frase falsa del Historial de `REQ-024`
+
+`requirements/REQ-024.md:994`: «**`CA-03` resuelve** por su salida (ii)…». Lo *medido y no elegido* es
+correcto y queda acreditado; lo falso es **«resuelve»** — ejecuta **un tercio** de la salida, y **la propia
+celda se desmiente sola nueve palabras después** («y dice expresamente que **NO acredita `CA-03`**»). La
+forma honesta: «`CA-03` **ELIGE** su salida (ii) … y ejecuta la **primera** de sus tres obligaciones».
+
+**Y una recomendación de coordinación que acepto:** `QA-024-01`, `QA-024-02` y `QA-024-03` son **los tres**
+write-back de analista **sobre el mismo archivo**, así que van en **una sola comisión** — «*un solo encargo
+evita tres pasadas y tres conflictos de fusión sobre `REQ-024.md`*». Se despachará cuando el
+`desarrollador` de `QA-024-01` suelte ese archivo.
+
 ## [Interno] — 2026-09-10 · QA de `REQ-024`: tres `contrato`, y uno es un gate que la coordinadora se saltó
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus, vuelta 1 de 3) · consolidación: coordinadora. **Bajo delegación de 24 h.**
 
