@@ -24,19 +24,40 @@
 
 ## Pendientes
 
-### D1 · `REQ-023` — cierre con residual declarado o `bloqueado`  ·  **espera el veredicto de QA**
+### D1 · `REQ-023` — **QA recomienda `Estado: bloqueado` con escalada, NO cierre con residual**  ·  **lista para tu firma**
 
-**Las tres vueltas dev↔QA están agotadas** (`QA:` declara «vuelta 2 de 3» y la tercera está en curso).
-Por `AGENTS.md` §6, agotado el tope el REQ **no se queda abierto**: o cierra con el **residual
-declarado** —dueño, forzador medido y vencimiento— o pasa a **`bloqueado`** y se escala. **La decisión
-es tuya y no la toma ningún agente.**
+**La vuelta 3 de 3 cerró el 2026-09-09 con `QA: con-hallazgos`.** 10 de 12 criterios pasan; `CA-09 (iii)`
+no acredita y **`CA-10` no cumple**. Se agotaron las tres vueltas dev↔QA, así que por §6 la salida es
+**cierre con residual declarado** o **`bloqueado`** con escalada — y **es tuya**.
 
-Estado al preparar esta entrada: `Hallazgos abiertos:` = `QA-023-04` · `QA-023-05` (**`contrato`**) ·
-`QA-023-06` · `QA-023-08`. Los tres `instrumento` no bloquean; **`QA-023-05` sí**, y mientras el campo
-lo diga `guard-completado` **deniega el cierre**. Hay además una divergencia que el `qa-tester` está
-reconciliando ahora: el campo dice `contrato` y el log de la vuelta 2 dice `instrumento` que no bloquea
-(`docs/qa/1.34.0.md:2002`). **No firmes esta entrada hasta que QA entregue su recomendación**; la
-preparo para que la tengas escrita, no para que decidas a ciegas.
+**QA recomienda `bloqueado`, y el motivo no es de calendario: §6 NO permite residual sobre un
+`usuario/dinero`.** El hallazgo nuevo **`QA-023-15`** es de esa clase, y `guard-completado` deniega hoy
+el cierre nombrándolo (QA lo verificó ejecutándolo con veredictos verdes ficticios).
+
+**Qué es `QA-023-15`, verificado por la coordinadora y no sólo afirmado:** `CA-10` no está implementado
+y su precondición **ha vencido**. `AGENTS.md:349` y `templates/AGENTS.md.tpl:314` siguen definiendo la
+invariante **por el retorno de carro**, cuando la puerta ya deniega por una propiedad **más ancha**
+—**9 de 20 formas voltean `allow`→`deny`**—; `skills/arnes-upgrade/SKILL.md` sólo menciona el retorno
+de carro (`:695`, `:701`), no la propiedad ancha; y los tres archivos **no** están en
+`codigo_app.globs`, así que ningún guardián los cubre. **El efecto sale del repositorio:** un proyecto
+consumidor con su `AGENTS.md` congelado no se entera de que pudo cerrar un REQ `critico` sin validación
+ni auditoría. Por eso no es `instrumento`.
+
+**Los tres caminos convergen en la misma recomendación:**
+1. `QA-023-15` es `usuario/dinero` y §6 no admite residual sobre él.
+2. **La puerta requerida y estricta de `main` está ROJA** por un caso de este REQ: el CI dio
+   **955 PASS · 1 FAIL · 10 SKIP** sobre `6ad9752`, con `CA-09 (iii)` en `arnes_campo_linea` a
+   **2,365× > 2,200×** y **dispersión 0,023× contra margen 0,165×** — o sea que resolvió con holgura,
+   **no fue ruido**. En local abstenía porque esta máquina tiene 17× más dispersión.
+3. El cierre de `QA-023-05` **cuelga de un write-back que hasta este commit no estaba comiteado**.
+
+**Lo que firmas aquí es una de estas dos:** (a) `Estado: bloqueado` y el REQ espera tu decisión de
+alcance; o (b) cierre con residual declarado — que **exigiría antes bajar o resolver `QA-023-15`**, y
+bajarlo necesita firma del auditor, no la mía ni la de QA.
+
+**Los cinco `instrumento` (`QA-023-10` a `QA-023-14`) no bloquean el campo.** Pero `QA-023-12` —el caso
+que mide la magnitud retirada— **sí bloquea el gate de fusión** mientras el banco siga rojo. Las dos
+cosas son verdad a la vez, y QA lo declaró así con el dato del CI delante.
 
 ### D2 · Los 20 hallazgos bloqueantes de siete REQ — resolver, declarar residual o aceptar
 
@@ -50,7 +71,7 @@ Tu regla del 2026-09-08 dice que **cualquiera devuelve el tag a ti**. Inventario
 | `REQ-013` | 1.32.0 | 2 — `SEC-014`, `SEC-020` | deuda de ventana ya publicada |
 | `REQ-021` | 1.34.0 | 2 — `QA-021-10`, `QA-021-11` | **3 vueltas agotadas, salida sin decidir** |
 | `REQ-019` | 1.35.0 | 1 — `SEC-033` | aplazado; su salida tampoco está decidida |
-| `REQ-023` | 1.34.0 | 1 — `QA-023-05` | ver **D1** |
+| `REQ-023` | 1.34.0 | 1 — **`QA-023-15`** (`usuario/dinero`) | ver **D1**. Era `QA-023-05` (`contrato`), **cerrado** en la vuelta 3; el que bloquea ahora es otro y de clase **más grave** |
 
 Casi la mitad es **deuda de 1.31.0 y 1.32.0**, no trabajo de esta ventana. Esto no es trabajo
 pendiente: es una decisión. Por cada uno hace falta **resolver**, **declarar residual** (dueño,

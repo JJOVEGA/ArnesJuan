@@ -2,6 +2,129 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · La abstención ocultó un rojo real durante nueve corridas, y el bloqueante de REQ-023 resultó ser otro
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `qa-tester` (Opus, vuelta 3 de 3) y coordinadora (verificación y escalada).
+
+**La lección de la sesión, y no es agradable: nueve corridas verdes entre tres personas eran
+abstenciones, no verdes.** El caso de `CA-09 (iii)` publica `SKIP` cuando la dispersión alcanza al
+margen —conducta correcta, escrita en el criterio, «nunca PASS»—, y en la máquina del desarrollo la
+dispersión es grande. El `desarrollador`, el `qa-tester` y la coordinadora leímos cinco «0 FAIL de
+REQ-023» como evidencia de que el caso estaba bien. **El CI del PR #45, sobre una máquina quieta,
+resolvió con holgura y salió ROJO:** `arnes_campo_linea` a **2,365× > 2,200×** con **dispersión 0,023×
+contra margen 0,165×**. La dispersión del CI es **17× más estrecha** que la local, y el archivo del caso
+es **byte a byte idéntico** en las dos partes, así que la diferencia no era de código.
+
+**Una abstención repetida no es un verde acumulado**, y comparar la dispersión **entre hosts** era el
+paso que faltaba. Queda escrito porque el mecanismo funcionó a medias: protegió contra el PASS falso y
+mantuvo invisible el rojo.
+
+**Y el rojo, medido, confirma el diagnóstico del analista en vez de contradecirlo:** el techo absoluto
+de 2,2 es insatisfacible **también para el código heredado** —la base `v1.33.0` paga mediana **2,446**
+en ese mismo sujeto, peor que el 2,365 del CI—. No es una regresión de `REQ-023`. Por eso el arreglo no
+es bajar el cociente ni subir el techo, sino **re-apuntar el caso a la relación emparejada** que el
+criterio nuevo ya contrata (medida: 0,856× y 0,906× contra techo 1,00×).
+
+**Veredicto de la vuelta 3: `QA: con-hallazgos`.** 10 de 12 criterios pasan. `QA-023-05` (`contrato`)
+**cerrado**, y el `qa-tester` **corrigió su propio veredicto de la vuelta 2** diciendo por qué se
+equivocó: su argumento de entonces («el producto no se degrada») contestaba a la pregunta de
+`usuario/dinero`, no a la de `contrato`. `CA-12 (iii)` pasa contando **3 = 3**. Los cuatro `instrumento`
+del `desarrollador` se retiran **tras verificarlos**, incluido un doble par discriminante propio para
+`QA-023-08`. La abstención sobre las dos instancias de `28-rotacion-seccion-{1,4}` se declara
+**correcta**: viven en el `Archivos:` de `REQ-026`, que tiene `QA: aprobado` sobre otro árbol.
+
+**El bloqueante de `REQ-023` resultó ser otro, y de clase más grave: `QA-023-15` (`usuario/dinero`).**
+`CA-10` no está implementado y su precondición **ha vencido**. Verificado por la coordinadora:
+`AGENTS.md:349` y `templates/AGENTS.md.tpl:314` siguen definiendo la invariante **por el retorno de
+carro** cuando la puerta ya deniega por una propiedad **más ancha** (9 de 20 formas voltean
+`allow`→`deny`); `skills/arnes-upgrade/SKILL.md` sólo habla del retorno de carro (`:695`, `:701`); y
+los tres archivos **no** están en `codigo_app.globs`, así que ningún guardián los cubre. **El efecto
+sale del repositorio:** un proyecto consumidor con su `AGENTS.md` congelado no se entera de que pudo
+cerrar un REQ `critico` sin validación ni auditoría.
+
+**`QA-023-12` es `instrumento` y a la vez bloquea el gate de fusión**, y las dos cosas son verdad: no
+retiene el cierre del REQ —§6 nombra «una prueba» por su nombre— pero mantiene roja la puerta requerida
+y estricta de `main`.
+
+**Escalado al propietario en `PENDING_APPROVAL.md`:** `D1` pasa de «espera el veredicto» a la
+recomendación de QA —**`Estado: bloqueado` con escalada, NO cierre con residual**, porque §6 no admite
+residual sobre un `usuario/dinero`— y la fila de `REQ-023` en `D2` se corrige: el bloqueante ya no es
+`QA-023-05` (`contrato`, cerrado) sino `QA-023-15`. La cola sigue en **4** y ningún REQ puede cerrarse.
+
+## [Interno] — 2026-09-09 · REQ-023 vuelta 3 de 3: cuatro hallazgos cerrados, la clase de `QA-023-05` reconciliada, y `CA-10` que deja de ser un pendiente para ser un incumplimiento
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester.
+
+**Veredicto: `QA: con-hallazgos`.** Tercera y última vuelta del ciclo dev↔QA de `REQ-023`
+(`AGENTS.md` §6: el contador es por REQ y no se reinicia). **10 de 12 criterios pasan**;
+`CA-09 (iii)` queda **no acreditado** y `CA-10` **no cumple**. Veredicto dado sobre `hooks/` y
+`tests/` tal como quedan en **`6ad9752`** —el commit aterrizó a mitad de la comisión y comiteó
+**exactamente los bytes que ya estaban** en el árbol de trabajo; `hooks/` no entró en él y no se tocó—,
+más el write-back del analista a `REQ-023.md`, sin comitear.
+
+**1. La reconciliación que se encargó: `QA-023-05` es `contrato`, y queda CERRADO.** Se confirma la
+subida del analista y se **corrige el veredicto propio de la vuelta 2** (que decía `instrumento`): el
+argumento de entonces —«el producto no se degrada»— responde a la pregunta de `usuario/dinero`, no a la
+de `contrato`, que es si el REQ afirma algo falso sobre lo construido; y lo afirmaba. El write-back del
+analista lo cierra, con su **prueba de falsación escrita literalmente** («si las medianas emparejadas
+hubieran salido 1,05, el techo seguiría siendo 1,00 y habría hallazgo contra el código») y su
+**aritmética verificada** (0,515 · 0,382 contra márgenes 0,144 · 0,094: las cuatro cuadran).
+
+**2. Los cuatro `instrumento` del `desarrollador`, RETIRADOS del campo tras verificarlos.**
+`QA-023-04` (`ARNES_CLAVES` da **6** claves con `Estado` dentro), `QA-023-06` (**2** ocurrencias
+restantes, **0** en las cinco secciones `39-*`, con el mecanismo de muerte por `set -u` **ejecutado**)
+y `QA-023-08`, éste con **doble par discriminante propio**: la sobre-denegación sintética pone en
+**FAIL** la mitad (2) nombrando `REQ-001.md`, y la guarda neutralizada pone en **FAIL** el cuarto suelo
+de anti-vacuidad. La abstención del dev sobre `28-rotacion-seccion-{1,4}` **fue la correcta** —son del
+`Archivos:` de `REQ-026`, con `QA: aprobado` dado sobre otro árbol— y su residual va a `QA-023-11`.
+
+**3. `CA-10` pasa de «pendiente declarado» a INCUMPLIDO, y es lo único que bloquea (`QA-023-15`,
+`usuario/dinero`).** Los tres archivos siguen sin tocar (`AGENTS.md:349` y
+`templates/AGENTS.md.tpl:314` definen la invariante por el **retorno de carro**;
+`skills/arnes-upgrade/SKILL.md` no menciona nada), y la precondición que el Historial declaró —«otra
+comisión viva» escribiendo `AGENTS.md`— **ha vencido**: `6dd3f8a` está fusionado y `REQ-027` cerró en
+`95764db`. Los tres archivos **no** están en `codigo_app.globs`. La clase no es `instrumento` porque el
+efecto **sale del repositorio**: sin el apartado de migración, el dueño de un proyecto consumidor no se
+entera de que pudo cerrar un REQ `critico` sin validación ni auditoría —y por tanto no barre su
+corpus—, y su `AGENTS.md` congelado (`§14.D`) seguirá hablando sólo del CR mientras la puerta deniega
+por una propiedad más ancha: **9 de 20 formas medidas voltean `allow`→`deny`**, entre ellas un BOM, un
+NBSP, un TAB, un blanco duplicado y un **emoji** dentro de la clave.
+
+**4. Cinco hallazgos nuevos más, todos `instrumento` y ninguno bloqueante del CAMPO — pero uno de ellos
+tiene la puerta requerida de `main` en ROJO.** `QA-023-10` (severidad **crítica**): el caso del banco de
+`CA-09 (iii)` mide la magnitud **retirada** (cociente absoluto contra techo 2,200×, tres parámetros y
+ningún tag), así que el criterio **no está ejercido por nada** — y en el **CI**, donde la máquina está
+quieta, ese caso **resuelve y FALLA**: `hooks-en-linux` sobre `6ad9752` da **955 · 1 · 10** con
+`arnes_campo_linea` en mediana **2,365× > 2,200×** y dispersión **0,023×**, entre 10× y 34× más estrecha
+que la mía. **No es regresión de `REQ-023`** —falla contra el techo que el write-back retiró por
+insatisfacible, y la base heredada paga **2,446** en ese mismo sujeto—, pero **bloquea el gate humano de
+fusión** mientras el caso siga apuntado ahí. Verificado por mí: el archivo del caso es byte a byte
+idéntico entre `6ad9752` y el local, el techo está codificado literal (`:271`), y el criterio que viajó
+en `6ad9752` es el **viejo** (0 apariciones de «relación emparejada» allí, 8 en el local pendiente) — de
+donde **el cierre de `QA-023-05` queda CONDICIONADO a que el write-back se comitee**. `QA-023-11`: la abstención
+que **mata la sección** sigue viva detrás de un umbral de **reloj** en `28/4:87` — dispara en la máquina
+**rápida**, y el arnés está abaratando esa misma ruta. `QA-023-12` (severidad **alta**): la dispersión es el **rango**, y eso hace dos cosas — invalida la vía
+conforme que el criterio pone primera («más tomas»), porque el rango es monótono no decreciente, **y
+enmascara el rojo en cuanto el host tiene ruido**: las nueve corridas locales «en verde» de tres
+personas distintas eran **abstenciones**, no verdes, y la máquina quieta del CI resolvió a la primera.
+La cláusula del margen cumple su mitad buena —nunca da un PASS falso— y paga un precio que nadie había
+escrito. `QA-023-13`: la
+superlinealidad heredada, abierta con ID **por encargo del propio REQ**. `QA-023-14`: **el banco no
+está en verde de forma reproducible en este host** — **3 de 4** corridas rojas (1, 4, 1 y **0** FAIL),
+**ninguna** de REQ-023; la cuarta, tomada sobre el árbol que se entrega, sale en **verde** (rc 0). El
+total cuadra en **966** las cuatro veces y los 42 casos del REQ dan **40 PASS · 0 FAIL · 2 SKIP**
+idénticos en las cuatro.
+
+**Y una cifra del encargo que no se sostuvo, medida y explicada:** la cola de `PENDING_APPROVAL.md`
+**no está en 0 sino en 4** (`D1`–`D4`), así que hoy `guard-completado` deniega el cierre de **cualquier**
+REQ. **No es un defecto del lector**: el archivo se reescribió a mitad de la comisión (18:56:54 → `0`;
+19:00:33 reescritura; 19:06:25 → `4`) y su contenido es exactamente el de `HEAD`; 30 lecturas
+consecutivas dan 4 con el hash y el `mtime` intactos.
+
+**Lo que NO se acredita, dicho expresamente:** `CA-09 (iii)`, `CA-10`, y **el banco en verde de
+`AGENTS.md` §7** —la puerta requerida de `main` se decide en CI, en otro host, que no se midió—. No se
+firmó `Seguridad:`, no se tocó `Estado:`, no se hizo write-back, no se fijó ninguna ventana y no se
+escribió en `hooks/`, `tools/`, `.github/`, `.arnes/`, `.claude-plugin/` ni `tests/`. Método y
+evidencia re-derivable: `docs/qa/1.34.0-req023-vuelta3-qa-metodo.md`.
+
 ## [Interno] — 2026-09-09 · El índice cuadrado, la ventana de REQ-019 al día y cuatro decisiones escritas donde la máquina las ve
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
 

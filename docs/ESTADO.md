@@ -46,6 +46,70 @@ el descontrol del ciclo 3.
 > Rama `rel/registro-1.33.0` @ `67eabfb`, **todo empujado**. Cola de aprobaciones: **`ARNES_COLA=0`**,
 > así que **la cola no bloquea ningún cierre**.
 
+### ⏸ PARADA LIMPIA — 2026-09-09, cambio de red del propietario. **Manda sobre todo lo que sigue**
+
+**El árbol quedó consistente y medido, no a medias.** Se detuvo a propósito la comisión del
+`desarrollador` sobre la mitad de código de `QA-023-05`, antes de que una caída de sesión la cortara a
+media escritura. Comprobado **después** de la parada: `bash -n` sobre las 57 secciones, `run.sh`,
+`hooks/*.sh` y `tools/*.sh` **compila todo**; las **tres quality gates en verde**; **cero worktrees
+huérfanos**; autoprueba **106 PASS · 0 FAIL**; banco **960 PASS · 0 FAIL · 6 SKIP**, con el total
+cuadrando en **966**.
+
+**Lo que el agente alcanzó a dejar hecho, y es lo que se le pidió:** el caso de `CA-09 (iii)` ya mide
+la **forma contratada** por el write-back del analista —crece el segmento de **clave** desde una clave
+que el lector reconoce, esqueleto `Sensible a @ seguridad: no`— y **abstiene con SKIP en vez de
+pasar**, publicando las tomas y la dispersión. De ahí los **dos SKIP nuevos** (4 → 6): no son una
+regresión, son la cláusula del margen funcionando por primera vez.
+
+| sujeto | tomas | mediana | dispersión | margen al techo 2,2 | veredicto |
+|---|---|---|---|---|---|
+| `arnes_norm_clave` | 2,943 · 2,136 · 2,277 | **2,277** | 0,807 | 0,077 | **no se puede afirmar** |
+| `arnes_campo_linea` | 2,563 · 2,318 · 2,211 | **2,318** | 0,352 | 0,118 | **no se puede afirmar** |
+
+Las dos medianas están **por encima** del techo, pero la dispersión es mayor que el margen, así que el
+criterio **prohíbe afirmar** y abstiene: ni pasa en falso ni suspende por ruido. Es la conducta correcta
+y deja `(iii)` **sin acreditar**, que es lo que hay que resolver.
+
+**La pista que dejó el agente en su última línea, y vale más que las cifras:** «*la candidata apenas
+mueve el número, así que el coste puede no estar en la guarda*». Si `v1.33.0` heredada paga el mismo
+cociente sobre la **misma forma**, entonces `CA-09 (iii)` **no mide lo que este REQ añade** y el
+hallazgo es contra el **criterio**, no contra el código. **Medir la línea base heredada sobre la forma
+«clave» es el siguiente paso concreto**, y era exactamente lo que el agente iba a hacer cuando se le
+detuvo. Sin ese número, la decisión de §6 se tomaría a ciegas.
+
+#### Retomar por aquí, en este orden
+
+1. **`desarrollador`** — medir `v1.33.0` heredada sobre la forma «clave», mismo par y mismo `k`, misma
+   tanda. Es una medición, no un arreglo. **No** subir el techo, **no** cambiar la forma, **no** tocar
+   `hooks/` sin volver al humano (gate de §6).
+2. Según salga: si la base paga lo mismo → hallazgo contra `CA-09 (iii)` y va al
+   **`analista-requerimientos`**; si sólo la candidata lo paga → hallazgo contra el código y la
+   decisión es del propietario, porque **no queda vuelta 4**.
+3. **`qa-tester`** cierra la **vuelta 3 de 3** validando todo el árbol, incluido el fail-before.
+4. **`auditor-seguridad`**, sólo después de QA.
+
+#### Lo que la coordinadora dejó pendiente para sí misma
+
+**El índice de `requirements/README.md` está desfasado en SIETE filas**, y no se corrigió a propósito:
+el corpus del banco hace `cat requirements/*.md`, así que editarlo mientras un agente mide **mueve sus
+cifras**. Se arregla con el banco parado. Las siete, con la cabecera real al lado:
+
+| REQ | cabecera (verdad) | índice (falso) |
+|---|---|---|
+| `REQ-012` | `completado` · aprobado · aprobado | pendiente · pendiente · pendiente |
+| `REQ-014` | `completado` | en-progreso |
+| `REQ-017` | `completado` | en-progreso |
+| `REQ-019` | `bloqueado` | pendiente |
+| `REQ-023` | `en-progreso` · con-hallazgos | pendiente · pendiente |
+| `REQ-026` | `en-revisión` · aprobado · con-hallazgos | pendiente · pendiente · pendiente |
+| `REQ-027` | `completado` · aprobado · aprobado | pendiente · pendiente · pendiente |
+
+**Nada está comiteado.** Todo el trabajo de la sesión vive en el árbol (partición de la sección 39,
+informe de QA de la vuelta 2, los cuatro `instrumento` cerrados, el write-back del analista y esta
+medición). Sobrevive a un reinicio porque está en disco; **no** sobrevive a un `git` destructivo, que
+por eso está prohibido en `git.prohibidos`. `gh` **sigue sin autenticar** en esta máquina: hace falta
+para el PR, no para trabajar.
+
 ### ⏸⏸ PAUSA — 2026-09-09, a petición del propietario. **Manda sobre todo lo que sigue**
 
 **Hay trabajo SIN VALIDAR en el árbol, y es del mecanismo. Nadie debe confiar en él ni comitearlo
@@ -85,22 +149,71 @@ El trabajo no se descarta: `git` destructivo está prohibido (`git.prohibidos`).
 Todo el trabajo está en `origin/rel/registro-1.33.0` @ **`29b06eb`** (dos commits: el cierre de
 `REQ-027` y el WIP marcado). Lo que **no** viaja, en orden de daño si se olvida:
 
-1. **`jq`, `gh` y `node` viven en `~/.local`, no en el sistema.** Una WSL nueva no los tiene. **Y sin
-   `jq` los hooks del arnés quedan INERTES con un aviso: el enforcement se apaga sin que nada falle.**
-   Es el olvido más caro de esta lista, porque no se manifiesta como error sino como silencio.
+1. **`jq` vive en `~/.local`, no en el sistema.** Una WSL nueva no lo tiene. **Y sin `jq` los hooks
+   del arnés quedan INERTES con un aviso: el enforcement se apaga sin que nada falle.** Es el olvido
+   más caro de esta lista, porque no se manifiesta como error sino como silencio.
+   **Corrección del 2026-09-09: `node` NO es dependencia del arnés y no debía figurar aquí.** En el
+   clon nuevo `node` está ausente y no se echó en falta: las tres quality gates del manifiesto piden
+   sólo `bash` y `jq`, y las únicas apariciones de `node`/`npm` en el árbol son **prosa** (§13 de
+   `AGENTS.md`, el `README`, el CHANGELOG) y **cadenas de caso** que el guardián debe juzgar como
+   texto (`npm run build > /tmp/build.log` en `07-bash-falsos-positivos.sh`). Nada las ejecuta.
+   Listar una dependencia falsa junto a la única que apaga el enforcement **abarata la que sí importa**.
 2. **`core.hooksPath` es configuración LOCAL y no se versiona.** En el clon nuevo hay que correr
    `git config core.hooksPath .githooks` o **la puerta del CHANGELOG queda apagada**, también en silencio.
-3. **El plugin estable.** Instalado desde el marketplace `JJOVEGA/ArnesJuan`, versión **1.33.0**
-   (`gitCommitSha 810128a`). Por autoalojamiento, **la 1.33.0 publicada gobierna el desarrollo de
-   1.34.0**: se instala la publicada, **nunca el árbol de trabajo**.
-4. **Sesión de Claude Code**: la cuenta activa es `juan.vega@sysvega.cr` (org *Consisa*).
-5. **`gh` con dos cuentas**: `jvega-habitat` (activa, push sin admin) y `JJOVEGA` (dueño, rulesets).
-   Hay que volver a autenticar las dos; `gh auth switch` alterna.
+3. **La identidad de git tampoco viaja, y faltaba en esta lista.** `user.name` y `user.email` son
+   configuración local o global; un clon nuevo no tiene ninguna de las dos. Es el **tercer apagado
+   silencioso de la misma familia** que 1 y 2 —el commit no falla: sale firmado con la identidad que
+   el sistema derive (`juan@sysvega-dev`), y la autoría del historial se parte sin que nada avise—.
+   Se restituye con la identidad **que el historial ya usa**: `Juan Vega <jvega@habitat.org>`,
+   configurada **local al repositorio** para no decidir por los demás repos de la máquina.
+4. **El plugin estable.** Instalado desde el marketplace `JJOVEGA/ArnesJuan`, versión **1.33.0**.
+   Por autoalojamiento, **la 1.33.0 publicada gobierna el desarrollo de 1.34.0**: se instala la
+   publicada, **nunca el árbol de trabajo**.
+   **Precisión del 2026-09-09: el `gitCommitSha` que registra la instalación es `5f37946`, no
+   `810128a`.** No es un error de instalación y conviene no volver a alarmarse: `810128a` es el
+   **tag** `v1.33.0` y `5f37946` es `origin/main` («Registro de la publicacion de v1.33.0», #44), un
+   commit **posterior**; el marketplace instala desde `main`. Lo que decide no es el sha sino **si el
+   mecanismo difiere**, y no difiere: entre los dos commits sólo cambian `CHANGELOG.md`,
+   `PENDING_APPROVAL.md`, `docs/ESTADO.md` y `docs/PLAN.md` —ni un archivo de `hooks/`, `tools/`,
+   `.github/`, `.claude-plugin/`, `agents/`, `skills/` ni `templates/`—, y comparado **archivo por
+   archivo contra el tag**, todo el mecanismo instalado coincide **byte a byte**. Esa comparación, y
+   no la igualdad de shas, es la que hay que repetir en el próximo traslado.
+5. **Sesión de Claude Code**: la cuenta activa es `juan.vega@sysvega.cr` (org *Consisa*).
+6. **`gh` con dos cuentas**: `jvega-habitat` (activa, push sin admin) y `JJOVEGA` (dueño, rulesets).
+   Hay que volver a autenticar las dos; `gh auth switch` alterna. **Es el único punto de esta lista
+   que un agente no puede cerrar solo**: `gh auth login` es interactivo y el token no está en disco.
 
 **Comprobación de que el traslado quedó bien hecho** —y es la misma que acredita que el arnés está
-vivo—: correr el banco (`bash tests/escenarios/hooks/run.sh`) y la autoprueba, y obtener **962 PASS ·
-0 FAIL · 4 SKIP** y **105 PASS · 1 FAIL** (el `CA-18` conocido de arriba). Un resultado **mejor** que
-ése es sospechoso: significaría que algo no se está midiendo.
+vivo—: correr el banco (`bash tests/escenarios/hooks/run.sh`) y la autoprueba. Un resultado **mejor**
+que el esperado es sospechoso: significaría que algo no se está midiendo.
+
+**El número de SKIP OSCILA entre 4 y 5 en la misma máquina, y no es la plataforma: es un caso de
+reloj.** La primera corrida del clon dio **961 PASS · 0 FAIL · 5 SKIP** y la segunda, sobre el árbol
+ya partido, **962 · 0 · 4**. El total cuadra en **966** las dos veces.
+
+> **Corrección de una causa que esta misma sección afirmó mal, y se deja escrita porque el error es
+> instructivo.** Al ver 5 SKIP se atribuyó la diferencia al SKIP de `cygpath` —`ruta estilo Windows
+> con backslashes -> deny`, de `04-windows-formas-del-manifiesto.sh`— y se concluyó que «la cifra
+> esperada no es una constante del proyecto sino de la máquina». **Es falso, y la prueba es que ese
+> SKIP aparece en las DOS corridas**: estaba también entre los 4 SKIP de la máquina anterior, así que
+> nunca pudo ser la diferencia. El caso que **entra y sale** es `REQ-017 CA-08 (ii) un REQ real de 6
+> líneas: el reloj no sube más de 1,25× el de v1.32.1`, y su propio motivo de SKIP lo dice: «*el techo
+> cae DENTRO del recorrido observado [1.010×, 1.302×]: el instrumento no distingue el factor que
+> vigila*». Un caso así **salta cuando no converge y pasa cuando sí**, según la carga de la máquina.
+> La lección real no es sobre plataformas: **una diferencia de una unidad en el recuento se explica
+> leyendo la LISTA de SKIP, nunca el total** — comparar totales invita a inventarle una causa a un
+> caso que sólo estaba oscilando. (El `desarrollador` reportó la oscilación como `REQ-017 CA-09, la
+> pared de los 60 s`; el nombre no coincide con ninguna de las dos listas medidas, así que **el caso
+> que oscila es el `CA-08 (ii)` de arriba**, que es el que sí aparece y desaparece entre ellas.)
+
+Sobre `cygpath`, lo que sí es cierto y conviene conservar: aquí está **ausente** —el interop de WSL
+está activo (`/mnt/c` montado, `WSLInterop` `enabled`) pero el host **no tiene Git para Windows** y el
+`PATH` no lleva ninguna ruta `/mnt/c`—, el caso es de Windows y **no hay nada que arreglar**: el banco
+lo salta declarando su motivo, que es lo que se le pide.
+
+La autoprueba dio **105 PASS · 1 FAIL** al llegar —el `CA-18` conocido:
+`39-caracter-invisible-2-la-clase-y-el-corpus.sh` en 402 líneas contra su techo de 400— y **106 PASS ·
+0 FAIL** después de que el `desarrollador` partiera la sección.
 
 **Lo cerrado en esta sesión, que sí está firme:** `REQ-027` **`completado`** — ciclo completo en
 orden (analista → QA `aprobado` → auditor `aprobado`, `R-023`), quality gates verdes, cola 0, y sus
@@ -734,7 +847,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-09 10:48
+## Estado derivado — 2026-09-09 19:23
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -744,9 +857,9 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `rel/registro-1.33.0` @ `81d260d` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `rel/registro-1.33.0` @ `6ad9752` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.0`
-**Aprobaciones pendientes:** 0
+**Aprobaciones pendientes:** 4
 **REQ:** 27 — completado 14 · en-revisión 2 · en-progreso 2 · bloqueado 2 · otros 7
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
@@ -763,7 +876,7 @@ _Sólo los REQ abiertos; los 14 completados no se listan._
 | REQ-020 | pendiente | pendiente | preventiva | critico | sec-038(contrato),sec-039(contrato),sec-… |
 | REQ-021 | bloqueado | con-hallazgos | preventiva | critico | dev-021-05(instrumento,dueñoanalista-req… |
 | REQ-022 | pendiente | pendiente | pendiente | critico | (ninguno) |
-| REQ-023 | en-progreso | con-hallazgos | pendiente | critico | qa-023-01(usuario/dinero),qa-023-02(cont… |
+| REQ-023 | en-progreso | con-hallazgos | pendiente | critico | qa-023-10(instrumento),qa-023-11(instrum… |
 | REQ-024 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-025 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-026 | en-revision | aprobado | con-hallazgos | critico | qa-026-03(instrumento),qa-026-07(instrum… |
