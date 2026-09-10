@@ -73,11 +73,9 @@ lo exige para cerrarlo y tú prohibiste NFR nuevos en esta ventana.
 **Ya no queda trabajo de coordinación pendiente:** los tres actos que el artefacto del auditor
 prescribía con dueño y archivo están hechos.
 
-**Queda un tramo que NO necesita tu firma:** el índice de sede de `SEC-056` (`auditor-seguridad`, deuda
-que él mismo declaró con vencimiento 1.34.0). Es de documento propio y **no bloquea**; se puede
-despachar al retomar sin esperarte. La ampliación de `QA-017-33` con su cuarta sede se registró el
-2026-09-10: el contexto de esa sede sí mide, pero su generalización y su equivalencia con la exigencia
-(ii) siguen siendo el hallazgo `instrumento` abierto.
+**No queda ningún tramo documental que no necesite tu firma:** la ampliación de `QA-017-33` con su
+cuarta sede y el índice de sede de `SEC-056` quedaron hechos el 2026-09-10. Ambos hallazgos siguen
+`instrumento` abiertos y no bloquean; ni su estado ni el de ningún REQ cambia con estas dos anotaciones.
 
 **Lo que NO se hace al retomar:** no se cierra ningún REQ ni hallazgo para limpiar el tablero, no se
 aceptan residuales, no se relajan pruebas, no se fusiona y no se publica. Cerrar la sesión no fue

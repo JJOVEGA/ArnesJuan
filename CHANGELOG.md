@@ -11,6 +11,13 @@ esa sede sí mide la abstención concreta; permanece falso generalizarlo a «cad
 la remediación (ii) de `SEC-064`. `QA-017-33` sigue abierto, de clase `instrumento`; no cambia ningún
 requerimiento, código ni veredicto.
 
+## [Interno] — 2026-09-10 · `SEC-056`: índice de hallazgos trasladado a sede estable
+> Origen: Interno (manual) · agente: auditor-seguridad.
+
+La tabla «Índice de hallazgos de clase bloqueante» pasó de §2 de R-016 a una sección `##` propia,
+antes de la secuencia de revisiones. R-016 conserva un puntero a la tabla y `SEC-056` deja constancia
+del traslado. No se cerró ni reclasificó ningún hallazgo, ni se alteraron REQ, requisitos o aprobaciones.
+
 ## [Interno] — 2026-09-10 · Cierre, última pieza: quedan DOS tramos que no necesitan firma, y se dejan sin despachar por la propia instrucción de cierre
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
 
