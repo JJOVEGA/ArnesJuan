@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Ajuste de coste del lector de Rigor
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Codex.
+
+Evita una segunda normalización en valores simples de `Rigor:`. Los matices parentéticos conservan el normalizador común. Corrige la ruta medida por REQ-017 CA-08 (ii); el CI decide el resultado.
+
+## [Interno] — 2026-09-10 · Preparación de metadatos para 1.33.1
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Codex.
+
+Actualiza los manifiestos del plugin y del marketplace a `1.33.1` para el hotfix de rigor y firma de Seguridad. La versión sigue sin publicar hasta fusionar, etiquetar y verificar la instalación.
+
 ## [Interno] — 2026-09-10 · Corrección del piso de la sección de estabilización
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Codex.
 
