@@ -2,6 +2,94 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · La cifra firme no era 17 ni 23: son **34**, y el índice que la frontera de publicación cita como exhaustivo no lo es (`SEC-085`)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad (`R-028`) y coordinadora. **Bajo delegación de 24 h.**
+
+**Reconciliación cerrada.** Artefacto: `docs/seguridad/reconciliacion-campos-2026-09-10.md` (once filas
++ método + versión base dentro del propio artefacto). Revisión `R-028`.
+
+**Mi lista de once estaba bien medida y mal compuesta, y el auditor explicó por qué:** mi `comm -23`
+reproduce los once **exacto**, pero lee el estado en la **cabecera de apertura**, mientras el estado
+vigente de ese registro es *la última declaración que nombra el hallazgo* —cabecera, una sección
+`### SEC-0NN — Estado: X → Y`, o **prosa sin encabezado**—. No es un error de método: es la prueba de
+que la sede contable no estaba mantenida. Sobraban cinco (ya `mitigado`) y **faltaban cuatro**
+(`SEC-023`, `SEC-029`, `SEC-030` y **`SEC-075`**, cuyo encabezado lleva el id entre acentos graves y
+ningún patrón alcanzaba).
+
+**La cifra firme: 33 sobre `b55347e`, 34 a partir de `R-028`.** Reparto: **21** los ve la puerta · **5**
+sólo en el registro **por diseño** (`en-mitigación`, con el residual viajando por `Seguridad:`) · **4**
+sin REQ atribuible · **1** que debería estar en un campo (`SEC-055`) · **2** discrepancias. Y la
+observación honesta del auditor: **bajo la frontera, 34 devuelve la decisión igual que 33, que 31 o
+que 17.** Lo que cambia es que ahora se puede desmentir **fila por fila**.
+
+**`SEC-085` (`contrato`, alta) — y es el hallazgo que importa.** El «Índice de hallazgos de clase
+bloqueante» se declara **sitio único de la lista exhaustiva** y **la frontera de publicación lo cita
+como tal**; no lo es: última actualización `R-017`, y entre `R-018` y `R-027` se abrieron **nueve**
+bloqueantes que nunca entraron. Lo grave no es el desfase: `R-016` argumentó **por escrito** que la
+unión de las dos sedes más fail-closed protege, y ese argumento vale sólo si cada hallazgo está en **al
+menos una** sede — algo que nunca se comprobó. **`SEC-075` es el contraejemplo medido:** `contrato`,
+`abierto`, en **ninguna** de las dos, y por una decisión *correcta*. Un recuento derivado de la
+frontera **no puede encontrarlo**, y la falta va hacia el lado que **publica**.
+
+**Dos discrepancias que bloquean de verdad, y una es un defecto del propio cierre del auditor:**
+`SEC-014` está `mitigado` desde `R-006` y sigue en el campo de `REQ-013`, que por eso no puede cerrar;
+y `SEC-083` está `mitigado` desde `R-027` y sigue en el de `REQ-024` porque `R-027` §2 escribió «se
+retira del campo» para `SEC-082` y §3 **omitió la frase** para `SEC-083`. Subsanado en `R-028` §3. La
+lección quedó escrita: **un cierre no está completo hasta que dice de qué campo sale.**
+
+### `D16`: la corrección de mi propia caracterización, medida
+
+Venía diciendo que `QA-016-04` y `SEC-084` están los dos «en la 1.33.0 publicada» como si tuvieran la
+misma exposición. **El defecto sí; la exposición no.** Sondeado con el lector real
+(`docs/arnes/d16-alcance-real/`, con su sonda y su salida): `Rigor: critico (por suelo)` cae a
+**`estandar`** —indistinguible de `basura` y de la **ausencia**— **sólo cuando el REQ NO está marcado
+`Sensible a seguridad: sí`**; con `sí`, el suelo de §6 lo rescata. Y en este repositorio, que es el
+**único consumidor verificado**, `grep -L` da **0 REQ no sensibles**: aquí el defecto es **latente, no
+activo**. Quien queda expuesto es un proyecto instalado con un REQ no sensible que escriba el rigor con
+un paréntesis —la forma que §13 **le enseña**—, y que eso haya ocurrido **no está comprobado**.
+
+Consecuencia de método, y va contra lo que yo había afirmado: **compartir causa no obliga a compartir
+commit.** `SEC-084` restituye un contrato y no depende del suelo; `QA-016-04` sólo se manifiesta en REQ
+no sensibles, y su arreglo correcto es **tolerar el paréntesis** como ya hacen `QA:` y `Seguridad:`, no
+denegar por valor no reconocido — denegar cambiaría la conducta heredada de cualquier proyecto que hoy
+escribe un matiz.
+
+### Y una deriva que dejé yo
+
+`requirements/README.md:513` decía `en-progreso` mientras `REQ-017.md` decía `bloqueado`: nació con mi
+propia edición de bloqueo y el analista la encontró. Corregida.
+
+Nueva también: `docs/propuesta-reglas-coordinacion.md` — la mejora mínima de las reglas de
+coordinación, con su delta de tamaño medido y sin prometer ahorro no medido.
+
+## [Interno] — 2026-09-10 · `QA-017-31`: la promesa de `CA-03` deja de ser absoluta y gana su condición de verdad — y aparece una CUARTA rama de abstención que nadie había nombrado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos. **Bajo autorización EXPRESA del propietario del 2026-09-10** (opción **(A)** de `D18` en `PENDING_APPROVAL.md`), tras agotarse las tres vueltas de `AGENTS.md` §6.
+
+**Qué se corrigió.** `CA-03` de `REQ-017` afirmaba, **absoluto y sin frontera**, que «*toda abstención
+de este caso publica de qué máquina es la medición que la produjo*», y con ello **declaraba CUMPLIDA**
+una mitad de `SEC-064` que **`CA-08 (ii)` declara ABIERTA**. Alineado `CA-03` con `CA-08 (ii)`, que es
+**la que dice la verdad**; **`CA-08` no se tocó**. La promesa **principal** pasa a ser verdadera —no se
+le colgó un «no exhaustiva» dejando el «toda» en pie, que es la trampa que el propietario nombró en
+`D5`—: el caso **emite** plataforma y carga en todas sus ramas de emisión, y ese par identifica la
+máquina de **esa** abstención **sólo cuando la abstención ocurre habiendo medido**.
+
+**Revisada contra las ramas disponibles, y son CUATRO, no tres.** Verificadas por mí las tres que traía
+el encargo (`docs/qa/evidencia-req-017-writeback-f4a5f1f/00-metodo-y-base.md` §5 y §6): medición propia
+(se cumple) · **sin línea base** (emite `carga=2.67`, la de la medición **directa** — `QA-017-27`,
+**abierto**, descrito y **no cerrado**) · **fallo antes de leer el registro** (`plataforma=n/a
+carga=n/a`). Y una **cuarta** que `CA-03` contrata vía `CA-06` y que no estaba nombrada: el **suelo de
+50 ms** no alcanzado, **de la que no hay medición** de lo que el par vale — así que **no se afirma nada**
+de ella. Por eso las ramas se enuncian **por propiedad** con la lista exhaustiva **citada** en su sitio
+único y los ejemplos marcados **no exhaustivos**.
+
+**Lo que NO se hizo, para que se pueda auditar:** `QA-017-31` sigue **`contrato`** con su dueño y lo
+cierra **QA**; `SEC-064` **no se cierra** —la señal y el «de qué máquina» siguen abiertas allí con dueño
+`desarrollador`—; **ningún umbral se movió** (techo **2,6**, suelo 50 ms, estadístico mínimo, par S/2S,
+`k`, `r`, modo intercalado); **ningún NFR ni cota nueva**; **ningún código**; y **ningún veredicto ni el
+estado** — `REQ-017` sigue **`bloqueado`**, y el desbloqueo es de la coordinadora cuando QA re-valide
+**fuera del contador**, según la misma autorización. Cambio **menor** con su fila de `Historial de
+cambios` (antes → después literal, causa y habilitante); **sin ADR**.
+
 ## [Interno] — 2026-09-10 · `SEC-067` tiene su write-back y sigue sin poder cerrarse: su condición exacta de cierre es `SEC-072`, que no está autorizado
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (la consolidación) y analista-requerimientos (el NFR). **Bajo delegación de 24 h.**
 
