@@ -30,7 +30,7 @@ bash tests/escenarios/hooks/run.sh secciones/07-*.sh     # sólo esa sección, m
 bash tests/escenarios/hooks/run.sh bash                  # sólo los casos cuyo nombre contenga "bash"
 bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del corredor
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **966 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **996 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`).
 Este número se escribe a mano en los dos sitios y **hay que cuadrarlo al añadir casos**: decía
 886 con `CASOS_ESPERADOS` ya en 887, y luego 924 con el literal ya en 966 (`SEC-066`, las dos
@@ -70,7 +70,7 @@ igual de inútil —el padre los ve a cero, cada subshell se llevó los suyos—
 con `SKIP` lo es.
 
 ## Por qué hay secciones numeradas en partes (`NN-<slug>-<k>-<tema>.sh`)
-Las secciones 28, 33, 36, 37, 38 y 39 viven repartidas en varios archivos. No es estilo: **REQ-014
+Las secciones 28, 33, 36, 37, 38, 39 y 40 viven repartidas en varios archivos. No es estilo: **REQ-014
 CA-18** pone un techo a lo que una comisión tiene que abrir para tocar una sección, y el techo se
 pone sobre el **excedente**, no sobre el total —`líneas(f) ≤ max(N, piso(f) × k)`, con `N` = 400 y
 `k` = 1,25—. Cada archivo declara, junto a su `CASOS_ESPERADOS_SECCION`, su
@@ -89,7 +89,16 @@ vienen copiados de `28-…-1-la-historia.sh`, y `num38` está en las tres partes
 renglones copiados cuestan menos que una puerta trasera entre secciones**. Por lo mismo, `mat`
 —el materializador de la línea base— viene copiado en **cuatro** de las cinco partes de la 39: las
 que comparan contra `v1.33.0` (todas menos la 1). Decía «dos de las cuatro» y eran **tres de
-cuatro** desde que nació la parte 4; la quinta las deja en cuatro de cinco.
+cuatro** desde que nació la parte 4; la quinta las deja en cuatro de cinco. Y en **las dos** de
+la 40, por lo mismo.
+
+**Y una sección puede repartirse en archivos que NO comparten su número.** La 40 (REQ-024) llega
+a su techo de 400 líneas con el bloque A, así que su bloque B —los casos de la cola— vive en
+`31-cola-una-sola-regla.sh`. No es un apaño de tamaño: es donde ya están los casos de **REQ-009**
+cuyos controles de no-regresión reutiliza, y un caso que mide una no-regresión lejos del caso que
+la contrata se desfasa del suyo. El cuadre no se entera —cada archivo declara su propio
+`CASOS_ESPERADOS_SECCION`— y el criterio se sigue leyendo entero: cada caso lleva su `REQ-0NN
+CA-NN` en el nombre.
 
 **Al partir, los casos se reparten; no se crean ni se pierden.** Cada parte declara su propio
 `CASOS_ESPERADOS_SECCION`, la suma no cambia y `CASOS_ESPERADOS` de `run.sh` tampoco. El corte va

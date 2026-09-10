@@ -392,6 +392,7 @@ arnes_parse_manifest_estado() {
   # ninguna ruta puede dejar una variable sin definir con `set -u` activo.
   ARNES_ESTADO_ARCHIVO='docs/ESTADO.md'; ARNES_ESTADO_ACTIVO='true'
   ARNES_REQ_DIR='requirements'; ARNES_PENDING_REL='PENDING_APPROVAL.md'
+  ARNES_AUSENCIA_EXIGE=false
   arnes_norm_campo 'completado'; ARNES_ESTADO_DONE="$ARNES_CAMPO"
   ARNES_ESTADO_MANIF_ROTO=0
   arnes_jq_file "$ARNES_MANIFEST" -r 'if type != "object" then error("no-objeto") else . end |
@@ -404,7 +405,14 @@ arnes_parse_manifest_estado() {
       (if .estado_derivado.activo == false then "false" else "true" end),
       (.requirements_dir          // "requirements"),
       (.estados.completado        // "completado"),
-      (.pending_approval          // "PENDING_APPROVAL.md") ] | join("\n")' 2>/dev/null || ARNES_JQ=''
+      (.pending_approval          // "PENDING_APPROVAL.md"),
+      # `campos.ausencia_exige` viaja en la MISMA llamada: este bloque publica el RIGOR
+      # EFECTIVO en su tabla, y sin leer la llave lo derivaria del lado HEREDADO mientras la
+      # puerta lo deriva del lado que cierra — el tablero diria `estandar` donde la puerta
+      # dice `critico`. Cero procesos añadidos (REQ-024 CA-07 i). DESVIACION DECLARADA:
+      # este archivo no esta en el `Archivos:` de REQ-024, que lo dejo fuera porque el
+      # bloque B no lo necesitaba; el bloque A si, y por un solo renglon.
+      (if .campos.ausencia_exige == true then "true" else "false" end) ] | join("\n")' 2>/dev/null || ARNES_JQ=''
   # Un archivo VACIO no hace fallar a jq: no produce entrada, asi que rc=0 y la salida es
   # vacia. Rc cero no es lectura buena — es la misma trampa que ya cerro `arnes_parse_manifest`.
   # Y cuando jq falla, `ARNES_JQ` conserva el valor de la lectura ANTERIOR (aqui, la de la
@@ -422,6 +430,7 @@ arnes_parse_manifest_estado() {
       2) ARNES_REQ_DIR="$l" ;;
       3) arnes_norm_campo "$l"; ARNES_ESTADO_DONE="$ARNES_CAMPO" ;;
       4) ARNES_PENDING_REL="$l" ;;
+      5) ARNES_AUSENCIA_EXIGE="$l" ;;
     esac
     i=$((i+1))
   done <<< "$ARNES_JQ"

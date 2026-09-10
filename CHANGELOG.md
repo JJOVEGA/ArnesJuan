@@ -2,6 +2,69 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · `REQ-024` implementado (9 de 11) y las dos filas de `SEC-079` transcritas, con dos residuales que ninguno de los dos agentes quiso cerrar solo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `desarrollador` (`REQ-024`) y `desarrollador` (transcripción) · consolidación: coordinadora. **Bajo delegación de decisión del propietario por 24 h (2026-09-09).**
+
+### `REQ-024` — 9 de 11 criterios, con sus pruebas
+
+Banco **988 PASS · 1 FAIL · 7 SKIP**, cuadre **996** (de 966: **30 casos nuevos**). Autoprueba 106 · 0.
+Tres quality gates verdes. Fail-before/pass-after de las tres secciones contra `v1.33.0`: **44 PASS · 9
+FAIL · 2 SKIP** antes, **55 · 0 · 0** después.
+
+**La tensión de fondo se resolvió midiendo, no eligiendo.** `CA-02` (sitio único) contra `CA-03 (i)`: el
+dato que decide es que `hooks/lib.sh` lo cargan **siete** puntos de entrada y sólo uno es la puerta; tres
+de ellos resuelven la ausencia al derivar el rigor. Una tabla en `guard-completado.sh` sería **invisible
+para los otros seis**, y el informe diría `estandar` donde la puerta dice `critico`. Sitio único =
+`hooks/lib.sh`, y `CA-03` sale por su salida **(ii)**.
+
+**`CA-01` reproduce la medición del auditor sin heredarla:** M = 6 claves, **N = 4 contra `v1.33.0`** y
+**0 en esta versión** — coincide con `R-013` §2. Y **`CA-03` reproduce `SEC-050`**: el puntero no encuentra
+**2 de 4**, justo los que retiran el suelo y el nivel.
+
+**Coste (`CA-07`):** 0 procesos añadidos (2 vs 2 en la puerta, 5 vs 5 en la parada), ruta crítica
+**1,077×** contra techo 1,25×, duplicación **1,860×** (MAD 0,010) y **1,994×** (MAD 0,022). **Estadístico:
+mediana de 5 tomas + MAD, no el rango** — el `desarrollador` aplicó por su cuenta la lección de `QA-023-12`.
+
+**La llave `campos.ausencia_exige` queda en `false`.** Encenderla es política, no implementación, y toca
+`.arnes/config.json`, que §6 declara **gate humano**: queda como decisión del propietario, no ejecutada.
+
+**No escribió el caso de banco de `REQ-023 CA-10`**, por la instrucción de secuencia: su redacción de
+referencia estaba cambiando.
+
+### El único FAIL es un `contrato` contra `REQ-023`, y el REQ-024 lo había predicho
+
+`REQ-023 CA-12 2 de 7 formas de la cola cambiaron de conteo o de rc`. El caso de `CA-12 (ii)`
+(`39-…-3-los-lectores-y-el-coste.sh:284-297`) compara el **árbol actual** contra `v1.33.0` —la afirmación
+**abierta**—, mientras su propio comentario (`:230-233`) y el criterio vigente contratan una no-regresión
+**anclada a esa versión**. Las 2 formas son exactamente las dos que ese comentario nombra. **El
+`desarrollador` no lo resolvió**, y explicó por qué: `REQ-023` está `bloqueado`, su caso lleva firma de QA
+sobre ese árbol, y elegir entre «anclada» y «abierta» sería decidir una pregunta de contrato ajena.
+
+### Las dos filas de `SEC-079`, transcritas
+
+`md5 02756e87…`, **2494 B**, `cmp` idénticas, **1/1** por sede. La titular ya lleva su condición **dentro
+de la propia oración**. El transcriptor hizo el barrido que `CA-10 (iii)` ahora exige —**8 oraciones,
+la 1 juzgada aislada**— y el punto **(v)** ejecutando la puerta en un worktree sobre `8754d98`: BOM,
+blanco borrado y NBSP interno dan **DENY** con su motivo citado; el homóglifo da **ALLOW**; y el control
+latino idéntico da **DENY**, así que **la única diferencia que decide es la `а` cirílica**.
+
+**Y nombró un residual en vez de cerrarlo por su cuenta**, que es la conducta correcta: `CA-10` punto 1
+exige que si el mecanismo aparece dos veces en la celda sean «**literalmente la misma frase**», y tras el
+cambio las oraciones 3 y 5 son **equivalentes en contenido pero no idénticas en letra**. Unificarlas
+exigía **redactar**, que es del analista y su comisión se lo prohibía. **`QA-023-19` puede quedar abierto
+por la letra del punto 1 aunque su defecto de fondo esté corregido.**
+
+### Deudas enrutadas y desviaciones declaradas
+
+`REGHER94` **hecho** en `39-…-4`, y el mismo defecto **existe en tres sitios más** (`39-…-2:100`,
+`39-…-3:96`, `39-…-5:105`), preexistentes y de `REQ-023`. **Desviación declarada:**
+`hooks/estado-derivado.sh` recibió **un renglón** y no estaba en `Archivos:` — sin él el bloque derivado
+publicaría `estandar` donde la puerta dice `critico`. **`40-ausencia-que-abre-2` está en 400 líneas, su
+techo exacto**: quien añada un caso ahí **parte** la sección, y hay aviso en su preámbulo.
+
+**`CA-04` y `CA-06` de `REQ-024` NO se tocan ni se acreditan**: exigen la superficie heredada que estaba
+reservada para `SEC-079`. Los dos ADR nuevos (`ADR-009`, `ADR-010`) quedan en **`propuesta`**.
+
 ## [Interno] — 2026-09-09 · El write-back que convierte el error de verificación de la coordinadora en una guarda del criterio
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de decisión del propietario por 24 h (2026-09-09).**
 

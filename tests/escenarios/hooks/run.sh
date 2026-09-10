@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=966   # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=996   # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1333,6 +1333,16 @@ CASOS_ESPERADOS=966   # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # contra su techo de 400 y `CA-04` —el corpus— sale a la parte 5. El total
                       # NO cambia porque partir REPARTE: 10 = 7 + 3. Que este literal siga en
                       # 966 es la comprobación de que no se creó ni se perdió ningún caso.
+                      # 966 → 996: los 30 casos de REQ-024 (la ausencia de un campo de cabecera
+                      # resuelta del lado que ABRE, SEC-047 mitad 2 / SEC-050 / SEC-051). Se
+                      # reparten en tres archivos y no en dos, y el motivo está medido: la
+                      # sección 40 nueva llega a su techo de 400 líneas con `CA-01`, `CA-02`,
+                      # `CA-03`, `CA-05`, `CA-07` y `CA-11 (ii)`, así que el bloque B —los 14
+                      # casos de la cola de `CA-08`, `CA-09`, `CA-10` y `CA-11 (i)`— va a la
+                      # sección 31, que es donde ya viven los casos de REQ-009 cuyos controles de
+                      # no-regresión `CA-09` reutiliza. Reparto: `31` 25 → 39, `40/1` 7 nuevos,
+                      # `40/2` 9 nuevos. Los `CASOS_ESPERADOS_SECCION` de la 39 NO se tocan: el
+                      # arreglo de `REGHER94` cambia un TEXTO de SKIP y no crea ni pierde casos.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

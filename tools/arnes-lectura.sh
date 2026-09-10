@@ -36,11 +36,18 @@ fi
 command -v jq >/dev/null 2>&1 || { printf 'Hace falta jq.\n' >&2; exit 2; }
 
 ARNES_MANIFEST="$MAN"
+# `campos.ausencia_exige` viaja en la MISMA llamada a jq que las otras tres claves: sin ella
+# este informe resolveria la ausencia de un campo del lado HEREDADO mientras la puerta la
+# resuelve del lado que cierra, y diria `estandar` donde la puerta dice `critico` — que es
+# exactamente el desfase entre lectores que este informe existe para detectar (REQ-024
+# CA-02/CA-11 ii). Cero procesos añadidos (CA-07 i).
 arnes_jq_file "$MAN" -r '[(.requirements_dir // "requirements"),
                           (.estados.completado // "completado"),
-                          (.pending_approval // "PENDING_APPROVAL.md")] | .[]'
-REQ_DIR=''; DONE=''; PEND_REL=''
-{ IFS= read -r REQ_DIR; IFS= read -r DONE; IFS= read -r PEND_REL; } <<< "$ARNES_JQ"
+                          (.pending_approval // "PENDING_APPROVAL.md"),
+                          (if .campos.ausencia_exige == true then "true" else "false" end)] | .[]'
+REQ_DIR=''; DONE=''; PEND_REL=''; ARNES_AUSENCIA_EXIGE=false
+{ IFS= read -r REQ_DIR; IFS= read -r DONE; IFS= read -r PEND_REL
+  IFS= read -r ARNES_AUSENCIA_EXIGE; } <<< "$ARNES_JQ"
 arnes_jq_file "$MAN" -r '(.estados.todos // ["borrador","pendiente","en-progreso","en-revisión","completado","bloqueado"])[]'
 ESTADOS_OK=''
 while IFS= read -r e; do arnes_norm_campo "$e"; ESTADOS_OK+="|$ARNES_CAMPO"; done <<< "$ARNES_JQ"
@@ -249,8 +256,25 @@ for f in "$PROY/$REQ_DIR"/*.md; do
   fi
 done
 
+# LA COLA SE MIDE AQUI, ANTES DE AFIRMAR NADA (REQ-024 CA-08 iii). Se medía al final, en el
+# RESUMEN, y por eso este informe podía imprimir «Ningún valor anómalo» y salir 0 sobre un
+# archivo de cola que no se pudo medir — el mismo fail-open de tres canales que SEC-051
+# midió, con el informe como el único sitio donde una persona busca anomalías. Es la MISMA
+# función que usa la puerta de cierre y el bloque derivado (`arnes_cola_pendientes`,
+# hooks/lib.sh): una tercera transcripción de la regla de conteo aquí sería cómica.
+COLA_RC=0
+arnes_cola_pendientes "$PROY/$PEND_REL" || COLA_RC=$?
+
 if [ "$anomalias" -gt 0 ]; then
   printf 'VALORES QUE LA MÁQUINA NO LEE COMO ESTÁN ESCRITOS (%s)\n\n%s' "$anomalias" "$detalle"
+elif [ "$COLA_RC" -ne 0 ]; then
+  # NO se afirma «Ningún valor anómalo»: la afirmación abarca el proyecto, y de este
+  # proyecto hay una parte que no se pudo medir. Decir que todo está bien porque lo que se
+  # pudo leer estaba bien es la forma de mentir que este informe existe para no tener.
+  printf 'LA COLA DE APROBACIONES NO SE PUDO MEDIR — este informe NO puede afirmar «Ningún valor anómalo»\n\n'
+  printf '  Los %s REQ leídos no traen ningún valor que la máquina lea distinto de como está\n' "$reqs"
+  printf '  escrito, pero %s no se pudo medir (ver RESUMEN), así que el estado del proyecto\n' "$PEND_REL"
+  printf '  queda sin acreditar y la puerta de cierre DENIEGA.\n\n'
 else
   printf 'Ningún valor anómalo: la máquina lee los %s REQ como están escritos.\n\n' "$reqs"
 fi
@@ -264,17 +288,22 @@ printf 'RESUMEN\n'
 printf '  %s REQ leídos' "$reqs"
 [ "$notas" -gt 0 ] && printf ' · %s archivo(s) sin `Estado:` (notas, no REQ)' "$notas"
 printf '\n  rigor efectivo: critico %s · estandar %s · ligero %s\n' "$nc" "$ne" "$nl"
-# La cola de aprobaciones, con la MISMA función que usa la puerta de cierre y el bloque
-# derivado de `docs/ESTADO.md` (`arnes_cola_pendientes`, hooks/lib.sh). Este informe existe
-# para detectar desfases entre lo que se escribe y lo que la máquina lee: tener aquí una
-# tercera transcripción de la regla de conteo sería cómico.
-if arnes_cola_pendientes "$PROY/$PEND_REL"; then
+# La cola de aprobaciones, ya medida arriba (una sola llamada: medirla dos veces costaría
+# una lectura de archivo por informe y podría publicar dos números distintos).
+if [ "$COLA_RC" -eq 0 ]; then
   printf '  cola de aprobaciones (%s): %s pendiente(s) — %s\n' "$PEND_REL" "$ARNES_COLA" \
     "$([ "$ARNES_COLA" -gt 0 ] && echo 'ningún REQ puede cerrarse' || echo 'no bloquea el cierre')"
+elif [ "${ARNES_COLA_ABIERTA:-0}" = "1" ]; then
+  printf '  cola de aprobaciones (%s): sin datos — ABRE un rango de comentario en la línea %s («%s») que no cierra; la puerta de cierre DENIEGA\n' \
+    "$PEND_REL" "${ARNES_COLA_ABRE_LN:-?}" "${ARNES_COLA_ABRE_TEXTO:-}"
 else
   printf '  cola de aprobaciones (%s): sin datos — no se pudo leer entera; la puerta de cierre DENIEGA\n' "$PEND_REL"
 fi
 printf '\n  El rigor efectivo es DERIVADO: `Sensible a seguridad: sí` impone `critico`\n'
 printf '  aunque no se declare `Rigor:`. Si un REQ que crees crítico sale `estandar`,\n'
 printf '  su campo de sensibilidad no se está leyendo como crees.\n'
-[ "$anomalias" -eq 0 ]
+# EL CODIGO DE SALIDA CUBRE LAS DOS COSAS (REQ-024 CA-08 iii): un valor que la maquina no
+# lee como esta escrito, Y una cola que no se pudo medir. Salir 0 con la cola sin datos
+# convertia el `sin datos` del RESUMEN en un adorno: quien automatiza este informe mira el
+# codigo de salida, no el texto.
+[ "$anomalias" -eq 0 ] && [ "$COLA_RC" -eq 0 ]

@@ -110,6 +110,12 @@ mat94() {   # <referencia> <destino> -> 0 si el árbol heredado quedó materiali
 }
 HER94="$RAIZ/her94-$BASHPID"; HER94_OK=no; REGHER94=''
 mat94 v1.33.0 "$HER94" && HER94_OK=si
+# EL REGISTRO SE RECOGE, y hasta aquí no se recogía: `REGHER94` nacía vacío y NADIE se lo
+# asignaba, así que los dos SKIP que lo citan publicaban un PARÉNTESIS VACÍO —«no hay línea base
+# v1.33.0 ()»— en vez del motivo por el que no la hay. Una abstención que no dice por qué se
+# abstiene no se puede diagnosticar, y era justo la información que hacía falta para saber si el
+# SKIP es diseño o avería. `instrumento`, preexistente; enrutado con REQ-024.
+REGHER94="${MAT94_REG:-sin registro}"
 # ---------- CA-09 · EL COSTE, POR LAS TRES VÍAS Y EN LA MISMA CORRIDA ----------
 # El estadístico es el MÍNIMO de k, nunca la media: la carga sólo puede AÑADIR tiempo. Y una
 # sonda que no llega a su suelo, o que no encuentra su línea base, emite SKIP CON EL MOTIVO Y

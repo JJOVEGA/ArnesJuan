@@ -409,7 +409,20 @@ arnes_guard_completado() {
   # La maquina hacia menos de lo que el papel decia -- deriva, desde 1.19.0.
   if [ "$rigor" != "ligero" ]; then
 
-    # Solo se exige el campo cuando está presente (compatibilidad con REQ antiguos sin veredictos).
+    # LA AUSENCIA YA NO SE RESUELVE AQUI, SE PREGUNTA AL SITIO UNICO (REQ-024 CA-02).
+    #
+    # Hasta 1.33.0 esta linea era `[ -n "$qa" ] &&`, y ese `-n` ERA la decision: un `QA:`
+    # que no llegaba a declararse —comentado, borrado o nunca escrito— saltaba la
+    # comprobacion entera. La direccion de la ausencia la declara ahora `ARNES_AUSENCIA`
+    # (hooks/lib.sh, ADR-009) y para los VEREDICTOS es `deniega` NOMBRANDO el campo que
+    # falta, porque «gobernar» un veredicto seria fabricar una firma que nadie emitio.
+    # Con la exigencia apagada —el defecto— `arnes_resuelve_ausencia` devuelve 0 y aqui se
+    # decide EXACTAMENTE lo mismo que antes (REQ-024 CA-05).
+    if ! arnes_resuelve_ausencia "$ARNES_CLAVE_QA" "$qa"; then
+      arnes_deny "ARNES: no se puede completar '$rel': su cabecera NO declara el campo '$ARNES_CLAVE_QA:', y este proyecto exige que los campos de cabecera esten declarados ('campos.ausencia_exige' en .arnes/config.json). Un campo que falta no es un campo aprobado: la ausencia se resolvia del lado que ABRE y por esa via un REQ critico cerraba con la validacion pendiente (SEC-047). Salida: escribe la linea '$ARNES_CLAVE_QA: aprobado' con su evidencia, o el veredicto que corresponda."
+    fi
+    # Solo se exige el VALOR cuando está presente (compatibilidad con REQ antiguos sin
+    # veredictos); la AUSENCIA la acaba de resolver el sitio único, arriba.
     if [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
       arnes_deny "ARNES: no se puede completar '$rel': el veredicto de QA es '$qa' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9)."
     fi
@@ -425,6 +438,16 @@ arnes_guard_completado() {
           # y acaba con alguien apagando el guard.
           if [ "${ARNES_SENS_DUDOSA:-0}" = "1" ]; then
             arnes_deny "ARNES: no se puede completar '$rel': su 'Sensible a seguridad:' dice '${ARNES_SENS_CRUDO}', que no se reconoce ni como si ni como no, y un valor que no se entiende se trata como SENSIBLE —no saber no puede abrir una puerta—. Escribe 'si' o 'no' (el énfasis de Markdown y un comentario tras el valor si se toleran), o declara 'Seguridad: aprobado' si de verdad lo es."
+          fi
+          # UN FAIL-CLOSED NO PUEDE SER SILENCIOSO (REQ-024 CA-01, direccion `gobierna`).
+          # Cuando el rigor llego a `critico` porque un campo AUSENTE se resolvio con el
+          # valor que mas restringe, el motivo lo dice: sin esto la persona lee «tu REQ es
+          # critico» sobre un documento que no declara ni sensibilidad ni rigor y no tiene
+          # forma de saber de donde salio. «Entra pero no ve nada, sin explicacion» es un
+          # bug de diagnostico, no una puerta.
+          if [ "${ARNES_AUSENCIA_EXIGE:-false}" = "true" ] &&
+             { [ "${ARNES_SENS_AUSENTE:-0}" = "1" ] || [ "${ARNES_RIGOR_AUSENTE:-0}" = "1" ]; }; then
+            arnes_deny "ARNES: no se puede completar '$rel': su rigor efectivo es 'critico' y el veredicto de seguridad es '${seg:-ausente}' (se requiere 'Seguridad: aprobado'). Y el rigor es 'critico' PORQUE su cabecera no declara$([ "${ARNES_SENS_AUSENTE:-0}" = "1" ] && printf " '%s:'" "$ARNES_CLAVE_SENS")$([ "${ARNES_RIGOR_AUSENTE:-0}" = "1" ] && printf " '%s:'" "$ARNES_CLAVE_RIGOR"): este proyecto exige que los campos de cabecera esten declarados ('campos.ausencia_exige' en .arnes/config.json) y un campo que falta se resuelve con el valor que MAS restringe, nunca retirando el suelo (ADR-009). Salida: declara esos campos con su valor real."
           fi
           arnes_deny "ARNES: no se puede completar '$rel': su rigor efectivo es 'critico' y el veredicto de seguridad es '${seg:-ausente}' (se requiere 'Seguridad: aprobado'). El control hallado debe quedar como NFR antes de cerrar (AGENTS.md §9)."
         fi ;;
@@ -517,6 +540,17 @@ arnes_guard_completado() {
   # Un hallazgo SIN clase deniega: la puerta no puede saber si bloquea o no, y un
   # "no se" que deja pasar es un "si" disfrazado.
   hall="$ARNES_HALL"
+  # LA AUSENCIA DEL CAMPO NO ES «NINGUN HALLAZGO» (REQ-024 CA-01/CA-02). `(ninguno)` es una
+  # declaracion —alguien miro y no habia—; que la linea no exista es que nadie la escribio,
+  # y hasta 1.33.0 las dos cosas se resolvian igual: del lado que ABRE. Por esa via un
+  # hallazgo `contrato` que bloqueaba el cierre se retiraba comentando su linea (SEC-047).
+  # La direccion la declara el sitio unico y para este campo es `deniega`: inventar
+  # «ninguno» abre, e inventar un hallazgo bloqueante seria fabricar lo contrario. Se juzga
+  # el valor CRUDO, antes de normalizar, porque despues de normalizar `(ninguno)` y la
+  # ausencia son la misma cadena vacia — que es precisamente la confusion que esto cierra.
+  if ! arnes_resuelve_ausencia "$ARNES_CLAVE_HALL" "$hall"; then
+    arnes_deny "ARNES: no se puede completar '$rel': su cabecera NO declara el campo '$ARNES_CLAVE_HALL:', y este proyecto exige que los campos de cabecera esten declarados ('campos.ausencia_exige' en .arnes/config.json). Que la linea no exista no es lo mismo que declarar que no hay hallazgos: la ausencia se resolvia del lado que ABRE, asi que un hallazgo bloqueante se retiraba comentando su linea (SEC-047). Salida: escribe '$ARNES_CLAVE_HALL: (ninguno)' si de verdad no hay ninguno, o la lista con la clase de cada uno."
+  fi
   case "$hall" in
     ''|ninguno|'(ninguno)'|n/a|na|-|'(-)') hall='' ;;
   esac
@@ -569,6 +603,12 @@ arnes_guard_completado() {
   pending="$ARNES_PROJ/$pending_rel"
   if [ -f "$pending" ]; then
     if ! arnes_cola_pendientes "$pending"; then
+      # DOS MOTIVOS DISTINTOS, DOS MENSAJES: el segundo es de 1.34.0 (REQ-024 CA-08) y cita
+      # LA LINEA DONDE ABRE el rango. Decir «no se pudo leer entera» sobre un comentario mal
+      # cerrado manda a la persona a buscar un byte NUL que no existe.
+      if [ "${ARNES_COLA_ABIERTA:-0}" = "1" ]; then
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': la cola de aprobaciones ($pending_rel) ABRE un rango de comentario '<!--' en la linea ${ARNES_COLA_ABRE_LN} —«${ARNES_COLA_ABRE_TEXTO}»— que NO se cierra con '-->' antes del fin del archivo. Todo lo que viene detras quedo descartado, asi que no se sabe cuantas aprobaciones humanas hay abiertas: hasta 1.33.0 esto contaba CERO en silencio y dejaba cerrar (SEC-051). Una puerta que no puede medir no deja pasar (AGENTS.md 1). Salida: cierra ese comentario con '-->', o saca la nota fuera del archivo."
+      fi
       arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': la cola de aprobaciones ($pending_rel) no se pudo leer entera —un byte NUL la trunca, o el archivo no es legible—, asi que no se sabe cuantas aprobaciones humanas hay abiertas. Una puerta que no puede medir no deja pasar (AGENTS.md 1). Arregla el archivo y reintenta."
     fi
     abiertas="$ARNES_COLA"

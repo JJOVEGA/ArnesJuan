@@ -80,6 +80,7 @@ arnes_parse_manifest() {
                                         else  "!tipo" end),
                                        (if $m.veredictos.exigir_fecha == true then "true" else "false" end),
                                        (if $m.veredictos.caducan_con_codigo == true then "true" else "false" end),
+                                       (if $m.campos.ausencia_exige == true then "true" else "false" end),
                                        (if $m.git.activo == false then "false" else "true" end),
                                        ((if ($m.git.prohibidos|type) == "array" then $m.git.prohibidos
                                          else ($gitdef | split("\t")) end)
@@ -91,6 +92,7 @@ arnes_parse_manifest() {
                                          ["limites.bash_max_analisis",    $m.limites.bash_max_analisis,     "number"],
                                          ["veredictos.exigir_fecha",      $m.veredictos.exigir_fecha,       "boolean"],
                                          ["veredictos.caducan_con_codigo",$m.veredictos.caducan_con_codigo, "boolean"],
+                                         ["campos.ausencia_exige",        $m.campos.ausencia_exige,         "boolean"],
                                          ["git.activo",                   $m.git.activo,                    "boolean"],
                                          ["git.prohibidos",               $m.git.prohibidos,                "array"],
                                          ["codigo_app.globs",             $m.codigo_app.globs,              "array"]]
@@ -133,6 +135,10 @@ arnes_parse_manifest() {
     # `git.prohibidos` ausente -> lista por defecto; `[]` explicito -> ninguna regla, que
     # es una decision declarada del proyecto y no un error.
     IFS= read -r ARNES_VER_FECHA;     IFS= read -r ARNES_VER_CADUCAN
+    # `campos.ausencia_exige` viaja en la MISMA llamada a jq que todo lo demas: la
+    # activacion de REQ-024 no cuesta NI UN PROCESO en el camino de evaluacion, que es lo
+    # que `REQ-024 CA-07 (i)` contrata. Nace APAGADA (ver `arnes_resuelve_ausencia`).
+    IFS= read -r ARNES_AUSENCIA_EXIGE
     IFS= read -r ARNES_GIT_ACTIVO;    IFS= read -r ARNES_GIT_PROHIBIDOS
     IFS= read -r ARNES_TIPOS
     while IFS= read -r g; do [ -n "$g" ] && ARNES_GLOBS+=("$g"); done
@@ -1147,19 +1153,46 @@ arnes_lee_archivo() {   # <ruta> -> ARNES_TEXTO ; 0 = leído entero, 1 = NO medi
 # plataforma cada fork cuesta 1,2-6 s, así que unificar no puede pagarse con un proceso.
 #
 # Y es una PUERTA: si el archivo no se puede medir —un NUL que trunca la lectura, un
-# archivo ilegible— no devuelve 0, devuelve «no lo sé» (rc 1). Contar 0 sobre un archivo
-# truncado abriría el cierre de cualquier REQ con aprobaciones humanas pendientes.
+# archivo ilegible, o un rango de comentario que ABRE y no cierra antes del fin del
+# archivo— no devuelve 0, devuelve «no lo sé» (rc 1). Contar 0 sobre un archivo truncado
+# abriría el cierre de cualquier REQ con aprobaciones humanas pendientes.
+#
+# La tercera de esas tres es de 1.34.0 (REQ-024 CA-08): hasta 1.33.0 el contrato de esta
+# cabecera sólo se honraba en la rama de `arnes_lee_archivo`, y un rango sin cerrar
+# devolvía el contador con rc 0. El motivo de la denegación cita la línea donde abre
+# (`ARNES_COLA_ABRE_LN` / `ARNES_COLA_ABRE_TEXTO`, publicadas aquí).
 arnes_cola_pendientes() {   # <archivo> -> ARNES_COLA ; 0 = medido, 1 = NO medible
-  local linea resto dentro=0 enc=0 n=0
-  ARNES_COLA=0
+  local linea resto dentro=0 enc=0 n=0 ln=0
+  ARNES_COLA=0; ARNES_COLA_ABIERTA=0; ARNES_COLA_ABRE_LN=0; ARNES_COLA_ABRE_TEXTO=''
   [ -e "$1" ] || return 0        # sin archivo no hay cola: cero, y es una medida
   arnes_lee_archivo "$1" || { ARNES_COLA=''; return 1; }
   while IFS= read -r linea; do
+    ln=$((ln + 1))
     linea="${linea%$'\r'}"       # CRLF: el retorno de carro no puede cambiar la cuenta
     # Comentarios HTML, con la misma semántica que tenía el awk de la puerta: la línea
     # que ABRE ya no cuenta, y la que CIERRA tampoco.
-    case "$linea" in *'<!--'*) enc=1 ;; esac
-    case "$linea" in *'-->'*)  enc=0; continue ;; esac
+    #
+    # DONDE ABRE SE RECUERDA, y no es adorno: si al final del archivo el rango sigue
+    # abierto, la cola no se pudo MEDIR y el motivo de la puerta tiene que decir en qué
+    # línea empezó (REQ-024 CA-08 i). Un «no se pudo medir» sin sitio deja a la persona
+    # buscando un `<!--` en un archivo entero.
+    case "$linea" in *'<!--'*)
+      [ "$enc" -eq 1 ] || { ARNES_COLA_ABRE_LN="$ln"; ARNES_COLA_ABRE_TEXTO="${linea:0:120}"; }
+      enc=1 ;;
+    esac
+    # UN CIERRE SIN APERTURA NO RETIRA NADA (REQ-024 CA-09, SEC-051 parte B). Hasta 1.33.0
+    # este `continue` era INCONDICIONAL, así que una línea con `-->` se descartaba aunque
+    # no hubiera ningún rango abierto: `### Migrar A --> B` —un título ordinario, sin
+    # comentario ninguno— hacía desaparecer una aprobación humana de la cuenta, y la
+    # puerta, el informe y el bloque derivado coincidían en el número equivocado. El
+    # cierre de un rango sólo tiene efecto si hay un rango ABIERTO; una secuencia de
+    # cierre huérfana no delimita nada. La línea que SÍ cierra un rango sigue sin contar,
+    # y una línea que abre y cierra dentro de sí misma sigue descartándose entera: es la
+    # frontera de grano de LÍNEA que `ADR-010` mantiene y que REQ-009 CA-04/CA-07
+    # contratan.
+    case "$linea" in *'-->'*)
+      if [ "$enc" -eq 1 ]; then enc=0; continue; fi ;;
+    esac
     [ "$enc" -eq 0 ] || continue
     case "$linea" in
       '##'[[:space:]]*)
@@ -1174,6 +1207,29 @@ arnes_cola_pendientes() {   # <archivo> -> ARNES_COLA ; 0 = medido, 1 = NO medib
         continue ;;
     esac
   done <<< "$ARNES_TEXTO"
+  # UN RANGO QUE ABRE Y NO CIERRA: LA COLA NO SE PUDO MEDIR (REQ-024 CA-08, SEC-051 parte C).
+  #
+  # Hasta 1.33.0 esta función llegaba aquí con `enc=1` y devolvía el contador con rc 0, o
+  # sea CERO sobre un archivo con aprobaciones visibles detrás del rango abierto: los tres
+  # canales de observabilidad —la puerta, el informe y el bloque derivado— publicaban el
+  # mismo número equivocado, y no quedaba ni un sitio donde una persona pudiera notarlo.
+  # Contradecía el contrato que esta función se escribe en su propia cabecera y la conducta
+  # que REQ-009 CA-15/CA-16 ya habían contratado para el byte NUL: la condición de salida
+  # existía, sólo no se alcanzaba.
+  #
+  # Y LA ASIMETRÍA QUE PRUEBA QUE ERA UN DEFECTO Y NO UNA DECISIÓN: en la cabecera de un
+  # REQ un rango sin cerrar DENIEGA con motivo propio (REQ-016, `ARNES_CITA_ABIERTA`); en
+  # la cola contaba cero en silencio. Dos transcripciones de la misma noción decidiendo al
+  # contrario, y la buena es la del REQ.
+  #
+  # SE MIRA AL FINAL DEL ARCHIVO Y NO SÓLO DENTRO DE `## Pendientes`, a propósito: con el
+  # rango abierto todas las líneas siguientes se descartaron, así que no se sabe si dentro
+  # había una entrada —ni si había otra sección `## Pendientes`—. Lo que no se pudo leer no
+  # se puede acotar.
+  if [ "$enc" -eq 1 ]; then
+    ARNES_COLA=''; ARNES_COLA_ABIERTA=1
+    return 1
+  fi
   ARNES_COLA="$n"
   return 0
 }
@@ -1459,12 +1515,24 @@ arnes_veredicto() {   # <valor normalizado> -> ARNES_VEREDICTO
 # `/arnes-upgrade` aplica a `UNKNOWN` —una comprobación que no puede responder no
 # dice «no sé», dice «sí»— y que aquí faltaba.
 #
-# AUSENTE sigue siendo «no», y eso no se toca: exigir auditoría a todo REQ que no
-# declara el campo rompería cualquier proyecto anterior a que el campo existiera.
+# AUSENTE sigue siendo «no» MIENTRAS EL PROYECTO NO ACTIVE LA EXIGENCIA, y eso no se toca:
+# exigir auditoría a todo REQ que no declara el campo rompería cualquier proyecto anterior a
+# que el campo existiera. La dirección de la ausencia la decide UN solo sitio
+# (`arnes_resuelve_ausencia`, ADR-009); aquí ya no se decide, se pregunta.
 arnes_sens_efectiva() {   # ARNES_SENS -> si|no ; ARNES_SENS_DUDOSA -> 0|1
   local corte
-  ARNES_SENS_DUDOSA=0; ARNES_SENS_CRUDO="$ARNES_SENS"
-  if [ -z "$ARNES_SENS" ]; then ARNES_SENS='no'; return 0; fi
+  ARNES_SENS_DUDOSA=0; ARNES_SENS_CRUDO="$ARNES_SENS"; ARNES_SENS_AUSENTE=0
+  if [ -z "$ARNES_SENS" ]; then
+    # AUSENTE. Sin la exigencia activada el sitio único devuelve la cadena vacía y manda el
+    # valor heredado —`no`—, que es lo que `REQ-024 CA-05` contrata: un proyecto que no
+    # activa nada decide EXACTAMENTE lo mismo. Con la exigencia activada devuelve el valor
+    # que MÁS restringe (`si`), que CONSERVA el suelo de rigor en vez de retirarlo. La
+    # bandera se publica para que un motivo de denegación pueda nombrar el campo que falta.
+    ARNES_SENS_AUSENTE=1
+    arnes_resuelve_ausencia "$ARNES_CLAVE_SENS" ''
+    ARNES_SENS="${ARNES_AUSENCIA_APLICA:-no}"
+    return 0
+  fi
   # Un comentario tras el valor no es el valor: `sí — gobierna la puerta…`.
   # El paréntesis se corta AQUÍ y no en `arnes_norm_campo`, porque
   # `Seguridad: aprobado (preventiva)` necesita conservarlo: cortarlo allí
@@ -1581,6 +1649,16 @@ _arnes_recorta_blancos() {   # <texto> -> ARNES_TRIM
 # con la suya—, y un cambio de conteo en la cola es un cambio de veredicto en la puerta.
 # Son dos documentos y dos contratos distintos; el sitio unico de ESTA regla es esta
 # funcion y `hooks/campos-req.awk` es su transcripcion declarada.
+#
+# LA FRONTERA SE MANTIENE, Y YA NO ES SOLO UN COMENTARIO: LO DECIDE `ADR-010` (REQ-024
+# CA-10). La forma medida sobre la que los dos lectores deciden AL CONTRARIO es una
+# anotacion de comentario CERRADA dentro de la propia linea —`### Real <!-- nota -->`—: la
+# cabecera de un REQ sustituye el rango por un espacio y sigue juzgando el resto, y la cola
+# descarta la linea entera. Cruzar la frontera cambiaria el conteo, o sea el veredicto de
+# la puerta, o sea el contrato de REQ-009 CA-04/CA-07, que esta en estado terminal; asi que
+# no se cruza en esta version. Y para que una divergencia futura falle una prueba en vez de
+# descubrirse en una auditoria, el banco MIDE esa diferencia sobre esa misma forma
+# (`tests/escenarios/hooks/secciones/31-cola-una-sola-regla.sh`, casos de REQ-024 CA-10).
 #
 # Sin procesos: solo expansion de parametros, como el resto del lector. Recorrer la
 # cabecera entera —en vez de salir en la primera aparicion— no añade ni un fork.
@@ -1752,6 +1830,91 @@ _arnes_deriva_mapa() {   # ARNES_CLAVES -> ARNES_CLAVES_MAPA
   done
 }
 _arnes_deriva_mapa
+
+# --- EL SITIO UNICO DE LA DIRECCION DE LA AUSENCIA (REQ-024 CA-02, ADR-009) -----------
+#
+# LA PREGUNTA QUE ESTA TABLA CONTESTA: cuando un campo de cabecera NO llega a declararse
+# —comentado, borrado, o nunca escrito: la puerta no mide la VIA, mide la AUSENCIA—, ¿que
+# hace la maquina? Hasta 1.33.0 la respuesta vivia en DOS sitios y para cuatro de los seis
+# campos era «abrir»: `arnes_sens_efectiva` retiraba el SUELO de sensibilidad,
+# `arnes_rigor_efectivo` caia a `estandar`, y en la puerta los `[ -n "$qa" ]` /
+# `[ -n "$hall" ]` saltaban la comprobacion entera. Medido (SEC-047 mitad 2, R-013 §2): un
+# REQ `critico` con los dos veredictos en `pendiente` cerraba comentando UNA linea.
+#
+# LAS TRES DIRECCIONES POSIBLES, Y LA PROHIBIDA ES LA TERCERA:
+#   * `gobierna:<valor>` — se aplica el valor que MAS RESTRINGE. Vale cuando existe tal
+#     valor y aplicarlo no inventa nada que nadie haya firmado: el suelo de sensibilidad y
+#     el nivel de rigor son exactamente eso.
+#   * `deniega` — no se deja pasar, y el motivo NOMBRA el campo que falta. Vale para los
+#     VEREDICTOS y para la clase del hallazgo: «gobernar» ahi seria fabricar una firma que
+#     nadie emitio, que es peor que no tenerla.
+#   * `n/a` — el campo no es una EXIGENCIA que su ausencia pueda activar. Solo `Estado`:
+#     es el SUJETO de la transicion. Sin el no hay cierre que juzgar, asi que su ausencia
+#     no abre ninguna puerta — no hay puerta.
+#   Y la tercera salida, la de hasta 1.33.0, es la que esta tabla existe para no tener:
+#   ABRIR. Cual corresponde a cada campo lo decide `ADR-009`; que ninguno abra lo contrata
+#   `REQ-024 CA-01`.
+#
+# POR QUE ES UNA TABLA DERIVADA Y NO UN `case` EN CADA SITIO. Las claves salen de las
+# constantes `ARNES_CLAVE_*` de arriba (REQ-023 CA-06), asi que un campo nuevo entra en la
+# tabla por el MISMO sitio por el que entra en el lector, y `REQ-024 CA-02` exige que un
+# campo que llegue al lector SIN declarar su direccion aqui haga fallar el banco NOMBRANDO
+# esa clave. Los dos despachos (`arnes_campos_req`, `arnes_estado_cabecera`) siguen
+# existiendo y siguen enrutando cada clave a SU variable; lo que ya no hacen es DECIDIR.
+#
+# COSTE: cero procesos. Es una cadena delimitada al estilo de `ARNES_CLAVES` y se consulta
+# con `case` + expansion de parametros, igual que `arnes_en_vocab` (REQ-024 CA-07 i).
+#
+# LA BUSQUEDA ES INAMBIGUA POR CONSTRUCCION, como la de `ARNES_CLAVES_MAPA`: lo que se
+# busca es siempre una CLAVE entre barras (`|Rigor|`), ninguna clave es subcadena
+# delimitada de otra, y ningun VALOR de direccion coincide con una clave.
+ARNES_AUSENCIA_GOBIERNA_SENS='si'        # el valor que MAS restringe: conserva el suelo
+ARNES_AUSENCIA_GOBIERNA_RIGOR='critico'  # el valor que MAS restringe: el techo de ceremonia
+ARNES_AUSENCIA=''
+_arnes_deriva_ausencia() {   # ARNES_CLAVE_* -> ARNES_AUSENCIA
+  ARNES_AUSENCIA="|$ARNES_CLAVE_QA|deniega|$ARNES_CLAVE_SEG|deniega|"
+  ARNES_AUSENCIA+="$ARNES_CLAVE_SENS|gobierna:$ARNES_AUSENCIA_GOBIERNA_SENS|"
+  ARNES_AUSENCIA+="$ARNES_CLAVE_HALL|deniega|"
+  ARNES_AUSENCIA+="$ARNES_CLAVE_RIGOR|gobierna:$ARNES_AUSENCIA_GOBIERNA_RIGOR|"
+  ARNES_AUSENCIA+="$ARNES_CLAVE_ESTADO|n/a|"
+}
+_arnes_deriva_ausencia
+
+# La direccion declarada para una clave -> ARNES_AUSENCIA_DIR. Rc 1 = esa clave NO declara
+# direccion en el sitio unico, y eso es fail-closed: quien pregunte trata el rc 1 como
+# `deniega`. Un campo nuevo que llegue al lector sin pasar por aqui no queda perdonado en
+# silencio; ademas el banco falla nombrandolo (REQ-024 CA-02).
+arnes_ausencia() {   # <clave> -> ARNES_AUSENCIA_DIR ; 0 = declarada, 1 = NO declarada
+  local r
+  ARNES_AUSENCIA_DIR=''
+  case "$ARNES_AUSENCIA" in
+    *"|$1|"*) r="${ARNES_AUSENCIA#*"|$1|"}"; ARNES_AUSENCIA_DIR="${r%%|*}" ;;
+    *) return 1 ;;
+  esac
+  [ -n "$ARNES_AUSENCIA_DIR" ] || return 1
+  return 0
+}
+
+# EL UNICO SITIO QUE DECIDE. Los tres lectores que resuelven ausencia —la puerta, el
+# informe y el bloque derivado— pasan por aqui y por ningun otro sitio.
+#
+# LA EXIGENCIA ESTA APAGADA SALVO QUE EL PROYECTO LA ENCIENDA (`campos.ausencia_exige`),
+# y eso NO es timidez: si la ausencia dejara de perdonarse por defecto, todo REQ heredado
+# de todo proyecto instalado que no declare un campo dejaria de cerrar el dia de la
+# actualizacion, y la friccion termina con alguien apagando el guard (AGENTS.md 13) — un
+# guard apagado protege menos que uno parcial. `REQ-024 CA-05` lo contrata como criterio:
+# en ESTA version, un proyecto que no activa nada decide EXACTAMENTE lo mismo.
+arnes_resuelve_ausencia() {   # <clave> <valor leido> -> ARNES_AUSENCIA_APLICA ; 1 = DENIEGA
+  ARNES_AUSENCIA_APLICA="$2"; ARNES_AUSENCIA_FALTA=''
+  [ -z "$2" ] || return 0                                    # presente: nada que resolver
+  [ "${ARNES_AUSENCIA_EXIGE:-false}" = true ] || return 0     # sin activar: como siempre
+  arnes_ausencia "$1" || { ARNES_AUSENCIA_FALTA="$1"; return 1; }
+  case "$ARNES_AUSENCIA_DIR" in
+    gobierna:*) ARNES_AUSENCIA_APLICA="${ARNES_AUSENCIA_DIR#gobierna:}"; return 0 ;;
+    n/a)        return 0 ;;
+    *)          ARNES_AUSENCIA_FALTA="$1"; return 1 ;;
+  esac
+}
 
 # LOS BYTES AJENOS DE UNA CLAVE, EN HEXADECIMAL -> ARNES_REPR.
 #
@@ -2196,6 +2359,7 @@ arnes_estado_cabecera() {   # <texto> -> ARNES_ESTADO
 # decide ese proyecto en su `AGENTS.md`, no el plugin.
 arnes_rigor_efectivo() {
   local declarado="$ARNES_RIGOR" nd ns
+  ARNES_RIGOR_AUSENTE=0
   # SUELO DE SEGURIDAD: `Sensible a seguridad: si` obliga a `critico` y eso no se
   # puede bajar. Un REQ que NO es sensible no tiene suelo.
   #
@@ -2205,7 +2369,13 @@ arnes_rigor_efectivo() {
   # nada. El suelo limita hacia abajo; el defecto solo aplica si no hay nada
   # declarado.
   if [ -z "$declarado" ]; then
-    # Nada declarado -> se juzga EXACTAMENTE como antes de existir los niveles.
+    # AUSENTE. Se pregunta al sitio único (`arnes_resuelve_ausencia`, ADR-009) y sólo si la
+    # exigencia está activada devuelve algo: `critico`, el valor que MÁS restringe. Sin
+    # activar devuelve vacío y aquí se juzga EXACTAMENTE como antes de existir los niveles
+    # —el defecto derivado de la sensibilidad—, que es lo que `REQ-024 CA-05` contrata.
+    ARNES_RIGOR_AUSENTE=1
+    arnes_resuelve_ausencia "$ARNES_CLAVE_RIGOR" ''
+    if [ -n "$ARNES_AUSENCIA_APLICA" ]; then ARNES_RIGOR="$ARNES_AUSENCIA_APLICA"; return 0; fi
     case "$ARNES_SENS" in
       si) ARNES_RIGOR='critico' ;;
       *)  ARNES_RIGOR='estandar' ;;
