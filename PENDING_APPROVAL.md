@@ -24,41 +24,6 @@
 
 ## Pendientes
 
-### D1 · `REQ-023` — **QA recomienda `Estado: bloqueado` con escalada, NO cierre con residual**  ·  **lista para tu firma**
-
-**La vuelta 3 de 3 cerró el 2026-09-09 con `QA: con-hallazgos`.** 10 de 12 criterios pasan; `CA-09 (iii)`
-no acredita y **`CA-10` no cumple**. Se agotaron las tres vueltas dev↔QA, así que por §6 la salida es
-**cierre con residual declarado** o **`bloqueado`** con escalada — y **es tuya**.
-
-**QA recomienda `bloqueado`, y el motivo no es de calendario: §6 NO permite residual sobre un
-`usuario/dinero`.** El hallazgo nuevo **`QA-023-15`** es de esa clase, y `guard-completado` deniega hoy
-el cierre nombrándolo (QA lo verificó ejecutándolo con veredictos verdes ficticios).
-
-**Qué es `QA-023-15`, verificado por la coordinadora y no sólo afirmado:** `CA-10` no está implementado
-y su precondición **ha vencido**. `AGENTS.md:349` y `templates/AGENTS.md.tpl:314` siguen definiendo la
-invariante **por el retorno de carro**, cuando la puerta ya deniega por una propiedad **más ancha**
-—**9 de 20 formas voltean `allow`→`deny`**—; `skills/arnes-upgrade/SKILL.md` sólo menciona el retorno
-de carro (`:695`, `:701`), no la propiedad ancha; y los tres archivos **no** están en
-`codigo_app.globs`, así que ningún guardián los cubre. **El efecto sale del repositorio:** un proyecto
-consumidor con su `AGENTS.md` congelado no se entera de que pudo cerrar un REQ `critico` sin validación
-ni auditoría. Por eso no es `instrumento`.
-
-**Los tres caminos convergen en la misma recomendación:**
-1. `QA-023-15` es `usuario/dinero` y §6 no admite residual sobre él.
-2. **La puerta requerida y estricta de `main` está ROJA** por un caso de este REQ: el CI dio
-   **955 PASS · 1 FAIL · 10 SKIP** sobre `6ad9752`, con `CA-09 (iii)` en `arnes_campo_linea` a
-   **2,365× > 2,200×** y **dispersión 0,023× contra margen 0,165×** — o sea que resolvió con holgura,
-   **no fue ruido**. En local abstenía porque esta máquina tiene 17× más dispersión.
-3. El cierre de `QA-023-05` **cuelga de un write-back que hasta este commit no estaba comiteado**.
-
-**Lo que firmas aquí es una de estas dos:** (a) `Estado: bloqueado` y el REQ espera tu decisión de
-alcance; o (b) cierre con residual declarado — que **exigiría antes bajar o resolver `QA-023-15`**, y
-bajarlo necesita firma del auditor, no la mía ni la de QA.
-
-**Los cinco `instrumento` (`QA-023-10` a `QA-023-14`) no bloquean el campo.** Pero `QA-023-12` —el caso
-que mide la magnitud retirada— **sí bloquea el gate de fusión** mientras el banco siga rojo. Las dos
-cosas son verdad a la vez, y QA lo declaró así con el dato del CI delante.
-
 ### D2 · Los 20 hallazgos bloqueantes de siete REQ — resolver, declarar residual o aceptar
 
 Tu regla del 2026-09-08 dice que **cualquiera devuelve el tag a ti**. Inventario medido el 2026-09-09:
@@ -97,6 +62,34 @@ El analista **propone** 1.35.0 y **no la fija**: las ventanas las decides tú. E
 código que `REQ-023` no introdujo.
 
 ## Resueltas
+
+### D1 · `REQ-023` — **RESUELTA el 2026-09-09: `Estado: bloqueado`, con extensión excepcional de alcance cerrado**
+
+**Decisión del propietario, literal en lo que autoriza y en lo que no:** acepta dejar `REQ-023`
+**bloqueado mientras se corrige**, y autoriza una **extensión excepcional limitada** a tres cosas:
+completar **`CA-10`**, corregir la prueba de **`CA-09 (iii)`** *conforme al contrato vigente*, y
+consolidar el write-back pendiente en un commit coherente. **Manda conservar el registro de las tres
+vueltas agotadas.** Después: **QA revalida lo afectado**, se ejecuta el **CI requerido**, y **seguridad
+revisa cuando corresponda**.
+
+**Lo que NO autoriza, y queda escrito porque es lo que una prisa convertiría en atajo:**
+1. **Cerrar con `QA-023-15` abierto.**
+2. **Eliminar pruebas.**
+3. **Relajar umbrales para obtener verde.**
+
+Si aparece otro bloqueo, se entrega **la evidencia y la decisión concreta necesaria** — no una consulta
+abierta.
+
+**Sobre qué se decidió:** la recomendación de `qa-tester` en la vuelta 3 de 3, apoyada en tres motivos
+que convergen — `QA-023-15` es `usuario/dinero` y §6 **no admite residual** sobre esa clase; la puerta
+requerida y estricta de `main` está **roja** por `CA-09 (iii)` en el CI del PR #45 (**2,365× > 2,200×**,
+dispersión **0,023×** contra margen **0,165×**: resolvió con holgura, **no fue ruido**); y el cierre de
+`QA-023-05` colgaba de un write-back sin comitear, ya consolidado en `86389ac`.
+
+**Registrado en** `requirements/REQ-023.md`: campo `Estado:` con la decisión y el alcance de la
+extensión, y fila de Historial con las tres vueltas nombradas una por una. La extensión **no reabre ni
+reinicia** el contador de vueltas.
+
 
 ### APLAZADA CON SU REQ (propietario, 2026-09-09) — `REQ-019 CA-07`: el techo viaja a 1.35.0 con su evidencia
 

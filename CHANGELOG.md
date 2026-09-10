@@ -2,6 +2,32 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · REQ-023 pasa a `bloqueado` por decisión del propietario, con una extensión excepcional de alcance cerrado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (registro de la decisión).
+
+El propietario resuelve `D1` sobre la recomendación de la vuelta 3 del `qa-tester`: **`REQ-023` queda
+`bloqueado` mientras se corrige**, y **no** cierra con residual — porque `AGENTS.md` §6 no admite
+residual sobre un `usuario/dinero` y `QA-023-15` es de esa clase.
+
+**Autoriza una extensión excepcional limitada a tres cosas:** completar **`CA-10`**, corregir la prueba
+de **`CA-09 (iii)`** *conforme al contrato vigente*, y consolidar el write-back pendiente en un commit
+coherente. Después: **QA revalida lo afectado**, se ejecuta el **CI requerido** y **seguridad revisa
+cuando corresponda**. Manda **conservar el registro de las tres vueltas agotadas**, y así queda: las
+tres se nombran una por una en la fila de Historial y el campo `QA:` sigue declarando «vuelta 3 de 3
+—la última—». **La extensión no reabre ni reinicia el contador.**
+
+**Y las tres cosas que NO autoriza, escritas porque son exactamente lo que una prisa convertiría en
+atajo:** cerrar con `QA-023-15` abierto, eliminar pruebas, y **relajar umbrales para obtener verde**.
+Esa última importa de forma concreta: el rojo del CI viene de un techo absoluto que está medido
+insatisfacible **también para el código heredado** (la base `v1.33.0` paga **2,446** contra el **2,365**
+que el CI marca), así que la tentación no sería subir el techo por pereza sino por un argumento que
+suena razonable. No se hace: lo que el contrato vigente pide es **re-apuntar la prueba a la relación
+emparejada**, cuyo techo es `1,00×` y cuya medida es `0,856×` y `0,906×`.
+
+`D1` pasa a «Resueltas» con la decisión y sus tres prohibiciones; la cola baja de **4 a 3** y sigue
+impidiendo cerrar cualquier REQ. La fila de `REQ-023` en `D2` queda con el hallazgo vigente,
+`QA-023-15`, y no con el ya cerrado `QA-023-05`.
+
 ## [Interno] — 2026-09-09 · La abstención ocultó un rojo real durante nueve corridas, y el bloqueante de REQ-023 resultó ser otro
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `qa-tester` (Opus, vuelta 3 de 3) y coordinadora (verificación y escalada).
 
