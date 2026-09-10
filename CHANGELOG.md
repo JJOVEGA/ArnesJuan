@@ -2,6 +2,55 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · `CA-12 (ii)` queda anclada con una precondición que la degrada declarándolo, y la oración 5 no sólo difería en letra: incumplía (v)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de decisión del propietario por 24 h (2026-09-09).**
+
+**(1) `CA-12 (ii)`: se contrata la lectura ANCLADA contra el tag `v1.33.0` materializado, con una
+precondición que es la parte buena.** Antes de comparar conteos, el caso comprobará que **el cuerpo de
+`arnes_cola_pendientes` y el de cualquier función que ese cuerpo llame** (hoy sólo `arnes_lee_archivo`) es
+**byte a byte el mismo** en las dos versiones. Si es idéntico, cualquier diferencia de conteo o `rc` es
+**FAIL contra el código**. Si difiere, la comparación **no puede atribuir** y el caso emite **SKIP con su
+motivo —nunca PASS y nunca FAIL—**, publicando qué difiere y qué formas cambiaron, elemento por elemento.
+
+**Por qué anclada y no abierta:** la abierta dice «hoy cuento igual que aquella versión», y **el proyecto
+ya decidió que eso es falso** — `REQ-024 CA-08`/`CA-09` cambian conteo y `rc` de esas dos formas **a
+propósito**, y `ADR-010` los declara defectos que `REQ-024` sí arregla «sin tocar el grano». Hacerla
+satisfacible exigiría **perseguir las expectativas de otro REQ dentro de un criterio ajeno**, que es la
+coartada que `requirements/README.md` § «Y el reverso» prohíbe, y dejaría de proteger nada. La anclada
+protege lo único que este REQ **puede** afirmar: «yo no moví el conteo que `REQ-009` contrata».
+
+**Y la consecuencia medida, leyendo `119e853` sin ejecutar:** `hooks/lib.sh` ya lleva el cambio de
+`REQ-024` **dentro** del cuerpo, así que **la precondición habría dado SKIP en este árbol**. El caso **se
+degrada solo, declarándolo** — no se retira y no se relaja—, y la propiedad sigue cubierta por
+construcción. Es la diferencia entre un rojo que se esquiva y un instrumento que dice cuándo no puede medir.
+
+**La cláusula de `CA-12` se disparó contra sí misma:** decía «si sale abierto es un hallazgo `contrato`
+contra este REQ», y salió abierto. Queda **registrado y vivo** en § «Conflictos registrados».
+
+**(2) Punto 1 de `CA-10`: salida (a), y el hallazgo dentro del hallazgo.** La oración 5 no sólo difería en
+letra del fragmento de la oración 3: **incumplía (v)**. De «*y sus blancos, si lo que queda **es** una
+clave del lector*» —sin «leída también sin sus blancos»— un lector deriva que ante el **blanco borrado**
+(`Sensibleaseguridad`) la guarda **calla**, y la máquina **deniega**. O sea que `QA-023-19` estaba
+**sobreviviendo en la segunda aparición**, y el residual que el transcriptor nombró sin cerrar era más
+grave de lo que parecía.
+
+**Y la precisión que lo vuelve satisfacible:** la unidad de identidad pasa a ser **el fragmento** —la
+prótasis, marcado incluido—, byte a byte en todas sus apariciones, **con la apódosis libre**. Exigir «la
+misma frase» donde las apódosis difieren sólo se cumplía **borrando** una de las dos apariciones, que es
+justo lo que no se quiere. No relaja: la identidad del fragmento es **más estrecha** que «frases
+equivalentes», y el fondo lo sigue cerrando **(v)**.
+
+**(3) Enrutado por la coordinadora: la skill lleva los DOS defectos.** El analista lo observó y no lo
+actuó por ámbito; verificado por mí en `skills/arnes-upgrade/SKILL.md:820-824`, que contiene **la promesa
+absoluta** («*la puerta **deniega** … **nunca** permite por *ausencia* del campo que ese carácter
+borró*») **y** la redacción vieja del mecanismo («*y sus blancos, si lo que queda **es** una clave del
+lector*»). Es `QA-023-18` y `QA-023-19` **en el artefacto que migra a los proyectos**, y `CA-10` lo nombra
+entre sus sedes. Entra en la comisión de transcripción. **Queda además una observación para el analista:**
+`CA-10` **no** somete hoy la skill al test de la titular aislada, y por ahí el defecto pudo sobrevivir.
+
+Las dos decisiones son **menores, sin ADR**, con su «qué lo volvería de fondo» escrito. `SEC-079`,
+`QA-023-18` y `QA-023-19` **siguen abiertos**: falta `desarrollador` → `qa-tester` → `auditor-seguridad`.
+
 ## [Interno] — 2026-09-09 · `REQ-024` implementado (9 de 11) y las dos filas de `SEC-079` transcritas, con dos residuales que ninguno de los dos agentes quiso cerrar solo
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `desarrollador` (`REQ-024`) y `desarrollador` (transcripción) · consolidación: coordinadora. **Bajo delegación de decisión del propietario por 24 h (2026-09-09).**
 
