@@ -2,6 +2,65 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · `SEC-079` cerrado (`R-025`), y por segunda vez el auditor corrige un rango que le di mal
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `auditor-seguridad` (Opus) · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`SEC-079` se cierra**, marcado `mitigado` —su entrada **no se borra**—, retirado del campo, y
+**`Seguridad: aprobado`** firmado. **`REQ-023` queda sin ningún bloqueante de QA ni de seguridad: 0.**
+Sigue `bloqueado` por la decisión del propietario, y la firma no lo desbloquea.
+
+**Qué acredita la firma, y sólo eso:** que el texto que los proyectos **heredan** —las dos sedes de la
+fila y el apartado de la skill— **ya no promete más cobertura de la que la máquina tiene**, y que **cada
+afirmación de hecho de esa fila es verdadera medida** contra `fcbb7b1`. **No** acredita el mecanismo de
+este árbol, ni `REQ-024`, ni que la clase esté cerrada, ni el banco.
+
+**Segundo error de rango de la coordinadora, y es el CONTRARIO al de `R-024`.** Propuse
+`1154417..fcbb7b1`, que **excluye `1154417`** — el commit donde la fila se reescribió por primera vez y
+donde `CA-10` recibió **135 líneas** de su primer write-back (verificado). El rango dejaba fuera la mayor
+parte de la remediación que pedía acreditar. El auditor auditó **`390a0a2..fcbb7b1`** y, además, **lo
+restringió por RUTA** con un motivo que no es comodidad: ese mismo rango trae **+270/−22 de mecanismo**
+(`hooks/lib.sh` +192, `guard-completado.sh` +42, `estado-derivado.sh` +11, `arnes-lectura.sh` +47, de
+`REQ-024`), y «*un rango declarado sólo por commits habría hecho pasar ese delta por revisado*». **Dos
+veces he dado el rango mal: una vez corto por delante y otra por detrás. El rango es un parámetro de la
+firma y lo estoy tratando como un adorno.**
+
+**El par que decide, con dos documentos idénticos salvo dos bytes:** `Sensible a seguridad: sí` con
+`Rigor: ligero` → **DENY** («*su rigor efectivo es `critico`*»); el mismo con `а` cirílica → **ALLOW**; y
+el mismo homóglifo con `Rigor: critico` **declarado a mano** → **DENY**. La denegación que desaparece es
+**exactamente** la que producía el campo borrado, y vuelve al declarar el rigor. Y «*ninguna versión lo
+deniega, tampoco 1.34.0*» queda verificado en **`v1.31.0`, `v1.32.1`, `v1.33.0` y este árbol**, con
+control latino DENY en los cuatro.
+
+**Su propio control negativo, contra la fila que él mismo declaró falsa:** incumple por **cuatro sitios
+independientes** —titular sin condición, «nunca se permite por ausencia» universal y medida falsa, «Tres
+fronteras» cerrada sin marca ni puntero, y cero menciones de la vía—, y la de hoy corrige los cuatro. **El
+arreglo es aditivo**: la promesa universal no se borró, se **condicionó** (5 → 8 oraciones, **cero
+retiradas**). Y **no-regresión medida**: las 10 fixtures de `R-024` dan veredicto **idéntico** en
+`390a0a2` y `fcbb7b1` pese al delta de mecanismo.
+
+**Y se cazó a sí mismo, que es lo que más vale del informe:** su entrada de `SEC-079` nombraba tres
+ubicaciones y **elogiaba la skill por honesta** — cierto sobre la vía y **falso sobre el mecanismo**,
+porque `SKILL.md` llevaba **los dos** defectos. Localizó por «las sedes que `CA-10` nombra» en vez de
+**derivarlas del texto**: la forma (a) cometida **por el auditor sobre sus propias ubicaciones**. Queda
+escrito en `R-025` §3.
+
+**`SEC-081` (`instrumento`, media, dueño `analista-requerimientos`) — nuevo, y su diagnóstico es fino:**
+la Regla de `requirements/README.md` cubre la lista de fronteras **por propiedad**, así que no hay laguna
+doctrinal, **pero sus tres ejemplos marcados son todos de la dirección que ABRE**, y `SEC-079` pasó **tres
+filtros** porque «excepto estas tres fronteras» **suena a propiedad y tranquiliza**. Hoy la lección vive
+sólo en `CA-10`, **que muere con su REQ**. Remediación: una frase que declare que la propiedad alcanza
+**las dos direcciones**. **Su forzador ya está en cola: `REQ-024 CA-04`**, misma tabla y misma forma.
+
+**Dos límites que declara y respeto:** el delta de mecanismo del rango **no está auditado** —su
+comprobación fue no-regresión sobre 10 fixtures, «*cota inferior, no auditoría*»—, y de la llave nueva
+sólo verificó que **nace apagada**. Y `guard-completado.sh:363`/`:392` conservan «**NUNCA** permite por
+AUSENCIA»: mantiene la clase `instrumento` de `QA-023-21` porque **la frase sólo se muestra al denegar**,
+donde es localmente cierta, y jamás llega a la persona en el caso expuesto — «*pero quien la lea de más se
+equivocará igual*».
+
+**Medido sin ensanchar `SEC-078`:** `tools/arnes-lectura.sh` —el lector **proactivo**— señala el NBSP y
+**no** señala el homóglifo: publica ese REQ como normal con `rigor efectivo: ligero`.
+
 ## [Interno] — 2026-09-09 · `QA-023-18` y `QA-023-19` retirados, el SKIP de `CA-12 (ii)` probado legítimo con tres ramas vivas, y `SEC-079` listo para firma
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus) · consolidación: coordinadora. **Bajo delegación de 24 h.**
 

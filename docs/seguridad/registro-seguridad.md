@@ -6994,7 +6994,15 @@ que el propietario decida para la vía, o antes si `SEC-079` la adelanta.
 
 ### 3. El hallazgo que BLOQUEA, y no está en el código
 
-#### SEC-079 — **La superficie HEREDADA promete la clase por ESTADO y sin condición, con una lista CERRADA de tres fronteras que no incluye la vía abierta: `CA-10` contrata esa lista, así que el defecto es del criterio** · `contrato` · severidad **alta** · **abierto** *(nuevo)* — **BLOQUEA `REQ-023`**
+#### SEC-079 — **La superficie HEREDADA promete la clase por ESTADO y sin condición, con una lista CERRADA de tres fronteras que no incluye la vía abierta: `CA-10` contrata esa lista, así que el defecto es del criterio** · `contrato` · severidad **alta** · **`mitigado` el 2026-09-09 en R-025** *(abierto en R-024)* — **ya NO bloquea `REQ-023`**
+
+> **Estado `mitigado` (R-025, 2026-09-09).** Las **tres** piezas de la remediación de abajo están
+> hechas y **medidas ejecutando la puerta**, no leyendo: `CA-10` ganó la cláusula (dos pases de
+> write-back), las **dos** sedes llevan la fila acotada y son **byte a byte idénticas**
+> (`md5 3ead3bd3…`, 2 545 B), y el apartado de `skills/arnes-upgrade/SKILL.md` —cuarta sede, que
+> este hallazgo no había nombrado— quedó con la misma forma. La entrada **no se borra** y el texto
+> de abajo **se conserva íntegro**: la fila que cita como falsa es la de `390a0a2` y sigue siendo
+> el **control negativo** con el que se comprueba la conforme. Detalle y mediciones en **R-025**.
 
 **Ubicación.** `AGENTS.md` §13, la fila reescrita por `CA-10`; **la misma fila** en
 `templates/AGENTS.md.tpl` §13 (la que reciben los proyectos **nuevos**); y la **letra de
@@ -7215,3 +7223,298 @@ próximos libres **R-025** y **SEC-081**.
 acceso, retención ni cumplimiento: no hay datos personales, credenciales ni activos nuevos. La única
 propiedad de seguridad en juego es la **integridad de la puerta de cierre** y su **honestidad hacia
 los proyectos instalados**, cuyas sedes son `hooks/` y `AGENTS.md`, no el documento de datos.
+
+---
+
+## Revisión R-025 — **REQ-023, 2.ª auditoría ACOTADA a `SEC-079`**: la fila heredada deja de prometer de más, medido ejecutando la puerta (`rel/registro-1.33.0` @ `fcbb7b1`; rango **`390a0a2..fcbb7b1` restringido por RUTA**, ver §0) — 2026-09-09
+
+**Veredicto: `aprobado`, y acotado a lo que dice acreditar.** `SEC-079` queda **`mitigado`** y
+**retirado** de `Hallazgos abiertos:` de `REQ-023`. Lo que firmo es **una** cosa: que el texto que
+los proyectos heredan **ya no promete más cobertura de la que la máquina tiene**, y que **cada
+afirmación de hecho de esa fila es verdadera medida contra el árbol con el que viaja**. No firmo el
+mecanismo de este árbol (§0), no firmo `REQ-024`, y **mi firma no desbloquea `REQ-023`**, que sigue
+`Estado: bloqueado` por decisión del propietario.
+
+**Y la pregunta que no era «¿está mejor redactada?».** `SEC-079` decía que la fila **prometía de
+más**. Eso no se cierra leyendo el texto nuevo: se cierra **ejerciendo la puerta** con entradas
+propias y comprobando que de cada oración se derive lo que la máquina hace. Es lo que hice en
+`R-024` y es lo único que vale aquí. Las **8** oraciones de la celda están barridas en §2 y las
+**17** entradas ejecutadas en §1.
+
+### 0. El rango que me dieron NO era el correcto, y el error es el CONTRARIO al de R-024
+
+El encargo proponía **`1154417..fcbb7b1`**, «pero compruébalo tú». Medido, y no vale:
+
+```
+git log --oneline 1154417..fcbb7b1        # NO contiene 1154417
+git show --stat 1154417 -- AGENTS.md templates/AGENTS.md.tpl requirements/REQ-023.md
+#   AGENTS.md | 2 +-   templates/AGENTS.md.tpl | 2 +-   requirements/REQ-023.md | 141 ++++-
+```
+
+`A..B` **excluye** `A`. Y `1154417` es precisamente el commit donde la fila se reescribió **por
+primera vez** y donde `CA-10` recibió las **141 líneas** del primer write-back: es decir, el rango
+propuesto **deja fuera la mayor parte de la remediación que se me pide acreditar**. En `R-024` el
+rango del encargo excluía el **código** que había que auditar; aquí excluye **el texto**. Misma
+lección, otra dirección: **el rango se mide, no se acepta**.
+
+**Rango que audito, y por qué lleva una restricción de RUTA.** Todo lo posterior a lo que `R-024`
+acreditó, es decir **`390a0a2..fcbb7b1`** (8 commits), **restringido a las sedes de `SEC-079`**:
+`AGENTS.md`, `templates/AGENTS.md.tpl`, `skills/arnes-upgrade/SKILL.md`, `requirements/REQ-023.md`
+(`CA-10` + Historial) y este registro.
+
+La restricción **no es comodidad, es honestidad, y va aquí porque sin ella la firma diría de más**:
+ese mismo rango contiene **+270 / −22 en el mecanismo** —`hooks/lib.sh` +192, `hooks/guard-completado.sh`
++42, `hooks/estado-derivado.sh` +11, `tools/arnes-lectura.sh` +47, todo en `119e853`, «REQ-024
+implementado (9 de 11)»— más una **llave nueva de manifiesto** (`campos.ausencia_exige`, en
+`.arnes/config.json` y en `templates/arnes-config.json.tpl`) y **dos secciones nuevas de banco**
+(`40-ausencia-que-abre-*`). El encargo excluye `REQ-024` expresamente y **no lo he auditado**. Un
+rango declarado sólo por commits habría hecho pasar ese delta por revisado.
+
+**Lo único que sí comprobé de ese delta, porque es mi deber de no-regresión y no una auditoría de
+`REQ-024`:** que **no debilitó ningún control que `R-024` había acreditado** (§3), y que la llave
+nueva nace **apagada** (`"ausencia_exige": false`) en las dos sedes, es decir del lado que **no
+cambia nada**. Que su lectura sea correcta —incluido el defecto declarado de la cadena `"true"`
+cayendo a ALLOW— es de la auditoría de `REQ-024`, **no de esta**.
+
+### 1. La fila, ejercida: 17 entradas contra la puerta REAL de este árbol
+
+No es lectura. Es `hooks/guard-completado.sh` de `fcbb7b1` con su JSON de entrada, proyecto de
+prueba con `quality_gates: ["true"]` y cola vacía, `Write` sobre un REQ cuyo estado en disco no era
+el terminal. El resto del documento, idéntico entre filas.
+
+| Cabecera juzgada | Veredicto | Qué oración de la fila lo afirma |
+|---|---|---|
+| `Sensible a seguridad: sí` · `QA: pendiente` · `Rigor: ligero` | **DENY** (por veredicto) | control: la puerta funciona y el arnés discrimina |
+| **BOM** + `Sensible a seguridad: sí` · `Rigor: ligero` | **DENY**, con `\xef\xbb\xbf` en el motivo | or. 2 y or. 4 |
+| **ZWSP** (`\xe2\x80\x8b`) dentro de la clave | **DENY** | or. 4 |
+| **`\xc3`** suelto (multibyte partido) | **DENY** | or. 4 |
+| **NBSP** dentro de la palabra (`Sensible\xc2\xa0a seguridad`) | **DENY**, con `\xc2\xa0` en el motivo | or. 3 y or. 5 |
+| **blanco BORRADO** (`Sensibleaseguridad`) | **DENY** | or. 3 y or. 5 |
+| **blanco de MÁS** (`Sensible a  seguridad`) | **DENY**, con `\x20\x20` en el motivo | or. 4, literal |
+| `QA-:` con **guion ASCII visible** | **DENY** | or. 5: la clase **no** es una lista de invisibles |
+| **BOM** + los **dos veredictos en `aprobado`** y `Rigor: critico` | **DENY** | or. 2: «**aunque los veredictos estén en verde**» |
+| **homóglifo `а` U+0430** en la «a» aislada · `Rigor: ligero` | **ALLOW** | **or. 6**, literal |
+| **homóglifo `е` U+0435** dentro de `Sеnsible` | **ALLOW** | **or. 6**: es la propiedad, no el ejemplo |
+| **`Еstado`** con `Е` U+0415 (el ejemplo literal de or. 6) | **ALLOW** | **or. 6**, literal |
+| toda la cabecera en **CRLF**, veredictos rojos | **DENY** (por veredicto) | or. 7, frontera 1 |
+| toda la cabecera en **CRLF**, veredictos verdes | **ALLOW** | or. 7, frontera 1: «CRLF decide **igual** que LF» |
+| **ZWSP en el CUERPO**, veredictos verdes | **ALLOW** | or. 7, frontera 2 |
+| `Estado: en-progreso` + **BOM** en la cabecera | **ALLOW** | or. 7, frontera 3: reabrir no se bloquea |
+| `Módulo:` y `Versión destino:` (no-ASCII **legítimo**) | **ALLOW** | cero falsos positivos |
+
+**Y el par que decide si «permite POR AUSENCIA» es verdad, que es la afirmación más fuerte de la
+celda.** Dos documentos **idénticos byte a byte salvo los dos bytes del homóglifo**:
+
+| Cabecera | Veredicto | Motivo |
+|---|---|---|
+| `Sensible a seguridad: sí` · `QA: aprobado` · `Seguridad: pendiente` · **`Rigor: ligero`** | **DENY** | «su **rigor efectivo es `critico`** y el veredicto de seguridad es `pendiente`» |
+| `Sensible а seguridad: sí` (U+0430) · `QA: aprobado` · `Seguridad: pendiente` · **`Rigor: ligero`** | **ALLOW** | — |
+| `Sensible а seguridad: sí` (U+0430) · `QA: aprobado` · `Seguridad: pendiente` · **`Rigor: critico`** | **DENY** | control: el ALLOW de arriba **viene del suelo que desapareció**, no de una guarda rota |
+
+La denegación que desaparece es **exactamente** la que producía el campo borrado, y vuelve a
+aparecer en cuanto el rigor se declara a mano. Es `SEC-047` **fila 1 reproducida entera**, y es lo
+que la or. 6 **publica en la propia celda**. La afirmación «**permite, y permite por ausencia**» no
+es una concesión retórica: está **medida**.
+
+**«Ninguna versión lo deniega, tampoco 1.34.0» — verificado tag a tag, con control en cada uno.**
+`v1.31.0`, `v1.32.1`, `v1.33.0` (la publicada, la que **gobierna** esta ventana) y este árbol
+—candidata de 1.34.0—: **ALLOW** las cuatro sobre el homóglifo, **DENY** las cuatro sobre el
+control latino. La única afirmación **universal** que queda en la fila es ésta, y apunta al lado
+que **no tranquiliza**.
+
+### 2. El barrido de las 8 oraciones, hecho por mí y con la 1 AISLADA
+
+`CA-10 (iii)` dice que **basta una** oración que prometa denegación o no-permisividad **sin su
+condición** para incumplir, y que la **titular** se juzga **leída sola**. Enumeradas, no resumidas:
+
+| # | Qué afirma | ¿Promete? | ¿Lleva su condición? | Verdad medida |
+|---|---|---|---|---|
+| **1** | titular: «no deja cerrar **dentro de lo que la guarda alcanza (acotado en esta misma celda; hay vías medidas que hoy PERMITEN)**» | sí, **acotada** | **sí, DENTRO, y juzgada aislada** | **cumple** |
+| 2 | «se deniega citando esa línea […] aunque los veredictos estén en verde» | sí | sí, por el sujeto que **or. 1/3** condicionan («**esa** línea») | medida (fila 9 de §1) |
+| 3 | la acotación **por propiedad**, con sus **dos** ramas | sí | **sí, es la condición** | medida (ramas DENY y «calla») |
+| 4 | instancias: BOM, ZWSP, C0, multibyte partido, blanco de más o en el sitio de otro | no promete: enumera | n/a, y **declara** que son instancias | las 5 medidas DENY |
+| 5 | «la clase **no** se cierra con una lista de caracteres» + el fragmento | no promete cobertura | sí | medida (`QA-:` ASCII → DENY) |
+| **6** | **la vía abierta, nombrada dentro de la fila, como ejemplo NO exhaustivo con puntero** | afirma que **PERMITE** | n/a | **medida en 3 formas + 4 versiones** |
+| 7 | tres fronteras, **lista «no exhaustiva»** + puntero al sitio único | descriptiva | sí | las 3 medidas |
+| 8 | cita el sitio único con los **dos** números (`R-024`, `SEC-078`, `SEC-079`) | no promete | n/a | el puntero **resuelve** |
+
+**Ninguna de las 8 promete sin condición. La 1 leída sola es verdadera.** Y no es una tautología
+vacía: la parte que carga el sentido es la **no** tautológica —«hay vías medidas que hoy
+**PERMITEN**»—, que es la información cuya ausencia era el defecto, puesta en **la única línea que
+lee quien escanea la columna «Invariante»**.
+
+**Mi propio control negativo, contra la fila de `390a0a2` (la que yo declaré falsa).** No me apoyo
+en el de QA: la extraje y la medí. **`md5 721abd511c9aea56ce91663c6de01608`, 1 274 B** la fila entera (1 216 B su columna «Invariante»), **5** oraciones, e **incumple por
+cuatro sitios independientes** — (a) titular «*no deja cerrar —*», sin condición; (b) «y **nunca**
+se permite por **ausencia** del campo que ese carácter borró», **universal y medida falsa**;
+(c) «**Tres fronteras:**», lista **cerrada**, sin marca y sin puntero; (d) **cero** menciones de la
+vía abierta. La fila de hoy corrige **los cuatro**, y mi comprobación **separa** los dos textos. Una
+lectura que no distinguiera esas dos filas no estaría ejerciendo nada.
+
+**Y el delta es ADITIVO: nada se arregló BORRANDO la oración incómoda.** La promesa universal de (b)
+**no se suprimió**: se **movió dentro de la condición** de la or. 3, donde es verdadera —«*si lo que
+queda es una clave del lector leída también sin sus blancos* la línea no se puede medir, se deniega
+y **no** se permite por ausencia»—. 5 oraciones → 8; 1 216 B → 2 545 B; **cero** oraciones retiradas.
+Es lo que `CA-10` punto 1 exige literalmente («**o lleva esa condición o no se escribe**») y lo
+contrario de lo que habría hecho un arreglo cosmético.
+
+### 3. Las tres sedes, y la CUARTA que este hallazgo no había nombrado
+
+| Comprobación | Medida |
+|---|---|
+| `AGENTS.md:349` ≡ `templates/AGENTS.md.tpl:314` | **byte a byte**: `md5 3ead3bd328da6b857271b0137c0209eb`, **2 545 B**, `cmp` sin diferencias |
+| Una sola fila de esta clase por sede | **1** y **1** |
+| Fragmento del mecanismo (la **prótasis**, 165 B, `md5 596a237fce04f0fdb2d7e442b5e91f44`) | **2 + 2 + 1** apariciones (`AGENTS.md`, `.tpl`, `SKILL.md`), **ninguna** con letra distinta |
+| Restos de la redacción vieja del mecanismo («repuesto un blanco», «colapsad», «sitio de la retirada») | **0** en las tres sedes |
+| La promesa universal vieja, **viva**, en cualquier superficie heredada | **0**. Sus 10 apariciones restantes son **citas** del defecto: este registro, los métodos de QA, el `CHANGELOG` y el Historial/criterio del propio REQ |
+| `agents/`, `templates/` (resto), `README.md`, `tools/arnes-lectura.sh`, `ADR-009` | **ninguno** promete la clase cerrada |
+
+**La cuarta sede, dicha porque `SEC-079` no la había localizado.** Mi entrada nombraba tres
+ubicaciones y **elogiaba** la skill por honesta. Era cierto sobre la vía abierta y **falso sobre el
+mecanismo**: `skills/arnes-upgrade/SKILL.md` llevaba también la promesa absoluta y la descripción
+vieja, en **el artefacto que migra a los proyectos instalados**. La detectó la coordinadora, la
+enrutó y está corregida con la misma forma (`SKILL.md:820-833`): acotación explícita —«**dentro de
+lo que la guarda alcanza, que no es toda la clase: la vía del homóglifo de arriba PERMITE, y permite
+por ausencia**»—, el fragmento idéntico, las fronteras marcadas «no exhaustiva» y el puntero al
+sitio único con los dos números. **Lección para mí, y va escrita:** localicé el hallazgo por las
+sedes que `CA-10` nombra en vez de **derivar** las sedes del texto. Es la forma (a) cometida por el
+auditor, sobre sus propias ubicaciones.
+
+**No-regresión, MEDIDA y no leída.** Es la comprobación que `AGENTS.md` §13 me pide entre
+iteraciones, y aquí importaba de verdad porque el rango trae **+270 / −22 de mecanismo** sin
+auditar. Las **10** entradas del banco de §1 corridas contra `hooks/` de `390a0a2` —lo que `R-024`
+acreditó— y contra `fcbb7b1`: **veredicto idéntico en las 10**, ninguna denegación perdida, ninguna
+permisividad nueva. Y `tools/arnes-lectura.sh` sobre los **27 REQ reales** de este repositorio:
+**«Ningún valor anómalo»**, es decir los **cero falsos positivos** de `R-024` **siguen en cero**.
+
+**Un hecho que conviene tener medido, y que NO ensancha `SEC-078`.** El informe
+`tools/arnes-lectura.sh` —el lector **proactivo**, el que una coordinadora corre para preguntarse si
+su cierre está protegido— señala el NBSP y **no** señala el homóglifo: publica ese REQ como normal,
+con `rigor efectivo: ligero`. Es la **misma** ubicación de `SEC-078` (`_arnes_clave_oculta`, un solo
+lector con dos consumidores), no una sede nueva, y el reparto de `SEC-078` **no se toca**. Se anota
+porque el silencio del informe es la mitad menos visible de esa vía.
+
+### 4. Lo que se me pidió mirar con dureza: ¿es la asimetría una COARTADA?
+
+`CA-01` sigue exigiendo **DENY** sobre toda la clase, y la vía del homóglifo **la incumple**. El
+analista acotó **la fila** y **no `CA-01`**. La pregunta es si eso es honestidad o coartada, y **no
+se responde con la intención de quien lo escribió: se responde por sus consecuencias**.
+
+Lo juzgo **honesto**, y éstas son las cuatro condiciones que lo sostienen, las cuatro
+**verificables**:
+
+1. **`CA-01` no se relajó en ninguna dirección** — su texto es idéntico y sigue pidiendo DENY sobre
+   toda la clase. Relajar la exigencia para que encaje el código es lo que `requirements/README.md`
+   § «Y el reverso» prohíbe, y **no ocurrió**.
+2. **El incumplimiento está declarado, con dueño, clase y ventana**, en cuatro sitios que no se
+   contradicen: `CA-11` («cualquier otra vía sigue **incumpliendo `CA-01`**»), `CA-12 (iii)`,
+   § «Fuera de alcance» y **`SEC-078`** en este registro.
+3. **La fila PUBLICA que la vía permite** — y en su **titular**. Es la diferencia decisiva: una
+   coartada esconde la excepción donde el lector no la busca; aquí está en la primera línea de la
+   columna que se escanea, y en la 6 con el nombre de la vía.
+4. **Las dos clases de texto son distintas y la asimetría está escrita DENTRO de `CA-10`**, no
+   descubierta a posteriori: un criterio dice **cómo se quiere el mundo**, una fila de §13 describe
+   **lo que la máquina hace hoy** para que alguien decida si tiene que auditar sus REQ cerrados. Una
+   fila §13 que describiera la exigencia como satisfecha sería falsa; un `CA-01` rebajado sería la
+   coartada. Se corrigió el primero.
+
+**Donde sí sería coartada, y es el punto exacto que hay que vigilar:** que la titular volviera a
+prometer sin condición, o que `CA-01` se «armonizara» con la cobertura real. Lo primero **ya ocurrió
+una vez** (`QA-023-18`, sobre `1154417`) y es la razón de que `CA-10` exija ahora la subordinada
+**dentro** de la titular y su juicio **aislado**. La condición que QA puso está **cumplida y medida**
+(§2). **Coincido con QA: honesto, no coartada.**
+
+### 5. Hallazgo nuevo
+
+#### SEC-081 — **La doctrina general prohíbe enumerar los CASOS y no nombra la dirección simétrica —enumerar las EXCEPCIONES—, que es la que envejece hacia el lado que TRANQUILIZA: la lección de `SEC-079` sobrevive hoy sólo en `CA-10`, que muere con su REQ** · `instrumento` · severidad **media** · **abierto** *(nuevo)*
+
+**Ubicación.** `requirements/README.md` § «Cómo se escribe un criterio que no se desmiente», forma
+**(a)**, la lista de ejemplos de su **Regla**.
+
+**Qué está bien y por qué aun así hay defecto.** La Regla de (a) está enunciada **por propiedad** y
+dice «**cualquier** conjunto, sin excepción por el tipo de cosa que sea», así que **cubre** la lista
+de fronteras: `SEC-079` no es una laguna de la doctrina, es un **fallo de detección** de la
+doctrina. Pero sus tres ejemplos marcados —«envoltorios, prefijos, estados»— son todos de la
+dirección **que abre**, y el caso y el «Mal/Bien» también. `SEC-079` pasó **tres filtros**
+—analista, desarrollador y una coordinadora que verificó con un `grep`— porque la forma «excepto
+estas tres fronteras» **suena a propiedad** y su texto **tranquiliza**, que es más difícil de ver que
+un texto que se queda corto. Mi propia entrada de `SEC-079` diagnostica exactamente eso, y **hoy ese
+diagnóstico vive sólo aquí y en `CA-10`** — un criterio de un REQ concreto, no la doctrina.
+
+**Por qué es `instrumento` y no `contrato`, dicho contra el argumento fácil.** Ningún texto dice
+nada **falso**: la Regla es verdadera y sus ejemplos van marcados «no exhaustivos». Lo que tiene
+defecto es **el control** —la lista con la que QA juzga un criterio **antes** de probarlo—, sin
+efecto en el producto. No bloquea, y **no** se me ocurre reclasificarlo para forzar un cierre ajeno.
+
+**Y por qué NO va al `Hallazgos abiertos:` de `REQ-023`:** su sede está **fuera** del `Archivos:` de
+ese REQ y su remediación no cabe en él. Queda **aquí**, que es el sitio único, y su **enrutado a un
+REQ es de la coordinadora**. Anotarlo en un REQ cuyo dueño no puede tocar el archivo lo dejaría sin
+dueño real.
+
+**Remediación (por propiedad, no por enumeración).** Que la Regla de (a) declare que la propiedad
+alcanza **las dos direcciones** —el conjunto que el código **reconoce** y el conjunto que
+**excluye**: fronteras, excepciones, casos perdonados— y que sus ejemplos marcados incluyan al menos
+una de la segunda. Una sola frase. **Dueño:** `analista-requerimientos`. **Forzador:** el próximo
+criterio o fila heredada que enumere fronteras o excepciones sin la marca «no exhaustiva» y sin el
+puntero al sitio único — y hay uno **ya en cola**: `REQ-024 CA-04`, sobre la fila del **rigor** de
+`AGENTS.md` §6/§13, misma tabla y misma forma. **Vencimiento propuesto:** **1.35.0**, y **lo decide
+el propietario**, no este documento.
+
+### 6. Lo que esta firma acredita, y lo que NO
+
+| Acredita |
+|---|
+| Que **ninguna de las 8 oraciones** de la fila heredada promete denegación o no-permisividad **sin su condición**, con la **titular juzgada aislada** — barrido enumerativo propio (§2) |
+| Que **cada afirmación de hecho** de esa fila es **verdadera medida contra `fcbb7b1`**: 17 entradas ejecutadas contra la puerta real, incluidas las **tres** ramas del homóglifo y las **tres** fronteras (§1) |
+| Que «**permite, y permite por ausencia**» está medido con un **par A/B de dos bytes de diferencia** y su control de rigor (§1) |
+| Que «**ninguna versión lo deniega, tampoco 1.34.0**» es cierto en `v1.31.0`, `v1.32.1`, `v1.33.0` y este árbol, **con control en cada uno** (§1) |
+| Que las **dos sedes** son **byte a byte idénticas** y el fragmento del mecanismo es literalmente el mismo en sus **2+2+1** apariciones, con **0** restos de la redacción vieja y **0** promesas absolutas vivas en superficie heredada (§3) |
+| Que la **cuarta sede** —la skill, el canal de entrega a los proyectos instalados— quedó con la misma forma (§3) |
+| Que el arreglo es **aditivo**: la promesa universal se **condicionó**, no se borró; 5 → 8 oraciones, **cero** retiradas (§2) |
+| Que **ningún control acreditado en `R-024` se debilitó** pese a las +270 / −22 líneas de mecanismo del rango: 10 fixtures, veredicto **idéntico** en `390a0a2` y `fcbb7b1`, y los **cero falsos positivos** sobre los 27 REQ reales **siguen en cero** (§3) |
+| Que la asimetría fila / `CA-01` es **honesta**, por sus cuatro condiciones verificables, y no una coartada (§4) |
+
+| NO acredita — y cada renglón está aquí porque alguien podría leerlo de más |
+|---|
+| **El delta de mecanismo del rango.** `hooks/lib.sh` +192, `guard-completado.sh` +42, `estado-derivado.sh` +11, `tools/arnes-lectura.sh` +47 (`119e853`, `REQ-024` 9 de 11) — **no auditados**. Mi comprobación fue de **no-regresión sobre 10 fixtures**, que es una cota inferior, **no** una auditoría |
+| **La llave nueva `campos.ausencia_exige`.** Sólo verifiqué que nace **apagada** en las dos sedes. Su lectura, sus tipos y el defecto declarado de la cadena `"true"` → ALLOW son de la auditoría de `REQ-024` |
+| **`REQ-024` entero**, y sus `CA-04` / `CA-06` sin acreditar |
+| **`CA-09 (iii)`**: sigue **SIN acreditar**; no lo re-medí (`SEC-080`) |
+| **El banco y las quality gates**: no los ejecuté. Cito de QA el banco local 988/0/8 y el CI `hooks-en-linux` PASS sobre `b5a29d9`, **no sobre `fcbb7b1`** |
+| **Que la clase del carácter invisible esté cerrada. NO lo está.** La vía del homóglifo **permite hoy**, en todas las versiones y en la candidata, y así lo publica la propia fila. `SEC-078` sigue **abierto** |
+| **El mensaje de la propia puerta.** `guard-completado.sh:363` y `:392` conservan «**NUNCA** permite por AUSENCIA del campo que ese caracter borro». Es la **misma** frase universal, y su ubicación queda **fuera** de las sedes de `SEC-079`, así que **mi cierre no la cubre**. Está declarada y con dueño: **`QA-023-21`** (`instrumento`). **Mantengo esa clase**, y no por cortesía: la frase sólo se muestra **al denegar**, donde es localmente cierta, y **jamás** llega a la persona en el caso expuesto —ahí la puerta calla—; su lector no es quien decide si auditar. Es materialmente más débil que la fila de §13, pero **es la misma frase** y quien la lea de más se equivocará igual |
+| **`SEC-078` y `SEC-080`**: los dejo **abiertos** por decisión del propietario. No los toqué |
+| **El `Estado:` de `REQ-023`**: sigue `bloqueado` y **mi firma no lo desbloquea** |
+
+### 7. Estado de seguridad aprobado por REQ — línea base de no-regresión, actualizada en R-025
+
+| REQ | Veredicto | Fecha | Alcance acreditado | Nota |
+|---|---|---|---|---|
+| **REQ-023** (2.ª auditoría, **acotada a `SEC-079`**) | **`aprobado`** | 2026-09-09 | `rel/registro-1.33.0` @ `fcbb7b1`; rango **`390a0a2..fcbb7b1` restringido por RUTA** a `AGENTS.md`, `templates/AGENTS.md.tpl`, `skills/arnes-upgrade/SKILL.md`, `requirements/REQ-023.md` y este registro (§0) | **Acredita** la mitad de **texto**: 8 oraciones barridas con la titular aislada, 17 entradas ejecutadas contra la puerta real, par A/B del «permite por ausencia», 4 versiones para «ninguna lo deniega», sedes byte a byte, fragmento 2+2+1, arreglo aditivo, cero regresión sobre las 10 fixtures de `R-024` y la asimetría juzgada honesta (§1–§4, §6). **NO acredita** el delta de mecanismo del rango (+270 / −22, `REQ-024`), la llave nueva, `REQ-024`, `CA-09 (iii)`, el banco ni las quality gates (§6). **Bloqueantes abiertos míos: ninguno.** **Residuales:** `SEC-078` (`instrumento`, alta), `SEC-080` (`instrumento`, media), `SEC-081` (`instrumento`, media) y `QA-023-21` (`instrumento`, de QA) |
+| **REQ-027** (1.ª auditoría) | `aprobado` | 2026-09-09 | `R-023`, `81d260d` | Sin cambios |
+| **REQ-026** (vuelta 2) | `con-hallazgos` | 2026-09-09 | `R-022`, `4f51293` | Sin cambios. `SEC-072` y `SEC-073` siguen abiertos y **siguen bloqueando** ese REQ |
+| **REQ-017** (reapertura 1.34.0) | `aprobado` | 2026-09-08 | `R-020` | Sin cambios |
+| **REQ-014** (reapertura 1.33.0) | `aprobado` | 2026-09-08 | `R-019` | Sin cambios |
+
+**Estado de mis hallazgos tras R-025.** **`SEC-079` `mitigado`** (`contrato`, alta; las tres piezas
+de su remediación hechas y medidas, más la cuarta sede que la entrada no había nombrado; **retirado
+de `Hallazgos abiertos:` de `REQ-023`**). `SEC-081` **abierto** (`instrumento`, media, dueño
+`analista-requerimientos`). `SEC-078` **abierto** sin cambios (`instrumento`, alta; su silencio en
+el informe queda **medido** en §3 y su reparto **no se toca**). `SEC-080` **abierto** sin cambios
+(`instrumento`, media). **`SEC-047` mitad 1 sigue `en-mitigación`**: el código está acreditado desde
+`R-024` y **su superficie heredada ya no promete de más**, pero su **mitad 2 es `REQ-024`**, que no
+he auditado; vencimiento sin cambio, **el cierre de 1.34.0**. Sin cambios en `SEC-048`, `SEC-049`,
+`SEC-050`, `SEC-051`, `SEC-058`, `SEC-064`, `SEC-067`..`SEC-077`.
+
+**Numeración vigente tras esta revisión:** última revisión **R-025**; último hallazgo **SEC-081**;
+próximos libres **R-026** y **SEC-082**.
+
+**Rigor de `REQ-023`: sin cambios, `critico`.** No hay nada que subir: `Sensible a seguridad: sí` ya
+impone ese suelo y el REQ lo declara.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** Este delta es **texto** —una fila de
+`AGENTS.md` §13, su gemela de plantilla y un apartado de skill—: no altera clasificación de datos,
+acceso, retención ni cumplimiento, y no introduce datos personales, credenciales ni activos nuevos.
+La propiedad de seguridad en juego sigue siendo la **honestidad de la puerta de cierre hacia los
+proyectos instalados**, cuyas sedes son `hooks/`, `AGENTS.md` y `skills/arnes-upgrade/`, no el
+documento de datos.
