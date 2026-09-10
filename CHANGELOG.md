@@ -2,6 +2,71 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · Mi diagnóstico de `k=1` era falso en su mecanismo: el estadístico nunca estuvo apagado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación y corrección: coordinadora. **Bajo delegación de 24 h.**
+
+
+**Corrección de hecho, y es la segunda vez hoy que construyo una explicación correcta-en-la-medida y
+falsa-en-el-mecanismo.** Escribí que «*con `k=1` no hay mínimo que tomar: el mínimo ES la única
+muestra*». **Es falso, y está verificado por mí:** `tests/util/sonda-reloj.sh` tiene **dos** parámetros
+—`--k` son las repeticiones **dentro** de una serie (`sr_serie:347`) y `--r` son las **series**, que es
+sobre lo que se toma el mínimo (`sr_minimo:381`)— y `mide37` pasa **`--r 3` FIJO** en todas sus llamadas
+(`37/2:163`). Así que el fail-before con `k=1` **sí** toma el mínimo de **3** muestras, **las mismas que
+la medición directa con `k=20`**. **El estadístico nunca estuvo apagado.** La medición de `D6`
+(3,379× → 2,329×) sigue siendo correcta; la explicación que construí encima, no.
+
+**El mecanismo real, medido con round-robin controlado (N=5, `loadavg` publicado fila a fila):** los dos
+términos del cociente se miden en **dos invocaciones distintas, dos procesos y dos instantes**, así que
+la dispersión la domina **cuál de las dos pilló al vecino**. Y de ahí lo importante: **subir `k` o `r`
+alarga cada invocación, las separa MÁS en el tiempo y EMPEORA.**
+
+| configuración | rango, carga 17,6–23,3 | rango, carga baja | coste |
+|---|---|---|---|
+| `k=1 r=3` (la de hoy) | 64,4 % (mín **2,879×**) | 13,3 % | 1,5–4,6 s |
+| `k=1 r=15` | 52,8 % | — | 21 s |
+| `k=2 r=9` | 23,9 % | — | 26 s |
+| `k=3 r=9` | — | **66,0 %** | 13 s |
+| `k=8 r=3` | 50,0 % | — | 31 s |
+| **intercalado `k=2/3 r=9`** | **18,4 %** | **9,4 %** | 13–23 s |
+
+**Y lo que hizo el `desarrollador` es exactamente lo que se le pidió y merece quedar escrito:** declaró su
+criterio **antes de medir** (escalera fija, variable de decisión = suelo + dispersión, **nunca** el
+cociente), el criterio seleccionó **`k=3`**, **midió esa configuración, salió peor, y NO la envió** —
+«*enviarla habría sido enviar una regresión medida*». No subió la `k`. Eso es lo contrario de repetir
+hasta obtener verde.
+
+**Lo que sí entregó:** el caso ahora **publica** `k`, las series y, de cada término, su **mínimo y su
+máximo**, y tiene **un solo nombre** en sus cinco ramas — antes cada rama nombraba un caso distinto, así
+que un PASS→FAIL se leía como un caso que desaparece y otro que nace. Eso es lo que impidió atribuir el
+rojo la primera vez.
+
+**El remedio medido es el modo INTERCALADO, y no es alcance nuevo: ya está implementado y ya está
+contratado.** `sr_intercala` existe en `tests/util/sonda-reloj.sh:399` y su propio comentario cita
+**`REQ-021 CA-02` punto 2** —«*con DOS sujetos las series van a, b, a, b, … dentro*»—, con su motivo
+medido en `QA-017-06`: **1,217 en bloque contra 1,012 intercalado**, que es **exactamente** nuestro modo
+de fallo. Fue la **única** configuración más estrecha en **las dos** cargas y además **más barata** que su
+equivalente en bloque.
+
+**Decisión tomada bajo la delegación de 24 h:** se adopta el **modo intercalado** para `CA-03`, **en sus
+dos mediciones** —la directa y el fail-before—, porque mover sólo una rompería la coherencia de «el
+**mismo** cociente» que el fail-before acredita. **No relaja nada:** el techo sigue en 2,600×, no se
+retira ninguna prueba, y la práctica ya la contrata `REQ-021 CA-02`. Cambia **qué instrumento** mide, así
+que el orden es **`analista-requerimientos`** (precisar el modo en `CA-03`) → **`desarrollador`** (~20
+líneas) → **`qa-tester`** → **CI**.
+
+**Lo que sigue sin certificar, y lo digo yo, no el agente:** **esta máquina no es el juez y nadie puede
+afirmar hoy que el CI se ponga verde.** El `2,329×` no se reproduce aquí ni con 12 quemadores; lo que se
+reproduce es la **anchura** que lo hace posible. El CI corre con `ARNES_JOBS=6` sobre 4 vCPU, varias
+secciones midiendo a la vez. **El intercalado es el remedio con mejor evidencia, no una garantía.**
+
+**Evidencia salvada al repositorio** (era efímera, en scratchpad): **29 archivos** en
+`docs/arnes/req-017-ca-03-modo-de-medicion/`, con el criterio declarado antes de medir, las cinco tablas
+de medidas, las cinco corridas, los inventarios y los guiones de sonda. Las cifras que deciden quedan
+además dentro del comentario del propio archivo del caso.
+
+**A la cola, no abiertos aquí:** `razon37` tiene la **misma** carencia de publicación —da los dos mínimos
+y no los máximos— y afecta a **5 casos más**; se dejó intacto a propósito.
+
 ## [Interno] — 2026-09-09 · El FAIL desaparece por DECLARACIÓN: la precondición de `CA-12 (ii)` dice que no puede atribuir, y lo publica con huellas
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de decisión del propietario por 24 h.**
 

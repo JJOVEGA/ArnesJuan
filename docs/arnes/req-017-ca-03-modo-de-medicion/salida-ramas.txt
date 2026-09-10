@@ -1,0 +1,11 @@
+a) sin linea base (los dos terminos vacios):
+  SKIP  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  no hay línea base v1.32.1 (la-referencia-no-resuelve:v1.32.1) · k=1 series=3 · 70000B min=n/aµs max=n/aµs · 140000B min=n/aµs max=n/aµs
+b) un solo termino:
+  SKIP  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  no hay línea base v1.32.1 (tag ausente) · k=1 series=3 · 70000B min=175419µs max=197278µs · 140000B min=n/aµs max=n/aµs
+c) serie bajo el suelo:
+  SKIP  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  serie bajo el suelo de 50 ms: el reloj no distingue del ruido · k=1 series=3 · 70000B min=4354µs max=4600µs · 140000B min=10097µs max=11000µs
+d) FAIL (cociente bajo el techo):
+  FAIL  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  sobre v1.32.1 el cociente da 2.250× y NO se pasa del techo 2,600×: la sonda no distingue el defecto que este REQ arregla · k=1 series=3 · 70000B min=400000µs max=460000µs · 140000B min=900000µs max=990000µs
+e) PASS:
+  PASS  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  sobre v1.32.1 el mismo cociente da 4.140× y se pasa del techo 2,600× · k=1 series=3 · 70000B min=91567µs max=101286µs · 140000B min=379090µs max=428564µs
+--- el nombre del caso es identico en las cinco (hasta el primer doble espacio) ---

@@ -17,7 +17,7 @@
 # que porta, están escritos UNA vez, en `37-coste-del-escaner-1-el-dominio.sh`. Ésta es la
 # única parte que materializa ADEMÁS v1.32.0: sólo la usa CA-04.
 CASOS_ESPERADOS_SECCION=5
-PISO_AUTONOMO_SECCION=192  # 24 preámbulo (líneas 1-24) + 122 maquinaria compartida duplicada (mat37 y las dos líneas base, líneas 25-146) + 46 bloque indivisible mayor (mide37 y razon37, el medidor y la única puerta de las tres razones, líneas 148-193) · REQ-014 CA-18
+PISO_AUTONOMO_SECCION=200  # 24 preámbulo (líneas 1-24) + 122 maquinaria compartida duplicada (mat37 y las dos líneas base, líneas 25-146) + 54 bloque indivisible mayor (mide37 y razon37, el medidor y la única puerta de las tres razones, líneas 148-201) · REQ-014 CA-18
 seccion_nueva "--- 37/2 · el coste del escáner: la escala y las razones (REQ-017 CA-03, CA-04 y CA-06) ---"
 
 num37() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
@@ -150,10 +150,15 @@ LIB37="$HOOKS_DIR/lib.sh"
 # último que se cargó: la sonda corre en SU PROPIO proceso y se le pasa la carga del árbol
 # en `--prep`, una vez por invocación en vez de una por serie. El mínimo de r series lo
 # impone ella (CA-02), no este archivo: la regla ya estaba escrita y se incumplió dos veces.
-MED37_US=''; MED37_MOTIVO=''; MED37_REG=''
-mide37() {   # <lib> <fn> <bytes> <k> -> MED37_US = mínimo de 3 series, en microsegundos
+# Se expone `MED37_MAX` junto al mínimo porque un veredicto que publica un mínimo y NO su
+# máximo no dice si la sonda CONVERGIÓ, y sin eso un rojo no se puede atribuir: el FAIL del
+# CI del 2026-09-09 publicaba el cociente y nada más, así que no había forma de saber cuál
+# de los dos términos se había movido. El máximo es EVIDENCIA, no juez: quien decide sigue
+# siendo el mínimo, que es el estadístico que CA-03 contrata.
+MED37_US=''; MED37_MAX=''; MED37_MOTIVO=''; MED37_REG=''
+mide37() {   # <lib> <fn> <bytes> <k> -> MED37_US/MED37_MAX = mínimo y máximo de 3 series, µs
   local lib="$1" fn="$2" n="$3" k="$4" reg
-  MED37_US=''; MED37_MOTIVO=''; MED37_REG=''
+  MED37_US=''; MED37_MAX=''; MED37_MOTIVO=''; MED37_REG=''
   if [ ! -r "$lib" ]; then MED37_MOTIVO="no existe $lib"; return 1; fi
   reg="$("$UTIL_DIR/sonda-reloj.sh" --k "$k" --r 3 --etiqueta "$fn-$n" \
     --prep "source '$lib' >/dev/null 2>&1 || :; s37=''; while [ \${#s37} -lt 512 ]; do s37+='Estado: en-revision -- relleno de cabecera '; done; l37=''; while [ \${#l37} -lt $n ]; do l37+=\"\$s37\"; done; l37=\"\${l37:0:$n}\"" \
@@ -166,6 +171,9 @@ mide37() {   # <lib> <fn> <bytes> <k> -> MED37_US = mínimo de 3 series, en micr
   fi
   if ! num37 "${SONDA[min]:-}"; then MED37_MOTIVO="la sonda no publicó un mínimo (<${SONDA[min]:-vacío}>)"; return 1; fi
   MED37_US="${SONDA[min]}"
+  # Si la sonda no publicara el máximo, el caso sigue midiendo con el mínimo y sólo pierde
+  # una cifra del mensaje. Por eso su ausencia NO es motivo de abstención.
+  MED37_MAX="${SONDA[max]:-}"
   return 0
 }
 
@@ -205,25 +213,63 @@ razon37 "REQ-017 CA-03 el escáner no crece más que linealmente: doblar la lín
   "$u2_37" "$u1_37" 2600 "cociente de duplicación (${S37}→$(( S37 * 2 )) bytes, k=20)"
 
 # FAIL-BEFORE. Un cociente verde no prueba nada si la sonda daría verde también sobre el
-# árbol enfermo: se comprueba que sobre v1.32.1 el MISMO cociente se pasa del techo. Con
-# k=1 basta —el árbol cuadrático cruza el suelo de 50 ms de sobra— y así el fail-before
-# cuesta segundos en vez de medio minuto.
-h1_37=''; h2_37=''
+# árbol enfermo: se comprueba que sobre v1.32.1 el MISMO cociente se pasa del techo. Se
+# mide con k=1 porque el árbol cuadrático cruza el suelo de 50 ms de sobra —una sola
+# llamada sobre 70 000 bytes costó entre 77 ms y 392 ms ahí, en 40 mediciones del
+# 2026-09-09, contra 4,4 ms en el árbol sano— y así el fail-before cuesta segundos.
+#
+# POR QUÉ k SIGUE EN 1, CONTRA LA PRIMERA LECTURA DEL ROJO DEL CI, Y ESTÁ MEDIDO. El
+# 2026-09-09 este caso dio 2,329× en el CI (FAIL) contra 3,379× en la corrida anterior
+# sobre EL MISMO tag inmutable, y la primera explicación fue que «con k=1 no hay mínimo que
+# tomar: la única muestra ES el mínimo». Eso es falso, y la confusión está en que
+# `sonda-reloj.sh` tiene DOS parámetros: `--k` son las repeticiones DENTRO de una serie
+# (`sr_serie`) y `--r` son las SERIES, que es sobre lo que se toma el mínimo (`sr_minimo`).
+# `mide37` pasa `--r 3` FIJO en todas sus llamadas, así que el fail-before con k=1 toma el
+# mínimo de 3 muestras, las MISMAS que la medición directa con k=20. El estadístico nunca
+# estuvo apagado.
+#
+# Y subir k no sólo no ayuda: EMPEORA. Medido sobre este mismo tag, N=5 por configuración,
+# configuraciones INTERCALADAS round-robin en la misma corrida y con el `loadavg` que
+# publica la propia sonda (si no se publica, una dispersión ancha no se puede atribuir):
+#   carga 17,6-23,3 → k=1 r=3: rango 64,4 % · k=1 r=15: 52,8 % · k=2 r=9: 23,9 % · k=8 r=3: 50,0 %
+#   carga 3,4-7,1   → k=1 r=3: rango 13,3 % · k=3 r=9: 66,0 %
+# No hay dirección estable en k ni en r, y el mecanismo explica por qué: los dos términos
+# se miden en DOS invocaciones distintas, en dos procesos y en dos instantes, de modo que la
+# dispersión del cociente la domina cuál de las dos pilló al vecino — y subir k o r alarga
+# cada invocación, las separa MÁS en el tiempo y hace más probable que vean entornos
+# distintos. Lo que sí es estable, medido en las dos cargas, es medir los dos términos
+# INTERCALADOS en una sola invocación (`--sujeto-a`/`--sujeto-b`, rango 18,4 % y 9,4 %, y
+# más barato): es lo que `REQ-021 CA-02` punto 2 ya contrata para una razón, con su motivo
+# medido en QA-017-06 (1,217 en bloque contra 1,012 intercalado). NO se aplica aquí porque
+# cambia el INSTRUMENTO y no un parámetro suyo: el fail-before dejaría de acreditar «el
+# mismo cociente» que la medición directa, y la decisión de mover las DOS mediciones a
+# intercalado es del analista y del coordinador, no de este archivo. Queda en el informe.
+h1_37=''; h2_37=''; x1_37=''; x2_37=''
 if [ "$HER37_OK" = si ]; then
-  mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$S37"           1 && h1_37="$MED37_US"
-  mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$(( S37 * 2 ))" 1 && h2_37="$MED37_US"
+  mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$S37"           1 && { h1_37="$MED37_US"; x1_37="$MED37_MAX"; }
+  mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$(( S37 * 2 ))" 1 && { h2_37="$MED37_US"; x2_37="$MED37_MAX"; }
 fi
-if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-03 fail-before" | grep -qi -- "$FILTRO"; then
+# UN SOLO NOMBRE para los cuatro veredictos, con la evidencia detrás de DOS espacios, que es
+# la convención de `razon37` y la que `inventario.sh` necesita: así normaliza las magnitudes
+# y un PASS que se vuelve FAIL o SKIP sigue siendo EL MISMO caso, en vez de leerse como uno
+# que desaparece y otro que nace —que es justo lo que CA-02 existe para detectar—. Hasta
+# hoy PASS y FAIL llevaban el número DENTRO del nombre y cada rama nombraba un caso distinto.
+NOM37_FB='REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático'
+# Las cifras que hacen atribuible el próximo rojo: la k, las series, y de cada término su
+# mínimo Y su máximo. Con sólo el cociente no se puede saber si se movió el numerador, el
+# denominador o los dos, y sin eso el rojo no se distingue del ruido del vecino.
+MUE37_FB="k=1 series=3 · ${S37}B min=${h1_37:-n/a}µs max=${x1_37:-n/a}µs · $(( S37 * 2 ))B min=${h2_37:-n/a}µs max=${x2_37:-n/a}µs"
+if [ -z "$FILTRO" ] || printf '%s' "$NOM37_FB" | grep -qi -- "$FILTRO"; then
   if [ -z "$h1_37" ] || [ -z "$h2_37" ]; then
-    echo "  SKIP  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  no hay línea base v1.32.1 (${MED37_MOTIVO:-tag ausente})"
+    echo "  SKIP  $NOM37_FB  no hay línea base v1.32.1 (${MED37_MOTIVO:-tag ausente}) · $MUE37_FB"
   elif [ "$h1_37" -lt 50000 ] || [ "$h2_37" -lt 50000 ]; then
-    echo "  SKIP  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  serie bajo el suelo de 50 ms (${h1_37}µs / ${h2_37}µs)"
+    echo "  SKIP  $NOM37_FB  serie bajo el suelo de 50 ms: el reloj no distingue del ruido · $MUE37_FB"
   else
     coc37=$(( h2_37 * 1000 / h1_37 ))
     if [ "$coc37" -gt 2600 ]; then
-      echo "  PASS  REQ-017 CA-03 fail-before: sobre v1.32.1 el mismo cociente da $(awk -v c=$coc37 'BEGIN{printf "%.3f", c/1000}')× y se pasa del techo 2,600×"; PASS=$((PASS+1))
+      echo "  PASS  $NOM37_FB  sobre v1.32.1 el mismo cociente da $(awk -v c=$coc37 'BEGIN{printf "%.3f", c/1000}')× y se pasa del techo 2,600× · $MUE37_FB"; PASS=$((PASS+1))
     else
-      echo "  FAIL  REQ-017 CA-03 fail-before: sobre v1.32.1 el cociente da $(awk -v c=$coc37 'BEGIN{printf "%.3f", c/1000}')× y NO se pasa: la sonda no distingue el defecto que este REQ arregla"; FAIL=$((FAIL+1))
+      echo "  FAIL  $NOM37_FB  sobre v1.32.1 el cociente da $(awk -v c=$coc37 'BEGIN{printf "%.3f", c/1000}')× y NO se pasa del techo 2,600×: la sonda no distingue el defecto que este REQ arregla · $MUE37_FB"; FAIL=$((FAIL+1))
     fi
   fi
 fi
