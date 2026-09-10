@@ -226,6 +226,44 @@ vuelta 4, no cerré ningún hallazgo, no retiré ninguna prueba, no relajé ning
 `Seguridad:` —cuyo `aprobado` sigue siendo del 2026-09-08 sobre `538c266`, **anterior al modo
 medido**, de modo que el auditor tiene que volver de todas formas.
 
+> **EJECUTADA Y NO CERRADA — 2026-09-10, `af01436`.** Autorizaste la opción (A), se ejecutó
+> completa, y **`QA-017-31` sigue abierto de clase `contrato`**. Lo que apareció importa más que el
+> arreglo:
+>
+> El analista corrigió la promesa de `CA-03` contra los tres casos que pediste **y encontró un
+> cuarto** —el suelo de 50 ms—, que QA verificó **alcanzable** (8457 y 4220 µs bajo el suelo). Todo lo
+> mecánico pasó: `git diff` de mecanismo **vacío**, tres quality gates en verde, banco **1057 PASS · 0
+> FAIL · 7 SKIP · rc 0**. Y las tres piezas de la promesa nueva pasan una por una: lo declarado
+> presente queda **acreditado** (13 de 13 ramas de emisión ejercitadas: 13/13 emiten plataforma y
+> carga, **0/13** publican la cota), la condición de verdad es cierta en las cuatro ramas y está
+> medida, y `CA-03:74` y `CA-08 (ii):140` dicen **ahora lo mismo**.
+>
+> **Bloquea una TERCERA sede de la misma promesa, dentro del propio `CA-03`, que la vuelta 3 no
+> nombró.** La línea **`:62`** la lista entre «*ejemplos no exhaustivos, **ya construidos** o exigidos
+> aquí*» y su «*citada **abajo***» apunta al párrafo `:74` **que la desmiente literalmente**. La
+> medición da la razón a `:74`. **Es la misma forma por tercera vez, con la sede cambiada** —
+> `QA-017-24` → `QA-017-31` (`CA-03` vs `CA-08`) → ahora `:62` vs `:74` **dentro de `CA-03`** —, y
+> aplica tu propio refinamiento de `D5` por analogía: **corregir un párrafo no basta si otro del mismo
+> criterio sostiene la promesa retirada.** QA **no abrió número nuevo**: es `QA-017-31` sin cerrar.
+>
+> **Remedio:** alinear el paréntesis de `:62` con `:74`. **Un paréntesis, del analista, sin código.**
+> **No lo despaché** — el propietario pidió no abrir comisiones nuevas en el cierre de sesión.
+>
+> **Y dos `instrumento` que NO bloquean, con dueño y vencimiento:** `QA-017-33` (la promesa retirada
+> se declara presente en `37-coste-del-escaner-2-las-razones.sh:169-171` y en
+> `docs/arnes/req-017-ca-03-modo-de-medicion/03-…:83-85`; vencimiento el de `SEC-064`) y, a la cola, el
+> caso guardián de `CA-03` (`:536-550`) que **no ejerce el par** y lo invoca con el **noveno argumento
+> vacío**: la publicación de plataforma y carga **no la ejerce ningún caso del banco** — es el mismo
+> hueco que ese caso dice cerrar, sobre otro campo.
+>
+> **Limitación material declarada por QA:** una sola corrida sin warm-up, en WSL2 de 8 núcleos y **no
+> en el runner**; acredita **cuadre, no rendimiento**.
+>
+> **Lo que queda por decidir, y es una sola cosa:** autorizar el paréntesis de `:62` —mismo alcance
+> que ya firmaste, tercera sede— o dejar `REQ-017` `bloqueado`. **Mi recomendación: autorizarlo, y
+> esta vez con la instrucción de barrer TODAS las sedes de la promesa antes de devolver a QA**, que es
+> exactamente la regla que falta y que `docs/propuesta-reglas-coordinacion.md` propone consolidar.
+
 **Opciones**
 
 - **(A) — recomendada.** Autorizás **una cláusula acotada** para `QA-017-31`: el analista copia a

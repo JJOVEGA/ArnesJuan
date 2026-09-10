@@ -2,6 +2,114 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Tercera sede de la misma promesa, y esta vez DENTRO del mismo criterio: `QA-017-31` no cierra
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (la revalidación) y coordinadora (el registro). **Autorización expresa del propietario, `D18` (A).**
+
+**Revalidación acotada FUERA DEL CONTADOR de §6** —por autorización expresa del propietario, no por
+reclasificación— sobre `af01436`. **Las tres vueltas siguen agotadas y su rastro se conserva
+intacto**: el veredicto nuevo se prefija al anterior en el campo, sin sustituirlo, y se declara
+explícitamente que **no es una vuelta**.
+
+**Veredicto: `con-hallazgos`. `QA-017-31` NO se cierra** y sigue de clase `contrato`.
+
+**Lo que pasó, y no es poco.** El `git diff` de mecanismo entre `f4a5f1f` y `af01436` sale **vacío**,
+las tres quality gates en verde y el banco **1057 PASS · 0 FAIL · 7 SKIP · rc 0**, cuadrando con la
+vuelta 3 (1064 casos en ambas). Y las tres piezas de la promesa corregida pasan, cada una juzgada
+aparte:
+
+- **lo declarado PRESENTE queda ACREDITADO, no sólo implementado:** 13 de 13 ramas de emisión
+  ejercitadas con las funciones reales extraídas por rango de línea — **13/13 emiten plataforma y
+  carga, 0/13 publican la cota**;
+- **la condición de verdad es cierta en las CUATRO ramas y está medida** (el par pasa de `0.55` a
+  `3.28` con carga forzada; es el de la directa sin línea base; sale `n/a` si no llega a leer el
+  registro). El **cuarto** caso —el suelo de 50 ms, que el analista encontró y yo no le había
+  nombrado— es **alcanzable** (8457 y 4220 µs bajo el suelo) y el criterio **no afirma nada de más**;
+- **la frontera de la exigencia pendiente es honesta**, y `CA-03:74` y `CA-08 (ii):140` dicen **ahora
+  lo mismo**: las dos mitades abiertas, dueño `desarrollador`, cierran la instancia y no la clase.
+
+### Y bloquea una TERCERA sede, dentro del propio `CA-03`
+
+`REQ-017.md:62` lista la promesa entre «*ejemplos no exhaustivos, **ya construidos** o exigidos
+aquí*», y su «*citada **abajo***» **apunta al párrafo `:74` que la desmiente literalmente**. La
+medición da la razón a `:74`. Verificado: `:62` contiene *«exigencia (ii) de la remediación de
+`SEC-064` citada abajo»* dentro de la lista de «ya construidos».
+
+**Es la misma forma por tercera vez, con la sede cambiada:** `QA-017-24` → `QA-017-31` (`CA-03` contra
+`CA-08`) → ahora `:62` contra `:74` **dentro de `CA-03`**. Aplica el refinamiento del propietario en
+`D5` por analogía: **corregir un párrafo no basta si otro del mismo criterio sostiene la promesa
+retirada.** QA **no abrió número nuevo**: es `QA-017-31` sin cerrar. Remedio: **un paréntesis**, del
+analista, sin código — **no despachado**, porque el propietario pidió no abrir comisiones en el cierre.
+
+**Dos `instrumento` con dueño y vencimiento, que NO bloquean:** `QA-017-33` —la promesa retirada se
+declara presente en `37-coste-del-escaner-2-las-razones.sh:169-171` y en
+`docs/arnes/req-017-ca-03-modo-de-medicion/03-…:83-85`— y, a la cola, el caso guardián de `CA-03`
+(`:536-550`) que comprueba banda, cociente y techo **pero no el par**, y lo invoca con el **noveno
+argumento vacío**: la publicación de plataforma y carga **no la ejerce ningún caso del banco**. Es el
+mismo hueco que ese caso dice cerrar, sobre otro campo.
+
+**Limitación material declarada por QA:** una sola corrida sin warm-up, en WSL2 de 8 núcleos y **no en
+el runner** (4 vCPU, `ARNES_JOBS=6`): acredita **cuadre, no rendimiento**. Y su extracto de
+`sonda_lee` no incluye `sonda_es_util`, así que salta la validación del campo `vivos` —más permisivo
+que el real, en un campo que no toca plataforma ni carga—, declarado en el artefacto.
+
+`REQ-023 CA-09 (iii)` salió **SKIP** esta vez. **Anotado y nada más:** no se usa para justificar nada
+y no se re-corrió buscando verde.
+
+**Comprobado con el lector real del arnés** tras escribir el campo: `QA=<con-hallazgos>`,
+`Seguridad=<aprobado>`, `Rigor=<critico>` — la cabecera sigue midiéndose. Cola en **16**.
+
+## [Interno] — 2026-09-10 · Re-validación ACOTADA de `REQ-017 CA-03`: la promesa de la máquina es cierta en las cuatro ramas, y la promesa vieja sobrevive en el párrafo de al lado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. **Fuera del contador de `AGENTS.md` §6, por autorización EXPRESA del propietario del 2026-09-10 (`D18` opción (A)).**
+
+**Las tres vueltas dev↔QA de `REQ-017` siguen agotadas y no se reescriben.** Esto no es la vuelta 4
+ni una vuelta 3 repetida: es una **excepción expresamente autorizada**, declarada como tal para que el
+contador siga siendo auditable desde el disco.
+
+**Veredicto: `con-hallazgos`. `QA-017-31` NO se cierra** — sigue `contrato`, dueño
+`analista-requerimientos`. **`requirements/REQ-017.md` no se modificó**: el REQ sigue `bloqueado` y su
+desbloqueo, la escritura del campo de veredicto y la escalada son de la coordinadora.
+
+**Lo mecánico, comprobado.** `git diff f4a5f1f..af01436` sobre `hooks/ tools/ tests/ .github/ .arnes/
+templates/ .claude-plugin/` sale **VACÍO**, así que no se re-midieron banda, techo, umbrales, modo ni
+las cinco corridas aisladas. Quality gates de §7: **3 de 3 en verde**. Banco completo: **1057 PASS ·
+0 FAIL · 7 SKIP · rc 0**, que cuadra con la vuelta 3 (1064 casos en las dos). El `FAIL` de
+`REQ-023 CA-09 (iii)` salió **SKIP** en esta corrida y **no se usa para justificar nada**: no se
+re-corrió el banco buscando verde, y una corrida en verde no demuestra que el FAIL anterior fuera falso.
+
+**Lo que la corrección SÍ logró, acreditado por ejecución y no por lectura.** Las **13 ramas de
+emisión** del caso emiten `plataforma=` y `carga=` y **ninguna** publica la cota; y la **condición de
+verdad** del par es cierta en las **cuatro** ramas: el par cambia con la medición cuando se ha medido
+(`0.55`→`3.28` con carga forzada), es el de la **directa** cuando no hay línea base —`QA-017-27`,
+abierto, que el REQ describe y no cierra—, sale `n/a` cuando la sonda no llega a leer su registro, y el
+**cuarto caso** —el suelo de 50 ms— **existe, es alcanzable** (8457 µs y 4220 µs con `k=1`) y el REQ
+**no afirma nada de más** de él. Las funciones se extrajeron **literalmente por rango de línea** del
+archivo real, sin transcribirlas.
+
+**Y lo que la deja sin cerrar: la promesa retirada sigue viva en OTRO párrafo del MISMO criterio.**
+`CA-03` § «Qué se publica junto al cociente» (`REQ-017.md:62`) presenta la plataforma y la carga, entre
+los ejemplos «**ya construidos**», como «la exigencia (ii) de la **remediación** de `SEC-064` citada
+**abajo**» — mientras el párrafo nuevo de abajo (`:74`) dice que eso es «una **exigencia declarada**,
+**no una propiedad ya presente**». La contradicción es objetiva por tres razones independientes: el
+puntero interno apunta al párrafo que lo desmiente; una sede lo lista como construido y la otra lo niega
+literalmente; y **la medición le da la razón a la segunda**. Es la **misma forma por tercera vez** con
+la sede cambiada —`QA-017-24` cambió de objeto, ahora `QA-017-31` cambia de párrafo dentro del mismo
+criterio—, y aplica el refinamiento del propietario en `D5`: corregir un párrafo no basta si otro del
+mismo criterio sostiene la promesa retirada. **No se abre número nuevo para esto**: es `QA-017-31` sin
+cerrar, con una sede que la vuelta 3 no había nombrado.
+
+**Dos hallazgos que NO bloquean, con dueño.** `QA-017-33` (`instrumento`, dueño `desarrollador`): la
+promesa retirada también se declara **presente** en el comentario de
+`tests/escenarios/hooks/secciones/37-coste-del-escaner-2-las-razones.sh:169-171` y en
+`docs/arnes/req-017-ca-03-modo-de-medicion/03-…md:83-85`. Y a la cola: el caso guardián del SKIP de la
+banda comprueba banda, cociente y techo pero **no** el par, **y lo invoca con el argumento vacío**, así
+que la publicación de plataforma y carga **no la ejerce ningún caso del banco** — el mismo hueco que ese
+caso dice cerrar (`QA-017-16`), sobre otro campo.
+
+**No se firmó seguridad, no se cerró `SEC-064` ni `QA-017-27`, no se reclasificó nada, no se tocó
+código, umbral, NFR ni cota, y no se marcó `completado`.** Detalle, reproducción y limitaciones en
+`docs/qa/1.34.0.md` § «re-validación ACOTADA» y en
+`docs/qa/evidencia-req-017-ca03-revalidacion-af01436/`.
+
 ## [Interno] — 2026-09-10 · Cierre ordenado de sesión: un solo punto de continuidad, informe de traspaso en disco, y el verde del CI que NO acredita
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **A petición del propietario.**
 

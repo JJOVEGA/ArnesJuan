@@ -1,0 +1,24 @@
+### RAMA 1 — ABSTENCION/EMISION HABIENDO MEDIDO: el par es el de ESA medicion
+Se invoca mide37i DOS veces sobre el MISMO arbol, con carga forzada distinta en medio.
+Si el par fuera heredado, las dos publicarian lo mismo.
+docs/qa/evidencia-req-017-ca03-revalidacion-af01436/sonda-lee-real.sh: line 47: sonda_es_util: command not found
+  m1: PLAT=<linux-gnu-x86_64-bash5.3> CARGA=<0.55>   (loadavg real: 0.59)
+docs/qa/evidencia-req-017-ca03-revalidacion-af01436/sonda-lee-real.sh: line 47: sonda_es_util: command not found
+  m2: PLAT=<linux-gnu-x86_64-bash5.3> CARGA=<3.28>   (loadavg real: 3.28)
+
+### RAMA 2 — SIN LINEA BASE (HER37_OK != si): mide37i NO SE LLAMA
+docs/qa/evidencia-req-017-ca03-revalidacion-af01436/sonda-lee-real.sh: line 47: sonda_es_util: command not found
+  tras la DIRECTA: PLAT=<linux-gnu-x86_64-bash5.3> CARGA=<3.28>
+  PASS  REQ-017 CA-03 directa  TODA la banda cae del lado conforme · cociente = 2.075× · banda compatible [1.951×, 2.145×] · mín/máx 183246/189389µs sobre 88273/93924µs · techo 2.600× · modo=intercalado k=20 series=3 · plataforma=linux-gnu-x86_64-bash5.3 carga=3.28
+  SKIP  REQ-017 CA-03 fail-before  no hay con qué medir: no hay línea base v1.32.1 (tag ausente o árbol a medias) (medido=<vacío> base=<vacío>) · mín/máx n/a/n/aµs sobre n/a/n/aµs · techo 2.600× · modo=intercalado k=1 series=3 · plataforma=linux-gnu-x86_64-bash5.3 carga=3.28
+  >>> el par del fail-before es el de LA DIRECTA: no hay 'medicion que lo produjo'
+
+### RAMA 3 — FALLO ANTES DE LEER EL REGISTRO: par = n/a
+  rc=1 motivo=<no existe /no/existe/lib.sh> PLAT=<> CARGA=<>
+  SKIP  REQ-017 CA-03 fail-before  no hay con qué medir: no existe /no/existe/lib.sh (medido=<vacío> base=<vacío>) · mín/máx n/a/n/aµs sobre n/a/n/aµs · techo 2.600× · modo=intercalado k=1 series=3 · plataforma=n/a carga=n/a
+
+### RAMA 4 — SUELO DE 50 ms NO ALCANZADO: que vale el par? (el REQ NO lo afirma)
+docs/qa/evidencia-req-017-ca03-revalidacion-af01436/sonda-lee-real.sh: line 47: sonda_es_util: command not found
+  rc=0 estado/motivo=<la sonda declaró estado=suelo (serie-bajo-el-suelo-de-50000us)> PLAT=<linux-gnu-x86_64-bash5.3> CARGA=<3.28>
+  A=8457 B=4220  (suelo = 50000 us)
+  SKIP  REQ-017 CA-03 directa  serie por debajo del suelo de 50 ms: el reloj no distingue del ruido · mín/máx 8457/8798µs sobre 4220/4372µs · techo 2.600× · modo=intercalado k=1 series=3 · plataforma=linux-gnu-x86_64-bash5.3 carga=3.28

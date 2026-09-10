@@ -1,0 +1,16 @@
+--- DIRECTA (dir=no-excede, techo 2600) ---
+R1 falta el termino medido                 ver=SKIP   plataforma=si  carga=si  cota=no
+R2 falta la linea base                     ver=SKIP   plataforma=si  carga=si  cota=no
+R3 bajo el suelo de 50 ms                  ver=SKIP   plataforma=si  carga=si  cota=no
+R4 banda sin el maximo                     ver=SKIP   plataforma=si  carga=si  cota=no
+R5 direccion no reconocida                 ver=SKIP   plataforma=si  carga=si  cota=no
+R6 banda PASS (unanime)                    ver=PASS   plataforma=si  carga=si  cota=no
+R7 banda FAIL (unanime)                    ver=FAIL   plataforma=si  carga=si  cota=no
+R8 techo DENTRO -> abstencion              ver=SKIP   plataforma=si  carga=si  cota=no
+--- FAIL-BEFORE (dir=excede) ---
+R9 banda PASS invertida                    ver=PASS   plataforma=si  carga=si  cota=no
+R10 banda FAIL invertida                   ver=FAIL   plataforma=si  carga=si  cota=no
+R11 techo DENTRO invertido                 ver=SKIP   plataforma=si  carga=si  cota=no
+--- SIN dir (la via de CA-04, no de CA-03) ---
+R12 sin dir PASS                           ver=PASS   plataforma=si  carga=si  cota=no
+R13 sin dir FAIL                           ver=FAIL   plataforma=si  carga=si  cota=no
