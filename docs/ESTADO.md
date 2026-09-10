@@ -56,6 +56,7 @@ puntero y la primera acción.
 | **Publicado** | **`v1.33.0`** (tag existe; `plugin.json` = `1.33.0`) |
 | **En desarrollo** | **1.34.0**, sin publicar |
 | **Cola de aprobaciones** | **16 pendientes** → ningún REQ puede cerrarse (`tools/arnes-lectura.sh`) |
+| **Coste medido** | **≈ 4,4 h** de ejecución de agente en **serie** para la sede A, + **4** comisiones de código **sin base** (`docs/arnes/coste-de-comision/`) |
 | **Bloqueantes reconciliados** | **32**, de los que **22** los ve la puerta (`docs/seguridad/reconciliacion-campos-2026-09-10.md`) |
 
 **Primera acción al retomar, y sólo ésta:** decidir **qué sede define el alcance de 1.34.0** —cuatro

@@ -2,6 +2,41 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Primera base real para estimar: once comisiones medidas, y el rol que hace el código no tiene ni una
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+**El propietario pidió tiempo estimado y por primera vez hay base para una parte.** Nueva:
+`docs/arnes/coste-de-comision/` — las **once** comisiones de esta sesión con su duración de reloj
+**real** (`duration_ms` del orquestador), con **mediana y MAD** por rol, no rango: el rango es
+monotónicamente no decreciente y no compara.
+
+| Rol | n | Mediana | MAD |
+|---|---|---|---|
+| `analista-requerimientos` | **7** | **7,1 min** | 1,5 min |
+| `qa-tester` | **3** | **22,2 min** | 5,3 min |
+| `auditor-seguridad` | **1** | 18,3 min | — (**n=1**) |
+| `desarrollador` | **0** | — | **SIN BASE** |
+
+**Y el hueco es exactamente donde más duele:** `desarrollador` **no tiene ni una medición** en esta
+sesión, y es el rol de las cuatro correcciones de código que quedan (`SEC-073`, `SEC-084`,
+`QA-024-19`, `SEC-075`).
+
+**La cifra:** con la sede A del alcance, ≈ **20 comisiones** (5 analista · 7 QA · 4 auditor · 4 dev)
+→ **264 min ≈ 4,4 h de ejecución de agente**, **en serie** —y la serie está **medida**, no supuesta:
+`tools/arnes-paralelo.sh` declaró que `REQ-017`, `REQ-013` y `REQ-024` **colisionan** en `run.sh` y
+`hooks/lib.sh`—, **más** 4 comisiones sin base, **más** CI, **más** el tiempo de decisión del
+propietario, que no tiene base ninguna.
+
+**Lo que no se convierte en «4,4 h y listo»:** esta ventana lleva **cuatro REQ con el tope de tres
+vueltas agotado** y la cadena de «misma forma» tiene **nueve eslabones**. El coste histórico no ha
+sido una pasada limpia por comisión, sino dos o tres. Multiplicar por ese factor sería honesto; **no
+se hace porque no hay medida del factor**, sólo el recuento de que ocurrió. Y con la **sede B** no hay
+estimación en absoluto: no existe ni descomposición en comisiones para `REQ-020` ni para los cinco REQ
+sin empezar.
+
+Separado como manda §14.B.1: **medido** el coste por comisión; **estimado** el número de comisiones;
+**sin base** el rol `desarrollador`, el CI y la espera humana.
+
 ## [Interno] — 2026-09-10 · Cierre: `SEC-055` deja de ser invisible para la puerta (21 → 22) y el `Estado:` de `REQ-023` deja de afirmar algo falso
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (el cierre) y analista-requerimientos (los dos actos).
 
