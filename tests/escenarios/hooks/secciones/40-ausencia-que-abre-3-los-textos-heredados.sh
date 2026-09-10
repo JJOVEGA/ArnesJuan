@@ -1,4 +1,4 @@
-# Sección 40 (3 de 3) del banco — 40-ausencia-que-abre-3-los-textos-heredados
+# Sección 40 (3 de 4) del banco — 40-ausencia-que-abre-3-los-textos-heredados
 # Se ejecuta con `source` desde el corredor (`../run.sh`), en su propio subshell y con los
 # ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de ninguna otra
 # sección (invariantes 3 y 4 del README del banco).

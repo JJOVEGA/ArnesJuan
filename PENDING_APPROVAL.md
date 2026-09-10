@@ -316,6 +316,40 @@ depende de ella, porque elegirla exige una medición de `CA-07 (i)` **que nadie 
 salida (b) arrastra un write-back en `CA-05` que su comisión tenía prohibido — «*decidirla habría dejado
 su obligación colgando*».
 
+
+### D12 · El precio de la salida (b) de `CA-12`: una decisión cambia para un proyecto SIN MIGRAR, en un acto que no es el cierre
+
+**Lo pide el `desarrollador` y el propio criterio lo exige**, así que no es una consulta abierta: `CA-12`
+de `REQ-024` admite dos salidas y él tomó la **(b)** —la guarda **deniega en los dos estados de la
+llave**—, cuya letra obliga a **decírselo al gate humano en la misma entrada**. Ésta es esa entrada.
+
+**Qué cambia, dicho sin suavizar:** hasta hoy, escribir `Seguridad: aprobado` sobre un REQ **que no
+declara `QA:`** pasaba. Desde este árbol **deniega**, y **con la llave `campos.ausencia_exige` apagada**,
+que es como nace todo proyecto. O sea: **un proyecto que no ha migrado nada y no ha encendido ninguna
+llave verá una denegación nueva** en un acto que **no es el cierre**.
+
+**Por qué la alternativa era peor.** La salida (a) condicionaba la denegación a la llave: un proyecto sin
+encenderla **seguiría pudiendo firmar seguridad sobre un árbol que QA no validó**. Eso es `SEC-083` vivo
+para todos los consumidores hasta que cada uno decida encender algo. La (b) cierra el fail-open **hoy y
+para todos**, y el precio es la sorpresa descrita arriba.
+
+**Lo medido, para que decidas con cifras y no con la descripción:** diferencial completo base contra
+árbol, **34 celdas: 28 idénticas y 6 divergentes**, y **las 6 son exactamente la firma sobre un REQ sin
+veredicto de QA**. **Las 24 celdas del acto de CIERRE deciden idéntico**, incluidas `estandar`,
+`critico`, `critico` por suelo, `ligero` y sensibilidad dudosa. Y la edición inocente **sigue pasando**,
+incluso con los veredictos **ya cruzados en disco** — el caso que el `-n` retirado **no** cubría.
+
+**Qué firmas:** (a) aceptar la salida (b) con su sorpresa para proyectos sin migrar; o (b) pedir la
+salida (a) y aceptar que `SEC-083` siga abierto para quien no encienda la llave.
+
+**Y su obligación pendiente, que el criterio ata a esta decisión:** la salida (b) **exige write-back en
+`REQ-024 CA-05`** —que contrata la equivalencia sobre el juicio de **cierre**— y ese write-back **va en la
+misma comisión que la implemente, no después**. Lo despacho al `analista` en cuanto esto tenga tu firma;
+si eliges la (a), el write-back no hace falta y el código se ajusta.
+
+**Nota:** el `ADR-011` que `CA-12` exigía **ya está escrito** (`01cb7e2`) y su gate es **`D11`**. El
+`desarrollador` no podía saberlo: nació mientras trabajaba.
+
 ## Resueltas
 
 ### D5 · `SEC-079` — **RESUELTA el 2026-09-09: opción (a), y con un matiz del propietario que cambia el arreglo**

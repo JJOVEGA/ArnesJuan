@@ -29,7 +29,7 @@ arnes_guard_completado() {
   local disk qa seg sens rigor hall h id clase pending abiertas tmp cmd out rc disk_medible acc c prof ci
   local -a piezas=()
   local modo resultante reconstruido np k old new ra done_norm est_antes est_despues
-  local cita_desp est_citado cr_desp cr_linea
+  local cita_desp est_citado cr_desp cr_linea seg_ef seg_falta cruce qa_falta
 
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
@@ -266,14 +266,90 @@ arnes_guard_completado() {
   #
   # EXCEPCION NOMBRADA: la auditoria PREVENTIVA —sin codigo todavia— si puede ir
   # por delante, porque no firma nada construido. Se declara escribiendo
-  # `Seguridad: aprobado (preventiva)`, y se declara AL EMITIRLA, no al invocarla:
-  # una excepcion que se inventa cuando hace falta no es una excepcion.
+  # `Seguridad: preventiva` —con su PROPIO veredicto, que es el vocabulario de hoy: la
+  # forma `aprobado (preventiva)` que este comentario nombraba hasta 1.34.0 la DENIEGA
+  # este mismo bloque desde que un matiz dejo de viajar en el parentesis de evidencia
+  # (medido en 493fb44: deniega YA, asi que el comentario prometia una salida que la
+  # maquina no daba)—, y se declara AL EMITIRLA, no al invocarla: una excepcion que se
+  # inventa cuando hace falta no es una excepcion.
   #
   # Solo se juzga si esta edicion TOCA el campo: reordenar un REQ viejo que ya
-  # tuviera los veredictos cruzados no debe bloquearse por algo que no hizo.
-  if [ "$seg" = "aprobado" ] && [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
+  # tuviera los veredictos cruzados no debe bloquearse por algo que no hizo. Y QUIEN SIRVE
+  # ESA INTENCION ES EL `grep` DE DENTRO, no el estado del campo `QA:`: esta medido en las
+  # dos direcciones (13-orden-del-ciclo.sh) con los veredictos YA cruzados en disco —`$qa`
+  # no vacio, que es el caso que el `-n` de abajo no cubria— y la edicion que no escribe
+  # `Seguridad:` pasa igual.
+  #
+  # POR ESO LA AUSENCIA DE `QA:` TAMBIEN DENIEGA (SEC-083). Hasta 1.34.0 esta condicion
+  # llevaba un `[ -n "$qa" ]`, y ese `-n` era un fail-open en la puerta que protege la firma
+  # del auditor: sin ninguna linea `QA:` la condicion salia falsa y `Seguridad: aprobado`
+  # pasaba —medido igual con la linea COMENTADA, que el lector resuelve como ausencia—. Un
+  # campo que falta no es un campo aprobado: si no hay linea de QA, QA no ha firmado, que es
+  # exactamente lo que este bloque existe para impedir.
+  #
+  # Y LA AUSENCIA NO SE RESUELVE EN ESTA RAMA: SE PREGUNTA LA DIRECCION AL SITIO UNICO
+  # (`REQ-024 CA-12`, salida (b)). Una comprobacion local del tipo «el campo esta» es lo que
+  # el criterio prohibe, y con motivo medible: una condicion local NO SE MUEVE al mutar la
+  # tabla, asi que la promesa «lo decide un solo sitio» volveria a ser falsa para este acto —
+  # es la misma forma de SEC-082 en la puerta que existe para cerrar SEC-083. Aqui se lee la
+  # DIRECCION declarada (`deniega` para `QA:`) y se actua segun ella: mutarla mueve el
+  # veredicto de esta guarda, y eso es lo que se mide (40/4).
+  #
+  # SE PREGUNTA LA DIRECCION Y NO `arnes_resuelve_ausencia`, y la diferencia es la LLAVE: el
+  # resolvedor perdona la ausencia cuando `campos.ausencia_exige` esta apagada, que es la
+  # salida (a) del criterio. Aqui se toma la (b) —deniega en los DOS estados—, porque esa
+  # llave declara si un proyecto exige que los campos esten DECLARADOS, y `ADR-009` le da por
+  # radio la puerta de CIERRE y el lector de campos; esto es otra cosa que corre en CUALQUIER
+  # edicion: el ORDEN de las fases, que `AGENTS.md` §6 llama «la condicion de validez de la
+  # firma» y no ofrece como opcion de proyecto. De ahi que `SEC-047` sobreviviera a su propia
+  # mitigacion —la llave no cerraba esto en NINGUNO de sus dos estados—.
+  #
+  # EL PRECIO DE LA (b) VA DECLARADO Y NO SE DESCUBRE DESPUES: cambia una decision para un
+  # proyecto SIN migrar en un acto que no es el cierre, asi que `REQ-024 CA-05` —que contrata
+  # la equivalencia sobre el juicio de CIERRE— necesita write-back, y el gate humano tiene que
+  # enterarse en la misma entrada. Ninguna de las dos cosas las hace esta funcion.
+  #
+  # Y EL RADIO DE MIGRACION QUEDA ACOTADO A LA UNICA ACCION QUE MUERDE: emitir la firma de
+  # seguridad sobre un REQ sin veredicto de QA. No toca el CIERRE de ningun REQ heredado
+  # —eso sigue decidiendolo el sitio unico unas lineas mas abajo, con su llave— y tiene dos
+  # salidas de una linea, las dos ya escritas en el motivo: declarar el `QA:` que
+  # corresponda, o declarar la firma como `Seguridad: preventiva`.
+  #
+  # ¿HAY CRUCE? —seguridad firmando sobre un QA que no ha aprobado—. Con el campo DECLARADO
+  # lo dice su valor; sin declarar, lo dice la direccion del sitio unico y NADA de aqui.
+  cruce=0; qa_falta=''
+  if [ -n "$qa" ]; then
+    [ "$qa" = "aprobado" ] || cruce=1
+  else
+    # Rc 1 = esa clave no declara direccion. Es fail-closed y lo declara el propio sitio
+    # unico: «quien pregunte trata el rc 1 como `deniega`» (`arnes_ausencia`, hooks/lib.sh).
+    arnes_ausencia "$ARNES_CLAVE_QA" || ARNES_AUSENCIA_DIR='deniega'
+    case "$ARNES_AUSENCIA_DIR" in
+      gobierna:*) [ "${ARNES_AUSENCIA_DIR#gobierna:}" = "aprobado" ] || cruce=1 ;;
+      n/a)        ;;   # el sitio unico declara que esa ausencia no es sujeto de resolucion
+      *)          cruce=1; qa_falta="$ARNES_CLAVE_QA" ;;
+    esac
+  fi
+  if [ "$seg" = "aprobado" ] && [ "$cruce" = "1" ]; then
     if grep -q 'Seguridad:' <<< "$nuevo"; then
-      arnes_deny "ARNES: '$rel' lleva 'Seguridad: aprobado' pero su 'QA:' es '$qa'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGENTS.md 6): la auditoria no firma sobre un arbol que QA no ha validado, porque no mira las quality gates. Si es una auditoria PREVENTIVA —sin codigo todavia— declarala con su propio veredicto: 'Seguridad: preventiva'."
+      # LA AUSENCIA SE DENIEGA NOMBRANDOLA, no con el motivo del veredicto equivocado: un
+      # deny que dice «su 'QA:' es ''» deja a la persona buscando un valor que no existe.
+      if [ -n "$qa_falta" ]; then
+        # PRECEDENCIA DE LA MEDIBILIDAD SOBRE LA AUSENCIA (REQ-023 CA-02). Si una clave de la
+        # cabecera lleva algo INSERTADO DENTRO, la linea ESTA ahi y una persona la lee: un
+        # motivo que diga «no declara ningun QA:» la manda a buscar una linea que existe, y el
+        # caracter es invisible tambien en el diff. EL VEREDICTO NO CAMBIA —se deniega en los
+        # dos casos, asi que esto no reabre nada— y lo que cambia es el diagnostico, que es la
+        # otra mitad de lo que hace una puerta.
+        if [ "${ARNES_OCULTA:-0}" = "1" ]; then
+          arnes_deny "ARNES: no se puede firmar la seguridad de '$rel': su cabecera declara el campo '${ARNES_OCULTA_CLAVE}:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puerta no lee como ese campo. La clave, con sus bytes ajenos en hexadecimal: «${ARNES_OCULTA_REPR}:». Es un caracter invisible —un BOM, un espacio de anchura cero, un byte de control, un multibyte partido, un BLANCO de mas o puesto en el sitio de otro— y el diff no lo muestra. Mientras esa linea no se lea, la cabecera no se puede MEDIR y el veredicto de QA no se puede comprobar, asi que la firma de seguridad no se acepta: una puerta que no puede medir no deja pasar (AGENTS.md 1, REQ-023). Salida: reescribe esa linea dejando la clave limpia y firma despues."
+        fi
+        arnes_deny "ARNES: '$rel' lleva 'Seguridad: aprobado' y su cabecera NO declara ningun '$ARNES_CLAVE_QA:'. Un campo que falta no es un campo aprobado: si no hay linea de QA, QA no ha firmado. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGENTS.md 6): la auditoria no firma sobre un arbol que QA no ha validado, porque no mira las quality gates. Salida: escribe la linea '$ARNES_CLAVE_QA: aprobado' con su evidencia —o el veredicto que corresponda— y firma despues; si es una auditoria PREVENTIVA —sin codigo todavia— declarala con su propio veredicto: 'Seguridad: preventiva' (SEC-083)."
+      fi
+      # `${qa:-…}`: con el campo declarado va su valor, y si se llega aqui sin valor es porque
+      # el sitio unico GOBIERNA la ausencia con algo que no aprueba — decirlo es mas util que
+      # imprimir dos comillas vacias.
+      arnes_deny "ARNES: '$rel' lleva 'Seguridad: aprobado' pero su 'QA:' es '${qa:-ausente, y la direccion declarada para ese campo no lo da por aprobado}'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGENTS.md 6): la auditoria no firma sobre un arbol que QA no ha validado, porque no mira las quality gates. Si es una auditoria PREVENTIVA —sin codigo todavia— declarala con su propio veredicto: 'Seguridad: preventiva'."
     fi
   fi
 
@@ -446,7 +522,30 @@ arnes_guard_completado() {
     # `arnes_sens_efectiva` en lib.sh.
     case "$rigor" in
       critico)
-        if [ "$seg" != "aprobado" ]; then
+        # LA AUSENCIA DE `Seguridad:` TAMBIEN SE PREGUNTA AL SITIO UNICO (SEC-082, QA-024-12).
+        # Hasta 1.34.0 la entrada `Seguridad|deniega` de `ARNES_AUSENCIA` era CODIGO MUERTO:
+        # el `[ "$seg" != "aprobado" ]` de abajo resolvia la ausencia por su cuenta —bien, en
+        # su veredicto— y con ello la promesa «EL UNICO SITIO QUE DECIDE» era falsa PARA ESTE
+        # CAMPO. Medido por mutacion: cambiar esa entrada a `gobierna:aprobado` no movia el
+        # veredicto, y la MISMA mutacion movia 4 de 4 en los otros campos.
+        #
+        # LA DIRECCION VA CONDICIONADA AL RIGOR, Y ESO ES LA CONDUCTA DE HOY, NO UNA REBAJA:
+        # con la llave encendida, un `Rigor: estandar` sin linea `Seguridad:` cierra (ALLOW) y
+        # un `critico` no (DENY), tambien cuando el `critico` viene del SUELO de sensibilidad.
+        # Esa conducta esta acreditada; lo que era falso es la declaracion incondicional. Por
+        # eso la pregunta se hace AQUI DENTRO, en la rama que exige el veredicto, y no arriba:
+        # preguntarla fuera convertiria «que ceremonia se exige» en «que se puede medir» y
+        # movería el ALLOW de `estandar` — un cambio de conducta que este arreglo no tiene
+        # mandato para hacer.
+        #
+        # ASIMETRIA DELIBERADA CON `QA:`, que si se resuelve fuera del corto-circuito de
+        # `ligero` (QA-024-01): alli lo que se exige es que el campo este DECLARADO en todo
+        # nivel, y aqui la exigencia del campo ES la del veredicto — un `estandar` no pide
+        # auditoria, asi que tampoco puede pedir que se declare su resultado. Si algun dia se
+        # decide que si, es una decision de contrato y se toma en el REQ, no aqui.
+        arnes_resuelve_ausencia "$ARNES_CLAVE_SEG" "$seg"
+        seg_ef="$ARNES_AUSENCIA_APLICA"; seg_falta="$ARNES_AUSENCIA_FALTA"
+        if [ "$seg_ef" != "aprobado" ]; then
           # Si el rigor salió de un valor que no se entendió, la denegación TIENE que
           # decirlo: un deny que no explica de dónde sale se lee como un falso positivo
           # y acaba con alguien apagando el guard.
@@ -462,6 +561,13 @@ arnes_guard_completado() {
           if [ "${ARNES_AUSENCIA_EXIGE:-false}" = "true" ] &&
              { [ "${ARNES_SENS_AUSENTE:-0}" = "1" ] || [ "${ARNES_RIGOR_AUSENTE:-0}" = "1" ]; }; then
             arnes_deny "ARNES: no se puede completar '$rel': su rigor efectivo es 'critico' y el veredicto de seguridad es '${seg:-ausente}' (se requiere 'Seguridad: aprobado'). Y el rigor es 'critico' PORQUE su cabecera no declara$([ "${ARNES_SENS_AUSENTE:-0}" = "1" ] && printf " '%s:'" "$ARNES_CLAVE_SENS")$([ "${ARNES_RIGOR_AUSENTE:-0}" = "1" ] && printf " '%s:'" "$ARNES_CLAVE_RIGOR"): este proyecto exige que los campos de cabecera esten declarados ('campos.ausencia_exige' en .arnes/config.json) y un campo que falta se resuelve con el valor que MAS restringe, nunca retirando el suelo (ADR-009). Salida: declara esos campos con su valor real."
+          fi
+          # LA OTRA MITAD DE `deniega`: NOMBRAR el campo que falta. Va DESPUES de las dos de
+          # arriba a proposito —cuando el rigor es `critico` porque otro campo falta, ese
+          # motivo explica ademas de donde salio el `critico`, y es el mas completo—, y solo
+          # dispara cuando el sitio unico dijo que la ausencia deniega.
+          if [ -n "$seg_falta" ]; then
+            arnes_deny "ARNES: no se puede completar '$rel': su rigor efectivo es 'critico' y su cabecera NO declara el campo '$ARNES_CLAVE_SEG:', y este proyecto exige que los campos de cabecera esten declarados ('campos.ausencia_exige' en .arnes/config.json). Un campo que falta no es una auditoria aprobada: la ausencia se resolvia del lado que ABRE y por esa via un REQ critico cerraba sin revision de seguridad (SEC-047). Salida: escribe la linea '$ARNES_CLAVE_SEG: aprobado' con su evidencia, o el veredicto que corresponda."
           fi
           arnes_deny "ARNES: no se puede completar '$rel': su rigor efectivo es 'critico' y el veredicto de seguridad es '${seg:-ausente}' (se requiere 'Seguridad: aprobado'). El control hallado debe quedar como NFR antes de cerrar (AGENTS.md §9)."
         fi ;;

@@ -847,7 +847,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-10 02:17
+## Estado derivado — 2026-09-10 02:23
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -857,9 +857,9 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `rel/registro-1.33.0` @ `73822fa` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `rel/registro-1.33.0` @ `01cb7e2` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.0`
-**Aprobaciones pendientes:** 8
+**Aprobaciones pendientes:** 9
 **REQ:** 27 — completado 12 · en-revisión 2 · en-progreso 4 · bloqueado 3 · otros 6
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 

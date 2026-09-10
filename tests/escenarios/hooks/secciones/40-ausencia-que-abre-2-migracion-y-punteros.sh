@@ -1,4 +1,4 @@
-# Sección 40 (2 de 2) del banco — 40-ausencia-que-abre-2-migracion-y-punteros
+# Sección 40 (2 de 4) del banco — 40-ausencia-que-abre-2-migracion-y-punteros
 # Se ejecuta con `source` desde el corredor (`../run.sh`), en su propio subshell y con los
 # ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de ninguna otra
 # sección (invariantes 3 y 4 del README del banco).

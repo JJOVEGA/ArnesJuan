@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1024  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1041  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1359,6 +1359,21 @@ CASOS_ESPERADOS=1024  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # Los cinco casos de antes NO se crean ni se pierden: los dos de CA-03
                       # cambian de instrumento y de puerta, y los de CA-04 y CA-06 sólo
                       # publican más evidencia en el mismo veredicto.
+                      # 1015 → 1041: las dos mitades de código de `SEC-082` y `SEC-083`
+                      # (`contrato`, altos, abiertos por `R-026`). Reparto: `13` 9 → 15 (+6)
+                      # con el par de `SEC-083` en las DOS direcciones —la ausencia de `QA:`
+                      # deniega la firma de seguridad y la nombra; la edición que NO toca el
+                      # campo sigue pasando, también con los veredictos ya CRUZADOS en disco—,
+                      # y `40/4` nueva con 11 casos para `SEC-082` (la entrada `Seguridad` del
+                      # sitio único ya no es código muerto: se mide por MUTACIÓN, con la
+                      # mutación verificada por su efecto en la tabla derivada y con control
+                      # positivo sobre `QA` en la misma corrida, más cinco celdas que acreditan
+                      # que la conducta condicional al rigor NO se movió, en los dos estados de
+                      # la llave). NINGÚN caso se retira: el de `13` que pedía ALLOW sobre una
+                      # firma sin `QA:` conserva fixture y sitio, y lo que cambia es el
+                      # veredicto que se le exige — era la codificación del fail-open. Va en una
+                      # parte 4 y no en la 1 porque la 1 está en 387 de 400 y la 2 en 400 de
+                      # 400: `REQ-014 CA-18` manda partir, no alargar.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

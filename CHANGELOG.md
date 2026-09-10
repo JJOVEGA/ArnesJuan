@@ -2,6 +2,78 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `SEC-083` cerrado en código, y la «opción barata» de `SEC-082` resultó ser la bloqueada
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**Banco 1034 PASS · 0 FAIL · 7 SKIP = 1041**, `rc=0`, 63 s; autoprueba 106 · 0; tres quality gates verdes.
+`loadavg` 0,35 → 2,53 con `nproc`=12. **Delta +17 casos** y `CASOS_ESPERADOS` **1024 → 1041** — «*lo toqué
+y lo digo, nadie más estaba en `run.sh`*».
+
+### `SEC-083`: el par en las dos direcciones, y el caso que el `-n` no cubría
+
+| caso | base `493fb44` | árbol |
+|---|---|---|
+| **sin línea `QA:`** + firma | **ALLOW** | **DENY** |
+| **`QA:` comentada** + firma | **ALLOW** | **DENY** |
+| `Seguridad: preventiva` sin `QA:` | ALLOW | ALLOW |
+| **inocente: veredictos cruzados EN DISCO, no toca `Seguridad:`** | ALLOW | **ALLOW** |
+
+**En los dos estados de la llave.** Diferencial completo: **34 celdas, 28 idénticas, 6 divergentes — y las
+6 son exactamente la firma sobre un REQ sin veredicto de QA**. **Las 24 celdas del acto de cierre deciden
+idéntico.**
+
+Y comprobó **antes de tocar** lo que yo le pedí comprobar: la intención legítima la sirve el
+`grep -q 'Seguridad:'` **de dentro**, no el `-n`. El caso inocente lo prueba con `$qa` **no vacío** —
+veredictos ya cruzados en disco—, que es **precisamente lo que el `-n` retirado no cubría**.
+
+### `SEC-082`: la opción «barata» era la bloqueada, y sólo se ve mirando
+
+Elegí decirle que (a) era el arreglo real y (b) el barato. **Se equivocaba mi etiqueta:** el `_doc` de
+`.arnes/config.json` **y su gemela del template** ya prometen que «`Seguridad:` **también DENIEGA**… su
+veredicto sólo se lee cuando el rigor efectivo es `critico`», así que **acotar el comentario exigía editar
+dos archivos que él tenía prohibidos**. **(b) no era la barata: era la bloqueada.** Tomó **(a)**: 6 líneas,
+la entrada queda **viva y medible por mutación**, y la conducta salió **idéntica en las 24 celdas** del
+cierre.
+
+**Mutación con control positivo, verificada por su efecto y no por el `rc` del `sed`:** omitiendo
+`Seguridad`, la mutación **no movía** el veredicto en la base y **lo mueve** en el árbol; las otras cuatro
+claves se mueven **4 de 4** en las dos versiones.
+
+### La cascada: su arreglo invalidó una medición escrita media hora antes
+
+`REQ-016 CA-11` —del **mismo** commit— dice que «alterar la entrada de `Seguridad:` en la tabla **no
+mueve** el veredicto». **Ya lo mueve.** Ninguna exigencia de conducta se incumple —la equivalencia
+comentado ≡ borrado y la excepción del `critico` siguen exactas y medidas—, pero su **cita de medición
+describe un estado que dejó de existir**. Lo detectó él y lo enrutó al `analista` en vez de retocar el REQ.
+
+**Y `CA-12` nació mientras trabajaba** (`73822fa`, 02:10) y **le obligó a reescribir el arreglo**: prohíbe
+resolver la ausencia «*por una comprobación local del tipo el campo está*», que es **exactamente** lo que
+había escrito primero. Hoy la guarda pregunta la **dirección declarada** al sitio único y actúa según ella;
+mutar `QA|deniega` **mueve** el veredicto del acto de firmar.
+
+### Un hallazgo colateral que el banco encontró y él arregló
+
+Su denegación por ausencia **se adelantaba** a la guarda de medibilidad de `REQ-023` con un BOM dentro de
+`QA:`. **El veredicto era DENY en los dos casos; el diagnóstico era falso** —«no declara ningún `QA:`»
+sobre una línea que **está ahí**—. Hoy manda la medibilidad. Y como el caso de `REQ-023 CA-02` **pasa
+ahora por su rama**, eso **desplaza su cobertura**: añadió un caso explícito que fija la precedencia y que
+**falla también contra `493fb44`**.
+
+Es la clase de consecuencia que se pierde si sólo se mira el veredicto: **dos DENY con motivos distintos
+no son el mismo DENY.**
+
+### Disciplina y límites
+
+Escribió `hooks/guard-completado.sh` con **`Edit` y no con `sed -i`**, citando §13: la preferencia de
+sesión por consola **cede** para un archivo que una invariante protege. **`CA-12` no queda acreditado** por
+lo entregado —su aparato de anti-vacuidad exige el materializador de línea base, y su mitad (ii) es texto
+con gate humano—. Y corrigió un comentario **ya falso en `493fb44`** dentro del bloque que tocaba, dejando
+dicho que **queda una gemela sin tocar** en `hooks/lib.sh:1538`, fuera de sus dos hallazgos.
+
+**Los 7 SKIP con su motivo, ninguno nuevo. Y `REQ-017 CA-08 (ii)` no está en la lista: saltó en su primera
+corrida y pasó en las tres siguientes** — el oscilador documentado, y la razón por la que el recuento se
+lee **por lista y no por total**.
+
 ## [Interno] — 2026-09-10 · `ADR-011`: complementa a `ADR-009` en vez de superarlo, y su gate entra en la cola porque el propio analista lo pidió contra sí mismo
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · sede del gate: coordinadora. **Bajo delegación de 24 h.**
 
