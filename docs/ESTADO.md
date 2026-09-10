@@ -5,6 +5,11 @@
 > `<!-- ARNES:DERIVADO ... -->` que **reescribe el arnés** en cada parada de agente: no lo
 > edites, se sobrescribe. Lo de fuera de esos marcadores no se toca nunca.
 
+> Nota de aislamiento — 2026-09-10: existe un candidato local separado, basado en
+> `v1.33.0`, para corregir el rigor con matiz y la detección de firmas de Seguridad.
+> No es una publicación ni sustituye este tablero. Su estado y sus límites están en
+> `docs/estabilizacion/`.
+
 ## Fase actual
 Fase 0 — autoalojamiento. **v1.32.1 publicada.** Ventana **1.33.0 abierta**, gobernada por 1.32.1.
 Rama `cand/1.33.0`, PR **#43** en borrador.

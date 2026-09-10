@@ -1,8 +1,23 @@
-# CHANGELOG — ArnesJuan
+CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
-## [GitHub] — 2026-09-09 · **PUBLICADA `v1.33.0`** — fusionada con cuenta SIN admin, y con su límite declarado
+## [Interno] — 2026-09-10 · Corrección del piso de la sección de estabilización
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Codex.
+
+Declara la derivación legible de `PISO_AUTONOMO_SECCION=20` en la sección 40. No cambia el comportamiento de rigor ni de firmas; corrige la evidencia que el corredor exige.
+
+## [Interno] — 2026-09-10 · Candidato local de estabilización sobre v1.33.0
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Codex · agente: desarrollador + revisión independiente.
+
+Se prepara un candidato sin versión ni publicación. Normaliza los matices
+parentéticos de `Rigor:` mediante el lector común y compara el valor crudo de
+`Seguridad:` antes y después de una edición, para cubrir claves decoradas y cambios
+de sólo valor. Incluye 17 regresiones: fallan 11 en la base y pasan las 17 en la
+candidata. El banco completo local conserva tres fallos ya observados en la base;
+por eso este registro no declara una liberación ni cierra hallazgos.
+
+# [GitHub] — 2026-09-09 · **PUBLICADA `v1.33.0`** — fusionada con cuenta SIN admin, y con su límite declarado
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: coordinadora.
 
 Decisión del propietario del 2026-09-09, que **revierte el aplazamiento acordado horas antes**. Merge

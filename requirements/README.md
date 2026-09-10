@@ -104,7 +104,10 @@ cada proyecto pone el mapeo con sus ejemplos concretos.
 - **Si se omite, se deriva:** sensible → `critico`, si no → `estandar`. Es exactamente el
   comportamiento anterior a que existieran los niveles, así que un proyecto que no declare
   nada no nota ningún cambio.
-- Un valor no reconocido se ignora y se cae a la derivación. Nunca abre la puerta.
+- Un matiz parentético final no cambia un nivel válido: `critico (por suelo)` se lee
+  como `critico`. Un valor realmente desconocido conserva la derivación heredada:
+  sensible → `critico`; no sensible → `estandar`. No garantiza conservar el nivel
+  que el autor pretendía escribir; usa uno de los tres niveles válidos.
 
 ## Clases de hallazgo
 Todo hallazgo abierto se declara en el campo `Hallazgos abiertos:` de la cabecera, con

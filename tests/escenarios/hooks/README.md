@@ -30,7 +30,7 @@ bash tests/escenarios/hooks/run.sh secciones/07-*.sh     # sólo esa sección, m
 bash tests/escenarios/hooks/run.sh bash                  # sólo los casos cuyo nombre contenga "bash"
 bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del corredor
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **873 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **901 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`).
 
 En vuelta parcial —con un selector de archivos o con filtro de nombre— el cuadre **total** queda
