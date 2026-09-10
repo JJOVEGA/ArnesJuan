@@ -2,6 +2,66 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · Primera auditoría de la guarda (R-024): el REQ se disparó su propio forzador, y el rango que le dio la coordinadora no contenía el mecanismo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `auditor-seguridad` (Opus) · consolidación: coordinadora.
+
+**Veredicto: `Seguridad: con-hallazgos` (R-024).** Acredita **la revisión de seguridad de la guarda de
+medibilidad** —que no abre nada que antes cerrara, que la duda va al lado que cierra, que no hay
+inyección ni fail-open por entorno, que ningún control aprobado se retiró y que **dos se refuerzan**— y
+**no** acredita el banco, las quality gates, `CA-09` ni el fail-before de `CA-08`.
+
+**Un error de la coordinadora, corregido por el auditor y anotado aquí porque es instructivo.** Se le
+dio el rango `5305de9..390a0a2`, y `git diff --stat` de ese rango sobre `hooks/` y `tools/` sale
+**VACÍO**: la guarda vive en `e406202` y en el WIP `29b06eb`, los dos **anteriores**. Con
+`Seguridad: pendiente`, eso significa que **nadie la había auditado nunca**. El auditor amplió por su
+cuenta al delta real (`43bfd47..390a0a2`: **349 inserciones** en `lib.sh`, `guard-completado.sh` y
+`arnes-lectura.sh`) y lo dijo: firmar sólo el rango recibido habría sido **una firma sin el mecanismo
+dentro**. Un rango es un parámetro de la firma, y darlo mal la vacía.
+
+**`SEC-079` (`contrato`, alta) BLOQUEA, y lo hace por máquina, no por prosa:** con los cuatro veredictos
+en verde, `guard-completado` responde `deny :: el hallazgo 'sec-079' es de clase 'contrato' y bloquea el
+cierre`. La fila heredada de `AGENTS.md` §13 y de `templates/AGENTS.md.tpl` promete la clase **por estado
+y sin condición**, con una lista **cerrada** de tres fronteras que **no incluye la vía abierta** del
+homóglifo. Medido ejecutando la puerta con su JSON real: `Sensible <U+0430> seguridad: sí` +
+`Rigor: ligero` responde **ALLOW**, y eso **reproduce entera la fila 1 de `SEC-047`**. También abren
+`Q<U+0430>: pendiente`, `Hallazg<U+043E>s abiertos: SEC-999 (contrato)` y `<U+0415>stado: completado`,
+mientras el control limpio deniega.
+
+**El defecto no es que la vía esté abierta —está declarada fuera de alcance con dueño y ventana— sino
+que el documento canónico lo promete sin condición mientras sigue abierta. Y el forzador lo escribió
+este REQ contra sí mismo:** «*que algún texto de este REQ o de la superficie heredada afirme sin
+condición que la guarda cubre la clase … mientras esta vía siga abierta*». Se disparó solo, que es
+exactamente para lo que se escriben los forzadores. Reparto justo: **la skill es honesta** —dice que
+«ninguna versión lo deniega, tampoco 1.34.0»—; el que promete de más es el documento canónico, así que
+el write-back es del **analista** sobre `CA-10`, no una culpa del `desarrollador`.
+
+**Lo que el auditor acredita A FAVOR de la guarda, ejercitándola y no leyéndola:** la clase **no puede
+fabricar** una clave del lector, sólo destruirla —lo que **justifica** su asimetría con la guarda del
+CR—; el mapa de claves es **inambiguo por construcción**; `arnes_deny` usa `jq --arg`, así que un
+`\xNN` no rompe el JSON; **`ARNES_CLAVES` es asignación incondicional**, así que el entorno no puede
+vaciarla (lo miró porque vaciarla habría apagado a la vez la guarda y los cinco brazos de
+`arnes_campos_req`); la clase de caracteres no contiene `-`, `]` ni `^`; y **cero falsos positivos**
+sobre los 27 REQ reales. Y **dos controles quedan reforzados**: la clave del estado terminal ya está
+cubierta, y el informe emite la anomalía **antes** del descarte «este archivo no tiene `Estado:`».
+
+**`SEC-078`** (`instrumento`, alta): la vía del homóglifo reproduce `SEC-047` entero, y el puntero de la
+skill —«clase abierta **con dueño en el registro**»— **no resolvía**: `grep 'homógl'` sobre el registro
+daba **0**. La entrada nueva lo hace cierto. **`SEC-080`** (`instrumento`, media): un umbral de la puerta
+requerida cuyo veredicto **lo decide el ruido de la máquina**, y cuya abstención sale con el **mismo
+`rc`** que un verde; extiende `SEC-064` sin duplicarlo. Ninguno de los dos condiciona el cierre.
+
+**Y una honestidad que conviene subrayar: el auditor NO se apropió del `957 · 0 · 9`.** Dice que es de
+QA y de la coordinadora, y que es sobre `808f9ca` y no sobre `390a0a2` — verificando, eso sí, que
+`808f9ca..390a0a2` no toca `hooks/`, `tools/`, `.github/`, `tests/` ni `.arnes/`, así que la cifra sigue
+siendo aplicable «pero no es mía». Tampoco subió la clase de `QA-023-17`: coincide con `instrumento`
+porque la guarda medida es lineal y hoy no hay daño.
+
+**Escalado: `D5` en `PENDING_APPROVAL.md`** con las dos salidas —(a) barata y recomendada: cláusula de
+lista «no exhaustiva» en `CA-10` que cite el sitio único, y luego la fila en las dos sedes, con el orden
+analista → desarrollador → QA → auditor; (b) cara: meter el homóglifo en esta ventana, con sus tres
+salidas ya medidas como malas—. La cola sube de **3 a 4**. La fila de `REQ-023` en `D2` queda con
+`SEC-079`: es el **tercer relevo** del bloqueante, tras `QA-023-05` y `QA-023-15`, los dos cerrados.
+
 ## [Interno] — 2026-09-09 · CI en verde y `QA: aprobado`, con la distinción que lo hace honesto: la prueba está corregida y el criterio NO está acreditado
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus, revalidación acotada) · verificación y consolidación: coordinadora.
 

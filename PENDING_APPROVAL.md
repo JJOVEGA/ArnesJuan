@@ -36,7 +36,7 @@ Tu regla del 2026-09-08 dice que **cualquiera devuelve el tag a ti**. Inventario
 | `REQ-013` | 1.32.0 | 2 — `SEC-014`, `SEC-020` | deuda de ventana ya publicada |
 | `REQ-021` | 1.34.0 | 2 — `QA-021-10`, `QA-021-11` | **3 vueltas agotadas, salida sin decidir** |
 | `REQ-019` | 1.35.0 | 1 — `SEC-033` | aplazado; su salida tampoco está decidida |
-| `REQ-023` | 1.34.0 | 1 — **`QA-023-15`** (`usuario/dinero`) | ver **D1**. Era `QA-023-05` (`contrato`), **cerrado** en la vuelta 3; el que bloquea ahora es otro y de clase **más grave** |
+| `REQ-023` | 1.34.0 | 1 — **`SEC-079`** (`contrato`) | ver **D5**. Tercer relevo del bloqueante: `QA-023-05` (`contrato`) y `QA-023-15` (`usuario/dinero`) están **cerrados**; el que bloquea ahora lo abrió la auditoría `R-024` |
 
 Casi la mitad es **deuda de 1.31.0 y 1.32.0**, no trabajo de esta ventana. Esto no es trabajo
 pendiente: es una decisión. Por cada uno hace falta **resolver**, **declarar residual** (dueño,
@@ -60,6 +60,38 @@ de empeorarlo**— y le dio casa propia en «Fuera de alcance» como `instrument
 El analista **propone** 1.35.0 y **no la fija**: las ventanas las decides tú. El arreglo está
 **descrito y no aplicado** en `docs/qa/1.34.0-req023-vuelta3-metodo.md` §11.6, y es alcance nuevo sobre
 código que `REQ-023` no introdujo.
+
+
+### D5 · `SEC-079` (`contrato`, **BLOQUEA**) — dos salidas, y el auditor recomienda la barata
+
+**Apareció un bloqueante nuevo en la auditoría `R-024`, y te lo traigo con la evidencia y la decisión
+concreta, como pediste.** Ya bloquea **por máquina**: con los cuatro veredictos en verde,
+`guard-completado` responde `deny :: el hallazgo 'sec-079' es de clase 'contrato' y bloquea el cierre`.
+
+**Qué es.** La fila heredada de `AGENTS.md` §13 y de `templates/AGENTS.md.tpl` promete la clase **por
+estado y SIN condición**, con una lista **cerrada** de tres fronteras que **no incluye la vía abierta**
+del homóglifo. Medido ejecutando la puerta: `Sensible <U+0430> seguridad: sí` + `Rigor: ligero` con los
+veredictos en `pendiente` responde **ALLOW** — y eso **reproduce entera la fila 1 de `SEC-047`**, que es
+justo lo que este REQ existe para cerrar.
+
+**El defecto NO es que la vía esté abierta** —eso está declarado fuera de alcance con dueño, clase,
+motivo medido y ventana propuesta 1.35.0—: **es que el documento canónico lo promete sin condición
+mientras sigue abierta**. Y el forzador **lo escribió este REQ contra sí mismo**: «*que algún texto de
+este REQ o de la superficie heredada afirme sin condición que la guarda cubre la clase … mientras esta
+vía siga abierta*». Se disparó solo. Nota de reparto justa: **la skill es honesta** (dice que «ninguna
+versión lo deniega —tampoco 1.34.0—»); el que promete de más es el documento canónico.
+
+**(a) Salida barata — la que el auditor recomienda.** Una cláusula en `CA-10`: que la lista de fronteras
+se marque **«no exhaustiva»** y **cite el sitio único** (`docs/seguridad/registro-seguridad.md`) —
+exactamente la letra que `CA-10` ya le exige a la skill—, y luego la fila en **las dos** sedes. Orden
+obligatorio: write-back del `analista-requerimientos` → `desarrollador` → **QA re-valida** → **el
+auditor firma**. Estimado: ~1 h de ejecución.
+
+**(b) Salida cara.** Meter la vía del homóglifo en esta ventana, con sus **tres salidas ya medidas como
+malas** (estrechar el alfabeto admitido, y las otras dos que el REQ ya prohibió o encareció).
+
+**`SEC-078`** (`instrumento`, alta) y **`SEC-080`** (`instrumento`, media) son residuales con dueño y
+**no** condicionan el cierre.
 
 ## Resueltas
 
