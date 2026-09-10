@@ -2,6 +2,69 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · CI en verde y `QA: aprobado`, con la distinción que lo hace honesto: la prueba está corregida y el criterio NO está acreditado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus, revalidación acotada) · verificación y consolidación: coordinadora.
+
+**`hooks-en-linux` PASA sobre `808f9ca`** (run 34427423326, PR #45): **957 PASS · 0 FAIL · 9 SKIP**,
+contra los 955 · 1 · 10 de `6ad9752`. **Cuadre 966 en las dos: nada se retiró.** La puerta requerida y
+estricta de `main` deja de estar roja.
+
+**Y aquí va la distinción que el propietario pidió expresamente, porque sin ella el verde miente:**
+
+- **La prueba está CORREGIDA.** Mide la relación emparejada contra `v1.33.0` con sus cuatro parámetros
+  publicados, y ya no la magnitud retirada.
+- **El criterio NO está ACREDITADO.** `CA-09 (iii)` **abstiene en los dos sujetos en la máquina más
+  limpia disponible**: `arnes_norm_clave` mediana 0,986 con margen **0,014** contra rango 0,229;
+  `arnes_campo_linea` mediana 0,952 con margen **0,048** contra rango 0,055. Y el **1 PASS de 10**
+  corridas locales era **flaky**: un rango que cayó bajo el margen por suerte.
+
+**El FAIL anterior era un ROJO FALSO, y no se deduce: se mide.** El caso nuevo publica los absolutos
+como control en la misma tanda, y la base heredada `v1.33.0` paga **2,571 · 2,519 · 2,642** en
+`arnes_campo_linea` contra el techo retirado de 2,200×. O sea que el `2,365× > 2,200×` que puso rojo el
+CI **condenaba una propiedad que el código heredado ya pagaba más caro**.
+
+**`CA-10` validado y `QA-023-15` (`usuario/dinero`) RETIRADO — por sus dos brazos, no por el texto.**
+Par por cláusulas reproducido con script propio: **7/26 → 26/26**, 19 voltean. Las dos filas byte a byte
+idénticas (md5 `721abd51…`, 1274 B) y **una sola** por archivo: la del CR fue **sustituida**, no
+acompañada, así que ningún documento dice dos cosas. El consumidor ahora **sí** se entera, y la fila que
+su coordinadora lee **sí** describe lo que la máquina hace — comprobado **ejerciéndolo**: la puerta
+deniega un **guion ASCII** insertado en la clave, que ninguna lista de invisibles contiene, mientras el
+control limpio abre. El homóglifo cirílico lo ve el barrido y la puerta lo permite, **tal como el
+apartado declara**. Y la completitud de versiones se comprobó sobre **los 41 tags publicados**, no sobre
+la muestra de 7. **`QA-023-10` también cierra.**
+
+**El hallazgo nuevo es del criterio y es estructural: `QA-023-17` (`instrumento`, dueño analista).**
+`margen = 1,000 − mediana`, y **la mediana no es un parámetro de diseño**. La consecuencia es
+incómoda y elegante: **el resultado ideal —que la guarda no añada nada, relación = 1,000— es exactamente
+el inafirmable**, porque el margen se hace cero. Cuanto mejor se porta el código, menos acreditable es
+el criterio. Con 0,986 haría falta reproducibilidad mejor del **1,4 %** sobre una relación de relaciones
+que compone **cuatro** cronometrajes, o sea **< 0,7 %** por cronometraje.
+
+**Y «más tomas» NO puede funcionar**, por una razón que estaba a la vista y nadie había mirado: el
+estadístico de dispersión sigue siendo el **rango** (`disp=$(( hi - lo ))`), que es **monótono no
+decreciente** — añadir tomas sólo puede ensancharlo. Sólo dos cosas lo mitigan: un **par mayor**, que
+fabrica margen, y un **estadístico robusto**. La evidencia exacta que falta, con protocolo y números:
+**par 2000→4000, `k`=600, 5 tomas, dispersión por IQR o MAD en vez del rango, corrido en el CI** (≈2-3
+min de job).
+
+**Las tres prohibiciones del propietario, medidas y respetadas:** techo `1000` por mil = **1,000×**;
+nota de falsación intacta (`39-…-4-el-coste.sh:236-237`); `CASOS_ESPERADOS_SECCION=4` antes y ahora.
+**Ninguna prueba retirada, ningún umbral movido.**
+
+**Veredicto: `QA: aprobado` con residual declarado**, nombrando expresamente que `CA-09 (iii)` **no está
+acreditado**. Se marca así porque el tope de vueltas está agotado y el residual **no es `usuario/dinero`
+ni `contrato`**: los seis hallazgos vivos (`QA-023-11` a `-14`, `-16`, `-17`) son **todos
+`instrumento`**. `QA-023-12` se mantiene y **baja de severidad alta a media**: su primera mitad sigue
+viva (el rango sin tocar) y la segunda se disuelve, porque el rojo que «ocultaba» era falso.
+
+**`REQ-023` NO se cierra**: sigue `bloqueado` por decisión del propietario y la cola está en **3**.
+Siguiente paso: el `auditor-seguridad` en su turno, que ahora sí es su turno.
+
+**Nota de instrumento anotada y no abierta como hallazgo:** el comando de extracción del barrido
+documentado en §12.1 del `desarrollador` **no acota el apartado**, así que casa también el de «Hacia
+1.32.1» y devuelve 168 líneas en vez de 53. El entregable es correcto; lo que no re-deriva es ese
+comando de la nota.
+
 ## [Interno] — 2026-09-09 · Extensión acotada de REQ-023: CA-10 cumplido por estado y la prueba de CA-09 (iii) midiendo lo que el contrato pide
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` (Opus, extensión excepcional) · verificación y consolidación: coordinadora.
 
