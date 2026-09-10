@@ -4,7 +4,10 @@
 # sección (invariantes 3 y 4 del README del banco).
 #
 # REQ-024 · SEC-047 (mitad 2), SEC-050, SEC-051. LOS TEXTOS QUE UN PROYECTO HEREDA: `CA-06` (la
-# nota de migración dice qué pudo pasar y pregunta por ESTADO, no por vía). La clase derivada y
+# nota de migración dice qué pudo pasar y pregunta por ESTADO, no por vía) y el `_doc` de la
+# llave `campos.ausencia_exige` en sus DOS sedes (`QA-024-01`, mitad de texto: el `_doc` prometía
+# sin condición que todo REQ que omitiera uno de los cuatro campos dejaba de cerrar, y eso es
+# medidamente falso para los dos que GOBIERNAN). La clase derivada y
 # el sitio único están en la parte 1, la migración y el coste en la parte 2, y la conducta de la
 # cola en `31-cola-una-sola-regla.sh`.
 #
@@ -26,7 +29,7 @@
 # aplanar se conserva el NÚMERO DE LÍNEA de arranque de cada viñeta, que es lo que permite medir
 # el ORDEN que `CA-06 (ii)` contrata —la propiedad ANTES de cualquier comando— sin volver a
 # recorrer el archivo.
-CASOS_ESPERADOS_SECCION=16
+CASOS_ESPERADOS_SECCION=20
 PISO_AUTONOMO_SECCION=78  # 31 preámbulo con sus dos declaraciones y el titular (líneas 1-31) + 16 maquinaria compartida duplicada (`mira40c`, el mismo ayudante que `36-…-4-el-informe-y-los-textos.sh` define, duplicado porque en `secciones/` no cabe un auxiliar; líneas 61-76) + 31 bloque indivisible mayor (el aplanado del apartado, el sub-bloque anclado por su titular y `idx40`, líneas 33-59 y 77-80: ningún caso de CA-06 puede prescindir de ellos) · REQ-014 CA-18
 seccion_nueva "--- 40/3 · la ausencia que abre: los textos que un proyecto hereda (REQ-024 CA-06) ---"
 
@@ -201,4 +204,57 @@ if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-06 completitud" | grep -qi -- "$F
     echo "  FAIL  REQ-024 CA-06 completitud: «exhaustiv» ${exn40:-0} negadas de ${ex40:-0}, «acredita ausencia de exposición» ${acn40:-0} con NO de ${ac40:-0}"; FAIL=$((FAIL+1))
   fi
 fi
+
+# ---------- QA-024-01 (mitad de texto) · EL `_doc` DE LA LLAVE, EN SUS DOS SEDES ----------
+# El `_doc` viaja en el template, así que es superficie HEREDADA: un propietario lo lee para
+# decidir si enciende la llave. Prometía dos cosas sin condición y las dos eran falsas medidas:
+# «los VEREDICTOS … DENIEGAN nombrando el campo que falta» (falso para `Seguridad:` por debajo
+# de `critico`, donde su veredicto no se lee) y «Todo REQ heredado que omita uno de esos cuatro
+# campos deja de cerrar» (falso para los dos que GOBIERNAN: un REQ que omite `Sensible a
+# seguridad:` y `Rigor:` y ya lleva `Seguridad: aprobado` CIERRA, con rigor efectivo `critico`).
+#
+# LAS PROPIEDADES QUE SE COMPRUEBAN SON EJEMPLOS NO EXHAUSTIVOS de la forma de `SEC-079`, y se
+# dice aquí para no cometer en la prueba el defecto que la prueba vigila: son las CUATRO formas
+# MEDIDAS falsas o medidas ausentes en este texto, no la lista de todas las maneras de prometer
+# de más. El sitio único de las vías conocidas de la clase es
+# `docs/seguridad/registro-seguridad.md`. Y por eso el caso no vale sin su INYECCIÓN: cada
+# propiedad se rompe a propósito en la misma corrida y la comprobación tiene que fallar
+# NOMBRÁNDOLA — un verde sobre un texto que nadie rompió también lo da un `grep` mal escrito.
+MAN40="$REPO40C/.arnes/config.json"
+TPLM40="$REPO40C/templates/arnes-config.json.tpl"
+doc40() {   # <archivo> -> la línea `_doc` del bloque `campos`, entera
+  awk '/^  "campos": \{/ { c = 1 } c && /"_doc"/ { print; exit }' "$1" 2>/dev/null
+}
+DOC40="$(doc40 "$MAN40")"; DOCT40="$(doc40 "$TPLM40")"
+mal40d() {   # <texto> -> imprime las propiedades incumplidas, o nada
+  local t="$1"
+  case "$t" in *"Todo REQ"*"deja de cerrar"*) printf ' promesa-absoluta-de-cierre' ;; esac
+  case "$t" in *"los VEREDICTOS"*DENIEGAN*) printf ' veredictos-sin-condicion' ;; esac
+  case "$t" in
+    *"Comentarlo, borrarlo"*)
+      case "$t" in *"NO EXHAUSTIVOS"*) ;; *) printf ' vias-enumeradas-sin-marca' ;; esac
+      case "$t" in *"docs/seguridad/registro-seguridad.md"*) ;; *) printf ' vias-sin-sitio-unico' ;; esac ;;
+  esac
+}
+if [ -z "$FILTRO" ] || printf '%s' "QA-024-01 el _doc de la llave" | grep -qi -- "$FILTRO"; then
+  if [ -z "$DOC40" ] || [ -z "$DOCT40" ]; then
+    echo "  SKIP  QA-024-01 el _doc de la llave  no se pudo extraer el bloque \`campos\` de una de las dos sedes (${#DOC40} caracteres en .arnes/config.json, ${#DOCT40} caracteres en templates/): no hay texto que medir"
+  elif [ "$DOC40" != "$DOCT40" ]; then
+    echo "  FAIL  QA-024-01 las dos sedes del _doc DIVERGEN (${#DOC40} caracteres contra ${#DOCT40} caracteres): el proyecto y lo que heredan los demás prometen cosas distintas"; FAIL=$((FAIL+1))
+  else
+    echo "  PASS  QA-024-01 las dos sedes del _doc son IDÉNTICAS (${#DOC40} caracteres en .arnes/config.json y en templates/arnes-config.json.tpl)"; PASS=$((PASS+1))
+  fi
+fi
+chk40d() {   # <nombre> <esperado> <obtenido>
+  if [ -n "$FILTRO" ] && ! printf '%s' "$1" | grep -qi -- "$FILTRO"; then return 0; fi
+  if [ "$2" = "$3" ]; then echo "  PASS  $1"; PASS=$((PASS+1))
+  else echo "  FAIL  $1  esperado=<$2> obtenido=<$3>"; FAIL=$((FAIL+1)); fi
+}
+chk40d "QA-024-01 el _doc no incumple ninguna de las 4 propiedades medidas (ejemplos NO exhaustivos)" \
+  "" "$(mal40d "$DOC40")"
+chk40d "QA-024-01 inyección (a): devuelta la promesa absoluta de cierre, la comprobación FALLA nombrándola" \
+  " promesa-absoluta-de-cierre" "$(mal40d "$DOC40 Todo REQ heredado que omita uno de esos cuatro campos deja de cerrar hasta que lo declare.")"
+chk40d "QA-024-01 inyección (b): retirada la marca «NO EXHAUSTIVOS» de la enumeración de vías, FALLA nombrándola" \
+  " vias-enumeradas-sin-marca" "$(mal40d "${DOC40//NO EXHAUSTIVOS/de la misma clase}")"
+
 rm -f "$AP40" "$SUB40"

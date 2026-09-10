@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1012  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1024  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1351,6 +1351,14 @@ CASOS_ESPERADOS=1012  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # su fail-before de `ARNES_SKILL_UPGRADE` en vez de `ARNES_HOOKS_DIR`.
                       # `CA-04` —la fila del rigor de `AGENTS.md` §6/§13— NO tiene casos aquí:
                       # su cambio espera el gate humano que el propio criterio declara.
+                      # 1012 → 1015: los 3 casos que ACREDITAN la banda de `REQ-017 CA-03`
+                      # (write-back del modo intercalado, 2026-09-09) en `37/2`, que pasa de 5
+                      # a 8: la tabla de veredictos en las DOS direcciones, el par
+                      # discriminante —la banda sólo puede estrechar, nunca convierte un FAIL
+                      # en PASS— y el contenido del SKIP, que cita banda, cociente y techo.
+                      # Los cinco casos de antes NO se crean ni se pierden: los dos de CA-03
+                      # cambian de instrumento y de puerta, y los de CA-04 y CA-06 sólo
+                      # publican más evidencia en el mismo veredicto.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

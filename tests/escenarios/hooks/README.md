@@ -30,7 +30,7 @@ bash tests/escenarios/hooks/run.sh secciones/07-*.sh     # sólo esa sección, m
 bash tests/escenarios/hooks/run.sh bash                  # sólo los casos cuyo nombre contenga "bash"
 bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del corredor
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1012 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1015 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`).
 Este número se escribe a mano en los dos sitios y **hay que cuadrarlo al añadir casos**: decía
 886 con `CASOS_ESPERADOS` ya en 887, y luego 924 con el literal ya en 966 (`SEC-066`, las dos
@@ -275,10 +275,13 @@ Tres reglas nacidas de fallos reales:
 | Coste (37/1) | **fuera** del dominio: la decisión de este árbol, k=6 por locale | determinista **e invariante al locale** |
 | Coste (37/1) | **fuera** del dominio: esa decisión contra el **oráculo** (la heredada bajo `LC_ALL=C`) | **coincide**; sin esto (i) la cumpliría una constante |
 | Coste (37/1) | **fuera** del dominio: lo que la heredada incumple bajo el locale del entorno | se **registra** (fail-before) y **no falla** por ello |
-| Coste (37/2) | doblar la longitud de línea (70 000 → 140 000 bytes) | cociente ≤ **2,6** (lineal ≈ 2) |
-| Coste (37/2) | el mismo cociente **contra v1.32.1** | > 2,6 — la sonda distingue el defecto |
+| Coste (37/2) | doblar la longitud de línea (70 000 → 140 000 bytes), series **intercaladas** en una invocación | cociente ≤ **2,6** (lineal ≈ 2) y **toda** la banda del lado conforme |
+| Coste (37/2) | el mismo cociente **contra v1.32.1**, con el **mismo** instrumento intercalado | > 2,6 — la sonda distingue el defecto |
 | Coste (37/2) | el camino de campo contra el de v1.32.0 (140 000 bytes sin CR) | razón ≤ **2,0×** |
 | Coste (37/2) | la sonda sin línea base, o bajo el suelo de 50 ms | **SKIP con motivo**, nunca PASS |
+| Coste (37/2) | el techo **dentro** de la banda `mín(2S)/máx(S) … máx(2S)/mín(S)` | **SKIP** citando banda, cociente y techo; nunca PASS ni FAIL |
+| Coste (37/2) | el **par discriminante** de la banda, con oráculo independiente | **ninguna** entrada pasa de FAIL a PASS, y la guarda **sí** decide |
+| Coste (37/2) | el **contenido** del SKIP de la banda, no sólo su palabra | cita las **tres** cifras: banda, cociente y techo |
 | Coste (37/3) | la pared de los 60 s, **pareada** con v1.32.1 en la misma corrida (2 pasadas por árbol) | este árbol **no menor**; rangos que **solapan** ⇒ SKIP |
 | Coste (37/4) | la sección 32 aislada, **sólo con `ARNES_COSTE_RUTA_CRITICA=1`** | la heredada **no termina** en 4 × mín(este árbol) ⇒ reloj ≤ **0,25×** |
 | Coste (37/4) | las 3 corridas cronometradas de este árbol, entre sí | **mismo inventario** caso→veredicto |

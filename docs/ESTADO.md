@@ -847,7 +847,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-10 00:12
+## Estado derivado — 2026-09-10 00:39
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -857,13 +857,13 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `rel/registro-1.33.0` @ `ac48cce` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `rel/registro-1.33.0` @ `62bac72` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.0`
-**Aprobaciones pendientes:** 6
-**REQ:** 27 — completado 13 · en-revisión 2 · en-progreso 3 · bloqueado 3 · otros 6
+**Aprobaciones pendientes:** 7
+**REQ:** 27 — completado 12 · en-revisión 2 · en-progreso 4 · bloqueado 3 · otros 6
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
-_Sólo los REQ abiertos; los 13 completados no se listan._
+_Sólo los REQ abiertos; los 12 completados no se listan._
 
 | REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
 |---|---|---|---|---|---|
@@ -871,6 +871,7 @@ _Sólo los REQ abiertos; los 13 completados no se listan._
 | REQ-008 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-011 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-013 | en-revision | con-hallazgos | con-hallazgos | critico | sec-014(contrato),sec-020(contrato),qa-2… |
+| REQ-016 | en-progreso | aprobado | aprobado | critico | h-07(instrumento),qa-024-02(contrato) |
 | REQ-017 | en-progreso | aprobado | aprobado | critico | qa-017-07(instrumento),qa-017-11(instrum… |
 | REQ-018 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-019 | bloqueado | pendiente | preventiva | critico | sec-033(contrato) |

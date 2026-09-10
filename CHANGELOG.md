@@ -2,6 +2,73 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `QA-024-01` cerrado en sus dos mitades, el cuadre reconciliado a 1024, y casi sobrescribo una cifra correcta con mi propio mal conteo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `desarrollador` (`QA-024-01`) y `desarrollador` (modo intercalado) · reconciliación: coordinadora. **Bajo delegación de 24 h.**
+
+**Banco 1016 PASS · 0 FAIL · 8 SKIP = 1024**, cuadre exacto, sin `ABORT`; autoprueba **106 · 0**; tres
+quality gates verdes; `loadavg` 2,57.
+
+### `QA-024-01` cerrado, y la mitad de texto era peor de lo que QA vio
+
+**Código** (`hooks/guard-completado.sh`): la resolución de la ausencia de `QA:` sale **fuera** del
+corto-circuito `if [ "$rigor" != "ligero" ]`, a la misma altura que `Hallazgos abiertos:`. La
+comprobación del **valor** se queda **dentro**: `ligero` sigue sin pedir veredicto, y sólo se le exige que
+el campo esté **declarado**. Par medido: la entrada que daba **ALLOW sin motivo** hoy da **DENY nombrando
+`'QA:'`**, y el control con `estandar` deniega igual.
+
+**Y midiendo campo a campo descubrió que la promesa era falsa en 2 de 4 incluso DESPUÉS del arreglo de
+código:** `QA:` ausente → DENY · `Hallazgos abiertos:` ausente → DENY · **`Sensible a seguridad:` ausente
+→ ALLOW (gobierna)** · **`Rigor:` ausente → ALLOW (gobierna)** · `Seguridad:` ausente con `estandar` →
+ALLOW, con `critico` → DENY. Así que «*Todo REQ … deja de cerrar*» **no** se arreglaba arreglando el
+código: había que **decir lo que la máquina hace**, que es denegar en dos campos y **gobernar** en otros
+dos.
+
+**`CA-05` verificado con 48 decisiones** (4 niveles × 3 estados de `QA:` × 2 de sensibilidad × 2 llaves):
+con la llave **apagada, 24 de 24 idénticas**; encendida cambia **exactamente 1 celda**, la del defecto.
+Corpus real: **27 REQ, 0 divergencias** con la llave en los dos estados.
+
+**Y las vías no las enumeró: las colapsó.** Con la llave encendida, `qa:`, `Qa:`, `QÁ:` y `QА:` (А
+cirílica) dan las cuatro **DENY nombrando `'QA:'`**. Las enumeraciones van marcadas **NO EXHAUSTIVOS** con
+puntero al registro, y **dos inyecciones del banco lo vigilan** — se ven en la salida: «*devuelta la
+promesa absoluta, la comprobación FALLA nombrándola*» y «*retirada la marca NO EXHAUSTIVOS, FALLA
+nombrándola*».
+
+**Su propio barrido le corrigió tres frases de su borrador**, y las nombra: la titular prometía «decide lo
+mismo» **sin acotar el sujeto** —la cola cambia sin llave—; el «ninguno abre» le faltaba la condición de
+la llave; y la remisión a `arnes-lectura.sh` ahora dice que da **el nivel, la mitad de la respuesta**.
+
+**Y no tocó la tercera sede porque no hacía falta, medido:** la skill ya tenía las **dos ramas**
+—denegar en dos campos, gobernar en otros dos— y con el arreglo de código **pasa a ser verdadera**.
+Alineó su `_doc` a esas mismas dos ramas en vez de imponer una redacción nueva.
+
+**`ADR-009:41` (Contexto) arrastra una forma más débil de la misma imprecisión** y **lo reportó sin
+editarlo**, con el motivo correcto: «*un ADR no se reescribe encima*» (§9). Dueño: analista.
+
+### La reconciliación, y mi quinto error del día
+
+Puse `CASOS_ESPERADOS` en **1024**, que es lo que el `desarrollador` dijo. **Primero puse 1025, porque
+conté mal**: sumé **todas** las coincidencias de `CASOS_ESPERADOS_SECCION` en vez de **una por archivo**, y
+`37-coste-del-escaner-5-el-camino-normal.sh` lo declara **dos veces** — la segunda en su línea 486, **dentro
+de un `echo`**, porque es un **fixture** que el caso escribe a una sección sintética. No es un defecto del
+archivo: es un contador ingenuo, el mío.
+
+**Casi sobrescribo una cifra correcta con mi propio mal conteo**, y lo único que lo evitó fue comprobar en
+vez de asumir: `HEAD` tenía `run.sh` = 1012 y suma = 1012 —**cuadrados**—, y los tres deltas declarados
+suman **+12** (`37/2` 5→8, `40/1` 7→12, `40/3` 16→20). 1012 + 12 = **1024**. El banco lo confirma.
+
+**Los dos `desarrollador` se negaron a reconciliar y tenían razón los dos:** «*no puse 1024: sería
+certificar 9 casos ajenos a medio escribir*». Quien tenía que hacerlo era quien ve las dos comisiones, y
+sólo cuando aterrizaran las dos.
+
+**Nota para quien construya un cuadre automático:** contar ese literal con `grep -r` **sobre-cuenta**,
+porque un caso legítimo lo escribe dentro de un `echo`. Clase `instrumento`, sin abrir.
+
+### Añadido al mapa
+
+`Archivos:` de `REQ-017` ahora incluye **`docs/arnes/req-017-ca-03-modo-de-medicion/`**, donde vive toda la
+evidencia del modo. El `desarrollador` lo señaló como suyo del analista; lo hago yo, que es quien reabrió
+el REQ y reconcilió su mapa hace unas horas.
+
 ## [Interno] — 2026-09-10 · El modo intercalado no estrecha lo que dije: la evidencia que fundó mi decisión movía dos variables
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · corrección de la decisión: coordinadora. **Bajo delegación de 24 h.**
 

@@ -407,22 +407,36 @@ arnes_guard_completado() {
   # 1.28.0 el codigo hacia `return 0` aqui mismo, ANTES de las tres puertas de abajo.
   # Un REQ ligero cerraba con el build en rojo y con una aprobacion humana pendiente.
   # La maquina hacia menos de lo que el papel decia -- deriva, desde 1.19.0.
-  if [ "$rigor" != "ligero" ]; then
 
-    # LA AUSENCIA YA NO SE RESUELVE AQUI, SE PREGUNTA AL SITIO UNICO (REQ-024 CA-02).
-    #
-    # Hasta 1.33.0 esta linea era `[ -n "$qa" ] &&`, y ese `-n` ERA la decision: un `QA:`
-    # que no llegaba a declararse —comentado, borrado o nunca escrito— saltaba la
-    # comprobacion entera. La direccion de la ausencia la declara ahora `ARNES_AUSENCIA`
-    # (hooks/lib.sh, ADR-009) y para los VEREDICTOS es `deniega` NOMBRANDO el campo que
-    # falta, porque «gobernar» un veredicto seria fabricar una firma que nadie emitio.
-    # Con la exigencia apagada —el defecto— `arnes_resuelve_ausencia` devuelve 0 y aqui se
-    # decide EXACTAMENTE lo mismo que antes (REQ-024 CA-05).
-    if ! arnes_resuelve_ausencia "$ARNES_CLAVE_QA" "$qa"; then
-      arnes_deny "ARNES: no se puede completar '$rel': su cabecera NO declara el campo '$ARNES_CLAVE_QA:', y este proyecto exige que los campos de cabecera esten declarados ('campos.ausencia_exige' en .arnes/config.json). Un campo que falta no es un campo aprobado: la ausencia se resolvia del lado que ABRE y por esa via un REQ critico cerraba con la validacion pendiente (SEC-047). Salida: escribe la linea '$ARNES_CLAVE_QA: aprobado' con su evidencia, o el veredicto que corresponda."
-    fi
+  # LA AUSENCIA YA NO SE RESUELVE AQUI, SE PREGUNTA AL SITIO UNICO (REQ-024 CA-02).
+  #
+  # Hasta 1.33.0 esta linea era `[ -n "$qa" ] &&`, y ese `-n` ERA la decision: un `QA:`
+  # que no llegaba a declararse saltaba la comprobacion entera. La direccion de la
+  # ausencia la declara ahora `ARNES_AUSENCIA` (hooks/lib.sh, ADR-009) y para los
+  # VEREDICTOS es `deniega` NOMBRANDO el campo que falta, porque «gobernar» un veredicto
+  # seria fabricar una firma que nadie emitio.
+  # Con la exigencia apagada —el defecto— `arnes_resuelve_ausencia` devuelve 0 y aqui se
+  # decide EXACTAMENTE lo mismo que antes (REQ-024 CA-05).
+  #
+  # Y ESTA RESOLUCION VA FUERA DEL CORTO-CIRCUITO DE `ligero`, DELIBERADAMENTE: hasta
+  # 1.34.0 vivia DENTRO, asi que con la llave encendida un REQ `Rigor: ligero` que OMITIA
+  # `QA:` cerraba en ALLOW y SIN NINGUN DIAGNOSTICO, mientras el mismo REQ con `estandar`
+  # denegaba y la ausencia de `Hallazgos abiertos:` —que se resuelve mas abajo, fuera del
+  # corto-circuito— si denegaba en los dos niveles (QA-024-01, medido). Un nivel de rigor
+  # decide QUE CEREMONIA se exige, NO si la cabecera se puede medir: `ligero` sigue sin
+  # pedir VEREDICTO —el valor solo se juzga dentro del `if`, unas lineas mas abajo, asi
+  # que `QA: pendiente` cierra igual que antes— y lo unico que se exige aqui es que el
+  # campo este DECLARADO. Sin esto, la llave prometia denegar por DOS campos y a nivel
+  # `ligero` solo denegaba por UNO, y la superficie heredada repetia la promesa entera: la
+  # misma forma de SEC-047/SEC-079 —texto que promete de mas— en la puerta que existe para
+  # cerrarla.
+  if ! arnes_resuelve_ausencia "$ARNES_CLAVE_QA" "$qa"; then
+    arnes_deny "ARNES: no se puede completar '$rel': su cabecera NO declara el campo '$ARNES_CLAVE_QA:', y este proyecto exige que los campos de cabecera esten declarados ('campos.ausencia_exige' en .arnes/config.json). Un campo que falta no es un campo aprobado: la ausencia se resolvia del lado que ABRE y por esa via un REQ critico cerraba con la validacion pendiente (SEC-047). El nivel de rigor no exime de DECLARARLO —'ligero' no pide VEREDICTO de QA, y su valor sigue sin juzgarse, pero un campo que falta no es un campo que alguien decidio no pedir (QA-024-01)—. Salida: escribe la linea '$ARNES_CLAVE_QA: aprobado' con su evidencia, o el veredicto que corresponda."
+  fi
+
+  if [ "$rigor" != "ligero" ]; then
     # Solo se exige el VALOR cuando está presente (compatibilidad con REQ antiguos sin
-    # veredictos); la AUSENCIA la acaba de resolver el sitio único, arriba.
+    # veredictos); la AUSENCIA la resolvió el sitio único, arriba y fuera de este `if`.
     if [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
       arnes_deny "ARNES: no se puede completar '$rel': el veredicto de QA es '$qa' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9)."
     fi

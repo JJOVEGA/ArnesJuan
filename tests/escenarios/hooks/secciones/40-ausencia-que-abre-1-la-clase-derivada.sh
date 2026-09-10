@@ -26,7 +26,7 @@
 # un archivo auxiliar. Su motivo largo y las cuatro propiedades de `REQ-021 CA-05` que porta
 # están escritos UNA vez, en `37-coste-del-escaner-1-el-dominio.sh`, y no se transcriben aquí.
 # Residual `AN-021-01`.
-CASOS_ESPERADOS_SECCION=7
+CASOS_ESPERADOS_SECCION=12
 PISO_AUTONOMO_SECCION=200  # 31 preámbulo (líneas 1-31) + 74 maquinaria compartida duplicada (mat24 y la línea base, líneas 33-106) + 95 bloque indivisible mayor (el dominio extraído, los fixtures y el evaluador de veredicto, líneas 107-201: ningún caso de CA-01 ni de CA-02 puede prescindir de ellos) · REQ-014 CA-18
 seccion_nueva "--- 40/1 · la ausencia que abre: la clase derivada (REQ-024 CA-01, CA-02) ---"
 
@@ -173,7 +173,12 @@ printf '## Pendientes\n\n## Resueltas\n' > "$P24/PENDING_APPROVAL.md"
 J24="$(CLAUDE_PROJECT_DIR="$P24" jq -n --arg fp "$P24/requirements/REQ-940.md" \
   '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,
     tool_input:{file_path:$fp,old_string:"en-revisión",new_string:"completado"}}')"
-eva24() {   # <hooks-dir> <exige:true|false> <cuerpo de cabecera> -> DENY|ALLOW
+eva24() {   # <hooks-dir> <exige:true|false> <cabecera> [clave] -> DENY[-nombra|-calla]|ALLOW
+  # LA CLAVE OPCIONAL NO ES ADORNO: `deniega` es media dirección; la otra mitad es NOMBRAR el
+  # campo que falta (CA-01). Un `DENY` a secas también lo da una puerta que deniega por otro
+  # motivo y deja a la persona sin saber qué escribir — «entra pero no ve nada» es un bug de
+  # diagnóstico. Los tres casos que no pasan clave siguen recibiendo `DENY`/`ALLOW` y no
+  # cambian: la mitad del nombre sólo se mide cuando se pide.
   local o
   printf '%s\n' "$MANIFIESTO_BASE" | jq ".campos.ausencia_exige = $2" > "$P24/.arnes/config.json"
   printf '# REQ-940\nEstado: en-revisión\n%s\n' "$3" > "$P24/requirements/REQ-940.md"
@@ -184,7 +189,14 @@ eva24() {   # <hooks-dir> <exige:true|false> <cuerpo de cabecera> -> DENY|ALLOW
   # asi se escribio este caso la primera vez. La leccion es la del canario: un `allow` esperado
   # tambien lo cumple un caso que no llego a medir.
   case "$o" in
-    *'"permissionDecision":"deny"'*|*'"permissionDecision": "deny"'*) printf 'DENY' ;;
+    *'"permissionDecision":"deny"'*|*'"permissionDecision": "deny"'*)
+      printf 'DENY'
+      if [ -n "${4:-}" ]; then
+        case "$o" in
+          *"NO declara el campo '$4:'"*) printf -- '-nombra' ;;
+          *) printf -- '-calla' ;;
+        esac
+      fi ;;
     *) printf 'ALLOW' ;;
   esac
 }
@@ -316,5 +328,60 @@ chk24a "REQ-024 CA-02 discriminante (i): una clave nueva sin dirección declarad
   "Campo nuevo " "$(falta24 "$INY24/hooks")"
 chk24a "REQ-024 CA-02 discriminante (ii): sin la inyección, la misma comprobación pasa" \
   "" "$(falta24 "$HOOKS_DIR")"
+
+# ---------- QA-024-01 · UN NIVEL DE RIGOR NO EXIME DE DECLARAR EL CAMPO ----------
+# El agujero medido: hasta 1.34.0 la resolución de la ausencia de `QA:` vivía DENTRO del
+# corto-circuito `if [ "$rigor" != "ligero" ]` y la de `Hallazgos abiertos:` FUERA, así que con
+# la llave encendida un REQ `Rigor: ligero` que OMITÍA `QA:` cerraba en ALLOW y SIN NINGÚN
+# diagnóstico, mientras el mismo REQ con `estandar` denegaba. Los fixtures de arriba no lo veían
+# porque `OTROS24['QA']` declara `Rigor: estandar`: la clase derivada quedaba vacía y la promesa
+# de la llave era falsa en un nivel. Un rigor decide QUÉ CEREMONIA se exige, no si la cabecera
+# se puede medir.
+CABLIG24="${OTROS24['QA']/Rigor: estandar/Rigor: ligero}"
+chk24a "QA-024-01 (i) llave ON, 'Rigor: ligero' y sin 'QA:': DENY NOMBRANDO el campo" \
+  "DENY-nombra" "$(eva24 "$HOOKS_DIR" true "$CABLIG24" 'QA')"
+chk24a "QA-024-01 (ii) control: con 'Rigor: estandar' deniega IGUAL y también nombrando" \
+  "DENY-nombra" "$(eva24 "$HOOKS_DIR" true "${OTROS24['QA']}" 'QA')"
+# LA EXENCIÓN DE `ligero` SE CONSERVA, y este caso es el que impide «arreglarlo» de más: si
+# alguien sacara del corto-circuito la comprobación del VALOR —y no sólo la de la ausencia—,
+# `ligero` empezaría a exigir veredicto de QA, que es lo contrario de lo que la plantilla
+# promete para ese nivel. El par sólo cuadra si la ausencia se juzga en los dos niveles y el
+# valor sólo en uno.
+chk24a "QA-024-01 (iii) declarado 'pendiente', 'ligero' permite y 'estandar' deniega: la exención del nivel se conserva" \
+  "ALLOW|DENY" "$(eva24 "$HOOKS_DIR" true "$CABLIG24"$'\nQA: pendiente')|$(eva24 "$HOOKS_DIR" true "${OTROS24['QA']}"$'\nQA: pendiente')"
+# CA-05 SOBRE ESTE MISMO ARREGLO: quien no enciende la llave no nota nada, y se mide contra la
+# versión heredada en la MISMA corrida, que es lo único que lo acredita.
+if [ "$HER24_OK" != si ]; then
+  echo "  SKIP  QA-024-01 (iv) con la llave APAGADA nada cambia  no hay línea base v1.33.0 ($REGHER24)"
+else
+  chk24a "QA-024-01 (iv) llave APAGADA: los dos niveles deciden lo de siempre, hoy y en v1.33.0" \
+    "ALLOW|ALLOW|ALLOW|ALLOW" \
+    "$(eva24 "$HOOKS_DIR" false "$CABLIG24")|$(eva24 "$HOOKS_DIR" false "${OTROS24['QA']}")|$(eva24 "$HER24/hooks" false "$CABLIG24")|$(eva24 "$HER24/hooks" false "${OTROS24['QA']}")"
+fi
+# LAS VÍAS NO SE ENUMERAN, SE COLAPSAN EN LA PROPIEDAD (QA-024-06). Una clave escrita de forma
+# que este lector no la lee como esa clave produce el MISMO estado que no escribirla, así que
+# con la llave encendida deniega por el mismo sitio y nombrando el mismo campo. Las formas de
+# aquí son EJEMPLOS NO EXHAUSTIVOS —la lista de vías conocidas vive en
+# `docs/seguridad/registro-seguridad.md`—: lo que el caso mide es que la puerta no distingue la
+# vía. Y la heredada las permite, así que el par decide distinto.
+#
+# SON LAS MISMAS CUATRO QUE EL `_doc` DE LA LLAVE NOMBRA, y por eso están aquí: un texto
+# heredado que dice «medido» tiene que tener detrás un caso que lo mida. La cuarta parece
+# repetida y no lo es —la `A` es cirílica (U+0410), el homóglifo—; el esperado se DERIVA del
+# número de vías, así que añadir una no obliga a tocar dos sitios.
+VIAS24='qa|Qa|QÁ|QА'; DECHOY24=''; DECHER24=''; ESPHOY24=''; ESPHER24=''; NVIAS24=0
+while IFS= read -r v24; do
+  [ -n "$v24" ] || continue
+  NVIAS24=$((NVIAS24 + 1))
+  ESPHOY24="${ESPHOY24}DENY-nombra "; ESPHER24="${ESPHER24}ALLOW "
+  DECHOY24="$DECHOY24$(eva24 "$HOOKS_DIR" true "$CABLIG24"$'\n'"$v24: pendiente" 'QA') "
+  [ "$HER24_OK" != si ] || DECHER24="$DECHER24$(eva24 "$HER24/hooks" true "$CABLIG24"$'\n'"$v24: pendiente") "
+done <<< "${VIAS24//|/$'\n'}"
+if [ "$HER24_OK" != si ]; then
+  echo "  SKIP  QA-024-01 (v) las vías colapsan en la ausencia  no hay línea base v1.33.0 ($REGHER24)"
+else
+  chk24a "QA-024-01 (v) $NVIAS24 vías de clave no leída (${VIAS24//|/, }; la última con la A cirílica) DENIEGAN nombrando 'QA:' hoy y la heredada las PERMITE" \
+    "$ESPHOY24|$ESPHER24" "$DECHOY24|$DECHER24"
+fi
 
 rm -rf "$HER24" "$MUT24" "$INY24" "$P24"
