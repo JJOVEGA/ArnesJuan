@@ -3,6 +3,12 @@
 > **Versión base de toda cifra de este documento:** rama `rel/registro-1.33.0`, HEAD `7db3cfc`,
 > 2026-09-10. `plugin.json` = `1.33.0`; el tag `v1.33.0` **existe** (`git tag --list 'v1.3*'`).
 > PR #45: **borrador**, 90 commits.
+> **Actualizado por segunda vez (vuelta 3 de 3 de `REQ-017`, 2026-09-10, `f4a5f1f`):** `QA-017-24`
+> quedó **cerrado** y en su lugar entró **`QA-017-31`** (`contrato`) — el mismo defecto **movido**, no
+> desaparecido. El total sigue en **23**. `REQ-017` pasó a **`bloqueado`** por la salida de §6 y está
+> escalado como **`D18`**; la cola subió a **16**. Y la misma comisión midió que **la prueba de
+> `REQ-023 CA-09 (iii)` no acredita su criterio**: `FAIL → SKIP → PASS → PASS` sobre código idéntico,
+> con el techo `1,000×` dentro del ruido del instrumento.
 > **Actualizado tras el cierre de la comisión de QA de `REQ-017` (2026-09-10, sobre `86a44c8`):**
 > el veredicto es `con-hallazgos` y aporta **un bloqueante nuevo**, `QA-017-24`. El recuento pasó de
 > 22 a **23**. La entrada anterior (22) no se borra: queda aquí dicho de dónde a dónde se movió.
@@ -26,7 +32,7 @@
 |---|---|---|---|
 | `REQ-007` | 1.31.0 | `QA-114`, `QA-116`, `QA-117` | 3 |
 | `REQ-013` | 1.32.0 | `SEC-014`, `SEC-020` | 2 |
-| `REQ-017` | **1.34.0** | `QA-017-24` | 1 |
+| `REQ-017` | **1.34.0** | ~~`QA-017-24`~~ (CERRADO en la vuelta 3) → **`QA-017-31`** | 1 |
 | `REQ-019` | 1.35.0 (aplazado) | `SEC-033` | 1 |
 | `REQ-020` | **1.34.0** | `SEC-038`, `SEC-039`, `SEC-040`, `SEC-041`, `SEC-042`, `SEC-043`, `SEC-044`, `SEC-045` | **8** |
 | `REQ-021` | **1.34.0** | `QA-021-10`, `QA-021-11` | 2 |
@@ -137,10 +143,10 @@ hay base para una estimación honesta.
 
 | REQ | Estado medido | Implementación | QA | Seguridad | Migración / cierre |
 |---|---|---|---|---|---|
-| `REQ-017` | `en-progreso` · **`QA: con-hallazgos`** (2026-09-10, `86a44c8`) | hecha; el modo nuevo se movió en las dos mediciones **sin mover ningún umbral** (techo 2600, suelo 50000, mínimo como estadístico, par 70000/140000, `r=3`) — verificado uno por uno | **CERRADO con hallazgos.** 1 `contrato` (`QA-017-24`) + 7 `instrumento`. La banda **no** convierte FAIL en PASS con lo que la sonda puede producir hoy (probado por ejecución, también bajo CPU saturada). `CA-03` **sí** dice lo medido, cifra a cifra | **el auditor NO debe firmar aún**: hay un `contrato` abierto, y el `Seguridad: aprobado` vigente es del **2026-09-08 sobre `538c266`** — un árbol anterior al modo | write-back de `QA-017-24` (**decide si es código o texto**), `QA-017-30`, `QA-017-29`; luego los 5 `instrumento` del desarrollador |
+| `REQ-017` | **`bloqueado`** (2026-09-10, salida de §6: **vuelta 3 de 3 agotada** con un `contrato` abierto) · escalado como **`D18`** | hecha; ningún código cambió entre `86a44c8` y `f4a5f1f` —verificado vacío en `hooks/ tools/ tests/ .github/ .arnes/ templates/ .claude-plugin/` | **3 vueltas gastadas.** `QA-017-24` **cerrado**; entra **`QA-017-31`** (`contrato`): `CA-03` afirma en absoluto que toda abstención publica su máquina y declara **cumplida** una mitad de `SEC-064` que `CA-08 (ii)` declara **abierta**. La medición da la razón a `CA-08`. Remedio: **una** cláusula, sin código | **el auditor tiene que volver de todas formas**: su `aprobado` es del 2026-09-08 sobre `538c266` | `D18` opción (A): cláusula acotada + re-validación **fuera del contador** de §6 |
 | `REQ-020` | **`pendiente`** · `QA: pendiente` · `Seguridad: preventiva` (no cubre código) | **NO IMPLEMENTADO.** La línea `Acredita:` que sus criterios contratan existe en **0 de 63** secciones (`grep -lE 'Acredita:' tests/escenarios/hooks/secciones/*.sh \| wc -l`) | todo | auditoría real (la `preventiva` **no** cubre el código posterior) | 8 bloqueantes = **36 %** de los 22 |
 | `REQ-021` | `bloqueado` · QA `con-hallazgos` **vuelta 3 de 3 AGOTADA** · `Seguridad: preventiva` | correcciones de `QA-021-10/-11` | re-validación | auditoría real | + `SEC-035`, `SEC-036`, `SEC-054` abiertos en el registro y **no** en su campo (§0.b) |
-| `REQ-023` | `bloqueado` · `QA: aprobado` · `Seguridad: aprobado` · **cero bloqueantes en el campo** | — | — | — | **El cero del campo NO resuelve `D13`:** `CA-11` es **falso** sobre este árbol y **dos firmas verdes lo cubren**. Un campo vacío no acredita un criterio que dejó de ser cierto. Además `SEC-052` está abierto en el registro y no en su campo. |
+| `REQ-023` | `bloqueado` · `QA: aprobado` · `Seguridad: aprobado` · **cero bloqueantes en el campo** | — | **`CA-09 (iii)` NO está acreditado, y ahora está medido:** su prueba da `FAIL → SKIP → PASS → PASS` sobre **código idéntico**, siguiendo la carga de la máquina, con el techo `1,000×` **dentro del ruido del instrumento**. El `FAIL` del banco **no es regresión**; y una prueba que oscila **no acredita nada, ni cuando sale PASS**. Ver `D18` (b) | — | **El cero del campo NO resuelve `D13`:** `CA-11` es **falso** sobre este árbol y **dos firmas verdes lo cubren**. Un campo vacío no acredita un criterio que dejó de ser cierto. Además `SEC-052` está abierto en el registro y no en su campo. |
 | `REQ-024` | `bloqueado` · QA `con-hallazgos` **vuelta 3 de 3 AGOTADA** · **`Seguridad: pendiente`** | `QA-024-19`, `SEC-083` (write-back), `SEC-084`; la fila prescrita en `:889` es **falsa**; `CA-03` fila 3 dice `EJECUTADA, NO ACREDITADA` | re-validación acotada | **la auditoría nunca se hizo** | write-back de `CA-12` en la **misma** comisión (no espera la firma) |
 | `REQ-026` | `en-revisión` · `QA: aprobado` **con alcance** · `Seguridad: con-hallazgos` | ver desglose abajo | re-validación de lo que se corrija | R-022 dejó hallazgos | |
 | `REQ-027` | `completado` | — | — | — | — |

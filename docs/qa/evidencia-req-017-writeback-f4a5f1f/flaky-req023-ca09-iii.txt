@@ -1,0 +1,9 @@
+--- corrida 1 (load 1.44) ---
+  SKIP  REQ-023 CA-09 (iii) la guarda no empeora el orden de crecimiento de arnes_norm_clave: relación emparejada contra v1.33.0  no se puede AFIRMAR ... techo 1.000× (mediana 0.919×) · 
+  SKIP  REQ-023 CA-09 (iii) la guarda no empeora el orden de crecimiento de arnes_campo_linea: relación emparejada contra v1.33.0  no se puede AFIRMAR ... techo 1.000× (mediana 0.988×) ·
+--- corrida 2 (load 2.61) ---
+  SKIP  REQ-023 CA-09 (iii) la guarda no empeora el orden de crecimiento de arnes_norm_clave: relación emparejada contra v1.33.0  no se puede AFIRMAR ... techo 1.000× (mediana 0.886×) · 
+  PASS  REQ-023 CA-09 (iii) la guarda no empeora el orden de crecimiento de arnes_campo_linea: relación emparejada contra v1.33.0  mediana ... margen 0.037× > dispersión 0.035×, de 0.930
+--- corrida 3 (load 2.79) ---
+  SKIP  REQ-023 CA-09 (iii) la guarda no empeora el orden de crecimiento de arnes_norm_clave: relación emparejada contra v1.33.0  no se puede AFIRMAR ... techo 1.000× (mediana 0.903×) · 
+  PASS  REQ-023 CA-09 (iii) la guarda no empeora el orden de crecimiento de arnes_campo_linea: relación emparejada contra v1.33.0  mediana ... margen 0.064× > dispersión 0.015×, de 0.926

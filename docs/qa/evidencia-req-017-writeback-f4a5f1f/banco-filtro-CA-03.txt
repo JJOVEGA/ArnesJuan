@@ -1,0 +1,162 @@
+A1 — guard-codigo.sh (quién edita código de la app):
+A3/A2 — guard-completado.sh (transición a completado):
+Veredictos QA/Seguridad (anti-deriva):
+Regresión Windows / formas del manifiesto:
+  SKIP  ruta estilo Windows con backslashes -> deny  (sin cygpath: caso solo de Windows)
+Identidad del agente (prefijo del plugin):
+Bash — escrituras evidentes (cobertura parcial):
+Bash — lo que NO debe denegar (falsos positivos):
+Clase del hallazgo:
+Cierre de REQ por Bash (guard-completado):
+Arranque limpio — plantilla de PENDING_APPROVAL:
+Nivel de rigor:
+Rigor ligero: salta veredictos, no puertas:
+Orden del ciclo (seguridad tras QA):
+Campos solo en la cabecera (la historia no es un veredicto):
+Formas decoradas (marcado de Markdown en el valor):
+guard.sh — punto de entrada unico (los dos guardianes, un proceso):
+Asterisco de nota al pie (una salvedad no es una firma):
+Parentesis = evidencia (el veredicto no cambia):
+Cola de aprobaciones: la seccion acaba en la siguiente cabecera:
+Continuidad automatica (hook Stop -> bloque derivado):
+  PASS  el hook sale 0 (no bloquea la parada)
+  PASS  idempotente: dos pasadas, un solo bloque
+  PASS  estado_derivado.archivo '../fuera.md' NO escribe fuera del proyecto
+  PASS  ...y sigue saliendo 0
+  PASS  docs -> externo (symlink): el bloque derivado NO se escribe fuera
+  PASS  ...y sigue saliendo 0
+  PASS  sin manifiesto tambien sale 0
+  PASS  sin la carpeta destino no la inventa
+Rotacion de artefactos (mover, nunca resumir):
+hooks.json (la forma que NO deja Bash sin guardian):
+stop.sh (continuidad y rotacion en un proceso):
+INERTE — sin manifiesto, el hook no estorba:
+tools/arnes-lectura.sh (el informe tiene que poder decir que algo esta mal):
+DEV REQ-001 v3: presupuesto de analisis y coste lineal (QA-007):
+  PASS  DEV 1.31.0 v3: QA-111 ...y NO por el presupuesto de analisis
+Veredicto fechado y no caduco (veredictos.*, opt-in):
+  PASS  CA-03 parentesis SIN fecha -> deny  (deny)
+Vocabulario de veredictos, aviso y lectura (REQ-003):
+  PASS  CA-03 escribir con-hallazgos sin cerrar -> allow  (allow)
+  PASS  CA-04 el vocabulario viene de lib.sh, no de una copia en el informe
+Rotacion de UNA seccion (la historia se archiva, el contrato no):
+  PASS  CA-03 la cabecera y las demas secciones, byte a byte
+Continuidad bajo averia: el manifiesto ilegible y la escritura que falla:
+  PASS  DEV 1.32.1: REQ-015 CA-03/CA-05 carrera forzada: el texto humano sigue, UN bloque bien formado, sin restos
+Rotacion de una seccion que ES una tabla (REQ-026):
+  PASS  CA-03 el destino se lee como tabla: cabecera + separadora pegadas al bloque
+  PASS  CA-03 dos bloques en el destino: dos cabeceras, dos separadoras, ninguna marca dentro
+La rotacion no publica sobre una lectura caducada (REQ-026 CA-18):
+guard-git: ningun agente ejecuta git destructivo:
+  PASS  CA-03 'git reset --hard' -> deny  (deny)
+  PASS  CA-03 'git reset --hard HEAD~1' -> deny  (deny)
+  PASS  CA-29 guard-git.sh es ejecutable
+Celdas del bloque derivado recortadas (presentacion, no lectura):
+  PASS  CA-03 los valores cortos salen intactos y sin elipsis
+Cola de aprobaciones: una sola regla, la de la puerta (REQ-009):
+  PASS  REQ-009 CA-03 sin mutar, los tres lectores dicen 1
+  PASS  REQ-009 CA-03 mutada SOLO lib.sh, los tres cambian a 2 (la regla es una)
+  PASS  REQ-009 CA-03 retirada la mutacion, los tres vuelven a 1
+Huecos de la auditoria de seguridad R-001 (REQ-007, bloque H):
+El acento y la clave decorada (REQ-010 + REQ-007 bloque A, SEC-004):
+  PASS  REQ-010 CA-03 'en-revisión' en NFD (o+U+0301) no es anomalia (sale 0)
+mv: cannot stat '/tmp/tmp.xnRjslQ5Kk/.arnes/c2': No such file or directory
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C.UTF-8
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=es_ES.UTF-8
+  PASS  REQ-010 CA-07 las tres escrituras caen en la MISMA casilla del bloque derivado
+  PASS  REQ-010 CA-14 el plegado vive SOLO en lib.sh; nadie tiene el suyo
+  PASS  REQ-010 CA-18 no queda ninguna pareja de letras escrita a mano
+  PASS  REQ-010 CA-20 el plegado es solo expansion de parametros (ningun binario)
+  PASS  REQ-010 CA-19 'ls -la' por guard.sh: registros de sed, tr e iconv VACIOS
+  PASS  REQ-007 CA-03 ' Estado: completado' (un espacio de sangrado) -> deny  (deny)
+  PASS  REQ-007 CA-03 '  Estado: completado' (dos espacios) -> deny  (deny)
+  PASS  REQ-007 CA-03 '<TAB>Estado: completado' -> deny  (deny)
+  PASS  REQ-007 CA-22 el informe lee la clave decorada igual que la puerta (1 REQ, 0 notas)
+  PASS  REQ-007 CA-22 el bloque derivado tambien lee la clave decorada
+La ruta escrita y el manifiesto roto (SEC-004, SEC-005, SEC-006):
+  PASS  SEC-004 CA-50b enlace ROTO: responde deny (113ms), ni cuelga ni revienta
+  PASS  REQ-007 CA-53 la ampliacion NO se propaga a templates/arnes-config.json.tpl
+  PASS  DEV 1.31.0 v2: QA-104 un comando que no escribe no consulta el manifiesto (ni avisa ni deniega)
+  PASS  REQ-007 CA-51 SEC-005 el aviso se emite siempre que el manifiesto se consulta (stderr), tambien cuando permite
+  PASS  REQ-007 CA-51 SEC-005 ninguna variable del manifiesto se rellena con el input
+  PASS  DEV 1.31.0 v2: QA-104 'ls -la' cuesta 1 proceso jq (como v1.30.3)
+  PASS  DEV 1.31.0 v2: QA-104 'npm run build' cuesta 1 proceso jq (como v1.30.3)
+tools/arnes-paralelo.sh (REQ-013): qué dos comisiones NO colisionan:
+tools/arnes-paralelo.sh: lo que no se puede medir no autoriza nada:
+Noción de cita (1/5): el interior de <!-- … --> no declara campo — la puerta (REQ-016):
+  PASS  REQ-016 CA-03 rango sin cerrar tras los veredictos en verde -> deny citando el rango
+  PASS  REQ-016 CA-03 el rango sin cerrar se traga el 'QA: pendiente' -> deny, no allow por ausencia
+  PASS  REQ-016 CA-03 el rango sin cerrar se traga la línea del 'Estado:' -> deny igual
+  PASS  REQ-016 CA-03 un '-->' que vive tras el primer '## ' no cierra la cabecera -> deny
+  PASS  REQ-016 CA-03 control: el mismo rango CERRADO y todo en verde -> allow  (allow)
+  PASS  REQ-016 CA-03 frontera: un '## ' dentro del rango termina la cabecera -> no hay cierre que juzgar  (allow)
+  PASS  REQ-016 CA-03 un '-$CR->' no cierra el rango, y el motivo nombra el CR invisible -> deny (regresión de 1.32.1)
+  PASS  REQ-016 CA-03 un '--!>' no cierra el rango para el arnés: sigue cayendo del lado que cierra
+Noción de cita (2/5): los dos lectores y la invariante sobre el corpus (REQ-016):
+  PASS  REQ-016 CA-01 los dos lectores y la cabecera sin el rango coinciden campo a campo (8 pares)
+  PASS  REQ-016 CA-02 'Est<!--x-->ado:' NO fabrica un campo y el 'QA:' de fuera del rango sí se lee
+  PASS  REQ-016 CA-02 el corpus de cabeceras se cosecha por glob del corredor (169 cabeceras, sobre las claves derivadas de ARNES_CLAVES: QA · Seguridad · Sensible a seguridad · Hallazgos abiertos · Rigor · Estado)
+  PASS  REQ-016 CA-02 ningún deny se volvió allow al insertar un rango (213 variantes sobre las 71 cabeceras que deniegan, de 169 cosechadas)
+Noción de cita (3/5): comentar una declaración la RETIRA — CA-11 (REQ-016):
+  PASS  REQ-016 CA-11 los campos de la equivalencia se derivan del lector de lib.sh (5 campos)
+  PASS  REQ-016 CA-11 comentar decide igual que borrar en las 15 parejas comprobadas
+  PASS  REQ-016 CA-11 las parejas tienen dientes en las dos direcciones (2 deny · 13 allow)
+Noción de cita (4/5): lo que el informe dice, el coste y los textos heredados (REQ-016):
+  PASS  REQ-016 CA-08 'arnes_sin_cita' existe y es sólo expansión de parámetros (ningún proceso)
+  PASS  REQ-016 CA-08 el bloque derivado gasta las mismas pasadas de awk con citas que sin ellas (1)
+Noción de cita (5/5): un CR que no termina la línea no se puede medir (REQ-016 · SEC-024):
+--- 37/1 · el coste del escáner: el dominio de equivalencia, dentro y fuera (REQ-017 CA-01 y CA-10) ---
+--- 37/2 · el coste del escáner: la escala y las razones (REQ-017 CA-03, CA-04 y CA-06) ---
+  PASS  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  TODA la banda cae del lado conforme · cociente de duplicación (70000→140000 bytes), que NO debe pasar del techo = 2.107× · banda compatible [1.908×, 2.206×] · mín/máx 307946/322416µs sobre 146146/161363µs · techo 2.600× · modo=intercalado k=20 series=3 · plataforma=linux-gnu-x86_64-bash5.3 carga=4.03
+  PASS  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  TODA la banda cae del lado conforme · el mismo cociente sobre v1.32.1 (70000→140000 bytes), que SÍ debe pasar del techo = 3.936× · banda compatible [3.674×, 4.225×] · mín/máx 460778/494542µs sobre 117038/125393µs · techo 2.600× · modo=intercalado k=1 series=3 · plataforma=linux-gnu-x86_64-bash5.3 carga=4.03
+  FAIL  REQ-017 CA-03 la banda decide en las dos direcciones: PASS y FAIL sólo por unanimidad, y el techo dentro de la banda es SKIP  se esperaba <PASS FAIL SKIP SKIP PASS FAIL SKIP SKIP SKIP SKIP > y se obtuvo <>
+  PASS  REQ-017 CA-03 par discriminante: la banda sólo puede ESTRECHAR — nunca convierte un FAIL en PASS, y sí convierte veredictos en abstención  (7 entradas: 0 de FAIL a PASS · 1 de FAIL a abstención · 2 de PASS a abstención)
+  FAIL  REQ-017 CA-03 el SKIP de la banda cita las TRES cifras: la banda, el cociente y el techo  al mensaje de la abstención le falta: el-SKIP el-extremo-bajo-de-la-banda(2.250) el-extremo-alto-de-la-banda(3.200) el-cociente(2.700) el-techo(2.600) — <>
+--- 37/3 · el coste del escáner: la pared de los 60 s (REQ-017 CA-09) ---
+--- 37/4 · la ruta crítica del banco (REQ-017 CA-05, con la mitad de CA-06 que la prueba) ---
+--- 37/5 · el camino de una cabecera normal: procesos y reloj (REQ-017 CA-08 y CA-06) ---
+--- 38/1 · los instrumentos de tests/util/: el registro y su parser (REQ-021 CA-09 y CA-01) ---
+  PASS  REQ-021 CA-09 bash -n pasa en los 2 archivos de tests/util/ (las gates del manifiesto no miran tests/, y .arnes/config.json no se toca)
+  PASS  REQ-021 CA-01.1/CA-09 los 2 instrumentos son ejecutables y traen shebang: se INVOCAN, no se hacen source, y por eso $BASHPID dentro de $( ) deja de ser expresable
+  PASS  REQ-021 CA-01.2/CA-01.3 las 2 sondas emiten UN registro de UNA línea y ninguna imprime una línea con la forma que el corredor usa para contar casos
+  PASS  REQ-021 CA-01.5/CA-10.2 el parser valida cada campo POR SEPARADO —ausente, vacío y no numérico son errores con motivo, nunca un cero—, exige 'vivos' sólo a quien puede observarlo y acepta procesos=no-aplica sin confundirlo con un cero
+  PASS  REQ-021 CA-01.4 tests/util/README.md apunta al único parser (sonda_lee, en el corredor) y no lo transcribe
+--- 38/2 · los instrumentos de tests/util/: la calibración y su procedencia (REQ-021 CA-03 y CA-08 (iii)) ---
+  PASS  REQ-021 CA-03 calibración de sonda-reloj.sh: el sujeto sensible responde al parámetro y el insensible no  sensible 2.045× · insensible 1.059× (esperados 2,000 y 1,000, los dos en banda y distinguidos; tamaño derivado del suelo en esta corrida: cal_n=161616 a 4× el suelo, r=3)
+  PASS  REQ-021 CA-03 calibración de sonda-procesos.sh: el sujeto sensible responde al parámetro y el insensible no  sensible 2.000× · insensible 1.000× (esperados 2,000 y 1,000, los dos en banda y distinguidos; tamaño derivado del suelo en esta corrida: cal_n=4 a 4× el suelo, r=1)
+  PASS  REQ-021 CA-03 (c) el tamaño de cada mitad se DERIVA del suelo medido en esta corrida, se publica, y ninguna mitad queda pegada al suelo  (cal_n=161616 derivado de 1237ns/vuelta para 4× el suelo de 50000µs que declara el JUEZ —la sonda publica suelo=50000µs y no decide—; sensible 227194µs · insensible 207721µs, ninguno pegado al suelo)
+  PASS  REQ-021 CA-03 (a.2) la magnitud de sonda-reloj.sh sale de OBSERVAR el sujeto: bajo el suelo dice suelo y no publica número  (disc_param=161616 · disc_obs=446 · testigo del juez=717, obtenido antes de invocar: terna <717 1789045513718685 1789045513718699>)
+  PASS  REQ-021 CA-03 (a.2) la magnitud de sonda-procesos.sh sale de OBSERVAR el sujeto: coincide con el testigo que el juez contó, no con el parámetro  (disc_param=4 · disc_obs=2 · testigo del juez=2, obtenido antes de invocar: terna <2 1789045513718685 1789045513718699>)
+  PASS  REQ-021 CA-03 (a.2) fail-before: a sonda-procesos.sh se le quita la observación en una COPIA —el único camino que ejerce el sujeto pasa a ser aritmética— y el juez la caza; la misma copia sin mutar pasa  (mutada: 'procesos' publica disc_obs=4 donde el testigo del juez dice 2 (parámetro con que se la invocó: 4): la magnitud no sale de observar el sujeto · sin mutar: pasa con la terna <2 1789045513718685 1789045513718699>)
+  PASS  REQ-021 CA-03 (a.2) fail-before: un registro de reloj SIN la observación —el parámetro donde va lo medido— lo caza el juez, y el real pasa  (neutralizado: 'reloj' publica disc_estado=ok sobre un sujeto que el juez cronometró en 717µs, por debajo del suelo de 50000µs: quien no mide no puede saber que está bajo el suelo (parámetro 161616, disc_obs=161616) · real: pasa con la terna <717 1789045513718685 1789045513718699>)
+  PASS  REQ-021 CA-03 (a.3) cond. 3 ANTERIORIDAD: un testigo que el juez no tenía ANTES de invocar la sonda ABORTA el caso, no lo pasa  (el juez ABORTA y no pasa: condición 3 de CA-03 (a.3) (ANTERIORIDAD): el juez obtuvo el testigo de 'procesos' en 1789045513718700µs y la sonda se invocó en 1789045513718699µs, así que el testigo NO existía antes de la invocación y la sonda pudo alimentarlo (testigo=2))
+  PASS  REQ-021 CA-03 (a.3) cond. 1 NO VACUIDAD: un testigo IGUAL al parámetro ABORTA —su verde sería cierto por vacío, y una colisión es un defecto del dimensionado—  (el juez ABORTA y no pasa: condición 1 de CA-03 (a.3) (NO VACUIDAD): el testigo de 'procesos' COINCIDE con el parámetro (4): el caso no distingue nada y su verde sería cierto POR VACÍO — una colisión es un defecto del dimensionado, no un veredicto)
+  PASS  REQ-021 CA-03 (a.3) cond. 4: si el registro DECLARA el tamaño del sujeto discordante, el caso ABORTA —ese tamaño es del juez—  (el juez ABORTA y no pasa: condición 4 de CA-03 (a.3): 'procesos' DECLARA en su registro el tamaño del sujeto discordante ( disc_veces=3), y ese tamaño es del juez; si lo pone la sonda, el parámetro y el testigo vuelven a salir de la misma fuente y el contraste no puede fallar (QA-021-10))
+  PASS  REQ-021 CA-03 (a.3) cond. 5: el umbral con que el juez decide NO sale del registro juzgado —un reloj que publique suelo=1µs no compra su propia abstención—  (disc_param=161616 · disc_obs=446 · testigo del juez=717, obtenido antes de invocar: terna <717 1789045513718685 1789045513718699>)
+--- 38/3 · los instrumentos de tests/util/: la descendencia, el estadístico y el juez (REQ-021 CA-04, CA-02 y CA-10) ---
+Carácter invisible (1/3): la puerta deniega por MEDIBILIDAD (REQ-023 · SEC-047):
+  PASS  REQ-023 CA-02 el dominio se DERIVA midiendo: 5 de 6 campos del lector abren al faltar [QA Sensible a seguridad Hallazgos abiertos Rigor Estado] · fuera [Seguridad]
+--- 39/2 · el carácter invisible: la clase (REQ-023 CA-03) ---
+  PASS  REQ-023 CA-03 anti-vacuidad: la base sin ningún carácter de la clase PERMITE, así que hay algo que denegar
+  PASS  REQ-023 CA-03 las tres familias aportan entradas (6 + 8 + 8), los dos estratos se derivan de las 6 claves (alfabeto de 21) y las 2 multi-palabra traen cabecera
+  PASS  REQ-023 CA-03 familia (i) bytes de control C0: las 6 entradas insertadas en una clave reconocida DENIEGAN
+  PASS  REQ-023 CA-03 familia (ii) anchura cero y formato: las 8 entradas insertadas en una clave reconocida DENIEGAN
+  PASS  REQ-023 CA-03 familia (iii) UTF-8 mal formado: las 8 entradas insertadas en una clave reconocida DENIEGAN
+        REQ-023 CA-03 sorteo estratificado · semilla 702825 (repetible con ARNES_SEM_39=702825) · tiradas por rama: 1(E1→DENY)=3 · 2(blanco→DENY)=5 · 3(E2 no blanco, fuera de la propiedad de CA-01, se publica y no se juzga)=0 · descartadas por no abrir en la heredada=0
+  PASS  REQ-023 CA-03 rama 1: entrada AJENA al alfabeto (E1) por P1 o P2 DENIEGA — las 3 tiradas de la rama (semilla 702825)
+  PASS  REQ-023 CA-03 rama 2: el BLANCO duplicado (P3) o insertado (E2) DENIEGA — las 5 tiradas de la rama (semilla 702825)
+--- 39/3 · el carácter invisible: los lectores (REQ-023 CA-06, CA-07 y CA-12) ---
+--- 39/4 · el carácter invisible: el coste por las tres vías (REQ-023 CA-09) ---
+--- 39/5 · el carácter invisible: el corpus (REQ-023 CA-04) ---
+--- 40/1 · la ausencia que abre: la clase derivada (REQ-024 CA-01, CA-02) ---
+--- 40/2 · la ausencia que abre: migración, punteros y coste (REQ-024 CA-03, CA-05, CA-07, CA-11) ---
+  PASS  REQ-024 CA-03 control del puntero: siguiendo REQ-016 CA-11 al pie de la letra, 2 de los 4 campos de la clase NO tienen su ausencia decidida en hooks/guard-completado.sh — «Sensible a seguridad»→lib.sh «Rigor»→lib.sh—, así que el sitio único de CA-02 es OTRO archivo y CA-03 resuelve por su salida (ii): REQ-016 vuelve a en-progreso y su CA-11 se reescribe con el puntero real. ESTE CASO PUBLICA LA MEDICIÓN Y NO ACREDITA CA-03: el write-back es del analista y no se ha hecho
+--- 40/3 · la ausencia que abre: los textos que un proyecto hereda (REQ-024 CA-06) ---
+--- 40/4 · la ausencia que abre: el veredicto de seguridad (REQ-024 CA-02, SEC-082) ---
+--- 40/5 · la ausencia que abre: el radio de migración POR ACTO (REQ-024 CA-05) ---
+--- 40/6 · la ausencia que abre: los ACTOS derivados del código (REQ-024 CA-12, ADR-011) ---
+aviso: vuelta parcial (63 de 63 secciones, filtro 'CA-03'): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 89 PASS, 2 FAIL, 1 SKIP — ninguna causa común: cada uno con su motivo
+       · ruta estilo Windows con backslashes -> deny  (sin cygpath: caso solo de Windows)

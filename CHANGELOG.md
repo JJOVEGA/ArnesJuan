@@ -2,6 +2,102 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `REQ-017` a `bloqueado` por la salida de §6, y la prueba de `REQ-023 CA-09 (iii)` medida como no acreditante
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (la escalada) y qa-tester (la vuelta 3). **Bajo delegación de 24 h.**
+
+**La vuelta 3 de 3 de `REQ-017` se agotó**, y esta vez el número de vuelta **va declarado en el
+campo**: el veredicto anterior lo omitía y sin él el contador de §6 no se podía auditar desde el
+disco, que es donde tiene que poder auditarse. QA lo verificó contra `git show`, no lo aceptó de mí.
+
+**`QA-017-24` quedó CERRADO**, y las cuatro comprobaciones le dieron la razón al write-back —la
+decisiva: imprimir la cota **no** cerraría `SEC-064`, cuya remediación pide «*una señal que lo
+publique sin depender de que alguien lea la salida*»—. Pero al cerrarlo apareció **`QA-017-31`**
+(`contrato`): **el defecto se movió, no desapareció.** `CA-03` afirma en absoluto que *«toda
+abstención publica de qué máquina es»* y declara **cumplida** la mitad (ii) de `SEC-064`;
+`CA-08 (ii)`, dos commits después, declara **esa misma mitad abierta** con dueño y vencimiento. No
+pueden ser las dos verdaderas, y la medición da la razón a `CA-08`: la abstención **no mide nada** y
+publica la carga de la **directa**. Misma forma que `QA-017-24` con el objeto cambiado, y **sin
+siquiera un «no exhaustiva»** — se aplica el refinamiento del propietario en `D5`.
+
+**Aplicada la salida de `AGENTS.md` §6, no una decisión discrecional:** agotado el tope, la vía del
+residual declarado **no está disponible** con un `contrato` abierto, y la reclasificación a errata
+editorial **la reserva §6 al propietario**. Así que `REQ-017` pasa a **`bloqueado`** y se escala como
+**`D18`**; la cola sube a **16**, comprobado con `tools/arnes-lectura.sh`. El remedio está
+identificado y es **una** cláusula del mismo autor en el mismo REQ —copiar a `CA-03` la frontera que
+`CA-08 (ii)` ya escribió—, sin código. **No lo tomé yo, y la razón importa: es barato y evidente, y
+eso es justamente lo que hace tentador saltarse la puerta.**
+
+### La respuesta medida a «prueba corregida» vs «criterio acreditado»
+
+El propietario pidió el 2026-09-09 distinguir las dos cosas para `REQ-023 CA-09 (iii)`. La misma
+comisión lo midió, y la respuesta es que **la prueba está corregida y el criterio NO está acreditado**:
+
+| Corrida | `loadavg` | `arnes_campo_linea` | mediana |
+|---|---|---|---|
+| banco completo | 3,36 | **FAIL** | 1,159× |
+| 1 | 1,44 | **SKIP** | 0,988× |
+| 2 | 2,61 | **PASS** | ~0,93× |
+| 3 | 2,79 | **PASS** | ~0,93× |
+
+**`FAIL → SKIP → PASS → PASS` sobre código idéntico**, y el veredicto sigue a la carga. El techo
+`1,000×` **vive dentro del ruido del instrumento** — la misma patología que `REQ-017 CA-08 (ii)`
+describe con esas palabras. Dos consecuencias, y ninguna es «ruido»: el `FAIL` que el banco da hoy
+**no es una regresión** y el `rc=1` no acusa al código; y **una prueba cuyo veredicto oscila sobre
+código idéntico no acredita nada, ni cuando sale PASS**. `REQ-023` sigue `bloqueado`; esto no lo
+desbloquea, lo explica.
+
+También abierto por la vuelta 3: **`QA-017-32`** (`instrumento`, `desarrollador`) — el banco da FAIL
+espurios **con filtro** porque `razon37:296` lleva su propia guarda de `FILTRO`. Es **fail-closed** y
+el CI no usa filtro, así que no bloquea. Las tres quality gates en verde y la autoprueba del corredor
+**106 PASS · 0 FAIL**: el write-back de texto no rompió `CA-18` ni el `CASOS_ESPERADOS`.
+
+Los ocho `instrumento` de `REQ-017` siguen abiertos con su dueño; **ninguno se cerró**. No se firmó
+`Seguridad:` —su `aprobado` es del 2026-09-08 sobre `538c266`, anterior al modo, así que el auditor
+vuelve de todas formas—, no se marcó `completado`, no se reescribió ningún criterio y no se tocó
+`hooks/`, `tools/`, `tests/` ni `.github/`.
+
+## [Interno] — 2026-09-10 · `REQ-017` vuelta 3 de 3: `QA-017-24` cerrado, y la promesa absoluta que el write-back movió de objeto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (Opus, por la política de autoalojamiento de §5).
+
+**Re-validación acotada del write-back de la cota sobre `f4a5f1f`, en sus dos tramos (`a139155` =
+`CA-03`, `f4a5f1f` = `CA-08 (ii)`). Veredicto: `con-hallazgos`, y el campo `QA:` declara su número de
+vuelta** — el de la vuelta 2 no lo declaraba, así que el contador de `AGENTS.md` §6 no se podía
+auditar desde el disco, que es donde tiene que poder auditarse.
+
+- **Precondición verificada, no supuesta:** `git diff 86a44c8..f4a5f1f` sobre `hooks/ tools/ tests/
+  .github/ .arnes/ templates/ .claude-plugin/` sale **vacío**. Los dos tramos son texto, así que se
+  reusa la medición de la vuelta 2 y **no** se re-midieron banda, techo, umbrales ni modo.
+- **`QA-017-24` (`contrato`) CERRADO.** Sus dos mitades quedan resueltas, y la razón decisiva del
+  write-back se comprobó **contra la sede del hallazgo**: la remediación de `SEC-064` pide
+  literalmente «*una señal que lo publique sin depender de que alguien lea la salida*», luego
+  imprimir la cota en un `SKIP` **no** la cerraría. También se verificaron la sede (`SEC-064` ofrece
+  `CA-06` **o** `CA-08 (ii)`), las **dos** bases de la cifra `1`, y que ninguna de las dos cotas cae
+  en las tres formas prohibidas de `requirements/README.md`.
+- **`QA-017-31` (`contrato`, dueño `analista-requerimientos`) ABIERTO — y es el mismo defecto con el
+  objeto cambiado.** `CA-03` afirma sin frontera que «*toda abstención de este caso publica de qué
+  máquina es la medición que la produjo*» y declara **cumplida** la mitad (ii) de `SEC-064`, mientras
+  `CA-08 (ii)` declara **esa misma mitad abierta** con dueño y vencimiento. La medición le da la
+  razón a `CA-08`: reproducido con las funciones reales extraídas en sólo lectura, con el tag
+  v1.32.1 ausente la abstención del fail-before publica la **carga de la medición directa**
+  (`QA-017-27`), y si `mide37i` falla antes de leer el registro publica `plataforma=n/a carga=n/a`.
+  Aplica la regla del propietario: *añadir «no exhaustiva» no basta si la promesa sigue siendo
+  absoluta* — y aquí no hay ni eso.
+- **`QA-017-32` (`instrumento`, dueño `desarrollador`) ABIERTO:** el banco da **FAIL espurios con
+  filtro** (2 con `CA-03`, 3 con `REQ-017`), porque `razon37` lleva su propia guarda de `FILTRO` y
+  los autotests la invocan con nombre sintético. **Fail-closed**, y el CI no usa filtro.
+- **El banco NO está verde, y no es de este REQ:** **1057 PASS · 1 FAIL · 6 SKIP, `rc=1`**. El `FAIL`
+  es `REQ-023 CA-09 (iii)`, medido **flaky** en cuatro corridas sobre código idéntico —**FAIL, SKIP,
+  PASS, PASS**— con el techo `1,000×` **dentro** del ruido. No se amplía ni se cierra, pero con
+  `rc=1` ninguna quality gate de §7 acepta un cierre.
+- Las **tres** quality gates en verde y autoprueba **106 PASS · 0 FAIL**: el write-back **no** rompió
+  el cuadre de `CA-18` ni el `CASOS_ESPERADOS`.
+- **Tope de §6 agotado y lo que queda es `contrato`**, así que la vía del residual declarado no está
+  disponible: **se recomienda escalar al propietario**. Nada se cerró, ninguna clase se bajó para
+  conseguir verde, y `Seguridad:` no se firmó (va después de QA, §6).
+
+Evidencia con versión base y método: `docs/qa/evidencia-req-017-writeback-f4a5f1f/00-metodo-y-base.md`.
+Detalle y reproducción: `docs/qa/1.34.0.md`.
+
 ## [Interno] — 2026-09-10 · La cola re-derivada: `D2` decía 20 bloqueantes y son 23, y su «casi la mitad es deuda» era el 22 %
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **Bajo delegación de 24 h.**
 

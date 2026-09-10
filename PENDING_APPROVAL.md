@@ -24,7 +24,10 @@
 
 ## Pendientes
 
-> **Índice — 15 decisiones, agrupadas por lo que desatascan.** Escrito el 2026-09-10 para que la cola se
+> **Índice — ~~15~~ 16 decisiones, agrupadas por lo que desatascan.** `D18` entró el 2026-09-10:
+> `REQ-017` agotó su vuelta 3 de 3 y queda `bloqueado`; §6 me obliga a escalar porque lo que queda
+> abierto es `contrato` y la reclasificación editorial te está reservada. Trae además la evidencia
+> medida de que **la prueba de `REQ-023 CA-09 (iii)` no acredita su criterio**. Escrito el 2026-09-10 para que la cola se
 > pueda leer desde GitHub sin recorrerla entera. Cada entrada lleva su evidencia y su recomendación;
 > ninguna se ha ejecutado.
 
@@ -54,6 +57,9 @@
 **`D13`** `REQ-023`, otro bloqueo · **`D14`** `REQ-024` `bloqueado` o residual · `D15`
 `veredictos.caducan_con_codigo` (premisa corregida) · `D16` `QA-016-04`, la convención que abre ·
 **`D17`** `SEC-084` en lo publicado.
+
+**Y la dieciséis:** **`D18`** `REQ-017` `bloqueado` por tope agotado + la prueba de `CA-09 (iii)`
+que oscila sobre código idéntico.
 
 **Resueltas** al final del archivo: `D1` (`REQ-023` a `bloqueado` con extensión) y `D5` (`SEC-079`).
 
@@ -123,6 +129,92 @@ residual** (dueño, forzador medido y vencimiento) o **aceptar explícitamente**
 > completo, aplicada a esta cola. *Re-derivación:* `comm -23` entre los ids de cabecera
 > `` `contrato` · **abierto** `` del registro y los ids de los campos. **No es decisión tuya:** el
 > registro es del `auditor-seguridad` y el campo del `analista-requerimientos`.
+
+### D18 · `REQ-017` agotó su vuelta 3 de 3 y queda `bloqueado` — y la misma medición demuestra que la prueba de `REQ-023 CA-09 (iii)` no acredita su criterio
+
+**[2026-09-10] (coordinadora, bajo la delegación de 24 h) — escalada obligada por `AGENTS.md` §6.**
+
+Escalo porque **§6 me lo impone y la delegación no me alcanza**: agotado el tope, la salida del
+residual declarado **no está disponible** cuando lo que queda abierto es `contrato`, y la
+reclasificación a errata editorial *«sólo puede bajar ese nivel con autorización expresa del
+propietario (Juan), nunca por reclasificación automática de un agente»*. Es exactamente el acto que
+§6 me prohíbe, así que no lo hago.
+
+Las dos partes van juntas porque **comparten causa**: un criterio promete más de lo que el
+instrumento puede medir. Es la familia que esta ventana lleva persiguiendo desde `SEC-047`.
+
+**(a) `QA-017-31` (`contrato`, dueño `analista-requerimientos`) — el defecto se MOVIÓ, no desapareció.**
+
+`QA-017-24` quedó **cerrado**: QA verificó el write-back y le dio la razón en las cuatro
+comprobaciones, incluida la decisiva —imprimir la cota **no** cerraría `SEC-064`, cuya remediación
+pide *«una señal que lo publique sin depender de que alguien lea la salida»*. Pero al hacerlo apareció
+una contradicción **entre dos criterios**, no dentro de uno:
+
+- `CA-03` afirma, **absoluto y sin frontera**: *«Toda abstención de este caso **publica de qué
+  máquina** es la medición que la produjo»*, y declara **CUMPLIDA** la mitad (ii) de `SEC-064`.
+- `CA-08 (ii)`, **dos commits después**, declara **esa misma mitad ABIERTA**, con dueño
+  `desarrollador` y vencimiento.
+
+**No pueden ser las dos verdaderas.** Y la medición le da la razón a `CA-08`, reproducida por QA con
+las funciones reales extraídas en sólo lectura: la abstención **no mide nada** y publica la carga de
+la **medición directa** (`carga=2.67`, que es la de la directa); y si la sonda falla antes de leer el
+registro, publica `plataforma=n/a carga=n/a`. Es la **misma forma** que `QA-017-24`, con el objeto
+cambiado: *«toda abstención declara su cota»* → *«toda abstención publica de qué máquina es»*. Y aquí
+**no hay ni un «no exhaustiva»** — se aplica tu propio refinamiento de `D5`: *«añadir solamente "no
+exhaustiva" no basta si la promesa principal sigue siendo absoluta»*.
+
+**Remedio identificado, y es pequeño:** **una** cláusula del mismo autor en el mismo REQ — copiar a
+`CA-03` la frontera que `CA-08 (ii)` **ya escribió** («su ausencia no invalida el veredicto de una
+corrida; limita la agregación»), con su dueño y su vencimiento. **No es trabajo de código.**
+
+**(b) La prueba de `REQ-023 CA-09 (iii)` está corregida y NO acredita su criterio — medido, no
+inferido.** Pediste el 2026-09-09 distinguir *«prueba corregida»* de *«criterio acreditado»*. Aquí
+está la evidencia, y es de esta comisión:
+
+| Corrida | `loadavg` | `arnes_campo_linea` | mediana |
+|---|---|---|---|
+| banco completo | 3,36 | **FAIL** | 1,159× |
+| 1 | 1,44 | **SKIP** | 0,988× |
+| 2 | 2,61 | **PASS** | ~0,93× |
+| 3 | 2,79 | **PASS** | ~0,93× |
+
+**`FAIL → SKIP → PASS → PASS` sobre código IDÉNTICO**, y el veredicto sigue a la carga de la máquina.
+El techo `1,000×` **vive dentro del ruido del instrumento** — la misma patología que `REQ-017
+CA-08 (ii)` describe con esas palabras. Consecuencia: el `FAIL` que el banco da hoy **no es una
+regresión**, y el `rc=1` no acusa al código; pero **una prueba cuyo veredicto oscila sobre código
+idéntico no acredita nada**, ni cuando sale PASS. `REQ-023` sigue `bloqueado` y esto **no** lo
+desbloquea: lo explica.
+
+QA **no** amplió ni cerró nada aquí, y yo tampoco. Lo traigo porque cambia lo que se puede afirmar.
+
+**Lo que NO hice, y lo digo para que se pueda auditar:** no reclasifiqué `QA-017-31`, no abrí una
+vuelta 4, no cerré ningún hallazgo, no retiré ninguna prueba, no relajé ningún umbral y no toqué
+`Seguridad:` —cuyo `aprobado` sigue siendo del 2026-09-08 sobre `538c266`, **anterior al modo
+medido**, de modo que el auditor tiene que volver de todas formas.
+
+**Opciones**
+
+- **(A) — recomendada.** Autorizás **una cláusula acotada** para `QA-017-31`: el analista copia a
+  `CA-03` la frontera de `CA-08 (ii)`, y QA re-valida **fuera del contador** de §6, declarándolo así
+  en el campo. Alcance cerrado, sin código, sin riesgo nuevo. `REQ-017` vuelve a `en-progreso`.
+  *Después queda:* la re-firma del auditor sobre el árbol nuevo, y los ocho `instrumento` con dueño.
+- **(B)** `REQ-017` se queda `bloqueado` hasta la ventana siguiente. *Precio:* el modo intercalado
+  queda implementado, medido y **sin acreditar**, y `CA-03` se queda con una promesa que la medición
+  contradice — en un REQ cuya sonda decide la puerta requerida de `main`.
+- **(C)** Lo declarás **errata editorial** con tu autorización expresa (§6 te lo reserva a vos).
+  *No la recomiendo:* la contradicción tiene **efecto en la máquina** —`CA-03` declara cumplida una
+  mitad de `SEC-064` que sigue abierta—, así que bajar su clase sería el acto que §6 quiere impedir.
+
+**Recomendación:** **(A)**, y añado la razón por la que no me la tomo yo: el remedio es barato y
+evidente, y **eso es justamente lo que hace tentador saltarse la puerta**. La regla que lo prohíbe
+es la que protege el resto.
+
+**Espera:** tu elección entre (A), (B) y (C). Y para la parte (b), si querés que `CA-09 (iii)` entre
+en el alcance de la decisión **4** de `docs/propuesta-cierre-1.34.0.md` con esta evidencia.
+
+**Evidencia en disco:** `docs/qa/1.34.0.md` (sección de la vuelta 3) ·
+`docs/qa/evidencia-req-017-writeback-f4a5f1f/00-metodo-y-base.md` (versión base y método dentro del
+propio artefacto, §14.B.7).
 
 ### D3 · `SEC-072` y `SEC-073` de `REQ-026` — **no se cierran por redacción ni por aceptación implícita**
 

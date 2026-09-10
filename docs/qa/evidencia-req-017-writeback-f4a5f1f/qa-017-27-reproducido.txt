@@ -1,0 +1,9 @@
+### GAP 1 — la DIRECTA mide de verdad; el fail-before NO mide (tag v1.32.1 ausente)
+   tras la DIRECTA (medicion REAL): MED37_PLAT=<linux-gnu-x86_64-bash5.3> MED37_CARGA=<2.67>
+   carga real del sistema ahora:    2.67
+  PASS  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  TODA la banda cae del lado conforme · cociente de duplicación = 2.064× · banda compatible [2.019×, 2.132×] · mín/máx 173735/179517µs sobre 84173/86015µs · techo 2.600× · modo=intercalado k=20 series=3 · plataforma=linux-gnu-x86_64-bash5.3 carga=2.67
+
+  SKIP  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  no hay con qué medir: no hay línea base v1.32.1 (tag ausente o árbol a medias) (medido=<vacío> base=<vacío>) · mín/máx n/a/n/aµs sobre n/a/n/aµs · techo 2.600× · modo=intercalado k=1 series=3 · plataforma=linux-gnu-x86_64-bash5.3 carga=2.67
+
+>>> El fail-before NO MIDIO NADA, y aun asi publica plataforma y carga:
+>>> son las de LA DIRECTA. No existe 'la medicion que la produjo'.
