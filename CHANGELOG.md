@@ -2,6 +2,53 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-09 · El write-back que convierte el error de verificación de la coordinadora en una guarda del criterio
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de decisión del propietario por 24 h (2026-09-09).**
+
+Segundo pase de write-back sobre `CA-10`, para `QA-023-18` y `QA-023-19`. Un solo archivo tocado:
+`requirements/REQ-023.md`.
+
+**Lo mejor del pase no es lo que arregla, sino lo que impide que vuelva.** «Cómo se comprueba» gana un
+apartado de **cómo NO se comprueba**, y cita el fallo real: *el `grep` de la cadena dio 0 sobre una fila
+que seguía prometiendo*. Ése fue el error de la coordinadora —verificar una **cadena** en vez de una
+**propiedad**— y ahora es una **anti-forma escrita en el criterio**. El barrido de `(iii)` pasa a ser
+**enumerativo obligatorio**: oraciones numeradas y **la 1 juzgada aislada**. Además entra un punto **(v)**:
+la descripción se comprueba **ejecutando** —las tres entradas dan DENY, así que el texto tiene que derivar
+DENY para las tres—, y una **cuarta candidata** al control negativo: la fila de `1154417` **también
+incumple**, por su titular.
+
+**`QA-023-18`:** el `Entonces` de `CA-10` pasa de «*no deja cerrar*» a «*no deja cerrar **dentro de lo que
+la guarda alcanza, acotado en la propia celda***», y la exigencia de «ninguna frase» gana **dónde**: «*la
+PRIMERA —la oración titular— se juzga AISLADA del resto de la celda y tiene que ser verdadera leída
+sola*». Eso cierra exactamente la puerta que el `qa-tester` había dejado como **condición** de su veredicto
+de «honesto, no coartada».
+
+**`QA-023-19`:** el mecanismo se reescribe **como el código lo hace** —«*retirado lo ajeno **y después
+todos sus blancos**… clave **leída también sin sus blancos**»—, con el motivo correcto del silencio (lo
+retirado **sustituía una letra**, y reponer *qué* letra exigiría **elegir entre candidatos**). Y se añade
+el **sitio único de la conducta** (`hooks/lib.sh`, `_arnes_clave_oculta`) con una regla que vale para todo
+el proyecto: **si el texto y el código divergen, el equivocado es el texto**. Más «una sola descripción por
+celda»: si el mecanismo aparece dos veces, las dos han de ser **literalmente la misma frase**.
+
+**Y el punto 4 nombra los dos casos que incumplen**, para que no haya que deducirlos: (a) acotación
+completa **con titular absoluta**; (b) describir un mecanismo que el código no hace **aunque describa
+menos**.
+
+**Las dos entradas del Historial que repetían la descripción falsa NO se reescriben:** quedan **anotadas
+en su sitio** con la corrección fechada y su causa, conservando la letra original como rastro. Es la forma
+correcta —un historial que se corrige encima deja de ser historial— y conviene que quede dicha.
+
+**Clasificación: menor, sin ADR.** No cambia alcance (12 criterios siguen siendo 12), ni la decisión base,
+ni el rigor, ni ningún techo, ni lo que la puerta hace. Corrige **dónde** va una condición que el criterio
+ya contrataba y **alinea una descripción con el código** en la dirección que `requirements/README.md` §
+«Cuando el código cubre MÁS de lo que el criterio promete» manda arreglar en el mismo cambio que lo
+descubre. Lo volvería de fondo: meter el homóglifo en esta ventana, mover el reparto blanco/letra, o
+cambiar `hooks/` para que reponga y colapse.
+
+`SEC-079`, `QA-023-18` y `QA-023-19` **siguen abiertos**: faltan `desarrollador` → `qa-tester` →
+`auditor-seguridad`. `CA-09 (iii)` sin acreditar; `SEC-078`, `SEC-080`, `QA-023-20` y `QA-023-21` con sus
+dueños.
+
 ## [Interno] — 2026-09-09 · La promesa absoluta no se había borrado: sobrevivía en la oración titular, y la coordinadora había verificado una cadena en vez de una propiedad
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus, revisión acotada al cambio) · consolidación: coordinadora.
 
