@@ -2,6 +2,76 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `SEC-067` tiene su write-back y sigue sin poder cerrarse: su condición exacta de cierre es `SEC-072`, que no está autorizado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (la consolidación) y analista-requerimientos (el NFR). **Bajo delegación de 24 h.**
+
+**El write-back de `SEC-067` está hecho** y `REQ-026` estrena su primer NFR — **`NFR-026-01`**, porque
+el REQ no tenía ninguno y **no existe ni un `requirements/NFR-*.md`** en todo el proyecto: no había
+qué actualizar, hubo que crearlo. Lleva la cobertura **por propiedad** (los escritores como ejemplos
+**no exhaustivos**), la eficacia con su procedencia y un **discriminador** sin el cual el umbral no se
+podría desmentir, la constancia con su fail-before, **el residuo con sus tres campos**, y el coste sin
+re-derivar el techo de `CA-15`.
+
+**Comprobado por máquina, no por mí:** el campo conserva `SEC-067 (usuario/dinero — en-mitigación …)`
+con su clase y su estado intactos, y el recuento de bloqueantes **sigue en 23**. El write-back **no
+relajó nada**. La cola sigue en **16** (`tools/arnes-lectura.sh`).
+
+**Y el hallazgo que reordena la versión.** `SEC-067` es `usuario/dinero` y **bloquea**, y su
+*condición exacta de cierre* está escrita literal en el registro (`:6367-6368`): que la tolerancia de
+la ventana de publicar viva **dentro** de `CA-18 (i)` y que la excepción de la publicación a medias
+esté declarada en `CA-05`. «**Nada más.**» Eso **es** el write-back de `SEC-072`, que el propietario
+**no ha autorizado** (`ADR-008` en **`propuesta`**). Consecuencia, escrita en `NFR-026-01 (6)`:
+**ningún write-back que un analista pueda escribir cierra `SEC-067`.** Cierra por **firma** (vía A) o
+por **código** (vía B, dueño `desarrollador`). Y **la precondición de la vía A es hoy inalcanzable**:
+exige medir el intervalo residual, con el instrumento no convergente, `REQ-021` `bloqueado` y la
+investigación fuera del alcance autorizado.
+
+### Corrección de mi propia consolidación, y el error importa
+
+Clasifiqué **`D3` como informativa** con este argumento: «ya instruiste que no se cierran por
+redacción — queda como trabajo autorizado». **Estaba mal.** La instrucción del propietario es una
+**prohibición** —dice cómo **no** se cierran—, no una resolución de qué se hace con ellos. Y lo que
+acaba de demostrarse es que está en la **ruta crítica**: sin ella `REQ-026` no cierra, y no por falta
+de trabajo. `D3` pasa a ser la **decisión 6** de `docs/propuesta-cierre-1.34.0.md`, que ahora son
+**seis** decisiones sobre **dieciséis** entradas. La clasificación anterior queda citada dentro del
+documento, no borrada.
+
+También reordenado el orden recomendado de `REQ-026`: el re-enunciado de `SEC-072` **no es el último
+de la lista, es la puerta de los tres**.
+
+### Un candidato a hallazgo que NO abrí
+
+`hooks/rotar-artefactos.sh:651` conserva en un comentario la cifra **no medida** —«*la medida era de
+355-361 ms y lo que queda es de microsegundos*»— que ya fue **retirada del REQ** por instrucción del
+propietario, precisamente por no estar medida. Sigue viva en el código. No lo abrí: es archivo del
+`desarrollador`, abrir hallazgos es de QA o del auditor, y §14.B.4 dice **corregir sin ampliar**.
+Queda escrito en §7 de la propuesta para que la comisión que toque ese archivo no lo redescubra.
+
+## [Interno] — 2026-09-10 · Write-back de `SEC-067` en `REQ-026`: `NFR-026-01`, con la cota medida del testigo y la ventana de publicar nombrada
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos.
+
+**`AGENTS.md` §9 exige que un hallazgo de seguridad se refleje como NFR, y `REQ-026` no tenía
+ninguno** (`NFR relacionados: (ninguno separado…)`). `SEC-067` estaba `en-mitigación` con el
+**código acreditado línea a línea** por el auditor (`R-022` §1) y sin write-back, que es la
+definición de deriva de §9: el control vivía sólo en el código.
+
+**Se escribe `NFR-026-01`** con lo que el mecanismo **da** y está medido —relectura y comparación
+byte a byte de los **dos** archivos antes de publicar, la duda hacia **no rotar**, y el canal
+duradero que distingue «no roté» de «roté y me comí tu cambio»— con **0 reproducciones** como cifra
+**de contrato** frente a las **3/3** de la reversión de un `Seguridad: aprobado` en una ventana de
+**355–361 ms**. Y **la ventana de publicar va nombrada dentro del mismo enunciado**, con dueño,
+forzador medido y vencimiento, no colgada como matiz: *«una promesa principal absoluta con un matiz
+colgado sigue siendo una promesa absoluta»*. La lectura no medida del residuo («microsegundos») se
+cita **atribuida** y **no funda ningún umbral**, por la instrucción del propietario del 2026-09-09.
+
+**Nada se relajó y nada se cerró.** `CA-18 (i)` y `CA-05` siguen **absolutos**; `SEC-072` y
+`SEC-073` **no se tocaron**; `Estado:`, `QA:` y `Seguridad:` intactos; `SEC-067` sigue en
+`Hallazgos abiertos:` como `usuario/dinero`. **Y queda dicho un bloqueo que no lo resuelve ningún
+analista:** la *condición exacta de cierre* que el auditor fija para `SEC-067` es meter la
+tolerancia dentro de `CA-18 (i)` y la excepción dentro de `CA-05` —o sea el write-back de
+`SEC-072`, que el propietario **no autorizó**—, así que `SEC-067` sólo cierra por **firma** (vía A
+de `ADR-008`, con su precondición hoy incumplida) o por **código** (vía B).
+
 ## [Interno] — 2026-09-10 · `REQ-017` a `bloqueado` por la salida de §6, y la prueba de `REQ-023 CA-09 (iii)` medida como no acreditante
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (la escalada) y qa-tester (la vuelta 3). **Bajo delegación de 24 h.**
 

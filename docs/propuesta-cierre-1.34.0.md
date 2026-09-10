@@ -148,7 +148,7 @@ hay base para una estimación honesta.
 | `REQ-021` | `bloqueado` · QA `con-hallazgos` **vuelta 3 de 3 AGOTADA** · `Seguridad: preventiva` | correcciones de `QA-021-10/-11` | re-validación | auditoría real | + `SEC-035`, `SEC-036`, `SEC-054` abiertos en el registro y **no** en su campo (§0.b) |
 | `REQ-023` | `bloqueado` · `QA: aprobado` · `Seguridad: aprobado` · **cero bloqueantes en el campo** | — | **`CA-09 (iii)` NO está acreditado, y ahora está medido:** su prueba da `FAIL → SKIP → PASS → PASS` sobre **código idéntico**, siguiendo la carga de la máquina, con el techo `1,000×` **dentro del ruido del instrumento**. El `FAIL` del banco **no es regresión**; y una prueba que oscila **no acredita nada, ni cuando sale PASS**. Ver `D18` (b) | — | **El cero del campo NO resuelve `D13`:** `CA-11` es **falso** sobre este árbol y **dos firmas verdes lo cubren**. Un campo vacío no acredita un criterio que dejó de ser cierto. Además `SEC-052` está abierto en el registro y no en su campo. |
 | `REQ-024` | `bloqueado` · QA `con-hallazgos` **vuelta 3 de 3 AGOTADA** · **`Seguridad: pendiente`** | `QA-024-19`, `SEC-083` (write-back), `SEC-084`; la fila prescrita en `:889` es **falsa**; `CA-03` fila 3 dice `EJECUTADA, NO ACREDITADA` | re-validación acotada | **la auditoría nunca se hizo** | write-back de `CA-12` en la **misma** comisión (no espera la firma) |
-| `REQ-026` | `en-revisión` · `QA: aprobado` **con alcance** · `Seguridad: con-hallazgos` | ver desglose abajo | re-validación de lo que se corrija | R-022 dejó hallazgos | |
+| `REQ-026` | `en-revisión` · `QA: aprobado` **con alcance** · `Seguridad: con-hallazgos` | ver desglose abajo. **`SEC-067` tiene ya su write-back** (`NFR-026-01`, 2026-09-10) y **sigue abierto**: es `usuario/dinero` y su cierre no depende de texto | re-validación de lo que se corrija | R-022 dejó hallazgos; el cierre de `SEC-067` **lo decide el auditor** y pasa por `SEC-072` | **No cierra sin la decisión 6.** `ADR-008` está en `propuesta` |
 | `REQ-027` | `completado` | — | — | — | — |
 
 ### 3.b `REQ-026`, sin resumirlo como «redacción» — son tres cosas distintas
@@ -162,27 +162,39 @@ hay base para una estimación honesta.
 2. **Criterios sin implementar** (declarados fuera de ventana en el propio campo `QA:`):
    **`CA-13`, `CA-14`, `CA-16`, `CA-17`**. No son texto pendiente: son criterios contratados y no
    construidos. `CA-13` (la declaración en el manifiesto) es además el que *enciende la rotación*.
+> **Y el hallazgo del 2026-09-10 que reordena el resto:** el write-back de `SEC-067` está hecho
+> (`NFR-026-01`, con el residual declarado y sus tres campos, y con la lectura no medida del auditor
+> —«de microsegundos a pocos milisegundos»— **atribuida, marcada como no medida y sin fundar ningún
+> umbral**). Pero **`SEC-067` no puede cerrarse por ningún write-back**: su condición exacta de
+> cierre pasa por `SEC-072`. La consecuencia práctica es que el punto 3 de abajo **no es el último
+> de la lista: es la puerta de los tres**.
+
 3. **Contrato mal enunciado —y esto tampoco es «redacción»:** `SEC-072` · `contrato` · media —
    *«dos promesas escritas en absoluto cuya excepción vive fuera del criterio»*. Lo que queda escrito
    es **más fuerte que la verdad**; se hereda así a cada proyecto.
 
 ---
 
-## 4. La cola consolidada: quince entradas, **cinco** decisiones
+## 4. La cola consolidada: dieciséis entradas, **seis** decisiones
 
 Ninguna entrada se borra ni se funde en el archivo: `PENDING_APPROVAL.md` conserva D2–D17 con su
 texto y su trazabilidad. Esta sección dice **cuáles se resuelven juntas**.
 
 **Informativas — no necesitan firma.** `D6` (mi diagnóstico de `k=1` era falso en su mecanismo; ya
 corregido y decidido bajo delegación) · `D9` (dos preguntas al analista: es trabajo, no decisión) ·
-`D10` (`SEC-083`: el trabajo ya fue) · `D3` (`SEC-072`/`SEC-073`: **ya instruiste** que no se cierran
-por redacción ni aceptación implícita — queda como trabajo autorizado).
+`D10` (`SEC-083`: el trabajo ya fue).
+
+> **Corrección de esta misma sección, el 2026-09-10: `D3` NO es informativa, y clasificarla así fue
+> un error mío.** Lo escribí como «ya instruiste que no se cierran por redacción — queda como trabajo
+> autorizado». Tu instrucción es una **prohibición**, no una resolución: dice cómo **no** se cierran,
+> no qué se hace con ellos. Y el write-back de `SEC-067` acaba de demostrar que está en la **ruta
+> crítica** de la versión. Es la **decisión 6**.
 
 **Ya resueltas.** `D1` y `D5` están en `## Resueltas`. `D5` opción (a) se aplicó con tu
 refinamiento —«*añadir solamente «no exhaustiva» no basta si la promesa principal sigue siendo
 absoluta*»— convertido en un control negativo falsable dentro de `CA-10`.
 
-### Las cinco que sí requieren tu firma
+### Las seis que sí requieren tu firma
 
 | # | Qué recomiendo autorizar | Qué cambia | Trabajo que queda después | Riesgo o incumplimiento que **permanece** |
 |---|---|---|---|---|
@@ -190,6 +202,7 @@ absoluta*»— convertido en un control negativo falsable dentro de `CA-10`.
 | **2**<br>*(agrupa `D16`, `D17`)* | **Implementar** el parche de los dos defectos publicados en una rama `hotfix/1.33.1` **cortada del tag `v1.33.0`**, con las cinco pruebas de §2.c. **Esto no autoriza publicarlo:** el tag es una segunda firma. | Los dos fail-open dejan de estar en el árbol de trabajo del parche: el que cuela una firma del auditor por delante de `QA: pendiente`, y el que degrada un `Rigor:` no reconocido a `estandar` en silencio. | Gate humano de `hooks/` (§4), PR, CI `hooks-en-linux`, fusión, tag `v1.33.1`, publicación, actualizar la instalación estable, y **portar el mismo arreglo a 1.34.0**. | **No hay base** para saber si el defecto se usó históricamente, y el parche **no lo averigua**. Y el fail-closed del rigor **cambia conducta heredada**: un proyecto instalado que escriba `critico (por suelo)` —forma que `AGENTS.md` §13 **autoriza**— pasará a ver una denegación donde hoy pasa. Es la forma de `D12`, aplicada a lo ya distribuido. |
 | **3**<br>*(agrupa `D11`, `D12`, `D13` y el `Seguridad:` de `REQ-017`)* | **Una sola regla para los verdes que ya no cubren su árbol:** un `aprobado` cuyo criterio cambió, o cuyo árbol cambió, **se declara sustituido en su propio campo** (no se borra), y el REQ no cierra hasta re-firmar. Con ello: ratificar **`ADR-011`** (parte (a) de `D11`), **corregir la fila de §13 que `D11` autorizó y que hoy es FALSA** —anuncia un fail-open que la salida (b) retiró—, y aceptar el precio de la salida (b) de `CA-12` que `D12` describe. | Dos contradicciones silenciosas se vuelven visibles: `REQ-023` (`CA-11` es falso sobre este árbol y **dos firmas verdes lo cubren**) y `REQ-017` (`Seguridad: aprobado` del **2026-09-08 sobre `538c266`**, un árbol anterior al modo que se acaba de medir). | Re-firmar `REQ-017` (auditor, **después** del write-back de `QA-017-24`); resolver `CA-11` de `REQ-023`; corregir la fila de §13; `ADR-011` pasa de `propuesta` a aceptada. | Un proyecto que **no ha migrado nada** verá una denegación nueva en un acto que **no es el cierre** (`D12`). Y mientras `ADR-011` siga `propuesta`, la doctrina que sostiene C1 no tiene gate. |
 | **4**<br>*(agrupa `D13`, `D14`)* | **`REQ-023` y `REQ-024` siguen `bloqueado`** —no cierran con residual— y autorizas una **cuarta vuelta ACOTADA**, sólo para: write-back de `CA-11`, `QA-024-19`, `SEC-083`, `SEC-084` y **la auditoría de `REQ-024` que nunca se hizo** (`Seguridad: pendiente`). El rastro de las tres vueltas se conserva. | El trabajo se desbloquea **sin fingir** que el tope de §6 no se agotó. | QA acotado a lo corregido; auditoría completa de `REQ-024`; write-back del analista. | **Se pasa del tope de tres vueltas de §6 por decisión expresa tuya.** Queda escrito como excepción nombrada y fechada, no como reinterpretación de la regla — que es la única forma en que §6 admite pasarlo. |
+| **6**<br>*(agrupa `D3`, `SEC-067` y el gate de `ADR-008`)* | **Decidir la excepción de las garantías absolutas de `REQ-026`**: firmar la vía **A** de `ADR-008` —que hoy está en `propuesta`— o encargar la vía **B** (código, dueño `desarrollador`). Lo que **no** es una opción es cerrarlos por redacción, y eso ya lo instruiste. | Desbloquea lo único que impide cerrar `REQ-026`. **`SEC-067` es `usuario/dinero` y BLOQUEA**, y su *condición exacta de cierre* —literal del registro, `:6367-6368`— es que la tolerancia de la ventana de publicar viva **dentro** de `CA-18 (i)` y la excepción de la publicación a medias esté declarada en `CA-05`: «**Nada más**». Eso **es** el write-back de `SEC-072`. | Vía A: el write-back del analista y la re-validación de QA. Vía B: código del `desarrollador` + QA + auditoría, y es la cadena larga. | **Ningún write-back que un analista pueda escribir cierra `SEC-067`** — quedó demostrado y escrito en `NFR-026-01 (6)`. Y **la precondición de la vía A es hoy inalcanzable**: exige medir el intervalo residual, con el instrumento **no convergente**, `REQ-021` **`bloqueado`** y la investigación **prohibida** por tu propia acotación de alcance. Si no firmás ni encargás la vía B, **`REQ-026` no cierra en 1.34.0**, y no por falta de trabajo. |
 | **5**<br>*(agrupa `D7`, `D8`, `D15`)* | **Poner el manifiesto en regla:** ratificar **o** revertir `campos.ausencia_exige: false`, que **comiteé en `119e853` sin su gate** —el fallo es mío y `ADR-009:3` declara ese gate pendiente—; dejar **apagado** `veredictos.caducan_con_codigo`; y firmar el gate **previo** de `REQ-024 CA-04`, que la delegación de 24 h **no** cubre. | El manifiesto deja de tener un cambio sin gate. `REQ-024 CA-04` puede avanzar. | Si revierte: el `desarrollador` lo cambia y el banco se re-corre entero. Si ratifica: se anota el gate a posteriori con su fecha. | **`veredictos.caducan_con_codigo` debe seguir apagado, y el motivo es medido:** la comparación es a **resolución de día**, así que es **ciega el mismo día**, y **28 de 29** veredictos vigentes expirarían al encenderla. Si se ratifica `ausencia_exige`, queda el **precedente** de un manifiesto cambiado antes de su gate. |
 
 ### Lo que **no** es una decisión tuya, y por eso no está en la tabla
@@ -207,11 +220,17 @@ absoluta*»— convertido en un control negativo falsable dentro de `CA-10`.
 ## 5. Las autorizaciones que pido, separadas por naturaleza
 
 **A. Autorizar trabajo** (no acepta riesgo ni publica nada):
+0. **`D18`, opción (A)** — la cláusula acotada de `QA-017-31` y su re-validación **fuera del
+   contador** de §6. `REQ-017` está **`bloqueado`** hasta que la firmes; §6 me prohíbe expresamente
+   reclasificarla como errata editorial, y por eso no lo hice.
 1. Decisión **1** — mover `REQ-020` a 1.35.0.
 2. Decisión **2**, sólo la parte de **implementar** el parche en `hotfix/1.33.1`.
 3. Decisión **4** — la cuarta vuelta acotada de `REQ-023`/`REQ-024` + la auditoría de `REQ-024`.
 4. Decisión **3** — la regla del verde sustituido, y `ADR-011`.
-5. La reconciliación de §0.b y el write-back de `QA-017-24`.
+5. Decisión **6** — la vía A o la vía B de `ADR-008`. **Es la única de las seis sin la cual una
+   ventana entera no cierra**, y no por falta de trabajo.
+6. ~~El write-back de `QA-017-24`~~ **HECHO** (`a139155`, `f4a5f1f`) y el de `SEC-067` **HECHO**
+   (`NFR-026-01`); la reconciliación de §0.b está **en curso** con el auditor.
 
 **B. Aceptar riesgos** (cada uno queda escrito con dueño y forzador):
 1. 1.34.0 se publica **sin** `REQ-020`: sin acreditación por sección y sin custodia de `tests/`
@@ -219,7 +238,12 @@ absoluta*»— convertido en un control negativo falsable dentro de `CA-10`.
 2. El precio de `D12`: una denegación nueva para un proyecto sin migrar, en un acto que no es el
    cierre.
 3. El fail-closed del rigor **cambia conducta heredada** en proyectos instalados (§2.b).
-4. Pasar del tope de tres vueltas de §6 en `REQ-023` y `REQ-024`, como excepción nombrada.
+4. Pasar del tope de tres vueltas de §6 en `REQ-023` y `REQ-024`, como excepción nombrada — y, con
+   `D18`, también en `REQ-017`.
+5. **Que la precondición de la vía A de `ADR-008` es hoy inalcanzable** y que firmarla significa
+   aceptar la excepción **sin** el intervalo residual medido. Es una aceptación de riesgo real, no
+   un trámite: el instrumento no converge, `REQ-021` está `bloqueado` y medirlo está fuera del
+   alcance que autorizaste.
 
 **C. Autorizar publicación** — **no la pido hoy, ninguna de las dos:**
 1. Tag `v1.33.1` y actualización de la instalación estable. Se pide **después** de CI verde.
@@ -260,6 +284,24 @@ acotado + auditoría cuando toca `hooks/` + CI + gate humano. Ninguna termina en
 4. **El parche `1.33.1`** desde `v1.33.0` (decisión **2**), en paralelo real: rama distinta, sede
    distinta, no toca nada de 1.34.0.
 5. **`REQ-024`**: correcciones → QA acotado → **la auditoría que nunca se hizo**.
-6. **`REQ-026`**: `SEC-073` (código) → `SEC-067` (write-back) → `SEC-072` (re-enunciado).
+6. **`REQ-026`**: reordenado el 2026-09-10 con lo medido. `SEC-067` **ya tiene su write-back**; lo
+   que manda ahora es la **decisión 6** (`SEC-072` / `ADR-008`), porque de ella cuelga el cierre de
+   `SEC-067`. Después `SEC-073` (código). **Sin la decisión 6, este REQ no cierra**, y ningún trabajo
+   adicional lo cambia.
 7. **`REQ-021`** y **`REQ-023`/`D13`** — dependen de la decisión **3**.
 8. **Cierre de versión**: CI verde, `SKIP` explicados por lista, fusión, tag, publicación.
+
+---
+
+## 7. Candidato a hallazgo, encontrado el 2026-09-10 y NO abierto
+
+`hooks/rotar-artefactos.sh:651` conserva en un comentario la cifra **no medida** —*«la medida era de
+355-361 ms y lo que queda es de microsegundos»*— que ya fue **retirada del REQ** por instrucción del
+propietario del 2026-09-09, precisamente por no estar medida. Sigue viva en el código.
+
+Lo dejo aquí y **no lo abrí**, por tres razones: es archivo del `desarrollador`; abrir hallazgos es de
+QA o del auditor, no de la coordinadora; y §14.B.4 dice **corregir sin ampliar**. Clase probable:
+`instrumento` (deriva de documentación), que **no** bloquearía. Queda en disco para que la comisión
+que toque ese archivo no tenga que volver a encontrarlo.
+
+*Verificado:* `sed -n '651p' hooks/rotar-artefactos.sh` sobre `b55347e`.
