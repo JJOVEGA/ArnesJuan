@@ -2,6 +2,45 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `QA-024-13` y `-14`: un título por propiedad, y una distinción sobre qué es deriva y qué es historia
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`REQ-024` se queda sólo con hallazgos `instrumento`** una vez cerradas estas dos.
+
+**`QA-024-13`** — el encabezado «*Por qué `Hallazgos abiertos:` está en `(ninguno)`, con tres hallazgos
+encima*», falso en sus **dos** mitades, pasa a: «*El reparto de `Hallazgos abiertos:`: el ORIGEN de un REQ
+de remediación no es un hallazgo contra él —mientras no venza—, y va en «Trazabilidad»*».
+
+**Tres cosas que hizo bien sin que se le pidieran:** el título nombra la **propiedad** —qué entra en el
+campo y qué no— en vez de un estado; **no lleva ningún número**, así que no envejece con el siguiente
+hallazgo (un título con «diez» habría envejecido igual que el de «tres»); y **mete la condición dentro de
+la propia frase** —«mientras no venza»— **porque se lee aislado**, aplicando `REQ-023 CA-10` por su
+cuenta a un texto que no es superficie heredada.
+
+**`QA-024-14`** — la celda de evidencia de `CA-03` fila 3 dice ahora que `REQ-016` **ya lleva
+`QA: aprobado`** del 2026-09-10 sobre `a57eecc` y que **falta el veredicto del auditor**, cuyo
+`Seguridad: aprobado` sigue siendo **del 2026-09-07**, emitido sobre un `CA-11` distinto del vigente.
+**La columna `Estado` sigue PENDIENTE, la cuenta 2 de 3 no cambia y `CA-03` sigue sin acreditar** — sólo
+se actualizó lo que venció, que es exactamente lo que el `qa-tester` había delimitado.
+
+### La distinción que más vale de esta entrega
+
+Encontró que **la fila del Historial del 2026-09-08 sigue diciendo** «`Hallazgos abiertos:` en `(ninguno)`
+con tres hallazgos encima» — y **declaró que NO es deriva**, con el motivo: «*era cierto ese día, así que
+no se reescribe; **el Historial es el rastro del cambio, no una afirmación sobre el árbol de hoy**»*.
+
+Es la misma línea que el propio proyecto trazó ayer al anotar dos filas viejas en vez de corregirlas
+encima, aplicada aquí por su cuenta. Y es la diferencia entre un historial y una foto retocada.
+
+**Y una deriva que sí observó y NO tocó, citando §14.B.4:** el párrafo posterior a la tabla nombra todavía
+al `qa-tester` como **dueño pendiente** de la obligación 3, cuando su mitad ya está firmada; hoy el único
+dueño vivo es el **auditor**. No la tocó porque el encargo acotaba a la celda, y **se cierra sola** cuando
+el auditor renueve y la fila 3 pase a «hecha».
+
+Las dos correcciones son **menores, sin ADR**: la primera cambia un encabezado y su marco sin tocar una
+coma del cuerpo; la segunda, una celda de evidencia dejando `Estado`, cuenta y veredicto idénticos. Y las
+clases van **citadas con archivo y línea**, no declaradas en prosa.
+
 ## [Interno] — 2026-09-10 · `CA-11` validado ejecutando, los tres `contrato` retirados, y QA caza el agujero que su propio retiro iba a abrir
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus) · consolidación: coordinadora. **Bajo delegación de 24 h.**
 
