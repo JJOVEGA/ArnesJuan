@@ -2,6 +2,86 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Vuelta 3 de 3: QA construyó la tercera forma de envejecer en DOS variantes, y `REQ-024` queda `bloqueado`
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus, vuelta 3 de 3) · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**`QA: con-hallazgos` sobre `9ba3b1f`.** **Diez de los once criterios pasan.** Banco en **cuatro**
+corridas: `1058/0/6`, `1057/0/7`, `1057/0/7` y `1056/0/8` — **`PASS+SKIP = 1064` en las cuatro y 0 FAIL en
+las cuatro**, con `loadavg` publicado por corrida. La última varía porque **editó la cabecera del REQ y
+`40/1` y `40/5` LEEN ese archivo**: lo dijo en vez de dejar que pareciera flakiness.
+
+**Y leyó el CI en vez de citar el anterior:** `pending` sobre `9ba3b1f`, «*entre las dos bases hay ocho
+commits sin puerta*».
+
+### Construyó la tercera forma de envejecer — en dos variantes, y refutó la afirmación central
+
+Le pedí buscar el hueco que el `desarrollador` declaró no cubrir. Lo **construyó**:
+
+- **E1 — una comilla.** `grep -q 'Seguridad:'` → `grep -q "Seguridad:"` en `guard-completado.sh:334`.
+  Actos derivados **3 → 2**, **justo el suelo**, y la sección sigue en **10 PASS · 0 FAIL · 0 SKIP**.
+- **E2 — un acto nuevo con el `-n` de `SEC-083` dentro**, con la guarda escrita en `case` y **antes** de la
+  frontera: `QA:` declarado → DENY, **ausente → ALLOW**, **comentado → ALLOW**. El aparato **publica 3
+  actos de 37 ramas, ejerce 2, cumple el suelo y da 10 PASS**. **El acto nuevo no se ejerce nunca.**
+
+**Y el diagnóstico es más grave que el ejemplo:** la frase «**FALLA RUIDOSAMENTE, NUNCA EN SILENCIO**» es
+**cierta para la frontera y FALSA para el campo**, porque `sin-transicion/-` y `transicion/-` **no son
+actos: son cubos**. Así que el límite declarado **subestima la mitad** — la absorción ocurre en **las dos
+zonas**. Y esa frase **vive en el archivo de pruebas**, no en `ADR-011` ni en el REQ (`QA-024-17`).
+
+Es la diferencia entre discutir una afirmación y **fabricar su contraejemplo**.
+
+### `CA-12 (ii)` no está implementado, y el matiz que lo hace peor
+
+`QA-024-16`: la fila prescrita **no está** en `AGENTS.md` ni en su gemela —**verificado por mí: 0 y 0**—,
+**ninguno** de los 11 casos que citan `CA-12` mide texto heredado, y **hoy la fila vieja es verdadera por
+la salida elegida, no por construcción**: si `D12` se firmara por la salida (a), **volvería a ser falsa el
+mismo día y nada lo mediría**.
+
+**Una imprecisión suya, corregida:** dice que «*el gate que el propio criterio nombra no está en la cola*».
+**Sí está: es `D11`**, que autoriza exactamente la reescritura de esa fila de §13, y estaba escrito antes
+de que empezara. Su sustancia se sostiene entera; el dato, no.
+
+### Dos hallazgos más, y los dos son del instrumento compartido
+
+**`QA-024-18`** — el «verde por no ejercer» de `emite_edit`, **inventariado**: **122 usos en 22 secciones**
++ 2 inline, y **el centinela existe sólo en `40/6`**. Verificó de forma **independiente** que `40/4` y
+`40/5` están limpias hoy (**0 ocurrencias de `x` en sus 11 cabeceras**). Y la vía conforme: el centinela
+**en `emite_edit`**, **una vez para las 122**, en vez de 122 parches — la misma doctrina de `ADR-011`
+aplicada al banco.
+
+**`QA-024-19`** — **`seguridad: aprobado` en minúscula da ALLOW en los dos estados de la llave**, porque el
+disparador es sensible a mayúsculas. El cierre sigue fail-closed, pero **se pierde el guardián del orden y
+el aviso**: «*un auditor puede escribir una firma que nadie mide y nada comenta*».
+
+### Y los SKIP flotantes son TRES, no dos
+
+Apareció **`REQ-024 CA-07 (iii)`**, y lo midió **7 veces aislado**: **7 PASS**, mediana de medianas
+**2,061×**, MAD **0,019×** contra techo 2,200×. **10 de 11 observaciones PASS y la undécima una
+abstención** → el criterio **pasa** y su abstención es **miembro nuevo** de la familia de reloj de
+`SEC-080`.
+
+### Retiradas, y otra vez mirando qué queda después
+
+Retira **`QA-024-12`** —verificando **por mutación propia** que la tabla ya decide, y que **la trampa
+latente no se activó**—, **`QA-024-13`** y **`QA-024-14`**. **No retira `SEC-083`**, por dos motivos:
+retirar un hallazgo de seguridad es **acto del auditor**, y su remediación (2) está escrita «*mientras (1)
+no exista*» — y **(1) ya existe**, así que hay que releerla contra el texto más estricto de `CA-12 (ii)`,
+**que no está transcrito**. Y aplicó su propia lección: «*retirarlo repetiría exactamente el ALLOW sobre
+firma vencida de la vuelta anterior*».
+
+**Y cazó dos de sus propias mutaciones que no tomaron efecto** —descartó esas corridas y lo declaró—:
+«*sin esa regla habrían pasado por «no discrimina»*».
+
+### `REQ-024` → `bloqueado`, y por qué lo aplico yo
+
+**Lo aplico porque describe la realidad**, no porque elija: lo que queda **no es un residual**, es
+`CA-12 (ii)` **contratado y sin implementar**, y **su redacción no puede escribirse** hasta que el
+propietario firme `D12`, porque **el REQ prescribe dos textos alternativos**. «*El trabajo son horas, pero
+está aguas abajo de una firma humana que no ha llegado. Esa es la definición de bloqueado.*»
+
+**Lo que NO aplico es la alternativa:** cierre con residual declarado es **una decisión de aceptación** y
+es del propietario. Escalado como **`D14`**.
+
 ## [Interno] — 2026-09-10 · `CA-12` medible: el extractor envejece RUIDOSAMENTE, medido — y un «verde por no ejercer» cazado en su propio fixture
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · consolidación: coordinadora. **Bajo delegación de 24 h.**
 

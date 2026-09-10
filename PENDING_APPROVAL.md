@@ -394,6 +394,36 @@ analista **no tocó `requirements/REQ-023.md`** y **se paró ahí**, que era lo 
 exactamente la forma que este proyecto persigue —lo llamó `SEC-079` en superficie heredada y `QA-023-18`
 en la titular—, y aquí está **dentro del REQ que existe para cerrar esa clase**.
 
+
+### D14 · `REQ-024` queda `bloqueado` tras agotar sus tres vueltas — y la alternativa es tuya
+
+**Aplicado ya:** `Estado: bloqueado`, por recomendación del `qa-tester` en la vuelta 3 de 3. **Lo aplico
+yo porque describe la realidad**, no porque elija: el REQ **no puede avanzar**. **Lo que NO aplico es la
+alternativa** —cierre con residual declarado—, porque **aceptar un residual es una decisión de aceptación
+y es tuya.**
+
+**El motivo, y es de definición:** lo que queda **no es un residual**. Es `CA-12 (ii)` —la fila de
+`AGENTS.md` §13 y su gemela del template— **contratado y sin implementar**, y **su redacción no puede
+escribirse** hasta que firmes `D12`, porque **el REQ prescribe dos textos alternativos** según la salida
+(a) o (b). Verificado por mí: la fila prescrita **no está** en ninguna de las dos sedes (0 y 0
+ocurrencias). El trabajo son **horas** —una fila en dos sedes y un caso de banco—, pero está **aguas abajo
+de una firma humana que no ha llegado**.
+
+**Lo que sí queda medido:** **diez de los once criterios pasan**. `CA-12` queda **parcial** —su `(i)` está
+acreditado con su fail-before reproducido— y **`CA-03` sin acreditar por una firma ajena y no por falta de
+medición**: su obligación 3 está **ejecutada**, y espera la re-firma del auditor sobre `REQ-016`, que ya
+tiene su código y su write-back. **Esa la despacho yo ahora.**
+
+**Un solo bloqueante después de las retiradas: `SEC-083`.** QA retiró `QA-024-12`, `-13` y `-14`
+verificándolos, y **no retiró `SEC-083`** por dos motivos suyos: retirar un hallazgo de seguridad es acto
+del **auditor**, y su remediación (2) está escrita «*mientras (1) no exista*» — y **(1) ya existe**, así
+que hay que releerla contra el texto más estricto de `CA-12 (ii)`, **que no está transcrito**. Y aplicó su
+propia lección: «*retirarlo repetiría exactamente el ALLOW sobre firma vencida de la vuelta anterior*».
+
+**Lo que firmas:** (a) ratificar `bloqueado` y firmar `D12` para desatascarlo; o (b) cierre con **residual
+declarado** —con dueño, forzador medido y vencimiento—, que exigiría aceptar que un criterio queda
+contratado y sin implementar.
+
 ## Resueltas
 
 ### D5 · `SEC-079` — **RESUELTA el 2026-09-09: opción (a), y con un matiz del propietario que cambia el arreglo**
