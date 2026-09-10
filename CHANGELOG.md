@@ -2,6 +2,79 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · El modo intercalado no estrecha lo que dije: la evidencia que fundó mi decisión movía dos variables
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador` · corrección de la decisión: coordinadora. **Bajo delegación de 24 h.**
+
+
+**Esto corrige una decisión que tomé yo bajo la delegación, y es la corrección más importante del día.**
+En `D6` adopté el **modo intercalado** para `CA-03` apoyándome en una tabla que comparaba
+**`intercalado k=2/3 r=9` contra `bloque k=1 r=3`**. **Cambiaba dos variables a la vez**: el modo **y**
+`k`/`r`. Verificado por mí en `docs/arnes/req-017-ca-03-modo-de-medicion/01-evidencia.md:72-74`.
+
+**Aislado el modo —round-robin con `k` y `r` fijos, N=5, `loadavg` fila a fila— el estrechamiento no se
+reproduce**, y el `desarrollador` lo dijo con las cifras **sin cambiar su umbral pre-declarado**:
+anchura de banda mediana en reposo **1,090 → 1,086** en la directa (diferencia 0,004 < su umbral 0,022 ⇒
+**no discriminado**) y **1,075 → 1,101** en el fail-before, **más ancha**. Bajo CPU saturada **las dos
+empeoran**.
+
+**Lo que el modo SÍ hace, medido:** estrecha la dispersión **entre corridas** del cociente en **3 de 4**
+comparaciones (rango 4,3 → 3,0 %, 5,1 → 3,9 %, 77,1 → 52,5 %; MAD del fail-before 0,065 → 0,023 en reposo
+y 0,508 → 0,160 saturado). Y **un efecto no buscado**: **sube** el valor de la directa 1,955× → 2,104×
+(**+7,6 %**), porque intercalado el término corto sale **caliente**, así que el margen al techo baja de
+~25 % a **~19 %**.
+
+**Decisión: el modo se QUEDA, y la justificación se corrige.** Motivos: el fail-before **discrimina en las
+16 corridas sin excepción**; la **regla de la banda** que vino con él está probada y es independiente del
+modo; y `REQ-021 CA-02` ya contrata el intercalado para una razón. **Lo que no se sostiene es el párrafo
+de referencia de `CA-03`**, que cita una comparación con dos variables movidas — y eso es exactamente lo
+que este proyecto llama un criterio que dice algo falso sobre lo medido.
+
+**Las dos preguntas para el `analista-requerimientos`, ninguna resoluble por el `desarrollador`:**
+1. **Write-back del párrafo de referencia de `CA-03`**: la evidencia que fundó el modo confundía modo con
+   `k`/`r`, y aislado el modo el estrechamiento **no se reproduce en esta máquina**. Hay que decir lo que
+   se sabe: el modo se adopta por **coherencia con `REQ-021 CA-02`** y por la dispersión **entre
+   corridas**, no por una anchura de banda que no se midió como se dijo. Y el **+7,6 % de la directa** hay
+   que escribirlo: reduce el margen al techo y nadie lo había previsto.
+2. **`CA-18` degenerado en `37/2`**: el piso re-derivado (**551**) queda a **una línea** del total (552),
+   porque la puerta es **única** y los tres casos que la acreditan tienen que ejercerla y no una copia
+   —mismo patrón que el piso 448 de `37/5`—. Es honesto y deja el techo casi libre. Clase **instrumento**,
+   con aviso ya escrito en el propio archivo.
+
+**Y una tercera, mía, que no le pido a nadie:** el `Archivos:` de `REQ-017` **no incluye**
+`docs/arnes/req-017-ca-03-modo-de-medicion/`, donde vive **toda** la evidencia del modo. Lo añado al
+reconciliar, junto al `CASOS_ESPERADOS`.
+
+**Y lo que el `desarrollador` entregó, que es mucho más que una medición incómoda:** la **regla de la
+banda** en una sola puerta con la dirección como dato, `razon37` publicando en **todas** sus ramas mínimo
+**y** máximo, modo, `k`, series, techo, **plataforma y carga** —los **5** casos de la sección, ninguno
+recortado y ninguno declarado «no cabe»—, y `37/2` de 5 a **8 casos**.
+
+**El par discriminante está EJECUTADO, no argumentado:** un **oráculo independiente escrito en el propio
+caso** calcula el veredicto del cociente solo y se compara entrada por entrada — **7 entradas: 0 de FAIL a
+PASS · 1 de FAIL a abstención · 2 de PASS a abstención**. Y las dos mitades son de contrato, con su
+motivo: «*sin la segunda, «no convierte un FAIL en PASS» lo cumpliría una guarda que no hiciera nada*».
+Un tercer caso comprueba el **contenido** del SKIP, porque una autoprueba que reduce la salida a la
+palabra del veredicto **ya perdió** el tercer elemento de `CA-08 (ii)` una vez (`QA-017-16`).
+
+**La abstención ocurrió de verdad y no en teoría:** corrida 9, cociente **2,133×** —cabía de sobra— pero
+banda **[2,000×, 2,817×]** por un máximo disparado del término largo → **SKIP citando banda, cociente,
+techo, plataforma y carga**. Frecuencia **1 de 16** aquí y **2 de 5** con CPU saturada; máximo consecutivo
+**1** contra la cota de 2 — no agotada, y **viva como riesgo** porque el runner tiene 4 vCPU y esta
+máquina 12.
+
+**Y cazó un defecto propio que ningún caso vio, sino el inventario:** el fail-before de `CA-04` no tenía
+el separador de dos espacios, así que `inventario.sh` leía su línea entera como **nombre** y los µs recién
+publicados **sobrevivían crudos** — tres corridas, tres inventarios distintos. Corregido, y una segunda
+variante igual (`carga v1.32.1=2.46` **designa**; se publica `carga heredada=…`). Tras ambos, las 8 líneas
+de `37/2` salen **idénticas byte a byte** entre corridas.
+
+**No reconcilió `CASOS_ESPERADOS` y explicó por qué:** sus 9 primeras corridas cerraron en **1015** con
+`rc 0` y **0 FAIL**; entre la 9 y la 10 otra comisión viva añadió **9 casos** sin actualizar `run.sh`, y
+las corridas 10-11 dan `ABORT: corrieron 1024 y se esperaban 1015` — **1024 = 1015 + 9 exactamente**, con
+0 FAIL y sin ningún `ABORT` de sección. **«No puse 1024: sería certificar 9 casos ajenos a medio
+escribir.»** La coordinadora tampoco reconcilia todavía: `run.sh` va en 1015 y las secciones suman ya
+**1025**, así que el blanco sigue moviéndose.
+
 ## [Interno] — 2026-09-10 · `CA-11` deja de apuntar a la puerta, §9 reabre `REQ-016`, y el analista corrige la cuenta de QA
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · reapertura: coordinadora. **Bajo delegación de 24 h.**
 

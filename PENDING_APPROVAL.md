@@ -195,6 +195,47 @@ CHANGELOG que «encenderla es política y queda como decisión del propietario»
 tocar (2) hasta que `QA-024-01` cierre. **No lo ratifico yo**: el gate es del propietario y el problema
 aquí ha sido precisamente saltármelo.
 
+
+### D9 · La evidencia que fundó mi decisión de `D6` confundía dos variables — dos preguntas para el analista
+
+**Esto corrige una decisión que tomé yo bajo la delegación, y es la corrección más importante del día.**
+En `D6` adopté el **modo intercalado** para `CA-03` apoyándome en una tabla que comparaba
+**`intercalado k=2/3 r=9` contra `bloque k=1 r=3`**. **Cambiaba dos variables a la vez**: el modo **y**
+`k`/`r`. Verificado por mí en `docs/arnes/req-017-ca-03-modo-de-medicion/01-evidencia.md:72-74`.
+
+**Aislado el modo —round-robin con `k` y `r` fijos, N=5, `loadavg` fila a fila— el estrechamiento no se
+reproduce**, y el `desarrollador` lo dijo con las cifras **sin cambiar su umbral pre-declarado**:
+anchura de banda mediana en reposo **1,090 → 1,086** en la directa (diferencia 0,004 < su umbral 0,022 ⇒
+**no discriminado**) y **1,075 → 1,101** en el fail-before, **más ancha**. Bajo CPU saturada **las dos
+empeoran**.
+
+**Lo que el modo SÍ hace, medido:** estrecha la dispersión **entre corridas** del cociente en **3 de 4**
+comparaciones (rango 4,3 → 3,0 %, 5,1 → 3,9 %, 77,1 → 52,5 %; MAD del fail-before 0,065 → 0,023 en reposo
+y 0,508 → 0,160 saturado). Y **un efecto no buscado**: **sube** el valor de la directa 1,955× → 2,104×
+(**+7,6 %**), porque intercalado el término corto sale **caliente**, así que el margen al techo baja de
+~25 % a **~19 %**.
+
+**Decisión: el modo se QUEDA, y la justificación se corrige.** Motivos: el fail-before **discrimina en las
+16 corridas sin excepción**; la **regla de la banda** que vino con él está probada y es independiente del
+modo; y `REQ-021 CA-02` ya contrata el intercalado para una razón. **Lo que no se sostiene es el párrafo
+de referencia de `CA-03`**, que cita una comparación con dos variables movidas — y eso es exactamente lo
+que este proyecto llama un criterio que dice algo falso sobre lo medido.
+
+**Las dos preguntas para el `analista-requerimientos`, ninguna resoluble por el `desarrollador`:**
+1. **Write-back del párrafo de referencia de `CA-03`**: la evidencia que fundó el modo confundía modo con
+   `k`/`r`, y aislado el modo el estrechamiento **no se reproduce en esta máquina**. Hay que decir lo que
+   se sabe: el modo se adopta por **coherencia con `REQ-021 CA-02`** y por la dispersión **entre
+   corridas**, no por una anchura de banda que no se midió como se dijo. Y el **+7,6 % de la directa** hay
+   que escribirlo: reduce el margen al techo y nadie lo había previsto.
+2. **`CA-18` degenerado en `37/2`**: el piso re-derivado (**551**) queda a **una línea** del total (552),
+   porque la puerta es **única** y los tres casos que la acreditan tienen que ejercerla y no una copia
+   —mismo patrón que el piso 448 de `37/5`—. Es honesto y deja el techo casi libre. Clase **instrumento**,
+   con aviso ya escrito en el propio archivo.
+
+**Y una tercera, mía, que no le pido a nadie:** el `Archivos:` de `REQ-017` **no incluye**
+`docs/arnes/req-017-ca-03-modo-de-medicion/`, donde vive **toda** la evidencia del modo. Lo añado al
+reconciliar, junto al `CASOS_ESPERADOS`.
+
 ## Resueltas
 
 ### D5 · `SEC-079` — **RESUELTA el 2026-09-09: opción (a), y con un matiz del propietario que cambia el arreglo**
