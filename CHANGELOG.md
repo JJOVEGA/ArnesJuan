@@ -2,6 +2,88 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Cierre: `SEC-055` deja de ser invisible para la puerta (21 → 22) y el `Estado:` de `REQ-023` deja de afirmar algo falso
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora (el cierre) y analista-requerimientos (los dos actos).
+
+**Los dos actos que el artefacto del auditor prescribía con dueño y archivo, hechos.** Y el analista
+verificó **cinco fuentes en el disco**, no mi resumen — con una corroboración que yo no le había dado:
+la propia entrada de `SEC-055` (`registro-seguridad.md:5016-5019`) **enruta el write-back por
+`REQ-019`** explícitamente, con su motivo. La prescripción no descansaba sólo en una tabla.
+
+**Acto 1 — dirección estricta.** `SEC-055 (contrato)` entra en el campo de `REQ-019`, que pasa a
+declarar **dos** `contrato`. Era un bloqueante **abierto** que **la puerta no podía ver**, porque
+`guard-completado` lee el campo y no el registro: la familia de `SEC-085`. Los bloqueantes visibles
+para la puerta suben de **21 a 22**; el total firme sigue en **32** —`SEC-055` ya estaba contado como
+«el que debería estar en un campo»—, y lo que cambia es que ahora **la máquina lo ve**.
+Comprobado: `Estado=<bloqueado>` y ventana **1.35.0** intactas, así que el aplazamiento no se altera;
+y el vencimiento de `SEC-055` es el cierre de `REQ-019`, con el que viaja sin incumplir nada.
+
+**Acto 2 — un texto que dejó de mentir.** El `Estado:` de `REQ-023` afirmaba que bloqueaba
+`QA-023-15`, y QA lo **retiró** el 2026-09-09 («*se retira, y no por simpatía con el esfuerzo*»). La
+cláusula falsa **se conserva literal como rastro** y la anotación fechada declara que quedó falsa,
+citando la evidencia. **El bloqueo no se levantó** y el rastro de las tres vueltas se **confirmó**, no
+se sustituyó. Dato que estrechó el acto: el **campo** de `REQ-023` ya **no** declaraba ese hallazgo —
+el desfase vivía **sólo** en la línea 2.
+
+### Tres cosas que quedan para el propietario, ninguna resuelta
+
+1. **La mitad de fondo de `SEC-055`:** acotar o **retirar** la delegación de publicación
+   (recomendación 4 del artefacto). Con una escalada que conviene leer: si `REQ-019` cierra sin tocar
+   las dos frases, el hallazgo **no sube de clase** pero pasa a **regresión de reparto**.
+2. **La causa vigente del bloqueo de `REQ-023`:** el texto ya no afirma nada falso, pero **hoy no hay
+   causa enunciada**. Re-enunciarla es afirmación de **alcance**, y no se escribió. `D13` está en la
+   cola y **no** se puso ahí.
+3. **El NFR de `SEC-085` — conflicto real de instrucciones.** El artefacto lo prescribe (fila 220) y
+   el auditor **no da el hallazgo por cerrado sin él**; el propietario **prohibió NFR nuevos** en esta
+   ventana. No se empezó. O entra como **excepción nombrada**, o `SEC-085` queda abierto con dueño y
+   vencimiento.
+
+**Comprobado con el lector real y no por mí:** `REQ-019` → `Estado=<bloqueado> QA=<pendiente>
+SEG=<preventiva> RIGOR=<critico>`; `REQ-023` → `Estado=<bloqueado> QA=<aprobado> SEG=<aprobado>`.
+Cola en **16**. **Ningún REQ ni hallazgo se cerró, ningún residual se aceptó, ninguna prueba se
+relajó, no se fusionó y no se publicó.**
+
+## [Interno] — 2026-09-10 · Dos estados desfasados, y los dos aprietan: `SEC-055` entra en el campo de `REQ-019` y el `Estado:` de `REQ-023` deja de declarar bloqueante un hallazgo retirado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos (las dos ediciones y sus dos filas de Historial).
+
+**Coordinación prescrita, no decisión nueva** —el propietario ya la había declarado tal: *«actualiza
+los estados desfasados… eso es coordinación, no una nueva decisión mía»*—. Las filas **214** y **219**
+del artefacto del auditor (`docs/seguridad/reconciliacion-campos-2026-09-10.md`) prescriben los dos
+actos con dueño y sede. **Ninguno afloja nada:** el primero **añade** un bloqueante, el segundo
+**retira una afirmación falsa** de un texto.
+
+**Acto 1 — `REQ-019`, campo `Hallazgos abiertos:`: `SEC-033 (contrato)` → `SEC-033 (contrato),
+SEC-055 (contrato)`.** Verificado **en la fuente** y no por transcripción: `SEC-055` está `contrato` ·
+**`abierto`** · severidad media (`registro-seguridad.md:4975-5028`, índice `:4824`), y **le pertenece a
+este REQ porque `AGENTS.md` está en su `Archivos:`** (`REQ-019.md:4`) — el propio registro enruta el
+write-back por aquí (`:5016-5019`) para no colisionar por archivo con el reparto. **Por qué importa:**
+`guard-completado` lee **el campo**, no el registro, así que un `contrato` abierto que ningún campo
+declara es un bloqueante que **la puerta no puede ver** — la familia de `SEC-085`, cuya omisión falla
+hacia el lado que **publica**. Declararlo **restituye** una barrera. En §Trazabilidad se añade la cita
+del hallazgo (clase, dueños, forzador y vencimiento **citados**, no transcritos) y **la mitad de fondo
+queda NOMBRADA como pendiente del propietario**: acotar o retirar la delegación de publicación es
+decisión con firma, sede `PENDING_APPROVAL.md` (`:5020-5021`, recomendación 4 `:217`), y esta edición
+**no la resuelve ni la insinúa resuelta**. Se recogió además la autocorrección del auditor: las dos
+frases de `AGENTS.md` **sí** citan el documento de gobernanza desde `6c1b58a` (v1.30.3); lo que queda
+en pie es que **no citan la frontera ni su regla de recuento** y que no declaran que hoy no autoriza
+nada. **`REQ-019` no se movió en nada más:** sigue `bloqueado` y sigue **aplazado a 1.35.0**.
+
+**Acto 2 — `REQ-023`, línea `Estado:`: anotado que `QA-023-15` fue RETIRADO.** El texto declaraba
+bloqueante un `usuario/dinero` que su dueño retiró el **2026-09-09** —`qa-tester`, medido:
+`docs/qa/1.34.0-req023-revalidacion-acotada-metodo.md:221` «se retira» y §4 en `:229-248`, con los
+**dos brazos** de su clase comprobados—, y el campo `Hallazgos abiertos:` ya no lo declaraba. La
+cláusula falsa **se conserva literal como rastro** y se le añade la anotación fechada con su
+evidencia. **Lo que NO se hizo, y es la mayor parte:** no se levantó ni se acotó el bloqueo —sigue
+`bloqueado` por **decisión del propietario**, que no depende de ningún hallazgo—, **no se reescribió el
+rastro de las TRES vueltas agotadas** (se confirma íntegro, por instrucción expresa del propietario), y
+**no se re-enunció la causa vigente** — eso es afirmación de alcance del propietario y queda escalada.
+
+**No se cerró ningún hallazgo** (`SEC-055`, `SEC-033`, `SEC-085`, `SEC-064` y el resto siguen como
+estaban), **no se marcó nada `completado`** (la cola tiene **16** entradas), y **no se escribió el NFR
+de la fila 220**: el auditor lo exige para cerrar `SEC-085` y el propietario prohibió NFR nuevos en esta
+ventana — **conflicto escalado, no resuelto por el analista**. Ninguno de los dos actos es una vuelta de
+ningún REQ y **no reinicia ningún contador**.
+
 ## [Interno] — 2026-09-10 · «¿Cuánto falta para cerrar?» destapa que DOS sedes declaran alcances distintos de 1.34.0: cuatro trabajos o doce REQ
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
 

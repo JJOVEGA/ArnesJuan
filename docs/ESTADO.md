@@ -56,12 +56,21 @@ puntero y la primera acción.
 | **Publicado** | **`v1.33.0`** (tag existe; `plugin.json` = `1.33.0`) |
 | **En desarrollo** | **1.34.0**, sin publicar |
 | **Cola de aprobaciones** | **16 pendientes** → ningún REQ puede cerrarse (`tools/arnes-lectura.sh`) |
-| **Bloqueantes reconciliados** | **34** desde `R-028` (`docs/seguridad/reconciliacion-campos-2026-09-10.md`) |
+| **Bloqueantes reconciliados** | **32**, de los que **22** los ve la puerta (`docs/seguridad/reconciliacion-campos-2026-09-10.md`) |
 
-**Primera acción al retomar, y sólo ésta:** leer `docs/TRASPASO-2026-09-10.md` §«Decisiones» y
-resolver **`D18`** —`REQ-017` está `bloqueado` esperándola— junto con las **seis** decisiones
-consolidadas de `docs/propuesta-cierre-1.34.0.md`. **No hay trabajo autorizado que no dependa de una
-firma**, salvo el tramo que el traspaso marca como «en cola serial».
+**Primera acción al retomar, y sólo ésta:** decidir **qué sede define el alcance de 1.34.0** —cuatro
+trabajos según tu decisión del 2026-09-09, **doce REQ** según los campos `Versión destino:`, con
+**seis sin empezar** (`docs/TRASPASO-2026-09-10.md` §10)—. **Sin eso, «cuánto falta» varía por un
+factor de tres** y ninguna estimación es honesta. Después, `D18` y las **seis** decisiones
+consolidadas de `docs/propuesta-cierre-1.34.0.md` §4.
+
+**Y tres cosas más que esperan tu palabra, no trabajo:** la mitad de fondo de `SEC-055` (acotar o
+retirar la delegación de publicación); cómo debe quedar enunciada la **causa vigente** del bloqueo de
+`REQ-023`, que hoy **no tiene ninguna** escrita; y el **conflicto** del NFR de `SEC-085` — el auditor
+lo exige para cerrarlo y tú prohibiste NFR nuevos en esta ventana.
+
+**Ya no queda trabajo de coordinación pendiente:** los tres actos que el artefacto del auditor
+prescribía con dueño y archivo están hechos.
 
 **Lo que NO se hace al retomar:** no se cierra ningún REQ ni hallazgo para limpiar el tablero, no se
 aceptan residuales, no se relajan pruebas, no se fusiona y no se publica. Cerrar la sesión no fue
@@ -875,7 +884,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-10 08:30
+## Estado derivado — 2026-09-10 08:46
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -885,7 +894,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `rel/registro-1.33.0` @ `cc7d3ce` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `rel/registro-1.33.0` @ `0fcb80a` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.0`
 **Aprobaciones pendientes:** 16
 **REQ:** 27 — completado 12 · en-revisión 2 · en-progreso 2 · bloqueado 5 · otros 6
@@ -902,7 +911,7 @@ _Sólo los REQ abiertos; los 12 completados no se listan._
 | REQ-016 | en-progreso | aprobado | aprobado | critico | h-07(instrumento),qa-016-01(instrumento) |
 | REQ-017 | bloqueado | con-hallazgos | aprobado | critico | qa-017-31(contrato,dueñoanalista-requeri… |
 | REQ-018 | borrador | pendiente | pendiente | critico | (ninguno) |
-| REQ-019 | bloqueado | pendiente | preventiva | critico | sec-033(contrato) |
+| REQ-019 | bloqueado | pendiente | preventiva | critico | sec-033(contrato),sec-055(contrato) |
 | REQ-020 | pendiente | pendiente | preventiva | critico | sec-038(contrato),sec-039(contrato),sec-… |
 | REQ-021 | bloqueado | con-hallazgos | preventiva | critico | dev-021-05(instrumento,dueñoanalista-req… |
 | REQ-022 | pendiente | pendiente | pendiente | critico | (ninguno) |
