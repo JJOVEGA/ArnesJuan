@@ -847,7 +847,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-10 01:00
+## Estado derivado — 2026-09-10 01:28
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -857,7 +857,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `rel/registro-1.33.0` @ `5c71694` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `rel/registro-1.33.0` @ `a57eecc` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.0`
 **Aprobaciones pendientes:** 7
 **REQ:** 27 — completado 12 · en-revisión 2 · en-progreso 4 · bloqueado 3 · otros 6
@@ -871,7 +871,7 @@ _Sólo los REQ abiertos; los 12 completados no se listan._
 | REQ-008 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-011 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-013 | en-revision | con-hallazgos | con-hallazgos | critico | sec-014(contrato),sec-020(contrato),qa-2… |
-| REQ-016 | en-progreso | aprobado | aprobado | critico | h-07(instrumento),qa-024-02(contrato) |
+| REQ-016 | en-progreso | aprobado | aprobado | critico | h-07(instrumento),qa-016-01(instrumento)… |
 | REQ-017 | en-progreso | aprobado | aprobado | critico | qa-017-07(instrumento),qa-017-11(instrum… |
 | REQ-018 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-019 | bloqueado | pendiente | preventiva | critico | sec-033(contrato) |
@@ -879,7 +879,7 @@ _Sólo los REQ abiertos; los 12 completados no se listan._
 | REQ-021 | bloqueado | con-hallazgos | preventiva | critico | dev-021-05(instrumento,dueñoanalista-req… |
 | REQ-022 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-023 | bloqueado | aprobado | aprobado | critico | qa-023-11(instrumento),qa-023-12(instrum… |
-| REQ-024 | en-progreso | con-hallazgos | pendiente | critico | qa-024-01(contrato),qa-024-02(contrato),… |
+| REQ-024 | en-progreso | con-hallazgos | pendiente | critico | qa-024-04(instrumento),qa-024-05(instrum… |
 | REQ-025 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-026 | en-revision | aprobado | con-hallazgos | critico | qa-026-03(instrumento),qa-026-07(instrum… |
 

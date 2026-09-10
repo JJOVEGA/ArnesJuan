@@ -2,6 +2,69 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `CA-11` validado ejecutando, los tres `contrato` retirados, y QA caza el agujero que su propio retiro iba a abrir
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester` (Opus) · consolidación: coordinadora. **Bajo delegación de 24 h.**
+
+**CI `hooks-en-linux` PASÓ sobre `a57eecc`** (1 min 42 s) — estaba `pending` al abrir la comisión y QA
+**lo releyó** en vez de citar el anterior. Banco **1017 PASS · 0 FAIL · 7 SKIP**, cuadre **1024**;
+autoprueba 106 · 0; tres quality gates verdes; **dos corridas con diff de veredictos VACÍO**, así que
+nada flaky y sus ediciones no movieron ninguna cifra.
+
+**`CA-11` de `REQ-016` VALIDADO, ejecutando y no leyendo:** los cuatro campos de la clase declaran su
+dirección en `hooks/lib.sh`, con la constante (`ARNES_AUSENCIA`) y la función (`arnes_ausencia`) **ambas
+ahí**, y **20 de 20** pares comentado/borrado equivalen **en los dos estados de la llave**, incluida la
+excepción de `Seguridad:` en `critico`. Es la **tercera obligación** de `CA-03 (ii)` y ya puede pasar a
+seguridad.
+
+**Los tres `contrato` de `REQ-024` se retiran**, y verificó lo que el analista había dejado sin verificar:
+la fila `Seguridad:` de la glosa nueva es cierta **en las seis combinaciones**.
+
+### El hallazgo que más vale: el agujero que su propio retiro iba a abrir
+
+**`QA-016-02` (`contrato`, alta).** `QA-024-02` era **el único hallazgo bloqueante de `REQ-016`**, y
+retirarlo **a secas** dejaba su cierre **medidamente en ALLOW** sobre un `Seguridad: aprobado` del
+**2026-09-07** emitido sobre **otro `CA-11`**. Con **control positivo** que descarta un instrumento ciego y
+**remedio verificado en la puerta**. Y la frase que lo cierra: «*hoy lo tapa la cola de 7, pero **la cola
+es transitoria y la firma vencida no***».
+
+Es la clase de cosa que sólo ve quien piensa **qué queda después** de su propio veredicto, en vez de
+limitarse a decidir sobre lo que le pusieron delante.
+
+### Dos correcciones a sí mismo, las dos habrían sido hallazgos falsos
+
+1. Contó **4 pares de `Estado`** como incumplimiento. Es un **límite de su sonda**: sin línea `Estado:` no
+   hay transición que juzgar, y `Estado` está **fuera del `Dado`** de `CA-11`.
+2. Declaró **muertas las cinco** entradas del sitio único — y era falso: **`bash` se comió el `${1}` de
+   `perl`** y la mutación **no tomaba efecto**. Con la mutación verificada, `Sensible a seguridad` resultó
+   **viva**: su mutación la **absorbe el tercer estado fail-closed**.
+
+**Cuarto agente del día que caza su propio instrumento antes de acusar al árbol.** Y el segundo cuya sonda
+falla por una expansión que el shell se traga.
+
+### La vía (c) de `CA-01` no es falsable, y la clase está bien puesta
+
+**`QA-024-11` (`instrumento`).** Ningún caso publica la igualdad, y (c) **no se ejercita en absoluto**:
+`OTROS24['Seguridad']` fija `Rigor: critico`, así que **el único campo al que (c) aplica se mide sólo donde
+aplica (b)**. Y en vez de dejarlo en duda, **midió la igualdad él mismo: existe en el producto, 6 de 6**.
+Por eso la clase es `instrumento` y no `contrato`: **el contrato dice la verdad y el que no puede fallar es
+el instrumento.** Ésa es la distinción que este proyecto lleva todo el día afinando.
+
+### Y dos más que valen
+
+**`QA-024-12`:** la entrada `Seguridad` del sitio único es **código muerto** —probado **por mutación con
+control positivo**— y el comentario «*EL UNICO SITIO QUE DECIDE*» es **falso para ese campo**.
+**`QA-016-01`:** el control de `40/2` afirma **en su PASS** que el write-back «*no se ha hecho*» — y **se
+hizo**. Un caso que pasa afirmando algo falso.
+
+**Y escribió con `Edit` y no por consola, con el motivo:** `requirements/` está cableado a
+`guard-completado`, y hacerlo por Bash «*habría apagado la puerta que mide justo esa transición*» (§13).
+
+**Límites que declara:** sin umbral de rendimiento en `AGENTS.md` **no hay prueba de carga**, así que
+`REQ-024 CA-07 (ii)` sale **no concluyente**; no ejercitó concurrencia; y `REQ-017 CA-08 (ii)` sigue con el
+techo dentro del recorrido — **«un SKIP repetido no es un verde acumulado»**.
+
+**`REQ-024` sigue `en-progreso` con `QA: con-hallazgos`: vuelta 2 de 3 consumida, queda una.**
+
 ## [Interno] — 2026-09-10 · Los cinco write-back, y el CI PASA sobre nueve commits incluida la puerta movida
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` · consolidación: coordinadora. **Bajo delegación de 24 h.**
 
