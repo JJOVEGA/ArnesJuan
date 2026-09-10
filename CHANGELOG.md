@@ -2,6 +2,38 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Write-back de `QA-017-24`: la cota vive en el criterio, no en el mensaje — y una cota que nadie puede comprobar es la misma nada
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos.
+
+**Causa: `QA-017-24`** (`contrato`, `docs/qa/1.34.0.md`), cuyo dueño declarado es el analista. `CA-03`
+de `REQ-017` **se contradecía consigo mismo** sobre la abstención: un párrafo decía que *declara* su
+**cota** y su **máquina**, y el párrafo de publicación —enunciado **por propiedad**: parámetros del
+valor del cociente y condiciones de la toma— **no incluye la cota** y mapea a la publicación **sólo**
+la máquina. La lectura decidía si el arreglo era de **código** o de **texto**.
+
+**Decisión: vale la lectura de que la cota vive en el criterio; el arreglo es de TEXTO** y el código
+de la abstención queda **invariante**. Cambio **menor, sin ADR** (`SEC-064` delega expresamente en el
+write-back «dónde vive la cota y cómo se publica», con dueño `analista-requerimientos`). La otra
+lectura cede por tres razones medidas, no por coste: el propio `CA-03` distingue la mitad publicada
+(«*que es lo que el caso publica arriba*») y el **sujeto** de la cota es la **puerta requerida**, que
+ninguna corrida ve; imprimirla sería la **segunda transcripción** de una cifra `operativo` sin nada
+que cuadre las dos —la clase que **`QA-017-23`** acaba de medir en el `modo=` del mismo caso—; y
+`SEC-064` pide «*una señal que lo publique **sin depender de que alguien lea la salida***», así que
+una línea impresa no la cierra y **lo parecería**.
+
+**Nada se relaja:** la cifra (**no más de 2** consecutivas, `operativo`, dirección **bajar**), la
+escalada a hallazgo con dueño y al propietario y los umbrales de `CA-03` quedan intactos, y ningún
+caso se retira ni se hace opt-in. **Se añade lo que faltaba:** la **forma de comprobar** la cota
+—sobre el **historial** de `hooks-en-linux`, observable externo a la corrida; incumple la **tercera**
+consecutiva sin hallazgo con dueño— y la declaración de que hoy **nadie la cuenta por máquina**, que
+es la **segunda mitad** de `SEC-064`, **dueño `desarrollador`**, abierta allí. Y se **retira una
+sobreafirmación**: el párrafo cierra **la instancia** de `SEC-064`, no su clase.
+
+**Archivos:** `requirements/REQ-017.md` (`CA-03` + fila de Historial) y `requirements/README.md`
+(fila del índice **re-derivada de la cabecera**: `completado`→`en-progreso` y QA
+`aprobado`→`con-hallazgos`; **ningún veredicto se emite ni se retira aquí**). `QA-017-24` **sigue
+abierto**: lo cierra el `qa-tester` al re-validar.
+
 ## [Interno] — 2026-09-10 · Propuesta de cierre de 1.34.0: quince entradas de la cola son CINCO decisiones, y los 23 bloqueantes son SIETE causas
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **Bajo delegación de 24 h.**
 
