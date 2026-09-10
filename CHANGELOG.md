@@ -2,6 +2,80 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · La cola re-derivada: `D2` decía 20 bloqueantes y son 23, y su «casi la mitad es deuda» era el 22 %
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **Bajo delegación de 24 h.**
+
+**Coordinación, no decisión.** `PENDING_APPROVAL.md` sigue con **15 pendientes** —comprobado con la
+regla de §6 y con `tools/arnes-lectura.sh`, que es la que la puerta usa—: no se añadió, borró ni
+fundió ninguna entrada. Lo re-derivado del disco:
+
+- **`D2`: de 20 bloqueantes a 23, de siete REQ a ocho.** Entran `REQ-024` (`QA-024-19`, `SEC-083`,
+  `SEC-084`) y `REQ-017` (`QA-017-24`); sale el de `REQ-023`, porque `SEC-079` se cerró por `D5`. El
+  inventario anterior **no se borra**: queda tachado con su fecha y el método para re-derivarlo.
+- **Una proporción que la entrada afirmaba mal, y es la segunda vez que caigo en la misma forma de
+  error.** Decía «*casi la mitad es deuda de 1.31.0 y 1.32.0*». No lo es: `REQ-007` (3) + `REQ-013`
+  (2) = **5 de 23, el 22 %**; lo de la ventana son **17 de 23**. El propietario ya me había corregido
+  exactamente esto —«*los ocho de deuda enumerada son el 36 % de 22, no la mitad*»—, así que la
+  corrección va **dentro de la entrada**, citando la frase anterior, y no sólo aquí.
+- **`REQ-020` no figuraba en la tabla de estado de la cola** pese a tener ventana 1.34.0 y aportar
+  **8 de los 23**. Añadido con sus tres campos reales: `pendiente`, `QA: pendiente`,
+  `Seguridad: preventiva` —que **no** cubre el código posterior.
+- **`REQ-017`**: la fila decía «QA en curso», y QA **cerró**. Queda dicho lo que gobierna el coste:
+  **la próxima validación es la vuelta 3 de 3 —la última— del ciclo que §9 reabrió**, porque la 1 fue
+  el `aprobado` del 2026-09-08 y la 2 el `con-hallazgos` del 2026-09-10. Por eso el write-back se
+  agrupó en **una** comisión de dos tramos antes de llamar a QA, en vez de dos comisiones.
+- **Un desfase que ninguna de las dos partes ve sola**, anotado en `D2` con su re-derivación: once
+  hallazgos `contrato` están **`abierto`** en el registro de seguridad y en **ningún** campo
+  `Hallazgos abiertos:`. `guard-completado` lee el campo, no el registro. Seis tocan 1.34.0.
+- **Puntero a la consolidación**: las quince entradas son **cinco** decisiones
+  (`docs/propuesta-cierre-1.34.0.md`), con las tres autorizaciones separadas por naturaleza.
+  Publicación **no se pide**: ni `v1.33.1` ni `v1.34.0`.
+
+**Y una cifra que estuve a punto de «corregir» mal, la tercera de la sesión.** `SEC-014` figura
+`mitigado` en el registro y abierto en el campo de `REQ-013`. Antes de declararlo desfase conté el
+vocabulario del registro —`abierto` 78, `mitigado` 6, `cerrado` 1— y **`mitigado` es un estado
+propio, distinto de `cerrado`**: el campo estaba bien y no se tocó. Anotado en `D2`.
+
+## [Interno] — 2026-09-10 · La cota de `SEC-064` llega a su sede declarada, `CA-08 (ii)`, y con cifra propia: 1 y no 2, porque ahí la abstención es el estado estable
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos. **Tramo 2, despachado por la coordinadora bajo la delegación de 24 h.**
+
+**Causa: `SEC-064`** (`instrumento`, severidad **alta**), **no `QA-017-24`**. Su remediación fija la
+sede —«*la cláusula en `CA-06` o en `CA-08 (ii)`, que es su sede única*»— y el write-back del
+2026-09-09 la escribió **sólo en `CA-03`**: la abstención de `CA-08 (ii)`, que es el **sujeto medido**
+del hallazgo, seguía **sin cota**.
+
+**Sede elegida: `CA-08 (ii)`, no `CA-06`.** `CA-06` es la regla **transversal** del SKIP para las
+sondas de `CA-03`, `CA-04` y `CA-05`; una cota escrita allí sería genérica y cubriría con **una sola
+cifra** actos cuyas dispersiones están medidas **distintas**. Es la doctrina de **`ADR-011`** —el
+alcance se enuncia **por acto**, no por puerta—.
+
+**Cifra propia, derivada y no copiada: no más de 1 corrida consecutiva** (`operativo`, dirección
+**bajar**, con **suelo 1** declarado y su motivo). En `CA-03` la abstención es **ocasional y depende
+de la carga** (1 de 16 corridas del banco, 2 de 5 saturado), así que la segunda consecutiva
+**informa**. En `CA-08 (ii)` no informa: sobre **código idéntico**, la razón recorre **0,973–1,364**
+—factor **1,40**— con el techo **1,25** **dentro** del recorrido en **5 de 5** corridas de la puerta
+requerida, de modo que la abstención es el **estado estable**. Y `SEC-064` pone su **forzador** en la
+**primera** corrida con SKIP: una cota de 2 habría sido **más floja que el forzador del propio
+hallazgo**.
+
+**Se añade también cómo se comprueba** —el **historial** de `hooks-en-linux`, observable **externo a
+la corrida**, porque ninguna corrida puede contar a sus predecesoras; incumple la **segunda**
+consecutiva sin hallazgo con dueño, y hoy el hallazgo **existe**— y, **declarado con dueño y
+vencimiento y no en silencio**, lo que falta para poder **sumar** dos abstenciones: la **señal** y
+**de qué máquina** es cada una. Esto último se **comprobó antes de escribirlo**: ningún mensaje de
+`tests/escenarios/hooks/secciones/37-coste-del-escaner-5-el-camino-normal.sh` —incluidos sus **seis**
+de abstención— emite plataforma ni carga, así que entra como **exigencia con dueño `desarrollador`**
+y no como propiedad ya presente. Afirmarla como presente habría reproducido `QA-017-24` en el
+criterio vecino.
+
+**Nada se mueve de `CA-08 (ii)`:** techo **≤ 1,25×**, unanimidad de las `k`, ≥ 6 series intercaladas,
+convergencia por brazo, par discriminante, techo de coste 0,750× y la mitad (i) de **0 procesos
+añadidos**. La cota es **más estricta** que la de `CA-03`, no más floja. `SEC-064` **no se cierra**:
+el párrafo cierra **su instancia**, no la clase, y sus dos mitades siguen abiertas allí.
+
+**Archivos:** `requirements/REQ-017.md` (`CA-08` + fila de Historial). **`CA-03` no se tocó**; ni
+`QA:`, ni `Seguridad:`, ni `Estado:`, ni `Hallazgos abiertos:`. Sin código.
+
 ## [Interno] — 2026-09-10 · Write-back de `QA-017-24`: la cota vive en el criterio, no en el mensaje — y una cota que nadie puede comprobar es la misma nada
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos.
 

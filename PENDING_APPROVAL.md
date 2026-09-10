@@ -41,11 +41,12 @@
 | REQ | Estado | Espera |
 |---|---|---|
 | `REQ-016` | `en-progreso` · **QA y Seguridad aprobados** | sólo que la cola baje a 0 |
-| `REQ-017` | `en-progreso` · modo intercalado implementado | QA en curso, luego auditor |
+| `REQ-017` | `en-progreso` · ~~QA en curso~~ → **QA CERRÓ** el 2026-09-10 (`con-hallazgos` sobre `86a44c8`): 1 `contrato` (`QA-017-24`) + 7 `instrumento`. Write-back hecho (`a139155`) | **la vuelta 3 de 3 —la última— del ciclo que §9 reabrió**, y después el auditor: su `Seguridad: aprobado` es del 2026-09-08 sobre `538c266`, **anterior al modo medido** |
 | `REQ-023` | **`bloqueado`** | **`D13`** — dos firmas verdes sobre un `CA-11` hoy falso |
-| `REQ-024` | **`bloqueado`**, tres vueltas agotadas | **`D14`** + `D12` |
+| `REQ-024` | **`bloqueado`**, tres vueltas agotadas · **`Seguridad: pendiente` — la auditoría nunca se hizo** | **`D14`** + `D12` |
+| `REQ-020` | **`pendiente`** · `QA: pendiente` · `Seguridad: preventiva` (no cubre código) | **`D2`**. No estaba en esta tabla y su ventana destino es 1.34.0: aporta **8 de los 23** bloqueantes |
 
-**Las quince, en orden de entrada:** `D2` los 20 hallazgos bloqueantes · `D3` `SEC-072`/`SEC-073` ·
+**Las quince, en orden de entrada:** `D2` los ~~20~~ **23** hallazgos bloqueantes · `D3` `SEC-072`/`SEC-073` ·
 `D4` ventana 1.35.0 de la superlinealidad · `D6` el fail-before de `CA-03` (analizado: **no** era `k=1`) ·
 `D7` `CA-04` y su gate previo · `D8` el bloque `campos` y la llave (+ las tres condiciones de `ADR-009`) ·
 `D9` el párrafo de `CA-03` (mi evidencia movía dos variables) · `D10` `SEC-083`, informativa ·
@@ -56,23 +57,72 @@
 
 **Resueltas** al final del archivo: `D1` (`REQ-023` a `bloqueado` con extensión) y `D5` (`SEC-079`).
 
-### D2 · Los 20 hallazgos bloqueantes de siete REQ — resolver, declarar residual o aceptar
+> **Las quince son CINCO decisiones — consolidación del 2026-09-10, en
+> `docs/propuesta-cierre-1.34.0.md`.** Ninguna entrada se borra, se funde ni pierde su
+> trazabilidad: esto sólo dice cuáles se firman juntas, con una fila por decisión que separa **qué
+> autorizar | qué cambia | qué trabajo queda después | qué riesgo permanece**.
+>
+> | Decisión | Agrupa | En una línea |
+> |---|---|---|
+> | **1** | `D2`, `D4` | Mover `REQ-020` a 1.35.0 sin retirar ninguno de sus 8 hallazgos → bloqueantes de la ventana **17 → 9** |
+> | **2** | `D16`, `D17` | **Implementar** el parche de los dos defectos publicados en `hotfix/1.33.1` **cortada del tag `v1.33.0`** — no autoriza publicarlo |
+> | **3** | `D11`, `D12`, `D13` | Una sola regla para **los verdes que ya no cubren su árbol**; ratificar `ADR-011`; **corregir la fila de §13 que `D11` autorizó y que hoy es falsa** |
+> | **4** | `D13`, `D14` | `REQ-023` y `REQ-024` siguen `bloqueado` + **cuarta vuelta acotada**, incluida la auditoría de `REQ-024` que nunca se hizo |
+> | **5** | `D7`, `D8`, `D15` | Poner el manifiesto en regla: ratificar o revertir `campos.ausencia_exige` (comiteado **sin su gate**), dejar **apagado** `veredictos.caducan_con_codigo`, firmar el gate previo de `CA-04` |
+>
+> **Informativas, sin firma:** `D3` (ya instruiste que no se cierran por redacción ni aceptación
+> implícita), `D6`, `D9`, `D10`.
+>
+> **Las tres autorizaciones están separadas por naturaleza** en §5 de la propuesta: *autorizar
+> trabajo* · *aceptar riesgos* · *autorizar publicación*. **Publicación no se pide hoy: ni
+> `v1.33.1` ni `v1.34.0`.**
 
-Tu regla del 2026-09-08 dice que **cualquiera devuelve el tag a ti**. Inventario medido el 2026-09-09:
+### D2 · Los ~~20~~ **23** hallazgos bloqueantes de ~~siete~~ **ocho** REQ — resolver, declarar residual o aceptar
+
+Tu regla del 2026-09-08 dice que **cualquiera devuelve el tag a ti**. ~~Inventario medido el
+2026-09-09~~ → **re-derivado el 2026-09-10 sobre `a139155`**. El inventario anterior no se borra: se
+dice de dónde a dónde se movió y por qué.
+
+*Método, para re-derivarlo sin preguntar:* recorrer los campos `Hallazgos abiertos:` de
+`requirements/REQ-0*.md`, conservar el `(clase)` que sigue a cada id y descartar `instrumento`
+(§6: sólo `usuario/dinero` y `contrato` impiden cerrar). Da **23** de **113** hallazgos abiertos;
+los otros **91** son `instrumento`, deuda con dueño que **no** bloquea.
 
 | REQ | Ventana | Bloqueantes | Nota |
 |---|---|---|---|
-| `REQ-020` | 1.34.0 | **8** — `SEC-038`…`SEC-045` | el bulto |
+| `REQ-020` | 1.34.0 | **8** — `SEC-038`…`SEC-045` | el bulto. **Y nunca se implementó:** la línea `Acredita:` que sus criterios contratan existe en **0 de 63** secciones del banco |
 | `REQ-007` | 1.31.0 | 3 — `QA-114`, `QA-116`, `QA-117` | deuda de ventana ya publicada |
+| `REQ-024` | 1.34.0 | **3 — `QA-024-19`, `SEC-083`, `SEC-084`** | **NUEVO** desde el inventario del 2026-09-09. Ver **D14**; `SEC-084` es además **D17** |
 | `REQ-026` | 1.34.0 | 3 — `SEC-067`, `SEC-072`, `SEC-073` | ver **D3** |
-| `REQ-013` | 1.32.0 | 2 — `SEC-014`, `SEC-020` | deuda de ventana ya publicada |
+| `REQ-013` | 1.32.0 | 2 — `SEC-014`, `SEC-020` | deuda de ventana ya publicada. `SEC-014` figura **`mitigado`** en el registro, que **no** es `cerrado`: el campo está bien y no se toca |
 | `REQ-021` | 1.34.0 | 2 — `QA-021-10`, `QA-021-11` | **3 vueltas agotadas, salida sin decidir** |
+| `REQ-017` | 1.34.0 | **1 — `QA-017-24`** | **NUEVO** el 2026-09-10: lo abrió el QA del modo intercalado. El write-back ya está hecho (`a139155`); lo cierra QA al re-validar |
 | `REQ-019` | 1.35.0 | 1 — `SEC-033` | aplazado; su salida tampoco está decidida |
-| `REQ-023` | 1.34.0 | 1 — **`SEC-079`** (`contrato`) | ver **D5**. Tercer relevo del bloqueante: `QA-023-05` (`contrato`) y `QA-023-15` (`usuario/dinero`) están **cerrados**; el que bloquea ahora lo abrió la auditoría `R-024` |
+| `REQ-023` | 1.34.0 | ~~1 — `SEC-079`~~ → **0** | `SEC-079` se cerró por **D5**. **Pero cero en el campo NO resuelve `D13`:** `CA-11` es falso sobre este árbol y dos firmas verdes lo cubren |
 
-Casi la mitad es **deuda de 1.31.0 y 1.32.0**, no trabajo de esta ventana. Esto no es trabajo
-pendiente: es una decisión. Por cada uno hace falta **resolver**, **declarar residual** (dueño,
-forzador medido y vencimiento) o **aceptar explícitamente**.
+**Corrección de una proporción que esta entrada afirmaba mal.** Decía «*casi la mitad es deuda de
+1.31.0 y 1.32.0*». **No lo es, y ya me corregiste una vez por el mismo tipo de error:** la deuda de
+ventanas publicadas es `REQ-007` (3) + `REQ-013` (2) = **5 de 23, el 22 %**. Lo de esta ventana son
+**17 de 23**. Y el bulto de `REQ-020` son **8 de 23, el 35 %** — era el **36 %** cuando el recuento
+era 20 ~~22~~; las dos cifras son correctas para su propio recuento y ninguna se retira.
+
+Esto no es trabajo pendiente: es una decisión. Por cada uno hace falta **resolver**, **declarar
+residual** (dueño, forzador medido y vencimiento) o **aceptar explícitamente**.
+
+> **Consolidación (2026-09-10).** Esta entrada y `D4` se resuelven juntas como la **decisión 1** de
+> `docs/propuesta-cierre-1.34.0.md`: **mover `REQ-020` a 1.35.0 sin retirar ninguno de sus ocho
+> hallazgos**, que baja los bloqueantes de la ventana de 17 a 9. Ninguna de las quince entradas de
+> esta cola se borra ni se funde; la propuesta sólo dice **cuáles se firman juntas**.
+>
+> **Y un desfase que hay que reconciliar antes de dar por firme cualquier recuento, incluido el 23
+> de arriba.** Hay **once** hallazgos `contrato` en estado **`abierto`** en
+> `docs/seguridad/registro-seguridad.md` que **ningún** campo `Hallazgos abiertos:` declara —
+> `SEC-031`, `SEC-032`, `SEC-034`, `SEC-035`, `SEC-036`, `SEC-050`, `SEC-052`, `SEC-053`, `SEC-054`,
+> `SEC-055`, `SEC-082` —, y `guard-completado` lee **el campo**, no el registro: **no los ve**. Seis
+> tocan la ventana 1.34.0. Es la misma familia que `SEC-073`, un inventario parcial leído como
+> completo, aplicada a esta cola. *Re-derivación:* `comm -23` entre los ids de cabecera
+> `` `contrato` · **abierto** `` del registro y los ids de los campos. **No es decisión tuya:** el
+> registro es del `auditor-seguridad` y el campo del `analista-requerimientos`.
 
 ### D3 · `SEC-072` y `SEC-073` de `REQ-026` — **no se cierran por redacción ni por aceptación implícita**
 
