@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Corrección del piso de la sección de estabilización
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Codex.
+
+Declara la derivación legible de `PISO_AUTONOMO_SECCION=20` en la sección 40. No cambia el comportamiento de rigor ni de firmas; corrige la evidencia que el corredor exige.
+
 ## [Interno] — 2026-09-10 · Candidato local de estabilización sobre v1.33.0
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Codex · agente: desarrollador + revisión independiente.
 

@@ -1,6 +1,6 @@
 # Regresiones D16 y SEC-084 sobre documentos y ediciones reales.
 CASOS_ESPERADOS_SECCION=17
-PISO_AUTONOMO_SECCION=20  # preámbulo y bloque mayor; sin maquinaria duplicada
+PISO_AUTONOMO_SECCION=20  # 4 preámbulo + 0 maquinaria compartida duplicada + 16 bloque indivisible mayor · REQ-014 CA-18
 
 seccion_nueva "Estabilizacion: rigor y firma por lector comun:"
 mkreq_r "REQ-940" "no" "aprobado" "pendiente" "critico (por suelo)"
