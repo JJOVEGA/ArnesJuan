@@ -1,0 +1,161 @@
+ID    RAMA                                                 SENS       RIGOR     MATIZ     VALOR_HEX
+R01   campo ausente (cadena vacia)                         no         estandar  unset     
+R01   campo ausente (cadena vacia)                         si         critico   unset     
+R01   campo ausente (cadena vacia)                         <ausente>  estandar  unset     
+R01   campo ausente (cadena vacia)                         quiza      critico   unset     
+R02   solo blancos (valor vacio tras normalizar)           no         estandar  unset      20 20 20
+R02   solo blancos (valor vacio tras normalizar)           si         critico   unset      20 20 20
+R02   solo blancos (valor vacio tras normalizar)           <ausente>  estandar  unset      20 20 20
+R02   solo blancos (valor vacio tras normalizar)           quiza      critico   unset      20 20 20
+R03   ligero limpio                                        no         ligero    unset      6c 69 67 65 72 6f
+R03   ligero limpio                                        si         critico   unset      6c 69 67 65 72 6f
+R03   ligero limpio                                        <ausente>  ligero    unset      6c 69 67 65 72 6f
+R03   ligero limpio                                        quiza      critico   unset      6c 69 67 65 72 6f
+R04   estandar limpio                                      no         estandar  unset      65 73 74 61 6e 64 61 72
+R04   estandar limpio                                      si         critico   unset      65 73 74 61 6e 64 61 72
+R04   estandar limpio                                      <ausente>  estandar  unset      65 73 74 61 6e 64 61 72
+R04   estandar limpio                                      quiza      critico   unset      65 73 74 61 6e 64 61 72
+R05   critico limpio                                       no         critico   unset      63 72 69 74 69 63 6f
+R05   critico limpio                                       si         critico   unset      63 72 69 74 69 63 6f
+R05   critico limpio                                       <ausente>  critico   unset      63 72 69 74 69 63 6f
+R05   critico limpio                                       quiza      critico   unset      63 72 69 74 69 63 6f
+R06   valor no reconocido                                  no         estandar  unset      62 61 73 75 72 61
+R06   valor no reconocido                                  si         critico   unset      62 61 73 75 72 61
+R06   valor no reconocido                                  <ausente>  estandar  unset      62 61 73 75 72 61
+R06   valor no reconocido                                  quiza      critico   unset      62 61 73 75 72 61
+R07   mayusculas (rama del ,,)                             no         ligero    unset      4c 49 47 45 52 4f
+R07   mayusculas (rama del ,,)                             si         critico   unset      4c 49 47 45 52 4f
+R07   mayusculas (rama del ,,)                             <ausente>  ligero    unset      4c 49 47 45 52 4f
+R07   mayusculas (rama del ,,)                             quiza      critico   unset      4c 49 47 45 52 4f
+R08   tabulador delante (rama //\t)                        no         ligero    unset      09 6c 69 67 65 72 6f
+R08   tabulador delante (rama //\t)                        si         critico   unset      09 6c 69 67 65 72 6f
+R08   tabulador delante (rama //\t)                        <ausente>  ligero    unset      09 6c 69 67 65 72 6f
+R08   tabulador delante (rama //\t)                        quiza      critico   unset      09 6c 69 67 65 72 6f
+R09   blanco de mas interior (rama // )                    no         ligero    unset      6c 69 20 67 65 72 6f
+R09   blanco de mas interior (rama // )                    si         critico   unset      6c 69 20 67 65 72 6f
+R09   blanco de mas interior (rama // )                    <ausente>  ligero    unset      6c 69 20 67 65 72 6f
+R09   blanco de mas interior (rama // )                    quiza      critico   unset      6c 69 20 67 65 72 6f
+R10   acento (rama pliega_ortografia NFC)                  no         ligero    unset      6c c3 ad 67 65 72 6f
+R10   acento (rama pliega_ortografia NFC)                  si         critico   unset      6c c3 ad 67 65 72 6f
+R10   acento (rama pliega_ortografia NFC)                  <ausente>  ligero    unset      6c c3 ad 67 65 72 6f
+R10   acento (rama pliega_ortografia NFC)                  quiza      critico   unset      6c c3 ad 67 65 72 6f
+R11   acento NFD (rama pliega_ortografia NFD)              no         estandar  unset      6c 69 65 cc 81 67 65 72 6f
+R11   acento NFD (rama pliega_ortografia NFD)              si         critico   unset      6c 69 65 cc 81 67 65 72 6f
+R11   acento NFD (rama pliega_ortografia NFD)              <ausente>  estandar  unset      6c 69 65 cc 81 67 65 72 6f
+R11   acento NFD (rama pliega_ortografia NFD)              quiza      critico   unset      6c 69 65 cc 81 67 65 72 6f
+R12   markdown ** envolviendo (rama desenvuelve)           no         ligero    unset      2a 2a 6c 69 67 65 72 6f 2a 2a
+R12   markdown ** envolviendo (rama desenvuelve)           si         critico   unset      2a 2a 6c 69 67 65 72 6f 2a 2a
+R12   markdown ** envolviendo (rama desenvuelve)           <ausente>  ligero    unset      2a 2a 6c 69 67 65 72 6f 2a 2a
+R12   markdown ** envolviendo (rama desenvuelve)           quiza      critico   unset      2a 2a 6c 69 67 65 72 6f 2a 2a
+R13   markdown backtick envolviendo                        no         ligero    unset      60 6c 69 67 65 72 6f 60
+R13   markdown backtick envolviendo                        si         critico   unset      60 6c 69 67 65 72 6f 60
+R13   markdown backtick envolviendo                        <ausente>  ligero    unset      60 6c 69 67 65 72 6f 60
+R13   markdown backtick envolviendo                        quiza      critico   unset      60 6c 69 67 65 72 6f 60
+R14   markdown _ envolviendo                               no         ligero    unset      5f 6c 69 67 65 72 6f 5f
+R14   markdown _ envolviendo                               si         critico   unset      5f 6c 69 67 65 72 6f 5f
+R14   markdown _ envolviendo                               <ausente>  ligero    unset      5f 6c 69 67 65 72 6f 5f
+R14   markdown _ envolviendo                               quiza      critico   unset      5f 6c 69 67 65 72 6f 5f
+R15   MATIZ: parentesis simple                             no         estandar  unset      6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c 29
+R15   MATIZ: parentesis simple                             si         critico   unset      6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c 29
+R15   MATIZ: parentesis simple                             <ausente>  estandar  unset      6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c 29
+R15   MATIZ: parentesis simple                             quiza      critico   unset      6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c 29
+R16   MATIZ: parentesis pegado sin espacio                 no         estandar  unset      6c 69 67 65 72 6f 28 6c 6f 63 61 6c 29
+R16   MATIZ: parentesis pegado sin espacio                 si         critico   unset      6c 69 67 65 72 6f 28 6c 6f 63 61 6c 29
+R16   MATIZ: parentesis pegado sin espacio                 <ausente>  estandar  unset      6c 69 67 65 72 6f 28 6c 6f 63 61 6c 29
+R16   MATIZ: parentesis pegado sin espacio                 quiza      critico   unset      6c 69 67 65 72 6f 28 6c 6f 63 61 6c 29
+R17   MATIZ: parentesis vacio                              no         estandar  unset      6c 69 67 65 72 6f 20 28 29
+R17   MATIZ: parentesis vacio                              si         critico   unset      6c 69 67 65 72 6f 20 28 29
+R17   MATIZ: parentesis vacio                              <ausente>  estandar  unset      6c 69 67 65 72 6f 20 28 29
+R17   MATIZ: parentesis vacio                              quiza      critico   unset      6c 69 67 65 72 6f 20 28 29
+R18   MATIZ: parentesis anidado                            no         estandar  unset      6c 69 67 65 72 6f 20 28 28 61 29 20 62 29
+R18   MATIZ: parentesis anidado                            si         critico   unset      6c 69 67 65 72 6f 20 28 28 61 29 20 62 29
+R18   MATIZ: parentesis anidado                            <ausente>  estandar  unset      6c 69 67 65 72 6f 20 28 28 61 29 20 62 29
+R18   MATIZ: parentesis anidado                            quiza      critico   unset      6c 69 67 65 72 6f 20 28 28 61 29 20 62 29
+R19   MATIZ: dos parentesis                                no         estandar  unset      6c 69 67 65 72 6f 20 28 61 29 20 28 62 29
+R19   MATIZ: dos parentesis                                si         critico   unset      6c 69 67 65 72 6f 20 28 61 29 20 28 62 29
+R19   MATIZ: dos parentesis                                <ausente>  estandar  unset      6c 69 67 65 72 6f 20 28 61 29 20 28 62 29
+R19   MATIZ: dos parentesis                                quiza      critico   unset      6c 69 67 65 72 6f 20 28 61 29 20 28 62 29
+R20   MATIZ: markdown envolviendo nivel+parentesis         no         estandar  unset      2a 2a 6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c 29 2a 2a
+R20   MATIZ: markdown envolviendo nivel+parentesis         si         critico   unset      2a 2a 6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c 29 2a 2a
+R20   MATIZ: markdown envolviendo nivel+parentesis         <ausente>  estandar  unset      2a 2a 6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c 29 2a 2a
+R20   MATIZ: markdown envolviendo nivel+parentesis         quiza      critico   unset      2a 2a 6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c 29 2a 2a
+R21   MATIZ: markdown solo en el nivel                     no         estandar  unset      2a 2a 6c 69 67 65 72 6f 2a 2a 20 28 6c 6f 63 61 6c 29
+R21   MATIZ: markdown solo en el nivel                     si         critico   unset      2a 2a 6c 69 67 65 72 6f 2a 2a 20 28 6c 6f 63 61 6c 29
+R21   MATIZ: markdown solo en el nivel                     <ausente>  estandar  unset      2a 2a 6c 69 67 65 72 6f 2a 2a 20 28 6c 6f 63 61 6c 29
+R21   MATIZ: markdown solo en el nivel                     quiza      critico   unset      2a 2a 6c 69 67 65 72 6f 2a 2a 20 28 6c 6f 63 61 6c 29
+R22   MATIZ: backtick solo en el nivel                     no         estandar  unset      60 6c 69 67 65 72 6f 60 20 28 6c 6f 63 61 6c 29
+R22   MATIZ: backtick solo en el nivel                     si         critico   unset      60 6c 69 67 65 72 6f 60 20 28 6c 6f 63 61 6c 29
+R22   MATIZ: backtick solo en el nivel                     <ausente>  estandar  unset      60 6c 69 67 65 72 6f 60 20 28 6c 6f 63 61 6c 29
+R22   MATIZ: backtick solo en el nivel                     quiza      critico   unset      60 6c 69 67 65 72 6f 60 20 28 6c 6f 63 61 6c 29
+R23   MATIZ: parentesis con tab dentro                     no         estandar  unset      6c 69 67 65 72 6f 20 28 09 6c 6f 63 61 6c 09 29
+R23   MATIZ: parentesis con tab dentro                     si         critico   unset      6c 69 67 65 72 6f 20 28 09 6c 6f 63 61 6c 09 29
+R23   MATIZ: parentesis con tab dentro                     <ausente>  estandar  unset      6c 69 67 65 72 6f 20 28 09 6c 6f 63 61 6c 09 29
+R23   MATIZ: parentesis con tab dentro                     quiza      critico   unset      6c 69 67 65 72 6f 20 28 09 6c 6f 63 61 6c 09 29
+R24   MATIZ: parentesis con parentesis interior desbalanceado no         estandar  unset      6c 69 67 65 72 6f 20 28 61 29 20 62 29
+R24   MATIZ: parentesis con parentesis interior desbalanceado si         critico   unset      6c 69 67 65 72 6f 20 28 61 29 20 62 29
+R24   MATIZ: parentesis con parentesis interior desbalanceado <ausente>  estandar  unset      6c 69 67 65 72 6f 20 28 61 29 20 62 29
+R24   MATIZ: parentesis con parentesis interior desbalanceado quiza      critico   unset      6c 69 67 65 72 6f 20 28 61 29 20 62 29
+R25   parentesis SIN CERRAR (no es parentesis, es texto)   no         estandar  unset      6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c
+R25   parentesis SIN CERRAR (no es parentesis, es texto)   si         critico   unset      6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c
+R25   parentesis SIN CERRAR (no es parentesis, es texto)   <ausente>  estandar  unset      6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c
+R25   parentesis SIN CERRAR (no es parentesis, es texto)   quiza      critico   unset      6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c
+R26   parentesis SIN ABRIR (no ends-with-( )               no         estandar  unset      6c 69 67 65 72 6f 20 6c 6f 63 61 6c 29
+R26   parentesis SIN ABRIR (no ends-with-( )               si         critico   unset      6c 69 67 65 72 6f 20 6c 6f 63 61 6c 29
+R26   parentesis SIN ABRIR (no ends-with-( )               <ausente>  estandar  unset      6c 69 67 65 72 6f 20 6c 6f 63 61 6c 29
+R26   parentesis SIN ABRIR (no ends-with-( )               quiza      critico   unset      6c 69 67 65 72 6f 20 6c 6f 63 61 6c 29
+R27   parentesis AL PRINCIPIO (no final)                   no         estandar  unset      28 6c 6f 63 61 6c 29 20 6c 69 67 65 72 6f
+R27   parentesis AL PRINCIPIO (no final)                   si         critico   unset      28 6c 6f 63 61 6c 29 20 6c 69 67 65 72 6f
+R27   parentesis AL PRINCIPIO (no final)                   <ausente>  estandar  unset      28 6c 6f 63 61 6c 29 20 6c 69 67 65 72 6f
+R27   parentesis AL PRINCIPIO (no final)                   quiza      critico   unset      28 6c 6f 63 61 6c 29 20 6c 69 67 65 72 6f
+R28   MATIZ sobre estandar                                 no         estandar  unset      65 73 74 61 6e 64 61 72 20 28 78 29
+R28   MATIZ sobre estandar                                 si         critico   unset      65 73 74 61 6e 64 61 72 20 28 78 29
+R28   MATIZ sobre estandar                                 <ausente>  estandar  unset      65 73 74 61 6e 64 61 72 20 28 78 29
+R28   MATIZ sobre estandar                                 quiza      critico   unset      65 73 74 61 6e 64 61 72 20 28 78 29
+R29   MATIZ sobre critico                                  no         estandar  unset      63 72 69 74 69 63 6f 20 28 70 6f 72 20 73 75 65 6c 6f 29
+R29   MATIZ sobre critico                                  si         critico   unset      63 72 69 74 69 63 6f 20 28 70 6f 72 20 73 75 65 6c 6f 29
+R29   MATIZ sobre critico                                  <ausente>  estandar  unset      63 72 69 74 69 63 6f 20 28 70 6f 72 20 73 75 65 6c 6f 29
+R29   MATIZ sobre critico                                  quiza      critico   unset      63 72 69 74 69 63 6f 20 28 70 6f 72 20 73 75 65 6c 6f 29
+R30   MATIZ sobre valor no reconocido                      no         estandar  unset      62 61 73 75 72 61 20 28 78 29
+R30   MATIZ sobre valor no reconocido                      si         critico   unset      62 61 73 75 72 61 20 28 78 29
+R30   MATIZ sobre valor no reconocido                      <ausente>  estandar  unset      62 61 73 75 72 61 20 28 78 29
+R30   MATIZ sobre valor no reconocido                      quiza      critico   unset      62 61 73 75 72 61 20 28 78 29
+R31   MATIZ: solo parentesis, sin nivel                    no         estandar  unset      28 6c 6f 63 61 6c 29
+R31   MATIZ: solo parentesis, sin nivel                    si         critico   unset      28 6c 6f 63 61 6c 29
+R31   MATIZ: solo parentesis, sin nivel                    <ausente>  estandar  unset      28 6c 6f 63 61 6c 29
+R31   MATIZ: solo parentesis, sin nivel                    quiza      critico   unset      28 6c 6f 63 61 6c 29
+R32   BOM delante del nivel                                no         estandar  unset      ef bb bf 6c 69 67 65 72 6f
+R32   BOM delante del nivel                                si         critico   unset      ef bb bf 6c 69 67 65 72 6f
+R32   BOM delante del nivel                                <ausente>  estandar  unset      ef bb bf 6c 69 67 65 72 6f
+R32   BOM delante del nivel                                quiza      critico   unset      ef bb bf 6c 69 67 65 72 6f
+R33   BOM delante + matiz                                  no         estandar  unset      ef bb bf 6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c 29
+R33   BOM delante + matiz                                  si         critico   unset      ef bb bf 6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c 29
+R33   BOM delante + matiz                                  <ausente>  estandar  unset      ef bb bf 6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c 29
+R33   BOM delante + matiz                                  quiza      critico   unset      ef bb bf 6c 69 67 65 72 6f 20 28 6c 6f 63 61 6c 29
+R34   espacio de anchura cero dentro del nivel             no         estandar  unset      6c 69 e2 80 8b 67 65 72 6f
+R34   espacio de anchura cero dentro del nivel             si         critico   unset      6c 69 e2 80 8b 67 65 72 6f
+R34   espacio de anchura cero dentro del nivel             <ausente>  estandar  unset      6c 69 e2 80 8b 67 65 72 6f
+R34   espacio de anchura cero dentro del nivel             quiza      critico   unset      6c 69 e2 80 8b 67 65 72 6f
+R35   parentesis de anchura completa (no ASCII)            no         estandar  unset      6c 69 67 65 72 6f 20 ef bc 88 6c 6f 63 61 6c ef bc 89
+R35   parentesis de anchura completa (no ASCII)            si         critico   unset      6c 69 67 65 72 6f 20 ef bc 88 6c 6f 63 61 6c ef bc 89
+R35   parentesis de anchura completa (no ASCII)            <ausente>  estandar  unset      6c 69 67 65 72 6f 20 ef bc 88 6c 6f 63 61 6c ef bc 89
+R35   parentesis de anchura completa (no ASCII)            quiza      critico   unset      6c 69 67 65 72 6f 20 ef bc 88 6c 6f 63 61 6c ef bc 89
+R36   CR interior en el valor                              no         estandar  unset      6c 69 67 65 72 6f 0d 28 6c 6f 63 61 6c 29
+R36   CR interior en el valor                              si         critico   unset      6c 69 67 65 72 6f 0d 28 6c 6f 63 61 6c 29
+R36   CR interior en el valor                              <ausente>  estandar  unset      6c 69 67 65 72 6f 0d 28 6c 6f 63 61 6c 29
+R36   CR interior en el valor                              quiza      critico   unset      6c 69 67 65 72 6f 0d 28 6c 6f 63 61 6c 29
+R37   matiz cuyo texto ES otro nivel                       no         estandar  unset      6c 69 67 65 72 6f 20 28 63 72 69 74 69 63 6f 29
+R37   matiz cuyo texto ES otro nivel                       si         critico   unset      6c 69 67 65 72 6f 20 28 63 72 69 74 69 63 6f 29
+R37   matiz cuyo texto ES otro nivel                       <ausente>  estandar  unset      6c 69 67 65 72 6f 20 28 63 72 69 74 69 63 6f 29
+R37   matiz cuyo texto ES otro nivel                       quiza      critico   unset      6c 69 67 65 72 6f 20 28 63 72 69 74 69 63 6f 29
+R38   matiz cuyo texto es critico, nivel estandar          no         estandar  unset      65 73 74 61 6e 64 61 72 20 28 63 72 69 74 69 63 6f 29
+R38   matiz cuyo texto es critico, nivel estandar          si         critico   unset      65 73 74 61 6e 64 61 72 20 28 63 72 69 74 69 63 6f 29
+R38   matiz cuyo texto es critico, nivel estandar          <ausente>  estandar  unset      65 73 74 61 6e 64 61 72 20 28 63 72 69 74 69 63 6f 29
+R38   matiz cuyo texto es critico, nivel estandar          quiza      critico   unset      65 73 74 61 6e 64 61 72 20 28 63 72 69 74 69 63 6f 29
+R39   nivel critico con matiz que dice ligero              no         estandar  unset      63 72 69 74 69 63 6f 20 28 6c 69 67 65 72 6f 29
+R39   nivel critico con matiz que dice ligero              si         critico   unset      63 72 69 74 69 63 6f 20 28 6c 69 67 65 72 6f 29
+R39   nivel critico con matiz que dice ligero              <ausente>  estandar  unset      63 72 69 74 69 63 6f 20 28 6c 69 67 65 72 6f 29
+R39   nivel critico con matiz que dice ligero              quiza      critico   unset      63 72 69 74 69 63 6f 20 28 6c 69 67 65 72 6f 29
+R40   parentesis con solo blancos dentro                   no         estandar  unset      6c 69 67 65 72 6f 20 28 20 09 20 29
+R40   parentesis con solo blancos dentro                   si         critico   unset      6c 69 67 65 72 6f 20 28 20 09 20 29
+R40   parentesis con solo blancos dentro                   <ausente>  estandar  unset      6c 69 67 65 72 6f 20 28 20 09 20 29
+R40   parentesis con solo blancos dentro                   quiza      critico   unset      6c 69 67 65 72 6f 20 28 20 09 20 29

@@ -2,6 +2,167 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · v1.33.2: QA APROBADO en la vuelta 1, y el argumento que era un barrido pasa a ser una demostración
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (el veredicto) y coordinadora (la verificación de instalación).
+
+**`QA: aprobado (vuelta 1 de 2, QA-P48-01, 2026-09-10)`.** Bajo la enmienda de autoalojamiento
+aligerado: revisión acotada al cambio y sus dependencias, **una** corrida del banco sobre el candidato
+final, y evidencia previa **verificada y no repetida**.
+
+### El propietario tenía razón, y el resultado es mejor que la objeción
+
+Dijo que *«las 144 combinaciones son evidencia del barrido, no por sí solas una prueba universal»*.
+QA fue a cubrir la brecha y **la cerró por construcción**, no ampliando el barrido: cinco premisas
+verificadas —`arnes_norm_campo` **byte a byte idéntica** a 1.33.0; el reparto de 1.33.0 era
+**incondicional**, luego **todo** valor con `(` daba el nivel heredado exacto; `ARNES_RIGOR_MATIZ=1`
+⟺ esa misma condición; con él la guarda toma `max(declarado, heredado)`; y `arnes_rigor_efectivo`
+sólo sube, con `arnes_rigor_nivel`, `arnes_sens_efectiva`, `arnes_veredicto` y `arnes_desenvuelve`
+**idénticas** a 1.33.0—. **El antecedente «rigor nuevo ≥ viejo» ya no descansa en un muestreo.**
+
+Consecuencia que QA saca y conviene no perder: **el contrato queda conservador, no falso** — así que
+**no hace falta otro write-back**.
+
+### Las tres comprobaciones que el propietario pidió nombradas
+
+1. **Ramas del lector: ninguna baja el rigor.** **40 ramas nombradas × 4 estados de sensibilidad =
+   160 combinaciones**, contra **tres** lectores. **0 regresiones** vs 1.33.0; **4** celdas cambian y
+   las cuatro **suben**. Cubiertas las once que la coordinadora enumeró **más** paréntesis sin abrir,
+   al principio, doble y sin nivel, matiz que nombra otro nivel, acento **NFC y NFD**, espacio de
+   anchura cero y paréntesis de anchura completa. **Toda** rama con matiz da `estandar` o `critico`;
+   las únicas que dan `ligero` son las de `ligero` **sin** matiz.
+2. **Contaminación, a través de la PUERTA** —no sólo del lector, que era lo que faltaba—: secuencias
+   (5 casos), REQ limpio con vecinos con matiz en la carpeta (2), y **`hooks/estado-derivado.sh` con
+   4 REQ en un solo proceso en los dos órdenes**, que es **el único consumidor que lee varios REQ en
+   el mismo proceso**. Todo correcto. Y por construcción: `arnes_campos_req` **no tiene `return`
+   temprano**, así que siempre alcanza el reinicio.
+3. **Contrato por conducta, con las exenciones ejercidas.** QA construyó un **discriminador**: la
+   **terna** de decisiones ante `(QA pdte, SEG pdte)` · `(QA ok, SEG pdte)` · `(ambas ok)` identifica
+   el nivel **sin preguntar al lector**. **120 invocaciones de puerta por versión, cero ternas
+   anómalas** en las tres, con lo que la **monotonía de la puerta queda medida** y no supuesta. Las
+   dos filas pedidas: `ligero (local)` + `QA: pendiente` → **deny**; `ligero` a secas con ambas
+   pendientes → **allow**.
+
+**Par fail-before/pass-after:** **8 filas** en las que la 1.33.1 publicada afloja con terna
+`allow allow allow` —cerraban **sin QA *ni* seguridad**—, las **8 restauradas**, 0 regresiones.
+
+**Falsación propia: 16 casos de puerta, 16 PASS.** No hay vía de **neutralizar el matiz** por la
+cabecera: clave decorada, sangrada, `Rigor :`, duplicada en los dos órdenes, `ligero` limpio
+comentado, `ligero` limpio en el cuerpo, comentario sin cerrar, CR final, sensibilidad no reconocida.
+
+### Instalación nueva y actualización desde v1.33.1 — condición de publicación, comprobada
+
+Hecha por la coordinadora y **por adelantado**, para que seguridad la verifique y no la reconstruya.
+`arnes-upgrade` es un **merge a tres vías**, así que se verifica su sustrato con `git merge-file` sobre
+las plantillas reales. **No se instaló nada en esta máquina ni se tocó ninguna configuración**, por el
+límite expreso del propietario.
+
+| Caso | `rc` | Resultado |
+|---|---|---|
+| Proyecto que **no tocó** el archivo *(= instalación nueva)* | 0 | recibe la regla, 0 conflictos |
+| Proyecto que editó **otra** sección | 0 | **conserva su texto** y recibe la regla |
+| Proyecto que editó **la misma región** | **1** | **conflictúa y NO sobrescribe** — conserva lo del equipo y ofrece la nueva |
+| ¿Toca el manifiesto o los REQ del proyecto? | — | **no**, cero archivos |
+
+Y el radio de impacto: **v1.33.2 cambia UNA sola superficie heredable**,
+`templates/requirements-README.md.tpl`. `agents/`, `skills/`, `playbooks/`, `hooks/hooks.json` y
+`templates/arnes-config.json.tpl` **intactos**. *(Una comprobación previa de la coordinadora comparó
+contra el árbol equivocado y dijo que el manifiesto de plantilla cambiaba: era falso, y queda
+corregido y registrado dentro del artefacto en vez de borrado.)*
+
+### Un hallazgo que NO bloquea, y dos avisos
+
+**`QA-1332-01`** (`instrumento`, dueño `desarrollador`, otra ventana por orden del propietario):
+`tools/arnes-lectura.sh` dice de `Rigor: critico (por suelo)` que *«no es un nivel válido → se ignora»*
+mientras la puerta lee `critico` y **deniega**. Va **del lado seguro**, **no es de este parche** —lo
+volvió falso **1.33.1** con D16— y **1.33.2 reduce el desfase a la mitad**.
+
+**Aviso 1: el parche no tiene REQ.** El veredicto de QA no puede vivir en un campo `QA:` y
+`guard-completado` **no mide nada de este cambio**. Queda anotado: no es un defecto del parche, es una
+propiedad de la línea de parches.
+
+**Aviso 2: el banco.** Una corrida, `rc 0`, **908 PASS · 0 FAIL · 4 SKIP**, cuadre **912**; autoprueba
+**106 PASS · 0 FAIL**. El reparto difiere del 907/0/5 del desarrollador en el SKIP de calibración que
+el propio banco declara dependiente del reloj: **se registra la variabilidad en vez de elegir cifra**,
+con `rc`, cuadre y `FAIL=0` idénticos. **Rendimiento no acreditado** (24 s, `loadavg` 0,03→1,62, 12
+núcleos, `ARNES_JOBS=6`, sin calentamiento, no es el runner).
+
+`.claude-plugin/plugin.json` sigue en `1.33.1`: el commit de versión va aparte. Superficie protegida
+—`hooks/`, `tests/`, `tools/`, `requirements/`, `templates/`, `.claude-plugin/`— **intacta** respecto a
+`a8e332a`, comprobado.
+
+## [Interno] — 2026-09-10 · `QA-P48-01`: QA acotada del parche v1.33.2 — **aprobado, vuelta 1 de 2**
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester.
+
+Veredicto **`QA: aprobado (vuelta 1 de 2, QA-P48-01, 2026-09-10)`** sobre `09ccf63` y `a8e332a`
+(cabeza `a8e332a`, rama `hotfix/1.33.2-rigor`). Revisión **proporcional**, según la política del
+propietario de hoy. Informe y arneses: **`docs/qa/1.33.2.md`** y `docs/qa/1.33.2-falsacion/`.
+El parche **no tiene REQ**, así que el veredicto no vive en un campo `QA:` y `guard-completado`
+no lo mide; se anota para que conste.
+
+**Quality gates en verde.** `bash -n`, los tres JSON del plugin y `git diff --check` OK. Banco
+completo en **una sola corrida** (este árbol es el candidato final): `rc 0`, **908 PASS · 0 FAIL ·
+4 SKIP**, cuadre **912** exacto; autoprueba del corredor **106 PASS · 0 FAIL**. El reparto difiere
+del 907/0/5 del desarrollador en el SKIP de calibración que el banco declara dependiente del
+reloj: se registra la variabilidad en vez de elegir cifra, con `rc`, cuadre y `FAIL=0` idénticos.
+Rendimiento **no acreditado** (24 s de reloj, `loadavg` 0,03→1,62, 12 núcleos, `ARNES_JOBS=6`;
+esta máquina no es el runner y no hubo calentamiento).
+
+**Ramas del lector: ninguna baja el rigor.** **40 ramas nombradas × 4 estados de sensibilidad =
+160 combinaciones**, contra los tres lectores (1.33.0 y 1.33.1 instaladas, y este árbol): **0
+regresiones** frente a v1.33.0 y sólo **4 celdas** cambian, las cuatro hacia arriba
+(`critico (<matiz>)` con sensibilidad no afirmativa). Cubiertas las once que el propietario
+nombró más paréntesis sin abrir, al principio, doble, sin nivel, matiz que nombra otro nivel,
+acento NFC/NFD, espacio de anchura cero y paréntesis de anchura completa. Toda rama con matiz da
+`estandar` o `critico`; las únicas que dan `ligero` son las de `ligero` **sin** matiz.
+
+**Y el antecedente del argumento resulta ser POR CONSTRUCCIÓN, no sólo por barrido** — sobre cinco
+premisas verificadas: `arnes_norm_campo` es byte a byte idéntica a v1.33.0; el reparto de v1.33.0
+era incondicional, luego todo valor con `(` daba el nivel heredado **exacto**; el indicador vale 1
+en **esa misma** condición; con él la guarda toma `max(declarado, heredado)`; y
+`arnes_rigor_efectivo` sólo sube, con `arnes_rigor_nivel`, `arnes_sens_efectiva`,
+`arnes_veredicto` y `arnes_desenvuelve` **idénticas** a v1.33.0. El contrato queda
+**conservador, no falso**: no hace falta write-back.
+
+**El indicador no contamina, medido a través de la PUERTA.** La sonda del proyecto se re-ejecutó y
+reproduce sus seis escenarios (cubre el lector). Nuevo: puerta en **secuencia** (5), REQ limpio con
+vecinos con matiz en la carpeta (2), `estado-derivado.sh` con **4 REQ en un solo proceso** en los
+dos órdenes, y `arnes-lectura.sh` igual — todo correcto. Y por construcción:
+`arnes_campos_req` **no tiene `return` temprano**, así que siempre alcanza el reinicio del
+indicador, y la puerta lee **un** documento por proceso.
+
+**Contrato probado por conducta de puerta, con las exenciones ejercidas.** La **terna** de
+decisiones ante `(QA pdte, SEG pdte)`, `(QA ok, SEG pdte)` y `(ambas ok)` identifica el nivel sin
+preguntar al lector: **20 formas × 2 sensibilidades × 3 firmas = 120 invocaciones** por versión,
+**cero ternas anómalas** en las tres —la monotonía de la puerta, además de construida, queda
+medida—. Las dos filas pedidas: `ligero (local)` con `QA: pendiente` **deniega**; `ligero` a secas
+con QA y seguridad pendientes **cierra**. **Par fail-before/pass-after comprobado:** **8 filas**
+en las que la v1.33.1 publicada afloja respecto a v1.33.0 —las ocho formas de `ligero (<matiz>)`,
+con terna `allow allow allow`: cerraban sin QA **y** sin seguridad—, **las 8 restauradas** aquí y
+**0 regresiones** frente a v1.33.0.
+
+**Las cuatro afirmaciones del contrato heredado son ciertas** contra conducta de puerta, ninguna
+promesa absoluta con su excepción fuera, y las dos sedes **idénticas byte a byte** (re-verificado).
+Un grep del enunciado sobre el árbol completo devuelve dos archivos más y **no son sedes**: viven
+en `docs/estabilizacion/verificacion-instalacion-1.33.2/`, **sin rastrear** y creado después de
+`a8e332a`, donde `base.tpl` **es** la plantilla de v1.33.1 y `c3.out` la salida con marcadores de
+conflicto. Lectura correcta; no se tocan.
+
+**Ataque propio, 16 casos de puerta, 16 PASS:** no hay vía de **neutralizar el matiz** por la
+cabecera — clave decorada, sangrada, `Rigor :`, `Rigor:` duplicado en los dos órdenes, `ligero`
+limpio comentado, `ligero` limpio en el cuerpo, comentario sin cerrar, CR final y sensibilidad no
+reconocida. Los dos `allow` son legítimos: en ambos la declaración vigente es `ligero` **a secas**.
+
+**Un hallazgo, y no bloquea: `QA-1332-01` (`instrumento`).** `tools/arnes-lectura.sh` dice de
+`Rigor: critico (por suelo)` que «no es un nivel válido → se IGNORA y el REQ se juzga como si no
+lo declarara», mientras la puerta lee `critico` y **deniega**: el informe normaliza con
+`arnes_norm_campo` a secas y no aplica el reparto del paréntesis. El error va **del lado seguro**
+(subestima el rigor; nadie cierra lo que no debe), y **no es de este parche**: en v1.33.0 el
+mensaje era cierto, lo volvió falso **v1.33.1** con D16, y v1.33.2 **reduce el desfase a la
+mitad**. Dueño `desarrollador`, otra ventana, por orden del propietario.
+
+**Fuera de este veredicto:** la firma `Seguridad:` (va después, y mira la plantilla heredada), el
+CI obligatorio, y la subida de versión en `.claude-plugin/`, que sigue en `1.33.1`.
+
 ## [Interno] — 2026-09-10 · `QA-P48-01`: v1.33.1 cerró un fail-open y abrió otro más ancho
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador.
 
