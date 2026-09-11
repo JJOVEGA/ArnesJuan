@@ -2,6 +2,41 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · El piso de la sección 40 vuelve a decir la verdad (cierre de la vuelta 2/2)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador.
+
+**Una línea de diff.** Sigue siendo la vuelta 2: el término quedó inexacto **como consecuencia
+directa** de la edición autorizada en el tramo anterior (el banner creció), así que esto la termina.
+
+`PISO_AUTONOMO_SECCION` de la sección 40 pasa de **53** a **59**, y su derivación de
+`4 + 0 + 49` a `4 + 0 + 55`. Ningún gate fallaba —CA-18 comprueba que los términos **sumen** el
+valor declarado y que el piso **quepa** en el archivo, no que el término sea el máximo— y un piso
+subestimado sigue siendo válido. Se corrige porque **«49 bloque indivisible mayor» era una
+afirmación falsa sobre un número**, que es la familia de defecto que esta ventana lleva persiguiendo:
+un piso conservador es correcto; una derivación que nombra un término que ya no es el mayor es una
+transcripción desfasada esperando a que alguien la crea.
+
+**Y al medirlo apareció un SEGUNDO número desfasado en la misma línea:** la nota decía
+`duplicadas=1` y CA-18 publica **3** —la línea de conteo, que coincide con las secciones 20 y 36/1
+por llevar las tres 28 casos, más dos `#` a secas que el banner nuevo introdujo—. Ninguno es
+maquinaria compartida, así que el término sigue siendo 0; lo que cambia es que la explicación ahora
+dice el número real.
+
+**La derivación lleva ahora su REGLA dentro**, para que el próximo que la toque no tenga que
+adivinar el método: «preámbulo» son las líneas previas al primer caso (1-4, la blanca incluida); un
+«bloque» es un grupo de líneas consecutivas sin blanca en medio, y el mayor es el de QA-P48-01
+(líneas **23-77**); «maquinaria» es 0 porque el archivo no define ni un ayudante propio. Medido, no
+estimado: 102 líneas, bloques de 3 · 17 · **55** · 9 · 14.
+
+Comprobado reproduciendo el parser de CA-18 sobre la línea nueva antes de correr nada: 3 términos,
+suma 59, legible, y 59 ≤ 102. La fila que CA-18 publica lo confirma:
+`lineas=102 piso=59 techo=400 duplicadas=3`. Autoprueba **106 PASS · 0 FAIL**.
+
+Banco: **908 PASS · 0 FAIL · 4 SKIP**, cuadre **912**, `rc 0`. El tramo anterior midió
+907 PASS · 0 FAIL · **5** SKIP con el mismo total y el mismo `rc`: **se registra la variabilidad en
+vez de elegir la cifra buena** — es el SKIP de calibración que depende del reloj de la máquina, ya
+documentado, y no puede ser efecto de cambiar una línea de comentario.
+
 ## [Interno] — 2026-09-11 · `SEC-087`: la quinta sede, la que vivía en el banco (cierre de la vuelta 2/2)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador.
 

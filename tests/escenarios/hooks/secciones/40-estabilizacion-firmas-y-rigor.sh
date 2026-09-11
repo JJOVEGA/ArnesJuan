@@ -1,6 +1,6 @@
 # Regresiones D16, SEC-084 y QA-P48-01 sobre documentos y ediciones reales.
 CASOS_ESPERADOS_SECCION=28
-PISO_AUTONOMO_SECCION=53  # 4 preámbulo + 0 maquinaria compartida duplicada + 49 bloque indivisible mayor · REQ-014 CA-18 · el `duplicadas=1` que CA-18 publica es esta misma línea de conteo coincidiendo con la 20 y la 36/1 por llevar las tres 28 casos; es preámbulo y ya está contada, no maquinaria
+PISO_AUTONOMO_SECCION=59  # 4 preámbulo + 0 maquinaria compartida duplicada + 55 bloque indivisible mayor · REQ-014 CA-18 · REGLA, escrita para re-derivar los tres términos sin preguntar a nadie: «preámbulo» son las líneas previas al primer caso (1-4, la blanca incluida); un «bloque» es un grupo de líneas consecutivas sin blanca en medio, y el mayor es el de QA-P48-01 (líneas 23-77, 55 líneas); «maquinaria» es 0 porque este archivo no define ni un ayudante propio, usa los del corredor. El `duplicadas=3` que CA-18 publica NO es maquinaria y por eso no suma: son la línea de conteo —que coincide con la 20 y la 36/1 por llevar las tres 28 casos, y ya va dentro del preámbulo— más dos `#` a secas del banner
 
 seccion_nueva "Estabilizacion: rigor y firma por lector comun:"
 mkreq_r "REQ-940" "no" "aprobado" "pendiente" "critico (por suelo)"
