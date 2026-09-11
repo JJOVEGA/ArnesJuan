@@ -410,6 +410,19 @@ regresión: la dispersión de esa sonda es un factor ~3,7 sobre el mismo árbol 
 **La abstención no tapa una regresión real:** una regresión sube los dos mínimos del árbol nuevo por
 igual y **no** separa su serie de sí misma; lo que separa una serie de sí misma es el vecino.
 
+**Y el recíproco NO se sigue, que es lo que se creyó y está medido falso.** Que el vecino sea lo
+que separa una serie de sí misma **no** autoriza a leer un `FAIL` unánime como «no lo puso ahí el
+vecino, luego es regresión». El `FAIL` de la razón —aquí y en el criterio portado a `REQ-024`
+CA-07 (ii)— llevaba escrita esa atribución absoluta y **se retiró en la vuelta 4 de REQ-024**:
+`QA-024-25` midió, sobre un árbol **conforme** de razón verdadera **1,177×**, **12** corridas sin
+cambiar un byte que dieron **7 PASS y 5 FAIL** recorriendo **1,095×–1,490×**. La unanimidad acota
+la dispersión **dentro** de una corrida; la de **entre** corridas es un orden de magnitud mayor que
+el `recorrido` que el mensaje publica, así que **la unanimidad no excluye el ruido**. Lo que el
+mensaje dice ahora es lo que puede sostener —«la medición excede el techo; no se acredita
+cumplimiento»—, y **la decisión no cambió**: mismo techo de 1,25×, misma unanimidad, mismo `rc`.
+Un **falso rechazo sobre un candidato conforme** sigue siendo una **limitación abierta del
+instrumento**, y la corrección de redacción **no la resuelve**.
+
 **La comparación contra la ruta crítica NO corre por defecto, y ese defecto está medido al revés
 que el resto del banco.** Corriéndola en cada vuelta, la sección 37/4 cuesta ~120 s —~76 s de ellos
 la corrida heredada, que cuesta lo que costaba el defecto porque **es** el defecto corriendo— y

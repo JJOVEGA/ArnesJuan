@@ -19,7 +19,7 @@
 # EL TECHO NO SE TOCA (1,250×), el caso NO sale de la puerta requerida y no hay
 # `continue-on-error`: lo que cambia es lo que la puerta hace cuando NO puede resolver.
 CASOS_ESPERADOS_SECCION=6
-PISO_AUTONOMO_SECCION=449  # 23 preámbulo (líneas 1-23) + 73 maquinaria compartida duplicada (num07 y mat07 con la línea base, líneas 24-96) + 353 bloque indivisible mayor (el sujeto con su fixture, las constantes derivadas midiendo, mide07, razon07/resuelve07/cierre07/veredicto07, el caso con su bucle de reintento y las CINCO demostraciones, líneas 97-449) · REQ-014 CA-18. El tercer término es TODO lo que queda y eso se afirma, no se esconde: el caso real no existe sin la medición, y las cinco demostraciones TIENEN que ejercer la función que decide y no una copia suya —partirlas la duplicaría y dejarían de acreditar nada—. Misma forma que 37/2 (552 líneas, piso 551). Creció de 329 a 449 en la vuelta 4 y el techo NO se compró deformando el sujeto: el techo que ese piso gobierna es 561 y el archivo mide 449.
+PISO_AUTONOMO_SECCION=485  # 23 preámbulo (líneas 1-23) + 73 maquinaria compartida duplicada (num07 y mat07 con la línea base, líneas 24-96) + 389 bloque indivisible mayor (el sujeto con su fixture, las constantes derivadas midiendo, mide07, razon07/resuelve07/cierre07/veredicto07, el caso con su bucle de reintento y las CINCO demostraciones, líneas 97-485) · REQ-014 CA-18. El tercer término es TODO lo que queda y eso se afirma, no se esconde: el caso real no existe sin la medición, y las cinco demostraciones TIENEN que ejercer la función que decide y no una copia suya —partirlas la duplicaría y dejarían de acreditar nada—. Misma forma que 37/2 (552 líneas, piso 551). Creció de 329 a 449 en la vuelta 4 y de 449 a 485 en la extensión de redacción de esa misma vuelta (QA-024-25 y QA-024-26: retirar la atribución absoluta del FAIL y etiquetar el suelo como diagnóstico cuesta texto, no ramas — no se añadió ni un caso ni una condición). El techo NO se compró deformando el sujeto: el techo que ese piso gobierna es 606 y el archivo mide 485.
 seccion_nueva "--- 40/7 · el reloj de la ruta crítica y su guarda de dispersión (REQ-024 CA-07 ii) ---"
 
 # UNO A UNO: concatenado, un valor VACÍO desaparece entre los dígitos del vecino.
@@ -149,6 +149,17 @@ FACTOR07=1280  # ‰. La regresión SINTÉTICA del par discriminante. BAJA DE 2,
                # cualquiera por encima de 1,276: es LA MAGNITUD DE LOS ROJOS REALES DE CI
                # (1,257×–1,338×) y la que `QA-024-21` demostró INDETECTABLE con los mandos
                # viejos. El par discriminante pasa a ejercer EXACTAMENTE el caso que falló.
+# ESA CALIBRACIÓN DE 1,28× QUEDÓ SUSTITUIDA, Y SE DICE AQUÍ Y NO EN OTRO DOCUMENTO (QA-024-25,
+# vuelta 4). El forzador `+1500` con el que se calibró resultó valer, MEDIDO, una razón verdadera
+# de 1,177× — es decir BAJO el techo de 1,250×—, así que no era el caso límite que se creyó: el
+# caso realmente por encima del techo es el `+3700`. Lo que se sigue de eso, sin adornos:
+#   * 1,280 sirve como magnitud SINTÉTICA de entrada del par discriminante —es un DATO de una
+#     demostración, no un umbral que nadie aplique—, y por eso su valor NO se toca aquí: moverlo
+#     cambiaría una decisión, y esta comisión es de REDACCIÓN.
+#   * pero 1,280 NO es una constante universal, ni «la magnitud» de una regresión detectable en
+#     general. Lo que separa detectable de indetectable depende del HOST, de la CARGA y del
+#     MOMENTO, y sobre este instrumento la dispersión ENTRE corridas de un árbol CONFORME
+#     (1,095×–1,490×) SE SOLAPA con él. Leerlo como cota de detección es el error que QA midió.
 # EL SUELO DE DETECCIÓN NO ES UNA CONSTANTE, Y ÉSE ES EL ARREGLO DE `QA-024-21`. El hallazgo
 # dice que «el propio código deriva su suelo de detección en 1,733×, en un comentario y en ningún
 # criterio». La tentación es mover ese número; la medición dice que NINGÚN número sirve: el
@@ -242,9 +253,18 @@ razon07() {   # <ue:ue2:uh:uh2 en µs> -> R07 y CONV07, o R07 vacío y MOT07 con
 # LA CONVERGENCIA ES NECESARIA Y NO SUFICIENTE, y está MEDIDO arriba: responde «¿se asentó CADA
 # serie?», no «¿puede ESTE COCIENTE distinguir el factor que vigila?». Por eso ENCIMA va la
 # resolución sobre la RAZÓN: PASS si máx(r) <= techo (conforme en TODAS), FAIL si mín(r) > techo
-# (excedido en TODAS, así que no lo puso ahí el vecino) y SKIP en cuanto el techo cae DENTRO del
-# recorrido. La unanimidad es DE CONTRATO —la definición de «la decisión no depende del ruido»—
-# y no admite mayoría, promedio ni «la mejor de k». `guarda = no` reproduce la regla ANTERIOR y
+# (excedido en TODAS: NO SE ACREDITA CUMPLIMIENTO) y SKIP en cuanto el techo cae DENTRO del
+# recorrido.
+# LO QUE ESTE COMENTARIO DECÍA HASTA LA VUELTA 4 —«excedido en TODAS, así que no lo puso ahí el
+# vecino»— ERA FALSO, Y NO ES OPINIÓN: `QA-024-25` lo REFUTÓ midiendo. La unanimidad acota la
+# dispersión DENTRO de una corrida y NO la de ENTRE corridas, que es un orden de magnitud mayor:
+# 12 corridas del MISMO árbol CONFORME —razón verdadera 1,177×— recorrieron 1,095×–1,490× y
+# dieron 7 PASS y 5 FAIL sin cambiar un byte, y una de ellas afirmó la atribución absoluta. Así
+# que la unanimidad NO excluye el ruido, y lo que el FAIL puede decir es lo que ahora dice: la
+# medición excede el techo y no se acredita cumplimiento. Bloquear sigue siendo correcto —una
+# puerta que no puede acreditar no deja pasar—; AFIRMAR la causa no lo era.
+# La unanimidad es DE CONTRATO —la definición de «la decisión no depende del ruido» DENTRO de la
+# corrida— y no admite mayoría, promedio ni «la mejor de k». `guarda = no` reproduce la regla ANTERIOR y
 # existe sólo para el par discriminante: sin ella, un SKIP no demuestra que lo causara la
 # guarda. No toca los contadores: no es un caso, es el testigo de uno.
 # `resuelve07` DECIDE y no imprime; `veredicto07` imprime y no decide. Se parten porque el
@@ -268,12 +288,22 @@ resuelve07() {   # <rep...> -> RES07 = pass|fail|inconcluso (+ LISTA07, MN07, MX
   rec=$(( rmax * 1000 / rmin ))
   fmt07 "$rmin"; MN07="$FMT07"; fmt07 "$rmax"; MX07="$FMT07"; fmt07 "$rec"; rec="$FMT07"
   fmt07 "$cmax"; cmax="$FMT07"; fmt07 $(( TECHO07 * ( rmax * 1000 / rmin ) / 1000 )); local suelo="$FMT07"
-  # Las k razones, el recorrido, el techo, el SUELO DE DETECCIÓN y LA MÁQUINA se publican
-  # SIEMPRE: son la evidencia de que la decisión no depende del ruido, no el adorno del SKIP.
-  # El suelo va aquí y no en un comentario porque `QA-024-21` midió justo eso —el suelo vivía en
+  # Las k razones, el recorrido, el techo, el SUELO ESTIMADO y LA MÁQUINA se publican SIEMPRE:
+  # son la evidencia de que la decisión no depende del ruido DENTRO de la corrida, no el adorno
+  # del SKIP. El suelo va aquí y no en un comentario porque `QA-024-21` midió justo eso —vivía en
   # un comentario y en ningún criterio—, y la máquina porque sin ella dos abstenciones no se
   # pueden sumar (`REQ-017 CA-08 (ii)`, mitad abierta con dueño).
-  LISTA07="$n razones:$lista · recorrido $rec · techo $techo · suelo de detección $suelo · peor convergencia $cmax · k=$K07 r=$SER07 · $MAQ07"
+  #
+  # Y VA ETIQUETADO COMO DIAGNÓSTICO PORQUE NO GOBIERNA NADA — `QA-024-26`, y se verifica leyendo
+  # esta función: `suelo` se calcula, se interpola en `LISTA07` y NO aparece en NINGUNA condición,
+  # ni aquí ni en `cierre07` ni en `veredicto07`. Quien leyera «suelo de detección» a secas podía
+  # entenderlo como un UMBRAL que la puerta aplica, y no lo es. Se queda como DATO ESTIMADO de
+  # ESTA corrida, con su limitación dicha en el propio nombre, y NO se convierte en garantía ni se
+  # le añade lógica para justificar el nombre: inventar una rama nueva en una corrección de
+  # redacción es justo lo que esta comisión no hace. Su limitación, además, es conocida y medida:
+  # se deriva del recorrido INTRA-corrida, así que SUBESTIMA el suelo real cuando la dispersión
+  # que manda es la de ENTRE corridas (QA-024-25) — por eso «estimado» y no «de detección».
+  LISTA07="$n razones:$lista · recorrido $rec · techo $techo · suelo estimado $suelo (DIAGNÓSTICO de esta corrida: no es umbral y no gobierna ninguna rama; derivado del recorrido intra-corrida, subestima si la dispersión que manda es la de entre corridas) · peor convergencia $cmax · k=$K07 r=$SER07 · $MAQ07"
   if [ "$rmax" -le "$TECHO07" ]; then RES07=pass
   elif [ "$rmin" -gt "$TECHO07" ]; then RES07=fail
   else RES07=inconcluso; MOTRES07="el techo cae DENTRO del recorrido observado [$MN07, $MX07]"; fi
@@ -309,7 +339,7 @@ veredicto07() {   # <nombre> <guarda: si|no> <rep...>, rep = ue:ue2:uh:uh2 en µ
   [ "${ARNES_COSTE_RUTA_CRITICA:-}" != 1 ] || via="esta corrida YA usa la palanca de acreditación (k=$K07, r=$SER07), así que la salida NO es repetirla: es medir en un host menos cargado, y si se repite es hallazgo con dueño — nunca subir el techo"
   case "$RES07" in
     pass) echo "  PASS  $nombre  máx(r) $MX07 <= techo en las $LISTA07"; PASS=$((PASS+1)) ;;
-    fail) echo "  FAIL  $nombre  mín(r) $MN07 > techo en TODAS: es regresión, no ruido — el techo es OPERATIVO y no se sube, lo que baja es el coste del lector — $LISTA07"; FAIL=$((FAIL+1)) ;;
+    fail) echo "  FAIL  $nombre  mín(r) $MN07 > techo en TODAS las repeticiones: LA MEDICIÓN EXCEDE EL TECHO Y NO SE ACREDITA CUMPLIMIENTO. Esto NO afirma que haya regresión del CÓDIGO ni descarta el RUIDO: la unanimidad acota la dispersión DENTRO de esta corrida y NO la de ENTRE corridas, y está MEDIDO que la segunda es un orden de magnitud mayor que el recorrido que esta misma línea publica (QA-024-25: 12 corridas del MISMO árbol CONFORME, razón verdadera 1,177×, recorrieron 1,095×–1,490× y dieron 7 PASS y 5 FAIL sin cambiar un byte). Un FALSO RECHAZO sobre un candidato CONFORME es por tanto una limitación ABIERTA de este instrumento, y esta redacción NO la resuelve. Bloquea igual —una puerta que no puede acreditar no deja pasar— y el techo es OPERATIVO y no se sube: lo que baja es el coste del lector — $LISTA07"; FAIL=$((FAIL+1)) ;;
     *)    echo "  SKIP  $nombre  $MOTRES07: el instrumento no distingue el factor que vigila, y una medición inconclusa NO es una aprobación. Vía de acreditación: $via — ${LISTA07:-sin razones}" ;;
   esac
 }
@@ -397,6 +427,12 @@ fi
 # real de CI sobre `67b06fe`, reproducida aquí sobre el sujeto fiel bajo contención (1,280× y
 # 1,333×). Los dos brazos CONVERGEN en las cuatro (1,010×), así que si sale la abstención, sale
 # de la guarda del recorrido y no de la de convergencia.
+# PRECISIÓN QUE EL NOMBRE DEL CASO NO CABE, y va aquí para que no se lea como lo que no dice: «la
+# magnitud de los rojos REALES de CI» significa LA MAGNITUD QUE SE OBSERVÓ en los rojos que CI
+# dio de verdad, y NO que esos rojos estuvieran acreditados como regresiones del código. No lo
+# están: `QA-024-25` midió 5 FAIL de 12 sobre un árbol CONFORME, así que un rojo de CI a esta
+# magnitud es compatible con el ruido del instrumento. Lo que la demostración acredita es lo
+# único que puede: que con esta entrada SINTÉTICA la guarda decide FAIL y no se abstiene.
 DISP07='1000000:1010000:1000000:1010000 1000000:1010000:1000000:1010000 1320000:1333000:1000000:1010000 1000000:1010000:1000000:1010000'
 LIMPIO07='1000000:1010000:1000000:1010000 1000000:1010000:1000000:1010000 1000000:1010000:1000000:1010000 1000000:1010000:1000000:1010000'
 if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-07 (ii) par discriminante NEGATIVO" | grep -qi -- "$FILTRO"; then

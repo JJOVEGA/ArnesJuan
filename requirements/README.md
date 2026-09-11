@@ -400,6 +400,28 @@ magnitud equivocada — y **enumerar** aquí las causas en vez de enunciar la pr
 mitad de esa familia: lo midió `QA-024-20` (`contrato`), cuando este sitio único nombraba **dos**
 causas y el código se abstenía por **seis**.
 
+**Y la unanimidad es NECESARIA y NO SUFICIENTE: un veredicto describe lo que midió y NO atribuye la
+causa.** Que **todas** las razones de una corrida excedan el techo **no demuestra** que lo haya
+puesto ahí el código ni **descarta** el ruido, porque las razones de una misma corrida comparten la
+desviación de **esa** corrida y la unanimidad no puede verla. Caso medido (`REQ-024 CA-07 (ii)`,
+`QA-024-25`): sobre un árbol **conforme** de razón verdadera `1,177×`, **12 corridas sin cambiar un
+byte** dieron **7 `PASS`** (pegados al techo, `1,223×`–`1,249×`), **4 `FAIL` «no se pudo
+acreditar»** y **1 `FAIL`** que afirmaba regresión; las razones recorrieron `1,095×`–`1,490×`
+**entre** corridas, **un orden de magnitud** más que el `recorrido` **intra-corrida** que el
+instrumento publica.
+
+- **Mal:** «`FAIL` por **regresión** si `mín(r) > techo` en **todas**, así que no lo puso ahí el
+  vecino.»
+- **Bien:** «`FAIL` si `mín(r) > techo` en **todas**: **la medición excede el techo; no se acredita
+  cumplimiento.**»
+
+**Bloquear no exige atribuir, y por eso la redacción fiel no debilita nada.** El resultado **puede
+bloquear sin afirmar que ha demostrado una regresión del código ni descartado el ruido** — una
+acreditación pendiente no habilita la fusión. Lo que sí debilita la puerta es lo contrario:
+atribuir una causa que la corrida no midió enseña a **desconfiar del rojo verdadero**. Y el falso
+rechazo que quede **se declara como limitación del instrumento en el criterio que lo usa**:
+corregir la frase **cambia lo que el rojo dice, no la tasa con la que aparece**.
+
 **Y toda abstención lleva COTA, porque una abstención sin cota es un verde que nadie anunció**
 (`SEC-064`). La cota se escribe **en el criterio que la usa**, y tiene dos mitades: **dentro de la
 corrida**, una medición inconclusa se **vuelve a medir** hasta un **techo de reintentos declarado**
@@ -420,6 +442,18 @@ criterio nazca falso: **un criterio no afirma que su instrumento detecta una mag
 detección no esté demostrada**; afirma lo demostrado —que no aprueba lo que no puede resolver—, y
 la brecha entre el techo y el suelo de detección se **escala como decisión de alcance**, **nunca**
 bajando el techo para que el instrumento lo alcance.
+
+**Y mientras ninguna rama lo consulte, se escribe como DATO DIAGNÓSTICO ESTIMADO con sus
+limitaciones: un número que se publica no gobierna nada por tener forma de guarda.** Caso medido
+(`REQ-024 CA-07 (ii)`, `QA-024-26`): el suelo aparecía en **una sola línea** del código —la que
+compone el mensaje—, **ninguna rama de decisión lo consultaba**, y una corrida llegó a publicar
+`suelo de detección 1.296×` y a afirmar, **en la frase siguiente**, un veredicto sobre un árbol cuyo
+valor verdadero era `1,177×`: afirmó haber probado algo **por debajo de su propio suelo**. La regla
+tiene dos mitades y las dos importan: (1) el criterio lo describe como **estimación diagnóstica** y
+declara **sus limitaciones** —de qué dispersión se deriva y cuál **no** ve—, en vez de presentarlo
+como cota de lo que la corrida puede probar; y (2) **no se añade lógica nueva para justificar el
+nombre**. Si se quiere que el suelo **gobierne**, ésa es una capacidad con su propio criterio, su
+medición y su decisión de alcance; hasta entonces, el texto dice **lo que el número es**.
 
 ### Cuando el código cubre MÁS de lo que el criterio promete
 

@@ -2,6 +2,62 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · `QA-024-25`/`26`: el programa deja de afirmar lo que no puede demostrar, y las sedes eran catorce
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (mensajes), analista-requerimientos (contrato), coordinadora.
+
+**Extensión excepcional y acotada, autorizada expresamente por el propietario el 2026-09-11**, dentro
+de la **vuelta 4 de `REQ-024`**. El contador **no se reinicia ni se renombra**. El propietario excluyó
+expresamente fusionar declarando estas dos afirmaciones falsas como deuda: **tenían que dejar de estar
+escritas**.
+
+Y lo pidió comprobado antes de editar: *«si lo imprime el programa, no basta con corregir el
+documento»*. **Lo imprimía**, en `40/7` y en `37/5` —el criterio hermano del que se portó—.
+
+### Las sedes: 8 en el programa + 6 en el contrato
+
+Barridas **por propiedad** —toda cadena, mensaje o comentario que afirme la *causa* de un
+`mín(r) > techo`—, no por la lista que la coordinadora entregó: **nueve de las catorce no estaban en
+ella**. Entre las halladas: una viñeta del contrato que decía *«el de regresión afirma que hay
+regresión»* —la misma atribución con otra redacción— y la premisa de `tests/escenarios/hooks/README.md`
+*«lo que separa una serie de sí misma es el vecino»*, de la que la atribución se derivaba, que ahora
+lleva el recíproco explícito: **no se sigue**.
+
+### El texto nuevo
+
+> `mín(r) … > techo en TODAS las repeticiones: LA MEDICIÓN EXCEDE EL TECHO Y NO SE ACREDITA
+> CUMPLIMIENTO. Esto NO afirma que haya regresión del CÓDIGO ni descarta el RUIDO: la unanimidad acota
+> la dispersión DENTRO de esta corrida y NO la de ENTRE corridas… Un FALSO RECHAZO sobre un candidato
+> CONFORME es por tanto una limitación ABIERTA de este instrumento, y esta redacción NO la resuelve.
+> Bloquea igual —una puerta que no puede acreditar no deja pasar—`
+
+El «suelo de detección» pasa a **`suelo estimado`**, «diagnóstico de esta corrida: no es umbral y no
+gobierna ninguna rama». **No se le añadió lógica** para justificar el nombre, como el propietario
+exigió: sigue apareciendo sólo donde se calcula y donde se interpola, en **cero** condiciones.
+
+### Que la puerta no se debilitó, por cinco pruebas y ninguna supuesta
+
+1. **Diff estructural** —sin comentarios y con cada cadena sustituida por `"S"`— **vacío**, salvo la
+   línea del piso de sección.
+2. Las constantes (`TECHO07=1250`, `K07=8`, `SER07=30`, `INTENTOS07=3`, `TECHO47=1250`): diff vacío.
+3. Las **72 + 86** líneas de `if`/`elif`/`case`/`return`/`exit`/contadores: **byte a byte idénticas**.
+4. **Rejilla ejecutable** de 11 entradas sobre los decisores de ambas versiones: decisión y cierre
+   idénticos, con el borde exacto intacto — **`1.250×`→`pass`, `1.251×`→`fail`**.
+5. **`rc` de extremo a extremo**: con la regresión `+3700`, `FAIL` y **`rc 1` en 3/3 antes y 3/3
+   después**; conforme, `PASS` y **`rc 0` en 2/2 y 2/2**. **Ningún resultado bloqueante pasó a verde.**
+
+### Lo que no se oculta
+
+El banco pasó de `1087 PASS · 8 SKIP` a `1086 PASS · 9 SKIP`. El caso que basculó —`REQ-017 CA-03`—
+vive en un archivo con **cero cambios**; es una sonda de reloj que se abstiene, y la dirección es
+`PASS → SKIP`, **no** hacia verde. **No se repitió buscando coincidencia.**
+
+`37/5` **sí** se tocó —el propietario autorizó «los mensajes de ejecución que repitan esas
+afirmaciones»— y **sin** tocar `requirements/REQ-017.md`: la deriva es de la *justificación*, no de la
+regla, y queda declarada en un comentario para que nadie la redescubra.
+
+**Escalado al propietario, sin tocar:** `requirements/REQ-017.md:118` conserva la misma atribución
+—«excedido en **todas**, así que no lo puso ahí el vecino»— y es el contrato de otro REQ.
+
 ## [Interno] — 2026-09-11 · QA vuelta 2: el mecanismo cumple la condición nueva, y el contrato afirma dos cosas falsas
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (vuelta 2 acotada), coordinadora.
 

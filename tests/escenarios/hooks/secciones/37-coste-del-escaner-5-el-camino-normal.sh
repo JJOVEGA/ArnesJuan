@@ -14,7 +14,7 @@
 # `37-coste-del-escaner-4-la-ruta-critica.sh`, donde está escrito su motivo largo, porque
 # CA-08 necesita el árbol heredado y CA-04 + CA-19 + H-04 hacen imposible factorizarlo.
 CASOS_ESPERADOS_SECCION=10
-PISO_AUTONOMO_SECCION=448  # 21 preámbulo (líneas 1-21) + 100 maquinaria compartida duplicada (num47 y mat47 con la línea base, líneas 22-121) + 327 bloque indivisible mayor (CA-08 entero: la medición de las dos magnitudes, razon08_47/veredicto08_47 y los casos que lo usan —incluido el par discriminante, que TIENE que ejercer la función que decide y no una copia suya, líneas 123-449) · REQ-014 CA-18
+PISO_AUTONOMO_SECCION=467  # 21 preámbulo (líneas 1-21) + 100 maquinaria compartida duplicada (num47 y mat47 con la línea base, líneas 22-121) + 346 bloque indivisible mayor (CA-08 entero: la medición de las dos magnitudes, razon08_47/veredicto08_47 y los casos que lo usan —incluido el par discriminante, que TIENE que ejercer la función que decide y no una copia suya, líneas 123-468) · REQ-014 CA-18. El tercer término creció de 327 a 346 en la extensión de redacción de la vuelta 4 de REQ-024 (QA-024-25: retirar del FAIL la atribución absoluta y declarar la deriva del contrato cuesta texto, no ramas — ni un caso ni una condición nuevos). El techo que este piso gobierna es 583 y el archivo mide 523.
 seccion_nueva "--- 37/5 · el camino de una cabecera normal: procesos y reloj (REQ-017 CA-08 y CA-06) ---"
 
 BANCO47="${SEC_DIR%/}/../run.sh"
@@ -252,10 +252,29 @@ rm -f "$JSON47"
 #
 # ENCIMA DE ELLA, LA RESOLUCIÓN SOBRE LA RAZÓN, que es la magnitud que (ii) juzga: KRAZ47
 # repeticiones del par, y el veredicto sólo se emite si NO depende del ruido. PASS si máx(r)
-# <= techo (conforme en TODAS), FAIL si mín(r) > techo (excedido en TODAS, así que no lo puso
-# ahí el vecino) y SKIP en cuanto el techo cae DENTRO del recorrido. La unanimidad es DE
-# CONTRATO: es la definición de «la decisión no depende del ruido», y no admite mayoría,
-# promedio ni «la mejor de k». El techo NO se toca: es `operativo` y su dirección es BAJAR.
+# <= techo (conforme en TODAS), FAIL si mín(r) > techo (excedido en TODAS: NO SE ACREDITA
+# CUMPLIMIENTO) y SKIP en cuanto el techo cae DENTRO del recorrido. La unanimidad es DE
+# CONTRATO: es la definición de «la decisión no depende del ruido» DENTRO de la corrida, y no
+# admite mayoría, promedio ni «la mejor de k». El techo NO se toca: es `operativo` y su
+# dirección es BAJAR.
+#
+# LA ATRIBUCIÓN ABSOLUTA QUE ESTE COMENTARIO Y EL MENSAJE DE FAIL LLEVABAN —«así que no lo puso
+# ahí el vecino»— SE RETIRA, y no por estilo: `QA-024-25` la REFUTÓ midiendo sobre el criterio
+# HERMANO, que es ESTA MISMA REGLA portada a REQ-024 CA-07 (ii). Sobre un árbol CONFORME de razón
+# verdadera 1,177×, 12 corridas sin cambiar un byte dieron 7 PASS y 5 FAIL y recorrieron
+# 1,095×–1,490×: la dispersión ENTRE corridas es un orden de magnitud mayor que el `recorrido`
+# INTRA-corrida que este mensaje publica y sobre el que razona, de modo que LA UNANIMIDAD NO
+# EXCLUYE EL RUIDO. Lo que NO cambia —y es la mitad que importa— es la DECISIÓN: `mín(r) > techo`
+# sigue dando FAIL con el mismo techo, la misma unanimidad y el mismo `rc`. Sólo deja de AFIRMAR
+# una causa que no ha demostrado.
+#
+# DERIVA DECLARADA Y NO RESUELTA AQUÍ (`AGENTS.md` §9): el CONTRATO de este criterio,
+# `requirements/REQ-017.md` CA-08 (ii), sigue diciendo «**FAIL** si `mín(r) > techo` —excedido en
+# **todas**, así que no lo puso ahí el vecino—». Esa frase queda DESFASADA por la misma medición.
+# NO se toca desde aquí: es otro REQ y no es de esta comisión —el analista trabaja en REQ-024—, y
+# el write-back lo decide el propietario. Lo que el contrato exige que el mensaje PUBLIQUE —las k
+# razones, el recorrido y el techo— se sigue publicando íntegro en `$lista`, así que la deriva es
+# de la JUSTIFICACIÓN del contrato, no de su regla ni de lo que se imprime.
 R47=''; MOT47=''; CONV47=0
 razon08_47() {   # <ue:ue2:uh:uh2 en µs> -> R47 y CONV47, o R47 vacío y MOT47 con el motivo
   local rep="$1" ue ue2 uh uh2 ce ch x rob
@@ -319,7 +338,7 @@ veredicto08_47() {   # <nombre> <guarda: si|no> <rep...>, rep = ue:ue2:uh:uh2 en
   if [ "$rmax" -le "$TECHO47" ]; then
     echo "  PASS  $nombre  máx(r) $mx <= techo en las $lista"; PASS=$((PASS+1))
   elif [ "$rmin" -gt "$TECHO47" ]; then
-    echo "  FAIL  $nombre  mín(r) $mn > techo en TODAS: es regresión, no ruido — $lista"; FAIL=$((FAIL+1))
+    echo "  FAIL  $nombre  mín(r) $mn > techo en TODAS las repeticiones: LA MEDICIÓN EXCEDE EL TECHO Y NO SE ACREDITA CUMPLIMIENTO. Esto NO afirma que haya regresión del CÓDIGO ni descarta el RUIDO: la unanimidad acota la dispersión DENTRO de esta corrida y NO la de ENTRE corridas, y sobre el criterio HERMANO (REQ-024 CA-07 (ii), misma regla) está MEDIDO que la segunda es mayor —12 corridas de un árbol CONFORME, razón verdadera 1,177×, dieron 7 PASS y 5 FAIL recorriendo 1,095×–1,490× sin cambiar un byte (QA-024-25)—. Un FALSO RECHAZO sobre un candidato CONFORME sigue siendo una limitación ABIERTA de este instrumento. Bloquea igual —una puerta que no puede acreditar no deja pasar— y el techo NO se sube: es operativo y su dirección es BAJAR — $lista"; FAIL=$((FAIL+1))
   else
     echo "  SKIP  $nombre  el techo cae DENTRO del recorrido observado [$mn, $mx]: el instrumento no distingue el factor que vigila — $lista"
   fi

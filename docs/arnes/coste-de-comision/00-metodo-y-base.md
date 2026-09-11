@@ -78,6 +78,10 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 7 | `REQ-024 CA-07 (ii)` — QA acotada **vuelta 2** · `qa-tester` | 2026-09-11 10:22:58 | 2026-09-11 11:13:25 | **48 min 29 s** | **`con-hallazgos`**. Comprobaciones 1·2·3 **acreditadas**, la 4 **no**. Cierra `QA-024-20/21/24`; abre `QA-024-25/26` (`contrato`), `27`, `28` | `ab3e4cb` | **214 463** | ídem |
 
+| 8 | `QA-024-25/26` — transcripción del contrato · `analista-requerimientos` | 2026-09-11 11:30:50 | 2026-09-11 11:40:13 | **9 min 22 s** | **seis** sedes corregidas (dos más de las cuatro listadas); bloqueo sin atribución; suelo como dato diagnóstico; `REQ-017.md:118` **nombrada y no tocada** | `f612b84` | **126 548** | ídem |
+
+| 9 | `QA-024-25/26` — mensajes del programa · `desarrollador` | 2026-09-11 11:30:50 | 2026-09-11 11:56:21 | **25 min 31 s** | **ocho** sedes (cinco fuera de la lista); decisión y `rc` idénticos por **cinco** pruebas; `37/5` tocada sin tocar `REQ-017.md` | `f612b84` | **174 744** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la
