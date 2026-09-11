@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1115  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1167  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1473,6 +1473,22 @@ CASOS_ESPERADOS=1115  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # Los `CASOS_ESPERADOS_SECCION` de la `41` y de la `13` NO se tocan:
                       # ningún caso suyo cambia de veredicto, porque esta reparación añade
                       # DIAGNÓSTICO y no mueve ninguna decisión.
+                      #
+                      # 1115 → 1167: la sección `43` nueva (`QA-024-35`), 52 casos. La `42`
+                      # fija QUÉ FORMAS disparan cada aviso; la `43` fija QUÉ PROMETE su
+                      # texto, que es otra propiedad y estaba medida falsa: los dos avisos
+                      # del lado `QA:` anunciaban la consecuencia sobre el cierre SIN su
+                      # condición, y la condición no es la misma para las dos claves —para
+                      # `QA:` ausente es la LLAVE `campos.ausencia_exige`, apagada por
+                      # defecto; para todo lo de `Seguridad:` y para el VALOR de `QA:` es el
+                      # RIGOR—. **Doce discriminan** (los dos bloques `QA:`, dos estados de
+                      # la llave × tres rigores) y cuarenta fijan lo que no se puede mover:
+                      # doce de `Seguridad:` como control de la asimetría, dos de que un
+                      # valor válido no avisa, y veintiséis de que ninguna decisión NI NINGÚN
+                      # `rc` se movió —esos veintiséis pasan también contra `929043d`, que es
+                      # la otra mitad de la acreditación—. Los `CASOS_ESPERADOS_SECCION` de
+                      # la `42` y de la `27` NO se tocan: ningún caso suyo cambia de
+                      # veredicto, porque esta reparación es de TEXTO.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

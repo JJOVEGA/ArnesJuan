@@ -50,6 +50,53 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-11 · El aviso deja de prometer un cierre que la máquina no tiene, y la promesa falsa estaba en DOS sedes
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador, coordinadora.
+
+**Vuelta 6 del bucle `dev↔QA` de `REQ-024`**, excepción autorizada expresamente por el propietario, que
+eligió la **salida (b)**: corregir **el mensaje**, no el criterio. El bucle `analista↔QA` sigue en 3 y no
+se tocó.
+
+### Los dos ejes, que no son el mismo
+
+| campo ausente para el lector | eje real | conducta |
+|---|---|---|
+| **`QA:`** | **la llave `campos.ausencia_exige`** | apagada —como nace— el REQ **cierra** en los tres rigores; encendida, DENY en los tres |
+| **`Seguridad:`** | **el rigor** | DENY sólo en `critico`, **idéntico en los dos estados de la llave** |
+
+Los dos mensajes de `Seguridad:` ya salían bien y **no se tocaron**. El desarrollador lo comprobó antes
+de escribir, como se le pidió, y dejó dicho que **no hay eje sin declarar en ese lado**.
+
+### La segunda sede, que nadie había señalado
+
+`guard-completado.sh:270` —el aviso de `QA:` con **valor fuera de vocabulario**— prometía lo mismo sin
+condición, y en `ligero` el REQ **cierra**. **La misma frase, en la misma función, cuatro líneas más
+arriba de la señalada.** Corregirla sólo a ella habría devuelto el trabajo en la vuelta siguiente.
+
+### Que no se activó ninguna protección, que era el riesgo real
+
+`campos.ausencia_exige` sigue **`false`**; no se tocó el manifiesto ni el valor por defecto. **Cero
+líneas de condición añadidas** —verificado por la coordinadora sobre el diff—: el cambio vive entero en
+dos cadenas de texto. **Que con la llave apagada la ausencia se perdone sigue igual; lo que cambia es
+que el aviso lo dice.**
+
+**Ninguna decisión ni ningún `rc` se movió:** `diff` de las **36 celdas** de decisión (6 sujetos × 2
+estados de la llave × 3 rigores) contra `929043d` sale **vacío**. Y los **26 casos de no-regresión** de
+la sección nueva **pasan también contra los hooks viejos**, que es la acreditación desde el otro lado.
+
+**Banco:** sección nueva `43-condicion-del-aviso.sh`, 52 casos, `CASOS_ESPERADOS` 1115 → **1167**.
+Fail-before **40 PASS · 12 FAIL**, y los 12 rojos son exactamente los dos bloques de `QA:`. Banco entero
+**1160 PASS · 0 FAIL · 7 SKIP**, cuadre ✓. Gates §7 en verde.
+
+### Dos apuntes que el desarrollador dejó y valen
+
+El punto `(3)` de `CA-13` habla **sólo** del aviso de **desfase**: la segunda sede que corrigió —el de
+**vocabulario**— no está certificada por ningún punto del criterio, así que su corrección **no
+contradice nada pero tampoco queda contratada**. Es decisión del analista si se contrata.
+
+Y corrigió un total desfasado en `tests/escenarios/hooks/README.md`, que decía «1015 casos» con el
+literal en 1115 — **el mismo defecto que ese párrafo enumera de sí mismo**.
+
 ## [Interno] — 2026-09-11 · La cola baja de 16 a 14, y las catorce restantes quedan explicadas por lo que autorizan
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
 

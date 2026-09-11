@@ -267,7 +267,7 @@ arnes_guard_completado() {
   arnes_declara_clave "$nuevo" "$ARNES_CLAVE_SEG"
   seg_decl="$ARNES_DECLARA"; seg_decl_linea="$ARNES_DECLARA_LINEA"
   if [ -n "$qa" ] && ! arnes_en_vocab "$qa" "$ARNES_VOCAB_QA" && [ "$qa_decl" = 'lee' ]; then
-    arnes_aviso "'$rel': 'QA:${ARNES_QA_CRUDO}' se lee como <$qa>, que NO es un veredicto ($ARNES_VOCAB_QA). Asi este REQ no podra cerrarse. Un matiz va entre parentesis —'QA: aprobado (R-045, 2026-09-01)'—; un veredicto distinto es otro valor."
+    arnes_aviso "'$rel': 'QA:${ARNES_QA_CRUDO}' se lee como <$qa>, que NO es un veredicto ($ARNES_VOCAB_QA). Si el rigor efectivo NO es 'ligero' —'ligero' no pide veredicto de QA y su valor no se juzga—, asi este REQ no podra cerrarse. Un matiz va entre parentesis —'QA: aprobado (R-045, 2026-09-01)'—; un veredicto distinto es otro valor."
   fi
   if [ -n "$seg" ] && ! arnes_en_vocab "$seg" "$ARNES_VOCAB_SEG" && [ "$seg_decl" = 'lee' ]; then
     arnes_aviso "'$rel': 'Seguridad:${ARNES_SEG_CRUDO}' se lee como <$seg>, que NO es un veredicto ($ARNES_VOCAB_SEG). Si el rigor efectivo es critico, asi este REQ no podra cerrarse."
@@ -283,8 +283,30 @@ arnes_guard_completado() {
   # bloqueo produce friccion constante, y la friccion termina con alguien apagando el
   # guard. Tampoco DECIDE nada: no cambia ni un veredicto, y por eso no puede reabrir
   # ninguno.
+  # Y CADA AVISO NOMBRA **SU** EJE, QUE NO ES EL MISMO PARA LAS DOS CLAVES (QA-024-35).
+  # Los cuatro avisos de este bloque anuncian una consecuencia sobre el CIERRE, y esa
+  # consecuencia esta CONDICIONADA. Hasta aqui los dos de `QA:` la prometian sin condicion
+  # —«asi este REQ no podra cerrarse»— y la condicion existe, medida:
+  #
+  #                              | ligero | estandar | critico | eje real
+  #   valor fuera de vocabulario ------------------------------------------------------
+  #     QA:                      | ALLOW  |  DENY    |  DENY   | el RIGOR (`ligero` no
+  #     Seguridad:               | ALLOW  |  ALLOW   |  DENY   |  juzga el valor de QA)
+  #   campo AUSENTE para el lector (esta rama) ----------------------------------------
+  #     QA:        llave apagada | ALLOW  |  ALLOW   |  ALLOW  | la LLAVE
+  #     QA:        llave enciende|  DENY  |  DENY    |  DENY   |  `campos.ausencia_exige`
+  #     Seguridad: los DOS est.  | ALLOW  |  ALLOW   |  DENY   | el RIGOR
+  #
+  # De ahi la asimetria del texto y por que no se puede copiar de una clave a la otra: para
+  # `Seguridad:` la condicion es el rigor y sus dos avisos ya la llevaban; para `QA:`
+  # ausente la condicion es la LLAVE —apagada POR DEFECTO, que es el estado de casi todo
+  # proyecto instalado—, asi que el aviso anterior prometia una denegacion que no ocurre y
+  # lo hacia hacia el lado que TRANQUILIZA: el operador leia «no podra cerrarse» y el REQ
+  # cerraba (familia de SEC-079). El mensaje resuelve ademas el estado REAL de la llave en
+  # este proyecto: los dos estados declarados no sirven de nada si quien lee no sabe en cual
+  # esta. Esto es TEXTO: ninguna decision ni ningun codigo de salida se mueve.
   if [ "$qa_decl" = 'desfase' ]; then
-    arnes_aviso "'$rel': la linea '${qa_decl_linea}:' NO se lee como el campo '$ARNES_CLAVE_QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera pero la CAJA no—. Para esta puerta ese campo sigue SIN declarar, asi que ninguna guarda juzga esta edicion y el REQ no podra cerrarse por ausencia de veredicto de QA. Salida: escribe la clave como '$ARNES_CLAVE_QA:'."
+    arnes_aviso "'$rel': la linea '${qa_decl_linea}:' NO se lee como el campo '$ARNES_CLAVE_QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera pero la CAJA no—. Para esta puerta ese campo sigue SIN declarar, asi que ninguna guarda juzga esta edicion. Y lo que el CIERRE hace con esa ausencia NO lo decide el rigor —que es el eje del campo '$ARNES_CLAVE_SEG:'—, lo decide 'campos.ausencia_exige' (.arnes/config.json): encendida, el cierre se deniega nombrando '$ARNES_CLAVE_QA:' en los tres niveles de rigor; apagada —como nace—, la ausencia se perdona y el REQ cierra sin veredicto de QA. Aqui esta $([ "${ARNES_AUSENCIA_EXIGE:-false}" = "true" ] && printf 'ENCENDIDA, asi que el REQ no podra cerrarse' || printf 'APAGADA, asi que el REQ SI podra cerrarse sin veredicto de QA'). Salida: escribe la clave como '$ARNES_CLAVE_QA:'."
   fi
   if [ "$seg_decl" = 'desfase' ]; then
     arnes_aviso "'$rel': la linea '${seg_decl_linea}:' NO se lee como el campo '$ARNES_CLAVE_SEG:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera pero la CAJA no—. Para esta puerta ese campo sigue SIN declarar: esta firma no la juzga la guarda del orden del ciclo y, si el rigor efectivo es critico, el REQ no podra cerrarse por ausencia de veredicto de seguridad. Salida: escribe la clave como '$ARNES_CLAVE_SEG:'."
