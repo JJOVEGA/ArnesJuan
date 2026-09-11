@@ -50,6 +50,53 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-11 · `CA-13` nació con una frontera falsa: el plegado SÍ repone letras acentuadas
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester, coordinadora.
+
+**`QA-024-19` NO cierra.** Nace **`QA-024-33`** (`contrato`, **bloquea**).
+
+**QA verificó el RAZONAMIENTO ejerciendo el lector, no leyendo el texto** — y ahí está el hallazgo. El
+analista sostuvo que la propiedad excluye la frontera **por construcción**, porque el plegado «repone el
+plegado pero **no repone letras**». **Medido: sí las repone.** `CA-13 (ii)` enumera el plegado como
+«blancos, marcado, caja» y **omite el cuarto paso**, `arnes_pliega_ortografia` (`hooks/lib.sh:1400`,
+invocado desde `arnes_norm_campo:1462`), que mapea vocales acentuadas en NFC y NFD. Verificado también
+por la coordinadora.
+
+| clave | clasificación | ¿avisa? | lo que promete `CA-13 (v)` |
+|---|---|---|---|
+| `Ѕeguridad:` (`U+0405`), `Segurida:` | `no` | no | correcto |
+| **`Segurídad:`**, **`Séguridad:`**, **`QÁ:`** | **`desfase`** | **sí** | **«pasa sin aviso» — falso** |
+
+No es lectura forzada de «letra»: `docs/qa/1.34.0.md:3343` ya rotula **`QÁ:`** como «letra sustituida».
+
+**Por qué bloquea, y es lo que lo hace `contrato`:** `CA-13 (v)` **prescribe el caso del banco**. Quien
+lo escriba obtiene aviso donde el criterio promete silencio, y sus dos salidas son **acreditar por
+medición falsa** o **tocar `arnes_pliega_ortografia`** —compartido con el lector de **valores**—, lo que
+movería decisiones y estrecharía `REQ-016 CA-04`: justo lo que `CA-13 (iii)` prohíbe. **El criterio
+tiene un camino mecánico hacia el defecto que él mismo declara prohibido.**
+
+Lo demás del write-back **pasa**: `CA-13` contrata `ALLOW` + aviso sin prometer el `DENY` que el
+hallazgo pedía al nacer; `:815` queda cierta con su acto dentro; el título de la sección corregido; y la
+celda de superficie heredada ya dice que la mención **no desaparece, cambia de hallazgo**. Pero **esa
+misma celda arrastra la frontera falsa**, y viaja a la plantilla.
+
+### El contador, declarado por QA con su argumento
+
+**No gasta vuelta: es el CIERRE de la vuelta 5.** `git diff a05994f HEAD -- hooks tests` sale **vacío**
+—no hubo entrega del desarrollador— y es la **primera** entrega del analista de ese write-back, no una
+re-entrega con defecto. «Vuelta 6» inflaría el contador con trabajo que el tope no acota; «tramo»
+escondería una vuelta real.
+
+### Para el propietario, y no es hallazgo
+
+**Hay dos bucles vivos y sólo uno tiene tope:** `dev↔QA` (5 de 3, por autorizaciones expresas) y
+**`analista↔QA` sobre el write-back, que `AGENTS.md` §6 no acota.** `QA-024-33` abre su primera vuelta.
+Si ese bucle debe tener tope, es decisión suya.
+
+**Y una consecuencia operativa inmediata:** la mitad de texto de `SEC-084` sigue ausente
+(`AGENTS.md:353`, `templates/AGENTS.md.tpl:311`) y **no debe transcribirse como está** mientras
+`QA-024-33` siga abierto — llevaría la frase falsa a todo proyecto.
+
 ## [Interno] — 2026-09-11 · Write-back de `QA-024-19`: nace `CA-13`, y la sede que gobernaba estaba en superficie heredada
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
 
