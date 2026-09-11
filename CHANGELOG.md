@@ -2,6 +2,186 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · #48 queda VALIDADO y NO fusionable: `SEC-090` demuestra que la fusión, hecha hoy, borraría un bloqueante abierto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad (`R-031`) y coordinadora (la verificación).
+
+**`Seguridad: aprobado` sobre `6e3bb90`**, con dos residuales declarados. Con `QA: aprobado` (vuelta 1
+de 2) y `hooks-en-linux` **`pass`** (2m11s) sobre la misma cabeza, **las tres puertas del árbol están
+satisfechas**. Lo que impide fusionar **no es un defecto del árbol**: es el acto de fusionar.
+
+### La pieza nueva: la guarda contra `ADR-009`, auditada POR CONSTRUCCIÓN
+
+El auditor la juzgó por construcción **antes** que por medición, con un motivo que merece copiarse:
+*«una medición sobre una llave hoy apagada envejece el día que se encienda»*.
+
+Halló un matiz que el encargo no mencionaba: el camino de ausencia no sólo retorna antes de la guarda,
+**también se salta el suelo de sensibilidad del final**. Y demostró que no importa, por una razón que
+se sostiene sola: `ARNES_AUSENCIA_GOBIERNA_RIGOR='critico'` es **constante del mecanismo, no llave del
+manifiesto** —verificado: `.arnes/` no la fija—, así que ese camino **sólo puede inyectar `critico`**.
+**Saltarse un suelo estando en el techo no abre nada.** Y dejó escrito que *si algún día se hace
+configurable, la conclusión caduca* — en el registro, no en la cabeza de nadie.
+
+**Sonda propia, 60 celdas** (15 formas × sensible sí/no × llave **apagada y encendida**), cabeza contra
+padre: **12 de 60 cambian y las 12 son `ligero` → `estandar`; cero hacia un nivel más bajo.** Y
+**una sola celda** es sensible a la llave —el campo vacío en REQ no sensible—, ninguna del dominio del
+matiz: **las dos maquinarias no se tocan**.
+
+### Superficies heredadas: eran TRES, no cinco
+
+`docs/estabilizacion/contrato-parche.md` **no existe** en esta rama y `CHANGELOG.md` tiene **0**
+ocurrencias. Las tres vivas son ciertas, y **radio heredable 1**.
+
+Y sobre la plantilla congelada de `.arnes/plantillas-origen/`, el auditor dio un motivo **más fuerte**
+que el que teníamos: la frase **era verdadera en la versión que congela** —origen 1.30.3; el fail-open
+lo introdujo 1.33.1—, así que corregirla haría que el snapshot **dijera algo que su versión no dijo**.
+Además `skills/arnes-upgrade/SKILL.md:105` sólo acredita `CONFIRMADO` si es idéntica al tag.
+
+### `SEC-087`: CERRADO por su dueño, aplicando la aclaración del propietario
+
+`abierto` → **`mitigado`**, con su evidencia. El propietario aclaró hoy que *«el rol responsable sí
+puede cerrar un hallazgo cuya remediación haya verificado y cuya condición de cierre se cumpla»*, y que
+eso **no equivale a aceptar un riesgo residual**. En `R-030` el auditor ya lo había declarado cerrable
+y se abstuvo **por una indicación mía más restrictiva de lo que el propietario quería**.
+
+**No cierra la vía** del paréntesis sin cerrar —sigue en `SEC-088`, preexistente e idéntica en las
+cuatro versiones—: cierra que **el contrato la tapara**. Y el cambio de estado se aplica sobre la copia
+de `main`, que es **donde el hallazgo tiene sede**.
+
+### `SEC-090` (`contrato`, media-alta) — el bloqueo real, y es del ACTO DE FUSIONAR
+
+`QA-P48-02` decía que `SEC-087` no tiene sede en esta rama. El auditor fue a dársela y encontró que
+**el riesgo real es el inverso**, que es mucho peor:
+
+| | último hallazgo definido |
+|---|---|
+| esta rama | `SEC-085` |
+| `origin/main` / `v1.33.2` | **`SEC-089`** |
+
+`git merge-tree` confirma que `docs/seguridad/registro-seguridad.md` **cambia en los dos lados** —10
+commits aquí, 2 allá— con **8 archivos en conflicto**.
+
+**Una resolución que tome esta copia borraría `SEC-086`…`SEC-089` y `R-029`/`R-030`.** Y entre ellos
+está **`SEC-088`, abierto y de clase `contrato`**. *Un hallazgo bloqueante invisible no bloquea.*
+
+**Verificado por la coordinadora sobre los identificadores concretos**, y la primera comprobación que
+hice fue **falsa**: un patrón de encabezado mío no casaba con ese formato y dio «nada se pierde». Con
+el patrón correcto: **`SEC-088`, `R-029` y `R-030` están definidos en `main` y ausentes en la rama.**
+La medición del auditor era la buena.
+
+**Remediación:** reconstruir tomando la copia de `main` como **espina** y apilando encima los bloques
+de esta rama, con verificación **por propiedad** —ningún identificador se pierde—, no por una lista de
+cuatro. **Forzador: antes de fusionar.** No bloquea la firma: no es defecto del árbol.
+
+**Write-back pendiente (§9), anotado como deuda y no como hecho consumado:** que la resolución de un
+archivo-índice preserve **todo** identificador previo debe quedar como **NFR**, vía
+`analista-requerimientos`.
+
+### Y una constancia sobre el presupuesto
+
+El auditor se pasó (~32 min de ~18) y lo declaró. El desvío fue `SEC-090`: al verificar `QA-P48-02`
+apareció la divergencia, y *«dejarla sin medir habría entregado una firma sobre un árbol correcto que
+se pierde en la fusión»*. El desvío estuvo bien gastado.
+
+## [Interno] — 2026-09-11 · Auditoría de seguridad del PR #48 sobre `6e3bb90`: **aprobado** (`R-031`)
+
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `auditor-seguridad`.
+> Cabeza cubierta: `6e3bb901acd8bc5e29f2ea6afd8b7bbe0ef32939`, rama `feat/1.34-reparaciones-astra`.
+> Revisión completa: `docs/seguridad/registro-seguridad.md` § **R-031**. Sonda:
+> `docs/seguridad/sondas/R-031-matiz-vs-ausencia.sh`.
+
+**Orden cumplido:** `QA: aprobado` (vuelta 1 de 2) sobre esta misma cabeza y `hooks-en-linux` en
+`pass`. La firma no acredita un árbol sin validar.
+
+**La pregunta que `R-030` no podía haber contestado.** Las dos líneas divergen en el mecanismo:
+`arnes_resuelve_ausencia` aparece **7** veces aquí y **0** en `v1.33.2`, así que la guarda del
+matiz se **añadió** sobre la lógica de ausencia de `ADR-009` en vez de copiarse encima de un árbol
+que no la tenía. Auditado si esa interacción abre algo, que es distinto de si funciona.
+**No abre nada, y se sostiene por construcción antes que por medición:** el camino de ausencia
+retorna antes de la guarda y se salta el suelo de sensibilidad, pero el único valor que puede
+inyectar es `critico` —`ARNES_AUSENCIA_GOBIERNA_RIGOR`, constante del mecanismo y **no** llave del
+manifiesto—, y saltarse un suelo estando en el techo de la escala no abre nada. Verificado además
+que el indicador `ARNES_RIGOR_MATIZ` no se arrastra por el lado que abre: asignación
+**incondicional**, un solo llamador de producción y re-normalización idempotente.
+
+**60 celdas propias** —15 formas de `Rigor:` × sensible sí/no × `campos.ausencia_exige` **apagada y
+encendida**—, contra la cabeza y contra el padre `2f7c821`: **12 cambian y las 12 van
+`ligero` → `estandar`; cero hacia un nivel más bajo**. Una sola celda es sensible a la llave —el
+campo **vacío** en REQ no sensible, que se mueve hacia `critico`—, así que las dos maquinarias no
+se tocan. Y la exención de QA sigue alcanzándose **sólo** desde `Rigor: ligero` desnudo.
+
+**Superficies heredadas: las sedes con promesa falsa no son cinco aquí, son tres, y las tres son
+ciertas.** `docs/estabilizacion/contrato-parche.md` no existe en esta rama y `CHANGELOG.md` no
+contiene la frase. La plantilla heredable es **idéntica** a su sede (radio heredable **1**): ningún
+consumidor hereda aquí una promesa que no tiene.
+
+**`.arnes/plantillas-origen/requirements-README.md.tpl` se juzga, no se asume: la decisión de
+dejarla intacta es CORRECTA**, y por un motivo más fuerte que el declarado — la frase era
+**verdadera en la versión que ese snapshot congela** (origen 1.30.3; el fail-open lo introdujo
+1.33.1), luego corregirla haría que el snapshot dijera algo que su versión no dijo. Además tiene un
+consumidor mecánico que depende de su identidad byte a byte (la acreditación **CONFIRMADO** de
+`arnes-upgrade`). Un registro que se corrige deja de ser un registro.
+
+**`SEC-087` se CIERRA (`abierto` → `mitigado`)**, ejerciendo la decisión que el propietario aclaró
+que corresponde al rol responsable. Se cierra que el contrato **tapara** la vía; **no** se cierra la
+vía del paréntesis sin cerrar, que sigue abierta con nombre propio en **`SEC-088`** y es
+preexistente e idéntica en 1.33.0, 1.33.1, 1.33.2 y aquí. El cambio de estado se aplica sobre la
+copia de `main`, que es donde el hallazgo tiene sede.
+
+**`SEC-090` abierto (`contrato`, media-alta): la fusión puede borrar cuatro hallazgos del índice.**
+Resuelve y subsume `QA-P48-02`, elevándolo de `instrumento`. El registro de esta rama llega a
+`SEC-085` y el de `origin/main` a `SEC-089`; `git merge-tree` confirma que
+`docs/seguridad/registro-seguridad.md` cambia **en los dos lados**. La remediación intuitiva
+—escribir `SEC-087` a mano aquí— es la peor salida: crearía una segunda definición divergente. El
+riesgo real es el inverso: una resolución que tome esta copia borraría `SEC-086`…`SEC-089`,
+incluido `SEC-088`, que está **abierto** y es `contrato` — y un hallazgo bloqueante invisible no
+bloquea. **Forzador: antes de fusionar `#48`.** No bloquea la firma: no es un defecto del árbol,
+es una condición sobre un acto que aún no ha ocurrido.
+
+## [Interno] — 2026-09-11 · QA acotada del PR #48 sobre `6e3bb90`: **aprobado**, vuelta 1 de 2
+
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`.
+> Cabeza cubierta: `6e3bb901acd8bc5e29f2ea6afd8b7bbe0ef32939`, rama `feat/1.34-reparaciones-astra`.
+> Informe completo: `docs/qa/1.34.0-pr48-6e3bb90-vuelta1.md`.
+
+**Lo publicado en `v1.33.2` no acreditó nada aquí.** Se reutilizó el **método** —medir por la puerta
+y no por un atajo— y no ningún resultado: las sondas se escribieron para este árbol
+(`docs/qa/1.34.0-porte-1.33.1-falsacion/30-…` a `36-…`) y el par fail-before se midió contra el
+**padre `2f7c821`**, que es el único árbol comparable porque es el único que además tiene la
+maquinaria de `ADR-009`.
+
+**La afirmación central del desarrollador es CIERTA, y se dice sin matices: la ausencia del campo
+`Rigor:` NO atraviesa la guarda.** Por dos vías: estructural —`arnes_resuelve_ausencia` retorna
+unas 50 líneas antes, y `arnes_rigor_efectivo` tiene un solo llamador en todo el mecanismo— y
+conductual: **15 celdas del camino de ausencia**, con la exigencia apagada y encendida, dan el
+**mismo veredicto en la cabeza y en el padre**. Nadie debe leer esta guarda como si cubriera ese
+camino.
+
+**La puerta, que es lo que decide: 31 celdas medidas.** `Rigor: ligero (local)` con `QA: pendiente`
+en un REQ no sensible pasa de **allow a deny**; `ligero` limpio sigue **allow**; `critico (por
+suelo)` conserva la corrección de v1.33.1; el suelo manda con `Sensible a seguridad: sí`. Del padre
+a la cabeza **cambian 10 celdas y las 10 son `allow` → `deny`; ninguna al revés**. Ninguna forma con
+paréntesis —capitalización, espacios, vacío, doble, anidado— alcanza `ligero`, el único nivel exento
+de QA.
+
+**Contabilidad cuadrada y la mitad que `CA-18` no comprueba, re-derivada a mano:** sección 41 declara
+26 y tiene 26 `check`; `CASOS_ESPERADOS=1090` cuadra con 1082 PASS + 8 SKIP y con la suma por
+secciones (1091 menos un literal generado dentro de un fixture de la 37); y el bloque mayor de la
+sección **es** de verdad 59 líneas (el siguiente es 17), preámbulo 5, maquinaria 0 → **64**.
+
+**La rama no perdió nada suyo:** las 18 líneas borradas se auditaron una a una y el porte de 1.33.1,
+el índice de hallazgos, la enmienda de política y `D16`/`D17` viven en archivos que este commit **no
+toca**.
+
+**Un hallazgo, no bloqueante — `QA-P48-02` (`instrumento`):** `SEC-087` se cita en `hooks/lib.sh` y
+en el banco de esta rama, pero **en esta rama no tiene sede** (el registro llega a `SEC-086` y ningún
+REQ lo declara), así que es invisible para `guard-completado`. Sus sedes están en la línea del parche.
+Dueño: quien reconcilie #48 antes de fusionar a `main`. **No se cerró ni reclasificó `SEC-087`,
+`SEC-088` ni `QA-1332-01`.**
+
+**Sin acreditar, dicho y no supuesto:** rendimiento (esta máquina no es el runner; `loadavg 0.75`),
+el CI —que estaba corriendo— y la revisión de seguridad, que va detrás. `QA: aprobado` **no cierra**:
+falta `Seguridad: aprobado` y el gate humano de fusión (`AGENTS.md` §6).
+
 ## [Interno] — 2026-09-11 · `QA-P48-01`: la guarda `max(declarado, heredado)` llega a esta rama, y llega **añadida**, no copiada
 
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador`.

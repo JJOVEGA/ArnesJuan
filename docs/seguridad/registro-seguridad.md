@@ -8588,3 +8588,221 @@ la ventana 1.34.0; ni el write-back de `SEC-031`, `032`, `034`, `035` y `036`, q
 
 **Numeración vigente tras esta revisión:** última revisión **R-028**; último hallazgo **SEC-085**;
 próximos libres **R-029** y **SEC-086**.
+
+---
+
+## Revisión R-031 — PR #48, el porte del arreglo de `v1.33.2` a la línea de 1.34.0, `feat/1.34-reparaciones-astra` @ `6e3bb90` (2026-09-11)
+
+> **AVISO DE NUMERACIÓN, LÉASE ANTES DE FUSIONAR — y no es el mismo aviso que el de `R-029`.**
+> Esta copia del registro termina declarando «próximos libres **R-029** y **SEC-086**», pero la
+> línea publicada (`origin/main`, `v1.33.2`) ya llega a **R-030** y **SEC-089**. Numero desde el
+> máximo real —**R-031**, **SEC-090**— para no colisionar. **La fusión no debe resolver
+> `docs/seguridad/registro-seguridad.md` tomando esta versión**: se perderían `SEC-086`…`SEC-089`
+> y las revisiones `R-029`/`R-030`, incluido `SEC-088`, que está **abierto** y es `contrato`. Este
+> bloque es apilable (append-only) y se puede trasplantar solo. Ver `SEC-090` (§4).
+
+**Alcance (el que nombró el propietario).** Tres piezas: (1) el cambio funcional de `hooks/lib.sh`
+y su interacción con la maquinaria de ausencia de `ADR-009`, que en esta línea **sí existe**;
+(2) su correspondencia con el contrato; (3) las superficies heredadas. Diff auditado:
+`2f7c821..6e3bb90`. Guardián de la sesión: instalación estable **v1.33.1**. Plataforma: Linux
+(WSL2); `loadavg` 0,75 / 0,84 / 0,69 al iniciar — **esta máquina no es el runner**, así que no
+publico cifras de reloj como si acreditaran rendimiento.
+
+**Orden cumplido antes de firmar.** `QA: aprobado` (vuelta 1 de 2) sobre esta misma cabeza
+(`docs/qa/1.34.0-pr48-6e3bb90-vuelta1.md`) y `hooks-en-linux` en `pass`. No firmo un árbol sin
+validar (`AGENTS.md` §6).
+
+**Qué NO repito, y por qué sigue valiendo.** `R-030` acreditó el mismo arreglo sobre la línea del
+parche con 156 combinaciones de alfabeto adversario, la frontera medida en 60 pares y la mitad
+absoluta demostrada por construcción. Reutilizo eso como **método**, no como veredicto: el
+propietario fue explícito en que lo aprobado en `v1.33.2` **no acredita** `#48`. Y hace falta que
+no lo haga, porque **las dos líneas divergen en el mecanismo**: `arnes_resuelve_ausencia` aparece
+**7** veces aquí y **0** en `v1.33.2`. La guarda se **añadió** sobre la lógica de ausencia; no se
+copió encima de un árbol que no la tenía.
+
+### 1. La pieza nueva: la guarda del matiz contra el camino de ausencia (`ADR-009`)
+
+Ésta es la única pregunta que `R-030` no podía haber contestado, y la contesto por **construcción**
+antes que por medición, porque una medición sobre una llave que hoy está apagada envejece el día
+que se encienda.
+
+**(a) El camino de ausencia retorna antes de la guarda — y no importa, porque retorna en el techo.**
+`arnes_rigor_efectivo` (`hooks/lib.sh:2418-2427`) resuelve la ausencia y hace `return 0` unas 60
+líneas **antes** del `if` del matiz, saltándose además el suelo de sensibilidad del final. Eso sería
+un fail-open si el valor que inyecta pudiera ser bajo. **No puede:**
+
+    hooks/lib.sh:1874   ARNES_AUSENCIA_GOBIERNA_RIGOR='critico'
+
+Es una constante **del propio mecanismo**, no una llave del manifiesto: verificado que `.arnes/`
+no la fija y que el único otro sitio que la nombra es una **mutación deliberada del banco**
+(`tests/…/40-ausencia-que-abre-1-la-clase-derivada.sh:300`). Luego el camino de ausencia sólo puede
+devolver `critico`, que es el máximo de la escala. **Saltarse un suelo estando en el techo no abre
+nada**, y la propiedad se sostiene sola: mientras esa constante sea el valor que más restringe, el
+orden de los dos bloques es indiferente. Si alguna vez se hace configurable, esta conclusión caduca
+— queda dicho aquí y no en la cabeza de nadie.
+
+**(b) El indicador no se puede arrastrar de un REQ a otro por el lado que abre.**
+`ARNES_RIGOR_MATIZ=0` se fija **incondicionalmente** (`hooks/lib.sh:2158`) seis líneas antes del
+`case` que lo pone a 1, dentro de `arnes_campos_normaliza`, que es el **único llamador de
+producción** de `arnes_rigor_efectivo` (verificado sobre todo el árbol: los otros dos llamadores
+son sondas bajo `docs/`). El `${ARNES_RIGOR_MATIZ:-0}` del `if` no es, por tanto, una omisión
+perdonada en silencio: no hay camino de producción que lo alcance sin asignación previa. Y la
+re-normalización de `hooks/lib.sh:2330` es **idempotente en la dirección segura**: vuelve a
+derivar el indicador del valor que recibe, así que un valor ya desenvuelto (sin paréntesis) no
+puede recuperar la exención que la guarda le quitó.
+
+**(c) Conductual, con la llave en los dos estados.** Sonda propia —**60 celdas**: `{15 formas de
+`Rigor:`} × {sensible sí/no} × {`ARNES_AUSENCIA_EXIGE` false/true}—, invocando la cola real
+(`arnes_campos_normaliza`), corrida sobre la cabeza y sobre el padre `2f7c821`. Método y script en
+`docs/seguridad/sondas/R-031-matiz-vs-ausencia.sh`.
+
+| Medición | Resultado |
+|---|---|
+| Celdas que cambian del padre a la cabeza | **12 de 60**, y **las 12** son `ligero` → `estandar` |
+| Celdas que cambian hacia un nivel **más bajo** | **0** |
+| Celdas que difieren entre `ausencia_exige` **apagada** y **encendida**, en la cabeza | **1**: `Rigor:` **vacío** en REQ no sensible, `estandar` → `critico` |
+| Celdas que alcanzan `ligero` en la cabeza | **2**, y las dos son `Rigor: ligero` **desnudo** en REQ no sensible |
+
+La tercera fila es la que contesta el encargo: **la única celda sensible a la llave es la del campo
+ausente**, que es precisamente el dominio de `ADR-009`, y se mueve hacia `critico`. Ninguna celda
+del dominio del matiz cambia de opinión al encender la llave. **Las dos maquinarias no se tocan**, y
+confirmo la medición de QA por vía independiente en vez de repetirla. La cuarta fila es la
+propiedad que de verdad protege: la exención de QA sigue alcanzándose **sólo** desde la forma
+desnuda, con la llave encendida o apagada.
+
+**Veredicto de la pieza nueva: la guarda sólo estrecha, y no altera nada de lo que `ADR-009`
+promete.** El día que `campos.ausencia_exige` se encienda, la guarda del matiz seguirá sin
+intervenir en ese camino — no porque se haya medido hoy, sino porque el camino termina en el techo
+de la escala.
+
+### 2. Correspondencia con el contrato, y las superficies heredadas
+
+**Las sedes con promesa falsa no son cinco aquí: son tres, y las tres son ciertas.** Lo verifico en
+vez de asumirlo, porque el encargo describía el mapa de la **otra** línea:
+
+| Sede | Estado en `6e3bb90` |
+|---|---|
+| `requirements/README.md:107-119` | Frase corregida, con la frontera nombrada y el efecto del paréntesis sin cerrar **dicho en voz alta** («deja de exigir la firma de seguridad, y no avisa») |
+| `templates/requirements-README.md.tpl:107-119` | **Idéntica** a su sede (mismo hunk, mismas 18 líneas). Radio heredable: **1** superficie |
+| `hooks/lib.sh:2439-2461` | El titular sigue siendo absoluto —«NUNCA BAJARLO»— pero **la frase siguiente lo condiciona en el sitio**: «La frase sin esa condicion es FALSA y estaba escrita asi», más el alcance a matices bien formados y la exclusión nombrada. Es la corrección completa de la promesa, no un matiz colgado de un absoluto |
+| `docs/estabilizacion/contrato-parche.md` | **No existe en esta rama** — artefacto de la línea del parche. Nada que corregir |
+| `CHANGELOG.md`, «subir o mantener» | **0 ocurrencias**. Nada que corregir |
+
+Barrido de la frase absoluta original en todo el árbol: **una** ocurrencia, y es la del §3.
+**Ningún consumidor hereda aquí una promesa que no tiene** — que era el hallazgo con el que abrí
+`SEC-087` en la otra línea.
+
+### 3. La plantilla congelada: la decisión es CORRECTA, y por una razón más fuerte que la dada
+
+`.arnes/plantillas-origen/requirements-README.md.tpl:79` conserva la frase vieja —«Un valor no
+reconocido se ignora y se cae a la derivación. Nunca abre la puerta»—. Se me pidió **juzgarlo**, no
+asumirlo. **Juzgo que debe quedarse, y añado el motivo que faltaba:**
+
+1. **La frase era VERDADERA en la versión que ese snapshot congela.** El origen declarado es
+   **1.30.3** (`.arnes/migracion.md`), y el fail-open del paréntesis lo introdujo **1.33.1** al
+   enrutar la forma parentética por el lector común. En 1.30.3 un `ligero (x)` era un valor no
+   reconocido y caía a la derivación: la frase describe con exactitud lo que esa versión hacía.
+   Corregirla haría que el snapshot dijera algo que su versión **no decía** — falsificaría el
+   pasado, no sólo el diff.
+2. **Tiene un consumidor mecánico que depende de su identidad byte a byte.**
+   `skills/arnes-upgrade/SKILL.md:105` acredita el origen como **CONFIRMADO** sólo si
+   `.arnes/plantillas-origen/` es **idéntica** a la del tag declarado. Editarla degradaría esa
+   acreditación y la migración pasaría a **adivinar** el origen.
+3. **No declara ninguna invariante**, y eso está decidido y registrado: `REQ-007` (CA-53) deja
+   `.arnes/plantillas-origen/` fuera del código protegido exactamente por eso. Nadie la lee como el
+   contrato vigente; se lee como el lado «antes» de un diff.
+
+`v1.33.2` la dejó intacta y acertó. **No es deuda: es el registro de un estado anterior**, y un
+registro que se corrige deja de ser un registro.
+
+### 4. `SEC-090` — el índice de hallazgos y el registro divergen entre las dos líneas, y la fusión puede borrar cuatro hallazgos sin que nadie lo note · clase `contrato` · severidad **media-alta** · **abierto** · dueño `auditor-seguridad` (mío)
+
+**Resuelve `QA-P48-02` (`instrumento`) y lo subsume, elevándolo de clase.** QA observó que
+`SEC-087` se **cita** en `hooks/lib.sh:2444` y en la sección 41 del banco pero **no tiene sede en
+esta rama**, luego es invisible para `guard-completado`. Es cierto, y al ir a darle sede encontré
+que el problema es mayor y de signo contrario al que sugiere la observación.
+
+**Lo medido.**
+
+| Hecho | Cifra |
+|---|---|
+| Último hallazgo en el registro de **esta rama** | `SEC-085` (revisión `R-028`) |
+| Último hallazgo en el registro de **`origin/main` / `v1.33.2`** | `SEC-089` (revisión `R-030`) |
+| Base de fusión | `5e53f12` |
+| Commits que tocan el registro desde la base, **lado rama** | 10 |
+| Commits que tocan el registro desde la base, **lado main** | 2 |
+| Archivos que cambian **en ambos lados** (`git merge-tree`) | **8**, y `docs/seguridad/registro-seguridad.md` es uno |
+
+**El riesgo, y por qué no es el que QA describió.** La remediación intuitiva —escribir `SEC-087` a
+mano en esta copia— es **la peor de las salidas**: crearía una **segunda definición divergente** de
+un hallazgo que ya tiene sede autorizada en `main`, dentro de un archivo que **ya está en
+conflicto**. El riesgo real es el inverso: que la resolución de ese conflicto tome esta copia
+(«ours») y **borre del índice `SEC-086`, `SEC-087`, `SEC-088` y `SEC-089`** más las revisiones
+`R-029` y `R-030`. `SEC-088` está **abierto** y es `contrato`: desaparecería del único inventario
+que `guard-completado` puede leer, y un hallazgo bloqueante invisible **no bloquea**.
+
+**Es mi familia de hallazgo** (`SEC-085`: un inventario que no ve lo que debería), aplicada al acto
+de fusionar. Y no es hipotética: la propia `R-029` dejó escrito un aviso de numeración por esta
+misma causa, lo que demuestra que la divergencia **sobrevive a que alguien ya la haya advertido
+una vez**.
+
+**Remediación (condición de cierre).** Al resolver `#48`, `docs/seguridad/registro-seguridad.md`
+se reconstruye tomando **la copia de `main` como espina** —conserva `SEC-086`…`SEC-089`, `R-029`,
+`R-030`— y **apilando encima** los bloques de esta rama (`R-028`/`SEC-085` y este `R-031`/`SEC-090`),
+que son append-only y trasplantables. Se verifica después, sobre el árbol fusionado, que el índice
+contiene **todos** los identificadores presentes en cualquiera de las dos copias antes de fusionar:
+la comprobación es una **propiedad** —ningún identificador se pierde—, no una lista de cuatro.
+
+**Forzador:** antes de fusionar `#48` a `main`. **No bloquea esta firma**, porque no es un defecto
+del árbol `6e3bb90`: es una condición sobre un acto que todavía no ha ocurrido.
+
+**Write-back pendiente (`AGENTS.md` §9):** este control no queda cerrado viviendo sólo aquí. Que la
+resolución de un archivo-índice preserve todo identificador previo debe quedar como **NFR** vía
+`analista-requerimientos`. Lo anoto como deuda del hallazgo, no como hecho consumado.
+
+### 5. `SEC-087` — lo CIERRO, y dónde se aplica el cambio de estado
+
+El propietario aclaró hoy que el rol responsable **sí puede cerrar** un hallazgo cuya remediación
+haya verificado y cuya condición de cierre se cumpla, dejando su evidencia, y que eso **no equivale
+a aceptar un riesgo residual**. En `R-030` lo declaré **cerrable** y me abstuve por una indicación
+más restrictiva de lo que el propietario quería. **Ejerzo ahora la decisión, que es mía:**
+
+**`SEC-087` pasa de `abierto` a `mitigado`.** Su condición de cierre era que ninguna sede afirmara
+en absoluto una protección con contraejemplo vivo. Verificado **en este árbol** (§2): de las cinco
+sedes que el hallazgo nombraba, tres existen aquí y **las tres** enuncian la frontera con su
+exclusión; dos no existen en esta rama. Barrido independiente de la frase absoluta: **una sola**
+ocurrencia en todo el árbol, y es la plantilla congelada, que **debe** conservarla (§3).
+
+**Lo que el cierre NO hace, dicho para que nadie lo lea de más:** no cierra la **vía** del paréntesis
+sin cerrar. Ésa sigue **abierta**, es **preexistente e idéntica en 1.33.0, 1.33.1, 1.33.2 y aquí**
+—reconfirmado en mis celdas: `critico (` en REQ no sensible da `estandar` en el padre y en la
+cabeza—, y vive con nombre propio en **`SEC-088`**, que **no** toco. Lo que cierro es que el
+contrato la **tapara**. Documentar un residuo no es remediarlo; aquí no estoy documentando un
+residuo, estoy cerrando la mitad que sí se remedió y dejando la otra con su propio identificador.
+
+**Dónde se aplica.** `SEC-087` **no tiene sede en esta copia** del registro: su bloque vive en
+`origin/main` / `v1.33.2`. Para no fabricar una segunda definición divergente (§4), **no lo
+trasplanto**. El cambio de estado a `mitigado`, con esta revisión `R-031` como evidencia, se aplica
+sobre **la copia de `main`** en la resolución de la fusión descrita en `SEC-090`. Queda así en un
+solo sitio y auditable desde el disco.
+
+### 6. Estado de seguridad aprobado (para detectar regresiones futuras)
+
+| REQ / entrega | Estado | Fecha | Base y alcance |
+|---|---|---|---|
+| **PR #48** — porte del arreglo de `v1.33.2` a 1.34.0, `feat/1.34-reparaciones-astra` @ **`6e3bb90`** | **`aprobado`** | 2026-09-11 | **Qué acredita:** que la guarda del matiz, **añadida** sobre la lógica de ausencia de esta línea y no copiada encima, **sólo estrecha** —12 de 60 celdas cambian y las 12 van `ligero`→`estandar`, cero hacia un nivel más bajo—; que **no altera nada de lo que `ADR-009` promete**, por construcción (el camino de ausencia sólo puede inyectar `critico`, constante del mecanismo y no del manifiesto) y por medición con `campos.ausencia_exige` **en los dos estados** (una sola celda sensible a la llave, la del campo ausente, y se mueve hacia `critico`); que el indicador no se arrastra por el lado que abre (asignación incondicional, un solo llamador de producción, re-normalización idempotente); que la exención de `ligero` sigue alcanzándose **sólo** desde la forma desnuda; que las **tres** sedes vivas del contrato son ciertas aquí y la heredable es idéntica a su sede (radio heredable **1**); y que dejar intacta la plantilla congelada es **correcto**. **Qué NO acredita:** las quality gates ni el banco (los mide QA: `rc 0`, 1082 PASS / 0 FAIL / 8 SKIP), ni `arnes-upgrade` como skill, ni la instalación, ni **la fusión** — ver `SEC-090`. **Residuales declarados:** `SEC-088` (`contrato`, media, preexistente, la vía del paréntesis sin cerrar) y `SEC-090` (`contrato`, media-alta, abierto por esta revisión, forzador **antes de fusionar**) |
+
+**Comparación contra el estado aprobado anterior (regresión de seguridad).** Contrastado el
+mecanismo de esta cabeza contra lo acreditado en `R-030` sobre la línea del parche: **ningún
+control antes presente ha desaparecido ni se ha debilitado**. Las 60 celdas no muestran una sola
+transición hacia un nivel más bajo, y el suelo de sensibilidad sigue intacto en las 30 celdas
+sensibles (todas `critico`, con la llave apagada y encendida).
+
+**Estado de mis hallazgos tras `R-031`.** **`SEC-087` `abierto` → `mitigado`** (§5; el cambio de
+estado se aplica sobre la copia de `main`, ver §4). **`SEC-090` `abierto`**, nuevo. **`SEC-088` sin
+cambios**, `abierto`. **`QA-P48-02` subsumido** en `SEC-090`, que lo resuelve por propiedad y lo
+eleva de `instrumento` a `contrato`. Sin cambios en el resto.
+
+**Numeración vigente tras esta revisión:** última revisión **R-031**; último hallazgo **SEC-090**;
+próximos libres **R-032** y **SEC-091**. *(Numerado desde el máximo real de las dos líneas; ver el
+aviso de la cabecera.)*

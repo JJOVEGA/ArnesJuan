@@ -1,0 +1,13 @@
+# Re-derivacion A MANO del PISO_AUTONOMO_SECCION de la seccion 41 (CA-18 comprueba la aritmetica, NO que el mayor sea el mayor)
+# archivo: tests/escenarios/hooks/secciones/41-estabilizacion-firmas-y-rigor.sh · 103 lineas
+# bloques (grupos de lineas consecutivas sin blanca), de mayor a menor:
+  59 lineas (23-81); 
+  17 lineas (5-21); 
+  12 lineas (92-103)
+  8 lineas (83-90); 
+  3 lineas (1-3); 
+# preambulo: lineas 1-5 (el primer caso arranca en la 6, mkreq_r REQ-940) = 5
+# maquinaria propia definida en el archivo: 0
+# 5 + 0 + 59 = 64 == PISO_AUTONOMO_SECCION declarado: PISO_AUTONOMO_SECCION=64
+# casos declarados en la seccion: CASOS_ESPERADOS_SECCION=26 · invocaciones check contadas: 26
+# suma de CASOS_ESPERADOS_SECCION de todas las secciones: 1091, menos 1 literal generado DENTRO de 37-coste-del-escaner-5 (linea 486, fixture sintetico) = 1090 == CASOS_ESPERADOS

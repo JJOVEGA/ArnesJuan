@@ -1,0 +1,42 @@
+# Sonda QA de la PUERTA · cabeza 6e3bb901acd8bc5e29f2ea6afd8b7bbe0ef32939 (rama feat/1.34-reparaciones-astra)
+# metodo: docs/qa/1.34.0-porte-1.33.1-falsacion/30-qa-sonda-puerta.sh <HOOKS_DIR> · mide guard-completado.sh, no el lector
+# loadavg al arrancar: 0.75 0.76 0.63 1/753 446494
+
+== PUERTA guard-completado.sh · HOOKS_DIR=hooks ==
+-- A. el eje: ligero con matiz vs ligero limpio, REQ NO sensible, QA pendiente --
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero]               -> allow
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero (local)]       -> deny
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero (lo que sea)]  -> deny
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero ()]            -> deny
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero (a) (b)]       -> deny
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero (a (b))]       -> deny
+-- B. con QA aprobado (la exencion deja de importar; manda Seguridad) --
+  sens=no  | QA=aprobado  Seg=pendiente | Rigor=[ligero]               -> allow
+  sens=no  | QA=aprobado  Seg=pendiente | Rigor=[ligero (local)]       -> allow
+  sens=no  | QA=aprobado  Seg=pendiente | Rigor=[estandar (x)]         -> allow
+  sens=no  | QA=aprobado  Seg=pendiente | Rigor=[critico (por suelo)]  -> deny
+  sens=no  | QA=aprobado  Seg=aprobado  | Rigor=[critico (por suelo)]  -> allow
+-- C. suelo de seguridad: sensible=si --
+  sens=si  | QA=pendiente Seg=pendiente | Rigor=[ligero (local)]       -> deny
+  sens=si  | QA=aprobado  Seg=pendiente | Rigor=[ligero (local)]       -> deny
+  sens=si  | QA=aprobado  Seg=aprobado  | Rigor=[ligero (local)]       -> allow
+-- D. variantes de entrada sobre el conjunto conocido --
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[LIGERO (local)]       -> deny
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[Ligero (local)]       -> deny
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero(local)]        -> deny
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[  ligero (local)  ]   -> deny
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero  (local)]      -> deny
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero (local]        -> deny
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero (local) y mas] -> deny
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[(local)]              -> deny
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[()]                   -> deny
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[]                     -> deny
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[inventado]            -> deny
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[inventado (x)]        -> deny
+-- E. AUSENCIA del campo Rigor (el camino que NO debe atravesar la guarda) --
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[OMIT]                 -> deny
+  sens=no  | QA=aprobado  Seg=pendiente | Rigor=[OMIT]                 -> allow
+  sens=si  | QA=aprobado  Seg=pendiente | Rigor=[OMIT]                 -> deny
+  sens=si  | QA=aprobado  Seg=aprobado  | Rigor=[OMIT]                 -> allow
+-- F. repeticion/idempotencia: mismo REQ dos veces y alternancia matiz/limpio --
+  alterna: matiz=deny limpio=allow matiz=deny limpio=allow

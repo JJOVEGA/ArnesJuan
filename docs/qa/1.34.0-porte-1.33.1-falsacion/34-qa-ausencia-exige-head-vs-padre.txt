@@ -1,0 +1,33 @@
+# Camino de AUSENCIA con campos.ausencia_exige=true · head vs padre · deben ser IDENTICOS
+== HEAD 6e3bb90 ==
+-- E. AUSENCIA del campo Rigor (el camino que NO debe atravesar la guarda) --
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[OMIT]                 -> deny
+  sens=no  | QA=aprobado  Seg=pendiente | Rigor=[OMIT]                 -> deny
+  sens=si  | QA=aprobado  Seg=pendiente | Rigor=[OMIT]                 -> deny
+  sens=si  | QA=aprobado  Seg=aprobado  | Rigor=[OMIT]                 -> deny
+-- F. repeticion/idempotencia: mismo REQ dos veces y alternancia matiz/limpio --
+  alterna: matiz=deny limpio=deny matiz=deny limpio=deny
+-- G. ausencia_exige=true: combinaciones de campos ausentes --
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[OMIT]                 -> deny
+  sens=no  | QA=OMIT      Seg=pendiente | Rigor=[ligero]               -> deny
+  sens=no  | QA=OMIT      Seg=pendiente | Rigor=[OMIT]                 -> deny
+  sens=no  | QA=aprobado  Seg=OMIT      | Rigor=[OMIT]                 -> deny
+  sens=si  | QA=aprobado  Seg=aprobado  | Rigor=[OMIT]                 -> deny
+  sens=OMIT | QA=aprobado  Seg=aprobado  | Rigor=[ligero (local)]       -> deny
+  sens=OMIT | QA=pendiente Seg=pendiente | Rigor=[ligero (local)]       -> deny
+== PADRE 2f7c821 ==
+-- E. AUSENCIA del campo Rigor (el camino que NO debe atravesar la guarda) --
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[OMIT]                 -> deny
+  sens=no  | QA=aprobado  Seg=pendiente | Rigor=[OMIT]                 -> deny
+  sens=si  | QA=aprobado  Seg=pendiente | Rigor=[OMIT]                 -> deny
+  sens=si  | QA=aprobado  Seg=aprobado  | Rigor=[OMIT]                 -> deny
+-- F. repeticion/idempotencia: mismo REQ dos veces y alternancia matiz/limpio --
+  alterna: matiz=deny limpio=deny matiz=deny limpio=deny
+-- G. ausencia_exige=true: combinaciones de campos ausentes --
+  sens=no  | QA=pendiente Seg=pendiente | Rigor=[OMIT]                 -> deny
+  sens=no  | QA=OMIT      Seg=pendiente | Rigor=[ligero]               -> deny
+  sens=no  | QA=OMIT      Seg=pendiente | Rigor=[OMIT]                 -> deny
+  sens=no  | QA=aprobado  Seg=OMIT      | Rigor=[OMIT]                 -> deny
+  sens=si  | QA=aprobado  Seg=aprobado  | Rigor=[OMIT]                 -> deny
+  sens=OMIT | QA=aprobado  Seg=aprobado  | Rigor=[ligero (local)]       -> deny
+  sens=OMIT | QA=pendiente Seg=pendiente | Rigor=[ligero (local)]       -> deny
