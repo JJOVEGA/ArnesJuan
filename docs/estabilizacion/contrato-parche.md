@@ -97,6 +97,20 @@ sensibilidad»— no era un descuido que el candidato corrigiera: en `ligero` er
 
 ## La propiedad
 
+**Enunciado contractual vigente, redactado por el propietario el 2026-09-10.** Es el
+texto que va literal en `requirements/README.md` y en su plantilla heredada, y manda
+sobre cualquier paráfrasis de este documento:
+
+> El rigor efectivo combina el nivel declarado con el suelo de seguridad. Un matiz
+> parentético conserva `estandar` y `critico`, sujeto a ese suelo. Para mantener la
+> protección heredada, `ligero` con matiz deriva a `estandar` si el REQ no es sensible
+> y a `critico` si lo es. `ligero` sin matiz conserva su comportamiento, sujeto al
+> suelo de seguridad.
+
+Enuncia las **dos ramas** de `ligero` con matiz en vez de remitir al «nivel heredado»,
+así que se puede comprobar contra la conducta sin traducir nada. La forma corta que
+gobierna el código es la misma regla vista desde la implementación:
+
 > **El matiz parentético puede SUBIR o MANTENER el rigor efectivo; nunca bajarlo.**
 
 Operativamente, en `arnes_rigor_efectivo` (`hooks/lib.sh`): se desenvuelve el
@@ -122,17 +136,24 @@ debe poder concederse de pasada.
 
 ## Que ningún caso antes denegado pase a permitido
 
-La condición del propietario se cumple **por construcción**, no por muestreo:
+El argumento tiene **dos mitades de distinto peso probatorio**, y mezclarlas sería
+vender un barrido como un teorema:
 
-1. Para toda entrada, el rigor efectivo de v1.33.2 es **mayor o igual** que el de
-   v1.33.0 (barrido de 144 combinaciones `(Rigor:, Sensible a seguridad:)`
-   comparando ambos lectores: **0 regresiones**; los únicos cuatro cambios son
-   hacia arriba, y son la corrección D16 conservada).
-2. Las exigencias de la puerta crecen de forma **monótona** con el nivel:
-   `ligero` ⊂ `estandar` (QA) ⊂ `critico` (QA + seguridad), en
-   `hooks/guard-completado.sh`.
+1. **Medido por barrido, NO demostrado.** El rigor efectivo de v1.33.2 es **mayor o
+   igual** que el de v1.33.0 en las **144 combinaciones**
+   `(Rigor:, Sensible a seguridad:)` barridas comparando ambos lectores: **0
+   regresiones**, y los únicos cuatro cambios son hacia arriba (la corrección D16
+   conservada). El dominio real de `Rigor:` es **abierto** —es texto tecleado a
+   mano—, así que 144 combinaciones son **evidencia del barrido, no una prueba
+   universal**. Cubrir todas las ramas relevantes del lector es encargo de QA.
+2. **Por construcción.** Las exigencias de la puerta crecen de forma **monótona**
+   con el nivel: `ligero` ⊂ `estandar` (QA) ⊂ `critico` (QA + seguridad), en
+   `hooks/guard-completado.sh`. Esto no depende de ninguna muestra.
 
-De (1) y (2): un caso sólo puede pasar de permitido a denegado, nunca al revés.
+De (1) y (2): **en el dominio barrido**, un caso sólo puede pasar de permitido a
+denegado, nunca al revés. La monotonía de (2) garantiza que **cualquier** entrada
+cuyo rigor no baje tampoco puede aflojar la puerta; lo que el barrido sostiene —y no
+demuestra— es el antecedente «el rigor no baja».
 
 ## Evidencia
 
@@ -183,17 +204,28 @@ entre plataformas y aquí no se presentan como tales.
 - **No** toca la corrección de la firma (`arnes_seguridad_cabecera` y su uso en
   `guard-completado.sh`): está validada y no es el defecto.
 - **No** sube la versión en `.claude-plugin/`: el commit de versión va aparte.
-- **No** toca `requirements/`, ni veredictos, ni estados de REQ.
+- **No** toca veredictos ni estados de REQ, ni nada de `requirements/` salvo el
+  enunciado del rigor en su `README.md` (autorizado; ver abajo).
 - Un `Rigor:` **genuinamente basura** (sin paréntesis, o cuyo desenvoltorio no da
   un nivel válido) sigue cayendo al defecto de la sensibilidad. Eso es
   `QA-016-04`, ya abierto, y **no** se toca aquí.
-- **Pendiente de decisión del propietario, y por eso no está escrito:**
-  `requirements/README.md:107-110` y su plantilla heredada
-  `templates/requirements-README.md.tpl:107-110` afirman que «un matiz
-  parentético final **no cambia** un nivel válido». Con este parche esa frase es
-  **falsa** para `ligero (…)`. Es contrato heredado por los proyectos
-  instalados, así que la corrección se propone y no se aplica por iniciativa del
-  desarrollador. Mientras no se corrija, esas dos sedes **prometen de más**.
-- `docs/estabilizacion/actualizacion-candidata.md:12` repite el enunciado sin
-  dirección. Describe el candidato de v1.33.1 como fue, así que se deja como
-  registro histórico; queda **superado** por esta sección.
+- **RESUELTO — el contrato heredado ya está escrito (2.º tramo, 2026-09-10).**
+  `requirements/README.md` y su plantilla heredada
+  `templates/requirements-README.md.tpl` afirmaban que «un matiz parentético final
+  **no cambia** un nivel válido», que con este parche es **falso** para
+  `ligero (…)`. Las dos sedes llevan ya el enunciado del propietario, **idéntico en
+  ambas** (verificado byte a byte en la región). El primer tramo paró antes de
+  escribirlas porque es superficie que los proyectos heredan por `arnes-upgrade`; la
+  redacción la fijó el propietario y no el desarrollador.
+
+- `docs/estabilizacion/actualizacion-candidata.md` repite el enunciado sin dirección
+  en el primer punto de «Cambios que debe conocer un proyecto consumidor». Describe
+  el candidato de v1.33.1 **como fue**, así que **no se reescribe**: borrarlo
+  escondería que esa promesa se publicó. Lleva arriba una marca de **SUPERADO EN
+  PARTE** que nombra qué punto queda superado, qué enunciado lo sustituye y desde
+  cuándo (v1.33.2, `QA-P48-01`, 2026-09-10, arreglo `09ccf63`).
+- **No contamina la lectura siguiente**, comprobado por la coordinadora sobre este
+  árbol en seis escenarios —matiz→limpio, el orden inverso, campo ausente, valor no
+  reconocido, tres seguidos alternando y el indicador **preensuciado a mano** antes
+  de una lectura limpia—: `arnes_campos_normaliza` pone `ARNES_RIGOR_MATIZ` a 0 al
+  entrar, así que el indicador no sobrevive de una cabecera a la siguiente.

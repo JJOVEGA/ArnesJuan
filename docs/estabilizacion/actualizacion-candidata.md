@@ -7,6 +7,28 @@ observados en la base; este documento no autoriza una liberación.
 Este documento acompaña un parche no publicado sobre v1.33.0. No instala nada
 ni cambia el marketplace. No usar la rama de desarrollo como plugin estable.
 
+> ## ⚠️ SUPERADO EN PARTE — registro histórico del candidato de v1.33.1
+>
+> **Qué queda superado:** el primer punto de «Cambios que debe conocer un proyecto
+> consumidor» (abajo), que dice que *«un nivel válido con matiz parentético final
+> conserva su nivel»*.
+>
+> **Qué lo sustituye:** la regla del rigor efectivo de `requirements/README.md`
+> («Nivel de rigor» → reglas de gobierno), en su forma vigente: *«El rigor efectivo
+> combina el nivel declarado con el suelo de seguridad. Un matiz parentético conserva
+> `estandar` y `critico`, sujeto a ese suelo. Para mantener la protección heredada,
+> `ligero` con matiz deriva a `estandar` si el REQ no es sensible y a `critico` si lo
+> es. `ligero` sin matiz conserva su comportamiento, sujeto al suelo de seguridad.»*
+>
+> **Desde cuándo:** desde el parche **v1.33.2** (`QA-P48-01`, 2026-09-10), rama
+> `hotfix/1.33.2-rigor`, arreglo en `09ccf63`. Motivo: enunciada **sin dirección**, la
+> frase de abajo autorizaba tanto subir `critico (por suelo)` —que era el arreglo— como
+> **bajar** `ligero (local)` hasta la exención de QA, que no lo era. El defecto, su
+> medición y sus límites están en `contrato-parche.md` § «El parche v1.33.2».
+>
+> **El resto del documento sigue vigente** y no se reescribe: describe el candidato de
+> v1.33.1 como fue, y borrarlo escondería que esa promesa se publicó.
+
 ## Cambios que debe conocer un proyecto consumidor
 
 - Un nivel válido con matiz parentético final conserva su nivel. Por ejemplo,

@@ -21,9 +21,12 @@ sensibilidad. Es la doctrina que ya estaba escrita —«el rigor se puede subir,
 regla de que una guarda sólo puede estrechar. `critico (por suelo)` conserva la corrección de
 v1.33.1 y el suelo de seguridad sigue mandando.
 
-**Ningún caso antes denegado pasa a permitido, y por construcción:** el rigor efectivo nuevo es
-≥ el de v1.33.0 para toda entrada (barrido de 144 combinaciones, 0 regresiones) y las exigencias
-de la puerta crecen de forma monótona con el nivel.
+**Ningún caso antes denegado pasa a permitido — con las dos mitades del argumento separadas, que
+no pesan igual:** el rigor efectivo nuevo es ≥ el de v1.33.0 en las **144 combinaciones barridas**
+(0 regresiones) —evidencia del barrido, **no** una prueba universal: el dominio de `Rigor:` es
+texto tecleado a mano y por tanto abierto—, y las exigencias de la puerta crecen de forma
+monótona con el nivel, esto sí **por construcción**. Cubrir todas las ramas del lector es encargo
+de QA.
 
 **Pruebas.** Sección 40: 17 → 28 casos que miden la **conducta de la puerta**, no el lector.
 Seis discriminan —fallan contra la 1.33.1 publicada en la caché del plugin y pasan aquí— y cinco
@@ -37,6 +40,49 @@ y `templates/requirements-README.md.tpl:107-110` prometen que «un matiz parent�
 cambia un nivel válido», que con este parche es **falso** para `ligero (…)`. Es contrato heredado
 por los proyectos instalados y no se toca por iniciativa del desarrollador. Detalle, evidencia y
 límites en `docs/estabilizacion/contrato-parche.md`.
+*(Resuelto en la entrada siguiente, el mismo día: el propietario fijó la redacción y ya está escrita.)*
+
+## [Interno] — 2026-09-10 · El contrato heredado dice lo que el código hace (`QA-P48-01`, 2.º tramo)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador.
+
+**Documenta la reparación del producto. NO es un cambio de las reglas de autoalojamiento** — el
+mismo día hay una enmienda de política en vuelo y las dos cosas no deben confundirse.
+
+Escribe el enunciado del rigor efectivo, **redactado por el propietario**, en las dos sedes del
+contrato: `requirements/README.md` y su plantilla heredada
+`templates/requirements-README.md.tpl`. Sustituye la frase «un matiz parentético final no cambia
+un nivel válido», que el arreglo de `09ccf63` volvió **falsa** para `ligero (…)`. Las dos sedes
+quedan **idénticas en lo que prometen**, verificado byte a byte en la región: es el desfase que
+este proyecto ya se ha comido varias veces —una sede corregida y su gemela heredada diciendo lo
+viejo—, y la plantilla la reciben los proyectos por `arnes-upgrade`.
+
+El texto enumera las **dos ramas** de `ligero` con matiz —`estandar` si el REQ no es sensible,
+`critico` si lo es— en vez de remitir al «nivel heredado» como proponía el desarrollador: así se
+comprueba contra la conducta sin traducir nada.
+
+**La consecuencia que el contrato no nombra, y va aquí para que esté escrita en algún sitio:**
+**no existe forma de declarar `ligero` con matiz.** Quien quiera la exención de QA escribe
+`Rigor: ligero` a secas y pone la evidencia en el cuerpo del REQ. Es deliberado — la exención de
+QA es justo lo que no debe poder concederse de pasada.
+
+**Sedes del enunciado: 3 enumeradas por `grep` del enunciado (no del archivo), en tres
+formulaciones distintas.** Dos corregidas (las de arriba) y una conservada: el registro histórico
+`docs/estabilizacion/actualizacion-candidata.md` **no se reescribe** —borrarlo escondería que esa
+promesa se publicó— y recibe una marca de **SUPERADO EN PARTE** que nombra qué punto queda
+superado, qué enunciado lo sustituye y desde cuándo. Otras 6 superficies mencionan `Rigor:` sin
+afirmar nada sobre paréntesis (no requieren cambio), y `.arnes/plantillas-origen/` es una
+instantánea **anterior** a que la promesa existiera: no se toca, porque su función es detectar
+deriva contra la versión desde la que se inicializó el proyecto.
+
+Se corrige además una **sobreafirmación del propio desarrollador** en la entrada anterior y en
+`contrato-parche.md`: el argumento «ningún caso antes denegado pasa a permitido» se presentaba
+entero «por construcción», cuando su primera mitad —rigor nuevo ≥ viejo— se estableció por
+**barrido de 144 combinaciones**, no por demostración. La monotonía de la puerta sí es por
+construcción. Observación del propietario.
+
+Verificado por la coordinadora, no re-medido aquí: las cuatro afirmaciones del texto coinciden con
+el código, y `ARNES_RIGOR_MATIZ` no contamina la lectura siguiente (seis escenarios, incluido el
+indicador preensuciado a mano). Sin cambios en `hooks/` ni en el banco: siguen como se validaron.
 
 ## [Interno] — 2026-09-10 · Ajuste de coste del lector de Rigor
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Codex.
