@@ -2,6 +2,25 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · Quinta observación del mismo techo de reloj: `#48` NO se fusiona sobre el rojo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+`hooks-en-linux` sobre `0caeac5` da **1077 PASS, 1 FAIL, 12 SKIP**. El `FAIL` es
+`REQ-024 CA-07 (ii)`: reloj de ruta crítica **1,257×** contra techo **1,250×** — un **0,6 %**.
+
+**No es atribuible a este cambio, y está comprobado:** `git diff` sobre `hooks/ tools/ tests/
+.github/ .arnes/ .claude-plugin/` entre `3c52d6d` (success) y `0caeac5` (failure) es **vacío**. Y el
+fallo previo del mismo criterio (1,320×) fue sobre `67b06fe`, **ancestro del destino y anterior** al
+cambio de `hooks/lib.sh` de `#48`: el criterio ya fallaba antes de que esa guarda existiera.
+
+**Y no atribuible no significa falso.** Una prueba que no discrimina no acredita en **ninguna** de
+sus dos direcciones, así que el verde de `3c52d6d` tampoco acreditaba este criterio. No se re-corrió
+buscando verde, no se reclasificó el rojo y **no se fusionó**. Registrado como quinta observación en
+`docs/arnes/ci-1.34.0-no-discrimina/`.
+
+Contraste que importa: el rojo de `d1b3cc3` en esta misma rama **sí** fue un defecto real
+(`CA-18 (b)`, piso de sección), corregido en `406f7e9`. No todo rojo aquí es instrumento.
+
 ## [Interno] — 2026-09-11 · `SEC-090` remediado: el registro de seguridad reconciliado entre las dos líneas, y la lista de cuatro estaba mal en dos de sus elementos
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad (`R-032`) y coordinadora (destino real y verificación independiente).
 

@@ -58,3 +58,46 @@ fundamento para los criterios de reloj mientras esto siga así.
   `REQ-023 CA-09 (iii)` en §10 de `docs/propuesta-cierre-1.34.0.md`, aplicada a otro criterio.
 - **No se abrió hallazgo:** abrirlos es de QA o del auditor, y el propietario pidió no abrir
   investigaciones nuevas en el cierre. Queda escrito aquí para que no se redescubra.
+
+---
+
+## Cuarta y quinta observación — `#48`, 2026-09-11 (añadido por la coordinadora)
+
+**Versión base:** `3c52d6d` (**success**, 12:28 UTC) y `0caeac5` (**failure**, 12:55 UTC), rama
+`feat/1.34-reparaciones-astra`. **Método:** idéntico al de arriba. **No se re-corrió nada.**
+
+```
+FAIL  REQ-024 CA-07 (ii) el reloj de la ruta crítica = 1.257× > techo 1.250×
+      (70971µs sobre 56431µs): el techo es OPERATIVO y no se sube
+```
+
+**El mismo criterio.** El resto de la corrida: **1077 PASS, 1 FAIL, 12 SKIP**.
+
+| Hecho | Cómo se comprobó |
+|---|---|
+| `git diff --stat 3c52d6d 0caeac5 -- hooks/ tools/ tests/ .github/ .arnes/ .claude-plugin/` | **vacío** — el código medido es idéntico byte a byte |
+| Lo único que cambia entre ambos | `CHANGELOG.md`, `docs/seguridad/`, `docs/arnes/` |
+| Margen del rebase | **0,6 %** sobre el techo (1,257× contra 1,250×) |
+
+### La atribución, comprobada y no supuesta
+
+El fallo previo de este mismo criterio (1,320×) fue sobre **`67b06fe`**, y se verificó que
+`67b06fe` es **ancestro de `rel/registro-1.33.0`** y **anterior a `6e3bb90`**, que es donde `#48`
+modifica `hooks/lib.sh`. Luego el criterio **ya fallaba en la línea destino antes de que existiera
+el cambio de código de `#48`**: la guarda del matiz no es condición necesaria del fallo.
+
+Historial de la rama: `d1b3cc3` **failure**, `406f7e9`…`3c52d6d` **success** (6), `0caeac5`
+**failure**. Y el rojo de `d1b3cc3` **no** fue instrumento: era `CA-18 (b)`, un defecto real de
+declaración del piso de sección, corregido en `406f7e9`. **No todo rojo de esta rama es ruido**, y
+por eso ninguno se descarta sin mirarlo.
+
+### Lo que esto NO autoriza, y es el punto
+
+Que el código medido sea idéntico **no convierte el `FAIL` en falso**. Sigue valiendo lo escrito
+arriba: una prueba que no discrimina **no acredita nada en ninguna de sus dos direcciones**. Lo que
+queda acreditado es lo de no-atribución —el fallo no lo causó este cambio— y lo que queda **sin**
+acreditar es `REQ-024 CA-07 (ii)`, en los dos sentidos, por quinta observación consecutiva.
+
+**Consecuencia operativa:** `#48` **no se fusionó** sobre este rojo. La puerta no se debilita, el
+rojo no se reclasifica y no se re-corrió buscando un verde. La decisión sobre el criterio sigue
+siendo la que ya estaba registrada arriba, y es del propietario.
