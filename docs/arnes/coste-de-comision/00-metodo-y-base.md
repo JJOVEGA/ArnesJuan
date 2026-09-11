@@ -102,6 +102,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 18 | `QA-024-33` — verificación de la frontera · `qa-tester` (**vuelta 2** del bucle `analista↔QA`) | 2026-09-11 15:15 | 2026-09-11 15:30:00 | **14 min 58 s** | **`QA-024-33` CIERRA**; nace **`QA-024-34`** (`contrato`): se corrigió la **pertenencia** a la clase y nadie miró **qué se afirma de la clase** | `f18dd45` | **175 488** | ídem |
 
+| 19 | `QA-024-34` — corrección estructural de `CA-13` · `analista-requerimientos` (vuelta **3** del bucle `analista↔QA`, autorizada por encima del presupuesto) | 2026-09-11 15:33:09 | 2026-09-11 15:46:44 | **13 min 35 s** | **alcanzó**, sin lista consolidada. **Once** sedes; halló un criterio **más laxo que lo construido**; `SEC-078` nombrado como la vía abierta | `863aa9d` | **181 166** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la

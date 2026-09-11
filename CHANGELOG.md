@@ -50,6 +50,61 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-11 · `CA-13` deja de contratar consecuencias ajenas, y aparece un criterio MÁS LAXO que lo construido
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
+
+Corrección **estructural** de `CA-13`, autorizada expresamente por el propietario (2026-09-11) **por
+encima** del presupuesto de dos vueltas que él mismo acababa de fijar. **Alcanzó en una sola pasada**:
+no hubo lista consolidada.
+
+**Once sedes**, donde QA había señalado tres. El barrido fue por propiedad —«fail-closed», «por
+ausencia», «pasa sin aviso», y **toda frase que atribuya una consecuencia a un mecanismo**—.
+
+### El principio aplicado
+
+`CA-13` responde de **una** cosa: que disparador y lector reconozcan el mismo conjunto, y qué ocurre con
+el **aviso**. **Qué hace el cierre ya no se contrata ahí**: remite a `CA-01` (dirección de la ausencia) y
+a `REQ-023` (medibilidad).
+
+### La contradicción con `CA-01`, resuelta por atribución
+
+**`CA-01` no se toca** —su tabla ya era verdadera—. `CA-13` **retira** la afirmación y **no la sustituye
+por otra sobre el cierre**, dejando escrito qué se prometía y por qué era falso (`Segurídad: aprobado` +
+`Rigor: ligero` → **ALLOW**). **Ningún criterio del REQ dice ya dos cosas del mismo hecho.**
+
+### El hallazgo que va en dirección contraria a la habitual
+
+El punto **(3)** contrataba que el aviso dijera «el REQ **no podrá cerrarse**» **sin condición**, cuando
+`guard-completado.sh:290` ya lo escribe **condicionado** al rigor `critico`. Era **un criterio más laxo
+que lo construido** — el reverso del defecto que este ciclo lleva persiguiendo. Ahora exige la condición
+«cuando la hay» y omitirla «cuando no la hay».
+
+### El homóglifo: explícito, con su hallazgo nombrado
+
+`Ѕeguridad:` (`U+0405`) y `Segurida:` **CIERRAN** el REQ en `estandar` y en `ligero`, con `DENY` **sólo**
+en `critico`. Escrito literal: **«eso no es fail-closed»**, y nombrado como la vía abierta **`SEC-078`**
+con su clase, dueño, forzador y vencimiento **citados y no transcritos**. Se respeta la regla del
+propietario: **una referencia no sustituye una protección inexistente** — aquí la protección que falta va
+**nombrada como hallazgo**, no disuelta en una remisión.
+
+Y una acotación de honestidad que el analista añadió por su cuenta: la tabla del auditor y la de `CA-01`
+**no se comparan desde aquí**, porque una se enuncia con la exigencia encendida y la otra no declara ese
+estado. **Cita y no afirma.**
+
+### `ZWSP` / `BOM`
+
+Atribuidos a la **guarda de medibilidad**, que **deniega citando la línea**, también en `ligero` — y eso
+es justo lo que hace que **las dos ramas decidan al revés**. La celda **heredada** ya no dice «el cierre
+resuelve por ausencia» sobre toda la clase, y sus reglas pasan de cinco a **seis**: *cuando la celda
+nombra una consecuencia, nombra el mecanismo que la resuelve y no atribuye a uno solo lo que resuelven
+dos*.
+
+### Para la cola, nombrado y no tocado
+
+**`hooks/lib.sh:2206-2208`** repite la misma falsedad en un **comentario de código** —«el cierre lo
+deniega por ausencia», sin la condición de rigor—. Verificado por la coordinadora. Dueño
+`desarrollador`; queda escrito para que no aparezca en una cuarta vuelta.
+
 ## [Interno] — 2026-09-11 · El bucle `analista`↔QA gana presupuesto, y la cola de 16 queda revisada contra el estado real
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
 
