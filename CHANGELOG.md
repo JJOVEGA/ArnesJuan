@@ -50,6 +50,72 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-11 · QA acredita el disparador entero, y `QA-024-19` no cierra por falta de write-back
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (**vuelta 5** dev↔QA de `REQ-024`), coordinadora.
+
+**QA contó la vuelta como la 5 y no la renombró**, aunque el encargo se titulara «acotada»: es un
+despacho nuevo tras una entrega nueva del desarrollador. La autorización del propietario cubre el
+**alcance**, no saca la vuelta del contador.
+
+### El código queda acreditado entero
+
+**Ninguna decisión se movió:** 37 formas en el acto de **firmar** y 19 en el de **cerrar**, contra
+`v1.33.2`, la base y el candidato, en el modo que usa la herramienta real. **Cero celdas
+`DENY→ALLOW` y cero `ALLOW→DENY`.**
+
+QA añadió **dos falsaciones dirigidas que el desarrollador no hizo** y que podían abrir un fail-open:
+la llamada nueva vive **entre** la publicación y el consumo de `ARNES_OCULTA`/`ARNES_CITA_ABIERTA` —no
+los pisa: BOM y comentario sin cerrar siguen denegando con el mismo motivo—, y **aviso + deny en la
+misma llamada siguen dando un solo JSON válido**.
+
+**El lector no se ensanchó**, estructural y de conducta: `lib.sh` **+67 / −0**, con las dos únicas
+líneas retiradas siendo exactamente los dos `grep`; `arnes_norm_clave`, `arnes_norm_campo`,
+`arnes_campo_linea` y `campos-req.awk` **intactos**; quedan **0** disparadores por cadena literal en
+código vivo.
+
+**El borde que importa, limpio: 0 falsos positivos de 18**, incluidos cuatro que QA inventó
+(`Auditor de seguridad:`, `Riesgo de seguridad:`, `QA-024:`, una URL). Buscó **activamente** formas que
+debieran avisar y no avisan: halló 8 y **7 se caen al medirlas** —el tabulador sí lo lee el lector, y
+las que llevan algo ajeno al alfabeto las **deniega con diagnóstico** la guarda de medibilidad—. **No
+hay franja silenciosa entre los tres mecanismos**; sólo queda fuera la sustitución de letra, que es la
+frontera declarada, verificada como **declarada en tres sedes y presentada como cerrada en ninguna**.
+
+### Por qué `QA-024-19` NO se cierra
+
+Sus dos mitades de **código** están cubiertas. Falta el **write-back** (`AGENTS.md` §9) por dos vías, y
+ninguna es un defecto de este entregable: **(1)** no hay criterio de aceptación del comportamiento
+nuevo, y es material porque la resolución **cambia el `Esperado:` del propio hallazgo** —pedía el mismo
+`DENY`; se entrega `ALLOW` + aviso—; **(2)** `REQ-024.md:815` sigue diciendo *«Cerrada la dirección, la
+vía se cierra por construcción»*, la frase que `QA-024-19` ya nombró **falsa para el acto de firmar**, y
+esta reparación **no la vuelve verdadera**: ahora avisa.
+
+### Lo que QA no ocultó, y mejora el argumento del desarrollador
+
+Sobre la diferencia de `SKIP`: **la conclusión del desarrollador era correcta y su argumento no.**
+«Volvieron a `PASS` en una segunda corrida» no desmiente en ninguna dirección. Lo que lo sostiene es la
+corrida **pareada**: 11 y 11 `SKIP`, conjuntos que difieren en **un elemento en cada sentido** — no un
+desplazamiento monótono. Conclusión: **no atribuible** a la reparación; **no** «es ruido», que no se
+caracterizó.
+
+Y **dos errores propios**, escritos porque cambian cómo se leen sus primeros números: su arnés resolvía
+mal una ruta y **todo salió `ALLOW`, incluido el control** —sin control positivo lo habría reportado
+como «no se reproduce»—, y una `x` en un fixture hacía casar el `old_string`.
+
+El único `FAIL` del banco (heredoc citado de 300 KB) **falla igual en la base**, con veredicto correcto
+en ambos: **no atribuible**, anotado con su pareja y no desmentido repitiendo.
+
+### `SEC-084`, para el auditor: la mitad de código está, la de texto no
+
+Presentes y verificadas la remediación **(1)** —el disparador por el lector, en las **dos** sedes— y la
+**(3)** —caso de banco con fail-before—. **Ausentes** la **(2)** —`AGENTS.md:353` y
+`templates/AGENTS.md.tpl:311` siguen prometiendo sin declarar alcance— y la **(4)**.
+
+### Hallazgo nuevo
+
+**`QA-024-32`** · `instrumento` · baja · **no bloquea**: el aviso de desfase se dispara sobre el
+**cuerpo** del REQ cuando la edición no arrastra el `## ` (con `Edit` y `MultiEdit`, no con `Write`).
+No mueve ninguna decisión. Su **forzador está medido: el propio write-back de `QA-024-19` lo dispara.**
+
 ## [Interno] — 2026-09-11 · Registrada la dirección de producto: la política proporcional, del arnés a los proyectos
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
 

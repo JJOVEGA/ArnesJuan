@@ -90,6 +90,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 13 | `SEC-084`/`QA-024-19` — reproducción sobre `e53de46` y reparación · `desarrollador` | 2026-09-11 13:30:20 | 2026-09-11 13:57:50 | **27 min 30 s** | **(c)** el vector medido ya estaba cerrado por `v1.33.1`+`#48`; **(b)** la clase sobrevive en el disparador del **aviso**, vivo en la `v1.33.2` publicada; reparado por propiedad | `6327b8c` | **199 406** | ídem |
 
+| 14 | Disparador del aviso — QA · `qa-tester` (**vuelta 5** dev↔QA de `REQ-024`) | 2026-09-11 14:05 | 2026-09-11 14:38:46 | **33 min 46 s** | **`con-hallazgos`**. El **código** queda acreditado entero (0 celdas `DENY→ALLOW` de 56); `QA-024-19` **no se cierra** por falta de write-back; abre `QA-024-32` (`instrumento`) | `a05994f` | **187 286** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la
