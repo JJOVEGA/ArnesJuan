@@ -6027,3 +6027,184 @@ principal**, no sobre esta copia atrasada — ver el aviso de la cabecera.)
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.** El parche no altera clasificación de
 datos, acceso, retención ni cumplimiento; este repositorio sigue sin usuarios finales ni datos
 personales, y el parche no introduce secretos, credenciales ni salida al exterior.
+
+---
+
+## Revisión R-030 — re-firma del parche v1.33.2 tras la corrección de `SEC-087`, @ `d82d6cd` (2026-09-11)
+
+> Numeración sobre el máximo de la **línea principal**, igual que `R-029`. El aviso de la cabecera
+> de `R-029` sigue vigente: **esta copia del registro está atrasada y la fusión no debe resolver
+> este archivo tomando esta versión.**
+
+**Alcance.** Los tres commits posteriores a mi `R-029`: `29f9af6` (la promesa deja de ser
+absoluta), `a529c49` (la quinta sede, en el banco, y resultó ser dos) y `d82d6cd` (el piso de la
+sección). Revisión **proporcional**: no releí el historial.
+
+**Evidencia reutilizada, con la comprobación que la enmienda exige, hecha por mí y no aceptada.**
+El diff de `hooks/` entre `a8e332a` y `d82d6cd` **no tiene una sola línea no-comentario** — lo
+verifiqué por dos vías independientes: filtrando el diff (0 líneas) y comparando los dos árboles
+**sin comentarios**, que salen **md5-idénticos** (`efc14a94…`). `tools/`, `.github/`, `.arnes/` y
+`.claude-plugin/` no cambian. Por tanto **el barrido de 156 combinaciones de `R-029` sigue
+acreditando este árbol** y no se repite: el ejecutable que audité es byte a byte el mismo.
+
+### 1. `SEC-087`: la corrección es correcta, y la frontera es EXACTA
+
+Lo medí en vez de leerlo. `frontera-mal-formado.sh`, **60 pares** (3 niveles × 4 estados de
+sensibilidad × 5 formas mal formadas, cada una contra su matiz cerrado): **10 celdas cambian y
+las 10 caen dentro de la frontera que el contrato nombra**; **0 fuera**. Nunca `ligero`, nunca
+`estandar`, nunca un REQ sensible. La misma sonda sobre la **1.33.1 publicada** da **10 celdas
+fuera** de la frontera, así que **discrimina** y no pasa por vacío.
+
+**Un matiz de precisión que NO abro como hallazgo.** Las 10 celdas son `critico` con `Sensible:
+no` (5) y con el campo **ausente** (5). El contrato dice «en un REQ **no sensible**», y una
+lectura ordinaria de eso es «declarado no». Queda exacto porque dos viñetas antes el mismo
+documento define la omisión como la rama «si no» —*«**Si se omite, se deriva:** sensible →
+`critico`, si no → `estandar`»*—, así que el lector que sigue el documento acierta. Lo dejo
+escrito porque el REQ **sin** el campo es el caso más probable en un proyecto consumidor sin
+migrar, y una futura pasada editorial podría decir «no **efectivamente** sensible». **No es
+defecto, no bloquea y no es una reparación de este parche.**
+
+### 2. La mitad que se conservó ABSOLUTA: es verdadera, y es más fuerte de lo que su justificación dice
+
+La afirmación es *«ninguna forma que contenga `(` alcanza `ligero`»*, el único nivel exento de
+`QA: aprobado`. La ejercí con un alfabeto **mucho más ancho** que las 104 lecturas del
+desarrollador: **287 formas hostiles × 4 estados de sensibilidad = 1148 lecturas**, con
+metacaracteres de shell, anchura cero, TAB, decoración por dentro y por fuera, anidados,
+invertidos y `(ligero)` como matiz. **0 alcanzan `ligero`.** La misma sonda sobre la 1.33.1
+publicada: **444**. Es, de paso, la medida de cuánto abría el defecto publicado.
+
+**Y la promesa no descansa en ese barrido: se sigue por construcción, en dos casos que agotan el
+dominio.** Si el valor normalizado contiene `(`, entonces `ARNES_RIGOR_MATIZ=1`, y:
+
+- **(a) el valor termina en `)`** → `arnes_veredicto` desenvuelve y deja el prefijo. Si ese
+  prefijo es `ligero`, `nd=1` y la guarda **corre**; `heredado` sólo puede ser `estandar` (2) o
+  `critico` (3), los dos `> 1`, así que `ARNES_RIGOR` pasa a `heredado` y **nunca queda `ligero`**.
+- **(b) no termina en `)`** → el valor conserva el `(` dentro, y `arnes_rigor_nivel` compara
+  contra valores **exactos**, así que no puede casar con `ligero`: `nd=0` y se devuelve
+  `heredado`, que otra vez es `estandar` o `critico`.
+
+No hay tercer caso. Por eso la afirmación **puede** ser absoluta sin ser una sobreafirmación:
+es la diferencia entre una promesa medida y una demostrada, y es exactamente la distinción que
+este parche ya corrigió una vez en la dirección contraria (`a8e332a` retiró un «por
+construcción» que era un barrido). **Aquí ocurre lo inverso: se justifica con un barrido algo que
+es constructivo.** No es defecto — la propiedad es verdadera — pero el argumento constructivo es
+el que conviene citar, porque el barrido envejece con el alfabeto y la construcción no.
+
+### 3. Las cinco sedes, barridas por propiedad: ninguna promesa falsa sobreviviente
+
+Barrí las formulaciones absolutas sobre el árbol completo. Las que quedan vivas son todas
+**verdaderas o históricas declaradas**: `requirements/README.md:111` y su plantilla hablan de
+`ligero` **sin** matiz y van condicionadas al suelo; `contrato-parche.md` cita el texto nuevo
+**verbatim** y se declara subordinado a la sede; `actualizacion-candidata.md` lleva una marca de
+superación que nombra la frase superada, **cita la sede en vez de copiarla** —y dice por qué: una
+copia es una sede más que se desfasa, *«y ya pasó»*— y fecha la condición de buena formación en el
+2026-09-11 con `SEC-087`/`R-029`; los dos `.tpl` de
+`verificacion-instalacion-1.33.2/` son **fixtures de la verificación del merge** y deben quedar
+congelados; y los nombres de caso del banco (`"D16: matiz CERRADO no rebaja critico"`,
+`"QA-P48-01: sensible con matiz conserva el suelo critico"`) son **ciertos** tal como están
+escritos. **La plantilla heredada sigue idéntica a su sede en la región** y el radio heredable
+sigue siendo **1**.
+
+**Mi pieza 3 queda satisfecha:** un consumidor que reciba esta plantilla por `arnes-upgrade`
+hereda **la frontera exacta**, no una vaga — incluida la frase que le dice qué hacer («escribe el
+matiz cerrado, o no lo escribas») y el hecho de que la forma mal escrita **no avisa**.
+
+### 4. Los cuatro puntos que la coordinadora contó, verificados por mí
+
+1. **El nombre del caso.** `docs/qa/1.33.2-falsacion/banco-corrida-unica.txt:938` conserva el
+   nombre **viejo**, y `git log 17ec674..d82d6cd -- docs/qa/` está **vacío**: el registro de QA
+   no se reescribió. Correcto — es una discrepancia **documental declarada**, no un defecto, y
+   reescribir el registro de una corrida sería falsificar evidencia.
+2. **El piso, derivado por mí sin mirar el suyo.** Bloques de la sección: `3 17 55 9 14`; el mayor
+   es **55** (líneas 23-77); preámbulo **4**; maquinaria **0**. `4 + 0 + 55 = 59` = lo declarado.
+   Y el instrumento lo confirma: la autoprueba publica
+   `40-estabilizacion-firmas-y-rigor.sh lineas=102 piso=59 techo=400 duplicadas=3`, con el piso
+   cabiendo en el archivo. **Cuadra.**
+3. **El segundo número falso.** Confirmado: CA-18 publica **`duplicadas=3`** y el comentario
+   decía `1`. La corrección es correcta. Y anoto lo que lo hace benigno y no un fail-open:
+   `duplicadas` se **publica sin compararse** —es evidencia, no puerta—, y el propio corredor
+   explica por qué (un ABORT ahí sería «un rojo sobre código correcto, la clase de rojo de H-11,
+   la que enseña a desactivar el control»). Que fuese falso importaba por **honestidad del
+   registro**, no por permisividad.
+4. **La variabilidad del SKIP.** No la verifico: el banco no es mío. Registro que se conserva la
+   variabilidad en vez de quedarse con la cifra alta, que es la conducta correcta.
+
+**Autoprueba del corredor, corrida por mí sobre este árbol: 106 PASS, 0 FAIL, `rc 0`.** La corrí
+porque `d82d6cd` cambia un término que **CA-18 comprueba aritméticamente**, y comprobarlo era más
+barato que razonarlo.
+
+### 5. Lo que esta firma NO acredita — y aquí hay un hecho de ORDEN que hay que resolver antes de fusionar
+
+**El veredicto de QA cubre `a8e332a`, no `d82d6cd`.** Su propio registro lo dice:
+*«cabeza `a8e332a`, árbol limpio»* (`docs/qa/1.33.2.md:11`). Desde entonces, **dos** de los tres
+commits editaron `tests/escenarios/hooks/secciones/40-estabilizacion-firmas-y-rigor.sh`, que
+`AGENTS.md` §6 clasifica como **crítico** («el banco que los certifica»), y uno de esos cambios
+altera el **nombre de un caso**, que es parte de la salida inventariada del banco.
+
+**Y no hay en disco ninguna corrida del banco sobre `d82d6cd`.** El único artefacto,
+`banco-corrida-unica.txt`, conserva el nombre viejo del caso, lo que **prueba** que es anterior a
+`a529c49`. Las cifras `907/0/5` y `908/0/4` me llegaron **sólo por conversación**; por §14 B.7 eso
+no es evidencia que yo pueda citar, así que **no la cito**.
+
+Por eso mi veredicto se emite con su alcance explícito: **acredita la revisión de seguridad del
+cambio sobre `d82d6cd`, no que las quality gates estén en verde sobre `d82d6cd`** — que no son
+mías (`AGENTS.md` §6) y que son justo lo que el CI obligatorio va a medir. **Condición de validez,
+no reserva sobre el contenido:** si el banco sale **rojo** sobre `d82d6cd` en algo que toque esta
+sección, el árbol deja de ser el que firmé y **esta firma no sobrevive**: se re-audita. Dicho de
+otro modo: firmo la seguridad de `d82d6cd`; el orden del §6 queda completo cuando el banco se
+haya ejercido **sobre esta cabeza**, por QA o por CI.
+
+### 6. El CI con 28 % de fallo en abierto: no cambia mi veredicto, y es un defecto de gobernanza que conviene no tratar como ruido
+
+Me preguntaron si cambia mi firma. **No la cambia**, y por una razón medida: el único FAIL es
+`REQ-017 CA-08 (ii)`, un techo de reloj ajeno al rigor, y **dos** de los fallos de la tasa base
+ocurrieron sobre commits que **no tocaron un solo archivo de código** — eso es la definición de
+un artefacto de medición, no de una regresión.
+
+**Pero como gobernanza sí es un defecto de primer orden, y es mi terreno.** `hooks-en-linux` es
+la puerta **requerida** de `main`. Una puerta requerida que falla ~28 % de las veces sobre código
+que no cambió **enseña a re-lanzar hasta el verde**, y ese hábito es indistinguible de ignorar un
+rojo verdadero. Es la clase `H-11` que este proyecto ya nombró en su propio corredor: *«un rojo
+sobre código correcto, la que enseña a desactivar el control»*. Y el principio que aplica:
+**un FAIL no queda desmentido repitiendo la prueba hasta obtener verde**; la variabilidad se
+conserva como evidencia y la decisión se presenta aparte.
+
+**Los dos hechos se COMPONEN, y por separado ninguno parece grave — por eso lo escribo.** Si la
+fusión se autoriza con un verde obtenido a base de re-lanzar, y la cabeza cuyo banco nunca se
+ejerció es precisamente `d82d6cd` (§5), entonces el verde que autoriza la fusión **puede no haber
+ejercido nunca este cambio**. Recomendación operativa, que no abre hallazgo porque el instrumento
+ya está escalado al propietario: que la corrida de CI que autorice esta fusión sea **sobre
+`d82d6cd`** y que se lean **la sección 40 y el cuadre**, no sólo el `rc` global, para poder
+distinguir un parpadeo de reloj en `REQ-017 CA-08 (ii)` de cualquier cosa que toque este parche.
+
+### 7. Estado de los hallazgos — no cierro ninguno, y `SEC-087` queda CERRABLE sin cerrar
+
+- **`SEC-087`** (`contrato`, media-alta): **su remediación está completa y verificada** —las cinco
+  sedes corregidas, la frontera exacta medida en 60 pares, la promesa absoluta verdadera y además
+  constructiva, y el write-back del §9 existe porque el remedio **era** el contrato—. **A mi juicio
+  es cerrable.** **No lo cierro**, por orden del propietario; queda como lo dejé, con esta
+  revisión como evidencia de que su condición de cierre se cumple.
+- **`SEC-088`** (`contrato`, media): **abierto, sin cambios, diferido y sigue sin bloquear.** Este
+  parche no lo toca. La vía es idéntica en 1.33.0, 1.33.1 y 1.33.2.
+- **`QA-1332-01`**: sin cambios; mi dictamen sigue siendo el de `R-029` §4 (`instrumento`
+  **correcta**, con la condición de que deja de serlo si su error cambia de dirección).
+- **Una discrepancia documental nueva y benigna, declarada:** `docs/qa/1.33.2.md:238` valida la
+  frase del contrato **anterior** a la corrección, porque el registro de QA no se reescribe. Es
+  correcto que no se reescriba; queda anotado para que nadie lo lea como contradicción.
+
+### 8. Estado de seguridad aprobado — línea base de no-regresión, sustituye a la de `R-029`
+
+| Objeto | Veredicto | Fecha | Alcance acreditado |
+|---|---|---|---|
+| **Parche v1.33.2** (`QA-P48-01` + `SEC-087`), `hotfix/1.33.2-rigor` @ **`d82d6cd`** | **`aprobado`** | 2026-09-11 | **Qué acredita:** que el ejecutable de `hooks/` es **byte a byte** el que acredité en `R-029` (md5 sin comentarios), luego el barrido de 156 combinaciones sigue vigente y no se abre ninguna vía nueva; que la **frontera** que el contrato y la plantilla heredada ahora nombran es **exacta** (60 pares, 0 pérdidas fuera de ella, sonda discriminante); que la mitad **absoluta** de la promesa es verdadera (0 de 1148 lecturas hostiles) **y además constructiva**; que las **cinco** sedes quedan sin promesa falsa y los registros históricos están marcados citando la sede en vez de copiarla; que el radio heredable sigue siendo **1** y la plantilla idéntica a su sede; y que el piso `59` y el `duplicadas=3` son correctos (derivados por mí + autoprueba 106 PASS / 0 FAIL / `rc 0`). **Qué NO acredita:** las quality gates ni el banco **sobre esta cabeza** —`QA: aprobado` cubre `a8e332a` y no hay corrida en disco de `d82d6cd` (§5)—, ni `arnes-upgrade` como skill, ni la instalación. **Residual declarado:** `SEC-088` abierto (`contrato`, media), preexistente e idéntico en las tres versiones |
+| **Parche v1.33.2** @ `17ec674` | `con-hallazgos` | 2026-09-10 | **No se retira:** cubre el árbol de entonces y es la causa de la corrección. Deja de ser la línea base vigente: la sustituye la fila de arriba |
+
+**Rigor:** no subo ni bajo ninguno. Si este parche recibe un REQ, nace `critico` y
+`Sensible a seguridad: sí` (`R-029` §4).
+
+**Numeración vigente tras esta revisión:** última revisión **R-030**; último hallazgo
+**SEC-088**; próximos libres **R-031** y **SEC-089**.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** Ni el parche ni su corrección alteran
+clasificación de datos, acceso, retención ni cumplimiento; no hay usuarios finales, datos
+personales, secretos ni salida al exterior.

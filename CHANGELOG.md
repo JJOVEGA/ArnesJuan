@@ -2,6 +2,164 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · Seguridad APRUEBA v1.33.2 (`R-030`), y deja nombrado el único pendiente real: el banco no se ha ejercido sobre esta cabeza
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad (`R-030`) y coordinadora (la firma en el contrato).
+
+**`Seguridad: aprobado (R-030, 2026-09-11)` sobre `d82d6cd`.** Sustituye al `con-hallazgos` de
+`R-029`, que **no se retira**: cubre el árbol de entonces y es **la causa de la corrección**.
+
+**La condición de reutilización, verificada y no aceptada.** El auditor comprobó por **dos** vías que
+podía reutilizar su barrido de 156 combinaciones: filtrando el diff de `hooks/` (**0** líneas
+no-comentario) y comparando los dos árboles **sin comentarios**, que salen **md5-idénticos**. Así que
+no repitió el barrido — y lo dice explicando por qué está autorizado a no repetirlo.
+
+### Las dos afirmaciones del contrato, medidas
+
+**La frontera es EXACTA, no sólo honesta.** 60 pares (3 niveles × 4 estados de sensibilidad × 5 formas
+mal formadas, cada una contra su matiz cerrado): **10 celdas cambian y las 10 caen DENTRO de la
+frontera que el contrato nombra; 0 fuera.** Nunca `ligero`, nunca `estandar`, nunca un REQ sensible. Y
+**discrimina**: la misma sonda sobre la 1.33.1 publicada da **10 fuera**.
+
+**La mitad absoluta es verdadera, y más fuerte de lo que su justificación dice.** *«Ninguna forma con
+`(` alcanza `ligero`»*: **0 de 1148** lecturas hostiles —287 formas × 4 estados, con metacaracteres de
+shell, anchura cero, TAB, anidados, invertidos, decoración por dentro y por fuera, `(ligero)` como
+matiz— frente a **444** en la 1.33.1. Y **no descansa en el barrido: se sigue por construcción**, en
+dos casos que **agotan el dominio** —si el valor termina en `)` la guarda corre y el nivel heredado
+(2 o 3) siempre supera a `ligero` (1); si no termina en `)` el valor conserva el paréntesis y
+`arnes_rigor_nivel` compara contra valores exactos, así que cae en el heredado—. **No hay tercer
+caso.** Es legítimamente absoluta.
+
+**Y la observación inversa que devuelve, que es fina:** `a8e332a` presentó como construcción lo que era
+un barrido; aquí se justifica **con un barrido** algo que **es** constructivo. No es defecto, pero
+conviene citar la construcción — *«el barrido envejece con el alfabeto y ella no»*.
+
+### El consumidor hereda la frontera exacta
+
+Radio heredable sigue **1**, plantilla idéntica a su sede, **ninguna promesa falsa sobreviviente** en
+el árbol completo. Y `actualizacion-candidata.md` hace lo correcto: nombra la frase superada y **cita
+la sede en vez de copiarla**, con el motivo escrito — *«una copia es una sede más que se desfasa, y ya
+pasó»*.
+
+Un matiz de precisión que el auditor **no abre como hallazgo**: de las 10 celdas, 5 son `critico` con
+`Sensible: no` y **5 con el campo AUSENTE**. El contrato dice «REQ no sensible» y queda exacto sólo
+porque el documento define dos viñetas antes la omisión como la rama «si no». Para un consumidor sin
+migrar, **el campo ausente es el caso más probable**. Una futura pasada editorial podría decir «no
+**efectivamente** sensible».
+
+### El único pendiente real, y es un hueco de ORDEN que causó la coordinadora
+
+**El veredicto de QA cubre `a8e332a`, no `d82d6cd`.** Desde entonces `a529c49` y `d82d6cd` editaron
+`tests/…/40-estabilizacion-firmas-y-rigor.sh` —que §6 clasifica **crítico**— y uno cambia el **nombre
+de un caso**, que es parte de la salida inventariada. **Y no existe en disco ninguna corrida del banco
+sobre esta cabeza**: el único artefacto conserva el nombre viejo, lo que **prueba** que es anterior.
+
+Las cifras `907/0/5` y `908/0/4` circularon **por conversación**, y §14.B.7 dice que eso **no es
+evidencia**: el auditor **no las citó**, correctamente. **El fallo es de la coordinadora**, que relevó
+números de reloj en conversación en vez de exigir su salida en disco.
+
+Por eso `R-030` va con su alcance explícito: acredita **la revisión de seguridad** de `d82d6cd`, **no**
+que las gates estén verdes sobre él — que no son suyas. **El orden del §6 se completa cuando el banco
+se haya ejercido sobre esta cabeza, con su salida en disco.**
+
+### Y la composición de dos hechos que por separado no alarman
+
+El auditor mantiene su veredicto pese al CI al 28 % —el FAIL es un techo de reloj ajeno al rigor—,
+pero señala algo que ninguno de los dos hechos dice solo: una puerta **requerida** que falla sobre
+código que no cambió **enseña a re-lanzar hasta el verde**, y ese hábito es **indistinguible de
+ignorar un rojo verdadero**. Si la fusión se autorizara con un verde obtenido re-lanzando, y la cabeza
+cuyo banco nunca se ejerció es precisamente ésta, **el verde que autoriza podría no haber ejercido
+nunca este cambio**. Su recomendación, adoptada: la corrida que autorice la fusión va **sobre la cabeza
+final**, y se leen **la sección 40 y el cuadre**, no sólo el `rc` global.
+
+### Hallazgos: ninguno cerrado
+
+**`SEC-087` es cerrable a juicio del auditor y NO se cierra** — el propietario prohibió cerrar en su
+nombre. `R-030` queda como evidencia de que su condición de cierre se cumple. `SEC-088` abierto y
+diferido. `QA-1332-01` sin cambios. Y una discrepancia documental **benigna y declarada**:
+`docs/qa/1.33.2.md:238` valida la frase anterior a la corrección, porque **el registro de una corrida
+no se reescribe**.
+
+Sondas de `R-030` **autojuzgadas y discriminantes**: `rc 0` sobre `d82d6cd`, `rc 1` sobre la 1.33.1
+publicada. Autoprueba corrida por el auditor: **106 PASS · 0 FAIL**, porque `d82d6cd` cambia un término
+que CA-18 comprueba aritméticamente y medirlo era más barato que razonarlo.
+
+## [Interno] — 2026-09-11 · v1.33.2: seguridad re-firma `aprobado` — la frontera es exacta y la promesa absoluta es, además, constructiva
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad.
+
+**`Seguridad: aprobado (R-030, 2026-09-11)`** sobre `hotfix/1.33.2-rigor` @ `d82d6cd`. Sustituye al
+`con-hallazgos (R-029)`, que cubría `17ec674` y **no se retira**: cubre el árbol de entonces y es la
+causa de esta corrección. Registro en `docs/seguridad/registro-seguridad.md` § **R-030**; sondas
+autojuzgadas y discriminantes en `docs/seguridad/sondas-R-030/`.
+
+### La evidencia de `R-029` se reutiliza, y la condición se verificó en vez de aceptarse
+
+El diff de `hooks/` entre `a8e332a` y `d82d6cd` **no tiene una sola línea no-comentario**,
+comprobado por dos vías: filtrando el diff (0 líneas) y comparando los dos árboles **sin
+comentarios**, que salen **md5-idénticos**. Luego el barrido de **156 combinaciones** de `R-029`
+sigue acreditando este árbol y **no se repite**.
+
+### Las dos afirmaciones del contrato, medidas — no leídas
+
+- **La frontera es EXACTA.** 60 pares (3 niveles × 4 estados de sensibilidad × 5 formas mal
+  formadas, cada una contra su matiz cerrado): **10 celdas cambian y las 10 caen dentro de la
+  frontera que el contrato nombra; 0 fuera.** Nunca `ligero`, nunca `estandar`, nunca un REQ
+  sensible. La misma sonda sobre la 1.33.1 publicada da **10 fuera**, así que discrimina.
+- **La mitad absoluta es verdadera, y es más fuerte de lo que su justificación decía.**
+  *«Ninguna forma que contenga `(` alcanza `ligero`»*: **0 de 1148 lecturas** hostiles (287 formas
+  × 4 estados), frente a **444** en la 1.33.1 publicada. Y no descansa en el barrido: se sigue **por
+  construcción** en dos casos que agotan el dominio —si el valor termina en `)` la guarda corre y
+  `heredado` siempre supera a `ligero`; si no termina en `)` el valor no casa con ningún nivel y
+  cae en `heredado`—. Es la distinción que este parche ya corrigió una vez en la dirección
+  contraria; aquí ocurre la inversa, y conviene citar la construcción porque el barrido envejece
+  con el alfabeto y ella no.
+
+### Las cinco sedes y los cuatro números
+
+Barrido por propiedad sobre el árbol completo: **ninguna promesa falsa sobreviviente**. Los
+registros históricos están marcados **citando la sede en vez de copiarla**, con su motivo escrito
+(«una copia es una sede más que se desfasa, y ya pasó»), que es la forma correcta. El radio
+heredable sigue siendo **1** y la plantilla idéntica a su sede: **un consumidor hereda la frontera
+exacta**, incluido que la forma mal escrita **no avisa**.
+
+Verificados de forma independiente: el piso —bloques `3 17 55 9 14`, mayor **55**, preámbulo 4,
+maquinaria 0, `4+0+55=59`— y el `duplicadas=3`, con **autoprueba 106 PASS / 0 FAIL / `rc 0`**
+corrida sobre este árbol porque `d82d6cd` cambia un término que CA-18 comprueba aritméticamente. Y
+`duplicadas` se **publica sin compararse**: que fuese falso importaba por honestidad del registro,
+no por permisividad.
+
+### Lo que esta firma NO acredita, y es un hecho de ORDEN
+
+**El veredicto de QA cubre `a8e332a`** (`docs/qa/1.33.2.md:11`), no `d82d6cd`. Dos de los tres
+commits nuevos editaron `tests/…/40-estabilizacion-firmas-y-rigor.sh`, que §6 clasifica como
+**crítico**, y **no hay en disco ninguna corrida del banco sobre `d82d6cd`**: el único artefacto
+conserva el nombre viejo del caso, lo que prueba que es anterior. Las cifras `907/0/5` y `908/0/4`
+llegaron sólo por conversación y por §14 B.7 no se citan.
+
+Así que la firma acredita **la revisión de seguridad de `d82d6cd`**, no que las gates estén verdes
+sobre `d82d6cd` — que no son del auditor (§6). **Condición de validez, no reserva:** si el banco
+sale rojo sobre esta cabeza en algo que toque esta sección, **la firma no sobrevive** y se
+re-audita.
+
+### El CI con 28 % de fallo en abierto
+
+No cambia el veredicto: el único FAIL es un techo de reloj ajeno al rigor, y dos fallos de la tasa
+base cayeron sobre commits que no tocaron código — artefacto de medición, no regresión. **Como
+gobernanza sí es un defecto de primer orden:** una puerta *requerida* que falla ~28 % sobre código
+que no cambió enseña a re-lanzar hasta el verde, y ese hábito es indistinguible de ignorar un rojo
+verdadero (la clase `H-11` que el propio corredor ya nombra). **Y los dos hechos se componen:** si
+la fusión se autoriza con un verde obtenido re-lanzando, y la cabeza cuyo banco nunca se ejerció es
+`d82d6cd`, el verde que autoriza puede no haber ejercido nunca este cambio. Recomendación: que la
+corrida que autorice la fusión sea **sobre `d82d6cd`** y que se lean **la sección 40 y el cuadre**,
+no sólo el `rc`.
+
+### Hallazgos
+
+`SEC-087` queda **cerrable y sin cerrar**, por orden del propietario: su remediación está completa
+y verificada, y el write-back del §9 existe porque el remedio **era** el contrato. `SEC-088` sigue
+**abierto, diferido y sin bloquear**. `QA-1332-01` sin cambios. Y queda declarada una discrepancia
+documental benigna: `docs/qa/1.33.2.md:238` valida la frase anterior a la corrección, porque el
+registro de una corrida **no se reescribe**.
+
 ## [Interno] — 2026-09-11 · El piso de la sección 40 vuelve a decir la verdad (cierre de la vuelta 2/2)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador.
 

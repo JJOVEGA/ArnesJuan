@@ -1,13 +1,27 @@
 # Candidato de estabilización sobre v1.33.0
 
 Estado: candidato validado localmente; no es una versión publicada ni un cierre de hallazgos.
-Seguridad: con-hallazgos (R-029, 2026-09-10 — no la mide ninguna puerta)
+Seguridad: aprobado (R-030, 2026-09-11, sobre d82d6cd — no la mide ninguna puerta; SUSTITUYE al con-hallazgos de R-029 del 2026-09-10, que NO se retira porque cubre el árbol de entonces y es la causa de la corrección)
+QA: aprobado (vuelta 1 de 2, 2026-09-10) sobre a8e332a — PENDIENTE de extender a la cabeza final: ver el aviso de orden de abajo
 
 > **Ese campo no lo mide nada, y va dicho dentro del propio campo a propósito.** Este
 > parche **no tiene REQ**, así que `guard-completado` no lee esta cabecera ni la puede
 > hacer cumplir: un campo que *parece* medido y no lo está es la familia de `SEC-079`,
-> y el auditor pidió expresamente que se declarara aquí. El hallazgo que lo detiene es
-> **`SEC-087`** (clase `contrato`), en `docs/seguridad/registro-seguridad.md` § **R-029**.
+> y el auditor pidió expresamente que se declarara aquí.
+>
+> **`SEC-087`** (`contrato`) —el hallazgo que detuvo la primera firma— está **remediado en cinco
+> sedes** y su condición de cierre **se cumple**, verificado en `R-030`. **No se cierra**: el
+> propietario prohibió cerrar hallazgos en su nombre, y ni la coordinadora ni el auditor lo hacen.
+> `SEC-088` sigue **abierto** y diferido, sin bloquear.
+>
+> **AVISO DE ORDEN, y es el único pendiente real del parche.** El veredicto de QA cubre `a8e332a`;
+> desde entonces `a529c49` y `d82d6cd` editaron
+> `tests/escenarios/hooks/secciones/40-estabilizacion-firmas-y-rigor.sh`, que §6 clasifica como
+> **crítico**, y uno de ellos cambia el **nombre de un caso**, que es parte de la salida inventariada.
+> **Y no existe en disco ninguna corrida del banco sobre esta cabeza**: el único artefacto conserva el
+> nombre viejo del caso, lo que prueba que es anterior. Las cifras que circularon llegaron **por
+> conversación**, y §14.B.7 dice que eso **no es evidencia**. El orden del §6 se completa cuando el
+> banco se haya ejercido **sobre esta cabeza**, con su salida en disco.
 
 Base de código: `810128abd5d5b1ca9a240bde98192a9a0c51447c` (tag v1.33.0).
 Traspaso consultado: `1dfe31bcb71dcf914f2124f40536bcde2d4019a3`.
