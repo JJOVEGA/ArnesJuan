@@ -2,6 +2,65 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-11 · Versión 1.33.1 → **1.33.2** en los tres campos, y el cuarto sitio que NO se toca
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador`.
+
+`.claude-plugin/plugin.json` `.version`; `.claude-plugin/marketplace.json` en sus **dos** campos
+(`.metadata.version` y `.plugins[0].version`). Los tres **concuerdan** en `1.33.2` —comprobado con
+`jq`, porque `claude plugin tag` falla si discordaran— y las tres comprobaciones `jq -e .`
+(`hooks/hooks.json`, `plugin.json`, `marketplace.json`) están en verde. `source: "./"` intacto.
+
+**Es `patch`:** corrige un defecto sin cambiar ningún contrato que los consumidores usen para
+decidir. La única superficie heredable que se mueve es una cláusula de
+`templates/requirements-README.md.tpl`, y **estrecha** una promesa que era falsa; no añade capacidad.
+
+### Qué corrige esta versión
+
+**`QA-P48-01` — un fail-open PUBLICADO en `v1.33.1`, más ancho que el que esa versión cerró.** El
+matiz parentético de `Rigor:` ya no puede **bajar** el rigor efectivo. `v1.33.1` enrutó la forma con
+paréntesis por el lector común **para todos los valores**: en `critico` eso cerró `D16`, pero en
+`ligero` regaló una exención, porque `ligero` es el **único** nivel exento de `QA: aprobado`
+(`AGENTS.md` §6). Efecto real y medido: un REQ **no sensible** con `Rigor: ligero (<matiz>)` **cerraba
+sin QA y sin veredicto de seguridad**, donde `v1.33.0` lo denegaba. Conducta de puerta en las tres
+versiones: deny (1.33.0) → **ALLOW (1.33.1)** → deny (1.33.2).
+
+La regla vigente es que un matiz **bien formado** sube o mantiene el rigor, nunca lo baja, y está
+escrita en `requirements/README.md` y en su plantilla heredada, con su contraejemplo nombrado.
+
+### Qué NO cierra esta versión — porque una versión que calla lo abierto es la mitad de un registro
+
+- **`SEC-087`** (`contrato`): **remediado y ABIERTO**. Su condición de cierre se cumple según `R-030`
+  —la promesa absoluta ya no existe en ninguna de las cinco sedes—, pero **no se cierra**: el
+  propietario prohibió cerrar hallazgos en su nombre. La **vía** que describe sigue viva y es
+  **preexistente e idéntica en 1.33.0, 1.33.1 y 1.33.2**: un paréntesis que no cierra al final del
+  valor no se lee como matiz, cae en la derivación heredada, y por ahí un `critico` declarado en un
+  REQ no sensible se juzga `estandar` y deja de exigir la firma de seguridad, en silencio. Esta
+  versión **documenta** esa frontera; **no la cierra** — eso es otra reparación, con su propio REQ.
+- **`SEC-088`** y **`QA-1332-01`**: **abiertos y diferidos**, ninguno de esta ventana.
+
+### El cuarto sitio, que existía en 1.33.0 y aquí NO se toca
+
+El commit de versión de `1.33.0` actualizó **cuatro** sitios: los tres de arriba y
+`.arnes/config.json` `.arnes_version`. Ese campo sigue hoy en **`1.33.0`**, y **ya estaba desfasado
+al publicarse `v1.33.1`** (verificado sobre el propio tag): no lo desalinea este commit. No se toca
+aquí por dos motivos: el encargo lo excluye expresamente, y `.arnes/config.json` es el manifiesto que
+**los hooks leen en runtime** —`hooks/estado-derivado.sh` usa `.arnes_version` para el aviso de
+migración del bloque derivado—, así que tocarlo invalidaría las tres firmas emitidas sobre este árbol.
+**Queda reportado al coordinador**, no resuelto por iniciativa del desarrollador.
+
+Y las menciones de `1.33.1` que **deben seguir diciendo `1.33.1`**: las sondas de
+`docs/seguridad/sondas-R-029/` y `sondas-R-030/` la usan como **línea base** —el lector con el defecto
+vivo— y son lo que hace que discriminen. Subirlas las volvería tautologías, que es exactamente la
+trampa que el commit de versión de `1.33.0` cazó con los tags de `REQ-017`.
+
+### Lo que este commit NO hace
+
+No fusiona, no etiqueta y no publica —son actos distintos, del coordinador—; no cierra hallazgos; no
+toca `hooks/`, `tests/`, `tools/`, `templates/`, `requirements/`, `docs/seguridad/` ni `docs/qa/`,
+que están firmados. La instalación estable sigue en `1.33.1` hasta que se publique y se verifique, así
+que el bloque derivado de `docs/ESTADO.md` avisará de migración pendiente: **no es un defecto**, es el
+estado real del autoalojamiento.
+
 ## [Interno] — 2026-09-11 · QA vuelta 2 cierra el hueco de orden: el banco ejercido sobre la cabeza real, con su salida en disco
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (el veredicto) y coordinadora (la identidad del ejecutable).
 
