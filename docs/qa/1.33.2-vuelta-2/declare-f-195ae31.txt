@@ -1,0 +1,1485 @@
+_arnes_desentrecomilla () 
+{ 
+    local s="$1" q k np i;
+    local -a p keep;
+    local reponer_f=0;
+    case $- in 
+        *f*)
+            reponer_f=1
+        ;;
+    esac;
+    local IFS;
+    for q in '"' "'";
+    do
+        case "$s" in 
+            *"$q"*)
+
+            ;;
+            *)
+                continue
+            ;;
+        esac;
+        IFS="$q";
+        set -f;
+        p=($s'');
+        [ "$reponer_f" -eq 1 ] || set +f;
+        np=${#p[@]};
+        k=$((np - 1));
+        p[k]="${p[k]%''}";
+        keep=();
+        for ((i = 0; i < np; i += 2))
+        do
+            keep+=("${p[i]}");
+        done;
+        IFS=' ';
+        s="${keep[*]}";
+        (( k % 2 )) && s+="$q${p[k]}";
+    done;
+    ARNES_SINCOM="$s"
+}
+_arnes_expansiones () 
+{ 
+    local linea="$1" s i np ty tx ch prof q nbs;
+    local -a p frag qbuf;
+    local reponer_f=0;
+    case $- in 
+        *f*)
+            reponer_f=1
+        ;;
+    esac;
+    local IFS;
+    if [[ "$linea" == *'$('* ]]; then
+        s="$linea";
+        case "$s" in 
+            *''*)
+                s="${s//''/ }"
+            ;;
+        esac;
+        case "$s" in 
+            *\\*)
+                s="${s//\\/''B}"
+            ;;
+        esac;
+        s="${s//'$('/''D}";
+        case "$s" in 
+            *'('*)
+                s="${s//'('/''A}"
+            ;;
+        esac;
+        s="${s//')'/''C}";
+        case "$s" in 
+            *'"'*)
+                s="${s//'"'/''Q}"
+            ;;
+        esac;
+        case "$s" in 
+            *"'"*)
+                s="${s//"'"/''S}"
+            ;;
+        esac;
+        IFS='';
+        set -f;
+        p=($s);
+        [ "$reponer_f" -eq 1 ] || set +f;
+        np=${#p[@]};
+        prof=0;
+        q='';
+        nbs=0;
+        frag=();
+        qbuf=();
+        for ((i = 1; i < np; i++))
+        do
+            ty="${p[i]:0:1}";
+            if [ -n "$q" ]; then
+                nbs=0;
+                if [ "$ty" = "$q" ]; then
+                    q='';
+                    qbuf=();
+                    frag+=("${p[i]:1}");
+                else
+                    case $ty in 
+                        B)
+                            ch='\'
+                        ;;
+                        D)
+                            ch='$('
+                        ;;
+                        A)
+                            ch='('
+                        ;;
+                        C)
+                            ch=')'
+                        ;;
+                        Q)
+                            ch='"'
+                        ;;
+                        S)
+                            ch="'"
+                        ;;
+                        *)
+                            continue
+                        ;;
+                    esac;
+                    qbuf+=("$ch${p[i]:1}");
+                fi;
+                continue;
+            fi;
+            case $ty in 
+                D)
+                    if (( nbs % 2 )); then
+                        nbs=0;
+                        (( prof > 0 )) && frag+=("\$(${p[i]:1}");
+                    else
+                        if (( prof == 0 )); then
+                            nbs=0;
+                            prof=1;
+                            frag=("${p[i]:1}");
+                        else
+                            nbs=0;
+                            prof=$((prof + 1));
+                            frag+=("\$(${p[i]:1}");
+                        fi;
+                    fi
+                ;;
+                C)
+                    if (( nbs % 2 )); then
+                        nbs=0;
+                        (( prof > 0 )) && frag+=(")${p[i]:1}");
+                    else
+                        nbs=0;
+                        if (( prof > 0 )); then
+                            prof=$((prof - 1));
+                            if (( prof == 0 )); then
+                                IFS='';
+                                ARNES_EXPS+=("${frag[*]}");
+                                IFS='';
+                                frag=();
+                            else
+                                frag+=(")${p[i]:1}");
+                            fi;
+                        fi;
+                    fi
+                ;;
+                B)
+                    tx="${p[i]:1}";
+                    nbs=$((nbs + 1));
+                    [ -z "$tx" ] || nbs=0;
+                    (( prof > 0 )) && frag+=("\\$tx")
+                ;;
+                A)
+                    if (( nbs % 2 )); then
+                        nbs=0;
+                        (( prof > 0 )) && frag+=("(${p[i]:1}");
+                    else
+                        nbs=0;
+                        (( prof > 0 )) && { 
+                            prof=$((prof + 1));
+                            frag+=("(${p[i]:1}")
+                        };
+                    fi
+                ;;
+                Q)
+                    if (( nbs % 2 )); then
+                        nbs=0;
+                        (( prof > 0 )) && frag+=("\"${p[i]:1}");
+                    else
+                        nbs=0;
+                        (( prof > 0 )) && { 
+                            q=Q;
+                            qbuf=("\"${p[i]:1}")
+                        };
+                    fi
+                ;;
+                S)
+                    if (( nbs % 2 )); then
+                        nbs=0;
+                        (( prof > 0 )) && frag+=("'${p[i]:1}");
+                    else
+                        nbs=0;
+                        (( prof > 0 )) && { 
+                            q=S;
+                            qbuf=("'${p[i]:1}")
+                        };
+                    fi
+                ;;
+            esac;
+        done;
+        if (( prof > 0 )); then
+            [ -z "$q" ] || frag+=("${qbuf[@]}");
+            IFS='';
+            ARNES_EXPS+=("${frag[*]}");
+        fi;
+    fi;
+    if [[ "$linea" == *'`'* ]]; then
+        IFS='`';
+        set -f;
+        p=($linea'');
+        [ "$reponer_f" -eq 1 ] || set +f;
+        np=${#p[@]};
+        p[np - 1]="${p[np - 1]%}";
+        for ((i = 1; i < np; i += 2))
+        do
+            _arnes_frag "${p[i]}";
+        done;
+    fi
+}
+_arnes_frag () 
+{ 
+    case "$1" in 
+        *\"* | *\'*)
+            _arnes_desentrecomilla "$1";
+            ARNES_EXPS+=("$ARNES_SINCOM")
+        ;;
+        *)
+            ARNES_EXPS+=("$1")
+        ;;
+    esac
+}
+_arnes_pliega_nfd () 
+{ 
+    local v="$1" m="$2";
+    v="${v//"a$m"/a}";
+    v="${v//"e$m"/e}";
+    v="${v//"i$m"/i}";
+    v="${v//"o$m"/o}";
+    v="${v//"u$m"/u}";
+    v="${v//"A$m"/a}";
+    v="${v//"E$m"/e}";
+    v="${v//"I$m"/i}";
+    v="${v//"O$m"/o}";
+    v="${v//"U$m"/u}";
+    ARNES_PLEGADO="$v"
+}
+_arnes_recorta_blancos () 
+{ 
+    local s="$1";
+    s="${s#"${s%%[![:blank:]]*}"}";
+    s="${s%"${s##*[![:blank:]]}"}";
+    ARNES_TRIM="$s"
+}
+_arnes_sin_cola_partida () 
+{ 
+    case "${LC_ALL:-${LC_CTYPE:-${LANG:-}}}" in 
+        *UTF-8* | *utf-8* | *UTF8* | *utf8*)
+            return 0
+        ;;
+    esac;
+    local b i n=0;
+    for ((i = 1; i <= 4; i++))
+    do
+        b="${ARNES_CORTO: -i:1}";
+        case "$b" in 
+            ['�'-'�'])
+                continue
+            ;;
+            ['�'-'�'])
+                n=2
+            ;;
+            ['�'-'�'])
+                n=3
+            ;;
+            ['�'-'�'])
+                n=4
+            ;;
+            *)
+                return 0
+            ;;
+        esac;
+        (( i < n )) && ARNES_CORTO="${ARNES_CORTO:0:${#ARNES_CORTO}-i}";
+        return 0;
+    done;
+    return 0
+}
+arnes_agente_coincide () 
+{ 
+    local rn dn rp dp;
+    arnes_ident_nombre "$1";
+    rn="$ARNES_NOMBRE";
+    arnes_ident_nombre "$2";
+    dn="$ARNES_NOMBRE";
+    [ -n "$rn" ] && [ "$rn" = "$dn" ] || return 1;
+    arnes_ident_prefijo "$1";
+    rp="$ARNES_PREFIJO";
+    arnes_ident_prefijo "$2";
+    dp="$ARNES_PREFIJO";
+    if [ -n "$dp" ] && [ -n "$rp" ] && [ "$rp" != "$dp" ]; then
+        return 1;
+    fi;
+    return 0
+}
+arnes_agente_legible () 
+{ 
+    local ident nombre;
+    arnes_norm_ident "$1";
+    ident="$ARNES_IDENT";
+    arnes_ident_nombre "$1";
+    nombre="$ARNES_NOMBRE";
+    if [ "$ident" != "$nombre" ]; then
+        printf "'%s' (%s)" "$nombre" "$ident";
+    else
+        printf "'%s'" "$nombre";
+    fi
+}
+arnes_aviso () 
+{ 
+    ARNES_AVISOS+="ARNES: $1"'
+'
+}
+arnes_bash_escrituras () 
+{ 
+    local limpio i j n tok;
+    local IFS=' 	
+';
+    arnes_bash_sin_texto "$1" || return $?;
+    limpio="$ARNES_SIN_TEXTO";
+    limpio="${limpio//'$('/ }";
+    limpio="${limpio//)/ }";
+    limpio="${limpio//>|/>}";
+    limpio="${limpio//>>/>}";
+    limpio="${limpio//>/ > }";
+    limpio="${limpio//|/ | }";
+    limpio="${limpio//;/ ; }";
+    local reponer_f=0;
+    case $- in 
+        *f*)
+            reponer_f=1
+        ;;
+    esac;
+    set -f;
+    local -a t=($limpio);
+    [ "$reponer_f" -eq 1 ] || set +f;
+    n=${#t[@]};
+    function _arnes_es_separador () 
+    { 
+        case "$1" in 
+            '>' | '|' | ';' | '&&' | '||' | '&')
+                return 0
+            ;;
+            *)
+                return 1
+            ;;
+        esac
+    };
+    function _arnes_emite () 
+    { 
+        [ -n "${1:-}" ] && ! _arnes_es_separador "$1" && printf '%s\n' "$1"
+    };
+    for ((i = 0; i < n; i++))
+    do
+        tok="${t[i]}";
+        case "$tok" in 
+            '>')
+                _arnes_emite "${t[i + 1]:-}"
+            ;;
+            tee | */tee)
+                for ((j = i + 1; j < n; j++))
+                do
+                    _arnes_es_separador "${t[j]}" && break;
+                    case "${t[j]}" in 
+                        -*)
+                            continue
+                        ;;
+                    esac;
+                    _arnes_emite "${t[j]}";
+                done
+            ;;
+            cp | mv | install | */cp | */mv | */install)
+                local dest="";
+                for ((j = i + 1; j < n; j++))
+                do
+                    _arnes_es_separador "${t[j]}" && break;
+                    case "${t[j]}" in 
+                        -*)
+                            continue
+                        ;;
+                    esac;
+                    dest="${t[j]}";
+                done;
+                if [ -n "$dest" ]; then
+                    _arnes_emite "$dest";
+                    case "$dest" in 
+                        */)
+
+                        ;;
+                        *)
+                            _arnes_emite "$dest/"
+                        ;;
+                    esac;
+                fi
+            ;;
+            sed | perl | */sed | */perl)
+                local en_sitio=0;
+                for ((j = i + 1; j < n; j++))
+                do
+                    _arnes_es_separador "${t[j]}" && break;
+                    case "${t[j]}" in 
+                        --in-place | --in-place=*)
+                            en_sitio=1
+                        ;;
+                        --*)
+                            :
+                        ;;
+                        -*i*)
+                            en_sitio=1
+                        ;;
+                    esac;
+                done;
+                [ "$en_sitio" -eq 1 ] || continue;
+                for ((j = i + 1; j < n; j++))
+                do
+                    _arnes_es_separador "${t[j]}" && break;
+                    case "${t[j]}" in 
+                        -*)
+                            continue
+                        ;;
+                    esac;
+                    _arnes_emite "${t[j]}";
+                done
+            ;;
+            of=*)
+                _arnes_emite "${tok#of=}"
+            ;;
+        esac;
+    done;
+    return 0
+}
+arnes_bash_sin_texto () 
+{ 
+    local cmd="$1" limpio;
+    local ARNES_SINCOM='';
+    local -a ARNES_EXPS=();
+    local IFS=' 	
+';
+    local analizado=0 max_analisis="$ARNES_BASH_MAX_ANALISIS" exceso=0;
+    limpio="$cmd";
+    if [[ "$limpio" == *'<<'* ]]; then
+        local linea delim='' dentro=0 citado=0 resto sinhs;
+        local -a sin=();
+        while IFS= read -r linea || [ -n "$linea" ]; do
+            if [ "$dentro" -eq 1 ]; then
+                resto="${linea#"${linea%%[![:blank:]]*}"}";
+                if [ "$resto" = "$delim" ]; then
+                    dentro=0;
+                    continue;
+                fi;
+                if [ "$citado" -eq 0 ]; then
+                    case "$linea" in 
+                        *'$('* | *'`'*)
+                            if (( analizado + ${#linea} > max_analisis )); then
+                                arnes_techo_bash;
+                                max_analisis="$ARNES_TECHO";
+                                if (( analizado + ${#linea} > max_analisis )); then
+                                    exceso=1;
+                                    break;
+                                fi;
+                            fi;
+                            analizado=$(( analizado + ${#linea} ));
+                            _arnes_expansiones "$linea"
+                        ;;
+                    esac;
+                fi;
+                continue;
+            fi;
+            sin+=("$linea");
+            sinhs="${linea//<<</ }";
+            case "$sinhs" in 
+                *'(('*'<<'*)
+
+                ;;
+                *'<<'*)
+                    resto="${sinhs#*<<}";
+                    resto="${resto#-}";
+                    resto="${resto#"${resto%%[! ]*}"}";
+                    citado=0;
+                    case "$resto" in 
+                        \'* | \"* | \\*)
+                            citado=1
+                        ;;
+                    esac;
+                    delim="${resto%%[[:space:]\;\|\&\)\<\>]*}";
+                    delim="${delim#\'}";
+                    delim="${delim%\'}";
+                    delim="${delim#\"}";
+                    delim="${delim%\"}";
+                    delim="${delim#\\}";
+                    case "$delim" in 
+                        [A-Za-z_]*)
+                            case "$delim" in 
+                                *[!A-Za-z0-9_]*)
+                                    delim=''
+                                ;;
+                                *)
+                                    dentro=1
+                                ;;
+                            esac
+                        ;;
+                        *)
+                            delim=''
+                        ;;
+                    esac
+                ;;
+            esac;
+        done <<< "$limpio";
+        IFS='
+';
+        limpio="${sin[*]}";
+        IFS=' 	
+';
+    fi;
+    if [ "$exceso" -eq 0 ] && (( analizado + ${#limpio} > max_analisis )); then
+        arnes_techo_bash;
+        max_analisis="$ARNES_TECHO";
+        (( analizado + ${#limpio} > max_analisis )) && exceso=1;
+    fi;
+    [ "$exceso" -eq 0 ] || return "$ARNES_RC_EXCESO";
+    _arnes_desentrecomilla "$limpio";
+    limpio="$ARNES_SINCOM";
+    if [ "${#ARNES_EXPS[@]}" -gt 0 ]; then
+        IFS=';';
+        limpio+=" ; ${ARNES_EXPS[*]}";
+        IFS=' 	
+';
+    fi;
+    ARNES_SIN_TEXTO="$limpio";
+    return 0
+}
+arnes_campo_linea () 
+{ 
+    arnes_sin_cita "$1";
+    arnes_norm_clave "$ARNES_LINEA"
+}
+arnes_campos_normaliza () 
+{ 
+    arnes_norm_campo "$1";
+    arnes_veredicto "$ARNES_CAMPO";
+    ARNES_QA="$ARNES_VEREDICTO";
+    arnes_norm_campo "$2";
+    arnes_veredicto "$ARNES_CAMPO";
+    ARNES_SEG="$ARNES_VEREDICTO";
+    arnes_norm_campo "$3";
+    ARNES_SENS="$ARNES_CAMPO";
+    arnes_norm_campo "$4";
+    ARNES_HALL="$ARNES_CAMPO";
+    arnes_norm_campo "$5";
+    ARNES_RIGOR_MATIZ=0;
+    case "$ARNES_CAMPO" in 
+        *'('*)
+            arnes_veredicto "$ARNES_CAMPO";
+            ARNES_RIGOR="$ARNES_VEREDICTO";
+            ARNES_RIGOR_MATIZ=1
+        ;;
+        *)
+            ARNES_RIGOR="$ARNES_CAMPO"
+        ;;
+    esac;
+    arnes_sens_efectiva;
+    arnes_rigor_efectivo
+}
+arnes_campos_req () 
+{ 
+    ARNES_QA='';
+    ARNES_SEG='';
+    ARNES_SENS='';
+    ARNES_HALL='';
+    ARNES_RIGOR='';
+    ARNES_QA_CRUDO='';
+    ARNES_SEG_CRUDO='';
+    ARNES_CITA_ABIERTA=0;
+    ARNES_CR_INTERIOR=0;
+    ARNES_CR_INTERIOR_LINEA='';
+    ARNES_CR=0;
+    ARNES_CR_LINEA='';
+    local texto l;
+    for texto in "$1" "$2";
+    do
+        [ -n "$texto" ] || continue;
+        ARNES_CITA=0;
+        while IFS= read -r l; do
+            case "$l" in 
+                '## '*)
+                    break
+                ;;
+            esac;
+            arnes_campo_linea "$l" || continue;
+            case "$ARNES_CLAVE" in 
+                'QA')
+                    ARNES_QA="$ARNES_VALOR"
+                ;;
+                'Seguridad')
+                    ARNES_SEG="$ARNES_VALOR"
+                ;;
+                'Sensible a seguridad')
+                    ARNES_SENS="$ARNES_VALOR"
+                ;;
+                'Hallazgos abiertos')
+                    ARNES_HALL="$ARNES_VALOR"
+                ;;
+                'Rigor')
+                    ARNES_RIGOR="$ARNES_VALOR"
+                ;;
+            esac;
+        done <<< "$texto";
+        [ "$ARNES_CITA" -eq 0 ] || ARNES_CITA_ABIERTA=1;
+    done;
+    ARNES_CR_INTERIOR="$ARNES_CR";
+    ARNES_CR_INTERIOR_LINEA="$ARNES_CR_LINEA";
+    ARNES_QA_CRUDO="$ARNES_QA";
+    ARNES_SEG_CRUDO="$ARNES_SEG";
+    arnes_campos_normaliza "$ARNES_QA" "$ARNES_SEG" "$ARNES_SENS" "$ARNES_HALL" "$ARNES_RIGOR"
+}
+arnes_cola_pendientes () 
+{ 
+    local linea resto dentro=0 enc=0 n=0;
+    ARNES_COLA=0;
+    [ -e "$1" ] || return 0;
+    arnes_lee_archivo "$1" || { 
+        ARNES_COLA='';
+        return 1
+    };
+    while IFS= read -r linea; do
+        linea="${linea%''}";
+        case "$linea" in 
+            *'<!--'*)
+                enc=1
+            ;;
+        esac;
+        case "$linea" in 
+            *'-->'*)
+                enc=0;
+                continue
+            ;;
+        esac;
+        [ "$enc" -eq 0 ] || continue;
+        case "$linea" in 
+            '##'[[:space:]]*)
+                resto="${linea#\#\#}";
+                while :; do
+                    case "$resto" in 
+                        [[:space:]]*)
+                            resto="${resto#?}"
+                        ;;
+                        *)
+                            break
+                        ;;
+                    esac;
+                done;
+                case "$resto" in 
+                    Pendientes*)
+                        dentro=1
+                    ;;
+                    *)
+                        dentro=0
+                    ;;
+                esac;
+                continue
+            ;;
+            '###'[[:space:]]*)
+                [ "$dentro" -eq 1 ] && n=$((n+1));
+                continue
+            ;;
+        esac;
+    done <<< "$ARNES_TEXTO";
+    ARNES_COLA="$n";
+    return 0
+}
+arnes_deny () 
+{ 
+    jq -cn --arg r "$1" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}';
+    exit 0
+}
+arnes_deny_enlace () 
+{ 
+    case "$ARNES_TOOL" in 
+        Edit | Write | MultiEdit)
+
+        ;;
+        *)
+            return 0
+        ;;
+    esac;
+    [ -n "$ARNES_FP" ] || return 0;
+    [ -L "$ARNES_FP" ] || return 0;
+    arnes_ruta_relativa "$ARNES_FP" "$ARNES_PROJ";
+    case "$ARNES_REL" in 
+        '' | /* | [A-Za-z]:* | .. | ../* | */../*)
+            return 0
+        ;;
+    esac;
+    arnes_deny "ARNES: '$ARNES_REL' es un ENLACE SIMBOLICO y no se escribe a traves de el. El arnés juzga la ruta escrita, no su destino: un enlace en una ruta libre que apunte a código protegido o a un REQ recibiría el veredicto de su nombre y no el de lo que realmente toca. Resolver el destino tampoco valdría —entre la comprobación y la escritura el enlace puede cambiar, y una puerta que mide otra cosa no es una puerta—. Salida: escribe directamente sobre la ruta real (SEC-004, REQ-007 CA-49)."
+}
+arnes_deny_manifiesto_roto () 
+{ 
+    [ "${ARNES_MANIFEST_ROTO:-0}" = "1" ] || return 0;
+    local destinos d solo_manifiesto=1 manif_rel;
+    case "$ARNES_TOOL" in 
+        Edit | Write | MultiEdit)
+            destinos="$ARNES_FP"
+        ;;
+        Bash)
+            destinos="${1:-}";
+            [ -n "$destinos" ] || return 0
+        ;;
+        *)
+            return 0
+        ;;
+    esac;
+    arnes_ruta_relativa "$ARNES_MANIFEST" "$ARNES_PROJ";
+    manif_rel="$ARNES_REL";
+    while IFS= read -r d; do
+        [ -n "$d" ] || continue;
+        arnes_ruta_relativa "$d" "$ARNES_PROJ";
+        [ "$ARNES_REL" = "$manif_rel" ] || { 
+            solo_manifiesto=0;
+            break
+        };
+    done <<< "$destinos";
+    if [ "$solo_manifiesto" -eq 1 ]; then
+        [ -z "${ARNES_AVISO_REPARACION:-}" ] || return 0;
+        ARNES_AVISO_REPARACION=1;
+        arnes_warn "REPARACION DEL MANIFIESTO permitida excepcionalmente: '$manif_rel' se esta escribiendo (herramienta $ARNES_TOOL) por '${ARNES_AGENT_TYPE:-sesion coordinadora}' mientras el manifiesto esta ilegible. Es la UNICA escritura que la averia deja pasar, porque es la que devuelve la capacidad de medir; cualquier otra ruta sigue denegada, y con el manifiesto sano este archivo vuelve a estar protegido como cualquier otro.";
+        return 0;
+    fi;
+    arnes_deny "ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas protege este proyecto, quien es el agente de codigo ni cual es el estado terminal. Un manifiesto AUSENTE deja los hooks inertes a proposito; uno ROTO no puede, porque el proyecto si declaro invariantes y la puerta no puede leerlas — permitir aqui seria apagar el enforcement en silencio, que es justo el fallo que este arnes existe para impedir. Salida: corrige el JSON (pruebalo con 'jq -e . .arnes/config.json') o borra el archivo si este proyecto no usa el arnes. Mientras siga roto, la UNICA escritura permitida es la del propio '$manif_rel': es la que repara la averia, y esa si se puede hacer desde la sesion."
+}
+arnes_desenvuelve () 
+{ 
+    local v="$1" antes;
+    while :; do
+        antes="$v";
+        case "$v" in 
+            '**'*'**')
+                v="${v#\*\*}";
+                v="${v%\*\*}"
+            ;;
+            '__'*'__')
+                v="${v#__}";
+                v="${v%__}"
+            ;;
+            '*'*'*')
+                v="${v#\*}";
+                v="${v%\*}"
+            ;;
+            '_'*'_')
+                v="${v#_}";
+                v="${v%_}"
+            ;;
+            '`'*'`')
+                v="${v#\`}";
+                v="${v%\`}"
+            ;;
+        esac;
+        [ "$v" != "$antes" ] || break;
+    done;
+    ARNES_DESENV="$v"
+}
+arnes_dir_interno () 
+{ 
+    local d="$1" fis raiz;
+    [ -d "$d" ] || return 1;
+    fis="$(cd -- "$d" 2> /dev/null && pwd -P)" || return 1;
+    raiz="$(cd -- "$ARNES_PROJ" 2> /dev/null && pwd -P)" || return 1;
+    case "$fis/" in 
+        "$raiz/"*)
+            return 0
+        ;;
+    esac;
+    return 1
+}
+arnes_emitir_avisos () 
+{ 
+    [ -n "$ARNES_AVISOS" ] || return 0;
+    jq -cn --arg m "${ARNES_AVISOS%'
+'}" '{systemMessage:$m}';
+    return 0
+}
+arnes_en_vocab () 
+{ 
+    case "|$2|" in 
+        *"|$1|"*)
+            return 0
+        ;;
+    esac;
+    return 1
+}
+arnes_es_codigo_app () 
+{ 
+    local rel="$1" manifest="$2" g;
+    [ -n "$rel" ] || return 1;
+    if [ -z "${ARNES_GLOBS_CARGADOS:-}" ]; then
+        ARNES_GLOBS=();
+        arnes_jq_file "$manifest" -r '.codigo_app.globs[]? // empty';
+        while IFS= read -r g; do
+            [ -n "$g" ] && ARNES_GLOBS+=("$g");
+        done <<< "$ARNES_JQ";
+        ARNES_GLOBS_CARGADOS=1;
+    fi;
+    for g in ${ARNES_GLOBS[@]+"${ARNES_GLOBS[@]}"};
+    do
+        if [[ "$rel" == $g ]]; then
+            return 0;
+        fi;
+    done;
+    return 1
+}
+arnes_estado_cabecera () 
+{ 
+    ARNES_ESTADO='';
+    ARNES_ESTADO_CITADO='';
+    ARNES_ESTADO_CITA=0;
+    ARNES_ESTADO_CR=0;
+    ARNES_ESTADO_CR_LINEA='';
+    ARNES_CITA=0;
+    ARNES_CR=0;
+    ARNES_CR_LINEA='';
+    local l crudo visto=0;
+    while IFS= read -r l; do
+        case "$l" in 
+            '## '*)
+                break
+            ;;
+        esac;
+        arnes_sin_cita "$l";
+        crudo="$l";
+        if [ "$visto" -eq 0 ] && [ -z "$ARNES_ESTADO_CITADO" ] && [ "$ARNES_LINEA" != "$crudo" ]; then
+            if arnes_norm_clave "$crudo"; then
+                case "$ARNES_CLAVE" in 
+                    'Estado')
+                        arnes_norm_campo "$ARNES_VALOR";
+                        arnes_veredicto "$ARNES_CAMPO";
+                        ARNES_ESTADO_CITADO="$ARNES_VEREDICTO"
+                    ;;
+                esac;
+            fi;
+        fi;
+        if [ "$visto" -eq 0 ] && arnes_norm_clave "$ARNES_LINEA"; then
+            case "$ARNES_CLAVE" in 
+                'Estado')
+                    arnes_norm_campo "$ARNES_VALOR";
+                    arnes_veredicto "$ARNES_CAMPO";
+                    ARNES_ESTADO="$ARNES_VEREDICTO";
+                    visto=1
+                ;;
+            esac;
+        fi;
+    done <<< "$1";
+    [ "$ARNES_CITA" -eq 0 ] || ARNES_ESTADO_CITA=1;
+    ARNES_ESTADO_CR="$ARNES_CR";
+    ARNES_ESTADO_CR_LINEA="$ARNES_CR_LINEA"
+}
+arnes_fecha_en () 
+{ 
+    ARNES_FECHA='';
+    if [[ "$1" =~ ([0-9][0-9][0-9][0-9]-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])) ]]; then
+        ARNES_FECHA="${BASH_REMATCH[1]}";
+    fi
+}
+arnes_ident_nombre () 
+{ 
+    arnes_norm_ident "$1";
+    ARNES_NOMBRE="${ARNES_IDENT##*:}"
+}
+arnes_ident_prefijo () 
+{ 
+    arnes_norm_ident "$1";
+    case "$ARNES_IDENT" in 
+        *:*)
+            ARNES_PREFIJO="${ARNES_IDENT%:*}"
+        ;;
+        *)
+            ARNES_PREFIJO=''
+        ;;
+    esac
+}
+arnes_jq () 
+{ 
+    local out;
+    out="$(jq "$@")" || return $?;
+    arnes_sin_cr_transporte "$out";
+    printf '%s\n' "$ARNES_SIN_CR"
+}
+arnes_jq_file () 
+{ 
+    local f="$1";
+    shift;
+    local out;
+    out="$(jq "$@" "$f")" || return $?;
+    arnes_sin_cr_transporte "$out";
+    ARNES_JQ="$ARNES_SIN_CR"
+}
+arnes_jq_str () 
+{ 
+    local json="$1";
+    shift;
+    local out;
+    out="$(jq "$@" <<< "$json")" || return $?;
+    arnes_sin_cr_transporte "$out";
+    ARNES_JQ="$ARNES_SIN_CR"
+}
+arnes_lee_archivo () 
+{ 
+    ARNES_TEXTO='';
+    [ -e "$1" ] || return 0;
+    [ -f "$1" ] && [ -r "$1" ] || return 1;
+    if IFS= read -r -d '' ARNES_TEXTO < "$1" 2> /dev/null; then
+        ARNES_TEXTO='';
+        return 1;
+    fi;
+    return 0
+}
+arnes_manifest_path () 
+{ 
+    printf '%s/.arnes/config.json' "$1"
+}
+arnes_norm_campo () 
+{ 
+    local v="${1//''/}";
+    v="${v// /}";
+    v="${v//'	'/}";
+    arnes_desenvuelve "$v";
+    v="$ARNES_DESENV";
+    arnes_pliega_ortografia "$v";
+    v="$ARNES_PLEGADO";
+    ARNES_CAMPO="${v,,}"
+}
+arnes_norm_clave () 
+{ 
+    ARNES_CLAVE='';
+    ARNES_VALOR='';
+    ARNES_CLAVE_DECORADA=0;
+    local l="${1//''/}" k r crudo;
+    case "$l" in 
+        *:*)
+
+        ;;
+        *)
+            return 1
+        ;;
+    esac;
+    crudo="${l%%:*}";
+    _arnes_recorta_blancos "$l";
+    l="$ARNES_TRIM";
+    k="${l%%:*}";
+    r="${l#*:}";
+    case "$k" in 
+        [*_\`]*)
+            r="${r#"${r%%[!*_\`]*}"}"
+        ;;
+    esac;
+    k="${k//\*/}";
+    k="${k//_/}";
+    k="${k//\`/}";
+    _arnes_recorta_blancos "$k";
+    ARNES_CLAVE="$ARNES_TRIM";
+    ARNES_VALOR="$r";
+    [ "$ARNES_CLAVE" = "$crudo" ] || ARNES_CLAVE_DECORADA=1
+}
+arnes_norm_ident () 
+{ 
+    local s="${1//''/}";
+    s="${s,,}";
+    s="${s#"${s%%[![:space:]]*}"}";
+    s="${s%"${s##*[![:space:]]}"}";
+    ARNES_IDENT="$s"
+}
+arnes_norm_path () 
+{ 
+    local p="$1" d;
+    case "$p" in 
+        [A-Za-z]:*)
+
+        ;;
+        /*)
+            if command -v cygpath > /dev/null 2>&1; then
+                p="$(cygpath -m -- "$p" 2> /dev/null)" || p="$1";
+            fi
+        ;;
+    esac;
+    p="${p//\\//}";
+    case "$p" in 
+        //*)
+            d='//';
+            p="${p#//}"
+        ;;
+        *)
+            d=''
+        ;;
+    esac;
+    while [ "$p" != "${p//\/\//\/}" ]; do
+        p="${p//\/\//\/}";
+    done;
+    p="$d$p";
+    case "$p" in 
+        [A-Za-z]:*)
+            d="${p%%:*}";
+            p="${d,,}:${p#*:}"
+        ;;
+    esac;
+    ARNES_NORM="$p"
+}
+arnes_parse_input () 
+{ 
+    [ -z "${ARNES_INPUT_LISTO:-}" ] || return 0;
+    arnes_jq_str "$ARNES_INPUT" -r '[.tool_name // "",
+                                   .agent_id // "",
+                                   .agent_type // "",
+                                   .tool_input.file_path // "",
+                                   .tool_input.command // ""] | .[]';
+    { 
+        IFS= read -r ARNES_TOOL;
+        IFS= read -r ARNES_AGENT_ID;
+        IFS= read -r ARNES_AGENT_TYPE;
+        IFS= read -r ARNES_FP;
+        IFS= read -r -d '' ARNES_CMD
+    } <<< "$ARNES_JQ";
+    ARNES_CMD="${ARNES_CMD%'
+'}";
+    ARNES_INPUT_LISTO=1
+}
+arnes_parse_manifest () 
+{ 
+    [ -z "${ARNES_MANIFEST_LISTO:-}" ] || return 0;
+    local g rc;
+    ARNES_MANIFEST_ROTO=0;
+    arnes_jq_file "$ARNES_MANIFEST" --arg gitdef "$ARNES_GIT_PROHIBIDOS_DEFECTO" -r 'if type != "object" then error("no-objeto") else . end
+                                      | . as $m
+                                      | [(if ($m.agentes.agente_codigo|type) == "string" then $m.agentes.agente_codigo else "desarrollador" end),
+                                       (if ($m.requirements_dir|type) == "string" then $m.requirements_dir else "requirements" end),
+                                       (if ($m.estados.completado|type) == "string" then $m.estados.completado else "completado" end),
+                                       (if ($m.pending_approval|type) == "string" then $m.pending_approval else "PENDING_APPROVAL.md" end),
+                                       (if   ($m.limites.bash_max_analisis|type) == "number" then ($m.limites.bash_max_analisis|tostring)
+                                        elif  $m.limites.bash_max_analisis == null           then ""
+                                        else  "!tipo" end),
+                                       (if $m.veredictos.exigir_fecha == true then "true" else "false" end),
+                                       (if $m.veredictos.caducan_con_codigo == true then "true" else "false" end),
+                                       (if $m.git.activo == false then "false" else "true" end),
+                                       ((if ($m.git.prohibidos|type) == "array" then $m.git.prohibidos
+                                         else ($gitdef | split("\t")) end)
+                                        | map(select(type == "string")) | join("\t")),
+                                       ([["agentes.agente_codigo",        $m.agentes.agente_codigo,         "string"],
+                                         ["requirements_dir",             $m.requirements_dir,              "string"],
+                                         ["estados.completado",           $m.estados.completado,            "string"],
+                                         ["pending_approval",             $m.pending_approval,              "string"],
+                                         ["limites.bash_max_analisis",    $m.limites.bash_max_analisis,     "number"],
+                                         ["veredictos.exigir_fecha",      $m.veredictos.exigir_fecha,       "boolean"],
+                                         ["veredictos.caducan_con_codigo",$m.veredictos.caducan_con_codigo, "boolean"],
+                                         ["git.activo",                   $m.git.activo,                    "boolean"],
+                                         ["git.prohibidos",               $m.git.prohibidos,                "array"],
+                                         ["codigo_app.globs",             $m.codigo_app.globs,              "array"]]
+                                        | map(select(.[1] != null and (.[1]|type) != .[2]) | .[0] + " = " + (.[1]|tojson))
+                                        | join("\u0001"))]
+                                      + (if ($m.codigo_app.globs|type) == "array" then ($m.codigo_app.globs | map(select(type == "string"))) else [] end) | .[]';
+    rc=$?;
+    ARNES_GLOBS=();
+    if [ "$rc" -ne 0 ] || [ -z "$ARNES_JQ" ]; then
+        ARNES_JQ='';
+        ARNES_MANIFEST_ROTO=1;
+        arnes_warn "'.arnes/config.json' existe pero no se puede leer como objeto JSON (invalido, vacio, 'null' o un array). NO se aplica ningun valor por defecto silencioso: mientras siga asi, toda escritura que las puertas deban juzgar se DENIEGA, y 'guard-git' deniega el git destructivo de su LISTA POR DEFECTO (una puerta que no puede medir no deja pasar, tampoco esa). Un manifiesto ausente si deja los hooks inertes; uno roto, no.";
+    fi;
+    { 
+        IFS= read -r ARNES_AGENTE_CODIGO;
+        IFS= read -r ARNES_REQ_DIR;
+        IFS= read -r ARNES_ESTADO_DONE;
+        IFS= read -r ARNES_PENDING;
+        IFS= read -r ARNES_BASH_MAX;
+        IFS= read -r ARNES_VER_FECHA;
+        IFS= read -r ARNES_VER_CADUCAN;
+        IFS= read -r ARNES_GIT_ACTIVO;
+        IFS= read -r ARNES_GIT_PROHIBIDOS;
+        IFS= read -r ARNES_TIPOS;
+        while IFS= read -r g; do
+            [ -n "$g" ] && ARNES_GLOBS+=("$g");
+        done
+    } <<< "$ARNES_JQ";
+    if [ -n "${ARNES_TIPOS:-}" ]; then
+        local _t;
+        while IFS= read -r -d '' _t || [ -n "$_t" ]; do
+            _t="${_t%'
+'}";
+            [ -n "$_t" ] || continue;
+            arnes_warn "'${_t%% = *}' de .arnes/config.json no tiene el tipo que esa clave espera (se recibio ${_t#* = }); se ignora y manda el valor por defecto del arnes. Lo que la puerta no entiende cae del lado seguro, y lo dice.";
+        done <<< "$ARNES_TIPOS";
+    fi;
+    case "${ARNES_BASH_MAX:-}" in 
+        '')
+
+        ;;
+        '!tipo')
+            ARNES_BASH_MAX=''
+        ;;
+        *[!0-9]* | 0)
+            arnes_warn "'limites.bash_max_analisis' de .arnes/config.json vale $ARNES_BASH_MAX, que no es un entero positivo de bytes (la forma exponencial '1e9' y los decimales tampoco lo son); se ignora y manda el techo por defecto del arnes.";
+            ARNES_BASH_MAX=''
+        ;;
+    esac;
+    ARNES_GLOBS_CARGADOS=1;
+    ARNES_MANIFEST_LISTO=1
+}
+arnes_pliega_ortografia () 
+{ 
+    local v="$1" m;
+    case "$v" in 
+        *'�'*)
+            v="${v//'à'/a}";
+            v="${v//'À'/a}";
+            v="${v//'á'/a}";
+            v="${v//'Á'/a}";
+            v="${v//'â'/a}";
+            v="${v//'Â'/a}";
+            v="${v//'ã'/a}";
+            v="${v//'Ã'/a}";
+            v="${v//'ä'/a}";
+            v="${v//'Ä'/a}";
+            v="${v//'è'/e}";
+            v="${v//'È'/e}";
+            v="${v//'é'/e}";
+            v="${v//'É'/e}";
+            v="${v//'ê'/e}";
+            v="${v//'Ê'/e}";
+            v="${v//'ë'/e}";
+            v="${v//'Ë'/e}";
+            v="${v//'ì'/i}";
+            v="${v//'Ì'/i}";
+            v="${v//'í'/i}";
+            v="${v//'Í'/i}";
+            v="${v//'î'/i}";
+            v="${v//'Î'/i}";
+            v="${v//'ï'/i}";
+            v="${v//'Ï'/i}";
+            v="${v//'ò'/o}";
+            v="${v//'Ò'/o}";
+            v="${v//'ó'/o}";
+            v="${v//'Ó'/o}";
+            v="${v//'ô'/o}";
+            v="${v//'Ô'/o}";
+            v="${v//'õ'/o}";
+            v="${v//'Õ'/o}";
+            v="${v//'ö'/o}";
+            v="${v//'Ö'/o}";
+            v="${v//'ù'/u}";
+            v="${v//'Ù'/u}";
+            v="${v//'ú'/u}";
+            v="${v//'Ú'/u}";
+            v="${v//'û'/u}";
+            v="${v//'Û'/u}";
+            v="${v//'ü'/u}";
+            v="${v//'Ü'/u}"
+        ;;
+    esac;
+    case "$v" in 
+        *'�'*)
+            for m in '̀' '́' '̂' '̃' '̈';
+            do
+                case "$v" in 
+                    *"$m"*)
+                        _arnes_pliega_nfd "$v" "$m";
+                        v="$ARNES_PLEGADO"
+                    ;;
+                esac;
+            done
+        ;;
+    esac;
+    ARNES_PLEGADO="$v"
+}
+arnes_preludio () 
+{ 
+    arnes_require_jq || return 1;
+    IFS= read -r -d '' ARNES_INPUT || true;
+    [ -n "${ARNES_INPUT:-}" ] || return 1;
+    arnes_project_dir "$ARNES_INPUT";
+    [ -n "$ARNES_PROJ" ] || return 1;
+    ARNES_MANIFEST="$ARNES_PROJ/.arnes/config.json";
+    [ -f "$ARNES_MANIFEST" ] || return 1;
+    return 0
+}
+arnes_project_dir () 
+{ 
+    if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
+        ARNES_PROJ="$CLAUDE_PROJECT_DIR";
+    else
+        ARNES_PROJ="$(printf '%s' "$1" | jq -r '.cwd // empty')";
+    fi
+}
+arnes_purga_tmp () 
+{ 
+    local t pid;
+    local -a huerfanos=();
+    for t in "$1".arnes.tmp "$1".arnes.tmp.*;
+    do
+        [ -f "$t" ] || continue;
+        pid="${t##*.arnes.tmp}";
+        pid="${pid#.}";
+        if [ -n "$pid" ]; then
+            case "$pid" in 
+                *[!0-9]*)
+                    continue
+                ;;
+            esac;
+            kill -0 "$pid" 2> /dev/null && continue;
+        fi;
+        huerfanos+=("$t");
+    done;
+    [ "${#huerfanos[@]}" -gt 0 ] || return 0;
+    rm -f -- "${huerfanos[@]}" 2> /dev/null;
+    return 0
+}
+arnes_read_stdin () 
+{ 
+    cat
+}
+arnes_recorta () 
+{ 
+    ARNES_CORTO="$1";
+    [ "${#ARNES_CORTO}" -le "$2" ] && return 0;
+    ARNES_CORTO="${ARNES_CORTO:0:$2}";
+    _arnes_sin_cola_partida;
+    ARNES_CORTO+='…';
+    return 0
+}
+arnes_require_jq () 
+{ 
+    if ! command -v jq > /dev/null 2>&1; then
+        printf 'ARNES (hook): jq no encontrado; enforcement inactivo en esta sesión.\n' 1>&2;
+        return 1;
+    fi;
+    return 0
+}
+arnes_rigor_efectivo () 
+{ 
+    local declarado="$ARNES_RIGOR" nd ns nh heredado;
+    case "$ARNES_SENS" in 
+        si)
+            heredado='critico'
+        ;;
+        *)
+            heredado='estandar'
+        ;;
+    esac;
+    if [ -z "$declarado" ]; then
+        ARNES_RIGOR="$heredado";
+        return 0;
+    fi;
+    arnes_rigor_nivel "$declarado";
+    nd=$?;
+    if [ "$nd" -eq 0 ]; then
+        ARNES_RIGOR="$heredado";
+        return 0;
+    fi;
+    ARNES_RIGOR="$declarado";
+    if [ "${ARNES_RIGOR_MATIZ:-0}" = "1" ]; then
+        arnes_rigor_nivel "$heredado";
+        nh=$?;
+        if [ "$nd" -lt "$nh" ]; then
+            ARNES_RIGOR="$heredado";
+            nd=$nh;
+        fi;
+    fi;
+    case "$ARNES_SENS" in 
+        si)
+            arnes_rigor_nivel critico;
+            ns=$?;
+            [ "$nd" -lt "$ns" ] && ARNES_RIGOR='critico'
+        ;;
+    esac;
+    return 0
+}
+arnes_rigor_nivel () 
+{ 
+    case "$1" in 
+        ligero)
+            return 1
+        ;;
+        estandar)
+            return 2
+        ;;
+        critico)
+            return 3
+        ;;
+        *)
+            return 0
+        ;;
+    esac
+}
+arnes_ruta_interna () 
+{ 
+    local r="$1";
+    case "$r" in 
+        '' | /* | [A-Za-z]:* | '~'*)
+            return 1
+        ;;
+        .. | ../* | */.. | */../*)
+            return 1
+        ;;
+    esac;
+    case "$r" in 
+        *'\'*)
+            return 1
+        ;;
+    esac;
+    return 0
+}
+arnes_ruta_relativa () 
+{ 
+    local p pp;
+    arnes_norm_path "$1";
+    p="$ARNES_NORM";
+    arnes_norm_path "$2";
+    pp="$ARNES_NORM";
+    p="${p#"$pp"/}";
+    ARNES_REL="${p#./}"
+}
+arnes_seguridad_cabecera () 
+{ 
+    local l ARNES_CITA=0 ARNES_CR=0 ARNES_CR_LINEA='';
+    local ARNES_LINEA ARNES_CLAVE ARNES_VALOR ARNES_CLAVE_DECORADA;
+    ARNES_SEG_CABECERA='';
+    while IFS= read -r l; do
+        case "$l" in 
+            '## '*)
+                break
+            ;;
+        esac;
+        arnes_campo_linea "$l" || continue;
+        [ "$ARNES_CLAVE" != 'Seguridad' ] || ARNES_SEG_CABECERA="$ARNES_VALOR";
+    done <<< "$1"
+}
+arnes_sens_efectiva () 
+{ 
+    local corte;
+    ARNES_SENS_DUDOSA=0;
+    ARNES_SENS_CRUDO="$ARNES_SENS";
+    if [ -z "$ARNES_SENS" ]; then
+        ARNES_SENS='no';
+        return 0;
+    fi;
+    corte="$ARNES_SENS";
+    corte="${corte%%—*}";
+    corte="${corte%%–*}";
+    corte="${corte%%-*}";
+    corte="${corte%%(*}";
+    corte="${corte%%[*}";
+    corte="${corte%%,*}";
+    corte="${corte%%;*}";
+    case "$corte" in 
+        si | s | true | x | yes | verdadero)
+            ARNES_SENS='si'
+        ;;
+        no | n | false)
+            ARNES_SENS='no'
+        ;;
+        *)
+            ARNES_SENS='si';
+            ARNES_SENS_DUDOSA=1
+        ;;
+    esac
+}
+arnes_sin_cita () 
+{ 
+    local l="$1" out='';
+    case "$l" in 
+        *''?*)
+            [ "$ARNES_CR" -eq 1 ] || ARNES_CR_LINEA="${l//''/\\r}";
+            ARNES_CR=1
+        ;;
+    esac;
+    if [ "$ARNES_CITA" -ne 0 ]; then
+        case "$l" in 
+            *'-->'*)
+                l="${l#*-->}";
+                ARNES_CITA=0
+            ;;
+            *)
+                ARNES_LINEA='';
+                return 0
+            ;;
+        esac;
+    fi;
+    while :; do
+        case "$l" in 
+            *'<!--'*)
+
+            ;;
+            *)
+                break
+            ;;
+        esac;
+        out+="${l%%<!--*} ";
+        l="${l#*<!--}";
+        case "$l" in 
+            *'-->'*)
+                l="${l#*-->}"
+            ;;
+            *)
+                ARNES_CITA=1;
+                ARNES_LINEA="$out";
+                return 0
+            ;;
+        esac;
+    done;
+    ARNES_LINEA="$out$l"
+}
+arnes_sin_cr_transporte () 
+{ 
+    local s="${1//'
+'/'
+'}";
+    ARNES_SIN_CR="${s%''}"
+}
+arnes_techo_bash () 
+{ 
+    local v m;
+    if [ -z "${ARNES_TECHO:-}" ]; then
+        ARNES_TECHO="$ARNES_BASH_MAX_ANALISIS";
+        arnes_parse_manifest;
+        if [ -n "${ARNES_BASH_MAX:-}" ]; then
+            v="${ARNES_BASH_MAX}";
+            m="$ARNES_BASH_MAX_MANIFIESTO";
+            while [ "${v:0:1}" = 0 ] && [ ${#v} -gt 1 ]; do
+                v="${v:1}";
+            done;
+            if [ ${#v} -gt ${#m} ] || { 
+                [ ${#v} -eq ${#m} ] && [ "$v" \> "$m" ]
+            }; then
+                arnes_warn "'limites.bash_max_analisis' de .arnes/config.json declara $ARNES_BASH_MAX bytes y el maximo admitido es $ARNES_BASH_MAX_MANIFIESTO; se aplica el maximo. Un techo mas alto deja de responder antes de que el hook muera, y un hook muerto no deniega.";
+                ARNES_TECHO="$ARNES_BASH_MAX_MANIFIESTO";
+            else
+                if (( v > ARNES_TECHO )); then
+                    ARNES_TECHO="$v";
+                fi;
+            fi;
+        fi;
+    fi;
+    return 0
+}
+arnes_tmp_publicacion () 
+{ 
+    local id="${BASHPID:-}";
+    case "$id" in 
+        '' | *[!0-9]*)
+            ARNES_TMP='';
+            return 1
+        ;;
+    esac;
+    arnes_purga_tmp "$1";
+    ARNES_TMP="$1.arnes.tmp.$id";
+    return 0
+}
+arnes_veredicto () 
+{ 
+    local v="$1";
+    case "$v" in 
+        *')')
+            case "$v" in 
+                *'('*)
+                    v="${v%%(*}"
+                ;;
+            esac
+        ;;
+    esac;
+    arnes_desenvuelve "$v";
+    v="$ARNES_DESENV";
+    ARNES_VEREDICTO="$v"
+}
+arnes_warn () 
+{ 
+    printf 'ARNES (hook): %s\n' "$1" 1>&2
+}

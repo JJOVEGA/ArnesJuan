@@ -1,0 +1,62 @@
+(1) LAS TRES FORMAS QUE EL CONTRATO NOMBRA, en un REQ no sensible
+  critico (por suelo       -> estandar  OK: el contrato dice estandar
+  critico (                -> estandar  OK: el contrato dice estandar
+  critico (x) y            -> estandar  OK: el contrato dice estandar
+
+(2) ¿ES LA UNICA PROTECCION QUE SE PIERDE? — tres niveles x dos sensibilidades,
+    cada forma mal formada CONTRA el matiz cerrado del mismo nivel.
+    FORMA_MAL_FORMADA          SENS  MALFORM   CERRADO   VEREDICTO
+    ligero (x                  no    estandar  estandar  OK
+    ligero (                   no    estandar  estandar  OK
+    ligero (x) y               no    estandar  estandar  OK
+    ligero(                    no    estandar  estandar  OK
+    ligero ((x)                no    estandar  estandar  OK
+    ligero (x                  sí   critico   critico   OK
+    ligero (                   sí   critico   critico   OK
+    ligero (x) y               sí   critico   critico   OK
+    ligero(                    sí   critico   critico   OK
+    ligero ((x)                sí   critico   critico   OK
+    estandar (x                no    estandar  estandar  OK
+    estandar (                 no    estandar  estandar  OK
+    estandar (x) y             no    estandar  estandar  OK
+    estandar(                  no    estandar  estandar  OK
+    estandar ((x)              no    estandar  estandar  OK
+    estandar (x                sí   critico   critico   OK
+    estandar (                 sí   critico   critico   OK
+    estandar (x) y             sí   critico   critico   OK
+    estandar(                  sí   critico   critico   OK
+    estandar ((x)              sí   critico   critico   OK
+    critico (x                 no    estandar  critico   <<< PIERDE PROTECCION
+    critico (                  no    estandar  critico   <<< PIERDE PROTECCION
+    critico (x) y              no    estandar  critico   <<< PIERDE PROTECCION
+    critico(                   no    estandar  critico   <<< PIERDE PROTECCION
+    critico ((x)               no    critico   critico   OK
+    critico (x                 sí   critico   critico   OK
+    critico (                  sí   critico   critico   OK
+    critico (x) y              sí   critico   critico   OK
+    critico(                   sí   critico   critico   OK
+    critico ((x)               sí   critico   critico   OK
+    --- formas que PIERDEN proteccion: 4 ---
+
+(3) LA PROMESA ABSOLUTA: ¿alguna forma con '(' alcanza 'ligero' (el nivel exento)?
+    ligero (x              -> estandar
+    ligero (               -> estandar
+    ligero (x) y           -> estandar
+    ligero(                -> estandar
+    ligero ((x)            -> estandar
+    ligero (x)             -> estandar
+    ligero()               -> estandar
+    (ligero)               -> estandar
+    (ligero                -> estandar
+    ligero )               -> estandar
+    **ligero (x**          -> estandar
+    ligero (ligero)        -> estandar
+    ligero ( ligero )      -> estandar
+    ligero (x) (y          -> estandar
+    ligero (()             -> estandar
+    ligero )(              -> estandar
+    ligero ()()            -> estandar
+    ligero (ligero         -> estandar
+    --- formas con '(' que alcanzan 'ligero': 0 (esperado 0) ---
+
+invocaciones de puerta: 0

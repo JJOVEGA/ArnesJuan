@@ -1,0 +1,31 @@
+(A) PUERTA EN SECUENCIA, mismo shell, invocaciones consecutivas
+  PASS  A1 matiz primero -> deny (deny)
+  PASS  A2 limpio DESPUES del matiz -> allow (allow)
+  PASS  A3 limpio primero -> allow (allow)
+  PASS  A4 matiz DESPUES del limpio -> deny (deny)
+  PASS  A5 limpio otra vez -> allow (allow)
+
+(B) REQ limpio con vecinos CON MATIZ en la misma carpeta, ambos ordenes
+  PASS  B1 limpio entre dos con matiz -> allow (allow)
+  PASS  B2 limpio ultimo del directorio -> allow (allow)
+
+(C) hooks/estado-derivado.sh: TODOS los REQ en UN proceso, ambos ordenes
+  --- orden: matiz-primero ---
+REQ-100 | en-revision | pendiente | pendiente | estandar 
+REQ-200 | en-revision | pendiente | pendiente | ligero 
+REQ-300 | en-revision | pendiente | pendiente | critico 
+REQ-400 | en-revision | pendiente | pendiente | ligero 
+  rigor por REQ segun el bloque derivado:
+  --- orden: limpio-primero ---
+REQ-100 | en-revision | pendiente | pendiente | ligero 
+REQ-200 | en-revision | pendiente | pendiente | estandar 
+REQ-300 | en-revision | pendiente | pendiente | ligero 
+REQ-400 | en-revision | pendiente | pendiente | critico 
+  rigor por REQ segun el bloque derivado:
+
+(D) tools/arnes-lectura.sh: TODOS los REQ en UN proceso
+      REQ-100      Rigor:
+      REQ-300      Rigor:
+      rigor efectivo: critico 0 · estandar 2 · ligero 2
+      El rigor efectivo es DERIVADO: `Sensible a seguridad: sí` impone `critico`
+    (esperado: ligero 2 · estandar 2 · critico 0)

@@ -2,6 +2,137 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · QA vuelta 2 cierra el hueco de orden: el banco ejercido sobre la cabeza real, con su salida en disco
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (el veredicto) y coordinadora (la identidad del ejecutable).
+
+**`QA: aprobado (vuelta 2 de 2, cabeza 195ae31, QA-P48-01, 2026-09-11)`** — con la cabeza **escrita
+dentro del veredicto**, que es lo que faltaba.
+
+**El hueco que el auditor detectó queda cerrado con evidencia, no con una cifra hablada.**
+`docs/qa/1.33.2-vuelta-2/banco-195ae31.txt`: `rc 0`, **908 PASS · 0 FAIL · 4 SKIP**, cuadre **912**. Y
+lo que acredita que el artefacto es **de esta cabeza**: la salida **lleva el nombre nuevo del caso**
+(`"D16: matiz CERRADO no rebaja critico"`), imposible en una corrida anterior a `a529c49`.
+
+**Adoptada la recomendación del auditor: se leyó la sección 40, no el `rc` global.** 28 casos, los 28
+PASS, contados uno por uno contra `CASOS_ESPERADOS_SECCION=28` y los 28 `check` del archivo.
+
+**El artefacto de la vuelta 1 no se reescribió** —conserva el nombre viejo en su línea 938, que es
+justo lo que prueba su antigüedad— y lleva un encabezado de «superado por la vuelta 2» explicando por
+qué no se toca. Reescribir el registro de una corrida sería falsificar evidencia.
+
+### La reutilización, con un argumento mejor que el mío
+
+Yo la justifiqué filtrando el diff. QA añadió la vía que **cierra la cuestión**: **bash descarta los
+comentarios al almacenar el cuerpo de una función**, así que `declare -f` compara **ejecutable y no
+texto**. Md5 idéntico, 1485 líneas. Y lo ejerció igual: las dos matrices re-corridas salen **byte a
+byte idénticas** a las de la vuelta 1.
+
+**Comprobado por la coordinadora sobre las tres cabezas firmadas**, con ese mismo método:
+`a8e332a` (QA v1), `d82d6cd` (`R-030`) y `195ae31` (QA v2) tienen el **mismo** md5 de `declare -f`
+—`9b67ea72…`—. **Las tres firmas cubren el mismo ejecutable**, y eso ya no es una afirmación: es una
+medición.
+
+### Lo que QA amplió por su cuenta, y hacía falta
+
+**`29f9af6` reescribió el enunciado del contrato, así que el veredicto de la vuelta 1 acreditaba el
+texto ANTERIOR.** QA lo detectó solo y re-verificó el vigente —no re-auditando `R-030`, sino
+comprobando que el requerimiento describa lo construido—: **180 invocaciones de puerta**. Las tres
+formas nombradas dan `estandar` en REQ no sensible y **cierran sin la firma de seguridad**, como el
+texto ahora advierte. Y la cláusula de **unicidad resulta completa**: pierden protección
+**exactamente 4** filas, todas `critico` + mal formado + no sensible.
+
+### La promesa absoluta: tres agentes, tres argumentos independientes
+
+QA coincide y **añade uno que no es un barrido**: la exención tiene **un solo punto de decisión**
+(`guard-completado.sh:383`) y `ARNES_RIGOR` se asigna en **exactamente 7 sitios** — cuatro no pueden
+valer `ligero`; uno sólo se alcanza si `(` **no** está; y el único que puede rendir `ligero` con
+paréntesis marca el indicador, con lo que `nd = 1 < nh ∈ {2,3}` es **siempre** cierto y la guarda
+**siempre** dispara, **sin depender de la entrada**. Más 18 formas hostiles, 0 alcanzan `ligero`.
+
+**Y nombra una frontera para que nadie la traiga después como el tercer caso:**
+`Rigor: ligero <!-- (x) -->` cierra, y **no** es contraejemplo — lo que vive en un comentario no
+declara campo, así que el valor declarado es `ligero` a secas.
+
+**Un detalle de medición que conviene que conste:** `critico ((x)` da **`critico`**, no `estandar`,
+porque **sí** termina en `)`. La regla del contrato lo clasifica bien; se anota porque a la vista
+parece mal formado.
+
+### Y una precisión de alcance sobre CA-18 que nadie había dicho
+
+**`CA-18` comprueba la aritmética del piso, no que el «55» sea de verdad el bloque mayor.** Esa mitad
+la re-derivaron a mano el desarrollador, el auditor y QA por separado, y las tres cuadran:
+preámbulo 4, maquinaria 0, bloque mayor 55 (líneas 23-77), suma 59.
+
+*(Nota de la coordinadora: un `grep ABORT` sobre la salida del banco devuelve 3 líneas, y las tres son
+**nombres de casos** que **pasan** —«…ABORTA el caso…»—. La afirmación de QA de que no hay ninguna
+línea de aborto es **correcta**; el `grep` ingenuo era mío.)*
+
+## [Interno] — 2026-09-11 · `QA-P48-01`: QA **vuelta 2 de 2** sobre `195ae31` — **aprobado**, y ahora con el banco en disco
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester.
+
+Veredicto **`QA: aprobado (vuelta 2 de 2, cabeza 195ae31, QA-P48-01, 2026-09-11)`**, con la
+cabeza escrita **dentro** del veredicto: el de la vuelta 1 cubría `a8e332a` y no puede cubrir
+lo que vino después. Informe **`docs/qa/1.33.2-vuelta-2.md`**, evidencia
+`docs/qa/1.33.2-vuelta-2/`. **Presupuesto agotado**: no queda vuelta ordinaria, y no hace falta.
+
+**Por qué era necesaria, y el hueco era real.** Cinco commits después de `a8e332a`, dos de
+ellos sobre la sección 40 del banco —crítica por §6—, y **ninguna corrida del banco en disco
+sobre esas cabezas**. Lo prueba mi propio artefacto de la vuelta 1: conserva el nombre **viejo**
+del caso (`banco-corrida-unica.txt:938`), luego es anterior a `a529c49`. Ese archivo **no se
+reescribe** —sería falsificar evidencia—; la corrida nueva es un artefacto nuevo.
+
+**Banco sobre `195ae31`, EN DISCO:** `rc 0`, **908 PASS · 0 FAIL · 4 SKIP**, cuadre **912**,
+sin ninguna línea `ABORT`; autoprueba del corredor **106 PASS · 0 FAIL**. Y **la sección 40
+leída, no inferida del `rc` global** (recomendación del auditor, adoptada): **28 casos, 28 PASS,
+0 FAIL**, contados uno por uno, iguales a su `CASOS_ESPERADOS_SECCION` y a los 28 `check` del
+archivo; el cuadre por archivo pasó —el corredor aborta nombrando la sección si no—; y la salida
+**lleva el nombre nuevo** del caso, que es lo que acredita que el artefacto es de esta cabeza.
+Rendimiento **no acreditado** (24 s, `loadavg` 0,18→1,89, una corrida, no es el runner).
+
+**Reutilización de evidencia declarada como se pidió: reutilizo porque el EJECUTABLE es
+idéntico**, no porque ya lo hubiera hecho. Tres vías: sólo `hooks/lib.sh` cambia; **ni una
+línea no-comentario** difiere; y —la que cierra— bash **descarta comentarios** al almacenar el
+cuerpo de una función, así que `declare -f` compara ejecutable y no texto: **md5 idéntico**
+(`133505830a67ad49fc585da5a5e7fba4`, 1485 líneas). Comprobado además **empíricamente**: las dos
+matrices re-ejecutadas salen **byte a byte idénticas** a las de la vuelta 1.
+
+**`PISO_AUTONOMO_SECCION` 53 → 59 re-derivado midiendo el archivo**, no leyendo el comentario:
+preámbulo **4** (primer arranque en la línea 5), maquinaria **0** (el archivo no define ni un
+ayudante), bloque mayor **55** (bloques `3·17·55·9·14`, el mayor en las líneas 23-77), suma
+**59** = declarado, con los tres términos legibles; `59 ≤ 102` y `102 ≤ max(400, 73,75)`.
+**CA-18 en verde, 16 casos**, y su fila publica exactamente `lineas=102 piso=59 techo=400
+(gobierna N) duplicadas=3`. Alcance dicho: CA-18 comprueba la **aritmética**, no que el «55»
+sea de verdad el bloque mayor — esa mitad es la re-derivada a mano, y las dos cuadran.
+
+**El contrato cambió en `29f9af6`, así que se RE-VERIFICA** — no es re-auditar seguridad
+(`R-030` no se toca), es comprobar que el requerimiento describa lo construido, que es
+anti-deriva. **180 invocaciones de puerta.** Las tres formas que el contrato nombra
+(`critico (por suelo`, `critico (`, `critico (x) y`) se juzgan **`estandar`** en un REQ no
+sensible y **cierran sin la firma de seguridad**, como el texto ahora advierte. Y la cláusula
+de **unicidad** —«es la única protección que esta forma puede perder»— resulta **completa**:
+barrido de **3 niveles × 2 sensibilidades × 5 formas mal formadas**, cada una contra el matiz
+cerrado del mismo nivel, y pierden protección **exactamente 4** filas, todas `critico` + mal
+formado + no sensible; en `ligero` y `estandar` la derivación heredada da lo mismo y con
+`Sensible: sí` el suelo lo impide. Las dos sedes siguen **idénticas**.
+
+**Juicio pedido sobre la promesa absoluta `"QA-P48-01: matiz no regala la exencion de QA"`:
+coincido en conservarla, y añado un tercer argumento que no es un barrido.** La exención tiene
+**un solo punto de decisión** (`guard-completado.sh:383`, `[ "$rigor" != "ligero" ]`), y
+`ARNES_RIGOR` se asigna en **exactamente 7 sitios**: cuatro no pueden valer `ligero` (asignan
+`heredado` o `critico`), uno sólo se alcanza si `(` **no** está, y el único que puede rendir
+`ligero` con paréntesis marca `ARNES_RIGOR_MATIZ=1` — con lo que `nd = 1 < nh ∈ {2,3}` es
+**siempre** cierto y la guarda **siempre** dispara, sin depender de la entrada. Luego un valor
+con `(` no puede rendir `ligero` **por ninguna vía**. Ejercido contra la conducta con **18
+formas hostiles** (`ligero )(`, `ligero ()()`, `(ligero)`, `**ligero (x**`…): **0 alcanzan
+`ligero`**. **No encontré un tercer caso.** Se nombra la frontera para que nadie la traiga
+luego como tal: `Rigor: ligero <!-- (x) -->` cierra, y **no** es contraejemplo —lo que vive en
+un comentario no declara campo, así que el valor declarado es `ligero` a secas—.
+
+**Sin hallazgos nuevos. Nada se cierra ni se reclasifica:** `QA-1332-01` (`instrumento`, y de
+**1.33.1**, no de este parche), `SEC-087` —que no se cierra por orden del propietario— y
+`SEC-088` siguen abiertos y diferidos. `Seguridad:` no lo firma QA; el CI obligatorio sigue
+pendiente y esta corrida local no lo sustituye.
+
 ## [Interno] — 2026-09-11 · Seguridad APRUEBA v1.33.2 (`R-030`), y deja nombrado el único pendiente real: el banco no se ha ejercido sobre esta cabeza
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad (`R-030`) y coordinadora (la firma en el contrato).
 
