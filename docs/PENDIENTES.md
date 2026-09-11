@@ -201,6 +201,53 @@ el commit real. Es la misma lección de `CA-18`: **comprobar la factibilidad ant
   > demás, aplicada por fin a sí mismo. **Va a la pasada de conformidad de 1.34.0 como cuarta promesa
   > más ancha que el código**, junto a las tres que ya estaban.
 
+### Propuesta — La política de trabajo proporcional, del arnés a los proyectos · **versión por decidir**
+
+> **Sede canónica de esta iniciativa.** `docs/PLAN.md` la referencia y no la copia. La política que se
+> propone propagar vive, ya escrita y **vigente sólo para este repositorio**, en
+> `docs/gobernanza/autoalojamiento.md` § «Enmienda: autoalojamiento aligerado» — **tampoco se copia
+> aquí**: lo que sigue es el alcance de **llevarla afuera**, no la política.
+
+**Dirección del producto, registrada por el propietario el 2026-09-11.** Que la política de trabajo
+proporcional llegue **desde el arnés a proyectos nuevos y existentes**, para **reducir tiempo y tokens
+sin reducir las protecciones necesarias**.
+
+**Lo autorizado hoy es el registro y la planificación. NO la implementación, y NO entra en 1.34.0.**
+No se abre comisión ni análisis extenso. Se planifica **después** del alcance actual, y su **versión
+está por decidir**.
+
+#### Alcance futuro — los seis puntos
+
+1. **Selección de análisis, QA y seguridad según el efecto y el riesgo del cambio**, no por rutina ni
+   por categoría del archivo.
+2. **Reutilización de evidencia válida**, y revisión **del cambio y sus dependencias** en lugar de
+   reabrir el trabajo entero.
+3. **Menos lecturas y menos comisiones repetidas.**
+4. **Plantillas** para instalaciones nuevas.
+5. **Migración** para proyectos existentes que **conserve sus reglas propias** y **no las rebaje en
+   silencio** — una migración que relaje un control sin decirlo es peor que no migrar.
+6. **Controles obligatorios intactos para operaciones sensibles.** La proporcionalidad decide cuánta
+   ceremonia paga un cambio ordinario; no toca el suelo de los sensibles.
+
+#### Cómo se evaluará — y hoy no hay ahorro que declarar
+
+**No se declara ningún ahorro.** Se medirá, después, sobre: **tiempo** · **tokens** · **vueltas
+dev↔QA** · **defectos posteriores** · **retrabajo**. Cada cifra irá marcada como **medida**, **derivada**
+o **estimada**, y lo que no se registre se escribirá **«no registrado»** en vez de reconstruirse.
+
+**La base de comparación todavía no existe.** Lo único medido hoy es el coste por comisión de este
+repositorio (`docs/arnes/coste-de-comision/`), que es **una muestra pequeña, de un solo proyecto y con
+`n` declarado por rol**; no vale como línea base de proyectos consumidores, y decirlo ahora evita que
+alguien la use como tal más adelante.
+
+#### No es `REQ-019`, y la diferencia importa
+
+`REQ-019` **reduce los documentos de arranque** —bytes que se leen en cada comisión—. Esta iniciativa
+**reduce las ceremonias** —cuántas comisiones y cuántas firmas paga un cambio según su efecto—. Son
+**mejoras relacionadas y distintas**: se pueden hacer por separado, en cualquier orden, y una puede
+ganar mientras la otra no. `REQ-019` está **aplazado a 1.35.0** por decisión del propietario
+(2026-09-09) y **no** es el vehículo de esto.
+
 ## Observado en el autoalojamiento (2026-09-05): fricciones del propio arnés sobre sí mismo
 
 Medidas mientras el arnés v1.30.2 gobernaba el desarrollo de 1.30.3. Cada punto es la **forma** del

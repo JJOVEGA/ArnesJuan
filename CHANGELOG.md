@@ -2,6 +2,29 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · Registrada la dirección de producto: la política proporcional, del arnés a los proyectos
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+**Sólo registro y planificación, por autorización expresa del propietario.** No es implementación y
+**no entra en 1.34.0**; su versión está **por decidir**. No se abrió comisión ni análisis.
+
+Comprobado antes de escribir: **no existía pendiente ni REQ que la cubriera** (`REQ-026` aparecía en la
+búsqueda por «proporcional» en un contexto de coste, sin relación).
+
+**Sede canónica:** `docs/PENDIENTES.md` § «Propuesta — La política de trabajo proporcional, del arnés a
+los proyectos», con los seis puntos de alcance futuro, el método de evaluación y la diferencia con
+`REQ-019`. **`docs/PLAN.md` la referencia y no la copia**, y ninguno de los dos copia la política en sí,
+que sigue teniendo sede única en `docs/gobernanza/autoalojamiento.md` § «Enmienda: autoalojamiento
+aligerado» y **vigente sólo para este repositorio**.
+
+**No se declara ningún ahorro.** Se medirá sobre tiempo, tokens, vueltas dev↔QA, defectos posteriores y
+retrabajo, marcando cada cifra como **medida**, **derivada** o **estimada**. Y queda escrito que **la
+base de comparación todavía no existe**: lo único medido es el coste por comisión de este repositorio,
+una muestra pequeña de un solo proyecto, que **no vale** como línea base de proyectos consumidores.
+
+**No es `REQ-019`:** aquél reduce los **documentos de arranque** (bytes por comisión); ésta reduce las
+**ceremonias** (cuántas comisiones y firmas paga un cambio según su efecto). Relacionadas y distintas.
+
 ## [Interno] — 2026-09-11 · `REQ-017 CA-08 (ii)` deja de atribuir al código lo que su medición no distingue
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
 

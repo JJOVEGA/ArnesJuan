@@ -573,5 +573,13 @@ Se hacen cuando estorben, no antes. Ninguno es `contrato`.
 - **El falso positivo de la regla del orden**: reportado desde un proyecto real, **no reproducido**. No
   se redacta REQ hasta tenerlo: un criterio escrito sobre un defecto que no se ha visto describe lo que
   imaginamos.
+- **La política de trabajo proporcional, del arnés a los proyectos** · **versión por decidir**.
+  Dirección del producto registrada por el propietario el **2026-09-11**: llevar la proporcionalidad a
+  proyectos **nuevos y existentes** por plantillas y migración, para bajar tiempo y tokens **sin bajar
+  las protecciones necesarias**. **Sólo registro y planificación; no implementación y NO entra en
+  1.34.0.** Alcance, método de evaluación y la diferencia con `REQ-019` en su **sede canónica**:
+  `docs/PENDIENTES.md` § «Propuesta — La política de trabajo proporcional, del arnés a los proyectos».
+  La política en sí vive en `docs/gobernanza/autoalojamiento.md` § «Enmienda: autoalojamiento
+  aligerado», y **no se copia** en ninguno de los dos.
 - **Decisión editorial del propietario**: los nombres de proyectos consumidores y de las dos cuentas de
   GitHub en un repositorio público.
