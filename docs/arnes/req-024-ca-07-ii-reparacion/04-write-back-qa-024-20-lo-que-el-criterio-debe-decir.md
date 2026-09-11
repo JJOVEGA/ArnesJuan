@@ -135,3 +135,39 @@ para no tener que reescribirlas—, pero **la tabla de ejemplos del §2 sí**.
 **cota** y de las **cuatro sedes** se haga **ya** —no depende de la fase 2— y que la tabla de
 ejemplos se confirme contra el árbol final antes de que `QA-024-20` se dé por cerrado. La
 decisión de cómo secuenciarlo es de la coordinadora.
+
+---
+
+## 7. ACTUALIZACIÓN tras la fase 2 — qué cambia de lo escrito arriba
+
+La fase 2 ya se ejecutó (`05-fase-2-lo-construido-y-lo-que-falta.md`). **La propiedad del §3 y
+la cota del §4 NO cambian** —estaban escritas sobre la propiedad justamente para eso—, pero sí
+cambian tres cosas que el analista tiene que reflejar. El §2 de arriba describe el árbol de la
+vuelta 3; las **causas** de inconclusión siguen siendo ésas, y lo que cambia es **qué hace la
+puerta con ellas**:
+
+1. **La abstención deja de ser el estado final del caso.** Una medición inconclusa se **vuelve a
+   medir** hasta `INTENTOS07 = 3`; agotado el presupuesto, el caso emite **`FAIL`** —«no se pudo
+   acreditar»—, **no `SKIP`**. El criterio debe decir que *una medición inconcluyente es
+   **acreditación pendiente**, no habilita la fusión, y la puerta **no sale verde** por no poder
+   medir*.
+2. **Los dos `FAIL` no significan lo mismo, y el criterio debe distinguirlos:** `FAIL` por
+   **regresión** (`mín(r) > techo` en todas) y `FAIL` por **no acreditación** (reintentos
+   agotados). El segundo **no afirma que haya regresión**. Un criterio que los confunda enseña a
+   leer mal el rojo.
+3. **El suelo de detección ya no es una constante:** se **deriva de cada medición**
+   (`techo × recorrido observado`) y se publica con la máquina y su carga. El criterio **no debe
+   fijar una cifra de suelo**: ninguna es verdad en todos los hosts — medido, 1,33× en WSL2 y
+   2,39× en el runner **para el mismo código**.
+
+**Y la advertencia que impide que el criterio nazca falso:** la **detección de 1,28× con los
+mandos de la puerta NO está demostrada** (`05-…md` §3: la nula subestima la dispersión de la
+comparación real, y en este host `r` no la estrecha). Si el criterio se redacta afirmando que la
+puerta detecta esa magnitud, **estaría prometiendo lo que no hay**. Mientras eso siga abierto,
+lo que el criterio puede afirmar es lo demostrado: que la puerta **no aprueba** lo que no puede
+resolver y **no sale verde** sin una medición válida.
+
+**Una sede más, que la fase 2 añade a las cuatro del §5:** la vía de acreditación citada en
+`REQ-017 CA-08 (ii)` y en las Notas de `REQ-024` dice `r` 6→30 y `k` 4→8; ahora la puerta ya
+está en `k=8 r=30` y la palanca sube `r` a **60**. Donde ese par de números esté transcrito, se
+desfasó.

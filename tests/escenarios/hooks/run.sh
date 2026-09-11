@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1094  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1095  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1446,18 +1446,20 @@ CASOS_ESPERADOS=1094  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # 400 líneas: `REQ-014 CA-18` manda partir, no alargar. El techo 1,250×
                       # va INTACTO y el caso sigue en la puerta requerida.
                       #
-                      # 1094 → 1094, Y NO ES UNA ERRATA. La sección `40/8`
-                      # (`40-ausencia-que-abre-8-sonda-de-viabilidad.sh`) es una SONDA que MIDE
-                      # Y PUBLICA y NO dicta veredicto: declara `CASOS_ESPERADOS_SECCION=0` y
-                      # emite con el prefijo `  VIAB  `, que no casa ninguno de los tres
-                      # patrones del recuento, así que el total NO se mueve. Es TEMPORAL —fase 1
-                      # de la VUELTA 4 de `REQ-024 CA-07 (ii)`: la única vía de medir en el
-                      # runner es viajar dentro de una corrida normal del PR, porque
-                      # `banco.yml` no tiene `workflow_dispatch` y `.github/` es gate humano
-                      # (`AGENTS.md` §4)— y se borra con un `rm` cuando la fase 1 termine, sin
-                      # tocar este número. Sus condiciones y su criterio de viabilidad, fijados
-                      # ANTES de ejecutar y no elegidos al ver los datos:
-                      # `docs/arnes/req-024-ca-07-ii-reparacion/03-fase-1-viabilidad-en-el-runner.md`.
+                      # 1094 → 1095, en la VUELTA 4 de `CA-07 (ii)`: `40/7` pasa de 5 a 6 casos.
+                      # El caso nuevo es la quinta demostración —«una medición inconcluyente es
+                      # acreditación PENDIENTE»: se reintenta hasta `INTENTOS07` y, agotado el
+                      # presupuesto, el caso emite FAIL y NO SKIP—, con su mitad discordante: la
+                      # MISMA entrada por el camino de presentación sigue dando SKIP, que es
+                      # exactamente lo que dejó la puerta requerida en VERDE sobre `1b3760e` con
+                      # el caso abstenido (`[0,836× , 1,598×]`). Los mandos del caso pasan de
+                      # `k=4 r=6` a `k=8 r=15` porque los primeros NO resuelven el factor que
+                      # vigilan, medido EN EL RUNNER: la nula recorre [0,805× , 1,123×] con
+                      # `k=4 r=6` y [0,997× , 1,018×] con `k=8 r=15`, en la misma corrida
+                      # (`docs/arnes/req-024-ca-07-ii-reparacion/03-fase-1-viabilidad-en-el-runner.md`).
+                      # La sonda de viabilidad TEMPORAL `40/8`, que declaraba 0 casos y por eso
+                      # no movía este número, se RETIRÓ al terminar la fase 1: su medición vive
+                      # en el artefacto, no en el banco.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

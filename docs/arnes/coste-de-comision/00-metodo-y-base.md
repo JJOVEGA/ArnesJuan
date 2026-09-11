@@ -70,7 +70,9 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 | 2 | `REQ-024 CA-07 (ii)` — reparar el instrumento · `desarrollador` | 2026-09-11 07:05:08 | 2026-09-11 08:00:52 | **55 min 45 s** | causa = dispersión del instrumento, no regresión; guarda de convergencia portada; criterio acreditado a 1,118× | `feat/1.34-reparaciones-astra` @ `69fc96a` | **285 206** | ídem |
 | 3 | `REQ-024 CA-07 (ii)` — QA acotada de la reparación · `qa-tester` | 2026-09-11 08:02:31 | 2026-09-11 08:33:42 | **31 min 11 s** | **`con-hallazgos`** (vuelta 1 de esta acotada; el contador §6 de `REQ-024` sigue agotado 3/3 y NO se reinició). 5 hallazgos: `QA-024-20` (`contrato`, bloquea) y 4 `instrumento` | árbol de trabajo sobre `69fc96a` | **185 933** | ídem |
 
-| 4 | `REQ-024 CA-07 (ii)` — **vuelta 4**, fase 1: viabilidad de la precisión en el CI real · `desarrollador` | 2026-09-11 08:43:33 | *(en curso)* | — | — | árbol de trabajo sobre `69fc96a` | — | ídem |
+| 4 | `REQ-024 CA-07 (ii)` — **vuelta 4**, fase 1: viabilidad de la precisión en el CI real · `desarrollador` | 2026-09-11 08:43:33 | 2026-09-11 09:11:30 | **27 min 57 s** | sonda de viabilidad entregada, condiciones y criterio fijados **antes** de ejecutar; expectativa propia registrada («espero NO VIABLE») | árbol sobre `69fc96a` → commiteado en `1b3760e` | **218 994** | ídem |
+
+| 5 | `REQ-024 CA-07 (ii)` — **vuelta 4**, fase 2: implementación · `desarrollador` | 2026-09-11 09:19:15 | 2026-09-11 09:52:57 | **~32 min** | **4 de 5 condiciones cumplidas**; la detección de 1,28× con los mandos de la puerta **NO** demostrada. Se detuvo en vez de tantear parámetros | árbol sobre `1b3760e` | **350 088** | ídem |
 
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es

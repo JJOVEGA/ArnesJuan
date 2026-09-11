@@ -357,10 +357,108 @@ eso se declara ahora:
 > informará: con las repeticiones **hechas** al lado de las **pedidas** (la línea
 > `VIAB-RESUMEN` publica las dos). Esto **no afloja** el criterio: lo endurece.
 
-### 7.3 El runner
+### 7.3 El runner — **la respuesta**
 
-*(pendiente: se rellena con la salida **literal** de `hooks-en-linux` que devuelva la
-coordinadora. No se supone ninguna cifra de aquí.)*
+**Corrida:** `hooks-en-linux` sobre **`1b3760e`**, `success`, 15:13:42→15:17:18Z (3 min 36 s).
+Cuadre **1080 PASS · 0 FAIL · 14 SKIP = 1094**: la sonda no lo alteró, como estaba comprobado.
+Contexto: **`nucleos=4`**, `jobs=6`, **`carga_al_empezar=5.04`** — 4 vCPU con carga 5, o sea el
+runner llegó sobresuscrito, que es exactamente la condición que se quería medir. Salida
+literal, 40 líneas: `corridas/vuelta4-fase1/RUNNER-1b3760e-salida-literal.txt`.
+
+**`hechas = pedidas` en los cuatro y `presupuesto_agotado=no`**: la muestra **no** se recortó,
+así que la advertencia del §7.2 **no aplica** y el resultado se lee a cara descubierta.
+
+| ajuste | razones (‰) | `mín` (**C1** ≥ 977) | `máx` (**C2** ≤ 1118) | `sin_razón` (**C0** = 0) | peor ventana 4 | coste por veredicto (`×4`) | Δ vs `k=4 r=6` (**C3** ≤ 60 s) |
+|---|---|---|---|---|---|---|---|
+| **V0** `k=4 r=6` | 805 1123 988 994 991 1003 1000 997 1000 1000 1003 1003 | **805** ✗ | **1123** ✗ | 0 ✓ | 1395 | 3,58 s | — |
+| **V1** `k=8 r=15` | 1018 1002 997 1000 999 998 999 1001 999 1002 | **997** ✓ (+20‰) | **1018** ✓ | 0 ✓ | 1021 | 14,77 s | **+11,2 s** ✓ |
+| **V2** `k=8 r=30` | 1000 1000 1005 999 1002 1003 994 998 | **994** ✓ (+17‰) | **1005** ✓ | 0 ✓ | 1009 | 28,13 s | **+24,6 s** ✓ |
+| **V3** `k=8 r=60` | 1001 999 1009 1004 | **999** ✓ (+22‰) | **1009** ✓ | 0 ✓ | 1010 | 52,93 s | **+49,4 s** ✓ |
+
+*Método de las dos últimas columnas:* coste por veredicto `= (us_total / hechas) × KRAZ(4)`; Δ
+contra el mismo cálculo sobre `V0`. **Y va la horquilla, no el número cómodo:** los 3,58 s de
+`V0` están inflados por sus dos primeras repeticiones (1,80 s y 1,92 s bajo carga 5,04); con el
+coste de sus repeticiones tardías (≈ 0,67 s ⇒ 2,68 s por veredicto) los Δ salen **+12,1 s**,
+**+25,5 s** y **+50,3 s**. **Los tres siguen bajo 60 s con cualquiera de las dos bases**, así
+que C3 no depende de cuál se elija.
+
+## ▶ VEREDICTO DE LA FASE 1: **VIABLE**
+
+- **`V0` (`k=4 r=6`, el ajuste de la puerta HOY) incumple C1 y C2** — `mín 805` contra 977, y
+  `máx 1123` contra 1118. **Eso es `QA-024-21` medido en el runner:** con el instrumento
+  recorriendo `[0,805× , 1,123×]` sobre una razón verdadera de **1,000× por construcción**, una
+  regresión de 1,28× cae dentro del ruido y sale `SKIP`. No es conjetura: es la misma corrida.
+- **`V1`, `V2` y `V3` cumplen C0, C1, C2 y C3.**
+- Por la regla escrita en el §4 —«el **más barato** de los que cumplan»— el ajuste es **`V1`:
+  `k=8`, `r=15`**, con **Δ ≈ +11,2 s** por veredicto.
+
+**Y el resultado refuta mi hipótesis registrada.** En el §6 escribí «mi expectativa es **NO
+VIABLE**», y esperaba que ni `V2` llegara en 4 vCPU sobresuscritas. El runner dice que `V2`
+llega con holgura y que **`V1` ya llega**. Lo digo yo y no lo descubre quien lea: una hipótesis
+registrada y **refutada** vale más que una acertada, porque es la que demuestra que el criterio
+no se escribió para confirmarla.
+
+### Por qué me equivoqué — y es un hecho NUEVO sobre el instrumento
+
+Miré la máquina (4 vCPU contra 12) y no miré **dónde** cae la medición dentro de la corrida. El
+registro crudo lo dice sin que haya que inferir nada:
+
+| repetición de `V0` | carga | `disp` | `acompanada` | razón | `min_a` |
+|---|---|---|---|---|---|
+| n=1 | 5,04 | **1838** | **sí** | **805** | 98 763 µs |
+| n=2 | 5,04 | **1389** | **sí** | **1123** | 126 163 µs |
+| n=3 | 5,05 | 1044 | no | 988 | 75 987 µs |
+| n=4 … n=12 | 4,14 → 1,76 | ≤ 1144 | no | **991 … 1003** | ≈ 54 000 µs |
+
+**`V0` sólo descarrila en sus dos primeras repeticiones, y las dos son justo las que la sonda
+marcó `acompanada=si`.** De la tercera en adelante recorre `[0,988× , 1,003×]` — **más
+estrecho que `V2`**. La dispersión de `V0` **no es una propiedad de `k=4`**: es una propiedad
+de **medir mientras las otras 64 secciones todavía corren**.
+
+Dos consecuencias, las dos operativas:
+
+1. **`k=8` ya absorbe esa contención.** La primera repetición de `V1` se tomó con la **misma**
+   carga 5,04 y dio **1018**, no 805. Duplicar `k` alarga la serie de ~54 ms a ~110 ms y saca
+   la medida del régimen en que manda el planificador.
+2. **Hay una señal publicada que las marca… y NO sirve como discriminante. Lo comprobé y me
+   desmiente, así que va escrito y no se calla.** `sonda-reloj.sh` publica `disp` y
+   `acompanada` (CA-06 punto 2, umbral 1250‰), y las dos repeticiones malas de `V0` vienen
+   marcadas `acompanada=si`. La conclusión fácil —«que la guarda descarte las repeticiones
+   marcadas»— es **falsa**, y lo dice la misma corrida: `V1 n=1` trae `disp=2316
+   acompanada=si` y su razón es **1018**, buena; `V1 n=2` trae `disp=1450 acompanada=si` y da
+   **1002**; en el contraste local `V2 n=7` trae `acompanada=si` y da **994**. `acompanada`
+   dice «alguna serie salió lenta», y con `k=8` **el mínimo no se contamina por eso**:
+   descartar por esa marca tiraría mediciones buenas y pagaría reintentos por nada. **La
+   palanca que sí está medida es `k`**, y es la que mueve la fase 2. Queda anotado como
+   observación con su refutación para que nadie la redescubra y la implemente.
+
+### El coste que la sonda le cobró a la puerta
+
+Barrido **157,1 s** de los 216 s de la corrida. `timeout` de 20 min ⇒ **holgura 16,4 min**. El
+presupuesto de 420 s **no se agotó**.
+
+### Lo que este resultado NO acredita — antes de que alguien lo dé por dicho
+
+- **Es una corrida.** Los márgenes de C1 son de 17–22 milésimas sobre 10, 8 y 4 muestras. Que
+  ninguna cayera bajo 977 **no demuestra** que la cola no exista. Lo que lo hace creíble no es
+  el conteo: es el **mecanismo** identificado arriba (la cola de `V0` viene marcada
+  `acompanada=si`, y `k=8` la suprime).
+- **La nula no es el candidato.** Mide `ε`; que ese `ε` sea el que actúa sobre un árbol
+  **regresado** es el supuesto declarado en el §1, y la fase 2 **tiene que confirmarlo con una
+  regresión real inyectada**, no darlo por bueno.
+
+### La incertidumbre del método, declarada como pidió el propietario
+
+Con `ε ∈ [0,997 , 1,018]` medido en el runner a `V1`, la zona en que el método **puede no
+decidir** alrededor del techo es
+
+> `ρ ∈ [T/ε_máx , T/ε_mín] = [1250/1018 , 1250/997] = [1,228× , 1,254×]`.
+
+Por debajo de **1,228×** resuelve del lado `PASS`; por encima de **1,254×** resuelve del lado
+`FAIL`; dentro, puede abstenerse. **`1,28×` queda fuera de la zona de indecisión**, y `1,25×`
+—la frontera exacta— queda dentro, que es justo la precisión infinita que el propietario no
+exige. La zona es **declarada y acotada**, y no se presenta como cumplimiento nada que caiga
+dentro de ella.
 
 ---
 

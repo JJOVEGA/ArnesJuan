@@ -2,6 +2,44 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · Vuelta 4 fase 2: la nula SUBESTIMA la dispersión real, y por eso la detección de 1,28× no queda demostrada
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (vuelta 4), coordinadora.
+
+**Fase 1: `VIABLE`** según el criterio fijado antes de ejecutar. En el runner (4 vCPU, `ARNES_JOBS=6`,
+carga 5,04 al empezar), los mandos actuales `k=4 r=6` dan `mín 805‰` y `máx 1123‰` — **incumplen las
+dos condiciones**, que es `QA-024-21` medido en el runner. Desde `k=8 r=15` las cumplen con margen y
+muy por debajo del presupuesto. **Muestra completa** (`hechas = pedidas`), así que la salvaguarda
+sobre muestra recortada no se activa. **El resultado refuta la hipótesis que el desarrollador había
+registrado** (§6 decía `NO VIABLE`), y así queda escrito: una hipótesis refutada demuestra que el
+criterio no se escribió para confirmarse.
+
+### Fase 2: cuatro condiciones de cinco
+
+Cumplidas: techo `1,250×` **intacto**; control sin regresión **`PASS`** a `1,201×`; **condición 4
+demostrada** —una medición inconclusa ya **no** emite `SKIP` verde: se remide hasta 3 veces y,
+agotado el presupuesto, emite **`FAIL` «no se pudo acreditar»**, con texto distinto del `FAIL` por
+regresión—; y documentadas las causas de abstención, su cota y el procedimiento. Hecha la deuda de
+`plataforma`/`carga` en los tres mensajes, hecho `QA-024-22`, **retirada la sonda temporal**, cuadre
+`1094` → **1095**.
+
+**NO cumplida — y el desarrollador fue a refutar su propio supuesto:** la **nula subestima la
+dispersión de la medición real**. Recorrido real `1,066` (r=15) · `1,10` (r=30) · `1,07–1,13` (r=60),
+contra nulas de `1,021`/`1,009`/`1,010`. Y **`r` no estrecha el recorrido real en este host**: plano
+con 4× el coste. Probados r=15/30/60, **se detuvo ahí** por la prohibición expresa de tantear
+parámetros. `r=30` queda **provisional**, dicho en el propio código.
+
+### Dos consecuencias que no se esconden
+
+**El suelo de detección dejó de ser una constante**: ninguna cifra es verdad en todos los hosts
+—`1,33×` local, `2,39×` en el runner para el mismo código—, así que ahora se **deriva de cada
+medición**. Y el caso pasa de 3,6 s a ~27 s de CPU dentro de un banco paralelo: **1 de 3 vueltas
+locales salió con 4 `FAIL` en criterios de reloj vecinos**. Las tres vueltas se conservan, y las dos
+verdes **no desmienten** la roja.
+
+Alternativa **(D)** —sacar la decisión de reloj de la puerta de cada PR— queda **enumerada y no
+tomada**: `REQ-017 CA-08 (ii)` dice que es decisión del propietario con entrada en
+`PENDING_APPROVAL.md`.
+
 ## [Interno] — 2026-09-11 · `REQ-024 CA-07 (ii)`: la causa era dispersión del instrumento, y la vuelta 4 mide si la precisión necesaria cabe en el CI real
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (reparación y sonda), qa-tester (vuelta 1 acotada), coordinadora.
 
