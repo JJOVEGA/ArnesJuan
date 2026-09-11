@@ -2,6 +2,53 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · `SEC-087`: la quinta sede, la que vivía en el banco (cierre de la vuelta 2/2)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador.
+
+**Cierra la vuelta 2; no abre una tercera.** La sede quedó viva porque el encargo anterior prohibía
+tocar `tests/`, y se reporta y corrige ahora con autorización acotada a este comentario. El contador
+va por trabajo y no por etiqueta: QA aún no ha validado la vuelta 2, así que esto la **termina**.
+
+**Sólo comentarios y un nombre de caso. Ninguna conducta cambia.** Sin casos nuevos, sin tocar
+contabilidad (`CASOS_ESPERADOS_SECCION=28` y `PISO_AUTONOMO_SECCION=53` intactos) ni `hooks/`.
+
+**Dos sedes en la sección 40, no una.** La que se señaló era el banner
+`# --- QA-P48-01: el matiz SUBE o MANTIENE el rigor; nunca lo baja`. Al leerlo apareció la segunda, y
+es **más fuerte**: el nombre del caso `"D16: matiz no rebaja critico"` enunciaba la promesa falsa
+**tal cual**, y un nombre de caso es texto que alguien lee como contrato. Pasa a
+`"D16: matiz CERRADO no rebaja critico"` — el caso ejerce `critico (por suelo)`, cerrado, así que el
+nombre dice ahora exactamente lo que prueba. El banner lleva la frontera completa: qué forma cae,
+en qué dirección, cuál es la **única** protección que se pierde, y que la vía es preexistente y no
+se cierra aquí.
+
+**Las demás afirmaciones de la sección se verificaron en la dirección adversaria antes de
+conservarlas, no por inspección.** `"QA-P48-01: matiz no regala la exencion de QA"` es absoluta y se
+mantiene porque es **cierta**: en 104 lecturas con formas hostiles —paréntesis sin cerrar, sólo
+abriente, vacío, doble, anidado, pegado, decorado, en mayúsculas, con texto detrás— **ninguna forma
+que contenga `(` alcanza `ligero`**, el nivel exento de QA; y **ningún `critico` cerrado baja**. Esa
+comprobación va escrita en el propio banner, porque es la mitad de la frontera que la hace estrecha.
+
+**Efecto declarado sobre el inventario (REQ-014 CA-12).** Renombrar un caso **cambia su identidad**,
+y es deliberado: frente a la corrida registrada por QA en
+`docs/qa/1.33.2-falsacion/banco-corrida-unica.txt:938` difiere **una** línea —
+`PASS D16: matiz no rebaja critico (deny)` → `PASS D16: matiz CERRADO no rebaja critico (deny)`—,
+**mismo veredicto y misma puerta**, sólo el nombre. Ese fichero es el registro de lo que QA corrió y
+**no se reescribe**. El inventario no tiene línea base comiteada contra la que fallar: es
+comparación manual antes/después, y la autoprueba sólo ejercita el oráculo con entradas sintéticas.
+
+**Nota de honestidad sobre el piso, que no se toca por instrucción:** el banner creció, así que el
+término «49 bloque indivisible mayor» de `PISO_AUTONOMO_SECCION=53` queda **subestimado**. No rompe
+nada —CA-18 comprueba que los términos sumen el valor declarado y que el piso **caiga** en el
+archivo (53 ≤ 102), no que el término sea máximo— y un piso subestimado sigue siendo un piso válido.
+Se declara para que nadie lo lea como exacto.
+
+Banco corrido una vez tras el cambio: **907 PASS · 0 FAIL · 5 SKIP**, cuadre **912**, `rc 0` —
+idénticos a antes—. Autoprueba **106 PASS · 0 FAIL**, CA-18 incluido. `bash -n` de la sección: OK.
+
+*(El FAIL de CI en `REQ-017 CA-08 (ii)` es ajeno a este trabajo: es un techo de reloj con 7 fallos en
+las últimas 25 corridas, dos de ellos sobre commits que no tocaron código. Está escalado al
+propietario como decisión sobre el instrumento y aquí no se toca.)*
+
 ## [Interno] — 2026-09-11 · `SEC-087`: la promesa deja de ser absoluta (`QA-P48-01`, 3.er tramo, vuelta 2/2)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador.
 

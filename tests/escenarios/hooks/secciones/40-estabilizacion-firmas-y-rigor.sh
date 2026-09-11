@@ -4,7 +4,10 @@ PISO_AUTONOMO_SECCION=53  # 4 preámbulo + 0 maquinaria compartida duplicada + 4
 
 seccion_nueva "Estabilizacion: rigor y firma por lector comun:"
 mkreq_r "REQ-940" "no" "aprobado" "pendiente" "critico (por suelo)"
-check "D16: matiz no rebaja critico" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-940.md" 'Estado: pendiente' 'Estado: completado')"
+# El nombre lleva CERRADO a proposito: decia "matiz no rebaja critico" a secas, y
+# eso es la promesa absoluta que SEC-087 falsa. El caso ejerce `critico (por suelo)`
+# --cerrado--, asi que el nombre ahora dice exactamente lo que el caso prueba.
+check "D16: matiz CERRADO no rebaja critico" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-940.md" 'Estado: pendiente' 'Estado: completado')"
 # QA-P48-01. ESTE CASO DECIA `allow` Y ERA EL FAIL-OPEN, no su prueba.
 # v1.33.1 enruto la forma con parentesis por el lector comun para TODOS los
 # valores; en `ligero` eso REGALO la exencion de QA --el unico nivel exento
@@ -17,7 +20,28 @@ check "QA-P48-01: matiz no regala la exencion de QA" deny guard-completado.sh "$
 mkreq_r "REQ-942" "no" "aprobado" "pendiente" "inventado"
 check "D16: desconocido conserva derivacion heredada" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-942.md" 'Estado: pendiente' 'Estado: completado')"
 
-# --- QA-P48-01: el matiz SUBE o MANTIENE el rigor; nunca lo baja --------------
+# --- QA-P48-01: un matiz BIEN FORMADO sube o mantiene el rigor; nunca lo baja --
+# EL ALCANCE ES LA MITAD DE LA PROPIEDAD, y omitirlo la vuelve FALSA. Esta linea
+# decia "el matiz SUBE o MANTIENE el rigor; nunca lo baja", sin condicion, y
+# SEC-087 (clase `contrato`) demostro el contraejemplo: `arnes_veredicto`
+# desenvuelve SOLO si el valor termina en `)`, asi que un parentesis sin cerrar
+# --`critico (por suelo`, `critico (`, `critico (x) y`-- NO es un matiz: es un
+# valor desconocido, cae en la derivacion heredada, y ahi un `critico` de un REQ
+# NO sensible se juzga `estandar` y deja de exigir la firma de seguridad, en
+# silencio.
+#
+# Y la frontera se nombra entera, porque medida es mas estrecha de lo que parece:
+# ese es el UNICO caso que esa forma puede perder. En `ligero` y en `estandar` la
+# derivacion heredada da lo mismo que el matiz cerrado, y en un REQ sensible el
+# suelo de `critico` lo impide. Comprobado tambien en la direccion contraria:
+# ninguna forma que contenga `(` alcanza `ligero` --el nivel exento de QA--, asi
+# que un matiz no puede regalar esa exencion por ninguna via.
+#
+# La via es PREEXISTENTE e identica en 1.33.0, 1.33.1 y 1.33.2, y NO se cierra
+# aqui: es otra reparacion con su propio REQ, y tocar `hooks/` invalidaria la
+# evidencia de QA. Los casos de abajo ejercen el matiz CERRADO, que es el alcance
+# de la guarda.
+# ---
 # Se mide la CONDUCTA DE LA PUERTA (cierra / no cierra), no lo que devuelve el
 # lector: la exencion de QA es un efecto de la puerta, y un lector correcto con
 # una puerta que no lo consulta no protege a nadie.
