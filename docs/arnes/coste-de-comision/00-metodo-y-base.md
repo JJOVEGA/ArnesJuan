@@ -98,6 +98,10 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 17 | `QA-024-33` — corregir la frontera de `CA-13` · `analista-requerimientos` (2.ª entrega del write-back) | 2026-09-11 15:06 | 2026-09-11 15:13:21 | **7 min 21 s** | **siete** sedes (QA señaló tres); frontera enunciada sobre la **clasificación del lector**; las reglas de la sección heredada pasan de cuatro a **cinco** | `8059e00` | **116 083** | ídem |
 
+| 18 | `QA-024-33` — verificación de la frontera · `qa-tester` (**vuelta 2** del bucle `analista↔QA`) | 2026-09-11 15:15 | 2026-09-11 15:30:00 | **14 min 58 s** | **`QA-024-33` CIERRA**; nace **`QA-024-34`** (`contrato`): se corrigió la **pertenencia** a la clase y nadie miró **qué se afirma de la clase** | `f18dd45` | **175 488** | ídem |
+
+| 18 | `QA-024-33` — verificación de la frontera · `qa-tester` (**vuelta 2** del bucle `analista↔QA`) | 2026-09-11 15:15 | 2026-09-11 15:30:00 | **14 min 58 s** | **`QA-024-33` CIERRA**; nace **`QA-024-34`** (`contrato`): se corrigió la **pertenencia** a la clase y nadie miró **qué se afirma de la clase** | `f18dd45` | **175 488** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la

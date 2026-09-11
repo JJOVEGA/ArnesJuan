@@ -1,0 +1,38 @@
+########## ACTO DE FIRMAR — el aviso ##########
+FIRMAR  control Seguridad: (limpia, vocab ok)    aviso=no  deny=SI  :: 
+FIRMAR  seguridad: minuscula (desfase)           aviso=SI  deny=no  :: ARNES: 'requirements/REQ-950.md': la linea 'seguridad:' NO se lee como el campo 'Seguridad:' —la clave se co
+FIRMAR  Segurídad: NFC (desfase)                aviso=SI  deny=no  :: ARNES: 'requirements/REQ-950.md': la linea 'Segurídad:' NO se lee como el campo 'Seguridad:' —la clave se c
+FIRMAR  Segurídad: NFD (desfase)                aviso=SI  deny=no  :: ARNES: 'requirements/REQ-950.md': la linea 'Segurídad:' NO se lee como el campo 'Seguridad:' —la clave se 
+FIRMAR  Séguridad: NFC (desfase)                aviso=SI  deny=no  :: ARNES: 'requirements/REQ-950.md': la linea 'Séguridad:' NO se lee como el campo 'Seguridad:' —la clave se c
+FIRMAR  QÁ: NFC (desfase)                       aviso=SI  deny=no  :: ARNES: 'requirements/REQ-950.md': la linea 'QÁ:' NO se lee como el campo 'QA:' —la clave se compara tal com
+FIRMAR  QÁ: NFD (desfase)                       aviso=SI  deny=no  :: ARNES: 'requirements/REQ-950.md': la linea 'QÁ:' NO se lee como el campo 'QA:' —la clave se compara tal co
+FIRMAR  _Segurídad_: acento+marcado             aviso=SI  deny=no  :: ARNES: 'requirements/REQ-950.md': la linea 'Segurídad:' NO se lee como el campo 'Seguridad:' —la clave se c
+FIRMAR  Ѕeguridad: homoglifo U+0405 (clase no)  aviso=no  deny=no  :: 
+FIRMAR  Segurida: truncada (clase no)            aviso=no  deny=no  :: 
+FIRMAR  Seguridad+ZWSP (clase no)                aviso=no  deny=no  :: 
+FIRMAR  BOM+Seguridad (clase no)                 aviso=no  deny=no  :: 
+FIRMAR  Segur idad (blanco de mas)               aviso=SI  deny=no  :: ARNES: 'requirements/REQ-950.md': la linea 'Segur idad:' NO se lee como el campo 'Seguridad:' —la clave se c
+FIRMAR  QĀ: macron NFC (clase no)               aviso=no  deny=no  :: 
+
+########## ACTO DE CIERRE — que resuelve sobre la clase 'no' ##########
+CIERRE  control: Seguridad: aprobado             rigor=critico  allow :: 
+CIERRE  Ѕeguridad homoglifo                     rigor=critico  DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'ausente' (se requiere 'Segurida
+CIERRE  Segurida: truncada                       rigor=critico  DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'ausente' (se requiere 'Segurida
+CIERRE  Seguridad+ZWSP                           rigor=critico  DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puer
+CIERRE  BOM+Seguridad                            rigor=critico  DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puer
+CIERRE  Segur idad (blanco de mas)               rigor=critico  DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puer
+CIERRE  QĀ macron (clase no)                    rigor=critico  DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'ausente' (se requiere 'Segurida
+--- los mismos con Rigor: ligero (donde 'por ausencia' y 'no medible' se separan) ---
+CIERRE  ligero: Ѕeguridad homoglifo             rigor=ligero   allow :: 
+CIERRE  ligero: Segurida truncada                rigor=ligero   allow :: 
+CIERRE  ligero: Seguridad+ZWSP                   rigor=ligero   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puer
+CIERRE  ligero: BOM+Seguridad                    rigor=ligero   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puer
+CIERRE  ligero: Segur idad blanco                rigor=ligero   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puer
+CIERRE  ligero: Segurídad NFC (desfase)         rigor=ligero   allow :: 
+
+########## CONTROL: ¿se mueve alguna decision? (clave LIMPIA, mismos rigores) ##########
+CIERRE  CONTROL limpia, Seguridad AUSENTE        rigor=ligero   allow :: 
+CIERRE  CONTROL limpia, Seguridad AUSENTE        rigor=critico  DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'ausente' (se requiere 'Segurida
+CIERRE  CONTROL limpia, Seguridad: aprobado      rigor=ligero   allow :: 
+CIERRE  estandar: Ѕeguridad homoglifo           rigor=estandar allow :: 
+CIERRE  estandar: Seguridad+ZWSP                 rigor=estandar DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puer

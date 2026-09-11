@@ -50,6 +50,50 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-11 · `QA-024-33` cierra y nace `QA-024-34`: se corrigió la PERTENENCIA a la clase, no lo que se AFIRMA de ella
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester, coordinadora.
+
+**Vuelta 2 del bucle `analista↔QA`** sobre este write-back. **El contador `dev↔QA` sigue en 5 y no se
+mueve**: `git diff a05994f f18dd45 -- hooks tests` sale **vacío**. QA declaró **las dos mitades a
+propósito**, porque quedarse con la cómoda sería el renombre que §6 prohíbe.
+
+### La frontera quedó verdadera, verificada **ejerciendo**
+
+Dos instrumentos y no lectura: **41 formas** contra `arnes_declara_clave` y **26 celdas** contra
+`guard-completado.sh` **real** en los dos actos. `desfase` ⟺ aviso **8/8**; clase `no` ⟺ silencio
+**5/5**; la glosa aguanta **41/41**. El par que más se buscaba sale en lados opuestos y el criterio los
+coloca bien **sin nombrarlos**: `Següridad:` (diéresis) **avisa**, `Seguriñad:` —la `ñ` **no** se
+pliega— **no**.
+
+### `QA-024-34` — el defecto nuevo
+
+**Se corrigió la pertenencia a la clase y nadie miró qué se afirma de la clase** —QA incluido, y por eso
+abre uno nuevo en vez de reabrir—. «Pasa sin aviso» es verdad; **«y el cierre la resuelve por ausencia,
+que es fail-closed» es falso por sus dos extremos**, medido con el hook real:
+
+- **`fail-closed` promete de más:** el homóglifo y la letra omitida **CIERRAN** el REQ en `estandar` y
+  en `ligero`. Y **`CA-01` de este mismo REQ** ya declara medidamente falso eso mismo —*«"No abre" NO es
+  "deja de cerrar"»*—: **dos criterios del mismo REQ dicen cosas opuestas sobre el mismo hecho.**
+- **«por ausencia» es falso** para el otro subconjunto: `ZWSP`, `BOM` y el espacio partido son clase `no`
+  y **no los resuelve la ausencia** — los coge la guarda de medibilidad y **deniega citando la línea**.
+  Y en `ligero` las dos ramas **deciden al revés**.
+
+**El código está bien y no se toca**, con control en la misma corrida. Arreglo **de texto**, tres sedes,
+una de ellas **heredada**.
+
+### `SEC-084`
+
+Su mitad de texto sigue **ausente** y **sigue sin ser transcribible**. **El motivo cambia y el veredicto
+no**: ya no es la frase de la «letra», ahora la de la «ausencia».
+
+### Una mejora aplicada a la corrección del `CHANGELOG`
+
+QA validó la forma —anotar sin reescribir, atribuirse la afirmación, citar el mecanismo con ruta y
+línea— y señaló una mejora: el analista pone su marcador **antes** del texto anulado y la coordinadora
+lo puso **después**, así que quien lee de arriba abajo encontraba la frase falsa **antes** que su
+corrección. **Movido delante.** Y una observación suya que vale conservar: **tres correcciones el mismo
+día con la misma forma son una convención, no una improvisación.**
+
 ## [Interno] — 2026-09-11 · `CA-13` nació con una frontera falsa: el plegado SÍ repone letras acentuadas
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester, coordinadora.
 
@@ -122,13 +166,6 @@ contrato**; borde negativo con **cero** falsos positivos; el coste (procesos, no
 anti-vacuidad con control positivo y **fail-before** contra la heredada. Las cifras de QA van como
 **evidencia fechada, nunca como umbral**.
 
-**La frontera, comprobada antes de escribirla y no dejada implícita:** «toda forma que el lector acepte
-avisa» sería **falsa** —las que acepta **son** el campo y no avisan—, y «toda forma que una persona lea
-como el campo avisa» también. La propiedad se enuncia sobre la clasificación `desfase` **del propio
-lector**, que repone el plegado **pero no repone letras**, así que **excluye la frontera por
-construcción** — y aun así va escrita dentro del criterio, con el homóglifo `U+0405` y la letra omitida
-como ejemplos, diciendo que **un caso que la diera por conforme incumpliría**.
-
 > **[CORRECCIÓN, 2026-09-11 — esta entrada afirmó como hecho algo FALSO, y no se reescribe.]** El
 > párrafo anterior relata la afirmación del analista **sin marcarla como relato**, así que se lee como
 > aserción de la coordinadora: es mía y la corrijo aquí. **El plegado SÍ repone letras acentuadas**
@@ -137,6 +174,13 @@ como ejemplos, diciendo que **un caso que la diera por conforme incumpliría**.
 > hallazgo, más arriba en este mismo archivo, lleva la medición. **Se anota y no se borra**, por lo
 > mismo que el analista conservó su fila desmentida: una bitácora corregida en silencio deja de servir
 > para saber qué se creyó y cuándo.
+
+**La frontera, comprobada antes de escribirla y no dejada implícita:** «toda forma que el lector acepte
+avisa» sería **falsa** —las que acepta **son** el campo y no avisan—, y «toda forma que una persona lea
+como el campo avisa» también. La propiedad se enuncia sobre la clasificación `desfase` **del propio
+lector**, que repone el plegado **pero no repone letras**, así que **excluye la frontera por
+construcción** — y aun así va escrita dentro del criterio, con el homóglifo `U+0405` y la letra omitida
+como ejemplos, diciendo que **un caso que la diera por conforme incumpliría**.
 
 `:815` queda cierta, con su acto dentro y la medición que la sostiene.
 

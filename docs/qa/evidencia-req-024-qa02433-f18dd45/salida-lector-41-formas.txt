@@ -1,0 +1,44 @@
+=== CONTROLES ===
+Seguridad: (limpia)                        | lee     | plegado->clave:SI  |  53 65 67 75 72 69 64 61 64
+_Seguridad_: (marcado)                     | lee     | plegado->clave:SI  |  5f 53 65 67 75 72 69 64 61 64 5f
+seguridad: (minuscula)                     | desfase | plegado->clave:SI  |  73 65 67 75 72 69 64 61 64
+QA: (limpia)                               | lee     | plegado->clave:SI  |  51 41
+
+=== LOS CINCO EJEMPLOS QUE EL CRITERIO DECLARA ===
+S(U+0405)eguridad: homoglifo               | no      | plegado->clave:no  |  d0 85 65 67 75 72 69 64 61 64
+Segurida: truncada                         | no      | plegado->clave:no  |  53 65 67 75 72 69 64 61
+Segurídad: NFC (i->U+00ED)                | desfase | plegado->clave:SI  |  53 65 67 75 72 c3 ad 64 61 64
+Segurídad: NFD (i+U+0301)                 | desfase | plegado->clave:SI  |  53 65 67 75 72 69 cc 81 64 61 64
+Séguridad: NFC                            | desfase | plegado->clave:SI  |  53 c3 a9 67 75 72 69 64 61 64
+Séguridad: NFD                            | desfase | plegado->clave:SI  |  53 65 cc 81 67 75 72 69 64 61 64
+QÁ: NFC                                   | desfase | plegado->clave:SI  |  51 c3 81
+QÁ: NFD                                   | desfase | plegado->clave:SI  |  51 41 cc 81
+
+=== LAS QUE BUSCO YO ===
+Segúridad: (u->u acento)                  | desfase | plegado->clave:SI  |  53 65 67 c3 ba 72 69 64 61 64
+SegurIdad: (caja interior)                 | desfase | plegado->clave:SI  |  53 65 67 75 72 49 64 61 64
+SEGURÍDAD: mayusc acentuada               | desfase | plegado->clave:SI  |  53 45 47 55 52 c3 8d 44 41 44
+Següridad: dieresis NFC                   | desfase | plegado->clave:SI  |  53 65 67 c3 bc 72 69 64 61 64
+Següridad: dieresis NFD                   | desfase | plegado->clave:SI  |  53 65 67 75 cc 88 72 69 64 61 64
+Seguriñad: (d->n con tilde)               | no      | plegado->clave:no  |  53 65 67 75 72 69 c3 b1 61 64
+Seguridañ: (d final->n tilde)             | no      | plegado->clave:no  |  53 65 67 75 72 69 64 61 6e cc 83
+_Segurídad_: acento+marcado               | desfase | plegado->clave:SI  |  5f 53 65 67 75 72 c3 ad 64 61 64 5f
+**Segurídad**: acento+negrita             | desfase | plegado->clave:SI  |  2a 2a 53 65 67 75 72 c3 ad 64 61 64 2a 2a
+ Segurídad : acento+blancos               | desfase | plegado->clave:SI  |  20 53 65 67 75 72 c3 ad 64 61 64 20
+Segurîdad: circunflejo NFC                | desfase | plegado->clave:SI  |  53 65 67 75 72 c3 ae 64 61 64
+Segurĩdad: tilde sobre i NFD              | desfase | plegado->clave:SI  |  53 65 67 75 72 69 cc 83 64 61 64
+Segurīdad: macron U+0304 NFD              | no      | plegado->clave:no  |  53 65 67 75 72 69 cc 84 64 61 64
+Seguridad con U+0307 NFD                   | no      | plegado->clave:no  |  53 65 67 75 72 69 cc 87 64 61 64
+Segurıdad: i sin punto U+0131             | no      | plegado->clave:no  |  53 65 67 75 72 c4 b1 64 61 64
+S(U+0435 cirilica e)guridad                | no      | plegado->clave:no  |  53 d0 b5 67 75 72 69 64 61 64
+Seguridadd: letra de mas                   | no      | plegado->clave:no  |  53 65 67 75 72 69 64 61 64 64
+Seguridad + ZWSP dentro                    | no      | plegado->clave:no  |  53 65 67 75 72 69 e2 80 8b 64 61 64
+Seguridad + BOM delante                    | no      | plegado->clave:no  |  ef bb bf 53 65 67 75 72 69 64 61 64
+Seguridad + blanco de mas                  | desfase | plegado->clave:SI  |  53 65 67 75 72 20 69 64 61 64
+QÁ con marcado _QÁ_                      | desfase | plegado->clave:SI  |  5f 51 c3 81 5f
+Qá: (minuscula+acento)                    | desfase | plegado->clave:SI  |  71 c3 a1
+QÀ: grave NFC                             | desfase | plegado->clave:SI  |  51 c3 80
+QÄ: dieresis NFC                          | desfase | plegado->clave:SI  |  51 c3 84
+QÅ: anillo (NO plegado)                   | no      | plegado->clave:no  |  51 c3 85
+QĀ: macron NFC U+0100                     | no      | plegado->clave:no  |  51 c4 80
+QA + U+030A anillo NFD                     | no      | plegado->clave:no  |  51 41 cc 8a
