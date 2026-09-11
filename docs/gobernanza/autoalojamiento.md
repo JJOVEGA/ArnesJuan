@@ -143,6 +143,86 @@ proyectos.
 vacío). Es una palanca pequeña; las grandes son el tope de criterios por REQ y que un defecto de forma
 deje de costar una vuelta.
 
+## Enmienda: autoalojamiento aligerado (decisión expresa del propietario, 2026-09-10, aplicación INMEDIATA)
+
+**Alcance: sólo cómo desarrollamos ArnesJuan.** No cambia las protecciones ni los valores por defecto
+que reciben los proyectos nuevos o existentes. **Sustituye** la instrucción anterior de esperar a la
+ventana siguiente, y se aplica también a las tareas pendientes del trabajo en curso.
+
+**Objetivo declarado:** reducir análisis repetidos, comisiones innecesarias y revisiones demasiado
+amplias, **manteniendo las protecciones del producto**.
+
+### La vía se elige por el EFECTO del cambio, no por la extensión del archivo
+
+| Naturaleza del cambio | Vía |
+|---|---|
+| Documentación informativa, índices y erratas **sin cambio de obligaciones** | **la coordinadora**, con las comprobaciones pertinentes |
+| Reparación con **causa, alcance y contrato claros** | desarrollador → QA. **Sin comisión de analista** |
+| Cambio que afecta **hooks, protecciones, firmas, permisos, instalación, migración o publicación** | desarrollador → QA → **seguridad**. El analista interviene **sólo** si hay una decisión de diseño o contrato **pendiente** |
+| **Capacidad nueva** o **cambio de contrato** | analista → desarrollador → QA → seguridad |
+
+Y la regla que impide que esta tabla se convierta en una salida: **clasificar por el efecto**. *«Una
+regla de autorización en Markdown es gobernanza sensible; una prueba que decide si una protección
+funciona tampoco es una simple edición documental.»*
+
+**Lo que esta tabla NO cambia, y va escrito porque su ausencia sería la ambigüedad peligrosa:** el
+**write-back** del §9 de `AGENTS.md` **sigue siendo obligatorio**. *«Un hallazgo resuelto solo en el
+código o en un log es deriva»*, y sigue siéndolo. Lo que la enmienda cambia es **quién puede
+transcribirlo** —el desarrollador, cuando no hay decisión de diseño ni de contrato pendiente—, no
+**si** hay que hacerlo. Un hallazgo sigue sin cerrarse hasta que el requerimiento lo refleje, y QA y
+seguridad siguen sin firmar `aprobado` antes de que exista.
+
+La coordinadora **clasifica** aplicando estas reglas y **registra una justificación breve**. No se
+abre una comisión sólo para clasificar. Se escala **únicamente** una ambigüedad concreta que pueda
+**reducir una protección**.
+
+### Revisión proporcional
+
+Cada encargo indica, brevemente: **objetivo · archivos que puede modificar · evidencia disponible ·
+condición de entrega**. Se revisa el cambio y sus dependencias relevantes; **no** se relee ni se
+audita todo el historial por rutina, y la revisión se amplía **sólo** ante un riesgo o una dependencia
+concreta. Durante el desarrollo, pruebas **enfocadas**. El **banco completo** va sobre el **candidato
+final** y tras cambios que invaliden esa evidencia — **no** por una errata informativa. Los controles
+obligatorios de integración y publicación **se mantienen todos**.
+
+Se puede **reutilizar evidencia** cuando se demuestre que el cambio posterior no afecta lo
+acreditado, y esa comprobación **se registra**. Y no se da por acreditado un árbol porque otro pasara.
+
+### Alcance y vueltas
+
+**Un defecto, una reparación.** Un hallazgo nuevo que implique un **fallo en abierto para
+consumidores** se atiende con alcance explícito. Las mejoras de eficiencia, documentación e
+instrumentos **se registran para otra ventana**, salvo que impidan validar el cambio en curso. No se
+convierte cada observación en un REQ nuevo, y no se añaden mejoras a un parche porque estén cerca del
+código que se toca.
+
+**Presupuesto de dos vueltas ordinarias dev↔QA** para trabajo **nuevo**. Si no alcanzan, se presenta
+**la causa y la reparación restante** antes de otra vuelta. El trabajo **en curso conserva su
+contador y las extensiones ya autorizadas**. **Agotar vueltas nunca equivale a aprobar.**
+
+### Los cinco límites, que son la mitad de esta enmienda
+
+Para implementar este piloto **no** se modifican:
+
+1. **Plantillas heredables** ni **agentes distribuidos**.
+2. **Hooks** ni **controles mecánicos**.
+3. El **comportamiento de instalación y actualización**.
+4. El **rigor** ni la **sensibilidad** de un REQ **para evitar una puerta**.
+
+Y el quinto, que es el que da carácter a los otros cuatro: **si un control mecánico impide una
+simplificación, se conserva el control y se presenta la incompatibilidad concreta. No se desactiva.**
+
+Esta enmienda **no** cierra ni reclasifica hallazgos, **no** cambia criterios de aceptación y **no**
+amplía permisos de publicación.
+
+### Cómo se comprobará si de verdad ahorra
+
+Al cerrar la ventana en curso, y **con los registros que ya existen** —sin construir ninguna
+herramienta nueva para medirlo—: tiempo, tokens si los hay, **comisiones evitadas**, **vueltas**, y
+**defectos detectados después de aprobar**, distinguiendo **dato medido** de **estimación**.
+
+---
+
 ## Aprobación humana delegada (propietario, 2026-09-05) — con la frontera escrita el 2026-09-08
 
 El propietario autorizó de forma **permanente** que, cuando **todo** esté en verde, la coordinadora

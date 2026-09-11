@@ -2,6 +2,48 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · Enmienda de política: autoalojamiento aligerado, por decisión expresa del propietario y con aplicación inmediata
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **Condición 7 de la autorización del propietario del 2026-09-10.**
+
+**Sede única, y una sola referencia.** La enmienda vive en
+`docs/gobernanza/autoalojamiento.md` § «Enmienda: autoalojamiento aligerado», con una referencia de
+seis líneas desde `AGENTS.md` §6. **Dos archivos y ninguno más** — el propietario prohibió duplicar la
+política, y comprobado: cero copias en `templates/`, `agents/` y `.arnes/`.
+
+**No se abrió un ciclo de cuatro agentes para transcribirla**, por su instrucción expresa: la
+autorización ya resuelve la decisión de política.
+
+**Qué cambia.** La vía de cada cambio se elige por su **efecto**, no por la extensión del archivo:
+informativo → coordinadora; reparación con causa y contrato claros → dev → QA **sin analista**;
+protecciones, firmas, permisos, instalación, migración o publicación → dev → QA → seguridad;
+capacidad nueva o cambio de contrato → los cuatro. Más revisión proporcional, banco completo sobre el
+**candidato final**, reutilización de evidencia con su comprobación registrada, **un defecto una
+reparación**, y presupuesto de **dos vueltas** para trabajo nuevo — conservando contador y extensiones
+del trabajo en curso.
+
+**Y la mitad que son límites**, porque sin ellos esto sería una salida: para el piloto **no** se
+modifican plantillas heredables, agentes distribuidos, hooks ni controles mecánicos, el
+comportamiento de instalación y actualización, ni el rigor o la sensibilidad de un REQ **para evitar
+una puerta**. Y el quinto, que da carácter a los otros cuatro: **si un control mecánico impide una
+simplificación, se conserva el control y se presenta la incompatibilidad. No se desactiva.**
+
+### Una ambigüedad encontrada al comprobar la redacción, y cerrada sin cambiar la política
+
+El propietario pidió comprobar que el texto **no contradiga sus propios límites**. Lo hace en un
+punto: `AGENTS.md` §9 asigna el **write-back** al `analista-requerimientos`, y la fila «reparación sin
+comisión de analista» se podía leer como «no hace falta write-back». **Escrito explícitamente que no:**
+el write-back sigue siendo obligatorio —*«un hallazgo resuelto solo en el código o en un log es
+deriva»*—, y lo que cambia es **quién puede transcribirlo** cuando no hay decisión pendiente, no
+**si** hay que hacerlo. QA y seguridad siguen sin firmar antes de que exista.
+
+Es precisamente el tipo de ambigüedad que el propietario mandó escalar «*sólo si puede reducir una
+protección*»: ésta podía, y se cierra precisando el texto en vez de consultando, porque no cambia la
+decisión — la describe con más exactitud.
+
+**Aplicación ya visible:** el segundo tramo del parche `v1.33.2` (`a8e332a`) escribió el contrato
+heredado **sin comisión de analista**, porque la decisión de fondo la había tomado el propietario y
+sólo faltaba transcribir conducta decidida. Es la primera comisión evitada bajo esta enmienda.
+
 ## [Interno] — 2026-09-10 · `D16` y `D17` dejan de describir una conducta que ya no existe, y el fail-open nuevo se registra APARTE
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **Condición 5 de la autorización del propietario del 2026-09-10.**
 
