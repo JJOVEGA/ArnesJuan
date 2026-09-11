@@ -1,0 +1,161 @@
+Autoprueba del corredor (/home/juan/dev/ArnesJuan-1.33.2/tests/escenarios/hooks/run.sh):
+  PASS  CA-02 el descubrimiento sale 0 y dice algo
+  PASS  CA-02 dos corridas descubren exactamente lo mismo
+  PASS  CA-02 el orden es el lexicográfico por nombre de archivo (LC_ALL=C)
+  PASS  CA-02 descubre los mismos archivos que hay en secciones/
+  PASS  CA-21 el descubrimiento no arranca find, ls ni sort
+  PASS  CA-21 control: la sonda SÍ registra cuando se llama a ls y a sort
+  PASS  CA-03 una sección nueva corre sin editar run.sh (la primera)
+  PASS  CA-03 una sección nueva corre sin editar run.sh (la segunda)
+  PASS  CA-03 y la vuelta sale 0
+  PASS  CA-03 una sección retirada desaparece de la vuelta
+  PASS  CA-03 el corredor no cambió ni un byte en todo esto
+  PASS  CA-07 sin CASOS_ESPERADOS_SECCION el corredor ABORTA
+  PASS  CA-07 el ABORT nombra el archivo que no lo declara
+  PASS  CA-07 y la vuelta sale distinta de 0
+  PASS  CA-08 el ABORT nombra el archivo descuadrado
+  PASS  CA-08 y dice la diferencia (declarados vs ejecutados)
+  PASS  CA-08 y NO acusa al archivo que sí cuadra
+  PASS  CA-08 y la vuelta sale distinta de 0
+  PASS  CA-10 el ABORT nombra el archivo cuyo subshell murió
+  PASS  CA-10 y dice su código de salida
+  PASS  CA-10 y lo distingue de una sección de cero casos
+  PASS  CA-10 y la corrida entera sale distinta de 0
+  PASS  CA-10 la sección viva sigue habiendo corrido
+  PASS  CA-04 el ayudante de otra sección no existe (el caso no se ejecuta)
+  PASS  CA-04 y el corredor lo reporta como fallo ruidoso, nombrando el archivo
+  PASS  CA-04 y la vuelta sale distinta de 0
+  PASS  H-01 el README no nombra ningún ayudante que el corredor ya no defina
+  PASS  H-01 y ninguna línea del README reenumera el conjunto (el sitio único es el corredor)
+  PASS  H-01 en el corredor, todo ayudante que dicta PASS/FAIL lleva su guarda de vacío
+  PASS  CA-04 los ayudantes compartidos del corredor SÍ se ven desde una sección
+  PASS  CA-04 y la sección que sólo usa los compartidos sale 0
+  PASS  CA-06 un ayudante de sección que juzga un hook sin guarda ABORTA
+  PASS  CA-06 el ABORT nombra el archivo y la función
+  PASS  CA-06 partir el ayudante en dos (ejecuta una, juzga otra) NO evade el control
+  PASS  CA-06 el ABORT nombra la función que dicta el veredicto, no la que ejecuta
+  PASS  CA-06 y el caso sin guarda no llegó a salir en verde
+  PASS  CA-06 y la vuelta sale distinta de 0
+  PASS  CA-06 control: la guarda en el eslabón que ejecuta basta (ni ABORT ni rojo)
+  PASS  CA-06 control: con la guarda puesta, ni ABORT ni ruido
+  PASS  H-11 una guarda equivalente con OTRO nombre de variable no aborta (ni falso positivo)
+  PASS  H-11 y no acusa a ninguna función de romper la invariante 1
+  PASS  H-11 el filtro de nombre de caso NO cuenta como guarda: sigue abortando
+  PASS  H-10 tras un diag sin salto final, el caso siguiente sigue empezando línea
+  PASS  H-10 y el cuadre por archivo no acusa en falso a CASOS_ESPERADOS_SECCION
+  PASS  H-10 el diagnóstico sigue saliendo, con su prefijo
+  PASS  CA-17 con un selector corre sólo esa sección
+  PASS  CA-17 y no corre las demás
+  PASS  CA-17 el cuadre TOTAL queda suspendido, y lo dice
+  PASS  CA-17 y no aborta en falso
+  PASS  CA-17 en parcial, el cuadre DE LA SECCIÓN se sigue exigiendo
+  PASS  CA-17 y por eso sale distinta de 0
+  PASS  CA-17 un selector que no casa con nada ABORTA (no degrada a filtro)
+  PASS  CA-17 y sale distinta de 0
+  PASS  H-04 un archivo de secciones/ sin extensión .sh ABORTA en vez de ignorarse
+  PASS  H-04 y el ABORT lo nombra
+  PASS  H-04 y la vuelta sale distinta de 0
+  PASS  H-04 un archivo .sh que no casa NN- tampoco se ignora
+  PASS  H-05 un directorio con nombre de sección ABORTA y lo nombra
+  PASS  H-05 y no muere con 'unbound variable'
+  PASS  H-05 y la vuelta sale distinta de 0
+  PASS  CA-09 sin hooks el canario aborta la corrida entera
+  PASS  CA-09 y no llegó a ejecutarse ninguna sección
+  PASS  CA-09 y sale distinta de 0
+  PASS  CA-01 run.sh no contiene ninguna definición seccion_NN()
+  PASS  CA-01 existe secciones/ con un archivo por sección
+  PASS  CA-01 todos los archivos de secciones/ se llaman NN-<slug>.sh
+  PASS  CA-11 bash -n pasa en todos los archivos de sección
+  PASS  CA-07 todos declaran su CASOS_ESPERADOS_SECCION
+  PASS  CA-19 ningún archivo de sección hace source de otro
+  PASS  CA-27 los archivos de sección no llevan bit de ejecución (se hacen source)
+  PASS  CA-27 run.sh sí conserva su bit de ejecución
+  PASS  CA-18 (a) todos los archivos de sección declaran su PISO_AUTONOMO_SECCION
+  PASS  CA-18 (b) la derivación de cada piso es legible (tres términos o más)
+  PASS  CA-18 (b) y sus términos SUMAN el valor declarado
+  PASS  CA-18 (c) el piso declarado cabe en el archivo
+  PASS  CA-18 publica una fila por archivo de sección descubierto
+  PASS  CA-18 ningún archivo excede max(N, piso × k) — con N=400 y k=1,25
+       --- CA-18 · techo derivado por archivo (se publica, no se compara) ---
+       01-guard-codigo-quien-edita.sh                           lineas=  13 piso=  12 techo= 400 (gobierna N       ) duplicadas=   4
+       02-guard-completado-transicion.sh                        lineas=  11 piso=  10 techo= 400 (gobierna N       ) duplicadas=   4
+       03-veredictos-anti-deriva.sh                             lineas=  27 piso=  16 techo= 400 (gobierna N       ) duplicadas=   6
+       04-windows-formas-del-manifiesto.sh                      lineas=  35 piso=  21 techo= 400 (gobierna N       ) duplicadas=   7
+       05-identidad-del-agente.sh                               lineas=  30 piso=  17 techo= 400 (gobierna N       ) duplicadas=   4
+       06-bash-escrituras-evidentes.sh                          lineas=  45 piso=  44 techo= 400 (gobierna N       ) duplicadas=   4
+       07-bash-falsos-positivos.sh                              lineas= 200 piso=  74 techo= 400 (gobierna N       ) duplicadas=   6
+       08-clase-del-hallazgo.sh                                 lineas=  27 piso=  23 techo= 400 (gobierna N       ) duplicadas=   4
+       09-cierre-de-req-por-bash.sh                             lineas=  38 piso=  24 techo= 400 (gobierna N       ) duplicadas=   4
+       10-plantilla-pending-approval.sh                         lineas=  27 piso=  22 techo= 400 (gobierna N       ) duplicadas=   7
+       11-nivel-de-rigor.sh                                     lineas=  33 piso=  28 techo= 400 (gobierna N       ) duplicadas=   4
+       12-rigor-ligero.sh                                       lineas=  30 piso=  29 techo= 400 (gobierna N       ) duplicadas=   7
+       13-orden-del-ciclo.sh                                    lineas=  53 piso=  40 techo= 400 (gobierna N       ) duplicadas=   5
+       14-campos-solo-en-la-cabecera.sh                         lineas= 168 piso= 167 techo= 400 (gobierna N       ) duplicadas=  10
+       15-formas-decoradas.sh                                   lineas=  65 piso=  64 techo= 400 (gobierna N       ) duplicadas=   3
+       16-guard-punto-de-entrada.sh                             lineas=  45 piso=  33 techo= 400 (gobierna N       ) duplicadas=   6
+       17-asterisco-de-nota-al-pie.sh                           lineas=  34 piso=  22 techo= 400 (gobierna N       ) duplicadas=   6
+       18-parentesis-es-evidencia.sh                            lineas=  38 piso=  32 techo= 400 (gobierna N       ) duplicadas=   4
+       19-cola-hasta-la-cabecera.sh                             lineas=  28 piso=  19 techo= 400 (gobierna N       ) duplicadas=   6
+       20-continuidad-automatica.sh                             lineas= 190 piso=  52 techo= 400 (gobierna N       ) duplicadas=  13
+       21-rotacion-de-artefactos.sh                             lineas= 178 piso=  65 techo= 400 (gobierna N       ) duplicadas=  15
+       22-hooks-json.sh                                         lineas=  56 piso=  38 techo= 400 (gobierna N       ) duplicadas=   8
+       23-inerte-sin-manifiesto.sh                              lineas=  14 piso=  13 techo= 400 (gobierna N       ) duplicadas=   4
+       24-arnes-lectura.sh                                      lineas=  37 piso=  36 techo= 400 (gobierna N       ) duplicadas=  11
+       25-presupuesto-de-analisis.sh                            lineas= 295 piso=  69 techo= 400 (gobierna N       ) duplicadas=  14
+       26-veredicto-fechado.sh                                  lineas= 155 piso=  61 techo= 400 (gobierna N       ) duplicadas=  12
+       27-vocabulario-de-veredictos.sh                          lineas=  77 piso=  35 techo= 400 (gobierna N       ) duplicadas=   9
+       28-rotacion-seccion-1-la-historia.sh                     lineas= 312 piso=  87 techo= 400 (gobierna N       ) duplicadas=  32
+       28-rotacion-seccion-2-el-estado.sh                       lineas= 373 piso=  86 techo= 400 (gobierna N       ) duplicadas=  42
+       29-guard-git-destructivo.sh                              lineas= 343 piso=  59 techo= 400 (gobierna N       ) duplicadas=   6
+       30-celdas-recortadas.sh                                  lineas= 100 piso=  99 techo= 400 (gobierna N       ) duplicadas=  13
+       31-cola-una-sola-regla.sh                                lineas= 176 piso=  49 techo= 400 (gobierna N       ) duplicadas=  16
+       32-huecos-auditoria-r001.sh                              lineas= 194 piso=  58 techo= 400 (gobierna N       ) duplicadas=  17
+       33-acento-y-clave-1-normalizacion.sh                     lineas= 333 piso= 174 techo= 400 (gobierna N       ) duplicadas=  84
+       33-acento-y-clave-2-manifiesto.sh                        lineas= 258 piso= 157 techo= 400 (gobierna N       ) duplicadas=  28
+       34-arnes-paralelo.sh                                     lineas= 332 piso=  85 techo= 400 (gobierna N       ) duplicadas=  91
+       35-arnes-paralelo-fail-open.sh                           lineas= 399 piso= 171 techo= 400 (gobierna N       ) duplicadas=  90
+       36-cabecera-comentario-html-1-la-puerta.sh               lineas= 358 piso= 138 techo= 400 (gobierna N       ) duplicadas= 160
+       36-cabecera-comentario-html-2-los-lectores.sh            lineas= 344 piso= 132 techo= 400 (gobierna N       ) duplicadas= 110
+       36-cabecera-comentario-html-3-comentar-retira.sh         lineas= 162 piso=  87 techo= 400 (gobierna N       ) duplicadas=  39
+       36-cabecera-comentario-html-4-el-informe-y-los-textos.sh lineas= 188 piso= 103 techo= 400 (gobierna N       ) duplicadas=  22
+       36-cabecera-comentario-html-5-el-cr-que-no-termina.sh    lineas= 332 piso= 117 techo= 400 (gobierna N       ) duplicadas= 102
+       37-coste-del-escaner-1-el-dominio.sh                     lineas= 577 piso= 470 techo= 588 (gobierna piso*k  ) duplicadas= 187
+       37-coste-del-escaner-2-las-razones.sh                    lineas= 282 piso= 192 techo= 400 (gobierna N       ) duplicadas= 148
+       37-coste-del-escaner-3-la-pared.sh                       lineas= 286 piso= 283 techo= 400 (gobierna N       ) duplicadas= 140
+       37-coste-del-escaner-4-la-ruta-critica.sh                lineas= 468 piso= 463 techo= 579 (gobierna piso*k  ) duplicadas= 157
+       37-coste-del-escaner-5-el-camino-normal.sh               lineas= 329 piso= 273 techo= 400 (gobierna N       ) duplicadas= 140
+       38-sondas-compartidas-1-el-registro.sh                   lineas= 198 piso=  65 techo= 400 (gobierna N       ) duplicadas=  43
+       38-sondas-compartidas-2-la-calibracion.sh                lineas= 327 piso=  98 techo= 400 (gobierna N       ) duplicadas=  77
+       38-sondas-compartidas-3-la-descendencia.sh               lineas= 351 piso= 103 techo= 400 (gobierna N       ) duplicadas= 115
+       40-estabilizacion-firmas-y-rigor.sh                      lineas= 102 piso=  59 techo= 400 (gobierna N       ) duplicadas=   3
+  PASS  CA-18 (iii) POSITIVO: la configuración verde existe (399 con techo N, 570 con techo 575)
+  PASS  CA-18 (iii) y el techo de piso 460 lo gobierna piso×k, no N
+  PASS  CA-18 (iii) mientras el de piso 100 lo sigue gobernando N=400
+  PASS  CA-18 (iii) NEGATIVO por N: nombra el archivo, su tamaño y su techo
+  PASS  CA-18 (iii) NEGATIVO por piso×k: nombra el archivo, su tamaño y su techo
+  PASS  CA-18 (a) NEGATIVO: el archivo que no declara su piso sale nombrado
+  PASS  CA-18 (b) NEGATIVO: la derivación que no suma sale nombrada CON los dos números
+  PASS  CA-18 (b) NEGATIVO: una derivación sin términos es ILEGIBLE, no se da por buena
+  PASS  CA-18 (c) NEGATIVO: un piso mayor que el archivo sale nombrado
+  PASS  CA-18 y el que sólo le falta la declaración no se acusa además de no sumar
+  PASS  CA-12 (d) POSITIVO: dos corridas intactas dan el inventario IDÉNTICO bajo el oráculo
+  PASS  CA-12 el inventario tiene una línea por CASO: lo que no es un caso no entra
+  PASS  CA-12 y sale en orden estable (LC_ALL=C)
+  PASS  CA-12 (c) el entero suelto del nombre se conserva (es la cota del caso, no su medida)
+  PASS  CA-12 (c) la entrada CITADA del caso se conserva (es lo que ejercita, no lo que midió)
+  PASS  CA-12 (c) la versión que el caso nombra se conserva
+  PASS  CA-12 (c) dos casos que sólo difieren en un entero del nombre siguen siendo dos
+  PASS  CA-12 (c) los tres veredictos se conservan
+  PASS  CA-12 (b) no queda ninguna magnitud sin normalizar (unidad pegada o tirada larga)
+  PASS  CA-12 (b) la unidad se conserva y la magnitud no: ms dentro del NOMBRE del caso
+  PASS  CA-12 (b) y lo mismo con µs, cocientes, PID y ternas sorteadas de la evidencia
+  PASS  CA-12 (d) NEGATIVO 1, caso SUPRIMIDO: la comparación falla
+  PASS  CA-12 (d) …y su salida NOMBRA la línea suprimida
+  PASS  CA-12 (d) NEGATIVO 2, caso RENOMBRADO: la comparación falla
+  PASS  CA-12 (d) …y su salida NOMBRA el identificador que cambió de texto (los dos)
+  PASS  CA-12 (d) NEGATIVO 3, VEREDICTO INVERTIDO: la comparación falla
+  PASS  CA-12 (d) …y su salida NOMBRA el caso que cambió de veredicto, con los dos
+  PASS  CA-12 (d) control: la inyección cambia UNA línea, no el inventario entero
+  PASS  H-06 la autoprueba declara su propio cuadre una sola vez
+-------------------------------------------
+Autoprueba: 106 PASS, 0 FAIL

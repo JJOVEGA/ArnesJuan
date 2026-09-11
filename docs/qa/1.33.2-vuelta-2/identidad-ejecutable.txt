@@ -1,0 +1,16 @@
+# Identidad del ejecutable entre a8e332a y 195ae31 — metodo y salida
+
+## (1) que archivos de hooks/ cambian
+hooks/lib.sh
+
+## (2) diff de lineas NO-comentario en hooks/lib.sh (vacio = sin diferencias)
+(vacio)
+
+## (3) md5 de los cuerpos de funcion segun bash (declare -f descarta comentarios)
+a8e332a    133505830a67ad49fc585da5a5e7fba4  -
+195ae31    133505830a67ad49fc585da5a5e7fba4  -
+
+## (4) lineas de cada volcado
+ 1485 docs/qa/1.33.2-vuelta-2/declare-f-195ae31.txt
+ 1485 docs/qa/1.33.2-vuelta-2/declare-f-a8e332a.txt
+ 2970 total

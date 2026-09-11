@@ -1,0 +1,42 @@
+FORMA_DE_RIGOR                               SENS  NIVEL_PUERTA TERNA
+<AUSENTE>                                    no    estandar   deny allow allow
+<AUSENTE>                                    sí   critico    deny deny allow
+ligero                                       no    ligero     allow allow allow
+ligero                                       sí   critico    deny deny allow
+estandar                                     no    estandar   deny allow allow
+estandar                                     sí   critico    deny deny allow
+critico                                      no    critico    deny deny allow
+critico                                      sí   critico    deny deny allow
+inventado                                    no    estandar   deny allow allow
+inventado                                    sí   critico    deny deny allow
+ligero (local)                               no    ligero     allow allow allow
+ligero (local)                               sí   critico    deny deny allow
+ligero(sin espacio)                          no    ligero     allow allow allow
+ligero(sin espacio)                          sí   critico    deny deny allow
+ligero ()                                    no    ligero     allow allow allow
+ligero ()                                    sí   critico    deny deny allow
+ligero ((a) b)                               no    ligero     allow allow allow
+ligero ((a) b)                               sí   critico    deny deny allow
+ligero (a) (b)                               no    ligero     allow allow allow
+ligero (a) (b)                               sí   critico    deny deny allow
+**ligero (local)**                           no    ligero     allow allow allow
+**ligero (local)**                           sí   critico    deny deny allow
+**ligero** (local)                           no    ligero     allow allow allow
+**ligero** (local)                           sí   critico    deny deny allow
+ligero (critico)                             no    ligero     allow allow allow
+ligero (critico)                             sí   critico    deny deny allow
+ligero (local                                no    estandar   deny allow allow
+ligero (local                                sí   critico    deny deny allow
+estandar (x)                                 no    estandar   deny allow allow
+estandar (x)                                 sí   critico    deny deny allow
+critico (por suelo)                          no    critico    deny deny allow
+critico (por suelo)                          sí   critico    deny deny allow
+critico (ligero)                             no    critico    deny deny allow
+critico (ligero)                             sí   critico    deny deny allow
+inventado (x)                                no    estandar   deny allow allow
+inventado (x)                                sí   critico    deny deny allow
+LIGERO                                       no    ligero     allow allow allow
+LIGERO                                       sí   critico    deny deny allow
+  ligero                                     no    ligero     allow allow allow
+  ligero                                     sí   critico    deny deny allow
+casos de puerta ejecutados: 0

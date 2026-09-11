@@ -1,0 +1,25 @@
+lector bajo prueba: /home/juan/dev/ArnesJuan-1.33.2/hooks/lib.sh
+
+A) con matiz -> SIN matiz  (el 2o no debe heredar el indicador)
+    Rigor=ligero (local)         Sens=no   -> estandar  (MATIZ=1)
+    Rigor=ligero                 Sens=no   -> ligero    (MATIZ=0)
+
+B) SIN matiz -> con matiz  (orden inverso)
+    Rigor=ligero                 Sens=no   -> ligero    (MATIZ=0)
+    Rigor=ligero (local)         Sens=no   -> estandar  (MATIZ=1)
+
+C) con matiz -> campo AUSENTE
+    Rigor=critico (por suelo)    Sens=no   -> critico   (MATIZ=1)
+    Rigor=<ausente>              Sens=no   -> estandar  (MATIZ=0)
+
+D) con matiz -> valor no reconocido
+    Rigor=ligero (x)             Sens=no   -> estandar  (MATIZ=1)
+    Rigor=basura                 Sens=no   -> estandar  (MATIZ=0)
+
+E) tres seguidos: matiz, limpio, matiz
+    Rigor=ligero (a)             Sens=no   -> estandar  (MATIZ=1)
+    Rigor=ligero                 Sens=no   -> ligero    (MATIZ=0)
+    Rigor=ligero (b)             Sens=no   -> estandar  (MATIZ=1)
+
+F) indicador sucio A MANO antes de una lectura limpia (el peor caso)
+    Rigor=ligero (indicador preensuciado) -> ligero    (MATIZ=0)  OK
