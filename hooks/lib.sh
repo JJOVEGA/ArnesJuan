@@ -1975,11 +1975,27 @@ arnes_rigor_efectivo() {
   # Declarado y valido. Sube libremente; bajar del suelo de seguridad, no.
   ARNES_RIGOR="$declarado"
 
-  # EL MATIZ SOLO PUEDE SUBIR O MANTENER EL RIGOR; NUNCA BAJARLO.
+  # UN MATIZ QUE LLEGA HASTA AQUI SOLO PUEDE SUBIR O MANTENER EL RIGOR, NUNCA
+  # BAJARLO. La frase sin esa condicion es FALSA y estaba escrita asi: el alcance
+  # de esta guarda son los matices BIEN FORMADOS, y lo acota `arnes_veredicto`,
+  # que desenvuelve SOLO si el valor termina en `)`.
   #
-  # Cuando el nivel salio de desenvolver un parentesis, el nivel efectivo es el
-  # MAS RESTRICTIVO entre lo desenvuelto y el nivel heredado -- que es, exacto,
-  # lo que ese mismo valor daba antes de que el desenvoltorio existiera.
+  # LO QUE QUEDA FUERA, medido y con nombre (SEC-087, clase `contrato`): si el
+  # parentesis NO cierra al final del valor --`critico (por suelo`, `critico (`,
+  # `critico (x) y`--, el valor entero deja de reconocerse y `arnes_rigor_efectivo`
+  # ya retorno por la rama `nd -eq 0` de arriba, con la derivacion heredada. Este
+  # `if` NO CORRE en ese camino. Efecto real: un `critico` asi escrito en un REQ
+  # no sensible se juzga `estandar` y deja de exigir la firma de seguridad, en
+  # silencio. Es la unica proteccion que esa forma pierde --en `ligero` y
+  # `estandar` la derivacion heredada da lo mismo, y en un REQ sensible el suelo
+  # lo impide--. La via es PREEXISTENTE e identica en 1.33.0, 1.33.1 y 1.33.2: no
+  # la abrio este arreglo, y cerrarla es otra reparacion con su propio REQ. Lo que
+  # este parche corrigio fue la frase absoluta que la tapaba.
+  #
+  # Cuando el nivel salio de desenvolver un parentesis bien formado, el nivel
+  # efectivo es el MAS RESTRICTIVO entre lo desenvuelto y el nivel heredado -- que
+  # es, exacto, lo que ese mismo valor daba antes de que el desenvoltorio
+  # existiera.
   #
   # POR QUE, y esto se pago publicando. v1.33.1 enruto la forma con parentesis
   # por el lector comun para TODOS los valores. En `critico (por suelo)` eso

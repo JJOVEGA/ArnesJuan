@@ -2,6 +2,70 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · `SEC-087`: la promesa deja de ser absoluta (`QA-P48-01`, 3.er tramo, vuelta 2/2)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador.
+
+**Sólo texto y comentarios. `hooks/` cambia únicamente en comentarios** —verificado: el diff de
+`hooks/lib.sh` no tiene ni una línea que no empiece por `#`— y **el banco no se toca**, así que la
+evidencia de QA sigue válida sobre el mismo mecanismo.
+
+**El defecto (`R-029` / `SEC-087`, clase `contrato`, media-alta).** El contrato escrito en el 2.º
+tramo afirmaba que «un matiz parentético conserva `estandar` y `critico`». Tiene contraejemplo con
+la puerta real y `Sensible a seguridad: no`: `critico (por suelo` (sin cerrar), `critico (` y
+`critico (x) y` dan **`estandar`** y el REQ **cierra sin veredicto de seguridad, en silencio**.
+Causa: `arnes_veredicto` desenvuelve **sólo si el valor termina en `)`**; si no, el valor entero
+deja de reconocerse y `arnes_rigor_efectivo` retorna por su rama de «no reconocido» **antes** de la
+guarda del más restrictivo, que por tanto **no corre**.
+
+**La vía es PREEXISTENTE e idéntica en 1.33.0, 1.33.1 y 1.33.2.** No es regresión, no se revierte
+nada y **no se cierra aquí**: cerrarla es otro defecto y otra reparación —«un defecto, una
+reparación»—, tocaría `hooks/` e invalidaría la evidencia de QA. Queda con dueño y ventana en
+`docs/seguridad/registro-seguridad.md` § **R-029**. Lo que este parche introdujo, y lo que se
+corrige, es **la frase absoluta que la tapaba**, en la superficie que los proyectos **heredan**.
+
+**La promesa va condicionada, no matizada.** No se cuelga un «salvo que…» de un «conserva `estandar`
+y `critico`»: la promesa **principal** queda restringida al matiz **bien formado** —el que cierra el
+paréntesis al final del valor— y a continuación se nombra el caso malo **con su dirección**. La
+medición permite algo mejor que un «no exhaustiva»: **se nombra la única protección que esa forma
+puede perder** — un `critico` declarado en un REQ **no** sensible, que deja de exigir la firma de
+seguridad. En `ligero` y `estandar` la derivación heredada da lo mismo, y en un REQ sensible el
+suelo de `critico` lo impide.
+
+**Autoridad, porque la frase base la dictó el propietario y cambia.** Su instrucción fue escribirla
+*«verificando que coincida con el código»*. El auditor demostró que sin la condición **no coincide**:
+añadirla **cumple** esa condición.
+
+**Sedes: 4 corregidas de 9 enumeradas, y el barrido fue por PROPIEDAD y atravesando saltos de
+línea** —aplanando cada archivo antes de buscar, porque la promesa se parte en dos renglones y un
+`grep` por línea la pierde; así encontró el auditor que el radio heredable era 1—.
+Corregidas: `requirements/README.md`, `templates/requirements-README.md.tpl` (heredada, **idénticas
+entre sí**, verificado byte a byte), `hooks/lib.sh:1978` (decía lo mismo **con más fuerza** que el
+contrato) y `docs/estabilizacion/contrato-parche.md` (en **dos** sitios).
+No tocadas, cada una con su motivo: el comentario de la sección 40 del banco (**prohibido tocar el
+banco** — queda como sede viva y se reporta), `docs/qa/1.33.2.md` y
+`docs/seguridad/registro-seguridad.md` (artefactos de otros roles), los tres ficheros de
+`docs/estabilizacion/verificacion-instalacion-1.33.2/` (fixtures y salidas de una verificación:
+reescribirlos la invalidaría) y el punto histórico de `actualizacion-candidata.md` (se conserva a
+propósito). Descartadas tras comprobarlas, tres frases con las mismas palabras y **otro sujeto**:
+`agents/auditor-seguridad.md` (la autoridad del auditor), `requirements/REQ-021.md` y la sección 25
+del banco (techos de tamaño y de presupuesto).
+
+**Corrige además una sede que yo mismo creé:** la marca de SUPERADO de
+`actualizacion-candidata.md` **transcribía** la regla del propietario, y `SEC-087` la dejó obsoleta
+en dos días. Ahora **cita la sede en vez de copiar su contenido**: una copia más es una sede más que
+se desfasa, que es justo la lección de este hallazgo.
+
+`docs/estabilizacion/contrato-parche.md` lleva en cabecera
+`Seguridad: con-hallazgos (R-029, 2026-09-10 — no la mide ninguna puerta)`. El paréntesis no es
+decorativo: este parche **no tiene REQ**, así que `guard-completado` no mide nada de esa cabecera, y
+un campo que *parece* medido y no lo está es la familia de `SEC-079`.
+
+Gates: banco **907 PASS · 0 FAIL · 5 SKIP**, cuadre 912, `rc 0`; autoprueba **106 PASS · 0 FAIL**;
+`bash -n`, los tres JSON y `git diff --check` en verde. Antes de editar el comentario de `lib.sh` se
+comprobó que **ningún caso del banco compara el cuerpo de `arnes_rigor_efectivo`**: la única
+extracción de cuerpo es sobre `arnes_sin_cita`, y las comparaciones byte a byte de la sección 37 son
+de estado conductual, no de texto fuente.
+
 ## [Interno] — 2026-09-10 · v1.33.2: seguridad devuelve `con-hallazgos` — el mecanismo pasa, la promesa heredada no
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad.
 

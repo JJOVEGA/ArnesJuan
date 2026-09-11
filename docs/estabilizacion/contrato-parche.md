@@ -1,6 +1,13 @@
 # Candidato de estabilización sobre v1.33.0
 
 Estado: candidato validado localmente; no es una versión publicada ni un cierre de hallazgos.
+Seguridad: con-hallazgos (R-029, 2026-09-10 — no la mide ninguna puerta)
+
+> **Ese campo no lo mide nada, y va dicho dentro del propio campo a propósito.** Este
+> parche **no tiene REQ**, así que `guard-completado` no lee esta cabecera ni la puede
+> hacer cumplir: un campo que *parece* medido y no lo está es la familia de `SEC-079`,
+> y el auditor pidió expresamente que se declarara aquí. El hallazgo que lo detiene es
+> **`SEC-087`** (clase `contrato`), en `docs/seguridad/registro-seguridad.md` § **R-029**.
 
 Base de código: `810128abd5d5b1ca9a240bde98192a9a0c51447c` (tag v1.33.0).
 Traspaso consultado: `1dfe31bcb71dcf914f2124f40536bcde2d4019a3`.
@@ -14,10 +21,14 @@ Claude, para preparar cambios y pruebas en una copia aislada. No incluye publica
    nivel que sin esa evidencia.~~ Esa promesa, tal cual, es la que abrió el
    fail-open de `QA-P48-01`: enunciada sin dirección, autoriza tanto subir
    `critico (por suelo)` —que era el arreglo— como **bajar** `ligero (local)`
-   hasta la exención de QA, que no era. El enunciado vigente lleva dirección:
-   **el matiz parentético puede SUBIR o MANTENER el rigor efectivo; nunca
-   bajarlo.** Se sigue usando la normalización común, y `critico (por suelo)`
-   en un REQ no sensible sigue sin caer a `estandar`.
+   hasta la exención de QA, que no era. El enunciado vigente lleva dirección **y
+   alcance**: **un matiz parentético BIEN FORMADO —el que cierra el paréntesis al
+   final del valor— puede SUBIR o MANTENER el rigor efectivo; nunca bajarlo.** Un
+   paréntesis sin cerrar no es un matiz: es un valor desconocido, cae en la
+   derivación heredada y por ahí un `critico` de un REQ no sensible se juzga
+   `estandar` (`SEC-087`, vía **preexistente**, ver §«El parche v1.33.2»). Se
+   sigue usando la normalización común, y `critico (por suelo)` —cerrado— en un
+   REQ no sensible sigue sin caer a `estandar`.
    Ausencia y valores realmente desconocidos conservan la derivación de v1.33.0;
    endurecer esa política queda fuera de este candidato.
 2. **SEC-084:** al cambiar el valor efectivo de Seguridad a aprobado, la guarda
@@ -97,27 +108,47 @@ sensibilidad»— no era un descuido que el candidato corrigiera: en `ligero` er
 
 ## La propiedad
 
-**Enunciado contractual vigente, redactado por el propietario el 2026-09-10.** Es el
-texto que va literal en `requirements/README.md` y en su plantilla heredada, y manda
-sobre cualquier paráfrasis de este documento:
+**Enunciado contractual vigente.** Lo redactó el propietario el 2026-09-10 y lleva
+desde el 2026-09-11 la **condición de buena formación** que exige `SEC-087` (abajo):
+el propietario había pedido escribirlo *«verificando que coincida con el código»*, y el
+auditor demostró que sin esa condición **no coincide**. Es el texto que va literal en
+`requirements/README.md` y en su plantilla heredada, y manda sobre cualquier paráfrasis
+de este documento:
 
 > El rigor efectivo combina el nivel declarado con el suelo de seguridad. Un matiz
-> parentético conserva `estandar` y `critico`, sujeto a ese suelo. Para mantener la
-> protección heredada, `ligero` con matiz deriva a `estandar` si el REQ no es sensible
-> y a `critico` si lo es. `ligero` sin matiz conserva su comportamiento, sujeto al
-> suelo de seguridad.
+> parentético **bien formado** —el que **cierra el paréntesis al final del valor**, como
+> `critico (por suelo)`— conserva `estandar` y `critico`, sujeto a ese suelo. Para
+> mantener la protección heredada, `ligero` con matiz deriva a `estandar` si el REQ no
+> es sensible y a `critico` si lo es. `ligero` sin matiz conserva su comportamiento,
+> sujeto al suelo de seguridad.
+>
+> **Un paréntesis que no cierra al final del valor no es un matiz: es un valor
+> desconocido**, y cae en la derivación heredada. `critico (por suelo` (sin cerrar),
+> `critico (` y `critico (x) y` (con texto detrás del cierre) se juzgan **`estandar`**
+> en un REQ no sensible, así que un `critico` escrito así **deja de exigir la firma de
+> seguridad, y no avisa**. Es la única protección que esta forma puede perder: en
+> `ligero` y en `estandar` la derivación heredada da lo mismo, y en un REQ sensible el
+> suelo de `critico` lo impide. Escribe el matiz cerrado, o no lo escribas.
 
 Enuncia las **dos ramas** de `ligero` con matiz en vez de remitir al «nivel heredado»,
 así que se puede comprobar contra la conducta sin traducir nada. La forma corta que
-gobierna el código es la misma regla vista desde la implementación:
+gobierna el código es la misma regla vista desde la implementación — **con su alcance,
+que es la mitad que faltaba**:
 
-> **El matiz parentético puede SUBIR o MANTENER el rigor efectivo; nunca bajarlo.**
+> **Un matiz BIEN FORMADO puede SUBIR o MANTENER el rigor efectivo; nunca bajarlo.**
 
 Operativamente, en `arnes_rigor_efectivo` (`hooks/lib.sh`): se desenvuelve el
 paréntesis, se calcula el nivel candidato y se toma **el más restrictivo** entre
 ese candidato y el **nivel heredado** —el que la sensibilidad da por defecto, que
 es exactamente lo que ese mismo valor daba antes de que el desenvoltorio
 existiera—. El suelo de seguridad se aplica después y sigue mandando.
+
+**Y el alcance sale del código, no de la prudencia:** `arnes_veredicto` desenvuelve
+**sólo si el valor termina en `)`**. Si no termina así, el valor entero deja de
+reconocerse y `arnes_rigor_efectivo` retorna por su rama de «valor no reconocido»
+**antes** de llegar a la guarda del más restrictivo. `max(declarado, heredado)` **no
+corre** en ese camino — por eso la promesa sin condición era falsa, y no por un
+descuido de redacción.
 
 No es un caso especial: es la doctrina que el proyecto ya tiene escrita en
 `AGENTS.md` §6 («el rigor se puede subir, nunca bajar») y la regla de que una
@@ -199,6 +230,43 @@ Nota de reconciliación: el resultado de v1.33.1 registrado arriba (889 PASS, 3
 FAIL, 9 SKIP) se midió en **otra máquina**; los recuentos no son comparables
 entre plataformas y aquí no se presentan como tales.
 
+## `SEC-087` — la vía que la promesa tapaba, y que este parche NO cierra
+
+Hallazgo del auditor (`R-029`, 2026-09-10), clase **`contrato`**, severidad
+media-alta, **abierto**. Con la puerta real, `Sensible a seguridad: no` y
+`QA: aprobado`:
+
+| `Rigor:` escrito | Nivel efectivo | Puerta |
+|---|---|---|
+| `critico (por suelo)` | `critico` | **deny** |
+| `critico (por suelo` — falta el `)` | **`estandar`** | **ALLOW, en silencio** |
+| `critico (` | **`estandar`** | **ALLOW, en silencio** |
+| `critico (x) y` — texto detrás del cierre | **`estandar`** | **ALLOW, en silencio** |
+
+**Causa.** `arnes_veredicto` desenvuelve **sólo si el valor termina en `)`**. Si no,
+el valor entero deja de reconocerse y `arnes_rigor_efectivo` retorna por su rama de
+«valor no reconocido» **antes** de la guarda del más restrictivo, que por tanto **no
+corre**. Lo comprobado en las tres versiones instaladas: **1.33.0, 1.33.1 y 1.33.2 se
+comportan igual**.
+
+**Qué es de este parche y qué no.** La vía es **preexistente** y este arreglo **no la
+abrió**: no es una regresión y no se revierte nada. Lo que este parche introdujo fue
+**la frase absoluta que la tapaba**, y encima en la superficie que los proyectos
+**heredan**. Eso es lo que se corrige aquí, en texto.
+
+**Por qué NO se cierra la vía en el código, y es una decisión, no un olvido.** Cerrarla
+es **otro defecto y otra reparación** —«un defecto, una reparación», instrucción del
+propietario—: cambiaría `hooks/` e **invalidaría la evidencia de QA**, que hoy es válida
+precisamente porque este tramo es sólo texto. Queda registrada con dueño y ventana en
+`docs/seguridad/registro-seguridad.md` § **R-029** / **SEC-087**.
+
+**Y cómo se nos pasó, que es la parte reutilizable.** La promesa se verificó **en la
+dirección en que es verdad**: con tres ejemplos bien formados. Es la misma forma de
+fallo que 1.33.1 —que se validó contra el defecto reportado y no contra su contrario— y
+van **tres veces en esta ventana**: el barrido del desarrollador, las formas felices de
+QA, y esta. Lo que la caza no es más diligencia: es elegir el **alfabeto adversario**
+antes de escribir la promesa.
+
 ## Límites de este parche
 
 - **No** toca la corrección de la firma (`arnes_seguridad_cabecera` y su uso en
@@ -209,21 +277,28 @@ entre plataformas y aquí no se presentan como tales.
 - Un `Rigor:` **genuinamente basura** (sin paréntesis, o cuyo desenvoltorio no da
   un nivel válido) sigue cayendo al defecto de la sensibilidad. Eso es
   `QA-016-04`, ya abierto, y **no** se toca aquí.
-- **RESUELTO — el contrato heredado ya está escrito (2.º tramo, 2026-09-10).**
-  `requirements/README.md` y su plantilla heredada
-  `templates/requirements-README.md.tpl` afirmaban que «un matiz parentético final
-  **no cambia** un nivel válido», que con este parche es **falso** para
-  `ligero (…)`. Las dos sedes llevan ya el enunciado del propietario, **idéntico en
-  ambas** (verificado byte a byte en la región). El primer tramo paró antes de
-  escribirlas porque es superficie que los proyectos heredan por `arnes-upgrade`; la
-  redacción la fijó el propietario y no el desarrollador.
+- **No** cierra la vía de `SEC-087` en el código (arriba: es otra reparación, con su
+  propio REQ, y tocar `hooks/` invalidaría la evidencia de QA).
+- **RESUELTO — el contrato heredado está escrito, y desde el 3.er tramo con su
+  condición de alcance.** `requirements/README.md` y su plantilla heredada
+  `templates/requirements-README.md.tpl` afirmaban primero que «un matiz parentético
+  final **no cambia** un nivel válido» (falso para `ligero (…)`, 2.º tramo) y después
+  que «un matiz parentético conserva `estandar` y `critico`» sin condición (falso para
+  el paréntesis sin cerrar, `SEC-087`, 3.er tramo). Las dos sedes llevan ya el
+  enunciado **condicionado al matiz bien formado**, con el contraejemplo y su
+  dirección nombrados, e **idénticas entre sí** (verificado byte a byte en la región).
+  El 1.er tramo paró antes de escribirlas porque es superficie que los proyectos
+  heredan por `arnes-upgrade`; la redacción base la fijó el propietario, y la condición
+  la exige su propia instrucción de escribirla *«verificando que coincida con el
+  código»*.
 
 - `docs/estabilizacion/actualizacion-candidata.md` repite el enunciado sin dirección
   en el primer punto de «Cambios que debe conocer un proyecto consumidor». Describe
   el candidato de v1.33.1 **como fue**, así que **no se reescribe**: borrarlo
   escondería que esa promesa se publicó. Lleva arriba una marca de **SUPERADO EN
-  PARTE** que nombra qué punto queda superado, qué enunciado lo sustituye y desde
-  cuándo (v1.33.2, `QA-P48-01`, 2026-09-10, arreglo `09ccf63`).
+  PARTE** que nombra qué punto queda superado, desde cuándo, y **cita la sede de la
+  regla en vez de transcribirla** — su primera versión sí la transcribía, y `SEC-087`
+  la dejó obsoleta en dos días: una copia más es una sede más que se desfasa.
 - **No contamina la lectura siguiente**, comprobado por la coordinadora sobre este
   árbol en seis escenarios —matiz→limpio, el orden inverso, campo ausente, valor no
   reconocido, tres seguidos alternando y el indicador **preensuciado a mano** antes
