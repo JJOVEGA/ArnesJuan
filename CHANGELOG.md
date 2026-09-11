@@ -2,6 +2,68 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · v1.33.2: seguridad devuelve `con-hallazgos` — el mecanismo pasa, la promesa heredada no
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad.
+
+**`Seguridad: con-hallazgos (R-029, 2026-09-10)`** sobre `hotfix/1.33.2-rigor` @ `17ec674`. Revisión
+proporcional (enmienda del 2026-09-10), acotada a las tres piezas que nombró el propietario, con la
+evidencia de QA **reutilizada tras comprobar que sigue válida** (árbol limpio, `HEAD` = el commit del
+propio veredicto de QA, `hooks/` sin tocar después de su medición). Registro completo en
+`docs/seguridad/registro-seguridad.md` § **R-029**.
+
+### El mecanismo: aprobado tal como se midió
+
+El arreglo de `hooks/lib.sh` **no abre ninguna vía nueva**, que era la pregunta —y el modo de fallo de
+1.33.1, verificada en la dirección en que el defecto estaba reportado—. Barrido **independiente** de
+**156 combinaciones** (39 formas de `Rigor:` × 4 estados de sensibilidad) contra **tres** lectores, con
+alfabeto adversario y no feliz: **0** casos por debajo de 1.33.0. El nivel exento de QA es alcanzable
+**sólo** desde la forma **desnuda**, incluidos los separadores invisibles (TAB, NBSP, anchura cero, CR
+final). Indicador sin contaminación, **forzado a mano** y con **un solo llamador** en todo el árbol. Y
+la monotonía de la puerta **por construcción**: no existe ninguna rama que se aplique sólo a `ligero`,
+así que subir un nivel no puede quitar una exigencia. Conducta de puerta real: deny (1.33.0) → **ALLOW
+(1.33.1, el fail-open reproducido)** → deny (1.33.2).
+
+### Lo que lo detiene: `SEC-087` (`contrato`, media-alta) — una cláusula, cuatro sedes
+
+El contrato nuevo afirma que «un matiz parentético conserva `estandar` y `critico`». Con la puerta
+real y `Sensible a seguridad: no`, **tiene contraejemplo**: `critico (por suelo` (sin cerrar),
+`critico (` y `critico (x) y` dan **`estandar`** y el REQ cierra **sin veredicto de seguridad, en
+silencio**. Es decir, el matiz **sí** puede bajar el rigor, y baja justo el nivel que exige la firma de
+seguridad. Causa: `arnes_veredicto` sólo desenvuelve si el valor **termina en `)`**; si no, el valor
+entero deja de reconocerse y `arnes_rigor_efectivo` retorna por la rama `nd -eq 0` **antes** de la
+guarda nueva, así que `max(declarado, heredado)` nunca corre en ese camino.
+
+**No es una regresión** —1.33.0 y 1.33.1 se comportan igual en esas filas— y **no se pide revertir
+nada**: lo que este parche introduce no es la vía, es la **frase absoluta que la tapa**, y la
+introduce en la superficie que los proyectos **heredan**. La reparación es **texto**, no toca `hooks/`
+ni el banco, y por tanto **no invalida la evidencia de QA**: enunciar la propiedad **con su
+condición** en las **cuatro** sedes que hoy la afirman en absoluto —`requirements/README.md:107-111`,
+`templates/requirements-README.md.tpl:107-111`, `hooks/lib.sh:1978` y
+`docs/estabilizacion/contrato-parche.md` + este CHANGELOG—. Cuatro y no dos: arreglar sólo las
+señaladas deja la misma promesa viva en las otras.
+
+### Registrado y diferido, sin bloquear: `SEC-088` (`contrato`, media)
+
+Una errata en `Rigor:` (`criitco`) rebaja la ceremonia **en silencio**: ALLOW, `systemMessage` vacío,
+igual en las tres versiones. `ARNES_VOCAB_RIGOR` **ya existe** y su único consumidor es
+`tools/arnes-lectura.sh`; la puerta no lo usa. `QA:` y `Seguridad:` sí avisan al escribir un valor
+fuera de vocabulario — `Rigor:` es el único de los tres que **baja** la ceremonia y el único que **no
+avisa**. No bloquea 1.33.2 porque el parche no lo introduce ni lo empeora, y bloquear mantendría
+instalada la 1.33.1 con un fail-open **más ancho y vivo**: sería cambiar un agujero por otro mayor.
+Ventana 1.34.0, con `campos.ausencia_exige` / `ADR-009`, que es la misma familia.
+
+`SEC-087` y `SEC-088` son la **vía** y la **promesa medida falsa** que la cubre — el patrón de
+`SEC-078`/`SEC-079`, y por eso van numerados en pareja.
+
+### Dos notas de gobernanza
+
+- **`QA-1332-01` se queda `instrumento`, y con la condición escrita:** el informe anuncia **menos**
+  ceremonia de la que hay, y esa dirección no concede nada. Deja de ser `instrumento` si su error
+  cambia de dirección. No se toca ni se cierra.
+- **Esta copia del registro de seguridad está atrasada** (declara «próximos libres R-020 y SEC-064»
+  cuando la línea principal va por **R-028**/**SEC-086**). `R-029` se numera sobre el máximo real. **La
+  fusión no debe resolver ese archivo tomando esta versión**, o se pierden nueve revisiones.
+
 ## [Interno] — 2026-09-10 · v1.33.2: QA APROBADO en la vuelta 1, y el argumento que era un barrido pasa a ser una demostración
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (el veredicto) y coordinadora (la verificación de instalación).
 
