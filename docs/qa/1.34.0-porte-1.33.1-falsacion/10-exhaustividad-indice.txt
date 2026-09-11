@@ -1,0 +1,10 @@
+A) IDs bloqueantes declarados en campos `Hallazgos abiertos:` de requirements/ : 22
+   ausentes del indice: NINGUNO
+B) filas del indice con estado bloqueante (abierto|en-mitigación) : 32
+C) de esas, cuantas estan en un campo : 22
+
+Celdas de la 3a columna comprobadas contra el arbol:
+  SEC-014: en campo AHORA = NO | celda del indice dice: 48 -> **discrepancia:** sigue declarado en `REQ-013` — **re-medida el 2026-09-10 (`R-028`): sigue ahí, dos ventanas 
+  SEC-055: en campo AHORA = SI (REQ-019.md) | celda del indice dice: 74 -> — **debe declararse en `REQ-019`** (mitad de write-back); la mitad de fondo es del **propietario** → `PENDING_
+  SEC-083: en campo AHORA = NO | celda del indice dice: 82 -> **discrepancia:** sigue declarado en `REQ-024` — el cierre de R-027 §3 **omitió** escribir la retirada; subsan
+  SEC-052: en campo AHORA = NO | celda del indice dice: 71 -> — (cerrado; **el campo de `REQ-023` ya NO lo declara**, verificado el 2026-09-10 en `R-028`: lo que `R-016` an

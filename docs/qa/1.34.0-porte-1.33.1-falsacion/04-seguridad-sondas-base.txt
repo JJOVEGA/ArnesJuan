@@ -1,0 +1,21 @@
+  B  Edit valor pendiente->aprobado (QA pendiente)           -> deny
+  B2 Edit SOLO el valor (old='pendiente')                    -> allow
+  A  Edit de prosa del cuerpo que MENCIONA el token          -> deny
+  A2 Edit de prosa con clave DECORADA en el cuerpo           -> allow
+  C  Edit que cambia SOLO el parentesis de evidencia         -> deny
+  F  Write documento entero, cabecera IGUAL, cuerpo otro     -> deny
+  G  Write que BORRA la linea Seguridad (disk=aprobado)      -> allow
+  I  Edit con old_string INEXISTENTE, new trae la firma      -> deny
+  M1 idempotente: misma edicion, 1a                          -> deny
+  M2 idempotente: misma edicion, 2a                          -> deny
+  N1 disk decorado; Edit deja clave limpia, valor IGUAL      -> allow
+  N2 disk decorado; Edit limpia clave Y aprueba              -> deny
+  D  REQ NUEVO por Write: Seg aprobado + QA pendiente        -> deny
+  E  REQ NUEVO por Write: Seg aprobado + QA aprobado         -> allow
+  D2 REQ NUEVO por Write: Seg aprobado y SIN linea QA        -> deny
+  H  disk CRLF; Edit SOLO valor pendiente->aprobado          -> allow
+  J1 dos Seguridad (ult=pendiente); Edit cambia la 1a        -> allow
+  J2 dos Seguridad; Edit cambia la ULTIMA a aprobado         -> deny
+  K  cabecera SIN Seguridad; Edit aprueba la del CUERPO      -> allow
+  L  QA con BOM en la clave; Edit firma la seguridad         -> deny
+     motivo: ARNES: no se puede firmar la seguridad de 'requirements/A7.md': su cabecera declara el campo 'QA:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puerta no lee

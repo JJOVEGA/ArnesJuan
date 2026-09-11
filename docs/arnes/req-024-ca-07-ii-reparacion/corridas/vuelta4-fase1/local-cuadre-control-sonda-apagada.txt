@@ -1,0 +1,1 @@
+Resultado: 1086 PASS, 0 FAIL, 8 SKIP — ninguna causa común: cada uno con su motivo

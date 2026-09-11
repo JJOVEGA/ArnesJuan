@@ -109,6 +109,13 @@ Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
 
 **Flujo:** analista define REQ → desarrollador codifica → qa-tester valida → auditor-seguridad revisa → REQ `completado`.
 
+> 🔒 **ALIGERADA por decisión expresa del propietario el 2026-09-10, con aplicación inmediata:** la
+> vía de cada cambio se elige por su **efecto** y no por la extensión del archivo, y una reparación con
+> causa y contrato claros ya **no** abre comisión de analista. Sede única de la enmienda, con sus cinco
+> límites: `docs/gobernanza/autoalojamiento.md` § «Enmienda: autoalojamiento aligerado». **Cambia cómo
+> desarrollamos este repositorio; no cambia nada de lo que reciben los proyectos.** Lo que sigue es el
+> régimen del 2026-09-05, vigente en todo lo que la enmienda no toca.
+>
 > 🔒 **Política de autoalojamiento (sólo este repositorio; no se propaga a las plantillas).** Para el
 > desarrollo de ArnesJuan, **todo REQ pasa por analista, desarrollador, QA y auditor de seguridad
 > antes de llegar a la aprobación humana**, en ese orden. Todo REQ se declara por defecto

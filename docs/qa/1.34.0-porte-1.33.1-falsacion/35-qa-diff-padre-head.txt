@@ -1,0 +1,37 @@
+# Diferencias celda a celda padre(2f7c821) -> head(6e3bb90). Esperado: solo allow->deny.
+
+2,6c2,6
+<   sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero (local)]       -> allow
+<   sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero (lo que sea)]  -> allow
+<   sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero ()]            -> allow
+<   sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero (a) (b)]       -> allow
+<   sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero (a (b))]       -> allow
+---
+>   sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero (local)]       -> deny
+>   sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero (lo que sea)]  -> deny
+>   sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero ()]            -> deny
+>   sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero (a) (b)]       -> deny
+>   sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero (a (b))]       -> deny
+15,19c15,19
+<   sens=no  | QA=pendiente Seg=pendiente | Rigor=[LIGERO (local)]       -> allow
+<   sens=no  | QA=pendiente Seg=pendiente | Rigor=[Ligero (local)]       -> allow
+<   sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero(local)]        -> allow
+<   sens=no  | QA=pendiente Seg=pendiente | Rigor=[  ligero (local)  ]   -> allow
+<   sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero  (local)]      -> allow
+---
+>   sens=no  | QA=pendiente Seg=pendiente | Rigor=[LIGERO (local)]       -> deny
+>   sens=no  | QA=pendiente Seg=pendiente | Rigor=[Ligero (local)]       -> deny
+>   sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero(local)]        -> deny
+>   sens=no  | QA=pendiente Seg=pendiente | Rigor=[  ligero (local)  ]   -> deny
+>   sens=no  | QA=pendiente Seg=pendiente | Rigor=[ligero  (local)]      -> deny
+32c32
+<   alterna: matiz=allow limpio=allow matiz=allow limpio=allow
+---
+>   alterna: matiz=deny limpio=allow matiz=deny limpio=allow
+
+# celdas donde HEAD es MAS PERMISIVO que PADRE:
+0 (0 = ninguna regresion hacia lo permisivo)
+# celdas que cambian allow->deny:
+10
+# celdas comparadas:
+31

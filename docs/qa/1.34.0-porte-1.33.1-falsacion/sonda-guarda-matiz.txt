@@ -1,0 +1,23 @@
+== Sonda: rigor efectivo por la VIA REAL (arnes_campos_normaliza), con la guarda aplicada
+base: commit 2f7c821 + arbol sin comitear de este trabajo
+metodo: se carga hooks/lib.sh y se llama arnes_campos_normaliza <qa> <seg> <sens> <hall> <rigor>,
+        que es exactamente lo que hace guard-completado.sh; se imprime ARNES_RIGOR resultante.
+
+  ligero                 sensible=no  -> ligero
+  ligero                 sensible=sí -> critico
+  ligero (local)         sensible=no  -> estandar
+  ligero (local)         sensible=sí -> critico
+  ligero ()              sensible=no  -> estandar
+  ligero ()              sensible=sí -> critico
+  estandar               sensible=no  -> estandar
+  estandar               sensible=sí -> critico
+  estandar (x)           sensible=no  -> estandar
+  estandar (x)           sensible=sí -> critico
+  critico                sensible=no  -> critico
+  critico                sensible=sí -> critico
+  critico (por suelo)    sensible=no  -> critico
+  critico (por suelo)    sensible=sí -> critico
+  critico (por suelo     sensible=no  -> estandar
+  critico (por suelo     sensible=sí -> critico
+  inventado              sensible=no  -> estandar
+  inventado              sensible=sí -> critico

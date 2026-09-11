@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1064  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1095  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1419,6 +1419,47 @@ CASOS_ESPERADOS=1064  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # se mueve ningún caso, y el único de `CA-12` que ya existía —`40/4`, la
                       # tabla que mueve el veredicto del acto de firmar— conserva sitio, fixture
                       # y veredicto.
+                      # 1079 → 1090, en la 41 (15 → 26): QA-P48-01. Once casos que miden la
+                      # CONDUCTA DE LA PUERTA ante un `Rigor:` con evidencia parentética —no lo
+                      # que devuelve el lector—, porque el fail-open de v1.33.1 era una exención
+                      # de QA, y una exención sólo existe en la puerta. Seis discriminan (fallan
+                      # contra la 1.33.1 publicada) y cinco fijan las filas que NO se pueden
+                      # mover: `ligero` limpio conserva su exención, `estandar (x)` sigue
+                      # pidiendo QA, `critico (por suelo)` conserva la corrección de v1.33.1 y
+                      # el suelo de seguridad sigue mandando sobre el piso del matiz. El caso
+                      # 12.º no suma: era `D16: ligero con matiz sigue ligero`, que declaraba
+                      # `allow` sobre el propio fail-open, y se corrige en su sitio en vez de
+                      # añadirse. Los `CASOS_ESPERADOS_SECCION` de las secciones 39 y 40 NO se
+                      # tocan: la AUSENCIA del campo se resuelve en otro camino (`ADR-009`) que
+                      # esta guarda no atraviesa, así que ningún caso suyo cambia de veredicto.
+                      # 1090 → 1094: la reparación del INSTRUMENTO de `REQ-024 CA-07 (ii)`
+                      # (2026-09-11). El caso no tenía tercer estado —decidía con una sola
+                      # invocación de la sonda y sin guarda de dispersión, así que una medición
+                      # que no resuelve el factor que vigila salía como FAIL— y se lleva a la
+                      # sección `40/7` nueva con su guarda de convergencia y de recorrido,
+                      # PORTADA de `REQ-017 CA-08 (ii)`. Reparto: `40/2` 9 → 8 (pierde el caso,
+                      # y NO se toca ningún otro: (i), (iii) y (iv) conservan sitio, fixture y
+                      # veredicto), `40/7` 5 nuevos = el caso real más las cuatro
+                      # demostraciones que acreditan la guarda —los tres estados con entradas
+                      # sintéticas, el contenido del SKIP, y el par discriminante negativo y
+                      # positivo—. Va en una parte 7 y no en la 2 porque la 2 estaba en 400 de
+                      # 400 líneas: `REQ-014 CA-18` manda partir, no alargar. El techo 1,250×
+                      # va INTACTO y el caso sigue en la puerta requerida.
+                      #
+                      # 1094 → 1095, en la VUELTA 4 de `CA-07 (ii)`: `40/7` pasa de 5 a 6 casos.
+                      # El caso nuevo es la quinta demostración —«una medición inconcluyente es
+                      # acreditación PENDIENTE»: se reintenta hasta `INTENTOS07` y, agotado el
+                      # presupuesto, el caso emite FAIL y NO SKIP—, con su mitad discordante: la
+                      # MISMA entrada por el camino de presentación sigue dando SKIP, que es
+                      # exactamente lo que dejó la puerta requerida en VERDE sobre `1b3760e` con
+                      # el caso abstenido (`[0,836× , 1,598×]`). Los mandos del caso pasan de
+                      # `k=4 r=6` a `k=8 r=15` porque los primeros NO resuelven el factor que
+                      # vigilan, medido EN EL RUNNER: la nula recorre [0,805× , 1,123×] con
+                      # `k=4 r=6` y [0,997× , 1,018×] con `k=8 r=15`, en la misma corrida
+                      # (`docs/arnes/req-024-ca-07-ii-reparacion/03-fase-1-viabilidad-en-el-runner.md`).
+                      # La sonda de viabilidad TEMPORAL `40/8`, que declaraba 0 casos y por eso
+                      # no movía este número, se RETIRÓ al terminar la fase 1: su medición vive
+                      # en el artefacto, no en el banco.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

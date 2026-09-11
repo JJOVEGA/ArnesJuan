@@ -1,0 +1,2 @@
+Autoprueba: 106 PASS, 0 FAIL
+       40-ausencia-que-abre-7-el-reloj-de-la-ruta-critica.sh    lineas= 449 piso= 449 techo= 562 (gobierna piso*k  ) duplicadas= 103

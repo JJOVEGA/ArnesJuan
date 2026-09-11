@@ -61,6 +61,49 @@
 **Y la dieciséis:** **`D18`** `REQ-017` `bloqueado` por tope agotado + la prueba de `CA-09 (iii)`
 que oscila sobre código idéntico.
 
+> ### 🔴 Registrado aparte, y NO es una decisión pendiente: `QA-P48-01`, un fail-open en la **`v1.33.1` publicada**
+>
+> Va **fuera** de la cola bloqueante a propósito: el propietario **ya autorizó** su corrección y la
+> publicación de **`v1.33.2`** el 2026-09-10, así que no hay firma que esperar y no debe frenar
+> cierres. Se registra aquí porque **está en lo distribuido** y porque `D16` y `D17` ya no cuentan
+> esta parte de la historia.
+>
+> **El hecho, medido ejecutando los lectores instalados de las dos versiones publicadas** (no el
+> árbol, no una copia): con `Sensible a seguridad:` **≠ sí**, `Rigor: ligero (<cualquier matiz>)`
+> daba **`estandar`** en 1.33.0 y da **`ligero`** en **1.33.1**. Y `ligero` es el **único** nivel
+> exento de `QA: aprobado` (`AGENTS.md` §6): ese REQ **cierra sin QA y sin veredicto de seguridad**,
+> donde 1.33.0 lo denegaba. Cinco formas comprobadas: `ligero (local)`, `ligero (D8, 2026-09-08)`,
+> `ligero(sin espacio)`, `ligero ()`, `ligero (critico)`.
+>
+> **Es la misma forma que el defecto que `v1.33.1` salió a corregir, con el signo cambiado.** El
+> parche enrutó la forma con paréntesis por el lector común **para todos los valores**, y en `ligero`
+> la conducta anterior —«*valor no reconocido: se ignora y se cae al defecto de la sensibilidad*»—
+> era **protectora**. Se cerró `critico`→`estandar` y se abrió `estandar`→`ligero`.
+>
+> **La exposición, con sus tres mitades separadas, porque no son lo mismo:**
+>
+> | | |
+> |---|---|
+> | **Defecto reproducido** | **Sí**, en la `v1.33.1` **publicada**, con el lector realmente instalado |
+> | **Exposición observada en ESTE repositorio** | **Ninguna, y es medible.** La política de §6 declara **todo** REQ `Sensible a seguridad: sí`, y el suelo lo rescata. Comprobado: `grep -L 'Sensible a seguridad: *\**s[íi]' requirements/REQ-0*.md` → **0** archivos. Aquí es **latente** |
+> | **Consumidores** | **Expuestos los que declaren un REQ NO sensible** y le escriban el rigor con un matiz entre paréntesis — que es la convención que `AGENTS.md` §13 les enseña. **Uso histórico NO comprobado**: que haya proyectos corriendo el plugin descansa en la afirmación de `AGENTS.md`, no en una comprobación, y **no hay base para estimarlo** |
+>
+> **Por qué NO se volvió a 1.33.0 en la instalación estable** (decisión del propietario del
+> 2026-09-10, y coincide con lo medido): en este árbol los dos defectos **no son simétricos**. El de
+> 1.33.1 es **latente**; el de 1.33.0 estaba **activo** — QA midió que con la clave **limpia**, un
+> `Edit` que sustituye **sólo el valor** de `Seguridad:` daba **allow** en 1.33.0 y da **deny** en
+> 1.33.1. Para este repositorio, 1.33.1 es **estrictamente mejor**. Para un consumidor con REQ no
+> sensibles la comparación es **otra**, y este bloque no la decide.
+>
+> **Evidencia:** `docs/qa/1.34.0-porte-1.33.1-veredicto.md` (el hallazgo, del `qa-tester`) ·
+> `docs/qa/1.34.0-porte-1.33.1-falsacion/21-QA-P48-01-VIVE-EN-LA-1.33.1-PUBLICADA.md` (la atribución,
+> de la coordinadora) · `22-sonda-ligero-publicadas.sh` (re-ejecutable).
+>
+> **Pendiente real que NO decide este bloque, y queda con dueño:** que el `auditor-seguridad`
+> formalice esto como hallazgo con su `SEC-###`, clase y vencimiento en
+> `docs/seguridad/registro-seguridad.md` —ese archivo es suyo, no mío— y que decida si un fail-open
+> **publicado** obliga a avisar a los consumidores además de publicar el parche.
+
 **Resueltas** al final del archivo: `D1` (`REQ-023` a `bloqueado` con extensión) y `D5` (`SEC-079`).
 
 > **Las quince son CINCO decisiones — consolidación del 2026-09-10, en
@@ -789,6 +832,27 @@ despachar.** Funcionó porque la comprobé; no porque nada me lo impidiera.
 
 ### D16 · `QA-016-04` (`contrato`) — la convención del propio arnés produce un valor que cae ABIERTO, y está en el plugin PUBLICADO
 
+> ⚠️ **SU PREMISA MEDIDA ES HOY FALSA — anotado el 2026-09-10, y la entrada NO se retira.** Lo que
+> sigue se midió sobre el plugin **1.33.0**. La **`v1.33.1` publicada corrigió esa mitad**, así que la
+> tabla de abajo describe una conducta que **ya no existe**:
+>
+> | `Sensible: no` + | 1.33.0 (lo que dice esta entrada) | **1.33.1 y 1.33.2, hoy** |
+> |---|---|---|
+> | `Rigor: critico (por suelo)` | **ALLOW** ← cierra sin auditoría | **DENY** ✅ |
+>
+> *Verificado ejecutando los lectores instalados de las dos versiones:*
+> `docs/qa/1.34.0-porte-1.33.1-falsacion/21-…md` y `22-sonda-ligero-publicadas.sh`.
+>
+> **Qué queda vivo de `D16`, que no es poco:** `QA-016-04` **sigue siendo un hallazgo `contrato`
+> abierto** y **sigue sin sede en ningún campo `Hallazgos abiertos:`** — ninguna puerta lo mide. Ésa
+> era y sigue siendo la decisión que te pedía. Lo que cambió es que ya **no** puedes decidirla sobre
+> la medición de arriba.
+>
+> **Y el parche que arregló esta mitad abrió otra**, registrada aparte más abajo como
+> **`QA-P48-01`**: la misma normalización que subió `critico (por suelo)` **bajó** `ligero (<matiz>)`
+> de `estandar` a `ligero`. Autorizaste su corrección y la publicación de **`v1.33.2`** el 2026-09-10.
+
+
 **Te lo traigo porque no es de esta ventana: es preexistente y vive en la 1.33.0 que gobierna este
 desarrollo.** El `qa-tester` lo reprodujo **igual** en `7e19537`, en `a57eecc` y en **el plugin estable
 1.33.0 instalado**.
@@ -833,6 +897,23 @@ documentación del propio arnés — y eso no cabe como residual de un REQ que n
 
 
 ### D17 · `SEC-084` — un fail-open VIVO en el plugin PUBLICADO, en la guarda que protege la firma del auditor. **No es una ventana: es una pregunta sobre lo distribuido**
+
+> ⚠️ **CORREGIDO EN LO PUBLICADO — anotado el 2026-09-10; la entrada NO se retira porque su
+> descripción del defecto sigue siendo la buena, y porque QA la AMPLIÓ.** La **`v1.33.1` publicada**
+> cambió el disparador de `grep -q 'Seguridad:'` a una comparación del **valor crudo de la cabecera**
+> con el de disco. Medido hoy sobre el lector instalado: `Seguridad:`, `_Seguridad_:`,
+> `**Seguridad**:` y `Seguridad :` se leen **todas**, y la firma **ya no pasa** sobre `QA: pendiente`.
+>
+> **Y el fail-open era MÁS ancho de lo que esta entrada describía.** QA del porte lo midió: con la
+> clave **limpia**, un `Edit` que sustituye **sólo el valor** daba **allow** en 1.33.0 y da **deny**
+> ahora — y ésa es la forma **más natural** de firmar con `Edit`, más común que la clave decorada. Es
+> decir: la decoración era **una** vía, no **la** vía. 33 sondas —REQ nuevo, CRLF, duplicados,
+> comentario, cuerpo, idempotencia, BOM— todas conformes.
+>
+> **Qué queda para ti:** nada de decisión sobre el defecto, que está corregido y publicado. Queda el
+> **cambio de conducta declarado** que trajo el arreglo —*«cambiar la evidencia también renueva la
+> firma»*—: una edición que sólo toque el paréntesis de evidencia cuenta ahora como firma nueva. Es
+> más estricto, está escrito en el código, y **no** lo he tratado como decisión tuya.
 
 **Esto no es de 1.34.0.** El `auditor-seguridad` lo midió en **cuatro árboles, incluido `v1.33.0`
 publicado** — el que gobierna este desarrollo y el que corren los proyectos consumidores.

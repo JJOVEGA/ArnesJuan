@@ -1,0 +1,3 @@
+inyectado-3700 min=224972 us · v1.33.0 min=176631 us · RAZON VERDADERA (suelo) = 1.2737
+inyectado-3700 min=223332 us · v1.33.0 min=174104 us · RAZON VERDADERA (suelo) = 1.2828
+inyectado-3700 min=225028 us · v1.33.0 min=175339 us · RAZON VERDADERA (suelo) = 1.2834

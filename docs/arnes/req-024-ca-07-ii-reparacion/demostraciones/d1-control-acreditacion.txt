@@ -1,0 +1,9 @@
+--- 40/7 · el reloj de la ruta crítica y su guarda de dispersión (REQ-024 CA-07 ii) ---
+  PASS  REQ-024 CA-07 (ii) el reloj de la ruta crítica no pasa de 1,25× la línea base  máx(r) 1.139× <= techo en las 4 razones: 1.127× 1.139× 1.121× 1.124× · recorrido 1.016× · techo 1.250× · peor convergencia 1.021× · k=8 r=30
+  PASS  REQ-024 CA-07 (ii) la sonda que no converge se ABSTIENE: nunca PASS y nunca FAIL, y la abstención manda sobre el rojo  (7 sondas → PASS FAIL SKIP SKIP SKIP SKIP SKIP )
+  PASS  REQ-024 CA-07 (ii) el SKIP por no convergencia cita las TRES cifras: las dos razones de convergencia y la razón que sí obtuvo  <la sonda NO convergió: segundo mínimo / mínimo = 1.400× (este) y 1.020× (heredada), por encima de su propio techo 1.250× — no puede distinguir una regresión de su ruido. La razón que sí obtuvo es 1.600×, y sobre eso no se firma>
+  PASS  REQ-024 CA-07 (ii) par discriminante NEGATIVO: dispersión ensanchada SIN regresión da SKIP, y con la guarda desactivada la MISMA entrada da PASS o FAIL según la repetición  (con la guarda: SKIP · sin ella: PASS PASS FAIL PASS — el rojo lo quita la guarda, no la entrada)
+  PASS  REQ-024 CA-07 (ii) par discriminante POSITIVO: una regresión sintética de 2× da FAIL y no SKIP, y sin regresión ni forzador da PASS  (con la regresión de 2×: FAIL · sin ella y sin forzador: PASS )
+aviso: vuelta parcial (1 de 65 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 5 PASS, 0 FAIL

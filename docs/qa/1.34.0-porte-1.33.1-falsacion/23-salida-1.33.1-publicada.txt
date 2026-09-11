@@ -1,0 +1,16 @@
+  ligero                     Sens=no   -> ligero
+  ligero                     Sens=sí  -> critico
+  ligero (local)             Sens=no   -> ligero
+  ligero (local)             Sens=sí  -> critico
+  ligero (D8, 2026-09-08)    Sens=no   -> ligero
+  ligero (D8, 2026-09-08)    Sens=sí  -> critico
+  ligero(sin espacio)        Sens=no   -> ligero
+  ligero(sin espacio)        Sens=sí  -> critico
+  ligero ()                  Sens=no   -> ligero
+  ligero ()                  Sens=sí  -> critico
+  ligero (critico)           Sens=no   -> ligero
+  ligero (critico)           Sens=sí  -> critico
+  estandar (x)               Sens=no   -> estandar
+  estandar (x)               Sens=sí  -> critico
+  critico (por suelo)        Sens=no   -> critico
+  critico (por suelo)        Sens=sí  -> critico

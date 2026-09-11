@@ -104,7 +104,23 @@ cada proyecto pone el mapeo con sus ejemplos concretos.
 - **Si se omite, se deriva:** sensible → `critico`, si no → `estandar`. Es exactamente el
   comportamiento anterior a que existieran los niveles, así que un proyecto que no declare
   nada no nota ningún cambio.
-- Un valor no reconocido se ignora y se cae a la derivación. Nunca abre la puerta.
+- El rigor efectivo combina el nivel declarado con el suelo de seguridad. Un matiz
+  parentético **bien formado** —el que **cierra el paréntesis al final del valor**,
+  como `critico (por suelo)`— conserva `estandar` y `critico`, sujeto a ese suelo.
+  Para mantener la protección heredada, `ligero` con matiz deriva a `estandar` si el
+  REQ no es sensible y a `critico` si lo es. `ligero` sin matiz conserva su
+  comportamiento, sujeto al suelo de seguridad.
+- **Un paréntesis que no cierra al final del valor no es un matiz: es un valor
+  desconocido**, y cae en la derivación heredada del punto siguiente. `critico (por
+  suelo` (sin cerrar), `critico (` y `critico (x) y` (con texto detrás del cierre) se
+  juzgan **`estandar`** en un REQ no sensible, así que un `critico` escrito así **deja
+  de exigir la firma de seguridad, y no avisa**. Es la única protección que esta forma
+  puede perder: en `ligero` y en `estandar` la derivación heredada da lo mismo, y en un
+  REQ sensible el suelo de `critico` lo impide. Escribe el matiz cerrado, o no lo
+  escribas.
+- Un valor realmente desconocido conserva la derivación heredada: sensible →
+  `critico`; no sensible → `estandar`. No garantiza conservar el nivel que el autor
+  pretendía escribir; usa uno de los tres niveles válidos.
 
 ## Clases de hallazgo
 Todo hallazgo abierto se declara en el campo `Hallazgos abiertos:` de la cabecera, con
@@ -369,10 +385,75 @@ la misma corrida**, no como una cifra: un runner lento sube el numerador y el de
 **El estadístico es el MÍNIMO de k repeticiones, nunca la media**, y k se elige para que el mínimo
 de cada serie supere el suelo por debajo del cual el reloj no distingue del ruido (en este arnés,
 50 ms). La carga sólo puede **añadir** tiempo, así que el mínimo es la mejor estimación del coste
-real y la media es una mezcla del coste y de los vecinos. Y **una sonda que no llega a ese suelo, o
-que no encuentra su línea base, emite SKIP con el motivo y con el número que sí obtuvo — nunca
-PASS**: un instrumento que ante la ausencia de datos responde «verde» es la misma familia de
-defecto que la magnitud equivocada.
+real y la media es una mezcla del coste y de los vecinos.
+
+**La abstención se enuncia por PROPIEDAD, nunca como lista cerrada de causas.** Una sonda que **no
+resuelve el factor que vigila** —cualquiera que sea el motivo— **no emite PASS**: publica **el
+motivo y el número que sí obtuvo**. La propiedad es decidible, y por eso no es un rodeo retórico:
+la sonda se abstiene exactamente cuando **no puede afirmar la unanimidad de sus razones respecto
+del techo** —ni todas conformes, ni todas excedidas—, **incluido el caso en que alguna razón no
+llegue a existir**. *Ejemplos declaradamente **no exhaustivos**, y la sede de la lista es el código
+de cada sonda, no este documento:* la serie no llega al suelo; falta la línea base; la sonda no
+midió por otro motivo; un brazo no converge; el techo cae **dentro** del recorrido de las razones.
+Un instrumento que ante la ausencia de datos responde «verde» es la misma familia de defecto que la
+magnitud equivocada — y **enumerar** aquí las causas en vez de enunciar la propiedad es la otra
+mitad de esa familia: lo midió `QA-024-20` (`contrato`), cuando este sitio único nombraba **dos**
+causas y el código se abstenía por **seis**.
+
+**Y la unanimidad es NECESARIA y NO SUFICIENTE: un veredicto describe lo que midió y NO atribuye la
+causa.** Que **todas** las razones de una corrida excedan el techo **no demuestra** que lo haya
+puesto ahí el código ni **descarta** el ruido, porque las razones de una misma corrida comparten la
+desviación de **esa** corrida y la unanimidad no puede verla. Caso medido (`REQ-024 CA-07 (ii)`,
+`QA-024-25`): sobre un árbol **conforme** de razón verdadera `1,177×`, **12 corridas sin cambiar un
+byte** dieron **7 `PASS`** (pegados al techo, `1,223×`–`1,249×`), **4 `FAIL` «no se pudo
+acreditar»** y **1 `FAIL`** que afirmaba regresión; las razones recorrieron `1,095×`–`1,490×`
+**entre** corridas, **un orden de magnitud** más que el `recorrido` **intra-corrida** que el
+instrumento publica.
+
+- **Mal:** «`FAIL` por **regresión** si `mín(r) > techo` en **todas**, así que no lo puso ahí el
+  vecino.»
+- **Bien:** «`FAIL` si `mín(r) > techo` en **todas**: **la medición excede el techo; no se acredita
+  cumplimiento.**»
+
+**Bloquear no exige atribuir, y por eso la redacción fiel no debilita nada.** El resultado **puede
+bloquear sin afirmar que ha demostrado una regresión del código ni descartado el ruido** — una
+acreditación pendiente no habilita la fusión. Lo que sí debilita la puerta es lo contrario:
+atribuir una causa que la corrida no midió enseña a **desconfiar del rojo verdadero**. Y el falso
+rechazo que quede **se declara como limitación del instrumento en el criterio que lo usa**:
+corregir la frase **cambia lo que el rojo dice, no la tasa con la que aparece**.
+
+**Y toda abstención lleva COTA, porque una abstención sin cota es un verde que nadie anunció**
+(`SEC-064`). La cota se escribe **en el criterio que la usa**, y tiene dos mitades: **dentro de la
+corrida**, una medición inconclusa se **vuelve a medir** hasta un **techo de reintentos declarado**
+(con su dirección admitida) y, agotado, el caso emite **`FAIL` «no se pudo acreditar»**, nunca un
+`SKIP` verde; **entre corridas**, un techo de corridas **consecutivas** abstenidas tras el cual la
+abstención **deja de ser un veredicto**, pasa a **hallazgo** con dueño y se **escala**. Dos
+abstenciones sólo se suman si se sabe **de qué máquina** salió cada una, así que el mensaje publica
+**plataforma y carga**. **Una medición inconcluyente es acreditación PENDIENTE: no habilita la
+fusión y la puerta no sale verde por no poder medir.** Y limitar la abstención **no sustituye** la
+acreditación del rendimiento: la cota es **necesaria y no suficiente**, y el criterio debe dejar
+escrita además una **vía de acreditación ejecutable**.
+
+**El suelo de detección de un instrumento NO es una constante, y un criterio no lo escribe como
+cifra.** Depende de la máquina y del momento —medido: `1,33×` en un host y `2,39×` en otro **para
+el mismo código**—, así que se **deriva de la propia medición** (`techo × recorrido observado`) y se
+**publica en el veredicto** junto con la máquina y su carga. De ahí la regla que impide que un
+criterio nazca falso: **un criterio no afirma que su instrumento detecta una magnitud cuya
+detección no esté demostrada**; afirma lo demostrado —que no aprueba lo que no puede resolver—, y
+la brecha entre el techo y el suelo de detección se **escala como decisión de alcance**, **nunca**
+bajando el techo para que el instrumento lo alcance.
+
+**Y mientras ninguna rama lo consulte, se escribe como DATO DIAGNÓSTICO ESTIMADO con sus
+limitaciones: un número que se publica no gobierna nada por tener forma de guarda.** Caso medido
+(`REQ-024 CA-07 (ii)`, `QA-024-26`): el suelo aparecía en **una sola línea** del código —la que
+compone el mensaje—, **ninguna rama de decisión lo consultaba**, y una corrida llegó a publicar
+`suelo de detección 1.296×` y a afirmar, **en la frase siguiente**, un veredicto sobre un árbol cuyo
+valor verdadero era `1,177×`: afirmó haber probado algo **por debajo de su propio suelo**. La regla
+tiene dos mitades y las dos importan: (1) el criterio lo describe como **estimación diagnóstica** y
+declara **sus limitaciones** —de qué dispersión se deriva y cuál **no** ve—, en vez de presentarlo
+como cota de lo que la corrida puede probar; y (2) **no se añade lógica nueva para justificar el
+nombre**. Si se quiere que el suelo **gobierne**, ésa es una capacidad con su propio criterio, su
+medición y su decisión de alcance; hasta entonces, el texto dice **lo que el número es**.
 
 ### Cuando el código cubre MÁS de lo que el criterio promete
 
@@ -517,7 +598,7 @@ Tocado por: (agente / fecha)
 | [REQ-021](REQ-021.md) | `tests/util/` con las sondas de reloj y de procesos, escritas una vez: se reconstruyen en cada comisión y dos se rompieron a la primera, una dejando un proceso vivo 3 h 41 min. Alcance reducido el 2026-09-08 (la sonda de línea base queda fuera). **BLOQUEADO el 2026-09-08**: agotó las 3 vueltas dev↔QA sin cerrar `QA-021-10` (`contrato`), y el propietario lo movió a **1.34.0** | `bloqueado` | critico | con-hallazgos | preventiva |
 | [REQ-022](REQ-022.md) | Despacho en paralelo: tres dimensiones de colisión y la herramienta sólo ve una. Bloque de apertura de **1.34.0** | `pendiente` | critico | pendiente | pendiente |
 | [REQ-023](REQ-023.md) | El carácter que no se ve apaga el enforcement: la guarda nombra el CR cuando la propiedad es «una cabecera que no se puede medir». **Ventana 1.34.0** (salió de 1.33.0 el 2026-09-08, decisión del propietario): depende de las sondas de REQ-021 y del gate de SEC-048 | `en-progreso` | critico | con-hallazgos | pendiente |
-| [REQ-024](REQ-024.md) | La ausencia de un campo no se resuelve del lado que abre, y el mismo estado en el segundo lector: la cola que cuenta cero sobre lo que no pudo medir. **Ventana 1.34.0**: va después de REQ-023, con el que comparte **diez** rutas (medido con `tools/arnes-paralelo.sh` el 2026-09-09) | `pendiente` | critico | pendiente | pendiente |
+| [REQ-024](REQ-024.md) | La ausencia de un campo no se resuelve del lado que abre, y el mismo estado en el segundo lector: la cola que cuenta cero sobre lo que no pudo medir. **Ventana 1.34.0**: va después de REQ-023, con el que comparte **diez** rutas (medido con `tools/arnes-paralelo.sh` el 2026-09-09) | `bloqueado` | critico | con-hallazgos | pendiente |
 | [REQ-025](REQ-025.md) | El arnés vigila también a quien orquesta: la sesión coordinadora acredita, decide y publica, y ninguna puerta la mide. **Ventana 1.34.0**; línea base = 20 errores de coordinación catalogados | `borrador` | critico | pendiente | pendiente |
 | [REQ-026](REQ-026.md) | El reconocedor de entradas de la rotación es una enumeración de prefijos y el corpus son TABLAS: el 23 % de `requirements/` (409.699 B) es historia que el mecanismo no sabe mover, y encenderlo hoy no haría nada. **Ventana 1.34.0** | `en-revisión` | critico | aprobado | con-hallazgos |
 | [REQ-027](REQ-027.md) | Las reglas de trabajo de la coordinadora, escritas en la sede canónica que leen todas las herramientas: la comprobación de cuatro preguntas antes de despachar habría cazado tres de los fallos medidos el 2026-09-08. Precursor de REQ-025 (reglas primero, agente sólo si hacen falta). **Ventana 1.34.0**; no se despacha a la vez que REQ-019 sobre `AGENTS.md` | `completado` | critico | aprobado | aprobado |

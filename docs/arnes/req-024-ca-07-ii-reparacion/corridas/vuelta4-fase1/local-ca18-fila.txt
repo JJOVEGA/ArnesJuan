@@ -1,0 +1,5 @@
+       --- CA-18 · techo derivado por archivo (se publica, no se compara) ---
+       01-guard-codigo-quien-edita.sh                           lineas=  13 piso=  12 techo= 400 (gobierna N       ) duplicadas=   4
+       02-guard-completado-transicion.sh                        lineas=  11 piso=  10 techo= 400 (gobierna N       ) duplicadas=   4
+       40-ausencia-que-abre-8-sonda-de-viabilidad.sh            lineas= 183 piso= 183 techo= 400 (gobierna N       ) duplicadas=  25
+Autoprueba: 106 PASS, 0 FAIL

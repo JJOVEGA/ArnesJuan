@@ -2144,9 +2144,38 @@ arnes_campos_normaliza() {   # <qa> <seg> <sens> <hall> <rigor> -> ARNES_QA/SEG/
   arnes_norm_campo "$2"; arnes_veredicto "$ARNES_CAMPO"; ARNES_SEG="$ARNES_VEREDICTO"
   arnes_norm_campo "$3"; ARNES_SENS="$ARNES_CAMPO"
   arnes_norm_campo "$4"; ARNES_HALL="$ARNES_CAMPO"
-  arnes_norm_campo "$5"; ARNES_RIGOR="$ARNES_CAMPO"
+  arnes_norm_campo "$5"
+  # Los niveles simples ya quedaron normalizados arriba; sólo la evidencia
+  # parentética necesita el veredicto común. Así el camino habitual no paga
+  # una segunda normalización por cada cabecera leída.
+  #
+  # Y se ANOTA que el nivel salió de desenvolver un paréntesis. No es
+  # contabilidad: es la diferencia entre leer y CONCEDER. Desenvolver
+  # `critico (por suelo)` corrige un fail-open; desenvolver `ligero (local)`
+  # abre otro más ancho, porque `ligero` es el unico nivel exento de
+  # `QA: aprobado`. El desenvoltorio no puede decidir eso solo -- necesita
+  # saber `arnes_rigor_efectivo` que el valor venia envuelto.
+  ARNES_RIGOR_MATIZ=0
+  case "$ARNES_CAMPO" in
+    *'('*) arnes_veredicto "$ARNES_CAMPO"; ARNES_RIGOR="$ARNES_VEREDICTO"; ARNES_RIGOR_MATIZ=1 ;;
+    *) ARNES_RIGOR="$ARNES_CAMPO" ;;
+  esac
   arnes_sens_efectiva
   arnes_rigor_efectivo
+}
+
+# Campo crudo anterior para distinguir una firma de una edición de prosa.
+# Comparte el lector de campos, incluida la decoración y las citas, y sólo se
+# consulta al juzgar el orden; no agrega trabajo al cierre normal.
+arnes_seguridad_cabecera() {   # <documento> -> ARNES_SEG_CABECERA
+  local l ARNES_CITA=0 ARNES_CR=0 ARNES_CR_LINEA=''
+  local ARNES_LINEA ARNES_CLAVE ARNES_VALOR ARNES_CLAVE_DECORADA
+  ARNES_SEG_CABECERA=''
+  while IFS= read -r l; do
+    case "$l" in '## '*) break ;; esac
+    arnes_campo_linea "$l" || continue
+    [ "$ARNES_CLAVE" != "$ARNES_CLAVE_SEG" ] || ARNES_SEG_CABECERA="$ARNES_VALOR"
+  done <<< "$1"
 }
 
 # Extrae en UNA pasada los campos de cabecera del REQ que gobiernan el cierre.
@@ -2365,8 +2394,18 @@ arnes_estado_cabecera() {   # <texto> -> ARNES_ESTADO
 # El arnes trae el MECANISMO, no el MAPEO: que REQ de un proyecto es critico lo
 # decide ese proyecto en su `AGENTS.md`, no el plugin.
 arnes_rigor_efectivo() {
-  local declarado="$ARNES_RIGOR" nd ns
+  local declarado="$ARNES_RIGOR" nd ns nh heredado
   ARNES_RIGOR_AUSENTE=0
+  # EL NIVEL HEREDADO: el que este REQ tendria si su `Rigor:` no se pudiera leer.
+  # Es el comportamiento anterior a que los niveles existieran, y se calcula UNA
+  # vez porque tiene dos usos: es el valor por defecto (no hay nada declarado y la
+  # exigencia de ausencia no aplica, o lo declarado no se entiende) y es el PISO
+  # del matiz (abajo).
+  case "$ARNES_SENS" in
+    si) heredado='critico' ;;
+    *)  heredado='estandar' ;;
+  esac
+
   # SUELO DE SEGURIDAD: `Sensible a seguridad: si` obliga a `critico` y eso no se
   # puede bajar. Un REQ que NO es sensible no tiene suelo.
   #
@@ -2383,25 +2422,73 @@ arnes_rigor_efectivo() {
     ARNES_RIGOR_AUSENTE=1
     arnes_resuelve_ausencia "$ARNES_CLAVE_RIGOR" ''
     if [ -n "$ARNES_AUSENCIA_APLICA" ]; then ARNES_RIGOR="$ARNES_AUSENCIA_APLICA"; return 0; fi
-    case "$ARNES_SENS" in
-      si) ARNES_RIGOR='critico' ;;
-      *)  ARNES_RIGOR='estandar' ;;
-    esac
+    ARNES_RIGOR="$heredado"
     return 0
   fi
 
   arnes_rigor_nivel "$declarado"; nd=$?
   if [ "$nd" -eq 0 ]; then
     # Valor no reconocido: se ignora y se cae al comportamiento de siempre.
-    case "$ARNES_SENS" in
-      si) ARNES_RIGOR='critico' ;;
-      *)  ARNES_RIGOR='estandar' ;;
-    esac
+    ARNES_RIGOR="$heredado"
     return 0
   fi
 
   # Declarado y valido. Sube libremente; bajar del suelo de seguridad, no.
   ARNES_RIGOR="$declarado"
+
+  # UN MATIZ QUE LLEGA HASTA AQUI SOLO PUEDE SUBIR O MANTENER EL RIGOR, NUNCA
+  # BAJARLO. La frase sin esa condicion es FALSA y estaba escrita asi: el alcance
+  # de esta guarda son los matices BIEN FORMADOS, y lo acota `arnes_veredicto`,
+  # que desenvuelve SOLO si el valor termina en `)`.
+  #
+  # LO QUE QUEDA FUERA, medido y con nombre (SEC-087, clase `contrato`): si el
+  # parentesis NO cierra al final del valor --`critico (por suelo`, `critico (`,
+  # `critico (x) y`--, el valor entero deja de reconocerse y `arnes_rigor_efectivo`
+  # ya retorno por la rama `nd -eq 0` de arriba, con la derivacion heredada. Este
+  # `if` NO CORRE en ese camino. Efecto real: un `critico` asi escrito en un REQ
+  # no sensible se juzga `estandar` y deja de exigir la firma de seguridad, en
+  # silencio. Es la unica proteccion que esa forma pierde --en `ligero` y
+  # `estandar` la derivacion heredada da lo mismo, y en un REQ sensible el suelo
+  # lo impide--. La via es PREEXISTENTE e identica en 1.33.0, 1.33.1 y 1.33.2: no
+  # la abrio este arreglo, y cerrarla es otra reparacion con su propio REQ. Lo que
+  # este parche corrigio fue la frase absoluta que la tapaba.
+  #
+  # Y TAMPOCO CORRE CUANDO EL CAMPO ESTA AUSENTE, que en esta linea es un camino
+  # APARTE: `arnes_resuelve_ausencia` (ADR-009) ya retorno mas arriba, antes de
+  # llegar aqui. Es correcto --una ausencia no es un matiz: no hay nada
+  # desenvuelto que pudiera bajar el nivel, y esa rama resuelve hacia `critico` o
+  # hacia lo heredado, nunca hacia `ligero`--, pero queda dicho para que nadie
+  # lea esta guarda como si cubriera tambien ese camino.
+  #
+  # Cuando el nivel salio de desenvolver un parentesis bien formado, el nivel
+  # efectivo es el MAS RESTRICTIVO entre lo desenvuelto y el nivel heredado -- que
+  # es, exacto, lo que ese mismo valor daba antes de que el desenvoltorio
+  # existiera.
+  #
+  # POR QUE, y esto se pago publicando. v1.33.1 enruto la forma con parentesis
+  # por el lector comun para TODOS los valores. En `critico (por suelo)` eso
+  # cerro un fail-open. En `ligero (local)` abrio otro MAS ANCHO: `ligero` es el
+  # unico nivel exento de `QA: aprobado` (AGENTS.md 6), asi que un REQ no
+  # sensible con `Rigor: ligero (<lo que sea>)` paso a cerrarse SIN QA y SIN
+  # veredicto de seguridad, donde v1.33.0 lo denegaba. La conducta anterior
+  # --"valor no reconocido: se cae al defecto de la sensibilidad"-- no era un
+  # descuido que el parche corrigiera: en `ligero` era PROTECTORA.
+  #
+  # La asimetria no es un caso especial pegado con cinta: es la misma doctrina
+  # que el proyecto ya tiene escrita en AGENTS.md 6 --"el rigor se puede subir,
+  # nunca bajar"-- y la regla de que una guarda solo puede ESTRECHAR. Un
+  # parentesis es evidencia que alguien anadio a mano; puede pedir mas ceremonia,
+  # no regalar una exencion.
+  #
+  # Consecuencia que hay que saber: no existe forma de declarar `ligero` CON
+  # matiz. Quien quiera la exencion escribe `Rigor: ligero` a secas y pone la
+  # evidencia en el cuerpo del REQ. Es deliberado -- la exencion de QA es
+  # justo lo que no debe poder concederse de pasada.
+  if [ "${ARNES_RIGOR_MATIZ:-0}" = "1" ]; then
+    arnes_rigor_nivel "$heredado"; nh=$?
+    if [ "$nd" -lt "$nh" ]; then ARNES_RIGOR="$heredado"; nd=$nh; fi
+  fi
+
   case "$ARNES_SENS" in
     si) arnes_rigor_nivel critico; ns=$?
         [ "$nd" -lt "$ns" ] && ARNES_RIGOR='critico' ;;
