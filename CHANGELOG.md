@@ -50,6 +50,61 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-11 · La tabla que heredan todos los proyectos deja de prometer lo que la máquina no hace
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador, coordinadora.
+
+**`D12`, opción A**, aprobado expresamente por el propietario (2026-09-11). Tres correcciones en **una
+entrega coherente**, porque son **filas vecinas de la misma tabla** y del **mismo defecto**: una promesa
+sin su condición. Corregir una sin las otras dejaba la tabla mintiendo en la línea siguiente.
+
+### Qué dice ahora
+
+**La fila del orden** (`AGENTS.md:353` y la plantilla) lleva el titular **transcrito literal** de la
+celda que `CA-12 (ii)(B)(b)` prescribe —no reinventado—, más que **deniega en los dos estados de
+`campos.ausencia_exige`** con su motivo, más el **alcance del disparador** de `SEC-084` citando el sitio
+único del lector **sin enumerarlo**, más la **consecuencia que no es una sola cosa** —la medibilidad
+deniega citando la línea; la ausencia **no siempre** deniega: el homóglifo deja **cerrar** por debajo de
+`critico`— y la **frontera abierta** con su sede.
+
+**El párrafo del aviso** (`:360-383`) pierde la frase sin condición y gana la conducta medida: el eje es
+el **rigor efectivo** y **los dos umbrales no coinciden** —`QA:` fuera de vocabulario impide cerrar en
+`estandar` y `critico`, **no** en `ligero`; `Seguridad:`, **sólo** en `critico`—. Se cita el fallo con su
+**denominador exacto** («falsa en 4 de las 6 celdas»), sin dejar la promesa absoluta con una coletilla.
+
+### El camino de QA, dentro de la fila y no en un anexo
+
+> *«La salida es pasar por la revisión de QA y escribir el veredicto que ÉSA emita, con su evidencia;
+> escribir `QA: aprobado` para desatascar la edición, sin la validación detrás, **es exactamente el fallo
+> que esta guarda existe para impedir**.»*
+
+Con la segunda salida legítima nombrada —`Seguridad: preventiva` cuando aún no hay código— y **dos casos
+de banco que lo fijan por sede**.
+
+### Banco
+
+Sección nueva `44-la-tabla-heredada.sh`, **33 casos**; `CASOS_ESPERADOS` 1167 → **1200**. Banco entero
+**1194 PASS · 0 FAIL · 6 SKIP**, `rc 0`. **Fail-before: 3 PASS · 30 FAIL** contra los documentos de
+`1605f35`, y los 3 verdes son **por construcción** los que no acreditan el arreglo.
+
+**Gemelas verificadas por la coordinadora:** la fila (1959 caracteres) y el párrafo aplanado (2309) son
+**idénticos byte a byte** en `AGENTS.md` y en la plantilla, y hay un caso de **inyección** que demuestra
+que el comparador detecta una copia mutada.
+
+**Sin acreditar rendimiento**, y dicho: una segunda corrida dio `1192/0/8` —los SKIP de reloj varían—,
+el total cuadra en las dos, y hay otra cuenta trabajando en esta máquina.
+
+### Dos cosas nombradas y NO tocadas
+
+**La cuarta sede:** `AGENTS.md:351` y `templates/AGENTS.md.tpl:309` —«*No completar sin `QA: aprobado`
+(salvo `Rigor: ligero`)…*»— es **la misma familia**, y ahora **el párrafo corregido la contradice en el
+mismo documento**: con la llave apagada, un REQ sin línea `QA:` **cierra en los tres rigores**. El
+desarrollador **no la tocó** —`D12` no la autoriza— y recomienda enrutarla como corrección autorizada
+aparte en vez de colarla. Ya tiene sede y dueño en `docs/PENDIENTES.md:1234-1238`.
+
+**Y el eslabón que haría inútil todo esto:** `skills/arnes-upgrade/SKILL.md` describe el cambio de
+conducta pero **no dice que hay que sustituir esta fila y este párrafo en el `AGENTS.md` ya congelado de
+cada proyecto**. Sin esa línea, **un proyecto migrado conserva las dos promesas falsas**.
+
 ## [Interno] — 2026-09-11 · `D3` ejecutado: los cuatro criterios sin implementar pasan a ser legibles por la máquina
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
 

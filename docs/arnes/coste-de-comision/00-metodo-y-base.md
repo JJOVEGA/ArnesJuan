@@ -112,6 +112,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 23 | `D3` — `SEC-073` y `SEC-072` de `REQ-026` · `analista-requerimientos` | 2026-09-11 17:33:03 | 2026-09-11 17:45:00 | **11 min 57 s** | cuatro criterios registrados **reutilizando `SEC-073`**, sin inventar ids; `CA-18 (i)` reconoce la ventana **sin aceptarla**; **cuatro** sedes de más; halla que dos entradas usan raya y el lector no lee su clase | `1605f35` | **178 435** | ídem |
 
+| 24 | `CA-12 (ii)` + `SEC-084` + `QA-024-38` en `AGENTS.md` y su plantilla · `desarrollador` | 2026-09-11 17:33:03 | 2026-09-11 17:49:33 | **16 min 30 s** | tres correcciones en **una entrega**; gemelas idénticas byte a byte; banco 1167 → **1200**; **cuarta sede** nombrada y no tocada | `1605f35` | **180 623** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la

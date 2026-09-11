@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1167  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1200  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1489,6 +1489,23 @@ CASOS_ESPERADOS=1167  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # la otra mitad de la acreditación—. Los `CASOS_ESPERADOS_SECCION` de
                       # la `42` y de la `27` NO se tocan: ningún caso suyo cambia de
                       # veredicto, porque esta reparación es de TEXTO.
+                      #
+                      # 1167 → 1200: la sección `44` nueva, 33 casos. Es la TERCERA
+                      # superficie de la misma promesa: no el mensaje del hook —eso es la
+                      # `43`— sino el DOCUMENTO que todo proyecto hereda, `AGENTS.md` §13 y
+                      # `templates/AGENTS.md.tpl`. Dieciséis fijan la fila del orden de las
+                      # firmas (`REQ-024 CA-12 (ii)` salida (b) y la mitad de texto de
+                      # `SEC-084`: el titular con la ausencia, el radio de la llave, la
+                      # salida por la REVISIÓN DE QA, el disparador, el reparto por
+                      # clasificación del lector, la consecuencia que no es una sola cosa y
+                      # la frontera abierta), doce fijan el párrafo del aviso con su
+                      # condición (`QA-024-38`, que lo midió falso en 4 de 6 celdas), y
+                      # cinco son el control de que las dos sedes quedan IDÉNTICAS, de que
+                      # la promesa vieja no sobrevive y de que el reconocedor de texto
+                      # discrimina. Los `CASOS_ESPERADOS_SECCION` de la `43`, la `42`, la
+                      # `40` y la `13` NO se tocan: no se retira ni se altera ningún caso, y
+                      # esta reparación es de TEXTO —ninguna decisión ni ningún `rc` se
+                      # mueve—.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
