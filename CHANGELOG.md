@@ -2,6 +2,52 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · `REQ-024 CA-07 (ii)`: la causa era dispersión del instrumento, y la vuelta 4 mide si la precisión necesaria cabe en el CI real
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (reparación y sonda), qa-tester (vuelta 1 acotada), coordinadora.
+
+El propietario eligió **reparar la prueba** y autorizó **expresamente la vuelta 4 de `REQ-024`**, por
+encima del tope de tres de `AGENTS.md` §6. **El contador no se reinicia**: es la vuelta 4 y así se
+numera. No autoriza aceptar residuales, rebajar el techo ni fusionar con el bloqueo pendiente.
+
+### La causa: dispersión del instrumento, no regresión de código
+
+Lo decide una **distribución nula** —el mismo árbol materializado dos veces, cociente verdadero
+`1,000×` por construcción— medida con los mandos del propio caso: recorre **0,875×–1,213×**. El techo
+vive a +0,25 y el instrumento se mueve **±0,21**: el techo estaba **dentro del ruido**. Con
+resolución suficiente (`k=8 r=30`) la nula colapsa a `0,984×–1,005×` y el coste real sale **1,118×**,
+por debajo del techo. QA lo re-derivó de forma independiente: nula `0,919×–1,112×`, coste real
+`1,112×–1,153×`.
+
+**Que no lo introdujo el delta de `#48`**, sin razonar sobre el diff: uno de los `FAIL` es sobre
+`67b06fe`, anterior al cambio de `hooks/lib.sh`; `0caeac5` y `69fc96a` son idénticos y separan
+0,064×; y la nula lo reproduce **sin ningún delta**.
+
+### La reparación, y lo que QA le encontró
+
+Guarda de convergencia **portada** de `REQ-017 CA-08 (ii)` —diff de lógica **cero**—, en sección
+propia `40/7`. Techo `1250‰` intacto, `sonda-reloj.sh` sin tocar, caso dentro de la puerta requerida,
+sin `continue-on-error`. Cuadre 1090 → **1094**.
+
+QA (vuelta 1 acotada, `con-hallazgos`): la reparación **conserva lo que la puerta afirma** —en 7
+corridas con regresión ninguna salió `PASS`— pero **no conserva lo que la puerta caza**.
+**`QA-024-20`** (`contrato`, **bloquea**): el criterio enumera cerrado dos causas de abstención y lo
+construido se abstiene por **seis**; y falta la **cota** que el criterio hermano sí contrata.
+**`QA-024-21`** (`instrumento`): banda ciega entre el techo y ~1,4×.
+
+### Vuelta 4, fase 1: la viabilidad se mide en el runner, no aquí
+
+Condiciones y criterio fijados **antes** de ejecutar. La pregunta se reduce a una desigualdad: con
+unanimidad, detectar `1,28×` contra `1,250×` exige **`ε_mín ≥ 977‰`**; no cazar cambios correctos
+exige **`ε_máx ≤ 1118‰`**. Cuatro condiciones (mide · detecta · no caza todo · coste ≤ +60 s) y un
+barrido de cuatro ajustes intercalados por rondas.
+
+La sonda viaja **dentro del banco** porque el workflow no admite disparo manual y `.github/` es gate
+humano. **No puede alterar el cuadre**, comprobado contra el texto: `run.sh` cuenta `^  PASS/FAIL/SKIP`
+y la sonda emite `VIAB`, con piso de sección declarado en 0.
+
+El desarrollador **registró por escrito que espera «NO VIABLE»** antes de ver el runner, y declaró que
+un «cumple» sobre muestra recortada por el tope valdría menos. Es temporal y se retira.
+
 ## [Interno] — 2026-09-11 · Quinta observación del mismo techo de reloj: `#48` NO se fusiona sobre el rojo
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
 

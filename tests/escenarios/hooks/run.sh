@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1090  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1094  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1432,6 +1432,32 @@ CASOS_ESPERADOS=1090  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # añadirse. Los `CASOS_ESPERADOS_SECCION` de las secciones 39 y 40 NO se
                       # tocan: la AUSENCIA del campo se resuelve en otro camino (`ADR-009`) que
                       # esta guarda no atraviesa, así que ningún caso suyo cambia de veredicto.
+                      # 1090 → 1094: la reparación del INSTRUMENTO de `REQ-024 CA-07 (ii)`
+                      # (2026-09-11). El caso no tenía tercer estado —decidía con una sola
+                      # invocación de la sonda y sin guarda de dispersión, así que una medición
+                      # que no resuelve el factor que vigila salía como FAIL— y se lleva a la
+                      # sección `40/7` nueva con su guarda de convergencia y de recorrido,
+                      # PORTADA de `REQ-017 CA-08 (ii)`. Reparto: `40/2` 9 → 8 (pierde el caso,
+                      # y NO se toca ningún otro: (i), (iii) y (iv) conservan sitio, fixture y
+                      # veredicto), `40/7` 5 nuevos = el caso real más las cuatro
+                      # demostraciones que acreditan la guarda —los tres estados con entradas
+                      # sintéticas, el contenido del SKIP, y el par discriminante negativo y
+                      # positivo—. Va en una parte 7 y no en la 2 porque la 2 estaba en 400 de
+                      # 400 líneas: `REQ-014 CA-18` manda partir, no alargar. El techo 1,250×
+                      # va INTACTO y el caso sigue en la puerta requerida.
+                      #
+                      # 1094 → 1094, Y NO ES UNA ERRATA. La sección `40/8`
+                      # (`40-ausencia-que-abre-8-sonda-de-viabilidad.sh`) es una SONDA que MIDE
+                      # Y PUBLICA y NO dicta veredicto: declara `CASOS_ESPERADOS_SECCION=0` y
+                      # emite con el prefijo `  VIAB  `, que no casa ninguno de los tres
+                      # patrones del recuento, así que el total NO se mueve. Es TEMPORAL —fase 1
+                      # de la VUELTA 4 de `REQ-024 CA-07 (ii)`: la única vía de medir en el
+                      # runner es viajar dentro de una corrida normal del PR, porque
+                      # `banco.yml` no tiene `workflow_dispatch` y `.github/` es gate humano
+                      # (`AGENTS.md` §4)— y se borra con un `rm` cuando la fase 1 termine, sin
+                      # tocar este número. Sus condiciones y su criterio de viabilidad, fijados
+                      # ANTES de ejecutar y no elegidos al ver los datos:
+                      # `docs/arnes/req-024-ca-07-ii-reparacion/03-fase-1-viabilidad-en-el-runner.md`.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

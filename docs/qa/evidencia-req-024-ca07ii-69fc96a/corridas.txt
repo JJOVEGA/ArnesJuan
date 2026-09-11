@@ -1,0 +1,79 @@
+# Todas las corridas de esta QA acotada, incluidas las que no me gustaron
+
+## Banco completo, arbol LIMPIO (69fc96a + cambios sin comitear del desarrollador)
+### banco-qa-1
+Resultado: 1087 PASS, 0 FAIL, 7 SKIP — ninguna causa común: cada uno con su motivo
+  PASS  REQ-024 CA-07 (i) la llave de activación no añade ni un proceso por evaluación de la puerta  la evaluación de la puerta gasta 2 procesos y la línea base 2: 0 añadidos
+  PASS  REQ-024 CA-07 (i) ni un proceso por PARADA (el bloque derivado lee la llave en la misma llamada)  la parada gasta 5 procesos y la línea base 5: 0 añadidos
+  PASS  REQ-024 CA-07 (iii) doblar el NÚMERO DE ENTRADAS mantiene el lector de la cola lineal  mediana 2.021× (techo 2.200×; margen 0.179× > MAD 0.024×, 5 tomas de 1.997× a 2.117×) · par de tamaños: 400 → 800 entradas de '## Pendientes', longitud de línea constante
+  PASS  REQ-024 CA-07 (iv) doblar la LONGITUD DE UNA LÍNEA de entrada mantiene el lector lineal  mediana 1.931× (techo 2.200×; margen 0.269× > MAD 0.015×, 5 tomas de 1.916× a 2.031×) · par de longitudes: 1000 → 2000 bytes de línea de entrada, 20 entradas constantes
+  PASS  REQ-024 CA-07 (ii) el reloj de la ruta crítica no pasa de 1,25× la línea base  máx(r) 1.149× <= techo en las 4 razones: 1.147× 1.055× 1.077× 1.149× · recorrido 1.089× · techo 1.250× · peor convergencia 1.084× · k=4 r=6
+  PASS  REQ-024 CA-07 (ii) la sonda que no converge se ABSTIENE: nunca PASS y nunca FAIL, y la abstención manda sobre el rojo  (7 sondas → PASS FAIL SKIP SKIP SKIP SKIP SKIP )
+  PASS  REQ-024 CA-07 (ii) el SKIP por no convergencia cita las TRES cifras: las dos razones de convergencia y la razón que sí obtuvo  <la sonda NO convergió: segundo mínimo / mínimo = 1.400× (este) y 1.020× (heredada), por encima de su propio techo 1.250× — no puede distinguir una regresión de su ruido. La razón que sí obtuvo es 1.600×, y sobre eso no se firma>
+  PASS  REQ-024 CA-07 (ii) par discriminante NEGATIVO: dispersión ensanchada SIN regresión da SKIP, y con la guarda desactivada la MISMA entrada da PASS o FAIL según la repetición  (con la guarda: SKIP · sin ella: PASS PASS FAIL PASS — el rojo lo quita la guarda, no la entrada)
+  PASS  REQ-024 CA-07 (ii) par discriminante POSITIVO: una regresión sintética de 2× da FAIL y no SKIP, y sin regresión ni forzador da PASS  (con la regresión de 2×: FAIL · sin ella y sin forzador: PASS )
+
+### autoprueba-qa
+Resultado: 1087 PASS, 0 FAIL, 7 SKIP — ninguna causa común: cada uno con su motivo
+  PASS  REQ-024 CA-07 (i) la llave de activación no añade ni un proceso por evaluación de la puerta  la evaluación de la puerta gasta 2 procesos y la línea base 2: 0 añadidos
+  PASS  REQ-024 CA-07 (i) ni un proceso por PARADA (el bloque derivado lee la llave en la misma llamada)  la parada gasta 5 procesos y la línea base 5: 0 añadidos
+  PASS  REQ-024 CA-07 (iii) doblar el NÚMERO DE ENTRADAS mantiene el lector de la cola lineal  mediana 1.996× (techo 2.200×; margen 0.204× > MAD 0.156×, 5 tomas de 1.790× a 2.339×) · par de tamaños: 400 → 800 entradas de '## Pendientes', longitud de línea constante
+  PASS  REQ-024 CA-07 (iv) doblar la LONGITUD DE UNA LÍNEA de entrada mantiene el lector lineal  mediana 1.923× (techo 2.200×; margen 0.277× > MAD 0.028×, 5 tomas de 1.895× a 2.083×) · par de longitudes: 1000 → 2000 bytes de línea de entrada, 20 entradas constantes
+  PASS  REQ-024 CA-07 (ii) el reloj de la ruta crítica no pasa de 1,25× la línea base  máx(r) 1.212× <= techo en las 4 razones: 1.081× 1.088× 1.212× 1.147× · recorrido 1.121× · techo 1.250× · peor convergencia 1.101× · k=4 r=6
+  PASS  REQ-024 CA-07 (ii) la sonda que no converge se ABSTIENE: nunca PASS y nunca FAIL, y la abstención manda sobre el rojo  (7 sondas → PASS FAIL SKIP SKIP SKIP SKIP SKIP )
+  PASS  REQ-024 CA-07 (ii) el SKIP por no convergencia cita las TRES cifras: las dos razones de convergencia y la razón que sí obtuvo  <la sonda NO convergió: segundo mínimo / mínimo = 1.400× (este) y 1.020× (heredada), por encima de su propio techo 1.250× — no puede distinguir una regresión de su ruido. La razón que sí obtuvo es 1.600×, y sobre eso no se firma>
+  PASS  REQ-024 CA-07 (ii) par discriminante NEGATIVO: dispersión ensanchada SIN regresión da SKIP, y con la guarda desactivada la MISMA entrada da PASS o FAIL según la repetición  (con la guarda: SKIP · sin ella: PASS PASS FAIL PASS — el rojo lo quita la guarda, no la entrada)
+  PASS  REQ-024 CA-07 (ii) par discriminante POSITIVO: una regresión sintética de 2× da FAIL y no SKIP, y sin regresión ni forzador da PASS  (con la regresión de 2×: FAIL · sin ella y sin forzador: PASS )
+
+## Banco completo sobre COPIA con regresion inyectada ~+2,3 ms (razon verdadera ~1,35x)
+### banco-inyectado-1
+Resultado: 1085 PASS, 1 FAIL, 8 SKIP — ninguna causa común: cada uno con su motivo
+  FAIL  REQ-024 CA-07 (ii) el reloj de la ruta crítica no pasa de 1,25× la línea base  mín(r) 1.338× > techo en TODAS: es regresión, no ruido — el techo es OPERATIVO y no se sube, lo que baja es el coste del lector — 4 razones: 1.338× 1.472× 1.343× 1.347× · recorrido 1.100× · techo 1.250× · peor convergencia 1.027× · k=4 r=6
+
+### banco-inyectado-2
+Resultado: 1085 PASS, 1 FAIL, 8 SKIP — ninguna causa común: cada uno con su motivo
+  FAIL  REQ-024 CA-07 (ii) el reloj de la ruta crítica no pasa de 1,25× la línea base  mín(r) 1.252× > techo en TODAS: es regresión, no ruido — el techo es OPERATIVO y no se sube, lo que baja es el coste del lector — 4 razones: 1.397× 1.365× 1.252× 1.455× · recorrido 1.162× · techo 1.250× · peor convergencia 1.046× · k=4 r=6
+
+## Banco completo sobre COPIA con regresion inyectada ~+1,3 ms (razon verdadera ~1,28x)
+### banco-inyectado-min-1
+Resultado: 1086 PASS, 0 FAIL, 8 SKIP — ninguna causa común: cada uno con su motivo
+  SKIP  REQ-024 CA-07 (ii) el reloj de la ruta crítica no pasa de 1,25× la línea base  el techo cae DENTRO del recorrido observado [1.230×, 1.259×]: el instrumento no distingue el factor que vigila, y una medición inconclusa NO es una aprobación. Vía de acreditación: repetir con ARNES_COSTE_RUTA_CRITICA=1 (r=30, k=8) o en un host menos cargado — nunca subir el techo — 4 razones: 1.240× 1.259× 1.249× 1.230× · recorrido 1.023× · techo 1.250× · peor convergencia 1.074× · k=4 r=6
+
+### banco-inyectado-min-2
+Resultado: 1085 PASS, 0 FAIL, 9 SKIP — ninguna causa común: cada uno con su motivo
+  SKIP  REQ-024 CA-07 (ii) el reloj de la ruta crítica no pasa de 1,25× la línea base  el techo cae DENTRO del recorrido observado [1.198×, 1.369×]: el instrumento no distingue el factor que vigila, y una medición inconclusa NO es una aprobación. Vía de acreditación: repetir con ARNES_COSTE_RUTA_CRITICA=1 (r=30, k=8) o en un host menos cargado — nunca subir el techo — 4 razones: 1.272× 1.198× 1.369× 1.253× · recorrido 1.142× · techo 1.250× · peor convergencia 1.063× · k=4 r=6
+
+### banco-inyectado-min-3
+Resultado: 1086 PASS, 0 FAIL, 8 SKIP — ninguna causa común: cada uno con su motivo
+  SKIP  REQ-024 CA-07 (ii) el reloj de la ruta crítica no pasa de 1,25× la línea base  el techo cae DENTRO del recorrido observado [1.230×, 1.344×]: el instrumento no distingue el factor que vigila, y una medición inconclusa NO es una aprobación. Vía de acreditación: repetir con ARNES_COSTE_RUTA_CRITICA=1 (r=30, k=8) o en un host menos cargado — nunca subir el techo — 4 razones: 1.336× 1.325× 1.344× 1.230× · recorrido 1.092× · techo 1.250× · peor convergencia 1.041× · k=4 r=6
+
+### banco-inyectado-min-4
+Resultado: 1086 PASS, 1 FAIL, 7 SKIP — ninguna causa común: cada uno con su motivo
+  FAIL  REQ-024 CA-07 (ii) el reloj de la ruta crítica no pasa de 1,25× la línea base  mín(r) 1.269× > techo en TODAS: es regresión, no ruido — el techo es OPERATIVO y no se sube, lo que baja es el coste del lector — 4 razones: 1.325× 1.345× 1.269× 1.363× · recorrido 1.074× · techo 1.250× · peor convergencia 1.105× · k=4 r=6
+
+### banco-inyectado-min-5
+Resultado: 1086 PASS, 0 FAIL, 8 SKIP — ninguna causa común: cada uno con su motivo
+  SKIP  REQ-024 CA-07 (ii) el reloj de la ruta crítica no pasa de 1,25× la línea base  el techo cae DENTRO del recorrido observado [1.240×, 1.324×]: el instrumento no distingue el factor que vigila, y una medición inconclusa NO es una aprobación. Vía de acreditación: repetir con ARNES_COSTE_RUTA_CRITICA=1 (r=30, k=8) o en un host menos cargado — nunca subir el techo — 4 razones: 1.324× 1.305× 1.240× 1.261× · recorrido 1.067× · techo 1.250× · peor convergencia 1.046× · k=4 r=6
+
+## Nula propia (los dos brazos = el MISMO arbol, diff -r vacio)
+reps:  119712:126332:129623:131826 119393:121475:119768:121703 106878:107893:111672:115863 109058:111836:118603:122428 124502:126657:119793:123745 124724:128320:128347:132194 125363:129805:119396:120824 131507:139561:118261:124212 119335:123170:127377:132367 120025:139394:124038:124680
+  PASS  QA-drv k=4 r=6 kraz=10 A=este B=este2  máx(r) 1.112× <= techo en las 10 razones: 0.923× 0.996× 0.957× 0.919× 1.039× 0.971× 1.049× 1.112× 0.936× 0.967× · recorrido 1.210× · techo 1.250× · peor convergencia 1.161× · k=4 r=6
+
+## Falsacion sintetica sobre las funciones REALES razon07/veredicto07
+--- 1,6x en 3 de 4 y 1,2x en la cuarta (regresion grande + una toma ruidosa)
+  SKIP  sonda  el techo cae DENTRO del recorrido observado [1.200×, 1.600×]: el instrumento no distingue el factor que vigila, y una medición inconclusa NO es una aprobación. Vía de acreditación: repetir con ARNES_COSTE_RUTA_CRITICA=1 (r=30, k=8) o en un host menos cargado — nunca subir el techo — 4 razones: 1.600× 1.600× 1.600× 1.200× · recorrido 1.333× · techo 1.250× · peor convergencia 1.010× · k=4 r=6
+--- 5x en 3 de 4 y 1,0x en la cuarta
+  SKIP  sonda  el techo cae DENTRO del recorrido observado [1.000×, 5.000×]: el instrumento no distingue el factor que vigila, y una medición inconclusa NO es una aprobación. Vía de acreditación: repetir con ARNES_COSTE_RUTA_CRITICA=1 (r=30, k=8) o en un host menos cargado — nunca subir el techo — 4 razones: 5.000× 5.000× 5.000× 1.000× · recorrido 5.000× · techo 1.250× · peor convergencia 1.010× · k=4 r=6
+--- exactamente 1,250x en las cuatro
+  PASS  sonda  máx(r) 1.250× <= techo en las 4 razones: 1.250× 1.250× 1.250× 1.250× · recorrido 1.000× · techo 1.250× · peor convergencia 1.010× · k=4 r=6
+--- 1,251x en las cuatro
+  FAIL  sonda  mín(r) 1.251× > techo en TODAS: es regresión, no ruido — el techo es OPERATIVO y no se sube, lo que baja es el coste del lector — 4 razones: 1.251× 1.251× 1.251× 1.251× · recorrido 1.000× · techo 1.250× · peor convergencia 1.010× · k=4 r=6
+--- sin repeticiones
+  SKIP  sonda  no llegó ninguna repetición del par intercalado
+--- valor no numerico
+  SKIP  sonda  repetición 1 de 1: la sonda no dio 6 series por árbol con sus dos mínimos (este abc/1010000µs · heredada 1000000/1010000µs)
+--- heredada = 0
+  SKIP  sonda  repetición 1 de 1: la sonda no dio 6 series por árbol con sus dos mínimos (este 1000000/1010000µs · heredada 0/1010000µs)
+--- este mas rapido que la base (0,5x)
+  PASS  sonda  máx(r) 0.500× <= techo en las 1 razones: 0.500× · recorrido 1.000× · techo 1.250× · peor convergencia 1.020× · k=4 r=6
+contadores: PASS=2 FAIL=1

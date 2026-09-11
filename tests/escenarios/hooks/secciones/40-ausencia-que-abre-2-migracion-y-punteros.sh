@@ -14,7 +14,7 @@
 # ⚠ ESTE ARCHIVO ESTÁ EN 400 LÍNEAS, QUE ES SU TECHO EXACTO (`REQ-014 CA-18`, `N` gobierna
 # porque el piso × 1,25 no llega): una línea más y la autoprueba aborta. Quien añada un caso
 # aquí PARTE la sección; no sube el techo ni infla el piso para caber.
-CASOS_ESPERADOS_SECCION=9
+CASOS_ESPERADOS_SECCION=8
 PISO_AUTONOMO_SECCION=194  # 16 preámbulo (líneas 1-16) + 74 maquinaria compartida duplicada (mat40 y la línea base, líneas 18-91) + 104 bloque indivisible mayor (el corpus con sus fixtures, el evaluador por documento y el veredicto del guardián, líneas 93-196: ningún caso de CA-03, CA-05 ni CA-11 puede prescindir de ellos) · REQ-014 CA-18
 seccion_nueva "--- 40/2 · la ausencia que abre: migración, punteros y coste (REQ-024 CA-03, CA-05, CA-07, CA-11) ---"
 
@@ -304,35 +304,11 @@ proc40 "REQ-024 CA-07 (i) la llave de activación no añade ni un proceso por ev
 proc40 "REQ-024 CA-07 (i) ni un proceso por PARADA (el bloque derivado lee la llave en la misma llamada)" \
   "bash '$HOOKS_DIR/estado-derivado.sh' < '$STOP40' >/dev/null 2>&1" \
   "bash '$HER40/hooks/estado-derivado.sh' < '$STOP40' >/dev/null 2>&1" "la parada"
-# (ii) EL RELOJ DE LA RUTA CRÍTICA, con los DOS SUJETOS INTERCALADOS en la misma invocación de
-# la sonda: así la carga de la máquina no cae entera sobre uno de los dos términos. El techo es
-# OPERATIVO y no se sube: si sale > 1,25×, es hallazgo contra el código.
-if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-07 (ii)" | grep -qi -- "$FILTRO"; then
-  if [ "$HER40_OK" != si ]; then
-    echo "  SKIP  REQ-024 CA-07 (ii) el reloj de la ruta crítica no pasa de 1,25× la línea base  no hay línea base v1.33.0 ($REGHER40)"
-  else
-    r40="$("$UTIL_DIR/sonda-reloj.sh" --k 4 --r 6 --etiqueta ruta-critica-024 \
-      --sujeto-a "bash '$HOOKS_DIR/guard-completado.sh' < '$ENT40' >/dev/null 2>&1" \
-      --sujeto-b "bash '$HER40/hooks/guard-completado.sh' < '$ENT40' >/dev/null 2>&1" 2>/dev/null)"
-    m40=''
-    if ! sonda_lee "$r40"; then m40="el registro de la sonda no es legible: $SONDA_MOTIVO"
-    elif [ "${SONDA[estado]}" != ok ] || ! num40 "${SONDA[min_a]:-}" || ! num40 "${SONDA[min_b]:-}"; then
-      m40="la sonda no pudo medir: estado=${SONDA[estado]:-vacío} motivo=${SONDA[motivo]:-sin motivo} (a=${SONDA[min_a]:-n/a}µs b=${SONDA[min_b]:-n/a}µs)"
-    elif [ "${SONDA[min_a]}" -lt 50000 ] || [ "${SONDA[min_b]}" -lt 50000 ]; then
-      m40="serie por debajo del suelo de 50 ms (a=${SONDA[min_a]}µs b=${SONDA[min_b]}µs): el reloj no distingue del ruido"
-    fi
-    if [ -n "$m40" ]; then
-      echo "  SKIP  REQ-024 CA-07 (ii) el reloj de la ruta crítica no pasa de 1,25× la línea base  $m40"
-    else
-      c40=$(( SONDA[min_a] * 1000 / SONDA[min_b] )); mil40 "$c40"
-      if [ "$c40" -le 1250 ]; then
-        echo "  PASS  REQ-024 CA-07 (ii) el reloj de la ruta crítica = ${V40}× (techo 1.250×; ${SONDA[min_a]}µs sobre ${SONDA[min_b]}µs, k=${SONDA[k]} r=${SONDA[r]}, sujetos intercalados)"; PASS=$((PASS+1))
-      else
-        echo "  FAIL  REQ-024 CA-07 (ii) el reloj de la ruta crítica = ${V40}× > techo 1.250× (${SONDA[min_a]}µs sobre ${SONDA[min_b]}µs): el techo es OPERATIVO y no se sube"; FAIL=$((FAIL+1))
-      fi
-    fi
-  fi
-fi
+# (ii) EL RELOJ DE LA RUTA CRÍTICA VIVE AHORA EN `40/7`, y no es un traslado de comodidad: al
+# caso le faltaba el TERCER ESTADO —abstenerse cuando la medición no resuelve el factor que
+# vigila— y la guarda de dispersión con sus cuatro demostraciones no cabía en el techo de 400
+# líneas de este archivo (`REQ-014 CA-18` manda partir). El techo 1,250× va INTACTO allí, el
+# caso sigue en la puerta requerida y (i), (iii) y (iv) se quedan aquí sin tocar.
 # (iii) y (iv) SON AUTO-ANCLADOS y ORTOGONALES: doblar el NÚMERO DE ENTRADAS y doblar la
 # LONGITUD DE UNA LÍNEA degradan por caminos distintos. EL ESTADÍSTICO ES LA MEDIANA DE 5 TOMAS
 # DE LA RELACIÓN Y LA DISPERSIÓN ES LA MAD, no el rango: el rango es monótono no decreciente, así
