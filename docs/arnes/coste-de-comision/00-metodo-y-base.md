@@ -108,6 +108,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 21 | `QA-024-35` — corregir el aviso (salida **b**) · `desarrollador` (**vuelta 6** `dev↔QA`, excepción expresa) | 2026-09-11 16:45:16 | 2026-09-11 17:03:41 | **18 min 25 s** | halló **una segunda sede** de la misma promesa falsa; **36 celdas de decisión sin mover**, cero ramas nuevas; banco 1167 | `929043d` | **187 521** | ídem |
 
+| 22 | `QA-024-35` — verificación acotada del aviso · `qa-tester` (**vuelta 6** `dev↔QA`) | 2026-09-11 17:05:52 | 2026-09-11 17:25:32 | **19 min 40 s** | **`QA-024-35` y `QA-024-19` CIERRAN**. 48 celdas de fidelidad + 72 de no-regresión. Abre `QA-024-38` y `QA-024-39` (`contrato`) | `0440cfd` | **193 970** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la

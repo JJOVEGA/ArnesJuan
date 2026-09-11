@@ -1,0 +1,56 @@
+Cada aviso lleva SU condicion, y no es la misma (QA-024-35):
+  FAIL  43/A QA-024-35 llave APAGADA y rigor ligero: el aviso dice que SI cerrara  el aviso no casa /APAGADA, asi que el REQ SI podra cerrarse sin veredicto de QA/  <ARNES: 'requirements/REQ-960.md': la linea 'qa:' NO se lee como el campo 'QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera p>
+  FAIL  43/A QA-024-35 llave APAGADA y rigor estandar: el aviso dice que SI cerrara  el aviso no casa /APAGADA, asi que el REQ SI podra cerrarse sin veredicto de QA/  <ARNES: 'requirements/REQ-960.md': la linea 'qa:' NO se lee como el campo 'QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera p>
+  FAIL  43/A QA-024-35 llave APAGADA y rigor critico: el aviso dice que SI cerrara  el aviso no casa /APAGADA, asi que el REQ SI podra cerrarse sin veredicto de QA/  <ARNES: 'requirements/REQ-960.md': la linea 'qa:' NO se lee como el campo 'QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera p>
+  FAIL  43/A QA-024-35 llave ENCENDIDA y rigor ligero: el aviso dice que NO cerrara  el aviso no casa /ENCENDIDA, asi que el REQ no podra cerrarse/  <ARNES: 'requirements/REQ-961.md': la linea 'qa:' NO se lee como el campo 'QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera p>
+  FAIL  43/A QA-024-35 llave ENCENDIDA y rigor estandar: el aviso dice que NO cerrara  el aviso no casa /ENCENDIDA, asi que el REQ no podra cerrarse/  <ARNES: 'requirements/REQ-961.md': la linea 'qa:' NO se lee como el campo 'QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera p>
+  FAIL  43/A QA-024-35 llave ENCENDIDA y rigor critico: el aviso dice que NO cerrara  el aviso no casa /ENCENDIDA, asi que el REQ no podra cerrarse/  <ARNES: 'requirements/REQ-961.md': la linea 'qa:' NO se lee como el campo 'QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera p>
+  FAIL  43/B QA-024-35 valor fuera de vocabulario, llave false y rigor ligero: el aviso nombra 'ligero'  el aviso no casa /Si el rigor efectivo NO es .ligero./  <ARNES: 'requirements/REQ-962.md': 'QA: aprobadisimo' se lee como <aprobadisimo>, que NO es un veredicto (pendiente|aprobado|con-hallazgos). Asi este REQ no podr>
+  FAIL  43/B QA-024-35 valor fuera de vocabulario, llave false y rigor estandar: el aviso nombra 'ligero'  el aviso no casa /Si el rigor efectivo NO es .ligero./  <ARNES: 'requirements/REQ-962.md': 'QA: aprobadisimo' se lee como <aprobadisimo>, que NO es un veredicto (pendiente|aprobado|con-hallazgos). Asi este REQ no podr>
+  FAIL  43/B QA-024-35 valor fuera de vocabulario, llave false y rigor critico: el aviso nombra 'ligero'  el aviso no casa /Si el rigor efectivo NO es .ligero./  <ARNES: 'requirements/REQ-962.md': 'QA: aprobadisimo' se lee como <aprobadisimo>, que NO es un veredicto (pendiente|aprobado|con-hallazgos). Asi este REQ no podr>
+  FAIL  43/B QA-024-35 valor fuera de vocabulario, llave true y rigor ligero: el aviso nombra 'ligero'  el aviso no casa /Si el rigor efectivo NO es .ligero./  <ARNES: 'requirements/REQ-962.md': 'QA: aprobadisimo' se lee como <aprobadisimo>, que NO es un veredicto (pendiente|aprobado|con-hallazgos). Asi este REQ no podr>
+  FAIL  43/B QA-024-35 valor fuera de vocabulario, llave true y rigor estandar: el aviso nombra 'ligero'  el aviso no casa /Si el rigor efectivo NO es .ligero./  <ARNES: 'requirements/REQ-962.md': 'QA: aprobadisimo' se lee como <aprobadisimo>, que NO es un veredicto (pendiente|aprobado|con-hallazgos). Asi este REQ no podr>
+  FAIL  43/B QA-024-35 valor fuera de vocabulario, llave true y rigor critico: el aviso nombra 'ligero'  el aviso no casa /Si el rigor efectivo NO es .ligero./  <ARNES: 'requirements/REQ-962.md': 'QA: aprobadisimo' se lee como <aprobadisimo>, que NO es un veredicto (pendiente|aprobado|con-hallazgos). Asi este REQ no podr>
+  PASS  43/C ausencia de Seguridad:, llave false y rigor ligero: la condicion sigue siendo el rigor
+  PASS  43/D Seguridad: fuera de vocabulario, llave false y rigor ligero: la condicion sigue siendo el rigor
+  PASS  43/C ausencia de Seguridad:, llave false y rigor estandar: la condicion sigue siendo el rigor
+  PASS  43/D Seguridad: fuera de vocabulario, llave false y rigor estandar: la condicion sigue siendo el rigor
+  PASS  43/C ausencia de Seguridad:, llave false y rigor critico: la condicion sigue siendo el rigor
+  PASS  43/D Seguridad: fuera de vocabulario, llave false y rigor critico: la condicion sigue siendo el rigor
+  PASS  43/C ausencia de Seguridad:, llave true y rigor ligero: la condicion sigue siendo el rigor
+  PASS  43/D Seguridad: fuera de vocabulario, llave true y rigor ligero: la condicion sigue siendo el rigor
+  PASS  43/C ausencia de Seguridad:, llave true y rigor estandar: la condicion sigue siendo el rigor
+  PASS  43/D Seguridad: fuera de vocabulario, llave true y rigor estandar: la condicion sigue siendo el rigor
+  PASS  43/C ausencia de Seguridad:, llave true y rigor critico: la condicion sigue siendo el rigor
+  PASS  43/D Seguridad: fuera de vocabulario, llave true y rigor critico: la condicion sigue siendo el rigor
+  PASS  43/discriminante llave false: clave limpia y valor valido -> NO avisa
+  PASS  43/discriminante llave true: clave limpia y valor valido -> NO avisa
+  PASS  43/E cierre sin QA: legible, llave false y rigor ligero -> allow  (allow, rc=0)
+  PASS  43/E cierre con QA fuera de vocabulario, llave false y rigor ligero -> allow  (allow, rc=0)
+  PASS  43/E cierre sin Seguridad: legible, llave false y rigor ligero -> allow  (allow, rc=0)
+  PASS  43/E cierre con Seguridad fuera de vocabulario, llave false y rigor ligero -> allow  (allow, rc=0)
+  PASS  43/E cierre sin QA: legible, llave false y rigor estandar -> allow  (allow, rc=0)
+  PASS  43/E cierre con QA fuera de vocabulario, llave false y rigor estandar -> deny  (deny, rc=0)
+  PASS  43/E cierre sin Seguridad: legible, llave false y rigor estandar -> allow  (allow, rc=0)
+  PASS  43/E cierre con Seguridad fuera de vocabulario, llave false y rigor estandar -> allow  (allow, rc=0)
+  PASS  43/E cierre sin QA: legible, llave false y rigor critico -> allow  (allow, rc=0)
+  PASS  43/E cierre con QA fuera de vocabulario, llave false y rigor critico -> deny  (deny, rc=0)
+  PASS  43/E cierre sin Seguridad: legible, llave false y rigor critico -> deny  (deny, rc=0)
+  PASS  43/E cierre con Seguridad fuera de vocabulario, llave false y rigor critico -> deny  (deny, rc=0)
+  PASS  43/E control positivo, llave false: el mismo REQ con todo declarado SI cierra  (allow, rc=0)
+  PASS  43/E cierre sin QA: legible, llave true y rigor ligero -> deny  (deny, rc=0)
+  PASS  43/E cierre con QA fuera de vocabulario, llave true y rigor ligero -> allow  (allow, rc=0)
+  PASS  43/E cierre sin Seguridad: legible, llave true y rigor ligero -> allow  (allow, rc=0)
+  PASS  43/E cierre con Seguridad fuera de vocabulario, llave true y rigor ligero -> allow  (allow, rc=0)
+  PASS  43/E cierre sin QA: legible, llave true y rigor estandar -> deny  (deny, rc=0)
+  PASS  43/E cierre con QA fuera de vocabulario, llave true y rigor estandar -> deny  (deny, rc=0)
+  PASS  43/E cierre sin Seguridad: legible, llave true y rigor estandar -> allow  (allow, rc=0)
+  PASS  43/E cierre con Seguridad fuera de vocabulario, llave true y rigor estandar -> allow  (allow, rc=0)
+  PASS  43/E cierre sin QA: legible, llave true y rigor critico -> deny  (deny, rc=0)
+  PASS  43/E cierre con QA fuera de vocabulario, llave true y rigor critico -> deny  (deny, rc=0)
+  PASS  43/E cierre sin Seguridad: legible, llave true y rigor critico -> deny  (deny, rc=0)
+  PASS  43/E cierre con Seguridad fuera de vocabulario, llave true y rigor critico -> deny  (deny, rc=0)
+  PASS  43/E control positivo, llave true: el mismo REQ con todo declarado SI cierra  (allow, rc=0)
+aviso: vuelta parcial (1 de 67 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 40 PASS, 12 FAIL

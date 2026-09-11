@@ -1,0 +1,5 @@
+ESCENARIO EXACTO DE REQ-003 CA-13: UN Edit que escribe A LA VEZ el valor fuera del
+vocabulario y el estado terminal. El criterio promete DENY, sin condicion.
+  rigor=ligero    -> ALLOW   <-- REQ-003 CA-13 promete DENY: FALSO aqui
+  rigor=estandar  -> DENY   coincide con el criterio
+  rigor=critico   -> DENY   coincide con el criterio

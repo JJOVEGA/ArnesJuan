@@ -50,6 +50,53 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-11 · `QA-024-35` y `QA-024-19` CIERRAN, y la tercera sede está en lo que heredan todos los proyectos
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (**vuelta 6** `dev↔QA`), coordinadora.
+
+### Cómo se verificó, que es lo que hace válido el cierre
+
+QA **no casó cadenas**: escribió un instrumento que **empareja, en la misma celda, lo que el aviso
+PROMETE con lo que el cierre HACE** sobre un REQ en ese estado. **48 de 48** celdas fieles, y amplió la
+matriz con **dos ejes que nadie había medido**: un **tercer estado del manifiesto** —**sin** la clave
+`campos`, que es como está todo proyecto que no la declara— y `Sensible a seguridad: si` con
+`Rigor: ligero`, para ejercer **el suelo** y no sólo el valor declarado.
+
+Ataques que no prosperaron: manifiesto sin `campos`; llave con **tipo inválido** (`"true"` como cadena);
+y el **reverso** —prometer de menos—, que no ocurre. Los dos mensajes de `Seguridad:` **intactos byte a
+byte**, por md5 de la línea y por los 24 textos emitidos.
+
+**Ninguna decisión ni `rc` se movió:** 72 celdas contra los dos árboles, `diff` vacío. **Diff estructural
+de ramas 212 = 212.** Y **que la ausencia se perdone con la llave apagada sigue ocurriendo**, medido en
+12 celdas: no se activó ninguna protección.
+
+**`QA-024-35` CIERRA.** **`QA-024-19` CIERRA con él**: `(3)` pasa a ser verdadero **tal como está
+escrito**. QA añade una observación de forma que no es hallazgo: la mitad «y la omite cuando no la hay»
+es **vacuamente verdadera**, porque en el dominio que `(ii)` contrata no hay ningún aviso sin condición.
+
+### La limitación material, dicha y no maquillada
+
+El banco entero salió **1157 PASS · 1 FAIL · 9 SKIP**, no el `1160 · 0 · 7` que declaró el desarrollador.
+Los tres de diferencia son de la familia del **reloj**. Corrida **pareada** contra el candidato y contra
+`929043d`: **6 PASS · 0 FAIL en los dos** → **no atribuible** a este commit. **QA no retira el `FAIL` y
+no acredita rendimiento**: las condiciones no son representativas —hay otra cuenta trabajando en esta
+máquina—. **«Banco entero en verde» no es reproducible aquí, y así queda escrito.**
+
+### Los dos `contrato` nuevos
+
+**`QA-024-38`** — **la TERCERA sede**, que nadie había señalado y que **era falsa antes de este commit**:
+`AGENTS.md:363` y `templates/AGENTS.md.tpl:321` dicen, **sin condición**, «*ese REQ no podrá cerrarse*».
+**Medido falso en 4 de 6 celdas.** Verificado por la coordinadora en las dos sedes. Es **la sede que
+`CA-13 (ii)` cita por nombre**, **viaja a todo proyecto por `arnes-upgrade`**, apunta **al lado que
+tranquiliza**, y tras este commit **la máquina contradice a su propia documentación heredada**.
+
+**`QA-024-39`** — la sede sin contratar (el aviso de **vocabulario**). QA coincide con el **hecho** del
+desarrollador y **no con su conclusión**: §9 no pide ausencia de contradicción, pide **write-back**; que
+el banco lo fije protege contra la regresión pero **no sustituye al contrato**. **Aviso de alcance:** su
+dueño natural es `REQ-003` Bloque B, que está **`completado`**, y contratarlo **lo reabre**.
+
+**Y una observación medida que QA NO abrió** por estar fuera de su alcance: **`REQ-003 CA-13`**, en un REQ
+**`completado`**, promete DENY sin condición y **su escenario exacto da `ALLOW` en `ligero`**.
+
 ## [Interno] — 2026-09-11 · El aviso deja de prometer un cierre que la máquina no tiene, y la promesa falsa estaba en DOS sedes
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador, coordinadora.
 

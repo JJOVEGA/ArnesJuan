@@ -1,0 +1,28 @@
+### (a) llave ENCENDIDA: ¿el DENY del cierre NOMBRA 'QA:' en los tres rigores?
+-- rigor=ligero
+  dec=deny
+  aviso= 
+  motivo=ARNES: no se puede completar 'requirements/R.md': su cabecera NO declara el campo 'QA:', y este proyecto exige que los campos de cabecera esten declarados ('campos.ausencia_exige' en .arnes/config.json). Un campo que falta no es un campo aprobado: la ausencia 
+-- rigor=estandar
+  dec=deny
+  aviso= 
+  motivo=ARNES: no se puede completar 'requirements/R.md': su cabecera NO declara el campo 'QA:', y este proyecto exige que los campos de cabecera esten declarados ('campos.ausencia_exige' en .arnes/config.json). Un campo que falta no es un campo aprobado: la ausencia 
+-- rigor=critico
+  dec=deny
+  aviso= 
+  motivo=ARNES: no se puede completar 'requirements/R.md': su cabecera NO declara el campo 'QA:', y este proyecto exige que los campos de cabecera esten declarados ('campos.ausencia_exige' en .arnes/config.json). Un campo que falta no es un campo aprobado: la ausencia 
+
+### (b) llave con TIPO INVALIDO (string "true"): ¿aviso y decision siguen de acuerdo?
+-- aviso:
+  dec=allow
+  aviso=ARNES: 'requirements/S.md': la linea 'qa:' NO se lee como el campo 'QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera pero la CAJA no—. Para esta puerta ese campo sigue SIN declarar, asi que ninguna guarda juzga esta edicion. Y lo que el CIERRE hace con esa ausencia NO lo decide el rigor —que es el eje del campo 'Seguridad:'—, lo decide 'campos.ausencia_exige' (.arnes/config.json): encendida, el cierre se deniega nombrando 'QA:' en los tres niveles de rigor; apagada —como nace—, la ausencia se perdona y el REQ cierra sin veredicto de QA. Aqui esta APAGADA, asi que el REQ SI podra cerrarse sin veredicto de QA. Salida: escribe la clave como 'QA:'. 
+  motivo= 
+-- cierre:
+  dec=allow
+  aviso=
+  motivo=
+
+### (c) llave ENCENDIDA + rigor ligero: ¿el aviso dice ENCENDIDA y el cierre deniega?
+  dec=allow
+  aviso=ARNES: 'requirements/U.md': la linea 'qa:' NO se lee como el campo 'QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera pero la CAJA no—. Para esta puerta ese campo sigue SIN declarar, asi que ninguna guarda juzga esta edicion. Y lo que el CIERRE hace con esa ausencia NO lo decide el rigor —que es el eje del campo 'Seguridad:'—, lo decide 'campos.ausencia_exige' (.arnes/config.json): encendida, el cierre se deniega nombrando 'QA:' en los tres niveles de rigor; apagada —como nace—, la ausencia se perdona y el REQ cierra sin veredicto de QA. Aqui esta ENCENDIDA, asi que el REQ no podra cerrarse. Salida: escribe la clave como 'QA:'. 
+  motivo= 

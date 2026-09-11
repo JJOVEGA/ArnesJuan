@@ -1,0 +1,12 @@
+LLAVE APAGADA. El aviso dice: «el REQ SI podra cerrarse SIN VEREDICTO DE QA».
+¿Cierra el REQ por otras causas, y el calificativo «sin veredicto de QA» aguanta?
+QAausente-critico-SEGpendiente                       deny | motivo: ARNES: no se puede completar 'requirements/QAausente-critico-SEGpendiente.md': su rigor efectivo es 
+QAausente-critico-SEGaprobado                        allow | motivo: 
+QAausente-hallazgo-bloqueante                        deny | motivo: ARNES: no se puede completar 'requirements/QAausente-hallazgo-bloqueante.md': el hallazgo 'x-1' es d
+QAausente-hallazgo-instrumento                       allow | motivo: 
+QAausente-hallazgos-ausente                          allow | motivo: 
+QAausente-SIN-linea-alguna                           allow | motivo: 
+QAausente-rigor-ausente                              allow | motivo: 
+
+Y con la COLA de aprobaciones NO vacia (otra causa ajena a QA):
+QAausente-con-cola-pendiente                         deny | motivo: ARNES: no se puede marcar 'requirements/QAausente-con-cola-pendiente.md' como 'completado': hay 1 ap

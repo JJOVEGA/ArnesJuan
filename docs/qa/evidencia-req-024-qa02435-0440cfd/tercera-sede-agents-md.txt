@@ -1,0 +1,7 @@
+llave        rigor      QA fuera  SEG fuera AGENTS.md:363 dice «ese REQ no podra cerrarse»
+false        ligero     ALLOW     ALLOW     FALSA para QA: y FALSA para Seguridad:
+false        estandar   DENY      ALLOW     FALSA para Seguridad:
+false        critico    DENY      DENY      cierta en esta celda
+true         ligero     ALLOW     ALLOW     FALSA para QA: y FALSA para Seguridad:
+true         estandar   DENY      ALLOW     FALSA para Seguridad:
+true         critico    DENY      DENY      cierta en esta celda

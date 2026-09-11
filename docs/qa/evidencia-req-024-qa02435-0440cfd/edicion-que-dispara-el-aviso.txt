@@ -1,0 +1,51 @@
+=========== rigor=ligero ===========
+[1] edicion que PRODUCE el aviso de QA-desfase (Seguridad: pendiente):
+dec=allow rc=0
+  AVISO: ARNES: 'requirements/A.md': la linea 'qa:' NO se lee como el campo 'QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera pero la CAJA no—. Para esta puerta ese campo sigue SIN declarar, asi que ninguna guarda juzga esta edicion. Y lo que el CIERRE hace con esa ausencia NO lo decide el rigor —que es el eje del campo 'Seguridad:'—, lo decide 'campos.ausencia_exige' (.
+  MOTIVO:  
+[2] idem, pero el REQ YA lleva 'Seguridad: aprobado' (guarda de ORDEN en juego):
+dec=allow rc=0
+  AVISO: ARNES: 'requirements/B.md': la linea 'qa:' NO se lee como el campo 'QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera pero la CAJA no—. Para esta puerta ese campo sigue SIN declarar, asi que ninguna guarda juzga esta edicion. Y lo que el CIERRE hace con esa ausencia NO lo decide el rigor —que es el eje del campo 'Seguridad:'—, lo decide 'campos.ausencia_exige' (.
+  MOTIVO:  
+[3] FIRMAR Seguridad con QA ya en desfase:
+dec=deny rc=0
+  AVISO:  
+  MOTIVO: ARNES: 'requirements/C.md' lleva 'Seguridad: aprobado' y su cabecera NO declara ningun 'QA:'. Un campo que falta no es un campo aprobado: si no hay linea de QA, QA no ha firmado. El ciclo es desarroll
+[4] edicion que produce el aviso de QA fuera de vocabulario:
+dec=allow rc=0
+  AVISO: ARNES: 'requirements/D.md': 'QA: aprobadisimo' se lee como <aprobadisimo>, que NO es un veredicto (pendiente|aprobado|con-hallazgos). Si el rigor efectivo NO es 'ligero' —'ligero' no pide veredicto de QA y su valor no se juzga—, asi este REQ no podra cerrarse. Un matiz va entre parentesis —'QA: aprobado (R-045, 2026-09-01)'—; un veredicto distinto es otro valor. 
+  MOTIVO:  
+=========== rigor=estandar ===========
+[1] edicion que PRODUCE el aviso de QA-desfase (Seguridad: pendiente):
+dec=allow rc=0
+  AVISO: ARNES: 'requirements/A.md': la linea 'qa:' NO se lee como el campo 'QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera pero la CAJA no—. Para esta puerta ese campo sigue SIN declarar, asi que ninguna guarda juzga esta edicion. Y lo que el CIERRE hace con esa ausencia NO lo decide el rigor —que es el eje del campo 'Seguridad:'—, lo decide 'campos.ausencia_exige' (.
+  MOTIVO:  
+[2] idem, pero el REQ YA lleva 'Seguridad: aprobado' (guarda de ORDEN en juego):
+dec=allow rc=0
+  AVISO: ARNES: 'requirements/B.md': la linea 'qa:' NO se lee como el campo 'QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera pero la CAJA no—. Para esta puerta ese campo sigue SIN declarar, asi que ninguna guarda juzga esta edicion. Y lo que el CIERRE hace con esa ausencia NO lo decide el rigor —que es el eje del campo 'Seguridad:'—, lo decide 'campos.ausencia_exige' (.
+  MOTIVO:  
+[3] FIRMAR Seguridad con QA ya en desfase:
+dec=deny rc=0
+  AVISO:  
+  MOTIVO: ARNES: 'requirements/C.md' lleva 'Seguridad: aprobado' y su cabecera NO declara ningun 'QA:'. Un campo que falta no es un campo aprobado: si no hay linea de QA, QA no ha firmado. El ciclo es desarroll
+[4] edicion que produce el aviso de QA fuera de vocabulario:
+dec=allow rc=0
+  AVISO: ARNES: 'requirements/D.md': 'QA: aprobadisimo' se lee como <aprobadisimo>, que NO es un veredicto (pendiente|aprobado|con-hallazgos). Si el rigor efectivo NO es 'ligero' —'ligero' no pide veredicto de QA y su valor no se juzga—, asi este REQ no podra cerrarse. Un matiz va entre parentesis —'QA: aprobado (R-045, 2026-09-01)'—; un veredicto distinto es otro valor. 
+  MOTIVO:  
+=========== rigor=critico ===========
+[1] edicion que PRODUCE el aviso de QA-desfase (Seguridad: pendiente):
+dec=allow rc=0
+  AVISO: ARNES: 'requirements/A.md': la linea 'qa:' NO se lee como el campo 'QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera pero la CAJA no—. Para esta puerta ese campo sigue SIN declarar, asi que ninguna guarda juzga esta edicion. Y lo que el CIERRE hace con esa ausencia NO lo decide el rigor —que es el eje del campo 'Seguridad:'—, lo decide 'campos.ausencia_exige' (.
+  MOTIVO:  
+[2] idem, pero el REQ YA lleva 'Seguridad: aprobado' (guarda de ORDEN en juego):
+dec=allow rc=0
+  AVISO: ARNES: 'requirements/B.md': la linea 'qa:' NO se lee como el campo 'QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera pero la CAJA no—. Para esta puerta ese campo sigue SIN declarar, asi que ninguna guarda juzga esta edicion. Y lo que el CIERRE hace con esa ausencia NO lo decide el rigor —que es el eje del campo 'Seguridad:'—, lo decide 'campos.ausencia_exige' (.
+  MOTIVO:  
+[3] FIRMAR Seguridad con QA ya en desfase:
+dec=deny rc=0
+  AVISO:  
+  MOTIVO: ARNES: 'requirements/C.md' lleva 'Seguridad: aprobado' y su cabecera NO declara ningun 'QA:'. Un campo que falta no es un campo aprobado: si no hay linea de QA, QA no ha firmado. El ciclo es desarroll
+[4] edicion que produce el aviso de QA fuera de vocabulario:
+dec=allow rc=0
+  AVISO: ARNES: 'requirements/D.md': 'QA: aprobadisimo' se lee como <aprobadisimo>, que NO es un veredicto (pendiente|aprobado|con-hallazgos). Si el rigor efectivo NO es 'ligero' —'ligero' no pide veredicto de QA y su valor no se juzga—, asi este REQ no podra cerrarse. Un matiz va entre parentesis —'QA: aprobado (R-045, 2026-09-01)'—; un veredicto distinto es otro valor. 
+  MOTIVO:  
