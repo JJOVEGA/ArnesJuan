@@ -2,6 +2,48 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · Seguridad `R-033`: sin veto, y el fail-open que el texto pudo crear estaba a un ancla de distancia
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad (`R-033`), coordinadora.
+
+Revisión **acotada** al delta de redacción, aplicando el autoalojamiento aligerado. **No firma
+`REQ-024`** —`QA:` sigue `con-hallazgos` y el REQ está `bloqueado`—: acredita **el delta**, declarado
+así dentro de la propia entrada, como `R-032`.
+
+**La puerta no se debilitó, establecido por construcción.** Retirando comentarios y líneas en blanco,
+el recuento de líneas ejecutables es **invariante** en las dos sedes (309 → 309 y 278 → 278) y las
+cinco líneas que cambian son, enteras: los dos `PISO_AUTONOMO_SECCION=`, los dos `echo` de la rama
+`fail` y la asignación de `LISTA07`. **Ninguna es condición.** Corroborado: `TECHO47`/`TECHO07` siguen
+en `1250‰` —los únicos dos valores así del banco—, el `rc` del corredor intacto, CI invoca `run.sh`
+sin `|| true`, **cero `continue-on-error`**, y `git diff` sobre `hooks/ tools/ .github/ .arnes/`
+devuelve **cero líneas**.
+
+### Lo que el auditor midió y no estaba en las nueve vías de dev+QA
+
+**El corredor cuenta los veredictos leyendo el TEXTO** —lo dice de sí mismo—, con patrones `awk`
+`/^  FAIL /`. Y el mensaje nuevo **contiene las palabras `PASS` y `FAIL` dentro de su prosa**: un
+fail-open perfecto producido por redacción, si el patrón no estuviera **anclado**. Ejerció la línea
+real: sale en **una sola línea física** y el `awk` real devuelve `PASS=0 FAIL=1 SKIP=0`. Cerrado.
+
+Y otro que nadie había mirado: el piso de sección se parsea de un **comentario partido por `+`**, así
+que un `+` de más en el texto añadido habría vuelto ilegible la derivación de `CA-18` y **abortado el
+banco**. Hay exactamente dos.
+
+### Dos hallazgos nuevos, `instrumento`, ninguno bloquea
+
+**`SEC-091`** — la guía anti-repetición vive en `via`, que **se interpola sólo en la rama `SKIP`**. La
+rama `fail`, que ahora publica su propia tasa de falso rechazo, **no la lleva**: la rama débil advierte
+contra repetir hasta verde y la que bloquea de verdad no.
+
+**`SEC-092`** — los dos pisos subieron (`448→467`, `449→485`) y `CA-18` **deriva de ellos** el techo de
+longitud. **El alza no compró paso** —los dos archivos caben bajo los techos viejos—, pero el piso
+creció porque se añadió **prosa dentro del bloque declarado indivisible**, ensanchando holgura futura
+que la máquina no puede detectar. Y los comentarios publican techos `583`/`606` donde la máquina
+deriva `584`/`607`: conservador, no concede nada, pero mal en la comisión cuyo objeto era el texto
+veraz.
+
+El auditor **no aceptó** la demostración (3) del desarrollador (`QA-024-31`): estableció la propiedad
+por su cuenta. `R-031` y `R-032` **siguen aplicables**.
+
 ## [Interno] — 2026-09-11 · QA cierra `QA-024-25` y `QA-024-26`: el delta de redacción CUMPLE
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (3.er pase de la vuelta 4), coordinadora.
 

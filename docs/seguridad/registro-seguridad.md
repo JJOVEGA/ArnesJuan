@@ -32,7 +32,7 @@ cierre; `instrumento` —defecto del propio arnés— **no bloquea**, va a deuda
 > **Estados:** `abierto` · `en-mitigación` · `mitigado` · `aceptado`. Bloquean todos menos los dos
 > últimos.
 >
-> **Última actualización de esta tabla: `R-032` (2026-09-11).** El sello va **dentro** de la tabla y no
+> **Última actualización de esta tabla: `R-033` (2026-09-11).** El sello va **dentro** de la tabla y no
 > en la revisión que la escribe, por dos razones medidas: la tabla vive dentro de una entrada fechada
 > (`SEC-056`, `instrumento`, abierto) y por tanto se **retoca hacia atrás** cada vez que se mantiene, y
 > sin sello **el desfase no se puede ver**: entre `R-018` y `R-027` la tabla estuvo **diez revisiones**
@@ -85,6 +85,8 @@ cierre; `instrumento` —defecto del propio arnés— **no bloquea**, va a deuda
 | `SEC-087` | contrato | `mitigado` | R-029 (`:8679`); estado verificado en R-030 §1; **cierre en R-031 §5** (`:9208`) | — (cerrado) |
 | `SEC-088` | contrato | **`abierto`** | R-029 (`:8738`) | — (no cuelga de REQ vivo; dueño `desarrollador`, vencimiento ventana 1.34.0) |
 | `SEC-090` | contrato | `mitigado` | R-031 §4 (`:9163`), **cierre en R-032** (`:9257`) | — (es de este registro; dueño `auditor-seguridad`) |
+| `SEC-091` | instrumento | **`abierto`** | R-033 §6 (`:9551`) | — (no cuelga de REQ vivo; dueño `desarrollador`, vencimiento ventana 1.34.0) |
+| `SEC-092` | instrumento | **`abierto`** | R-033 §7 (`:9572`) | — (no cuelga de REQ vivo; dueño `desarrollador`, vencimiento ventana 1.34.0) |
 | `QA-114` | contrato | **`abierto`** | `docs/qa/` (dueño `analista-requerimientos`) | `REQ-007` |
 | `QA-116` | contrato | **`abierto`** | `docs/qa/`, reproducido por el auditor en R-003 | `REQ-007` |
 | `QA-117` | contrato | **`abierto`** | `docs/qa/`, reproducido por el auditor en R-003 | `REQ-007` |
@@ -9426,3 +9428,247 @@ finales ni datos personales.
 **Numeración vigente tras esta revisión:** última revisión **R-032**; último hallazgo **SEC-090**;
 próximos libres **R-033** y **SEC-091**. *(Ya numerado sobre el máximo real de las dos líneas, que a
 partir de esta reconciliación son una sola.)*
+
+---
+
+## Revisión R-033 — el delta de REDACCIÓN que remedió `QA-024-25` y `QA-024-26`, `feat/1.34-reparaciones-astra` @ `0b2f227` (2026-09-11)
+
+**Alcance: ACOTADO, por autorización expresa del propietario del 2026-09-11** («Seguridad revisa de
+forma acotada lo que corresponda»), bajo **autoalojamiento aligerado**: sin análisis completo nuevo y
+sin repetir bancos por rutina. **Objeto:** el delta `f612b84..0b2f227`, catorce sedes de texto —ocho en
+`tests/`, seis en `requirements/`— más la cabecera y el Historial de `REQ-024`.
+
+> **Esta revisión NO es la auditoría de ningún REQ y NO firma código, igual que `R-032`.** `REQ-024`
+> está `Estado: bloqueado` con `QA: con-hallazgos`, así que **no escribo `Seguridad: aprobado` en su
+> cabecera**: mi firma acreditaría un árbol que QA no ha validado, y `guard-completado` lo denegaría
+> con razón (`AGENTS.md` §6). Lo que acredito es **el objeto de esta revisión y nada más**: que el
+> delta de redacción **no debilitó la puerta**. Cuando `REQ-024` llegue a mi turno, se audita entero.
+
+### 1. La pregunta de seguridad de este delta, y por qué es ésta
+
+Un cambio «sólo de redacción» que de paso relaje un umbral, un `rc` o una rama **es exactamente cómo
+se apaga un control sin que nadie lo note**. Ésa es la única pregunta que un delta de prosa plantea, y
+es la que contesto. **No** la contesto por venir de `desarrollador` y `qa-tester`: la establezco **por
+construcción**, que es la vía más fuerte disponible aquí, y añado las mediciones que ellos no hicieron.
+
+### 2. La puerta NO se debilitó — establecido por construcción, no por confianza
+
+**Diff estructural sobre líneas NO comentario** (comentarios y líneas en blanco retirados de las dos
+sedes ejecutables, en las dos revisiones):
+
+| Sede | Líneas ejecutables en `f612b84` | En `0b2f227` | Líneas ejecutables cambiadas |
+|---|---|---|---|
+| `tests/escenarios/hooks/secciones/37-coste-del-escaner-5-el-camino-normal.sh` | 309 | **309** | 2 |
+| `tests/escenarios/hooks/secciones/40-ausencia-que-abre-7-el-reloj-de-la-ruta-critica.sh` | 278 | **278** | 3 |
+
+**El recuento de líneas ejecutables es invariante**, y las cinco líneas que cambiaron son, enteras y
+sin excepción: las dos declaraciones `PISO_AUTONOMO_SECCION=`, los dos `echo` de la rama `fail` y la
+asignación de `LISTA07`. **Ninguna es una condición.** De ahí se sigue, sin necesidad de ejecutar nada,
+que la función que decide es **la misma función**: no se puede haber movido una rama que no existe en
+el diff.
+
+Y las comprobaciones dirigidas, cada una medida:
+
+- **Constantes decisorias, idénticas en las dos revisiones:** `TECHO47=1250`, `KRAZ47=4`, `SER47=6`,
+  `FACTOR47=2000`, `CASOS_ESPERADOS_SECCION=10`; `TECHO07=1250`, `KRAZ07=4`, `K07=8`, `SER07=30`,
+  `FACTOR07=1280`, `CASOS_ESPERADOS_SECCION=6`. **El techo contratado sigue en `1250‰` = `1,250×`** en
+  las dos sedes, y son los **únicos dos** `TECHO*` de `1250` del banco (el tercero, `TECHO38=6000`, es
+  de otra sección y no está en el delta).
+- **`rc` fail-closed, cableado intacto:** la rama `fail` sigue haciendo `FAIL=$((FAIL+1))`, el `rc` del
+  banco sigue siendo `[ "$FAIL" -eq 0 ] && [ "$PROBLEMAS" -eq 0 ]` (`tests/escenarios/hooks/run.sh`,
+  cierre del archivo), CI sigue invocándolo como `run: bash tests/escenarios/hooks/run.sh` **sin**
+  `|| true`, y **no existe ni un `continue-on-error` en los workflows**. Un `FAIL` impreso termina en
+  job rojo: la exigencia 2 del propietario (*«no basta con imprimir `FAIL` si el workflow termina en
+  éxito»*) se cumple.
+- **El mecanismo no se tocó:** `git diff --stat f612b84..0b2f227 -- hooks/ tools/ .github/ .arnes/`
+  devuelve **cero líneas**. El delta es `tests/`, `requirements/`, `docs/` y `CHANGELOG.md`.
+- **Sintaxis:** `bash -n` limpio en las dos secciones.
+
+### 3. Fail-open por la vía del texto: una vía que NO estaba en las nueve de `desarrollador` y `qa-tester`, y la mido yo
+
+El corredor dice de sí mismo, en `run.sh`, que **«el recuento sale DEL TEXTO, no de variables»**: los
+contadores por archivo se derivan con `awk` sobre la salida, con los patrones `/^  PASS /`,
+`/^  FAIL /`, `/^  SKIP /`. Y el mensaje nuevo de la rama `fail` **contiene las palabras `PASS` y
+`FAIL` dentro de su propio texto** («dieron 7 PASS y 5 FAIL»). Si el recuento hubiera mirado la línea
+sin anclar, un solo `FAIL` habría podido cuadrar como un `PASS` de más: **un fail-open perfecto,
+producido por prosa**. Medido sobre la línea **real** extraída del archivo y ejercida con valores:
+
+- la emite en **una sola línea física** (776 caracteres en `37/5`, 847 en `40/7`; ningún salto);
+- el `awk` **real** del corredor sobre esa salida devuelve `PASS=0 FAIL=1 SKIP=0`;
+- el contador de proceso queda en `FAIL=1`.
+
+**No hay fail-open:** los patrones están anclados a inicio de línea con dos espacios, y las palabras
+van a media línea. Confirmado además **en vivo**: la corrida de CI de `0b2f227` cuadra
+`1084 PASS + 0 FAIL + 11 SKIP = 1095 = CASOS_ESPERADOS`, **exacto**, ya con la `LISTA07` nueva
+—paréntesis, `·` y todo— emitida en la línea del caso.
+
+Y las dos vías vecinas, también cerradas: **nada** en `hooks/`, `tools/` ni los workflows parsea los
+campos publicados (`razones:`, `recorrido`, `techo`, `suelo`), así que añadir un paréntesis a
+`LISTA07` no rompe ningún consumidor; y `lee_casos_declarados` sigue encontrando **una sola**
+declaración `CASOS_ESPERADOS_SECCION=` por archivo.
+
+### 4. El «suelo estimado» efectivamente NO gobierna — verificado por vía propia
+
+`QA-024-26` se remedió etiquetando el valor como diagnóstico. Lo verifico sin apoyarme en QA:
+
+- `suelo` se **calcula** (`fmt07 $(( TECHO07 * ( rmax * 1000 / rmin ) / 1000 ))`) y se **interpola** en
+  `LISTA07`. Son sus **dos únicas** apariciones ejecutables bajo ese rol.
+- **Cero** condiciones del archivo lo mencionan: ni en `resuelve07`, ni en `cierre07`, ni en
+  `veredicto07`. Las tres ramas se deciden **sólo** contra `TECHO07` (`rmax -le`, `rmin -gt`).
+- Llamarlo diagnóstico **no crea garantía implícita**, porque la etiqueta va **pegada al valor en la
+  propia línea emitida** («no es umbral y no gobierna ninguna rama; derivado del recorrido
+  intra-corrida, subestima si la dispersión que manda es la de entre corridas»), no en un comentario
+  que el lector del veredicto no ve. Y la corrida de CI de `0b2f227` lo demuestra en el caso peor:
+  publica **`suelo estimado 1.275×`** con **techo `1,250×`** —es decir, un suelo estimado **por encima
+  del techo que vigila**— y aun así **decide `PASS` contra el techo** y no contra el suelo. La
+  limitación queda **publicada y sin efecto sobre la decisión**, que es exactamente lo contratado.
+
+*(Observación, no hallazgo: en la misma sección existe otro «suelo» —el de resolución de reloj de
+50 ms— que **sí** gobierna una rama. No se confunden: llevan nombres distintos («suelo de 50 ms» /
+«suelo estimado») y la etiqueta de no-gobierno viaja adosada sólo al segundo.)*
+
+### 5. Gobernanza del acto: las dos cosas que el propietario impuso, comprobadas
+
+La decisión está transcrita en
+`docs/arnes/req-024-ca-07-ii-reparacion/06-decision-del-propietario-techo-y-bloqueo.md` (2026-09-11):
+modifica **expresamente** la condición previa de «detectar `1,28×`» por «**no aprobarla ni permitir la
+integración**, sea por regresión demostrada o por incertidumbre», y **no autoriza** elevar el techo a
+`1,302×` ni convertir esa cifra observada en un límite nuevo. El árbol respeta las dos:
+
+1. **Techo en `1,250×`:** `TECHO47`/`TECHO07` = `1250‰`, sin cambio en el delta; y el contrato lo
+   reafirma («El techo contratado sigue siendo **1,250× y no se toca**», `REQ-024:548`).
+2. **Ninguna cifra observada promovida a umbral:** ninguna constante del repo vale `1302`, `1177`,
+   `1490`, `1095`, `1338`, `1257` ni `1212` en rol de umbral. Las cifras aparecen **sólo como
+   medición** en prosa (`REQ-024:403,408,509,550,560,567,578,1281`; `requirements/README.md:407,409,451`).
+   *(El único `=1095` del repo es `CASOS_ESPERADOS` en `run.sh`, un recuento de casos: coincidencia
+   numérica con el `1,095×` observado, sin relación — y cuadra exacto en CI, §3.)*
+
+La exigencia 3 del propietario —*«el candidato sin la regresión obtiene acreditación válida bajo el
+techo, no un verde basado en `SKIP`»*— también se cumple **sobre esta cabeza**, y no por construcción
+sino medido en CI: el caso de `40/7` sale **`PASS` con `máx(r) 1,179× <= techo 1,250×`** (razones
+`1,179 / 1,155 / 1,165 / 1,161`, recorrido `1,020×`). Es **acreditación**, no abstención.
+
+### 6. ¿El texto nuevo sostiene el control o lo ablanda? — lo sostiene, con UN hueco medido
+
+**Lo sostiene**, y en lo esencial bien: la rama `fail` cierra con *«Bloquea igual —una puerta que no
+puede acreditar no deja pasar—»* y con *«el techo es OPERATIVO y no se sube»*. Eso es la formulación
+correcta de un instrumento cuyo límite está medido: **no se le pide certeza que no tiene, se le pide
+fail-closed.** Retirar del `FAIL` una atribución de causa que estaba **refutada por medición** es una
+mejora de seguridad, no una concesión: un control que afirma más de lo que sabe se desacredita solo, y
+un control desacreditado es el que alguien acaba desactivando.
+
+**El hueco, y es mío, no de QA ni del desarrollador (`SEC-091`, `instrumento`).** La guía
+anti-repetición del instrumento —*«la salida NO es repetirla: es medir en un host menos cargado, y si
+se repite es hallazgo con dueño — nunca subir el techo»*— vive en la variable `via`, y `via` **se
+interpola sólo en la rama `SKIP`**. La rama `fail`, que a partir de este delta **publica su propia tasa
+medida de falso rechazo** (`7 PASS y 5 FAIL` sobre un árbol conforme), **no** la lleva. Queda invertido
+donde importa: la rama epistémicamente **más débil** advierte contra repetir hasta verde, y la rama que
+**bloquea de verdad** —la que un agente con prisa tiene más incentivo en volver a correr— no advierte.
+No debilita el mecanismo (el `rc` sigue rojo, §2) y **no bloquea nada**: es del **instrumento**, con
+dueño `desarrollador`. Pero va escrito, porque la instrucción vigente del propietario es que **un
+`FAIL` no queda desmentido por repetir la prueba hasta obtener verde**, y ése es justo el texto que a
+esa rama le falta.
+
+### 7. El único umbral que este delta MOVIÓ, y por qué no es un veto (`SEC-092`, `instrumento`)
+
+Las dos líneas `PISO_AUTONOMO_SECCION=` **subieron**: `448 → 467` en `37/5` y `449 → 485` en `40/7`.
+No es cosmético: `CA-18` de `REQ-014` **deriva de ese piso el techo de longitud** del archivo
+(`techo = máx(400, ⌈piso × 1,25⌉)`, `tests/escenarios/hooks/autoprueba-corredor.sh`). Subir el piso
+**sube el techo**. Ejecutada la derivación real de `CA-18` sobre las dos sedes:
+
+| Sede | piso antes → techo | piso ahora → techo | archivo ahora | ¿cabía bajo el techo VIEJO? |
+|---|---|---|---|---|
+| `37/5` | `448` → `560` | `467` → **`584`** | 523 | **SÍ** (523 ≤ 560) |
+| `40/7` | `449` → `562` | `485` → **`607`** | 485 | **SÍ** (485 ≤ 562) |
+
+**Lo primero, y es lo que descarta el veto: el alza NO compró paso.** Los dos archivos caben bajo los
+techos **viejos**. El delta no necesitaba el alza para salir verde, así que no hay umbral relajado
+*para* dejar pasar este cambio. Y la derivación es **conforme** en las cinco comprobaciones que la
+máquina hace: legible (3 términos), `suma == piso` (`21+100+346=467`; `23+73+389=485`),
+`piso <= líneas`, `líneas <= techo`. *(Comprobado de paso un fail-closed que la prosa podía haber
+disparado: el piso se parsea de un **comentario** partido por `+`, y un `+` de más en el texto añadido
+habría vuelto la derivación **ilegible** y abortado el banco. Hay exactamente **dos** `+` en cada
+línea. No ocurrió, y pudo ocurrir.)*
+
+**Lo segundo, que es el hallazgo:** el piso creció **porque se añadió prosa dentro del bloque que él
+mismo declara indivisible**, y con ello el techo de longitud se ensanchó en **+24** y **+45** líneas de
+holgura futura. La propiedad es autorreferencial: `CA-18` promete «un archivo puede medir hasta 1,25×
+su núcleo irreducible», y por esta vía pasa a tolerar «1,25× (el núcleo **más** la prosa que escribas
+dentro de él)». Un comentario no es lógica irreducible. La máquina **no puede** detectarlo —sólo sabe
+sumar los términos declarados y comprobar que el piso no exceda el total—, así que el control depende
+de que los términos sean **verdaderos**, y esta vez crecieron por texto.
+
+**Tercera parte, medida, de la misma línea:** las dos cifras de techo que esos comentarios **publican**
+están **mal en uno**. Dicen «el techo que este piso gobierna es **583**» y «es **606**»; la máquina
+deriva **584** y **607** (`int((piso×125+99)/100)`, redondeo **hacia arriba** porque un techo es una
+cota; los comentarios aplicaron truncamiento). El error va en dirección **conservadora** —publican
+menos holgura de la que existe, no más—, así que no concede nada; pero es una cifra derivada publicada
+**mal** en la misma comisión cuyo objeto era que el texto no afirme lo que no puede demostrar. *(En
+`40/7` el desfase **preexistía** —decía `561` donde la máquina deriva `562`—; en `37/5` la cifra es
+**nueva** en este delta.)*
+
+Clase **`instrumento`** las dos partes, dueño `desarrollador`: `CA-18` es un criterio de
+mantenibilidad del banco, no un control de seguridad; no toca usuario ni dinero y **no impide cerrar**
+(`AGENTS.md` §6). Lo registro porque es, literalmente, la forma del riesgo que esta revisión fue a
+buscar —un umbral movido dentro de un cambio de prosa—, y porque la próxima vez puede no ser inocuo.
+
+### 8. Qué reutilicé y qué no
+
+**Reutilizado sin repetir:** las 12 corridas del árbol conforme de `QA-024-25`
+(`docs/qa/evidencia-req-024-ca07ii-ab3e4cb/`, veredicto en
+`docs/qa/1.34.0-req024-ca07ii-vuelta4-veredicto.md`) como **la** medición de la dispersión entre
+corridas; el veredicto de la vuelta 3 (`docs/qa/1.34.0-req024-vuelta4-extension-redaccion-veredicto.md`);
+y las rejillas de borde `1,250×`→`pass` / `1,251×`→`fail` de QA — **no las repito porque el §2 las hace
+innecesarias**: la función que decide es la misma función, byte a byte.
+
+**NO acepté la demostración (3) del desarrollador** de
+`docs/arnes/req-024-ca-07-ii-reparacion/07-redaccion-qa-024-25-y-26-sedes-y-demostraciones.md`: QA avisa
+(`QA-024-31`, `instrumento`) de que **no se re-deriva** con el método declarado. La propiedad que
+afirma es verdadera, pero la **establezco por mi cuenta** en §2 y §3, no sobre esa prueba.
+
+**Medido por mí, y no estaba en las nueve vías de dev+QA:** el fail-open del **recuento por texto**
+frente a las palabras `PASS`/`FAIL` embebidas en el mensaje (§3); la ausencia de consumidores de los
+campos de `LISTA07` (§3); la legibilidad `CA-18` del comentario del piso frente al `+` (§7); la
+derivación real de los techos `CA-18` y el contrafáctico «¿cabía bajo el techo viejo?» (§7); el
+inventario de constantes idénticas y el `rc` extremo a extremo (§2); y la lectura del **log de CI de la
+cabeza real** `0b2f227` (§3, §4, §5) — que además es **mejor evidencia que la que se me citó**: se me
+dio `hooks-en-linux` success sobre `f2b74d9`, y hay **success sobre `0b2f227`**, la cabeza que reviso.
+
+### 9. `R-031` y `R-032` siguen aplicables
+
+**Sí, las dos, y verificado.** `R-031` firmó el **código** de `#48` sobre `6e3bb90`; este delta **no
+toca `hooks/` ni `tools/`** (§2, cero líneas de diff), así que esa firma sigue acreditando lo que
+acreditaba. `R-032` es de este registro y no dependía del código. Ninguna de las dos se re-emite.
+
+### 10. Veredicto
+
+**NO hay veto, y NO hay firma de REQ.** Sobre el objeto acotado de esta revisión:
+
+- **La puerta no se debilitó.** Establecido **por construcción** (recuento de líneas ejecutables
+  invariante; las cinco líneas cambiadas no son condiciones), corroborado por el `rc` extremo a
+  extremo, por la integridad del mecanismo y por CI en verde sobre la cabeza real con el caso en
+  **`PASS` acreditado bajo techo**, no en `SKIP`.
+- **El texto nuevo sostiene el control.** Retirar una atribución refutada **fortalece** el control;
+  «Bloquea igual» es la formulación correcta. Con **un hueco** (`SEC-091`): la advertencia contra
+  repetir hasta verde falta justo en la rama que bloquea.
+- **Un umbral se movió** (`SEC-092`): el techo derivado de `CA-18`, ensanchado por prosa escrita dentro
+  del núcleo declarado indivisible. **No compró paso** y es `instrumento`.
+- **Desde seguridad, y en mi alcance, nada impide integrar `#48`.** Mis dos hallazgos son
+  `instrumento` con dueño `desarrollador` y no bloquean (`AGENTS.md` §6). **Y eso no es una
+  recomendación de fusión:** `REQ-024` sigue `Estado: bloqueado` con `QA: con-hallazgos` y
+  `Seguridad: pendiente`, `SEC-088` sigue `abierto` y `contrato`, y la fusión es **gate humano** del
+  propietario. No reclasifico nada en su nombre ni acepto residuales.
+
+### 11. Estado de mis hallazgos tras `R-033`
+
+**`SEC-091` `abierto`** (nuevo, §6) — `instrumento`, dueño `desarrollador`, vencimiento ventana
+1.34.0. **`SEC-092` `abierto`** (nuevo, §7) — `instrumento`, dueño `desarrollador`, vencimiento
+ventana 1.34.0. Sin cambios en el resto: `SEC-088` `abierto` (`contrato`, dueño `desarrollador`),
+`SEC-085` `abierto`, `SEC-090` `mitigado`, `SEC-087` `mitigado`.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** Un delta de redacción en el banco y en los
+requerimientos no altera clasificación de datos, acceso, retención ni cumplimiento; este repositorio
+sigue sin usuarios finales ni datos personales.
+
+**Numeración vigente tras esta revisión:** última revisión **R-033**; último hallazgo **SEC-092**;
+próximos libres **R-034** y **SEC-093**.
