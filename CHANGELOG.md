@@ -50,6 +50,56 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-11 · `D3` ejecutado: los cuatro criterios sin implementar pasan a ser legibles por la máquina
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
+
+`D3` aprobado expresamente por el propietario (2026-09-11) con alcance explícito, y **tratados como los
+dos problemas distintos que son**.
+
+### `SEC-073` — el cierre prematuro deja de ser posible en silencio
+
+Cuatro elementos nuevos en `Hallazgos abiertos:`, uno por criterio: **`SEC-073/CA-13`, `/CA-14`,
+`/CA-16`, `/CA-17`**, clase **`contrato`** como primer elemento del paréntesis.
+
+**Ningún identificador inventado**, que era la condición: el analista revisó los seis `QA-026-*` abiertos
+y **ninguno cubre los cuatro criterios**; el único que sí lo hace es `SEC-073`, *«cuyo objeto son
+exactamente ellos»*. Por eso cada elemento es `SEC-073` **más** el identificador que el criterio ya
+tenía: **el inventario de hallazgos no sube** y un recuento por identificador los colapsa sobre
+`SEC-073`.
+
+**La clase no se elige, se cita** del sitio único (`registro-seguridad.md:78` y `:6458`). Y razonada en
+las dos direcciones: **no `instrumento`** —no bloquearía, que es lo contrario de lo pedido— y **no
+`usuario/dinero`** —la rotación está apagada y ningún REQ real se ha rotado nunca, así que subirla sobre
+el sitio único sería **declararla en vez de citarla**—.
+
+### `SEC-072` — la ventana se reconoce sin aceptarse
+
+`CA-18 (i)` queda en **dos mitades dentro del criterio**: la exigencia **íntegra y sin una palabra
+menos**, y debajo lo que el testigo cubre (295–312 / 355–361 ms) y lo que **no** —la ventana de
+publicar, **duración sin medir**—, dicho **con las mismas palabras que la exigencia**. Más una tercera
+mitad explícita: **reconocer la ventana no la acepta, no la contrata como excepción y no repara nada**;
+el criterio queda **INCUMPLIDO**, `SEC-072` **abierto**, y la obligación de reparación **con dueño**.
+
+Lo medido **subió** del bloque `PROPUESTA` —que empieza diciendo «no rige»— a la mitad vigente.
+
+### Cuatro sedes de más, ninguna señalada
+
+El **titular** de `CA-18` · el **par discriminante `(vi)`**, que contrataba el positivo «dentro de la
+ventana entre la lectura y la publicación» e **incluía el residuo incumplido**, o sea **contrataba una
+prueba que el mecanismo de hoy no puede pasar** · **`CA-05`**, la segunda instancia del mismo `SEC-072`
+· y el **«Ajuste de alcance»**, que listaba `CA-18` en «Entregado y validado» sin la brecha.
+
+### El hallazgo colateral, y la decisión de no tocarlo
+
+Con la regla del lector —parte por comas **de profundidad 0** y toma la clase hasta la primera coma de
+dentro, verificado por la coordinadora en `guard-completado.sh:744-773`— dos entradas preexistentes
+separan la clase con **raya**: `SEC-067 (usuario/dinero — …)` y `QA-026-10 (instrumento — …)`. El lector
+obtiene la cadena entera y **ninguna es clase válida**. Deniegan igual, **por fail-closed**, pero por el
+motivo equivocado.
+
+**El analista NO las corrigió, y el motivo es exacto:** arreglar `QA-026-10` **convertiría una
+denegación en un permiso**, porque `instrumento` no bloquea. Queda para sus dueños.
+
 ## [Interno] — 2026-09-11 · `QA-024-35` y `QA-024-19` CIERRAN, y la tercera sede está en lo que heredan todos los proyectos
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (**vuelta 6** `dev↔QA`), coordinadora.
 

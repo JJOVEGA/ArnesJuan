@@ -110,6 +110,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 22 | `QA-024-35` — verificación acotada del aviso · `qa-tester` (**vuelta 6** `dev↔QA`) | 2026-09-11 17:05:52 | 2026-09-11 17:25:32 | **19 min 40 s** | **`QA-024-35` y `QA-024-19` CIERRAN**. 48 celdas de fidelidad + 72 de no-regresión. Abre `QA-024-38` y `QA-024-39` (`contrato`) | `0440cfd` | **193 970** | ídem |
 
+| 23 | `D3` — `SEC-073` y `SEC-072` de `REQ-026` · `analista-requerimientos` | 2026-09-11 17:33:03 | 2026-09-11 17:45:00 | **11 min 57 s** | cuatro criterios registrados **reutilizando `SEC-073`**, sin inventar ids; `CA-18 (i)` reconoce la ventana **sin aceptarla**; **cuatro** sedes de más; halla que dos entradas usan raya y el lector no lee su clase | `1605f35` | **178 435** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la
