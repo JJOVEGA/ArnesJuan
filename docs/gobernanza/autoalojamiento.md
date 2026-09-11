@@ -223,6 +223,27 @@ herramienta nueva para medirlo—: tiempo, tokens si los hay, **comisiones evita
 
 ---
 
+
+### Presupuesto del bucle `analista`↔QA — **dos vueltas** (decisión expresa del propietario, 2026-09-11)
+
+`AGENTS.md` §6 acota el bucle **`dev`↔QA** en tres vueltas por REQ. **No acotaba ningún otro**, y eso se
+descubrió midiendo: al remediar `QA-024-19`, el `qa-tester` observó que había **dos bucles vivos y sólo
+uno con tope** — el write-back del `analista-requerimientos` volvía a QA, QA encontraba un defecto nuevo
+de `contrato` en el texto recién escrito, y el ciclo podía repetirse **sin que ninguna regla lo notara**.
+Giró **tres** veces antes de que nadie lo nombrara.
+
+**Presupuesto ordinario: dos vueltas** de `analista`↔QA por hallazgo remediado, en el autoalojamiento.
+
+- **Agotado el presupuesto no se aprueba por agotamiento.** Se entrega una **lista consolidada** de las
+  contradicciones restantes, su **efecto** y la **decisión concreta** que hace falta, y se para. Una
+  vuelta más exige **autorización expresa del propietario**.
+- **El contador se lleva por el trabajo, no por la etiqueta.** Una segunda entrega del analista sobre el
+  **mismo** write-back es la vuelta 2, se llame como se llame. Y **no se mezcla** con el contador de
+  `dev`↔QA: son dos cuentas distintas y las dos van declaradas en el campo del veredicto.
+- **Vale para este repositorio.** **No se copia a las plantillas de proyectos consumidores**: llevar la
+  proporcionalidad afuera es la iniciativa registrada en `docs/PENDIENTES.md` § «Propuesta — La política
+  de trabajo proporcional, del arnés a los proyectos», **todavía sin implementar y sin versión**.
+
 ## Aprobación humana delegada (propietario, 2026-09-05) — con la frontera escrita el 2026-09-08
 
 El propietario autorizó de forma **permanente** que, cuando **todo** esté en verde, la coordinadora

@@ -50,6 +50,52 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-11 · El bucle `analista`↔QA gana presupuesto, y la cola de 16 queda revisada contra el estado real
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+Dos decisiones del propietario (2026-09-11), ejecutadas.
+
+### El bucle sin tope, ahora con dos vueltas
+
+`AGENTS.md` §6 acota `dev`↔QA en tres vueltas y **no acotaba ningún otro**. Se descubrió **midiendo**:
+al remediar `QA-024-19`, el `qa-tester` observó que había **dos bucles vivos y sólo uno con tope** — el
+write-back volvía a QA, QA hallaba un defecto `contrato` **nuevo** en el texto recién escrito, y el ciclo
+podía repetirse sin que ninguna regla lo notara. **Giró tres veces antes de que nadie lo nombrara.**
+
+**Presupuesto ordinario: dos vueltas.** Agotado, **no se aprueba por agotamiento**: se entrega la lista
+consolidada de contradicciones restantes con su efecto y la decisión necesaria, y se para. Registrado en
+la **sede canónica** (`docs/gobernanza/autoalojamiento.md` § «Enmienda»), **sin abrir ciclo para
+transcribirlo** y **sin copiarlo a plantillas** — verificado: cero copias en `templates/`, `agents/` y
+`.arnes/`.
+
+### La cola: 16 medidas, y dos cifras que no aguantaron
+
+`docs/arnes/cola-de-aprobaciones/00-revision-2026-09-11.md`.
+
+**La cifra se midió, no se heredó:** `arnes_cola_pendientes` devuelve **16** con `rc 0` —medible— y
+`tools/arnes-lectura.sh` publica lo mismo.
+
+**Y la afirmación «bloquea todos los cierres» hay que acotarla:** el gate **A2** deniega **marcar un REQ
+como `completado`**, y **nada más**. No bloquea commitear, empujar, abrir ni fusionar un PR, ni ninguna
+otra transición de estado. **Todo el trabajo de 1.34.0 puede avanzar; lo único imposible hoy es cerrar
+un REQ.**
+
+**`D2` estaba desfasada y es material:** dice **23 bloqueantes en 8 REQ**; re-derivada hoy **con su
+propio método** da **16 en 5** (`REQ-020` 8 · `REQ-024` 3 · `REQ-026` 2 · `REQ-019` 2 · `REQ-013` 1).
+Ocho de los dieciséis son de `REQ-020`, cuya ventana es la propia `D2`.
+
+**Recuento:** **2 resueltas** con evidencia (`D6` decidida bajo delegación, `D10` cerrada en `R-027`) ·
+**3 parcialmente sustituidas** que exigen re-medir antes de decidir (`D16`, `D17`, `D18`) · **11
+vigentes**, de las que tres no cuestan nada decidir (`D4` fijar ventana, `D8` ratificar, `D15` sin
+urgencia).
+
+**`D17` merece nota**, porque es la misma lección que el propietario ya aplicó hoy: describe un vector
+que **ya no se reproduce**, mientras que lo medido esta sesión es que la clase **sobrevivía en otro
+disparador**. Su descripción original ya no es la buena.
+
+La revisión **no vacía la cola, no retira entradas y no decide ninguna**: señalar `D6` y `D10` como
+resueltas no las borra — retirarlas es acto del propietario.
+
 ## [Interno] — 2026-09-11 · `QA-024-33` cierra y nace `QA-024-34`: se corrigió la PERTENENCIA a la clase, no lo que se AFIRMA de ella
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester, coordinadora.
 
