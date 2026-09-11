@@ -2,6 +2,43 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · `REQ-017 CA-08 (ii)` deja de atribuir al código lo que su medición no distingue
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
+
+Autorizado expresamente por el propietario (2026-09-11): *«corregir de forma acotada la afirmación de
+`REQ-017` que atribuye con certeza al código un exceso de tiempo… Debe describir lo que la medición
+acredita, sin afirmar que descarta ruido. Conserva umbrales y comportamiento.»*
+
+**No es una vuelta del contador de `REQ-017`.** Ese REQ sigue `bloqueado` con sus tres vueltas
+agotadas; esto es una corrección de contrato autorizada aparte, y así queda escrito en su Historial.
+
+### La frase y su refutación
+
+> **FAIL** si `mín(r) > techo` —excedido en **todas**, ~~así que no lo puso ahí el vecino~~ **la
+> medición excede el techo; no se acredita cumplimiento**—
+
+Lo desmiente `QA-024-25`: sobre un árbol **conforme** de razón verdadera `1,177×` con techo `1,250×`,
+**12 corridas sin cambiar un byte** dieron 7 `PASS` (`1,223×`–`1,249×`), 4 `FAIL` «no se pudo
+acreditar» y **1 `FAIL` que afirmaba regresión**. La dispersión **entre** corridas (`1,095×`–`1,490×`)
+es un orden de magnitud mayor que el `recorrido` intra-corrida sobre el que el criterio razonaba. El
+propio `REQ-017` ya tenía su medida equivalente: `0,973×`–`1,364×` sobre **código idéntico**.
+
+**Seis sedes en el archivo, cinco fuera de la lista que la coordinadora entregó** —el mismo patrón que
+en la corrección hermana, donde nueve de catorce no estaban—. La frase vieja queda **citada y
+desmentida**, no borrada. Dos de las seis merecen mención: el **recuento de afirmaciones sobre el
+mecanismo falsas al ejecutarlas** subió de tres a cuatro, porque si no el propio recuento quedaba
+desmentido por esta fila; y la **condición de disparo** de la lectura alternativa del techo se
+**endureció** —un `FAIL` unánime sobre un árbol sin regresión ya no basta: hace falta que se reproduzca
+**entre** corridas sobre código idéntico—, así que no habilita ninguna subida que antes no lo estuviera.
+
+**Umbrales y comportamiento intactos**, verificado por la coordinadora: ninguna cifra de umbral cambia
+—las nuevas (`1,095×`, `1,177×`, `1,223×`, `1,490×`) son la medición citada como evidencia—, siguen el
+techo `≤ 1,25×`, la regla `mín(r) > techo → FAIL`, la unanimidad de contrato, y **las tres salidas
+siguen siendo las mismas tres**, con `SKIP` —y no la salida del hermano— como tercera.
+
+**Deriva cerrada:** el comentario `37/5:271-277` declaraba que el contrato seguía diciendo la frase.
+Ya no la dice como promesa viva. Actualizar ese comentario es del `desarrollador` y queda en la cola.
+
 ## [Interno] — 2026-09-11 · Seguridad `R-033`: sin veto, y el fail-open que el texto pudo crear estaba a un ancla de distancia
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad (`R-033`), coordinadora.
 

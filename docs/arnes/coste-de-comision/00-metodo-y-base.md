@@ -86,6 +86,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 11 | Delta de redacción — revisión de seguridad acotada · `auditor-seguridad` | 2026-09-11 12:23:29 | 2026-09-11 12:34:22 | **10 min 53 s** | **`R-033`, sin veto**. La puerta no se debilitó (por construcción); abre `SEC-091` y `SEC-092` (`instrumento`, no bloquean) | `0b2f227` | **116 377** | ídem |
 
+| 12 | `REQ-017.md:118` — retirar la atribución absoluta · `analista-requerimientos` | 2026-09-11 13:30:20 | 2026-09-11 13:39:21 | **9 min 1 s** | **seis** sedes corregidas (cinco fuera de la lista) + dos transcripciones declaradas; umbrales y tres salidas intactos; deriva contra `37/5:273` cerrada | `e53de46` | **139 416** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la
