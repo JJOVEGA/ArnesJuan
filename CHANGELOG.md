@@ -50,6 +50,49 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-11 · La cola baja de 16 a 14, y las catorce restantes quedan explicadas por lo que autorizan
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+Autorización expresa del propietario (2026-09-11) para mover `D6` y `D10` a resueltas **si se verifica
+que las decisiones existentes cubren íntegramente lo solicitado**, y para explicar las restantes «en
+lenguaje claro», con la instrucción de que **no basta con «ratificar» o «sin coste»: hay que decir qué
+estaría autorizando**.
+
+### `D6` y `D10` movidas, íntegras y con evidencia
+
+Verificado antes de mover, y **ninguna pedía decisión**: `D6` se declara a sí misma **«decidida bajo
+delegación»** y su remedio —el modo intercalado— **estaba ya implementado**; `D10` dice **literalmente**
+«no te pido permiso para arreglarlo», y el hallazgo que describe, `SEC-083`, está **cerrado** por el
+auditor en `R-027` §3.
+
+**No se borraron ni se resumieron:** el bloque va **entero** en § «Resueltas», con una nota que dice
+quién autorizó el movimiento, qué se verificó y dónde está la evidencia. Y queda anotado que **`D9`
+sigue viva**, porque es la evidencia que fundó `D6`.
+
+**Medido después:** `arnes_cola_pendientes` devuelve **14** y `tools/arnes-lectura.sh` publica lo mismo.
+
+### Las tres re-medidas
+
+**`D16`** — vigente, con su medición **sustituida** (mide 1.33.0; `v1.33.1` corrigió esa mitad) y su
+pregunta intacta: `QA-016-04` es `contrato` y **no está en el campo `Hallazgos abiertos:` de ningún
+REQ** — verificado hoy: `REQ-016` sólo declara `H-07` y `QA-016-01`. **Ninguna puerta lo mide.**
+
+**`D17`** — vigente, y **su descripción quedó obsoleta hoy mismo**: describe un vector que ya no se
+reproduce, mientras lo medido es que la clase **sobrevivía en el disparador del aviso**, vivo en la
+`v1.33.2` publicada.
+
+**`D18`** — vigente **sólo en su primera mitad**. La segunda —la prueba de reloj que oscilaba— quedó
+resuelta por decisión del propietario el 2026-09-11.
+
+### La tabla
+
+`docs/arnes/cola-de-aprobaciones/01-decisiones-vigentes-2026-09-11.md`, con cinco columnas por entrada y
+**sin atajos de lenguaje**: `D8` no dice «ratificar» sino que *estarías autorizando el cambio ya hecho y
+cerrando el incumplimiento de procedimiento, no aprobando un riesgo nuevo*; `D11` no dice «no firmar (b)»
+sino que *estarías autorizando escribir en el documento que cada proyecto hereda una promesa al revés de
+lo que hace el código*; `D4` no dice «sin coste» sino que *estarías autorizando que ese trabajo no se
+haga ahora y quede con ventana escrita en vez de flotar sin fecha*.
+
 ## [Interno] — 2026-09-11 · `QA-024-34` cierra, `SEC-084` ya es transcribible, y el defecto se muda a la CONDICIÓN
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester, coordinadora.
 

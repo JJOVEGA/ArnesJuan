@@ -417,70 +417,6 @@ código que `REQ-023` no introdujo.
 
 
 
-### D6 · **CORREGIDA: mi diagnóstico de `k=1` era FALSO en su mecanismo, y el remedio es otro** — decidida bajo delegación
-
-**Corrección de hecho, y es la segunda vez hoy que construyo una explicación correcta-en-la-medida y
-falsa-en-el-mecanismo.** Escribí que «*con `k=1` no hay mínimo que tomar: el mínimo ES la única
-muestra*». **Es falso, y está verificado por mí:** `tests/util/sonda-reloj.sh` tiene **dos** parámetros
-—`--k` son las repeticiones **dentro** de una serie (`sr_serie:347`) y `--r` son las **series**, que es
-sobre lo que se toma el mínimo (`sr_minimo:381`)— y `mide37` pasa **`--r 3` FIJO** en todas sus llamadas
-(`37/2:163`). Así que el fail-before con `k=1` **sí** toma el mínimo de **3** muestras, **las mismas que
-la medición directa con `k=20`**. **El estadístico nunca estuvo apagado.** La medición de `D6`
-(3,379× → 2,329×) sigue siendo correcta; la explicación que construí encima, no.
-
-**El mecanismo real, medido con round-robin controlado (N=5, `loadavg` publicado fila a fila):** los dos
-términos del cociente se miden en **dos invocaciones distintas, dos procesos y dos instantes**, así que
-la dispersión la domina **cuál de las dos pilló al vecino**. Y de ahí lo importante: **subir `k` o `r`
-alarga cada invocación, las separa MÁS en el tiempo y EMPEORA.**
-
-| configuración | rango, carga 17,6–23,3 | rango, carga baja | coste |
-|---|---|---|---|
-| `k=1 r=3` (la de hoy) | 64,4 % (mín **2,879×**) | 13,3 % | 1,5–4,6 s |
-| `k=1 r=15` | 52,8 % | — | 21 s |
-| `k=2 r=9` | 23,9 % | — | 26 s |
-| `k=3 r=9` | — | **66,0 %** | 13 s |
-| `k=8 r=3` | 50,0 % | — | 31 s |
-| **intercalado `k=2/3 r=9`** | **18,4 %** | **9,4 %** | 13–23 s |
-
-**Y lo que hizo el `desarrollador` es exactamente lo que se le pidió y merece quedar escrito:** declaró su
-criterio **antes de medir** (escalera fija, variable de decisión = suelo + dispersión, **nunca** el
-cociente), el criterio seleccionó **`k=3`**, **midió esa configuración, salió peor, y NO la envió** —
-«*enviarla habría sido enviar una regresión medida*». No subió la `k`. Eso es lo contrario de repetir
-hasta obtener verde.
-
-**Lo que sí entregó:** el caso ahora **publica** `k`, las series y, de cada término, su **mínimo y su
-máximo**, y tiene **un solo nombre** en sus cinco ramas — antes cada rama nombraba un caso distinto, así
-que un PASS→FAIL se leía como un caso que desaparece y otro que nace. Eso es lo que impidió atribuir el
-rojo la primera vez.
-
-**El remedio medido es el modo INTERCALADO, y no es alcance nuevo: ya está implementado y ya está
-contratado.** `sr_intercala` existe en `tests/util/sonda-reloj.sh:399` y su propio comentario cita
-**`REQ-021 CA-02` punto 2** —«*con DOS sujetos las series van a, b, a, b, … dentro*»—, con su motivo
-medido en `QA-017-06`: **1,217 en bloque contra 1,012 intercalado**, que es **exactamente** nuestro modo
-de fallo. Fue la **única** configuración más estrecha en **las dos** cargas y además **más barata** que su
-equivalente en bloque.
-
-**Decisión tomada bajo la delegación de 24 h:** se adopta el **modo intercalado** para `CA-03`, **en sus
-dos mediciones** —la directa y el fail-before—, porque mover sólo una rompería la coherencia de «el
-**mismo** cociente» que el fail-before acredita. **No relaja nada:** el techo sigue en 2,600×, no se
-retira ninguna prueba, y la práctica ya la contrata `REQ-021 CA-02`. Cambia **qué instrumento** mide, así
-que el orden es **`analista-requerimientos`** (precisar el modo en `CA-03`) → **`desarrollador`** (~20
-líneas) → **`qa-tester`** → **CI**.
-
-**Lo que sigue sin certificar, y lo digo yo, no el agente:** **esta máquina no es el juez y nadie puede
-afirmar hoy que el CI se ponga verde.** El `2,329×` no se reproduce aquí ni con 12 quemadores; lo que se
-reproduce es la **anchura** que lo hace posible. El CI corre con `ARNES_JOBS=6` sobre 4 vCPU, varias
-secciones midiendo a la vez. **El intercalado es el remedio con mejor evidencia, no una garantía.**
-
-**Evidencia salvada al repositorio** (era efímera, en scratchpad): **29 archivos** en
-`docs/arnes/req-017-ca-03-modo-de-medicion/`, con el criterio declarado antes de medir, las cinco tablas
-de medidas, las cinco corridas, los inventarios y los guiones de sonda. Las cifras que deciden quedan
-además dentro del comentario del propio archivo del caso.
-
-**A la cola, no abiertos aquí:** `razon37` tiene la **misma** carencia de publicación —da los dos mínimos
-y no los máximos— y afecta a **5 casos más**; se dejó intacto a propósito.
-
-
 ### D7 · `REQ-024 CA-04` — gate humano **previo**, y la delegación de 24 h NO lo cubre
 
 **Lo traigo en vez de tomarlo, y el motivo no es cautela: es que el criterio contrata su propio gate.**
@@ -587,49 +523,6 @@ que este proyecto llama un criterio que dice algo falso sobre lo medido.
 **Y una tercera, mía, que no le pido a nadie:** el `Archivos:` de `REQ-017` **no incluye**
 `docs/arnes/req-017-ca-03-modo-de-medicion/`, donde vive **toda** la evidencia del modo. Lo añado al
 reconciliar, junto al `CASOS_ESPERADOS`.
-
-
-### D10 · `SEC-083` — un fail-open en la guarda que protege la firma del auditor. **Informativa: el trabajo ya va en marcha**
-
-**No te pido permiso para arreglarlo** —es remediación de un `contrato` y dejarlo abierto es peor que
-tocarlo—, pero un fail-open **en el mecanismo de enforcement** es exactamente lo que querrías saber, así
-que va escrito aquí y no sólo en el registro.
-
-**Qué es.** La invariante «*seguridad no firma lo que QA no ha validado*» (`AGENTS.md` §13, cumplida por
-máquina en `hooks/guard-completado.sh:274`) **falla en abierto cuando la línea `QA:` no llega a
-declararse**. Verificado por mí leyendo el código:
-
-```bash
-if [ "$seg" = "aprobado" ] && [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
-```
-
-**El `[ -n "$qa" ]` es la puerta abierta:** si `QA:` **no existe**, la condición es falsa y la guarda **no
-deniega**. `Seguridad: aprobado` sin ninguna línea `QA:` **pasa**.
-
-**Y es `SEC-047` sobreviviendo a su propia mitigación.** El comentario del propio `lib.sh` describe ese
-patrón como el defecto de `SEC-047` —«*los `[ -n "$qa" ]` / `[ -n "$hall" ]` saltaban la comprobación
-entera*»— y `campos.ausencia_exige` **no lo cierra en ninguno de sus dos estados**, porque `ADR-009`
-alcanza «la puerta de cierre y el lector de campos» y **esta guarda corre en cualquier edición**. La
-mitigación pasó por al lado.
-
-**Lo midió el `auditor-seguridad` en `R-026` con tres controles:** `QA: pendiente` y `QA: con-hallazgos` →
-DENY; `QA: aprobado` → ALLOW correcto; **ausente o comentada → ALLOW**, también con la llave encendida.
-Clase `contrato`, severidad **alta**, dueños `desarrollador` (la guarda) y `analista-requerimientos` (la
-fila de §13 y el criterio).
-
-**La ironía que conviene no perder:** es la guarda que hace que el `QA: aprobado` del `qa-tester` sea
-**precondición mecánica** de que el auditor pueda firmar. O sea que **el auditor encontró que la puerta
-que protege su propia firma se puede rodear** borrando una línea.
-
-**Lo que hago bajo la delegación:** enruto `SEC-083` al campo `Hallazgos abiertos:` de `REQ-024` —sin sede
-en un campo, **ninguna puerta lo mide**, que es la deriva de §9— y despacho las dos mitades: código y
-write-back. **Lo que NO hago:** darlo por cerrado sin QA y sin auditor, ni tocar `AGENTS.md` §13 sin que el
-analista fije primero qué debe decir.
-
-**Y lo que sí es tuyo, si discrepas:** §6 lista «cualquier cambio en `hooks/`» entre los gates humanos.
-Toda esta sesión ha cambiado `hooks/` bajo autorización de REQ y con el ciclo completo, y lo sigo haciendo
-aquí por el mismo criterio; **si querías ese gate literal por cada cambio del mecanismo, dilo y paro** —
-pero un fail-open abierto en la guarda de las firmas me parecía peor que un commit de más.
 
 
 ### D11 · `ADR-011` — el gate que el propio ADR declara y que no estaba en la cola
@@ -955,6 +848,136 @@ decorada gobierne —cosa que hace—*». O sea que **el defecto no está en tol
 que **una guarda la tolera y la otra no**. Arreglarlo mal —quitando la tolerancia— rompería `CA-04`.
 
 ## Resueltas
+
+> **Movidas desde «Pendientes» el 2026-09-11 por autorización expresa del propietario**, tras
+> verificar que **las decisiones existentes cubren íntegramente lo solicitado**. **No se borran ni se
+> resumen: el bloque va entero**, y debajo queda enlazada la evidencia que acredita el cierre. La
+> revisión completa de la cola está en `docs/arnes/cola-de-aprobaciones/00-revision-2026-09-11.md`.
+
+#### `D6` — resuelta: no pedía decisión
+
+Su propio título la declara **«decidida bajo delegación»**, y el remedio que propone —el **modo
+intercalado**— estaba **ya implementado** cuando se escribió. La entrada **corrige su propia premisa**
+dentro (el diagnóstico de `k=1` era falso en su mecanismo) y no formula ninguna pregunta al propietario.
+**Evidencia:** el bloque íntegro debajo, y `docs/arnes/req-017-ca-03-modo-de-medicion/01-evidencia.md`.
+**Queda viva su acoplada `D9`**, que sí pide decisión sobre la evidencia que fundó aquélla.
+
+### D6 · **CORREGIDA: mi diagnóstico de `k=1` era FALSO en su mecanismo, y el remedio es otro** — decidida bajo delegación
+
+**Corrección de hecho, y es la segunda vez hoy que construyo una explicación correcta-en-la-medida y
+falsa-en-el-mecanismo.** Escribí que «*con `k=1` no hay mínimo que tomar: el mínimo ES la única
+muestra*». **Es falso, y está verificado por mí:** `tests/util/sonda-reloj.sh` tiene **dos** parámetros
+—`--k` son las repeticiones **dentro** de una serie (`sr_serie:347`) y `--r` son las **series**, que es
+sobre lo que se toma el mínimo (`sr_minimo:381`)— y `mide37` pasa **`--r 3` FIJO** en todas sus llamadas
+(`37/2:163`). Así que el fail-before con `k=1` **sí** toma el mínimo de **3** muestras, **las mismas que
+la medición directa con `k=20`**. **El estadístico nunca estuvo apagado.** La medición de `D6`
+(3,379× → 2,329×) sigue siendo correcta; la explicación que construí encima, no.
+
+**El mecanismo real, medido con round-robin controlado (N=5, `loadavg` publicado fila a fila):** los dos
+términos del cociente se miden en **dos invocaciones distintas, dos procesos y dos instantes**, así que
+la dispersión la domina **cuál de las dos pilló al vecino**. Y de ahí lo importante: **subir `k` o `r`
+alarga cada invocación, las separa MÁS en el tiempo y EMPEORA.**
+
+| configuración | rango, carga 17,6–23,3 | rango, carga baja | coste |
+|---|---|---|---|
+| `k=1 r=3` (la de hoy) | 64,4 % (mín **2,879×**) | 13,3 % | 1,5–4,6 s |
+| `k=1 r=15` | 52,8 % | — | 21 s |
+| `k=2 r=9` | 23,9 % | — | 26 s |
+| `k=3 r=9` | — | **66,0 %** | 13 s |
+| `k=8 r=3` | 50,0 % | — | 31 s |
+| **intercalado `k=2/3 r=9`** | **18,4 %** | **9,4 %** | 13–23 s |
+
+**Y lo que hizo el `desarrollador` es exactamente lo que se le pidió y merece quedar escrito:** declaró su
+criterio **antes de medir** (escalera fija, variable de decisión = suelo + dispersión, **nunca** el
+cociente), el criterio seleccionó **`k=3`**, **midió esa configuración, salió peor, y NO la envió** —
+«*enviarla habría sido enviar una regresión medida*». No subió la `k`. Eso es lo contrario de repetir
+hasta obtener verde.
+
+**Lo que sí entregó:** el caso ahora **publica** `k`, las series y, de cada término, su **mínimo y su
+máximo**, y tiene **un solo nombre** en sus cinco ramas — antes cada rama nombraba un caso distinto, así
+que un PASS→FAIL se leía como un caso que desaparece y otro que nace. Eso es lo que impidió atribuir el
+rojo la primera vez.
+
+**El remedio medido es el modo INTERCALADO, y no es alcance nuevo: ya está implementado y ya está
+contratado.** `sr_intercala` existe en `tests/util/sonda-reloj.sh:399` y su propio comentario cita
+**`REQ-021 CA-02` punto 2** —«*con DOS sujetos las series van a, b, a, b, … dentro*»—, con su motivo
+medido en `QA-017-06`: **1,217 en bloque contra 1,012 intercalado**, que es **exactamente** nuestro modo
+de fallo. Fue la **única** configuración más estrecha en **las dos** cargas y además **más barata** que su
+equivalente en bloque.
+
+**Decisión tomada bajo la delegación de 24 h:** se adopta el **modo intercalado** para `CA-03`, **en sus
+dos mediciones** —la directa y el fail-before—, porque mover sólo una rompería la coherencia de «el
+**mismo** cociente» que el fail-before acredita. **No relaja nada:** el techo sigue en 2,600×, no se
+retira ninguna prueba, y la práctica ya la contrata `REQ-021 CA-02`. Cambia **qué instrumento** mide, así
+que el orden es **`analista-requerimientos`** (precisar el modo en `CA-03`) → **`desarrollador`** (~20
+líneas) → **`qa-tester`** → **CI**.
+
+**Lo que sigue sin certificar, y lo digo yo, no el agente:** **esta máquina no es el juez y nadie puede
+afirmar hoy que el CI se ponga verde.** El `2,329×` no se reproduce aquí ni con 12 quemadores; lo que se
+reproduce es la **anchura** que lo hace posible. El CI corre con `ARNES_JOBS=6` sobre 4 vCPU, varias
+secciones midiendo a la vez. **El intercalado es el remedio con mejor evidencia, no una garantía.**
+
+**Evidencia salvada al repositorio** (era efímera, en scratchpad): **29 archivos** en
+`docs/arnes/req-017-ca-03-modo-de-medicion/`, con el criterio declarado antes de medir, las cinco tablas
+de medidas, las cinco corridas, los inventarios y los guiones de sonda. Las cifras que deciden quedan
+además dentro del comentario del propio archivo del caso.
+
+**A la cola, no abiertos aquí:** `razon37` tiene la **misma** carencia de publicación —da los dos mínimos
+y no los máximos— y afecta a **5 casos más**; se dejó intacto a propósito.
+
+
+
+#### `D10` — resuelta: informativa, y su hallazgo está cerrado
+
+La entrada dice **literalmente** «**no te pido permiso para arreglarlo**»: se escribió para que el
+propietario **supiera** de un fail-open en el mecanismo de enforcement, no para detener nada. Y el
+hallazgo que describe, **`SEC-083`, está CERRADO** por el `auditor-seguridad` en la revisión **`R-027`
+§3** —*«se cierra, y su cierre NO depende de la fila sin transcribir»*—, con su causa medida.
+**Evidencia:** el bloque íntegro debajo, y `docs/seguridad/registro-seguridad.md` § `R-027` §3.
+
+### D10 · `SEC-083` — un fail-open en la guarda que protege la firma del auditor. **Informativa: el trabajo ya va en marcha**
+
+**No te pido permiso para arreglarlo** —es remediación de un `contrato` y dejarlo abierto es peor que
+tocarlo—, pero un fail-open **en el mecanismo de enforcement** es exactamente lo que querrías saber, así
+que va escrito aquí y no sólo en el registro.
+
+**Qué es.** La invariante «*seguridad no firma lo que QA no ha validado*» (`AGENTS.md` §13, cumplida por
+máquina en `hooks/guard-completado.sh:274`) **falla en abierto cuando la línea `QA:` no llega a
+declararse**. Verificado por mí leyendo el código:
+
+```bash
+if [ "$seg" = "aprobado" ] && [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
+```
+
+**El `[ -n "$qa" ]` es la puerta abierta:** si `QA:` **no existe**, la condición es falsa y la guarda **no
+deniega**. `Seguridad: aprobado` sin ninguna línea `QA:` **pasa**.
+
+**Y es `SEC-047` sobreviviendo a su propia mitigación.** El comentario del propio `lib.sh` describe ese
+patrón como el defecto de `SEC-047` —«*los `[ -n "$qa" ]` / `[ -n "$hall" ]` saltaban la comprobación
+entera*»— y `campos.ausencia_exige` **no lo cierra en ninguno de sus dos estados**, porque `ADR-009`
+alcanza «la puerta de cierre y el lector de campos» y **esta guarda corre en cualquier edición**. La
+mitigación pasó por al lado.
+
+**Lo midió el `auditor-seguridad` en `R-026` con tres controles:** `QA: pendiente` y `QA: con-hallazgos` →
+DENY; `QA: aprobado` → ALLOW correcto; **ausente o comentada → ALLOW**, también con la llave encendida.
+Clase `contrato`, severidad **alta**, dueños `desarrollador` (la guarda) y `analista-requerimientos` (la
+fila de §13 y el criterio).
+
+**La ironía que conviene no perder:** es la guarda que hace que el `QA: aprobado` del `qa-tester` sea
+**precondición mecánica** de que el auditor pueda firmar. O sea que **el auditor encontró que la puerta
+que protege su propia firma se puede rodear** borrando una línea.
+
+**Lo que hago bajo la delegación:** enruto `SEC-083` al campo `Hallazgos abiertos:` de `REQ-024` —sin sede
+en un campo, **ninguna puerta lo mide**, que es la deriva de §9— y despacho las dos mitades: código y
+write-back. **Lo que NO hago:** darlo por cerrado sin QA y sin auditor, ni tocar `AGENTS.md` §13 sin que el
+analista fije primero qué debe decir.
+
+**Y lo que sí es tuyo, si discrepas:** §6 lista «cualquier cambio en `hooks/`» entre los gates humanos.
+Toda esta sesión ha cambiado `hooks/` bajo autorización de REQ y con el ciclo completo, y lo sigo haciendo
+aquí por el mismo criterio; **si querías ese gate literal por cada cambio del mecanismo, dilo y paro** —
+pero un fail-open abierto en la guarda de las firmas me parecía peor que un commit de más.
+
+
 
 ### D5 · `SEC-079` — **RESUELTA el 2026-09-09: opción (a), y con un matiz del propietario que cambia el arreglo**
 
