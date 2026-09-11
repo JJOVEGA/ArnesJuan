@@ -74,6 +74,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 5 | `REQ-024 CA-07 (ii)` — **vuelta 4**, fase 2: implementación · `desarrollador` | 2026-09-11 09:19:15 | 2026-09-11 09:52:57 | **~32 min** | **4 de 5 condiciones cumplidas**; la detección de 1,28× con los mandos de la puerta **NO** demostrada. Se detuvo en vez de tantear parámetros | árbol sobre `1b3760e` | **350 088** | ídem |
 
+| 6 | `QA-024-20` — write-back del criterio · `analista-requerimientos` | 2026-09-11 10:05:10 | 2026-09-11 10:05:23 | **7 min 19 s** | cinco sedes corregidas (una más de las cuatro encargadas); abstención enunciada **por propiedad**; no afirma detectar 1,28× | árbol sobre `f2b74d9` | **125 018** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la

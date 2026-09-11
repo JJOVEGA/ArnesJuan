@@ -385,10 +385,41 @@ la misma corrida**, no como una cifra: un runner lento sube el numerador y el de
 **El estadístico es el MÍNIMO de k repeticiones, nunca la media**, y k se elige para que el mínimo
 de cada serie supere el suelo por debajo del cual el reloj no distingue del ruido (en este arnés,
 50 ms). La carga sólo puede **añadir** tiempo, así que el mínimo es la mejor estimación del coste
-real y la media es una mezcla del coste y de los vecinos. Y **una sonda que no llega a ese suelo, o
-que no encuentra su línea base, emite SKIP con el motivo y con el número que sí obtuvo — nunca
-PASS**: un instrumento que ante la ausencia de datos responde «verde» es la misma familia de
-defecto que la magnitud equivocada.
+real y la media es una mezcla del coste y de los vecinos.
+
+**La abstención se enuncia por PROPIEDAD, nunca como lista cerrada de causas.** Una sonda que **no
+resuelve el factor que vigila** —cualquiera que sea el motivo— **no emite PASS**: publica **el
+motivo y el número que sí obtuvo**. La propiedad es decidible, y por eso no es un rodeo retórico:
+la sonda se abstiene exactamente cuando **no puede afirmar la unanimidad de sus razones respecto
+del techo** —ni todas conformes, ni todas excedidas—, **incluido el caso en que alguna razón no
+llegue a existir**. *Ejemplos declaradamente **no exhaustivos**, y la sede de la lista es el código
+de cada sonda, no este documento:* la serie no llega al suelo; falta la línea base; la sonda no
+midió por otro motivo; un brazo no converge; el techo cae **dentro** del recorrido de las razones.
+Un instrumento que ante la ausencia de datos responde «verde» es la misma familia de defecto que la
+magnitud equivocada — y **enumerar** aquí las causas en vez de enunciar la propiedad es la otra
+mitad de esa familia: lo midió `QA-024-20` (`contrato`), cuando este sitio único nombraba **dos**
+causas y el código se abstenía por **seis**.
+
+**Y toda abstención lleva COTA, porque una abstención sin cota es un verde que nadie anunció**
+(`SEC-064`). La cota se escribe **en el criterio que la usa**, y tiene dos mitades: **dentro de la
+corrida**, una medición inconclusa se **vuelve a medir** hasta un **techo de reintentos declarado**
+(con su dirección admitida) y, agotado, el caso emite **`FAIL` «no se pudo acreditar»**, nunca un
+`SKIP` verde; **entre corridas**, un techo de corridas **consecutivas** abstenidas tras el cual la
+abstención **deja de ser un veredicto**, pasa a **hallazgo** con dueño y se **escala**. Dos
+abstenciones sólo se suman si se sabe **de qué máquina** salió cada una, así que el mensaje publica
+**plataforma y carga**. **Una medición inconcluyente es acreditación PENDIENTE: no habilita la
+fusión y la puerta no sale verde por no poder medir.** Y limitar la abstención **no sustituye** la
+acreditación del rendimiento: la cota es **necesaria y no suficiente**, y el criterio debe dejar
+escrita además una **vía de acreditación ejecutable**.
+
+**El suelo de detección de un instrumento NO es una constante, y un criterio no lo escribe como
+cifra.** Depende de la máquina y del momento —medido: `1,33×` en un host y `2,39×` en otro **para
+el mismo código**—, así que se **deriva de la propia medición** (`techo × recorrido observado`) y se
+**publica en el veredicto** junto con la máquina y su carga. De ahí la regla que impide que un
+criterio nazca falso: **un criterio no afirma que su instrumento detecta una magnitud cuya
+detección no esté demostrada**; afirma lo demostrado —que no aprueba lo que no puede resolver—, y
+la brecha entre el techo y el suelo de detección se **escala como decisión de alcance**, **nunca**
+bajando el techo para que el instrumento lo alcance.
 
 ### Cuando el código cubre MÁS de lo que el criterio promete
 

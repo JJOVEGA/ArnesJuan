@@ -2,6 +2,45 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · Write-back de `QA-024-20`: la abstención pasa a enunciarse por PROPIEDAD, y las sedes eran cinco
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
+
+El criterio escrito de `REQ-024 CA-07 (ii)` **enumeraba cerrado** dos causas de abstención mientras lo
+construido se abstiene por seis. La corrección **no** alarga la lista —eso reproduce el defecto en
+cuanto aparezca la séptima—: la enuncia como propiedad.
+
+> El caso **se abstiene** exactamente cuando **no puede afirmar la unanimidad de sus razones respecto
+> del techo** —ni `máx(r) ≤ techo` en todas, ni `mín(r) > techo` en todas—, **incluido el caso en que
+> alguna de esas razones no llegue a existir**.
+
+Las seis causas quedan como ejemplos **declaradamente no exhaustivos**, con la sede de la lista en el
+**código del caso**. El «no exhaustivo» no cuelga de un absoluto: la promesa principal **es** la
+propiedad.
+
+**Las sedes eran cinco, no cuatro.** El analista encontró que `REQ-024:405-407` transcribía la misma
+lista cerrada **cuatro líneas más abajo del criterio que estaba corrigiendo**. Corregir las cuatro
+encargadas habría reproducido el defecto en el acto, dentro del mismo criterio.
+
+**La cota**, que faltaba (`SEC-064`): dentro de la corrida, no más de **3 intentos** —`operativo`, y su
+dirección es hacia menos—; agotado, **`FAIL` «no se pudo acreditar»**, nunca `SKIP` verde. Y explícito
+que la cota es **necesaria y no suficiente**: limitar `SKIP` no sustituye la acreditación.
+
+**Lo que el criterio NO afirma, y es deliberado:** que la puerta detecte `1,28×` con sus mandos. Lo
+contratado es lo demostrado —que no aprueba lo que no puede resolver y no sale verde sin medición
+válida—. El **suelo de detección** va como **incertidumbre del método**: no constante, derivado de
+cada medición, publicado con máquina y carga. La brecha techo↔suelo queda **pendiente de decisión del
+propietario**, no resuelta escribiendo texto.
+
+Cabecera: `Hallazgos abiertos:` gana los cinco `QA-024-20…24` **con su clase** —sin clase,
+`guard-completado` no puede juzgar—, incluidos los dos que la fase 2 dice haber atendido, porque
+cerrarlos es del `qa-tester`. `Archivos:` gana la sección `40/7`. `Estado:` sigue `bloqueado`, `QA:`
+sigue `con-hallazgos (vuelta 3 de 3)` y `Seguridad:` sigue `pendiente`: este write-back **no** vuelve
+cerrable el REQ.
+
+**En cola, sin actuar:** `requirements/README.md:536` declara `pendiente | critico | pendiente |
+pendiente` para `REQ-024`, contra `bloqueado` y `con-hallazgos` en la cabecera. Dos celdas desfasadas
+del espejo; tocarlas roza veredictos y estado.
+
 ## [Interno] — 2026-09-11 · Vuelta 4 fase 2: la nula SUBESTIMA la dispersión real, y por eso la detección de 1,28× no queda demostrada
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (vuelta 4), coordinadora.
 
