@@ -96,6 +96,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 16 | Write-back de `QA-024-19` — verificación · `qa-tester` (**cierre de la vuelta 5**, no gasta vuelta) | 2026-09-11 14:53 | 2026-09-11 15:04:42 | **11 min 40 s** | **`QA-024-19` NO cierra**: nace `QA-024-33` (`contrato`) — el plegado **sí** repone acentos, y `CA-13 (v)` prometía silencio | `7154769` | **147 856** | ídem |
 
+| 17 | `QA-024-33` — corregir la frontera de `CA-13` · `analista-requerimientos` (2.ª entrega del write-back) | 2026-09-11 15:06 | 2026-09-11 15:13:21 | **7 min 21 s** | **siete** sedes (QA señaló tres); frontera enunciada sobre la **clasificación del lector**; las reglas de la sección heredada pasan de cuatro a **cinco** | `8059e00` | **116 083** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la

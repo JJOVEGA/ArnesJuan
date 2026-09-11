@@ -129,6 +129,15 @@ lector**, que repone el plegado **pero no repone letras**, así que **excluye la
 construcción** — y aun así va escrita dentro del criterio, con el homóglifo `U+0405` y la letra omitida
 como ejemplos, diciendo que **un caso que la diera por conforme incumpliría**.
 
+> **[CORRECCIÓN, 2026-09-11 — esta entrada afirmó como hecho algo FALSO, y no se reescribe.]** El
+> párrafo anterior relata la afirmación del analista **sin marcarla como relato**, así que se lee como
+> aserción de la coordinadora: es mía y la corrijo aquí. **El plegado SÍ repone letras acentuadas**
+> —`arnes_pliega_ortografia`, `hooks/lib.sh:1400`, invocado desde `arnes_norm_campo:1462`—, de modo que
+> la propiedad **no** excluía la frontera por construcción. Lo destapó `QA-024-33`. La entrada de ese
+> hallazgo, más arriba en este mismo archivo, lleva la medición. **Se anota y no se borra**, por lo
+> mismo que el analista conservó su fila desmentida: una bitácora corregida en silencio deja de servir
+> para saber qué se creyó y cuándo.
+
 `:815` queda cierta, con su acto dentro y la medición que la sostiene.
 
 ### Nota del analista que vale conservar
