@@ -61,6 +61,53 @@ que están firmados. La instalación estable sigue en `1.33.1` hasta que se publ
 que el bloque derivado de `docs/ESTADO.md` avisará de migración pendiente: **no es un defecto**, es el
 estado real del autoalojamiento.
 
+## [Interno] — 2026-09-11 · Corrección de la coordinadora: el digest de `declare -f` que publiqué NO es portable, y un cuarto sitio de versión que quedó desfasado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+**Me corrijo, y el error estaba en cómo presenté la evidencia, no en la conclusión.** Publiqué que las
+tres cabezas firmadas tienen «el mismo md5 de `declare -f`: `9b67ea72…`», citando un **número
+absoluto**. El desarrollador reprodujo la comprobación y obtuvo **`13350583…`** — y tenía razón en
+sospechar del mío.
+
+**Medido:** el digest depende del **método** de volcado. `bash -c '. hooks/lib.sh; declare -f | md5sum'`
+da `133505830a67ad49fc585da5a5e7fba4`; un subshell de una sesión que ya tenía funciones cargadas da
+`c2ded3e2d5dd9f765a5ac59972526d3b`; y mi valor original venía de un tercer camino.
+
+**Lo que acredita la firma es la IGUALDAD dentro de un mismo método, no el número.** La conclusión se
+sostiene —las cabezas firmadas cubren el mismo ejecutable— y la forma correcta de escribirla es como
+**invariante**, que es como el desarrollador la dejó en `877e5f7`. Un digest absoluto en un registro
+invita a que alguien compare dos números obtenidos de formas distintas y concluya algo falso: la misma
+familia que una cifra sin su método.
+
+*El apunte anterior no se retira; queda con esta corrección encima.*
+
+### Y un cuarto sitio de versión, que el desarrollador encontró y NO tocó
+
+`.arnes/config.json` → `.arnes_version` dice **`1.33.0`**, mientras los tres manifiestos ya dicen
+`1.33.2`. **Comprobado sobre los tags: ya decía `1.33.0` en `v1.33.0` y en `v1.33.1`**, así que **este
+parche no lo desalinea: lo hereda.**
+
+**No se toca, por tres motivos que se refuerzan:** es el manifiesto que **los hooks leen en runtime**
+—`hooks/estado-derivado.sh` usa `.arnes_version` para el aviso de migración—, así que editarlo
+**invalidaría las tres firmas**; `AGENTS.md` §4 lo declara **gate humano** expreso; y no es superficie
+que los consumidores reciban (ellos heredan `templates/arnes-config.json.tpl`), así que su desfase
+afecta sólo al autoalojamiento de este repositorio. **Queda registrado como pendiente con gate**, no
+como defecto del parche.
+
+### Tres cosas más del commit de versión que conviene que consten
+
+**Eran tres campos, no dos:** `marketplace.json` lleva la versión en `metadata.version` **y** en
+`plugins[0].version`. Los tres verificados con `jq` en `1.33.2`, sin residuos y con `source: "./"`
+intacto.
+
+**Las menciones de `1.33.1` en las sondas de `R-029` y `R-030` deben SEGUIR diciendo `1.33.1`:** son la
+**línea base con el defecto vivo**, y es lo que las hace discriminar. Subirlas las convertiría en
+tautologías. Queda escrito para que nadie las «actualice» después.
+
+**El `Origen` de la sección de versión es `GitHub` y no `Interno`**, porque hay commit (§8) — a
+diferencia de la preparación de metadatos de `1.33.1`, que fue edición manual. Lo razonó el
+desarrollador por su cuenta leyendo la forma del commit de versión de `1.33.0`.
+
 ## [Interno] — 2026-09-11 · QA vuelta 2 cierra el hueco de orden: el banco ejercido sobre la cabeza real, con su salida en disco
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (el veredicto) y coordinadora (la identidad del ejecutable).
 
