@@ -50,6 +50,46 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-11 · Write-back de `QA-024-19`: nace `CA-13`, y la sede que gobernaba estaba en superficie heredada
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
+
+QA acreditó el **código entero** y declaró que lo único que faltaba era este write-back (`AGENTS.md` §9).
+**No es una vuelta del contador**: la última fue la **vuelta 5** dev↔QA, y esto no es entrega de
+desarrollador ni pase de QA.
+
+**Cuatro sedes vivas, no una.** La que importaba no era `:815`: era el **título** de su sección —«entra
+por `CA-01` **sin criterio nuevo**», falso desde que existe `CA-13`— y una celda de **superficie
+heredada**, que viaja a la plantilla y a todo proyecto, diciendo que la mención del hallazgo
+«**desaparece** porque deja de haber hueco». Medidamente falso: **el hueco que desapareció era el de
+otro hallazgo**; sigue el de la entrada al acto. Y las «**tres** reglas» de esa sección pasan a
+**cuatro**, atacando la promesa en la sede que gobierna **las dos** variantes en vez de parchear una
+viñeta — que es donde los dos barridos anteriores de este ciclo se quedaron cortos.
+
+### `CA-13` — el REQ pasa de 12 a 13 criterios
+
+Contrata que **disparador y lector reconozcan el mismo conjunto, sea cual sea**, con el conjunto
+**derivado ejerciendo el lector** y los ejemplos marcados **no exhaustivos**: así **una forma que el
+lector acepte mañana entra sola**, que es literalmente el defecto que se cierra. Añade que `desfase` ⇒
+**`ALLOW` + aviso, no `DENY`**; **cero celdas `DENY→ALLOW` y cero `ALLOW→DENY`** como número **de
+contrato**; borde negativo con **cero** falsos positivos; el coste (procesos, no más de 0 añadidos); y
+anti-vacuidad con control positivo y **fail-before** contra la heredada. Las cifras de QA van como
+**evidencia fechada, nunca como umbral**.
+
+**La frontera, comprobada antes de escribirla y no dejada implícita:** «toda forma que el lector acepte
+avisa» sería **falsa** —las que acepta **son** el campo y no avisan—, y «toda forma que una persona lea
+como el campo avisa» también. La propiedad se enuncia sobre la clasificación `desfase` **del propio
+lector**, que repone el plegado **pero no repone letras**, así que **excluye la frontera por
+construcción** — y aun así va escrita dentro del criterio, con el homóglifo `U+0405` y la letra omitida
+como ejemplos, diciendo que **un caso que la diera por conforme incumpliría**.
+
+`:815` queda cierta, con su acto dentro y la medición que la sostiene.
+
+### Nota del analista que vale conservar
+
+`QA-024-32` **no le saltó** en ninguna de sus seis ediciones. Explicación **plausible y declarada como
+no verificada**: los hooks que gobiernan esta sesión son los de la **instalación estable** (`v1.33.x`),
+donde la rama del aviso de desfase **todavía no existe**. No lo investigó: no es suyo.
+
 ## [Interno] — 2026-09-11 · QA acredita el disparador entero, y `QA-024-19` no cierra por falta de write-back
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (**vuelta 5** dev↔QA de `REQ-024`), coordinadora.
 

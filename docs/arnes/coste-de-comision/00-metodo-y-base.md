@@ -92,6 +92,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 14 | Disparador del aviso — QA · `qa-tester` (**vuelta 5** dev↔QA de `REQ-024`) | 2026-09-11 14:05 | 2026-09-11 14:38:46 | **33 min 46 s** | **`con-hallazgos`**. El **código** queda acreditado entero (0 celdas `DENY→ALLOW` de 56); `QA-024-19` **no se cierra** por falta de write-back; abre `QA-024-32` (`instrumento`) | `a05994f` | **187 286** | ídem |
 
+| 15 | `QA-024-19` — write-back del contrato · `analista-requerimientos` | 2026-09-11 14:40 | 2026-09-11 14:51:22 | **11 min 22 s** | **cuatro** sedes vivas (no una); criterio nuevo `CA-13`; las «tres reglas» de la sección heredada pasan a **cuatro** | `21c52c6` | **191 964** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la
