@@ -82,6 +82,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 9 | `QA-024-25/26` — mensajes del programa · `desarrollador` | 2026-09-11 11:30:50 | 2026-09-11 11:56:21 | **25 min 31 s** | **ocho** sedes (cinco fuera de la lista); decisión y `rc` idénticos por **cinco** pruebas; `37/5` tocada sin tocar `REQ-017.md` | `f612b84` | **174 744** | ídem |
 
+| 10 | `QA-024-25/26` — revisión del delta · `qa-tester` (3.er pase de la vuelta 4) | 2026-09-11 11:58:08 | 2026-09-11 12:21:48 | **23 min 40 s** | **el delta CUMPLE**; cierra `QA-024-25` y `QA-024-26`; abre `29/30/31` (`instrumento`, ninguno bloquea) | `d82c127` | **203 205** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la

@@ -2,6 +2,50 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · QA cierra `QA-024-25` y `QA-024-26`: el delta de redacción CUMPLE
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (3.er pase de la vuelta 4), coordinadora.
+
+**Vuelta 4 de `REQ-024`**, tercer pase de QA dentro de ella. El contador **no se reinicia ni se
+renombra**.
+
+Las cinco exigencias del propietario, cumplidas y verificadas una por una. Barrido **por propiedad**
+en todo el árbol: **no queda ninguna instancia afirmativa en sede viva**. Lo que sobrevive es
+refutación explícita, el contraejemplo «**Mal:**» del README o registro de evidencia histórica. Y el
+mensaje se verificó **ejecutando** el decisor, no leyendo el archivo.
+
+**Que la puerta no se debilitó, por cinco vías propias de QA** —incluida una que el desarrollador no
+había reclamado: los **flags `eje`/`ver`/`gua` de la invariante 1** son idénticos función por función.
+Importa porque añadir texto dentro de un cuerpo podía encender un `gua` y **eximir** a una función de
+la guarda de salida vacía. Y una **rejilla ejecutable de 16 entradas** —cuatro más que la del
+desarrollador— idéntica en ambas versiones, con el borde exacto (`1.250×`→`pass`, `1.251×`→`fail`) y
+los casos degenerados (vacío, cero, negativo, no numérico, una sola repetición).
+
+**`QA-024-25` y `QA-024-26` CERRADOS.** El REQ sigue `con-hallazgos`, y **no por este delta**:
+`QA-024-19` y `SEC-084` (`contrato`) siguen abiertos, `CA-12 (ii)` sin implementar y `CA-03` sin
+acreditar.
+
+### El `PASS → SKIP` de `REQ-017 CA-03` no es hallazgo de este delta
+
+Su archivo tiene **cero cambios**, es una sonda que se abstiene **por contrato**, y **basculó sola**
+delante de QA: `PASS`, `PASS`, `SKIP` en tres corridas aisladas de su sección donde los archivos
+modificados **no se cargan**. Lo que QA **no** afirma —y es la parte correcta— es que aquella corrida
+abstuviera *por* ruido: la variabilidad no desmiente en ninguna dirección. Lo demostrado es que **el
+mecanismo por el que el delta lo causaría no existe**.
+
+### Tres hallazgos nuevos, los tres `instrumento`, ninguno bloquea
+
+`QA-024-29` — el barrido de la promesa hermana quedó a medias: «la decisión no depende del ruido» se
+calificó con «DENTRO de la corrida» en 3 de 4 sedes y no en `37/5:336`. Son comentarios; los mensajes
+impresos son correctos.
+`QA-024-30` — el delta tocó `37/5` y `requirements/README.md`, que `Archivos:` no declara, y ese campo
+es la entrada de `tools/arnes-paralelo.sh`. Misma familia que `QA-024-24`.
+`QA-024-31` — la **demostración (3)** del artefacto del desarrollador **no se re-deriva** con el método
+que declara. **La propiedad que afirma es verdadera** y QA la verificó por otras cuatro vías: el
+defecto está en la prueba, no en el producto.
+
+**Cuadre de la cabecera:** 21 hallazgos · 2 `contrato` · 19 `instrumento` · **0 sin clase**.
+`guard-completado` sigue denegando el cierre por **cuatro vías independientes** y cualquiera basta.
+
 ## [Interno] — 2026-09-11 · `QA-024-25`/`26`: el programa deja de afirmar lo que no puede demostrar, y las sedes eran catorce
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (mensajes), analista-requerimientos (contrato), coordinadora.
 
