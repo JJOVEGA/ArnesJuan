@@ -1,0 +1,20 @@
+########## campos.ausencia_exige = false ##########
+-- oracion 1: 'tampoco cuando la linea QA: no llega a declararse -> deniega nombrando el campo'
+  QA: AUSENTE, se firma Seguridad: aprobado            DENY  :: ARNES: 'requirements/REQ-960.md' lleva 'Seguridad: aprobado' y su cabecera NO declara ningun 'QA:'. Un campo que falta no es un ca
+  [control] QA: pendiente, se firma Seguridad          DENY  :: ARNES: 'requirements/REQ-960.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'pendiente'. El ciclo es desarrollador -> qa-tester 
+  [control] QA: aprobado, se firma Seguridad           ALLOW :: 
+  QA: comentado <!-- -->, se firma Seguridad           DENY  :: ARNES: 'requirements/REQ-960.md' lleva 'Seguridad: aprobado' y su cabecera NO declara ningun 'QA:'. Un campo que falta no es un ca
+-- oracion 2: 'una linea que el lector NO lee como Seguridad:, esta guarda NO la juzga'
+  firma escrita 'seguridad:' minuscula (desfase)       ALLOW ::  
+  firma escrita 'Ѕeguridad:' homoglifo (clase no)     ALLOW :: 
+
+########## campos.ausencia_exige = true ##########
+-- oracion 1: 'tampoco cuando la linea QA: no llega a declararse -> deniega nombrando el campo'
+  QA: AUSENTE, se firma Seguridad: aprobado            DENY  :: ARNES: 'requirements/REQ-960.md' lleva 'Seguridad: aprobado' y su cabecera NO declara ningun 'QA:'. Un campo que falta no es un ca
+  [control] QA: pendiente, se firma Seguridad          DENY  :: ARNES: 'requirements/REQ-960.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'pendiente'. El ciclo es desarrollador -> qa-tester 
+  [control] QA: aprobado, se firma Seguridad           ALLOW :: 
+  QA: comentado <!-- -->, se firma Seguridad           DENY  :: ARNES: 'requirements/REQ-960.md' lleva 'Seguridad: aprobado' y su cabecera NO declara ningun 'QA:'. Un campo que falta no es un ca
+-- oracion 2: 'una linea que el lector NO lee como Seguridad:, esta guarda NO la juzga'
+  firma escrita 'seguridad:' minuscula (desfase)       ALLOW ::  
+  firma escrita 'Ѕeguridad:' homoglifo (clase no)     ALLOW :: 
+

@@ -1,0 +1,44 @@
+################ campos.ausencia_exige = false ################
+-- QA: AUSENTE (el aviso de QA NO lleva condicion de rigor)
+  QA AUSENTE + Seguridad: aprobado             rigor=ligero    ALLOW :: 
+  QA AUSENTE + Seguridad: aprobado             rigor=estandar  ALLOW :: 
+  QA AUSENTE + Seguridad: aprobado             rigor=critico   ALLOW :: 
+-- Seguridad: AUSENTE (el aviso SI lleva condicion de rigor)
+  SEG AUSENTE + QA: aprobado                   rigor=ligero    ALLOW :: 
+  SEG AUSENTE + QA: aprobado                   rigor=estandar  ALLOW :: 
+  SEG AUSENTE + QA: aprobado                   rigor=critico   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'ausente' (se requiere 'Segurida
+-- clase 'no': homoglifo en la clave de SEGURIDAD
+  Ѕeguridad: U+0405                           rigor=ligero    ALLOW :: 
+  Ѕeguridad: U+0405                           rigor=estandar  ALLOW :: 
+  Ѕeguridad: U+0405                           rigor=critico   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'ausente' (se requiere 'Segurida
+-- clase 'no': homoglifo en la clave de QA (Q cirilica no existe; uso А U+0410)
+  QА: U+0410 en QA                            rigor=ligero    ALLOW :: 
+  QА: U+0410 en QA                            rigor=estandar  ALLOW :: 
+  QА: U+0410 en QA                            rigor=critico   ALLOW :: 
+-- desfase: qa: minuscula
+  qa: minuscula + Seguridad: aprobado          rigor=ligero    ALLOW :: 
+  qa: minuscula + Seguridad: aprobado          rigor=estandar  ALLOW :: 
+  qa: minuscula + Seguridad: aprobado          rigor=critico   ALLOW :: 
+
+################ campos.ausencia_exige = true ################
+-- QA: AUSENTE (el aviso de QA NO lleva condicion de rigor)
+  QA AUSENTE + Seguridad: aprobado             rigor=ligero    DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera NO declara el campo 'QA:', y este proyecto exige que los campos de cabecera esten 
+  QA AUSENTE + Seguridad: aprobado             rigor=estandar  DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera NO declara el campo 'QA:', y este proyecto exige que los campos de cabecera esten 
+  QA AUSENTE + Seguridad: aprobado             rigor=critico   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera NO declara el campo 'QA:', y este proyecto exige que los campos de cabecera esten 
+-- Seguridad: AUSENTE (el aviso SI lleva condicion de rigor)
+  SEG AUSENTE + QA: aprobado                   rigor=ligero    ALLOW :: 
+  SEG AUSENTE + QA: aprobado                   rigor=estandar  ALLOW :: 
+  SEG AUSENTE + QA: aprobado                   rigor=critico   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su rigor efectivo es 'critico' y su cabecera NO declara el campo 'Seguridad:', y este proyecto
+-- clase 'no': homoglifo en la clave de SEGURIDAD
+  Ѕeguridad: U+0405                           rigor=ligero    ALLOW :: 
+  Ѕeguridad: U+0405                           rigor=estandar  ALLOW :: 
+  Ѕeguridad: U+0405                           rigor=critico   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su rigor efectivo es 'critico' y su cabecera NO declara el campo 'Seguridad:', y este proyecto
+-- clase 'no': homoglifo en la clave de QA (Q cirilica no existe; uso А U+0410)
+  QА: U+0410 en QA                            rigor=ligero    DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera NO declara el campo 'QA:', y este proyecto exige que los campos de cabecera esten 
+  QА: U+0410 en QA                            rigor=estandar  DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera NO declara el campo 'QA:', y este proyecto exige que los campos de cabecera esten 
+  QА: U+0410 en QA                            rigor=critico   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera NO declara el campo 'QA:', y este proyecto exige que los campos de cabecera esten 
+-- desfase: qa: minuscula
+  qa: minuscula + Seguridad: aprobado          rigor=ligero    DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera NO declara el campo 'QA:', y este proyecto exige que los campos de cabecera esten 
+  qa: minuscula + Seguridad: aprobado          rigor=estandar  DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera NO declara el campo 'QA:', y este proyecto exige que los campos de cabecera esten 
+  qa: minuscula + Seguridad: aprobado          rigor=critico   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera NO declara el campo 'QA:', y este proyecto exige que los campos de cabecera esten 
+

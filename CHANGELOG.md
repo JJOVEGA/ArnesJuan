@@ -50,6 +50,56 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-11 · `QA-024-34` cierra, `SEC-084` ya es transcribible, y el defecto se muda a la CONDICIÓN
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester, coordinadora.
+
+**Vuelta 3 del bucle `analista↔QA`**, autorizada expresamente por encima del presupuesto de dos.
+**Presupuesto agotado: QA entrega lista consolidada y NO pide otra vuelta**, que es exactamente la
+conducta que el propietario contrató al fijarlo. El contador `dev↔QA` sigue en **5**: `git diff a05994f
+HEAD -- hooks tools .github` sale **vacío**.
+
+### Lo que pasa, y es la mayor parte
+
+**`QA-024-34` CIERRA.** Las cuatro comprobaciones pasan: `CA-13` remite en vez de afirmar y **las
+remisiones apuntan donde dicen** —QA abrió cada una—; la contradicción con `CA-01` queda resuelta **por
+atribución**, sin tocar `CA-01`; el homóglifo queda explícito y **más robusto de lo que el propio texto
+afirma** (idéntico en los **dos** estados de la llave); y `ZWSP`/`BOM` van a la medibilidad, **9 de 9
+DENY** citando la línea en hexadecimal, también en `ligero`.
+
+**Y `SEC-084` ya es TRANSCRIBIBLE.** QA lo midió **oración por oración** contra el hook real en los dos
+estados de la llave, con control positivo y negativo en la misma corrida. Desbloquea la remediación de
+texto a `AGENTS.md:353` y `templates/AGENTS.md.tpl:311`, pendiente desde el principio del ciclo.
+
+### El defecto nuevo: `QA-024-35` (`contrato`, bloquea)
+
+`CA-13 (ii)(3)` afirma que el aviso «lleva la condición **cuando la hay** y la omite **cuando no la
+hay**». **Falso para `QA:`**: su condición **no es el rigor**, es la llave `campos.ausencia_exige`,
+**apagada por defecto y en este repositorio**. Medido con el hook real: con la llave en `false`, un REQ
+sin `QA:` **cierra** en `ligero`, `estandar` **y** `critico` —ALLOW 3 de 3—; con `true`, DENY 3 de 3.
+**El aviso promete un cierre que la máquina no tiene, y el criterio lo acredita.** Corroborado por la
+coordinadora en el propio `_doc` del manifiesto, que dice que con la llave apagada un `QA:` ausente **se
+perdona**.
+
+**Es la misma forma de defecto, mudándose:** `QA-024-33` la **pertenencia** a la clase · `QA-024-34` la
+**consecuencia** · `QA-024-35` la **condición**.
+
+### Dos sedes nuevas que nadie había nombrado
+
+QA barrió **13** sedes, no las 11 declaradas. Ambas `instrumento`, ninguna bloqueante, dueño
+`desarrollador`: **`QA-024-36`** — `hooks/guard-completado.sh:277-280`, la misma falsedad en un
+comentario, **gemela** de la ya nombrada en `lib.sh:2206-2208`; y **`QA-024-37`** — el **rótulo que el
+banco publica** en `42/B`, «el cierre sigue fail-closed», sobre un fixture `critico`, **el único nivel
+donde eso es cierto**. El caso mide bien; **la etiqueta promete de más**.
+
+### La lista consolidada, para el propietario
+
+Bloquea **sólo** `QA-024-35`. Tres salidas **no equivalentes**: **(a)** corregir el criterio —otra vuelta
+del bucle agotado, y el mensaje **sigue** inexacto—; **(b)** corregir el **mensaje** en
+`guard-completado.sh:288` —gasta vuelta `dev↔QA`, **cierra de raíz** y deja `(3)` verdadero tal como
+está—; **(c)** residual, que QA **desaconseja con su motivo**: un `contrato` no se declara residual y el
+forzador se arma al revés. **Recomendación de QA: (b)**, con (a) en el mismo acto si se quiere que `(3)`
+deje de hablar del cierre.
+
 ## [Interno] — 2026-09-11 · `CA-13` deja de contratar consecuencias ajenas, y aparece un criterio MÁS LAXO que lo construido
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
 

@@ -1,0 +1,45 @@
+########## A — TEXTO REAL DEL AVISO DE DESFASE (guard-completado.sh:287-292) ##########
+--- desfase de QA:        (qa: minuscula)
+    ARNES: 'requirements/REQ-950.md': la linea 'qa:' NO se lee como el campo 'QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera pero la CAJA no—. Para esta puerta ese campo sigue SIN declarar, asi que ninguna guarda juzga esta edicion y el REQ no podra cerrarse por ausencia de veredicto de QA. Salida: escribe la clave como 'QA:'.
+    CONDICIONADO("si el rigor efectivo es critico")=NO
+--- desfase de Seguridad: (seguridad: minuscula)
+    ARNES: 'requirements/REQ-950.md': la linea 'seguridad:' NO se lee como el campo 'Seguridad:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera pero la CAJA no—. Para esta puerta ese campo sigue SIN declarar: esta firma no la juzga la guarda del orden del ciclo y, si el rigor efectivo es critico, el REQ no podra cerrarse por ausencia de veredicto de seguridad. Salida: escribe la clave como 'Seguridad:'.
+    CONDICIONADO("si el rigor efectivo es critico")=SI
+
+########## B1 — QA: AUSENTE por rigor (el aviso de QA NO lleva condicion) ##########
+  QA: AUSENTE, Seguridad: aprobado               rigor=ligero    ALLOW :: 
+  QA: AUSENTE, Seguridad: aprobado               rigor=estandar  ALLOW :: 
+  QA: AUSENTE, Seguridad: aprobado               rigor=critico   ALLOW :: 
+  [control] QA: aprobado declarado, mismo cuerpo
+  QA: aprobado + Seguridad: aprobado             rigor=ligero    ALLOW :: 
+  QA: aprobado + Seguridad: aprobado             rigor=estandar  ALLOW :: 
+  QA: aprobado + Seguridad: aprobado             rigor=critico   ALLOW :: 
+
+########## B2 — Seguridad: AUSENTE por rigor (el aviso SI lleva condicion) ##########
+  Seguridad: AUSENTE, QA: aprobado               rigor=ligero    ALLOW :: 
+  Seguridad: AUSENTE, QA: aprobado               rigor=estandar  ALLOW :: 
+  Seguridad: AUSENTE, QA: aprobado               rigor=critico   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'ausente' (se requiere 'Seguridad: aprobado'). 
+
+########## C — HOMOGLIFO y TRUNCADA (clase 'no'): lo que CA-13 (v) afirma ##########
+  Ѕeguridad: U+0405 (homoglifo)                 rigor=ligero    ALLOW :: 
+  Ѕeguridad: U+0405 (homoglifo)                 rigor=estandar  ALLOW :: 
+  Ѕeguridad: U+0405 (homoglifo)                 rigor=critico   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'ausente' (se requiere 'Seguridad: aprobado'). 
+  Segurida: truncada                             rigor=ligero    ALLOW :: 
+  Segurida: truncada                             rigor=estandar  ALLOW :: 
+  Segurida: truncada                             rigor=critico   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'ausente' (se requiere 'Seguridad: aprobado'). 
+
+########## D — ZWSP / BOM / blanco de mas: guarda de MEDIBILIDAD, tambien en ligero ##########
+  Seguri<ZWSP>dad:                               rigor=ligero    DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puerta no puede lee
+  Seguri<ZWSP>dad:                               rigor=estandar  DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puerta no puede lee
+  Seguri<ZWSP>dad:                               rigor=critico   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puerta no puede lee
+  <BOM>Seguridad:                                rigor=ligero    DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puerta no puede lee
+  <BOM>Seguridad:                                rigor=estandar  DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puerta no puede lee
+  <BOM>Seguridad:                                rigor=critico   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puerta no puede lee
+  Segur idad: (blanco de mas)                    rigor=ligero    DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puerta no puede lee
+  Segur idad: (blanco de mas)                    rigor=estandar  DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puerta no puede lee
+  Segur idad: (blanco de mas)                    rigor=critico   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su cabecera declara el campo 'Seguridad:' con algo INSERTADO DENTRO DE LA CLAVE, que esta puerta no puede lee
+
+########## E — Segurídad: (desfase) en ligero: lo que (ii) retiro por falso ##########
+  Segurídad: NFC (desfase)                      rigor=ligero    ALLOW :: 
+  Segurídad: NFC (desfase)                      rigor=estandar  ALLOW :: 
+  Segurídad: NFC (desfase)                      rigor=critico   DENY  :: ARNES: no se puede completar 'requirements/REQ-951.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'ausente' (se requiere 'Seguridad: aprobado'). 

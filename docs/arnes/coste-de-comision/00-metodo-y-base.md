@@ -104,6 +104,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 19 | `QA-024-34` — corrección estructural de `CA-13` · `analista-requerimientos` (vuelta **3** del bucle `analista↔QA`, autorizada por encima del presupuesto) | 2026-09-11 15:33:09 | 2026-09-11 15:46:44 | **13 min 35 s** | **alcanzó**, sin lista consolidada. **Once** sedes; halló un criterio **más laxo que lo construido**; `SEC-078` nombrado como la vía abierta | `863aa9d` | **181 166** | ídem |
 
+| 20 | `CA-13` estructural — verificación · `qa-tester` (vuelta **3** del bucle `analista↔QA`, presupuesto **agotado**) | 2026-09-11 15:49 | 2026-09-11 16:03:26 | **14 min 26 s** | **`QA-024-34` CIERRA**; **`QA-024-19` no**: nace `QA-024-35` (`contrato`). **`SEC-084` ya es transcribible.** 13 sedes barridas, 2 nuevas `instrumento` | `587cbb0` | **163 334** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la
