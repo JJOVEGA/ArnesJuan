@@ -2,6 +2,38 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `D16` y `D17` dejan de describir una conducta que ya no existe, y el fail-open nuevo se registra APARTE
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **Condición 5 de la autorización del propietario del 2026-09-10.**
+
+**Ninguna entrada se retira y ningún historial se borra:** las dos llevan ahora un bloque fechado que
+dice qué parte de su medición quedó falsa y por qué, con la evidencia citada.
+
+**`D16`.** Su tabla medía el plugin **1.33.0**. La `v1.33.1` publicada corrigió esa mitad:
+`critico (por suelo)` + `Sensible: no` daba **ALLOW** y hoy da **DENY**. **Lo que sigue vivo** —y era
+la decisión que pedía— es que `QA-016-04` sigue siendo `contrato` abierto **sin sede en ningún campo**:
+ninguna puerta lo mide. Lo que ya no puede es decidirse sobre esa medición.
+
+**`D17`.** Corregido en lo publicado, y la entrada **se queda** por dos motivos: su descripción del
+defecto sigue siendo la buena, y **QA la amplió**. El fail-open era **más ancho**: con la clave
+**limpia**, un `Edit` que sustituye **sólo el valor** daba allow en 1.33.0 y da deny ahora — la forma
+**más natural** de firmar con `Edit`. La decoración era **una** vía, no **la** vía.
+
+**El fail-open nuevo (`QA-P48-01`) va registrado APARTE y FUERA de la cola bloqueante**, porque el
+propietario ya autorizó su corrección y la publicación de `v1.33.2`: no hay firma que esperar y no
+debe frenar cierres. La cola sigue en **16**, comprobado con `tools/arnes-lectura.sh`.
+
+Su registro separa las **tres** mitades que no son lo mismo: *defecto reproducido* —sí, en lo
+publicado, con el lector instalado—; *exposición observada en este repositorio* —**ninguna y es
+medible**: los 22 REQ son `Sensible a seguridad: sí` y el suelo los rescata, `grep -L` → 0—; y
+*consumidores* —**expuestos los que declaren un REQ NO sensible** y le escriban el rigor con un matiz
+entre paréntesis, que es la convención que §13 les enseña; **uso histórico no comprobado**, sin base
+para estimarlo—.
+
+**Y deja un pendiente con dueño que este bloque NO decide:** que el `auditor-seguridad` lo formalice
+con su `SEC-###`, clase y vencimiento en `docs/seguridad/registro-seguridad.md` —ese archivo es suyo—
+y que decida si un fail-open **publicado** obliga a avisar a los consumidores además de publicar el
+parche.
+
 ## [Interno] — 2026-09-10 · QA del porte de 1.33.1 (#48): `con-hallazgos`, y la comprobación de después demuestra que el fail-open que encontró **vive en la 1.33.1 PUBLICADA**
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (el veredicto) y coordinadora (la atribución y el registro).
 
