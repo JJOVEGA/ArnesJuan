@@ -2,6 +2,52 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · QA vuelta 2: el mecanismo cumple la condición nueva, y el contrato afirma dos cosas falsas
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (vuelta 2 acotada), coordinadora.
+
+**Decisión del propietario (2026-09-11)**, registrada en
+`docs/arnes/req-024-ca-07-ii-reparacion/06-decision-del-propietario-techo-y-bloqueo.md`: el techo se
+queda en `1,250×` y lo exigido pasa de **detectar** `1,28×` a **bloquearla**, sea por regresión
+demostrada o por incertidumbre. No se autoriza convertir el `1,302×` observado en un límite nuevo.
+
+### Lo acreditado — tres de cuatro
+
+1. **`1,28×` queda bloqueado**: `FAIL` por regresión **10 de 10**, `rc 1`, al primer intento. QA tuvo
+   que **recalibrar la receta**: el `+1500` de `QA-024-21` vale `1,177×` y está bajo el techo; el caso
+   de `1,28×` es `+3700`.
+2. **Fallo efectivo hasta el job**: `rc 1` en **17 de 17** corridas con `FAIL` y `rc 0` en 8 de 8 con
+   `PASS`, en cuatro escenarios. Sin `continue-on-error`. Comprobado, no deducido.
+3. **Acreditación válida, no verde por `SKIP`**: la corrida de `f2b74d9` empieza por `PASS`, publica
+   cuatro razones reales y cero reintentos. Holgura **3,1 %**, menor que el propio recorrido — dicho
+   sin adornar.
+
+### Lo no acreditado: el contrato afirma dos cosas falsas
+
+**`QA-024-25` (`contrato`)** — el criterio dice que `mín(r) > techo` en todas significa «así que no lo
+puso ahí el vecino». **Es falso y está medido:** sobre un árbol **conforme** de `1,177×`, 12 corridas
+**sin cambiar un byte** dieron **7 `PASS`** (todos pegados al techo, `1,223×`–`1,249×`), **4 `FAIL`
+«no se pudo acreditar»** y **1 `FAIL` afirmando «es regresión, no ruido»**. La dispersión **entre**
+corridas (`1,095×`–`1,490×`) es un orden de magnitud mayor que el `recorrido` intra-corrida que el
+instrumento publica.
+
+**`QA-024-26` (`contrato`)** — el «suelo de detección» se publica y **no gobierna nada**: aparece en
+una sola línea del código, la que compone el mensaje. Ninguna rama lo consulta.
+
+Nada de esto autoriza subir el techo, relajar la unanimidad ni `continue-on-error`: **lo mal
+caracterizado es la dispersión, no el `1,250×`**.
+
+### Hallazgos
+
+Cerrados por QA tras verificar: `QA-024-20` (las **cinco** sedes, una por una), `QA-024-21` (no
+reproduce, y **no** por el cambio de condición) y `QA-024-24`. Siguen abiertos `QA-024-22` —el arreglo
+cayó en una rama que la puerta no recorre— y `QA-024-23`. Nuevos: `QA-024-25`, `QA-024-26`,
+`QA-024-27` y **`QA-024-28`, cuyo dueño es el propio `qa-tester`**: una cifra suya mal medida en la
+vuelta 1.
+
+QA **no pidió** el PR de usar y tirar, y argumentó por qué: el tramo que aportaría está medido cinco
+veces sobre este caso, el eslabón línea→`rc` no se tocó, y la comprobación 4 falla por **texto**.
+Dejó la receta lista por si el propietario la quiere.
+
 ## [Interno] — 2026-09-11 · Write-back de `QA-024-20`: la abstención pasa a enunciarse por PROPIEDAD, y las sedes eran cinco
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
 
