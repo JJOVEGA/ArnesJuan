@@ -2,6 +2,54 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-11 · `SEC-084`/`QA-024-19`: el disparador del AVISO era la sede que `v1.33.1` no tocó
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador.
+
+Reparación acotada, autorizada por el propietario (2026-09-11) dentro del alcance de 1.34.0.
+**Entrega la remediación; los hallazgos los cierran `qa-tester` y `auditor-seguridad` al verificar.**
+
+**Lo primero es que una de las dos mitades ya estaba reparada, y se dice antes que nada.** Reproducido
+por la puerta real sobre `HEAD` (`6327b8c`; `hooks/` y `tests/` idénticos a `e53de46`) con el control
+positivo del auditor en la misma corrida: el **vector medido** de `SEC-084` —clave decorada que firma
+sin que ninguna guarda la juzgue y **gobierna** el cierre— **ya no se reproduce**. Lo cerró `v1.33.1`
+(`b0eb678`) y lo portó `#48` (`d1b3cc3`), sustituyendo el disparador del **orden** por el valor leído.
+La evidencia histórica **no se borra**: fue cierta cuando se tomó.
+
+**Lo que sí se reproduce, y es lo que se repara.** Aquel arreglo cambió **una** de las dos sedes. La
+otra —el disparador del **aviso**, `grep -q 'QA:'` y `grep -q 'Seguridad:'`— siguió reconociendo la
+clave por **cadena literal** en todos los árboles, **incluida la `v1.33.2` publicada**. Efecto medido:
+`_Seguridad_: aprobado-ish` **se lee** como veredicto, impedirá cerrar el REQ, y **nadie lo decía**
+(`rc 0`, salida vacía); y `seguridad: aprobado` —`QA-024-19`— no la juzga ninguna guarda **ni la
+comenta nada**, así que quien la escribe cree haber firmado.
+
+**La propiedad, no los tres ejemplos.** Una función nueva en `hooks/lib.sh`, `arnes_declara_clave`,
+pregunta **al lector** —sede única, `arnes_campo_linea`/`arnes_norm_clave`— qué hace un texto con una
+clave: `lee` (el conjunto que gobierna, hoy y mañana), `desfase` (una línea que una persona lee como
+ese campo y el lector no) o `no`. El aviso se entra por `lee`; el `desfase` **avisa y no deniega**. La
+clave se pasa por su **constante**, así que renombrarla mueve las dos guardas a la vez.
+
+**No se mueve ni una decisión.** La tolerancia del lector **no se ensancha** (`REQ-016 CA-04` intacto);
+el cierre sigue **fail-closed** con la clave en minúscula; el orden sigue denegando la firma decorada.
+Lo que cambia es el **diagnóstico**: un camino fail-closed correcto había quedado **mudo**.
+
+**Coste: cero procesos añadidos y hasta dos retirados** (11 → 9 cuando la edición escribe los dos
+veredictos; 8 → 8 en el camino normal). Sustituye dos `grep` por un recorrido en bash puro que además
+para en el primer `## `.
+
+**Banco:** sección `42-disparador-y-lector.sh`, 20 casos; `CASOS_ESPERADOS` 1095 → 1115. **Ocho
+discriminan** (12 PASS · 8 FAIL contra el árbol base **y** contra `v1.33.2`) y doce fijan lo que no se
+puede mover. Banco entero **1107 PASS · 0 FAIL · 8 SKIP**, cuadre exacto; base aislada **1083 · 0 ·
+12**, cuadre exacto. La diferencia de SKIP es **variabilidad de los instrumentos de tiempo** —los
+cuatro pasaron a PASS en una segunda corrida del propio árbol base— y se conserva como tal. Las tres
+quality gates de §7 y `autoprueba-corredor.sh` (106 PASS · 0 FAIL) en verde.
+
+**Queda nombrado para la cola, sin tocarlo:** `Estado:`, `Rigor:`, `Sensible a seguridad:` y
+`Hallazgos abiertos:` **no tienen aviso en absoluto**. No es el mismo defecto —no hay disparador que
+desfasar, hay cobertura que no existe— y `arnes_declara_clave` ya sirve para cerrarlo. Y la frontera
+que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin aviso**.
+
+**Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
+
 ## [Interno] — 2026-09-11 · Registrada la dirección de producto: la política proporcional, del arnés a los proyectos
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
 

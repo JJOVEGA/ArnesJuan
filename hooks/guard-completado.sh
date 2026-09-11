@@ -30,6 +30,7 @@ arnes_guard_completado() {
   local -a piezas=()
   local modo resultante reconstruido np k old new ra done_norm est_antes est_despues
   local cita_desp est_citado cr_desp cr_linea seg_ef seg_falta cruce qa_falta seg_antes
+  local qa_decl qa_decl_linea seg_decl seg_decl_linea
 
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
@@ -246,11 +247,47 @@ arnes_guard_completado() {
   # del REQ repetiria el mismo aviso hasta que alguien lo silencie. Y el valor juzgado es
   # el de la CABECERA —`arnes_campos_req` no mira mas alla del primer `## `—, asi que una
   # linea igual dentro de una seccion no dispara nada.
-  if [ -n "$qa" ] && ! arnes_en_vocab "$qa" "$ARNES_VOCAB_QA" && grep -q 'QA:' <<< "$nuevo"; then
+  #
+  # «TOCA EL CAMPO» LO DECIDE EL LECTOR, NO UNA CADENA (SEC-084 · QA-024-19). Hasta aqui
+  # eran dos `grep` de cadena literal, y esa es la sede que el arreglo del ORDEN —el que
+  # `v1.33.1` hizo unas lineas mas abajo, cambiando su disparador por el VALOR leido— dejo
+  # intacta. El defecto es el mismo y se enuncia igual: el disparador reconocia UNA cadena
+  # y el lector reconoce un CONJUNTO de formas (`REQ-016 CA-04`), asi que toda la
+  # diferencia entre los dos conjuntos pasaba sin aviso — medido: `_Seguridad_: aprobado-ish`
+  # se lee como veredicto, impedira cerrar el REQ, y NADIE lo decia (`rc 0`, salida vacia).
+  # Ahora se pregunta al lector, que es el sitio unico de que formas cuentan
+  # (`arnes_declara_clave`, hooks/lib.sh), y las dos sedes reconocen lo mismo POR
+  # CONSTRUCCION en vez de por dos listas que se desfasan.
+  #
+  # Y LA CLAVE SE PASA POR SU CONSTANTE, no tecleada: una clave que cambie de nombre en
+  # `ARNES_CLAVES` mueve las dos guardas a la vez, que es lo unico que impide que esto
+  # vuelva.
+  arnes_declara_clave "$nuevo" "$ARNES_CLAVE_QA"
+  qa_decl="$ARNES_DECLARA"; qa_decl_linea="$ARNES_DECLARA_LINEA"
+  arnes_declara_clave "$nuevo" "$ARNES_CLAVE_SEG"
+  seg_decl="$ARNES_DECLARA"; seg_decl_linea="$ARNES_DECLARA_LINEA"
+  if [ -n "$qa" ] && ! arnes_en_vocab "$qa" "$ARNES_VOCAB_QA" && [ "$qa_decl" = 'lee' ]; then
     arnes_aviso "'$rel': 'QA:${ARNES_QA_CRUDO}' se lee como <$qa>, que NO es un veredicto ($ARNES_VOCAB_QA). Asi este REQ no podra cerrarse. Un matiz va entre parentesis —'QA: aprobado (R-045, 2026-09-01)'—; un veredicto distinto es otro valor."
   fi
-  if [ -n "$seg" ] && ! arnes_en_vocab "$seg" "$ARNES_VOCAB_SEG" && grep -q 'Seguridad:' <<< "$nuevo"; then
+  if [ -n "$seg" ] && ! arnes_en_vocab "$seg" "$ARNES_VOCAB_SEG" && [ "$seg_decl" = 'lee' ]; then
     arnes_aviso "'$rel': 'Seguridad:${ARNES_SEG_CRUDO}' se lee como <$seg>, que NO es un veredicto ($ARNES_VOCAB_SEG). Si el rigor efectivo es critico, asi este REQ no podra cerrarse."
+  fi
+  # --- Y LA OTRA MITAD: UNA LINEA QUE PARECE EL CAMPO Y NO LO ES (QA-024-19) ---------
+  # `seguridad: aprobado` en minuscula NO lo lee el lector, asi que el REQ sigue sin ese
+  # campo y el cierre lo deniega por ausencia: el camino fail-closed ya era correcto. Lo
+  # que faltaba es que no fuera MUDO — quien escribio la firma creia haberla escrito, ni
+  # una guarda la juzgaba ni nada la comentaba, y el estado final es indistinguible de no
+  # haber escrito nada. Un fail-closed silencioso es un defecto de diagnostico.
+  #
+  # AVISA, NO DENIEGA, y es la misma razon de arriba: convertir una errata de caja en un
+  # bloqueo produce friccion constante, y la friccion termina con alguien apagando el
+  # guard. Tampoco DECIDE nada: no cambia ni un veredicto, y por eso no puede reabrir
+  # ninguno.
+  if [ "$qa_decl" = 'desfase' ]; then
+    arnes_aviso "'$rel': la linea '${qa_decl_linea}:' NO se lee como el campo '$ARNES_CLAVE_QA:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera pero la CAJA no—. Para esta puerta ese campo sigue SIN declarar, asi que ninguna guarda juzga esta edicion y el REQ no podra cerrarse por ausencia de veredicto de QA. Salida: escribe la clave como '$ARNES_CLAVE_QA:'."
+  fi
+  if [ "$seg_decl" = 'desfase' ]; then
+    arnes_aviso "'$rel': la linea '${seg_decl_linea}:' NO se lee como el campo '$ARNES_CLAVE_SEG:' —la clave se compara tal como se escribe, y el marcado de Markdown si se tolera pero la CAJA no—. Para esta puerta ese campo sigue SIN declarar: esta firma no la juzga la guarda del orden del ciclo y, si el rigor efectivo es critico, el REQ no podra cerrarse por ausencia de veredicto de seguridad. Salida: escribe la clave como '$ARNES_CLAVE_SEG:'."
   fi
 
   # --- Orden del ciclo: seguridad no firma lo que QA no ha validado -------------

@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1095  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1115  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1460,6 +1460,19 @@ CASOS_ESPERADOS=1095  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # La sonda de viabilidad TEMPORAL `40/8`, que declaraba 0 casos y por eso
                       # no movía este número, se RETIRÓ al terminar la fase 1: su medición vive
                       # en el artefacto, no en el banco.
+                      #
+                      # 1095 → 1115: la sección `42` nueva (`SEC-084` · `QA-024-19`), 20 casos.
+                      # Mide la sede que el arreglo del ORDEN de `v1.33.1` NO tocó: el
+                      # disparador del AVISO, que seguía reconociendo la clave por CADENA
+                      # LITERAL mientras el lector reconoce un CONJUNTO de formas. **Ocho
+                      # discriminan** —fallan contra `e53de46` y contra `v1.33.2` publicada— y
+                      # doce fijan lo que no se puede mover: el cierre sigue fail-closed con la
+                      # clave en minúscula, el orden sigue denegando la firma decorada (su
+                      # matriz vive en la `41` y NO se toca), y ninguna clave ajena
+                      # —`Sensible a seguridad:`, `Notas de seguridad:`, `qa-tester:`— avisa.
+                      # Los `CASOS_ESPERADOS_SECCION` de la `41` y de la `13` NO se tocan:
+                      # ningún caso suyo cambia de veredicto, porque esta reparación añade
+                      # DIAGNÓSTICO y no mueve ninguna decisión.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

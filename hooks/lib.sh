@@ -2178,6 +2178,73 @@ arnes_seguridad_cabecera() {   # <documento> -> ARNES_SEG_CABECERA
   done <<< "$1"
 }
 
+# --- ¿QUE HACE ESTE TEXTO CON ESTA CLAVE? SE PREGUNTA AL LECTOR, NUNCA A UNA CADENA ---
+#
+# EXISTE PORQUE LA PREGUNTA SE ESTABA HACIENDO DOS VECES Y CON DOS ALFABETOS. Una guarda
+# que decide si un acto «se entra» tiene que reconocer EL MISMO conjunto de formas que
+# despues gobierna la decision; si no, la diferencia entre los dos conjuntos es
+# exactamente el agujero. Medido dos veces en esta misma familia:
+#   * `SEC-084`: el disparador del ORDEN reconocia la cadena `Seguridad:` y el lector
+#     reconoce la clave DECORADA (`REQ-016 CA-04`, tolerancia contratada), asi que
+#     `_Seguridad_: aprobado` se firmaba sin que ninguna guarda la juzgara Y GOBERNABA el
+#     cierre. `v1.33.1` lo cerro en esa sede cambiando el disparador por el VALOR leido.
+#   * `QA-024-19` y lo que aquel arreglo no toco: el disparador del AVISO —la otra sede,
+#     en el mismo archivo— seguia siendo la MISMA cadena literal. De ahi las dos mitades
+#     que esta funcion responde, y que son una sola propiedad.
+#
+# LA PROPIEDAD, Y POR ESO SON TRES RESPUESTAS Y NO DOS:
+#   `lee`     el lector lee esa linea COMO ese campo. Es el conjunto que gobierna, con
+#             las formas de hoy y con las que nadie ha escrito todavia: no se enumera
+#             ninguna, se pregunta al lector.
+#   `desfase` hay una linea que UNA PERSONA lee como ese campo y el lector NO. Plegada la
+#             clave con `arnes_norm_campo` —el mismo plegado que el arnes ya aplica a los
+#             valores: blancos, marcado, ortografia y caja— coincide con la clave, y sin
+#             plegar no. La minuscula (`seguridad:`) es la INSTANCIA medida; la clase la
+#             cierra el plegado, no una lista de tres cadenas.
+#   `no`      esa clave no aparece en la cabecera de este texto.
+#
+# `desfase` NO ES UN VEREDICTO Y NO PUEDE SERLO. El camino fail-closed es correcto —el
+# lector no lee esa linea, asi que el REQ sigue SIN ese campo y el cierre lo deniega por
+# ausencia— pero era MUDO: quien escribio la firma creia haberla escrito y nada se lo
+# decia. Esto no cambia ninguna decision; da el diagnostico que faltaba. Ensanchar el
+# LECTOR para que aceptara la minuscula si moveria decisiones y estrecharia `CA-04` por el
+# otro lado: no se hace.
+#
+# NO SE SALE EN EL PRIMER `desfase`: la cabecera se recorre hasta encontrar un `lee`, que
+# manda. Una cabecera con `seguridad: aprobado` Y `Seguridad: pendiente` declara el campo,
+# y quedarse con el desfase avisaria de algo que no es cierto.
+#
+# COSTE: cero procesos. Sustituye DOS `grep` —dos forks por edicion de un REQ— por un
+# recorrido de cabecera que ademas para en el primer `## `, donde el `grep` leia el
+# documento entero. La guarda de entrada es la del propio lector (`arnes_norm_clave`: sin
+# dos puntos no hay campo), asi que un texto sin `:` no paga ni el recorrido.
+#
+# LOS ACUMULADORES DEL ESCANER VAN `local` A PROPOSITO. `arnes_campo_linea` publica el
+# estado de la cabecera que las puertas consultan (`ARNES_OCULTA…`, `ARNES_CITA`,
+# `ARNES_CR`); esta funcion se llama en mitad del juicio y no debe moverlo. Solo OBSERVA:
+# si pisara esos acumuladores cambiaria veredictos ajenos sin que nadie lo viera, que es
+# la forma de defecto que este arreglo viene a cerrar.
+arnes_declara_clave() {   # <texto> <clave> -> ARNES_DECLARA=lee|desfase|no ; ARNES_DECLARA_LINEA
+  ARNES_DECLARA='no'; ARNES_DECLARA_LINEA=''
+  case "$1" in *:*) ;; *) return 0 ;; esac
+  local l objetivo
+  local ARNES_CITA=0 ARNES_CR=0 ARNES_CR_LINEA='' ARNES_LINEA
+  local ARNES_CLAVE ARNES_VALOR ARNES_CLAVE_DECORADA ARNES_CAMPO
+  local ARNES_CLAVE_OCULTA ARNES_CLAVE_OCULTA_CLAVE ARNES_CLAVE_OCULTA_REPR
+  local ARNES_OCULTA=0 ARNES_OCULTA_CLAVE='' ARNES_OCULTA_REPR='' ARNES_OCULTA_ESTADO=''
+  arnes_norm_campo "$2"; objetivo="$ARNES_CAMPO"
+  while IFS= read -r l; do
+    case "$l" in '## '*) break ;; esac
+    arnes_campo_linea "$l" || continue
+    if [ "$ARNES_CLAVE" = "$2" ]; then ARNES_DECLARA='lee'; ARNES_DECLARA_LINEA=''; return 0; fi
+    [ "$ARNES_DECLARA" = 'no' ] || continue
+    arnes_norm_campo "$ARNES_CLAVE"
+    [ "$ARNES_CAMPO" = "$objetivo" ] || continue
+    ARNES_DECLARA='desfase'; ARNES_DECLARA_LINEA="$ARNES_CLAVE"
+  done <<< "$1"
+  return 0
+}
+
 # Extrae en UNA pasada los campos de cabecera del REQ que gobiernan el cierre.
 #
 # RENDIMIENTO. La versión anterior leía cada campo con `printf | sed | head`
