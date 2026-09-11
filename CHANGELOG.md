@@ -2,6 +2,59 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · `SEC-090` remediado: el registro de seguridad reconciliado entre las dos líneas, y la lista de cuatro estaba mal en dos de sus elementos
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad (`R-032`) y coordinadora (destino real y verificación independiente).
+
+Autorización expresa del propietario (2026-09-11) para resolver `SEC-090`, validar el resultado e
+integrar `#48` **hacia su rama destino**. No autoriza publicar `v1.34.0`.
+
+### Tres premisas del propio `SEC-090`, medidas y corregidas
+
+1. **El forzador nombraba otra fusión.** `SEC-090` escribió «antes de fusionar `#48` a `main`», y el
+   destino real de `#48` es **`rel/registro-1.33.0`**, cuya cabeza `1dfe31b` **es** la merge-base:
+   *fast-forward*, `CLEAN`, sin conflicto. `destino \ rama` = **∅**: la fusión autorizada no podía
+   perder nada.
+2. **La espina estaba invertida.** «Tomar `main` como espina» habría perdido **31** identificadores
+   para salvar **3**: `main` define 86 y la línea de release 113. Espina = **la rama**, más los tres
+   bloques que sólo `main` define.
+3. **`SEC-086` y `SEC-089` no existen como hallazgos** en ninguna de las tres copias — sólo figuran
+   como «próximos libres». La frase «se perderían `SEC-086`…`SEC-089`» leía una declaración de
+   numeración como si fuera una sede. **Lo destapó la propiedad; la lista de cuatro estaba mal en dos
+   de sus cuatro elementos**, que es exactamente por lo que la condición de cierre pedía una
+   propiedad y no una lista.
+
+### Lo hecho
+
+Trasplantadas **verbatim** las revisiones `R-029` (250 L) y `R-030` (178 L) desde `main`. `SEC-087` y
+`SEC-088` **no tienen bloque propio**: son `###` dentro de `R-029`, así que trasplantar `R-029` es lo
+que les da sede — escribirlos aparte habría fabricado la segunda definición divergente que el propio
+`SEC-090` prohibía.
+
+Las **cinco** diferencias de contenido (`R-016`, `R-017`, `SEC-055`, `SEC-056`, `SEC-087`) resueltas
+una por una: en cuatro la relación resultó ser **de inclusión**, no divergencia; `SEC-087` no eran dos
+redacciones del mismo hecho sino **la sede** (`main`) y **la entrada de cambio de estado** (`R-031`
+§5), que conviven por convención del registro. **Ningún estado se eligió por favorable.**
+
+### Lo que apareció al verificar
+
+`SEC-087` y `SEC-088` (`contrato`) **no figuraban en el índice de ninguna de las tres copias, ni
+siquiera en `main`**. Como el índice es el único inventario que `guard-completado` sabe leer,
+trasplantar las sedes sin indexarlas dejaba el riesgo intacto bajo otra forma. Añadidas 3 filas; el
+**recuento bloqueante sube de 32 a 33**, y sube porque el trasplante hace visible un abierto que
+estaba fuera del inventario.
+
+### Verificación por propiedad, re-derivada por la coordinadora
+
+Unión de las tres copias **119** → resultado **120**; identificadores **perdidos: 0**; único añadido
+`R-032`. Sedes de apertura duplicadas: **0** — un primer conteo que marcó 49 era un patrón mal escrito
+que contaba menciones en encabezados de revisiones posteriores, no sedes. Quality gates en verde.
+
+`SEC-090`: **`abierto` → `mitigado`**, cerrado por su dueño con su evidencia y alcance declarado. El
+**write-back queda como deuda** (NFR pendiente, dueño `analista-requerimientos`), **no** como
+implementado.
+
+Evidencia: `docs/seguridad/reconciliacion-SEC-090.md` y `docs/arnes/sec-090-destino-real/00-medicion.md`.
+
 ## [Interno] — 2026-09-11 · #48 queda VALIDADO y NO fusionable: `SEC-090` demuestra que la fusión, hecha hoy, borraría un bloqueante abierto
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad (`R-031`) y coordinadora (la verificación).
 

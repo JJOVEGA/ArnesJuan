@@ -32,7 +32,7 @@ cierre; `instrumento` —defecto del propio arnés— **no bloquea**, va a deuda
 > **Estados:** `abierto` · `en-mitigación` · `mitigado` · `aceptado`. Bloquean todos menos los dos
 > últimos.
 >
-> **Última actualización de esta tabla: `R-028` (2026-09-10).** El sello va **dentro** de la tabla y no
+> **Última actualización de esta tabla: `R-032` (2026-09-11).** El sello va **dentro** de la tabla y no
 > en la revisión que la escribe, por dos razones medidas: la tabla vive dentro de una entrada fechada
 > (`SEC-056`, `instrumento`, abierto) y por tanto se **retoca hacia atrás** cada vez que se mantiene, y
 > sin sello **el desfase no se puede ver**: entre `R-018` y `R-027` la tabla estuvo **diez revisiones**
@@ -82,6 +82,9 @@ cierre; `instrumento` —defecto del propio arnés— **no bloquea**, va a deuda
 | `SEC-083` | contrato | `mitigado` | R-026 (`:7848`), cierre en R-027 (`:8067`) | **discrepancia:** sigue declarado en `REQ-024` — el cierre de R-027 §3 **omitió** escribir la retirada; subsanado en `R-028` §3 |
 | `SEC-084` | contrato | **`abierto`** | R-027 (`:8112`) | `REQ-024` |
 | `SEC-085` | contrato | **`abierto`** | R-028 | — (es de este registro; dueño `auditor-seguridad`) |
+| `SEC-087` | contrato | `mitigado` | R-029 (`:8679`); estado verificado en R-030 §1; **cierre en R-031 §5** (`:9208`) | — (cerrado) |
+| `SEC-088` | contrato | **`abierto`** | R-029 (`:8738`) | — (no cuelga de REQ vivo; dueño `desarrollador`, vencimiento ventana 1.34.0) |
+| `SEC-090` | contrato | `mitigado` | R-031 §4 (`:9163`), **cierre en R-032** (`:9257`) | — (es de este registro; dueño `auditor-seguridad`) |
 | `QA-114` | contrato | **`abierto`** | `docs/qa/` (dueño `analista-requerimientos`) | `REQ-007` |
 | `QA-116` | contrato | **`abierto`** | `docs/qa/`, reproducido por el auditor en R-003 | `REQ-007` |
 | `QA-117` | contrato | **`abierto`** | `docs/qa/`, reproducido por el auditor en R-003 | `REQ-007` |
@@ -8591,6 +8594,437 @@ próximos libres **R-029** y **SEC-086**.
 
 ---
 
+## Revisión R-029 — parche v1.33.2 (`QA-P48-01`), `hotfix/1.33.2-rigor` @ `17ec674` (2026-09-10)
+
+> **AVISO DE NUMERACIÓN, LÉASE ANTES DE FUSIONAR.** Esta copia del registro está **atrasada**:
+> termina declarando «próximos libres **R-020** y **SEC-064**», pero la línea principal
+> (`/home/juan/dev/ArnesJuan`) va por **R-028** y **SEC-086**. Numero desde el máximo real
+> —**R-029**, **SEC-087**, **SEC-088**— para no colisionar. **La fusión no debe resolver este
+> archivo tomando esta versión**: se perderían nueve revisiones de la línea principal. Este
+> bloque es apilable (append-only) y se puede trasplantar solo.
+
+**Alcance (revisión proporcional, enmienda del 2026-09-10).** Las tres piezas que nombró el
+propietario y nada más: (1) el cambio funcional de `hooks/lib.sh` —indicador
+`ARNES_RIGOR_MATIZ`, nivel heredado como variable y la guarda `max(declarado, heredado)`—;
+(2) el contrato en `requirements/README.md:105-112`; (3) la plantilla heredada
+`templates/requirements-README.md.tpl`. Diff auditado: `09ccf63` y `a8e332a`. Guardián de la
+sesión: instalación estable **v1.33.1**. Plataforma: Linux (WSL2), 12 núcleos,
+`loadavg` 0,78–1,41 durante mis corridas; esta máquina no es el runner.
+
+**Evidencia reutilizada, y por qué sigue válida.** El veredicto de QA (`docs/qa/1.33.2.md`) y sus
+cinco arneses se reutilizan **sin re-ejecutar** el banco: el árbol que audito es byte a byte el
+que QA validó (`git status --porcelain` **vacío**; `HEAD` = `17ec674`, el commit de su propio
+veredicto), y `09ccf63`/`a8e332a` no tocan `hooks/` después de su medición. Comprobado por mí, no
+asumido. **No doy por acreditado nada de eso como mío.**
+
+### 1. El mecanismo: APROBADO tal como lo medí — el arreglo no abre nada nuevo
+
+La pregunta del propietario era la dirección contraria, que es donde 1.33.1 falló. La ejercí:
+
+- **Barrido propio, 156 combinaciones** (39 formas de `Rigor:` × 4 estados de sensibilidad:
+  `si`/`no`/ausente/no reconocido) contra **tres** lectores —1.33.0 y 1.33.1 instalados y este
+  árbol—. **Cero** casos en que 1.33.2 dé un nivel **menor** que 1.33.0. Los cambios van todos
+  hacia arriba. Alfabeto deliberadamente adversario, no las formas felices: paréntesis sin
+  cerrar, sólo abriente, anidado, vacío, doble, pegado a la clave, con texto detrás, decorado
+  (`**`, `_`, `` ` ``), en mayúsculas, con tilde, y con **separadores invisibles** (TAB, NBSP,
+  espacio de anchura cero, CR final).
+- **La propiedad que de verdad importa, y se cumple:** con `Sensible: no`, el nivel exento de QA
+  —`ligero`— es alcanzable **sólo** desde la forma **desnuda**. Ninguna de las 38 formas
+  no-desnudas lo alcanza. Las invisibles tampoco: `ligero<TAB>(local)`,
+  `ligero<NBSP>(local)`, `ligero<ZWSP>(local)` y `ligero (local)<CR>` dan **`estandar`**.
+- **Conducta de puerta real** (no salida del lector), con `guard-completado.sh` y un proyecto de
+  prueba propio: `Rigor: ligero (local)` + `Sensible: no` + `QA: pendiente` → 1.33.0 **deny**,
+  1.33.1 **ALLOW** (el fail-open publicado, reproducido), 1.33.2 **deny**. El suelo intacto:
+  `ligero (local)` + `Sensible: sí` + `QA: aprobado` + `Seguridad: pendiente` → **deny** en las
+  tres.
+- **El indicador no contamina, y lo forcé a mano.** `ARNES_RIGOR_MATIZ` se pone a 0
+  **incondicionalmente** al entrar en `arnes_campos_normaliza`, en línea recta y sin retorno
+  anticipado por delante. Verificado: (a) preensuciado a `1` desde el entorno con un valor
+  desnudo → `ligero` se conserva (no aprieta de más); (b) dos REQ seguidos en un proceso, con
+  matiz y sin él, en los dos órdenes → sin herencia; (c) `arnes_rigor_efectivo` invocado tres
+  veces → idempotente. Y la razón estructural, que es más fuerte que la prueba:
+  `arnes_rigor_efectivo` tiene **un solo llamador** en todo el árbol
+  (`arnes_campos_normaliza`), verificado por grep sobre `hooks/`, `tools/` y `tests/`.
+- **Monotonía de las exigencias, por construcción y no por muestreo.** En
+  `guard-completado.sh:383` todo lo que la puerta exige de más vive dentro de
+  `if [ "$rigor" != "ligero" ]`, y dentro sólo `critico` **añade** (el veredicto de seguridad).
+  **No existe ninguna rama que se aplique sólo a `ligero`**, así que subir un nivel nunca puede
+  **quitar** una exigencia. Esto cierra la dirección contraria de verdad: no dependo de haber
+  acertado el alfabeto.
+- **Interacciones que el encargo me pidió mirar.** `campos.ausencia_exige` y `ADR-009`
+  **no existen en este árbol** (0 apariciones en `hooks/`, `tools/` y `.arnes/config.json`;
+  `docs/decisions/` llega hasta `ADR-007`). Viven en la línea 1.34 —allí hay hasta `ADR-011`—,
+  así que **no hay interacción que auditar aquí**; queda como concreto a revisar **en la fusión**,
+  no como hallazgo del parche. El resto de campos que comparten el lector (`QA:`, `Seguridad:`)
+  pasan por `arnes_veredicto`, que **no** toca el indicador: 4 sedes en total, todas leídas.
+- **Radio heredable: 1, confirmado por mí y no por el informe ajeno.** Barrí el enunciado por
+  **propiedad** (con el salto de línea del texto nuevo, que derrota al grep ingenuo) sobre
+  `templates/`, `skills/`, `agents/`, `playbooks/` y `.arnes/`: la única superficie heredable que
+  afirma algo sobre el paréntesis es `templates/requirements-README.md.tpl`, y es **idéntica byte
+  a byte** a `requirements/README.md` en la región (md5 `6d061a9a…` en las dos). `AGENTS.md.tpl`,
+  `agents/analista-requerimientos.md` y `skills/arnes-upgrade/SKILL.md` mencionan `Rigor:` sin
+  afirmar nada sobre paréntesis. La promesa vieja sobrevive sólo en dos **fixtures de evidencia**
+  (`docs/estabilizacion/verificacion-instalacion-1.33.2/`), que es donde debe estar.
+- **El script nuevo que el parche añade** (`docs/estabilizacion/sonda-matiz-no-contamina.sh`) es
+  de sólo lectura: no escribe, no red, y sólo hace `source` del `lib.sh` que le pasa quien lo
+  invoca. Vive en `docs/`, no en una superficie heredable. Sin objeción.
+- Higiene: `bash -n` en verde sobre `hooks/*.sh`, `tools/*.sh` y la sonda nueva; los tres JSON
+  del plugin válidos; `.claude-plugin/plugin.json` sigue en **1.33.1**, que es lo correcto antes
+  de publicar.
+
+**Conclusión de esta sección: el cambio funcional no abre ninguna vía nueva** y restaura
+exactamente la conducta de 1.33.0 en la fila que 1.33.1 abrió. Si de mí dependiera sólo el
+mecanismo, firmaría `aprobado`.
+
+### 2. `SEC-087` — la promesa del contrato es ABSOLUTA y tiene contraejemplo vivo · clase `contrato` · severidad **media-alta** · **abierto** · BLOQUEA mi firma
+
+**Dónde.** `requirements/README.md:107-111` y su gemela heredada
+`templates/requirements-README.md.tpl:107-111` (mismas líneas), más dos sedes que el encargo no
+nombraba y que dicen lo mismo con más fuerza: `hooks/lib.sh:1978` («EL MATIZ SOLO PUEDE SUBIR O
+MANTENER EL RIGOR; NUNCA BAJARLO») y `docs/estabilizacion/contrato-parche.md` + `CHANGELOG.md`
+(«el matiz parentético puede **subir o mantener** el rigor efectivo; nunca bajarlo»).
+
+**La afirmación.** «Un matiz parentético conserva `estandar` y `critico`, sujeto a ese suelo.»
+
+**El contraejemplo, medido con la puerta real, con `Sensible a seguridad: no`, `QA: aprobado` y
+`Seguridad: pendiente`:**
+
+| `Rigor:` escrito | Nivel efectivo | Puerta |
+|---|---|---|
+| `critico (por suelo)` | `critico` | **deny** (correcto) |
+| `critico (por suelo` ← falta el `)` | **`estandar`** | **ALLOW, en silencio** |
+| `critico (` | **`estandar`** | **ALLOW, en silencio** |
+| `critico (x) y` ← texto detrás | **`estandar`** | **ALLOW, en silencio** |
+
+Es decir: **el matiz sí puede bajar el rigor**, y baja justo el nivel que exige mi firma. Un REQ
+declarado `critico` cierra **sin veredicto de seguridad** por un paréntesis sin cerrar.
+
+**Por qué ocurre, y es la mitad que el arreglo no cubre.** `arnes_veredicto` desenvuelve el
+paréntesis **sólo si el valor termina en `)`** (`hooks/lib.sh`, `case "$v" in *')')`). Si no
+termina así, el valor entero deja de reconocerse, y `arnes_rigor_efectivo` **retorna en la rama
+`nd -eq 0`** —`ARNES_RIGOR="$heredado"`— **antes** de llegar a la guarda nueva. La protección
+`max(declarado, heredado)` **nunca se ejecuta** en el camino del paréntesis mal formado. Para
+`ligero` eso da igual (cae del lado protector, comprobado en las 8 formas); para `critico`
+declarado sin sensibilidad es una **caída**.
+
+**Por qué no lo vio nadie antes, y es la lección y no un reproche.** `docs/qa/1.33.2.md` valida
+esa misma afirmación en su fila 2 con `estandar (x)`, `critico (por suelo)` y `critico (ligero)`
+— **las tres bien formadas**. Es exactamente la forma del fallo de 1.33.1: verificar la promesa
+en la dirección en que es verdad. Mi barrido añadió las mal formadas porque el propietario pidió
+la dirección contraria.
+
+**Qué NO es.** No es una regresión: 1.33.0 y 1.33.1 se comportan **igual** en estas cuatro filas
+(medido). El mecanismo de 1.33.2 es ≥ 1.33.0 en las 156 combinaciones. Lo que este parche
+introduce no es la vía: es la **frase que la tapa**, y la introduce en la superficie que los
+proyectos **heredan**.
+
+**Por qué bloquea de todos modos.** Porque es la pregunta que el encargo me puso como prueba de
+la pieza 3 —«que lo que hereda un consumidor no le prometa una protección que no tiene»— y la
+respuesta medida es que **sí se la promete**. Una promesa absoluta sobre una protección envejece
+hacia el lado que abre, y ésta ya nació del lado que abre.
+
+**Remediación (documental, una cláusula, cuatro sedes — no una frase).** Enunciar la **propiedad
+con su condición**, en las cuatro sedes a la vez: *el matiz sólo sube o mantiene el rigor
+**mientras el nivel siga siendo reconocido tras desenvolver el paréntesis**; un paréntesis que no
+cierra, o texto tras el paréntesis, hace que el valor **entero** deje de reconocerse y el rigor
+caiga a la derivación heredada —`critico` si el REQ es sensible, `estandar` si no—, que para un
+`critico` no sensible es una **bajada** y **no avisa**.* Ejemplos, marcados **no exhaustivos**.
+**Dueño:** `desarrollador` (transcripción; la enmienda del 2026-09-10 le permite el write-back
+cuando no hay decisión de diseño pendiente) con **visto del propietario sobre la redacción**,
+porque la frase sustituida la dictó él verbatim. **Vencimiento:** antes de fusionar y publicar
+1.33.2. **No requiere tocar `hooks/` ni el banco** —es texto— así que no invalida la evidencia de
+QA sobre el mecanismo.
+
+### 3. `SEC-088` — una errata en `Rigor:` rebaja la ceremonia en silencio, y el vocabulario existe pero nadie lo vigila · clase `contrato` · severidad **media** · **abierto** · **diferido, NO bloquea 1.33.2**
+
+**La vía.** Cualquier `Rigor:` que el lector no reconozca cae a la derivación heredada **sin una
+sola señal**. Con `Sensible: no`, eso es `estandar`: adiós al veredicto de seguridad. Medido con
+la puerta real: `Rigor: criitco` (errata de dos letras) + `Seguridad: pendiente` → **ALLOW**,
+`systemMessage` **vacío**, en 1.33.0, 1.33.1 y 1.33.2 por igual.
+
+**Lo que lo hace un hallazgo y no una nota.** `ARNES_VOCAB_RIGOR='ligero|estandar|critico'` ya
+existe en `hooks/lib.sh:1764`, y su **único** consumidor es `tools/arnes-lectura.sh:57`: la
+**puerta no lo usa para nada**. Los otros dos campos sí avisan —`QA:` y `Seguridad:` fuera de
+vocabulario disparan un `arnes_aviso` al escribirlos, que no deniega y se ve en el momento
+(`guard-completado.sh:255` y `:258`)—. `Rigor:` es el único de los tres cuyo valor mal escrito **baja
+la ceremonia** y el único que **no avisa**. La asimetría va en la dirección equivocada.
+
+**Remediación propuesta (no la implemento; no escribo código).** El aviso que ya existe para los
+otros dos campos, aplicado a `Rigor:` con el vocabulario que ya está declarado: fail-closed, sin
+denegar, y reutiliza el mecanismo en vez de transcribirlo. **Dueño:** `desarrollador`.
+**Vencimiento:** ventana 1.34.0, junto al trabajo de `campos.ausencia_exige` / `ADR-009`, que es
+la misma familia («la ausencia no se resuelve del lado que abre»; aquí es el **valor ilegible**,
+no la ausencia).
+
+**Por qué NO bloquea este parche, dicho con su coste.** No lo introduce ni lo empeora: es
+idéntico en las tres versiones. Y bloquear 1.33.2 por él mantendría instalada la **1.33.1**, que
+tiene un fail-open **más ancho y vivo** (`ligero (<matiz>)` cierra sin QA **ni** seguridad).
+Bloquear aquí cambiaría un agujero por otro mayor. Se registra abierto y se atiende aparte —
+«un defecto, una reparación».
+
+`SEC-087` y `SEC-088` son las dos mitades de la misma grieta: la **vía** y la **promesa medida
+falsa** que la cubre. Es el patrón que este registro ya usa en `SEC-078`/`SEC-079`, y se numeran
+en pareja a propósito.
+
+### 4. Lo que me reportó la coordinadora, resuelto
+
+**`QA-1332-01` (el informe que contradice a la puerta) — la clase `instrumento` es CORRECTA, y
+con la condición que la hace auditable.** `tools/arnes-lectura.sh` dice de
+`Rigor: critico (por suelo)` que «se ignora» cuando la puerta lee `critico` y **deniega**: el
+informe anuncia **menos** ceremonia de la que hay. Esa dirección no concede nada —quien se fíe de
+él sobreestimará su deuda, no su permiso—, y por eso es deuda técnica y no contrato.
+**La condición, que es lo que hay que escribir junto a la clase:** deja de ser `instrumento` en el
+momento en que su error cambie de dirección, es decir, si alguna vez reporta una ceremonia que la
+puerta **no** exige, o llama «ignorado» a un valor que la puerta honra **del lado que abre**.
+Entonces es `contrato` y es la familia de `SEC-073`. Verificado de paso que en las formas mal
+formadas de `SEC-088` el informe **no** contradice a la puerta (las dos leen `estandar`), así que
+el desfase que queda es sólo el de la dirección segura. **No lo toco, no lo cierro.**
+
+**Dónde debe vivir mi firma para que sea auditable desde el disco.** El parche no tiene REQ, así
+que no hay campo `Seguridad:` que `guard-completado` pueda medir, y eso hay que decirlo en vez de
+disimularlo. Mi recomendación, en tres capas:
+1. **Ésta**, que es la sede canónica y ya está escrita: `R-029` en este registro, con el estado
+   aprobado tabulado abajo para que la revisión siguiente detecte regresiones.
+2. **Una línea de cabecera en el contrato del propio parche**,
+   `docs/estabilizacion/contrato-parche.md`, con el **mismo vocabulario** para que se encuentre
+   con el mismo grep: `Seguridad: con-hallazgos (R-029, 2026-09-10)`. **Y en la misma línea, que
+   NO la mide ninguna puerta** —`guard-completado` sólo lee `requirements_dir`—. Un campo que
+   parece medido y no lo está es la familia de `SEC-079`, así que su falta de medición va escrita
+   **dentro del campo**, no en una nota al pie. *No puedo escribirla yo: `docs/estabilizacion/`
+   está fuera de los archivos que esta comisión me permite tocar.*
+3. **Lo duradero, y es decisión del propietario, no mía:** este parche cambió un contrato
+   heredado y una protección, así que el write-back del §9 pide un **REQ** —en la línea donde el
+   registro está al día— que sea dueño de `SEC-087` y `SEC-088`. Es el único sitio donde un
+   `Seguridad:` lo mide una máquina.
+
+**Una observación medida que NO abro como hallazgo, porque ya tiene dueño en la otra línea.** En
+este árbol, `Sensible a seguridad:` **ausente** se resuelve como **no sensible** (así que
+`Rigor: ligero` sin campo de sensibilidad da `ligero`, exento de QA), mientras un valor
+**no reconocido** en ese mismo campo se resuelve como **sensible**. La ausencia cae del lado que
+abre y el valor ilegible del lado que cierra: la asimetría va en la dirección contraria a la que
+debería. Es **anterior al parche** —idéntico en 1.33.0, 1.33.1 y 1.33.2, medido en el barrido— y
+es exactamente lo que `ADR-009` («la ausencia de un campo no se resuelve del lado que abre») y
+`campos.ausencia_exige` atienden en la línea 1.34. **No lo numero** para no duplicar un hallazgo
+ajeno ni inflar el alcance de este parche; lo dejo escrito porque confirma que **la fusión** tiene
+que mirar esa interacción, y con una cifra en vez de una sospecha.
+
+### 5. Lo que esta revisión NO miró — tabulado como NO MIRADO, nunca como PASA
+
+| No mirado | Por qué |
+|---|---|
+| **Quality gates y el banco completo** | No son míos (`AGENTS.md` §6). No ejecuté `run.sh` ni la autoprueba: el `907/0/5` con cuadre 912 y el `106 PASS` son de QA y los **cito**, no los re-mido. Sí corrí `bash -n` y los tres JSON, que son higiene de lo que audito |
+| **Las 160 combinaciones, los 120 ejercicios de puerta y las 16 falsaciones de QA** | Evidencia de QA reutilizada con su justificación (arriba). Mi barrido de 156 es **independiente y con otro alfabeto**, no una réplica del suyo |
+| **`arnes-upgrade` ejecutado como skill contra un proyecto real** | Nadie lo ha hecho, y la coordinadora lo declaró. Sólo está medido su **sustrato** (merge a tres vías, con el caso fail-closed). Lo hago constar como **no acreditado**, no como correcto |
+| **La instalación en esta máquina** | No se instaló nada: el propietario prohibió tocar configuraciones. La estable sigue siendo 1.33.1 |
+| **`campos.ausencia_exige` / `ADR-009` / `ADR-010` / `ADR-011`** | **No existen en este árbol.** No es una omisión mía: no hay nada que auditar aquí. Queda nombrado como concreto **de la fusión** |
+| **Todo lo demás del árbol** | Revisión proporcional (enmienda del 2026-09-10). No releí el historial ni los demás REQ |
+| **Los hallazgos ajenos abiertos** | No se cierran, no se reclasifican, no son míos |
+
+### 6. Estado de seguridad aprobado — línea base de no-regresión
+
+| Objeto | Veredicto | Fecha | Alcance acreditado |
+|---|---|---|---|
+| **Parche v1.33.2** (`QA-P48-01`), `hotfix/1.33.2-rigor` @ **`17ec674`** | **`con-hallazgos`** | 2026-09-10 | **Qué acredita:** que el cambio funcional de `hooks/lib.sh` **no abre ninguna vía nueva** —156 combinaciones propias contra tres lectores, 0 casos por debajo de 1.33.0; el nivel exento sólo alcanzable desde la forma desnuda, invisibles incluidos; indicador sin contaminación, forzado a mano y con un solo llamador; monotonía de la puerta **por construcción**—, que restaura la conducta de 1.33.0 en la fila que 1.33.1 abrió (deny/ALLOW/deny medido con la puerta real), que el suelo de sensibilidad queda intacto, y que el radio heredable es **una** superficie, idéntica byte a byte a su sede. **Qué NO acredita:** las quality gates ni el banco (§5), ni `arnes-upgrade` como skill, ni la instalación. **Qué lo detiene:** `SEC-087` — el contrato y la plantilla heredada afirman en absoluto una protección con contraejemplo medido, y el contraejemplo cae del lado que abre |
+
+**Rigor:** no subo ni bajo ninguno. **Si este parche recibe un REQ** (recomendación §4.3), nace
+`critico` y `Sensible a seguridad: sí` por la política de autoalojamiento: toca una protección y
+una superficie heredable.
+
+**Hallazgos que esta revisión abre:** `SEC-087` (`contrato`, media-alta, **bloquea**),
+`SEC-088` (`contrato`, media, **diferido, no bloquea**). **Ninguno cerrado.** `QA-1332-01` no es
+mío: lo dictamino en §4 y lo dejo como está.
+
+**Numeración vigente tras esta revisión:** última revisión **R-029**; último hallazgo
+**SEC-088**; próximos libres **R-030** y **SEC-089**. (Contados sobre el máximo de la **línea
+principal**, no sobre esta copia atrasada — ver el aviso de la cabecera.)
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** El parche no altera clasificación de
+datos, acceso, retención ni cumplimiento; este repositorio sigue sin usuarios finales ni datos
+personales, y el parche no introduce secretos, credenciales ni salida al exterior.
+
+---
+
+## Revisión R-030 — re-firma del parche v1.33.2 tras la corrección de `SEC-087`, @ `d82d6cd` (2026-09-11)
+
+> Numeración sobre el máximo de la **línea principal**, igual que `R-029`. El aviso de la cabecera
+> de `R-029` sigue vigente: **esta copia del registro está atrasada y la fusión no debe resolver
+> este archivo tomando esta versión.**
+
+**Alcance.** Los tres commits posteriores a mi `R-029`: `29f9af6` (la promesa deja de ser
+absoluta), `a529c49` (la quinta sede, en el banco, y resultó ser dos) y `d82d6cd` (el piso de la
+sección). Revisión **proporcional**: no releí el historial.
+
+**Evidencia reutilizada, con la comprobación que la enmienda exige, hecha por mí y no aceptada.**
+El diff de `hooks/` entre `a8e332a` y `d82d6cd` **no tiene una sola línea no-comentario** — lo
+verifiqué por dos vías independientes: filtrando el diff (0 líneas) y comparando los dos árboles
+**sin comentarios**, que salen **md5-idénticos** (`efc14a94…`). `tools/`, `.github/`, `.arnes/` y
+`.claude-plugin/` no cambian. Por tanto **el barrido de 156 combinaciones de `R-029` sigue
+acreditando este árbol** y no se repite: el ejecutable que audité es byte a byte el mismo.
+
+### 1. `SEC-087`: la corrección es correcta, y la frontera es EXACTA
+
+Lo medí en vez de leerlo. `frontera-mal-formado.sh`, **60 pares** (3 niveles × 4 estados de
+sensibilidad × 5 formas mal formadas, cada una contra su matiz cerrado): **10 celdas cambian y
+las 10 caen dentro de la frontera que el contrato nombra**; **0 fuera**. Nunca `ligero`, nunca
+`estandar`, nunca un REQ sensible. La misma sonda sobre la **1.33.1 publicada** da **10 celdas
+fuera** de la frontera, así que **discrimina** y no pasa por vacío.
+
+**Un matiz de precisión que NO abro como hallazgo.** Las 10 celdas son `critico` con `Sensible:
+no` (5) y con el campo **ausente** (5). El contrato dice «en un REQ **no sensible**», y una
+lectura ordinaria de eso es «declarado no». Queda exacto porque dos viñetas antes el mismo
+documento define la omisión como la rama «si no» —*«**Si se omite, se deriva:** sensible →
+`critico`, si no → `estandar`»*—, así que el lector que sigue el documento acierta. Lo dejo
+escrito porque el REQ **sin** el campo es el caso más probable en un proyecto consumidor sin
+migrar, y una futura pasada editorial podría decir «no **efectivamente** sensible». **No es
+defecto, no bloquea y no es una reparación de este parche.**
+
+### 2. La mitad que se conservó ABSOLUTA: es verdadera, y es más fuerte de lo que su justificación dice
+
+La afirmación es *«ninguna forma que contenga `(` alcanza `ligero`»*, el único nivel exento de
+`QA: aprobado`. La ejercí con un alfabeto **mucho más ancho** que las 104 lecturas del
+desarrollador: **287 formas hostiles × 4 estados de sensibilidad = 1148 lecturas**, con
+metacaracteres de shell, anchura cero, TAB, decoración por dentro y por fuera, anidados,
+invertidos y `(ligero)` como matiz. **0 alcanzan `ligero`.** La misma sonda sobre la 1.33.1
+publicada: **444**. Es, de paso, la medida de cuánto abría el defecto publicado.
+
+**Y la promesa no descansa en ese barrido: se sigue por construcción, en dos casos que agotan el
+dominio.** Si el valor normalizado contiene `(`, entonces `ARNES_RIGOR_MATIZ=1`, y:
+
+- **(a) el valor termina en `)`** → `arnes_veredicto` desenvuelve y deja el prefijo. Si ese
+  prefijo es `ligero`, `nd=1` y la guarda **corre**; `heredado` sólo puede ser `estandar` (2) o
+  `critico` (3), los dos `> 1`, así que `ARNES_RIGOR` pasa a `heredado` y **nunca queda `ligero`**.
+- **(b) no termina en `)`** → el valor conserva el `(` dentro, y `arnes_rigor_nivel` compara
+  contra valores **exactos**, así que no puede casar con `ligero`: `nd=0` y se devuelve
+  `heredado`, que otra vez es `estandar` o `critico`.
+
+No hay tercer caso. Por eso la afirmación **puede** ser absoluta sin ser una sobreafirmación:
+es la diferencia entre una promesa medida y una demostrada, y es exactamente la distinción que
+este parche ya corrigió una vez en la dirección contraria (`a8e332a` retiró un «por
+construcción» que era un barrido). **Aquí ocurre lo inverso: se justifica con un barrido algo que
+es constructivo.** No es defecto — la propiedad es verdadera — pero el argumento constructivo es
+el que conviene citar, porque el barrido envejece con el alfabeto y la construcción no.
+
+### 3. Las cinco sedes, barridas por propiedad: ninguna promesa falsa sobreviviente
+
+Barrí las formulaciones absolutas sobre el árbol completo. Las que quedan vivas son todas
+**verdaderas o históricas declaradas**: `requirements/README.md:111` y su plantilla hablan de
+`ligero` **sin** matiz y van condicionadas al suelo; `contrato-parche.md` cita el texto nuevo
+**verbatim** y se declara subordinado a la sede; `actualizacion-candidata.md` lleva una marca de
+superación que nombra la frase superada, **cita la sede en vez de copiarla** —y dice por qué: una
+copia es una sede más que se desfasa, *«y ya pasó»*— y fecha la condición de buena formación en el
+2026-09-11 con `SEC-087`/`R-029`; los dos `.tpl` de
+`verificacion-instalacion-1.33.2/` son **fixtures de la verificación del merge** y deben quedar
+congelados; y los nombres de caso del banco (`"D16: matiz CERRADO no rebaja critico"`,
+`"QA-P48-01: sensible con matiz conserva el suelo critico"`) son **ciertos** tal como están
+escritos. **La plantilla heredada sigue idéntica a su sede en la región** y el radio heredable
+sigue siendo **1**.
+
+**Mi pieza 3 queda satisfecha:** un consumidor que reciba esta plantilla por `arnes-upgrade`
+hereda **la frontera exacta**, no una vaga — incluida la frase que le dice qué hacer («escribe el
+matiz cerrado, o no lo escribas») y el hecho de que la forma mal escrita **no avisa**.
+
+### 4. Los cuatro puntos que la coordinadora contó, verificados por mí
+
+1. **El nombre del caso.** `docs/qa/1.33.2-falsacion/banco-corrida-unica.txt:938` conserva el
+   nombre **viejo**, y `git log 17ec674..d82d6cd -- docs/qa/` está **vacío**: el registro de QA
+   no se reescribió. Correcto — es una discrepancia **documental declarada**, no un defecto, y
+   reescribir el registro de una corrida sería falsificar evidencia.
+2. **El piso, derivado por mí sin mirar el suyo.** Bloques de la sección: `3 17 55 9 14`; el mayor
+   es **55** (líneas 23-77); preámbulo **4**; maquinaria **0**. `4 + 0 + 55 = 59` = lo declarado.
+   Y el instrumento lo confirma: la autoprueba publica
+   `40-estabilizacion-firmas-y-rigor.sh lineas=102 piso=59 techo=400 duplicadas=3`, con el piso
+   cabiendo en el archivo. **Cuadra.**
+3. **El segundo número falso.** Confirmado: CA-18 publica **`duplicadas=3`** y el comentario
+   decía `1`. La corrección es correcta. Y anoto lo que lo hace benigno y no un fail-open:
+   `duplicadas` se **publica sin compararse** —es evidencia, no puerta—, y el propio corredor
+   explica por qué (un ABORT ahí sería «un rojo sobre código correcto, la clase de rojo de H-11,
+   la que enseña a desactivar el control»). Que fuese falso importaba por **honestidad del
+   registro**, no por permisividad.
+4. **La variabilidad del SKIP.** No la verifico: el banco no es mío. Registro que se conserva la
+   variabilidad en vez de quedarse con la cifra alta, que es la conducta correcta.
+
+**Autoprueba del corredor, corrida por mí sobre este árbol: 106 PASS, 0 FAIL, `rc 0`.** La corrí
+porque `d82d6cd` cambia un término que **CA-18 comprueba aritméticamente**, y comprobarlo era más
+barato que razonarlo.
+
+### 5. Lo que esta firma NO acredita — y aquí hay un hecho de ORDEN que hay que resolver antes de fusionar
+
+**El veredicto de QA cubre `a8e332a`, no `d82d6cd`.** Su propio registro lo dice:
+*«cabeza `a8e332a`, árbol limpio»* (`docs/qa/1.33.2.md:11`). Desde entonces, **dos** de los tres
+commits editaron `tests/escenarios/hooks/secciones/40-estabilizacion-firmas-y-rigor.sh`, que
+`AGENTS.md` §6 clasifica como **crítico** («el banco que los certifica»), y uno de esos cambios
+altera el **nombre de un caso**, que es parte de la salida inventariada del banco.
+
+**Y no hay en disco ninguna corrida del banco sobre `d82d6cd`.** El único artefacto,
+`banco-corrida-unica.txt`, conserva el nombre viejo del caso, lo que **prueba** que es anterior a
+`a529c49`. Las cifras `907/0/5` y `908/0/4` me llegaron **sólo por conversación**; por §14 B.7 eso
+no es evidencia que yo pueda citar, así que **no la cito**.
+
+Por eso mi veredicto se emite con su alcance explícito: **acredita la revisión de seguridad del
+cambio sobre `d82d6cd`, no que las quality gates estén en verde sobre `d82d6cd`** — que no son
+mías (`AGENTS.md` §6) y que son justo lo que el CI obligatorio va a medir. **Condición de validez,
+no reserva sobre el contenido:** si el banco sale **rojo** sobre `d82d6cd` en algo que toque esta
+sección, el árbol deja de ser el que firmé y **esta firma no sobrevive**: se re-audita. Dicho de
+otro modo: firmo la seguridad de `d82d6cd`; el orden del §6 queda completo cuando el banco se
+haya ejercido **sobre esta cabeza**, por QA o por CI.
+
+### 6. El CI con 28 % de fallo en abierto: no cambia mi veredicto, y es un defecto de gobernanza que conviene no tratar como ruido
+
+Me preguntaron si cambia mi firma. **No la cambia**, y por una razón medida: el único FAIL es
+`REQ-017 CA-08 (ii)`, un techo de reloj ajeno al rigor, y **dos** de los fallos de la tasa base
+ocurrieron sobre commits que **no tocaron un solo archivo de código** — eso es la definición de
+un artefacto de medición, no de una regresión.
+
+**Pero como gobernanza sí es un defecto de primer orden, y es mi terreno.** `hooks-en-linux` es
+la puerta **requerida** de `main`. Una puerta requerida que falla ~28 % de las veces sobre código
+que no cambió **enseña a re-lanzar hasta el verde**, y ese hábito es indistinguible de ignorar un
+rojo verdadero. Es la clase `H-11` que este proyecto ya nombró en su propio corredor: *«un rojo
+sobre código correcto, la que enseña a desactivar el control»*. Y el principio que aplica:
+**un FAIL no queda desmentido repitiendo la prueba hasta obtener verde**; la variabilidad se
+conserva como evidencia y la decisión se presenta aparte.
+
+**Los dos hechos se COMPONEN, y por separado ninguno parece grave — por eso lo escribo.** Si la
+fusión se autoriza con un verde obtenido a base de re-lanzar, y la cabeza cuyo banco nunca se
+ejerció es precisamente `d82d6cd` (§5), entonces el verde que autoriza la fusión **puede no haber
+ejercido nunca este cambio**. Recomendación operativa, que no abre hallazgo porque el instrumento
+ya está escalado al propietario: que la corrida de CI que autorice esta fusión sea **sobre
+`d82d6cd`** y que se lean **la sección 40 y el cuadre**, no sólo el `rc` global, para poder
+distinguir un parpadeo de reloj en `REQ-017 CA-08 (ii)` de cualquier cosa que toque este parche.
+
+### 7. Estado de los hallazgos — no cierro ninguno, y `SEC-087` queda CERRABLE sin cerrar
+
+- **`SEC-087`** (`contrato`, media-alta): **su remediación está completa y verificada** —las cinco
+  sedes corregidas, la frontera exacta medida en 60 pares, la promesa absoluta verdadera y además
+  constructiva, y el write-back del §9 existe porque el remedio **era** el contrato—. **A mi juicio
+  es cerrable.** **No lo cierro**, por orden del propietario; queda como lo dejé, con esta
+  revisión como evidencia de que su condición de cierre se cumple.
+- **`SEC-088`** (`contrato`, media): **abierto, sin cambios, diferido y sigue sin bloquear.** Este
+  parche no lo toca. La vía es idéntica en 1.33.0, 1.33.1 y 1.33.2.
+- **`QA-1332-01`**: sin cambios; mi dictamen sigue siendo el de `R-029` §4 (`instrumento`
+  **correcta**, con la condición de que deja de serlo si su error cambia de dirección).
+- **Una discrepancia documental nueva y benigna, declarada:** `docs/qa/1.33.2.md:238` valida la
+  frase del contrato **anterior** a la corrección, porque el registro de QA no se reescribe. Es
+  correcto que no se reescriba; queda anotado para que nadie lo lea como contradicción.
+
+### 8. Estado de seguridad aprobado — línea base de no-regresión, sustituye a la de `R-029`
+
+| Objeto | Veredicto | Fecha | Alcance acreditado |
+|---|---|---|---|
+| **Parche v1.33.2** (`QA-P48-01` + `SEC-087`), `hotfix/1.33.2-rigor` @ **`d82d6cd`** | **`aprobado`** | 2026-09-11 | **Qué acredita:** que el ejecutable de `hooks/` es **byte a byte** el que acredité en `R-029` (md5 sin comentarios), luego el barrido de 156 combinaciones sigue vigente y no se abre ninguna vía nueva; que la **frontera** que el contrato y la plantilla heredada ahora nombran es **exacta** (60 pares, 0 pérdidas fuera de ella, sonda discriminante); que la mitad **absoluta** de la promesa es verdadera (0 de 1148 lecturas hostiles) **y además constructiva**; que las **cinco** sedes quedan sin promesa falsa y los registros históricos están marcados citando la sede en vez de copiarla; que el radio heredable sigue siendo **1** y la plantilla idéntica a su sede; y que el piso `59` y el `duplicadas=3` son correctos (derivados por mí + autoprueba 106 PASS / 0 FAIL / `rc 0`). **Qué NO acredita:** las quality gates ni el banco **sobre esta cabeza** —`QA: aprobado` cubre `a8e332a` y no hay corrida en disco de `d82d6cd` (§5)—, ni `arnes-upgrade` como skill, ni la instalación. **Residual declarado:** `SEC-088` abierto (`contrato`, media), preexistente e idéntico en las tres versiones |
+| **Parche v1.33.2** @ `17ec674` | `con-hallazgos` | 2026-09-10 | **No se retira:** cubre el árbol de entonces y es la causa de la corrección. Deja de ser la línea base vigente: la sustituye la fila de arriba |
+
+**Rigor:** no subo ni bajo ninguno. Si este parche recibe un REQ, nace `critico` y
+`Sensible a seguridad: sí` (`R-029` §4).
+
+**Numeración vigente tras esta revisión:** última revisión **R-030**; último hallazgo
+**SEC-088**; próximos libres **R-031** y **SEC-089**.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** Ni el parche ni su corrección alteran
+clasificación de datos, acceso, retención ni cumplimiento; no hay usuarios finales, datos
+personales, secretos ni salida al exterior.
+
+---
+
 ## Revisión R-031 — PR #48, el porte del arreglo de `v1.33.2` a la línea de 1.34.0, `feat/1.34-reparaciones-astra` @ `6e3bb90` (2026-09-11)
 
 > **AVISO DE NUMERACIÓN, LÉASE ANTES DE FUSIONAR — y no es el mismo aviso que el de `R-029`.**
@@ -8600,6 +9034,17 @@ próximos libres **R-029** y **SEC-086**.
 > `docs/seguridad/registro-seguridad.md` tomando esta versión**: se perderían `SEC-086`…`SEC-089`
 > y las revisiones `R-029`/`R-030`, incluido `SEC-088`, que está **abierto** y es `contrato`. Este
 > bloque es apilable (append-only) y se puede trasplantar solo. Ver `SEC-090` (§4).
+
+> **Nota de mantenimiento — 2026-09-11 (`R-032`), añadida sin tocar el aviso de arriba.** El aviso
+> **ya se cumplió**: esta copia es el resultado de la reconciliación que pedía, y `R-029`/`R-030`
+> —con `SEC-087` y `SEC-088`— están trasplantadas **encima de `R-028` y debajo de esta revisión**.
+> Léase en pasado. Dos precisiones que `R-032` mide y que corrigen al aviso y a `SEC-090` §«Lo
+> medido»: (1) `SEC-086` y `SEC-089` **no existen como hallazgos en ninguna de las dos líneas** —
+> son declaraciones de «próximo libre», no sedes—, así que el conjunto realmente en riesgo era
+> `{R-029, R-030, SEC-088}` más la sede de `SEC-087`, no «cuatro hallazgos»; y (2) la espina
+> correcta **no** era la copia de `main`, que carece de 31 definiciones de esta línea. Ambas se
+> detectaron justamente por verificar la **propiedad** en vez de la lista, que es lo que la
+> condición de cierre exigía.
 
 **Alcance (el que nombró el propietario).** Tres piezas: (1) el cambio funcional de `hooks/lib.sh`
 y su interacción con la maquinaria de ausencia de `ADR-009`, que en esta línea **sí existe**;
@@ -8806,3 +9251,178 @@ eleva de `instrumento` a `contrato`. Sin cambios en el resto.
 **Numeración vigente tras esta revisión:** última revisión **R-031**; último hallazgo **SEC-090**;
 próximos libres **R-032** y **SEC-091**. *(Numerado desde el máximo real de las dos líneas; ver el
 aviso de la cabecera.)*
+
+---
+
+## Revisión R-032 — reconciliación del registro entre las dos líneas para `#48` y cierre de `SEC-090` (no es auditoría de ningún REQ; no firma código) — 2026-09-11
+
+**Qué es y qué no.** Es la ejecución de la condición de cierre que `SEC-090` (`R-031` §4) dejó
+escrita, sobre `docs/seguridad/registro-seguridad.md` y nada más. **No audita código**, no mira
+quality gates, no firma ningún REQ y no releva a `R-031` de nada. Autorización expresa del
+propietario (2026-09-11) para reconciliar este archivo, con alcance de escritura declarado:
+**únicamente** `docs/seguridad/registro-seguridad.md` y artefactos nuevos bajo `docs/seguridad/`.
+
+### 0. Versión base y método — para que esto se pueda re-derivar sin preguntarme
+
+| Copia | Ref | Commit | Definiciones |
+|---|---|---|---|
+| Línea publicada | `origin/main` | `10eac80` | 86 |
+| Destino real de `#48` | `origin/rel/registro-1.33.0` | `1dfe31b` | 113 |
+| Rama de `#48` (espina) | `origin/feat/1.34-reparaciones-astra` | `3c52d6d` | 116 |
+
+Extracción de las tres copias con `git show <ref>:docs/seguridad/registro-seguridad.md`.
+«Definición» = identificador que aparece en una línea de encabezado (`^#{1,6} `), medido con
+`grep -nE '^#{1,6} ' | grep -oE '\b(R|SEC)-[0-9]{3}\b' | sort -u`. Bloque = desde su encabezado
+hasta el siguiente de nivel **igual o menor**. El detalle elemento por elemento, con los comandos
+completos, vive en `docs/seguridad/reconciliacion-SEC-090.md`.
+
+### 1. Tres premisas del propio `SEC-090`, medidas y corregidas — y por eso la condición pedía una propiedad
+
+`SEC-090` se escribió con tres supuestos que no se sostienen al medirlos. Van corregidos aquí, no
+borrados de su sede: la entrada original se conserva tal cual, que es la disciplina de este registro.
+
+1. **La fusión de `#48` no es a `main`.** Su rama destino es `rel/registro-1.33.0` (`gh pr view 48`),
+   cuya cabeza `1dfe31b` **es exactamente la merge-base** con la rama: `#48` es *fast-forward*,
+   `mergeStateStatus: CLEAN`, sin conflicto. El forzador literal («antes de fusionar `#48` a `main`»)
+   nombra una fusión que no es ésta. La base declarada `5e53f12` tampoco es la vigente.
+2. **`main` no podía ser la espina.** Le faltan **31** definiciones que la línea de release sí tiene.
+   Tomarla como espina —como decía la remediación— habría invertido el archivo grande por el pequeño
+   y perdido 31 identificadores para no perder 3. La espina correcta es la copia de la **rama**, que
+   ya es superconjunto de su destino (`dest \ rama = ∅`), más el trasplante de lo único que sólo
+   `main` define.
+3. **`SEC-086` y `SEC-089` no existen como hallazgos en ninguna de las tres copias.** Aparecen sólo
+   como declaraciones de «próximos libres». La frase «se perderían `SEC-086`…`SEC-089`» y la fila
+   «último hallazgo de `main`: `SEC-089`» son lecturas de una declaración de numeración como si fuera
+   una sede. El conjunto realmente en riesgo era **`{R-029, R-030, SEC-088}`** más la sede de
+   `SEC-087` (que vive **dentro** de `R-029`).
+
+**Y ésta es la lección, que es del método y no de quien lo escribió:** las tres se detectaron porque
+la condición de cierre exigía verificar una **propiedad** —ningún identificador se pierde— y no la
+**lista de cuatro** que la prosa enumeraba. La lista estaba mal en dos de sus cuatro elementos. Un
+criterio por enumeración habría «pasado» buscando cuatro cosas, dos de las cuales no existen.
+
+### 2. Lo trasplantado — inventario elemento por elemento
+
+Insertado **verbatim**, entre el final de `R-028` y el comienzo de `R-031`, que es además su lugar
+cronológico (`R-028` 09-10 → `R-029` 09-10 → `R-030` 09-11 → `R-031` 09-11):
+
+| Bloque | Origen | Líneas | Contiene |
+|---|---|---|---|
+| `## Revisión R-029` | `main:5783-6032` | 250 | la **sede** de `SEC-087` (§2) y la **sede** de `SEC-088` (§3) |
+| `## Revisión R-030` | `main:6033-6210` | 178 | verificación de la corrección de `SEC-087`; §7 lo declara *cerrable sin cerrar* |
+
+Ninguno de los dos existía en la línea de release. `SEC-088` es `contrato` y está **abierto**: era el
+identificador cuya pérdida convertía un hallazgo bloqueante en invisible para `guard-completado`.
+
+**Efecto colateral que conviene nombrar porque es la prueba de que el trasplante era necesario:**
+`R-031` §5 cambiaba el estado de `SEC-087` a una sede **que no existía en esta copia**. Ahora existe,
+y la cadena queda completa y en orden: sede en `R-029` → verificación en `R-030` §1 → cierre en
+`R-031` §5.
+
+### 3. Las cinco diferencias de contenido, reconciliadas una por una
+
+Cinco identificadores estaban definidos en **ambas** copias con bloques distintos. Ninguna se resolvió
+eligiendo el estado más favorable; en las cinco se comprobó la relación real entre los textos.
+
+| id | `main` | destino | rama | Qué difiere | Decisión |
+|---|---|---|---|---|---|
+| `R-016` | 421 L | 459 L | 344 L | La rama **movió** la subsección `### 2. Índice` a una sección `##` estable al inicio del documento, y dejó puntero; el destino añadió sobre `main` un apunte de `R-028` que **estrecha el titular de `SEC-055`** | **Se conserva la de la rama.** Es `destino` menos el índice movido, y el índice no se pierde: vive arriba, con **43** filas frente a las **33** de `main` (superconjunto verificado). El apunte de `R-028` está incluido |
+| `R-017` | 197 L | 197 L | 202 L | `main` ≡ destino, byte a byte. La rama añade una nota de mantenimiento de 5 líneas sobre la nueva sede del índice | **Se conserva la de la rama**, estrictamente mayor. No se pierde nada de `main` |
+| `SEC-055` | 55 L | 65 L | 65 L | Destino ≡ rama. `main` es 10 líneas **más corto**: le falta la precisión de `R-028` (2026-09-10) que corrige el titular del hallazgo y **estrecha su enunciado sin cambiar su alcance** | **Se conserva la de la rama.** Contiene íntegro el texto de `main` más la corrección posterior. El hallazgo sigue `abierto` en las dos |
+| `SEC-056` | 32 L | 32 L | 37 L | `main` ≡ destino. La rama añade la misma nota de mantenimiento de sede, que **explícitamente no cierra ni reclasifica** | **Se conserva la de la rama**, estrictamente mayor |
+| `SEC-087` | 59 L | — | 26 L | **No son dos redacciones del mismo texto.** La de `main` es la **sede** del hallazgo (clase, severidad, contraejemplo medido, remediación). La de la rama es la **entrada de cambio de estado** de `R-031` §5, que dice de sí misma que la sede vive en `main` y que **no la trasplanta** para no fabricar una segunda definición | **Se conservan las dos, porque no compiten.** Es el patrón normal de este registro —sede en una revisión, cambio de estado en otra posterior—, y el trasplante de `R-029` es justamente lo que le da referente a `R-031` §5 |
+
+En las cuatro primeras la relación es de **inclusión**, no de divergencia: el bloque de la rama
+contiene el de `main`. No hubo que fundir redacciones ni hubo evidencia que sacrificar.
+
+### 4. Las tres filas nuevas del índice — la mitad de la condición que nadie había cumplido
+
+Verificando la propiedad apareció un hueco que **ninguna de las dos copias** tenía tapado:
+`SEC-087` y `SEC-088` son `contrato` y **no figuraban en el índice de ninguna de las tres copias**,
+ni siquiera en `main`, donde nacieron. `SEC-090` tampoco se indexó a sí mismo. Como el índice es «el
+único inventario que `guard-completado` puede leer» —palabras del propio `SEC-090`—, trasplantar las
+sedes sin indexarlas habría dejado el riesgo **intacto bajo otra forma**. Se añaden tres filas y se
+actualiza el sello de la tabla a `R-032`.
+
+**Recuento de clase bloqueante tras esta revisión:** 52 filas — **25 `abierto` + 8 `en-mitigación` =
+33 bloqueantes**, frente a 32 antes. **La cifra sube, y sube porque el trasplante hace visible un
+hallazgo que estaba abierto y fuera del inventario** (`SEC-088`), más el propio `SEC-090` que ahora
+cierra. Que un recuento de bloqueantes **aumente** al reconciliar es la dirección correcta del error.
+
+**Lo que esta revisión NO hace con el índice, dicho para que nadie lo lea de más:** no re-adjudica la
+clase de los demás identificadores ausentes de la tabla. Que el índice no sea exhaustivo **en general**
+es un hallazgo ya abierto con dueño propio —**`SEC-085`**—, y no es el objeto de `SEC-090`. Aquí sólo
+se indexa lo que esta reconciliación mueve o abre.
+
+### 5. Verificación de la propiedad, sobre el árbol resultante
+
+| Comprobación | Resultado |
+|---|---|
+| Definiciones en `main ∪ destino ∪ rama` | **119** |
+| Definiciones en el árbol reconciliado | **119** |
+| Identificadores **perdidos** (en cualquier copia y no en el resultado) | **0** |
+| **Menciones** (no sólo definiciones) perdidas | **0** |
+| Revisiones `## Revisión R-xxx` duplicadas | **0** |
+| Identificadores con **dos sedes de apertura** | **0** |
+| Filas del índice de `main` ausentes del índice resultante | **0** |
+| Filas del índice del destino ausentes del índice resultante | **0** |
+
+La comprobación se hizo por **conjuntos**, no recorriendo una lista: `comm -23` de la unión de las
+tres copias contra el resultado, en definiciones y en menciones por separado.
+
+**Sobre «el árbol fusionado».** `#48` es *fast-forward* sobre `rel/registro-1.33.0`, luego el árbol
+fusionado **es** este árbol: la verificación no es una predicción. Y como la reconciliación tomó una
+espina que es superconjunto **también de `main`**, la fusión posterior de la línea de release hacia
+`main` tampoco puede perder nada de este archivo por resolución «ours».
+
+### 6. `SEC-090` — estado `abierto` → **`mitigado`**, con su alcance
+
+Su condición de cierre era que, sobre el árbol resultante, **ningún identificador presente en
+cualquiera de las dos copias se perdiera**, verificado como propiedad. Está cumplida y medida (§5),
+y además se corrigió el hueco de indexación que la remediación no había previsto (§4). **Lo cierro
+yo, que soy su dueño**, con esta revisión como evidencia.
+
+**Qué NO cierra este cierre, y no es una formalidad.** Acredita **estas tres cabezas**
+(`10eac80`, `1dfe31b`, `3c52d6d`). Si la línea publicada vuelve a avanzar sobre este archivo, la
+propiedad de superconjunto deja de estar medida y hay que re-verificarla: eso es el alcance de una
+firma, no un residuo que yo acepte. La **clase** del problema —que resolver un archivo-índice pueda
+perder identificadores— **sigue abierta** y vive en el write-back del §7.
+
+### 7. Write-back pendiente — se registra como DEUDA, no como hecho
+
+`SEC-090` dejó una obligación de `AGENTS.md` §9 que **esta revisión no cumple y no puede cumplir**:
+que «la resolución de un archivo-índice preserve todo identificador previo» quede como **NFR**. Yo no
+escribo en `requirements/`, y documentar un residuo no es remediarlo.
+
+- **Estado:** **pendiente**. No está implementado ni verificado por nadie.
+- **Dueño:** `analista-requerimientos` (redacción del NFR); `auditor-seguridad` (verificación).
+- **Forzador:** la siguiente fusión que toque `docs/seguridad/registro-seguridad.md` entre dos líneas
+  divergentes, o el cierre de la ventana 1.34.0, lo que ocurra antes.
+- **Forma exigida:** por **propiedad**, no por enumeración — «ninguna resolución de este archivo
+  pierde un identificador presente en cualquiera de las copias de entrada», citando el sitio único de
+  la lista exhaustiva. Ejemplos, **no exhaustivos**. Escribirlo como «se conservan `R-029`, `R-030` y
+  `SEC-088`» reproduciría exactamente el defecto que §1 acaba de medir.
+
+**No abro aquí el proyecto general de resolver esa clase**, por instrucción expresa del alcance.
+
+### 8. Lo que esta revisión NO acredita
+
+Ninguna quality gate —no las miro—; **ningún REQ**; el código de `#48`, cuya firma sigue siendo la de
+`R-031` sobre `6e3bb90` y **sigue vigente porque este cambio no toca código**: el diff de esta
+revisión está contenido en `docs/seguridad/`. Ninguna publicación ni fusión. Y no releva al
+propietario de ninguno de sus gates.
+
+### 9. Estado de mis hallazgos tras `R-032`
+
+**`SEC-090` `abierto` → `mitigado`** (§6). **`SEC-087` `mitigado`**, sin cambio — cerrado en `R-031`
+§5, ahora **con sede presente e indexada**. **`SEC-088` `abierto`, sin cambios**, trasplantado e
+indexado; dueño `desarrollador`, vencimiento ventana 1.34.0. **`SEC-085` `abierto`, sin cambios** — la
+no-exhaustividad general del índice no es objeto de esta revisión. Sin cambios en el resto.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** Reconciliar una bitácora no altera
+clasificación de datos, acceso, retención ni cumplimiento; este repositorio sigue sin usuarios
+finales ni datos personales.
+
+**Numeración vigente tras esta revisión:** última revisión **R-032**; último hallazgo **SEC-090**;
+próximos libres **R-033** y **SEC-091**. *(Ya numerado sobre el máximo real de las dos líneas, que a
+partir de esta reconciliación son una sola.)*
