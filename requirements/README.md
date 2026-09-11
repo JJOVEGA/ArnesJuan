@@ -104,7 +104,23 @@ cada proyecto pone el mapeo con sus ejemplos concretos.
 - **Si se omite, se deriva:** sensible → `critico`, si no → `estandar`. Es exactamente el
   comportamiento anterior a que existieran los niveles, así que un proyecto que no declare
   nada no nota ningún cambio.
-- Un valor no reconocido se ignora y se cae a la derivación. Nunca abre la puerta.
+- El rigor efectivo combina el nivel declarado con el suelo de seguridad. Un matiz
+  parentético **bien formado** —el que **cierra el paréntesis al final del valor**,
+  como `critico (por suelo)`— conserva `estandar` y `critico`, sujeto a ese suelo.
+  Para mantener la protección heredada, `ligero` con matiz deriva a `estandar` si el
+  REQ no es sensible y a `critico` si lo es. `ligero` sin matiz conserva su
+  comportamiento, sujeto al suelo de seguridad.
+- **Un paréntesis que no cierra al final del valor no es un matiz: es un valor
+  desconocido**, y cae en la derivación heredada del punto siguiente. `critico (por
+  suelo` (sin cerrar), `critico (` y `critico (x) y` (con texto detrás del cierre) se
+  juzgan **`estandar`** en un REQ no sensible, así que un `critico` escrito así **deja
+  de exigir la firma de seguridad, y no avisa**. Es la única protección que esta forma
+  puede perder: en `ligero` y en `estandar` la derivación heredada da lo mismo, y en un
+  REQ sensible el suelo de `critico` lo impide. Escribe el matiz cerrado, o no lo
+  escribas.
+- Un valor realmente desconocido conserva la derivación heredada: sensible →
+  `critico`; no sensible → `estandar`. No garantiza conservar el nivel que el autor
+  pretendía escribir; usa uno de los tres niveles válidos.
 
 ## Clases de hallazgo
 Todo hallazgo abierto se declara en el campo `Hallazgos abiertos:` de la cabecera, con

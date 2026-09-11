@@ -2,6 +2,74 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-11 · `QA-P48-01`: la guarda `max(declarado, heredado)` llega a esta rama, y llega **añadida**, no copiada
+
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador`.
+> Rama `feat/1.34-reparaciones-astra`, PR **#48**, sobre `2f7c821`.
+
+**Qué faltaba, medido antes de tocar nada.** El trabajo sin comitear que quedó de la sesión anterior
+traía **2 de las 3 piezas** del porte: `ARNES_RIGOR_MATIZ` (0 al entrar, 1 al desenvolver un
+paréntesis) y `heredado` elevado a variable. Faltaba **la guarda**, que es lo único que decide: sin
+ella `Rigor: ligero (local)` en un REQ no sensible seguía dando `ligero` —el único nivel exento de
+`QA: aprobado` (§6)—, así que el fail-open de v1.33.1 estaba **abierto en esta rama**. `bash -n`
+pasaba: nada roto, y nada corregido.
+
+**Por qué no fue un cherry-pick, y esto es el fondo del asunto.** Esta rama tiene la maquinaria de
+resolución de ausencia de `ADR-009` que la línea del parche **no tiene** — `arnes_resuelve_ausencia`
+(6 apariciones), `ARNES_AUSENCIA_APLICA` (5), `ARNES_RIGOR_AUSENTE` (2); en `v1.33.2` las tres valen
+**0**. Copiar `arnes_rigor_efectivo` de la publicada encima **habría borrado esa lógica**. La guarda
+se **añadió** al final del camino de valor declarado y válido; la resolución de ausencia se **quedó**
+donde estaba, y **retorna antes** de llegar a la guarda. Eso es correcto —una ausencia no es un
+matiz— y ahora **está dicho en el código y en el banco**, para que nadie lea la guarda como si
+cubriera también ese camino. Las dos ramas que ya derivaban a mano pasan a usar `heredado`, que es
+justo lo que su comentario prometía.
+
+**El efecto, medido por la vía real** (`arnes_campos_normaliza`, la que usa `guard-completado.sh`),
+en `docs/qa/1.34.0-porte-1.33.1-falsacion/sonda-guarda-matiz.txt`, con su base y su método dentro:
+`ligero (local)` no sensible **`ligero` → `estandar`** (el fail-open, cerrado); `ligero` limpio
+**sigue `ligero`** (la exención no se aprieta de más); `critico (por suelo)` no sensible **sigue
+`critico`** (la corrección de v1.33.1, conservada); y el suelo de seguridad sigue mandando en todas.
+
+**Lo que sigue abierto y no lo abrió esto: `SEC-087` (`contrato`).** Un paréntesis que **no cierra al
+final del valor** —`critico (por suelo`, `critico (`, `critico (x) y`— no es un matiz sino un valor
+desconocido, cae en la derivación heredada, y ahí un `critico` de un REQ **no** sensible se juzga
+`estandar` y **deja de exigir la firma de seguridad, en silencio**. Idéntico en 1.33.0, 1.33.1 y
+1.33.2. **No se cierra aquí**: es otra reparación con su propio REQ. Lo que sí se hizo fue no dejar
+ninguna sede prometiendo lo contrario.
+
+**Las sedes del contrato de esta rama: cinco**, enumeradas por propiedad —todo sitio que *enuncia* la
+regla del rigor, no que *narre* el defecto— y atravesando saltos de línea. Son `hooks/lib.sh`,
+`requirements/README.md`, `templates/requirements-README.md.tpl`,
+`tests/escenarios/hooks/secciones/41-estabilizacion-firmas-y-rigor.sh` y
+`tests/escenarios/hooks/run.sh`. El enunciado **no se redactó de nuevo**: se copió el ya publicado en
+`v1.33.2:requirements/README.md`. **Cuatro candidatas descartadas con motivo**, no por olvido:
+`.arnes/plantillas-origen/requirements-README.md.tpl` es el **snapshot congelado del origen** de la
+migración y editarlo falsearía el diff de `arnes-upgrade` —`v1.33.2` también lo dejó intacto—;
+`AGENTS.md` y sus dos plantillas no transcriben esta regla (lo que dicen del rigor —«se puede subir,
+nunca bajar», «un matiz va entre paréntesis» sobre los **veredictos**— sigue siendo cierto); y
+`CHANGELOG.md`, `PENDING_APPROVAL.md`, `docs/qa/`, `docs/TRASPASO-2026-09-10.md` y
+`docs/arnes/d16-alcance-real/` **narran el defecto medido de la 1.33.1 publicada**, que no deja de ser
+verdad porque esta rama lo corrija.
+
+**El banco, corrido entero una vez y con la salida en disco desde el principio**
+(`docs/qa/1.34.0-porte-1.33.1-falsacion/banco-corrida-unica-guarda.txt`): **1082 PASS, 0 FAIL, 8 SKIP**,
+`rc=0`. La contabilidad de **esta** rama: sección **41** de 15 → **26** casos y `CASOS_ESPERADOS`
+1079 → **1090**, los dos literales a mano y por separado, que es el control. El caso 12.º no suma:
+`D16: ligero con matiz sigue ligero` declaraba `allow` **sobre el propio fail-open** —una prueba que
+fija la conducta defectuosa como esperada es exactamente lo que impide que el banco la vea— y se
+**corrigió en su sitio**. Seis de los once discriminan contra la 1.33.1 publicada y cinco fijan las
+filas que no se pueden mover. `PISO_AUTONOMO_SECCION` recalculado 20 → **64** (5 preámbulo + 0
+maquinaria + 59 del bloque indivisible mayor, que pasó a ser el de `QA-P48-01`), con la regla para
+re-derivar los tres términos escrita al lado. Los `CASOS_ESPERADOS_SECCION` de las secciones **39 y
+40 no se tocan**: la ausencia se resuelve en el camino de `ADR-009`, que esta guarda no atraviesa.
+
+**Fuera de alcance, y sin tocar:** `docs/estabilizacion/` y las sondas de `R-029`/`R-030` (otra
+entrega, worktrees sin mezclar), `docs/seguridad/`, `.claude-plugin/` y la versión del manifiesto.
+No se cerró ni reclasificó `SEC-087`, `SEC-088` ni `QA-1332-01`. El resto del trabajo de la rama
+—porte de 1.33.1, índice de hallazgos reconstruido, enmienda de política, `D16`/`D17` anotados—
+verificado intacto: el commit toca **cinco archivos de código y contrato más dos de evidencia**,
+por ruta explícita y sin `git add -A`.
+
 ## [Interno] — 2026-09-10 · Enmienda de política: autoalojamiento aligerado, por decisión expresa del propietario y con aplicación inmediata
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. **Condición 7 de la autorización del propietario del 2026-09-10.**
 

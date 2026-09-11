@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1079  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1090  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1419,6 +1419,19 @@ CASOS_ESPERADOS=1079  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # se mueve ningún caso, y el único de `CA-12` que ya existía —`40/4`, la
                       # tabla que mueve el veredicto del acto de firmar— conserva sitio, fixture
                       # y veredicto.
+                      # 1079 → 1090, en la 41 (15 → 26): QA-P48-01. Once casos que miden la
+                      # CONDUCTA DE LA PUERTA ante un `Rigor:` con evidencia parentética —no lo
+                      # que devuelve el lector—, porque el fail-open de v1.33.1 era una exención
+                      # de QA, y una exención sólo existe en la puerta. Seis discriminan (fallan
+                      # contra la 1.33.1 publicada) y cinco fijan las filas que NO se pueden
+                      # mover: `ligero` limpio conserva su exención, `estandar (x)` sigue
+                      # pidiendo QA, `critico (por suelo)` conserva la corrección de v1.33.1 y
+                      # el suelo de seguridad sigue mandando sobre el piso del matiz. El caso
+                      # 12.º no suma: era `D16: ligero con matiz sigue ligero`, que declaraba
+                      # `allow` sobre el propio fail-open, y se corrige en su sitio en vez de
+                      # añadirse. Los `CASOS_ESPERADOS_SECCION` de las secciones 39 y 40 NO se
+                      # tocan: la AUSENCIA del campo se resuelve en otro camino (`ADR-009`) que
+                      # esta guarda no atraviesa, así que ningún caso suyo cambia de veredicto.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
