@@ -1716,8 +1716,16 @@ arnes_campos_normaliza() {   # <qa> <seg> <sens> <hall> <rigor> -> ARNES_QA/SEG/
   # Los niveles simples ya quedaron normalizados arriba; sólo la evidencia
   # parentética necesita el veredicto común. Así el camino habitual no paga
   # una segunda desenvuelta por cada cabecera leída.
+  #
+  # Y se ANOTA que el nivel salió de desenvolver un paréntesis. No es
+  # contabilidad: es la diferencia entre leer y CONCEDER. Desenvolver
+  # `critico (por suelo)` corrige un fail-open; desenvolver `ligero (local)`
+  # abre otro más ancho, porque `ligero` es el unico nivel exento de
+  # `QA: aprobado`. El desenvoltorio no puede decidir eso solo -- necesita
+  # saber `arnes_rigor_efectivo` que el valor venia envuelto.
+  ARNES_RIGOR_MATIZ=0
   case "$ARNES_CAMPO" in
-    *'('*) arnes_veredicto "$ARNES_CAMPO"; ARNES_RIGOR="$ARNES_VEREDICTO" ;;
+    *'('*) arnes_veredicto "$ARNES_CAMPO"; ARNES_RIGOR="$ARNES_VEREDICTO"; ARNES_RIGOR_MATIZ=1 ;;
     *) ARNES_RIGOR="$ARNES_CAMPO" ;;
   esac
   arnes_sens_efectiva
@@ -1933,7 +1941,16 @@ arnes_estado_cabecera() {   # <texto> -> ARNES_ESTADO
 # El arnes trae el MECANISMO, no el MAPEO: que REQ de un proyecto es critico lo
 # decide ese proyecto en su `AGENTS.md`, no el plugin.
 arnes_rigor_efectivo() {
-  local declarado="$ARNES_RIGOR" nd ns
+  local declarado="$ARNES_RIGOR" nd ns nh heredado
+  # EL NIVEL HEREDADO: el que este REQ tendria si su `Rigor:` no se pudiera leer.
+  # Es el comportamiento anterior a que los niveles existieran, y se calcula UNA
+  # vez porque ahora tiene dos usos: es el valor por defecto (no hay nada
+  # declarado, o lo declarado no se entiende) y es el PISO del matiz (abajo).
+  case "$ARNES_SENS" in
+    si) heredado='critico' ;;
+    *)  heredado='estandar' ;;
+  esac
+
   # SUELO DE SEGURIDAD: `Sensible a seguridad: si` obliga a `critico` y eso no se
   # puede bajar. Un REQ que NO es sensible no tiene suelo.
   #
@@ -1944,25 +1961,50 @@ arnes_rigor_efectivo() {
   # declarado.
   if [ -z "$declarado" ]; then
     # Nada declarado -> se juzga EXACTAMENTE como antes de existir los niveles.
-    case "$ARNES_SENS" in
-      si) ARNES_RIGOR='critico' ;;
-      *)  ARNES_RIGOR='estandar' ;;
-    esac
+    ARNES_RIGOR="$heredado"
     return 0
   fi
 
   arnes_rigor_nivel "$declarado"; nd=$?
   if [ "$nd" -eq 0 ]; then
     # Valor no reconocido: se ignora y se cae al comportamiento de siempre.
-    case "$ARNES_SENS" in
-      si) ARNES_RIGOR='critico' ;;
-      *)  ARNES_RIGOR='estandar' ;;
-    esac
+    ARNES_RIGOR="$heredado"
     return 0
   fi
 
   # Declarado y valido. Sube libremente; bajar del suelo de seguridad, no.
   ARNES_RIGOR="$declarado"
+
+  # EL MATIZ SOLO PUEDE SUBIR O MANTENER EL RIGOR; NUNCA BAJARLO.
+  #
+  # Cuando el nivel salio de desenvolver un parentesis, el nivel efectivo es el
+  # MAS RESTRICTIVO entre lo desenvuelto y el nivel heredado -- que es, exacto,
+  # lo que ese mismo valor daba antes de que el desenvoltorio existiera.
+  #
+  # POR QUE, y esto se pago publicando. v1.33.1 enruto la forma con parentesis
+  # por el lector comun para TODOS los valores. En `critico (por suelo)` eso
+  # cerro un fail-open. En `ligero (local)` abrio otro MAS ANCHO: `ligero` es el
+  # unico nivel exento de `QA: aprobado` (AGENTS.md 6), asi que un REQ no
+  # sensible con `Rigor: ligero (<lo que sea>)` paso a cerrarse SIN QA y SIN
+  # veredicto de seguridad, donde v1.33.0 lo denegaba. La conducta anterior
+  # --"valor no reconocido: se cae al defecto de la sensibilidad"-- no era un
+  # descuido que el parche corrigiera: en `ligero` era PROTECTORA.
+  #
+  # La asimetria no es un caso especial pegado con cinta: es la misma doctrina
+  # que el proyecto ya tiene escrita en AGENTS.md 6 --"el rigor se puede subir,
+  # nunca bajar"-- y la regla de que una guarda solo puede ESTRECHAR. Un
+  # parentesis es evidencia que alguien anadio a mano; puede pedir mas ceremonia,
+  # no regalar una exencion.
+  #
+  # Consecuencia que hay que saber: no existe forma de declarar `ligero` CON
+  # matiz. Quien quiera la exencion escribe `Rigor: ligero` a secas y pone la
+  # evidencia en el cuerpo del REQ. Es deliberado -- la exencion de QA es
+  # justo lo que no debe poder concederse de pasada.
+  if [ "${ARNES_RIGOR_MATIZ:-0}" = "1" ]; then
+    arnes_rigor_nivel "$heredado"; nh=$?
+    if [ "$nd" -lt "$nh" ]; then ARNES_RIGOR="$heredado"; nd=$nh; fi
+  fi
+
   case "$ARNES_SENS" in
     si) arnes_rigor_nivel critico; ns=$?
         [ "$nd" -lt "$ns" ] && ARNES_RIGOR='critico' ;;

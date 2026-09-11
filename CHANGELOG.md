@@ -2,6 +2,42 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-10 · `QA-P48-01`: v1.33.1 cerró un fail-open y abrió otro más ancho
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador.
+
+Corrige la normalización del rigor con evidencia parentética en `hooks/lib.sh`. Autorización
+expresa del propietario del 2026-09-10, sobre `hotfix/1.33.2-rigor` (base `a630dc6` = `v1.33.1`).
+
+**El defecto.** v1.33.1 enrutó la forma con paréntesis por el lector común **para todos los
+valores**. En `critico` eso corrigió D16; en `ligero` regaló una exención. `ligero` es el
+**único** nivel exento de `QA: aprobado` (`AGENTS.md` §6), así que un REQ **no sensible** con
+`Rigor: ligero (<cualquier matiz>)` pasó a **cerrarse sin QA y sin veredicto de seguridad**,
+donde v1.33.0 lo denegaba. La conducta anterior —«valor no reconocido: se cae al defecto de la
+sensibilidad»— no era un descuido: en `ligero` era **protectora**.
+
+**La propiedad.** El matiz parentético puede **subir o mantener** el rigor efectivo; nunca
+bajarlo. Se toma el más restrictivo entre el nivel desenvuelto y el nivel heredado de la
+sensibilidad. Es la doctrina que ya estaba escrita —«el rigor se puede subir, nunca bajar»— y la
+regla de que una guarda sólo puede estrechar. `critico (por suelo)` conserva la corrección de
+v1.33.1 y el suelo de seguridad sigue mandando.
+
+**Ningún caso antes denegado pasa a permitido, y por construcción:** el rigor efectivo nuevo es
+≥ el de v1.33.0 para toda entrada (barrido de 144 combinaciones, 0 regresiones) y las exigencias
+de la puerta crecen de forma monótona con el nivel.
+
+**Pruebas.** Sección 40: 17 → 28 casos que miden la **conducta de la puerta**, no el lector.
+Seis discriminan —fallan contra la 1.33.1 publicada en la caché del plugin y pasan aquí— y cinco
+fijan las filas que no se pueden mover. El caso `D16: ligero con matiz sigue ligero` **declaraba
+`allow` sobre el propio fail-open** y se corrige en su sitio: una prueba que fija la conducta
+defectuosa como esperada es lo que impide que el banco la vea. `CASOS_ESPERADOS` 901 → 912.
+Banco completo **908 PASS · 0 FAIL · 4 SKIP**, cuadre exacto; autoprueba 106 PASS · 0 FAIL.
+
+**Queda pendiente de decisión del propietario, sin escribir:** `requirements/README.md:107-110`
+y `templates/requirements-README.md.tpl:107-110` prometen que «un matiz parentético final no
+cambia un nivel válido», que con este parche es **falso** para `ligero (…)`. Es contrato heredado
+por los proyectos instalados y no se toca por iniciativa del desarrollador. Detalle, evidencia y
+límites en `docs/estabilizacion/contrato-parche.md`.
+
 ## [Interno] — 2026-09-10 · Ajuste de coste del lector de Rigor
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Codex.
 
