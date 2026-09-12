@@ -50,6 +50,63 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-12 · Nace `CA-14`: lo que la superficie heredada debe decir, enunciado por propiedad
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
+
+**Vuelta 4 del bucle `analista↔QA`**, autorizada expresamente por encima del presupuesto de dos.
+Numerada y no renombrada. `dev↔QA` sigue en 7 y no se tocó.
+
+### `CA-14` — un solo criterio para `QA-024-38` y `QA-024-40`
+
+Su `Dado` **no es una lista de sedes**: es el **conjunto** de *sedes de superficie heredada que afirman
+una consecuencia sobre el cierre a partir de un campo de veredicto*, **derivado barriendo** los tres
+documentos. Las tres sedes conocidas van como **ejemplos no exhaustivos y fechados**.
+
+Contrata siete cosas, y dos merecen citarse: **(ii)** una promesa de «no podrá cerrarse» **sin el nivel
+dentro de la oración INCUMPLE aunque la conducta pase** —eso es exactamente `QA-024-38`—, verificado
+**emparejando el texto con el hook real en la misma corrida**, no casando cadenas; y **(vi)** que las
+**gemelas** se coteja**n en la misma corrida**, porque **divergir incumple aunque las dos mitades sean
+verdaderas por separado**.
+
+Con **fail-before en las dos direcciones** y **negativo vivo**: reponer la promesa, divergir una gemela
+o retirar el mandato de migración **falla nombrando sede y frase**. Las cifras de QA entran como
+**evidencia fechada, nunca como umbral**.
+
+### `REQ-003` — la limitación, donde la lee quien lee el estado
+
+El propietario corrigió a la coordinadora: **«No considero válido conservar "completado" únicamente
+porque la cola dificultaría volver a cerrarlo.»** Tiene razón — un estado es una **afirmación sobre la
+realidad**, no una etiqueta administrativa.
+
+La limitación queda **en la propia línea `Estado:`**: que `CA-13` promete `DENY` sin condición y **su
+escenario exacto da `ALLOW` en `ligero`**, que el REQ sigue `completado` y **esa parte de su acreditación
+no se sostiene**, y que **el estado no se cambia a propósito** porque la reapertura **se presenta**. Con
+el texto de `CA-13` **intacto**: no se reescribe ni se relaja para que encaje.
+
+### El forzador que no depende de un trámite ajeno
+
+`QA-024-39`: **la decisión de reapertura se presenta antes de declarar lista 1.34.0** —un **acto del
+propio trabajo**, que no se puede cumplir esperando— **más `2026-09-30` como respaldo**, para que el
+vencimiento tampoco dependa de un acto que puede no llegar. **No se acepta como residual.**
+
+**Y una decisión que el analista razonó y no escribió:** `QA-024-39` **no** debe ir hoy al campo
+`Hallazgos abiertos:` de `REQ-003` — es `contrato`, y escribirlo ahí sería **la reapertura aplicada en
+vez de presentada**, por una vía que el propietario no autorizó.
+
+### Dos sedes de más, y la lista de la coordinadora volvió a no ser exhaustiva
+
+Se señaló **una**; el barrido encontró **dos más**: un párrafo que repetía **las dos mitades exactas** de
+`QA-024-40`, y la **regla (4)** de las seis, con un presente falso desde el 2026-09-11. Las dos
+**tachadas sin borrar**. Van **cinco de cinco** barridos de este ciclo encontrando más de lo señalado.
+
+### Para la cola: el mapa de `Archivos:` está desfasado
+
+**Verificado por la coordinadora:** `Archivos:` de `REQ-024` declara la sección `42` y **omite `43`, `44`
+y `45`**, que son de esta misma entrega. Ese campo es **la entrada de `tools/arnes-paralelo.sh`**, así
+que un `disjunto` calculado hoy mediría **un mapa incompleto**. No afectó a los despachos en paralelo de
+esta sesión —la herramienta siguió diciendo «colisiona» por `run.sh`—, **pero por suerte y no por el
+mapa**. Es la familia de `SEC-020`.
+
 ## [Interno] — 2026-09-12 · Tres propuestas de lectura, y la afirmación vencida de `CA-05` sincronizada
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
 
