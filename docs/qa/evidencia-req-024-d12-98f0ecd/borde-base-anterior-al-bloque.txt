@@ -1,0 +1,9 @@
+# Clasificacion de los tres bloques con DOS bases distintas (borde de la migracion)
+## Escenario A — base v1.33.0 (la que el banco usa por defecto)
+  fila del cierre      proy(o/d)=1/0 base(o)=1  -> INTACTO                                                    sustituir por el bloque destino
+  fila del orden       proy(o/d)=1/0 base(o)=1  -> INTACTO                                                    sustituir por el bloque destino
+  parrafo del aviso    proy(o/d)=1/0 base(o)=1  -> INTACTO                                                    sustituir por el bloque destino
+## Escenario B — base v1.30.3 (el ORIGEN declarado de ESTE repo, .arnes/migracion.md)
+  fila del cierre      proy(o/d)=1/0 base(o)=1  -> INTACTO                                                    sustituir por el bloque destino
+  fila del orden       proy(o/d)=1/0 base(o)=1  -> INTACTO                                                    sustituir por el bloque destino
+  parrafo del aviso    proy(o/d)=1/0 base(o)=0  -> MODIFICADO (el bloque NO EXISTE en la base: 'difiere' se cumple por vacuidad) CONFLICTO: conservar y preguntar

@@ -50,6 +50,61 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-11 · El candidato completo destapa un defecto que no existe en ningún commit por separado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (**vuelta 7** `dev↔QA`), coordinadora.
+
+### Lo que valida la decisión de agrupar
+
+**`QA-024-40`** (`contrato`, **bloquea**): `REQ-024 CA-05` afirma —en un párrafo titulado literalmente
+*«escritas para que nadie las suponga hechas»*— que `AGENTS.md:351` **«sigue prometiendo sin
+condición»** y que la skill **«no dice** que haya que **sustituir** esa fila ni su párrafo».
+
+**Las dos eran verdad en `378b8a0` y las dos son falsas en `98f0ecd`** —el commit siguiente, del mismo
+delta—, y el párrafo sobrevivió sin barrer. Verificado por la coordinadora: **0** ocurrencias de la
+promesa vieja y **11** de «sustitu» en la skill.
+
+**No existe en ningún commit por separado: sólo aparece juzgando el candidato completo**, que es
+exactamente lo que el propietario pidió al agrupar. El banco lo confirma desde el otro lado: `45/18`
+**pasa** sobre «la guía manda sustituir los tres textos».
+
+### Lo que pasa
+
+**42 celdas con el hook real.** Las 6 que QA declaró falsas al abrir `QA-024-38` **ahora son conformes**.
+Por **valor** manda el rigor y los umbrales no coinciden; por **ausencia** el eje **cambia con la clave**,
+tal como afirma `:351`. Firmar con `QA:` sin declararse: **DENY en las 18 celdas**. Las dos sedes
+idénticas byte a byte.
+
+**El hueco que buscó y decidió no abrir:** retirar la línea `QA:` de un REQ que ya lleva
+`Seguridad: aprobado` da ALLOW y mudo, y **ninguna de las tres sedes lo describe** — pero su **resultado**
+sí lo describe `:351`, no rompe la invariante (QA **sí** había validado al firmarse) y con la llave
+encendida el cierre deniega. **Queda medido y escrito, no abierto.**
+
+**La migración:** verificó el fail-before **en vez de asumirlo** — **13 `FAIL` por defecto** frente a
+`SKIP` por entorno con motivo distinto: **la separación es real**.
+
+### `QA-024-38` no cierra, y el motivo es de estándar
+
+**La conducta pasa; falta el contrato.** `CA-12 (ii)` está acotado a la fila del **orden**, y **ningún
+criterio cubre la fila del CIERRE ni el párrafo del aviso** (grep = 0). Es **el mismo estándar** con el
+que QA abrió `QA-024-39`, aplicado a sí misma.
+
+**`SEC-084`: tres de sus cuatro partes listas** para el auditor —disparador (24 celdas, todas DENY donde
+`v1.33.0` daba ALLOW), el texto de `:353`, y el caso `42/A`—. **La parte (4)**
+(`veredictos.caducan_con_codigo`) **no está entregada**.
+
+### `QA-024-41` (`instrumento`, no bloquea) — el banco no lo ve, y el motivo importa
+
+La migración clasifica `MODIFICADO` **por vacuidad** cuando la base de origen **es anterior al bloque**.
+Con base `v1.33.0` los tres dan `INTACTO`; con base **`v1.30.3` —el origen declarado de este
+repositorio—** el párrafo del aviso da `MODIFICADO → CONFLICTO`, y eso **impide subir `arnes_version`**.
+**El banco no lo ve porque sus 27 casos usan una base que sí contiene los tres bloques.**
+
+### Banco
+
+**1243 PASS · 0 FAIL · 6 SKIP**, cuadre exacto **1249**. Frente a lo declarado (1244·0·5) mueve **un caso
+de PASS a SKIP**, de la familia del reloj. **Lo conserva y no lo desmiente**; ningún `SKIP` toca la
+conducta de este delta.
+
 ## [Interno] — 2026-09-11 · `D12` completado: la corrección llega también a los proyectos que ya están instalados
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador, coordinadora.
 

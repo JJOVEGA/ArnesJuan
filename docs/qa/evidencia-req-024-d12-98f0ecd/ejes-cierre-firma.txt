@@ -1,0 +1,26 @@
+=== EJE 1 · POR VALOR (campo declarado, valor fuera de vocabulario) ===
+llave   rigor     QAfuera SEGfuera
+false   ligero    ALLOW   ALLOW  
+false   estandar  DENY    ALLOW  
+false   critico   DENY    DENY   
+true    ligero    ALLOW   ALLOW  
+true    estandar  DENY    ALLOW  
+true    critico   DENY    DENY   
+
+=== EJE 2 · POR AUSENCIA (el campo no llega a declararse) ===
+llave   rigor     QAausente  SEGausente QAminuscula 
+false   ligero    ALLOW      ALLOW      ALLOW       
+false   estandar  ALLOW      ALLOW      ALLOW       
+false   critico   ALLOW      DENY       ALLOW       
+true    ligero    DENY       ALLOW      DENY        
+true    estandar  DENY       ALLOW      DENY        
+true    critico   DENY       DENY       DENY        
+
+=== EJE 3 · FIRMAR Seguridad: aprobado con QA sin declararse (fila :353) ===
+llave   rigor     QAausente    QAminuscula  QApendiente 
+false   ligero    DENY         DENY         DENY        
+false   estandar  DENY         DENY         DENY        
+false   critico   DENY         DENY         DENY        
+true    ligero    DENY         DENY         DENY        
+true    estandar  DENY         DENY         DENY        
+true    critico   DENY         DENY         DENY        

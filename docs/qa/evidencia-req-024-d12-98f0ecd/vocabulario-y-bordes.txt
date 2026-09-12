@@ -1,0 +1,25 @@
+=== A · TODO el vocabulario de Seguridad: en rigor critico (cierre) ===
+  Seguridad: aprobado       -> ALLOW
+  Seguridad: pendiente      -> DENY
+  Seguridad: con-hallazgos  -> DENY
+  Seguridad: n/a            -> DENY
+  Seguridad: preventiva     -> DENY
+  Seguridad: vetado         -> DENY
+=== B · TODO el vocabulario de QA: en rigor estandar (cierre) ===
+  QA: aprobado       -> ALLOW
+  QA: pendiente      -> DENY
+  QA: con-hallazgos  -> DENY
+=== C · BORDE: la edicion que BORRA la linea QA: dejando Seguridad: aprobado ===
+  llave=false borrar la linea QA: -> ALLOW
+  llave=true  borrar la linea QA: -> ALLOW
+=== D · BORDE: cierre con QA ausente + Seguridad ausente, llave apagada ===
+  rigor=ligero    -> ALLOW
+  rigor=estandar  -> ALLOW
+  rigor=critico   -> DENY
+=== E · el DENY por ausencia de QA (llave ON) NOMBRA el campo? ===
+ARNES: no se puede completar 'requirements/N.md': su cabecera NO declara el campo 'QA:', y este proyecto exige que los campos de cabecera esten declarados ('campos.ausencia_exige' en .arnes/config.json). Un campo que falta no es un campo aprobado: la ausencia se resolvia del lado que ABRE y por esa 
+=== F · el DENY al FIRMAR con QA ausente: que dice? ===
+ARNES: 'requirements/M.md' lleva 'Seguridad: aprobado' y su cabecera NO declara ningun 'QA:'. Un campo que falta no es un campo aprobado: si no hay linea de QA, QA no ha firmado. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGENTS.md 6): la auditoria no firma sobre un arbol que QA no ha validado, porque no mira las quality gates. Salida: escribe la linea 'QA: aprobado' con su evide
+=== G · FIRMAR preventiva con QA ausente (la salida declarada) ===
+  llave=false Seguridad: preventiva -> ALLOW
+  llave=true  Seguridad: preventiva -> ALLOW

@@ -1,0 +1,18 @@
+=== llave ausencia_exige=false · REQ critico con QA: pendiente ===
+forma escrita de la clave          FIRMAR         CIERRE despues
+Seguridad                          DENY           DENY          
+_Seguridad_                        DENY           DENY          
+**Seguridad**                      DENY           DENY          
+__Seguridad__                      DENY           DENY          
+*Seguridad*                        DENY           DENY          
+`Seguridad`                        DENY           DENY          
+
+=== llave ausencia_exige=true · REQ critico con QA: pendiente ===
+forma escrita de la clave          FIRMAR         CIERRE despues
+Seguridad                          DENY           DENY          
+_Seguridad_                        DENY           DENY          
+**Seguridad**                      DENY           DENY          
+__Seguridad__                      DENY           DENY          
+*Seguridad*                        DENY           DENY          
+`Seguridad`                        DENY           DENY          
+

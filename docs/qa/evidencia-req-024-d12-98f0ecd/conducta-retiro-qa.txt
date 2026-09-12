@@ -1,0 +1,6 @@
+  llave=false rigor=ligero    retirar QA: -> ALLOW(mudo)   y luego CERRAR -> ALLOW(mudo)
+  llave=false rigor=estandar  retirar QA: -> ALLOW(mudo)   y luego CERRAR -> ALLOW(mudo)
+  llave=false rigor=critico   retirar QA: -> ALLOW(mudo)   y luego CERRAR -> ALLOW(mudo)
+  llave=true  rigor=ligero    retirar QA: -> ALLOW(mudo)   y luego CERRAR -> DENY
+  llave=true  rigor=estandar  retirar QA: -> ALLOW(mudo)   y luego CERRAR -> DENY
+  llave=true  rigor=critico   retirar QA: -> ALLOW(mudo)   y luego CERRAR -> DENY
