@@ -2,6 +2,70 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-12 · `QA-024-41`: el write-back completa `CA-14`, y el mapa de archivos de REQ-024 declaraba menos de lo que el REQ escribe
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos.
+
+**Vuelta 5 del bucle `analista↔QA`**, autorizada expresamente por el propietario el 2026-09-12. Se
+**numera y no se renombra**; el bucle `dev↔QA` sigue en **9** y es otra cuenta. Único archivo de
+requerimientos tocado: `requirements/REQ-024.md`. **Ningún hallazgo se cierra ni se reclasifica** —los
+cierra el `qa-tester` al verificar—, y `Estado:` (`bloqueado`), `QA:`, `Seguridad:` y `Hallazgos
+abiertos:` quedan **intactos**.
+
+**No hace falta un criterio nuevo, y el motivo es de alcance y no de economía.** Por instrucción literal
+del propietario —«*Completa los criterios existentes cuando corresponda, sin crear otro por defecto*»—,
+el write-back entra como punto **(viii) de `CA-14`**, que pasa de siete puntos a ocho; **el número de
+criterios sigue siendo 14**. `CA-14 (vii)` ya contrataba que la guía **mandara sustituir** las sedes
+heredadas en el `AGENTS.md` congelado de cada proyecto; lo que `QA-024-41` midió es que ese mandato **no
+aterrizaba**. Es el mismo `Entonces`, la misma sede y la misma obligación: partirla en dos criterios
+habría producido la **segunda transcripción** que este REQ persigue. `CA-06` no era casa —contrata **qué
+dice** la nota de migración— y `CA-12 (ii)` tampoco: su propio `Dado` lo acota a **una** sede.
+
+**La causa contratada es la que se midió, y no era «faltaba un estado».** La tabla general de
+`skills/arnes-upgrade/SKILL.md` dice `ELIMINADO | Existía en la base **y** no está en el proyecto`; la
+tabla por bloques **perdió la primera mitad al transcribirse** y quedó como `0/0 → ELIMINADO`
+incondicional. El criterio enuncia la **propiedad** —una tabla que especializa otra de la misma guía
+conserva **todas** sus condiciones, o declara cuál omite y por qué— en vez de la celda, porque es la
+familia del defecto y no su instancia.
+
+Con ella entran, todas medidas por el `desarrollador` en la **vuelta 8** del bucle `dev↔QA` y **citadas,
+no re-medidas** aquí: la **pregunta previa** contada sobre la base (`1` / `≥ 2` → `UNKNOWN` / `0` → el
+bloque es posterior, y entonces `0/0` es `NUEVO` y `1/0` es `MODIFICADO`), declarada **partición
+exhaustiva de un conteo** y no umbral; el **ancla de inserción**, que no existía —`NUEVO` no sustituye un
+ancla ausente: hay que decir **dónde** va—; los dos límites de `NUEVO`, con el **saldo de líneas
+contratado como igualdad a propósito** y el motivo escrito (no es criterio de coste: el saldo es el
+discriminante, **menos** significa que sustituyó y **más** que duplicó); y que `UNKNOWN` y `CONFLICTO`
+son **igual de terminales**. Lo medido con base `v1.30.3` —el origen declarado de este repositorio— es
+`INTACTO / INTACTO / NUEVO`, los tres `APLICADO`, titular `COMPLETA` y `arnes_version` **sube**; **no**
+son los tres `NUEVO`, porque las dos filas de tabla son byte a byte idénticas entre `v1.30.3` y
+`v1.33.0`, y el criterio escribe esa distinción para que nadie la confunda.
+
+**Y una limitación que el propietario pidió reflejar, escrita dentro del criterio: las pruebas del
+CLASIFICADOR no son una EJECUCIÓN del procedimiento real de actualización.** La guía es prosa; los casos
+ejercen una **reimplementación** de su tabla. Su verde acredita que **la tabla que el ejecutor aplica
+decide bien**, no que una corrida real de `arnes-upgrade` migre. De ahí que el cotejo de las **dos
+transcripciones** sea parte del punto, y que la limitación **no se retire añadiendo más casos**:
+retirarla exige ejecutar el procedimiento, que queda **nombrado fuera de alcance** con dueño, ventana
+(1.35.0), clase `instrumento` —el fail-closed se conserva— y forzador que **no depende de ninguna cola**.
+
+**El mapa de archivos declaraba menos de lo que el REQ escribe, y eso no es cosmética.** `Archivos:` es
+la entrada de `tools/arnes-paralelo.sh`, así que un `disjunto` mide **el mapa que declare**. Entran las
+secciones de banco `43`, `44` y las **tres** partes de la `45`, `requirements/REQ-003.md`,
+`docs/PENDIENTES.md` y los dos artefactos de evidencia de QA que el glob de versión no alcanzaba. La
+familia `40-ausencia-que-abre-*` pasa de **tres de siete enumeradas** a **glob**: una lista de archivos
+de una familia que crece envejece hacia el lado que abre, igual que en un criterio. Quedan fuera
+`docs/PLAN.md` y `docs/gobernanza/autoalojamiento.md` por la propiedad de artefacto de gobierno, y
+`.arnes/plantillas-origen/` por el motivo contrario —`CA-14 (viii)` la exige **intacta**, luego no es
+conjunto de escritura de nadie—. Las rutas van **sin decoración de Markdown** (`SEC-020`). Y las cifras
+de colisión de la sección de coordinación quedan declaradas **fechadas al 2026-09-09 y por re-derivar**:
+esta comisión no ejecuta, así que no inventa ninguna cifra nueva.
+
+**Dos cosas que se señalan y no se cuelan.** (1) Automatizar el cotejo de la tabla general contra la
+especializada **no se contrata**: hoy lo hicieron personas, y convertirlo en puerta es decisión de
+alcance con su punto `(ix)` si el propietario la quiere. (2) La sección `45/3` del banco cita
+`CA-12 (ii)` como su contrato, y esa cita es **incorrecta por el alcance que el propio `CA-12 (ii)`
+declara**; la casa correcta es `CA-14 (viii)`. Queda dicho aquí y en el REQ, y **no** se edita `tests/`
+desde esta comisión.
+
 ## [GitHub] — 2026-09-11 · `SEC-084`/`QA-024-19`: el disparador del AVISO era la sede que `v1.33.1` no tocó
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador.
 
