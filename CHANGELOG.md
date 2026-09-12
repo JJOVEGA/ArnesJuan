@@ -50,6 +50,39 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-12 · Tres propuestas de lectura, y la afirmación vencida de `CA-05` sincronizada
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+Lectura y diagnóstico autorizados, **sin comisiones y sin implementar nada**:
+`docs/arnes/propuestas-2026-09-12/00-tres-propuestas.md`.
+
+**`SEC-072`** — cuatro opciones. La recomendación es **medir la ventana antes de elegir reparación**,
+porque hoy se elegiría a ciegas: **su duración está sin medir**. La candidata es la publicación atómica,
+y no por intuición: **`REQ-015` cerró exactamente esta forma de pérdida** en el hook de parada con
+temporal propio del proceso y `mv` encima, tras medir que **1 de 25 vueltas perdía texto humano**.
+
+**`REQ-003`** — **cambia un solo criterio, `CA-13`**. Los otros **seis** del Bloque B contratan el
+**aviso** y **no caducan**; el `QA: aprobado` del 2026-09-06 incluye prueba por mutación y **sigue
+acreditando esa parte**; **el código no se toca** —`CA-13` describe mal una conducta que es correcta—.
+**El impedimento no es el trabajo:** `REQ-003` **no puede volver a `completado` mientras la cola tenga
+entradas** (hoy 14), así que reabrirlo hoy lo deja `en-revisión` **indefinidamente**. Recomendación: **no
+reabrirlo ahora**; dejar `QA-024-39` abierto **con dueño y forzador fechado**.
+
+**`QA-024-41`** — la corrección mínima **ya existe en la skill**: el estado **`NUEVO`** (`:47`, `:54`) y
+la clasificación **por conteo de anclas** que §14 ya usa (`:880`), con `0 → NUEVO`, `1 → ya está`,
+`> 1 → UNKNOWN`. Preserva personalizaciones porque **añade y no sustituye**, y **no permite una
+actualización incompleta** porque `UNKNOWN` es tan terminal como `CONFLICTO`. **El caso es el nuestro:**
+`.arnes/plantillas-origen/` congela **`v1.30.3`**, y con esa base el párrafo da `MODIFICADO → CONFLICTO`.
+**El banco no lo vio porque sus 27 casos usan una base que sí contiene los bloques**, y por eso debe
+ganar un caso con base anterior.
+
+### La afirmación vencida de `CA-05`, sincronizada por la coordinadora
+
+Las dos observaciones de `QA-024-40` quedan **tachadas y no borradas** —fueron ciertas sobre `378b8a0`—
+con la corrección delante y la medición dentro (**0** ocurrencias de la promesa vieja, el caso `44/D`
+que falla si reaparece, y `45/18` sobre la guía). **`QA-024-40` NO se cierra con esto**: lo que falta es
+el **criterio** que cubra la fila del cierre y el párrafo, y ése es acto del analista.
+
 ## [Interno] — 2026-09-11 · El candidato completo destapa un defecto que no existe en ningún commit por separado
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (**vuelta 7** `dev↔QA`), coordinadora.
 
