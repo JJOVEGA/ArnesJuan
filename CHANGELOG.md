@@ -50,6 +50,56 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-12 · Las dos precisiones del contrato de coste, y `REQ-008` queda en 1.35.0
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
+
+Precisiones decididas por el propietario el 2026-09-12. **Sin criterios nuevos**: las dos cupieron en
+los existentes.
+
+### La suscripción: el «0» pasa de afirmación a afirmación condicionada
+
+> *«Una suscripción sólo tiene gasto adicional cero cuando **no hay cargos adicionales aplicables**.»*
+
+Enunciado **por propiedad y sin enumerar tipos de cargo**: el `0` se declara **sólo cuando consta, como
+dato de entrada, que en el periodo y el ámbito de facturación que el informe cubre no hay cargos
+adicionales aplicables**; si no consta —o consta que sí los hay— **el informe no lo afirma**, publica
+`sin datos` con el motivo y **nombra el dato que falta**. La pertenencia la decide la propiedad —*es
+cargo adicional aplicable todo concepto facturado de ese periodo y ámbito que el importe de suscripción
+no cubra*— y la lista vive **donde el proyecto la declara**, nunca en el contrato.
+
+Con dos consecuencias que la precisión arrastraba: el **gasto pagado** deja de ser «sólo el importe de
+suscripción», y **un cargo declarado sin importe** deja el gasto pagado rotulado `incompleto`.
+
+### Los datos que faltan: la redacción lo cerraba a medias
+
+> *«La falta de datos permite mostrar importes parciales claramente identificados, pero **impide
+> presentarlos como coste completo o ahorro total acreditado**.»*
+
+`CA-90` **ya lo admitía** y se hizo explícita. **`CA-96` lo cerraba** —decía «el bloque **no se
+publica**»— y se abrió con su condición: no se publica **como caso**, pero **los importes que sí existen
+se publican identificados como parciales**, con cero rótulos de completo o acreditado y **cero cifras
+derivadas del sumando ausente**. La prohibición se enuncia **sobre el rótulo**, no sobre la publicación.
+
+### Ventana
+
+`Versión destino:` **1.34.0 → 1.35.0**, con el rastro **dentro del propio campo** (1.34.0 desde el
+2026-09-07 · 1.33.0 de origen) y la decisión citada textual. La § «Discrepancia de planificación» pasa a
+**«Ventana: decidida el 2026-09-12»**, conservando como histórico lo que decía cada sede.
+
+### Seis sedes de más, y dos merecen mención
+
+**La premisa** de la que se deducía el `0` —Decisión 8— estaba corregida sólo donde se **concluía**, no
+donde se **enuncia**. Y **`CA-98`**: su par discriminante decía **lo contrario** de la regla nueva, y le
+**faltaba el control** — sin una variante con la comprobación recibida, el criterio **se satisfacía
+callando siempre**. Es la anti-vacuidad, otra vez, y en un criterio escrito hoy.
+
+### ADR: sigue sin hacer falta, ahora con la ventana dentro del razonamiento
+
+Ninguna de las tres decisiones toca alcance, decisión base ni significado (§9): una **estrecha** una
+promesa, otra **abre** con su condición una publicación ya prevista, y la tercera es **calendario, no
+contenido**. Precedente del proyecto: **`REQ-019`**, aplazado a 1.35.0 por el propietario, tampoco abrió
+ADR.
+
 ## [Interno] — 2026-09-12 · `REQ-008` pasa a 1.35.0, con su contrato ya escrito
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
 
