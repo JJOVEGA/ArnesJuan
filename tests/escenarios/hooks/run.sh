@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1266  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1286  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1540,6 +1540,29 @@ CASOS_ESPERADOS=1266  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # nombre (`45/2`, `45/3`) y su veredicto, así que el saldo real son
                       # 17 casos NUEVOS y ninguno retirado ni alterado. Ningún otro
                       # `CASOS_ESPERADOS_SECCION` se toca.
+                      #
+                      # 1266 → 1286: las TRES carencias de cobertura de `REQ-024 CA-14`, que
+                      # nació después de que se escribieran las secciones 44 y 45 y contrata
+                      # cosas que ninguna prueba hacía EN CADA CORRIDA. Entra la sección `46`
+                      # con 17: el EMPAREJAMIENTO que pide `CA-14 (ii)`–`(iii)` —lo que la sede
+                      # AFIRMA contra lo que el HOOK REAL hace, en la misma vuelta, sobre un
+                      # conjunto de sedes DERIVADO barriendo y no escrito en ninguna lista—, con
+                      # sus DENOMINADORES publicados (sedes, afirmaciones por sede y celdas por
+                      # eje, con el suelo de 12 de `CA-14`), la promesa de cierre sin su condición
+                      # dentro, las gemelas del conjunto derivado y los dos discriminantes —el de
+                      # la derivación y el del sondeo—. El instrumento NO es nuevo: es el que el
+                      # `qa-tester` usó el 2026-09-11 sobre `98f0ecd`
+                      # (`docs/qa/evidencia-req-024-d12-98f0ecd/probe-d12.sh`), que era una
+                      # medición FECHADA y ahora se re-ejecuta en cada vuelta. Y suben la `44`
+                      # (55 → 57) y la `45/2` (13 → 14) con el NEGATIVO VIVO de `CA-14`, que va
+                      # por PROPIEDAD y no por lista: cada una retira, una a una, las obligaciones
+                      # de SU PROPIO registro —24 fragmentos en la 44, 11 en la guía— y exige el
+                      # rojo citando la frase, más la gemela divergida. El registro se lee del
+                      # texto de la sección, así que una obligación añadida mañana entra sola y
+                      # una retirada baja el denominador publicado. Ningún caso se retira ni
+                      # cambia de veredicto: los tres bloques de gemelas de la `44` pasan a un
+                      # juez en función para que el negativo pueda EJERCERLO, con el mismo
+                      # veredicto y la misma cuenta.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

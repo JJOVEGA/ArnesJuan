@@ -10,7 +10,7 @@
 # migración ese proyecto actualiza a 1.34.0 y conserva las promesas falsas. Aquí se mide la
 # CUARTA superficie: que la corrección LLEGUE a un proyecto ya instalado y que, cuando ese
 # proyecto personalizó la zona, NO se le pise y el resultado LO DIGA (`QA-024-38`, `SEC-084`,
-# `REQ-024 CA-12 (ii)`).
+# `REQ-024 CA-14 (vii)`–`(viii)`; la redacción de la fila del ORDEN sigue siendo de `CA-12 (ii)`).
 #
 # LAS DOS COMPROBACIONES QUE ESTA SECCIÓN FIJA, que son las que el propietario exige:
 #   (1) INSTALACIÓN NUEVA — un proyecto que instala hoy recibe la fila y el párrafo
@@ -75,7 +75,7 @@
 CASOS_ESPERADOS_SECCION=14
 PISO_AUTONOMO_SECCION=246  # 78 preámbulo con sus dos declaraciones y el titular (líneas 1-78) + 98 maquinaria propia, que el corredor no tiene: el materializador de línea base, el extractor de bloque, el contador, el clasificador con su pregunta previa, el sustituidor-insertador, el corredor de migración y los dos jueces (líneas 86-183) + 70 bloque indivisible mayor (las cinco tablas de anclas —la de INSERCIÓN entra con `QA-024-41`—, el portero y las cinco maquetas de proyecto, líneas 185-254: ningún caso de esta parte puede prescindir de ellos) · REQ-014 CA-18 · REGLA para re-derivar los tres términos sin preguntar: «preámbulo» son las líneas hasta el titular inclusive; un «bloque» es un grupo de líneas consecutivas sin blanca en medio, y el mayor que no es el preámbulo ni la maquinaria es el de las anclas y las maquetas; «maquinaria» es la que esta parte define porque el corredor no la tiene, no una copia de otra parte
 
-seccion_nueva "--- 45/1 · la correccion de §13 llega a los proyectos YA instalados (REQ-024 CA-12 (ii), QA-024-38) ---"
+seccion_nueva "--- 45/1 · la correccion de §13 llega a los proyectos YA instalados (REQ-024 CA-14 (vii)-(viii), QA-024-38) ---"
 
 REPO45="${SEC_DIR%/}/../../../.."
 RAIZ45="${ARNES_DOCS_RAIZ:-$REPO45}"

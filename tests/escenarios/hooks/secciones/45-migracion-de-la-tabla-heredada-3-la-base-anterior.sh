@@ -8,7 +8,7 @@
 # este defecto: es un hueco de COBERTURA, no de redacción. Aquí la base es ANTERIOR al bloque,
 # que es el caso de todo proyecto instalado antes de que el bloque naciera, y el de este mismo
 # repositorio: su `.arnes/plantillas-origen/` está congelado en `v1.30.3` y el párrafo del
-# aviso NO EXISTE antes de 1.31.0 (`QA-024-41`, `REQ-024 CA-12 (ii)`).
+# aviso NO EXISTE antes de 1.31.0 (`QA-024-41`, `REQ-024 CA-14 (viii)` —y no `CA-12 (ii)`, cuyo `Dado` está acotado a la fila del orden de las firmas: el algoritmo de clasificación de la migración no es suyo—).
 #
 # EL DEFECTO QUE ESTA PARTE CAZA, medido antes del arreglo con `ARNES_MIG45_BASE=v1.30.3`
 # sobre la parte 1: el párrafo del aviso salía `ELIMINADO → CONFLICTO: pendiente de resolver`,

@@ -126,6 +126,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 30 | Write-back de `QA-024-41` + reconciliación de `Archivos:` · `analista-requerimientos` (**vuelta 5** `analista↔QA`) | 2026-09-12 16:33:36 | 2026-09-12 16:45:52 | **12 min 19 s** | encaja como **`CA-14 (viii)`** sin criterio nuevo; `Archivos:` 18 → 23 con la familia `40-*` pasada a **glob**; **cinco** sedes de más | `0990d34` | **210 375** | ídem |
 
+| 31 | Las tres carencias de `CA-14` + trazabilidad · `desarrollador` (**vuelta 9** `dev↔QA`) | 2026-09-12 16:33:36 | 2026-09-12 17:09:49 | **36 min 14 s** | trazabilidad **sin duplicar un caso**; negativos que **recorren el registro real**; sección `46` con emparejamiento y denominadores; halla una **cuarta sede** y presenta la frontera | `0990d34` | **268 293** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la

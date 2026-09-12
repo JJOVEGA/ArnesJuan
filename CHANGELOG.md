@@ -2,6 +2,66 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-12 · Las tres carencias de `CA-14`, con negativos que recorren el registro real
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (**vuelta 9** `dev↔QA`), coordinadora.
+
+### La trazabilidad: **sin duplicar un solo caso**
+
+El propietario lo advirtió —*«ausencia de una referencia a `CA-14` no significa ausencia de
+cobertura»*— y tenía razón. Los ocho puntos de `CA-14` **ya estaban cubiertos** por casos de `44` y `45`
+que citaban `QA-024-38`, `CA-12 (ii)` y `SEC-084`. Se **reapuntó la cita conservando los
+identificadores**, para no invalidar las referencias de `docs/qa/` y del REQ.
+
+Y el barrido encontró **ocho sedes** que citaban `CA-12 (ii)` para algo que **no es suyo** —cuatro en la
+`45`, tres en `44/A2`, una en `44/B`—. Lo que **sí** es de `CA-12 (ii)` —los ocho casos de `44/A`, la
+fila del orden— queda intacto, con la frontera escrita en cada sede.
+
+### Los negativos: propiedad, no tres mutaciones
+
+`CA-14` pasó su «negativo vivo» de lista a **propiedad** en la vuelta 5. El desarrollador lo respetó y
+**no escribió tres mutaciones fijas**: escribió un negativo que **recorre el registro real de
+obligaciones leyéndolo del propio archivo de sección** — *«un negativo que no recorre el registro real
+envejece hacia el lado que abre»*.
+
+`44/E` retira **una a una las 24 obligaciones** de la 44 y exige rojo **citando la frase**; `45/24` hace
+lo mismo con las **11** de la guía. **Una obligación añadida mañana entra sola; una retirada baja el
+denominador publicado.** Para poder ejercerlo, los tres cotejos inline de `44/C` pasan a función: **un
+juez copiado tres veces no se puede ejercer**.
+
+### El emparejamiento y la anti-vacuidad
+
+Sección nueva **`46-emparejamiento-texto-y-hook.sh`** (17 casos): mide **24 celdas con el hook real** y
+las empareja contra lo que cada sede **afirma**, derivado del texto **por anclas, no comparando
+cadenas**. **Denominadores publicados en cada corrida**: 4 sedes, afirmaciones por sede `[3][1][2][1]`,
+**48 celdas** en el eje VALOR y **30** en el de AUSENCIA —suelo de `CA-14`: 12—.
+
+Y la anti-vacuidad en cuatro frentes: **aborta con `SKIP`, nunca `PASS`**, si algún denominador sale 0;
+comprueba que **la tabla del hook no es constante** —*un `guard-completado` muerto responde vacío y el
+emparejamiento pasaría por constancia*—; y que **la derivación no es un espejo del hook**.
+
+**Descubrimiento al portarlo:** el REQ de sondeo necesitaba la línea `Hallazgos abiertos:`, porque con la
+llave encendida **su ausencia también deniega** y contaminaba las celdas.
+
+### Banco
+
+`CASOS_ESPERADOS` 1266 → **1286**. Banco entero **1279 PASS · 0 FAIL · 7 SKIP**, cuadre exacto.
+**Fail-before en las dos direcciones y rojos, no abstenciones**: con el texto anterior, `46/7` falla
+**citando la sede y la frase sin condición**; con los hooks de `v1.30.3`, el texto promete y el hook hace
+otra cosa **en 6 de 9 celdas**. Y los negativos se validaron **inyectando defecto**: un juez que no cita
+la frase da rojo con 24 sin cita; uno que siempre pasa, rojo con 24 mudas.
+
+### La decisión que presenta en vez de resolver
+
+El barrido encuentra **cuatro** sedes, no tres: entra **«Anti-deriva — el techo honesto»**, que dice que
+la máquina **«puede impedir»** que un REQ se cierre. El desarrollador trazó la frontera **en el código y
+declarada**: `CA-14 (ii)` persigue las formas de **necesidad o imposibilidad**; una de **posibilidad** no
+promete que la consecuencia valga siempre. Con esa lectura la sede **pasa** y se cuenta en el
+denominador. **Pero una lectura estricta le exigiría declarar niveles, y eso es editar `AGENTS.md`** —
+gate humano. **No lo rebajó ni lo escondió**: queda para el analista y QA.
+
+**Limitación declarada:** su encargo lo acotaba a `tests/`, así que **no escribió artefacto en
+`docs/qa/`**; dejó los dos mandos para re-derivar las corridas de fail-before sin preguntar.
+
 ## [Interno] — 2026-09-12 · `QA-024-41`: el write-back completa `CA-14`, y el mapa de archivos de REQ-024 declaraba menos de lo que el REQ escribe
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos.
 
