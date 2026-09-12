@@ -469,7 +469,7 @@ de un proyecto sin abrir diez archivos.
 
 | Trabajo | Qué cierra |
 |---|---|
-| **REQ-008 — informe de proyecto** | Lo que pidió el propietario: resumen de cada REQ, NFR, hallazgo y decisión, con **porcentaje de avance**, **qué lo detiene**, decisiones humanas pendientes y recomendaciones; en HTML, siguiendo la guía de marca del proyecto si existe. Evolución de `arnes-panel`, con la cuenta hecha por `tools/arnes-avance.sh` y no por el modelo |
+| ~~**REQ-008 — informe de proyecto**~~ → **MOVIDO a 1.35.0 el 2026-09-12** | **Decisión del propietario, textual: «*Decido programar `REQ-008` para 1.35.0. Alinea su versión destino y el PLAN, conservando el historial del acuerdo*».** La fila **se tacha y no se borra**: estuvo en esta ventana desde su planificación y el rastro es lo que explica por qué su contrato se escribió aquí. **Lo que se mueve es el trabajo, no el acuerdo:** el bloque de coste del 2026-09-06 y sus precisiones del 2026-09-12 **siguen vigentes** y ya están escritos como criterios en el REQ (99 en total) — lo que falta es **la ventana para implementarlo**, que es exactamente lo que esta decisión le da. Contenido original: resumen de cada REQ, NFR, hallazgo y decisión, con **porcentaje de avance**, **qué lo detiene**, decisiones humanas pendientes y recomendaciones; en HTML, siguiendo la guía de marca del proyecto si existe. Evolución de `arnes-panel`, con la cuenta hecha por `tools/arnes-avance.sh` y no por el modelo |
 | **Índice de `requirements/` derivado** | Sus columnas se desfasaron **cuatro veces en dos días**. Pasa a bloque derivado entre marcadores, con el mismo lector que usan la puerta y el informe. Misma función, escrita una vez |
 | **Rotación que reconoce filas de tabla** | Hoy la rotación de la historia de un REQ **no rota nada** en este repositorio: 0 entradas reconocidas y 94 filas de tabla. Es su caso de uso principal y no funciona |
 | **`AGENTS.md` + `requirements/README.md` adelgazados — `REQ-019`** | **Sale de 1.33.0 el 2026-09-08**, cuando su estimación pasó de ~2h a **7–11h en 7 fases** — no cabe en una comisión. Es el impuesto de arranque real (**≈17-20 k tokens por subagente**, no ~9 k) y 1.34.0 es precisamente la ventana con más comisiones: adelgazarlo después es pagarlo entero primero |
@@ -526,6 +526,24 @@ con escepticismo. Reglas de diseño para el segundo, y son distintas:
 ## 1.35.0 — el banco en el que se puede creer
 
 **Qué entra:** el **runner de mutación** y el **cribado automático** de aserciones sobre los 847 casos.
+**Y desde el 2026-09-12, `REQ-008` — el informe de proyecto, con su contrato de coste.**
+
+> **`REQ-008` llega aquí con su contrato ya escrito, y ésa es la diferencia con moverlo sin más.**
+> Decisión del propietario del 2026-09-12: *«Decido programar `REQ-008` para 1.35.0.»* Venía de 1.34.0,
+> donde **nunca figuró entre los cuatro trabajos del alcance vigente** pese a declarar esa ventana —el
+> mismo caso que `REQ-020`—, y lo que lo detenía era **falta de ventana, no falta de contrato**.
+>
+> **Lo que trae hecho:** el acuerdo de coste que el propietario decidió el **2026-09-06** —siete puntos
+> más seis reglas del segundo lector— **convertido en 19 criterios verificables** (`CA-81`…`CA-99`), con
+> la contradicción de la revisión humana resuelta —**eran dos números llamados igual**: el `gasto de
+> modelo` la excluye, el `coste total del proyecto` la incluye— y las **dos precisiones del 2026-09-12**:
+> el marginal cero de una suscripción **sólo se afirma si no hay cargos adicionales aplicables**, y la
+> falta de datos **permite importes parciales identificados pero prohíbe el rótulo** de coste completo o
+> ahorro total acreditado.
+>
+> **Orden de entrega pedido por el propietario:** *«empezando por **registrar y mostrar consumo real**
+> antes de construir la comparación estimada con trabajo humano»*. La división en entregas útiles se
+> presenta **al terminar 1.34.0** — no antes, para no competir con su cierre.
 
 > **Ajuste del 2026-09-07, para que esta ventana y `REQ-020` no digan lo mismo.** La *puerta* que
 > pregunta si una prueba mide algo es **REQ-020**, y va en **1.34.0**. Lo que queda aquí es lo que ese

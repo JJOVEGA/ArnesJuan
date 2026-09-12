@@ -50,6 +50,28 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-12 · `REQ-008` pasa a 1.35.0, con su contrato ya escrito
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+Decisión del propietario (2026-09-12), textual: *«Decido programar `REQ-008` para 1.35.0. Alinea su
+versión destino y el PLAN, conservando el historial del acuerdo.»*
+
+**Alineadas las dos sedes de `docs/PLAN.md`:**
+
+- En **§1.34.0**, la fila queda **tachada y no borrada** — estuvo en esa ventana desde su planificación,
+  y el rastro es lo que explica por qué su contrato se escribió allí. Con la distinción dicha: **lo que
+  se mueve es el trabajo, no el acuerdo**; los 99 criterios siguen vigentes y lo que faltaba era
+  **ventana**.
+- En **§1.35.0** entra con lo que **trae hecho**: el acuerdo del 2026-09-06 convertido en 19 criterios,
+  la contradicción de la revisión humana resuelta —**eran dos números llamados igual**— y las dos
+  precisiones del 2026-09-12.
+
+Y el **orden de entrega que el propietario pidió**, escrito donde se planifica: *«empezando por
+**registrar y mostrar consumo real** antes de construir la comparación estimada con trabajo humano»*. La
+división en entregas útiles se presenta **al terminar 1.34.0**, para no competir con su cierre.
+
+`Versión destino:` del REQ lo alinea el analista en la misma rama; esta entrada cubre **sólo el PLAN**.
+
 ## [Interno] — 2026-09-12 · El contrato de coste de `REQ-008`: la contradicción eran dos números llamados igual
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
 
