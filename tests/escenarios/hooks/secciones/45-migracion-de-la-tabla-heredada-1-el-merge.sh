@@ -1,4 +1,4 @@
-# Sección 45 (1 de 2) del banco — 45-migracion-de-la-tabla-heredada-1-el-merge
+# Sección 45 (1 de 3) del banco — 45-migracion-de-la-tabla-heredada-1-el-merge
 # Se ejecuta con `source` desde el corredor (`../run.sh`), en su propio subshell y con los
 # ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de ninguna
 # otra sección (invariantes 3 y 4 del README del banco).
@@ -14,8 +14,8 @@
 #
 # LAS DOS COMPROBACIONES QUE ESTA SECCIÓN FIJA, que son las que el propietario exige:
 #   (1) INSTALACIÓN NUEVA — un proyecto que instala hoy recibe la fila y el párrafo
-#       CORREGIDOS: las tres anclas de DESTINO aparecen una vez cada una en la plantilla que
-#       `arnes-init` copia, y ninguna de las tres de ORIGEN sobrevive.
+#       CORREGIDOS. Vive en la PARTE 3 desde `QA-024-41`: no necesita el merge ni la línea
+#       base, y aquí ya no cabía (`REQ-014 CA-18`). Los nombres `45/2` y `45/3` no cambian.
 #   (2) ACTUALIZACIÓN CON PERSONALIZACIONES — un proyecto que MODIFICÓ esa zona no la pierde,
 #       y la salida DICE que ahí hay un conflicto por resolver. El verde exige las DOS
 #       mitades: que el texto de la persona siga entero Y que el registro lo publique. Un
@@ -55,12 +55,25 @@
 # de pasar inadvertida. El residuo conocido: una redacción nueva de las anclas pondría estos
 # casos en rojo, y la vía conforme es actualizarlas en los dos archivos, nunca retirar el caso.
 #
-# QUÉ VIVE EN LA PARTE 2 Y POR QUÉ (`REQ-014 CA-18`). Los siete casos que miden que la SKILL
-# mande esta migración están en `45-…-2-la-guia.sh`: juntas medían 445 líneas sobre un techo
-# de `max(400, piso × 1,25)` y la autoprueba lo dijo en rojo. El corte cae en la frontera
-# natural entre EJERCER el mecanismo —aquí— y LEER un documento.
-CASOS_ESPERADOS_SECCION=20
-PISO_AUTONOMO_SECCION=227  # 65 preámbulo con sus dos declaraciones y el titular (líneas 1-65) + 86 maquinaria propia, que el corredor no tiene: el materializador de línea base, el extractor de bloque, el contador, el clasificador, el sustituidor, el corredor de migración y los dos jueces (líneas 73-158) + 76 bloque indivisible mayor (las cuatro tablas de anclas, los dos porteros y las cinco maquetas de proyecto, líneas 160-235: ningún caso de esta parte puede prescindir de ellos) · REQ-014 CA-18 · REGLA para re-derivar los tres términos sin preguntar: «preámbulo» son las líneas hasta el titular inclusive; un «bloque» es un grupo de líneas consecutivas sin blanca en medio, y el mayor que no es el preámbulo ni la maquinaria es el de las anclas y las maquetas; «maquinaria» es la que esta parte define porque el corredor no la tiene, no una copia de otra parte
+# LA PREGUNTA PREVIA CONTRA LA BASE, Y POR QUÉ EL CLASIFICADOR LA HACE (`QA-024-41`). Los tres
+# bloques nacieron en versiones distintas —el párrafo del aviso NO existe antes de 1.31.0—, así
+# que un proyecto instalado antes migra con una base que no lo contiene. Sin preguntar primero
+# si la base lo tenía, esa comparación SIN SUJETO se resolvía por el camino del conflicto
+# (`ELIMINADO` o `MODIFICADO`), los dos terminales: titular `PARCIAL`, `arnes_version` que no
+# sube y un proyecto que NO PUEDE MIGRAR NUNCA, porque no hay conflicto real que resolver. La
+# respuesta ya estaba en la skill —«si no existía en la base, entonces sí es `NUEVO` y se
+# añade»— y se había perdido en la transcripción. Los casos que la ejercen están en la PARTE 3,
+# con una base ANTERIOR al bloque; aquí la base (`v1.33.0`) los tiene los tres, así que estos
+# casos no cambian de veredicto: ése es exactamente su papel de control.
+#
+# QUÉ VIVE EN LAS PARTES 2 Y 3, Y POR QUÉ (`REQ-014 CA-18`). Los casos que miden que la SKILL
+# mande esta migración están en `45-…-2-la-guia.sh`; los que la ejercen con una base anterior
+# al bloque, más la instalación nueva, en `45-…-3-la-base-anterior.sh`. Juntas no caben bajo el
+# techo de `max(400, piso × 1,25)` y la autoprueba del corredor lo dice en rojo. El corte cae
+# en fronteras naturales: EJERCER el merge con base contemporánea —aquí—, LEER un documento
+# —parte 2— y EJERCER el merge cuando la base es más vieja que el bloque —parte 3—.
+CASOS_ESPERADOS_SECCION=14
+PISO_AUTONOMO_SECCION=246  # 78 preámbulo con sus dos declaraciones y el titular (líneas 1-78) + 98 maquinaria propia, que el corredor no tiene: el materializador de línea base, el extractor de bloque, el contador, el clasificador con su pregunta previa, el sustituidor-insertador, el corredor de migración y los dos jueces (líneas 86-183) + 70 bloque indivisible mayor (las cinco tablas de anclas —la de INSERCIÓN entra con `QA-024-41`—, el portero y las cinco maquetas de proyecto, líneas 185-254: ningún caso de esta parte puede prescindir de ellos) · REQ-014 CA-18 · REGLA para re-derivar los tres términos sin preguntar: «preámbulo» son las líneas hasta el titular inclusive; un «bloque» es un grupo de líneas consecutivas sin blanca en medio, y el mayor que no es el preámbulo ni la maquinaria es el de las anclas y las maquetas; «maquinaria» es la que esta parte define porque el corredor no la tiene, no una copia de otra parte
 
 seccion_nueva "--- 45/1 · la correccion de §13 llega a los proyectos YA instalados (REQ-024 CA-12 (ii), QA-024-38) ---"
 
@@ -103,22 +116,32 @@ cuenta45() {   # <archivo> <ancla> -> cuantas lineas lo contienen
   awk -v a="$2" 'index($0, a) { n++ } END { print n + 0 }' "$1" 2>/dev/null
 }
 # EL CLASIFICADOR, que transcribe la tabla de la skill y nada mas. Devuelve UNA palabra.
+# `nb` es LA PREGUNTA PREVIA de la skill: ¿tenia la BASE este bloque? Sin ella, un bloque
+# POSTERIOR a la base se resuelve por el camino del conflicto y el proyecto no migra nunca.
 clas45() {   # <archivo-proyecto> <indice de bloque> <archivo-base> -> estado
-  local proy="$1" i="$2" base="$3" no nd bp bb
+  local proy="$1" i="$2" base="$3" no nd nb bp bb
   no="$(cuenta45 "$proy" "${AO45[$i]}")"; nd="$(cuenta45 "$proy" "${AD45[$i]}")"
-  if [ "$no" -ge 2 ] || [ "$nd" -ge 2 ] || { [ "$no" -eq 1 ] && [ "$nd" -eq 1 ]; }; then printf 'UNKNOWN'; return; fi
-  if [ "$no" -eq 0 ] && [ "$nd" -eq 0 ]; then printf 'ELIMINADO'; return; fi
+  nb="$(cuenta45 "$base" "${AO45[$i]}")"
+  if [ "$no" -ge 2 ] || [ "$nd" -ge 2 ] || [ "$nb" -ge 2 ] || { [ "$no" -eq 1 ] && [ "$nd" -eq 1 ]; }; then printf 'UNKNOWN'; return; fi
   if [ "$no" -eq 0 ] && [ "$nd" -eq 1 ]; then printf 'APLICADO-YA'; return; fi
+  if [ "$nb" -eq 0 ]; then   # el bloque es POSTERIOR a la base: NUEVO si no hay nada en esa ancla
+    [ "$no" -eq 1 ] && { printf 'MODIFICADO'; return; }
+    [ "$(cuenta45 "$proy" "${AINS45[$i]}")" -eq 1 ] && printf 'NUEVO' || printf 'UNKNOWN'; return
+  fi
+  if [ "$no" -eq 0 ] && [ "$nd" -eq 0 ]; then printf 'ELIMINADO'; return; fi
   bp="$(bloq45 "$proy" "${AI45[$i]}")"; bb="$(bloq45 "$base" "${AI45[$i]}")"
   if [ -z "$bp" ] || [ -z "$bb" ]; then printf 'UNKNOWN'; return; fi
   [ "$bp" = "$bb" ] && printf 'INTACTO' || printf 'MODIFICADO'
 }
-sust45() {   # <archivo> <ancla-inicio-de-origen> <archivo-con-el-bloque-destino>
-  local f="$1" ao="$2" nuevo="$3" tmp="$1.sust"
-  awk -v a="$ao" -v nv="$nuevo" '
+sust45() {   # <archivo> <ancla-inicio> <archivo-con-el-bloque-destino> [ins]
+  # Con <ins> no vacio el ancla es la de INSERCION y la linea casada SE CONSERVA: `NUEVO`
+  # anade delante y no sustituye nada. Sin el, el ancla es la de ORIGEN y el bloque se sustituye.
+  local f="$1" ao="$2" nuevo="$3" ins="${4:-}" tmp="$1.sust"
+  awk -v a="$ao" -v nv="$nuevo" -v ins="$ins" '
     !d && index($0, a) { d = 1
                          while ((getline l < nv) > 0) print l
                          close(nv)
+                         if (ins != "") { if (substr($0, 1, 1) != "|") print ""; print; next }
                          if (substr($0, 1, 1) == "|") next
                          salta = 1; next }
     salta { if ($0 ~ /^[ \t]*\r?$/) { salta = 0; print }; next }
@@ -136,6 +159,8 @@ migra45() {   # <dir-proyecto> <archivo-base> -> escribe .arnes/migracion.md
     case "$est" in
       INTACTO)     sust45 "$proy/AGENTS.md" "${AI45[$i]}" "$DIR45/dest-$i.txt"
                    printf '%s: APLICADO\n' "${NOM45[$i]}" >> "$reg" ;;
+      NUEVO)       sust45 "$proy/AGENTS.md" "${AINS45[$i]}" "$DIR45/dest-$i.txt" ins
+                   printf '%s: APLICADO (NUEVO: no existia en la base; se anade sin sustituir nada)\n' "${NOM45[$i]}" >> "$reg" ;;
       APLICADO-YA) printf '%s: APLICADO (ya estaba; no se toca)\n' "${NOM45[$i]}" >> "$reg" ;;
       MODIFICADO|ELIMINADO)
                    printf '%s: CONFLICTO: pendiente de resolver (%s; el contenido del proyecto se conserva y el bloque de destino se cita sin aplicar)\n' "${NOM45[$i]}" "$est" >> "$reg"
@@ -174,6 +199,12 @@ AI45=('No completar sin `QA: aprobado`'
 AID45=('El CIERRE juzga DOS cosas distintas'
        'tampoco cuando la línea `QA:` no llega a declararse'
        '**Un hook que avisa sin decidir.**')
+# El ancla de INSERCION dice DONDE va un bloque `NUEVO`: justo ANTES de ella. Es texto que
+# existe en las DOS plantillas y no cambio entre ellas; si no aparece exactamente una vez en
+# el proyecto, `UNKNOWN`, que es lo unico honesto con un sitio que no se localiza.
+AINS45=('La transición a `completado` no se hace por shell'
+        'Los campos del REQ valen sólo en la cabecera'
+        '**Es una barandilla, no una jaula.**')
 BASE45F="$DIR45/base.tpl"; BASE45_OK=no
 base45 "$BASE45F" && BASE45_OK=si
 REG45="$MOT45"
@@ -212,18 +243,6 @@ if [ "$BASE45_OK" = si ] && [ -f "$TPL45" ]; then
   migra45 "$DIR45/ya" "$BASE45F"           # el que YA migro, construido aplicando
   [ -s "$DIR45/dest-0.txt" ] && [ -s "$DIR45/dest-1.txt" ] && [ -s "$DIR45/dest-2.txt" ] && MAQ45=si
 fi
-# La maqueta de INSTALACION NUEVA no depende del merge ni de la linea base: `arnes-init` copia
-# la plantilla y ya. Se prepara aparte para que la comprobacion (1) pueda JUZGAR bloque a
-# bloque —y salir roja sobre el bloque concreto que no se corrigio— en vez de abstenerse en
-# bloque porque el merge no se pudo montar.
-NUEVO45=no
-if [ -f "$TPL45" ]; then mkdir -p "$DIR45/nuevo"; cp "$TPL45" "$DIR45/nuevo/AGENTS.md"; NUEVO45=si; fi
-gaten45() {   # <nombre> -> 0 si hay maqueta de instalacion nueva que medir
-  local nombre="$1"
-  [ "$NUEVO45" = si ] && return 0
-  echo "  FAIL  $nombre  no existe la plantilla $TPL45: no hay texto que un proyecto nuevo pueda recibir"
-  FAIL=$((FAIL+1)); return 1
-}
 if [ "$MAQ45" != si ]; then
   if [ "$BASE45_OK" != si ]; then EST45="skip:no se pudo materializar la linea base ($REG45): un clasificador que no pudo leer la base no ha clasificado nada"
   elif [ ! -f "$TPL45" ]; then EST45="fail:no existe la plantilla de destino $TPL45: no hay texto corregido que llevar a ningun proyecto"
@@ -245,30 +264,6 @@ if mide45 "$N45"; then
       "base y destino no se distinguen por las anclas de la fila del cierre (destino en la base=$(cuenta45 "$BASE45F" "${AD45[0]}"), destino en la plantilla=$(cuenta45 "$TPL45" "${AD45[0]}"), origen en la base=$(cuenta45 "$BASE45F" "${AO45[0]}"))"
   fi
 fi
-
-# --- (2) y (3) COMPROBACION 1: INSTALACION NUEVA ----------------------------------
-# Lo que `arnes-init` copia es `templates/AGENTS.md.tpl`. Se mide sobre la COPIA del proyecto
-# y no sobre la plantilla, porque lo que se contrata es lo que el proyecto RECIBE.
-for i45 in 0 1 2; do
-  N45="45/2 instalacion nueva: el proyecto recibe CORREGIDO el bloque «${NOM45[$i45]}»"
-  if mide45 "$N45"; then
-    if ! gaten45 "$N45"; then :
-    else
-      n45="$(cuenta45 "$DIR45/nuevo/AGENTS.md" "${AD45[$i45]}")"
-      juzga45 "$N45" "$([ "$n45" -eq 1 ] && echo si || echo no)" \
-        "el ancla de DESTINO aparece $n45 veces (se espera 1) en el AGENTS.md que sale de la plantilla"
-    fi
-  fi
-  N45="45/3 instalacion nueva: no sobrevive la promesa vieja del bloque «${NOM45[$i45]}»"
-  if mide45 "$N45"; then
-    if ! gaten45 "$N45"; then :
-    else
-      n45="$(cuenta45 "$DIR45/nuevo/AGENTS.md" "${AO45[$i45]}")"
-      juzga45 "$N45" "$([ "$n45" -eq 0 ] && echo si || echo no)" \
-        "el ancla de ORIGEN sigue apareciendo $n45 veces: se corrigio el documento del arnes y no la plantilla que heredan los proyectos"
-    fi
-  fi
-done
 
 # --- (4)-(9) COMPROBACION 2: ACTUALIZACION CON PERSONALIZACIONES -------------------
 CLAS45P=''; REGP45="$DIR45/no-existe"

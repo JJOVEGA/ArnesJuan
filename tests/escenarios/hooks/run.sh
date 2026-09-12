@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1249  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1266  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1525,6 +1525,21 @@ CASOS_ESPERADOS=1249  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # anterior se toca: no se retira ni se altera ningún caso, y las dos
                       # piezas siguen siendo de TEXTO y de MIGRACIÓN —no se mueve ninguna
                       # decisión de ningún hook ni ningún `rc`—.
+                      #
+                      # 1249 → 1266: el HUECO DE COBERTURA de la propia `45` (`QA-024-41`).
+                      # Sus 27 casos usaban una base que YA TRAÍA los tres bloques, y por eso
+                      # ninguno vio que con una base ANTERIOR al bloque —la de todo proyecto
+                      # instalado antes de que ese bloque naciera, y la de este repositorio,
+                      # congelada en `v1.30.3`— el párrafo del aviso salía `ELIMINADO →
+                      # CONFLICTO`, el titular `PARCIAL` y el proyecto no podía migrar NUNCA.
+                      # Entra la parte `45/3` con 17 y la `45/2` sube 7 → 13 (la guía tiene
+                      # que MANDAR la pregunta previa y declarar las tres anclas de
+                      # INSERCIÓN). La `45/1` baja 20 → 14 porque los seis casos de
+                      # INSTALACIÓN NUEVA se MUEVEN a la parte 3 —no necesitan el merge y
+                      # allí ya no cabían bajo el techo de `REQ-014 CA-18`—: conservan su
+                      # nombre (`45/2`, `45/3`) y su veredicto, así que el saldo real son
+                      # 17 casos NUEVOS y ninguno retirado ni alterado. Ningún otro
+                      # `CASOS_ESPERADOS_SECCION` se toca.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

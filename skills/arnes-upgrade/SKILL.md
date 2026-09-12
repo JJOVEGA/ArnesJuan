@@ -929,29 +929,74 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   valor entero consiste en decir la verdad sobre de dónde vino este proyecto. De ella cuelgan
   todos los `INTACTO` y todos los `MODIFICADO`; alterarla no limpia el diff, falsifica la
   comparación — y la siguiente migración partirá de esa mentira.
-- **Localizar el bloque es el paso que puede equivocarse, así que se decide con DOS CUENTAS y no
-  con la impresión de haberlo visto** —la misma conducta que el bloque de §14 de arriba, donde
-  esto está medido—: el **ancla de origen**, que sólo aparece en el texto viejo, y el **ancla de
-  destino**, que sólo aparece en el nuevo. Las anclas van escritas aquí porque sin ellas la
-  tabla de abajo no se puede aplicar:
+- **Localizar el bloque es el paso que puede equivocarse, así que se decide CONTANDO y no con la
+  impresión de haberlo visto** —la misma conducta que el bloque de §14 de arriba, donde esto está
+  medido—: el **ancla de origen**, que sólo aparece en el texto viejo, y el **ancla de destino**,
+  que sólo aparece en el nuevo, sobre el archivo del proyecto; y la de origen **una tercera vez,
+  sobre la BASE**, que es la pregunta previa del punto siguiente. Las anclas van escritas aquí
+  porque sin ellas las tablas de abajo no se pueden aplicar:
 
-  | Bloque | Ancla de ORIGEN | Ancla de DESTINO |
+  | Bloque | Ancla de ORIGEN | Ancla de DESTINO | Ancla de INSERCIÓN |
+  |---|---|---|---|
+  | fila del cierre | ``No completar sin `QA: aprobado` `` | `El CIERRE juzga DOS cosas distintas` | ``La transición a `completado` no se hace por shell`` |
+  | fila del orden | ``Seguridad no firma lo que QA no ha validado (salvo`` | ``tampoco cuando la línea `QA:` no llega a declararse`` | `Los campos del REQ valen sólo en la cabecera` |
+  | párrafo del aviso | ``**no deniega** la edición: ese REQ no podrá cerrarse`` | `el aviso lleva su condición` | `**Es una barandilla, no una jaula.**` |
+
+  Las dos primeras anclas de un bloque son **disjuntas a propósito**: si compartieran texto, la
+  segunda corrida leería el bloque ya migrado como si aún fuera el viejo y lo volvería a
+  sustituir. Y se cuentan sobre el archivo del proyecto, no sobre la plantilla.
+
+  **La tercera sólo se usa cuando el bloque resulta `NUEVO`, y dice DÓNDE va:** el bloque se
+  inserta **inmediatamente antes** de ella, que es el sitio que ocupa en la plantilla de destino.
+  Es a propósito texto que existe **en las dos** plantillas —la de origen y la de destino— y que
+  no cambió entre ellas; si no aparece **exactamente una vez** en el `AGENTS.md` del proyecto, el
+  estado es `UNKNOWN`: un sitio que no se localiza con seguridad no se adivina, y éste es el
+  único estado de la tabla que escribe donde antes no había nada.
+
+- **ANTES DE LAS DOS CUENTAS HAY UNA PREGUNTA PREVIA, Y OMITIRLA DEJA SIN MIGRAR, PARA SIEMPRE, A
+  TODO PROYECTO MÁS VIEJO QUE EL BLOQUE: ¿tenía la BASE este bloque?** Los tres nacieron en
+  versiones distintas —el párrafo del aviso **no existe antes de 1.31.0**—, así que un proyecto
+  instalado antes migra con una base que **no lo contiene**. Comparar contra una base que no lo
+  tiene no produce «difiere»: produce una comparación **sin sujeto**, y la tabla de abajo, sin
+  esta pregunta, la resolvía por el camino del conflicto —`ELIMINADO` si el proyecto tampoco lo
+  tiene, `MODIFICADO` si lo tiene—. **Los dos son terminales**: el titular sale `PARCIAL`, la
+  Fase 5 no sube `arnes_version` y **el proyecto no puede migrar nunca**, porque no hay nada que
+  una persona pueda resolver —no hay conflicto real—. Medido sobre la instantánea de este mismo
+  repositorio (`.arnes/plantillas-origen/`, congelada en `v1.30.3`): el párrafo del aviso salía
+  `ELIMINADO → CONFLICTO` y la migración entera quedaba `PARCIAL` con los otros dos bloques ya
+  aplicados.
+
+  **La respuesta ya está en esta misma skill y no hay que inventarla**, y que se perdiera aquí es
+  el defecto: § «Clasificación: cuatro estados» dice **«no existía en la base y sí en el destino
+  → `NUEVO` → Añadir»**, y lo repite explícito —«si no existía en la base, entonces sí es
+  `NUEVO` y se añade»—. Esta tabla es una **transcripción** de aquélla para tres bloques
+  concretos, y una transcripción que pierde una condición se desfasa de su original sin que nada
+  grite. Se responde contando el **ancla de ORIGEN sobre la BASE**, con los mismos tres valores
+  que el bloque de §14 de arriba usa sobre sus marcadores:
+
+  | ancla de origen en la BASE | Qué significa | Cómo sigue |
   |---|---|---|
-  | fila del cierre | ``No completar sin `QA: aprobado` `` | `El CIERRE juzga DOS cosas distintas` |
-  | fila del orden | ``Seguridad no firma lo que QA no ha validado (salvo`` | ``tampoco cuando la línea `QA:` no llega a declararse`` |
-  | párrafo del aviso | ``**no deniega** la edición: ese REQ no podrá cerrarse`` | `el aviso lleva su condición` |
+  | 1 | la base tenía el bloque | la tabla de abajo decide **tal cual** |
+  | 0 | el bloque es **posterior** a la base | no hay con qué comparar: manda la columna «la base lo tenía: **no**» |
+  | ≥ 2 | la base no es referencia fiable | `UNKNOWN` — **detenerse y preguntar** |
 
-  Las dos anclas de un bloque son **disjuntas a propósito**: si compartieran texto, la segunda
-  corrida leería el bloque ya migrado como si aún fuera el viejo y lo volvería a sustituir. Y se
-  cuentan sobre el archivo del proyecto, no sobre la plantilla.
+  | origen / destino | la base lo tenía | Estado | Acción |
+  |---|---|---|---|
+  | 1 / 0 | sí, y el bloque del proyecto es **idéntico** al de la base | `INTACTO` | sustituir por el bloque de la plantilla destino |
+  | 1 / 0 | sí, y el bloque del proyecto **difiere** de la base | `MODIFICADO` | **conflicto: conservar lo del proyecto y preguntar** |
+  | 1 / 0 | **no** | `MODIFICADO` | **conflicto: conservar lo del proyecto y preguntar** — hay texto del proyecto en esa ancla y **ninguna base que responda si lo escribió una persona**; `NUEVO` añade, **nunca** sustituye |
+  | 0 / 1, y el bloque es idéntico al de la plantilla destino | indiferente | ya aplicado | **no tocar nada** — es lo que hace idempotente la segunda corrida |
+  | 0 / 0 | sí | `ELIMINADO` | **conflicto: preguntar, y NO reponer** — pudo borrarse a propósito |
+  | 0 / 0 | **no** | `NUEVO` | **añadir** inmediatamente antes del ancla de inserción, y nada más |
+  | cualquier otra cuenta (≥ 2 en cualquiera de las dos, o 1 / 1) | indiferente | `UNKNOWN` | **detenerse y preguntar** |
 
-  | origen / destino | Estado | Acción |
-  |---|---|---|
-  | 1 / 0, y el bloque es **idéntico** al de la base | `INTACTO` | sustituir por el bloque de la plantilla destino |
-  | 1 / 0, y el bloque **difiere** de la base | `MODIFICADO` | **conflicto: conservar lo del proyecto y preguntar** |
-  | 0 / 1, y el bloque es idéntico al de la plantilla destino | ya aplicado | **no tocar nada** — es lo que hace idempotente la segunda corrida |
-  | 0 / 0 | `ELIMINADO` | **conflicto: preguntar, y NO reponer** — pudo borrarse a propósito |
-  | cualquier otra cuenta (≥ 2 en cualquiera de las dos, o 1 / 1) | `UNKNOWN` | **detenerse y preguntar** |
+  **`NUEVO` es `SAFE`, y por eso lleva sus dos límites escritos aquí y no en otra página.** (a)
+  **Añade y no sustituye:** el resto del `AGENTS.md` del proyecto no se toca y el saldo de la
+  operación es **exactamente** el tamaño del bloque. (b) **Si el proyecto ya tiene algo en esa
+  ancla, no es `NUEVO`:** manda la fila `1 / 0` de arriba, la personalización se conserva entera
+  y el bloque de destino se **cita sin aplicar**. Cumplidos los dos, un proyecto cuyos tres
+  bloques queden `APLICADO` migra entero y la Fase 5 **sí** sube `arnes_version`; lo que nunca la
+  sube es un titular `PARCIAL`.
 
   «Idéntico» se decide **tras quitar el `\r` final** de cada línea, si lo hay, por el mismo
   motivo que allí: un proyecto Windows cuyo editor normaliza el archivo a CRLF tras migrar tiene

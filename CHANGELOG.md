@@ -50,6 +50,67 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-12 · `QA-024-41`: la causa era una condición perdida al transcribir, y el diagnóstico de la coordinadora estaba mal dos veces
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (**vuelta 8** `dev↔QA`), coordinadora.
+
+### La causa real
+
+**No era un estado que faltara: era una condición perdida al transcribir.** La tabla **general** de la
+skill dice `ELIMINADO | Existía en la base **y** no está en el proyecto`. La tabla de `D12` —que es una
+**transcripción** de aquélla para tres bloques concretos— **perdió el «existía en la base»** y quedó con
+`0 / 0 → ELIMINADO` incondicional. **Verificado por la coordinadora en las dos sedes.** La corrección
+**repone la condición**; no inventa nada.
+
+Es la misma familia que este ciclo lleva persiguiendo: **una copia que pierde una condición del
+original**.
+
+### Las dos correcciones al diagnóstico de la coordinadora, medidas
+
+1. **No daba `MODIFICADO`, daba `ELIMINADO`** — reproducido con `ARNES_MIG45_BASE=v1.30.3` antes del
+   arreglo. `MODIFICADO` es el **otro** caso de la misma clase y también estaba mal. **Los dos son
+   terminales**, así que el efecto descrito sí era exacto: **el proyecto no puede migrar nunca**, con dos
+   bloques ya aplicados y **nada que una persona pueda resolver**.
+2. **«Los tres bloques dan `NUEVO` con base `v1.30.3`» es falso.** Las dos filas de tabla son **byte a
+   byte idénticas** entre `v1.30.3` y `v1.33.0` —verificado— así que salen **`INTACTO`**. El único
+   posterior a la base es el párrafo del aviso, que **nace en 1.31.0**. El resultado medido es
+   **`INTACTO / INTACTO / NUEVO`**, los tres `APLICADO`, titular `COMPLETA` y `arnes_version` **sube**.
+
+### La pieza que no existía
+
+**El ancla de INSERCIÓN.** `NUEVO` no puede sustituir un ancla que no está, y hay que decir **dónde** va.
+Las tres son texto presente en las dos plantillas, sin cambios entre ellas, y cada una aparece
+**exactamente una vez** en `v1.30.3`, `v1.33.0`, la plantilla de hoy y este repositorio.
+
+### Las seis verificaciones: **todas PASS**
+
+Base `v1.30.3` aplica los tres y sube `arnes_version` · base `v1.33.0` sigue `INTACTO` · segunda corrida
+**idempotente byte a byte** · bloque duplicado → `UNKNOWN` y se detiene · personalización → conflicto con
+el contenido **íntegro** · y **al menos un caso con base anterior al bloque** — la parte 3 entera.
+
+**`NUEVO` añade y no sustituye**, medido por **saldo exacto de líneas** y por que ningún título `##` se
+mueve. `.arnes/plantillas-origen/` **no se toca en ningún camino**.
+
+### Banco
+
+`CASOS_ESPERADOS` 1249 → **1266**; **17 casos nuevos, ninguno retirado ni alterado**. Banco entero
+**1259 PASS · 0 FAIL · 7 SKIP**. Gates §7 en verde.
+
+**Fail-before rojos y no abstenciones**, con las causas de entorno y el defecto en **ramas separadas**:
+con el clasificador anterior, **6 FAIL exactamente en los de base anterior**; con la skill vieja, **6
+FAIL exactamente en los de guía**. Y un **discriminante permanente**: apagada la pregunta previa, el
+defecto **tiene que reaparecer**.
+
+### Dos cosas que quedan, y no son suyas
+
+**El write-back de §9 no existe**: `QA-024-41` necesita criterio en `REQ-024` y entrada de `CHANGELOG`
+**antes de que QA pueda firmar**. No lo escribió porque el analista estaba en esos archivos.
+
+**Y un hallazgo colateral, no tocado:** `.arnes/config.json` declara `arnes_version: 1.33.0` mientras
+`.arnes/plantillas-origen/` está congelada en **`v1.30.3`** (idéntica al tag, verificado). Por la propia
+skill esa contradicción es `DESMENTIDO` en su Fase 1 y **debería salir a la luz antes del merge**. Es
+`instrumento`; alterar la instantánea es justo lo que el propietario prohibió y cambiar `arnes_version`
+es decisión de alcance.
+
 ## [Interno] — 2026-09-12 · Nace `CA-14`: lo que la superficie heredada debe decir, enunciado por propiedad
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
 
