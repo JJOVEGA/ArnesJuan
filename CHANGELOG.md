@@ -50,6 +50,50 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-11 · Write-back de `CA-05`: el contrato deja de decir que un proyecto no nota nada al actualizar
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
+
+Ordenado por el propietario al aprobar **`D12`**, y **no es vuelta de ningún contador** —`dev↔QA` en 6,
+`analista↔QA` en 3—: lo ordena una firma, no lo abre un defecto de una entrega anterior. Declarado así
+en el Historial.
+
+**Siete sedes vivas**, tres señaladas. Y una decisión de forma que merece anotarse: dejó **fuera a
+propósito** las **tres sedes históricas** del Historial —incluida la que registra el titular viejo «no
+nota nada»—, porque **son registro y no promesa viva, y reescribirlas borraría la traza**.
+
+### Lo que `CA-05` dice ahora
+
+Que la ratificación **existe**, con fecha y la autorización **citada literal**, y **lo que esa firma no
+hace**: no declara `completado`, no mueve veredictos, no cierra hallazgos y **no cubre `D11`/`ADR-011`**.
+Las cifras conservan su marca de **evidencia fechada y no umbral**, y ganan **método**.
+
+**El camino de QA, sin duplicar `AGENTS.md`:** el criterio contrata que la denegación se resuelve
+**pasando por la revisión de QA y escribiendo el veredicto que ÉSA emita** —o `Seguridad: preventiva` si
+aún no hay código—, y que rellenar `QA: aprobado` para desatascar **es el fallo que la guarda existe para
+impedir**. **No transcribe la frase: remite** a su sede única, y exige que esté escrita **donde la lee
+quien recibe el rechazo**.
+
+**Y lo que no cambia, con la misma letra:** cierre **idéntico en las 24 celdas** y **edición inocente
+que sigue pasando**, incluso con los veredictos ya cruzados en disco, con **dos** sedes de evidencia.
+
+### Un desfase que resolvió en vez de heredar
+
+La fila transcrita en `AGENTS.md:353` lleva **una oración más** que la prescrita en «el texto exacto». La
+**adoptó** ahí como parte del texto exacto, con fecha, **para que prescripción y transcripción no se
+desfasen** — y dejó escrito que quien transcriba compare contra las dos sedes.
+
+### La justificación vencida del `Estado:`, corregida por la coordinadora
+
+La línea `Estado:` sostenía el bloqueo diciendo que `CA-12 (ii)` «**no puede escribirse** hasta que el
+propietario firme `D12`». **Esa firma llegó y el texto ya está transcrito**, así que el motivo venció. El
+analista lo detectó y **no podía tocarlo** (su encargo excluía `Estado:`).
+
+**Corregido sin mover el estado:** la cláusula vencida queda **tachada y no borrada** —fue cierta hasta
+esa fecha—, y quedan escritos los motivos que **hoy** sostienen el bloqueo: **`D14` sin resolver** y
+**tres `contrato` abiertos** (`SEC-084` y `QA-024-38`, los dos **corregidos y pendientes de verificar**;
+`QA-024-39`, sin contratar). Verificado después: `Estado:` sigue `bloqueado`, los hallazgos intactos y
+`tools/arnes-lectura.sh` sin valor anómalo.
+
 ## [Interno] — 2026-09-11 · La tabla que heredan todos los proyectos deja de prometer lo que la máquina no hace
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador, coordinadora.
 

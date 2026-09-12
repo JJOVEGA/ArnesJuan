@@ -114,6 +114,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 24 | `CA-12 (ii)` + `SEC-084` + `QA-024-38` en `AGENTS.md` y su plantilla · `desarrollador` | 2026-09-11 17:33:03 | 2026-09-11 17:49:33 | **16 min 30 s** | tres correcciones en **una entrega**; gemelas idénticas byte a byte; banco 1167 → **1200**; **cuarta sede** nombrada y no tocada | `1605f35` | **180 623** | ídem |
 
+| 25 | Write-back de `CA-05` (ordenado por `D12`) · `analista-requerimientos` | 2026-09-11 17:51 | 2026-09-11 17:59:24 | **8 min 25 s** | **siete** sedes vivas (tres señaladas); conserva las tres históricas **sin reescribirlas**; detecta la justificación vencida de `Estado:` | `2fcd239` | **130 278** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la
