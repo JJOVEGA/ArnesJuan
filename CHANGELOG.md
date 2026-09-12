@@ -50,6 +50,30 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-12 · La ruta de QA alineada a 1.35.0, y una afirmación mía que era falsa
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+**Actualización documental puntual**, autorizada expresamente (2026-09-12), sin comisión ni revisión
+general.
+
+**`Archivos:` de `REQ-008`**: la ruta del log de QA pasa de `docs/qa/1.34.0.md` a **`docs/qa/1.35.0.md`**,
+que es la ventana que el REQ declara desde hoy. El analista la había **dejado escrita como deriva de
+campo** que su encargo le prohibía tocar; ésta es esa corrección.
+
+**El PLAN ya estaba alineado** en sus dos sedes principales —la fila tachada de §1.34.0 y la entrada
+nueva de §1.35.0—, y la mención del acuerdo de coste del 2026-09-06 (`:478`) **se conserva a propósito**:
+es historia del acuerdo, no declaración de ventana.
+
+### La corrección, que es lo que importa de esta entrada
+
+La coordinadora afirmó que **«el plan no ofrece destino: no lo mueve, simplemente no lo lista»**. **Era
+falso.** El bloque § «Lo que SALE de 1.34.0, con su destino» (`docs/PLAN.md:218`), **vigente y sin marca
+de histórico**, ya listaba **`REQ-008` → 1.35.0**.
+
+Consecuencia: la decisión del propietario **no resolvió una laguna — ratificó lo que una sede del PLAN
+ya decía y el campo `Versión destino:` del REQ contradecía**. Es la familia del **espejo desfasado**, y
+queda escrita en el propio PLAN para que nadie la redescubra.
+
 ## [Interno] — 2026-09-12 · Las dos precisiones del contrato de coste, y `REQ-008` queda en 1.35.0
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
 

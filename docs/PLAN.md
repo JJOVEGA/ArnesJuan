@@ -528,6 +528,14 @@ con escepticismo. Reglas de diseño para el segundo, y son distintas:
 **Qué entra:** el **runner de mutación** y el **cribado automático** de aserciones sobre los 847 casos.
 **Y desde el 2026-09-12, `REQ-008` — el informe de proyecto, con su contrato de coste.**
 
+> **Y una corrección de la coordinadora, porque afirmé lo contrario:** dije que el PLAN «no ofrecía
+> destino» para `REQ-008` —que no lo movía, simplemente no lo listaba—. **Era falso.** El bloque
+> § «Lo que SALE de 1.34.0, con su destino» (`:218`), **vigente y sin marca de histórico**, ya listaba
+> `REQ-008` **→ 1.35.0**. Luego la decisión del propietario del 2026-09-12 **no resolvió una laguna:
+> ratificó lo que una sede del PLAN ya decía y el campo `Versión destino:` del REQ contradecía**. Es la
+> familia del espejo desfasado —dos sedes en desacuerdo, y la que se lee primero manda— y queda escrito
+> para que nadie lo redescubra.
+
 > **`REQ-008` llega aquí con su contrato ya escrito, y ésa es la diferencia con moverlo sin más.**
 > Decisión del propietario del 2026-09-12: *«Decido programar `REQ-008` para 1.35.0.»* Venía de 1.34.0,
 > donde **nunca figuró entre los cuatro trabajos del alcance vigente** pese a declarar esa ventana —el
