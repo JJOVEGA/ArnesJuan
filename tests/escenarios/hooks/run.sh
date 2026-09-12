@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1200  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1249  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1506,6 +1506,25 @@ CASOS_ESPERADOS=1200  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # `40` y la `13` NO se tocan: no se retira ni se altera ningún caso, y
                       # esta reparación es de TEXTO —ninguna decisión ni ningún `rc` se
                       # mueve—.
+                      #
+                      # 1200 → 1249: la CUARTA sede de la misma promesa y su MIGRACIÓN.
+                      # La `44` sube 33 → 55 (+22) con el bloque `A2`, la fila del CIERRE de
+                      # §13 —diez propiedades por sede, que son los DOS EJES que esa fila
+                      # confundía (el VALOR del campo, gobernado por el rigor; y que el campo
+                      # llegue a DECLARARSE, gobernado por la llave para `QA:` y por el rigor
+                      # para `Seguridad:`), más su comparación de gemelas y su caso negativo—.
+                      # Y entra la sección `45` con 27, repartida en DOS archivos por el
+                      # techo de `REQ-014 CA-18` (`45/1` el merge, 20; `45/2` la guía, 7): la
+                      # fila y el párrafo corregidos sólo sirven a quien instala hoy, porque
+                      # el `AGENTS.md` de un proyecto ya inicializado está CONGELADO. La `45`
+                      # fija las DOS comprobaciones que el propietario exige —instalación
+                      # nueva, y actualización con personalizaciones que NO se pisan y que la
+                      # salida publica como conflicto pendiente—, más los bordes de la tabla
+                      # de clasificación, el discriminante del clasificador y que la SKILL
+                      # mande esa migración. Ningún `CASOS_ESPERADOS_SECCION`
+                      # anterior se toca: no se retira ni se altera ningún caso, y las dos
+                      # piezas siguen siendo de TEXTO y de MIGRACIÓN —no se mueve ninguna
+                      # decisión de ningún hook ni ningún `rc`—.
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

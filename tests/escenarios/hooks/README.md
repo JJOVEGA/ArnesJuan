@@ -30,7 +30,7 @@ bash tests/escenarios/hooks/run.sh secciones/07-*.sh     # sólo esa sección, m
 bash tests/escenarios/hooks/run.sh bash                  # sólo los casos cuyo nombre contenga "bash"
 bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del corredor
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1200 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1249 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`).
 Este número se escribe a mano en los dos sitios y **hay que cuadrarlo al añadir casos**: decía
 886 con `CASOS_ESPERADOS` ya en 887, y luego 924 con el literal ya en 966 (`SEC-066`, las dos
@@ -71,7 +71,7 @@ igual de inútil —el padre los ve a cero, cada subshell se llevó los suyos—
 con `SKIP` lo es.
 
 ## Por qué hay secciones numeradas en partes (`NN-<slug>-<k>-<tema>.sh`)
-Las secciones 28, 33, 36, 37, 38, 39 y 40 viven repartidas en varios archivos. No es estilo: **REQ-014
+Las secciones 28, 33, 36, 37, 38, 39, 40 y 45 viven repartidas en varios archivos. No es estilo: **REQ-014
 CA-18** pone un techo a lo que una comisión tiene que abrir para tocar una sección, y el techo se
 pone sobre el **excedente**, no sobre el total —`líneas(f) ≤ max(N, piso(f) × k)`, con `N` = 400 y
 `k` = 1,25—. Cada archivo declara, junto a su `CASOS_ESPERADOS_SECCION`, su

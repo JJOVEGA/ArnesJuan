@@ -50,6 +50,74 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-11 · `D12` completado: la corrección llega también a los proyectos que ya están instalados
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador, coordinadora.
+
+Las dos piezas que faltaban, autorizadas expresamente por el propietario (2026-09-11). Las había
+nombrado el propio desarrollador al entregar la tabla, y las dejó sin tocar correctamente.
+
+### La cuarta sede: se RETIRA, no se le cuelga una condición
+
+`AGENTS.md:351` y `templates/AGENTS.md.tpl:309`, **idénticas byte a byte** (1713 caracteres), y la
+promesa vieja **no sobrevive en ninguna de las dos** — verificado por la coordinadora: **0 y 0
+ocurrencias**. Hay un caso negativo (`44/D`) que busca la cadena entera sobre los dos documentos
+completos y **falla si reaparece**.
+
+**Distingue los dos ejes que la fila confundía**, que era el encargo:
+
+- **Por VALOR** manda el **rigor efectivo**, y los umbrales **no coinciden**: `QA:` no-`aprobado` no
+  cierra en `estandar` ni `critico` y **sí cierra en `ligero`**; `Seguridad:` no-`aprobado` no cierra
+  **sólo** en `critico`. La llave **no mueve nada** ahí, porque el campo *está* declarado.
+- **Por AUSENCIA** manda **otro** eje y **cambia con la clave**: el de `QA:` es `campos.ausencia_exige`
+  —apagada, **como nace todo proyecto**, un REQ sin línea `QA:` **CIERRA en los tres rigores, también en
+  `critico`**—; el de `Seguridad:` sigue siendo el rigor.
+
+**Y las tres sedes dejan de solaparse:** `:351` acota su sujeto **al cierre** y **remite** el acto de
+firmar a `:353`; `:360` son los avisos que no deciden. Ninguna repite ni contradice a otra.
+
+### La migración, con el mecanismo que ya existía
+
+`skills/arnes-upgrade/SKILL.md`: merge a **tres vías, bloque a bloque**, con la tabla de cuatro estados
+que ya usaba. **No sobrescribe `AGENTS.md` entero** —§2, §3 y §5 son del proyecto— y **prohíbe
+expresamente retocar `.arnes/plantillas-origen/`** para limpiar el diff, con su motivo: de ahí cuelgan
+todos los `INTACTO` y `MODIFICADO`. **Verificado por la coordinadora: la instantánea sigue intacta.**
+
+Tres bloques, cada uno con **ancla de origen y ancla de destino disjuntas** —a propósito, para que una
+segunda corrida no vuelva a sustituir lo ya migrado—.
+
+**Ante un conflicto:** el contenido del proyecto **sigue ahí entero**, el bloque de destino se **cita sin
+aplicar**, y `.arnes/migracion.md` publica **una línea por bloque**. **El titular se deriva de esas
+líneas:** con un conflicto el resultado es **`PARCIAL`**, `arnes_version` **no sube**, y **en ninguna
+parte se escribe que el proyecto quedó migrado**.
+
+### Las dos comprobaciones, ejecutables y no descritas
+
+**Instalación nueva:** el `AGENTS.md` que sale de la plantilla trae las tres anclas de destino y **cero**
+de las de origen. **Actualización con personalizaciones:** la fila reescrita clasifica `MODIFICADO`, tras
+migrar sigue **byte a byte igual**, el registro la publica como `CONFLICTO: pendiente de resolver`, y la
+salida distingue **2 `APLICADO` + 1 `CONFLICTO`** en el mismo proyecto.
+
+### Banco
+
+`44` 33 → **55**, dos secciones `45` nuevas (**27**), `CASOS_ESPERADOS` 1200 → **1249**. Banco entero
+**1244 PASS · 0 FAIL · 5 SKIP**, cuadre exacto. Fail-before: `44` **33·22** → `55·0`; `45` **4·23** →
+`27·0`, y **los 4 verdes de antes son exactamente los dos bloques ya corregidos**: el fail-before
+**discrimina por bloque**.
+
+### Las dos veces que se paró a corregirse, y las dos valen
+
+**`REQ-014 CA-18`** puso en rojo su propia sección por longitud: la partió por la frontera natural
+—ejercer el mecanismo / leer el documento— con la duplicación de anclas **declarada** y cerrada por un
+caso.
+
+Y **el fail-before no era fail-before**: la primera versión metía «no hay tag de git» y «la plantilla no
+trae el bloque» en el **mismo `SKIP`**, y contra el árbol anterior salían **20 abstenciones y 0 rojos**.
+Separó las dos causas —**abstenerse por entorno, fallar por defecto**—. Sin eso, la sección habría
+parecido acreditar y no habría acreditado nada.
+
+**Sin acreditar rendimiento:** el conteo de `SKIP` osciló entre 8 y 5 en dos corridas; queda como
+limitación y no se usa.
+
 ## [Interno] — 2026-09-11 · Write-back de `CA-05`: el contrato deja de decir que un proyecto no nota nada al actualizar
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
 

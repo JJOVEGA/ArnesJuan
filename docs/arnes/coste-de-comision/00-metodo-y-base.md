@@ -116,6 +116,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 25 | Write-back de `CA-05` (ordenado por `D12`) · `analista-requerimientos` | 2026-09-11 17:51 | 2026-09-11 17:59:24 | **8 min 25 s** | **siete** sedes vivas (tres señaladas); conserva las tres históricas **sin reescribirlas**; detecta la justificación vencida de `Estado:` | `2fcd239` | **130 278** | ídem |
 
+| 26 | `D12` completado — cuarta sede + migración de `arnes-upgrade` · `desarrollador` | 2026-09-11 19:37:48 | 2026-09-11 20:09:08 | **31 min 19 s** | fila `:351` **retirada**, no matizada; migración bloque a bloque con conflicto **declarado y sin declarar migrado**; banco 1200 → **1249** | `378b8a0` | **312 940** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la

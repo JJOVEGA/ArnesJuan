@@ -10,6 +10,17 @@
 # que sigue prometiendo lo contrario dejan a la máquina contradiciendo su documentación, y
 # quien lee la tabla no ve el mensaje (`QA-024-38`, `SEC-084`, `REQ-024 CA-12 (ii)`).
 #
+# TRES BLOQUES DE TEXTO Y NO DOS. A la fila del ORDEN (bloque A) y al párrafo del AVISO
+# (bloque B) se suma la fila del CIERRE (bloque A2), que es la CUARTA sede de la misma
+# promesa absoluta y la única que quedó sin corregir cuando se corrigieron las otras: decía
+# «No completar sin `QA: aprobado` (salvo `Rigor: ligero`)» y, tras corregir el párrafo, el
+# documento pasó a contradecirse a sí mismo.
+#
+# LO QUE UN PROYECTO YA INSTALADO RECIBE NO SE MIDE AQUÍ, y se dice para que nadie lea de
+# más: esta sección acredita los DOS documentos del arnés. Un proyecto ya inicializado tiene
+# su `AGENTS.md` CONGELADO y no recibe nada de esto sin migrar; quien mide que la migración
+# lleve los tres bloques y no pise lo personalizado es `45-migracion-de-la-tabla-heredada.sh`.
+#
 # ESTA SECCIÓN ES SOBRE TEXTO, y por eso no usa `$HOOKS_DIR`: la ruta de los documentos se
 # deriva de `$SEC_DIR`, igual que `40-…-3-los-textos-heredados.sh` y que los casos de
 # `REQ-016 CA-10` en `36-…-4-el-informe-y-los-textos.sh`. Apuntar el banco a una instalación
@@ -38,8 +49,8 @@
 # dijera lo mismo con otras palabras pondría estos casos en rojo. Por eso cada FAIL publica
 # el tamaño del bloque que midió, y por eso el discriminante del final comprueba que el
 # reconocedor distingue un fragmento presente de uno inventado.
-CASOS_ESPERADOS_SECCION=33
-PISO_AUTONOMO_SECCION=109  # 44 preámbulo con sus dos declaraciones y el titular (líneas 1-44) + 28 maquinaria propia, que el corredor no tiene: los dos extractores, el reconocedor y el juez de fragmento (líneas 51-78) + 37 bloque indivisible mayor (el bloque C, líneas 131-167: las dos comparaciones de gemelas y su inyección, que no se leen sueltas) · REQ-014 CA-18 · REGLA para re-derivar los tres términos sin preguntar: «preámbulo» son las líneas previas a la maquinaria; un «bloque» es un grupo de líneas consecutivas sin blanca en medio, y el mayor que no es el preámbulo es el C; «maquinaria» es la que esta sección define porque el corredor no la tiene, no una copia de otra parte
+CASOS_ESPERADOS_SECCION=55
+PISO_AUTONOMO_SECCION=132  # 55 preámbulo con sus dos declaraciones y el titular (líneas 1-55) + 31 maquinaria propia, que el corredor no tiene: los tres extractores, el reconocedor y el juez de fragmento (líneas 62-92) + 46 bloque indivisible mayor (el bloque C, líneas 180-225: las tres comparaciones de gemelas y su inyección, que no se leen sueltas) · REQ-014 CA-18 · REGLA para re-derivar los tres términos sin preguntar: «preámbulo» son las líneas hasta el titular inclusive; un «bloque» es un grupo de líneas consecutivas sin blanca en medio, y el mayor que no es el preámbulo ni la maquinaria es el C; «maquinaria» es la que esta sección define porque el corredor no la tiene, no una copia de otra parte
 
 seccion_nueva "Las dos sedes heredadas dicen lo que la maquina hace (REQ-024 CA-12 (ii), SEC-084, QA-024-38):"
 
@@ -56,6 +67,9 @@ SEDE_T44="$RAIZ44/templates/AGENTS.md.tpl"
 # FAIL: un documento que no se pudo leer no puede dar verde.
 fila44() {   # <archivo> -> la fila de la tabla de §13 del orden de las firmas, entera
   awk 'substr($0, 1, 1) == "|" && index($0, "Seguridad no firma lo que QA no ha validado") { print; exit }' "$1" 2>/dev/null
+}
+cier44() {   # <archivo> -> la fila de la tabla de §13 del CIERRE, entera
+  awk 'substr($0, 1, 1) == "|" && index($0, "El CIERRE juzga DOS cosas distintas") { print; exit }' "$1" 2>/dev/null
 }
 parr44() {   # <archivo> -> el bloque «Un hook que avisa sin decidir», APLANADO en una línea
   awk 'index($0, "**Un hook que avisa sin decidir.**") == 1 { d = 1 }
@@ -79,6 +93,7 @@ mira44() {   # <nombre> <texto> <fragmento literal> — el bloque tiene que deci
 
 FILA_A44="$(fila44 "$SEDE_A44")"; FILA_T44="$(fila44 "$SEDE_T44")"
 PARR_A44="$(parr44 "$SEDE_A44")"; PARR_T44="$(parr44 "$SEDE_T44")"
+CIER_A44="$(cier44 "$SEDE_A44")"; CIER_T44="$(cier44 "$SEDE_T44")"
 
 # --- A. LA FILA DEL ORDEN DE LAS FIRMAS (REQ-024 CA-12 (ii), salida (b)) -----------
 # Ocho propiedades por sede. No son ocho maneras de decir lo mismo: son las que el criterio
@@ -105,6 +120,40 @@ for s44 in AGENTS.md templates/AGENTS.md.tpl; do
     "$f44" 'parte de esas líneas las coge la **guarda de medibilidad**, que **deniega citando la línea**; el resto llega al cierre como **campo no declarado**, donde manda la **dirección de la ausencia**, que **no siempre deniega**'
   mira44 "44/A SEC-084 [$s44] ...con la frontera declarada ABIERTA y su sitio unico, nombrando SEC-084" \
     "$f44" 'Frontera declarada y **abierta**: su clase, su dueño y su vencimiento viven en `docs/seguridad/registro-seguridad.md` (**SEC-084**)'
+done
+
+# --- A2. LA FILA DEL CIERRE (QA-024-38, la CUARTA sede de la misma promesa) --------
+# La fila del CIERRE es de la misma familia que el párrafo del bloque B: prometía sin
+# condición «No completar sin `QA: aprobado` (salvo `Rigor: ligero`)», y después de corregir
+# el párrafo el propio documento se contradecía — con `campos.ausencia_exige` APAGADA, que es
+# como nace todo proyecto, un REQ SIN línea `QA:` CIERRA en los TRES rigores (`43/E`, `40/6`).
+# Diez propiedades por sede, y no son diez maneras de decir lo mismo: son los DOS EJES que esa
+# fila confundía —el VALOR del campo y que el campo llegue a DECLARARSE—, cada uno con su
+# gobernante y con sus umbrales, más el acotamiento del sujeto que la separa de la fila del
+# orden (bloque A) y la evidencia medida. Se miden en las DOS sedes porque corregir una sola
+# es el defecto que este proyecto lleva persiguiendo; la igualdad la mide el bloque C.
+for s44 in AGENTS.md templates/AGENTS.md.tpl; do
+  [ "$s44" = "AGENTS.md" ] && c44="$CIER_A44" || c44="$CIER_T44"
+  mira44 "44/A2 QA-024-38 [$s44] el titular separa los DOS ejes: el VALOR del campo y que el campo llegue a DECLARARSE" \
+    "$c44" 'El CIERRE juzga DOS cosas distintas sobre cada veredicto, y NO las gobierna el mismo eje: qué VALOR lleva el campo, y que el campo llegue a DECLARARSE'
+  mira44 "44/A2 QA-024-38 [$s44] ...y por VALOR el eje es el rigor efectivo, con los dos umbrales que NO coinciden" \
+    "$c44" 'Por VALOR manda el rigor efectivo, y los dos umbrales NO coinciden'
+  mira44 "44/A2 QA-024-38 [$s44] ...umbral de QA por valor: no cierra en estandar ni critico, y SI cierra en ligero" \
+    "$c44" 'un `QA:` cuyo valor no sea `aprobado` no deja cerrar en `estandar` ni en `critico`, y **sí deja cerrar en `ligero`**'
+  mira44 "44/A2 QA-024-38 [$s44] ...umbral de Seguridad por valor: solo en critico" \
+    "$c44" 'un `Seguridad:` cuyo valor no sea `aprobado` no deja cerrar **sólo** en `critico`'
+  mira44 "44/A2 QA-024-38 [$s44] ...y la llave NO mueve las celdas del VALOR, porque ahi el campo esta declarado" \
+    "$c44" 'la llave `campos.ausencia_exige` **no mueve nada**: ahí el campo **está** declarado'
+  mira44 "44/A2 CA-12 (ii) [$s44] ...la AUSENCIA es una PROPIEDAD y no una lista de vias, con sus ejemplos no exhaustivos y su sitio unico" \
+    "$c44" 'Ausencia es una **propiedad** —que el campo no llegue a declararse—, no una lista de vías'
+  mira44 "44/A2 CA-12 (ii) [$s44] ...y esos ejemplos van marcados no exhaustivos y remiten al registro de seguridad" \
+    "$c44" 'son ejemplos **no exhaustivos**, y el sitio único de las vías conocidas es `docs/seguridad/registro-seguridad.md`'
+  mira44 "44/A2 QA-024-38 [$s44] ...el eje de la AUSENCIA de QA: es LA LLAVE, y apagada el REQ cierra en los TRES rigores" \
+    "$c44" 'con la llave APAGADA —como nace todo proyecto— un REQ SIN línea `QA:` CIERRA en los TRES rigores, también en `critico`'
+  mira44 "44/A2 QA-024-38 [$s44] ...y el de la AUSENCIA de Seguridad: sigue siendo el RIGOR, igual en los dos estados" \
+    "$c44" 'Para `Seguridad:` el eje sigue siendo el **rigor**: su ausencia no para el cierre por debajo de `critico`, idéntico en los dos estados de la llave'
+  mira44 "44/A2 CA-12 (ii) [$s44] ...y acota su sujeto al CIERRE, remitiendo el acto de FIRMAR a la fila del orden" \
+    "$c44" 'esta fila habla del CIERRE y de nada más:** FIRMAR la seguridad sobre un REQ cuyo `QA:` no llega a declararse **deniega en los dos estados de la llave**, y eso va en la fila del **orden de las firmas**'
 done
 
 # --- B. EL PÁRRAFO DEL AVISO (QA-024-38) ------------------------------------------
@@ -151,6 +200,15 @@ if [ -z "$FILTRO" ] || printf '%s' "44/C gemelas el parrafo" | grep -qi -- "$FIL
     echo "  FAIL  44/C gemelas: el parrafo DIVERGE (${#PARR_A44} caracteres en AGENTS.md contra ${#PARR_T44} en templates/AGENTS.md.tpl)"; FAIL=$((FAIL+1))
   fi
 fi
+if [ -z "$FILTRO" ] || printf '%s' "44/C gemelas la fila del cierre" | grep -qi -- "$FILTRO"; then
+  if [ -z "$CIER_A44" ] || [ -z "$CIER_T44" ]; then
+    echo "  FAIL  44/C gemelas la fila del cierre: no se pudo extraer de una de las dos sedes (${#CIER_A44} caracteres en AGENTS.md, ${#CIER_T44} en templates/AGENTS.md.tpl)"; FAIL=$((FAIL+1))
+  elif [ "$CIER_A44" = "$CIER_T44" ]; then
+    echo "  PASS  44/C gemelas: la fila del CIERRE es IDENTICA en las dos sedes (${#CIER_A44} caracteres)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  44/C gemelas: la fila del CIERRE DIVERGE (${#CIER_A44} caracteres en AGENTS.md contra ${#CIER_T44} en templates/AGENTS.md.tpl): el proyecto y lo que heredan los demas prometen cosas distintas"; FAIL=$((FAIL+1))
+  fi
+fi
 # INYECCIÓN DEL COMPARADOR: sin ella, una comparación que siempre dijera «iguales» —dos
 # extractores que devolvieran lo mismo vacío, por ejemplo— pasaría los dos casos de arriba.
 if [ -z "$FILTRO" ] || printf '%s' "44/C inyeccion gemelas" | grep -qi -- "$FILTRO"; then
@@ -179,6 +237,22 @@ if [ -z "$FILTRO" ] || printf '%s' "44/D la promesa vieja" | grep -qi -- "$FILTR
     echo "  FAIL  44/D la promesa vieja sigue enunciada sin condicion en alguna de las dos sedes: «$VIEJA44»"; FAIL=$((FAIL+1))
   else
     echo "  PASS  44/D la promesa vieja no sobrevive en ninguna de las dos sedes"; PASS=$((PASS+1))
+  fi
+fi
+
+# Y LA PROMESA VIEJA DE LA FILA DEL CIERRE TAMPOCO SOBREVIVE. Es el caso negativo gemelo del
+# de arriba, sobre la CUARTA sede: dejar la frase absoluta —«No completar sin `QA: aprobado`
+# (salvo `Rigor: ligero`)»— y colgarle la condición debajo la deja igual de falsa para quien
+# lee la fila sola, que es como se lee una tabla. Se busca sobre el DOCUMENTO entero y no
+# sobre la fila nueva: lo que no puede quedar es la fila vieja en ninguna parte de §13.
+if [ -z "$FILTRO" ] || printf '%s' "44/D la promesa vieja de la fila del cierre" | grep -qi -- "$FILTRO"; then
+  VIEJAC44='| No completar sin `QA: aprobado` (salvo `Rigor: ligero`)'
+  if [ ! -f "$SEDE_A44" ] || [ ! -f "$SEDE_T44" ]; then
+    echo "  FAIL  44/D la promesa vieja de la fila del cierre: falta una de las dos sedes ($SEDE_A44 / $SEDE_T44)"; FAIL=$((FAIL+1))
+  elif grep -qF -- "$VIEJAC44" "$SEDE_A44" || grep -qF -- "$VIEJAC44" "$SEDE_T44"; then
+    echo "  FAIL  44/D la fila vieja del cierre sigue en alguna de las dos sedes: «$VIEJAC44…»"; FAIL=$((FAIL+1))
+  else
+    echo "  PASS  44/D la fila vieja del cierre no sobrevive en ninguna de las dos sedes"; PASS=$((PASS+1))
   fi
 fi
 

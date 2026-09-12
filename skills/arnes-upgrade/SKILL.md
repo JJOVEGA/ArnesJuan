@@ -902,6 +902,107 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   lo lee y **ninguna puerta lo comprueba** — es una regla escrita para quien coordina, no
   enforcement. Y mientras el proyecto no migre, **sus coordinadoras no tienen estas reglas**: cerrar
   eso es exactamente para lo que existe esta entrada.
+- **Y TRES TEXTOS DE `AGENTS.md` §13 QUE HAY QUE SUSTITUIR EN EL PROYECTO, porque prometían lo
+  que la máquina no hace y su corrección NO viaja sola.** Corregir `templates/AGENTS.md.tpl`
+  sirve a los proyectos **nuevos**; el `AGENTS.md` de un proyecto ya inicializado está
+  **congelado** (§ «Por qué existe»), así que sin esta entrada un proyecto actualiza a 1.34.0 y
+  **se queda con las promesas falsas** — se habría corregido la plantilla para quien empieza hoy
+  y para nadie más. Los tres bloques, con lo que decían y por qué se sustituyen:
+
+  | Bloque | Dónde | Qué prometía | Por qué se sustituye |
+  |---|---|---|---|
+  | **la fila del CIERRE** | tabla de §13 | «No completar sin `QA: aprobado` (salvo `Rigor: ligero`), ni un REQ `critico` sin `Seguridad: aprobado`» | confunde dos cosas distintas: que el **valor** del campo no sea `aprobado` y que el campo **no llegue a declararse**. Los ejes no son el mismo —el rigor para uno, la llave para el otro— y con `campos.ausencia_exige` **apagada, como nace todo proyecto**, un REQ **sin línea `QA:`** CIERRA en los **tres** rigores, también en `critico` (`QA-024-38`) |
+  | **la fila del ORDEN de las firmas** | tabla de §13 | «Seguridad no firma lo que QA no ha validado (salvo `Seguridad: preventiva`)» | no dice que la **ausencia** de la línea `QA:` se trate como no validado, ni que esa firma **deniegue en los DOS estados de la llave**, que es lo que cambió sin que el proyecto active nada (`SEC-083`, `SEC-084`) |
+  | **el párrafo «Un hook que avisa sin decidir»** | prosa de §13, tras la tabla | «…**no deniega** la edición: ese REQ no podrá cerrarse» | esa consecuencia **no es incondicional**: la decide el rigor efectivo y los dos umbrales no coinciden. Quedó medida falsa en 4 de sus 6 celdas y hacia el lado que **tranquiliza**, que es la familia de `SEC-079` |
+
+  **El texto de destino no se transcribe aquí:** es el que lleva `templates/AGENTS.md.tpl` de
+  esta versión, y una segunda transcripción de la misma frase se desfasa de la primera — la
+  copia que envejece es siempre la de la guía.
+- **CÓMO SE MIGRAN: con el merge a tres vías de esta misma skill, BLOQUE A BLOQUE, y sin tocar
+  el resto del archivo.** No se copia la plantilla encima: un proyecto tiene su §2, su §3 y su
+  §5 propios, y sobrescribir `AGENTS.md` entero **borra su trabajo** — eso no es migrar, es
+  reinstalar. Cada bloque se clasifica **por separado** con la tabla de «Clasificación: cuatro
+  estados» contra la **base** de la versión de origen (`.arnes/plantillas-origen/AGENTS.md.tpl`
+  del proyecto, o `git show v<origen>:templates/AGENTS.md.tpl`), y sólo se aplica lo que el plan
+  marque `SAFE`. **Y la instantánea de `.arnes/plantillas-origen/` no se retoca antes de
+  comparar, ni para que el diff salga más limpio:** es el **origen congelado** del merge y su
+  valor entero consiste en decir la verdad sobre de dónde vino este proyecto. De ella cuelgan
+  todos los `INTACTO` y todos los `MODIFICADO`; alterarla no limpia el diff, falsifica la
+  comparación — y la siguiente migración partirá de esa mentira.
+- **Localizar el bloque es el paso que puede equivocarse, así que se decide con DOS CUENTAS y no
+  con la impresión de haberlo visto** —la misma conducta que el bloque de §14 de arriba, donde
+  esto está medido—: el **ancla de origen**, que sólo aparece en el texto viejo, y el **ancla de
+  destino**, que sólo aparece en el nuevo. Las anclas van escritas aquí porque sin ellas la
+  tabla de abajo no se puede aplicar:
+
+  | Bloque | Ancla de ORIGEN | Ancla de DESTINO |
+  |---|---|---|
+  | fila del cierre | ``No completar sin `QA: aprobado` `` | `El CIERRE juzga DOS cosas distintas` |
+  | fila del orden | ``Seguridad no firma lo que QA no ha validado (salvo`` | ``tampoco cuando la línea `QA:` no llega a declararse`` |
+  | párrafo del aviso | ``**no deniega** la edición: ese REQ no podrá cerrarse`` | `el aviso lleva su condición` |
+
+  Las dos anclas de un bloque son **disjuntas a propósito**: si compartieran texto, la segunda
+  corrida leería el bloque ya migrado como si aún fuera el viejo y lo volvería a sustituir. Y se
+  cuentan sobre el archivo del proyecto, no sobre la plantilla.
+
+  | origen / destino | Estado | Acción |
+  |---|---|---|
+  | 1 / 0, y el bloque es **idéntico** al de la base | `INTACTO` | sustituir por el bloque de la plantilla destino |
+  | 1 / 0, y el bloque **difiere** de la base | `MODIFICADO` | **conflicto: conservar lo del proyecto y preguntar** |
+  | 0 / 1, y el bloque es idéntico al de la plantilla destino | ya aplicado | **no tocar nada** — es lo que hace idempotente la segunda corrida |
+  | 0 / 0 | `ELIMINADO` | **conflicto: preguntar, y NO reponer** — pudo borrarse a propósito |
+  | cualquier otra cuenta (≥ 2 en cualquiera de las dos, o 1 / 1) | `UNKNOWN` | **detenerse y preguntar** |
+
+  «Idéntico» se decide **tras quitar el `\r` final** de cada línea, si lo hay, por el mismo
+  motivo que allí: un proyecto Windows cuyo editor normaliza el archivo a CRLF tras migrar tiene
+  el bloque intacto, y sin esa normalización se declararía `MODIFICADO` — un conflicto falso que
+  hace preguntar por nada.
+- **EL TEXTO DEL PROYECTO NO SE PISA, Y LA SALIDA DISTINGUE LO APLICADO DE LO PENDIENTE.** Un
+  proyecto que reescribió esa fila se queda **con lo suyo y con un aviso**, nunca sin ninguna de
+  las dos cosas. En `.arnes/migracion.md` cada uno de los tres bloques deja **su propia línea**
+  con uno de estos tres resultados, y nunca un resumen que los promedie:
+  - `APLICADO` — estaba `INTACTO`, el bloque nuevo está en disco y se ha **releído** (Fase 4);
+  - `CONFLICTO: pendiente de resolver` — `MODIFICADO` o `ELIMINADO`: el contenido del proyecto
+    **sigue ahí entero**, y debajo se **cita** el bloque de destino **sin aplicarlo**, para que
+    la persona decida;
+  - `UNKNOWN: detenido` — la localización no es concluyente, y ahí no se aplica nada.
+
+  **Y el titular se DERIVA de esas líneas, no se redacta:** si algún bloque quedó en
+  `CONFLICTO` o en `UNKNOWN`, el resultado de la migración es **`PARCIAL`**, la Fase 5 **no**
+  sube `arnes_version` y **en ninguna parte se escribe que el proyecto quedó migrado**. Un
+  resumen que dijera «migrado» sobre un proyecto con un conflicto sin resolver deja al proyecto
+  con la promesa falsa **y** con un registro que afirma que ya no la tiene: es exactamente el
+  fallo en abierto que esta entrada viene a cerrar, y con el agravante de que nadie volverá a
+  mirar.
+- **LAS DOS COMPROBACIONES, y se corren las DOS: una migración verificada sólo sobre el caso
+  fácil no acredita el difícil.**
+  1. **Instalación nueva** —`arnes-init` sobre un proyecto que empieza hoy—: su `AGENTS.md` sale
+     de `templates/AGENTS.md.tpl`, así que las tres anclas de **destino** aparecen **una vez cada
+     una** y ninguna de las tres de **origen** aparece. Si alguna de origen sobrevive, lo que se
+     corrigió fue el documento del arnés y no la plantilla que los proyectos heredan.
+  2. **Actualización con personalizaciones** —un proyecto que reescribió esa zona de su
+     `AGENTS.md`—: el bloque personalizado sale `MODIFICADO`, la corrida **no lo toca** (byte a
+     byte igual antes y después) y `.arnes/migracion.md` lo publica como `CONFLICTO: pendiente de
+     resolver`, con el titular en `PARCIAL`. El verde aquí exige las **dos** mitades: que el
+     texto de la persona siga entero **y** que el registro lo diga.
+
+  Se comprueba releyendo el disco (Fase 4) y no porque el comando dijera que sí:
+  ```
+  cp AGENTS.md /tmp/agents-antes.md
+  grep -c 'No completar sin `QA: aprobado`'    AGENTS.md   # ancla de ORIGEN de la fila del cierre
+  grep -c 'El CIERRE juzga DOS cosas distintas' AGENTS.md  # ancla de DESTINO de la misma fila
+  # ...aplicar sólo lo que el plan marcó SAFE, y volver a correr la migración...
+  cmp /tmp/agents-tras-1a-corrida.md AGENTS.md             # sin salida = idempotente
+  diff <(grep '^## ' /tmp/agents-antes.md) <(grep '^## ' AGENTS.md)   # sin salida = ninguna sección movida
+  ```
+  Estas dos comprobaciones están fijadas por el banco en
+  `tests/escenarios/hooks/secciones/45-migracion-de-la-tabla-heredada-*.sh` (dos partes: el merge y la guía), con un proyecto de
+  maqueta por cada una.
+- **Lo que esta migración NO hace, para que nadie busque una puerta que no existe:** no cambia
+  ninguna conducta —los tres textos describen lo que 1.34.0 ya hace—, no añade llave al
+  manifiesto y **ninguna puerta comprueba que un proyecto la haya aplicado**. Es superficie
+  normativa: mientras el proyecto no migre, su `AGENTS.md` **sigue prometiendo lo que su hook no
+  hace**, y quien lea esa tabla no verá el aviso que la máquina sí emite.
 - **Y UNA SEGUNDA VÍA EN ESTA MISMA VERSIÓN, que no necesita ningún carácter raro: LA LÍNEA QUE
   NO ESTÁ. Sin eufemismos, y es la frase entera: en una versión afectada pudiste cerrar un REQ
   `critico` sin validación de QA y sin auditoría de seguridad aprobada haciendo desaparecer una
