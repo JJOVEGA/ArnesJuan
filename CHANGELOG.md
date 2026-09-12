@@ -50,6 +50,57 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-12 · El contrato de coste de `REQ-008`: la contradicción eran dos números llamados igual
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
+
+Convierte en criterios verificables el acuerdo del **2026-09-06** que `REQ-008` declaraba pendiente.
+**Worktree aislado** (`feat/req-008-contrato-de-coste`) para no tocar el árbol que QA mide. El REQ pasa
+de **80 a 99** criterios.
+
+### La contradicción, resuelta verificando y no aceptando la pista
+
+El punto 7 **cierra la lista de los siete**, que hablan todos del consumo de los agentes → «el número»
+es el **`gasto de modelo`**. La regla de completitud vive en la sección del **segundo lector** → su
+sujeto es el **`coste total del proyecto`**.
+
+**Gana la exclusión dentro del primero y la inclusión dentro del segundo, y ninguna gana sobre la otra
+porque nunca hablaron del mismo objeto.** Contratado: **dos nombres**, el rótulo «el coste» a secas
+**prohibido**, y un informe con un solo número **incumple las dos reglas a la vez**.
+
+Y una ambigüedad interna resuelta sin inventar: las tres exclusiones del punto 7 **no son de la misma
+naturaleza** —el tiempo humano es un coste que falta; la ceremonia máxima es una salvedad de
+comparabilidad—, así que cada entrada **declara su clase**. Con lo contrario de lo que el lector supone
+dicho explícito: **una vuelta fallida anotada en el libro sí está dentro** del número.
+
+### API frente a suscripción
+
+Con **suscripción**, ningún nodo `pagado` puede tener entre sus sumandos uno de `valoración`
+—comprobable **sobre el marcado**, no sobre el texto—, se declara «**coste marginal por comisión: 0 — se
+paga capacidad, no consumo**», y la valoración a tarifa API existe **sólo etiquetada, `derivado`, fuera
+de toda suma**. Sin fuente declarada: **cero cifras monetarias**.
+
+El doble conteo va aparte, con **cuadre publicado** y **el error dicho en vez de publicar el total**.
+
+### `git log`
+
+La frase del acuerdo se conserva **cierta sobre lo que acredita** y se acota donde promete de más: cero
+cifras de horas o contrafactual derivadas de la historia. **El límite viaja junto a la afirmación.**
+
+### Nueve sedes de más, ninguna señalada
+
+Entre ellas: **«Fuera de alcance» prohibía toda cifra `estimado`**, en contradicción directa con el
+bloque nuevo; **`CA-02` no listaba «coste» ni «ahorro»** entre los términos de invocación, así que el
+informe respondía algo que nadie le podía preguntar; y un fixture que prohíbe toda cifra seguida de `%`
+se habría roto con el porcentaje de coordinadora — **blindado sin modificar ese criterio**.
+
+### Discrepancia de planificación, registrada y NO resuelta
+
+`REQ-008` declara `Versión destino: 1.34.0` y el **PLAN no lo lista** entre los cuatro trabajos del
+alcance vigente. Precedente idéntico: `REQ-020`. Manda la decisión de alcance, no el campo — **pero el
+plan no ofrece destino**: no lo mueve, simplemente no lo lista. Por eso **el campo no se tocó**.
+
+**Lo que impide despacharlo hoy es falta de ventana, no falta de contrato.**
+
 ## [Interno] — 2026-09-12 · Nace `CA-14`: lo que la superficie heredada debe decir, enunciado por propiedad
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
 
