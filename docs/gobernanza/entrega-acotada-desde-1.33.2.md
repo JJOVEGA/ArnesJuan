@@ -107,12 +107,18 @@ Cuatro criterios contratados —`CA-13`, `CA-14`, `CA-16`, `CA-17`— **siguen s
 **Líneas vivas:** `lib.sh` **322**, `guard-completado.sh` **225**, `arnes-lectura.sh` **38**,
 `estado-derivado.sh` **10**.
 
-**M y A: NO son separables entre sí.** Sus líneas vivas están **entrelazadas dentro de
-`hooks/lib.sh`**, y el entrelazado es de diseño, no de casualidad: el commit `6e3bb90` se titula
-*«La pieza que faltaba: la guarda se AÑADE sobre la lógica de ausencia de esta rama»* — la guarda
-de medibilidad de REQ-023 está **construida encima** de la resolución por ausencia de REQ-024.
-Separarlas no es recortar commits: es reescribir `lib.sh`, y eso es trabajo nuevo con su propio
-ciclo completo de dev → QA → seguridad.
+**M y A: separables con coste alto, no imposibles de separar.** Sus líneas vivas están
+**entrelazadas dentro de `hooks/lib.sh`**, y el entrelazado es de diseño, no de casualidad: el
+commit `6e3bb90` se titula *«La pieza que faltaba: la guarda se AÑADE sobre la lógica de ausencia
+de esta rama»* — la guarda de medibilidad de REQ-023 está **construida encima** de la resolución
+por ausencia de REQ-024.
+
+**Qué demuestra exactamente el entrelazamiento, y qué no.** Demuestra que la separación **no se
+hace recortando commits**: habría que reescribir `hooks/lib.sh` para que la guarda de REQ-023 se
+sostenga sin la lógica de REQ-024, y eso es trabajo nuevo con su ciclo completo de dev → QA →
+seguridad y su propio riesgo de regresión sobre la puerta. **No demuestra que sea imposible**, y
+esta medición no lo intentó: nadie ha construido la variante ni ha medido qué parte de la guarda
+depende realmente de la otra. Lo medido es el **coste esperado** de separarlas, y es alto.
 
 **Estado que arrastra:** `REQ-023` está **`bloqueado`** esperando `D13`. `REQ-024` está
 **`bloqueado`** con **28** hallazgos abiertos, **5 de clase `contrato`** (`SEC-084`, `QA-024-38`,
@@ -127,10 +133,12 @@ parte, que es la decisión **`D15`**, sin tomar.
 **9 líneas** de `lib.sh` (`8b06cd6`).
 
 **Separable en archivos: casi.** Salvo esas 9 líneas, no toca los hooks.
-**Separable en sentido: NO.** La migración de `D12` existe **para que la denegación por ausencia
-de A llegue a los proyectos ya instalados**, y las filas corregidas de `AGENTS.md` describen lo
-que A y M hacen. Publicar U sin A distribuiría una migración que prepara un mecanismo ausente y
-una tabla que describe una conducta que el consumidor no tendría. **U arrastra A; A no arrastra U.**
+**Separable en sentido: sólo reescribiéndola.** La migración de `D12` existe **para que la
+denegación por ausencia de A llegue a los proyectos ya instalados**, y las filas corregidas de
+`AGENTS.md` describen lo que A y M hacen. Publicar U **tal cual** sin A distribuiría una migración
+que prepara un mecanismo ausente y una tabla que describe una conducta que el consumidor no
+tendría. Separarla exige **reescribir** las partes que referencian el mecanismo, no sólo extraer
+los archivos. **U arrastra A mientras conserve esas referencias; A no arrastra U.**
 
 ---
 
@@ -231,8 +239,10 @@ migración que referencia el mecanismo ausente: **trabajo nuevo**, no una revers
 probabilidad más de una vuelta, porque lo que se pide es que un documento **deje de describir**
 algo que la rama sí tiene. **Estimación: ≥ 5 comisiones**, y la menos predecible de las cuatro.
 
-**Separar M de A no se estima aquí** porque no es separación sino reescritura de `hooks/lib.sh`
-(§2), con su ciclo completo y su propio riesgo de regresión sobre la puerta.
+**Separar M de A no se estima aquí** porque exigiría **reescribir** `hooks/lib.sh` (§2) y nadie ha
+construido esa variante: sin ella no hay base para una cifra. Lo que sí se afirma es que su coste
+es **superior** al de la opción 2, porque lleva ciclo completo y riesgo de regresión sobre la
+puerta.
 
 ---
 

@@ -2,6 +2,21 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-12 · Dos formulaciones corregidas por el propietario: el entrelazamiento mide dificultad, y una firma acredita alcance
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. Sin veredicto de QA ni de seguridad: corrige prosa de dos documentos de decisión.
+
+1. **«No separables» → «separables a coste alto».** El entrelazamiento de REQ-023 y REQ-024 en
+   `hooks/lib.sh` demuestra que la separación **no se hace recortando commits** —habría que
+   reescribir el archivo—, **no** que sea imposible. Nadie construyó la variante separada, así que
+   lo medido es el **coste esperado**, y presentarlo como impedimento cerraba una opción que la
+   evidencia no cierra. Mismo arreglo en el grupo de la migración: es separable **reescribiendo**
+   sus referencias, no inseparable.
+2. **Un commit no extiende una firma.** La formulación anterior —«un commit presta su evidencia a
+   todo lo que lleva dentro»— le atribuía a la herramienta de transporte un poder que no tiene.
+   **Una firma acredita el alcance que su autor verificó.** Los commits se separan para que ese
+   alcance quede **legible desde el disco** sin reconstruirlo, que es un defecto de trazabilidad,
+   no de validez de la firma.
+
 ## [Interno] — 2026-09-12 · Antes de auditar el conjunto, decidir qué se publica: el inventario desde `v1.33.2` y sus cuatro opciones
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
 
@@ -32,8 +47,10 @@ se conserva completa. **Sin veredicto de QA ni de seguridad**, y no le correspon
 **Separabilidad, por `git blame` sobre líneas vivas:** la **rotación** (REQ-026) es el único grupo
 limpiamente separable —cero líneas suyas en `lib.sh`, `guard-completado.sh` o `arnes-lectura.sh`—,
 aunque es el más **antiguo**, así que se separa revirtiendo, no recortando. **Medibilidad (REQ-023)
-y ausencia (REQ-024) no son separables**: 307 y 322 líneas vivas **entrelazadas en `hooks/lib.sh`**,
-y la guarda de una está construida **encima** de la otra. La **migración** (`D12`) es separable en
+y ausencia (REQ-024) se separarían a coste alto**: 307 y 322 líneas vivas **entrelazadas en
+`hooks/lib.sh`**, y la guarda de una está construida **encima** de la otra. **El entrelazamiento
+demuestra dificultad, no imposibilidad** — nadie construyó la variante separada, así que lo medido
+es el coste esperado, no un impedimento. La **migración** (`D12`) es separable en
 archivos pero **no en sentido**: existe para llevar a los proyectos instalados el mecanismo que
 tendría que viajar con ella.
 
@@ -60,8 +77,9 @@ revisable; no permite desactivar controles ni distribuir cambios todavía»*.
 **Este cambio no lleva veredicto de QA ni de seguridad, y no le corresponde ninguno todavía.** Viaja
 en **commit propio y separado** de la rectificación de `QA-024-42` justamente por eso: la
 verificación de aquélla —quality gates 4 de 4, corrida de la sección `46`— acredita **sus** rutas y
-**no** alcanza a este documento. Un commit presta su evidencia a todo lo que lleva dentro, y aquí no
-hay evidencia que prestar.
+**no** alcanza a este documento: **una firma acredita el alcance que su autor verificó**, no todos
+los archivos de un commit por el hecho de pertenecer a él. Se separan los commits para que ese
+alcance sea **legible desde el disco** sin reconstruirlo, no porque el commit extienda la firma.
 
 ### Las cuatro precisiones del propietario
 
