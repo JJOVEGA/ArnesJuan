@@ -132,6 +132,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 33 | Candidato de la derivación vacía — QA · `qa-tester` (**vuelta 10** `dev↔QA`) | 2026-09-12 18:44 | 2026-09-12 19:05:56 | **21 min 56 s** | **acredita la reparación del instrumento, NO el cumplimiento de `CA-14`**; abre `QA-024-42` (`contrato`): `46/7` examina **cero** oraciones en las sedes mudas | `d40dcb5` | **170 828** | ídem |
 
+| 34 | `QA-024-42` — rectificación de la entrega · `desarrollador` (**no es vuelta**: contadores 10 y 5 sin mover) | 2026-09-12 22:05 | 2026-09-12 22:13:40 | **8 min 28 s** | dos sedes corregidas a **«sin acreditar»**; conserva las citas del texto falso **como evidencia**; ejerce el reconocedor antes de escribir | `1c415fc` | **103 264** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la

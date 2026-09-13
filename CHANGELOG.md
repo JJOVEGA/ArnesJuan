@@ -2,6 +2,57 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-12 · La afirmación falsa deja de estar escrita: donde no hubo emparejamiento ni oraciones examinadas, ahora dice «sin acreditar»
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (**rectificación de la entrega**, autorizada expresamente por el propietario el 2026-09-12; **no es la vuelta 11**).
+
+### Alcance: una afirmación falsa, y nada más
+
+`QA-024-42` (`contrato`) midió que el **punto 8** de § «Qué queda SIN VERIFICAR» de `REQ-024` afirmaba
+que `CA-14 (i)`–`(v)` estaban **«acreditados»** sobre las dos sedes mudas «**sólo** por `46/7` y
+`46/8`». Se **corrige el texto**, que es lo que el propietario pidió —*«donde no hubo emparejamiento ni
+oraciones examinadas, debe decir **sin acreditar**»*—, y **no** se inventa una acreditación alternativa,
+**no** se declara residual y **no** se rebaja `CA-14`.
+
+**Dos sedes, barridas juntas y localizadas por propiedad** (`.md`, `.sh`, `.json`, `.tpl` de todo el
+árbol): el **punto 8** y su **transcripción** en la fila del Historial de la PRECISIÓN de `CA-14`. **El
+programa no la imprime**: es sólo prosa. Las citas del texto falso que viven en el campo `QA:` y en la
+fila del veredicto de QA **se conservan** — ahí son la **evidencia del hallazgo**, ya declarada falsa, y
+borrarlas destruiría el rastro.
+
+### Qué acreditan de verdad `46/7` y `46/8` — ejercido antes de escribirlo
+
+La regla que el propietario corrigió se aplica aquí: *«una funcionalidad nueva se especifica antes de
+implementarse; una **afirmación sobre comportamiento existente debe contrastarse antes de presentarse
+como hecho**»*. Lo que sigue se **midió corriendo la sección `46`** sobre `1c415fc`, no leyendo el
+código:
+
+- **`46/7`** acredita una propiedad **negativa por documento** y **no empareja nada con el hook**: de
+  las **4** sedes barridas, **0** promesas de cierre sin su condición dentro de la oración. Sobre las
+  dos sedes mudas ese cero es **cero sobre cero** —`oraciones46 <sede> neces` → `0` y `0`, y una sonda
+  sobre **copia** confirma que ninguna de sus oraciones entra siquiera en la **familia** que el caso
+  juzga—, luego su `PASS` es ahí **cierto por vacío**.
+- **`46/8`** acredita **`(vi)`** y sólo `(vi)`: 4 sedes del conjunto derivado cotejadas una a una contra
+  sus gemelas de `templates/AGENTS.md.tpl`, las 4 **idénticas byte a byte**. Dos sedes **mudas**
+  idénticas siguen siendo **dos sedes mudas**.
+- Lo único que hoy se afirma en voz alta sobre ellas es el **`SKIP` de `46/11`**, que las identifica por
+  nombre y motivo y las declara **no acreditadas**.
+
+### Lo que NO cambia
+
+**`tests/` no se toca** —las ampliaciones de `CA-14` siguen **pausadas** por el propietario y la
+reparación que QA aprobó se **conserva**—, ni `AGENTS.md`, `templates/`, `hooks/` o `skills/`. **Ningún
+veredicto ni estado se mueve**: `Estado: bloqueado`, `QA: con-hallazgos`, `Seguridad: pendiente` y
+`Hallazgos abiertos:` **intactos**. **`QA-024-42` NO se cierra**: lo cierra el `qa-tester` al
+verificarlo. **Los contadores no se mueven**: `dev↔QA` **10**, `analista↔QA` **5**. **`CA-14` NO se
+declara satisfecho** con dos sedes sin acreditar.
+
+### Verificación
+
+Quality gates §7 **4 de 4** en verde. Corrida parcial de las secciones que leen `REQ-024.md` —`08`,
+`40/5`, `44`, `46`(×2)—: **90 PASS · 0 FAIL · 2 SKIP**, y los 2 `SKIP` son los `46/11` esperados y
+declarados. `tools/arnes-lectura.sh` sobre el repo: **27 REQ, ningún valor anómalo**, cabecera de
+`REQ-024` sin cambios.
+
 ## [Interno] — 2026-09-12 · QA acredita el instrumento y NO `CA-14`, y la prosa recayó en el defecto que el código acababa de corregir
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (**vuelta 10** `dev↔QA`), coordinadora.
 
