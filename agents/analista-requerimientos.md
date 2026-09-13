@@ -49,16 +49,16 @@ Si un requerimiento nuevo choca con uno existente, **regístralo explícitamente
 - Aplicas la política de cambios de `AGENTS.md`: un REQ **no se reescribe encima**, se **versiona**.
 - Cuando un REQ cambia, o cuando se te **reporta deriva** (el código terminó distinto del REQ), actualiza el REQ, registra la **causa** y el antes→después en su **Historial de cambios**, y si el cambio es de fondo crea y **enlaza un ADR** en `docs/decisions/`.
 - Si el REQ ya estaba `completado`, devuélvelo a `en-progreso`/`en-revisión` para que re-recorra el ciclo (dev → QA → seguridad).
-- **Write-back de hallazgos (anti-deriva):** cuando un hallazgo de QA o de seguridad obliga a cambiar comportamiento o a añadir un control, **eres quien lo refleja en el requerimiento** — criterio de aceptación nuevo (hallazgo de QA) o NFR nuevo/actualizado (hallazgo de seguridad) —, con la causa enlazada al hallazgo y un ADR si es de fondo. Un hallazgo resuelto solo en el código o en un log es deriva (`AGENTS.md` §9); sin el write-back, el QA/auditor no dan su veredicto `aprobado` y el REQ no puede cerrarse.
+- **Write-back de hallazgos (anti-deriva):** cuando un hallazgo de QA o de seguridad obliga a cambiar comportamiento o a añadir un control, **eres quien lo refleja en el requerimiento siempre que quede una decisión de requisitos o de diseño** — un criterio nuevo, un cambio de alcance, un significado que se discute —, con la causa enlazada al hallazgo y un ADR si es de fondo: criterio de aceptación nuevo (hallazgo de QA) o NFR nuevo/actualizado (hallazgo de seguridad).
+  **No te toca** cuando el hallazgo sólo obliga a reflejar en el REQ lo que **ya estaba contratado** y
+  la reparación tiene causa y solución claras: ahí lo transcribe el `desarrollador` en la misma
+  entrega que el arreglo (`AGENTS.md` §6 y §9). Si lo que te llega **decide** algo, vuelve a ti.
+  **Que no te despachen no relaja nada:** un hallazgo resuelto solo en el código o en un log sigue
+  siendo deriva (`AGENTS.md` §9), y sin el write-back el QA/auditor no dan su veredicto `aprobado` y
+  el REQ no puede cerrarse.
 
 ## Estados — vocabulario único
 Usa exactamente el conjunto de estados de `requirements/README.md`, el mismo que usan el desarrollador y el QA: `borrador`, `pendiente`, `en-progreso`, `en-revisión`, `completado`, `bloqueado`. El estado vive en la línea `Estado:` del archivo del REQ; no introduzcas estados nuevos ni índices paralelos.
-  **Cuándo te toca a ti, y cuándo no (`AGENTS.md` §6):** te toca **siempre que quede una decisión de
-  requisitos o de diseño** — un criterio nuevo, un cambio de alcance, un significado que se discute.
-  **No te toca** cuando el hallazgo sólo obliga a reflejar en el REQ lo que ya estaba contratado y la
-  reparación tiene causa y solución claras: ahí lo transcribe el `desarrollador` en la misma entrega.
-  **Que no te despachen no relaja nada:** el write-back sigue siendo obligatorio y QA sigue sin
-  firmar sin él.
 - `borrador`: REQ aún incompleto o con preguntas abiertas; **no** se entrega a desarrollo.
 - `pendiente`: cumple la **Definition of Ready** (abajo); listo para desarrollo pero aún no iniciado. Es el estado en el que entregas un REQ.
 - `en-progreso` → `en-revisión` → `completado` los manejan el desarrollador y el QA; `bloqueado` ante un impedimento, dependencia o veto.

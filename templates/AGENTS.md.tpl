@@ -97,6 +97,14 @@ claros** no necesita las cuatro fases, y hacerlas igual no añade protección: a
 | Cambio que afecta **hooks, protecciones, firmas, permisos, instalación, migración o publicación** | desarrollador → QA → **seguridad**. El analista interviene **sólo** si queda una decisión de diseño o de contrato **pendiente** |
 | **Capacidad nueva** o **cambio de contrato** | analista → desarrollador → QA → seguridad |
 
+**La fila 1 no levanta el control de edición de un archivo protegido.** Elegir vía decide **quién
+revisa**, nunca **quién puede escribir**. Una errata sin cambio de obligaciones la corrige la
+coordinadora **salvo que viva dentro de una ruta que `codigo_app.globs` (`.arnes/config.json`)
+declare código de la app**: ahí `guard-codigo` **deniega la edición, y hace bien** — la puerta mira
+la **ruta**, no si el cambio es documental. Ese arreglo va por el **`desarrollador`**, por la vía que
+le corresponda según su efecto. Esto **no** es una excepción a la tabla: es el recordatorio de que la
+tabla no autoriza saltarse un control de edición.
+
 **La regla que impide que esta tabla se convierta en una salida: se clasifica por el EFECTO.** Una
 regla de autorización escrita en Markdown es gobernanza sensible; una prueba que decide si una
 protección funciona tampoco es una simple edición documental. La coordinadora clasifica y **registra
@@ -116,8 +124,12 @@ es lo que la máquina ya calcula: `guard-completado` exige `Seguridad: aprobado`
    —el desarrollador, cuando no queda decisión de diseño ni de contrato pendiente—, **no si hay que
    hacerlo.** Un hallazgo resuelto sólo en el código o en un log **sigue siendo deriva**, y QA y
    seguridad siguen sin firmar `aprobado` antes de que el requerimiento lo refleje.
-2. **El rigor no se rebaja.** Elegir vía **no** reclasifica un REQ: el rigor y la sensibilidad se
-   fijan por el efecto, nunca para evitar una puerta.
+2. **El rigor no se rebaja, y elegir vía no lo toca.** El `Rigor:` y el `Sensible a seguridad:`
+   **declarados en el REQ siguen vigentes tal cual**: clasificar un cambio en una vía **no**
+   reclasifica el REQ. Subirlo o bajarlo **sigue su procedimiento de siempre, y esta tabla no es un
+   atajo a él**: lo fija el `analista-requerimientos`, el `auditor-seguridad` **puede subirlo**,
+   **nadie lo baja sin su firma**, y `Sensible a seguridad: sí` impone `critico` como **suelo**.
+   Ninguna vía puede usarse para evitar un control.
 3. **No se omiten pruebas necesarias.** Durante el desarrollo, pruebas **enfocadas**; el banco
    completo sobre el **candidato final** y tras cualquier cambio que invalide esa evidencia. Los
    controles obligatorios de integración y publicación **se mantienen todos**.

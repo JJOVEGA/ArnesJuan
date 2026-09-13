@@ -2,6 +2,85 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-13 · Los diez defectos de texto reparados, y **dos sedes más que no estaban en la lista**
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (reparación conjunta autorizada por el propietario el 2026-09-13, **por la vía de reparación: desarrollador → QA, sin comisión de analista**). Informe de origen: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`.
+
+**La vía proporcional se aplicó a sí misma:** el arreglo y su documentación viajan en la **misma
+entrega**, sin comisión de analista. Ninguna decisión de alcance se tomó por el camino; las que
+aparecieron **se presentan, no se resuelven** (abajo).
+
+**El barrido fue por PROPIEDAD, no por la lista** —*toda frase, en cualquier sede del árbol, que
+atribuya una fase o un write-back a un rol fijo, o que afirme que la enmienda no cambia lo que
+reciben los proyectos*—, y por eso aparecieron **dos sedes que nadie había listado**, las dos en el
+agente que menos se mira:
+- **`agents/auditor-seguridad.md:38`** — la **gemela exacta de `H-1`**: el write-back del auditor
+  seguía yendo «vía `analista-requerimientos`». Corregir sólo `qa-tester.md` habría dejado a
+  seguridad rechazando el write-back de un desarrollador, que es el mismo fallo con otro rol.
+- **`agents/auditor-seguridad.md:3`, el `description` del frontmatter** — decía que la auditoría es
+  obligatoria en todo REQ «marcado como sensible a seguridad **por el analista**». Es **la línea que
+  la coordinadora lee al despachar**, y en las vías 2 y 3 el analista no interviene: el disparador
+  se quedaba sin sujeto justo donde se decide invocarlo. Ahora: «**sin depender de quién lo
+  despache**», igual que el cuerpo del agente.
+
+**`H-1`** `agents/qa-tester.md:76`, en la sección del veredicto, deja de fijar el write-back en el
+analista. **`H-2`** `agents/analista-requerimientos.md:52`: la promesa absoluta pasa a llevar **su
+condición dentro de la misma frase** («siempre que quede una decisión de requisitos o de diseño»), y
+el párrafo corrector **deja de vivir bajo `## Estados`**, sección con la que no tenía relación: la
+doctrina queda entera en un sitio. **`H-8`** `agents/qa-tester.md:55`: la deriva ofrece ya **las
+tres** salidas, no dos.
+
+**`H-3` y `H-4` se corrigen juntos, porque uno es la premisa del otro.** «No cambia nada de lo que
+reciben los proyectos» era **falso desde el 2026-09-12**. Ahora ambas sedes —el blockquote ALIGERADA
+de `AGENTS.md` §6 y el **preámbulo** de la enmienda— distinguen **alcance al nacer** de **alcance
+vigente**, nombran **qué** llega a los proyectos (la vía proporcional, en la plantilla, los cuatro
+agentes y la migración) y **qué no** (ningún control mecánico: los límites 2, 3 y 5 no se
+levantaron). Corregir sólo una habría dejado viva la premisa para que alguien la volviera a deducir.
+**Y la frase falsa se corrige escribiéndola, no borrándola:** el registro de gobernanza deja
+constancia de que *«ahora QA sabe que quién transcribe depende de la vía»* **era falso cuando se
+escribió**, y de cuándo dejó de serlo. **No se reescribió el historial de git**, ni la entrada
+anterior de este CHANGELOG.
+
+**`H-5`, el peor para consumidores, era una confusión de categorías:** la migración clasificaba «un
+agente» por estado de merge, pero **los agentes los provee el plugin** y no hay copia en el proyecto
+que clasificar —`arnes-init` sólo guarda `.tpl`, y ningún agente lo es—. Sin base recuperable eso es
+`UNKNOWN`, y un `UNKNOWN` **detiene la corrida entera**, incluidas `§6` y `§9`, que sí son migrables.
+Ahora la entrada **separa las dos cosas**: los agentes **no se clasifican, no se buscan y no entran
+en el plan** (llegan al actualizar el plugin, y se dice en el informe); la tabla queda **sólo** para
+`§6` y `§9`, que sí se copiaron y sí se mergean.
+
+**`H-6`** devuelve a `UNKNOWN` su tratamiento canónico —**terminal, se detiene y no se aplica nada de
+toda la corrida**, declarado **no negociable**— en vez de «preguntar» por sección. **`H-7`**: la fila
+`MODIFICADO` ya **no prescribe** «añade encima lo nuevo» como acción; el conflicto **se presenta y la
+sección no se toca**, y «añadir encima» es lo que se **propone** al humano.
+
+**El rigor (defecto 9).** `AGENTS.md` §6 y su gemela dicen ahora que **elegir vía no toca el rigor**:
+el declarado **sigue vigente tal cual**, y subirlo o bajarlo **sigue su procedimiento de siempre** —lo
+fija el analista, el auditor **puede subirlo**, **nadie lo baja sin su firma**, y `Sensible a
+seguridad: sí` impone `critico` como **suelo**—. Se sustituye la voz pasiva («se fijan por el
+efecto») que no reconciliaba con la línea 248.
+
+**La edición en archivo protegido (defecto 10), y viaja a la plantilla.** La fila 1 manda la errata a
+la coordinadora, **pero no levanta el control de edición**: si vive en una ruta de
+`codigo_app.globs`, `guard-codigo` **deniega, y hace bien** —la puerta mira la **ruta**, no si el
+cambio es documental— y el arreglo va por el **`desarrollador`**. Queda escrito en `AGENTS.md` §6,
+**en `templates/AGENTS.md.tpl`** y en la entrada de migración: elegir vía decide **quién revisa**, no
+**quién puede escribir**.
+
+**Gemelas:** los cuerpos de **§6 y §9 siguen idénticos byte a byte** entre `AGENTS.md` y
+`templates/AGENTS.md.tpl`. La **única** divergencia es el blockquote ALIGERADA (`H-3`), que
+**nunca** existió en la plantilla y no debe existir: la política de autoalojamiento es de este
+repositorio y §6 dice que no se propaga. **§13 intacta** en las dos sedes (`sha256` coincidente con
+la base). **Evidencia:** quality gates §7 **4/4**; banco con filtro `'44-*' '46-*'` (arrastra `45`)
+**103 PASS · 0 FAIL · 1 SKIP** —el SKIP es el caso de ruta Windows sin `cygpath`—, idéntico a lo que
+midió QA. **No se tocaron** `hooks/`, `tools/`, `tests/`, `.arnes/config.json` ni ningún REQ, **no se
+cerró ningún hallazgo** —lo hace QA al verificar— y **no hay pronunciamiento sobre la publicación**,
+que sigue detenida.
+
+**El experimento documental sigue excluido:** `referencia/`, `{{RUTA_ARNES}}` y el adelgazamiento de
+§13 **no entran**, y sólo se mencionan aquí para declarar la exclusión.
+
+**Lo que NO se arregló, porque no es mío decidirlo** (presentado, no resuelto): `docs/seguridad/registro-seguridad.md:709` transcribe «(vía `analista-requerimientos`)» dentro de una **obligación abierta** en un registro **fechado** (R-002, 2026-09-06); y la tabla de vías **no asigna rol que fije `Rigor:`/`Sensible a seguridad:` si una reparación de las filas 2 o 3 necesitara un REQ NUEVO**. Detalle y opciones, en el informe de la comisión.
+
 ## [Interno] — 2026-09-13 · Revisión de coherencia: **NO ADOPTABLE tal cual** — la contradicción sigue viva en dos agentes
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (revisión única acotada, autorizada el 2026-09-13). Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`.
 

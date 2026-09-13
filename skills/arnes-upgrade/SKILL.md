@@ -1216,24 +1216,39 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   `analista-requerimientos` mantiene el suyo **siempre que quede una decisión**; y el disparador del
   `auditor-seguridad` se enuncia **sin depender de quién lo despache**.
   **Qué NO cambia:** el **write-back sigue siendo obligatorio** —cambia quién lo escribe, no si se
-  escribe—; **el rigor no se rebaja** y elegir vía **no** reclasifica un REQ; **no se omiten pruebas
+  escribe—; **el rigor no se rebaja**, elegir vía **no** reclasifica un REQ y subirlo o bajarlo sigue
+  su procedimiento de siempre (lo fija el analista, el auditor puede subirlo, nadie lo baja sin su
+  firma, y `Sensible a seguridad: sí` impone `critico` como suelo); **no se omiten pruebas
   necesarias**; **los contadores no se reinician**; y **seguridad sigue sin firmar lo que QA no ha
-  validado**. **Ningún hook cambia**, y tampoco `.arnes/config.json`.
+  validado**. **Ningún hook cambia**, y tampoco `.arnes/config.json` — y por eso una errata que viva
+  dentro de `codigo_app.globs` **la sigue denegando `guard-codigo`** por mucho que sea documental:
+  elegir vía decide quién revisa, no quién puede escribir.
 
   **Cómo llega esto a tu proyecto, por el estado que devuelva el merge —los cinco, sin declarar
   ninguno imposible—:**
 
-  | Estado de `§6` / `§9` / un agente | Qué haces |
+  **Primero, la separación sin la cual esta migración se detiene entera: los agentes NO se migran.**
+  Los **cuatro agentes los provee el plugin** (`.claude/agents/`): tu proyecto **no tiene copia
+  propia** que clasificar, y `arnes-init` **no** deja base suya en `.arnes/plantillas-origen/`,
+  porque ahí sólo van los `.tpl` y los agentes no lo son. **No los clasifiques, no los busques y no
+  los pongas en el plan:** una clasificación sin base recuperable es `UNKNOWN`, y un `UNKNOWN`
+  **detiene la corrida completa** — incluidas `§6` y `§9`, que sí son migrables. Los agentes llegan
+  corregidos **al actualizar el plugin**, no por esta migración; **dilo en el informe** y sigue.
+
+  **Lo que SÍ se migra son las secciones `§6` y `§9` de tu `AGENTS.md`**, que se copiaron de la
+  plantilla a tu proyecto y por eso tienen base con la que comparar:
+
+  | Estado de `§6` / `§9` | Qué haces |
   |---|---|
   | **`INTACTO`** | Aplicar el contenido nuevo **sin preguntar** |
-  | **`MODIFICADO`** | **Conflicto: preguntar.** **Conserva tu texto** y añade encima lo nuevo; si tu personalización fijaba quién hace el write-back, **es justo lo que este cambio toca**, y decidirlo es tuyo |
+  | **`MODIFICADO`** | **Conflicto: preguntar, y NO tocar la sección.** Tu texto **se queda como está** y el conflicto **se lista para el humano**; no escribas nada en ella. Cuando preguntes, **propón** conservar tu texto añadiendo encima lo nuevo — pero **aplicarlo es decisión tuya, no de la migración**. Si tu personalización fijaba quién hace el write-back, **es justo lo que este cambio toca** |
   | **`ELIMINADO`** —la sección existía en la base y tu proyecto **la borró**— | **Conflicto: preguntar, y NO reponer por tu cuenta.** Pudo borrarse a propósito. Si se repone, se repone **con tu decisión**, y si no, **dilo en el informe**: ese proyecto se queda sin la vía y sigue con el flujo anterior, que es válido |
   | **`NUEVO`** —tu base **no tenía** esa sección, porque instalaste el arnés antes de que existiera— | **Añadir.** No hay texto tuyo que conservar |
-  | **`UNKNOWN`** —no se puede decidir sin adivinar— | **Preguntar**, y dejarlo constar |
+  | **`UNKNOWN`** —no se puede decidir sin adivinar— | **Terminal, como `CONFLICTO`, y no es negociable: te DETIENES y NO se aplica NADA de toda la corrida**, ni siquiera lo que salió `SAFE`. Déjalo constar y pregunta |
 
-  **No supongas que §6, §9 y los cuatro agentes están en tu base sólo porque están en la nuestra:**
-  un proyecto instalado con una versión anterior puede no tener alguno, y ahí el estado correcto es
-  **`NUEVO`**, no `INTACTO`. Clasifica **cada uno por separado**: pueden salir en estados distintos.
+  **No supongas que §6 y §9 están en tu base sólo porque están en la nuestra:** un proyecto instalado
+  con una versión anterior puede no tener alguna, y ahí el estado correcto es **`NUEVO`**, no
+  `INTACTO`. Clasifica **cada una por separado**: pueden salir en estados distintos.
 
   **Y un aviso entero:** esta vía **reduce despachos, no controles**. Si prefieres seguir con las
   cuatro fases siempre, **no migres estas secciones**: conservar tu texto es una respuesta válida.
