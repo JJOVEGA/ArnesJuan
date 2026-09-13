@@ -2,6 +2,42 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-13 · Revisión de coherencia: **NO ADOPTABLE tal cual** — la contradicción sigue viva en dos agentes
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (revisión única acotada, autorizada el 2026-09-13). Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`.
+
+**Ocho defectos, todos de texto y dentro de los mismos 9 archivos.** Ninguno exige rediseñar la
+política; **cinco bloquean** (`contrato`).
+
+**El central, `H-1`:** corregí `agents/qa-tester.md:38` y **dejé intacta la línea 76**, que dice que
+el write-back va «vía `analista-requerimientos`» — y está en la sección que QA lee **en el acto de
+firmar**, no en la de criticar criterios. Así que la justificación del commit anterior —«ahora QA
+sabe que quién transcribe depende de la vía»— **afirma algo falso sobre lo construido**, y esa misma
+frase está transcrita en el `CHANGELOG` y en `docs/gobernanza/autoalojamiento.md`.
+
+**`H-2`:** `agents/analista-requerimientos.md:52` conserva la promesa absoluta «eres quien lo refleja
+en el requerimiento», a cinco líneas del párrafo que dice lo contrario. **`H-3` y `H-4`:** el
+blockquote ALIGERADA de `AGENTS.md` y el **preámbulo** de la enmienda siguen diciendo «no cambia nada
+de lo que reciben los proyectos», hoy falso — tachar el límite 1 no barrió sus transcripciones.
+
+**`H-5`, el peor para consumidores:** la migración clasifica «un agente» por estado de merge, pero
+**los agentes no son plantillas** y el proyecto no tiene copia que clasificar; encadenado con las
+reglas de la propia skill eso da `UNKNOWN`, y un `UNKNOWN` **detiene la migración entera**, incluidas
+§6 y §9, que sí son migrables. **`H-6`:** la fila `UNKNOWN` dice «preguntar» donde la canónica dice
+**detenerse**, y lo declara no negociable. **`H-7`, `H-8`:** `instrumento`.
+
+**Lo que sí está bien:** las **tres capacidades** están enunciadas —el desarrollador puede actualizar
+la documentación y nada se lo prohíbe; QA sabe verificar el write-back y no firmar sin él; **las tres
+obligaciones de seguridad permanecen**, verificadas en las **instrucciones** y no en el hook—. El
+caso de **una base sin la sección** está resuelto y bien. Y la **exclusión del experimento está
+confirmada**: `referencia/` ausente y **§13 idéntica byte a byte** por `sha256`.
+
+**Una cifra mía no era re-derivable:** publiqué «§13 = 17 807 B»; QA mide 18 023 con encabezado y
+17 973 sin él. La **identidad** está confirmada por `sha256`; el **número** carecía de método.
+
+**Y un límite del banco que hay que saber:** **ningún guardián cubre `agents/*.md`** —las secciones
+`44` y `46` vigilan `AGENTS.md` §13 y su plantilla—, así que **`H-1` y `H-2` no los caza ninguna
+máquina**.
+
 ## [Interno] — 2026-09-13 · Candidato aislado: la vía proporcional de reparación pasa a producto, **sin el experimento documental**
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. Rama `rel/via-proporcional`, base `f387b1c` (anterior al experimento). **Preparado, pendiente de revisión acotada.**
 
