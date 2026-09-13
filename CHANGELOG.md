@@ -2,6 +2,52 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-13 · `N-5` corregido y `H-5` **completo**: QA da el candidato **LISTO para la siguiente validación**
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: desarrollador (`2e72934`) y qa-tester (4.ª vuelta). Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`.
+
+**`H-5` está completo.** QA lo verificó recorriendo las entradas **por su cuenta**: la frase causante
+**desapareció del archivo entero** —`grep` → **0 ocurrencias**, no se matizó, se retiró—; la entrada
+`Hacia 1.32.0` abre por la conclusión y **cierra la vía en seco** donde alguien la provocaría
+(«no las clasifiques ni las busques en `.arnes/plantillas-origen/`… sólo produce un `UNKNOWN`, que
+detiene la corrida entera»); y su **recuento propio** —21 entradas, tres sedes sobre agentes que
+dicen lo mismo, 24 menciones de `UNKNOWN` todas terminales, personalizaciones coherentes— da
+**0 contradicciones** en los tres temas.
+
+**Las dos mitades, verificadas contra el disco:** `.arnes/plantillas-origen/` contiene las **dos**
+plantillas —sí tienen base y sí mergean— y **0** agentes. Separarlas era el arreglo que faltaba:
+estaban revueltas bajo un tratamiento que sólo dos admitían. **La forma de `H-7` queda corregida
+ahí**, porque la frase prescriptiva ya no existe. Y el proyecto con una definición de agente
+personalizada: su copia **no se toca, no se sobrescribe, no se actualiza y el merge no le avisará** —
+**dicho, no prometido**, que es lo contrario del defecto original, que prometía un aviso imposible.
+
+### `R-1` · `instrumento`, **no bloquea** — la reserva que QA sí abre
+
+`skills/arnes-upgrade/SKILL.md:586-589`. Los **dos punteros** existen y cargan peso, pero la frase
+dice «**y aquí no se repite**» y la oración siguiente **repite** la regla operativa: las sedes pasan
+de una a **dos**, no a «dos correctas y una referencia». No sube de clase porque lo duplicado son
+**hechos estables** y las dos sedes coinciden hoy. Se abre igual porque es **la misma forma que
+produjo `N-5`**, y porque la frase que debería protegernos de ella **afirma lo contrario de lo que
+hace**: quien confíe en «aquí no se repite» editará sólo `1.34.0` y dejará atrás `1.32.0`. **QA no
+recomienda retirar la repetición** —lo repetido es el suelo de seguridad—; lo falso es la frase que
+la niega.
+
+**Intactos, contrastados:** `git diff` → **0 líneas** en los **once** archivos que no debían moverse.
+`N-4` **44 líneas, 4 278 B, `cmp` sin diferencias**; «Clasificación» y §13 con `sha256` idénticos;
+`referencia/` ausente. Gates §7 **4/4** y banco `'45-*'` → **89 PASS · 0 FAIL · 1 SKIP**, corridos
+por QA.
+
+**Método, sin ambigüedad —de las dos comisiones—:** **lectura cruzada de instrucciones** y
+mediciones mecánicas sobre el disco. **Nadie ejecutó `arnes-upgrade` y nadie migró ningún proyecto,
+ni real ni copiado.** El ejercicio sobre copias de vueltas anteriores **no se extiende** a esta
+cabeza. Que las instrucciones ya no se contradigan **no acredita** cómo se comportaría una corrida
+real.
+
+**Sigue en pie y sin revalidar:** la observación de `N-4` —el paso obligatorio compara **proyecto ↔
+base** y el eje que falla es **base ↔ hoy**, que vive sólo en la prosa—. QA sólo midió que **no se
+movió**.
+
+**Coste del candidato:** 8 comisiones · **60 min 27 s** · **1 335 545 tokens**.
+
 ## [Interno] — 2026-09-13 · `N-5`: la entrada de 1.32.0 deja de desmentir a la de 1.34.0 en la misma corrida
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (reparación de `N-5` autorizada por el propietario el 2026-09-13). Base: `c39736c`. Hallazgo: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` (3.ª vuelta).
 
