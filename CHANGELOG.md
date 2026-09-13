@@ -2,6 +2,47 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-12 · La propuesta de redirección, corregida por el propietario — **documento de decisión, sin validación ni efecto en la máquina**
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+### Qué es y qué NO es
+
+Toca **un solo archivo**: `docs/gobernanza/propuesta-redireccion-2026-09-12.md`. Es una **propuesta
+revisable** pendiente de decisión del propietario. **No** cambia `hooks/`, `tools/`, `tests/`,
+`templates/`, `skills/`, `.arnes/config.json` ni ningún REQ; **no** desactiva ningún control y **no**
+autoriza distribuir nada — el encargo que la creó lo dice: *«permite diseñar y dejar una propuesta
+revisable; no permite desactivar controles ni distribuir cambios todavía»*.
+
+### Sin validación, y dicho aquí para que nadie la herede
+
+**Este cambio no lleva veredicto de QA ni de seguridad, y no le corresponde ninguno todavía.** Viaja
+en **commit propio y separado** de la rectificación de `QA-024-42` justamente por eso: la
+verificación de aquélla —quality gates 4 de 4, corrida de la sección `46`— acredita **sus** rutas y
+**no** alcanza a este documento. Un commit presta su evidencia a todo lo que lleva dentro, y aquí no
+hay evidencia que prestar.
+
+### Las cuatro precisiones del propietario
+
+1. El **12 %** del contexto atribuido a los documentos de arranque pasa de «derivado» a **estimación**:
+   los 6 336 179 tokens **no** están desglosados por concepto, y desglosarlos exigiría un medidor nuevo
+   que no está autorizado.
+2. Las métricas quedan **acotadas a las 33 comisiones registradas** de este repositorio entre el
+   2026-09-10 y el 2026-09-12. No se extrapolan a otros proyectos ni a otras ventanas.
+3. Se **retiran** la «causa dominante» y las «vueltas evitables»: cada una de aquellas vueltas
+   encontró un defecto real, y llamarlas evitables confunde *que hubo retrabajo* con *que el trabajo
+   sobraba*.
+4. La regla que yo había formulado mal queda **partida en dos**: *una funcionalidad nueva se
+   **especifica** antes de implementarse; una afirmación sobre comportamiento **existente** debe
+   **contrastarse** antes de presentarse como hecho*. Mi versión —«un criterio no se escribe antes de
+   ejercer lo que describe»— era falsa **por exceso**: habría prohibido especificar.
+
+### Además
+
+La **sustitución aprobada** para las dos sedes mudas —revisión **documentada y atribuida** al
+responsable en lugar de interpretación automática de prosa, **conservando las pruebas del hook**, y
+**sin** construir ahora ningún mecanismo de firmas ni de caducidad—, y **`D14`** con sus tres
+alternativas y el alcance mínimo entregable.
+
 ## [Interno] — 2026-09-12 · La afirmación falsa deja de estar escrita: donde no hubo emparejamiento ni oraciones examinadas, ahora dice «sin acreditar»
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (**rectificación de la entrega**, autorizada expresamente por el propietario el 2026-09-12; **no es la vuelta 11**).
 

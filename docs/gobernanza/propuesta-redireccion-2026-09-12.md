@@ -14,6 +14,11 @@
 **Fuente:** `docs/arnes/coste-de-comision/00-metodo-y-base.md`, anotado al cerrar cada comisión. **No se
 construyó ningún medidor nuevo para esta revisión.**
 
+> **Alcance de estas cifras, y no se extrapolan.** Cubren **las 33 comisiones registradas** entre el
+> **2026-09-10 y el 2026-09-12**, de **este repositorio**, que se impone la ceremonia máxima a propósito.
+> **No describen un proyecto consumidor, ni el proyecto completo, ni ningún periodo anterior.** Las
+> comisiones de sesiones previas **no están registradas** y por tanto **no están aquí**.
+
 | Medida | Valor | Clase |
 |---|---|---|
 | Comisiones registradas | **33** | medido |
@@ -30,23 +35,32 @@ construyó ningún medidor nuevo para esta revisión.**
 
 `AGENTS.md` + `requirements/README.md` = **93 328 bytes**, que **cada comisión lee al arrancar**.
 
-**≈ 23 300 tokens por comisión × 33 = ≈ 770 000 tokens = 12 % del total**, sólo en releer los mismos dos
-documentos. *(Clase: **derivado** — la conversión bytes→tokens es aproximada; el recuento de comisiones y
-el tamaño son medidos.)*
+**≈ 23 300 tokens por comisión × 33 ≈ 770 000 tokens ≈ 12 % del total**, sólo en releer los mismos dos
+documentos.
+
+**Clase: `estimado`, no `derivado`.** Lo **medido** es el tamaño en bytes (93 328) y el número de
+comisiones (33). **Lo demás es estimación**: la conversión bytes→tokens usa una razón aproximada, y
+**no existe medición de tokens por comisión desglosada por concepto** que sostenga que esos tokens se
+gastaron en esa lectura. Los 6,34 M totales **no están desglosados**. Para convertirlo en `medido`
+haría falta instrumentar el desglose — y **eso es exactamente el medidor nuevo que este encargo no
+autoriza construir**.
 
 **Es la palanca más barata de todas y ya tiene REQ escrito: `REQ-019`, aplazado a 1.35.0.**
 
-### 1.2 · Comisiones que podrían haberse evitado
+### 1.2 · Dónde se concentró el retrabajo — **sin llamarlo evitable**
 
 **Una, medida y con nombre: la reparación de `SEC-084`.** Se despachó para arreglar un defecto que
 **`v1.33.1` ya había cerrado y `#48` portado**. Lo paró el propietario exigiendo reproducir sobre la
 cabeza actual antes de reparar. **Coste evitado: una comisión de desarrollador (~28 min, ~200 k
 tokens).** La lección quedó como regla y ya se aplica.
 
-**Y una clase entera, no una instancia: las vueltas 5 a 10.** Cada una corrigió **una capa** del mismo
-criterio y destapó la siguiente — pertenencia → consecuencia → condición → derivación vacía. **No fueron
-errores de ejecución**: cada vuelta encontró un defecto real. Lo que falló es que **el criterio se
-escribió antes de que nadie ejerciera lo que describía**.
+**Y una secuencia que NO llamo evitable, porque no lo fue.** Las vueltas 5 a 10 corrigieron una capa
+cada una y destaparon la siguiente —pertenencia → consecuencia → condición → derivación vacía—, y
+**cada una encontró un defecto real y medido**. Llamarlas «evitables» confundiría *que hubo retrabajo*
+con *que el trabajo sobraba*, y esa lectura lleva a recortar revisiones en vez de a corregir el orden.
+
+**Lo que sí se puede afirmar, y es más útil:** en todas ellas se **afirmó sobre conducta ya existente
+sin ejercerla**. Ése es el orden que hay que corregir, no el número de vueltas.
 
 ### 1.3 · Revisiones que repiten evidencia vigente
 
@@ -54,7 +68,7 @@ escribió antes de que nadie ejerciera lo que describía**.
 las 56 celdas del disparador, las 41 formas y las 72 de no-regresión, y lo dijo en cada veredicto. **Ese
 mecanismo ya está y no hay que inventarlo.**
 
-### 1.4 · Contradicciones entre copias de una misma regla — **la causa dominante**
+### 1.4 · Contradicciones entre copias de una misma regla — **la más frecuente de las medidas**
 
 Es **la familia que más trabajo consumió**, y aparece medida en todas sus formas:
 
@@ -65,8 +79,12 @@ Es **la familia que más trabajo consumió**, y aparece medida en todas sus form
 - `Archivos:` enumeraba **tres de siete** secciones.
 - `QA-026-10` y `SEC-067` con la clase separada por raya: **el lector no la reconoce**.
 
-**El patrón único: una copia que pierde una condición del original, o una lista que envejece hacia el
-lado que abre.**
+**El patrón que comparten: una copia que pierde una condición del original, o una lista que envejece
+hacia el lado que abre.**
+
+**No lo declaro causa única.** Es **la familia que más veces apareció en las comisiones registradas**;
+otras —el criterio escrito sobre conducta no ejercida (§1.2), el instrumento que no discrimina
+(§1.6)— son distintas y no se reducen a ella.
 
 ### 1.5 · Aprobaciones que bloquean trabajo independiente
 
@@ -110,8 +128,16 @@ atrapado es el más alto del banco**.
 2. **El rigor no se baja para eludir una protección.** Si un cambio toca la vía C, paga la vía C — aunque
    «sólo sea una línea».
 
-**Y una tercera, que es la que esta sesión demuestra:** *un criterio no se escribe antes de ejercer lo que
-describe*. Seis vueltas de este ciclo fueron texto que nadie había ejercido.
+**Y una tercera, corregida por el propietario el 2026-09-12 porque mi primera formulación era falsa por
+exceso** —yo escribí «un criterio no se escribe antes de ejercer lo que describe», y eso habría
+prohibido especificar—:
+
+> **Una funcionalidad nueva se especifica ANTES de implementarse. Una afirmación sobre comportamiento
+> EXISTENTE debe contrastarse ANTES de presentarse como hecho.**
+
+Son **dos reglas distintas**. Especificar por adelantado es el orden normal del trabajo; lo que falló en
+este ciclo fue lo otro. Y la forma extrema del fallo quedó medida: **el texto que documentaba la
+reparación de la derivación vacía cometía la misma forma de defecto que la reparación corrige**.
 
 ---
 
@@ -143,6 +169,91 @@ describe*. Seis vueltas de este ciclo fueron texto que nadie había ejercido.
 - **Una errata o una referencia desfasada NO dispara una revisión completa.** Se corrige donde está, se
   anota, y **no reabre el producto**. La documentación **falsa** sí se corrige — pero la escala de la
   respuesta la fija **el efecto**, no la clase del archivo.
+
+---
+
+## 3-bis · Las dos sedes sin acreditar: revisión documentada en vez de análisis de prosa
+
+**El propietario no autoriza declarar satisfecho `CA-14` con dos sedes sin acreditar**, y **pausó** las
+ampliaciones del instrumento. Esta es la salida que propongo, y **no es rebajar el criterio**.
+
+### El problema, medido
+
+Dos sedes de `AGENTS.md` §13 —**«Anti-deriva: el techo honesto»** y **la fila del orden de las
+firmas**— **no producen ninguna celda** emparejable: el derivador **no reconoce su forma**, así que no
+se puede leer en qué niveles ni en qué estado de la llave caen. **`46/7` examina cero oraciones en
+ellas**, y su `PASS` es cierto por vacío.
+
+**La salida por instrumento sería ensanchar el reconocedor hasta entender esas formas.** Es justamente
+lo que este proyecto ha perdido **cinco veces**: ensanchar el patrón cubre la instancia y no la clase.
+Y el propietario lo prohibió expresamente: **no sustituir revisión humana de significado por
+analizadores generales de texto**.
+
+### Qué obligación cambia, exactamente
+
+| | Hoy | Propuesto |
+|---|---|---|
+| **`CA-14 (ii)`** para sedes que el derivador reconoce | Emparejamiento **automático** texto↔hook, ≥12 celdas | **Sin cambio** |
+| **`CA-14 (ii)`** para sedes que **no** reconoce | Se declaran **mudas y sin acreditar** — y ahí se queda | **Revisión documentada**: una persona lee la sede, escribe **qué afirma en términos de clave, eje y niveles**, y esa lectura se **contrasta contra la conducta medida**, dejando la evidencia con fecha y árbol |
+| **La conducta del hook** | Medida por el banco | **Sin cambio — y esto es lo que no se negocia** |
+
+**La obligación que cambia es quién traduce la prosa a una afirmación comprobable**: hoy el derivador,
+y donde no llega, **una persona que firma su lectura**. **La obligación que NO cambia es que la
+afirmación se contraste contra el hook real.**
+
+### Qué evidencia sigue siendo necesaria
+
+- **Las pruebas ejecutables del comportamiento se conservan enteras.** El banco sigue midiendo las 24
+  celdas con el hook real; ninguna se retira.
+- **La revisión documentada deja evidencia con fecha y árbol**, y **caduca si la sede cambia** — igual
+  que un veredicto.
+- **La sede sigue apareciendo en el denominador como no emparejada automáticamente.** No desaparece del
+  recuento: cambia de «muda» a «acreditada por revisión», y **quien lea el informe ve cuál es cuál**.
+- **`46/11` sigue emitiendo su `SKIP`** mientras no exista esa revisión. **No se convierte en `PASS`
+  por decreto.**
+
+**Lo que esto NO resuelve, y va dicho:** una revisión humana **no escala** y **no se re-ejecuta en cada
+PR**. Es la decisión consciente de pagar revisión en dos sedes en vez de construir un analizador que
+este proyecto ya ha demostrado que no converge.
+
+---
+
+## 3-ter · `D14` — la decisión, con alternativas y consecuencias
+
+**Qué se decide:** si `REQ-024` cierra con **residual declarado** o sigue **`bloqueado`**.
+
+**Estado medido hoy:** `Estado: bloqueado` · `QA: con-hallazgos` · `Seguridad: pendiente` · **28
+hallazgos abiertos, 5 de clase `contrato`** (`SEC-084`, `QA-024-38`, `QA-024-39`, `QA-024-40`,
+`QA-024-42`).
+
+| | Qué pasa | Consecuencia |
+|---|---|---|
+| **(A) Mantener `bloqueado`** | El REQ no cierra en 1.34.0. Sus hallazgos siguen **abiertos y visibles** | 1.34.0 sale **sin `REQ-024`**. **Nada se pierde**: el trabajo está hecho y verificado en lo que QA acreditó |
+| **(B) Cerrar con residual declarado** | Exige aceptar que **cinco `contrato`** quedan abiertos con dueño, forzador y vencimiento | **No lo recomiendo, y el motivo es de definición:** lo que queda **no es un residual**. `SEC-084` y `QA-024-38/40` son **trabajo hecho pendiente de verificar**; `QA-024-39` es **una decisión tuya**; `QA-024-42` es **una frase falsa por corregir**. Declararlos residuales diría que se acepta un riesgo donde hay una **cola de verificación** |
+| **(C) Mover `REQ-024` a 1.35.0** | La ventana cambia; **los hallazgos no** | Es la vía que este proyecto ya usó con `REQ-019` y `REQ-008`. **Mueve el trabajo, no la deuda** |
+
+**Recomendación: (A) ahora, y (C) como decisión de ventana cuando cierres 1.34.0.** Son compatibles:
+mantener `bloqueado` describe la realidad **hoy**; mover la ventana es **planificación**, y ninguna de
+las dos cierra nada por conveniencia.
+
+### El alcance mínimo entregable de 1.34.0
+
+**Lo que puede terminarse con lo que ya está hecho y verificado**, sin `REQ-024`:
+
+| | Estado |
+|---|---|
+| El porte de la estabilización 1.33.1 y `SEC-090` | **Integrado** en `e53de46`, con QA, seguridad y CI |
+| La reparación de `SEC-084`/`QA-024-19` (el disparador) | **Hecha y acreditada por QA** (56 celdas, 0 `DENY→ALLOW`) |
+| La tabla heredada de `AGENTS.md` y la migración | **Hechas**, con 55+27 casos y gemelas idénticas |
+| La reparación de `QA-024-41` | **Hecha**, seis verificaciones PASS |
+| La reparación de la derivación vacía | **Hecha y acreditada por QA** en la vuelta 10 |
+| `REQ-027` | **`completado`** |
+
+**Lo que falta para poder entregar eso:** la rectificación de `QA-024-42` (en curso), **seguridad sobre
+el conjunto**, **CI en verde** — y **la cola de 14**, que hoy impide cerrar cualquier REQ.
+
+**Lo que NO entra:** `REQ-024`, `REQ-026`, `REQ-017`, `REQ-023` — cada uno con su decisión pendiente, y
+**todos con sus compromisos abiertos y visibles**.
 
 ---
 
