@@ -2,6 +2,48 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-12 · Antes de auditar el conjunto, decidir qué se publica: el inventario desde `v1.33.2` y sus cuatro opciones
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
+
+Nuevo `docs/gobernanza/entrega-acotada-desde-1.33.2.md`. **Propuesta de alcance: no construye
+ninguna rama candidata, no retira trabajo y no publica nada.** La rama `feat/1.34-cierre-alcance`
+se conserva completa. **Sin veredicto de QA ni de seguridad**, y no le corresponde ninguno.
+
+**Tres cosas que la medición destapó y que cambian la decisión:**
+
+1. **La rama declara `1.33.0`**, versión **anterior** a la publicada, en `plugin.json`,
+   `marketplace.json` (dos campos) y `.arnes/config.json:arnes_version`. Salió de
+   `rel/registro-1.33.0` y el número nunca subió: **hoy no es publicable tal cual**.
+2. **`v1.33.2` no es ancestro de la rama** —los parches se **portaron**, no se fusionaron—, así que
+   se verificó línea a línea que no se perdió ninguno. **No se perdió**: las 101 líneas de
+   `hooks/`+`tools/` que sólo están en `v1.33.2` son código **superado** por `SEC-084` y REQ-026,
+   y de los cuatro commits publicados fuera de la rama, `29f9af6` está entero (20/20) y de
+   `09ccf63` sólo difieren 5 comentarios; `ARNES_SEG_CABECERA`, `seg_antes` y `ARNES_RIGOR_MATIZ`
+   aparecen el mismo número de veces en los dos árboles.
+3. **El riesgo que el propietario nombró, medido.** Que `rotacion.activo` nazca `false` protege a
+   quien instala de cero, **no a quien actualiza**: la llave vive en el manifiesto del consumidor.
+   Quien la tenga en `true` pasa de **431 a 788** líneas en cada `Stop`, y una sección declarada
+   que sea una **tabla** pasa de *no tocarse* —cero entradas reconocibles, aviso y nada más— a
+   **recortarse**. En dirección contraria, con `estado_derivado.activo: false` la rotación de
+   sección **deja de rotar**. Y las dos revisiones de `REQ-026` declaran explícitamente que **no
+   acreditan «el comportamiento con la rotación encendida»**, con `SEC-067` (`usuario/dinero`) en
+   mitigación.
+
+**Separabilidad, por `git blame` sobre líneas vivas:** la **rotación** (REQ-026) es el único grupo
+limpiamente separable —cero líneas suyas en `lib.sh`, `guard-completado.sh` o `arnes-lectura.sh`—,
+aunque es el más **antiguo**, así que se separa revirtiendo, no recortando. **Medibilidad (REQ-023)
+y ausencia (REQ-024) no son separables**: 307 y 322 líneas vivas **entrelazadas en `hooks/lib.sh`**,
+y la guarda de una está construida **encima** de la otra. La **migración** (`D12`) es separable en
+archivos pero **no en sentido**: existe para llevar a los proyectos instalados el mecanismo que
+tendría que viajar con ella.
+
+**Cuatro opciones con su coste estimado por suma de anclas medidas** —nunca por mediana—, y
+**ninguna publicable hoy por la vía delegada**: `AGENTS.md` §4 devuelve la decisión al propietario
+mientras haya un hallazgo abierto, y hay 5 `contrato` en `REQ-024` y 6 en `REQ-026`.
+
+**La revisión de seguridad del conjunto queda detenida** hasta que el alcance esté decidido: una
+auditoría sobre un alcance que va a cambiar acredita un árbol que no se publicará.
+
 ## [Interno] — 2026-09-12 · La propuesta de redirección, corregida por el propietario — **documento de decisión, sin validación ni efecto en la máquina**
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
 
