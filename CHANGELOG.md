@@ -2,6 +2,65 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-13 · `N-1`…`N-4` reparados, y **la migración deja de actuar sin preguntar sobre un número prestado**
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (reparación conjunta autorizada por el propietario el 2026-09-13, incluidas las superficies afectadas). Base: `8427e7a`. Hallazgos de `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` (segunda vuelta).
+
+**`N-4` es el único que actuaba sin preguntar, y por eso es el importante.** `INTACTO` es la única
+fila que aplica **sin conflicto**, y se llegaba a ella comparando **por número**: un proyecto
+instalado cuando `## 9.` era «Convenciones de trabajo» veía su §9 idéntica a su base, salía
+`INTACTO`, y la doctrina del write-back se escribía **dentro de una sección que trata de otra cosa,
+en silencio**, en el `AGENTS.md` de un consumidor. La reparación **no inventa regla**: reutiliza la
+que la skill ya tenía —*«el número está tomado: `UNKNOWN`, se detiene y se pregunta»*— y la sube a
+donde se hereda. Ahora **primero se identifica la sección por título y contenido, y sólo después se
+clasifica**; una correspondencia incierta es `UNKNOWN`, **detiene la corrida y conserva el
+documento**.
+
+**Y el salvavidas estaba mal condicionado, que era el defecto de fondo.** Decía «puede **no tener**
+alguna, y ahí es `NUEVO`» — una comprobación de **ausencia**, cuando el caso real es **presencia con
+el mismo número y otro significado**: la sección **está**, así que la comprobación no dispara. Queda
+enunciado **por propiedad y no como lista de tags** —*el arnés ha renumerado y retitulado secciones
+a lo largo de su historia, y un proyecto conserva la numeración de su versión de origen*—, con `## 9.`
+como **ejemplo declarado, no como definición**: una lista de versiones envejece y la propiedad no.
+
+**La regla se puso en los DOS sitios, porque la causa era que no se heredaba.** En la sección
+canónica «Clasificación» —con «vale para **toda** entrada de migración: ninguna la re-inventa»— y en
+la entrada de 1.34.0. Poner sólo la segunda habría dejado a la entrada siguiente repitiendo el fallo.
+
+**`N-1` viaja en pareja.** `templates/requirements-README.md.tpl` **y** `requirements/README.md` de
+este repositorio decían «quien lo reescribe es **el analista**». **Comprobado antes de tocar: los dos
+decían exactamente lo mismo**, no divergían. Ahora dicen que **depende de la vía**, y siguen
+**idénticos** (6 líneas, 468 B, `sha256 ecf04195…`).
+
+**`N-2`** `skills/arnes-close/SKILL.md`: la skill que §13 designa para la trazabilidad al cierre ya
+no devuelve la deriva a un rol fijo — depende de la vía, y **lo bloqueante no cambia**: sin
+write-back no se entrega, venga de quien venga.
+
+**`N-3`, mirando los CUATRO `description` y no los dos nombrados**, porque el criterio es que **es
+la línea que la coordinadora lee al despachar**:
+- **analista** — decía «cuando haya que crear/actualizar archivos en `requirements/`», que manda
+  **toda** actualización al analista. Ahora: sólo cuando implique **una decisión de requisitos o de
+  diseño**, **incluido el REQ nuevo que nazca de una reparación** (que es el caso `B` de ayer), y
+  **NO** para el write-back de una reparación ya contratada.
+- **desarrollador** — **omitía el write-back**, que es justo la capacidad que la vía le concede.
+  Ahora lo nombra, con su frontera: para y escala si aparece una decisión.
+- **auditor** — ya corregido en `c65ce65`; se re-verificó.
+- **qa-tester** — **revisado y NO tocado**: es el único que no atribuye ninguna fase a un rol fijo.
+  Cambiarlo habría sido ampliar, no reparar.
+
+**Las cuatro superficies dicen ya lo mismo** —despacho (los cuatro `description`), ejecución (los
+cuerpos y `AGENTS.md` §6/§9), cierre (`arnes-close`) y actualización (`arnes-upgrade`)—: el
+write-back es **obligatorio siempre**, **quién lo escribe depende de la vía**, y **quien lo verifica
+no cambia**.
+
+**`A` y `B` intactos**, comprobado por diff vacío: la nota fechada de `registro-seguridad.md` y el
+caso del REQ nuevo en §6 no se tocaron; las gemelas de §6 siguen en **57 líneas, 4701 B, `sha256
+b2c79314…`**, idénticas. **Exclusión del experimento documental**: sin cambios.
+
+**Evidencia:** gates §7 **4/4**; banco `'44-*' '45-*' '46-*'` **103 PASS · 0 FAIL · 1 SKIP** (el
+SKIP es el caso sólo-Windows sin `cygpath`). Banco **no ampliado**. **No se tocaron** `hooks/`,
+`tools/`, `tests/`, `.arnes/config.json` ni ningún REQ; **no se cierra ningún hallazgo** —lo hace
+QA—; sin pronunciamiento sobre la publicación, que sigue detenida.
+
 ## [Interno] — 2026-09-13 · QA, segunda vuelta: **adoptable con reserva** — los diez reparados, cuatro sedes nuevas
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester. Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` (segunda vuelta). **Sin veredicto de seguridad.**
 

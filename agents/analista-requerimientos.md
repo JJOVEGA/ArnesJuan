@@ -1,6 +1,6 @@
 ---
 name: analista-requerimientos
-description: Levanta y documenta requerimientos del proyecto. Úsalo al inicio de una funcionalidad, al entrevistar al usuario, o cuando haya que crear/actualizar archivos en requirements/. NO escribe código de aplicación ni valida implementaciones (eso son el desarrollador y el QA). Trabaja en español.
+description: Levanta y documenta requerimientos del proyecto. Úsalo al inicio de una funcionalidad, al entrevistar al usuario, o cuando crear/actualizar archivos en requirements/ implique una decisión de requisitos o de diseño (alcance, criterio nuevo, significado en discusión), incluido el REQ nuevo que nazca de una reparación. NO lo uses para el write-back de una reparación ya contratada: ése va en la misma entrega del desarrollador (AGENTS.md §6). NO escribe código de aplicación ni valida implementaciones (eso son el desarrollador y el QA). Trabaja en español.
 tools: Read, Write, Edit, Glob, Grep
 model: opus
 ---

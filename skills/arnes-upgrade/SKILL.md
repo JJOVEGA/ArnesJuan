@@ -40,7 +40,14 @@ versión destino, para que la siguiente migración tenga base.
 
 ## Clasificación: cuatro estados
 
-Para cada sección gestionada, comparando los tres documentos:
+Para cada sección gestionada, comparando los tres documentos. **Primero se IDENTIFICA la sección,
+y sólo después se clasifica:** una sección se identifica por su **título y su contenido**, nunca
+sólo por el número —`## N.` ha significado cosas distintas en distintas versiones del arnés, así
+que el número numera pero no identifica—. Si el `## N.` del proyecto y el de la base **no son la
+misma sección**, no hay pareja que comparar; y si no puedes afirmar la correspondencia sin
+adivinar, **eso es exactamente el «no se localiza con seguridad» de más abajo: `UNKNOWN`, paras y
+el documento se conserva**. Esta regla vale para **toda** entrada de migración, también las de
+abajo: ninguna la re-inventa.
 
 | Estado | Evidencia | Acción |
 |---|---|---|
@@ -1236,7 +1243,31 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   corregidos **al actualizar el plugin**, no por esta migración; **dilo en el informe** y sigue.
 
   **Lo que SÍ se migra son las secciones `§6` y `§9` de tu `AGENTS.md`**, que se copiaron de la
-  plantilla a tu proyecto y por eso tienen base con la que comparar:
+  plantilla a tu proyecto y por eso tienen base con la que comparar.
+
+  **Y antes de clasificar ninguna, identifícala por CONTENIDO Y TÍTULO, nunca sólo por el número.**
+  Es la misma regla que ya aplicas al insertar un bloque al final —*«si el `AGENTS.md` del proyecto
+  ya tiene una sección `## 14.` propia, el número está tomado: `UNKNOWN`, se detiene y se
+  pregunta»*—, y aquí vale igual: **un mismo `## N.` ha significado cosas distintas en distintas
+  versiones del arnés**, así que el número **no identifica** una sección, sólo la numera. Comprueba
+  que el título y el contenido del `## N.` de tu proyecto y el del `## N.` de la base **son la misma
+  sección**; **si no lo son, o si no puedes afirmarlo sin adivinar, es `UNKNOWN`**: la migración
+  **se detiene, no se aplica nada y el documento se conserva intacto**. Esto no es una regla nueva
+  —es la de arriba, reutilizada— y **manda sobre la tabla**: sin identificación firme no se entra a
+  clasificar.
+
+  > **Por qué, enunciado por propiedad y no como lista de versiones** (una lista de tags envejece; la
+  > propiedad no): **el arnés ha renumerado y retitulado secciones de `AGENTS.md` a lo largo de su
+  > historia**, y un proyecto instalado hace tiempo conserva la numeración de **su** versión de
+  > origen. Por eso el `## N.` de una base antigua puede llevar **otro título y otro contenido** que
+  > el `## N.` de hoy. **Caso real, como ejemplo y no como definición:** `## 9.` fue «Convenciones de
+  > trabajo» antes de ser «Cambios de requerimientos (versionado y deriva)». Comparar por número dos
+  > secciones que sólo comparten el número las declara `INTACTO` **—la única fila que actúa sin
+  > preguntar—** y escribe la doctrina del write-back dentro de una sección que trata de otra cosa,
+  > **en silencio**, en el archivo de gobernanza de tu proyecto. Identificar por título y contenido
+  > da `NUEVO` —«Añadir»—, que es lo correcto.
+
+  Hecha esa identificación, y **sólo** entonces:
 
   | Estado de `§6` / `§9` | Qué haces |
   |---|---|
@@ -1246,9 +1277,15 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   | **`NUEVO`** —tu base **no tenía** esa sección, porque instalaste el arnés antes de que existiera— | **Añadir.** No hay texto tuyo que conservar |
   | **`UNKNOWN`** —no se puede decidir sin adivinar— | **Terminal, como `CONFLICTO`, y no es negociable: te DETIENES y NO se aplica NADA de toda la corrida**, ni siquiera lo que salió `SAFE`. Déjalo constar y pregunta |
 
-  **No supongas que §6 y §9 están en tu base sólo porque están en la nuestra:** un proyecto instalado
-  con una versión anterior puede no tener alguna, y ahí el estado correcto es **`NUEVO`**, no
-  `INTACTO`. Clasifica **cada una por separado**: pueden salir en estados distintos.
+  **No supongas que §6 y §9 están en tu base sólo porque están en la nuestra**, y ojo con la forma
+  en que esto falla: **no basta con mirar si la sección FALTA.** Un proyecto instalado con una
+  versión anterior puede **no tener** la sección —y entonces es **`NUEVO`**, no `INTACTO`—, pero
+  puede también **tener ese mismo número ocupado por otra sección distinta**, y ése es el caso que
+  engaña, porque la sección **está presente** y la comprobación de ausencia **no dispara**. Las dos
+  situaciones se resuelven con la identificación de arriba: si el `## N.` de la base no es la misma
+  sección que el `## N.` de hoy, **no es `INTACTO`** — es `NUEVO` si la sección de hoy no existe en
+  tu proyecto bajo ningún número, y **`UNKNOWN`** si no puedes decidirlo sin adivinar. Clasifica
+  **cada una por separado**: pueden salir en estados distintos.
 
   **Y un aviso entero:** esta vía **reduce despachos, no controles**. Si prefieres seguir con las
   cuatro fases siempre, **no migres estas secciones**: conservar tu texto es una respuesta válida.

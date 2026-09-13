@@ -26,8 +26,11 @@ contenido: resume lo real.
      REQ/NFR/ADR, o está explícitamente `aceptado` con justificación.
    - Veredictos coherentes: `QA: aprobado` y, si es sensible, `Seguridad: aprobado`.
    Si encuentras **deriva** (algo construido que el requerimiento no refleja), es **bloqueante**:
-   devuélvelo al `analista-requerimientos` para el write-back antes de entregar. Documenta el
-   resultado en la sección *Trazabilidad y no-deriva* de `DELIVERY.md`.
+   devuélvelo para el write-back antes de entregar. **A quién depende de la vía** (`AGENTS.md` §6 y
+   §9): al `analista-requerimientos` cuando queda una decisión de requisitos o de diseño, y al
+   `desarrollador` —en la misma entrega que el arreglo— cuando sólo hay que reflejar en el REQ lo
+   que ya estaba contratado. **Lo bloqueante no cambia:** sin el write-back no se entrega, venga de
+   quien venga. Documenta el resultado en la sección *Trazabilidad y no-deriva* de `DELIVERY.md`.
 4. Pregunta el **destinatario** (técnico / ejecutivo / ambos) y ajusta el nivel de detalle.
 5. Marca el `DELIVERY.md` como pendiente de aprobación: regístralo en `PENDING_APPROVAL.md`
    y NO des el proyecto por cerrado hasta el visto bueno del destinatario.
