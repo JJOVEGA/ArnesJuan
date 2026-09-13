@@ -2,6 +2,38 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-13 · QA, segunda vuelta: **adoptable con reserva** — los diez reparados, cuatro sedes nuevas
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester. Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` (segunda vuelta). **Sin veredicto de seguridad.**
+
+**Los diez reparados**, y dos mejor de lo pedido: `H-2` corrigió **la causa** y `H-4` **la premisa**.
+Las dos sedes de `agents/auditor-seguridad.md` —línea 38, gemela exacta de `H-1` con el rol cambiado;
+y línea 3, el `description` que la coordinadora lee **al despachar**— eran reales y están cerradas.
+
+**Gemelas contrastadas, no aceptadas:** §6 y §9 con `sha256` idéntico, y `git log -S` confirma que el
+blockquote `ALIGERADA` **nunca existió** en la plantilla.
+
+**Cuatro sedes nuevas, que NO se reparan en esta ventana** —decisión del propietario—:
+
+- **`N-4` · `contrato`, y el único que actúa sin preguntar.** `## 9.` **no siempre significó lo
+  mismo**: en `v1.2.0`…`v1.3.3` era «Convenciones de trabajo». Un proyecto instalado ahí y sin tocar
+  clasifica `INTACTO`, la **única fila que aplica sin preguntar**, y la doctrina del write-back se
+  escribiría **dentro de «Convenciones de trabajo»**, en silencio. El salvavidas escrito **no
+  dispara**: condiciona a la **ausencia** de la sección, y el caso real es **presencia con el mismo
+  número y otro significado**. La skill ya tiene la doctrina correcta sin heredarla: «el número está
+  tomado: `UNKNOWN`, se detiene y se pregunta».
+- **`N-1`** `templates/requirements-README.md.tpl:236` · **`N-2`** `skills/arnes-close/SKILL.md:29` ·
+  **`N-3`** los `description` de dos agentes.
+
+**Lo que la revisión NO acredita, y pesa:** `N-4` está medido **en papel**, no observado fallando —
+QA **no migró ningún proyecto**: usó copias temporales de artefactos reales y aplicó la instrucción
+**a mano**. Y **ningún guardián del banco cubre `agents/*.md`, `templates/requirements-README.md.tpl`
+ni las skills**: `H-1`, `H-2`, `N-1`, `N-2` y `N-3` **no los caza ninguna máquina**.
+
+**Coste de este candidato, medido:** 4 comisiones · **36 min 18 s** de agente · **512 398 tokens**
+(QA coherencia 10 min 13 s / 107 075 · reparación de los diez 8 min 57 s / 107 188 · QA 2.ª vuelta
+12 min 28 s / 163 710 · incorporación de A y B 4 min 40 s / 134 425). El registro canónico vive en
+`feat/1.34-cierre-alcance` y queda por reconciliar cuando las ramas converjan.
+
 ## [Interno] — 2026-09-13 · Las **dos contradicciones** que quedaron abiertas, resueltas por el propietario e incorporadas
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (decisiones expresas del propietario del 2026-09-13, incorporadas por la vía de reparación). Base: `c65ce65`, ya acreditado por QA y **no reabierto**.
 
