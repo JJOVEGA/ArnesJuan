@@ -2,6 +2,62 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-13 · `N-5`: la entrada de 1.32.0 deja de desmentir a la de 1.34.0 en la misma corrida
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (reparación de `N-5` autorizada por el propietario el 2026-09-13). Base: `c39736c`. Hallazgo: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` (3.ª vuelta).
+
+**Yo había visto una de las tres cosas que la frase hacía mal, y era la menos grave.** Vi la forma de
+`H-7` —prescribir la acción sobre lo que el merge marca como conflicto—, que sola habría sido
+`instrumento`. Las otras dos son las que bloquean, y QA acierta al reclasificar a **`contrato`**:
+la frase **afirmaba algo falso sobre lo construido** —que «el merge a tres vías te lo marcará» para
+una definición de agente, cuando **no puede**, y encima las listaba bajo «lo que llega **por
+plantilla**», que es justo lo que `H-5` estableció que no ocurre— y, sobre todo, **reabría `H-5`**:
+`## Migraciones conocidas` es **acumulativa**, así que un proyecto anterior a 1.32.0 lee **esta**
+entrada y la de 1.34.0 **en la misma corrida** y las dos dicen lo contrario. Si ganaba la de 1.32.0,
+clasificar un agente sin base da `UNKNOWN` y —con `H-6` ya reparado— **detiene la corrida entera**,
+precisamente a los proyectos más antiguos, que son los que más necesitan migrar.
+
+**La salida es una REFERENCIA, no una cuarta copia**, porque escribir por su cuenta lo que la
+doctrina ya decía es exactamente lo que produjo `N-5`. El árbol tenía **tres** sedes sobre migrar
+agentes —el encabezado «Por qué existe» y la entrada de 1.34.0 **correctas**, ésta **contraria**—;
+ahora quedan **las dos correctas y una referencia** que apunta al tratamiento vigente (`Hacia
+1.34.0`) y **no lo repite**.
+
+**Y las dos cosas separadas, que estaban revueltas en un solo bullet:** `templates/requirements-README.md.tpl`
+y `templates/AGENTS.md.tpl` §9 **sí** tienen base y **sí** entran en el merge —si los personalizaste
+salen `MODIFICADO`, que es **conflicto**: tu texto **no se toca** y la decisión es tuya, con lo que
+la forma de `H-7` también queda corregida—. Las **definiciones de agente no llegan por plantilla ni
+entran en la migración**, y no se las manda a un merge que no puede clasificarlas.
+
+**El proyecto que personalizó una definición de agente no se queda sin nada, y se dice qué le pasa
+sin prometer que el merge lo resuelva:** su copia **no se toca, no se sobrescribe y no se
+actualiza** —se queda como la dejó—, y lo que **no** va a pasar es que el merge le avise, así que
+compararla con la definición nueva del plugin queda **a su cargo**.
+
+**Recorrido conjunto de un proyecto anterior a 1.32.0 hacia el candidato — 0 contradicciones.**
+Revisadas **las 21 entradas** de `## Migraciones conocidas` más el encabezado, buscando qué dice
+cada una sobre **agentes**, **personalizaciones** y **`UNKNOWN`**: sólo tres sedes hablan de migrar
+agentes (encabezado `:10` ✔, `Hacia 1.32.0` ✔ ya como referencia, `Hacia 1.34.0` ✔); las demás
+menciones a «agente» son de otros asuntos (rigor, `docs/ESTADO.md`, `guard-*`, paradas simultáneas)
+y **no aplican**. `UNKNOWN` se enuncia igual en todas sus sedes —terminal, detiene, no se aplica
+nada— y las personalizaciones, igual en las suyas: **se conservan, no se pisan, se informan**.
+
+**Cómo lo verifiqué, sin ambigüedad: verifiqué las INSTRUCCIONES por lectura cruzada de las
+entradas sobre el árbol del repositorio. NO ejecuté `arnes-upgrade` y NO migré ningún proyecto, ni
+real ni copiado.** `N-5` es un defecto **del texto** —dos entradas que se contradicen leídas en la
+misma corrida—, y se mide leyéndolas; no hay corrida observada detrás de esta entrada.
+
+**Y corrijo un error de método mío:** mis tres citas anteriores tenían **deriva de línea**, y la de
+`N-5` además erraba la entrada — dije «576, entrada de 1.33.0» cuando es **583, entrada `Hacia
+1.32.0`** (que va de `:530` a `:634`). Esta vez verifiqué las líneas **antes** de tocarlas.
+
+**Evidencia:** gates §7 **4/4**; banco `'45-*'` —la sección que cubre la guía de migración; el
+filtro arrastra `46`— **89 PASS · 0 FAIL · 1 SKIP** (el SKIP es el caso sólo-Windows sin `cygpath`).
+Banco **no ampliado**. **No se tocó** la prosa que rodea la tabla ni el paso obligatorio de `N-4`
+—la observación de QA queda **registrada y sin actuar**, conforme a la instrucción—. `A`, `B` y la
+exclusión del experimento documental, intactos. Sin tocar `hooks/`, `tools/`, `tests/`,
+`.arnes/config.json` ni ningún REQ; **ningún hallazgo cerrado**; sin pronunciamiento sobre la
+publicación.
+
 ## [Interno] — 2026-09-13 · `N-1`…`N-4` reparados; QA: **PENDIENTE** por un impedimento — `N-5` reabre `H-5`
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: desarrollador (`a34e18c`) y qa-tester (3.ª vuelta). Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`.
 

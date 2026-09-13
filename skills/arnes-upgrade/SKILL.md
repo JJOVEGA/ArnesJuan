@@ -574,13 +574,23 @@ nada.
   (`docs/qa/<versión>.md`), nunca en el paréntesis de la clase** de `Hallazgos abiertos:`. Ese
   paréntesis es la entrada de `guard-completado` y no cambia.
 - **Lo que además llega por plantilla y hay que revisar si lo personalizaste:**
-  `templates/requirements-README.md.tpl` (la misma sección), `templates/AGENTS.md.tpl` §9 (un punto
-  nuevo, «criterio más estrecho que lo construido», que apunta a la sección y no la transcribe) y
-  las definiciones de los tres agentes que la aplican — `analista-requerimientos` (tres casillas
-  nuevas en su Definition of Ready), `qa-tester` (un criterio mal formado es hallazgo de clase
-  `contrato` **antes** de probar, y el QA no reescribe el criterio) y `auditor-seguridad` (un
-  control se describe por propiedad, nunca por enumeración). Si personalizaste alguno, el merge a
-  tres vías te lo marcará: conserva tu texto y añade lo nuevo, que es aditivo.
+  `templates/requirements-README.md.tpl` (la misma sección) y `templates/AGENTS.md.tpl` §9 (un punto
+  nuevo, «criterio más estrecho que lo construido», que apunta a la sección y no la transcribe).
+  Esos dos **sí** tienen base y **sí** entran en el merge: si los personalizaste saldrán
+  `MODIFICADO`, y eso es **conflicto** — tu texto **no se toca** y la decisión es tuya.
+- **Las definiciones de agente que aplican esta sección NO llegan por plantilla y NO entran en esta
+  migración.** Son `analista-requerimientos` (tres casillas nuevas en su Definition of Ready),
+  `qa-tester` (un criterio mal formado es hallazgo de clase `contrato` **antes** de probar, y el QA
+  no reescribe el criterio) y `auditor-seguridad` (un control se describe por propiedad, nunca por
+  enumeración). **Se actualizan con el plugin**, como dice «Por qué existe» al principio de esta
+  skill, y **el tratamiento vigente de los agentes distribuidos está en la entrada `Hacia 1.34.0`**:
+  se aplica **ése**, y aquí no se repite. **No las clasifiques ni las busques en
+  `.arnes/plantillas-origen/`:** no hay base suya que recuperar, y pedirle al merge que las clasifique
+  sólo produce un `UNKNOWN`, que detiene la corrida entera.
+  **Y si guardaste una copia modificada de alguna definición de agente en tu proyecto, no se pierde
+  ni se pisa:** esta migración **no la toca, no la sobrescribe y no la actualiza** — se queda
+  exactamente como la dejaste. Lo que **no** va a pasar es que el merge te avise de ella, así que
+  compararla con la definición nueva del plugin queda **a tu cargo**.
 
 **El banco de este repositorio pasa a archivos por sección — y en tu proyecto no hay nada que
 migrar.** En ArnesJuan, `tests/escenarios/hooks/run.sh` era un solo archivo de 4.096 líneas con 33
