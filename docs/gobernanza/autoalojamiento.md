@@ -204,7 +204,15 @@ contador y las extensiones ya autorizadas**. **Agotar vueltas nunca equivale a a
 
 Para implementar este piloto **no** se modifican:
 
-1. **Plantillas heredables** ni **agentes distribuidos**.
+1. ~~**Plantillas heredables** ni **agentes distribuidos**.~~ **LEVANTADO por decisión expresa del
+   propietario los días 2026-09-12 (plantillas) y 2026-09-13 (agentes distribuidos), y sólo para
+   esto:** llevar la **vía proporcional de reparación** a `templates/AGENTS.md.tpl`, a `AGENTS.md`,
+   a los **cuatro agentes** y a la migración de `arnes-upgrade`. La vía **deja de ser un piloto de
+   este repositorio y pasa a ser producto**. **Los agentes entran porque la política también los
+   gobierna**, y sin ellos el cambio sería falso: `agents/qa-tester.md` decía que el write-back es
+   siempre del analista, y QA habría rechazado el de un desarrollador. **Ninguna otra parte de esta
+   enmienda se propaga sin una decisión nueva.** Se **tacha, no se borra**: el límite existió y su
+   levantamiento es un hecho con fecha.
 2. **Hooks** ni **controles mecánicos**.
 3. El **comportamiento de instalación y actualización**.
 4. El **rigor** ni la **sensibilidad** de un REQ **para evitar una puerta**.

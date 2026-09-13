@@ -86,6 +86,44 @@ Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
 
 **Flujo:** analista define REQ → desarrollador codifica → qa-tester valida → auditor-seguridad revisa → REQ `completado`.
 
+**La vía de cada cambio se elige por su EFECTO, no por su tamaño ni por la extensión del archivo.**
+El flujo de arriba es el de una **capacidad nueva**. Una **reparación con diagnóstico y solución
+claros** no necesita las cuatro fases, y hacerlas igual no añade protección: añade espera.
+
+| Naturaleza del cambio | Vía |
+|---|---|
+| Documentación informativa, índices y erratas **sin cambio de obligaciones** | la coordinadora, con las comprobaciones pertinentes |
+| **Reparación con causa, alcance y contrato claros** | desarrollador → QA. **Sin comisión de analista** |
+| Cambio que afecta **hooks, protecciones, firmas, permisos, instalación, migración o publicación** | desarrollador → QA → **seguridad**. El analista interviene **sólo** si queda una decisión de diseño o de contrato **pendiente** |
+| **Capacidad nueva** o **cambio de contrato** | analista → desarrollador → QA → seguridad |
+
+**La regla que impide que esta tabla se convierta en una salida: se clasifica por el EFECTO.** Una
+regla de autorización escrita en Markdown es gobernanza sensible; una prueba que decide si una
+protección funciona tampoco es una simple edición documental. La coordinadora clasifica y **registra
+una justificación breve**; **no se abre una comisión sólo para clasificar**, y se escala únicamente
+una ambigüedad concreta que pueda **reducir una protección**.
+
+**En la vía de reparación, el desarrollador entrega el arreglo y su documentación EN LA MISMA
+ENTREGA** —incluido el write-back de §9—, y **QA verifica el cambio y sus dependencias**,
+reutilizando la evidencia vigente cuando se demuestre que lo posterior no la invalida, y
+**registrando esa comprobación**. **Seguridad interviene cuando el efecto del cambio lo exige**, que
+es lo que la máquina ya calcula: `guard-completado` exige `Seguridad: aprobado` **en `critico`**, y
+`Sensible a seguridad: sí` impone `critico` como suelo.
+
+**Y las cuatro cosas que esta vía NO cambia, porque su ausencia sería la ambigüedad peligrosa:**
+
+1. **El write-back de §9 sigue siendo obligatorio.** Lo que cambia es **quién puede transcribirlo**
+   —el desarrollador, cuando no queda decisión de diseño ni de contrato pendiente—, **no si hay que
+   hacerlo.** Un hallazgo resuelto sólo en el código o en un log **sigue siendo deriva**, y QA y
+   seguridad siguen sin firmar `aprobado` antes de que el requerimiento lo refleje.
+2. **El rigor no se rebaja.** Elegir vía **no** reclasifica un REQ: el rigor y la sensibilidad se
+   fijan por el efecto, nunca para evitar una puerta.
+3. **No se omiten pruebas necesarias.** Durante el desarrollo, pruebas **enfocadas**; el banco
+   completo sobre el **candidato final** y tras cualquier cambio que invalide esa evidencia. Los
+   controles obligatorios de integración y publicación **se mantienen todos**.
+4. **Los contadores no se reinician.** Una reparación que vuelve al mismo agente **gasta vuelta**,
+   se llame como se llame, y **agotar vueltas nunca equivale a aprobar**.
+
 **El orden no es una sugerencia: es la condición de validez de la firma.** El
 `auditor-seguridad` no firma `Seguridad: aprobado` sobre un árbol que el `qa-tester` no ha
 validado, porque **no mira las quality gates**: su veredicto acredita la revisión de seguridad,
@@ -250,9 +288,13 @@ cambio de legislación, una limitación detectada en pruebas, un parche de depen
   diseño. El hallazgo **no se cierra** hasta que el requerimiento lo refleje — un **criterio de
   aceptación** nuevo (hallazgo de QA) o un **NFR** nuevo/actualizado (hallazgo de seguridad) —,
   con la causa enlazada al hallazgo y un ADR si es de fondo. Un hallazgo resuelto solo en el
-  código o en un log (`docs/qa/…`, `registro-seguridad.md`) es deriva. El `analista-requerimientos`
-  hace el write-back; el `qa-tester` y el `auditor-seguridad` no dan su veredicto `aprobado`
-  (campos `QA:`/`Seguridad:` del REQ) hasta que existe.
+  código o en un log (`docs/qa/…`, `registro-seguridad.md`) es deriva. **Quién lo transcribe depende
+  de la vía (§6):** el `analista-requerimientos` cuando queda una decisión de requisitos o de diseño,
+  y el **`desarrollador`, en la misma entrega que el arreglo**, cuando no queda ninguna y sólo hay
+  que reflejar en el requerimiento lo que ya estaba contratado. **Quien transcribe no decide**: si al
+  escribirlo aparece una decisión de alcance o de significado, **para y la escala** — eso es un
+  cambio DE FONDO y vuelve al analista. En todos los casos, el `qa-tester` y el `auditor-seguridad`
+  no dan su veredicto `aprobado` (campos `QA:`/`Seguridad:` del REQ) hasta que existe.
 - **REGLA DE ESTADO:** cuando un REQ ya `completado` cambia, vuelve a `en-progreso` o
   `en-revisión` y **re-recorre el ciclo** (dev ajusta → QA re-valida contra los criterios
   nuevos → seguridad revisa). Un cambio de requerimiento **reabre** el trabajo; no es solo

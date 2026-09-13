@@ -17,6 +17,12 @@ Eres el desarrollador del proyecto. Implementas los requerimientos de `requireme
 El estado vive en la línea `Estado:` del archivo `requirements/REQ-XXX.md` (según la plantilla de `requirements/README.md`). Edítalo ahí; no crees archivos ni índices de estado paralelos.
 - Al empezar: `Estado: en-progreso`.
 - Al terminar: `Estado: en-revisión` (nunca `completado` — eso lo deciden QA/seguridad).
+- **En la vía de reparación (`AGENTS.md` §6), el write-back es TUYO y viaja en la MISMA entrega que
+  el arreglo:** el criterio o el NFR que el hallazgo obliga a ajustar se escribe en el REQ, con su
+  causa enlazada al hallazgo. Un arreglo entregado sin él **es deriva** y QA no firmará. **Pero
+  transcribir no es decidir:** si al escribirlo aparece una decisión de alcance o de significado
+  —el criterio tendría que prometer otra cosa, o hace falta un criterio nuevo—, **para, déjalo
+  escrito y escálalo al analista**. Esa es la frontera y no se cruza por comodidad.
 - Si el REQ es ambiguo, le falta un dato para implementarse, o contradice un NFR: **no adivines y no implementes una interpretación a medias.** Deja `Estado: bloqueado` con una nota de qué falta o qué choca, y detente.
 
 ## Jerarquía ante conflictos

@@ -1204,6 +1204,40 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   más de lo que decía y algún cierre pudo pasar por delante de una decisión tuya. `tools/arnes-lectura.sh`
   publica ahora el número que bloquea, y `sin datos` cuando no lo puede medir.
 
+- **`AGENTS.md` §6 y §9, y los cuatro agentes: la VÍA PROPORCIONAL de reparación.** §6 gana una tabla
+  que elige la vía **por el efecto del cambio** —documentación sin cambio de obligaciones · **reparación
+  con causa, alcance y contrato claros: desarrollador → QA, sin comisión de analista** · cambio que
+  toca hooks, protecciones, firmas, permisos, instalación, migración o publicación: **+ seguridad** ·
+  capacidad nueva o cambio de contrato: las cuatro fases—, y §9 deja de fijar en el analista **quién
+  transcribe** el write-back.
+  **Y los agentes cambian con ella, porque la política también los gobierna:** el `desarrollador`
+  recibe el write-back de la vía de reparación **en la misma entrega**; el `qa-tester` deja de leer
+  que el write-back es siempre del analista y conserva su obligación de **no firmar sin él**; el
+  `analista-requerimientos` mantiene el suyo **siempre que quede una decisión**; y el disparador del
+  `auditor-seguridad` se enuncia **sin depender de quién lo despache**.
+  **Qué NO cambia:** el **write-back sigue siendo obligatorio** —cambia quién lo escribe, no si se
+  escribe—; **el rigor no se rebaja** y elegir vía **no** reclasifica un REQ; **no se omiten pruebas
+  necesarias**; **los contadores no se reinician**; y **seguridad sigue sin firmar lo que QA no ha
+  validado**. **Ningún hook cambia**, y tampoco `.arnes/config.json`.
+
+  **Cómo llega esto a tu proyecto, por el estado que devuelva el merge —los cinco, sin declarar
+  ninguno imposible—:**
+
+  | Estado de `§6` / `§9` / un agente | Qué haces |
+  |---|---|
+  | **`INTACTO`** | Aplicar el contenido nuevo **sin preguntar** |
+  | **`MODIFICADO`** | **Conflicto: preguntar.** **Conserva tu texto** y añade encima lo nuevo; si tu personalización fijaba quién hace el write-back, **es justo lo que este cambio toca**, y decidirlo es tuyo |
+  | **`ELIMINADO`** —la sección existía en la base y tu proyecto **la borró**— | **Conflicto: preguntar, y NO reponer por tu cuenta.** Pudo borrarse a propósito. Si se repone, se repone **con tu decisión**, y si no, **dilo en el informe**: ese proyecto se queda sin la vía y sigue con el flujo anterior, que es válido |
+  | **`NUEVO`** —tu base **no tenía** esa sección, porque instalaste el arnés antes de que existiera— | **Añadir.** No hay texto tuyo que conservar |
+  | **`UNKNOWN`** —no se puede decidir sin adivinar— | **Preguntar**, y dejarlo constar |
+
+  **No supongas que §6, §9 y los cuatro agentes están en tu base sólo porque están en la nuestra:**
+  un proyecto instalado con una versión anterior puede no tener alguno, y ahí el estado correcto es
+  **`NUEVO`**, no `INTACTO`. Clasifica **cada uno por separado**: pueden salir en estados distintos.
+
+  **Y un aviso entero:** esta vía **reduce despachos, no controles**. Si prefieres seguir con las
+  cuatro fases siempre, **no migres estas secciones**: conservar tu texto es una respuesta válida.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

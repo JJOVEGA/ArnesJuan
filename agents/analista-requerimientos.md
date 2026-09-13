@@ -53,6 +53,12 @@ Si un requerimiento nuevo choca con uno existente, **regístralo explícitamente
 
 ## Estados — vocabulario único
 Usa exactamente el conjunto de estados de `requirements/README.md`, el mismo que usan el desarrollador y el QA: `borrador`, `pendiente`, `en-progreso`, `en-revisión`, `completado`, `bloqueado`. El estado vive en la línea `Estado:` del archivo del REQ; no introduzcas estados nuevos ni índices paralelos.
+  **Cuándo te toca a ti, y cuándo no (`AGENTS.md` §6):** te toca **siempre que quede una decisión de
+  requisitos o de diseño** — un criterio nuevo, un cambio de alcance, un significado que se discute.
+  **No te toca** cuando el hallazgo sólo obliga a reflejar en el REQ lo que ya estaba contratado y la
+  reparación tiene causa y solución claras: ahí lo transcribe el `desarrollador` en la misma entrega.
+  **Que no te despachen no relaja nada:** el write-back sigue siendo obligatorio y QA sigue sin
+  firmar sin él.
 - `borrador`: REQ aún incompleto o con preguntas abiertas; **no** se entrega a desarrollo.
 - `pendiente`: cumple la **Definition of Ready** (abajo); listo para desarrollo pero aún no iniciado. Es el estado en el que entregas un REQ.
 - `en-progreso` → `en-revisión` → `completado` los manejan el desarrollador y el QA; `bloqueado` ante un impedimento, dependencia o veto.

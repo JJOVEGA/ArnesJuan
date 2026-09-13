@@ -2,6 +2,44 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-13 · Candidato aislado: la vía proporcional de reparación pasa a producto, **sin el experimento documental**
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. Rama `rel/via-proporcional`, base `f387b1c` (anterior al experimento). **Preparado, pendiente de revisión acotada.**
+
+**Qué contiene, y nada más.** `AGENTS.md` §6/§9 y `templates/AGENTS.md.tpl` §6/§9 con la tabla que
+elige la vía **por el efecto del cambio**; los **cuatro agentes** ajustados; la migración en
+`arnes-upgrade`; y el levantamiento acotado del límite 1 de la enmienda de autoalojamiento.
+
+**Qué NO contiene.** Nada del **experimento de extracción documental**, descartado por el
+propietario: sin `referencia/`, sin `{{RUTA_ARNES}}`, sin el adelgazamiento de §13, sin los cambios
+de `arnes-init`. La rama base es **anterior** a ese trabajo, así que la exclusión es **estructural y
+comprobable por diff**, no una anotación.
+
+**La vía.** Documentación sin cambio de obligaciones → la coordinadora · **reparación con causa,
+alcance y contrato claros → desarrollador → QA, sin comisión de analista** · cambio que toca hooks,
+protecciones, firmas, permisos, instalación, migración o publicación → **+ seguridad**, con el
+analista **sólo** si queda una decisión pendiente · capacidad nueva o cambio de contrato → las cuatro
+fases. En la vía de reparación **el desarrollador entrega el arreglo y su documentación en la misma
+entrega**, y **QA verifica el cambio y sus dependencias** reutilizando evidencia vigente y
+**registrándolo**.
+
+**Los agentes entran, y sin ellos el cambio sería falso.** `agents/qa-tester.md` decía *«el
+write-back es del `analista-requerimientos`»*: QA habría rechazado el de un desarrollador y la
+política no habría funcionado. Ahora: QA sabe que **quién transcribe depende de la vía** y conserva
+su obligación de **no firmar sin write-back**; el `desarrollador` lo recibe explícitamente **en la
+misma entrega**, con la frontera **transcribir no es decidir**; el `analista` lo mantiene **siempre
+que quede una decisión**; y el disparador del `auditor-seguridad` se enuncia **sin depender de quién
+lo despache**.
+
+**Migración por los CINCO estados del merge, ninguno declarado imposible:** `INTACTO` → aplicar ·
+`MODIFICADO` → conflicto, preguntar, **conservar tu texto** · **`ELIMINADO`** → conflicto, preguntar
+y **no reponer por tu cuenta** · **`NUEVO`** —una base que no tenía la sección— → añadir · `UNKNOWN`
+→ preguntar. Y la advertencia que faltaba: **no supongas que §6, §9 y los agentes están en la base
+de un proyecto sólo porque están en la nuestra**; se clasifica **cada uno por separado**.
+
+**Lo que no cambia:** write-back **obligatorio** (cambia quién, no si) · el **rigor no se rebaja** ·
+**no se omiten pruebas necesarias** · los **contadores no se reinician** · **seguridad no firma lo
+que QA no ha validado**. **Ningún hook** y **ningún manifiesto** se tocan.
+
 ## [Interno] — 2026-09-12 · Dos formulaciones corregidas por el propietario: el entrelazamiento mide dificultad, y una firma acredita alcance
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. Sin veredicto de QA ni de seguridad: corrige prosa de dos documentos de decisión.
 

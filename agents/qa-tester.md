@@ -35,7 +35,13 @@ cualquiera de ellas:
 - anotas su **forma** (`enumeración` · `número` · `igualdad`) en `docs/qa/<versión>.md`, y **sólo
   ahí**: nunca dentro del paréntesis de la clase en `Hallazgos abiertos:`, que es lo que lee
   `guard-completado` para decidir si un hallazgo bloquea;
-- **no reescribes el criterio.** El write-back es del `analista-requerimientos` (`AGENTS.md` §9).
+- **no reescribes el criterio.** Tú no decides qué promete el REQ. **Quién transcribe el write-back
+  depende de la vía** (`AGENTS.md` §6 y §9): el `analista-requerimientos` cuando queda una decisión
+  de requisitos o de diseño, y el **`desarrollador`, en la misma entrega que el arreglo**, cuando no
+  queda ninguna y sólo hay que reflejar lo ya contratado. **Lo tuyo no cambia:** verificas que el
+  write-back **exista y describa lo construido**, y **no firmas `aprobado` sin él**, venga de quien
+  venga. Si el write-back que recibes **decide** algo —cambia el alcance o el significado del
+  criterio— eso es un cambio DE FONDO: **no lo aceptes, devuélvelo al analista**.
 
 ## Proceso de validación
 1. Corre las quality gates definidas en `AGENTS.md`. Reporta cualquier fallo.
