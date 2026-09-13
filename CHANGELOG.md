@@ -50,6 +50,49 @@ que **no** se mueve, medida: un **homóglifo** en la clave sigue pasando **sin a
 
 **Evidencia:** `docs/arnes/sec-084-qa-024-19-disparador/00-reproduccion-y-reparacion.md`.
 
+## [Interno] — 2026-09-12 · `CA-88`: «consta que sí hay cargos» dejaba de constar
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: analista-requerimientos, coordinadora.
+
+Precisión documental autorizada expresamente (2026-09-12). **Sin desarrollo, sin criterios nuevos
+—99 → 99— y sin revisar el resto por rutina.**
+
+### El defecto, y la redacción lo cerraba de forma medible
+
+El texto anterior decía **literalmente**: «mientras eso **no** conste —**o conste que sí los hay**— el
+informe publica “coste marginal: **sin datos** … y eso **no consta comprobado**”».
+
+**Dos salidas para tres hechos**, con «consta que sí» **dirigido explícitamente** al cajón de «no se
+sabe», y el informe afirmando que la comprobación **no consta** sobre un hecho que **sí consta** —sólo
+que consta lo contrario—. **Se resolvía del lado que abre y del lado equivocado:** callar se lee como
+«todavía no lo miraron», no como «lo miraron y hay cargos».
+
+### Los tres estados, por propiedad
+
+Lo que el informe publica lo decide **el estado del conocimiento sobre la existencia de cargos**, no una
+lista de tipos. **Ninguno comparte salida con otro**: *no consta* → `sin datos`, sin afirmar el `0` **ni**
+la existencia · *consta que no* → **sólo entonces** el `0` · *consta que sí* → **se afirma que existen**
+—nunca «no consta comprobado»—, los importes **conocidos y atribuidos se presentan**, y al que le falte
+el importe **o su atribución** se le nombra **exactamente qué** falta, **nunca un «incompleto»
+genérico**.
+
+Verificable **sobre marcado, no sobre texto**, y los tres declarados **de contrato**.
+
+### La precisión anterior no se contradice: **se reubica**
+
+«Cargo sin importe → gasto pagado `incompleto`» estaba redactada colgando del estado **binario**. Ahora
+se declara **instancia del tercer estado**, no del primero, y gana *«ni callando los importes de los
+demás cargos, que sí se presentan»*. Así el rótulo convive con la afirmación de existencia **en vez de
+sustituirla**.
+
+### El control, ampliado sólo lo justo
+
+`CA-98` **quedó corto**, y el analista lo midió: seguía discriminando entre «no consta» y «consta que
+no», pero **dos casos no pueden obligar a tres salidas distintas** — una implementación que tratara
+«consta que sí» como el segundo **pasaba las dos**. Se añadió **una** variante, con **dos** cargos —uno
+con importe, otro sin— para discriminar **las dos mitades** del tercer estado, y el par escrito en los
+**cuatro** sentidos en que puede fallar. Cierra con: **«(b), (d) y (e) juntas no se satisfacen con menos
+de tres salidas distintas»**.
+
 ## [Interno] — 2026-09-12 · La ruta de QA alineada a 1.35.0, y una afirmación mía que era falsa
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora.
 
