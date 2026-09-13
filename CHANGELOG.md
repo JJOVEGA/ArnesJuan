@@ -2,6 +2,49 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-13 · `N-1`…`N-4` reparados; QA: **PENDIENTE** por un impedimento — `N-5` reabre `H-5`
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: desarrollador (`a34e18c`) y qa-tester (3.ª vuelta). Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`.
+
+**`N-1`…`N-4` reparados**, los cuatro falsos positivos **bien descartados** y ninguna regla correcta
+rota. Gemelas e intactos **cuadran al byte**. Gates §7 **4/4**; banco `44`+`45`+`46` → **103 PASS ·
+0 FAIL · 1 SKIP**.
+
+**`N-4`**, el único que actuaba sin preguntar, quedó reparado **en la causa**: la doctrina se
+**reutilizó** —«no es una regla nueva; es la de arriba»— y se escribió **también en la sección
+canónica**, con «vale para **toda** entrada de migración: ninguna la re-inventa» — la frase que
+habría evitado el defecto de origen. El caso F ejercido con la plantilla real de `v1.2.0` ya no
+llega a `INTACTO` sin preguntar.
+
+### `N-5` · `contrato`, **bloquea** — `skills/arnes-upgrade/SKILL.md:583`, entrada `Hacia 1.32.0`
+
+El desarrollador lo propuso `instrumento` viendo **una** de las tres cosas que la frase hace mal. QA
+midió las otras dos:
+
+1. Prescribe la acción sobre lo que el merge marca como conflicto — la forma de `H-7`. **Eso solo
+   sería `instrumento`.**
+2. **Afirma algo falso sobre lo construido:** que «el merge a tres vías te lo marcará» para una
+   definición de agente personalizada. **No puede** — es justo lo que `H-5` estableció.
+3. **Reabre `H-5`, y por eso bloquea.** `## Migraciones conocidas` es **acumulativa**: un proyecto
+   anterior a 1.32.0 que migre a 1.34.0 lee **las dos entradas en la misma corrida**, y dicen lo
+   contrario. Si gana la de 1.32.0: intenta clasificar un agente → no hay base → `UNKNOWN` → con
+   `H-6` ya reparado, **se detiene la corrida completa**. El fallo que `H-5` existe para evitar,
+   alcanzable otra vez, y **justo para los proyectos más antiguos**.
+
+**No es «de otra ventana»:** lo que queda incompleto es **la reparación de `H-5` que esta versión
+entrega**. Barrido: **tres sedes hablan de migrar agentes** —la línea 10 y la 1237-1240 correctas, la
+579-583 contraria—, ocurrencia única.
+
+**Una observación con riesgo futuro, sin elevar:** el paso obligatorio de `N-4` compara **proyecto ↔
+base**, y el eje que falla es **base ↔ hoy**, que vive **sólo en la prosa** que rodea la tabla. Si
+alguien recorta esa prosa, `N-4` vuelve **sin que nada lo señale**.
+
+**Lo que no acredita:** **ningún proyecto migrado** — el caso F y `N-5` están medidos por aplicación
+a mano y lectura cruzada, no por una corrida de `arnes-upgrade` observada. Y **ningún guardián cubre
+los agentes, las plantillas de `requirements` ni las skills**: `N-5` es la prueba de que esta clase
+sobrevive a un barrido cuidadoso cuando vive en una entrada que nadie consideró en alcance.
+
+**Coste acumulado del candidato:** 6 comisiones · **50 min 54 s** · **896 795 tokens**.
+
 ## [Interno] — 2026-09-13 · `N-1`…`N-4` reparados, y **la migración deja de actuar sin preguntar sobre un número prestado**
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (reparación conjunta autorizada por el propietario el 2026-09-13, incluidas las superficies afectadas). Base: `8427e7a`. Hallazgos de `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` (segunda vuelta).
 
