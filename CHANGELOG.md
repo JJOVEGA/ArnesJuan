@@ -2,6 +2,90 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-12 · DETECTAR no es COMPROBAR: la derivación vacía dejaba pasar una afirmación falsa
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (**vuelta 10** `dev↔QA`).
+
+### El defecto, medido antes de tocar nada
+
+Lo encontró **Codex** y lo reprodujo la coordinadora sobre `5d1b1d1`. Insertada en §13 de copias
+temporales la frase **falsa** «Un `QA:` pendiente no deja cerrar en `ligero`» —falsa porque **por
+valor** un `QA:` no-`aprobado` **sí** cierra en `ligero`—, la sección 46 daba **17 PASS · 0 FAIL**,
+exactamente igual que sobre los documentos originales, y publicaba «**2 de 5** sedes lo declaran».
+
+El mecanismo: el barrido **detectó** la quinta sede; el emparejador **no pudo derivar** de ella ninguna
+celda y la descontó con un `continue` mudo; y el caso **pasó en verde** con las celdas de las otras.
+**Doce celdas verdes tapaban una sede muda.**
+
+### La reparación NO ensancha el reconocedor
+
+Era la salida fácil y es la que pierde: añadir la forma de la frase que se escapó cubre **esa** frase y
+no la **clase** —la redacción siguiente vuelve a escaparse—. Lo que se trata es el **estado** «derivación
+vacía», que **no envejece**: cualquier sede que el barrido detecte y el derivador no interprete cae en
+él. Es la misma familia de siempre: *ensanchar el patrón pierde; preguntar por el estado no*.
+
+El instrumento distingue ahora **tres** estados y no dos: **DETECTADA** (el barrido la trajo),
+**INTERPRETADA** (se derivaron celdas) y **CONTRASTADA** (se compararon con el hook real).
+
+- **`46/11` (nuevo, por documento)** — registra las sedes detectadas y no interpretadas, **citando la
+  sede y su motivo**, y emite **SKIP**: `FAIL` afirmaría que el documento miente, que es justo lo que el
+  instrumento no pudo comprobar, y `PASS` diría que se comprobó. El corredor lo recapitula al cerrar.
+- **`46/12` y `46/13` (nuevos)** — la **regresión** con la frase falsa y su **control** con una
+  afirmación válida. Sin el control, un instrumento que declarase muda a toda sede pasaría en verde:
+  habría cambiado un silencio por otro. La inyección va **siempre sobre una copia**; los documentos del
+  candidato **no se tocan**.
+- **`46/1`–`46/4`** — la línea publica los tres estados y **el recuento de mudas va en la misma línea**
+  que las celdas verdes, para que lo contrastado no tape la carencia.
+
+### Dos denominadores que mentían
+
+**`46/6`** publicaba «afirmaciones **comprobadas** por sede» imprimiendo las frases **detectadas**: de la
+sede muda decía `[1]`, igual que de una cuyas celdas sí se contrastaron. Ahora publica `<f>f/<c>c` —
+frases detectadas y comparaciones contrastadas—, y `0c` es una sede muda.
+
+**`46/5`** juzgaba el suelo de 12 sobre **comparaciones**, sumando los dos documentos. Como `46/8` exige
+que la plantilla sea la **gemela byte a byte**, la mitad de ese número era la misma rejilla contada dos
+veces: **48 y 30 donde hay 12 y 12**. El suelo se juzga ya sobre celdas **distintas**, y los dos números
+se publican. Un denominador que sube porque el corpus se duplica no mide cobertura.
+
+### Lo que el candidato NO acredita, y ahora se ve
+
+Sobre los documentos reales **dos de las cuatro** sedes ya eran mudas, y nadie lo sabía: la fila
+«Seguridad no firma lo que QA no ha validado…» —cuya consecuencia es sobre el **orden** de las firmas,
+que miden `13` y `40/4`— y el párrafo «Anti-deriva — el techo honesto», que enuncia una **posibilidad**
+(«la máquina **puede** impedir»). La sección pasa de `17 PASS` a **`19 PASS · 2 SKIP`**, y los dos SKIP
+son ese hecho dicho en voz alta. **No se ha tocado `AGENTS.md` ni su plantilla**: cómo debe evaluarse
+«puede impedir» es decisión **editorial del propietario**, y la reparación **no depende** de ella.
+
+### La sección se parte en dos, por `CA-18`
+
+Con la reparación el archivo llegó a **592 líneas** contra un techo de **400**, y el piso **no se infla
+para caber** —eso es regresión declarada en `REQ-014`—. El corte va por **verbo**: la mitad 1
+**CONTRASTA** (emparejamiento, suelos, gemelas y los dos discriminantes, 372 líneas, piso 239) y la
+mitad 2 **DECLARA** (denominadores y sedes mudas, con la regresión y su control, 400 líneas, piso 221).
+
+### Write-back: precisión, no criterio nuevo
+
+Se verificó antes de escribir —y no se aceptó la lectura recibida—: `CA-14 (ii)` **ya** contrata
+*emparejar* y la anti-vacuidad **ya** contrata publicar el denominador. Lo que faltaba era **qué cuenta
+como comprobada**. `CA-14` gana el bloque `[PRECISIÓN, 2026-09-12]` con los tres estados y sus cuatro
+obligaciones, y § «Qué queda SIN VERIFICAR» gana el **punto 8** con las dos sedes y la obligación
+concreta que queda sin acreditar sobre ellas. **Ningún criterio nuevo.**
+
+**El hallazgo no recibe identificador `QA-024-NN`**: es de Codex, no del `qa-tester`, y asignárselo
+habría misatribuido su origen y colisionado con la numeración de QA (el máximo asignado es
+`QA-024-41`).
+
+### Evidencia
+
+Banco completo **1280 PASS · 0 FAIL · 10 SKIP**, cuadre exacto contra `CASOS_ESPERADOS` **1290**
+(1286 → 1290; la `46` sube 17 → 21). Autoprueba del corredor **106 PASS · 0 FAIL**, con `CA-18`
+conforme sobre los dos archivos nuevos. **Fail-before**: neutralizado el seguimiento de estado,
+`46/12` emite `FAIL` nombrando el defecto —«la frase falsa subió las INTERPRETADAS»— y el control
+`46/13` sigue en verde, que es la asimetría correcta.
+
+`Estado:`, `QA:`, `Seguridad:` y `Hallazgos abiertos:` de `REQ-024` quedan **intactos**; ningún ADR,
+ningún NFR; `AGENTS.md` y `templates/AGENTS.md.tpl` **no se tocan**.
+
 ## [Interno] — 2026-09-12 · Las tres carencias de `CA-14`, con negativos que recorren el registro real
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (**vuelta 9** `dev↔QA`), coordinadora.
 

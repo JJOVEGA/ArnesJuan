@@ -1300,7 +1300,7 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1286  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1290  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
@@ -1563,6 +1563,25 @@ CASOS_ESPERADOS=1286  # 887 → 906: la sección `28/3` nueva, con los 19 casos 
                       # cambia de veredicto: los tres bloques de gemelas de la `44` pasan a un
                       # juez en función para que el negativo pueda EJERCERLO, con el mismo
                       # veredicto y la misma cuenta.
+                      #
+                      # 1286 → 1290: la DERIVACIÓN VACÍA —hallazgo de Codex del 2026-09-12,
+                      # reproducido sobre `5d1b1d1`—, que es la diferencia entre DETECTAR
+                      # una afirmación y COMPROBARLA. La `46` sube 17 → 21. El emparejador traía al
+                      # conjunto una sede, no lograba derivar de ella ninguna celda y la
+                      # descontaba con un `continue` MUDO: el caso pasaba en verde con las celdas
+                      # de las otras sedes. Medido por Codex y reproducido: insertada en §13 la
+                      # frase FALSA «Un `QA:` pendiente no deja cerrar en `ligero`», la sección
+                      # daba 17 PASS · 0 FAIL y publicaba «2 de 5 sedes lo declaran». Entran
+                      # `46/11` —el registro de las sedes DETECTADAS y no INTERPRETADAS, que las
+                      # cita con su motivo y NO acredita: SKIP, porque FAIL diría que el
+                      # documento miente y es justo lo que no se pudo comprobar— por documento,
+                      # más el par `46/12`/`46/13`: la regresión con la frase falsa y su CONTROL
+                      # con una afirmación válida, que sin él lo verde lo pondría un instrumento
+                      # que declarase muda a toda sede. NO se ensancha el reconocedor —cubrir esa
+                      # frase cubre ESA frase y no la clase—: se trata el ESTADO «derivación
+                      # vacía». Ningún caso se retira; `46/5` y `46/6` cambian de MAGNITUD y no
+                      # de veredicto (celdas DISTINTAS en vez de comparaciones repetidas por la
+                      # gemela, y frases detectadas separadas de comparaciones contrastadas).
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

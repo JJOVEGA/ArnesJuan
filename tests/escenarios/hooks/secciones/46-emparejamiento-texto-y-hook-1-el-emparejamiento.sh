@@ -1,7 +1,16 @@
-# Sección 46 del banco — 46-emparejamiento-texto-y-hook
+# Sección 46 del banco (mitad 1 de 2) — 46-emparejamiento-texto-y-hook-1-el-emparejamiento
 # Se ejecuta con `source` desde el corredor (`../run.sh`), en su propio subshell y con los
 # ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de ninguna
-# otra sección (invariantes 3 y 4 del README del banco).
+# otra sección (invariantes 3 y 4 del README del banco) — tampoco de su otra mitad, y por eso
+# la maquinaria propia está DUPLICADA en las dos: es lo que `PISO_AUTONOMO_SECCION` contabiliza.
+#
+# POR QUÉ HAY DOS MITADES: `CA-18`. Al entrar la reparación de la DERIVACIÓN VACÍA el archivo único
+# llegó a 592 líneas contra un techo de 400, y el piso NO se infla para caber —eso es regresión
+# declarada en `REQ-014`—, así que se parte. El corte va por VERBO, no por tamaño:
+#   · mitad 1 (aquí)  — CONTRASTAR: el emparejamiento texto↔hook, sus suelos y los dos
+#                       discriminantes que impiden que ese contraste pase por constancia.
+#   · mitad 2         — DECLARAR:   los denominadores, las gemelas y las sedes DETECTADAS que
+#                       no se pudieron interpretar, con la regresión de la DERIVACION VACIA y su control.
 #
 # QUÉ MIDE Y POR QUÉ NO CABE EN LA 44 — la diferencia es el VERBO. La 44 comprueba que cada
 # sede DIGA un fragmento literal, sobre una LISTA de tres bloques escrita en el archivo. Aquí
@@ -12,6 +21,19 @@
 # correcto y ser falso: eso es lo que midió `QA-024-38` (4 de 6 celdas falsas, y hacia el lado
 # que tranquiliza). La redacción y la VERDAD de esa redacción son propiedades distintas, y
 # ninguna implica la otra.
+#
+# TRES ESTADOS, Y NO DOS — es la reparación de la DERIVACIÓN VACÍA (hallazgo de Codex del
+# 2026-09-12, reproducido sobre `5d1b1d1`) y gobierna las DOS mitades de la
+# `46`. Una afirmación puede estar DETECTADA (el barrido la trajo al conjunto), INTERPRETADA
+# (el derivador leyó de ella celdas de la rejilla) y CONTRASTADA (esas celdas se compararon con
+# el hook real). Hasta esta vuelta el instrumento sólo distinguía dos: lo que no lograba
+# interpretar lo descontaba con un `continue` MUDO, y el caso pasaba en verde con las celdas de
+# las otras sedes. Medido: insertada en §13 la frase «Un `QA:` pendiente no deja cerrar en
+# `ligero`» —FALSA, porque por VALOR un `QA:` no-`aprobado` SÍ cierra en `ligero`—, la sección
+# daba 17 PASS · 0 FAIL y publicaba «2 de 5 sedes lo declaran». Doce celdas verdes tapaban una
+# sede muda. La corrección NO ensancha el reconocedor —cubrir esa frase cubriría ESA frase y no
+# la CLASE, y la redacción siguiente volvería a escaparse—: trata el ESTADO «derivación VACÍA»,
+# que es el que no envejece.
 #
 # DE DÓNDE SALE EL INSTRUMENTO, Y POR QUÉ ENTRA AL BANCO. El `qa-tester` midió estas celdas el
 # 2026-09-11 sobre `98f0ecd` con una sonda propia
@@ -44,8 +66,8 @@
 # barrido la incluya en su conjunto. Los NEGATIVOS VIVOS de `CA-14` viven donde vive cada
 # registro de obligaciones —`44/E` para las sedes y `45/24` para la guía—, porque un negativo
 # que no recorre el registro real envejece hacia el lado que abre.
-CASOS_ESPERADOS_SECCION=17
-PISO_AUTONOMO_SECCION=212  # 50 preámbulo con sus dos declaraciones y el titular (líneas 1-50) + 124 maquinaria propia, que el corredor no tiene: el barrido por propiedad, el partidor de oraciones con sus dos reconocedores, el extractor entre anclas, los tres lectores de niveles, el derivador de celdas, el constructor de REQ y la sonda que devuelve la decisión del hook como VALOR (líneas 57-180) + 38 bloque indivisible mayor (el emparejador `empareja46`, líneas 219-256: ningún caso de esta sección se lee sin él) · REQ-014 CA-18 · REGLA para re-derivar los tres términos sin preguntar: «preámbulo» son las líneas hasta el titular inclusive; un «bloque» es un grupo de líneas consecutivas sin blanca en medio, y el mayor que no es el preámbulo ni la maquinaria es el emparejador; «maquinaria» es la que esta sección define porque el corredor no la tiene, no una copia de otra parte
+CASOS_ESPERADOS_SECCION=13
+PISO_AUTONOMO_SECCION=239  # 72 preámbulo con sus dos declaraciones y el titular (líneas 1-72) + 114 maquinaria propia, que el corredor no tiene: el barrido por propiedad, el extractor entre anclas, los tres lectores de niveles, el derivador de celdas, el lector de estado de la derivación `interp46`, el constructor de REQ y la sonda que devuelve la decisión del hook como VALOR (líneas 79-192) + 53 bloque indivisible mayor (el emparejador `empareja46`, líneas 230-282: ningún caso de esta mitad se lee sin él) · REQ-014 CA-18 · REGLA para re-derivar los tres términos sin preguntar: «preámbulo» son las líneas hasta el titular inclusive; un «bloque» es un grupo de líneas consecutivas sin blanca en medio; «maquinaria» es la que esta mitad define porque el corredor no la tiene, no una copia de otra parte, y va DUPLICADA en la otra mitad porque ninguna sección hace `source` de otra (invariante 4)
 
 seccion_nueva "--- 46/1 · lo que la superficie heredada PROMETE, emparejado con lo que el hook HACE (REQ-024 CA-14 (ii)-(iii)) ---"
 
@@ -75,29 +97,6 @@ barre46() {   # <archivo> -> una línea por SEDE del conjunto DERIVADO, aplanada
       if (c !~ /(no |NO )?(podrá|puede|deja|dejan|permite|permiten) cerrar|(impide|impiden|impedir) (que|el|cerrar)|(deniega|deniegan|denegar) (el cierre|cerrar)|cierre se deniega|se deniega en los|[Nn]o completar|CIERRA en|cierra en|cierra sin|no para el cierre|llega al cierre|no cierra/) return
       print t
     }' "$1" 2>/dev/null
-}
-oraciones46() {   # <texto> <clase: consec|neces-sin-condicion> -> una línea por oración
-  printf '%s\n' "$1" | awk -v clase="$2" '
-    {
-      # Lo que va entre «» es CITA y no afirmación de este documento: el texto corregido cita
-      # la promesa vieja para decir que quedó medida falsa, y eso no vuelve a prometerla.
-      gsub(/«[^»]*»/, "", $0)
-      n = split($0, frase, "\\. +")
-      for (i = 1; i <= n; i++) {
-        s = frase[i]
-        if (clase == "consec") {
-          if (s ~ /(no |NO )?(podrá|puede|deja|dejan|permite|permiten) cerrar|(impide|impiden|impedir) (que|el|cerrar)|(deniega|deniegan|denegar) (el cierre|cerrar)|cierre se deniega|se deniega en los|[Nn]o completar|CIERRA en|cierra en|cierra sin|no para el cierre|llega al cierre|no cierra/) print s
-        } else {
-          # Necesidad o imposibilidad: «no podrá cerrarse», «no deja cerrar», «No completar
-          # sin…». Una afirmación así SIN su condición dentro de la misma oración INCUMPLE
-          # (`CA-14 (ii)`), aunque la conducta pase. Una posibilidad —«puede impedir»— no
-          # promete y no entra: la frontera va dicha y es una decisión, no un descuido.
-          if (s !~ /no podrá cerrar|no puede cerrar|no se puede cerrar|no deja cerrar|impide cerrar|impiden cerrar|deniega el cierre|el cierre se deniega|[Nn]o completar sin|no permite cerrar|no cierra/) continue
-          if (s ~ /ligero|estandar|critico|[Tt]res rigores|en los tres|ausencia_exige|la llave/) continue
-          print s
-        }
-      }
-    }'
 }
 entre46() {   # <texto> <ancla inicial> <ancla final> -> lo que hay entre las dos (vacío si falta)
   local t="$1" ini="$2" fin="$3" resto
@@ -161,6 +160,19 @@ deriva46() {   # <sede> <clave: QA|Seguridad> <eje: valor|ausencia> -> «<llave>
   for n in $denys;  do printf 'false %s deny\n'  "$n"; printf 'true %s deny\n'  "$n"; done
   for n in $allows; do printf 'false %s allow\n' "$n"; printf 'true %s allow\n' "$n"; done
 }
+interp46() {   # <sede> -> las combinaciones clave/eje que SÍ derivan celdas; VACÍO = sede MUDA
+  # DETECTAR y COMPROBAR son cosas distintas, y ésta es la función que las separa. `barre46`
+  # DETECTA; `deriva46` INTERPRETA; el emparejador CONTRASTA. Una sede que el barrido detectó y
+  # que NINGUNA de las cuatro combinaciones interpreta no tiene celdas que contrastar: hasta
+  # la DERIVACIÓN VACÍA se descontaba con un `continue` mudo y el caso pasaba en verde igual.
+  local t="$1" c e out=''
+  for c in QA Seguridad; do
+    for e in valor ausencia; do
+      case "$(deriva46 "$t" "$c" "$e")" in '') ;; *) out="$out $c/$e" ;; esac
+    done
+  done
+  printf '%s' "${out# }"
+}
 req46() {   # <nombre> <rigor> <valor QA o vacío> <valor Seguridad o vacío>
   # `Hallazgos abiertos:` va SIEMPRE, y no es adorno: con `campos.ausencia_exige` encendida su
   # AUSENCIA también deniega, y contaminaría las celdas de las otras dos claves.
@@ -206,7 +218,6 @@ celda46() {   # <clave> <eje> <llave> <rigor> -> lo que el hook REAL hizo en esa
   printf '%s' "$linea"
 }
 
-
 # --- EL CONJUNTO DERIVADO, barrido UNA VEZ por documento --------------------------
 SEDES_A46="$(barre46 "$RAIZ46/AGENTS.md")"
 SEDES_T46="$(barre46 "$RAIZ46/templates/AGENTS.md.tpl")"
@@ -214,22 +225,32 @@ sedes46() { case "$1" in AGENTS.md) printf '%s' "$SEDES_A46" ;; *) printf '%s' "
 nom46() {   # <sede> -> nombre corto y legible para el mensaje de un fallo
   local t="${1//\*/}"; t="${t//\`/}"; t="${t//|/}"; t="${t# }"; printf '%s' "${t:0:56}"
 }
-CELDAS_VALOR46=0; CELDAS_AUSENCIA46=0
+CELDAS_VALOR46=0; CELDAS_AUSENCIA46=0; CELDAS_DIST46=''
 
 empareja46() {   # <nombre> <documento> <clave> <eje> — EL caso: texto contra hook, misma corrida
   local nombre="$1" doc="$2" clave="$3" eje="$4"
   local sede claims llave rigor esperado real primera=''
-  local nsedes=0 conafirmacion=0 celdas=0 malas=0
+  local nsedes=0 conafirmacion=0 celdas=0 malas=0 mudas=0
   if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
   while IFS= read -r sede; do
     [ -z "$sede" ] && continue
     nsedes=$((nsedes + 1))
     claims="$(deriva46 "$sede" "$clave" "$eje")"
-    [ -z "$claims" ] && continue
+    if [ -z "$claims" ]; then
+      # DETECTADA y no interpretada AQUÍ. Por sí solo NO es defecto —una sede que habla del eje
+      # del VALOR no dice nada del de la AUSENCIA, y descontarla es correcto—, pero deja de
+      # descontarse en SILENCIO: si NINGUNA de las cuatro combinaciones la interpreta, la sede
+      # es MUDA y se cuenta aquí para que salga en esta misma línea. El veredicto lo emite
+      # `46/11`, que es donde una sede muda queda identificada y SIN acreditar.
+      [ -z "$(interp46 "$sede")" ] && mudas=$((mudas + 1))
+      continue
+    fi
     conafirmacion=$((conafirmacion + 1))
     while read -r llave rigor esperado; do
       [ -z "$esperado" ] && continue
       celdas=$((celdas + 1))
+      CELDAS_DIST46="$CELDAS_DIST46$clave $eje $llave $rigor
+"
       real="$(celda46 "$clave" "$eje" "$llave" "$rigor")"
       if [ "$real" != "$esperado" ]; then
         malas=$((malas + 1))
@@ -246,11 +267,16 @@ empareja46() {   # <nombre> <documento> <clave> <eje> — EL caso: texto contra 
     echo "  SKIP  $nombre  de las $nsedes sedes barridas NINGUNA declara esta afirmacion (0 celdas, suelo 1): el texto no dice que hace la maquina aqui"
     SKIP=$((${SKIP:-0} + 1)); return 0
   fi
+  # Los TRES estados van en la línea, y el tercero no se calla: un «2 de 4 sedes lo declaran»
+  # deja creer que las otras 2 no tenían nada que decir. Medido: doce celdas verdes tapaban
+  # una sede muda, y el recuento de mudas es lo que impide que la vuelvan a tapar.
+  local cola=''
+  [ "$mudas" -gt 0 ] && cola=" · $mudas MUDA(s) en las 4 combinaciones, NO acreditadas: ver 46/11"
   if [ "$malas" -eq 0 ]; then
-    echo "  PASS  $nombre  ($conafirmacion de $nsedes sedes lo declaran; $celdas celdas emparejadas con el hook real)"
+    echo "  PASS  $nombre  (DETECTADAS $nsedes · INTERPRETADAS aqui $conafirmacion · CONTRASTADAS $celdas celdas con el hook real$cola)"
     PASS=$((PASS+1))
   else
-    echo "  FAIL  $nombre  el TEXTO promete algo distinto de lo que el HOOK hace en $malas de $celdas celdas: $primera"
+    echo "  FAIL  $nombre  el TEXTO promete algo distinto de lo que el HOOK hace en $malas de $celdas celdas contrastadas: $primera"
     FAIL=$((FAIL+1))
   fi
 }
@@ -266,65 +292,23 @@ done
 # «Operativos, dirección hacia arriba: más es conforme y NO es hallazgo; menos ABORTA con SKIP
 # y su motivo, nunca PASS.» El número se publica en cada corrida y sube con cada forma nueva
 # del corpus: ninguna de estas cifras fija techo ni suelo de nada más.
+#
+# EL SUELO SE JUZGA SOBRE CELDAS DISTINTAS, Y ES UN ARREGLO DE LA DERIVACIÓN VACÍA. El suelo de
+# `CA-14 (ii)`/`(iii)` describe una REJILLA —2 claves × 3 rigores × 2 estados = 12—, así que la
+# magnitud que lo satisface es la celda DISTINTA, no la comparación. Antes se sumaban las
+# comparaciones de los DOS documentos, y como `46/8` exige que la plantilla sea la GEMELA byte a
+# byte de `AGENTS.md`, la mitad de ese número era la misma rejilla contada dos veces: 48 y 30
+# donde hay 12 y 12. Un denominador que sube porque el corpus se duplica no mide cobertura, y
+# con él una sede muda no baja ninguna cifra. Se publican los DOS números y se juzga el segundo.
 for e46 in valor ausencia; do
-  N46="46/5 CA-14 suelo del eje $e46: no menos de 12 celdas emparejadas con el hook real"
+  N46="46/5 CA-14 suelo del eje $e46: no menos de 12 CELDAS DISTINTAS contrastadas con el hook real"
   [ "$e46" = valor ] && n46=$CELDAS_VALOR46 || n46=$CELDAS_AUSENCIA46
+  dist46="$(printf '%s' "$CELDAS_DIST46" | awk -v e="$e46" '$2 == e' | sort -u | grep -c .)"
   if [ -n "$FILTRO" ] && ! printf '%s' "$N46" | grep -qi -- "$FILTRO"; then :
-  elif [ "$n46" -ge 12 ]; then
-    echo "  PASS  $N46  ($n46 celdas: 2 claves x 3 rigores x 2 estados de la llave, por las sedes que lo declaran)"; PASS=$((PASS+1))
+  elif [ "$dist46" -ge 12 ]; then
+    echo "  PASS  $N46  ($dist46 celdas DISTINTAS de la rejilla 2x3x2, contrastadas en $n46 comparaciones; la gemela repite celdas y NO suma cobertura)"; PASS=$((PASS+1))
   else
-    echo "  SKIP  $N46  solo $n46 celdas emparejadas (suelo 12): el instrumento no alcanza a acreditar el eje, y un verde aqui seria por vacio"; SKIP=$((${SKIP:-0} + 1))
-  fi
-done
-
-# --- ANTI-VACUIDAD: EL DENOMINADOR DEL BARRIDO, PUBLICADO POR DOCUMENTO -----------
-# `CA-14`: se publica cuántas SEDES encontró el barrido y cuántas AFIRMACIONES se comprobaron en
-# cada una, y se aborta con SKIP —nunca PASS— si cualquiera de los dos sale 0. «Ninguna sede
-# promete de más» es cierto POR VACÍO con el conjunto vacío, y eso es lo que `REQ-020` caza.
-for d46 in $DOCS46; do
-  N46="46/6 CA-14 (anti-vacuidad) [$d46] el barrido publica su denominador: sedes y afirmaciones por sede"
-  if [ -n "$FILTRO" ] && ! printf '%s' "$N46" | grep -qi -- "$FILTRO"; then continue; fi
-  ns46=0; sinafirm46=''; detalle46=''
-  while IFS= read -r s46; do
-    [ -z "$s46" ] && continue
-    ns46=$((ns46 + 1))
-    na46="$(oraciones46 "$s46" consec | grep -c .)"
-    detalle46="$detalle46 [$na46]"
-    [ "$na46" -eq 0 ] && sinafirm46="$sinafirm46 «$(nom46 "$s46")…»"
-  done <<< "$(sedes46 "$d46")"
-  if [ "$ns46" -eq 0 ]; then
-    echo "  SKIP  $N46  el barrido encontro 0 sedes (suelo 1): con el conjunto vacio, «ninguna promete de mas» es cierto por vacio"; SKIP=$((${SKIP:-0} + 1))
-  elif [ -n "$sinafirm46" ]; then
-    echo "  SKIP  $N46  $ns46 sedes, y alguna con 0 afirmaciones (suelo 1 por sede):$sinafirm46"; SKIP=$((${SKIP:-0} + 1))
-  else
-    echo "  PASS  $N46  ($ns46 sedes barridas; afirmaciones comprobadas por sede:$detalle46)"; PASS=$((PASS+1))
-  fi
-done
-
-# --- `CA-14 (ii)`, ÚLTIMA FRASE: PROMETER EL CIERRE SIN LA CONDICIÓN DENTRO INCUMPLE ---
-# «Aunque la conducta pase»: es el defecto exacto de `QA-024-38`, y es el caso que pone en ROJO
-# —y no en abstención— la versión heredada de estas sedes. La frontera va dicha: se persiguen las
-# formas de NECESIDAD o IMPOSIBILIDAD; una de POSIBILIDAD («la máquina PUEDE impedir que un REQ
-# se cierre») no promete que la consecuencia valga siempre y no entra. Lo de dentro de «» es CITA.
-for d46 in $DOCS46; do
-  N46="46/7 CA-14 (ii)(v) [$d46] ninguna sede promete una consecuencia sobre el CIERRE sin su condicion DENTRO de la oracion"
-  if [ -n "$FILTRO" ] && ! printf '%s' "$N46" | grep -qi -- "$FILTRO"; then continue; fi
-  ns46=0; malas46=0; primera46=''
-  while IFS= read -r s46; do
-    [ -z "$s46" ] && continue
-    ns46=$((ns46 + 1))
-    while IFS= read -r o46; do
-      [ -z "$o46" ] && continue
-      malas46=$((malas46 + 1))
-      [ -n "$primera46" ] || primera46="sede «$(nom46 "$s46")…», frase «${o46:0:110}…»"
-    done <<< "$(oraciones46 "$s46" neces)"
-  done <<< "$(sedes46 "$d46")"
-  if [ "$ns46" -eq 0 ]; then
-    echo "  SKIP  $N46  el barrido encontro 0 sedes (suelo 1): sin conjunto, la afirmacion seria cierta por vacio"; SKIP=$((${SKIP:-0} + 1))
-  elif [ "$malas46" -eq 0 ]; then
-    echo "  PASS  $N46  ($ns46 sedes barridas, 0 promesas sin condicion)"; PASS=$((PASS+1))
-  else
-    echo "  FAIL  $N46  $malas46 promesa(s) de cierre SIN su condicion dentro: $primera46"; FAIL=$((FAIL+1))
+    echo "  SKIP  $N46  solo $dist46 celdas DISTINTAS contrastadas (suelo 12; $n46 comparaciones, que repiten rejilla): el instrumento no alcanza a acreditar el eje, y un verde aqui seria por vacio"; SKIP=$((${SKIP:-0} + 1))
   fi
 done
 

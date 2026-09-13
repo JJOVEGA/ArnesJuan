@@ -128,6 +128,8 @@ de subagente del orquestador (`duration_ms`) y la marca de creación del archivo
 
 | 31 | Las tres carencias de `CA-14` + trazabilidad · `desarrollador` (**vuelta 9** `dev↔QA`) | 2026-09-12 16:33:36 | 2026-09-12 17:09:49 | **36 min 14 s** | trazabilidad **sin duplicar un caso**; negativos que **recorren el registro real**; sección `46` con emparejamiento y denominadores; halla una **cuarta sede** y presenta la frontera | `0990d34` | **268 293** | ídem |
 
+| 32 | La derivación vacía — hallazgo de Codex · `desarrollador` (**vuelta 10** `dev↔QA`) | 2026-09-12 18:10:28 | 2026-09-12 18:42:22 | **31 min 54 s** | reproducido y corregido **sin ensanchar el reconocedor**; destapa **2 sedes mudas preexistentes**; `CA-14` precisado **sin criterio nuevo**; banco 1286 → **1290** | `5d1b1d1` | **243 219** | ídem |
+
 > **Vuelta 4 de `REQ-024`, autorizada expresamente por el propietario el 2026-09-11**, por encima
 > del tope de tres de `AGENTS.md` §6. **El contador no se reinicia** y el historial se conserva: es
 > la vuelta **4** y así se numera en todas las sedes. Alcance autorizado: resolver `QA-024-20` y la
