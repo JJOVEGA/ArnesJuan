@@ -2,6 +2,59 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-12 · QA acredita el instrumento y NO `CA-14`, y la prosa recayó en el defecto que el código acababa de corregir
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: qa-tester (**vuelta 10** `dev↔QA`), coordinadora.
+
+### Qué acredita la firma, y qué no
+
+**Acredita que la reparación del instrumento hace lo que dice.** **No acredita el cumplimiento de
+`CA-14`**, que sigue parcialmente sin acreditar, ni el cierre de `REQ-024`, ni rendimiento. Son dos
+cosas y salen con **signos distintos**.
+
+Las **cinco propiedades cumplen** y los **dos límites se respetan**, con dos verificadas en vez de
+leídas: por sede entera salen **24 celdas**, por oración **6** —**se pierden 18 de 24**, la cifra del
+desarrollador es exacta—; y los patrones del reconocedor son **idénticos** a `5d1b1d1`, con la prueba
+**conductual** de que en el caso mutado las interpretadas **no se mueven** (2→2) y lo que sube son **las
+mudas** (2→3).
+
+**QA ejerció el control** en las dos direcciones: con `interp46` **ciego**, `46/12` pasa y `46/13`
+**falla**; con `interp46` **crédulo**, al revés. La afirmación *«sin él, un instrumento que declarase
+muda a toda sede pasaría en verde»* es **exacta**.
+
+### `QA-024-42` (`contrato`) — el texto recayó donde el código acababa de corregir
+
+El punto 8 del REQ dice que `(i)`–`(v)` están **«acreditados»** sobre las sedes mudas «sólo por `46/7` y
+`46/8`». **Es falso, y está medido:**
+
+- **`46/7` examina CERO oraciones** en las dos sedes mudas. **Su `PASS` es cierto por vacío** — la
+  familia exacta que el párrafo de anti-vacuidad de `CA-14` persigue.
+- **`46/8` acredita `(vi)`**, no `(i)`–`(v)`: dos sedes mudas **idénticas byte a byte** siguen siendo dos
+  sedes mudas.
+
+**El punto 8 comete, en el texto que documenta la reparación de la derivación vacía, la misma forma de
+defecto que la reparación corrige.** El instrumento quedó bien; **la prosa recayó**. La coordinadora ya
+había repetido esa formulación y el propietario la corrigió antes de que QA la midiera.
+
+### El «tercer SKIP» no existe — y la premisa era mía
+
+**El baseline real es 8, no 7**, y está en disco. Así que **8 + 2 = 10 cuadra sin residuo**. La pregunta
+se hizo sobre una cifra equivocada.
+
+### El banco no es reproducible aquí, y se conserva el `FAIL`
+
+Tres corridas, **tres resultados**: `1279·0·11`, **`1279·1·10`** y `1280·0·10`. **Cuadre 1290 exacto en
+las tres**, y **ninguna movió un caso de la `46`**. El `FAIL` oscila en `REQ-017 CA-03` —sonda de coste
+que no lee el REQ—: **se conserva, se declara flaky y NO se abre hallazgo**, porque esa investigación
+está prohibida por el propietario.
+
+**Y la frase que importa:** *«Que la tercera corrida coincida con el `1280·0·10` declarado no la hace
+reproducible: la hace **una de tres**.»* `hooks-en-linux` es puerta **requerida y estricta**, y un `FAIL`
+la rompe.
+
+### Parada
+
+**Ambos contadores agotados** —`dev↔QA` 10, `analista↔QA` 5—. **No se abre vuelta 11.**
+
 ## [Interno] — 2026-09-12 · DETECTAR no es COMPROBAR: la derivación vacía dejaba pasar una afirmación falsa
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (**vuelta 10** `dev↔QA`).
 
