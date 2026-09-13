@@ -711,6 +711,17 @@ Un control que viva sólo en este registro es deriva. Sigue abierta, además, la
 SEC-001…SEC-007 como criterios de REQ-007 (SEC-003…SEC-007 ya implementados en esta ventana;
 SEC-001 y SEC-002 siguen asignados a 1.32.0).
 
+> **Nota fechada — 2026-09-13 (no modifica R-002).** El texto de arriba se conserva **íntegro**: es
+> el registro de su fecha y describe la regla vigente el 2026-09-06, cuando el write-back era
+> **siempre** del `analista-requerimientos`. Desde la vía proporcional, **quién lo transcribe se rige
+> por `AGENTS.md` §6 y §9** y ya no está fijado de antemano.
+> **Y esto no es permiso para que lo transcriba cualquiera:** SEC-009, SEC-010 y SEC-011 exigen
+> **NFR nuevos**, así que es **muy probable que quede una decisión de requisitos o de diseño** y que
+> el `analista-requerimientos` **siga siendo el rol correcto para ellos**. Lo que la vía corrige es
+> haberlo fijado **incondicionalmente**, no el rol.
+> **No cambia nada más:** el estado de SEC-009, SEC-010 y SEC-011, el **veto de REQ-005**, sus
+> condiciones de cierre y todos los veredictos quedan **exactamente como están**.
+
 ---
 
 ## Revisión R-003 — levantamiento del veto de REQ-005, ventana 1.31.0 — 2026-09-06

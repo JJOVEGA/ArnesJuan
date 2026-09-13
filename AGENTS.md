@@ -175,6 +175,13 @@ es lo que la máquina ya calcula: `guard-completado` exige `Seguridad: aprobado`
    atajo a él**: lo fija el `analista-requerimientos`, el `auditor-seguridad` **puede subirlo**,
    **nadie lo baja sin su firma**, y `Sensible a seguridad: sí` impone `critico` como **suelo**.
    Ninguna vía puede usarse para evitar un control.
+   **Y si la reparación necesita un REQ NUEVO** —el único caso en que esos campos no existen aún—,
+   **es él quien define el contrato inicial y los dos campos**, por esas mismas reglas: así el
+   disparador del `auditor-seguridad`, que depende del flag, **nunca nace sin sujeto**. Hecho eso,
+   **se aplica la vía que corresponda SIN una segunda comisión de análisis**, salvo que aparezca una
+   decisión nueva — si hiciera falta analizar dos veces, la vía no habría retirado nada. Para los REQ
+   **que ya existen** no cambia nada: conservan sus clasificaciones, como dice la primera frase de
+   este punto.
 3. **No se omiten pruebas necesarias.** Durante el desarrollo, pruebas **enfocadas**; el banco
    completo sobre el **candidato final** y tras cualquier cambio que invalide esa evidencia. Los
    controles obligatorios de integración y publicación **se mantienen todos**.

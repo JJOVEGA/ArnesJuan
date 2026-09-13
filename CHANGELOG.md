@@ -2,6 +2,50 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-13 · Las **dos contradicciones** que quedaron abiertas, resueltas por el propietario e incorporadas
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (decisiones expresas del propietario del 2026-09-13, incorporadas por la vía de reparación). Base: `c65ce65`, ya acreditado por QA y **no reabierto**.
+
+**Delta deliberadamente mínimo: dos sedes de contenido y el `CHANGELOG`.** Nada de `c65ce65` se
+retoca, y las cuatro sedes nuevas que QA dejó en su segunda vuelta (`N-1`…`N-4`) **no se tocan, no
+se reparan y no se cierran**: están reservadas a la decisión del propietario. `H-1`…`H-8` tampoco se
+cierran aquí.
+
+**A · `docs/seguridad/registro-seguridad.md` — una nota fechada, y R-002 íntegro.** El texto de la
+revisión R-002 (2026-09-06) **no se toca: ni una palabra**. Debajo se añade una nota que aclara que
+aquella asignación del write-back describía **la regla de su fecha**, y que hoy la rige la vía
+proporcional de `AGENTS.md` §6/§9. **Con el matiz que midió QA, escrito porque evita el error
+contrario:** como SEC-009, SEC-010 y SEC-011 exigen **NFR nuevos**, es muy probable que **quede una
+decisión** y que el `analista-requerimientos` **siga siendo el rol correcto para ellos** — el defecto
+era fijarlo **incondicionalmente**, no el rol, y la nota **no es permiso para que lo transcriba
+cualquiera**. **No se tocan** el estado de esos tres hallazgos, el **veto de REQ-005**, sus
+condiciones de cierre ni ningún veredicto.
+
+**B · el REQ nuevo nacido de una reparación, en `AGENTS.md` §6 y en su gemela.** Cierra el hueco que
+QA había dejado nombrado: si una reparación de las vías 2 o 3 necesita un **REQ nuevo**, el
+`analista-requerimientos` **define el contrato inicial, `Rigor:` y `Sensible a seguridad:`** por las
+reglas que ya existen — con lo que el **disparador del `auditor-seguridad`, que depende de ese flag,
+nunca nace sin sujeto**. **Hecho eso se aplica la vía que corresponda sin una segunda comisión de
+análisis**, salvo que aparezca una decisión nueva: es lo que impide que este arreglo reintroduzca por
+la puerta de atrás el despacho que la vía retira. Los **REQ existentes conservan sus
+clasificaciones**.
+
+**Y se escribió UNA sola vez, que era el aviso.** QA midió que reparar el rigor había vuelto a
+nombrar al analista en dos sedes más, ahora en producto. En vez de abrir una tercera, esto se
+**encadena dentro del punto 2** —el que ya nombra quién fija el rigor— con un «**es él**», y lo de
+los REQ existentes **remite** a la primera frase de ese mismo punto en lugar de transcribirla.
+Comprobado: `analista-requerimientos` aparece **1 vez** en el bloque de §6 de cada sede, igual que
+antes de este cambio.
+
+**Gemelas, medidas antes y después.** Base de QA reproducida exactamente —§6: 50 líneas, 4074 B,
+`sha256 f695e4ba…22b1c` en ambas sedes—. Tras el cambio: **57 líneas, 4701 B, `sha256
+b2c79314…b54a`, idéntico en `AGENTS.md` (134-190) y `templates/AGENTS.md.tpl` (89-145)**. §13
+**intacta** en las dos (`sha256` coincidente con `c65ce65`).
+
+**Evidencia:** quality gates §7 **4/4**; banco `'44-*' '46-*'` (arrastra `45`) **103 PASS · 0 FAIL ·
+1 SKIP** —el SKIP es el caso sólo-Windows sin `cygpath`—, idéntico a las dos corridas anteriores. No
+se amplió el banco. **No se tocaron** `hooks/`, `tools/`, `tests/`, `.arnes/config.json` ni ningún
+REQ, y **no hay pronunciamiento sobre la publicación**, que sigue detenida.
+
 ## [Interno] — 2026-09-13 · Los diez defectos de texto reparados, y **dos sedes más que no estaban en la lista**
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (reparación conjunta autorizada por el propietario el 2026-09-13, **por la vía de reparación: desarrollador → QA, sin comisión de analista**). Informe de origen: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`.
 
