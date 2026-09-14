@@ -2,6 +2,54 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-13 · Seguridad `R-034`: **NO adoptable** — cinco `contrato`, y los cuatro reparables son **dos promesas, no cuatro defectos**
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad. Registro: `docs/seguridad/registro-seguridad.md` § R-034.
+
+**El orden de las firmas es demostrable, no supuesto:** QA midió `2e72934`, y `git diff` entre esa
+cabeza y `b785ba8` sobre las superficies auditadas sale **vacío** — lo auditado es **byte a byte** lo
+que QA validó. Frontera comprobada: **0 rutas** bajo `hooks/`, `tools/`, `tests/`, `.arnes/`,
+`.github/` o `.claude-plugin/`. Puertas §7 **4/4** re-corridas.
+
+**Cinco protecciones NO se debilitaron**, verificadas en su sede: el veto, el orden de las firmas, la
+obligatoriedad del write-back, la prohibición de bajar el rigor, y —mejora real— **el disparador del
+auditor deja de colgar del analista** justo cuando dos vías no lo despachan.
+
+**Dos sí se debilitaron, y por la misma forma: enunciar por enumeración lo que debía enunciarse por
+propiedad.**
+
+- **`SEC-093` · `contrato`** — la decisión «B» **no llega a quien actúa**: `agents/desarrollador.md`
+  no nombra `REQ nuevo`, `Rigor:` ni `Sensible a seguridad:` —`grep` da **0**— y su única parada es
+  «una decisión de alcance o de significado». Además el pronombre de `AGENTS.md:179` es **ambiguo**:
+  el antecedente más próximo de «es él» es el **auditor**, no el analista.
+- **`SEC-094` · `contrato`** — la fila 3 decide cuándo entra seguridad **enumerando** `hooks,
+  protecciones, firmas, permisos, instalación, migración o publicación`: **cero de los cinco
+  criterios que la misma sección declara críticos** (dinero, datos personales, identidad, documento
+  legal, cambio irreversible). Una reparación de un **bug de cobro** casa con la **fila 2**, cuya
+  ruta termina en QA. La frase que lo repara ancla el criterio en `guard-completado`, que es puerta
+  de **cierre** y no de **despacho**, y que la plantilla declara **inerte** sin `jq`.
+- **`SEC-095` · `contrato`** — «no migres estas secciones» es **falso**: los agentes **se actualizan
+  solos**. Ese proyecto recibe el `description` nuevo apuntando a un §6 que no tiene, y **el
+  write-back queda sin dueño**. Tres de los cinco desenlaces dejan documento viejo con agentes
+  nuevos, y ninguna fila lo dice.
+- **`SEC-096` · `contrato`** — la dirección inversa y peor: **la mitad que afloja llega sola**
+  (§6/§9, `INTACTO` → aplicar sin preguntar) y **la mitad que compensa puede no llegar nunca** si el
+  proyecto tiene copia propia del agente. Queda un auditor que aún lee «sensible a seguridad **por el
+  analista**» junto a un §6 con dos vías sin analista.
+- **`SEC-097` · `contrato`, hasta decisión del propietario** — el candidato modifica la sección
+  **canónica** del clasificador y la declara universal, lo que cambia **todas** las migraciones. El
+  cambio es **bueno y conservador**, pero el **límite 3** de la enmienda —«el comportamiento de
+  instalación y actualización»— **sigue sin levantar**, y el del límite 1 fue «y sólo para esto».
+
+**El tratamiento de personalizaciones: sólido en lo que preserva, frágil en lo que acopla.** Ninguna
+ruta pierde trabajo humano, y **`UNKNOWN` es atómico por construcción** —Fases 1 y 2 no escriben—,
+así que «detiene la corrida» significa **cero escrituras**.
+
+**Qué NO acredita:** **ninguna corrida de `arnes-upgrade`** — el límite de QA se hereda y no se
+levantó. **La prueba práctica sigue haciendo falta, y `SEC-095` y `SEC-096` son exactamente los
+puntos que debería ejercer.** Ni banco completo, ni REQ, ni fusión, ni publicación.
+
+**Coste del candidato:** 9 comisiones · **72 min 23 s** · **1 463 993 tokens**.
+
 ## [Interno] — 2026-09-13 · `N-5` corregido y `H-5` **completo**: QA da el candidato **LISTO para la siguiente validación**
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: desarrollador (`2e72934`) y qa-tester (4.ª vuelta). Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`.
 

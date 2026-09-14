@@ -9683,3 +9683,326 @@ sigue sin usuarios finales ni datos personales.
 
 **Numeración vigente tras esta revisión:** última revisión **R-033**; último hallazgo **SEC-092**;
 próximos libres **R-034** y **SEC-093**.
+
+---
+
+## Revisión R-034 — **la vía proporcional de reparación pasa a producto**: revisión acotada a DOS objetos (responsabilidades · tratamiento de personalizaciones), `rel/via-proporcional` @ `b785ba8` — 2026-09-13
+
+**No es una auditoría general del arnés.** Encargo acotado por el propietario (2026-09-13) a dos
+objetos del candidato. **No firmo ningún REQ**: no audité `REQ-024`, `REQ-023` ni `REQ-026`, y no
+emito `Seguridad:` sobre ninguno. **No me pronuncio sobre la publicación**, que sigue sin autorizarse.
+
+### 0. Árbol, frontera y orden de las firmas
+
+- **Worktree:** `/home/juan/dev/ArnesJuan-via-proporcional`, rama `rel/via-proporcional`, commit
+  **`b785ba8`**, árbol limpio (`git status --porcelain` vacío). Los otros cinco worktrees no se
+  tocaron. Ningún proyecto consumidor se tocó.
+- **Diff auditado:** `f387b1c..b785ba8` — 14 archivos.
+- **La frontera declarada se comprobó, no se aceptó.** `git diff --name-only f387b1c..b785ba8`
+  filtrado por `^(hooks/|tools/|tests/|\.arnes/|\.github/|\.claude-plugin/)` devuelve **0 rutas**.
+  **Ningún hook, ninguna herramienta, ninguna prueba, ningún manifiesto y ningún workflow cambian.**
+- **El orden de las firmas está satisfecho, y es demostrable.** QA midió `2e72934`; entre esa cabeza
+  y la mía sólo hay **un commit** que añade el informe de QA y el `CHANGELOG`.
+  `git diff --stat 2e72934..b785ba8 -- AGENTS.md templates/ agents/ skills/ requirements/
+  docs/seguridad/ docs/gobernanza/ hooks/ tools/ tests/` devuelve **vacío**: los artefactos que
+  audito son **idénticos byte a byte** a los que QA validó. Mi revisión no se adelanta a nada.
+- **Puertas §7 re-corridas por mí sobre esta cabeza: 4/4.** Sintaxis de `hooks/*.sh` y `tools/*.sh`,
+  `hooks.json`, `plugin.json` y `marketplace.json`. **No repetí el banco** ni lo amplié; reutilizo el
+  `'45-*'` de QA (**89 PASS · 0 FAIL · 1 SKIP**) por la frontera medida de arriba.
+
+### 1. Método, y el límite que heredo
+
+**Lectura cruzada de instrucciones** y **medición mecánica sobre el disco** (`git diff`,
+`--name-status`, recuentos, `grep` por propiedad). **No deduje ninguna conclusión del hook**, por
+instrucción expresa del propietario: *«la política también gobierna a los agentes»*. Donde el texto
+del candidato delega su criterio en `guard-completado`, lo trato como **defecto del texto**, no como
+garantía (ver `SEC-094`).
+
+**Límite heredado de QA y no levantado:** **nadie ha ejecutado `arnes-upgrade` ni migrado ningún
+proyecto**, ni real ni copiado, en esta vuelta. Ninguno de mis hallazgos depende de observar una
+corrida; todos se leen en el texto. **Lo que una corrida real haga sigue sin acreditar.**
+
+### 2. Objeto (1) — el cambio de responsabilidades: qué NO se debilitó
+
+Barrido por propiedad («toda sede que enuncie una obligación de seguridad o una condición de firma»),
+no por la lista del encargo. **Cuatro protecciones siguen en pie, verificadas en su sede:**
+
+1. **El veto sobrevive intacto.** `agents/auditor-seguridad.md:24` y `:37` sin cambios; la mención
+   del veto en `templates/AGENTS.md.tpl:76` y `:200` tampoco se movió. Ninguna vía lo condiciona.
+2. **Seguridad no firma lo que QA no ha validado.** El bloque «el orden no es una sugerencia: es la
+   condición de validez de la firma» aparece como **contexto sin tocar** en el diff de `AGENTS.md` y
+   de `templates/AGENTS.md.tpl:146`. La vía **no** introduce paralelismo entre QA y seguridad.
+3. **El rigor no se puede bajar eligiendo vía.** Punto 2 del bloque nuevo lo dice por propiedad:
+   «clasificar un cambio en una vía **no** reclasifica el REQ», «nadie lo baja sin su firma»,
+   «`Sensible a seguridad: sí` impone `critico` como **suelo**».
+4. **El write-back sigue siendo obligatorio.** Cambia **quién transcribe**, no **si se transcribe**,
+   y las tres sedes que lo exigen antes de firmar (`qa-tester`, `auditor-seguridad`, `arnes-close`)
+   conservan la obligación con la fórmula «venga de quien venga».
+5. **El disparador del auditor gana sujeto donde lo había perdido.** `agents/auditor-seguridad.md:3`
+   y `:27` retiran «marcado como sensible a seguridad **por el analista**» y lo enuncian «**sin
+   depender de quién lo despache**». Es la corrección correcta, y era necesaria: dos de las cuatro
+   vías no despachan analista.
+
+**Lo que sí encontré está en `SEC-093` y `SEC-094`.**
+
+### 3. `SEC-093` — `contrato` · **abierto** · dueño `desarrollador` · vencimiento: antes de adoptar
+
+**El hueco del REQ NUEVO se estrechó, pero no se cerró DONDE SE ACTÚA.**
+
+QA lo nombró en su primera vuelta sin elevarlo (*Observación · `AGENTS.md:248`*), y el propietario lo
+resolvió con la decisión «B»: el REQ nuevo lo abre el **analista**. El candidato la transcribe en
+`AGENTS.md:177-184` y `templates/AGENTS.md.tpl:132-139`, y en el `description` de
+`agents/analista-requerimientos.md` («**incluido el REQ nuevo que nazca de una reparación**»). **Dos
+defectos impiden que eso cierre el hueco:**
+
+**(a) La sede que lleva la decisión tiene el pronombre ambiguo, y las dos lecturas son
+consecuentes.** `AGENTS.md:179` / `templates/AGENTS.md.tpl:134`:
+
+> «lo fija el `analista-requerimientos`, el `auditor-seguridad` **puede subirlo**, **nadie lo baja sin
+> su firma** […] **Y si la reparación necesita un REQ NUEVO** […] **es él quien define el contrato
+> inicial y los dos campos**»
+
+El antecedente **más próximo** de «él» es `el auditor-seguridad`; el intencionado es el
+`analista-requerimientos`, que es el **más lejano**. En el mismo párrafo «él» ya se usa con otro
+referente («esta tabla no es un atajo a **él**» = el procedimiento). La lectura errónea no es
+inocua: pondría al auditor a **definir el contrato inicial**, que no es suyo, y **antes de QA**.
+
+**(b) El agente que ACTÚA en esa vía no recibe la regla.** `agents/desarrollador.md:20-25` le dice
+«**el write-back es TUYO y viaja en la MISMA entrega**» y le da **un solo** disparador de parada:
+«si al escribirlo aparece **una decisión de alcance o de significado**». **«Hace falta un REQ nuevo»
+no está nombrado.** Comprobado por propiedad: `grep -n "Historial\|REQ nuevo\|crear.*REQ\|Sensible a
+seguridad\|Rigor" agents/desarrollador.md` → **0 ocurrencias**. El desarrollador tiene `Write`/`Edit`
+y `requirements/` no está en `codigo_app.globs`, así que **puede** crear el REQ; nada en su
+instrucción le dice que no debe.
+
+**Por qué es de seguridad y no de proceso.** El propio candidato declara que el disparador del
+auditor **depende del flag** («así el disparador del `auditor-seguridad` […] **nunca nace sin
+sujeto**»). Un REQ nacido en la vía de reparación sin `Sensible a seguridad:` y sin `Rigor:` deriva a
+un rigor por debajo de `critico`, y entonces **ni la política ni la puerta exigen la firma de
+seguridad**: la promesa citada se desmiente a sí misma en el único caso para el que se escribió.
+
+**Remediación (no la aplico; es del `desarrollador`):** (i) sustituir «es él» por el rol nombrado en
+las dos sedes; (ii) añadir a `agents/desarrollador.md` una parada **nombrada**: si la reparación
+necesita un **REQ nuevo**, no lo abre él — para y escala al analista, que fija el contrato inicial,
+`Rigor:` y `Sensible a seguridad:`.
+
+### 4. `SEC-094` — `contrato` · **abierto** · dueño `desarrollador` · vencimiento: antes de adoptar
+
+**La tabla de vías decide POR ENUMERACIÓN cuándo entra seguridad, y la enumeración es del dominio del
+arnés, no del dominio de los proyectos que la heredan.**
+
+`templates/AGENTS.md.tpl:93-98` (y su gemela `AGENTS.md:138-143`):
+
+| fila | texto | qué omite |
+|---|---|---|
+| 2 | «**Reparación con causa, alcance y contrato claros** \| desarrollador → QA. **Sin comisión de analista**» | la ruta escrita **termina en QA**; no nombra la condición de rigor |
+| 3 | «Cambio que afecta **hooks, protecciones, firmas, permisos, instalación, migración o publicación** \| … **+ seguridad**» | **enumeración** |
+
+**La enumeración de la fila 3 no contiene NINGUNO de los cinco criterios que la misma sección declara
+críticos para un proyecto.** `templates/AGENTS.md.tpl:220-222`: «dinero · datos personales ·
+identidad o acceso · documento con efecto legal · cambio irreversible de esquema o borrado». **Cero
+de cinco.** La fila 3 habla de `hooks` y `publicación` —vocabulario de **este** repositorio— en una
+plantilla genérica. Consecuencia directa: en un proyecto consumidor, una **reparación de un bug de
+cobro o de una fuga de datos personales** casa con la **fila 2** y **no** con la fila 3, y la ruta
+escrita para ella termina en QA.
+
+**Es exactamente la forma que este proyecto prohíbe por nombre**, `requirements/README.md`
+§«Cómo se escribe un criterio que no se desmiente», forma **(a)**: una promesa de protección que
+**envejece hacia el lado que abre** — el día que aparece un efecto que no está en los siete
+nombrados, la fila sigue prometiendo los siete y nadie lo nota.
+
+**La única frase que lo repara delega su criterio en la máquina, y ahí falla dos veces.**
+`templates/AGENTS.md.tpl:117-119`: «**Seguridad interviene cuando el efecto del cambio lo exige**,
+que es lo que **la máquina ya calcula**: `guard-completado` exige `Seguridad: aprobado` en
+`critico`».
+
+1. `guard-completado` es una puerta de **CIERRE**, no una regla de **DESPACHO**. Con la fila 2, el
+   trabajo llega hasta el cierre y **sólo entonces** se descubre que falta seguridad: la vía nace
+   para **evitar** un bucle tardío y **produce uno**.
+2. La plantilla misma declara, en su §13, que **sin `jq` o sin `.arnes/config.json` los hooks son
+   inertes**. En ese proyecto la frase apunta a un criterio que **no existe**, y la tabla queda como
+   única regla.
+
+**No es un fallo abierto silencioso** —`agents/qa-tester.md:78` («el cierre sí espera») sigue
+negándose a cerrar sin `Seguridad: aprobado` cuando el REQ es sensible o `critico`—, y por eso
+**`usuario/dinero` no corresponde. Pero es una protección que se descubre tarde en vez de
+despacharse a tiempo**, y se vuelve fallo abierto si se compone con `SEC-096`.
+
+**Remediación:** enunciar **por propiedad** y no por lista. Fila 2 → «desarrollador → QA, **y
+seguridad si el rigor efectivo del REQ es `critico`**». Fila 3 → «todo cambio cuyo efecto alcance un
+criterio de `critico` **de este proyecto** (§6) o una protección del arnés — ejemplos **no
+exhaustivos**: hooks, firmas, permisos, instalación, migración, publicación».
+
+### 5. `SEC-095` — `contrato` · **abierto** · dueño `desarrollador` · vencimiento: antes de adoptar
+
+**«No migres estas secciones: conservar tu texto es una respuesta válida» es falso sobre lo que
+ocurre.**
+
+`skills/arnes-upgrade/SKILL.md:1300-1301`:
+
+> «esta vía **reduce despachos, no controles**. Si prefieres seguir con las cuatro fases siempre,
+> **no migres estas secciones**: conservar tu texto es una respuesta válida.»
+
+**La misma skill, en `:10`, dice lo contrario de su premisa:** «Los hooks, **los agentes** y las
+skills viven **en el plugin** y **se actualizan solos**». Un proyecto que sigue ese consejo **recibe
+igualmente las cuatro definiciones nuevas** y se queda con un `AGENTS.md` que no las respalda. La
+sede más aguda es el `description` de `agents/analista-requerimientos.md`, porque es lo que la
+coordinadora lee **para decidir a quién despacha**:
+
+> «**NO lo uses** para el write-back de una reparación ya contratada: ése va en la misma entrega del
+> desarrollador (`AGENTS.md` §6)»
+
+En ese proyecto **`AGENTS.md` §6 no tiene vía de reparación**. El analista declina un write-back del
+que su propio §9 lo sigue haciendo único dueño, y el desarrollador recibe una instrucción condicionada
+a una sección **inexistente**. **El write-back queda sin dueño: la deriva que §9 existe para
+impedir.**
+
+**Y no es un camino raro: son TRES de los cinco desenlaces de la tabla de `:1264-1270`** —
+`MODIFICADO` (conflicto: la sección **no se toca**), `ELIMINADO` (**no se repone**) y la negativa
+voluntaria de `:1301`— **dejan el documento viejo con los agentes nuevos**, y la tabla **no lo dice
+en ninguna de las tres filas**.
+
+**Remediación:** el consejo debe dejar de prometer el régimen anterior — «no migrar conserva tu
+**documento**, no tu **flujo**: las cuatro definiciones de agente ya llegaron con el plugin y
+describen la vía» — y las tres filas que no aplican deben decir que el desenlace es un **desfase
+documento↔agentes**, no una vuelta al estado previo.
+
+### 6. `SEC-096` — `contrato` · **abierto** · dueño `desarrollador` · vencimiento: antes de adoptar
+
+**El desfase también corre en la dirección contraria, y ésa es la peligrosa: la mitad que AFLOJA se
+aplica sola; la mitad que COMPENSA puede no llegar nunca, y nada lo lista.**
+
+QA contrastó `:590-593` y acertó: la migración **no toca, no sobrescribe y no actualiza** una copia
+personalizada de un agente, y **está dicho, no prometido**. **Mi pregunta es otra**, y es la que el
+propietario me puso: qué **obligación** queda sin dueño.
+
+- El documento (`§6`/`§9`) migra: si sale `INTACTO`, se aplica **«sin preguntar»** (`:1264`). Esa
+  mitad **afloja** — introduce dos vías sin analista.
+- La mitad que **compensa** vive en los agentes: `agents/qa-tester.md` («si el write-back que recibes
+  **decide** algo […] **no lo aceptes, devuélvelo al analista**») y `agents/auditor-seguridad.md`
+  (disparador «**sin depender de quién lo despache**»). Un proyecto con copia propia de esos dos se
+  queda con el texto **viejo** — el del auditor dice literalmente «marcado como sensible a seguridad
+  **por el analista**», y en su §6 recién migrado **dos vías no despachan analista**. El disparador
+  se queda **sin sujeto**: es el mismo defecto que este candidato corrigió para todos los demás.
+- **Y la skill lo hace invisible por instrucción:** `:589` ordena «**No las clasifiques ni las
+  busques** […] no las pongas en el plan». La intención es correcta y hay que conservarla —evitar un
+  `UNKNOWN` espurio que detenga la corrida—, **pero nada la sustituye**: no hay ningún paso que
+  **enumere**, aunque sea informativamente, qué definiciones de agente tiene el proyecto en
+  `.claude/agents/`.
+- Por eso la enumeración de `:1247-1251`, escrita bajo «**Cómo llega esto a tu proyecto**» —«el
+  `qa-tester` […] conserva su obligación de no firmar sin él; […] el disparador del
+  `auditor-seguridad` se enuncia sin depender de quién lo despache»—, **es falsa para ese proyecto**.
+
+**Remediación (barata y sin riesgo de `UNKNOWN`):** un paso **informativo y no clasificador** que
+liste `.claude/agents/*.md` presentes en el proyecto y lo emita en el informe con el motivo —«esta
+migración mueve obligaciones **entre** agentes; una copia tuya desfasada no pierde una mejora: puede
+dejar una obligación **sin dueño**»—. No entra en el plan de merge, luego no puede producir `UNKNOWN`.
+
+### 7. `SEC-097` — `contrato` · **abierto** · dueño **propietario (decisión), luego `desarrollador`**
+
+**El candidato cambia el comportamiento GENERAL de `arnes-upgrade`, y el límite que lo prohibía sigue
+escrito como NO levantado.**
+
+`docs/gobernanza/autoalojamiento.md` —sede única de la enmienda— levanta el **límite 1** (plantillas y
+agentes distribuidos) «**y sólo para esto**: llevar la **vía proporcional de reparación** a […] y a la
+migración de `arnes-upgrade`». Los **límites 2, 3 y 5 no se levantaron**, y el propio texto nuevo lo
+reafirma: «ningún **control mecánico** cambia». El **límite 3** es «El **comportamiento de instalación
+y actualización**».
+
+**Pero el candidato modifica la sección CANÓNICA del clasificador**, no la entrada de esta versión:
+`skills/arnes-upgrade/SKILL.md:43-50`, dentro de `## Clasificación: cuatro estados`, añade la regla
+de identificar por **título y contenido** antes de clasificar, y la declara **universal**: «Esta regla
+vale para **toda** entrada de migración, también las de abajo». Eso cambia el resultado de **todas**
+las migraciones, no sólo la de §6/§9: secciones que antes salían `INTACTO` pueden ahora salir
+`NUEVO` o `UNKNOWN` **y detener la corrida entera**.
+
+**La dirección es conservadora y el cambio es bueno**: nace de `N-4` de QA, es **fail-closed** y
+sustituye una aplicación silenciosa por una parada. **No debilita nada, y lo digo sin reservas.** Lo
+que está mal es **el registro del alcance**: un documento de gobernanza declara no levantado un
+límite que el trabajo ya cruzó, y eso es deriva de §9 en la sede que existe para que no se deduzca
+mal más tarde.
+
+**Remediación: es una DECISIÓN, no un parche.** O el propietario levanta el límite 3 acotado a esta
+regla y se **tacha con fecha** como se hizo con el 1, o el cambio canónico se separa a su propia vía.
+**Documentarlo no lo remedia**: mientras `autoalojamiento.md` siga diciendo que el límite 3 está en
+pie, dice algo falso sobre lo construido.
+
+### 8. Objeto (2) — lo que SÍ es seguro en el tratamiento de personalizaciones
+
+Aparte de `SEC-095`, `SEC-096` y `SEC-097`, **tres propiedades están bien resueltas y las verifiqué**:
+
+1. **`UNKNOWN` es la dirección conservadora y NO deja a nadie a medias.** El procedimiento es
+   **atómico por construcción**: Fase 1 inventario «(no toca nada)», Fase 2 plan «(no toca nada)»
+   con «**Si hay algún `UNKNOWN`, no se aplica nada**», y **sólo** la Fase 3 escribe. La detención se
+   decide **antes** de la primera escritura, de modo que «detiene la corrida entera» significa
+   **ninguna escritura**, no una migración partida. El riesgo real es el contrario —una corrida
+   detenida por un `UNKNOWN` espurio—, y `:589` lo ataca en el sitio donde se provocaría.
+2. **Ninguna personalización se pierde por ningún camino.** `MODIFICADO` → «tu texto **no se toca**»;
+   `ELIMINADO` → «**no reponer** por tu cuenta»; agentes → fuera del plan, luego ninguna fase escribe
+   en ellos. Reanudación acotada a **continuar** o **revertir con git**. **No encontré ninguna ruta
+   que sobrescriba trabajo humano.**
+3. **La separación plantillas↔agentes es el arreglo correcto.** Los dos `.tpl` tienen base en
+   `.arnes/plantillas-origen/` y entran al merge; los agentes no son `.tpl`, `arnes-init` no los
+   copia (`skills/arnes-init/SKILL.md:63`) y no hay base que recuperar. Pedirle al merge que los
+   clasifique sólo produciría un `UNKNOWN`.
+
+### 9. Dictamen
+
+**NO firmo ningún REQ y NO hay veto que emitir** —no hay REQ bajo mi firma en este encargo—. Sobre
+el objeto acotado:
+
+- **Ninguna protección se retiró.** Veto, orden de las firmas, obligatoriedad del write-back y la
+  prohibición de bajar el rigor **siguen en pie**, verificadas en su sede. El candidato incluso
+  **repara** el disparador del auditor, que estaba atado al analista.
+- **Dos protecciones quedaron con el borde abierto**, y las dos por la misma forma —**enunciar por
+  enumeración lo que debía enunciarse por propiedad**—: `SEC-093` (el REQ nuevo, en el agente que
+  actúa) y `SEC-094` (cuándo entra seguridad, en la tabla que se hereda).
+- **El tratamiento de personalizaciones es sólido en lo que preserva y frágil en lo que acopla:**
+  no pierde nada de nadie y para en seco ante la duda, pero **documento y agentes pueden desfasarse
+  en las dos direcciones** (`SEC-095`, `SEC-096`) y la skill sólo declara una.
+- **`SEC-097` no es un defecto técnico: es una decisión de alcance** que corresponde al propietario.
+
+**Qué bloquea la adopción:** `SEC-093`, `SEC-094`, `SEC-095` y `SEC-096` son `contrato` y **bloquean**;
+los cuatro son **reparaciones de texto** en las sedes que los proyectos heredan y pertenecen a **dos
+promesas**, no a cuatro defectos sueltos —quién es dueño del contrato, y cómo viajan juntos el
+documento y los agentes—: **conviene corregirlas de una vez**, barriendo por propiedad, o la vuelta
+siguiente encuentra la misma forma con el objeto cambiado. `SEC-097` **bloquea hasta una decisión**,
+que no es del `desarrollador`.
+
+**No cerré ni reclasifiqué ningún hallazgo ajeno:** `R-1` y la observación de `N-4` de QA quedan
+**exactamente como están**. No corregí nada, no toqué ningún REQ, ningún agente, ningún hook, ninguna
+prueba ni el manifiesto, y **no comiteé**.
+
+### 10. Qué NO acredita esta revisión
+
+1. **No acredita ninguna corrida de `arnes-upgrade`.** Nadie migró ningún proyecto, real ni copiado.
+   Todo lo anterior es **lectura cruzada de instrucciones** y medición sobre el disco. Que las
+   instrucciones digan lo que digo **no acredita** cómo se comporta una migración real; **la prueba
+   práctica prevista sigue haciendo falta**, y `SEC-095` y `SEC-096` son justo los puntos que debería
+   ejercer.
+2. **No acredita `REQ-024`, `REQ-023` ni `REQ-026`**, ni ningún otro REQ. **No emito `Seguridad:`.**
+3. **No acredita el banco completo.** Reutilicé el `'45-*'` de QA y re-corrí las puertas §7; no
+   ejecuté las ~73 secciones restantes ni las amplié.
+4. **No acredita la publicación ni la fusión**, y no me pronuncio sobre ellas.
+5. **No es una auditoría general del arnés.** Fuera de los dos objetos no barrí: en particular, no
+   revisé el resto de `AGENTS.md`, ni `hooks/`, ni las demás entradas de `arnes-upgrade` —salvo donde
+   una contradecía a otra dentro de mi alcance.
+6. **Ningún guardián cubre `agents/*.md`, las plantillas ni las skills.** `SEC-093`…`SEC-097` **no
+   los caza ninguna máquina**: se ven leyendo, y ésa sigue siendo su única defensa.
+
+### 11. Estado de mis hallazgos tras `R-034`
+
+**Nuevos, los cinco `abierto`:** `SEC-093` (`contrato`), `SEC-094` (`contrato`), `SEC-095`
+(`contrato`), `SEC-096` (`contrato`), `SEC-097` (`contrato`). Dueño `desarrollador`, salvo `SEC-097`
+cuya primera mitad es **decisión del propietario**. Vencimiento de los cinco: **antes de adoptar la
+vía en los proyectos**.
+
+**Sin cambios en el resto:** `SEC-091` `abierto`, `SEC-092` `abierto`, `SEC-088` `abierto`
+(`contrato`), `SEC-085` `abierto`, `SEC-090` `mitigado`, `SEC-087` `mitigado`.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** Un cambio de política de despacho y de
+migración documental no altera clasificación de datos, acceso, retención ni cumplimiento; este
+repositorio sigue sin usuarios finales ni datos personales.
+
+**Numeración vigente tras esta revisión:** última revisión **R-034**; último hallazgo **SEC-097**;
+próximos libres **R-035** y **SEC-098**.
