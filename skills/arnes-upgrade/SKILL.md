@@ -1223,16 +1223,24 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   te trae §6 y §9 **descritas**; la vía sólo rige donde el **propietario del proyecto la declara**,
   y esa declaración es **un acto suyo**, no una consecuencia de que el texto llegue. **Ninguna fila
   del merge —tampoco `INTACTO` ni `NUEVO`— escribe esa autorización**: lo que se instala es la
-  descripción y una línea que dice, en tus palabras, que **todavía no la has declarado**.
+  descripción y la **línea negativa**, que es el valor por defecto.
   **Hasta que la declares, tu proyecto sigue exactamente con el procedimiento anterior:** analista →
   desarrollador → QA → seguridad, y **ningún agente puede omitir al analista**: migrar sin declarar
   **no cambia quién interviene en cada REQ**. Lo que sí cambia, declares o no, es el **texto** de §6
   y §9 y el de los agentes, que pasan a describir la vía y a condicionarla a esa declaración.
-  **Cómo la declaras, si la quieres:** escribe en §6, donde está esa línea, «**este proyecto
-  autoriza la vía proporcional de reparación**», con tu nombre y la fecha. Y si no la quieres,
-  **deja la línea como está**: no hay nada que borrar. Ni la **tabla de vías**, ni la descripción,
-  ni la propia comprobación de §6 son evidencia de autorización — todas **llegan instaladas**, y
-  deducir de ellas el permiso es exactamente el fallo que esto evita.
+  **Las dos líneas —la afirmativa y la negativa— y toda la disciplina de redacción salen de UNA
+  sede, y aquí no se copian ni se parafrasean: `AGENTS.md` §6, «La disciplina de la declaración».**
+  Escríbelas **exactamente como manda esa sede**: de ahí salen las dos redacciones literales, la
+  prohibición de **inventar una tercera**, la de **dejar la declaración comentada** —un comentario
+  sigue siendo texto, y una declaración apagada no es una declaración— y la regla de que una
+  **negación**, una **postergación** o una **decisión pendiente** **no autorizan aunque contengan la
+  frase entera**. Esta entrada decía antes que esa línea se escribía «en tus palabras», y **ése era
+  el defecto**: es el único texto cuya redacción **es** el control (`SEC-099`).
+  **Cómo la declaras, si la quieres:** sustituye la línea negativa por la **afirmativa** de esa
+  sede, con tu nombre y la fecha. Y si no la quieres, **deja la línea como está**: no hay nada que
+  borrar. Ni la **tabla de vías**, ni la descripción, ni la propia comprobación de §6 son evidencia
+  de autorización — todas **llegan instaladas**, y deducir de ellas el permiso es exactamente el
+  fallo que esto evita.
   **Y define «contrato claro»**: incluye que `Rigor:`, `Sensible a seguridad:` y las revisiones
   exigidas sean **coherentes con el efecto** de la reparación; una clasificación insuficiente o
   contradictoria devuelve al analista **sólo esa decisión** antes de continuar, sin repetir el

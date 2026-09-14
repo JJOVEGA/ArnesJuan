@@ -54,19 +54,19 @@ marcador antes de hacer nada.
    reparación con causa, alcance y contrato claros se haga sin comisión de analista, con el
    write-back en la misma entrega del desarrollador? Si no, todo REQ seguirá pasando por el
    analista.»* Y escribe **la respuesta que te dé**, no la que ahorra pasos:
-   - **Sólo si responde que sí**, sustituye el placeholder por: `> **Este proyecto autoriza la vía
-     proporcional de reparación** descrita en esta sección. — Declarado por <propietario>, <fecha>.`
-   - **En cualquier otro caso** —dice que no, duda, no contesta, o no está delante—, escribe:
-     `> **Este proyecto todavía no ha declarado esa autorización.** Rige el procedimiento anterior:
-     analista → desarrollador → QA → seguridad.` **Ése es el valor por defecto**, y es deliberado:
-     la ausencia de respuesta **no autoriza**.
+   - **Sólo si responde que sí**, escribe la **línea afirmativa**.
+   - **En cualquier otro caso** —dice que no, duda, no contesta, o no está delante—, escribe la
+     **línea negativa**. **Ése es el valor por defecto**, y es deliberado: la ausencia de respuesta
+     **no autoriza**.
 
-   **No dejes el `{{...}}` sin sustituir** y **no inventes una tercera redacción.** La línea
-   afirmativa es la única evidencia que §6 acepta, y la negativa está redactada **a propósito** sin
-   contener esa frase, para que no pueda confundirse con ella —ni leyéndola, ni buscándola—. Por lo
-   mismo, **no dejes la declaración comentada**: un comentario de Markdown sigue siendo texto para
-   quien lee el archivo, así que una declaración «apagada» se leería igual que una encendida, que
-   es justo la confusión que esto evita.
+   **Las dos líneas, y toda la disciplina de redacción, están en UNA sede y no se copian aquí:
+   `AGENTS.md` §6, «La disciplina de la declaración».** Léela y aplícala tal cual — de ahí salen las
+   dos redacciones literales, la prohibición de inventar una tercera, la de dejar la declaración
+   comentada y la regla de que una negación o una postergación **no autorizan aunque contengan la
+   frase**. **No la reescribas con tus palabras ni la resumas:** esta instrucción y la de
+   `arnes-upgrade` decían cosas distintas sobre lo mismo, y de ahí salió `SEC-099`.
+   **Lo único que añade este paso** es que aquí hay alguien a quien preguntar: **no dejes el
+   `{{...}}` sin sustituir**.
 
    **Rellena también `.arnes/config.json`** (es lo que vuelve ejecutables las invariantes):
    - `codigo_app.globs`: rutas de código de la app que SÓLO el `desarrollador` puede editar

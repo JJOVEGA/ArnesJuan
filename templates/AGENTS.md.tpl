@@ -142,6 +142,39 @@ expresamente** la contradicción.
 **La ausencia de la declaración no habilita nada**, y ésa es la dirección del fallo que importa: el
 agente trae la **capacidad**, el documento da el **permiso**.
 
+**La disciplina de la declaración — SEDE NORMATIVA. Se escribe aquí una vez y todo lo demás
+remite:** `arnes-init` al instalar, `arnes-upgrade` al migrar, y cualquier agente al comprobar.
+Nadie vuelve a redactar esta regla por su cuenta — **redactarla dos veces fue exactamente el fallo
+que la trajo**.
+
+1. **Sólo autoriza una decisión afirmativa explícita del propietario, tomada como acto completo.**
+   Vale **la oración entera afirmando que este proyecto lo autoriza**, no que la frase aparezca en
+   algún sitio del archivo.
+2. **No son autorización, aunque contengan la frase entera:** una **negación**, una **postergación**
+   («aún no…»), una **pregunta** o **decisión pendiente**, un **ejemplo**, una **cita**, la
+   descripción de la vía, la tabla, este mismo apartado, y una **declaración afirmativa comentada**
+   —un comentario sigue siendo texto, y una declaración apagada no es una declaración—.
+3. **Quien comprueba no se queda en la coincidencia de cadena:** lee la **oración completa y su
+   función**. Encontrar las palabras no es encontrar una decisión. **Una coincidencia parcial no
+   vale**, y ante la duda **no se autoriza**: se despacha al analista.
+4. **La unidad es la ORACIÓN, nunca la línea.** Nada de esto depende de dónde caiga un salto de
+   línea, un reflujo del párrafo o un margen: una oración partida en dos líneas sigue siendo una
+   oración, y dos oraciones en una línea siguen siendo dos.
+5. **Las dos líneas, y no se inventa una tercera.** Para autorizar: `> **Este proyecto autoriza la
+   vía proporcional de reparación** descrita en esta sección. — Declarado por <propietario>,
+   <fecha>.` Para **no** autorizar, que es el valor por defecto: `> **Este proyecto todavía no ha
+   declarado esa autorización.** Rige el procedimiento anterior: analista → desarrollador → QA →
+   seguridad.` La negativa está redactada **a propósito** sin contener la frase afirmativa; pero
+   **aunque alguien la escribiera conteniéndola** —«este proyecto **no** autoriza…»— seguiría **sin
+   autorizar**, por el punto 2. La regla **no depende de la redacción que se elija**.
+
+> **Límite declarado, y es de esta regla, no de una versión.** Esto es una **norma para quien lee**:
+> **no hay comprobación mecánica** que la haga cumplir — ningún hook, ninguna prueba y ningún `grep`
+> distinguen una negación de una afirmación. Un `grep` de la frase **encuentra también los casos del
+> punto 2**, empezando por este mismo apartado. Quien quiera verificación automática tiene que
+> construirla, y **hoy no existe**. Las redacciones negativas que se midieron leyéndose como
+> afirmativas están en `docs/seguridad/registro-seguridad.md` § R-036 (`SEC-099`).
+
 **La fila 1 no levanta el control de edición de un archivo protegido.** Elegir vía decide **quién
 revisa**, nunca **quién puede escribir**. Una errata sin cambio de obligaciones la corrige la
 coordinadora **salvo que viva dentro de una ruta que `codigo_app.globs` (`.arnes/config.json`)

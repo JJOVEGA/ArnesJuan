@@ -2,6 +2,94 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-14 · `SEC-099`: la disciplina de la declaración pasa a tener **una sola sede**, y la promesa de `SEC-100` deja de prometer lo que un `grep` no da
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: desarrollador (reparación de `SEC-099` autorizada por el propietario el 2026-09-14, como parte de la misma reparación). Base: `10f31ed`. Hallazgos: `docs/seguridad/registro-seguridad.md` § R-036 (`SEC-099` `contrato`, `SEC-100` `instrumento`).
+
+**La causa, dicha sin rodeos: la regla estaba escrita dos veces.** `arnes-init` blindaba la línea
+negativa con tres reglas; `arnes-upgrade` con ninguna, y encima decía que esa línea se escribía **«en
+tus palabras»** — *sobre el único texto cuya redacción **es** el control*. El auditor lo construyó:
+**cuatro de cinco redacciones negativas naturales se leen como sí**, porque la negación, la
+postergación y la pregunta abierta **contienen la frase afirmativa íntegra**, y la afirmativa
+**comentada** también.
+
+### La sede normativa: `AGENTS.md` §6, «La disciplina de la declaración»
+
+Se eligió **§6** y no `arnes-init` por una razón operativa: **un proyecto ya instalado no tiene
+`arnes-init` delante**, pero sí tiene su `AGENTS.md` — y §6 es justo lo que lee quien comprueba.
+Se escribe **una vez** y remiten `arnes-init`, `arnes-upgrade` y cualquier agente. Dice cinco cosas:
+
+1. **Sólo autoriza una decisión afirmativa explícita del propietario como acto completo** — la
+   **oración entera**, no que la frase aparezca en algún sitio del archivo.
+2. **No son autorización aunque contengan la frase entera:** negación, postergación («aún no…»),
+   pregunta o **decisión pendiente**, ejemplo, cita, la descripción, la tabla, **el propio apartado**
+   y la **afirmativa comentada** —un comentario sigue siendo texto, y una declaración apagada no es
+   una declaración—.
+3. **Quien comprueba no se queda en la coincidencia de cadena:** lee la **oración completa y su
+   función**. **Una coincidencia parcial no vale**, y ante la duda **no se autoriza**.
+4. **La unidad es la ORACIÓN, nunca la línea** — nada depende de dónde caiga un salto de línea, un
+   reflujo o un margen. Eso es lo que responde a `SEC-100` en la norma, no en la maquetación.
+5. **Las dos líneas literales, y no se inventa una tercera** — y **aunque alguien escribiera la
+   negativa conteniendo la frase**, seguiría sin autorizar por el punto 2: **la regla no depende de
+   la redacción elegida**. Ahí está la diferencia con antes, cuando *toda* la protección era que la
+   línea prescrita no contuviera la frase.
+
+**`arnes-init`** deja de repetir sus tres reglas y **remite**; conserva lo único que es suyo: que
+aquí hay alguien a quien preguntar, y que el `{{...}}` no se deja sin sustituir.
+**`arnes-upgrade`**: **«en tus palabras» desaparece**. La entrada `Hacia 1.34.0` manda escribir las
+líneas **exactamente como manda la sede**, remite a ella, y declara prohibida también aquí la
+afirmativa comentada — **por referencia, sin volver a redactar la regla**.
+
+### `SEC-100`: qué prometía el producto y qué promete ahora
+
+**Antes:** la negativa está redactada a propósito sin contener la frase «para que no pueda
+confundirse con ella **—ni leyéndola, ni buscándola—**». **La mitad «buscándola» era falsa**, y se
+sostenía sobre dónde caía un salto de línea: unir dos líneas del párrafo descriptivo —un acto
+puramente editorial— hacía que `grep` pasara de 0 a 1.
+
+**Ahora esa promesa no existe.** Se retiró entera del producto (**0 ocurrencias**; sobrevive sólo en
+el registro de seguridad y en este `CHANGELOG`, que son bitácoras). En su lugar, §6 declara el
+**límite, y como límite de la regla, no de una versión**: esto es una **norma para quien lee**; **no
+hay comprobación mecánica** —ningún hook, ninguna prueba, ningún `grep` distingue una negación de una
+afirmación—; un `grep` de la frase **encuentra también los casos del punto 2, empezando por el propio
+apartado**; y quien quiera verificación automática **tiene que construirla, y hoy no existe**.
+
+### Las cinco redacciones, y qué pude probar y qué no
+
+Reproduje la medición del auditor: la línea prescrita **no** contiene la frase afirmativa; las otras
+cuatro **sí**. Bajo la regla nueva, **las cinco quedan fuera de la autorización** —negación,
+postergación y pendiente por el punto 2; la comentada, nombrada expresamente; la prescrita, por no
+ser una afirmación—.
+
+**Y lo que NO hice, por instrucción y porque no se puede hacer honestamente:** no dejé las cinco como
+caso del banco. Comprobar «es una negación y no una afirmación» exige **leer la función de la
+oración**, que es semántica: cualquier prueba que lo intentara sería **otro reconocedor**, justo lo
+prohibido — y uno que volvería a decidir por coincidencia de cadena, que es el defecto. **`tests/`
+no se tocó en esta entrega.** Queda escrito como **límite** en la propia sede, con las cinco
+redacciones citadas por referencia a `R-036` en vez de transcritas, **para no multiplicar en el
+`AGENTS.md` de cada proyecto las apariciones buscables de la frase**.
+
+### Evidencia, con la disciplina nueva de `I-6`
+
+**Las secciones se corrieron POR RUTA DE ARCHIVO, y se verificó que los casos esperados aparecen por
+su nombre** — no basta un total verde:
+- `secciones/40-…-3-los-textos-heredados.sh` → **27 PASS · 0 FAIL**, 27 ejecutados = 27 declarados, y
+  **los dos casos de `CA-06` aparecen por su identificador** (el de las promesas con su acto y el
+  discriminante). Se corre porque el apartado que edité **es** el que `AP40` aplana.
+- `44` + las tres de `45` + las dos de `46`, por ruta → **121 PASS · 0 FAIL · 2 SKIP**, **123
+  ejecutados = 123 declarados** (57+14+14+17+13+8).
+- **Los 2 SKIP son PREEXISTENTES, y no lo supuse:** monté un worktree temporal en la base `10f31ed`
+  y corrí allí la `46` — **mismos 2 SKIP, mismas dos sedes nombradas, mismo denominador (2 de 4)**.
+  El worktree se retiró.
+
+**Gates §7: las tres, verdes.** Gemelas §6: **29 líneas divergentes, las mismas que antes de este
+cambio** —la declaración (aquí acto con fecha; allí placeholder) y «un proyecto»/«este proyecto»—, es
+decir **mi bloque no añadió ninguna**; y la **sede normativa es byte a byte idéntica** en las dos: 32
+líneas, 2 758 B, `sha256 8b84ebaf…`.
+
+**Fuera de alcance y sin tocar:** `I-3`, `I-5`, `I-6`, `R-1`, `SEC-096`, la observación de `N-4` y el
+`mv` de la sección 33. **La frase protectora de `CA-06` no se reformuló.** Ningún hallazgo cerrado,
+sin pronunciamiento sobre la publicación, **sin `push`**.
+
 ## [Interno] — 2026-09-14 · Seguridad `R-036` sobre `c169a4f`: estados determinados, **sin firma**; `SEC-099` nuevo **bloquea**
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad. Registro: `docs/seguridad/registro-seguridad.md` § R-036. **No hay aprobación de seguridad.**
 
