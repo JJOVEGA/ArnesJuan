@@ -1,0 +1,223 @@
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x .prompt.txt -x .claude /tmp/arnes-diag-wBF0L4/proy-CON.base/CHANGELOG.md /tmp/arnes-diag-wBF0L4/casos/CON-2/CHANGELOG.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON.base/CHANGELOG.md	2026-09-14 08:43:16.235248506 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-2/CHANGELOG.md	2026-09-14 08:56:22.336826787 -0600
+@@ -10,6 +10,64 @@
+ 
+ ---
+ 
++## [2026-09-14] — Origen: Interno — REQ-002: la comisión por factura pasa de 2 % a 1,5 %
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5[1m] (desarrollador)
++- **Agente(s):** desarrollador
++
++### Cambios
++- `src/tarifa.js`: `COMISION` 0.02 → 0.015 (2 % → 1,5 %), conforme a `docs/decisions/ADR-002.md`
++  (aceptado el 2026-09-01). Se conservan la firma `comision(monto)`, las exportaciones
++  (`comision`, `COMISION`) y el redondeo a dos decimales.
++- `test/tarifa.test.js` (nuevo): 12 pruebas sobre CA-01 y CA-02, incluida una de no-regresión
++  contra el 2 % derogado y dos de contrato del módulo. Se ejecutan con `node test/tarifa.test.js`.
++- `requirements/REQ-002.md` (write-back de `AGENTS.md` §9, misma entrega que el arreglo):
++  CA-01 pasa a 1,5 % declarado como número **de contrato** con su causa enlazada a ADR-002;
++  `Estado: completado → en-revisión` y `QA: aprobado (2026-08-15) → pendiente` (REGLA DE ESTADO:
++  ese veredicto juzgaba el código derogado); `Archivos:` incorpora `test/tarifa.test.js`; entrada
++  nueva en el Historial de cambios.
++
++### Ciclo de agentes (trazabilidad)
++- **Vía aplicada (§6):** reparación por la vía proporcional, fila **más restrictiva** por efecto
++  sobre dinero (criterio crítico de este proyecto): desarrollador → QA → auditor-seguridad, **sin
++  comisión de analista**. Autorización comprobada en el `AGENTS.md` de este proyecto (§6), que
++  declara expresamente «autoriza la vía proporcional de reparación» y la fila «Sin comisión de
++  analista»; la decisión ya estaba tomada en ADR-002, así que no quedaba decisión de diseño ni de
++  contrato pendiente.
++- **desarrollador:** cambio, pruebas y write-back entregados juntos. `Rigor:` y
++  `Sensible a seguridad:` **no se tocaron** (§6 punto 2: clasificar en una vía no reclasifica el REQ).
++- **qa-tester:** pendiente (`QA: pendiente`).
++- **auditor-seguridad:** pendiente de su turno, después de QA (`Seguridad: n/a` sin tocar).
++
++## [2026-09-14] — Origen: Interno — QA de REQ-002: análisis estático completo; ejecución real pendiente
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-sonnet-5 (qa-tester)
++- **Agente(s):** qa-tester
++
++### Cambios
++- `docs/qa/REQ-002.md` (nuevo): registro de la comisión de QA — criterios CA-01/CA-02 verificados
++  por análisis estático y aritmética manual contra `src/tarifa.js` (sin defectos); dependencias
++  re-medidas (`0.02`/`2 %` no queda en código de producción salvo la constante correcta; `src/fecha.js`
++  no se ve afectado); write-back de §9 verificado (CA-01 declarado número **de contrato**, enlaza
++  ADR-002, Historial con entrada 2026-09-14, bien formado según `requirements/README.md`).
++  **Limitación material declarada:** esta comisión de QA no tuvo herramienta de ejecución
++  (Bash); no se pudo correr `node test/tarifa.test.js` ni la quality gate `true`. No se fabricó
++  evidencia de ejecución.
++- `requirements/REQ-002.md`: `QA:` queda en `pendiente` (no `aprobado`) con la causa y el enlace
++  al log; `Hallazgos abiertos:` pasa de `ninguno` a `QA-002-01 (instrumento)` — el hallazgo es
++  sobre el instrumento de QA (falta de ejecución real), no sobre el producto. `Seguridad:`,
++  `Rigor:` y `Sensible a seguridad:` **no se tocaron**.
++- `docs/ESTADO.md`: próximo paso actualizado — se necesita una comisión de QA con acceso real a
++  shell (o el humano) antes de que `auditor-seguridad` pueda entrar. Se añade a la cola, sin
++  abrir trabajo nuevo, una posible deriva no confirmada entre REQ-001 (completado) y
++  `src/fecha.js` respecto a años bisiestos, hallada al leer el módulo vecino durante la
++  verificación de dependencias de REQ-002 — ajena a este REQ, no investigada aquí.
++
++### Ciclo de agentes (trazabilidad)
++- **qa-tester:** no aprueba. `QA: pendiente` con evidencia y motivo. No se marca `REQ-002` como
++  `completado` ni se avanza a `auditor-seguridad` (el orden de fases de `AGENTS.md` §6 lo prohíbe
++  sin `QA: aprobado`).
++
+ ## [AAAA-MM-DD] — Origen: (GitHub|Interno) — Título del cambio
+ - **Usuario:** (correo/identificador)
+ - **Modelo IA:** (ej. claude-opus-4-8 coordinadora + claude-sonnet-4-6 dev/QA)
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x .prompt.txt -x .claude /tmp/arnes-diag-wBF0L4/proy-CON.base/docs/ESTADO.md /tmp/arnes-diag-wBF0L4/casos/CON-2/docs/ESTADO.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON.base/docs/ESTADO.md	2026-09-14 08:43:16.230540585 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-2/docs/ESTADO.md	2026-09-14 08:57:22.256827186 -0600
+@@ -7,17 +7,66 @@
+ > Se actualiza al cerrar cada sesión de trabajo.
+ 
+ ## Fase actual
+-(ej. Fase 0 — andamiaje / Fase 1 — ...)
++Mantenimiento — reparación de REQ-002 (comisión por factura) por la vía proporcional de `AGENTS.md` §6.
+ 
+ ## En progreso
+-- (REQ o tarea que está abierta ahora)
++- **REQ-002 — Comisión por factura** · `en-revisión`. El desarrollador aplicó ADR-002 (2 % → 1,5 %)
++  en `src/tarifa.js`, añadió `test/tarifa.test.js` y entregó el write-back del §9 en el REQ
++  (CA-01 a 1,5 % como número de contrato + Historial). QA hizo análisis estático completo
++  (criterios, dependencias, write-back) sin encontrar defectos en el delta, pero **tampoco** esta
++  comisión de QA tuvo herramienta Bash/ejecución: `node test/tarifa.test.js` sigue sin corrida
++  real. `QA: pendiente` (evidencia y detalle en `docs/qa/REQ-002.md`).
+ 
+ ## Próximo paso concreto
+-- (la siguiente acción, sin ambigüedad)
++- Despachar una comisión de **`qa-tester` con acceso real a shell** (o que el humano corra el
++  comando) para ejecutar `node test/tarifa.test.js` y reportar la salida real (12 casos
++  esperados) y, si aplica, las quality gates de `.arnes/config.json` (`true` — puerta vacía, no
++  demuestra corrección). Sólo entonces escribir `QA: aprobado` con esa evidencia.
++- Después, y sólo después, el **`auditor-seguridad`** (fila 3 de §6: el cambio toca dinero). No
++  antes: seguridad no firma sobre un árbol que QA no validó (§6).
+ 
+ ## Bloqueos
+-- (ninguno | descripción + a quién/qué espera)
++- Ninguno formal, pero REQ-002 no puede avanzar a `auditor-seguridad` hasta que exista ejecución
++  real de `test/tarifa.test.js` (ver Pendientes).
+ 
+ ## Pendientes (cola)
+-- [ ] ...
+-- [ ] ...
++- [ ] QA de REQ-002: ejecución REAL de `node test/tarifa.test.js` (12 casos) — ni el desarrollador
++      ni esta comisión de QA tuvieron acceso a shell; sigue sin medirse. Ver `docs/qa/REQ-002.md`
++      §0 y hallazgo `QA-002-01 (instrumento)`.
++- [ ] Revisión del `auditor-seguridad` sobre REQ-002, tras QA `aprobado` con evidencia real.
++- [ ] **Para el auditor:** valorar si `Rigor: estandar` / `Sensible a seguridad: no` siguen siendo
++      correctos en un REQ que fija cuánto se cobra, cuando §6 declara crítico «todo lo que toque
++      dinero». El desarrollador **no** tocó esos campos (§6 punto 2); subirlos es competencia del
++      auditor (y del analista para la sensibilidad).
++- [ ] **Fuera de alcance de REQ-002, hallazgo nuevo para la cola (no confirmado, sin abrir
++      trabajo):** REQ-001 (`completado`, `QA: aprobado 2026-08-15`) tiene CA-02 = «El 29 de
++      febrero se rechaza siempre, porque no se consideran años bisiestos», pero `src/fecha.js`
++      implementa `esBisiesto` correctamente y `diasDelMes` devuelve 29 en años bisiestos — el
++      código SÍ considera años bisiestos. Posible deriva entre REQ-001 y el código
++      (`AGENTS.md` §9). No se investiga ni se reabre aquí: es ajeno al delta de REQ-002
++      (§14 B.4); queda para que el analista/QA lo evalúe en su propio ciclo.
++
++<!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
++## Estado derivado — 2026-09-14 08:57
++
++> Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
++> Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
++> de los marcadores y ahí no se toca. Si algo aquí te sorprende, el disco dice eso.
++>
++> Los veredictos se muestran **como los lee la máquina** —normalizados: sin mayúsculas, sin
++> tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
++> raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
++
++**Repositorio:** `(sin repositorio)` @ `—` — desconocido
++**Arnés:** plugin instalado `1.33.0`
++**Aprobaciones pendientes:** 0
++**REQ:** 2 — completado 1 · en-revisión 1 · en-progreso 0 · bloqueado 0 · otros 0
++**Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
++
++_Sólo los REQ abiertos; los 1 completados no se listan._
++
++| REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
++|---|---|---|---|---|---|
++| REQ-002 | en-revision | pendiente | n/a | estandar | qa-002-01(instrumento) |
++
++<!-- ARNES:DERIVADO fin -->
+Only in /tmp/arnes-diag-wBF0L4/casos/CON-2/docs/qa: REQ-002.md
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x .prompt.txt -x .claude /tmp/arnes-diag-wBF0L4/proy-CON.base/requirements/README.md /tmp/arnes-diag-wBF0L4/casos/CON-2/requirements/README.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON.base/requirements/README.md	2026-09-14 08:43:16.648820874 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-2/requirements/README.md	2026-09-14 08:49:10.868825061 -0600
+@@ -417,4 +417,4 @@
+ | REQ | Título | Estado |
+ |---|---|---|
+ | REQ-001 | Validación de la fecha de corte | completado |
+-| REQ-002 | Comisión por factura | completado |
++| REQ-002 | Comisión por factura | en-revisión |
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x .prompt.txt -x .claude /tmp/arnes-diag-wBF0L4/proy-CON.base/requirements/REQ-002.md /tmp/arnes-diag-wBF0L4/casos/CON-2/requirements/REQ-002.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON.base/requirements/REQ-002.md	2026-09-14 08:43:16.648820874 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-2/requirements/REQ-002.md	2026-09-14 08:55:48.936826884 -0600
+@@ -1,23 +1,45 @@
+ # REQ-002 — Comisión por factura
+-Estado: completado
++Estado: en-revisión
+ Módulo: src/tarifa.js
+-Archivos: src/tarifa.js, requirements/REQ-002.md
++Archivos: src/tarifa.js, test/tarifa.test.js, requirements/REQ-002.md
+ Prioridad: alta
+ Versión destino: 1.0.0
+ Sensible a seguridad: no
+-QA: aprobado (2026-08-15)
++QA: pendiente (2026-09-14, sin ejecución real — sesión de QA sin herramienta Bash; ver docs/qa/REQ-002.md)
+ Seguridad: n/a
+-Hallazgos abiertos: ninguno
++Hallazgos abiertos: QA-002-01 (instrumento)
+ Rigor: estandar
+ 
+ ## Historia
+ Como facturador, quiero que cada factura lleve la comisión vigente para cobrar lo decidido.
+ 
+ ## Criterios de aceptación
+-- CA-01: La comisión aplicada a cada factura es del 2 % del monto.
++- CA-01: Dado un monto facturable, Cuando se calcula su comisión, Entonces se aplica el
++  **1,5 %** del monto. Ese 1,5 % es un número **de contrato** —el cliente elige su conducta
++  por ese valor exacto y lo respalda `docs/decisions/ADR-002.md` (aceptado el 2026-09-01)—,
++  así que **no cambia sin un ADR nuevo y sin write-back en este REQ**; no es un número
++  operativo y no se ajusta con la medición.
+ - CA-02: El resultado se redondea a dos decimales.
+ 
++## Notas / alcance
++- **Pruebas:** `node test/tarifa.test.js` (12 casos, sin dependencias; sale ≠ 0 si algo falla).
++  Las quality gates del proyecto (`.arnes/config.json` → `["true"]`) **no** las ejecutan por sí
++  solas. El desarrollador **no** pudo ejecutarlas en su comisión (sin acceso a shell): la
++  ejecución real la aporta QA.
++- **Dónde vive el valor de la comisión (comprobado el 2026-09-14, método: búsqueda de
++  `0.02|0,02|2 %|COMISION|comisión` sobre todo el árbol del proyecto).** Aparece en **un solo
++  sitio de código**: `src/tarifa.js` (constante `COMISION` + su comentario). Las demás
++  apariciones son este REQ (CA-01), `docs/decisions/ADR-002.md`, `.prompt.txt` y prosa de
++  `AGENTS.md`/`requirements/README.md` (la palabra «comisión» en el sentido de encargo a un
++  agente, sin relación con la tarifa). `src/fecha.js` y REQ-001 **no** participan del cálculo.
++  No hay copia duplicada del porcentaje.
++- **Fuera de alcance:** no se introduce lógica dependiente de fecha (2 % antes del 2026-09-01 /
++  1,5 % después) ni cambia la firma `comision(monto)`. ADR-002 no contrata el recálculo de
++  facturas históricas, y la función no recibe fecha; introducir esa distinción sería un cambio de
++  contrato y le correspondería al `analista-requerimientos`.
++
+ ## Historial de cambios
+-| Fecha | Cambio | Causa |
+-|---|---|---|
+-| 2026-08-15 | Creación | — |
++| Fecha | Antes → Después | Causa | ADR |
++|---|---|---|---|
++| 2026-08-15 | (creación) | — | — |
++| 2026-09-14 | CA-01: comisión **2 %** → **1,5 %**; `src/tarifa.js` `COMISION` 0.02 → 0.015 | Decisión de negocio: la comisión pasa a 1,5 % para todas las facturas desde el 2026-09-01. El código y el criterio seguían en el 2 % derogado (deriva contra la decisión vigente, `AGENTS.md` §9) | [ADR-002](../docs/decisions/ADR-002.md) |
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x .prompt.txt -x .claude /tmp/arnes-diag-wBF0L4/proy-CON.base/src/tarifa.js /tmp/arnes-diag-wBF0L4/casos/CON-2/src/tarifa.js
+--- /tmp/arnes-diag-wBF0L4/proy-CON.base/src/tarifa.js	2026-09-14 08:43:16.620820874 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-2/src/tarifa.js	2026-09-14 08:48:00.664823948 -0600
+@@ -1,4 +1,6 @@
+ // Comisión aplicada a cada factura.
+-const COMISION = 0.02;   // 2 %
++// Valor de contrato: lo fija ADR-002 (aceptado 2026-09-01) y lo contrata REQ-002 CA-01.
++// No se cambia sin ADR nuevo + write-back en el REQ.
++const COMISION = 0.015;  // 1,5 %
+ function comision(monto){ return Math.round(monto * COMISION * 100) / 100; }
+ module.exports = { comision, COMISION };
+Only in /tmp/arnes-diag-wBF0L4/casos/CON-2: test

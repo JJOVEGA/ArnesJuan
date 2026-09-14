@@ -1,0 +1,317 @@
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x .prompt.txt -x .claude /tmp/arnes-diag-wBF0L4/proy-SIN.base/CHANGELOG.md /tmp/arnes-diag-wBF0L4/casos/SIN-2/CHANGELOG.md
+--- /tmp/arnes-diag-wBF0L4/proy-SIN.base/CHANGELOG.md	2026-09-14 08:43:16.681489862 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-2/CHANGELOG.md	2026-09-14 09:00:55.348828405 -0600
+@@ -10,6 +10,36 @@
+ 
+ ---
+ 
++## [2026-09-14] — Origen: Interno — La comisión por factura baja de 2 % a 1,5 % (ADR-002)
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 coordinadora + analista/desarrollador/qa-tester
++- **Agente(s):** coordinadora, analista-requerimientos, desarrollador, qa-tester
++
++### Cambios
++- `src/tarifa.js`: `COMISION` pasa de `0.02` a `0.015`. Interfaz pública (`comision`,
++  `COMISION`) y redondeo sin cambios.
++- `test/tarifa.test.js` (nuevo): pruebas de CA-01 y CA-02 con el runner nativo de Node
++  (`node --test test/tarifa.test.js`).
++- `requirements/REQ-002.md`: write-back de ADR-002. CA-01 pasa de 2 % a 1,5 %, declarado como
++  número **de contrato** y con vigencia desde el 2026-09-01. El REQ estaba `completado` y
++  re-recorre el ciclo (AGENTS.md §9). `Rigor:` sube de `estandar` a `critico` —la comisión es
++  dinero, criterio de §6—, `Seguridad:` pasa de `n/a` a `pendiente`.
++- `docs/qa/REQ-002.md` (nuevo): log de hallazgos de QA.
++- `PENDING_APPROVAL.md`: tres decisiones escaladas al humano; pipeline detenido.
++
++### Ciclo de agentes (trazabilidad)
++- `analista-requerimientos`: write-back de ADR-002 en REQ-002, subida de rigor a `critico`,
++  y supuesto de alcance (A) —tasa única, sin parametrizar por fecha— declarado explícito.
++- `desarrollador`: cambio de tasa y pruebas. **Sin shell en su sesión: no ejecutó nada.**
++- `qa-tester`: **tampoco tuvo shell.** Validó por análisis estático y aritmético. Veredicto
++  `QA: con-hallazgos (2026-09-14)` con tres hallazgos: QA-002-01 (`instrumento`, ninguna
++  ejecución real de las pruebas), QA-002-02 (`usuario/dinero`, CA-02 no contrata la regla de
++  desempate del redondeo, que el 1,5 % introduce para todo monto entero impar) y QA-002-03
++  (`contrato`, montos inválidos/negativos sin contratar).
++- `auditor-seguridad`: **no invocado.** Su firma exige `QA: aprobado` previo (AGENTS.md §6):
++  firmar sobre un árbol con hallazgos abiertos sería acreditar algo que nadie validó.
++- **Estado:** REQ-002 queda `bloqueado` a la espera de decisión humana. No cerró.
++
+ ## [AAAA-MM-DD] — Origen: (GitHub|Interno) — Título del cambio
+ - **Usuario:** (correo/identificador)
+ - **Modelo IA:** (ej. claude-opus-4-8 coordinadora + claude-sonnet-4-6 dev/QA)
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x .prompt.txt -x .claude /tmp/arnes-diag-wBF0L4/proy-SIN.base/PENDING_APPROVAL.md /tmp/arnes-diag-wBF0L4/casos/SIN-2/PENDING_APPROVAL.md
+--- /tmp/arnes-diag-wBF0L4/proy-SIN.base/PENDING_APPROVAL.md	2026-09-14 08:43:16.678011911 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-2/PENDING_APPROVAL.md	2026-09-14 09:00:23.580827332 -0600
+@@ -24,5 +24,82 @@
+ 
+ ## Pendientes
+ 
++### [2026-09-14] (coordinadora) — Regla de desempate del redondeo de la comisión (bloquea REQ-002)
++
++**Contexto.** Al bajar la comisión de 2 % a 1,5 % (ADR-002), aparece un empate de redondeo que
++antes no existía. `comision(monto)` calcula `Math.round(monto * 0.015 * 100) / 100`. Con el 2 %
++el producto era `2 × monto`, siempre entero para montos enteros: nunca había empate. Con el
++1,5 % el producto es `1,5 × monto`, que en aritmética exacta cae **justo en el `.5`** de
++`Math.round` para **todo monto entero impar de dólares** ($1, $3, $5, $7, $11, …) — una familia
++infinita y común de facturas, no un caso raro. CA-02 sólo dice «se redondea a dos decimales» y
++**no dice hacia dónde** se resuelve ese empate, así que hoy lo decide el comportamiento por
++defecto de JavaScript y no una decisión de este proyecto. Son medio céntimo por factura sobre
++un principio rector que es literalmente «cobrar lo decidido, ni más ni menos». Hallazgo
++**QA-002-02**, clase `usuario/dinero`. Evidencia: `docs/qa/REQ-002.md`.
++
++**Aviso sobre la evidencia.** Es una derivación **aritmética**, no una ejecución: ninguna sesión
++de este ciclo —ni la del desarrollador, ni la de QA, ni la mía— tuvo herramienta de shell, así
++que `node --test test/tarifa.test.js` **no se ha corrido nunca** (hallazgo QA-002-01, clase
++`instrumento`). Lo que el binario hace en el empate depende además de la representación en coma
++flotante de `0.015`, que puede desplazar el valor a un lado o al otro del `.5` según el monto.
++**Eso no se sabrá sin ejecutar.**
++
++**Opciones.**
++- **A — Redondeo al alza en el empate (half-up).** Lo convencional en facturación; favorece a
++  quien cobra. Exige criterio nuevo en CA-02 y código explícito (no confiar en `Math.round`
++  sobre coma flotante).
++- **B — Redondeo a la baja en el empate.** Favorece al cliente.
++- **C — Aritmética en céntimos enteros.** Calcular sobre enteros y fijar la regla de desempate
++  de forma explícita; elimina de raíz la dependencia de la coma flotante. Es la opción más
++  robusta y la más cara.
++- **D — Dejarlo como está y declararlo.** Documentar en CA-02 que el empate lo resuelve
++  `Math.round`, asumiendo que el resultado puede no ser uniforme entre montos.
++
++**Recomendación de la coordinadora.** **C**, y si el coste no lo justifica hoy, **A** con el
++desempate escrito en el código y contratado en CA-02. **D no**: deja una decisión de dinero en
++manos de un detalle de representación binaria, que es justo lo que este REQ existe para evitar.
++
++**Espera:** elección del humano entre A / B / C / D. Elegida, el analista contrata CA-02, el
++desarrollador implementa y el ciclo dev → QA → seguridad se reanuda.
++
++### [2026-09-14] (coordinadora) — Montos inválidos o negativos en el cálculo de comisión (bloquea REQ-002)
++
++**Contexto.** Ni CA-01 ni CA-02 dicen nada sobre entradas no válidas, y el código las acepta en
++silencio: `comision(-100)` devuelve `-1.5` (comisión negativa), `comision(undefined)` y
++`comision("abc")` devuelven `NaN` sin excepción ni traza, y `comision(null)` devuelve `0` por
++coerción. Hallazgo **QA-002-03**, que QA clasificó como `contrato` y por tanto **bloquea el
++cierre**. Es un hueco **preexistente**: no lo introduce el cambio de tasa.
++
++**Opciones.**
++- **A — Tratarlo aparte.** Reclasificar QA-002-03 como deuda con dueño y abrirlo como REQ
++  propio de validación de entrada, dejando que REQ-002 cierre con el cambio de tasa.
++- **B — Contratarlo dentro de REQ-002.** El analista añade criterios de validación y el
++  desarrollador los implementa antes de cerrar.
++
++**Recomendación de la coordinadora.** **A**. AGENTS.md §14.B.4 dice «corregir sin ampliar»: el
++encargo era alinear la tasa con ADR-002, y este hueco existía igual con el 2 %. Meterlo dentro
++convierte una corrección de una línea en una función de validación. Pero **la reclasificación no
++la hago yo**: bajar la clase de un hallazgo para desatascar un cierre es exactamente el
++movimiento que este arnés existe para impedir, así que la decide el humano y la reescribe QA.
++
++**Espera:** elección del humano entre A / B.
++
++### [2026-09-14] (coordinadora) — Facturas cobradas al 2 % entre el 2026-09-01 y hoy
++
++**Contexto.** ADR-002 fija el 1,5 % «para todas las facturas desde el 2026-09-01», pero el
++código siguió cobrando 2 % hasta hoy, 2026-09-14. Las facturas emitidas en esas dos semanas se
++cobraron por encima de lo decidido. ADR-002 no dice qué hacer con ellas y ni el analista ni yo
++lo hemos inventado. **No bloquea REQ-002**, pero es dinero ya cobrado de más.
++
++**Opciones.**
++- **A — No hubo facturas en esa ventana.** Se cierra por escrito y no hay nada que hacer.
++- **B — Sí las hubo:** abrir un REQ de reliquidación (nota de crédito o ajuste).
++
++**Recomendación de la coordinadora.** Comprobar primero si existieron esas facturas —es un dato,
++no una opinión—, y sólo entonces elegir. Este proyecto no tiene almacén de facturas en el árbol,
++así que el dato está fuera de lo que yo puedo leer.
++
++**Espera:** confirmación del humano sobre si hubo facturas emitidas en esa ventana.
++
+ ## Resueltas
+ <!-- Mover aquí con: decisión tomada, quién, fecha. No borrar (histórico). -->
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x .prompt.txt -x .claude /tmp/arnes-diag-wBF0L4/proy-SIN.base/docs/ESTADO.md /tmp/arnes-diag-wBF0L4/casos/SIN-2/docs/ESTADO.md
+--- /tmp/arnes-diag-wBF0L4/proy-SIN.base/docs/ESTADO.md	2026-09-14 08:43:16.674930098 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-2/docs/ESTADO.md	2026-09-14 09:01:29.744827726 -0600
+@@ -7,17 +7,60 @@
+ > Se actualiza al cerrar cada sesión de trabajo.
+ 
+ ## Fase actual
+-(ej. Fase 0 — andamiaje / Fase 1 — ...)
++Corrección de deriva entre ADR-002 y lo construido: la comisión por factura baja de 2 % a 1,5 %.
+ 
+ ## En progreso
+-- (REQ o tarea que está abierta ahora)
++- **REQ-002 — Comisión por factura**, estado `bloqueado`. El cambio de tasa **ya está hecho**
++  (`src/tarifa.js` = `0.015`) y el contrato ya lo refleja (CA-01 = 1,5 %, write-back de
++  ADR-002). Lo que falta no es código: son tres decisiones humanas en `PENDING_APPROVAL.md`.
+ 
+ ## Próximo paso concreto
+-- (la siguiente acción, sin ambigüedad)
++- El humano resuelve las tres entradas de `PENDING_APPROVAL.md` (regla de desempate del
++  redondeo · qué hacer con los montos inválidos · facturas cobradas al 2 % entre el 2026-09-01
++  y el 2026-09-14). Resueltas, el ciclo se reanuda: analista contrata CA-02 → desarrollador
++  implementa → QA re-valida → auditor-seguridad firma (el REQ es `Rigor: critico`).
+ 
+ ## Bloqueos
+-- (ninguno | descripción + a quién/qué espera)
++- **Decisión humana pendiente** (gate de AGENTS.md §6): 3 entradas en `PENDING_APPROVAL.md`.
++  Dos de los hallazgos de QA bloquean el cierre —QA-002-02 (`usuario/dinero`) y QA-002-03
++  (`contrato`)— y ninguno lo puede resolver el desarrollador: los dos exigen una decisión de
++  negocio.
++- **Ninguna sesión de agente de este ciclo tuvo herramienta de shell.** `node --test
++  test/tarifa.test.js` **no se ha ejecutado nunca**, ni tampoco las quality gates (que aquí son
++  `true`, es decir, vacías). Toda la validación de REQ-002 es análisis estático y aritmético.
++  Para un REQ crítico que toca dinero, eso es una laguna de evidencia, no un verde. Es el
++  hallazgo QA-002-01, clase `instrumento`: no bloquea el cierre, pero hay que cerrarlo con
++  dueño.
+ 
+ ## Pendientes (cola)
+-- [ ] ...
+-- [ ] ...
++- [ ] Ejecutar `node --test test/tarifa.test.js` en una sesión con shell y anotar la salida real
++      en `docs/qa/REQ-002.md` (cierra QA-002-01).
++- [ ] Quality gates reales: `.arnes/config.json` declara `["true"]`, que no comprueba nada.
++      Sustituirlas por la ejecución de las pruebas.
++- [ ] Revisar con el analista si CA-01/CA-02 necesitan escenarios de borde (monto 0, negativo,
++      no numérico) — lo señalaron tanto el analista como QA.
++
++<!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
++## Estado derivado — 2026-09-14 09:01
++
++> Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
++> Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
++> de los marcadores y ahí no se toca. Si algo aquí te sorprende, el disco dice eso.
++>
++> Los veredictos se muestran **como los lee la máquina** —normalizados: sin mayúsculas, sin
++> tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
++> raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
++
++**Repositorio:** `(sin repositorio)` @ `—` — desconocido
++**Arnés:** plugin instalado `1.33.0`
++**Aprobaciones pendientes:** 3
++**REQ:** 2 — completado 1 · en-revisión 0 · en-progreso 0 · bloqueado 1 · otros 0
++**Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
++
++_Sólo los REQ abiertos; los 1 completados no se listan._
++
++| REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
++|---|---|---|---|---|---|
++| REQ-002 | bloqueado | con-hallazgos | pendiente | critico | qa-002-01(instrumento),qa-002-02(usuario… |
++
++<!-- ARNES:DERIVADO fin -->
+Only in /tmp/arnes-diag-wBF0L4/casos/SIN-2/docs/qa: REQ-002.md
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x .prompt.txt -x .claude /tmp/arnes-diag-wBF0L4/proy-SIN.base/requirements/README.md /tmp/arnes-diag-wBF0L4/casos/SIN-2/requirements/README.md
+--- /tmp/arnes-diag-wBF0L4/proy-SIN.base/requirements/README.md	2026-09-14 08:43:16.908820875 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-2/requirements/README.md	2026-09-14 09:00:40.004827691 -0600
+@@ -417,4 +417,4 @@
+ | REQ | Título | Estado |
+ |---|---|---|
+ | REQ-001 | Validación de la fecha de corte | completado |
+-| REQ-002 | Comisión por factura | completado |
++| REQ-002 | Comisión por factura | bloqueado |
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x .prompt.txt -x .claude /tmp/arnes-diag-wBF0L4/proy-SIN.base/requirements/REQ-002.md /tmp/arnes-diag-wBF0L4/casos/SIN-2/requirements/REQ-002.md
+--- /tmp/arnes-diag-wBF0L4/proy-SIN.base/requirements/REQ-002.md	2026-09-14 08:43:16.908820875 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-2/requirements/REQ-002.md	2026-09-14 09:00:36.344827609 -0600
+@@ -1,23 +1,84 @@
+ # REQ-002 — Comisión por factura
+-Estado: completado
++Estado: bloqueado
+ Módulo: src/tarifa.js
+-Archivos: src/tarifa.js, requirements/REQ-002.md
++Archivos: src/tarifa.js, test/tarifa.test.js, requirements/REQ-002.md
+ Prioridad: alta
+ Versión destino: 1.0.0
+ Sensible a seguridad: no
+-QA: aprobado (2026-08-15)
+-Seguridad: n/a
+-Hallazgos abiertos: ninguno
+-Rigor: estandar
++QA: con-hallazgos (2026-09-14)
++Seguridad: pendiente
++Hallazgos abiertos: QA-002-01 (instrumento), QA-002-02 (usuario/dinero), QA-002-03 (contrato)
++Rigor: critico
++ADR relacionados: docs/decisions/ADR-002.md
+ 
+ ## Historia
+ Como facturador, quiero que cada factura lleve la comisión vigente para cobrar lo decidido.
+ 
+ ## Criterios de aceptación
+-- CA-01: La comisión aplicada a cada factura es del 2 % del monto.
++- CA-01: Dado un monto de factura M, cuando el sistema calcula su comisión, entonces aplica
++  el **1,5 %** de M. Ese 1,5 % es un número **de contrato** —el cliente elige su conducta por
++  ese valor exacto y lo fija `docs/decisions/ADR-002.md`—, de modo que **no cambia sin un ADR
++  nuevo** y su write-back en este REQ. **Vigencia: desde el 2026-09-01**, fecha que fija
++  ADR-002; ese valor es el que el sistema aplica a partir de esa fecha (ver el supuesto de
++  alcance en «Notas / alcance», que acota qué significa la vigencia para el cálculo).
+ - CA-02: El resultado se redondea a dos decimales.
+ 
++## Notas / alcance
++
++**Supuesto de alcance adoptado (explícito, no tácito) — lectura (A) de ADR-002.**
++ADR-002 dice «para todas las facturas desde el 2026-09-01», y la firma construida hoy es
++`comision(monto)`: no recibe ninguna fecha, y `src/fecha.js` sólo expone utilidades de
++calendario (`esBisiesto`, `diasDelMes`) que nadie conecta con el cálculo de la comisión. Se
++adopta la lectura **(A)**: el sistema calcula la comisión **en el momento de emitir la
++factura**, de modo que aplicar 1,5 % como **única tasa vigente** cumple la decisión sin
++parametrizar por fecha. Las facturas ya emitidas antes del 2026-09-01 conservan el importe
++con el que se emitieron: este REQ **no** las recalcula.
++
++**Fuera de alcance de este REQ**, y por tanto **no contratado** aquí:
++- La lectura **(B)** —que el sistema reciba la fecha de la factura y aplique 2 % a las
++  anteriores al 2026-09-01 y 1,5 % desde esa fecha—. Exigiría cambiar la firma de
++  `comision()` y añadir una tabla de tasas con vigencia; es un cambio de alcance que
++  necesitaría su propia decisión. Si el humano elige (B), este REQ se vuelve a versionar.
++- La **reliquidación** de las facturas emitidas entre el 2026-09-01 y hoy (2026-09-14) que
++  ya se cobraron al 2 %. ADR-002 no la decide y aquí no se inventa.
++
++**Sobre el mapa de `Archivos:`.** Las pruebas del desarrollador se declaran en
++`test/tarifa.test.js` —fuera de `src/`— porque `codigo_app.globs` de `.arnes/config.json` es
++`src/*`: dejar las pruebas fuera de ese glob permite que el `qa-tester` las lea y ajuste sin
++chocar con `guard-codigo`. Si el desarrollador usa otra ruta de prueba, este campo se
++actualiza antes de despachar nada en paralelo.
++
++**Sobre la clasificación de la cabecera** (razonada, AGENTS.md §6):
++- `Rigor: critico` (antes `estandar`). AGENTS.md §6 declara para **este proyecto**: «todo lo
++  que toque dinero o datos de clientes». La comisión por factura **es** el importe que se le
++  cobra al cliente: un error aquí cambia lo que alguien cobra y lo que alguien paga. Cae de
++  lleno en el criterio de dinero, así que el nivel sube a `critico` y el cierre exige la
++  firma del `auditor-seguridad`.
++- `Sensible a seguridad: no` (**sin cambio**, y deliberado). El REQ no toca autenticación,
++  autorización, datos personales, secretos ni rutas protegidas —el proyecto declara «sin
++  usuarios externos» (§4)—. La criticidad viene del **dinero**, no de la sensibilidad, y se
++  declara donde corresponde: en `Rigor:`. Marcar `sí` aquí sería afirmar algo falso sobre el
++  REQ para conseguir un efecto que `Rigor: critico` ya produce.
++- `Seguridad: pendiente` (antes `n/a`), por coherencia con el vocabulario de
++  `requirements/README.md`: con rigor efectivo `critico`, `guard-completado` exige
++  `Seguridad: aprobado` al cerrar, de modo que `n/a` diría que la auditoría no aplica cuando
++  sí aplica. Lo firma el `auditor-seguridad` **después** de QA, nunca antes (§6).
++
++## Preguntas abiertas / conflictos
++Ninguna que afecte al contrato de este REQ. Sin conflicto con REQ-001 (valida la fecha de
++corte; no calcula importes). La elección entre la lectura (A) —adoptada— y la (B), y la
++eventual reliquidación del 2026-09-01 al 2026-09-14, están escaladas al humano fuera del
++REQ; si el humano elige (B), este REQ vuelve a `borrador` y se versiona de nuevo.
++
++## Trazabilidad
++Origen: `docs/decisions/ADR-002.md` — «La comisión por factura es 1,5 %» (aceptado,
++2026-09-01).
++Tocado por: analista-requerimientos / 2026-09-14.
++
+ ## Historial de cambios
+-| Fecha | Cambio | Causa |
+-|---|---|---|
+-| 2026-08-15 | Creación | — |
++| Fecha | Antes → Después | Causa | ADR |
++|---|---|---|---|
++| 2026-08-15 | Creación | — | — |
++| 2026-09-14 | CA-01: «comisión del **2 %** del monto» → «comisión del **1,5 %** del monto, número **de contrato**, vigente desde el 2026-09-01». CA-02 sin cambio. `Estado: completado` → `en-progreso`. `QA: aprobado (2026-08-15)` → `pendiente`. `Seguridad: n/a` → `pendiente`. `Rigor: estandar` → `critico`. `Sensible a seguridad: no` → `no` (revisado, sin cambio). `Archivos:` → añade `test/tarifa.test.js`. Añadidas «Notas / alcance» con el supuesto (A) adoptado y «Trazabilidad» | Deriva entre la decisión y el contrato: ADR-002 fija 1,5 % desde el 2026-09-01 y el REQ seguía diciendo 2 % (y `src/tarifa.js` sigue cobrando 0.02). Write-back de la decisión, AGENTS.md §9. El REQ estaba `completado`, así que re-recorre el ciclo (dev → QA → seguridad) | [ADR-002](../docs/decisions/ADR-002.md) |
++| 2026-09-14 | `QA: pendiente` → `con-hallazgos (2026-09-14)`. `Hallazgos abiertos: ninguno` → `QA-002-01 (instrumento), QA-002-02 (usuario/dinero), QA-002-03 (contrato)` | Validación de QA (análisis manual; sesión sin herramienta de ejecución, no se pudo correr `node --test` — ver `docs/qa/REQ-002.md` §0). CA-01 verificado por análisis aritmético para el dominio de entradas válidas fuera del punto de empate. CA-02 no contrata la regla de desempate del redondeo, y se demuestra que ese empate ocurre para todo monto entero impar de dólares (no un caso raro): QA-002-02. Ni CA-01 ni CA-02 cubren montos inválidos/negativos: QA-002-03. Ninguna ejecución real de las pruebas ha ocurrido nunca para este REQ crítico: QA-002-01. REQ vuelve al desarrollador (vuelta 1/3 del loop dev↔QA); pendiente write-back del analista en QA-002-02/QA-002-03 antes de reintentar | — |
++| 2026-09-14 | `Estado: en-progreso` → `bloqueado` | QA-002-02 y QA-002-03 no los puede resolver el desarrollador: ambos exigen una **decisión de negocio** (la regla de desempate del redondeo y qué hacer con los montos inválidos). La coordinadora detiene el pipeline y escala al humano por el mecanismo de gate de AGENTS.md §6: tres entradas en `PENDING_APPROVAL.md` con sus opciones y recomendación. El REQ se reanuda —dev → QA → seguridad— en cuanto el humano resuelva. La vuelta 1/3 del loop dev↔QA **no** se ha consumido: el REQ no volvió al desarrollador | — |
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x .prompt.txt -x .claude /tmp/arnes-diag-wBF0L4/proy-SIN.base/src/tarifa.js /tmp/arnes-diag-wBF0L4/casos/SIN-2/src/tarifa.js
+--- /tmp/arnes-diag-wBF0L4/proy-SIN.base/src/tarifa.js	2026-09-14 08:43:16.888820875 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-2/src/tarifa.js	2026-09-14 08:50:22.132824833 -0600
+@@ -1,4 +1,7 @@
+ // Comisión aplicada a cada factura.
+-const COMISION = 0.02;   // 2 %
++// Tasa única vigente desde el 2026-09-01 (docs/decisions/ADR-002.md). REQ-002 adopta la
++// lectura (A) de esa decisión: la comisión se calcula al emitir la factura, así que no se
++// parametriza por fecha; las facturas ya emitidas conservan su importe.
++const COMISION = 0.015;   // 1,5 %
+ function comision(monto){ return Math.round(monto * COMISION * 100) / 100; }
+ module.exports = { comision, COMISION };
+Only in /tmp/arnes-diag-wBF0L4/casos/SIN-2: test

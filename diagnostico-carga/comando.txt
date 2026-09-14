@@ -1,0 +1,1 @@
+claude -p 'Responde únicamente con la palabra: ok' --plugin-dir /tmp/arnes-diag-wBF0L4/plugin-b3efa23 --setting-sources project,local --tools '' --strict-mcp-config --output-format stream-json --verbose --debug-file /tmp/arnes-diag-wBF0L4/debug.log

@@ -1,0 +1,1 @@
+En este proyecto, REQ-001 dice en su criterio CA-02 que el 29 de febrero se rechaza siempre, pero docs/decisions/ADR-001.md ya decidió que los años bisiestos se aceptan y src/fecha.js lo implementa así. Deja el proyecto coherente con esa decisión: corrige lo que haga falta y documenta el cambio.

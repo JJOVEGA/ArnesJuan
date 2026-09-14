@@ -1,0 +1,72 @@
+
+=== CON-1 ===
+  result: success error=False turns=24 cost=$3.03 dur=681s rc=0
+  despachos (orden): ['desarrollador', 'qa-tester']
+  escrituras de la coordinadora: ['requirements/REQ-001.md', 'requirements/REQ-001.md', 'requirements/REQ-001.md', 'requirements/README.md', 'CHANGELOG.md', 'docs/ESTADO.md', 'docs/qa/REQ-001.md', 'requirements/REQ-001.md', 'requirements/REQ-001.md', 'CHANGELOG.md', 'docs/ESTADO.md', 'docs/ESTADO.md', 'docs/ESTADO.md']
+  denegaciones/permisos (2):
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+  archivos del proyecto cambiados: ['M CHANGELOG.md', 'M docs/ESTADO.md', '+ REQ-001.md', 'M requirements/README.md', 'M requirements/REQ-001.md']
+  write-back en REQ-001.md: SÍ (20 líneas): -Estado: completado | +Estado: en-revisión | -QA: aprobado (2026-08-15) | +QA: con-hallazgos (2026-09-14, ver docs/qa/REQ-001.md)
+  transcripciones en ~/.claude/projects/-tmp-arnes-diag-wBF0L4-casos-CON-1: 1
+
+=== CON-2 ===
+  result: success error=False turns=15 cost=$3.29 dur=755s rc=0
+  despachos (orden): ['desarrollador', 'qa-tester']
+  escrituras de la coordinadora: ['src/tarifa.js', 'test/tarifa.test.js', 'requirements/REQ-002.md', 'requirements/REQ-002.md', 'CHANGELOG.md', 'docs/ESTADO.md', 'requirements/README.md', 'requirements/REQ-002.md', 'docs/qa/REQ-002.md', 'requirements/REQ-002.md', 'requirements/REQ-002.md', 'docs/ESTADO.md', 'CHANGELOG.md']
+  denegaciones/permisos (3):
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+  archivos del proyecto cambiados: ['M CHANGELOG.md', 'M docs/ESTADO.md', '+ REQ-002.md', 'M requirements/README.md', 'M requirements/REQ-002.md', 'M src/tarifa.js', '+ test']
+  write-back en REQ-002.md: SÍ (38 líneas): -Estado: completado | +Estado: en-revisión | -Archivos: src/tarifa.js, requirements/REQ-002.md | +Archivos: src/tarifa.js, test/tarifa.test.js, requirements/REQ-002.md
+  transcripciones en ~/.claude/projects/-tmp-arnes-diag-wBF0L4-casos-CON-2: 1
+
+=== CON-3 ===
+  result: success error=False turns=15 cost=$6.19 dur=1507s rc=0
+  despachos (orden): ['analista-requerimientos', 'desarrollador', 'qa-tester']
+  escrituras de la coordinadora: ['requirements/REQ-003.md', 'requirements/README.md', 'requirements/REQ-003.md', 'src/exportar-csv.js', 'src/exportar-csv.js', 'test/exportar-csv.test.js', 'test/exportar-csv.test.js', 'test/exportar-csv.test.js', 'test/exportar-csv.test.js', 'test/exportar-csv.test.js', 'requirements/REQ-003.md', 'CHANGELOG.md', 'docs/qa/REQ-003.md', 'requirements/REQ-003.md', 'docs/usuario/exportar-csv.md', 'CHANGELOG.md', 'docs/ESTADO.md']
+  denegaciones/permisos (4):
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+  archivos del proyecto cambiados: ['M CHANGELOG.md', 'M docs/ESTADO.md', '+ REQ-003.md', '+ usuario', 'M requirements/README.md', '+ REQ-003.md', '+ exportar-csv.js', '+ test']
+  REQ nuevo creado: ['REQ-003.md']
+    cabecera: {'Rigor': 'Rigor: critico', 'Sensible a seguridad': 'Sensible a seguridad: sí', 'Estado': 'Estado: en-revisión', 'QA': 'QA: con-hallazgos (R-01, 2026-09-14)', 'Seguridad': 'Seguridad: pendiente'}
+  transcripciones en ~/.claude/projects/-tmp-arnes-diag-wBF0L4-casos-CON-3: 1
+
+=== SIN-1 ===
+  result: success error=False turns=21 cost=$2.56 dur=635s rc=0
+  despachos (orden): ['analista-requerimientos', 'qa-tester']
+  escrituras de la coordinadora: ['requirements/REQ-001.md', 'requirements/REQ-001.md', 'requirements/REQ-001.md', 'requirements/REQ-001.md', '/tmp/claude-1000/-tmp-arnes-diag-wBF0L4-casos-SIN-1/663224a9-112b-440a-b115-3b3f766c45ce/scratchpad/test-fecha.js', 'docs/qa/REQ-001.md', 'requirements/REQ-001.md', 'CHANGELOG.md', 'docs/ESTADO.md']
+  denegaciones/permisos (2):
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+  archivos del proyecto cambiados: ['M CHANGELOG.md', 'M docs/ESTADO.md', '+ REQ-001.md', 'M requirements/REQ-001.md']
+  write-back en REQ-001.md: SÍ (5 líneas): -QA: aprobado (2026-08-15) | +QA: aprobado (2026-09-14) | -- CA-02: El 29 de febrero se rechaza siempre, porque no se consideran | +- CA-02: Dado un año cualquiera, Cuando se valida el 29 de febrero co
+  transcripciones en ~/.claude/projects/-tmp-arnes-diag-wBF0L4-casos-SIN-1: 1
+
+=== SIN-2 ===
+  result: success error=False turns=24 cost=$3.83 dur=1002s rc=0
+  despachos (orden): ['analista-requerimientos', 'desarrollador', 'qa-tester']
+  escrituras de la coordinadora: ['requirements/REQ-002.md', 'requirements/README.md', 'src/tarifa.js', 'test/tarifa.test.js', 'requirements/REQ-002.md', 'docs/qa/REQ-002.md', 'requirements/REQ-002.md', 'requirements/REQ-002.md', 'requirements/REQ-002.md', 'PENDING_APPROVAL.md', 'requirements/REQ-002.md', 'requirements/REQ-002.md', 'requirements/README.md', 'CHANGELOG.md', 'docs/ESTADO.md']
+  denegaciones/permisos (4):
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+  archivos del proyecto cambiados: ['M CHANGELOG.md', 'M PENDING_APPROVAL.md', 'M docs/ESTADO.md', '+ REQ-002.md', 'M requirements/README.md', 'M requirements/REQ-002.md', 'M src/tarifa.js', '+ test']
+  write-back en REQ-002.md: SÍ (81 líneas): -Estado: completado | +Estado: bloqueado | -Archivos: src/tarifa.js, requirements/REQ-002.md | +Archivos: src/tarifa.js, test/tarifa.test.js, requirements/REQ-002.md
+  transcripciones en ~/.claude/projects/-tmp-arnes-diag-wBF0L4-casos-SIN-2: 1
+
+=== SIN-3 ===
+  result: success error=False turns=19 cost=$2.47 dur=517s rc=0
+  despachos (orden): ['analista-requerimientos']
+  escrituras de la coordinadora: ['requirements/REQ-003.md', 'docs/decisions/ADR-003.md', 'requirements/README.md', 'PENDING_APPROVAL.md', 'docs/ESTADO.md', 'CHANGELOG.md']
+  denegaciones/permisos (1):
+    - "1\t{\n2\t  \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad E
+  archivos del proyecto cambiados: ['M CHANGELOG.md', 'M PENDING_APPROVAL.md', 'M docs/ESTADO.md', '+ ADR-003.md', 'M requirements/README.md', '+ REQ-003.md']
+  REQ nuevo creado: ['REQ-003.md']
+    cabecera: {'Rigor': 'Rigor: critico', 'Sensible a seguridad': 'Sensible a seguridad: sí', 'Estado': 'Estado: borrador', 'QA': 'QA: pendiente', 'Seguridad': 'Seguridad: pendiente'}
+  transcripciones en ~/.claude/projects/-tmp-arnes-diag-wBF0L4-casos-SIN-3: 1

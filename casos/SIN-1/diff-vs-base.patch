@@ -1,0 +1,130 @@
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x .prompt.txt -x .claude /tmp/arnes-diag-wBF0L4/proy-SIN.base/CHANGELOG.md /tmp/arnes-diag-wBF0L4/casos/SIN-1/CHANGELOG.md
+--- /tmp/arnes-diag-wBF0L4/proy-SIN.base/CHANGELOG.md	2026-09-14 08:43:16.681489862 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-1/CHANGELOG.md	2026-09-14 08:54:34.976826447 -0600
+@@ -10,6 +10,37 @@
+ 
+ ---
+ 
++## [2026-09-14] — Origen: Interno — REQ-001 CA-02 alineado con ADR-001 (años bisiestos)
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 coordinadora + analista-requerimientos y qa-tester
++- **Agente(s):** analista-requerimientos, qa-tester (coordinadora: orquestación y registro)
++
++### Cambios
++- `requirements/REQ-001.md` — `CA-02` decía «el 29 de febrero se rechaza siempre, porque no se
++  consideran años bisiestos», lo que **contradecía** a `docs/decisions/ADR-001.md` (aceptado
++  2026-08-20) y a lo ya implementado en `src/fecha.js`. Hallazgo de clase `contrato` (el
++  requerimiento decía algo falso sobre lo construido). Se reescribió `CA-02` enunciando la
++  **propiedad de pertenencia** al conjunto de años bisiestos y citando su **sitio único**
++  (`esBisiesto` en `src/fecha.js`), con ejemplos marcados como no exhaustivos y enlace a `ADR-001`.
++- `requirements/REQ-001.md` — cabecera: `Estado: completado` → `en-revisión` → `completado`, y
++  `QA: aprobado (2026-08-15)` → `pendiente` → `aprobado (2026-09-14)`. El veredicto viejo juzgaba
++  el criterio viejo, así que el REQ **re-recorrió el ciclo** (AGENTS.md §9, regla de estado).
++- `requirements/REQ-001.md` — entrada nueva en `## Historial de cambios` (antes → después + causa).
++- `docs/qa/REQ-001.md` — log de QA nuevo con la evidencia de la re-validación.
++- **Sin cambios en `src/`**: el código ya cumplía la decisión; lo que estaba mal era el contrato.
++- **Sin ADR nuevo**: la decisión de fondo ya estaba registrada en `ADR-001`; este cambio sólo la
++  refleja en el requerimiento.
++
++### Ciclo de agentes (trazabilidad)
++- `analista-requerimientos` — write-back de `CA-02` + Historial; reabrió el REQ a `en-revisión`.
++- `qa-tester` — re-validó CA-01 y CA-02 contra `src/fecha.js` (29-feb en bisiesto y en no bisiesto,
++  más bordes 1600/1800/2100/2400); veredicto **`QA: aprobado (2026-09-14)`**; marcó `completado`.
++  `Seguridad: n/a` (Rigor `estandar`, no sensible: QA es la última puerta).
++- **Limitación declarada:** la sesión de QA **no tuvo `Bash`**, así que la verificación fue
++  **manual determinista** (traza a mano de las 4 líneas de aritmética pura de `src/fecha.js`) y la
++  quality gate del manifiesto (`true`) **no se ejecutó**. No es evidencia de ejecución real; queda
++  como deuda de clase `instrumento` en `docs/qa/REQ-001.md`.
++
+ ## [AAAA-MM-DD] — Origen: (GitHub|Interno) — Título del cambio
+ - **Usuario:** (correo/identificador)
+ - **Modelo IA:** (ej. claude-opus-4-8 coordinadora + claude-sonnet-4-6 dev/QA)
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x .prompt.txt -x .claude /tmp/arnes-diag-wBF0L4/proy-SIN.base/docs/ESTADO.md /tmp/arnes-diag-wBF0L4/casos/SIN-1/docs/ESTADO.md
+--- /tmp/arnes-diag-wBF0L4/proy-SIN.base/docs/ESTADO.md	2026-09-14 08:43:16.674930098 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-1/docs/ESTADO.md	2026-09-14 08:55:22.200826785 -0600
+@@ -7,17 +7,54 @@
+ > Se actualiza al cerrar cada sesión de trabajo.
+ 
+ ## Fase actual
+-(ej. Fase 0 — andamiaje / Fase 1 — ...)
++Mantenimiento de coherencia contrato ↔ ADR ↔ código (REQ-001 y REQ-002 ya implementados).
+ 
+ ## En progreso
+-- (REQ o tarea que está abierta ahora)
++- (nada abierto) — REQ-001 cerró el 2026-09-14 tras el write-back de `CA-02` y la re-validación
++  de QA. Ver `CHANGELOG.md` [2026-09-14] y `docs/qa/REQ-001.md`.
+ 
+ ## Próximo paso concreto
+-- (la siguiente acción, sin ambigüedad)
++- **Decisión del humano sobre REQ-002 / ADR-002** (ver cola, primer punto): `ADR-002` (aceptado
++  2026-09-01) decidió comisión **1,5 %** desde esa fecha; `src/tarifa.js` tiene `COMISION = 0.02`
++  y `REQ-002 CA-01` dice «2 %». Aquí el que no cumple la decisión es el **código**, toca **dinero**
++  (crítico en este proyecto, AGENTS.md §6) y **no se toca sin visto bueno**. Al aprobarse: REQ-002
++  reabre → `desarrollador` implementa 1,5 % con su regla de vigencia → analista hace el write-back
++  de `CA-01` → `qa-tester` valida → `auditor-seguridad` firma (rigor `critico` por tocar dinero).
+ 
+ ## Bloqueos
+-- (ninguno | descripción + a quién/qué espera)
++- REQ-002 espera **decisión humana** (alcance de la vigencia y autorización para cambiar un
++  importe que se cobra). No está en `PENDING_APPROVAL.md` a propósito: una entrada ahí bloquearía
++  el cierre de **todos** los REQ mientras se decide.
+ 
+ ## Pendientes (cola)
+-- [ ] ...
+-- [ ] ...
++- [ ] **REQ-002 / ADR-002 — comisión 2 % vs 1,5 % (clase `usuario/dinero`, toca dinero).** Decidido
++      1,5 % en `ADR-002`; `src/tarifa.js` sigue en 2 % y `CA-01` también. Pregunta abierta que hay
++      que responder antes de codificar: ¿cómo se aplica «desde el 2026-09-01» —por fecha de emisión,
++      por período facturado— y qué pasa con las facturas ya emitidas entre esa fecha y hoy?
++- [ ] **Evidencia de ejecución real para REQ-001 (clase `instrumento`, no bloquea).** La
++      re-validación de QA del 2026-09-14 fue **manual determinista**: la sesión no tuvo `Bash`, así
++      que no se ejecutó `node` ni la quality gate del manifiesto. Repetir con `Bash` disponible y
++      dejar pruebas automatizadas de `esBisiesto`/`diasDelMes`. Detalle en `docs/qa/REQ-001.md`.
++- [ ] **Huecos de borde en `src/fecha.js`, observados por QA (no prometidos por ningún CA, sin
++      llamador hoy).** `diasDelMes(0|13, año)` devuelve `undefined` (fail-open) y `esBisiesto(null)`
++      devuelve `true`. Si se decide cubrirlos, es un `CA-03` nuevo y una decisión de alcance del
++      analista, no un arreglo suelto.
++
++<!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
++## Estado derivado — 2026-09-14 08:55
++
++> Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
++> Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
++> de los marcadores y ahí no se toca. Si algo aquí te sorprende, el disco dice eso.
++>
++> Los veredictos se muestran **como los lee la máquina** —normalizados: sin mayúsculas, sin
++> tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
++> raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
++
++**Repositorio:** `(sin repositorio)` @ `—` — desconocido
++**Arnés:** plugin instalado `1.33.0`
++**Aprobaciones pendientes:** 0
++**REQ:** 2 — completado 2 · en-revisión 0 · en-progreso 0 · bloqueado 0 · otros 0
++**Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
++
++<!-- ARNES:DERIVADO fin -->
+Only in /tmp/arnes-diag-wBF0L4/casos/SIN-1/docs/qa: REQ-001.md
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x .prompt.txt -x .claude /tmp/arnes-diag-wBF0L4/proy-SIN.base/requirements/REQ-001.md /tmp/arnes-diag-wBF0L4/casos/SIN-1/requirements/REQ-001.md
+--- /tmp/arnes-diag-wBF0L4/proy-SIN.base/requirements/REQ-001.md	2026-09-14 08:43:16.904820876 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-1/requirements/REQ-001.md	2026-09-14 08:53:31.876826640 -0600
+@@ -5,7 +5,7 @@
+ Prioridad: media
+ Versión destino: 1.0.0
+ Sensible a seguridad: no
+-QA: aprobado (2026-08-15)
++QA: aprobado (2026-09-14)
+ Seguridad: n/a
+ Hallazgos abiertos: ninguno
+ Rigor: estandar
+@@ -15,9 +15,10 @@
+ 
+ ## Criterios de aceptación
+ - CA-01: Una fecha con día mayor que los del mes se rechaza.
+-- CA-02: El 29 de febrero se rechaza siempre, porque no se consideran años bisiestos.
++- CA-02: Dado un año cualquiera, Cuando se valida el 29 de febrero como fecha de corte, Entonces se acepta si y sólo si ese año **pertenece al conjunto de los años bisiestos**, y se rechaza en caso contrario. La **pertenencia a ese conjunto la decide el código**: la regla exhaustiva vive en un **único sitio**, la función `esBisiesto` de `src/fecha.js`, y este criterio no la reproduce. Ejemplos **no exhaustivos**: se acepta en 2024 y en 2000; se rechaza en 2026 y en 1900. Decisión de fondo: `docs/decisions/ADR-001.md` (aceptado 2026-08-20).
+ 
+ ## Historial de cambios
+ | Fecha | Cambio | Causa |
+ |---|---|---|
+ | 2026-08-15 | Creación | — |
++| 2026-09-14 | CA-02 — antes: «El 29 de febrero se rechaza siempre, porque no se consideran años bisiestos» → después: «se acepta si y sólo si el año pertenece al conjunto de los años bisiestos, cuya pertenencia decide `esBisiesto` en `src/fecha.js` (sitio único; ejemplos no exhaustivos)». Cabecera — Estado: `completado` → `en-revisión`; QA: `aprobado (2026-08-15)` → `pendiente` (ese veredicto juzgó el criterio anterior) | Hallazgo de clase `contrato`: el criterio decía algo falso sobre lo construido — `src/fecha.js` ya acepta el 29 de febrero en año bisiesto — y contradecía una decisión aceptada, `docs/decisions/ADR-001.md` (aceptado · 2026-08-20). Write-back de AGENTS.md §9; sin ADR nuevo, la decisión de fondo ya está registrada en ADR-001 |

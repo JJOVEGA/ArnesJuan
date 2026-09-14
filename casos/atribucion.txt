@@ -1,0 +1,38 @@
+Atribución de despachos y write-back por parent_tool_use_id (regenerado desde salida.jsonl)
+
+== CON-1 ==
+  despachos (orden): ['desarrollador', 'qa-tester']
+  write-back en requirements/: {'REQ-001.md': ['desarrollador', 'desarrollador', 'desarrollador', 'qa-tester', 'qa-tester'], 'README.md': ['desarrollador']}
+  Bash intentos: 0 | denegaciones reales en Edit/Write: 0
+  result: success turns=24 cost=$3.03 dur=681s
+
+== CON-2 ==
+  despachos (orden): ['desarrollador', 'qa-tester']
+  write-back en requirements/: {'REQ-002.md': ['desarrollador', 'desarrollador', 'desarrollador', 'qa-tester', 'qa-tester'], 'README.md': ['desarrollador']}
+  Bash intentos: 0 | denegaciones reales en Edit/Write: 0
+  result: success turns=15 cost=$3.29 dur=755s
+
+== CON-3 ==
+  despachos (orden): ['analista-requerimientos', 'desarrollador', 'qa-tester']
+  write-back en requirements/: {'REQ-003.md': ['analista-requerimientos', 'desarrollador', 'desarrollador', 'qa-tester'], 'README.md': ['analista-requerimientos']}
+  Bash intentos: 0 | denegaciones reales en Edit/Write: 0
+  result: success turns=15 cost=$6.19 dur=1507s
+
+== SIN-1 ==
+  despachos (orden): ['analista-requerimientos', 'qa-tester']
+  write-back en requirements/: {'REQ-001.md': ['analista-requerimientos', 'analista-requerimientos', 'analista-requerimientos', 'analista-requerimientos', 'qa-tester']}
+  Bash intentos: 0 | denegaciones reales en Edit/Write: 0
+  result: success turns=21 cost=$2.56 dur=635s
+
+== SIN-2 ==
+  despachos (orden): ['analista-requerimientos', 'desarrollador', 'qa-tester']
+  write-back en requirements/: {'REQ-002.md': ['analista-requerimientos', 'COORDINADORA', 'qa-tester', 'qa-tester', 'qa-tester', 'COORDINADORA', 'COORDINADORA'], 'README.md': ['analista-requerimientos', 'COORDINADORA']}
+  Bash intentos: 0 | denegaciones reales en Edit/Write: 0
+  result: success turns=24 cost=$3.83 dur=1002s
+
+== SIN-3 ==
+  despachos (orden): ['analista-requerimientos']
+  write-back en requirements/: {'REQ-003.md': ['analista-requerimientos'], 'README.md': ['analista-requerimientos']}
+  Bash intentos: 0 | denegaciones reales en Edit/Write: 0
+  result: success turns=19 cost=$2.47 dur=517s
+

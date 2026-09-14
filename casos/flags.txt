@@ -1,0 +1,1 @@
+--plugin-dir /tmp/arnes-diag-wBF0L4/plugin-b3efa23 --setting-sources project,local --strict-mcp-config --tools Read,Edit,Write,Glob,Grep,Agent --permission-mode acceptEdits --max-budget-usd 8 --output-format stream-json --verbose

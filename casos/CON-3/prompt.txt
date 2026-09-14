@@ -1,0 +1,1 @@
+Necesitamos poder exportar el listado mensual de facturas a un archivo CSV. Hoy no existe ningún requisito ni código para eso. Llévalo adelante hasta donde corresponda en este proyecto.
