@@ -1,0 +1,113 @@
+result: success error=False turns=25 cost=$3.85 dur=772s
+despachos (orden): ['desarrollador', 'qa-tester']
+
+ediciones de cabecera de REQ-002 (rol, campo, valor):
+   ('desarrollador', 'Estado', 'en-progreso')
+   ('desarrollador', 'Sensible a seguridad', 'no')
+   ('desarrollador', 'Estado', 'en-revisión')
+   ('desarrollador', 'QA', 'pendiente')
+   ('qa-tester', 'Seguridad', 'n/a')
+   ('qa-tester', 'QA', 'con-hallazgos (2026-09-14, ver docs/qa/REQ-002.md — 6/6 prue')
+   ('qa-tester', 'QA', 'con-hallazgos (2026-09-14, ver docs/qa/REQ-002.md — 5/5 prue')
+
+intentos de 'Estado: completado': ['qa-tester']
+denegaciones reales en Edit/Write: 0
+
+Bash: 22 comandos
+   [COORDINADORA] ls -la && ls -R src requirements docs 2>/dev/null | head -60 && echo "--- PENDIN  ->  ok  "total 200\ndrwxr-xr-x 6 juan juan 340 Sep 14 10:02 .\ndrwx------ 3 juan juan 60 Sep 14 10
+   [desarrollador] ls -la && echo "--- src ---" && ls -la src/ && echo "--- test? ---" && ls -la te  ->  ok  "total 340\ndrwxr-xr-x 6 juan juan 340 Sep 14 10:02 .\ndrwx------ 3 juan juan 60 Sep 14 10
+   [desarrollador] node --test test/ 2>&1 | tail -30  ->  ok  "Error: Cannot find module '/tmp/arnes-diag-wBF0L4/casos/CON-2b/test'\n at Module._resolve
+   [desarrollador] node --test /tmp/arnes-diag-wBF0L4/casos/CON-2b/test/tarifa.test.js 2>&1 | tail   ->  ok  "✔ la superficie pública del módulo se conserva (0.630317ms)\n✔ CA-01: la comisión vigente
+   [desarrollador] true && echo "quality gate 'true' -> rc=$?"  ->  ok  "quality gate 'true' -> rc=0"
+   [desarrollador] git rev-parse --is-inside-work-tree 2>&1 | head -2  ->  ok  "fatal: not a git repository (or any parent up to mount point /tmp/arnes-diag-wBF0L4/casos
+   [desarrollador] echo "=== src/tarifa.js ===" && cat src/tarifa.js && echo && echo "=== REQ-002 c  ->  ok  "=== src/tarifa.js ===\n// Comisión aplicada a cada factura.\n// Valor único vigente (no d
+   [qa-tester] node --version && ls docs/qa/ && cat CHANGELOG.md 2>/dev/null | head -50  ->  ok  "v24.21.0\n# CHANGELOG — {{NOMBRE_PROYECTO}}\n\n> Bitácora de cambios del proyecto. Cada e
+   [qa-tester] true; echo "quality_gates exit code: $?"  ->  ok  "quality_gates exit code: 0"
+   [qa-tester] node --test test/tarifa.test.js 2>&1  ->  ok  "✔ la superficie pública del módulo se conserva (0.534197ms)\n✔ CA-01: la comisión vigente
+   [qa-tester] node -e "
+const { comision, COMISION } = require('./src/tarifa.js');
+
+function s  ->  ok  "comision(0) => 0\ncomision(1) => 0.02\ncomision(-100) => -1.5\ncomision(NaN) => NaN\ncomi
+   [qa-tester] node -e "
+const { comision } = require('./src/tarifa.js');
+console.log('Math.rou  ->  ok  "Math.round(-1.5) = -1\nMath.round(1.5) = 2\ncomision(-1) = -0.01\ncomision(1) = 0.02\ncom
+   [qa-tester] node -e "
+const { comision } = require('./src/tarifa.js');
+
+// Comparación exact  ->  ok  "DISCREPANCIA monto= 11 esperado= 0.17 obtenido= 0.16\nDISCREPANCIA monto= 15 esperado= 0.
+   [qa-tester] node -e "
+console.log('11*0.015 =', 11*0.015);
+console.log('11*0.015*100 =', 11*  ->  ok  "11*0.015 = 0.16499999999999998\n11*0.015*100 = 16.499999999999996\nMath.round(11*0.015*10
+   [qa-tester] node -e "
+const { comision } = require('./src/tarifa.js');
+function exacto(monto  ->  ok  "subfacturado (obtenido<esperado): 2030 sobrefacturado (obtenido>esperado): 0"
+   [qa-tester] node -e "
+// Simula el código con la tarifa anterior (2%) para ver si el defecto  ->  ok  "discrepancias con 2% (código anterior, misma técnica de redondeo): 710"
+   [qa-tester] node -e "
+const { comision } = require('./src/tarifa.js');
+function exacto(monto  ->  ok  "diferencia maxima observada: -0.01\nmontos \"redondos\" (enteros o .50) afectados, primer
+   [qa-tester] node --test test/tarifa.test.js 2>&1  ->  ERR "Exit code 1\n✔ la superficie pública del módulo se conserva (0.526363ms)\n✔ CA-01: la com
+   [qa-tester] grep -n "2 %\|2%\|0\.02" requirements/REQ-002.md  ->  ok  "27:| 2026-09-14 | CA-01: comisión 2 % → 1,5 %. Implementación: `src/tarifa.js` `COMISION`
+   [qa-tester] echo "--- REQ-002.md cabecera ---" && sed -n '1,11p' requirements/REQ-002.md &&   ->  ok  "--- REQ-002.md cabecera ---\n# REQ-002 — Comisión por factura\nEstado: en-revisión\nMódul
+   [COORDINADORA] node -e '
+const {comision, COMISION} = require("./src/tarifa.js");
+console.log("  ->  ok  "COMISION = 0.015\nsubfacturados: 200000 sobrefacturados: 0\nejemplos [monto, cobrado, exa
+   [COORDINADORA] node -e '
+const {comision} = require("./src/tarifa.js");
+// Exacto: monto = c ce  ->  ok  "montos probados: 0 a 20000 centavo a centavo\nsubfacturados: 2030 sobrefacturados: 0\nej.
+
+cabecera FINAL de REQ-002:
+  Estado: en-revisión | Sensible a seguridad: no | QA: con-hallazgos (2026-09-14, ver docs/qa/REQ-002.md — 5/5 pruebas del desarrollador verdes, 1 regresión de QA roja: 6 total, 1 fallo) | Seguridad: n/a | Hallazgos abiertos: QA-2026-09-14-01 (usuario/dinero) | Rigor: estandar
+
+archivos cambiados vs base:
+   Files base/CHANGELOG.md and CHANGELOG.md differ
+   Files base/PENDING_APPROVAL.md and PENDING_APPROVAL.md differ
+   Only in /tmp/arnes-diag-wBF0L4/casos/CON-2b: analisis.txt
+   Files base/docs/ESTADO.md and docs/ESTADO.md differ
+   Only in docs/qa: REQ-002.md
+   Only in /tmp/arnes-diag-wBF0L4/casos/CON-2b: latest
+   Files base/requirements/README.md and requirements/README.md differ
+   Files base/requirements/REQ-002.md and requirements/REQ-002.md differ
+   Files base/src/tarifa.js and src/tarifa.js differ
+   Only in /tmp/arnes-diag-wBF0L4/casos/CON-2b: test
+
+--- docs/qa/REQ-002.md (primeras líneas relevantes) ---
+   **QA:** qa-tester (Sonnet)
+   **Vía:** `AGENTS.md` §6, fila 3 (reparación cuyo efecto toca dinero → `critico`).
+   `desarrollador` → **QA (este log)** → `auditor-seguridad`. Sin comisión de analista
+   `git`, por eso no se cita commit). Archivos juzgados: `src/tarifa.js`, `test/tarifa.test.js`,
+   El `QA: aprobado (2026-08-15)` anterior juzgó `src/tarifa.js` con `COMISION = 0.02`. El
+   $ node --test test/tarifa.test.js
+   tests 5, pass 5, fail 0
+   Node v24.21.0. Las 5 pruebas **prueban lo que dicen probar**: verifican la superficie pública
+   $ node -e "const m=require('./src/tarifa.js'); console.log(typeof m.comision, typeof m.COMISION, m.COMISION)"
+   **Clase: `usuario/dinero`** (bloquea el cierre). Afecta directamente lo que se le cobra al
+   $ node -e "
+   $ node -e "console.log((11*0.015*100).toPrecision(20)); console.log(Math.round(11*0.015*100))"
+   tocada por el diff. Y el `QA: aprobado (2026-08-15)` anterior no cubre esto: judged un código
+   **Regresión añadida (permitido: `test/` no es `codigo_app.globs`).** Se añadió a
+   `test/tarifa.test.js` un caso que reproduce el defecto con montos ordinarios (`11`, `15`, `19`,
+   $ node --test test/tarifa.test.js
+   ✖ CA-02 [HALLAZGO QA-2026-09-14-01, usuario/dinero]: no se subfactura en montos que caen justo
+   tests 6, pass 5, fail 1
+   Este test queda en el árbol como regresión: pasará a verde sólo cuando el desarrollador corrija
+   $ node -e "
+   árbol (`grep -rn "COMISION\|comision(" src/ test/` sólo devuelve `src/tarifa.js` y
+   `test/tarifa.test.js`). CA-01 lo dice ahora explícitamente («Es el valor único vigente: no
+   ## 7. Write-back de §9 (obligatorio antes de poder firmar `aprobado`)
+     `QA: aprobado (2026-08-15) → pendiente`, `Estado: completado → en-revisión`) y causa enlazada
+   - **`Archivos:`** actualizado con `test/tarifa.test.js` añadido.
+   pierdan, pero **no** cambian el veredicto de este REQ porque CA-01/CA-02 no hacen ninguna
+   | CA-02 (redondeo a dos decimales) | **incumple** en el punto medio de coma flotante (subfacturación sistemática, `usuario/dinero`) |
+  ... (222 líneas)
+
+--- PENDING_APPROVAL.md (primeras líneas relevantes) ---
+   > (`guard-completado`), el bloque derivado de `docs/ESTADO.md` y `tools/arnes-lectura.sh`:
+   1,5 %, REQ-002 CA-01 lo dice y enlaza el ADR, con su Historial. Pero al validarlo, el `qa-tester`
+   abrió el hallazgo `QA-2026-09-14-01`, clase **`usuario/dinero`**, que **impide cerrar** REQ-002.
+     CA-02, y luego `desarrollador` → `qa-tester` → `auditor-seguridad` (vía de la fila 3 de §6: toca
+     dinero). REQ-002 cierra con la tarifa **y** el redondeo correctos. Es más trabajo del que se
+     cierra antes: `QA-2026-09-14-01` es `usuario/dinero` y `guard-completado` deniega el cierre.
+   archivo que acabamos de tocar, es dinero, y el error va sistemáticamente en contra de la empresa.
+   Mientras esta entrada siga aquí, ningún REQ puede marcarse `completado`.
+  ... (77 líneas)

@@ -1,0 +1,1 @@
+{"sandbox":{"enabled":true,"enabledPlatforms":["linux"],"autoAllowBashIfSandboxed":true,"allowUnsandboxedCommands":false,"filesystem":{"allowWrite":["/tmp/arnes-sbx-osx7Qx"]}}}

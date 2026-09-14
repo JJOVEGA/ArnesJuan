@@ -1,0 +1,266 @@
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x analisis.txt -x debug.log -x .claude /tmp/arnes-diag-wBF0L4/proy-CON.base/CHANGELOG.md /tmp/arnes-diag-wBF0L4/casos/CON-2b/CHANGELOG.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON.base/CHANGELOG.md	2026-09-14 08:43:16.235248506 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-2b/CHANGELOG.md	2026-09-14 10:15:15.352876340 -0600
+@@ -10,6 +10,42 @@
+ 
+ ---
+ 
++## [2026-09-14] — Origen: Interno — Comisión por factura: 2 % → 1,5 % (ADR-002)
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 coordinadora + desarrollador/QA del plugin arnes-juan
++- **Agente(s):** coordinadora · desarrollador · qa-tester
++
++### Cambios
++- `src/tarifa.js`: `COMISION` 0.02 → 0.015 (1,5 %), por `docs/decisions/ADR-002.md` (aceptado
++  2026-09-01). Se conservan el redondeo a dos decimales y la superficie pública del módulo.
++- `test/tarifa.test.js` (nuevo): pruebas de la tarifa vigente y del redondeo, más una regresión
++  añadida por QA que reproduce la subfacturación del punto medio (en rojo a propósito).
++- `requirements/REQ-002.md`: write-back de §9 en la misma entrega — CA-01 a 1,5 % enlazado a
++  ADR-002 y declarado número **de contrato**, `Estado:` de `completado` a `en-revisión` (§9 REGLA
++  DE ESTADO), `QA:` de vuelta a `pendiente`, `Archivos:` e Historial con antes → después y causa.
++  Sin ADR nuevo: ADR-002 ya cubre el fondo.
++- `docs/qa/REQ-002.md` (nuevo): log de validación con comandos, salidas y método.
++- `PENDING_APPROVAL.md`: entrada de gate humano por la regla de redondeo (ver abajo).
++- `docs/ESTADO.md`: clasificación de vía, autorización comprobada y bitácora del ciclo.
++
++### Ciclo de agentes (trazabilidad)
++- **Coordinadora:** clasificó la vía por su EFECTO (`AGENTS.md` §6): fila 2 (reparación con causa y
++  contrato claros) **y** fila 3 (toca dinero, `critico` en este proyecto) → manda la más
++  restrictiva, fila 3: desarrollador → QA → seguridad, **sin comisión de analista**. Autorización
++  comprobada por escrito contra el `AGENTS.md` de este proyecto (§14 A-5).
++- **desarrollador:** arreglo + pruebas + write-back en una sola entrega. Comprobó el supuesto de
++  «valor único vigente, no tarifa por fecha»; no se disparó la condición de parada.
++- **qa-tester — veredicto `con-hallazgos`:** CA-01, superficie pública, quality gate (`true`) y
++  fidelidad del write-back, conformes. Abrió `QA-2026-09-14-01` (`usuario/dinero`): subfacturación
++  de 1 centavo en el punto medio del redondeo por coma flotante, **anterior a este cambio** e
++  independiente de la tarifa. Verificado de forma independiente por la coordinadora: 2030 montos
++  subfacturados y 0 sobrefacturados entre $0 y $20.000.
++- **auditor-seguridad:** **no despachado todavía**, a propósito — con `QA:` en `con-hallazgos` no
++  puede firmar `Seguridad: aprobado`, y el árbol cambiará según la decisión pendiente. Va sobre el
++  candidato final.
++- **Estado:** REQ-002 queda en `en-revisión`. No cierra: hallazgo `usuario/dinero` abierto + cola
++  de aprobación viva.
++
+ ## [AAAA-MM-DD] — Origen: (GitHub|Interno) — Título del cambio
+ - **Usuario:** (correo/identificador)
+ - **Modelo IA:** (ej. claude-opus-4-8 coordinadora + claude-sonnet-4-6 dev/QA)
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x analisis.txt -x debug.log -x .claude /tmp/arnes-diag-wBF0L4/proy-CON.base/PENDING_APPROVAL.md /tmp/arnes-diag-wBF0L4/casos/CON-2b/PENDING_APPROVAL.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON.base/PENDING_APPROVAL.md	2026-09-14 08:43:16.233135639 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-2b/PENDING_APPROVAL.md	2026-09-14 10:14:41.940873059 -0600
+@@ -24,5 +24,54 @@
+ 
+ ## Pendientes
+ 
++### [2026-09-14] (coordinadora) — Cómo se redondea la comisión en el punto medio (REQ-002)
++
++**Contexto.** El encargo pedido —comisión 2 % → 1,5 % según `docs/decisions/ADR-002.md`, y los
++requisitos coherentes con esa decisión— está **entregado y verificado**: `src/tarifa.js` cobra
++1,5 %, REQ-002 CA-01 lo dice y enlaza el ADR, con su Historial. Pero al validarlo, el `qa-tester`
++abrió el hallazgo `QA-2026-09-14-01`, clase **`usuario/dinero`**, que **impide cerrar** REQ-002.
++
++El hallazgo **no lo introdujo este cambio** y es **independiente de la tarifa**: `Math.round(monto
++* COMISION * 100) / 100` opera en coma flotante IEEE-754, y los montos cuya comisión cae justo en
++el medio centavo se redondean **hacia abajo** porque el producto no es representable exacto
++(`11 * 0.015` da `0.16499999999999998`, no `0.165`). Reproducido por QA y **verificado de forma
++independiente por la coordinadora** con el mismo método y el mismo resultado: barriendo los
++2.000.001 montos de $0 a $20.000 centavo a centavo contra el cálculo exacto en enteros con
++redondeo half-up, hay **2030 montos subfacturados y 0 sobrefacturados** — el error va **siempre en
++contra de la empresa**. Ejemplos: $11 → cobra 0,16 en vez de 0,17; $15, $19, $37, $61, $67. El
++mismo patrón existía con la tarifa anterior del 2 % (710 casos), así que lleva ahí desde el origen.
++Evidencia y método: `docs/qa/REQ-002.md`.
++
++**Por qué se detiene aquí y no lo resuelve un agente.** CA-02 dice «el resultado se redondea a dos
++decimales», y el código **sí** devuelve dos decimales: lo que CA-02 **no contrata** es hacia dónde
++redondear en el punto medio (half-up, half-even/bancario, o truncar). Elegir esa regla es una
++**decisión de significado** sobre lo que se cobra, no una transcripción, así que ni el
++`desarrollador` ni la coordinadora pueden tomarla (`AGENTS.md` §9, «quien transcribe no decide»).
++Además choca de frente con el principio rector del proyecto —«cobrar lo decidido, ni más ni
++menos»—, que hoy no se cumple.
++
++**Opciones.**
++- **A — Arreglarlo dentro de REQ-002.** El `analista-requerimientos` fija la regla de redondeo en
++  CA-02, y luego `desarrollador` → `qa-tester` → `auditor-seguridad` (vía de la fila 3 de §6: toca
++  dinero). REQ-002 cierra con la tarifa **y** el redondeo correctos. Es más trabajo del que se
++  pidió.
++- **B — Separarlo en un REQ nuevo.** El analista abre un REQ propio para la regla de redondeo con
++  su prioridad, y REQ-002 queda en `en-revisión` hasta que ese trabajo cierre el hallazgo. No
++  cierra antes: `QA-2026-09-14-01` es `usuario/dinero` y `guard-completado` deniega el cierre.
++- **C — Cerrar REQ-002 con el residual declarado.** Sólo si se acepta seguir subfacturando esos
++  montos por ahora; exige declarar dueño, forzador medido y vencimiento (§6). La tarifa quedaría
++  correcta y el centavo, mal, por escrito.
++
++**Recomendación de la coordinadora: A.** El defecto está en el mismo criterio (CA-02) y en el mismo
++archivo que acabamos de tocar, es dinero, y el error va sistemáticamente en contra de la empresa.
++Separarlo (B) paga dos veces el ciclo sobre `src/tarifa.js`; cerrarlo con residual (C) deja
++incumplido el principio rector justo en el REQ que existe para cumplirlo. Si la prioridad es
++entregar sólo lo pedido, **B** es la alternativa honesta; **C** sólo con la decisión explícita de
++convivir con el defecto.
++
++**Espera:** elección del humano entre A, B y C. Si es A o B, hace falta además que decidas **qué
++regla** de redondeo se contrata (la habitual en facturación es **half-up**: el medio centavo sube).
++Mientras esta entrada siga aquí, ningún REQ puede marcarse `completado`.
++
+ ## Resueltas
+ <!-- Mover aquí con: decisión tomada, quién, fecha. No borrar (histórico). -->
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x analisis.txt -x debug.log -x .claude /tmp/arnes-diag-wBF0L4/proy-CON.base/docs/ESTADO.md /tmp/arnes-diag-wBF0L4/casos/CON-2b/docs/ESTADO.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON.base/docs/ESTADO.md	2026-09-14 08:43:16.230540585 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-2b/docs/ESTADO.md	2026-09-14 10:15:40.596877088 -0600
+@@ -7,17 +7,93 @@
+ > Se actualiza al cerrar cada sesión de trabajo.
+ 
+ ## Fase actual
+-(ej. Fase 0 — andamiaje / Fase 1 — ...)
++Corrección de deriva: ADR-002 (comisión 1,5 %) vs. `src/tarifa.js` y REQ-002 (2 %).
+ 
+ ## En progreso
+-- (REQ o tarea que está abierta ahora)
++- REQ-002 — Comisión por factura. Salió de `completado` (§9, REGLA DE ESTADO: un REQ completado
++  que cambia re-recorre el ciclo) y, entregado el arreglo, queda en `en-revisión`.
++- 2026-09-14, desarrollador: entregados el arreglo (`src/tarifa.js`, `COMISION` 0.02 → 0.015),
++  sus pruebas (`test/tarifa.test.js`, 5/5 en verde con `node --test`) y el write-back de §9 en
++  `requirements/REQ-002.md` (CA-01 a 1,5 % enlazado a ADR-002, `QA:` de vuelta a `pendiente`,
++  Historial e `Archivos:`). Sin ADR nuevo: ADR-002 ya cubre el fondo. Supuesto de la coordinadora
++  (valor único vigente, no tarifa por fecha) **comprobado** contra el código y el REQ: `comision()`
++  no recibe fecha, no hay persistencia de facturas ni otro consumidor, y nada pide recalcular
++  facturas anteriores. No se disparó la condición de parada.
++
++## Clasificación de vía y comprobación de autorización (§6, §14 A-5) — 2026-09-14, coordinadora
++- **Archivo leído:** `AGENTS.md` de ESTE proyecto (`/tmp/arnes-diag-wBF0L4/casos/CON-2b/AGENTS.md`),
++  importado por `CLAUDE.md`.
++- **Resuelto:** el documento **declara y autoriza** la vía proporcional de reparación — contiene
++  la frase «autoriza la vía proporcional de reparación» (§6) y la tabla de vías con la fila
++  «Sin comisión de analista». Autorización **confirmada**.
++- **Clasificación por EFECTO:** el cambio casa con la **fila 2** (reparación con causa, alcance y
++  contrato claros: la decisión ya está tomada y fechada en `docs/decisions/ADR-002.md`) **y** con la
++  **fila 3** (su efecto alcanza un criterio de `critico` de este proyecto: «todo lo que toque dinero»).
++  Manda la **más restrictiva** → **fila 3**.
++- **Vía aplicada:** `desarrollador` → `qa-tester` → `auditor-seguridad`, en **serie**. **Sin comisión
++  de analista**, porque no queda decisión de diseño ni de contrato pendiente: ADR-002 ya contrató el
++  valor, y el write-back en REQ-002 sólo transcribe lo ya decidido (§9, lo entrega el desarrollador
++  en la misma entrega que el arreglo).
++- **Lo que esta clasificación NO cambia:** el `Rigor: estandar` y el `Sensible a seguridad: no`
++  declarados en REQ-002 **siguen vigentes tal cual**; elegir vía no reclasifica el REQ. El
++  `auditor-seguridad` **puede subirlos** y nadie los baja sin su firma. La revisión de seguridad se
++  despacha por **propiedad** (el efecto toca dinero), no por el umbral de `guard-completado`.
++- **Supuesto declarado y condición de parada:** se implementa la comisión como **valor único vigente**
++  (1,5 %), no como tarifa dependiente de la fecha de la factura. ADR-002 fija la vigencia desde el
++  2026-09-01 y hoy es 2026-09-14. Si la implementación exigiera una tarifa por fecha o cambiar la
++  firma de `comision()`, eso es una **decisión de diseño**: el desarrollador **para y escala** al
++  `analista-requerimientos` (§9, «quien transcribe no decide»).
++
++- 2026-09-14, qa-tester: veredicto **`QA: con-hallazgos`**. CA-01 (1,5 %), la superficie pública del
++  módulo, el quality gate (`true`) y la fidelidad del write-back de §9: todo conforme. Pero abrió
++  `QA-2026-09-14-01` (`usuario/dinero`) por subfacturación de 1 centavo en el punto medio del
++  redondeo, por coma flotante. **Verificado de forma independiente por la coordinadora** (§14 C):
++  2030 montos subfacturados y 0 sobrefacturados entre $0 y $20.000 centavo a centavo. Defecto
++  **anterior** a este cambio e **independiente de la tarifa**. Evidencia: `docs/qa/REQ-002.md`.
+ 
+ ## Próximo paso concreto
+-- (la siguiente acción, sin ambigüedad)
++- **Esperar la decisión humana de `PENDING_APPROVAL.md`** (regla de redondeo en el punto medio,
++  opciones A/B/C). El `auditor-seguridad` **no** se ha despachado a propósito: con `QA:` en
++  `con-hallazgos` no podría firmar `Seguridad: aprobado` (el hook lo deniega en cualquier edición
++  del REQ, `requirements/README.md`), y el árbol va a cambiar si se elige A o B — la auditoría se
++  hace sobre el candidato final. Resuelta la decisión: analista (sólo si A o B) → desarrollador →
++  QA → seguridad → cierre.
++- Vueltas dev↔QA gastadas en REQ-002: **1 de 3** (§6; el contador no se reinicia con cada hallazgo
++  nuevo).
+ 
+ ## Bloqueos
+-- (ninguno | descripción + a quién/qué espera)
++- **REQ-002 no puede cerrar**: `Hallazgos abiertos: QA-2026-09-14-01 (usuario/dinero)` y una entrada
++  viva en `PENDING_APPROVAL.md`. Las dos cosas las hace cumplir `guard-completado`. Espera decisión
++  del humano.
+ 
+ ## Pendientes (cola)
+-- [ ] ...
+-- [ ] ...
++- [ ] **Deriva detectada fuera del encargo (no se toca en este cambio, §14 B-4 «corregir sin
++      ampliar»):** `docs/decisions/ADR-001.md` (aceptado 2026-08-20) declara que el 29 de febrero
++      **es** fecha de corte válida y `src/fecha.js` lo implementa, pero REQ-001 CA-02 dice «El 29 de
++      febrero se rechaza siempre». Es un hallazgo de clase `contrato` contra REQ-001. Pendiente de
++      decisión del humano sobre si se abre su propia vía de reparación.
++
++<!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
++## Estado derivado — 2026-09-14 10:15
++
++> Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
++> Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
++> de los marcadores y ahí no se toca. Si algo aquí te sorprende, el disco dice eso.
++>
++> Los veredictos se muestran **como los lee la máquina** —normalizados: sin mayúsculas, sin
++> tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
++> raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
++
++**Repositorio:** `(sin repositorio)` @ `—` — desconocido
++**Arnés:** plugin instalado `1.33.0`
++**Aprobaciones pendientes:** 1
++**REQ:** 2 — completado 1 · en-revisión 1 · en-progreso 0 · bloqueado 0 · otros 0
++**Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
++
++_Sólo los REQ abiertos; los 1 completados no se listan._
++
++| REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
++|---|---|---|---|---|---|
++| REQ-002 | en-revision | con-hallazgos | n/a | estandar | qa-2026-09-14-01(usuario/dinero) |
++
++<!-- ARNES:DERIVADO fin -->
+Only in /tmp/arnes-diag-wBF0L4/casos/CON-2b/docs/qa: REQ-002.md
+Only in /tmp/arnes-diag-wBF0L4/casos/CON-2b: latest
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x analisis.txt -x debug.log -x .claude /tmp/arnes-diag-wBF0L4/proy-CON.base/requirements/README.md /tmp/arnes-diag-wBF0L4/casos/CON-2b/requirements/README.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON.base/requirements/README.md	2026-09-14 08:43:16.648820874 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-2b/requirements/README.md	2026-09-14 10:15:19.976876456 -0600
+@@ -417,4 +417,4 @@
+ | REQ | Título | Estado |
+ |---|---|---|
+ | REQ-001 | Validación de la fecha de corte | completado |
+-| REQ-002 | Comisión por factura | completado |
++| REQ-002 | Comisión por factura | en-revisión |
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x analisis.txt -x debug.log -x .claude /tmp/arnes-diag-wBF0L4/proy-CON.base/requirements/REQ-002.md /tmp/arnes-diag-wBF0L4/casos/CON-2b/requirements/REQ-002.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON.base/requirements/REQ-002.md	2026-09-14 08:43:16.648820874 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-2b/requirements/REQ-002.md	2026-09-14 10:12:29.132870832 -0600
+@@ -1,23 +1,27 @@
+ # REQ-002 — Comisión por factura
+-Estado: completado
++Estado: en-revisión
+ Módulo: src/tarifa.js
+-Archivos: src/tarifa.js, requirements/REQ-002.md
++Archivos: src/tarifa.js, test/tarifa.test.js, requirements/REQ-002.md
+ Prioridad: alta
+ Versión destino: 1.0.0
+ Sensible a seguridad: no
+-QA: aprobado (2026-08-15)
++QA: con-hallazgos (2026-09-14, ver docs/qa/REQ-002.md — 5/5 pruebas del desarrollador verdes, 1 regresión de QA roja: 6 total, 1 fallo)
+ Seguridad: n/a
+-Hallazgos abiertos: ninguno
++Hallazgos abiertos: QA-2026-09-14-01 (usuario/dinero)
+ Rigor: estandar
+ 
+ ## Historia
+ Como facturador, quiero que cada factura lleve la comisión vigente para cobrar lo decidido.
+ 
+ ## Criterios de aceptación
+-- CA-01: La comisión aplicada a cada factura es del 2 % del monto.
++- CA-01: La comisión aplicada a cada factura es del 1,5 % del monto (número **de contrato**:
++  lo fija `docs/decisions/ADR-002.md` y no cambia sin un ADR nuevo). Es el **valor único
++  vigente**: no depende de la fecha de la factura, y no hay recálculo de facturas anteriores
++  al 2026-09-01.
+ - CA-02: El resultado se redondea a dos decimales.
+ 
+ ## Historial de cambios
+ | Fecha | Cambio | Causa |
+ |---|---|---|
+ | 2026-08-15 | Creación | — |
++| 2026-09-14 | CA-01: comisión 2 % → 1,5 %. Implementación: `src/tarifa.js` `COMISION` 0.02 → 0.015. `QA:` `aprobado (2026-08-15)` → `pendiente` (juzgaba el código anterior). `Estado:` `completado` → `en-revisión` (§9, REGLA DE ESTADO). `Archivos:` añade `test/tarifa.test.js` | Deriva contra una decisión ya tomada: el código cobraba de más. Causa: `docs/decisions/ADR-002.md` (aceptado 2026-09-01, comisión 1,5 % desde el 2026-09-01). Write-back del desarrollador en la misma entrega que el arreglo (`AGENTS.md` §6 vía de reparación / §9). Sin ADR nuevo: ADR-002 ya cubre el fondo |
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x analisis.txt -x debug.log -x .claude /tmp/arnes-diag-wBF0L4/proy-CON.base/src/tarifa.js /tmp/arnes-diag-wBF0L4/casos/CON-2b/src/tarifa.js
+--- /tmp/arnes-diag-wBF0L4/proy-CON.base/src/tarifa.js	2026-09-14 08:43:16.620820874 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-2b/src/tarifa.js	2026-09-14 10:05:31.848866865 -0600
+@@ -1,4 +1,6 @@
+ // Comisión aplicada a cada factura.
+-const COMISION = 0.02;   // 2 %
++// Valor único vigente (no depende de la fecha de la factura): ADR-002 lo fija en 1,5 %
++// desde el 2026-09-01 y no hay recálculo de facturas anteriores.
++const COMISION = 0.015;  // 1,5 % — ADR-002
+ function comision(monto){ return Math.round(monto * COMISION * 100) / 100; }
+ module.exports = { comision, COMISION };
+Only in /tmp/arnes-diag-wBF0L4/casos/CON-2b: test

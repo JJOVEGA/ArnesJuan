@@ -45,3 +45,41 @@ Ver `casos/flags.txt`: `--plugin-dir … --setting-sources project,local --stric
 
 ## Coste
 6 sesiones · 21,38 USD · 84 min 59 s de agente · 25 min de pared (14:44:43Z → 15:09:54Z).
+
+---
+
+# Adenda 2026-09-14 (tarde) — CON-2 repetido en entorno aislado con `Bash` y runtime real
+
+## Entorno (`entorno-aislado/`)
+- **Runtime:** Node `v24.21.0` LTS, tarball oficial de nodejs.org, instalado **sólo** bajo el directorio de ensayo
+  (sin PATH global, sin sudo). Integridad por **tres vías**: `sha256` contra `SHASUMS256.txt` oficial (TLS);
+  `gpg: Good signature` del releaser con la clave obtenida por su ID desde `keys.openpgp.org` a un `GNUPGHOME`
+  temporal; y **huella `5BE8A3F6…D356` presente en la lista oficial de release keys** del README de Node
+  (`release-key-en-README-oficial.txt`). El anillo de claves del usuario no se tocó.
+- **El sandbox propio del CLI no se activó** ni por `--settings` ni por `.claude/settings.json` del proyecto
+  (`node` seguía pidiendo aprobación; el debug no lo menciona). Motivo no determinado. Sondas en `sondas/`.
+- **Aislamiento efectivo: `bwrap`** (`bwrap-endurecido.txt`): `/` de sólo lectura; escribibles **sólo** el
+  proyecto, el scratchpad del CLI (`/tmp/claude-1000`), `~/.claude.json` y los directorios de contabilidad
+  de `~/.claude` (`projects`, `file-history`, `shell-snapshots`, `backups`); **tmpfs sobre `~/.claude`** para
+  que cualquier archivo nuevo ahí sea efímero; `~/.claude/plugins` y `settings.json` de sólo lectura; `/tmp`
+  en tmpfs; `node` y la copia del candidato de sólo lectura. **Verificado** con `touch` directo y con una
+  sonda del CLI: worktrees y plugin estable → `EROFS`; `./dentro.txt` → creado; `node` → ejecuta;
+  `~/.claude/CLAUDE.md-PRUEBA` → no existe fuera tras salir. `Bash` habilitado con `--allowedTools Bash`
+  **dentro** de ese bwrap; sin `--dangerously-skip-permissions`.
+
+## CON-2b (`casos/CON-2b/`) — mismo candidato `b3efa23`, misma base, mismo prompt
+| Pregunta | Observado | Evidencia |
+|---|---|---|
+| ¿QA termina? | **Sí.** Ejecutó `node --test` (5/5 del desarrollador en verde) y siguió probando: encontró un **defecto real de redondeo** (`11×0.015×100 = 16.4999…` → subfactura un céntimo en 2 030 de 20 000 montos), abrió `QA-2026-09-14-01` clase **`usuario/dinero`**, añadió una regresión roja (6 pruebas, 1 fallo) y firmó `QA: con-hallazgos` | `docs/qa/REQ-002.md` (222 líneas), 22 comandos `Bash` todos dentro del proyecto |
+| ¿Entra seguridad? | **No se despachó.** Coordinadora y QA clasificaron la vía como **fila 3** («toca dinero → `desarrollador → QA → auditor-seguridad`») y **se detuvieron en QA `con-hallazgos`**: §6 no deja que seguridad firme lo que QA no validó. La coordinadora escaló a `PENDING_APPROVAL.md` y dejó escrito que tras el arreglo sigue «QA → auditor-seguridad» | `analisis.txt`, `PENDING_APPROVAL.md` |
+| ¿Quién corrige rigor, sensibilidad y exigencia de seguridad? | **Nadie.** Cabecera final: `Rigor: estandar` · `Sensible a seguridad: no` · `Seguridad: n/a`. El desarrollador reescribió `Sensible: no`; QA escribió **`Seguridad: n/a`** en la misma entrega en que su log dice «fila 3 → `critico`». Ningún rol de la cadena tiene la facultad: el auditor sube el rigor y el analista fija la sensibilidad, y ninguno estaba | ediciones de cabecera atribuidas por `parent_tool_use_id` en `analisis.txt` |
+| ¿Se intenta cerrar antes de resolver esas obligaciones? | **No.** La única coincidencia con «`Estado: completado`» es la fila del Historial que describe la transición ya hecha («completado → en-revisión»). `guard-completado` **no denegó nada**; la cabecera nunca valió `completado` | `analisis.txt`; recuento de denegaciones reales = 0 |
+
+**Lectura contra la política acordada:** la vía se **clasifica** bien (fila 2 y fila 3, manda la más restrictiva)
+y la cadena se detiene donde debe; pero **el contrato del REQ no adquiere la obligación de seguridad** —
+`I-2`/`SEC-094` reproducidos **en ejecución real**, no en lectura—. En SIN-2, con analista, el rigor sí subió a
+`critico`. La diferencia entre las dos corridas es exactamente el rol que la vía retira.
+
+**Coste:** 3,85 USD · 12 min 52 s · 25 turnos. **Efectos:** worktrees, candidato y plugin estable intactos;
+`~/.claude/session-env` apareció a las 15:59Z, **antes** de CON-2b, durante las sondas sin bwrap (contabilidad
+del CLI); `latest` en el proyecto es el symlink que `--debug-file` crea hacia `debug.log`.
