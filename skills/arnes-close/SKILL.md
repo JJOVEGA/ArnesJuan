@@ -29,7 +29,9 @@ contenido: resume lo real.
    devuélvelo para el write-back antes de entregar. **A quién depende de la vía** (`AGENTS.md` §6 y
    §9): al `analista-requerimientos` cuando queda una decisión de requisitos o de diseño, y al
    `desarrollador` —en la misma entrega que el arreglo— cuando sólo hay que reflejar en el REQ lo
-   que ya estaba contratado. **Lo bloqueante no cambia:** sin el write-back no se entrega, venga de
+   que ya estaba contratado **y el `AGENTS.md` de este proyecto declara expresamente la vía
+   proporcional (§6)**; si no la declara, es del `analista-requerimientos`, como antes de que la
+   vía existiera. **Lo bloqueante no cambia:** sin el write-back no se entrega, venga de
    quien venga. Documenta el resultado en la sección *Trazabilidad y no-deriva* de `DELIVERY.md`.
 4. Pregunta el **destinatario** (técnico / ejecutivo / ambos) y ajusta el nivel de detalle.
 5. Marca el `DELIVERY.md` como pendiente de aprobación: regístralo en `PENDING_APPROVAL.md`

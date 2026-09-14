@@ -2,6 +2,60 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-13 · La vía proporcional deja de ejercerse por estar escrita: **la autoriza el documento del proyecto**
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (diseño aprobado por el propietario el 2026-09-13). Rama `rel/via-proporcional`, sobre `b2323f1`.
+
+**El diseño, y la dirección del fallo que es su punto.** Un agente del plugin **no** ejerce la vía
+proporcional por tenerla escrita en su definición: **la ejerce si el proyecto la autoriza**. Antes de
+omitir al analista se comprueba que el `AGENTS.md` **del proyecto** declara expresamente la vía; si
+no la declara, si no se puede leer, si la respuesta no es clara o si otra parte del mismo documento
+exige el analista **sin resolver** la contradicción, **se conserva el procedimiento anterior** y se
+despacha al analista. **La ausencia de permiso no habilita nada.** El agente trae la **capacidad**;
+el documento da el **permiso**.
+
+**Dónde quedó, porque la coordinadora es quien decide el despacho.** La comprobación vive en las
+**dos** sedes que la ejercen: `AGENTS.md` §6 y §14 A (5) —y sus gemelas de
+`templates/AGENTS.md.tpl`—, y los agentes `desarrollador`, `analista-requerimientos`, `qa-tester` y
+`auditor-seguridad`. El barrido por propiedad destapó **tres transcripciones más** que no estaban en
+el encargo: §9 de las dos sedes, `skills/arnes-close/SKILL.md` y la tabla de
+`docs/gobernanza/autoalojamiento.md`, que es la **premisa** de la que §6 se declara transcripción.
+
+**`SEC-093` — el REQ nuevo, resuelto donde se actúa y con el pronombre desambiguado.** «es él» pasa
+a «es el `analista-requerimientos`, y no el `desarrollador` ni el `auditor-seguridad`», y
+`agents/desarrollador.md` gana una **parada nombrada**: «hace falta un REQ nuevo» es, por sí solo,
+motivo de parada — con el motivo escrito, que un REQ nacido sin `Rigor:` ni `Sensible a seguridad:`
+deja al disparador del auditor **sin sujeto**.
+
+**`SEC-094` — la obligación de seguridad se enuncia por PROPIEDAD.** La fila 3 deja de ser una
+enumeración («hooks, protecciones, firmas, permisos, instalación, migración o publicación» — cero de
+los cinco criterios críticos que la misma sección declara) y pasa a ser «todo cambio cuyo efecto
+alcanza **un criterio de `critico` de este proyecto** o una protección del arnés», con esos ejemplos
+**declaradamente no exhaustivos**. Se añade **«manda la más restrictiva»**, de modo que la reparación
+de un bug de cobro ya **no** termina en QA. Y se retira el anclaje en `guard-completado`: es puerta
+de **cierre**, no de despacho, e **inerte** sin `jq` — usarla como criterio produce el bucle tardío
+que la vía existe para evitar.
+
+**La prueba práctica se corrió ANTES de ampliar documentación**, en dos proyectos temporales con
+archivos reales —uno con la plantilla **anterior** a la vía (`f387b1c`) y otro con la de este
+cambio—, idénticos en todo lo demás. **Seis casos, y la frontera de honestidad va con ellos:** la
+comprobación de autorización se **ejecutó** (`NO-AUTORIZADA` rc 1 · `AUTORIZADA` rc 0); la
+clasificación de cada caso en su fila se **leyó y aplicó a mano** citando la línea que la decide.
+**No se despachó ningún agente**: aquí no hay «despacho ejecutado». Política antigua → analista en
+los tres; autorización proporcional → ordinaria sin analista, la de cobro con seguridad, la del REQ
+nuevo con analista. Instrucciones, método, resultados y límites en
+`docs/arnes/via-proporcional-prueba-despacho/`.
+
+**Lo que NO se afirma, porque no está demostrado:** ni compatibilidad universal con definiciones de
+agente anteriores, ni coste adicional cero —que §0 obligue a leer `AGENTS.md` no demuestra que un
+agente lea §6 con esta profundidad—. Y queda **escrito, no tapado**, que un agente que el plugin
+**no entrega** no recibe la comprobación: ninguna instrucción del plugin gobierna un archivo que el
+plugin no entrega.
+
+**No se cierra ningún hallazgo.** `SEC-093`…`SEC-097`, `R-1` y la observación de `N-4` quedan como
+estaban; `SEC-095` y `SEC-096` se cierran **verificando comportamiento**, no escribiendo texto. No se
+tocaron `hooks/`, `tools/`, `tests/`, `.arnes/config.json`, ningún REQ ni el clasificador de
+migraciones. Quality gates §7: **3/3 en verde**.
+
 ## [Interno] — 2026-09-13 · Intento terminado: candidato detenido, y **una conclusión mía corregida**
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. Punto de continuidad en `docs/ESTADO.md`.
 

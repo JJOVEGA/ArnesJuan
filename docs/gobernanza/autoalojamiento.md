@@ -167,9 +167,19 @@ amplias, **manteniendo las protecciones del producto**.
 | Naturaleza del cambio | Vía |
 |---|---|
 | Documentación informativa, índices y erratas **sin cambio de obligaciones** | **la coordinadora**, con las comprobaciones pertinentes |
-| Reparación con **causa, alcance y contrato claros** | desarrollador → QA. **Sin comisión de analista** |
-| Cambio que afecta **hooks, protecciones, firmas, permisos, instalación, migración o publicación** | desarrollador → QA → **seguridad**. El analista interviene **sólo** si hay una decisión de diseño o contrato **pendiente** |
+| Reparación con **causa, alcance y contrato claros** | desarrollador → QA. **Sin comisión de analista** — sólo si el cambio **no** cae también en la fila 3 |
+| Cambio cuyo efecto alcanza **un criterio de `critico` de este proyecto** (`AGENTS.md` §6, «Qué es crítico EN ESTE PROYECTO») **o una protección del arnés** — ejemplos **declaradamente no exhaustivos**: hooks, protecciones, firmas, permisos, instalación, migración, publicación | desarrollador → QA → **seguridad**. El analista interviene **sólo** si hay una decisión de diseño o contrato **pendiente** |
 | **Capacidad nueva** o **cambio de contrato** | analista → desarrollador → QA → seguridad |
+
+**Si un cambio casa con más de una fila, manda la MÁS RESTRICTIVA**, y la fila 3 va enunciada **por
+propiedad**: elegir vía **nunca elimina** una revisión de seguridad que las reglas vigentes exijan, y
+la enumeración de ejemplos **no puede limitar esa obligación**. Tampoco se delega ese criterio en
+`guard-completado`, que es puerta de **cierre** —no de despacho— e inerte sin `jq` o sin
+`.arnes/config.json`.
+
+**Y esta vía sólo rige donde el `AGENTS.md` del proyecto la declara.** ArnesJuan la declara en su
+§6; un proyecto que no la declare **conserva el procedimiento anterior** y ningún agente puede
+omitir al analista en él.
 
 Y la regla que impide que esta tabla se convierta en una salida: **clasificar por el efecto**. *«Una
 regla de autorización en Markdown es gobernanza sensible; una prueba que decide si una protección

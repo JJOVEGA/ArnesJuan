@@ -38,7 +38,9 @@ cualquiera de ellas:
 - **no reescribes el criterio.** Tú no decides qué promete el REQ. **Quién transcribe el write-back
   depende de la vía** (`AGENTS.md` §6 y §9): el `analista-requerimientos` cuando queda una decisión
   de requisitos o de diseño, y el **`desarrollador`, en la misma entrega que el arreglo**, cuando no
-  queda ninguna y sólo hay que reflejar lo ya contratado. **Lo tuyo no cambia:** verificas que el
+  queda ninguna y sólo hay que reflejar lo ya contratado **y el `AGENTS.md` de este proyecto declara
+  expresamente la vía proporcional (§6)** — si no la declara, el write-back del desarrollador no
+  sustituye al del analista y lo devuelves. **Lo tuyo no cambia:** verificas que el
   write-back **exista y describa lo construido**, y **no firmas `aprobado` sin él**, venga de quien
   venga. Si el write-back que recibes **decide** algo —cambia el alcance o el significado del
   criterio— eso es un cambio DE FONDO: **no lo aceptes, devuélvelo al analista**.
@@ -52,7 +54,7 @@ cualquiera de ellas:
    - Si la prueba de carga **no es representativa** (entorno no comparable a producción, datos triviales, una sola corrida sin warm-up), **no reportes "cumple": márcala como no concluyente.** Un verde inválido es peor que ningún número.
 6. Para cualquier valor que se compare contra un **conjunto conocido** (roles, enums, estados, flags), prueba **variantes de entrada**: distinta capitalización, espacios sobrantes, valor ausente y valor inválido. Confirma que el comportamiento es el esperado y que los estados **fail-closed son visibles/diagnosticables** (hay log o mensaje), no un vacío silencioso.
 7. **Manejo de flakiness:** si un test o criterio da resultados inconsistentes entre corridas, no lo trates como pase ni como fallo. Repórtalo como **flaky** para que el desarrollador lo estabilice. Un test no determinista no es evidencia válida.
-8. **Detecta deriva:** si el código NO coincide con el REQ, NO apruebes contra un REQ desactualizado. Repórtalo y devuélvelo, con **tres** salidas posibles según la vía (`AGENTS.md` §6): el `analista-requerimientos` actualiza el REQ cuando queda una decisión de requisitos o de diseño (con causa y ADR si aplica); el `desarrollador` lo actualiza **en la misma entrega que el arreglo** cuando sólo hay que reflejar lo ya contratado; o el `desarrollador` alinea el código. La aprobación es siempre contra el **REQ vigente**.
+8. **Detecta deriva:** si el código NO coincide con el REQ, NO apruebes contra un REQ desactualizado. Repórtalo y devuélvelo, con **tres** salidas posibles según la vía (`AGENTS.md` §6): el `analista-requerimientos` actualiza el REQ cuando queda una decisión de requisitos o de diseño (con causa y ADR si aplica); el `desarrollador` lo actualiza **en la misma entrega que el arreglo** cuando sólo hay que reflejar lo ya contratado **y el `AGENTS.md` de este proyecto declara expresamente la vía proporcional (§6)**; o el `desarrollador` alinea el código. Sin esa declaración quedan **dos** salidas: el analista o el código. La aprobación es siempre contra el **REQ vigente**.
 9. **Playbooks de plataforma:** si `AGENTS.md` declara playbooks, verificá que el código cumpla sus convenciones y que existan (y pasen) los tests guardián que prescriben. Su incumplimiento es hallazgo, no detalle.
 
 ## Integridad de dependencias
@@ -73,7 +75,7 @@ La conversación no es el registro. Registra los hallazgos en `docs/qa/REQ-XXX.m
 
 ## Resultado y cambio de estado
 El estado vive en la línea `Estado:` del REQ y **tu veredicto en la línea `QA:`** (`pendiente` / `aprobado` / `con-hallazgos`).
-- **Write-back (anti-deriva):** un hallazgo que añade comportamiento aceptado no se cierra hasta que ese comportamiento quede como **criterio de aceptación** en el REQ. **Quién lo transcribe depende de la vía** (`AGENTS.md` §6 y §9) — el `analista-requerimientos` cuando queda una decisión de requisitos o de diseño, y el `desarrollador`, en la misma entrega que el arreglo, cuando no queda ninguna—; **lo tuyo no cambia: exiges que exista y describa lo construido, venga de quien venga.** No apruebes algo que el REQ no describe — es deriva (`AGENTS.md` §9).
+- **Write-back (anti-deriva):** un hallazgo que añade comportamiento aceptado no se cierra hasta que ese comportamiento quede como **criterio de aceptación** en el REQ. **Quién lo transcribe depende de la vía** (`AGENTS.md` §6 y §9) — el `analista-requerimientos` cuando queda una decisión de requisitos o de diseño, y el `desarrollador`, en la misma entrega que el arreglo, cuando no queda ninguna **y el `AGENTS.md` de este proyecto declara expresamente la vía**—; **lo tuyo no cambia: exiges que exista y describa lo construido, venga de quien venga.** No apruebes algo que el REQ no describe — es deriva (`AGENTS.md` §9).
 - **Tu veredicto y el cierre son dos actos, no uno.** En cuanto la validación pasa sin hallazgos abiertos, marca `QA: aprobado` **sin esperar a seguridad**: el `auditor-seguridad` no puede firmar hasta que tú hayas aprobado (`AGENTS.md` §6), así que esperarle deja el REQ parado para siempre.
 - **El cierre sí espera.** Marca `Estado: completado` sólo cuando además —si el REQ es `Sensible a seguridad: sí`, o su rigor efectivo es `critico`— exista `Seguridad: aprobado`. Un `Seguridad: preventiva` **no cierra**: se emitió antes de que existiera el código, luego no lo acredita.
   - **Salvo** que `AGENTS.md` exija un gate humano para el cierre de fase: no completes tú — escribe la decisión en `PENDING_APPROVAL.md` y **detén el pipeline** hasta el visto bueno humano (el hook `guard-completado` también lo exige).

@@ -90,12 +90,34 @@ Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
 El flujo de arriba es el de una **capacidad nueva**. Una **reparación con diagnóstico y solución
 claros** no necesita las cuatro fases, y hacerlas igual no añade protección: añade espera.
 
+> **Esta vía sólo rige donde ESTE documento la declara.** Un agente del plugin no la ejerce por
+> tenerla escrita en su definición: la ejerce **si el proyecto la autoriza**. Y este proyecto
+> **autoriza la vía proporcional de reparación** descrita en esta sección.
+> *(Si no la quieres, borra esta cita y la tabla: sin declaración se conserva el procedimiento
+> anterior —analista → desarrollador → QA → seguridad— y ningún agente puede omitir al analista.)*
+
 | Naturaleza del cambio | Vía |
 |---|---|
 | Documentación informativa, índices y erratas **sin cambio de obligaciones** | la coordinadora, con las comprobaciones pertinentes |
-| **Reparación con causa, alcance y contrato claros** | desarrollador → QA. **Sin comisión de analista** |
-| Cambio que afecta **hooks, protecciones, firmas, permisos, instalación, migración o publicación** | desarrollador → QA → **seguridad**. El analista interviene **sólo** si queda una decisión de diseño o de contrato **pendiente** |
+| **Reparación con causa, alcance y contrato claros** | desarrollador → QA. **Sin comisión de analista** — sólo si este proyecto **autoriza** la vía (cita de arriba) y el cambio **no** cae también en la fila 3 |
+| Cambio cuyo efecto alcanza **un criterio de `critico` de este proyecto** (§6, «Qué es crítico EN ESTE PROYECTO») **o una protección del arnés** — ejemplos **declaradamente no exhaustivos**: hooks, protecciones, firmas, permisos, instalación, migración, publicación | desarrollador → QA → **seguridad**. El analista interviene **sólo** si queda una decisión de diseño o de contrato **pendiente** |
 | **Capacidad nueva** o **cambio de contrato** | analista → desarrollador → QA → seguridad |
+
+**Si un cambio casa con más de una fila, manda la MÁS RESTRICTIVA.** La tabla no se para en la
+primera fila que encaje: la reparación de un bug de cobro tiene causa y contrato claros —fila 2— y
+además toca dinero —fila 3—, y la vía que se aplica es la de la **fila 3**.
+
+**Cómo se comprueba la autorización, y hacia dónde falla.** Antes de omitir la comisión de analista
+—y sólo para eso— se lee el `AGENTS.md` **del proyecto en el que se está trabajando**: ni la
+definición del agente, ni este archivo recordado de otro proyecto. La pregunta es por **propiedad**:
+*¿este documento declara la vía proporcional y la autoriza para este proyecto?* Dos formas la
+responden que sí —son su evidencia, no su definición—: la frase «**autoriza la vía proporcional de
+reparación**», o la tabla de vías de esta sección con la fila «**Sin comisión de analista**».
+**Cualquier otro desenlace conserva el procedimiento anterior y se despacha al analista**: que no
+esté declarada, que el archivo no se pueda leer, que la respuesta no sea clara, o que otra parte del
+mismo documento exija el analista para ese cambio **sin resolver expresamente** la contradicción.
+**La ausencia de la declaración no habilita nada**, y ésa es la dirección del fallo que importa: el
+agente trae la **capacidad**, el documento da el **permiso**.
 
 **La fila 1 no levanta el control de edición de un archivo protegido.** Elegir vía decide **quién
 revisa**, nunca **quién puede escribir**. Una errata sin cambio de obligaciones la corrige la
@@ -114,9 +136,23 @@ una ambigüedad concreta que pueda **reducir una protección**.
 **En la vía de reparación, el desarrollador entrega el arreglo y su documentación EN LA MISMA
 ENTREGA** —incluido el write-back de §9—, y **QA verifica el cambio y sus dependencias**,
 reutilizando la evidencia vigente cuando se demuestre que lo posterior no la invalida, y
-**registrando esa comprobación**. **Seguridad interviene cuando el efecto del cambio lo exige**, que
-es lo que la máquina ya calcula: `guard-completado` exige `Seguridad: aprobado` **en `critico`**, y
-`Sensible a seguridad: sí` impone `critico` como suelo.
+**registrando esa comprobación**.
+
+**Elegir vía NUNCA elimina una revisión de seguridad que las reglas vigentes de este proyecto
+exijan, y la lista de ejemplos de la fila 3 no puede limitar esa obligación.** Va enunciada por
+**propiedad**: interviene seguridad siempre que el **efecto** del cambio alcance algo que este
+proyecto declare crítico (§6) o una protección del arnés, y siempre que el **rigor efectivo** del
+REQ sea `critico` —por declaración, o por el suelo que impone `Sensible a seguridad: sí`—. Los
+ejemplos de la fila 3 son **declaradamente no exhaustivos** y no acotan la propiedad: el día que
+aparezca un efecto que no esté entre ellos, la obligación sigue en pie. **Y esta obligación no
+depende de la comprobación de autorización de arriba:** un proyecto que no autorice la vía tiene
+**más** pasos, nunca menos.
+
+**`guard-completado` no decide a quién se despacha, y aquí no se usa como criterio.** Es una puerta
+de **cierre**: si se deja que ella lo resuelva, el trabajo llega hasta el final y **sólo entonces**
+se descubre que faltaba seguridad — el bucle tardío que esta vía existe para evitar. Y §13 la
+declara **inerte** sin `jq` o sin `.arnes/config.json`, de modo que en ese proyecto no calcularía
+nada. La regla de despacho es la del párrafo anterior y se sostiene sola.
 
 **Y las cuatro cosas que esta vía NO cambia, porque su ausencia sería la ambigüedad peligrosa:**
 
@@ -131,8 +167,11 @@ es lo que la máquina ya calcula: `guard-completado` exige `Seguridad: aprobado`
    **nadie lo baja sin su firma**, y `Sensible a seguridad: sí` impone `critico` como **suelo**.
    Ninguna vía puede usarse para evitar un control.
    **Y si la reparación necesita un REQ NUEVO** —el único caso en que esos campos no existen aún—,
-   **es él quien define el contrato inicial y los dos campos**, por esas mismas reglas: así el
-   disparador del `auditor-seguridad`, que depende del flag, **nunca nace sin sujeto**. Hecho eso,
+   **es el `analista-requerimientos`, y no el `desarrollador` ni el `auditor-seguridad`, quien
+   define el contrato inicial, el `Rigor:` y el `Sensible a seguridad:`**, por esas mismas reglas:
+   así el disparador del `auditor-seguridad`, que depende del flag, **nunca nace sin sujeto**.
+   **«Hace falta un REQ nuevo» es, por sí solo, motivo de parada del `desarrollador`**: que tenga
+   permiso de escritura sobre `requirements/` no lo convierte en dueño del contrato. Hecho eso,
    **se aplica la vía que corresponda SIN una segunda comisión de análisis**, salvo que aparezca una
    decisión nueva — si hiciera falta analizar dos veces, la vía no habría retirado nada. Para los REQ
    **que ya existen** no cambia nada: conservan sus clasificaciones, como dice la primera frase de
@@ -142,6 +181,20 @@ es lo que la máquina ya calcula: `guard-completado` exige `Seguridad: aprobado`
    controles obligatorios de integración y publicación **se mantienen todos**.
 4. **Los contadores no se reinician.** Una reparación que vuelve al mismo agente **gasta vuelta**,
    se llame como se llame, y **agotar vueltas nunca equivale a aprobar**.
+
+**Tres límites de la comprobación de autorización, escritos aquí porque NO están medidos.**
+
+1. **Un agente que el plugin no entrega no recibe la comprobación.** Si este proyecto tiene su
+   propia copia de una definición de agente en `.claude/agents/`, esa copia lleva el texto que
+   alguien escribió ahí y **ninguna instrucción del plugin puede gobernar un archivo que el plugin
+   no entrega**. En ese caso la comprobación queda sólo en manos de la coordinadora (§14 A), que sí
+   la lee de **este** documento — y si el coordinador tampoco la tiene (§14, límite (b)), no la
+   hace nadie.
+2. **No está demostrada la compatibilidad con definiciones de agente anteriores.** Que la
+   comprobación falle hacia el procedimiento anterior es su **diseño**, no una medición sobre
+   agentes viejos: nadie la ha ejercido con ellos.
+3. **No se afirma que cueste cero.** Que §0 obligue a leer `AGENTS.md` **no demuestra** que un
+   agente lea esta sección con la profundidad que la comprobación exige. Ese coste no se ha medido.
 
 **El orden no es una sugerencia: es la condición de validez de la firma.** El
 `auditor-seguridad` no firma `Seguridad: aprobado` sobre un árbol que el `qa-tester` no ha
@@ -309,8 +362,11 @@ cambio de legislación, una limitación detectada en pruebas, un parche de depen
   con la causa enlazada al hallazgo y un ADR si es de fondo. Un hallazgo resuelto solo en el
   código o en un log (`docs/qa/…`, `registro-seguridad.md`) es deriva. **Quién lo transcribe depende
   de la vía (§6):** el `analista-requerimientos` cuando queda una decisión de requisitos o de diseño,
-  y el **`desarrollador`, en la misma entrega que el arreglo**, cuando no queda ninguna y sólo hay
-  que reflejar en el requerimiento lo que ya estaba contratado. **Quien transcribe no decide**: si al
+  y el **`desarrollador`, en la misma entrega que el arreglo**, cuando no queda ninguna, sólo hay
+  que reflejar en el requerimiento lo que ya estaba contratado **y este documento declara la vía
+  proporcional (§6)**. **Si §6 no la declara, el write-back es del `analista-requerimientos`**, como
+  antes de que la vía existiera: la ausencia de la declaración conserva el procedimiento anterior y
+  **nunca deja este write-back sin dueño**. **Quien transcribe no decide**: si al
   escribirlo aparece una decisión de alcance o de significado, **para y la escala** — eso es un
   cambio DE FONDO y vuelve al analista. En todos los casos, el `qa-tester` y el `auditor-seguridad`
   no dan su veredicto `aprobado` (campos `QA:`/`Seguridad:` del REQ) hasta que existe.
@@ -503,8 +559,17 @@ con prefijo sólo acepta a ese proveedor, útil si conviven dos plugins con un a
 **A. Comprobación de antes de despachar** — obligatoria y **por escrito en el propio encargo**:
 (1) ¿qué **resultado exacto** debe entregar?; (2) ¿los **criterios pueden cumplirse
 simultáneamente**?; (3) ¿qué **supuesto o cifra** necesita comprobarse primero?; (4) ¿qué queda
-**fuera**, y **cuándo debe detenerse**? Si falta algo, se resuelve **únicamente esa dependencia**;
-no se amplía el encargo.
+**fuera**, y **cuándo debe detenerse**?; **(5) si el encargo OMITE una fase —típicamente la comisión
+de analista de la vía proporcional de §6—, ¿el `AGENTS.md` DE ESTE PROYECTO la autoriza
+expresamente?** Si falta algo, se resuelve **únicamente esa dependencia**; no se amplía el encargo.
+
+**La (5) la hace la coordinadora, y va por escrito con qué archivo leyó y qué resolvió.** Es ella
+quien decide el despacho, así que es ella quien comprueba el permiso: **tenerlo escrito en la
+definición de un agente no lo concede**. Sin declaración expresa —o con el archivo ilegible, o con
+otra parte del mismo documento exigiendo el analista sin resolver la contradicción— **se despacha al
+analista**, que es el procedimiento anterior. **Las obligaciones de seguridad no dependen de esta
+comprobación:** ninguna respuesta aquí retira una revisión que las reglas vigentes del proyecto
+exijan, y un proyecto que no autorice la vía tiene **más** pasos, nunca menos.
 
 **B. Las siete reglas:**
 1. **Separar evidencia de interpretación** — dato medido / cálculo / estimación / hipótesis; una
