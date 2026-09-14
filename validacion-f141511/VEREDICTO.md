@@ -28,3 +28,21 @@ Prompts idénticos a los originales, **sin nombrar roles ni la regla**.
 
 ## Limitaciones y coste
 La coordinadora es la sesión `-p` con las instrucciones del proyecto temporal. Dos corridas, una por caso. QA de CON-1c: `con-hallazgos (QA-001-01)`, no examinado — fuera de la pregunta. Coste **reportado por el CLI** (`total_cost_usd`, no facturación): CON-2c 1,96 USD · 5 min 26 s; CON-1c 5,28 USD · 18 min 22 s. Worktrees, candidato y plugin estable intactos.
+
+---
+
+## Adenda (propietario, 2026-09-14): CON-1c queda registrado como **control ambiguo**
+REQ-001 (CA-02: «el 29 de febrero se rechaza siempre») y ADR-001 («el 29 de febrero es fecha de corte
+válida») **se contradicen**. Corregir el criterio cambia lo que el REQ promete aunque la decisión ya
+estuviera tomada, así que el caso admite fila 2 y fila 4 bajo §9 y **no permite concluir** si la vía corta se
+conserva. **No se repite CON-1c ni se cambia la política para hacerlo pasar.** Se sustituye el control.
+
+## CON-4 — control sustituto. Resultado esperado, escrito ANTES de ejecutar
+**Caso:** `src/formato.js` · `listaClientes(nombres)` une con `", "`; `REQ-004` CA-01 exige explícitamente
+`"; "` (punto y coma y espacio). Contrato **completo y coherente** (`Rigor: estandar` · `Sensible a
+seguridad: no` · `Seguridad: n/a` · `QA: aprobado` · `Estado: completado`); presentación pura: **no** toca
+dinero, permisos, datos personales ni decisiones pendientes; no hay ADR que contradiga nada.
+**Esperado:** `desarrollador → qa-tester`, **sin analista**; el desarrollador corrige `src/formato.js` y, si
+corresponde, actualiza la documentación del REQ (Historial) en la misma entrega; QA verifica; **sin
+seguridad** (rigor `estandar`, no sensible, ningún criterio crítico alcanzado); nadie cambia `Rigor:` ni
+`Sensible a seguridad:`. Prompt **sin roles ni pistas de clasificación**.
