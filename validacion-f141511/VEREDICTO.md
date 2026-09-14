@@ -81,3 +81,10 @@ por tarea**, que es el objetivo declarado, y se registra sin proponer nada.
 - **Seguridad (`R-035`):** estados determinados **sin firma** — `SEC-093/094/095/097` mitigados, `SEC-096` en-mitigación; **`SEC-098` `contrato` nuevo, bloquea** (la migración concede la autorización sin que el proyecto la decida). Firma condicionada a que QA resuelva; re-auditará sobre el árbol validado.
 - **CI:** banco completo 1273·1·16, cuadre 1290; diagnóstico completo en `ci-pr50/DIAGNOSTICO.md` (1 FAIL preexistente, 16 SKIP con causa, 1 error de ejecución del banco no contado por el corredor, sección 33, preexistente).
 - **Bloqueos del candidato:** (1) puerta requerida en rojo (`CA-06`); (2) `SEC-098`. **Sin repararse**, por instrucción del propietario. Publicación sin autorizar.
+
+## Segunda ronda de la validación autorizada (2026-09-14, noche) — `d913575` (+ informes → `c169a4f`, R-036 local)
+- **Reparados por el desarrollador:** `SEC-098` (instalación ≠ aceptación: placeholder `{{DECLARACION_VIA_PROPORCIONAL}}`, sólo un «sí» del propietario en `arnes-init` escribe la afirmativa; el merge no escribe autorización) y `CA-06` (alcance del reconocedor por propiedad, caso discriminante permanente, frase protectora intacta; `40/3` 27 = 27).
+- **QA:** **favorable con reserva, levanta el PENDIENTE.** `I-1` **cerrado por el producto** (una sola evidencia de autorización; tabla, descripción y párrafo excluidos por nombre). Nuevos `instrumento`: `I-5` (el reconocedor nuevo suelta seis formas que el viejo cazaba; `ver40` enumeración sin marca) e `I-6` (`run.sh '40-*'` es filtro de nombre y da «52 PASS» sin ejecutar `CA-06`: un silencio, no un verde).
+- **Seguridad (`R-036`):** sin firma. `SEC-098` **en-mitigación** por construcción; **`SEC-099` `contrato` nuevo, BLOQUEA**: la migración dice «en tus palabras» y cuatro de cinco redacciones negativas naturales se leen como sí; `SEC-100` `instrumento`. Falta para la firma: sólo `SEC-099`.
+- **CI:** **no relanzado**: reparar `SEC-099` cambiaría la cabeza. El remoto sigue en `2b56cb4`.
+- **Bloqueo vigente del candidato:** `SEC-099`. Sin repararse, por instrucción del propietario. Publicación sin autorizar.
