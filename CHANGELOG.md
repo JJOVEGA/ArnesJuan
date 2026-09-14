@@ -2,6 +2,22 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-14 · QA, validación final sobre `2b56cb4`: **favorable con reserva**
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester. Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` (validación final).
+
+**Sin bloqueo.** `I-2` **resuelto** (disyunción; el caso discriminante entra a seguridad, y `f141511` lo cubre por el otro lado).
+`I-1` **reclasificado a `instrumento` y abierto**: el script está neutralizado por retirada de alcance —«documentar no es
+remediar»—, pero la prosa de autorización sigue nombrando la fila «Sin comisión de analista» como forma que «responde que
+sí» cuando ya no afirma autorización; QA no lo cierra por exclusión y dice qué lo cerraría. **`I-3` nuevo, `instrumento`:**
+la referencia reanclada por la coordinadora apunta a «Hacia 1.31.0» y la doctrina vive en la propia entrada 1.34.0 (`:857`);
+lo sustantivo es cierto, el puntero es falso — tercera vez que falla un puntero en esta skill (`N-5`, `R-1`, `I-3`).
+`SEC-097` separado **correctamente**: sección canónica byte a byte igual a `a34e18c^`, y el caso F sigue cerrado sólo con la
+entrada. «Contrato claro» **correcta**, idéntica en las tres sedes. Banco `44`+`45`+`46`: 103 PASS · 0 FAIL · 1 SKIP.
+
+**Lo que no acredita:** los ensayos funcionales (reutilizados como declarados), el cierre de `SEC-093`…`097` (del auditor),
+el banco entero. **El CI del PR #50 está en rojo por `REQ-024 CA-06`, preexistente desde `c65ce65`** (ver rama de evidencia);
+QA lo clasifica aparte.
+
 ## [Interno] — 2026-09-14 · Preparación para la revisión final: `SEC-097` separado, `I-2` corregido, `I-1` conservado como evidencia
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. **Sin QA ni seguridad todavía**, por instrucción del propietario.
 
