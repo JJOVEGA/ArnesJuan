@@ -2,6 +2,22 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-14 · QA sobre `d913575`: **favorable con reserva — levanta el PENDIENTE**; `I-1` cerrado por el producto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester. Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`.
+
+**`SEC-098` reparado, verificado por construcción:** las dos instalaciones construidas sustituyendo el placeholder — la
+afirmativa da 1 ocurrencia de la declaración, la **negativa 0**; ninguna fila del merge escribe la autorización; comentar
+está prohibido con motivo. Observación anotada sin abrir: que la negativa dé 0 depende de un salto de línea, pero la norma
+excluye ese párrafo por su nombre. **`I-1` CERRADO por el cambio positivo del texto** («una sola forma responde que sí»;
+tabla, descripción y propio párrafo excluidos por nombre), **no por exclusión del script**. **`CA-06`**: `40/3` entera 27 PASS ·
+0 FAIL, 27 = 27, frase protectora intacta. **`I-5` `instrumento`**: el reconocedor nuevo suelta seis formas que el anterior
+cazaba; el alcance por oración tiene coste simétrico no declarado y `ver40` es enumeración sin marca «no exhaustivo».
+**`I-6` `instrumento`**: `run.sh '40-*'` se vuelve filtro de nombre y da «52 PASS» **sin ejecutar `CA-06`** — un silencio, no
+un verde; obliga a leer con reserva las corridas parciales anteriores. Gates 3/3.
+
+**No acredita:** el banco completo, la ejecución real de `arnes-init`/`arnes-upgrade`, ni el comportamiento con la
+declaración **negativa** (los ensayos funcionales corrieron con la declaración de plantilla). Sin seguridad ni publicación.
+
 ## [Interno] — 2026-09-14 · Los dos bloqueos: instalar la política deja de autorizarla (`SEC-098`), y `CA-06` deja de teñir de rojo la frase que protege tu texto
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: desarrollador (reparación de los dos bloqueos, autorizada por el propietario el 2026-09-14). Base: `f4b77fa`. Hallazgos: `SEC-098` (`docs/seguridad/registro-seguridad.md` § R-035) y el rojo de CI en PR #50.
 
