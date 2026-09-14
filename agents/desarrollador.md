@@ -41,6 +41,10 @@ El estado vive en la línea `Estado:` del archivo `requirements/REQ-XXX.md` (seg
   impedir: es una frontera de rol, no un control mecánico.** Y no es ceremonia: un REQ nuevo abierto
   sin esos dos campos deriva a un rigor **por debajo de `critico`**, y entonces el disparador del
   `auditor-seguridad` —que depende del flag— **nace sin sujeto** y nadie pide la revisión.
+- **Si el REQ existe pero su clasificación no encaja con el EFECTO de lo que reparas** —tocas dinero
+  y el REQ dice `Rigor: estandar`, `Sensible a seguridad: no`—, **no la corrijas tú y no sigas como
+  si encajara**: el contrato **no es claro** en el sentido de `AGENTS.md` §6. Déjalo escrito y para;
+  la coordinadora pide al analista **sólo esa decisión**, y con ella resuelta la vía continúa.
 - Si el REQ es ambiguo, le falta un dato para implementarse, o contradice un NFR: **no adivines y no implementes una interpretación a medias.** Deja `Estado: bloqueado` con una nota de qué falta o qué choca, y detente.
 
 ## Jerarquía ante conflictos

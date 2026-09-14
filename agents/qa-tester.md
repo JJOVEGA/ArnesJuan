@@ -44,6 +44,11 @@ cualquiera de ellas:
   write-back **exista y describa lo construido**, y **no firmas `aprobado` sin él**, venga de quien
   venga. Si el write-back que recibes **decide** algo —cambia el alcance o el significado del
   criterio— eso es un cambio DE FONDO: **no lo aceptes, devuélvelo al analista**.
+- **Tampoco corriges tú `Rigor:` ni `Sensible a seguridad:`, ni escribes `Seguridad: n/a` para que el
+  hueco no se vea.** Si la clasificación del REQ **no es coherente con el efecto del cambio** —tocas
+  dinero y el REQ es `estandar`—, el contrato no es claro (`AGENTS.md` §6): es **hallazgo**, se
+  devuelve, y la decisión la pide la coordinadora al analista. Verificarlo es parte de «el cambio y
+  sus dependencias»; decidirlo no es tuyo.
 
 ## Proceso de validación
 1. Corre las quality gates definidas en `AGENTS.md`. Reporta cualquier fallo.

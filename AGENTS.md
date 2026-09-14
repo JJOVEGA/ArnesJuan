@@ -153,6 +153,20 @@ claros** no necesita las cuatro fases, y hacerlas igual no añade protección: a
 primera fila que encaje: la reparación de un bug de cobro tiene causa y contrato claros —fila 2— y
 además toca dinero —fila 3—, y la vía que se aplica es la de la **fila 3**.
 
+**Qué es «contrato claro», y qué pasa cuando no lo es.** «Contrato claro» no es sólo que el
+criterio ya esté decidido: incluye que **`Rigor:`, `Sensible a seguridad:` y las revisiones que el
+REQ exige sean coherentes con el EFECTO de la reparación**. Una reparación que toca dinero sobre un
+REQ `Rigor: estandar` · `Sensible a seguridad: no` · `Seguridad: n/a` **no tiene el contrato claro**,
+por decidido que esté su criterio: la cabecera promete menos revisión que la que el efecto exige.
+Cuando el trabajo revela una clasificación **insuficiente o contradictoria**, la coordinadora
+**solicita al `analista-requerimientos` únicamente esa decisión y su actualización documental**
+—qué rigor, qué sensibilidad, qué revisiones— **antes de continuar**. **No se repite el análisis
+completo y no se otorgan facultades nuevas a ningún otro rol:** ni el desarrollador ni QA corrigen
+esos campos por su cuenta, y el auditor conserva la suya de subir el rigor, como siempre. Resuelta
+la clasificación, la vía se aplica tal cual: una reparación ordinaria **correctamente clasificada**
+sigue siendo desarrollador → QA sin analista, y una que **exige seguridad** sigue siendo
+desarrollador → QA → seguridad.
+
 **Cómo se comprueba la autorización, y hacia dónde falla.** Antes de omitir la comisión de analista
 —y sólo para eso— se lee el `AGENTS.md` **del proyecto en el que se está trabajando**: ni la
 definición del agente, ni este archivo recordado de otro proyecto. La pregunta es por **propiedad**:
@@ -607,7 +621,7 @@ con prefijo sólo acepta a ese proveedor, útil si conviven dos plugins con un a
 simultáneamente**?; (3) ¿qué **supuesto o cifra** necesita comprobarse primero?; (4) ¿qué queda
 **fuera**, y **cuándo debe detenerse**?; **(5) si el encargo OMITE una fase —típicamente la comisión
 de analista de la vía proporcional de §6—, ¿el `AGENTS.md` DE ESTE PROYECTO la autoriza
-expresamente?** Si falta algo, se resuelve **únicamente esa dependencia**; no se amplía el encargo.
+expresamente?** **Y si la omite por «contrato claro», ¿lo es en el sentido de §6 —`Rigor:`, `Sensible a seguridad:` y revisiones exigidas coherentes con el EFECTO—?** Si no lo es, la dependencia que se resuelve primero es **esa decisión del analista, y sólo esa**. Si falta algo, se resuelve **únicamente esa dependencia**; no se amplía el encargo.
 
 **La (5) la hace la coordinadora, y va por escrito con qué archivo leyó y qué resolvió.** Es ella
 quien decide el despacho, así que es ella quien comprueba el permiso: **tenerlo escrito en la

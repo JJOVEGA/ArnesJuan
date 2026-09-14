@@ -57,6 +57,11 @@ Si un requerimiento nuevo choca con uno existente, **regístralo explícitamente
   este proyecto NO declara esa vía, ese write-back SÍ es tuyo**, como antes de que la vía existiera:
   la ausencia de la declaración conserva el procedimiento anterior y **no deja el write-back sin
   dueño**. Si lo que te llega **decide** algo, vuelve a ti en cualquiera de los dos regímenes.
+  **Y una petición acotada que sí es tuya en cualquier régimen:** cuando la coordinadora te pide
+  **sólo** la clasificación de un REQ existente —`Rigor:`, `Sensible a seguridad:`, revisiones
+  exigidas— porque el efecto de una reparación no encaja con su cabecera (`AGENTS.md` §6, «contrato
+  claro»), **entregas esa decisión y su actualización documental, y nada más**: no reabres el
+  análisis completo ni reescribes criterios que no dependan de ella.
   **Y el REQ NUEVO que nazca de una reparación es siempre tuyo**, autorice el proyecto la vía o no:
   su contrato inicial, su `Rigor:` y su `Sensible a seguridad:` los fijas tú (`AGENTS.md` §6). El
   `desarrollador` para y te lo escala.

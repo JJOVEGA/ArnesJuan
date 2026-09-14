@@ -1223,10 +1223,13 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
 
 - **`AGENTS.md` §6 y §9, y los cuatro agentes: la VÍA PROPORCIONAL de reparación.** §6 gana una tabla
   que elige la vía **por el efecto del cambio** —documentación sin cambio de obligaciones · **reparación
-  con causa, alcance y contrato claros: desarrollador → QA, sin comisión de analista** · cambio que
-  toca hooks, protecciones, firmas, permisos, instalación, migración o publicación: **+ seguridad** ·
+  con causa, alcance y contrato claros: desarrollador → QA, sin comisión de analista** · cambio cuyo efecto alcanza **un criterio de `critico` del proyecto o una protección del arnés** (ejemplos declaradamente no exhaustivos): **+ seguridad** ·
   capacidad nueva o cambio de contrato: las cuatro fases—, y §9 deja de fijar en el analista **quién
   transcribe** el write-back.
+  **Y define «contrato claro»**: incluye que `Rigor:`, `Sensible a seguridad:` y las revisiones
+  exigidas sean **coherentes con el efecto** de la reparación; una clasificación insuficiente o
+  contradictoria devuelve al analista **sólo esa decisión** antes de continuar, sin repetir el
+  análisis ni dar facultades nuevas a otros roles.
   **Y los agentes cambian con ella, porque la política también los gobierna:** el `desarrollador`
   recibe el write-back de la vía de reparación **en la misma entrega**; el `qa-tester` deja de leer
   que el write-back es siempre del analista y conserva su obligación de **no firmar sin él**; el

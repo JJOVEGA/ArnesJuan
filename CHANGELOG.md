@@ -2,6 +2,30 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-14 · Precisión del propietario: «contrato claro» incluye rigor, sensibilidad y revisiones coherentes con el efecto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. **Preparado, sin validar** — el propietario pidió ver el diff antes de cualquier validación. Motivo medido: en la prueba CON-2b (rama `evidencia/prueba-despacho-2026-09-14`), con agentes reales, **nadie corrigió** `Rigor: estandar` · `Sensible: no` · `Seguridad: n/a` en una reparación que tocaba dinero.
+
+**Una definición, en dos sedes normativas (idéntica byte a byte):** `AGENTS.md` §6 y su gemela en
+`templates/AGENTS.md.tpl`, y la enmienda de `docs/gobernanza/autoalojamiento.md` de la que §6 se
+declara transcripción. «Contrato claro» **incluye** que `Rigor:`, `Sensible a seguridad:` y las
+revisiones exigidas sean **coherentes con el efecto** de la reparación. Si el trabajo revela una
+clasificación insuficiente o contradictoria, la coordinadora **solicita al analista únicamente esa
+decisión y su actualización documental antes de continuar**; **no se repite el análisis completo ni
+se otorgan facultades nuevas a otros roles**. Las rutas no cambian: ordinaria bien clasificada →
+desarrollador → QA; con seguridad exigida → desarrollador → QA → seguridad.
+
+**Referencias, no copias, en las demás sedes:** §14 A (5) —la comprobación de la coordinadora antes
+de despachar— pregunta ahora también por el contrato claro en el sentido de §6; `desarrollador`
+para y escala si la clasificación no encaja con el efecto, **sin corregirla**; `qa-tester` no
+corrige `Rigor:`/`Sensible:` ni escribe `Seguridad: n/a` para tapar el hueco: es hallazgo; el
+`analista` recibe la **petición acotada** y entrega sólo esa decisión.
+
+**Y una alineación en la entrada «Hacia 1.34.0» de `arnes-upgrade`** que va más allá de la precisión
+estricta y se declara: su resumen de la fila 3 seguía **enumerando** «hooks, protecciones, firmas…»
+—la forma exacta de `SEC-094`— y pasa a la propiedad («criterio de `critico` del proyecto o
+protección del arnés», ejemplos no exhaustivos). El propietario había dicho que alinear esa
+entrada no está prohibido y que no se dejen instrucciones incompatibles.
+
 ## [Interno] — 2026-09-13 · Autorización explícita implementada; QA: **PENDIENTE** — `I-1` falla ABIERTA en un opt-out parcial
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: desarrollador (`5101ece`) y qa-tester (5.ª vuelta). Detalle: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`; punto de continuidad en `docs/ESTADO.md`.
 

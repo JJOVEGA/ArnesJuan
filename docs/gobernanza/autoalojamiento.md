@@ -177,6 +177,20 @@ la enumeración de ejemplos **no puede limitar esa obligación**. Tampoco se del
 `guard-completado`, que es puerta de **cierre** —no de despacho— e inerte sin `jq` o sin
 `.arnes/config.json`.
 
+**Qué es «contrato claro», y qué pasa cuando no lo es.** «Contrato claro» no es sólo que el
+criterio ya esté decidido: incluye que **`Rigor:`, `Sensible a seguridad:` y las revisiones que el
+REQ exige sean coherentes con el EFECTO de la reparación**. Una reparación que toca dinero sobre un
+REQ `Rigor: estandar` · `Sensible a seguridad: no` · `Seguridad: n/a` **no tiene el contrato claro**,
+por decidido que esté su criterio: la cabecera promete menos revisión que la que el efecto exige.
+Cuando el trabajo revela una clasificación **insuficiente o contradictoria**, la coordinadora
+**solicita al `analista-requerimientos` únicamente esa decisión y su actualización documental**
+—qué rigor, qué sensibilidad, qué revisiones— **antes de continuar**. **No se repite el análisis
+completo y no se otorgan facultades nuevas a ningún otro rol:** ni el desarrollador ni QA corrigen
+esos campos por su cuenta, y el auditor conserva la suya de subir el rigor, como siempre. Resuelta
+la clasificación, la vía se aplica tal cual: una reparación ordinaria **correctamente clasificada**
+sigue siendo desarrollador → QA sin analista, y una que **exige seguridad** sigue siendo
+desarrollador → QA → seguridad.
+
 **Y esta vía sólo rige donde el `AGENTS.md` del proyecto la declara.** ArnesJuan la declara en su
 §6; un proyecto que no la declare **conserva el procedimiento anterior** y ningún agente puede
 omitir al analista en él.
