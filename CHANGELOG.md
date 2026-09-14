@@ -2,7 +2,21 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
-## [Interno] — 2026-09-14 · QA, validación final sobre `2b56cb4`: **favorable con reserva**
+## [Interno] — 2026-09-14 · QA, validación final sobre `2b56cb4`: **PENDIENTE** — el CI en rojo bloquea como puerta, aunque el hallazgo sea `instrumento`
+> **Revisado por QA tras conocer el CI.** El veredicto inicial fue «favorable con reserva» y **QA lo retiró**: lo había emitido
+> sin esa evidencia. **Lo dicho sobre el contenido del delta se mantiene.** QA **reprodujo** el caso revisión por revisión
+> (`f387b1c`, `a80a1cb` → PASS; `c65ce65` y posteriores → FAIL): **lo introduce `c65ce65` —la reparación de `H-7`, hallazgo del
+> propio QA— y el delta ni lo introduce ni lo altera.** Clase **`instrumento`**: la frase describe lo que la migración hace con
+> el texto del proyecto, no promete equivalencia con ninguna versión heredada, y su acto está nombrado; falla el **alcance del
+> reconocedor**, que barre un apartado que ahora contiene una tabla de migración. **Pero son dos puertas distintas:** como
+> hallazgo no bloquea el cierre de un REQ; como puerta, un banco en rojo **bloquea la fusión** (§7), y §7 exigía además correr el
+> banco entero al menos una vez, cosa que en esta rama no ocurrió hasta el PR #50. Tres salidas sin elegir —corregir el
+> reconocedor (toca `tests/`, es del desarrollador, cambia lo que `REQ-024` acredita), reescribir la frase (**reabre `H-7`**), o
+> excepción declarada (no recomendada sin decir qué deja de medir)—. QA declara además que su corrida local de `40/3` no ejecutó
+> ese caso —**un verde por no medir no desmiente el rojo**— y que no acredita los 16 SKIP ni el cuadre, ni que éste sea el único
+> desacuerdo entre un guardián y el candidato.
+>
+> *(Entrada original, superada por la revisión anterior:)*
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester. Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` (validación final).
 
 **Sin bloqueo.** `I-2` **resuelto** (disyunción; el caso discriminante entra a seguridad, y `f141511` lo cubre por el otro lado).
