@@ -43,8 +43,8 @@ Ver `casos/flags.txt`: `--plugin-dir … --setting-sources project,local --stric
    `known_marketplaces.json` (`lastUpdated`), `policy-limits.json`, `remote-settings.json`. Intactos: los seis
    worktrees, el candidato, `enabledPlugins` y el caché del estable.
 
-## Coste
-6 sesiones · 21,38 USD · 84 min 59 s de agente · 25 min de pared (14:44:43Z → 15:09:54Z).
+## Coste (valoración reportada por el CLI, no facturación efectiva)
+6 sesiones · 21,38 USD —valoración reportada por el CLI (`total_cost_usd`), no facturación efectiva— · 84 min 59 s de agente · 25 min de pared (14:44:43Z → 15:09:54Z).
 
 ---
 
@@ -80,6 +80,6 @@ y la cadena se detiene donde debe; pero **el contrato del REQ no adquiere la obl
 `I-2`/`SEC-094` reproducidos **en ejecución real**, no en lectura—. En SIN-2, con analista, el rigor sí subió a
 `critico`. La diferencia entre las dos corridas es exactamente el rol que la vía retira.
 
-**Coste:** 3,85 USD · 12 min 52 s · 25 turnos. **Efectos:** worktrees, candidato y plugin estable intactos;
+**Coste:** 3,85 USD —valoración reportada por el CLI (`total_cost_usd`), no facturación efectiva— · 12 min 52 s · 25 turnos. **Efectos:** worktrees, candidato y plugin estable intactos;
 `~/.claude/session-env` apareció a las 15:59Z, **antes** de CON-2b, durante las sondas sin bwrap (contabilidad
 del CLI); `latest` en el proyecto es el symlink que `--debug-file` crea hacia `debug.log`.
