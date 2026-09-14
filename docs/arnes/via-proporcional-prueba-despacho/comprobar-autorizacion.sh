@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+# ==========================================================================
+# EVIDENCIA HISTÓRICA — NO VÁLIDO PARA ACREDITAR AUTORIZACIÓN (hallazgo I-1 de QA,
+# `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`): resuelve AUTORIZADA sobre
+# un opt-out parcial y casa con la prosa de la propia comprobación. Se conserva tal cual,
+# por disposición del propietario (2026-09-14), como registro de la prueba de despacho.
+# NO es mecanismo del producto, NO se repara, NO se usa para decidir nada. El estado del
+# hallazgo lo determina QA, responsable del mismo.
+# ==========================================================================
 # Transcripción EJECUTABLE de la mitad mecánica de la comprobación de §6
 # («Cómo se comprueba la autorización, y hacia dónde falla»).
 #

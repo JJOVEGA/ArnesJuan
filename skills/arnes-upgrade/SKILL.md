@@ -40,14 +40,7 @@ versión destino, para que la siguiente migración tenga base.
 
 ## Clasificación: cuatro estados
 
-Para cada sección gestionada, comparando los tres documentos. **Primero se IDENTIFICA la sección,
-y sólo después se clasifica:** una sección se identifica por su **título y su contenido**, nunca
-sólo por el número —`## N.` ha significado cosas distintas en distintas versiones del arnés, así
-que el número numera pero no identifica—. Si el `## N.` del proyecto y el de la base **no son la
-misma sección**, no hay pareja que comparar; y si no puedes afirmar la correspondencia sin
-adivinar, **eso es exactamente el «no se localiza con seguridad» de más abajo: `UNKNOWN`, paras y
-el documento se conserva**. Esta regla vale para **toda** entrada de migración, también las de
-abajo: ninguna la re-inventa.
+Para cada sección gestionada, comparando los tres documentos:
 
 | Estado | Evidencia | Acción |
 |---|---|---|
@@ -1265,8 +1258,7 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   versiones del arnés**, así que el número **no identifica** una sección, sólo la numera. Comprueba
   que el título y el contenido del `## N.` de tu proyecto y el del `## N.` de la base **son la misma
   sección**; **si no lo son, o si no puedes afirmarlo sin adivinar, es `UNKNOWN`**: la migración
-  **se detiene, no se aplica nada y el documento se conserva intacto**. Esto no es una regla nueva
-  —es la de arriba, reutilizada— y **manda sobre la tabla**: sin identificación firme no se entra a
+  **se detiene, no se aplica nada y el documento se conserva intacto**. Esto no es una regla nueva —es la de la entrada «Hacia 1.31.0» (`## 14.`: «el número está tomado: `UNKNOWN`»), reutilizada aquí para esta migración— y **manda sobre la tabla**: sin identificación firme no se entra a
   clasificar.
 
   > **Por qué, enunciado por propiedad y no como lista de versiones** (una lista de tags envejece; la

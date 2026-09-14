@@ -154,9 +154,10 @@ reutilizando la evidencia vigente cuando se demuestre que lo posterior no la inv
 
 **Elegir vía NUNCA elimina una revisión de seguridad que las reglas vigentes de este proyecto
 exijan, y la lista de ejemplos de la fila 3 no puede limitar esa obligación.** Va enunciada por
-**propiedad**: interviene seguridad siempre que el **efecto** del cambio alcance algo que este
-proyecto declare crítico (§6) o una protección del arnés, y siempre que el **rigor efectivo** del
-REQ sea `critico` —por declaración, o por el suelo que impone `Sensible a seguridad: sí`—. Los
+**propiedad**: interviene seguridad cuando el **efecto** del cambio alcance algo que este
+proyecto declare crítico (§6) o una protección del arnés, **o** cuando las reglas vigentes de rigor y
+sensibilidad la exijan —rigor efectivo `critico`, por declaración o por el suelo que impone
+`Sensible a seguridad: sí`—. **Basta una de las dos condiciones; no se exige que coincidan.** Los
 ejemplos de la fila 3 son **declaradamente no exhaustivos** y no acotan la propiedad: el día que
 aparezca un efecto que no esté entre ellos, la obligación sigue en pie. **Y esta obligación no
 depende de la comprobación de autorización de arriba:** un proyecto que no autorice la vía tiene

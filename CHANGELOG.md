@@ -2,6 +2,24 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-14 · Preparación para la revisión final: `SEC-097` separado, `I-2` corregido, `I-1` conservado como evidencia
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. **Sin QA ni seguridad todavía**, por instrucción del propietario.
+
+- **`SEC-097`** — el propietario **mantiene** la prohibición de ampliar el clasificador general. El párrafo
+  que `a34e18c` añadió a la sección canónica «Clasificación» **se retira del candidato** (restaurada a
+  `a34e18c^`) y **se conserva** en la rama `sec-097/clasificador-por-titulo-y-contenido` (@ `f141511`).
+  **La comprobación de la migración se mantiene entera** en la entrada «Hacia 1.34.0» —identificar por
+  título y contenido, colisión → `UNKNOWN`, manda sobre la tabla—, y su referencia deja de decir «la de
+  arriba»: nombra la doctrina **preexistente** de «Hacia 1.31.0» (`## 14.`, «el número está tomado»).
+- **`I-2`** — la conjunción ambigua **se corrige** en las dos gemelas: seguridad interviene cuando lo
+  exige el **efecto** del cambio **o** las reglas vigentes de rigor y sensibilidad; **basta una, no se
+  exige que coincidan**. La precisión de `f141511` no sustituía esta frase.
+- **`I-1`** — el script auxiliar **se conserva como evidencia histórica**, identificado en su cabecera y en
+  su README como **no válido para acreditar autorización** y **no mecanismo del producto**; no se repara.
+  Nota atribuida bajo el hallazgo en el informe de QA: **su estado lo determina QA**; no se cierra por exclusión.
+
+Pruebas funcionales y resto del candidato **sin cambios**. Sin versión nueva, sin publicar.
+
 ## [Interno] — 2026-09-14 · Precisión del propietario: «contrato claro» incluye rigor, sensibilidad y revisiones coherentes con el efecto
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. **Preparado, sin validar** — el propietario pidió ver el diff antes de cualquier validación. Motivo medido: en la prueba CON-2b (rama `evidencia/prueba-despacho-2026-09-14`), con agentes reales, **nadie corrigió** `Rigor: estandar` · `Sensible: no` · `Seguridad: n/a` en una reparación que tocaba dinero.
 

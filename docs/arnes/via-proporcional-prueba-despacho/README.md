@@ -1,3 +1,7 @@
+> **Aviso (2026-09-14, propietario):** `comprobar-autorizacion.sh` es **evidencia histórica, no válida para
+> acreditar autorización** (hallazgo `I-1` de QA). Se conserva sin reparar y **no es mecanismo del producto**.
+> El estado de `I-1` lo determina QA.
+
 # Prueba de despacho de la vía proporcional — instrucciones, método y resultados
 
 **Versión base:** rama `rel/via-proporcional`, árbol de trabajo en el commit **`b2323f1`** más el
