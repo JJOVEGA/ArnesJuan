@@ -73,3 +73,11 @@ crítica. Es el mismo patrón que en CON-1c («la fecha de corte toca dinero»).
 por tarea**, que es el objetivo declarado, y se registra sin proponer nada.
 
 **Veredicto de este caso:** favorable a `f141511` en lo preguntado. `f141511` sigue **no adoptado, no publicado**.
+
+---
+
+## Estado final de la validación autorizada (2026-09-14, noche) — candidato `rel/via-proporcional` @ `4a38fcf` local / `2b56cb4` remoto
+- **QA (validación final):** **PENDIENTE** — el CI del PR #50 está en rojo por `REQ-024 CA-06` (`instrumento`, preexistente desde `c65ce65`); bloquea como **puerta**, no como hallazgo. `I-2` resuelto; `I-1` reclasificado a `instrumento`, abierto; `I-3` nuevo `instrumento`.
+- **Seguridad (`R-035`):** estados determinados **sin firma** — `SEC-093/094/095/097` mitigados, `SEC-096` en-mitigación; **`SEC-098` `contrato` nuevo, bloquea** (la migración concede la autorización sin que el proyecto la decida). Firma condicionada a que QA resuelva; re-auditará sobre el árbol validado.
+- **CI:** banco completo 1273·1·16, cuadre 1290; diagnóstico completo en `ci-pr50/DIAGNOSTICO.md` (1 FAIL preexistente, 16 SKIP con causa, 1 error de ejecución del banco no contado por el corredor, sección 33, preexistente).
+- **Bloqueos del candidato:** (1) puerta requerida en rojo (`CA-06`); (2) `SEC-098`. **Sin repararse**, por instrucción del propietario. Publicación sin autorizar.
