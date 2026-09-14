@@ -5,7 +5,48 @@
 > `<!-- ARNES:DERIVADO ... -->` que **reescribe el arnés** en cada parada de agente: no lo
 > edites, se sobrescribe. Lo de fuera de esos marcadores no se toca nunca.
 
-## ⏸ RETOMAR AQUÍ — distribución de la vía proporcional, detenida el 2026-09-13
+## ⏸ RETOMAR AQUÍ — vía proporcional con autorización explícita, 2026-09-13 (tarde)
+
+**Este bloque SUSTITUYE al de más abajo, que queda como histórico.** El propietario **reanudó** el
+trabajo el mismo día: aprobó el diseño de **autorización explícita** —el agente trae la capacidad, el
+documento del proyecto da el permiso, y la ausencia de permiso **no habilita nada**— y autorizó una
+implementación acotada que resolviera además `SEC-093` y `SEC-094`.
+
+**Cabeza: `rel/via-proporcional` @ `5101ece`** (implementación) + la quinta vuelta de QA.
+**Veredicto de QA: PENDIENTE — dos impedimentos nuevos, los dos `contrato`.**
+
+- **`I-1`, y está MEDIDO:** la comprobación **falla ABIERTA en un opt-out parcial**. Un proyecto que
+  **borra la cita de autorización** pero conserva la tabla resuelve **`AUTORIZADA` (rc 0)**. Borrar
+  la cita **es** el acto de no declarar, y §6 promete que «la ausencia de la declaración no habilita
+  nada». Además la evidencia es **circular** —la fila remite a la cita que falta— y una de las formas
+  casa **con la prosa de la propia comprobación**. La **prosa de §6 es correcta por propiedad**; lo
+  que falla es la fila como forma de evidencia y el script que las une por **disyunción**.
+- **`I-2`:** la frase que remedia `SEC-094` admite una lectura **conjuntiva** —«siempre que… y siempre
+  que…»— **más estrecha que el anclaje que `SEC-094` vino a retirar**. Caso discriminante no ejercido:
+  un REQ `Rigor: estandar` cuya reparación **toca dinero**.
+
+**Lo que sí quedó verificado:** `SEC-093` **remediado** en las dos sedes, con el pronombre ambiguo
+retirado · el anclaje en `guard-completado` **retirado** (`grep` → 0) · la comprobación en **§14 A**,
+que es donde la coordinadora decide, e idéntica en la plantilla · la prueba de despacho **re-derivada
+por QA con las mismas cifras** y su frase de honestidad **exacta** · las seis prohibiciones
+respetadas.
+
+**Sin cerrar:** `SEC-093`/`094` (remediación escrita, **sin revisar por seguridad**), `SEC-095`/`096`
+(**no se cierran por texto**; sólo se ejerció **una** composición), `SEC-097` (decisión del
+propietario sobre el límite 3), `R-1` y la observación de `N-4`. Y **`arnes-upgrade` describe la vía
+sin la condición de autorización y con la enumeración vieja de la fila 3** — hereda **las dos**
+promesas retiradas.
+
+**Nadie ha ejecutado `arnes-upgrade` ni desplegado un agente dentro de un proyecto de prueba.** Que
+las instrucciones digan lo correcto **no acredita** que un agente real haga la comprobación.
+
+**Evidencia:** QA (5 vueltas) en `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` · seguridad
+en `docs/seguridad/registro-seguridad.md` § `R-034` · prueba de despacho en
+`docs/arnes/via-proporcional-prueba-despacho/`. **Coste: 11 comisiones · 98 min 29 s · 1 926 008 tokens.**
+
+---
+
+## (histórico) ⏸ Distribución de la vía proporcional, detenida el 2026-09-13 (mañana)
 
 **Estado: candidato `rel/via-proporcional` @ `27bb49c`, DETENIDO y NO ADOPTADO.** Se conserva entero
 —rama, hallazgos y evidencia—. **No se revierte, no se cierra nada, no se publica.** El propietario

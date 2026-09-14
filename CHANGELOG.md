@@ -2,6 +2,41 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-13 · Autorización explícita implementada; QA: **PENDIENTE** — `I-1` falla ABIERTA en un opt-out parcial
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: desarrollador (`5101ece`) y qa-tester (5.ª vuelta). Detalle: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`; punto de continuidad en `docs/ESTADO.md`.
+
+**`I-1` · `contrato`, y está MEDIDO — no razonado.** QA construyó dos proyectos desde la plantilla y
+corrió **el script del propio desarrollador**: el opt-out **total** resuelve `NO-AUTORIZADA` (rc 1),
+pero el opt-out **parcial** —borrar **sólo la cita**, conservando la tabla— resuelve **`AUTORIZADA`
+(rc 0)**. **Borrar la cita es el acto de no declarar**, y §6 promete que «la ausencia de la
+declaración no habilita nada». La evidencia es además **circular** —la fila remite a la cita que
+falta— y una forma casa **con la prosa de la propia comprobación**, así que un documento que sólo
+*describa* la comprobación resuelve `AUTORIZADA`. **La prosa de §6 es correcta por propiedad**; lo
+que falla es tratar la fila como evidencia y unirlas por **disyunción**.
+
+**`I-2` · `contrato`.** La frase que remedia `SEC-094` admite lectura **conjuntiva** —«siempre que… y
+siempre que…»—, **más estrecha que el anclaje que `SEC-094` vino a retirar**: sería regresión. El
+caso discriminante —REQ `Rigor: estandar` cuya reparación **toca dinero**— **no se ejerció**. El
+núcleo sí está remediado y `auditor-seguridad.md:39` lo enuncia sin ambigüedad.
+
+**Lo verificado y correcto:** `SEC-093` **remediado** —`desarrollador.md` contiene ya `REQ NUEVO`,
+`Rigor:` y `Sensible a seguridad:`, donde antes había **0**— con el **pronombre ambiguo retirado de
+las dos sedes** · anclaje en `guard-completado` **retirado** · la comprobación entra en **§14 A**,
+donde la coordinadora decide, **idéntica byte a byte** en la plantilla · la prueba de despacho
+**re-derivada por QA con las mismas cifras**, su **frase de honestidad exacta**, y la corrección del
+salto de línea **sin ensanchar el reconocedor** · las **seis prohibiciones** respetadas y las dos
+afirmaciones rechazadas **negadas por escrito**.
+
+**Y una corrección de método que nos alcanza a los dos:** las quality gates son **tres**, no cuatro.
+El manifiesto las declara así y la tercera agrupa `plugin.json` y `marketplace.json`. Yo venía
+contándolas mal y QA también.
+
+**Impedimento heredado que crece:** la entrada de `arnes-upgrade` describe la vía **sin** la
+condición de autorización **y** con la **enumeración vieja** de la fila 3 — la forma exacta de
+`SEC-094`. Un proyecto migrado por ahí hereda **las dos** promesas retiradas.
+
+**Coste acumulado:** 11 comisiones · **98 min 29 s** · **1 926 008 tokens**.
+
 ## [Interno] — 2026-09-13 · La vía proporcional deja de ejercerse por estar escrita: **la autoriza el documento del proyecto**
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: desarrollador (diseño aprobado por el propietario el 2026-09-13). Rama `rel/via-proporcional`, sobre `b2323f1`.
 
