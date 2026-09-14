@@ -5,6 +5,46 @@
 > `<!-- ARNES:DERIVADO ... -->` que **reescribe el arnés** en cada parada de agente: no lo
 > edites, se sobrescribe. Lo de fuera de esos marcadores no se toca nunca.
 
+## ⏸ RETOMAR AQUÍ — distribución de la vía proporcional, detenida el 2026-09-13
+
+**Estado: candidato `rel/via-proporcional` @ `27bb49c`, DETENIDO y NO ADOPTADO.** Se conserva entero
+—rama, hallazgos y evidencia—. **No se revierte, no se cierra nada, no se publica.** El propietario
+dio por **agotado el presupuesto de este intento** y **no autoriza** reparaciones, `push`, PR ni
+levantar el límite 3 de la enmienda (`SEC-097`).
+
+**Lo que SÍ queda vigente:** la **política aligerada** que ya regía el desarrollo de ArnesJuan desde
+el 2026-09-10 (`docs/gobernanza/autoalojamiento.md`). **Su distribución a consumidores queda
+pendiente, sin fecha comprometida y sin comisiones abiertas.**
+
+### Corrección de una conclusión mía, y es la que hay que leer antes de retomar
+
+Escribí que retirar la entrada de migración haría **desaparecer** `SEC-095` y `SEC-096` «porque son
+íntegramente sobre migrar». **Es falso, y lo corrijo aquí:** **un riesgo no se cierra excluyendo el
+archivo que lo menciona.** Lo que esos dos hallazgos describen no es una instrucción defectuosa: es
+que **los agentes se actualizan solos con el plugin mientras el `AGENTS.md` del proyecto queda
+congelado**. Esa divergencia ocurre **exista o no una entrada de migración**, y **alcanza también a
+un proyecto nuevo** en cuanto el plugin sube de versión — lo dije yo mismo dos párrafos más abajo,
+contradiciendo mi propia conclusión.
+
+**`SEC-095` y `SEC-096` siguen abiertos y NO se cierran por exclusión de archivos.** Tampoco
+`SEC-093`, `SEC-094`, `SEC-097`, `R-1` ni la observación de `N-4`.
+
+### La condición para retomar, decidida por el propietario
+
+> **Primero se resuelve cómo se mantiene compatible el conjunto de instrucciones durante una
+> actualización, y sólo después se editan sus distintas sedes.**
+
+Es decir: **no se vuelve a tocar `AGENTS.md`, las plantillas, los agentes ni las skills** hasta que
+exista respuesta a cómo documento y agentes permanecen coherentes cuando uno sube y el otro no.
+Medido y pertinente para esa respuesta: **no hay sello de versión** en las sedes que divergen, así
+que hoy la incompatibilidad **no es detectable leyendo**; y **ningún guardián del banco cubre
+`agents/*.md`, las plantillas de `requirements` ni las skills**, así que esta clase de defecto sólo
+se ve **barriendo por propiedad**, a mano.
+
+**Dónde está todo:** veredictos de QA (4 vueltas) en `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`;
+seguridad en `docs/seguridad/registro-seguridad.md` § `R-034`; historia del intento en `CHANGELOG.md`.
+**Coste medido del intento: 9 comisiones · 72 min 23 s · 1 463 993 tokens.**
+
 ## Fase actual
 Fase 0 — autoalojamiento. **v1.33.0 PUBLICADA** el 2026-09-08 (merge `810128a`, tag y Release creados;
 instalación estable actualizada y verificada: 880 PASS · 0 FAIL en el banco completo). Ventana **1.34.0

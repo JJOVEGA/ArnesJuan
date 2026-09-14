@@ -2,6 +2,21 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-13 · Intento terminado: candidato detenido, y **una conclusión mía corregida**
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: coordinadora. Punto de continuidad en `docs/ESTADO.md`.
+
+**Corrección.** Escribí que retirar la entrada de migración haría desaparecer `SEC-095` y `SEC-096`.
+**Es falso:** un riesgo **no se cierra excluyendo el archivo que lo menciona**. Lo que describen es
+que **los agentes se actualizan solos mientras el documento del proyecto queda congelado**, y eso
+ocurre **exista o no** esa entrada — **también en un proyecto nuevo**. **Ningún hallazgo se cierra
+por exclusión de archivos.**
+
+**Intento terminado.** `rel/via-proporcional` @ `27bb49c` queda **detenido y no adoptado**, entero y
+sin revertir. Sigue vigente la **política aligerada** para desarrollar ArnesJuan; **su distribución
+queda pendiente, sin fecha y sin comisiones**. **Condición para retomar:** resolver **cómo se
+mantiene compatible el conjunto de instrucciones durante una actualización** antes de volver a editar
+sus sedes.
+
 ## [Interno] — 2026-09-13 · Seguridad `R-034`: **NO adoptable** — cinco `contrato`, y los cuatro reparables son **dos promesas, no cuatro defectos**
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: auditor-seguridad. Registro: `docs/seguridad/registro-seguridad.md` § R-034.
 
