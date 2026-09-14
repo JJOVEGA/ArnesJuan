@@ -1219,6 +1219,20 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   con causa, alcance y contrato claros: desarrollador → QA, sin comisión de analista** · cambio cuyo efecto alcanza **un criterio de `critico` del proyecto o una protección del arnés** (ejemplos declaradamente no exhaustivos): **+ seguridad** ·
   capacidad nueva o cambio de contrato: las cuatro fases—, y §9 deja de fijar en el analista **quién
   transcribe** el write-back.
+  **LO PRIMERO, porque decide todo lo demás: instalar esta sección NO la autoriza.** La migración
+  te trae §6 y §9 **descritas**; la vía sólo rige donde el **propietario del proyecto la declara**,
+  y esa declaración es **un acto suyo**, no una consecuencia de que el texto llegue. **Ninguna fila
+  del merge —tampoco `INTACTO` ni `NUEVO`— escribe esa autorización**: lo que se instala es la
+  descripción y una línea que dice, en tus palabras, que **todavía no la has declarado**.
+  **Hasta que la declares, tu proyecto sigue exactamente con el procedimiento anterior:** analista →
+  desarrollador → QA → seguridad, y **ningún agente puede omitir al analista**: migrar sin declarar
+  **no cambia quién interviene en cada REQ**. Lo que sí cambia, declares o no, es el **texto** de §6
+  y §9 y el de los agentes, que pasan a describir la vía y a condicionarla a esa declaración.
+  **Cómo la declaras, si la quieres:** escribe en §6, donde está esa línea, «**este proyecto
+  autoriza la vía proporcional de reparación**», con tu nombre y la fecha. Y si no la quieres,
+  **deja la línea como está**: no hay nada que borrar. Ni la **tabla de vías**, ni la descripción,
+  ni la propia comprobación de §6 son evidencia de autorización — todas **llegan instaladas**, y
+  deducir de ellas el permiso es exactamente el fallo que esto evita.
   **Y define «contrato claro»**: incluye que `Rigor:`, `Sensible a seguridad:` y las revisiones
   exigidas sean **coherentes con el efecto** de la reparación; una clasificación insuficiente o
   contradictoria devuelve al analista **sólo esa decisión** antes de continuar, sin repetir el

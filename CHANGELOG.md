@@ -2,6 +2,100 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-14 · Los dos bloqueos: instalar la política deja de autorizarla (`SEC-098`), y `CA-06` deja de teñir de rojo la frase que protege tu texto
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: desarrollador (reparación de los dos bloqueos, autorizada por el propietario el 2026-09-14). Base: `f4b77fa`. Hallazgos: `SEC-098` (`docs/seguridad/registro-seguridad.md` § R-035) y el rojo de CI en PR #50.
+
+### `SEC-098` — la autorización era texto de plantilla; ahora es un acto
+
+**El defecto, en una línea:** `templates/AGENTS.md.tpl` **traía escrita la frase de consentimiento**
+—«y **este proyecto autoriza** la vía proporcional de reparación»— y ofrecía salir *borrándola*. Es
+decir: la política llegaba **aceptada por defecto**, y las filas `INTACTO` («aplicar sin preguntar»)
+y `NUEVO` («añadir») la instalaban **sin que nadie decidiera nada**. Una declaración que debía ser un
+**acto del propietario del proyecto** viajaba como andamiaje.
+
+**La inversión, de *opt-out* a *opt-in*.** La plantilla ya **no** trae la declaración: trae el
+placeholder `{{DECLARACION_VIA_PROPORCIONAL}}` y, encima, la separación dicha con todas las letras —
+*instalar la política y aceptarla son **dos actos distintos**, y el segundo es del propietario*—.
+**Mientras esa línea no sea la declaración expresa, rige el procedimiento anterior** (analista →
+desarrollador → QA → seguridad) y ningún agente puede omitir al analista.
+
+**Proyectos nuevos:** por el mecanismo que ya existía, la entrevista de `arnes-init` — **no se
+inventó otro**. Pregunta nueva, textual y planteada como autorización, no como ajuste; y el reparto
+de la duda es explícito: **sólo un sí escribe la declaración**; «no», duda, silencio o ausencia del
+propietario escriben la línea negativa. **El valor por defecto es no autorizado, y es deliberado.**
+
+**Y la forma elegida NO puede confundirse, que era la trampa señalada.** La línea negativa está
+redactada **a propósito** sin contener la frase afirmativa, así que no la casa ni quien lee ni quien
+hace `grep`; y `arnes-init` **prohíbe dejar la declaración comentada**, porque un comentario de
+Markdown **sigue siendo texto** para quien lee el archivo y una declaración «apagada» se leería igual
+que una encendida. Por eso no se usó la vía del bloque comentado.
+
+**Proyectos existentes:** la entrada `Hacia 1.34.0` de `arnes-upgrade` lo dice **lo primero, antes
+que nada**: instalar §6/§9 **no** las autoriza; **ninguna fila del merge —tampoco `INTACTO` ni
+`NUEVO`— escribe esa autorización**; cómo se declara si se quiere; y **qué cambia para quien no la
+declare: nada en quién interviene en cada REQ** —analista, como antes—, y sí el **texto** de §6/§9 y
+de los agentes. Eso responde por escrito a la prueba de despacho que se hizo sobre una base que
+**traía la declaración de la plantilla**, sin repetirla.
+
+**El caso compuesto con `I-1` — describir deja de ser consentir.** §6 nombraba **dos** formas que
+«responden que sí»: la frase **y la tabla con la fila «Sin comisión de analista»**. La segunda era el
+defecto entero, porque la tabla **se instala con la política**. Ahora **la única evidencia es la
+declaración afirmativa del propietario**, y se dice explícitamente que **no** lo son la tabla, la
+descripción de la vía ni la propia comprobación — *tomarlo por consentimiento es deducir el permiso
+del texto que lo describe*. Corregido en **§6 de las dos gemelas**, en la **fila 1 de la tabla** («esta
+fila no es esa declaración ni la sustituye»), en **§14 A (5)** («tenerlo instalado en el `AGENTS.md`
+tampoco lo concede») y en `agents/desarrollador.md`. **`I-1` no se cierra** — eso lo decide QA.
+
+### `CA-06` — el falso positivo confirmado, y el alcance corregido sin tocar la frase
+
+**Lo confirmé yo antes de tocar nada**, con la sección entera sobre `f4b77fa`: **79 PASS · 1 FAIL**,
+y el rojo cita su causa, `se queda como está`. El reconocedor buscaba los **verbos** de la familia
+sobre el apartado entero, y el apartado **dejó de ser sólo prosa sobre la llave**: ahora lleva la
+tabla de migración, cuya fila `MODIFICADO` dice «Tu texto **se queda como está**» — que **no promete
+equivalencia con ninguna versión heredada** (su sujeto es el texto del proyecto ante un conflicto) y
+**lleva su acto al lado**.
+
+**La frase protectora NO se tocó.** Se corrigió el **alcance**, y **por propiedad, no excluyendo la
+línea, la fila ni la tabla por su nombre** —una exclusión por nombre caduca en cuanto la tabla se
+mueva—: **una promesa de equivalencia compara con una versión heredada, y por tanto nombra el término
+de esa comparación** —un número de versión, «las anteriores», «la heredada»— **dentro de la misma
+oración**. Las dos promesas reales lo llevan («cierra exactamente como cerraba **en 1.33.0**», «sin la
+llave, 1.34.0 cierra **como las anteriores**»); «tu texto se queda como está» no, porque no hay
+versión con la que comparar. El alcance es **la oración** —y una celda de tabla cuenta como una— para
+que un número de versión de otra frase de la misma viñeta no le preste su término a una que no lo
+tiene.
+
+**El par, entero, porque sin él esto sería un reconocedor más laxo:** *(a)* la frase protectora
+**pasa sin haber cambiado** — está tal cual en el apartado real, que el caso mide; *(b1)* una promesa
+sintética **con término heredado y sin acto**, inyectada en una copia, **sigue fallando** (1 sin
+acto); *(b2)* la misma **con su acto**, **pasa** (0 sin acto, 3 con acto); y *(c)* la frase protectora
+**sola** da «0 0» — ni promesa ni infracción. Va como **caso permanente del banco**, no como
+comprobación de esta sesión: `40/3` pasa de **26 a 27** casos y el total del banco de **1290 a 1291**.
+**No se retiró ningún caso ni se concedió excepción al CI.**
+
+**Write-back en `REQ-024`** (`Historial de cambios`, fila del 2026-09-14): cambia **el instrumento que
+mide `CA-06`**, no `CA-06` — el criterio no se toca, ni su texto ni lo que promete—, con la causa
+enlazada al falso positivo medido en CI (PR #50). Es write-back de la vía, no cambio de contrato.
+
+### Gemelas, evidencia y lo que no se tocó
+
+**Gemelas §6:** `AGENTS.md` 134-267 · `templates/AGENTS.md.tpl` 89-223. **Todo el bloque coincide
+salvo las dos divergencias declaradas**, y las dos son correctas: (1) **la declaración misma** —aquí
+el acto existe y tiene fecha (enmienda del propietario del 2026-09-10); en la plantilla es el
+placeholder—, que es justo lo que `SEC-098` exige que difiera; y (2) «un proyecto» / «este proyecto»,
+preexistente. Todo el texto **nuevo** —la comprobación, la fila de la tabla, §14 A (5)— es **idéntico
+en las dos**.
+
+**Evidencia:** gates §7 **4/4** (más `bash -n` del corredor y de la sección tocada). Banco: **`40`
+entera 81 PASS · 0 FAIL** (era 79·1), con **27 casos ejecutados = 27 declarados**; **`44`/`45`/`46`
+103 PASS · 0 FAIL · 1 SKIP** (el SKIP es el caso sólo-Windows sin `cygpath`). **El banco completo no
+se corrió: lo hace el CI.**
+
+**Fuera de alcance y sin tocar, expresamente:** `I-1`, `I-3`, `R-1`, `SEC-096`, la observación de
+`N-4` y el `mv` de la sección 33. **No se cerró ningún hallazgo**, no se retiró ningún caso, no se
+reformuló nada para esquivar un test, no se concedió excepción al CI, y **no hay pronunciamiento
+sobre la publicación**. Sin `push`.
+
 ## [Interno] — 2026-09-14 · Seguridad `R-035`: estados determinados, **sin firma**; `SEC-098` nuevo bloquea
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad. Registro: `docs/seguridad/registro-seguridad.md` § R-035. **No es aprobación de seguridad**: QA está en `PENDIENTE` y §6 no deja firmar sobre un árbol sin validar; la firma queda **condicionada** y se re-auditará sobre el árbol que QA valide.
 

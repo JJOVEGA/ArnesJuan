@@ -46,6 +46,28 @@ marcador antes de hacer nada.
    proyecto**. Pide ejemplos concretos: son los que el analista usará para clasificar.
    Si el proyecto entero es de bajo riesgo, dilo aquí: puede declararse `ligero` por defecto. Si el usuario prefiere, lanza al `analista-requerimientos` para esta parte.
 
+   **Pregunta `{{DECLARACION_VIA_PROPORCIONAL}}`, y pregúntalo como lo que es: una AUTORIZACIÓN,
+   no un ajuste.** La plantilla trae **descrita** la vía proporcional de reparación de §6 —la que
+   permite que una reparación con causa y contrato claros vaya `desarrollador → QA` **sin comisión
+   de analista**—, pero **describirla no la autoriza**: instalarla y aceptarla son **dos actos
+   distintos**, y el segundo es del propietario. Pregúntale, textualmente: *«¿autorizas que una
+   reparación con causa, alcance y contrato claros se haga sin comisión de analista, con el
+   write-back en la misma entrega del desarrollador? Si no, todo REQ seguirá pasando por el
+   analista.»* Y escribe **la respuesta que te dé**, no la que ahorra pasos:
+   - **Sólo si responde que sí**, sustituye el placeholder por: `> **Este proyecto autoriza la vía
+     proporcional de reparación** descrita en esta sección. — Declarado por <propietario>, <fecha>.`
+   - **En cualquier otro caso** —dice que no, duda, no contesta, o no está delante—, escribe:
+     `> **Este proyecto todavía no ha declarado esa autorización.** Rige el procedimiento anterior:
+     analista → desarrollador → QA → seguridad.` **Ése es el valor por defecto**, y es deliberado:
+     la ausencia de respuesta **no autoriza**.
+
+   **No dejes el `{{...}}` sin sustituir** y **no inventes una tercera redacción.** La línea
+   afirmativa es la única evidencia que §6 acepta, y la negativa está redactada **a propósito** sin
+   contener esa frase, para que no pueda confundirse con ella —ni leyéndola, ni buscándola—. Por lo
+   mismo, **no dejes la declaración comentada**: un comentario de Markdown sigue siendo texto para
+   quien lee el archivo, así que una declaración «apagada» se leería igual que una encendida, que
+   es justo la confusión que esto evita.
+
    **Rellena también `.arnes/config.json`** (es lo que vuelve ejecutables las invariantes):
    - `codigo_app.globs`: rutas de código de la app que SÓLO el `desarrollador` puede editar
      (p. ej. `["src/*", "app/*"]`). Pregúntalas explícitamente; sin ellas la regla A1 no

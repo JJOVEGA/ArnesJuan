@@ -135,17 +135,20 @@ Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
 El flujo de arriba es el de una **capacidad nueva**. Una **reparación con diagnóstico y solución
 claros** no necesita las cuatro fases, y hacerlas igual no añade protección: añade espera.
 
-> **Esta vía sólo rige donde ESTE documento la declara.** Un agente del plugin no la ejerce por
-> tenerla escrita en su definición: la ejerce **si el proyecto la autoriza**. Y ArnesJuan
-> **autoriza la vía proporcional de reparación** descrita en esta sección, por la enmienda del
-> propietario del 2026-09-10 citada arriba. **La contradicción con el «todo REQ pasa por analista, desarrollador, QA
+> **Esta vía sólo rige donde ESTE documento la declara, y describirla NO la declara.** Un agente
+> del plugin no la ejerce por tenerla escrita en su definición, y el texto que describe la vía no
+> la autoriza por estar instalado: **instalar la política y aceptarla son dos actos distintos**, y
+> el segundo es del propietario del proyecto. **Aquí ese acto existe y tiene fecha:** ArnesJuan
+> **autoriza la vía proporcional de reparación** descrita en esta sección, por la **enmienda
+> expresa del propietario del 2026-09-10** citada arriba — no por venir escrita en la plantilla.
+> **La contradicción con el «todo REQ pasa por analista, desarrollador, QA
 > y auditor» de la cita anterior queda resuelta expresamente ahí y aquí**: manda la enmienda; el
 > régimen del 2026-09-05 sigue vigente **en todo lo que la enmienda no toca**.
 
 | Naturaleza del cambio | Vía |
 |---|---|
 | Documentación informativa, índices y erratas **sin cambio de obligaciones** | la coordinadora, con las comprobaciones pertinentes |
-| **Reparación con causa, alcance y contrato claros** | desarrollador → QA. **Sin comisión de analista** — sólo si este proyecto **autoriza** la vía (cita de arriba) y el cambio **no** cae también en la fila 3 |
+| **Reparación con causa, alcance y contrato claros** | desarrollador → QA. **Sin comisión de analista** — sólo si el propietario del proyecto lo **declaró expresamente** (la declaración afirmativa de arriba; **esta fila no es esa declaración ni la sustituye**) y el cambio **no** cae también en la fila 3 |
 | Cambio cuyo efecto alcanza **un criterio de `critico` de este proyecto** (§6, «Qué es crítico EN ESTE PROYECTO») **o una protección del arnés** — ejemplos **declaradamente no exhaustivos**: hooks, protecciones, firmas, permisos, instalación, migración, publicación | desarrollador → QA → **seguridad**. El analista interviene **sólo** si queda una decisión de diseño o de contrato **pendiente** |
 | **Capacidad nueva** o **cambio de contrato** | analista → desarrollador → QA → seguridad |
 
@@ -170,12 +173,16 @@ desarrollador → QA → seguridad.
 **Cómo se comprueba la autorización, y hacia dónde falla.** Antes de omitir la comisión de analista
 —y sólo para eso— se lee el `AGENTS.md` **del proyecto en el que se está trabajando**: ni la
 definición del agente, ni este archivo recordado de otro proyecto. La pregunta es por **propiedad**:
-*¿este documento declara la vía proporcional y la autoriza para este proyecto?* Dos formas la
-responden que sí —son su evidencia, no su definición—: la frase «**autoriza la vía proporcional de
-reparación**», o la tabla de vías de esta sección con la fila «**Sin comisión de analista**».
+*¿el propietario de este proyecto declaró expresamente que lo autoriza?* **Una sola forma responde
+que sí, y es un acto suyo: la declaración afirmativa** —la frase «**autoriza la vía proporcional de
+reparación**» dicha de este proyecto—. **Nada más es evidencia, y esto importa porque es el error
+que se cometió:** ni la **tabla de vías** con su fila «Sin comisión de analista», ni la descripción
+de la vía, ni este mismo párrafo. Todo eso **se instala con el andamiaje** y no lo decidió nadie
+aquí; tomarlo por consentimiento es **deducir el permiso del texto que lo describe**.
 **Cualquier otro desenlace conserva el procedimiento anterior y se despacha al analista**: que no
-esté declarada, que el archivo no se pueda leer, que la respuesta no sea clara, o que otra parte del
-mismo documento exija el analista para ese cambio **sin resolver expresamente** la contradicción.
+esté declarada, que sólo esté descrita, que el archivo no se pueda leer, que la respuesta no sea
+clara, o que otra parte del mismo documento exija el analista para ese cambio **sin resolver
+expresamente** la contradicción.
 **La ausencia de la declaración no habilita nada**, y ésa es la dirección del fallo que importa: el
 agente trae la **capacidad**, el documento da el **permiso**.
 
@@ -626,7 +633,10 @@ expresamente?** **Y si la omite por «contrato claro», ¿lo es en el sentido de
 
 **La (5) la hace la coordinadora, y va por escrito con qué archivo leyó y qué resolvió.** Es ella
 quien decide el despacho, así que es ella quien comprueba el permiso: **tenerlo escrito en la
-definición de un agente no lo concede**. Sin declaración expresa —o con el archivo ilegible, o con
+definición de un agente no lo concede, y tenerlo instalado en el `AGENTS.md` tampoco** — la tabla
+de vías y la descripción de §6 **llegan con el andamiaje**, así que encontrarlas no responde nada:
+lo único que responde es la **declaración afirmativa del propietario del proyecto**. Sin ella —o
+con el archivo ilegible, o con la vía sólo descrita, o con
 otra parte del mismo documento exigiendo el analista sin resolver la contradicción— **se despacha al
 analista**, que es el procedimiento anterior. **Las obligaciones de seguridad no dependen de esta
 comprobación:** ninguna respuesta aquí retira una revisión que las reglas vigentes del proyecto

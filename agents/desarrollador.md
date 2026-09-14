@@ -19,9 +19,13 @@ El estado vive en la línea `Estado:` del archivo `requirements/REQ-XXX.md` (seg
 - Al terminar: `Estado: en-revisión` (nunca `completado` — eso lo deciden QA/seguridad).
 - **PRIMERO comprueba que el proyecto autoriza la vía; no la ejerces por tenerla escrita aquí.**
   Antes de entregar un write-back **sin** que haya pasado el analista, lee el `AGENTS.md` **del
-  proyecto en el que estás trabajando** (§6) y comprueba que **declara expresamente** la vía
-  proporcional de reparación — la frase «autoriza la vía proporcional de reparación», o la tabla de
-  vías con la fila «Sin comisión de analista». **Si no la declara, si no puedes leerla, si la
+  proyecto en el que estás trabajando** (§6) y comprueba que el propietario de ese proyecto
+  **declaró expresamente** la vía proporcional de reparación: la frase «autoriza la vía proporcional
+  de reparación» dicha de él. **Ésa es la ÚNICA evidencia.** La **tabla de vías** con su fila «Sin
+  comisión de analista», y la descripción de la vía en §6, **llegan instaladas con el andamiaje**:
+  encontrarlas no prueba que nadie las haya aceptado, y tomarlas por autorización es **deducir el
+  permiso del texto que lo describe**. **Si no la declara, si sólo está descrita, si no puedes
+  leerla, si la
   respuesta no es clara, o si otra parte del mismo documento exige el analista para ese cambio sin
   resolver expresamente la contradicción: el write-back NO es tuyo.** Entrega el arreglo y escala el
   write-back al `analista-requerimientos`, que es el procedimiento anterior. **La ausencia de

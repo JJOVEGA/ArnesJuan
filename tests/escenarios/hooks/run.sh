@@ -1300,7 +1300,18 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1290  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1291  # 1290 → 1291: el DISCRIMINANTE del reconocedor de promesas de equivalencia
+                      # en `40/3` (26 → 27). Su alcance se corrigió por un falso positivo MEDIDO en
+                      # CI (PR #50): el apartado dejó de ser sólo prosa sobre la llave y ahora lleva
+                      # la tabla de migración, cuya fila `MODIFICADO` —«tu texto se queda como
+                      # está»— casaba con el verbo sin prometer equivalencia con versión alguna. La
+                      # frase protectora NO se reformuló para esquivar la prueba; se acotó el
+                      # reconocedor POR PROPIEDAD (una promesa de equivalencia nombra el término
+                      # heredado con el que compara, en la misma oración). El caso nuevo es el par
+                      # que impide que ese arreglo sea un reconocedor más laxo. Ningún otro
+                      # `CASOS_ESPERADOS_SECCION` se toca.
+                      #
+                      # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni

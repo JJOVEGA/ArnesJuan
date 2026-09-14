@@ -29,7 +29,7 @@
 # aplanar se conserva el NÚMERO DE LÍNEA de arranque de cada viñeta, que es lo que permite medir
 # el ORDEN que `CA-06 (ii)` contrata —la propiedad ANTES de cualquier comando— sin volver a
 # recorrer el archivo.
-CASOS_ESPERADOS_SECCION=26
+CASOS_ESPERADOS_SECCION=27  # 26 → 27: el DISCRIMINANTE del reconocedor de promesas de equivalencia. Al corregir su alcance (falso positivo medido en CI, PR #50: la fila `MODIFICADO` de la tabla de migración casaba con el verbo sin prometer equivalencia con ninguna versión), el arreglo sería indistinguible de haber aflojado el reconocedor; el caso nuevo inyecta en una COPIA las dos formas que tienen que decidir distinto —con término heredado y SIN acto muerde, la misma CON acto pasa— más el control de que la frase que protege el texto personalizado, sola, no es ni promesa ni infracción
 PISO_AUTONOMO_SECCION=78  # 31 preámbulo con sus dos declaraciones y el titular (líneas 1-31) + 16 maquinaria compartida duplicada (`mira40c`, el mismo ayudante que `36-…-4-el-informe-y-los-textos.sh` define, duplicado porque en `secciones/` no cabe un auxiliar; líneas 61-76) + 31 bloque indivisible mayor (el aplanado del apartado, el sub-bloque anclado por su titular y `idx40`, líneas 33-59 y 77-80: ningún caso de CA-06 puede prescindir de ellos) · REQ-014 CA-18
 seccion_nueva "--- 40/3 · la ausencia que abre: los textos que un proyecto hereda (REQ-024 CA-06) ---"
 
@@ -233,20 +233,77 @@ mira40c "REQ-024 CA-06 (v) ...con los ejemplos marcados NO exhaustivos y los dos
 # «ninguna»: un instrumento que no puede enumerar su clase tiene que enseñar su cuenta.
 # Y ABSTIENE con 0 promesas: «todas llevan su acto» es cierto por vacío cuando no hay ninguna, y
 # un verde por no medir es la familia que `REQ-020` existe para cazar.
+# QUÉ ES UNA PROMESA DE EQUIVALENCIA, Y POR QUÉ HIZO FALTA DECIRLO (`CA-06`, falso positivo medido
+# en CI, PR #50). El reconocedor buscaba los VERBOS de la familia sobre el apartado entero, y el
+# apartado dejó de ser sólo prosa sobre la llave: ahora lleva además la tabla de migración, cuya
+# fila `MODIFICADO` dice «Tu texto **se queda como está**». Esa frase NO promete equivalencia con
+# ninguna versión heredada — su sujeto es **el texto del proyecto ante un conflicto**, y su acto va
+# al lado («el conflicto se lista para el humano») —, pero casaba con el verbo y teñía el caso de
+# rojo. Y la instrucción que protege el texto personalizado NO se reformula para esquivar una
+# prueba: se arregla el ALCANCE del reconocedor.
+#
+# La distinción se hace POR PROPIEDAD, no excluyendo la línea, la fila ni la tabla por su nombre
+# —una exclusión por nombre deja de valer en cuanto la tabla se mueva—: **una promesa de
+# equivalencia compara con una VERSIÓN HEREDADA, y por tanto nombra el término de la comparación**
+# —un número de versión, «las anteriores», «la heredada»— DENTRO DE LA MISMA ORACIÓN. Las dos
+# promesas reales del apartado lo llevan («cierra exactamente como cerraba **en 1.33.0**», «sin la
+# llave, 1.34.0 cierra **como las anteriores**»); «tu texto se queda como está» no lo lleva, porque
+# no hay versión con la que comparar. Sin término heredado no hay equivalencia que prometer.
+#
+# El alcance es LA ORACIÓN —y una celda de tabla cuenta como una— para que un número de versión que
+# vive en otra frase de la misma viñeta no le preste su término a una frase que no lo tiene.
 if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-06 promesas con su acto" | grep -qi -- "$FILTRO"; then
   # Con acto DENTRO de la promesa (el verbo de la equivalencia es cerrar) / sin acto (sujeto
   # abierto: «decide», «no nota nada», «se queda como está»).
   con40='cierra exactamente como cerraba|cierra como las anteriores|cierra exactamente como cerró'
   sin40='decide[ ]*exactamente lo mismo|decide como las anteriores|no nota nada|se queda[ ]*exactamente como está|se queda como está|resuelve como las anteriores'
-  c40p="$(grep -o -E -- "$con40" "$AP40" 2>/dev/null | grep -c . || true)"
-  s40p="$(grep -o -E -- "$sin40" "$AP40" 2>/dev/null | grep -c . || true)"
+  # El TÉRMINO DE COMPARACIÓN HEREDADO que convierte un verbo en promesa de equivalencia.
+  ver40='[0-9]+\.[0-9]+(\.[0-9]+)?|las anteriores|la anterior|versiones anteriores|versión anterior|la heredada|versión heredada'
+  # El apartado partido en ORACIONES: el separador de celda de tabla abre oración, y luego se corta
+  # en punto+espacio (un «1.33.0» no se parte: no lleva espacio tras el punto).
+  ORA40="$RAIZ/ora40-$BASHPID.txt"
+  sed -e 's/|/ . /g' -e 's/\. /.\n/g' "$AP40" 2>/dev/null > "$ORA40" || : > "$ORA40"
+  c40p="$(grep -E -- "$con40" "$ORA40" 2>/dev/null | grep -c -E -- "$ver40" || true)"
+  s40p="$(grep -E -- "$sin40" "$ORA40" 2>/dev/null | grep -v -E -- "$con40" | grep -c -E -- "$ver40" || true)"
   tot40p=$(( ${c40p:-0} + ${s40p:-0} ))
   if [ "$tot40p" -lt 1 ]; then
     echo "  SKIP  REQ-024 CA-06 promesas con su acto  el apartado no enuncia ninguna promesa de equivalencia de las formas conocidas ($VIN40 viñetas): «todas llevan su acto» sería cierto por vacío"
   elif [ "${s40p:-0}" -eq 0 ]; then
-    echo "  PASS  REQ-024 CA-06 las $tot40p promesas de equivalencia del apartado llevan el ACTO dentro de la promesa (${c40p} con acto, 0 de sujeto abierto; formas reconocidas por cadena, conjunto ABIERTO)"; PASS=$((PASS+1))
+    echo "  PASS  REQ-024 CA-06 las $tot40p promesas de equivalencia del apartado llevan el ACTO dentro de la promesa (${c40p} con acto, 0 de sujeto abierto; oraciones con verbo de la familia Y término heredado, conjunto ABIERTO)"; PASS=$((PASS+1))
   else
-    echo "  FAIL  REQ-024 CA-06 promesas de equivalencia: $tot40p vistas y ${s40p} enunciadas SIN acto (sujeto abierto): $(grep -o -E -- "$sin40" "$AP40" | tr '\n' '|')"; FAIL=$((FAIL+1))
+    echo "  FAIL  REQ-024 CA-06 promesas de equivalencia: $tot40p vistas y ${s40p} enunciadas SIN acto (sujeto abierto): $(grep -E -- "$sin40" "$ORA40" | grep -v -E -- "$con40" | grep -E -- "$ver40" | tr '\n' '|')"; FAIL=$((FAIL+1))
+  fi
+fi
+
+# ---------- CA-06 · EL DISCRIMINANTE DEL RECONOCEDOR (par fail-before / pass-after) ----------
+# Sin esto, el arreglo de arriba sería indistinguible de haber aflojado el reconocedor hasta que
+# dejara de morder. Se inyectan en una COPIA del apartado las dos formas que tienen que decidir
+# distinto, y se exige que decidan distinto:
+#   (b1) promesa de equivalencia con la versión heredada SIN su acto  -> tiene que SEGUIR FALLANDO
+#   (b2) la misma promesa CON su acto dentro                          -> tiene que PASAR
+# El control (a) —que la frase protectora del texto personalizado pasa SIN haber sido cambiada— lo
+# da el caso de arriba sobre el apartado real, que la contiene tal cual.
+if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-06 discriminante del reconocedor" | grep -qi -- "$FILTRO"; then
+  mide40p() {   # <archivo-oraciones> -> imprime «<con> <sin>»
+    local f="$1" c s
+    c="$(grep -E -- "$con40" "$f" 2>/dev/null | grep -c -E -- "$ver40" || true)"
+    s="$(grep -E -- "$sin40" "$f" 2>/dev/null | grep -v -E -- "$con40" | grep -c -E -- "$ver40" || true)"
+    printf '%s %s' "${c:-0}" "${s:-0}"
+  }
+  INY40="$RAIZ/iny40-$BASHPID.txt"
+  # (b1) sintética SIN acto, con término heredado explícito.
+  { cat "$ORA40"; printf 'sin la llave, esta version decide como las anteriores.\n'; } > "$INY40"
+  b1="$(mide40p "$INY40")"; b1s="${b1##* }"
+  # (b2) sintética CON su acto dentro de la promesa.
+  { cat "$ORA40"; printf 'sin la llave, esta version cierra como las anteriores.\n'; } > "$INY40"
+  b2="$(mide40p "$INY40")"; b2s="${b2##* }"; b2c="${b2%% *}"
+  # (c) control de no-vacuidad: la frase protectora, SOLA, no es una promesa de equivalencia.
+  printf 'Tu texto **se queda como está** y el conflicto **se lista para el humano**.\n' > "$INY40"
+  b3="$(mide40p "$INY40")"
+  if [ "$b1s" -ge 1 ] && [ "$b2s" -eq 0 ] && [ "$b2c" -ge 1 ] && [ "$b3" = "0 0" ]; then
+    echo "  PASS  REQ-024 CA-06 discriminante: el reconocedor sigue mordiendo lo que debe y suelta lo que no  (inyectada SIN acto -> $b1s sin acto, muerde; la MISMA CON acto -> $b2s sin acto y $b2c con acto, pasa; la frase que protege el texto personalizado, sola -> «$b3», ni promesa ni infracción)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  REQ-024 CA-06 discriminante: el reconocedor no distingue los dos casos  (SIN acto -> «$b1» (se esperaba sin>=1); CON acto -> «$b2» (se esperaba sin=0 y con>=1); frase protectora sola -> «$b3» (se esperaba «0 0»))"; FAIL=$((FAIL+1))
   fi
 fi
 
