@@ -10304,3 +10304,239 @@ datos personales.
 
 **Numeración vigente tras esta revisión:** última revisión **R-035**; último hallazgo **SEC-098**;
 próximos libres **R-036** y **SEC-099**.
+
+---
+
+## Revisión R-036 — **el delta que repara los dos bloqueos**: estados de `SEC-093`…`SEC-098`. **SIN firma de aprobación: hay impedimento.** `rel/via-proporcional` @ `c169a4f` (= `d913575` + informe de QA) — 2026-09-14
+
+**Objeto acotado** al delta `f4b77fa..d913575` y a los estados de mis hallazgos. **No es auditoría
+general.** No toqué `I-3`, `I-5`, `I-6`, `R-1`, la observación de `N-4` ni el `mv` de la sección 33
+—son de QA—, no reparé nada, **no relancé ni propuse excepción al CI**, ningún proyecto consumidor, y
+**no me pronuncio sobre la fusión ni la publicación**.
+
+### 0. Árbol y orden de las firmas
+
+- Worktree `/home/juan/dev/ArnesJuan-via-proporcional`, **árbol limpio**, cabeza **`c169a4f`**.
+  **Comprobado por mí, no aceptado:** `git diff --stat d913575..c169a4f` = `CHANGELOG.md` +
+  `docs/qa/…` y nada más. **Audito exactamente el árbol que QA validó.**
+- **Mi `R-035` quedó en el historial** (`f4b77fa`), de modo que este registro es continuo.
+- **Orden satisfecho:** QA emitió **favorable con reserva** sobre `d913575`. **§6 me permite firmar;
+  no firmo por motivo propio**, que va en §7.
+
+### 1. La frontera cambió, y hay que decirlo: **este delta SÍ toca `tests/`**
+
+A diferencia de los anteriores, el delta modifica `tests/escenarios/hooks/run.sh` y
+`tests/escenarios/hooks/secciones/40-…-3-….sh`, que `AGENTS.md` §6 declara **crítico**. `hooks/`,
+`tools/`, `.arnes/`, `.github/` y `.claude-plugin/`: **0 rutas**. Como se tocó un guardián, lo medí.
+
+**El reconocedor se ACOTÓ, y no se aflojó. Lo verifico por construcción y lo afirmo:**
+
+- **La corrección es por propiedad, y el propio código dice por qué no por nombre:** «La distinción
+  se hace POR PROPIEDAD, no excluyendo la línea, la fila ni la tabla por su nombre —**una exclusión
+  por nombre deja de valer en cuanto la tabla se mueva**—: una promesa de equivalencia **compara con
+  una VERSIÓN HEREDADA**, y por tanto **nombra el término de la comparación** dentro de la misma
+  oración». Es el estándar que yo mismo exijo, aplicado al instrumento.
+- **Existe el par discriminante y es permanente**, no un verde de una vez: `(b1)` promesa con término
+  heredado **sin** su acto → **tiene que seguir mordiendo**; `(b2)` la misma **con** acto → pasa;
+  `(b3)` la frase protectora sola → **ni promesa ni infracción**. El caso falla si los tres no
+  deciden distinto.
+- **La frase protectora NO se reformuló para esquivar la prueba** — se corrigió el instrumento. Es la
+  dirección correcta: reescribir el texto que impide que la migración pise el trabajo de un proyecto,
+  para que un reconocedor deje de teñirse, habría sido cambiar el producto por la prueba.
+- **Corrido por mí** sobre esta cabeza: `bash tests/escenarios/hooks/run.sh '40-*'` → **52 PASS · 0
+  FAIL · 1 SKIP** (el `SKIP` sólo-Windows). Los temporales llevan `$BASHPID`, sin nombre fijo.
+
+**Ninguna protección se debilitó en el delta.** Las sedes de `SEC-093`, `SEC-094` y `SEC-097` no se
+movieron (`git diff --stat` sobre los cuatro agentes restantes, `arnes-close` y `autoalojamiento.md`:
+**vacío**); las cuatro frases portantes siguen **1 y 1** en cada gemela; la sección canónica de
+`SEC-097` conserva su `sha256 4507acfc…5045c`.
+
+### 2. `SEC-093`, `SEC-094`, `SEC-097` → siguen **`mitigado`**
+
+Sin cambios en sus sedes y sin regresión medible. No repito su razonamiento: está en `R-035`.
+
+### 3. `SEC-095` → sigue **`mitigado`**, y la premisa nueva lo refuerza
+
+Se me pide revisarlo porque yo lo cerré **sobre la premisa** de la declaración, y la premisa cambió.
+**Cambió a mejor para este hallazgo.** `SEC-095` era: un proyecto que **no migra** recibe agentes
+nuevos que aflojan solos y el write-back queda huérfano. Hoy: (i) los agentes condicionan al
+documento; (ii) **migrar tampoco autoriza**; (iii) §9 sigue diciendo que sin declaración el
+write-back **es del analista**. La única vía por la que un proyecto podía quedarse sin dueño del
+write-back está cerrada por **dos** lados en vez de uno. Su evidencia funcional —`proy-SIN`, **0**
+coincidencias, analista en **3/3**— sigue correspondiendo a un estado real y hoy **más** común.
+
+**Y el límite que sí gana, declarado:** los ensayos corrieron con la **declaración de plantilla**
+(`proy-CON`) o con **nada** (`proy-SIN`). **El estado por defecto NUEVO —descripción completa de la
+vía + línea negativa explícita— no está ejercido con agentes reales**, y es justamente el estado en
+que caerá todo proyecto nuevo o migrado. Es el estado donde «deducir el permiso del texto que lo
+describe» resulta más tentador. No reabre el hallazgo; acota lo que acredito.
+
+### 4. `SEC-096` → sigue **`en-mitigación`**
+
+Este delta **no lo toca**. Medido: `grep -c "\.claude/agents" skills/arnes-upgrade/SKILL.md` → **1**,
+la mención en prosa que ya existía; **sigue sin haber ningún paso que enumere, aunque sea
+informativamente, las definiciones de agente propias del proyecto**. La composición tampoco está
+ejercida. La dirección sigue siendo fail-safe por derivación y el límite sigue declarado por nombre en
+la plantilla. **No bloquea.**
+
+### 5. `SEC-098` → **`en-mitigación`** (no lo cierro, y la mitad que falta es `SEC-099`)
+
+**Lo que SÍ está reparado, comprobado por construcción y no por lectura** —construí las dos
+instalaciones desde `templates/AGENTS.md.tpl`:
+
+| Artefacto | Frase de autorización | Veredicto |
+|---|---|---|
+| Plantilla **cruda** (lo que instala/migra el andamiaje) | **0** | no trae autorización |
+| Instalación **afirmativa** (sustituido por el «sí» del propietario) | **1** | autoriza |
+| Instalación **negativa** (valor por defecto de `arnes-init`) | **0** | no autoriza |
+| ¿La línea negativa **contiene** la frase afirmativa? | **0** | no la contiene |
+
+**El placeholder `{{DECLARACION_VIA_PROPORCIONAL}}` existe en la plantilla**, así que **ninguna ruta
+del andamiaje deja escrita la afirmativa**: ni `arnes-init` sin un «sí» expreso, ni `INTACTO`, ni
+`NUEVO`, ni `MODIFICADO` —que no toca la sección—. **El núcleo de `SEC-098` —«la migración concede la
+autorización sin que el proyecto la decida»— está cerrado**, y la reparación es de la clase correcta:
+no matiza, **separa los dos actos**. §6 reduce además la evidencia a **una sola forma** y excluye por
+su nombre la tabla, la descripción y el propio párrafo de la comprobación, que era el compuesto con
+`I-1`.
+
+**Por qué NO lo cierro:** `SEC-098` se abrió **sobre la ruta de migración**, y la disciplina de
+redacción que hace funcionar todo esto llegó a `arnes-init` y **no** a `arnes-upgrade`. Eso es
+`SEC-099`, abajo. Cerrar `SEC-098` dejando viva la mitad por la que se abrió sería cerrarlo por la
+mitad reparada.
+
+### 6. `SEC-099` — **nuevo** · `contrato` · **abierto** · **BLOQUEA**
+
+**La ruta de MIGRACIÓN no heredó la disciplina de redacción de la ruta de INSTALACIÓN, y por ahí una
+declaración NEGATIVA se lee como afirmativa.**
+
+`arnes-init` blinda la negativa con tres reglas explícitas: escribe **esta** línea literal, **«no
+inventes una tercera redacción»** y **«no dejes la declaración comentada»** —con su motivo: la
+negativa «está redactada **a propósito** sin contener esa frase, para que no pueda confundirse con
+ella **ni leyéndola, ni buscándola**»—.
+
+**`skills/arnes-upgrade/SKILL.md` («Hacia 1.34.0») no tiene ninguna de las tres.** Medido, las tres
+cadenas, sede por sede:
+
+| Regla | `arnes-init` | `arnes-upgrade` |
+|---|---|---|
+| «no inventes una tercera redacción» | **1** | **0** |
+| «no dejes la declaración comentada» | **1** | **0** |
+| la línea negativa literal | **1** | **0** |
+
+Y en su lugar dice: «lo que se instala es la descripción y una línea que dice, **en tus palabras**,
+que todavía no la has declarado». **«En tus palabras» sobre el único texto cuya redacción es el
+control.**
+
+**Construido, no razonado** —sustituí el placeholder por redacciones **negativas** naturales y conté
+la frase que §6 acepta como evidencia:
+
+| Línea escrita (todas son NEGATIVAS o apagadas) | Coincidencias |
+|---|---|
+| la literal de `arnes-init` | **0** ✔ |
+| «Este proyecto **no** autoriza la vía proporcional de reparación.» | **1** ✘ |
+| «Este proyecto **aún no** autoriza la vía proporcional de reparación; rige el procedimiento anterior.» | **1** ✘ |
+| «**Pendiente**: decidir si este proyecto autoriza la vía proporcional de reparación.» | **1** ✘ |
+| la afirmativa **comentada** (`<!-- … -->`), que `arnes-init` prohíbe y `arnes-upgrade` no menciona | **1** ✘ |
+
+**Cuatro de cinco redacciones que dicen NO se leen como SÍ.** La negación, la postergación y la
+pregunta abierta **contienen la frase afirmativa íntegra**.
+
+**Por qué es `contrato` y por qué bloquea.** El producto afirma «**La ausencia de la declaración no
+habilita nada**» y «la dirección del fallo que importa: el agente trae la capacidad, el documento da
+el permiso». En la ruta de migración —**la de todo proyecto ya instalado**— siguiendo la instrucción
+tal como está escrita se produce el estado que esa frase declara imposible. Y es **la misma propiedad
+de `SEC-098` fallando en la sede hermana**: bloqueé `SEC-098` porque el permiso se concedía sin
+decisión; firmar ahora sobre un «no» que se lee como «sí» sería aplicar dos varas.
+
+**No me apoyo en el script de `I-1`** (está en cuarentena, y hago bien en no usarlo): esto se mide
+sobre el texto que §6 nombra como **única evidencia**, y el desenlace es el mismo para quien lo
+busque y para quien lea deprisa.
+
+**Remediación (no la aplico):** llevar a la entrada «Hacia 1.34.0» las tres reglas de `arnes-init`
+—la línea negativa **literal**, «no inventes una tercera redacción», «no dejes la declaración
+comentada»— y **retirar «en tus palabras»**. Tres frases en un archivo; **ningún mecanismo**.
+
+### 7. `SEC-100` — **nuevo** · `instrumento` · **abierto** · **no bloquea**
+
+**El `0` que acredita una instalación negativa es un accidente de MAQUETACIÓN, no una propiedad.**
+
+Es la nota que QA dejó **sin abrir**, y el encargo me pide decidir: **es hallazgo.** La frase
+afirmativa **existe una vez en la plantilla cruda**, dentro del párrafo que **describe** la
+comprobación —«la frase «autoriza la vía proporcional de reparación» dicha de este proyecto»—. Hoy no
+casa porque un **salto de línea** la parte entre «de» y «reparación».
+
+**Medido sobre la instalación NEGATIVA, aplicando un acto puramente editorial (unir dos líneas, nadie
+declara nada):** `grep` pasa de **0** a **1**. Retirar sólo las negritas **no** lo cambia (0): lo
+único que lo sostiene es el corte de línea.
+
+**Por qué `instrumento` y no `contrato`:** la norma es correcta **por propiedad** —§6 excluye ese
+párrafo **por su nombre**—, así que quien comprueba como §6 manda resuelve bien, y no hay efecto
+medido en el producto. **Por qué lo abro igual:** el producto declara que la negativa no puede
+confundirse «**ni leyéndola, ni buscándola**», y la mitad «buscándola» **se sostiene sobre dónde cae
+el margen derecho**. Un reflujo del párrafo —el cambio más inocente que existe— la rompe en silencio,
+y la próxima implementación mecánica de la comprobación heredará la trampa. **Remediación sugerida:**
+que el párrafo descriptivo no contenga nunca la frase en forma buscable.
+
+### 8. Dictamen — **NO firmo. Impedimento concreto.**
+
+**No emito `Seguridad: aprobado` sobre `c169a4f`/`d913575`, y no hay veto que emitir** (no hay REQ
+bajo mi firma en este encargo). **El impedimento es `SEC-099`**, `contrato`, abierto, medido por
+construcción: en la ruta de migración una declaración **negativa** se lee como autorización en cuatro
+de cinco redacciones naturales, y esa ruta es la de todo proyecto ya instalado.
+
+**Lo que sí acredito, y no es poco:**
+- **Ninguna protección se debilitó en el delta.** El único guardián tocado se **acotó por propiedad
+  con par discriminante permanente**, verificado corriéndolo yo (52 PASS · 0 FAIL · 1 SKIP).
+- **El núcleo de `SEC-098` está cerrado y comprobado por construcción**: instalar la política ya no la
+  autoriza, en **ninguna** ruta del andamiaje.
+- **`SEC-093`, `SEC-094`, `SEC-095`, `SEC-097` siguen `mitigado`**; `SEC-096`, `en-mitigación`.
+
+**Qué falta para mi firma: sólo `SEC-099`.** `SEC-100` es `instrumento` y **no** la condiciona;
+`SEC-096` tampoco. Reparadas las tres frases, vuelvo a auditar **sobre el árbol que QA valide
+entonces** — una firma sobre otro árbol no acredita éste.
+
+### 9. Qué NO acredita esta revisión
+
+1. **No acredita el candidato**: no hay aprobación de seguridad aquí, y que cinco de mis hallazgos
+   estén mitigados **no debe citarse como tal**.
+2. **No acredita ninguna corrida de `arnes-init` ni de `arnes-upgrade`.** `SEC-098`, `SEC-099` y
+   `SEC-100` los medí **construyendo instalaciones con `python3`/`grep` sobre copias en el
+   scratchpad**, no ejecutando las skills ni desplegando agentes. Nadie ha migrado ningún proyecto.
+3. **No acredita el estado por defecto nuevo** —descripción + línea negativa— **con agentes reales**:
+   los ensayos de `evidencia/prueba-despacho-2026-09-14` corrieron con la declaración de plantilla o
+   sin nada, y **no los re-ejecuté**. Es el límite que `SEC-095` gana en §3.
+4. **No acredita la composición «copia propia de una definición de agente»** (`SEC-096`).
+5. **No acredita el banco completo ni el CI.** Corrí **una** sección (`'40-*'`, con su arrastre) y
+   **no relancé nada**; el cuadre total queda suspendido por vuelta parcial, como avisa el corredor.
+   **No me pronuncio sobre `I-3`, `I-5`, `I-6`, `R-1` ni la observación de `N-4`**, que son de QA.
+6. **No acredita `REQ-024`, `REQ-023` ni `REQ-026`.** El delta toca `REQ-024.md` (una fila de
+   historial); **no lo audité** y no emito `Seguridad:` sobre él.
+7. **No acredita la fusión ni la publicación**, y no me pronuncio sobre ellas.
+8. **Ningún guardián cubre `agents/*.md`, las plantillas ni las skills.** `SEC-099` y `SEC-100` **no
+   los caza ninguna máquina**: se ven midiendo el texto a mano.
+
+### 10. Estado de mis hallazgos tras `R-036`
+
+| Hallazgo | Estado | Clase | Bloquea |
+|---|---|---|---|
+| `SEC-093` | `mitigado` | `contrato` | no |
+| `SEC-094` | `mitigado` | `contrato` | no |
+| `SEC-095` | `mitigado` | `contrato` | no |
+| `SEC-096` | `en-mitigación` | `contrato` | no |
+| `SEC-097` | `mitigado` | `contrato` | no |
+| `SEC-098` | **`en-mitigación`** | `contrato` | no |
+| `SEC-099` | **`abierto`** (nuevo) | `contrato` | **sí** |
+| `SEC-100` | **`abierto`** (nuevo) | `instrumento` | no |
+
+Dueño de `SEC-096`, `SEC-098`, `SEC-099` y `SEC-100`: `desarrollador`. Vencimiento de `SEC-099`:
+**antes de mi firma**. **Sin cambios en el resto:** `SEC-091`, `SEC-092`, `SEC-088`, `SEC-085`
+`abiertos`; `SEC-090`, `SEC-087` `mitigados`.
+
+**Hallazgos ajenos, intactos:** `I-3`, `I-5`, `I-6`, `R-1` y la observación de `N-4` son de QA; `I-1`
+lo cerró QA y **no lo reabro**.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** Este repositorio sigue sin usuarios finales ni
+datos personales.
+
+**Numeración vigente tras esta revisión:** última revisión **R-036**; último hallazgo **SEC-100**;
+próximos libres **R-037** y **SEC-101**.

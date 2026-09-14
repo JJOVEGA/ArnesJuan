@@ -2,6 +2,29 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-14 · Seguridad `R-036` sobre `c169a4f`: estados determinados, **sin firma**; `SEC-099` nuevo **bloquea**
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad. Registro: `docs/seguridad/registro-seguridad.md` § R-036. **No hay aprobación de seguridad.**
+
+**Estados:** `SEC-093`, `094`, `097` **mitigados** (sedes sin mover, huellas intactas) · `SEC-095` **mitigado** (la premisa cambió
+a favor: migrar tampoco autoriza) · `SEC-096` **en-mitigación** (intacto, no bloquea) · **`SEC-098` en-mitigación**: su
+núcleo está cerrado **por construcción** —plantilla cruda 0, instalación afirmativa 1, negativa 0, la negativa no contiene
+la frase—, pero se abrió *sobre la migración* y ahí falta la mitad que es `SEC-099`.
+
+**`SEC-099` · `contrato` · BLOQUEA.** La ruta de migración **no heredó la disciplina de redacción** de la de instalación:
+`arnes-init` blinda la línea negativa con tres reglas; `arnes-upgrade` con **ninguna**, y dice «una línea que dice, **en tus
+palabras**, que todavía no la has declarado». Construido: **cuatro de cinco redacciones negativas naturales se leen como
+sí** («Este proyecto **no** autoriza la vía proporcional de reparación» → 1; «**aún no** autoriza…» → 1; «**Pendiente**:
+decidir si… autoriza…» → 1; la afirmativa comentada → 1; sólo la literal de `arnes-init` → 0). Es la propiedad de `SEC-098`
+fallando en la sede hermana, en la ruta de **todo proyecto ya instalado**. Remediación estimada: tres frases en un archivo.
+
+**`SEC-100` · `instrumento`, no bloquea:** el 0 de una instalación negativa depende de un **salto de línea** en el párrafo
+que describe la comprobación; unidas las dos líneas pasa a 1. La norma excluye ese párrafo por su nombre, pero el producto
+promete que la negativa no se confunde «ni leyéndola ni buscándola».
+
+**Ninguna protección se debilitó**, y este delta sí toca `tests/`: el auditor midió que el reconocedor se acotó **por
+propiedad** con par discriminante permanente y sin reformular la frase protectora. **Qué falta para la firma: sólo
+`SEC-099`**; reparado, re-auditará sobre el árbol que QA valide entonces.
+
 ## [Interno] — 2026-09-14 · QA sobre `d913575`: **favorable con reserva — levanta el PENDIENTE**; `I-1` cerrado por el producto
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester. Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`.
 
