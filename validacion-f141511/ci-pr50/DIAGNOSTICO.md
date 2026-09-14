@@ -38,7 +38,8 @@ Recuento del log: **PASS 1273 · FAIL 1 · SKIP 16 · suma 1290** — coincide c
 723:mv: cannot stat '/tmp/tmp.WldUhGoxHH/.arnes/c2': No such file or directory
 ```
 - Ocurre dentro de la sección que contiene los casos `REQ-010 CA-13` y `REQ-010 CA-02` (`33-acento-y-clave-1-normalizacion.sh`), entre dos PASS. **No cambia ningún veredicto** —los casos vecinos pasan— pero es un comando del propio banco que falla y **el corredor no lo cuenta**: no aparece como FAIL, SKIP ni aviso.
-- Origen en el banco: `tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh:77:python3 - "$L33/.arnes/config.json" <<'PY' 2>/dev/null || jq '.esta`. Presente en `f387b1c`: **** ocurrencia(s) — **preexistente**, no del candidato.
+- Mecanismo: en `33-acento-y-clave-1-normalizacion.sh:77` el fixture reescribe `.arnes/config.json` con `python3 … || jq … > .arnes/c2 && mv …`; cuando `python3` tiene éxito la rama `jq` no corre, `c2` no llega a existir y el `mv` posterior falla con `cannot stat`. El fixture queda igualmente bien escrito por la rama `python3`, por eso los casos vecinos pasan.
+- Origen en el banco: `tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh:77:python3 - "$L33/.arnes/config.json" <<'PY' 2>/dev/null || jq '.esta`. Presente en `f387b1c`: **1** ocurrencia(s) en la misma sección — **preexistente**, no del candidato (el candidato no toca `tests/`).
 - Clase: no fijada aquí; corresponde a QA (`instrumento` probable: un fixture del banco, no una protección). Se registra sin reparar.
 
 ## 4. Otros
