@@ -1,0 +1,182 @@
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/PENDING_APPROVAL.md /tmp/arnes-diag-wBF0L4/casos/CON-2c/PENDING_APPROVAL.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/PENDING_APPROVAL.md	2026-09-14 10:34:59.164465476 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-2c/PENDING_APPROVAL.md	2026-09-14 10:38:37.904884951 -0600
+@@ -24,5 +24,46 @@
+ 
+ ## Pendientes
+ 
++### [2026-09-14] (analista-requerimientos) — REQ-002: ¿la comisión de 1,5 % es tasa única o tasa vigente por fecha de factura?
++
++**Contexto.** `ADR-002` (aceptado 2026-09-01) dice: «la comisión pasa de 2 % a 1,5 % para todas las
++facturas desde el 2026-09-01». Al escribir el contrato de REQ-002 hay que decidir qué contrata esa
++frase, y las dos lecturas producen **importes cobrados distintos**, así que no se puede elegir por
++redacción:
++
++- El proyecto factura **mensualmente** (`AGENTS.md` §1). Una factura del ciclo de agosto (corte
++  2026-08-31) emitida en septiembre cobra **1,5 %** bajo (A) y **2 %** bajo (B).
++- El ADR **no dice** si «desde el 2026-09-01» se refiere a la fecha de **emisión** de la factura, a
++  su fecha de **corte/periodo**, o simplemente a la fecha de **entrada en vigor** del cambio.
++- El código no desempata: `comision(monto)` en `src/tarifa.js` **no recibe ninguna fecha** y
++  `COMISION` es una constante única (hoy `0.02`). No hay ninguna noción de fecha de factura en el
++  cálculo de la comisión de la que deducir la intención.
++- Cuestión ligada: `src/tarifa.js` sigue en 2 % a día de hoy (2026-09-14), es decir **14 días** de
++  facturas emitidas al 2 % bajo cualquiera de las dos lecturas. Hay que decir si se **rectifican**
++  (recálculo / nota de crédito) o si el cambio rige sólo hacia adelante desde que se despliegue.
++
++**Opciones.**
++
++- **(A) Tasa única.** La tasa vigente pasa a ser 1,5 % y el sistema aplica **una sola** tasa a toda
++  factura que calcule. Es un cambio de constante (`COMISION = 0.015`); `comision(monto)` conserva su
++  firma. Las facturas ya emitidas al 2 % no se recalculan salvo decisión aparte.
++- **(B) Tasa vigente por fecha.** La tasa depende de la **fecha de la factura**: 1,5 % para las de
++  fecha ≥ 2026-09-01 y 2 % para las anteriores. Es una **capacidad nueva**: `comision()` pasa a
++  necesitar la fecha, hay que definir qué fecha de la factura manda (emisión o corte) y hay que
++  contratar el borde exacto del 2026-09-01 y el comportamiento ante fecha ausente o inválida.
++
++**Recomendación del agente.** Ninguna de las dos sin respuesta humana: el desempate decide **lo que
++se cobra**, y `AGENTS.md` §1 fija como principio rector «cobrar lo decidido, ni más ni menos». Si se
++confirma que el sistema **nunca** vuelve a calcular la comisión de una factura anterior al
++2026-09-01 —ni por reemisión, ni por rectificación, ni al facturar en septiembre el ciclo de
++agosto—, entonces (A) y (B) son observablemente equivalentes y procede **(A)** por ser la más
++simple. En cuanto exista **cualquiera** de esos recálculos, la respuesta es **(B)** y hace falta
++contratar la fecha que manda. Junto con la elección hace falta la respuesta a la cuestión ligada:
++qué se hace con lo cobrado al 2 % entre el 2026-09-01 y el despliegue del cambio.
++
++**Espera.** Elección humana entre (A) y (B) —y, si es (B), qué fecha de la factura manda— más la
++decisión sobre las facturas ya cobradas al 2 % desde el 2026-09-01. Hasta entonces `CA-01` de
++REQ-002 **no se reescribe** y el REQ queda en `en-progreso` sin entregar a desarrollo.
++
+ ## Resueltas
+ <!-- Mover aquí con: decisión tomada, quién, fecha. No borrar (histórico). -->
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/docs/ESTADO.md /tmp/arnes-diag-wBF0L4/casos/CON-2c/docs/ESTADO.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/docs/ESTADO.md	2026-09-14 10:34:59.164781025 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-2c/docs/ESTADO.md	2026-09-14 10:40:26.508886149 -0600
+@@ -7,17 +7,60 @@
+ > Se actualiza al cerrar cada sesión de trabajo.
+ 
+ ## Fase actual
+-(ej. Fase 0 — andamiaje / Fase 1 — ...)
++Alineación de REQ-002 con ADR-002 (comisión 2 % → 1,5 %).
+ 
+ ## En progreso
+-- (REQ o tarea que está abierta ahora)
++- **REQ-002 — Comisión por factura** (`en-progreso`). Reclasificado el 2026-09-14 por el
++  `analista-requerimientos`: `Sensible a seguridad: sí`, `Rigor: critico`, `Seguridad: pendiente`,
++  `QA: pendiente`. Vía de §6: **desarrollador → QA → seguridad** (el efecto toca dinero, que §6
++  declara crítico en este proyecto), con la comisión de análisis ya consumida para resolver la
++  clasificación insuficiente.
+ 
+ ## Próximo paso concreto
+-- (la siguiente acción, sin ambigüedad)
++- **Espera decisión humana** en `PENDING_APPROVAL.md`: ¿la comisión de 1,5 % es **(A) tasa única**
++  o **(B) tasa vigente por fecha de factura**? Y qué se hace con lo cobrado al 2 % entre el
++  2026-09-01 y el despliegue. Resuelta la entrada y retirada de `## Pendientes`:
++  - si **(A)**: despachar al `desarrollador` (cambio de `COMISION` a `0.015` en `src/tarifa.js` +
++    write-back de `CA-01` + pruebas + CHANGELOG, en la misma entrega) → `qa-tester` →
++    `auditor-seguridad`.
++  - si **(B)**: volver al `analista-requerimientos` para contratar los criterios de vigencia por
++    fecha antes de desarrollo.
+ 
+ ## Bloqueos
+-- (ninguno | descripción + a quién/qué espera)
++- REQ-002 bloqueado por la entrada de `PENDING_APPROVAL.md` del 2026-09-14 (gate humano, §6).
++  Mientras esa entrada siga en `## Pendientes`, `guard-completado` deniega el cierre de **cualquier**
++  REQ; es el comportamiento previsto del gate.
+ 
+ ## Pendientes (cola)
+-- [ ] ...
+-- [ ] ...
++- [ ] **REQ-002**: resolver la vigencia (A/B) y terminar el ciclo dev → QA → seguridad.
++- [ ] **REQ-001 — deriva detectada, no atendida hoy (§14 B.4, corregir sin ampliar):** su `CA-02`
++      dice «el 29 de febrero se rechaza siempre, porque no se consideran años bisiestos», pero
++      `ADR-001` (aceptado 2026-08-20) decide lo contrario y `src/fecha.js` implementa
++      `esBisiesto()` devolviendo 29 días en febrero bisiesto. El criterio contradice la decisión y
++      el código. Es la misma forma de defecto que REQ-002 y está fuera del encargo del 2026-09-14;
++      requiere su propia vía (el efecto alcanza la validación de fechas de facturación).
++
++<!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
++## Estado derivado — 2026-09-14 10:40
++
++> Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
++> Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
++> de los marcadores y ahí no se toca. Si algo aquí te sorprende, el disco dice eso.
++>
++> Los veredictos se muestran **como los lee la máquina** —normalizados: sin mayúsculas, sin
++> tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
++> raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
++
++**Repositorio:** `(sin repositorio)` @ `—` — desconocido
++**Arnés:** plugin instalado `1.33.0`
++**Aprobaciones pendientes:** 1
++**REQ:** 2 — completado 1 · en-revisión 0 · en-progreso 1 · bloqueado 0 · otros 0
++**Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
++
++_Sólo los REQ abiertos; los 1 completados no se listan._
++
++| REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
++|---|---|---|---|---|---|
++| REQ-002 | en-progreso | pendiente | pendiente | critico | ninguno |
++
++<!-- ARNES:DERIVADO fin -->
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/requirements/README.md /tmp/arnes-diag-wBF0L4/casos/CON-2c/requirements/README.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/requirements/README.md	2026-09-14 10:34:59.164989925 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-2c/requirements/README.md	2026-09-14 10:39:03.284885264 -0600
+@@ -417,4 +417,4 @@
+ | REQ | Título | Estado |
+ |---|---|---|
+ | REQ-001 | Validación de la fecha de corte | completado |
+-| REQ-002 | Comisión por factura | completado |
++| REQ-002 | Comisión por factura | en-progreso |
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/requirements/REQ-002.md /tmp/arnes-diag-wBF0L4/casos/CON-2c/requirements/REQ-002.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/requirements/REQ-002.md	2026-09-14 10:34:59.164894447 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-2c/requirements/REQ-002.md	2026-09-14 10:39:00.184885225 -0600
+@@ -1,14 +1,14 @@
+ # REQ-002 — Comisión por factura
+-Estado: completado
++Estado: en-progreso
+ Módulo: src/tarifa.js
+ Archivos: src/tarifa.js, requirements/REQ-002.md
+ Prioridad: alta
+ Versión destino: 1.0.0
+-Sensible a seguridad: no
+-QA: aprobado (2026-08-15)
+-Seguridad: n/a
++Sensible a seguridad: sí
++QA: pendiente
++Seguridad: pendiente
+ Hallazgos abiertos: ninguno
+-Rigor: estandar
++Rigor: critico
+ 
+ ## Historia
+ Como facturador, quiero que cada factura lleve la comisión vigente para cobrar lo decidido.
+@@ -17,7 +17,29 @@
+ - CA-01: La comisión aplicada a cada factura es del 2 % del monto.
+ - CA-02: El resultado se redondea a dos decimales.
+ 
++## Preguntas abiertas / conflictos
++- **Vigencia de la nueva tasa (abierta, escalada a `PENDING_APPROVAL.md` el 2026-09-14).**
++  `ADR-002` dice «1,5 % para todas las facturas desde el 2026-09-01» y no desempata si eso significa
++  (A) **tasa única** —la tasa vigente pasa a 1,5 % y el sistema aplica una sola tasa— o (B) **tasa
++  vigente por fecha de la factura**, conservando el 2 % para las anteriores al 2026-09-01. Las dos
++  lecturas cobran importes distintos a las facturas del ciclo de agosto emitidas en septiembre, y
++  (B) exigiría además decidir qué fecha manda (emisión o corte) y cambiar la firma de `comision()`.
++  `src/tarifa.js` no ofrece desempate: `comision(monto)` no recibe ninguna fecha.
++  **Mientras esto siga abierto, `CA-01` NO se reescribe y el REQ no se entrega a desarrollo.**
++- **Ligada a la anterior:** `src/tarifa.js` sigue en 2 % a 2026-09-14, así que hay facturas cobradas
++  al 2 % desde el 2026-09-01 bajo cualquiera de las dos lecturas; falta decidir si se rectifican.
++
++## Notas / alcance
++- **Deriva conocida (sin resolver aquí):** `CA-01` dice 2 %, `ADR-002` decide 1,5 % y
++  `src/tarifa.js` implementa `COMISION = 0.02`. El write-back del criterio queda supeditado a la
++  decisión de vigencia de arriba.
++- **Fuera de alcance de la comisión del 2026-09-14:** sólo se decidió la clasificación y la
++  reapertura; no se tocó `CA-01` ni `src/`.
++
+ ## Historial de cambios
+ | Fecha | Cambio | Causa |
+ |---|---|---|
+ | 2026-08-15 | Creación | — |
++| 2026-09-14 | `Sensible a seguridad:` no → sí · `Rigor:` estandar → critico · `Seguridad:` n/a → pendiente | El efecto del cambio (aplicar 1,5 % al cobro) toca **dinero**, que `AGENTS.md` §6 declara crítico en este proyecto; la cabecera anterior prometía menos revisión que la que el efecto exige (§6, «contrato claro»). Causa: **ADR-002** (`docs/decisions/ADR-002.md`) |
++| 2026-09-14 | `Estado:` completado → en-progreso · `QA:` aprobado (2026-08-15) → pendiente | Reapertura por cambio de contrato (`AGENTS.md` §9, REGLA DE ESTADO): el REQ re-recorre el ciclo y el veredicto del 2026-08-15 juzgó un código que va a cambiar. Causa: **ADR-002** |
++| 2026-09-14 | Criterios de aceptación: sin cambio (`CA-01` sigue diciendo 2 %) | La vigencia de la nueva tasa (tasa única vs. tasa por fecha de factura) no la desempata **ADR-002**; escalada a `PENDING_APPROVAL.md` a la espera de decisión humana. Causa: **ADR-002** |

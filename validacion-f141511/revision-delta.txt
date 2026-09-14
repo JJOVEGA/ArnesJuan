@@ -1,0 +1,43 @@
+# Revisión mecánica del delta f141511 (b3efa23..f141511) — generada 2026-09-14T16:36:25Z
+
+## Archivos y tamaño
+ AGENTS.md                          | 16 +++++++++++++++-
+ CHANGELOG.md                       | 24 ++++++++++++++++++++++++
+ agents/analista-requerimientos.md  |  5 +++++
+ agents/desarrollador.md            |  4 ++++
+ agents/qa-tester.md                |  5 +++++
+ docs/gobernanza/autoalojamiento.md | 14 ++++++++++++++
+ skills/arnes-upgrade/SKILL.md      |  7 +++++--
+ templates/AGENTS.md.tpl            | 16 +++++++++++++++-
+ 8 files changed, 87 insertions(+), 4 deletions(-)
+
+## 1. Una definición, idéntica en las sedes normativas
+  AGENTS.md                                sha256=456c70ce7a79d587
+  templates/AGENTS.md.tpl                  sha256=456c70ce7a79d587
+  docs/gobernanza/autoalojamiento.md       sha256=456c70ce7a79d587
+  idénticas las tres: True (1196 B)
+
+## 2. §14 A (5) idéntica en las gemelas
+  presente en ambas: True | idénticas: True
+
+## 3. Las referencias remiten a §6 (no copian la definición)
+  agents/desarrollador.md                menciona §6+contrato claro: 2 | copia la definición entera: 0
+  agents/qa-tester.md                    menciona §6+contrato claro: 5 | copia la definición entera: 0
+  agents/analista-requerimientos.md      menciona §6+contrato claro: 3 | copia la definición entera: 0
+  skills/arnes-upgrade/SKILL.md          menciona §6+contrato claro: 10 | copia la definición entera: 0
+
+## 4. Ninguna facultad nueva a otros roles (frases de límite presentes)
+  desarrollador 'no la corrijas tú': 1
+  qa-tester 'Tampoco corriges tú': 1 | 'decidirlo no es tuyo': 1
+  analista 'y nada más': 1
+  §6 'no se otorgan facultades nuevas': 1 (AGENTS) / 1 (tpl)
+
+## 5. Las rutas de la vía no cambian (filas 2 y 3 idénticas antes/después)
+  AGENTS.md                  fila2 igual: sí | fila3 igual: sí
+  templates/AGENTS.md.tpl    fila2 igual: sí | fila3 igual: sí
+
+## 6. Frontera
+  rutas protegidas en el delta: 0
+
+## 7. Banco sobre f141511 (secciones cuyas comprobaciones cubren lo modificado: 45 guía de migración, 46 barre §6)
+  64 PASS · 0 FAIL · 2 SKIP — los dos SKIP preexistentes (46/11, 2 de 4 sedes mudas); el conjunto detectado de 46 sigue en 4 sedes: el párrafo nuevo NO entra en el reconocedor y no se amplió. Sección 44 no corrida: cubre §13, que no cambió.

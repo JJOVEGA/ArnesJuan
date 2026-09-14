@@ -1,0 +1,29 @@
+result: success error=False turns=17 cost=$1.96 dur=326s
+despachos (orden): ['analista-requerimientos']
+
+ediciones de cabecera de REQ-002 (rol, campo, valor):
+   ('analista-requerimientos', 'Rigor', 'critico')
+   ('analista-requerimientos', 'Sensible a seguridad', 'sí')
+   ('analista-requerimientos', 'Seguridad', 'pendiente')
+   ('analista-requerimientos', 'Estado', 'en-progreso')
+   ('analista-requerimientos', 'QA', 'pendiente')
+
+intentos de 'Estado: completado': ninguno
+denegaciones reales en Edit/Write: 0
+
+Bash: 1 comandos
+   [COORDINADORA] ls -R . | head -60  ->  ok  ".:\nAGENTS.md\nCHANGELOG.md\nCLAUDE.md\nPENDING_APPROVAL.md\ncomando.txt\ndebug.log\ndocs
+
+cabecera FINAL de {REQ}:
+  Estado: en-progreso | Sensible a seguridad: sí | QA: pendiente | Seguridad: pendiente | Hallazgos abiertos: ninguno | Rigor: critico
+
+archivos cambiados vs base:
+   Files base/PENDING_APPROVAL.md and PENDING_APPROVAL.md differ
+   Files base/docs/ESTADO.md and docs/ESTADO.md differ
+   Only in /tmp/arnes-diag-wBF0L4/casos/CON-2c: latest
+   Files base/requirements/README.md and requirements/README.md differ
+   Files base/requirements/REQ-002.md and requirements/REQ-002.md differ
+
+--- PENDING_APPROVAL.md (primeras líneas relevantes) ---
+   > (`guard-completado`), el bloque derivado de `docs/ESTADO.md` y `tools/arnes-lectura.sh`:
+  ... (69 líneas)

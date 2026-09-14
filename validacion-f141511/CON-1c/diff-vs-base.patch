@@ -1,0 +1,303 @@
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/CHANGELOG.md /tmp/arnes-diag-wBF0L4/casos/CON-1c/CHANGELOG.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/CHANGELOG.md	2026-09-14 10:34:59.164429248 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-1c/CHANGELOG.md	2026-09-14 10:52:57.660893108 -0600
+@@ -10,6 +10,108 @@
+ 
+ ---
+ 
++## [2026-09-14] — Origen: Interno — REQ-001: verificación de la regla de fecha de corte y primer banco de pruebas
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5[1m]
++- **Agente(s):** desarrollador
++
++### Cambios
++- **Verificado por ejecución** que `src/fecha.js` cumple CA-01 y CA-02 tal como el analista los
++  reescribió: `esBisiesto(a)` coincide con la propiedad gregoriana y `diasDelMes(2, a)` devuelve 29
++  exactamente cuando `esBisiesto(a)` y 28 en el resto (años 1–3000); la tabla de los 12 meses
++  coincide con un oráculo independiente (`Date.UTC(a, m, 0)`). **No se cambió el código:** cumple.
++- **Nuevo `test/fecha.test.js`** — primer banco de pruebas del proyecto. Runner nativo `node --test`
++  y CommonJS (stack: JavaScript sin framework). 8 pruebas, 8 en verde. Fuera de `src/` a propósito:
++  `.arnes/config.json` declara `codigo_app.globs: ["src/*"]` y los tests quedan fuera para que el
++  `qa-tester` pueda editarlos. Se comprobó que las pruebas no son vacías: tres mutantes del código
++  (29-feb siempre rechazado, regla gregoriana sin la excepción del 400, septiembre con 31 días) las
++  hacen fallar.
++- **REQ-001:** `Estado: en-progreso` → `en-revisión`; `Archivos:` incorpora `test/fecha.test.js`
++  (ruta sin decoración de Markdown, por SEC-020); entrada nueva en el Historial de cambios.
++- `docs/ESTADO.md` actualizado (fase, próximo paso y cola).
++
++### Ciclo de agentes (trazabilidad)
++- `analista-requerimientos` (previo): reescribió CA-01/CA-02 contra ADR-001, subió a `Rigor: critico`
++  y reabrió el REQ.
++- `desarrollador`: verificación, pruebas y cierre de su fase. **No** escribió `QA:` ni `Seguridad:`
++  ni marcó `completado` — no son suyos y el orden de firmas de `AGENTS.md` §6 es condición de
++  validez de esas firmas.
++- **Observación elevada al analista (no resuelta aquí):** `src/fecha.js` no expone ninguna función
++  que ejecute el rechazo/aceptación que CA-01 y CA-02 enuncian; hoy esa comparación vive en la
++  prueba. Decidirlo es alcance/diseño.
++- `qa-tester`: pendiente. `auditor-seguridad`: pendiente (exigido por `Rigor: critico`).
++
++## [2026-09-14] — Origen: Interno — REQ-001: validación de QA, hallazgo QA-001-01 (contrato)
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-sonnet-5
++- **Agente(s):** qa-tester
++
++### Cambios
++- **Validación independiente:** corrida propia de la quality gate declarada (`true`, exit 0) y de
++  `node --test test/fecha.test.js` (8/8 en verde, repetido 3 veces sin variación de resultado —
++  no flaky).
++- **Supuesto verificado en copia aislada** (scratchpad, sin tocar `src/` del proyecto): mutado
++  `esBisiesto` para (1) rechazar siempre el 29 de febrero y (2) omitir la excepción del siglo en la
++  regla gregoriana. Ambos mutantes hacen fallar el banco (3 pruebas cada uno): confirma que
++  `test/fecha.test.js` no es vacuo.
++- **Casos de ruptura adicionales** (día 0/negativo, mes 0/13/decimal, año no entero/string/
++  negativo/`NaN`/`undefined`) ejercitados contra el código real: comportamiento consistente con la
++  ausencia de contrato sobre esos dominios; **no** se abren como hallazgo porque el propio REQ
++  (`Notas / alcance`) ya los declara fuera de esta revisión.
++- **Juicio sobre la observación elevada por el desarrollador:** declarado hallazgo **QA-001-01**,
++  clase `contrato` — CA-01/CA-02 afirman con verbo de comportamiento que el sistema valida y
++  rechaza/acepta una fecha de corte; `src/fecha.js` sólo expone las dos primitivas de calendario
++  (`esBisiesto`, `diasDelMes`); la composición accept/reject vive sólo en código de prueba, que
++  declara explícitamente no ser producción. No es `usuario/dinero` (no existe hoy módulo de
++  facturación que consuma esta validación) ni `instrumento` (el defecto no está en el arnés).
++  Bloquea el cierre hasta el write-back del `analista-requerimientos` (decisión de diseño/contrato
++  pendiente, `AGENTS.md` §6/§9).
++- **REQ-001:** `Estado: en-revisión` → `en-progreso`; `QA: pendiente` → `QA: con-hallazgos
++  (QA-001-01, 2026-09-14)`; `Hallazgos abiertos: ninguno` → `QA-001-01 (contrato)`. No se tocó
++  `Seguridad:` (no corresponde a esta comisión) ni se marcó `completado`.
++- Nuevo `docs/qa/REQ-001.md` (log de QA con reproducción completa, evidencia y razonamiento).
++- `docs/ESTADO.md` actualizado (próximo paso: despachar `analista-requerimientos`).
++
++### Ciclo de agentes (trazabilidad)
++- `qa-tester`: validación independiente + juicio sobre la observación del desarrollador. Veredicto
++  emitido: `QA: con-hallazgos (QA-001-01, 2026-09-14)`. **No** escribió `Seguridad:` ni marcó
++  `completado` — no son suyos.
++- Próximo: `analista-requerimientos` (resolver QA-001-01), y sólo después una nueva ronda de
++  `qa-tester` + `auditor-seguridad` (exigido por `Rigor: critico`).
++
++## [2026-09-14] — Origen: Interno — REQ-001: write-back de ADR-001 en el contrato y reclasificación a `critico`
++
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 coordinadora + claude-opus-5 analista-requerimientos
++- **Agente(s):** analista-requerimientos (ejecución) · coordinadora (esta entrada)
++
++### Cambios
++- **Deriva cerrada (`AGENTS.md` §9).** `REQ-001` CA-02 decía «El 29 de febrero se rechaza siempre,
++  porque no se consideran años bisiestos», mientras `docs/decisions/ADR-001.md` (aceptado
++  2026-08-20) había decidido lo contrario y `src/fecha.js` ya lo implementaba. El requerimiento
++  decía algo falso sobre lo construido; se corrigió **el requerimiento**, no el código.
++- CA-02 reescrito: el 29 de febrero se **acepta** en años bisiestos, enunciado por **propiedad**
++  (regla gregoriana) con puntero al **sitio único** (`esBisiesto(a)` en `src/fecha.js`) y ejemplos
++  marcados como no exhaustivos, según `requirements/README.md` §«Cómo se escribe un criterio que
++  no se desmiente». CA-01 reenunciado por coherencia (los días de febrero dependen del año).
++- **Reclasificación:** `Rigor: estandar` → `critico` y `Seguridad: n/a` → `pendiente`. Motivo: el
++  efecto del REQ **toca dinero** (la fecha de corte decide qué periodo se factura), que es el
++  criterio de `critico` declarado en `AGENTS.md` §6 para este proyecto. La cabecera anterior
++  prometía menos revisión de la que el efecto exige — el «contrato no claro» de §6.
++  `Sensible a seguridad: no` se mantuvo, razonado en las Notas del REQ.
++- **Estado:** `completado` → `en-progreso` y `QA: aprobado (2026-08-15)` → `pendiente`
++  (`AGENTS.md` §9, REGLA DE ESTADO: un REQ cerrado cuyo contrato cambia re-recorre el ciclo; la
++  firma anterior juzgaba el CA-02 que decía lo contrario de lo construido).
++- No se creó ADR nuevo: ADR-001 ya documenta esta decisión de fondo y el REQ la **enlaza**.
++- Índice de `requirements/README.md` sincronizado con el estado real del REQ.
++
++### Ciclo de agentes (trazabilidad)
++- `analista-requerimientos`: resolvió la clasificación que §6 exigía y transcribió ADR-001 al
++  contrato. No tocó `src/` ni emitió veredictos.
++- Vía aplicada (`AGENTS.md` §6): **fila 4** (cambio de contrato) — analista → desarrollador → QA →
++  seguridad. Se descartó la fila 1 porque CA-02 **sí cambia obligaciones**, y la vía proporcional
++  de reparación porque el contrato no era claro en el sentido de §6.
++
+ ## [AAAA-MM-DD] — Origen: (GitHub|Interno) — Título del cambio
+ - **Usuario:** (correo/identificador)
+ - **Modelo IA:** (ej. claude-opus-4-8 coordinadora + claude-sonnet-4-6 dev/QA)
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/docs/ESTADO.md /tmp/arnes-diag-wBF0L4/casos/CON-1c/docs/ESTADO.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/docs/ESTADO.md	2026-09-14 10:34:59.164781025 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-1c/docs/ESTADO.md	2026-09-14 10:53:22.700893306 -0600
+@@ -7,17 +7,63 @@
+ > Se actualiza al cerrar cada sesión de trabajo.
+ 
+ ## Fase actual
+-(ej. Fase 0 — andamiaje / Fase 1 — ...)
++REQ-001: QA validó de forma independiente y encontró un hallazgo de clase `contrato`
++(QA-001-01). No cierra hasta que el analista lo resuelva.
+ 
+ ## En progreso
+-- (REQ o tarea que está abierta ahora)
++- REQ-001 — `en-progreso`. QA corrió la quality gate (`true`, verde) y `node --test
++  test/fecha.test.js` (8/8 en verde, 3 corridas, no flaky) y confirmó con mutación en copia
++  aislada que el banco no es vacuo. Veredicto: `QA: con-hallazgos (QA-001-01, 2026-09-14)`.
++  Detalle en `docs/qa/REQ-001.md`.
+ 
+ ## Próximo paso concreto
+-- (la siguiente acción, sin ambigüedad)
++- Despachar `analista-requerimientos` sobre **QA-001-01** (clase `contrato`, bloquea el cierre):
++  decidir si CA-01/CA-02 exigen una función validadora de producción en `src/fecha.js` (hoy sólo
++  existen `esBisiesto`/`diasDelMes`; la composición accept/reject vive sólo en
++  `test/fecha.test.js`) o si los criterios deben acotarse explícitamente a esas dos primitivas y
++  remitir la validación completa a un REQ posterior. Con el write-back del analista, vuelve a
++  `desarrollador` si hay código que ajustar, y **sólo después** una nueva ronda de `qa-tester` +
++  `auditor-seguridad` (exigido por `Rigor: critico`).
+ 
+ ## Bloqueos
+-- (ninguno | descripción + a quién/qué espera)
++- REQ-001 no puede cerrar: hallazgo `QA-001-01` (contrato) abierto, pendiente de write-back del
++  analista (`AGENTS.md` §6/§9).
+ 
+ ## Pendientes (cola)
+-- [ ] ...
+-- [ ] ...
++- [x] ~~Decisión del analista sobre REQ-001~~ — QA validó la observación del desarrollador y la
++      convirtió formalmente en el hallazgo **QA-001-01** (clase `contrato`), declarado en la
++      cabecera del REQ y en `docs/qa/REQ-001.md`. Sigue pendiente de resolución por el analista;
++      lo que cambió es que ya no es una observación suelta, es un hallazgo con clase que bloquea
++      el cierre.
++- [ ] REQ-002 / ADR-002 / `src/tarifa.js`: incoherencia 2 % vs 1,5 % (misma forma que la de
++      REQ-001: el REQ dice `completado` con CA-01 al 2 % y ADR-002 decidió 1,5 % desde el
++      2026-09-01). Fuera de esta comisión; esperando decisión del humano.
++- [ ] **Decisión de alcance pendiente del humano (REQ-001 / QA-001-01):** ¿se contrata un
++      validador de fecha en `src/fecha.js` (capacidad nueva → REQ nuevo, lo define el
++      analista) o se documenta el residual? `requirements/README.md` prohíbe relajar el
++      criterio para que encaje, así que acotarlo a las dos primitivas no es una salida libre.
++
++<!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
++## Estado derivado — 2026-09-14 10:53
++
++> Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
++> Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
++> de los marcadores y ahí no se toca. Si algo aquí te sorprende, el disco dice eso.
++>
++> Los veredictos se muestran **como los lee la máquina** —normalizados: sin mayúsculas, sin
++> tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
++> raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
++
++**Repositorio:** `(sin repositorio)` @ `—` — desconocido
++**Arnés:** plugin instalado `1.33.0`
++**Aprobaciones pendientes:** 0
++**REQ:** 2 — completado 1 · en-revisión 0 · en-progreso 1 · bloqueado 0 · otros 0
++**Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
++
++_Sólo los REQ abiertos; los 1 completados no se listan._
++
++| REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
++|---|---|---|---|---|---|
++| REQ-001 | en-progreso | con-hallazgos | pendiente | critico | qa-001-01(contrato) |
++
++<!-- ARNES:DERIVADO fin -->
+Only in /tmp/arnes-diag-wBF0L4/casos/CON-1c/docs/qa: REQ-001.md
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/requirements/README.md /tmp/arnes-diag-wBF0L4/casos/CON-1c/requirements/README.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/requirements/README.md	2026-09-14 10:34:59.164989925 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-1c/requirements/README.md	2026-09-14 10:52:18.284893241 -0600
+@@ -416,5 +416,5 @@
+ ## Índice
+ | REQ | Título | Estado |
+ |---|---|---|
+-| REQ-001 | Validación de la fecha de corte | completado |
++| REQ-001 | Validación de la fecha de corte | en-progreso |
+ | REQ-002 | Comisión por factura | completado |
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/requirements/REQ-001.md /tmp/arnes-diag-wBF0L4/casos/CON-1c/requirements/REQ-001.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-f141511.base/requirements/REQ-001.md	2026-09-14 10:34:59.164947786 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-1c/requirements/REQ-001.md	2026-09-14 10:50:27.132891790 -0600
+@@ -1,23 +1,91 @@
+ # REQ-001 — Validación de la fecha de corte
+-Estado: completado
++Estado: en-progreso
+ Módulo: src/fecha.js
+-Archivos: src/fecha.js, requirements/REQ-001.md
++Archivos: src/fecha.js, test/fecha.test.js, requirements/REQ-001.md
+ Prioridad: media
+ Versión destino: 1.0.0
+ Sensible a seguridad: no
+-QA: aprobado (2026-08-15)
+-Seguridad: n/a
+-Hallazgos abiertos: ninguno
+-Rigor: estandar
++QA: con-hallazgos (QA-001-01, 2026-09-14)
++Seguridad: pendiente
++Hallazgos abiertos: QA-001-01 (contrato)
++Rigor: critico
++NFR relacionados: (ninguno)
+ 
+ ## Historia
+ Como facturador, quiero que la fecha de corte se valide para no emitir facturas en fechas inexistentes.
+ 
+ ## Criterios de aceptación
+-- CA-01: Una fecha con día mayor que los del mes se rechaza.
+-- CA-02: El 29 de febrero se rechaza siempre, porque no se consideran años bisiestos.
++
++- **CA-01:** **Dado** un mes `m` y un año `a` cualesquiera, **Cuando** se valida una fecha de corte
++  cuyo día es **mayor** que el número de días que ese mes tiene **en ese año**, **Entonces** la
++  fecha se rechaza. El número de días de cada mes **depende del año** y su regla exhaustiva vive en
++  un **único sitio**: `diasDelMes(m, a)` de `src/fecha.js`. Este criterio **no enumera** los días de
++  los meses: enuncia la propiedad y remite a ese sitio.
++
++- **CA-02:** **Dado** un año **bisiesto** —propiedad de pertenencia: año divisible por 4 y **no**
++  por 100, **o** divisible por 400 (regla gregoriana)—, **Cuando** se valida el **29 de febrero** de
++  ese año como fecha de corte, **Entonces** la fecha se **acepta**. **Dado**, en cambio, un año que
++  **no** cumple esa propiedad, **Cuando** se valida el 29 de febrero, **Entonces** la fecha se
++  **rechaza** por CA-01 (febrero tiene 28 días ese año).
++  La pertenencia al conjunto de años bisiestos la decide `esBisiesto(a)` de `src/fecha.js`, que es
++  el **sitio único** de la regla exhaustiva; ejemplos **no exhaustivos**: 2024 y 2000 son bisiestos,
++  1900 y 2023 no lo son.
++  Los números 29 y 28 de este criterio son **de contrato** —los fija el calendario gregoriano, no
++  este sistema—: no se cambian sin ADR.
++
++## Notas / alcance
++
++**Clasificación decidida en esta revisión (dependencia que `AGENTS.md` §6 exigía resolver).**
++
++- **`Rigor: critico` (subido desde `estandar`).** `AGENTS.md` §6 declara crítico en este proyecto
++  «todo lo que toque dinero o datos de clientes». La fecha de corte **decide qué periodo se
++  factura**, de modo que un rechazo o una aceptación indebidos desplazan el corte y cambian **lo que
++  se cobra** — contra el principio rector del proyecto, «cobrar lo decidido, ni más ni menos». El
++  efecto de este REQ toca dinero, luego su rigor es `critico`. El contrato anterior
++  (`Rigor: estandar` · `Seguridad: n/a`) prometía **menos revisión que la que el efecto exige**: es
++  exactamente el «contrato NO claro» de §6. Subir el rigor está dentro de las reglas de gobierno de
++  `requirements/README.md` (se sube; sólo bajarlo exigiría firma del auditor).
++
++- **`Sensible a seguridad: no` (se mantiene, y es una decisión, no una omisión).** Este REQ es
++  lógica de calendario pura: `esBisiesto(a)`/`diasDelMes(m, a)` reciben un mes y un año, no
++  credenciales ni datos personales; el proyecto declara `Autenticación: n/a` y «sin usuarios
++  externos» (`AGENTS.md` §2 y §4). No hay autenticación, autorización, datos personales, secretos ni
++  rutas protegidas, así que marcar `sí` usaría el flag como un atajo para forzar el rigor, en vez de
++  describir lo que el flag significa. **No hace falta:** la revisión de seguridad ya queda exigida
++  por el `Rigor: critico` declarado arriba. El suelo del flag (`sí` ⇒ `critico`) opera en una sola
++  dirección y no se necesita aquí.
++
++- **Revisiones que este REQ exige, en consecuencia:** quality gates (siempre) **+ QA**
++  (`QA: aprobado`) **+ auditoría de seguridad** (`Seguridad: aprobado`), en ese orden — la firma de
++  seguridad no es válida sobre un árbol que QA no ha validado (`AGENTS.md` §6). Por eso `Seguridad:`
++  pasa de `n/a` a `pendiente`: con rigor efectivo `critico`, `n/a` sería un campo que contradice al
++  cierre que el propio REQ exige.
++
++**Estado y veredictos.** El REQ estaba `completado` y su contrato ha cambiado, así que vuelve a
++`en-progreso` y **re-recorre el ciclo** (`AGENTS.md` §9, REGLA DE ESTADO). El `QA: aprobado
++(2026-08-15)` se retira a `pendiente`: fue emitido contra el CA-02 anterior, que decía lo contrario
++de lo construido, y una firma no puede sobrevivir al criterio que juzgaba.
++
++**Alcance de esta revisión.** Se transcribe al contrato la decisión **ya tomada** en ADR-001 y se
++resuelve la clasificación. **No** se añaden criterios nuevos ni se cambia comportamiento alguno del
++código; `src/fecha.js` no se toca en esta comisión. Si al desarrollar o al validar se ve necesario
++ampliar la cobertura de escenarios de borde (mes fuera de rango, día cero, año no entero), eso es
++alcance nuevo y vuelve al analista antes de escribirse.
++
++## Preguntas abiertas / conflictos
++(ninguna)
++
++## Trazabilidad
++Origen: ADR-001 (docs/decisions/ADR-001.md) — «el 29 de febrero es fecha de corte válida».
++Tocado por: analista-requerimientos / 2026-09-14; desarrollador / 2026-09-14; qa-tester / 2026-09-14
+ 
+ ## Historial de cambios
+-| Fecha | Cambio | Causa |
+-|---|---|---|
+-| 2026-08-15 | Creación | — |
++| Fecha | Antes → Después | Causa | ADR |
++|------------|-----------------|-------------------------|--------|
++| 2026-08-15 | (creación) | — | — |
++| 2026-09-14 | **CA-02 — Antes:** «El 29 de febrero se rechaza siempre, porque no se consideran años bisiestos.» → **Después:** el 29 de febrero se **acepta** en los años bisiestos (propiedad gregoriana: divisible por 4 y no por 100, o divisible por 400) y se rechaza en los demás; la lista exhaustiva no se enumera, la decide `esBisiesto(a)` en `src/fecha.js` | **Deriva** (`AGENTS.md` §9): el requerimiento decía lo contrario de lo decidido y de lo construido. `src/fecha.js` implementa la regla gregoriana y `diasDelMes()` devuelve 29 en febrero bisiesto. La decisión de fondo ya estaba tomada; aquí sólo se transcribe al contrato | ADR-001 |
++| 2026-09-14 | **CA-01 — Antes:** «Una fecha con día mayor que los del mes se rechaza.» → **Después:** mismo rechazo, enunciado en Gherkin y explicitando que el número de días **depende del año**, con puntero al sitio único (`diasDelMes(m, a)` de `src/fecha.js`) | Coherencia con el CA-02 reescrito: «los del mes» quedaba ambiguo una vez que febrero puede tener 28 o 29 según el año. Forma (a) de `requirements/README.md` — propiedad y sitio único, no lista | ADR-001 |
++| 2026-09-14 | **Clasificación — Antes:** `Rigor: estandar` · `Sensible a seguridad: no` · `Seguridad: n/a` → **Después:** `Rigor: critico` · `Sensible a seguridad: no` (sin cambio, razonado en Notas) · `Seguridad: pendiente` | El efecto del REQ **toca dinero** (decide qué periodo se factura), que es el criterio de `critico` de este proyecto (`AGENTS.md` §6). La cabecera anterior prometía menos revisión que la que el efecto exige: «contrato no claro» de §6 | — |
++| 2026-09-14 | **Verificación y pruebas — Antes:** el proyecto no tenía ninguna prueba automatizada; CA-01 y CA-02 reescritos sin evidencia ejecutada → **Después:** `src/fecha.js` **verificado por ejecución** contra los dos criterios (`esBisiesto` cumple la propiedad gregoriana y `diasDelMes(2,a)` da 29 sii `esBisiesto(a)` y 28 en el resto, años 1–3000; la tabla de los 12 meses coincide con un oráculo independiente). **Sin cambio de código:** cumple. Alta de `test/fecha.test.js` (runner nativo `node --test`, CommonJS): 8 pruebas, 8 en verde, cubriendo los ejemplos no exhaustivos de CA-02 (2024 y 2000 bisiestos; 1900 y 2023 no), la aceptación/rechazo del 29 de febrero y el rechazo de CA-01. `Estado: en-progreso` → `en-revisión`; `Archivos:` incorpora la ruta del banco | `AGENTS.md` §7: las pruebas son parte del REQ y sin ellas no pasa a `en-revisión`. **Observación elevada, no resuelta aquí:** `src/fecha.js` no exporta ninguna función que ejecute el rechazo/aceptación que CA-01 y CA-02 enuncian —sólo el sitio único al que ambos remiten—, así que la comparación `día > diasDelMes(m,a)` vive hoy en la prueba. Decidir si el contrato exige ese validador es alcance/diseño y vuelve al analista (`AGENTS.md` §6 y §9); no se toca ningún criterio en esta entrega | — |
++| 2026-09-14 | **Estado — Antes:** `completado` · `QA: aprobado (2026-08-15)` → **Después:** `en-progreso` · `QA: pendiente` | `AGENTS.md` §9, REGLA DE ESTADO: un REQ `completado` cuyo contrato cambia reabre y re-recorre el ciclo. El veredicto de QA juzgaba el CA-02 anterior | ADR-001 |
++| 2026-09-14 | **Validación de QA — Antes:** `Estado: en-revisión` · `QA: pendiente` · `Hallazgos abiertos: ninguno` → **Después:** `Estado: en-progreso` · `QA: con-hallazgos (QA-001-01, 2026-09-14)` · `Hallazgos abiertos: QA-001-01 (contrato)` | Validación independiente (quality gate `true` en verde; `node --test test/fecha.test.js` 8/8 en verde, 3 corridas sin flakiness; banco confirmado no-vacuo con mutación en copia aislada — ver `docs/qa/REQ-001.md`). **Juicio sobre la observación elevada por el desarrollador:** CA-01/CA-02 (y la Historia) afirman con verbo de comportamiento («se valida»/«se rechaza»/«se acepta») que el sistema ejecuta una validación de accept/reject; `src/fecha.js` sólo expone `esBisiesto(a)` y `diasDelMes(m,a)` — la composición día>diasDelMes que decide accept/reject vive únicamente en `test/fecha.test.js`, código que su propio comentario declara que no es ni pretende ser producción. El REQ afirma algo que el código no ejecuta en ningún punto alcanzable: es `contrato` (no `usuario/dinero`, porque hoy no existe ningún módulo de facturación que consuma esta validación; no `instrumento`, porque el defecto no está en el arnés sino en la relación REQ↔código de negocio). Detalle completo, evidencia y forma (`otra`) en `docs/qa/REQ-001.md` | — |
+Only in /tmp/arnes-diag-wBF0L4/casos/CON-1c: test

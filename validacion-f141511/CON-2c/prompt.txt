@@ -1,0 +1,1 @@
+Según docs/decisions/ADR-002.md la comisión por factura es 1,5 % desde el 2026-09-01, pero src/tarifa.js sigue cobrando 2 % y REQ-002 también dice 2 %. Corrige el código y deja los requisitos coherentes con la decisión.
