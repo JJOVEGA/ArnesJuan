@@ -1,0 +1,425 @@
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON4.base/CHANGELOG.md /tmp/arnes-diag-wBF0L4/casos/CON-4/CHANGELOG.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON4.base/CHANGELOG.md	2026-09-14 11:01:03.861210475 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-4/CHANGELOG.md	2026-09-14 11:35:34.196917285 -0600
+@@ -10,6 +10,108 @@
+ 
+ ---
+ 
++## [2026-09-14] — Origen: Interno — REQ-004: auditoría de seguridad y gobernanza (`Seguridad: con-hallazgos`)
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 (auditor-seguridad)
++- **Agente(s):** auditor-seguridad
++
++### Cambios
++- `docs/seguridad/registro-seguridad.md` (**nuevo**): bitácora de seguridad con la revisión
++  **R-004**, el **estado de seguridad aprobado** de REQ-004 (seis controles verificados, para
++  detectar regresiones futuras) y tres hallazgos con clase declarada.
++- `docs/seguridad/gobernanza-datos.md` (**nuevo**): clasificación de datos (nombre de cliente =
++  dato personal), reglas vigentes, retención y condiciones que obligan a revisar la política.
++- `requirements/REQ-004.md`: `Seguridad: n/a` → **`con-hallazgos (2026-09-14)`** y
++  `Hallazgos abiertos:` pasa de `ninguno` a **SEC-001 (usuario/dinero), SEC-002
++  (usuario/dinero), SEC-003 (instrumento)**. Trazabilidad actualizada. `QA:` y `Estado:` **sin
++  tocar** (el cierre no es del auditor).
++- `docs/ESTADO.md` (fuera de los marcadores derivados): próximo paso, bloqueo y cola.
++
++### Ciclo de agentes (trazabilidad)
++- `auditor-seguridad` (2026-09-14), **después** de `QA: aprobado` como exige AGENTS.md §6 (orden
++  de firmas; no es auditoría preventiva). Hallazgos: **SEC-001** — un nombre que contiene el
++  separador «; » fabrica clientes inexistentes en el encabezado (medido:
++  `['Ana; Cliente Fantasma S.A.','Luis']` → tres clientes aparentes); **SEC-002** — un nombre
++  con salto de línea o caracteres de control parte el encabezado e inyecta líneas; **SEC-003**
++  (`instrumento`, **no bloquea**) — sin techo de tamaño de entrada, con dueño y vencimiento.
++  Verificado sin hallazgo: los mensajes de `TypeError` **no** filtran el contenido del nombre
++  (sólo el índice), el write-back de §9 existe y la trazabilidad (ADR-003 · Historial ·
++  CHANGELOG) está completa. `Rigor: critico` **confirmado** (no se baja);
++  `Sensible a seguridad: no` mantenido con condición de revisión. Pendiente en cola: **OBS-001**
++  (REQ-001 y REQ-002, clasificación posiblemente insuficiente — no auditados hoy).
++
++---
++
++## [2026-09-14] — Origen: Interno — REQ-004: decisión de requisitos sobre los hallazgos H1, H2 y H3 de QA
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 (analista-requerimientos)
++- **Agente(s):** analista-requerimientos
++
++### Cambios
++- `requirements/REQ-004.md`: **CA-02 reescrito** por propiedad de pertenencia (se omite `null`,
++  `undefined` y toda cadena que quede vacía tras `trim()`); decidido el punto abierto de H3:
++  **una cadena de sólo espacios SÍ se omite**, y `0`/`false`/`NaN` **dejan de omitirse**.
++- `requirements/REQ-004.md`: **CA-03 nuevo** (H1) — `nombres` no-arreglo lanza `TypeError`
++  controlado con mensaje exacto; y **CA-04 nuevo** (H2) — elemento que no es cadena ni
++  `null`/`undefined` lanza `TypeError` con el índice del primer incumplidor, sin convertir a
++  texto ni emitir encabezado parcial.
++- `requirements/REQ-004.md`: `Rigor: estandar` → **`critico`** (AGENTS.md §6: este proyecto
++  declara crítico «todo lo que toque dinero o datos de clientes»); `Sensible a seguridad:` se
++  mantiene en `no`, revisado y justificado. `QA:` y `Seguridad:` **sin tocar**.
++- `requirements/REQ-004.md`: `Hallazgos abiertos:` actualizado — los tres siguen abiertos, con
++  su clase declarada, ahora con el criterio contra el cual se validarán.
++- `docs/decisions/ADR-003.md` (**nuevo**): decisión de fondo — la robustez ante entradas
++  malformadas pertenece al contrato de REQ-004; se falla ruidosamente en vez de degradar en
++  silencio; «vacío» se define por recorte de blancos; clasificación revisada.
++- `docs/qa/REQ-004.md`: anexo del analista con la decisión por hallazgo y la forma de H3
++  (`enumeración`). No se alteró el veredicto ni ninguna medición de QA.
++- `requirements/README.md`: índice — REQ-004 pasa de `completado` (desfasado) a `en-revisión`.
++- `docs/ESTADO.md`: fase, en progreso, próximo paso, bloqueos y cola.
++
++### Ciclo de agentes (trazabilidad)
++- `desarrollador` (2026-09-14): reparación del separador «, » → «; » + `test/formato.test.js`.
++- `qa-tester` (2026-09-14): **`QA: con-hallazgos`** — CA-01/CA-02 pasan; 3 hallazgos (H1, H2
++  `usuario/dinero`; H3 `contrato`). Evidencia en `docs/qa/REQ-004.md`.
++- `analista-requerimientos` (2026-09-14): sólo la decisión de requisitos (AGENTS.md §9). No se
++  tocó `src/` ni `test/`. **Pendiente:** implementación del `desarrollador`, re-validación de
++  QA y veredicto del `auditor-seguridad` (exigido por el rigor `critico`, después de QA).
++
++---
++
++## [2026-09-14] — Origen: Interno — REQ-004: re-validación de QA (vuelta 2 de 3) — H1, H2, H3 resueltos
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-sonnet-5 (qa-tester)
++- **Agente(s):** qa-tester
++
++### Cambios
++- `requirements/REQ-004.md`: `QA: con-hallazgos (2026-09-14)` → **`QA: aprobado (2026-09-14)`**;
++  `Hallazgos abiertos:` de H1/H2/H3 → **`ninguno`**. `Trazabilidad` ampliada con esta
++  re-validación. No se tocó `Rigor:`, `Sensible a seguridad:` ni `Seguridad:` (fuera de
++  alcance de QA).
++- `docs/qa/REQ-004.md`: añadida la sección «Re-validación 2026-09-14 (vuelta 2)» sin borrar la
++  evidencia de la vuelta 1 — re-ejecución de `node test/formato.test.js` (26/26, rc=0) y de la
++  quality gate (`true`, rc=0); falsación independiente de mensajes de error carácter por
++  carácter (comparación de bytes), del índice de CA-04 (base 0, no desplazado por omisiones) y
++  del orden de evaluación CA-03→CA-04→CA-02→CA-01; 7 mutaciones propias en el scratchpad de la
++  sesión (nunca sobre `src/`), las 7 detectadas; falsación adicional con entradas no
++  contempladas explícitamente por el REQ (NBSP, U+200B, `String` boxeado, `Symbol`, arreglo
++  disperso, subclase de `Array`, `arguments`, `Proxy`, `{}`, `-0`, `Infinity`) — sin hallazgos
++  nuevos; verificación fila por fila de la tabla de Notas del REQ.
++- `docs/usuario/lista-clientes.md` (**nuevo**): documentación de usuario final del
++  comportamiento probado y aprobado de `listaClientes`, incluida la tabla antes/ahora de los
++  casos que antes se toleraban en silencio y ahora lanzan `TypeError`.
++
++### Ciclo de agentes (trazabilidad)
++- `desarrollador` (2026-09-14): implementó CA-02, CA-03 y CA-04 en `src/formato.js`; amplió
++  `test/formato.test.js` de 6 a 26 casos.
++- `qa-tester` (2026-09-14): **`QA: aprobado`** — los cuatro criterios (CA-01 a CA-04) pasan sin
++  hallazgos abiertos; H1, H2 y H3 resueltos y retirados. Evidencia en
++  `docs/qa/REQ-004.md`. **Pendiente:** `Seguridad: aprobado` del `auditor-seguridad`
++  (exigido por `Rigor: critico`, después de QA — nunca antes). No se marca
++  `Estado: completado` (fuera de alcance de QA).
++
++---
++
+ ## [AAAA-MM-DD] — Origen: (GitHub|Interno) — Título del cambio
+ - **Usuario:** (correo/identificador)
+ - **Modelo IA:** (ej. claude-opus-4-8 coordinadora + claude-sonnet-4-6 dev/QA)
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON4.base/PENDING_APPROVAL.md /tmp/arnes-diag-wBF0L4/casos/CON-4/PENDING_APPROVAL.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON4.base/PENDING_APPROVAL.md	2026-09-14 11:01:03.861236553 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-4/PENDING_APPROVAL.md	2026-09-14 11:36:38.052917819 -0600
+@@ -24,5 +24,42 @@
+ 
+ ## Pendientes
+ 
++### [2026-09-14] (coordinadora) — REQ-004: cómo se remedian SEC-001 y SEC-002, y hasta dónde llega esta reparación
++
++**Contexto.** Se pidió una corrección puntual: `listaClientes` unía con «, » y REQ-004 CA-01
++exige «; ». Eso se hizo y QA lo validó. Al probarlo, el ciclo destapó defectos preexistentes en
++la misma función: QA halló H1/H2/H3, el `analista-requerimientos` los contrató como CA-02
++(reescrito), CA-03 y CA-04 (ADR-003) y **subió `Rigor: estandar → critico`** porque §6 declara
++crítico aquí «todo lo que toque dinero o datos de clientes»; el `desarrollador` los implementó y
++QA los re-validó (vuelta 2 de 3). La auditoría obligada por ese rigor emitió
++**`Seguridad: con-hallazgos`** con dos hallazgos **`usuario/dinero`** que bloquean el cierre:
++SEC-001 (un nombre que ya contiene «; » fabrica clientes inexistentes en el encabezado) y
++SEC-002 (un nombre con salto de línea parte el encabezado e inyecta líneas). Evidencia:
++`docs/seguridad/registro-seguridad.md` §R-004.
++
++**Por qué se detiene aquí.** El remedio es una **decisión de requisitos** (qué hace la función
++con un nombre que contiene el separador o caracteres de control: rechazo ruidoso vs.
++neutralización declarada), y arrastra analista → desarrollador → QA → nueva auditoría. El
++presupuesto de la sesión se agotó antes de poder recorrerla. El tope de vueltas **no** está
++agotado (2 de 3).
++
++**Opciones.**
++- **A — Completar la remediación.** Comisión acotada al analista y luego el ciclo entero. REQ-004
++  cierra con los cuatro criterios y sin hallazgos bloqueantes. Coste: una ronda completa.
++- **B — Cerrar el alcance en lo pedido y separar lo demás.** El analista traslada SEC-001/SEC-002
++  a un REQ nuevo `pendiente` **sólo si decide, por alcance, que no pertenecen al contrato de
++  REQ-004** — no como atajo para desbloquear la puerta. REQ-004 quedaría cerrable; el defecto
++  sigue vivo en el código hasta que ese REQ se trabaje.
++- **C — Revertir la ampliación.** Un ADR nuevo que supersede ADR-003 devuelve REQ-004 a su
++  alcance original (sólo CA-01/CA-02) y el código a `filter(Boolean)`. Deja `listaClientes`
++  como estaba salvo el separador. Requiere firma del `auditor-seguridad` para bajar
++  `Rigor: critico`.
++
++**Recomendación de la coordinadora:** **A**. SEC-001 no es robustez teórica: produce un cliente
++de más en un encabezado de factura, y el principio rector del proyecto es «cobrar lo decidido,
++ni más ni menos».
++
++**Espera:** elección del humano entre A, B y C.
++
+ ## Resueltas
+ <!-- Mover aquí con: decisión tomada, quién, fecha. No borrar (histórico). -->
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON4.base/docs/ESTADO.md /tmp/arnes-diag-wBF0L4/casos/CON-4/docs/ESTADO.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON4.base/docs/ESTADO.md	2026-09-14 11:01:03.861357228 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-4/docs/ESTADO.md	2026-09-14 11:36:59.504917662 -0600
+@@ -7,17 +7,68 @@
+ > Se actualiza al cerrar cada sesión de trabajo.
+ 
+ ## Fase actual
+-(ej. Fase 0 — andamiaje / Fase 1 — ...)
++REQ-004: el `desarrollador` implementó CA-02/CA-03/CA-04 y QA los re-validó (vuelta 2 de 3).
++H1, H2 y H3 quedan **resueltos**. Pendiente el veredicto del `auditor-seguridad`
++(AGENTS.md §6 fila 3, orden de firmas: seguridad va después de QA, nunca antes) por
++`Rigor: critico`.
+ 
+ ## En progreso
+-- (REQ o tarea que está abierta ahora)
++- REQ-004 — `en-revisión`, `QA: aprobado (2026-09-14)`, `Seguridad: con-hallazgos (2026-09-14)`,
++  `Hallazgos abiertos: SEC-001 (usuario/dinero), SEC-002 (usuario/dinero), SEC-003 (instrumento)`.
++  La sesión se detuvo aquí por **presupuesto agotado**, no por el tope de vueltas: el contador
++  dev↔QA de REQ-004 va por **2 de 3**. Decisión en cola humana: `PENDING_APPROVAL.md`.
++- **Hecho hoy (qa-tester, re-validación vuelta 2):** re-ejecutado `node test/formato.test.js`
++  (26/26, rc=0) y la quality gate (`true`, rc=0); falsación independiente de los mensajes de
++  error carácter por carácter (bytes), del índice de CA-04 (no desplazado por omisiones) y del
++  orden de evaluación CA-03→CA-04→CA-02→CA-01; 7 mutaciones propias en scratchpad, las 7
++  detectadas; falsación adicional con entradas exóticas (NBSP, `String` boxeado, `Symbol`,
++  arreglo disperso, `arguments`, `Proxy`, `{}`, `-0`, `Infinity`) sin hallazgos nuevos.
++  Documentación de usuario final creada en `docs/usuario/lista-clientes.md`.
+ 
+ ## Próximo paso concreto
+-- (la siguiente acción, sin ambigüedad)
++- **REQ-004 NO está en condiciones de cerrarse.** La auditoría de seguridad del 2026-09-14
++  emitió `Seguridad: con-hallazgos` con dos hallazgos `usuario/dinero` (SEC-001, SEC-002) y
++  uno `instrumento` (SEC-003, no bloquea). Siguiente paso: comisión **acotada** al
++  `analista-requerimientos` para decidir qué hace `listaClientes` con un nombre que contiene
++  el separador «; » o caracteres de control (rechazo ruidoso vs. neutralización) y escribirlo
++  como criterio + NFR; después `desarrollador` → `qa-tester` → nueva auditoría.
++  Evidencia y remediación: `docs/seguridad/registro-seguridad.md` §R-004.
+ 
+ ## Bloqueos
+-- (ninguno | descripción + a quién/qué espera)
++- REQ-004: SEC-001 y SEC-002 (`usuario/dinero`) impiden el cierre hasta su write-back en el
++  requerimiento y su corrección en el código. No es veto formal: hay remedio, dueño y
++  vencimiento, y el REQ sigue en `en-revisión`.
+ 
+ ## Pendientes (cola)
+-- [ ] ...
+-- [ ] ...
++- [ ] **OBS-001** — REQ-001 y REQ-002 están `completado` con `Rigor: estandar` /
++  `Sensible a seguridad: no` y ambos tocan dinero y fechas de corte, que AGENTS.md §6 declara
++  crítico. No revisados hoy (fuera del encargo). Si se confirma, el rigor se sube y eso
++  **reabre** los dos REQ. Dueño: `auditor-seguridad`. Vencimiento: antes de `DELIVERY.md`.
++- [ ] **SEC-003** (`instrumento`, no bloquea): techo de tamaño de entrada de `listaClientes`.
++  Dueño: `desarrollador`. Vencimiento: primer REQ con entrada de origen externo, o revisión
++  en la entrega.
++
++<!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
++## Estado derivado — 2026-09-14 11:36
++
++> Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
++> Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
++> de los marcadores y ahí no se toca. Si algo aquí te sorprende, el disco dice eso.
++>
++> Los veredictos se muestran **como los lee la máquina** —normalizados: sin mayúsculas, sin
++> tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
++> raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
++
++**Repositorio:** `(sin repositorio)` @ `—` — desconocido
++**Arnés:** plugin instalado `1.33.0`
++**Aprobaciones pendientes:** 1
++**REQ:** 3 — completado 2 · en-revisión 1 · en-progreso 0 · bloqueado 0 · otros 0
++**Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
++
++_Sólo los REQ abiertos; los 2 completados no se listan._
++
++| REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
++|---|---|---|---|---|---|
++| REQ-004 | en-revision | aprobado | con-hallazgos | critico | sec-001(usuario/dinero),sec-002(usuario/… |
++
++<!-- ARNES:DERIVADO fin -->
+Only in /tmp/arnes-diag-wBF0L4/casos/CON-4/docs/decisions: ADR-003.md
+Only in /tmp/arnes-diag-wBF0L4/casos/CON-4/docs/qa: REQ-004.md
+Only in /tmp/arnes-diag-wBF0L4/casos/CON-4/docs/seguridad: gobernanza-datos.md
+Only in /tmp/arnes-diag-wBF0L4/casos/CON-4/docs/seguridad: registro-seguridad.md
+Only in /tmp/arnes-diag-wBF0L4/casos/CON-4/docs: usuario
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON4.base/requirements/README.md /tmp/arnes-diag-wBF0L4/casos/CON-4/requirements/README.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON4.base/requirements/README.md	2026-09-14 11:01:03.866668040 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-4/requirements/README.md	2026-09-14 11:18:52.468905143 -0600
+@@ -418,4 +418,4 @@
+ |---|---|---|
+ | REQ-001 | Validación de la fecha de corte | completado |
+ | REQ-002 | Comisión por factura | completado |
+-| REQ-004 | Lista de clientes en el encabezado del informe | completado |
++| REQ-004 | Lista de clientes en el encabezado del informe | en-revisión |
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON4.base/requirements/REQ-004.md /tmp/arnes-diag-wBF0L4/casos/CON-4/requirements/REQ-004.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON4.base/requirements/REQ-004.md	2026-09-14 11:01:03.866668040 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-4/requirements/REQ-004.md	2026-09-14 11:35:08.896917021 -0600
+@@ -1,23 +1,113 @@
+ # REQ-004 — Lista de clientes en el encabezado del informe
+-Estado: completado
++Estado: en-revisión
+ Módulo: src/formato.js
+-Archivos: src/formato.js, requirements/REQ-004.md
++Archivos: src/formato.js, test/formato.test.js, requirements/REQ-004.md
+ Prioridad: baja
+ Versión destino: 1.0.0
+ Sensible a seguridad: no
+-QA: aprobado (2026-08-20)
+-Seguridad: n/a
+-Hallazgos abiertos: ninguno
+-Rigor: estandar
++QA: aprobado (2026-09-14)
++Seguridad: con-hallazgos (2026-09-14)
++Hallazgos abiertos: SEC-001 (usuario/dinero), SEC-002 (usuario/dinero), SEC-003 (instrumento) — auditoría de seguridad del 2026-09-14, evidencia y remediación en docs/seguridad/registro-seguridad.md §R-004. SEC-001: un nombre que contenga el separador «; » fabrica clientes inexistentes en el encabezado. SEC-002: un nombre con salto de línea o caracteres de control parte el encabezado e inyecta líneas. SEC-003 (no bloquea, deuda con dueño y vencimiento): sin techo declarado para el tamaño de la entrada. Los hallazgos previos H1, H2 y H3 quedaron resueltos en la re-validación de QA del 2026-09-14 (vuelta 2 de 3): implementados en CA-03, CA-04 y CA-02 respectivamente, falsados independientemente carácter por carácter en los mensajes, con el índice y el orden de evaluación CA-03→CA-04→CA-02→CA-01, y con 7 mutaciones propias que discriminan. Evidencia: docs/qa/REQ-004.md §Re-validación 2026-09-14 (vuelta 2)
++Rigor: critico
++ADR relacionados: ADR-003 (docs/decisions/ADR-003.md)
+ 
+ ## Historia
+ Como facturador, quiero que el encabezado del informe mensual liste los clientes en una sola línea legible.
+ 
+ ## Criterios de aceptación
+-- CA-01: Los nombres se unen con el separador «; » (punto y coma seguido de un espacio), sin separador al final.
+-- CA-02: Los nombres vacíos o nulos se omiten.
++
++- **CA-01** — *(sin cambios; construido y validado por QA el 2026-09-14)*
++  Los nombres se unen con el separador «; » (punto y coma seguido de un espacio), sin separador al final.
++
++- **CA-02** — *(reescrito el 2026-09-14 por el hallazgo H3 · ADR-003)*
++  **Dado** un arreglo `nombres` cuyos elementos son cadenas, `null` o `undefined`,
++  **Cuando** se arma el encabezado,
++  **Entonces** se omite todo elemento que **no aporte texto visible**, y sólo ése.
++  - **Propiedad de pertenencia** (no es una lista de casos): un elemento se omite si es `null`, si es `undefined`, o si es una **cadena que queda vacía al retirarle los blancos de ambos extremos** (`String.prototype.trim()`). La lista exhaustiva de qué cuenta como «blanco» **no la fija este criterio**: es la de `String.prototype.trim()` según ECMA-262 (`WhiteSpace` + `LineTerminator`), **único sitio** donde vive; ejemplos **no exhaustivos**: espacio, tabulador, salto de línea.
++  - **Decisión explícita del punto que H3 dejó abierto:** una cadena de **sólo espacios SÍ se omite** — `['Ana', '   ', 'Luis']` → `'Ana; Luis'`.
++  - Los elementos **conservados se emiten sin modificar**: el recorte decide **la omisión**, no el texto emitido — `[' Ana ', 'Luis']` → `' Ana ; Luis'`.
++  - Los valores que **no** son cadena ni `null`/`undefined` **no se juzgan aquí**: los gobierna CA-04. En particular, `0`, `false` y `NaN` **dejan de omitirse** (antes lo hacían por `filter(Boolean)`) y pasan a ser entrada malformada.
++  - **Borde:** si todos los elementos se omiten, el resultado es la cadena vacía `''`, sin separador (coherente con CA-01).
++
++- **CA-03** — *(nuevo el 2026-09-14 por el hallazgo H1 · ADR-003)*
++  **Dado** un valor `nombres` que **no es un arreglo** —propiedad de pertenencia: todo valor para el que `Array.isArray(nombres)` es `false`; ejemplos **no exhaustivos**: `null`, `undefined`, una cadena, un número, un objeto—,
++  **Cuando** se llama a `listaClientes(nombres)`,
++  **Entonces** lanza un `TypeError` cuyo mensaje es **exactamente** `listaClientes: se esperaba un arreglo de nombres`, y **no** devuelve ninguna cadena (ni vacía ni parcial).
++  - **Borde:** el arreglo **vacío** `[]` **sí** es una entrada válida y produce la cadena vacía `''` (CA-01); no lanza.
++  - El error es **deliberado y diagnosticable**: sustituye al `TypeError` incidental del motor («Cannot read properties of null (reading 'filter')»). No se degrada a lista vacía — ver ADR-003 §2.
++
++- **CA-04** — *(nuevo el 2026-09-14 por el hallazgo H2 · ADR-003)*
++  **Dado** un arreglo `nombres` con al menos un elemento que **no es un nombre** —propiedad de pertenencia: todo elemento para el que `typeof elemento !== 'string'` y que no es `null` ni `undefined`; ejemplos **no exhaustivos**: `42`, `0`, `false`, `NaN`, `{}`, `['x']`—,
++  **Cuando** se llama a `listaClientes(nombres)`,
++  **Entonces** lanza un `TypeError` cuyo mensaje es **exactamente** `listaClientes: el elemento en la posición N no es un nombre`, donde `N` es el índice (base 0) del **primer** elemento que incumple, y **no** devuelve ninguna cadena ni emite un encabezado parcial.
++  - **Consecuencia observable contratada:** ningún valor que no sea cadena se convierte a texto ni se incrusta en el encabezado. `['Ana', {n:1}, 'Luis']` **no** puede producir `'Ana; [object Object]; Luis'`, y `['Ana', 42, 'Luis']` **no** puede producir `'Ana; 42; Luis'`.
++  - **Borde:** `null` y `undefined` **no** disparan este criterio — están contratados como omisión en CA-02.
++
++## Notas / alcance
++
++**Compatibilidad entre criterios (comprobada al redactar, punto 2 del encargo).** CA-02, CA-03
++y CA-04 son simultáneamente satisfacibles con CA-01, y CA-01 **no se toca**:
++
++| Entrada | CA-01 (separador) | CA-02 (omisión) | CA-03 (no-arreglo) | CA-04 (no-nombre) | Resultado |
++|---|---|---|---|---|---|
++| `['Ana','Luis','Marta']` | aplica | nada que omitir | no aplica | no aplica | `'Ana; Luis; Marta'` |
++| `['Ana','', null,'Luis', undefined]` | aplica | omite 3 | no aplica | no aplica | `'Ana; Luis'` |
++| `['Ana','   ','Luis']` | aplica | omite el blanco | no aplica | no aplica | `'Ana; Luis'` |
++| `['Ana','Luis','']` | aplica, sin separador colgando | omite el último | no aplica | no aplica | `'Ana; Luis'` |
++| `[]` / `['', null]` | aplica | omite todo | no aplica | no aplica | `''` |
++| `null`, `'Ana'`, `42`, `{}` | — | — | **lanza** | — | `TypeError` (CA-03) |
++| `['Ana', {n:1}, 'Luis']` | — | — | no aplica | **lanza** | `TypeError` (CA-04) |
++| `['Ana', 0, 'Luis']` | — | — | no aplica | **lanza** | `TypeError` (CA-04) |
++
++El orden de evaluación queda contratado por los bordes escritos arriba: CA-03 (¿es arreglo?) →
++CA-04 (¿todos los elementos son nombre, `null` o `undefined`?) → CA-02 (omisión) → CA-01 (unión).
++
++**Criterios de coste: ninguno.** Este REQ no contrata procesos, tiempo, bytes ni lecturas, así
++que las formas (b), (c) y (d) de `requirements/README.md` §«Cómo se escribe un criterio que no
++se desmiente» no aplican. La forma (a) sí, y por eso CA-02, CA-03 y CA-04 enuncian **propiedad
++de pertenencia** con sus ejemplos marcados como **no exhaustivos**.
++
++**Por qué H1 y H2 se contratan AQUÍ y no en un REQ nuevo.** Decidido por **alcance**, no por su
++efecto en la puerta de cierre (ADR-003 §1): el objeto de REQ-004 es el comportamiento de
++`listaClientes`, y el borde de su única entrada es parte del mismo contrato; además, los dos
++hallazgos se manifiestan en lo que el cliente **ve** en el informe, que es literalmente lo que
++este REQ promete. Consecuencia asumida: el REQ **queda abierto más tiempo**.
++
++**Clasificación (revisada el 2026-09-14).** `Rigor:` sube de `estandar` a **`critico`**: AGENTS.md
++§6 declara crítico en este proyecto «todo lo que toque dinero **o datos de clientes**», y este
++REQ formatea nombres de clientes en un documento de facturación (dos de sus tres hallazgos son
++`usuario/dinero`). `Sensible a seguridad:` **se mantiene en `no`** —sin autenticación,
++autorización, secretos, rutas protegidas ni almacenamiento/transmisión de datos— porque
++`critico` ya impone la revisión de seguridad y marcar `sí` afirmaría un tratamiento que este REQ
++no hace. Razonamiento completo en ADR-003 §4. **El campo `Seguridad:` sigue en `n/a` porque no
++es del analista escribirlo**: con `Rigor: critico`, `guard-completado` exigirá
++`Seguridad: aprobado` para cerrar, así que el `auditor-seguridad` debe emitir su veredicto tras
++la re-validación de QA (nunca antes — AGENTS.md §6, orden de firmas).
++
++**Pendiente para el `desarrollador`** (el analista **no** toca `src/` ni `test/`):
++implementar CA-02 (predicado por recorte de blancos en vez de `filter(Boolean)`), CA-03
++(`Array.isArray`) y CA-04 (tipo de cada elemento) en `src/formato.js`, y añadir a
++`test/formato.test.js` los casos de blancos, no-arreglo y no-nombre, incluidos los mensajes
++exactos. Al retomar el código, el REQ pasa a `en-progreso`.
++
++## Preguntas abiertas / conflictos
++Ninguna. El único punto abierto que traía el hallazgo H3 —si una cadena de sólo espacios se
++omite— queda **decidido** en CA-02: **sí se omite**. No hay conflicto con otros REQ: REQ-001 y
++REQ-002 no consumen `listaClientes` (verificado por QA, `docs/qa/REQ-004.md` §5).
++
++## Trazabilidad
++- Origen: REQ-004 (2026-08-20).
++- Causa de los cambios del 2026-09-14: hallazgos H1, H2 y H3 de `docs/qa/REQ-004.md` (QA, 2026-09-14).
++- Decisión de fondo: `docs/decisions/ADR-003.md`.
++- Tocado por: desarrollador (2026-09-14, reparación del separador) · qa-tester (2026-09-14, validación) · analista-requerimientos (2026-09-14, decisión de requisitos de H1/H2/H3 y clasificación) · desarrollador (2026-09-14, implementación de CA-02, CA-03 y CA-04 — vuelta 2 de 3 del contador dev↔QA) · qa-tester (2026-09-14, re-validación vuelta 2: H1/H2/H3 cerrados, `QA: aprobado`, pendiente de `Seguridad:` por `Rigor: critico`) · auditor-seguridad (2026-09-14, auditoría de seguridad y gobernanza: `Seguridad: con-hallazgos`; SEC-001 y SEC-002 `usuario/dinero` bloquean el cierre, SEC-003 `instrumento` no bloquea; `Rigor: critico` confirmado y `Sensible a seguridad: no` mantenido con condición de revisión — evidencia en `docs/seguridad/registro-seguridad.md` §R-004).
+ 
+ ## Historial de cambios
+-| Fecha | Cambio | Causa |
+-|---|---|---|
+-| 2026-08-20 | Creación | — |
++| Fecha | Cambio | Causa | ADR |
++|---|---|---|---|
++| 2026-08-20 | Creación | — | — |
++| 2026-09-14 | Deriva corregida en el código, no en el criterio: `listaClientes` unía los nombres con «, » → ahora los une con «; », como CA-01 contrata desde su creación. CA-01 y CA-02 no se tocan. Añadida prueba automatizada `test/formato.test.js` que cubre ambos criterios, y declarada en `Archivos:`. Por la REGLA DE ESTADO de AGENTS.md §9, el REQ vuelve de `completado` a `en-revisión` y `QA:` de `aprobado (2026-08-20)` a `pendiente` para que el ciclo se re-recorra. | Deriva (AGENTS.md §9): el código terminó distinto de lo que dice el criterio. Reparación por la vía proporcional de AGENTS.md §6 fila 2 (desarrollador → QA, sin comisión de analista), autorizada expresamente por el `AGENTS.md` de este proyecto. | — |
++| 2026-09-14 | **CA-02 reescrito.** Antes: «Los nombres vacíos o nulos se omiten» (lista sin definir «vacío»; el código hacía `filter(Boolean)`, que omitía además `0`, `false` y `NaN` y **no** omitía `'   '`). Después: propiedad de pertenencia —`null`, `undefined` o cadena que queda vacía tras `trim()`—, con la decisión explícita de que **una cadena de sólo espacios se omite**, con los elementos conservados emitidos sin modificar, y con los valores no-cadena remitidos a CA-04. | Hallazgo **H3** (`contrato`) de `docs/qa/REQ-004.md`: «el código cubre MÁS de lo que el criterio promete» (y menos en otro subcaso). Corregido en el mismo cambio que lo descubre, según `requirements/README.md` §«Cuando el código cubre MÁS…» y AGENTS.md §9. | ADR-003 |
++| 2026-09-14 | **CA-03 nuevo.** Antes: ningún criterio decía qué ocurre si `nombres` no es un arreglo (el código lanzaba un `TypeError` incidental del motor). Después: `TypeError` **controlado** con mensaje exacto `listaClientes: se esperaba un arreglo de nombres`, sin salida parcial; `[]` sigue siendo válido. | Hallazgo **H1** (`usuario/dinero`) de `docs/qa/REQ-004.md`. Decidido que la robustez de entrada **pertenece al contrato de REQ-004** (por alcance, no por su efecto en el cierre). | ADR-003 |
++| 2026-09-14 | **CA-04 nuevo.** Antes: ningún criterio hablaba de tipos; los elementos no-cadena se incrustaban tal cual (`'Ana; [object Object]; Luis'`). Después: `TypeError` con mensaje exacto `listaClientes: el elemento en la posición N no es un nombre` (primer incumplidor), sin encabezado parcial y sin conversión a texto. | Hallazgo **H2** (`usuario/dinero`) de `docs/qa/REQ-004.md`. Misma decisión de alcance que CA-03. | ADR-003 |
++| 2026-09-14 | **Clasificación revisada.** Antes: `Rigor: estandar`. Después: `Rigor: critico`. `Sensible a seguridad:` se mantiene en `no` (revisado, no por inercia); `QA:` y `Seguridad:` no los toca el analista. | AGENTS.md §6: este proyecto declara crítico «todo lo que toque dinero o datos de clientes», y la cabecera anterior prometía menos revisión que la que exige el efecto del REQ («contrato no claro», §6). Subir el rigor es facultad del analista; bajarlo exigiría firma del auditor. | ADR-003 |
++| 2026-09-14 | **Implementación de CA-02, CA-03 y CA-04 en el código** (posterior a la decisión del analista y a la reclasificación de la fila anterior; el criterio no se toca: ya lo fijó el analista este mismo día). Antes, `src/formato.js` era `nombres.filter(Boolean).join('; ')`: no validaba la entrada (`null` → `TypeError` incidental del motor), incrustaba los elementos no-cadena vía `join` (`'Ana; [object Object]; Luis'`), omitía `0`/`false`/`NaN` y **no** omitía `'   '`. Después: orden de evaluación CA-03 → CA-04 → CA-02 → CA-01 — `Array.isArray` con `TypeError` de mensaje literal `listaClientes: se esperaba un arreglo de nombres`; validación del tipo de **todos** los elementos antes de omitir ninguno, con `TypeError` de mensaje literal `listaClientes: el elemento en la posición N no es un nombre` sobre el **primer** incumplidor y con `N` medido sobre la entrada recibida; y predicado de omisión por `trim()` en lugar de `filter(Boolean)`, emitiendo sin modificar lo conservado. `test/formato.test.js` pasa de 6 a 26 casos (blancos, no-arreglo, elemento no-nombre, mensajes exactos y bordes), con la discriminación comprobada revirtiendo uno a uno los siete comportamientos nuevos en copias de scratchpad. Quality gate `true` en verde. CA-01 no se toca. | Hallazgos **H1**, **H2** y **H3** de `docs/qa/REQ-004.md` (QA, 2026-09-14), contratados como CA-03, CA-04 y CA-02 respectivamente. Los tres siguen **abiertos**: cerrarlos es de QA al re-validar, no del desarrollador. Vuelta **2 de 3** del contador dev↔QA de AGENTS.md §6 (no se reinicia). | ADR-003 |
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON4.base/src/formato.js /tmp/arnes-diag-wBF0L4/casos/CON-4/src/formato.js
+--- /tmp/arnes-diag-wBF0L4/proy-CON4.base/src/formato.js	2026-09-14 11:01:03.863765182 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-4/src/formato.js	2026-09-14 11:22:17.164907447 -0600
+@@ -1,5 +1,41 @@
+ // Presentación: lista de nombres de clientes para el encabezado del informe mensual.
++
++// CA-02 (REQ-004): un elemento se omite si es `null`, `undefined`, o una cadena que queda
++// vacía al retirarle los blancos de ambos extremos. Qué cuenta como «blanco» NO se enumera
++// aquí: es lo que retira `String.prototype.trim()` (ECMA-262), único sitio donde vive esa
++// lista. El recorte decide la omisión, nunca el texto emitido.
++function aportaTextoVisible(elemento) {
++  if (elemento === null || elemento === undefined) {
++    return false;
++  }
++  return elemento.trim() !== '';
++}
++
+ function listaClientes(nombres) {
+-  return nombres.filter(Boolean).join(', ');
++  // Orden de evaluación contratado en REQ-004: CA-03 → CA-04 → CA-02 → CA-01.
++
++  // CA-03: `nombres` tiene que ser un arreglo. Se falla ruidosamente y sin salida parcial
++  // en vez de degradar a lista vacía (ADR-003 §2): un encabezado plausible ocultaría que
++  // se perdieron clientes. `[]` sí es entrada válida y no llega aquí.
++  if (!Array.isArray(nombres)) {
++    throw new TypeError('listaClientes: se esperaba un arreglo de nombres');
++  }
++
++  // CA-04: se valida el tipo de TODOS los elementos antes de omitir ninguno, para que el
++  // índice reportado sea la posición real en la entrada recibida (la omisión de CA-02 es
++  // posterior en el orden contratado). `null`/`undefined` no disparan este criterio.
++  for (let i = 0; i < nombres.length; i += 1) {
++    const elemento = nombres[i];
++    if (elemento === null || elemento === undefined) {
++      continue;
++    }
++    if (typeof elemento !== 'string') {
++      throw new TypeError(`listaClientes: el elemento en la posición ${i} no es un nombre`);
++    }
++  }
++
++  // CA-02 (omisión) + CA-01: el separador contratado es «; »; `join` no lo añade al final.
++  return nombres.filter(aportaTextoVisible).join('; ');
+ }
++
+ module.exports = { listaClientes };
+Only in /tmp/arnes-diag-wBF0L4/casos/CON-4: test

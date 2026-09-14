@@ -11,3 +11,6 @@ Adenda en `README.md`; artefactos en `casos/CON-2b/` y `entorno-aislado/`. QA te
 
 ## 2026-09-14 · Validación acotada de `f141511` (CON-2c y CON-1c en bwrap): PENDIENTE
 Ver `validacion-f141511/VEREDICTO.md`. CON-2c: el analista resolvió la clasificación de forma acotada antes de continuar (lo contratado). CON-1c: el control **no** conservó la vía corta (fila 4 declarada); con n=1 no atribuible al cambio. Banco 45+46: 64·0·2.
+
+## 2026-09-14 · CON-4 (control sustituto) sobre `f141511`: vía corta conservada; escalada posterior por hallazgos de QA y criterio crítico amplio
+Ver `validacion-f141511/VEREDICTO.md` y `validacion-f141511/CON-4/`.

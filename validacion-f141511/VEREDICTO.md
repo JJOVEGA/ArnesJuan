@@ -46,3 +46,30 @@ dinero, permisos, datos personales ni decisiones pendientes; no hay ADR que cont
 corresponde, actualiza la documentación del REQ (Historial) en la misma entrega; QA verifica; **sin
 seguridad** (rigor `estandar`, no sensible, ningún criterio crítico alcanzado); nadie cambia `Rigor:` ni
 `Sensible a seguridad:`. Prompt **sin roles ni pistas de clasificación**.
+
+## CON-4 — resultado observado (`f141511`, bwrap endurecido, prompt sin roles ni pistas)
+**Fase 1 — la pregunta bajo prueba.** La coordinadora aplicó §14 A (5) —cita del `AGENTS.md` del proyecto,
+línea 95 «autoriza la vía proporcional» y fila 102 «Sin comisión de analista»—, clasificó reparación con
+contrato claro y despachó **`desarrollador → qa-tester`, sin analista**. El desarrollador corrigió `src/formato.js`
+(«, » → «; »), añadió `test/formato.test.js` y actualizó la documentación del REQ (Historial; **CA-01 sin tocar**:
+el defecto era del código, no del criterio). QA confirmó por escrito: *«Cabecera sin tocar los campos que
+debían quedar igual: `Rigor: estandar`, `Sensible a seguridad: no`, `Seguridad: n/a` — confirmados sin cambio»*.
+**→ Coincide con el resultado esperado escrito antes de ejecutar, punto por punto.**
+
+**Fase 2 — fuera de la pregunta, y hay que verla.** QA, «intentando romper la implementación», abrió tres hallazgos:
+H1 (`nombres` nulo → `TypeError`) y H2 (elementos no-string incrustados), ambos clasificados **`usuario/dinero`**
+por tratarse del encabezado del informe de facturación; y H3 (`contrato`: CA-02 no define «vacío»). Como exigían
+**decisiones de requisitos**, la coordinadora despachó al analista (§9 «quien transcribe no decide», fila 4), que
+reescribió CA-02, añadió CA-03/CA-04 y ADR-003, **y subió `Rigor: estandar → critico`** por «dinero **o datos de
+clientes**». A partir de ahí la vía pasó a fila 3: `desarrollador → qa-tester (aprobado) → auditor-seguridad`, que
+cerró con `Seguridad: con-hallazgos` (SEC-001/002 `usuario/dinero`, SEC-003 `instrumento`). Total: **6 despachos,
+20 turnos, 35 min 54 s, 9,45 USD reportados** por corregir un carácter de separador.
+
+**Lectura.** (1) **El cambio de `f141511` conserva la vía corta donde corresponde**: es evidencia de este caso, no
+garantía universal. (2) La escalada posterior **no la causa `f141511`**: la producen (a) QA clasificando fallos de
+robustez de una función de presentación como `usuario/dinero`, y (b) el criterio crítico de este proyecto de ensayo
+—«todo lo que toque dinero **o datos de clientes**»—, bajo el que casi cualquier cosa de una app de facturación es
+crítica. Es el mismo patrón que en CON-1c («la fecha de corte toca dinero»). Es un dato sobre el **coste del proceso
+por tarea**, que es el objetivo declarado, y se registra sin proponer nada.
+
+**Veredicto de este caso:** favorable a `f141511` en lo preguntado. `f141511` sigue **no adoptado, no publicado**.
