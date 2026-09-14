@@ -2,6 +2,26 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-14 · Seguridad `R-035`: estados determinados, **sin firma**; `SEC-098` nuevo bloquea
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad. Registro: `docs/seguridad/registro-seguridad.md` § R-035. **No es aprobación de seguridad**: QA está en `PENDIENTE` y §6 no deja firmar sobre un árbol sin validar; la firma queda **condicionada** y se re-auditará sobre el árbol que QA valide.
+
+Medido sobre `2b56cb4`; la cabeza se movió a `4a38fcf` (informes de QA) y el auditor verificó `diff` **vacío** en todos
+sus objetos: lo determinado vale igual. **Estados:** `SEC-093` **mitigado** (pronombre desambiguado nombrando las dos
+lecturas erróneas; parada por REQ nuevo en el agente que actúa; ejercido en CON-3/SIN-3) · `SEC-094` **mitigado** (fila 3
+por propiedad, más restrictiva, anclaje retirado **y refutado**) · `SEC-095` **mitigado** (se retiró la causa; `proy-SIN` →
+analista 3/3) · `SEC-096` **en-mitigación**, no bloquea (composición de copia propia sin ejercer; listado informativo no
+añadido) · `SEC-097` **mitigado** (sección canónica byte a byte igual a `a34e18c^`, párrafo vivo en su rama, entrada 1.34.0
+con su identificación intacta; el límite 3 vuelve a ser cierto). **Ninguna protección se debilitó**; tres ganaron sede.
+
+**`SEC-098` · `contrato` · abierto · BLOQUEA.** La migración **concede la autorización sin que el proyecto la decida** y no
+lo dice: el texto insertado afirma «este proyecto autoriza la vía», `INTACTO` y `NUEVO` lo aplican **sin preguntar**, y
+`arnes-upgrade` no menciona «autoriza» ni «borra esta cita». Es la premisa con la que el auditor cierra `SEC-095` y baja
+`SEC-096`, así que la señala en la misma revisión. Compone con `I-1` (sedes distintas; ninguno sustituye al otro). No toca
+obligaciones de seguridad. Remediación estimada: dos frases en la entrada «Hacia 1.34.0». **No se repara aquí.**
+
+**Qué bloquea la adopción, según el auditor:** `SEC-098` y el `PENDIENTE` de QA (puerta requerida en rojo). Ni excepción al
+CI ni cambio de la frase de `CA-06`.
+
 ## [Interno] — 2026-09-14 · QA, validación final sobre `2b56cb4`: **PENDIENTE** — el CI en rojo bloquea como puerta, aunque el hallazgo sea `instrumento`
 > **Revisado por QA tras conocer el CI.** El veredicto inicial fue «favorable con reserva» y **QA lo retiró**: lo había emitido
 > sin esa evidencia. **Lo dicho sobre el contenido del delta se mantiene.** QA **reprodujo** el caso revisión por revisión

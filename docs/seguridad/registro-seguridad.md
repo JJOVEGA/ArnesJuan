@@ -10006,3 +10006,301 @@ repositorio sigue sin usuarios finales ni datos personales.
 
 **Numeración vigente tras esta revisión:** última revisión **R-034**; último hallazgo **SEC-097**;
 próximos libres **R-035** y **SEC-098**.
+
+---
+
+## Revisión R-035 — **remediación de `SEC-093`…`SEC-097`**: determino sus estados. **SIN firma de aprobación.** `rel/via-proporcional` @ `2b56cb4` (artefactos verificados idénticos en `4a38fcf`) — 2026-09-14
+
+**Objeto acotado a las remediaciones**, delta `b785ba8..2b56cb4` respecto de mi `R-034`. **No es una
+auditoría general.** No audité `REQ-024`, `REQ-023` ni `REQ-026`, **no firmo ningún REQ** y **no me
+pronuncio sobre la publicación**. No cerré ni reclasifiqué hallazgos ajenos: `I-1`, `I-3` y `R-1` son
+de QA y quedan **exactamente como están**.
+
+> **Esta revisión determina ESTADOS DE HALLAZGO; no emite aprobación de seguridad, y no podría.**
+> El veredicto vigente de QA sobre esta cabeza es **`PENDIENTE`** (lo revisó desde «favorable con
+> reserva» al incorporar el CI en rojo). `AGENTS.md` §6: **seguridad no firma lo que QA no ha
+> validado**, y hoy QA no lo ha validado. **La firma queda condicionada a que QA resuelva su
+> pendiente**, y cuando lo haga **volveré a auditar sobre el árbol que valide** — una firma sobre
+> otro árbol no acredita éste. Determinar estados **sí** me corresponde ahora: describe lo que
+> encontré, no acredita el candidato.
+
+### 0. Árbol, frontera y orden de las firmas
+
+- **Worktree** `/home/juan/dev/ArnesJuan-via-proporcional`, rama `rel/via-proporcional`. **Medí sobre
+  `2b56cb4`. La cabeza se movió mientras auditaba**, a `d8af657` y luego a **`4a38fcf`**, y lo digo
+  en vez de reescribir el commit de referencia. **Las dos veces era el informe de QA**:
+  `git diff --stat 2b56cb4..4a38fcf` = `CHANGELOG.md` + `docs/qa/…`, y
+  `git diff --stat 2b56cb4..4a38fcf -- AGENTS.md templates/ agents/ skills/ requirements/
+  docs/gobernanza/ docs/arnes/ hooks/ tools/ tests/` sale **vacío**: **todos mis objetos son
+  idénticos byte a byte en las dos cabezas**, así que lo que determino abajo vale igual sobre
+  `4a38fcf`.
+- **Matiz sobre «árbol limpio»:** cuando empecé el árbol **no** lo estaba —`M docs/qa/…`, la
+  validación de QA sin comitear—. **Ningún artefacto auditado estuvo sucio en ningún momento.** Lo
+  dejo escrito porque el encargo afirmaba lo contrario y una discrepancia de estado no se hereda en
+  silencio.
+- **La frontera se comprobó otra vez, sobre el delta nuevo.** `git diff --name-only b785ba8..2b56cb4`
+  filtrado por `^(hooks/|tools/|tests/|\.arnes/|\.github/|\.claude-plugin/)` → **0 rutas**. **Ningún
+  hook, herramienta, prueba, manifiesto ni workflow cambia.**
+- **Orden de las firmas — y por qué NO firmo.** QA emitió «favorable con reserva» sobre `2b56cb4` y
+  **lo revisó a `PENDIENTE`** en `4a38fcf` al incorporar el CI en rojo. **No hay firma de seguridad
+  que dar sobre un árbol que QA no ha validado** (§6). Determino estados; no acredito el candidato.
+
+### 1. `SEC-093` → **`mitigado`**
+
+**Los dos defectos que abrí están corregidos, y el segundo —el que importaba— en el agente que actúa.**
+
+- **Pronombre:** `AGENTS.md` y `templates/AGENTS.md.tpl` dicen ahora «**es el
+  `analista-requerimientos`, y no el `desarrollador` ni el `auditor-seguridad`, quien define el
+  contrato inicial, el `Rigor:` y el `Sensible a seguridad:`**». **Las dos lecturas erróneas que
+  nombré quedan excluidas por nombre**, no por contexto.
+- **La parada, en `agents/desarrollador.md`:** «**Si la reparación necesita un REQ NUEVO, NO lo abres
+  tú — para y escala al analista**», con la razón escrita —«ninguna puerta te lo va a impedir: es una
+  **frontera de rol, no un control mecánico**»— y el efecto que yo medí —«deriva a un rigor **por
+  debajo de `critico`** […] el disparador **nace sin sujeto**»—. Va además al **checklist de cierre**
+  del agente.
+- **Y sobrevive al eje de autorización**, que es lo que podría haberlo reabierto:
+  `agents/analista-requerimientos.md` dice «**el REQ NUEVO que nazca de una reparación es siempre
+  tuyo, autorice el proyecto la vía o no**». La regla **no** depende de la comprobación, luego `I-1`
+  no la toca.
+- **Ejercido funcionalmente, no sólo leído** (`/home/juan/dev/ArnesJuan-evidencia`, `casos/analisis.txt`):
+  **CON-3** despachó `analista-requerimientos → desarrollador → qa-tester` y el REQ nuevo nació con
+  `Rigor: critico` · `Sensible a seguridad: sí` · `Seguridad: pendiente`; **SIN-3** (proyecto sin la
+  declaración) despachó **sólo al analista** y el REQ nació igual. **El disparador tuvo sujeto en los
+  dos regímenes.**
+
+### 2. `SEC-094` → **`mitigado`**
+
+**La enumeración pasó a propiedad y el anclaje en la máquina se retiró — y se retiró la premisa, no
+sólo la conclusión.**
+
+- **Fila 3, por propiedad:** «Cambio cuyo efecto alcanza **un criterio de `critico` de este proyecto**
+  (§6) **o una protección del arnés** — ejemplos **declaradamente no exhaustivos**: hooks…». Es la
+  remediación que pedí, en la forma que este proyecto exige (`requirements/README.md`, forma (a)).
+- **Se añadió la regla que yo no había pedido y que hacía falta:** «**Si un cambio casa con más de una
+  fila, manda la MÁS RESTRICTIVA**», con **mi propio caso** como ejemplo (el bug de cobro casa con la
+  fila 2 y con la 3; manda la 3). Y la fila 2 queda condicionada: «sólo si […] el cambio **no** cae
+  también en la fila 3».
+- **El anclaje en `guard-completado` no se matizó: se retiró, y se refutó con mis dos argumentos** —
+  «**no decide a quién se despacha** […] es una puerta de **cierre** […] y §13 la declara **inerte**
+  sin `jq` o sin `.arnes/config.json`»—. Eso es corregir la **premisa**, que es lo que impide que
+  alguien vuelva a deducirla.
+- **La obligación se declaró independiente del eje nuevo**, que era el riesgo que el diseño de
+  autorización podía introducir: «esta obligación **no depende de la comprobación de autorización**:
+  un proyecto que no autorice la vía tiene **más** pasos, nunca menos». Y en
+  `agents/auditor-seguridad.md`, dirigido a mí: «**Tu intervención NO depende de que el proyecto
+  autorice la vía** […] **la lista de ejemplos de la fila 3 no puede limitar esa obligación**»,
+  nombrando los cinco criterios (dinero, datos personales, identidad o acceso, documento con efecto
+  legal, cambio irreversible) que la enumeración anterior **no** contenía.
+- **Gemelas contrastadas, no supuestas:** las **siete** frases portantes aparecen **1 vez en cada**
+  sede (`AGENTS.md` y `templates/AGENTS.md.tpl`). La disyunción que QA exigió en `I-2` («**Basta una
+  de las dos condiciones; no se exige que coincidan**») está en ambas.
+
+### 3. `SEC-095` → **`mitigado`** — y es el único que cierro con medición funcional propia
+
+**La frase que señalé (`skills/arnes-upgrade/SKILL.md:1295-1296`) NO se editó, y es lo correcto: se
+retiró su causa.** Yo la declaré falsa porque un proyecto que no migraba recibía igualmente los
+agentes nuevos, que aflojaban solos. Ahora **los cuatro agentes y `arnes-close` condicionan al
+documento del proyecto**, y §9 cierra el hueco por el lado que importa: «**Si §6 no la declara, el
+write-back es del `analista-requerimientos`** […] la ausencia de la declaración conserva el
+procedimiento anterior y **nunca deja este write-back sin dueño**». El consejo de `:1295` **pasó a ser
+verdadero** sin tocarlo.
+
+**Y la composición exacta de mi hallazgo está EJERCIDA con agentes reales** —documento viejo + agentes
+nuevos—, que es la única forma de acreditar esto:
+
+| Proyecto | Declaración en su `AGENTS.md` | Despachos observados |
+|---|---|---|
+| `proy-SIN` | **0** coincidencias (medido por `grep`) | **SIN-1** `analista → qa-tester` · **SIN-2** `analista → desarrollador → qa-tester` · **SIN-3** `analista` |
+| `proy-CON` | 4 coincidencias | **CON-1**, **CON-2** `desarrollador → qa-tester` · **CON-3** `analista → …` |
+
+**En los tres casos sin declaración intervino el analista.** El write-back no quedó huérfano en
+ninguno. El fallo que describí **no se produjo**, y el texto que lo producía ya no está.
+
+### 4. `SEC-096` → **`en-mitigación`** (no lo cierro)
+
+**La dirección del riesgo se invirtió y eso es real; lo que falta es la medición y el listado.**
+
+**Por qué ya no es lo que era.** En `R-034` la mitad que aflojaba viajaba en los agentes y llegaba
+sola. Ahora **la mitad que afloja es el documento** —que un proyecto con copia propia de un agente
+también recibe— **y el documento lleva encima sus propias compensaciones** (fila 3 por propiedad, la
+disyunción, «contrato claro», el REQ nuevo del analista), más la comprobación de la coordinadora en
+§14 A (5). Y **toda copia propia de un agente es, por definición, anterior a la vía**: no sabe
+omitir al analista, de modo que **las composiciones que puedo derivar fallan hacia MÁS proceso, no
+hacia menos**.
+
+**Y el límite está declarado por nombre en el producto**, no escondido —`templates/AGENTS.md.tpl`,
+«Tres límites de la comprobación […] escritos aquí **porque NO están medidos**», límite 1: «Un agente
+que el plugin no entrega **no recibe la comprobación** […] y si el coordinador tampoco la tiene (§14,
+límite (b)), **no la hace nadie**»—. Declarar el residuo con su peor caso es la forma correcta.
+
+**Por qué NO lo cierro, y son dos razones separadas:**
+
+1. **La composición no está ejercida.** Los siete casos con agentes reales cubren *documento viejo +
+   agentes nuevos*; **ninguno** cubre *copia propia de una definición de agente*. Mi inversión de la
+   dirección del riesgo es **derivación por lectura**, no medición — y el límite 1 dice exactamente
+   eso de sí mismo.
+2. **La remediación que pedí no se aplicó.** Medido: `grep -n "\.claude/agents" skills/arnes-upgrade/SKILL.md`
+   → sólo las **dos** menciones en prosa que ya existían. **No hay ningún paso que ENUMERE, aunque sea
+   informativamente, las definiciones de agente que el proyecto tiene propias**, y `:589` sigue
+   ordenando «no las clasifiques ni las busques» — orden correcta para no provocar un `UNKNOWN`
+   espurio, pero **nada la sustituye**. Un listado informativo no entra en el plan de merge y por
+   tanto **no puede producir `UNKNOWN`**.
+
+**No bloquea.** Con la dirección invertida y el límite declarado, es deuda con dueño.
+
+### 5. `SEC-097` → **`mitigado`**
+
+Atendí la advertencia del propietario —*«separar código no implica automáticamente cerrar un
+hallazgo»*— comprobando **las dos** mitades, no la separación:
+
+- **La retirada es exacta.** Extraje la sección canónica `## Clasificación: cuatro estados` de
+  `a34e18c^` y de la cabeza actual: **`cmp` sin diferencias**, `sha256`
+  `4507acfcec0f045b8e319c61892318863f9433432a295064ac69bbc7f605045c` en **ambas**. El clasificador
+  general vuelve **byte a byte** a su comportamiento anterior.
+- **El párrafo no se perdió:** vive en `sec-097/clasificador-por-titulo-y-contenido` (`git rev-parse`
+  resuelve; `grep` → 1 ocurrencia), y **no sobrevive en el candidato** fuera de la entrada de
+  migración.
+- **La comprobación de la migración no perdió nada**, que era mi condición: la entrada «Hacia 1.34.0»
+  conserva el paso de identificación **por contenido y título** (`:1254`) y su precedencia («**manda
+  sobre la tabla**», `:1261`), ahora derivada de «Hacia 1.31.0» en vez del párrafo retirado.
+
+**La causa del hallazgo desaparece:** `autoalojamiento.md` declara el **límite 3 no levantado** y eso
+**vuelve a ser cierto**, porque el trabajo ya no lo cruza. **Lo digo sin ambigüedad: el párrafo
+retirado era bueno** —fail-closed, nacido de `N-4`— y su mérito no está en discusión; lo que no cabía
+era su **alcance** dentro de esta ventana.
+
+### 6. `SEC-098` — **nuevo** · `contrato` · **abierto** · **bloquea la adopción**
+
+**La migración CONCEDE la autorización sin que el proyecto la decida, y no lo dice en ninguna parte.**
+
+Todo el diseño nuevo descansa en una propiedad: *el agente trae la capacidad, **el documento del
+proyecto da el permiso**, y «**La ausencia de la declaración no habilita nada**»*. Es la frase sobre la
+que yo cierro `SEC-095` y bajo `SEC-096` a `en-mitigación`. **Para la población que migra, esa premisa
+no se cumple: el permiso lo escribe la herramienta.**
+
+**Medido:**
+
+1. El texto que la migración inserta **afirma una decisión del proyecto**: `templates/AGENTS.md.tpl`
+   §6 → «**este proyecto autoriza la vía proporcional de reparación**».
+2. **Dos de las cinco filas lo aplican sin preguntar** (`skills/arnes-upgrade/SKILL.md:1279` y
+   `:1282`): `INTACTO` → «Aplicar el contenido nuevo **sin preguntar**»; `NUEVO` → «**Añadir.** No hay
+   texto tuyo que conservar» — y `NUEVO` es, por su propia glosa, el proyecto **más antiguo**, el que
+   «instaló el arnés antes de que existiera» la sección.
+3. **La skill no lo nombra en ningún sitio.** `grep -n "autoriza\|autorización\|declara la vía\|borra
+   esta cita" skills/arnes-upgrade/SKILL.md` → **0 ocurrencias** en la entrada «Hacia 1.34.0** y en
+   toda la skill. El informe de migración —lo que la persona lee **en el momento de decidir**— no dice
+   que está concediendo un permiso.
+
+**Qué es falso, y por qué es `contrato`:** tras una migración `INTACTO`/`NUEVO`, el `AGENTS.md` del
+proyecto **afirma que ese proyecto autoriza la vía**, y ese proyecto no ha autorizado nada. El
+documento asserta una decisión que no ocurrió, y es **la premisa** de la que cuelga la promesa central
+del diseño.
+
+**Lo que sí atenúa, y lo digo entero:** el texto insertado lleva **su propia salida** —«*(Si no la
+quieres, borra esta cita **y la tabla**…)*»—, así que quien lea su §6 después ve el permiso y cómo
+revocarlo. Y la skill ofrece una salida **de grano grueso** (`:1295`, «no migres estas secciones»).
+**Lo que no existe es la salida de grano fino** —migrar §6 y **declinar** la autorización— ni el aviso
+de que se está concediendo.
+
+**Compone con `I-1` de QA, que NO reclasifico ni cierro (es suyo, `instrumento`, abierto):** el acto
+mínimo y más natural de revocar es **borrar la frase que dice «autoriza»**, y ésa es exactamente la
+configuración que QA **midió** resolviendo `AUTORIZADA` (opt-out parcial). De modo que el permiso
+llega **sin anunciarse** y, si se intenta revocar por lo mínimo, **no se revoca**. Los dos hallazgos
+son de sedes distintas —`I-1` en la forma (b) de §6 y en el script; el mío en la skill de migración— y
+**ninguno sustituye al otro**.
+
+**Qué NO afecta, comprobado uno por uno:** ninguna obligación de seguridad. La fila 3 por propiedad,
+la disyunción y el REQ nuevo del analista están **declarados independientes** de la autorización, y el
+`auditor-seguridad` lo lleva en su propia definición. `SEC-098` mueve **si se omite al analista**, no
+**si entra seguridad**.
+
+**Remediación (no la aplico):** en la entrada «Hacia 1.34.0», (i) decir que **aplicar §6 concede** la
+autorización, y (ii) ofrecer la salida de grano fino —aplicar §6 y **borrar la cita y la tabla**, las
+dos, remitiendo a `I-1` para el porqué de «las dos»—, en el informe que la persona lee al decidir.
+
+### 7. Dictamen
+
+**No firmo ningún REQ, no emito aprobación de seguridad y no hay veto que emitir.** Sobre el objeto
+acotado:
+
+- **Ninguna protección se debilitó en el delta.** Verifiqué otra vez las cuatro de `R-034` —veto,
+  orden de las firmas, write-back obligatorio, el rigor que no se baja— y las tres **ganaron sede**:
+  la obligación de seguridad se declaró **independiente** del eje de autorización nuevo, que era el
+  riesgo que este delta podía haber introducido.
+- **Las remediaciones son de la clase correcta:** retiraron **premisas**, no sólo conclusiones
+  (el anclaje en `guard-completado`), y corrigieron la causa en vez de la frase señalada (`SEC-095`).
+- **Cuatro de mis cinco quedan `mitigado`**; `SEC-096` baja a `en-mitigación` con la dirección
+  invertida y el límite declarado.
+- **Abro uno nuevo, `SEC-098`, y bloquea** — porque es la premisa sobre la que yo mismo cierro los
+  otros. Cerrar `SEC-095` y bajar `SEC-096` invocando «la ausencia de la declaración no habilita
+  nada», y no señalar que la migración **suple** esa declaración, sería cerrar cuatro hallazgos sobre
+  una frase que en la misma revisión encuentro sin cumplir para la población que migra.
+
+**Qué bloquea la adopción — son DOS cosas, y sólo una es mía.** Escribí primero «`SEC-098`, y sólo
+él»; **era falso y lo corrijo aquí en vez de añadirle un matiz**, porque una frase que enumera lo que
+bloquea envejece hacia el lado que abre:
+
+1. **`SEC-098`, mío**, `contrato`, abierto. Es un cambio de **dos frases en un archivo**
+   (`skills/arnes-upgrade/SKILL.md`, entrada «Hacia 1.34.0»); **no toca ningún mecanismo**, no reabre
+   `SEC-093`…`SEC-095` y no afecta a ninguna obligación de seguridad.
+2. **El veredicto `PENDIENTE` de QA, que NO es mío y no me corresponde levantar.** La puerta
+   requerida de `main` está en rojo. **No concedo ni propongo excepción al CI**, no reparo la frase
+   señalada por `CA-06` y no me pronuncio sobre su clase, que es de QA.
+
+**Y una tercera que no bloquea la adopción pero sí mi firma:** mientras QA no resuelva, **no hay
+firma de seguridad posible** sobre esta cabeza (§6). Reparar `SEC-098` no la desbloquea; sólo retira
+mi impedimento.
+
+**Sobre el CI en rojo (`1273 PASS · 1 FAIL · 16 SKIP`):** el `FAIL` de `REQ-024 CA-06` cae en
+`skills/arnes-upgrade/SKILL.md:1280`, la fila `MODIFICADO` que yo cité en `SEC-095`. **Es
+preexistente** (`c65ce65`), **su clase la fija QA** y **no lo reparo ni me pronuncio sobre él**. Lo
+comprobé por una sola razón: **no cambia quién es dueño del write-back**, que es lo único de esa fila
+que mis hallazgos usaban. `SEC-095` no depende de él.
+
+### 8. Qué NO acredita esta revisión
+
+1. **No acredita ninguna corrida de `arnes-upgrade`.** Nadie ha migrado ningún proyecto, y `SEC-098`
+   es justamente un hallazgo **sobre** esa migración: lo medí **leyendo la skill y contando
+   ocurrencias**, no observando una corrida. Una corrida real podría comportarse de otro modo.
+2. **No acredita la composición «copia propia de una definición de agente»** — `SEC-096` queda
+   `en-mitigación` precisamente por eso.
+3. **La evidencia funcional es de otro alcance y la reutilizo como declarada.** Leí
+   `casos/analisis.txt` y `validacion-f141511/VEREDICTO.md` en
+   `/home/juan/dev/ArnesJuan-evidencia`; **no re-ejecuté ningún caso** ni desplegué agentes. Son
+   **una corrida por caso**: sostienen que el comportamiento ocurrió, **no** su reproducibilidad.
+4. **No acredita `REQ-024`, `REQ-023` ni `REQ-026`**, ni ningún REQ. **No emito `Seguridad:`.**
+5. **NO ACREDITA EL CANDIDATO, y esto es lo primero que hay que leer de esta lista.** Determinar que
+   cinco hallazgos míos quedan `mitigado`/`en-mitigación` **no es una aprobación de seguridad** y no
+   debe citarse como tal: QA está en `PENDIENTE` y §6 no deja firmar sobre un árbol sin validar. Que
+   cuatro de mis cinco estén mitigados y el quinto sea barato **no autoriza fusionar, publicar ni
+   adoptar**.
+6. **No acredita el banco completo ni el CI.** No corrí el banco ni lo amplié en esta vuelta, y **no
+   me pronuncio sobre la clase ni sobre la reparación del `FAIL` de `CA-06`**, que son de QA.
+7. **No acredita la publicación ni la fusión**, y no me pronuncio sobre ellas.
+8. **No es auditoría general**: fuera de las remediaciones de `SEC-093`…`SEC-097` no barrí.
+9. **Ningún guardián cubre `agents/*.md`, las plantillas ni las skills.** `SEC-098` **no lo caza
+   ninguna máquina**, como ninguno de los anteriores.
+
+### 9. Estado de mis hallazgos tras `R-035`
+
+| Hallazgo | Estado | Clase | Bloquea |
+|---|---|---|---|
+| `SEC-093` | **`mitigado`** | `contrato` | no |
+| `SEC-094` | **`mitigado`** | `contrato` | no |
+| `SEC-095` | **`mitigado`** | `contrato` | no |
+| `SEC-096` | **`en-mitigación`** | `contrato` | **no** |
+| `SEC-097` | **`mitigado`** | `contrato` | no |
+| `SEC-098` | **`abierto`** (nuevo) | `contrato` | **sí** |
+
+Dueño de `SEC-096` y `SEC-098`: `desarrollador`. Vencimiento: **antes de adoptar la vía en los
+proyectos**. **Sin cambios en el resto:** `SEC-091` `abierto`, `SEC-092` `abierto`, `SEC-088`
+`abierto`, `SEC-085` `abierto`, `SEC-090` `mitigado`, `SEC-087` `mitigado`.
+
+**Hallazgos de QA, intactos por no ser míos:** `I-1` (`instrumento`, abierto), `I-3` (`instrumento`),
+`R-1` (`instrumento`).
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** Este repositorio sigue sin usuarios finales ni
+datos personales.
+
+**Numeración vigente tras esta revisión:** última revisión **R-035**; último hallazgo **SEC-098**;
+próximos libres **R-036** y **SEC-099**.
