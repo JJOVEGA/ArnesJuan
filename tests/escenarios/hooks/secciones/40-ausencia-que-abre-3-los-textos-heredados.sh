@@ -29,7 +29,7 @@
 # aplanar se conserva el NÚMERO DE LÍNEA de arranque de cada viñeta, que es lo que permite medir
 # el ORDEN que `CA-06 (ii)` contrata —la propiedad ANTES de cualquier comando— sin volver a
 # recorrer el archivo.
-CASOS_ESPERADOS_SECCION=28  # 27 → 28: las SIETE REGRESIONES CONOCIDAS de `I-5` con sus controles positivos. Al acotar el reconocedor por propiedad (26 → 27, abajo) el eje del VERBO quedó bien y el del TÉRMINO HEREDADO quedó como enumeración cerrada y alcance de una sola oración; QA y el auditor midieron que por ahí se soltaron **siete** formas que el reconocedor anterior sí cazaba, **ninguna espuria**. El caso nuevo inyecta las siete, una a una, y exige que **todas vuelvan a morder**, más los controles positivos en la misma vuelta (la frase protectora y las dos promesas reales siguen pasando). Son regresiones CONOCIDAS, no la definición de la clase ni un conjunto cerrado.  # 26 → 27: el DISCRIMINANTE del reconocedor de promesas de equivalencia. Al corregir su alcance (falso positivo medido en CI, PR #50: la fila `MODIFICADO` de la tabla de migración casaba con el verbo sin prometer equivalencia con ninguna versión), el arreglo sería indistinguible de haber aflojado el reconocedor; el caso nuevo inyecta en una COPIA las dos formas que tienen que decidir distinto —con término heredado y SIN acto muerde, la misma CON acto pasa— más el control de que la frase que protege el texto personalizado, sola, no es ni promesa ni infracción
+CASOS_ESPERADOS_SECCION=29  # 28 → 29: los FALSOS POSITIVOS de `I-7` con la falsación `v2`. La reparación de `I-5` ensanchó el eje del término heredado y metió dos defectos propios —el escape `\.` perdido al pasar por `awk -v`, que hacía casar cualquier número de 3+ cifras o una fecha ISO como identificador de versión, y la anterioridad sin límite de palabra («bastantes», «restantes», «instantes»)—. Corregidos con ENVIRON y bordes no alfabéticos, el caso nuevo los EJERCE: seis negativos que deben dar «0 0» y la falsación `v2`, fuera de las siete, que debe seguir mordiendo para que «0 falsos positivos» no sea cierto por mudez.  # 27 → 28: las SIETE REGRESIONES CONOCIDAS de `I-5` con sus controles positivos. Al acotar el reconocedor por propiedad (26 → 27, abajo) el eje del VERBO quedó bien y el del TÉRMINO HEREDADO quedó como enumeración cerrada y alcance de una sola oración; QA y el auditor midieron que por ahí se soltaron **siete** formas que el reconocedor anterior sí cazaba, **ninguna espuria**. El caso nuevo inyecta las siete, una a una, y exige que **todas vuelvan a morder**, más los controles positivos en la misma vuelta (la frase protectora y las dos promesas reales siguen pasando). Son regresiones CONOCIDAS, no la definición de la clase ni un conjunto cerrado.  # 26 → 27: el DISCRIMINANTE del reconocedor de promesas de equivalencia. Al corregir su alcance (falso positivo medido en CI, PR #50: la fila `MODIFICADO` de la tabla de migración casaba con el verbo sin prometer equivalencia con ninguna versión), el arreglo sería indistinguible de haber aflojado el reconocedor; el caso nuevo inyecta en una COPIA las dos formas que tienen que decidir distinto —con término heredado y SIN acto muerde, la misma CON acto pasa— más el control de que la frase que protege el texto personalizado, sola, no es ni promesa ni infracción
 PISO_AUTONOMO_SECCION=78  # 31 preámbulo con sus dos declaraciones y el titular (líneas 1-31) + 16 maquinaria compartida duplicada (`mira40c`, el mismo ayudante que `36-…-4-el-informe-y-los-textos.sh` define, duplicado porque en `secciones/` no cabe un auxiliar; líneas 61-76) + 31 bloque indivisible mayor (el aplanado del apartado, el sub-bloque anclado por su titular y `idx40`, líneas 33-59 y 77-80: ningún caso de CA-06 puede prescindir de ellos) · REQ-014 CA-18
 seccion_nueva "--- 40/3 · la ausencia que abre: los textos que un proyecto hereda (REQ-024 CA-06) ---"
 
@@ -286,8 +286,31 @@ con40='cierra exactamente como cerraba|cierra como las anteriores|cierra exactam
 sin40='decide[ ]*exactamente lo mismo|decide como las anteriores|no nota nada|se queda[ ]*exactamente como está|se queda como está|resuelve como las anteriores'
 # EJE 1, con sus ejemplos declaradamente NO EXHAUSTIVOS (ver cabecera): identificador de versión
 # —con `v` o sin ella, completo o truncado— o expresión de anterioridad.
-ver40='[0-9]+\.[0-9]+|(^|[^a-zA-Z0-9])v[0-9]+|anterior|previa|previo|antes|hasta ahora|heredad'
-# EJE 2. `mide40p <archivo-en-formato-AP>` -> «<con> <sin>». Parte cada viñeta en BLOQUES por el
+#
+# LAS DOS CAUTELAS DE ABAJO SON `I-7`, Y LAS DOS SON DEFECTOS QUE ESTE MISMO CASO INTRODUJO:
+#
+#  (1) EL PUNTO TIENE QUE LLEGAR A `awk` COMO PUNTO LITERAL. Estos patrones NO se pasan con
+#      `awk -v`, y no es un capricho: `-v` **procesa las secuencias de escape**, así que `\.` llega
+#      como `.` —cualquier carácter— y el patrón de versión se vuelve enorme: `123`, `2026` o una
+#      fecha ISO casaban como «identificador de versión», y bastaba una fecha cerca de la frase
+#      protegida para teñir el caso de rojo. Se pasan por **ENVIRON**, que entrega el valor **byte a
+#      byte, sin interpretar nada**. Es la forma que **no depende de que nadie recuerde una regla de
+#      escapes** al editar el patrón más tarde: lo que se escriba aquí es exactamente lo que ve
+#      `awk`. (El síntoma también era visible y nadie lo miraba: `-v` emitía 12 avisos
+#      `escape sequence \. treated as plain .` por corrida. Con ENVIRON son **0**, y ese cero es
+#      parte de lo que se comprueba.)
+#
+#  (2) LA ANTERIORIDAD CASA COMO PALABRA, NO COMO SUBCADENA. Sin límites, «bast-antes»,
+#      «rest-antes» e «inst-antes» mordían. El límite se escribe **sin extensiones de gawk**
+#      —`\<`, `\>` y `\b` no son portables—: se exige **borde de cadena o carácter no alfabético**
+#      a cada lado. Y por eso las formas van con sus terminaciones (`anterior(es)`, `previ[ao]s`,
+#      `heredad[ao]s`): con límite por la derecha, un prefijo como `heredad` ya no alcanzaría a
+#      «heredada».
+ver40_ver='[0-9]+\.[0-9]+|(^|[^a-zA-Z0-9])v[0-9]+'
+ver40_ant='(^|[^[:alpha:]])(anterior(es)?|previ[ao]s?|antes|hasta ahora|heredad[ao]s?)([^[:alpha:]]|$)'
+ver40="$ver40_ver|$ver40_ant"
+# EJE 2. `mide40p <archivo-en-formato-AP> [detalle]` -> «<con> <sin>», o con `detalle` una línea
+# `<clase>|<verbo>|<término heredado>` por promesa vista. Parte cada viñeta en BLOQUES por el
 # separador de celda, cada bloque en ORACIONES por punto+espacio, y para cada oración con verbo de
 # la familia busca el término heredado en ella o en una vecina del mismo bloque.
 # (Nota de precisión, porque la versión anterior de este comentario lo decía mal: un «1.33.0» a
@@ -299,7 +322,12 @@ ver40='[0-9]+\.[0-9]+|(^|[^a-zA-Z0-9])v[0-9]+|anterior|previa|previo|antes|hasta
 # medidor roto que devuelve «0 promesas sin acto» es un verde por no medir, que es justo la familia
 # que este banco existe para cazar.
 mide40p() {
-    awk -v rcon="$con40" -v rsin="$sin40" -v rver="$ver40" '
+    ARNES40_CON="$con40" ARNES40_SIN="$sin40" ARNES40_VER="$ver40" ARNES40_MODO="${2:-cuenta}" \
+    awk '
+      BEGIN {
+        rcon = ENVIRON["ARNES40_CON"]; rsin = ENVIRON["ARNES40_SIN"]
+        rver = ENVIRON["ARNES40_VER"]; modo = ENVIRON["ARNES40_MODO"]
+      }
       {
         nb = split($0, B, /\|/)
         for (b = 1; b <= nb; b++) {
@@ -311,11 +339,16 @@ mide40p() {
             ctx = S[i]
             if (i > 1)  ctx = S[i-1] " " ctx
             if (i < no) ctx = ctx " " S[i+1]
-            if (ctx ~ rver) { if (v == "con") c++; else s++ }
+            if (ctx !~ rver) continue
+            if (modo == "cuenta") { if (v == "con") c++; else s++; continue }
+            verbo = ""; if (match(S[i], (v == "con") ? rcon : rsin)) verbo = substr(S[i], RSTART, RLENGTH)
+            term = "";  if (match(ctx, rver)) term = substr(ctx, RSTART, RLENGTH)
+            gsub(/^[^[:alnum:]]+|[^[:alnum:]]+$/, "", term)
+            print v "|" verbo "|" term
           }
         }
       }
-      END { printf "%d %d", c + 0, s + 0 }
+      END { if (modo == "cuenta") printf "%d %d", c + 0, s + 0 }
     ' "$1"
 }
 
@@ -329,7 +362,11 @@ if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-06 promesas con su acto" | grep -
   elif [ "${s40p:-0}" -eq 0 ]; then
     echo "  PASS  REQ-024 CA-06 las $tot40p promesas de equivalencia del apartado llevan el ACTO dentro de la promesa (${c40p} con acto, 0 de sujeto abierto; oraciones con verbo de la familia Y término heredado, conjunto ABIERTO)"; PASS=$((PASS+1))
   else
-    echo "  FAIL  REQ-024 CA-06 promesas de equivalencia: $tot40p vistas y ${s40p} enunciadas SIN acto (sujeto abierto): $(grep -o -E -- "$sin40" "$AP40" | sort -u | tr '\n' '|')"; FAIL=$((FAIL+1))
+    # El rojo nombra el VERBO **y el término heredado que hizo contar la oración**. Sin el término,
+    # el mensaje señalaba sólo la frase con el verbo —típicamente la que protege el texto
+    # personalizado— e inducía a reescribirla, que es justo lo que no hay que hacer: lo que hay que
+    # mirar es la pareja, y muchas veces lo que sobra es el término, no el verbo.
+    echo "  FAIL  REQ-024 CA-06 promesas de equivalencia: $tot40p vistas y ${s40p} enunciadas SIN acto (sujeto abierto): $(mide40p "$AP40" detalle | awk -F'|' '$1 == "sin" { printf "· verbo «%s» + término heredado «%s» ", $2, $3 }')"; FAIL=$((FAIL+1))
   fi
 fi
 
@@ -399,6 +436,46 @@ if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-06 regresiones conocidas" | grep 
     echo "  PASS  REQ-024 CA-06 las $reg_tot regresiones conocidas de I-5 siguen mordiendo, y los controles positivos siguen pasando  ($reg_ok de $reg_tot inyectadas dan «sin acto» >= 1 —conjunto de regresiones CONOCIDAS, NO exhaustivo—; y el apartado sin inyectar sigue en $posc con acto y $poss sin acto, así que la frase protectora y las dos promesas reales pasan sin haberse tocado)"; PASS=$((PASS+1))
   else
     echo "  FAIL  REQ-024 CA-06 regresiones/controles: $reg_ok de $reg_tot regresiones muerden (se esperaban $reg_tot)$reg_mal · controles positivos: $posc con acto (se esperaba >=2) y $poss sin acto (se esperaba 0)"; FAIL=$((FAIL+1))
+  fi
+fi
+
+# ---------- CA-06 · LOS FALSOS POSITIVOS DE `I-7`, Y LA FALSACIÓN `v2` ----------
+# `I-7` fueron DOS defectos que la reparación de `I-5` introdujo al ensanchar el eje del término
+# heredado: el escape `\.` perdido al pasar por `awk -v` (cualquier número de 3+ cifras o una fecha
+# ISO casaba como versión) y la anterioridad sin límite de palabra («bastantes», «restantes»).
+# Los dos están corregidos arriba —ENVIRON y bordes no alfabéticos—, y aquí se EJERCEN, porque un
+# arreglo de reconocedor que no se ejerce en los dos sentidos no se distingue de aflojarlo.
+#
+# Y con ellos va `v2`, la falsación de QA: una forma que **no está entre las siete** y que tiene que
+# morder igual. Es lo que separa «arreglé la propiedad» de «añadí siete excepciones».
+if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-06 falsos positivos I-7" | grep -qi -- "$FILTRO"; then
+  NEG40="$RAIZ/neg40-$BASHPID.txt"
+  # Negativos: la frase que protege el texto personalizado, con un vecino inocente al lado. Ninguno
+  # es un término heredado, así que ninguno puede convertirla en promesa de equivalencia.
+  NEGS40=(
+    'fecha ISO junto a la frase protectora::Decidido el 2026-09-14: tu texto se queda como está'
+    'fecha ISO en la oración vecina::Corregido el 2026-09-14. Tu texto se queda como está'
+    '«bastantes» (anterioridad dentro de otra palabra)::Hay bastantes casos y tu texto se queda como está'
+    '«restantes» (ídem)::Los restantes: tu texto se queda como está'
+    '«instantes» (ídem)::Durante unos instantes, tu texto se queda como está'
+    'número suelto de 3 cifras::Nota 123: tu texto se queda como está'
+  )
+  neg_tot=0; neg_ok=0; neg_mal=''
+  for entrada in "${NEGS40[@]}"; do
+    neg_tot=$((neg_tot+1))
+    eje="${entrada%%::*}"; texto="${entrada#*::}"
+    printf '0\t- %s\n' "$texto" > "$NEG40"
+    r="$(mide40p "$NEG40")"
+    if [ "$r" = "0 0" ]; then neg_ok=$((neg_ok+1)); else neg_mal="$neg_mal · #$neg_tot [$eje] dio «$r» en vez de «0 0»: «$texto»"; fi
+  done
+  # Positivo de no-vacuidad: `v2` NO está entre las siete regresiones conocidas y tiene que morder.
+  # Sin esto, «0 falsos positivos» sería cierto por haber dejado el reconocedor mudo.
+  printf '0\t- sin la llave, la v2 decide exactamente lo mismo.\n' > "$NEG40"
+  v2="$(mide40p "$NEG40")"; v2s="${v2##* }"
+  if [ "$neg_ok" -eq "$neg_tot" ] && [ "${v2s:-0}" -ge 1 ]; then
+    echo "  PASS  REQ-024 CA-06 los $neg_tot falsos positivos de I-7 ya no muerden, y el reconocedor no se quedó mudo  ($neg_ok de $neg_tot dan «0 0» —fechas ISO, números de 3 cifras y la anterioridad dentro de «bastantes»/«restantes»/«instantes»—; y la falsación «v2», que NO está entre las siete regresiones, sigue mordiendo con $v2s sin acto)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  REQ-024 CA-06 falsos positivos I-7: $neg_ok de $neg_tot dan «0 0» (se esperaban $neg_tot)$neg_mal · y la falsación «v2» dio «$v2» (se esperaba sin acto >= 1; un 0 aquí significa que el reconocedor quedó mudo, no limpio)"; FAIL=$((FAIL+1))
   fi
 fi
 

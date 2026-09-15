@@ -2,6 +2,69 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-15 · `I-7`: el punto dejaba de ser un punto al pasar por `awk -v`, y «bastantes» contenía «antes»
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: desarrollador (reparación acotada de `I-7`, autorizada por el propietario: **únicamente los dos defectos que la reparación de `I-5` introdujo**). Base: `6732e94`. Hallazgo: QA sobre `eea46ad` e `R-038` del auditor. **Sólo `tests/` + `Historial` de `REQ-024` + este `CHANGELOG`.**
+
+**Los dos defectos eran míos**, de la reparación anterior: al ensanchar el eje del término heredado
+para recuperar la cobertura de `I-5`, ensanché **de más y por accidente**.
+
+### (1) El punto literal se convertía en comodín
+
+Los patrones llegaban a `awk` con `-v`, y **`-v` interpreta las secuencias de escape**: `[0-9]+\.[0-9]+`
+llegaba como `[0-9]+.[0-9]+`, donde `.` es **cualquier carácter**. Consecuencia: **cualquier número de
+tres o más cifras, o una fecha ISO**, casaba como identificador de versión. Reproducido antes de tocar
+nada: «Decidido el **2026-09-14**: tu texto se queda como está» → **muerde**; «Nota **123**: …» →
+**muerde**.
+
+**Ahora los patrones se pasan por `ENVIRON`**, que entrega el valor **byte a byte sin interpretar
+nada**. Elegí esa forma sobre `[.]` o el doble escape por la razón que se pidió: **no depende de que
+nadie recuerde una regla de escapes** al editar el patrón más tarde — lo que se escriba en el shell
+es exactamente lo que ve `awk`. Y el síntoma que nadie miraba queda cerrado: la sección emitía **12
+avisos `escape sequence \. treated as plain .`** por corrida; ahora son **0**, y ese cero se
+comprueba.
+
+### (2) La anterioridad casaba dentro de otras palabras
+
+`anterior|previa|antes|…` iba sin límite, así que «bast**antes**», «rest**antes**» e «inst**antes**»
+mordían. Ahora se exige **borde de cadena o carácter no alfabético a cada lado**, escrito **sin
+extensiones de `gawk`** —`\<`, `\>` y `\b` no son portables— y con las terminaciones explícitas
+(`anterior(es)`, `previ[ao]s`, `heredad[ao]s`), porque con límite por la derecha un prefijo como
+`heredad` ya no alcanzaría a «heredada».
+
+**Contrastado bajo los dos intérpretes**, no supuesto: `gawk 5.3.2` y `mawk 1.3.4` dan **el mismo
+resultado**, y la sección entera corre **29 PASS · 0 FAIL · 0 avisos** con `mawk` shimeado como `awk`
+— que importa porque `ubuntu-latest` no garantiza cuál de los dos resuelve `awk`.
+
+### Lo que se ejerce ahora, todo permanente
+
+| Control | Resultado |
+|---|---|
+| Las **siete regresiones** de `I-5` | **7/7 muerden** |
+| **`v2`** (la falsación de QA, **fuera** de las siete) | **muerde** — «0 falsos positivos» no puede ser cierto por mudez |
+| Fecha ISO junto a la frase protectora, y en la oración vecina | **0 0** |
+| «bastantes», «restantes», «instantes» | **0 0** |
+| Número suelto de 3 cifras | **0 0** |
+| Frase protectora sola · dos promesas reales con acto · discriminante | pasan, **sin tocar la frase** |
+
+**Y el rojo ya no induce a tocar la frase equivocada**, que es lo que pidió el auditor: cuando muerde,
+nombra **el verbo y el término heredado** que hizo contar la oración. Forzado un `FAIL` real para
+verlo: `verbo «no nota nada» + término heredado «1.33»`. Antes imprimía sólo el verbo —típicamente la
+frase que protege el texto personalizado—, y eso empuja a reescribir justo lo que no se debe.
+
+### Evidencia, con la disciplina de `I-6`
+
+**Por ruta de archivo**, `secciones/40-…-3-los-textos-heredados.sh` → **29 PASS · 0 FAIL**, **29
+ejecutados = 29 declarados** (antes 28), **0 avisos `escape sequence`** (antes 12), y **los cuatro
+casos de `CA-06` aparecen por su identificador**: promesas con su acto, discriminante, las siete
+regresiones y los falsos positivos de `I-7`. Ninguno faltó. **Gates §7: las tres, verdes.**
+`40/3`: 28 → 29; total del banco: 1292 → 1293.
+
+**No se amplió el reconocedor en ningún otro eje.** **No se tocó** la frase protectora, `CA-06`,
+`AGENTS.md`, plantillas, skills, `hooks/`, `tools/`, `.arnes/` ni `.github/`; de `requirements/`,
+sólo el **`Historial` de `REQ-024`**, describiendo el instrumento. **Fuera de alcance y sin tocar:**
+`REQ-017 CA-09`, el `mv` de la 33, `I-3`, `I-6`, `R-1`, `SEC-096`, `SEC-101` y `N-4`. Ningún hallazgo
+cerrado, **sin `push`**.
+
 ## [Interno] — 2026-09-15 · Seguridad `R-038`: cobertura de `I-5` **recuperada**, ninguna protección tocada, **firma extendida a `eea46ad`**
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad. Registro: `docs/seguridad/registro-seguridad.md` § R-038. Comprobación acotada, no auditoría del delta.
 

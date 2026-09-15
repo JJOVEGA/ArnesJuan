@@ -1300,7 +1300,20 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1292  # 1291 → 1292: las SIETE REGRESIONES CONOCIDAS de `I-5` en `40/3` (27 → 28).
+CASOS_ESPERADOS=1293  # 1292 → 1293: los FALSOS POSITIVOS de `I-7` en `40/3` (28 → 29). Al ensanchar
+                      # el eje del término heredado para recuperar `I-5`, la reparación metió dos
+                      # defectos propios: el escape `\.` se perdía al pasar el patrón por `awk -v`
+                      # —que interpreta escapes—, de modo que CUALQUIER número de tres o más cifras
+                      # o una fecha ISO casaba como identificador de versión; y la anterioridad
+                      # casaba dentro de otras palabras («bastantes», «restantes», «instantes»). Los
+                      # dos van corregidos en la propiedad —los patrones llegan por `ENVIRON`, que
+                      # no interpreta nada, y la anterioridad exige borde no alfabético—, y el caso
+                      # nuevo los EJERCE en los dos sentidos: seis negativos que deben dar «0 0» y
+                      # la falsación `v2`, que NO está entre las siete regresiones, que debe seguir
+                      # mordiendo — si no, «0 falsos positivos» sería cierto por mudez. Ningún otro
+                      # `CASOS_ESPERADOS_SECCION` se toca.
+                      #
+                      # 1291 → 1292: las SIETE REGRESIONES CONOCIDAS de `I-5` en `40/3` (27 → 28).
                       # Al acotar el reconocedor de promesas de equivalencia quedó por propiedad en
                       # UN EJE DE DOS: el del verbo/acto bien, y el del TÉRMINO HEREDADO como
                       # enumeración cerrada con alcance de una sola oración. QA y el auditor
