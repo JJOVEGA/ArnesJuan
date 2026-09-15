@@ -29,7 +29,7 @@
 # aplanar se conserva el NÚMERO DE LÍNEA de arranque de cada viñeta, que es lo que permite medir
 # el ORDEN que `CA-06 (ii)` contrata —la propiedad ANTES de cualquier comando— sin volver a
 # recorrer el archivo.
-CASOS_ESPERADOS_SECCION=27  # 26 → 27: el DISCRIMINANTE del reconocedor de promesas de equivalencia. Al corregir su alcance (falso positivo medido en CI, PR #50: la fila `MODIFICADO` de la tabla de migración casaba con el verbo sin prometer equivalencia con ninguna versión), el arreglo sería indistinguible de haber aflojado el reconocedor; el caso nuevo inyecta en una COPIA las dos formas que tienen que decidir distinto —con término heredado y SIN acto muerde, la misma CON acto pasa— más el control de que la frase que protege el texto personalizado, sola, no es ni promesa ni infracción
+CASOS_ESPERADOS_SECCION=28  # 27 → 28: las SIETE REGRESIONES CONOCIDAS de `I-5` con sus controles positivos. Al acotar el reconocedor por propiedad (26 → 27, abajo) el eje del VERBO quedó bien y el del TÉRMINO HEREDADO quedó como enumeración cerrada y alcance de una sola oración; QA y el auditor midieron que por ahí se soltaron **siete** formas que el reconocedor anterior sí cazaba, **ninguna espuria**. El caso nuevo inyecta las siete, una a una, y exige que **todas vuelvan a morder**, más los controles positivos en la misma vuelta (la frase protectora y las dos promesas reales siguen pasando). Son regresiones CONOCIDAS, no la definición de la clase ni un conjunto cerrado.  # 26 → 27: el DISCRIMINANTE del reconocedor de promesas de equivalencia. Al corregir su alcance (falso positivo medido en CI, PR #50: la fila `MODIFICADO` de la tabla de migración casaba con el verbo sin prometer equivalencia con ninguna versión), el arreglo sería indistinguible de haber aflojado el reconocedor; el caso nuevo inyecta en una COPIA las dos formas que tienen que decidir distinto —con término heredado y SIN acto muerde, la misma CON acto pasa— más el control de que la frase que protege el texto personalizado, sola, no es ni promesa ni infracción
 PISO_AUTONOMO_SECCION=78  # 31 preámbulo con sus dos declaraciones y el titular (líneas 1-31) + 16 maquinaria compartida duplicada (`mira40c`, el mismo ayudante que `36-…-4-el-informe-y-los-textos.sh` define, duplicado porque en `secciones/` no cabe un auxiliar; líneas 61-76) + 31 bloque indivisible mayor (el aplanado del apartado, el sub-bloque anclado por su titular y `idx40`, líneas 33-59 y 77-80: ningún caso de CA-06 puede prescindir de ellos) · REQ-014 CA-18
 seccion_nueva "--- 40/3 · la ausencia que abre: los textos que un proyecto hereda (REQ-024 CA-06) ---"
 
@@ -244,34 +244,92 @@ mira40c "REQ-024 CA-06 (v) ...con los ejemplos marcados NO exhaustivos y los dos
 #
 # La distinción se hace POR PROPIEDAD, no excluyendo la línea, la fila ni la tabla por su nombre
 # —una exclusión por nombre deja de valer en cuanto la tabla se mueva—: **una promesa de
-# equivalencia compara con una VERSIÓN HEREDADA, y por tanto nombra el término de la comparación**
-# —un número de versión, «las anteriores», «la heredada»— DENTRO DE LA MISMA ORACIÓN. Las dos
-# promesas reales del apartado lo llevan («cierra exactamente como cerraba **en 1.33.0**», «sin la
-# llave, 1.34.0 cierra **como las anteriores**»); «tu texto se queda como está» no lo lleva, porque
-# no hay versión con la que comparar. Sin término heredado no hay equivalencia que prometer.
+# equivalencia compara con una VERSIÓN HEREDADA, y por tanto nombra el término de la comparación**.
+# Las dos promesas reales del apartado lo llevan («cierra exactamente como cerraba **en 1.33.0**»,
+# «sin la llave, 1.34.0 cierra **como las anteriores**»); «tu texto se queda como está» no lo lleva,
+# porque no hay versión con la que comparar. Sin término heredado no hay equivalencia que prometer.
 #
-# El alcance es LA ORACIÓN —y una celda de tabla cuenta como una— para que un número de versión que
-# vive en otra frase de la misma viñeta no le preste su término a una frase que no lo tiene.
+# EL DETECTOR QUEDÓ POR PROPIEDAD EN UN EJE DE DOS, Y ESO FUE `I-5`. La primera versión de esta
+# corrección acotó bien el eje del VERBO/ACTO y dejó el del TÉRMINO HEREDADO como una **enumeración
+# cerrada** y un alcance de **una sola oración**. Resultado medido por QA y por el auditor: **siete**
+# formas que el reconocedor anterior sí cazaba dejaron de caer, **ninguna de ellas espuria** — las
+# siete eran promesas que debían seguir bloqueadas. Efecto sobre el texto de entonces: nulo.
+# Cobertura futura: perdida. Los dos ejes se enuncian ahora por propiedad:
+#
+#   EJE 1 · QUÉ ES UN TÉRMINO HEREDADO — **por propiedad, con ejemplos NO EXHAUSTIVOS**
+#   (`requirements/README.md`: una enumeración cerrada envejece hacia el lado que abre). Es toda
+#   expresión que señale **un estado anterior de este arnés**, y se reconoce de dos maneras:
+#     (i) un IDENTIFICADOR DE VERSIÓN — con `v` o sin ella, completo o truncado: `1.33.0`, `1.33.`,
+#         `v1`—; o
+#     (ii) una EXPRESIÓN DE ANTERIORIDAD — «anterior», «previa», «antes», «hasta ahora»,
+#         «heredada»…
+#   Los ejemplos de abajo son **ejemplos**, no la clase: una forma nueva de decir «antes» se le
+#   escapa, y por eso el caso **publica su denominador** en vez de afirmar «ninguna».
+#
+#   EJE 2 · DÓNDE PUEDE ESTAR ESE TÉRMINO — en la oración del verbo **o en una vecina inmediata**,
+#   dentro del MISMO BLOQUE. Una promesa se reparte entre dos frases con toda naturalidad («La
+#   comparación es con la versión 1.33.0. Sin la llave, decide exactamente lo mismo.»), así que la
+#   oración sola suelta la mitad de la familia. **El bloque es el límite**, y es lo que impide que
+#   esto se vuelva laxo: una celda de tabla es un bloque, así que el término de una celda **no le
+#   presta** a otra — que era la ganancia por la que se acotó, y se conserva.
+#
+# LÍMITE DECLARADO, PORQUE SIGUE SIENDO UN RECONOCEDOR POR CADENA Y NO UN ANALIZADOR: no entiende
+# castellano. Reconoce las formas que se le enumeran en los dos ejes y **no las demás**; la ventana
+# de dos oraciones es una heurística de vecindad, no una noción de párrafo. Lo que lo hace fiable no
+# es su cobertura, sino que **lo que suelta y lo que muerde está ejercido**: las SIETE regresiones
+# conocidas y los controles positivos corren en cada vuelta, abajo.
+# Con acto DENTRO de la promesa (el verbo de la equivalencia es cerrar) / sin acto (sujeto
+# abierto: «decide», «no nota nada», «se queda como está»). Conjunto ABIERTO (`QA-024-05`).
+# Se definen a NIVEL DE ARCHIVO, no dentro del primer caso: los tres casos de `CA-06` los usan, y
+# con `FILTRO` el primero puede no ejecutarse.
+con40='cierra exactamente como cerraba|cierra como las anteriores|cierra exactamente como cerró'
+sin40='decide[ ]*exactamente lo mismo|decide como las anteriores|no nota nada|se queda[ ]*exactamente como está|se queda como está|resuelve como las anteriores'
+# EJE 1, con sus ejemplos declaradamente NO EXHAUSTIVOS (ver cabecera): identificador de versión
+# —con `v` o sin ella, completo o truncado— o expresión de anterioridad.
+ver40='[0-9]+\.[0-9]+|(^|[^a-zA-Z0-9])v[0-9]+|anterior|previa|previo|antes|hasta ahora|heredad'
+# EJE 2. `mide40p <archivo-en-formato-AP>` -> «<con> <sin>». Parte cada viñeta en BLOQUES por el
+# separador de celda, cada bloque en ORACIONES por punto+espacio, y para cada oración con verbo de
+# la familia busca el término heredado en ella o en una vecina del mismo bloque.
+# (Nota de precisión, porque la versión anterior de este comentario lo decía mal: un «1.33.0» a
+# mitad de frase no se parte, pero uno que CIERRA la oración va seguido de punto y espacio y SÍ se
+# parte. Por eso el término se busca también en la vecina, y no sólo en la propia oración.)
+# Los nombres de las variables de awk llevan prefijo A PROPÓSITO: `sin` es una función interna de
+# gawk y usarla como variable aborta el programa. Y NO se enmascara el error: si el medidor no
+# puede correr, no imprime nada, y quien lo llama **falla nombrándolo** en vez de leer un 0. Un
+# medidor roto que devuelve «0 promesas sin acto» es un verde por no medir, que es justo la familia
+# que este banco existe para cazar.
+mide40p() {
+    awk -v rcon="$con40" -v rsin="$sin40" -v rver="$ver40" '
+      {
+        nb = split($0, B, /\|/)
+        for (b = 1; b <= nb; b++) {
+          t = B[b]; gsub(/\. /, ".\n", t)
+          no = split(t, S, /\n/)
+          for (i = 1; i <= no; i++) {
+            v = (S[i] ~ rcon) ? "con" : ((S[i] ~ rsin) ? "sin" : "")
+            if (v == "") continue
+            ctx = S[i]
+            if (i > 1)  ctx = S[i-1] " " ctx
+            if (i < no) ctx = ctx " " S[i+1]
+            if (ctx ~ rver) { if (v == "con") c++; else s++ }
+          }
+        }
+      }
+      END { printf "%d %d", c + 0, s + 0 }
+    ' "$1"
+}
+
 if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-06 promesas con su acto" | grep -qi -- "$FILTRO"; then
-  # Con acto DENTRO de la promesa (el verbo de la equivalencia es cerrar) / sin acto (sujeto
-  # abierto: «decide», «no nota nada», «se queda como está»).
-  con40='cierra exactamente como cerraba|cierra como las anteriores|cierra exactamente como cerró'
-  sin40='decide[ ]*exactamente lo mismo|decide como las anteriores|no nota nada|se queda[ ]*exactamente como está|se queda como está|resuelve como las anteriores'
-  # El TÉRMINO DE COMPARACIÓN HEREDADO que convierte un verbo en promesa de equivalencia.
-  ver40='[0-9]+\.[0-9]+(\.[0-9]+)?|las anteriores|la anterior|versiones anteriores|versión anterior|la heredada|versión heredada'
-  # El apartado partido en ORACIONES: el separador de celda de tabla abre oración, y luego se corta
-  # en punto+espacio (un «1.33.0» no se parte: no lleva espacio tras el punto).
-  ORA40="$RAIZ/ora40-$BASHPID.txt"
-  sed -e 's/|/ . /g' -e 's/\. /.\n/g' "$AP40" 2>/dev/null > "$ORA40" || : > "$ORA40"
-  c40p="$(grep -E -- "$con40" "$ORA40" 2>/dev/null | grep -c -E -- "$ver40" || true)"
-  s40p="$(grep -E -- "$sin40" "$ORA40" 2>/dev/null | grep -v -E -- "$con40" | grep -c -E -- "$ver40" || true)"
+  m40="$(mide40p "$AP40")"; c40p="${m40%% *}"; s40p="${m40##* }"
   tot40p=$(( ${c40p:-0} + ${s40p:-0} ))
-  if [ "$tot40p" -lt 1 ]; then
+  if [ -z "$m40" ]; then
+    echo "  FAIL  REQ-024 CA-06 promesas con su acto: el MEDIDOR no pudo correr y no hay medición; esto no se da por bueno ni se cuenta como «0 promesas sin acto»"; FAIL=$((FAIL+1))
+  elif [ "$tot40p" -lt 1 ]; then
     echo "  SKIP  REQ-024 CA-06 promesas con su acto  el apartado no enuncia ninguna promesa de equivalencia de las formas conocidas ($VIN40 viñetas): «todas llevan su acto» sería cierto por vacío"
   elif [ "${s40p:-0}" -eq 0 ]; then
     echo "  PASS  REQ-024 CA-06 las $tot40p promesas de equivalencia del apartado llevan el ACTO dentro de la promesa (${c40p} con acto, 0 de sujeto abierto; oraciones con verbo de la familia Y término heredado, conjunto ABIERTO)"; PASS=$((PASS+1))
   else
-    echo "  FAIL  REQ-024 CA-06 promesas de equivalencia: $tot40p vistas y ${s40p} enunciadas SIN acto (sujeto abierto): $(grep -E -- "$sin40" "$ORA40" | grep -v -E -- "$con40" | grep -E -- "$ver40" | tr '\n' '|')"; FAIL=$((FAIL+1))
+    echo "  FAIL  REQ-024 CA-06 promesas de equivalencia: $tot40p vistas y ${s40p} enunciadas SIN acto (sujeto abierto): $(grep -o -E -- "$sin40" "$AP40" | sort -u | tr '\n' '|')"; FAIL=$((FAIL+1))
   fi
 fi
 
@@ -284,26 +342,63 @@ fi
 # El control (a) —que la frase protectora del texto personalizado pasa SIN haber sido cambiada— lo
 # da el caso de arriba sobre el apartado real, que la contiene tal cual.
 if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-06 discriminante del reconocedor" | grep -qi -- "$FILTRO"; then
-  mide40p() {   # <archivo-oraciones> -> imprime «<con> <sin>»
-    local f="$1" c s
-    c="$(grep -E -- "$con40" "$f" 2>/dev/null | grep -c -E -- "$ver40" || true)"
-    s="$(grep -E -- "$sin40" "$f" 2>/dev/null | grep -v -E -- "$con40" | grep -c -E -- "$ver40" || true)"
-    printf '%s %s' "${c:-0}" "${s:-0}"
-  }
   INY40="$RAIZ/iny40-$BASHPID.txt"
   # (b1) sintética SIN acto, con término heredado explícito.
-  { cat "$ORA40"; printf 'sin la llave, esta version decide como las anteriores.\n'; } > "$INY40"
+  { cat "$AP40"; printf '0\t- sin la llave, esta version decide como las anteriores.\n'; } > "$INY40"
   b1="$(mide40p "$INY40")"; b1s="${b1##* }"
   # (b2) sintética CON su acto dentro de la promesa.
-  { cat "$ORA40"; printf 'sin la llave, esta version cierra como las anteriores.\n'; } > "$INY40"
+  { cat "$AP40"; printf '0\t- sin la llave, esta version cierra como las anteriores.\n'; } > "$INY40"
   b2="$(mide40p "$INY40")"; b2s="${b2##* }"; b2c="${b2%% *}"
   # (c) control de no-vacuidad: la frase protectora, SOLA, no es una promesa de equivalencia.
-  printf 'Tu texto **se queda como está** y el conflicto **se lista para el humano**.\n' > "$INY40"
+  printf '0\t- Tu texto **se queda como está** y el conflicto **se lista para el humano**.\n' > "$INY40"
   b3="$(mide40p "$INY40")"
   if [ "$b1s" -ge 1 ] && [ "$b2s" -eq 0 ] && [ "$b2c" -ge 1 ] && [ "$b3" = "0 0" ]; then
     echo "  PASS  REQ-024 CA-06 discriminante: el reconocedor sigue mordiendo lo que debe y suelta lo que no  (inyectada SIN acto -> $b1s sin acto, muerde; la MISMA CON acto -> $b2s sin acto y $b2c con acto, pasa; la frase que protege el texto personalizado, sola -> «$b3», ni promesa ni infracción)"; PASS=$((PASS+1))
   else
     echo "  FAIL  REQ-024 CA-06 discriminante: el reconocedor no distingue los dos casos  (SIN acto -> «$b1» (se esperaba sin>=1); CON acto -> «$b2» (se esperaba sin=0 y con>=1); frase protectora sola -> «$b3» (se esperaba «0 0»))"; FAIL=$((FAIL+1))
+  fi
+fi
+
+# ---------- CA-06 · LAS SIETE REGRESIONES CONOCIDAS, Y LOS CONTROLES POSITIVOS ----------
+# Las siete formas que el reconocedor de `d913575` dejó de cazar y el anterior sí cazaba (`I-5`,
+# medidas por QA y confirmadas por el auditor: **ninguna era espuria**; las siete son promesas de
+# equivalencia sin su acto y debían seguir bloqueadas). Se inyecta cada una en una COPIA del
+# apartado y se exige que **siga mordiendo**.
+#
+# NO SON LA DEFINICIÓN NI UN CONJUNTO CERRADO, y esto importa tanto como el caso: son las
+# regresiones **conocidas**, es decir las que ya se escaparon una vez. La clase la enuncian los dos
+# ejes de la cabecera, por propiedad y con ejemplos no exhaustivos; estas siete son el suelo
+# ejercido, no el techo. Tampoco son excepciones escritas una a una: el arreglo está en la
+# PROPIEDAD —el término heredado por clase, y la vecindad dentro del bloque—, y estas siete sólo
+# comprueban que la propiedad las alcanza.
+if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-06 regresiones conocidas" | grep -qi -- "$FILTRO"; then
+  REG40="$RAIZ/reg40-$BASHPID.txt"
+  # Cada entrada: <etiqueta del eje que la dejó escapar>::<texto inyectado>
+  REGS40=(
+    'vecina/término en la oración anterior::La comparación es con la versión 1.33.0. Sin la llave, decide exactamente lo mismo.'
+    'vecina/«no nota nada» en la siguiente::Frente a las anteriores no hay cambio. Un proyecto no nota nada.'
+    'enumeración/versión sin punto decimal::sin la llave, la v1 decide exactamente lo mismo.'
+    'corte/versión que cierra la oración::respecto a la versión 1.33. decide exactamente lo mismo.'
+    'enumeración/anterioridad natural::respecto a antes, decide exactamente lo mismo.'
+    'enumeración/anterioridad natural::como hasta ahora, no nota nada.'
+    'enumeración/«previa» no estaba::igual que en la versión previa, decide exactamente lo mismo.'
+  )
+  reg_tot=0; reg_ok=0; reg_mal=''
+  for entrada in "${REGS40[@]}"; do
+    reg_tot=$((reg_tot+1))
+    eje="${entrada%%::*}"; texto="${entrada#*::}"
+    { cat "$AP40"; printf '0\t- %s\n' "$texto"; } > "$REG40"
+    r="$(mide40p "$REG40")"; rs="${r##* }"
+    if [ "${rs:-0}" -ge 1 ]; then reg_ok=$((reg_ok+1)); else reg_mal="$reg_mal · #$reg_tot [$eje] «$texto»"; fi
+  done
+  # Controles POSITIVOS, en la misma vuelta: el apartado SIN inyectar tiene que seguir dando sus dos
+  # promesas con acto y ninguna sin acto — es decir, la frase protectora de la fila `MODIFICADO`
+  # sigue pasando SIN haber sido reformulada, y las dos promesas reales del apartado también.
+  pos="$(mide40p "$AP40")"; posc="${pos%% *}"; poss="${pos##* }"
+  if [ "$reg_ok" -eq "$reg_tot" ] && [ "${poss:-1}" -eq 0 ] && [ "${posc:-0}" -ge 2 ]; then
+    echo "  PASS  REQ-024 CA-06 las $reg_tot regresiones conocidas de I-5 siguen mordiendo, y los controles positivos siguen pasando  ($reg_ok de $reg_tot inyectadas dan «sin acto» >= 1 —conjunto de regresiones CONOCIDAS, NO exhaustivo—; y el apartado sin inyectar sigue en $posc con acto y $poss sin acto, así que la frase protectora y las dos promesas reales pasan sin haberse tocado)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  REQ-024 CA-06 regresiones/controles: $reg_ok de $reg_tot regresiones muerden (se esperaban $reg_tot)$reg_mal · controles positivos: $posc con acto (se esperaba >=2) y $poss sin acto (se esperaba 0)"; FAIL=$((FAIL+1))
   fi
 fi
 

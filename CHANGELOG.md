@@ -2,6 +2,87 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-14 · `I-5`: el reconocedor estaba por propiedad en **un eje de dos**, y el que faltaba vuelve — con las siete regresiones ejercidas
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: desarrollador (reparación acotada de `I-5`, autorizada por el propietario el 2026-09-14). Base: `a82db68`. Hallazgo: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` § `I-5` (6.ª vuelta) y su valoración sobre `6212e87` («son **siete**, no seis»). **Sólo `tests/` + `Historial` de `REQ-024` + este `CHANGELOG`.**
+
+**El diagnóstico del auditor, que es el que ordena el arreglo:** al acotar el reconocedor de `CA-06`
+lo dejé **por propiedad en un eje de dos** — el del **verbo/acto**, bien; el del **término
+heredado**, no. Ahí quedaron una **enumeración cerrada** de seis términos, **sin marca de no
+exhaustividad** en un repositorio cuya doctrina la exige, y un alcance de **una sola oración**. Por
+esas dos rendijas se soltaron **siete** formas que el reconocedor anterior sí cazaba, y **ninguna era
+espuria**: las siete eran promesas de equivalencia sin su acto.
+
+### Los dos ejes, ahora los dos por propiedad
+
+**Qué es un término heredado** — enunciado como clase, no como lista: **toda expresión que señale un
+estado anterior de este arnés**, y se reconoce de dos maneras: **(i)** un **identificador de
+versión** —con `v` o sin ella, **completo o truncado**: `1.33.0`, `1.33.`, `v1`—, o **(ii)** una
+**expresión de anterioridad** —«anterior», «previa», «antes», «hasta ahora», «heredada»…—. Los
+ejemplos van **declaradamente NO EXHAUSTIVOS**, como `requirements/README.md` exige: una enumeración
+cerrada envejece **hacia el lado que abre**, y por eso el caso **publica su denominador** en vez de
+afirmar «ninguna».
+
+**Dónde puede estar** — en la oración del verbo **o en una vecina inmediata del MISMO BLOQUE**. Una
+promesa se reparte entre dos frases con toda naturalidad («La comparación es con la versión 1.33.0.
+Sin la llave, decide exactamente lo mismo.»), así que la oración sola soltaba media familia. **El
+bloque es el límite y es lo que impide que esto se vuelva laxo:** una celda de tabla es un bloque, de
+modo que el término de una celda **sigue sin prestar** a otra — que era exactamente la ganancia por
+la que se acotó, y se conserva. **Comprobado antes de tocar nada:** la celda `MODIFICADO` **no
+contiene ningún término heredado**, así que la frase protectora no puede caer por vecindad.
+
+**Y esto arregla de paso la regla de corte** (`#4`) sin tocarla: una versión que **cierra** la oración
+va seguida de punto y espacio y **sí se parte** — el término queda en la oración de al lado, y ahora
+la vecindad lo alcanza. **Corregida además la afirmación imprecisa** que dejé en el comentario
+anterior: «un `1.33.0` no se parte» **sólo vale a mitad de frase**, y así queda escrito.
+
+### Las siete, con su fail-before y su pass-after
+
+Son **regresiones conocidas**, y el caso lo dice con todas las letras: **no son la definición de la
+clase ni un conjunto cerrado**, y **no son excepciones escritas una a una** — el arreglo vive en la
+propiedad; las siete sólo comprueban que la propiedad las alcanza.
+
+| # | Eje que la soltaba | Bajo el reconocedor de `a82db68` | Ahora |
+|---|---|---|---|
+| 1 | término en la oración **anterior** | **suelta** | **muerde** |
+| 2 | «no nota nada» en la **siguiente** | **suelta** | **muerde** |
+| 3 | versión **sin punto decimal** (`v1`) | **suelta** | **muerde** |
+| 4 | versión que **cierra** la oración (`1.33.`) | **suelta** | **muerde** |
+| 5 | «respecto a **antes**» | **suelta** | **muerde** |
+| 6 | «como **hasta ahora**» | **suelta** | **muerde** |
+| 7 | «la versión **previa**» | **suelta** | **muerde** |
+
+**7 de 7**, y el fail-before está **medido**, no supuesto: apliqué el reconocedor anterior a las
+siete y las siete salen sueltas.
+
+**Controles positivos, permanentes y en la misma vuelta:** el apartado **sin inyectar** sigue en **2
+promesas con acto y 0 sin acto** — es decir, **la frase protectora de la fila `MODIFICADO` pasa sin
+haberse tocado** (no se reformuló) y **las dos promesas reales del apartado** siguen pasando. El
+**discriminante** anterior se conserva: promesa heredada **sin** acto → muerde; **con** acto → pasa;
+frase protectora sola → ni promesa ni infracción.
+
+### Un fail-open mío, encontrado y cerrado en el camino
+
+Al escribir el medidor nuevo usé `sin` como variable de `awk` — **es una función interna de gawk** y
+aborta el programa—, y lo había envuelto en un `2>/dev/null || printf '0 0'`. Resultado: el medidor
+reventaba y **devolvía «0 promesas sin acto»**, que es un **verde por no medir**, justo la familia que
+este banco existe para cazar. Lo vi porque el caso nuevo salió en rojo con «0 de 7». **Las dos cosas
+quedan arregladas:** las variables llevan prefijo, y **el error ya no se enmascara** — si el medidor
+no puede correr, el caso **falla nombrándolo** en vez de leer un cero.
+
+### Evidencia, con la disciplina de `I-6`
+
+**Por RUTA DE ARCHIVO y verificando identificadores, no totales:**
+`secciones/40-…-3-los-textos-heredados.sh` → **28 PASS · 0 FAIL**, **28 ejecutados = 28 declarados**
+(era 27), y **los tres casos de `CA-06` aparecen por su identificador**: el de las promesas con su
+acto, el discriminante y el de las siete regresiones. **Gates §7: las tres, verdes.**
+`40/3`: 27 → 28; total del banco: 1291 → 1292.
+
+**No se tocó** `AGENTS.md`, ni plantillas, ni skills, ni `hooks/`, `tools/`, `.arnes/`, `.github/`.
+De `requirements/` sólo el **`Historial` de `REQ-024`**, describiendo **el instrumento** — `CA-06` no
+cambia. **Fuera de alcance y sin tocar:** `REQ-017 CA-09`, el `mv` de la sección 33, `I-3`, `I-6`
+(sólo como disciplina), `R-1`, `SEC-096`, `SEC-101` y la observación de `N-4`. Ningún hallazgo
+cerrado, **sin relanzar el CI** y **sin `push`**.
+
 ## [Interno] — 2026-09-14 · Seguridad `R-037` sobre `6212e87`: **`Seguridad: aprobado`**, acotado a su objeto
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad. Registro: `docs/seguridad/registro-seguridad.md` § R-037. **La firma vive en el registro, sobre el candidato; no se escribe en el `Seguridad:` de ningún REQ.**
 

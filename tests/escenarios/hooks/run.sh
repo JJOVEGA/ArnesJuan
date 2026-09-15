@@ -1300,7 +1300,18 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1291  # 1290 → 1291: el DISCRIMINANTE del reconocedor de promesas de equivalencia
+CASOS_ESPERADOS=1292  # 1291 → 1292: las SIETE REGRESIONES CONOCIDAS de `I-5` en `40/3` (27 → 28).
+                      # Al acotar el reconocedor de promesas de equivalencia quedó por propiedad en
+                      # UN EJE DE DOS: el del verbo/acto bien, y el del TÉRMINO HEREDADO como
+                      # enumeración cerrada con alcance de una sola oración. QA y el auditor
+                      # midieron que por ahí se soltaron SIETE formas que el reconocedor anterior sí
+                      # cazaba, y NINGUNA era espuria. El arreglo va en la PROPIEDAD —el término
+                      # heredado enunciado por clase con ejemplos no exhaustivos, y la vecindad
+                      # dentro del bloque—; el caso nuevo las inyecta una a una y exige que todas
+                      # vuelvan a morder, con los controles positivos en la misma vuelta. Ningún
+                      # otro `CASOS_ESPERADOS_SECCION` se toca.
+                      #
+                      # 1290 → 1291: el DISCRIMINANTE del reconocedor de promesas de equivalencia
                       # en `40/3` (26 → 27). Su alcance se corrigió por un falso positivo MEDIDO en
                       # CI (PR #50): el apartado dejó de ser sólo prosa sobre la llave y ahora lleva
                       # la tabla de migración, cuya fila `MODIFICADO` —«tu texto se queda como
