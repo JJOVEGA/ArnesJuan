@@ -88,3 +88,11 @@ por tarea**, que es el objetivo declarado, y se registra sin proponer nada.
 - **Seguridad (`R-036`):** sin firma. `SEC-098` **en-mitigación** por construcción; **`SEC-099` `contrato` nuevo, BLOQUEA**: la migración dice «en tus palabras» y cuatro de cinco redacciones negativas naturales se leen como sí; `SEC-100` `instrumento`. Falta para la firma: sólo `SEC-099`.
 - **CI:** **no relanzado**: reparar `SEC-099` cambiaría la cabeza. El remoto sigue en `2b56cb4`.
 - **Bloqueo vigente del candidato:** `SEC-099`. Sin repararse, por instrucción del propietario. Publicación sin autorizar.
+
+## Tercera ronda (2026-09-14/15) — `6212e87` (+ informes → `a82db68`, empujado; PR #50)
+- **`SEC-099`/`SEC-100` reparados** (una sede normativa en §6; «en tus palabras» retirado; promesa «ni buscándola» retirada).
+- **Ensayos con agentes reales sobre `6212e87`:** `CON-AFIRM` → `desarrollador → qa-tester` sin analista ✔; `SIN-CONS` → analista primero ✔ (sesión muerta a los 24 min por `401 OAuth access token has been revoked`, entorno).
+- **QA: FAVORABLE.** `I-5` valorado: **siete** formas, todas promesas que debían seguir bloqueadas; debilitamiento de instrumento, efecto presente nulo.
+- **Seguridad `R-037`: `Seguridad: aprobado`** acotado. `SEC-093/094/095/097/098/099/100` mitigados; `SEC-096` en-mitigación; `SEC-101` nuevo `instrumento`. Corrige `R-036` en un eje.
+- **CI (`a82db68`): 1275 · 1 · 15, cuadre 1291.** `CA-06` en verde con identificadores. **Nuevo FAIL: `REQ-017 CA-09`** (sonda de coste, SKIP en la corrida anterior; no atribuible al delta). Diagnóstico en `ci-pr50-a82db68/`.
+- **Bloqueo vigente:** la puerta requerida sigue en rojo (`CA-09`). Sin repararse ni relanzarse. Sin fusión ni publicación.
