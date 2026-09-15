@@ -2,6 +2,30 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-14 · Seguridad `R-037` sobre `6212e87`: **`Seguridad: aprobado`**, acotado a su objeto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad. Registro: `docs/seguridad/registro-seguridad.md` § R-037. **La firma vive en el registro, sobre el candidato; no se escribe en el `Seguridad:` de ningún REQ.**
+
+**Estados:** `SEC-093`, `094`, `095`, `097`, **`098`, `099`, `100` mitigados**; `SEC-096` en-mitigación (no bloquea);
+**`SEC-101` nuevo, `instrumento`, no bloquea**: la disciplina de remisión alcanzó a `arnes-init`/`arnes-upgrade` —que
+escriben la línea— y **no** a §14 A (5) ni a `agents/desarrollador.md` —que la comprueban—; dato empírico: la coordinadora
+de SIN-CONS apoyó su lectura en un `grep` desde la sede que no remite.
+
+**`SEC-099`:** las cinco redacciones quedan fuera **por la función de la oración** (punto 2, y el punto 5 cita el propio
+caso del auditor); sede única medida por texto **aplanado** —«contarlo por línea es el error que la regla nombra, y mi
+primera pasada cayó en él»—: literales 1/1 sólo en `AGENTS.md` y plantilla, 0 transcripciones y 1 remisión por skill.
+
+**Las siete formas de `I-5`:** concuerda con QA sin reservas — ninguna es falso positivo, las siete debían seguir bloqueadas;
+**debilitamiento de instrumento, no de protección**, con efecto presente nulo (medido: el reconocedor viejo sobre el apartado
+actual caza exactamente 1 sin acto: la frase protectora). **Y corrige su propia `R-036`:** «se acotó por propiedad» era cierto
+en **un eje de dos**; `ver40` es enumeración cerrada sin marca — «un comentario correcto más un verde no acreditan eso; había
+que leer el patrón». No cambia el veredicto; cambia la razón.
+
+**Acredita:** que la vía no retira ninguna revisión de seguridad; que el disparador del auditor nunca nace sin sujeto; que
+instalar la política no la autoriza en ninguna ruta y la disciplina vive en una sede; veto, orden de firmas y write-back
+intactos; sin regresión en cuatro revisiones. **No acredita:** ninguna corrida real de `arnes-init`/`arnes-upgrade`, la
+composición «copia propia de agente», la cadena completa de SIN-CONS (murió por `401`), el banco ni el CI, ni fusión ni
+publicación — y **no hay comprobación mecánica de la autorización, como el producto declara**.
+
 ## [Interno] — 2026-09-14 · QA sobre `6212e87`: **FAVORABLE**; `I-5` valorado — son **siete** formas y las siete debían seguir bloqueadas
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester. Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`.
 
