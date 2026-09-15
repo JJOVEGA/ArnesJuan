@@ -2,6 +2,29 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-14 · QA sobre `6212e87`: **FAVORABLE**; `I-5` valorado — son **siete** formas y las siete debían seguir bloqueadas
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester. Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`.
+
+**`SEC-099` reparado:** una sola sede (idéntica en las gemelas, 32 líneas, 2 758 B), las dos líneas literales sólo en
+`AGENTS.md` y la plantilla, skills que **remiten y no transcriben**, «en tus palabras» 0 como instrucción, y la regla **no
+depende de la redacción**: las cinco redacciones del auditor quedan fuera **por el punto 2**. Las apariciones «buscables» de
+la frase en §6 son exactamente lo que el límite declara —«empezando por este mismo apartado»—, verificado literal. **`SEC-100`:**
+promesa retirada, límite bien enunciado («hoy no existe» verificación automática).
+
+**`I-5`, valorado forma por forma —corrección de QA: son siete, no seis—: ninguna es falso positivo; las siete son promesas
+de equivalencia sin acto que el reconocedor viejo cazaba y el nuevo suelta.** Hay debilitamiento real, de tres clases
+(enumeración cerrada de `ver40` sin marca «no exhaustivo»; alcance por oración; regla de corte —«un «1.33.0» no se parte»
+sólo vale a mitad de frase—). **Efecto sobre el documento de hoy: nulo** (el reconocedor viejo aplicado al apartado actual
+caza sólo la frase protectora). Clase `instrumento`, no bloquea, **caracterización agravada**.
+
+**Ensayos contrastados:** CON-AFIRM conforme (la coordinadora aplicó los puntos 2 y 3 nombrándolos); SIN-CONS conforme en lo
+preguntado. Dos observaciones valoradas: el `grep` de la coordinadora es la **primera evidencia empírica** de que el límite de
+`SEC-100` era necesario —acertó por el salto de línea—; y el mismo separador recibió **dos clasificaciones opuestas** en dos
+corridas (n=1 por caso: no se afirma no determinismo, se declara lo no demostrado).
+
+Mecánica por ruta e identificador (`I-6`): `44`/`45`/`46` → 121 · 0 · 2, 123 casos con identificador. Gates 3/3. Sin `tests/`.
+**No acredita:** ejecución real de `arnes-init`/`arnes-upgrade`, banco completo, reproducibilidad de «clasificar por el efecto».
+
 ## [Interno] — 2026-09-14 · `SEC-099`: la disciplina de la declaración pasa a tener **una sola sede**, y la promesa de `SEC-100` deja de prometer lo que un `grep` no da
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: desarrollador (reparación de `SEC-099` autorizada por el propietario el 2026-09-14, como parte de la misma reparación). Base: `10f31ed`. Hallazgos: `docs/seguridad/registro-seguridad.md` § R-036 (`SEC-099` `contrato`, `SEC-100` `instrumento`).
 
