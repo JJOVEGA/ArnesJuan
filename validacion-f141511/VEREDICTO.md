@@ -96,3 +96,10 @@ por tarea**, que es el objetivo declarado, y se registra sin proponer nada.
 - **Seguridad `R-037`: `Seguridad: aprobado`** acotado. `SEC-093/094/095/097/098/099/100` mitigados; `SEC-096` en-mitigación; `SEC-101` nuevo `instrumento`. Corrige `R-036` en un eje.
 - **CI (`a82db68`): 1275 · 1 · 15, cuadre 1291.** `CA-06` en verde con identificadores. **Nuevo FAIL: `REQ-017 CA-09`** (sonda de coste, SKIP en la corrida anterior; no atribuible al delta). Diagnóstico en `ci-pr50-a82db68/`.
 - **Bloqueo vigente:** la puerta requerida sigue en rojo (`CA-09`). Sin repararse ni relanzarse. Sin fusión ni publicación.
+
+## Cuarta ronda (2026-09-15) — reparación acotada de `I-5` → `eea46ad` (+ informes → local, sin empujar)
+- **`I-5` RESUELTO** (QA): propiedad en los dos ejes; 7/7 regresiones muerden con fail-before medido; `v2` (fuera de las siete) también muerde; controles positivos intactos; falso positivo original no vuelve. **Fail-open del medidor** (`sin` de gawk → «0 0» enmascarado) encontrado por el desarrollador, reproducido por QA, corrección completa.
+- **Seguridad `R-038`:** cobertura recuperada contra sus tres clases; #4 y #6 ejercidas fuera del banco; protecciones heredadas byte a byte iguales; **`Seguridad: aprobado` extendida a `eea46ad`**.
+- **`I-7` nuevo, `instrumento`, abierto:** `\.` perdido en `awk -v` → cualquier número de 3+ dígitos casa (una fecha hace morder); anterioridad dentro de palabras. Efecto hoy nulo; **rojo latente de superficie ancha**; el auditor: su coste esperado es «el próximo estrechamiento». **Sin reparar**, por instrucción.
+- **CI: no relanzado.** Remoto en `a82db68` (1275 · 1 · 15, `FAIL` `REQ-017 CA-09`, sonda de coste no atribuible al delta). Cuadre esperado 1292 sin verificar. **La decisión sobre ese gate es del propietario, aparte.**
+- **Abiertos, no bloqueantes:** `I-3`, `I-6`, `I-7`, `R-1`, `SEC-096`, `SEC-101`, observación de `N-4`, `mv` sección 33. Sin fusión ni publicación.
