@@ -2,6 +2,26 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-15 · QA sobre `eea46ad`: **favorable con reserva**; `I-5` **RESUELTO**; `I-7` nuevo (`instrumento`)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester. Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`.
+
+**`I-5` resuelto por propiedad, ejercido en los dos extremos:** `40/3` por ruta → 28 PASS · 0 FAIL, 28 = 28, tres
+identificadores de `CA-06` vistos; **7 de 7 regresiones muerden** y los controles positivos pasan en la misma vuelta.
+**Falsación:** `v2` —que no está entre las siete— **también muerde**: el arreglo no son excepciones. Lo que sólo alcanzan los
+ejemplos («en el pasado», «igual que siempre», «la 33»…) **coincide con lo que la cabecera declara**: declaración exacta, no
+optimista. El término a dos oraciones **no cae, por definición** (ventana ±1). El falso positivo original **no vuelve**.
+**Fail-open del medidor reproducido y corrección completa** (`sin` como variable de gawk → «0 0» enmascarado; ahora falla
+nombrándolo); barrido del resto de `|| true`: ninguno de esa familia.
+
+**`I-7` · `instrumento`, no bloquea — introducido por esta reparación:** (a) el escape `\.` **se pierde al pasar por `awk -v`**
+(la sección emite 12 avisos `escape sequence`), así que `.` es comodín y **cualquier número de 3+ dígitos casa** —«Decidido el
+2026-09-14: tu texto se queda como está» → **muerde**—; (b) la anterioridad casa **dentro de otras palabras** («bast**antes**»).
+Efecto hoy **nulo** (2 con / 0 sin; la celda sin disparador **por construcción**); dirección **hacia el rojo**. **Rojo latente
+de superficie ancha** — la forma en que empezó el ciclo del PR #50.
+
+`REQ-024` +1/−0 (Historial); `SKILL.md` ni aparece en el delta. Gates 3/3. **No acredita:** cuadre 1292 (CI), que las siete
+fueran todas las escapadas, seguridad.
+
 ## [Interno] — 2026-09-14 · `I-5`: el reconocedor estaba por propiedad en **un eje de dos**, y el que faltaba vuelve — con las siete regresiones ejercidas
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: desarrollador (reparación acotada de `I-5`, autorizada por el propietario el 2026-09-14). Base: `a82db68`. Hallazgo: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` § `I-5` (6.ª vuelta) y su valoración sobre `6212e87` («son **siete**, no seis»). **Sólo `tests/` + `Historial` de `REQ-024` + este `CHANGELOG`.**
 
