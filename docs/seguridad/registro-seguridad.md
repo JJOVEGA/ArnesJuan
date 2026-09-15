@@ -10993,3 +10993,194 @@ de datos, acceso, retención ni cumplimiento.
 
 **Numeración vigente tras esta revisión:** última revisión **R-038**; último hallazgo **SEC-101**;
 próximos libres **R-039** y **SEC-102**.
+
+---
+
+## Revisión R-039 — **extensión acotada de la firma `R-038`** al delta de `I-7`. `rel/via-proporcional` @ `9dac46f` — 2026-09-14
+
+**Acotada al delta `6732e94..9dac46f`.** No es auditoría de la vía ni reapertura de nada. Fuera y sin
+tocar: `REQ-017 CA-09`, `I-3`, `I-6`, `R-1`, `SEC-096`, `SEC-101`, `N-4`, el `mv` de la 33. **`I-7` es
+de QA: no lo cierro ni lo reclasifico.** No reparé nada, no relancé el CI, ningún consumidor, **y no
+emito aprobación final de la vía ni me pronuncio sobre fusión o publicación**.
+
+### 0. Árbol y frontera
+
+- Cabeza **`9dac46f`**. **Matiz sobre «árbol limpio»:** `git status --porcelain` devuelve
+  `M docs/qa/…veredicto.md` —el informe de QA, aún sin comitear, como la coordinadora anunció—.
+  **Ningún artefacto auditado está sucio.**
+- **Delta: 4 archivos**, y ninguno es una protección. Comprobado por mí:
+  `git diff --name-only 6732e94..9dac46f` filtrado por
+  `^(hooks/|tools/|skills/|agents/|templates/|AGENTS\.md|\.arnes/|\.github/|\.claude-plugin/)` →
+  **0 rutas**. **Lo que los proyectos heredan no se ha movido.**
+- **Sección corrida por mí, por ruta:** `40-…-3` → **29 PASS · 0 FAIL**, cuadre exacto con su
+  `CASOS_ESPERADOS_SECCION=29`. **Avisos `escape sequence` en corrida normal: 0.**
+
+### 1. `I-7` está corregido — medido con la combinación REAL de cada cabeza
+
+La comparación honesta exige correr **cada cabeza con su transporte y su patrón**, porque el defecto
+estaba en el **transporte** (`-v` interpretando `\.`), no en el texto del patrón. Reconstruí las dos
+fuera del banco:
+
+| Caso | `eea46ad` (`-v` + patrón viejo) | `9dac46f` (`ENVIRON` + patrón nuevo) |
+|---|---|---|
+| fecha ISO junto a la frase protectora | `sin = 1` ✘ | **`sin = 0`** ✔ |
+| número suelto de 3 cifras | `sin = 1` ✘ | **`sin = 0`** ✔ |
+| «bastantes» | `sin = 1` ✘ | **`sin = 0`** ✔ |
+| #6 «como hasta ahora» (verdadero positivo) | `sin = 1` | **`sin = 1`** ✔ |
+| falsación `v2` (verdadero positivo) | `sin = 1` | **`sin = 1`** ✔ |
+
+**Los tres falsos positivos que leí en `R-038` están muertos y los verdaderos siguen vivos.** Y el
+`FAIL` nombra ahora **verbo + término heredado**, que es exactamente lo que pedí: el rojo deja de
+señalar sólo la frase que protege el texto de los proyectos.
+
+### 2. Las tres preguntas que se me hicieron
+
+**(a) ¿Vía nueva de fail-open en el medidor? NO — y miré los cuatro sitios, no sólo el primero.**
+La rama fail-loud (`if [ -z "$m40" ]` → `FAIL … el MEDIDOR no pudo correr`) **sobrevive**, y los tres
+llamadores nuevos tratan el vacío como fallo: las regresiones por `[ "${rs:-0}" -ge 1 ]`, la falsación
+`v2` por `[ "${v2s:-0}" -ge 1 ]`, y los negativos por `[ "$r" = "0 0" ]` — **un vacío no es «0 0»**.
+**Ese último es el sutil y sale bien:** en un control **negativo**, un medidor roto podría haberse
+leído como «ningún falso positivo, limpio»; aquí se lee como **fallo**. El modo `detalle` nuevo sólo
+se usa dentro del mensaje de `FAIL` y no participa de ninguna decisión.
+
+**(b) ¿`ENVIRON` trae un riesgo que `-v` no tenía? NO, y lo construí en vez de razonarlo.** La
+pregunta real es si el entorno del CI puede **sustituir** el patrón. **No puede:** la asignación va
+como **prefijo del comando**, y un prefijo **gana** a una variable heredada del mismo nombre. Lo
+medí exportando `ARNES40_VER=ZZZ_NUNCA_CASA` en el entorno y ejecutando la misma construcción: el
+patrón que se aplica **es el del prefijo**, no el del entorno. Además **no hay `export`**: las cuatro
+variables viven sólo en ese `awk`, no se filtran a comandos hermanos ni persisten en la shell.
+**`ENVIRON` es aquí estrictamente más seguro que `-v`**, porque `-v` **interpreta** escapes —eso fue
+el bug— y `ENVIRON` entrega bytes.
+**Una propiedad general que dejo escrita una vez, no como defecto:** lo que viaja por `ENVIRON` queda
+**visible en el entorno de ese proceso** (legible por el mismo usuario). Aquí es inocuo —son patrones
+literales del propio script, no secretos—, pero si alguna vez se reutiliza este transporte para algo
+sensible, esa propiedad cambia de signo.
+
+**(c) ¿Se debilitó alguna detección que yo considerara protección? SÍ, y es `SEC-102`, abajo.**
+
+### 3. `SEC-102` — **nuevo, mío** · `instrumento` · **abierto** · **no bloquea**
+
+**El límite de palabra que mata «bastantes» mata también tres formas legítimas de anterioridad, y
+ninguna prueba lo ejerce.**
+
+Medido, cada cabeza con su combinación real:
+
+| Forma | `eea46ad` | `9dac46f` |
+|---|---|---|
+| «**anteriormente**, decide exactamente lo mismo.» | `sin = 1` | **`sin = 0`** |
+| «**previamente**, no nota nada.» | `sin = 1` | **`sin = 0`** |
+| «**con anterioridad**, decide exactamente lo mismo.» | `sin = 1` | **`sin = 0`** |
+| control «como **antes**» | `sin = 1` | `sin = 1` |
+
+**Las tres están dentro de la clase que el propio Eje 1 declara** —«toda expresión que señale **un
+estado anterior de este arnés**»—, y las tres son promesas de equivalencia **sin su acto**: debían
+seguir mordiendo. **No son formas nuevas que nunca se alcanzaron: las cazaba la cabeza anterior.** Es
+la misma figura de `I-5`, con otro objeto.
+
+**Y la causa está aislada, que es lo que la hace barata:** lo que las pierde es el borde
+**DERECHO** (`([^[:alpha:]]|$)`), no el izquierdo. Lo comprobé sustituyendo sólo eso:
+
+| | ambos bordes (`9dac46f`) | **sólo borde izquierdo** |
+|---|---|---|
+| «bastantes» · «restantes» · «instantes» (los 3 falsos positivos) | **0 · 0 · 0** | **0 · 0 · 0** |
+| «anteriormente» · «previamente» · «con anterioridad» | 0 · 0 · 0 | **1 · 1 · 1** |
+
+**El borde derecho no compra ni uno de los falsos positivos medidos y cuesta tres verdaderos.** Los
+tres falsos positivos son palabras que llevan el término **como sufijo** (`bast|antes`), así que el
+borde **izquierdo** ya los rechaza entero.
+
+**Dirección del fallo: hacia el VERDE.** Y ahí está la diferencia con `I-7`, que iba hacia el rojo:
+una promesa real escrita con «anteriormente» **pasaría inadvertida**. **Efecto sobre el documento de
+hoy: nulo** —el apartado sigue en `2 con acto / 0 sin acto`—, así que es **cobertura futura**, como
+`I-5`. Por eso `instrumento` y por eso **no bloquea**.
+
+**La observación estructural, que vale más que el hallazgo.** Es la **tercera** vez en esta cadena
+que un ajuste del reconocedor **estrecha en silencio**: `I-5` soltó siete formas al acotar, esto
+suelta tres al poner bordes. El patrón es siempre el mismo: **cada arreglo se ejerce sólo sobre los
+casos para los que se escribió.** La sección tiene hoy 7 regresiones, 6 negativos y la falsación
+`v2` — y **ningún caso que ejerza el COSTE del borde**, que es justo por donde se ha ido la cobertura
+esta vez. **Remediación sugerida (no la aplico):** retirar el borde derecho, conservar el izquierdo, y
+añadir «anteriormente»/«previamente» como positivos permanentes junto a los seis negativos, para que
+el siguiente ajuste tenga que decidir entre los dos lados **a la vista**.
+
+**QA declaró «sin defecto nuevo» sobre esta cabeza y yo encuentro uno.** No lo presento como
+discrepancia: son dos sondas distintas —QA ejerció los negativos que el arreglo se propuso matar, yo
+ejercí **lo que el arreglo podía costar**—, y eso es exactamente para lo que sirve una pasada
+independiente. **No reclasifico ni cierro nada suyo.**
+
+### 4. La nota de locale, valorada
+
+`[[:alpha:]]` depende del locale, y **el workflow no fija ninguno**: `.github/workflows/` declara
+`runs-on: ubuntu-latest` y **ni `LANG` ni `LC_ALL`** (comprobado por mí, sólo lectura). Así que el
+locale del runner es el de la imagen, y **nadie lo ha leído**.
+
+**No condiciona la extensión, por una razón medida:** QA corrió la sección bajo `C.UTF-8` y bajo
+`LC_ALL=C` —los dos extremos plausibles— con **29·0·0 en ambos**, y mi propia corrida fue bajo
+`C.UTF-8`. Los dos valores que puede tomar dan el mismo resultado. **Lo que queda es una suposición,
+no un hecho**, y va como límite declarado en §6, no como hallazgo.
+
+**Observación, sin abrir nada:** un guardián de la **puerta requerida** cuya semántica depende del
+locale gana determinismo si el workflow lo fija. `.github/` está fuera de este delta y es código
+protegido; lo dejo dicho para quien decida, no como defecto de esta entrega.
+
+**Y las mayúsculas al borde** («Antes», «PREVIA»): **no es regresión de este delta** —el patrón
+siempre fue sensible a mayúsculas y ya escapaban en `eea46ad`; lo verifiqué—. Es un caso más de la
+clase que el propio Eje 1 declara no alcanzar. **Observación, no hallazgo**, y si se atiende
+`SEC-102` conviene mirarlo en el mismo acto.
+
+### 5. **Extiendo `R-038` a `9dac46f`**
+
+**`Seguridad: aprobado`**, con **el mismo alcance acotado** de `R-037`/`R-038`, extendida a
+**`9dac46f`**.
+
+**Por qué es legítima:**
+
+1. **El objeto firmado no se ha movido:** ninguna protección, plantilla, agente, skill, hook,
+   manifiesto ni workflow entra en el delta — **0 rutas**, medido.
+2. **El cambio es de instrumento y va en la dirección correcta**: mata tres falsos positivos
+   verificados por mí, conserva los verdaderos positivos y la falsación `v2`, y **no abre ninguna
+   vía de fail-open** —comprobados los cuatro llamadores, incluido el negativo, que es el sutil—.
+3. **`ENVIRON` no añade superficie**: el entorno **no puede** sustituir el patrón, y lo construí.
+4. **Ningún hallazgo mío de clase `contrato` queda abierto.** `SEC-102` es `instrumento`, con efecto
+   presente nulo.
+
+**Y lo que la extensión NO hace:** no acredita `I-7` —es de QA—, no avala el banco, no es aprobación
+final de la vía, y **no se extiende sola a la cabeza siguiente**.
+
+### 6. Qué NO acredita
+
+1. **No es una auditoría del delta.** Ejercí el medidor **fuera del banco** sobre casos que elegí yo;
+   no revisé el resto de la sección ni recorrí los 29 casos uno a uno.
+2. **`SEC-102` acota lo que acredito**: la detección de `CA-06` es hoy **más estrecha que en
+   `eea46ad`** en tres formas de anterioridad. Mi firma **no** dice que el reconocedor cubra su clase
+   declarada; dice que **lo que suelta y lo que muerde está, en parte, ejercido** — y acabo de
+   encontrar una parte que no lo estaba.
+3. **El locale del runner de CI es una suposición, no un hecho** (§4). Si el runner usara un locale
+   que cambie `[[:alpha:]]`, no lo he medido: sólo sé que los dos valores plausibles coinciden.
+4. **No acredita el banco completo ni el CI.** Corrí **una** sección por ruta. **No corrí las tres
+   puertas en esta vuelta**: el delta no toca `hooks/`, `tools/`, `hooks.json` ni el manifiesto — las
+   corrí sobre este mismo contenido en `R-038`.
+5. **No acredita `REQ-024`** —el delta toca su Historial y **no lo audité**— ni ningún otro REQ. **No
+   escribo en el `Seguridad:` de ningún REQ.**
+6. **No acredita ninguna corrida de `arnes-init` ni de `arnes-upgrade`**, ni la composición «copia
+   propia de una definición de agente» (`SEC-096`). **Todos los límites de `R-037` siguen en pie.**
+7. **No acredita `I-3`, `I-5`, `I-6`, `I-7`, `R-1`, `SEC-096`, `SEC-101` ni la observación de `N-4`.**
+8. **No es la aprobación final de la vía, y no me pronuncio sobre la fusión ni la publicación.**
+
+### 7. Estado de mis hallazgos tras `R-039`
+
+| Hallazgo | Estado | Clase | Bloquea |
+|---|---|---|---|
+| `SEC-093` · `094` · `095` · `097` · `098` · `099` · `100` | `mitigado` | — | no |
+| `SEC-096` | `en-mitigación` | `contrato` | no |
+| `SEC-101` | `abierto` | `instrumento` | no |
+| `SEC-102` | **`abierto`** (nuevo) | `instrumento` | **no** |
+
+Dueño de `SEC-102`: `desarrollador`; **vencimiento sugerido: el mismo acto en que se atienda el borde
+de palabra**, para no volver a tocar el patrón dos veces. Sin cambios en el resto: `SEC-091`,
+`SEC-092`, `SEC-088`, `SEC-085` `abiertos`; `SEC-090`, `SEC-087` `mitigados`.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta revisión:** última revisión **R-039**; último hallazgo **SEC-102**;
+próximos libres **R-040** y **SEC-103**.

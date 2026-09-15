@@ -2,6 +2,33 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-15 · Seguridad R-039: firma `R-038` **extendida a `9dac46f`**; `ENVIRON` no añade superficie; **`SEC-102` nuevo** (`instrumento`, no bloquea)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad (extensión acotada de `R-038` al delta `6732e94..9dac46f`, después de QA favorable). Sede: `docs/seguridad/registro-seguridad.md` § R-039.
+
+**Frontera verificada:** el delta no toca `hooks/`, `tools/`, `skills/`, `agents/`, `templates/`, `AGENTS.md`, `.arnes/`,
+`.github/` ni `.claude-plugin/` (0 rutas). **`I-7` corregido**, medido con el transporte y el patrón reales de cada cabeza:
+fecha ISO, número de 3 cifras y «bastantes» pasan de `sin=1` a **`sin=0`**; «como hasta ahora» y `v2` siguen en `sin=1`.
+**(a) Fail-open nuevo: no** — el vacío se trata como fallo en los cuatro llamadores, también en los controles negativos.
+**(b) `ENVIRON` no añade superficie, construido y no razonado:** con `ARNES40_VER=ZZZ_NUNCA_CASA` exportado, la
+asignación-prefijo **gana a la variable heredada**; el CI no puede sustituir el patrón. Estrictamente más seguro que `-v`.
+
+**(c) Se debilitó una detección — `SEC-102`, `instrumento`, abierto, no bloquea.** El **borde derecho** de palabra deja
+pasar «**anteriormente**», «**previamente**» y «**con anterioridad**» (`sin=1` → `sin=0`), tres promesas sin acto que la
+cabeza anterior cazaba: la figura de `I-5` con otro objeto, dirección **hacia el verde**, efecto presente nulo. Causa aislada:
+con **solo borde izquierdo** los tres falsos positivos siguen en 0 y los tres verdaderos vuelven a 1 — el borde derecho no
+compra ninguno de los falsos positivos medidos. **Observación estructural:** tercer ajuste del reconocedor que estrecha en
+silencio; la sección no tiene ningún caso que ejerza el **coste** del borde. Dueño: `desarrollador`; vencimiento sugerido: el
+mismo acto en que se atienda el borde. No se repara en esta entrega (fuera del encargo: «no atiendas otros pendientes»).
+
+**Locale:** el workflow declara `ubuntu-latest` sin `LANG` ni `LC_ALL`; los dos valores plausibles dan el mismo resultado, pero
+**queda como suposición**. Mayúsculas al borde: no son regresión de este delta.
+
+**`Seguridad: aprobado` extendido a `9dac46f`**, mismo alcance acotado que `R-037`/`R-038`. **No acredita:** auditoría del delta
+(el medidor se ejerció fuera del banco), `SEC-102` acota lo acreditado (detección de `CA-06` más estrecha que en `eea46ad`), las
+tres puertas no se corrieron en esta vuelta, `REQ-024`, `arnes-init`/`arnes-upgrade`, la composición «copia propia de agente».
+**No es la aprobación final de la vía; no se pronuncia sobre fusión ni publicación.** Numeración vigente: última revisión
+**R-039**; último hallazgo **SEC-102**.
+
 ## [Interno] — 2026-09-15 · QA sobre `9dac46f`: **favorable**; `I-7` **RESUELTO**; sin defecto nuevo
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester (verificación acotada del delta `6732e94..9dac46f`, reutilizando las aprobaciones vigentes sobre `eea46ad`). Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` § «Verificación acotada de `9dac46f`».
 
