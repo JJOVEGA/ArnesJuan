@@ -2,6 +2,24 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-15 · CI sobre `f6912ea`: banco **1280 · 0 · 13, cuadre 1293**; puerta roja por **`REQ-014 CA-18`** en la autoprueba del corredor (`40/3` = 554 líneas, techo 400). Tablero actualizado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Única corrida autorizada tras la reparación de `I-7`; run 34926912323. Diagnóstico en la rama de evidencia (`validacion-f141511/ci-pr50-f6912ea/DIAGNOSTICO.md`).
+
+**Banco (paso 6) verde y cuadrado:** los cuatro casos de `REQ-024 CA-06` (incl. las 7 regresiones de `I-5` y los 6 falsos
+positivos de `I-7`) **se ejecutaron y pasaron**; `REQ-017 CA-09` **PASS** (1,563×, rangos sin solapar) — el FAIL de `a82db68`
+(0,976×) **se conserva y no queda desmentido**: misma sonda, mismo mecanismo, tres resultados en tres corridas. SKIP 15 → 13
+(tres sondas de coste pasan a PASS, una de `REQ-023 CA-09 (iii)` pasa a SKIP por dispersión). El `mv` de la sección 33 sigue
+igual, preexistente.
+
+**Autoprueba del corredor (paso 7): 105 PASS · 1 FAIL — `CA-18 ningún archivo excede max(N, piso × k)`:**
+`40-ausencia-que-abre-3-los-textos-heredados.sh` mide **554 líneas** (piso declarado 78 → gobierna N = 400). **Introducido
+por la cadena de reparaciones:** 325 (`f387b1c`) → 382 (`a82db68`) → **477** (`eea46ad`, I-5) → **554** (`9dac46f`, I-7). No se
+vio antes porque la autoprueba es el paso posterior al banco y quedó `skipped` en las dos corridas previas del PR (rojas en el
+banco), y en local nadie la corrió: no es una de las tres gates del manifiesto. Determinista, no ruido. **No se repara ni se
+sube el techo** (`REQ-014 CA-18 (ii)`: el techo «no se resuelve subiendo el techo en silencio»); la vía prevista es partir la
+sección, y es decisión del propietario. `docs/ESTADO.md` «⏸ RETOMAR AQUÍ» reescrito con el estado vigente y las tres decisiones
+pendientes (`CA-18`, `SEC-102`, `REQ-017 CA-09`). Sin relanzar, sin excepciones, sin fusión ni publicación.
+
 ## [Interno] — 2026-09-15 · Seguridad R-039: firma `R-038` **extendida a `9dac46f`**; `ENVIRON` no añade superficie; **`SEC-102` nuevo** (`instrumento`, no bloquea)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad (extensión acotada de `R-038` al delta `6732e94..9dac46f`, después de QA favorable). Sede: `docs/seguridad/registro-seguridad.md` § R-039.
 

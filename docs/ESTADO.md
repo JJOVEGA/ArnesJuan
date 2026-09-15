@@ -5,44 +5,44 @@
 > `<!-- ARNES:DERIVADO ... -->` que **reescribe el arnés** en cada parada de agente: no lo
 > edites, se sobrescribe. Lo de fuera de esos marcadores no se toca nunca.
 
-## ⏸ RETOMAR AQUÍ — vía proporcional con autorización explícita, 2026-09-13 (tarde)
+## ⏸ RETOMAR AQUÍ — vía proporcional, candidato `rel/via-proporcional` @ `f6912ea` (contenido `9dac46f`), 2026-09-15
 
-**Este bloque SUSTITUYE al de más abajo, que queda como histórico.** El propietario **reanudó** el
-trabajo el mismo día: aprobó el diseño de **autorización explícita** —el agente trae la capacidad, el
-documento del proyecto da el permiso, y la ausencia de permiso **no habilita nada**— y autorizó una
-implementación acotada que resolviera además `SEC-093` y `SEC-094`.
+**Este bloque SUSTITUYE al de más abajo, que queda como histórico.** Los bloques anteriores de esta
+misma cabecera (2026-09-13) quedaron superados por las cinco rondas de validación registradas en
+`docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` y `docs/seguridad/registro-seguridad.md`
+§ `R-034`…`R-039`.
 
-**Cabeza: `rel/via-proporcional` @ `5101ece`** (implementación) + la quinta vuelta de QA.
-**Veredicto de QA: PENDIENTE — dos impedimentos nuevos, los dos `contrato`.**
+**Estado del candidato: detenido, empujado a PR #50 (borrador, base `base/via-proporcional` = `f387b1c`).
+Sin fusión, sin publicación, sin cambio de versión.**
 
-- **`I-1`, y está MEDIDO:** la comprobación **falla ABIERTA en un opt-out parcial**. Un proyecto que
-  **borra la cita de autorización** pero conserva la tabla resuelve **`AUTORIZADA` (rc 0)**. Borrar
-  la cita **es** el acto de no declarar, y §6 promete que «la ausencia de la declaración no habilita
-  nada». Además la evidencia es **circular** —la fila remite a la cita que falta— y una de las formas
-  casa **con la prosa de la propia comprobación**. La **prosa de §6 es correcta por propiedad**; lo
-  que falla es la fila como forma de evidencia y el script que las une por **disyunción**.
-- **`I-2`:** la frase que remedia `SEC-094` admite una lectura **conjuntiva** —«siempre que… y siempre
-  que…»— **más estrecha que el anclaje que `SEC-094` vino a retirar**. Caso discriminante no ejercido:
-  un REQ `Rigor: estandar` cuya reparación **toca dinero**.
+- **QA: FAVORABLE sobre `9dac46f`.** `I-1`, `I-2`, `I-5`, `I-7` resueltos; `CA-06` y `SEC-098`/`099`
+  reparados. Abiertos `instrumento`: `I-3`, `I-6`, `R-1`.
+- **Seguridad: `Seguridad: aprobado` acotado (`R-037`), extendido a `eea46ad` (`R-038`) y a `9dac46f`
+  (`R-039`).** `SEC-093/094/095/097/098/099/100` mitigados; `SEC-096` en-mitigación; `SEC-101` y
+  **`SEC-102`** (nuevo: el borde derecho del reconocedor pierde «anteriormente», «previamente», «con
+  anterioridad») abiertos, `instrumento`, no bloquean. **No es la aprobación final de la vía.**
+- **CI sobre `f6912ea` (única corrida autorizada): banco 1280 PASS · 0 FAIL · 13 SKIP, cuadre 1293
+  exacto**; los cuatro casos de `CA-06` ejecutados; `REQ-017 CA-09` PASS (el FAIL de `a82db68` se
+  conserva, no queda desmentido). **Puerta requerida `hooks-en-linux` ROJA por la autoprueba del
+  corredor: `REQ-014 CA-18`** — `40-ausencia-que-abre-3-los-textos-heredados.sh` mide **554 líneas**
+  con techo 400 (piso 78, gobierna N). Introducido por la cadena I-5 (477) / I-7 (554); la autoprueba
+  no había corrido nunca en el PR (paso `skipped` tras los rojos del banco) y nadie la corrió en local
+  (no es una de las tres gates del manifiesto).
 
-**Lo que sí quedó verificado:** `SEC-093` **remediado** en las dos sedes, con el pronombre ambiguo
-retirado · el anclaje en `guard-completado` **retirado** (`grep` → 0) · la comprobación en **§14 A**,
-que es donde la coordinadora decide, e idéntica en la plantilla · la prueba de despacho **re-derivada
-por QA con las mismas cifras** y su frase de honestidad **exacta** · las seis prohibiciones
-respetadas.
+**Decisiones pendientes del propietario, presentadas aparte:**
+1. **`REQ-014 CA-18`:** autorizar la **partición** de `40/3` en dos secciones con su propio
+   `PISO_AUTONOMO_SECCION` (vía prevista por el criterio; **no** subir N). `tests/` es `critico`:
+   desarrollador → QA → seguridad, y otra corrida de CI.
+2. **`SEC-102`:** reparar el borde derecho (retirarlo y añadir las tres formas como positivos) o dejarlo
+   en deuda con dueño y vencimiento.
+3. **`REQ-017 CA-09`:** la sonda dio SKIP, FAIL (0,976×) y PASS (1,563×) en tres corridas sobre el mismo
+   mecanismo; decidir qué acredita como gate.
 
-**Sin cerrar:** `SEC-093`/`094` (remediación escrita, **sin revisar por seguridad**), `SEC-095`/`096`
-(**no se cierran por texto**; sólo se ejerció **una** composición), `SEC-097` (decisión del
-propietario sobre el límite 3), `R-1` y la observación de `N-4`. Y **`arnes-upgrade` describe la vía
-sin la condición de autorización y con la enumeración vieja de la fila 3** — hereda **las dos**
-promesas retiradas.
-
-**Nadie ha ejecutado `arnes-upgrade` ni desplegado un agente dentro de un proyecto de prueba.** Que
-las instrucciones digan lo correcto **no acredita** que un agente real haga la comprobación.
-
-**Evidencia:** QA (5 vueltas) en `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` · seguridad
-en `docs/seguridad/registro-seguridad.md` § `R-034` · prueba de despacho en
-`docs/arnes/via-proporcional-prueba-despacho/`. **Coste: 11 comisiones · 98 min 29 s · 1 926 008 tokens.**
+**Evidencia fuera del repo:** worktree `/home/juan/dev/ArnesJuan-evidencia`, rama huérfana
+`evidencia/prueba-despacho-2026-09-14` @ `728523d` (**sólo local, sin remoto**): `validacion-f141511/VEREDICTO.md`
+(cinco rondas), `ci-pr50/`, `ci-pr50-a82db68/`, `ci-pr50-f6912ea/` (logs completos y diagnósticos), casos
+con agentes reales. **Fuera de alcance por instrucción:** el `mv` de la sección 33, `I-3`, `I-6`, `R-1`,
+`SEC-096`, `SEC-101`, la observación de `N-4`.
 
 ---
 
