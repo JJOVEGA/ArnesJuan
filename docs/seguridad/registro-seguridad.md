@@ -10813,3 +10813,183 @@ repositorio sigue sin usuarios finales ni datos personales.
 
 **Numeración vigente tras esta revisión:** última revisión **R-037**; último hallazgo **SEC-101**;
 próximos libres **R-038** y **SEC-102**.
+
+---
+
+## Revisión R-038 — **comprobación ACOTADA: la recuperación de cobertura de `I-5`**, y extensión de la firma de `R-037`. `rel/via-proporcional` @ `0b8daf9` (= `eea46ad` + informe de QA) — 2026-09-14
+
+**No es una auditoría, y no repito la de QA.** El propietario pidió comprobar la recuperación de
+cobertura sin rehacer su trabajo: ejerzo **dos** de las siete, contrasto contra **mi propia
+caracterización de `R-037`** y valoro `I-7`. Fuera y sin tocar: `REQ-017 CA-09`, el `mv` de la 33,
+`I-3`, `I-6`, `R-1`, `SEC-096`, `SEC-101`, `N-4`. **`I-5` e `I-7` son de QA: no los cierro ni los
+reclasifico.** No reparé nada, no relancé el CI, ningún consumidor, **sin pronunciarme sobre la
+fusión ni la publicación**.
+
+### 0. Árbol, frontera y puertas
+
+- Árbol **limpio**, cabeza **`0b8daf9`**. **Comprobado por mí:** `git diff --stat eea46ad..0b8daf9`
+  = `CHANGELOG.md` + `docs/qa/…` y nada más.
+- **Delta sustantivo `a82db68..eea46ad`: 4 archivos** — `tests/escenarios/hooks/run.sh`, la sección
+  `40-…-3`, el Historial de `REQ-024` y `CHANGELOG.md`.
+- **Quality gates: 3 de 3**, las tres del manifiesto, corridas por mí.
+- **Cuadre declarado:** `CASOS_ESPERADOS=1292`, `CASOS_ESPERADOS_SECCION=28`.
+
+### 1. **La cobertura está recuperada** — contrastada contra mi caracterización, clase por clase
+
+En `R-037` corregí mi propia frase de `R-036` y dejé el defecto escrito en **tres clases**. Las tres
+tienen respuesta, y la respuesta está en **la propiedad**, no en las siete formas:
+
+| Clase que describí en `R-037` | Formas | Qué la cierra |
+|---|---|---|
+| **Enumeración cerrada** en el eje del término heredado, **sin marca «no exhaustivo»** | #3, #5, #6, #7 | **Eje 1 enunciado por clase** —«toda expresión que señale **un estado anterior de este arnés**», por identificador de versión (con `v` o sin ella, **completo o truncado**) o por expresión de anterioridad— con los ejemplos **declaradamente no exhaustivos** y el **denominador publicado** «en vez de afirmar “ninguna”» |
+| **Alcance por oración** | #1, #2 | **Eje 2**: la oración del verbo **o una vecina inmediata del mismo BLOQUE**. Y **el bloque sigue siendo el límite**, así que la ganancia por la que se acotó —que una celda no le preste su término a otra— **se conserva**: no se deshizo la corrección, se le puso el alcance que le faltaba |
+| **Regla de corte** (versión que **cierra** la oración) | #4 | La vecina la recoge — y **el comentario que lo decía mal está corregido en su sitio**: «un «1.33.0» a mitad de frase no se parte, pero uno que **CIERRA** la oración va seguido de punto y espacio y **SÍ** se parte» |
+
+**Y la forma es la correcta, que para mí pesa tanto como el resultado:** las siete van declaradas
+**«regresiones CONOCIDAS, NO la definición ni un conjunto cerrado»**, con la clase enunciada arriba y
+las siete como **suelo ejercido, no techo**. Si se hubieran escrito como siete excepciones, habría
+abierto hallazgo: sería la enumeración de `I-5` otra vez, con los casos del lado contrario.
+
+**Ejercido por mí, no aceptado.** Corrí la sección **por ruta**
+(`tests/escenarios/hooks/secciones/40-ausencia-que-abre-3-los-textos-heredados.sh`): **28 PASS · 0
+FAIL**, cuadre exacto con su `CASOS_ESPERADOS_SECCION`, con el caso
+`REQ-024 CA-06 las 7 regresiones conocidas de I-5 siguen mordiendo` en verde y los controles
+positivos en `2 con acto / 0 sin acto`.
+
+**Y dos de las siete las medí aparte, con mi propio par fail-before/pass-after**, reconstruyendo los
+dos reconocedores —el de `d913575` y el de `eea46ad`— fuera del banco, para no acreditar el
+instrumento con el instrumento:
+
+| Forma | reconocedor de `d913575` | reconocedor de `eea46ad` |
+|---|---|---|
+| **#4** «respecto a la versión **1.33.** decide exactamente lo mismo.» (regla de corte) | `sin = 0` — se escapaba | **`sin = 1` — muerde** |
+| **#6** «**como hasta ahora**, no nota nada.» (enumeración cerrada) | `sin = 0` — se escapaba | **`sin = 1` — muerde** |
+| **control positivo:** la frase protectora, sola | `0 0` | **`0 0`** |
+
+**Recuperada, y sin recuperar el falso positivo que se corrigió bien:** la frase de la fila
+`MODIFICADO` sigue sin ser ni promesa ni infracción, y **sigue sin haber sido reformulada**.
+
+**Un tercer arreglo que no me habían pedido mirar y que registro, porque es de mi materia:** el
+medidor ya no puede fallar en silencio. Usaba `sin` como variable de `gawk` —una función interna—, lo
+que abortaba el programa y devolvía «0 0», es decir **«0 promesas sin acto»: un verde por no medir**,
+que es exactamente la familia que este banco existe para cazar. Ahora, si el medidor no corre, quien
+lo llama **falla nombrándolo**. Es un **fail-open cerrado**, y **ni `R-036` ni `R-037` lo detectaron**:
+lo digo porque mis dos revisiones anteriores pasaron por encima de ese código.
+
+### 2. Protecciones: **ninguna se debilitó**, y lo mido en vez de deducirlo
+
+- **Lo que los proyectos heredan no se ha movido desde que firmé.**
+  `git diff --stat 6212e87..eea46ad -- AGENTS.md templates/ agents/ skills/ docs/gobernanza/
+  requirements/README.md hooks/ tools/ .arnes/ .github/ .claude-plugin/` → **vacío**. El objeto de mi
+  firma de `R-037` es **byte a byte el mismo**.
+- **Dentro de `tests/`, la cobertura SUBE, no baja:** 7 de 7 regresiones restauradas, controles
+  positivos intactos, un fail-open cerrado y un comentario falso corregido. `CASOS_ESPERADOS` 1291 →
+  1292 y el de la sección 27 → 28, **y ningún otro umbral se toca**.
+- **Ninguna protección quedó sin aplicar**, y el par discriminante sigue impidiendo que el ajuste
+  degenere en «aflojar hasta que deje de morder».
+
+### 3. `I-7` — mi lectura como auditor. **No lo cierro ni lo reclasifico: es de QA**
+
+**Reproduje las dos mitades**, con el reconocedor real:
+
+| Texto inyectado | Resultado |
+|---|---|
+| «**Decidido el 2026-09-14**: tu texto **se queda como está**…» | **muerde** (`sin = 1`) |
+| «**Nota 123**: tu texto se queda como está.» | **muerde** (`sin = 1`) |
+| «Hay **bastantes** casos y el texto se queda como está.» | **muerde** (`sin = 1`) |
+| el apartado **tal cual, hoy** | `2 con / 0 sin` — **efecto presente nulo** |
+
+Confirmo la causa: `awk -v` **interpreta las secuencias de escape**, así que el `\.` de
+`[0-9]+\.[0-9]+` llega a `awk` como `.` **comodín** — el propio `awk` lo avisa
+(`escape sequence '\.' treated as plain '.'`) — y entonces **cualquier corrida de 3 o más dígitos**
+satisface el eje 1. Y la anterioridad casa **dentro de palabra**.
+
+**Clase: `instrumento`, y concuerdo.** No hay efecto sobre el producto, la propiedad contratada por
+`CA-06` y los documentos heredados no cambian, y la dirección es **hacia el rojo**: produce un `FAIL`
+falso, **nunca un `PASS` falso**. Nada de esto bloquea.
+
+**Y ahora lo que sí quiero dejar dicho, porque es de seguridad y no de pruebas.** «Dirección hacia el
+rojo» **no** equivale a «riesgo nulo para una protección», y en este repositorio eso está **medido,
+no supuesto**. El modo de fallo de un guardián ruidoso sobre una **puerta requerida** no es el build
+en rojo: es **que alguien lo apague o lo estreche**, y `AGENTS.md` §13 lo nombra —«*perseguirlo
+produce falsos positivos que acaban con alguien desactivando el guard: un guard apagado protege menos
+que uno parcial*»—.
+
+**No es hipotético: es el origen exacto de esta cadena.** Un solo falso positivo —la frase
+protectora— puso `hooks-en-linux` en rojo; la respuesta fue **estrechar el reconocedor**; el
+estrechamiento soltó **siete formas reales** en silencio (`I-5`), y hicieron falta **dos vueltas de
+QA y dos revisiones mías** para detectarlo y restituirlo. **Coste medido de un falso positivo: siete
+formas de cobertura durante dos cabezas, más cuatro ciclos de revisión.** `I-7` es un generador de
+ese mismo falso positivo, y por eso su coste esperado no es el rojo: es **el próximo
+estrechamiento**.
+
+**Tres cosas más que agravan el pronóstico, y las nombro sin repararlas:**
+
+1. **«Efecto hoy nulo» tiene media vida corta, y el objeto vigilado crece hacia el disparador.** El
+   gatillo es «3+ dígitos en el mismo bloque que un verbo de la familia», y lo vigilado es una
+   **entrada de migración** dentro de `## Migraciones conocidas`, que por construcción acumula
+   **fechas, números de versión y recuentos**. **La primera fecha que entre en el bloque de la fila
+   `MODIFICADO` lo enciende.**
+2. **El rojo no señalará su causa.** El mensaje de `FAIL` imprime el **verbo** que casó —«se queda
+   como está», la **frase protectora**—, no el término que lo hizo contar. Quien vea el rojo verá
+   señalada la frase que protege el texto de los proyectos, y la reparación natural será **otra vez**
+   tocarla o estrechar el reconocedor: el camino que produjo `I-5`.
+3. **El diagnóstico que delata el bug no se ve.** Medido: en una corrida normal de la sección el aviso
+   de `awk` sale **0 veces**, así que quien depure el rojo **no verá** la pista que a mí me lo
+   confirmó en un segundo.
+
+**Recomendación, sin abrir reparación ni tocar nada:** que `I-7` se atienda **antes de que el
+apartado crezca**, y que al hacerlo el mensaje de `FAIL` **nombre el término heredado que hizo
+contar la oración**, no sólo el verbo. Lo primero es de QA y del `desarrollador`; lo segundo evita
+que el próximo rojo vuelva a apuntar al inocente.
+
+### 4. **Extiendo la firma** de `R-037` a `eea46ad`
+
+**`Seguridad: aprobado`**, con **el mismo alcance acotado** de `R-037` —las dos preguntas de `R-034`
+y la cadena de remediaciones—, extendida a **`eea46ad`** (árbol idéntico en `0b8daf9`).
+
+**Por qué la extensión es legítima y no una firma nueva sin revisión:**
+
+1. **El objeto firmado es byte a byte el mismo** — medido arriba: ningún documento heredable se ha
+   movido desde `6212e87`.
+2. **Lo único que cambió fue un instrumento, y cambió hacia MÁS cobertura**, con `fail-before`
+   medido por mí en dos de las siete y un fail-open cerrado.
+3. **Gates 3 de 3** y la sección **28 PASS · 0 FAIL** corrida por mí sobre esta cabeza.
+4. **Ningún hallazgo mío bloquea:** `SEC-093`…`SEC-095`, `097`, `098`, `099`, `100` `mitigados`;
+   `SEC-096` `en-mitigación`; `SEC-101` `instrumento`. **Ninguno abierto de clase `contrato`.**
+
+**Y lo que la extensión NO hace:** no acredita `I-5` ni `I-7` —son de QA—, no convierte mi firma en
+un aval del banco, y **no se extiende sola a la cabeza siguiente**: si vuelve a moverse algo que los
+proyectos hereden, vuelvo a auditar.
+
+### 5. Qué NO acredita esta comprobación
+
+1. **No es una auditoría del delta ni de la sección.** Ejercí **dos** de las siete regresiones y los
+   controles positivos; **las otras cinco las acredita QA, no yo**, y las doy por buenas en su
+   informe sin haberlas medido.
+2. **No acredita la clase completa de `CA-06`.** El reconocedor sigue siendo **por cadena y no
+   analizador de castellano** —el propio código lo declara—: reconoce las formas de sus dos ejes y
+   **no las demás**. Una forma nueva de decir «antes» se le escapa, **por diseño declarado**. Lo que
+   acredito es que **lo que suelta y lo que muerde está ejercido**.
+3. **No acredita el banco completo ni el CI**: corrí **una** sección por ruta y las tres puertas. No
+   relancé nada.
+4. **No acredita `REQ-024`** —el delta toca su Historial y **no lo audité**—, ni `REQ-023`, ni
+   `REQ-026`. **No escribo en el `Seguridad:` de ningún REQ.**
+5. **No acredita ninguna corrida de `arnes-init` ni de `arnes-upgrade`**, ni la composición «copia
+   propia de una definición de agente» (`SEC-096`). Los límites de `R-037` siguen todos en pie.
+6. **No acredita `I-3`, `I-5`, `I-6`, `I-7`, `R-1`, `SEC-096`, `SEC-101` ni la observación de `N-4`.**
+   De `I-7` doy **lectura**, no veredicto.
+7. **No acredita la fusión ni la publicación**, y no me pronuncio sobre ellas.
+
+### 6. Estado de mis hallazgos tras `R-038`
+
+**Sin cambios respecto de `R-037`:** `SEC-093`, `094`, `095`, `097`, `098`, `099`, `100`
+`mitigados`; `SEC-096` `en-mitigación`; `SEC-101` `abierto` (`instrumento`, no bloquea). **No abro
+ninguno**: lo que vi en este delta pertenece a `I-7`, que es de QA. `SEC-091`, `SEC-092`, `SEC-088`,
+`SEC-085` siguen `abiertos`; `SEC-090` y `SEC-087`, `mitigados`.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** Un cambio en el banco no altera clasificación
+de datos, acceso, retención ni cumplimiento.
+
+**Numeración vigente tras esta revisión:** última revisión **R-038**; último hallazgo **SEC-101**;
+próximos libres **R-039** y **SEC-102**.

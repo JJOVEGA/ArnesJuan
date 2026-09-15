@@ -2,6 +2,26 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-15 · Seguridad `R-038`: cobertura de `I-5` **recuperada**, ninguna protección tocada, **firma extendida a `eea46ad`**
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad. Registro: `docs/seguridad/registro-seguridad.md` § R-038. Comprobación acotada, no auditoría del delta.
+
+**Cobertura recuperada contra las tres clases de `R-037`** —enumeración cerrada → clase con ejemplos no exhaustivos; alcance
+por oración → vecina del mismo bloque **conservando el bloque como límite**; regla de corte → la recoge la vecina—, y **en la
+forma correcta**: las siete declaradas «regresiones conocidas, no la definición», suelo y no techo. Ejercidas por el auditor
+**#4 y #6 fuera del banco**, reconstruyendo ambos reconocedores: de `sin=0` a **`sin=1`**, control positivo `0 0`. **Fail-open
+del medidor** (`sin` de gawk → «0 0») registrado como cerrado, **y no detectado por `R-036` ni `R-037`**.
+
+**Protecciones:** `git diff --stat 6212e87..eea46ad` sobre todo lo heredado → **vacío**. Lo que los proyectos reciben es byte
+a byte lo firmado. **Firma `Seguridad: aprobado` extendida a `eea46ad`**, mismo alcance; no se extiende sola a la siguiente.
+
+**`I-7`, lectura del auditor (no lo cierra ni reclasifica):** `instrumento`, no bloquea, **pero «dirección hacia el rojo» no
+es «riesgo nulo»**: el modo de fallo de un guardián ruidoso en una puerta requerida es **que alguien lo apague o lo
+estreche** —§13 lo nombra— y **es el origen exacto de esta cadena**: un falso positivo puso el CI en rojo, se estrechó, y el
+estrechamiento soltó siete formas reales. Tres agravantes: el gatillo son 3+ dígitos sobre una entrada que **acumula fechas y
+versiones por construcción**; el `FAIL` **imprimirá la frase protectora**, no el término que disparó, así que la reparación
+natural será otra vez tocarla; y el aviso de `awk` sale **0 veces** en corrida normal. Recomienda atenderlo **antes de que el
+apartado crezca** y que el `FAIL` nombre el término.
+
 ## [Interno] — 2026-09-15 · QA sobre `eea46ad`: **favorable con reserva**; `I-5` **RESUELTO**; `I-7` nuevo (`instrumento`)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester. Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`.
 
