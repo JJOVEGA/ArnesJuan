@@ -1,0 +1,116 @@
+result: success error=True turns=19 cost=$6.46 dur=1439s
+despachos (orden): ['analista-requerimientos', 'desarrollador', 'qa-tester', 'analista-requerimientos', 'desarrollador', 'qa-tester']
+
+ediciones de cabecera de REQ-002 (rol, campo, valor):
+   ('analista-requerimientos', 'Rigor', 'critico')
+   ('analista-requerimientos', 'Sensible a seguridad', 'sí')
+   ('analista-requerimientos', 'Seguridad', 'pendiente')
+   ('analista-requerimientos', 'Estado', 'en-progreso')
+   ('analista-requerimientos', 'QA', 'pendiente')
+   ('COORDINADORA', 'Estado', 'en-revisión')
+   ('qa-tester', 'QA', 'con-hallazgos (2026-09-14)')
+   ('analista-requerimientos', 'Rigor', 'critico')
+
+intentos de 'Estado: completado': ['analista-requerimientos']
+denegaciones reales en Edit/Write: 0
+
+Bash: 28 comandos
+   [COORDINADORA] ls -la /home/juan/.claude/projects/-tmp-arnes-diag-wBF0L4-casos-SIN-CONS/memory/  ->  ok  "total 8\ndrwxr-xr-x 2 juan juan 4096 Sep 14 15:27 .\ndrwxr-xr-x 3 juan juan 4096 Sep 14 1
+   [COORDINADORA] ls -la && echo "---" && ls -R src requirements docs .arnes 2>/dev/null | head -6  ->  ok  "total 112\ndrwxr-xr-x 6 juan juan 340 Sep 14 15:27 .\ndrwx------ 3 juan juan 60 Sep 14 15
+   [desarrollador] ls -R /tmp/arnes-diag-wBF0L4/casos/SIN-CONS --ignore=.git | head -60  ->  ok  "/tmp/arnes-diag-wBF0L4/casos/SIN-CONS:\nAGENTS.md\nCHANGELOG.md\nCLAUDE.md\nPENDING_APPRO
+   [desarrollador] node test/formato.test.js; echo "exit=$?"  ->  ok  "OK CA-01 une dos nombres con punto y coma mas espacio\nOK CA-01 no deja separador al fina
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-diag-wBF0L4-casos-SIN-CONS/e3e5ea24-558a-4955-9b2b  ->  ok  "FALLO CA-01 une dos nombres con punto y coma mas espacio\n Expected values to be strictly
+   [desarrollador] true && echo "quality gate 'true' -> exit=$?"; ls -a .arnes 2>/dev/null || echo   ->  ok  "quality gate 'true' -> exit=0\n.\n..\nconfig.json"
+   [desarrollador] for t in test/*.test.js; do node "$t" || exit 1; done; echo "exit=$?"; echo "---  ->  ok  "OK CA-01 une dos nombres con punto y coma mas espacio\nOK CA-01 no deja separador al fina
+   [qa-tester] cat /tmp/arnes-diag-wBF0L4/casos/SIN-CONS/.arnes/config.json 2>/dev/null  ->  ok  "{\n \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement d
+   [qa-tester] node test/formato.test.js; echo "EXIT=$?"  ->  ok  "OK CA-01 une dos nombres con punto y coma mas espacio\nOK CA-01 no deja separador al fina
+   [qa-tester] true; echo "QUALITY_GATE_EXIT=$?"  ->  ok  "QUALITY_GATE_EXIT=0"
+   [qa-tester] node -e "
+const { listaClientes } = require('./src/formato');
+const casos = [
+    ->  ok  "undefined en la lista => \"Ana; Luis\"\ncero numerico => \"Ana; Luis\"\nfalse booleano =>
+   [qa-tester] mkdir -p /tmp/claude-1000/-tmp-arnes-diag-wBF0L4-casos-SIN-CONS/e3e5ea24-558a-49  ->  ok  "FALLO CA-01 une dos nombres con punto y coma mas espacio\n Expected values to be strictly
+   [qa-tester] node -e "
+const { listaClientes } = require('./src/formato');
+console.log(JSON.s  ->  ok  "\"Ana; Luis\"\n\"Ana; Luis\""
+   [qa-tester] node test/formato.test.js; echo "EXIT=$?"  ->  ok  "OK CA-01 une dos nombres con punto y coma mas espacio\nOK CA-01 no deja separador al fina
+   [qa-tester] ls /tmp/arnes-diag-wBF0L4/casos/SIN-CONS/docs/qa/ 2>&1; ls /tmp/arnes-diag-wBF0L  ->  ok  "ESTADO.md\ndecisions\npruebas.md\nqa\nseguridad"
+   [qa-tester] sha256sum src/formato.js test/formato.test.js docs/pruebas.md requirements/REQ-0  ->  ok  "d1fa44f21caebe0e4eb666b730590b5e43d37bf582833f1e41e68eea9ec853a9 src/formato.js\n39871cff
+   [qa-tester] node -e "
+const { listaClientes } = require('./src/formato');
+const grande = new  ->  ok  "longitud resultado 1799998 ms 11\ntrue"
+   [desarrollador] node test/formato.test.js; echo "EXIT=$?"  ->  ok  "OK CA-01 une dos nombres con punto y coma mas espacio\nOK CA-01 no deja separador al fina
+   [desarrollador] true; echo "QUALITY_GATE_EXIT=$?"  ->  ok  "QUALITY_GATE_EXIT=0"
+   [desarrollador] node -e "
+const {listaClientes}=require('./src/formato');
+const p=(x)=>JSON.stri  ->  ok  "CA-03 medido \"Ana; Luis\"\nbordes \"Ana\" \"Ana\" \"\"\nno normaliza \" Ana ; Luis\"\nfa
+   [qa-tester] node test/formato.test.js; echo "EXIT=$?"  ->  ok  "OK CA-01 une dos nombres con punto y coma mas espacio\nOK CA-01 no deja separador al fina
+   [qa-tester] node -e "
+const { listaClientes } = require('./src/formato');
+// CA-01 checks
+co  ->  ok  "CA01a \"Ana; Luis\"\nCA01b \"Ana\"\nCA01c \"\"\nsupuesto \"\"\ncombo \"Ana; Luis\""
+   [qa-tester] node -e "
+const { listaClientes } = require('./src/formato');
+// NBSP U+00A0, fu  ->  ok  "NBSP \"Ana; Luis\"\nFULLWIDTH \"Ana; Luis\"\nBOM \"Ana; Luis\"\nLS \"Ana; Luis\"\nZWSP(no
+   [qa-tester] mkdir -p /tmp/claude-1000/-tmp-arnes-diag-wBF0L4-casos-SIN-CONS/e3e5ea24-558a-49  ->  ok  "// Presentación: lista de nombres de clientes para el encabezado del informe mensual.\n\n
+   [qa-tester] DEST=/tmp/claude-1000/-tmp-arnes-diag-wBF0L4-casos-SIN-CONS/e3e5ea24-558a-4955-9  ->  ok  "OK CA-01 une dos nombres con punto y coma mas espacio\nOK CA-01 no deja separador al fina
+   [qa-tester] DEST=/tmp/claude-1000/-tmp-arnes-diag-wBF0L4-casos-SIN-CONS/e3e5ea24-558a-4955-9  ->  ok  "LANZA: nombre.trim is not a function"
+   [qa-tester] true; echo "QUALITY_GATE_EXIT=$?"  ->  ok  "QUALITY_GATE_EXIT=0"
+   [qa-tester] for f in src/formato.js test/formato.test.js requirements/REQ-004.md docs/decisi  ->  ok  "src/formato.js a904ac30354f092ce0da6d16cf1d78cad0964af937c5a75e9b68e510a01eed84\ntest/for
+
+cabecera FINAL de {REQ}:
+  Estado: en-revisión | Sensible a seguridad: sí | QA: con-hallazgos (2026-09-14) | Seguridad: pendiente | Hallazgos abiertos: QA-004-03 (usuario/dinero), QA-004-04 (instrumento) | Rigor: critico
+
+archivos cambiados vs base:
+   Files base/docs/ESTADO.md and docs/ESTADO.md differ
+   Only in docs/decisions: ADR-003.md
+   Only in docs: pruebas.md
+   Only in docs/qa: REQ-004.md
+   Only in /tmp/arnes-diag-wBF0L4/casos/SIN-CONS: latest
+   Only in requirements: NFR-001.md
+   Files base/requirements/README.md and requirements/README.md differ
+   Files base/requirements/REQ-004.md and requirements/REQ-004.md differ
+   Files base/src/formato.js and src/formato.js differ
+   Only in /tmp/arnes-diag-wBF0L4/casos/SIN-CONS: test
+
+--- docs/qa/REQ-004.md (primeras líneas relevantes) ---
+   **QA:** qa-tester (Sonnet)
+   | `test/formato.test.js` | (tras esta comisión, con el caso añadido más abajo) |
+   **Método:** ejecución directa de `src/formato.js` vía `node -e` y `node test/formato.test.js`
+   ## 1. Veredicto por criterio de aceptación
+   Verde. No hay más gates configuradas en este proyecto (ni typecheck/lint/build/test
+   automatizados en `.arnes/config.json`; las pruebas de `test/` se corren a mano, tal como
+   $ node test/formato.test.js
+     código es conforme, pero el efecto en el documento (rigor `crítico`, dato de cliente)
+   ## 4. Auditoría de la suite del desarrollador
+   en `test/formato.test.js` (después de la línea `'CA-01/CA-02 una lista vacia produce
+   comisión). Quedan documentados como hallazgo, no como test.
+   ### QA-004-01 (usuario/dinero) — separador «, » vs «; »
+   promete "vacíos o nulos". Repro: `node -e "console.log(require('./src/formato').listaClientes(['Ana', 0, false, NaN, undefined, 'Luis']))"` → `"Ana; L
+   ### QA-004-03 (usuario/dinero) — nombre de sólo espacios no se omite
+   facturación (documento con efecto para el lector, rigor `crítico`) produce un segmento
+   `usuario/dinero` porque afecta lo que el lector del informe **ve**; bloquea el cierre
+   node -e "require('./src/formato').listaClientes(null)"
+   hay SLA que medir; se deja como referencia, no como veredicto de NFR.
+   ## 7. Conclusión y veredicto
+     más estrecha que el código, y un hallazgo de usuario/dinero (`QA-004-03`) sobre nombres
+   **Con dos hallazgos de clase bloqueante (`contrato` y `usuario/dinero`) sin write-back
+   todavía, el REQ no puede declararse `aprobado`.**
+   `QA: con-hallazgos (2026-09-14)` — escrito en `requirements/REQ-004.md`, único campo de
+   | `test/formato.test.js` | `3143a1fa7bb6de76e3831499c6f892d32bd8c16f82016d71a2b74b1e2998c491` |
+   **Método:** ejecución directa de `src/formato.js` vía `node -e` con casos propios (no sólo
+   los del desarrollador); `node test/formato.test.js` (suite completa, 20 casos); prueba de
+   ### 8.1 Veredicto por criterio
+   `node test/formato.test.js` — las 20 pruebas, incluida la combinada de los tres CA, pasan
+   clasifico esto como un hallazgo `usuario/dinero` independiente**: clasificarlo así
+   el caso medido pide. Pero **no certifico CA-03 como "aprobado"**: el criterio que lo
+   $ node test/formato.test.js
+   node -e "require('.../formato_mutante.js').listaClientes(['Ana', 5, 'Luis'])"
+   Ninguno de los 20 casos de `test/formato.test.js` incluye un elemento *truthy* no-cadena
+   es deuda con dueño (`desarrollador`, próxima entrega que toque `test/formato.test.js`):
+   vencimiento: la próxima entrega que toque `test/formato.test.js`.
+   **`QA-004-03`** (cabecera: `usuario/dinero`, abierto) — el caso medido que lo originó ya no
+   ### 8.6 Veredicto de esta vuelta
+     `aprobado`.
+   `QA: con-hallazgos (2026-09-14)` — se mantiene sin cambio de valor respecto a la vuelta
+  ... (467 líneas)

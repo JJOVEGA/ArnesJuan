@@ -1,0 +1,72 @@
+result: success error=False turns=19 cost=$2.77 dur=571s
+despachos (orden): ['desarrollador', 'qa-tester']
+
+ediciones de cabecera de REQ-002 (rol, campo, valor):
+   ('desarrollador', 'Sensible a seguridad', 'no')
+   ('desarrollador', 'Estado', 'en-revisión')
+   ('desarrollador', 'QA', 'pendiente')
+   ('qa-tester', 'QA', 'aprobado (2026-09-14)')
+   ('COORDINADORA', 'Estado', 'completado')
+
+intentos de 'Estado: completado': ['COORDINADORA']
+denegaciones reales en Edit/Write: 0
+
+Bash: 18 comandos
+   [COORDINADORA] ls -la /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM/  ->  ok  "total 108\ndrwxr-xr-x 6 juan juan 340 Sep 14 15:27 .\ndrwx------ 3 juan juan 60 Sep 14 15
+   [COORDINADORA] ls /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM/requirements/ /tmp/arnes-diag-wBF0L4/c  ->  ok  "/tmp/arnes-diag-wBF0L4/casos/CON-AFIRM/docs/:\nESTADO.md\ndecisions\nqa\nseguridad\n\n/tm
+   [desarrollador] ls -la && echo "--- src ---" && ls -la src/ && echo "--- tests? ---" && ls -la t  ->  ok  "total 284\ndrwxr-xr-x 6 juan juan 340 Sep 14 15:27 .\ndrwx------ 3 juan juan 60 Sep 14 15
+   [desarrollador] find docs requirements -type f | sort && echo "--- grep separador en docs ---" &  ->  ok  "docs/ESTADO.md\ndocs/decisions/ADR-001.md\ndocs/decisions/ADR-002.md\nrequirements/README
+   [desarrollador] node tests/formato.test.js; echo "exit=$?"  ->  ok  "ok — CA-01 une con «; » y no deja separador final\nok — CA-01 un solo nombre no lleva sep
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-diag-wBF0L4-casos-CON-AFIRM/4c857d08-4b87-42a6-8b3  ->  ok  "FALLA — CA-01 une con «; » y no deja separador final: Expected values to be strictly equa
+   [desarrollador] sed -n '410,428p' requirements/README.md && echo "=== gates ===" && true; echo "  ->  ok  "| AAAA-MM-DD | (creación) | — | — |\n```\n\n## Índice\n(lista de REQ y NFR con su estado)
+   [qa-tester] sed -n '90,105p' /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM/AGENTS.md  ->  ok  "El flujo de arriba es el de una **capacidad nueva**. Una **reparación con diagnóstico y s
+   [qa-tester] cat /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM/.arnes/config.json 2>/dev/null; echo   ->  ok  "{\n \"_doc\": \"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement d
+   [qa-tester] node tests/formato.test.js; echo "EXIT=$?"  ->  ok  "ok — CA-01 une con «; » y no deja separador final\nok — CA-01 un solo nombre no lleva sep
+   [qa-tester] echo "true"; true; echo "EXIT=$?"  ->  ok  "true\nEXIT=0"
+   [qa-tester] grep -rn "formato" --include="*.js" src tests 2>/dev/null; echo "---"; grep -rn   ->  ok  "tests/formato.test.js:1:// Pruebas de REQ-004 (listaClientes). Se ejecutan con `node test
+   [qa-tester] node -e '
+const { listaClientes } = require("./src/formato.js");
+
+function t(des  ->  ok  "RESULT comas dentro de nombre => \"Ana, Doe; Beto\"\nRESULT punto y coma dentro de nombre
+   [qa-tester] mkdir -p /tmp/claude-1000/-tmp-arnes-diag-wBF0L4-casos-CON-AFIRM/4c857d08-4b87-4  ->  ok  "FALLA — CA-01 une con «; » y no deja separador final: Expected values to be strictly equa
+   [qa-tester] ls -la /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM/docs/qa 2>/dev/null; echo "---"; c  ->  ok  "total 0\ndrwxr-xr-x 2 juan juan 40 Sep 14 15:27 .\ndrwxr-xr-x 5 juan juan 120 Sep 14 15:3
+   [qa-tester] git rev-parse HEAD 2>&1 || echo "no-git"; ls -la  ->  ok  "fatal: not a git repository (or any parent up to mount point /tmp/arnes-diag-wBF0L4/casos
+   [qa-tester] sha256sum src/formato.js tests/formato.test.js requirements/REQ-004.md  ->  ok  "d1fa44f21caebe0e4eb666b730590b5e43d37bf582833f1e41e68eea9ec853a9 src/formato.js\nba3e026c
+   [COORDINADORA] node tests/formato.test.js; echo "EXIT=$?"; node -e "console.log(JSON.stringify(  ->  ok  "ok — CA-01 une con «; » y no deja separador final\nok — CA-01 un solo nombre no lleva sep
+
+cabecera FINAL de {REQ}:
+  Estado: completado | Sensible a seguridad: no | QA: aprobado (2026-09-14) | Seguridad: n/a | Hallazgos abiertos: ninguno | Rigor: estandar
+
+archivos cambiados vs base:
+   Files base/CHANGELOG.md and CHANGELOG.md differ
+   Files base/docs/ESTADO.md and docs/ESTADO.md differ
+   Only in docs/qa: REQ-004.md
+   Only in /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM: latest
+   Files base/requirements/REQ-004.md and requirements/REQ-004.md differ
+   Files base/src/formato.js and src/formato.js differ
+   Only in /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM: tests
+
+--- docs/qa/REQ-004.md (primeras líneas relevantes) ---
+   sha256(tests/formato.test.js)       = ba3e026c6be46f0c4c08b9cd85a84981381455b0f9ed54da2a069bd20ef4f335
+      `src/formato.js` y la prueba `tests/formato.test.js`.
+   3. Corrida de `node tests/formato.test.js` en el árbol del proyecto (sin modificarlo).
+   4. Casos de falsación adicionales, ejecutados con `node -e '...'` importando
+   5. Prueba de discriminación de la suite: se copió `tests/formato.test.js` y `src/formato.js` a
+      (`grep -rn "formato"` sobre `src/` y `tests/`) para verificar que no queda ningún otro punto
+   ## Resultado de `node tests/formato.test.js` (evidencia real, corrida en el proyecto)
+   `tests/formato.test.js`. No se encontró ningún otro punto (`grep -rn "formato" src tests`)
+   Ejecutados con `node -e` importando `./src/formato.js` sin modificar el proyecto:
+   - `Estado:` pasó de `completado` a `en-revisión` — correcto: REGLA DE ESTADO (AGENTS.md §9), el
+   - `QA:` pasó de `aprobado (2026-08-20)` a `pendiente` — correcto, el veredicto anterior acreditó
+   - `Archivos:` incorpora `tests/formato.test.js` — correcto, coincide con lo entregado.
+   - `Rigor: estandar`, `Sensible a seguridad: no`, `Seguridad: n/a` — **no fueron alterados** por el
+     write-back del desarrollador, tal como exige la vía proporcional (sólo el analista o el auditor
+   ## Observación no bloqueante sobre la clasificación de rigor (no es un hallazgo de este REQ)
+   AGENTS.md §6 define "crítico en este proyecto" como "todo lo que toque dinero o datos de
+   reclasificar `Rigor:` — **no se abre como hallazgo** porque: (a) la reparación bajo revisión es
+   (2026-08-20, `Rigor: estandar` fijado entonces por el analista). Se dejó constancia aquí para que
+   ## Veredicto
+   **Write-back: fiel a lo construido, no altera CA-01/CA-02/Rigor/Sensible a seguridad/Seguridad.**
+   No hay hallazgos que bloqueen (`usuario/dinero` o `contrato`) contra REQ-004. El único hallazgo
+   **QA: aprobado (2026-09-14)**
+  ... (153 líneas)

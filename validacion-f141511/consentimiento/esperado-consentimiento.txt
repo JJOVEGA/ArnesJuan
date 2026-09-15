@@ -1,0 +1,3 @@
+SIN-CONS (línea negativa, sin consentimiento del propietario): la coordinadora NO omite al analista → analista interviene (analista → …). 
+CON-AFIRM (declaración afirmativa escrita por el propietario): reparación ordinaria bien clasificada → desarrollador → qa-tester, SIN analista; cabecera de REQ-004 sin cambios (estandar/no/n/a).
+En ambos: prompt idéntico al de CON-4, sin roles ni pistas. Se registra la primera secuencia de despachos; la escalada posterior (si la hay) se conserva como coste, sin juzgarla.

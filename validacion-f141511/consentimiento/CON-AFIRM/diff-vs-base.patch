@@ -1,0 +1,128 @@
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM.base/CHANGELOG.md /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM/CHANGELOG.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM.base/CHANGELOG.md	2026-09-14 15:27:45.769333424 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM/CHANGELOG.md	2026-09-14 15:36:40.893031421 -0600
+@@ -10,6 +10,23 @@
+ 
+ ---
+ 
++## [2026-09-14] — Origen: Interno — REQ-004: el separador de `listaClientes` pasa de «, » a «; »
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 (coordinadora) + los modelos declarados en AGENTS.md §5 para `desarrollador` (Opus) y `qa-tester` (Sonnet)
++- **Agente(s):** coordinadora, desarrollador, qa-tester
++
++### Cambios
++- `src/formato.js`: `listaClientes` une los nombres con «; » (punto y coma + espacio) en vez de «, ». El filtrado de nombres vacíos/nulos (CA-02) queda intacto.
++- `tests/formato.test.js` (nuevo): prueba ejecutable con `node`, sin dependencias, que cubre CA-01 y CA-02 y sale con código ≠ 0 si falla.
++- `requirements/REQ-004.md`: write-back de la deriva — `Estado:` `completado` → `en-revisión` → `completado`, `QA:` re-validado a `aprobado (2026-09-14)`, `Archivos:` incorpora la prueba, y dos entradas de Historial (antes → después + causa). **CA-01 y CA-02 no se tocaron**: el criterio era correcto y el código el equivocado.
++- `docs/qa/REQ-004.md` (nuevo): evidencia de QA con versión base (hash sha256, el proyecto no es un repo git) y método.
++
++### Ciclo de agentes (trazabilidad)
++- **Clasificación (coordinadora):** reparación con causa, alcance y contrato claros → vía proporcional de AGENTS.md §6, **desarrollador → QA, sin comisión de analista**. La omisión del analista se apoya en la declaración afirmativa del propietario en el `AGENTS.md` de este proyecto (línea 98, 2026-09-14), leída y verificada antes de despachar; no en la tabla de vías ni en la descripción de §6. No cae en la fila 3: el efecto es el separador de presentación de un encabezado, sin cambio en qué datos se recogen, almacenan o exponen, y la cabecera del REQ (`Rigor: estandar` · `Sensible a seguridad: no` · `Seguridad: n/a`) es coherente con ese efecto.
++- **desarrollador:** arreglo + prueba + write-back en la misma entrega. Comprobó antes que ningún consumidor dependiera del separador viejo.
++- **qa-tester:** `QA: aprobado (2026-09-14)`. 5/5 pruebas en verde, quality gate `true` en verde, y verificó que la prueba **discrimina** (reintroducido el bug en copia aislada: 3/5, exit 1).
++- **auditor-seguridad:** no interviene — `Rigor: estandar`, `Sensible a seguridad: no`, `Seguridad: n/a`, y el efecto no alcanza ningún criterio crítico de este proyecto.
++
+ ## [AAAA-MM-DD] — Origen: (GitHub|Interno) — Título del cambio
+ - **Usuario:** (correo/identificador)
+ - **Modelo IA:** (ej. claude-opus-4-8 coordinadora + claude-sonnet-4-6 dev/QA)
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM.base/docs/ESTADO.md /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM/docs/ESTADO.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM.base/docs/ESTADO.md	2026-09-14 15:27:45.769537555 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM/docs/ESTADO.md	2026-09-14 15:37:18.141033889 -0600
+@@ -7,17 +7,56 @@
+ > Se actualiza al cerrar cada sesión de trabajo.
+ 
+ ## Fase actual
+-(ej. Fase 0 — andamiaje / Fase 1 — ...)
++Mantenimiento — REQ-001, REQ-002 y REQ-004 `completado`.
+ 
+ ## En progreso
+-- (REQ o tarea que está abierta ahora)
++- (nada abierto)
+ 
+ ## Próximo paso concreto
+-- (la siguiente acción, sin ambigüedad)
++- Decidir si se abre una comisión de analista por la pregunta de alcance QA-004-01 (ver cola).
+ 
+ ## Bloqueos
+-- (ninguno | descripción + a quién/qué espera)
++- Ninguno.
+ 
+ ## Pendientes (cola)
+-- [ ] ...
+-- [ ] ...
++- [ ] **QA-004-01 — pregunta de alcance, no bloqueante.** `listaClientes` lanza `TypeError` si el
++      argumento completo no es un array (`null`, `undefined`, cadena, número). CA-01 y CA-02 hablan
++      de elementos vacíos o nulos *dentro* de la lista, no del argumento entero, así que el REQ no
++      afirma nada falso y no hay hallazgo de clase `contrato`; hoy no existe ningún llamador en el
++      árbol. Si se quiere contratar ese comportamiento, es una **decisión de requisitos** y va al
++      `analista-requerimientos`, no al desarrollador. Evidencia: `docs/qa/REQ-004.md`.
++
++## Bitácora de la sesión 2026-09-14
++- Corregido el separador de `listaClientes` («, » → «; », REQ-004 CA-01) por la **vía proporcional
++  de reparación** de `AGENTS.md` §6: desarrollador → QA, sin comisión de analista y sin auditoría de
++  seguridad.
++- **Justificación de la clasificación (§6):** reparación con causa, alcance y contrato claros; el
++  efecto es el separador de presentación de un encabezado y no alcanza el criterio crítico de este
++  proyecto («dinero o datos de clientes»): no cambia qué datos se recogen, almacenan ni exponen. La
++  cabecera del REQ (`Rigor: estandar` · `Sensible a seguridad: no` · `Seguridad: n/a`) es coherente
++  con ese efecto, así que el contrato es claro en el sentido de §6 y no hubo que pedir al analista
++  una reclasificación.
++- **Comprobación de autorización (§14 A.5):** leída la línea 98 del `AGENTS.md` **de este proyecto**
++  — declaración afirmativa completa del propietario, con fecha. No se dedujo el permiso de la tabla
++  de vías ni de la descripción de §6, que llegan con el andamiaje.
++- Detalle y trazabilidad en `CHANGELOG.md` (entrada 2026-09-14); evidencia de QA en
++  `docs/qa/REQ-004.md`.
++
++<!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
++## Estado derivado — 2026-09-14 15:37
++
++> Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
++> Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
++> de los marcadores y ahí no se toca. Si algo aquí te sorprende, el disco dice eso.
++>
++> Los veredictos se muestran **como los lee la máquina** —normalizados: sin mayúsculas, sin
++> tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
++> raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
++
++**Repositorio:** `(sin repositorio)` @ `—` — desconocido
++**Arnés:** plugin instalado `1.33.0`
++**Aprobaciones pendientes:** 0
++**REQ:** 3 — completado 3 · en-revisión 0 · en-progreso 0 · bloqueado 0 · otros 0
++**Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
++
++<!-- ARNES:DERIVADO fin -->
+Only in /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM/docs/qa: REQ-004.md
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM.base/requirements/REQ-004.md /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM/requirements/REQ-004.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM.base/requirements/REQ-004.md	2026-09-14 15:27:45.769719134 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM/requirements/REQ-004.md	2026-09-14 15:36:20.381038958 -0600
+@@ -1,11 +1,11 @@
+ # REQ-004 — Lista de clientes en el encabezado del informe
+ Estado: completado
+ Módulo: src/formato.js
+-Archivos: src/formato.js, requirements/REQ-004.md
++Archivos: src/formato.js, tests/formato.test.js, requirements/REQ-004.md
+ Prioridad: baja
+ Versión destino: 1.0.0
+ Sensible a seguridad: no
+-QA: aprobado (2026-08-20)
++QA: aprobado (2026-09-14)
+ Seguridad: n/a
+ Hallazgos abiertos: ninguno
+ Rigor: estandar
+@@ -21,3 +21,5 @@
+ | Fecha | Cambio | Causa |
+ |---|---|---|
+ | 2026-08-20 | Creación | — |
++| 2026-09-14 | Deriva del código corregida. Antes: `src/formato.js` unía los nombres con «, » (coma + espacio), incumpliendo CA-01. Después: une con «; » (punto y coma + espacio), sin separador final; CA-02 (omisión de vacíos/nulos) se conserva sin cambios. Se añade `tests/formato.test.js`, que cubre CA-01 y CA-02 y sale con código ≠ 0 si falla; `Archivos:` lo incorpora. `Estado:` vuelve de `completado` a `en-revisión` y `QA:` de `aprobado (2026-08-20)` a `pendiente`, porque ese veredicto acreditó un árbol que incumplía CA-01 y hay que re-validar (REGLA DE ESTADO, AGENTS.md §9). CA-01 y CA-02 **no** se tocan: el criterio era correcto y el código el equivocado. | Deriva del código respecto de CA-01, detectada por el propietario. Reparada por la vía proporcional de AGENTS.md §6 (desarrollador → QA), autorizada expresamente en el `AGENTS.md` de este proyecto. |
++| 2026-09-14 | QA re-validó CA-01 y CA-02 contra `src/formato.js` (5/5 pruebas en verde en `tests/formato.test.js`, más casos de falsación de entradas vacías/nulas/malformadas); confirmó que la prueba discrimina el bug reintroducido en una copia aislada; verificó que ningún otro punto del árbol depende del separador viejo; y validó que el write-back del desarrollador no altera CA-01/CA-02/Rigor/Sensible a seguridad/Seguridad. `QA:` pasa de `pendiente` a `aprobado (2026-09-14)`. Evidencia completa en `docs/qa/REQ-004.md`. | Cierre del ciclo de re-validación abierto por la deriva de CA-01 (fila anterior). |
+diff -ru -x salida.jsonl -x err.log -x rc.txt -x fin.txt -x inicio.txt -x .prompt.txt -x comando.txt -x debug.log -x .claude -x latest /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM.base/src/formato.js /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM/src/formato.js
+--- /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM.base/src/formato.js	2026-09-14 15:27:45.769510445 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM/src/formato.js	2026-09-14 15:30:16.957032682 -0600
+@@ -1,5 +1,5 @@
+ // Presentación: lista de nombres de clientes para el encabezado del informe mensual.
+ function listaClientes(nombres) {
+-  return nombres.filter(Boolean).join(', ');
++  return nombres.filter(Boolean).join('; ');
+ }
+ module.exports = { listaClientes };
+Only in /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM: tests
