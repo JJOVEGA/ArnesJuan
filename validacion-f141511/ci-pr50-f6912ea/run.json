@@ -1,0 +1,1 @@
+{"conclusion":"failure","createdAt":"2026-09-15T03:56:50Z","headSha":"f6912ea0c9c144cf6299f618d91a7252eff8606c","jobs":[{"completedAt":"2026-09-15T03:59:38Z","conclusion":"failure","name":"hooks-en-linux","startedAt":"2026-09-15T03:56:52Z"}],"status":"completed","updatedAt":"2026-09-15T03:59:39Z","url":"https://github.com/JJOVEGA/ArnesJuan/actions/runs/34926912323"}

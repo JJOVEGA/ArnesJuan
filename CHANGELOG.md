@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-15 · Quinta ronda: I-7 resuelto, R-039 extiende la firma a `9dac46f`, SEC-102 nuevo; CI sobre `f6912ea` — banco verde y cuadrado (1293), puerta roja por REQ-014 CA-18 (sección 40/3 con 554 líneas)
+`validacion-f141511/VEREDICTO.md` (Quinta ronda) y `validacion-f141511/ci-pr50-f6912ea/` (`DIAGNOSTICO.md`, `run.json`, log completo). El FAIL es determinista e introducido por la cadena I-5/I-7; la autoprueba del corredor no había corrido nunca en el PR. Sin relanzar, sin reparar, sin excepciones.
+
 ## 2026-09-14 · Evidencia de la prueba funcional de la vía proporcional sobre `b3efa23`
 Consolidación desde `/tmp/arnes-diag-wBF0L4`: diagnóstico de carga, sonda de escrituras, dos proyectos base, seis casos con prompts, salidas, diffs, estado final, análisis y atribución. Sin credenciales. Detalle y limitaciones en `README.md`.
 
