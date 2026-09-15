@@ -2,6 +2,24 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-15 · QA sobre `9dac46f`: **favorable**; `I-7` **RESUELTO**; sin defecto nuevo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester (verificación acotada del delta `6732e94..9dac46f`, reutilizando las aprobaciones vigentes sobre `eea46ad`). Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` § «Verificación acotada de `9dac46f`».
+
+**Las dos mitades de `I-7`, reproducidas antes y después:** las seis entradas que mordían bajo `eea46ad` —fecha ISO en la misma
+oración y en la vecina, «Nota 123», «bast**antes**», «rest**antes**», «inst**antes**»— **pasan las seis**; avisos `escape
+sequence` **12 → 0** en las tres corridas (gawk, mawk, `LC_ALL=C`). `ENVIRON` corrige la causa, no el síntoma. **El arreglo del
+punto no soltó versiones legítimas:** `1.33.0`, `v1.32.1`, `1.33` y `v2` (falsación, fuera de las siete) **siguen mordiendo**;
+las **7/7** regresiones muerden. **Portabilidad confirmada por QA**, no aceptada: `40/3` por ruta → **29 PASS · 0 FAIL, 29 = 29**
+bajo GNU Awk 5.3.2 y bajo mawk 1.3.4 enlazado como `awk`, cuatro identificadores de `CA-06` en ambas.
+
+**Anotado sin hallazgo:** «**A**ntes» y «**PREVIA**» escapan al reconocedor **y ya escapaban en `eea46ad`** (sensible a
+mayúsculas desde siempre; no es regresión). **Locale:** `[[:alpha:]]` depende del locale; la sección da 29 · 0 · 0 bajo
+`C.UTF-8` y bajo `LC_ALL=C`; **el locale del runner de CI no se leyó**. Sin ampliación por otro eje: `skills/`, `AGENTS.md`,
+plantillas, agentes → 0 archivos; eje del verbo → 0 líneas; `REQ-024` +1/−0. Gates 3/3.
+
+**No acredita:** el cuadre total 1293 (CI), el locale del runner, exhaustividad de la falsación (17 sondas), nada anterior a
+`6732e94`, seguridad, fusión ni publicación.
+
 ## [Interno] — 2026-09-15 · `I-7`: el punto dejaba de ser un punto al pasar por `awk -v`, y «bastantes» contenía «antes»
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: desarrollador (reparación acotada de `I-7`, autorizada por el propietario: **únicamente los dos defectos que la reparación de `I-5` introdujo**). Base: `6732e94`. Hallazgo: QA sobre `eea46ad` e `R-038` del auditor. **Sólo `tests/` + `Historial` de `REQ-024` + este `CHANGELOG`.**
 
