@@ -2,6 +2,30 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-16 · `SEC-102` reparado: el **borde derecho** se retira y las tres formas vuelven a morder, con los dos lados ejercidos en la misma vuelta (banco 1293 → **1294**)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: desarrollador. Reparación acotada autorizada por el propietario sobre `rel/via-proporcional` @ `38858d2`. Sedes: `tests/escenarios/hooks/secciones/40-ausencia-que-abre-3-los-textos-heredados.sh`, `tests/escenarios/hooks/run.sh`, `requirements/REQ-024.md`.
+
+**Fail-before sobre la cabeza actual, antes de tocar nada** (los dos reconocedores reconstruidos fuera del banco, como en
+`R-039`, con el transporte real de cada cabeza): «anteriormente», «previamente» y «con anterioridad» dan **`sin = 0` · `0` · `0`**
+con el patrón de `9dac46f` y **`sin = 1` · `1` · `1`** con el de `eea46ad`. Con **sólo el borde izquierdo** vuelven a `1 · 1 · 1`
+y los tres falsos positivos de `I-7` («bastantes», «restantes», «instantes») **siguen en «0 0»**: el borde derecho **no compraba
+ni uno** de los falsos positivos medidos y costaba **tres verdaderos**, con la dirección del fallo **hacia el VERDE**.
+
+**Reparación en la propiedad, no por excepciones:** `ver40_ant` conserva el borde no alfabético **a la izquierda** y pierde el
+derecho —los falsos positivos llevan el término como **sufijo**, los verdaderos como **prefijo**—. Las terminaciones
+(`anterior(es)`, `previ[ao]s`, `heredad[ao]s`) **se conservan** y su motivo se re-escribe: ya no es el borde derecho, es que
+siguen restringiendo solas (`previ[ao]s?` no alcanza «previsto»). **Caso nuevo «el COSTE del borde»** (`40/3`: 29 → 30 casos;
+banco 1293 → **1294**): tres positivos que deben morder —**regresiones CONOCIDAS y permanentes**, conjunto declaradamente **NO
+exhaustivo** y **NO excepciones**— y los tres sufijos que deben seguir en «0 0», **en la misma vuelta**, para que el siguiente
+ajuste tenga que decidir entre los dos lados **a la vista**.
+
+**Par discriminante del caso nuevo, por sus dos ramas, sobre copias del árbol fuera del repositorio:** con el borde derecho
+restaurado **FALLA** nombrando las tres formas (29 PASS · 1 FAIL); sin ningún borde **FALLA** nombrando los tres sufijos con su
+«0 1». Sección corrida **por ruta**: **30 PASS · 0 FAIL**, cuadre de sección exacto, **0 avisos `escape sequence`**, idéntico
+bajo **`gawk` 5.3.2** y **`mawk` 1.3.4**. Quality gates **3/3**. **No se tocó** la frase protectora, `AGENTS.md`, plantillas,
+agentes, skills, `hooks/` ni `tools/`; el veredicto de `SEC-102` lo emite el auditor. Barrido por propiedad: **tres sedes**
+afirmaban el borde «a cada lado» describiendo el mecanismo vivo y las tres quedan corregidas.
+
 ## [Interno] — 2026-09-15 · CI sobre `f6912ea`: banco **1280 · 0 · 13, cuadre 1293**; puerta roja por **`REQ-014 CA-18`** en la autoprueba del corredor (`40/3` = 554 líneas, techo 400). Tablero actualizado
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Única corrida autorizada tras la reparación de `I-7`; run 34926912323. Diagnóstico en la rama de evidencia (`validacion-f141511/ci-pr50-f6912ea/DIAGNOSTICO.md`).
 

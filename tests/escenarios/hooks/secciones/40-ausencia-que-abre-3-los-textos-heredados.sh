@@ -29,7 +29,7 @@
 # aplanar se conserva el NÚMERO DE LÍNEA de arranque de cada viñeta, que es lo que permite medir
 # el ORDEN que `CA-06 (ii)` contrata —la propiedad ANTES de cualquier comando— sin volver a
 # recorrer el archivo.
-CASOS_ESPERADOS_SECCION=29  # 28 → 29: los FALSOS POSITIVOS de `I-7` con la falsación `v2`. La reparación de `I-5` ensanchó el eje del término heredado y metió dos defectos propios —el escape `\.` perdido al pasar por `awk -v`, que hacía casar cualquier número de 3+ cifras o una fecha ISO como identificador de versión, y la anterioridad sin límite de palabra («bastantes», «restantes», «instantes»)—. Corregidos con ENVIRON y bordes no alfabéticos, el caso nuevo los EJERCE: seis negativos que deben dar «0 0» y la falsación `v2`, fuera de las siete, que debe seguir mordiendo para que «0 falsos positivos» no sea cierto por mudez.  # 27 → 28: las SIETE REGRESIONES CONOCIDAS de `I-5` con sus controles positivos. Al acotar el reconocedor por propiedad (26 → 27, abajo) el eje del VERBO quedó bien y el del TÉRMINO HEREDADO quedó como enumeración cerrada y alcance de una sola oración; QA y el auditor midieron que por ahí se soltaron **siete** formas que el reconocedor anterior sí cazaba, **ninguna espuria**. El caso nuevo inyecta las siete, una a una, y exige que **todas vuelvan a morder**, más los controles positivos en la misma vuelta (la frase protectora y las dos promesas reales siguen pasando). Son regresiones CONOCIDAS, no la definición de la clase ni un conjunto cerrado.  # 26 → 27: el DISCRIMINANTE del reconocedor de promesas de equivalencia. Al corregir su alcance (falso positivo medido en CI, PR #50: la fila `MODIFICADO` de la tabla de migración casaba con el verbo sin prometer equivalencia con ninguna versión), el arreglo sería indistinguible de haber aflojado el reconocedor; el caso nuevo inyecta en una COPIA las dos formas que tienen que decidir distinto —con término heredado y SIN acto muerde, la misma CON acto pasa— más el control de que la frase que protege el texto personalizado, sola, no es ni promesa ni infracción
+CASOS_ESPERADOS_SECCION=30  # 29 → 30: el COSTE DEL BORDE (`SEC-102`). El borde de palabra que `I-7` puso a los DOS lados mataba los tres falsos positivos con el lado IZQUIERDO y, con el DERECHO, mataba además tres formas legítimas que la cabeza anterior sí cazaba —«anteriormente», «previamente», «con anterioridad»—: fallo hacia el VERDE y en silencio. El borde derecho se retira (los falsos positivos llevan el término como SUFIJO y el izquierdo ya los rechaza enteros) y el caso nuevo ejerce LOS DOS LADOS en la misma vuelta: tres positivos que deben morder —regresiones conocidas, conjunto NO exhaustivo y NO excepciones— y los tres sufijos que deben seguir en «0 0». El renglón siguiente describe el mecanismo del 2026-09-14, cuando el borde estaba a ambos lados.  # 28 → 29: los FALSOS POSITIVOS de `I-7` con la falsación `v2`. La reparación de `I-5` ensanchó el eje del término heredado y metió dos defectos propios —el escape `\.` perdido al pasar por `awk -v`, que hacía casar cualquier número de 3+ cifras o una fecha ISO como identificador de versión, y la anterioridad sin límite de palabra («bastantes», «restantes», «instantes»)—. Corregidos con ENVIRON y bordes no alfabéticos, el caso nuevo los EJERCE: seis negativos que deben dar «0 0» y la falsación `v2`, fuera de las siete, que debe seguir mordiendo para que «0 falsos positivos» no sea cierto por mudez.  # 27 → 28: las SIETE REGRESIONES CONOCIDAS de `I-5` con sus controles positivos. Al acotar el reconocedor por propiedad (26 → 27, abajo) el eje del VERBO quedó bien y el del TÉRMINO HEREDADO quedó como enumeración cerrada y alcance de una sola oración; QA y el auditor midieron que por ahí se soltaron **siete** formas que el reconocedor anterior sí cazaba, **ninguna espuria**. El caso nuevo inyecta las siete, una a una, y exige que **todas vuelvan a morder**, más los controles positivos en la misma vuelta (la frase protectora y las dos promesas reales siguen pasando). Son regresiones CONOCIDAS, no la definición de la clase ni un conjunto cerrado.  # 26 → 27: el DISCRIMINANTE del reconocedor de promesas de equivalencia. Al corregir su alcance (falso positivo medido en CI, PR #50: la fila `MODIFICADO` de la tabla de migración casaba con el verbo sin prometer equivalencia con ninguna versión), el arreglo sería indistinguible de haber aflojado el reconocedor; el caso nuevo inyecta en una COPIA las dos formas que tienen que decidir distinto —con término heredado y SIN acto muerde, la misma CON acto pasa— más el control de que la frase que protege el texto personalizado, sola, no es ni promesa ni infracción
 PISO_AUTONOMO_SECCION=78  # 31 preámbulo con sus dos declaraciones y el titular (líneas 1-31) + 16 maquinaria compartida duplicada (`mira40c`, el mismo ayudante que `36-…-4-el-informe-y-los-textos.sh` define, duplicado porque en `secciones/` no cabe un auxiliar; líneas 61-76) + 31 bloque indivisible mayor (el aplanado del apartado, el sub-bloque anclado por su titular y `idx40`, líneas 33-59 y 77-80: ningún caso de CA-06 puede prescindir de ellos) · REQ-014 CA-18
 seccion_nueva "--- 40/3 · la ausencia que abre: los textos que un proyecto hereda (REQ-024 CA-06) ---"
 
@@ -300,14 +300,27 @@ sin40='decide[ ]*exactamente lo mismo|decide como las anteriores|no nota nada|se
 #      `escape sequence \. treated as plain .` por corrida. Con ENVIRON son **0**, y ese cero es
 #      parte de lo que se comprueba.)
 #
-#  (2) LA ANTERIORIDAD CASA COMO PALABRA, NO COMO SUBCADENA. Sin límites, «bast-antes»,
-#      «rest-antes» e «inst-antes» mordían. El límite se escribe **sin extensiones de gawk**
-#      —`\<`, `\>` y `\b` no son portables—: se exige **borde de cadena o carácter no alfabético**
-#      a cada lado. Y por eso las formas van con sus terminaciones (`anterior(es)`, `previ[ao]s`,
-#      `heredad[ao]s`): con límite por la derecha, un prefijo como `heredad` ya no alcanzaría a
-#      «heredada».
+#  (2) LA ANTERIORIDAD CASA POR EL PRINCIPIO DE LA PALABRA, NO COMO SUBCADENA — Y EL BORDE VA EN
+#      UN SOLO LADO. Sin límites, «bast-antes», «rest-antes» e «inst-antes» mordían. El límite se
+#      escribe **sin extensiones de gawk** —`\<`, `\>` y `\b` no son portables—: se exige **borde
+#      de cadena o carácter no alfabético** **a la IZQUIERDA**, y **nada a la derecha**.
+#
+#      POR QUÉ SÓLO A LA IZQUIERDA, Y ESTÁ MEDIDO (`SEC-102`). Los tres falsos positivos llevan el
+#      término como **sufijo** (`bast|antes`, `rest|antes`, `inst|antes`), así que el borde
+#      izquierdo ya los rechaza **enteros**: con él solo siguen dando «0 0». El borde DERECHO no
+#      compraba **ni uno** de los tres y costaba **tres verdaderos** —«anteriormente»,
+#      «previamente», «con anterioridad»—, que son la misma clase con el término como **prefijo** y
+#      que la cabeza anterior sí cazaba. Dejaron de morder **en silencio** y la dirección del fallo
+#      era **hacia el VERDE**: una promesa real escrita con «anteriormente» pasaba inadvertida.
+#      Retirar el borde derecho las recupera **sin resucitar ningún negativo medido**, y el caso
+#      «el COSTE del borde», abajo, ejerce **los dos lados en la misma vuelta**, para que el
+#      siguiente ajuste tenga que decidir entre ellos **a la vista** y no en silencio.
+#
+#      Las terminaciones (`anterior(es)`, `previ[ao]s`, `heredad[ao]s`) se CONSERVAN, y ya no por
+#      el borde derecho sino porque siguen restringiendo por sí solas: `previ[ao]s?` no alcanza
+#      «previsto», que un `previ` a secas sí alcanzaría.
 ver40_ver='[0-9]+\.[0-9]+|(^|[^a-zA-Z0-9])v[0-9]+'
-ver40_ant='(^|[^[:alpha:]])(anterior(es)?|previ[ao]s?|antes|hasta ahora|heredad[ao]s?)([^[:alpha:]]|$)'
+ver40_ant='(^|[^[:alpha:]])(anterior(es)?|previ[ao]s?|antes|hasta ahora|heredad[ao]s?)'
 ver40="$ver40_ver|$ver40_ant"
 # EJE 2. `mide40p <archivo-en-formato-AP> [detalle]` -> «<con> <sin>», o con `detalle` una línea
 # `<clase>|<verbo>|<término heredado>` por promesa vista. Parte cada viñeta en BLOQUES por el
@@ -443,8 +456,9 @@ fi
 # `I-7` fueron DOS defectos que la reparación de `I-5` introdujo al ensanchar el eje del término
 # heredado: el escape `\.` perdido al pasar por `awk -v` (cualquier número de 3+ cifras o una fecha
 # ISO casaba como versión) y la anterioridad sin límite de palabra («bastantes», «restantes»).
-# Los dos están corregidos arriba —ENVIRON y bordes no alfabéticos—, y aquí se EJERCEN, porque un
-# arreglo de reconocedor que no se ejerce en los dos sentidos no se distingue de aflojarlo.
+# Los dos están corregidos arriba —ENVIRON y borde izquierdo no alfabético; el borde DERECHO se
+# retiró después por `SEC-102` y no hacía falta para esto— y aquí se EJERCEN, porque un arreglo de
+# reconocedor que no se ejerce en los dos sentidos no se distingue de aflojarlo.
 #
 # Y con ellos va `v2`, la falsación de QA: una forma que **no está entre las siete** y que tiene que
 # morder igual. Es lo que separa «arreglé la propiedad» de «añadí siete excepciones».
@@ -476,6 +490,67 @@ if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-06 falsos positivos I-7" | grep -
     echo "  PASS  REQ-024 CA-06 los $neg_tot falsos positivos de I-7 ya no muerden, y el reconocedor no se quedó mudo  ($neg_ok de $neg_tot dan «0 0» —fechas ISO, números de 3 cifras y la anterioridad dentro de «bastantes»/«restantes»/«instantes»—; y la falsación «v2», que NO está entre las siete regresiones, sigue mordiendo con $v2s sin acto)"; PASS=$((PASS+1))
   else
     echo "  FAIL  REQ-024 CA-06 falsos positivos I-7: $neg_ok de $neg_tot dan «0 0» (se esperaban $neg_tot)$neg_mal · y la falsación «v2» dio «$v2» (se esperaba sin acto >= 1; un 0 aquí significa que el reconocedor quedó mudo, no limpio)"; FAIL=$((FAIL+1))
+  fi
+fi
+
+# ---------- CA-06 · EL COSTE DEL BORDE, EJERCIDO POR LOS DOS LADOS (`SEC-102`) ----------
+# Este caso existe porque es la TERCERA vez en esta cadena que un ajuste del reconocedor estrecha
+# en silencio: `I-5` soltó siete formas al acotar el alcance, y el borde de palabra de `I-7` soltó
+# otras tres al poner límites por ambos lados. El patrón es siempre el mismo —cada arreglo se
+# ejerce sólo sobre los casos para los que se escribió—, y la respuesta no es más vigilancia sino
+# un caso que mida **el COSTE** del ajuste, no sólo su ganancia.
+#
+# Las tres de abajo son REGRESIONES CONOCIDAS PERMANENTES, y por tanto POSITIVOS QUE DEBEN MORDER:
+# las cazaba la cabeza anterior al borde derecho, están dentro de la clase que el EJE 1 enuncia
+# —«toda expresión que señale un estado anterior de este arnés»— y las tres son promesas de
+# equivalencia SIN su acto. NO SON EXCEPCIONES escritas una a una ni la definición de la clase: el
+# arreglo vive en la PROPIEDAD (el borde va sólo a la izquierda, porque los falsos positivos llevan
+# el término como sufijo y los verdaderos como prefijo), y estas tres sólo comprueban que la
+# propiedad las alcanza. Como las siete de `I-5`, son **suelo ejercido y NO techo**, y el conjunto
+# es declaradamente **NO EXHAUSTIVO**: una cuarta forma de decir «antes» se le escapa, y por eso el
+# caso publica lo que ve en vez de afirmar «ninguna».
+#
+# Y LOS TRES NEGATIVOS VAN EN LA MISMA VUELTA, que es lo que este caso añade sobre los de arriba:
+# los dos lados del borde se deciden JUNTOS y A LA VISTA. Quien vuelva a poner un límite por la
+# derecha verá en el acto los tres verdaderos que cuesta; quien lo quite entero verá los tres
+# falsos positivos que vuelven. Un caso que sólo mirase un lado enseña a pagar el otro sin saberlo.
+if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-06 el coste del borde" | grep -qi -- "$FILTRO"; then
+  BOR40="$RAIZ/bor40-$BASHPID.txt"
+  # Positivos: el término heredado como PREFIJO de una palabra más larga. Se inyectan sobre una
+  # COPIA del apartado, igual que las siete regresiones de `I-5`, y tienen que seguir mordiendo.
+  BORS40=(
+    'prefijo/«anteriormente»::anteriormente, decide exactamente lo mismo.'
+    'prefijo/«previamente»::previamente, no nota nada.'
+    'prefijo/«con anterioridad»::con anterioridad, decide exactamente lo mismo.'
+  )
+  bor_tot=0; bor_ok=0; bor_mal=''
+  for entrada in "${BORS40[@]}"; do
+    bor_tot=$((bor_tot+1))
+    eje="${entrada%%::*}"; texto="${entrada#*::}"
+    { cat "$AP40"; printf '0\t- %s\n' "$texto"; } > "$BOR40"
+    r="$(mide40p "$BOR40")"; rs="${r##* }"
+    if [ "${rs:-0}" -ge 1 ]; then bor_ok=$((bor_ok+1)); else bor_mal="$bor_mal · #$bor_tot [$eje] «$texto» no muerde"; fi
+  done
+  # El OTRO lado, aquí y no sólo en el caso de `I-7`: el término como SUFIJO tiene que seguir
+  # rechazado por el borde IZQUIERDO. Van solos —no sobre el apartado—, porque lo que se exige es
+  # el «0 0» exacto: sobre el apartado se mezclarían con sus dos promesas legítimas.
+  BORN40=(
+    'sufijo/«bastantes»::Hay bastantes casos y tu texto se queda como está'
+    'sufijo/«restantes»::Los restantes: tu texto se queda como está'
+    'sufijo/«instantes»::Durante unos instantes, tu texto se queda como está'
+  )
+  born_tot=0; born_ok=0; born_mal=''
+  for entrada in "${BORN40[@]}"; do
+    born_tot=$((born_tot+1))
+    eje="${entrada%%::*}"; texto="${entrada#*::}"
+    printf '0\t- %s\n' "$texto" > "$BOR40"
+    r="$(mide40p "$BOR40")"
+    if [ "$r" = "0 0" ]; then born_ok=$((born_ok+1)); else born_mal="$born_mal · #$born_tot [$eje] dio «$r» en vez de «0 0»: «$texto»"; fi
+  done
+  if [ "$bor_ok" -eq "$bor_tot" ] && [ "$born_ok" -eq "$born_tot" ]; then
+    echo "  PASS  REQ-024 CA-06 el coste del borde: las $bor_tot formas con el término como PREFIJO vuelven a morder y los $born_tot negativos con el término como SUFIJO siguen en «0 0»  ($bor_ok de $bor_tot dan «sin acto» >= 1 —«anteriormente», «previamente», «con anterioridad»: regresiones CONOCIDAS de SEC-102, conjunto NO exhaustivo y NO excepciones—; $born_ok de $born_tot dan «0 0» —«bastantes», «restantes», «instantes»—, así que el borde izquierdo basta y el derecho no compra ninguno)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  REQ-024 CA-06 el coste del borde: $bor_ok de $bor_tot prefijos muerden (se esperaban $bor_tot)$bor_mal · $born_ok de $born_tot sufijos dan «0 0» (se esperaban $born_tot)$born_mal · los dos lados se deciden juntos: recuperar unos no puede comprarse soltando los otros"; FAIL=$((FAIL+1))
   fi
 fi
 

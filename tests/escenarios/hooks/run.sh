@@ -1300,7 +1300,21 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1293  # 1292 → 1293: los FALSOS POSITIVOS de `I-7` en `40/3` (28 → 29). Al ensanchar
+CASOS_ESPERADOS=1294  # 1293 → 1294: el COSTE DEL BORDE en `40/3` (29 → 30), por `SEC-102`. El borde
+                      # de palabra que `I-7` puso a los DOS lados para matar «bastantes»,
+                      # «restantes» e «instantes» ya los mataba con el lado IZQUIERDO —los tres
+                      # llevan el término como SUFIJO—, y con el DERECHO mataba además tres formas
+                      # legítimas que la cabeza anterior sí cazaba: «anteriormente», «previamente»
+                      # y «con anterioridad», la misma clase con el término como PREFIJO. Fallo
+                      # hacia el VERDE y en silencio: una promesa real escrita con «anteriormente»
+                      # pasaba inadvertida. Se retira el borde derecho —medido: no compraba ni uno
+                      # de los tres negativos— y el caso nuevo ejerce LOS DOS LADOS en la misma
+                      # vuelta: tres positivos que deben morder (regresiones CONOCIDAS, conjunto
+                      # NO exhaustivo y NO excepciones) y los tres sufijos que deben seguir en
+                      # «0 0», para que el siguiente ajuste tenga que decidir entre los dos lados
+                      # a la vista. Ningún otro `CASOS_ESPERADOS_SECCION` se toca.
+                      #
+                      # 1292 → 1293: los FALSOS POSITIVOS de `I-7` en `40/3` (28 → 29). Al ensanchar
                       # el eje del término heredado para recuperar `I-5`, la reparación metió dos
                       # defectos propios: el escape `\.` se perdía al pasar el patrón por `awk -v`
                       # —que interpreta escapes—, de modo que CUALQUIER número de tres o más cifras
