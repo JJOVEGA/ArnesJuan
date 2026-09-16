@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-16 · Candidato v1.34.0 corregido `a8cbb29` (PR #51): **CI verde** — banco 904 · 0 · 8 = 912, autoprueba 106 · 0; QA del delta favorable; seguridad R-032 extendida (SEC-090/091/092 instrumento); FAIL previo de la sonda conservado
+`porte-1.33.2/ci-pr51-a8cbb29/` (DIAGNOSTICO.md, run.json, log completo) y `porte-1.33.2/README.md` § «Candidato v1.34.0 corregido». Sin fusión, tag ni publicación.
+
 ## 2026-09-16 · H-P1 reparado en `8bd5e33` (regla explícita de Fase 5): comprobación UPG4 (2 de 2 sesiones con §6 personalizada conservan la versión y declaran PARCIAL; control COMPLETO avanza a 1.34.0); autoprueba 106 · 0 sobre `8bd5e33`
 `porte-1.33.2/ensayos/UPG4-*`, `esperado-upg4.txt`, `lanzar-upg4.sh`, `UPG4-analisis.txt`; `porte-1.33.2/autoprueba-8bd5e33.txt`. QA del delta y seguridad acotada pendientes; sin push todavía.
 

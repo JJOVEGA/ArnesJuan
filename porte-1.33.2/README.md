@@ -60,3 +60,17 @@ Sin QA ni seguridad. Nada mecánico distingue la declaración afirmativa de la n
 **Alcance final del candidato:** `v1.33.2` + vía proporcional (11 archivos heredables/instrucciones + 2 manifiestos + notas) — 15 archivos, +1280/−21, 0 de mecanismo. **Conservados:** `SEC-089`, `H-P1`, `H-P2`, `arnes_version 1.33.0` del repo, n=1 en los ensayos con agentes, Fase 2 con `UNKNOWN` real no ejercida (el renumerado se resolvió sin `UNKNOWN`).
 
 **Impedimentos concretos:** (1) el check requerido `hooks-en-linux` está en rojo por una sonda de coste no atribuible al candidato — decisión del propietario sobre esa puerta; (2) las firmas de QA (`743a5ff`) y seguridad (`346b882`) nombran `404e044`, no `b520e3b` (el commit de versión añade tres números, un título y notas; ninguna firma lo cubre expresamente); (3) la autoprueba no corrió en CI sobre la cabeza final. **Sin fusión, sin tag, sin publicación, sin cambios en la instalación estable.**
+
+---
+
+## Candidato v1.34.0 corregido — `a8cbb29` (2026-09-16, noche): **CI verde**
+
+- **`8bd5e33` — H-P1** (autorizado: «conservar la versión anterior y declarar el resultado parcial; reutiliza la regla existente»): Fase 4 (1)(4) y Fase 5 de `arnes-upgrade` explícitas; dos frases contradictorias corregidas; remisión de una línea en «Hacia 1.34.0». **Comprobado (`ensayos/UPG4-*`):** 2 de 2 sesiones con §6 personalizada → PARCIAL declarado en `migracion.md` y CHANGELOG, contenido conservado, **`arnes_version` sin avanzar**; control sin conflictos → COMPLETA, 1.34.0.
+- **QA del delta (`cf88b4e`): FAVORABLE.** `H-P1` resuelto por el producto (reserva: n=2 no demuestra determinismo); `H-P2` no resuelto; **`H-P3`** nuevo (`instrumento`: la skill no especifica `plantillas-origen` en migración parcial; 2 de 2 sesiones lo hicieron bien).
+- **Seguridad (`a8cbb29`, R-032): firma extendida a `cf88b4e`.** Versión y notas sin promesas ajenas; delta de H-P1 en dirección segura. **Nuevos `instrumento`:** `SEC-090` (la reanudación no repite la precondición de verificar), `SEC-091` (las notas infieren que el banco de v1.33.2 certifica esta versión; no se sigue), `SEC-092` (H-P3 ausente de los límites de las notas). Ninguno bloquea; ninguno se reparó (instrucción).
+- **Autoprueba del corredor sobre `8bd5e33`** (coordinadora): 106 · 0. Gates 3/3.
+- **CI (`ci-pr51-a8cbb29/DIAGNOSTICO.md`): check `hooks-en-linux` = SUCCESS.** Banco **904 · 0 · 8 = 912** cuadrado; autoprueba **106 · 0**; la sonda `CA-08 (ii)` dio 0,958× — **el FAIL de `b520e3b` (1,258×) se conserva y no queda desmentido** (mismos hooks). PR #51 con diff idéntico a `v1.33.2..a8cbb29`.
+
+**Alcance final:** `v1.33.2` + vía proporcional + regla explícita de migración parcial (H-P1); 15 archivos heredables/instrucciones/manifiestos/notas + 2 informes; 0 de mecanismo. **Conservados y visibles:** `SEC-089`, `SEC-090`, `SEC-091`, `SEC-092`, `H-P2`, `H-P3`, `arnes_version 1.33.0` del repo, n pequeño en ensayos, reanudación tras parcial no ejercida, FAIL de la sonda de coste en `b520e3b`.
+
+**Decisiones pendientes del propietario:** (1) fusión, tag y publicación de `a8cbb29` como v1.34.0, o corrección previa de las notas (`SEC-091`: frase falsa por inferencia; `SEC-092`: añadir H-P3 a los límites) — cualquier commit nuevo exige otra corrida de CI; (2) tratamiento de la sonda `REQ-017 CA-08 (ii)` como puerta (seis lecturas entre 0,932× y 1,258× sobre hooks idénticos); (3) destino de `SEC-090`/`H-P3` (ruta de reanudación tras parcial, nunca ejercida) — ventana posterior.
