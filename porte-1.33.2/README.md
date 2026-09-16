@@ -20,7 +20,7 @@
 | Clases de hallazgo: `usuario/dinero`, `contrato` y **sin clase** deniegan el cierre | sección `08-clase-del-hallazgo.sh` por ruta, hooks de `v1.33.2` | 7 PASS · 0 FAIL |
 | `Rigor: ligero` no salta gates, cola ni `usuario/dinero`; sólo el veredicto de QA | `12-rigor-ligero.sh` por ruta | 4 PASS · 0 FAIL |
 | Los campos valen sólo en la cabecera | `14-campos-solo-en-la-cabecera.sh` por ruta | 36 PASS · 0 FAIL |
-| Suelo de rigor (`Sensible a seguridad: sí` → `critico`) | ver el apéndice de abajo (sección localizada y corrida) | ver abajo |
+| Suelo de rigor (`Sensible a seguridad: sí` → `critico`; un matiz no lo rebaja; `estandar` cierra con QA, `critico` exige ambas firmas) | `40-estabilizacion-firmas-y-rigor.sh` por ruta, hooks de `v1.33.2` (identificadores `QA-P48-01 … sensible con matiz conserva el suelo critico (deny)`, `D16: matiz CERRADO no rebaja critico (deny)`) | 28 PASS · 0 FAIL |
 | Regla `UNKNOWN` terminal de `arnes-upgrade`; relleno de `{{…}}` por entrevista en `arnes-init`; `tools/arnes-paralelo.sh` | lectura del código y las skills de `v1.33.2` (`SKILL.md:56-68`, `:145`; `arnes-init` `:22-54`) | existen |
 | `campos.ausencia_exige` (base) | — | **no existe y no se referencia** |
 
