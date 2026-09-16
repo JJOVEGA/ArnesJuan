@@ -2,6 +2,30 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-16 · Seguridad R-040: **`SEC-102` mitigado**; firma extendida a `81f89bf`; **`SEC-103` nuevo** («antesala», `instrumento`, no bloquea); la partición **no se auditó**, por instrucción
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad (revisión acotada por el propietario al cambio del reconocedor, `108b087`, después de QA favorable). Sede: `docs/seguridad/registro-seguridad.md` § R-040.
+
+**`SEC-102` → `mitigado`, las dos mitades comprobadas:** la clase de anterioridad vuelve a ser al menos la de `eea46ad`
+(«anteriormente», «previamente», «con anterioridad» pasan de 0 a 1; «como antes», «las anteriores», «la heredada» siguen en 1)
+**sin resucitar ningún falso positivo de `I-7`** («bastantes», «restantes», «instantes», fecha ISO, número de 3 cifras → 0;
+«previsto», «previsión», «heredades» → 0 por la terminación sola). **Ni pérdida de detección ni fail-open, por construcción:**
+`ver40` es condición necesaria (`if (ctx !~ rver) continue`); retirar un conjunto de la alternancia sólo puede casar más, así que
+lo detectado en `81f89bf` es superconjunto de lo detectado en `9dac46f`. Único efecto posible: casar de más, dirección roja.
+
+**`SEC-103` — «antesala»** (observación de QA, elevada por el auditor): barrido **por propiedad** de las palabras que empiezan por
+el término — sólo `antesala`/`antesalas` son falsos positivos; `anterioridad`, `anteriormente`, `previamente`, `heredada` son
+verdaderos. Dirección roja, efecto presente nulo (0 apariciones en el apartado), y **preexistente respecto de `eea46ad`**, donde
+ya daba 1: `9dac46f` lo mató como daño colateral. Se abre para dejar constancia del coste de cada ajuste; **recomendación: no
+tocar el patrón ahora sólo por esto** — la cura ha costado cobertura dos de dos veces, y el analizador general está excluido.
+
+**Firma acotada extendida a `81f89bf` (válida en `1f6f06d`, idéntico byte a byte en lo medido).** **La partición NO se auditó**,
+por instrucción del propietario; queda fuera de la firma: preservación de casos (la coincidencia `25 + 5 = 30` no es auditoría),
+piso del archivo nuevo, CA-18, CA-19, H-04, autoprueba, contabilidad de `run.sh` — lo acredita QA. Sí se acreditó que el
+reconocedor medido es el que la cabeza ejecuta (`ver40_ant=` en un solo archivo). **Cautela de método declarada:** el aparejo del
+auditor compara patrones fuera del banco y no reproduce el aplanado de viñetas; las cifras absolutas son las de la sección, y en
+R-038/R-039 no se distinguieron las dos fuentes. **No es la aprobación final de la vía; no se pronuncia sobre fusión ni
+publicación.** Numeración vigente: última revisión **R-040**; último hallazgo **SEC-103**.
+
 ## [Interno] — 2026-09-16 · QA conjunta sobre `81f89bf`: **favorable**; `SEC-102` remediado desde QA; `REQ-014 CA-18` **cumplido**; ningún hallazgo nuevo
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester (verificación conjunta autorizada: conservación de cobertura, ejecución de las dos secciones y CA-18). Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` § «Verificación conjunta de `81f89bf`».
 

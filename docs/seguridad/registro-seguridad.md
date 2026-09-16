@@ -11184,3 +11184,194 @@ de palabra**, para no volver a tocar el patrón dos veces. Sin cambios en el res
 
 **Numeración vigente tras esta revisión:** última revisión **R-039**; último hallazgo **SEC-102**;
 próximos libres **R-040** y **SEC-103**.
+
+---
+
+## Revisión R-040 — **`SEC-102` remediado**: veredicto del hallazgo y extensión acotada de la firma. `rel/via-proporcional` @ `81f89bf` — 2026-09-16
+
+**Acotada por el propietario al cambio del reconocedor** (`108b087`). **La partición de `40/3` en
+`40/3` + `40/8` NO se audita, por instrucción expresa**; qué deja eso fuera va en §5. Fuera y sin
+tocar: `REQ-017 CA-09`, el `mv` de la 33, `I-3`, `I-6`, `R-1`, `SEC-096`, `SEC-101`, `N-4`, el locale
+del runner, la fusión y la publicación. No reparé nada y no relancé el CI.
+
+### 0. Árbol, frontera y método
+
+- Cabeza **`81f89bf`**. `git status --porcelain` devolvía `M docs/qa/…veredicto.md` —el informe de
+  QA, sin comitear—; **ningún artefacto auditado estuvo sucio**.
+- **La cabeza se movió mientras yo escribía, a `1f6f06d`, y lo digo en vez de reescribir la
+  referencia.** Fue el commit del informe de QA: `git diff --stat 81f89bf..1f6f06d` = `CHANGELOG.md`
+  + `docs/qa/…` y nada más, y `git diff --stat 81f89bf..1f6f06d -- tests/ AGENTS.md templates/
+  agents/ skills/ hooks/ tools/ .arnes/ .github/ .claude-plugin/` sale **vacío**. **Todo lo que medí
+  es idéntico byte a byte en las dos cabezas**, así que el veredicto y la firma de abajo valen igual
+  sobre `1f6f06d`.
+- **Ninguna protección en el delta.** `git diff --name-only 9dac46f..81f89bf` filtrado por
+  `^(hooks/|tools/|skills/|agents/|templates/|AGENTS\.md|\.arnes/|\.github/|\.claude-plugin/)` →
+  **0 rutas**. **Lo que los proyectos heredan no se ha movido.** Gates **3 de 3**.
+- **Corrido por mí, por ruta:** `40/3` → **25 PASS · 0 FAIL**; `40/8` → **5 PASS · 0 FAIL**; avisos
+  `escape sequence`: **0**.
+- **Y una cautela de método que declaro porque afecta a mis cifras.** Para comparar tres cabezas
+  reconstruí el reconocedor **fuera del banco**. Ese aparejo **aísla el patrón** —las tres columnas
+  comparten todo lo demás, así que la diferencia es del patrón y de nada más— pero **no reproduce el
+  aplanado de viñetas** de la sección real: mi sonda contó `1 con acto` donde la sección cuenta `2`.
+  **Las cifras ABSOLUTAS de esta revisión son las que imprime la sección**, no las de mi sonda; de mi
+  sonda uso **sólo las comparaciones**. Lo digo porque en `R-038` y `R-039` no distinguí las dos
+  fuentes y podrían leerse como una sola.
+- **Lo que medí es lo que la cabeza ejecuta:** `grep -rln "ver40_ant=" tests/` devuelve **un solo
+  archivo**, `40-…-8-el-reconocedor-de-promesas.sh`. No hay una segunda copia del patrón que pudiera
+  divergir.
+
+### 1. `SEC-102` → **`mitigado`**
+
+**La reparación es exactamente la que el hallazgo señalaba, y en la propiedad, no en excepciones:**
+se retira el borde **derecho** de `ver40_ant`, se conserva el **izquierdo** y se conservan las
+terminaciones — ahora por su propio mérito, no apoyadas en el borde: «`previ[ao]s?` no alcanza
+*previsto*, que un `previ` a secas sí alcanzaría».
+
+**Comprobé la propiedad que me importaba, que son DOS y no una**, con las tres cabezas y su
+combinación real de transporte y patrón:
+
+**(a) La detección de la clase de anterioridad vuelve a ser AL MENOS la de `eea46ad`:**
+
+| Forma | `eea46ad` | `9dac46f` | **`81f89bf`** |
+|---|---|---|---|
+| «**anteriormente**» | 1 | **0** | **1** ✔ |
+| «**previamente**» | 1 | **0** | **1** ✔ |
+| «**con anterioridad**» | 1 | **0** | **1** ✔ |
+| «como antes» · «las anteriores» · «la heredada» (controles) | 1 · 1 · 1 | 1 · 1 · 1 | **1 · 1 · 1** ✔ |
+
+**(b) SIN resucitar ninguno de los falsos positivos de `I-7`:**
+
+| Falso positivo | `eea46ad` | `9dac46f` | **`81f89bf`** |
+|---|---|---|---|
+| «bastantes» · «restantes» · «instantes» | 1 · 1 · 1 | 0 · 0 · 0 | **0 · 0 · 0** ✔ |
+| fecha ISO · número de 3 cifras | 1 · 1 | 0 · 0 | **0 · 0** ✔ |
+
+Y los negativos que la terminación debe excluir por sí sola: «previsto» **0**, «previsión» **0**,
+«heredades» **0** —esta última mordía en `eea46ad` y ya no—.
+
+**Las dos mitades se cumplen a la vez, que era la condición.** Recuperar la clase sin reabrir los
+falsos positivos es justo lo que yo no podía dar por hecho en `R-039`, y está medido.
+
+**Y la forma vuelve a ser la correcta:** las tres formas entran como **regresiones conocidas,
+declaradas no exhaustivas y NO excepciones**, y el caso nuevo «el COSTE del borde» **ejerce los dos
+lados en la misma vuelta** —tres positivos que deben morder y tres sufijos que deben seguir en
+«0 0»—. Es literalmente lo que pedí en `R-039`: que el siguiente ajuste tenga que decidir entre los
+dos lados **a la vista**. Lo veo verde en la corrida real.
+
+### 2. ¿Abre la retirada del borde otra pérdida de detección o un fail-open? **NO, y por construcción**
+
+Ésta es mi pregunta (c) de `R-039`, y esta vez la respondo **sin depender de ejemplos**.
+
+`ver40` se aplica como **condición NECESARIA**: en el medidor, `if (ctx !~ rver) continue`. Retirar
+un conjunto de una alternancia —el borde derecho— **sólo puede hacer que casen MÁS cadenas**. Por
+tanto el conjunto de promesas detectadas en `81f89bf` es un **superconjunto** del de `9dac46f`.
+
+**Consecuencia, y es monotónica, no muestral: por este cambio NO se puede perder ninguna detección,
+y NO puede aparecer ningún fail-open.** Un fail-open exigiría **dejar de casar** algo, y quitar una
+restricción no puede. El único efecto posible es **casar de más**: falsos positivos, **dirección
+hacia el ROJO**. La tabla de §1 lo corrobora; el argumento no depende de ella.
+
+**¿Basta el caso nuevo? Para lo que se escribió, sí; para lo que el cambio abre, no** — y por eso
+abro `SEC-103`. El caso ejerce **los dos lados de la decisión del borde** (positivos con el término
+como prefijo, negativos con el término como sufijo), que era el hueco estructural que denuncié. Lo
+que **no** ejerce es la **superficie de falso positivo que la retirada abre**: palabras que
+**empiezan** por el término sin ser expresiones de anterioridad.
+
+### 3. `SEC-103` — «antesala» · `instrumento` · **abierto** · **no bloquea**
+
+**Barrí la superficie por propiedad** —palabras que empiezan por uno de los términos— en vez de
+quedarme en el ejemplo:
+
+| Palabra | ¿muerde? | Qué es |
+|---|---|---|
+| **antesala** · **antesalas** | **1 · 1** | **falso positivo** |
+| anterioridad · anteriormente · previamente · heredada | 1 · 1 · 1 · 1 | **verdaderos positivos** |
+| previsto · heredades | 0 · 0 | correctamente excluidos por la terminación |
+
+**La superficie real es una sola familia de palabras**: `antesala(s)`. Todas las demás derivaciones
+por prefijo que encontré **son** expresiones de anterioridad, es decir, lo que el eje 1 quiere cazar.
+
+**Tres datos que fijan su tamaño, y el tercero importa:**
+1. **Dirección: hacia el ROJO** — un `FAIL` falso, nunca un `PASS` falso. No es fail-open.
+2. **Efecto presente: nulo.** La sección mide el apartado en **2 con acto / 0 sin acto**, y
+   «antesala» aparece **0 veces** en él.
+3. **No es nuevo respecto de `eea46ad`: es preexistente.** Medido: en `eea46ad` «antesala» daba
+   **1**. Lo que hizo `9dac46f` fue matarlo **como daño colateral** de matar las tres formas
+   legítimas; al retirar el borde volvemos al estado anterior **en los dos sentidos**. Por eso la
+   frase del commit —«sin resucitar ningún negativo **medido**»— es cierta por el calificativo, y
+   está bien puesto: nadie lo había medido hasta QA.
+
+**Por qué lo abro aun así**, cuando QA no lo elevó: porque el defecto recurrente de esta cadena no ha
+sido equivocarse, sino **no dejar constancia de lo que cada ajuste cuesta**. `I-5` perdió siete
+formas en silencio y `SEC-102` tres, las dos veces porque el ajuste se ejerció sólo sobre aquello
+para lo que se escribió. Un hallazgo con clase y dueño pone «antesala» **sobre la mesa del próximo
+que toque este patrón**; una observación flotante no.
+
+**Y mi recomendación es NO tocar el patrón ahora sólo por esto.** Está medido que cada retoque de
+este patrón ha costado cobertura —siete formas, luego tres—, y la cura ha salido peor que la
+enfermedad **dos de dos veces**. `SEC-103` no justifica una tercera vuelta: se atiende **en el
+próximo acto legítimo** sobre el patrón, con la decisión a la vista. Y **no se resuelve construyendo
+un analizador general**, que el propietario excluyó y que yo tampoco pediría: el reconocedor declara
+ser por cadena y publica su denominador.
+
+### 4. **Extiendo la firma acotada a `81f89bf`**
+
+**`Seguridad: aprobado`**, mismo alcance acotado de `R-037`/`R-038`/`R-039`, extendido a
+**`81f89bf`**.
+
+1. **El objeto firmado no se ha movido:** 0 rutas de protección en el delta, medido.
+2. **El cambio es de instrumento y sólo puede ampliar la detección** (§2, por construcción); recupera
+   las tres formas de `SEC-102` sin reabrir los cinco falsos positivos de `I-7`, medido.
+3. **Sin fail-open posible** por este cambio, y sin avisos de `awk`; las dos secciones en verde
+   corridas por mí; gates 3/3.
+4. **Ningún hallazgo mío de clase `contrato` queda abierto.** `SEC-103` es `instrumento`, dirección
+   roja, efecto presente nulo.
+
+### 5. **La partición NO se auditó — por instrucción del propietario — y esto es lo que deja fuera**
+
+Lo declaro expresamente porque una firma que no dice lo que no miró **acredita de más**:
+
+- **No verifiqué que la partición preserve los casos.** Observé una **coincidencia aritmética** —
+  `25 + 5 = 30`, el total que `40/3` declaraba antes— y **eso no es una auditoría**: no comprueba que
+  cada caso conserve su identidad, su identificador ni su significado al cambiar de archivo.
+- **No revisé** el piso autónomo del archivo nuevo, `CA-18`, `CA-19`, `H-04`, la autoprueba, los
+  encabezados ni la contabilidad de `CASOS_ESPERADOS` en `run.sh`. **Eso lo acredita QA, no yo.**
+- **Lo único que sí acredité sobre la partición**, porque mi veredicto dependía de ello: que **el
+  reconocedor que medí es el que la cabeza ejecuta** —el patrón vive en **un solo archivo**— y que
+  las dos secciones corren verdes desde el corredor real.
+
+### 6. Qué NO acredita esta revisión
+
+1. **No es una auditoría del delta ni de la sección nueva**: ejercí el reconocedor sobre casos que
+   elegí yo, con un aparejo **reconstruido**, y tomé del banco las cifras absolutas (§0).
+2. **No acredita la partición** (§5), ni `REQ-024` —el delta toca su Historial y no lo audité—, ni
+   ningún otro REQ. **No escribo en el `Seguridad:` de ningún REQ.**
+3. **No acredita que el reconocedor cubra su clase declarada.** Sigue siendo **por cadena y no
+   analizador**: una forma nueva de decir «antes» se le escapa **por diseño declarado**, y `SEC-103`
+   muestra que la dirección contraria también tiene superficie. Acredito que **lo que muerde y lo que
+   suelta está, en los dos lados del borde, ejercido**.
+4. **No acredita el banco completo ni el CI**: corrí **dos** secciones por ruta y las tres puertas.
+5. **No acredita ninguna corrida de `arnes-init` ni de `arnes-upgrade`**, ni la composición «copia
+   propia de una definición de agente» (`SEC-096`). **Todos los límites de `R-037` siguen en pie.**
+6. **No acredita `I-3`, `I-5`, `I-6`, `I-7`, `R-1`, `SEC-096`, `SEC-101` ni la observación de `N-4`**,
+   ni el locale del runner, que quedó fuera por instrucción.
+7. **No es la aprobación final de la vía, y no me pronuncio sobre la fusión ni la publicación.**
+
+### 7. Estado de mis hallazgos tras `R-040`
+
+| Hallazgo | Estado | Clase | Bloquea |
+|---|---|---|---|
+| `SEC-093` · `094` · `095` · `097` · `098` · `099` · `100` | `mitigado` | — | no |
+| `SEC-096` | `en-mitigación` | `contrato` | no |
+| `SEC-101` | `abierto` | `instrumento` | no |
+| `SEC-102` | **`mitigado`** | `instrumento` | no |
+| `SEC-103` | **`abierto`** (nuevo) | `instrumento` | **no** |
+
+Dueño de `SEC-103`: `desarrollador`. **Vencimiento: el próximo acto legítimo sobre `ver40_ant`** —no
+antes, por lo dicho en §3—. Sin cambios en el resto: `SEC-091`, `SEC-092`, `SEC-088`, `SEC-085`
+`abiertos`; `SEC-090`, `SEC-087` `mitigados`.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta revisión:** última revisión **R-040**; último hallazgo **SEC-103**;
+próximos libres **R-041** y **SEC-104**.
