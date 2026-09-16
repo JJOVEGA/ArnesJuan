@@ -1,0 +1,4 @@
+ M AGENTS.md
+ M CHANGELOG.md
+ M docs/ESTADO.md
+?? .arnes/migracion.md

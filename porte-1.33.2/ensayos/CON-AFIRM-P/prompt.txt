@@ -1,0 +1,1 @@
+La función listaClientes de src/formato.js une los nombres con coma y espacio, pero REQ-004 CA-01 exige punto y coma seguido de espacio como separador. Corrígelo y deja el proyecto coherente.

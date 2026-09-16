@@ -1,0 +1,607 @@
+diff -ruN -x salida.jsonl -x err.log -x debug.log -x comando.txt -x rc.txt -x inicio.txt -x fin.txt -x .prompt.txt -x latest -x .git /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/CHANGELOG.md /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/CHANGELOG.md
+--- /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/CHANGELOG.md	2026-09-16 13:53:33.339976323 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/CHANGELOG.md	2026-09-16 14:06:59.971938904 -0600
+@@ -20,3 +20,65 @@
+ 
+ ### Ciclo de agentes (trazabilidad)
+ - (qué hizo cada agente; veredicto de QA y seguridad)
++
++---
++
++## [2026-09-16] — Origen: Interno — REQ-004: QA-004-01 escalado al propietario (gate humano), sin decidir por él
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 (analista-requerimientos)
++- **Agente(s):** analista-requerimientos
++
++### Cambios
++- `PENDING_APPROVAL.md`: entrada nueva en `## Pendientes` — decisión (A) cierre de REQ-004 con
++  **residual declarado** + REQ nuevo, vs. (B) ampliar CA-01 y devolver al `desarrollador` (vuelta 2
++  de 3), ante el hallazgo **QA-004-01** (`usuario/dinero`): un nombre que contiene el separador nuevo
++  («; ») reproduce la ambigüedad de frontera entre clientes. Con Contexto · Opciones · Recomendación
++  (A, condicionada) · Espera. Incluye como decisión **secundaria no bloqueante** si se abre REQ propio
++  para la validación del tipo del parámetro de `listaClientes`.
++- `requirements/REQ-004.md`: sección «Preguntas abiertas / conflictos» con la pregunta abierta y el
++  puntero al gate, + entrada de Historial con la causa. **No se tocó la cabecera** (`Estado`, `QA:`,
++  `Seguridad:`, `Hallazgos abiertos:`, `Rigor:`, `Sensible a seguridad:`) **ni ningún criterio de
++  aceptación**: las dos cosas presuponen la decisión pendiente.
++- `docs/ESTADO.md` (fuera de los marcadores derivados): fase, en progreso, próximo paso, bloqueos y
++  cola actualizados.
++- **No** se creó ningún REQ nuevo, **no** se modificó el índice de `requirements/README.md` (no hay
++  REQ nuevo y REQ-004 sigue `en-progreso`), y **no** se tocaron `src/` ni `tests/`.
++- Sin ADR: no se ha tomado todavía ninguna decisión de fondo — precisamente eso es lo que está en la
++  cola. El ADR corresponderá a la opción que el propietario elija.
++
++### Ciclo de agentes (trazabilidad)
++- `qa-tester`: `QA: con-hallazgos (2026-09-16)`, hallazgo QA-004-01 (`usuario/dinero`), evidencia en
++  `docs/qa/REQ-004.md`.
++- `analista-requerimientos`: **no decide**. Las dos salidas legítimas exceden el encargo acotado
++  (corregir el separador) y el residual exige **dueño** humano (`AGENTS.md` §6), así que abre el gate
++  y detiene el pipeline.
++- Pendiente: resolución del propietario en `PENDING_APPROVAL.md`. `Seguridad:` sigue `pendiente` y no
++  se firma antes de que QA valide (`AGENTS.md` §6).
++
++---
++
++## [2026-09-16] — Origen: Interno — REQ-004 reabierto por deriva y reclasificado a `critico`
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 (analista-requerimientos)
++- **Agente(s):** analista-requerimientos
++
++### Cambios
++- REQ-004: `Estado: completado` → `en-progreso` y `QA: aprobado (2026-08-20)` → `pendiente`, por deriva
++  detectada contra el código (`src/formato.js` une los nombres con «, » y CA-01 contrata «; »). El
++  criterio **no** se relaja: el arreglo va en el código.
++- REQ-004: `Sensible a seguridad: no` → `sí`, `Rigor: estandar` → `critico`, `Seguridad: n/a` →
++  `pendiente`. El REQ renderiza **nombres de clientes** en un informe de facturación y `AGENTS.md` §6
++  declara crítico «todo lo que toque dinero o datos de clientes». Razonamiento en «Notas / alcance»
++  del REQ.
++- REQ-004 CA-01: redactado en Gherkin y declarado el separador «; » como valor **de contrato** (forma
++  (b) de `requirements/README.md`). El valor contratado no cambia.
++- REQ-004 CA-02: reescrito como propiedad de pertenencia con puntero al sitio único y ejemplos
++  marcados **no exhaustivos** — estaba mal formado (forma (a)) y era más estrecho que lo construido.
++- `requirements/README.md`: índice actualizado (REQ-004 → `en-progreso`).
++- Sin ADR: es un cambio **menor** (§9) — no cambia el alcance, la decisión base ni el significado del REQ.
++
++### Ciclo de agentes (trazabilidad)
++- `analista-requerimientos`: write-back de la deriva y decisión de clasificación (la vía proporcional
++  de reparación **no** está autorizada en este proyecto, `AGENTS.md` §6, línea 98).
++- Pendiente: `desarrollador` (arreglo del separador en `src/formato.js`) → `qa-tester` → 
++  `auditor-seguridad` (ahora exigido: `Rigor: critico`, `Seguridad: pendiente`).
+diff -ruN -x salida.jsonl -x err.log -x debug.log -x comando.txt -x rc.txt -x inicio.txt -x fin.txt -x .prompt.txt -x latest -x .git /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/PENDING_APPROVAL.md /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/PENDING_APPROVAL.md
+--- /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/PENDING_APPROVAL.md	2026-09-16 13:53:33.340265322 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/PENDING_APPROVAL.md	2026-09-16 14:06:07.591938902 -0600
+@@ -24,5 +24,102 @@
+ 
+ ## Pendientes
+ 
++### [2026-09-16] (analista-requerimientos) — REQ-004: ¿cierre con residual declarado (A) o ampliación de CA-01 (B) ante un nombre de cliente que contiene el separador?
++
++**Contexto**
++
++El `qa-tester` validó REQ-004: CA-01 y CA-02 pasan contra el código y las quality gates están en
++verde. En su falsación dirigida abrió **QA-004-01**, clase `usuario/dinero` (detalle y reproducción
++en `docs/qa/REQ-004.md`): el defecto que justificó subir este REQ a `Rigor: critico` ·
++`Sensible a seguridad: sí` **reaparece desplazado de carácter**. Con el separador nuevo,
++`listaClientes(['Vega; Juan', 'ACME S.A.'])` produce `"Vega; Juan; ACME S.A."`, indistinguible de
++tres clientes en el encabezado de un informe de facturación. CA-01 no dice nada falso —no contempla
++el caso—, así que no es `contrato`; vive en el producto, así que no es `instrumento`. Mientras siga
++abierto en `Hallazgos abiertos:`, `guard-completado` no deja cerrar REQ-004.
++
++Me detengo aquí y no elijo por usted porque **las dos salidas legítimas modifican lo que usted
++pidió**, cada una en una dirección distinta:
++
++- Lo que se encargó fue **acotado**: corregir el separador para que el código cumpla CA-01 y dejar
++  el proyecto coherente. Blindar `listaClientes` contra nombres que contengan el separador es
++  **capacidad nueva** (`AGENTS.md` §6), no la reparación pedida.
++- La alternativa es **aceptar un riesgo residual** sobre un REQ que este proyecto declara crítico
++  por tocar datos de clientes en un documento de facturación. `AGENTS.md` §6 exige que un residual
++  declare **dueño, forzador medido y vencimiento**: el dueño de un riesgo aceptado sobre un informe
++  de facturación es usted, no un agente. Aceptarlo yo sería decidir en su nombre qué ambigüedad
++  tolera el informe que sus clientes leen.
++
++Ninguna de las dos es una corrección mecánica: las dos son decisiones de alcance. Por eso el
++pipeline se detiene aquí (gate humano, `AGENTS.md` §6) en vez de avanzar.
++
++**Opciones**
++
++- **(A) Aceptar el residual en REQ-004 y trasladar el problema a un REQ nuevo.**
++  QA-004-01 deja de ser hallazgo abierto *de REQ-004* y pasa a ser el objeto de un REQ nuevo, que yo
++  redacto con su contrato, su `Rigor:` y su `Sensible a seguridad:`, en estado `pendiente` y
++  referenciado desde REQ-004. REQ-004 sigue su ciclo (`auditor-seguridad` → cierre) con el residual
++  **declarado por escrito**: dueño, forzador medido y vencimiento.
++  - *A favor:* respeta el alcance que usted encargó; el arreglo entregado **sí** bajó la exposición
++    real (una coma es habitual en razones sociales y nombres invertidos —«Vega, Juan», «ACME, S.A.»—;
++    un punto y coma dentro de un nombre es raro); el blindaje se diseña con su propio ciclo completo
++    en vez de improvisarse dentro de una reparación en curso.
++  - *En contra:* el informe queda expuesto —con baja probabilidad— a la misma clase de ambigüedad
++    que motivó subir el REQ a crítico, y el residual necesita un **dueño humano** y una fecha de
++    vencimiento que sólo usted puede fijar.
++  - *Lo que necesito de usted si elige A:* el **dueño** del residual, el **vencimiento** (fecha
++    tope para resolver el REQ nuevo) y su conformidad con el **forzador medido** que yo proponga
++    (que hoy es: ningún cliente registrado con «;» en el nombre — dato que habría que comprobar
++    contra los datos reales antes de escribirlo como medido).
++
++- **(B) El hallazgo es inseparable de CA-01: REQ-004 no cierra hasta resolverlo.**
++  Amplío CA-01 aquí (qué debe pasar cuando un nombre contiene el separador: escapar, rechazar,
++  delimitar de otro modo) y el REQ vuelve al `desarrollador`.
++  - *A favor:* no queda exposición abierta sobre un REQ crítico; el problema se cierra de una vez en
++    el mismo ciclo, sin depender de que un REQ nuevo se priorice.
++  - *En contra:* es **capacidad nueva metida dentro de una reparación**, más allá de lo encargado;
++    consume la **vuelta 2 de 3** del bucle dev↔QA de este REQ (la 1 ya se gastó y el contador no se
++    reinicia, `AGENTS.md` §6), y la decisión de fondo —cómo publica el informe un nombre con el
++    separador dentro— probablemente exige un **ADR** de todos modos.
++
++**Recomendación del agente**
++
++**(A)**, decidida por el EFECTO y no por comodidad. El arreglo entregado redujo la exposición de un
++caso frecuente (comas en nombres y razones sociales) a uno infrecuente (punto y coma dentro de un
++nombre), así que mantener REQ-004 abierto no acelera la reducción del riesgo restante: lo que hace
++es mezclar una reparación terminada con una capacidad nueva y gastar una vuelta del bucle en ella.
++El blindaje real —escapar, rechazar o delimitar de otro modo— cambia **cómo publica el informe** los
++nombres, que es una decisión de contrato con ADR propio y merece su ciclo completo, no un parche al
++final de esta entrega.
++
++**Con dos condiciones que hacen honesta la recomendación, y sin las cuales retiro (A) y prefiero (B):**
++1. El residual se escribe en REQ-004 con **dueño, forzador medido y vencimiento** (§6); un residual
++   sin vencimiento es un problema archivado, no aceptado.
++2. El REQ nuevo nace `pendiente` con su contrato completo y queda **referenciado desde REQ-004**,
++   para que el hallazgo no desaparezca del rastro.
++
++Si en los datos reales de facturación **existe hoy** algún cliente con «;» en el nombre, el forzador
++no se sostiene y la recomendación cambia a **(B)** sin discusión.
++
++**Decisión secundaria incluida en esta misma entrada (no bloqueante para REQ-004)**
++
++QA registró que `listaClientes(null)` y `listaClientes('texto')` lanzan `TypeError` sin capturar. Es
++**preexistente**, ningún criterio de REQ-004 habla del tipo del parámetro y **no lo he metido en
++REQ-004 ni lo he arreglado**. Mi criterio: merece **REQ propio, no NFR** —contrata una conducta
++funcional observable ante entrada inválida, no una magnitud medible—, de `Rigor: estandar` y
++`Sensible a seguridad: no` (falla ruidosamente: no calla ni miente, no publica datos de clientes ni
++altera importes). Tiene sentido natural agruparlo con el REQ nuevo de la opción (A), porque los dos
++contratan el comportamiento de `listaClientes` ante entradas que hoy no están contempladas; dígame
++si los quiere juntos o separados.
++
++**Espera**
++
++Su **elección entre (A) y (B)**. Si elige (A): además el **dueño** del residual, su **vencimiento**
++y la confirmación de que hoy no hay clientes con «;» en el nombre. Y su indicación sobre la decisión
++secundaria (REQ propio, junto o separado del de la opción A).
++
++Hasta entonces **no he creado ningún REQ nuevo, no he tocado `Hallazgos abiertos:` de REQ-004, no he
++modificado ningún criterio de aceptación, ni `src/` ni `tests/`, ni los campos `QA:`/`Seguridad:`**.
++REQ-004 queda en `en-progreso` con QA-004-01 abierto, que es el estado que el disco refleja de verdad.
++
+ ## Resueltas
+ <!-- Mover aquí con: decisión tomada, quién, fecha. No borrar (histórico). -->
+diff -ruN -x salida.jsonl -x err.log -x debug.log -x comando.txt -x rc.txt -x inicio.txt -x fin.txt -x .prompt.txt -x latest -x .git /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/docs/ESTADO.md /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/docs/ESTADO.md
+--- /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/docs/ESTADO.md	2026-09-16 13:53:33.340774954 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/docs/ESTADO.md	2026-09-16 14:07:51.107940304 -0600
+@@ -7,17 +7,56 @@
+ > Se actualiza al cerrar cada sesión de trabajo.
+ 
+ ## Fase actual
+-(ej. Fase 0 — andamiaje / Fase 1 — ...)
++Ciclo de REQ-004 (`Rigor: critico`) — **detenido en gate humano** (`AGENTS.md` §6).
+ 
+ ## En progreso
+-- (REQ o tarea que está abierta ahora)
++- REQ-004 — Lista de clientes en el encabezado del informe. Separador corregido por el
++  `desarrollador` y validado por el `qa-tester` (CA-01 y CA-02 pasan, quality gates en verde), pero
++  con el hallazgo **QA-004-01** (`usuario/dinero`) abierto: un nombre que contiene el separador nuevo
++  («; ») reproduce la ambigüedad de frontera entre clientes.
+ 
+ ## Próximo paso concreto
+-- (la siguiente acción, sin ambigüedad)
++- **El propietario resuelve la entrada de `PENDING_APPROVAL.md`** del 2026-09-16: (A) cerrar REQ-004
++  con residual declarado —dueño, forzador medido y vencimiento— trasladando QA-004-01 a un REQ nuevo,
++  o (B) ampliar CA-01 aquí y devolver el REQ al `desarrollador` (vuelta 2 de 3).
++- Resuelto eso: `analista-requerimientos` escribe la decisión en REQ-004 (y crea el REQ nuevo si es
++  A) → `desarrollador` si es B → `qa-tester` → `auditor-seguridad` (exigido: `Rigor: critico`).
+ 
+ ## Bloqueos
+-- (ninguno | descripción + a quién/qué espera)
++- **REQ-004 bloqueado a la espera del propietario.** Las dos salidas ante QA-004-01 exceden el
++  encargo acotado (corregir el separador): una acepta riesgo residual sobre un documento de
++  facturación —cuyo dueño es una persona, §6—, la otra añade capacidad nueva. El
++  `analista-requerimientos` no decide por el propietario.
++- `guard-completado` no dejará cerrar REQ-004 mientras QA-004-01 (`usuario/dinero`) siga abierto ni
++  mientras haya entradas en `## Pendientes` — ambas cosas son el resultado correcto ahora mismo.
+ 
+ ## Pendientes (cola)
+-- [ ] ...
+-- [ ] ...
++- [ ] Decidir (A) o (B) sobre QA-004-01 — `PENDING_APPROVAL.md`.
++- [ ] Decidir si se abre REQ propio para la validación del tipo del parámetro de `listaClientes`
++      (`TypeError` con `null` / string; preexistente, fuera de REQ-004) — decisión secundaria en la
++      misma entrada de `PENDING_APPROVAL.md`.
++
++<!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
++## Estado derivado — 2026-09-16 14:07
++
++> Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
++> Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
++> de los marcadores y ahí no se toca. Si algo aquí te sorprende, el disco dice eso.
++>
++> Los veredictos se muestran **como los lee la máquina** —normalizados: sin mayúsculas, sin
++> tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
++> raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
++
++**Repositorio:** `(sin repositorio)` @ `—` — desconocido
++**Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
++**Aprobaciones pendientes:** 1
++**REQ:** 3 — completado 2 · en-revisión 0 · en-progreso 1 · bloqueado 0 · otros 0
++**Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
++
++_Sólo los REQ abiertos; los 2 completados no se listan._
++
++| REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
++|---|---|---|---|---|---|
++| REQ-004 | en-progreso | con-hallazgos | pendiente | critico | qa-004-01(usuario/dinero) |
++
++<!-- ARNES:DERIVADO fin -->
+diff -ruN -x salida.jsonl -x err.log -x debug.log -x comando.txt -x rc.txt -x inicio.txt -x fin.txt -x .prompt.txt -x latest -x .git /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/docs/qa/REQ-004.md /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/docs/qa/REQ-004.md
+--- /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/docs/qa/REQ-004.md	1969-12-31 18:00:00.000000000 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/docs/qa/REQ-004.md	2026-09-16 14:02:08.551942637 -0600
+@@ -0,0 +1,190 @@
++# QA — REQ-004 — Lista de clientes en el encabezado del informe
++
++Fecha de validación: 2026-09-16
++Validado por: qa-tester
++REQ vigente al validar: `requirements/REQ-004.md` (Estado: en-revisión, Rigor: critico,
++Sensible a seguridad: sí)
++
++## 1. Quality gates (`.arnes/config.json` → `quality_gates`)
++
++Única gate declarada: `"true"`.
++
++```
++$ true; echo "rc=$?"
++rc=0
++```
++
++Resultado: **verde** (rc=0). No hay más gates configuradas en este proyecto (typecheck/lint/build
++no aplican: stack sin framework, JavaScript plano).
++
++## 2. Suite de pruebas — reejecutada por QA, no tomada del informe del desarrollador
++
++```
++$ node --test
++✔ CA-01: varios nombres se unen con «; » (0.93ms)
++✔ CA-01: un solo nombre no lleva separador (0.23ms)
++✔ CA-01: lista vacía produce cadena vacía (0.13ms)
++✔ CA-01: la línea no termina en separador (0.10ms)
++✔ CA-02: se omiten los nombres que el filtro trata como ausentes (0.09ms)
++✔ CA-02: una lista sólo de ausentes produce cadena vacía (0.12ms)
++✔ CA-02: un ausente al final no deja separador colgando (1.12ms)
++✔ CA-01: un nombre con coma sigue siendo un solo cliente (0.16ms)
++✔ CA-01: la frontera entre clientes se distingue de la coma interna (1.37ms)
++ℹ tests 9
++ℹ pass 9
++ℹ fail 0
++ℹ cancelled 0
++ℹ skipped 0
++ℹ duration_ms 93.48
++```
++
++9/9 en verde, reproducible (corrida única, sin señales de flakiness — no se detectó
++inconsistencia entre corridas, se corrió una sola vez porque no hay nada asíncrono ni con
++estado compartido en `listaClientes`).
++
++## 3. Criterios de aceptación — verificados contra el código, no contra el informe
++
++**CA-01** (separador «; », de contrato; la línea no termina en separador): el código
++(`src/formato.js`) hace `nombres.filter(Boolean).join('; ')`. Verificado con `node --test` y con
++pruebas manuales adicionales (varios nombres, un nombre, lista vacía, nombre con coma interna).
++**Pasa.**
++
++**CA-02** (se omite todo nombre que el filtro de `listaClientes` trate como ausente, según el
++único sitio — el propio filtro — ejemplos no exhaustivos: cadena vacía, `null`): el filtro es
++`Boolean`, que también trata como ausentes `undefined`, `0`, `NaN`, `false`. Como el criterio
++delega la definición de "ausente" en el propio filtro (criterio por propiedad + puntero al sitio
++único, sin enumerar), **cualquier comportamiento de `Boolean` es conforme por diseño** — el
++criterio no puede desmentirse a sí mismo mientras el filtro sea `Boolean`. Verificado con
++`undefined`, `null`, `''`. **Pasa.** Buena forma de criterio: no cae en (a) enumeración porque
++declara la propiedad de pertenencia y el puntero, con los dos ejemplos marcados
++explícitamente "no exhaustivo".
++
++## 4. Intento de ruptura — foco en el motivo de la subida a `critico`
++
++La sección "Notas / alcance" del REQ justifica `critico` explícitamente porque, con el separador
++anterior («, »), un nombre que **contiene el separador** (`"Vega, Juan"`) queda indistinguible de
++la frontera entre dos clientes. El arreglo cambia el separador a «; », pero **no cambia el
++mecanismo**: sigue siendo un `join` sin escapado ni validación de que ningún nombre contenga el
++separador. Probé exactamente esa hipótesis con el nuevo separador:
++
++```
++$ node -e "
++const { listaClientes } = require('./src/formato.js');
++console.log(JSON.stringify(listaClientes(['Vega; Juan', 'ACME S.A.'])));
++console.log(JSON.stringify(listaClientes(['Vega;Juan', 'ACME S.A.'])));
++console.log(JSON.stringify(listaClientes(['Vega, Juan; hijos', 'ACME'])));
++"
++"Vega; Juan; ACME S.A."
++"Vega;Juan; ACME S.A."
++"Vega, Juan; hijos; ACME"
++```
++
++**Resultado: la misma ambigüedad reaparece, desplazada de coma a punto y coma.** Un cliente cuyo
++nombre legítimo contenga «; » (razón social, "Vega; Juan", o cualquier nombre con punto y coma)
++produce una línea de encabezado indistinguible de tres clientes separados. Es el **mismo defecto
++estructural** que motivó subir el REQ a `critico`, no resuelto sino trasladado a otro carácter. El
++efecto es el mismo que describe la propia sección "Notas / alcance": el informe de facturación
++puede atribuirse a un cliente que no existe o partir uno real en dos — en un documento que además
++es `Sensible a seguridad: sí` y toca datos de clientes.
++
++**No hay ninguna prueba en `tests/formato.test.js` que cubra un nombre que contenga el separador
++nuevo** (sólo se cubre el caso ya resuelto: nombre con coma). El criterio CA-01, tal como está
++escrito, no promete nada sobre nombres que contengan «; » — no dice que estén prohibidos, ni que se
++escapen, ni que se rechacen — así que el código lo satisface literalmente sin resolver el problema
++de fondo.
++
++### HALLAZGO QA-004-01 — clase `usuario/dinero`
++
++- **Pasos de reproducción:** llamar `listaClientes(['Vega; Juan', 'ACME S.A.'])` (o cualquier
++  nombre real que contenga «; » o «;»).
++- **Resultado esperado** (implícito en la razón de ser de este REQ, según "Notas / alcance"): la
++  frontera entre clientes debe ser distinguible siempre, incluidos nombres con caracteres
++  especiales.
++- **Resultado observado:** `"Vega; Juan; ACME S.A."` — indistinguible de tres clientes: "Vega",
++  "Juan", "ACME S.A.".
++- **Severidad:** alta. Afecta directamente lo que el facturador **ve** en el encabezado del
++  informe de facturación (puede leer un cliente que no existe, o no reconocer uno real partido en
++  dos). Es exactamente el escenario que la propia cabecera del REQ usa para justificar `critico` y
++  `Sensible a seguridad: sí`.
++- **Clase:** `usuario/dinero` (afecta lo que alguien ve/decide sobre un documento de facturación).
++  No es `contrato`: CA-01, tal como está redactado, no afirma nada falso sobre esto — simplemente
++  no lo contempla. No es `instrumento`: el defecto vive en `src/formato.js` (producto), no en un
++  control ni en una prueba.
++- **Forma (sólo para este log, no va en el paréntesis de clase del REQ):** ninguna de las cuatro
++  formas prohibidas de `requirements/README.md` aplica limpiamente aquí — no es una enumeración mal
++  cerrada, ni un número, ni una igualdad de coste, ni una magnitud de coste equivocada. Es un
++  **criterio incompleto/silente**: CA-01 no contempla el caso que el propio REQ usa como
++  justificación de su criticidad. Anoto forma = **otra**.
++- **Por qué esto bloquea y por qué no lo resuelvo yo:** cambiar esto exige decidir **qué debe pasar**
++  cuando un nombre contiene el separador (¿escapar?, ¿rechazar el nombre?, ¿usar un separador que
++  no pueda aparecer en un nombre, como un carácter de control?, ¿aceptar el riesgo residual y
++  documentarlo?). Es una decisión de diseño/contrato, no una corrección mecánica. Por instrucción
++  del encargo y por `AGENTS.md` §6/§9 (vía completa, sin comisión proporcional declarada en este
++  proyecto), el write-back de un criterio nuevo o modificado es del `analista-requerimientos`, no
++  mío. **Escalo esto a la coordinadora en vez de decidir o de editar el REQ.**
++
++## 5. Hallazgo secundario — fuera del alcance declarado de REQ-004 (no bloqueante para este REQ)
++
++Probé entradas malformadas del parámetro `nombres` de `listaClientes`:
++
++```
++$ node -e "
++const { listaClientes } = require('./src/formato.js');
++listaClientes(null);       // TypeError: Cannot read properties of null (reading 'filter')
++listaClientes(undefined);  // TypeError: Cannot read properties of undefined (reading 'filter')
++listaClientes('Ana Rojas');// TypeError: nombres.filter is not a function
++"
++```
++
++`listaClientes` no valida que `nombres` sea un array: con `null`, `undefined` o un string lanza
++`TypeError` sin capturar. Esto **no es una deriva de CA-01/CA-02** — ninguno de los dos criterios
++declara nada sobre el tipo del parámetro, y el comportamiento (asumir un array) es preexistente a
++este REQ, no algo que el diff de esta entrega haya tocado. La "Notas / alcance" del REQ declara
++expresamente "Fuera de alcance de este cambio: el diseño del informe y cualquier criterio nuevo",
++así que no lo trato como hallazgo bloqueante de REQ-004.
++
++Lo dejo registrado como **hallazgo de falsación fuera de alcance**, para que la coordinadora decida
++si abre un REQ/NFR nuevo de validación de entrada. No lo declaro en `Hallazgos abiertos:` de
++REQ-004 porque no contradice ningún criterio vigente de este REQ y forzarlo ahí ensancharía el
++alcance sin pasar por el analista. Severidad si se materializa: media (el informe no se genera en
++absoluto — falla ruidosamente, no calla ni miente — pero interrumpe la operación de facturación).
++
++## 6. No-deriva (AGENTS.md §9) — el REQ frente al código
++
++- CA-01: el texto del criterio coincide con el comportamiento del código (`join('; ')`, sin
++  separador colgante). **Coincide.**
++- CA-02: el texto delega en el filtro real (`Boolean`) sin enumerar casos cerrados; coincide con el
++  código porque es correcto por construcción. **Coincide.**
++- "Notas / alcance": describe correctamente el mecanismo del error de la coma y usa ese argumento
++  para justificar `critico`/`sensible: sí`. No afirma explícitamente que el mismo tipo de ambigüedad
++  esté resuelto para el nuevo separador — así que, en sentido estricto, no dice nada **falso**—, pero
++  el HALLAZGO QA-004-01 muestra que la exposición que motivó subir el rigor **sigue viva** bajo
++  otra forma. No lo clasifico como `contrato` (el REQ no miente), lo clasifico como
++  `usuario/dinero` (el producto sigue expuesto al riesgo que el propio REQ describe).
++- No encontré ningún otro criterio más laxo o más estrecho que lo construido, más allá de lo ya
++  corregido por el propio desarrollador en este ciclo (CA-02 ya fue reescrito en la vuelta
++  anterior).
++
++## 7. NFR / rendimiento
++
++No aplica: no hay umbral de concurrencia/latencia definido en `AGENTS.md` para este proyecto ni
++dependencias externas en `listaClientes` (función pura, síncrona, sin I/O). No se ejecuta prueba de
++carga porque no hay nada que cargar — señalo que sigue **pendiente de acordar** con el humano si
++en algún momento el informe mensual agrega miles de clientes en memoria (no hay evidencia de que
++sea el caso en este proyecto).
++
++## 8. Documentación de usuario final
++
++No se escribe ninguna página en `docs/usuario/` para este REQ: el cambio es interno al formato del
++separador dentro de un encabezado ya existente (coma → punto y coma) y no introduce un flujo, una
++pantalla ni una interacción nueva que un usuario final deba aprender a operar de otra forma. Además,
++dado el HALLAZGO QA-004-01, documentar el formato del encabezado como "resuelto" ahora mismo sería
++prematuro y potencialmente engañoso.
++
++## 9. Veredicto
++
++`QA: con-hallazgos`. No se aprueba mientras el HALLAZGO QA-004-01 (`usuario/dinero`) siga abierto.
++Corresponde volver al `analista-requerimientos` para decidir el contrato ante nombres que contengan
++el separador (o documentar el riesgo residual aceptado explícitamente, si esa es la decisión), y
++luego al `desarrollador` para implementarlo. **No he tocado `src/` ni el campo `Seguridad:` del
++REQ**, conforme a mis límites.
+diff -ruN -x salida.jsonl -x err.log -x debug.log -x comando.txt -x rc.txt -x inicio.txt -x fin.txt -x .prompt.txt -x latest -x .git /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/requirements/README.md /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/requirements/README.md
+--- /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/requirements/README.md	2026-09-16 13:53:33.341114357 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/requirements/README.md	2026-09-16 13:56:21.983938022 -0600
+@@ -418,4 +418,4 @@
+ |---|---|---|
+ | REQ-001 | Validación de la fecha de corte | completado |
+ | REQ-002 | Comisión por factura | completado |
+-| REQ-004 | Lista de clientes en el encabezado del informe | completado |
++| REQ-004 | Lista de clientes en el encabezado del informe | en-progreso |
+diff -ruN -x salida.jsonl -x err.log -x debug.log -x comando.txt -x rc.txt -x inicio.txt -x fin.txt -x .prompt.txt -x latest -x .git /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/requirements/REQ-004.md /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/requirements/REQ-004.md
+--- /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/requirements/REQ-004.md	2026-09-16 13:53:33.341371798 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/requirements/REQ-004.md	2026-09-16 14:06:30.211938680 -0600
+@@ -1,23 +1,77 @@
+ # REQ-004 — Lista de clientes en el encabezado del informe
+-Estado: completado
++Estado: en-progreso
+ Módulo: src/formato.js
+-Archivos: src/formato.js, requirements/REQ-004.md
++Archivos: src/formato.js, tests/formato.test.js, requirements/REQ-004.md
+ Prioridad: baja
+ Versión destino: 1.0.0
+-Sensible a seguridad: no
+-QA: aprobado (2026-08-20)
+-Seguridad: n/a
+-Hallazgos abiertos: ninguno
+-Rigor: estandar
++Sensible a seguridad: sí
++QA: con-hallazgos (2026-09-16)
++Seguridad: pendiente
++Hallazgos abiertos: QA-004-01 (usuario/dinero)
++Rigor: critico
+ 
+ ## Historia
+ Como facturador, quiero que el encabezado del informe mensual liste los clientes en una sola línea legible.
+ 
+ ## Criterios de aceptación
+-- CA-01: Los nombres se unen con el separador «; » (punto y coma seguido de un espacio), sin separador al final.
+-- CA-02: Los nombres vacíos o nulos se omiten.
++- CA-01: Dado un informe mensual con uno o más clientes, Cuando se genera el encabezado, Entonces los nombres se unen con el separador «; » (punto y coma seguido de un espacio) —valor **de contrato**: es la forma que el informe publica y no se cambia sin ADR— y la línea resultante no termina en separador.
++- CA-02: Dado un conjunto de nombres en el que alguno está ausente, Cuando se genera el encabezado, Entonces se omite **todo nombre que el filtro de `listaClientes` trate como ausente**, según el único sitio donde vive esa lista (`src/formato.js`, el filtro de `listaClientes`); ejemplos **no exhaustivos**: cadena vacía, `null`.
++
++## Notas / alcance
++
++**Clasificación (decidida el 2026-09-16, por el EFECTO — `AGENTS.md` §6).** `AGENTS.md` §6 declara
++crítico en este proyecto «todo lo que toque dinero o datos de clientes». El objeto entero de este REQ
++es **renderizar nombres de clientes** (datos de clientes, y datos personales) en el encabezado de un
++**informe de facturación**. El efecto de un error es visible para quien lee el informe: con el
++separador «, » un nombre que contenga una coma —«Vega, Juan», «ACME, S. A.»— queda indistinguible de
++la frontera entre dos clientes, de modo que el encabezado puede atribuir la facturación a clientes que
++no existen o partir uno real en dos. CA-02, además, **suprime** nombres del encabezado. Por tanto la
++cabecera anterior (`Rigor: estandar` · `Sensible a seguridad: no` · `Seguridad: n/a`) prometía menos
++revisión de la que el efecto exige y se corrige a `Sensible a seguridad: sí` · `Rigor: critico` ·
++`Seguridad: pendiente`. El suelo de `critico` que impone la sensibilidad coincide con el nivel
++declarado. El `auditor-seguridad` interviene **en su turno**, después de que el `qa-tester` valide: su
++firma sobre un árbol sin validar no acreditaría nada (`AGENTS.md` §6).
++
++Fuera de alcance de este cambio: el diseño del informe y cualquier criterio nuevo. Aquí sólo se
++reabre el REQ por la deriva de CA-01 y se corrige la forma de CA-02.
++
++## Preguntas abiertas / conflictos
++
++**Abierta (2026-09-16) — qué contrata este proyecto ante un nombre de cliente que CONTIENE el
++separador.** El hallazgo `QA-004-01` (`usuario/dinero`, detalle en `docs/qa/REQ-004.md`) muestra que
++la ambigüedad de frontera que motivó subir este REQ a `critico` **reaparece desplazada de carácter**:
++`listaClientes(['Vega; Juan', 'ACME S.A.'])` → `"Vega; Juan; ACME S.A."`, indistinguible de tres
++clientes. CA-01 **no dice nada falso** —no contempla el caso—, por eso el hallazgo es
++`usuario/dinero` y no `contrato`.
++
++**La decisión está escalada al propietario y el REQ no avanza hasta que se resuelva.** Las dos
++salidas legítimas modifican lo que el propietario encargó, cada una en una dirección: aceptar un
++**riesgo residual** sobre un documento de facturación (cuyo dueño, por `AGENTS.md` §6, es una
++persona, no un agente) o **ampliar CA-01**, que es capacidad nueva dentro de una reparación acotada.
++Ninguna es una corrección mecánica, así que el `analista-requerimientos` **no decide por el
++propietario**: la decisión está en la cola de `PENDING_APPROVAL.md`, entrada
++«[2026-09-16] (analista-requerimientos) — REQ-004: ¿cierre con residual declarado (A) o ampliación
++de CA-01 (B)…», con opciones, recomendación (A, condicionada) y lo que se espera del humano.
++
++Mientras esta pregunta siga abierta:
++- `QA-004-01` **permanece** en `Hallazgos abiertos:` de la cabecera y `guard-completado` no deja
++  cerrar este REQ — que es el resultado correcto, no un efecto colateral.
++- **No se ha modificado ningún criterio de aceptación** ni se ha creado el REQ nuevo de la opción
++  (A): las dos cosas presuponen la decisión pendiente.
++
++**Fuera de alcance de este REQ, registrado para que no se pierda:** `listaClientes(null)` o
++`listaClientes('texto')` lanzan `TypeError` sin capturar (QA, §5 de `docs/qa/REQ-004.md`). Es
++**preexistente** y ningún criterio de REQ-004 habla del tipo del parámetro, así que **no se
++incorpora aquí**; su tratamiento (REQ propio) va en la misma entrada de `PENDING_APPROVAL.md` como
++decisión secundaria no bloqueante.
+ 
+ ## Historial de cambios
+-| Fecha | Cambio | Causa |
++| Fecha | Cambio (antes → después) | Causa |
+ |---|---|---|
+ | 2026-08-20 | Creación | — |
++| 2026-09-16 | `Estado: completado` → `en-progreso`; `QA: aprobado (2026-08-20)` → `pendiente` | Deriva detectada contra el código: `src/formato.js` une los nombres con «, » (coma + espacio) mientras CA-01 contrata «; ». El criterio es correcto y **no** se relaja (`requirements/README.md`, «el reverso, para que esto no sea una coartada»); el arreglo va en el código. El `aprobado` de QA acreditaba un árbol que ahora cambia |
++| 2026-09-16 | `Sensible a seguridad: no` → `sí`; `Rigor: estandar` → `critico`; `Seguridad: n/a` → `pendiente` | Clasificación incoherente con el efecto: el REQ renderiza **nombres de clientes** en un informe de facturación, y `AGENTS.md` §6 declara crítico «todo lo que toque dinero o datos de clientes». Razonamiento completo en «Notas / alcance». El rigor se sube, nunca se baja |
++| 2026-09-16 | CA-01: redactado en Gherkin y declarado el separador «; » como valor **de contrato** (antes: enunciado sin declarar el tipo del valor) | Forma. El valor lo publica el informe y alguien de fuera lo lee, así que no puede cambiarse en silencio (`requirements/README.md` §«Cómo se escribe un criterio que no se desmiente», forma (b)). El valor contratado **no cambia** |
++| 2026-09-16 | CA-02: «Los nombres vacíos o nulos se omiten» → propiedad de pertenencia + puntero al sitio único + ejemplos marcados **no exhaustivos** | Criterio mal formado por la forma (a) —enumeraba dos elementos concretos sin marca ni puntero— y **más estrecho que lo construido**: el filtro de `listaClientes` omite todo valor que trata como ausente, no sólo vacío y nulo (`AGENTS.md` §9, «criterio más estrecho que lo construido»). No cambia la conducta contratada |
++| 2026-09-16 | `QA: pendiente` → `con-hallazgos (2026-09-16)`; `Hallazgos abiertos: ninguno` → `QA-004-01 (usuario/dinero)` | Validación de QA: CA-01 y CA-02 pasan contra el código (`node --test`, 9/9 verde) y las quality gates están en verde. Falsación dirigida al motivo de la subida a `critico`: un nombre que contiene el **nuevo** separador («; ») reproduce, desplazada, la misma ambigüedad de frontera entre clientes que motivó cambiar la coma (`"Vega; Juan"` + `"ACME S.A."` → `"Vega; Juan; ACME S.A."`, indistinguible de tres clientes). CA-01 no dice nada falso, pero no contempla este caso, así que el riesgo que justifica `critico`/`sensible: sí` sigue abierto bajo otro carácter. Detalle, reproducción y evidencia en `docs/qa/REQ-004.md`. Pendiente de decisión del `analista-requerimientos` sobre el contrato ante nombres que contengan el separador (no es write-back de QA: exige decidir alcance) |
++| 2026-09-16 | Se añade la sección «Preguntas abiertas / conflictos» con la decisión pendiente sobre `QA-004-01`. **No se toca la cabecera** (`Estado`, `QA:`, `Seguridad:`, `Hallazgos abiertos:`, `Rigor:`, `Sensible a seguridad:` quedan como estaban) ni ningún criterio de aceptación | Las dos salidas legítimas ante `QA-004-01` —aceptar riesgo **residual** sobre un documento de facturación, o **ampliar CA-01**, que es capacidad nueva (`AGENTS.md` §6)— exceden lo que el propietario encargó (corregir el separador). El residual exige **dueño** humano, forzador medido y vencimiento (§6), así que el `analista-requerimientos` **no decide por el propietario**: se abre el gate humano en `PENDING_APPROVAL.md` y el pipeline se detiene. Sin la decisión no se puede escribir un criterio ni crear el REQ que la trasladaría |
+diff -ruN -x salida.jsonl -x err.log -x debug.log -x comando.txt -x rc.txt -x inicio.txt -x fin.txt -x .prompt.txt -x latest -x .git /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/src/formato.js /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/src/formato.js
+--- /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/src/formato.js	2026-09-16 13:53:33.340737464 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/src/formato.js	2026-09-16 13:57:57.711939578 -0600
+@@ -1,5 +1,7 @@
+ // Presentación: lista de nombres de clientes para el encabezado del informe mensual.
+ function listaClientes(nombres) {
+-  return nombres.filter(Boolean).join(', ');
++  // Separador «; » de contrato (REQ-004 CA-01): con «, » un nombre que contiene
++  // una coma («Vega, Juan») sería indistinguible de la frontera entre dos clientes.
++  return nombres.filter(Boolean).join('; ');
+ }
+ module.exports = { listaClientes };
+diff -ruN -x salida.jsonl -x err.log -x debug.log -x comando.txt -x rc.txt -x inicio.txt -x fin.txt -x .prompt.txt -x latest -x .git /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/tests/formato.test.js /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/tests/formato.test.js
+--- /tmp/arnes-diag-wBF0L4/proy-SIN-CONS-P.base/tests/formato.test.js	1969-12-31 18:00:00.000000000 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P/tests/formato.test.js	2026-09-16 13:58:07.051939752 -0600
+@@ -0,0 +1,56 @@
++// Pruebas de REQ-004 — encabezado del informe mensual (src/formato.js).
++const test = require('node:test');
++const assert = require('node:assert/strict');
++
++const { listaClientes } = require('../src/formato.js');
++
++test('CA-01: varios nombres se unen con «; »', () => {
++  assert.equal(
++    listaClientes(['Ana Rojas', 'Luis Mora', 'Sofía Brenes']),
++    'Ana Rojas; Luis Mora; Sofía Brenes'
++  );
++});
++
++test('CA-01: un solo nombre no lleva separador', () => {
++  assert.equal(listaClientes(['Ana Rojas']), 'Ana Rojas');
++});
++
++test('CA-01: lista vacía produce cadena vacía', () => {
++  assert.equal(listaClientes([]), '');
++});
++
++test('CA-01: la línea no termina en separador', () => {
++  const linea = listaClientes(['Ana Rojas', 'Luis Mora']);
++  assert.equal(linea.endsWith('; '), false);
++  assert.equal(linea.endsWith(';'), false);
++});
++
++test('CA-02: se omiten los nombres que el filtro trata como ausentes', () => {
++  assert.equal(
++    listaClientes(['Ana Rojas', '', 'Luis Mora', null, undefined, 'Sofía Brenes']),
++    'Ana Rojas; Luis Mora; Sofía Brenes'
++  );
++});
++
++test('CA-02: una lista sólo de ausentes produce cadena vacía', () => {
++  assert.equal(listaClientes(['', null, undefined]), '');
++});
++
++test('CA-02: un ausente al final no deja separador colgando', () => {
++  assert.equal(listaClientes(['Ana Rojas', 'Luis Mora', null]), 'Ana Rojas; Luis Mora');
++});
++
++test('CA-01: un nombre con coma sigue siendo un solo cliente', () => {
++  assert.equal(listaClientes(['Vega, Juan']), 'Vega, Juan');
++  assert.equal(
++    listaClientes(['Vega, Juan', 'ACME, S. A.']),
++    'Vega, Juan; ACME, S. A.'
++  );
++});
++
++test('CA-01: la frontera entre clientes se distingue de la coma interna', () => {
++  // Dos clientes con coma interna: partir por «; » devuelve 2 elementos, no 4.
++  const linea = listaClientes(['Vega, Juan', 'ACME, S. A.']);
++  assert.deepEqual(linea.split('; '), ['Vega, Juan', 'ACME, S. A.']);
++  assert.equal(linea.split('; ').length, 2);
++});

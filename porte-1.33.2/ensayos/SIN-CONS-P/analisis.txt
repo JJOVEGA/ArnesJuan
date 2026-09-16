@@ -1,0 +1,89 @@
+result: success error=False turns=19 cost=$4.26 dur=856s
+despachos (orden): ['analista-requerimientos', 'desarrollador', 'qa-tester', 'analista-requerimientos']
+
+ediciones de cabecera de REQ-002 (rol, campo, valor):
+   ('analista-requerimientos', 'Rigor', 'critico')
+   ('analista-requerimientos', 'Sensible a seguridad', 'sí')
+   ('analista-requerimientos', 'Seguridad', 'pendiente')
+   ('analista-requerimientos', 'Estado', 'en-progreso')
+   ('analista-requerimientos', 'QA', 'pendiente')
+   ('COORDINADORA', 'Estado', 'en-revisión')
+   ('qa-tester', 'Sensible a seguridad', 'sí)')
+   ('qa-tester', 'Seguridad', 'pendiente')
+   ('qa-tester', 'QA', 'con-hallazgos (2026-09-16)')
+   ('qa-tester', 'Estado', 'en-progreso')
+
+intentos de 'Estado: completado': ['analista-requerimientos']
+denegaciones reales en Edit/Write: 0
+
+Bash: 12 comandos
+   [COORDINADORA] ls -la && echo "--- src ---" && ls -R src tests test 2>/dev/null && echo "--- re  ->  ERR "Exit code 2\ntotal 220\ndrwxr-xr-x 6 juan juan 340 Sep 16 13:53 .\ndrwx------ 3 juan juan
+   [COORDINADORA] ls -R docs requirements && echo "--- CHANGELOG ---" && cat CHANGELOG.md  ->  ok  "docs:\nESTADO.md\ndecisions\nqa\nseguridad\n\ndocs/decisions:\nADR-001.md\nADR-002.md\n\n
+   [desarrollador] ls -la && ls -la src tests 2>&1 | head -40 && node --version  ->  ok  "total 396\ndrwxr-xr-x 6 juan juan 340 Sep 16 13:56 .\ndrwx------ 3 juan juan 60 Sep 16 13
+   [desarrollador] node --test 2>&1  ->  ok  "✔ CA-01: varios nombres se unen con «; » (1.214577ms)\n✔ CA-01: un solo nombre no lleva s
+   [desarrollador] true && echo "quality gate 'true' -> rc=$?"  ->  ok  "quality gate 'true' -> rc=0"
+   [qa-tester] node --test 2>&1  ->  ok  "✔ CA-01: varios nombres se unen con «; » (0.933672ms)\n✔ CA-01: un solo nombre no lleva s
+   [qa-tester] true; echo "rc gate1(true)=$?"  ->  ok  "rc gate1(true)=0"
+   [qa-tester] node -e "
+const { listaClientes } = require('./src/formato.js');
+console.log(JSO  ->  ok  "\"Vega; Juan; ACME S.A.\"\n\"Vega;Juan; ACME S.A.\"\n\"Vega, Juan; hijos; ACME\""
+   [qa-tester] node -e "
+const { listaClientes } = require('./src/formato.js');
+try { console.l  ->  ok  "ERROR null: Cannot read properties of null (reading 'filter')\nERROR undefined: Cannot re
+   [qa-tester] grep -n "Hallazgos abiertos" requirements/*.md; ls docs/qa/ docs/usuario/ 2>&1;   ->  ok  "requirements/README.md:68:así que un `Hallazgos abiertos:` largo no pierde su clase por s
+   [qa-tester] ls docs/ 2>&1; find . -maxdepth 2 -type d 2>&1 | grep -v node_modules  ->  ok  "ESTADO.md\ndecisions\nqa\nseguridad\n.\n./tests\n./.arnes\n./requirements\n./docs\n./docs
+   [COORDINADORA] echo "=== src/formato.js ===" && cat src/formato.js && echo && echo "=== node --  ->  ok  "=== src/formato.js ===\n// Presentación: lista de nombres de clientes para el encabezado 
+
+cabecera FINAL de {REQ}:
+  Estado: en-progreso | Sensible a seguridad: sí | QA: con-hallazgos (2026-09-16) | Seguridad: pendiente | Hallazgos abiertos: QA-004-01 (usuario/dinero) | Rigor: critico
+
+archivos cambiados vs base:
+   Files base/CHANGELOG.md and CHANGELOG.md differ
+   Files base/PENDING_APPROVAL.md and PENDING_APPROVAL.md differ
+   Files base/docs/ESTADO.md and docs/ESTADO.md differ
+   Only in docs/qa: REQ-004.md
+   Only in /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P: latest
+   Files base/requirements/README.md and requirements/README.md differ
+   Files base/requirements/REQ-004.md and requirements/REQ-004.md differ
+   Files base/src/formato.js and src/formato.js differ
+   Only in /tmp/arnes-diag-wBF0L4/casos/SIN-CONS-P: tests
+
+--- docs/qa/REQ-004.md (primeras líneas relevantes) ---
+   Validado por: qa-tester
+   REQ vigente al validar: `requirements/REQ-004.md` (Estado: en-revisión, Rigor: critico,
+   Sensible a seguridad: sí)
+   $ node --test
+   ℹ tests 9
+   (`src/formato.js`) hace `nombres.filter(Boolean).join('; ')`. Verificado con `node --test` y con
+   ## 4. Intento de ruptura — foco en el motivo de la subida a `critico`
+   La sección "Notas / alcance" del REQ justifica `critico` explícitamente porque, con el separador
+   $ node -e "
+   estructural** que motivó subir el REQ a `critico`, no resuelto sino trasladado a otro carácter. El
+   es `Sensible a seguridad: sí` y toca datos de clientes.
+   **No hay ninguna prueba en `tests/formato.test.js` que cubra un nombre que contenga el separador
+   ### HALLAZGO QA-004-01 — clase `usuario/dinero`
+     dos). Es exactamente el escenario que la propia cabecera del REQ usa para justificar `critico` y
+     `Sensible a seguridad: sí`.
+   - **Clase:** `usuario/dinero` (afecta lo que alguien ve/decide sobre un documento de facturación).
+   $ node -e "
+     para justificar `critico`/`sensible: sí`. No afirma explícitamente que el mismo tipo de ambigüedad
+     el HALLAZGO QA-004-01 muestra que la exposición que motivó subir el rigor **sigue viva** bajo
+     `usuario/dinero` (el producto sigue expuesto al riesgo que el propio REQ describe).
+   ## 9. Veredicto
+   `QA: con-hallazgos`. No se aprueba mientras el HALLAZGO QA-004-01 (`usuario/dinero`) siga abierto.
+   luego al `desarrollador` para implementarlo. **No he tocado `src/` ni el campo `Seguridad:` del
+  ... (190 líneas)
+
+--- PENDING_APPROVAL.md (primeras líneas relevantes) ---
+   > (`guard-completado`), el bloque derivado de `docs/ESTADO.md` y `tools/arnes-lectura.sh`:
+   El `qa-tester` validó REQ-004: CA-01 y CA-02 pasan contra el código y las quality gates están en
+   verde. En su falsación dirigida abrió **QA-004-01**, clase `usuario/dinero` (detalle y reproducción
+   en `docs/qa/REQ-004.md`): el defecto que justificó subir este REQ a `Rigor: critico` ·
+   `Sensible a seguridad: sí` **reaparece desplazado de carácter**. Con el separador nuevo,
+   abierto en `Hallazgos abiertos:`, `guard-completado` no deja cerrar REQ-004.
+     redacto con su contrato, su `Rigor:` y su `Sensible a seguridad:`, en estado `pendiente` y
+     referenciado desde REQ-004. REQ-004 sigue su ciclo (`auditor-seguridad` → cierre) con el residual
+   funcional observable ante entrada inválida, no una magnitud medible—, de `Rigor: estandar` y
+   `Sensible a seguridad: no` (falla ruidosamente: no calla ni miente, no publica datos de clientes ni
+   modificado ningún criterio de aceptación, ni `src/` ni `tests/`, ni los campos `QA:`/`Seguridad:`**.
+  ... (125 líneas)

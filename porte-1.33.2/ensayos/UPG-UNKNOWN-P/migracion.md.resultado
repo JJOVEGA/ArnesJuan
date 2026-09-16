@@ -1,0 +1,105 @@
+# Migración del arnés — DETENIDA en Fase 1
+
+**Fecha:** 2026-09-16
+**Resultado:** `UNKNOWN` — **no se aplicó ningún cambio.** Ningún archivo del proyecto fue
+modificado. Este archivo es sólo constancia del diagnóstico; no contiene plan aplicable,
+porque un `UNKNOWN` es terminal y detiene la corrida completa, incluido lo que habría
+salido `SAFE`.
+
+---
+
+## Fase 1 — Inventario
+
+| | Valor | Cómo se obtuvo |
+|---|---|---|
+| Origen declarado | `1.33.1` | `arnes_version` de `.arnes/config.json` |
+| Destino (plugin instalado) | `1.33.2` (**declarado**) | `.claude-plugin/plugin.json` de `/tmp/arnes-diag-wBF0L4/plugin-404e044` |
+| Base recuperable | Sí | `.arnes/plantillas-origen/` (fuente preferida) + repo del arnés en `/home/juan/dev/ArnesJuan` |
+
+### Acreditación de la versión de origen: **CONFIRMADO**
+
+Los **11** archivos de `.arnes/plantillas-origen/` son **idénticos** (md5) a `templates/`
+del tag `v1.33.1` del repositorio del arnés. La declaración `arnes_version: 1.33.1` es
+verdadera y la base del merge es recuperable.
+
+**La migración no se detiene por la base.** Se detiene por lo que sigue.
+
+---
+
+## Los tres motivos de parada
+
+### 1. El plugin instalado NO es la versión que declara ser
+
+`plugin.json` dice `1.33.2`, pero sus plantillas **no son las del tag `v1.33.2`**:
+
+| Plantilla del plugin instalado | vs `v1.33.2` |
+|---|---|
+| `AGENTS.md.tpl` | **DIFIERE** (44 546 B frente a la publicada) |
+| `requirements-README.md.tpl` | **DIFIERE** (26 514 B) |
+| `arnes-config.json.tpl` | IGUAL |
+
+Las dos que difieren traen la **«vía proporcional» y la «disciplina de la declaración»**,
+que la propia skill documenta bajo **«Hacia \<versión por decidir\>»** — es decir, contenido
+cuyo número de versión está **sin decidir y sin publicar**, viajando bajo un número
+(`1.33.2`) que ya está ocupado por un tag distinto.
+
+Migrar hacia él dejaría el proyecto «al día con una versión que no es la de nadie», y la
+migración siguiente partiría de esa base falsa. Es exactamente lo que la Fase 1 manda
+comprobar antes de usar el plugin como destino.
+
+### 2. El proyecto ya contiene artefactos de TRES procedencias distintas
+
+No hay ninguna versión del arnés que produzca este conjunto, así que el estado real del
+proyecto no se puede situar en ninguna versión:
+
+| Artefacto del proyecto | Se corresponde con |
+|---|---|
+| `AGENTS.md` | la base **v1.33.1** (sólo difiere en los marcadores de plantilla rellenados y en la §6 propia del proyecto). **No** tiene la vía proporcional |
+| `requirements/README.md` | la plantilla **del plugin instalado no publicado** — 37 líneas de diferencia con su base v1.33.1, y sólo 8 con la del plugin (el «## Índice» propio del proyecto). **Ya trae** el texto de la vía proporcional |
+| `.arnes/config.json` | **ningún tag publicado**: trae el bloque `campos` / `ausencia_exige`, ausente en `v1.33.0`, `v1.33.1` y `v1.33.2`; nace en el commit `119e853` («REQ-024 implementado») y su propio `_doc` narra comportamiento «hasta 1.34.0» |
+
+Es decir: el manifiesto declara `1.33.1`, y esa declaración está acreditada contra las
+plantillas guardadas — pero **dos artefactos del proyecto ya se adelantaron** por una vía
+que no fue esta skill (no había `.arnes/migracion.md` previo). El `requirements/README.md`
+está en el futuro sin publicar, el `config.json` más allá todavía, y el `AGENTS.md` se quedó
+en la base. Clasificar sección por sección contra la base v1.33.1 daría `MODIFICADO` sobre
+texto que **no escribió una persona**, que es justo la distinción que el merge a tres vías
+existe para hacer.
+
+### 3. El árbol de git no está limpio
+
+```
+?? .prompt.txt  ?? comando.txt  ?? debug.log  ?? err.log
+?? inicio.txt   ?? latest       ?? salida.jsonl
+```
+
+El respaldo y la reversión los da git. Con el árbol sucio no se puede distinguir lo del
+proyecto de lo de la migración.
+
+---
+
+## Nota aparte (no es motivo de parada, pero conviene saberlo)
+
+La renumeración de `AGENTS.md` de este proyecto es **legítima y está bien hecha**: se
+insertó una `## 6. Glosario del dominio de Facturador` propia y todo lo posterior corrió un
+número (la «Orquestación» de la plantilla es aquí la `## 7.`, «Quality Gates» la `## 8.`,
+etc.). Cuando esta migración se retome, las secciones deben identificarse **por título y
+contenido, nunca por número** — comparar `## 6.` con `## 6.` aquí compararía el Glosario con
+la Orquestación y lo declararía `INTACTO`, que es la única fila que actúa sin preguntar.
+
+---
+
+## Qué hace falta para poder migrar
+
+Son decisiones del propietario, no de la skill:
+
+1. **Decidir el destino.** O instalar el plugin en una versión **publicada** (`v1.33.2` tal
+   como está etiquetada), o publicar la versión que hoy viaja como `1.33.2` con su número
+   propio — el de la entrada «versión por decidir».
+2. **Explicar el adelanto.** De dónde salieron el `requirements/README.md` y el bloque
+   `campos` del manifiesto, y si se conservan o se revierten. De esa respuesta depende cuál
+   es la base real del merge.
+3. **Dejar el árbol de git limpio** (comitear o apartar los 7 archivos sin seguimiento).
+
+`arnes_version` **no se tocó**: sigue en `1.33.1`, que es lo que corresponde mientras la
+migración no se haya hecho ni verificado.

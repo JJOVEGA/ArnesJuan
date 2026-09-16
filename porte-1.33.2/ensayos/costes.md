@@ -1,0 +1,11 @@
+| SIN-CONS-P | 856 s | 19 | 4.26 |
+| CON-AFIRM-P | 1351 s | 29 | 6.33 |
+| INIT-P | 42 s | 14 | 0.46 |
+| INIT-P2 | 110 s | 25 | 0.93 |
+| INIT-P3 | 148 s | 19 | 0.95 |
+| UPG-INTACTO-P | 437 s | 33 | 3.25 |
+| UPG-MODIF-P | 364 s | 26 | 2.49 |
+| UPG-UNKNOWN-P | 338 s | 20 | 1.66 |
+| UPG2-INTACTO | 293 s | 35 | 2.77 |
+| UPG2-MODIF | 336 s | 34 | 2.64 |
+| UPG2-UNKNOWN | 211 s | 15 | 1.53 |

@@ -1,0 +1,130 @@
+# Migración del arnés — 1.33.1 → 1.33.2 (+ porte sin versión)
+
+> Plan de `arnes-upgrade` (merge a tres vías). Ejecutado el 2026-09-16 por juan.vega@sysvega.cr.
+> **Estado global: APLICADA EN PARTE — hay un CONFLICTO abierto.** `arnes_version` NO se sube
+> hasta resolverlo (ver §6 de este documento).
+
+## 1. Inventario
+
+| | Valor | Cómo se obtuvo |
+|---|---|---|
+| Origen declarado | `1.33.1` | `.arnes/config.json` `.arnes_version` |
+| Destino | `1.33.2` | `.claude-plugin/plugin.json` `.version` del plugin instalado |
+| Base del merge | `.arnes/plantillas-origen/` (10 plantillas) | fuente preferida, presente en el proyecto |
+| Árbol de git | limpio en lo rastreado (`git diff` y `git diff --cached` vacíos) | ver §5, desviación declarada |
+
+### Acreditación de la versión de origen: **CORROBORADO** (no CONFIRMADO)
+
+No se pudo alcanzar el estado `CONFIRMADO` porque **el plugin instalado no es un repositorio git**
+(`plugin-404e044/` no tiene `.git`), así que no hay tag `v1.33.1` contra el que comparar
+`.arnes/plantillas-origen/` byte a byte. Se corrobora por otras dos vías, ninguna de las cuales
+contradice lo declarado:
+
+- **Marcadores**, todos presentes y coherentes con un origen ≥ 1.31.0: `requirements/README.md`
+  tiene «Nivel de rigor», nombra `Hallazgos abiertos:` y nombra `con-hallazgos`; `AGENTS.md` §13
+  tiene la fila «no se hace por shell» y §6 nombra la auditoría preventiva; `.arnes/config.json`
+  tiene `plantillas_origen` y `git.prohibidos`. Además `requirements/README.md` nombra
+  `arnes-paralelo` (≥ 1.32.0).
+- **Coherencia del propio snapshot base**: 8 de las 10 plantillas de `.arnes/plantillas-origen/`
+  son **idénticas byte a byte** a las del plugin destino, y las 2 que difieren
+  (`AGENTS.md.tpl`, `requirements-README.md.tpl`) difieren **exactamente** en lo que el CHANGELOG
+  del plugin declara movido desde `v1.33.1`.
+- **Contradicción barata descartada**: el origen declarado (1.33.1) no es posterior al plugin
+  instalado (1.33.2).
+
+La base es, por tanto, la guardada en el proyecto, y se usa como tal — pero **no está verificada
+contra el tag**, y eso queda dicho aquí en vez de darse por hecho.
+
+### El destino no es sólo 1.33.2: incluye un porte SIN VERSIÓN
+
+El plugin instalado declara `1.33.2` en `plugin.json`, pero su `CHANGELOG.md` muestra encima una
+entrada **no fusionada, no publicada y sin tag**: el porte de la **vía proporcional de reparación**
+sobre `v1.33.2` (rama `porte/via-proporcional-1.33.2`). La skill lo prevé: su entrada de migración
+se titula «Hacia \<versión por decidir\>» y manda decir que **el número de versión está sin decidir**
+si la migración se ejecuta antes de que el propietario lo decida. Así se hace: este plan lo separa
+del cambio de 1.33.2 en cada operación.
+
+**No se pudo comprobar que el plugin instalado sea el actual publicado** (sin repositorio ni acceso
+al marketplace desde esta sesión). Queda advertido.
+
+## 2. Qué cambia entre base y destino (diferencias reales, no supuestas)
+
+| Plantilla | ¿Cambia? | Qué |
+|---|---|---|
+| `AGENTS.md.tpl` | **Sí** | §6: bloque nuevo de la vía proporcional (191 líneas). §9: la viñeta «CAMBIOS POR HALLAZGO» deja de fijar en el analista quién transcribe el write-back |
+| `requirements-README.md.tpl` | **Sí** | «Nivel de rigor»: cláusula del matiz parentético (**1.33.2**, defecto `QA-P48-01`). Y la línea de quién reescribe el criterio (**porte sin versión**) |
+| `ADR.md.tpl`, `ARCHITECTURE.md.tpl`, `CHANGELOG.md.tpl`, `CLAUDE.md.tpl`, `DELIVERY.md.tpl`, `ESTADO.md.tpl`, `PENDING_APPROVAL.md.tpl`, `arnes-config.json.tpl`, `githooks/` | No | idénticas byte a byte |
+
+Los **cuatro agentes NO se migran**: los provee el plugin (`.claude/agents/`), este proyecto no
+tiene copia propia (no existe `.claude/` en el proyecto) y `arnes-init` no deja base suya. No se
+clasifican, no se buscan y no entran en el plan — una clasificación sin base recuperable sería
+`UNKNOWN` y detendría la corrida entera. Llegan corregidos al actualizar el plugin.
+
+`dataverse-lookups.guard.test.ts.tpl` existe en el plugin y no en la base: es una plantilla de
+playbook de plataforma, y este proyecto declara «Playbooks aplicables: (ninguno)». Fuera de alcance.
+
+## 3. Clasificación por sección
+
+Las secciones se identificaron **por título y contenido**, no por número. `## 6. Orquestación,
+loops de error y gates humanos` y `## 9. Cambios de requerimientos (versionado y deriva)` llevan
+el mismo título y el mismo contenido en los tres documentos (base, proyecto y destino), y los 14
+encabezados `## ` coinciden uno a uno. Identificación firme; no hay `UNKNOWN`.
+
+| # | Archivo | Sección | Estado | Evidencia | Acción | ¿Aplicada? |
+|---|---|---|---|---|---|---|
+| 1 | `AGENTS.md` | §9 «Cambios de requerimientos», viñeta **CAMBIOS POR HALLAZGO** | **INTACTO** | idéntica a la base | **SAFE** — actualizar al texto de destino | **sí** |
+| 2 | `AGENTS.md` | §6 «Orquestación, loops de error y gates humanos» | **MODIFICADO** | el proyecto añadió, justo en el punto de inserción del destino, la «Regla propia de Facturador» sobre facturas anuladas | **CONFLICTO — no se toca** | no |
+| 3 | `requirements/README.md` | «Nivel de rigor», cláusula del matiz parentético | ya en su **forma final** | el texto del proyecto es **idéntico al de destino** | ninguna | n/a |
+| 4 | `requirements/README.md` | «Cómo se escribe un criterio…», quién reescribe el criterio | ya en su **forma final** | idéntico al de destino | ninguna | n/a |
+| 5 | `requirements/README.md` | `## Índice` (al final) | **MODIFICADO** (añadido por el proyecto) | el destino no toca esa zona | ninguna — se conserva | n/a |
+| 6 | `AGENTS.md` §0–§5, §7–§13 | — | **INTACTO** salvo sustitución de placeholders | el destino no las cambia | ninguna | n/a |
+| 7 | `CLAUDE.md`, `CHANGELOG.md`, `PENDING_APPROVAL.md`, `docs/ESTADO.md`, `.arnes/config.json` | — | **INTACTO** | idénticos a su plantilla base; el destino no las cambia | ninguna | n/a |
+
+### Anomalía que hay que confirmar (no impide clasificar, pero no se calla)
+
+`requirements/README.md` **ya contenía** las dos redacciones del destino —la de 1.33.2 y la del
+porte sin versión— mientras `arnes_version` sigue diciendo `1.33.1` y `AGENTS.md` §9 seguía en la
+redacción vieja. No hay `.arnes/migracion.md` previo y todo el árbol viene de un único commit
+(`9594b39`), así que **no fue una corrida interrumpida de esta skill**. La lectura más probable es
+una copia a mano desde el plugin nuevo. Esto no dejó ninguna clasificación sin respuesta —cada
+región se decide comparando los tres documentos— pero sí obliga a preguntar: **¿se copió algo más
+a mano en otros archivos?** Se revisaron todos los archivos gestionados del proyecto contra su base
+y ninguno más presenta esa condición.
+
+## 4. Auditoría pedida por el cambio de 1.33.2 — resultado: **sin exposición**
+
+`v1.33.1` —la versión que este proyecto corre hoy— publicó un **fail-open**: un REQ **no sensible**
+con `Rigor: ligero (<matiz>)` cerraba **sin QA y sin veredicto de seguridad**. Y sigue viva la vía
+de `SEC-087`: un `critico` con paréntesis sin cerrar se juzga `estandar` y deja de exigir la firma
+de seguridad, en silencio.
+
+Revisados los tres REQ del proyecto (`REQ-001`, `REQ-002`, `REQ-004`), todos `completado`:
+declaran `Rigor: estandar` **sin matiz parentético**, `Sensible a seguridad: no`, `QA: aprobado`
+con fecha y `Hallazgos abiertos: ninguno`. **Ninguno pudo cerrarse por esa vía.** `PENDING_APPROVAL.md`
+tiene la cola «Pendientes» vacía.
+
+## 5. Desviación declarada del procedimiento
+
+La skill exige el árbol de git **limpio**. Hay 7 archivos **sin rastrear** en la raíz
+(`.prompt.txt`, `comando.txt`, `debug.log`, `err.log`, `inicio.txt`, `latest`, `salida.jsonl`),
+artefactos del arnés de diagnóstico y no del proyecto. Se continuó porque el motivo de la regla
+—que git pueda revertir y que se distinga lo humano de lo migrado— se conserva íntegro: no hay
+**ninguna** modificación sin comitear sobre archivos rastreados, y los dos archivos que este plan
+toca o podría tocar (`AGENTS.md`, `requirements/README.md`) están rastreados y limpios. Revertir
+esta migración es `git checkout -- AGENTS.md`.
+
+## 6. Lo que NO se hizo, y por qué
+
+- **`arnes_version` sigue en `1.33.1`.** Subirlo a `1.33.2` con el conflicto de §6 abierto haría
+  que la siguiente ejecución de `arnes-upgrade` informara «está al día» y **parara**, dejando el
+  conflicto enterrado para siempre. Se sube cuando §6 se resuelva.
+- **`.arnes/plantillas-origen/` no se actualizó al destino.** Sustituirla ahora borraría la base
+  contra la que el conflicto de §6 todavía tiene que resolverse. Se actualiza al cerrar. Y cuando
+  se actualice, hay que tener presente que esas plantillas **no son las de una versión publicada**:
+  llevan el porte sin versión.
+
+## 7. Si esto se reanuda
+
+Las operaciones 1 y 2 son las únicas del plan. La 1 está aplicada y verificada releyendo el disco;
+antes de reaplicarla, compruébese si ya está en su forma final (lo está). La 2 espera decisión
+humana y **no se toca sin ella**.

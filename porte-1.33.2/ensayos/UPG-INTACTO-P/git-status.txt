@@ -1,0 +1,7 @@
+ M .arnes/config.json
+ M .arnes/plantillas-origen/AGENTS.md.tpl
+ M .arnes/plantillas-origen/requirements-README.md.tpl
+ M AGENTS.md
+ M CHANGELOG.md
+ M docs/ESTADO.md
+?? .arnes/migracion.md

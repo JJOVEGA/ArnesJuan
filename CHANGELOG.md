@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-16 · Once ensayos reales sobre el porte `404e044` (agentes: SIN-CONS-P, CON-AFIRM-P; instalación: INIT-P/P2/P3; actualización: UPG-*-P y UPG2-* con fixture limpio)
+`porte-1.33.2/ensayos/`: README con resultados frente a lo esperado, lanzadores, salidas completas por caso, análisis y costes reportados. Hallazgo transversal: el marcador de versión del porte (declara 1.33.2 con plantillas distintas del tag) hace que la skill estable rehúse el destino en 2 de 6 sesiones. Sin QA ni seguridad todavía.
+
 ## 2026-09-16 · Porte mínimo de la vía proporcional sobre `v1.33.2`: diff preparado (`404e044`) y revisión de la coordinadora
 `porte-1.33.2/404e044.diff` y `porte-1.33.2/README.md`: revisión del diff (mecanismo 0, términos prohibidos 0, gemelas, sede única, título provisional), capacidades de `v1.33.2` comprobadas con secciones del banco por ruta. Sin QA, sin seguridad, sin despacho real.
 

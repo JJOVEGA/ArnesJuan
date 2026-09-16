@@ -1,0 +1,12 @@
+# REQ-004 — Lista de clientes en el encabezado del informe
+Estado: en-progreso
+Módulo: src/formato.js
+Archivos: src/formato.js, tests/formato.test.js, requirements/REQ-004.md
+Prioridad: baja
+Versión destino: 1.0.0
+Sensible a seguridad: sí
+QA: con-hallazgos (2026-09-16)
+Seguridad: pendiente
+Hallazgos abiertos: QA-004-01 (usuario/dinero)
+Rigor: critico
+

@@ -1,0 +1,1 @@
+Observado: la skill se cargó (comando /arnes-init del porte), leyó el proyecto y se detuvo en la pregunta 1 de 12 de la entrevista. No creó AGENTS.md ni .arnes/. Sin nadie que responda, la instalación no llega a la declaración. 42 s, 14 turnos.

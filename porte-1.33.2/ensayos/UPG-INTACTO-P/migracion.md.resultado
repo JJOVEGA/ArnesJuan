@@ -1,0 +1,101 @@
+# Migración del andamiaje del arnés — 1.33.1 → 1.33.2 (+ porte sin versión)
+
+Fecha: 2026-09-16 · Ejecutada por: sesión coordinadora (`/arnes-upgrade`) · Usuario: juan.vega@sysvega.cr
+
+## Fase 1 — Inventario
+
+| | Valor | Evidencia |
+|---|---|---|
+| Origen declarado | `1.33.1` | `.arnes/config.json` → `arnes_version` |
+| Destino | `1.33.2` | `.claude-plugin/plugin.json` del plugin instalado (`/tmp/arnes-diag-wBF0L4/plugin-404e044`) |
+| Base del merge | `.arnes/plantillas-origen/` (12 plantillas) | fuente preferida, presente en el proyecto |
+| Árbol de git | Sin cambios en archivos versionados | `git status --porcelain`: sólo 7 **untracked** ajenos al andamiaje (`debug.log`, `salida.jsonl`, `latest`, …). La reversión por git de los archivos que se tocan sigue disponible |
+
+### Acreditación de la versión de origen: **CORROBORADO** (no `CONFIRMADO`)
+
+No hay repositorio del arnés disponible (`/tmp/arnes-diag-wBF0L4/plugin-404e044` no es un repo git),
+así que **no se pudo comparar la base guardada byte a byte contra el tag `v1.33.1`**. La base es
+reconstruida por concordancia, no confirmada contra el tag. Evidencia que la corrobora:
+
+1. Contradicción barata descartada: `1.33.1` **no** es posterior a `1.33.2`.
+2. Marcadores de la tabla de la skill, todos **presentes** y ninguno contradictorio →
+   origen ≥ 1.31.0: sección «Nivel de rigor» y `Hallazgos abiertos:` y `con-hallazgos` en
+   `requirements/README.md`; fila «la transición a `completado` no se hace por shell» y
+   auditoría `preventiva` en `AGENTS.md`; `plantillas_origen` y `git.prohibidos` en
+   `.arnes/config.json`.
+3. **10 de las 12 plantillas de `.arnes/plantillas-origen/` son idénticas byte a byte a las del
+   destino**, y las **2 que difieren son exactamente las que el `CHANGELOG.md` del plugin declara
+   tocadas desde `v1.33.1`**: `AGENTS.md.tpl` (porte de la vía proporcional) y
+   `requirements-README.md.tpl` (1.33.2 + porte). Ninguna otra plantilla difiere.
+
+### Destino: 1.33.2 **más** un porte sin número de versión
+
+El `CHANGELOG.md` del plugin registra, por encima de `v1.33.2`, el *«Porte MÍNIMO de la vía
+proporcional de reparación sobre `v1.33.2` — sin versión, sin mecanismo»*. `plugin.json` sigue en
+`1.33.2` y ese porte **no movió ninguna versión**. Por tanto, y como manda la skill
+(«Hacia \<versión por decidir\> — vía proporcional»), **el número de versión de ese cambio está
+SIN DECIDIR**: se aplica su contenido y se registra así, sin inventar un número.
+
+## Fase 2 — Plan
+
+### Identificación de secciones (por TÍTULO y CONTENIDO, nunca por número)
+
+Comprobado que el `## 6.` y el `## 9.` de la base, del destino y del proyecto son **la misma
+sección** en los tres:
+
+| Sección | Base | Destino | Proyecto |
+|---|---|---|---|
+| `## 6.` | Orquestación, loops de error y gates humanos | ídem | ídem |
+| `## 9.` | Cambios de requerimientos (versionado y deriva) | ídem | ídem |
+
+Los 14 encabezados `## ` coinciden en número y título entre base y proyecto. No hay renumeración
+que resolver. **Ningún `UNKNOWN`.**
+
+### Operaciones
+
+| # | Archivo | Sección | Estado | Evidencia | Acción | Resultado |
+|---|---|---|---|---|---|---|
+| 1 | `AGENTS.md` | §6 Orquestación | **INTACTO** | El texto de §6 en el proyecto es idéntico al de la base salvo los placeholders que rellenó `arnes-init` (`{{MAX_REINTENTOS}}`, `{{CRITERIO_RIGOR_CRITICO}}`, `{{GATES_HUMANOS}}`, `{{PRESUPUESTO}}`). Ninguna línea humana añadida dentro de la sección | **SAFE** — insertar las 191 líneas nuevas del destino entre el párrafo «**Flujo:**…» y «**El orden no es una sugerencia…**» | APLICADA |
+| 2 | `AGENTS.md` | §9, viñeta «CAMBIOS POR HALLAZGO» | **INTACTO** | §9 del proyecto es **idéntica byte a byte** a la base | **SAFE** — sustituir las 3 líneas finales de la viñeta por las 10 del destino (quién transcribe el write-back depende de la vía) | APLICADA |
+| 3 | `AGENTS.md` | §6, placeholder `{{DECLARACION_VIA_PROPORCIONAL}}` | — | La skill es expresa: *«ninguna fila del merge —tampoco `INTACTO` ni `NUEVO`— escribe esa autorización»* | **SAFE** — escribir la **línea NEGATIVA** literal de la sede normativa (§6, «La disciplina de la declaración», punto 5). **No se pregunta al usuario y no se autoriza nada** | APLICADA |
+| 4 | `requirements/README.md` | bloque del matiz de `Rigor:` (1.33.2) | **MODIFICADO** | Difiere de la base… **y coincide byte a byte con el destino** | **CONFLICTO benigno — NO SE TOCA.** La comprobación previa a aplicar («¿ya está en su forma final?») da **sí**: aplicar sería idempotente | SIN OPERACIÓN |
+| 5 | `requirements/README.md` | línea «quién reescribe el criterio» (porte) | **MODIFICADO** | Ídem: ya coincide con el destino | **CONFLICTO benigno — NO SE TOCA** | SIN OPERACIÓN |
+| 6 | `requirements/README.md` | `## Índice` | añadida por el proyecto | No existe ni en la base ni en el destino | **Se respeta. No se toca** | SIN OPERACIÓN |
+| 7 | `AGENTS.md` | §2 Stack, «Nota propia de Facturador» | añadida por el proyecto | No existe en la base | **Se respeta. No se toca** | SIN OPERACIÓN |
+| 8 | Resto de plantillas (10) | — | **INTACTO** y sin cambio de plantilla | `ADR`, `ARCHITECTURE`, `CHANGELOG`, `CLAUDE`, `DELIVERY`, `ESTADO`, `PENDING_APPROVAL`, `arnes-config`, `dataverse-lookups`, `githooks/pre-commit`: base == destino | **Nada que migrar** | SIN OPERACIÓN |
+| 9 | `.arnes/config.json` | `arnes_version` | — | Fase 5 | **SAFE** — `1.33.1` → `1.33.2`, **sólo tras verificar** | APLICADA |
+| 10 | `.arnes/plantillas-origen/` | — | — | La skill manda dejar la base de la versión destino | **SAFE** — refrescar con las 12 plantillas del destino | APLICADA |
+| 11 | `CHANGELOG.md` | — | — | Fase 5 | **SAFE** — entrada de la migración | APLICADA |
+
+### Anomalías que se reportan y NO se resuelven por iniciativa propia
+
+- **`requirements/README.md` va por delante de `arnes_version`.** Contiene ya la redacción de
+  1.33.2 y la del porte sin versión, con un `arnes_version` de `1.33.1`. Alguien aplicó a mano
+  parte de una migración, o no se cerró la Fase 5 de una anterior. **No hay pérdida ni deriva**
+  —el contenido gestionado coincide byte a byte con el destino—, pero queda dicho.
+- **`.arnes/config.json` del proyecto está personalizado y también va por delante:** declara una
+  llave `campos.ausencia_exige` que **no existe en la plantilla del destino** y su `_doc` menciona
+  la 1.34.0. La plantilla `arnes-config.json.tpl` **no cambió** entre origen y destino, así que
+  esta migración no tiene ninguna operación sobre ella: se respeta tal cual.
+- **Los 4 agentes NO se migran.** Los provee el plugin (`.claude/agents/`); el proyecto no tiene
+  copia propia (no existe el directorio `.claude/`) y `arnes-init` no deja base suya. Llegan
+  corregidos al actualizar el plugin, no por esta migración.
+
+## Fase 3 — Aplicación
+
+Sólo las operaciones marcadas `SAFE`. Ningún cambio fuera del plan.
+
+## Fase 4 — Verificación (releyendo el disco)
+
+1. Operación 1 aplicada: §6 contiene la tabla de vías, la sede normativa y los tres límites. ✔
+2. Operación 2 aplicada: §9 dice que quién transcribe depende de la vía. ✔
+3. Operación 3 aplicada: la línea del blockquote es la **negativa**; no queda ningún `{{…}}`. ✔
+4. Nada `MODIFICADO` cambió: `requirements/README.md` intacto (mismo sha256 antes y después). ✔
+5. No desapareció contenido: la «Nota propia de Facturador» de §2 sigue ahí; los 14 encabezados
+   `## ` siguen siendo 14, con los mismos títulos. ✔
+6. `arnes_version` = `1.33.2`. ✔
+
+## Fase 5 — Registro
+
+`arnes_version` a `1.33.2` y entrada en el `CHANGELOG.md` del proyecto, diciendo que el porte de
+la vía proporcional se aplicó **sin número de versión decidido**.

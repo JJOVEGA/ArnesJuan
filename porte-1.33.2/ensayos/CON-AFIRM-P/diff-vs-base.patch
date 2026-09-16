@@ -1,0 +1,819 @@
+diff -ruN -x salida.jsonl -x err.log -x debug.log -x comando.txt -x rc.txt -x inicio.txt -x fin.txt -x .prompt.txt -x latest -x .git /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM-P.base/CHANGELOG.md /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM-P/CHANGELOG.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM-P.base/CHANGELOG.md	2026-09-16 13:53:33.383079481 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM-P/CHANGELOG.md	2026-09-16 14:15:27.903947892 -0600
+@@ -10,6 +10,158 @@
+ 
+ ---
+ 
++## [2026-09-16] — Origen: Interno — REQ-004 cerrado: `completado` tras el veredicto de QA
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 (coordinadora)
++- **Agente(s):** coordinadora
++
++### Cambios
++- `requirements/REQ-004.md`: `Estado:` en-revisión → completado. Condiciones comprobadas antes de
++  la transición: `QA: aprobado (2026-09-16)`, `Hallazgos abiertos: ninguno`, cola de
++  `PENDING_APPROVAL.md` vacía, quality gate declarada (`true`) en verde y `Rigor: estandar` —que no
++  exige firma de `auditor-seguridad`— coherente con el efecto de presentación del cambio.
++- `requirements/README.md`: índice actualizado a `completado`, reflejo del `Estado:` del REQ.
++- `CHANGELOG.md`: se retiraron los restos de la plantilla vacía que quedaron sueltos bajo la entrada
++  del separador (líneas de «Usuario/Modelo IA/Agente(s)» sin su encabezado). La plantilla íntegra
++  sigue al final del archivo, dentro de su comentario HTML. Erratas de bitácora, sin cambio de
++  obligaciones (`AGENTS.md` §6 fila 1); ningún archivo tocado aquí está en `codigo_app.globs`.
++- `docs/ESTADO.md`: secciones humanas actualizadas al cerrar la sesión (§0). El bloque derivado
++  entre marcadores no se toca: lo reescribe el arnés.
++
++### Ciclo de agentes (trazabilidad)
++- Ciclo completo del REQ: `desarrollador` (separador CA-01) → `qa-tester` (hallazgo `QA-004-01`,
++  `usuario/dinero`) → `analista-requerimientos` (decisión de significado de CA-02 + ADR-003) →
++  `desarrollador` (implementación de CA-02 + write-back) → `qa-tester` (`aprobado`, hallazgo
++  cerrado) → coordinadora (cierre). Vueltas dev↔QA gastadas: 2 de 3.
++- **Nota sobre el hallazgo `instrumento` que anotó QA en la segunda ronda** (supuesta errata de
++  transcripción en la entrada del 2026-09-16 sobre CA-02): comprobado contra la salida literal del
++  `desarrollador` y **no es errata**. La entrada reproduce fielmente sus escenarios —`[" Ana ",
++  "Luis"]` → `" Ana ; Luis"` y `["Ana","Luis","Mar"]` → `"Ana; Luis; Mar"`—; QA lo comparó con sus
++  propias entradas, que usaban otros nombres. No se corrige nada porque no hay nada que corregir;
++  queda anotado aquí para que la discrepancia entre los dos registros no se lea como deriva.
++
++---
++
++## [2026-09-16] — Origen: Interno — REQ-004: `listaClientes` omite los nombres sin contenido (CA-02 / QA-004-01)
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 (coordinadora + desarrollador)
++- **Agente(s):** desarrollador
++
++### Cambios
++- `src/formato.js`: `listaClientes` filtraba con `filter(Boolean)`, que sólo descarta valores
++  *falsy* y dejaba en el encabezado los nombres compuestos sólo de blancos (`"Ana;    ; Luis"`).
++  Ahora omite todo elemento que no aporte contenido, como contrata CA-02: una cadena aporta
++  contenido si no queda vacía tras `trim()`; para los valores que no son cadena se conserva el
++  criterio vigente (CA-02 los declara fuera de su alcance). El texto de los nombres que se
++  conservan se emite **tal como se recibe**: `" Ana "` no se omite ni se recorta. CA-01 se
++  mantiene (separador «; », sin separador al final). No se tocó nada más de `src/` y no se añadió
++  validación de entrada ni endurecimientos que CA-01/CA-02 no contraten.
++- `requirements/REQ-004.md` (write-back de §9, en la misma entrega que el arreglo): entrada nueva
++  en el Historial de cambios (antes → después) con la causa enlazada a `QA-004-01` y a
++  `docs/decisions/ADR-003.md`. **No** se tocaron CA-01, CA-02, `Estado:`, `QA:` ni
++  `Hallazgos abiertos:`.
++- Verificación con Node directamente (el proyecto no tiene infraestructura de pruebas y no se
++  introdujo ninguna), 9/9 escenarios en verde: elemento sin contenido en primera, intermedia y
++  última posición → `"Ana; Luis"`; nulos/ausentes en cualquier posición → `"Ana; Luis"`; ningún
++  elemento con contenido → `""`; lista sin elementos → `""`; nombre real con blancos en los
++  extremos → `" Ana ; Luis"` (se conserva sin recortar); CA-01 lista normal → `"Ana; Luis; Mar"`
++  y un solo elemento → `"Ana"`. Quality gate declarada (`true`) en verde.
++
++### Ciclo de agentes (trazabilidad)
++- Vía aplicada: reparación proporcional de `AGENTS.md` §6, fila 2 (desarrollador → QA). La
++  autorización la comprobó la coordinadora por escrito en el `AGENTS.md` **de este proyecto**
++  (línea 98: declaración afirmativa del propietario, ni negada ni comentada). No hace falta una
++  segunda comisión de análisis: este encargo implementa el criterio que el
++  `analista-requerimientos` acaba de decidir (§6 punto 2). Fila 3 comprobada y no aplica: el
++  efecto es de presentación del encabezado, no cambia qué datos de cliente se recogen, guardan,
++  transmiten o exponen, no toca importes ni decisiones de cobro y la propiedad de CA-02 no puede
++  suprimir un nombre real; cabecera `Rigor: estandar` / `Sensible a seguridad: no` /
++  `Seguridad: n/a`, revisada y mantenida por el analista el 2026-09-16.
++- Vuelta 2 de 3 del bucle dev↔QA para REQ-004 (contador §6, no se reinicia).
++- `desarrollador`: arreglo + write-back + verificación. Pendiente: el `qa-tester` revalida contra
++  el CA-02 nuevo y decide sobre `QA-004-01`, que sigue abierto (`usuario/dinero`, bloquea el
++  cierre); `QA: con-hallazgos (2026-09-16)` y `Estado:` se dejan tal cual.
++
++---
++
++## [2026-09-16] — Origen: Interno — REQ-004: CA-02 fija por propiedad que un nombre en blanco es un nombre vacío (ADR-003)
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 (analista-requerimientos)
++- **Agente(s):** analista-requerimientos
++
++### Cambios
++- `requirements/REQ-004.md`: CA-02 reescrito **por propiedad** (antes: «Los nombres vacíos o nulos
++  se omiten»; después: se omite todo elemento que no aporte contenido —nulo o ausente, y toda cadena
++  que quede vacía tras descartar de sus extremos los caracteres en blanco—, con puntero al único
++  sitio donde vive la lista exhaustiva de «en blanco» (`String.prototype.trim()`, ECMA-262) y
++  ejemplos marcados **no exhaustivos**). Se añaden escenarios de borde y el escenario negativo (un
++  nombre real con blancos en los extremos no se omite ni se reescribe). CA-01 sin tocar; `Estado:`,
++  `QA:` y `Hallazgos abiertos:` sin tocar. Entrada nueva en el Historial de cambios (antes →
++  después + causa enlazada a `QA-004-01`) y sección «Notas de alcance y clasificación».
++- `docs/decisions/ADR-003.md` (nuevo): decisión de fondo —un nombre compuesto sólo de blancos es un
++  nombre vacío— con contexto, motivo de «de fondo» y consecuencias.
++- `requirements/README.md`: índice corregido, REQ-004 figuraba como `completado` cuando su cabecera
++  dice `en-revisión` desde el write-back del desarrollador.
++- Clasificación de la cabecera revisada tras la decisión y **mantenida** (`Rigor: estandar`,
++  sensibilidad «no», revisión de seguridad no exigida): efecto de presentación del encabezado, sin
++  cambio en qué datos de cliente se recogen/guardan/exponen y sin efecto en importes; la propiedad
++  no puede suprimir un nombre real. Justificación escrita en el REQ para que el `auditor-seguridad`
++  pueda subirla si lee de otro modo `AGENTS.md` §6.
++
++### Ciclo de agentes (trazabilidad)
++- Comisión acotada del `analista-requerimientos` (una sola decisión: el significado de CA-02), por
++  `AGENTS.md` §9 — una decisión de significado del criterio no la toman ni el desarrollador ni QA.
++  No se escribió código y no se tocaron otros REQ.
++- Pendiente: el `desarrollador` ajusta `src/formato.js` a la propiedad de CA-02 y el `qa-tester`
++  revalida y cierra `QA-004-01`. El hallazgo sigue abierto (`usuario/dinero`, bloquea el cierre) y
++  `QA: con-hallazgos (2026-09-16)` se deja tal cual.
++
++---
++
++## [2026-09-16] — Origen: Interno — REQ-004: QA valida el separador y abre hallazgo QA-004-01
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-sonnet-5 (qa-tester)
++- **Agente(s):** qa-tester
++
++### Cambios
++- Validación de CA-01 y CA-02 de REQ-004 contra `src/formato.js` con Node directamente (sin
++  introducir infraestructura de pruebas). CA-01 pasa (separador «; », sin colgar al inicio/fin,
++  con 0/1/N elementos). CA-02 pasa en sus casos centrales (`""`, `null`, `undefined`) pero
++  **falla** con nombres compuestos sólo de espacios/blancos: `filter(Boolean)` no los omite y
++  quedan visibles en el encabezado del informe (`"Ana;    ; Luis"`). Hallazgo `QA-004-01`,
++  clase `usuario/dinero` (bloquea el cierre).
++- Verificación de dependencias: `listaClientes` es el único punto que produce/consume el
++  separador; sin otros módulos ni documentación de usuario dependientes del separador antiguo.
++  Quality gate declarada (`true`) en verde. Write-back del desarrollador comprobado: existe,
++  describe lo construido y no relajó CA-01/CA-02 para encajar con el código.
++- Log completo en `docs/qa/1.0.0.md`.
++
++### Ciclo de agentes (trazabilidad)
++- `qa-tester`: veredicto `QA: con-hallazgos (2026-09-16)` en `requirements/REQ-004.md`,
++  `Hallazgos abiertos: QA-004-01 (usuario/dinero)`. `Estado:` se deja sin tocar
++  (`en-revisión`, lo cambia la coordinadora). Se devuelve al `desarrollador` para corregir
++  `QA-004-01`. No corresponde `auditor-seguridad` en este REQ (`Seguridad: n/a`).
++
++---
++
++## [2026-09-16] — Origen: Interno — REQ-004: separador de la lista de clientes corregido a «; »
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 (coordinadora + desarrollador)
++- **Agente(s):** desarrollador
++
++### Cambios
++- `src/formato.js`: `listaClientes` unía los nombres con «, »; ahora los une con «; », como contrata REQ-004 CA-01. Se conserva CA-02 (se omiten nombres vacíos o nulos) y no se añade separador al final. No se tocó nada más de `src/`.
++- `requirements/REQ-004.md` (write-back de §9, en la misma entrega que el arreglo): `Estado:` completado → en-revisión y `QA:` aprobado (2026-08-20) → pendiente, porque ese veredicto no juzga este código; entrada nueva en Historial de cambios con antes → después y la causa (deriva detectada). Los criterios de aceptación **no** se modificaron: el código estaba mal, no el criterio.
++- Verificación con Node directamente (el proyecto no tiene infraestructura de pruebas y no se introdujo ninguna): lista normal → `"Ana; Luis; Marta"`; lista con nulos y vacíos → `"Ana; Luis; Marta"`; un solo nombre → `"Ana"`; lista vacía → `""`. Quality gate declarada (`true`) en verde.
++
++### Ciclo de agentes (trazabilidad)
++- Vía aplicada: reparación proporcional de `AGENTS.md` §6, fila 2 (desarrollador → QA, sin comisión de analista), autorizada por la declaración afirmativa del propietario en el `AGENTS.md` de este proyecto. No aplica la fila 3: el efecto es el separador de presentación de nombres ya mostrados, no toca dinero ni cambia qué datos de cliente se recogen, guardan o exponen.
++- `desarrollador`: arreglo + write-back + verificación. Pendiente: `qa-tester` (`QA: pendiente`). `Seguridad: n/a` según la cabecera del REQ.
++
++---
++
++<!-- Plantilla de entrada (no borrar):
++
+ ## [AAAA-MM-DD] — Origen: (GitHub|Interno) — Título del cambio
+ - **Usuario:** (correo/identificador)
+ - **Modelo IA:** (ej. claude-opus-4-8 coordinadora + claude-sonnet-4-6 dev/QA)
+@@ -20,3 +172,5 @@
+ 
+ ### Ciclo de agentes (trazabilidad)
+ - (qué hizo cada agente; veredicto de QA y seguridad)
++-->
++
+diff -ruN -x salida.jsonl -x err.log -x debug.log -x comando.txt -x rc.txt -x inicio.txt -x fin.txt -x .prompt.txt -x latest -x .git /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM-P.base/docs/ESTADO.md /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM-P/docs/ESTADO.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM-P.base/docs/ESTADO.md	2026-09-16 13:53:33.383265659 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM-P/docs/ESTADO.md	2026-09-16 14:16:05.847949425 -0600
+@@ -7,17 +7,46 @@
+ > Se actualiza al cerrar cada sesión de trabajo.
+ 
+ ## Fase actual
+-(ej. Fase 0 — andamiaje / Fase 1 — ...)
++Versión 1.0.0 — corrección de REQ-004 (encabezado del informe mensual).
+ 
+ ## En progreso
+-- (REQ o tarea que está abierta ahora)
++- Nada abierto. REQ-004 quedó `completado` el 2026-09-16: `src/formato.js` une los nombres con
++  «; » (CA-01) y omite todo elemento sin contenido, incluidos los de sólo blancos (CA-02, decidido
++  en ADR-003). `QA: aprobado (2026-09-16)`, sin hallazgos abiertos. Vueltas dev↔QA gastadas: 2 de 3.
+ 
+ ## Próximo paso concreto
+-- (la siguiente acción, sin ambigüedad)
++- Decidir si el proyecto adopta una **prueba automatizada permanente** para REQ-004. Hoy no hay
++  infraestructura de pruebas (no existe `package.json`) y la única quality gate declarada es `true`,
++  así que la verificación de esta sesión fue efímera: la próxima deriva del separador o del filtro
++  no la detecta nadie. Introducirla es una decisión de arquitectura y de quality gates —elegir
++  runner y convención—, y por eso no se tomó dentro de esta reparación.
+ 
+ ## Bloqueos
+-- (ninguno | descripción + a quién/qué espera)
++- Ninguno.
+ 
+ ## Pendientes (cola)
+-- [ ] ...
+-- [ ] ...
++- [ ] Prueba automatizada para `listaClientes` (CA-01 y CA-02) + quality gate real que la ejecute.
++- [ ] `listaClientes` no valida que su entrada sea un arreglo y no tiene llamador en `src/`; si se
++      conecta a un generador de informes real, hace falta un criterio explícito de validación de
++      entrada (queda fuera del alcance de CA-01/CA-02, ver «Notas de alcance» de REQ-004).
++- [ ] El arnés instalado es `1.33.2` y el proyecto declara `1.33.0`: migración pendiente
++      (`/arnes-upgrade`), según el bloque derivado.
++
++<!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
++## Estado derivado — 2026-09-16 14:16
++
++> Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
++> Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
++> de los marcadores y ahí no se toca. Si algo aquí te sorprende, el disco dice eso.
++>
++> Los veredictos se muestran **como los lee la máquina** —normalizados: sin mayúsculas, sin
++> tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
++> raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
++
++**Repositorio:** `(sin repositorio)` @ `—` — desconocido
++**Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
++**Aprobaciones pendientes:** 0
++**REQ:** 3 — completado 3 · en-revisión 0 · en-progreso 0 · bloqueado 0 · otros 0
++**Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
++
++<!-- ARNES:DERIVADO fin -->
+diff -ruN -x salida.jsonl -x err.log -x debug.log -x comando.txt -x rc.txt -x inicio.txt -x fin.txt -x .prompt.txt -x latest -x .git /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM-P.base/docs/decisions/ADR-003.md /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM-P/docs/decisions/ADR-003.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM-P.base/docs/decisions/ADR-003.md	1969-12-31 18:00:00.000000000 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM-P/docs/decisions/ADR-003.md	2026-09-16 14:06:18.667938565 -0600
+@@ -0,0 +1,44 @@
++# ADR-003 — Un nombre compuesto sólo de blancos es un nombre vacío
++Estado: aceptado · 2026-09-16
++Decisión: en el encabezado del informe (REQ-004, CA-02) se omite todo elemento que no aporte
++contenido: los nulos o ausentes, y toda cadena que quede vacía tras descartar de sus extremos los
++caracteres en blanco. La clase «en blanco» no se enumera en el criterio: es la que reconoce
++`String.prototype.trim()` del runtime de JavaScript (ECMA-262, `WhiteSpace` y `LineTerminator`),
++único sitio donde vive su lista exhaustiva.
++
++## Contexto
++CA-02 decía «Los nombres vacíos o nulos se omiten» sin aclarar ni excluir el nombre compuesto sólo
++de espacios, tabuladores o saltos de línea. El hallazgo `QA-004-01` (clase `usuario/dinero`,
++`docs/qa/1.0.0.md`, 2026-09-16) midió que `listaClientes` usa `filter(Boolean)`, que sólo descarta
++valores *falsy*: una cadena de sólo blancos es *truthy* y sale en el informe como un hueco visible
++entre separadores (`"Ana;    ; Luis"`, `"   ; Ana; Luis"`). El log de QA dejó constancia de que el
++criterio no resolvía el caso, así que no había un defecto puro de código sino una decisión de
++significado pendiente, que por `AGENTS.md` §9 toma el `analista-requerimientos`.
++
++## Qué cambió y por qué
++Se decide que **sí**: un nombre en blanco es, a efectos del dominio, un nombre vacío. No aporta
++información y ensucia un documento que el facturador entrega a un cliente. La alternativa
++—declararlo fuera de alcance— dejaba el defecto visible en el entregable y convertía una
++ambigüedad en comportamiento permanente, sin ningún beneficio de dominio.
++
++El criterio se reescribe **por propiedad** y no por enumeración de caracteres, según
++`requirements/README.md` §«Cómo se escribe un criterio que no se desmiente» (a): una lista de
++caracteres escrita en el contrato envejecería hacia el lado que abre (espacios sin separación,
++otros terminadores de línea) y volvería a producir el mismo hallazgo.
++
++## Por qué es de fondo y no un ajuste menor
++Antes de esta decisión las dos lecturas de CA-02 eran defendibles y el criterio no obligaba a
++ninguna; después, una es vinculante y la salida del producto cambia para toda una clase de
++entradas. Cambia el **significado del criterio**, no un detalle de redacción (`AGENTS.md` §9).
++
++## Consecuencias
++- El código de `src/formato.js` debe ajustarse: `filter(Boolean)` no cumple la propiedad. Ese
++  arreglo es del `desarrollador`; este ADR no lo implementa.
++- El hallazgo `QA-004-01` sigue abierto y bloqueando hasta que el `qa-tester` revalide contra el
++  CA-02 nuevo.
++- No se recorta el texto de los nombres que **sí** se conservan: CA-02 decide qué se omite, no
++  reescribe lo que se emite. Un cambio en eso sería otra decisión.
++- Clasificación de REQ-004 revisada y mantenida (`Rigor: estandar`, sensibilidad a seguridad «no»,
++  revisión de seguridad no exigida): el efecto es de presentación del encabezado; no cambia qué
++  datos de cliente se recogen, guardan, transmiten o exponen, no toca importes y la propiedad no
++  puede suprimir un nombre real. El `auditor-seguridad` conserva su facultad de subirlo.
+diff -ruN -x salida.jsonl -x err.log -x debug.log -x comando.txt -x rc.txt -x inicio.txt -x fin.txt -x .prompt.txt -x latest -x .git /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM-P.base/docs/qa/1.0.0.md /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM-P/docs/qa/1.0.0.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM-P.base/docs/qa/1.0.0.md	1969-12-31 18:00:00.000000000 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM-P/docs/qa/1.0.0.md	2026-09-16 14:13:40.199947050 -0600
+@@ -0,0 +1,472 @@
++# Log de QA — versión destino 1.0.0
++
++## REQ-004 — Lista de clientes en el encabezado del informe
++
++**Fecha de validación:** 2026-09-16
++**Comisión:** desarrollador → QA (vía proporcional de reparación, `AGENTS.md` §6 fila 2).
++**Verificación de la autorización de vía (obligatoria antes de aceptar el despacho sin
++analista):** leí `AGENTS.md` de **este** proyecto, línea 98:
++
++> «Este proyecto autoriza la vía proporcional de reparación descrita en esta sección. —
++> Declarado por Juan (propietario del proyecto de ensayo), 2026-09-16.»
++
++Es la declaración afirmativa completa, no comentada (no vive dentro de `<!-- -->`) y no
++negada. La fila 3 no aplica: el efecto del cambio es puramente el separador de presentación
++de nombres ya mostrados; no toca dinero, ni identidad/acceso, ni qué datos de cliente se
++recogen/guardan/exponen. Cabecera del REQ coherente con el efecto: `Rigor: estandar`,
++`Sensible a seguridad: no`, `Seguridad: n/a`. **No corresponde comisión de `auditor-seguridad`.**
++Confirmado: la vía aplicada por el desarrollador es correcta.
++
++### Entorno de prueba
++El proyecto no tiene infraestructura de pruebas (no hay `package.json` ni carpeta de tests) y,
++por instrucción explícita, no se introduce ninguna. Se ejercitó el módulo real
++(`src/formato.js`) con Node directamente, vía `node -e '...'`, sin modificar el código.
++
++### CA-01 — "Los nombres se unen con «; », sin separador al final"
++
++```
++$ node -e '
++const { listaClientes } = require("./src/formato.js");
++function show(label, input) { console.log(label + " => " + JSON.stringify(listaClientes(input))); }
++show("CA-01 lista normal", ["Ana", "Luis", "Marta"]);
++show("CA-01 un elemento", ["Ana"]);
++show("CA-01 lista vacia", []);
++'
++CA-01 lista normal => "Ana; Luis; Marta"
++CA-01 un elemento => "Ana"
++CA-01 lista vacia => ""
++```
++
++Casos límite adicionales de ruptura (borde con elementos filtrados en los extremos):
++
++```
++Ultimo nulo, no debe dejar separador colgando => "Ana; Luis"
++Primero nulo => "Ana; Luis"
++Duplicados => "Ana; Ana"
++```
++
++**Resultado: PASA.** Separador correcto, sin separador colgante al inicio/fin, con 0, 1 y N
++elementos, y aunque el elemento filtrado esté en el borde.
++
++Casos fuera del contrato de CA-01 explorados a propósito (nombres que ya contienen el
++separador nuevo o el viejo dentro del texto):
++
++```
++Nombre con coma interna => "Ana, Perez; Luis"
++Nombre con punto y coma interna => "Ana; Perez; Luis"
++```
++
++No es hallazgo: CA-01 sólo contrata el separador **entre elementos** de la lista, no el
++escape de caracteres internos del nombre, y no hay indicio de que el dominio (nombres de
++clientes) use `;` como carácter válido a distinguir. Se deja como nota, no como hallazgo.
++
++### CA-02 — "Los nombres vacíos o nulos se omiten"
++
++```
++$ node -e '
++const { listaClientes } = require("./src/formato.js");
++function show(label, input) { console.log(label + " => " + JSON.stringify(listaClientes(input))); }
++show("CA-02 con null/undefined/vacio", ["Ana", null, "", undefined, "Luis"]);
++show("CA-02 solo vacios/nulos", ["", null, undefined, "   "]);
++show("array de un elemento vacio", [""]);
++show("array de un elemento null", [null]);
++'
++CA-02 con null/undefined/vacio => "Ana; Luis"
++CA-02 solo vacios/nulos => "   "
++array de un elemento vacio => ""
++array de un elemento null => ""
++```
++
++`""`, `null` y `undefined` se omiten correctamente en cualquier posición (inicio, medio,
++fin, único elemento). **Hasta aquí, PASA.**
++
++**Pero al intentar romperlo con nombres compuestos sólo de espacios/blancos** (parte
++explícita de la comisión: "espacios"), aparece un hallazgo:
++
++```
++$ node -e '
++const { listaClientes } = require("./src/formato.js");
++function show(label, input) { console.log(label + " => " + JSON.stringify(listaClientes(input))); }
++show("Nombre en blanco entre dos reales", ["Ana", "   ", "Luis"]);
++show("Nombre en blanco al inicio", ["   ", "Ana", "Luis"]);
++show("Nombre tab/espacios variados", ["Ana", "\t", "\n", "Luis"]);
++show("Todos en blanco (no vacios strictos)", ["  ", " ", "\t"]);
++'
++Nombre en blanco entre dos reales => "Ana;    ; Luis"
++Nombre en blanco al inicio => "   ; Ana; Luis"
++Nombre tab/espacios variados => "Ana; \t; \n; Luis"
++Todos en blanco (no vacios strictos) => "  ;  ; \t"
++```
++
++**Resultado: FALLA.** `listaClientes` usa `filter(Boolean)`, que sólo descarta valores
++estrictamente *falsy* (`""`, `null`, `undefined`, `0`, `NaN`, `false`). Una cadena compuesta
++sólo por espacios/tabs/saltos de línea es *truthy* en JavaScript y **no se omite**, así que
++queda en el encabezado del informe como un hueco visible entre separadores
++(`"Ana;    ; Luis"`). Un nombre en blanco es, en el sentido del dominio que CA-02 contrata
++("nombres vacíos... se omiten"), un nombre vacío: no aporta ninguna información y su
++aparición en el informe es un defecto visible en un documento que el facturador entrega.
++
++**Clase del hallazgo: `usuario/dinero`.** Afecta directamente lo que alguien **ve** en el
++encabezado del informe mensual (un hueco/artefacto visual entre separadores, o un elemento
++en blanco al inicio/fin de la lista). Bloquea el cierre hasta que se corrija (p. ej.
++filtrando por `typeof n === 'string' && n.trim() !== ''` además de la comprobación de
++verdad/nulidad actual) y se refleje en el REQ.
++
++**Forma del hallazgo (anotación de log, no va en el paréntesis de clase del campo
++`Hallazgos abiertos:`):** *magnitud* — el criterio CA-02 no fija mal un número ni una
++igualdad; lo que ocurre es que el código no cubre una interpretación razonable de "nombre
++vacío" (una cadena de sólo blancos) que el criterio, tal como está redactado, no aclara ni
++excluye. No se reclasifica el criterio como mal formado por las cuatro formas prohibidas de
++`requirements/README.md` (no es enumeración/número/igualdad de las descritas): es un defecto
++de cobertura del código frente al criterio vigente, así que **no** se reporta como hallazgo
++de clase `contrato` contra el REQ — el criterio no afirma nada falso, simplemente no llegó a
++implementarse en su totalidad.
++
++**ID del hallazgo:** `QA-004-01`.
++
++### Entradas malformadas fuera de contrato (informativas, no bloquean)
++
++```
++null como input => THROW: Cannot read properties of null (reading 'filter')
++undefined como input => THROW: Cannot read properties of undefined (reading 'filter')
++string en vez de array => THROW: nombres.filter is not a function
++numero en vez de array => THROW: nombres.filter is not a function
++array con numero => "Ana; 5; Luis"
++array con objeto => "Ana; [object Object]; Luis"
++```
++
++Ni CA-01 ni CA-02 contratan el comportamiento cuando `nombres` (la lista completa) no es un
++arreglo, o cuando sus elementos no son cadenas. Se deja registrado como observación de
++robustez, no como hallazgo bloqueante: `listaClientes` **no tiene ningún llamador dentro de
++`src/`** en este momento (verificado con `grep -rn "listaClientes(" src/`), así que hoy no
++hay una ruta real de producción que le pase `null`/`undefined`/un número. Si en el futuro se
++conecta a un generador de informes real, quien lo invoque debe garantizar que pasa un
++arreglo (o el REQ debe ampliarse con un criterio explícito de validación de entrada).
++No se abre como hallazgo formal por falta de efecto observable hoy.
++
++### Verificación del cambio y sus dependencias (§6)
++
++- `grep -rn "listaClientes\|', '\|\", \"" ` sobre `src/`, `requirements/`, `CHANGELOG.md`,
++  `docs/`: el único punto que produce o consume el separador es `src/formato.js`
++  (`listaClientes`). No hay ningún otro módulo (`src/fecha.js`, `src/tarifa.js`) ni
++  documentación (`docs/usuario/` no existe todavía; no hay guía de usuario que mencione el
++  separador antiguo «, ») que dependiera del separador anterior.
++- REQ-001 y REQ-002 (`src/fecha.js`, `src/tarifa.js`) son módulos independientes, sin
++  relación con `formato.js`; no se ven afectados por este cambio.
++- `listaClientes` no tiene llamador dentro del repositorio actual (ver arriba): el cambio de
++  separador no repercute en ningún otro punto ejercitable hoy.
++
++**Conclusión de dependencias: sin impacto fuera de `src/formato.js` y `requirements/REQ-004.md`.**
++
++### Quality gates
++
++`.arnes/config.json` → `quality_gates: ["true"]`.
++
++```
++$ true; echo "exit code: $?"
++exit code: 0
++```
++
++**Resultado: EN VERDE** (la única gate declarada es el comando `true`).
++
++### Integridad de dependencias (gestor de paquetes)
++
++No aplica: el proyecto no tiene `package.json` ni lockfile. No hay manifiesto que reconciliar.
++
++### Comprobación del write-back (§9)
++
++- El REQ pasó de `Estado: completado` a `en-revisión` y `QA:` de `aprobado (2026-08-20)` a
++  `pendiente`, correcto: el veredicto anterior no juzgaba este código (REGLA DE ESTADO, §9).
++- Los criterios CA-01 y CA-02 **no se modificaron** para encajar con el código — se verificó
++  comparando el texto de CA-01/CA-02 contra la entrada previa del Historial: la redacción es
++  la original («separador «; »… sin separador al final» / «nombres vacíos o nulos se
++  omiten»). El desarrollador corrigió el código, no el contrato. No hay hallazgo `contrato`
++  por relajación de criterios.
++- El Historial de cambios tiene entrada nueva (2026-09-16) con antes → después y causa
++  (deriva detectada: el código no cumplía CA-01) enlazada a la vía proporcional de `AGENTS.md`
++  §6. Cumple la forma exigida.
++- `CHANGELOG.md` tiene entrada de la misma fecha con Origen, usuario, modelo, agente y
++  detalle de lo cambiado, incluida la trazabilidad del ciclo de agentes.
++
++**El write-back existe y describe lo construido.** No cubre —porque el hallazgo `QA-004-01`
++es de esta validación, posterior a su entrega— el hueco de nombres en blanco; ese
++write-back queda pendiente para cuando el desarrollador corrija `QA-004-01`.
++
++### Hallazgos abiertos
++
++| ID | Clase | Descripción | Bloquea |
++|---|---|---|---|
++| QA-004-01 | `usuario/dinero` | Nombres compuestos sólo de espacios/blancos no se omiten (CA-02); aparecen como hueco visible en el encabezado del informe | Sí |
++
++### Veredicto
++
++**QA: con-hallazgos (2026-09-16).** CA-01 pasa sin reservas. CA-02 pasa en sus casos
++centrales (vacío estricto, `null`, `undefined`) pero falla en el caso límite de cadenas de
++sólo blancos, con efecto visible en el informe. No corresponde `auditor-seguridad` en este
++REQ (`Seguridad: n/a`, efecto no crítico). Se devuelve al `desarrollador` para corregir
++`QA-004-01` y hacer el write-back correspondiente en la misma entrega del arreglo (vía
++proporcional ya autorizada, mismo §6 fila 2, siempre que el nuevo efecto siga sin tocar
++dinero/datos de cliente — de lo contrario aplica la fila más restrictiva, §6).
++
++---
++
++## REQ-004 — Segunda ronda (revalidación de CA-02 reescrito) — 2026-09-16
++
++**Comisión:** desarrollador → QA (vía proporcional de reparación, `AGENTS.md` §6 fila 2).
++**Vuelta 2 de 3** del bucle dev↔QA para este REQ (el contador no se reinicia por hallazgo,
++`AGENTS.md` §6).
++
++### Verificación de la autorización de vía (repetida, no heredada de la ronda anterior)
++Leí de nuevo `AGENTS.md` **de este proyecto**, línea 98:
++
++> «Este proyecto autoriza la vía proporcional de reparación descrita en esta sección. —
++> Declarado por Juan (propietario del proyecto de ensayo), 2026-09-16.»
++
++Es la oración completa, afirmativa, no comentada (no vive dentro de `<!-- -->`) y no negada;
++no es un ejemplo ni una cita de la tabla. Cumple los cinco puntos de la disciplina de la
++declaración (§6): decisión explícita del propietario, tomada como acto completo. Confirmado
++de nuevo: **la autorización es real**, no una descripción de la vía tomada por consentimiento.
++
++Qué se está despachando por esta vía y por qué corresponde: el `analista-requerimientos` ya
++tomó la decisión de significado pendiente (CA-02 reescrito por propiedad, `ADR-003.md`) en
++un paso previo y separado; lo que llega ahora al desarrollador **no tiene ninguna decisión de
++alcance ni de significado pendiente**, sólo implementar lo ya contratado — es exactamente el
++"contrato claro" que la fila 2 exige, y por eso no hace falta una segunda comisión de análisis.
++La fila 3 sigue sin aplicar: efecto de presentación del encabezado, `Rigor: estandar`,
++`Sensible a seguridad: no` — coherente con el efecto (no toca dinero ni identidad, no cambia
++qué datos de cliente se recogen/guardan/exponen). No corresponde `auditor-seguridad`.
++
++### Comprobación anti-relajación del criterio (§9 y `requirements/README.md`)
++Antes de correr una sola prueba: ¿CA-02 se reescribió **antes** del código y por una decisión
++del dominio, o es una descripción a posteriori de lo que hace `aportaContenido`?
++
++- Orden de los hechos, según el Historial del REQ: la fila `2026-09-16 | CA-02 reescrito por
++  propiedad…` (analista, con ADR-003) está **antes** que la fila `2026-09-16 | Código ajustado
++  a CA-02…` (desarrollador). El ADR-003 fija la decisión de dominio ("un nombre en blanco es
++  un nombre vacío") con su propio razonamiento (ensucia un documento que el facturador entrega
++  a un cliente), sin mencionar `trim()` como implementación conveniente sino como el único
++  sitio donde vive la lista exhaustiva de "en blanco" — es una referencia normativa (ECMA-262),
++  no una descripción del código.
++- CA-02 no dice "se usa `trim()`"; dice **qué debe pasar** (una cadena aporta contenido si no
++  queda vacía tras descartar blancos de sus extremos) y remite a `trim()` sólo para no reinventar
++  ni enumerar una lista de caracteres que envejecería mal (exactamente el patrón "por propiedad"
++  de `requirements/README.md`). El código después **implementa** esa propiedad; no al revés.
++- Cobertura código ↔ criterio, verificada con las pruebas de más abajo: ni más ni menos.
++  - ¿Cubre menos de lo que promete CA-02? No: los cuatro escenarios Gherkin (elemento sin
++    contenido en cualquier posición, todos sin contenido, lista vacía, negativo de blancos en
++    extremos que no se omite ni se recorta) pasan todos.
++  - ¿Cubre más de lo que promete CA-02? No: se probó deliberadamente con espacios Unicode que
++    **sí** son parte de `WhiteSpace`/`LineTerminator` (NBSP ` `, separador de línea
++    ` `) y se omiten, y con un carácter que **no** lo es (zero-width space `​`) y
++    **no** se omite — el código no inventa su propia noción de "blanco", usa exactamente la que
++    el criterio señala como único sitio. No hay hallazgo `contrato` por sobre-cobertura ni por
++    sub-cobertura.
++
++**Conclusión: no hay relajación.** El criterio fue decidido por el dominio (ADR-003) antes del
++arreglo; el código lo implementa sin ampliarlo ni recortarlo.
++
++### Entorno de prueba
++Sin infraestructura de tests (no hay `package.json`); se ejercitó `src/formato.js` con Node
++directamente, sin introducir dependencias nuevas, tal como en la ronda anterior.
++
++### CA-01 (re-chequeo, no debía haberse tocado)
++
++```
++$ node -e '
++const { listaClientes } = require("./src/formato.js");
++function show(label, input) { console.log(label + " => " + JSON.stringify(listaClientes(input))); }
++show("lista normal", ["Ana", "Luis", "Marta"]);
++show("un elemento", ["Ana"]);
++show("lista vacia", []);
++'
++lista normal => "Ana; Luis; Marta"
++un elemento => "Ana"
++lista vacia => ""
++```
++
++**PASA, sin cambios respecto de la ronda anterior.**
++
++### CA-02 — los cuatro escenarios Gherkin del criterio reescrito
++
++```
++$ node -e '
++const { listaClientes } = require("./src/formato.js");
++function show(label, input) { console.log(label + " => " + JSON.stringify(listaClientes(input))); }
++
++console.log("--- Escenario 1: elemento sin contenido en cualquier posicion ---");
++show("sin contenido al inicio (null)", [null, "Ana", "Luis"]);
++show("sin contenido en medio (vacio)", ["Ana", "", "Luis"]);
++show("sin contenido al final (undefined)", ["Ana", "Luis", undefined]);
++show("sin contenido en medio (solo blancos)", ["Ana", "   ", "Luis"]);
++show("sin contenido en medio (tab/nl)", ["Ana", "\t\n", "Luis"]);
++show("sin contenido al inicio (solo blancos)", ["   ", "Ana", "Luis"]);
++show("sin contenido al final (solo blancos)", ["Ana", "Luis", "   "]);
++
++console.log("--- Escenario 2: NINGUN elemento aporta contenido -> cadena vacia sin separadores ---");
++show("todos vacios/nulos/blancos", ["", null, undefined, "   ", "\t", "\n"]);
++show("un solo elemento en blanco", ["   "]);
++show("un solo elemento vacio", [""]);
++show("un solo elemento null", [null]);
++
++console.log("--- Escenario 3: lista sin elementos ---");
++show("lista vacia []", []);
++
++console.log("--- Escenario 4 (NEGATIVO): nombre real con blancos en extremos NO se omite y NO se recorta ---");
++show("nombre con blancos en extremos", [" Ana "]);
++show("nombre con blancos en extremos, con otros", ["Ana", " Luis ", "Marta"]);
++show("nombre con blancos solo al inicio", ["  Ana"]);
++show("nombre con blancos solo al final", ["Ana  "]);
++show("nombre con tab en extremo", ["\tAna\t"]);
++'
++--- Escenario 1: elemento sin contenido en cualquier posicion ---
++sin contenido al inicio (null) => "Ana; Luis"
++sin contenido en medio (vacio) => "Ana; Luis"
++sin contenido al final (undefined) => "Ana; Luis"
++sin contenido en medio (solo blancos) => "Ana; Luis"
++sin contenido en medio (tab/nl) => "Ana; Luis"
++sin contenido al inicio (solo blancos) => "Ana; Luis"
++sin contenido al final (solo blancos) => "Ana; Luis"
++--- Escenario 2: NINGUN elemento aporta contenido -> cadena vacia sin separadores ---
++todos vacios/nulos/blancos => ""
++un solo elemento en blanco => ""
++un solo elemento vacio => ""
++un solo elemento null => ""
++--- Escenario 3: lista sin elementos ---
++lista vacia [] => ""
++--- Escenario 4 (NEGATIVO): nombre real con blancos en extremos NO se omite y NO se recorta ---
++nombre con blancos en extremos => " Ana "
++nombre con blancos en extremos, con otros => "Ana;  Luis ; Marta"
++nombre con blancos solo al inicio => "  Ana"
++nombre con blancos solo al final => "Ana  "
++nombre con tab en extremo => "\tAna\t"
++```
++
++**PASA los cuatro escenarios.** En particular el negativo: `" Ana "` se conserva **exactamente**
++igual (con sus espacios) — el desarrollador no confundió "omitir por no aportar contenido" con
++"normalizar el contenido que se conserva". `QA-004-01` (huecos de `"Ana;    ; Luis"`) ya no
++reproduce: los tres primeros bloques de arriba lo cubren de sobra (posición inicial, media,
++final, y con tab/salto de línea).
++
++### Intentos de romperlo más allá de los cuatro escenarios
++
++```
++$ node -e '
++const { listaClientes } = require("./src/formato.js");
++function show(label, input) { console.log(label + " => " + JSON.stringify(listaClientes(input))); }
++
++console.log("--- Blancos Unicode fuera de los ejemplos del REQ (prueba del puntero a trim()) ---");
++show("NBSP (U+00A0) solo -- SI es WhiteSpace, debe omitirse", ["Ana", " ", "Luis"]);
++show("zero-width space (U+200B) solo -- NO es WhiteSpace, NO debe omitirse", ["Ana", "​", "Luis"]);
++show("line separator U+2028 -- SI es LineTerminator, debe omitirse", ["Ana", " ", "Luis"]);
++show("nombre real con NBSP en extremos -- se omite el blanco de extremo, no el nombre", [" Ana "]);
++show("nombre real con ZWSP en extremos -- ZWSP no es blanco, no se recorta", ["​Ana​"]);
++
++console.log("--- Idempotencia y no-mutacion ---");
++const input = ["Ana", "   ", null, " Luis "];
++console.log("misma entrada -> misma salida:", JSON.stringify(listaClientes(input)) === JSON.stringify(listaClientes(input)));
++const original = ["Ana", "   ", " Luis "];
++const copia = JSON.stringify(original);
++listaClientes(original);
++console.log("input no mutado:", JSON.stringify(original) === copia);
++
++console.log("--- Fuera de alcance de CA-02 (no-strings): debe conservar el Boolean() previo ---");
++show("numero 0", ["Ana", 0, "Luis"]);
++show("numero no cero", ["Ana", 5, "Luis"]);
++show("boolean false", ["Ana", false, "Luis"]);
++show("objeto", ["Ana", {}, "Luis"]);
++'
++--- Blancos Unicode fuera de los ejemplos del REQ (prueba del puntero a trim()) ---
++NBSP (U+00A0) solo -- SI es WhiteSpace, debe omitirse => "Ana; Luis"
++zero-width space (U+200B) solo -- NO es WhiteSpace, NO debe omitirse => "Ana; ​; Luis"
++line separator U+2028 -- SI es LineTerminator, debe omitirse => "Ana; Luis"
++nombre real con NBSP en extremos -- se omite el blanco de extremo, no el nombre => " Ana "
++nombre real con ZWSP en extremos -- ZWSP no es blanco, no se recorta => "​Ana​"
++--- Idempotencia y no-mutacion ---
++misma entrada -> misma salida: true
++input no mutado: true
++--- Fuera de alcance de CA-02 (no-strings): debe conservar el Boolean() previo ---
++numero 0 => "Ana; Luis"
++numero no cero => "Ana; 5; Luis"
++boolean false => "Ana; Luis"
++objeto => "Ana; [object Object]; Luis"
++```
++
++**No aparece hallazgo nuevo.** El puntero de CA-02 a `String.prototype.trim()` se sostiene al
++nivel de detalle de Unicode: NBSP y separador de línea (que sí son `WhiteSpace`/`LineTerminator`)
++se tratan como blancos; zero-width space (que no lo es) se conserva como contenido, en el nombre
++suelto y en los extremos de un nombre real. Es idempotente, no muta su entrada, y el
++comportamiento para valores fuera de alcance (número, boolean, objeto) es idéntico al de la
++ronda anterior — no cambió nada que CA-02 no contratara.
++
++### Deriva de código: llamador aún inexistente (repetido, no reabre nada nuevo)
++
++```
++$ grep -rn "listaClientes(" src/
++src/formato.js:12:function listaClientes(nombres) {
++```
++
++Sigue sin haber llamador dentro de `src/`. La observación de robustez (comportamiento con
++`nombres` no-arreglo o con elementos no-cadena/no-nulo) sigue siendo **fuera de alcance de
++CA-01/CA-02** y sin efecto observable hoy, exactamente como se dejó registrado en la ronda
++anterior. No se repite la prueba de malformados porque no cambió el código que los toca
++(`nombres.filter(...)`, sin variación) ni el criterio que los cubre (ninguno).
++
++### Quality gates
++
++```
++$ true; echo "exit code: $?"
++exit code: 0
++```
++
++**EN VERDE.** Única gate declarada en `.arnes/config.json` (`quality_gates: ["true"]`).
++
++### Integridad de dependencias
++No aplica: sin `package.json` ni lockfile.
++
++### Verificación del cambio y sus dependencias (§6)
++Reutilizo la comprobación de la ronda anterior (sigue vigente, nada posterior la invalida):
++`listaClientes` no tiene llamador en `src/`, REQ-001/REQ-002 (`src/fecha.js`, `src/tarifa.js`)
++son módulos independientes sin relación con `formato.js`, y no hay documentación de usuario que
++mencione el formato del encabezado. El único archivo tocado en esta vuelta es `src/formato.js`
++(predicado `aportaContenido`) y el propio `requirements/REQ-004.md` (write-back). Sin impacto
++fuera de esos dos archivos.
++
++### Comprobación del write-back (§9)
++- El write-back del desarrollador (Historial, fila `2026-09-16 | Código ajustado a CA-02…`)
++  describe con precisión lo construido: predicado `aportaContenido`, `trim()` como base para
++  cadenas, `Boolean()` sin cambios para no-cadenas, texto conservado sin recorte. Coincide
++  exactamente con lo que se observó al ejecutar el código.
++- No decide nada nuevo (no cambia alcance ni significado): sólo transcribe lo que ADR-003 ya
++  fijó. Corresponde al `desarrollador` por la vía proporcional autorizada (§6, sin decisión
++  pendiente) y está en la misma entrega que el arreglo, como exige §9.
++- `CHANGELOG.md` tiene entrada de la misma fecha con Origen, usuario, modelo, agente y detalle
++  del ciclo de agentes.
++- Nota menor, no bloqueante: la línea del `CHANGELOG.md` que resume la verificación describe el
++  escenario negativo como `" Ana ; Luis"` y la lista final como `"Ana; Luis; Mar"` — son erratas
++  de transcripción del resumen (recortan "Marta" y omiten el "Ana" inicial del negativo), no
++  afectan al REQ ni al código y la evidencia real (arriba, y la de la ronda anterior) es
++  correcta. Clase: `instrumento` (defecto de una nota de bitácora, no del producto ni del
++  contrato) — no se abre como hallazgo formal por no tener efecto sobre lo que se cobra o se
++  muestra al cliente; se deja anotado aquí para quien lea el CHANGELOG.
++
++**El write-back existe, describe lo construido y coincide con la evidencia.** `QA-004-01`
++queda resuelto.
++
++### Hallazgos — estado tras esta ronda
++
++| ID | Clase | Descripción | Estado |
++|---|---|---|---|
++| QA-004-01 | `usuario/dinero` | Nombres compuestos sólo de espacios/blancos no se omitían (CA-02 anterior) | **Cerrado** — ya no reproduce; CA-02 reescrito por propiedad (ADR-003) y código ajustado (`aportaContenido`), verificado en los cuatro escenarios Gherkin y en los intentos adicionales de ruptura (Unicode, idempotencia, no-mutación) |
++
++No se abren hallazgos nuevos de clase `usuario/dinero` ni `contrato`. La única anotación es de
++clase `instrumento` (errata del resumen en `CHANGELOG.md`, arriba) y no bloquea el cierre.
++
++### Veredicto
++
++**QA: aprobado (2026-09-16).** CA-01 y CA-02 pasan íntegramente, incluidos los cuatro
++escenarios Gherkin y los intentos de ruptura adicionales. El criterio CA-02 no se relajó para
++encajar con el código: fue decidido por el analista (ADR-003) antes del arreglo, y el código
++ni sub-cubre ni sobre-cubre lo que promete. `Hallazgos abiertos: ninguno`. No corresponde
++`auditor-seguridad` (`Sensible a seguridad: no`, efecto de presentación, `Rigor: estandar`
++coherente con el efecto). El `Estado:` del REQ (a `completado`) queda a criterio de la
++coordinadora, no de este veredicto.
+diff -ruN -x salida.jsonl -x err.log -x debug.log -x comando.txt -x rc.txt -x inicio.txt -x fin.txt -x .prompt.txt -x latest -x .git /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM-P.base/requirements/REQ-004.md /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM-P/requirements/REQ-004.md
+--- /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM-P.base/requirements/REQ-004.md	2026-09-16 13:53:33.383438501 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM-P/requirements/REQ-004.md	2026-09-16 14:14:59.399947428 -0600
+@@ -5,7 +5,7 @@
+ Prioridad: baja
+ Versión destino: 1.0.0
+ Sensible a seguridad: no
+-QA: aprobado (2026-08-20)
++QA: aprobado (2026-09-16)
+ Seguridad: n/a
+ Hallazgos abiertos: ninguno
+ Rigor: estandar
+@@ -15,9 +15,34 @@
+ 
+ ## Criterios de aceptación
+ - CA-01: Los nombres se unen con el separador «; » (punto y coma seguido de un espacio), sin separador al final.
+-- CA-02: Los nombres vacíos o nulos se omiten.
++- CA-02: **Se omite del encabezado todo elemento que no aporte contenido**: los elementos nulos o ausentes, y toda cadena que quede **vacía tras descartar de sus extremos los caracteres en blanco**. Este criterio **no enumera** qué caracteres cuentan como «en blanco»: son los que el runtime de JavaScript reconoce como espacio en blanco en `String.prototype.trim()` —ECMA-262, producciones `WhiteSpace` y `LineTerminator`—, que es el **único sitio** donde vive esa lista exhaustiva; ejemplos **no exhaustivos**: el espacio, el tabulador, el salto de línea.
++  - Dado un elemento sin contenido en cualquier posición de la lista (primero, intermedio o último) Cuando se genera el encabezado Entonces el resultado no contiene ese elemento ni deja por él un separador al inicio, al final ni duplicado en el medio (CA-01 sigue rigiendo sobre los elementos que sí quedan).
++  - Dado que **ningún** elemento de la lista aporta contenido Cuando se genera el encabezado Entonces el resultado es la cadena vacía (`""`), sin ningún separador.
++  - Dado una lista sin elementos Cuando se genera el encabezado Entonces el resultado es la cadena vacía (`""`).
++  - Dado un nombre con contenido que además lleva blancos en sus extremos (p. ej. `" Ana "`) Cuando se genera el encabezado Entonces **no se omite** y su texto se emite **tal como se recibe**: CA-02 decide qué se omite, no reescribe el contenido de lo que se conserva.
++
++## Notas de alcance y clasificación
++- La decisión que fija el significado de «nombre vacío» en CA-02 está registrada en
++  [`docs/decisions/ADR-003.md`](../docs/decisions/ADR-003.md) (cambio **de fondo**: fija el
++  significado del criterio y amplía el conjunto de entradas que el sistema debe descartar).
++- Fuera de alcance de CA-02, sin cambio respecto de lo ya vigente: el comportamiento cuando la
++  lista completa no es un arreglo o cuando un elemento no es ni cadena ni nulo (observación de
++  robustez registrada por QA en `docs/qa/1.0.0.md`, sin efecto observable hoy porque
++  `listaClientes` no tiene llamador en `src/`).
++- **Clasificación revisada el 2026-09-16 tras esta decisión y mantenida** (`Rigor: estandar`,
++  sensibilidad a seguridad «no», revisión de seguridad no exigida): el efecto es de
++  **presentación del encabezado**. No cambia qué datos de cliente se recogen, guardan,
++  transmiten o exponen —los nombres ya se mostraban—, no interviene en ningún importe ni en
++  ninguna decisión de cobro, y la propiedad de CA-02 **no puede suprimir un nombre real**:
++  sólo descarta elementos cuyo contenido es vacío. Queda escrito aquí para que el
++  `auditor-seguridad` pueda subirlo si lee de otro modo el criterio de `AGENTS.md` §6 («todo
++  lo que toque dinero o datos de clientes»); bajarlo exige su firma.
+ 
+ ## Historial de cambios
+ | Fecha | Cambio | Causa |
+ |---|---|---|
+ | 2026-08-20 | Creación | — |
++| 2026-09-16 | Deriva corregida en el código, sin tocar los criterios: `listaClientes` unía los nombres con «, » (antes) y ahora los une con «; » (después), como contrata CA-01. Los criterios CA-01 y CA-02 quedan sin cambios. `Estado:` completado → en-revisión y `QA:` aprobado (2026-08-20) → pendiente, porque ese veredicto no juzga este código (§9 REGLA DE ESTADO). | Deriva detectada: el código implementado no cumplía CA-01; el criterio era correcto y el código estaba mal. Write-back del `desarrollador` en la misma entrega que el arreglo, por la vía proporcional de reparación declarada en `AGENTS.md` §6. |
++| 2026-09-16 | CA-02 reescrito por propiedad. **Antes:** «Los nombres vacíos o nulos se omiten» — redacción que no aclaraba ni excluía el nombre compuesto sólo de blancos. **Después:** se omite todo elemento que no aporte contenido (nulo o ausente, y toda cadena que quede vacía tras descartar de sus extremos los caracteres en blanco), con la clase «en blanco» enunciada por propiedad y con puntero al único sitio donde vive su lista exhaustiva (`String.prototype.trim()`, ECMA-262 `WhiteSpace`/`LineTerminator`) y ejemplos marcados **no exhaustivos**; se añaden los escenarios de borde (elemento sin contenido en cualquier posición, todos sin contenido, lista sin elementos) y el escenario negativo (un nombre real con blancos en los extremos **no** se omite y su texto no se reescribe). CA-01 **no se toca**; `Estado:` y los veredictos tampoco. Se añade la sección «Notas de alcance y clasificación». | Hallazgo **`QA-004-01`** (clase `usuario/dinero`, `docs/qa/1.0.0.md`): `listaClientes` usa `filter(Boolean)` y deja en el encabezado los nombres de sólo blancos (`"Ana;    ; Luis"`). El propio log de QA registra que CA-02 no resolvía ese caso: es una **decisión de significado del criterio**, que por `AGENTS.md` §9 corresponde al `analista-requerimientos` y no al desarrollador ni a QA. Cambio **DE FONDO** → **ADR-003** (`docs/decisions/ADR-003.md`). El arreglo del código es del `desarrollador`; este write-back no lo hace ni cierra el hallazgo. |
++| 2026-09-16 | Código ajustado a CA-02, sin tocar los criterios. **Antes:** `listaClientes` filtraba con `filter(Boolean)`, que sólo descarta valores *falsy* y por eso conservaba las cadenas compuestas sólo de blancos (`"Ana;    ; Luis"`). **Después:** se omite todo elemento que no aporte contenido —una cadena aporta contenido si no queda vacía tras `trim()`; para los valores que no son cadena se conserva el criterio vigente, que CA-02 declara fuera de su alcance—, y el texto de los nombres que se conservan se emite **tal como se recibe** (`" Ana "` no se omite ni se recorta). CA-01 sigue rigiendo sobre los elementos que quedan. No se cambió nada más de `src/` ni se añadió validación de entrada. `Estado:`, `QA:`, `Hallazgos abiertos:`, CA-01 y CA-02 **no se tocan**: el veredicto y el cierre del hallazgo son del `qa-tester`. | Hallazgo **`QA-004-01`** (clase `usuario/dinero`, `docs/qa/1.0.0.md`) y la decisión de significado que lo resolvió, **[ADR-003](../docs/decisions/ADR-003.md)** → CA-02 reescrito por propiedad (fila anterior). Write-back del `desarrollador` en la misma entrega que el arreglo (`AGENTS.md` §9), por la vía proporcional de reparación declarada por el propietario en `AGENTS.md` §6: aquí no queda decisión de alcance ni de significado, sólo se refleja en el requerimiento lo que el analista ya contrató. |
++| 2026-09-16 | Revalidación de QA (vuelta 2 de 3 del bucle dev↔QA): CA-01 y CA-02 verificados contra los cuatro escenarios Gherkin, incluido el negativo (`" Ana "` se conserva sin recortar), más intentos de ruptura adicionales (blancos Unicode NBSP/` ` frente a zero-width space, idempotencia, no-mutación del arreglo de entrada, valores fuera de alcance no-cadena). No se relajó el criterio: CA-02 fue decidido por el analista (ADR-003) antes del arreglo del desarrollador. `QA:` pendiente → aprobado (2026-09-16); `Hallazgos abiertos:` QA-004-01 → ninguno. No se tocan CA-01, CA-02 ni `Estado:` (lo cambia la coordinadora). | Cierre del hallazgo `QA-004-01` tras verificar el write-back del desarrollador contra el código ejecutado; evidencia completa en `docs/qa/1.0.0.md` (segunda ronda). |
+diff -ruN -x salida.jsonl -x err.log -x debug.log -x comando.txt -x rc.txt -x inicio.txt -x fin.txt -x .prompt.txt -x latest -x .git /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM-P.base/src/formato.js /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM-P/src/formato.js
+--- /tmp/arnes-diag-wBF0L4/proy-CON-AFIRM-P.base/src/formato.js	2026-09-16 13:53:33.383237957 -0600
++++ /tmp/arnes-diag-wBF0L4/casos/CON-AFIRM-P/src/formato.js	2026-09-16 14:07:55.103940428 -0600
+@@ -1,5 +1,18 @@
+ // Presentación: lista de nombres de clientes para el encabezado del informe mensual.
++
++// CA-02: un elemento aporta contenido si, siendo cadena, no queda vacía tras descartar
++// de sus extremos los caracteres en blanco (los que reconoce String.prototype.trim()).
++// Para cualquier otro valor se conserva el criterio vigente —descartar los falsy—:
++// ese caso queda fuera del alcance de CA-02 y no se cambia aquí.
++function aportaContenido(nombre) {
++  if (typeof nombre === 'string') return nombre.trim() !== '';
++  return Boolean(nombre);
++}
++
+ function listaClientes(nombres) {
+-  return nombres.filter(Boolean).join(', ');
++  // Se filtra por contenido, pero se emite el texto tal como se recibe:
++  // CA-02 decide qué se omite, no reescribe lo que se conserva.
++  return nombres.filter(aportaContenido).join('; ');
+ }
++
+ module.exports = { listaClientes };

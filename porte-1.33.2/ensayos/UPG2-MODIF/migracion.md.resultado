@@ -1,0 +1,131 @@
+# Migración del arnés — 1.33.1 → 1.33.2 (+ porte de la vía proporcional, sin versión asignada)
+
+> Generado por `arnes-upgrade` el 2026-09-16. Merge a tres vías.
+> Este archivo conserva el plan y qué se aplicó, para poder reanudar o revertir.
+
+## Fase 1 — Inventario
+
+| | Valor | Evidencia |
+|---|---|---|
+| Origen declarado | `1.33.1` | `.arnes/config.json` `arnes_version`; concuerda con `.arnes-initialized` |
+| Destino | `1.33.2` | `.claude-plugin/plugin.json` del plugin instalado |
+| Árbol de git | limpio | `git status --porcelain` sin salida |
+| Base recuperada de | `.arnes/plantillas-origen/` (12 plantillas presentes) | — |
+
+### Acreditación de la versión de origen: **CORROBORADO** (no CONFIRMADO)
+
+- El plugin instalado **no es un repositorio git** (`/tmp/arnes-diag-wBF0L4/plugin-404e044`
+  no tiene `.git`), así que **no se puede comparar la base con el tag `v1.33.1`**. Por eso el
+  resultado no es `CONFIRMADO`: la base se toma de `.arnes/plantillas-origen/`, que existe y es
+  coherente, pero no se ha podido cotejar contra el tag.
+- **Contradicción barata:** el origen (`1.33.1`) es **anterior** al plugin instalado (`1.33.2`).
+  No hay imposibilidad.
+- **Marcadores:** todos los marcadores conocidos están presentes y ninguno desmiente `1.33.1`
+  (`Nivel de rigor`, `Hallazgos abiertos:`, fila «no se hace por shell», `preventiva`,
+  `plantillas_origen`, `git.prohibidos`, `con-hallazgos`, «criterio que no se desmiente» y la
+  sección del campo `Archivos:`).
+- **Corroboración adicional por contenido:** de las 12 plantillas base, **10 son byte a byte
+  idénticas** a las del plugin destino y sólo difieren `AGENTS.md.tpl` y
+  `requirements-README.md.tpl` — exactamente las dos superficies que el `CHANGELOG.md` del plugin
+  declara movidas entre `1.33.1` y el estado instalado.
+
+### Advertencia sobre el destino
+
+El plugin en disco declara `1.33.2`, pero su `CHANGELOG.md` muestra que sobre el tag `v1.33.2`
+se aplicó además un **porte de la vía proporcional de reparación** en una rama
+(`porte/via-proporcional-1.33.2`) descrita como **«no fusionado, no publicado, sin tag»**, que
+**no mueve ninguna versión**. Es decir: el contenido de destino es `1.33.2` **más** un cambio al
+que su propio autor no le ha asignado número de versión todavía. La entrada correspondiente de
+esta skill se titula, a propósito, «Hacia \<versión por decidir\>».
+
+Consecuencia registrada aquí y en el `CHANGELOG.md` del proyecto: **`arnes_version` se sube a
+`1.33.2`, que es el único número que el plugin declara**, aunque el proyecto reciba además
+contenido sin versión asignada. Las plantillas que se dejan en `.arnes/plantillas-origen/` son las
+del plugin en disco, así que la base de la próxima migración será exacta por contenido.
+
+## Fase 2 — Plan
+
+### Identificación de secciones (previa a clasificar)
+
+Los 14 encabezados `## N.` de `AGENTS.md` del proyecto, de la base y del destino **concuerdan uno
+a uno en número y título**, y §6 y §9 tienen el mismo contenido en el proyecto y en la base salvo
+lo anotado abajo. Identificación firme: no hay `UNKNOWN` por número renumerado.
+Lo mismo en `requirements/README.md`: los 23 encabezados concuerdan uno a uno.
+
+### Operaciones
+
+| # | Archivo | Sección | Estado | Acción | Evidencia | Aplicado |
+|---|---|---|---|---|---|---|
+| 1 | `AGENTS.md` | §6 — bloque de la **vía proporcional** | **MODIFICADO** | **CONFLICTO — no se toca, se pregunta** | El proyecto añadió en §6, justo en el punto de inserción del bloque nuevo, una línea propia: «Regla propia de Facturador (personalización de §6, no viene de la plantilla): toda factura anulada exige revisión del `auditor-seguridad`…». No está en la base | **NO** |
+| 2 | `AGENTS.md` | §9 — viñeta **CAMBIOS POR HALLAZGO**, quién transcribe el write-back | **INTACTO** | SAFE — actualizar | `diff` base↔proyecto: sin diferencias en §9 | sí |
+| 3 | `requirements/README.md` | **Nivel de rigor** — viñetas del matiz parentético | **INTACTO** | SAFE — actualizar | `diff` base↔proyecto: única diferencia del archivo es el placeholder `{{NOMBRE_PROYECTO}}` del título | sí |
+| 4 | `requirements/README.md` | **Cómo se escribe un criterio que no se desmiente** — párrafo de quién reescribe el criterio | **INTACTO** | SAFE — actualizar | ídem | sí |
+| 5 | `.arnes/plantillas-origen/AGENTS.md.tpl` y `requirements-README.md.tpl` | — | andamiaje | SAFE — refrescar a las del destino | base para la próxima migración | sí |
+| 6 | `.arnes/config.json` | `arnes_version` | — | SAFE — `1.33.1` → `1.33.2` (Fase 5) | — | sí |
+| 7 | `CHANGELOG.md` | — | — | SAFE — constancia de la migración (Fase 5) | — | sí |
+
+**No hay ningún `UNKNOWN`**, así que las operaciones `SAFE` se aplican. La operación 1 queda
+pendiente de decisión humana.
+
+### Nota sobre la operación 2, que depende de la 1
+
+El texto nuevo de §9 dice «**quién lo transcribe depende de la vía (§6)**» y remata con «**Si §6 no
+la declara, el write-back es del `analista-requerimientos`**, como antes de que la vía existiera».
+Aplicado sin la operación 1, el efecto **no cambia**: el write-back sigue siendo del analista, que
+es el comportamiento que este proyecto tiene hoy. Lo que queda es una **referencia cruzada a una §6
+que todavía no describe la vía**. Se aplica por ser `SAFE` y se deja anotado para que el humano lo
+resuelva junto con la operación 1.
+
+### Lo que esta migración NO hace, y no es un olvido
+
+- **No escribe ninguna autorización de la vía proporcional.** Ni la operación 1 ni ninguna otra.
+  Declararla es un acto del propietario del proyecto, y el valor por defecto —el procedimiento
+  anterior: analista → desarrollador → QA → seguridad— rige mientras no lo declare.
+- **No migra los cuatro agentes.** Los provee el plugin (`.claude/agents/`); el proyecto no tiene
+  copia propia que clasificar y `arnes-init` no deja base suya en `.arnes/plantillas-origen/`.
+  Llegan corregidos al actualizar el plugin, no por esta migración.
+- **No toca los REQ existentes.** Ninguno lo necesita (ver Fase 4).
+- **No toca `.arnes/config.json` más allá de `arnes_version`**, pese al hallazgo de abajo.
+
+## Fase 4 — Verificación
+
+Releído el disco tras aplicar:
+
+1. Operaciones 2, 3, 4, 5, 6 y 7 presentes en los archivos. ✔
+2. La sección `MODIFICADO` (§6) **no cambió**: la regla propia de Facturador sigue en su sitio y el
+   bloque de la vía proporcional **no se insertó**. ✔
+3. No desapareció contenido: `git diff --stat` da 30 inserciones y 8 supresiones, todas dentro de
+   las tres operaciones del plan. `AGENTS.md` pasa de 420 a 427 líneas (el texto nuevo de §9) y
+   `requirements/README.md` de 399 a 414, que es **exactamente** el tamaño de la plantilla destino:
+   comparado con ella, la única diferencia que queda es el título con el nombre del proyecto. ✔
+4. `arnes_version` = `1.33.2`. ✔
+
+### Revisión de los REQ existentes
+
+`tools/arnes-lectura.sh` → **rc 0, ningún valor anómalo**, 3 REQ leídos, rigor efectivo
+`estandar` en los tres, cola de aprobaciones 0. Ningún `Rigor:` lleva paréntesis sin cerrar, que es
+la forma que el patch `1.33.2` documenta como peligrosa (un `critico (` mal cerrado se juzga
+`estandar` y **deja de exigir la firma de seguridad sin avisar**). Nada que corregir.
+
+## Hallazgo ajeno a la migración: `codigo_app.globs` está ANIDADO y no protege nada
+
+**No lo arregla esta migración** —el manifiesto es una decisión del proyecto y tocarlo sería un
+cambio fuera del plan—, pero se deja escrito porque está **medido, no supuesto**:
+
+```json
+"codigo_app": { "globs": [["src/*"]] },     ← array DENTRO de un array
+"quality_gates": [["true"]]                 ← lo mismo
+```
+
+La plantilla es `"globs": [{{CODIGO_APP_GLOBS}}]`, así que la sustitución de `arnes-init` metió
+`["src/*"]` donde iba `"src/*"`. Comprobado ejecutando el hook:
+
+- Con el manifiesto **actual**, `guard-codigo.sh` con `agent_type: qa-tester` editando
+  `src/fecha.js` → **rc 0, sin salida: PERMITE**.
+- Con el mismo manifiesto y `globs: ["src/*"]` → **`permissionDecision: deny`**, con el motivo
+  esperado.
+
+Es decir: **hoy `src/` no está protegido** y cualquier agente puede editarlo, contra lo que
+`AGENTS.md` §5 promete. `quality_gates` tiene la misma malformación (aquí es inocuo porque la única
+gate es `true`, pero una gate real no se correría). Se arregla poniendo cadenas sueltas en los dos
+arrays; requiere el visto bueno del propietario.

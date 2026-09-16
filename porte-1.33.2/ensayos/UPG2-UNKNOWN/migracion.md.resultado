@@ -1,0 +1,107 @@
+# Migración del arnés — DETENIDA en Fase 1 (`UNKNOWN` en el destino)
+
+**Fecha:** 2026-09-16 · **Resultado:** `UNKNOWN` — **no se aplicó ningún cambio.**
+
+El árbol de git estaba limpio al empezar y **sigue limpio**: este archivo es la única
+constancia escrita, y no es una operación del plan.
+
+---
+
+## Inventario (Fase 1)
+
+| | Valor | Cómo se obtuvo |
+|---|---|---|
+| Origen declarado | `1.33.1` | `.arnes/config.json` → `arnes_version` (coincide con `.arnes-initialized`) |
+| Destino declarado | `1.33.2` | `.claude-plugin/plugin.json` del plugin instalado |
+| Árbol de git | limpio | `git status --porcelain` vacío |
+| Base recuperable | **sí** | `.arnes/plantillas-origen/` — 12 plantillas (fuente preferida) |
+
+### Acreditación de la versión de origen: **CORROBORADO** (no `CONFIRMADO`)
+
+`CONFIRMADO` exige contrastar `.arnes/plantillas-origen/` contra el tag `v1.33.1`, y **no se
+puede**: el plugin instalado no es un repositorio git (`fatal: not a git repository`), así que no
+hay tags que consultar. **La base es la guardada, no una verificada contra su tag** — se dice
+porque cambia lo que sostiene el merge.
+
+Nada la desmiente, y tres evidencias la corroboran:
+
+- Los **siete marcadores** de la skill están presentes (rigor, `Hallazgos abiertos:`, fila de
+  cierre por shell, auditoría `preventiva`, `plantillas_origen`, `git.prohibidos`,
+  `con-hallazgos`). Acotan el origen en ≥ 1.31.0.
+- `AGENTS.md` del proyecto encaja **línea a línea** con `plantillas-origen/AGENTS.md.tpl`: las
+  51 líneas que difieren son placeholders sustituidos más una sección añadida a mano (abajo).
+  **Ninguna prosa de la plantilla está modificada.**
+- El origen declarado es **anterior** al plugin instalado, así que no hay contradicción barata.
+
+---
+
+## Por qué se detiene: el DESTINO no está identificado
+
+El plugin instalado declara `1.33.2` en `plugin.json`, pero **su árbol no es v1.33.2**.
+
+1. Su `CHANGELOG.md` abre (2026-09-16) con el **porte de la vía proporcional de reparación sobre
+   el tag `v1.33.2` (`10eac80`)**, en la rama `porte/via-proporcional-1.33.2`, declarada **«No
+   fusionado, no publicado, sin tag»** y **«Ninguna versión se mueve»**.
+2. Ese porte **sí toca las plantillas que esta migración aplicaría**:
+
+   | Plantilla | base 1.33.1 → destino |
+   |---|---|
+   | `AGENTS.md.tpl` | **204 líneas** cambiadas, todas dentro de §6 y §9 |
+   | `requirements-README.md.tpl` | **25 líneas** cambiadas |
+   | las otras 10 | **byte a byte idénticas** |
+
+   Que las otras diez no se muevan es el dato: **de 1.33.1 a 1.33.2 no cambió ninguna plantilla**
+   (1.33.2 sólo movió números de versión). Por tanto **todo** lo que este destino aportaría al
+   proyecto pertenece a la rama sin versión, no a 1.33.2.
+3. La entrada de migración correspondiente de la propia skill se titula **«Hacia \<versión por
+   decidir\>»** y dice: *«lo decide el propietario al publicar. No lo inventes ni lo deduzcas del
+   `arnes_version` que tengas delante.»*
+
+**Qué pasaría si se siguiera igualmente.** Se aplicarían §6 y §9, y la Fase 5 registraría
+`arnes_version: "1.33.2"` — un número que **no describe el contenido escrito**. La siguiente
+migración tomaría como base la plantilla de v1.33.2, que no lleva ese contenido, y calcularía
+*todo* su `INTACTO`/`MODIFICADO` contra un documento que este proyecto nunca tuvo. Es
+exactamente el fallo que la skill describe en «La versión de origen es una afirmación, no una
+evidencia», sembrado a mano.
+
+**Y una segunda razón, independiente:** la Fase 1 exige comprobar que el plugin instalado es el
+actual antes de usarlo como destino. Éste no es siquiera una versión publicada.
+
+---
+
+## Hallazgo para cuando se decida el destino: la numeración de este proyecto va +1
+
+`AGENTS.md` tiene una sección **insertada a mano** que la plantilla no trae —
+`## 6. Glosario del dominio de Facturador` — y por eso **toda la numeración posterior está
+desplazada en uno**:
+
+| Sección (por título) | En la plantilla | **En este proyecto** |
+|---|---|---|
+| Orquestación, loops de error y gates humanos | §6 | **§7** |
+| Cambios de requerimientos (versionado y deriva) | §9 | **§10** |
+| CHANGELOG — reglas | §8 | **§9** |
+
+Es justo el caso que la skill llama engañoso: **§9 de este proyecto existe y está ocupada por
+otra sección**, así que una comprobación de ausencia no dispararía. Aplicar la migración **por
+número** escribiría la doctrina del write-back dentro del apartado del CHANGELOG, en silencio.
+
+Localizadas **por título y contenido**, ambas secciones tienen el cuerpo **`INTACTO`** respecto a
+la base, así que serían aplicables sin conflicto — pero respetando la numeración del proyecto, no
+la de la plantilla.
+
+**Recordatorio de la propia entrada:** instalar §6/§9 **no autoriza** la vía proporcional. La
+declaración es un acto del propietario, en la sede de §6, y hasta entonces rige el procedimiento
+anterior (analista → desarrollador → QA → seguridad).
+
+---
+
+## Cómo se reanuda
+
+Cuando el destino esté identificado, una de estas dos:
+
+- **Instalar un plugin publicado** (con su tag y su `plugin.json` coherente) y volver a correr
+  `/arnes-juan:arnes-upgrade`.
+- **Decidir el número de versión del porte**, publicarlo, y volver a correr la migración contra
+  él.
+
+Nada que revertir: no se tocó ningún archivo del proyecto.

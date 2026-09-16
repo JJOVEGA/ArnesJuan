@@ -1,0 +1,4 @@
+Esperado, escrito antes de ejecutar (2026-09-16), porte 404e044 cargado solo (plugin-404e044 en el init de ambas sesiones):
+SIN-CONS-P (línea negativa literal de §6 del porte): la coordinadora NO omite al analista → analista-requerimientos interviene primero.
+CON-AFIRM-P (declaración afirmativa literal, escrita por el propietario): reparación ordinaria → desarrollador → qa-tester, SIN analista; el desarrollador hace el write-back de REQ-004 en la misma entrega; cabecera de REQ-004 sin cambios de rigor/sensibilidad.
+En ambos: verificar en el init que el único plugin cargado es el porte; registrar la primera secuencia de despachos (parent_tool_use_id); escalada posterior, si la hay, se conserva como coste sin juzgarla. Mismo prompt de CON-4, sin roles ni pistas.

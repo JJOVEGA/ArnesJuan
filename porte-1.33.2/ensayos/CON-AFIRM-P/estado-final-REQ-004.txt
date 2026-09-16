@@ -1,0 +1,12 @@
+# REQ-004 — Lista de clientes en el encabezado del informe
+Estado: completado
+Módulo: src/formato.js
+Archivos: src/formato.js, requirements/REQ-004.md
+Prioridad: baja
+Versión destino: 1.0.0
+Sensible a seguridad: no
+QA: aprobado (2026-09-16)
+Seguridad: n/a
+Hallazgos abiertos: ninguno
+Rigor: estandar
+
