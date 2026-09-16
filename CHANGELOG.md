@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-16 · CI del candidato v1.34.0 (`b520e3b`, PR #51): puerta ROJA por `REQ-017 CA-08 (ii)` (sonda de coste sobre hooks idénticos a v1.33.2); banco 904 · 1 · 7 cuadrado; consolidado del candidato
+`porte-1.33.2/ci-pr51-b520e3b/` (DIAGNOSTICO.md, run.json, log completo) y `porte-1.33.2/README.md` § «Candidato v1.34.0». Sin relanzar, sin fusión, sin publicación.
+
 ## 2026-09-16 · Candidato v1.34.0 (`b520e3b`): verificación acotada del destino (UPG3, 4 sesiones: 0 dudas del marcador; renumerado llega a Fase 2 y localiza por título y contenido), aclaración de H-P1, PR #51 en borrador hacia `main`
 `porte-1.33.2/ensayos/UPG3-*`, `esperado-upg3.txt`, `lanzar-upg3.sh`, `UPG3-analisis.txt`; `porte-1.33.2/H-P1-aclaracion.md`. Push sin force de `porte/via-proporcional-1.33.2` @ `b520e3b`; diff del PR idéntico a `v1.33.2..b520e3b`; CI run 35151689849 en curso.
 
