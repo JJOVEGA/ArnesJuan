@@ -1,0 +1,771 @@
+2026-09-16T21:10:08.788Z [DEBUG] MDM settings load completed in 13ms
+2026-09-16T21:10:08.793Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /etc/claude-code/managed-settings.json
+2026-09-16T21:10:08.796Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /etc/claude-code/managed-settings.json
+2026-09-16T21:10:08.797Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/.claude/settings.json
+2026-09-16T21:10:08.798Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/.claude/settings.local.json
+2026-09-16T21:10:08.799Z [DEBUG] Cleared CA certificates cache
+2026-09-16T21:10:08.804Z [DEBUG] [init] configureGlobalMTLS starting
+2026-09-16T21:10:08.804Z [DEBUG] [init] configureGlobalMTLS complete
+2026-09-16T21:10:08.805Z [DEBUG] [init] configureGlobalAgents starting
+2026-09-16T21:10:08.805Z [DEBUG] CA certs: stores=bundled,system, extraCertsPath=/etc/ssl/certs/ca-certificates.crt
+2026-09-16T21:10:08.805Z [DEBUG] CA certs: Loaded 121 bundled root certificates
+2026-09-16T21:10:08.815Z [DEBUG] CA certs: Loaded 122 system CA certificates
+2026-09-16T21:10:08.815Z [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (/etc/ssl/certs/ca-certificates.crt)
+2026-09-16T21:10:08.815Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-09-16T21:10:08.815Z [DEBUG] [init] configureGlobalAgents complete
+2026-09-16T21:10:08.824Z [DEBUG] Git remote URL: null
+2026-09-16T21:10:08.824Z [DEBUG] No git remote URL found
+2026-09-16T21:10:08.827Z [DEBUG] Error log sink initialized
+2026-09-16T21:10:08.828Z [DEBUG] clearPluginCache: invalidating loadAllPlugins cache (preAction: --plugin-dir inline plugins)
+2026-09-16T21:10:08.860Z [DEBUG] [ToolSearch:optimistic] mode=tst, ENABLE_TOOL_SEARCH=undefined, result=true
+2026-09-16T21:10:08.872Z [DEBUG] [STARTUP] Loading MCP configs...
+2026-09-16T21:10:08.882Z [DEBUG] [STARTUP] Running setup()...
+2026-09-16T21:10:08.950Z [DEBUG] Loaded 1 installed plugins from /home/juan/.claude/plugins/installed_plugins.json
+2026-09-16T21:10:08.954Z [DEBUG] Loading skills from: managed=/etc/claude-code/.claude/skills, user=/home/juan/.claude/skills, project=[]
+2026-09-16T21:10:08.966Z [DEBUG] Failed to stat directory /etc/claude-code/.claude/agents: ENOENT: no such file or directory, stat '/etc/claude-code/.claude/agents'
+2026-09-16T21:10:08.982Z [DEBUG] Failed to stat directory /etc/claude-code/.claude/commands: ENOENT: no such file or directory, stat '/etc/claude-code/.claude/commands'
+2026-09-16T21:10:08.985Z [DEBUG] Loaded 0 unique skills (0 unconditional, 0 conditional, managed: 0, user: 0, project: 0, additional: 0, legacy commands: 0)
+2026-09-16T21:10:09.080Z [WARN] Plugin arnes-juan: hooks.json: unknown key "_doc" ignored (/tmp/arnes-diag-wBF0L4/plugin-b520e3b/hooks/hooks.json)
+2026-09-16T21:10:09.080Z [DEBUG] [arnes-juan] $.ui.log: hooks.json: unknown key "_doc" ignored
+2026-09-16T21:10:09.081Z [DEBUG] Read hooks.json for plugin arnes-juan (enabled=true): /tmp/arnes-diag-wBF0L4/plugin-b520e3b/hooks/hooks.json
+2026-09-16T21:10:09.114Z [DEBUG] Loaded inline plugin from path: arnes-juan
+2026-09-16T21:10:09.114Z [DEBUG] Loaded 1 directory-loaded plugins
+2026-09-16T21:10:09.116Z [DEBUG] Found 1 plugins (1 enabled, 0 disabled)
+2026-09-16T21:10:09.120Z [DEBUG] getPluginSkills: Processing 1 enabled plugins
+2026-09-16T21:10:09.120Z [DEBUG] Checking plugin arnes-juan: skillsPath=exists, skillsPaths=0 paths
+2026-09-16T21:10:09.120Z [DEBUG] Attempting to load skills from plugin arnes-juan default skillsPath: /tmp/arnes-diag-wBF0L4/plugin-b520e3b/skills
+2026-09-16T21:10:09.121Z [DEBUG] Total plugin workflows loaded: 0
+2026-09-16T21:10:09.122Z [DEBUG] Total plugin commands loaded: 0
+2026-09-16T21:10:09.152Z [DEBUG] Git remote URL: null
+2026-09-16T21:10:09.152Z [DEBUG] No git remote URL found
+2026-09-16T21:10:09.155Z [DEBUG] Loaded 4 agents from plugin arnes-juan default directory
+2026-09-16T21:10:09.155Z [DEBUG] Total plugin agents loaded: 4
+2026-09-16T21:10:09.161Z [ERROR] [uds-messaging] Server error: Failed to listen at /run/user/1000/cc-socks/2328729.sock
+2026-09-16T21:10:09.161Z [ERROR] [uds-messaging] Failed to start: Error: Failed to listen at /run/user/1000/cc-socks/2328729.sock
+2026-09-16T21:10:09.167Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /etc/claude-code/managed-settings.json
+2026-09-16T21:10:09.168Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/.claude/settings.json
+2026-09-16T21:10:09.168Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/.claude/settings.local.json
+2026-09-16T21:10:09.169Z [DEBUG] Error log sink initialized
+2026-09-16T21:10:09.225Z [DEBUG] hooks modules not loaded: rollout flag (tengu_plugin_hooks_modules) is off, from the default (a cold GrowthBook cache, no payload yet)
+2026-09-16T21:10:09.225Z [DEBUG] Loading hooks from plugin: arnes-juan
+2026-09-16T21:10:09.226Z [DEBUG] sec-default@builtin not seated: hooks modules are off in this process
+2026-09-16T21:10:09.229Z [DEBUG] Registered 3 hooks from 1 plugins
+2026-09-16T21:10:09.254Z [DEBUG] Cannot acquire lock for 2.1.272 - held by PID 1685663
+2026-09-16T21:10:09.255Z [ERROR] NON-FATAL: Lock acquisition failed for /home/juan/.local/share/claude/versions/2.1.272 (expected in multi-process scenarios): Lock already held by another process
+2026-09-16T21:10:09.267Z [DEBUG] [STARTUP] setup() completed in 385ms
+2026-09-16T21:10:09.274Z [DEBUG] Cleared mTLS configuration cache
+2026-09-16T21:10:09.274Z [DEBUG] Cleared proxy agent cache
+2026-09-16T21:10:09.274Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-09-16T21:10:09.298Z [DEBUG] [STARTUP] Loading commands and agents...
+2026-09-16T21:10:09.314Z [DEBUG] Loaded 4 skills from plugin arnes-juan default directory
+2026-09-16T21:10:09.314Z [DEBUG] Total plugin skills loaded: 4 (0 duplicate/user-owned entries skipped)
+2026-09-16T21:10:09.315Z [DEBUG] getSkills returning: 0 skill dir commands, 4 plugin skills, 40 bundled skills, 0 builtin plugin skills
+2026-09-16T21:10:09.321Z [DEBUG] Artifact input schema built: capabilities=true comments=true db=true assets=true files=true types=true type_catalog=true read_page_data=false room=false verify=false delete=true copy_from=true preview=false open=true endpoints=false pin=true flag_source=payload gb_fresh=true assets_source=disk
+2026-09-16T21:10:09.348Z [DEBUG] [STARTUP] Commands and agents loaded in 50ms
+2026-09-16T21:10:09.354Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-09-16T21:10:09.354Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-09-16T21:10:09.354Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2026-09-16T21:10:09.354Z [DEBUG] Starting background startup prefetches
+2026-09-16T21:10:09.355Z [DEBUG] [Bootstrap] Fetching
+2026-09-16T21:10:09.374Z [DEBUG] [STARTUP] MCP configs resolved in 2ms (awaited at +502ms)
+2026-09-16T21:10:09.390Z [ERROR] Failed to migrate plugin files: EROFS: read-only file system, rename '/home/juan/.claude/plugins/installed_plugins_v2.json' -> '/home/juan/.claude/plugins/installed_plugins.json'
+2026-09-16T21:10:09.393Z [DEBUG] Cleared mTLS configuration cache
+2026-09-16T21:10:09.393Z [DEBUG] Cleared proxy agent cache
+2026-09-16T21:10:09.393Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-09-16T21:10:09.394Z [DEBUG] [3P telemetry] Waiting for remote managed settings fetch before telemetry init
+2026-09-16T21:10:09.402Z [DEBUG] All plugins already exist, skipping migration
+2026-09-16T21:10:09.406Z [DEBUG] [MCP] --mcp-config servers running fully async (nonblocking)
+2026-09-16T21:10:09.407Z [DEBUG] [MCP] claude.ai connectors running fully async (nonblocking)
+2026-09-16T21:10:09.408Z [DEBUG] Initialized versioned plugins system with 1 plugins
+2026-09-16T21:10:09.416Z [DEBUG] [auto-mode] verifyAutoModeGateAccess: enabledState=enabled disabledBySettings=false model=claude-opus-5[1m] modelSupported=true disableFastModeBreakerFires=false carouselAvailable=true canEnterAuto=true
+2026-09-16T21:10:09.475Z [DEBUG] [event-loop-stall] detector started (interval=200ms, threshold=500ms)
+2026-09-16T21:10:09.516Z [DEBUG] [ScheduledTasks] scheduler start() — enabled=false, hasTasks=false
+2026-09-16T21:10:09.518Z [DEBUG] session.start: raised (surface none, not interactive)
+2026-09-16T21:10:09.562Z [DEBUG] [claudeai-mcp] Fetching from https://api.anthropic.com/v1/mcp_servers?limit=1000
+2026-09-16T21:10:09.563Z [DEBUG] mcp runtime arm: v2 (source: growthbook)
+2026-09-16T21:10:09.577Z [DEBUG] Total LSP servers loaded: 0
+2026-09-16T21:10:09.577Z [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2026-09-16T21:10:09.577Z [DEBUG] LSP manager initialized with 0 servers
+2026-09-16T21:10:09.578Z [DEBUG] LSP server manager initialized successfully
+2026-09-16T21:10:09.579Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-09-16T21:10:09.591Z [DEBUG] [concurrentSessions] register failed: EROFS: read-only file system, chmod '/home/juan/.claude/sessions'
+2026-09-16T21:10:09.591Z [DEBUG] Failed to remove .orphaned_at: /home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.33.2: Error: EROFS: read-only file system, unlink '/home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.33.2/.orphaned_at'
+2026-09-16T21:10:09.597Z [DEBUG] Failed to stat directory /etc/claude-code/.claude/output-styles: ENOENT: no such file or directory, stat '/etc/claude-code/.claude/output-styles'
+2026-09-16T21:10:09.598Z [DEBUG] Total plugin output styles loaded: 0
+2026-09-16T21:10:09.602Z [DEBUG] act_dont_rederive_arm_active source=growthbook
+2026-09-16T21:10:09.606Z [ERROR] Failed to save config with lock: Error: EROFS: read-only file system, mkdir '/home/juan/.claude.json.lock'
+2026-09-16T21:10:09.606Z [DEBUG] [concurrentSessions] updatePidFile failed: ENOENT: no such file or directory, open '/home/juan/.claude/sessions/2328729.json'
+2026-09-16T21:10:09.611Z [DEBUG] [concurrentSessions] updatePidFile failed: ENOENT: no such file or directory, open '/home/juan/.claude/sessions/2328729.json'
+2026-09-16T21:10:09.642Z [DEBUG] Policy limits: Using cached restrictions (304)
+2026-09-16T21:10:09.643Z [DEBUG] Policy limits: Cache still valid (304 Not Modified)
+2026-09-16T21:10:09.654Z [DEBUG] Preserving file permissions: 100600
+2026-09-16T21:10:09.676Z [DEBUG] Writing to temp file: /home/juan/.claude.json.tmp.2328729.4020d44a15c5
+2026-09-16T21:10:09.686Z [ERROR] Failed to write file atomically: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.4020d44a15c5'
+2026-09-16T21:10:09.688Z [DEBUG] Remote settings: No settings found (404)
+2026-09-16T21:10:09.690Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /etc/claude-code/managed-settings.json
+2026-09-16T21:10:09.691Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/.claude/settings.json
+2026-09-16T21:10:09.691Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/.claude/settings.local.json
+2026-09-16T21:10:09.693Z [DEBUG] Cleared mTLS configuration cache
+2026-09-16T21:10:09.693Z [DEBUG] Cleared proxy agent cache
+2026-09-16T21:10:09.694Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-09-16T21:10:09.723Z [DEBUG] Watching /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN for /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/.claude to appear
+2026-09-16T21:10:09.723Z [DEBUG] Watching for changes in setting files /home/juan/.claude/settings.json...
+2026-09-16T21:10:09.724Z [DEBUG] Failed to clean up temp file: Error: EROFS: read-only file system, unlink '/home/juan/.claude.json.tmp.2328729.4020d44a15c5'
+2026-09-16T21:10:09.724Z [ERROR] Config fallback write also failed; continuing without persisting: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.4020d44a15c5'
+2026-09-16T21:10:09.726Z [DEBUG] Remote settings: Failed to save - EROFS: read-only file system, open '/home/juan/.claude/remote-settings.json'
+2026-09-16T21:10:09.726Z [DEBUG] Remote settings: Saved empty sentinel (404 response)
+2026-09-16T21:10:09.728Z [DEBUG] Programmatic settings change notification for policySettings
+2026-09-16T21:10:09.728Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /etc/claude-code/managed-settings.json
+2026-09-16T21:10:09.729Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/.claude/settings.json
+2026-09-16T21:10:09.729Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/.claude/settings.local.json
+2026-09-16T21:10:09.732Z [DEBUG] Plugin hooks: skipping reload, plugin-affecting settings unchanged
+2026-09-16T21:10:09.732Z [DEBUG] Settings changed from policySettings, updating app state
+2026-09-16T21:10:09.736Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /etc/claude-code/managed-settings.json
+2026-09-16T21:10:09.737Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/.claude/settings.json
+2026-09-16T21:10:09.737Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/.claude/settings.local.json
+2026-09-16T21:10:09.737Z [DEBUG] Replacing all allow rules for destination 'userSettings' with 0 rule(s): []
+2026-09-16T21:10:09.737Z [DEBUG] Replacing all deny rules for destination 'userSettings' with 0 rule(s): []
+2026-09-16T21:10:09.737Z [DEBUG] Replacing all ask rules for destination 'userSettings' with 0 rule(s): []
+2026-09-16T21:10:09.737Z [DEBUG] Replacing all allow rules for destination 'projectSettings' with 0 rule(s): []
+2026-09-16T21:10:09.737Z [DEBUG] Replacing all deny rules for destination 'projectSettings' with 0 rule(s): []
+2026-09-16T21:10:09.737Z [DEBUG] Replacing all ask rules for destination 'projectSettings' with 0 rule(s): []
+2026-09-16T21:10:09.737Z [DEBUG] Replacing all allow rules for destination 'localSettings' with 0 rule(s): []
+2026-09-16T21:10:09.738Z [DEBUG] Replacing all deny rules for destination 'localSettings' with 0 rule(s): []
+2026-09-16T21:10:09.738Z [DEBUG] Replacing all ask rules for destination 'localSettings' with 0 rule(s): []
+2026-09-16T21:10:09.738Z [DEBUG] Replacing all allow rules for destination 'flagSettings' with 0 rule(s): []
+2026-09-16T21:10:09.738Z [DEBUG] Replacing all deny rules for destination 'flagSettings' with 0 rule(s): []
+2026-09-16T21:10:09.738Z [DEBUG] Replacing all ask rules for destination 'flagSettings' with 0 rule(s): []
+2026-09-16T21:10:09.738Z [DEBUG] Replacing all allow rules for destination 'policySettings' with 0 rule(s): []
+2026-09-16T21:10:09.738Z [DEBUG] Replacing all deny rules for destination 'policySettings' with 0 rule(s): []
+2026-09-16T21:10:09.738Z [DEBUG] Replacing all ask rules for destination 'policySettings' with 0 rule(s): []
+2026-09-16T21:10:09.741Z [DEBUG] [3P telemetry] Remote managed settings fetch settled, initializing telemetry
+2026-09-16T21:10:09.741Z [DEBUG] Cleared mTLS configuration cache
+2026-09-16T21:10:09.741Z [DEBUG] Cleared proxy agent cache
+2026-09-16T21:10:09.741Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-09-16T21:10:09.743Z [DEBUG] Keeping /home/juan/.claude/plugins/cache/arnes-juan/arnes-juan: it still holds a directory, a symlink, a versioned archive or an entry of unknown type
+2026-09-16T21:10:09.745Z [ERROR] Failed to save config with lock: Error: EROFS: read-only file system, mkdir '/home/juan/.claude.json.lock'
+2026-09-16T21:10:09.748Z [DEBUG] [Perfetto] initializePerfettoTracing called, env value: undefined
+2026-09-16T21:10:09.748Z [DEBUG] [3P telemetry] isTelemetryEnabled=false (CLAUDE_CODE_ENABLE_TELEMETRY=undefined)
+2026-09-16T21:10:09.751Z [DEBUG] Keeping /home/juan/.claude/plugins/cache/arnes-juan: it still holds a directory, a symlink, a versioned archive or an entry of unknown type
+2026-09-16T21:10:09.768Z [DEBUG] Ripgrep first use test: PASSED (mode=embedded, path=/home/juan/.local/share/claude/versions/2.1.272)
+2026-09-16T21:10:09.770Z [DEBUG] Preserving file permissions: 100600
+2026-09-16T21:10:09.771Z [DEBUG] Writing to temp file: /home/juan/.claude.json.tmp.2328729.ecd1bdd8d11f
+2026-09-16T21:10:09.771Z [ERROR] Failed to write file atomically: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.ecd1bdd8d11f'
+2026-09-16T21:10:09.772Z [DEBUG] Failed to clean up temp file: Error: EROFS: read-only file system, unlink '/home/juan/.claude.json.tmp.2328729.ecd1bdd8d11f'
+2026-09-16T21:10:09.772Z [ERROR] Config fallback write also failed; continuing without persisting: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.ecd1bdd8d11f'
+2026-09-16T21:10:09.850Z [WARN] [3P telemetry] Event dropped (no event logger initialized): user_prompt
+2026-09-16T21:10:09.865Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:10:09.865Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:10:09.865Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:10:09.865Z [DEBUG] Total plugin workflows loaded: 0
+2026-09-16T21:10:09.866Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:10:09.869Z [DEBUG] getSkills returning: 0 skill dir commands, 4 plugin skills, 40 bundled skills, 0 builtin plugin skills
+2026-09-16T21:10:09.887Z [DEBUG] Sending 20 skills via attachment (initial)
+2026-09-16T21:10:09.895Z [ERROR] Failed to save config with lock: Error: EROFS: read-only file system, mkdir '/home/juan/.claude.json.lock'
+2026-09-16T21:10:09.910Z [DEBUG] [session-notices] advertise=false mode=acceptEdits flag=true(payload) pollChannel=false remote=false remoteEnv=false nonInteractive=true
+2026-09-16T21:10:09.913Z [DEBUG] FileHistory: Added snapshot for 939168cb-f0a8-4596-9789-aa402a5f8739, tracking 0 files
+2026-09-16T21:10:09.916Z [DEBUG] [engine] turn 1 start
+2026-09-16T21:10:09.927Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:10:09.945Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:10:09.952Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:10:09.958Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000;
+2026-09-16T21:10:09.967Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:10:09.971Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=7b24a268-dbc8-4c5d-94da-d13ecf257676 source=sdk
+2026-09-16T21:10:09.978Z [DEBUG] Preserving file permissions: 100600
+2026-09-16T21:10:09.978Z [DEBUG] Writing to temp file: /home/juan/.claude.json.tmp.2328729.eb052eefe7da
+2026-09-16T21:10:09.978Z [ERROR] Failed to write file atomically: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.eb052eefe7da'
+2026-09-16T21:10:09.982Z [DEBUG] Org fast mode: enabled
+2026-09-16T21:10:09.983Z [DEBUG] [Bootstrap] Fetch ok
+2026-09-16T21:10:09.984Z [DEBUG] [Bootstrap] Cache updated, persisting to disk
+2026-09-16T21:10:09.985Z [DEBUG] Failed to clean up temp file: Error: EROFS: read-only file system, unlink '/home/juan/.claude.json.tmp.2328729.eb052eefe7da'
+2026-09-16T21:10:09.985Z [ERROR] Config fallback write also failed; continuing without persisting: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.eb052eefe7da'
+2026-09-16T21:10:09.986Z [ERROR] Failed to save config with lock: Error: EROFS: read-only file system, mkdir '/home/juan/.claude.json.lock'
+2026-09-16T21:10:09.989Z [DEBUG] Preserving file permissions: 100600
+2026-09-16T21:10:09.989Z [DEBUG] Writing to temp file: /home/juan/.claude.json.tmp.2328729.bb86a0f5cb3e
+2026-09-16T21:10:09.989Z [ERROR] Failed to write file atomically: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.bb86a0f5cb3e'
+2026-09-16T21:10:09.989Z [DEBUG] Failed to clean up temp file: Error: EROFS: read-only file system, unlink '/home/juan/.claude.json.tmp.2328729.bb86a0f5cb3e'
+2026-09-16T21:10:09.989Z [ERROR] Config fallback write also failed; continuing without persisting: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.bb86a0f5cb3e'
+2026-09-16T21:10:09.991Z [ERROR] Failed to save config with lock: Error: EROFS: read-only file system, mkdir '/home/juan/.claude.json.lock'
+2026-09-16T21:10:09.994Z [DEBUG] Preserving file permissions: 100600
+2026-09-16T21:10:09.994Z [DEBUG] Writing to temp file: /home/juan/.claude.json.tmp.2328729.e7611e2e0384
+2026-09-16T21:10:09.994Z [ERROR] Failed to write file atomically: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.e7611e2e0384'
+2026-09-16T21:10:09.994Z [DEBUG] Failed to clean up temp file: Error: EROFS: read-only file system, unlink '/home/juan/.claude.json.tmp.2328729.e7611e2e0384'
+2026-09-16T21:10:09.994Z [ERROR] Config fallback write also failed; continuing without persisting: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.e7611e2e0384'
+2026-09-16T21:10:10.044Z [DEBUG] [servedCatalog] fetch ok: 4 rows
+2026-09-16T21:10:10.047Z [DEBUG] [claudeai-mcp] Fetched 4 servers
+2026-09-16T21:10:10.049Z [DEBUG] [servedCatalog] cache write failed: EROFS
+2026-09-16T21:10:10.049Z [DEBUG] installPluginsForHeadless: starting
+2026-09-16T21:10:10.049Z [DEBUG] installPluginsForHeadless: no marketplaces declared
+2026-09-16T21:10:10.049Z [DEBUG] [servedCatalog] headless retry marker write failed: EROFS
+2026-09-16T21:10:10.052Z [DEBUG] [servedCatalog] shadow compare logged (fetch=ok, rows=4, source=compiled)
+2026-09-16T21:10:10.178Z [DEBUG] [fs.watch probe] verdict: delivers
+2026-09-16T21:10:11.002Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:10:11.002Z [DEBUG] [API:timing] first byte after 1036ms
+2026-09-16T21:10:13.640Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:10:13.665Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01YPP1q18GjpCUADbVwtD98i permissionDecisionMs=21
+2026-09-16T21:10:13.672Z [DEBUG] Creating shell snapshot for bash (/bin/bash)
+2026-09-16T21:10:13.672Z [DEBUG] Looking for shell config file: /home/juan/.bashrc
+2026-09-16T21:10:13.686Z [DEBUG] Snapshots directory: /home/juan/.claude/shell-snapshots
+2026-09-16T21:10:13.687Z [DEBUG] Spawn-env probe captured 53 keys
+2026-09-16T21:10:13.688Z [DEBUG] Creating snapshot at: /home/juan/.claude/shell-snapshots/snapshot-bash-1789593013676-60dodb.sh
+2026-09-16T21:10:13.688Z [DEBUG] Execution timeout: 10000ms
+2026-09-16T21:10:13.758Z [DEBUG] Shell snapshot created successfully (6413 bytes)
+2026-09-16T21:10:13.760Z [DEBUG] Failed to load session environment from hooks: EROFS: read-only file system, mkdir '/home/juan/.claude/session-env/3f0a1381-ffe8-4998-a810-96e786c0039d'
+2026-09-16T21:10:13.760Z [DEBUG] No session environment scripts found
+2026-09-16T21:10:13.760Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:10:13.796Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01YPP1q18GjpCUADbVwtD98i outcome=ok durationMs=131
+2026-09-16T21:10:14.480Z [DEBUG] Skipping retention cleanup: userSettings source is disabled (--setting-sources) and no enabled source provides cleanupPeriodDays.
+2026-09-16T21:10:14.480Z [ERROR] .last-cleanup write failed: EROFS EROFS: read-only file system, open '/home/juan/.claude/.last-cleanup'
+2026-09-16T21:10:15.186Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:10:15.198Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01Moeb2Mdrg3Wsh83BTJUe2M permissionDecisionMs=9
+2026-09-16T21:10:15.201Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:10:15.225Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01Moeb2Mdrg3Wsh83BTJUe2M outcome=ok durationMs=27
+2026-09-16T21:10:15.230Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:10:15.230Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:10:15.230Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:10:15.230Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:10:15.233Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:10:15.236Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:10:15.237Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:10:15.239Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7ocEETLoXhvkzqSaN6X;
+2026-09-16T21:10:15.243Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:10:15.245Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=f55c465e-e1e6-4e04-baf2-2d05a5731210 source=sdk
+2026-09-16T21:10:16.325Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:10:16.325Z [DEBUG] [API:timing] first byte after 1082ms
+2026-09-16T21:10:20.322Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:10:20.358Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_019t2Dy5r22kpWksrQTZBPQC permissionDecisionMs=33
+2026-09-16T21:10:20.364Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:10:20.403Z [DEBUG] Invalidating session environment cache
+2026-09-16T21:10:20.414Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_019t2Dy5r22kpWksrQTZBPQC outcome=ok durationMs=56
+2026-09-16T21:10:21.533Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:10:21.557Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01AunbCtNPyMz8a1xgWYx4a8 permissionDecisionMs=20
+2026-09-16T21:10:21.560Z [DEBUG] Failed to load session environment from hooks: EROFS: read-only file system, mkdir '/home/juan/.claude/session-env/3f0a1381-ffe8-4998-a810-96e786c0039d'
+2026-09-16T21:10:21.560Z [DEBUG] No session environment scripts found
+2026-09-16T21:10:21.561Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:10:21.589Z [WARN] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01AunbCtNPyMz8a1xgWYx4a8 outcome=error durationMs=32
+2026-09-16T21:10:21.589Z [DEBUG] Bash tool error (32ms): Shell command failed
+2026-09-16T21:10:21.596Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:10:21.596Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:10:21.596Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:10:21.596Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:10:21.598Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:10:21.600Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:10:21.601Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:10:21.603Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7occiJymi4QNpBhMRMn;
+2026-09-16T21:10:21.607Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:10:21.608Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=6a15f2a6-e106-46b7-81e5-8d54b032f048 source=sdk
+2026-09-16T21:10:22.564Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:10:22.564Z [DEBUG] [API:timing] first byte after 958ms
+2026-09-16T21:10:39.036Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:10:39.049Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01EjjtY5BB7z5UkEXsDLkxvb permissionDecisionMs=10
+2026-09-16T21:10:39.052Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:10:39.080Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01EjjtY5BB7z5UkEXsDLkxvb outcome=ok durationMs=32
+2026-09-16T21:10:42.374Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:10:42.382Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_017ZDMH3ZixM1YsPNRF99E4R permissionDecisionMs=4
+2026-09-16T21:10:42.383Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:10:42.401Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_017ZDMH3ZixM1YsPNRF99E4R outcome=ok durationMs=19
+2026-09-16T21:10:42.406Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:10:42.406Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:10:42.406Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:10:42.406Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:10:42.408Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:10:42.410Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:10:42.412Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:10:42.414Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7od5tgmJ91ZwNgfv8AA;
+2026-09-16T21:10:42.417Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:10:42.419Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=c5bb19eb-a801-4fc5-a90b-f543336fe2ff source=sdk
+2026-09-16T21:10:43.352Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:10:43.352Z [DEBUG] [API:timing] first byte after 935ms
+2026-09-16T21:11:00.208Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:11:00.222Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_012FwNLDHZgFBuUUiwma2Kfk permissionDecisionMs=11
+2026-09-16T21:11:00.223Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:11:00.235Z [DEBUG] Invalidating session environment cache
+2026-09-16T21:11:00.239Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_012FwNLDHZgFBuUUiwma2Kfk outcome=ok durationMs=18
+2026-09-16T21:11:00.243Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:11:00.243Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:11:00.243Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:11:00.243Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:11:00.245Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:11:00.246Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:11:00.247Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:11:00.248Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7oecpZpvNcMVNkQfQ7v;
+2026-09-16T21:11:00.251Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:11:00.252Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=80349028-de1a-4aa0-b9cb-9cf5729ed64f source=sdk
+2026-09-16T21:11:02.161Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:11:02.161Z [DEBUG] [API:timing] first byte after 1911ms
+2026-09-16T21:11:09.853Z [ERROR] Failed to save config with lock: Error: EROFS: read-only file system, mkdir '/home/juan/.claude.json.lock'
+2026-09-16T21:11:09.856Z [DEBUG] Preserving file permissions: 100600
+2026-09-16T21:11:09.856Z [DEBUG] Writing to temp file: /home/juan/.claude.json.tmp.2328729.0daa79ff6d1e
+2026-09-16T21:11:09.856Z [ERROR] Failed to write file atomically: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.0daa79ff6d1e'
+2026-09-16T21:11:09.856Z [DEBUG] Failed to clean up temp file: Error: EROFS: read-only file system, unlink '/home/juan/.claude.json.tmp.2328729.0daa79ff6d1e'
+2026-09-16T21:11:09.856Z [ERROR] Config fallback write also failed; continuing without persisting: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.0daa79ff6d1e'
+2026-09-16T21:11:27.029Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:11:27.034Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01JxUncmcj1Hb9CESh4a7bCg permissionDecisionMs=3
+2026-09-16T21:11:27.036Z [DEBUG] Failed to load session environment from hooks: EROFS: read-only file system, mkdir '/home/juan/.claude/session-env/3f0a1381-ffe8-4998-a810-96e786c0039d'
+2026-09-16T21:11:27.036Z [DEBUG] No session environment scripts found
+2026-09-16T21:11:27.036Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:11:27.049Z [DEBUG] Invalidating session environment cache
+2026-09-16T21:11:27.052Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01JxUncmcj1Hb9CESh4a7bCg outcome=ok durationMs=18
+2026-09-16T21:11:29.073Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:11:29.096Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01AnvaBWdCPXGzAenqA1E7Kv permissionDecisionMs=21
+2026-09-16T21:11:29.105Z [DEBUG] Failed to load session environment from hooks: EROFS: read-only file system, mkdir '/home/juan/.claude/session-env/3f0a1381-ffe8-4998-a810-96e786c0039d'
+2026-09-16T21:11:29.105Z [DEBUG] No session environment scripts found
+2026-09-16T21:11:29.106Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:11:29.122Z [DEBUG] Invalidating session environment cache
+2026-09-16T21:11:29.126Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01AnvaBWdCPXGzAenqA1E7Kv outcome=ok durationMs=30
+2026-09-16T21:11:29.133Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:11:29.133Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:11:29.133Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:11:29.133Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:11:29.137Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:11:29.140Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:11:29.141Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:11:29.144Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7ofw7gCLzdtNrwkfJBf;
+2026-09-16T21:11:29.149Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:11:29.151Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=912747d9-2653-42dc-8efc-96c49e3ce197 source=sdk
+2026-09-16T21:11:30.149Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:11:30.149Z [DEBUG] [API:timing] first byte after 1001ms
+2026-09-16T21:12:09.957Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:12:09.974Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01RgBwMHVGRtAZSWvpHwKBHB permissionDecisionMs=15
+2026-09-16T21:12:09.977Z [DEBUG] Failed to load session environment from hooks: EROFS: read-only file system, mkdir '/home/juan/.claude/session-env/3f0a1381-ffe8-4998-a810-96e786c0039d'
+2026-09-16T21:12:09.977Z [DEBUG] No session environment scripts found
+2026-09-16T21:12:09.977Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:12:09.996Z [DEBUG] Invalidating session environment cache
+2026-09-16T21:12:10.000Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01RgBwMHVGRtAZSWvpHwKBHB outcome=ok durationMs=26
+2026-09-16T21:12:12.405Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:12:12.408Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01WEXpF1ewYcBZGC5PL9gQM6 permissionDecisionMs=2
+2026-09-16T21:12:12.410Z [DEBUG] Failed to load session environment from hooks: EROFS: read-only file system, mkdir '/home/juan/.claude/session-env/3f0a1381-ffe8-4998-a810-96e786c0039d'
+2026-09-16T21:12:12.410Z [DEBUG] No session environment scripts found
+2026-09-16T21:12:12.410Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:12:12.421Z [DEBUG] Invalidating session environment cache
+2026-09-16T21:12:12.425Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01WEXpF1ewYcBZGC5PL9gQM6 outcome=ok durationMs=17
+2026-09-16T21:12:12.432Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:12:12.432Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:12:12.432Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:12:12.432Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:12:12.435Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:12:12.439Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:12:12.440Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:12:12.442Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7oi4g9qiWKnhJGu9HbE;
+2026-09-16T21:12:12.446Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:12:12.448Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=0c919bf7-f01e-40d2-aeb1-45a349465016 source=sdk
+2026-09-16T21:12:13.520Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:12:13.520Z [DEBUG] [API:timing] first byte after 1074ms
+2026-09-16T21:12:23.710Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:12:23.717Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01SpwAvRFRgDTxxnxhp94qMZ permissionDecisionMs=4
+2026-09-16T21:12:23.736Z [DEBUG] Failed to load session environment from hooks: EROFS: read-only file system, mkdir '/home/juan/.claude/session-env/3f0a1381-ffe8-4998-a810-96e786c0039d'
+2026-09-16T21:12:23.736Z [DEBUG] No session environment scripts found
+2026-09-16T21:12:23.736Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:12:23.763Z [WARN] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01SpwAvRFRgDTxxnxhp94qMZ outcome=error durationMs=47
+2026-09-16T21:12:23.763Z [DEBUG] Bash tool error (47ms): Shell command failed
+2026-09-16T21:12:26.114Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:12:26.127Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01LjS5FNCKErvz2UxGupFCvM permissionDecisionMs=12
+2026-09-16T21:12:26.131Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:12:26.148Z [DEBUG] Invalidating session environment cache
+2026-09-16T21:12:26.151Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01LjS5FNCKErvz2UxGupFCvM outcome=ok durationMs=24
+2026-09-16T21:12:26.155Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:12:26.155Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:12:26.155Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:12:26.155Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:12:26.157Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:12:26.161Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:12:26.162Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:12:26.164Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7omFoDXFbzQTtZyGuZ2;
+2026-09-16T21:12:26.169Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:12:26.170Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=6bac422e-8b88-4865-b67b-67843413735f source=sdk
+2026-09-16T21:12:27.031Z [ERROR] Failed to save config with lock: Error: EROFS: read-only file system, mkdir '/home/juan/.claude.json.lock'
+2026-09-16T21:12:27.034Z [DEBUG] Preserving file permissions: 100600
+2026-09-16T21:12:27.034Z [DEBUG] Writing to temp file: /home/juan/.claude.json.tmp.2328729.42dd638988cd
+2026-09-16T21:12:27.034Z [ERROR] Failed to write file atomically: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.42dd638988cd'
+2026-09-16T21:12:27.034Z [DEBUG] Failed to clean up temp file: Error: EROFS: read-only file system, unlink '/home/juan/.claude.json.tmp.2328729.42dd638988cd'
+2026-09-16T21:12:27.034Z [ERROR] Config fallback write also failed; continuing without persisting: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.42dd638988cd'
+2026-09-16T21:12:27.244Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:12:27.244Z [DEBUG] [API:timing] first byte after 1077ms
+2026-09-16T21:12:29.467Z [DEBUG] "Permission suggestions for Read: [\n  {\n    \"type\": \"addRules\",\n    \"rules\": [\n      {\n        \"toolName\": \"Read\",\n        \"ruleContent\": \"//tmp/arnes-diag-wBF0L4/plugin-b520e3b/templates/**\"\n      }\n    ],\n    \"behavior\": \"allow\",\n    \"destination\": \"session\"\n  }\n]"
+2026-09-16T21:12:29.467Z [DEBUG] executePermissionRequestHooks called for tool: Read
+2026-09-16T21:12:29.468Z [DEBUG] Read tool permission denied
+2026-09-16T21:12:29.473Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:12:29.473Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:12:29.473Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:12:29.473Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:12:29.475Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:12:29.478Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:12:29.479Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:12:29.481Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7onGRhKMbcBi9zdiSB2;
+2026-09-16T21:12:29.484Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:12:29.485Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=bf358815-8360-4c57-b94b-a718ed044a8e source=sdk
+2026-09-16T21:12:30.429Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:12:30.429Z [DEBUG] [API:timing] first byte after 946ms
+2026-09-16T21:12:31.521Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:12:31.532Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01AxpPzrVhVnJkssSNetjdm3 permissionDecisionMs=8
+2026-09-16T21:12:31.533Z [DEBUG] Failed to load session environment from hooks: EROFS: read-only file system, mkdir '/home/juan/.claude/session-env/3f0a1381-ffe8-4998-a810-96e786c0039d'
+2026-09-16T21:12:31.533Z [DEBUG] No session environment scripts found
+2026-09-16T21:12:31.534Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:12:31.546Z [DEBUG] Invalidating session environment cache
+2026-09-16T21:12:31.549Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01AxpPzrVhVnJkssSNetjdm3 outcome=ok durationMs=18
+2026-09-16T21:12:31.554Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:12:31.554Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:12:31.554Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:12:31.554Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:12:31.557Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:12:31.560Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:12:31.561Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:12:31.565Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7onWfCpZnkoW8usUec2;
+2026-09-16T21:12:31.568Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:12:31.570Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=1c754171-a9fd-4ec0-b05d-92a8a7ad1a00 source=sdk
+2026-09-16T21:12:32.518Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:12:32.518Z [DEBUG] [API:timing] first byte after 950ms
+2026-09-16T21:13:20.900Z [DEBUG] Zip extraction completed: 445 files, 5648KB uncompressed
+2026-09-16T21:13:20.901Z [WARN] Official marketplace GCS fetch failed: EROFS: read-only file system, rm '/home/juan/.claude/plugins/marketplaces/claude-plugins-official.staging'
+2026-09-16T21:13:20.901Z [WARN] Official marketplace GCS failed; falling back to git
+2026-09-16T21:13:20.908Z [DEBUG] SSH config check: code=255 configured=false
+2026-09-16T21:13:20.911Z [DEBUG] git pull: cwd=/home/juan/.claude/plugins/marketplaces/claude-plugins-official ref=default
+2026-09-16T21:13:20.918Z [WARN] git pull failed, will re-clone: fatal: not a git repository (or any of the parent directories): .git
+2026-09-16T21:13:20.919Z [INFO] Marketplace refresh failed with HTTPS for anthropics/claude-plugins-official, falling back to SSH
+2026-09-16T21:13:20.922Z [DEBUG] git pull: cwd=/home/juan/.claude/plugins/marketplaces/claude-plugins-official ref=default
+2026-09-16T21:13:20.929Z [WARN] git pull failed, will re-clone: fatal: not a git repository (or any of the parent directories): .git
+2026-09-16T21:13:20.930Z [ERROR] "Failed to refresh marketplace claude-plugins-official: Failed to clean up stale marketplace backup directory. Please manually delete the directory at /home/juan/.claude/plugins/marketplaces/claude-plugins-official.bak and try again.\n\nTechnical details: EROFS: read-only file system, rmdir '/home/juan/.claude/plugins/marketplaces/claude-plugins-official.bak'"
+2026-09-16T21:13:20.930Z [WARN] "Plugin autoupdate: failed to refresh marketplace claude-plugins-official: Failed to refresh marketplace 'claude-plugins-official': Failed to clean up stale marketplace backup directory. Please manually delete the directory at /home/juan/.claude/plugins/marketplaces/claude-plugins-official.bak and try again.\n\nTechnical details: EROFS: read-only file system, rmdir '/home/juan/.claude/plugins/marketplaces/claude-plugins-official.bak'"
+2026-09-16T21:13:20.930Z [DEBUG] Plugin autoupdate: checking installed plugins
+2026-09-16T21:13:28.401Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:13:28.441Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01GC5Ysne1wqHX5hrWPzVJPp permissionDecisionMs=36
+2026-09-16T21:13:28.447Z [DEBUG] Failed to load session environment from hooks: EROFS: read-only file system, mkdir '/home/juan/.claude/session-env/3f0a1381-ffe8-4998-a810-96e786c0039d'
+2026-09-16T21:13:28.447Z [DEBUG] No session environment scripts found
+2026-09-16T21:13:28.448Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:13:28.474Z [DEBUG] Invalidating session environment cache
+2026-09-16T21:13:28.482Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01GC5Ysne1wqHX5hrWPzVJPp outcome=ok durationMs=42
+2026-09-16T21:13:28.493Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:13:28.493Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:13:28.493Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:13:28.494Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:13:28.498Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:13:28.502Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:13:28.503Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:13:28.508Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7onfaELL9dx5YMGzcxL;
+2026-09-16T21:13:28.514Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:13:28.517Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=7ac00270-2ea3-4b2c-95ff-ab3dfacfd6ea source=sdk
+2026-09-16T21:13:29.570Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:13:29.570Z [DEBUG] [API:timing] first byte after 1056ms
+2026-09-16T21:13:31.524Z [ERROR] Failed to save config with lock: Error: EROFS: read-only file system, mkdir '/home/juan/.claude.json.lock'
+2026-09-16T21:13:31.527Z [DEBUG] Preserving file permissions: 100600
+2026-09-16T21:13:31.527Z [DEBUG] Writing to temp file: /home/juan/.claude.json.tmp.2328729.9d58f38dd92b
+2026-09-16T21:13:31.527Z [ERROR] Failed to write file atomically: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.9d58f38dd92b'
+2026-09-16T21:13:31.528Z [DEBUG] Failed to clean up temp file: Error: EROFS: read-only file system, unlink '/home/juan/.claude.json.tmp.2328729.9d58f38dd92b'
+2026-09-16T21:13:31.528Z [ERROR] Config fallback write also failed; continuing without persisting: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.9d58f38dd92b'
+2026-09-16T21:14:07.513Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:14:07.522Z [INFO] [Stall] tool_dispatch_start tool=Write toolUseId=toolu_014EmvG5QLUCkXtSuvFJ18YG permissionDecisionMs=6
+2026-09-16T21:14:07.525Z [DEBUG] FileHistory: Tracked file modification for /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/.arnes/migracion.md
+2026-09-16T21:14:07.527Z [DEBUG] Writing to temp file: /proc/self/fd/26/migracion.md.tmp.2328729.700a2dacf0ee
+2026-09-16T21:14:07.528Z [DEBUG] Temp file written successfully, size: 5350 bytes
+2026-09-16T21:14:07.528Z [DEBUG] Renaming /proc/self/fd/26/migracion.md.tmp.2328729.700a2dacf0ee to /proc/self/fd/26/migracion.md
+2026-09-16T21:14:07.528Z [DEBUG] File /proc/self/fd/26/migracion.md written atomically
+2026-09-16T21:14:07.530Z [INFO] [Stall] tool_dispatch_end tool=Write toolUseId=toolu_014EmvG5QLUCkXtSuvFJ18YG outcome=ok durationMs=8
+2026-09-16T21:14:07.542Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:14:07.542Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:14:07.542Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:14:07.542Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:14:07.546Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:14:07.549Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:14:07.550Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:14:07.555Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7ors5eGdTL9twewMqSL;
+2026-09-16T21:14:07.559Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:14:07.560Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=61ea3167-db70-4550-903a-1775b373f878 source=sdk
+2026-09-16T21:14:08.762Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:14:08.762Z [DEBUG] [API:timing] first byte after 1204ms
+2026-09-16T21:14:30.481Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:14:30.486Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01REUwVkCavEQTndS4HQbTrh permissionDecisionMs=2
+2026-09-16T21:14:30.488Z [DEBUG] Failed to load session environment from hooks: EROFS: read-only file system, mkdir '/home/juan/.claude/session-env/3f0a1381-ffe8-4998-a810-96e786c0039d'
+2026-09-16T21:14:30.488Z [DEBUG] No session environment scripts found
+2026-09-16T21:14:30.489Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:14:30.506Z [DEBUG] Invalidating session environment cache
+2026-09-16T21:14:30.510Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01REUwVkCavEQTndS4HQbTrh outcome=ok durationMs=24
+2026-09-16T21:14:31.395Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:14:31.404Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01J7uBGiwk4jHPrZhSgzmFBC permissionDecisionMs=6
+2026-09-16T21:14:31.406Z [DEBUG] Failed to load session environment from hooks: EROFS: read-only file system, mkdir '/home/juan/.claude/session-env/3f0a1381-ffe8-4998-a810-96e786c0039d'
+2026-09-16T21:14:31.406Z [DEBUG] No session environment scripts found
+2026-09-16T21:14:31.406Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:14:31.417Z [DEBUG] Invalidating session environment cache
+2026-09-16T21:14:31.420Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01J7uBGiwk4jHPrZhSgzmFBC outcome=ok durationMs=16
+2026-09-16T21:14:31.426Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:14:31.426Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:14:31.426Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:14:31.426Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:14:31.429Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:14:31.432Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:14:31.433Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:14:31.437Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7oujzLS5MhnNkzZTAbb;
+2026-09-16T21:14:31.441Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:14:31.443Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=894e55e1-afa0-485c-a240-cea710c0ee55 source=sdk
+2026-09-16T21:14:32.550Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:14:32.550Z [DEBUG] [API:timing] first byte after 1110ms
+2026-09-16T21:15:05.560Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:15:05.568Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01B1fzqPLnN6ExdXZ376cCcz permissionDecisionMs=5
+2026-09-16T21:15:05.571Z [DEBUG] Failed to load session environment from hooks: EROFS: read-only file system, mkdir '/home/juan/.claude/session-env/3f0a1381-ffe8-4998-a810-96e786c0039d'
+2026-09-16T21:15:05.571Z [DEBUG] No session environment scripts found
+2026-09-16T21:15:05.571Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:15:05.622Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01B1fzqPLnN6ExdXZ376cCcz outcome=ok durationMs=54
+2026-09-16T21:15:05.628Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:15:05.628Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:15:05.628Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:15:05.628Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:15:05.631Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:15:05.634Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:15:05.635Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:15:05.638Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7owW1mJ1Zcc8YwmmJEQ;
+2026-09-16T21:15:05.644Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:15:05.645Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=7814bc96-5bc5-4741-8a16-5d9396bf93b8 source=sdk
+2026-09-16T21:15:06.719Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:15:06.719Z [DEBUG] [API:timing] first byte after 1076ms
+2026-09-16T21:15:07.516Z [ERROR] Failed to save config with lock: Error: EROFS: read-only file system, mkdir '/home/juan/.claude.json.lock'
+2026-09-16T21:15:07.519Z [DEBUG] Preserving file permissions: 100600
+2026-09-16T21:15:07.519Z [DEBUG] Writing to temp file: /home/juan/.claude.json.tmp.2328729.642a000ab50e
+2026-09-16T21:15:07.519Z [ERROR] Failed to write file atomically: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.642a000ab50e'
+2026-09-16T21:15:07.519Z [DEBUG] Failed to clean up temp file: Error: EROFS: read-only file system, unlink '/home/juan/.claude.json.tmp.2328729.642a000ab50e'
+2026-09-16T21:15:07.519Z [ERROR] Config fallback write also failed; continuing without persisting: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.642a000ab50e'
+2026-09-16T21:15:09.935Z [DEBUG] [Anthropic telemetry] BigQuery metrics exported successfully
+2026-09-16T21:15:09.935Z [DEBUG] "[Anthropic telemetry] BigQuery API Response: {\n  \"accepted_count\": 9,\n  \"rejected_count\": 0\n}"
+2026-09-16T21:15:20.284Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:15:20.307Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01KXG54yqb9moAoC9atHYzDV permissionDecisionMs=21
+2026-09-16T21:15:20.310Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:15:20.328Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01KXG54yqb9moAoC9atHYzDV outcome=ok durationMs=21
+2026-09-16T21:15:20.333Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:15:20.333Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:15:20.333Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:15:20.333Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:15:20.335Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:15:20.337Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:15:20.339Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:15:20.342Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7oz2JUSJcid3s3veAwc;
+2026-09-16T21:15:20.345Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:15:20.346Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=e2b76be3-5de4-419c-a191-75d875457c75 source=sdk
+2026-09-16T21:15:21.592Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:15:21.592Z [DEBUG] [API:timing] first byte after 1247ms
+2026-09-16T21:15:32.070Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:15:32.082Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01Uzy8A11UBNsoJRoGNsGRi8 permissionDecisionMs=10
+2026-09-16T21:15:32.086Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:15:32.096Z [DEBUG] Invalidating session environment cache
+2026-09-16T21:15:32.099Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01Uzy8A11UBNsoJRoGNsGRi8 outcome=ok durationMs=17
+2026-09-16T21:15:32.104Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:15:32.104Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:15:32.104Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:15:32.105Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:15:32.108Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:15:32.110Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:15:32.110Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:15:32.114Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7p17AT5uc1RBkDaNmCR;
+2026-09-16T21:15:32.117Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:15:32.118Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=2933b1bc-20e1-4960-baee-79976768e338 source=sdk
+2026-09-16T21:15:34.067Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:15:34.067Z [DEBUG] [API:timing] first byte after 1951ms
+2026-09-16T21:15:35.088Z [INFO] [Stall] tool_dispatch_start tool=Read toolUseId=toolu_01Y6QQ1xoqXFG7PTAeLa6z91 permissionDecisionMs=3
+2026-09-16T21:15:35.092Z [INFO] [Stall] tool_dispatch_end tool=Read toolUseId=toolu_01Y6QQ1xoqXFG7PTAeLa6z91 outcome=ok durationMs=4
+2026-09-16T21:15:35.932Z [INFO] [Stall] tool_dispatch_start tool=Read toolUseId=toolu_01RtEjmtvCfaoGgG6V1aWN1L permissionDecisionMs=3
+2026-09-16T21:15:35.935Z [INFO] [Stall] tool_dispatch_end tool=Read toolUseId=toolu_01RtEjmtvCfaoGgG6V1aWN1L outcome=ok durationMs=3
+2026-09-16T21:15:35.943Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:15:35.943Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:15:35.943Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:15:35.943Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:15:35.949Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:15:35.951Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:15:35.952Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:15:35.954Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7p1yUcqiKfAGZxTfgSJ;
+2026-09-16T21:15:35.957Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:15:35.959Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=90cd3f81-dbef-4747-9d0c-2ea785064886 source=sdk
+2026-09-16T21:15:36.951Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:15:36.951Z [DEBUG] [API:timing] first byte after 994ms
+2026-09-16T21:15:43.516Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:15:43.520Z [INFO] [Stall] tool_dispatch_start tool=Edit toolUseId=toolu_01D26557ME9tshNVimC8FNVz permissionDecisionMs=2
+2026-09-16T21:15:43.523Z [DEBUG] FileHistory: Tracked file modification for /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/AGENTS.md
+2026-09-16T21:15:43.527Z [DEBUG] Preserving file permissions: 100644
+2026-09-16T21:15:43.527Z [DEBUG] Writing to temp file: /proc/self/fd/10/AGENTS.md.tmp.2328729.4d49dd6c269d
+2026-09-16T21:15:43.528Z [DEBUG] Applied original permissions to temp file
+2026-09-16T21:15:43.528Z [DEBUG] Temp file written successfully, size: 43831 bytes
+2026-09-16T21:15:43.528Z [DEBUG] Renaming /proc/self/fd/10/AGENTS.md.tmp.2328729.4d49dd6c269d to /proc/self/fd/10/AGENTS.md
+2026-09-16T21:15:43.529Z [DEBUG] File /proc/self/fd/10/AGENTS.md written atomically
+2026-09-16T21:15:43.530Z [INFO] [Stall] tool_dispatch_end tool=Edit toolUseId=toolu_01D26557ME9tshNVimC8FNVz outcome=ok durationMs=10
+2026-09-16T21:15:43.535Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:15:43.535Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:15:43.535Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:15:43.535Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:15:43.536Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:15:43.538Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:15:43.539Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:15:43.542Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7p2Fot7biU1ZGUtJexG;
+2026-09-16T21:15:43.545Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:15:43.546Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=28215d17-cba1-4341-8491-cf804e2f7d56 source=sdk
+2026-09-16T21:15:44.872Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:15:44.872Z [DEBUG] [API:timing] first byte after 1328ms
+2026-09-16T21:15:47.247Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:15:47.250Z [INFO] [Stall] tool_dispatch_start tool=Edit toolUseId=toolu_01Nuy7v1u5NmHj9DgTp4TuuF permissionDecisionMs=2
+2026-09-16T21:15:47.252Z [DEBUG] FileHistory: Tracked file modification for /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/requirements/README.md
+2026-09-16T21:15:47.254Z [DEBUG] Preserving file permissions: 100644
+2026-09-16T21:15:47.254Z [DEBUG] Writing to temp file: /proc/self/fd/10/README.md.tmp.2328729.859d57cd44ce
+2026-09-16T21:15:47.255Z [DEBUG] Applied original permissions to temp file
+2026-09-16T21:15:47.255Z [DEBUG] Temp file written successfully, size: 25926 bytes
+2026-09-16T21:15:47.255Z [DEBUG] Renaming /proc/self/fd/10/README.md.tmp.2328729.859d57cd44ce to /proc/self/fd/10/README.md
+2026-09-16T21:15:47.256Z [DEBUG] File /proc/self/fd/10/README.md written atomically
+2026-09-16T21:15:47.257Z [INFO] [Stall] tool_dispatch_end tool=Edit toolUseId=toolu_01Nuy7v1u5NmHj9DgTp4TuuF outcome=ok durationMs=7
+2026-09-16T21:15:47.261Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:15:47.261Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:15:47.261Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:15:47.261Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:15:47.262Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:15:47.264Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:15:47.264Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:15:47.267Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7p2pMDmBS8YcwzqkuKU;
+2026-09-16T21:15:47.269Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:15:47.270Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=b52d7afa-9f3b-4ea6-b870-ef616aef2415 source=sdk
+2026-09-16T21:15:48.304Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:15:48.304Z [DEBUG] [API:timing] first byte after 1035ms
+2026-09-16T21:16:05.203Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:16:05.209Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_012Y7wcqbFCw56dxMqpxgvEm permissionDecisionMs=4
+2026-09-16T21:16:05.211Z [DEBUG] Failed to load session environment from hooks: EROFS: read-only file system, mkdir '/home/juan/.claude/session-env/3f0a1381-ffe8-4998-a810-96e786c0039d'
+2026-09-16T21:16:05.211Z [DEBUG] No session environment scripts found
+2026-09-16T21:16:05.211Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:16:05.241Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_012Y7wcqbFCw56dxMqpxgvEm outcome=ok durationMs=32
+2026-09-16T21:16:05.245Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:16:05.245Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:16:05.245Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:16:05.245Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:16:05.247Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:16:05.248Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:16:05.248Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:16:05.251Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7p36JfGM51Y3WZHLZ6w;
+2026-09-16T21:16:05.253Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:16:05.254Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=b9fdf7bc-ab2a-40cd-b9e1-13e42cbfdefc source=sdk
+2026-09-16T21:16:11.793Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:16:11.793Z [DEBUG] [API:timing] first byte after 6540ms
+2026-09-16T21:16:20.286Z [ERROR] Failed to save config with lock: Error: EROFS: read-only file system, mkdir '/home/juan/.claude.json.lock'
+2026-09-16T21:16:20.291Z [DEBUG] Preserving file permissions: 100600
+2026-09-16T21:16:20.291Z [DEBUG] Writing to temp file: /home/juan/.claude.json.tmp.2328729.aed7da547cf4
+2026-09-16T21:16:20.291Z [ERROR] Failed to write file atomically: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.aed7da547cf4'
+2026-09-16T21:16:20.291Z [DEBUG] Failed to clean up temp file: Error: EROFS: read-only file system, unlink '/home/juan/.claude.json.tmp.2328729.aed7da547cf4'
+2026-09-16T21:16:20.291Z [ERROR] Config fallback write also failed; continuing without persisting: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.aed7da547cf4'
+2026-09-16T21:16:22.995Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:16:22.998Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_016x8RB1yNhfVdZjb2qqomWw permissionDecisionMs=1
+2026-09-16T21:16:22.999Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:16:23.013Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_016x8RB1yNhfVdZjb2qqomWw outcome=ok durationMs=15
+2026-09-16T21:16:23.017Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:16:23.017Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:16:23.017Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:16:23.018Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:16:23.019Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:16:23.021Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:16:23.021Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:16:23.024Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7p4R4JUzwsjiBsAin5y;
+2026-09-16T21:16:23.027Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:16:23.028Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=fec82744-1e40-4eb2-9be0-99d28949c84a source=sdk
+2026-09-16T21:16:24.314Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:16:24.314Z [DEBUG] [API:timing] first byte after 1288ms
+2026-09-16T21:16:36.475Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:16:36.481Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_014ji1g3fnuHJXzJdnocTX5m permissionDecisionMs=3
+2026-09-16T21:16:36.482Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:16:36.502Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_014ji1g3fnuHJXzJdnocTX5m outcome=ok durationMs=20
+2026-09-16T21:16:36.507Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:16:36.507Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:16:36.507Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:16:36.508Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:16:36.509Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:16:36.510Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:16:36.511Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:16:36.513Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7p5jBkGNCV2Cx7w7rBh;
+2026-09-16T21:16:36.516Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:16:36.519Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=1903529c-12c3-4207-982a-0e4090f51085 source=sdk
+2026-09-16T21:16:37.733Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:16:37.733Z [DEBUG] [API:timing] first byte after 1217ms
+2026-09-16T21:16:38.755Z [INFO] [Stall] tool_dispatch_start tool=Read toolUseId=toolu_017wpzxG5wPziUUApzndZMxt permissionDecisionMs=3
+2026-09-16T21:16:38.765Z [INFO] [Stall] tool_dispatch_end tool=Read toolUseId=toolu_017wpzxG5wPziUUApzndZMxt outcome=ok durationMs=10
+2026-09-16T21:16:39.645Z [INFO] [Stall] tool_dispatch_start tool=Read toolUseId=toolu_0121jC1eWwxY1Z1f2H5y73iq permissionDecisionMs=2
+2026-09-16T21:16:39.647Z [INFO] [Stall] tool_dispatch_end tool=Read toolUseId=toolu_0121jC1eWwxY1Z1f2H5y73iq outcome=ok durationMs=2
+2026-09-16T21:16:39.668Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:16:39.668Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:16:39.668Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:16:39.668Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:16:39.675Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:16:39.676Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:16:39.677Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:16:39.679Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7p6itAZYC3Vw34adNUv;
+2026-09-16T21:16:39.681Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:16:39.683Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=ae735966-2819-4653-8e47-1ad6484ce5cf source=sdk
+2026-09-16T21:16:40.469Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:16:40.469Z [DEBUG] [API:timing] first byte after 788ms
+2026-09-16T21:16:41.636Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:16:41.639Z [INFO] [Stall] tool_dispatch_start tool=Edit toolUseId=toolu_01HLfXgeswBzzz8jsitGjyA5 permissionDecisionMs=2
+2026-09-16T21:16:41.640Z [DEBUG] FileHistory: Tracked file modification for /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/.arnes/config.json
+2026-09-16T21:16:41.642Z [DEBUG] Preserving file permissions: 100644
+2026-09-16T21:16:41.642Z [DEBUG] Writing to temp file: /proc/self/fd/17/config.json.tmp.2328729.12bf62fdb99b
+2026-09-16T21:16:41.642Z [DEBUG] Applied original permissions to temp file
+2026-09-16T21:16:41.642Z [DEBUG] Temp file written successfully, size: 8092 bytes
+2026-09-16T21:16:41.642Z [DEBUG] Renaming /proc/self/fd/17/config.json.tmp.2328729.12bf62fdb99b to /proc/self/fd/17/config.json
+2026-09-16T21:16:41.643Z [DEBUG] File /proc/self/fd/17/config.json written atomically
+2026-09-16T21:16:41.643Z [INFO] [Stall] tool_dispatch_end tool=Edit toolUseId=toolu_01HLfXgeswBzzz8jsitGjyA5 outcome=ok durationMs=4
+2026-09-16T21:16:41.648Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:16:41.648Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:16:41.648Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:16:41.649Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:16:41.651Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:16:41.652Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:16:41.652Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:16:41.654Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7p6xRFfCnrFnXnhp5Fm;
+2026-09-16T21:16:41.657Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:16:41.658Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=804134f1-872f-4bbe-b066-5df5a0c09afc source=sdk
+2026-09-16T21:16:42.809Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:16:42.809Z [DEBUG] [API:timing] first byte after 1152ms
+2026-09-16T21:16:53.662Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:16:53.666Z [INFO] [Stall] tool_dispatch_start tool=Edit toolUseId=toolu_01MDCT3MD2boz8uVLPyXVN2V permissionDecisionMs=3
+2026-09-16T21:16:53.668Z [DEBUG] FileHistory: Tracked file modification for /tmp/arnes-diag-wBF0L4/casos/UPG3-UNKNOWN/CHANGELOG.md
+2026-09-16T21:16:53.670Z [DEBUG] Preserving file permissions: 100644
+2026-09-16T21:16:53.670Z [DEBUG] Writing to temp file: /proc/self/fd/10/CHANGELOG.md.tmp.2328729.74fb56969efa
+2026-09-16T21:16:53.671Z [DEBUG] Applied original permissions to temp file
+2026-09-16T21:16:53.671Z [DEBUG] Temp file written successfully, size: 2539 bytes
+2026-09-16T21:16:53.671Z [DEBUG] Renaming /proc/self/fd/10/CHANGELOG.md.tmp.2328729.74fb56969efa to /proc/self/fd/10/CHANGELOG.md
+2026-09-16T21:16:53.671Z [DEBUG] File /proc/self/fd/10/CHANGELOG.md written atomically
+2026-09-16T21:16:53.672Z [INFO] [Stall] tool_dispatch_end tool=Edit toolUseId=toolu_01MDCT3MD2boz8uVLPyXVN2V outcome=ok durationMs=6
+2026-09-16T21:16:53.677Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:16:53.677Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:16:53.677Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:16:53.678Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:16:53.680Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:16:53.682Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:16:53.683Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:16:53.686Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7p76sFYuCNYLTwvqZae;
+2026-09-16T21:16:53.690Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:16:53.692Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=791c5056-965e-44a7-9867-dbce93c6ccd2 source=sdk
+2026-09-16T21:16:56.697Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:16:56.697Z [DEBUG] [API:timing] first byte after 3008ms
+2026-09-16T21:16:59.350Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:16:59.366Z [INFO] [Stall] tool_dispatch_start tool=Bash toolUseId=toolu_01GKmgGb8aw35LH6QFzwjc1M permissionDecisionMs=15
+2026-09-16T21:16:59.368Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-09-16T21:16:59.389Z [INFO] [Stall] tool_dispatch_end tool=Bash toolUseId=toolu_01GKmgGb8aw35LH6QFzwjc1M outcome=ok durationMs=23
+2026-09-16T21:16:59.393Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-09-16T21:16:59.393Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-09-16T21:16:59.393Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-09-16T21:16:59.393Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-09-16T21:16:59.395Z [DEBUG] autocompact: tokens=[REDACTED] level=ok effectiveWindow=980000
+2026-09-16T21:16:59.397Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-09-16T21:16:59.397Z [DEBUG] Dynamic tool loading: 0/0 deferred tools included
+2026-09-16T21:16:59.400Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.272.318; cc_entrypoint=claude-vscode; cch=00000; cc_prev_req=req_011Cf7p7zJ9DENyAav5GgyCp;
+2026-09-16T21:16:59.402Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-5[1m]
+2026-09-16T21:16:59.403Z [DEBUG] [API REQUEST] /v1/messages x-client-request-id=c8699691-fe6c-4047-96c4-a1a88b9c121f source=sdk
+2026-09-16T21:17:01.044Z [DEBUG] Stream started - received first chunk
+2026-09-16T21:17:01.044Z [DEBUG] [API:timing] first byte after 1642ms
+2026-09-16T21:17:22.996Z [ERROR] Failed to save config with lock: Error: EROFS: read-only file system, mkdir '/home/juan/.claude.json.lock'
+2026-09-16T21:17:22.998Z [DEBUG] Preserving file permissions: 100600
+2026-09-16T21:17:22.998Z [DEBUG] Writing to temp file: /home/juan/.claude.json.tmp.2328729.d096f67a2a06
+2026-09-16T21:17:22.998Z [ERROR] Failed to write file atomically: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.d096f67a2a06'
+2026-09-16T21:17:22.999Z [DEBUG] Failed to clean up temp file: Error: EROFS: read-only file system, unlink '/home/juan/.claude.json.tmp.2328729.d096f67a2a06'
+2026-09-16T21:17:22.999Z [ERROR] Config fallback write also failed; continuing without persisting: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.d096f67a2a06'
+2026-09-16T21:17:25.909Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-09-16T21:17:25.912Z [DEBUG] [engine] turn 1 end (turns=35 usage in=52 out=32225 cost=$2.8977 api=434355ms stop=end_turn resultLen=3423)
+2026-09-16T21:17:25.921Z [DEBUG] LSP server manager shut down successfully
+2026-09-16T21:17:25.925Z [DEBUG] [concurrentSessions] updatePidFile failed: ENOENT: no such file or directory, open '/home/juan/.claude/sessions/2328729.json'
+2026-09-16T21:17:25.925Z [DEBUG] Cleaned up session snapshot: /home/juan/.claude/shell-snapshots/snapshot-bash-1789593013676-60dodb.sh
+2026-09-16T21:17:26.153Z [DEBUG] [Anthropic telemetry] BigQuery metrics exported successfully
+2026-09-16T21:17:26.153Z [DEBUG] "[Anthropic telemetry] BigQuery API Response: {\n  \"accepted_count\": 10,\n  \"rejected_count\": 0\n}"
+2026-09-16T21:17:26.153Z [DEBUG] [Anthropic telemetry] BigQuery metrics exporter flush complete
+2026-09-16T21:17:26.153Z [DEBUG] [Anthropic telemetry] BigQuery metrics exporter flush complete
+2026-09-16T21:17:26.153Z [DEBUG] [Anthropic telemetry] BigQuery metrics exporter shutdown complete
+2026-09-16T21:17:26.581Z [DEBUG] Preserving file permissions: 100600
+2026-09-16T21:17:26.581Z [DEBUG] Writing to temp file: /home/juan/.claude.json.tmp.2328729.502c90a8ea2d
+2026-09-16T21:17:26.581Z [ERROR] Failed to write file atomically: Error: EROFS: read-only file system, open '/home/juan/.claude.json.tmp.2328729.502c90a8ea2d'
+2026-09-16T21:17:26.581Z [DEBUG] Failed to clean up temp file: Error: EROFS: read-only file system, unlink '/home/juan/.claude.json.tmp.2328729.502c90a8ea2d'

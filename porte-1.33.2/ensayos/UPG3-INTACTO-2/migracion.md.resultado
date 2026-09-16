@@ -1,0 +1,115 @@
+# Plan de migración del arnés — 1.33.2 → 1.34.0
+
+Fecha: 2026-09-16 · Ejecutado por: juan.vega@sysvega.cr (sesión coordinadora)
+
+## Fase 1 — Inventario
+
+| Dato | Valor | Evidencia |
+|---|---|---|
+| Versión de origen | `1.33.2` | `arnes_version` de `.arnes/config.json`; concuerda con `.arnes-initialized` |
+| Versión de destino | `1.34.0` | `version` de `.claude-plugin/plugin.json` del plugin instalado |
+| Árbol de git | limpio | `git status --porcelain` sin salida |
+| Base del merge | `.arnes/plantillas-origen/` (11 `.tpl` + `githooks/pre-commit`) | fuente preferida; presente y completa |
+
+### Acreditación de la versión de origen: **CORROBORADO**
+
+No **CONFIRMADO**: el plugin instalado es una copia de directorio, **no un repositorio git**, así
+que no existe el tag `v1.33.2` contra el que comparar byte a byte `.arnes/plantillas-origen/`.
+La base es la guardada por `arnes-init`, no una reconstruida — pero su identidad con la plantilla
+del tag declarado **no se pudo verificar**, y eso se dice en vez de darse por bueno.
+
+Comprobaciones que **no desmienten** `1.33.2`:
+
+- Origen declarado (`1.33.2`) es **anterior** al plugin instalado (`1.34.0`): sin contradicción barata.
+- Marcadores presentes en el proyecto, todos consistentes con origen ≥ 1.31.0:
+  `requirements/README.md` §«Nivel de rigor»; `Hallazgos abiertos:`; `AGENTS.md` §13 fila del cierre
+  por shell; `(preventiva)` en §6; `plantillas_origen` y `"git"`/`"prohibidos"` en `.arnes/config.json`;
+  `con-hallazgos` en el vocabulario de `Seguridad:`.
+- Marcadores propios de 1.32.x, esperables si el origen es 1.33.2: `tools/arnes-paralelo.sh` y
+  **SEC-020** (con su ventana `1.33.0`) en `AGENTS.md`; el campo `Archivos:` y la sección
+  «Cómo se escribe un criterio que no se desmiente» en `requirements/README.md`.
+- La base guardada **no** menciona la vía proporcional de reparación (0 coincidencias), y la de
+  destino sí (4): coherente con que ese cambio sea exactamente el de 1.34.0.
+
+Ningún marcador contradice lo declarado. Se sigue, **diciéndolo**.
+
+## Fase 1 (cont.) — Qué cambia entre las dos plantillas
+
+Sólo **dos** plantillas difieren entre base y destino; las otras nueve y el `githooks/pre-commit`
+son idénticas:
+
+- `AGENTS.md.tpl` — §6 gana 191 líneas (vía proporcional); §9 reescribe el punto del write-back.
+- `requirements-README.md.tpl` — un párrafo en §«Cómo se escribe un criterio que no se desmiente».
+
+`arnes-config.json.tpl` **no cambia**: el manifiesto del proyecto sólo necesita subir `arnes_version`
+(Fase 5). No hay llave nueva, ni hook nuevo, ni nada que decidir en `.arnes/config.json`.
+
+## Fase 2 — Clasificación
+
+### Identificación previa de secciones (por TÍTULO y CONTENIDO, nunca por número)
+
+| Sección | Base 1.33.2 | Proyecto | Destino 1.34.0 | ¿La misma sección? |
+|---|---|---|---|---|
+| §6 | `## 6. Orquestación, loops de error y gates humanos` | idem | idem | **Sí** — título idéntico y contenido coincidente línea a línea |
+| §9 | `## 9. Cambios de requerimientos (versionado y deriva)` | idem | idem | **Sí** — título idéntico y contenido **byte a byte** idéntico |
+
+Los 14 encabezados `## ` de `AGENTS.md` coinciden en número y título en los tres documentos, y los
+25 de `requirements/README.md` coinciden entre base y proyecto. No hay renumeración que resolver;
+no hay `UNKNOWN`.
+
+### Estados
+
+| # | Archivo | Sección | Estado | Evidencia | Acción | Resultado |
+|---|---|---|---|---|---|---|
+| 1 | `AGENTS.md` | §6 | **INTACTO** | Frente a la base sólo difiere en los **valores de marcador** que `arnes-init` sustituyó (`{{MAX_REINTENTOS}}`→`3`, `{{CRITERIO_RIGOR_CRITICO}}`, `{{GATES_HUMANOS}}`, `{{PRESUPUESTO}}`). Ni una línea de andamiaje tocada | Insertar el bloque nuevo entre la línea `**Flujo:** …` y `**El orden no es una sugerencia…`, sustituyendo `{{DECLARACION_VIA_PROPORCIONAL}}` por la **línea negativa** de la sede | **SAFE** |
+| 2 | `AGENTS.md` | §9 | **INTACTO** | `diff` de la sección contra la base: **sin diferencias** | Reemplazar el final del punto «CAMBIOS POR HALLAZGO» por la redacción nueva (quién transcribe el write-back depende de la vía) | **SAFE** |
+| 3 | `requirements/README.md` | «Cómo se escribe un criterio que no se desmiente» | **INTACTO** | El archivo entero es idéntico a la base salvo `{{NOMBRE_PROYECTO}}`→`Facturador` en el título | Reemplazar la frase «y quien lo reescribe es el analista…» por la redacción nueva | **SAFE** |
+
+Personalización humana detectada y **fuera de alcance**: la nota propia de Facturador en §2 de
+`AGENTS.md` («el cálculo de IVA vive en `src/iva.js`…»). Ninguna operación la toca.
+
+### Lo que NO se clasifica, y por qué
+
+- **Los cuatro agentes (`.claude/agents/`) los provee el plugin.** El proyecto no tiene copia
+  propia, y `arnes-init` no deja base suya en `.arnes/plantillas-origen/` (ahí sólo van `.tpl`).
+  No se clasifican, no se buscan y no entran en el plan: llegan corregidos al actualizar el plugin.
+- **El proyecto no tiene carpeta `templates/`**, así que `templates/AGENTS.md.tpl` y
+  `templates/requirements-README.md.tpl` no existen aquí como archivos migrables.
+
+### Veredicto de Fase 2
+
+**3 operaciones, las 3 `SAFE`. Ningún `CONFLICTO`. Ningún `UNKNOWN`.** Se aplica.
+
+## Fase 3 — Aplicación
+
+| # | Estado |
+|---|---|
+| 1 | aplicada |
+| 2 | aplicada |
+| 3 | aplicada |
+
+## Fase 4 — Verificación (releyendo el disco)
+
+- [x] Las 3 operaciones están en disco.
+- [x] `AGENTS.md` resultante == plantilla de destino con las 9 sustituciones del proyecto + la nota
+      humana de §2 + la línea negativa de la declaración. Verificado por reconstrucción y `diff`.
+- [x] `requirements/README.md` resultante == plantilla de destino con `{{NOMBRE_PROYECTO}}`
+      sustituido. Verificado por `diff`.
+- [x] No desapareció contenido previo: la nota de §2 sigue presente; ninguna sección perdida.
+- [x] `arnes_version` = `1.34.0` (Fase 5).
+
+## Fase 5 — Registro
+
+- `.arnes/config.json` → `arnes_version: "1.34.0"`.
+- `.arnes-initialized` → `arnes_version: 1.34.0`.
+- `.arnes/plantillas-origen/` refrescada con las plantillas de 1.34.0, para que la migración
+  siguiente tenga base.
+- Entrada en `CHANGELOG.md`.
+
+## Decisión que queda en manos del propietario
+
+La **vía proporcional de reparación** se instala **descrita y NO autorizada**: la migración escribe
+la **línea negativa**, que es el valor por defecto. Hasta que el propietario sustituya esa línea por
+la afirmativa de la sede (`AGENTS.md` §6, «La disciplina de la declaración», punto 5), el proyecto
+sigue **exactamente** con el procedimiento anterior: analista → desarrollador → QA → seguridad, y
+ningún agente puede omitir al analista.

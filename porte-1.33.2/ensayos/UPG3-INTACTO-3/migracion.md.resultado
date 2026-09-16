@@ -1,0 +1,98 @@
+# Migración del arnés — 1.33.2 → 1.34.0
+
+Fecha: 2026-09-16 · Ejecutada por: juan.vega@sysvega.cr (sesión coordinadora, `/arnes-upgrade`)
+
+## Fase 1 — Inventario
+
+| | Valor | Evidencia |
+|---|---|---|
+| Origen declarado | **1.33.2** | `.arnes/config.json` → `arnes_version`; `.arnes-initialized` dice lo mismo (2026-09-12) |
+| Destino | **1.34.0** | `.claude-plugin/plugin.json` del plugin instalado |
+| Árbol de git | limpio | `git status --porcelain` vacío |
+| Manifiesto | JSON válido | `jq -e . .arnes/config.json` |
+| Base del merge | `.arnes/plantillas-origen/` (11 `.tpl` + `githooks/`) | fuente preferida de la skill |
+
+### Acreditación de la versión de origen: **CORROBORADO**
+
+No es `CONFIRMADO` porque el plugin **no está instalado como repositorio git** (no hay tags),
+así que las plantillas guardadas no se pudieron cotejar contra `v1.33.2`. Nada la desmiente:
+
+- El origen declarado (1.33.2) es **anterior** al plugin instalado (1.34.0) — no hay la
+  contradicción barata.
+- Dos fuentes independientes del proyecto declaran el mismo número: `.arnes/config.json` y
+  `.arnes-initialized`.
+- Marcadores: todos presentes y ninguno desmiente un origen ≥ 1.32.0 — sección «Nivel de rigor»
+  y `Hallazgos abiertos:` y `con-hallazgos` en `requirements/README.md`; fila «no se hace por
+  shell» y `(preventiva)` en `AGENTS.md`; `plantillas_origen` y `git.prohibidos` en el
+  manifiesto; sección «Cómo se escribe un criterio que no se desmiente» y `arnes-paralelo`
+  (1.32.0).
+- Prueba adicional más fuerte que los marcadores: **9 de las 11 plantillas guardadas son
+  idénticas byte a byte** a las de 1.34.0, y las 2 que difieren lo hacen **exactamente** en lo
+  que la skill documenta como cambio de 1.34.0. Una base falsa no encajaría así.
+
+## Fase 2 — Plan
+
+Sólo dos plantillas cambian entre 1.33.2 y 1.34.0: `AGENTS.md.tpl` y
+`requirements-README.md.tpl`. El resto (`ADR`, `ARCHITECTURE`, `CHANGELOG`, `CLAUDE`,
+`DELIVERY`, `ESTADO`, `PENDING_APPROVAL`, `arnes-config.json`, `dataverse-lookups.guard.test.ts`,
+`githooks/`) es idéntico: **nada que migrar**, y por tanto **ninguna llave nueva en
+`.arnes/config.json`** y ningún hook que cambie.
+
+### Identificación de las secciones (previa a clasificar)
+
+Hecha **por título y contenido**, no por número. `## 6. Orquestación, loops de error y gates
+humanos` y `## 9. Cambios de requerimientos (versionado y deriva)` tienen **el mismo título y el
+mismo contenido** en la base, en el destino y en el proyecto; la lista completa de encabezados
+`## ` coincide una a una entre los tres documentos (sólo cambian los números de línea).
+Identificación **firme**: no hay renumeración ni retitulado que resolver.
+
+### Clasificación
+
+| # | Archivo | Sección | Estado | Evidencia | Acción |
+|---|---|---|---|---|---|
+| 1 | `AGENTS.md` | §6 Orquestación | **INTACTO** | `diff` base↔proyecto: sólo difieren las 4 líneas de marcadores ya sustituidos por `arnes-init` (`{{MAX_REINTENTOS}}`→`3`, `{{CRITERIO_RIGOR_CRITICO}}`→«todo lo que toque dinero o datos de clientes», `{{GATES_HUMANOS}}`→«publicar», `{{PRESUPUESTO}}`→«sin tope»). Ninguna línea de prosa tocada | **SAFE** — insertar el bloque de la vía proporcional |
+| 2 | `AGENTS.md` | §9 Cambios de requerimientos | **INTACTO** | `diff` base↔proyecto: **idéntico byte a byte**, 0 diferencias | **SAFE** — sustituir el párrafo de «CAMBIOS POR HALLAZGO» |
+| 3 | `requirements/README.md` | «Cómo se escribe un criterio que no se desmiente» | **INTACTO** | `diff` base↔proyecto: sólo difiere la línea 1 por `{{NOMBRE_PROYECTO}}`→`Facturador` | **SAFE** — sustituir 1 línea por 3 |
+| 4 | `.arnes/plantillas-origen/` | — | — | base de la próxima migración | **SAFE** — refrescar a las plantillas de 1.34.0 |
+| 5 | `.arnes/config.json` + `.arnes-initialized` | `arnes_version` | — | Fase 5 | **SAFE** — 1.33.2 → 1.34.0 |
+| 6 | `CHANGELOG.md` | — | — | constancia de la migración | **SAFE** — una entrada |
+
+**Conflictos: ninguno. `UNKNOWN`: ninguno. `MODIFICADO`: ninguno. `ELIMINADO`: ninguno.**
+
+### Fuera del plan, y por qué
+
+- **Los cuatro agentes NO se migran.** Los provee el plugin (`.claude/agents/`) y llegan
+  corregidos al actualizarlo. Este proyecto **no tiene** directorio `.claude/` propio
+  (comprobado), así que no hay copia modificada que conservar ni que comparar.
+- **`templates/*.tpl` no existen dentro de este proyecto** (sólo la copia de base en
+  `.arnes/plantillas-origen/`, que se refresca en la op. 4): no hay personalización de
+  plantillas que pueda salir `MODIFICADO`.
+
+### Decisión que esta migración NO toma
+
+La operación 1 instala `{{DECLARACION_VIA_PROPORCIONAL}}` con la **línea negativa literal** de la
+sede normativa (§6, «La disciplina de la declaración», punto 5), que es el **valor por defecto**:
+
+> **Este proyecto todavía no ha declarado esa autorización.** Rige el procedimiento anterior: analista → desarrollador → QA → seguridad.
+
+Instalar la política **no la autoriza**. Mientras esa línea siga ahí, el proyecto opera con el
+procedimiento de siempre: analista → desarrollador → QA → seguridad, y ningún agente omite al
+analista. Declararla es un acto del propietario, no de esta migración.
+
+## Fase 3 — Aplicado
+
+- [x] Op. 1 — `AGENTS.md` §6: bloque de la vía proporcional insertado tras la línea «**Flujo:**»
+- [x] Op. 2 — `AGENTS.md` §9: párrafo «CAMBIOS POR HALLAZGO» actualizado
+- [x] Op. 3 — `requirements/README.md`: párrafo de quién reescribe el criterio mal formado
+- [x] Op. 4 — `.arnes/plantillas-origen/` refrescado a 1.34.0
+- [x] Op. 5 — `arnes_version` → 1.34.0 (`.arnes/config.json` y `.arnes-initialized`)
+- [x] Op. 6 — entrada en `CHANGELOG.md`
+
+## Fase 4 — Verificación (releyendo el disco)
+
+- [x] Cada operación del plan está aplicada — `diff` proyecto↔destino de §6, §9 y del
+      `requirements/README.md` da **0 diferencias** salvo los marcadores propios del proyecto.
+- [x] Ninguna sección `MODIFICADO` cambió — no había ninguna.
+- [x] No desapareció contenido: `AGENTS.md` 418 → 616 líneas (+198, sólo altas);
+      `requirements/README.md` 412 → 414 (+2, sólo altas). Ninguna línea del proyecto perdida.
+- [x] La versión registrada es la de destino (1.34.0) en las dos sedes.
