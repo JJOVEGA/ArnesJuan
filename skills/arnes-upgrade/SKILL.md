@@ -735,12 +735,7 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   sale ≠ 0, porque el documento dice dos cosas y la máquina elige una. Un informe que grita por lo
   inofensivo deja de leerse, y con él lo que sí importa.
 
-### Hacia <versión por decidir> — vía proporcional
-
-**El número de versión de esta entrada está SIN DECIDIR, y es deliberado: lo decide el propietario
-al publicar.** No lo inventes ni lo deduzcas del `arnes_version` que tengas delante; si ejecutas
-esta migración antes de que se haya decidido, dilo así en el informe y en el `CHANGELOG.md` del
-proyecto.
+### Hacia 1.34.0
 
 - **`AGENTS.md` §6 y §9, y los cuatro agentes: la VÍA PROPORCIONAL de reparación.** §6 gana una tabla
   que elige la vía **por el efecto del cambio** —documentación sin cambio de obligaciones · **reparación

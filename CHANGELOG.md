@@ -2,6 +2,94 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.34.0] — 2026-09-16 · La vía proporcional se publica DESCRITA, y ningún proyecto la estrena activada
+> Origen: GitHub (commit de versión) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (el commit de versión); el contenido que publica viene de `desarrollador` (porte `404e044`), `qa-tester` (`743a5ff`) y `auditor-seguridad` (`346b882`) · gobernado por la instalación estable **1.33.2**.
+
+**Alcance, fijado por el propietario y sin nada más dentro:** `v1.33.2` **+** la vía proporcional de
+reparación, portada con autorización explícita del propietario. **No entra ningún cambio de la rama
+larga** (`rel/via-proporcional`, `base/via-proporcional`). **Ningún cambio de mecanismo:** `hooks/`,
+`tools/`, `.arnes/`, `tests/` y `.github/` son **idénticos a `v1.33.2`** —`git diff v1.33.2 HEAD
+--name-only` sobre esas rutas devuelve **0 archivos**—, así que ninguna puerta cambia de conducta y
+el banco que certifica `v1.33.2` certifica también esto.
+
+**Es `minor`:** añade una capacidad descrita —una vía de reparación con menos despachos— sin quitar
+ni estrechar ninguna promesa existente. Sube de `1.33.2` a `1.34.0` en los **tres** campos de
+distribución: `.claude-plugin/plugin.json` `.version` y `.claude-plugin/marketplace.json` en sus dos
+(`.metadata.version` y `.plugins[0].version`). Los tres **concuerdan** —comprobado con `jq`, porque
+`claude plugin tag` falla si discordaran— y las tres comprobaciones `jq -e .` están en verde.
+`source: "./"` intacto.
+
+### Qué recibe un consumidor al actualizar
+
+- **`AGENTS.md` §6** gana la **tabla de vías**, que elige la vía **por el efecto del cambio**:
+  documentación sin cambio de obligaciones · **reparación con causa, alcance y contrato claros:
+  desarrollador → QA, sin comisión de analista** · cambio cuyo efecto alcanza un criterio de
+  `critico` del proyecto o una protección del arnés (ejemplos declaradamente **no exhaustivos**):
+  **+ seguridad** · capacidad nueva o cambio de contrato: las cuatro fases. Si un cambio casa con
+  más de una fila, manda la **más restrictiva**. Con ella llegan la definición de «contrato claro»
+  —que exige coherencia de `Rigor:`, `Sensible a seguridad:` y revisiones exigidas con el **efecto**—
+  y la **sede normativa única** de la declaración, con sus dos líneas literales.
+- **`AGENTS.md` §9** deja de fijar en el analista **quién transcribe** el write-back. Lo que no
+  cambia: el write-back **sigue siendo obligatorio** —cambia quién lo escribe, no si se escribe— y
+  QA sigue sin firmar sin él.
+- **Los cuatro agentes** (los provee el plugin, no se migran): el `desarrollador` recibe el
+  write-back de la vía de reparación en la misma entrega; el `qa-tester` deja de leer que el
+  write-back es siempre del analista; el `analista-requerimientos` conserva el suyo siempre que
+  quede una decisión; el disparador del `auditor-seguridad` se enuncia sin depender de quién lo
+  despache.
+- **`arnes-init` pregunta la autorización** al crear un proyecto, y **`arnes-upgrade` la migra**
+  —entrada § `Hacia 1.34.0`— **instalando la línea NEGATIVA**, que es el valor por defecto.
+
+### Publicar la capacidad no equivale a activarla
+
+**Instalar esta sección NO la autoriza.** La migración trae §6 y §9 **descritas**; la vía sólo rige
+donde el **propietario de cada proyecto la declara**, y esa declaración es **un acto suyo**, no una
+consecuencia de que el texto llegue. **Ninguna fila del merge —tampoco `INTACTO` ni `NUEVO`— escribe
+la afirmativa**: lo que se instala es la descripción y la **negativa**. Hasta que se declare, el
+proyecto sigue **exactamente** con analista → desarrollador → QA → seguridad, y ningún agente puede
+omitir al analista. **Este repositorio conserva la negativa** (`AGENTS.md` §6): publica la capacidad
+y no la usa.
+
+Y lo que la vía **no** cambia en ningún caso: el rigor no se rebaja y elegir vía **no** reclasifica
+un REQ; no se omiten pruebas necesarias; los contadores de vueltas no se reinician; seguridad sigue
+sin firmar lo que QA no ha validado; **ningún hook cambia** —una errata dentro de `codigo_app.globs`
+la sigue denegando `guard-codigo`—: elegir vía decide **quién revisa**, no quién puede escribir.
+
+### Limitaciones declaradas, que esta versión CONSERVA y no cierra
+
+- **`SEC-089`** (`instrumento`, no bloquea): la comprobación previa al despacho enumera **una** causa
+  de «esta comprobación no la hace nadie» donde hay **dos** —incorpora la del documento congelado y
+  **no** la de «una herramienta cuya vía no está verificada no cuenta como cubierta»—. No afirma nada
+  falso y su desenlace exige dos condiciones simultáneas. Sede: `docs/seguridad/registro-seguridad.md`
+  § **R-031**.
+- **`H-P1`** y **`H-P2`**: son conducta de la **skill estable de `v1.33.2`**, no del porte, y siguen
+  abiertos. `H-P1` — `/arnes-upgrade` registró `arnes_version` con un conflicto abierto en una sesión
+  y no en otra: el marcador dice «migrado» cuando no lo está. `H-P2` — 2 de 6 sesiones rehusaron el
+  porte como destino y 4 lo aceptaron: un juicio **no determinista** con dos desenlaces seguros.
+  **`H-P2` NO queda resuelto por este commit:** fijar el número **retira el forzador documentado**
+  que QA señaló, pero **nadie ha vuelto a medir** esas sesiones contra un destino ya numerado, así
+  que la no determinación **no está desmentida**. Sede: `docs/qa/porte-1.33.2-via-proporcional-veredicto.md`.
+- **`n=1` en los ensayos** de las evidencias de QA: cada escenario se ejerció **una vez**. Una sola
+  corrida no acota variabilidad.
+- **La Fase 2 de `arnes-upgrade` con `UNKNOWN` no quedó ejercida**: el ensayo `UPG2-UNKNOWN` paró en
+  **Fase 1**. El cierre fail-closed de `UNKNOWN` está **descrito y no medido en Fase 2**.
+- **`arnes_version` de `.arnes/config.json` de este repositorio sigue en `1.33.0`**, ahora frente a un
+  plugin `1.34.0`. La discrepancia es **preexistente** —ya lo estaba al publicarse `v1.33.1` y
+  `v1.33.2`— y este commit **deliberadamente no la toca**, por instrucción expresa del propietario:
+  ese campo representa la **migración del proyecto**, no la versión del plugin, y además es el
+  manifiesto que los hooks leen en runtime, así que moverlo invalidaría las firmas emitidas sobre
+  este árbol. El bloque derivado de `docs/ESTADO.md` avisará de migración pendiente: **no es un
+  defecto**, es el estado real del autoalojamiento.
+
+También siguen abiertos y **no los toca esta ventana** los hallazgos que `v1.33.2` dejó declarados
+(`SEC-087`, `SEC-088`, `QA-1332-01`).
+
+### Lo que este commit NO hace
+
+No fusiona, no etiqueta y no publica —son actos distintos, del coordinador—; no cierra ningún
+hallazgo; no toca `hooks/`, `tools/`, `tests/`, `.arnes/`, `.github/`, `requirements/`,
+`docs/seguridad/` ni `docs/qa/`; no altera la declaración de este repositorio, que sigue **negativa**.
+
 ## [Interno] — 2026-09-16 · Seguridad R-031 (registro de `v1.33.2`): **`Seguridad: aprobado` acotada al porte `404e044`**; **`SEC-089`** nuevo (`instrumento`, no bloquea)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad (revisión acotada por el propietario a las diferencias relevantes respecto de la política ya auditada en `5f07419`; R-037…R-040 de la rama larga son antecedentes, no aprobación). Sede: `docs/seguridad/registro-seguridad.md` § R-031 — numeración de **este** archivo (llegaba a R-030 / SEC-088).
 
