@@ -145,9 +145,19 @@ deje de costar una vuelta.
 
 ## Enmienda: autoalojamiento aligerado (decisión expresa del propietario, 2026-09-10, aplicación INMEDIATA)
 
-**Alcance: sólo cómo desarrollamos ArnesJuan.** No cambia las protecciones ni los valores por defecto
-que reciben los proyectos nuevos o existentes. **Sustituye** la instrucción anterior de esperar a la
-ventana siguiente, y se aplica también a las tareas pendientes del trabajo en curso.
+**Alcance al nacer: sólo cómo desarrollamos ArnesJuan.** **Sustituye** la instrucción anterior de
+esperar a la ventana siguiente, y se aplica también a las tareas pendientes del trabajo en curso.
+
+**Alcance vigente, tras el levantamiento del límite 1** (2026-09-12 plantillas, 2026-09-13 agentes
+distribuidos): **una parte nombrada de esta enmienda SÍ llega a los proyectos nuevos y existentes** —
+**la vía proporcional de reparación**, en `templates/AGENTS.md.tpl`, en los **cuatro agentes** y en la
+migración de `arnes-upgrade`—, porque dejó de ser un piloto y pasó a ser producto. **Ninguna otra
+parte se propaga sin una decisión nueva**, y ningún **control mecánico** cambia: los hooks,
+`.arnes/config.json` y las protecciones de instalación y publicación siguen exactamente como estaban
+(límites 2, 3 y 5, que no se levantaron). La frase anterior —«no cambia las protecciones ni los
+valores por defecto que reciben los proyectos»— **describía el alcance de origen y dejó de ser
+cierta como enunciado general** el 2026-09-12; se corrige aquí, en su premisa, para que no vuelva a
+deducirse. Su transcripción en `AGENTS.md` §6 se corrige en el mismo acto.
 
 **Objetivo declarado:** reducir análisis repetidos, comisiones innecesarias y revisiones demasiado
 amplias, **manteniendo las protecciones del producto**.
@@ -157,9 +167,33 @@ amplias, **manteniendo las protecciones del producto**.
 | Naturaleza del cambio | Vía |
 |---|---|
 | Documentación informativa, índices y erratas **sin cambio de obligaciones** | **la coordinadora**, con las comprobaciones pertinentes |
-| Reparación con **causa, alcance y contrato claros** | desarrollador → QA. **Sin comisión de analista** |
-| Cambio que afecta **hooks, protecciones, firmas, permisos, instalación, migración o publicación** | desarrollador → QA → **seguridad**. El analista interviene **sólo** si hay una decisión de diseño o contrato **pendiente** |
+| Reparación con **causa, alcance y contrato claros** | desarrollador → QA. **Sin comisión de analista** — sólo si el cambio **no** cae también en la fila 3 |
+| Cambio cuyo efecto alcanza **un criterio de `critico` de este proyecto** (`AGENTS.md` §6, «Qué es crítico EN ESTE PROYECTO») **o una protección del arnés** — ejemplos **declaradamente no exhaustivos**: hooks, protecciones, firmas, permisos, instalación, migración, publicación | desarrollador → QA → **seguridad**. El analista interviene **sólo** si hay una decisión de diseño o contrato **pendiente** |
 | **Capacidad nueva** o **cambio de contrato** | analista → desarrollador → QA → seguridad |
+
+**Si un cambio casa con más de una fila, manda la MÁS RESTRICTIVA**, y la fila 3 va enunciada **por
+propiedad**: elegir vía **nunca elimina** una revisión de seguridad que las reglas vigentes exijan, y
+la enumeración de ejemplos **no puede limitar esa obligación**. Tampoco se delega ese criterio en
+`guard-completado`, que es puerta de **cierre** —no de despacho— e inerte sin `jq` o sin
+`.arnes/config.json`.
+
+**Qué es «contrato claro», y qué pasa cuando no lo es.** «Contrato claro» no es sólo que el
+criterio ya esté decidido: incluye que **`Rigor:`, `Sensible a seguridad:` y las revisiones que el
+REQ exige sean coherentes con el EFECTO de la reparación**. Una reparación que toca dinero sobre un
+REQ `Rigor: estandar` · `Sensible a seguridad: no` · `Seguridad: n/a` **no tiene el contrato claro**,
+por decidido que esté su criterio: la cabecera promete menos revisión que la que el efecto exige.
+Cuando el trabajo revela una clasificación **insuficiente o contradictoria**, la coordinadora
+**solicita al `analista-requerimientos` únicamente esa decisión y su actualización documental**
+—qué rigor, qué sensibilidad, qué revisiones— **antes de continuar**. **No se repite el análisis
+completo y no se otorgan facultades nuevas a ningún otro rol:** ni el desarrollador ni QA corrigen
+esos campos por su cuenta, y el auditor conserva la suya de subir el rigor, como siempre. Resuelta
+la clasificación, la vía se aplica tal cual: una reparación ordinaria **correctamente clasificada**
+sigue siendo desarrollador → QA sin analista, y una que **exige seguridad** sigue siendo
+desarrollador → QA → seguridad.
+
+**Y esta vía sólo rige donde el `AGENTS.md` del proyecto la declara.** ArnesJuan la declara en su
+§6; un proyecto que no la declare **conserva el procedimiento anterior** y ningún agente puede
+omitir al analista en él.
 
 Y la regla que impide que esta tabla se convierta en una salida: **clasificar por el efecto**. *«Una
 regla de autorización en Markdown es gobernanza sensible; una prueba que decide si una protección
@@ -204,7 +238,21 @@ contador y las extensiones ya autorizadas**. **Agotar vueltas nunca equivale a a
 
 Para implementar este piloto **no** se modifican:
 
-1. **Plantillas heredables** ni **agentes distribuidos**.
+1. ~~**Plantillas heredables** ni **agentes distribuidos**.~~ **LEVANTADO por decisión expresa del
+   propietario los días 2026-09-12 (plantillas) y 2026-09-13 (agentes distribuidos), y sólo para
+   esto:** llevar la **vía proporcional de reparación** a `templates/AGENTS.md.tpl`, a `AGENTS.md`,
+   a los **cuatro agentes** y a la migración de `arnes-upgrade`. La vía **deja de ser un piloto de
+   este repositorio y pasa a ser producto**. **Los agentes entran porque la política también los
+   gobierna**, y sin ellos el cambio sería falso: `agents/qa-tester.md` decía que el write-back es
+   siempre del analista, y QA habría rechazado el de un desarrollador. **Ninguna otra parte de esta
+   enmienda se propaga sin una decisión nueva.** Se **tacha, no se borra**: el límite existió y su
+   levantamiento es un hecho con fecha.
+   **Corrección (2026-09-13, revisión de coherencia).** Al llevarlo a los agentes se afirmó que
+   *«ahora QA sabe que quién transcribe depende de la vía»*. **Era falso cuando se escribió:** la
+   regla vieja seguía viva en `agents/qa-tester.md`, en la sección del veredicto, y también en
+   `agents/auditor-seguridad.md`. Quedó cierto el 2026-09-13, al corregirse las dos sedes. Se
+   **escribe la corrección, no se borra la afirmación**: una promesa que se dio por cumplida antes
+   de estarlo es justo lo que este registro existe para no repetir.
 2. **Hooks** ni **controles mecánicos**.
 3. El **comportamiento de instalación y actualización**.
 4. El **rigor** ni la **sensibilidad** de un REQ **para evitar una puerta**.

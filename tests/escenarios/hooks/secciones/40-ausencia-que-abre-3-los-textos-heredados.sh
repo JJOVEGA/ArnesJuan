@@ -1,4 +1,4 @@
-# Sección 40 (3 de 4) del banco — 40-ausencia-que-abre-3-los-textos-heredados
+# Sección 40 (3ª parte) del banco — 40-ausencia-que-abre-3-los-textos-heredados
 # Se ejecuta con `source` desde el corredor (`../run.sh`), en su propio subshell y con los
 # ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de ninguna otra
 # sección (invariantes 3 y 4 del README del banco).
@@ -10,6 +10,16 @@
 # medidamente falso para los dos que GOBIERNAN). La clase derivada y
 # el sitio único están en la parte 1, la migración y el coste en la parte 2, y la conducta de la
 # cola en `31-cola-una-sola-regla.sh`.
+#
+# PARTIDA POR REQ-014 CA-18: EL RECONOCEDOR SE FUE A `40/8`. Este archivo llegó a 629 líneas
+# contra un techo de 400 —su piso no llega a `N / k` = 320, así que lo gobierna `N`— por la cadena
+# de reparaciones del reconocedor de promesas de equivalencia: 325 → 382 → 477 (`I-5`) → 554
+# (`I-7`) → 629 (`SEC-102`). El corte va por la frontera que el archivo ya tenía: aquí se queda lo
+# que se mide con `mira40c` sobre el TEXTO, y en `40-ausencia-que-abre-8-el-reconocedor-de-promesas.sh`
+# viven los cinco casos del RECONOCEDOR, con `con40`/`sin40`/`ver40` y `mide40p`. Ningún caso se
+# añadió, quitó ni renombró al partir, y ninguna de las dos partes usa un nombre definido en la
+# otra (CA-19: ninguna sección hace `source` de otra; H-04: en `secciones/` no cabe un auxiliar,
+# así que el aplanado del apartado va DUPLICADO en las dos).
 #
 # ESTA PARTE ES SOBRE TEXTO, y por eso no usa `$HOOKS_DIR`: la ruta del documento se deriva de
 # `$SEC_DIR`, igual que los casos de `REQ-016 CA-09/CA-10` en `36-…-4-el-informe-y-los-textos.sh`.
@@ -29,8 +39,8 @@
 # aplanar se conserva el NÚMERO DE LÍNEA de arranque de cada viñeta, que es lo que permite medir
 # el ORDEN que `CA-06 (ii)` contrata —la propiedad ANTES de cualquier comando— sin volver a
 # recorrer el archivo.
-CASOS_ESPERADOS_SECCION=26
-PISO_AUTONOMO_SECCION=78  # 31 preámbulo con sus dos declaraciones y el titular (líneas 1-31) + 16 maquinaria compartida duplicada (`mira40c`, el mismo ayudante que `36-…-4-el-informe-y-los-textos.sh` define, duplicado porque en `secciones/` no cabe un auxiliar; líneas 61-76) + 31 bloque indivisible mayor (el aplanado del apartado, el sub-bloque anclado por su titular y `idx40`, líneas 33-59 y 77-80: ningún caso de CA-06 puede prescindir de ellos) · REQ-014 CA-18
+CASOS_ESPERADOS_SECCION=25  # 30 → 25 por la PARTICIÓN de `REQ-014 CA-18`, y NO por perder nada: los CINCO casos del reconocedor se mudan enteros a `40-ausencia-que-abre-8-el-reconocedor-de-promesas.sh`, que declara 5. La suma de las dos partes sigue siendo 30 y `CASOS_ESPERADOS` del banco NO cambia; los identificadores de los casos son las mismas cadenas, byte a byte. Los renglones de abajo son la historia de este archivo ANTES de partirse y se conservan sin reescribir; los tres últimos describen casos que hoy viven en `40/8`.  # 29 → 30: el COSTE DEL BORDE (`SEC-102`). El borde de palabra que `I-7` puso a los DOS lados mataba los tres falsos positivos con el lado IZQUIERDO y, con el DERECHO, mataba además tres formas legítimas que la cabeza anterior sí cazaba —«anteriormente», «previamente», «con anterioridad»—: fallo hacia el VERDE y en silencio. El borde derecho se retira (los falsos positivos llevan el término como SUFIJO y el izquierdo ya los rechaza enteros) y el caso nuevo ejerce LOS DOS LADOS en la misma vuelta: tres positivos que deben morder —regresiones conocidas, conjunto NO exhaustivo y NO excepciones— y los tres sufijos que deben seguir en «0 0». El renglón siguiente describe el mecanismo del 2026-09-14, cuando el borde estaba a ambos lados.  # 28 → 29: los FALSOS POSITIVOS de `I-7` con la falsación `v2`. La reparación de `I-5` ensanchó el eje del término heredado y metió dos defectos propios —el escape `\.` perdido al pasar por `awk -v`, que hacía casar cualquier número de 3+ cifras o una fecha ISO como identificador de versión, y la anterioridad sin límite de palabra («bastantes», «restantes», «instantes»)—. Corregidos con ENVIRON y bordes no alfabéticos, el caso nuevo los EJERCE: seis negativos que deben dar «0 0» y la falsación `v2`, fuera de las siete, que debe seguir mordiendo para que «0 falsos positivos» no sea cierto por mudez.  # 27 → 28: las SIETE REGRESIONES CONOCIDAS de `I-5` con sus controles positivos. Al acotar el reconocedor por propiedad (26 → 27, abajo) el eje del VERBO quedó bien y el del TÉRMINO HEREDADO quedó como enumeración cerrada y alcance de una sola oración; QA y el auditor midieron que por ahí se soltaron **siete** formas que el reconocedor anterior sí cazaba, **ninguna espuria**. El caso nuevo inyecta las siete, una a una, y exige que **todas vuelvan a morder**, más los controles positivos en la misma vuelta (la frase protectora y las dos promesas reales siguen pasando). Son regresiones CONOCIDAS, no la definición de la clase ni un conjunto cerrado.  # 26 → 27: el DISCRIMINANTE del reconocedor de promesas de equivalencia. Al corregir su alcance (falso positivo medido en CI, PR #50: la fila `MODIFICADO` de la tabla de migración casaba con el verbo sin prometer equivalencia con ninguna versión), el arreglo sería indistinguible de haber aflojado el reconocedor; el caso nuevo inyecta en una COPIA las dos formas que tienen que decidir distinto —con término heredado y SIN acto muerde, la misma CON acto pasa— más el control de que la frase que protege el texto personalizado, sola, no es ni promesa ni infracción
+PISO_AUTONOMO_SECCION=90  # 44 preámbulo con sus dos declaraciones y el titular (líneas 1-44) + 34 maquinaria compartida duplicada (el aplanado del apartado, líneas 46-65, duplicado en `40/8` desde la partición; y `mira40c`, líneas 74-87, el mismo ayudante que `36-…-4-el-informe-y-los-textos.sh` define, duplicado porque en `secciones/` no cabe un auxiliar y CA-19 prohíbe el `source`) + 12 bloque indivisible mayor (el sub-bloque anclado por su titular y `idx40`, líneas 66-72 y 88-92: ningún caso de los que quedan aquí puede prescindir de ellos) · REQ-014 CA-18
 seccion_nueva "--- 40/3 · la ausencia que abre: los textos que un proyecto hereda (REQ-024 CA-06) ---"
 
 REPO40C="${SEC_DIR%/}/../../../.."
@@ -215,40 +225,6 @@ mira40c "REQ-024 CA-06 (v) ...y la LISTA de actos divergentes la fija CA-05, no 
   "$SUB40" 'no la fija este apartado: la fija[ ]*.REQ-024 CA-05.'
 mira40c "REQ-024 CA-06 (v) ...con los ejemplos marcados NO exhaustivos y los dos actos por su nombre (cierre: no cambia; firma: cambia)" \
   "$SUB40" 'Ejemplos \*\*no exhaustivos\*\* de actos: el \*\*cierre\*\*,[ ]*que no cambia, y la \*\*firma de seguridad\*\*, que cambia'
-
-# ---------- CA-06 · NINGUNA PROMESA DE EQUIVALENCIA SE ENUNCIA SIN SU ACTO ----------
-# La otra mitad de la cláusula final de `CA-06` —«ninguna frase afirma … que un proyecto que no
-# activa nada no note NADA»—, medida como PROPIEDAD y no buscando una frase mala. `CA-05` dejó de
-# contratar la equivalencia sobre «la puerta» y la contrata sobre el ACTO DE CIERRE (`ADR-011`),
-# así que en este apartado toda promesa de equivalencia con la versión heredada tiene que llevar
-# el acto DENTRO de la propia promesa. Con una coletilla al lado no vale: es exactamente la forma
-# que `SEC-079` midió, y quien lee la promesa sola se queda con la promesa.
-#
-# LA FAMILIA PROHIBIDA SE RECONOCE POR CADENA LITERAL, Y ES UN CONJUNTO ABIERTO (`QA-024-05`):
-# son las formas SIN acto medidas en este documento —dos de ellas vivían aquí hasta hoy: «la
-# resolución de la ausencia de un campo de cabecera decide exactamente lo mismo que 1.33.0» y
-# «sin la llave, 1.34.0 decide como las anteriores»—, no la lista de todas las maneras de
-# prometer equivalencia. Una tercera forma redactada con otras palabras se le escapa, y por eso
-# el caso PUBLICA su denominador —cuántas promesas ve y cuántas llevan su acto— en vez de decir
-# «ninguna»: un instrumento que no puede enumerar su clase tiene que enseñar su cuenta.
-# Y ABSTIENE con 0 promesas: «todas llevan su acto» es cierto por vacío cuando no hay ninguna, y
-# un verde por no medir es la familia que `REQ-020` existe para cazar.
-if [ -z "$FILTRO" ] || printf '%s' "REQ-024 CA-06 promesas con su acto" | grep -qi -- "$FILTRO"; then
-  # Con acto DENTRO de la promesa (el verbo de la equivalencia es cerrar) / sin acto (sujeto
-  # abierto: «decide», «no nota nada», «se queda como está»).
-  con40='cierra exactamente como cerraba|cierra como las anteriores|cierra exactamente como cerró'
-  sin40='decide[ ]*exactamente lo mismo|decide como las anteriores|no nota nada|se queda[ ]*exactamente como está|se queda como está|resuelve como las anteriores'
-  c40p="$(grep -o -E -- "$con40" "$AP40" 2>/dev/null | grep -c . || true)"
-  s40p="$(grep -o -E -- "$sin40" "$AP40" 2>/dev/null | grep -c . || true)"
-  tot40p=$(( ${c40p:-0} + ${s40p:-0} ))
-  if [ "$tot40p" -lt 1 ]; then
-    echo "  SKIP  REQ-024 CA-06 promesas con su acto  el apartado no enuncia ninguna promesa de equivalencia de las formas conocidas ($VIN40 viñetas): «todas llevan su acto» sería cierto por vacío"
-  elif [ "${s40p:-0}" -eq 0 ]; then
-    echo "  PASS  REQ-024 CA-06 las $tot40p promesas de equivalencia del apartado llevan el ACTO dentro de la promesa (${c40p} con acto, 0 de sujeto abierto; formas reconocidas por cadena, conjunto ABIERTO)"; PASS=$((PASS+1))
-  else
-    echo "  FAIL  REQ-024 CA-06 promesas de equivalencia: $tot40p vistas y ${s40p} enunciadas SIN acto (sujeto abierto): $(grep -o -E -- "$sin40" "$AP40" | tr '\n' '|')"; FAIL=$((FAIL+1))
-  fi
-fi
 
 # ---------- CA-06 · NINGUNA FRASE DEL APARTADO AFIRMA COMPLETITUD SOBRE UN BARRIDO ----------
 # No se busca una frase mala —esa lista envejece—: se comprueba la PROPIEDAD sobre las dos

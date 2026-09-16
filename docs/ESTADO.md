@@ -5,6 +5,87 @@
 > `<!-- ARNES:DERIVADO ... -->` que **reescribe el arnés** en cada parada de agente: no lo
 > edites, se sobrescribe. Lo de fuera de esos marcadores no se toca nunca.
 
+## ⏸ RETOMAR AQUÍ — vía proporcional, candidato `rel/via-proporcional` @ `f6912ea` (contenido `9dac46f`), 2026-09-15
+
+**Este bloque SUSTITUYE al de más abajo, que queda como histórico.** Los bloques anteriores de esta
+misma cabecera (2026-09-13) quedaron superados por las cinco rondas de validación registradas en
+`docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` y `docs/seguridad/registro-seguridad.md`
+§ `R-034`…`R-039`.
+
+**Estado del candidato: detenido, empujado a PR #50 (borrador, base `base/via-proporcional` = `f387b1c`).
+Sin fusión, sin publicación, sin cambio de versión.**
+
+- **QA: FAVORABLE sobre `9dac46f`.** `I-1`, `I-2`, `I-5`, `I-7` resueltos; `CA-06` y `SEC-098`/`099`
+  reparados. Abiertos `instrumento`: `I-3`, `I-6`, `R-1`.
+- **Seguridad: `Seguridad: aprobado` acotado (`R-037`), extendido a `eea46ad` (`R-038`) y a `9dac46f`
+  (`R-039`).** `SEC-093/094/095/097/098/099/100` mitigados; `SEC-096` en-mitigación; `SEC-101` y
+  **`SEC-102`** (nuevo: el borde derecho del reconocedor pierde «anteriormente», «previamente», «con
+  anterioridad») abiertos, `instrumento`, no bloquean. **No es la aprobación final de la vía.**
+- **CI sobre `f6912ea` (única corrida autorizada): banco 1280 PASS · 0 FAIL · 13 SKIP, cuadre 1293
+  exacto**; los cuatro casos de `CA-06` ejecutados; `REQ-017 CA-09` PASS (el FAIL de `a82db68` se
+  conserva, no queda desmentido). **Puerta requerida `hooks-en-linux` ROJA por la autoprueba del
+  corredor: `REQ-014 CA-18`** — `40-ausencia-que-abre-3-los-textos-heredados.sh` mide **554 líneas**
+  con techo 400 (piso 78, gobierna N). Introducido por la cadena I-5 (477) / I-7 (554); la autoprueba
+  no había corrido nunca en el PR (paso `skipped` tras los rojos del banco) y nadie la corrió en local
+  (no es una de las tres gates del manifiesto).
+
+**Decisiones pendientes del propietario, presentadas aparte:**
+1. **`REQ-014 CA-18`:** autorizar la **partición** de `40/3` en dos secciones con su propio
+   `PISO_AUTONOMO_SECCION` (vía prevista por el criterio; **no** subir N). `tests/` es `critico`:
+   desarrollador → QA → seguridad, y otra corrida de CI.
+2. **`SEC-102`:** reparar el borde derecho (retirarlo y añadir las tres formas como positivos) o dejarlo
+   en deuda con dueño y vencimiento.
+3. **`REQ-017 CA-09`:** la sonda dio SKIP, FAIL (0,976×) y PASS (1,563×) en tres corridas sobre el mismo
+   mecanismo; decidir qué acredita como gate.
+
+**Evidencia fuera del repo:** worktree `/home/juan/dev/ArnesJuan-evidencia`, rama huérfana
+`evidencia/prueba-despacho-2026-09-14` @ `728523d` (**sólo local, sin remoto**): `validacion-f141511/VEREDICTO.md`
+(cinco rondas), `ci-pr50/`, `ci-pr50-a82db68/`, `ci-pr50-f6912ea/` (logs completos y diagnósticos), casos
+con agentes reales. **Fuera de alcance por instrucción:** el `mv` de la sección 33, `I-3`, `I-6`, `R-1`,
+`SEC-096`, `SEC-101`, la observación de `N-4`.
+
+---
+
+## (histórico) ⏸ Distribución de la vía proporcional, detenida el 2026-09-13 (mañana)
+
+**Estado: candidato `rel/via-proporcional` @ `27bb49c`, DETENIDO y NO ADOPTADO.** Se conserva entero
+—rama, hallazgos y evidencia—. **No se revierte, no se cierra nada, no se publica.** El propietario
+dio por **agotado el presupuesto de este intento** y **no autoriza** reparaciones, `push`, PR ni
+levantar el límite 3 de la enmienda (`SEC-097`).
+
+**Lo que SÍ queda vigente:** la **política aligerada** que ya regía el desarrollo de ArnesJuan desde
+el 2026-09-10 (`docs/gobernanza/autoalojamiento.md`). **Su distribución a consumidores queda
+pendiente, sin fecha comprometida y sin comisiones abiertas.**
+
+### Corrección de una conclusión mía, y es la que hay que leer antes de retomar
+
+Escribí que retirar la entrada de migración haría **desaparecer** `SEC-095` y `SEC-096` «porque son
+íntegramente sobre migrar». **Es falso, y lo corrijo aquí:** **un riesgo no se cierra excluyendo el
+archivo que lo menciona.** Lo que esos dos hallazgos describen no es una instrucción defectuosa: es
+que **los agentes se actualizan solos con el plugin mientras el `AGENTS.md` del proyecto queda
+congelado**. Esa divergencia ocurre **exista o no una entrada de migración**, y **alcanza también a
+un proyecto nuevo** en cuanto el plugin sube de versión — lo dije yo mismo dos párrafos más abajo,
+contradiciendo mi propia conclusión.
+
+**`SEC-095` y `SEC-096` siguen abiertos y NO se cierran por exclusión de archivos.** Tampoco
+`SEC-093`, `SEC-094`, `SEC-097`, `R-1` ni la observación de `N-4`.
+
+### La condición para retomar, decidida por el propietario
+
+> **Primero se resuelve cómo se mantiene compatible el conjunto de instrucciones durante una
+> actualización, y sólo después se editan sus distintas sedes.**
+
+Es decir: **no se vuelve a tocar `AGENTS.md`, las plantillas, los agentes ni las skills** hasta que
+exista respuesta a cómo documento y agentes permanecen coherentes cuando uno sube y el otro no.
+Medido y pertinente para esa respuesta: **no hay sello de versión** en las sedes que divergen, así
+que hoy la incompatibilidad **no es detectable leyendo**; y **ningún guardián del banco cubre
+`agents/*.md`, las plantillas de `requirements` ni las skills**, así que esta clase de defecto sólo
+se ve **barriendo por propiedad**, a mano.
+
+**Dónde está todo:** veredictos de QA (4 vueltas) en `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md`;
+seguridad en `docs/seguridad/registro-seguridad.md` § `R-034`; historia del intento en `CHANGELOG.md`.
+**Coste medido del intento: 9 comisiones · 72 min 23 s · 1 463 993 tokens.**
+
 ## Fase actual
 Fase 0 — autoalojamiento. **v1.33.0 PUBLICADA** el 2026-09-08 (merge `810128a`, tag y Release creados;
 instalación estable actualizada y verificada: 880 PASS · 0 FAIL en el banco completo). Ventana **1.34.0

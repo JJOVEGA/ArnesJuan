@@ -1300,7 +1300,56 @@ done
 # sonda y umbral leído del registro juzgado—. Los `CASOS_ESPERADOS_SECCION` de `37/1` y `37/2`
 # NO se tocan (CA-07 punto 2). Los dos literales, el de esta línea y el del archivo, se
 # actualizan a mano y por separado: son el control.
-CASOS_ESPERADOS=1290  # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
+CASOS_ESPERADOS=1294  # 1293 → 1294: el COSTE DEL BORDE en `40/3` (29 → 30), por `SEC-102`. El borde
+                      # de palabra que `I-7` puso a los DOS lados para matar «bastantes»,
+                      # «restantes» e «instantes» ya los mataba con el lado IZQUIERDO —los tres
+                      # llevan el término como SUFIJO—, y con el DERECHO mataba además tres formas
+                      # legítimas que la cabeza anterior sí cazaba: «anteriormente», «previamente»
+                      # y «con anterioridad», la misma clase con el término como PREFIJO. Fallo
+                      # hacia el VERDE y en silencio: una promesa real escrita con «anteriormente»
+                      # pasaba inadvertida. Se retira el borde derecho —medido: no compraba ni uno
+                      # de los tres negativos— y el caso nuevo ejerce LOS DOS LADOS en la misma
+                      # vuelta: tres positivos que deben morder (regresiones CONOCIDAS, conjunto
+                      # NO exhaustivo y NO excepciones) y los tres sufijos que deben seguir en
+                      # «0 0», para que el siguiente ajuste tenga que decidir entre los dos lados
+                      # a la vista. Ningún otro `CASOS_ESPERADOS_SECCION` se toca.
+                      #
+                      # 1292 → 1293: los FALSOS POSITIVOS de `I-7` en `40/3` (28 → 29). Al ensanchar
+                      # el eje del término heredado para recuperar `I-5`, la reparación metió dos
+                      # defectos propios: el escape `\.` se perdía al pasar el patrón por `awk -v`
+                      # —que interpreta escapes—, de modo que CUALQUIER número de tres o más cifras
+                      # o una fecha ISO casaba como identificador de versión; y la anterioridad
+                      # casaba dentro de otras palabras («bastantes», «restantes», «instantes»). Los
+                      # dos van corregidos en la propiedad —los patrones llegan por `ENVIRON`, que
+                      # no interpreta nada, y la anterioridad exige borde no alfabético—, y el caso
+                      # nuevo los EJERCE en los dos sentidos: seis negativos que deben dar «0 0» y
+                      # la falsación `v2`, que NO está entre las siete regresiones, que debe seguir
+                      # mordiendo — si no, «0 falsos positivos» sería cierto por mudez. Ningún otro
+                      # `CASOS_ESPERADOS_SECCION` se toca.
+                      #
+                      # 1291 → 1292: las SIETE REGRESIONES CONOCIDAS de `I-5` en `40/3` (27 → 28).
+                      # Al acotar el reconocedor de promesas de equivalencia quedó por propiedad en
+                      # UN EJE DE DOS: el del verbo/acto bien, y el del TÉRMINO HEREDADO como
+                      # enumeración cerrada con alcance de una sola oración. QA y el auditor
+                      # midieron que por ahí se soltaron SIETE formas que el reconocedor anterior sí
+                      # cazaba, y NINGUNA era espuria. El arreglo va en la PROPIEDAD —el término
+                      # heredado enunciado por clase con ejemplos no exhaustivos, y la vecindad
+                      # dentro del bloque—; el caso nuevo las inyecta una a una y exige que todas
+                      # vuelvan a morder, con los controles positivos en la misma vuelta. Ningún
+                      # otro `CASOS_ESPERADOS_SECCION` se toca.
+                      #
+                      # 1290 → 1291: el DISCRIMINANTE del reconocedor de promesas de equivalencia
+                      # en `40/3` (26 → 27). Su alcance se corrigió por un falso positivo MEDIDO en
+                      # CI (PR #50): el apartado dejó de ser sólo prosa sobre la llave y ahora lleva
+                      # la tabla de migración, cuya fila `MODIFICADO` —«tu texto se queda como
+                      # está»— casaba con el verbo sin prometer equivalencia con versión alguna. La
+                      # frase protectora NO se reformuló para esquivar la prueba; se acotó el
+                      # reconocedor POR PROPIEDAD (una promesa de equivalencia nombra el término
+                      # heredado con el que compara, en la misma oración). El caso nuevo es el par
+                      # que impide que ese arreglo sea un reconocedor más laxo. Ningún otro
+                      # `CASOS_ESPERADOS_SECCION` se toca.
+                      #
+                      # 887 → 906: la sección `28/3` nueva, con los 19 casos de REQ-026 (la
                       # historia de los REQ es una TABLA). Los `CASOS_ESPERADOS_SECCION` de
                       # `28/1` y `28/2` NO se tocan: allí tres casos cambiaron de rama y de
                       # texto —CA-08 reclasifica «tabla sin separadora»— pero no se creó ni
