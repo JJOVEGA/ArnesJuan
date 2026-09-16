@@ -224,9 +224,12 @@ Tres reglas nacidas de fallos reales:
    viejos contra los textos de HOY— y aceptan una variable propia con el documento de antes, la
    misma técnica y el mismo motivo que `ARNES_README_BANCO` en `autoprueba-corredor.sh`:
    ```
-   ARNES_SKILL_UPGRADE=/ruta/a/la/skill/de/antes bash tests/escenarios/hooks/run.sh secciones/40-*-3-*.sh
+   ARNES_SKILL_UPGRADE=/ruta/a/la/skill/de/antes bash tests/escenarios/hooks/run.sh secciones/40-*-3-*.sh secciones/40-*-8-*.sh
    ```
    Con la variable puesta la vuelta **no acredita el árbol**: mide otro archivo, y eso se dice.
+   **Las DOS partes**, desde que `REQ-014 CA-18` partió la sección: el apartado de la skill lo
+   leen `40/3` (los textos) y `40/8` (el reconocedor), y una vuelta que sólo pase una de las dos
+   mide media cosa. (`40/5`, `44` y `45/2` leen la skill por su cuenta y no entran en este par.)
 3. **Al reorganizar el banco se compara el INVENTARIO, no el total.** Dos casos que intercambian
    PASS y FAIL dan el mismo total: es la forma en que un refactor pierde cobertura en silencio.
    ```

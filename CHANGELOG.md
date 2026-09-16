@@ -2,6 +2,34 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-16 · `REQ-014 CA-18`: `40/3` partida en dos (629 → **301** + **388**, techo 400); la puerta de la autoprueba vuelve a **106 PASS · 0 FAIL**
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: desarrollador. Partición autorizada por el propietario. Sedes: `tests/escenarios/hooks/secciones/40-ausencia-que-abre-3-los-textos-heredados.sh`, `tests/escenarios/hooks/secciones/40-ausencia-que-abre-8-el-reconocedor-de-promesas.sh` (nuevo), `tests/escenarios/hooks/README.md`, `requirements/REQ-024.md`.
+
+**El corte va por la frontera que el archivo ya tenía, que es la misma por la que creció:** `40/3` conserva
+su nombre y sus **25** casos de TEXTO —los que miden con `mira40c` la nota de migración, la completitud y el
+`_doc` de `campos.ausencia_exige`—, y `40/8` recibe los **5** del RECONOCEDOR, con `con40`/`sin40`/`ver40` y
+`mide40p`. Las cuatro reparaciones de la cadena (325 → 382 → 477 `I-5` → 554 `I-7` → 629 `SEC-102`) cayeron
+**enteras** de ese lado.
+
+**Ningún caso se añade, quita ni renombra, y los identificadores son las mismas cadenas byte a byte:** 25 + 5
+= 30, así que `CASOS_ESPERADOS` del banco **no cambia** (1294). Comprobado mecánicamente: de las 629 líneas del
+archivo original, las **únicas** que no aparecen en ninguna de las dos partes son las **dos** que decían «los
+tres casos de `CA-06`» y ahora dicen «los cinco casos de este archivo».
+
+**La maquinaria compartida va DUPLICADA, no subida al corredor** (CA-04 + CA-19 + H-04; subirla es cambio de
+mecanismo y no está autorizado): el aplanado del apartado, 20 líneas, con su motivo escrito. Cada parte declara
+su `PISO_AUTONOMO_SECCION` término a término —**90** y **129**— y **ningún piso se infla**: en `40/8` la
+documentación de los dos ejes queda **fuera** del piso aunque viva pegada al reconocedor, porque un comentario
+sí podría repartirse. **`N` = 400 y `k` = 1,25 no se tocan, y `autoprueba-corredor.sh` tampoco.**
+
+**Medido:** autoprueba del corredor **106 PASS · 0 FAIL** con `40/3` en `lineas=301 piso=90 techo=400` y `40/8`
+en `lineas=388 piso=129 techo=400`; cada parte **por ruta** (25 y 5 casos, 0 FAIL); las dos juntas bajo **`gawk`
+5.3.2** y **`mawk` 1.3.4** (30 PASS · 0 FAIL en ambos); banco completo **1284 PASS · 0 FAIL · 10 SKIP**, cuadre
+**1294** exacto. Quality gates **3/3**. **Limitación declarada, del reparto y no de la regla:** `40/8` queda con
+**12 líneas** de holgura (3,0 %) frente a las **99** de `40/3`, y es la parte donde cae toda reparación del
+reconocedor; ningún caso del reconocedor puede vivir sin él, así que la siguiente de ese tamaño reabrirá `CA-18`
+y pedirá una **tercera** parte, vía que `CA-18 (ii)` ya prevé. No se decide aquí.
+
 ## [Interno] — 2026-09-16 · `SEC-102` reparado: el **borde derecho** se retira y las tres formas vuelven a morder, con los dos lados ejercidos en la misma vuelta (banco 1293 → **1294**)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: desarrollador. Reparación acotada autorizada por el propietario sobre `rel/via-proporcional` @ `38858d2`. Sedes: `tests/escenarios/hooks/secciones/40-ausencia-que-abre-3-los-textos-heredados.sh`, `tests/escenarios/hooks/run.sh`, `requirements/REQ-024.md`.
 
