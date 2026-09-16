@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-16 · QA del porte `404e044`: **FAVORABLE**; las dos adaptaciones (§14 → §6; ancla de `UNKNOWN`) **conformes**; dos hallazgos sobre la skill estable, ninguno contra el porte
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester (QA acotada autorizada por el propietario). Informe: `docs/qa/porte-1.33.2-via-proporcional-veredicto.md`.
+
+**Adaptaciones:** (a) diez obligaciones de §14 A(5) de `5f07419` mapeadas a §6:277-310, las diez presentes; cero referencias a §14; el límite (b) incorporado por contenido, no citado. (b) las dos anclas de la skill estable («Tres resultados, nunca dos»; Fase 2) dicen literalmente lo que el porte afirma. **Barrido por propiedad:** 16 patrones de la rama larga sobre las 672 líneas añadidas → 0; 21 rutas citadas, todas existen; gemelas difieren exactamente en la declaración y una frase de §9. **Autoalojamiento:** la frase «no se propaga a las plantillas» califica el bloque de autoalojamiento; con la negativa del repo, ambas dicen lo mismo; no se toca la política.
+
+**Evidencias contrastadas contra las salidas crudas:** INIT-P2 negativa byte a byte; INIT-P3 afirmativa con prefijo idéntico y nombre/fecha reales; 0 placeholders. UPG2-INTACTO recibe la negativa y conserva la personalización; UPG2-MODIF no escribe declaración; UPG2-UNKNOWN cero archivos tocados. **Write-back medido por `parent_tool_use_id`:** con la negativa el desarrollador editó `REQ-004` **0 veces** (primer editor: analista); con la afirmativa **6 veces** (primer editor: desarrollador).
+
+**Hallazgos (conducta de la skill estable de `v1.33.2`, preexistentes):** `H-P1` — `/arnes-upgrade` registró `arnes_version` con un conflicto abierto en una sesión y no en otra (el marcador dice migrado cuando no lo está); `H-P2` — 2 de 6 sesiones rehusaron el porte como destino (Fase 1, correcto) y 4 lo aceptaron: juicio no determinista que **se resuelve decidiendo la versión**, no reparando el porte. Observación: `arnes_version 1.33.0` en `.arnes/config.json` del repo frente a `plugin.json 1.33.2` preexiste al porte (`10eac80`).
+
+**Banco corrido por QA** (la corrida del desarrollador no estaba guardada): **908 PASS · 0 FAIL · 4 SKIP, 912 casos**; autoprueba **106 · 0**; gates 3/3; ninguna ruta protegida tocada. **No acredita:** n=1 en los ensayos; marcador de versión sin decidir; fila 3 por vía afirmativa, copia propia de agente y `arnes-init` interactivo sin ejercer; seguridad; publicación, fusión y número de versión.
+
 ## [GitHub] — 2026-09-16 · Porte MÍNIMO de la vía proporcional de reparación sobre `v1.33.2` — sin versión, sin mecanismo, y este repositorio declara la NEGATIVA
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador`.
 > Rama `porte/via-proporcional-1.33.2`, desde el tag `v1.33.2` (`10eac80`). **No fusionado, no publicado, sin tag.**
