@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-16 · Integración del PR #50 (5f07419 en base/via-proporcional) y tabla para la decisión de publicación
+`decision-publicacion/2026-09-16-tabla.md`: actualización del inventario `entrega-acotada-desde-1.33.2.md` con el diff `v1.33.2..5f07419`, procedencia base/vía, ocho bloqueos con evidencia y recomendación (separar). Sin pruebas nuevas ni comisiones.
+
 ## 2026-09-16 · Sexta ronda: SEC-102 mitigado (R-040), 40/3 partida por REQ-014 CA-18, SEC-103 nuevo; CI sobre `e392fbf` **verde**: banco 1278 · 0 · 16 cuadrado en 1294, autoprueba 106 · 0
 `validacion-f141511/VEREDICTO.md` (Sexta ronda) y `validacion-f141511/ci-pr50-e392fbf/` (`DIAGNOSTICO.md`, `run.json`, log completo). CA-09 PASS 1,126× registrado sin borrar el FAIL anterior. Sin fusión ni publicación.
 
