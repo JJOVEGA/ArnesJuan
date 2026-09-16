@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-16 · v1.34.0 PUBLICADA: notas corregidas (`c5db41b`) verificadas por QA y seguridad (R-033); CI verde sobre `ca5ac4a` (903 · 0 · 9); PR #51 fusionado (`cc8972c`, árbol = candidato); tag anotado `v1.34.0` empujado; instalación estable y consumidores sin actualizar
+`porte-1.33.2/ci-pr51-ca5ac4a/DIAGNOSTICO.md` y `porte-1.33.2/README.md` § «v1.34.0 PUBLICADA». Limitaciones que viajan, enumeradas; SEC-090 y H-P3 diferidos y abiertos.
+
 ## 2026-09-16 · Candidato v1.34.0 corregido `a8cbb29` (PR #51): **CI verde** — banco 904 · 0 · 8 = 912, autoprueba 106 · 0; QA del delta favorable; seguridad R-032 extendida (SEC-090/091/092 instrumento); FAIL previo de la sonda conservado
 `porte-1.33.2/ci-pr51-a8cbb29/` (DIAGNOSTICO.md, run.json, log completo) y `porte-1.33.2/README.md` § «Candidato v1.34.0 corregido». Sin fusión, tag ni publicación.
 
