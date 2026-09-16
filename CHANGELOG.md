@@ -2,6 +2,316 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-16 · Seguridad R-033: `SEC-091` y `SEC-092` **mitigados**; decisión del propietario registrada (`SEC-090` y `H-P3` **abiertos — diferidos**); firma extendida a `1fe3382`
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad (confirmación acotada autorizada por el propietario). Sede: `docs/seguridad/registro-seguridad.md` § R-033.
+
+**`SEC-091`:** la inferencia no se matizó, se retiró (0 ocurrencias); en su lugar la premisa correcta —el banco lee `AGENTS.md`, `templates/` y `skills/arnes-upgrade/SKILL.md`, que `8bd5e33` modificó— y las cuatro corridas con su cabeza, con abstención sobre la que se publique. **`SEC-092`:** `H-P3` y `SEC-090` pasan de 0 a 4 ocurrencias en `[1.34.0]`, con clase, estado, sedes y la razón; «repetir `/arnes-upgrade`» no se presenta como comprobado. **Decisión del propietario (2026-09-16), literal:** «Para esta publicación acepto diferir `SEC-090` y `H-P3`, con dueño y revisión antes de recomendar reanudar una migración parcial. Permanecen abiertos; esta decisión no los declara resueltos.» Estado anotado **`abierto — diferido por decisión del propietario`**, no `mitigado`; notas y registro coinciden frase a frase. **Sonda de coste:** `tests/` idéntico a `v1.33.2` (0 archivos); las notas no declaran acreditada su estabilidad y publican las seis lecturas con el FAIL conservado; no se valora ni clasifica. **Firma:** entre `cf88b4e` y `1fe3382` ningún artefacto de producto cambió; **`Seguridad: aprobado` extendida a `1fe3382`**, alcance acotado de R-031/R-032. **Rectificación de R-032:** decía «no hay banco sobre esta cabeza» sin constar que un antecesor (`b520e3b`) sí tuvo CI y salió en rojo por la sonda; no cambia el veredicto. **No acredita:** la reanudación tras un parcial; ninguna corrida nueva; n pequeño; `H-P2` abierto; la discrepancia `arnes_version 1.33.0`/`plugin.json 1.34.0`; **la cabeza que finalmente se publique tendrá su propia corrida**; fusión, tag, publicación.
+
+## [Interno] — 2026-09-16 · QA del delta documental `c5db41b`: **FAVORABLE**; `SEC-091` y `SEC-092` remediados desde QA; el FAVORABLE sobre `a8cbb29` sigue aplicable
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester (verificación documental acotada, autorizada por el propietario). Adenda 2 en `docs/qa/porte-1.33.2-via-proporcional-veredicto.md`.
+
+Un solo archivo, cuatro hunks (uno es la entrada nueva; los otros tres dentro de `[1.34.0]`); mecanismo, versión y declaración negativa sin tocar. **Cada cifra contra su fuente: todas coinciden** (908·0·4 y 106·0 sobre `404e044` — medición propia de QA; 106·0 sobre `8bd5e33`; CI `b520e3b` 904·1·7 con 1,258×; CI `a8cbb29` 904·0·8 con 0,958×; 912 casos y 51 secciones verificados en el árbol; las «seis lecturas» de la sonda son exactamente seis). **Barrido por propiedad:** certificación por identidad **retirada** (queda el hecho medido y la negación explícita, con el motivo: el banco lee la skill que `8bd5e33` modificó); la reanudación aparece cinco veces, las cinco en negativo; `H-P1` con su reserva de n en las sedes operativas; las dos afirmaciones que habían quedado falsas («H-P1 ya no está en esta lista»; «la skill no se ejecutó en este commit») **retiradas**, y sobreviven sólo citadas como texto sustituido. **No acredita:** ninguna prueba nueva (acredita correspondencia entre notas y fuentes); los logs del runner (QA leyó los diagnósticos); la sonda de coste; la reanudación de una migración parcial («un texto que declara bien una limitación no la remedia»); el cierre formal de `SEC-090/091/092`/`H-P3`, que es del auditor.
+
+## [GitHub] — 2026-09-16 · `SEC-091` y `SEC-092`: las notas de `1.34.0` dejan de inferir el banco por identidad de mecanismo, y declaran el límite de la **migración parcial**
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` · autorizado por el propietario, alcance **sólo las notas de versión** (`CHANGELOG.md` § `## [1.34.0]`). **Ningún mecanismo tocado y ninguna otra reparación abierta:** el único archivo del commit es `CHANGELOG.md`.
+
+**`SEC-091` — la inferencia se sustituye por los hechos.** Donde las notas decían «mecanismo idéntico
+a `v1.33.2`, **así que** el banco que certifica `v1.33.2` certifica también esto», ahora dicen que la
+identidad de mecanismo es un **hecho medido** (0 archivos en `hooks/ tools/ .arnes/ tests/ .github/`)
+y **no** una razón para no correr el banco —que lee documentos que el porte sí cambió, incluida la
+skill `arnes-upgrade` que `8bd5e33` modificó—, y enumeran **qué se ejecutó sobre qué cabeza**: banco
+de `v1.33.2` (912 casos, 51 secciones) por QA en local sobre `404e044` **908 · 0 · 4** (autoprueba
+106 · 0); autoprueba sobre `8bd5e33` **106 · 0**; CI sobre `b520e3b` **904 · 1 FAIL · 7** —la sonda de
+coste `REQ-017 CA-08 (ii)`, 1,258× frente a 1,25×, **conservada, sin relanzar ni modificar**—; CI
+sobre `a8cbb29` **904 · 0 · 8** con la misma sonda en 0,958×, que **no desmiente** el FAIL ni acredita
+la estabilidad de la sonda (seis lecturas entre 0,932× y 1,258×). **La certificación de una cabeza es
+la corrida que se ejecutó sobre ella:** la cabeza que se publique tendrá la suya y las notas **no**
+afirman su resultado por adelantado.
+
+**`SEC-092` — `H-P3` y `SEC-090` entran en la lista de límites**, con la limitación de las migraciones
+parciales: con `8bd5e33` un `CONFLICTO`/`UNKNOWN` pendiente deja la migración **PARCIAL**, conserva
+`arnes_version` de origen y lo declara (dos sesiones con §6 personalizada y un control; `n` pequeño,
+sin determinismo); **la reanudación NO está acreditada** —nadie la ha ejercido, «Continuar» no repite
+la precondición de verificar antes de registrar la versión (`SEC-090`) y no especifica qué pasa con
+`.arnes/plantillas-origen/` en un parcial (`H-P3`)—; **«repetir `/arnes-upgrade`» no se presenta como
+solución comprobada**: el propietario del proyecto resuelve el conflicto a mano y la reanudación queda
+**pendiente de revisión**. **Decisión del propietario (2026-09-16): `SEC-090` y `H-P3` DIFERIDOS** para
+esta publicación, dueño `desarrollador`, con revisión de QA y seguridad antes de recomendar reanudar;
+**permanecen ABIERTOS**. Barrido por propiedad dentro de `[1.34.0]`: también se corrigen «`H-P1` ya no
+está en esta lista» → **corregido con su reserva de `n`**, «la skill no se ejecutó en este commit» →
+**los ensayos medidos 2 de 2**, el `n=1` acotado al porte `404e044` y «no cierra ningún hallazgo salvo
+`H-P1`» → con su reserva y el banco no corrido sobre esta cabeza.
+
+**No acredita:** ningún mecanismo (no se tocó), ninguna corrida nueva de banco o CI —no se ejecutó
+ninguna para este commit—, la estabilidad de la sonda de coste, la conducta de la reanudación, ni el
+cierre de `SEC-090`, `SEC-091`, `SEC-092` o `H-P3`, que los declaran QA y seguridad. Gates **3 de 3**
+(`bash -n` sobre `hooks/*.sh` y `tools/*.sh`; `jq -e` sobre `hooks.json`, `plugin.json` y
+`marketplace.json`) y `git diff v1.33.2 HEAD --name-only -- hooks tools .arnes tests .github` → **0**.
+No fusiona, no etiqueta, no publica y no empuja.
+
+## [Interno] — 2026-09-16 · Seguridad R-032: **`Seguridad: aprobado` extendida a `cf88b4e`** (versión, notas y delta de `H-P1`); **`SEC-090`, `SEC-091`, `SEC-092`** nuevos (`instrumento`, no bloquean)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad (confirmación acotada autorizada por el propietario; no repite la revisión del porte). Sede: `docs/seguridad/registro-seguridad.md` § R-032.
+
+**Versión y notas:** tres campos 1.34.0; `arnes_version` del repo 1.33.0 y declaración negativa sin tocar; las notas no prometen mecanismo ajeno (0 rutas en `hooks/ tools/ .arnes/ tests/ .github/`) y no inducen a creer cerrado nada (`H-P2` «NO queda resuelto por esta ventana»). La entrada «Hacia 1.34.0» numerada no altera lo firmado en R-031. **Delta de `H-P1`:** dirección segura, sin fail-open nuevo; «Continuar» conserva el guardián por operación. **Hallazgos nuevos, todos `instrumento`:** `SEC-090` — la reanudación es la única sede que no repite la precondición de verificar antes de registrar la versión, y resolver un conflicto implica edición humana del archivo; `SEC-091` — las notas afirman «mecanismo idéntico, así que el banco que certifica v1.33.2 certifica también esto», inferencia que no se sigue (el banco lee documentos que el porte cambió, incluida la skill que `8bd5e33` modificó); `SEC-092` — `H-P3` no aparece en la lista de límites de `## [1.34.0]`. **`H-P3`** desde seguridad: `instrumento`, dirección fail-open invisible si se materializara (base del merge en destino con versión en origen); conviene especificarlo con `SEC-090` en el mismo acto. **Ninguno se repara en esta entrega** (instrucción: sin otras reparaciones); quedan declarados para decisión del propietario.
+
+**No acredita:** la revisión del porte (R-031, límites en pie); la reanudación tras parcial (texto, no conducta); banco sobre esta cabeza (lo dará el CI); n pequeño; la sonda de coste del CI; `H-P2` abierto; la discrepancia `arnes_version 1.33.0` vs `plugin.json 1.34.0` preexistente, que crece con la versión y no se auditó; fusión, tag, publicación.
+
+## [Interno] — 2026-09-16 · QA del delta `b520e3b..8bd5e33` y de la versión: **FAVORABLE**; `H-P1` **resuelto por el producto** (n=2); `H-P2` no resuelto; **`H-P3`** nuevo (`instrumento`, no bloquea)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester (QA acotada al delta, autorizada por el propietario; no repite la revisión del porte). Adenda en `docs/qa/porte-1.33.2-via-proporcional-veredicto.md`.
+
+**Delta de `H-P1`:** regla enunciada en la sede que ya la gobernaba (Fase 5 estable: «sólo ahora actualiza `arnes_version`…»), sin rediseño: cinco fases, tres resultados y cinco estados intactos; el rótulo «PARCIAL» es nuevo en el árbol pero nombra un desenlace que la skill ya describía, no un estado del clasificador. Barrido propio de QA: las cuatro sedes que hablan de cuándo se registra la versión quedan condicionadas; cero frases residuales. **Versión y notas:** tres campos 1.34.0, el cuarto sin tocar; `por decidir` → 0; entrada tras «Hacia 1.32.1»; declaración negativa intacta; doce patrones de la rama larga → ninguna promesa (las tres menciones de §14 son historiografía del CHANGELOG, cero en el producto).
+
+**Evidencias UPG3/UPG4 contrastadas: todas se sostienen.** `H-P1`: **RESUELTO por el producto** con reserva — 2 de 2 no demuestra determinismo; lo que demuestra es que ahora hay regla escrita donde no la había. `H-P2`: **no resuelto** — 4 de 4 aceptaron el destino porque desapareció la contradicción del insumo, no porque la Fase 1 cambiara (el delta no la toca). **`H-P3`** (`instrumento`, abierto, no bloquea): la skill dice «al terminar, deja en `plantillas-origen` las plantillas de destino» sin calificar el caso parcial y el delta no lo menciona; medido en los proyectos finales **no se materializa** (2 de 2 parciales conservaron la base en origen), pero UPG4-MODIF-2 llegó ahí razonándolo por su cuenta — la misma no determinación que `H-P1` cerró, movida al artefacto de al lado. **No se repara en esta entrega** (instrucción: sin otras reparaciones); se conserva declarado.
+
+**No acredita:** banco en esta cabeza (el 908 · 0 · 4 era sobre `404e044`); la autoprueba sobre `8bd5e33` es de la coordinadora (106 · 0), no repetida; la sonda de coste del CI no se valora; n pequeño; la reanudación tras una migración parcial no se ejerció; seguridad; publicación, fusión y número.
+
+## [1.34.0] — 2026-09-16 · La vía proporcional se publica DESCRITA, y ningún proyecto la estrena activada
+> Origen: GitHub (commit de versión) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (el commit de versión); el contenido que publica viene de `desarrollador` (porte `404e044`), `qa-tester` (`743a5ff`) y `auditor-seguridad` (`346b882`) · gobernado por la instalación estable **1.33.2**.
+
+**Alcance, fijado por el propietario y sin nada más dentro:** `v1.33.2` **+** la vía proporcional de
+reparación, portada con autorización explícita del propietario. **No entra ningún cambio de la rama
+larga** (`rel/via-proporcional`, `base/via-proporcional`). **Ningún cambio de mecanismo:** `hooks/`,
+`tools/`, `.arnes/`, `tests/` y `.github/` son **idénticos a `v1.33.2`** —`git diff v1.33.2 HEAD
+--name-only` sobre esas rutas devuelve **0 archivos**—, así que ninguna puerta cambia de conducta.
+
+**Eso es un hecho medido sobre el mecanismo, y no una razón para no correr el banco.** El banco lee
+además documentos que este porte **sí** cambió —hay secciones que leen `AGENTS.md`, `templates/` y
+**`skills/arnes-upgrade/SKILL.md`**, que `8bd5e33` modificó—, de modo que «mecanismo idéntico» **no**
+implica «el banco sigue certificando». Lo que se ejecutó, y sobre qué cabeza, sin extrapolar:
+
+- **Banco de `v1.33.2`** (912 casos declarados, 51 secciones), corrido **por QA en local sobre
+  `404e044`**: **908 PASS · 0 FAIL · 4 SKIP**; autoprueba del corredor **106 · 0**.
+- **Autoprueba del corredor sobre `8bd5e33`** (coordinadora, local): **106 · 0** — sólo la autoprueba,
+  **ninguna sección del banco**.
+- **CI `hooks-en-linux` sobre `b520e3b`** (PR #51, run 35151689849): **904 · 1 FAIL · 7 SKIP**. El FAIL
+  es la sonda de coste `REQ-017 CA-08 (ii)` —**1,258×** frente al techo **1,25×**, con los hooks
+  idénticos a `v1.33.2`—. **Se conserva: no se relanzó ni se modificó la sonda.**
+- **CI `hooks-en-linux` sobre `a8cbb29`** (run 35158767267): **904 · 0 · 8**, autoprueba **106 · 0**;
+  la misma sonda dio **0,958×**. **Ese PASS no desmiente el FAIL anterior ni acredita la estabilidad
+  de la sonda:** seis lecturas entre **0,932×** y **1,258×** sobre los mismos hooks.
+
+**La certificación de una cabeza es la corrida que se ejecutó sobre ella, y nada más amplio.** La
+cabeza que se publique tendrá **su propia** corrida de CI, y estas notas **no** afirman su resultado
+por adelantado.
+
+**Es `minor`:** añade una capacidad descrita —una vía de reparación con menos despachos— sin quitar
+ni estrechar ninguna promesa existente. Sube de `1.33.2` a `1.34.0` en los **tres** campos de
+distribución: `.claude-plugin/plugin.json` `.version` y `.claude-plugin/marketplace.json` en sus dos
+(`.metadata.version` y `.plugins[0].version`). Los tres **concuerdan** —comprobado con `jq`, porque
+`claude plugin tag` falla si discordaran— y las tres comprobaciones `jq -e .` están en verde.
+`source: "./"` intacto.
+
+### Qué recibe un consumidor al actualizar
+
+- **`AGENTS.md` §6** gana la **tabla de vías**, que elige la vía **por el efecto del cambio**:
+  documentación sin cambio de obligaciones · **reparación con causa, alcance y contrato claros:
+  desarrollador → QA, sin comisión de analista** · cambio cuyo efecto alcanza un criterio de
+  `critico` del proyecto o una protección del arnés (ejemplos declaradamente **no exhaustivos**):
+  **+ seguridad** · capacidad nueva o cambio de contrato: las cuatro fases. Si un cambio casa con
+  más de una fila, manda la **más restrictiva**. Con ella llegan la definición de «contrato claro»
+  —que exige coherencia de `Rigor:`, `Sensible a seguridad:` y revisiones exigidas con el **efecto**—
+  y la **sede normativa única** de la declaración, con sus dos líneas literales.
+- **`AGENTS.md` §9** deja de fijar en el analista **quién transcribe** el write-back. Lo que no
+  cambia: el write-back **sigue siendo obligatorio** —cambia quién lo escribe, no si se escribe— y
+  QA sigue sin firmar sin él.
+- **Los cuatro agentes** (los provee el plugin, no se migran): el `desarrollador` recibe el
+  write-back de la vía de reparación en la misma entrega; el `qa-tester` deja de leer que el
+  write-back es siempre del analista; el `analista-requerimientos` conserva el suyo siempre que
+  quede una decisión; el disparador del `auditor-seguridad` se enuncia sin depender de quién lo
+  despache.
+- **`arnes-init` pregunta la autorización** al crear un proyecto, y **`arnes-upgrade` la migra**
+  —entrada § `Hacia 1.34.0`— **instalando la línea NEGATIVA**, que es el valor por defecto.
+- **`arnes-upgrade` Fase 5 dice ahora qué hacer con un conflicto pendiente** (corrige **`H-P1`**,
+  abajo): un `CONFLICTO` o `UNKNOWN` sin resolver **es una operación del plan no aplicada**, la
+  migración es **PARCIAL**, `arnes_version` **conserva el valor de origen** y el resultado parcial
+  se declara en `.arnes/migracion.md` y en el `CHANGELOG.md` del proyecto **con la lista de
+  secciones pendientes**; la versión se registra sólo al aplicar el plan entero.
+
+### Publicar la capacidad no equivale a activarla
+
+**Instalar esta sección NO la autoriza.** La migración trae §6 y §9 **descritas**; la vía sólo rige
+donde el **propietario de cada proyecto la declara**, y esa declaración es **un acto suyo**, no una
+consecuencia de que el texto llegue. **Ninguna fila del merge —tampoco `INTACTO` ni `NUEVO`— escribe
+la afirmativa**: lo que se instala es la descripción y la **negativa**. Hasta que se declare, el
+proyecto sigue **exactamente** con analista → desarrollador → QA → seguridad, y ningún agente puede
+omitir al analista. **Este repositorio conserva la negativa** (`AGENTS.md` §6): publica la capacidad
+y no la usa.
+
+Y lo que la vía **no** cambia en ningún caso: el rigor no se rebaja y elegir vía **no** reclasifica
+un REQ; no se omiten pruebas necesarias; los contadores de vueltas no se reinician; seguridad sigue
+sin firmar lo que QA no ha validado; **ningún hook cambia** —una errata dentro de `codigo_app.globs`
+la sigue denegando `guard-codigo`—: elegir vía decide **quién revisa**, no quién puede escribir.
+
+### Limitaciones declaradas, que esta versión CONSERVA y no cierra
+
+- **`SEC-089`** (`instrumento`, no bloquea): la comprobación previa al despacho enumera **una** causa
+  de «esta comprobación no la hace nadie» donde hay **dos** —incorpora la del documento congelado y
+  **no** la de «una herramienta cuya vía no está verificada no cuenta como cubierta»—. No afirma nada
+  falso y su desenlace exige dos condiciones simultáneas. Sede: `docs/seguridad/registro-seguridad.md`
+  § **R-031**.
+- **`H-P2`** (conducta de la **skill estable de `v1.33.2`**, no del porte, y sigue abierto): 2 de 6
+  sesiones rehusaron el porte como destino y 4 lo aceptaron: un juicio **no determinista** con dos
+  desenlaces seguros. **`H-P2` NO queda resuelto por esta ventana:** fijar el número **retira el
+  forzador documentado** que QA señaló, pero **nadie ha vuelto a medir** esas sesiones contra un
+  destino ya numerado, así que la no determinación **no está desmentida**. Sede:
+  `docs/qa/porte-1.33.2-via-proporcional-veredicto.md`.
+  **`H-P1` queda corregido en `1.34.0`, y con su reserva de `n`**, haciendo explícita la regla de la
+  Fase 5 de `arnes-upgrade` (arriba). Lo que la corrección **sí** hace es cerrar el hueco del
+  contrato —la Fase 5 de `v1.33.2` no decía qué hacer con un `CONFLICTO` pendiente, y por eso una
+  sesión subió `arnes_version` con §6 en conflicto y otra no—. Y con `8bd5e33` se **comprobó** que una
+  migración con `CONFLICTO`/`UNKNOWN` pendiente queda **PARCIAL**, conserva `arnes_version` de origen
+  y **lo declara**: en **dos** sesiones con §6 personalizada y **un** control completo. **`n` pequeño:
+  2 de 2 no acredita determinismo**; lo que acredita es que ahora hay regla escrita donde no la había.
+  Su sede de QA sigue registrándolo hasta el write-back.
+- **`H-P3`** (`instrumento`, abierto, no bloquea) **y `SEC-090`** (`instrumento`, abierto, no bloquea):
+  **la reanudación de una migración parcial NO está acreditada.** Nadie la ha ejercido. La skill
+  describe «Continuar», pero esa ruta **no repite la precondición de verificar antes de registrar la
+  versión** (`SEC-090`) y **no especifica qué ocurre con `.arnes/plantillas-origen/` en un parcial**
+  (`H-P3`; medido: **2 de 2** sesiones conservaron la base en origen, por su cuenta). Por eso **estas
+  notas no presentan «repetir `/arnes-upgrade`» como solución comprobada** para completar una
+  migración parcial: el **propietario del proyecto resuelve el conflicto a mano**, y la reanudación
+  queda **pendiente de revisión** antes de recomendarla. **Decisión del propietario de ArnesJuan
+  (2026-09-16): `SEC-090` y `H-P3` quedan DIFERIDOS para esta publicación**, con dueño `desarrollador`
+  y revisión de QA y seguridad antes de recomendar reanudar una migración parcial; **permanecen
+  ABIERTOS — esta decisión no los declara resueltos**. Sedes:
+  `docs/seguridad/registro-seguridad.md` § **R-032** y
+  `docs/qa/porte-1.33.2-via-proporcional-veredicto.md`.
+- **`n=1` en los ensayos** de las evidencias de QA **del porte `404e044`**: cada escenario se ejerció
+  **una vez**. Los ensayos posteriores sobre el delta tampoco acotan variabilidad —**4 de 4** y **2 de
+  2**—: `n` pequeño en todos.
+- **La Fase 2 de `arnes-upgrade` con `UNKNOWN` no quedó ejercida**: el ensayo `UPG2-UNKNOWN` paró en
+  **Fase 1**. El cierre fail-closed de `UNKNOWN` está **descrito y no medido en Fase 2**.
+- **`arnes_version` de `.arnes/config.json` de este repositorio sigue en `1.33.0`**, ahora frente a un
+  plugin `1.34.0`. La discrepancia es **preexistente** —ya lo estaba al publicarse `v1.33.1` y
+  `v1.33.2`— y este commit **deliberadamente no la toca**, por instrucción expresa del propietario:
+  ese campo representa la **migración del proyecto**, no la versión del plugin, y además es el
+  manifiesto que los hooks leen en runtime, así que moverlo invalidaría las firmas emitidas sobre
+  este árbol. El bloque derivado de `docs/ESTADO.md` avisará de migración pendiente: **no es un
+  defecto**, es el estado real del autoalojamiento.
+
+También siguen abiertos y **no los toca esta ventana** los hallazgos que `v1.33.2` dejó declarados
+(`SEC-087`, `SEC-088`, `QA-1332-01`).
+
+### Lo que este commit NO hace
+
+No fusiona, no etiqueta y no publica —son actos distintos, del coordinador—; **no cierra ningún
+hallazgo salvo `H-P1`**, y ése **con su reserva de `n`** (2 de 2, sin determinismo)
+(`H-P2`, `H-P3`, `SEC-089`, `SEC-090`, `SEC-087`, `SEC-088` y `QA-1332-01` siguen conservados);
+**tampoco corre el banco sobre esta cabeza** —lo que se ejecutó es lo enumerado arriba, y nada
+más—; no toca `hooks/`,
+`tools/`, `tests/`, `.arnes/`, `.github/`, `requirements/`, `docs/seguridad/` ni `docs/qa/`; no
+altera la declaración de este repositorio, que sigue **negativa**.
+
+## [GitHub] — 2026-09-16 · `H-P1`: la Fase 5 de `arnes-upgrade` dice ahora que un conflicto pendiente deja la migración **PARCIAL** y `arnes_version` **sin subir**
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` · autorizado por el propietario, alcance **sólo `H-P1`**.
+
+**El defecto, medido:** con `AGENTS.md` §6 en `MODIFICADO → CONFLICTO`, una sesión aplicó lo `SAFE`,
+declaró **parcial** tres veces en prosa (mensaje final, `CHANGELOG.md` del proyecto,
+`.arnes/migracion.md`) **y aun así subió `arnes_version`** `1.33.1 → 1.33.2` (fila 6 del plan, «SAFE
+— Fase 5»; Fase 4: «`arnes_version` = `1.33.2` ✔»). Otra sesión en la misma situación **no** lo
+subió. Consecuencia: en la siguiente ejecución origen = destino → Fase 1 «informa que está al día y
+**para**», y el conflicto **deja de ser visible para la vía automática**. Evidencia:
+`ensayos/UPG2-MODIF/migracion.md.resultado` y `H-P1-aclaracion.md` del paquete del porte.
+
+**La causa era del contrato, no del mecanismo:** la Fase 5 ya decía *«sólo ahora actualiza
+`arnes_version`… si se sube antes de verificar, la siguiente ejecución creerá que está hecho»*, pero
+**no decía que un `CONFLICTO` pendiente sea una operación no aplicada**. Se reutiliza la regla que ya
+existía; **no se rediseña la migración**: sin fases, estados, campos ni comprobaciones mecánicas
+nuevas, y sin tocar `hooks/` ni la sección canónica «Clasificación».
+
+**Qué cambia, sólo en `skills/arnes-upgrade/SKILL.md`** (4 puntos, todos redacción):
+1. **Fase 5** — párrafo nuevo: un `CONFLICTO`/`UNKNOWN` sin resolver es **una operación del plan no
+   aplicada** → migración **PARCIAL** → `arnes_version` **conserva el valor de origen (no se
+   escribe)**; el resultado parcial se declara en `.arnes/migracion.md` y en el `CHANGELOG.md` del
+   proyecto **con la lista de secciones pendientes**; la versión se registra **sólo** al quedar el
+   plan aplicado entero, reanudando por «Continuar» (sección «Si se interrumpe a mitad», que ya
+   existía). Con el porqué en una frase: con la versión subida, la Fase 1 de la siguiente ejecución
+   la daría por hecha.
+2. **Fase 4, comprobación 1** — explícito: un `CONFLICTO`/`UNKNOWN` sin resolver **es** una operación
+   no aplicada, no un pendiente aparte.
+3. **Fase 4, comprobación 4** — decía «la versión registrada es la de destino» en absoluto, lo que
+   **contradecía** la regla; ahora condiciona a que el plan quede aplicado entero.
+4. **Barrido por propiedad** (frases que afirmaran o implicaran que `arnes_version` se sube al
+   terminar): corregida la de § `Hacia 1.26.0` —«**Actualiza `arnes_version` al terminar la
+   migración**», imperativo absoluto que empujaba a subirlo para callar el aviso del bloque
+   derivado— y añadida **una línea** de remisión en § `Hacia 1.34.0`, tras la tabla de estados, que
+   es la sede que lee una sesión en esta situación exacta.
+
+**Lo que NO acredita:** **la skill no se ejecutó**; la conducta resultante no está medida y la no
+determinación de origen (1 de 2 sesiones) **no queda desmentida** por este commit. **No cierra nada
+más:** `H-P2` y `SEC-089` siguen conservados, y el write-back de `H-P1` a su sede de QA
+(`docs/qa/porte-1.33.2-via-proporcional-veredicto.md`) **queda pendiente** — fuera de este alcance.
+
+**Verificación:** gates 3/3 en verde (`bash -n` de `hooks/*.sh` y `tools/*.sh`; `jq -e .` de
+`hooks/hooks.json`, `plugin.json` y `marketplace.json`); `git diff v1.33.2 HEAD --name-only --
+hooks tools .arnes tests .github` → **0 archivos**; `diff` de la sección canónica «Clasificación»
+contra `v1.33.2` → **vacío**.
+
+## [Interno] — 2026-09-16 · Seguridad R-031 (registro de `v1.33.2`): **`Seguridad: aprobado` acotada al porte `404e044`**; **`SEC-089`** nuevo (`instrumento`, no bloquea)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad (revisión acotada por el propietario a las diferencias relevantes respecto de la política ya auditada en `5f07419`; R-037…R-040 de la rama larga son antecedentes, no aprobación). Sede: `docs/seguridad/registro-seguridad.md` § R-031 — numeración de **este** archivo (llegaba a R-030 / SEC-088).
+
+**Frontera:** `10eac80..404e044` → 0 rutas de mecanismo; gates 3/3. **Identidad acreditada por `sha` de blob:** los cuatro agentes, `templates/requirements-README.md.tpl` y `arnes-close` son idénticos a la política auditada; la disciplina de la declaración es idéntica salvo la cita retirada; **§13 del porte es idéntica a la de `v1.33.2`** (no se importó la §13 de la línea 1.34.0, que describe guardas que el destino no tiene) y las tres promesas de mecanismo que hace (`guard-codigo`, `guard-completado`, suelo de rigor) existen en `v1.33.2`.
+
+**Las cinco diferencias:** (1) §14 A(5) → §6: diez obligaciones presentes; el límite (b) incorporado por contenido; **falta el límite (a) → `SEC-089`**. (2) Ancla de `UNKNOWN` re-anclada a sedes que existen en la skill del destino; mismo cierre fail-closed; **la Fase 2 con `UNKNOWN` no quedó ejercida** (UPG2-UNKNOWN paró en Fase 1). (3) Identificadores `SEC-099`/`R-036` sustituidos por su contenido: la propiedad se conserva entera. (4) Entrada de `arnes-upgrade`: sin promesas nuevas; viajan la propiedad de `SEC-098` y la reparación de `SEC-099`; corroborado en seis sesiones (ninguna escribió la afirmativa). (5) El «sí» por escrito en INIT-P3 **no es un vector nuevo**: la autorización nunca estuvo anclada en más que «quien conduce la sesión»; el control existe para que el andamiaje no conceda el permiso por defecto, y los dos lados están ejercidos.
+
+**`SEC-089`** — el límite 1 de la comprobación enumera una causa de «no la hace nadie» donde hay dos: incorpora la (b) (documento congelado) y no la (a) («una herramienta cuya vía no está verificada no cuenta como cubierta»); pesa más porque `v1.33.2` ya afirma que lo leen Codex y Cursor sin el matiz de verificación. No bloquea: no afirma nada falso y el desenlace exige dos condiciones simultáneas. **H-P1** (fail-open de la contabilidad de la migración, no de la autorización) y **H-P2** (no determinación con dos desenlaces seguros): de la skill estable, no bloquean. **Autoalojamiento:** sin contradicción; sería latente si este repo escribiera la afirmativa, y el propio porte la resuelve hacia el analista.
+
+**No acredita:** la política (auditada en el otro árbol), n=1 en los ensayos, la Fase 2 con `UNKNOWN`, la fila 3 por vía afirmativa, copia propia de agente, `arnes-init` interactivo, el marcador de versión (pendiente; `H-P2` es su consecuencia), la discrepancia `arnes_version 1.33.0`/`plugin.json 1.33.2` preexistente, el banco; **no se pronuncia sobre fusión ni publicación**.
+
+## [Interno] — 2026-09-16 · QA del porte `404e044`: **FAVORABLE**; las dos adaptaciones (§14 → §6; ancla de `UNKNOWN`) **conformes**; dos hallazgos sobre la skill estable, ninguno contra el porte
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester (QA acotada autorizada por el propietario). Informe: `docs/qa/porte-1.33.2-via-proporcional-veredicto.md`.
+
+**Adaptaciones:** (a) diez obligaciones de §14 A(5) de `5f07419` mapeadas a §6:277-310, las diez presentes; cero referencias a §14; el límite (b) incorporado por contenido, no citado. (b) las dos anclas de la skill estable («Tres resultados, nunca dos»; Fase 2) dicen literalmente lo que el porte afirma. **Barrido por propiedad:** 16 patrones de la rama larga sobre las 672 líneas añadidas → 0; 21 rutas citadas, todas existen; gemelas difieren exactamente en la declaración y una frase de §9. **Autoalojamiento:** la frase «no se propaga a las plantillas» califica el bloque de autoalojamiento; con la negativa del repo, ambas dicen lo mismo; no se toca la política.
+
+**Evidencias contrastadas contra las salidas crudas:** INIT-P2 negativa byte a byte; INIT-P3 afirmativa con prefijo idéntico y nombre/fecha reales; 0 placeholders. UPG2-INTACTO recibe la negativa y conserva la personalización; UPG2-MODIF no escribe declaración; UPG2-UNKNOWN cero archivos tocados. **Write-back medido por `parent_tool_use_id`:** con la negativa el desarrollador editó `REQ-004` **0 veces** (primer editor: analista); con la afirmativa **6 veces** (primer editor: desarrollador).
+
+**Hallazgos (conducta de la skill estable de `v1.33.2`, preexistentes):** `H-P1` — `/arnes-upgrade` registró `arnes_version` con un conflicto abierto en una sesión y no en otra (el marcador dice migrado cuando no lo está); `H-P2` — 2 de 6 sesiones rehusaron el porte como destino (Fase 1, correcto) y 4 lo aceptaron: juicio no determinista que **se resuelve decidiendo la versión**, no reparando el porte. Observación: `arnes_version 1.33.0` en `.arnes/config.json` del repo frente a `plugin.json 1.33.2` preexiste al porte (`10eac80`).
+
+**Banco corrido por QA** (la corrida del desarrollador no estaba guardada): **908 PASS · 0 FAIL · 4 SKIP, 912 casos**; autoprueba **106 · 0**; gates 3/3; ninguna ruta protegida tocada. **No acredita:** n=1 en los ensayos; marcador de versión sin decidir; fila 3 por vía afirmativa, copia propia de agente y `arnes-init` interactivo sin ejercer; seguridad; publicación, fusión y número de versión.
+
+## [GitHub] — 2026-09-16 · Porte MÍNIMO de la vía proporcional de reparación sobre `v1.33.2` — sin versión, sin mecanismo, y este repositorio declara la NEGATIVA
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador`.
+> Rama `porte/via-proporcional-1.33.2`, desde el tag `v1.33.2` (`10eac80`). **No fusionado, no publicado, sin tag.**
+
+Porte **por comportamiento**, no por copia de archivos, de la política que ya se diseñó en la
+integración `5f07419` de `base/via-proporcional`. **No viaja nada del desarrollo de la rama larga**:
+ni referencias a mecanismos que `v1.33.2` no tiene, ni identificadores de hallazgos que su registro
+de seguridad no contiene, ni la sección `## 14.` —que en `v1.33.2` **no existe**—.
+
+**Qué entra.** `AGENTS.md` §6 gana la tabla de vías (4 filas, la 3ª enunciada **por propiedad** con
+ejemplos declaradamente no exhaustivos, y «si casa con más de una fila manda la **más
+restrictiva**»), la definición de «contrato claro» —que incluye la **coherencia** de `Rigor:`,
+`Sensible a seguridad:` y revisiones exigidas con el **efecto**—, la **sede normativa única** de la
+declaración con sus **dos líneas literales**, la comprobación previa al despacho de la coordinadora
+y los tres límites no medidos. §9 deja de fijar en el analista **quién transcribe** el write-back.
+Mismo bloque en `templates/AGENTS.md.tpl`, **gemelo byte a byte salvo una línea**: ahí va el
+placeholder `{{DECLARACION_VIA_PROPORCIONAL}}`. Los cuatro `agents/*.md`, `skills/arnes-init`
+(pregunta la autorización; **sólo un «sí» explícito** escribe la afirmativa), `skills/arnes-upgrade`
+(entrada de migración con **título de versión provisional**, que identifica la sección **por título
+y contenido** y en la que **ninguna fila del merge escribe la autorización**), `skills/arnes-close`
+y `templates/requirements-README.md.tpl`.
+
+**La llave es una sola y no la da el andamiaje.** Los agentes traen la **capacidad**; el `AGENTS.md`
+**del proyecto** da el **permiso**. La ausencia de declaración **no habilita nada**, y la tabla, la
+descripción y el propio apartado de comprobación **llegan instalados**: tomarlos por consentimiento
+es deducir el permiso del texto que lo describe.
+
+**Este repositorio escribe la NEGATIVA.** `AGENTS.md` de ArnesJuan declara «Este proyecto todavía no
+ha declarado esa autorización», así que **aquí sigue rigiendo analista → desarrollador → QA →
+seguridad** y la tabla queda descrita pero inerte. Declararla es una decisión del propietario, no de
+esta comisión.
+
+**Qué NO se toca, y es la condición del encargo.** `hooks/`, `tools/`, `.arnes/config.json`,
+`hooks.json`, `.claude-plugin/*`, `.github/` y `tests/`: **cero cambios**, comprobado con
+`git diff --name-only`. **Ninguna versión se mueve** (`plugin.json`, `marketplace.json`,
+`arnes_version`). **No se añade ninguna sección al banco.**
+
+**Verificación ejecutada.** Quality gates 3/3 en verde. Banco completo de `v1.33.2`
+(`tests/escenarios/hooks/run.sh`) en local, **rc 0**, **0 FAIL**, cuadre **exacto** contra los 912
+casos declarados en las 51 secciones (dos corridas: 906 PASS/6 SKIP y 907 PASS/5 SKIP — la
+diferencia es la sonda de reloj de `REQ-017 CA-08 (ii)`, que converge o no según la carga; ninguna
+corrida produjo un FAIL). `autoprueba-corredor.sh`: **106 PASS, 0 FAIL**.
+
 ## [GitHub] — 2026-09-11 · Versión 1.33.1 → **1.33.2** en los tres campos, y el cuarto sitio que NO se toca
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador`.
 

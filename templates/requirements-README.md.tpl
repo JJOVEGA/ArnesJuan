@@ -233,7 +233,9 @@ midiendo la magnitud que se degrada.
 
 Las cuatro están **prohibidas por nombre**. Un criterio que caiga en cualquiera de ellas está **mal
 formado**: el QA lo reporta como hallazgo de clase `contrato` contra el REQ **antes** de ejecutar
-la prueba, y quien lo reescribe es el analista (write-back, `AGENTS.md` §9).
+la prueba, y **quien lo reescribe depende de la vía** (write-back, `AGENTS.md` §6 y §9): el
+analista cuando queda una decisión de requisitos o de diseño, y el desarrollador —en la misma
+entrega que el arreglo— cuando sólo hay que reflejar lo ya contratado.
 
 ### (a) Enumerar lo que el código reconoce
 

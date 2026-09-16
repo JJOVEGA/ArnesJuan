@@ -6208,3 +6208,626 @@ distinguir un parpadeo de reloj en `REQ-017 CA-08 (ii)` de cualquier cosa que to
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.** Ni el parche ni su corrección alteran
 clasificación de datos, acceso, retención ni cumplimiento; no hay usuarios finales, datos
 personales, secretos ni salida al exterior.
+
+---
+
+## Revisión R-031 — **porte mínimo de la vía proporcional sobre `v1.33.2`**: revisión acotada a las diferencias respecto de la política ya auditada. `porte/via-proporcional-1.33.2` @ `404e044` — 2026-09-16
+
+> **Numeración: la de ESTE archivo, y lo digo porque hay dos.** Este registro es el de la línea
+> `v1.33.2` y llega a **R-030** / **SEC-088**, con `SEC-089` declarado como próximo libre. Uso
+> **R-031** y **SEC-089**. Mis revisiones `R-037`…`R-040` viven en el registro de la **rama larga**
+> (línea 1.34.0) y aquí valen como **antecedentes**, no como aprobación: el propietario lo acotó así.
+> *(Precisión sobre el encargo: se me dijo que este registro «no tiene secciones `R-`»; **sí las
+> tiene, veinte, hasta `R-030`**. La conclusión que se apoyaba en ello sigue siendo correcta por otra
+> razón: no llega a `R-036`, así que la cita retirada no tenía destino aquí.)*
+
+**Objeto acotado, por instrucción del propietario:** «seguridad revisa únicamente las diferencias
+relevantes respecto de la política ya auditada». Fuera y sin tocar: la rama larga, `REQ-017 CA-09`,
+el marcador de versión, reparar, relanzar ensayos y publicar.
+
+### 0. Árbol, frontera y método
+
+- Worktree `/home/juan/dev/ArnesJuan-porte-via`, rama `porte/via-proporcional-1.33.2`, cabeza
+  **`404e044`**, **un solo commit** sobre `10eac80` (= `v1.33.2`). `git status --porcelain` devuelve
+  únicamente `?? docs/qa/porte-…-veredicto.md`, el informe de QA sin comitear.
+- **Frontera comprobada por mí:** `git diff --name-only 10eac80..404e044` filtrado por
+  `^(hooks/|tools/|tests/|\.arnes/|\.github/|\.claude-plugin/)` → **0 rutas**. **El mecanismo no se
+  toca.** Gates **3 de 3**.
+- **Método:** comparación **blob a blob y frase a frase** entre el porte y la política auditada
+  (`base/via-proporcional` @ `5f07419`), y entre el porte y su destino (`10eac80`). No repito la
+  auditoría de la política: **verifico qué cambió al portarla**.
+
+### 1. Lo que NO cambió, acreditado por identidad — y es la mayor parte
+
+**Los cuatro agentes son IDÉNTICOS, por `sha` de blob**, tanto al destino antes del porte como a la
+política auditada:
+
+| Agente | `404e044` | `5f07419` | |
+|---|---|---|---|
+| `analista-requerimientos` | `a962a8c3b61f` | `a962a8c3b61f` | **idéntico** |
+| `auditor-seguridad` | `4ec0b4421b75` | `4ec0b4421b75` | **idéntico** |
+| `desarrollador` | `44ffbc3bce8e` | `44ffbc3bce8e` | **idéntico** |
+| `qa-tester` | `c79517d219c1` | `c79517d219c1` | **idéntico** |
+
+Y `git diff 10eac80 f387b1c -- agents/` sale **vacío**: `agents/` ya era el mismo antes del porte, así
+que **el porte aplica exactamente el diff que auditamos**. Confirmado con `git diff`, como se me
+pidió, y no por suposición. **Mi auditoría de los agentes se traslada entera.** Igual
+`templates/requirements-README.md.tpl` y `skills/arnes-close/SKILL.md`: **idénticos** a la política
+auditada.
+
+**Y las frases portantes de la política sobreviven 1 a 1 en las dos gemelas del porte** —«manda la
+MÁS RESTRICTIVA», «Basta una de las dos condiciones», «no decide a quién se despacha», «y no el
+`desarrollador` ni el `auditor-seguridad`», «La ausencia de la declaración no habilita nada», los dos
+«declaradamente no exhaustivos», y el §9 «Si §6 no la declara, el write-back es del
+`analista-requerimientos`»—. **La disciplina de la declaración es IDÉNTICA a la auditada salvo la
+cita** (2 672 caracteres, igual en `AGENTS.md` y en la plantilla): sus **cinco puntos no cambian ni
+un byte**.
+
+### 2. Lo que el porte NO importó, y hace bien — la comprobación que más me importaba
+
+**§13 del porte es IDÉNTICA a la de `v1.33.2`**, en `AGENTS.md` y en la plantilla (`diff` vacío). El
+porte **no trajo** la §13 de la línea 1.34.0, que describe guardas y estados que el mecanismo de
+`v1.33.2` **no tiene**. Era el riesgo mayor de un porte de política —distribuir una tabla de
+enforcement que promete comportamientos que los hooks del destino no implementan— y **no ocurrió**.
+Tampoco existe §14 en el porte (0 en ambas sedes), consistente con su destino.
+
+**Y las tres promesas de mecanismo que la entrada de `arnes-upgrade` sí hace son ciertas en
+`v1.33.2`**, verificadas en el destino y no asumidas: `guard-codigo` y `guard-completado` existen en
+sus hooks y en su §13, y «`Sensible a seguridad: sí` impone `critico` como suelo» está en su
+`AGENTS.md` y en su plantilla. **Ninguna promesa de mecanismo que el destino no cumpla.**
+
+### 3. Las cinco diferencias sustantivas, una a una
+
+**(1) §14 A(5) → §6 — las diez obligaciones están, y las conté yo.** Comparé los dos textos frase a
+frase: comprobación **por escrito en el propio encargo**; **qué archivo leyó y qué resolvió**; es la
+coordinadora quien comprueba porque es quien despacha; **la definición de un agente no lo concede**;
+**tenerlo instalado en el `AGENTS.md` tampoco**; tabla y descripción **llegan con el andamiaje** y no
+responden nada; **sólo la declaración afirmativa** responde; los cuatro desenlaces que **despachan al
+analista** (sin declaración · archivo ilegible · vía sólo descrita · contradicción sin resolver); la
+sub-pregunta de **«contrato claro»** con `Rigor:`/`Sensible a seguridad:`/revisiones coherentes con
+el **efecto** y **«sólo esa decisión»**; y **las obligaciones de seguridad no dependen de esta
+comprobación**. **Diez de diez. Ninguna pérdida de protección.**
+
+**El límite (b) se incorporó por CONTENIDO y quedó mejor**: donde la base apuntaba a «§14, límite
+(b)» —una sección inexistente aquí—, el porte escribe la razón dentro: «porque **un proyecto ya
+instalado tiene su `AGENTS.md` congelado hasta que `arnes-upgrade` migre este bloque**». Un puntero
+a la nada habría sido el defecto típico de un porte; esto es lo contrario.
+
+**Lo que sí quedó fuera es el límite (a), y es `SEC-089`** (§4).
+
+**(2) Ancla de `UNKNOWN` — mismo cierre fail-closed, verificado contra el destino.** El porte
+re-ancla a «**Tres resultados, nunca dos**» y a la **Fase 2**, y las dos **existen en la skill
+estable de `v1.33.2`**: el titular aparece 1 vez y «**Si hay algún `UNKNOWN`, no se aplica nada**»
+está en su Fase 2. La entrada además lo explicita —«no se aplica nada **—tampoco lo que salió
+`SAFE`, como manda la Fase 2**—»— y conserva «**manda sobre la tabla**». **El cierre es el mismo: sin
+identificación firme no se clasifica; ante la duda, `UNKNOWN`, se detiene y el documento se conserva
+intacto.**
+
+**Lo que queda sin acreditar, y lo declaro porque se me pidió:** `UPG2-UNKNOWN` **paró en la Fase 1**
+(el destino), de modo que **la Fase 2 no se ejerció**. Que el ancla apunte a un texto correcto está
+verificado **por lectura**; que una corrida real que llegue a Fase 2 con un `UNKNOWN` **no aplique
+nada, ni siquiera lo `SAFE`**, **no está observado en este porte**.
+
+**(3) Identificadores retirados — la propiedad se conserva ENTERA.** Los cinco puntos de la
+disciplina **no cambian**; lo único que cambia es la última frase del límite, donde
+«`registro-seguridad.md` § R-036 (`SEC-099`)» pasa a «se midieron redacciones **negativas** que un
+lector automático resolvía como afirmativas, y por eso la comprobación es de quien lee y no de un
+patrón». **Las dos mitades sobreviven**: que **una negación con la frase entera no autoriza** sigue
+en los puntos 2 y 5 —incluido «aunque alguien la escribiera conteniéndola […] seguiría **sin
+autorizar**. La regla **no depende de la redacción que se elija**»—, y que **no hay reconocedor**
+sigue en «no hay comprobación mecánica […] Quien quiera verificación automática tiene que
+construirla, y **hoy no existe**». **Sustituir una cita por su contenido es la forma correcta cuando
+el destino no tiene dónde apuntar**, y aquí el contenido no perdió nada.
+
+**(4) Entrada de `arnes-upgrade` — sin promesas nuevas, y la negativa garantizada por el texto.** La
+entrada dice, y son las dos afirmaciones que importan: «**Ninguna fila del merge —tampoco `INTACTO`
+ni `NUEVO`— escribe esa autorización**: lo que se instala es la descripción y la **línea negativa**,
+que es el valor por defecto», y «**No escribas esa línea “en tus palabras”**: es el único texto cuya
+**redacción es** el control». Es decir: **la propiedad de `SEC-098` y la reparación de `SEC-099`
+viajan las dos**, y las dos líneas se remiten a la **sede única** sin copiarse ni parafrasearse.
+**Y está corroborado en ejecución real**: `UPG2-INTACTO` aplicó §6 y §9 **con la negativa**, y
+**ninguna de las seis sesiones escribió la afirmativa**.
+
+El título «Hacia \<versión por decidir\>» va con su párrafo —«No lo inventes ni lo deduzcas […] dilo
+así en el informe y en el `CHANGELOG.md`»—: **declara el hueco en vez de rellenarlo**, que es la
+dirección correcta.
+
+**(5) Las dos líneas literales y el «sí» por escrito — NO es un vector nuevo.** Lo valoro como se me
+pidió, y la respuesta es de frontera de confianza, no de redacción: **la autorización nunca estuvo
+anclada en nada más fuerte que “quien conduce la sesión”**. No hay identidad, no hay firma y la línea
+afirmativa es **texto plano** en un archivo que cualquiera con acceso de escritura puede escribir
+directamente. Quien pueda redactar el prompt puede también escribir la línea a mano, o instruir al
+desarrollador para que se salte al analista. **El control no existe para autenticar al propietario:
+existe para que el ANDAMIAJE no conceda el permiso por defecto** (`SEC-098`), y eso lo cumple.
+**Y los dos lados están ejercidos, uno cada uno:** `INIT-P2`, con la pregunta **sin responder**,
+escribió la **negativa**; `INIT-P3`, con un «sí» explícito, escribió la **afirmativa** literal. El
+defecto por el que preguntaría —que el silencio autorice— **no se produjo**. Observación menor en §5.
+
+### 4. `SEC-089` — **nuevo** · `instrumento` · **abierto** · **no bloquea**
+
+**El límite 1 enumera UNA causa de «no la hace nadie» donde hay dos, y la que falta es la que este
+documento deja abierta por su cuenta.**
+
+La base decía: «la comprobación queda sólo en manos de la coordinadora (**§14 A**) […] y si el
+coordinador tampoco la tiene (**§14, límite (b)**), no la hace nadie», con `§14 D` declarando aparte
+el límite **(a)**: *una herramienta cuya vía no está verificada **no cuenta como cubierta**; esta
+sección no promete cobertura de todo coordinador*.
+
+El porte incorpora **(b)** por contenido —bien— y **no incorpora (a)**. Medido: «no cuenta como
+cubierta» = **1** en la plantilla auditada, **0** en la del porte.
+
+**Y aquí pesa más que en la base, por algo que medí en el destino:** `v1.33.2` **ya afirma** que su
+`AGENTS.md` lo leen «Claude Code, **Codex**, **Cursor** y otros» (1 ocurrencia en cada sede) **y no
+trae el matiz de verificación** (`vía no está verificada` = **0**). De modo que el porte **apoya una
+protección nueva en una lectura que su propio documento afirma sin haberla verificado**, y retira el
+único texto que lo advertía.
+
+**Por qué `instrumento` y no `contrato`, y por qué no bloquea** —y es el mismo criterio que apliqué a
+`SEC-101` en el otro registro, que es la misma figura—: **no afirma nada falso**; enumera una causa
+en vez de enunciar la propiedad, y el desenlace que deja descubierto exige **dos** condiciones
+simultáneas —que el proyecto tenga **copia propia** de una definición de agente (única vía por la que
+la comprobación cae sólo en la coordinadora) **y** que su coordinador no lea este archivo—. Para el
+proyecto ordinario, **el agente del plugin comprueba igual**, con su cláusula fail-closed.
+
+**Remediación (no la aplico):** enunciarlo por propiedad en esa misma frase — «…y si la coordinadora
+tampoco la tiene —porque su documento está congelado, porque **no está verificado que su herramienta
+lea este archivo**, o por cualquier otra razón—, no la hace nadie».
+
+### 5. Tres observaciones que valoro y NO elevo a hallazgo
+
+1. **«Se suma a las que ya hace».** El porte introduce la comprobación diciendo que «se suma a las
+   que ya hace antes de cualquier encargo —qué resultado exacto debe entregar, qué queda fuera,
+   cuándo detenerse—», y **esas tres no existen en la plantilla de `v1.33.2`**: medido, 0
+   ocurrencias antes del porte y 1 después, dentro del propio párrafo nuevo. **No lo elevo** porque
+   la comprobación queda **escrita entera y numerada**, se sostiene sola, y la frase se lee como
+   descripción de la práctica ordinaria y no como puntero a una sección. Se cerraría quitando el
+   «ya».
+2. **«O no está delante» frente a un «sí» por escrito.** La instrucción pone «no está delante» en la
+   lista que produce la **negativa**, junto a «no contesta»; `INIT-P3` escribió la afirmativa con el
+   propietario ausente pero **con su respuesta dejada por escrito**. La lectura que casa con el
+   ensayo —«no está delante» = *no hay respuesta suya*— es la natural, y el caso complementario
+   (`INIT-P2`, sin responder → negativa) confirma que el defecto temido no se produce. **No lo
+   elevo**; se cerraría con una cláusula: *una respuesta **suya** por escrito vale; la paráfrasis de
+   un tercero, no*.
+3. **Autoalojamiento y vía distribuida: no hay contradicción, y la que sería latente la resuelve el
+   propio porte.** Confirmado como se me pidió: la frase «**sólo este repositorio; no se propaga a
+   las plantillas**» sigue intacta y su sujeto es la **política de autoalojamiento** (las cuatro
+   fases de este repo), no la vía; y **este repositorio lleva la NEGATIVA** —medido: afirmativa 0,
+   negativa 1 en su `AGENTS.md`; la plantilla lleva el **placeholder**—, así que **la vía no rige
+   aquí y la política de autoalojamiento gobierna sin cambio**. **La contradicción sería latente si
+   alguien escribiera aquí la afirmativa**, porque `v1.33.2` no tiene la nota de enmienda
+   «ALIGERADA» (medido: 0, ni antes ni después del porte) y §6 diría a la vez «todo REQ pasa por las
+   cuatro fases» y «una reparación va dev → QA sin analista». **Y el propio porte la resuelve en la
+   dirección segura**: su comprobación manda despachar al analista cuando «otra parte del mismo
+   documento exige el analista para ese cambio **sin resolver expresamente** la contradicción».
+   **No hay cambio de política por asociación.**
+
+### 6. `H-P1` y `H-P2` desde seguridad
+
+Son de QA y **sobre la skill estable de `v1.33.2`**, no sobre el porte. Los clasifico desde mi
+materia, sin cerrarlos ni reclasificarlos:
+
+- **`H-P1` — `arnes_version` sube con un conflicto abierto** (`UPG2-MODIF` lo subió, `UPG-MODIF-P`
+  no). **Es real y su dirección es fail-open, pero de la CONTABILIDAD, no de la autorización.** La
+  propia skill dice por qué importa: si se sube antes de verificar, «la siguiente ejecución creerá
+  que está hecho y el proyecto quedará **a medias sin que nadie lo note**». **No puede producir una
+  autorización que nadie concedió**, porque **ninguna fila del merge escribe la afirmativa**: el peor
+  estado que genera es §6 viejo con agentes nuevos, y ésa es la composición cuya salida ya es
+  **fail-safe** —sin declaración, el write-back vuelve al analista—. **No bloquea el porte**, y
+  merece dueño: es de la skill del destino.
+- **`H-P2` — 2 de 6 sesiones rehusaron el porte como destino por el marcador de versión.** El juicio
+  **no determinista** es el defecto; sus dos desenlaces son **ambos seguros**: rehusar no aplica
+  nada, y aceptar viene **declarado** por la propia entrada, que obliga a decirlo en el informe y en
+  el `CHANGELOG`. **Consecuencia directa de publicar con el número sin decidir**, no de la política.
+  **No bloquea**, y desaparece cuando el propietario fije la versión.
+
+### 7. Firma
+
+**`Seguridad: aprobado`, acotada al porte** `404e044` sobre `v1.33.2`. **Ningún hallazgo mío de clase
+`contrato` queda abierto**; `SEC-089` es `instrumento`.
+
+**Qué acredita:** que el porte **traslada la política auditada sin perder protección** —agentes
+idénticos por `sha`, disciplina idéntica salvo la cita, frases portantes 1 a 1, §9 portado—; que **no
+importó la §13 de otra línea** ni promete mecanismo que `v1.33.2` no tenga; que las **diez
+obligaciones** de la comprobación previa al despacho están las diez; que el **cierre fail-closed de
+`UNKNOWN`** se re-ancló a texto que existe en el destino; que la **negativa es el valor por defecto**
+y ninguna fila del merge escribe la afirmativa, corroborado en seis sesiones; y que **este
+repositorio lleva la negativa**, de modo que su política de autoalojamiento no cambia.
+
+### 8. Qué NO acredita
+
+1. **No es una auditoría de la política**: la audité en el otro árbol y **aquí sólo reviso las
+   diferencias**, por acotamiento expreso. Lo que aquellas revisiones **no** acreditaban sigue sin
+   acreditarse.
+2. **`n = 1`.** Los ensayos son **una corrida por caso**; sostienen que el comportamiento ocurrió,
+   **no** su reproducibilidad. **No los re-ejecuté ni inspeccioné los proyectos resultantes.**
+3. **La Fase 2 con `UNKNOWN` no está ejercida** (§3.2): `UPG2-UNKNOWN` paró en Fase 1.
+4. **No está ejercida la fila 3** (efecto `critico`) por vía afirmativa, ni **ningún proyecto con
+   copia propia de una definición de agente** — el mismo hueco que dejé abierto en la línea larga.
+5. **`arnes-init` sólo se ejerció con respuestas por escrito**, nunca interactivas.
+6. **El marcador de versión sigue sin decidir**, y `H-P2` es su consecuencia directa. **No me
+   pronuncio sobre la versión.**
+7. **La discrepancia `arnes_version 1.33.0` frente a `plugin.json 1.33.2` en el propio repositorio
+   PREEXISTE al porte** —verificada por QA sobre `10eac80`— y **no la audité**.
+8. **No acredita el banco ni el CI**: corrí **las tres puertas** y **ninguna sección** (`tests/` no
+   se toca).
+9. **No acredita `H-P1` ni `H-P2`**, que son de QA sobre la skill estable: doy **clasificación desde
+   seguridad**, no veredicto.
+10. **No acredita la publicación ni la fusión**, y no me pronuncio sobre ellas.
+
+### 9. Estado de hallazgos de esta línea tras `R-031`
+
+| Hallazgo | Estado | Clase | Bloquea |
+|---|---|---|---|
+| `SEC-089` | **`abierto`** (nuevo) | `instrumento` | **no** |
+
+Dueño: `desarrollador`. **Vencimiento: antes de publicar el porte.** No toco ningún otro hallazgo de
+este registro. **`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta revisión (en ESTE registro):** última revisión **R-031**; último
+hallazgo **SEC-089**; próximos libres **R-032** y **SEC-090**.
+
+---
+
+## Revisión R-032 — **confirmación acotada del candidato final a `v1.34.0`**: versión, notas y el delta de `H-P1`. `porte/via-proporcional-1.33.2` @ `cf88b4e` — 2026-09-16
+
+**Acotada por el propietario:** «confirmación acotada sobre el candidato final, incluidos los cambios
+de versión y las notas. **No repitas la revisión de todo el porte.**» Mi `R-031` sobre `404e044` vale
+como **antecedente**; aquí sólo los **tres commits posteriores**. Fuera y sin tocar: la rama larga,
+la sonda `REQ-017 CA-08`, reparar, relanzar, fusión y publicación. Numeración de **este** registro.
+
+### 0. Árbol, frontera y puertas
+
+- Cabeza **`cf88b4e`**, **árbol limpio**. Delta `404e044..cf88b4e`: **6 archivos**.
+- **Ninguna ruta de mecanismo**: `git diff --name-only 404e044..cf88b4e` sobre `hooks/`, `tools/`,
+  `tests/`, `.arnes/` y `.github/` → **0**. Lo tocado es `.claude-plugin/` (la versión),
+  `skills/arnes-upgrade/SKILL.md`, `CHANGELOG.md` y los dos registros.
+- **Gates 3 de 3**, corridas por mí.
+
+### 1. La versión — acotada, y el cuarto sitio sigue sin tocarse
+
+Los **tres** campos de distribución pasan a `1.34.0` y **concuerdan**, leídos con `jq` por mí:
+`plugin.json .version`, `marketplace.json .metadata.version` y `.plugins[0].version`. `source: "./"`
+intacto.
+
+**Y lo que NO se movió, que es lo que me importaba:** `.arnes/config.json` del repositorio sigue en
+**`1.33.0`** —la discrepancia **preexistente** que declaré sin auditar en `R-031`, y que sigue sin
+auditarse—, y **la declaración de este repositorio sigue siendo la NEGATIVA**: medido, afirmativa
+**0**, negativa **1**. **El repositorio publica la capacidad y no la estrena.**
+
+### 2. Las notas `[1.34.0]` — no prometen mecanismo ajeno, y declaran sus límites bien
+
+**(a) ¿Prometen algo que `v1.33.2` no tiene? No.** La afirmación central es comprobable y la
+comprobé: «`hooks/`, `tools/`, `.arnes/`, `tests/` y `.github/` son **idénticos a `v1.33.2`**» →
+`git diff 10eac80 cf88b4e --name-only` sobre esas rutas devuelve **0 archivos**. De ahí se sigue que
+ninguna puerta cambia de conducta. Las promesas de mecanismo que las notas repiten —`guard-codigo`
+denegando dentro de `codigo_app.globs`— ya las verifiqué en `v1.33.2` en `R-031`.
+
+**(b) ¿Inducen a creer cerrados `SEC-089` / `H-P2`? No, y con una limpieza que conviene señalar
+porque es lo contrario del defecto habitual.** Hay una sección titulada **«Limitaciones declaradas,
+que esta versión CONSERVA y no cierra»**; `SEC-089` va con su clase, su razón y su sede; y de `H-P2`
+se dice **«NO queda resuelto por esta ventana»**, distinguiendo que fijar el número **retira el
+forzador** pero que **nadie ha vuelto a medir**, así que la no determinación **no está desmentida**.
+Y sobre `H-P1` las notas separan lo que la corrección **sí** hace de lo que **no acredita** —«la
+skill no se ejecutó en este commit»—. **Eso es declarar, no maquillar.**
+
+**(c) `H-P3` es la excepción, y es `SEC-092`** (§5).
+
+**(d) La entrada «Hacia 1.34.0» numerada no cambia nada de lo que firmé.** El diff sobre esa entrada
+tiene **tres** cambios y sólo tres: el título deja de ser «\<versión por decidir\>», desaparece el
+párrafo «No lo inventes ni lo deduzcas», y entra una línea sobre `PARCIAL`. **Las propiedades que
+firmé siguen 1 a 1** —medido sobre texto aplanado—: «instalar esta sección **NO la autoriza**», «lo
+que se instala es la descripción y la **línea negativa**, que es el valor por defecto», «**te
+DETIENES y NO se aplica NADA de toda la corrida**» y «**No escribas esa línea “en tus palabras”**».
+**Instalación ≠ autorización, negativa por defecto y `UNKNOWN` terminal: intactos.**
+
+### 3. El delta de `H-P1` — dirección segura, sin fail-open nuevo
+
+**La regla queda en la dirección correcta y por la razón correcta.** Fase 4 (1) convierte un
+`CONFLICTO`/`UNKNOWN` sin resolver en «**una operación no aplicada**, no un pendiente aparte» —cierra
+el hueco semántico que permitía llamar «aplicado» a un plan con un conflicto—; Fase 4 (4) y Fase 5
+condicionan la versión a que **el plan quede aplicado entero**; y en `PARCIAL` **`arnes_version`
+conserva el origen — no se escribe**, con el resultado declarado y **la lista de secciones
+pendientes**.
+
+**Y el porqué está escrito, que es lo que impide que alguien lo deshaga por comodidad:** con la
+versión ya subida, «la **Fase 1** de la siguiente ejecución encuentra origen = destino, informa que
+está al día y **para** — el conflicto deja de existir para la vía automática y sobrevive sólo en la
+prosa». Es exactamente el fail-open que yo habría señalado, nombrado por el propio texto.
+
+**Barrido de las sedes hermanas, que es donde suelen quedar los residuos:** la frase contraria de
+§ `Hacia 1.26.0` («Actualiza `arnes_version` **al terminar**») está corregida en su sitio y **añade
+la mitad que faltaba** —si la migración quedó parcial, el aviso de desajuste «es correcto y se
+mantiene […] la versión **no** se sube para callarlo»—. Corregir la sede que decía lo opuesto, y no
+sólo la señalada, es lo que evita la vuelta siguiente.
+
+**¿«Reanudar por Continuar» puede aplicar operaciones sin recomprobarlas? NO**, y el guardián es
+**preexistente y este delta no lo toca**: «**Cada operación se comprueba antes de aplicarla —¿ya está
+en su forma final?—**», con la prohibición expresa de «inferir el estado del contenido». **Ninguna
+vía nueva de fail-open.** Lo que sí queda sin decir es la otra mitad de la reanudación, y es
+`SEC-090`.
+
+### 4. `SEC-090` — **nuevo** · `instrumento` · **abierto** · **no bloquea**
+
+**La reanudación tras un `PARCIAL` es donde la versión acaba subiendo, y es la única sede que no
+repite la precondición de verificar.**
+
+Fase 5 escribe la versión «**Sólo ahora**», es decir **tras la Fase 4**, y su razón es explícita
+(«si se sube antes de verificar…»). El texto nuevo remite: «la versión se registra **sólo** cuando
+esas operaciones queden aplicadas, **al reanudar por “Continuar”** (ver «Si se interrumpe a mitad»)».
+Pero «Si se interrumpe a mitad» **no manda volver a la Fase 4**: sólo exige comprobar **cada
+operación** antes de aplicarla.
+
+**Y aquí importa más que en una interrupción cualquiera, por lo que significa resolver un
+`CONFLICTO`: lo resuelve una persona EDITANDO el archivo.** Las comprobaciones (2) y (3) de la Fase 4
+—«ninguna sección `MODIFICADO` cambió», «no desapareció contenido que estuviera antes»— son
+propiedades **de archivo entero** que esa edición humana puede haber alterado entre las dos corridas.
+Verificar sólo la operación recién aplicada no las cubre.
+
+**Consecuencia:** la versión puede quedar escrita sobre un árbol cuyas propiedades de archivo entero
+no se re-verificaron tras una edición humana — y entonces la corrida siguiente «creerá que está
+hecho», que es **el mismo fail-open que este delta cierra**, alcanzado por la puerta de la
+reanudación.
+
+**Por qué `instrumento` y no bloquea:** la Fase 5 gobierna y dice «sólo ahora», así que quien la lea
+verifica; la sección de reanudación ya prohíbe inferir estado; y el desenlace exige una reanudación
+tras un parcial, **que nadie ha ejercido todavía**. **Remediación (no la aplico):** una cláusula en
+«Si se interrumpe a mitad» — *al reanudar se repite la **Fase 4 completa** antes de la Fase 5,
+porque resolver un conflicto significa que alguien editó el archivo*.
+
+### 5. `SEC-091` y `SEC-092` — **nuevos** · `instrumento` · **abiertos** · **no bloquean**
+
+**`SEC-091` — la justificación que las notas dan para el banco no es la razón por la que la
+conclusión es cierta, y sobre esta cabeza no hay banco.**
+
+Las notas encadenan: mecanismo idéntico «**así que** ninguna puerta cambia de conducta **y el banco
+que certifica `v1.33.2` certifica también esto**». La primera mitad es válida. **La segunda no se
+sigue**, y lo medí: **el banco de este árbol lee documentos que el porte SÍ cambió** —hay secciones
+que leen `AGENTS.md`, `templates/` y **una que lee `skills/arnes-upgrade/SKILL.md`**—, de modo que
+«mecanismo idéntico» **no** implica «el banco sigue certificando».
+
+**Y hay un segundo hecho que lo agrava, declarado por QA en el propio `CHANGELOG`:** el banco
+`908 · 0 · 4` se corrió **sobre `404e044`**, no sobre esta cabeza — y `8bd5e33` **modificó justamente
+`skills/arnes-upgrade/SKILL.md`**, el archivo que esa sección del banco lee. De modo que la frase de
+las notas afirma una certificación que, para esta cabeza, **no se ha ejecutado**.
+
+**No bloquea** porque el cambio es de prosa dentro de una skill y porque QA declara el límite en su
+entrada; **pero la frase quedará escrita** y es del tipo que alguien re-deriva («no tocamos
+mecanismo, luego no hace falta banco») **para un cambio documental que el banco sí juzga**.
+**Remediación:** sustituir la inferencia por el hecho — *el banco se corrió sobre `404e044`
+(908·0·4); sobre esta cabeza no se ha vuelto a correr* —.
+
+**`SEC-092` — `H-P3` no llega a la lista que lee el consumidor.** Medido: `H-P3` aparece **2 veces**
+en el `CHANGELOG`, **las dos en la entrada `[Interno]` de QA**, y **0 veces** en la sección
+`## [1.34.0]`, cuya lista «Limitaciones declaradas, que esta versión CONSERVA y no cierra» sí nombra
+`SEC-089`, `H-P2`, el `n=1`, la Fase 2 sin ejercer y el `arnes_version 1.33.0`. **Quien lea las notas
+de versión para decidir si actualiza conoce cuatro límites y no el quinto** — y el quinto es sobre
+**la ruta de migración parcial que esta versión estrena**. Es un desajuste de **sede**, no una
+afirmación falsa: por eso `instrumento` y por eso no bloquea. **Remediación:** una línea en esa lista,
+con su clase y su sede.
+
+### 6. `H-P3` desde seguridad — clasificación, sin cerrarlo ni reclasificarlo
+
+**Concuerdo con `instrumento` y con que no bloquea**, por lo medido: **2 de 2** migraciones parciales
+**conservaron la base** en `.arnes/plantillas-origen/`, así que el defecto **no se materializa** — es
+un hueco del **texto**, que no califica el caso parcial.
+
+**Y digo lo que me toca decir, que es la dirección si se materializara.** `plantillas-origen` es **la
+base del merge a tres vías**. Si una migración **parcial** dejara ahí las plantillas de **destino**,
+la corrida siguiente compararía el archivo del proyecto contra una base que **afirma un estado que
+nunca se aplicó**: las secciones pendientes dejarían de verse como pendientes —parecerían borradas
+por la persona, o el proyecto parecería al día— y **la migración que faltaba se perdería en
+silencio**. Es decir: **fail-open del propio mecanismo que existe para distinguir “esto lo escribió
+una persona” de “esto es andamiaje”, y además invisible.**
+
+**Por eso, aunque no bloquee, no lo trataría como cosmético:** su coste esperado no es el estado de
+hoy, sino **la primera reanudación real**. Y agrupa con `SEC-090`: **las dos son de la ruta
+parcial/reanudación que este delta estrena y que nadie ha ejercido entera**. Recomiendo que se
+especifiquen **en el mismo acto**, antes de que esa ruta se use en un proyecto de verdad. **No lo
+reparo ni lo cierro: es de QA, y la instrucción excluye otras reparaciones.**
+
+### 7. **Extiendo la firma acotada a `cf88b4e`**
+
+**`Seguridad: aprobado`**, con el **mismo alcance acotado** de `R-031` —el porte de la vía
+proporcional sobre `v1.33.2`—, extendido al candidato final **`cf88b4e`**.
+
+1. **La versión se movió donde debía y sólo ahí:** tres campos concordantes, `arnes_version` del repo
+   sin tocar, **declaración negativa intacta**.
+2. **Las notas no prometen mecanismo ajeno** —verificado: 0 archivos de mecanismo— y **declaran sus
+   límites en vez de esconderlos**, incluido decir de `H-P2` que **no** queda resuelto.
+3. **La entrada numerada no altera ninguna de las tres propiedades que firmé.**
+4. **El delta de `H-P1` va en la dirección segura, con su razón escrita y las sedes hermanas
+   barridas**, y **no introduce ninguna vía nueva de fail-open**: la reanudación sigue comprobando
+   cada operación antes de aplicarla.
+5. **Ningún hallazgo mío de clase `contrato` queda abierto.** `SEC-090`, `SEC-091` y `SEC-092` son
+   `instrumento`.
+
+### 8. Qué NO acredita
+
+1. **No repite la revisión del porte** (`R-031`), cuyos límites siguen **todos** en pie: `n=1`, Fase 2
+   con `UNKNOWN` sin ejercer, fila 3 por vía afirmativa sin ejercer, ningún proyecto con copia propia
+   de agente, `arnes-init` sólo con respuestas escritas.
+2. **La reanudación tras una migración parcial NO se ha ejercido.** `SEC-090` y `H-P3` viven los dos
+   ahí: lo que acredito de esa ruta es **texto**, no conducta.
+3. **No hay banco sobre esta cabeza** (§5): el `908 · 0 · 4` es de `404e044`, y `8bd5e33` cambió una
+   skill que el banco lee. **Corrí las tres puertas y ninguna sección.**
+4. **`n` pequeño en todo:** `UPG3-*` 4 de 4 y `UPG4-*` 2 de 2 **no demuestran determinismo**; lo que
+   muestran es que ahora hay regla escrita donde no la había. **No re-ejecuté ningún ensayo ni
+   inspeccioné los proyectos temporales.**
+5. **La sonda de coste del CI queda fuera de mi encargo** y no la valoro.
+6. **`H-P2` sigue abierto y no lo acredito**: fijar el número retira un forzador, no desmiente la no
+   determinación.
+7. **No acredito `H-P1` ni `H-P3`**, que son de QA: doy **clasificación y lectura**, no veredicto.
+8. **La discrepancia `arnes_version 1.33.0` frente a `plugin.json 1.34.0` preexiste, crece con este
+   commit y NO la audité** —ahora son dos menores de distancia en vez de uno—.
+9. **No acredita la fusión, el tag ni la publicación**, y no me pronuncio sobre ellos.
+
+### 9. Estado de hallazgos de esta línea tras `R-032`
+
+| Hallazgo | Estado | Clase | Bloquea |
+|---|---|---|---|
+| `SEC-089` (`R-031`) | `abierto` | `instrumento` | no |
+| `SEC-090` | **`abierto`** (nuevo) | `instrumento` | no |
+| `SEC-091` | **`abierto`** (nuevo) | `instrumento` | no |
+| `SEC-092` | **`abierto`** (nuevo) | `instrumento` | no |
+
+Dueño de los tres nuevos: `desarrollador`. **Vencimiento de `SEC-090`: antes de que se ejerza una
+reanudación real**, junto con `H-P3`. `SEC-091` y `SEC-092`: **antes de publicar**, porque son texto
+de las notas que se publican. **`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta revisión (en ESTE registro):** última revisión **R-032**; último
+hallazgo **SEC-092**; próximos libres **R-033** y **SEC-093**.
+
+---
+
+## Revisión R-033 — **confirmación acotada de `c5db41b`** (remediación de `SEC-091` y `SEC-092`) y **registro de una decisión del propietario**. `porte/via-proporcional-1.33.2` @ `1fe3382` — 2026-09-16
+
+**Acotada.** No repito `R-031` ni `R-032`. Fuera y sin tocar: reparar, relanzar, fusión, tag y
+publicación. Numeración de **este** registro.
+
+### 0. Árbol, frontera y una precisión sobre qué firmé
+
+- Cabeza **`1fe3382`**, **árbol limpio**. Delta desde mi firma: `CHANGELOG.md`,
+  `docs/qa/…veredicto.md` y este registro. **Nada más.**
+- **El objeto firmado no se ha movido:** `git diff --stat cf88b4e..1fe3382 -- AGENTS.md templates/
+  agents/ skills/ hooks/ tools/ tests/ .arnes/ .github/ .claude-plugin/ requirements/` sale
+  **vacío**. **Gates 3 de 3** sobre esta cabeza.
+- **Precisión de trazabilidad, porque el encargo y mi registro nombran cabezas distintas.** Yo firmé
+  **`cf88b4e`** en `R-032`; el encargo dice «`a8cbb29`, que firmaste en R-032». **No es una
+  discrepancia material:** `a8cbb29` es el commit que **registró mi propia `R-032`**, y
+  `git diff cf88b4e a8cbb29` son **sólo** `CHANGELOG.md` y `docs/seguridad/registro-seguridad.md`.
+  Ningún artefacto de producto difiere. Lo dejo escrito para que el rastro no dependa de recordarlo.
+
+### 1. `SEC-091` → **`mitigado`**
+
+**La inferencia no se matizó: se retiró, y en su lugar hay hechos.** Medido sobre la sección
+`## [1.34.0]`:
+
+- La cadena «…así que ninguna puerta cambia de conducta **y el banco que certifica `v1.33.2`
+  certifica también esto**» → **0 ocurrencias**. Desapareció.
+- Entra la premisa correcta, y dice **exactamente lo que yo medí**: el banco «lee además documentos
+  que este porte **sí** cambió —hay secciones que leen `AGENTS.md`, `templates/` y
+  **`skills/arnes-upgrade/SKILL.md`**, que `8bd5e33` modificó—, de modo que “mecanismo idéntico”
+  **no implica “el banco sigue certificando”**» (**1**).
+- Y **la abstención sobre la cabeza que se publique** (**1**): «La certificación de una cabeza es la
+  corrida que se ejecutó sobre ella […] estas notas **no afirman su resultado por adelantado**».
+- Más «**tampoco corre el banco sobre esta cabeza**» en «Lo que este commit NO hace».
+
+**Esto es corregir la premisa, no la conclusión**, que es la forma que impide que alguien vuelva a
+deducir «no tocamos mecanismo, luego no hace falta banco» para un cambio documental que el banco sí
+juzga. **Dado por mitigado.**
+
+**Y una rectificación de mi propia `R-032`, que hago aquí en vez de dejarla implícita.** Escribí «no
+hay banco sobre esta cabeza», y era cierto de `cf88b4e`; **lo que yo no tenía es que sí hubo CI sobre
+un antecesor, y que salió en ROJO**: `b520e3b` → **904 · 1 FAIL · 7**. Mi frase no era falsa, pero se
+emitió **sin esa evidencia**, y quien la lea debe saberlo. **No cambia mi veredicto de `R-032`** por
+dos razones medidas: el `FAIL` es la sonda de coste, **fuera de mi encargo por instrucción**, y
+`tests/` es **idéntico a `v1.33.2`** (§3), así que no hay cambio mío que pueda haberlo causado.
+
+### 2. `SEC-092` → **`mitigado`**
+
+**`H-P3` y `SEC-090` entran en la lista que lee el consumidor**, que era todo el hallazgo. Medido
+dentro de `## [1.34.0]`: `H-P3` **4** ocurrencias y `SEC-090` **4**, donde antes había **0 y 0**. Van
+con su clase (`instrumento`), su estado (`abierto`), sus sedes y la razón: «**la reanudación de una
+migración parcial NO está acreditada**» (**1**), con las dos causas nombradas —«Continuar» no repite
+la precondición de verificar, y `plantillas-origen` sin especificar en un parcial—.
+
+**Y cumple la instrucción del propietario de no vender una solución que nadie ha probado**: «estas
+notas **no presentan “repetir `/arnes-upgrade`” como solución comprobada**» (**1**), remitiendo a que
+el conflicto lo resuelve el propietario del proyecto **a mano** y la reanudación queda **pendiente de
+revisión**. **Dado por mitigado.**
+
+**Barrido de las sedes hermanas dentro de la misma sección, que no había pedido y conviene:** «`H-P1`
+ya no está en esta lista» pasa a «**queda corregido […] y con su reserva de `n`** (2 de 2, sin
+determinismo)»; «la skill no se ejecutó en este commit» se sustituye por los ensayos medidos; el
+`n=1` queda **acotado al porte `404e044`** y se añade que los posteriores (**4 de 4**, **2 de 2**)
+tampoco acotan variabilidad. **Corregir la frase señalada y sus vecinas es lo que evita la vuelta
+siguiente.**
+
+### 3. La sonda de coste — **constato, y no valoro**, conforme a la instrucción
+
+Decisión del propietario: «La sonda de coste conserva su configuración y todos sus resultados,
+incluido el FAIL anterior. **No autorizo modificarla ni declarar acreditada su estabilidad.**»
+Comprobado, y sólo comprobado:
+
+- **`tests/` es idéntico a `v1.33.2`**: `git diff 10eac80 1fe3382 --name-only -- tests/` → **0
+  archivos**. La sonda **no se tocó**.
+- **Las notas NO declaran acreditada su estabilidad, y declaran lo contrario.** Medido: «ni acredita
+  la estabilidad de la sonda» → **1**; «Ese PASS **no desmiente** el FAIL anterior» → **1**; la
+  cadena «acreditada la estabilidad» → **0**. Y publican la dispersión en vez de esconderla: **seis
+  lecturas entre 0,932× y 1,258×** sobre los mismos hooks, con el `FAIL` de `b520e3b` **conservado,
+  sin relanzar ni modificar**.
+
+**Es la conducta correcta ante un `FAIL`** —no se repite hasta el verde y la variabilidad se conserva
+como evidencia—, y me limito a constatarlo: **no valoro la sonda, no la clasifico y no me pronuncio
+sobre su techo**, que quedan fuera de mi encargo.
+
+### 4. Decisión del propietario, registrada con su literalidad
+
+> **«Para esta publicación acepto diferir `SEC-090` y `H-P3`, con dueño y revisión antes de
+> recomendar reanudar una migración parcial. Permanecen abiertos; esta decisión no los declara
+> resueltos.»** — propietario, 2026-09-16.
+
+**Dueño: `desarrollador`. Revisión de QA y seguridad antes de recomendar reanudar una migración
+parcial.** El estado que anoto es **`abierto — diferido por decisión del propietario`**, **no**
+`mitigado`: diferir no repara, y el registro no debe poder leerse como si lo hiciera.
+
+**Y las notas lo dicen igual**, comprobado frase a frase sobre el texto aplanado —las cuatro partes,
+cada una **1** ocurrencia—: «quedan **DIFERIDOS** para esta publicación», «**dueño
+`desarrollador`**», «**revisión de QA y seguridad antes de recomendar reanudar**» y «**permanecen
+ABIERTOS — esta decisión no los declara resueltos**». **No hay desajuste entre lo que decide el
+propietario, lo que publican las notas y lo que registro aquí.**
+
+**`H-P3` es de QA**: la decisión lo alcanza y la registro, pero **no lo clasifico ni lo cierro** —mi
+lectura de seguridad sobre él está en `R-032` §6 y no la repito—.
+
+### 5. **Mi firma de `R-032` sigue aplicable a `1fe3382`**
+
+**Sí, y no por inercia:** entre `cf88b4e` —lo que firmé— y esta cabeza **no se movió ningún artefacto
+de producto** (medido, diff vacío sobre las once rutas), y los dos commits posteriores son **las
+notas** y **el informe de QA**. Las notas **sí** las he revisado en esta misma revisión, que es
+justamente lo que se me pidió, y su corrección va **en la dirección de declarar más y prometer
+menos**.
+
+**`Seguridad: aprobado`** sigue vigente sobre el porte, con el alcance acotado de `R-031`/`R-032`,
+**extendida a `1fe3382`**. **Ningún hallazgo mío de clase `contrato` está abierto**; los cuatro son
+`instrumento`, y dos de ellos van **diferidos por decisión expresa del propietario**, no cerrados.
+
+### 6. Qué NO acredita
+
+1. **No repite `R-031` ni `R-032`**; todos sus límites siguen en pie —`n=1` en el porte, Fase 2 con
+   `UNKNOWN` sin ejercer, fila 3 por vía afirmativa sin ejercer, ningún proyecto con copia propia de
+   agente, `arnes-init` sólo con respuestas escritas—.
+2. **La reanudación tras una migración parcial sigue SIN ejercer.** De esa ruta acredito **texto**, y
+   ahora además **texto que declara no estar acreditado**. `SEC-090` y `H-P3` siguen **abiertos**.
+3. **Ninguna corrida nueva.** **No corrí el banco ni relancé el CI**; sólo las tres puertas. De las
+   cuatro corridas que las notas enumeran **no re-ejecuté ninguna**: las leo como declaradas.
+4. **No valoro la sonda de coste** ni su `FAIL` de `b520e3b`, por instrucción expresa: **constato** su
+   conservación y que las notas no le atribuyen estabilidad.
+5. **`n` pequeño en todo**: 4 de 4 y 2 de 2 **no acreditan determinismo**, como las propias notas
+   declaran.
+6. **`H-P2` sigue abierto** y no lo acredito; **`H-P1` y `H-P3` son de QA**: doy lectura, no veredicto.
+7. **La discrepancia `arnes_version 1.33.0` frente a `plugin.json 1.34.0` preexiste y sigue sin
+   auditar.**
+8. **No acredita la cabeza que finalmente se publique**, que tendrá su propia corrida de CI — las
+   notas se abstienen de afirmar su resultado y yo también.
+9. **No acredita la fusión, el tag ni la publicación**, y no me pronuncio sobre ellos.
+
+### 7. Estado de hallazgos de esta línea tras `R-033`
+
+| Hallazgo | Estado | Clase | Bloquea |
+|---|---|---|---|
+| `SEC-089` (`R-031`) | `abierto` | `instrumento` | no |
+| `SEC-090` (`R-032`) | **`abierto — diferido por decisión del propietario`** (2026-09-16) | `instrumento` | no |
+| `SEC-091` (`R-032`) | **`mitigado`** | `instrumento` | no |
+| `SEC-092` (`R-032`) | **`mitigado`** | `instrumento` | no |
+
+**`H-P3`** (de QA, `instrumento`): alcanzado por la misma decisión — **`abierto — diferido por
+decisión del propietario`**; su estado lo declara QA, no yo.
+
+Dueño de `SEC-089`, `SEC-090` y `H-P3`: `desarrollador`. **`SEC-090` y `H-P3` se revisan por QA y
+seguridad antes de recomendar reanudar una migración parcial**, conforme a la decisión de §4.
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta revisión (en ESTE registro):** última revisión **R-033**; último
+hallazgo **SEC-092**; próximos libres **R-034** y **SEC-093**.
