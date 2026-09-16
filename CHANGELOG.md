@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-16 · Tabla de decisión corregida: tres clases (cierre de REQ · condiciones de publicación · limitaciones no bloqueantes)
+`decision-publicacion/2026-09-16-tabla.md` § 3: nota de corrección y filas B1…B8 etiquetadas [a]/[b]/[c]; la clasificación vigente vive en el inventario del repo § 4.1. Registro fechado conservado.
+
 ## 2026-09-16 · Integración del PR #50 (5f07419 en base/via-proporcional) y tabla para la decisión de publicación
 `decision-publicacion/2026-09-16-tabla.md`: actualización del inventario `entrega-acotada-desde-1.33.2.md` con el diff `v1.33.2..5f07419`, procedencia base/vía, ocho bloqueos con evidencia y recomendación (separar). Sin pruebas nuevas ni comisiones.
 
