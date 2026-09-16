@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-16 · Seguridad R-032: **`Seguridad: aprobado` extendida a `cf88b4e`** (versión, notas y delta de `H-P1`); **`SEC-090`, `SEC-091`, `SEC-092`** nuevos (`instrumento`, no bloquean)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad (confirmación acotada autorizada por el propietario; no repite la revisión del porte). Sede: `docs/seguridad/registro-seguridad.md` § R-032.
+
+**Versión y notas:** tres campos 1.34.0; `arnes_version` del repo 1.33.0 y declaración negativa sin tocar; las notas no prometen mecanismo ajeno (0 rutas en `hooks/ tools/ .arnes/ tests/ .github/`) y no inducen a creer cerrado nada (`H-P2` «NO queda resuelto por esta ventana»). La entrada «Hacia 1.34.0» numerada no altera lo firmado en R-031. **Delta de `H-P1`:** dirección segura, sin fail-open nuevo; «Continuar» conserva el guardián por operación. **Hallazgos nuevos, todos `instrumento`:** `SEC-090` — la reanudación es la única sede que no repite la precondición de verificar antes de registrar la versión, y resolver un conflicto implica edición humana del archivo; `SEC-091` — las notas afirman «mecanismo idéntico, así que el banco que certifica v1.33.2 certifica también esto», inferencia que no se sigue (el banco lee documentos que el porte cambió, incluida la skill que `8bd5e33` modificó); `SEC-092` — `H-P3` no aparece en la lista de límites de `## [1.34.0]`. **`H-P3`** desde seguridad: `instrumento`, dirección fail-open invisible si se materializara (base del merge en destino con versión en origen); conviene especificarlo con `SEC-090` en el mismo acto. **Ninguno se repara en esta entrega** (instrucción: sin otras reparaciones); quedan declarados para decisión del propietario.
+
+**No acredita:** la revisión del porte (R-031, límites en pie); la reanudación tras parcial (texto, no conducta); banco sobre esta cabeza (lo dará el CI); n pequeño; la sonda de coste del CI; `H-P2` abierto; la discrepancia `arnes_version 1.33.0` vs `plugin.json 1.34.0` preexistente, que crece con la versión y no se auditó; fusión, tag, publicación.
+
 ## [Interno] — 2026-09-16 · QA del delta `b520e3b..8bd5e33` y de la versión: **FAVORABLE**; `H-P1` **resuelto por el producto** (n=2); `H-P2` no resuelto; **`H-P3`** nuevo (`instrumento`, no bloquea)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester (QA acotada al delta, autorizada por el propietario; no repite la revisión del porte). Adenda en `docs/qa/porte-1.33.2-via-proporcional-veredicto.md`.
 
