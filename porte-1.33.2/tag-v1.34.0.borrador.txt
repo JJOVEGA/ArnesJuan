@@ -1,0 +1,25 @@
+v1.34.0 — la via proporcional se publica DESCRITA, y ningun proyecto la estrena activada
+
+Alcance: v1.33.2 + la via proporcional de reparacion con autorizacion explicita del
+propietario (porte minimo por comportamiento) + regla explicita de migracion parcial
+(H-P1: con un CONFLICTO/UNKNOWN pendiente, arnes_version conserva el origen y el
+resultado se declara PARCIAL). Ningun cambio de mecanismo: hooks/, tools/, .arnes/,
+tests/ y .github/ son byte a byte los de v1.33.2. Ningun cambio de la rama larga.
+
+Publicar la capacidad no equivale a activarla: solo la declaracion afirmativa del
+propietario de cada proyecto (AGENTS.md §6, «La disciplina de la declaracion») la
+activa; arnes-init pregunta y sin un «si» escribe la negativa; arnes-upgrade instala
+la negativa y nunca la afirmativa. Este repositorio conserva la negativa.
+
+Validacion: QA favorable (porte 404e044; delta 8bd5e33; notas c5db41b); Seguridad
+aprobado acotado (R-031, R-032, R-033); once ensayos con agentes y skills reales en
+entorno aislado; hooks-en-linux en verde sobre la cabeza publicada.
+
+Queda ABIERTO y no se cierra: SEC-089 (limite (a) de la comprobacion), H-P2 (Fase 1 de
+arnes-upgrade no determinista ante un destino inconsistente), SEC-090 y H-P3 (reanudacion
+de una migracion parcial: DIFERIDOS por decision del propietario, dueno desarrollador,
+revision de QA y seguridad antes de recomendar reanudar), SEC-091/092 (corregidos en las
+notas; cierre del auditor), SEC-087, SEC-088 y QA-1332-01 (de v1.33.2). La sonda de coste
+REQ-017 CA-08 (ii) conserva su configuracion y todos sus resultados, incluido el FAIL
+sobre b520e3b; su estabilidad no esta acreditada. arnes_version de este repo (1.33.0)
+no se toca: representa su migracion, no la version del plugin.
