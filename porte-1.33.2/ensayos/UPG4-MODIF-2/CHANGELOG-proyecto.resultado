@@ -1,0 +1,55 @@
+# CHANGELOG — Facturador
+
+> Bitácora de cambios del proyecto. Cada entrada registra: fecha, **Origen**, usuario, modelo de IA, agente(s) y detalle.
+>
+> **Origen:**
+> - `GitHub` → generado en un commit; el cambio está respaldado en el repo remoto.
+> - `Interno` → disparado manualmente; control interno, aún sin commit.
+>
+> Regla: todo commit debe actualizar este archivo (lo exige el hook `pre-commit`).
+
+---
+
+## [2026-09-16] — Origen: Interno — Migración del arnés 1.33.2 → 1.34.0: **PARCIAL**
+- **Usuario:** juan.vega@sysvega.cr
+- **Modelo IA:** claude-opus-5 (coordinadora)
+- **Agente(s):** coordinadora (skill `arnes-upgrade`)
+
+### Cambios
+- **Origen:** `1.33.2` · **Destino:** `1.34.0` · **Resultado: PARCIAL** — queda 1 conflicto sin
+  resolver, así que `arnes_version` **conserva `1.33.2`** y **no se sube** (Fase 5 de la skill).
+  `.arnes/plantillas-origen/` **tampoco se actualiza**, por el mismo motivo: guardar las
+  plantillas de 1.34.0 con el manifiesto declarando 1.33.2 daría una base falsa a la próxima
+  migración.
+- **Aplicado** (secciones `INTACTO`, idénticas a la base 1.33.2):
+  - `AGENTS.md` §9, viñeta «CAMBIOS POR HALLAZGO»: quién transcribe el write-back **depende de la
+    vía de §6**. El write-back sigue siendo obligatorio; cambia quién puede escribirlo.
+  - `requirements/README.md`, §«Cómo se escribe un criterio que no se desmiente»: el mismo cambio
+    de propietario del write-back.
+- **PENDIENTE — no aplicado (conflicto):**
+  - `AGENTS.md` **§6** → **`MODIFICADO`**. El proyecto tiene una personalización propia («toda
+    factura anulada exige revisión del `auditor-seguridad` antes de cerrar su REQ») que se
+    pronuncia sobre lo mismo que el bloque nuevo de 1.34.0 (la **tabla de vías**, cuya fila 2
+    despacha reparaciones sin seguridad). **§6 se conserva byte a byte**; la decisión es del
+    propietario. Detalle y opción propuesta en `.arnes/migracion.md`.
+- **Efecto real hoy: ninguno sobre quién interviene.** §6 no declara la vía proporcional, y el
+  texto nuevo de §9 resuelve por sí solo hacia el procedimiento anterior: el write-back sigue
+  siendo del `analista-requerimientos`. Ningún hook cambia y `.arnes/config.json` no se toca.
+- Los **cuatro agentes** no se migran: los provee el plugin y llegan corregidos al actualizarlo.
+
+### Ciclo de agentes (trazabilidad)
+- Migración de andamiaje ejecutada por la coordinadora; no toca código de la app ni ningún REQ,
+  así que no abre ciclo de dev/QA/seguridad.
+
+---
+
+## [AAAA-MM-DD] — Origen: (GitHub|Interno) — Título del cambio
+- **Usuario:** (correo/identificador)
+- **Modelo IA:** (ej. claude-opus-4-8 coordinadora + claude-sonnet-4-6 dev/QA)
+- **Agente(s):** (analista-requerimientos | desarrollador | qa-tester | auditor-seguridad | coordinadora)
+
+### Cambios
+- (detalle de lo que se hizo)
+
+### Ciclo de agentes (trazabilidad)
+- (qué hizo cada agente; veredicto de QA y seguridad)

@@ -1,0 +1,54 @@
+# CHANGELOG — Facturador
+
+> Bitácora de cambios del proyecto. Cada entrada registra: fecha, **Origen**, usuario, modelo de IA, agente(s) y detalle.
+>
+> **Origen:**
+> - `GitHub` → generado en un commit; el cambio está respaldado en el repo remoto.
+> - `Interno` → disparado manualmente; control interno, aún sin commit.
+>
+> Regla: todo commit debe actualizar este archivo (lo exige el hook `pre-commit`).
+
+---
+
+## [2026-09-16] — Origen: Interno — Migración del arnés 1.33.2 → 1.34.0 (**PARCIAL**)
+- **Usuario:** juan.vega@sysvega.cr
+- **Modelo IA:** claude-opus-5 (coordinadora)
+- **Agente(s):** coordinadora (skill `arnes-upgrade`)
+
+### Cambios
+- **Resultado: PARCIAL.** `arnes_version` **conserva `1.33.2`** y NO se sube a `1.34.0`: queda
+  una operación del plan sin aplicar. El plan completo, con su evidencia, está en
+  `.arnes/migracion.md`.
+- Aplicado (`SAFE`, secciones `INTACTO` respecto de la plantilla de origen):
+  - `AGENTS.md` §9, punto «CAMBIOS POR HALLAZGO»: **quién transcribe el write-back pasa a
+    depender de la vía (§6)**. Como §6 **no** declara la vía proporcional, el write-back sigue
+    siendo del `analista-requerimientos` — el procedimiento del proyecto **no cambia**.
+  - `requirements/README.md`, sección «Cómo se escribe un criterio que no se desmiente»: la
+    misma corrección sobre quién reescribe un criterio mal formado.
+- **NO aplicado — pendiente de decisión humana:**
+  - `AGENTS.md` **§6** — `MODIFICADO`, **conflicto**. El proyecto personalizó esta sección con
+    la regla propia de Facturador sobre facturas anuladas, así que **no se tocó**. 1.34.0 trae
+    ahí el bloque de la **vía proporcional de reparación**. Mientras no se resuelva, el
+    proyecto sigue con el flujo anterior (analista → desarrollador → QA → seguridad), que es
+    una opción válida.
+- **`.arnes/plantillas-origen/` no se refrescó** a las plantillas de 1.34.0, a propósito: la
+  base de §6 debe seguir siendo la de 1.33.2 para poder reclasificar esa sección al reanudar.
+- Sin cambios en `.arnes/config.json` (1.34.0 no añade llaves ni hooks) ni en los 4 agentes,
+  que los provee el plugin y llegan al actualizarlo, no por esta migración.
+
+### Ciclo de agentes (trazabilidad)
+- Migración de andamiaje ejecutada por la coordinadora; no toca código de la app ni ningún REQ,
+  así que no entra en el ciclo dev → QA → seguridad.
+
+---
+
+## [AAAA-MM-DD] — Origen: (GitHub|Interno) — Título del cambio
+- **Usuario:** (correo/identificador)
+- **Modelo IA:** (ej. claude-opus-4-8 coordinadora + claude-sonnet-4-6 dev/QA)
+- **Agente(s):** (analista-requerimientos | desarrollador | qa-tester | auditor-seguridad | coordinadora)
+
+### Cambios
+- (detalle de lo que se hizo)
+
+### Ciclo de agentes (trazabilidad)
+- (qué hizo cada agente; veredicto de QA y seguridad)

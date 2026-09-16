@@ -1,0 +1,57 @@
+# CHANGELOG — Facturador
+
+> Bitácora de cambios del proyecto. Cada entrada registra: fecha, **Origen**, usuario, modelo de IA, agente(s) y detalle.
+>
+> **Origen:**
+> - `GitHub` → generado en un commit; el cambio está respaldado en el repo remoto.
+> - `Interno` → disparado manualmente; control interno, aún sin commit.
+>
+> Regla: todo commit debe actualizar este archivo (lo exige el hook `pre-commit`).
+
+---
+
+## [2026-09-16] — Origen: Interno — Migración del arnés 1.33.2 → 1.34.0
+- **Usuario:** juan.vega@sysvega.cr
+- **Modelo IA:** claude-opus-5 (1M context), sesión coordinadora
+- **Agente(s):** coordinadora (skill `arnes-upgrade`)
+
+### Cambios
+- `arnes_version`: **1.33.2 → 1.34.0** en `.arnes/config.json`. Migración **COMPLETA**: las
+  cuatro operaciones del plan quedaron aplicadas y verificadas, sin ningún `CONFLICTO` ni
+  `UNKNOWN` pendiente.
+- `AGENTS.md` §6: se añade la **vía proporcional de reparación** — la tabla que elige la vía por
+  el **efecto** del cambio, la definición de «contrato claro» y la sede normativa de la
+  declaración. La sección estaba `INTACTO` respecto de la base, así que se aplicó sin preguntar.
+- `AGENTS.md` §6: la declaración se instala **NEGATIVA** (valor por defecto): *«Este proyecto
+  todavía no ha declarado esa autorización.»* Instalar la política y aceptarla son dos actos
+  distintos, y el segundo es del propietario. **Mientras esa línea siga así, el proyecto sigue
+  exactamente con analista → desarrollador → QA → seguridad, y ningún agente puede omitir al
+  analista.**
+- `AGENTS.md` §9: el write-back deja de estar fijado en el analista y pasa a depender de la vía.
+  Sigue siendo **obligatorio**: cambia quién lo transcribe, no si se escribe. Y como §6 **no**
+  declara la vía, en este proyecto el write-back **sigue siendo del `analista-requerimientos`**.
+- `requirements/README.md` § «Cómo se escribe un criterio que no se desmiente»: la frase sobre
+  quién reescribe un criterio mal formado queda alineada con lo anterior.
+- `.arnes/plantillas-origen/`: actualizada a las plantillas de 1.34.0, para que la próxima
+  migración tenga base con la que comparar.
+- **Conservado sin tocar:** la nota propia de §2 «Stack» sobre `src/iva.js` y la revisión
+  trimestral de contabilidad. Está `MODIFICADO` respecto de la plantilla y 1.34.0 no toca §2.
+- El plan, la clasificación y la evidencia quedan en `.arnes/migracion.md`.
+
+### Ciclo de agentes (trazabilidad)
+- Migración de andamiaje ejecutada por la coordinadora; no toca código de la app (`src/*`) ni
+  ningún REQ, así que no abre ciclo de dev/QA/seguridad y no requiere veredictos.
+- Ningún hook cambia de conducta con esta versión: 1.34.0 es `v1.33.2` + documentación de la vía.
+
+---
+
+## [AAAA-MM-DD] — Origen: (GitHub|Interno) — Título del cambio
+- **Usuario:** (correo/identificador)
+- **Modelo IA:** (ej. claude-opus-4-8 coordinadora + claude-sonnet-4-6 dev/QA)
+- **Agente(s):** (analista-requerimientos | desarrollador | qa-tester | auditor-seguridad | coordinadora)
+
+### Cambios
+- (detalle de lo que se hizo)
+
+### Ciclo de agentes (trazabilidad)
+- (qué hizo cada agente; veredicto de QA y seguridad)

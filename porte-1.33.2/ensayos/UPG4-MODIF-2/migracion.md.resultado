@@ -1,0 +1,141 @@
+# Migración del arnés — 1.33.2 → 1.34.0
+
+Fecha: 2026-09-16 · Ejecutada por: `/arnes-juan:arnes-upgrade` (sesión coordinadora)
+
+## Resultado: **PARCIAL** — hay un CONFLICTO sin resolver
+
+`arnes_version` **conserva el valor de origen (`1.33.2`)** y **no se sube** hasta que el
+conflicto quede resuelto (Fase 5 de la skill). `.arnes/plantillas-origen/` **tampoco se
+actualiza** por el mismo motivo: si guardara las plantillas de 1.34.0 mientras el manifiesto
+declara 1.33.2, la próxima migración tomaría como base un documento que este proyecto nunca
+tuvo, y toda su clasificación saldría falsa.
+
+---
+
+## Fase 1 — Inventario
+
+| | Valor | Evidencia |
+|---|---|---|
+| Origen declarado | `1.33.2` | `.arnes/config.json` → `arnes_version`; `.arnes-initialized` → `arnes_version: 1.33.2` (concuerdan) |
+| Destino | `1.34.0` | `.claude-plugin/plugin.json` del plugin instalado |
+| Plugin instalado ¿es el actual? | **Sí** | `CHANGELOG.md` del plugin: `[1.34.0] — 2026-09-16`, la entrada más reciente |
+| Árbol de git | **limpio** | `git status --porcelain` sin salida |
+
+### Acreditación de la versión de origen: **CORROBORADO** (se sigue, diciéndolo)
+
+No se alcanza **CONFIRMADO** por una razón del entorno, no del proyecto: **el plugin no está
+disponible como repositorio git** (`/tmp/arnes-diag-wBF0L4/plugin-8bd5e33` no tiene `.git` ni
+tags), así que `.arnes/plantillas-origen/` **no se puede contrastar contra el tag `v1.33.2`**.
+
+La base usada es la **guardada en el proyecto**, `.arnes/plantillas-origen/`, que es la fuente
+preferida de la skill. Comprobaciones que la corroboran y ninguna que la desmienta:
+
+- El origen declarado (1.33.2) **no es posterior** al plugin instalado (1.34.0).
+- Los dos sitios que declaran la versión en el proyecto **coinciden** entre sí.
+- **Todos** los marcadores de la tabla de la skill están presentes (todos implican origen
+  ≥ 1.31.0, compatible con 1.33.2) y **ninguno falta**: sección «Nivel de rigor» y
+  `Hallazgos abiertos:` y `con-hallazgos` en `requirements/README.md`; fila «no se hace por
+  shell» y auditoría `preventiva` en `AGENTS.md`; `plantillas_origen` y `git.prohibidos` en
+  `.arnes/config.json`.
+- De las **12 plantillas** de la base, **10 son idénticas** a las de 1.34.0 (incluido el
+  directorio `githooks/`). Sólo difieren `AGENTS.md.tpl` y `requirements-README.md.tpl`, que es
+  **exactamente** lo que «Migraciones conocidas → Hacia 1.34.0» dice que cambia. Una base de
+  otra versión habría producido diferencias en más archivos.
+
+> **La base es reconstruida/guardada, no verificada contra tag.** Queda dicho aquí porque la
+> skill obliga a decirlo cuando no se llega a CONFIRMADO.
+
+## Fase 2 — Plan
+
+Identificación de secciones **por título y contenido, no por número**: §6 («Orquestación, loops
+de error y gates humanos») y §9 («Cambios de requerimientos (versionado y deriva)») llevan el
+**mismo título** en el proyecto, en la base 1.33.2 y en el destino 1.34.0. Identificación firme:
+no hay `UNKNOWN` por renumeración.
+
+| # | Archivo / sección | Estado | Evidencia | Acción | Aplicada |
+|---|---|---|---|---|---|
+| OP-1 | `AGENTS.md` §6 | **MODIFICADO** | Difiere de la base en una línea que **no** es sustitución de marcador (ver abajo) | **CONFLICTO — no se toca, se pregunta** | **NO** |
+| OP-2 | `AGENTS.md` §9, viñeta «CAMBIOS POR HALLAZGO» | **INTACTO** | `diff` de §9 contra la base: **sin ninguna diferencia** | Aplicar el párrafo nuevo de write-back por vía | **SÍ** |
+| OP-3 | `requirements/README.md`, §«Cómo se escribe un criterio que no se desmiente» | **INTACTO** | `diff` contra la base: única diferencia es `{{NOMBRE_PROYECTO}}` → `Facturador`, que es sustitución de `arnes-init` | Aplicar el párrafo «quien lo reescribe depende de la vía» | **SÍ** |
+| OP-4 | Resto de plantillas gestionadas (`CLAUDE.md`, `ESTADO.md`, `PENDING_APPROVAL.md`, `CHANGELOG.md`, `ADR`, `ARCHITECTURE`, `DELIVERY`, `.arnes/config.json`, `githooks/`) | **INTACTO** | Base y destino **idénticos**: 1.34.0 no las toca | Nada que migrar | n/a |
+| OP-5 | `.arnes/plantillas-origen/` → plantillas de 1.34.0 | — | — | **Aplazada**: migración parcial (ver arriba) | **NO** |
+| OP-6 | `arnes_version` → `1.34.0` (Fase 5) | — | — | **NO se escribe**: migración parcial | **NO** |
+
+### Fuera de alcance, y se dice expresamente
+
+**Los cuatro agentes NO se migran y NO se clasifican.** Los provee el plugin
+(`.claude/agents/`); este proyecto **no tiene** copia propia (no existe el directorio
+`.claude/` en el árbol) y `arnes-init` no deja base suya en `.arnes/plantillas-origen/`. Sus
+correcciones de 1.34.0 llegan **al actualizar el plugin**, no por esta migración.
+
+`templates/AGENTS.md.tpl` y `templates/requirements-README.md.tpl` que menciona la skill son del
+**repositorio del arnés**; este proyecto no tiene directorio `templates/`.
+
+---
+
+## El CONFLICTO (OP-1): `AGENTS.md` §6
+
+**Qué diferencia hay entre la base y el proyecto.** `diff` de §6 devuelve cinco diferencias.
+Cuatro son **sustituciones de marcador** hechas por `arnes-init` (andamiaje, no trabajo humano):
+
+- `{{MAX_REINTENTOS}}` → `3`
+- `{{CRITERIO_RIGOR_CRITICO}}` → `todo lo que toque dinero o datos de clientes`
+- `{{GATES_HUMANOS}}` → `publicar`
+- `{{PRESUPUESTO}}` → `sin tope`
+
+La quinta es **una adición humana**, insertada tras el «Flujo:» de §6, y se declara a sí misma
+como tal:
+
+```
+**Regla propia de Facturador (personalización de §6, no viene de la plantilla):** toda factura
+anulada exige revisión del `auditor-seguridad` antes de cerrar su REQ.
+```
+
+**Por qué esto es conflicto y no un detalle cosmético.** La regla propia del proyecto **exige
+`auditor-seguridad`** para un caso concreto de negocio. El bloque que 1.34.0 quiere insertar en
+§6 es justamente una **tabla de vías** cuya fila 2 despacha reparaciones `desarrollador → QA`
+**sin seguridad**. Son dos textos que se pronuncian sobre lo mismo y hay que decidir **cómo
+conviven** — es exactamente la contradicción que el propio bloque nuevo manda resolver
+expresamente antes de omitir una fase.
+
+**Qué se ha hecho: NADA.** §6 se conserva **byte a byte** como estaba. La decisión es del humano.
+
+**Opción que la skill manda proponer (y que es del propietario aplicar, no de la migración):**
+conservar el texto del proyecto y **añadir encima** el bloque nuevo, dejando la regla propia
+**después** de la tabla de vías y redactada como lo que es: un caso que cae en la fila 3
+(seguridad obligatoria) y que por tanto **no** puede despacharse por la fila 2.
+
+**Y si se aplica, hay una segunda decisión, que es una AUTORIZACIÓN y no un ajuste:** el bloque
+trae el marcador `{{DECLARACION_VIA_PROPORCIONAL}}`. El valor por defecto es la **línea
+negativa** —el proyecto **no** autoriza la vía y sigue con analista → desarrollador → QA →
+seguridad—. Sólo una decisión afirmativa expresa del propietario escribe la línea afirmativa.
+Las dos redacciones literales salen de una sola sede: `AGENTS.md` §6, «La disciplina de la
+declaración» (en la plantilla de 1.34.0). No se inventa una tercera.
+
+---
+
+## Efecto de lo aplicado (OP-2 y OP-3), dicho entero
+
+§9 pasa a decir que **quién transcribe el write-back depende de la vía de §6**. Como §6 de este
+proyecto **no** trae la vía (OP-1 en conflicto), el texto nuevo de §9 resuelve solo y hacia el
+lado seguro: *«Si §6 no la declara, el write-back es del `analista-requerimientos`, como antes de
+que la vía existiera»*. Es decir: **hoy no cambia quién hace nada en este proyecto**. Lo mismo
+vale para el párrafo de `requirements/README.md`.
+
+**Ningún hook cambia** y `.arnes/config.json` no se toca: 1.34.0 no añade ni modifica ninguna
+puerta.
+
+## Fase 4 — Verificación (releyendo el disco)
+
+- OP-2 aplicada y releída: el párrafo nuevo está en `AGENTS.md` §9; `diff` contra el destino
+  sobre esa viñeta: sin diferencias.
+- OP-3 aplicada y releída: `requirements/README.md` sólo difiere del destino en
+  `{{NOMBRE_PROYECTO}}` → `Facturador`.
+- OP-1 **no aplicada**: §6 verificada **idéntica** a como estaba antes de la migración.
+- No desapareció contenido previo en ningún archivo tocado.
+- `arnes_version` sigue siendo `1.33.2`, que es lo correcto para una migración parcial.
+
+## Pendiente para reanudar
+
+Una sola operación: **OP-1 (`AGENTS.md` §6)**. Al resolverla, se aplica OP-5 y OP-6 y la
+migración queda completa. Se reanuda por **«Continuar»**, no volviendo a inferir el estado.

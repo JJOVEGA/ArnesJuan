@@ -1,0 +1,142 @@
+# Migración del arnés — 1.33.2 → 1.34.0
+
+> Plan generado por `arnes-upgrade` el 2026-09-16. Registra qué se clasificó, con qué
+> evidencia y qué se aplicó. Si la corrida se interrumpe, se reanuda desde aquí: o se
+> **continúa** por la primera operación no aplicada, o se **revierte** con git.
+
+## Fase 1 — Inventario
+
+| | Valor | De dónde sale |
+|---|---|---|
+| Versión de origen | `1.33.2` | `.arnes/config.json` → `arnes_version` |
+| Versión de destino | `1.34.0` | `.claude-plugin/plugin.json` del plugin instalado |
+| Árbol de git | limpio | `git status --porcelain` sin salida |
+| Base del merge | `.arnes/plantillas-origen/` | fuente preferida, presente en el proyecto |
+| Migración previa interrumpida | ninguna | no existía `.arnes/migracion.md` |
+
+### Acreditación de la versión de origen: **CORROBORADO**
+
+No es `CONFIRMADO` y se dice por qué: el plugin instalado **no es un repositorio git**
+(`/tmp/arnes-diag-wBF0L4/plugin-8bd5e33` no tiene `.git`), así que **no hay tag `v1.33.2` contra
+el que cotejar** la carpeta de plantillas. No es `DESMENTIDO`: no es que el tag no exista, es que
+no hay repositorio donde consultarlo. La base se usa, y se usa sabiendo esto.
+
+Lo que sí la corrobora, por tres vías independientes:
+
+1. **Contradicción barata, descartada:** el origen declarado (`1.33.2`) es **anterior** al plugin
+   instalado (`1.34.0`), así que es posible que ese plugin lo escribiera.
+2. **Marcadores, todos presentes y ninguno contradictorio** (acotan el origen por abajo en
+   ≥ 1.31.0; ninguno desmiente `1.33.2`):
+
+   | Marcador | Implica origen ≥ | Presente |
+   |---|---|---|
+   | `requirements/README.md` § **Nivel de rigor** | 1.19.0 | sí |
+   | `requirements/README.md` nombra `Hallazgos abiertos:` | 1.16.0 | sí |
+   | `AGENTS.md` §13 fila «no se hace por shell» | 1.16.0 | sí |
+   | `AGENTS.md` §6 nombra la auditoría `preventiva` | 1.21.0 | sí |
+   | `.arnes/config.json` tiene `plantillas_origen` | 1.21.0 | sí |
+   | `.arnes/config.json` tiene `git.prohibidos` | 1.31.0 | sí |
+   | `requirements/README.md` nombra `con-hallazgos` en `Seguridad:` | 1.31.0 | sí |
+
+3. **La forma de la base concuerda exactamente con lo que el destino declara haber cambiado.**
+   `diff -rq` entre `.arnes/plantillas-origen/` y `templates/` de 1.34.0 devuelve **exactamente
+   dos** archivos distintos —`AGENTS.md.tpl` y `requirements-README.md.tpl`— y las otras diez
+   plantillas son idénticas byte a byte. El CHANGELOG de 1.34.0 dice que esa versión es
+   «`v1.33.2` **+** la vía proporcional», sin ningún cambio de mecanismo. Una base que no fuera
+   la de 1.33.2 no encajaría así.
+
+Además, `.arnes-initialized` (`arnes_version: 1.33.2`, fecha 2026-09-12) concuerda con el
+manifiesto: los dos sitios donde vive el número dicen lo mismo.
+
+### El plugin instalado como destino
+
+`1.34.0` es la entrada **más reciente** de su propio `CHANGELOG.md` y está fechada **2026-09-16**,
+que es hoy. No hay red ni marketplace que consultar desde aquí, así que esto no es una prueba de
+que sea la última publicada: es la mejor evidencia disponible y se declara como tal.
+
+## Fase 2 — Plan
+
+### Identificación de las secciones, antes de clasificarlas
+
+Hecha **por título y contenido, no por número**, como exige la skill. Los catorce encabezados
+`## 0.` … `## 13.` de `AGENTS.md` son **idénticos** en los tres documentos (base, proyecto y
+destino), incluido `## 6. Orquestación, loops de error y gates humanos` y `## 9. Cambios de
+requerimientos (versionado y deriva)`. No hay renumeración ni retitulado entre 1.33.2 y 1.34.0,
+así que el `## 6.` y el `## 9.` de la base **son la misma sección** que los del destino. La
+identificación es firme; no hay `UNKNOWN`.
+
+### Qué cambia el destino, y sólo eso
+
+El `diff` base → destino contiene **tres** cambios, ninguno más:
+
+- `AGENTS.md.tpl` §6: bloque nuevo de 191 líneas tras la línea `**Flujo:** …` (tabla de vías,
+  disciplina de la declaración, marcador `{{DECLARACION_VIA_PROPORCIONAL}}`).
+- `AGENTS.md.tpl` §9: el cierre del punto **CAMBIOS POR HALLAZGO** pasa de fijar el write-back en
+  el analista a hacerlo depender de la vía.
+- `requirements-README.md.tpl` § **Cómo se escribe un criterio que no se desmiente**: una frase
+  sobre quién reescribe un criterio mal formado.
+
+### Clasificación
+
+| # | Archivo | Sección | Estado | Evidencia | Acción |
+|---|---|---|---|---|---|
+| 1 | `AGENTS.md` | §6 Orquestación… | **INTACTO** | En el rango de §6, el proyecto sólo difiere de la base en `{{MAX_REINTENTOS}}`, `{{CRITERIO_RIGOR_CRITICO}}`, `{{GATES_HUMANOS}}` y `{{PRESUPUESTO}}` — las cuatro son sustituciones de marcadores hechas por `arnes-init`, no texto humano | **SAFE** — insertar el bloque nuevo |
+| 2 | `AGENTS.md` | §9 Cambios de requerimientos | **INTACTO** | El `diff` proyecto ↔ base **no muestra ninguna diferencia** en el rango de §9 | **SAFE** — sustituir el cierre del punto |
+| 3 | `requirements/README.md` | § Cómo se escribe un criterio que no se desmiente | **INTACTO** | El archivo entero difiere de la base **sólo** en el título (`{{NOMBRE_PROYECTO}}` → `Facturador`) | **SAFE** — sustituir la frase |
+| 4 | `.arnes/plantillas-origen/` | — | — | La skill manda dejar las plantillas del destino para que la próxima migración tenga base | **SAFE** — copiar `templates/` de 1.34.0 |
+
+**No hay ninguna operación `CONFLICTO` ni `UNKNOWN`.** El plan se aplica entero, así que la
+Fase 5 registra la versión.
+
+### Clasificado y NO tocado — se informa, no se corrige
+
+`AGENTS.md` §2 «Stack» está **MODIFICADO**: el proyecto añadió una nota humana propia («el cálculo
+de IVA vive en `src/iva.js` y lo revisa contabilidad cada trimestre»). **No genera conflicto**
+porque 1.34.0 **no toca §2**: no hay ninguna operación sobre esa sección. La nota se conserva
+literal.
+
+### Fuera del merge, a propósito
+
+- **Los cuatro agentes NO se migran.** Los provee el plugin (`.claude/agents/`); este proyecto no
+  tiene carpeta `.claude/` ni copia propia de ninguna definición, y `arnes-init` no deja base suya
+  en `.arnes/plantillas-origen/`. Clasificarlos sin base daría `UNKNOWN`, y un `UNKNOWN` detendría
+  la corrida entera. Llegan corregidos al actualizar el plugin, no por esta migración.
+- **`templates/` del proyecto:** no existe. Nada que clasificar.
+
+### La declaración de la vía proporcional se instala NEGATIVA
+
+El marcador `{{DECLARACION_VIA_PROPORCIONAL}}` se sustituye por la **línea negativa** literal de la
+sede normativa (`AGENTS.md` §6, «La disciplina de la declaración»), que es el **valor por defecto**.
+Ninguna fila de este merge —tampoco `INTACTO`— escribe la afirmativa: instalar la política y
+aceptarla son dos actos distintos, y el segundo es del propietario del proyecto.
+
+## Fase 3 — Aplicación
+
+| # | Operación | Estado |
+|---|---|---|
+| 1 | `AGENTS.md` §6 — bloque de la vía proporcional + línea negativa | **APLICADA** |
+| 2 | `AGENTS.md` §9 — write-back según la vía | **APLICADA** |
+| 3 | `requirements/README.md` — quién reescribe el criterio | **APLICADA** |
+| 4 | `.arnes/plantillas-origen/` ← plantillas de 1.34.0 | **APLICADA** |
+
+## Fase 4 — Verificación (releyendo el disco)
+
+- Las tres ediciones están en disco y su texto coincide con el del destino: `diff` entre
+  `AGENTS.md` y `templates/AGENTS.md.tpl` de 1.34.0 devuelve **sólo** las sustituciones de
+  marcadores de `arnes-init` y la nota humana de §2; `diff` entre `requirements/README.md` y
+  `templates/requirements-README.md.tpl` devuelve **sólo** el título.
+- §2 «Stack» conserva su nota humana, sin cambios.
+- No desapareció contenido, y está acreditado contra git, no por haber escrito las ediciones:
+  `AGENTS.md` pasa de 420 a 611 líneas (+191, exactamente las del bloque nuevo) y
+  `git diff -U0` muestra **exactamente 3 líneas borradas** en `AGENTS.md` —las tres del cierre de
+  §9 que el destino sustituye— y **1** en `requirements/README.md`. Ninguna otra.
+- No queda ningún marcador `{{…}}` sin sustituir en los archivos tocados.
+- `.arnes/plantillas-origen/` es idéntica a `templates/` de 1.34.0.
+- El plan quedó **aplicado entero**, así que la versión se registra (Fase 5).
+
+## Fase 5 — Registro
+
+- `.arnes/config.json` → `arnes_version: "1.34.0"`.
+- Entrada en el `CHANGELOG.md` del proyecto, con origen y destino.
+
+**Resultado: migración COMPLETA.** Ninguna operación quedó pendiente.

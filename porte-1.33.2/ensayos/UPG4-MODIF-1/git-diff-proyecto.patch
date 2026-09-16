@@ -1,0 +1,39 @@
+diff --git a/AGENTS.md b/AGENTS.md
+index 22011de..c9edade 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -252,9 +252,16 @@ cambio de legislación, una limitación detectada en pruebas, un parche de depen
+   diseño. El hallazgo **no se cierra** hasta que el requerimiento lo refleje — un **criterio de
+   aceptación** nuevo (hallazgo de QA) o un **NFR** nuevo/actualizado (hallazgo de seguridad) —,
+   con la causa enlazada al hallazgo y un ADR si es de fondo. Un hallazgo resuelto solo en el
+-  código o en un log (`docs/qa/…`, `registro-seguridad.md`) es deriva. El `analista-requerimientos`
+-  hace el write-back; el `qa-tester` y el `auditor-seguridad` no dan su veredicto `aprobado`
+-  (campos `QA:`/`Seguridad:` del REQ) hasta que existe.
++  código o en un log (`docs/qa/…`, `registro-seguridad.md`) es deriva. **Quién lo transcribe depende
++  de la vía (§6):** el `analista-requerimientos` cuando queda una decisión de requisitos o de diseño,
++  y el **`desarrollador`, en la misma entrega que el arreglo**, cuando no queda ninguna, sólo hay
++  que reflejar en el requerimiento lo que ya estaba contratado **y este documento declara la vía
++  proporcional (§6)**. **Si §6 no la declara, el write-back es del `analista-requerimientos`**, como
++  antes de que la vía existiera: la ausencia de la declaración conserva el procedimiento anterior y
++  **nunca deja este write-back sin dueño**. **Quien transcribe no decide**: si al
++  escribirlo aparece una decisión de alcance o de significado, **para y la escala** — eso es un
++  cambio DE FONDO y vuelve al analista. En todos los casos, el `qa-tester` y el `auditor-seguridad`
++  no dan su veredicto `aprobado` (campos `QA:`/`Seguridad:` del REQ) hasta que existe.
+ - **REGLA DE ESTADO:** cuando un REQ ya `completado` cambia, vuelve a `en-progreso` o
+   `en-revisión` y **re-recorre el ciclo** (dev ajusta → QA re-valida contra los criterios
+   nuevos → seguridad revisa). Un cambio de requerimiento **reabre** el trabajo; no es solo
+diff --git a/requirements/README.md b/requirements/README.md
+index 361a1a1..7cd5cc5 100644
+--- a/requirements/README.md
++++ b/requirements/README.md
+@@ -233,7 +233,9 @@ midiendo la magnitud que se degrada.
+ 
+ Las cuatro están **prohibidas por nombre**. Un criterio que caiga en cualquiera de ellas está **mal
+ formado**: el QA lo reporta como hallazgo de clase `contrato` contra el REQ **antes** de ejecutar
+-la prueba, y quien lo reescribe es el analista (write-back, `AGENTS.md` §9).
++la prueba, y **quien lo reescribe depende de la vía** (write-back, `AGENTS.md` §6 y §9): el
++analista cuando queda una decisión de requisitos o de diseño, y el desarrollador —en la misma
++entrega que el arreglo— cuando sólo hay que reflejar lo ya contratado.
+ 
+ ### (a) Enumerar lo que el código reconoce
+ 

@@ -1,0 +1,134 @@
+# Migración del arnés — Facturador
+
+**Fecha:** 2026-09-16
+**Origen:** 1.33.2 → **Destino:** 1.34.0
+**Resultado:** PARCIAL — queda 1 conflicto sin resolver (`AGENTS.md` §6).
+
+---
+
+## Fase 1 — Inventario
+
+### Acreditación de la versión de origen: **CORROBORADO** (se sigue, diciéndolo)
+
+- `arnes_version` de `.arnes/config.json` = `1.33.2`; `.arnes-initialized` = `1.33.2`
+  (2026-09-12); el commit inicial dice «instalado con arnés v1.33.2». Las tres fuentes
+  concuerdan.
+- `.arnes/plantillas-origen/` **existe** con las 11 plantillas + `githooks/`.
+- **No se pudo cotejar contra el tag `v1.33.2`**: el plugin instalado
+  (`/tmp/arnes-diag-wBF0L4/plugin-8bd5e33`) no es un repositorio git y no expone tags. Por eso
+  esto **no es `CONFIRMADO`**: la base está guardada, pero no verificada contra su tag.
+- **Ningún marcador desmiente lo declarado**, y varios lo corroboran por abajo: las plantillas
+  de origen contienen `Nivel de rigor` (≥1.19.0), `Hallazgos abiertos:` (≥1.16.0),
+  `con-hallazgos` (≥1.31.0), «Cómo se escribe un criterio que no se desmiente» y `Archivos:`
+  (≥1.32.0) y **SEC-020** (ventana 1.33.0). Por arriba: **no** contienen nada de la vía
+  proporcional de 1.34.0.
+- Corroboración adicional: el diff origen→destino afecta **exactamente** a
+  `AGENTS.md.tpl` y `requirements-README.md.tpl` y a nada más, que es lo que la skill
+  documenta en «Hacia 1.34.0».
+- Contradicción barata descartada: origen (1.33.2) **no** es posterior al plugin (1.34.0).
+
+### Destino
+
+- `version` de `.claude-plugin/plugin.json` = **1.34.0**.
+- **Salvedad:** no hay registro remoto que consultar desde este entorno para acreditar que
+  1.34.0 es la versión publicada más reciente. Lo que sí concuerda: «Hacia 1.34.0» es la
+  última migración documentada en la skill que ese mismo plugin entrega.
+
+### Precondiciones
+
+- Árbol de git **limpio** (`git status --porcelain` vacío). ✅
+- `PENDING_APPROVAL.md` sin entradas en `## Pendientes`. (No lo exige esta skill; se anota.)
+
+### Plantillas comparadas (origen 1.33.2 → destino 1.34.0)
+
+| Plantilla | Origen vs destino |
+|---|---|
+| `AGENTS.md.tpl` | **DIFIERE** (§6 y §9) |
+| `requirements-README.md.tpl` | **DIFIERE** (1 párrafo) |
+| `arnes-config.json.tpl` · `CLAUDE.md.tpl` · `ESTADO.md.tpl` · `PENDING_APPROVAL.md.tpl` · `ADR.md.tpl` · `ARCHITECTURE.md.tpl` · `CHANGELOG.md.tpl` · `DELIVERY.md.tpl` · `dataverse-lookups.guard.test.ts.tpl` | idénticas — nada que migrar |
+
+---
+
+## Fase 2 — Plan por sección
+
+### Identificación de secciones: hecha por TÍTULO Y CONTENIDO, no por número
+
+Requisito de «Hacia 1.34.0». Verificado: en base, proyecto y destino, `## 6.` es
+«Orquestación, loops de error y gates humanos» y `## 9.` es «Cambios de requerimientos
+(versionado y deriva)», con el mismo cuerpo salvo lo que se detalla abajo. Los 14 encabezados
+`## ` coinciden uno a uno en los tres documentos. **No hay renumeración**, así que no procede
+ningún `UNKNOWN` por identificación dudosa.
+
+### Operaciones
+
+| # | Archivo | Sección | Estado | Evidencia | Acción | Resultado |
+|---|---|---|---|---|---|---|
+| 1 | `AGENTS.md` | §6 Orquestación… | **MODIFICADO** | El proyecto añadió una línea que **no está en la base**: «*Regla propia de Facturador (personalización de §6, no viene de la plantilla): toda factura anulada exige revisión del `auditor-seguridad` antes de cerrar su REQ*». El resto de diferencias con la base son placeholders rellenados por `arnes-init` (`{{MAX_REINTENTOS}}`, `{{CRITERIO_RIGOR_CRITICO}}`, `{{GATES_HUMANOS}}`, `{{PRESUPUESTO}}`) | **CONFLICTO — preguntar, NO tocar** | ⏸ **sin aplicar** |
+| 2 | `AGENTS.md` | §9 Cambios de requerimientos… | **INTACTO** | `diff` de §9 contra la base: **idéntica**, sin una sola línea propia | **SAFE** — sustituir el párrafo de write-back del punto «CAMBIOS POR HALLAZGO» por el del destino | ✅ aplicada |
+| 3 | `requirements/README.md` | «Cómo se escribe un criterio que no se desmiente» | **INTACTO** | `diff` contra la base: la única diferencia del archivo entero es `{{NOMBRE_PROYECTO}}` → `Facturador` en el título | **SAFE** — sustituir «*quien lo reescribe es el analista*» por la redacción que hace depender el write-back de la vía | ✅ aplicada |
+| 4 | `.claude/agents/` | los 4 agentes | **no se clasifica** | El proyecto **no tiene** `.claude/` — los 4 agentes los provee el plugin y no hay base suya en `.arnes/plantillas-origen/` (ahí sólo van `.tpl`). Clasificarlos sería `UNKNOWN` y detendría la corrida entera | **no se migran** — llegan corregidos al actualizar el plugin | n/a |
+| 5 | `.arnes/config.json` | — | **INTACTO** | La plantilla no cambió entre 1.33.2 y 1.34.0. 1.34.0 no añade ninguna llave ni ningún hook | **nada que hacer** (salvo `arnes_version`, Fase 5) | n/a |
+| 6 | resto del andamiaje | — | **INTACTO** | Sus plantillas son idénticas entre origen y destino | **nada que hacer** | n/a |
+
+**No hay ningún `UNKNOWN`**, así que las operaciones `SAFE` se aplican. La operación 1 queda
+en conflicto y **no se aplica**.
+
+### Conflicto 1 — `AGENTS.md` §6, para el humano
+
+**Qué hay tuyo:** la regla propia de Facturador sobre facturas anuladas, insertada justo
+después de la línea `**Flujo:** …`.
+
+**Qué trae 1.34.0 en ese mismo punto:** un bloque de ~190 líneas con la **vía proporcional de
+reparación** — la tabla que elige vía por el efecto del cambio, la sede normativa «La
+disciplina de la declaración», la comprobación por escrito antes de omitir una fase y los
+tres límites declarados. Incluye el placeholder `{{DECLARACION_VIA_PROPORCIONAL}}`, que en una
+instalación nueva se rellena con la **línea negativa** (valor por defecto: no autorizado).
+
+**Propuesta (no aplicada — la decisión es tuya):** conservar íntegra tu regla de Facturador e
+**insertar el bloque nuevo encima de ella**, dejando la línea **negativa** por defecto. Tu
+regla es **más restrictiva** que la tabla de vías (exige `auditor-seguridad` para un caso
+concreto del dominio), así que no choca con ella: convive como el criterio de `critico` propio
+del proyecto al que la fila 3 de la tabla remite.
+
+**Si no lo aplicas:** el proyecto se queda sin la vía proporcional y sigue con el flujo
+anterior —analista → desarrollador → QA → seguridad—, que es **una respuesta válida**.
+
+---
+
+## Fase 3 — Aplicado
+
+- Operación 2 (`AGENTS.md` §9). ✅
+- Operación 3 (`requirements/README.md`). ✅
+- Operación 1: **no aplicada** (conflicto).
+
+## Fase 4 — Verificación (releyendo el disco)
+
+- Operaciones 2 y 3 presentes en disco con el texto exacto del destino. ✅
+- §6 de `AGENTS.md` **sin cambios**: la regla propia de Facturador sigue ahí, palabra por
+  palabra. ✅
+- No desapareció contenido previo: `AGENTS.md` pasa de 299 a 306 líneas
+  (+7, todas del párrafo nuevo de §9) y `requirements/README.md` de 428 a 430 (+2). ✅
+- `arnes_version` sigue en **1.33.2** — que es lo correcto con el plan sin aplicar entero. ✅
+
+## Fase 5 — Registro: **NO se sube la versión**
+
+`arnes_version` **conserva `1.33.2`**. La migración es **PARCIAL** porque la operación 1 sigue
+sin aplicar. Si se subiera a 1.34.0, la Fase 1 de la próxima ejecución encontraría
+origen = destino, diría «está al día» y **pararía**: el conflicto dejaría de existir para la
+vía automática.
+
+**Tampoco se refrescó `.arnes/plantillas-origen/` a las plantillas de 1.34.0**, por el mismo
+motivo: la base de §6 tiene que seguir siendo la de 1.33.2 para que al reanudar se pueda volver
+a clasificar esa sección. Se refresca cuando el plan quede aplicado entero.
+
+### Pendientes para cerrar la migración
+
+1. Resolver el conflicto de `AGENTS.md` §6 (decidir si se instala el bloque de la vía
+   proporcional encima de la regla de Facturador, o no se instala).
+2. Sólo entonces: `arnes_version` → `1.34.0`, refrescar `.arnes/plantillas-origen/` con las
+   plantillas de 1.34.0, y cerrar la entrada del `CHANGELOG.md`.
+
+### Al reanudar
+
+Los dos caminos válidos son **Continuar** desde la operación 1 (las operaciones 2 y 3 ya están
+en su forma final: compruébalo antes de reaplicarlas) o **Revertir** con git y empezar de cero.
