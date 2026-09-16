@@ -1,0 +1,868 @@
+diff --git a/AGENTS.md b/AGENTS.md
+index fcaafaa..73b2ba7 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -120,6 +120,197 @@ Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
+ > fail-before/pass-after, QA y auditor aprobados), **fusiona, etiqueta y publica por delegación
+ > permanente del propietario (2026-09-05)**; cualquier rojo o hallazgo abierto devuelve la decisión a Juan. Procedimiento completo en `docs/gobernanza/autoalojamiento.md`.
+ 
++**La vía de cada cambio se elige por su EFECTO, no por su tamaño ni por la extensión del archivo.**
++El flujo de arriba es el de una **capacidad nueva**. Una **reparación con diagnóstico y solución
++claros** no necesita las cuatro fases, y hacerlas igual no añade protección: añade espera.
++
++> **Esta vía sólo rige donde ESTE documento la declara, y describirla NO la declara.** Un agente
++> del plugin no la ejerce por tenerla escrita en su definición, y **este texto no la autoriza por
++> estar instalado**: instalar la política y aceptarla son **dos actos distintos**, y el segundo es
++> **del propietario de este proyecto**. Lo que sigue lo escribe él, y sólo él:
++>
++> **Este proyecto todavía no ha declarado esa autorización.** Rige el procedimiento anterior: analista → desarrollador → QA → seguridad.
++>
++> **Mientras esa línea no sea la declaración expresa, rige el procedimiento anterior** —analista →
++> desarrollador → QA → seguridad— y **ningún agente puede omitir al analista**. La tabla de abajo
++> describe las vías; **describirlas no las autoriza**, y su presencia no es evidencia de nada.
++
++| Naturaleza del cambio | Vía |
++|---|---|
++| Documentación informativa, índices y erratas **sin cambio de obligaciones** | la coordinadora, con las comprobaciones pertinentes |
++| **Reparación con causa, alcance y contrato claros** | desarrollador → QA. **Sin comisión de analista** — sólo si el propietario del proyecto lo **declaró expresamente** (la declaración afirmativa de arriba; **esta fila no es esa declaración ni la sustituye**) y el cambio **no** cae también en la fila 3 |
++| Cambio cuyo efecto alcanza **un criterio de `critico` de este proyecto** (§6, «Qué es crítico EN ESTE PROYECTO») **o una protección del arnés** — ejemplos **declaradamente no exhaustivos**: hooks, protecciones, firmas, permisos, instalación, migración, publicación | desarrollador → QA → **seguridad**. El analista interviene **sólo** si queda una decisión de diseño o de contrato **pendiente** |
++| **Capacidad nueva** o **cambio de contrato** | analista → desarrollador → QA → seguridad |
++
++**Si un cambio casa con más de una fila, manda la MÁS RESTRICTIVA.** La tabla no se para en la
++primera fila que encaje: la reparación de un bug de cobro tiene causa y contrato claros —fila 2— y
++además toca dinero —fila 3—, y la vía que se aplica es la de la **fila 3**.
++
++**Qué es «contrato claro», y qué pasa cuando no lo es.** «Contrato claro» no es sólo que el
++criterio ya esté decidido: incluye que **`Rigor:`, `Sensible a seguridad:` y las revisiones que el
++REQ exige sean coherentes con el EFECTO de la reparación**. Una reparación que toca dinero sobre un
++REQ `Rigor: estandar` · `Sensible a seguridad: no` · `Seguridad: n/a` **no tiene el contrato claro**,
++por decidido que esté su criterio: la cabecera promete menos revisión que la que el efecto exige.
++Cuando el trabajo revela una clasificación **insuficiente o contradictoria**, la coordinadora
++**solicita al `analista-requerimientos` únicamente esa decisión y su actualización documental**
++—qué rigor, qué sensibilidad, qué revisiones— **antes de continuar**. **No se repite el análisis
++completo y no se otorgan facultades nuevas a ningún otro rol:** ni el desarrollador ni QA corrigen
++esos campos por su cuenta, y el auditor conserva la suya de subir el rigor, como siempre. Resuelta
++la clasificación, la vía se aplica tal cual: una reparación ordinaria **correctamente clasificada**
++sigue siendo desarrollador → QA sin analista, y una que **exige seguridad** sigue siendo
++desarrollador → QA → seguridad.
++
++**Cómo se comprueba la autorización, y hacia dónde falla.** Antes de omitir la comisión de analista
++—y sólo para eso— se lee el `AGENTS.md` **del proyecto en el que se está trabajando**: ni la
++definición del agente, ni este archivo recordado de otro proyecto. La pregunta es por **propiedad**:
++*¿el propietario de este proyecto declaró expresamente que lo autoriza?* **Una sola forma responde
++que sí, y es un acto suyo: la declaración afirmativa** —la frase «**autoriza la vía proporcional de
++reparación**» dicha de este proyecto—. **Nada más es evidencia, y esto importa porque es el error
++que se cometió:** ni la **tabla de vías** con su fila «Sin comisión de analista», ni la descripción
++de la vía, ni este mismo párrafo. Todo eso **se instala con el andamiaje** y no lo decidió nadie
++aquí; tomarlo por consentimiento es **deducir el permiso del texto que lo describe**.
++**Cualquier otro desenlace conserva el procedimiento anterior y se despacha al analista**: que no
++esté declarada, que sólo esté descrita, que el archivo no se pueda leer, que la respuesta no sea
++clara, o que otra parte del mismo documento exija el analista para ese cambio **sin resolver
++expresamente** la contradicción.
++**La ausencia de la declaración no habilita nada**, y ésa es la dirección del fallo que importa: el
++agente trae la **capacidad**, el documento da el **permiso**.
++
++**La disciplina de la declaración — SEDE NORMATIVA. Se escribe aquí una vez y todo lo demás
++remite:** `arnes-init` al instalar, `arnes-upgrade` al migrar, y cualquier agente al comprobar.
++Nadie vuelve a redactar esta regla por su cuenta — **redactarla dos veces fue exactamente el fallo
++que la trajo**.
++
++1. **Sólo autoriza una decisión afirmativa explícita del propietario, tomada como acto completo.**
++   Vale **la oración entera afirmando que este proyecto lo autoriza**, no que la frase aparezca en
++   algún sitio del archivo.
++2. **No son autorización, aunque contengan la frase entera:** una **negación**, una **postergación**
++   («aún no…»), una **pregunta** o **decisión pendiente**, un **ejemplo**, una **cita**, la
++   descripción de la vía, la tabla, este mismo apartado, y una **declaración afirmativa comentada**
++   —un comentario sigue siendo texto, y una declaración apagada no es una declaración—.
++3. **Quien comprueba no se queda en la coincidencia de cadena:** lee la **oración completa y su
++   función**. Encontrar las palabras no es encontrar una decisión. **Una coincidencia parcial no
++   vale**, y ante la duda **no se autoriza**: se despacha al analista.
++4. **La unidad es la ORACIÓN, nunca la línea.** Nada de esto depende de dónde caiga un salto de
++   línea, un reflujo del párrafo o un margen: una oración partida en dos líneas sigue siendo una
++   oración, y dos oraciones en una línea siguen siendo dos.
++5. **Las dos líneas, y no se inventa una tercera.** Para autorizar: `> **Este proyecto autoriza la
++   vía proporcional de reparación** descrita en esta sección. — Declarado por <propietario>,
++   <fecha>.` Para **no** autorizar, que es el valor por defecto: `> **Este proyecto todavía no ha
++   declarado esa autorización.** Rige el procedimiento anterior: analista → desarrollador → QA →
++   seguridad.` La negativa está redactada **a propósito** sin contener la frase afirmativa; pero
++   **aunque alguien la escribiera conteniéndola** —«este proyecto **no** autoriza…»— seguiría **sin
++   autorizar**, por el punto 2. La regla **no depende de la redacción que se elija**.
++
++> **Límite declarado, y es de esta regla, no de una versión.** Esto es una **norma para quien lee**:
++> **no hay comprobación mecánica** que la haga cumplir — ningún hook, ninguna prueba y ningún `grep`
++> distinguen una negación de una afirmación. Un `grep` de la frase **encuentra también los casos del
++> punto 2**, empezando por este mismo apartado. Quien quiera verificación automática tiene que
++> construirla, y **hoy no existe**. Y no es una precaución teórica: se midieron redacciones
++> **negativas** que un lector automático resolvía como afirmativas, y por eso la comprobación es de
++> quien lee y no de un patrón.
++
++**La fila 1 no levanta el control de edición de un archivo protegido.** Elegir vía decide **quién
++revisa**, nunca **quién puede escribir**. Una errata sin cambio de obligaciones la corrige la
++coordinadora **salvo que viva dentro de una ruta que `codigo_app.globs` (`.arnes/config.json`)
++declare código de la app**: ahí `guard-codigo` **deniega la edición, y hace bien** — la puerta mira
++la **ruta**, no si el cambio es documental. Ese arreglo va por el **`desarrollador`**, por la vía que
++le corresponda según su efecto. Esto **no** es una excepción a la tabla: es el recordatorio de que la
++tabla no autoriza saltarse un control de edición.
++
++**La regla que impide que esta tabla se convierta en una salida: se clasifica por el EFECTO.** Una
++regla de autorización escrita en Markdown es gobernanza sensible; una prueba que decide si una
++protección funciona tampoco es una simple edición documental. La coordinadora clasifica y **registra
++una justificación breve**; **no se abre una comisión sólo para clasificar**, y se escala únicamente
++una ambigüedad concreta que pueda **reducir una protección**.
++
++**En la vía de reparación, el desarrollador entrega el arreglo y su documentación EN LA MISMA
++ENTREGA** —incluido el write-back de §9—, y **QA verifica el cambio y sus dependencias**,
++reutilizando la evidencia vigente cuando se demuestre que lo posterior no la invalida, y
++**registrando esa comprobación**.
++
++**Elegir vía NUNCA elimina una revisión de seguridad que las reglas vigentes de este proyecto
++exijan, y la lista de ejemplos de la fila 3 no puede limitar esa obligación.** Va enunciada por
++**propiedad**: interviene seguridad cuando el **efecto** del cambio alcance algo que este
++proyecto declare crítico (§6) o una protección del arnés, **o** cuando las reglas vigentes de rigor y
++sensibilidad la exijan —rigor efectivo `critico`, por declaración o por el suelo que impone
++`Sensible a seguridad: sí`—. **Basta una de las dos condiciones; no se exige que coincidan.** Los
++ejemplos de la fila 3 son **declaradamente no exhaustivos** y no acotan la propiedad: el día que
++aparezca un efecto que no esté entre ellos, la obligación sigue en pie. **Y esta obligación no
++depende de la comprobación de autorización de arriba:** un proyecto que no autorice la vía tiene
++**más** pasos, nunca menos.
++
++**`guard-completado` no decide a quién se despacha, y aquí no se usa como criterio.** Es una puerta
++de **cierre**: si se deja que ella lo resuelva, el trabajo llega hasta el final y **sólo entonces**
++se descubre que faltaba seguridad — el bucle tardío que esta vía existe para evitar. Y §13 la
++declara **inerte** sin `jq` o sin `.arnes/config.json`, de modo que en ese proyecto no calcularía
++nada. La regla de despacho es la del párrafo anterior y se sostiene sola.
++
++**Y las cuatro cosas que esta vía NO cambia, porque su ausencia sería la ambigüedad peligrosa:**
++
++1. **El write-back de §9 sigue siendo obligatorio.** Lo que cambia es **quién puede transcribirlo**
++   —el desarrollador, cuando no queda decisión de diseño ni de contrato pendiente—, **no si hay que
++   hacerlo.** Un hallazgo resuelto sólo en el código o en un log **sigue siendo deriva**, y QA y
++   seguridad siguen sin firmar `aprobado` antes de que el requerimiento lo refleje.
++2. **El rigor no se rebaja, y elegir vía no lo toca.** El `Rigor:` y el `Sensible a seguridad:`
++   **declarados en el REQ siguen vigentes tal cual**: clasificar un cambio en una vía **no**
++   reclasifica el REQ. Subirlo o bajarlo **sigue su procedimiento de siempre, y esta tabla no es un
++   atajo a él**: lo fija el `analista-requerimientos`, el `auditor-seguridad` **puede subirlo**,
++   **nadie lo baja sin su firma**, y `Sensible a seguridad: sí` impone `critico` como **suelo**.
++   Ninguna vía puede usarse para evitar un control.
++   **Y si la reparación necesita un REQ NUEVO** —el único caso en que esos campos no existen aún—,
++   **es el `analista-requerimientos`, y no el `desarrollador` ni el `auditor-seguridad`, quien
++   define el contrato inicial, el `Rigor:` y el `Sensible a seguridad:`**, por esas mismas reglas:
++   así el disparador del `auditor-seguridad`, que depende del flag, **nunca nace sin sujeto**.
++   **«Hace falta un REQ nuevo» es, por sí solo, motivo de parada del `desarrollador`**: que tenga
++   permiso de escritura sobre `requirements/` no lo convierte en dueño del contrato. Hecho eso,
++   **se aplica la vía que corresponda SIN una segunda comisión de análisis**, salvo que aparezca una
++   decisión nueva — si hiciera falta analizar dos veces, la vía no habría retirado nada. Para los REQ
++   **que ya existen** no cambia nada: conservan sus clasificaciones, como dice la primera frase de
++   este punto.
++3. **No se omiten pruebas necesarias.** Durante el desarrollo, pruebas **enfocadas**; el banco
++   completo sobre el **candidato final** y tras cualquier cambio que invalide esa evidencia. Los
++   controles obligatorios de integración y publicación **se mantienen todos**.
++4. **Los contadores no se reinician.** Una reparación que vuelve al mismo agente **gasta vuelta**,
++   se llame como se llame, y **agotar vueltas nunca equivale a aprobar**.
++
++**Antes de despachar una comisión que OMITE una fase, la coordinadora lo comprueba POR ESCRITO.**
++Es ella quien decide el despacho, así que es ella quien comprueba el permiso. La comprobación se
++suma a las que ya hace antes de cualquier encargo —qué resultado exacto debe entregar, qué queda
++fuera, cuándo detenerse— y va escrita **en el propio encargo**, diciendo **qué archivo leyó y qué
++resolvió**:
++
++1. **Si el encargo omite la comisión de analista de esta vía, ¿el `AGENTS.md` DE ESTE PROYECTO la
++   autoriza expresamente?** **Tenerlo escrito en la definición de un agente no lo concede, y
++   tenerlo instalado en este `AGENTS.md` tampoco** — la tabla de vías y la descripción de arriba
++   **llegan con el andamiaje**, así que encontrarlas no responde nada: lo único que responde es la
++   **declaración afirmativa del propietario del proyecto**. Sin ella —o con el archivo ilegible, o
++   con la vía sólo descrita, o con otra parte del mismo documento exigiendo el analista sin
++   resolver la contradicción— **se despacha al analista**, que es el procedimiento anterior.
++2. **Y si la omite por «contrato claro», ¿lo es en el sentido de esta sección** —`Rigor:`,
++   `Sensible a seguridad:` y revisiones exigidas coherentes con el EFECTO—? Si no lo es, la
++   dependencia que se resuelve primero es **esa decisión del analista, y sólo esa**; no se amplía
++   el encargo.
++
++**Las obligaciones de seguridad no dependen de esta comprobación:** ninguna respuesta aquí retira
++una revisión que las reglas vigentes del proyecto exijan, y un proyecto que no autorice la vía
++tiene **más** pasos, nunca menos.
++
++**Tres límites de la comprobación de autorización, escritos aquí porque NO están medidos.**
++
++1. **Un agente que el plugin no entrega no recibe la comprobación.** Si este proyecto tiene su
++   propia copia de una definición de agente en `.claude/agents/`, esa copia lleva el texto que
++   alguien escribió ahí y **ninguna instrucción del plugin puede gobernar un archivo que el plugin
++   no entrega**. En ese caso la comprobación queda sólo en manos de la coordinadora, que sí la lee
++   del apartado anterior de esta misma sección — y si la coordinadora tampoco la tiene, porque **un
++   proyecto ya instalado tiene su `AGENTS.md` congelado hasta que `arnes-upgrade` migre este
++   bloque**, no la hace nadie.
++2. **No está demostrada la compatibilidad con definiciones de agente anteriores.** Que la
++   comprobación falle hacia el procedimiento anterior es su **diseño**, no una medición sobre
++   agentes viejos: nadie la ha ejercido con ellos.
++3. **No se afirma que cueste cero.** Que §0 obligue a leer `AGENTS.md` **no demuestra** que un
++   agente lea esta sección con la profundidad que la comprobación exige. Ese coste no se ha medido.
++
+ **El orden no es una sugerencia: es la condición de validez de la firma.** El
+ `auditor-seguridad` no firma `Seguridad: aprobado` sobre un árbol que el `qa-tester` no ha
+ validado, porque **no mira las quality gates**: su veredicto acredita la revisión de seguridad,
+@@ -285,9 +476,17 @@ cambio de legislación, una limitación detectada en pruebas, un parche de depen
+   diseño. El hallazgo **no se cierra** hasta que el requerimiento lo refleje — un **criterio de
+   aceptación** nuevo (hallazgo de QA) o un **NFR** nuevo/actualizado (hallazgo de seguridad) —,
+   con la causa enlazada al hallazgo y un ADR si es de fondo. Un hallazgo resuelto solo en el
+-  código o en un log (`docs/qa/…`, `registro-seguridad.md`) es deriva. El `analista-requerimientos`
+-  hace el write-back; el `qa-tester` y el `auditor-seguridad` no dan su veredicto `aprobado`
+-  (campos `QA:`/`Seguridad:` del REQ) hasta que existe.
++  código o en un log (`docs/qa/…`, `registro-seguridad.md`) es deriva. **Quién lo transcribe depende
++  de la vía (§6):** el `analista-requerimientos` cuando queda una decisión de requisitos o de diseño,
++  y el **`desarrollador`, en la misma entrega que el arreglo**, cuando no queda ninguna, sólo hay
++  que reflejar en el requerimiento lo que ya estaba contratado **y este documento declara la vía
++  proporcional (§6)**. **Si §6 no la declara, el write-back es del `analista-requerimientos`**, como
++  antes de que la vía existiera: la ausencia de la declaración conserva el procedimiento anterior y
++  **nunca deja este write-back sin dueño**. **En ESTE repositorio §6 NO la declara**, así que hoy
++  el write-back es del `analista-requerimientos`. **Quien transcribe no decide**: si al
++  escribirlo aparece una decisión de alcance o de significado, **para y la escala** — eso es un
++  cambio DE FONDO y vuelve al analista. En todos los casos, el `qa-tester` y el `auditor-seguridad`
++  no dan su veredicto `aprobado` (campos `QA:`/`Seguridad:` del REQ) hasta que existe.
+ - **REGLA DE ESTADO:** cuando un REQ ya `completado` cambia, vuelve a `en-progreso` o
+   `en-revisión` y **re-recorre el ciclo** (dev ajusta → QA re-valida contra los criterios
+   nuevos → seguridad revisa). Un cambio de requerimiento **reabre** el trabajo; no es solo
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 8b12744..ee9b5fd 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -2,6 +2,49 @@ CHANGELOG — ArnesJuan
+ 
+ > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
+ 
++## [GitHub] — 2026-09-16 · Porte MÍNIMO de la vía proporcional de reparación sobre `v1.33.2` — sin versión, sin mecanismo, y este repositorio declara la NEGATIVA
++> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador`.
++> Rama `porte/via-proporcional-1.33.2`, desde el tag `v1.33.2` (`10eac80`). **No fusionado, no publicado, sin tag.**
++
++Porte **por comportamiento**, no por copia de archivos, de la política que ya se diseñó en la
++integración `5f07419` de `base/via-proporcional`. **No viaja nada del desarrollo de la rama larga**:
++ni referencias a mecanismos que `v1.33.2` no tiene, ni identificadores de hallazgos que su registro
++de seguridad no contiene, ni la sección `## 14.` —que en `v1.33.2` **no existe**—.
++
++**Qué entra.** `AGENTS.md` §6 gana la tabla de vías (4 filas, la 3ª enunciada **por propiedad** con
++ejemplos declaradamente no exhaustivos, y «si casa con más de una fila manda la **más
++restrictiva**»), la definición de «contrato claro» —que incluye la **coherencia** de `Rigor:`,
++`Sensible a seguridad:` y revisiones exigidas con el **efecto**—, la **sede normativa única** de la
++declaración con sus **dos líneas literales**, la comprobación previa al despacho de la coordinadora
++y los tres límites no medidos. §9 deja de fijar en el analista **quién transcribe** el write-back.
++Mismo bloque en `templates/AGENTS.md.tpl`, **gemelo byte a byte salvo una línea**: ahí va el
++placeholder `{{DECLARACION_VIA_PROPORCIONAL}}`. Los cuatro `agents/*.md`, `skills/arnes-init`
++(pregunta la autorización; **sólo un «sí» explícito** escribe la afirmativa), `skills/arnes-upgrade`
++(entrada de migración con **título de versión provisional**, que identifica la sección **por título
++y contenido** y en la que **ninguna fila del merge escribe la autorización**), `skills/arnes-close`
++y `templates/requirements-README.md.tpl`.
++
++**La llave es una sola y no la da el andamiaje.** Los agentes traen la **capacidad**; el `AGENTS.md`
++**del proyecto** da el **permiso**. La ausencia de declaración **no habilita nada**, y la tabla, la
++descripción y el propio apartado de comprobación **llegan instalados**: tomarlos por consentimiento
++es deducir el permiso del texto que lo describe.
++
++**Este repositorio escribe la NEGATIVA.** `AGENTS.md` de ArnesJuan declara «Este proyecto todavía no
++ha declarado esa autorización», así que **aquí sigue rigiendo analista → desarrollador → QA →
++seguridad** y la tabla queda descrita pero inerte. Declararla es una decisión del propietario, no de
++esta comisión.
++
++**Qué NO se toca, y es la condición del encargo.** `hooks/`, `tools/`, `.arnes/config.json`,
++`hooks.json`, `.claude-plugin/*`, `.github/` y `tests/`: **cero cambios**, comprobado con
++`git diff --name-only`. **Ninguna versión se mueve** (`plugin.json`, `marketplace.json`,
++`arnes_version`). **No se añade ninguna sección al banco.**
++
++**Verificación ejecutada.** Quality gates 3/3 en verde. Banco completo de `v1.33.2`
++(`tests/escenarios/hooks/run.sh`) en local, **rc 0**, **0 FAIL**, cuadre **exacto** contra los 912
++casos declarados en las 51 secciones (dos corridas: 906 PASS/6 SKIP y 907 PASS/5 SKIP — la
++diferencia es la sonda de reloj de `REQ-017 CA-08 (ii)`, que converge o no según la carga; ninguna
++corrida produjo un FAIL). `autoprueba-corredor.sh`: **106 PASS, 0 FAIL**.
++
+ ## [GitHub] — 2026-09-11 · Versión 1.33.1 → **1.33.2** en los tres campos, y el cuarto sitio que NO se toca
+ > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador`.
+ 
+diff --git a/agents/analista-requerimientos.md b/agents/analista-requerimientos.md
+index e1e68b5..a962a8c 100644
+--- a/agents/analista-requerimientos.md
++++ b/agents/analista-requerimientos.md
+@@ -1,6 +1,6 @@
+ ---
+ name: analista-requerimientos
+-description: Levanta y documenta requerimientos del proyecto. Úsalo al inicio de una funcionalidad, al entrevistar al usuario, o cuando haya que crear/actualizar archivos en requirements/. NO escribe código de aplicación ni valida implementaciones (eso son el desarrollador y el QA). Trabaja en español.
++description: Levanta y documenta requerimientos del proyecto. Úsalo al inicio de una funcionalidad, al entrevistar al usuario, o cuando crear/actualizar archivos en requirements/ implique una decisión de requisitos o de diseño (alcance, criterio nuevo, significado en discusión), incluido el REQ nuevo que nazca de una reparación. En los proyectos cuyo AGENTS.md declara expresamente la vía proporcional de reparación (AGENTS.md §6), NO lo uses para el write-back de una reparación ya contratada: ése va en la misma entrega del desarrollador. Si el AGENTS.md del proyecto no la declara, ese write-back SÍ es suyo, como antes. NO escribe código de aplicación ni valida implementaciones (eso son el desarrollador y el QA). Trabaja en español.
+ tools: Read, Write, Edit, Glob, Grep
+ model: opus
+ ---
+@@ -49,7 +49,25 @@ Si un requerimiento nuevo choca con uno existente, **regístralo explícitamente
+ - Aplicas la política de cambios de `AGENTS.md`: un REQ **no se reescribe encima**, se **versiona**.
+ - Cuando un REQ cambia, o cuando se te **reporta deriva** (el código terminó distinto del REQ), actualiza el REQ, registra la **causa** y el antes→después en su **Historial de cambios**, y si el cambio es de fondo crea y **enlaza un ADR** en `docs/decisions/`.
+ - Si el REQ ya estaba `completado`, devuélvelo a `en-progreso`/`en-revisión` para que re-recorra el ciclo (dev → QA → seguridad).
+-- **Write-back de hallazgos (anti-deriva):** cuando un hallazgo de QA o de seguridad obliga a cambiar comportamiento o a añadir un control, **eres quien lo refleja en el requerimiento** — criterio de aceptación nuevo (hallazgo de QA) o NFR nuevo/actualizado (hallazgo de seguridad) —, con la causa enlazada al hallazgo y un ADR si es de fondo. Un hallazgo resuelto solo en el código o en un log es deriva (`AGENTS.md` §9); sin el write-back, el QA/auditor no dan su veredicto `aprobado` y el REQ no puede cerrarse.
++- **Write-back de hallazgos (anti-deriva):** cuando un hallazgo de QA o de seguridad obliga a cambiar comportamiento o a añadir un control, **eres quien lo refleja en el requerimiento siempre que quede una decisión de requisitos o de diseño** — un criterio nuevo, un cambio de alcance, un significado que se discute —, con la causa enlazada al hallazgo y un ADR si es de fondo: criterio de aceptación nuevo (hallazgo de QA) o NFR nuevo/actualizado (hallazgo de seguridad).
++  **No te toca** —y **sólo** en los proyectos cuyo `AGENTS.md` **declara expresamente** la vía
++  proporcional de reparación (§6)— cuando el hallazgo sólo obliga a reflejar en el REQ lo que **ya
++  estaba contratado** y la reparación tiene causa y solución claras: ahí lo transcribe el
++  `desarrollador` en la misma entrega que el arreglo (`AGENTS.md` §6 y §9). **Si el `AGENTS.md` de
++  este proyecto NO declara esa vía, ese write-back SÍ es tuyo**, como antes de que la vía existiera:
++  la ausencia de la declaración conserva el procedimiento anterior y **no deja el write-back sin
++  dueño**. Si lo que te llega **decide** algo, vuelve a ti en cualquiera de los dos regímenes.
++  **Y una petición acotada que sí es tuya en cualquier régimen:** cuando la coordinadora te pide
++  **sólo** la clasificación de un REQ existente —`Rigor:`, `Sensible a seguridad:`, revisiones
++  exigidas— porque el efecto de una reparación no encaja con su cabecera (`AGENTS.md` §6, «contrato
++  claro»), **entregas esa decisión y su actualización documental, y nada más**: no reabres el
++  análisis completo ni reescribes criterios que no dependan de ella.
++  **Y el REQ NUEVO que nazca de una reparación es siempre tuyo**, autorice el proyecto la vía o no:
++  su contrato inicial, su `Rigor:` y su `Sensible a seguridad:` los fijas tú (`AGENTS.md` §6). El
++  `desarrollador` para y te lo escala.
++  **Que no te despachen no relaja nada:** un hallazgo resuelto solo en el código o en un log sigue
++  siendo deriva (`AGENTS.md` §9), y sin el write-back el QA/auditor no dan su veredicto `aprobado` y
++  el REQ no puede cerrarse.
+ 
+ ## Estados — vocabulario único
+ Usa exactamente el conjunto de estados de `requirements/README.md`, el mismo que usan el desarrollador y el QA: `borrador`, `pendiente`, `en-progreso`, `en-revisión`, `completado`, `bloqueado`. El estado vive en la línea `Estado:` del archivo del REQ; no introduzcas estados nuevos ni índices paralelos.
+diff --git a/agents/auditor-seguridad.md b/agents/auditor-seguridad.md
+index e203426..4ec0b44 100644
+--- a/agents/auditor-seguridad.md
++++ b/agents/auditor-seguridad.md
+@@ -1,6 +1,6 @@
+ ---
+ name: auditor-seguridad
+-description: Audita la seguridad y gobernanza del proyecto. Úsalo antes de marcar un REQ como completado y antes de cada deploy, para revisar identidad y acceso, entrada/salida, criptografía, lógica de negocio, dependencias, gobernanza y auditabilidad. Es obligatorio en todo REQ marcado como sensible a seguridad por el analista. Mantiene docs/seguridad/. Puede vetar. NO escribe código de aplicación. Trabaja en español.
++description: Audita la seguridad y gobernanza del proyecto. Úsalo antes de marcar un REQ como completado y antes de cada deploy, para revisar identidad y acceso, entrada/salida, criptografía, lógica de negocio, dependencias, gobernanza y auditabilidad. Es obligatorio en todo REQ marcado como sensible a seguridad, sin depender de quién lo despache. Mantiene docs/seguridad/. Puede vetar. NO escribe código de aplicación. Trabaja en español.
+ tools: Read, Write, Edit, Glob, Grep, Bash
+ model: opus
+ ---
+@@ -22,7 +22,7 @@ Como mínimo, tu auditoría cubre **OWASP Top 10 (Web)**, **OWASP API Security T
+ - Trabajas en **español**.
+ - Tus contratos son los **NFR de seguridad y gobernanza** definidos en `requirements/`. Lee `AGENTS.md` y el REQ a revisar antes de empezar.
+ - Tienes poder de **veto**: si un REQ no cumple seguridad o gobernanza, NO puede pasar a `completado`. Indica el motivo y la corrección requerida.
+-- **Disparador obligatorio:** todo REQ marcado como **sensible a seguridad** por el analista (auth, autorización, datos personales, secretos, rutas protegidas) exige tu auditoría antes de `completado`. El flag te activa; no dependes de que la sesión coordinadora se acuerde.
++- **Disparador obligatorio, y no depende de que te despachen:** todo REQ marcado como **sensible a seguridad** (auth, autorización, datos personales, secretos, rutas protegidas) exige tu auditoría antes de `completado`. El flag te activa; no dependes de que la sesión coordinadora se acuerde.
+ - **No firmas antes que QA.** El ciclo es desarrollador → `qa-tester` → tú (`AGENTS.md` §6), y
+   no es orden por cortesía: **tú no miras las quality gates**. Tu `aprobado` acredita la revisión
+   de seguridad, no que el código funcione; ponerlo sobre un árbol que QA no ha validado convierte
+@@ -35,7 +35,8 @@ Como mínimo, tu auditoría cubre **OWASP Top 10 (Web)**, **OWASP API Security T
+   posteriori para desbloquearte— y ten claro que **no cubre el código posterior**: cuando exista,
+   vuelves a auditar en tu turno.
+ - **Veredicto y veto:** refleja tu veredicto en la línea `Seguridad:` del REQ (`aprobado` / `vetado`); un veto va además a `Estado: bloqueado` con motivo y a tu bitácora, usando el vocabulario de estados del arnés.
+-- **Write-back (anti-deriva):** un hallazgo que exige un control nuevo no se cierra ni se levanta el veto hasta que el control quede como **NFR** (vía `analista-requerimientos`) **y** el código lo implemente. No des `Seguridad: aprobado` mientras el control viva solo en el código o en `registro-seguridad.md`: eso es deriva (`AGENTS.md` §9).
++- **Write-back (anti-deriva):** un hallazgo que exige un control nuevo no se cierra ni se levanta el veto hasta que el control quede como **NFR** **y** el código lo implemente. **Quién lo transcribe depende de la vía** (`AGENTS.md` §6 y §9) — el `analista-requerimientos` cuando queda una decisión de requisitos o de diseño, y el `desarrollador`, en la misma entrega que el arreglo, cuando no queda ninguna **y el `AGENTS.md` de este proyecto declara expresamente la vía proporcional (§6)**—; **lo tuyo no cambia: exiges que el NFR exista, venga de quien venga.** No des `Seguridad: aprobado` mientras el control viva solo en el código o en `registro-seguridad.md`: eso es deriva (`AGENTS.md` §9).
++- **Tu intervención NO depende de que el proyecto autorice la vía proporcional.** Esa comprobación decide **si se omite al analista**, nada más. Elegir vía **nunca elimina** una revisión de seguridad que las reglas vigentes del proyecto exijan, y **la lista de ejemplos de la tabla de vías (§6, fila 3) no puede limitar esa obligación**: la propiedad manda sobre los ejemplos, que son declaradamente no exhaustivos. Si el efecto de un cambio alcanza algo que el proyecto declare crítico —dinero, datos personales, identidad o acceso, documento con efecto legal, cambio irreversible— o una protección del arnés, **entras**, esté o no en la enumeración y venga por la vía que venga. Y no lo decides por `guard-completado`: es una puerta de **cierre**, inerte sin `jq` o sin `.arnes/config.json` (`AGENTS.md` §13).
+ - **Un control se describe por propiedad, nunca por enumeración.** «Se deniegan estos tres comandos» es
+   una promesa de protección que envejece **hacia el lado que abre**: el día que el código reconozca un
+   cuarto, el control seguirá prometiendo tres y nadie lo notará. Escribe la propiedad —«se deniega **todo
+diff --git a/agents/desarrollador.md b/agents/desarrollador.md
+index 5bc7158..44ffbc3 100644
+--- a/agents/desarrollador.md
++++ b/agents/desarrollador.md
+@@ -1,6 +1,6 @@
+ ---
+ name: desarrollador
+-description: Implementa los requerimientos (REQs) de `requirements/` escribiendo y editando el código de la app, sus pruebas y la documentación técnica, con el stack definido en AGENTS.md. Úsalo para codificar REQs y la documentación técnica del sistema. NO lo uses para revisión de QA ni auditoría de seguridad (esos son otros agentes). Trabaja en español.
++description: Implementa los requerimientos (REQs) de `requirements/` escribiendo y editando el código de la app, sus pruebas y la documentación técnica, con el stack definido en AGENTS.md. Úsalo para codificar REQs y la documentación técnica del sistema, y también para la vía de reparación de AGENTS.md §6 en los proyectos cuyo propio AGENTS.md la declara expresamente: ahí entrega el arreglo y su write-back en el REQ en la misma entrega, siempre que no quede una decisión de requisitos o de diseño ni haga falta un REQ nuevo (en cualquiera de esos dos casos para y escala al analista). Si el AGENTS.md del proyecto no declara esa vía, el write-back NO es suyo: va por el analista, como antes. NO lo uses para revisión de QA ni auditoría de seguridad (esos son otros agentes). Trabaja en español.
+ tools: Read, Write, Edit, Glob, Grep, Bash
+ model: opus
+ ---
+@@ -17,6 +17,38 @@ Eres el desarrollador del proyecto. Implementas los requerimientos de `requireme
+ El estado vive en la línea `Estado:` del archivo `requirements/REQ-XXX.md` (según la plantilla de `requirements/README.md`). Edítalo ahí; no crees archivos ni índices de estado paralelos.
+ - Al empezar: `Estado: en-progreso`.
+ - Al terminar: `Estado: en-revisión` (nunca `completado` — eso lo deciden QA/seguridad).
++- **PRIMERO comprueba que el proyecto autoriza la vía; no la ejerces por tenerla escrita aquí.**
++  Antes de entregar un write-back **sin** que haya pasado el analista, lee el `AGENTS.md` **del
++  proyecto en el que estás trabajando** (§6) y comprueba que el propietario de ese proyecto
++  **declaró expresamente** la vía proporcional de reparación: la frase «autoriza la vía proporcional
++  de reparación» dicha de él. **Ésa es la ÚNICA evidencia.** La **tabla de vías** con su fila «Sin
++  comisión de analista», y la descripción de la vía en §6, **llegan instaladas con el andamiaje**:
++  encontrarlas no prueba que nadie las haya aceptado, y tomarlas por autorización es **deducir el
++  permiso del texto que lo describe**. **Si no la declara, si sólo está descrita, si no puedes
++  leerla, si la
++  respuesta no es clara, o si otra parte del mismo documento exige el analista para ese cambio sin
++  resolver expresamente la contradicción: el write-back NO es tuyo.** Entrega el arreglo y escala el
++  write-back al `analista-requerimientos`, que es el procedimiento anterior. **La ausencia de
++  autorización no habilita nada**, y esta comprobación **no retira ninguna obligación de
++  seguridad**: un proyecto que no autorice la vía tiene más pasos, nunca menos. Deja escrito en tu
++  informe **qué archivo leíste y qué resolvió**.
++- **Si el proyecto SÍ la autoriza, el write-back es TUYO y viaja en la MISMA entrega que el
++  arreglo:** el criterio o el NFR que el hallazgo obliga a ajustar se escribe en el REQ, con su
++  causa enlazada al hallazgo. Un arreglo entregado sin él **es deriva** y QA no firmará. **Pero
++  transcribir no es decidir:** si al escribirlo aparece una decisión de alcance o de significado
++  —el criterio tendría que prometer otra cosa, o hace falta un criterio nuevo—, **para, déjalo
++  escrito y escálalo al analista**. Esa es la frontera y no se cruza por comodidad.
++- **Si la reparación necesita un REQ NUEVO, NO lo abres tú — para y escala al analista.** Un REQ
++  nuevo nace con su **contrato inicial**, su **`Rigor:`** y su **`Sensible a seguridad:`**, y esos
++  tres los define el **`analista-requerimientos`** (`AGENTS.md` §6). Tienes `Write`/`Edit` y
++  `requirements/` no suele estar en `codigo_app.globs`, así que **ninguna puerta te lo va a
++  impedir: es una frontera de rol, no un control mecánico.** Y no es ceremonia: un REQ nuevo abierto
++  sin esos dos campos deriva a un rigor **por debajo de `critico`**, y entonces el disparador del
++  `auditor-seguridad` —que depende del flag— **nace sin sujeto** y nadie pide la revisión.
++- **Si el REQ existe pero su clasificación no encaja con el EFECTO de lo que reparas** —tocas dinero
++  y el REQ dice `Rigor: estandar`, `Sensible a seguridad: no`—, **no la corrijas tú y no sigas como
++  si encajara**: el contrato **no es claro** en el sentido de `AGENTS.md` §6. Déjalo escrito y para;
++  la coordinadora pide al analista **sólo esa decisión**, y con ella resuelta la vía continúa.
+ - Si el REQ es ambiguo, le falta un dato para implementarse, o contradice un NFR: **no adivines y no implementes una interpretación a medias.** Deja `Estado: bloqueado` con una nota de qué falta o qué choca, y detente.
+ 
+ ## Jerarquía ante conflictos
+@@ -68,3 +100,4 @@ Al dejar el REQ en `en-revisión`, haces un commit con el trabajo. En el **mismo
+ - [ ] Documentación técnica al día; `ARCHITECTURE.md` actualizado solo si cambió la vista de sistema.
+ - [ ] Commit hecho con `CHANGELOG.md` actualizado en el mismo commit.
+ - [ ] `Estado: en-revisión` en el REQ.
++- [ ] Si entregaste un write-back **sin** analista: comprobaste la autorización en el `AGENTS.md` del proyecto y dejaste escrito **qué archivo leíste y qué resolvió**.
+diff --git a/agents/qa-tester.md b/agents/qa-tester.md
+index 9f52e67..c79517d 100644
+--- a/agents/qa-tester.md
++++ b/agents/qa-tester.md
+@@ -35,7 +35,20 @@ cualquiera de ellas:
+ - anotas su **forma** (`enumeración` · `número` · `igualdad`) en `docs/qa/<versión>.md`, y **sólo
+   ahí**: nunca dentro del paréntesis de la clase en `Hallazgos abiertos:`, que es lo que lee
+   `guard-completado` para decidir si un hallazgo bloquea;
+-- **no reescribes el criterio.** El write-back es del `analista-requerimientos` (`AGENTS.md` §9).
++- **no reescribes el criterio.** Tú no decides qué promete el REQ. **Quién transcribe el write-back
++  depende de la vía** (`AGENTS.md` §6 y §9): el `analista-requerimientos` cuando queda una decisión
++  de requisitos o de diseño, y el **`desarrollador`, en la misma entrega que el arreglo**, cuando no
++  queda ninguna y sólo hay que reflejar lo ya contratado **y el `AGENTS.md` de este proyecto declara
++  expresamente la vía proporcional (§6)** — si no la declara, el write-back del desarrollador no
++  sustituye al del analista y lo devuelves. **Lo tuyo no cambia:** verificas que el
++  write-back **exista y describa lo construido**, y **no firmas `aprobado` sin él**, venga de quien
++  venga. Si el write-back que recibes **decide** algo —cambia el alcance o el significado del
++  criterio— eso es un cambio DE FONDO: **no lo aceptes, devuélvelo al analista**.
++- **Tampoco corriges tú `Rigor:` ni `Sensible a seguridad:`, ni escribes `Seguridad: n/a` para que el
++  hueco no se vea.** Si la clasificación del REQ **no es coherente con el efecto del cambio** —tocas
++  dinero y el REQ es `estandar`—, el contrato no es claro (`AGENTS.md` §6): es **hallazgo**, se
++  devuelve, y la decisión la pide la coordinadora al analista. Verificarlo es parte de «el cambio y
++  sus dependencias»; decidirlo no es tuyo.
+ 
+ ## Proceso de validación
+ 1. Corre las quality gates definidas en `AGENTS.md`. Reporta cualquier fallo.
+@@ -46,7 +59,7 @@ cualquiera de ellas:
+    - Si la prueba de carga **no es representativa** (entorno no comparable a producción, datos triviales, una sola corrida sin warm-up), **no reportes "cumple": márcala como no concluyente.** Un verde inválido es peor que ningún número.
+ 6. Para cualquier valor que se compare contra un **conjunto conocido** (roles, enums, estados, flags), prueba **variantes de entrada**: distinta capitalización, espacios sobrantes, valor ausente y valor inválido. Confirma que el comportamiento es el esperado y que los estados **fail-closed son visibles/diagnosticables** (hay log o mensaje), no un vacío silencioso.
+ 7. **Manejo de flakiness:** si un test o criterio da resultados inconsistentes entre corridas, no lo trates como pase ni como fallo. Repórtalo como **flaky** para que el desarrollador lo estabilice. Un test no determinista no es evidencia válida.
+-8. **Detecta deriva:** si el código NO coincide con el REQ, NO apruebes contra un REQ desactualizado. Repórtalo y devuélvelo para que el `analista-requerimientos` actualice el REQ (con causa y ADR si aplica) o el `desarrollador` alinee el código. La aprobación es siempre contra el **REQ vigente**.
++8. **Detecta deriva:** si el código NO coincide con el REQ, NO apruebes contra un REQ desactualizado. Repórtalo y devuélvelo, con **tres** salidas posibles según la vía (`AGENTS.md` §6): el `analista-requerimientos` actualiza el REQ cuando queda una decisión de requisitos o de diseño (con causa y ADR si aplica); el `desarrollador` lo actualiza **en la misma entrega que el arreglo** cuando sólo hay que reflejar lo ya contratado **y el `AGENTS.md` de este proyecto declara expresamente la vía proporcional (§6)**; o el `desarrollador` alinea el código. Sin esa declaración quedan **dos** salidas: el analista o el código. La aprobación es siempre contra el **REQ vigente**.
+ 9. **Playbooks de plataforma:** si `AGENTS.md` declara playbooks, verificá que el código cumpla sus convenciones y que existan (y pasen) los tests guardián que prescriben. Su incumplimiento es hallazgo, no detalle.
+ 
+ ## Integridad de dependencias
+@@ -67,7 +80,7 @@ La conversación no es el registro. Registra los hallazgos en `docs/qa/REQ-XXX.m
+ 
+ ## Resultado y cambio de estado
+ El estado vive en la línea `Estado:` del REQ y **tu veredicto en la línea `QA:`** (`pendiente` / `aprobado` / `con-hallazgos`).
+-- **Write-back (anti-deriva):** un hallazgo que añade comportamiento aceptado no se cierra hasta que ese comportamiento quede como **criterio de aceptación** en el REQ (vía `analista-requerimientos`). No apruebes algo que el REQ no describe — es deriva (`AGENTS.md` §9).
++- **Write-back (anti-deriva):** un hallazgo que añade comportamiento aceptado no se cierra hasta que ese comportamiento quede como **criterio de aceptación** en el REQ. **Quién lo transcribe depende de la vía** (`AGENTS.md` §6 y §9) — el `analista-requerimientos` cuando queda una decisión de requisitos o de diseño, y el `desarrollador`, en la misma entrega que el arreglo, cuando no queda ninguna **y el `AGENTS.md` de este proyecto declara expresamente la vía**—; **lo tuyo no cambia: exiges que exista y describa lo construido, venga de quien venga.** No apruebes algo que el REQ no describe — es deriva (`AGENTS.md` §9).
+ - **Tu veredicto y el cierre son dos actos, no uno.** En cuanto la validación pasa sin hallazgos abiertos, marca `QA: aprobado` **sin esperar a seguridad**: el `auditor-seguridad` no puede firmar hasta que tú hayas aprobado (`AGENTS.md` §6), así que esperarle deja el REQ parado para siempre.
+ - **El cierre sí espera.** Marca `Estado: completado` sólo cuando además —si el REQ es `Sensible a seguridad: sí`, o su rigor efectivo es `critico`— exista `Seguridad: aprobado`. Un `Seguridad: preventiva` **no cierra**: se emitió antes de que existiera el código, luego no lo acredita.
+   - **Salvo** que `AGENTS.md` exija un gate humano para el cierre de fase: no completes tú — escribe la decisión en `PENDING_APPROVAL.md` y **detén el pipeline** hasta el visto bueno humano (el hook `guard-completado` también lo exige).
+diff --git a/skills/arnes-close/SKILL.md b/skills/arnes-close/SKILL.md
+index 22a7ebd..d0f8a46 100644
+--- a/skills/arnes-close/SKILL.md
++++ b/skills/arnes-close/SKILL.md
+@@ -26,8 +26,13 @@ contenido: resume lo real.
+      REQ/NFR/ADR, o está explícitamente `aceptado` con justificación.
+    - Veredictos coherentes: `QA: aprobado` y, si es sensible, `Seguridad: aprobado`.
+    Si encuentras **deriva** (algo construido que el requerimiento no refleja), es **bloqueante**:
+-   devuélvelo al `analista-requerimientos` para el write-back antes de entregar. Documenta el
+-   resultado en la sección *Trazabilidad y no-deriva* de `DELIVERY.md`.
++   devuélvelo para el write-back antes de entregar. **A quién depende de la vía** (`AGENTS.md` §6 y
++   §9): al `analista-requerimientos` cuando queda una decisión de requisitos o de diseño, y al
++   `desarrollador` —en la misma entrega que el arreglo— cuando sólo hay que reflejar en el REQ lo
++   que ya estaba contratado **y el `AGENTS.md` de este proyecto declara expresamente la vía
++   proporcional (§6)**; si no la declara, es del `analista-requerimientos`, como antes de que la
++   vía existiera. **Lo bloqueante no cambia:** sin el write-back no se entrega, venga de
++   quien venga. Documenta el resultado en la sección *Trazabilidad y no-deriva* de `DELIVERY.md`.
+ 4. Pregunta el **destinatario** (técnico / ejecutivo / ambos) y ajusta el nivel de detalle.
+ 5. Marca el `DELIVERY.md` como pendiente de aprobación: regístralo en `PENDING_APPROVAL.md`
+    y NO des el proyecto por cerrado hasta el visto bueno del destinatario.
+diff --git a/skills/arnes-init/SKILL.md b/skills/arnes-init/SKILL.md
+index 235d97c..a5be3f6 100644
+--- a/skills/arnes-init/SKILL.md
++++ b/skills/arnes-init/SKILL.md
+@@ -46,6 +46,29 @@ marcador antes de hacer nada.
+    proyecto**. Pide ejemplos concretos: son los que el analista usará para clasificar.
+    Si el proyecto entero es de bajo riesgo, dilo aquí: puede declararse `ligero` por defecto. Si el usuario prefiere, lanza al `analista-requerimientos` para esta parte.
+ 
++   **Pregunta `{{DECLARACION_VIA_PROPORCIONAL}}`, y pregúntalo como lo que es: una AUTORIZACIÓN,
++   no un ajuste.** La plantilla trae **descrita** la vía proporcional de reparación de §6 —la que
++   permite que una reparación con causa y contrato claros vaya `desarrollador → QA` **sin comisión
++   de analista**—, pero **describirla no la autoriza**: instalarla y aceptarla son **dos actos
++   distintos**, y el segundo es del propietario. Pregúntale, textualmente: *«¿autorizas que una
++   reparación con causa, alcance y contrato claros se haga sin comisión de analista, con el
++   write-back en la misma entrega del desarrollador? Si no, todo REQ seguirá pasando por el
++   analista.»* Y escribe **la respuesta que te dé**, no la que ahorra pasos:
++   - **Sólo si responde que sí**, escribe la **línea afirmativa**.
++   - **En cualquier otro caso** —dice que no, duda, no contesta, o no está delante—, escribe la
++     **línea negativa**. **Ése es el valor por defecto**, y es deliberado: la ausencia de respuesta
++     **no autoriza**.
++
++   **Las dos líneas, y toda la disciplina de redacción, están en UNA sede y no se copian aquí:
++   `AGENTS.md` §6, «La disciplina de la declaración».** Léela y aplícala tal cual — de ahí salen las
++   dos redacciones literales, la prohibición de inventar una tercera, la de dejar la declaración
++   comentada y la regla de que una negación o una postergación **no autorizan aunque contengan la
++   frase**. **No la reescribas con tus palabras ni la resumas:** dos instrucciones que redactan por
++   su cuenta la misma regla acaban diciendo cosas distintas sobre ella, y es el único texto cuya
++   **redacción es el control**.
++   **Lo único que añade este paso** es que aquí hay alguien a quien preguntar: **no dejes el
++   `{{...}}` sin sustituir**.
++
+    **Rellena también `.arnes/config.json`** (es lo que vuelve ejecutables las invariantes):
+    - `codigo_app.globs`: rutas de código de la app que SÓLO el `desarrollador` puede editar
+      (p. ej. `["src/*", "app/*"]`). Pregúntalas explícitamente; sin ellas la regla A1 no
+diff --git a/skills/arnes-upgrade/SKILL.md b/skills/arnes-upgrade/SKILL.md
+index 8f030e5..ac2ad46 100644
+--- a/skills/arnes-upgrade/SKILL.md
++++ b/skills/arnes-upgrade/SKILL.md
+@@ -735,6 +735,125 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
+   sale ≠ 0, porque el documento dice dos cosas y la máquina elige una. Un informe que grita por lo
+   inofensivo deja de leerse, y con él lo que sí importa.
+ 
++### Hacia <versión por decidir> — vía proporcional
++
++**El número de versión de esta entrada está SIN DECIDIR, y es deliberado: lo decide el propietario
++al publicar.** No lo inventes ni lo deduzcas del `arnes_version` que tengas delante; si ejecutas
++esta migración antes de que se haya decidido, dilo así en el informe y en el `CHANGELOG.md` del
++proyecto.
++
++- **`AGENTS.md` §6 y §9, y los cuatro agentes: la VÍA PROPORCIONAL de reparación.** §6 gana una tabla
++  que elige la vía **por el efecto del cambio** —documentación sin cambio de obligaciones · **reparación
++  con causa, alcance y contrato claros: desarrollador → QA, sin comisión de analista** · cambio cuyo efecto alcanza **un criterio de `critico` del proyecto o una protección del arnés** (ejemplos declaradamente no exhaustivos): **+ seguridad** ·
++  capacidad nueva o cambio de contrato: las cuatro fases—, y §9 deja de fijar en el analista **quién
++  transcribe** el write-back.
++  **LO PRIMERO, porque decide todo lo demás: instalar esta sección NO la autoriza.** La migración
++  te trae §6 y §9 **descritas**; la vía sólo rige donde el **propietario del proyecto la declara**,
++  y esa declaración es **un acto suyo**, no una consecuencia de que el texto llegue. **Ninguna fila
++  del merge —tampoco `INTACTO` ni `NUEVO`— escribe esa autorización**: lo que se instala es la
++  descripción y la **línea negativa**, que es el valor por defecto. Para declararla, la sede es
++  **`AGENTS.md` §6, «La disciplina de la declaración»**, y la escribe el propietario, no esta skill.
++  **Hasta que la declares, tu proyecto sigue exactamente con el procedimiento anterior:** analista →
++  desarrollador → QA → seguridad, y **ningún agente puede omitir al analista**: migrar sin declarar
++  **no cambia quién interviene en cada REQ**. Lo que sí cambia, declares o no, es el **texto** de §6
++  y §9 y el de los agentes, que pasan a describir la vía y a condicionarla a esa declaración.
++  **Las dos líneas —la afirmativa y la negativa— y toda la disciplina de redacción salen de UNA
++  sede, y aquí no se copian ni se parafrasean: `AGENTS.md` §6, «La disciplina de la declaración».**
++  Escríbelas **exactamente como manda esa sede**: de ahí salen las dos redacciones literales, la
++  prohibición de **inventar una tercera**, la de **dejar la declaración comentada** —un comentario
++  sigue siendo texto, y una declaración apagada no es una declaración— y la regla de que una
++  **negación**, una **postergación** o una **decisión pendiente** **no autorizan aunque contengan la
++  frase entera**. **No escribas esa línea «en tus palabras»:** es el único texto cuya **redacción
++  es** el control.
++  **Cómo la declaras, si la quieres:** sustituye la línea negativa por la **afirmativa** de esa
++  sede, con tu nombre y la fecha. Y si no la quieres, **deja la línea como está**: no hay nada que
++  borrar. Ni la **tabla de vías**, ni la descripción, ni la propia comprobación de §6 son evidencia
++  de autorización — todas **llegan instaladas**, y deducir de ellas el permiso es exactamente el
++  fallo que esto evita.
++  **Y define «contrato claro»**: incluye que `Rigor:`, `Sensible a seguridad:` y las revisiones
++  exigidas sean **coherentes con el efecto** de la reparación; una clasificación insuficiente o
++  contradictoria devuelve al analista **sólo esa decisión** antes de continuar, sin repetir el
++  análisis ni dar facultades nuevas a otros roles.
++  **Y los agentes cambian con ella, porque la política también los gobierna:** el `desarrollador`
++  recibe el write-back de la vía de reparación **en la misma entrega**; el `qa-tester` deja de leer
++  que el write-back es siempre del analista y conserva su obligación de **no firmar sin él**; el
++  `analista-requerimientos` mantiene el suyo **siempre que quede una decisión**; y el disparador del
++  `auditor-seguridad` se enuncia **sin depender de quién lo despache**.
++  **Qué NO cambia:** el **write-back sigue siendo obligatorio** —cambia quién lo escribe, no si se
++  escribe—; **el rigor no se rebaja**, elegir vía **no** reclasifica un REQ y subirlo o bajarlo sigue
++  su procedimiento de siempre (lo fija el analista, el auditor puede subirlo, nadie lo baja sin su
++  firma, y `Sensible a seguridad: sí` impone `critico` como suelo); **no se omiten pruebas
++  necesarias**; **los contadores no se reinician**; y **seguridad sigue sin firmar lo que QA no ha
++  validado**. **Ningún hook cambia**, y tampoco `.arnes/config.json` — y por eso una errata que viva
++  dentro de `codigo_app.globs` **la sigue denegando `guard-codigo`** por mucho que sea documental:
++  elegir vía decide quién revisa, no quién puede escribir.
++
++  **Cómo llega esto a tu proyecto, por el estado que devuelva el merge —los cinco, sin declarar
++  ninguno imposible—:**
++
++  **Primero, la separación sin la cual esta migración se detiene entera: los agentes NO se migran.**
++  Los **cuatro agentes los provee el plugin** (`.claude/agents/`): tu proyecto **no tiene copia
++  propia** que clasificar, y `arnes-init` **no** deja base suya en `.arnes/plantillas-origen/`,
++  porque ahí sólo van los `.tpl` y los agentes no lo son. **No los clasifiques, no los busques y no
++  los pongas en el plan:** una clasificación sin base recuperable es `UNKNOWN`, y un `UNKNOWN`
++  **detiene la corrida completa** — incluidas `§6` y `§9`, que sí son migrables. Los agentes llegan
++  corregidos **al actualizar el plugin**, no por esta migración; **dilo en el informe** y sigue.
++  **Y si guardaste una copia modificada de alguna definición de agente en tu proyecto, no se pierde
++  ni se pisa:** esta migración **no la toca, no la sobrescribe y no la actualiza** — se queda
++  exactamente como la dejaste. Lo que **no** va a pasar es que el merge te avise de ella, así que
++  compararla con la definición nueva del plugin queda **a tu cargo**.
++
++  **Lo que SÍ se migra son las secciones `§6` y `§9` de tu `AGENTS.md`**, que se copiaron de la
++  plantilla a tu proyecto y por eso tienen base con la que comparar. Y **`templates/AGENTS.md.tpl`
++  y `templates/requirements-README.md.tpl`** también tienen base y entran en el merge: si los
++  personalizaste saldrán `MODIFICADO`, y eso es **conflicto** — tu texto **no se toca** y la
++  decisión es tuya.
++
++  **Y antes de clasificar ninguna, identifícala por CONTENIDO Y TÍTULO, nunca sólo por el número.**
++  Es la misma regla terminal que ya rige en «Tres resultados, nunca dos» —*si una sección no se
++  localiza con seguridad, el estado es `UNKNOWN` y paras*—, aplicada aquí a una forma concreta de no
++  localizarla: **un mismo `## N.` ha significado cosas distintas en distintas versiones del arnés**,
++  así que el número **no identifica** una sección, sólo la numera. Comprueba que el título y el
++  contenido del `## N.` de tu proyecto y el del `## N.` de la base **son la misma sección**; **si no
++  lo son, o si no puedes afirmarlo sin adivinar, es `UNKNOWN`**: la migración **se detiene, no se
++  aplica nada** —tampoco lo que salió `SAFE`, como manda la Fase 2— **y el documento se conserva
++  intacto**. Esto **manda sobre la tabla de abajo**: sin identificación firme no se entra a
++  clasificar.
++
++  > **Por qué, enunciado por propiedad y no como lista de versiones** (una lista de tags envejece; la
++  > propiedad no): **el arnés ha renumerado y retitulado secciones de `AGENTS.md` a lo largo de su
++  > historia**, y un proyecto instalado hace tiempo conserva la numeración de **su** versión de
++  > origen. Por eso el `## N.` de una base antigua puede llevar **otro título y otro contenido** que
++  > el `## N.` de hoy. **Caso real, como ejemplo y no como definición:** `## 9.` fue «Convenciones de
++  > trabajo» antes de ser «Cambios de requerimientos (versionado y deriva)». Comparar por número dos
++  > secciones que sólo comparten el número las declara `INTACTO` **—la única fila que actúa sin
++  > preguntar—** y escribe la doctrina del write-back dentro de una sección que trata de otra cosa,
++  > **en silencio**, en el archivo de gobernanza de tu proyecto. Identificar por título y contenido
++  > da `NUEVO` —«Añadir»—, que es lo correcto.
++
++  Hecha esa identificación, y **sólo** entonces:
++
++  | Estado de `§6` / `§9` | Qué haces |
++  |---|---|
++  | **`INTACTO`** | Aplicar el contenido nuevo **sin preguntar** |
++  | **`MODIFICADO`** | **Conflicto: preguntar, y NO tocar la sección.** Tu texto **se queda como está** y el conflicto **se lista para el humano**; no escribas nada en ella. Cuando preguntes, **propón** conservar tu texto añadiendo encima lo nuevo — pero **aplicarlo es decisión tuya, no de la migración**. Si tu personalización fijaba quién hace el write-back, **es justo lo que este cambio toca** |
++  | **`ELIMINADO`** —la sección existía en la base y tu proyecto **la borró**— | **Conflicto: preguntar, y NO reponer por tu cuenta.** Pudo borrarse a propósito. Si se repone, se repone **con tu decisión**, y si no, **dilo en el informe**: ese proyecto se queda sin la vía y sigue con el flujo anterior, que es válido |
++  | **`NUEVO`** —tu base **no tenía** esa sección, porque instalaste el arnés antes de que existiera— | **Añadir.** No hay texto tuyo que conservar |
++  | **`UNKNOWN`** —no se puede decidir sin adivinar— | **Terminal, como `CONFLICTO`, y no es negociable: te DETIENES y NO se aplica NADA de toda la corrida**, ni siquiera lo que salió `SAFE`. Déjalo constar y pregunta |
++
++  **No supongas que §6 y §9 están en tu base sólo porque están en la nuestra**, y ojo con la forma
++  en que esto falla: **no basta con mirar si la sección FALTA.** Un proyecto instalado con una
++  versión anterior puede **no tener** la sección —y entonces es **`NUEVO`**, no `INTACTO`—, pero
++  puede también **tener ese mismo número ocupado por otra sección distinta**, y ése es el caso que
++  engaña, porque la sección **está presente** y la comprobación de ausencia **no dispara**. Las dos
++  situaciones se resuelven con la identificación de arriba: si el `## N.` de la base no es la misma
++  sección que el `## N.` de hoy, **no es `INTACTO`** — es `NUEVO` si la sección de hoy no existe en
++  tu proyecto bajo ningún número, y **`UNKNOWN`** si no puedes decidirlo sin adivinar. Clasifica
++  **cada una por separado**: pueden salir en estados distintos.
++
++  **Y un aviso entero:** esta vía **reduce despachos, no controles**. Si prefieres seguir con las
++  cuatro fases siempre, **no migres estas secciones**: conservar tu texto es una respuesta válida.
++
+ *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
+ 
+ ## Reglas
+diff --git a/templates/AGENTS.md.tpl b/templates/AGENTS.md.tpl
+index 835e51e..a3da260 100644
+--- a/templates/AGENTS.md.tpl
++++ b/templates/AGENTS.md.tpl
+@@ -86,6 +86,197 @@ Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
+ 
+ **Flujo:** analista define REQ → desarrollador codifica → qa-tester valida → auditor-seguridad revisa → REQ `completado`.
+ 
++**La vía de cada cambio se elige por su EFECTO, no por su tamaño ni por la extensión del archivo.**
++El flujo de arriba es el de una **capacidad nueva**. Una **reparación con diagnóstico y solución
++claros** no necesita las cuatro fases, y hacerlas igual no añade protección: añade espera.
++
++> **Esta vía sólo rige donde ESTE documento la declara, y describirla NO la declara.** Un agente
++> del plugin no la ejerce por tenerla escrita en su definición, y **este texto no la autoriza por
++> estar instalado**: instalar la política y aceptarla son **dos actos distintos**, y el segundo es
++> **del propietario de este proyecto**. Lo que sigue lo escribe él, y sólo él:
++>
++> {{DECLARACION_VIA_PROPORCIONAL}}
++>
++> **Mientras esa línea no sea la declaración expresa, rige el procedimiento anterior** —analista →
++> desarrollador → QA → seguridad— y **ningún agente puede omitir al analista**. La tabla de abajo
++> describe las vías; **describirlas no las autoriza**, y su presencia no es evidencia de nada.
++
++| Naturaleza del cambio | Vía |
++|---|---|
++| Documentación informativa, índices y erratas **sin cambio de obligaciones** | la coordinadora, con las comprobaciones pertinentes |
++| **Reparación con causa, alcance y contrato claros** | desarrollador → QA. **Sin comisión de analista** — sólo si el propietario del proyecto lo **declaró expresamente** (la declaración afirmativa de arriba; **esta fila no es esa declaración ni la sustituye**) y el cambio **no** cae también en la fila 3 |
++| Cambio cuyo efecto alcanza **un criterio de `critico` de este proyecto** (§6, «Qué es crítico EN ESTE PROYECTO») **o una protección del arnés** — ejemplos **declaradamente no exhaustivos**: hooks, protecciones, firmas, permisos, instalación, migración, publicación | desarrollador → QA → **seguridad**. El analista interviene **sólo** si queda una decisión de diseño o de contrato **pendiente** |
++| **Capacidad nueva** o **cambio de contrato** | analista → desarrollador → QA → seguridad |
++
++**Si un cambio casa con más de una fila, manda la MÁS RESTRICTIVA.** La tabla no se para en la
++primera fila que encaje: la reparación de un bug de cobro tiene causa y contrato claros —fila 2— y
++además toca dinero —fila 3—, y la vía que se aplica es la de la **fila 3**.
++
++**Qué es «contrato claro», y qué pasa cuando no lo es.** «Contrato claro» no es sólo que el
++criterio ya esté decidido: incluye que **`Rigor:`, `Sensible a seguridad:` y las revisiones que el
++REQ exige sean coherentes con el EFECTO de la reparación**. Una reparación que toca dinero sobre un
++REQ `Rigor: estandar` · `Sensible a seguridad: no` · `Seguridad: n/a` **no tiene el contrato claro**,
++por decidido que esté su criterio: la cabecera promete menos revisión que la que el efecto exige.
++Cuando el trabajo revela una clasificación **insuficiente o contradictoria**, la coordinadora
++**solicita al `analista-requerimientos` únicamente esa decisión y su actualización documental**
++—qué rigor, qué sensibilidad, qué revisiones— **antes de continuar**. **No se repite el análisis
++completo y no se otorgan facultades nuevas a ningún otro rol:** ni el desarrollador ni QA corrigen
++esos campos por su cuenta, y el auditor conserva la suya de subir el rigor, como siempre. Resuelta
++la clasificación, la vía se aplica tal cual: una reparación ordinaria **correctamente clasificada**
++sigue siendo desarrollador → QA sin analista, y una que **exige seguridad** sigue siendo
++desarrollador → QA → seguridad.
++
++**Cómo se comprueba la autorización, y hacia dónde falla.** Antes de omitir la comisión de analista
++—y sólo para eso— se lee el `AGENTS.md` **del proyecto en el que se está trabajando**: ni la
++definición del agente, ni este archivo recordado de otro proyecto. La pregunta es por **propiedad**:
++*¿el propietario de este proyecto declaró expresamente que lo autoriza?* **Una sola forma responde
++que sí, y es un acto suyo: la declaración afirmativa** —la frase «**autoriza la vía proporcional de
++reparación**» dicha de este proyecto—. **Nada más es evidencia, y esto importa porque es el error
++que se cometió:** ni la **tabla de vías** con su fila «Sin comisión de analista», ni la descripción
++de la vía, ni este mismo párrafo. Todo eso **se instala con el andamiaje** y no lo decidió nadie
++aquí; tomarlo por consentimiento es **deducir el permiso del texto que lo describe**.
++**Cualquier otro desenlace conserva el procedimiento anterior y se despacha al analista**: que no
++esté declarada, que sólo esté descrita, que el archivo no se pueda leer, que la respuesta no sea
++clara, o que otra parte del mismo documento exija el analista para ese cambio **sin resolver
++expresamente** la contradicción.
++**La ausencia de la declaración no habilita nada**, y ésa es la dirección del fallo que importa: el
++agente trae la **capacidad**, el documento da el **permiso**.
++
++**La disciplina de la declaración — SEDE NORMATIVA. Se escribe aquí una vez y todo lo demás
++remite:** `arnes-init` al instalar, `arnes-upgrade` al migrar, y cualquier agente al comprobar.
++Nadie vuelve a redactar esta regla por su cuenta — **redactarla dos veces fue exactamente el fallo
++que la trajo**.
++
++1. **Sólo autoriza una decisión afirmativa explícita del propietario, tomada como acto completo.**
++   Vale **la oración entera afirmando que este proyecto lo autoriza**, no que la frase aparezca en
++   algún sitio del archivo.
++2. **No son autorización, aunque contengan la frase entera:** una **negación**, una **postergación**
++   («aún no…»), una **pregunta** o **decisión pendiente**, un **ejemplo**, una **cita**, la
++   descripción de la vía, la tabla, este mismo apartado, y una **declaración afirmativa comentada**
++   —un comentario sigue siendo texto, y una declaración apagada no es una declaración—.
++3. **Quien comprueba no se queda en la coincidencia de cadena:** lee la **oración completa y su
++   función**. Encontrar las palabras no es encontrar una decisión. **Una coincidencia parcial no
++   vale**, y ante la duda **no se autoriza**: se despacha al analista.
++4. **La unidad es la ORACIÓN, nunca la línea.** Nada de esto depende de dónde caiga un salto de
++   línea, un reflujo del párrafo o un margen: una oración partida en dos líneas sigue siendo una
++   oración, y dos oraciones en una línea siguen siendo dos.
++5. **Las dos líneas, y no se inventa una tercera.** Para autorizar: `> **Este proyecto autoriza la
++   vía proporcional de reparación** descrita en esta sección. — Declarado por <propietario>,
++   <fecha>.` Para **no** autorizar, que es el valor por defecto: `> **Este proyecto todavía no ha
++   declarado esa autorización.** Rige el procedimiento anterior: analista → desarrollador → QA →
++   seguridad.` La negativa está redactada **a propósito** sin contener la frase afirmativa; pero
++   **aunque alguien la escribiera conteniéndola** —«este proyecto **no** autoriza…»— seguiría **sin
++   autorizar**, por el punto 2. La regla **no depende de la redacción que se elija**.
++
++> **Límite declarado, y es de esta regla, no de una versión.** Esto es una **norma para quien lee**:
++> **no hay comprobación mecánica** que la haga cumplir — ningún hook, ninguna prueba y ningún `grep`
++> distinguen una negación de una afirmación. Un `grep` de la frase **encuentra también los casos del
++> punto 2**, empezando por este mismo apartado. Quien quiera verificación automática tiene que
++> construirla, y **hoy no existe**. Y no es una precaución teórica: se midieron redacciones
++> **negativas** que un lector automático resolvía como afirmativas, y por eso la comprobación es de
++> quien lee y no de un patrón.
++
++**La fila 1 no levanta el control de edición de un archivo protegido.** Elegir vía decide **quién
++revisa**, nunca **quién puede escribir**. Una errata sin cambio de obligaciones la corrige la
++coordinadora **salvo que viva dentro de una ruta que `codigo_app.globs` (`.arnes/config.json`)
++declare código de la app**: ahí `guard-codigo` **deniega la edición, y hace bien** — la puerta mira
++la **ruta**, no si el cambio es documental. Ese arreglo va por el **`desarrollador`**, por la vía que
++le corresponda según su efecto. Esto **no** es una excepción a la tabla: es el recordatorio de que la
++tabla no autoriza saltarse un control de edición.
++
++**La regla que impide que esta tabla se convierta en una salida: se clasifica por el EFECTO.** Una
++regla de autorización escrita en Markdown es gobernanza sensible; una prueba que decide si una
++protección funciona tampoco es una simple edición documental. La coordinadora clasifica y **registra
++una justificación breve**; **no se abre una comisión sólo para clasificar**, y se escala únicamente
++una ambigüedad concreta que pueda **reducir una protección**.
++
++**En la vía de reparación, el desarrollador entrega el arreglo y su documentación EN LA MISMA
++ENTREGA** —incluido el write-back de §9—, y **QA verifica el cambio y sus dependencias**,
++reutilizando la evidencia vigente cuando se demuestre que lo posterior no la invalida, y
++**registrando esa comprobación**.
++
++**Elegir vía NUNCA elimina una revisión de seguridad que las reglas vigentes de este proyecto
++exijan, y la lista de ejemplos de la fila 3 no puede limitar esa obligación.** Va enunciada por
++**propiedad**: interviene seguridad cuando el **efecto** del cambio alcance algo que este
++proyecto declare crítico (§6) o una protección del arnés, **o** cuando las reglas vigentes de rigor y
++sensibilidad la exijan —rigor efectivo `critico`, por declaración o por el suelo que impone
++`Sensible a seguridad: sí`—. **Basta una de las dos condiciones; no se exige que coincidan.** Los
++ejemplos de la fila 3 son **declaradamente no exhaustivos** y no acotan la propiedad: el día que
++aparezca un efecto que no esté entre ellos, la obligación sigue en pie. **Y esta obligación no
++depende de la comprobación de autorización de arriba:** un proyecto que no autorice la vía tiene
++**más** pasos, nunca menos.
++
++**`guard-completado` no decide a quién se despacha, y aquí no se usa como criterio.** Es una puerta
++de **cierre**: si se deja que ella lo resuelva, el trabajo llega hasta el final y **sólo entonces**
++se descubre que faltaba seguridad — el bucle tardío que esta vía existe para evitar. Y §13 la
++declara **inerte** sin `jq` o sin `.arnes/config.json`, de modo que en ese proyecto no calcularía
++nada. La regla de despacho es la del párrafo anterior y se sostiene sola.
++
++**Y las cuatro cosas que esta vía NO cambia, porque su ausencia sería la ambigüedad peligrosa:**
++
++1. **El write-back de §9 sigue siendo obligatorio.** Lo que cambia es **quién puede transcribirlo**
++   —el desarrollador, cuando no queda decisión de diseño ni de contrato pendiente—, **no si hay que
++   hacerlo.** Un hallazgo resuelto sólo en el código o en un log **sigue siendo deriva**, y QA y
++   seguridad siguen sin firmar `aprobado` antes de que el requerimiento lo refleje.
++2. **El rigor no se rebaja, y elegir vía no lo toca.** El `Rigor:` y el `Sensible a seguridad:`
++   **declarados en el REQ siguen vigentes tal cual**: clasificar un cambio en una vía **no**
++   reclasifica el REQ. Subirlo o bajarlo **sigue su procedimiento de siempre, y esta tabla no es un
++   atajo a él**: lo fija el `analista-requerimientos`, el `auditor-seguridad` **puede subirlo**,
++   **nadie lo baja sin su firma**, y `Sensible a seguridad: sí` impone `critico` como **suelo**.
++   Ninguna vía puede usarse para evitar un control.
++   **Y si la reparación necesita un REQ NUEVO** —el único caso en que esos campos no existen aún—,
++   **es el `analista-requerimientos`, y no el `desarrollador` ni el `auditor-seguridad`, quien
++   define el contrato inicial, el `Rigor:` y el `Sensible a seguridad:`**, por esas mismas reglas:
++   así el disparador del `auditor-seguridad`, que depende del flag, **nunca nace sin sujeto**.
++   **«Hace falta un REQ nuevo» es, por sí solo, motivo de parada del `desarrollador`**: que tenga
++   permiso de escritura sobre `requirements/` no lo convierte en dueño del contrato. Hecho eso,
++   **se aplica la vía que corresponda SIN una segunda comisión de análisis**, salvo que aparezca una
++   decisión nueva — si hiciera falta analizar dos veces, la vía no habría retirado nada. Para los REQ
++   **que ya existen** no cambia nada: conservan sus clasificaciones, como dice la primera frase de
++   este punto.
++3. **No se omiten pruebas necesarias.** Durante el desarrollo, pruebas **enfocadas**; el banco
++   completo sobre el **candidato final** y tras cualquier cambio que invalide esa evidencia. Los
++   controles obligatorios de integración y publicación **se mantienen todos**.
++4. **Los contadores no se reinician.** Una reparación que vuelve al mismo agente **gasta vuelta**,
++   se llame como se llame, y **agotar vueltas nunca equivale a aprobar**.
++
++**Antes de despachar una comisión que OMITE una fase, la coordinadora lo comprueba POR ESCRITO.**
++Es ella quien decide el despacho, así que es ella quien comprueba el permiso. La comprobación se
++suma a las que ya hace antes de cualquier encargo —qué resultado exacto debe entregar, qué queda
++fuera, cuándo detenerse— y va escrita **en el propio encargo**, diciendo **qué archivo leyó y qué
++resolvió**:
++
++1. **Si el encargo omite la comisión de analista de esta vía, ¿el `AGENTS.md` DE ESTE PROYECTO la
++   autoriza expresamente?** **Tenerlo escrito en la definición de un agente no lo concede, y
++   tenerlo instalado en este `AGENTS.md` tampoco** — la tabla de vías y la descripción de arriba
++   **llegan con el andamiaje**, así que encontrarlas no responde nada: lo único que responde es la
++   **declaración afirmativa del propietario del proyecto**. Sin ella —o con el archivo ilegible, o
++   con la vía sólo descrita, o con otra parte del mismo documento exigiendo el analista sin
++   resolver la contradicción— **se despacha al analista**, que es el procedimiento anterior.
++2. **Y si la omite por «contrato claro», ¿lo es en el sentido de esta sección** —`Rigor:`,
++   `Sensible a seguridad:` y revisiones exigidas coherentes con el EFECTO—? Si no lo es, la
++   dependencia que se resuelve primero es **esa decisión del analista, y sólo esa**; no se amplía
++   el encargo.
++
++**Las obligaciones de seguridad no dependen de esta comprobación:** ninguna respuesta aquí retira
++una revisión que las reglas vigentes del proyecto exijan, y un proyecto que no autorice la vía
++tiene **más** pasos, nunca menos.
++
++**Tres límites de la comprobación de autorización, escritos aquí porque NO están medidos.**
++
++1. **Un agente que el plugin no entrega no recibe la comprobación.** Si este proyecto tiene su
++   propia copia de una definición de agente en `.claude/agents/`, esa copia lleva el texto que
++   alguien escribió ahí y **ninguna instrucción del plugin puede gobernar un archivo que el plugin
++   no entrega**. En ese caso la comprobación queda sólo en manos de la coordinadora, que sí la lee
++   del apartado anterior de esta misma sección — y si la coordinadora tampoco la tiene, porque **un
++   proyecto ya instalado tiene su `AGENTS.md` congelado hasta que `arnes-upgrade` migre este
++   bloque**, no la hace nadie.
++2. **No está demostrada la compatibilidad con definiciones de agente anteriores.** Que la
++   comprobación falle hacia el procedimiento anterior es su **diseño**, no una medición sobre
++   agentes viejos: nadie la ha ejercido con ellos.
++3. **No se afirma que cueste cero.** Que §0 obligue a leer `AGENTS.md` **no demuestra** que un
++   agente lea esta sección con la profundidad que la comprobación exige. Ese coste no se ha medido.
++
+ **El orden no es una sugerencia: es la condición de validez de la firma.** El
+ `auditor-seguridad` no firma `Seguridad: aprobado` sobre un árbol que el `qa-tester` no ha
+ validado, porque **no mira las quality gates**: su veredicto acredita la revisión de seguridad,
+@@ -250,9 +441,16 @@ cambio de legislación, una limitación detectada en pruebas, un parche de depen
+   diseño. El hallazgo **no se cierra** hasta que el requerimiento lo refleje — un **criterio de
+   aceptación** nuevo (hallazgo de QA) o un **NFR** nuevo/actualizado (hallazgo de seguridad) —,
+   con la causa enlazada al hallazgo y un ADR si es de fondo. Un hallazgo resuelto solo en el
+-  código o en un log (`docs/qa/…`, `registro-seguridad.md`) es deriva. El `analista-requerimientos`
+-  hace el write-back; el `qa-tester` y el `auditor-seguridad` no dan su veredicto `aprobado`
+-  (campos `QA:`/`Seguridad:` del REQ) hasta que existe.
++  código o en un log (`docs/qa/…`, `registro-seguridad.md`) es deriva. **Quién lo transcribe depende
++  de la vía (§6):** el `analista-requerimientos` cuando queda una decisión de requisitos o de diseño,
++  y el **`desarrollador`, en la misma entrega que el arreglo**, cuando no queda ninguna, sólo hay
++  que reflejar en el requerimiento lo que ya estaba contratado **y este documento declara la vía
++  proporcional (§6)**. **Si §6 no la declara, el write-back es del `analista-requerimientos`**, como
++  antes de que la vía existiera: la ausencia de la declaración conserva el procedimiento anterior y
++  **nunca deja este write-back sin dueño**. **Quien transcribe no decide**: si al
++  escribirlo aparece una decisión de alcance o de significado, **para y la escala** — eso es un
++  cambio DE FONDO y vuelve al analista. En todos los casos, el `qa-tester` y el `auditor-seguridad`
++  no dan su veredicto `aprobado` (campos `QA:`/`Seguridad:` del REQ) hasta que existe.
+ - **REGLA DE ESTADO:** cuando un REQ ya `completado` cambia, vuelve a `en-progreso` o
+   `en-revisión` y **re-recorre el ciclo** (dev ajusta → QA re-valida contra los criterios
+   nuevos → seguridad revisa). Un cambio de requerimiento **reabre** el trabajo; no es solo
+diff --git a/templates/requirements-README.md.tpl b/templates/requirements-README.md.tpl
+index 6c664f6..e21d29e 100644
+--- a/templates/requirements-README.md.tpl
++++ b/templates/requirements-README.md.tpl
+@@ -233,7 +233,9 @@ midiendo la magnitud que se degrada.
+ 
+ Las cuatro están **prohibidas por nombre**. Un criterio que caiga en cualquiera de ellas está **mal
+ formado**: el QA lo reporta como hallazgo de clase `contrato` contra el REQ **antes** de ejecutar
+-la prueba, y quien lo reescribe es el analista (write-back, `AGENTS.md` §9).
++la prueba, y **quien lo reescribe depende de la vía** (write-back, `AGENTS.md` §6 y §9): el
++analista cuando queda una decisión de requisitos o de diseño, y el desarrollador —en la misma
++entrega que el arreglo— cuando sólo hay que reflejar lo ya contratado.
+ 
+ ### (a) Enumerar lo que el código reconoce
+ 

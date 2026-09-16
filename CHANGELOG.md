@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-16 · Porte mínimo de la vía proporcional sobre `v1.33.2`: diff preparado (`404e044`) y revisión de la coordinadora
+`porte-1.33.2/404e044.diff` y `porte-1.33.2/README.md`: revisión del diff (mecanismo 0, términos prohibidos 0, gemelas, sede única, título provisional), capacidades de `v1.33.2` comprobadas con secciones del banco por ruta. Sin QA, sin seguridad, sin despacho real.
+
 ## 2026-09-16 · Tabla de decisión corregida: tres clases (cierre de REQ · condiciones de publicación · limitaciones no bloqueantes)
 `decision-publicacion/2026-09-16-tabla.md` § 3: nota de corrección y filas B1…B8 etiquetadas [a]/[b]/[c]; la clasificación vigente vive en el inventario del repo § 4.1. Registro fechado conservado.
 
