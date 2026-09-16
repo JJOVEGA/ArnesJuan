@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-16 · Sexta ronda: SEC-102 mitigado (R-040), 40/3 partida por REQ-014 CA-18, SEC-103 nuevo; CI sobre `e392fbf` **verde**: banco 1278 · 0 · 16 cuadrado en 1294, autoprueba 106 · 0
+`validacion-f141511/VEREDICTO.md` (Sexta ronda) y `validacion-f141511/ci-pr50-e392fbf/` (`DIAGNOSTICO.md`, `run.json`, log completo). CA-09 PASS 1,126× registrado sin borrar el FAIL anterior. Sin fusión ni publicación.
+
 ## 2026-09-15 · Quinta ronda: I-7 resuelto, R-039 extiende la firma a `9dac46f`, SEC-102 nuevo; CI sobre `f6912ea` — banco verde y cuadrado (1293), puerta roja por REQ-014 CA-18 (sección 40/3 con 554 líneas)
 `validacion-f141511/VEREDICTO.md` (Quinta ronda) y `validacion-f141511/ci-pr50-f6912ea/` (`DIAGNOSTICO.md`, `run.json`, log completo). El FAIL es determinista e introducido por la cadena I-5/I-7; la autoprueba del corredor no había corrido nunca en el PR. Sin relanzar, sin reparar, sin excepciones.
 
