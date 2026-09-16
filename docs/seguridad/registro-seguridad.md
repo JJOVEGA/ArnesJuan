@@ -6677,3 +6677,157 @@ de las notas que se publican. **`docs/seguridad/gobernanza-datos.md`: sin cambio
 
 **Numeración vigente tras esta revisión (en ESTE registro):** última revisión **R-032**; último
 hallazgo **SEC-092**; próximos libres **R-033** y **SEC-093**.
+
+---
+
+## Revisión R-033 — **confirmación acotada de `c5db41b`** (remediación de `SEC-091` y `SEC-092`) y **registro de una decisión del propietario**. `porte/via-proporcional-1.33.2` @ `1fe3382` — 2026-09-16
+
+**Acotada.** No repito `R-031` ni `R-032`. Fuera y sin tocar: reparar, relanzar, fusión, tag y
+publicación. Numeración de **este** registro.
+
+### 0. Árbol, frontera y una precisión sobre qué firmé
+
+- Cabeza **`1fe3382`**, **árbol limpio**. Delta desde mi firma: `CHANGELOG.md`,
+  `docs/qa/…veredicto.md` y este registro. **Nada más.**
+- **El objeto firmado no se ha movido:** `git diff --stat cf88b4e..1fe3382 -- AGENTS.md templates/
+  agents/ skills/ hooks/ tools/ tests/ .arnes/ .github/ .claude-plugin/ requirements/` sale
+  **vacío**. **Gates 3 de 3** sobre esta cabeza.
+- **Precisión de trazabilidad, porque el encargo y mi registro nombran cabezas distintas.** Yo firmé
+  **`cf88b4e`** en `R-032`; el encargo dice «`a8cbb29`, que firmaste en R-032». **No es una
+  discrepancia material:** `a8cbb29` es el commit que **registró mi propia `R-032`**, y
+  `git diff cf88b4e a8cbb29` son **sólo** `CHANGELOG.md` y `docs/seguridad/registro-seguridad.md`.
+  Ningún artefacto de producto difiere. Lo dejo escrito para que el rastro no dependa de recordarlo.
+
+### 1. `SEC-091` → **`mitigado`**
+
+**La inferencia no se matizó: se retiró, y en su lugar hay hechos.** Medido sobre la sección
+`## [1.34.0]`:
+
+- La cadena «…así que ninguna puerta cambia de conducta **y el banco que certifica `v1.33.2`
+  certifica también esto**» → **0 ocurrencias**. Desapareció.
+- Entra la premisa correcta, y dice **exactamente lo que yo medí**: el banco «lee además documentos
+  que este porte **sí** cambió —hay secciones que leen `AGENTS.md`, `templates/` y
+  **`skills/arnes-upgrade/SKILL.md`**, que `8bd5e33` modificó—, de modo que “mecanismo idéntico”
+  **no implica “el banco sigue certificando”**» (**1**).
+- Y **la abstención sobre la cabeza que se publique** (**1**): «La certificación de una cabeza es la
+  corrida que se ejecutó sobre ella […] estas notas **no afirman su resultado por adelantado**».
+- Más «**tampoco corre el banco sobre esta cabeza**» en «Lo que este commit NO hace».
+
+**Esto es corregir la premisa, no la conclusión**, que es la forma que impide que alguien vuelva a
+deducir «no tocamos mecanismo, luego no hace falta banco» para un cambio documental que el banco sí
+juzga. **Dado por mitigado.**
+
+**Y una rectificación de mi propia `R-032`, que hago aquí en vez de dejarla implícita.** Escribí «no
+hay banco sobre esta cabeza», y era cierto de `cf88b4e`; **lo que yo no tenía es que sí hubo CI sobre
+un antecesor, y que salió en ROJO**: `b520e3b` → **904 · 1 FAIL · 7**. Mi frase no era falsa, pero se
+emitió **sin esa evidencia**, y quien la lea debe saberlo. **No cambia mi veredicto de `R-032`** por
+dos razones medidas: el `FAIL` es la sonda de coste, **fuera de mi encargo por instrucción**, y
+`tests/` es **idéntico a `v1.33.2`** (§3), así que no hay cambio mío que pueda haberlo causado.
+
+### 2. `SEC-092` → **`mitigado`**
+
+**`H-P3` y `SEC-090` entran en la lista que lee el consumidor**, que era todo el hallazgo. Medido
+dentro de `## [1.34.0]`: `H-P3` **4** ocurrencias y `SEC-090` **4**, donde antes había **0 y 0**. Van
+con su clase (`instrumento`), su estado (`abierto`), sus sedes y la razón: «**la reanudación de una
+migración parcial NO está acreditada**» (**1**), con las dos causas nombradas —«Continuar» no repite
+la precondición de verificar, y `plantillas-origen` sin especificar en un parcial—.
+
+**Y cumple la instrucción del propietario de no vender una solución que nadie ha probado**: «estas
+notas **no presentan “repetir `/arnes-upgrade`” como solución comprobada**» (**1**), remitiendo a que
+el conflicto lo resuelve el propietario del proyecto **a mano** y la reanudación queda **pendiente de
+revisión**. **Dado por mitigado.**
+
+**Barrido de las sedes hermanas dentro de la misma sección, que no había pedido y conviene:** «`H-P1`
+ya no está en esta lista» pasa a «**queda corregido […] y con su reserva de `n`** (2 de 2, sin
+determinismo)»; «la skill no se ejecutó en este commit» se sustituye por los ensayos medidos; el
+`n=1` queda **acotado al porte `404e044`** y se añade que los posteriores (**4 de 4**, **2 de 2**)
+tampoco acotan variabilidad. **Corregir la frase señalada y sus vecinas es lo que evita la vuelta
+siguiente.**
+
+### 3. La sonda de coste — **constato, y no valoro**, conforme a la instrucción
+
+Decisión del propietario: «La sonda de coste conserva su configuración y todos sus resultados,
+incluido el FAIL anterior. **No autorizo modificarla ni declarar acreditada su estabilidad.**»
+Comprobado, y sólo comprobado:
+
+- **`tests/` es idéntico a `v1.33.2`**: `git diff 10eac80 1fe3382 --name-only -- tests/` → **0
+  archivos**. La sonda **no se tocó**.
+- **Las notas NO declaran acreditada su estabilidad, y declaran lo contrario.** Medido: «ni acredita
+  la estabilidad de la sonda» → **1**; «Ese PASS **no desmiente** el FAIL anterior» → **1**; la
+  cadena «acreditada la estabilidad» → **0**. Y publican la dispersión en vez de esconderla: **seis
+  lecturas entre 0,932× y 1,258×** sobre los mismos hooks, con el `FAIL` de `b520e3b` **conservado,
+  sin relanzar ni modificar**.
+
+**Es la conducta correcta ante un `FAIL`** —no se repite hasta el verde y la variabilidad se conserva
+como evidencia—, y me limito a constatarlo: **no valoro la sonda, no la clasifico y no me pronuncio
+sobre su techo**, que quedan fuera de mi encargo.
+
+### 4. Decisión del propietario, registrada con su literalidad
+
+> **«Para esta publicación acepto diferir `SEC-090` y `H-P3`, con dueño y revisión antes de
+> recomendar reanudar una migración parcial. Permanecen abiertos; esta decisión no los declara
+> resueltos.»** — propietario, 2026-09-16.
+
+**Dueño: `desarrollador`. Revisión de QA y seguridad antes de recomendar reanudar una migración
+parcial.** El estado que anoto es **`abierto — diferido por decisión del propietario`**, **no**
+`mitigado`: diferir no repara, y el registro no debe poder leerse como si lo hiciera.
+
+**Y las notas lo dicen igual**, comprobado frase a frase sobre el texto aplanado —las cuatro partes,
+cada una **1** ocurrencia—: «quedan **DIFERIDOS** para esta publicación», «**dueño
+`desarrollador`**», «**revisión de QA y seguridad antes de recomendar reanudar**» y «**permanecen
+ABIERTOS — esta decisión no los declara resueltos**». **No hay desajuste entre lo que decide el
+propietario, lo que publican las notas y lo que registro aquí.**
+
+**`H-P3` es de QA**: la decisión lo alcanza y la registro, pero **no lo clasifico ni lo cierro** —mi
+lectura de seguridad sobre él está en `R-032` §6 y no la repito—.
+
+### 5. **Mi firma de `R-032` sigue aplicable a `1fe3382`**
+
+**Sí, y no por inercia:** entre `cf88b4e` —lo que firmé— y esta cabeza **no se movió ningún artefacto
+de producto** (medido, diff vacío sobre las once rutas), y los dos commits posteriores son **las
+notas** y **el informe de QA**. Las notas **sí** las he revisado en esta misma revisión, que es
+justamente lo que se me pidió, y su corrección va **en la dirección de declarar más y prometer
+menos**.
+
+**`Seguridad: aprobado`** sigue vigente sobre el porte, con el alcance acotado de `R-031`/`R-032`,
+**extendida a `1fe3382`**. **Ningún hallazgo mío de clase `contrato` está abierto**; los cuatro son
+`instrumento`, y dos de ellos van **diferidos por decisión expresa del propietario**, no cerrados.
+
+### 6. Qué NO acredita
+
+1. **No repite `R-031` ni `R-032`**; todos sus límites siguen en pie —`n=1` en el porte, Fase 2 con
+   `UNKNOWN` sin ejercer, fila 3 por vía afirmativa sin ejercer, ningún proyecto con copia propia de
+   agente, `arnes-init` sólo con respuestas escritas—.
+2. **La reanudación tras una migración parcial sigue SIN ejercer.** De esa ruta acredito **texto**, y
+   ahora además **texto que declara no estar acreditado**. `SEC-090` y `H-P3` siguen **abiertos**.
+3. **Ninguna corrida nueva.** **No corrí el banco ni relancé el CI**; sólo las tres puertas. De las
+   cuatro corridas que las notas enumeran **no re-ejecuté ninguna**: las leo como declaradas.
+4. **No valoro la sonda de coste** ni su `FAIL` de `b520e3b`, por instrucción expresa: **constato** su
+   conservación y que las notas no le atribuyen estabilidad.
+5. **`n` pequeño en todo**: 4 de 4 y 2 de 2 **no acreditan determinismo**, como las propias notas
+   declaran.
+6. **`H-P2` sigue abierto** y no lo acredito; **`H-P1` y `H-P3` son de QA**: doy lectura, no veredicto.
+7. **La discrepancia `arnes_version 1.33.0` frente a `plugin.json 1.34.0` preexiste y sigue sin
+   auditar.**
+8. **No acredita la cabeza que finalmente se publique**, que tendrá su propia corrida de CI — las
+   notas se abstienen de afirmar su resultado y yo también.
+9. **No acredita la fusión, el tag ni la publicación**, y no me pronuncio sobre ellos.
+
+### 7. Estado de hallazgos de esta línea tras `R-033`
+
+| Hallazgo | Estado | Clase | Bloquea |
+|---|---|---|---|
+| `SEC-089` (`R-031`) | `abierto` | `instrumento` | no |
+| `SEC-090` (`R-032`) | **`abierto — diferido por decisión del propietario`** (2026-09-16) | `instrumento` | no |
+| `SEC-091` (`R-032`) | **`mitigado`** | `instrumento` | no |
+| `SEC-092` (`R-032`) | **`mitigado`** | `instrumento` | no |
+
+**`H-P3`** (de QA, `instrumento`): alcanzado por la misma decisión — **`abierto — diferido por
+decisión del propietario`**; su estado lo declara QA, no yo.
+
+Dueño de `SEC-089`, `SEC-090` y `H-P3`: `desarrollador`. **`SEC-090` y `H-P3` se revisan por QA y
+seguridad antes de recomendar reanudar una migración parcial**, conforme a la decisión de §4.
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta revisión (en ESTE registro):** última revisión **R-033**; último
+hallazgo **SEC-092**; próximos libres **R-034** y **SEC-093**.
