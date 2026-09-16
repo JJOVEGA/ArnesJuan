@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-16 · QA del delta documental `c5db41b`: **FAVORABLE**; `SEC-091` y `SEC-092` remediados desde QA; el FAVORABLE sobre `a8cbb29` sigue aplicable
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester (verificación documental acotada, autorizada por el propietario). Adenda 2 en `docs/qa/porte-1.33.2-via-proporcional-veredicto.md`.
+
+Un solo archivo, cuatro hunks (uno es la entrada nueva; los otros tres dentro de `[1.34.0]`); mecanismo, versión y declaración negativa sin tocar. **Cada cifra contra su fuente: todas coinciden** (908·0·4 y 106·0 sobre `404e044` — medición propia de QA; 106·0 sobre `8bd5e33`; CI `b520e3b` 904·1·7 con 1,258×; CI `a8cbb29` 904·0·8 con 0,958×; 912 casos y 51 secciones verificados en el árbol; las «seis lecturas» de la sonda son exactamente seis). **Barrido por propiedad:** certificación por identidad **retirada** (queda el hecho medido y la negación explícita, con el motivo: el banco lee la skill que `8bd5e33` modificó); la reanudación aparece cinco veces, las cinco en negativo; `H-P1` con su reserva de n en las sedes operativas; las dos afirmaciones que habían quedado falsas («H-P1 ya no está en esta lista»; «la skill no se ejecutó en este commit») **retiradas**, y sobreviven sólo citadas como texto sustituido. **No acredita:** ninguna prueba nueva (acredita correspondencia entre notas y fuentes); los logs del runner (QA leyó los diagnósticos); la sonda de coste; la reanudación de una migración parcial («un texto que declara bien una limitación no la remedia»); el cierre formal de `SEC-090/091/092`/`H-P3`, que es del auditor.
+
 ## [GitHub] — 2026-09-16 · `SEC-091` y `SEC-092`: las notas de `1.34.0` dejan de inferir el banco por identidad de mecanismo, y declaran el límite de la **migración parcial**
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` · autorizado por el propietario, alcance **sólo las notas de versión** (`CHANGELOG.md` § `## [1.34.0]`). **Ningún mecanismo tocado y ninguna otra reparación abierta:** el único archivo del commit es `CHANGELOG.md`.
 

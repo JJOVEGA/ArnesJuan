@@ -424,3 +424,112 @@ conducta de la skill estable**, y no bloquea.
 6. **No acredita seguridad.** `SEC-089` y la firma son del auditor.
 7. **No me pronuncio sobre la publicación, la fusión ni el número de versión** — sólo sobre que los
    tres campos están puestos de forma coherente y el cuarto no se tocó.
+
+---
+
+# Adenda 2 — delta documental `a8cbb29..c5db41b` (`SEC-091` y `SEC-092`)
+
+*(Sección nueva; lo fechado arriba no se reescribe.)*
+
+- **Árbol:** mismo worktree, cabeza **`c5db41b`**, árbol limpio. **Un solo archivo**: `CHANGELOG.md`, +84/−10.
+- **Alcance:** documental y acotado. No reviso nada más.
+- **Fecha:** 2026-09-16.
+
+## Método
+
+**EJECUTADO:** el contraste de **cada cifra** contra su fuente; mi propio barrido por propiedad sobre
+la sección `[1.34.0]`; la comprobación de contención del diff; y las tres gates.
+**NO OCURRIÓ:** no corrí banco ni CI, no relancé nada, no reparé, no comiteé, y no valoro la sonda de
+coste.
+
+## Veredicto sobre `c5db41b`: FAVORABLE · mi FAVORABLE sobre `a8cbb29` **sigue aplicable**
+
+El delta toca **un solo archivo** y **sólo** `[1.34.0]` más la entrada nueva. No toca mecanismo,
+versión ni la declaración negativa —comprobado: `plugin.json` sigue en `1.34.0` y la negativa sigue
+con 1 ocurrencia—, así que **nada de lo que acredité sobre `a8cbb29` queda afectado**.
+
+**Ninguna afirmación nueva sin fuente.** Barrí las cifras del bloque añadido una a una: todas tienen
+origen verificable, y las verifiqué.
+
+## 1 · Cada cifra contra su fuente
+
+| Cifra en las notas | Fuente | Contraste |
+|---|---|---|
+| Banco de `v1.33.2` sobre `404e044`: **908 · 0 · 4**, autoprueba **106 · 0** | **mi propio informe**, línea 194 de esta sede | **coincide** |
+| Autoprueba sobre `8bd5e33`: **106 · 0** | `…/porte-1.33.2/autoprueba-8bd5e33.txt` | **coincide**, y el archivo nombra la cabeza y quién la corrió |
+| CI sobre `b520e3b`: **904 · 1 FAIL · 7**, sonda **1,258×** | `…/ci-pr51-b520e3b/DIAGNOSTICO.md` | **coincide**, suma 912, cuadre exacto |
+| CI sobre `a8cbb29`: **904 · 0 · 8**, sonda **0,958×** | `…/ci-pr51-a8cbb29/DIAGNOSTICO.md` | **coincide**; y la fuente dice por su cuenta «*el FAIL … **no queda desmentido** por este PASS*» |
+| «**seis** lecturas entre **0,932×** y **1,258×**» | ídem, línea 21 | **coincide, y son exactamente seis**: 0,932 · 0,936 · 0,958 · 1,101 · 1,214 · 1,258 |
+| 912 casos declarados, 51 secciones | `CASOS_ESPERADOS=912`; `ls secciones/*.sh` | **912** y **51** |
+| `git diff v1.33.2 HEAD` sobre `hooks tools .arnes tests .github` → 0 | medido por mí ahora | **0** |
+| Gates **3 de 3** | corridas por mí | **3/3 OK** |
+
+**Una precisión de método sobre la cifra «seis», porque mi primera pasada pareció desmentirla:** un
+barrido bruto de ratios en ese diagnóstico devuelve **nueve** números. Tres no son lecturas de esta
+sonda —dos son las cifras de **convergencia** de la propia medición (1,139× / 1,088×) y una es **otra
+sonda**, `REQ-021 CA-08 (iii)` (1,233×)—. Leído en su frase, el documento enumera **seis** y son las
+seis que las notas citan. **La cifra es correcta; lo que fallaba era mi grep.**
+
+## 2 · Barrido por propiedad de `[1.34.0]` — hecho por mí, no por su lista
+
+La sección va de la línea **58** a la **194**. Barrí tres propiedades:
+
+**(a) Certificación atribuida por identidad de mecanismo — RETIRADA.** Las cuatro apariciones de
+«certifica/idéntico» que quedan dentro de `[1.34.0]` son **hechos o negaciones**, ninguna una
+inferencia:
+- el hecho medido (0 archivos) ahora **termina** en «*ninguna puerta cambia de conducta*», sin el «así que»;
+- la negación explícita: «*"mecanismo idéntico" **no** implica "el banco sigue certificando"*», con su
+  motivo —el banco lee documentos que el porte sí cambió, **incluida `skills/arnes-upgrade/SKILL.md`
+  que `8bd5e33` modificó**—;
+- y el principio: «*La certificación de una cabeza es la corrida que se ejecutó sobre ella, y nada más
+  amplio*», con la frase que cierra el flanco: **las notas no afirman por adelantado el resultado de la
+  cabeza que se publique.**
+
+**(b) Reanudación o «repetir la migración» presentadas como comprobadas — NO, en cinco menciones y
+las cinco en negativo:** «*la reanudación … **NO está acreditada***», «*Nadie la ha ejercido*», «*esa
+ruta **no repite** la precondición*», «*estas notas **no** presentan "repetir `/arnes-upgrade`" como
+solución comprobada*», «*permanecen **ABIERTOS** — esta decisión no los declara resueltos*».
+
+**(c) `H-P1` dado por resuelto sin reserva — NO.** Las dos sedes operativas llevan la reserva:
+«*queda corregido en `1.34.0`, **y con su reserva de `n`***» y «***con su reserva de `n`** (2 de 2,
+sin determinismo)*». La tercera mención es el **titular** de la funcionalidad y remite «abajo»,
+donde la reserva vive. **Coincide con lo que yo escribí** en la adenda anterior.
+
+**(d) Y las dos afirmaciones que habían quedado FALSAS están retiradas** —lo comprobé por línea, que
+es donde se decide: «*`H-P1` ya no está en esta lista*» → **0 ocurrencias en todo el archivo**; «*la
+skill no se ejecutó en este commit*» y «*así que el banco … certifica también esto*» → **0 dentro de
+`[1.34.0]`**, y sobreviven **sólo citadas** en la entrada nueva (líneas 9, 31 y 45) como el texto que
+se sustituye. Es la forma correcta: documenta qué cambió **sin dejar viva la afirmación falsa**.
+
+## 3 · Contención del diff
+
+Cuatro *hunks*: el primero es la **entrada nueva** (líneas 2-5, por encima de `[1.34.0]`, que empieza
+en la 58) y **los otros tres (62, 145, 185) caen dentro de `[1.34.0]` (58-194)**. **Nada fuera.**
+
+## 4 · Estados desde QA (el cierre formal es del auditor)
+
+| Id | Estado desde QA | Base |
+|---|---|---|
+| **`SEC-091`** | **REMEDIADO** | La inferencia desapareció y está sustituida por **los hechos**, cada uno con su cabeza y su fuente, más el principio general y la abstención sobre la cabeza futura. Las cuatro cifras contrastadas coinciden |
+| **`SEC-092`** | **REMEDIADO** | `H-P3` y `SEC-090` **en la lista de límites**; la reanudación declarada **no acreditada**; el conflicto lo resuelve **a mano** el propietario del proyecto; y la decisión del propietario con **dueño, condición y la declaración expresa de que permanecen ABIERTOS** |
+
+**No los cierro yo:** el cierre es del `auditor-seguridad`. Lo que acredito es que **el texto dice lo
+que el propietario exigió** y que **cada cifra tiene fuente**.
+
+**`H-P3` sigue ABIERTO** en esta sede, y las notas ahora lo recogen así — eso resuelve el write-back
+que yo señalaba: mi hallazgo y el CHANGELOG **ya dicen lo mismo**.
+
+## 5 · Qué NO acredita
+
+1. **No corrí ninguna prueba nueva.** Ni banco, ni CI, ni autoprueba sobre esta cabeza. **Esta adenda
+   acredita la correspondencia entre las notas y sus fuentes**, no el estado del producto.
+2. **Las cifras que reutilizo son de quien las midió**, salvo la de `404e044`, que es mía. Para el CI
+   dependo de los `DIAGNOSTICO.md`: **no vi los logs del runner**.
+3. **No valoro la sonda de coste** ni su FAIL, y lo digo expresamente para que mi FAVORABLE no se lea
+   como opinión sobre ese rojo. Que `a8cbb29` diera PASS **no desmiente** el FAIL de `b520e3b`, y las
+   notas ya lo dicen así.
+4. **No acredita la reanudación** de una migración parcial: sigue sin ejercerse, y por eso `H-P3` y
+   `SEC-090` siguen abiertos. Un texto que declara bien una limitación **no la remedia**.
+5. **No acredita el cierre** de `SEC-090`, `SEC-091`, `SEC-092` ni `H-P3` — son del auditor y de mí,
+   y aquí sólo me pronuncio sobre la remediación **documental** de los dos que me tocaban.
+6. **No me pronuncio sobre la publicación, la fusión ni el tag.**
