@@ -39,6 +39,11 @@ distribución: `.claude-plugin/plugin.json` `.version` y `.claude-plugin/marketp
   despache.
 - **`arnes-init` pregunta la autorización** al crear un proyecto, y **`arnes-upgrade` la migra**
   —entrada § `Hacia 1.34.0`— **instalando la línea NEGATIVA**, que es el valor por defecto.
+- **`arnes-upgrade` Fase 5 dice ahora qué hacer con un conflicto pendiente** (corrige **`H-P1`**,
+  abajo): un `CONFLICTO` o `UNKNOWN` sin resolver **es una operación del plan no aplicada**, la
+  migración es **PARCIAL**, `arnes_version` **conserva el valor de origen** y el resultado parcial
+  se declara en `.arnes/migracion.md` y en el `CHANGELOG.md` del proyecto **con la lista de
+  secciones pendientes**; la versión se registra sólo al aplicar el plan entero.
 
 ### Publicar la capacidad no equivale a activarla
 
@@ -62,13 +67,18 @@ la sigue denegando `guard-codigo`—: elegir vía decide **quién revisa**, no q
   **no** la de «una herramienta cuya vía no está verificada no cuenta como cubierta»—. No afirma nada
   falso y su desenlace exige dos condiciones simultáneas. Sede: `docs/seguridad/registro-seguridad.md`
   § **R-031**.
-- **`H-P1`** y **`H-P2`**: son conducta de la **skill estable de `v1.33.2`**, no del porte, y siguen
-  abiertos. `H-P1` — `/arnes-upgrade` registró `arnes_version` con un conflicto abierto en una sesión
-  y no en otra: el marcador dice «migrado» cuando no lo está. `H-P2` — 2 de 6 sesiones rehusaron el
-  porte como destino y 4 lo aceptaron: un juicio **no determinista** con dos desenlaces seguros.
-  **`H-P2` NO queda resuelto por este commit:** fijar el número **retira el forzador documentado**
-  que QA señaló, pero **nadie ha vuelto a medir** esas sesiones contra un destino ya numerado, así
-  que la no determinación **no está desmentida**. Sede: `docs/qa/porte-1.33.2-via-proporcional-veredicto.md`.
+- **`H-P2`** (conducta de la **skill estable de `v1.33.2`**, no del porte, y sigue abierto): 2 de 6
+  sesiones rehusaron el porte como destino y 4 lo aceptaron: un juicio **no determinista** con dos
+  desenlaces seguros. **`H-P2` NO queda resuelto por esta ventana:** fijar el número **retira el
+  forzador documentado** que QA señaló, pero **nadie ha vuelto a medir** esas sesiones contra un
+  destino ya numerado, así que la no determinación **no está desmentida**. Sede:
+  `docs/qa/porte-1.33.2-via-proporcional-veredicto.md`.
+  **`H-P1` ya no está en esta lista: queda corregido en `1.34.0`** haciendo explícita la regla de la
+  Fase 5 de `arnes-upgrade` (arriba). Lo que la corrección **sí** hace es cerrar el hueco del
+  contrato —la Fase 5 de `v1.33.2` no decía qué hacer con un `CONFLICTO` pendiente, y por eso una
+  sesión subió `arnes_version` con §6 en conflicto y otra no—; lo que **no** acredita es la conducta
+  resultante: **la skill no se ejecutó en este commit**, así que la no determinación de origen no
+  está medida contra el texto nuevo. Su sede de QA sigue registrándolo abierto hasta el write-back.
 - **`n=1` en los ensayos** de las evidencias de QA: cada escenario se ejerció **una vez**. Una sola
   corrida no acota variabilidad.
 - **La Fase 2 de `arnes-upgrade` con `UNKNOWN` no quedó ejercida**: el ensayo `UPG2-UNKNOWN` paró en
@@ -86,9 +96,56 @@ También siguen abiertos y **no los toca esta ventana** los hallazgos que `v1.33
 
 ### Lo que este commit NO hace
 
-No fusiona, no etiqueta y no publica —son actos distintos, del coordinador—; no cierra ningún
-hallazgo; no toca `hooks/`, `tools/`, `tests/`, `.arnes/`, `.github/`, `requirements/`,
-`docs/seguridad/` ni `docs/qa/`; no altera la declaración de este repositorio, que sigue **negativa**.
+No fusiona, no etiqueta y no publica —son actos distintos, del coordinador—; **no cierra ningún
+hallazgo salvo `H-P1`**, y ése por corrección del texto de la skill, sin medir la conducta
+(`H-P2`, `SEC-089`, `SEC-087`, `SEC-088` y `QA-1332-01` siguen conservados); no toca `hooks/`,
+`tools/`, `tests/`, `.arnes/`, `.github/`, `requirements/`, `docs/seguridad/` ni `docs/qa/`; no
+altera la declaración de este repositorio, que sigue **negativa**.
+
+## [GitHub] — 2026-09-16 · `H-P1`: la Fase 5 de `arnes-upgrade` dice ahora que un conflicto pendiente deja la migración **PARCIAL** y `arnes_version` **sin subir**
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` · autorizado por el propietario, alcance **sólo `H-P1`**.
+
+**El defecto, medido:** con `AGENTS.md` §6 en `MODIFICADO → CONFLICTO`, una sesión aplicó lo `SAFE`,
+declaró **parcial** tres veces en prosa (mensaje final, `CHANGELOG.md` del proyecto,
+`.arnes/migracion.md`) **y aun así subió `arnes_version`** `1.33.1 → 1.33.2` (fila 6 del plan, «SAFE
+— Fase 5»; Fase 4: «`arnes_version` = `1.33.2` ✔»). Otra sesión en la misma situación **no** lo
+subió. Consecuencia: en la siguiente ejecución origen = destino → Fase 1 «informa que está al día y
+**para**», y el conflicto **deja de ser visible para la vía automática**. Evidencia:
+`ensayos/UPG2-MODIF/migracion.md.resultado` y `H-P1-aclaracion.md` del paquete del porte.
+
+**La causa era del contrato, no del mecanismo:** la Fase 5 ya decía *«sólo ahora actualiza
+`arnes_version`… si se sube antes de verificar, la siguiente ejecución creerá que está hecho»*, pero
+**no decía que un `CONFLICTO` pendiente sea una operación no aplicada**. Se reutiliza la regla que ya
+existía; **no se rediseña la migración**: sin fases, estados, campos ni comprobaciones mecánicas
+nuevas, y sin tocar `hooks/` ni la sección canónica «Clasificación».
+
+**Qué cambia, sólo en `skills/arnes-upgrade/SKILL.md`** (4 puntos, todos redacción):
+1. **Fase 5** — párrafo nuevo: un `CONFLICTO`/`UNKNOWN` sin resolver es **una operación del plan no
+   aplicada** → migración **PARCIAL** → `arnes_version` **conserva el valor de origen (no se
+   escribe)**; el resultado parcial se declara en `.arnes/migracion.md` y en el `CHANGELOG.md` del
+   proyecto **con la lista de secciones pendientes**; la versión se registra **sólo** al quedar el
+   plan aplicado entero, reanudando por «Continuar» (sección «Si se interrumpe a mitad», que ya
+   existía). Con el porqué en una frase: con la versión subida, la Fase 1 de la siguiente ejecución
+   la daría por hecha.
+2. **Fase 4, comprobación 1** — explícito: un `CONFLICTO`/`UNKNOWN` sin resolver **es** una operación
+   no aplicada, no un pendiente aparte.
+3. **Fase 4, comprobación 4** — decía «la versión registrada es la de destino» en absoluto, lo que
+   **contradecía** la regla; ahora condiciona a que el plan quede aplicado entero.
+4. **Barrido por propiedad** (frases que afirmaran o implicaran que `arnes_version` se sube al
+   terminar): corregida la de § `Hacia 1.26.0` —«**Actualiza `arnes_version` al terminar la
+   migración**», imperativo absoluto que empujaba a subirlo para callar el aviso del bloque
+   derivado— y añadida **una línea** de remisión en § `Hacia 1.34.0`, tras la tabla de estados, que
+   es la sede que lee una sesión en esta situación exacta.
+
+**Lo que NO acredita:** **la skill no se ejecutó**; la conducta resultante no está medida y la no
+determinación de origen (1 de 2 sesiones) **no queda desmentida** por este commit. **No cierra nada
+más:** `H-P2` y `SEC-089` siguen conservados, y el write-back de `H-P1` a su sede de QA
+(`docs/qa/porte-1.33.2-via-proporcional-veredicto.md`) **queda pendiente** — fuera de este alcance.
+
+**Verificación:** gates 3/3 en verde (`bash -n` de `hooks/*.sh` y `tools/*.sh`; `jq -e .` de
+`hooks/hooks.json`, `plugin.json` y `marketplace.json`); `git diff v1.33.2 HEAD --name-only --
+hooks tools .arnes tests .github` → **0 archivos**; `diff` de la sección canónica «Clasificación»
+contra `v1.33.2` → **vacío**.
 
 ## [Interno] — 2026-09-16 · Seguridad R-031 (registro de `v1.33.2`): **`Seguridad: aprobado` acotada al porte `404e044`**; **`SEC-089`** nuevo (`instrumento`, no bloquea)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad (revisión acotada por el propietario a las diferencias relevantes respecto de la política ya auditada en `5f07419`; R-037…R-040 de la rama larga son antecedentes, no aprobación). Sede: `docs/seguridad/registro-seguridad.md` § R-031 — numeración de **este** archivo (llegaba a R-030 / SEC-088).

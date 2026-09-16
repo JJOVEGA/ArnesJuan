@@ -150,10 +150,12 @@ esté en el plan** — nada de «ya que estoy, mejoro esto».
 
 ### Fase 4 — Verificar (releyendo el disco)
 Vuelve a leer **todos** los archivos tocados y comprueba:
-1. Cada operación del plan está aplicada.
+1. Cada operación del plan está aplicada — y una que quedó en `CONFLICTO` o `UNKNOWN` **sin
+   resolver es una operación no aplicada**, no un pendiente aparte.
 2. Ninguna sección `MODIFICADO` cambió.
 3. No desapareció contenido que estuviera antes.
-4. La versión registrada es la de destino.
+4. La versión registrada es la de destino **si el plan quedó aplicado entero**; si quedó alguna
+   operación sin aplicar, sigue siendo la de origen (Fase 5).
 
 **No des por hecho que se aplicó porque lo escribiste.** El acto de editar no es la prueba de
 que se editó bien; la prueba es volver a leer. Es la misma regla que el arnés aplica a todo lo
@@ -164,6 +166,17 @@ demás: se acredita por contenido, no porque el comando dijera que sí.
 `CHANGELOG.md` del proyecto, con origen y destino. Ese campo es el registro de la migración: si
 se sube antes de verificar, la siguiente ejecución creerá que está hecho y el proyecto quedará
 a medias sin que nadie lo note.
+
+**Y sólo si el plan quedó aplicado entero.** Un `CONFLICTO` o un `UNKNOWN` que siga sin resolver
+es **una operación del plan no aplicada**, así que la migración es **PARCIAL**: `arnes_version`
+**conserva el valor de origen — no se escribe**, y el resultado parcial se **declara** en
+`.arnes/migracion.md` y en el `CHANGELOG.md` del proyecto **con la lista de secciones
+pendientes**. La versión se registra **sólo** cuando esas operaciones queden aplicadas, al
+reanudar por **«Continuar»** (ver «Si se interrumpe a mitad»). El porqué es el de arriba visto
+desde el otro lado: con la versión ya subida, la **Fase 1** de la siguiente ejecución encuentra
+origen = destino, informa que está al día y **para** — el conflicto deja de existir para la vía
+automática y sobrevive sólo en la prosa. Declarar «parcial» en el texto y subir el número a la
+vez es decir dos cosas opuestas, y **el número es el dato que lee la máquina.**
 
 ## Si se interrumpe a mitad
 
@@ -282,8 +295,10 @@ nada.
   `umbral_bytes` y `conservar_secciones` pasándolo de cadena a objeto. Antes compartían uno solo, y
   para el que creciera al revés la rotación archivaba lo más reciente.
 - El bloque derivado empieza a mostrar la versión del plugin y a avisar si `arnes_version` del
-  proyecto no coincide. **Actualiza `arnes_version` al terminar la migración** o el aviso quedará
-  puesto para siempre — es la Fase 5, y ahora se nota si se salta.
+  proyecto no coincide. **Actualiza `arnes_version` cuando el plan quede aplicado entero** o el
+  aviso quedará puesto para siempre — es la Fase 5, y ahora se nota si se salta. Si la migración
+  quedó **parcial**, el aviso es correcto y se mantiene hasta resolver lo pendiente: la versión
+  **no** se sube para callarlo (Fase 5).
 
 ### Hacia 1.27.0
 - Nada que migrar. Pero **si el proyecto tenía la rotación encendida sobre algún artefacto con
@@ -835,6 +850,9 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   | **`ELIMINADO`** —la sección existía en la base y tu proyecto **la borró**— | **Conflicto: preguntar, y NO reponer por tu cuenta.** Pudo borrarse a propósito. Si se repone, se repone **con tu decisión**, y si no, **dilo en el informe**: ese proyecto se queda sin la vía y sigue con el flujo anterior, que es válido |
   | **`NUEVO`** —tu base **no tenía** esa sección, porque instalaste el arnés antes de que existiera— | **Añadir.** No hay texto tuyo que conservar |
   | **`UNKNOWN`** —no se puede decidir sin adivinar— | **Terminal, como `CONFLICTO`, y no es negociable: te DETIENES y NO se aplica NADA de toda la corrida**, ni siquiera lo que salió `SAFE`. Déjalo constar y pregunta |
+
+  **Y si alguna queda en conflicto, la migración es PARCIAL: `arnes_version` conserva el valor de
+  origen y no se sube hasta resolverlo (Fase 5).**
 
   **No supongas que §6 y §9 están en tu base sólo porque están en la nuestra**, y ojo con la forma
   en que esto falla: **no basta con mirar si la sección FALTA.** Un proyecto instalado con una
