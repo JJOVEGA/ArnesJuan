@@ -240,3 +240,187 @@ comiteé.
 7. **No me pronuncio sobre la publicación** ni sobre la fusión, ni sobre qué número debe llevar.
 8. **No evalué** `REQ-017 CA-09` ni nada de `rel/via-proporcional`: mis veredictos sobre esa rama son
    **antecedente y no aprobación** de este árbol.
+
+---
+
+# Adenda — delta `404e044..8bd5e33`: versión 1.34.0 y reparación de `H-P1`
+
+*(Sección nueva. Lo fechado arriba no se reescribe: el veredicto FAVORABLE sobre `404e044` sigue
+vigente y esta adenda sólo cubre los dos commits que no había revisado.)*
+
+- **Árbol:** mismo worktree, cabeza **`8bd5e33`**, árbol limpio, sin empujar.
+- **Objeto:** `b520e3b` (versión) y `8bd5e33` (`H-P1`). **No repito la revisión del porte.**
+- **Fecha:** 2026-09-16.
+
+## Método
+
+**EJECUTADO:** las tres gates; mi propio barrido por propiedad sobre la skill y sobre las notas; la
+lectura de los proyectos finales de `UPG3`/`UPG4` en `/tmp/arnes-diag-wBF0L4` **en sólo lectura**;
+y el contraste de los `*-analisis.txt` contra `salida.jsonl`, `migracion.md.resultado` y
+`git-diff-proyecto.patch`.
+**NO OCURRIÓ:** **no relancé ninguna sesión**, no modifiqué ningún proyecto de `/tmp`, no corrí el
+banco completo en esta vuelta, no toqué la sonda de coste ni la valoro, no reparé nada, no comiteé.
+
+## Veredicto sobre `8bd5e33` (delta + versión): FAVORABLE
+
+La regla de `H-P1` **queda enunciada donde ya vivía, sin rediseñar**, y mi barrido **no deja ni una
+frase residual** que implique subir la versión al terminar con conflictos. La versión está puesta en
+los tres campos y **el cuarto sigue sin tocar**. Las evidencias `UPG3`/`UPG4` **se sostienen todas**.
+
+**Un hallazgo nuevo, `H-P3`**, de clase `instrumento` y **no bloqueante**: una laguna de
+especificación que el delta abre y no cierra.
+
+---
+
+## 1 · El delta de `H-P1`
+
+### ¿En la sede que ya lo gobernaba, sin rediseñar? — **sí, con un matiz que declaro**
+
+**No hay fases, estados ni campos nuevos:** las **cinco fases**, los **tres resultados**
+(`SAFE`/`CONFLICTO`/`UNKNOWN`) y los **cinco estados** del clasificador quedan intactos, y no se
+añade ninguna clave de manifiesto. El cambio vive en Fase 4 (1) y (4), en el párrafo de Fase 5, en
+la corrección de `Hacia 1.26.0` y en una remisión de una línea en `Hacia 1.34.0`.
+
+**Y la regla que reutiliza es la correcta, verificada en la skill estable de `v1.33.2`:** la Fase 5
+ya decía «***Sólo ahora** actualiza `arnes_version`… si se sube antes de verificar, la siguiente
+ejecución creerá que está hecho y **el proyecto quedará a medias sin que nadie lo note***». El delta
+**extiende ese mismo razonamiento** al caso «conflicto sin resolver», y se apoya en «**Continuar**
+desde la primera operación no aplicada», que también preexiste. No inventa doctrina: la aplica a un
+caso que no estaba cubierto.
+
+**El matiz, medido:** el rótulo **`PARCIAL` es nuevo en este árbol** — 0 ocurrencias en `10eac80`,
+`404e044` y `b520e3b`; **2** en `8bd5e33`. **No es un estado del clasificador**: nombra el
+**desenlace de una corrida**, y el desenlace ya estaba descrito en prosa («quedará a medias»). Lo
+declaro porque mi propio criterio de §2 era «sin promesas de la rama larga», y este término viene de
+allí: **importa el rótulo, no maquinaria** — comprobado que no arrastra fases, campos ni estados.
+
+### Mi barrido, no su lista
+
+Barrí **por propiedad** toda frase de la skill sobre **cuándo se registra la versión**:
+
+| Línea | Estado |
+|---|---|
+| 157-158 · Fase 4 (4) | condicionada: «**si el plan quedó aplicado entero**; si quedó alguna operación sin aplicar, sigue siendo la de origen» |
+| 164-177 · Fase 5 | condicionada, con el porqué desde el otro lado: con la versión subida, la Fase 1 siguiente «encuentra origen = destino, informa que está al día y **para**» |
+| 297-301 · `Hacia 1.26.0` | corregida: «**cuando el plan quede aplicado entero**… si quedó **parcial**, el aviso es correcto y se mantiene; la versión **no** se sube para callarlo» |
+| 854-855 · `Hacia 1.34.0` | remisión de una línea, coherente |
+
+**Cero frases residuales.** Y la línea 89, preexistente —«`arnes_version` lo escribe quien migra, y
+**ninguna puerta lo comprueba**»— sigue siendo cierta y **coherente** con el delta: esto es una
+**norma**, no una puerta, y el texto no pretende otra cosa.
+
+### `H-P3` (nuevo) · `plantillas-origen` en una migración PARCIAL — `instrumento`. **No bloquea.**
+
+**La laguna es real:** la skill dice (línea 38) «*al terminar, deja en `.arnes/plantillas-origen/`
+las plantillas de la **versión destino***», **sin calificar el caso parcial**, y el delta **no lo
+menciona: 0 ocurrencias**. Queda un estado que la skill estable nunca producía —porque versión y
+base se movían juntas— y que ahora es posible: **versión en origen, base en destino**. Si ocurriera,
+la Fase 1 siguiente compara contra una base que no es la del tag declarado, y la propia skill nombra
+esa consecuencia como la peor: «*acierta en el procedimiento y **se equivoca en todo el resultado***».
+
+**Pero lo medí en los proyectos finales, y NO se materializa:**
+
+| Caso | `arnes_version` | ¿la base trae la vía? | Coherencia |
+|---|---|---|---|
+| **UPG4-MODIF-1** (PARCIAL) | **1.33.2** (origen) | **no** → base en origen | **coherente** ✔ |
+| **UPG4-MODIF-2** (PARCIAL) | **1.33.2** (origen) | **no** → base en origen | **coherente** ✔ |
+| UPG4-INTACTO (COMPLETA) | 1.34.0 | **sí** → base en destino | coherente ✔ |
+| UPG3-INTACTO-1 (COMPLETA) | 1.34.0 | **sí** | coherente ✔ |
+
+**En 2 de 2 corridas parciales la base se conservó en origen**, que es el estado correcto. Así que el
+riesgo es **de especificación, no de conducta observada**, y por eso **no bloquea**.
+
+**Lo abro igual, y por un motivo concreto:** `UPG4-MODIF-2` llegó al estado correcto **razonándolo
+por su cuenta** —lo aplazó— y `UPG4-MODIF-1` **no dejó constancia** de haberlo decidido. Depender de
+que el agente lo deduzca en cada corrida es **exactamente la no determinación que `H-P1` vino a
+cerrar**, trasladada al artefacto de al lado. **Se cierra con una frase** en la línea 38 o en la
+Fase 5 —«en una migración `PARCIAL`, `plantillas-origen` **también** conserva la de origen»—, en la
+misma sede que el delta ya toca. **No lo reparo.**
+
+## 2 · Versión y notas (`b520e3b`)
+
+| Comprobación | Resultado |
+|---|---|
+| Los **tres** campos | `plugin.json` **1.34.0** · `marketplace.json` `metadata.version` **1.34.0** · `plugins[0].version` **1.34.0** |
+| **El cuarto, que NO se toca** | `arnes_version` del repositorio sigue en **1.33.0** ✔ |
+| `por decidir` en `skills/` | **0** en todo el directorio |
+| Posición de la entrada | `### Hacia 1.34.0` en la línea **753**, tras `### Hacia 1.32.1` (**632**) ✔ |
+| La **declaración negativa** del repositorio | **sigue en su sitio**, 1 ocurrencia, intacta tras los dos commits |
+| Promesas de la rama larga en las notas | barrido de doce patrones → **ninguna** |
+
+**Las tres menciones de `§14` que encontré en las notas son historiografía, no referencia viva:**
+describen la adaptación («§14 A(5) → §6») dentro de entradas del `CHANGELOG`, una de ellas
+transcribiendo mi propio veredicto. **En el producto** —`AGENTS.md`, plantilla, los cuatro agentes y
+las skills— siguen siendo **cero**, comprobado.
+
+**Las notas nombran lo que deben:** `H-P1` (9 menciones), `H-P2` (7), `SEC-089` (6), `arnes_version`
+(12) y el titular dice el alcance en una línea —«*La vía proporcional se publica **DESCRITA**, y
+ningún proyecto la estrena **activada***»—, que es exactamente el contrato de esta versión.
+
+**Nota de convergencia, no de conflicto:** las notas registran que `SEC-089` halló que **falta el
+límite (a)** en la adaptación. Eso **no contradice** mi §1(a) de arriba: yo mapeé las **diez
+obligaciones de §14 A(5)** y están las diez; el auditor mapeó **los límites**, que son otro bloque.
+Las dos revisiones son **complementarias**, y `SEC-089` es suyo, no mío.
+
+## 3 · Las evidencias `UPG3` / `UPG4` — **todas se sostienen**
+
+Contrasté los `*-analisis.txt` con las salidas, los planes y los patches. **No encontré ninguna
+afirmación de la coordinadora que no aguante.** Lo verificado por mí:
+
+- **UPG4-MODIF-1 y -2:** `migracion.md` declara **PARCIAL**; `arnes_version` **no aparece en el
+  patch** → no se escribió; el párrafo propio de §6 **conservado**. **2 de 2**, frente al 1 de 2 de
+  la tanda anterior.
+- **UPG4-INTACTO (control):** **COMPLETA**, `arnes_version → 1.34.0`, nota de §2 conservada.
+- **UPG3, 4 sesiones:** las cuatro aceptaron el destino **1.34.0**. `UPG3-INTACTO-1`: versión y base
+  al destino, y la declaración escrita es **la negativa**.
+- **UPG3-UNKNOWN:** llegó a **Fase 2**; «## 6. Glosario» **conservado** (0 supresiones); la
+  declaración escrita es **la negativa**; y la afirmación «**Sin `UNKNOWN`**» **se sostiene**, que era
+  la que podía no sostenerse: las dos ocurrencias del término en su plan son **negaciones**
+  —«*No es `UNKNOWN`: no hay nada que adivinar*» y el titular «*Sin `UNKNOWN`*»—, no clasificaciones.
+
+## 4 · Estados de `H-P1` y `H-P2`
+
+**`H-P1` — RESUELTO por el producto, con la reserva del tamaño de la muestra.** La regla está
+enunciada, mi barrido no deja frase residual, y el comportamiento se corrobora **2 de 2** en el caso
+que lo destapó más **1 de control** en el caso contrario. **La reserva que dejo escrita:** el
+defecto era *no determinismo* —una sesión sí y otra no—, y **2 de 2 no demuestra determinismo**; lo
+que sí demuestra es que **ahora hay una regla escrita que antes no existía**, y eso es lo que
+cambió. Con `n=2` no prometo más que eso.
+
+**`H-P2` — NO resuelto. Coincido con la coordinadora, y lo razono.** Que 4 de 4 aceptaran el destino
+**no acredita que la Fase 1 sea determinista**: acredita que **desapareció la contradicción del
+insumo**. Antes el porte declaraba `1.33.2` sin serlo y la Fase 1 tenía dos lecturas defendibles;
+ahora declara `1.34.0` y no miente, así que no hay nada sobre lo que dudar. **El delta no toca la
+Fase 1**, comprobado. La no determinación sigue ahí, sin insumo que la dispare. **Sigue abierto como
+conducta de la skill estable**, y no bloquea.
+
+## 5 · Hallazgos
+
+| Id | Sede | Clase | ¿De qué es defecto? | Bloquea |
+|---|---|---|---|---|
+| **H-P3** *(nuevo)* | `skills/arnes-upgrade` — qué pasa con `.arnes/plantillas-origen/` en una migración `PARCIAL` | `instrumento` | **Del delta `8bd5e33`**: desacopla versión y base sin decir qué hace con la base. La skill estable no producía ese estado | **no** |
+| `H-P1` | — | — | **RESUELTO** (ver §4) | — |
+| `H-P2` | `skills/arnes-upgrade` estable, Fase 1 | `instrumento` | conducta de la skill estable; el delta no la toca | **no** |
+
+**Quality gates: 3/3.** No cerré nada del auditor, no corregí nada y no comiteé.
+
+## 6 · Qué NO acredita esta adenda
+
+1. **No relancé ninguna sesión.** `UPG3` y `UPG4` son de la coordinadora; yo **contrasté los
+   artefactos guardados y leí los proyectos finales en sólo lectura**. Acredito que **sus
+   afirmaciones se sostienen**, no que otra corrida dé lo mismo.
+2. **`n` pequeño, y es la limitación que más pesa aquí:** 2 corridas parciales y 2 completas para
+   `H-P1`; 4 sesiones para `H-P2`. Contra un defecto cuya naturaleza era **la variabilidad**, esos
+   números **no demuestran determinismo** — sólo que la regla existe y que se siguió las veces
+   medidas.
+3. **No corrí el banco completo en esta vuelta.** Mi corrida de `404e044` (908 · 0 · 4) **no cubre
+   estos dos commits**; el delta toca `skills/` y `.claude-plugin/`, no `tests/`, pero **no lo he
+   medido sobre esta cabeza**. La autoprueba sobre `8bd5e33` la corrió la coordinadora y **yo no la
+   repetí**.
+4. **No valoro la sonda de coste** del CI sobre `b520e3b` ni la toco: fuera de mi encargo, y lo digo
+   para que no se lea mi FAVORABLE como una opinión sobre ese rojo.
+5. **`H-P3` está medido como laguna de texto**, con la conducta observada **correcta en 2 de 2**. No
+   he ejercido una **reanudación** tras una migración parcial, que es donde el estado se pagaría.
+6. **No acredita seguridad.** `SEC-089` y la firma son del auditor.
+7. **No me pronuncio sobre la publicación, la fusión ni el número de versión** — sólo sobre que los
+   tres campos están puestos de forma coherente y el cuarto no se tocó.

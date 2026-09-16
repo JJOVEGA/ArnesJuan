@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-16 · QA del delta `b520e3b..8bd5e33` y de la versión: **FAVORABLE**; `H-P1` **resuelto por el producto** (n=2); `H-P2` no resuelto; **`H-P3`** nuevo (`instrumento`, no bloquea)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester (QA acotada al delta, autorizada por el propietario; no repite la revisión del porte). Adenda en `docs/qa/porte-1.33.2-via-proporcional-veredicto.md`.
+
+**Delta de `H-P1`:** regla enunciada en la sede que ya la gobernaba (Fase 5 estable: «sólo ahora actualiza `arnes_version`…»), sin rediseño: cinco fases, tres resultados y cinco estados intactos; el rótulo «PARCIAL» es nuevo en el árbol pero nombra un desenlace que la skill ya describía, no un estado del clasificador. Barrido propio de QA: las cuatro sedes que hablan de cuándo se registra la versión quedan condicionadas; cero frases residuales. **Versión y notas:** tres campos 1.34.0, el cuarto sin tocar; `por decidir` → 0; entrada tras «Hacia 1.32.1»; declaración negativa intacta; doce patrones de la rama larga → ninguna promesa (las tres menciones de §14 son historiografía del CHANGELOG, cero en el producto).
+
+**Evidencias UPG3/UPG4 contrastadas: todas se sostienen.** `H-P1`: **RESUELTO por el producto** con reserva — 2 de 2 no demuestra determinismo; lo que demuestra es que ahora hay regla escrita donde no la había. `H-P2`: **no resuelto** — 4 de 4 aceptaron el destino porque desapareció la contradicción del insumo, no porque la Fase 1 cambiara (el delta no la toca). **`H-P3`** (`instrumento`, abierto, no bloquea): la skill dice «al terminar, deja en `plantillas-origen` las plantillas de destino» sin calificar el caso parcial y el delta no lo menciona; medido en los proyectos finales **no se materializa** (2 de 2 parciales conservaron la base en origen), pero UPG4-MODIF-2 llegó ahí razonándolo por su cuenta — la misma no determinación que `H-P1` cerró, movida al artefacto de al lado. **No se repara en esta entrega** (instrucción: sin otras reparaciones); se conserva declarado.
+
+**No acredita:** banco en esta cabeza (el 908 · 0 · 4 era sobre `404e044`); la autoprueba sobre `8bd5e33` es de la coordinadora (106 · 0), no repetida; la sonda de coste del CI no se valora; n pequeño; la reanudación tras una migración parcial no se ejerció; seguridad; publicación, fusión y número.
+
 ## [1.34.0] — 2026-09-16 · La vía proporcional se publica DESCRITA, y ningún proyecto la estrena activada
 > Origen: GitHub (commit de versión) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` (el commit de versión); el contenido que publica viene de `desarrollador` (porte `404e044`), `qa-tester` (`743a5ff`) y `auditor-seguridad` (`346b882`) · gobernado por la instalación estable **1.33.2**.
 
