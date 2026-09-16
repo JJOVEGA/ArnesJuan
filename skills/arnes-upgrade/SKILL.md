@@ -735,6 +735,125 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   sale ≠ 0, porque el documento dice dos cosas y la máquina elige una. Un informe que grita por lo
   inofensivo deja de leerse, y con él lo que sí importa.
 
+### Hacia <versión por decidir> — vía proporcional
+
+**El número de versión de esta entrada está SIN DECIDIR, y es deliberado: lo decide el propietario
+al publicar.** No lo inventes ni lo deduzcas del `arnes_version` que tengas delante; si ejecutas
+esta migración antes de que se haya decidido, dilo así en el informe y en el `CHANGELOG.md` del
+proyecto.
+
+- **`AGENTS.md` §6 y §9, y los cuatro agentes: la VÍA PROPORCIONAL de reparación.** §6 gana una tabla
+  que elige la vía **por el efecto del cambio** —documentación sin cambio de obligaciones · **reparación
+  con causa, alcance y contrato claros: desarrollador → QA, sin comisión de analista** · cambio cuyo efecto alcanza **un criterio de `critico` del proyecto o una protección del arnés** (ejemplos declaradamente no exhaustivos): **+ seguridad** ·
+  capacidad nueva o cambio de contrato: las cuatro fases—, y §9 deja de fijar en el analista **quién
+  transcribe** el write-back.
+  **LO PRIMERO, porque decide todo lo demás: instalar esta sección NO la autoriza.** La migración
+  te trae §6 y §9 **descritas**; la vía sólo rige donde el **propietario del proyecto la declara**,
+  y esa declaración es **un acto suyo**, no una consecuencia de que el texto llegue. **Ninguna fila
+  del merge —tampoco `INTACTO` ni `NUEVO`— escribe esa autorización**: lo que se instala es la
+  descripción y la **línea negativa**, que es el valor por defecto. Para declararla, la sede es
+  **`AGENTS.md` §6, «La disciplina de la declaración»**, y la escribe el propietario, no esta skill.
+  **Hasta que la declares, tu proyecto sigue exactamente con el procedimiento anterior:** analista →
+  desarrollador → QA → seguridad, y **ningún agente puede omitir al analista**: migrar sin declarar
+  **no cambia quién interviene en cada REQ**. Lo que sí cambia, declares o no, es el **texto** de §6
+  y §9 y el de los agentes, que pasan a describir la vía y a condicionarla a esa declaración.
+  **Las dos líneas —la afirmativa y la negativa— y toda la disciplina de redacción salen de UNA
+  sede, y aquí no se copian ni se parafrasean: `AGENTS.md` §6, «La disciplina de la declaración».**
+  Escríbelas **exactamente como manda esa sede**: de ahí salen las dos redacciones literales, la
+  prohibición de **inventar una tercera**, la de **dejar la declaración comentada** —un comentario
+  sigue siendo texto, y una declaración apagada no es una declaración— y la regla de que una
+  **negación**, una **postergación** o una **decisión pendiente** **no autorizan aunque contengan la
+  frase entera**. **No escribas esa línea «en tus palabras»:** es el único texto cuya **redacción
+  es** el control.
+  **Cómo la declaras, si la quieres:** sustituye la línea negativa por la **afirmativa** de esa
+  sede, con tu nombre y la fecha. Y si no la quieres, **deja la línea como está**: no hay nada que
+  borrar. Ni la **tabla de vías**, ni la descripción, ni la propia comprobación de §6 son evidencia
+  de autorización — todas **llegan instaladas**, y deducir de ellas el permiso es exactamente el
+  fallo que esto evita.
+  **Y define «contrato claro»**: incluye que `Rigor:`, `Sensible a seguridad:` y las revisiones
+  exigidas sean **coherentes con el efecto** de la reparación; una clasificación insuficiente o
+  contradictoria devuelve al analista **sólo esa decisión** antes de continuar, sin repetir el
+  análisis ni dar facultades nuevas a otros roles.
+  **Y los agentes cambian con ella, porque la política también los gobierna:** el `desarrollador`
+  recibe el write-back de la vía de reparación **en la misma entrega**; el `qa-tester` deja de leer
+  que el write-back es siempre del analista y conserva su obligación de **no firmar sin él**; el
+  `analista-requerimientos` mantiene el suyo **siempre que quede una decisión**; y el disparador del
+  `auditor-seguridad` se enuncia **sin depender de quién lo despache**.
+  **Qué NO cambia:** el **write-back sigue siendo obligatorio** —cambia quién lo escribe, no si se
+  escribe—; **el rigor no se rebaja**, elegir vía **no** reclasifica un REQ y subirlo o bajarlo sigue
+  su procedimiento de siempre (lo fija el analista, el auditor puede subirlo, nadie lo baja sin su
+  firma, y `Sensible a seguridad: sí` impone `critico` como suelo); **no se omiten pruebas
+  necesarias**; **los contadores no se reinician**; y **seguridad sigue sin firmar lo que QA no ha
+  validado**. **Ningún hook cambia**, y tampoco `.arnes/config.json` — y por eso una errata que viva
+  dentro de `codigo_app.globs` **la sigue denegando `guard-codigo`** por mucho que sea documental:
+  elegir vía decide quién revisa, no quién puede escribir.
+
+  **Cómo llega esto a tu proyecto, por el estado que devuelva el merge —los cinco, sin declarar
+  ninguno imposible—:**
+
+  **Primero, la separación sin la cual esta migración se detiene entera: los agentes NO se migran.**
+  Los **cuatro agentes los provee el plugin** (`.claude/agents/`): tu proyecto **no tiene copia
+  propia** que clasificar, y `arnes-init` **no** deja base suya en `.arnes/plantillas-origen/`,
+  porque ahí sólo van los `.tpl` y los agentes no lo son. **No los clasifiques, no los busques y no
+  los pongas en el plan:** una clasificación sin base recuperable es `UNKNOWN`, y un `UNKNOWN`
+  **detiene la corrida completa** — incluidas `§6` y `§9`, que sí son migrables. Los agentes llegan
+  corregidos **al actualizar el plugin**, no por esta migración; **dilo en el informe** y sigue.
+  **Y si guardaste una copia modificada de alguna definición de agente en tu proyecto, no se pierde
+  ni se pisa:** esta migración **no la toca, no la sobrescribe y no la actualiza** — se queda
+  exactamente como la dejaste. Lo que **no** va a pasar es que el merge te avise de ella, así que
+  compararla con la definición nueva del plugin queda **a tu cargo**.
+
+  **Lo que SÍ se migra son las secciones `§6` y `§9` de tu `AGENTS.md`**, que se copiaron de la
+  plantilla a tu proyecto y por eso tienen base con la que comparar. Y **`templates/AGENTS.md.tpl`
+  y `templates/requirements-README.md.tpl`** también tienen base y entran en el merge: si los
+  personalizaste saldrán `MODIFICADO`, y eso es **conflicto** — tu texto **no se toca** y la
+  decisión es tuya.
+
+  **Y antes de clasificar ninguna, identifícala por CONTENIDO Y TÍTULO, nunca sólo por el número.**
+  Es la misma regla terminal que ya rige en «Tres resultados, nunca dos» —*si una sección no se
+  localiza con seguridad, el estado es `UNKNOWN` y paras*—, aplicada aquí a una forma concreta de no
+  localizarla: **un mismo `## N.` ha significado cosas distintas en distintas versiones del arnés**,
+  así que el número **no identifica** una sección, sólo la numera. Comprueba que el título y el
+  contenido del `## N.` de tu proyecto y el del `## N.` de la base **son la misma sección**; **si no
+  lo son, o si no puedes afirmarlo sin adivinar, es `UNKNOWN`**: la migración **se detiene, no se
+  aplica nada** —tampoco lo que salió `SAFE`, como manda la Fase 2— **y el documento se conserva
+  intacto**. Esto **manda sobre la tabla de abajo**: sin identificación firme no se entra a
+  clasificar.
+
+  > **Por qué, enunciado por propiedad y no como lista de versiones** (una lista de tags envejece; la
+  > propiedad no): **el arnés ha renumerado y retitulado secciones de `AGENTS.md` a lo largo de su
+  > historia**, y un proyecto instalado hace tiempo conserva la numeración de **su** versión de
+  > origen. Por eso el `## N.` de una base antigua puede llevar **otro título y otro contenido** que
+  > el `## N.` de hoy. **Caso real, como ejemplo y no como definición:** `## 9.` fue «Convenciones de
+  > trabajo» antes de ser «Cambios de requerimientos (versionado y deriva)». Comparar por número dos
+  > secciones que sólo comparten el número las declara `INTACTO` **—la única fila que actúa sin
+  > preguntar—** y escribe la doctrina del write-back dentro de una sección que trata de otra cosa,
+  > **en silencio**, en el archivo de gobernanza de tu proyecto. Identificar por título y contenido
+  > da `NUEVO` —«Añadir»—, que es lo correcto.
+
+  Hecha esa identificación, y **sólo** entonces:
+
+  | Estado de `§6` / `§9` | Qué haces |
+  |---|---|
+  | **`INTACTO`** | Aplicar el contenido nuevo **sin preguntar** |
+  | **`MODIFICADO`** | **Conflicto: preguntar, y NO tocar la sección.** Tu texto **se queda como está** y el conflicto **se lista para el humano**; no escribas nada en ella. Cuando preguntes, **propón** conservar tu texto añadiendo encima lo nuevo — pero **aplicarlo es decisión tuya, no de la migración**. Si tu personalización fijaba quién hace el write-back, **es justo lo que este cambio toca** |
+  | **`ELIMINADO`** —la sección existía en la base y tu proyecto **la borró**— | **Conflicto: preguntar, y NO reponer por tu cuenta.** Pudo borrarse a propósito. Si se repone, se repone **con tu decisión**, y si no, **dilo en el informe**: ese proyecto se queda sin la vía y sigue con el flujo anterior, que es válido |
+  | **`NUEVO`** —tu base **no tenía** esa sección, porque instalaste el arnés antes de que existiera— | **Añadir.** No hay texto tuyo que conservar |
+  | **`UNKNOWN`** —no se puede decidir sin adivinar— | **Terminal, como `CONFLICTO`, y no es negociable: te DETIENES y NO se aplica NADA de toda la corrida**, ni siquiera lo que salió `SAFE`. Déjalo constar y pregunta |
+
+  **No supongas que §6 y §9 están en tu base sólo porque están en la nuestra**, y ojo con la forma
+  en que esto falla: **no basta con mirar si la sección FALTA.** Un proyecto instalado con una
+  versión anterior puede **no tener** la sección —y entonces es **`NUEVO`**, no `INTACTO`—, pero
+  puede también **tener ese mismo número ocupado por otra sección distinta**, y ése es el caso que
+  engaña, porque la sección **está presente** y la comprobación de ausencia **no dispara**. Las dos
+  situaciones se resuelven con la identificación de arriba: si el `## N.` de la base no es la misma
+  sección que el `## N.` de hoy, **no es `INTACTO`** — es `NUEVO` si la sección de hoy no existe en
+  tu proyecto bajo ningún número, y **`UNKNOWN`** si no puedes decidirlo sin adivinar. Clasifica
+  **cada una por separado**: pueden salir en estados distintos.
+
+  **Y un aviso entero:** esta vía **reduce despachos, no controles**. Si prefieres seguir con las
+  cuatro fases siempre, **no migres estas secciones**: conservar tu texto es una respuesta válida.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

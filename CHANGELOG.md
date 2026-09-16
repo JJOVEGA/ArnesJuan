@@ -2,6 +2,49 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-16 · Porte MÍNIMO de la vía proporcional de reparación sobre `v1.33.2` — sin versión, sin mecanismo, y este repositorio declara la NEGATIVA
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador`.
+> Rama `porte/via-proporcional-1.33.2`, desde el tag `v1.33.2` (`10eac80`). **No fusionado, no publicado, sin tag.**
+
+Porte **por comportamiento**, no por copia de archivos, de la política que ya se diseñó en la
+integración `5f07419` de `base/via-proporcional`. **No viaja nada del desarrollo de la rama larga**:
+ni referencias a mecanismos que `v1.33.2` no tiene, ni identificadores de hallazgos que su registro
+de seguridad no contiene, ni la sección `## 14.` —que en `v1.33.2` **no existe**—.
+
+**Qué entra.** `AGENTS.md` §6 gana la tabla de vías (4 filas, la 3ª enunciada **por propiedad** con
+ejemplos declaradamente no exhaustivos, y «si casa con más de una fila manda la **más
+restrictiva**»), la definición de «contrato claro» —que incluye la **coherencia** de `Rigor:`,
+`Sensible a seguridad:` y revisiones exigidas con el **efecto**—, la **sede normativa única** de la
+declaración con sus **dos líneas literales**, la comprobación previa al despacho de la coordinadora
+y los tres límites no medidos. §9 deja de fijar en el analista **quién transcribe** el write-back.
+Mismo bloque en `templates/AGENTS.md.tpl`, **gemelo byte a byte salvo una línea**: ahí va el
+placeholder `{{DECLARACION_VIA_PROPORCIONAL}}`. Los cuatro `agents/*.md`, `skills/arnes-init`
+(pregunta la autorización; **sólo un «sí» explícito** escribe la afirmativa), `skills/arnes-upgrade`
+(entrada de migración con **título de versión provisional**, que identifica la sección **por título
+y contenido** y en la que **ninguna fila del merge escribe la autorización**), `skills/arnes-close`
+y `templates/requirements-README.md.tpl`.
+
+**La llave es una sola y no la da el andamiaje.** Los agentes traen la **capacidad**; el `AGENTS.md`
+**del proyecto** da el **permiso**. La ausencia de declaración **no habilita nada**, y la tabla, la
+descripción y el propio apartado de comprobación **llegan instalados**: tomarlos por consentimiento
+es deducir el permiso del texto que lo describe.
+
+**Este repositorio escribe la NEGATIVA.** `AGENTS.md` de ArnesJuan declara «Este proyecto todavía no
+ha declarado esa autorización», así que **aquí sigue rigiendo analista → desarrollador → QA →
+seguridad** y la tabla queda descrita pero inerte. Declararla es una decisión del propietario, no de
+esta comisión.
+
+**Qué NO se toca, y es la condición del encargo.** `hooks/`, `tools/`, `.arnes/config.json`,
+`hooks.json`, `.claude-plugin/*`, `.github/` y `tests/`: **cero cambios**, comprobado con
+`git diff --name-only`. **Ninguna versión se mueve** (`plugin.json`, `marketplace.json`,
+`arnes_version`). **No se añade ninguna sección al banco.**
+
+**Verificación ejecutada.** Quality gates 3/3 en verde. Banco completo de `v1.33.2`
+(`tests/escenarios/hooks/run.sh`) en local, **rc 0**, **0 FAIL**, cuadre **exacto** contra los 912
+casos declarados en las 51 secciones (dos corridas: 906 PASS/6 SKIP y 907 PASS/5 SKIP — la
+diferencia es la sonda de reloj de `REQ-017 CA-08 (ii)`, que converge o no según la carga; ninguna
+corrida produjo un FAIL). `autoprueba-corredor.sh`: **106 PASS, 0 FAIL**.
+
 ## [GitHub] — 2026-09-11 · Versión 1.33.1 → **1.33.2** en los tres campos, y el cuarto sitio que NO se toca
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador`.
 
