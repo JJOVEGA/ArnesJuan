@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-16 · Validación acotada del porte `404e044` consolidada: QA FAVORABLE, seguridad acotada aprobada (R-031 del porte, SEC-089 instrumento), once ensayos reales
+`porte-1.33.2/README.md` § «Resultado consolidado». Porte en `346b882` local; pendiente el número de versión (detectado por la skill estable en 2 de 6 sesiones). Sin publicación ni cambios en instalaciones.
+
 ## 2026-09-16 · Once ensayos reales sobre el porte `404e044` (agentes: SIN-CONS-P, CON-AFIRM-P; instalación: INIT-P/P2/P3; actualización: UPG-*-P y UPG2-* con fixture limpio)
 `porte-1.33.2/ensayos/`: README con resultados frente a lo esperado, lanzadores, salidas completas por caso, análisis y costes reportados. Hallazgo transversal: el marcador de versión del porte (declara 1.33.2 con plantillas distintas del tag) hace que la skill estable rehúse el destino en 2 de 6 sesiones. Sin QA ni seguridad todavía.
 

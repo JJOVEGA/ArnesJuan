@@ -28,3 +28,21 @@ El desarrollador reportó además: gates 3/3; banco completo de `v1.33.2` dos ve
 
 ## Qué NO acredita
 Sin QA ni seguridad. Nada mecánico distingue la declaración afirmativa de la negativa (límite declarado en la propia sede). La migración de `arnes-upgrade` no se ejecutó contra ningún proyecto. No se ha hecho ningún despacho real con agentes sobre el porte (`--plugin-dir`): la evidencia funcional existente (CON-AFIRM, SIN-CONS) es de `6212e87`, otro árbol.
+
+---
+
+## Resultado consolidado de la validación acotada de `404e044` (2026-09-16)
+
+| Pieza | Resultado | Sede |
+|---|---|---|
+| Ensayos con agentes reales (CON-AFIRM-P, SIN-CONS-P) | ambos coinciden con lo esperado: con la negativa el analista va primero y el desarrollador no edita el REQ (0 ediciones); con la afirmativa desarrollador → QA sin analista y write-back del desarrollador en la misma entrega (6 ediciones, primer editor) | `ensayos/README.md` §A |
+| Instalación (`/arnes-init`) | sin respuestas: la skill estable se detiene en la entrevista (no crea nada); con respuestas y sin «sí»: **negativa** literal; con «sí» explícito: **afirmativa** literal con nombre y fecha; 0 placeholders | `ensayos/README.md` §B |
+| Actualización (`/arnes-upgrade`, origen 1.33.1) | personalizaciones conservadas (§2 nota; §6 propia → CONFLICTO no resuelto); ninguna de 6 sesiones escribió la afirmativa; §6 INTACTA recibe el bloque con la negativa. **2 de 6 sesiones rehusaron el destino** por el marcador de versión (plugin declara 1.33.2 con plantillas distintas del tag) | `ensayos/README.md` §C |
+| QA (porte `743a5ff`) | **FAVORABLE**; adaptaciones §14→§6 y ancla `UNKNOWN` **conformes**; barrido a cero; gemelas exactas; autoalojamiento sin contradicción; banco de `v1.33.2` corrido por QA: **908 · 0 · 4 = 912**, autoprueba **106 · 0**, gates 3/3. Hallazgos `H-P1`, `H-P2` (skill estable) | `docs/qa/porte-1.33.2-via-proporcional-veredicto.md` del porte |
+| Seguridad (porte `346b882`) | **`Seguridad: aprobado` acotada al porte** (R-031 del registro de `v1.33.2`); identidad por `sha` de los agentes y de §13; cinco diferencias sin pérdida de protección; **`SEC-089`** `instrumento` (límite 1 incorpora sólo una de dos causas); H-P1/H-P2 no bloquean | `docs/seguridad/registro-seguridad.md` § R-031 del porte |
+
+**Estado del porte:** `porte/via-proporcional-1.33.2` @ `346b882` (= `404e044` + informes), **local, nunca empujada**. `main`, `5f07419`, `v1.33.2` e instalación estable sin cambios.
+
+**Pendiente antes de entregar (decisiones del propietario):** (1) **el número de versión** — el porte declara `1.33.2` y la skill estable lo detecta como destino inconsistente en 2 de 6 sesiones; con el número decidido, el título «Hacia <versión por decidir>» se fija y `H-P2` desaparece; (2) la declaración de este repositorio (hoy **negativa**); (3) qué hacer con `SEC-089`, `H-P1` y la discrepancia preexistente `arnes_version 1.33.0` / `plugin.json 1.33.2` (limitaciones no bloqueantes, declaradas); (4) CI sobre el porte (nunca corrido en `hooks-en-linux`; el banco local de QA es la evidencia disponible).
+
+**Qué no acredita el conjunto:** n=1 por caso; la Fase 2 de `/arnes-upgrade` con `UNKNOWN` no quedó ejercida; fila 3 por vía afirmativa, copia propia de agente y `arnes-init` interactivo sin ejercer; ninguna corrida de CI; ninguna publicación.
