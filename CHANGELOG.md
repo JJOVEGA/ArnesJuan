@@ -2,6 +2,31 @@
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-16 · QA conjunta sobre `81f89bf`: **favorable**; `SEC-102` remediado desde QA; `REQ-014 CA-18` **cumplido**; ningún hallazgo nuevo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester (verificación conjunta autorizada: conservación de cobertura, ejecución de las dos secciones y CA-18). Informe: `docs/qa/1.34.0-via-proporcional-coherencia-veredicto.md` § «Verificación conjunta de `81f89bf`».
+
+**Cobertura, medida por QA:** 14 de 14 muerden (7 regresiones de `I-5`, `v2`, tres versiones legítimas, las tres formas de
+`SEC-102`); 7 de 7 negativos dan `0 0` (fechas ISO, «bastantes»/«restantes»/«instantes», número de 3 cifras, frase protectora).
+Contrastado el borde derecho contra sí mismo: no compraba ningún falso positivo medido y costaba tres verdaderos; las
+terminaciones aguantan solas («previsto», «previsión», «heredades» no muerden). **Observación medida, no elevada a hallazgo:**
+«en la **antesala** de la decisión, no nota nada» **muerde sin borde derecho** — falso positivo nuevo, simétrico del de los
+sufijos, dirección hacia el rojo, no observado en el apartado; la frase del commit es cierta por el calificativo «medido».
+«Anteriormente» con mayúscula escapa con y sin borde: preexistente.
+
+**Partición sin pérdida:** 30 identificadores antes y después, 29 idénticos byte a byte; el 30.º (`QA-024-01`) difiere sólo por
+la rama `SKIP` que tomó la corrida de contraste en scratch, resuelto por lectura. En crudo faltan **cinco** líneas del original
+(dos semánticas + dos declaraciones + cabecera), no dos. CA-19: cero `source`. H-04: nombre y modo 100644.
+
+**CA-18:** pisos recorridos término a término — `40/3` = 44 + 34 + 12 = 90; `40/8` = 27 + 20 + 82 = 129 — cada término es lo
+que dice ser, y `40/8` declara el piso **a la baja**. Autoprueba entera **106 PASS · 0 FAIL**, filas `301/90/400` y
+`388/129/400`. Holgura desigual real (99 frente a 12); `46-…-2` está en 400 con techo 400 y los que superan 400 lo hacen por
+`piso × 1,25`: CA-18 pasa por la regla, no por excepción. Cuatro corridas por ruta (`40/3` 25 = 25, `40/8` 5 = 5, gawk y mawk),
+0 avisos `escape sequence`. Gates 3/3. 0 archivos de producto tocados.
+
+**No acredita:** banco completo y cuadre 1294 (CI), el 30.º identificador sin reserva, exhaustividad de la falsación (33 sondas),
+que exista hoy texto que active «antesala», nada anterior a `38858d2`, seguridad (`SEC-102` lo cierra el auditor), fusión ni
+publicación.
+
 ## [Interno] — 2026-09-16 · `REQ-014 CA-18`: `40/3` partida en dos (629 → **301** + **388**, techo 400); la puerta de la autoprueba vuelve a **106 PASS · 0 FAIL**
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: desarrollador. Partición autorizada por el propietario. Sedes: `tests/escenarios/hooks/secciones/40-ausencia-que-abre-3-los-textos-heredados.sh`, `tests/escenarios/hooks/secciones/40-ausencia-que-abre-8-el-reconocedor-de-promesas.sh` (nuevo), `tests/escenarios/hooks/README.md`, `requirements/REQ-024.md`.
 
