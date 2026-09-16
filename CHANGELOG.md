@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-16 · Seguridad R-031 (registro de `v1.33.2`): **`Seguridad: aprobado` acotada al porte `404e044`**; **`SEC-089`** nuevo (`instrumento`, no bloquea)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad (revisión acotada por el propietario a las diferencias relevantes respecto de la política ya auditada en `5f07419`; R-037…R-040 de la rama larga son antecedentes, no aprobación). Sede: `docs/seguridad/registro-seguridad.md` § R-031 — numeración de **este** archivo (llegaba a R-030 / SEC-088).
+
+**Frontera:** `10eac80..404e044` → 0 rutas de mecanismo; gates 3/3. **Identidad acreditada por `sha` de blob:** los cuatro agentes, `templates/requirements-README.md.tpl` y `arnes-close` son idénticos a la política auditada; la disciplina de la declaración es idéntica salvo la cita retirada; **§13 del porte es idéntica a la de `v1.33.2`** (no se importó la §13 de la línea 1.34.0, que describe guardas que el destino no tiene) y las tres promesas de mecanismo que hace (`guard-codigo`, `guard-completado`, suelo de rigor) existen en `v1.33.2`.
+
+**Las cinco diferencias:** (1) §14 A(5) → §6: diez obligaciones presentes; el límite (b) incorporado por contenido; **falta el límite (a) → `SEC-089`**. (2) Ancla de `UNKNOWN` re-anclada a sedes que existen en la skill del destino; mismo cierre fail-closed; **la Fase 2 con `UNKNOWN` no quedó ejercida** (UPG2-UNKNOWN paró en Fase 1). (3) Identificadores `SEC-099`/`R-036` sustituidos por su contenido: la propiedad se conserva entera. (4) Entrada de `arnes-upgrade`: sin promesas nuevas; viajan la propiedad de `SEC-098` y la reparación de `SEC-099`; corroborado en seis sesiones (ninguna escribió la afirmativa). (5) El «sí» por escrito en INIT-P3 **no es un vector nuevo**: la autorización nunca estuvo anclada en más que «quien conduce la sesión»; el control existe para que el andamiaje no conceda el permiso por defecto, y los dos lados están ejercidos.
+
+**`SEC-089`** — el límite 1 de la comprobación enumera una causa de «no la hace nadie» donde hay dos: incorpora la (b) (documento congelado) y no la (a) («una herramienta cuya vía no está verificada no cuenta como cubierta»); pesa más porque `v1.33.2` ya afirma que lo leen Codex y Cursor sin el matiz de verificación. No bloquea: no afirma nada falso y el desenlace exige dos condiciones simultáneas. **H-P1** (fail-open de la contabilidad de la migración, no de la autorización) y **H-P2** (no determinación con dos desenlaces seguros): de la skill estable, no bloquean. **Autoalojamiento:** sin contradicción; sería latente si este repo escribiera la afirmativa, y el propio porte la resuelve hacia el analista.
+
+**No acredita:** la política (auditada en el otro árbol), n=1 en los ensayos, la Fase 2 con `UNKNOWN`, la fila 3 por vía afirmativa, copia propia de agente, `arnes-init` interactivo, el marcador de versión (pendiente; `H-P2` es su consecuencia), la discrepancia `arnes_version 1.33.0`/`plugin.json 1.33.2` preexistente, el banco; **no se pronuncia sobre fusión ni publicación**.
+
 ## [Interno] — 2026-09-16 · QA del porte `404e044`: **FAVORABLE**; las dos adaptaciones (§14 → §6; ancla de `UNKNOWN`) **conformes**; dos hallazgos sobre la skill estable, ninguno contra el porte
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: qa-tester (QA acotada autorizada por el propietario). Informe: `docs/qa/porte-1.33.2-via-proporcional-veredicto.md`.
 
