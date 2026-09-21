@@ -2,6 +2,9 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-21 · REQ-025 → `en-revisión` (entrega 1 aplicada, vuelta 1 de 3); resultado esperado de S1 del ensayo corregido a la transición exacta
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. `docs/arnes/req-025-ensayo-coordinacion.md` S1: «aprobar/cerrar» → «marcar cualquier REQ como `completado`» (precisión (a) del propietario), corregido ANTES de ejecutar el ensayo, a raíz del aviso del desarrollador en su entrega; misma corrección en la copia de la rama de evidencia. `Estado:` de REQ-025 movido a `en-revisión` por la coordinadora (el desarrollador no tocó el REQ por instrucción); ningún veredicto escrito. Sin push.
+
 ## [GitHub] — 2026-09-21 · REQ-025 **entrega 1 APLICADA**: la coordinación orientada a entregas gana **una sola sede** en `AGENTS.md` §6, y los dos párrafos que prometían más que su mecanismo quedan reescritos en su **promesa completa**, nombrando la **transición exacta** que la cola impide
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` · rama `feat/req-025-coordinacion-entregas` (desde `main` = `v1.34.0`). Archivos del cambio: `AGENTS.md`, `templates/AGENTS.md.tpl`, `PENDING_APPROVAL.md`, `templates/PENDING_APPROVAL.md.tpl`, `skills/arnes-upgrade/SKILL.md`, `agents/qa-tester.md`, `agents/auditor-seguridad.md`, `agents/desarrollador.md`, `docs/decisions/ADR-008-coordinacion-orientada-a-entregas-y-bloqueos-con-alcance.md` (nuevo), las dos notas de histórico en `docs/arnes/req-025-entrega1.patch` y `docs/arnes/req-025-entrega1-preparacion.md`, y esta entrada.
 
