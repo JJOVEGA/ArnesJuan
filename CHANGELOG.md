@@ -2,6 +2,9 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-21 · REQ-025 → `en-revisión` (vuelta 2 de 3 aplicada en `e566739`); resultado esperado de S1 del ensayo alineado con la opción B (clase «cerrar»)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. `docs/arnes/req-025-ensayo-coordinacion.md` S1 nombra la clase «cerrar» y su transición exacta (decisión del propietario), antes de ejecutar el ensayo; misma corrección en la copia de la evidencia. `Estado:` movido por la coordinadora; ningún veredicto escrito. Sin push.
+
 ## [Interno] — 2026-09-21 · **REQ-025 entrega 1, reparación de la VUELTA 2 de 3:** las **cinco clases de acción** llegan a la sede y a su gemela, las **nueve copias de `agents/` pasan a referencias**, la plantilla deja de arrastrar contenido de este repositorio y **ADR-008** recibe su adenda
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador`. Rama `feat/req-025-coordinacion-entregas`, worktree `ArnesJuan-req025`, sobre `faf0db7`. **Vuelta 2 de 3** del ciclo dev↔QA de esta entrega: el contador **no se reinicia** (`AGENTS.md` §6, «Loop de error»). Sin push.
 >
