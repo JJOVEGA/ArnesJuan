@@ -2,6 +2,50 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-21 · REQ-025 se **parte**: conserva la entrega 1 y pasa a `pendiente`; **REQ-028** se lleva la herramienta, la procedencia del `CHANGELOG.md` y las cuatro decisiones pendientes — **sin cerrar ninguna**
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` · rama `feat/req-025-coordinacion-entregas` (desde `main` = `v1.34.0`). Archivos del cambio: `requirements/REQ-025.md`, `requirements/REQ-028.md` (nuevo), las dos filas de `requirements/README.md` y esta entrada.
+
+**Causa: tres decisiones del propietario del 2026-09-21**, literales en lo esencial. **(c)** «REQ-025
+conserva la entrega de coordinación definida. Un REQ nuevo conserva las capacidades futuras,
+criterios y preguntas pendientes. Deja trazabilidad de origen y destino, sin perder obligaciones ni
+duplicar criterios. **No presupongas que todos los criterios enumerados son independientes:**
+cualquier dependencia necesaria para la entrega 1 permanece en ella. No se cierra ni implementa por
+esta partición el trabajo diferido.» **(a)** «Sustituye "aprobar/cerrar" por la **transición exacta
+que bloquea `guard-completado`: marcar un REQ como `completado`**. Distingue ese bloqueo mecánico de
+otras aprobaciones o restricciones normativas.» **(b)** «La coordinadora decide qué reparación
+encargar, **sin retirar ni neutralizar veredictos**… deben resolver esa discrepancia o escalarla; **no
+basta con cambiar su ubicación para permitir el cierre**. Una reparación del mismo defecto o entrega
+**conserva su contador**.»
+
+**El reparto se hizo por dependencia, criterio a criterio, y tres criterios quedaron partidos.** En
+REQ-025 se quedan **CA-01, CA-02, CA-09, CA-14 y CA-15** (todos son texto de la sede escrita, que es
+la entrega), la mitad de **CA-10** que se anota con las columnas que el libro **ya tiene** (reglas 5
+y 6 y la derivación del estado en el encargo), las condiciones **3, 4 y 5** de **CA-11** (el ensayo
+S1…S4 y el orden de firma) y las **puertas comunes** de **CA-13**. Viajan a **REQ-028**, íntegros y
+**con su identificador original**, **CA-03, CA-04, CA-05, CA-06, CA-07, CA-08 y CA-12**, más las
+mitades de **CA-10** (columnas de instantes), **CA-11** (condiciones 1 y 2 y el residual medido sobre
+los instantes) y **CA-13** (el modo `100755`). No se renumeró nada: una cita anterior a «REQ-025
+CA-06» sigue señalando el mismo texto, ahora en el otro archivo. **Ninguna de las cuatro decisiones
+pendientes se cerró** — B-1…B-4 viajaron abiertas y mantienen a REQ-028 en `borrador`.
+
+**Las dos precisiones que corrigen el contrato.** Donde el REQ declaraba que la cola de
+`PENDING_APPROVAL.md` impide «aprobar/cerrar» —una barra que mezclaba el bloqueo mecánico con las
+aprobaciones humanas de `AGENTS.md` §6—, ahora declara la **transición exacta**: **marcar un REQ como
+`completado`**, con sus tres fronteras escritas (no impide implementar ni probar; no es ninguna
+aprobación humana normativa; no absorbe el orden de fases, el veto ni el tope de 3 vueltas). Y
+**CA-14** gana que la clasificación de la coordinadora **no toca ningún veredicto**, que una
+discrepancia QA/seguridad ↔ coordinadora **se resuelve o se escala** y que **mover el hallazgo de
+sitio no permite cerrar**, y que el **contador de vueltas** es del defecto o de la entrega y **no se
+elude abriendo un REQ nuevo**.
+
+**Estado y lo que esto NO acredita.** REQ-025 pasa de `borrador` a **`pendiente`**: sin preguntas
+abiertas, sin conflictos y con todos sus criterios aplicables a lo que se va a construir. **No** se
+tocaron `QA:`, `Seguridad:`, `Rigor:` ni `Sensible a seguridad:` de ningún REQ, no se implementó ni
+se cerró nada, y **sigue pendiente el ADR** del cambio de texto normativo de `AGENTS.md` §6, que
+ahora se contrata en **CA-15 punto 7**. El **parche** `docs/arnes/req-025-entrega1.patch` quedó
+**desfasado** por estas precisiones: usa la forma «aprobar/cerrar» y no cubre las dos sedes de
+`PENDING_APPROVAL`; hay que regenerarlo antes de aplicarlo.
+
 ## [GitHub] — 2026-09-21 · REQ-025 entrega 1: el **diff mínimo** queda preparado como **parche sin aplicar**, porque dos de sus párrafos cambian texto normativo vigente y eso lo decide el propietario
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` · rama `feat/req-025-coordinacion-entregas` (desde `main` = `v1.34.0`). Archivos del cambio: `docs/arnes/req-025-entrega1.patch`, `docs/arnes/req-025-entrega1-preparacion.md` y esta entrada.
 
