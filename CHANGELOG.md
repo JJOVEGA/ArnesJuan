@@ -2,6 +2,9 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-21 · REQ-025: la opción A se retira de la cola por consumida; quedan B y C para el propietario; punto de retomar actualizado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Tras la acreditación R-3b de QA, la entrada pendiente de `PENDING_APPROVAL.md` deja de ofrecer la opción A (autorizada y ejecutada como `ENS-S4-P`, resultado no observado, sin repetición por instrucción del propietario) y recoge el forzador que QA propone para B; recomendación B, decisión del propietario. `docs/ESTADO.md` «RETOMAR AQUÍ» refleja QA-025-05 cerrado, QA-025-08 abierto como decisión, y las observaciones OBS-G y OBS-H registradas con dueño y sin trabajo abierto. Evidencia consolidada en la rama de evidencia (`req-025/README.md`, `req-025/ensayos/ENS-S4-P/`). Sin despachos nuevos, sin fusión ni publicación; entrega 1b y REQ-028 sin arrancar.
+
 ## [Interno] — 2026-09-21 · **Observación acotada de S4: NO OBSERVADA, y veredicto de la entrega 1 de REQ-025** — `QA-025-05` cierra con el CI verde (**CA-13 satisfecho**) y queda **un** hallazgo, que ya no es trabajo sino decisión del propietario
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester`. Comisión autorizada por el propietario como **ampliación excepcional y acotada** del presupuesto de validación («sólo S4 y su revisión por QA»): **no gasta vuelta**, el contador sigue 3 de 3 agotado. Sesión `ENS-S4-P` sobre el candidato `9f908d9`. Cabecera: `QA: con-hallazgos (R-3b, 2026-09-21, sobre 9f908d9)`; `Hallazgos abiertos:` pasa de **dos** a **uno**. Sede: `docs/qa/REQ-025.md`, §«Observación acotada de S4 y veredicto de la entrega 1 — R-3b». Sin comitear, sin reparar, sin relanzar.
 

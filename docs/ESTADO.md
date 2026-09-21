@@ -17,16 +17,24 @@
 `completado`); implementar y probar no—, tras agotar las 3 vueltas con `QA: con-hallazgos` (R-3): lo encargado a
 las tres vueltas está reparado (8 de 9 hallazgos de QA cerrados); queda **QA-025-08** (`instrumento`): la conducta
 de la coordinadora ante un **hallazgo de QA** no fue observada en el ensayo S1…S4 (S4 no se disparó; el bloqueo se
-conservó por el veto de seguridad, vía que esta entrega no modifica), y **QA-025-05** (`instrumento`, FAIL local de
-tiempo del banco, independiente, espera el CI). **Decisión del propietario encolada** en `PENDING_APPROVAL.md`
-(A observación acotada de S4 · B cerrar con la laguna declarada · C mantener bloqueado; recomendación A).
+conservó por el veto de seguridad, vía que esta entrega no modifica). **La opción A (observación acotada sólo de S4)
+fue autorizada y consumida el 2026-09-21** (`ENS-S4-P` sobre `9f908d9`): **NO OBSERVADO** por la rama benigna —el
+desarrollador corrigió los dos defectos sembrados y QA no tuvo nada que retener—; QA lo acreditó (R-3b) y mantiene
+QA-025-08 abierto: dos ausencias no confirman. **No se repite** (instrucción del propietario). **QA-025-05 cerrado**
+por QA con el CI verde verificado sobre la cabeza exacta (903 · 0 · 9; CA-13 satisfecho; el verde no desmiente el FAIL
+local). **Decisión del propietario encolada** en `PENDING_APPROVAL.md`: quedan **B** (cerrar con la laguna declarada,
+con el forzador que QA propone) o **C** (mantener bloqueado); recomendación B. **Observación independiente nueva,
+OBS-H** (`instrumento`, dueño coordinadora, en `docs/qa/REQ-025.md`): en el ensayo un `cp` por `Bash` del
+`qa-tester` hacia `src/*` tuvo efecto pese a que §13 lista `cp` como cubierto por `guard-codigo`; **no reproducido
+en la cabeza actual**, no se abre contra REQ-025 ni se repara sin decisión; siguiente paso: reproducción acotada
+como caso de banco cuando el propietario lo autorice.
 **Hecho:** contrato partido (REQ-025 entrega 1 / entrega 1b trazada / REQ-028 diferido); seis reglas en `AGENTS.md`
 §6 y gemela; cinco clases de acción (`cerrar` = marcar `completado`); cabeceras de la cola; entrada «Hacia 1.35.0»
 (preparada, no publicada); referencias en tres agentes con la cláusula de proyecto sin migrar; ADR-008 con adenda;
 ensayo acreditado por QA (CA-11 punto 3 satisfecho en el acto, S4 ante hallazgo de QA **no observado**, veto
-**observado**, regla 6 incumplida y corregida). **Pendiente:** CA-11 punto 4 (seguridad no firma con QA
-`con-hallazgos`), CA-13 (CI sobre la cabeza, autorizado; el verde no cierra QA-025-05), OBS-D y la cola 1→7 del
-ensayo (material de la entrega 1b). Sedes: `requirements/REQ-025.md`, `docs/qa/REQ-025.md`, `docs/decisions/ADR-008-…`,
+**observado**, regla 6 incumplida y corregida). **Pendiente:** la decisión B/C del propietario; CA-11 punto 4
+(seguridad no firma con QA `con-hallazgos`); OBS-D, OBS-G (margen del 93 % del techo en CI, dueño desarrollador),
+OBS-H y la cola 1→7 del ensayo (material de la entrega 1b). Entrega 1b y REQ-028 **no se arrancan** sin autorización. Sedes: `requirements/REQ-025.md`, `docs/qa/REQ-025.md`, `docs/decisions/ADR-008-…`,
 rama de evidencia `req-025/`. Sin fusión ni publicación.
 
 ---
