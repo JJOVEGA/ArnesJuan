@@ -32,9 +32,24 @@ QA-025-08 sigue en la cabecera (`instrumento`, residual aceptado). **Seguridad R
 veto**: CA-11 punto 4 satisfecho, delta normativo dentro del límite del propietario, orden de firmas correcto;
 **SEC-102** (`contrato`, dueño analista): el `Archivos:` de REQ-025 omite `requirements/README.md` y
 `requirements/REQ-028.md`, escritos por comisiones de este REQ, y frente a REQ-020 la intersección declarada queda vacía;
-remedio de una línea (añadir las dos rutas con fila de Historial), **no despachado**: el contador está agotado y la
-decisión de gastarlo es del propietario. Hoy no impide nada operativo: REQ-025 no puede llegar a `completado` mientras
-queden la entrega 1b y REQ-028 (CA-15 punto 9). **SEC-103** = OBS-H, `instrumento`, abierto, no aceptado, sin
+remedio de una línea (añadir las dos rutas con fila de Historial), **autorizado excepcionalmente por el propietario el
+2026-09-21** («no reinicies contadores ni abras otras reparaciones»), **aplicado por el analista en `1932492`** y
+**reverificado por seguridad: `R-041-A` → SEC-102 `mitigado`, `Seguridad: aprobado` sobre `1932492`** (reutiliza la
+acreditación del delta normativo de R-041, que no cambió). **Las tres firmas están: QA aprobado, seguridad aprobado,
+cola 0, sólo `instrumento` abierto (QA-025-08, SEC-103, SEC-104).** ⚠️ **Advertencia del auditor, y es la regla para
+quien retome:** con eso `guard-completado` **ya no impide** marcar REQ-025 como `completado`, y **cerrarlo sería
+incorrecto**: la entrega 1b sigue `pendiente` dentro del REQ (CA-15 punto 9) y ninguna puerta comprueba esa cláusula.
+**No se cierra REQ-025.** SEC-104 (`instrumento`, dueño coordinadora): las decisiones del propietario posteriores a la
+opción B sólo estaban citadas dentro del REQ; ya pegadas literales en `PENDING_APPROVAL.md` §Resueltas (cierre del
+hallazgo: del auditor). Antes del write-back, SEC-102 no impedía nada operativo: REQ-025 no puede llegar a `completado` mientras quede la **entrega 1b**
+(CA-15 punto 9). **REQ-028 no se presenta como dependencia de cierre**: haber separado trabajo no la crea
+(propietario, 2026-09-21); el punto 9 lo enumera junto a la 1b y queda para el analista informar si ese texto la
+establece. **Confirmado por el propietario:** fecha de revisión del residual **2026-10-21**; la coordinadora señala el
+primer caso aplicable y **QA conserva la responsabilidad de verificarlo** (resuelve OBS-I); S4 sigue «no observado».
+**Fuente de la preferencia «edita por consola» identificada, nada modificado:** la emite el propio Claude Code como
+`system-reminder` en modo de permisos `auto` (texto compilado en el binario, 2.1.274 de la extensión de VS Code; sin
+rastro en `settings`, `CLAUDE.md`, memoria ni plugin). Detalle en la rama de evidencia,
+`req-025/preferencia-consola-fuente.md`. **SEC-103** = OBS-H, `instrumento`, abierto, no aceptado, sin
 reparación autorizada; sube a `contrato` si la reproducción muestra que `guard-codigo` permite. **OBS-I** (QA): el
 write-back añade que la coordinadora señale el caso, obligación que el propietario no escribió; a confirmar por él junto
 con la fecha 2026-10-21. Sin ensayos nuevos. **Observación independiente nueva,
