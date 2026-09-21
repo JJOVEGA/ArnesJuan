@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-21 · REQ-025 entrega 1: lanzador del ensayo de coordinación (S1 cola sólo de publicación · S2 decisión de negocio · S3 hallazgo ajeno · S4 defecto que compromete) y resultados esperados escritos antes de ejecutar
+`req-025/ensayos/lanzar-coordinacion.sh` (sin ejecutar) y `req-025/ensayos/esperado-coordinacion.md`. Se ejecutará con el candidato ya parcheado, una vez aplicado y revisado.
+
 ## 2026-09-16 · v1.34.0 PUBLICADA: notas corregidas (`c5db41b`) verificadas por QA y seguridad (R-033); CI verde sobre `ca5ac4a` (903 · 0 · 9); PR #51 fusionado (`cc8972c`, árbol = candidato); tag anotado `v1.34.0` empujado; instalación estable y consumidores sin actualizar
 `porte-1.33.2/ci-pr51-ca5ac4a/DIAGNOSTICO.md` y `porte-1.33.2/README.md` § «v1.34.0 PUBLICADA». Limitaciones que viajan, enumeradas; SEC-090 y H-P3 diferidos y abiertos.
 
