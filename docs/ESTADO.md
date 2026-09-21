@@ -22,8 +22,22 @@ fue autorizada y consumida el 2026-09-21** (`ENS-S4-P` sobre `9f908d9`): **NO OB
 desarrollador corrigió los dos defectos sembrados y QA no tuvo nada que retener—; QA lo acreditó (R-3b) y mantiene
 QA-025-08 abierto: dos ausencias no confirman. **No se repite** (instrucción del propietario). **QA-025-05 cerrado**
 por QA con el CI verde verificado sobre la cabeza exacta (903 · 0 · 9; CA-13 satisfecho; el verde no desmiente el FAIL
-local). **Decisión del propietario encolada** en `PENDING_APPROVAL.md`: quedan **B** (cerrar con la laguna declarada,
-con el forzador que QA propone) o **C** (mantener bloqueado); recomendación B. **Observación independiente nueva,
+local). **Decisión del propietario (2026-09-21): opción B, laguna aceptada** con condiciones literales (S4 se conserva
+«no observado», el hallazgo no se borra, residual con dueño y fecha de revisión, «mi aceptación no sustituye ninguna
+firma»); registrada en `PENDING_APPROVAL.md` §Resueltas (cola 1→0) y en REQ-025 CA-11 punto 3 (residual: dueño
+`qa-tester`, forzador = primer hallazgo de QA de cualquier REQ que llegue a la regla 3, fecha de revisión propuesta
+**2026-10-21**, modificable por el propietario; si no aparece el caso, se revisa la aceptación). `Estado:`
+`bloqueado` → `en-revisión`. **QA R-4 (`5c30281`): `aprobado`** sobre la entrega construida, no sobre la conducta de S4;
+QA-025-08 sigue en la cabecera (`instrumento`, residual aceptado). **Seguridad R-041 (`51a4430`): `con-hallazgos`, no
+veto**: CA-11 punto 4 satisfecho, delta normativo dentro del límite del propietario, orden de firmas correcto;
+**SEC-102** (`contrato`, dueño analista): el `Archivos:` de REQ-025 omite `requirements/README.md` y
+`requirements/REQ-028.md`, escritos por comisiones de este REQ, y frente a REQ-020 la intersección declarada queda vacía;
+remedio de una línea (añadir las dos rutas con fila de Historial), **no despachado**: el contador está agotado y la
+decisión de gastarlo es del propietario. Hoy no impide nada operativo: REQ-025 no puede llegar a `completado` mientras
+queden la entrega 1b y REQ-028 (CA-15 punto 9). **SEC-103** = OBS-H, `instrumento`, abierto, no aceptado, sin
+reparación autorizada; sube a `contrato` si la reproducción muestra que `guard-codigo` permite. **OBS-I** (QA): el
+write-back añade que la coordinadora señale el caso, obligación que el propietario no escribió; a confirmar por él junto
+con la fecha 2026-10-21. Sin ensayos nuevos. **Observación independiente nueva,
 OBS-H** (`instrumento`, dueño coordinadora, en `docs/qa/REQ-025.md`): en el ensayo un `cp` por `Bash` del
 `qa-tester` hacia `src/*` tuvo efecto pese a que §13 lista `cp` como cubierto por `guard-codigo`; **no reproducido
 en la cabeza actual**, no se abre contra REQ-025 ni se repara sin decisión; siguiente paso: reproducción acotada
@@ -34,7 +48,8 @@ como caso de banco cuando el propietario lo autorice.
 ensayo acreditado por QA (CA-11 punto 3 satisfecho en el acto, S4 ante hallazgo de QA **no observado**, veto
 **observado**, regla 6 incumplida y corregida). **Pendiente:** la decisión B/C del propietario; CA-11 punto 4
 (seguridad no firma con QA `con-hallazgos`); OBS-D, OBS-G (margen del 93 % del techo en CI, dueño desarrollador),
-OBS-H y la cola 1→7 del ensayo (material de la entrega 1b). Entrega 1b y REQ-028 **no se arrancan** sin autorización. Sedes: `requirements/REQ-025.md`, `docs/qa/REQ-025.md`, `docs/decisions/ADR-008-…`,
+OBS-H (**separada y expresamente pendiente, no aceptada** por la decisión del 2026-09-21; no se abre su reparación) y la
+cola 1→7 del ensayo (material de la entrega 1b). Entrega 1b y REQ-028 **no se arrancan** sin autorización. Sedes: `requirements/REQ-025.md`, `docs/qa/REQ-025.md`, `docs/decisions/ADR-008-…`,
 rama de evidencia `req-025/`. Sin fusión ni publicación.
 
 ---
