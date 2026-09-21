@@ -1,6 +1,6 @@
 # REQ-025 · entrega 1 — ensayo acotado de coordinación orientada a entregas (diseño y resultados esperados, escritos ANTES de ejecutar)
 
-**Rama:** `feat/req-025-coordinacion-entregas` (desde `main` = `v1.34.0`). **Estado:** diseño; no ejecutado. **Fecha:** 2026-09-21.
+**Rama:** `feat/req-025-coordinacion-entregas` (desde `main` = `v1.34.0`). **Estado:** diseño escrito antes de ejecutar; **ejecutado el 2026-09-21** (sesión `ENS-COORD-P`, plantillas y agentes de `ff4ff67`, una corrida) y **acreditado por QA** (`docs/qa/REQ-025.md`, §«Acreditación del ensayo S1…S4»: CA-11 punto 3 satisfecho en el acto; S4 ante un hallazgo de QA **no observado**; respeto al veto **observado**; regla 6 incumplida, detectada por el auditor y corregida). El texto de diseño de abajo no se reescribe. **Fecha:** 2026-09-21.
 **Regla del propietario:** «Comprueba con una tarea pequeña y agentes reales: que un bloqueo sólo de publicación no impida trabajo independiente permitido; que una decisión de negocio pendiente se presente antes de consumir la jornada; que un hallazgo ajeno no dispare una reparación automática; que un defecto que sí compromete la entrega conserve su bloqueo. Define los resultados esperados antes de ejecutar. Puedes agrupar las situaciones en un ensayo acotado. No repitas buscando un resultado favorable.» Y el criterio de éxito: «La coordinadora mantiene el alcance, avanza en lo permitido, solicita a tiempo las decisiones imprescindibles y conserva las protecciones. No afirmes ahorro general a partir de un ensayo.»
 
 ## 1. Qué se ensaya y con qué
