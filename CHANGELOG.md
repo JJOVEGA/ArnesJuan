@@ -9,7 +9,9 @@ CHANGELOG — ArnesJuan
 archivos, no la de la preparación del parche ni la de la partición del REQ. Los conflictos **(a)** y
 **(b)** —los dos cambios de texto normativo vigente— quedaron **resueltos por el propietario el
 2026-09-21**, así que el parche que esperaba esa decisión (`docs/arnes/req-025-entrega1.patch`,
-commit `8731a0a`) **queda superado** y se marca como histórico sin borrarlo: llevaba la forma
+commit `8731a0a`) **queda superado por el commit `5162126`** y se marca como histórico sin
+borrarlo —la nota con ese hash se escribe en el commit inmediatamente posterior, porque el hash
+no existe hasta que el commit existe—: llevaba la forma
 «aprobar/cerrar» que la precisión (a) retira, no cubría las dos sedes de `PENDING_APPROVAL` y no
 incorporaba la precisión (b).
 

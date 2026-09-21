@@ -1,4 +1,4 @@
-> **HISTÓRICO — superado por el commit `{{COMMIT}}` (2026-09-21); se conserva como registro.** El
+> **HISTÓRICO — superado por el commit `5162126` (2026-09-21); se conserva como registro.** El
 > parche que este documento prepara **no se aplicó**: las precisiones (a) y (b) del propietario lo
 > dejaron desfasado y la entrega 1 se escribió directamente sobre los archivos. Léase como
 > evidencia de cómo se construyó y se comprobó el diff, no como el estado del árbol.
