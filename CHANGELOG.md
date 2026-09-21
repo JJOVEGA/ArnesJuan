@@ -2,6 +2,60 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-21 · **QA de la entrega 1 de REQ-025 (vuelta 1 de 3): `con-hallazgos`** — las dos promesas absolutas están muertas y las gemelas son exactas, pero el vocabulario cerrado se quedó sin clase para el bloqueo que el arnés más usa
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester`. Validación sobre `567eb38` (rama `feat/req-025-coordinacion-entregas`, worktree `ArnesJuan-req025`). Sede del registro: `docs/qa/REQ-025.md` (nuevo). `QA: con-hallazgos (R-1, 2026-09-21)` en la cabecera de REQ-025, con **seis hallazgos clasificados**: cuatro `contrato` y dos `instrumento`. Sin push.
+
+**Lo que PASA, y se comprueba leyendo el diff.** Las dos promesas absolutas que el REQ vino a matar
+**ya no existen** en ninguna de las cuatro sedes que las alojaban (CA-15 punto 2): barrido **por
+propiedad** independiente del del desarrollador, ampliado a `requirements/README.md`,
+`templates/requirements-README.md.tpl`, `README.md`, **`hooks/` y `tools/`** — ningún mensaje que el
+programa imprima repite la promesa antigua; `hooks/guard-completado.sh:549` ya nombraba la
+transición exacta antes que el texto. Los seis restos que el desarrollador enumeró: **verificados
+uno a uno, los seis correctos**. Gemelas **exactas** (`AGENTS.md` ↔ `.tpl`: el bloque de las seis
+reglas es idéntico byte a byte; «Loop de error» difiere sólo en el marcador preexistente
+`{{MAX_REINTENTOS}}`). Alcance respetado: **0 archivos** fuera de las rutas admitidas, y
+`.arnes/plantillas-origen/` intacta (CA-15 puntos 5 y 6). `ADR-008` bien formado, con la decisión
+del propietario citada. Entrada del `CHANGELOG.md` con **fecha real** y sin marcadores (punto 8).
+Y **ningún agente pierde una facultad**: leídos enteros `agents/qa-tester.md` y
+`agents/auditor-seguridad.md`, las cuatro de CA-14 punto 1 —detectar, registrar, clasificar,
+bloquear— y el veto siguen enteros. CA-09 (A), CA-09 (B) punto 3, CA-10 reglas 5 y 6 y los seis
+puntos de CA-14: **pasan**.
+
+**Los cuatro `contrato`.** **QA-025-01** — CA-01 y CA-02 **enteros**, las preguntas previas 1, 2 y
+4 de CA-09 (B) con su propiedad y su caso medido, la regla del `git add -A` y la primera mitad de
+CA-10 **no están escritos en ninguna parte**, y el REQ declara que esos criterios miden la entrega
+1: dos afirmaciones del REQ son incompatibles y no elige QA cuál. **QA-025-02** — el vocabulario
+**cerrado** `implementar · probar · aprobar · publicar` se queda **sin clase para el bloqueo
+mecánico**: el titular retocado de «Gates de aprobación humana» (cambio hecho fuera de las seis
+piezas) define «aprobar» **por extensión** como esa lista, y la frontera (ii) dice que la cola «no
+es ninguna» de ellas — de modo que el ejemplo resuelto del propio criterio (clase «aprobar» para la
+cola) deja de poder escribirse, y `agents/auditor-seguridad.md:24` y `agents/desarrollador.md:52`
+reciben una instrucción **inejecutable**. La contradicción venía ya en CA-09 (B) punto 5; el
+retoque cerró la lectura que la salvaba. **QA-025-03** — nueve sedes de `agents/` **copian** el
+texto de las reglas 2, 3, 4 y 5 en vez de remitir (CA-15 punto 1), y **el desfase ya ocurrió en el
+mismo commit**: las copias del vocabulario pierden el glosario de «aprobar», y `qa-tester.md:87`
+convierte «abre sólo lo que **depende de ella**» en «abre sólo lo que **bloquea**». Es la
+alternativa que `ADR-008` descarta por su nombre. **QA-025-04** — `ADR-008` existe pero el
+Historial de REQ-025 sigue diciendo «Pendiente de crear y enlazar aquí» (CA-15 punto 7).
+
+**Los dos `instrumento`, que no bloquean por su clase.** **QA-025-05** — el banco completo,
+corrido **tres veces** por QA sobre `567eb38` (el desarrollador reportó `906 · 0 · 6` **sin salida
+guardada**, no verificable), da `907·1·4`, `906·1·5` y `906·1·5`, `rc=1`: **1 FAIL reproducible 3 de
+3**, `DEV v3: heredoc CITADO de ~300 KB`, veredicto `allow` **correcto** y 4128–4255 ms contra un
+techo de 4000 ms. **Ajeno al delta** —que no toca una línea de código— y sensible a la plataforma;
+**no se repitió hasta obtener verde**. Cuadre exacto en las tres (912) y SKIP con motivo en línea.
+CA-13 no queda satisfecho hasta una corrida verde en CI. **QA-025-06** — `templates/AGENTS.md.tpl`
+lleva **siete citas a `REQ-025`** y «el libro de comisiones» con sus columnas: contenido propio de
+este repositorio que un proyecto consumidor no puede resolver. No bloquea porque **nada ha llegado
+a ningún consumidor**; vencimiento natural, antes de publicar 1.35.0.
+
+**Lo que este veredicto NO acredita:** el ensayo S1…S4 de CA-11 punto 3 (no ejecutado; se acredita
+en otra comisión), **la conducta** —las seis reglas son disciplina declarada y ninguna puerta las
+comprueba—, nada sobre los **proyectos consumidores**, ningún **ahorro** ni determinismo, el banco
+**en CI**, y la revisión de seguridad, que firma después. Observación registrada para la
+coordinadora: la `§14` que sólo existe en `rel/registro-1.33.0` será, al converger, una **segunda
+sede** de las reglas 1 y 3, ya desfasada.
+
 ## [Interno] — 2026-09-21 · REQ-025 → `en-revisión` (entrega 1 aplicada, vuelta 1 de 3); resultado esperado de S1 del ensayo corregido a la transición exacta
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. `docs/arnes/req-025-ensayo-coordinacion.md` S1: «aprobar/cerrar» → «marcar cualquier REQ como `completado`» (precisión (a) del propietario), corregido ANTES de ejecutar el ensayo, a raíz del aviso del desarrollador en su entrega; misma corrección en la copia de la rama de evidencia. `Estado:` de REQ-025 movido a `en-revisión` por la coordinadora (el desarrollador no tocó el REQ por instrucción); ningún veredicto escrito. Sin push.
 
