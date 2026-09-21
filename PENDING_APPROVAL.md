@@ -36,6 +36,17 @@
 
 ## Pendientes
 
+
+### [2026-09-21] (coordinadora) — REQ-025 entrega 1: cómo se resuelve la condición de aceptación que QA determinó pendiente (QA-025-08)
+- **Contexto:** la vuelta 3 de 3 se agotó con `QA: con-hallazgos` (R-3, sobre `a441e04`). Lo encargado a la vuelta 3 quedó reparado (QA-025-07, ENS-01, OBS-C, OBS-E). QA determinó, como el propietario le pidió, que **falta una condición de aceptación**: la conducta que la entrega 1 modifica —el tratamiento de un **hallazgo de QA** bajo la regla 3— no tiene evidencia de tercero; en la única corrida del ensayo QA aprobó y S4 no se disparó, y el bloqueo se conservó por la vía del **veto de seguridad**, que esta entrega **no** modifica. El propietario escribió: «no se elimina esa condición por agotarse las vueltas», «no aceptes residuales en mi nombre», «no autorizo repetir el ensayo completo ni construir mecanismos nuevos».
+- **Acción que impide (regla 2):** **cerrar** — marcar `REQ-025` como `completado`. **Regla que lo impide:** `QA: con-hallazgos` y CA-13 (`guard-completado`, `AGENTS.md` §6 y §13). **No** impide implementar ni probar; **no** afecta a la entrega 1b ni a REQ-028. **Evidencia:** `docs/qa/REQ-025.md`, §«Acreditación del ensayo S1…S4» (S4) y §«Vuelta 3 de 3» (QA-025-08).
+- **Opciones:**
+  - **A — Observación acotada de UNA sola situación** *(recomendación de QA y de la coordinadora)*: re-sembrar **sólo S4**, con un defecto que QA deba detectar y retener, sin repetir S1…S3, reutilizando `lanzar-coordinacion.sh`; QA acredita. Es estrictamente menos que «repetir el ensayo completo», pero **no se da por autorizado: lo decide el propietario**. Consecuencia: convierte la laguna en evidencia (o en un defecto medido); coste ≈ una sesión de ensayo y una comisión de QA.
+  - **B — Cerrar con la laguna declarada**: aceptar que la entrega se acredita sin observar esa conducta, con dueño, forzador y vencimiento. **Sólo el propietario puede elegirla.** Consecuencia: la sede queda acreditada sobre el camino que el cambio no toca.
+  - **C — Mantener `Estado: bloqueado`**: detener la entrega 1 hasta otra ventana. Consecuencia: para la entrega entera por una laguna de evidencia, no por un defecto medido.
+- **Recomendación:** A.
+- **Espera:** elección del propietario. **Trabajo que sigue mientras tanto:** el CI autorizado sobre la cabeza (CA-13, evidencia de la corrida); nada más de esta entrega. La entrega 1b y REQ-028 no dependen de esta decisión.
+
 ## Resueltas
 
 ### RESUELTA (propietario, 2026-09-09) — **se PUBLICA `v1.33.0`**: revierte el aplazamiento de ayer, con límite declarado

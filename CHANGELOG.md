@@ -2,6 +2,9 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-21 · REQ-025 → `bloqueado` con alcance (cerrar); decisión QA-025-08 encolada para el propietario (A/B/C); contador 3 de 3 agotado sin aprobar por agotamiento
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Aplicación de las reglas 2, 4 y 5 sobre la propia entrega: bloqueo con acción exacta y regla que la impide; decisión presentada con pregunta, opciones, recomendación y consecuencia en `PENDING_APPROVAL.md`; implementar y probar no quedan impedidos; entrega 1b y REQ-028 no dependen. Sigue el CI autorizado sobre la cabeza como evidencia de CA-13 (no cierra el FAIL local de tiempo QA-025-05). Sin fusión ni publicación.
+
 ## [Interno] — 2026-09-21 · **QA de la entrega 1 de REQ-025, VUELTA 3 de 3 (la última): `con-hallazgos`** — todo lo encargado está reparado, y aun así no apruebo: falta una condición de aceptación, y el contador agotado no la retira
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester`. Validación sobre `a441e04`, delta `7f19c50..a441e04` (8 archivos); lo acreditado en R-2 y en la acreditación del ensayo sigue vigente. Sede: `docs/qa/REQ-025.md`, §«Vuelta 3 de 3». Cabecera: `QA: con-hallazgos (R-3, 2026-09-21, sobre a441e04)`; `Hallazgos abiertos:` pasa a **QA-025-05 (instrumento)** y **QA-025-08 (instrumento)** — salen QA-025-07 y ENS-01. **Contador de la entrega: 3 de 3, AGOTADO.** Sin push.
 

@@ -10,6 +10,27 @@
 > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
 > `docs/estabilizacion/`.
 
+## ⏸ RETOMAR AQUÍ — REQ-025 entrega 1 (coordinación orientada a entregas), 2026-09-21
+
+**Este bloque SUSTITUYE a los de más abajo, que quedan como históricos.** Rama `feat/req-025-coordinacion-entregas`
+(desde `main` = `v1.34.0`). **Estado: `bloqueado` con alcance** —acción impedida **cerrar** (marcar REQ-025 como
+`completado`); implementar y probar no—, tras agotar las 3 vueltas con `QA: con-hallazgos` (R-3): lo encargado a
+las tres vueltas está reparado (8 de 9 hallazgos de QA cerrados); queda **QA-025-08** (`instrumento`): la conducta
+de la coordinadora ante un **hallazgo de QA** no fue observada en el ensayo S1…S4 (S4 no se disparó; el bloqueo se
+conservó por el veto de seguridad, vía que esta entrega no modifica), y **QA-025-05** (`instrumento`, FAIL local de
+tiempo del banco, independiente, espera el CI). **Decisión del propietario encolada** en `PENDING_APPROVAL.md`
+(A observación acotada de S4 · B cerrar con la laguna declarada · C mantener bloqueado; recomendación A).
+**Hecho:** contrato partido (REQ-025 entrega 1 / entrega 1b trazada / REQ-028 diferido); seis reglas en `AGENTS.md`
+§6 y gemela; cinco clases de acción (`cerrar` = marcar `completado`); cabeceras de la cola; entrada «Hacia 1.35.0»
+(preparada, no publicada); referencias en tres agentes con la cláusula de proyecto sin migrar; ADR-008 con adenda;
+ensayo acreditado por QA (CA-11 punto 3 satisfecho en el acto, S4 ante hallazgo de QA **no observado**, veto
+**observado**, regla 6 incumplida y corregida). **Pendiente:** CA-11 punto 4 (seguridad no firma con QA
+`con-hallazgos`), CA-13 (CI sobre la cabeza, autorizado; el verde no cierra QA-025-05), OBS-D y la cola 1→7 del
+ensayo (material de la entrega 1b). Sedes: `requirements/REQ-025.md`, `docs/qa/REQ-025.md`, `docs/decisions/ADR-008-…`,
+rama de evidencia `req-025/`. Sin fusión ni publicación.
+
+---
+
 ## Fase actual
 Fase 0 — autoalojamiento. **v1.32.1 publicada.** Ventana **1.33.0 abierta**, gobernada por 1.32.1.
 Rama `cand/1.33.0`, PR **#43** en borrador.
@@ -226,7 +247,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-08 20:25
+## Estado derivado — 2026-09-21 13:46
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -236,10 +257,10 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.33.0` @ `7dc0699` — limpio
-**Arnés:** plugin instalado `1.32.1` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
-**Aprobaciones pendientes:** 0
-**REQ:** 25 — completado 13 · en-revisión 1 · en-progreso 1 · bloqueado 1 · otros 9
+**Repositorio:** `feat/req-025-coordinacion-entregas` @ `bb50ecd` — CON CAMBIOS SIN COMITEAR
+**Arnés:** plugin instalado `1.34.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
+**Aprobaciones pendientes:** 1
+**REQ:** 26 — completado 13 · en-revisión 1 · en-progreso 1 · bloqueado 2 · otros 9
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
 _Sólo los REQ abiertos; los 13 completados no se listan._
@@ -257,6 +278,7 @@ _Sólo los REQ abiertos; los 13 completados no se listan._
 | REQ-022 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-023 | borrador | pendiente | pendiente | critico | sec-052(contrato) |
 | REQ-024 | borrador | pendiente | pendiente | critico | (ninguno) |
-| REQ-025 | borrador | pendiente | pendiente | critico | (ninguno) |
+| REQ-025 | bloqueado | con-hallazgos | pendiente | critico | qa-025-05(instrumento),qa-025-08(instrum… |
+| REQ-028 | borrador | pendiente | pendiente | critico | (ninguno) |
 
 <!-- ARNES:DERIVADO fin -->
