@@ -2,6 +2,50 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-21 · REQ-025 se ajusta para una **primera entrega acotada**: la sede escrita de la coordinación orientada a entregas, con **tres conflictos** presentados al propietario y **ningún** cambio de mecanismo
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` · rama `feat/req-025-coordinacion-entregas` (desde `main` = `v1.34.0`). Archivos del cambio: `requirements/REQ-025.md`, la fila de REQ-025 en `requirements/README.md` y esta entrada.
+
+**Causa, literal en lo esencial (decisión del propietario, 2026-09-21):** «El objetivo inmediato del
+arnés es mantener el desarrollo orientado a entregas y evitar ciclos de revisión que amplían el
+trabajo sin decisión explícita», que autoriza «el ajuste contractual necesario y la implementación de
+una primera entrega acotada» con **seis reglas** —objetivo concreto · bloqueos con alcance · hallazgo
+no equivale a nuevo encargo · decisiones humanas tempranas · presupuesto del ciclo completo · avance
+observable— y con el límite de **no** cambiar hooks, permisos, rigor, exigencias de seguridad ni
+condiciones de cierre.
+
+**Qué se ajustó, reutilizando criterios en vez de abrir una familia nueva:** `Versión destino:
+1.34.0 → 1.35.0`; **CA-09** pasa de «cuatro preguntas» a **(A)** lo que todo encargo declara
+—resultado **construido y comprobado**, criterios aplicables, fuera de alcance y cuándo detenerse— y
+**(B)** cinco preguntas, con la **forma de la decisión temprana** (pregunta · opciones ·
+recomendación · consecuencia) y el **bloqueo con alcance** (qué acción impide · qué parte · qué
+evidencia · qué lo resuelve), incluido el límite **no acotable** de la cola de aprobaciones, que se
+**declara** —acción impedida `aprobar/cerrar`, parte «todos los REQ por construcción»— y **no se
+toca**. **CA-10** gana el **presupuesto del ciclo completo** —conserva el tope de 3 vueltas dev↔QA
+por REQ y añade que no se reinicia «ni por cambio de rol, fase o nombre»— y el **avance observable**
+tras cada comisión, ambos con las columnas que el libro ya tiene: **ningún tablero ni medidor nuevo**.
+**CA-14** (nuevo) escribe la clasificación del hallazgo poniendo **por delante** lo que no cambia —QA
+y seguridad conservan íntegras su capacidad de detectar, registrar, clasificar, bloquear y vetar— y
+separa los **dos ejes** sin renombrar las clases `usuario/dinero` · `contrato` · `instrumento`.
+**CA-15** (nuevo) contrata la entrega 1: una sede, gemela preparada y **no declarada entregada**,
+referencias en vez de copias, y **no más de 0** archivos tocados fuera del alcance autorizado.
+**CA-11** pasa de cuatro a **cinco** condiciones de acreditación: la nueva es el **ensayo acotado**
+con agentes reales sobre las cuatro situaciones del propietario, con los resultados esperados ya
+escritos **antes de ejecutar** en `docs/arnes/req-025-ensayo-coordinacion.md`, acreditado por el
+**`qa-tester`** y **no** por la coordinadora, y **sin afirmar ahorro general**.
+
+**Lo que NO se hizo, y es lo que decide el siguiente paso:** el REQ **sigue en `borrador`**. Los dos
+párrafos vigentes de `AGENTS.md` §6 —«Loop de error: … el REQ **vuelve al desarrollador**» y
+«Mecanismo de gate: … **No continúa hasta que el humano resuelve**»— **contradicen** la sede nueva y
+**no se han tocado**: van presentados como conflictos **(a)** y **(b)** con pregunta, opciones,
+recomendación y consecuencia, más un conflicto **(c)** —el contrato no admite una salida **parcial**
+de `borrador` para el alcance de una sola entrega—. Ninguna decisión diferida se cerró al
+reorganizar: siguen **cuatro** abiertas (B-1…B-4) y la antigua pregunta 3 queda **respondida y
+conservada**, no borrada.
+
+**No acredita:** ninguna línea de `AGENTS.md`, de `templates/`, de `skills/` ni de `agents/` —no se
+tocó ninguna—; ningún ensayo ejecutado; ninguna corrida de banco ni de CI; y nada sobre los
+proyectos consumidores, que no reciben nada hasta publicar y migrar.
+
 ## [Interno] — 2026-09-16 · Seguridad R-033: `SEC-091` y `SEC-092` **mitigados**; decisión del propietario registrada (`SEC-090` y `H-P3` **abiertos — diferidos**); firma extendida a `1fe3382`
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: auditor-seguridad (confirmación acotada autorizada por el propietario). Sede: `docs/seguridad/registro-seguridad.md` § R-033.
 
