@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-21 · REQ-025 entrega 1 consolidada: 18 commits, PR #52 en borrador, CI verde sobre `9f908d9` (903 · 0 · 9; autoprueba 106 · 0); QA vuelta 3 `con-hallazgos` por QA-025-08 (condición de aceptación pendiente); REQ-025 bloqueado con alcance y decisión encolada
+`req-025/README.md` (consolidado), `req-025/ci-pr52-9f908d9/` (diagnóstico y log). Sin fusión ni publicación.
+
 ## 2026-09-21 · REQ-025 entrega 1: ensayo de coordinación ENS-COORD-P ejecutado (plantillas y agentes de `ff4ff67`, n=1): S1, S2, S3 observados; S4 bloqueo conservado por veto de seguridad; cola 1 → 7 entradas (observación)
 `req-025/ensayos/ENS-COORD-P/` (salida completa, diff del proyecto, cola, REQ-004, QA y seguridad del proyecto, análisis de la coordinadora). Acreditación pendiente de QA (CA-11 punto 3).
 
