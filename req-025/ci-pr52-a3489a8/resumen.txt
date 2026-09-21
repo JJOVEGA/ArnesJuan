@@ -1,0 +1,6 @@
+  PASS  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  (allow en 3429ms; presupuesto 1000ms, techo holgado 4000ms)
+  PASS  REQ-017 CA-09 la pared de los 60 s de este árbol NO es menor que la de v1.32.1, pareado en la misma corrida  el PEOR de este árbol vale 1.461× el MEJ
+  SKIP  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  la sonda NO convergió: segundo mínimo / mínimo = 1.297
+Resultado: 903 PASS, 1 FAIL, 8 SKIP — ninguna causa común: cada uno con su motivo
+       · REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  la sonda NO convergió: segundo mínimo / mínimo = 1.2
+RUN_ID=35668137505 HEAD=a3489a8
