@@ -2,6 +2,66 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-21 · **QA de la entrega 1 de REQ-025, VUELTA 2 de 3: `con-hallazgos`** — cinco de los seis hallazgos cerrados y el vocabulario ya nombra el bloqueo que el arnés más usa; queda **una** afirmación del REQ que su propio árbol desmiente
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester`. Validación sobre `0558a0e`, acotada al delta `48c87b7..0558a0e` (12 archivos); lo acreditado en R-1 y no modificado sigue vigente y no se repitió. Sede: `docs/qa/REQ-025.md`, §«Vuelta 2 de 3 — adenda». Cabecera del REQ: `QA: con-hallazgos (R-2, 2026-09-21, sobre 0558a0e)`; `Hallazgos abiertos:` pasa de **seis** a **dos**. **El contador de la entrega va por 2 de 3 y no se reinicia** por cerrar, abrir ni renumerar hallazgos (`AGENTS.md` §6, «Loop de error», y regla 5). Sin push.
+
+**Cerrados: cinco hallazgos y una observación.** **QA-025-01** — el reparto entrega 1 / **entrega
+1b** se comprobó **contra la sede, no contra la tabla**: las cuatro asignaciones «Sí, por
+dependencia» están escritas en `AGENTS.md` (incluido el **caso medido de la regla 4**, que el
+desarrollador añadió), y falsé las cinco asignaciones a 1b buscando una dependencia olvidada sin
+encontrarla. **QA-025-02** — las **cinco clases** son ejecutables, y lo acredito **usándolas**: el
+bloqueo que este veredicto impone se escribe «acción: marcar REQ-025 como `completado`, clase
+**cerrar**; regla: `guard-completado`», que en R-1 **no tenía palabra**. Cuatro ataques al texto
+nuevo fallan, incluido el de si la glosa de «cerrar» redeclara las condiciones del hook —no lo
+hace: la propia regla declara que **ninguna lista enumera todos los bloqueos posibles**, «tampoco
+las de esta sección»—. **QA-025-03** — cero copias del vocabulario, de los cuatro elementos, de los
+tres términos y de la forma de la regla 4 fuera de la sede y su gemela; seguí las **nueve**
+referencias y las nueve resuelven; inventarié el texto retirado de cada agente y **todo** tiene
+destino. **Ningún agente pierde una facultad, y dos ganan.** **QA-025-04** — `ADR-008` enlazado
+desde «Trazabilidad» y desde el conflicto (a), con adenda fechada y **sin contradicción residual**:
+el párrafo antiguo queda sellado, no reescrito. **QA-025-06** — **7 → 0** citas a `REQ-025` en
+`templates/AGENTS.md.tpl`; comprobado que un proyecto recién inicializado **puede** cumplir la
+regla 6 (la rama de respaldo es el `CHANGELOG.md`, que `arnes-init` deja). **OBS-A** — las dos
+cabeceras de la cola nombran acción **y** regla. **Gemelas idénticas** (bloque de las seis reglas
+byte a byte; sólo difieren los marcadores preexistentes), **0 archivos de mecanismo** en el delta y
+**quality gates 3/3** corridas por QA.
+
+**Abierto — `QA-025-07` (`contrato`): el REQ afirma en presente tres cosas que su propio árbol
+desmiente.** La vuelta 2 fue **dos commits**, y las frases con que el analista describió lo que
+faltaba no se actualizaron cuando el desarrollador lo hizo: `requirements/REQ-025.md:619` dice que
+el caso medido de la regla 4 «hoy falta en la sede» (está), `:931` dice que `ADR-008` «no recoge
+todavía la opción B» (la recoge, en su adenda) y `:905` dice que sede, gemela, agentes y cola
+«siguen con el vocabulario de cuatro clases» (ninguno). Dos de las tres viven en secciones
+**vivas** —la tabla que decide **qué mide la entrega 1** y la **Trazabilidad**—, y **el siguiente
+en la cola es el `auditor-seguridad`**, a quien la Trazabilidad le diría que el ADR que acredita el
+cambio de fondo contradice al propietario. Lo resuelven tres frases del `analista-requerimientos`,
+con el barrido definido **por propiedad** —toda frase fuera del Historial que describa en presente
+un artefacto de la entrega como pendiente— y no por la lista de tres. **`QA-025-05`** sigue abierto
+sin cambio (`instrumento`, no bloquea; el banco no se re-corrió por instrucción y espera la corrida
+verde de CI).
+
+**Observaciones, ninguna bloqueante.** **OBS-C agravada y con remedio:** los agentes llegan **al
+actualizar el plugin**, no por `arnes-upgrade`, así que existe una ventana «plugin actualizado +
+`AGENTS.md` congelado» en la que sus nueve referencias apuntan a un `§6` sin reglas; no es pérdida
+de facultad y es consecuencia directa de la decisión del propietario, así que se propone una línea
+de conducta por agente —que no copia nada— con vencimiento antes de publicar 1.35.0. **OBS-E,
+decidida a petición de la coordinadora:** `AGENTS.md:274` y `:278` son **observación y no
+hallazgo** —viven en la **misma §6** que la sede, a la vista del mismo lector, que no es el daño
+que CA-15 punto 1 contrata—, con el matiz dicho en voz alta de que si el auditor lee `:274` («una
+reparación que vuelve **al mismo agente** gasta vuelta») como narrowing del contador, **tiene
+razón y se convierte en hallazgo**. **OBS-D:** quedan **9** identificadores de este repositorio en
+`templates/`, todos **preexistentes** y fuera del delta — independiente, con responsable, no se
+repara «ya que estamos» (regla 3). **OBS-F:** el orden de fases sigue sin clase natural entre las
+cinco; no se abre porque las clases son ya **descriptivas** y ningún agente recibe por ello una
+instrucción inejecutable.
+
+**Lo que NO acredita:** el **ensayo S1…S4** (sin ejecutar; CA-11 punto 3 sigue sin satisfacer), el
+**banco completo** (no re-corrido; las 22 secciones por ruta del desarrollador no se verificaron y
+no se hacen propias; CA-13 espera CI), **la conducta**, **los consumidores**, ningún **ahorro** y
+**la revisión de seguridad**. Y, por **CA-15 punto 9**, aprobar la entrega 1 **no completará**
+REQ-025: quedan la entrega 1b y REQ-028. **Aviso de calendario: queda UNA vuelta**, así que si se
+despacha la 3 conviene que lleve también OBS-C y OBS-E, cuyo coste conjunto son siete líneas.
+
 ## [Interno] — 2026-09-21 · REQ-025 → `en-revisión` (vuelta 2 de 3 aplicada en `e566739`); resultado esperado de S1 del ensayo alineado con la opción B (clase «cerrar»)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. `docs/arnes/req-025-ensayo-coordinacion.md` S1 nombra la clase «cerrar» y su transición exacta (decisión del propietario), antes de ejecutar el ensayo; misma corrección en la copia de la evidencia. `Estado:` movido por la coordinadora; ningún veredicto escrito. Sin push.
 
