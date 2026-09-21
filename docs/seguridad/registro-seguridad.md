@@ -7111,3 +7111,147 @@ identidad ni superficie expuesta: es texto normativo de gobernanza del despacho.
 **Numeración vigente tras esta revisión:** última revisión **R-041**; últimos hallazgos **SEC-102** y
 **SEC-103**; próximos libres **R-042** y **SEC-104**. Tomados libres **sobre todas las líneas vivas
 del registro**, no sólo sobre este archivo (motivo al inicio de §R-041).
+
+---
+
+## Adenda a R-041 (**`R-041-A`**) — **reverificación acotada de SEC-102** sobre la cabeza corregida `1932492` — 2026-09-21
+
+**Por qué adenda y no `R-042`.** Una revisión nueva anunciaría una auditoría nueva del delta
+normativo, y **no la hay**: esto reverifica **un hallazgo propio** sobre una corrección autorizada.
+Numerarlo `R-042` haría creer que la entrega 1 se volvió a mirar entera.
+
+**Alcance, y lo reutilizado dicho por su nombre.** Sólo `git diff 51a4430..1932492`:
+`CHANGELOG.md`, `docs/ESTADO.md` y `requirements/REQ-025.md` — **3** archivos, **0** de mecanismo
+(`hooks/`, `tools/`, `tests/`, `.github/`, `.arnes/`, `.claude-plugin/`), verificado. **Todo lo demás
+se reutiliza de `R-041` y NO se vuelve a auditar**: el límite del propietario, la gemela, los tres
+agentes, las dos cabeceras de la cola, el ADR-008, el barrido de mensajes de los hooks y CA-11 punto
+4. La reutilización es legítima **porque el delta no toca ninguna de esas sedes**, y lo escribo en
+vez de dejarlo implícito: una firma que reutiliza evidencia debe declarar **sobre qué** la reutiliza.
+Autorización del propietario (2026-09-21), literal: «*Autorizo excepcionalmente el write-back de
+SEC-102… No reinicies contadores ni abras otras reparaciones. Después, seguridad reverifica ese
+hallazgo y emite el estado correspondiente sobre la cabeza corregida… Conserva SEC-103 separado y
+sin aceptación.*» **Sin ensayos, sin reproducciones, sin reparaciones.**
+
+### 1. **SEC-102 → `mitigado`**
+
+**Qué exigía la remediación de `R-041` §6:** que `Archivos:` declarase `requirements/README.md` y
+`requirements/REQ-028.md`, con fila de Historial y causa enlazada. **Comprobado sobre `1932492` —en
+la forma además de en el contenido, porque un campo correcto mal escrito no lo lee la máquina:**
+
+- `requirements/REQ-025.md:4` declara ahora **quince** rutas; las dos que faltaban están, tras
+  `requirements/REQ-025.md`.
+- **Forma, leída en crudo (`sed -n '4p' … | cat -A`):** rutas **sin decoración** de Markdown —ni
+  acentos graves ni subrayado elemento por elemento, que es la forma que **SEC-020** vuelve
+  insegura—, separadas por comas, **relativas** a la raíz, sin paréntesis, línea terminada limpia.
+  Nada insertado que un diff no enseñe.
+- **Efecto, que es lo que el hallazgo medía.** **Evidencia primaria: la intersección de los dos
+  campos, leída.** Frente a `REQ-020` (`pendiente`, declara `requirements/README.md`) pasa de
+  **vacía** a **`{requirements/README.md}`**. **Corroboración:** `tools/arnes-paralelo.sh REQ-025
+  REQ-020` responde **`colisiona  requirements/README.md`**, donde antes habría respondido
+  `disjunto`. **La corroboración se declara como lo que es:** esa herramienta tiene abierto
+  **SEC-020**, que la hace **condición necesaria y no suficiente**; lo que sostiene este estado es
+  la lectura de los campos, y la corrida sólo concuerda con ella.
+- **La fila de Historial existe** y cita la procedencia. El `analista-requerimientos` declara que
+  **no re-ejecutó** el `git log` y que cita la evidencia de `R-041` §6. **Correcto:** re-medir lo
+  mismo habría sido una segunda transcripción, y declarar de dónde viene una cifra que no se midió
+  es justamente lo que este repositorio exige.
+- **Nada más de la cabecera se tocó:** `Estado:`, `QA:`, `Seguridad:`, `Hallazgos abiertos:`,
+  `Rigor:` y `Sensible a seguridad:` son idénticos entre `51a4430` y `1932492`, comprobado campo a
+  campo. **El write-back no se acreditó a sí mismo**: dejó mi `Seguridad: con-hallazgos` en pie.
+
+**Estado: `mitigado`.** Deja de bloquear y **sale de `Hallazgos abiertos:`**. No se borra de este
+registro: cambia de estado, como todos.
+
+### 2. El resto del delta **no debilita nada, y estrecha en dos sitios**
+
+El write-back gemelo sobre CA-11 punto 3 no entraba en la autorización de SEC-102 y trae la suya,
+citada literal. Lo reviso por lo único que me toca —**si mueve el residual hacia el lado que abre**—
+y **no lo mueve**:
+
+- **Fecha 2026-10-21**: de «propuesta de la coordinadora, y el propietario puede cambiarla» a
+  **confirmada por él**, con «cambiarla vuelve a exigir una decisión suya». Eso **estrecha**: antes
+  cualquiera podía tratarla como provisional.
+- **OBS-I resuelta**: la obligación de que la coordinadora **señale** el caso pasa de añadido del
+  write-back a **aceptada**, con la precisión «**QA conserva la responsabilidad de verificarlo**». El
+  **dueño sigue siendo el `qa-tester`** y señalar **no** es acreditar. **Ninguna facultad se mueve.**
+- **«S4 sigue "no observado"»** se conserva **literal** y no se convierte en satisfecho.
+  `QA-025-08` sigue en `Hallazgos abiertos:` con su clase.
+- **La consecuencia del vencimiento queda intacta** —si el caso no aparece, se revisa la aceptación
+  y **no** se da por acreditado—, que es la cláusula que impide que el residual caduque hacia el
+  verde.
+
+### 3. **SEC-103 (OBS-H): sin cambio** — `abierto — no aceptado — sin reparación autorizada`
+
+Conservado separado y sin aceptación, conforme a la instrucción del propietario. Nada del delta lo
+toca, nada lo repara, **y esta firma no lo acredita ni lo atenúa**. Su **condición de ascenso a
+`contrato`** sigue escrita en `R-041` §7 y sigue vigente.
+
+### 4. **SEC-104** (nuevo, `instrumento`, **no bloquea**) — dos decisiones del propietario cuya única copia vive **dentro del artefacto que autorizan**
+
+- **Clase `instrumento`. Severidad baja. Estado `abierto`. Dueño: coordinadora.** **No bloquea** y
+  **no cambia mi veredicto**. Lo registro porque, sin registrarlo, se vuelve a derivar dentro de un
+  mes.
+- **Qué está medido.** Las dos decisiones que autorizan este delta —la del write-back de SEC-102 y
+  la de la fecha/OBS-I— están citadas **literal** en `requirements/REQ-025.md` (CA-11 punto 3 y dos
+  filas de Historial) y **no aparecen en `PENDING_APPROVAL.md` §«Resueltas»**, comprobado con `grep`
+  sobre la cola, el `CHANGELOG.md` y `docs/ESTADO.md`. La decisión **anterior** (opción B) sí se
+  conservó allí, literal, y el `Estado:` del REQ apunta a esa sede.
+- **Por qué importa, sin exagerarlo.** La cola no es sólo un bloqueo: es **la sede donde la
+  procedencia de una decisión del propietario vive FUERA del documento que esa decisión autoriza**.
+  Cuando la única copia está dentro del artefacto autorizado, quien lo relea depende de que el
+  propio artefacto transcriba bien su permiso — que es, en pequeño, la figura que **CA-11** existe
+  para evitar. **No afirmo que aquí se transcribiera mal:** contrasté las dos citas contra el encargo
+  que recibí y **concuerdan**. Lo que falta es la copia independiente.
+- **Remedio, barato:** conservar las dos literales en `PENDING_APPROVAL.md` §«Resueltas» —donde ya
+  vive la anterior—, o **declarar por escrito cuál es la sede de una decisión del propietario tomada
+  fuera de la cola**. Hoy esa sede no está escrita, y por eso esto es `instrumento` y no
+  incumplimiento de nadie.
+- **Registrar no autoriza reparar** (`AGENTS.md` §6, regla 3): queda con dueño y **fuera** de esta
+  entrega.
+
+### 5. Veredicto, y la advertencia que va con él
+
+**`Seguridad: aprobado (R-041-A, 2026-09-21, sobre 1932492)`.** Con `SEC-102` `mitigado`, lo que
+queda abierto —`QA-025-08`, `SEC-103`, `SEC-104`— es **todo `instrumento`**, que por definición no
+bloquea el cierre.
+
+**Y la advertencia, porque es el efecto real de esta firma y nadie debería descubrirlo después.** Con
+`QA: aprobado`, `Seguridad: aprobado`, la cola vacía y ningún hallazgo `usuario/dinero` ni
+`contrato`, **`guard-completado` ya no impide marcar REQ-025 como `completado`**. Y **cerrarlo sería
+incorrecto**: su propio **CA-15 punto 9** dice que aprobar la entrega 1 **no** completa el REQ —
+quedan la **entrega 1b**, `pendiente` dentro de él, y **REQ-028**. **Ninguna puerta comprueba esa
+cláusula.** Es el techo honesto de `AGENTS.md` §13 —el enforcement es la última red, no la primera—
+visto con nitidez. **Mi `aprobado` acredita la revisión de seguridad de la entrega 1; NO autoriza el
+cierre del REQ, y quien lo cierre no podrá decir que una puerta se lo consintió.**
+
+### 6. Lo que esta adenda **NO** acredita
+
+1. **Que S4 se observara.** Sigue **no observado**, dos corridas. Hay laguna aceptada con dueño,
+   forzador y vencimiento confirmado — **no evidencia**.
+2. **`SEC-103` / OBS-H**, abierta y **no aceptada**; ni que `guard-codigo` esté sano o roto en la
+   cabeza actual.
+3. **El delta normativo**, que **no** he vuelto a auditar: su acreditación es la de `R-041` sobre
+   `5c30281`, y se sostiene porque `51a4430..1932492` no toca ninguna de sus sedes.
+4. **Las quality gates ni el CI.** No los miro, y sobre `1932492` **no consta corrida**.
+5. **Los proyectos consumidores**, que no reciben nada hasta publicar y migrar.
+6. **La fusión, el tag ni la publicación.**
+7. **Que REQ-025 pueda cerrarse** (§5).
+
+### 7. Estado de hallazgos de esta línea tras `R-041-A`
+
+| Hallazgo | Clase | Estado | Dueño | Bloquea |
+|---|---|---|---|---|
+| `SEC-102` | `contrato` | **`mitigado`** (sobre `1932492`) | `analista-requerimientos` | **No** |
+| `SEC-103` (OBS-H) | `instrumento` | `abierto — no aceptado — sin reparación autorizada` | coordinadora | No |
+| `SEC-104` | `instrumento` | `abierto` | coordinadora | No |
+
+**Línea base de no-regresión para REQ-025 — sustituye a la de `R-041` §9:** `Seguridad: aprobado`
+sobre **`1932492`**, con el delta de la entrega 1 acreditado en `R-041` sobre `5c30281` (18 archivos,
+0 de mecanismo) y el campo `Archivos:` con **quince** rutas sin decoración. Una auditoría futura
+compara contra eso. **Las líneas base de los demás REQ no se re-midieron.**
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta adenda:** última revisión **R-041** (adenda **`R-041-A`**); último
+hallazgo **SEC-104**; próximos libres **R-042** y **SEC-105**, tomados libres **sobre todas las
+líneas vivas del registro**.
