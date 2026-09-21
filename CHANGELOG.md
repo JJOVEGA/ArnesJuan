@@ -2,6 +2,77 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-21 · REQ-025 **entrega 1 APLICADA**: la coordinación orientada a entregas gana **una sola sede** en `AGENTS.md` §6, y los dos párrafos que prometían más que su mecanismo quedan reescritos en su **promesa completa**, nombrando la **transición exacta** que la cola impide
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` · rama `feat/req-025-coordinacion-entregas` (desde `main` = `v1.34.0`). Archivos del cambio: `AGENTS.md`, `templates/AGENTS.md.tpl`, `PENDING_APPROVAL.md`, `templates/PENDING_APPROVAL.md.tpl`, `skills/arnes-upgrade/SKILL.md`, `agents/qa-tester.md`, `agents/auditor-seguridad.md`, `agents/desarrollador.md`, `docs/decisions/ADR-008-coordinacion-orientada-a-entregas-y-bloqueos-con-alcance.md` (nuevo), las dos notas de histórico en `docs/arnes/req-025-entrega1.patch` y `docs/arnes/req-025-entrega1-preparacion.md`, y esta entrada.
+
+**Es la fecha real de aplicación** (CA-15 punto 8): el día en que el cambio queda escrito en los
+archivos, no la de la preparación del parche ni la de la partición del REQ. Los conflictos **(a)** y
+**(b)** —los dos cambios de texto normativo vigente— quedaron **resueltos por el propietario el
+2026-09-21**, así que el parche que esperaba esa decisión (`docs/arnes/req-025-entrega1.patch`,
+commit `8731a0a`) **queda superado** y se marca como histórico sin borrarlo: llevaba la forma
+«aprobar/cerrar» que la precisión (a) retira, no cubría las dos sedes de `PENDING_APPROVAL` y no
+incorporaba la precisión (b).
+
+**La sede, y es una sola (CA-15 punto 1).** `AGENTS.md` §6 gana un bloque **compacto** con las
+**seis reglas** de la sesión coordinadora: objetivo concreto declarado en el propio encargo
+(`CA-09` (A)) · **todo bloqueo declara su alcance**, con el vocabulario **cerrado** `implementar ·
+probar · aprobar · publicar` (`CA-09` (B) punto 5) · un hallazgo **no es, por sí solo, un encargo
+nuevo** (`CA-14`) · decisiones humanas **temprano y con su forma** (`CA-09` (B) punto 3) ·
+**presupuesto del ciclo completo** (`CA-10`) · **avance observable** tras cada comisión (`CA-10`).
+Ningún agente, plantilla, skill ni documento copia ese texto: **remiten** a él.
+
+**Los dos párrafos, reescritos en su PROMESA COMPLETA y no matizados al final (CA-15 punto 2).**
+«**Mecanismo de gate**» deja de prometer que el pipeline «no continúa hasta que el humano resuelve»
+y declara la **transición exacta** que queda impedida —**marcar un REQ como `completado`**, para
+cualquier REQ mientras la cola tenga entradas, **por construcción de `guard-completado`, que no
+cambia**— con sus **tres fronteras**: no impide **implementar** ni **probar**; **no es** ninguna
+aprobación humana normativa de §6 y **vaciar la cola no concede ninguna**; y **no absorbe** el orden
+de fases, el veto ni el tope de vueltas. «**Loop de error**» **empieza por lo que no cambia** —QA y
+seguridad **detectan, registran con su clase y bloquean**, la seguridad puede **vetar**, y ninguna
+clasificación retira, degrada ni pospone un veredicto— y sólo entonces dice que el REQ vuelve al
+desarrollador **cuando la coordinadora clasifica el hallazgo como defecto que impide cumplir o
+entregar con seguridad el alcance acordado**; añade la **discrepancia** QA/seguridad ↔ coordinadora
+que **se resuelve o se escala** —y **mover el hallazgo de sitio no permite cerrar**— y que el
+**contador es del defecto o de la entrega**: **el tope de 3 vueltas dev↔QA por REQ se conserva
+intacto** y tampoco se reinicia por cambio de rol, de fase o de nombre **ni abriendo un REQ nuevo**.
+
+**Las dos sedes de la cola (pieza 3).** `PENDING_APPROVAL.md` y su plantilla dejan de prometer que
+«el pipeline NO avanza en ese hilo» —la promesa absoluta que se leía justo **al encolar**— y nombran
+la acción: mientras haya algo en «Pendientes», `guard-completado` deniega **marcar cualquier REQ como
+`completado`**; implementar y probar continúan en trabajo independiente, autorizado y
+suficientemente definido; y **cada entrada declara qué trabajo sigue**, o que ninguno sigue.
+
+**La gemela y la entrada de actualización: PREPARADAS, no entregadas (CA-15 punto 3).**
+`templates/AGENTS.md.tpl` y `templates/PENDING_APPROVAL.md.tpl` reciben el mismo texto —idéntico
+salvo los marcadores `{{MAX_REINTENTOS}}` y `{{NOMBRE_PROYECTO}}`, que ya existían— y
+`skills/arnes-upgrade/SKILL.md` gana **«Hacia 1.35.0»**, que describe qué secciones cambian, dice
+que **los agentes no se migran** (los provee el plugin), que la identificación es **por título y
+contenido**, y que `MODIFICADO` es **conflicto que se presenta**. **Nada de esto ha llegado a ningún
+proyecto consumidor:** un proyecto instalado tiene su `AGENTS.md` **congelado** hasta que
+`arnes-upgrade` lo migre, y migrar es un acto de su propietario.
+
+**Referencias en los agentes, no copias (CA-15 punto 4).** `agents/qa-tester.md` —la cola pasa a
+nombrar la transición que impide (dos sedes), la devolución al desarrollador pasa por la
+clasificación **sin que su `con-hallazgos` pierda nada**, y el contador no se reinicia por cambio de
+rol, fase, nombre ni REQ nuevo—; `agents/auditor-seguridad.md` —el **veto declara su alcance** sin
+debilitarse, la **urgencia se escala con su efecto concreto**, y qué se repara ahora lo clasifica la
+coordinadora **sin tocar su veredicto**—; y `agents/desarrollador.md` —`Estado: bloqueado` con la
+forma de bloqueo con alcance—. `agents/analista-requerimientos.md` **no cambia**: el barrido por
+propiedad no encontró en él ninguna frase que contradiga la sede. **Ningún agente pierde una
+facultad.**
+
+**El ADR del cambio de fondo (CA-15 punto 7).** `docs/decisions/ADR-008-…md` registra contexto —la
+cadena de la vía proporcional como caso medido—, las dos decisiones del propietario del 2026-09-21
+citadas literalmente en lo esencial, las alternativas descartadas (colgar la excepción al final;
+«aprobar/cerrar»; un hook que decida semántica; distribuir las reglas a los agentes) y las
+consecuencias, separando **lo que no cambia** de lo que sí.
+
+**Lo que NO se tocó, y se comprueba leyendo el diff (CA-15 puntos 5 y 6):** `hooks/`, `hooks.json`,
+`.arnes/`, `.github/`, `tests/`, `tools/`, `.claude-plugin/`, los permisos, el `Rigor:` o el
+`Sensible a seguridad:` de ningún REQ, y las condiciones de cierre de `guard-completado`; ningún
+tablero, medidor ni herramienta nueva; y `.arnes/plantillas-origen/`, que contiene los mismos
+párrafos pero es la **base de fusión** de `arnes-upgrade` y **no se edita a mano**.
+
 ## [Interno] — 2026-09-21 · REQ-025 se **parte**: conserva la entrega 1 y pasa a `pendiente`; **REQ-028** se lleva la herramienta, la procedencia del `CHANGELOG.md` y las cuatro decisiones pendientes — **sin cerrar ninguna**
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` · rama `feat/req-025-coordinacion-entregas` (desde `main` = `v1.34.0`). Archivos del cambio: `requirements/REQ-025.md`, `requirements/REQ-028.md` (nuevo), las dos filas de `requirements/README.md` y esta entrada.
 

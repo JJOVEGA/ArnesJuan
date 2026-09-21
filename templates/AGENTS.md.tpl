@@ -323,11 +323,34 @@ validez de la firma, no una preferencia de calendario. `tools/arnes-paralelo.sh`
 comprueba** —responde sobre archivos, y lo dice en su propia salida—, así que un `disjunto` nunca es
 permiso para saltárselas.
 
-**Loop de error:** si QA o seguridad encuentran fallos, el REQ vuelve al desarrollador.
+**Loop de error.** Empieza por lo que **NO** cambia, porque es lo que se perdería leyendo el
+resto de prisa: el `qa-tester` y el `auditor-seguridad` **detectan, registran con su clase y
+bloquean** lo que encuentren, y la seguridad puede **vetar** en cualquier momento; **ninguna
+clasificación de la coordinadora retira, degrada ni pospone un veredicto suyo** — un
+`con-hallazgos` sigue escrito y sigue impidiendo lo que impide, y sólo lo cambia quien lo firmó,
+sobre lo que haya vuelto a revisar. Hecho eso: el REQ **vuelve al desarrollador cuando la
+coordinadora clasifica el hallazgo como defecto que impide cumplir o entregar con seguridad el
+alcance acordado**; una **dependencia necesaria para continuar** abre **sólo lo que depende de
+ella**, sin ampliar el encargo; y una **mejora o defecto independiente** se **registra con
+responsable** en su sede y **queda fuera** de la entrega — **registrar no autoriza reparar**, y
+hacerlo «ya que estamos» es ampliación de alcance y se anota como tal.
+**Y si QA o seguridad consideran que un hallazgo bloquea esta entrega y la coordinadora lo
+considera independiente, eso es una discrepancia declarada y no una clasificación firme:** se
+**resuelve entre ellos** con la evidencia a la vista, o se **escala al propietario** con la forma
+de la regla 4; mientras no esté resuelta o escalada, la entrega **no se cierra**. Y la salida
+barata queda prohibida por su nombre: **mover el hallazgo de sitio no lo resuelve** —ni sacarlo
+del `Hallazgos abiertos:` del REQ, ni reasignarlo a otro REQ, a otra entrega o a otra ventana, ni
+pasarlo de una sede a otra—. **La ubicación no es un veredicto.**
 Máximo **{{MAX_REINTENTOS}}** vueltas dev↔QA **por REQ**, y el contador **NO se reinicia con
 cada hallazgo nuevo**. Esto es deliberado: un tope por hallazgo no acota nada, porque cada
 arreglo cierra el hallazgo documentado y la vuelta siguiente encuentra una variante. Un REQ
 puede pasar semanas en `en-revisión` sin haber gastado nunca tres vueltas del mismo hallazgo.
+**Y el contador es del defecto o de la entrega, no del envoltorio bajo el que se despacha:** una
+reparación **del mismo defecto o de la misma entrega** **conserva su contador**, y tampoco se
+reinicia por cambio de rol, de fase o de nombre de la comisión —tramo, ajuste, revisión acotada,
+seguimiento— **ni abriendo un REQ nuevo**. Abrir un REQ **para** reiniciarlo es incumplimiento de
+esta sección. *(El reverso, para que no se lea de más: partir un REQ por **alcance** no elude
+ningún contador, porque no viaja ninguna reparación en curso.)*
 
 Agotado el tope, el REQ **no se queda abierto**: o cierra con el residual **declarado**
 (dueño, forzador medido y vencimiento) o pasa a `bloqueado` y se escala al humano. La
@@ -343,6 +366,71 @@ función de negocio**.
 > 🔒 **Cumplido por máquina:** `guard-completado` lee `Hallazgos abiertos:` y deniega el
 > cierre si alguno es `usuario/dinero` o `contrato` — y también si alguno **no declara clase**,
 > porque entonces la puerta no puede saber si bloquea.
+
+**La coordinación se orienta a entregas — seis reglas, y ésta es su sede única.** Son
+obligaciones de la **sesión coordinadora**, no de los subagentes. Se verifican leyendo el
+encargo, el libro de comisiones y el REQ, y **ninguna puerta las comprueba**: son disciplina
+declarada con dueño, y el dueño es la coordinadora. Su contrato completo vive en el
+requerimiento del arnés que las introdujo, **`REQ-025`**, que es donde se discuten y se cambian.
+**Aquí viven una sola vez:** ningún agente, plantilla, skill ni documento copia su texto —
+remiten a este bloque, porque dos transcripciones de la misma regla se desfasan, y ésta se
+desfasaría hacia el lado que **abre**.
+
+1. **Objetivo concreto, declarado en el propio encargo** (`REQ-025` CA-09 (A)). Todo encargo dice
+   por escrito **qué resultado debe quedar construido y comprobado**, **qué criterios de
+   aceptación le aplican** citados por su identificador, y **qué queda fuera** y **cuándo debe
+   detenerse**. Documentar o revisar **es** avance cuando sirve a esa entrega y no la sustituye:
+   un encargo cuyo único resultado sea texto se despacha **sólo** si ese texto **es** el resultado
+   contratado.
+2. **Todo bloqueo declara su alcance** (`REQ-025` CA-09 (B) punto 5). Venga de un hallazgo, de un
+   veto, de la cola de aprobaciones o de una dependencia, declara **(i) qué acción impide**
+   —vocabulario **cerrado**, y **esta línea es su sede única**: **implementar · probar · aprobar ·
+   publicar**, donde «aprobar» nombra las **aprobaciones humanas** de «Gates de aprobación
+   humana», más abajo, que conceden personas y que **ningún hook impone**; añadir una quinta clase
+   es cambio de contrato, no interpretación—, **(ii) qué parte de la entrega afecta**, **(iii) qué
+   evidencia lo sostiene**, citada de modo que se pueda volver a ella **sin preguntar** —archivo y
+   línea, identificador del hallazgo, o la corrida con su fecha—, y **(iv) qué lo resuelve**.
+   **Cuando el bloqueo es mecánico, la declaración conserva su clase y además nombra la transición
+   exacta que la máquina deniega**; nombrarla **no** añade una quinta clase al vocabulario. Un
+   bloqueo **no se extiende solo** a trabajo independiente y **no se rodea** con otro REQ, una
+   reclasificación ni un cambio de herramienta.
+3. **Un hallazgo no es, por sí solo, un encargo nuevo** (`REQ-025` CA-14). **Lo primero es lo que
+   NO cambia:** el `qa-tester` y el `auditor-seguridad` conservan íntegra su capacidad de
+   **detectar, registrar, clasificar y bloquear**, el **veto** de seguridad sigue disponible en
+   cualquier momento, y **ninguna clasificación retira, degrada ni pospone un veredicto**. Lo que
+   la coordinadora decide es **qué reparación se encarga y dentro de qué entrega**: los tres
+   términos de esa clasificación, la **discrepancia** que se resuelve o se escala, y el
+   **contador que es del defecto o de la entrega**, están escritos en «Loop de error», más arriba,
+   y **no se transcriben aquí**. Una **urgencia de seguridad no se aplaza por esta regla: se
+   escala** con su efecto concreto —qué puede ocurrir, sobre qué, y qué acción impide— por la vía
+   de la regla 4; «independiente» no es un sitio donde guardar una urgencia. **Y son dos ejes que
+   no se renombran uno en términos del otro:** la clase del campo `Hallazgos abiertos:`
+   (`usuario/dinero`, `contrato`, `instrumento`; sede única `requirements/README.md`) decide si un
+   hallazgo **bloquea el cierre** de su REQ y la lee `guard-completado`; esta clasificación decide
+   **si se abre trabajo ahora y dentro de qué entrega**.
+4. **Las decisiones humanas se presentan temprano y con su forma** (`REQ-025` CA-09 (B) punto 3).
+   Cuando una decisión del propietario **impida continuar**, se presenta **en ese momento** —no al
+   cierre de la jornada— con **(i) pregunta comprensible, (ii) opciones, (iii) recomendación y
+   (iv) consecuencia de cada opción**, y **agrupada** con las decisiones ya conocidas que sigan
+   pendientes. Mientras la decisión no llegue se avanza **únicamente** en trabajo que cumpla las
+   tres condiciones a la vez: **no depende** de ella, está **autorizado** y está **suficientemente
+   definido** en el sentido de la regla 1. Qué impide exactamente la cola, y qué no, está en
+   «Mecanismo de gate», más abajo.
+5. **El presupuesto es del ciclo completo, no del agente** (`REQ-025` CA-10). La misma entrega se
+   sigue **a través de todos los roles**, y **cambiar de agente, de fase o de nombre no reinicia
+   ningún límite**. Los contadores existentes **se conservan tal cual** —el primero, el tope de
+   vueltas dev↔QA **por REQ** que fija «Loop de error», que se **cita** y **no se redeclara
+   aquí**—. **Agotado el presupuesto no se aprueba por agotamiento ni se abre otra vuelta
+   automáticamente:** se presenta el impedimento con la forma de la regla 2 y **las alternativas
+   concretas**, que son las dos que «Loop de error» ya nombra —cerrar con el residual declarado, o
+   `bloqueado` y escalar—.
+6. **Avance observable después de cada comisión** (`REQ-025` CA-10). Su entrada del libro de
+   comisiones dice, en **una línea**, **qué resultado se obtuvo** y **qué dependencia falta**; y
+   si la comisión siguiente **no acerca directamente la entrega**, esa misma línea dice **por qué
+   es necesaria**. Queda prohibido por su nombre **fabricar cambios visibles, maquetas o tareas
+   nuevas para aparentar progreso**: un artefacto que ni es la entrega ni la acerca **no es
+   avance**, y anotarlo como si lo fuera es publicar una cifra sin procedencia, aplicada al
+   trabajo en vez de al número.
 
 **Nivel de rigor — cuánta ceremonia paga cada REQ.** No todo requerimiento merece el mismo
 esfuerzo. Cada REQ declara `Rigor:` en su cabecera: `ligero` (analista + desarrollador +
@@ -363,13 +451,28 @@ sensibilidad — exactamente como se juzgaba antes de que existieran los niveles
 > `Seguridad: aprobado` en `critico`. Un `Rigor: ligero` escrito sobre un REQ sensible **no
 > baja nada**: el suelo manda.
 
-**Gates de aprobación humana** — el pipeline se detiene y espera tu visto bueno antes de:
+**Gates de aprobación humana** — las acciones siguientes esperan tu visto bueno y **no se
+ejecutan** sin él; son las que la regla 2 llama «**aprobar**», las concede una persona y **ningún
+hook las impone**. Lo que no está en esta lista **no se detiene** por ellas:
 {{GATES_HUMANOS}}
 (por defecto: cierre de cada fase, decisiones arquitecturales, y cambios que tocan datos/credenciales de producción).
 
 **Mecanismo de gate:** cuando una acción requiere aprobación, el agente escribe la decisión
-pendiente en `PENDING_APPROVAL.md` y **detiene** el pipeline. No continúa hasta que el humano
-resuelve (aprueba/rechaza) y limpia esa entrada. Así el bloqueo queda visible y por escrito.
+pendiente en `PENDING_APPROVAL.md` con la forma de la regla 4 —pregunta, opciones, recomendación
+y consecuencia de cada opción—, agrupada con las que sigan pendientes. **Y lo que esa entrada
+detiene va dicho con su alcance, no en absoluto:** mientras la cola tenga entradas bajo
+`## Pendientes` queda impedida **la transición de cualquier REQ a `Estado: completado`** —marcar
+un REQ como `completado`—, por construcción de `guard-completado`, que este mecanismo **no**
+cambia. Y sus **tres fronteras**, porque un bloqueo sin alcance se extiende solo: **(i)** **no**
+impide **implementar** ni **probar**, y el trabajo que **no dependa** de la decisión, esté
+**autorizado** y esté **suficientemente definido** (regla 1) **sigue permitido**; **(ii)** **no
+es** ninguna de las aprobaciones humanas normativas de «Gates de aprobación humana», más arriba
+—ésas las conceden personas, ningún hook las impone, y **vaciar la cola no concede ninguna**—; y
+**(iii)** **no absorbe** ninguna otra restricción normativa —el orden de fases, el veto de
+seguridad, el tope de vueltas dev↔QA—, que bloquean por su propia regla y **no** se levantan
+resolviendo la cola. Por eso la propia entrada declara **qué trabajo sigue**, o que **ninguno
+sigue**, y en ese segundo caso el proyecto **espera** — que es distinto de fabricar trabajo
+(regla 6). Así el bloqueo queda visible, por escrito y **con su alcance**.
 
 > 🔒 **Vigilado por máquina:** mientras `PENDING_APPROVAL.md` tenga entradas en "## Pendientes",
 > el hook `guard-completado` (plugin) deniega marcar cualquier REQ como `completado`. El avance

@@ -1,8 +1,18 @@
 # PENDING_APPROVAL — ArnesJuan
 
-> Cola de decisiones que esperan visto bueno humano antes de que el pipeline continúe.
-> Un agente AÑADE una entrada y se detiene; el humano la resuelve y la mueve a "Resueltas".
-> Mientras haya algo en "Pendientes", el pipeline NO avanza en ese hilo.
+> Cola de decisiones que esperan visto bueno humano. Un agente AÑADE una entrada con su forma
+> —pregunta, opciones, recomendación y consecuencia de cada opción (`AGENTS.md` §6, regla 4)—;
+> el humano la resuelve y la mueve a "Resueltas".
+>
+> **Qué impide esta cola, dicho con su alcance y no en absoluto.** Mientras haya algo en
+> "Pendientes", `guard-completado` deniega **marcar cualquier REQ como `completado`** —la
+> transición del campo `Estado:` de ese REQ al valor `completado`—. Y sus tres fronteras:
+> **no** impide **implementar** ni **probar**, así que el trabajo que **no dependa** de la
+> decisión, esté **autorizado** y esté **suficientemente definido** continúa; **no es** ninguna
+> de las aprobaciones humanas normativas de `AGENTS.md` §6, y **vaciar la cola no concede
+> ninguna**; y **no absorbe** ninguna otra restricción normativa —el orden de fases, el veto de
+> seguridad, el tope de vueltas dev↔QA—, que bloquean por su propia regla. Por eso **cada
+> entrada declara qué trabajo sigue**, o que **ninguno sigue** y el proyecto espera.
 >
 > **Formato de una entrada** (va bajo `## Pendientes`, con `###`):
 > `### [AAAA-MM-DD] (agente) — Título de la decisión`, y debajo: **Contexto** (por qué se

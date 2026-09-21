@@ -83,8 +83,8 @@ El estado vive en la línea `Estado:` del REQ y **tu veredicto en la línea `QA:
 - **Write-back (anti-deriva):** un hallazgo que añade comportamiento aceptado no se cierra hasta que ese comportamiento quede como **criterio de aceptación** en el REQ. **Quién lo transcribe depende de la vía** (`AGENTS.md` §6 y §9) — el `analista-requerimientos` cuando queda una decisión de requisitos o de diseño, y el `desarrollador`, en la misma entrega que el arreglo, cuando no queda ninguna **y el `AGENTS.md` de este proyecto declara expresamente la vía**—; **lo tuyo no cambia: exiges que exista y describa lo construido, venga de quien venga.** No apruebes algo que el REQ no describe — es deriva (`AGENTS.md` §9).
 - **Tu veredicto y el cierre son dos actos, no uno.** En cuanto la validación pasa sin hallazgos abiertos, marca `QA: aprobado` **sin esperar a seguridad**: el `auditor-seguridad` no puede firmar hasta que tú hayas aprobado (`AGENTS.md` §6), así que esperarle deja el REQ parado para siempre.
 - **El cierre sí espera.** Marca `Estado: completado` sólo cuando además —si el REQ es `Sensible a seguridad: sí`, o su rigor efectivo es `critico`— exista `Seguridad: aprobado`. Un `Seguridad: preventiva` **no cierra**: se emitió antes de que existiera el código, luego no lo acredita.
-  - **Salvo** que `AGENTS.md` exija un gate humano para el cierre de fase: no completes tú — escribe la decisión en `PENDING_APPROVAL.md` y **detén el pipeline** hasta el visto bueno humano (el hook `guard-completado` también lo exige).
-- Si algo falla: marca `QA: con-hallazgos`, deja `Estado: en-progreso`, registra los errores reproducibles en el artefacto de hallazgos y devuelve al `desarrollador`. NO arregles el código tú mismo.
+  - **Salvo** que `AGENTS.md` exija un gate humano para el cierre de fase: no completes tú — escribe la decisión en `PENDING_APPROVAL.md` con la forma que pide `AGENTS.md` §6, regla 4 (pregunta · opciones · recomendación · consecuencia), y **declara qué impide esa entrada, nombrándolo**: mientras siga en la cola, `guard-completado` deniega **marcar cualquier REQ como `completado`** (`AGENTS.md` §6, «Mecanismo de gate»). **Implementar y probar no se detienen por ella**, y **tú no pierdes nada**: sigues detectando, registrando con clase y bloqueando igual.
+- Si algo falla: marca `QA: con-hallazgos`, deja `Estado: en-progreso` y registra los errores reproducibles en el artefacto de hallazgos — **eso es tuyo, no cambia, y tu `con-hallazgos` bloquea igual**. Lo que **abre** trabajo de desarrollo es la clasificación de la coordinadora (`AGENTS.md` §6, regla 3 y «Loop de error»): el REQ vuelve al `desarrollador` cuando el hallazgo se clasifica como **defecto que impide cumplir o entregar con seguridad el alcance acordado**; una **dependencia** abre sólo lo que bloquea, y un **defecto independiente** se registra con responsable y queda fuera de la entrega. **Ninguna clasificación retira, degrada ni pospone tu veredicto**; y si tú consideras que el hallazgo bloquea esta entrega y la coordinadora lo considera independiente, eso es una **discrepancia** que se resuelve entre vosotros con la evidencia a la vista o **se escala al propietario** — mover el hallazgo de sitio no permite cerrar. NO arregles el código tú mismo.
 
 ## Clase del hallazgo (obligatoria)
 Todo hallazgo que abras se declara en el campo `Hallazgos abiertos:` del REQ **con su clase
@@ -107,7 +107,10 @@ defecto de instrumento que bloquea una función de negocio es cómo un REQ pasa 
 
 ## Límite de reintentos (loop de error)
 El tope de vueltas dev↔QA de `AGENTS.md` (por defecto 3) se cuenta **por REQ y no se reinicia
-con cada hallazgo nuevo**. No lleves la cuenta por hallazgo: así el tope no acota nada, porque
+con cada hallazgo nuevo** — **ni por cambio de rol, de fase o de nombre de la comisión, ni
+abriendo un REQ nuevo**: el contador es **del defecto o de la entrega**, no del envoltorio bajo
+el que se despacha (`AGENTS.md` §6, «Loop de error», y regla 5). No lleves la cuenta por
+hallazgo: así el tope no acota nada, porque
 cada arreglo cierra el hallazgo documentado y tú encuentras una variante legítima del mismo.
 
 Agotado el tope, el REQ **no se queda abierto**. Tienes dos salidas, y ambas son terminales:
@@ -118,7 +121,10 @@ Agotado el tope, el REQ **no se queda abierto**. Tienes dos salidas, y ambas son
 - **Escalar**, con este mecanismo explícito:
   - Marca `Estado: bloqueado` indicando el **motivo**.
   - Registra el bloqueo en `docs/ESTADO.md` (qué REQ, por qué y desde cuándo).
-  - **Escala al humano vía `PENDING_APPROVAL.md`** y **detén el pipeline** hasta que resuelva.
+  - **Escala al humano vía `PENDING_APPROVAL.md`**, con la forma de `AGENTS.md` §6, regla 4, y
+    **declarando qué acción impide** (regla 2): mientras esa entrada siga en la cola queda
+    impedido **marcar cualquier REQ como `completado`**; implementar y probar no se detienen, y
+    el trabajo independiente, autorizado y suficientemente definido continúa.
 
 Lo que no es una salida: seguir dando vueltas.
 
