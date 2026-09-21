@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-21 · REQ-025 entrega 1: ensayo de coordinación ENS-COORD-P ejecutado (plantillas y agentes de `ff4ff67`, n=1): S1, S2, S3 observados; S4 bloqueo conservado por veto de seguridad; cola 1 → 7 entradas (observación)
+`req-025/ensayos/ENS-COORD-P/` (salida completa, diff del proyecto, cola, REQ-004, QA y seguridad del proyecto, análisis de la coordinadora). Acreditación pendiente de QA (CA-11 punto 3).
+
 ## 2026-09-21 · REQ-025 entrega 1: lanzador del ensayo de coordinación (S1 cola sólo de publicación · S2 decisión de negocio · S3 hallazgo ajeno · S4 defecto que compromete) y resultados esperados escritos antes de ejecutar
 `req-025/ensayos/lanzar-coordinacion.sh` (sin ejecutar) y `req-025/ensayos/esperado-coordinacion.md`. Se ejecutará con el candidato ya parcheado, una vez aplicado y revisado.
 

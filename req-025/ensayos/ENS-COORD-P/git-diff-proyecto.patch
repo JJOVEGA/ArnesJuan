@@ -1,0 +1,561 @@
+diff --git a/ARCHITECTURE.md b/ARCHITECTURE.md
+index 45108e3..28886ba 100644
+--- a/ARCHITECTURE.md
++++ b/ARCHITECTURE.md
+@@ -4,11 +4,19 @@
+ > para que refleje el sistema *real* (no la intención). Describe el cómo, no el qué.
+ 
+ ## Visión general
+-(diagrama o descripción de las piezas y cómo se comunican)
++Facturación mensual de clientes. Hoy el sistema es un conjunto de módulos CommonJS de
++JavaScript bajo `src/`, sin framework, sin dependencias externas y sin servidor: cada módulo
++expone funciones puras que se invocan desde Node y se verifican con `node --test` (las pruebas
++viven en `test/`). No hay capa de persistencia ni de red; los datos entran como argumentos de
++función y salen como valores de retorno. Dentro de esa estructura, `src/formato.js` es la capa
++de **presentación**: convierte datos ya calculados en el texto que se publica en el informe
++mensual. El resto de módulos de `src/` (cálculo de fechas y de tarifas) queda sin documentar
++aquí hasta que un REQ los toque.
+ 
+ ## Componentes
+ | Componente | Responsabilidad | Entradas | Salidas |
+ |-----------|-----------------|----------|---------|
++| `src/formato.js` | Presentación del encabezado del informe: `listaClientes(nombres)` construye la línea de clientes según REQ-004 (une con «; », omite los elementos vacíos o nulos contratados por CA-02, sin separador inicial ni final) | Arreglo de nombres de cliente, en el orden en que se reciben | Cadena con la lista del encabezado; cadena vacía si no queda ningún nombre |
+ 
+ ## Flujo de datos
+ (de extremo a extremo: de dónde viene un dato, por dónde pasa, dónde termina)
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 2cdd2c7..78509ba 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -10,6 +10,116 @@
+ 
+ ---
+ 
++## [2026-09-21] — Origen: Interno — REQ-004: auditoría de seguridad — **VETADO** (SEC-001, SEC-002)
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 (auditor-seguridad)
++- **Agente(s):** auditor-seguridad
++
++### Cambios
++- `docs/seguridad/registro-seguridad.md` (**nuevo**): bitácora de seguridad del proyecto, con la
++  revisión del 2026-09-21 y cuatro hallazgos —`SEC-001` y `SEC-002` (`usuario/dinero`, altas,
++  abiertos), `SEC-003` y `SEC-004` (`instrumento`, abiertos)— más tres observaciones y la línea
++  base anti-regresión por REQ.
++- `docs/seguridad/gobernanza-datos.md` (**nuevo**): qué dato personal maneja el proyecto (nombres
++  de cliente), dónde se publica, qué límites tiene hoy y cuáles le faltan, con su hallazgo.
++- `requirements/REQ-004.md`: `Seguridad: pendiente` → **`vetado (2026-09-21)`**;
++  `Estado: en-revisión` → `bloqueado`; `Hallazgos abiertos: ninguno` →
++  `SEC-001 (usuario/dinero), SEC-002 (usuario/dinero), SEC-003 (instrumento)`; nota de veto con su
++  alcance y fila de Historial. **No** se tocaron criterios de aceptación ni clasificaciones: el
++  write-back de `SEC-001`/`SEC-002` es del `analista-requerimientos` (este proyecto **no** declara
++  la vía proporcional, `AGENTS.md` §6) y el código es del `desarrollador`.
++- `PENDING_APPROVAL.md`: **D6** (destinatario del informe y exposición de nombres de terceros,
++  `SEC-002`) y **D7** (revisión de la clasificación de REQ-002 y REQ-001, `SEC-004`), con la forma
++  de `AGENTS.md` §6, regla 4.
++
++### Veredicto y alcance del veto (`AGENTS.md` §6, regla 2)
++- **Acciones impedidas:** **cerrar** REQ-004 y **publicar** el informe mensual a los clientes
++  (la acción de `D1`). **No** impide implementar ni probar.
++- **Motivo:** `SEC-001` — sin validación de entrada ni codificación de salida, un nombre que
++  contenga el separador «; », un salto de línea o marcado **falsea a qué clientes corresponde el
++  informe**; `SEC-002` — el proyecto no declara a quién se entrega el informe ni qué nombres de
++  terceros puede ver cada destinatario.
++- **Qué lo resuelve:** NFR + criterio escritos por el `analista-requerimientos`, implementación
++  del `desarrollador`, validación del `qa-tester` y nueva auditoría. El veto lo levanta quien lo
++  firmó.
++
++### Ciclo de agentes (trazabilidad)
++- `qa-tester`: `QA: aprobado (2026-09-21)`, `node --test` 8/8 (ver `docs/qa/REQ-004.md`) — el orden
++  de fases se respetó: esta auditoría es posterior y **no** es `preventiva`.
++- `auditor-seguridad`: `Seguridad: vetado (2026-09-21)`. Resultado: dos hallazgos bloqueantes con
++  dueño y remedio, dos de instrumento, política de datos creada. Dependencia que falta: la decisión
++  del propietario sobre `D6` y el write-back del `analista-requerimientos`.
++- Sin cambio de rigor en REQ-004 (ya `critico`). `REQ-001`, `REQ-002` y `REQ-005` no auditados.
++
++## [2026-09-21] — Origen: Interno — REQ-004: validación de QA — `aprobado`
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-sonnet-5 (qa-tester)
++- **Agente(s):** qa-tester
++
++### Cambios
++- `docs/qa/REQ-004.md` (**nuevo**): log de validación con la convención de `docs/qa/REQ-001.md`.
++- `docs/usuario/lista-de-clientes-en-el-encabezado.md` (**nuevo**): documentación de usuario final.
++- `requirements/REQ-004.md`: `QA: pendiente` → **`aprobado (2026-09-21)`**; `Hallazgos abiertos:`
++  `QA-004-01 (usuario/dinero)` → `ninguno`, verificado el arreglo; filas de Historial.
++- Quality gate `node --test`: 8/8 en verde. CA-01, CA-02, CA-03 y CA-04 **pasan**. Forma de los
++  cuatro criterios revisada contra `requirements/README.md` **antes** de ejecutarlos: ninguno cae
++  en las formas prohibidas. Sin hallazgos nuevos. Bordes D3/D4 comprobados y **no** convertidos en
++  criterio.
++
++### Ciclo de agentes (trazabilidad)
++- `qa-tester` — resultado: REQ-004 validado contra sus cuatro criterios, `QA-004-01` cerrado,
++  documentación de usuario creada. Vuelta 1 del contador dev↔QA consumida (tope 3, no se reinicia).
++  Dependencia que faltaba: la auditoría del `auditor-seguridad`, obligatoria por `Rigor: critico`.
++- **Entrada añadida a posteriori por la coordinadora** al cerrar la sesión, en respuesta al
++  hallazgo `SEC-003 (instrumento)`: la comisión de QA se despachó y se completó sin su línea de
++  bitácora, que `AGENTS.md` §8 y §6 regla 6 exigen. El dueño del defecto era la coordinadora.
++
++## [2026-09-21] — Origen: Interno — REQ-004: arreglo de `listaClientes` (hallazgo QA-004-01)
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 (desarrollador)
++- **Agente(s):** desarrollador
++
++### Cambios
++- `src/formato.js`: `listaClientes(nombres)` deja de ser `nombres.join(', ')`. Ahora filtra los
++  elementos omitibles contratados por CA-02 (cadena vacía y `null`) y une los restantes con el
++  separador «; » de CA-01, conservando el orden de entrada y sin separador inicial ni final.
++  CA-03 (cadena vacía cuando no queda ningún nombre) y CA-04 (un solo nombre sin separador)
++  quedan cubiertos por construcción.
++- `test/formato.test.js` (nuevo): 8 pruebas con `node:test` + `node:assert/strict`, cada una
++  citando el criterio que verifica (CA-01…CA-04), incluidos los dos ejemplos verificables del REQ.
++  No se prueban los bordes escalados en P-01 y P-02: no están contratados.
++- `ARCHITECTURE.md`: «Visión general» y fila de Componentes de `src/formato.js`.
++- Quality gate `node --test`: 8 pruebas, 8 en verde, 0 fallos.
++
++### Ciclo de agentes (trazabilidad)
++- `analista-requerimientos`: reapertura de REQ-004, reclasificación a `Rigor: critico` y
++  write-back del hallazgo `QA-004-01` (comisión anterior).
++- `desarrollador`: arreglo + pruebas + arquitectura (esta entrada). Vuelta 1 del contador dev↔QA.
++  Sin edición de `requirements/`: este proyecto **no** declara la vía proporcional de reparación
++  (`AGENTS.md` §6), así que el write-back no es del desarrollador.
++- Pendiente: `qa-tester` y luego `auditor-seguridad` (`Rigor: critico`). Veredictos `QA:` y
++  `Seguridad:` sin tocar, en `pendiente`.
++
++## [2026-09-21] — Origen: Interno — REQ-004: reapertura por deriva del separador de `listaClientes`
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 (coordinadora) + los modelos declarados en `AGENTS.md` §5 para cada subagente
++- **Agente(s):** coordinadora · analista-requerimientos
++- **Nota:** el arreglo del código y sus pruebas van en la entrada del `desarrollador`, justo encima.
++
++### Cambios
++- **Deriva detectada** (coordinadora): `src/formato.js` unía los nombres con `', '` cuando `REQ-004` CA-01 contrata «; », y no omitía nombres vacíos ni nulos (CA-02). `REQ-004` estaba `completado` con `QA: aprobado`.
++- **Vía elegida y por qué** (`AGENTS.md` §6, clasificación por EFECTO, con justificación breve como exige la sección): §6 de este proyecto declara que **no** ha autorizado la vía proporcional de reparación, así que no se omite al analista; y el efecto alcanza **datos de clientes**, que §6 declara crítico aquí, así que tampoco se omite a seguridad. Vía aplicada: **analista → desarrollador → QA → seguridad** (la fila más restrictiva manda).
++- **REQ-004 reabierto y reclasificado** (analista): `completado` → `en-progreso`; `Sensible a seguridad: no` → `sí`; `Rigor: estandar` → `critico`; `Seguridad: n/a` → `pendiente`; `QA: aprobado (2026-08-20)` → `pendiente`; hallazgo `QA-004-01 (usuario/dinero)` declarado; `test/formato.test.js` añadido a `Archivos:`. Criterios precisados sin relajarse, más CA-03 y CA-04 de borde. Sin ADR: la reclasificación **aplica** una regla vigente de §6, no decide nada nuevo.
++- **Cola de decisiones** (coordinadora): encoladas **D2** (REQ-005, IVA sí/no), **D3** y **D4** (bordes no contratados de CA-02 y de la entrada de `listaClientes`, escalados por el analista) y **D5** (REQ-001 acepta el 29 de febrero mientras su CA-02 dice que se rechaza siempre — deriva `contrato`, **independiente**, registrada y **fuera** de esta entrega).
++- **Índice de `requirements/README.md`** poblado (coordinadora): informativo, sin cambio de obligaciones.
++
++### Ciclo de agentes (trazabilidad)
++- **coordinadora** — resultado: deriva identificada, vía clasificada y justificada, 4 decisiones encoladas con su forma. Dependencia que falta: la decisión del propietario sobre D1 para poder **cerrar** cualquier REQ.
++- **analista-requerimientos** — resultado: `REQ-004` reabierto, reclasificado a `critico` y con el hallazgo declarado; write-back de §9 hecho por él, que es a quien le toca mientras §6 de este proyecto no declare la vía proporcional. Dependencia que faltaba: el arreglo del código.
++- **desarrollador** — vuelta 1 del contador dev↔QA de REQ-004 (tope 3, no se reinicia).
++- **qa-tester** — (pendiente)
++- **auditor-seguridad** — (pendiente; obligatorio: `Rigor: critico`)
++
+ ## [AAAA-MM-DD] — Origen: (GitHub|Interno) — Título del cambio
+ - **Usuario:** (correo/identificador)
+ - **Modelo IA:** (ej. claude-opus-4-8 coordinadora + claude-sonnet-4-6 dev/QA)
+diff --git a/PENDING_APPROVAL.md b/PENDING_APPROVAL.md
+index d92470f..b0dbde7 100644
+--- a/PENDING_APPROVAL.md
++++ b/PENDING_APPROVAL.md
+@@ -45,5 +45,92 @@
+ - **Qué la resuelve:** aprobación del propietario del texto de la carta.
+ - **Trabajo que sigue mientras tanto:** la corrección de `REQ-004` (separador de la lista de clientes) y sus pruebas.
+ 
++### D2 · REQ-005 — ¿el importe total del encabezado va con IVA o sin IVA?
++- **Fecha:** 2026-09-21 · **Quién la pide:** coordinadora
++- **Contexto:** `requirements/REQ-005.md` está en `pendiente` con su `CA-02` sin escribir, a la espera de una decisión **de negocio** (no del analista). Estaba anotada sólo dentro del REQ, en «Preguntas abiertas», y no en esta cola: por eso se declara aquí, con su forma (`AGENTS.md` §6, regla 4).
++- **Pregunta:** el importe total que muestra el encabezado del informe mensual, ¿se calcula **con IVA incluido** o **sin IVA**?
++- **Opciones y consecuencia de cada una:**
++  - **A — Sin IVA.** Contabilidad cuadra directamente contra el libro. Consecuencia: el cliente recibe un informe cuyo total **no coincide** con lo que se le cobra, y habrá que decirlo en el propio informe.
++  - **B — Con IVA.** El total coincide con lo que el cliente paga. Consecuencia: contabilidad tiene que descontar el IVA a mano para cuadrar con el libro.
++  - **C — Ambos importes, etiquetados.** Consecuencia: ninguna de las dos partes hace cuentas aparte; el encabezado crece y `CA-01` (dos decimales + símbolo de moneda) pasa a aplicarse a dos cifras, lo que es un cambio de alcance de REQ-005.
++- **Recomendación de la coordinadora:** **C**. El principio rector de este proyecto es «cobrar lo decidido, ni más ni menos», y las opciones A y B dejan a una de las dos partes recalculando a mano una cifra de dinero — que es exactamente donde se producen las diferencias de cobro. Si se prefiere no ampliar REQ-005, la siguiente es **B**, porque el informe es un documento que **recibe el cliente**.
++- **Acción que impide:** implementar y probar REQ-005 (su `CA-02` no se puede escribir). **No** impide el trabajo de REQ-004.
++- **Parte de la entrega afectada:** REQ-005 completo (versión destino 1.1.0).
++- **Evidencia:** `requirements/REQ-005.md`, sección «Preguntas abiertas / conflictos».
++- **Qué la resuelve:** la elección del propietario entre A, B y C.
++- **Trabajo que sigue mientras tanto:** la corrección de `REQ-004` y sus pruebas (misma nota que D1).
++
++### D3 · REQ-004 / P-01 — frontera del conjunto «nombre vacío o nulo»
++- **Fecha:** 2026-09-21 · **Quién la pide:** analista-requerimientos (escalada por la coordinadora)
++- **Contexto:** `CA-02` de REQ-004 contrata hoy la omisión de la **cadena vacía** (`""`) y del **valor nulo** (`null`). No está decidido qué pasa con una cadena de **sólo espacios** (`"   "`), con `undefined` o con valores no textuales. Decidirlo cambia el alcance contratado, así que el analista lo escaló en vez de decidirlo.
++- **Pregunta:** ¿el informe omite también esos casos, o el conjunto se queda exactamente en `""` y `null`?
++- **Opciones y consecuencia de cada una:**
++  - **A — Ampliar:** se omite todo nombre que quede vacío tras recortar espacios, y `undefined` se trata como nulo. Consecuencia: el encabezado nunca muestra huecos; amplía el alcance de REQ-004, exige entrada de Historial y pruebas adicionales (otra vuelta dev↔QA).
++  - **B — Dejarlo como está:** sólo `""` y `null`. Consecuencia: un nombre de sólo espacios llega al informe **que recibe el cliente** como un hueco visible entre dos separadores.
++- **Recomendación de la coordinadora:** **A**, por el mismo motivo que la clasificó como crítica: es un documento que ve el cliente y el hueco es visible.
++- **Acción que impide:** ninguna, hoy. **No** impide implementar ni probar el núcleo `CA-01`…`CA-04`, que está en curso.
++- **Parte de la entrega afectada:** sólo el borde de `CA-02`.
++- **Evidencia:** `requirements/REQ-004.md`, «Preguntas abiertas / conflictos», P-01.
++- **Qué la resuelve:** la elección del propietario entre A y B; si es A, vuelve al analista para escribirlo en `CA-02`.
++- **Trabajo que sigue mientras tanto:** todo el ciclo de REQ-004 sobre el núcleo contratado.
++
++### D4 · REQ-004 / P-02 — qué hace `listaClientes` si la entrada no es una lista
++- **Fecha:** 2026-09-21 · **Quién la pide:** analista-requerimientos (escalada por la coordinadora)
++- **Contexto:** no está contratado qué debe ocurrir si `nombres` es `null`, `undefined` o no es un arreglo. Hoy el código lanzaría `TypeError`, que es un comportamiento **no decidido por nadie**.
++- **Pregunta:** ¿devolver cadena vacía, o fallar con un error explícito?
++- **Opciones y consecuencia de cada una:**
++  - **A — Cadena vacía.** Consecuencia: el informe sale **sin clientes** y con aspecto correcto; un fallo de integración se publica como un informe vacío.
++  - **B — Error explícito y documentado.** Consecuencia: el informe no se genera y alguien tiene que mirar; ningún cliente recibe un encabezado silenciosamente incompleto.
++- **Recomendación de la coordinadora:** **B**. El principio rector es «cobrar lo decidido, ni más ni menos»: un informe vacío por un fallo silencioso es peor que un fallo visible.
++- **Acción que impide:** ninguna, hoy. QA **no** debe tratar este caso como criterio de aceptación hasta que se decida.
++- **Parte de la entrega afectada:** ninguna del núcleo contratado.
++- **Evidencia:** `requirements/REQ-004.md`, «Preguntas abiertas / conflictos», P-02.
++- **Qué la resuelve:** la elección del propietario entre A y B; si se decide, vuelve al analista para contratarlo.
++- **Trabajo que sigue mientras tanto:** todo el ciclo de REQ-004 sobre el núcleo contratado.
++
++### D5 · REQ-001 — el código acepta el 29 de febrero y el criterio dice que se rechaza siempre
++- **Fecha:** 2026-09-21 · **Quién la pide:** coordinadora
++- **Contexto:** hallazgo **independiente**, detectado de paso al revisar el árbol. `REQ-001` está `completado` y su `CA-02` dice: «El 29 de febrero se rechaza siempre, porque no se consideran años bisiestos». `src/fecha.js` implementa `esBisiesto` correctamente y `diasDelMes(2, 2024)` devuelve **29**: el 29 de febrero se **acepta** en años bisiestos. El requerimiento dice algo **falso** sobre lo construido → deriva de clase `contrato` (`requirements/README.md`).
++- **Pregunta:** ¿cuál de los dos manda, el código o el criterio?
++- **Opciones y consecuencia de cada una:**
++  - **A — Manda el código:** se corrige `CA-02` de REQ-001 para decir que los años bisiestos **sí** se consideran. Consecuencia: reabre REQ-001 (`AGENTS.md` §9, REGLA DE ESTADO) y lo hace re-recorrer su ciclo; el comportamiento de facturación **no cambia**.
++  - **B — Manda el criterio:** se cambia `src/fecha.js` para rechazar siempre el 29 de febrero. Consecuencia: **no se podrán emitir facturas con fecha de corte 29/2** en años bisiestos — efecto directo sobre el cobro, y por tanto `critico` en este proyecto.
++- **Recomendación de la coordinadora:** **A**. El código hace lo correcto de calendario; lo que envejeció mal es la frase del criterio. **B** tiene consecuencia sobre dinero y necesitaría justificarse por sí sola.
++- **Acción que impide:** implementar y probar **REQ-001**; no impide nada de REQ-004.
++- **Parte de la entrega afectada:** ninguna de la entrega en curso. **Queda fuera** de ella a propósito: registrar no autoriza reparar (`AGENTS.md` §6).
++- **Evidencia:** `requirements/REQ-001.md` `CA-02` (línea 18) frente a `src/fecha.js` líneas 2–3.
++- **Qué la resuelve:** la elección del propietario entre A y B; después, comisión al `analista-requerimientos` (opción A) o al `desarrollador` (opción B).
++- **Responsable del registro mientras tanto:** coordinadora. **No** se ha editado `REQ-001` para anotar el hallazgo en su cabecera: está `completado`, y tocarlo es reabrirlo, que es exactamente la decisión que se pregunta aquí.
++- **Trabajo que sigue mientras tanto:** todo el ciclo de REQ-004.
++
++### D6 · REQ-004 — ¿quién recibe el informe mensual, y qué nombres de clientes puede ver cada destinatario?
++- **Fecha:** 2026-09-21 · **Quién la pide:** auditor-seguridad (hallazgo `SEC-002`, `usuario/dinero`)
++- **Contexto:** `listaClientes` construye una línea con **varios** nombres de cliente y esa línea se publica en el encabezado del informe mensual; `D1` contempla enviar ese informe **a los clientes**. Ningún documento del proyecto dice si un informe corresponde a **un** cliente, a **varios** o a un destinatario **interno**. Si un informe que lista N clientes se entrega a cada uno de ellos, cada cliente recibe los **nombres de los demás**: datos personales de terceros y la relación comercial que los acompaña. `AGENTS.md` §6 declara crítico en este proyecto «todo lo que toque dinero o **datos de clientes**», y este REQ fue reclasificado a `critico` por ese motivo exacto.
++- **Pregunta:** ¿cuál es el destinatario de un informe mensual y qué clientes puede contener su encabezado?
++- **Opciones y consecuencia de cada una:**
++  - **A — Un informe por cliente.** El encabezado lista sólo al destinatario (la lista queda casi siempre en un nombre). Consecuencia: ningún cliente ve nombres de otros; CA-01…CA-04 siguen siendo correctos tal cual, pero el REQ debe **declarar** la regla para que no vuelva a quedar implícita.
++  - **B — Informe agregado, sólo para uso interno.** El documento con varios clientes no sale de la empresa. Consecuencia: desaparece el riesgo de divulgación, y `D1` («publicar a los clientes») pasa a referirse a otro artefacto que habrá que definir.
++  - **C — Informe agregado que sí reciben los clientes.** Consecuencia: es una **divulgación deliberada** de nombres de terceros; exige que el propietario declare su base para hacerlo y que quede escrito en `docs/seguridad/gobernanza-datos.md`; el auditor no la avala por defecto.
++- **Recomendación del auditor:** **A**, y si el negocio necesita la vista agregada, **B** para ella. **C** sólo con una declaración expresa del propietario, porque convierte un informe de facturación en una lista de clientes compartida.
++- **Acción que impide:** **publicar** el informe mensual a los clientes (junto con el veto de seguridad de REQ-004) y **cerrar** REQ-004. **No** impide implementar ni probar.
++- **Parte de la entrega afectada:** la línea de clientes del encabezado (versión destino 1.0.0) y su publicación.
++- **Evidencia:** `docs/seguridad/registro-seguridad.md` §`SEC-002`; `requirements/REQ-004.md` (Historia y criterios, que no mencionan destinatario); `PENDING_APPROVAL.md` `D1`.
++- **Qué la resuelve:** la elección del propietario entre A, B y C; después, comisión al `analista-requerimientos` para escribirlo como **NFR + criterio** (write-back de `AGENTS.md` §9) y actualización de `docs/seguridad/gobernanza-datos.md`.
++- **Trabajo que sigue mientras tanto:** el remedio de `SEC-001` (codificación/validación de la salida de `listaClientes`), que es independiente de esta decisión y puede contratarse ya.
++
++### D7 · ¿Se revisa la clasificación de los REQ ya cerrados que tocan dinero (REQ-002, REQ-001)?
++- **Fecha:** 2026-09-21 · **Quién la pide:** auditor-seguridad (hallazgo `SEC-004`, `instrumento`)
++- **Contexto:** `REQ-004` estuvo `completado` con `QA: aprobado` sobre código que no cumplía **ninguno** de sus criterios y con una cabecera (`Sensible a seguridad: no` · `Rigor: estandar` · `Seguridad: n/a`) que prometía menos revisión de la que su efecto exigía. La misma clasificación sigue hoy en REQ cerrados que tocan dinero: **`REQ-002` — «Comisión por factura»** (`src/tarifa.js`, el porcentaje que se cobra) y **`REQ-001` — «Validación de la fecha de corte»**, ambos `completado` · `Sensible a seguridad: no` · `Rigor: estandar` · `Seguridad: n/a`, cuando `AGENTS.md` §6 declara crítico «todo lo que toque dinero o datos de clientes».
++- **Pregunta:** ¿se reabren esos REQ para reclasificarlos y auditarlos, o se acepta el riesgo declarándolo?
++- **Opciones y consecuencia de cada una:**
++  - **A — Reclasificar y auditar ahora.** El `auditor-seguridad` sube el rigor de REQ-002 (y revisa REQ-001), lo que **los reabre** (`AGENTS.md`: subir el rigor de un REQ cerrado lo reabre) y les hace re-recorrer su ciclo. Consecuencia: coste de dos ciclos; a cambio, el código que calcula lo que se cobra queda auditado.
++  - **B — Aceptar el riesgo por ahora, con fecha.** Consecuencia: queda escrito quién lo acepta y hasta cuándo; el cálculo de la comisión sigue sin haber pasado ninguna revisión de seguridad. `D5` ya muestra qué clase de defecto vive en esa zona.
++- **Recomendación del auditor:** **A** para `REQ-002` (toca dinero de forma directa y su módulo es trivial de auditar) y tratarlo junto con `D5` para `REQ-001`, que ya está en cola por otra causa.
++- **Acción que impide:** ninguna hoy. **No** impide nada de REQ-004 ni de esta entrega; se registra con dueño y **queda fuera** de ella (`AGENTS.md` §6: registrar no autoriza reparar).
++- **Parte de la entrega afectada:** ninguna.
++- **Evidencia:** `docs/seguridad/registro-seguridad.md` §`SEC-004`; cabeceras de `requirements/REQ-001.md` y `requirements/REQ-002.md`; `AGENTS.md` §6, «Qué es crítico EN ESTE PROYECTO».
++- **Qué la resuelve:** la elección del propietario entre A y B. La facultad de **subir el rigor** es del `auditor-seguridad` y no caduca: si no hay decisión, la ejercerá en una comisión propia sobre esos REQ.
++- **Trabajo que sigue mientras tanto:** todo el trabajo de REQ-004.
++
+ ## Resueltas
+ <!-- Mover aquí con: decisión tomada, quién, fecha. No borrar (histórico). -->
+diff --git a/docs/ESTADO.md b/docs/ESTADO.md
+index f65b912..dc74468 100644
+--- a/docs/ESTADO.md
++++ b/docs/ESTADO.md
+@@ -7,17 +7,74 @@
+ > Se actualiza al cerrar cada sesión de trabajo.
+ 
+ ## Fase actual
+-(ej. Fase 0 — andamiaje / Fase 1 — ...)
++Versión 1.0.0 — REQ-004 (lista de clientes del encabezado), en ciclo de revisión tras la
++reapertura por deriva del 2026-09-21.
+ 
+ ## En progreso
+-- (REQ o tarea que está abierta ahora)
++- `REQ-004` — **bloqueado por veto de seguridad (2026-09-21)**. El arreglo del separador y de la
++  omisión está construido, probado (`node --test` 8/8) y con `QA: aprobado`; lo que falta no es
++  el arreglo, sino dos controles que el REQ no contrata (`SEC-001`, `SEC-002`).
+ 
+ ## Próximo paso concreto
+-- (la siguiente acción, sin ambigüedad)
++1. Propietario: resolver **D6** (¿quién recibe el informe y qué nombres puede ver cada
++   destinatario?). Es lo que desbloquea `SEC-002`.
++2. `analista-requerimientos`: write-back de `SEC-001` como **NFR + criterio** (tratamiento, por
++   propiedad, de los caracteres con significado en el formato de salida). No depende de D6 y se
++   puede empezar ya.
++3. Después: `desarrollador` → `qa-tester` → nueva auditoría de seguridad para levantar el veto.
+ 
+ ## Bloqueos
+-- (ninguno | descripción + a quién/qué espera)
++- **Veto de seguridad sobre `REQ-004`** (`docs/seguridad/registro-seguridad.md`, 2026-09-21).
++  Impide **cerrar** REQ-004 y **publicar** el informe a los clientes. **No** impide implementar
++  ni probar. Lo levanta el `auditor-seguridad` sobre lo que vuelva a revisar.
++- Cola de aprobaciones con 7 pendientes (D1…D7): impide **cerrar** cualquier REQ.
+ 
+ ## Pendientes (cola)
+-- [ ] ...
+-- [ ] ...
++- [ ] D6 — destinatario del informe / exposición de nombres de terceros (`SEC-002`).
++- [ ] D7 — revisión de la clasificación de `REQ-002` y `REQ-001` (`SEC-004`).
++- [x] `SEC-003` (instrumento, dueño coordinadora) — **resuelto el 2026-09-21 al cerrar la
++      sesión**: añadida la entrada de `CHANGELOG.md` de la comisión de QA (marcada como escrita a
++      posteriori) y realineado el índice de `requirements/README.md` con la cabecera de REQ-004.
++      Queda pendiente de que el `auditor-seguridad` lo verifique y lo cierre en
++      `docs/seguridad/registro-seguridad.md` y en la cabecera del REQ: **la clase la puso él y la
++      retira él**, no la coordinadora sobre su propio trabajo.
++- [ ] D1…D5 — el resto de la cola de aprobaciones (publicación 1.0, IVA de REQ-005, bordes P-01 y
++      P-02 de REQ-004, y la deriva de años bisiestos de REQ-001).
++
++## Notas de cierre de sesión (2026-09-21)
++- Ciclo recorrido completo y en orden: analista → desarrollador → `qa-tester` → `auditor-seguridad`.
++  La vía se eligió por el **efecto** (`AGENTS.md` §6): §6 de este proyecto declara que **no** ha
++  autorizado la vía proporcional de reparación, y el efecto alcanza «datos de clientes», que §6
++  declara crítico aquí. Ninguna fase se omitió y ninguna se solapó.
++- **Contador dev↔QA de REQ-004: 1 de 3 vueltas gastadas.** No se reinicia cuando el trabajo vuelva
++  del write-back de `SEC-001`: es el contador de la entrega, no del envoltorio de la comisión.
++- Lo que este ciclo **no** demostró: que `src/fecha.js` y `src/tarifa.js` cumplan sus REQ. `REQ-001`
++  tiene una deriva `contrato` ya registrada (D5) y `REQ-002` —que decide **cuánto se cobra**— sigue
++  con la misma clasificación insuficiente que tenía REQ-004 antes de este ciclo (D7). Ninguno de los
++  dos se tocó: registrar no autoriza reparar.
++
++<!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
++## Estado derivado — 2026-09-21 11:21
++
++> Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
++> Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
++> de los marcadores y ahí no se toca. Si algo aquí te sorprende, el disco dice eso.
++>
++> Los veredictos se muestran **como los lee la máquina** —normalizados: sin mayúsculas, sin
++> tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
++> raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
++
++**Repositorio:** `master` @ `67f575b` — CON CAMBIOS SIN COMITEAR
++**Arnés:** plugin instalado `1.34.0`
++**Aprobaciones pendientes:** 7
++**REQ:** 4 — completado 2 · en-revisión 0 · en-progreso 0 · bloqueado 1 · otros 1
++**Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
++
++_Sólo los REQ abiertos; los 2 completados no se listan._
++
++| REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
++|---|---|---|---|---|---|
++| REQ-004 | bloqueado | aprobado | vetado | critico | sec-001(usuario/dinero),sec-002(usuario/… |
++| REQ-005 | pendiente | pendiente | pendiente | critico | ninguno |
++
++<!-- ARNES:DERIVADO fin -->
+diff --git a/requirements/README.md b/requirements/README.md
+index 7cd5cc5..f22f963 100644
+--- a/requirements/README.md
++++ b/requirements/README.md
+@@ -411,4 +411,22 @@ Tocado por: (agente / fecha)
+ ```
+ 
+ ## Índice
+-(lista de REQ y NFR con su estado)
++
++> Índice informativo, mantenido por la sesión coordinadora. **No es la fuente de verdad**: la
++> cabecera de cada REQ lo es, y es la que leen las puertas. Si los dos discrepan, manda el REQ.
++> Última revisión: 2026-09-21, tras el veto de seguridad sobre REQ-004.
++>
++> Que este índice quedara desalineado durante el ciclo es parte del hallazgo `SEC-003
++> (instrumento)`; se realinea a mano y nadie lo vigila por máquina.
++
++| REQ | Título | Estado | Rigor | QA | Seguridad | Hallazgos abiertos |
++|---|---|---|---|---|---|---|
++| [REQ-001](REQ-001.md) | Validación de la fecha de corte | `completado` | `estandar` | `aprobado (2026-08-15)` | `n/a` | `QA-001-03 (instrumento)` |
++| [REQ-002](REQ-002.md) | Comisión por factura | `completado` | `estandar` | `aprobado (2026-08-15)` | `n/a` | ninguno |
++| [REQ-004](REQ-004.md) | Lista de clientes en el encabezado del informe | `bloqueado` | `critico` | `aprobado (2026-09-21)` | **`vetado (2026-09-21)`** | `SEC-001 (usuario/dinero)`, `SEC-002 (usuario/dinero)`, `SEC-003 (instrumento)` |
++| [REQ-005](REQ-005.md) | Importe total en el encabezado del informe mensual | `pendiente` | `critico` | `pendiente` | `pendiente` | ninguno |
++
++No hay **NFR** declarados en este proyecto.
++
++**No existe `REQ-003`**: el hueco de numeración es anterior a esta revisión y no se ha rastreado
++su causa; se deja constancia para que nadie lo lea como un archivo perdido.
+diff --git a/requirements/REQ-004.md b/requirements/REQ-004.md
+index 7b6e8ac..5a3b18e 100644
+--- a/requirements/REQ-004.md
++++ b/requirements/REQ-004.md
+@@ -1,23 +1,160 @@
+ # REQ-004 — Lista de clientes en el encabezado del informe
+-Estado: completado
++Estado: bloqueado
+ Módulo: src/formato.js
+-Archivos: src/formato.js, requirements/REQ-004.md
++Archivos: src/formato.js, test/formato.test.js, requirements/REQ-004.md
+ Prioridad: baja
+ Versión destino: 1.0.0
+-Sensible a seguridad: no
+-QA: aprobado (2026-08-20)
+-Seguridad: n/a
+-Hallazgos abiertos: ninguno
+-Rigor: estandar
++Sensible a seguridad: sí
++QA: aprobado (2026-09-21)
++Seguridad: vetado (2026-09-21)
++Hallazgos abiertos: SEC-001 (usuario/dinero), SEC-002 (usuario/dinero), SEC-003 (instrumento)
++Rigor: critico
+ 
+ ## Historia
+-Como facturador, quiero que el encabezado del informe mensual liste los clientes en una sola línea legible.
++Como facturador, quiero que el encabezado del informe mensual liste los clientes en una sola línea legible, para que el destinatario identifique sin ambigüedad a qué clientes corresponde el informe.
+ 
+ ## Criterios de aceptación
+-- CA-01: Los nombres se unen con el separador «; » (punto y coma seguido de un espacio), sin separador al final.
+-- CA-02: Los nombres vacíos o nulos se omiten.
++
++- **CA-01** — *Separador y ausencia de separador final.*
++  **Dado** una lista de nombres de cliente en la que ningún elemento se omite por CA-02,
++  **Cuando** se genera la lista del encabezado,
++  **Entonces** los nombres aparecen **en el mismo orden en que se recibieron**, unidos por el separador exacto «; » (punto y coma `;` seguido de un espacio ` `), y el resultado **no empieza ni termina** con ese separador.
++  *(Ejemplo verificable: `["Ana", "Luis", "Marta"]` → `"Ana; Luis; Marta"`.)*
++
++- **CA-02** — *Omisión de nombres vacíos o nulos.*
++  **Dado** una lista que contiene elementos vacíos o nulos,
++  **Cuando** se genera la lista del encabezado,
++  **Entonces** esos elementos **no aparecen** en el resultado y **no dejan** separador, hueco ni espacio doble: el resultado es idéntico al que produciría CA-01 sobre la lista sin ellos.
++  El conjunto contratado hoy son la **cadena vacía** (`""`) y el **valor nulo** (`null`); **ejemplos no exhaustivos** — la frontera exacta del conjunto (cadena de sólo espacios, `undefined`, valores no textuales) **no está decidida** y se escala en **P-01**; mientras no se decida, el conjunto contratado y exigible es el de esos dos valores.
++  *(Ejemplo verificable: `["Ana", "", null, "Marta"]` → `"Ana; Marta"`.)*
++
++- **CA-03** — *Borde: no queda ningún nombre.* (derivado de CA-01 + CA-02; no amplía el alcance contratado)
++  **Dado** una lista vacía, o una lista en la que **todos** los elementos se omiten por CA-02,
++  **Cuando** se genera la lista del encabezado,
++  **Entonces** el resultado es la **cadena vacía** (`""`), sin separadores ni espacios.
++
++- **CA-04** — *Borde: un solo nombre.* (derivado de CA-01; no amplía el alcance contratado)
++  **Dado** una lista de la que queda exactamente un nombre tras aplicar CA-02,
++  **Cuando** se genera la lista del encabezado,
++  **Entonces** el resultado es ese nombre **sin ningún separador**.
++
++## Notas / alcance
++
++**Reapertura por deriva (2026-09-21).** `src/formato.js` implementa `listaClientes(nombres)` como
++`nombres.join(', ')`: usa coma en vez de «; » (incumple CA-01) y no omite nada (incumple CA-02, que
++además produce separadores sueltos y huecos visibles). Es deriva en el sentido de `AGENTS.md` §9 y
++la dirección es la del reverso declarado en `requirements/README.md`: **los criterios NO se relajan
++para que encaje el código**; el hallazgo va **contra el código**. CA-01 y CA-02 conservan su alcance
++contratado y sólo se han **precisado** en su forma (ver Historial).
++
++**Hallazgo QA-004-01 (`usuario/dinero`).** Clase `usuario/dinero` porque afecta directamente a **lo
++que el destinatario del informe ve**: el encabezado publicado lista a los clientes con el separador
++equivocado y puede mostrar entradas en blanco o separadores sueltos. Evidencia: `src/formato.js`,
++`return nombres.join(', ')`. Bloquea el cierre hasta que el arreglo esté construido, probado y
++validado. Origen: deriva detectada por la sesión coordinadora el 2026-09-21.
++
++**Justificación de la clasificación.** El REQ manipula y publica **nombres de clientes** en un
++informe que se entrega a los propios clientes; `AGENTS.md` §6 declara crítico en este proyecto
++«todo lo que toque dinero o **datos de clientes**», de modo que el REQ es **sensible a seguridad**
++y por ese suelo su `Rigor:` es **`critico`**, con `Seguridad:` de `n/a` a `pendiente`. La cabecera
++anterior (`Sensible a seguridad: no` · `Rigor: estandar` · `Seguridad: n/a`) prometía **menos
++revisión de la que el efecto exige**, que es lo que `AGENTS.md` §6 describe como contrato **no**
++claro. La corrección **aplica** una regla ya vigente del proyecto; no decide nada nuevo, por lo que
++se registra como cambio menor con entrada de Historial y **sin ADR**. Si la coordinadora considera
++que la reclasificación es una *decisión base* en el sentido de §9, el ADR debe encargarse aparte:
++queda fuera del alcance de esta comisión.
++
++**Veto de seguridad (2026-09-21) — `auditor-seguridad`.** Los criterios CA-01…CA-04 están
++cumplidos y QA los validó; el veto **no** es sobre ellos, sino sobre lo que el REQ **no
++contrata** y su efecto exige. Detalle, evidencia y remedios en
++`docs/seguridad/registro-seguridad.md`.
++
++- **Motivo 1 — `SEC-001` (`usuario/dinero`, alta).** Un nombre que contenga el separador
++  contratado, un terminador de línea o marcado del formato de salida se incrusta **literalmente**
++  en la línea publicada y **falsea a qué clientes corresponde el informe**. Medido:
++  `["Ana","Gomez; Ruiz S.A.","Marta"]` → `"Ana; Gomez; Ruiz S.A.; Marta"` (el destinatario lee
++  cuatro clientes donde hay tres); `["Ana","Luis\nTotal a pagar: 0,00","Marta"]` inyecta una línea
++  nueva en el encabezado. No está cubierto por P-01 ni por P-02: es un nombre presente y no vacío,
++  dentro del alcance exigible de CA-01. Evidencia: `src/formato.js:15-19` (sin validación de
++  entrada ni codificación de salida).
++- **Motivo 2 — `SEC-002` (`usuario/dinero`, alta).** Ningún documento del proyecto declara **a
++  quién se entrega** el informe ni **qué nombres puede ver cada destinatario**. Si un informe que
++  lista N clientes se envía a cada uno de ellos (`PENDING_APPROVAL.md` `D1`), cada cliente recibe
++  los nombres de los demás. Un REQ declarado `critico` **por datos de clientes** no puede cerrar
++  sin decir a quién se los publica.
++- **Alcance del veto (`AGENTS.md` §6, regla 2).** **(i) Acciones que impide:** **cerrar** —marcar
++  este REQ como `completado`— y **publicar** —entregar el informe mensual a los clientes, la
++  acción de `D1`—. **No** impide **implementar** ni **probar**. **(ii) Parte de la entrega
++  afectada:** la línea de clientes del encabezado (versión destino 1.0.0) y su publicación.
++  **(iii) Evidencia:** `src/formato.js:15-19`; mediciones y tabla en
++  `docs/seguridad/registro-seguridad.md` §SEC-001; ausencia de NFR (`requirements/README.md`).
++  **(iv) Qué lo resuelve:** que `SEC-001` y `SEC-002` queden como **NFR/criterio** escritos por el
++  `analista-requerimientos` —hay decisión de diseño y de contrato pendiente, y este proyecto **no**
++  declara la vía proporcional (`AGENTS.md` §6), así que el write-back es suyo—, que el
++  `desarrollador` los implemente, que el `qa-tester` los valide y que el `auditor-seguridad`
++  vuelva a auditar. El veto lo levanta quien lo firmó, sobre lo que haya vuelto a revisar.
++- **`SEC-003` (`instrumento`)** no bloquea: es traza incompleta del ciclo (sin entrada de
++  `CHANGELOG.md` para la comisión de QA; índice de `requirements/README.md` desalineado), con
++  dueño en la coordinadora.
++- **Sin cambio de rigor:** el REQ ya es `critico`; no hay nada que subir. Fuera de este REQ queda
++  registrado `SEC-004` (clasificación insuficiente que persiste en `REQ-002`, y `REQ-001`),
++  escalado como `D7` y **fuera** de esta entrega. `SEC-002` está escalado como `D6`.
++
++**Fuera de alcance de este REQ:** el formato del resto del encabezado, la ordenación o
++deduplicación de los nombres (se conserva el orden de entrada tal cual) y cualquier
++truncado por longitud de línea.
++
++**Ciclo que debe re-recorrer (AGENTS.md §9 + §6):** desarrollador (arreglo + `test/formato.test.js`)
++→ `qa-tester` → `auditor-seguridad`. Este REQ **no puede cerrarse** mientras el hallazgo siga
++abierto, ni con la cola de `PENDING_APPROVAL.md` con pendientes.
++
++## Preguntas abiertas / conflictos
++
++- **P-01 — frontera del conjunto «vacío o nulo» de CA-02 (escalada a la coordinadora / propietario).**
++  CA-02 contrata la omisión de la cadena vacía y del valor nulo. No está decidido qué ocurre con:
++  (i) una cadena de **sólo espacios** (`"   "`), (ii) el valor `undefined`, (iii) valores **no
++  textuales** (números, objetos). Decidirlo cambiaría el alcance contratado, así que **no lo decido
++  aquí**. Impacto: un nombre de sólo espacios llegaría al informe como un hueco visible entre dos
++  separadores. Opciones: **(A)** omitir también los que queden vacíos tras recortar espacios y
++  tratar `undefined` como nulo *(recomendada: es lo que el destinatario espera ver)*; **(B)** dejar
++  el conjunto en `""` y `null` exactamente. Consecuencia de (A): amplía el alcance, requiere
++  entrada de Historial y pruebas adicionales. Consecuencia de (B): el informe puede mostrar huecos.
++  **No bloquea** el arreglo del núcleo contratado (CA-01 a CA-04), que el desarrollador puede
++  implementar ya.
++- **P-02 — comportamiento ante una entrada que no es una lista (escalada).** No está contratado qué
++  debe ocurrir si `nombres` es `null`, `undefined` o no es un arreglo (hoy el código lanzaría
++  `TypeError`). Opciones: **(A)** devolver cadena vacía, **(B)** lanzar un error explícito y
++  documentado *(recomendada: un informe sin clientes por un fallo silencioso es peor que un fallo
++  visible)*. Hasta que se decida, QA **no** debe tratar ese caso como criterio de aceptación.
++
++*(Ambas preguntas afectan sólo a bordes no contratados; el núcleo CA-01…CA-04 es exigible y
++verificable tal como está escrito.)*
++
++## Trazabilidad
++- Origen: encabezado del informe mensual de facturación (REQ-004, creado 2026-08-20).
++- Causa de la reapertura: deriva detectada por la sesión coordinadora sobre `src/formato.js`
++  (hallazgo `QA-004-01`), 2026-09-21.
++- Implementación: `src/formato.js` → `listaClientes(nombres)`.
++- Prueba automatizada: `test/formato.test.js` (a escribir por el `desarrollador`; quality gate
++  `node --test`).
++- Tocado por: `analista-requerimientos` / 2026-09-21; `desarrollador` / 2026-09-21;
++  `qa-tester` / 2026-09-21; `auditor-seguridad` / 2026-09-21.
++- Auditoría de seguridad: `docs/seguridad/registro-seguridad.md` (revisión 2026-09-21,
++  hallazgos `SEC-001`…`SEC-004`) y `docs/seguridad/gobernanza-datos.md`.
+ 
+ ## Historial de cambios
+-| Fecha | Cambio | Causa |
+-|---|---|---|
+-| 2026-08-20 | Creación | — |
++| Fecha | Antes → Después | Causa | ADR |
++|---|---|---|---|
++| 2026-08-20 | (creación) | — | — |
++| 2026-09-21 | `Estado: completado` → `en-progreso` | Deriva detectada por la coordinadora sobre `src/formato.js` (`join(', ')` incumple CA-01 y CA-02). `AGENTS.md` §9, REGLA DE ESTADO: un REQ completado que cambia re-recorre el ciclo | — |
++| 2026-09-21 | `QA: aprobado (2026-08-20)` → `QA: pendiente` | El veredicto juzgaba un árbol que va a cambiar y, además, aprobó código que no cumple los criterios; la reapertura lo invalida | — |
++| 2026-09-21 | `Sensible a seguridad: no` → `sí`; `Rigor: estandar` → `critico`; `Seguridad: n/a` → `pendiente` | Clasificación incoherente con el efecto: el REQ trata y publica **datos de clientes**, que `AGENTS.md` §6 declara crítico en este proyecto; `Sensible a seguridad: sí` impone `critico` como suelo. Corrección de contrato no claro (`AGENTS.md` §6) | — |
++| 2026-09-21 | `Hallazgos abiertos: ninguno` → `QA-004-01 (usuario/dinero)` | Declaración del defecto de separador y de omisión; afecta lo que el destinatario del informe ve | — |
++| 2026-09-21 | `Archivos: src/formato.js, requirements/REQ-004.md` → `+ test/formato.test.js` | La prueba automatizada del arreglo forma parte del REQ (`AGENTS.md` §7); rutas sin decoración de Markdown (`requirements/README.md`, SEC-020) | — |
++| 2026-09-21 | CA-01: «Los nombres se unen con el separador «; »…» → criterio Gherkin con separador explícito, orden de entrada y prohibición de separador inicial/final | Precisión de forma para hacerlo testeable (`requirements/README.md` §«Cómo se escribe un criterio que no se desmiente»). **No** amplía ni recorta el alcance contratado | — |
++| 2026-09-21 | CA-02: «Los nombres vacíos o nulos se omiten» → criterio Gherkin, con el conjunto contratado (`""`, `null`) marcado **no exhaustivo** y su frontera escalada en P-01 | Forma (a) —enumerar un conjunto sin marca ni puntero—; se marca como no exhaustivo y se **escala** la frontera en vez de decidirla. Alcance contratado intacto | — |
++| 2026-09-21 | (nuevos) CA-03 y CA-04 | Escenarios de borde **derivados** de CA-01 + CA-02 (lista vacía / todos omitidos; un solo nombre), explicitados para que QA no los invente. No amplían el alcance | — |
++| 2026-09-21 | `Estado: en-progreso` → `en-revisión` | El `desarrollador` entregó el arreglo de `src/formato.js` y `test/formato.test.js` con la quality gate `node --test` en verde (8/8). Transición de pipeline hecha por la coordinadora; **no** altera criterios, clasificación ni veredictos | — |
++| 2026-09-21 | `QA: pendiente` → `aprobado (2026-09-21)` | Validación de CA-01…CA-04 contra `src/formato.js`: quality gate `node --test` 8/8 verde, correspondencia prueba↔criterio verificada, casos de ruptura (omisión en extremos, sin dedup/orden) sin fallos. Detalle en `docs/qa/REQ-004.md` | — |
++| 2026-09-21 | `Hallazgos abiertos: QA-004-01 (usuario/dinero)` → `ninguno` | `QA-004-01` resuelto: separador «; » exacto y omisión de `""`/`null` sin hueco ni separador suelto, confirmado por pruebas automatizadas y manuales. Write-back ya reflejado por el analista en CA-01/CA-02/CA-03/CA-04 (filas anteriores de este Historial); no queda decisión pendiente que transcribir | — |
++| 2026-09-21 | `Seguridad: pendiente` → `vetado (2026-09-21)`; `Estado: en-revisión` → `bloqueado`; `Hallazgos abiertos: ninguno` → `SEC-001 (usuario/dinero), SEC-002 (usuario/dinero), SEC-003 (instrumento)` | Auditoría de seguridad obligatoria (`Rigor: critico`), hecha **después** de `QA: aprobado`. Veto por `SEC-001` (un nombre que contenga el separador, un salto de línea o marcado falsea a qué clientes corresponde el informe: no hay validación de entrada ni codificación de salida) y `SEC-002` (no está declarado el destinatario del informe ni qué nombres de terceros puede ver cada destinatario). Alcance del veto: impide **cerrar** este REQ y **publicar** el informe a clientes; **no** impide implementar ni probar. `SEC-003` (`instrumento`) no bloquea. Detalle, evidencia y remedios en `docs/seguridad/registro-seguridad.md` | — |
+diff --git a/src/formato.js b/src/formato.js
+index 4d01d64..de43e41 100644
+--- a/src/formato.js
++++ b/src/formato.js
+@@ -1,5 +1,21 @@
+ // Presentación: lista de nombres de clientes para el encabezado del informe mensual.
++
++// Separador exacto contratado por CA-01 de REQ-004: punto y coma seguido de un espacio.
++// Se une con `join`, que por construcción no deja separador inicial ni final.
++const SEPARADOR = '; ';
++
++// CA-02 de REQ-004 contrata hoy exactamente dos valores omitibles: la cadena vacía
++// y el valor nulo. La frontera del conjunto (cadena de sólo espacios, `undefined`,
++// valores no textuales) está escalada en P-01 y NO se decide aquí: ampliarla sería
++// implementar alcance no contratado.
++function seOmite(nombre) {
++  return nombre === '' || nombre === null;
++}
++
+ function listaClientes(nombres) {
+-  return nombres.join(', ');
++  // Filtrar antes de unir es lo que evita separadores sueltos y huecos: omitir
++  // después de unir obligaría a limpiar el resultado a posteriori.
++  return nombres.filter((nombre) => !seOmite(nombre)).join(SEPARADOR);
+ }
++
+ module.exports = { listaClientes };

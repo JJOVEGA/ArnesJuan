@@ -1,0 +1,11 @@
+ M ARCHITECTURE.md
+ M CHANGELOG.md
+ M PENDING_APPROVAL.md
+ M docs/ESTADO.md
+ M requirements/README.md
+ M requirements/REQ-004.md
+ M src/formato.js
+?? docs/qa/REQ-004.md
+?? docs/seguridad/
+?? docs/usuario/
+?? test/

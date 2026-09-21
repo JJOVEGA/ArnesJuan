@@ -1,0 +1,1 @@
+Corrige `listaClientes` según `REQ-004` y deja el proyecto coherente. Antes de nada, revisa qué hay pendiente.
