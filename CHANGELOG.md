@@ -2,6 +2,9 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-21 · ENS-01: nota fechada en el diseño del ensayo declarando que S3 se sembró como `QA-001-03` en REQ-001 (no `QA-002-03` en REQ-002), sin reescribir lo escrito antes
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora (dueña del hallazgo). Corrección del instrumento; el resultado del ensayo no cambia. El registro de ENS-01 en `Hallazgos abiertos:` de REQ-025 queda para la vuelta 3.
+
 ## [Interno] — 2026-09-21 · **CA-11 punto 3 de REQ-025: el ensayo S1…S4 queda ACREDITADO** — tres situaciones observadas, una que no llegó a ocurrir y se dice, y la regla 6 incumplida en su primera corrida real
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester`. **Comisión distinta de la vuelta dev↔QA: no gasta vuelta** (la entrega sigue en 2 de 3) y **no toca el campo `QA:`** de la cabecera, que es de la vuelta 3. Ensayo `ENS-COORD-P`, brazo P, **n = 1**, no repetido; evidencia en `/home/juan/dev/ArnesJuan-evidencia/req-025/ensayos/ENS-COORD-P/` (579 eventos de `salida.jsonl`). Sede de la acreditación: `docs/qa/REQ-025.md`, §«Acreditación del ensayo S1…S4». Sin push.
 
