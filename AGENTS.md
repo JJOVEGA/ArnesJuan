@@ -272,13 +272,15 @@ nada. La regla de despacho es la del párrafo anterior y se sostiene sola.
    completo sobre el **candidato final** y tras cualquier cambio que invalide esa evidencia. Los
    controles obligatorios de integración y publicación **se mantienen todos**.
 4. **Los contadores no se reinician.** Una reparación que vuelve al mismo agente **gasta vuelta**,
-   se llame como se llame, y **agotar vueltas nunca equivale a aprobar**.
+   se llame como se llame, y **agotar vueltas nunca equivale a aprobar**
+   (y tampoco se reinicia por cambiar de agente, de fase, de nombre o de REQ: regla 5, más abajo).
 
 **Antes de despachar una comisión que OMITE una fase, la coordinadora lo comprueba POR ESCRITO.**
 Es ella quien decide el despacho, así que es ella quien comprueba el permiso. La comprobación se
 suma a las que ya hace antes de cualquier encargo —qué resultado exacto debe entregar, qué queda
-fuera, cuándo detenerse— y va escrita **en el propio encargo**, diciendo **qué archivo leyó y qué
-resolvió**:
+fuera, cuándo detenerse— (la lista completa es la regla 1, más abajo: resultado construido y
+comprobado, criterios aplicables, qué queda fuera y cuándo detenerse) y va escrita **en el propio
+encargo**, diciendo **qué archivo leyó y qué resolvió**:
 
 1. **Si el encargo omite la comisión de analista de esta vía, ¿el `AGENTS.md` DE ESTE PROYECTO la
    autoriza expresamente?** **Tenerlo escrito en la definición de un agente no lo concede, y

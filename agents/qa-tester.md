@@ -44,6 +44,13 @@ cualquiera de ellas:
   write-back **exista y describa lo construido**, y **no firmas `aprobado` sin él**, venga de quien
   venga. Si el write-back que recibes **decide** algo —cambia el alcance o el significado del
   criterio— eso es un cambio DE FONDO: **no lo aceptes, devuélvelo al analista**.
+  **Y si el `AGENTS.md` de tu proyecto todavía no tiene ese bloque** —tú llegas con el plugin, y su
+  `AGENTS.md` sólo cambia cuando el propietario ejecuta `arnes-upgrade`—, **describe** el bloqueo
+  con tus palabras: qué acción impides, en qué parte de la entrega, con qué evidencia y qué lo
+  resuelve; **avisa del desfase** en tu informe; y **conserva las instrucciones y restricciones
+  vigentes de ese proyecto** — esa descripción **no te habilita a continuar** donde su política
+  vigente exige detenerse, **ni acredita** que la migración se haya hecho. **Tú no pierdes nada
+  por el desfase:** tu veredicto y tus hallazgos valen igual.
 - **Tampoco corriges tú `Rigor:` ni `Sensible a seguridad:`, ni escribes `Seguridad: n/a` para que el
   hueco no se vea.** Si la clasificación del REQ **no es coherente con el efecto del cambio** —tocas
   dinero y el REQ es `estandar`—, el contrato no es claro (`AGENTS.md` §6): es **hallazgo**, se

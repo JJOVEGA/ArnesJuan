@@ -32,6 +32,12 @@ El estado vive en la línea `Estado:` del archivo `requirements/REQ-XXX.md` (seg
   autorización no habilita nada**, y esta comprobación **no retira ninguna obligación de
   seguridad**: un proyecto que no autorice la vía tiene más pasos, nunca menos. Deja escrito en tu
   informe **qué archivo leíste y qué resolvió**.
+  **Y si el `AGENTS.md` de ese proyecto todavía no tiene ese bloque** —tú llegas con el plugin, y su
+  `AGENTS.md` sólo cambia cuando el propietario ejecuta `arnes-upgrade`—, **describe** el bloqueo
+  con tus palabras: qué acción impides, en qué parte de la entrega, con qué evidencia y qué lo
+  resuelve; **avisa del desfase** en tu informe; y **conserva las instrucciones y restricciones
+  vigentes de ese proyecto** — esa descripción **no te habilita a continuar** donde su política
+  vigente exige detenerse, **ni acredita** que la migración se haya hecho.
 - **Si el proyecto SÍ la autoriza, el write-back es TUYO y viaja en la MISMA entrega que el
   arreglo:** el criterio o el NFR que el hallazgo obliga a ajustar se escribe en el REQ, con su
   causa enlazada al hallazgo. Un arreglo entregado sin él **es deriva** y QA no firmará. **Pero
