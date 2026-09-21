@@ -2,6 +2,31 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-21 · REQ-025 entrega 1: el **diff mínimo** queda preparado como **parche sin aplicar**, porque dos de sus párrafos cambian texto normativo vigente y eso lo decide el propietario
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` · rama `feat/req-025-coordinacion-entregas` (desde `main` = `v1.34.0`). Archivos del cambio: `docs/arnes/req-025-entrega1.patch`, `docs/arnes/req-025-entrega1-preparacion.md` y esta entrada.
+
+**Qué se hizo y, sobre todo, qué NO.** Se construyó y se comprobó el cambio **completo** de la
+entrega 1 de REQ-025 —el bloque de las **seis reglas** en `AGENTS.md` §6, su **gemela** en
+`templates/AGENTS.md.tpl`, la entrada **«Hacia 1.35.0»** en `skills/arnes-upgrade/SKILL.md`, las
+**referencias** (no copias) en tres definiciones de `agents/`, y la entrada de `CHANGELOG.md` del
+commit futuro— y se dejó **fuera de los archivos reales**, como parche. **Con este commit no cambia
+ni una línea de ningún documento normativo:** sólo se añaden el parche y su nota de preparación.
+
+**Por qué.** Los conflictos **(a)** («Mecanismo de gate: … No continúa hasta que el humano
+resuelve») y **(b)** («Loop de error: … el REQ vuelve al desarrollador») que `requirements/REQ-025.md`
+presenta en §«Preguntas abiertas / conflictos» son **cambios de texto vigente** de `AGENTS.md` §6, y
+su decisión es del propietario. El parche los marca **hunk por hunk** para que pueda aprobarlos o
+excluirlos **por separado**, y el REQ **sigue en `borrador`**.
+
+**Comprobado sobre una copia con el parche aplicado (corrida del 2026-09-21).** Las tres quality
+gates de `AGENTS.md` §7 en verde; las **14** secciones del banco que leen `AGENTS.md`, `templates/`,
+`agents/` o `skills/` → **308 PASS, 0 FAIL, 1 SKIP** (el SKIP declara su motivo: «sin cygpath: caso
+solo de Windows»); el `diff` del bloque nuevo y de los dos párrafos entre `AGENTS.md` y su gemela →
+**vacío**; y `git apply --check` del parche en el worktree real → limpio, con `--stat` acotado a los
+seis documentos más `CHANGELOG.md`. **Lo que no acredita:** el banco **completo** en CI —la puerta
+requerida de `main`—, que no se corrió aquí; y nada sobre proyectos consumidores, que **no reciben
+nada** hasta publicar y migrar.
+
 ## [Interno] — 2026-09-21 · REQ-025 se ajusta para una **primera entrega acotada**: la sede escrita de la coordinación orientada a entregas, con **tres conflictos** presentados al propietario y **ningún** cambio de mecanismo
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos` · rama `feat/req-025-coordinacion-entregas` (desde `main` = `v1.34.0`). Archivos del cambio: `requirements/REQ-025.md`, la fila de REQ-025 en `requirements/README.md` y esta entrada.
 
