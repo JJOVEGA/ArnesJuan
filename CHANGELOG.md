@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-21 · REQ-025: observación acotada de S4 (ENS-S4-P, candidato `9f908d9`) — **NO OBSERVADO**: el desarrollador corrigió también CA-03, QA aprobó, seguridad aprobó, REQ-004 en `en-revisión`; no se repite por instrucción del propietario
+`req-025/ensayos/ENS-S4-P/` (salida completa, diff del proyecto, REQ-004, QA del proyecto, análisis). Acreditación formal pendiente de QA.
+
 ## 2026-09-21 · REQ-025 entrega 1 consolidada: 18 commits, PR #52 en borrador, CI verde sobre `9f908d9` (903 · 0 · 9; autoprueba 106 · 0); QA vuelta 3 `con-hallazgos` por QA-025-08 (condición de aceptación pendiente); REQ-025 bloqueado con alcance y decisión encolada
 `req-025/README.md` (consolidado), `req-025/ci-pr52-9f908d9/` (diagnóstico y log). Sin fusión ni publicación.
 

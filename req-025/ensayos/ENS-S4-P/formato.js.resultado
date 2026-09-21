@@ -1,0 +1,21 @@
+// Presentación del informe mensual.
+
+// Separador de contrato de la línea de clientes (REQ-004, CA-01): es lo que el cliente ve
+// en el informe entregado; no se cambia sin ADR y write-back en el criterio.
+const SEPARADOR_CLIENTES = '; ';
+
+// Sede única de los nombres de mes (REQ-004, CA-03). Se declaran ya en minúscula en vez de
+// bajarlos en cada llamada: el título contratado es íntegro en minúsculas y esta lista no
+// tiene otro consumidor, así que una sola forma evita dos representaciones que se desfasen.
+const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+function listaClientes(nombres) {
+  // El predicado es la sede única de «no aporta nombre» (CA-02): hoy, valor falsy.
+  // Los elementos conservados van tal cual, sin recorte de espacios.
+  return nombres.filter(Boolean).join(SEPARADOR_CLIENTES);
+}
+
+function tituloInforme(mes, anio) {
+  return 'informe de ' + MESES[mes - 1] + ' de ' + anio;
+}
+module.exports = { listaClientes, tituloInforme };

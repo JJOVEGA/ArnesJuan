@@ -1,0 +1,566 @@
+diff --git a/ARCHITECTURE.md b/ARCHITECTURE.md
+index 45108e3..4609ce5 100644
+--- a/ARCHITECTURE.md
++++ b/ARCHITECTURE.md
+@@ -4,17 +4,71 @@
+ > para que refleje el sistema *real* (no la intención). Describe el cómo, no el qué.
+ 
+ ## Visión general
+-(diagrama o descripción de las piezas y cómo se comunican)
++
++Facturación mensual de clientes. Hoy el sistema es una **biblioteca de módulos JavaScript
++(CommonJS) sin framework**, que se ejecuta localmente con Node. No hay servidor, base de datos,
++red ni credenciales.
++
++`src/` contiene tres módulos **independientes entre sí**: ninguno importa a otro. Cada uno
++exporta funciones puras (misma entrada → misma salida, sin estado ni efectos), y quien las
++compone es el proceso que arme la factura o el informe, que **no vive en este repositorio**.
++
++```
++        (proceso que arma la factura / el informe — fuera de este repo)
++                 │              │                │
++                 ▼              ▼                ▼
++          src/fecha.js    src/tarifa.js    src/formato.js
++          corte de mes     comisión        encabezado del informe
++```
++
++Las pruebas viven en `test/`, **fuera** de `src/`, porque `codigo_app.globs` del manifiesto
++(`.arnes/config.json`) es `src/*` y el `qa-tester` debe poder editarlas. La quality gate única
++es `node --test` desde la raíz.
+ 
+ ## Componentes
++
+ | Componente | Responsabilidad | Entradas | Salidas |
+ |-----------|-----------------|----------|---------|
++| `src/fecha.js` | Calendario de la fecha de corte de una factura. `esBisiesto(a)`; `diasDelMes(m, a)` resuelve la tabla de duraciones con febrero corregido por bisiesto. | `a`: año; `m`: ordinal de mes 1–12 | `boolean`; número de días del mes |
++| `src/tarifa.js` | Comisión aplicada a cada factura. `comision(monto)` aplica la constante `COMISION` (0,02) y redondea a dos decimales con `Math.round(x*100)/100`. Exporta también `COMISION`. | `monto`: número | número (importe de comisión) |
++| `src/formato.js` | Presentación del encabezado del informe mensual. `listaClientes(nombres)` une los nombres conservados con `"; "`; `tituloInforme(mes, anio)` compone el título íntegro en minúsculas desde la lista `MESES`. | `nombres`: arreglo de nombres; `mes` 1–12 y `anio` | cadena de la línea de clientes; cadena del título |
++| `test/formato.test.js` | Pruebas de REQ-004 (CA-01 a CA-05) con `node:test` + `node:assert/strict`. | — | resultado de la quality gate |
++
++**Contratos de presentación que no son detalle interno** (`src/formato.js`): el separador
++`"; "` (`SEPARADOR_CLIENTES`) y el título en minúsculas viajan en el documento que se entrega
++al cliente. Cambiarlos es cambio de contrato, no refactor. La lista `MESES` es la **sede única**
++de los nombres de mes y se declara ya en minúscula.
++
++**Límites conocidos y declarados fuera de alcance en REQ-004** (no son deuda oculta): ningún
++módulo valida sus entradas. `listaClientes` falla si el argumento no es un arreglo, y
++`tituloInforme` con un `mes` fuera de 1–12 produce `"informe de undefined de <año>"`, título
++que llegaría a un documento entregado a clientes. Está registrado en REQ-004 §«Notas / alcance»
++con recomendación de abrir un REQ propio; cerrarlo es del `analista-requerimientos`.
+ 
+ ## Flujo de datos
+-(de extremo a extremo: de dónde viene un dato, por dónde pasa, dónde termina)
++
++1. El proceso llamador (externo a este repo) reúne el año y el mes del periodo y la lista de
++   clientes a facturar.
++2. **Periodo** → `fecha.diasDelMes(mes, anio)` determina el corte del mes.
++3. **Importe** → `tarifa.comision(monto)` calcula la comisión por factura.
++4. **Encabezado** → `formato.tituloInforme(mes, anio)` y `formato.listaClientes(nombres)`
++   producen las dos cadenas del encabezado del informe mensual.
++5. Ese informe se entrega a los clientes. Esa entrega está tras un **gate de aprobación humana**
++   (`AGENTS.md` §6, «publicar el informe a los clientes») y no la ejecuta ningún módulo de aquí.
++
++Los nombres de cliente **entran y salen sin persistirse**: no se guardan, no se registran en
++ningún log y no salen del proceso. Aun así son datos de clientes, y por eso el módulo que los
++presenta es `critico` y sensible a seguridad (ADR-001).
+ 
+ ## Integraciones externas
+-(APIs, servicios, credenciales — sin valores reales)
++
++Ninguna. Sin APIs, sin servicios, sin base de datos y sin credenciales ni secretos — tampoco
++variables de entorno. Runtime: Node (probado con v24); sin `package.json` ni dependencias, los
++`.js` son CommonJS y `node --test` descubre `test/`.
+ 
+ ## Decisiones clave
+-(enlaces a los ADRs relevantes en docs/decisions/)
++
++- [`ADR-001` — La presentación de datos de clientes es `critico` y sensible a seguridad](docs/decisions/ADR-001-rigor-critico-datos-de-cliente.md):
++  `src/formato.js` manipula y publica nombres de clientes, así que REQ-004 es `Rigor: critico` ·
++  `Sensible a seguridad: sí`. Precedente: un módulo «de presentación», sin aritmética, **no**
++  queda fuera del criterio de §6 — lo que decide es qué dato toca y quién lo ve.
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 2cdd2c7..f55a38b 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -10,6 +10,166 @@
+ 
+ ---
+ 
++## [2026-09-21] — Origen: Interno — REQ-004: auditoría de seguridad y gobernanza, `Seguridad: aprobado`
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 auditor-seguridad
++- **Agente(s):** auditor-seguridad
++
++### Cambios
++- **Auditoría de seguridad de REQ-004** sobre el árbol ya validado por QA (orden de firmas de
++  `AGENTS.md` §6: la firma de seguridad va **después** de la de QA; **no** es `preventiva`).
++  Verificado sobre el disco, no sólo leído: `git diff src/formato.js` contiene exactamente el
++  arreglo del `desarrollador` y `node --test` da **8/8**.
++  - **Nombres de cliente:** no se persisten, no se registran en ningún canal, no salen del
++    proceso. `src/formato.js` son funciones puras; cero `console.*`, cero I/O, cero `eval`.
++  - **Secretos:** ninguno en el árbol (grep de claves/tokens/credenciales sobre `*.js`, `*.json`
++    y `*.md`); no hay variables de entorno ni cliente al que filtrarlos.
++  - **Dependencias:** ninguna (sin `package.json` ni lockfile) → superficie de cadena de
++    suministro nula; sin riesgo de *slopsquatting* ni CVE hoy.
++  - **Inyección / superficie externa:** sin BD, sin red, sin proceso hijo, sin parseo de
++    formatos; los únicos `require` son `node:test`, `node:assert/strict` y el módulo bajo prueba.
++  - **`ADR-001` sostiene lo que afirma:** el criterio de `AGENTS.md` §6 («dinero o datos de
++    clientes») es de propiedad, y `listaClientes` presenta datos de clientes.
++- **Nuevo `docs/seguridad/gobernanza-datos.md`**: clasificación de los datos, dónde viven, qué
++  **no** se persiste, acceso y publicación, datos en documentación y ceremonia exigida.
++- **Nuevo `docs/seguridad/registro-seguridad.md`**: bitácora viva con SEC-001…SEC-005 y la
++  **línea base anti-regresión** de REQ-004 (ocho controles aprobados, C-1…C-8).
++- **SEC-001 (`instrumento`, no bloquea)** — durante la comprobación anti-vacuidad, el
++  `qa-tester` **escribió en `src/formato.js`**, que `AGENTS.md` §5 y `codigo_app.globs` reservan
++  al `desarrollador`; `guard-codigo` no lo vio porque §13 declara la cobertura de `Bash`
++  **parcial a propósito**. Efecto sobre el producto **nulo, verificado por el auditor**. Se
++  clasifica `instrumento` porque el defecto está en el **control y el procedimiento**, no en el
++  producto. Dueño: sesión coordinadora; remedio: comprobar la no-vacuidad sin escribir en
++  `codigo_app.globs`.
++- **Registrados con dueño y FUERA del alcance de REQ-004** (no son condición de su cierre):
++  **SEC-002** (REQ-002 toca dinero con `Rigor: estandar` · `Sensible a seguridad: no`, y
++  `src/tarifa.js` no tiene ninguna prueba), **SEC-003** (la frontera de renderizado no tiene
++  contratada la codificación de salida de los nombres, con condición de reapertura declarada),
++  **SEC-004** (`tituloInforme` fuera de 1–12 y `listaClientes(null)`, ya declarados fuera de
++  alcance por el analista — el auditor confirma la decisión) y **SEC-005** (sin `.gitignore` que
++  cubra `.env*`; preventivo, hoy no hay secretos).
++- `requirements/REQ-004.md`: `Seguridad: pendiente → aprobado (2026-09-21)`,
++  `Hallazgos abiertos: ninguno → SEC-001 (instrumento)`, sección «Hallazgos» reordenada en
++  abierto/resueltos (DEF-001 y DEF-002 **no se borran**: cambian de estado), punto 4 nuevo en
++  «Notas / alcance» (write-back de SEC-003) y entradas en «Trazabilidad» e «Historial de
++  cambios». `requirements/README.md`: fila del índice de REQ-004 sincronizada con la cabecera.
++- **No se tocó `src/` ni `test/`** (el auditor no escribe código de aplicación) y **no se marcó
++  el REQ como `completado`**: esa transición es de la coordinadora, tras la aprobación humana.
++
++### Ciclo de agentes (trazabilidad)
++- auditor-seguridad: auditoría de REQ-004, creación de `docs/seguridad/`, veredicto `Seguridad:`.
++- Vía aplicable (confirmada leyendo el `AGENTS.md` **de este proyecto**, que declara «Este
++  proyecto todavía no ha declarado esa autorización»): analista → desarrollador → QA →
++  seguridad. Intervención obligatoria por `Rigor: critico` · `Sensible a seguridad: sí`.
++- Veredictos: `QA: aprobado (2026-09-21)` · `Seguridad: aprobado (2026-09-21)`. **Sin veto.**
++  El rigor **no se baja** y no hubo motivo para **subirlo** por encima de `critico`, que ya es
++  el techo.
++
++---
++
++## [2026-09-21] — Origen: Interno — REQ-004: validación de QA, DEF-001/DEF-002 retirados
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-sonnet-5 qa-tester
++- **Agente(s):** qa-tester
++
++### Cambios
++- Verificados CA-01 a CA-06 contra el árbol (`src/formato.js`, `test/formato.test.js`): los 6
++  pasan. Evidencia y comandos en `docs/qa/REQ-004.md`.
++- Quality gate `node --test`: verde, 8/8. Comprobado además que las 8 pruebas **no son
++  vacías**: reaplicando temporalmente el `src/formato.js` anterior al arreglo (el de DEF-001/
++  DEF-002), 5/8 pruebas fallan; se restauró el archivo corregido de inmediato (verificado con
++  `diff`, idéntico) y no se comiteó el experimento.
++- Revisión de forma de los 6 criterios contra `requirements/README.md` §«Cómo se escribe un
++  criterio que no se desmiente»: ninguno cae en enumeración/número sin tipo/igualdad de
++  coste/magnitud equivocada. Sin hallazgo de clase `contrato` por forma.
++- Falsación dentro de alcance: combinaciones de valores *falsy* intercalados, bordes del rango
++  de mes (1 y 12) cruzados con años límite, idempotencia. Sin hallazgos nuevos.
++- Confirmados como fuera de alcance (no hallazgo, ya registrados con dueño en REQ-004 §«Notas /
++  alcance»): `listaClientes(null)`, `tituloInforme` con mes fuera de 1–12, recorte de espacios.
++- `requirements/REQ-004.md`: `QA: pendiente → aprobado (2026-09-21)`,
++  `Hallazgos abiertos: DEF-001 (usuario/dinero), DEF-002 (usuario/dinero) → ninguno` (ambos
++  verificados como resueltos), entradas en `## Trazabilidad` y `## Historial de cambios`.
++- Nuevo `docs/qa/REQ-004.md` (log de QA) y `docs/usuario/encabezado-informe-mensual.md` (guía
++  de usuario final del encabezado del informe).
++- **No se tocó `src/`**. Integridad de dependencias: no aplica (sin `package.json`/lockfile en
++  el proyecto).
++
++### Ciclo de agentes (trazabilidad)
++- qa-tester: validación de REQ-004, log de QA, guía de usuario, veredicto `QA:`.
++- Vía aplicable (confirmada leyendo el `AGENTS.md` de este proyecto, que **no** declara la vía
++  proporcional): analista → desarrollador → QA → seguridad.
++- Veredictos: `QA: aprobado (2026-09-21)`. `Seguridad: pendiente` — no lo firmo, es del
++  `auditor-seguridad`, que va **después** de esta validación (`AGENTS.md` §6). Por
++  `Rigor: critico` y `Sensible a seguridad: sí`, el REQ no puede pasar a `completado` sin esa
++  firma.
++
++---
++
++## [2026-09-21] — Origen: Interno — REQ-004: arreglo de DEF-001 y DEF-002 en `src/formato.js` + pruebas
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 desarrollador
++- **Agente(s):** desarrollador
++
++### Cambios
++- `src/formato.js`:
++  - **DEF-001 / CA-01**: `listaClientes` une con `"; "` (constante `SEPARADOR_CLIENTES`) en vez
++    de `", "`. Sin separador delante del primero ni detrás del último.
++  - **DEF-002 / CA-03**: `tituloInforme` devuelve el título **íntegro en minúsculas**
++    (`"informe de septiembre de 2026"`): prefijo `'informe de '` y constante `MESES` declarada
++    ya en minúscula, que sigue siendo la sede única de los nombres de mes.
++  - CA-02 **sin cambios de comportamiento**: el predicado sigue siendo `filter(Boolean)` y los
++    nombres conservados van tal cual, sin recorte de espacios. Sólo se documentó en comentario.
++- `test/formato.test.js` (nuevo): 8 pruebas con `node:test` + `node:assert/strict`, al menos una
++  por criterio CA-01…CA-05 (**CA-06**). Vive fuera de `src/*` (`codigo_app.globs`) para que el
++  `qa-tester` pueda editarlas.
++- `ARCHITECTURE.md`: sustituida la plantilla vacía por la vista real del sistema (los tres
++  módulos de `src/`, sus entradas/salidas, el flujo de datos del informe, ausencia de
++  integraciones y credenciales, y el enlace a ADR-001).
++- `requirements/REQ-004.md`: **sólo** una línea en `## Trazabilidad` («Tocado por»). No se
++  tocaron criterios, clasificación, `Hallazgos abiertos:` ni veredictos.
++- **Quality gate `node --test`: verde con 8 pruebas ejecutadas** (antes corría verde con 0).
++- **Fuera de alcance, no tocado** (REQ-004 §«Notas / alcance»): validación de la entrada de
++  `listaClientes`, validación del ordinal de mes en `tituloInforme` y recorte de espacios.
++  Tampoco se tocó `src/fecha.js` ni `src/tarifa.js`.
++
++### Ciclo de agentes (trazabilidad)
++- desarrollador: arreglo de DEF-001 y DEF-002, pruebas de CA-01…CA-06, `ARCHITECTURE.md`.
++- Vía aplicable (comprobada por la coordinadora en el `AGENTS.md` de este proyecto, que **no**
++  declara la vía proporcional): analista → desarrollador → QA → seguridad. El write-back de §9
++  ya lo hizo el `analista-requerimientos`; este agente no lo transcribió.
++- Veredictos: `QA: pendiente`, `Seguridad: pendiente`. Ninguno firmado por este agente.
++  Siguiente: `qa-tester`; después, por `Rigor: critico`, `auditor-seguridad`.
++
++---
++
++## [2026-09-21] — Origen: Interno — REQ-004: reclasificación a `critico`, resolución de CA-03 y reapertura
++- **Usuario:** juan.vega@sysvega.cr
++- **Modelo IA:** claude-opus-5 (analista-requerimientos)
++- **Agente(s):** analista-requerimientos (comisión de análisis acotada despachada por la coordinadora)
++
++### Cambios
++- `requirements/REQ-004.md`: `Rigor: estandar → critico`, `Sensible a seguridad: no → sí`,
++  `Seguridad: n/a → pendiente`, `Estado: completado → en-progreso`,
++  `QA: aprobado (2026-08-20) → pendiente`,
++  `Hallazgos abiertos: ninguno → DEF-001 (usuario/dinero), DEF-002 (usuario/dinero)`.
++- CA-03 resuelto **a favor del criterio** (título íntegro en minúsculas): el código es el que
++  incumple, así que no hay cambio de significado y **no** procede ADR por ese punto.
++- CA-01 y CA-03 redactados en Gherkin por propiedad; CA-02 reenunciado por propiedad (el código
++  cubría más de lo prometido); CA-04/CA-05 (bordes) y CA-06 (pruebas) añadidos.
++- `Archivos:` ahora incluye `test/formato.test.js` (fuera de `src/*` por `codigo_app.globs`).
++- Nuevo `docs/decisions/ADR-001-rigor-critico-datos-de-cliente.md` (reclasificación de rigor y
++  sensibilidad; es el cambio DE FONDO de esta entrega).
++- Índice de `requirements/README.md` actualizado.
++- **No se tocó `src/`**: el arreglo y las pruebas son del `desarrollador`.
++
++### Ciclo de agentes (trazabilidad)
++- analista-requerimientos: write-back de DEF-001 y DEF-002 en el REQ, clasificación y ADR-001.
++- Vía aplicable (comprobada por la coordinadora en el `AGENTS.md` de este proyecto, que **no**
++  declara la vía proporcional): analista → desarrollador → QA → seguridad.
++- Veredictos: `QA: pendiente`, `Seguridad: pendiente`. Ninguno firmado por este agente.
++
++---
++
+ ## [AAAA-MM-DD] — Origen: (GitHub|Interno) — Título del cambio
+ - **Usuario:** (correo/identificador)
+ - **Modelo IA:** (ej. claude-opus-4-8 coordinadora + claude-sonnet-4-6 dev/QA)
+diff --git a/docs/ESTADO.md b/docs/ESTADO.md
+index f65b912..713b625 100644
+--- a/docs/ESTADO.md
++++ b/docs/ESTADO.md
+@@ -7,17 +7,67 @@
+ > Se actualiza al cerrar cada sesión de trabajo.
+ 
+ ## Fase actual
+-(ej. Fase 0 — andamiaje / Fase 1 — ...)
++Fase 1 — corrección de REQ-004 (encabezado del informe). Vía: analista → desarrollador → QA →
++seguridad (el `AGENTS.md` de este proyecto **no** declara la vía proporcional de reparación).
+ 
+ ## En progreso
+-- (REQ o tarea que está abierta ahora)
++- **REQ-004** — `en-revisión`. `Rigor: critico` · `Sensible a seguridad: sí` (ADR-001). Análisis,
++  implementación, **validación de QA** (`QA: aprobado (2026-09-21)`, 8/8) y **auditoría de
++  seguridad** (`Seguridad: aprobado (2026-09-21)`) **terminadas**. Queda abierto **SEC-001**
++  (`instrumento`), que **no bloquea** el cierre.
+ 
+ ## Próximo paso concreto
+-- (la siguiente acción, sin ambigüedad)
++- **Cerrar REQ-004**: la transición a `completado` es de la sesión coordinadora, tras la
++  aprobación humana del cierre de fase. Los dos veredictos están firmados y en orden (seguridad
++  **después** de QA), las quality gates en verde y el único hallazgo abierto es `instrumento`.
+ 
+ ## Bloqueos
+-- (ninguno | descripción + a quién/qué espera)
++- Ninguno para implementar ni probar. Para **cerrar** REQ-004 tampoco queda bloqueo técnico:
++  `PENDING_APPROVAL.md` está vacío, `QA: aprobado` y `Seguridad: aprobado`, y SEC-001 es
++  `instrumento` (no bloquea). Falta sólo el visto bueno humano del cierre de fase.
+ 
+ ## Pendientes (cola)
+-- [ ] ...
+-- [ ] ...
++- [ ] **SEC-001** (`instrumento`, dueño: coordinadora) — la comprobación anti-vacuidad de QA se
++      hizo **escribiendo en `src/formato.js`**, que `AGENTS.md` §5 reserva al `desarrollador`;
++      `guard-codigo` no lo vio (§13: cobertura de `Bash` parcial a propósito). Efecto sobre el
++      producto **nulo, verificado**. Remedio: hacerla sin escribir en `codigo_app.globs`.
++- [ ] **SEC-003** (dueño: `analista-requerimientos`) — NFR de codificación de salida de los
++      nombres de cliente en la frontera de renderizado. Si el renderizador entra alguna vez en
++      este repositorio, ese NFR es precondición y REQ-004 **se vuelve a auditar**.
++- [ ] **SEC-005** (dueño: coordinadora, severidad baja) — el repositorio no tiene `.gitignore`
++      que cubra `.env*`. Hoy no hay secretos; es preventivo.
++- [ ] Decidir si se abre un REQ nuevo para la validación del ordinal de mes en `tituloInforme`
++      (hoy un mes fuera de 1–12 produce «informe de undefined de 2026» en un documento que se
++      entrega a clientes). REQ nuevo ⇒ lo define el `analista-requerimientos`.
++- [ ] Revisar la clasificación de REQ-002 (comisión por factura): toca **dinero** y está en
++      `Rigor: estandar` · `Sensible a seguridad: no`. Fuera de la comisión de REQ-004.
++      **Registrado como SEC-002** por el `auditor-seguridad` (severidad media), que ejercerá ahí
++      su facultad de **subir el rigor**; subirlo **reabre** el REQ, así que la decisión de abrir
++      esa comisión es del propietario. Añadido: `src/tarifa.js` **no tiene ninguna prueba**.
++- [ ] La quality gate `node --test` corre en verde con **0 pruebas** en todo el proyecto: un
++      verde vacío. Lo cierra CA-06 para REQ-004; REQ-001 y REQ-002 siguen sin pruebas.
++
++<!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
++## Estado derivado — 2026-09-21 14:58
++
++> Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
++> Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
++> de los marcadores y ahí no se toca. Si algo aquí te sorprende, el disco dice eso.
++>
++> Los veredictos se muestran **como los lee la máquina** —normalizados: sin mayúsculas, sin
++> tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
++> raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
++
++**Repositorio:** `master` @ `4b6db84` — CON CAMBIOS SIN COMITEAR
++**Arnés:** plugin instalado `1.34.0`
++**Aprobaciones pendientes:** 0
++**REQ:** 3 — completado 2 · en-revisión 1 · en-progreso 0 · bloqueado 0 · otros 0
++**Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
++
++_Sólo los REQ abiertos; los 2 completados no se listan._
++
++| REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
++|---|---|---|---|---|---|
++| REQ-004 | en-revision | aprobado | aprobado | critico | sec-001(instrumento) |
++
++<!-- ARNES:DERIVADO fin -->
+diff --git a/requirements/README.md b/requirements/README.md
+index 7cd5cc5..d443f47 100644
+--- a/requirements/README.md
++++ b/requirements/README.md
+@@ -411,4 +411,14 @@ Tocado por: (agente / fecha)
+ ```
+ 
+ ## Índice
+-(lista de REQ y NFR con su estado)
++
++| Id | Título | Estado | Rigor | Sensible a seguridad | QA | Seguridad | Hallazgos abiertos |
++|---|---|---|---|---|---|---|---|
++| REQ-001 | Validación de la fecha de corte | `completado` | `estandar` | no | aprobado (2026-08-15) | n/a | ninguno |
++| REQ-002 | Comisión por factura | `completado` | `estandar` | no | aprobado (2026-08-15) | n/a | ninguno |
++| REQ-004 | Lista de clientes en el encabezado del informe | `en-revisión` | `critico` | sí | aprobado (2026-09-21) | aprobado (2026-09-21) | SEC-001 (instrumento) |
++
++(No hay NFR declarados.)
++
++> Este índice es una **copia de lectura**: la fuente de verdad de cada campo es la cabecera del
++> archivo del REQ, que es lo que leen las puertas.
+diff --git a/requirements/REQ-004.md b/requirements/REQ-004.md
+index 5ef259a..a8ebc7f 100644
+--- a/requirements/REQ-004.md
++++ b/requirements/REQ-004.md
+@@ -1,24 +1,169 @@
+ # REQ-004 — Lista de clientes en el encabezado del informe
+-Estado: completado
++Estado: en-revisión
+ Módulo: src/formato.js
+-Archivos: src/formato.js, requirements/REQ-004.md
++Archivos: src/formato.js, test/formato.test.js, requirements/REQ-004.md
+ Prioridad: baja
+ Versión destino: 1.0.0
+-Sensible a seguridad: no
+-QA: aprobado (2026-08-20)
+-Seguridad: n/a
+-Hallazgos abiertos: ninguno
+-Rigor: estandar
++Sensible a seguridad: sí
++QA: aprobado (2026-09-21)
++Seguridad: aprobado (2026-09-21)
++Hallazgos abiertos: SEC-001 (instrumento)
++Rigor: critico
++NFR relacionados: (ninguno)
+ 
+ ## Historia
+-Como facturador, quiero que el encabezado del informe mensual liste los clientes en una sola línea legible.
++Como facturador, quiero que el encabezado del informe mensual liste los clientes en una sola
++línea legible y con un título uniforme, para entregar a cada cliente un documento con la misma
++forma mes a mes.
+ 
+ ## Criterios de aceptación
+-- CA-01: Los nombres se unen con el separador «; » (punto y coma seguido de un espacio), sin separador al final.
+-- CA-02: Los nombres vacíos o nulos se omiten.
+-- CA-03: El título del informe (`tituloInforme(mes, anio)`) escribe el mes en español y en minúsculas, precedido de «informe de»: por ejemplo «informe de septiembre de 2026».
++
++- **CA-01** — **Dado** un arreglo de nombres con dos o más elementos conservados (los que CA-02
++  no omite), **Cuando** se invoca `listaClientes(nombres)`, **Entonces** devuelve esos nombres
++  en el orden en que se recibieron, unidos por la secuencia «punto y coma» + «espacio» (`"; "`),
++  **sin** separador delante del primero ni detrás del último.
++  El separador es **de contrato**: es lo que el cliente ve en el informe entregado y no se
++  cambia sin ADR y sin write-back en este criterio.
++
++- **CA-02** — **Dado** un arreglo de nombres, **Cuando** se invoca `listaClientes(nombres)`,
++  **Entonces** se omite del resultado **todo elemento que el predicado de filtrado de
++  `listaClientes` trate como «no aporta nombre»** — hoy la propiedad es «valor *falsy* de
++  JavaScript», y su **única** sede es el predicado de `src/formato.js`, función `listaClientes`;
++  ejemplos **no exhaustivos**: la cadena vacía `''`, `null`, `undefined`.
++  **Y** todo elemento que esa propiedad **no** omite se conserva **tal cual, sin recorte de
++  espacios**: una cadena de sólo espacios (`'   '`) **se conserva** y eso **no** es hallazgo
++  (recortarla sería comportamiento nuevo — ver «Notas / alcance»).
++
++- **CA-03** — **Dado** un ordinal de mes en el rango 1–12 (**de contrato**: el año tiene doce
++  meses; no es una magnitud que se ajuste con la medición) y un año, **Cuando** se invoca
++  `tituloInforme(mes, anio)`, **Entonces** devuelve la concatenación
++  «informe de » + nombre del mes + « de » + año **con todas sus letras en minúscula**, incluida
++  la inicial de «informe» **y** la inicial del nombre del mes.
++  El nombre del mes es el que corresponde al ordinal según la **lista única** que vive en
++  `src/formato.js` (constante `MESES`); ejemplo **no exhaustivo**: `tituloInforme(9, 2026)`
++  devuelve exactamente `"informe de septiembre de 2026"`.
++  *(Este criterio manda sobre lo que el código produce hoy — ver DEF-002 y el Historial.)*
++
++- **CA-04** *(borde)* — **Dado** un arreglo vacío, **o** uno en el que CA-02 omite todos sus
++  elementos, **Cuando** se invoca `listaClientes(nombres)`, **Entonces** devuelve la cadena
++  vacía `""`: ni el separador suelto, ni un texto de relleno, ni `undefined`.
++
++- **CA-05** *(borde)* — **Dado** un arreglo con exactamente un elemento conservado, **Cuando**
++  se invoca `listaClientes(nombres)`, **Entonces** devuelve ese nombre solo, sin separador
++  delante ni detrás.
++
++- **CA-06** *(demostración)* — **Dado** el árbol del proyecto, **Cuando** corre la quality gate
++  `node --test`, **Entonces** existen pruebas automatizadas que ejercen CA-01 a CA-05 y el
++  conteo de pruebas ejecutadas es de **no menos de una por criterio** (**operativo**: el número
++  **sube** si se añaden criterios). Las pruebas viven **fuera** de `src/` —`codigo_app.globs`
++  del manifiesto es `src/*`— para que el `qa-tester` pueda editarlas; ruta prevista:
++  `test/formato.test.js`.
++
++## Hallazgos
++
++### Abierto (cabecera)
++
++| Id | Clase | Evidencia | Qué es | Qué lo resuelve |
++|---|---|---|---|---|
++| SEC-001 | `instrumento` | `docs/qa/REQ-004.md` §2 (líneas 57-80) y la entrada de QA del `CHANGELOG.md`: durante la comprobación anti-vacuidad, el `qa-tester` **escribió en `src/formato.js`**, que `AGENTS.md` §5 y `codigo_app.globs` reservan al `desarrollador`; `guard-codigo` no lo vio porque §13 declara la cobertura de `Bash` **parcial a propósito** | Defecto del **procedimiento de validación** y límite declarado del guardián. **Efecto sobre el producto: nulo, verificado por el auditor** — `git diff src/formato.js` es exactamente el arreglo del `desarrollador` y `node --test` da 8/8 | Comprobación anti-vacuidad **sin escribir en `codigo_app.globs`** (copia fuera de `src/`, o corrida de mutación encargada al `desarrollador`). Dueño: sesión coordinadora. Detalle en `docs/seguridad/registro-seguridad.md` |
++
++`instrumento` **no bloquea** el cierre (`requirements/README.md` §«Clases de hallazgo»): un
++defecto del propio arnés no puede ser condición para cerrar una función de negocio. **Y el
++reverso queda dicho:** si el árbol auditado hubiera diferido en algo del arreglo del
++`desarrollador`, la clase habría sido `usuario/dinero` y el veredicto de seguridad, `vetado`.
++
++### Resueltos (historia, no se borran)
++
++Los dos defectos que reabrieron este REQ, con su evidencia citada para que se pueda volver a
++ella sin preguntar (`AGENTS.md` §6, regla 2). **Verificados como resueltos por QA el
++2026-09-21** y confirmados por el auditor sobre el mismo árbol:
++
++| Id | Clase | Evidencia | Criterio incumplido | Qué lo resolvió |
++|---|---|---|---|---|
++| DEF-001 | `usuario/dinero` | `src/formato.js:4` → `nombres.filter(Boolean).join(', ')` | CA-01 (contrata `"; "`, el código une con `", "`) | Arreglo en el código por el `desarrollador` + prueba que fije el separador |
++| DEF-002 | `usuario/dinero` | `src/formato.js:7` → `'Informe de ' + MESES[mes-1] + ' de ' + anio`, con `MESES` capitalizado en la línea 2; produce `"Informe de Septiembre de 2026"` | CA-03 (contrata el título íntegro en minúsculas) | Arreglo en el código por el `desarrollador` + prueba que fije el título exacto |
++
++**Por qué `usuario/dinero` y no `contrato`.** `contrato` es «el requerimiento dice algo falso
++sobre lo construido», y su remedio es el write-back. Aquí la resolución analizada (ver Historial,
++2026-09-21) es la inversa: **el criterio es el contrato válido y el código es el que está mal**,
++de modo que el defecto está en el producto y afecta lo que el cliente **ve** en el informe que se
++le entrega. Por eso la clase es `usuario/dinero` y el remedio es el arreglo del código, no la
++reescritura del criterio. Las dos clases bloquean el cierre, así que la elección no relaja nada:
++lo que cambia es **dónde va el arreglo**.
++
++## Notas / alcance
++
++**Fuera del alcance de este REQ** (no se amplía aquí; se nombran para que nadie los dé por
++cubiertos ni los «arregle ya que estamos»):
++
++1. **Validación de la entrada de `listaClientes`.** Hoy un argumento que no sea arreglo (por
++   ejemplo `null`) hace fallar la llamada. Definir qué debe ocurrir sería **capacidad nueva**.
++2. **Validación del ordinal de mes en `tituloInforme`.** Hoy un `mes` fuera de 1–12 produce un
++   título con `undefined` incrustado (`"informe de undefined de 2026"`), y ese título **llega a
++   un documento que se entrega a clientes**. Es un hueco real y **recomiendo abrir un REQ nuevo**
++   para cerrarlo; ese REQ, con su `Rigor:` y su `Sensible a seguridad:`, es del
++   `analista-requerimientos` (`AGENTS.md` §6), y debe encargarse, no deducirse de aquí.
++3. **Recorte de espacios en los nombres** (ver CA-02): sería un cambio de comportamiento.
++4. **Codificación de salida de los nombres en la frontera de renderizado** *(añadido por el
++   `auditor-seguridad`, 2026-09-21)*. `listaClientes` copia cada nombre **tal cual** —así lo
++   contrata CA-02— y el proceso que renderiza y entrega el informe **no vive en este
++   repositorio** (`ARCHITECTURE.md`). Escapar según el contexto final (HTML, CSV, PDF) es de esa
++   frontera; hacerlo aquí sería capacidad nueva **y contradiría CA-02**. Registrado con dueño
++   (`analista-requerimientos`) y con su condición de reapertura en
++   `docs/seguridad/registro-seguridad.md`, **SEC-003**. **No es condición de cierre de este REQ.**
++
++**Sobre la inicial de «informe» en CA-03.** El criterio original ya fijaba el ejemplo completo
++en minúsculas, no sólo el mes. Se conserva **tal cual** y se ha hecho explícito para que el
++arreglo no se quede a medias (bajar sólo el mes y dejar `"Informe de septiembre…"` **incumple**
++CA-03). Si el propietario prefiriera la inicial mayúscula, eso **cambia el significado del
++criterio**: es un cambio DE FONDO, exige ADR y write-back, y **no** se hace en la fase de
++arreglo.
++
++## Preguntas abiertas / conflictos
++Ninguna. Sin conflicto con REQ-001 (`src/fecha.js`) ni con REQ-002 (`src/tarifa.js`): módulos,
++criterios y archivos disjuntos.
++
++## Trazabilidad
++- Origen: encabezado del informe mensual entregado a clientes.
++- ADR relacionado: `docs/decisions/ADR-001-rigor-critico-datos-de-cliente.md` (reclasificación
++  de rigor y sensibilidad).
++- Tocado por: analista-requerimientos / 2026-09-21 (comisión de análisis acotada: clasificación,
++  resolución de CA-03, reapertura y write-back).
++- Tocado por: desarrollador / 2026-09-21 (comisión de implementación: arreglo de DEF-001 y
++  DEF-002 en `src/formato.js`, pruebas `test/formato.test.js` para CA-01…CA-06 —`node --test`
++  en verde con 8 pruebas— y `ARCHITECTURE.md`. No se tocaron criterios, clasificación,
++  `Hallazgos abiertos:` ni veredictos).
++- Tocado por: qa-tester / 2026-09-21 (comisión de validación: verificación de CA-01 a CA-06
++  contra el árbol, quality gate `node --test` en verde con 8/8, y comprobación de que las
++  pruebas ejercen de verdad el arreglo —5/8 fallan al re-aplicar el código anterior a DEF-001/
++  DEF-002; ver `docs/qa/REQ-004.md`—. DEF-001 y DEF-002 verificados como resueltos y retirados.
++  Sin hallazgos nuevos dentro del alcance. Veredicto `QA: aprobado (2026-09-21)`. Falta el
++  visto bueno del `auditor-seguridad` para `completado`).
++- Tocado por: auditor-seguridad / 2026-09-21 (comisión de auditoría de seguridad y gobernanza,
++  **después** de la validación de QA y sobre el árbol que ésta validó — **no** es una auditoría
++  `preventiva`). Auditado: entrada/salida y manejo de los nombres de cliente (no se persisten, no
++  se registran, no salen del proceso), inyección y codificación de salida, criptografía y
++  secretos (ninguno en el árbol), dependencias (ninguna), lógica de negocio y bordes, y la
++  consistencia de `ADR-001`. Veredicto `Seguridad: aprobado (2026-09-21)`. Abierto SEC-001
++  (`instrumento`, **no bloquea**); registrados con dueño y **fuera del alcance de este REQ**
++  SEC-002…SEC-005. Documentos creados: `docs/seguridad/gobernanza-datos.md` y
++  `docs/seguridad/registro-seguridad.md` (con la **línea base anti-regresión** de este REQ).
+ 
+ ## Historial de cambios
+-| Fecha | Cambio | Causa |
+-|---|---|---|
+-| 2026-08-20 | Creación | — |
++| Fecha | Antes → Después | Causa | ADR |
++|---|---|---|---|
++| 2026-08-20 | (creación) | — | — |
++| 2026-09-21 | `Rigor: estandar` → `critico` · `Sensible a seguridad: no` → `sí` · `Seguridad: n/a` → `pendiente` | Clasificación insuficiente en el sentido de `AGENTS.md` §6 («contrato claro»): `listaClientes` presenta **nombres de clientes** y este proyecto declara crítico «todo lo que toque dinero o datos de clientes». La cabecera prometía menos revisión que la que exige el efecto | ADR-001 |
++| 2026-09-21 | `Estado: completado` → `en-progreso` | `AGENTS.md` §9, REGLA DE ESTADO: el contrato cambia y el REQ re-recorre el ciclo (dev → QA → seguridad) | — |
++| 2026-09-21 | `QA: aprobado (2026-08-20)` → `pendiente` | Ese veredicto juzgaba un árbol que incumple CA-01 y CA-03, y un contrato que hoy es otro. Se retira la firma caduca (no se emite ninguna: la re-validación es del `qa-tester`) | — |
++| 2026-09-21 | `Hallazgos abiertos: ninguno` → `DEF-001 (usuario/dinero), DEF-002 (usuario/dinero)` | Write-back (`AGENTS.md` §9, «CAMBIOS POR HALLAZGO») de los dos defectos medidos en `src/formato.js:4` y `src/formato.js:7` | — |
++| 2026-09-21 | CA-02: «Los nombres vacíos o nulos se omiten» → enunciado **por propiedad**, con la sede única del predicado y ejemplos marcados «no exhaustivos», más la conservación explícita de los espacios | El código cubre **más** de lo que el criterio prometía (`filter(Boolean)` omite todo valor *falsy*, no sólo vacíos y nulos): `requirements/README.md` §«Cuando el código cubre MÁS…», que obliga a corregirlo **en el mismo cambio que lo descubre** | — |
++| 2026-09-21 | CA-01 y CA-03: redactados en Gherkin, con el separador y el rango 1–12 declarados **de contrato** y la lista de meses citada por su **sede única** | Formas (a) y (b) de `requirements/README.md` §«Cómo se escribe un criterio que no se desmiente», aplicables a todo criterio que se modifica. **El contenido contratado no cambia**: `"; "` y título en minúsculas eran ya lo acordado | — |
++| 2026-09-21 | Criterios nuevos CA-04 y CA-05 (bordes: sin nombres conservados, un solo nombre) | El Gherkin sólo cubría el camino feliz; ambos describen comportamiento **ya construido**, no capacidad nueva | — |
++| 2026-09-21 | Criterio nuevo CA-06 (pruebas automatizadas) | `AGENTS.md` §7: las pruebas son parte de cada REQ y el REQ no pasa a `en-revisión` sin ellas. Hoy `node --test` está en verde con **0 pruebas** | — |
++| 2026-09-21 | `Archivos:` → + `test/formato.test.js` | El alcance de la fase siguiente incluye las pruebas, que deben vivir fuera de `src/*` (`codigo_app.globs`) para que el `qa-tester` pueda editarlas | — |
++| 2026-09-21 | `Hallazgos abiertos: DEF-001 (usuario/dinero), DEF-002 (usuario/dinero)` → `ninguno` | Verificado por QA: CA-01 y CA-03 se cumplen en `src/formato.js` y las pruebas de `test/formato.test.js` distinguen el código corregido del código con los dos defectos (5/8 pruebas fallan al reaplicar el código anterior). Ver `docs/qa/REQ-004.md` | — |
++| 2026-09-21 | `Seguridad: pendiente` → `aprobado (2026-09-21)` | Auditoría de seguridad y gobernanza sobre el árbol ya validado por QA (orden de firmas de `AGENTS.md` §6). Sin secretos, sin persistencia, sin registro de nombres de cliente, sin dependencias y sin superficie de inyección dentro de la frontera del repositorio; `ADR-001` sostiene lo que afirma. Línea base anti-regresión en `docs/seguridad/registro-seguridad.md` | — |
++| 2026-09-21 | `Hallazgos abiertos: ninguno` → `SEC-001 (instrumento)` | Hallazgo de gobernanza de la auditoría: el `qa-tester` escribió en `src/formato.js` (`AGENTS.md` §5 lo reserva al `desarrollador`; `guard-codigo` no lo vio, §13 declara la cobertura de `Bash` parcial). **Efecto sobre el producto nulo, verificado.** Clase `instrumento` → deuda técnica con dueño, **no bloquea** el cierre | — |
++| 2026-09-21 | «Notas / alcance»: punto 4 nuevo (codificación de salida en la frontera de renderizado) | Write-back del hallazgo SEC-003 de la auditoría: se nombra para que nadie lo dé por cubierto, con dueño y condición de reapertura. Fuera de alcance de este REQ (sería capacidad nueva y contradiría CA-02) | — |
++| 2026-09-21 | `QA: pendiente` → `aprobado (2026-09-21)` | CA-01 a CA-06 verificados contra el árbol; `node --test` en verde (8/8); ninguna forma prohibida (`requirements/README.md` §«Cómo se escribe un criterio que no se desmiente») en los criterios vigentes. Detalle en `docs/qa/REQ-004.md` | — |
+diff --git a/src/formato.js b/src/formato.js
+index 7380d65..532b29e 100644
+--- a/src/formato.js
++++ b/src/formato.js
+@@ -1,9 +1,21 @@
+ // Presentación del informe mensual.
+-const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
++
++// Separador de contrato de la línea de clientes (REQ-004, CA-01): es lo que el cliente ve
++// en el informe entregado; no se cambia sin ADR y write-back en el criterio.
++const SEPARADOR_CLIENTES = '; ';
++
++// Sede única de los nombres de mes (REQ-004, CA-03). Se declaran ya en minúscula en vez de
++// bajarlos en cada llamada: el título contratado es íntegro en minúsculas y esta lista no
++// tiene otro consumidor, así que una sola forma evita dos representaciones que se desfasen.
++const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
++
+ function listaClientes(nombres) {
+-  return nombres.filter(Boolean).join(', ');
++  // El predicado es la sede única de «no aporta nombre» (CA-02): hoy, valor falsy.
++  // Los elementos conservados van tal cual, sin recorte de espacios.
++  return nombres.filter(Boolean).join(SEPARADOR_CLIENTES);
+ }
++
+ function tituloInforme(mes, anio) {
+-  return 'Informe de ' + MESES[mes - 1] + ' de ' + anio;
++  return 'informe de ' + MESES[mes - 1] + ' de ' + anio;
+ }
+ module.exports = { listaClientes, tituloInforme };
