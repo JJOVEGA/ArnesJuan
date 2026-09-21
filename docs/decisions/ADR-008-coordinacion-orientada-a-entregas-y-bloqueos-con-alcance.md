@@ -52,18 +52,61 @@ a ellas y no copian su texto.
   basta con cambiar su ubicación para permitir el cierre**. Una reparación del mismo defecto o
   entrega **conserva su contador**. No se reinicia ni se elude mediante un REQ nuevo.»
 
-De **(a)** salen el vocabulario **cerrado** de clases de acción —`implementar · probar · aprobar ·
+De **(a)** salieron, **en la redacción original de esta decisión**, el vocabulario **cerrado** de
+clases de acción —`implementar · probar · aprobar ·
 publicar`, donde «aprobar» nombra las aprobaciones humanas de §6 que ningún hook impone—, la regla
 de que un bloqueo **mecánico** conserva su clase **y además nombra la transición exacta** que la
 máquina deniega, y las **tres fronteras** de la cola: no impide implementar ni probar; no es
 ninguna aprobación humana normativa y vaciarla no concede ninguna; no absorbe el orden de fases,
-el veto ni el tope de vueltas. De **(b)** salen la clasificación que la coordinadora hace sobre
+el veto ni el tope de vueltas. **Las dos primeras piezas de este párrafo —el vocabulario y la
+regla del bloqueo mecánico— quedaron corregidas el 2026-09-21 por decisión del propietario:** la
+adenda del final de esta sección **manda sobre ellas**, y este párrafo se conserva sin reescribir
+como redacción original. Las tres fronteras siguen vigentes. De **(b)** salen la clasificación que la coordinadora hace sobre
 cada hallazgo, la **discrepancia declarada** que se resuelve entre QA/seguridad y la coordinadora
 o se **escala al propietario**, y el **contador que es del defecto o de la entrega** y no del
 identificador bajo el que se despacha.
 
 Contrato completo y criterios que lo miden: `requirements/REQ-025.md`, CA-09, CA-10, CA-14 y
 CA-15.
+
+### Adenda — corregido el 2026-09-21 por decisión del propietario: **cinco** clases de acción
+
+**Esta adenda manda sobre el párrafo de arriba que derivaba de (a) un vocabulario de cuatro
+clases.** Ese párrafo no se reescribe: queda como redacción original de la decisión, marcado como
+corregido. **Causa:** el hallazgo `QA-025-02` (`contrato`, `docs/qa/REQ-025.md`, 2026-09-21) midió
+que el vocabulario cerrado de cuatro clases **no tenía clase para el bloqueo que el arnés más
+usa** —el de la cola de `PENDING_APPROVAL.md`—, y que por eso dos definiciones de agente recibían
+una instrucción **inejecutable**.
+
+**Decisión del propietario (2026-09-21), literal en lo esencial — opción B:** «Distinguir
+**implementar, probar, aprobar, cerrar y publicar**. Aquí "cerrar" significa **marcar el REQ como
+`completado`**. Son **categorías descriptivas, no controles nuevos**. Para cada bloqueo se nombra
+**la acción concreta y la regla que la impide**. **No afirmes que una lista enumera todos los
+bloqueos posibles.** El veto conserva su alcance según la regla que lo establece y **puede afectar
+más de una acción**.»
+
+**Qué cambia en la sede** (`AGENTS.md` §6, regla 2, «Gates de aprobación humana» y «Mecanismo de
+gate»; y su gemela `templates/AGENTS.md.tpl`, más las dos cabeceras de `PENDING_APPROVAL`):
+
+- El vocabulario pasa de cuatro a **cinco** clases: **implementar · probar · aprobar · cerrar ·
+  publicar**, cada una glosada en la sede.
+- **«aprobar»** vuelve a ser **sólo** la aprobación **humana** normativa de §6, que conceden
+  personas y que ningún hook impone.
+- **«cerrar»** es **marcar el REQ como `completado`**, y el bloqueo de la cola pasa a **esa**
+  clase. Las condiciones que `guard-completado` aplica no se redeclaran: la sede las **cita**
+  (§6 y §13).
+- Desaparecen «un bloqueo mecánico **conserva su clase**» y «nombrar la transición **no añade una
+  quinta clase**», que la opción B deja sin objeto.
+- Desaparece del titular de «Gates de aprobación humana» la frase **«lo que no está en esta lista
+  no se detiene por ellas»**: **ninguna lista enumera todos los bloqueos posibles**, y lo que una
+  lista no menciona no queda por ello desbloqueado.
+- **Un bloqueo puede afectar a más de una acción**, y el **veto** conserva el alcance que le da su
+  propia regla — puede impedir a la vez **cerrar** y **publicar**.
+
+**Qué NO cambia, y es lo que impide leer esto como una decisión nueva sobre el mecanismo:** las
+cinco clases son **descriptivas**; no crean, no retiran y no modifican ninguna puerta, permiso,
+aprobación ni condición de cierre. `hooks/`, `hooks.json` y `.arnes/config.json` quedan intactos,
+y todas las consecuencias marcadas (=) más abajo siguen vigentes tal cual.
 
 ## Alternativas consideradas
 

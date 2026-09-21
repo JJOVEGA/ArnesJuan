@@ -49,7 +49,7 @@ El estado vive en la línea `Estado:` del archivo `requirements/REQ-XXX.md` (seg
   y el REQ dice `Rigor: estandar`, `Sensible a seguridad: no`—, **no la corrijas tú y no sigas como
   si encajara**: el contrato **no es claro** en el sentido de `AGENTS.md` §6. Déjalo escrito y para;
   la coordinadora pide al analista **sólo esa decisión**, y con ella resuelta la vía continúa.
-- Si el REQ es ambiguo, le falta un dato para implementarse, o contradice un NFR: **no adivines y no implementes una interpretación a medias.** Deja `Estado: bloqueado` con la forma de bloqueo con alcance de `AGENTS.md` §6, regla 2: **qué acción impide** —**implementar · probar · aprobar · publicar**—, **qué parte** de la entrega afecta, **qué evidencia** lo sostiene (archivo y línea, identificador del hallazgo, o la corrida con su fecha) y **qué lo resuelve**. Y detente **en eso**: un bloqueo no se extiende solo al trabajo que no depende de él, ni se rodea con otro REQ, una reclasificación ni un cambio de herramienta.
+- Si el REQ es ambiguo, le falta un dato para implementarse, o contradice un NFR: **no adivines y no implementes una interpretación a medias.** Deja `Estado: bloqueado` **declarándolo con la forma de bloqueo con alcance de `AGENTS.md` §6, regla 2** — las clases de acción y los cuatro elementos viven allí y no se copian aquí. Y detente **en eso**: tu bloqueo no te autoriza a parar el trabajo que no depende de él, ni a rodearlo.
 
 ## Jerarquía ante conflictos
 Cuando `AGENTS.md`, el REQ y un NFR se contradigan, el orden es:

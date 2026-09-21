@@ -30,7 +30,9 @@
 > el bloque derivado dice `sin datos`: nunca 0.
 >
 > El ejemplo vive AQUÍ, fuera de la cola, y a propósito: un ejemplo dentro de la sección se
-> cuenta como una pendiente real y bloquea todos los cierres.
+> cuenta como una pendiente real e impide la acción de clase «cerrar» —**marcar cualquier REQ
+> como `completado`**, la transición de su campo `Estado:` a ese valor—, porque la regla que lo
+> impide, `guard-completado`, no distingue un ejemplo de una pendiente.
 
 ## Pendientes
 
