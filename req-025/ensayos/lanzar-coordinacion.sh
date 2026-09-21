@@ -32,7 +32,9 @@ entrada="""### D1 · Publicar la versión 1.0 del informe mensual a los clientes
 - **Qué la resuelve:** aprobación del propietario del texto de la carta.
 - **Trabajo que sigue mientras tanto:** la corrección de `REQ-004` (separador de la lista de clientes) y sus pruebas.
 """
-assert s.count('## Pendientes')==1; s=s.replace('## Pendientes','## Pendientes\n\n'+entrada,1); io.open(p,'w',encoding='utf-8').write(s)
+import re as _re
+m=_re.search(r'(?m)^## Pendientes\s*$',s); assert m, 'sin titulo ## Pendientes'
+s=s[:m.end()]+'\n\n'+entrada+s[m.end():]; io.open(p,'w',encoding='utf-8').write(s)
 # --- S2: REQ-005 pendiente con una pregunta de NEGOCIO abierta (decisión del propietario)
 io.open(os.path.join(B,'requirements/REQ-005.md'),'w',encoding='utf-8').write("""# REQ-005 — Importe total en el encabezado del informe mensual
 Estado: pendiente
