@@ -1,0 +1,2 @@
+  PASS  REQ-017 CA-09 la pared de los 60 s de este árbol NO es menor que la de v1.32.1, pareado en la misma corrida  el PEOR de este árbol vale 1.194× el MEJOR de v1.32.1 medido EN ESTA MISMA corrida (>= 1,000×; los rangos no se solapan, así que la dirección no es ruido). La magnitud es del Historial y de SEC-030
+  PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  1.047× (0.1997 s/llamada frente a 0.1906 s; convergencia 1.125×/1.013×)

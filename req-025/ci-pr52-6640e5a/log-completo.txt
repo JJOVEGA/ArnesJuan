@@ -1,0 +1,1402 @@
+hooks-en-linux	UNKNOWN STEP	﻿2026-09-21T21:11:28.8282221Z Current runner version: '2.337.0'
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8305928Z ##[group]Runner Image Provisioner
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8306805Z Hosted Compute Agent
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8307472Z Version: 20260828.587
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8308168Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8309305Z Build Date: 2026-08-28T16:44:25Z
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8310137Z Worker ID: {9d78fee6-0c68-4cf5-9cb6-ce966e273baa}
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8310890Z Azure Region: westus
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8311495Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8313030Z ##[group]Operating System
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8313666Z Ubuntu
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8314269Z 24.04.5
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8314782Z LTS
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8315408Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8316135Z ##[group]Runner Image
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8316741Z Image: ubuntu-24.04
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8317412Z Version: 20260907.300.1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8318636Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260907.300/images/ubuntu/Ubuntu2404-Readme.md
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8320713Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260907.300
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8321759Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8322979Z ##[group]GITHUB_TOKEN Permissions
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8324894Z Contents: read
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8325681Z Metadata: read
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8326263Z Packages: read
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8326807Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8329081Z Secret source: Actions
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8330038Z Cache mode: write
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8330847Z Prepare workflow directory
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8659277Z Prepare all required actions
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:28.8707806Z Getting action download info
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.2384804Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.4354372Z Complete job name: hooks-en-linux
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5145109Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5154012Z ##[group]Run actions/checkout@v4
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5154774Z with:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5155209Z   fetch-depth: 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5155681Z   repository: JJOVEGA/ArnesJuan
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5159885Z   token: ***
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5160336Z   ssh-strict: true
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5160792Z   ssh-user: git
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5161249Z   persist-credentials: true
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5161753Z   clean: true
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5162214Z   sparse-checkout-cone-mode: true
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5162760Z   fetch-tags: false
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5163218Z   show-progress: true
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5163683Z   lfs: false
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5164157Z   submodules: false
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5164626Z   set-safe-directory: true
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5165150Z   allow-unsafe-pr-checkout: false
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.5165960Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6173260Z Syncing repository: JJOVEGA/ArnesJuan
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6175835Z ##[group]Getting Git version info
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6176977Z Working directory is '/home/runner/work/ArnesJuan/ArnesJuan'
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6178602Z [command]/usr/bin/git version
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6237527Z git version 2.55.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6261022Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6276987Z Temporarily overriding HOME='/home/runner/work/_temp/e174f7b9-e382-473a-9c1f-61ac242f3aa9' before making global git config changes
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6279688Z Adding repository directory to the temporary git global config as a safe directory
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6283408Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ArnesJuan/ArnesJuan
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6341778Z Deleting the contents of '/home/runner/work/ArnesJuan/ArnesJuan'
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6348220Z ##[group]Initializing the repository
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6360693Z [command]/usr/bin/git init /home/runner/work/ArnesJuan/ArnesJuan
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6492980Z hint: Using 'master' as the name for the initial branch. This default branch name
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6494583Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6496092Z hint: to use in all of your new repositories, which will suppress this warning,
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6497623Z hint: call:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6498251Z hint:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6500575Z hint: 	git config --global init.defaultBranch <name>
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6501856Z hint:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6503034Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6504924Z hint: 'development'. The just-created branch can be renamed via this command:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6506318Z hint:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6507173Z hint: 	git branch -m <name>
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6507964Z hint:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6510337Z hint: Disable this message with "git config set advice.defaultBranchName false"
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6512516Z Initialized empty Git repository in /home/runner/work/ArnesJuan/ArnesJuan/.git/
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6515916Z [command]/usr/bin/git remote add origin https://github.com/JJOVEGA/ArnesJuan
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6557059Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6558369Z ##[group]Disabling automatic garbage collection
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6560528Z [command]/usr/bin/git config --local gc.auto 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6593262Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6594514Z ##[group]Setting up auth
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6601324Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.6637200Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.7026376Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.7066583Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.7300223Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.7337922Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.7561410Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.7601677Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.7602590Z ##[group]Fetching the repository
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:29.7612402Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +13a002c95c187013419254346657cd81f9d56e2b:refs/remotes/pull/52/merge
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9095020Z From https://github.com/JJOVEGA/ArnesJuan
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9097023Z  * [new branch]      base/via-proporcional                    -> origin/base/via-proporcional
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9098977Z  * [new branch]      cand/1.30.3-autoalojamiento              -> origin/cand/1.30.3-autoalojamiento
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9101241Z  * [new branch]      cand/1.31.0-mecanismos                   -> origin/cand/1.31.0-mecanismos
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9102381Z  * [new branch]      cand/1.32.1                              -> origin/cand/1.32.1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9103593Z  * [new branch]      cand/1.33.0                              -> origin/cand/1.33.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9104833Z  * [new branch]      claude/exciting-galileo-dvr0fp           -> origin/claude/exciting-galileo-dvr0fp
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9106260Z  * [new branch]      docs/cierre-1.32.1                       -> origin/docs/cierre-1.32.1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9107437Z  * [new branch]      docs/cierre-ciclo-2                      -> origin/docs/cierre-ciclo-2
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9108567Z  * [new branch]      docs/coste-ciclo-2                       -> origin/docs/coste-ciclo-2
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9110419Z  * [new branch]      docs/disciplina-coste                    -> origin/docs/disciplina-coste
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9111565Z  * [new branch]      docs/migracion-1.31.0                    -> origin/docs/migracion-1.31.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9112627Z  * [new branch]      docs/plan-maestro                        -> origin/docs/plan-maestro
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9114013Z  * [new branch]      docs/registro-ciclo-1                    -> origin/docs/registro-ciclo-1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9116067Z  * [new branch]      exp/context-pack                         -> origin/exp/context-pack
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9118077Z  * [new branch]      feat/1.31.0                              -> origin/feat/1.31.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9120744Z  * [new branch]      feat/1.34-cierre-alcance                 -> origin/feat/1.34-cierre-alcance
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9122018Z  * [new branch]      feat/1.34-reparaciones-astra             -> origin/feat/1.34-reparaciones-astra
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9123205Z  * [new branch]      feat/niveles-de-rigor                    -> origin/feat/niveles-de-rigor
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9124397Z  * [new branch]      feat/req-008-contrato-de-coste           -> origin/feat/req-008-contrato-de-coste
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9125697Z  * [new branch]      feat/req-025-coordinacion-entregas       -> origin/feat/req-025-coordinacion-entregas
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9126960Z  * [new branch]      hotfix/1.33.1-estabilizacion             -> origin/hotfix/1.33.1-estabilizacion
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9128079Z  * [new branch]      hotfix/1.33.2-rigor                      -> origin/hotfix/1.33.2-rigor
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9129449Z  * [new branch]      main                                     -> origin/main
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9130535Z  * [new branch]      porte/via-proporcional-1.33.2            -> origin/porte/via-proporcional-1.33.2
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9131873Z  * [new branch]      rel/registro-1.33.0                      -> origin/rel/registro-1.33.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9132973Z  * [new branch]      rel/via-proporcional                     -> origin/rel/via-proporcional
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9134051Z  * [new branch]      work/req014-codex                        -> origin/work/req014-codex
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9134985Z  * [new tag]         v1.10.0                                  -> v1.10.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9135904Z  * [new tag]         v1.11.0                                  -> v1.11.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9136824Z  * [new tag]         v1.12.0                                  -> v1.12.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9137629Z  * [new tag]         v1.13.0                                  -> v1.13.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9138434Z  * [new tag]         v1.14.0                                  -> v1.14.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9139528Z  * [new tag]         v1.15.0                                  -> v1.15.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9140348Z  * [new tag]         v1.16.0                                  -> v1.16.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9141150Z  * [new tag]         v1.17.0                                  -> v1.17.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9141933Z  * [new tag]         v1.18.0                                  -> v1.18.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9142824Z  * [new tag]         v1.19.0                                  -> v1.19.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9143622Z  * [new tag]         v1.2.0                                   -> v1.2.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9144431Z  * [new tag]         v1.21.0                                  -> v1.21.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9145220Z  * [new tag]         v1.23.0                                  -> v1.23.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9146014Z  * [new tag]         v1.24.0                                  -> v1.24.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9147028Z  * [new tag]         v1.25.0                                  -> v1.25.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9148401Z  * [new tag]         v1.26.0                                  -> v1.26.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9149876Z  * [new tag]         v1.27.0                                  -> v1.27.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9150695Z  * [new tag]         v1.28.0                                  -> v1.28.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9151484Z  * [new tag]         v1.29.0                                  -> v1.29.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9152473Z  * [new tag]         v1.29.1                                  -> v1.29.1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9153263Z  * [new tag]         v1.29.2                                  -> v1.29.2
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9154043Z  * [new tag]         v1.29.3                                  -> v1.29.3
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9154825Z  * [new tag]         v1.3.0                                   -> v1.3.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9155649Z  * [new tag]         v1.3.1                                   -> v1.3.1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9156614Z  * [new tag]         v1.3.2                                   -> v1.3.2
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9157401Z  * [new tag]         v1.3.3                                   -> v1.3.3
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9158205Z  * [new tag]         v1.30.0                                  -> v1.30.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9159308Z  * [new tag]         v1.30.1                                  -> v1.30.1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9160119Z  * [new tag]         v1.30.2                                  -> v1.30.2
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9160931Z  * [new tag]         v1.30.3                                  -> v1.30.3
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9161718Z  * [new tag]         v1.31.0                                  -> v1.31.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9162531Z  * [new tag]         v1.32.0                                  -> v1.32.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9163347Z  * [new tag]         v1.32.1                                  -> v1.32.1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9164136Z  * [new tag]         v1.33.0                                  -> v1.33.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9164929Z  * [new tag]         v1.33.1                                  -> v1.33.1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9165720Z  * [new tag]         v1.33.2                                  -> v1.33.2
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9166664Z  * [new tag]         v1.34.0                                  -> v1.34.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9167504Z  * [new tag]         v1.4.0                                   -> v1.4.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9168295Z  * [new tag]         v1.4.1                                   -> v1.4.1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9169440Z  * [new tag]         v1.5.0                                   -> v1.5.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9170254Z  * [new tag]         v1.6.0                                   -> v1.6.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9171036Z  * [new tag]         v1.7.0                                   -> v1.7.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9171818Z  * [new tag]         v1.8.0                                   -> v1.8.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9172605Z  * [new tag]         v1.9.0                                   -> v1.9.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9173473Z  * [new ref]         13a002c95c187013419254346657cd81f9d56e2b -> pull/52/merge
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9175511Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9176340Z ##[group]Determining the checkout info
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9177232Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9177826Z [command]/usr/bin/git sparse-checkout disable
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9202130Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9234748Z ##[group]Checking out the ref
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9238194Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/52/merge
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9771807Z Note: switching to 'refs/remotes/pull/52/merge'.
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9773056Z 
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9773955Z You are in 'detached HEAD' state. You can look around, make experimental
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9775741Z changes and commit them, and you can discard any commits you make in this
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9777423Z state without impacting any branches by switching back to a branch.
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9778417Z 
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9779349Z If you want to create a new branch to retain commits you create, you may
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9780910Z do so (now or later) by using -c with the switch command. Example:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9781807Z 
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9782248Z   git switch -c <new-branch-name>
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9782898Z 
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9783289Z Or undo this operation with:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9783889Z 
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9784248Z   git switch -
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9784996Z 
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9785757Z Turn off this advice by setting config variable advice.detachedHead to false
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9786828Z 
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9788025Z HEAD is now at 13a002c Merge 6640e5a0489e6fed9203bd5b7bb13cc356a327ab into cc8972c9f582a077759cd1b4dd8263db80d54725
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9793558Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9841436Z [command]/usr/bin/git log -1 --format=%H
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:31.9869669Z 13a002c95c187013419254346657cd81f9d56e2b
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0096408Z ##[group]Run set -e
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0097049Z ^[[36;1mset -e^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0097556Z ^[[36;1mmalos=0^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0098228Z ^[[36;1mfor f in hooks/*.sh tools/*.sh templates/githooks/pre-commit \^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0099663Z ^[[36;1m         tests/escenarios/hooks/run.sh tests/escenarios/hooks/autoprueba-corredor.sh \^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0100654Z ^[[36;1m         tests/escenarios/hooks/inventario.sh; do^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0101464Z ^[[36;1m  modo="$(git ls-files -s -- "$f" | awk '{print $1}')"^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0102460Z ^[[36;1m  if [ "$modo" != "100755" ]; then echo "NO EJECUTABLE ($modo): $f"; malos=$((malos+1)); fi^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0103296Z ^[[36;1mdone^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0103880Z ^[[36;1mfor f in tests/escenarios/hooks/secciones/*.sh; do^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0104723Z ^[[36;1m  modo="$(git ls-files -s -- "$f" | awk '{print $1}')"^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0105790Z ^[[36;1m  if [ "$modo" != "100644" ]; then echo "EJECUTABLE Y NO DEBE ($modo): $f"; malos=$((malos+1)); fi^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0106692Z ^[[36;1mdone^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0107850Z ^[[36;1m[ "$malos" -eq 0 ] || { echo "$malos archivo(s) con el bit de ejecución inconsistente: en Unix el hook no arranca y Claude Code sigue adelante."; exit 1; }^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0109652Z ^[[36;1mecho "modos correctos: puntos de entrada 100755, secciones del banco 100644"^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0151548Z shell: /usr/bin/bash -e {0}
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.0152160Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.1745491Z modos correctos: puntos de entrada 100755, secciones del banco 100644
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.1881430Z ##[group]Run set -e
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.1882044Z ^[[36;1mset -e^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.1882721Z ^[[36;1mfor f in hooks/*.sh tools/*.sh tests/escenarios/hooks/run.sh \^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.1883625Z ^[[36;1m         tests/escenarios/hooks/autoprueba-corredor.sh \^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.1884435Z ^[[36;1m         tests/escenarios/hooks/inventario.sh \^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.1885190Z ^[[36;1m         tests/escenarios/hooks/secciones/*.sh; do^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.1885967Z ^[[36;1m  bash -n "$f" || { echo "SINTAXIS ROTA: $f"; exit 1; }^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.1886658Z ^[[36;1mdone^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.1887290Z ^[[36;1mecho "bash -n en verde sobre hooks/, tools/ y el banco entero"^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.1925633Z shell: /usr/bin/bash -e {0}
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.1926208Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.3147271Z bash -n en verde sobre hooks/, tools/ y el banco entero
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.3197986Z ##[group]Run command -v jq >/dev/null || sudo apt-get install -y jq
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.3200105Z ^[[36;1mcommand -v jq >/dev/null || sudo apt-get install -y jq^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.3237219Z shell: /usr/bin/bash -e {0}
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.3237802Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.3345563Z ##[group]Run bash tests/escenarios/hooks/run.sh
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.3346358Z ^[[36;1mbash tests/escenarios/hooks/run.sh^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.3381639Z shell: /usr/bin/bash -e {0}
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:11:32.3382214Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.3960358Z A1 — guard-codigo.sh (quién edita código de la app):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.3961390Z   PASS  coordinadora edita src/ -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.3964387Z   PASS  desarrollador edita src/ -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.3969977Z   PASS  qa-tester edita src/ -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.3970733Z   PASS  coordinadora edita doc fuera de app -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.3971836Z A3/A2 — guard-completado.sh (transición a completado):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.3972633Z   PASS  REQ -> en-progreso (no completado) -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.3973880Z   PASS  REQ -> completado, sin pendientes, gate ok -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.3985216Z Veredictos QA/Seguridad (anti-deriva):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.3985911Z   PASS  completado con QA: pendiente -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.3986351Z   PASS  completado con QA: aprobado (no sensible) -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.3986796Z   PASS  sensible + Seguridad: pendiente -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.3987201Z   PASS  sensible + QA y Seguridad aprobados -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.3987788Z   PASS  REQ -> completado con aprobación pendiente -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.3988258Z   PASS  REQ -> completado con quality gate roja -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4000264Z Regresión Windows / formas del manifiesto:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4001066Z   PASS  quality_gates como objetos, en verde -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4001809Z   PASS  quality_gates como objetos, en rojo -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4003095Z   SKIP  ruta estilo Windows con backslashes -> deny  (sin cygpath: caso solo de Windows)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4011124Z Identidad del agente (prefijo del plugin):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4011747Z   PASS  desarrollador CON prefijo de plugin -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4012604Z   PASS  qa-tester CON prefijo de plugin -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4013324Z   PASS  el deny sigue nombrando al agente de forma legible
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4014518Z   PASS  agent_type con mayúsculas y espacios -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4015482Z   PASS  coordinadora que se declara desarrollador -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4016012Z   PASS  otro-plugin:desarrollador con manifiesto sin prefijo -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4016561Z   PASS  manifiesto con prefijo + agent_type sin prefijo -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4017036Z   PASS  manifiesto con prefijo + mismo proveedor -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4017462Z   PASS  manifiesto con prefijo + otro proveedor -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4017953Z   PASS  manifiesto con prefijo + coordinadora -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4023069Z Bash — escrituras evidentes (cobertura parcial):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4023657Z   PASS  coordinadora: redirección a código -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4024394Z   PASS  coordinadora: >> pegado al archivo -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4025137Z   PASS  coordinadora: ruta absoluta del proyecto -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4026449Z   PASS  coordinadora: tee sobre código -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4027114Z   PASS  coordinadora: sed -i sobre código -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4027584Z   PASS  coordinadora: cp a directorio de código -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4028056Z   PASS  coordinadora: mv a directorio de código -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4028538Z   PASS  coordinadora: escritura en la segunda orden encadenada -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4029474Z   PASS  heredoc: el cuerpo se descuenta, pero el cp DESPUES del cierre -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4030047Z   PASS  heredoc: la redireccion en la PROPIA linea del heredoc -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4030576Z   PASS  here-string (<<<) no es heredoc: el cp de detras sigue viendose -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4031468Z   PASS  aritmetica $((1<<n)) no es heredoc: el cp de la linea siguiente sigue viendose -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4032086Z   PASS  heredoc sin citar: una sustitucion escribe en codigo protegido -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4032608Z   PASS  heredoc sin citar: ...y el motivo nombra el archivo que se crearia
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4033104Z   PASS  heredoc sin citar: acentos graves que escriben en codigo -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4033798Z   PASS  heredoc sin citar con <<- y sangria: cp al codigo dentro de la sustitucion -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4034910Z   PASS  heredoc sin citar y sin cierre: la sustitucion se sigue viendo -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4035840Z   PASS  el deny por Bash admite que la cobertura es parcial
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4037108Z   PASS  desarrollador (con prefijo) escribe por Bash -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4038571Z Bash — lo que NO debe denegar (falsos positivos):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4039481Z   PASS  coordinadora: cat de lectura -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4040156Z   PASS  coordinadora: grep recursivo -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4040799Z   PASS  coordinadora: sed sin -i -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4041736Z   PASS  coordinadora: la ruta sólo se menciona en un mensaje -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4042798Z   PASS  coordinadora: lee código y escribe fuera -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4043780Z   PASS  heredoc: 'cp README.md src/...' como TEXTO del cuerpo -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4044685Z   PASS  heredoc: 'echo x > src/otro.ts' en el cuerpo -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4045591Z   PASS  heredoc con <<- y sangria: 'tee src/otro.ts' en el cuerpo -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4046552Z   PASS  heredoc CITADO <<'EOF': el cuerpo es literal -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4047504Z   PASS  heredoc CITADO con comillas dobles: el cuerpo es literal -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4048551Z   PASS  heredoc ESCAPADO con barra invertida: el cuerpo es literal -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4049828Z   PASS  heredoc sin citar: una expansion inocente de fecha -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4050829Z   PASS  heredoc sin citar: 'cp README.md src/...' como TEXTO del cuerpo -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4051905Z   PASS  heredoc sin citar: el desarrollador si puede escribir codigo -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4053297Z   PASS  heredoc: una here-string sola no lo es -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4053915Z   PASS  heredoc: la aritmetica $((1<<n)) sola no lo es -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4054305Z yes: standard output: Broken pipe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4054886Z   PASS  heredoc sin citar: 10.000 lineas de cuerpo SIN expansiones -> allow  (allow en 3768ms; presupuesto 5000ms, techo holgado 20000ms)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4055483Z yes: standard output: Broken pipe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4056163Z   PASS  heredoc sin citar: 1.500 lineas con expansion y comillas + escritura real -> deny  (deny en 924ms; presupuesto 5000ms, techo holgado 20000ms)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4056810Z yes: standard output: Broken pipe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4057502Z   PASS  heredoc sin citar: 5.000 lineas con expansion y comillas + escritura real -> deny  (deny en 2026ms; presupuesto 5000ms, techo holgado 20000ms)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4058385Z   PASS  QA: comilla impar en el cuerpo NO puede desarmar la redireccion posterior -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4059375Z   PASS  QA: control, el mismo comando sin el heredoc delante -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4059951Z   PASS  QA: la misma comilla impar con acento grave en el cuerpo -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4060508Z   PASS  QA: control, cuerpo con expansion y comillas PARES -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4061594Z   PASS  QA: cuerpo con $(date) y una mencion TEXTUAL de cp no es una escritura -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4062645Z   PASS  QA: control, cuerpo con $(date) y sin rutas -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4064000Z   PASS  DEV: comilla impar en un fragmento NO desarma otro fragmento del cuerpo -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4065504Z   PASS  DEV: el destino de un cp no cruza al fragmento siguiente -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4066136Z   PASS  DEV: mencion textual ANTES de la expansion sigue siendo texto -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4066750Z   PASS  DEV: comillas DENTRO de la expansion siguen siendo sintaxis -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4067290Z   PASS  DEV: control, la misma expansion SIN comillas -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4067819Z   PASS  DEV: sustitucion que abre en una linea y cierra en otra -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4068380Z   PASS  QA v2: comilla simple impar cruzada entre dos fragmentos -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4069281Z   PASS  QA v2: comilla doble impar cruzada entre dos fragmentos -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4070094Z   PASS  QA v2: acento grave impar en el cuerpo NO desarma la escritura posterior -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4070718Z   PASS  QA v2: comilla impar en el comando real ANTES del heredoc -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4071279Z   PASS  QA v2: fragmento que termina en ';' no cruza al siguiente -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4071858Z   PASS  QA v2: control, cp sin destino + ruta en el fragmento siguiente -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4072672Z   PASS  QA v2: install dentro de la expansion -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4073185Z   PASS  QA v2: perl -pi dentro de la expansion -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4073804Z   PASS  QA v2: dd of= dentro de la expansion -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4074537Z   PASS  QA v2: mv dentro de la expansion -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4075284Z   PASS  QA v2: '&&' dentro de la expansion -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4076441Z   PASS  QA v2: tuberia a tee dentro de la expansion -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4077153Z   PASS  QA v2: redireccion en la linea que abre el heredoc -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4077600Z   PASS  QA v2: 'cat > ruta <<EOF' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4077925Z yes: standard output: Broken pipe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4078610Z   PASS  QA v2: UNA linea de cuerpo con 8.000 expansiones + escritura real -> deny  (deny en 3487ms; presupuesto 5000ms, techo holgado 20000ms)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4079957Z   PASS  QA v2: control, la misma escritura sin el cuerpo delante -> deny  (deny en 50ms; presupuesto 5000ms, techo holgado 20000ms)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4080685Z   PASS  coordinadora: redirige un log fuera de los globs -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4081337Z   PASS  qa-tester escribe en tests/ (no es código de app) -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4081781Z Clase del hallazgo:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4082068Z   PASS  hallazgo de instrumento -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4082438Z   PASS  hallazgo de usuario/dinero -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4082793Z   PASS  hallazgo de contrato -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4083134Z   PASS  hallazgo SIN clase -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4083726Z   PASS  mezcla: basta uno bloqueante -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4084394Z   PASS  sin hallazgos abiertos -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4085021Z   PASS  REQ antiguo sin el campo -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4085659Z Cierre de REQ por Bash (guard-completado):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4086313Z   PASS  sed -i que cierra un REQ -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4087217Z   PASS  heredoc que cierra un REQ -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4088110Z   PASS  leer un REQ que menciona completado -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4088672Z   PASS  anotar en un REQ sin cerrarlo -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4089460Z   PASS  escribir fuera de requirements/ -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4089926Z   PASS  heredoc sin citar que cierra un REQ con sed -i -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4090547Z   PASS  QA: comilla impar en el cuerpo NO puede desarmar el sed -i que cierra el REQ -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4091179Z   PASS  QA: control, el mismo sed -i sin el heredoc delante -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4091692Z Arranque limpio — plantilla de PENDING_APPROVAL:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4092339Z   PASS  PENDING recien copiado de la plantilla -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4092739Z Nivel de rigor:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4093062Z   PASS  sin Rigor + QA pendiente -> deny (como siempre)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4093548Z   PASS  sin Rigor + sensible sin seguridad -> deny (como siempre)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4093994Z   PASS  LIGERO no exige veredictos -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4094351Z   PASS  estandar exige QA -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4095006Z   PASS  critico exige seguridad -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4095593Z   PASS  critico con QA y seguridad -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4096330Z   PASS  ligero sobre SENSIBLE no baja el suelo -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4097145Z   PASS  estandar sobre SENSIBLE no baja el suelo -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4098462Z   PASS  Rigor invalido se ignora, no abre -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4099538Z Rigor ligero: salta veredictos, no puertas:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4100047Z   PASS  ligero con quality gate ROJA -> deny (la plantilla promete gates)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4100574Z   PASS  ligero con aprobacion humana PENDIENTE -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4101047Z   PASS  ligero con hallazgo usuario/dinero ABIERTO -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4101590Z   PASS  ligero SIN veredicto de QA y todo verde -> allow (eso si lo salta)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4106318Z Orden del ciclo (seguridad tras QA):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4106837Z   PASS  firmar Seguridad con QA pendiente -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4107612Z   PASS  ...y tampoco al cerrar de paso -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4108340Z   PASS  auditoria PREVENTIVA declarada -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4109577Z   PASS  orden correcto: QA ya aprobado -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4110612Z   PASS  edicion que NO toca Seguridad -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4111030Z   PASS  REQ antiguo sin campo QA -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4111457Z   PASS  critico: solo firma preventiva no cierra -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4111896Z   PASS  critico: auditoria real si cierra -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4112353Z   PASS  sensible: QA firma sin esperar a seguridad -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4117921Z Campos solo en la cabecera (la historia no es un veredicto):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4119087Z   PASS  historia con 'Seguridad: aprobado (...)' a col. 0 NO cierra -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4120255Z   PASS  control: la CABECERA si se lee (aprobado arriba, pendiente en historia) -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4121819Z   PASS  vineta '- Seguridad:' en historia tampoco cuenta -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4122800Z   PASS  un fragmento sin '##' se lee entero: QA aprobado en el Edit -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4123400Z   PASS  MultiEdit: cierra y aprueba SOLO la linea del historial -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4123976Z   PASS  control: MultiEdit que aprueba la CABECERA y cierra -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4124509Z   PASS  MultiEdit sobre un REQ CRLF: el bypass tambien -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4125095Z   PASS  Edit: 'Estado: completado' solo en la historia NO es una transicion -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4125727Z   PASS  transicion por documento: Edit que sustituye SOLO el valor -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4126307Z   PASS  transicion por documento: ...y el motivo nombra el veredicto que falta
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4126918Z   PASS  transicion por documento: control, SOLO el valor con todo en verde -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4127602Z   PASS  transicion por documento: SOLO el valor sobre un REQ sensible sin auditoria -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4128522Z   PASS  transicion por documento: MultiEdit con SOLO el valor + fila de historial -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4129934Z   PASS  transicion por documento: replace_all sustituye TODAS las ocurrencias -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4131372Z   PASS  transicion por documento: control, sin replace_all solo la primera y la cabecera no cambia -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4133462Z   PASS  transicion por documento: SOLO el valor sobre un REQ CRLF -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4134512Z   PASS  transicion por documento: Write con la cabecera completa -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4135678Z   PASS  transicion por documento: control, Write que solo CITA el estado en el cuerpo -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4136696Z   PASS  transicion por documento: Write sobre un REQ que EN DISCO ya estaba terminal -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4137418Z   PASS  transicion por documento: control, el mismo Write sobre un REQ NO terminal -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4138170Z   PASS  transicion por documento: old_string ausente + 'Estado: completado' en el fragmento -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4139263Z   PASS  transicion por documento: old_string ausente y fragmento 'completado' a secas -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4140489Z   PASS  transicion por documento: REQ inexistente en disco -> allow y sin traza de bash
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4141296Z   PASS  transicion por documento: la cabecera en disco YA decia completado -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4142529Z   PASS  transicion por documento: reabrir un REQ cerrado a en-progreso -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4143976Z   PASS  transicion por documento: SOLO el valor con la cola de aprobaciones abierta -> deny
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4145056Z   PASS  transicion por documento: SOLO el valor con una quality gate roja -> deny
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4145679Z   PASS  transicion por documento: estado terminal 'hecho' del manifiesto -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4146417Z   PASS  transicion por documento: control, 'completado' ya no es terminal en ese manifiesto -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4147060Z   PASS  QA: Edit con la LINEA ENTERA 'Estado: completado' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4147523Z   PASS  QA: el valor en MAYUSCULAS -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4147951Z   PASS  QA: el valor con su parentesis de evidencia -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4148368Z   PASS  QA: el valor en **negrita** -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4149122Z   PASS  QA: el valor con espacios de mas tras los dos puntos -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4149753Z   PASS  QA: MultiEdit encadenado (edit1 crea lo que busca edit2) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4150389Z   PASS  QA: control, edit2 busca lo que edit1 destruyo: la herramienta fallaria -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4150905Z Formas decoradas (marcado de Markdown en el valor):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4151340Z   PASS  sensible en **negrita** exige auditoria -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4151777Z   PASS  negrita + comentario tras el valor -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4152404Z   PASS  comentario tras el valor, sin negrita -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4153070Z   PASS  sensible en _cursiva_ -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4153766Z   PASS  valor que NO se entiende -> deny (lado seguro)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4154443Z   PASS  ...y la denegacion dice por que
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4155133Z   PASS  no sensible en **negrita** -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4156022Z   PASS  'n/a' no abre la puerta -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4156974Z   PASS  ...y 'no aplica' dice lo mismo -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4157554Z   PASS  'ninguna' tampoco abre -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4157982Z   PASS  no + comentario tras el valor -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4158415Z   PASS  QA en **negrita** cuenta como aprobado -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4159191Z   PASS  Seguridad en **negrita** cierra un critico -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4159671Z   PASS  preventiva decorada TAMPOCO cierra -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4160110Z   PASS  Rigor **ligero** decorado se reconoce -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4160694Z guard.sh — punto de entrada unico (los dos guardianes, un proceso):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4161197Z   PASS  A1 por guard.sh: coordinadora edita src/ -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4161667Z   PASS  A1 por guard.sh: desarrollador edita src/ -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4162293Z   PASS  A1 por guard.sh: edicion neutra -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4162775Z   PASS  guard.sh: el 2o guardian sigue corriendo tras el 1o -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4163222Z   PASS  guard.sh: cierre limpio -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4163614Z   PASS  guard.sh: sensible sin seguridad -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4164220Z   PASS  guard.sh: hallazgo de instrumento -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4164803Z   PASS  guard.sh: Bash escribe en src/ -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4165249Z   PASS  guard.sh: Bash cierra un REQ -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4165915Z   PASS  guard.sh: Bash de lectura -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4166660Z Asterisco de nota al pie (una salvedad no es una firma):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4168099Z   PASS  'aprobado*' NO cierra un critico -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4169101Z   PASS  '*aprobado' tampoco -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4169760Z   PASS  '*aprobado*' pareado si cierra -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4170445Z   PASS  y '**sí**' sigue exigiendo auditoria -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4170886Z Parentesis = evidencia (el veredicto no cambia):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4171344Z   PASS  QA con su evidencia entre parentesis cierra -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4171855Z   PASS  Seguridad con evidencia cierra un critico -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4172325Z   PASS  parentesis sin cerrar no es evidencia -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4172749Z   PASS  preventiva NO cierra un critico -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4173196Z   PASS  preventiva desbloquea el ORDEN del ciclo -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4173734Z   PASS  enfasis + evidencia: misma escritura, mismo veredicto -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4176527Z Cola de aprobaciones: la seccion acaba en la siguiente cabecera:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4177190Z   PASS  un ### bajo OTRA cabecera no es cola -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4177932Z   PASS  ...pero uno bajo Pendientes si -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4187675Z Continuidad automatica (hook Stop -> bloque derivado):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4188388Z   PASS  el hook sale 0 (no bloquea la parada)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4189211Z   PASS  escribe el bloque derivado
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4189763Z   PASS  no pisa lo que escribio una persona
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4190535Z   PASS  cuenta los REQ, no el README
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4191315Z   PASS  lee la cola de aprobaciones
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4191857Z   PASS  el bloque delata el rigor efectivo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4192384Z   PASS  arbol sin repo -> desconocido, no inventado
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4192768Z   PASS  idempotente: dos pasadas, un solo bloque
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4193129Z   PASS  una nota sin Estado: no cuenta como REQ
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4193528Z   PASS  ...y se dice cuantas hay, no se esconden
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4193878Z   PASS  un REQ completado NO ocupa fila
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4194189Z   PASS  un REQ abierto SI ocupa fila
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4194536Z   PASS  Estado con evidencia cuenta como completado
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4194900Z   PASS  ...y no ocupa fila entre los abiertos
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4195251Z   PASS  la version del plugin se ve en el bloque
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4195707Z   PASS  estado_derivado.archivo '../fuera.md' NO escribe fuera del proyecto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4196121Z   PASS  ...y sigue saliendo 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4196514Z   PASS  docs -> externo (symlink): el bloque derivado NO se escribe fuera
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4196902Z   PASS  ...y sigue saliendo 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4197235Z   PASS  47 REQ grandes (3,7 MB): el bloque los cuenta todos
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4197715Z   PASS  ...y los 15 completados salen como completados
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4198479Z   PASS  campos DENTRO de una seccion NO se leen: QA queda vacio
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4199269Z   PASS  ...y Rigor cae al defecto, no al 'critico' de la historia
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4199705Z   PASS  un .md VACIO cuenta como nota, no desaparece
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4200294Z   PASS  con activo:false no escribe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4201081Z   PASS  sin manifiesto no escribe (repo ajeno)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4201729Z   PASS  sin manifiesto tambien sale 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4202533Z   PASS  sin la carpeta destino no la inventa
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4203357Z Rotacion de artefactos (mover, nunca resumir):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4203707Z   PASS  apagada por defecto no toca nada
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4204025Z   PASS  bajo el umbral no toca nada
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4204353Z   PASS  conserva exactamente conservar_secciones
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4204709Z   PASS  nada se pierde: origen + archivo = total
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4205049Z   PASS  conserva LAS NUEVAS, no las viejas
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4205378Z   PASS  no pisa el preambulo de una persona
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4205698Z   PASS  deja el puntero al archivo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4206008Z   PASS  el hook sale 0 (no bloquea la parada)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4206529Z   PASS  idempotente: tres pasadas, mismo reparto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4206881Z   PASS  orden nuevo-al-final conserva el final
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4207208Z   PASS  ...y archiva el principio
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4207501Z   PASS  sin encabezados no corta nada
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4207890Z   PASS  artefacto como CADENA sigue funcionando (compatibilidad)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4208348Z   PASS  ...y el OBJETO usa SU orden, opuesto, en la misma pasada
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4209051Z   PASS  ...y SU conservar_secciones, distinto del global
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4209446Z   PASS  un artefacto CRLF rota igual que uno LF
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4209881Z   PASS  ...y no duplica: tres pasadas, mismo reparto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4210571Z   PASS  nada se pierde con CRLF: origen + archivo = total
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4211000Z   PASS  el contenido movido conserva su CRLF
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4211438Z   PASS  sin temporales huerfanos
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4212133Z   PASS  rotacion con ruta '../fuera.md' NO toca nada fuera del proyecto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4213178Z   PASS  rotacion bajo un directorio symlink hacia fuera NO toca el externo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4214718Z   PASS  umbral_bytes mide BYTES: UTF-8 de 4002 bytes (< chars×2) con umbral 3000 ROTA
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4215213Z   PASS  sin manifiesto no toca nada y sale 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4215617Z hooks.json (la forma que NO deja Bash sin guardian):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4215939Z   PASS  es JSON valido
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4216337Z   PASS  NINGUN handler lleva if: la redireccion no se puede seleccionar con if
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4216807Z   PASS  un solo grupo cubre Edit|Write|MultiEdit|Bash
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4217219Z   PASS  Bash esta en el matcher (la puerta de consola existe)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4217651Z   PASS  todos los handlers PreToolUse apuntan a guard.sh
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4218049Z   PASS  Stop y SubagentStop: UN solo proceso, stop.sh
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4218415Z stop.sh (continuidad y rotacion en un proceso):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4219093Z   PASS  stop.sh sale 0 (no bloquea la parada)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4219456Z   PASS  la continuidad escribio su bloque
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4219799Z   PASS  ...y la rotacion corrio EN LA MISMA parada
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4222826Z INERTE — sin manifiesto, el hook no estorba:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4223369Z   PASS  sin .arnes/config.json, guard.sh no estorba -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4224187Z   PASS  sin .arnes/config.json edita src/ -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4225028Z   PASS  sin .arnes/config.json escribe por Bash -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4234349Z tools/arnes-lectura.sh (el informe tiene que poder decir que algo esta mal):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4235165Z   PASS  arnes-lectura: un veredicto fuera del vocabulario sale 1 y lo nombra
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4236007Z   PASS  arnes-lectura: ...y cuenta 1 anomalia, no 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4237003Z   PASS  arnes-lectura: control, con todo en vocabulario sale 0 y lo dice
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4245296Z DEV REQ-001 v3: presupuesto de analisis y coste lineal (QA-007):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4246018Z yes: standard output: Broken pipe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4247408Z   PASS  DEV v3: UNA linea con 16.000 expansiones + escritura real -> deny  (deny en 607ms; presupuesto 5000ms, techo holgado 20000ms)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4249695Z   PASS  DEV v3: control, la misma escritura sin el cuerpo -> deny  (deny en 38ms; presupuesto 5000ms, techo holgado 20000ms)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4250433Z yes: standard output: Broken pipe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4250869Z   PASS  DEV v3: 1 byte POR DEBAJO del presupuesto -> analiza y nombra la ruta
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4251295Z yes: standard output: Broken pipe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4251717Z   PASS  DEV v3: 1 byte POR ENCIMA del presupuesto -> deny por tamano, con salida
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4252130Z yes: standard output: Broken pipe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4252756Z   PASS  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  (allow en 3331ms; presupuesto 1000ms, techo holgado 4000ms)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4253634Z   PASS  DEV v3: heredoc SIN citar de ~300 KB SIN expansiones -> allow  (allow en 3692ms; presupuesto 5000ms, techo holgado 20000ms)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4254540Z   PASS  DEV v3: control, los mismos 300 KB citados + escritura real -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4255128Z   PASS  DEV 1.31.0 v3: QA-111 los 300 KB CITADOS se descuentan enteros: deny POR LA RUTA
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4255851Z   PASS  DEV 1.31.0 v3: QA-111 ...y NO por el presupuesto de analisis
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4256491Z yes: standard output: Broken pipe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4257285Z   PASS  DEV v3: 4.000 lineas de cuerpo bajo el presupuesto -> analiza y nombra la ruta
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4258079Z yes: standard output: Broken pipe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4259156Z   PASS  DEV v3: sobre el presupuesto, guard-completado deniega por tamano
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4260179Z yes: standard output: Broken pipe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4260817Z   PASS  DEV v3: sobre el presupuesto, guard-codigo NO estorba al desarrollador -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4261301Z yes: standard output: Broken pipe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4261637Z   PASS  DEV v3: ...y al qa-tester si -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4261965Z yes: standard output: Broken pipe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4262400Z   PASS  DEV v3: con el techo subido en el manifiesto, la misma entrada SI se analiza
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4262977Z   PASS  DEV v3: el manifiesto NO puede bajar el techo por debajo del defecto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4263544Z   PASS  DEV v3: techo con errata -> manda el defecto del codigo, no se desactiva nada
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4264162Z   PASS  QA-103 el motivo del techo imprime el maximo en BYTES, no el nombre de la variable
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4264697Z   PASS  DEV v3: QA-013, $( escapado en el cuerpo -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4265215Z   PASS  DEV v3: QA-013, barra ESCAPADA antes de $( (bash si ejecuta) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4265748Z   PASS  DEV v3: QA-013, control, sin barra ninguna -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4266273Z   PASS  QA v3: expansion ANIDADA, la escritura va tras el ) interior -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4266970Z   PASS  QA v3: un ) dentro de comillas trunca el fragmento -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4267960Z   PASS  QA v3: parentesis literal entrecomillado en la expansion -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4269166Z   PASS  QA v3: control, la misma expansion SIN ) interior -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4270189Z   PASS  QA v3: control, la misma forma SIN heredoc ya se detecta -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4271566Z   PASS  QA v3: control, el acento grave NO trunca en el ) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4272451Z   PASS  QA v3: control CA-49, texto tras el cierre real de la expansion -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4273032Z   PASS  DEV v4: anidada con la escritura DENTRO del interior -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4273582Z   PASS  DEV v4: un ) entre comillas SIMPLES no cierra el fragmento -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4274138Z   PASS  DEV v4: parentesis que nunca cierra + escritura despues -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4274683Z   PASS  DEV v4: (texto) tras el cierre real sigue siendo texto -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4275189Z   PASS  DEV v4: un ) ESCAPADO no cierra el fragmento -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4275864Z   PASS  DEV v4: control, el mismo ) SIN escapar si cierra -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4276282Z yes: standard output: Broken pipe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4276704Z   PASS  DEV v4: el deny por tamano dice el presupuesto en bytes (guard-codigo)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4277121Z yes: standard output: Broken pipe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4277452Z   PASS  DEV v4: ...y tambien lo dice guard-completado
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4278132Z   PASS  QA v4: $( y ) entre comillas simples, la escritura fuera -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4279281Z   PASS  QA v4: aritmetica $(( )) dentro de la sustitucion -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4280287Z   PASS  QA v4: dos sustituciones, la primera cierra y la segunda escribe -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4281402Z   PASS  QA v4: un ) solo entre comillas simples no cierra -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4282905Z   PASS  QA v4: con \\) la barra se escapa a si misma y el ) SI cierra -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4283566Z   PASS  QA v4: comilla impar dentro de la expansion -> deny (fail-closed)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4284212Z   PASS  QA v4: LIMITACION QA-006/REQ-007, sustitucion dentro de comillas dobles -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4284752Z Veredicto fechado y no caduco (veredictos.*, opt-in):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4285185Z   PASS  CA-01 sin opt-in: veredictos SIN fecha -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4285654Z   PASS  CA-02 exigir_fecha: 'aprobado' sin parentesis -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4286074Z   PASS  CA-03 parentesis SIN fecha -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4286524Z   PASS  CA-04 fecha en cualquier posicion del parentesis -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4286980Z   PASS  CA-05 '01/09/2026' no es una fecha -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4287375Z   PASS  CA-05 '2026-9-1' no es una fecha -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4287753Z   PASS  CA-05 '20260901' no es una fecha -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4288134Z   PASS  CA-05 '2026-13-05' no es una fecha -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4288592Z   PASS  CA-07 critico: la fecha se exige tambien a Seguridad -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4289615Z   PASS  CA-08 ligero no pide veredictos ni sus fechas -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4290128Z   PASS  CA-09 QA pendiente: deniega el VEREDICTO, no la fecha  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4290795Z   PASS  CA-10 veredicto POSTERIOR al commit, arbol limpio -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4291817Z   PASS  CA-11 veredicto ANTERIOR al commit -> deny con las dos fechas y el sha  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4293000Z   PASS  CA-12 mismo dia que el commit -> allow (el empate no caduca)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4294103Z   PASS  CA-19 caducan sin exigir_fecha: 'aprobado' sin fecha -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4294651Z   PASS  CA-21 la caducidad alcanza a Seguridad, no solo a QA -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4295206Z   PASS  CA-14 sucio FUERA de los globs -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4295721Z   PASS  CA-13 cambio sin comitear en el codigo -> deny nombrando el archivo  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4296254Z   PASS  CA-15 sin repositorio git -> deny (no puedo medir)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4296708Z   PASS  CA-16 git que no entiende %cs -> deny (no puedo medir)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4297156Z   PASS  CA-17 caducan con codigo_app.globs vacio -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4297739Z   PASS  CA-18 ningun commit toca los globs y el arbol esta limpio -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4323354Z   PASS  CA-20 sin las claves: codigo posterior y arbol sucio -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4324315Z Vocabulario de veredictos, aviso y lectura (REQ-003):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4325296Z   PASS  CA-02 critico con Seguridad: con-hallazgos -> deny (valido, pero no firma)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4326270Z   PASS  CA-03 escribir con-hallazgos sin cerrar -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4327211Z   PASS  CA-08 con-hallazgos con QA pendiente -> allow (no es una firma)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4328492Z   PASS  CA-06 critico con Seguridad: vetado -> deny (como en 1.30.3)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4330019Z   PASS  CA-06 critico con Seguridad: preventiva -> deny (como en 1.30.3)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4330629Z   PASS  CA-06 critico con Seguridad: pendiente -> deny (como en 1.30.3)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4331196Z   PASS  CA-06 critico con Seguridad: n/a -> deny (como en 1.30.3)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4331684Z   PASS  CA-07 ligero con con-hallazgos -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4332134Z   PASS  CA-09 escribir 'QA: aprobadisimo' -> avisa sin denegar
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4332590Z   PASS  CA-10 escribir un valor del vocabulario -> sin aviso
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4333083Z   PASS  CA-11 el REQ ya lo tenia en disco y la edicion no lo toca -> sin aviso
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4333599Z   PASS  CA-12 'Seguridad: aprobado' dentro del historial -> sin aviso
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4334093Z   PASS  CA-15 el mismo texto FUERA de requirements/ -> sin aviso
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4334763Z   PASS  CA-13 valor fuera del vocabulario Y cierre -> deny (manda la puerta)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4335308Z   PASS  CA-01 'Seguridad: con-hallazgos' no es una anomalia (sale 0)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4336050Z   PASS  CA-16/CA-17 Estado con parentesis o enfasis no es anomalia (sale 0)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4337012Z   PASS  CA-18/CA-20 un estado que NO existe sigue siendo anomalia (sale 1)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4337807Z   PASS  CA-20 ...y se imprime el bloque que lo explica
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4338613Z   PASS  CA-04 el vocabulario viene de lib.sh, no de una copia en el informe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4340148Z Rotacion de UNA seccion (la historia se archiva, el contrato no):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4341004Z   PASS  CA-01 apagada: dos paradas y ni un byte cambia
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4341443Z   PASS  CA-02 quedan 20 entradas y 40 se archivan
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4341798Z   PASS  CA-02 un solo puntero al archivo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4342178Z   PASS  CA-03 la cabecera y las demas secciones, byte a byte
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4342588Z   PASS  CA-04 los campos de la cabecera, intactos
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4342957Z   PASS  CA-07 ninguna continuacion queda huerfana
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4343387Z   PASS  CA-18 la entrada mas reciente se queda en el documento
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4343788Z   PASS  CA-19 el puntero dice cuantas quedan
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4344139Z   PASS  el hook sale 0 (una parada no se bloquea)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4344595Z   PASS  CA-05 idempotente: tres paradas, mismo reparto y un solo puntero
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4345107Z   PASS  CA-06 bajo el umbral no se toca nada, haya las entradas que haya
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4345569Z   PASS  CA-09 sin la seccion declarada, el archivo no se toca
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4345978Z   PASS  CA-10 cada REQ a su propio archivo de historia
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4346395Z   PASS  CA-11 CRLF: tres paradas, mismo reparto y sin duplicar
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4346971Z   PASS  CA-13 archivo_dir con .. no escribe nada y no toca el origen
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4347881Z   PASS  CA-14 archivo_dir que sale por un enlace simbolico -> nada fuera
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4348989Z   PASS  CA-15 archivo_dir interno: escribe ahi y no junto al documento
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4349869Z   PASS  CA-16 conservar_entradas no numerico: se ignora y sale 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4351087Z   PASS  CA-20 '## Historial' no casa '## Historial de cambios' (exacto, no prefijo)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4352228Z   PASS  QA-102 CA-09: la seccion declarada no encontrada emite arnes_warn
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4352772Z   PASS  DEV 1.31.0 v2: QA-102 el aviso nombra el archivo y la seccion declarada
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4353331Z   PASS  DEV 1.31.0 v2: QA-102 CA-09 el bloque derivado refleja la seccion no encontrada
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4353919Z   PASS  DEV 1.31.0 v2: QA-102 lo que escribio una persona sigue fuera de los marcadores
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4354498Z   PASS  DEV 1.31.0 v2: QA-102 control: con la seccion encontrada el bloque no dice nada
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4355066Z   PASS  DEV 1.31.0 v3: QA-109 seccion sin entradas reconocibles: NO rota, pero AVISA
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4355632Z   PASS  DEV 1.31.0 v3: QA-109 el aviso DISTINGUE 'existe sin entradas' de 'no existe'
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4356356Z   PASS  DEV 1.31.0 v3: QA-109 el bloque derivado refleja la seccion sin entradas
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4356954Z   PASS  DEV 1.31.0 v3: QA-109 control: con entradas de verdad ni aviso ni mencion en el bloque
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4357562Z   PASS  DEV 1.31.0 v4: CA-36 bajo el umbral: ni se rota, ni se avisa, ni el bloque lo dice
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4358458Z   PASS  DEV 1.31.0 v4: CA-36 las dos averias juntas: dos avisos, uno por rama
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4359646Z   PASS  DEV 1.31.0 v4: CA-36 las dos averias juntas: dos lineas DISTINTAS en el bloque
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4360560Z   PASS  DEV 1.31.0 v4: CA-36 y con las dos averias no se rota NADA
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4361672Z Continuidad bajo averia: el manifiesto ilegible y la escritura que falla:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4363145Z   PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible ({"agentes":{,}): bloque derivado + linea de degradado, sale 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4364142Z   PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible ({"agentes":{,}): lo de la persona sigue, y sin jq crudo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4364944Z   PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible (<vacio>): bloque derivado + linea de degradado, sale 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4365673Z   PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible (<vacio>): lo de la persona sigue, y sin jq crudo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4366374Z   PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible (null): bloque derivado + linea de degradado, sale 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4367059Z   PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible (null): lo de la persona sigue, y sin jq crudo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4367738Z   PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible ([]): bloque derivado + linea de degradado, sale 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4368392Z   PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible ([]): lo de la persona sigue, y sin jq crudo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4369500Z   PASS  DEV 1.31.0 v4: SEC-011 un NUL en ESTADO.md: no se escribe nada, byte a byte, y se avisa
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4370626Z   PASS  DEV 1.31.0 v4: SEC-011 ESTADO.md sin permiso de lectura: no se escribe nada, byte a byte
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4371272Z   PASS  DEV 1.31.0 v4: SEC-011 carpeta sin permiso: original intacto, 0 temporales, y avisa
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4371894Z   PASS  QA 1.31.0 v4: CA-64.2 disco lleno (ENOSPC): byte a byte, 0 temporales, avisa, sale 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4372611Z   PASS  DEV 1.31.0 v5: QA-118 muerte por SIGXFSZ: byte a byte, 0 temporales, avisa, sale 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4373422Z   PASS  QA 1.31.0 v4: CA-64.2 cuatro paradas a la vez x5: ni se pierde, ni se duplica, ni deja basura
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4374093Z   PASS  DEV 1.31.0 v4: SEC-011 la reparacion avisa una vez, nombra el archivo y el agente
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4374682Z   PASS  DEV 1.31.0 v4: SEC-011 control: otra ruta sigue deny y sin el aviso de reparacion
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4375205Z   PASS  CA-17 la forma anterior (por ruta, secciones ##) no cambia
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4375846Z   PASS  DEV 1.32.1: REQ-015 CA-03/CA-05 carrera forzada: el texto humano sigue, UN bloque bien formado, sin restos
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4376554Z   PASS  DEV 1.32.1: REQ-015 CA-01 ocho procesos, ocho rutas DISTINTAS y todas junto al destino
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4377256Z   PASS  DEV 1.32.1: REQ-015 CA-01 sin componente unica: fail-closed, byte a byte, 0 temporales, avisa, sale 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4378039Z   PASS  DEV 1.32.1: REQ-015 CA-02 restos sin dueno retirados, la publicacion en curso intacta, el texto humano sigue
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4379204Z   PASS  DEV 1.32.1: REQ-015 CA-07 rotacion de SECCION bajo la carrera: 5+15 entradas, cabecera intacta, un puntero, sin restos
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4380085Z   PASS  DEV 1.32.1: REQ-015 CA-07 rotacion por RUTA bajo la carrera: 3+7 secciones, cabecera intacta, un puntero, sin restos
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4380766Z guard-git: ningun agente ejecuta git destructivo:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4381624Z   PASS  CA-01/CA-17 coordinadora: 'git clean -fd' -> deny (por defecto)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4382384Z   PASS  CA-01 el motivo dice que se pierde y como seguir
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4382918Z   PASS  CA-02 el MISMO comando desde el desarrollador -> deny igual  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4383534Z   PASS  CA-03 'git reset --hard' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4384035Z   PASS  CA-03 'git reset --hard HEAD~1' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4384494Z   PASS  CA-04 'git checkout .' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4384941Z   PASS  CA-04 'git restore .' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4385323Z   PASS  CA-05 'git stash' desnudo -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4385688Z   PASS  CA-05 'git stash push -u' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4386066Z   PASS  CA-06 'cd sub && git clean -fd' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4386459Z   PASS  CA-06 'git -C proj reset --hard' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4386835Z   PASS  CA-06 '(git reset --hard)' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4387185Z   PASS  CA-06 'x=$(git stash)' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4387549Z   PASS  CA-06 'git clean -fd | tee log' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4388107Z   PASS  CA-07 heredoc SIN citar con $(git clean -fd) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4388536Z   PASS  flags cortos: 'git clean -fdx' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4389314Z   PASS  los argumentos entrecomillados no desarman el reconocimiento  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4389782Z   PASS  CA-08 'git stash list' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4390131Z   PASS  CA-08 'git stash show' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4390538Z   PASS  CA-09 'git restore --staged archivo.ts' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4390924Z   PASS  CA-10 'git clean -n' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4391278Z   PASS  CA-10 'git clean --dry-run' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4391671Z   PASS  CA-11 'git reset --soft HEAD~1' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4392059Z   PASS  CA-11 'git reset archivo.ts' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4392672Z   PASS  CA-12 'git checkout rama' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4393375Z   PASS  CA-12 'git checkout -b rama' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4393973Z   PASS  CA-12 'git restore --source=HEAD~1 x.ts' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4394440Z   PASS  CA-13 'git commit -m "no uses git clean"' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4394975Z   PASS  CA-13 heredoc CITADO cuyo cuerpo dice git clean -fd -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4395534Z   PASS  QA-101 'git clean --force' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4396010Z   PASS  QA-101 'git clean --force -d' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4396471Z   PASS  QA-101 'git stash save "wip"' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4396882Z   PASS  QA-101 control: 'git clean --dry-run' sigue allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4397318Z   PASS  QA-101 control: 'git stash list' sigue allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4397810Z   PASS  DEV 1.31.0 v2: QA-101 'git clean -d --force' (larga al final) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4398342Z   PASS  DEV 1.31.0 v2: QA-101 'git stash save' sin mensaje -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4399175Z   PASS  DEV 1.31.0 v2: QA-101 'git clean --force=si' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4399778Z   PASS  DEV 1.31.0 v2: QA-101 control fin de opciones: 'git clean -- --force' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4400447Z   PASS  DEV 1.31.0 v2: QA-101 control: 'git restore -S .' (forma corta de --staged) -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4401100Z   PASS  QA 1.31.0 v2: fin de opciones 'git clean -- -f' -> allow (era deny en 40312c6)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4401727Z   PASS  QA 1.31.0 v2: fin de opciones 'git reset -- --hard' -> allow (era deny en 40312c6)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4402333Z   PASS  QA 1.31.0 v2: control fin de opciones: 'git checkout -- .' sigue deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4402915Z   PASS  DEV 1.31.0 v2: QA-101 'git restore -W .' (forma corta de --worktree) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4403632Z   PASS  QA 1.31.0 v3: QA-113 'git clean "-f"' -> allow (hoy; cambia con REQ-007 Bloque C)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4404509Z   PASS  QA 1.31.0 v3: QA-113 'git checkout "."' -> allow (hoy; cambia con REQ-007 Bloque C)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4405293Z   PASS  QA 1.31.0 v3: QA-113 control: 'git clean -f' desnudo sigue deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4406502Z   PASS  QA 1.31.0 v3: valor pegado tras '--': 'git clean -- --force=x' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4407878Z   PASS  QA 1.31.0 v3: '--' repetido: 'git clean -- -- -f' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4408692Z   PASS  QA 1.31.0 v3: la opcion ANTES del '--' casa igual: 'git clean -f -- -f' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4409597Z   PASS  QA 1.31.0 v3: '--' unico argumento: 'git clean --' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4410220Z   PASS  QA 1.31.0 v3: '--' unico argumento: 'git stash --' -> deny (sigue siendo la forma desnuda)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4410866Z   PASS  QA 1.31.0 v3: 'git restore --staged -- .' -> allow (solo rehace el indice)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4411520Z   PASS  QA 1.31.0 v3: 'git restore -- --staged .' -> deny (tras '--' es una ruta, no la opcion)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4412194Z   PASS  CA-14 'github clone x' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4412554Z   PASS  CA-14 'mygit clean -f' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4412919Z   PASS  CA-15 'echo "git clean -f"' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4413271Z   PASS  CA-16 'git status' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4413590Z   PASS  CA-16 'git log' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4413952Z   PASS  CA-16 'git add .' y 'git commit' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4414435Z   PASS  CA-18 git.activo:false -> allow (acto explicito del proyecto)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4415138Z   PASS  CA-20 lista vacia: una decision declarada, no un error -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4415969Z   PASS  CA-19 lista propia: 'git clean -fd' ya no esta en ella -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4416724Z   PASS  CA-19 lista propia: 'git push --force origin main' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4417868Z   PASS  DEV 1.31.0 v2: QA-101 lista propia con la larga: 'git push -f origin main' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4419606Z   PASS  DEV 1.31.0 v2: QA-101 control: '--force-with-lease' no es '--force' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4420549Z   PASS  DEV 1.31.0 v2: QA-101 '--directory' es la larga de 'clean -d' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4421163Z   PASS  DEV 1.31.0 v2: QA-101 control: '--dry-run' es la de '-n', no la de '-d' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4421799Z   PASS  DEV 1.31.0 v2: QA-101 '--include-untracked' es la larga de 'stash -u' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4422368Z   PASS  DEV 1.31.0 v2: QA-101 '--all' es la larga de 'stash -a' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4422885Z   PASS  CA-21 el token en otra posicion del segmento -> deny igual  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4423418Z   PASS  DEV 1.31.0 v4: SEC-009 'if true; then git clean -fd; fi' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4423902Z   PASS  DEV 1.31.0 v4: SEC-009 '{ git clean -fd; }' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4424399Z   PASS  DEV 1.31.0 v4: SEC-009 'for i in 1; do git clean -fd; done' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4424997Z   PASS  DEV 1.31.0 v4: SEC-009 'sleep 0 & git clean -fd' (el & sencillo separa) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4425531Z   PASS  DEV 1.31.0 v4: SEC-009 'nohup git clean -fd' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4426096Z   PASS  DEV 1.31.0 v4: SEC-009 continuacion de linea 'git clean \<salto> -fd' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4426980Z   PASS  DEV 1.31.0 v4: SEC-009 'timeout 30 git clean -fd' (envoltorio con argumento) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4427976Z   PASS  DEV 1.31.0 v4: SEC-009 '! git reset --hard' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4429132Z   PASS  DEV 1.31.0 v4: SEC-009 'while read x; do git checkout .; done' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4430317Z   PASS  DEV 1.31.0 v4: SEC-009 control: 'echo git clean -f' sigue allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4431682Z   PASS  DEV 1.31.0 v4: SEC-009 control: grep de un texto que dice 'then git clean -fd' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4432337Z   PASS  DEV 1.31.0 v4: SEC-009 control: 'if true; then git status; fi' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4432920Z   PASS  DEV 1.31.0 v4: SEC-009 control: 'echo hi >&2 && git add .' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4433781Z   PASS  DEV 1.31.0 v4: CA-21.5 'git reset "--hard"' -> allow (LIM-10; cambia en 1.32.0)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4434483Z   PASS  DEV 1.31.0 v4: CA-21.5 'git "clean" -f' (el SUBCOMANDO entrecomillado) -> allow (LIM-10)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4435166Z   PASS  DEV 1.31.0 v4: CA-21.5 'git clean \-f' (escapado, no entrecomillado) -> allow (LIM-10)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4435836Z   PASS  DEV 1.31.0 v4: CA-21.5 'git stash "save" wip' (alias entrecomillado) -> allow (LIM-10)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4436438Z   PASS  DEV 1.31.0 v4: CA-21.5 control: 'git reset --hard' desnudo sigue deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4437010Z   PASS  DEV 1.31.0 v4: CA-21.5 control: 'git stash save wip' desnudo sigue deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4437890Z   PASS  DEV 1.31.0 v4: SEC-010 manifiesto ilegible ({"agentes":{,}): 'git clean -fd' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4439305Z   PASS  DEV 1.31.0 v4: SEC-010 manifiesto ilegible (<vacio>): 'git clean -fd' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4440433Z   PASS  DEV 1.31.0 v4: SEC-010 manifiesto ilegible ([]): 'git clean -fd' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4441982Z   PASS  DEV 1.31.0 v4: SEC-010 manifiesto ilegible ({"git":"si"}): 'git clean -fd' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4442802Z   PASS  DEV 1.31.0 v4: SEC-010 el motivo dice MODO DEGRADADO y como salir
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4443384Z   PASS  DEV 1.31.0 v4: SEC-010 control: con el manifiesto roto 'git status' sigue allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4444058Z   PASS  DEV 1.31.0 v4: SEC-010 borde: 'git.activo:false' + JSON roto -> deny (direccion segura)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4444744Z   PASS  DEV 1.31.0 v4: SEC-010 control: con el manifiesto SANO 'activo:false' sigue apagando  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4445400Z   PASS  QA 1.31.0 v4: SEC-009 frontera '\'+ESPACIO+salto NO es continuacion -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4446002Z   PASS  QA 1.31.0 v4: SEC-009 frontera salto SIN barra son dos ordenes -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4446596Z   PASS  QA 1.31.0 v4: SEC-009 control 'for f in git; do echo $f; done' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4447168Z   PASS  QA 1.31.0 v4: SEC-009 control 'case git in *) echo x;; esac' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4447754Z   PASS  QA 1.31.0 v4: SEC-009 control 'function git_helper { git status; }' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4448364Z   PASS  QA 1.31.0 v4: SEC-009 control CA-41(b) 'echo hola # git clean -fd' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4449497Z   PASS  QA 1.31.0 v4: QA-115 'xargs git clean -fd' -> deny (el REQ lo declara fuera de alcance)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4450418Z   PASS  QA 1.31.0 v4: QA-115 control 'xargs -n1 git status' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4451523Z   PASS  QA 1.31.0 v4: SEC-010 control degradado 'git push --force origin main' -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4452750Z   PASS  CA-23/CA-24 en guard.sh manda el motivo de git
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4453613Z   PASS  CA-25 lo que guard-git permite lo sigue juzgando guard-codigo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4454177Z   PASS  CA-26 un comando sin el token git sigue pasando por guard.sh -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4454703Z   PASS  CA-28 guard-git.sh por su cuenta decide igual  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4455076Z   PASS  CA-29 guard-git.sh es ejecutable
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4455485Z Celdas del bloque derivado recortadas (presentacion, no lectura):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4455945Z   PASS  CA-01 la celda mide 41 como mucho y termina en elipsis
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4456349Z   PASS  CA-02 el valor completo no entra en el archivo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4456743Z   PASS  CA-05 toda fila de la tabla tiene 7 separadores
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4457155Z   PASS  CA-06 una barra dentro del valor no crea una columna
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4457575Z   PASS  CA-03 los valores cortos salen intactos y sin elipsis
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4457970Z   PASS  CA-04 borde exacto: 40 intacto, 41 recortado
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4458400Z   PASS  CA-10 un 'Hallazgos abiertos:' vacio sigue mostrando el guion
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4459230Z   PASS  CA-17 el hook sale 0 (la parada no se bloquea nunca)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4459917Z   PASS  DEV 1.31.0 v5: QA-119 la cabecera lleva la marca de tiempo, con su formato
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4460757Z   PASS  CA-09 idempotente: el bloque no cambia ni la celda gana otra elipsis
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4461391Z   PASS  DEV 1.31.0 v5: QA-119 cruzar el minuto no rompe la idempotencia (y byte a byte si)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4462495Z   PASS  CA-11 hallazgo largo de clase contrato: la puerta lee el campo entero -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4463833Z   PASS  CA-12 un QA largo que empieza por aprobado se lee como siempre -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4465175Z Cola de aprobaciones: una sola regla, la de la puerta (REQ-009):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4465713Z   PASS  REQ-009 CA-01 la puerta cuenta 1 sobre la entrada del formato documentado
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4466279Z   PASS  REQ-009 CA-01 el bloque derivado dice 1 sobre la misma entrada (decia 4)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4466946Z   PASS  REQ-009 CA-12 CRLF: la puerta sigue contando 1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4467367Z   PASS  REQ-009 CA-12 CRLF: el bloque derivado tambien dice 1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4467900Z   PASS  REQ-009 CA-07 un ejemplo comentado bajo Pendientes no bloquea el cierre  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4468487Z   PASS  REQ-009 CA-07 el bloque derivado tambien dice 0 con el ejemplo comentado
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4469410Z   PASS  REQ-009 CA-06 la plantilla de PENDING no bloquea (ejemplo fuera de la cola)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4469985Z   PASS  REQ-009 CA-09 cinco entradas bajo Resueltas no bloquean  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4470524Z   PASS  REQ-009 CA-10 cualquier seccion cierra la cola, no solo Resueltas  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4471032Z   PASS  REQ-009 CA-11 un '####' no es una entrada: sigue siendo 1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4471594Z   PASS  REQ-009 CA-13 '## Pendientes (2 abiertas)' abre la seccion por prefijo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4472605Z   PASS  REQ-009 CA-13 '##Pendientes' sin espacio no abre la seccion (como en v1.30.3)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4473399Z   PASS  REQ-009 CA-05 con 0 entradas el cierre pasa  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4474178Z   PASS  REQ-009 CA-05 con 3 entradas deniega y dice cuantas
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4475266Z   PASS  REQ-009 CA-14 sin PENDING_APPROVAL.md el cierre no se bloquea  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4476381Z   PASS  REQ-009 CA-14 sin archivo el bloque derivado dice 0, no error
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4476916Z   PASS  REQ-009 CA-15 un NUL en la cola: DENY con motivo propio, nunca allow por 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4477415Z   PASS  REQ-009 CA-16 con NUL el bloque dice 'sin datos', no 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4477848Z   PASS  REQ-009 CA-16 con NUL la parada NO se bloquea (rc 0)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4478327Z   PASS  REQ-009 CA-17 una cola ilegible deniega el cierre con el mismo motivo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4479200Z   PASS  REQ-009 CA-02 ningun consumidor conserva su propio patron de conteo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4479715Z   PASS  REQ-009 CA-03 sin mutar, los tres lectores dicen 1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4480207Z   PASS  REQ-009 CA-03 mutada SOLO lib.sh, los tres cambian a 2 (la regla es una)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4480699Z   PASS  REQ-009 CA-03 retirada la mutacion, los tres vuelven a 1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4481175Z   PASS  REQ-009 CA-20 el cierre no arranca ningun awk para contar la cola
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4481657Z Huecos de la auditoria de seguridad R-001 (REQ-007, bloque H):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4482225Z   PASS  REQ-007 CA-47 SEC-003 Write a <raiz>//src//a.ts -> deny igual que con una barra  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4483147Z   PASS  REQ-007 CA-47 SEC-003 Edit que cierra un REQ en <raiz>//requirements//REQ-700.md -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4483945Z   PASS  REQ-007 CA-48 control <raiz>/./src/../src/a.ts sigue deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4484674Z   PASS  REQ-007 CA-48 control <raiz>/src/./a.ts sigue deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4485525Z   PASS  REQ-007 CA-48 control ruta relativa src/a.ts sigue deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4486575Z   PASS  REQ-007 CA-48 control ./src/a.ts sigue deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4487606Z   PASS  REQ-007 CA-48 <raiz>//docs//notas.md (fuera de los globs) -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4488407Z   PASS  REQ-007 CA-48 una ruta UNC //servidor/recurso/x.ts conserva su forma -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4489375Z   PASS  REQ-007 CA-48 el desarrollador si puede escribir en <raiz>//src//a.ts  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4490036Z   PASS  REQ-007 CA-43 SEC-001 MultiEdit con un byte de control en el new_string -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4490751Z   PASS  REQ-007 CA-43 SEC-001 Write con 'nota'+byte de control delante del documento cerrado -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4491470Z   PASS  REQ-007 CA-44 control: el MultiEdit HONESTO que cierra con QA pendiente ya denegaba  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4492125Z   PASS  REQ-007 CA-44 control: el mismo MultiEdit sobre un REQ en verde -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4492811Z   PASS  REQ-007 CA-44 control: tabuladores y saltos de linea legitimos no son un falso positivo  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4493604Z   PASS  REQ-007 CA-45 SEC-002 un NUL en el REQ: el cierre deniega con motivo propio
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4494340Z   PASS  REQ-007 CA-46 control: sobre el REQ con NUL, una edicion que no toca el estado -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4495337Z   PASS  REQ-007 CA-46 control: el mismo REQ SIN NUL y con QA pendiente -> deny (como siempre)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4496430Z   PASS  REQ-007 CA-46 control: el mismo REQ SIN NUL y con los veredictos completos -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4497770Z   PASS  REQ-007 CA-54 SEC-006 un techo de 4294967296 se recorta al maximo y el deny lo dice
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4499289Z   PASS  REQ-007 CA-54 SEC-006 un valor que desborda 64 bits tampoco sube el techo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4499885Z   PASS  REQ-007 CA-54 SEC-006 '999999' entrecomillado no es un numero: cae al defecto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4500457Z   PASS  REQ-007 CA-55 control: un valor mas bajo que el defecto no baja el techo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4500924Z   PASS  REQ-007 CA-55 control: -5 cae al defecto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4501286Z   PASS  REQ-007 CA-55 control: 0 cae al defecto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4501683Z   PASS  REQ-007 CA-55 control: la clave ausente cae al defecto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4502163Z   PASS  REQ-007 CA-55 el deny por presupuesto no nombra ninguna ruta
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4502680Z   PASS  REQ-007 CA-53 ninguna plantilla hereda los globs del autoalojamiento
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4503580Z   PASS  REQ-007 CA-40 QA-014 '(instrumento, dueño REQ-007)': la clase es el primer elemento -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4504343Z   PASS  REQ-007 CA-40 QA-014 la evidencia acompana, nunca cambia el veredicto -> deny por la clase
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4504939Z   PASS  REQ-007 CA-41 control: la clase NO es el primer elemento -> deny
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4505666Z   PASS  REQ-007 CA-41 control: otro delimitador no es un parentesis -> deny
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4506293Z   PASS  REQ-007 CA-41 control: sin ninguna clase -> deny
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4507066Z   PASS  REQ-007 CA-41 control: '(Instrumento)' se sigue leyendo como hoy -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4508214Z   PASS  REQ-007 CA-41 control: '( instrumento )' se sigue leyendo como hoy -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4510348Z   PASS  REQ-007 CA-41 control: '(instrumento) — REQ-007' se sigue leyendo como hoy -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4511079Z   PASS  REQ-007 CA-56 SEC-007 100 ediciones sobre 700 KB superan el presupuesto -> deny
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4511703Z   PASS  REQ-007 CA-56 el deny por presupuesto de reconstruccion no nombra ninguna ruta
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4512385Z   PASS  REQ-007 CA-57 control: 50 ediciones (bajo el presupuesto) se juzgan como siempre -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4513082Z   PASS  REQ-007 CA-57 control: el deny por presupuesto alcanza tambien al desarrollador  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4513783Z   PASS  REQ-007 CA-57 control: una edicion sola sobre el mismo REQ se juzga como siempre -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4514384Z El acento y la clave decorada (REQ-010 + REQ-007 bloque A, SEC-004):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4514905Z   PASS  REQ-010 CA-01 'Estado: en-revision' SIN tilde no es anomalia (sale 0)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4515672Z   PASS  REQ-010 CA-03 'en-revisión' en NFD (o+U+0301) no es anomalia (sale 0)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4516238Z   PASS  REQ-010 CA-04 'Rigor: estándar' se reconoce (sale 0)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4516760Z   PASS  REQ-010 CA-04 no-regresion: 'Rigor: crítico' se sigue reconociendo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4517588Z   PASS  REQ-010 CA-11 mayusculas, enfasis y parentesis de evidencia siguen sin marcarse
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4518343Z   PASS  REQ-010 CA-12 'QA: aprobado*' (nota al pie) sigue siendo anomalia (sale 1)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4519714Z   PASS  REQ-010 CA-08 'en revision', 'enrevision' y 'revisión' siguen siendo anomalia
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4520931Z   PASS  REQ-010 CA-09 'en-revision-parcial' sigue siendo anomalia (sale 1)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4522049Z   PASS  REQ-010 CA-13 el aviso ensena el valor CRUDO con su tilde
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4522530Z   PASS  REQ-010 CA-13 ...y al lado el normalizado que lee la maquina
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4523245Z mv: cannot stat '/tmp/tmp.FPWUSbHXIF/.arnes/c2': No such file or directory
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4523814Z   PASS  REQ-010 CA-02 manifiesto SIN tilde + REQ CON tilde: tampoco es anomalia
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4524443Z   PASS  REQ-010 CA-10 la ñ no se pliega: 'ano' no casa con 'año' (sigue anomalia)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4524965Z   PASS  REQ-010 CA-10 control: 'año' con ñ SI casa con 'año'
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4525478Z   PASS  REQ-010 CA-10 la ñ tampoco se pliega en NFD (n+U+0303 no es 'n')
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4526082Z   PASS  REQ-010 CA-05 estado terminal acentuado escrito SIN tilde -> deny (era ALLOW)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4526708Z   PASS  REQ-010 CA-05 control: el mismo cierre CON tilde ya denegaba  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4527379Z   PASS  REQ-010 CA-06 reescribir 'aprobación' como 'aprobacion' no cambia el veredicto  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4527928Z   PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4529021Z   PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C.UTF-8
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4529583Z   PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=es_ES.UTF-8
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4530379Z   PASS  REQ-010 CA-07 las tres escrituras caen en la MISMA casilla del bloque derivado
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4531385Z   PASS  REQ-010 CA-14 el plegado vive SOLO en lib.sh; nadie tiene el suyo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4532665Z   PASS  REQ-010 CA-18 no queda ninguna pareja de letras escrita a mano
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4533452Z   PASS  REQ-010 CA-20 el plegado es solo expansion de parametros (ningun binario)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4534025Z   PASS  REQ-010 CA-19 'ls -la' por guard.sh: registros de sed, tr e iconv VACIOS
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4534577Z   PASS  REQ-007 CA-01 'Estado:<TAB>completado' con QA pendiente -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4535120Z   PASS  REQ-007 CA-02 '**Estado:** completado' (clave decorada) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4535676Z   PASS  REQ-007 CA-03 ' Estado: completado' (un espacio de sangrado) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4536234Z   PASS  REQ-007 CA-03 '  Estado: completado' (dos espacios) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4536714Z   PASS  REQ-007 CA-03 '<TAB>Estado: completado' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4537288Z   PASS  REQ-007 CA-04 'Estado : completado' (espacio antes de los dos puntos) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4537827Z   PASS  REQ-007 CA-04 '__Estado:__ completado' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4538258Z   PASS  REQ-007 CA-04 '*Estado:* completado' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4538673Z   PASS  REQ-007 CA-04 '`Estado:` completado' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4539519Z   PASS  REQ-007 CA-04 '**Estado** : completado' (forma no enumerada) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4540460Z   PASS  REQ-007 CA-05 control: 'Estado: completado' DENTRO de una seccion no cierra nada  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4541725Z   PASS  REQ-007 CA-06 control: un '**Seguridad:** aprobado' en una seccion sigue sin ser veredicto  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4542930Z   PASS  REQ-007 CA-07 '**Hallazgos abiertos:** SEC-9 (usuario/dinero)' -> deny por la clase
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4544229Z   PASS  REQ-007 CA-08 '**Sensible a seguridad:** sí' con Seguridad pendiente -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4545362Z   PASS  REQ-007 CA-08 '**QA:** pendiente' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4546297Z   PASS  REQ-007 CA-08 '**Rigor:** ligero' sobre un REQ sensible (el suelo manda) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4547465Z   PASS  REQ-007 CA-09 '**Rigor:** critico' en un REQ no sensible se LEE critico -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4548550Z   PASS  REQ-007 bloque A control: clave decorada + todo en verde -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4549874Z   PASS  REQ-007 CA-22 el informe lee la clave decorada igual que la puerta (1 REQ, 0 notas)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4550941Z   PASS  REQ-007 CA-22 el bloque derivado tambien lee la clave decorada
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4551782Z La ruta escrita y el manifiesto roto (SEC-004, SEC-005, SEC-006):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4552680Z   PASS  SEC-004 CA-49 Edit sobre un enlace a un REQ -> deny (salida fail-closed)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4554077Z   PASS  SEC-004 CA-49 Write sobre un enlace a codigo protegido -> deny tambien en guard-codigo  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4555180Z   PASS  SEC-004 CA-50a un archivo REGULAR en docs/ sigue -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4556055Z   PASS  SEC-004 CA-50a ...y tambien para la puerta de cierre  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4556949Z   PASS  SEC-004 CA-50b enlace ROTO: responde deny (73ms), ni cuelga ni revienta
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4557970Z   PASS  SEC-004 CA-50c enlace que apunta FUERA -> deny, no allow  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4559377Z   PASS  SEC-004 CA-50c control: un enlace FUERA del proyecto no se juzga -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4560550Z   PASS  SEC-004 CA-50d el camino comun de Bash ('ls -la') sigue -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4561172Z   PASS  SEC-004 el desarrollador tampoco escribe a traves de un enlace -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4561806Z   PASS  REQ-007 CA-53 la ampliacion NO se propaga a templates/arnes-config.json.tpl
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4562422Z   PASS  REQ-007 CA-53 la coordinadora NO escribe .arnes/config.json -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4562965Z   PASS  REQ-007 CA-53 ...ni .claude-plugin/plugin.json -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4563455Z   PASS  REQ-007 CA-53 el desarrollador SI lo escribe -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4563964Z   PASS  REQ-007 CA-51 SEC-005 manifiesto INVALIDO: Write -> deny con motivo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4564457Z   PASS  REQ-007 CA-51 SEC-005 manifiesto VACIO -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4564942Z   PASS  REQ-007 CA-51 SEC-005 manifiesto 'null' (JSON valido) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4565469Z   PASS  REQ-007 CA-51 SEC-005 manifiesto ARRAY (JSON valido) -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4566012Z   PASS  REQ-007 CA-51 SEC-005 ...y la puerta de cierre tampoco deja pasar  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4566649Z   PASS  DEV 1.31.0 v2: QA-104 un comando que no escribe no consulta el manifiesto (ni avisa ni deniega)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4567427Z   PASS  REQ-007 CA-51 SEC-005 el aviso se emite siempre que el manifiesto se consulta (stderr), tambien cuando permite
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4568153Z   PASS  DEV 1.31.0 v2: QA-105 manifiesto roto: Write al PROPIO manifiesto -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4569055Z   PASS  DEV 1.31.0 v2: QA-105 ...tambien por Bash (la via que el motivo nombra)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4569691Z   PASS  DEV 1.31.0 v2: QA-105 ...y la puerta de cierre tampoco lo estorba  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4570241Z   PASS  DEV 1.31.0 v2: QA-105 control: cualquier OTRA ruta sigue denegada  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4570847Z   PASS  DEV 1.31.0 v2: QA-105 control: reparar Y escribir otra cosa no es reparar -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4571498Z   PASS  DEV 1.31.0 v2: QA-105 control: otro archivo bajo .arnes/ NO repara nada -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4572215Z   PASS  DEV 1.31.0 v2: QA-104 control: manifiesto roto + Bash que escribe -> deny (el fail-closed sigue)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4572892Z   PASS  DEV 1.31.0 v2: QA-105 el motivo dice que la reparacion del manifiesto SI se puede
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4573497Z   PASS  REQ-007 CA-51 SEC-005 ninguna variable del manifiesto se rellena con el input
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4574259Z   PASS  REQ-007 CA-52 control: manifiesto AUSENTE sigue INERTE -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4574864Z   PASS  REQ-007 CA-52 control: manifiesto VALIDO decide igual que siempre -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4575447Z   PASS  REQ-007 CA-52 control: un manifiesto VALIDO no emite NINGUN aviso
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4576003Z   PASS  REQ-007 CA-52 control: 'limites' ausente cae al defecto sin avisar ni denegar
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4576597Z   PASS  DEV 1.31.0 v2: QA-106 'exigir_fecha' con la cadena "true" avisa y cae al defecto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4577126Z   PASS  DEV 1.31.0 v2: QA-106 'exigir_fecha' con el numero 1 avisa igual
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4577603Z   PASS  DEV 1.31.0 v2: QA-106 control: el booleano de verdad no avisa
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4578116Z   PASS  DEV 1.31.0 v2: QA-107 'bash_max_analisis: 1e9' avisa en vez de caer callado
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4578956Z   PASS  DEV 1.31.0 v2: QA-107 'bash_max_analisis: 1.5' avisa igual
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4579448Z   PASS  DEV 1.31.0 v2: QA-107 control: un entero valido no avisa
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4579981Z   PASS  DEV 1.31.0 v2: QA-106 'git.activo' con cadena avisa y manda el defecto (encendida)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4580525Z   PASS  DEV 1.31.0 v2: QA-106 'codigo_app.globs' que no es un array avisa
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4581013Z   PASS  DEV 1.31.0 v2: QA-106 control: el manifiesto ya reparado no avisa
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4581575Z   PASS  DEV 1.31.0 v2: QA-106 'git.activo' con cadena no apaga la puerta de git -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4582131Z   PASS  DEV 1.31.0 v2: QA-104 'ls -la' cuesta 1 proceso jq (como v1.30.3)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4582649Z   PASS  DEV 1.31.0 v2: QA-104 'npm run build' cuesta 1 proceso jq (como v1.30.3)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4583295Z tools/arnes-paralelo.sh (REQ-013): qué dos comisiones NO colisionan:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4583789Z   PASS  paralelo: hooks/lib.sh vs hooks/*.sh -> colisiona
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4584212Z   PASS  paralelo: hooks/*.sh vs hooks/hooks.json -> disjunto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4584628Z   PASS  paralelo: run.sh vs tests/** -> colisiona
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4585048Z   PASS  paralelo: docs/qa/1.32.0.md vs docs/qa/*.md -> colisiona
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4585472Z   PASS  paralelo: dos plantillas distintas -> disjunto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4586015Z   PASS  paralelo: dos globs distintos que alcanzan el mismo archivo -> colisiona y lo nombra
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4586640Z   PASS  paralelo: un archivo que TODAVIA NO EXISTE se compara como ruta literal
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4587188Z   PASS  paralelo: control positivo, dos rutas ajenas -> disjunto y rc 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4587693Z   PASS  paralelo: (ninguno) es disjunto con todos, no 'sin declarar'
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4588186Z   PASS  paralelo: ./x y x//y se normalizan a la misma ruta -> colisiona
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4588663Z   PASS  paralelo: x/../x se normaliza a la misma ruta -> colisiona
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4589576Z   PASS  paralelo: una ruta ABSOLUTA se rechaza con motivo propio y deja el REQ sin declarar
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4590192Z   PASS  paralelo: una ruta que SALE de la raiz se rechaza igual (fail-closed)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4590716Z   PASS  paralelo: un REQ SIN el campo colisiona con todos y sale != 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4591190Z   PASS  paralelo: un valor vacio no se interpreta: sin declarar
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4591734Z   PASS  paralelo: clave decorada, sangrado, tabulador y acentos graves se reconocen
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4592285Z   PASS  paralelo: el campo DEBAJO del primer '## ' no es una declaracion
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4592794Z   PASS  paralelo: el parentesis final es EVIDENCIA, no un tercer archivo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4593293Z   PASS  paralelo: --json es JSON valido y dice lo mismo que el texto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4593810Z   PASS  paralelo: sin argumentos toma los REQ abiertos y salta los cerrados
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4594321Z   PASS  paralelo: la salida advierte que NO evalua el orden de fases
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4594839Z   PASS  paralelo: la advertencia del orden de fases tambien viaja en --json
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4595522Z   PASS  paralelo: no escribe ni un archivo en el proyecto (ni un temporal)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4596472Z   PASS  paralelo: no invoca agentes ni toca PENDING_APPROVAL.md
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4597288Z   PASS  paralelo: sin jq lo dice y sale 2, no responde 'adelante'
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4598068Z   PASS  paralelo: sin .arnes/config.json lo dice y sale 2
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4599207Z   PASS  paralelo: un requirements/ vacio lo dice y sale 2, no dice 'todo disjunto'
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4600251Z   PASS  paralelo: no esta registrada en ningun hook (0 procesos anadidos por comando)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4601103Z   PASS  paralelo: bash -n pasa sobre la herramienta
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4601989Z   PASS  paralelo/CA-05: un REQ SIN Archivos: cierra igual que en v1.31.0 -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4603092Z   PASS  paralelo/CA-05: un Archivos: ilegible tampoco bloquea el cierre -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4604258Z   PASS  paralelo: 60 REQ y 200 archivos en 520ms (techo 2000ms)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4605141Z   PASS  paralelo: 1 proceso(s) externo(s) para 60 REQ (techo 2 por REQ = 120)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4606070Z tools/arnes-paralelo.sh: lo que no se puede medir no autoriza nada:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4607006Z   PASS  paralelo: un REQ SIN PERMISO de lectura se declara y colisiona con todos
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4607910Z   PASS  paralelo: el recuento de REQ evaluados no baja en silencio
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4608978Z   PASS  paralelo: un REQ truncado por un byte NUL se declara, no se descarta
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4610014Z   PASS  paralelo: un archivo que AUN NO EXISTE colisiona con el glob que lo alcanzara
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4611105Z   PASS  paralelo: un archivo que AUN NO EXISTE colisiona con el DIRECTORIO que lo contendra
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4612171Z   PASS  paralelo: control, un archivo futuro AJENO al glob sigue siendo disjunto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4613170Z   PASS  paralelo: SIMETRIA, archivo futuro y glob colisionan en los DOS ordenes
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4614238Z   PASS  paralelo: SIMETRIA, archivo futuro y su DIRECTORIO colisionan en los DOS ordenes
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4615403Z   PASS  paralelo: SIMETRIA control, un futuro AJENO al glob es disjunto en los DOS ordenes
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4616484Z   PASS  paralelo: un marcador de posicion (TBD) no se acepta como ruta futura
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4617456Z   PASS  paralelo: y tampoco el que TIENE forma de ruta por accidente (N/A)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4618480Z   PASS  paralelo: con Archivos: duplicado gana el ULTIMO, igual que en las puertas
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4619743Z   PASS  paralelo: --json declara el PATRON, no los archivos que casa hoy
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4620771Z   PASS  paralelo: control de QA-211, tres REQ bien escritos -> 3 evaluados y colisiona
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4621875Z   PASS  paralelo: un REQ con los campos DEBAJO del primer ## no desaparece en silencio
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4622952Z   PASS  paralelo: un REQ SIN Estado: no encoge la poblacion evaluada (siguen siendo 3)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4623963Z   PASS  paralelo: un REQ de 0 bytes se declara con motivo, no se descarta
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4624931Z   PASS  paralelo: un marcador con barra (n/d) tampoco se acepta como ruta futura
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4625965Z   PASS  paralelo: control, un futuro en un directorio que aun no existe SI es ruta
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4627067Z   PASS  paralelo/SEC-014: anotar CADA elemento no borra la cola del mapa (los DOS ordenes)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4628202Z   PASS  paralelo/SEC-014: los DOS elementos anotados llegan al mapa, ninguno se pierde
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4629530Z   PASS  paralelo/SEC-014: una anotacion SUELTA entre comas se declara, no se descarta
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4630615Z   PASS  paralelo/SEC-014 control: la coma DENTRO de la evidencia no parte la lista
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4631717Z   PASS  paralelo/SEC-014 control: dos elementos anotados AJENOS siguen siendo disjuntos
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4632679Z   PASS  paralelo: un TABULADOR en el motivo no rompe el JSON
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4633592Z   PASS  paralelo: un control DENTRO de una ruta se escapa y vuelve igual al leerlo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4635209Z Noción de cita (1/5): el interior de <!-- … --> no declara campo — la puerta (REQ-016):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4636527Z   PASS  REQ-016 CA-01 cita '**Seguridad:** aprobado' en un comentario -> deny por el veredicto VIGENTE (era ALLOW)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4637961Z   PASS  REQ-016 CA-01 cita 'Seguridad: aprobado' en un comentario -> deny por el veredicto VIGENTE (era ALLOW)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4639675Z   PASS  REQ-016 CA-01 cita '_Seguridad:_ aprobado' en un comentario -> deny por el veredicto VIGENTE (era ALLOW)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4641116Z   PASS  REQ-016 CA-01 cita '*Seguridad:* aprobado' en un comentario -> deny por el veredicto VIGENTE (era ALLOW)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4642545Z   PASS  REQ-016 CA-01 cita '`Seguridad:` aprobado' en un comentario -> deny por el veredicto VIGENTE (era ALLOW)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4643977Z   PASS  REQ-016 CA-01 cita '**Seguridad: aprobado**' en un comentario -> deny por el veredicto VIGENTE (era ALLOW)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4645748Z   PASS  REQ-016 CA-01 la cita de una línea (la clave no encabeza) ya denegaba y sigue denegando
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4646989Z   PASS  REQ-016 CA-07 control (ii): veredicto vigente autorizante + la MISMA cita -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4648187Z   PASS  REQ-016 CA-01 un '**QA:** aprobado' citado no desbanca a 'QA: pendiente' (era ALLOW)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4649579Z   PASS  REQ-016 CA-01 un '**Hallazgos abiertos:** (ninguno)' citado no borra el hallazgo (era ALLOW)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4650957Z   PASS  REQ-016 CA-01 un '**Sensible a seguridad:** no' citado no rebaja el suelo -> deny (era ALLOW)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4652234Z   PASS  REQ-016 CA-01 un '**Rigor:** ligero' citado no baja la ceremonia -> deny (era ALLOW)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4653644Z   PASS  REQ-016 CA-02 la dirección conforme: la cita se traga el 'Seguridad: aprobado' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4654908Z   PASS  REQ-016 CA-03 rango sin cerrar tras los veredictos en verde -> deny citando el rango
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4656123Z   PASS  REQ-016 CA-03 el rango sin cerrar se traga el 'QA: pendiente' -> deny, no allow por ausencia
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4657399Z   PASS  REQ-016 CA-03 el rango sin cerrar se traga la línea del 'Estado:' -> deny igual
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4658489Z   PASS  REQ-016 CA-03 un '-->' que vive tras el primer '## ' no cierra la cabecera -> deny
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4659814Z   PASS  REQ-016 CA-03 control: el mismo rango CERRADO y todo en verde -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4661071Z   PASS  REQ-016 CA-03 frontera: un '## ' dentro del rango termina la cabecera -> no hay cierre que juzgar  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4662467Z   PASS  REQ-016 CA-02 un CR suelto NO fabrica el '-->': el veredicto citado no gobierna -> deny (era ALLOW)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4663932Z   PASS  REQ-016 CA-02 ...y tampoco por la vía del Edit, con el CR en disco -> deny (era ALLOW)  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4665492Z   PASS  REQ-016 CA-03 un '-$CR->' no cierra el rango, y el motivo nombra el CR invisible -> deny (regresión de 1.32.1)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4666929Z   PASS  REQ-016 CA-04 un REQ guardado ENTERO en CRLF con el veredicto en rojo -> deny igual que en LF  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4668175Z   PASS  REQ-016 CA-04 ...y en CRLF con todo en verde cierra igual que en LF -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4669722Z   PASS  REQ-016 CA-03 un '--!>' no cierra el rango para el arnés: sigue cayendo del lado que cierra
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4671100Z   PASS  REQ-016 CA-04 '**Estado:** completado' FUERA de todo rango sigue viéndose -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4672399Z   PASS  REQ-016 CA-04 '  Seguridad: pendiente' sangrado, fuera de rango, sigue gobernando -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4673705Z   PASS  REQ-016 CA-04 '**Seguridad:** aprobado' fuera de todo rango GOBIERNA y cierra -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4674966Z Noción de cita (2/5): los dos lectores y la invariante sobre el corpus (REQ-016):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4676124Z   PASS  REQ-016 CA-01 los dos lectores y la cabecera sin el rango coinciden campo a campo (8 pares)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4677751Z   PASS  REQ-016 CA-02 'Est<!--x-->ado:' NO fabrica un campo y el 'QA:' de fuera del rango sí se lee
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4679228Z   PASS  REQ-016 CA-02 el corpus de cabeceras se cosecha por glob del corredor (104 cabeceras)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4680931Z   PASS  REQ-016 CA-02 ningún deny se volvió allow al insertar un rango (147 variantes sobre las 49 cabeceras que deniegan, de 104 cosechadas)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4682394Z Noción de cita (3/5): comentar una declaración la RETIRA — CA-11 (REQ-016):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4683469Z   PASS  REQ-016 CA-11 los campos de la equivalencia se derivan del lector de lib.sh (5 campos)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4684602Z   PASS  REQ-016 CA-11 comentar decide igual que borrar en las 15 parejas comprobadas
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4685886Z   PASS  REQ-016 CA-11 las parejas tienen dientes en las dos direcciones (1 deny · 14 allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4687495Z   PASS  REQ-016 CA-11 la excepción: envolver 'Seguridad: pendiente' en un critico -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4689109Z   PASS  REQ-016 CA-11 comentar 'QA: con-hallazgos' y un hallazgo 'usuario/dinero' cierra -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4690749Z   PASS  REQ-016 CA-11 ...y BORRAR esas dos líneas decide lo mismo -> allow (la equivalencia, en su forma más dura)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4692143Z Noción de cita (4/5): lo que el informe dice, el coste y los textos heredados (REQ-016):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4693429Z   PASS  REQ-016 CA-05 la línea decorada que gobierna se nombra, con la línea tal como está escrita
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4694648Z   PASS  REQ-016 CA-05 ...y enseña la línea literal y el valor que lee la máquina
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4695746Z   PASS  REQ-016 CA-06 el aviso de forma NO cambia el código de salida (sale 0)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4696977Z   PASS  REQ-016 CA-06 dos declaraciones y gobierna la decorada -> anomalía con salida ≠ 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4698224Z   PASS  REQ-016 CA-06 ...y lo dice por la vía única de las anomalías, no en el bloque de forma
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4699756Z   PASS  REQ-016 CA-05 un rango sin cerrar en la cabecera es anomalía y lo dice (sale 1)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4701064Z   PASS  REQ-016 CA-01 el informe no reporta la cita como anomalía: dentro del rango no hay campo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4702243Z   PASS  REQ-016 CA-01 ...y tampoco la cuenta como línea decorada que gobierna
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4703435Z   PASS  REQ-016 CA-08 'arnes_sin_cita' existe y es sólo expansión de parámetros (ningún proceso)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4704676Z   PASS  REQ-016 CA-08 el bloque derivado gasta las mismas pasadas de awk con citas que sin ellas (1)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4706014Z   PASS  REQ-016 CA-09 la migración lo dice sin eufemismo: se pudo cerrar un critico sin auditoría
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4707131Z   PASS  REQ-016 CA-09 ...y trae el comando que barre las cabeceras con un comentario
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4708257Z   PASS  REQ-016 CA-09 ...y dice que la pertenencia de versiones se deriva del historial del lector
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4709524Z   PASS  REQ-016 CA-09 ...con el comando que lo comprueba tag a tag
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4710801Z   PASS  REQ-016 CA-09 (i) la guía enuncia la propiedad por ESTADO: 'REQ en estado terminal que NO cerrarían hoy'
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4712224Z   PASS  REQ-016 CA-09 (i) ...y dice que la pregunta de estado no envejece con la vía siguiente
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4713611Z   PASS  REQ-016 CA-09 (ii) ...y que un barrido por vía calla sin acreditar: 'no acredita ausencia de exposición'
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4714939Z   PASS  REQ-016 CA-09 (ii) ...y nombra las dos vías conocidas que el comando NO encuentra
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4716211Z   PASS  REQ-016 CA-09 ...y dice que ningún comando del apartado responde hoy la pregunta de estado
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4717535Z   PASS  REQ-016 CA-09 (i) la propiedad se enuncia ANTES del primer comando (línea 692 < 708)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4719010Z   PASS  REQ-016 CA-10 la plantilla trae la regla: la invariante manda sobre la preferencia de herramienta
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4720523Z   PASS  REQ-016 CA-10 ...con su motivo: quien configura una sesión no suele ser quien lee esa sección
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4721879Z   PASS  REQ-016 CA-10 y también en el AGENTS.md de este repositorio
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4722976Z Noción de cita (5/5): un CR que no termina la línea no se puede medir (REQ-016 · SEC-024):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4724326Z   PASS  SEC-024 (1/4) base desnuda: critico sin ninguna declaración de 'Seguridad:' -> deny por AUSENTE
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4725736Z   PASS  SEC-024 (2/4) + rango BIEN escrito citando 'Seguridad: aprobado' -> deny por AUSENTE (la vuelta 1, intacta)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4727143Z   PASS  SEC-024 (3/4) + el ABRE fabricado '<!$CR--' citando 'Seguridad: aprobado' -> deny por el CR (era ALLOW hoy)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4728423Z   PASS  SEC-024 (4/4) CONTROL: el mismo '<!$CR--' citando 'Seguridad: pendiente' -> deny  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4729885Z   PASS  SEC-024 control con dientes: retirado el CR y con el veredicto FUERA del rango -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4731676Z   PASS  SEC-024 la CLAVE fabricada 'Seg$CRuridad: aprobado' no desbanca a 'Seguridad: pendiente' -> deny (era ALLOW desde <=1.30.3)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4733195Z   PASS  SEC-024 ...y con TODO en verde el mismo CR deniega igual: la regla es de medibilidad, no de veredicto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4734737Z   PASS  SEC-024 boca Edit: el '<!$CR--' vive en DISCO y la edición sólo cambia el estado -> deny (era ALLOW hoy)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4736199Z   PASS  SEC-024 boca fragmento (old_string ausente): el CR del fragmento entrante también deniega
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4737547Z   PASS  SEC-024 CRLF entero + comentario bien escrito, todo en verde -> allow (el transporte no se toca)  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4739088Z   PASS  SEC-024 ...y el MISMO REQ en CRLF con el veredicto en rojo -> deny, igual que en LF  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4740411Z   PASS  SEC-024 ...y un CR INTERIOR dentro de un documento CRLF sigue denegando: el transporte no es coartada
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4741715Z   PASS  SEC-024 frontera: un CR suelto DEBAJO del primer '## ' no es cabecera -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4742842Z   PASS  SEC-024 reabrir un REQ con un CR interior nunca se bloquea -> allow  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4744347Z   PASS  SEC-024 informe: arnes-lectura llama anomalía a la clave fabricada y sale 1 (decía «ningún valor anómalo», rc=0)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4745729Z   PASS  SEC-024 informe: ...y cita la línea con el CR escrito como \r, no crudo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4746865Z   PASS  SEC-024 paralelo: una cabecera con un CR interior colisiona con motivo, no responde 'disjunto'
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4748288Z   PASS  SEC-024 lectores: el diferencial del CR recorre 80 cabeceras (enumeración fija, no semilla)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4749903Z   PASS  SEC-024 lectores: 0 divergencias entre hooks/lib.sh y hooks/campos-req.awk sobre el CR
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4751304Z --- 37/1 · el coste del escáner: el dominio de equivalencia, dentro y fuera (REQ-017 CA-01 y CA-10) ---
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4753583Z   PASS  REQ-017 CA-01 diferencial dentro del dominio: cada línea por separado (ARNES_LINEA/CITA/CR/CR_LINEA)  (dentro 18 · fuera 266 · no clasificables 36 de 320; estado idéntico byte a byte y este árbol repite k=6)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4756536Z   PASS  REQ-017 CA-01 ...y en secuencia, que es donde el estado de cita y de CR cruza líneas  (dentro 18 · fuera 266 · no clasificables 36 de 320; el recorrido de las 18 entradas del dominio sale idéntico byte a byte)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4759245Z   PASS  REQ-017 CA-01 el corpus conserva las fronteras nombradas y la clase que no puede perder (320 entradas, 281 con UTF-8 inválido, semilla fija)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4762767Z   SKIP  REQ-017 CA-10 (i) fuera del dominio este árbol decide siempre lo mismo, y lo mismo en los dos locales  36 entradas NO son clasificables: la heredada tampoco publica una decisión única bajo LC_ALL=C, y un oráculo que no repite no es un oráculo — bash 5.2.21(1)-release, locale del entorno C.UTF-8, dentro 18 · fuera 266 · no clasificables 36 de 320
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4767573Z   SKIP  REQ-017 CA-10 (ii) ...y esa decisión es la del ORÁCULO: la heredada bajo LC_ALL=C  36 entradas NO son clasificables: la heredada tampoco publica una decisión única bajo LC_ALL=C, y un oráculo que no repite no es un oráculo — bash 5.2.21(1)-release, locale del entorno C.UTF-8, dentro 18 · fuera 266 · no clasificables 36 de 320
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4772609Z   SKIP  REQ-017 CA-10 (iii) fail-before: la heredada bajo el locale del entorno NO cumple (i) o (ii), y se registra sin fallar por ello  36 entradas NO son clasificables: la heredada tampoco publica una decisión única bajo LC_ALL=C, y un oráculo que no repite no es un oráculo — bash 5.2.21(1)-release, locale del entorno C.UTF-8, dentro 18 · fuera 266 · no clasificables 36 de 320
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4775951Z --- 37/2 · el coste del escáner: la escala y las razones (REQ-017 CA-03, CA-04 y CA-06) ---
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4777504Z   PASS  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  cociente de duplicación (70000→140000 bytes, k=20) = 2.110× (techo 2.600×; 657691µs sobre 311630µs)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4779156Z   PASS  REQ-017 CA-03 fail-before: sobre v1.32.1 el mismo cociente da 2.777× y se pasa del techo 2,600×
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4780289Z   PASS  REQ-017 CA-04 el camino de campo no cuesta más de 2× lo que costaba en v1.32.0 (140 000 bytes sin CR)  razón contra v1.32.0 = 1.244× (techo 2.000×; 2159438µs sobre 1735264µs)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4781241Z   PASS  REQ-017 CA-04 fail-before: v1.32.1 cuesta 7.133× lo de v1.32.0 y se pasa del techo 2,000×
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4781966Z   PASS  REQ-017 CA-06 sin línea base y bajo el suelo de 50 ms la sonda emite SKIP con motivo, nunca PASS
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4782770Z --- 37/3 · el coste del escáner: la pared de los 60 s (REQ-017 CA-09) ---
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4784210Z   PASS  REQ-017 CA-09 la pared de los 60 s de este árbol NO es menor que la de v1.32.1, pareado en la misma corrida  el PEOR de este árbol vale 1.194× el MEJOR de v1.32.1 medido EN ESTA MISMA corrida (>= 1,000×; los rangos no se solapan, así que la dirección no es ruido). La magnitud es del Historial y de SEC-030
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4785925Z   PASS  REQ-017 CA-09 la dirección se COMPRUEBA por rangos, no se publica: por debajo es FAIL y el solapamiento es SKIP  (7 pares de rangos → PASS PASS FAIL SKIP SKIP SKIP SKIP )
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4786864Z --- 37/4 · la ruta crítica del banco (REQ-017 CA-05, con la mitad de CA-06 que la prueba) ---
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4788268Z   SKIP  REQ-017 CA-05 (i) la ruta crítica cuesta no más de 0,250× lo de v1.32.1  no se pide: evidencia acreditada en el Historial de REQ-017 (0,125× — 9,60 s frente a 76,19 s, medido el 2026-09-07); es acreditación de fail-before, no puerta de cada PR — se repite con ARNES_COSTE_RUTA_CRITICA=1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4790861Z   SKIP  REQ-017 CA-05 (ii) la comparación no se compra dejando de probar  no se pide: evidencia acreditada en el Historial de REQ-017 (0,125× — 9,60 s frente a 76,19 s, medido el 2026-09-07); es acreditación de fail-before, no puerta de cada PR — se repite con ARNES_COSTE_RUTA_CRITICA=1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4792844Z   PASS  REQ-017 CA-05 (i)/(ii) una corrida que termina EN ROJO no cuenta como medición: deciden el rc y los casos, no el número de líneas
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4794136Z   PASS  REQ-017 CA-05 (i) sólo el vencimiento del plazo, y con el reloj de acuerdo, prueba la cota: una muerte por señal dice SKIP  (10 formas de terminar → SKIP SKIP PASS SKIP SKIP PASS SKIP FAIL SKIP SKIP )
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4795153Z --- 37/5 · el camino de una cabecera normal: procesos y reloj (REQ-017 CA-08 y CA-06) ---
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4795984Z   PASS  REQ-017 CA-08 (i) un REQ real de 6 líneas: 0 procesos añadidos respecto a v1.32.1  5 procesos frente a 5 (menos es conforme)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4797033Z   PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  1.059× (0.0800 s/llamada frente a 0.0755 s; convergencia 1.119×/1.103×)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4798067Z   PASS  REQ-017 CA-08 (i) una cabecera de 200 líneas: 0 procesos añadidos respecto a v1.32.1  5 procesos frente a 5 (menos es conforme)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4799649Z   PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  1.047× (0.1997 s/llamada frente a 0.1906 s; convergencia 1.125×/1.013×)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4800943Z   PASS  REQ-017 CA-08 (ii) la sonda que no converge se ABSTIENE: nunca PASS y nunca FAIL, y la abstención manda sobre el rojo  (7 sondas → PASS FAIL SKIP SKIP SKIP SKIP SKIP )
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4802689Z   PASS  REQ-017 CA-06 el envoltorio resuelve rutas absolutas antes de tocar el PATH y no se llama a sí mismo (<5> procesos)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4804326Z   PASS  REQ-017 CA-06 el corredor acusa POR SU NOMBRE a la sección que deja un proceso vivo, y la vuelta sale en rojo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4805712Z --- 38/1 · los instrumentos de tests/util/: el registro y su parser (REQ-021 CA-09 y CA-01) ---
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4807710Z   PASS  REQ-021 CA-09 bash -n pasa en los 2 archivos de tests/util/ (las gates del manifiesto no miran tests/, y .arnes/config.json no se toca)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4809985Z   PASS  REQ-021 CA-01.1/CA-09 los 2 instrumentos son ejecutables y traen shebang: se INVOCAN, no se hacen source, y por eso $BASHPID dentro de $( ) deja de ser expresable
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4811252Z   PASS  REQ-021 CA-01.2/CA-01.3 las 2 sondas emiten UN registro de UNA línea y ninguna imprime una línea con la forma que el corredor usa para contar casos
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4812792Z   PASS  REQ-021 CA-01.5/CA-10.2 el parser valida cada campo POR SEPARADO —ausente, vacío y no numérico son errores con motivo, nunca un cero—, exige 'vivos' sólo a quien puede observarlo y acepta procesos=no-aplica sin confundirlo con un cero
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4814269Z   PASS  REQ-021 QA-021-04 el parser no se puede inyectar: clave repetida es ILEGIBLE, y un valor con metacaracteres de glob no se expande contra el directorio de trabajo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4815595Z   PASS  REQ-021 CA-01.2/CA-01.3 un valor con espacios o saltos de línea no parte el registro ni fabrica un veredicto  (1 línea, etiqueta=x___PASS__inyectado_estado=ok, estado=suelo intacto)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4816706Z   PASS  REQ-021 CA-01.4 tests/util/README.md apunta al único parser (sonda_lee, en el corredor) y no lo transcribe
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4817518Z --- 38/2 · los instrumentos de tests/util/: la calibración y su procedencia (REQ-021 CA-03 y CA-08 (iii)) ---
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4819303Z   PASS  REQ-021 CA-03 calibración de sonda-reloj.sh: el sujeto sensible responde al parámetro y el insensible no  sensible 2.004× · insensible 1.002× (esperados 2,000 y 1,000, los dos en banda y distinguidos; tamaño derivado del suelo en esta corrida: cal_n=101729 a 4× el suelo, r=3)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4821424Z   PASS  REQ-021 CA-03 calibración de sonda-procesos.sh: el sujeto sensible responde al parámetro y el insensible no  sensible 2.000× · insensible 1.000× (esperados 2,000 y 1,000, los dos en banda y distinguidos; tamaño derivado del suelo en esta corrida: cal_n=4 a 4× el suelo, r=1)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4823752Z   PASS  REQ-021 CA-03 (c) el tamaño de cada mitad se DERIVA del suelo medido en esta corrida, se publica, y ninguna mitad queda pegada al suelo  (cal_n=101729 derivado de 1966ns/vuelta para 4× el suelo de 50000µs que declara el JUEZ —la sonda publica suelo=50000µs y no decide—; sensible 204252µs · insensible 203425µs, ninguno pegado al suelo)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4825957Z   PASS  REQ-021 CA-03 (a.2) la magnitud de sonda-reloj.sh sale de OBSERVAR el sujeto: bajo el suelo dice suelo y no publica número  (disc_param=101729 · disc_obs=654 · testigo del juez=880, obtenido antes de invocar: terna <880 1790025092435617 1790025092435625>)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4827898Z   PASS  REQ-021 CA-03 (a.2) la magnitud de sonda-procesos.sh sale de OBSERVAR el sujeto: coincide con el testigo que el juez contó, no con el parámetro  (disc_param=4 · disc_obs=2 · testigo del juez=2, obtenido antes de invocar: terna <2 1790025092435617 1790025092435625>)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4830965Z   PASS  REQ-021 CA-03 (a.2) fail-before: a sonda-procesos.sh se le quita la observación en una COPIA —el único camino que ejerce el sujeto pasa a ser aritmética— y el juez la caza; la misma copia sin mutar pasa  (mutada: 'procesos' publica disc_obs=4 donde el testigo del juez dice 2 (parámetro con que se la invocó: 4): la magnitud no sale de observar el sujeto · sin mutar: pasa con la terna <2 1790025092435617 1790025092435625>)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4834108Z   PASS  REQ-021 CA-03 (a.2) fail-before: un registro de reloj SIN la observación —el parámetro donde va lo medido— lo caza el juez, y el real pasa  (neutralizado: 'reloj' publica disc_estado=ok sobre un sujeto que el juez cronometró en 880µs, por debajo del suelo de 50000µs: quien no mide no puede saber que está bajo el suelo (parámetro 101729, disc_obs=101729) · real: pasa con la terna <880 1790025092435617 1790025092435625>)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4837071Z   PASS  REQ-021 CA-03 (a.3) cond. 3 ANTERIORIDAD: un testigo que el juez no tenía ANTES de invocar la sonda ABORTA el caso, no lo pasa  (el juez ABORTA y no pasa: condición 3 de CA-03 (a.3) (ANTERIORIDAD): el juez obtuvo el testigo de 'procesos' en 1790025092435626µs y la sonda se invocó en 1790025092435625µs, así que el testigo NO existía antes de la invocación y la sonda pudo alimentarlo (testigo=2))
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4840407Z   PASS  REQ-021 CA-03 (a.3) cond. 1 NO VACUIDAD: un testigo IGUAL al parámetro ABORTA —su verde sería cierto por vacío, y una colisión es un defecto del dimensionado—  (el juez ABORTA y no pasa: condición 1 de CA-03 (a.3) (NO VACUIDAD): el testigo de 'procesos' COINCIDE con el parámetro (4): el caso no distingue nada y su verde sería cierto POR VACÍO — una colisión es un defecto del dimensionado, no un veredicto)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4843387Z   PASS  REQ-021 CA-03 (a.3) cond. 4: si el registro DECLARA el tamaño del sujeto discordante, el caso ABORTA —ese tamaño es del juez—  (el juez ABORTA y no pasa: condición 4 de CA-03 (a.3): 'procesos' DECLARA en su registro el tamaño del sujeto discordante ( disc_veces=3), y ese tamaño es del juez; si lo pone la sonda, el parámetro y el testigo vuelven a salir de la misma fuente y el contraste no puede fallar (QA-021-10))
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4845987Z   PASS  REQ-021 CA-03 (a.3) cond. 5: el umbral con que el juez decide NO sale del registro juzgado —un reloj que publique suelo=1µs no compra su propia abstención—  (disc_param=101729 · disc_obs=654 · testigo del juez=880, obtenido antes de invocar: terna <880 1790025092435617 1790025092435625>)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4848366Z   SKIP  REQ-021 CA-08 (iii) calibrar sonda-reloj.sh no cuesta más de 6× una medición suya con los MISMOS mandos  reloj 1.890× (3116955µs sobre 1648621µs) cabe en el techo 6,000×, pero la mitad en PROCESOS no es medible en este instrumento: publica procesos=no-aplica (contarlos exigiría instrumentar, y una muestra mixta no es publicable, CA-02.5)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4850626Z   PASS  REQ-021 CA-08 (iii) calibrar sonda-procesos.sh no cuesta más de 6× una medición suya con los MISMOS mandos  reloj 0.605× (61974µs sobre 102361µs) y procesos 3.571× (25 sobre 7), techo 6,000×
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4851785Z --- 38/3 · los instrumentos de tests/util/: la descendencia, el estadístico y el juez (REQ-021 CA-04, CA-02 y CA-10) ---
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4852916Z   PASS  REQ-021 CA-04.1 la sonda mata y DECLARA a su descendencia hasta el NIETO, sin apoyarse en jobs  (vivos=2, mecanismo proc+marca; el sujeto deja abuelo y nieto y ninguno sobrevive)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4854363Z   PASS  REQ-021 CA-04.1 fail-before: el mismo sujeto SIN la mitad de descendencia deja vivo al nieto  (PID 16968 y su descendencia siguen vivos sin la barrida; esta sección los recoge)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4855869Z   PASS  REQ-021 CA-04.1 el descendiente REPARENTADO se ve y se mata: el recorrido por children no lo alcanza y la marca de entorno sí  (vivos=1, mecanismo proc+marca; el doble fork lo reparenta a init y no sobrevive)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4857492Z   PASS  REQ-021 CA-04.1 fail-before: sin la marca de entorno, el MISMO sujeto publica vivos=0 con el reparentado vivo  (la copia sin la marca publica vivos=0 y deja el proceso vivo; esta sección lo recoge)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4859390Z   PASS  REQ-021 CA-04.4 el directorio de envoltorios es privado y se retira también en el camino de error  (estado=sin-sujeto y 0 directorios sonda-procesos-* en el temporal de la vuelta)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4865105Z   PASS  REQ-021 CA-04.5 un PATH con componente vacío o relativo no se mide: se dice  (las cuatro formas —':' inicial, ':' final, '::' y '.'— dan estado=path-inseguro, ninguna un número)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4866420Z   PASS  REQ-021 CA-04.3 las rutas se resuelven con type -P y el envoltorio generado lleva la ruta ABSOLUTA, no una re-resolución por PATH
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4867692Z   PASS  REQ-021 CA-02.5 una muestra MIXTA —reloj bajo instrumentación de procesos— no es publicable  (un envoltorio por proceso mide el envoltorio: estado=mixta, instrumentada=si y sin número)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4869489Z   PASS  REQ-021 CA-02.1/CA-02.4 el mínimo lo impone la sonda —no hay vía para pedir la media— y bajo el suelo no publica número  (estado=suelo con min=22µs bajo el suelo de 50000µs, y ninguna opción de media)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4871472Z   PASS  REQ-021 CA-02.2/CA-02.3/CA-06 con DOS sujetos las series se alternan a,b,a,b y el registro trae los dos mínimos, los máximos, la razón y sus condiciones  (razón 0.928× entre dos sujetos idénticos, con carga=3.61 y corrida declarada)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4873189Z   PASS  REQ-021 CA-10 el juez: estado≠ok es SKIP con motivo, registro vacío, ilegible o AMBIGUO es FAIL, y una corrida sin su calibración también  (13 registros → PASS SKIP SKIP SKIP FAIL FAIL FAIL FAIL FAIL FAIL FAIL SKIP PASS )
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4874791Z   PASS  REQ-021 CA-10.2 vivos>0 en una CALIBRACIÓN es FAIL y en una MEDICIÓN es SKIP: no es el mismo hecho  (la misma calibración con vivos=2 es FAIL y con vivos=0 pasa; en medición el mismo hecho da SKIP, arriba)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4875663Z Estabilizacion: rigor y firma por lector comun:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4876063Z   PASS  D16: matiz CERRADO no rebaja critico  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4876476Z   PASS  QA-P48-01: matiz no regala la exencion de QA  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4876923Z   PASS  D16: desconocido conserva derivacion heredada  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4877361Z   PASS  QA-P48-01: ligero limpio conserva su exencion  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4877799Z   PASS  QA-P48-01: matiz sube a estandar, no a critico  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4878231Z   PASS  QA-P48-01: matiz con fecha y coma exige QA  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4878646Z   PASS  QA-P48-01: matiz pegado a la clave exige QA  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4879300Z   PASS  QA-P48-01: matiz vacio exige QA  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4879704Z   PASS  QA-P48-01: el texto del matiz no decide el nivel  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4880160Z   PASS  QA-P48-01: estandar con matiz sigue pidiendo QA  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4880594Z   PASS  QA-P48-01: estandar con matiz cierra con QA  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4881050Z   PASS  QA-P48-01: critico con matiz cierra con ambas firmas  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4881551Z   PASS  QA-P48-01: sensible con matiz conserva el suelo critico  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4882018Z   PASS  QA-P48-01: el diagnostico nombra el veredicto de QA
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4882423Z   PASS  SEC084: Edit solo valor decorado  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4882768Z   PASS  SEC084: Edit valor sin clave  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4883094Z   PASS  SEC084: MultiEdit decorado  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4883411Z   PASS  SEC084: Write decorado  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4883763Z   PASS  SEC084: preventiva decorada permitida  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4884187Z   PASS  SEC084: QA y seguridad aprobados en MultiEdit  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4884592Z   PASS  SEC084: prosa con Seguridad no firma  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4885020Z   PASS  SEC084: Write conserva firma vieja y cambia prosa  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4885473Z   PASS  SEC084: cambiar evidencia de firma requiere QA  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4885947Z   PASS  SEC084: ausencia QA conserva comportamiento heredado  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4886398Z   PASS  SEC084: QA previo permite firma decorada  (allow)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4886797Z   PASS  SEC084: nueva cabecera Write sin archivo  (deny)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4887301Z   PASS  D16: diagnostico nombra rigor critico
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4887660Z   PASS  SEC084: diagnostico nombra el orden QA
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4887987Z -------------------------------------------
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4888500Z Resultado: 905 PASS, 0 FAIL, 7 SKIP — ninguna causa común: cada uno con su motivo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4889492Z        · ruta estilo Windows con backslashes -> deny  (sin cygpath: caso solo de Windows)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4891177Z        · REQ-017 CA-10 (i) fuera del dominio este árbol decide siempre lo mismo, y lo mismo en los dos locales  36 entradas NO son clasificables: la heredada tampoco publica una decisión única bajo LC_ALL=C, y un oráculo que no repite no es un oráculo — bash 5.2.21(1)-release, locale del entorno C.UTF-8, dentro 18 · fuera 266 · no clasificables 36 de 320
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4893757Z        · REQ-017 CA-10 (ii) ...y esa decisión es la del ORÁCULO: la heredada bajo LC_ALL=C  36 entradas NO son clasificables: la heredada tampoco publica una decisión única bajo LC_ALL=C, y un oráculo que no repite no es un oráculo — bash 5.2.21(1)-release, locale del entorno C.UTF-8, dentro 18 · fuera 266 · no clasificables 36 de 320
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4896314Z        · REQ-017 CA-10 (iii) fail-before: la heredada bajo el locale del entorno NO cumple (i) o (ii), y se registra sin fallar por ello  36 entradas NO son clasificables: la heredada tampoco publica una decisión única bajo LC_ALL=C, y un oráculo que no repite no es un oráculo — bash 5.2.21(1)-release, locale del entorno C.UTF-8, dentro 18 · fuera 266 · no clasificables 36 de 320
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4898640Z        · REQ-017 CA-05 (i) la ruta crítica cuesta no más de 0,250× lo de v1.32.1  no se pide: evidencia acreditada en el Historial de REQ-017 (0,125× — 9,60 s frente a 76,19 s, medido el 2026-09-07); es acreditación de fail-before, no puerta de cada PR — se repite con ARNES_COSTE_RUTA_CRITICA=1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4900947Z        · REQ-017 CA-05 (ii) la comparación no se compra dejando de probar  no se pide: evidencia acreditada en el Historial de REQ-017 (0,125× — 9,60 s frente a 76,19 s, medido el 2026-09-07); es acreditación de fail-before, no puerta de cada PR — se repite con ARNES_COSTE_RUTA_CRITICA=1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4903254Z        · REQ-021 CA-08 (iii) calibrar sonda-reloj.sh no cuesta más de 6× una medición suya con los MISMOS mandos  reloj 1.890× (3116955µs sobre 1648621µs) cabe en el techo 6,000×, pero la mitad en PROCESOS no es medible en este instrumento: publica procesos=no-aplica (contarlos exigiría instrumentar, y una muestra mixta no es publicable, CA-02.5)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.5177720Z ##[group]Run bash tests/escenarios/hooks/autoprueba-corredor.sh
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.5178239Z ^[[36;1mbash tests/escenarios/hooks/autoprueba-corredor.sh^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.5216360Z shell: /usr/bin/bash -e {0}
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.5216662Z ##[endgroup]
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.5324019Z Autoprueba del corredor (/home/runner/work/ArnesJuan/ArnesJuan/tests/escenarios/hooks/run.sh):
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.6157811Z   PASS  CA-02 el descubrimiento sale 0 y dice algo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.6164014Z   PASS  CA-02 dos corridas descubren exactamente lo mismo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.6192223Z   PASS  CA-02 el orden es el lexicográfico por nombre de archivo (LC_ALL=C)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.6234255Z   PASS  CA-02 descubre los mismos archivos que hay en secciones/
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.6721863Z   PASS  CA-21 el descubrimiento no arranca find, ls ni sort
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.6824524Z   PASS  CA-21 control: la sonda SÍ registra cuando se llama a ls y a sort
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.7415193Z   PASS  CA-03 una sección nueva corre sin editar run.sh (la primera)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.7433520Z   PASS  CA-03 una sección nueva corre sin editar run.sh (la segunda)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.7434262Z   PASS  CA-03 y la vuelta sale 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.7978503Z   PASS  CA-03 una sección retirada desaparece de la vuelta
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.8008609Z   PASS  CA-03 el corredor no cambió ni un byte en todo esto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.8578322Z   PASS  CA-07 sin CASOS_ESPERADOS_SECCION el corredor ABORTA
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.8601817Z   PASS  CA-07 el ABORT nombra el archivo que no lo declara
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.8609636Z   PASS  CA-07 y la vuelta sale distinta de 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.9151783Z   PASS  CA-08 el ABORT nombra el archivo descuadrado
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.9169465Z   PASS  CA-08 y dice la diferencia (declarados vs ejecutados)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.9188196Z   PASS  CA-08 y NO acusa al archivo que sí cuadra
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.9193749Z   PASS  CA-08 y la vuelta sale distinta de 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.9725573Z   PASS  CA-10 el ABORT nombra el archivo cuyo subshell murió
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.9741597Z   PASS  CA-10 y dice su código de salida
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.9758340Z   PASS  CA-10 y lo distingue de una sección de cero casos
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.9763942Z   PASS  CA-10 y la corrida entera sale distinta de 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.9780671Z   PASS  CA-10 la sección viva sigue habiendo corrido
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.0322796Z   PASS  CA-04 el ayudante de otra sección no existe (el caso no se ejecuta)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.0338991Z   PASS  CA-04 y el corredor lo reporta como fallo ruidoso, nombrando el archivo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.0344562Z   PASS  CA-04 y la vuelta sale distinta de 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.0429972Z   PASS  H-01 el README no nombra ningún ayudante que el corredor ya no defina
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.0462549Z   PASS  H-01 y ninguna línea del README reenumera el conjunto (el sitio único es el corredor)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.0498564Z   PASS  H-01 en el corredor, todo ayudante que dicta PASS/FAIL lleva su guarda de vacío
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.1024503Z   PASS  CA-04 los ayudantes compartidos del corredor SÍ se ven desde una sección
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.1025288Z   PASS  CA-04 y la sección que sólo usa los compartidos sale 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.1469581Z   PASS  CA-06 un ayudante de sección que juzga un hook sin guarda ABORTA
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.1486488Z   PASS  CA-06 el ABORT nombra el archivo y la función
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.1932700Z   PASS  CA-06 partir el ayudante en dos (ejecuta una, juzga otra) NO evade el control
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.1950302Z   PASS  CA-06 el ABORT nombra la función que dicta el veredicto, no la que ejecuta
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.1966991Z   PASS  CA-06 y el caso sin guarda no llegó a salir en verde
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.1972778Z   PASS  CA-06 y la vuelta sale distinta de 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.2724796Z   PASS  CA-06 control: la guarda en el eslabón que ejecuta basta (ni ABORT ni rojo)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.3431920Z   PASS  CA-06 control: con la guarda puesta, ni ABORT ni ruido
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.4181901Z   PASS  H-11 una guarda equivalente con OTRO nombre de variable no aborta (ni falso positivo)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.4198117Z   PASS  H-11 y no acusa a ninguna función de romper la invariante 1
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.4643616Z   PASS  H-11 el filtro de nombre de caso NO cuenta como guarda: sigue abortando
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.5170532Z   PASS  H-10 tras un diag sin salto final, el caso siguiente sigue empezando línea
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.5186890Z   PASS  H-10 y el cuadre por archivo no acusa en falso a CASOS_ESPERADOS_SECCION
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.5203815Z   PASS  H-10 el diagnóstico sigue saliendo, con su prefijo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.5719544Z   PASS  CA-17 con un selector corre sólo esa sección
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.5736570Z   PASS  CA-17 y no corre las demás
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.5754672Z   PASS  CA-17 el cuadre TOTAL queda suspendido, y lo dice
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.5755137Z   PASS  CA-17 y no aborta en falso
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.6271877Z   PASS  CA-17 en parcial, el cuadre DE LA SECCIÓN se sigue exigiendo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.6277101Z   PASS  CA-17 y por eso sale distinta de 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.6676710Z   PASS  CA-17 un selector que no casa con nada ABORTA (no degrada a filtro)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.6681672Z   PASS  CA-17 y sale distinta de 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.7080603Z   PASS  H-04 un archivo de secciones/ sin extensión .sh ABORTA en vez de ignorarse
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.7096999Z   PASS  H-04 y el ABORT lo nombra
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.7103598Z   PASS  H-04 y la vuelta sale distinta de 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.7502037Z   PASS  H-04 un archivo .sh que no casa NN- tampoco se ignora
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.7941603Z   PASS  H-05 un directorio con nombre de sección ABORTA y lo nombra
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.7958464Z   PASS  H-05 y no muere con 'unbound variable'
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.7964572Z   PASS  H-05 y la vuelta sale distinta de 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.8260494Z   PASS  CA-09 sin hooks el canario aborta la corrida entera
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.8277285Z   PASS  CA-09 y no llegó a ejecutarse ninguna sección
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.8283120Z   PASS  CA-09 y sale distinta de 0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.8302589Z   PASS  CA-01 run.sh no contiene ninguna definición seccion_NN()
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.8308317Z   PASS  CA-01 existe secciones/ con un archivo por sección
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.8315978Z   PASS  CA-01 todos los archivos de secciones/ se llaman NN-<slug>.sh
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.0652171Z   PASS  CA-11 bash -n pasa en todos los archivos de sección
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.0652772Z   PASS  CA-07 todos declaran su CASOS_ESPERADOS_SECCION
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.0653383Z   PASS  CA-19 ningún archivo de sección hace source de otro
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.0654303Z   PASS  CA-27 los archivos de sección no llevan bit de ejecución (se hacen source)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.0658487Z   PASS  CA-27 run.sh sí conserva su bit de ejecución
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.0992358Z   PASS  CA-18 (a) todos los archivos de sección declaran su PISO_AUTONOMO_SECCION
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.0993909Z   PASS  CA-18 (b) la derivación de cada piso es legible (tres términos o más)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.0995501Z   PASS  CA-18 (b) y sus términos SUMAN el valor declarado
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.0996456Z   PASS  CA-18 (c) el piso declarado cabe en el archivo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1010060Z   PASS  CA-18 publica una fila por archivo de sección descubierto
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1011527Z   PASS  CA-18 ningún archivo excede max(N, piso × k) — con N=400 y k=1,25
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1012969Z        --- CA-18 · techo derivado por archivo (se publica, no se compara) ---
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1014383Z        01-guard-codigo-quien-edita.sh                           lineas=  13 piso=  12 techo= 400 (gobierna N       ) duplicadas=   4
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1016035Z        02-guard-completado-transicion.sh                        lineas=  11 piso=  10 techo= 400 (gobierna N       ) duplicadas=   4
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1017682Z        03-veredictos-anti-deriva.sh                             lineas=  27 piso=  16 techo= 400 (gobierna N       ) duplicadas=   6
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1019520Z        04-windows-formas-del-manifiesto.sh                      lineas=  35 piso=  21 techo= 400 (gobierna N       ) duplicadas=   7
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1021612Z        05-identidad-del-agente.sh                               lineas=  30 piso=  17 techo= 400 (gobierna N       ) duplicadas=   4
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1023262Z        06-bash-escrituras-evidentes.sh                          lineas=  45 piso=  44 techo= 400 (gobierna N       ) duplicadas=   4
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1024886Z        07-bash-falsos-positivos.sh                              lineas= 200 piso=  74 techo= 400 (gobierna N       ) duplicadas=   6
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1026441Z        08-clase-del-hallazgo.sh                                 lineas=  27 piso=  23 techo= 400 (gobierna N       ) duplicadas=   4
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1028006Z        09-cierre-de-req-por-bash.sh                             lineas=  38 piso=  24 techo= 400 (gobierna N       ) duplicadas=   4
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1029904Z        10-plantilla-pending-approval.sh                         lineas=  27 piso=  22 techo= 400 (gobierna N       ) duplicadas=   7
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1031509Z        11-nivel-de-rigor.sh                                     lineas=  33 piso=  28 techo= 400 (gobierna N       ) duplicadas=   4
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1033126Z        12-rigor-ligero.sh                                       lineas=  30 piso=  29 techo= 400 (gobierna N       ) duplicadas=   7
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1034739Z        13-orden-del-ciclo.sh                                    lineas=  53 piso=  40 techo= 400 (gobierna N       ) duplicadas=   5
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1036416Z        14-campos-solo-en-la-cabecera.sh                         lineas= 168 piso= 167 techo= 400 (gobierna N       ) duplicadas=  10
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1038094Z        15-formas-decoradas.sh                                   lineas=  65 piso=  64 techo= 400 (gobierna N       ) duplicadas=   3
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1040248Z        16-guard-punto-de-entrada.sh                             lineas=  45 piso=  33 techo= 400 (gobierna N       ) duplicadas=   6
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1041948Z        17-asterisco-de-nota-al-pie.sh                           lineas=  34 piso=  22 techo= 400 (gobierna N       ) duplicadas=   6
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1043662Z        18-parentesis-es-evidencia.sh                            lineas=  38 piso=  32 techo= 400 (gobierna N       ) duplicadas=   4
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1045085Z        19-cola-hasta-la-cabecera.sh                             lineas=  28 piso=  19 techo= 400 (gobierna N       ) duplicadas=   6
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1046321Z        20-continuidad-automatica.sh                             lineas= 190 piso=  52 techo= 400 (gobierna N       ) duplicadas=  13
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1047807Z        21-rotacion-de-artefactos.sh                             lineas= 178 piso=  65 techo= 400 (gobierna N       ) duplicadas=  15
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1049290Z        22-hooks-json.sh                                         lineas=  56 piso=  38 techo= 400 (gobierna N       ) duplicadas=   8
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1050589Z        23-inerte-sin-manifiesto.sh                              lineas=  14 piso=  13 techo= 400 (gobierna N       ) duplicadas=   4
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1051876Z        24-arnes-lectura.sh                                      lineas=  37 piso=  36 techo= 400 (gobierna N       ) duplicadas=  11
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1053160Z        25-presupuesto-de-analisis.sh                            lineas= 295 piso=  69 techo= 400 (gobierna N       ) duplicadas=  14
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1054486Z        26-veredicto-fechado.sh                                  lineas= 155 piso=  61 techo= 400 (gobierna N       ) duplicadas=  12
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1055804Z        27-vocabulario-de-veredictos.sh                          lineas=  77 piso=  35 techo= 400 (gobierna N       ) duplicadas=   9
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1057196Z        28-rotacion-seccion-1-la-historia.sh                     lineas= 312 piso=  87 techo= 400 (gobierna N       ) duplicadas=  32
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1058631Z        28-rotacion-seccion-2-el-estado.sh                       lineas= 373 piso=  86 techo= 400 (gobierna N       ) duplicadas=  42
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1060430Z        29-guard-git-destructivo.sh                              lineas= 343 piso=  59 techo= 400 (gobierna N       ) duplicadas=   6
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1061771Z        30-celdas-recortadas.sh                                  lineas= 100 piso=  99 techo= 400 (gobierna N       ) duplicadas=  13
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1063072Z        31-cola-una-sola-regla.sh                                lineas= 176 piso=  49 techo= 400 (gobierna N       ) duplicadas=  16
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1064377Z        32-huecos-auditoria-r001.sh                              lineas= 194 piso=  58 techo= 400 (gobierna N       ) duplicadas=  17
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1065761Z        33-acento-y-clave-1-normalizacion.sh                     lineas= 333 piso= 174 techo= 400 (gobierna N       ) duplicadas=  84
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1067188Z        33-acento-y-clave-2-manifiesto.sh                        lineas= 258 piso= 157 techo= 400 (gobierna N       ) duplicadas=  28
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1068529Z        34-arnes-paralelo.sh                                     lineas= 332 piso=  85 techo= 400 (gobierna N       ) duplicadas=  91
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1070703Z        35-arnes-paralelo-fail-open.sh                           lineas= 399 piso= 171 techo= 400 (gobierna N       ) duplicadas=  90
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1072187Z        36-cabecera-comentario-html-1-la-puerta.sh               lineas= 358 piso= 138 techo= 400 (gobierna N       ) duplicadas= 160
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1073737Z        36-cabecera-comentario-html-2-los-lectores.sh            lineas= 344 piso= 132 techo= 400 (gobierna N       ) duplicadas= 110
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1075330Z        36-cabecera-comentario-html-3-comentar-retira.sh         lineas= 162 piso=  87 techo= 400 (gobierna N       ) duplicadas=  39
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1076975Z        36-cabecera-comentario-html-4-el-informe-y-los-textos.sh lineas= 188 piso= 103 techo= 400 (gobierna N       ) duplicadas=  22
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1078655Z        36-cabecera-comentario-html-5-el-cr-que-no-termina.sh    lineas= 332 piso= 117 techo= 400 (gobierna N       ) duplicadas= 102
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1080436Z        37-coste-del-escaner-1-el-dominio.sh                     lineas= 577 piso= 470 techo= 588 (gobierna piso*k  ) duplicadas= 187
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1081911Z        37-coste-del-escaner-2-las-razones.sh                    lineas= 282 piso= 192 techo= 400 (gobierna N       ) duplicadas= 148
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1083555Z        37-coste-del-escaner-3-la-pared.sh                       lineas= 286 piso= 283 techo= 400 (gobierna N       ) duplicadas= 140
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1085043Z        37-coste-del-escaner-4-la-ruta-critica.sh                lineas= 468 piso= 463 techo= 579 (gobierna piso*k  ) duplicadas= 157
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1086545Z        37-coste-del-escaner-5-el-camino-normal.sh               lineas= 329 piso= 273 techo= 400 (gobierna N       ) duplicadas= 140
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1088032Z        38-sondas-compartidas-1-el-registro.sh                   lineas= 198 piso=  65 techo= 400 (gobierna N       ) duplicadas=  43
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1089787Z        38-sondas-compartidas-2-la-calibracion.sh                lineas= 327 piso=  98 techo= 400 (gobierna N       ) duplicadas=  77
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1091313Z        38-sondas-compartidas-3-la-descendencia.sh               lineas= 351 piso= 103 techo= 400 (gobierna N       ) duplicadas= 115
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1092798Z        40-estabilizacion-firmas-y-rigor.sh                      lineas= 102 piso=  59 techo= 400 (gobierna N       ) duplicadas=   3
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1218319Z   PASS  CA-18 (iii) POSITIVO: la configuración verde existe (399 con techo N, 570 con techo 575)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1243253Z   PASS  CA-18 (iii) y el techo de piso 460 lo gobierna piso×k, no N
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1266878Z   PASS  CA-18 (iii) mientras el de piso 100 lo sigue gobernando N=400
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1470442Z   PASS  CA-18 (iii) NEGATIVO por N: nombra el archivo, su tamaño y su techo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1488380Z   PASS  CA-18 (iii) NEGATIVO por piso×k: nombra el archivo, su tamaño y su techo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1589687Z   PASS  CA-18 (a) NEGATIVO: el archivo que no declara su piso sale nombrado
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1607165Z   PASS  CA-18 (b) NEGATIVO: la derivación que no suma sale nombrada CON los dos números
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1624760Z   PASS  CA-18 (b) NEGATIVO: una derivación sin términos es ILEGIBLE, no se da por buena
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1642271Z   PASS  CA-18 (c) NEGATIVO: un piso mayor que el archivo sale nombrado
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1660322Z   PASS  CA-18 y el que sólo le falta la declaración no se acusa además de no sumar
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1799360Z   PASS  CA-12 (d) POSITIVO: dos corridas intactas dan el inventario IDÉNTICO bajo el oráculo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1815202Z   PASS  CA-12 el inventario tiene una línea por CASO: lo que no es un caso no entra
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1835400Z   PASS  CA-12 y sale en orden estable (LC_ALL=C)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1866737Z   PASS  CA-12 (c) el entero suelto del nombre se conserva (es la cota del caso, no su medida)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1896631Z   PASS  CA-12 (c) la entrada CITADA del caso se conserva (es lo que ejercita, no lo que midió)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1927650Z   PASS  CA-12 (c) la versión que el caso nombra se conserva
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1945502Z   PASS  CA-12 (c) dos casos que sólo difieren en un entero del nombre siguen siendo dos
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1974888Z   PASS  CA-12 (c) los tres veredictos se conservan
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.1993890Z   PASS  CA-12 (b) no queda ninguna magnitud sin normalizar (unidad pegada o tirada larga)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.2023884Z   PASS  CA-12 (b) la unidad se conserva y la magnitud no: ms dentro del NOMBRE del caso
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.2054167Z   PASS  CA-12 (b) y lo mismo con µs, cocientes, PID y ternas sorteadas de la evidencia
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.2366293Z   PASS  CA-12 (d) NEGATIVO 1, caso SUPRIMIDO: la comparación falla
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.2384507Z   PASS  CA-12 (d) …y su salida NOMBRA la línea suprimida
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.2453186Z   PASS  CA-12 (d) NEGATIVO 2, caso RENOMBRADO: la comparación falla
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.2492859Z   PASS  CA-12 (d) …y su salida NOMBRA el identificador que cambió de texto (los dos)
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.2559737Z   PASS  CA-12 (d) NEGATIVO 3, VEREDICTO INVERTIDO: la comparación falla
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.2597640Z   PASS  CA-12 (d) …y su salida NOMBRA el caso que cambió de veredicto, con los dos
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.2662991Z   PASS  CA-12 (d) control: la inyección cambia UNA línea, no el inventario entero
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.2679317Z   PASS  H-06 la autoprueba declara su propio cuadre una sola vez
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.2679992Z -------------------------------------------
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.2680514Z Autoprueba: 106 PASS, 0 FAIL
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.2834891Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.2836536Z Post job cleanup.
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.3728625Z [command]/usr/bin/git version
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.3774808Z git version 2.55.0
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.3816858Z Temporarily overriding HOME='/home/runner/work/_temp/315c49ef-5858-42f1-86c1-e4c07eea057d' before making global git config changes
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.3818311Z Adding repository directory to the temporary git global config as a safe directory
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.3823427Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ArnesJuan/ArnesJuan
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.3864976Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.3903253Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.4160847Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.4192781Z http.https://github.com/.extraheader
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.4206315Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.4243947Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.4515733Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.4558133Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.4974085Z Cleaning up orphan processes
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.5274539Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

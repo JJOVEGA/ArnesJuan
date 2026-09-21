@@ -1,0 +1,9 @@
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.4888500Z Resultado: 905 PASS, 0 FAIL, 7 SKIP — ninguna causa común: cada uno con su motivo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.5177720Z ##[group]Run bash tests/escenarios/hooks/autoprueba-corredor.sh
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:17.5178239Z ^[[36;1mbash tests/escenarios/hooks/autoprueba-corredor.sh^[[0m
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.0498564Z   PASS  H-01 en el corredor, todo ayudante que dicta PASS/FAIL lleva su guarda de vacío
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.5186890Z   PASS  H-10 y el cuadre por archivo no acusa en falso a CASOS_ESPERADOS_SECCION
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.5754672Z   PASS  CA-17 el cuadre TOTAL queda suspendido, y lo dice
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:18.6271877Z   PASS  CA-17 en parcial, el cuadre DE LA SECCIÓN se sigue exigiendo
+hooks-en-linux	UNKNOWN STEP	2026-09-21T21:12:19.2679317Z   PASS  H-06 la autoprueba declara su propio cuadre una sola vez
+hooks-en-linux success 2026-09-21T21:11:27Z 2026-09-21T21:12:21Z
