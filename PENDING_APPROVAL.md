@@ -36,8 +36,17 @@
 
 ## Pendientes
 
+## Resueltas
 
-### [2026-09-21] (coordinadora) — REQ-025 entrega 1: cómo se resuelve la condición de aceptación que QA determinó pendiente (QA-025-08)
+### RESUELTA (propietario, 2026-09-21) — **REQ-025 entrega 1: se ACEPTA la laguna de evidencia de QA-025-08 (opción B)**, con residual y sin sustituir ninguna firma
+
+**Texto del propietario, literal:** «Acepto la laguna de evidencia de QA-025-08 para la entrega 1. Conserva S4 como "no observado"; no lo conviertas en satisfecho ni borres el hallazgo. Registra el residual con dueño y fecha de revisión. En el primer caso real aplicable se comprobará si la coordinadora conserva el bloqueo de QA. Si no aparece antes de la fecha, se revisa la aceptación; no se da por acreditado. Pide a QA que determine el veredicto correspondiente con esta aceptación y, si permite avanzar según las reglas vigentes, continúa con seguridad acotada. Mi aceptación no sustituye ninguna firma. OBS-H queda separado y expresamente pendiente: lo observado cuestiona una protección declarada y no queda aceptado por esta decisión. No abras su reparación ahora. Entrega el resultado con el CI de la cabeza actual. Sin nuevos ensayos, sin iniciar 1b ni REQ-028, sin fusión ni publicación.»
+
+**Qué cambia y qué no:** QA-025-08 pasa a **residual aceptado** en `requirements/REQ-025.md` (CA-11 punto 3), con S4 conservado como **no observado**; el veredicto de QA y la firma de seguridad se emiten por sus autores con esta aceptación como dato. **OBS-H** (`guard-codigo` y un `cp` con efecto en el ensayo) **no queda aceptado** ni se repara por esta decisión.
+
+**La entrada tal como estaba, conservada:**
+
+#### [2026-09-21] (coordinadora) — REQ-025 entrega 1: cómo se resuelve la condición de aceptación que QA determinó pendiente (QA-025-08) *(histórica; resuelta arriba)*
 - **Contexto:** la vuelta 3 de 3 se agotó con `QA: con-hallazgos` (R-3, sobre `a441e04`). Lo encargado a la vuelta 3 quedó reparado (QA-025-07, ENS-01, OBS-C, OBS-E). QA determinó, como el propietario le pidió, que **falta una condición de aceptación**: la conducta que la entrega 1 modifica —el tratamiento de un **hallazgo de QA** bajo la regla 3— no tiene evidencia de tercero; en la única corrida del ensayo QA aprobó y S4 no se disparó, y el bloqueo se conservó por la vía del **veto de seguridad**, que esta entrega **no** modifica. El propietario escribió: «no se elimina esa condición por agotarse las vueltas», «no aceptes residuales en mi nombre», «no autorizo repetir el ensayo completo ni construir mecanismos nuevos».
 - **Acción que impide (regla 2):** **cerrar** — marcar `REQ-025` como `completado`. **Regla que lo impide:** `QA: con-hallazgos` y CA-13 (`guard-completado`, `AGENTS.md` §6 y §13). **No** impide implementar ni probar; **no** afecta a la entrega 1b ni a REQ-028. **Evidencia:** `docs/qa/REQ-025.md`, §«Acreditación del ensayo S1…S4» (S4) y §«Vuelta 3 de 3» (QA-025-08).
 - **Opciones:**
@@ -47,8 +56,6 @@
 - **Recomendación (2026-09-21, tras consumir A):** B con el forzador de QA. Es la recomendación de QA y de la coordinadora; la elección es del propietario.
 - **Estado tras A:** `QA: con-hallazgos (R-3b, sobre 9f908d9)`; **QA-025-05 cerrado** (CI verde verificado por QA sobre la cabeza exacta; CA-13 satisfecho; el verde no desmiente el FAIL local); `Hallazgos abiertos: QA-025-08 (instrumento)`. Seguridad (CA-11 punto 4) no emitida.
 - **Espera:** elección del propietario entre B y C. **Trabajo que sigue mientras tanto:** ninguno de esta entrega. La entrega 1b y REQ-028 no dependen de esta decisión y no se arrancan sin autorización.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-09-09) — **se PUBLICA `v1.33.0`**: revierte el aplazamiento de ayer, con límite declarado
 
