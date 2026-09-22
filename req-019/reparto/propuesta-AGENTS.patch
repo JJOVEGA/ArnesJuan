@@ -1,0 +1,104 @@
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -22,7 +22,7 @@
+ 
+ Plugin de Claude Code: un arnés de cuatro agentes (analista, desarrollador, QA, auditor de seguridad) con enforcement por hooks (`PreToolUse`, `Stop`), quality gates, trazabilidad y continuidad derivada del disco. Lo usan proyectos reales; sus informes de defectos llegan por canal privado y este repositorio, que es público, describe el arnés y nunca los hallazgos de un cliente.
+ 
+-**Este repositorio se desarrolla a sí mismo (autoalojamiento controlado).** La versión estable instalada del plugin —la que corre los hooks de esta sesión— gobierna el desarrollo de la siguiente. La versión que se está modificando nunca es su propio guardián durante esa misma ejecución. El procedimiento completo vive en `docs/gobernanza/autoalojamiento.md`.
++**Este repositorio se desarrolla a sí mismo (autoalojamiento controlado):** la versión estable instalada del plugin gobierna el desarrollo de la siguiente. Por qué la versión que se modifica nunca es su propio guardián, y el procedimiento completo: `docs/gobernanza/autoalojamiento.md` §«Las dos copias».
+ 
+ **Principio rector:** el arnés trae el mecanismo, nunca el mapeo; una puerta que no puede medir no deja pasar; y la versión N gobierna el desarrollo de N+1.
+ 
+@@ -95,10 +95,7 @@
+ > proyectos**, e intenta romperlo. Se lanza con el modelo **Opus**, por encima del `sonnet` que
+ > declara el agente.
+ >
+-> **Cómo se aplica, y por qué así:** con el parámetro `model` de la herramienta `Agent` al despachar
+-> el subagente, que tiene precedencia sobre el frontmatter. **No** se edita `agents/qa-tester.md` del
+-> plugin: ese archivo lo heredan todos los proyectos que instalan el arnés, y esta decisión es de
+-> este repositorio, no suya. Misma frontera que el resto de la política de autoalojamiento.
++> **Cómo se aplica:** con el parámetro `model` de la herramienta `Agent` al despachar el subagente, que tiene precedencia sobre el frontmatter; **no** se edita `agents/qa-tester.md`. Por qué así y no editando el agente: `docs/gobernanza/autoalojamiento.md` §«Política de rigor».
+ 
+ > Documentación distribuida (no hay 5º agente "documentador"): cada agente documenta su
+ > rebanada con el contexto vivo, y el `desarrollador` consolida la vista de arquitectura en
+@@ -330,9 +327,8 @@
+ coordinadora **sólo** despacha comisiones en paralelo sobre REQ que `tools/arnes-paralelo.sh`
+ declare **disjuntos** por su campo `Archivos:` (forma y fail-closed en `requirements/README.md`), y
+ **nunca** por intuición. Un despacho paralelo sin esa comprobación es lo que produce **conflictos de
+-fusión y trabajo perdido**. Medido: el ciclo 2 corrió casi entero en serie —tiempo de reloj ≈ tiempo
+-de agente— no porque una regla lo prohibiera, sino porque nadie podía afirmar sin adivinar qué dos
+-comisiones no iban a pisarse; y adivinar bien tres veces y mal la cuarta cuesta más que la serie.
++fusión y trabajo perdido**.
++Medido en el ciclo 2, con su cifra: `docs/gobernanza/autoalojamiento.md` §«Lo que enseñó el ciclo 2».
+ 
+ > **Necesaria y no suficiente: un `disjunto` no se toma por bueno sobre un campo decorado.** La
+ > instrucción de arriba no se relaja —preguntar sigue siendo obligatorio—, pero mientras el hallazgo
+@@ -378,9 +374,8 @@
+ del `Hallazgos abiertos:` del REQ, ni reasignarlo a otro REQ, a otra entrega o a otra ventana, ni
+ pasarlo de una sede a otra—. **La ubicación no es un veredicto.**
+ Máximo **3** vueltas dev↔QA **por REQ**, y el contador **NO se reinicia con
+-cada hallazgo nuevo**. Esto es deliberado: un tope por hallazgo no acota nada, porque cada
+-arreglo cierra el hallazgo documentado y la vuelta siguiente encuentra una variante. Un REQ
+-puede pasar semanas en `en-revisión` sin haber gastado nunca tres vueltas del mismo hallazgo.
++cada hallazgo nuevo**.
++(Por qué el tope es por REQ y no por hallazgo: `docs/arnes/agents-md-historia-y-mecanica.md` §«Loop de error».)
+ **Y el contador es del defecto o de la entrega, no del envoltorio bajo el que se despacha:** una
+ reparación **del mismo defecto o de la misma entrega** **conserva su contador**, y tampoco se
+ reinicia por cambio de rol, de fase o de nombre de la comisión —tramo, ajuste, revisión acotada,
+@@ -699,10 +694,7 @@
+ distinto es **otro valor**, no un paréntesis. Es la única vía documentada para avisar sin
+ bloquear: `ask` detendría la llamada.
+ 
+-**Las celdas de veredicto del bloque derivado salen recortadas a 40 caracteres.** Es
+-presentación: la puerta y `tools/arnes-lectura.sh` leen el valor entero. Un bloque de
+-continuidad en el que cuatro veredictos largos ocupan un tercio —y rompen la tabla— deja
+-de servir para lo único que existe.
++**Presentación del bloque derivado** (por qué las celdas de veredicto salen recortadas a 40 caracteres y qué lee el valor entero): `docs/arnes/agents-md-historia-y-mecanica.md` §«Bloque derivado».
+ 
+ **La invariante manda sobre cualquier preferencia de herramienta.** Si una preferencia de sesión
+ —una instrucción de estilo, una costumbre, un ajuste de configuración— empuja a hacer por la
+@@ -746,32 +738,9 @@
+   pregunta después si algo protegido cambió. Hasta que exista, esta vía es exactamente lo que dice
+   ser: una barandilla contra el descuido, no contra la ofuscación deliberada.
+ 
+-**Otro que tampoco decide: la rotación.** Un artefacto de bitácora —`CHANGELOG.md`, el registro
+-de seguridad— crece sin tope, y todo lo que crece sin tope acaba entrando entero en la ventana
+-de contexto. Con `rotacion.activo: true`, al parar un agente el arnés **mueve** las secciones
+-sobrantes a `<nombre>-archivo.md` y deja un puntero. **Mueve; no resume** — un resumen
+-convertiría la bitácora en la versión que el modelo recuerda de ella. Viene apagada.
+-También puede archivar **una sección** de un documento —típicamente la historia de un REQ— a
+-`historial/<nombre>.md`, dejando **el resto intacto**: la cabecera con sus veredictos y los
+-criterios de aceptación no se tocan nunca, porque son el contrato. Qué sección es historia lo
+-declara este proyecto en `rotacion.artefactos` (`glob` + `seccion`); el arnés no trae ninguna por
+-defecto, y el nombre se compara **exacto**, nunca por prefijo.
+-
+-**Un hook que no decide nada: la continuidad.** Al parar un agente (`Stop` / `SubagentStop`),
+-el arnés reescribe en `docs/ESTADO.md`, entre marcadores, un bloque **derivado** del disco:
+-estado y veredictos de cada REQ, cola de aprobaciones, rama y limpieza del árbol. No permite ni
+-impide nada — existe porque **un resumen redactado por el modelo miente justo cuando más falta
+-hace**, que es cuando le queda poco contexto. Por eso no se redacta: se deriva, y cada línea
+-sale de leer un archivo. Nunca bloquea la parada y se apaga con
+-`estado_derivado.activo: false`. **Y sobre el texto que hay fuera de los marcadores, las dos
+-mitades — porque una se afirmó sin condición y estaba medida falsa.** *Sí:* fuera de los
+-marcadores no se modifica nada; si eso no se puede **leer** no se escribe nada y se avisa; y
+-cada parada publica por un temporal **propio de su proceso** y lo mueve encima, así que dos
+-paradas simultáneas no comparten archivo (hasta 1.32.0 el temporal tenía **nombre fijo** y por
+-ahí se perdió texto humano **1 de 25** vueltas del banco; cerrado en 1.32.1, REQ-015). *No:*
+-no hay **serialización ni orden** — con dos paradas a la vez gana la última que publica, y es
+-conforme porque el bloque es derivado del mismo disco; y si al proceso lo **matan** sin darle
+-salida, su temporal puede sobrevivir hasta la parada siguiente, que lo retira.
++**Otro que tampoco decide: la rotación.** Con `rotacion.activo: true` (viene **apagada**), al parar un agente el arnés **mueve** —y **no resume**— las secciones sobrantes de una bitácora a `<nombre>-archivo.md`, o una sección declarada de un documento a `historial/<nombre>.md`, dejando **el resto intacto**: la cabecera con sus veredictos y los criterios de un REQ **no se tocan nunca**. Qué declara el proyecto en `rotacion.artefactos`, cómo se compara el nombre y por qué mueve en vez de resumir: `docs/arnes/agents-md-historia-y-mecanica.md` §«Rotación».
++
++**Un hook que no decide nada: la continuidad.** Al parar un agente (`Stop` / `SubagentStop`) el arnés reescribe en `docs/ESTADO.md`, entre marcadores, un bloque **derivado** del disco (estado y veredictos de cada REQ, cola, rama y limpieza del árbol). **No permite ni impide nada**, nunca bloquea la parada y se apaga con `estado_derivado.activo: false`. **Acotación, no exhaustiva:** fuera de los marcadores **no se modifica nada** y, si eso no se puede leer, no se escribe nada y se avisa; **no** hay serialización entre paradas simultáneas —gana la última que publica—, y un proceso **matado** puede dejar su temporal hasta la parada siguiente. Por qué se deriva y no se redacta, y la historia medida (1.32.0 → 1.32.1, REQ-015): `docs/arnes/agents-md-historia-y-mecanica.md` §«Continuidad».
+ 
+ La consecuencia práctica: el enforcement por runtime es la última red, no la primera. La regla
+ sigue siendo la de §5, y saltársela por otra vía es un incumplimiento aunque ningún hook grite.
+@@ -786,7 +755,4 @@
+ sin él, el enforcement queda inactivo con aviso (no bloquea). El changelog sigue cubierto por
+ el hook `pre-commit` de git (§8).
+ 
+-**Nombre del agente en el manifiesto:** basta el nombre corto (`desarrollador`). El hook tolera
+-el prefijo del plugin que Claude Code añade en runtime (`arnes-juan:desarrollador`), así que no
+-hay que escribirlo. Escribirlo es opcional y hace la comparación **estricta**: `agentes.agente_codigo`
+-con prefijo sólo acepta a ese proveedor, útil si conviven dos plugins con un agente homónimo.
++**Nombre del agente en el manifiesto:** basta el nombre corto (`desarrollador`); el prefijo del plugin (`arnes-juan:desarrollador`) es opcional y hace la comparación **estricta**. Cuándo conviene el prefijo: `docs/arnes/agents-md-historia-y-mecanica.md` §«Manifiesto».
