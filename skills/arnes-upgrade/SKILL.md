@@ -867,6 +867,84 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   **Y un aviso entero:** esta vía **reduce despachos, no controles**. Si prefieres seguir con las
   cuatro fases siempre, **no migres estas secciones**: conservar tu texto es una respuesta válida.
 
+### Hacia 1.35.0
+
+- **`AGENTS.md` §6: la COORDINACIÓN ORIENTADA A ENTREGAS, en una sola sede; y la cabecera de
+  `PENDING_APPROVAL.md`, que nombra qué impide la cola.** §6 gana un bloque con **seis reglas** de
+  la sesión coordinadora —objetivo concreto en el encargo · todo bloqueo declara su alcance · un
+  hallazgo no es, por sí solo, un encargo nuevo · decisiones humanas temprano y con su forma ·
+  presupuesto del ciclo completo · avance observable—, y **dos párrafos vigentes de esa misma
+  sección quedan reescritos en su promesa completa**: «Loop de error» deja de prometer que un
+  hallazgo **devuelve** el REQ al desarrollador por sí solo, y «Mecanismo de gate» deja de
+  prometer que una decisión pendiente **detiene todo** — ahora nombra la **transición exacta** que
+  queda impedida, **marcar un REQ como `completado`**, y dice qué sigue permitido. La **cabecera
+  de `PENDING_APPROVAL.md`** cambia por lo mismo: es el texto que se lee **al encolar**.
+
+  **LO PRIMERO, porque decide cómo se lee el resto: esta entrada se prepara CON la versión y NO
+  declara que el cambio haya llegado a tu proyecto.** Tu `AGENTS.md` sigue **congelado** hasta que
+  corras esta migración y resuelvas sus conflictos; que el texto exista en el plugin no cambia una
+  coma del tuyo, y migrar es **un acto tuyo**.
+
+  **Qué NO cambia, y va antes que las seis reglas porque es lo que se perdería leyendo de prisa:**
+  el `qa-tester` y el `auditor-seguridad` **conservan íntegra** su capacidad de **detectar,
+  registrar, clasificar y bloquear**, y el **veto** de seguridad sigue disponible en cualquier
+  momento; **ninguna clasificación de la coordinadora retira, degrada ni pospone un veredicto**;
+  el **tope de vueltas dev↔QA por REQ** y su no-reinicio **se conservan** —se les añade que
+  tampoco se reinician por **cambio de rol, de fase o de nombre** de la comisión **ni abriendo un
+  REQ nuevo**—; las **tres clases** del campo `Hallazgos abiertos:` (`usuario/dinero`, `contrato`,
+  `instrumento`) **no se renombran** ni se mezclan con la clasificación nueva; y **ningún hook
+  cambia**, tampoco `.arnes/config.json`: `guard-completado` sigue denegando el cierre de
+  **cualquier** REQ mientras la cola tenga entradas. Lo que la reescritura corrige es que el
+  **texto** prometía más de lo que ningún mecanismo sostiene. **Ninguna fila del merge —tampoco
+  `INTACTO` ni `NUEVO`— escribe una autorización ni concede una facultad:** lo que se instala es
+  **texto normativo** sobre cómo despacha tu sesión coordinadora, y **ningún agente gana ni pierde
+  facultades** por migrarlo.
+
+  **Primero, la separación sin la cual esta migración se detiene entera: los agentes NO se
+  migran.** Los **cuatro agentes los provee el plugin** (`.claude/agents/`): tu proyecto **no
+  tiene copia propia** que clasificar, y `arnes-init` **no** deja base suya en
+  `.arnes/plantillas-origen/`, porque ahí sólo van los `.tpl` y los agentes no lo son. **No los
+  clasifiques, no los busques y no los pongas en el plan:** una clasificación sin base recuperable
+  es `UNKNOWN`, y un `UNKNOWN` **detiene la corrida completa** — incluida `§6`, que sí es
+  migrable. Sus definiciones llegan con las referencias a esta sede **al actualizar el plugin**,
+  no por esta migración; **dilo en el informe** y sigue.
+
+  **Lo que SÍ se migra** son **dos** artefactos, y se clasifican **por separado**: la sección
+  `§6` de tu `AGENTS.md` y la **cabecera de tu `PENDING_APPROVAL.md`** —el bloque de cita que abre
+  el archivo, **antes** de `## Pendientes`; **las entradas de la cola no se tocan nunca**—. Los
+  dos se copiaron de plantilla y por eso tienen base con la que comparar. Y
+  **`templates/AGENTS.md.tpl`** y **`templates/PENDING_APPROVAL.md.tpl`**, si tu proyecto los
+  conserva, también tienen base y entran en el merge: si los personalizaste saldrán `MODIFICADO`,
+  y eso es **conflicto** — tu texto **no se toca** y la decisión es tuya.
+
+  **Y antes de clasificar `§6`, identifícala por CONTENIDO Y TÍTULO, nunca sólo por el número.**
+  Es la misma regla terminal de «Tres resultados, nunca dos», por la misma propiedad que ya se
+  explica en «Hacia 1.34.0»: **el arnés ha renumerado y retitulado secciones de `AGENTS.md` a lo
+  largo de su historia**, así que el número **no identifica** una sección. Comprueba que el título
+  y el contenido del `## N.` de tu proyecto y el del `## N.` de la base **son la misma sección**;
+  **si no lo son, o si no puedes afirmarlo sin adivinar, es `UNKNOWN`**: la migración **se
+  detiene, no se aplica nada** —tampoco lo que salió `SAFE`— **y el documento se conserva
+  intacto**. La cabecera de `PENDING_APPROVAL.md` se identifica por la misma propiedad y no por
+  su número de línea: es el bloque de cita anterior al primer `## `. Esto **manda sobre la tabla
+  de abajo**.
+
+  Hecha esa identificación, y **sólo** entonces:
+
+  | Estado de cada artefacto | Qué haces |
+  |---|---|
+  | **`INTACTO`** | Aplicar el contenido nuevo **sin preguntar** |
+  | **`MODIFICADO`** | **Conflicto: preguntar, y NO tocar la sección.** Tu texto **se queda como está** y el conflicto **se lista para el humano**; no escribas nada en ella. Cuando preguntes, **propón** conservar tu texto añadiendo encima lo nuevo — pero **aplicarlo es decisión tuya, no de la migración**. Si tu personalización reescribió «Loop de error», «Mecanismo de gate» o la cabecera de la cola, **es justo lo que este cambio toca** |
+  | **`ELIMINADO`** —existía en la base y tu proyecto **lo borró**— | **Conflicto: preguntar, y NO reponer por tu cuenta.** Pudo borrarse a propósito. Si no se repone, **dilo en el informe**: ese proyecto se queda sin las seis reglas y sigue con su texto anterior, que es válido |
+  | **`NUEVO`** —tu base **no tenía** ese artefacto— | **Añadir.** No hay texto tuyo que conservar |
+  | **`UNKNOWN`** —no se puede decidir sin adivinar— | **Terminal, como `CONFLICTO`: te DETIENES y NO se aplica NADA de toda la corrida**, ni siquiera lo que salió `SAFE`. Déjalo constar y pregunta |
+
+  **Y si queda en conflicto, la migración es PARCIAL: `arnes_version` conserva el valor de origen
+  y no se sube hasta resolverlo (Fase 5).**
+
+  **Y un aviso entero:** estas seis reglas **no reducen controles**, reordenan **quién decide qué
+  trabajo se abre**. Si prefieres seguir con tu texto actual, **no migres estas secciones**:
+  conservarlo es una respuesta válida.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

@@ -32,6 +32,12 @@ El estado vive en la línea `Estado:` del archivo `requirements/REQ-XXX.md` (seg
   autorización no habilita nada**, y esta comprobación **no retira ninguna obligación de
   seguridad**: un proyecto que no autorice la vía tiene más pasos, nunca menos. Deja escrito en tu
   informe **qué archivo leíste y qué resolvió**.
+  **Y si el `AGENTS.md` de ese proyecto todavía no tiene ese bloque** —tú llegas con el plugin, y su
+  `AGENTS.md` sólo cambia cuando el propietario ejecuta `arnes-upgrade`—, **describe** el bloqueo
+  con tus palabras: qué acción impides, en qué parte de la entrega, con qué evidencia y qué lo
+  resuelve; **avisa del desfase** en tu informe; y **conserva las instrucciones y restricciones
+  vigentes de ese proyecto** — esa descripción **no te habilita a continuar** donde su política
+  vigente exige detenerse, **ni acredita** que la migración se haya hecho.
 - **Si el proyecto SÍ la autoriza, el write-back es TUYO y viaja en la MISMA entrega que el
   arreglo:** el criterio o el NFR que el hallazgo obliga a ajustar se escribe en el REQ, con su
   causa enlazada al hallazgo. Un arreglo entregado sin él **es deriva** y QA no firmará. **Pero
@@ -49,7 +55,7 @@ El estado vive en la línea `Estado:` del archivo `requirements/REQ-XXX.md` (seg
   y el REQ dice `Rigor: estandar`, `Sensible a seguridad: no`—, **no la corrijas tú y no sigas como
   si encajara**: el contrato **no es claro** en el sentido de `AGENTS.md` §6. Déjalo escrito y para;
   la coordinadora pide al analista **sólo esa decisión**, y con ella resuelta la vía continúa.
-- Si el REQ es ambiguo, le falta un dato para implementarse, o contradice un NFR: **no adivines y no implementes una interpretación a medias.** Deja `Estado: bloqueado` con una nota de qué falta o qué choca, y detente.
+- Si el REQ es ambiguo, le falta un dato para implementarse, o contradice un NFR: **no adivines y no implementes una interpretación a medias.** Deja `Estado: bloqueado` **declarándolo con la forma de bloqueo con alcance de `AGENTS.md` §6, regla 2** — las clases de acción y los cuatro elementos viven allí y no se copian aquí. Y detente **en eso**: tu bloqueo no te autoriza a parar el trabajo que no depende de él, ni a rodearlo.
 
 ## Jerarquía ante conflictos
 Cuando `AGENTS.md`, el REQ y un NFR se contradigan, el orden es:

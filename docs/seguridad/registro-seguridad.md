@@ -6831,3 +6831,427 @@ seguridad antes de recomendar reanudar una migración parcial**, conforme a la d
 
 **Numeración vigente tras esta revisión (en ESTE registro):** última revisión **R-033**; último
 hallazgo **SEC-092**; próximos libres **R-034** y **SEC-093**.
+
+---
+
+## Revisión R-041 — **firma de la ENTREGA 1 de REQ-025**, revisión acotada de seguridad y gobernanza del delta normativo. `feat/req-025-coordinacion-entregas` @ `5c30281` — 2026-09-21
+
+**Por qué R-041 y SEC-102, y no R-034 y SEC-093.** El cierre de `R-033` declara libres `R-034` y
+`SEC-093` **en este registro**, pero el propio `R-031` deja escrito que `R-037`…`R-040` y `SEC-093`…
+`SEC-101` viven en el registro de la **rama larga**, que no está fusionada. Tomar el siguiente libre
+«de este archivo» fabricaría dos `SEC-093` distintos el día que las dos líneas converjan — que es
+exactamente el defecto que `R-019` §0 tuvo que renumerar (dos `R-018` y dos `SEC-057`). Tomo, por
+tanto, el siguiente libre **sobre las dos líneas**: `R-041` y `SEC-102`. La regla queda enunciada por
+su propiedad y no por este caso: **un identificador se toma libre en todas las líneas vivas del
+registro, no sólo en el archivo que se tiene delante.**
+
+**Alcance, y lo que lo acota.** Sólo el delta `origin/main..5c30281` (`origin/main` = `cc8972c` =
+`v1.34.0`): **18** archivos. Verificado por mí, no aceptado de la coordinadora: **0** archivos en
+`hooks/`, `tools/`, `tests/`, `.github/`, `.arnes/` y `.claude-plugin/`. Los commits
+`a46ef50..5c30281` posteriores a `QA: aprobado` tocan **sólo** `CHANGELOG.md`, `docs/qa/REQ-025.md`
+y la línea `QA:` de `requirements/REQ-025.md` — documentación de QA —, así que firmo **sobre el
+mismo árbol** que QA validó. Orden respetado (`AGENTS.md` §6): `QA: aprobado (R-4)` existía antes de
+esta revisión, y esta revisión **no** es preventiva.
+
+**Método.** Lectura del delta completo, del REQ, del registro de QA (§R-3b y §R-4), de la cola y del
+ADR-008; comparación del par `AGENTS.md` ↔ `templates/AGENTS.md.tpl` **carácter a carácter sobre las
+líneas añadidas y retiradas** (idénticas salvo los marcadores preexistentes `{{MAX_REINTENTOS}}` y
+`{{GATES_HUMANOS}}`); barrido **por propiedad** de la frase absoluta que la entrega corrige —toda
+sede, plantilla, definición de agente **o mensaje que un programa imprima** que afirme que un
+hallazgo devuelve trabajo por sí solo o que una decisión pendiente detiene todo—; y derivación de la
+intersección de campos `Archivos:` **leyendo los campos**, no ejecutando la herramienta. **Sin
+ensayos, sin reproducciones y sin reparaciones**, por instrucción expresa. Ninguna sonda se ejecutó.
+
+### 1. El límite del propietario: **se cumple**
+
+«No cambia hooks, permisos, rigor, exigencias de seguridad ni condiciones de cierre». Comprobado, y
+cada punto con su evidencia:
+
+| Lo prometido | Cómo lo comprobé | Resultado |
+|---|---|---|
+| No cambia hooks | `git diff --name-only origin/main..5c30281` → ningún archivo bajo `hooks/`, `hooks.json` ni `.arnes/config.json` | ✓ |
+| No cambia permisos | Ninguna fila del delta concede una facultad; `skills/arnes-upgrade/SKILL.md` lo dice de sí mismo: «Ninguna fila del merge —tampoco `INTACTO` ni `NUEVO`— escribe una autorización ni concede una facultad» | ✓ |
+| No cambia el rigor | Ninguna línea `Rigor:` ni `Sensible a seguridad:` cambia en el delta; `REQ-028`, que nace aquí, nace `Rigor: critico` y `Sensible a seguridad: sí`, conforme a la política de autoalojamiento | ✓ |
+| No cambia exigencias de seguridad | El disparador obligatorio, el orden de firmas, el write-back y el veto siguen escritos e **íntegros** en `agents/auditor-seguridad.md`; §2 abajo | ✓ |
+| No cambia condiciones de cierre | «cerrar» **cita** las condiciones de `guard-completado` y declara expresamente que **no las redeclara**; el hook no se toca | ✓ |
+
+**Y una comprobación que no estaba pedida y sí importaba: el delta estrecha lo que la prosa
+prometía, y hay que decir en qué dirección.** «Mecanismo de gate» pasa de «detiene el pipeline, no
+continúa hasta que el humano resuelve» a «impide la acción de clase *cerrar* — marcar un REQ como
+`completado`». Eso **abre** trabajo que antes la prosa daba por detenido. **No es un debilitamiento
+de control** y razono por qué en vez de afirmarlo: la prosa antigua prometía **más de lo que ningún
+mecanismo sostenía** —`guard-completado` sólo deniega esa transición—, de modo que lo retirado es
+una promesa falsa, no una puerta. Y la apertura viene acompañada de **dos estrechamientos reales**:
+se **retira** de «Gates de aprobación humana» la frase «lo que no está en esta lista no se detiene
+por ellas», y la frontera (ii) añade que **vaciar la cola no concede ninguna aprobación humana**.
+Neto: la sede promete menos y **acota más**.
+
+### 2. Ningún agente pierde facultad — y dos ganan precisión
+
+- **`auditor-seguridad`**: el veto sigue entero y gana «**conserva el alcance que tú le das** y puede
+  impedir más de una acción»; el disparador obligatorio, la prohibición de firmar antes que QA, la
+  auditoría preventiva y el write-back quedan **sin tocar**. La obligación nueva es de **forma**
+  —declarar el alcance—, y el texto dice explícitamente que «declararlo no lo debilita».
+- **`qa-tester`**: conserva «detectar, registrar con clase y bloquear»; gana la **discrepancia**
+  —«si tú lo consideras bloqueante y ella independiente, no lo des por zanjado»—, que es una
+  facultad más, no menos.
+- **`desarrollador`**: su `Estado: bloqueado` gana la forma con alcance y el límite «detente **en
+  eso**», que no retira nada.
+- **La cláusula del proyecto sin migrar**, en los tres: **no habilita** a continuar donde la
+  política vigente exige detenerse y **no acredita** migración. Comprobado literal en las tres
+  sedes.
+- **`skills/arnes-upgrade/SKILL.md`** no declara entregado nada a ningún consumidor: «tu `AGENTS.md`
+  sigue **congelado** hasta que corras esta migración». Barrido de la propiedad «afirmar entrega a
+  un consumidor» sobre todo el delta: **0 coincidencias**.
+
+### 3. Lo que el programa imprime **no** repite la frase corregida
+
+Barrido por propiedad sobre `hooks/*.sh` de todo mensaje que afirme lo que la entrega corrige. El
+único mensaje de la cola es `guard-completado.sh:549` — *«hay N aprobación(es) pendiente(s) en …; el
+humano debe resolverlas primero»* —, que **no** promete que el pipeline se detenga. **No hay
+transcripción de la promesa absoluta en código.** Las dos copias que sí la conservan viven en
+`.arnes/plantillas-origen/`, y conservarlas es **lo correcto**: es la base de fusión de
+`arnes-upgrade` y editarla a mano falsearía el merge de tres vías (CA-15 punto 6).
+
+### 4. CA-11 punto 4 — **lo que este criterio me manda mirar, contestado**
+
+El criterio pregunta si alguna condición **aplicable** quedó satisfecha por una **afirmación de la
+coordinadora** en vez de por evidencia de un tercero. La condición aplicable es la **3**, el ensayo.
+**Respuesta: no, y la laguna no está disfrazada.**
+
+- El ensayo lo **ejecutó** la coordinadora y lo **acreditó** el `qa-tester`, que no despacha
+  (`docs/qa/REQ-025.md`, §«Acreditación del ensayo S1…S4» y §R-4). El informe de la coordinadora es
+  **testimonio**, y el REQ lo dice con esas palabras.
+- La conducta de **S4 ante un hallazgo de QA** sigue **«no observada»** en **dos** corridas, y las
+  tres sedes lo dicen **sin suavizarlo**: la cabecera del REQ, CA-11 punto 3 y el veredicto de QA,
+  que lo pone en su primera línea («aprobar **no** es declarar observado»). `QA-025-08` **sigue en
+  `Hallazgos abiertos:`** con su clase. **No encuentro ninguna frase que lo convierta en
+  satisfecho**, ni en el REQ, ni en el registro de QA, ni en el `CHANGELOG.md`.
+- La vía por la que se resolvió es **aceptación declarada del propietario**, conservada **literal**
+  en `PENDING_APPROVAL.md` §«Resueltas» y citada literal en CA-11 punto 3, incluidas las dos frases
+  que impiden leerla de más: «mi aceptación no sustituye ninguna firma» y «no lo conviertas en
+  satisfecho ni borres el hallazgo». **Una aceptación no es evidencia, y el REQ no la presenta como
+  tal.**
+- **El residual tiene las tres partes que §6 exige**: **dueño** (`qa-tester`, con el motivo escrito
+  —la coordinadora no puede acreditarse a sí misma—), **forzador** observable **sí/no con cita**, que
+  se arma con el trabajo normal y no exige sesión ni mecanismo nuevo, y **vencimiento** (2026-10-21,
+  propuesto y modificable por el propietario) **con su consecuencia escrita**: si el caso no aparece,
+  se revisa la aceptación y **no** se da por acreditado. Esto último es lo que impide que el residual
+  caduque hacia el verde, que es como caducan los residuales mal escritos.
+- **Una ampliación, ya nombrada por QA como OBS-I y que confirmo:** el write-back añade una
+  obligación a la coordinadora —«señalar el caso»— que el propietario no escribió. No relaja nada y
+  hace ejecutable su instrucción; **queda a confirmación del propietario junto con la fecha**. No la
+  abro como hallazgo propio: ya tiene sede y dueño.
+
+**Conclusión de CA-11 punto 4: satisfecho.** La laguna está declarada, nombrada, con dueño, forzador
+y vencimiento, y **ninguna afirmación de la coordinadora la sustituye**.
+
+### 5. Gobernanza del cierre — orden de firmas y quién escribió qué
+
+| Acto | Quién | ¿Correcto? |
+|---|---|---|
+| Cola 1 → 0 | **propietario**, texto literal conservado en §«Resueltas» | ✓ Es suya y de nadie más |
+| `Estado: bloqueado` → `en-revisión` | `analista-requerimientos` (write-back, `a46ef50`) | ✓ §9; no es un veredicto |
+| `QA: con-hallazgos` → `aprobado` | `qa-tester` (`5c30281`) | ✓ Es su campo |
+| `Seguridad:` | **yo**, ahora, después de QA | ✓ §6 |
+
+**Ningún veredicto lo escribió quien no debía**, y `## Pendientes` está **vacía** — comprobado
+leyendo el archivo, no el bloque derivado. El `Hallazgos abiertos:` conserva `QA-025-08` con su
+clase, que es donde una máquina lo lee.
+
+### 6. **SEC-102** — el campo `Archivos:` de REQ-025 declara **de menos**, y hay un par con intersección vacía que sí colisiona
+
+- **Clase `contrato`** — «el requerimiento dice algo falso sobre lo construido»
+  (`requirements/README.md`). **Bloquea** el cierre de REQ-025 hasta el write-back. **Estado:
+  `abierto`.** **Dueño: `analista-requerimientos`.** **Severidad: media** (no hay efecto sobre
+  usuario ni dinero; el daño es trabajo perdido).
+- **Qué está medido.** `requirements/REQ-025.md:4` declara trece rutas y **no** declara
+  `requirements/README.md` ni `requirements/REQ-028.md`. Las dos las escribieron comisiones de este
+  REQ: `a3338a3`, `1de2b26` y `faf0db7` (write-backs del `analista-requerimientos`), verificado con
+  `git log -- requirements/README.md requirements/REQ-028.md` sobre `origin/main..5c30281`.
+- **Por qué no lo cubre ninguna exclusión.** `requirements/README.md` **no** es artefacto de
+  gobierno de quien orquesta: **seis** REQ lo declaran en su `Archivos:` (012, 013, 017, 019, 020,
+  022). La exclusión escrita alcanza a `CHANGELOG.md`, `docs/ESTADO.md` y `PENDING_APPROVAL.md`, y
+  este último REQ-025 lo declara **de más** a propósito, que es la dirección barata.
+- **La consecuencia, derivada y no supuesta.** REQ-020 (`pendiente`) declara
+  `requirements/REQ-020.md, requirements/README.md, templates/requirements-README.md.tpl,
+  tests/…, docs/qa/1.33.0.md`. La intersección con el campo declarado por REQ-025 es **vacía**, luego
+  la respuesta por el campo sería **`disjunto`** — y las dos comisiones escriben el índice. Es el
+  error que `requirements/README.md` nombra como el caro: *«de menos es un `disjunto` falso, que son
+  dos comisiones escribiendo el mismo archivo y una **escritura perdida** que git no señala»*. **No
+  ejecuté `tools/arnes-paralelo.sh`**: la intersección está derivada de leer los dos campos, y lo
+  digo para que nadie lea aquí una corrida que no hubo.
+- **Mitigación que existe y no cierra el hallazgo.** El cuerpo de REQ-025 ya razona que va «en serie
+  y en solitario». Eso vive en el **cuerpo**, y lo que la máquina lee es **el campo**: una mitigación
+  que depende de que una persona lea un párrafo no es la mitigación de un mapa que se consulta por
+  herramienta. **SEC-020** ya enseñó que un `disjunto` sobre un mapa corrompido no autoriza nada;
+  aquí la corrupción no viene de la decoración sino de la **omisión**, y el efecto es el mismo.
+- **Remediación (no la aplico yo).** El `analista-requerimientos` añade `requirements/README.md` y
+  `requirements/REQ-028.md` al campo `Archivos:` de `requirements/REQ-025.md`, con su fila de
+  Historial y su causa enlazada a este hallazgo. Con eso el hallazgo pasa a `mitigado` y deja de
+  bloquear. **Coste: una línea.**
+- **Y lo colateral, que anoto sin abrirlo:** `requirements/REQ-028.md:4` omite también
+  `requirements/README.md`. Hoy REQ-028 está en `borrador`, y la obligación del campo alcanza a los
+  REQ **abiertos**; se corrige al salir a `pendiente`. **No lo abro como hallazgo**: registrar no
+  autoriza reparar, y esto no impide nada todavía.
+
+### 7. **SEC-103** — OBS-H: un `cp` por `Bash` tuvo efecto sobre `codigo_app.globs` en el ensayo, y §13 enumera `cp` **dentro** del detector que declara cubierto
+
+- **Clase `instrumento`**, y la justifico contra la alternativa en vez de elegirla. Sería `contrato`
+  si estuviera establecido que §13 promete una cobertura que el detector no da: la promesa es de
+  **protección** y fallaría hacia el lado que **abre**, que es la familia **SEC-078 / SEC-079**. Pero
+  eso **no está medido**: lo medido es que en un **entorno de ensayo** una escritura tuvo efecto, y
+  de ahí salen dos hipótesis disyuntas —«§13 promete lo que el detector no da» y «el fallo era del
+  entorno»— que **nadie ha discriminado**. Clasificarlo `contrato` hoy sería afirmar la primera sin
+  evidencia; clasificarlo `instrumento` dice lo que hay: **un defecto abierto sobre el control, sin
+  efecto de producto establecido**. **Y queda escrita la condición de ascenso, para que la clase no
+  se quede baja por inercia: si la reproducción acotada muestra que `guard-codigo` PERMITE, este
+  hallazgo sube a `contrato`** y se trata como promesa medida falsa de §13, con su write-back.
+- **Estado: `abierto — no aceptado — sin reparación autorizada`.** Instrucción literal del
+  propietario (2026-09-21, `PENDING_APPROVAL.md` §«Resueltas»): «**OBS-H queda separado y
+  expresamente pendiente: lo observado cuestiona una protección declarada y no queda aceptado por
+  esta decisión. No abras su reparación ahora.**» **No es un residual aceptado** y no se anota como
+  tal en ninguna parte; comprobado en el REQ, en el registro de QA §R-4 §4 y en `docs/ESTADO.md`.
+- **Dueño: coordinadora** (para llevarlo al propietario con el alcance de su ventana o a su propio
+  REQ). **Severidad: alta si se confirma** —una puerta que se declara cerrada y no lo está es un
+  fallo en abierto y en silencio, y en todos los proyectos que heredan §13—; **indeterminada hoy**.
+- **Evidencia** (rama de evidencia, **sólo lectura**, no la modifico):
+  `/home/juan/dev/ArnesJuan-evidencia/req-025/ensayos/ENS-S4-P/` — `salida.jsonl` (el `cp` y su
+  efecto), `comando.txt`, `debug.log`, `git-diff-proyecto.patch`. Lectura de QA en
+  `docs/qa/REQ-025.md` §R-3b §4.
+- **Dos precisiones mías, de leer la evidencia, que acotan lo que hoy se puede afirmar** — y las
+  escribo porque **estrechan** el hallazgo, no porque lo excusen:
+  1. `comando.txt` muestra que el ensayo corrió con **`--plugin-dir …/plugin-9f908d9`** y
+     **`--setting-sources project,local`**. Ésa no es la vía de instalación normal del plugin, luego
+     el entorno del ensayo **no es** el entorno cuyo comportamiento §13 describe. Refuerza la
+     hipótesis (iii) que QA ya había nombrado, y **no la confirma**.
+  2. La evidencia que QA cita para afirmar «los hooks estaban vivos» es que el bloque
+     `ARNES:DERIVADO` se reescribió cuatro veces. Eso acredita que se disparó **`Stop` /
+     `SubagentStop`**, que es **otro evento**: **no** establece que `PreToolUse` estuviera cableado
+     sobre `Bash`. La distinción no cambia el hallazgo; cambia qué se puede decir sin reproducirlo.
+- **Siguiente paso, y sólo cuando el propietario lo autorice:** una **reproducción acotada como caso
+  de banco** —invocar `guard-codigo` con `agent_type` = `qa-tester` y un `cp` **multilínea** hacia una
+  ruta de `codigo_app.globs`, comprobando `deny`— que **discrimine** entre las dos hipótesis. **No la
+  ejecuto**, por la instrucción del propietario y por el encargo de esta revisión.
+- **¿Bloquea el cierre de REQ-025? NO, y doy el motivo.** Tres razones, y la tercera es la que
+  decide: (i) REQ-025 **no toca `hooks/`** —0 archivos de mecanismo en el delta—, así que no lo causa
+  ni lo agrava; (ii) `AGENTS.md` §6 fija que un defecto del propio arnés es `instrumento` y **no
+  puede condicionar el cierre de una función**; y (iii) **no hay defecto probado del mecanismo
+  vigente** que bloquear — bloquear hoy sería tratar una hipótesis sin discriminar como si fuera un
+  hallazgo medido, que es la clase de error que este registro persigue. **Lo que sí digo, con su
+  alcance:** este hallazgo **no impide cerrar REQ-025 ni implementar ni probar**; **queda abierto**, y
+  si alguna vez se propone **reafirmar, reescribir o redistribuir la promesa de cobertura de §13**,
+  eso **sí** exige haberlo discriminado antes — no por mi veto, sino porque publicar una promesa que
+  se sabe cuestionada es lo que `SEC-079` ya nombra.
+
+### 8. Regresión de seguridad — comparación contra el estado aprobado
+
+- **Mecánica: ninguna.** El delta contiene **0** archivos de `hooks/`, `hooks.json`,
+  `.arnes/config.json`, `tools/`, `tests/` y `.github/`, luego ningún control puede haber cambiado
+  su comportamiento por esta entrega.
+- **Normativa: ninguna a la baja.** Comparadas las tres definiciones de agente y §6 contra
+  `origin/main`, **no encuentro ningún control antes presente que ya no esté o que haya quedado más
+  débil**; sí dos que quedan **más acotados** (§1). El único ensanchamiento es el de «Mecanismo de
+  gate», que retira una promesa que ningún mecanismo sostenía.
+- **Observación de convergencia, registrada aquí para que no se pierda y sin abrirla contra este
+  REQ.** La rama `rel/registro-1.33.0` tiene un `AGENTS.md` **§14 A** —«Comprobación de antes de
+  despachar»— que enumera, **con otras cuatro preguntas**, la misma obligación que la **regla 1**
+  nueva, y **ninguna de las dos apunta a la otra**. `origin/main` **no** tiene §14, así que **no es
+  defecto de este delta** y no lo abro. Pero es exactamente el desfase que CA-15 punto 1 previene, y
+  falla hacia el lado que **abre**: quien siga §14 A no citará los criterios por su identificador.
+  **Dueño cuando las dos líneas converjan: `analista-requerimientos`**, que reconcilia §14 A
+  remitiendo a la regla 1 en vez de re-enumerar.
+- **Índice de `requirements/README.md` desfasado** respecto de la cabecera de REQ-025 (dice
+  `en-progreso` / `con-hallazgos` / vuelta 1 de 3). **No lo abro como hallazgo**: el propio README
+  declara que el índice «se desfasa solo», que «sólo mandan los campos del propio REQ» y que **no se
+  cite como fuente**. Se corrige al tocarlo por SEC-102.
+
+### 9. Estado de seguridad aprobado — línea base de no-regresión
+
+| REQ | Estado de seguridad tras `R-041` | Contra qué se compara la próxima auditoría |
+|---|---|---|
+| **REQ-025** (entrega 1) | **`con-hallazgos`** (R-041, sobre `5c30281`) | Este delta: 18 archivos, 0 de mecanismo; §6 con las seis reglas, «Loop de error» y «Mecanismo de gate» reescritos; gemela idéntica salvo marcadores; tres agentes con referencias y sin pérdida de facultad; dos cabeceras de `PENDING_APPROVAL`; ADR-008 |
+| **REQ-028** | `pendiente` (nace en este delta) | Nace `Rigor: critico`, `Sensible a seguridad: sí`, `QA`/`Seguridad` `pendiente` — conforme a la política de autoalojamiento |
+
+**Las líneas base de los demás REQ no se re-midieron en esta revisión** y siguen siendo las de
+`R-019`, `R-030` y `R-033` según su línea; esta revisión es **acotada** y no las sustituye.
+
+### 10. Lo que esta revisión **NO** acredita
+
+1. **Que S4 se observara.** Sigue **no observado**, en dos corridas. Lo que hay es una **laguna
+   aceptada** por quien podía aceptarla, con dueño, forzador y vencimiento — **no evidencia**.
+2. **`SEC-103` / OBS-H**, que queda **abierta y no aceptada**; ni que `guard-codigo` esté sano en la
+   cabeza actual, ni que esté roto.
+3. **La conducta** de las seis reglas: son disciplina declarada, **ninguna puerta las comprueba**, y
+   el propio ensayo midió un incumplimiento de la regla 6.
+4. **Nada sobre los proyectos consumidores.** No reciben nada hasta publicar y hasta que el
+   propietario de cada proyecto migre; ninguna frase del delta afirma lo contrario, y eso es lo que
+   comprobé — no que la migración funcione.
+5. **Las quality gates ni el CI.** No los miro: mi firma acredita la revisión de seguridad, no que
+   el código funcione (`AGENTS.md` §6). La corrida sobre `a46ef50`/`5c30281` que el propietario pidió
+   **sigue sin existir**, y no la sustituyo con un razonamiento.
+6. **Ni la fusión, ni el tag, ni la publicación**, que son gates humanos.
+7. **Que aprobar la entrega 1 complete REQ-025**: no lo hace (CA-15 punto 9).
+
+### 11. Alcance de lo que este veredicto impide — con la forma de la regla 2, que es lo que esta misma entrega contrata
+
+**No es un veto.** **Acción impedida:** **cerrar** — marcar `REQ-025` como `completado`. **Regla que
+lo impide:** `guard-completado`, por `SEC-102 (contrato)` en `Hallazgos abiertos:` (`AGENTS.md` §6 y
+§13). **Parte de la entrega afectada:** ninguna pieza construida; sólo la **cabecera** del REQ.
+**Evidencia:** `requirements/REQ-025.md:4` frente a `git log -- requirements/README.md
+requirements/REQ-028.md` sobre `origin/main..5c30281`, y el campo `Archivos:` de
+`requirements/REQ-020.md`. **Qué lo resuelve:** el write-back del `analista-requerimientos` descrito
+en §6. **No impide**: implementar, probar, la entrega 1b, REQ-028, ni el trabajo de ningún otro REQ.
+**Y no impide `publicar` por sí mismo** — la publicación tiene sus propias condiciones, que no son
+mías.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** El delta no toca datos, credenciales,
+identidad ni superficie expuesta: es texto normativo de gobernanza del despacho.
+
+**Numeración vigente tras esta revisión:** última revisión **R-041**; últimos hallazgos **SEC-102** y
+**SEC-103**; próximos libres **R-042** y **SEC-104**. Tomados libres **sobre todas las líneas vivas
+del registro**, no sólo sobre este archivo (motivo al inicio de §R-041).
+
+---
+
+## Adenda a R-041 (**`R-041-A`**) — **reverificación acotada de SEC-102** sobre la cabeza corregida `1932492` — 2026-09-21
+
+**Por qué adenda y no `R-042`.** Una revisión nueva anunciaría una auditoría nueva del delta
+normativo, y **no la hay**: esto reverifica **un hallazgo propio** sobre una corrección autorizada.
+Numerarlo `R-042` haría creer que la entrega 1 se volvió a mirar entera.
+
+**Alcance, y lo reutilizado dicho por su nombre.** Sólo `git diff 51a4430..1932492`:
+`CHANGELOG.md`, `docs/ESTADO.md` y `requirements/REQ-025.md` — **3** archivos, **0** de mecanismo
+(`hooks/`, `tools/`, `tests/`, `.github/`, `.arnes/`, `.claude-plugin/`), verificado. **Todo lo demás
+se reutiliza de `R-041` y NO se vuelve a auditar**: el límite del propietario, la gemela, los tres
+agentes, las dos cabeceras de la cola, el ADR-008, el barrido de mensajes de los hooks y CA-11 punto
+4. La reutilización es legítima **porque el delta no toca ninguna de esas sedes**, y lo escribo en
+vez de dejarlo implícito: una firma que reutiliza evidencia debe declarar **sobre qué** la reutiliza.
+Autorización del propietario (2026-09-21), literal: «*Autorizo excepcionalmente el write-back de
+SEC-102… No reinicies contadores ni abras otras reparaciones. Después, seguridad reverifica ese
+hallazgo y emite el estado correspondiente sobre la cabeza corregida… Conserva SEC-103 separado y
+sin aceptación.*» **Sin ensayos, sin reproducciones, sin reparaciones.**
+
+### 1. **SEC-102 → `mitigado`**
+
+**Qué exigía la remediación de `R-041` §6:** que `Archivos:` declarase `requirements/README.md` y
+`requirements/REQ-028.md`, con fila de Historial y causa enlazada. **Comprobado sobre `1932492` —en
+la forma además de en el contenido, porque un campo correcto mal escrito no lo lee la máquina:**
+
+- `requirements/REQ-025.md:4` declara ahora **quince** rutas; las dos que faltaban están, tras
+  `requirements/REQ-025.md`.
+- **Forma, leída en crudo (`sed -n '4p' … | cat -A`):** rutas **sin decoración** de Markdown —ni
+  acentos graves ni subrayado elemento por elemento, que es la forma que **SEC-020** vuelve
+  insegura—, separadas por comas, **relativas** a la raíz, sin paréntesis, línea terminada limpia.
+  Nada insertado que un diff no enseñe.
+- **Efecto, que es lo que el hallazgo medía.** **Evidencia primaria: la intersección de los dos
+  campos, leída.** Frente a `REQ-020` (`pendiente`, declara `requirements/README.md`) pasa de
+  **vacía** a **`{requirements/README.md}`**. **Corroboración:** `tools/arnes-paralelo.sh REQ-025
+  REQ-020` responde **`colisiona  requirements/README.md`**, donde antes habría respondido
+  `disjunto`. **La corroboración se declara como lo que es:** esa herramienta tiene abierto
+  **SEC-020**, que la hace **condición necesaria y no suficiente**; lo que sostiene este estado es
+  la lectura de los campos, y la corrida sólo concuerda con ella.
+- **La fila de Historial existe** y cita la procedencia. El `analista-requerimientos` declara que
+  **no re-ejecutó** el `git log` y que cita la evidencia de `R-041` §6. **Correcto:** re-medir lo
+  mismo habría sido una segunda transcripción, y declarar de dónde viene una cifra que no se midió
+  es justamente lo que este repositorio exige.
+- **Nada más de la cabecera se tocó:** `Estado:`, `QA:`, `Seguridad:`, `Hallazgos abiertos:`,
+  `Rigor:` y `Sensible a seguridad:` son idénticos entre `51a4430` y `1932492`, comprobado campo a
+  campo. **El write-back no se acreditó a sí mismo**: dejó mi `Seguridad: con-hallazgos` en pie.
+
+**Estado: `mitigado`.** Deja de bloquear y **sale de `Hallazgos abiertos:`**. No se borra de este
+registro: cambia de estado, como todos.
+
+### 2. El resto del delta **no debilita nada, y estrecha en dos sitios**
+
+El write-back gemelo sobre CA-11 punto 3 no entraba en la autorización de SEC-102 y trae la suya,
+citada literal. Lo reviso por lo único que me toca —**si mueve el residual hacia el lado que abre**—
+y **no lo mueve**:
+
+- **Fecha 2026-10-21**: de «propuesta de la coordinadora, y el propietario puede cambiarla» a
+  **confirmada por él**, con «cambiarla vuelve a exigir una decisión suya». Eso **estrecha**: antes
+  cualquiera podía tratarla como provisional.
+- **OBS-I resuelta**: la obligación de que la coordinadora **señale** el caso pasa de añadido del
+  write-back a **aceptada**, con la precisión «**QA conserva la responsabilidad de verificarlo**». El
+  **dueño sigue siendo el `qa-tester`** y señalar **no** es acreditar. **Ninguna facultad se mueve.**
+- **«S4 sigue "no observado"»** se conserva **literal** y no se convierte en satisfecho.
+  `QA-025-08` sigue en `Hallazgos abiertos:` con su clase.
+- **La consecuencia del vencimiento queda intacta** —si el caso no aparece, se revisa la aceptación
+  y **no** se da por acreditado—, que es la cláusula que impide que el residual caduque hacia el
+  verde.
+
+### 3. **SEC-103 (OBS-H): sin cambio** — `abierto — no aceptado — sin reparación autorizada`
+
+Conservado separado y sin aceptación, conforme a la instrucción del propietario. Nada del delta lo
+toca, nada lo repara, **y esta firma no lo acredita ni lo atenúa**. Su **condición de ascenso a
+`contrato`** sigue escrita en `R-041` §7 y sigue vigente.
+
+### 4. **SEC-104** (nuevo, `instrumento`, **no bloquea**) — dos decisiones del propietario cuya única copia vive **dentro del artefacto que autorizan**
+
+- **Clase `instrumento`. Severidad baja. Estado `abierto`. Dueño: coordinadora.** **No bloquea** y
+  **no cambia mi veredicto**. Lo registro porque, sin registrarlo, se vuelve a derivar dentro de un
+  mes.
+- **Qué está medido.** Las dos decisiones que autorizan este delta —la del write-back de SEC-102 y
+  la de la fecha/OBS-I— están citadas **literal** en `requirements/REQ-025.md` (CA-11 punto 3 y dos
+  filas de Historial) y **no aparecen en `PENDING_APPROVAL.md` §«Resueltas»**, comprobado con `grep`
+  sobre la cola, el `CHANGELOG.md` y `docs/ESTADO.md`. La decisión **anterior** (opción B) sí se
+  conservó allí, literal, y el `Estado:` del REQ apunta a esa sede.
+- **Por qué importa, sin exagerarlo.** La cola no es sólo un bloqueo: es **la sede donde la
+  procedencia de una decisión del propietario vive FUERA del documento que esa decisión autoriza**.
+  Cuando la única copia está dentro del artefacto autorizado, quien lo relea depende de que el
+  propio artefacto transcriba bien su permiso — que es, en pequeño, la figura que **CA-11** existe
+  para evitar. **No afirmo que aquí se transcribiera mal:** contrasté las dos citas contra el encargo
+  que recibí y **concuerdan**. Lo que falta es la copia independiente.
+- **Remedio, barato:** conservar las dos literales en `PENDING_APPROVAL.md` §«Resueltas» —donde ya
+  vive la anterior—, o **declarar por escrito cuál es la sede de una decisión del propietario tomada
+  fuera de la cola**. Hoy esa sede no está escrita, y por eso esto es `instrumento` y no
+  incumplimiento de nadie.
+- **Registrar no autoriza reparar** (`AGENTS.md` §6, regla 3): queda con dueño y **fuera** de esta
+  entrega.
+
+### 5. Veredicto, y la advertencia que va con él
+
+**`Seguridad: aprobado (R-041-A, 2026-09-21, sobre 1932492)`.** Con `SEC-102` `mitigado`, lo que
+queda abierto —`QA-025-08`, `SEC-103`, `SEC-104`— es **todo `instrumento`**, que por definición no
+bloquea el cierre.
+
+**Y la advertencia, porque es el efecto real de esta firma y nadie debería descubrirlo después.** Con
+`QA: aprobado`, `Seguridad: aprobado`, la cola vacía y ningún hallazgo `usuario/dinero` ni
+`contrato`, **`guard-completado` ya no impide marcar REQ-025 como `completado`**. Y **cerrarlo sería
+incorrecto**: su propio **CA-15 punto 9** dice que aprobar la entrega 1 **no** completa el REQ —
+quedan la **entrega 1b**, `pendiente` dentro de él, y **REQ-028**. **Ninguna puerta comprueba esa
+cláusula.** Es el techo honesto de `AGENTS.md` §13 —el enforcement es la última red, no la primera—
+visto con nitidez. **Mi `aprobado` acredita la revisión de seguridad de la entrega 1; NO autoriza el
+cierre del REQ, y quien lo cierre no podrá decir que una puerta se lo consintió.**
+
+### 6. Lo que esta adenda **NO** acredita
+
+1. **Que S4 se observara.** Sigue **no observado**, dos corridas. Hay laguna aceptada con dueño,
+   forzador y vencimiento confirmado — **no evidencia**.
+2. **`SEC-103` / OBS-H**, abierta y **no aceptada**; ni que `guard-codigo` esté sano o roto en la
+   cabeza actual.
+3. **El delta normativo**, que **no** he vuelto a auditar: su acreditación es la de `R-041` sobre
+   `5c30281`, y se sostiene porque `51a4430..1932492` no toca ninguna de sus sedes.
+4. **Las quality gates ni el CI.** No los miro, y sobre `1932492` **no consta corrida**.
+5. **Los proyectos consumidores**, que no reciben nada hasta publicar y migrar.
+6. **La fusión, el tag ni la publicación.**
+7. **Que REQ-025 pueda cerrarse** (§5).
+
+### 7. Estado de hallazgos de esta línea tras `R-041-A`
+
+| Hallazgo | Clase | Estado | Dueño | Bloquea |
+|---|---|---|---|---|
+| `SEC-102` | `contrato` | **`mitigado`** (sobre `1932492`) | `analista-requerimientos` | **No** |
+| `SEC-103` (OBS-H) | `instrumento` | `abierto — no aceptado — sin reparación autorizada` | coordinadora | No |
+| `SEC-104` | `instrumento` | `abierto` | coordinadora | No |
+
+**Línea base de no-regresión para REQ-025 — sustituye a la de `R-041` §9:** `Seguridad: aprobado`
+sobre **`1932492`**, con el delta de la entrega 1 acreditado en `R-041` sobre `5c30281` (18 archivos,
+0 de mecanismo) y el campo `Archivos:` con **quince** rutas sin decoración. Una auditoría futura
+compara contra eso. **Las líneas base de los demás REQ no se re-midieron.**
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta adenda:** última revisión **R-041** (adenda **`R-041-A`**); último
+hallazgo **SEC-104**; próximos libres **R-042** y **SEC-105**, tomados libres **sobre todas las
+líneas vivas del registro**.

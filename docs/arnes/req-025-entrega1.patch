@@ -1,0 +1,506 @@
+HISTÓRICO — superado por el commit 5162126 (2026-09-21); se conserva como registro.
+NO SE APLICA: lleva la forma «aprobar/cerrar» que la precisión (a) del propietario retira, no
+cubre las dos sedes de PENDING_APPROVAL y no incorpora la precisión (b). La entrega 1 se
+escribió directamente sobre los archivos reales en ese commit.
+
+REQ-025 — ENTREGA 1 · parche PREPARADO Y NO APLICADO
+====================================================
+
+Qué es: el cambio completo de la entrega 1 de REQ-025 (ver `requirements/REQ-025.md`,
+CA-09, CA-10, CA-14, CA-15 y «Notas / alcance» §«Entrega 1»), construido y comprobado,
+pero DELIBERADAMENTE NO APLICADO a los archivos reales.
+
+Por qué no está aplicado: dos de los seis hunks cambian TEXTO NORMATIVO VIGENTE de
+`AGENTS.md` §6 y de su gemela. Son los conflictos (a) y (b) que el propio REQ presenta
+en §«Preguntas abiertas / conflictos», bloque A, y su decisión es del propietario. El
+REQ sigue en `borrador` y dice que «mientras A siga abierto la entrega 1 NO se despacha».
+
+Cómo se aplica: `git apply docs/arnes/req-025-entrega1.patch` desde la raíz del
+worktree. Todo lo que hay por encima de la primera línea `diff --git` es comentario y
+`git apply` lo ignora.
+
+MAPA DE HUNKS — los marcados [DECISIÓN] pueden aprobarse o excluirse POR SEPARADO
+---------------------------------------------------------------------------------
+
+  AGENTS.md
+    @@ -357,7 +357,14 @@   [DECISIÓN (b)]  «Loop de error» reescrito en su promesa
+                                            completa. Conflicto (b) del REQ.
+    @@ -378,6 +385,70 @@   [libre]         El bloque nuevo con las SEIS REGLAS.
+    @@ -407,8 +478,14 @@   [DECISIÓN (a)]  «Mecanismo de gate» reescrito en su promesa
+                                            completa. Conflicto (a) del REQ.
+
+  templates/AGENTS.md.tpl   (gemela byte a byte de las tres de arriba)
+    @@ -323,7 +323,14 @@   [DECISIÓN (b)]
+    @@ -344,6 +351,70 @@   [libre]
+    @@ -368,8 +439,14 @@   [DECISIÓN (a)]
+
+  skills/arnes-upgrade/SKILL.md
+    @@ -867,6 +867,75 @@   [libre]  Entrada «Hacia 1.35.0», PREPARADA y no declarada
+                                     entregada a ningún consumidor.
+
+  agents/qa-tester.md, agents/auditor-seguridad.md, agents/desarrollador.md
+    todos los hunks  [libre]  Referencias a la sede, no copias. Ningún agente pierde
+                              una facultad.
+
+  CHANGELOG.md
+    @@ -2,6 +2,56 @@      [libre]  Entrada del commit futuro. Lleva el marcador
+                                    «FECHA DE APLICACIÓN» en su título: se sustituye por
+                                    la fecha real al aplicar. No se inventó una fecha.
+
+SI SE EXCLUYE (a) O (b), HAY QUE AJUSTAR TAMBIÉN:
+  - la entrada de `CHANGELOG.md` de este parche, que los describe como aplicados;
+  - la entrada «Hacia 1.35.0» de `skills/arnes-upgrade/SKILL.md`, que los describe;
+  - las referencias de `agents/qa-tester.md` que remiten a la promesa reescrita.
+  Excluir un hunk [DECISIÓN] y dejar el resto produce exactamente la contradicción
+  entre dos sedes que CA-15 punto 1 prohíbe.
+
+BASE Y COMPROBACIONES
+---------------------
+Base del diff: el commit de preparación de esta rama (que es `a3338a3` + este parche +
+su nota + la entrada de `CHANGELOG.md` de la preparación). Los seis documentos
+normativos también aplican limpiamente sobre `a3338a3`; el único hunk que necesita la
+base nueva es el de `CHANGELOG.md`, porque el commit de preparación escribió encima.
+Evidencia y método: `docs/arnes/req-025-entrega1-preparacion.md`.
+
+--- el parche empieza aquí ---
+
+diff --git a/AGENTS.md b/AGENTS.md
+index 73b2ba7..d29c221 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -357,7 +357,14 @@ validez de la firma, no una preferencia de calendario. `tools/arnes-paralelo.sh`
+ comprueba** —responde sobre archivos, y lo dice en su propia salida—, así que un `disjunto` nunca es
+ permiso para saltárselas.
+ 
+-**Loop de error:** si QA o seguridad encuentran fallos, el REQ vuelve al desarrollador.
++**Loop de error.** Empieza por lo que **no** cambia: el `qa-tester` y el `auditor-seguridad`
++**detectan, registran con su clase y bloquean** lo que encuentren, y la seguridad puede **vetar**
++en cualquier momento; ninguna clasificación de la coordinadora retira, degrada ni pospone un
++veredicto suyo. Y el REQ **vuelve al desarrollador cuando la coordinadora clasifica el hallazgo
++como defecto que impide cumplir o entregar con seguridad el alcance acordado** (regla 3, arriba):
++una **dependencia** bloquea **sólo lo que depende de ella**, y una **mejora o defecto
++independiente** se **registra con responsable** en su sede y **queda fuera** de la entrega —
++registrarlo no autoriza repararlo.
+ Máximo **3** vueltas dev↔QA **por REQ**, y el contador **NO se reinicia con
+ cada hallazgo nuevo**. Esto es deliberado: un tope por hallazgo no acota nada, porque cada
+ arreglo cierra el hallazgo documentado y la vuelta siguiente encuentra una variante. Un REQ
+@@ -378,6 +385,70 @@ función de negocio**.
+ > cierre si alguno es `usuario/dinero` o `contrato` — y también si alguno **no declara clase**,
+ > porque entonces la puerta no puede saber si bloquea.
+ 
++**La coordinación se orienta a entregas — seis reglas, y ésta es su sede.** Son obligaciones de
++la **sesión coordinadora** —no de los subagentes—, se verifican leyendo el encargo, el libro de
++comisiones y el REQ, y **ninguna puerta las comprueba**: son disciplina declarada con dueño. Su
++contrato completo vive en el requerimiento del arnés que las introdujo, `REQ-025`. **Y viven aquí
++una sola vez:** ningún agente, plantilla, skill ni documento copia su texto — remiten a este
++bloque, porque dos transcripciones de la misma regla se desfasan, y ésta se desfasaría hacia el
++lado que **abre**.
++
++1. **Objetivo concreto, declarado en el propio encargo** (`CA-09` (A)). Todo encargo dice por
++   escrito **qué resultado debe quedar construido y comprobado**, **qué criterios de aceptación
++   le aplican** citados por su identificador, y **qué queda fuera** y **cuándo detenerse**.
++   Documentar o revisar es avance cuando **sirve** a esa entrega y no la sustituye: un encargo
++   cuyo único resultado sea texto se despacha **sólo** si ese texto **es** el resultado
++   contratado.
++2. **Todo bloqueo declara su alcance** (`CA-09` (B) punto 5). Venga de un hallazgo, de un veto,
++   de la cola de aprobaciones o de una dependencia, declara **(i) qué acción impide**
++   —vocabulario **cerrado**, cuya sede única es esta línea: **implementar · probar · aprobar ·
++   publicar**; añadir una quinta acción es cambio de contrato, no interpretación—, **(ii) qué
++   parte de la entrega afecta**, **(iii) qué evidencia lo sostiene**, citada de modo que se pueda
++   volver a ella **sin preguntar**, y **(iv) qué lo resuelve**. Un bloqueo **no se extiende solo**
++   a trabajo independiente y **no se rodea** con otro REQ, una reclasificación ni un cambio de
++   herramienta.
++3. **Un hallazgo no es, por sí solo, un encargo nuevo** (`CA-14`). **Primero lo que NO cambia:**
++   el `qa-tester` y el `auditor-seguridad` conservan íntegra su capacidad de **detectar,
++   registrar, clasificar y bloquear**, el **veto** de seguridad sigue disponible en cualquier
++   momento, y **ninguna clasificación de la coordinadora retira, degrada ni pospone un veredicto
++   suyo**. Hecho eso, la coordinadora clasifica cada hallazgo que llega en **tres** términos:
++   **defecto que impide cumplir o entregar con seguridad el alcance acordado** —se repara
++   **dentro** de la entrega y **conserva su bloqueo**—; **dependencia necesaria para continuar**
++   —se resuelve **únicamente** esa dependencia, sin ampliar el encargo—; y **mejora o defecto
++   independiente** —se **registra con responsable** en su sede y **queda fuera** de la entrega—.
++   **Registrar no autoriza reparar:** hacerlo «ya que estamos» es ampliación de alcance y se anota
++   como tal. Y una **urgencia de seguridad no se aplaza por esta regla: se escala** con su efecto
++   concreto —qué puede ocurrir, sobre qué, y qué acción impide— por la vía de la regla 4;
++   «independiente» no es un sitio donde guardar una urgencia. **Son dos ejes distintos y ninguno
++   se renombra en términos del otro:** la clase del campo `Hallazgos abiertos:` —`usuario/dinero`,
++   `contrato`, `instrumento`; sede única `requirements/README.md`— decide si un hallazgo
++   **bloquea el cierre** de su REQ, y la lee `guard-completado`; esta clasificación decide **si se
++   abre trabajo ahora y dentro de qué entrega**.
++4. **Las decisiones humanas se presentan temprano y con su forma** (`CA-09` (B) punto 3). Cuando
++   una decisión del propietario **impida continuar**, se presenta **en ese momento** —no al cierre
++   de la jornada— con **(i) pregunta comprensible, (ii) opciones, (iii) recomendación y (iv)
++   consecuencia de cada opción**, y **agrupada** con las decisiones ya conocidas que sigan
++   pendientes. Mientras la decisión no llegue se avanza **únicamente** en trabajo que cumpla las
++   tres condiciones a la vez: **no depende** de ella, está **autorizado** y está **suficientemente
++   definido** en el sentido de la regla 1. Si no queda ninguno, la entrada de
++   `PENDING_APPROVAL.md` lo dice y el proyecto **espera** — que es distinto de fabricar trabajo
++   (regla 6).
++5. **El presupuesto es del ciclo completo, no del agente** (`CA-10`). La misma entrega se sigue
++   **a través de todos los roles**, y **cambiar de agente, de fase o de nombre no reinicia ningún
++   límite**. Los contadores existentes **se conservan tal cual** —el primero, el tope de vueltas
++   dev↔QA **por REQ** que fija «Loop de error» más arriba, que se **cita** y **no se redeclara
++   aquí**—, y a su «no se reinicia con cada hallazgo nuevo» se le añade, por la misma propiedad,
++   **«ni por cambio de rol, de fase o de nombre de la comisión»**. **Agotado el presupuesto no se
++   aprueba por agotamiento ni se abre otra vuelta automáticamente:** se presenta el impedimento
++   con la forma de la regla 2 y **las alternativas concretas**, que son las dos que «Loop de
++   error» ya nombra —cerrar con el residual declarado, o `bloqueado` y escalar—.
++6. **Avance observable después de cada comisión** (`CA-10`). Su entrada del libro de comisiones
++   (sede en `docs/qa/`) dice, en **una línea**, **qué resultado se obtuvo** y **qué dependencia
++   falta**; y si la comisión siguiente **no acerca directamente la entrega**, esa misma línea dice
++   **por qué es necesaria**. Queda prohibido **fabricar cambios visibles, maquetas o tareas nuevas
++   para aparentar progreso**: un artefacto que ni es la entrega ni la acerca **no es avance**, y
++   anotarlo como si lo fuera es la cifra sin procedencia aplicada al trabajo en vez de al número.
++
+ **Nivel de rigor — cuánta ceremonia paga cada REQ.** No todo requerimiento merece el mismo
+ esfuerzo. Cada REQ declara `Rigor:` en su cabecera: `ligero` (analista + desarrollador +
+ quality gates), `estandar` (+ QA) o `critico` (+ auditoría de seguridad). Tabla completa en
+@@ -407,8 +478,14 @@ sensibilidad — exactamente como se juzgaba antes de que existieran los niveles
+ (por defecto: cierre de cada fase, decisiones arquitecturales, y cambios que tocan datos/credenciales de producción).
+ 
+ **Mecanismo de gate:** cuando una acción requiere aprobación, el agente escribe la decisión
+-pendiente en `PENDING_APPROVAL.md` y **detiene** el pipeline. No continúa hasta que el humano
+-resuelve (aprueba/rechaza) y limpia esa entrada. Así el bloqueo queda visible y por escrito.
++pendiente en `PENDING_APPROVAL.md` con la forma de la regla 4 —pregunta, opciones, recomendación
++y consecuencia—. **Y lo que esa entrada detiene va dicho con su alcance, no en absoluto:**
++mientras la cola tenga entradas bajo `## Pendientes` queda impedida la acción **aprobar/cerrar**
++de **todos** los REQ del proyecto, por construcción de `guard-completado`, que este mecanismo
++**no** cambia. **Implementar** y **probar** siguen permitidos, y **sólo** en trabajo que **no
++dependa** de la decisión, esté **autorizado** y esté **suficientemente definido** (regla 1). La
++propia entrada declara **qué trabajo sigue** o que **ninguno sigue**, y en ese segundo caso el
++proyecto **espera**. Así el bloqueo queda visible, por escrito y **con su alcance**.
+ 
+ > 🔒 **Vigilado por máquina:** mientras `PENDING_APPROVAL.md` tenga entradas en "## Pendientes",
+ > el hook `guard-completado` (plugin) deniega marcar cualquier REQ como `completado`. El avance
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index e24ef23..0200db6 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -2,6 +2,56 @@ CHANGELOG — ArnesJuan
+ 
+ > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
+ 
++## [GitHub] — «FECHA DE APLICACIÓN» · REQ-025 **entrega 1**: la coordinación orientada a entregas gana **una sola sede** en `AGENTS.md` §6, y los dos párrafos que prometían más que su mecanismo quedan reescritos en su promesa completa
++> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` · rama `feat/req-025-coordinacion-entregas` (desde `main` = `v1.34.0`). Archivos del cambio: `AGENTS.md`, `templates/AGENTS.md.tpl`, `skills/arnes-upgrade/SKILL.md`, `agents/qa-tester.md`, `agents/auditor-seguridad.md`, `agents/desarrollador.md` y esta entrada.
++
++**Condición de este commit, dicha por delante.** Los conflictos **(a)** y **(b)** de
++`requirements/REQ-025.md` §«Preguntas abiertas / conflictos» cambian **texto normativo vigente** de
++`AGENTS.md` §6 y su decisión es del propietario; **sin esa respuesta este cambio no se aplica**. Por
++eso el diff se preparó aparte y marcado hunk por hunk en `docs/arnes/req-025-entrega1.patch`.
++
++**La sede, y es una sola (CA-15 punto 1).** `AGENTS.md` §6 gana un bloque con las **seis reglas** de
++la sesión coordinadora: objetivo concreto declarado en el propio encargo (`CA-09` (A)) · **todo
++bloqueo declara su alcance**, con el vocabulario **cerrado** `implementar · probar · aprobar ·
++publicar` (`CA-09` (B) punto 5) · un hallazgo **no es, por sí solo, un encargo nuevo** (`CA-14`) ·
++las decisiones humanas se presentan **temprano y con su forma** (`CA-09` (B) punto 3) · el
++**presupuesto es del ciclo completo** (`CA-10`) · **avance observable** tras cada comisión (`CA-10`).
++Ningún agente, plantilla ni skill copia ese texto: **remiten** a él.
++
++**Los dos párrafos, reescritos en su PROMESA COMPLETA y no matizados al final (CA-15 punto 2).**
++«Mecanismo de gate» deja de prometer que el pipeline «no continúa hasta que el humano resuelve» y
++declara **qué acción impide**: **aprobar/cerrar**, para **todos** los REQ mientras la cola tenga
++entradas, **por construcción de `guard-completado`, que no cambia**; **implementar** y **probar**
++siguen permitidos, y **sólo** en trabajo independiente, autorizado y suficientemente definido. «Loop
++de error» **empieza por lo que no cambia** —QA y seguridad **detectan, registran con su clase y
++bloquean**, y la seguridad puede **vetar** en cualquier momento— y sólo entonces dice que el REQ
++vuelve al desarrollador **cuando la coordinadora clasifica el hallazgo como defecto que impide
++cumplir o entregar con seguridad el alcance acordado**. **El tope de 3 vueltas dev↔QA por REQ y su
++no-reinicio se conservan intactos**; el bloque de las seis reglas los **cita** y les añade que
++tampoco se reinician «ni por cambio de rol, de fase o de nombre de la comisión».
++
++**La gemela y la entrada de actualización: PREPARADAS, no entregadas (CA-15 punto 3).**
++`templates/AGENTS.md.tpl` recibe el mismo texto —**byte a byte** en las líneas que ya eran idénticas—
++y `skills/arnes-upgrade/SKILL.md` gana **«Hacia 1.35.0»**, que describe qué secciones cambian, dice
++que **los agentes no se migran** (los provee el plugin) y que la identificación es **por título y
++contenido**. **Nada de esto ha llegado a ningún proyecto consumidor:** un proyecto instalado tiene su
++`AGENTS.md` **congelado** hasta que `arnes-upgrade` lo migre, y migrar es un acto de su propietario.
++
++**Referencias en los agentes, no copias (CA-15 punto 4).** `agents/qa-tester.md` —el pipeline que se
++detenía «entero» pasa a nombrar la acción que impide, la devolución al desarrollador pasa por la
++clasificación, el escalado declara su alcance y el contador no se reinicia por cambio de rol, fase o
++nombre—; `agents/auditor-seguridad.md` —el **veto declara su alcance** sin debilitarse, la
++**urgencia se escala con su efecto concreto**, y qué se repara ahora lo clasifica la coordinadora sin
++tocar su veredicto—; y `agents/desarrollador.md` —`Estado: bloqueado` con la forma de bloqueo con
++alcance—. **Ningún agente pierde una facultad:** detectar, registrar, clasificar, bloquear y vetar
++quedan íntegras.
++
++**Lo que NO se tocó, y se comprueba leyendo el diff (CA-15 puntos 5 y 6):** `hooks/`, `hooks.json`,
++`.arnes/config.json`, `.github/`, `tests/`, `tools/`, los permisos, el `Rigor:` o el `Sensible a
++seguridad:` de ningún REQ y las condiciones de cierre de `guard-completado`; ningún tablero, medidor
++ni herramienta nueva; y `.arnes/plantillas-origen/AGENTS.md.tpl`, que contiene los dos mismos
++párrafos pero es la **base de fusión** de `arnes-upgrade` y **no se edita a mano**.
++
+ ## [GitHub] — 2026-09-21 · REQ-025 entrega 1: el **diff mínimo** queda preparado como **parche sin aplicar**, porque dos de sus párrafos cambian texto normativo vigente y eso lo decide el propietario
+ > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador` · rama `feat/req-025-coordinacion-entregas` (desde `main` = `v1.34.0`). Archivos del cambio: `docs/arnes/req-025-entrega1.patch`, `docs/arnes/req-025-entrega1-preparacion.md` y esta entrada.
+ 
+diff --git a/agents/auditor-seguridad.md b/agents/auditor-seguridad.md
+index 4ec0b44..285cc06 100644
+--- a/agents/auditor-seguridad.md
++++ b/agents/auditor-seguridad.md
+@@ -21,7 +21,7 @@ Como mínimo, tu auditoría cubre **OWASP Top 10 (Web)**, **OWASP API Security T
+ ## Reglas
+ - Trabajas en **español**.
+ - Tus contratos son los **NFR de seguridad y gobernanza** definidos en `requirements/`. Lee `AGENTS.md` y el REQ a revisar antes de empezar.
+-- Tienes poder de **veto**: si un REQ no cumple seguridad o gobernanza, NO puede pasar a `completado`. Indica el motivo y la corrección requerida.
++- Tienes poder de **veto**: si un REQ no cumple seguridad o gobernanza, NO puede pasar a `completado`. Indica el motivo y la corrección requerida, y **declara el alcance del veto** con la forma de `AGENTS.md` §6, regla 2: qué acción impide —**implementar · probar · aprobar · publicar**—, qué parte de la entrega afecta, qué evidencia lo sostiene y qué lo resuelve. **Declararlo no lo debilita**: lo hace exigible sin adivinar, y nadie puede rodearlo con otro REQ, una reclasificación ni un cambio de herramienta.
+ - **Disparador obligatorio, y no depende de que te despachen:** todo REQ marcado como **sensible a seguridad** (auth, autorización, datos personales, secretos, rutas protegidas) exige tu auditoría antes de `completado`. El flag te activa; no dependes de que la sesión coordinadora se acuerde.
+ - **No firmas antes que QA.** El ciclo es desarrollador → `qa-tester` → tú (`AGENTS.md` §6), y
+   no es orden por cortesía: **tú no miras las quality gates**. Tu `aprobado` acredita la revisión
+@@ -34,7 +34,7 @@ Como mínimo, tu auditoría cubre **OWASP Top 10 (Web)**, **OWASP API Security T
+   construido. Declárala **al emitirla** con su propio veredicto, `Seguridad: preventiva` —nunca a
+   posteriori para desbloquearte— y ten claro que **no cubre el código posterior**: cuando exista,
+   vuelves a auditar en tu turno.
+-- **Veredicto y veto:** refleja tu veredicto en la línea `Seguridad:` del REQ (`aprobado` / `vetado`); un veto va además a `Estado: bloqueado` con motivo y a tu bitácora, usando el vocabulario de estados del arnés.
++- **Veredicto y veto:** refleja tu veredicto en la línea `Seguridad:` del REQ (`aprobado` / `vetado`); un veto va además a `Estado: bloqueado` con motivo **y con su alcance** (`AGENTS.md` §6, regla 2) y a tu bitácora, usando el vocabulario de estados del arnés.
+ - **Write-back (anti-deriva):** un hallazgo que exige un control nuevo no se cierra ni se levanta el veto hasta que el control quede como **NFR** **y** el código lo implemente. **Quién lo transcribe depende de la vía** (`AGENTS.md` §6 y §9) — el `analista-requerimientos` cuando queda una decisión de requisitos o de diseño, y el `desarrollador`, en la misma entrega que el arreglo, cuando no queda ninguna **y el `AGENTS.md` de este proyecto declara expresamente la vía proporcional (§6)**—; **lo tuyo no cambia: exiges que el NFR exista, venga de quien venga.** No des `Seguridad: aprobado` mientras el control viva solo en el código o en `registro-seguridad.md`: eso es deriva (`AGENTS.md` §9).
+ - **Tu intervención NO depende de que el proyecto autorice la vía proporcional.** Esa comprobación decide **si se omite al analista**, nada más. Elegir vía **nunca elimina** una revisión de seguridad que las reglas vigentes del proyecto exijan, y **la lista de ejemplos de la tabla de vías (§6, fila 3) no puede limitar esa obligación**: la propiedad manda sobre los ejemplos, que son declaradamente no exhaustivos. Si el efecto de un cambio alcanza algo que el proyecto declare crítico —dinero, datos personales, identidad o acceso, documento con efecto legal, cambio irreversible— o una protección del arnés, **entras**, esté o no en la enumeración y venga por la vía que venga. Y no lo decides por `guard-completado`: es una puerta de **cierre**, inerte sin `jq` o sin `.arnes/config.json` (`AGENTS.md` §13).
+ - **Un control se describe por propiedad, nunca por enumeración.** «Se deniegan estos tres comandos» es
+@@ -135,7 +135,9 @@ ahora se le exige.
+ ## Tras cada auditoría
+ Registra hallazgos y revisión en `docs/seguridad/registro-seguridad.md` (incluyendo el estado de seguridad aprobado del REQ para detectar regresiones futuras), actualiza `gobernanza-datos.md` si cambió algo, reporta a la sesión coordinadora (aprobado / vetado + correcciones) y refleja tu veredicto en la línea `Seguridad:` del REQ (y el veto en `Estado: bloqueado`).
+ 
++**Una urgencia no se queda en la bitácora esperando turno: se ESCALA.** Preséntala **en ese momento** por la vía de `AGENTS.md` §6, regla 4 —pregunta, opciones, recomendación y consecuencia—, y **con su efecto concreto**: qué puede ocurrir, sobre qué, y qué acción impide (regla 2). «Independiente» no es un sitio donde guardar una urgencia (regla 3).
++
+ ## Límites
+-- NO escribes código de aplicación. Reportas hallazgos y correcciones para que el `desarrollador` las aplique.
++- NO escribes código de aplicación. Reportas hallazgos y correcciones; **qué se repara dentro de la entrega en curso lo clasifica la coordinadora** (`AGENTS.md` §6, regla 3), y esa clasificación **no retira, degrada ni pospone tu veredicto**: tu `vetado` y tus hallazgos con clase bloquean igual, y lo que quede **fuera** de la entrega se registra **con responsable**, no se archiva.
+ - Sé concreto: cada hallazgo con ubicación (archivo:línea), riesgo y remediación.
+ - Revisas código y configuración; **NO ejecutas ataques reales** (fuerza bruta, DDoS, payloads de inyección) contra entornos productivos.
+diff --git a/agents/desarrollador.md b/agents/desarrollador.md
+index 44ffbc3..cb2d009 100644
+--- a/agents/desarrollador.md
++++ b/agents/desarrollador.md
+@@ -49,7 +49,7 @@ El estado vive en la línea `Estado:` del archivo `requirements/REQ-XXX.md` (seg
+   y el REQ dice `Rigor: estandar`, `Sensible a seguridad: no`—, **no la corrijas tú y no sigas como
+   si encajara**: el contrato **no es claro** en el sentido de `AGENTS.md` §6. Déjalo escrito y para;
+   la coordinadora pide al analista **sólo esa decisión**, y con ella resuelta la vía continúa.
+-- Si el REQ es ambiguo, le falta un dato para implementarse, o contradice un NFR: **no adivines y no implementes una interpretación a medias.** Deja `Estado: bloqueado` con una nota de qué falta o qué choca, y detente.
++- Si el REQ es ambiguo, le falta un dato para implementarse, o contradice un NFR: **no adivines y no implementes una interpretación a medias.** Deja `Estado: bloqueado` con la forma de bloqueo con alcance de `AGENTS.md` §6, regla 2: **qué acción impide** —**implementar · probar · aprobar · publicar**—, **qué parte** de la entrega afecta, **qué evidencia** lo sostiene (archivo y línea, identificador del hallazgo, o la corrida con su fecha) y **qué lo resuelve**. Y detente **en eso**: un bloqueo no se extiende solo al trabajo que no depende de él, ni se rodea con otro REQ, una reclasificación ni un cambio de herramienta.
+ 
+ ## Jerarquía ante conflictos
+ Cuando `AGENTS.md`, el REQ y un NFR se contradigan, el orden es:
+diff --git a/agents/qa-tester.md b/agents/qa-tester.md
+index c79517d..e7f50d9 100644
+--- a/agents/qa-tester.md
++++ b/agents/qa-tester.md
+@@ -83,8 +83,8 @@ El estado vive en la línea `Estado:` del REQ y **tu veredicto en la línea `QA:
+ - **Write-back (anti-deriva):** un hallazgo que añade comportamiento aceptado no se cierra hasta que ese comportamiento quede como **criterio de aceptación** en el REQ. **Quién lo transcribe depende de la vía** (`AGENTS.md` §6 y §9) — el `analista-requerimientos` cuando queda una decisión de requisitos o de diseño, y el `desarrollador`, en la misma entrega que el arreglo, cuando no queda ninguna **y el `AGENTS.md` de este proyecto declara expresamente la vía**—; **lo tuyo no cambia: exiges que exista y describa lo construido, venga de quien venga.** No apruebes algo que el REQ no describe — es deriva (`AGENTS.md` §9).
+ - **Tu veredicto y el cierre son dos actos, no uno.** En cuanto la validación pasa sin hallazgos abiertos, marca `QA: aprobado` **sin esperar a seguridad**: el `auditor-seguridad` no puede firmar hasta que tú hayas aprobado (`AGENTS.md` §6), así que esperarle deja el REQ parado para siempre.
+ - **El cierre sí espera.** Marca `Estado: completado` sólo cuando además —si el REQ es `Sensible a seguridad: sí`, o su rigor efectivo es `critico`— exista `Seguridad: aprobado`. Un `Seguridad: preventiva` **no cierra**: se emitió antes de que existiera el código, luego no lo acredita.
+-  - **Salvo** que `AGENTS.md` exija un gate humano para el cierre de fase: no completes tú — escribe la decisión en `PENDING_APPROVAL.md` y **detén el pipeline** hasta el visto bueno humano (el hook `guard-completado` también lo exige).
+-- Si algo falla: marca `QA: con-hallazgos`, deja `Estado: en-progreso`, registra los errores reproducibles en el artefacto de hallazgos y devuelve al `desarrollador`. NO arregles el código tú mismo.
++  - **Salvo** que `AGENTS.md` exija un gate humano para el cierre de fase: no completes tú — escribe la decisión en `PENDING_APPROVAL.md` con la forma que pide `AGENTS.md` §6, regla 4 (pregunta · opciones · recomendación · consecuencia), y **detén lo que esa entrada impide, nombrándolo**: la acción **aprobar/cerrar**, para todos los REQ mientras la cola tenga entradas (el hook `guard-completado` también lo exige). **Implementar y probar no se detienen por ella**; el alcance de un bloqueo se declara según `AGENTS.md` §6, regla 2, y **tú no pierdes nada**: sigues detectando, registrando y bloqueando igual.
++- Si algo falla: marca `QA: con-hallazgos`, deja `Estado: en-progreso` y registra los errores reproducibles en el artefacto de hallazgos — **eso es tuyo y no cambia**. Lo que **abre** trabajo de desarrollo es la clasificación de la coordinadora (`AGENTS.md` §6, regla 3): el REQ vuelve al `desarrollador` cuando el hallazgo se clasifica como **defecto que impide cumplir o entregar con seguridad el alcance acordado**; una **dependencia** abre sólo lo que bloquea, y un **defecto independiente** se registra con responsable y queda fuera de la entrega. Tu `con-hallazgos` **bloquea igual** y **ninguna clasificación lo retira, lo degrada ni lo pospone**. NO arregles el código tú mismo.
+ 
+ ## Clase del hallazgo (obligatoria)
+ Todo hallazgo que abras se declara en el campo `Hallazgos abiertos:` del REQ **con su clase
+@@ -107,7 +107,8 @@ defecto de instrumento que bloquea una función de negocio es cómo un REQ pasa
+ 
+ ## Límite de reintentos (loop de error)
+ El tope de vueltas dev↔QA de `AGENTS.md` (por defecto 3) se cuenta **por REQ y no se reinicia
+-con cada hallazgo nuevo**. No lleves la cuenta por hallazgo: así el tope no acota nada, porque
++con cada hallazgo nuevo** — **ni por cambio de rol, de fase o de nombre de la comisión**
++(`AGENTS.md` §6, regla 5). No lleves la cuenta por hallazgo: así el tope no acota nada, porque
+ cada arreglo cierra el hallazgo documentado y tú encuentras una variante legítima del mismo.
+ 
+ Agotado el tope, el REQ **no se queda abierto**. Tienes dos salidas, y ambas son terminales:
+@@ -118,7 +119,10 @@ Agotado el tope, el REQ **no se queda abierto**. Tienes dos salidas, y ambas son
+ - **Escalar**, con este mecanismo explícito:
+   - Marca `Estado: bloqueado` indicando el **motivo**.
+   - Registra el bloqueo en `docs/ESTADO.md` (qué REQ, por qué y desde cuándo).
+-  - **Escala al humano vía `PENDING_APPROVAL.md`** y **detén el pipeline** hasta que resuelva.
++  - **Escala al humano vía `PENDING_APPROVAL.md`**, con la forma de `AGENTS.md` §6, regla 4, y
++    **declarando qué acción impide** (regla 2): mientras esa entrada siga en la cola queda impedido
++    **aprobar/cerrar** cualquier REQ; el trabajo independiente, autorizado y suficientemente
++    definido continúa.
+ 
+ Lo que no es una salida: seguir dando vueltas.
+ 
+diff --git a/skills/arnes-upgrade/SKILL.md b/skills/arnes-upgrade/SKILL.md
+index fbfab47..421d47d 100644
+--- a/skills/arnes-upgrade/SKILL.md
++++ b/skills/arnes-upgrade/SKILL.md
+@@ -867,6 +867,75 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
+   **Y un aviso entero:** esta vía **reduce despachos, no controles**. Si prefieres seguir con las
+   cuatro fases siempre, **no migres estas secciones**: conservar tu texto es una respuesta válida.
+ 
++### Hacia 1.35.0
++
++- **`AGENTS.md` §6: la COORDINACIÓN ORIENTADA A ENTREGAS, en una sola sede.** §6 gana un bloque con
++  **seis reglas** de la sesión coordinadora —objetivo concreto en el encargo · todo bloqueo declara
++  su alcance · un hallazgo no es, por sí solo, un encargo nuevo · decisiones humanas temprano y con
++  su forma · presupuesto del ciclo completo · avance observable—, y **dos párrafos vigentes de esa
++  misma sección quedan reescritos en su promesa completa**: «Loop de error» deja de prometer que un
++  hallazgo **devuelve** el REQ al desarrollador por sí solo, y «Mecanismo de gate» deja de prometer
++  que una decisión pendiente **detiene todo** — ahora nombra la acción que impide, **aprobar/cerrar**
++  para todos los REQ, y dice qué sigue permitido.
++  **LO PRIMERO, porque decide cómo se lee el resto: esta entrada se prepara CON la versión y NO
++  declara que el cambio haya llegado a tu proyecto.** Tu `AGENTS.md` sigue **congelado** hasta que
++  corras esta migración y resuelvas sus conflictos; que el texto exista en el plugin no cambia una
++  coma del tuyo, y migrar es **un acto tuyo**.
++  **Qué NO cambia, y va antes que las seis reglas porque es lo que se perdería leyendo de prisa:** el
++  `qa-tester` y el `auditor-seguridad` **conservan íntegra** su capacidad de **detectar, registrar,
++  clasificar y bloquear**, y el **veto** de seguridad sigue disponible en cualquier momento; el
++  **tope de vueltas dev↔QA por REQ** y su no-reinicio **se conservan** —se les añade que tampoco se
++  reinician por **cambio de rol, de fase o de nombre** de la comisión—; las **tres clases** del campo
++  `Hallazgos abiertos:` (`usuario/dinero`, `contrato`, `instrumento`) **no se renombran** ni se
++  mezclan con la clasificación nueva; y **ningún hook cambia**, tampoco `.arnes/config.json`:
++  `guard-completado` sigue denegando el cierre de **cualquier** REQ mientras la cola tenga entradas.
++  Lo que la reescritura corrige es que el **texto** prometía más de lo que ningún mecanismo sostiene.
++  **Ninguna fila del merge —tampoco `INTACTO` ni `NUEVO`— escribe una autorización ni concede una
++  facultad:** lo que se instala es **texto normativo** sobre cómo despacha tu sesión coordinadora, y
++  **ningún agente gana ni pierde facultades** por migrarlo.
++
++  **Cómo llega esto a tu proyecto, por el estado que devuelva el merge:**
++
++  **Primero, la separación sin la cual esta migración se detiene entera: los agentes NO se migran.**
++  Los **cuatro agentes los provee el plugin** (`.claude/agents/`): tu proyecto **no tiene copia
++  propia** que clasificar, y `arnes-init` **no** deja base suya en `.arnes/plantillas-origen/`,
++  porque ahí sólo van los `.tpl` y los agentes no lo son. **No los clasifiques, no los busques y no
++  los pongas en el plan:** una clasificación sin base recuperable es `UNKNOWN`, y un `UNKNOWN`
++  **detiene la corrida completa** — incluida `§6`, que sí es migrable. Sus definiciones llegan con
++  las referencias a esta sede **al actualizar el plugin**, no por esta migración; **dilo en el
++  informe** y sigue.
++
++  **Lo que SÍ se migra es la sección `§6` de tu `AGENTS.md`**, que se copió de la plantilla a tu
++  proyecto y por eso tiene base con la que comparar. Y **`templates/AGENTS.md.tpl`** también tiene
++  base y entra en el merge: si lo personalizaste saldrá `MODIFICADO`, y eso es **conflicto** — tu
++  texto **no se toca** y la decisión es tuya.
++
++  **Y antes de clasificarla, identifícala por CONTENIDO Y TÍTULO, nunca sólo por el número.** Es la
++  misma regla terminal de «Tres resultados, nunca dos», por la misma propiedad que ya se explica en
++  «Hacia 1.34.0»: **el arnés ha renumerado y retitulado secciones de `AGENTS.md` a lo largo de su
++  historia**, así que el número **no identifica** una sección. Comprueba que el título y el contenido
++  del `## N.` de tu proyecto y el del `## N.` de la base **son la misma sección**; **si no lo son, o
++  si no puedes afirmarlo sin adivinar, es `UNKNOWN`**: la migración **se detiene, no se aplica nada**
++  —tampoco lo que salió `SAFE`— **y el documento se conserva intacto**. Esto **manda sobre la tabla
++  de abajo**.
++
++  Hecha esa identificación, y **sólo** entonces:
++
++  | Estado de `§6` | Qué haces |
++  |---|---|
++  | **`INTACTO`** | Aplicar el contenido nuevo **sin preguntar** |
++  | **`MODIFICADO`** | **Conflicto: preguntar, y NO tocar la sección.** Tu texto **se queda como está** y el conflicto **se lista para el humano**; no escribas nada en ella. Cuando preguntes, **propón** conservar tu texto añadiendo encima lo nuevo — pero **aplicarlo es decisión tuya, no de la migración**. Si tu personalización reescribió «Loop de error» o «Mecanismo de gate», **es justo lo que este cambio toca** |
++  | **`ELIMINADO`** —la sección existía en la base y tu proyecto **la borró**— | **Conflicto: preguntar, y NO reponer por tu cuenta.** Pudo borrarse a propósito. Si no se repone, **dilo en el informe**: ese proyecto se queda sin las seis reglas y sigue con su texto anterior, que es válido |
++  | **`NUEVO`** —tu base **no tenía** esa sección— | **Añadir.** No hay texto tuyo que conservar |
++  | **`UNKNOWN`** —no se puede decidir sin adivinar— | **Terminal, como `CONFLICTO`: te DETIENES y NO se aplica NADA de toda la corrida**, ni siquiera lo que salió `SAFE`. Déjalo constar y pregunta |
++
++  **Y si queda en conflicto, la migración es PARCIAL: `arnes_version` conserva el valor de origen y
++  no se sube hasta resolverlo (Fase 5).**
++
++  **Y un aviso entero:** estas seis reglas **no reducen controles**, reordenan **quién decide qué
++  trabajo se abre**. Si prefieres seguir con tu texto actual, **no migres esta sección**: conservarlo
++  es una respuesta válida.
++
+ *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
+ 
+ ## Reglas
+diff --git a/templates/AGENTS.md.tpl b/templates/AGENTS.md.tpl
+index a3da260..30b9a8d 100644
+--- a/templates/AGENTS.md.tpl
++++ b/templates/AGENTS.md.tpl
+@@ -323,7 +323,14 @@ validez de la firma, no una preferencia de calendario. `tools/arnes-paralelo.sh`
+ comprueba** —responde sobre archivos, y lo dice en su propia salida—, así que un `disjunto` nunca es
+ permiso para saltárselas.
+ 
+-**Loop de error:** si QA o seguridad encuentran fallos, el REQ vuelve al desarrollador.
++**Loop de error.** Empieza por lo que **no** cambia: el `qa-tester` y el `auditor-seguridad`
++**detectan, registran con su clase y bloquean** lo que encuentren, y la seguridad puede **vetar**
++en cualquier momento; ninguna clasificación de la coordinadora retira, degrada ni pospone un
++veredicto suyo. Y el REQ **vuelve al desarrollador cuando la coordinadora clasifica el hallazgo
++como defecto que impide cumplir o entregar con seguridad el alcance acordado** (regla 3, arriba):
++una **dependencia** bloquea **sólo lo que depende de ella**, y una **mejora o defecto
++independiente** se **registra con responsable** en su sede y **queda fuera** de la entrega —
++registrarlo no autoriza repararlo.
+ Máximo **{{MAX_REINTENTOS}}** vueltas dev↔QA **por REQ**, y el contador **NO se reinicia con
+ cada hallazgo nuevo**. Esto es deliberado: un tope por hallazgo no acota nada, porque cada
+ arreglo cierra el hallazgo documentado y la vuelta siguiente encuentra una variante. Un REQ
+@@ -344,6 +351,70 @@ función de negocio**.
+ > cierre si alguno es `usuario/dinero` o `contrato` — y también si alguno **no declara clase**,
+ > porque entonces la puerta no puede saber si bloquea.
+ 
++**La coordinación se orienta a entregas — seis reglas, y ésta es su sede.** Son obligaciones de
++la **sesión coordinadora** —no de los subagentes—, se verifican leyendo el encargo, el libro de
++comisiones y el REQ, y **ninguna puerta las comprueba**: son disciplina declarada con dueño. Su
++contrato completo vive en el requerimiento del arnés que las introdujo, `REQ-025`. **Y viven aquí
++una sola vez:** ningún agente, plantilla, skill ni documento copia su texto — remiten a este
++bloque, porque dos transcripciones de la misma regla se desfasan, y ésta se desfasaría hacia el
++lado que **abre**.
++
++1. **Objetivo concreto, declarado en el propio encargo** (`CA-09` (A)). Todo encargo dice por
++   escrito **qué resultado debe quedar construido y comprobado**, **qué criterios de aceptación
++   le aplican** citados por su identificador, y **qué queda fuera** y **cuándo detenerse**.
++   Documentar o revisar es avance cuando **sirve** a esa entrega y no la sustituye: un encargo
++   cuyo único resultado sea texto se despacha **sólo** si ese texto **es** el resultado
++   contratado.
++2. **Todo bloqueo declara su alcance** (`CA-09` (B) punto 5). Venga de un hallazgo, de un veto,
++   de la cola de aprobaciones o de una dependencia, declara **(i) qué acción impide**
++   —vocabulario **cerrado**, cuya sede única es esta línea: **implementar · probar · aprobar ·
++   publicar**; añadir una quinta acción es cambio de contrato, no interpretación—, **(ii) qué
++   parte de la entrega afecta**, **(iii) qué evidencia lo sostiene**, citada de modo que se pueda
++   volver a ella **sin preguntar**, y **(iv) qué lo resuelve**. Un bloqueo **no se extiende solo**
++   a trabajo independiente y **no se rodea** con otro REQ, una reclasificación ni un cambio de
++   herramienta.
++3. **Un hallazgo no es, por sí solo, un encargo nuevo** (`CA-14`). **Primero lo que NO cambia:**
++   el `qa-tester` y el `auditor-seguridad` conservan íntegra su capacidad de **detectar,
++   registrar, clasificar y bloquear**, el **veto** de seguridad sigue disponible en cualquier
++   momento, y **ninguna clasificación de la coordinadora retira, degrada ni pospone un veredicto
++   suyo**. Hecho eso, la coordinadora clasifica cada hallazgo que llega en **tres** términos:
++   **defecto que impide cumplir o entregar con seguridad el alcance acordado** —se repara
++   **dentro** de la entrega y **conserva su bloqueo**—; **dependencia necesaria para continuar**
++   —se resuelve **únicamente** esa dependencia, sin ampliar el encargo—; y **mejora o defecto
++   independiente** —se **registra con responsable** en su sede y **queda fuera** de la entrega—.
++   **Registrar no autoriza reparar:** hacerlo «ya que estamos» es ampliación de alcance y se anota
++   como tal. Y una **urgencia de seguridad no se aplaza por esta regla: se escala** con su efecto
++   concreto —qué puede ocurrir, sobre qué, y qué acción impide— por la vía de la regla 4;
++   «independiente» no es un sitio donde guardar una urgencia. **Son dos ejes distintos y ninguno
++   se renombra en términos del otro:** la clase del campo `Hallazgos abiertos:` —`usuario/dinero`,
++   `contrato`, `instrumento`; sede única `requirements/README.md`— decide si un hallazgo
++   **bloquea el cierre** de su REQ, y la lee `guard-completado`; esta clasificación decide **si se
++   abre trabajo ahora y dentro de qué entrega**.
++4. **Las decisiones humanas se presentan temprano y con su forma** (`CA-09` (B) punto 3). Cuando
++   una decisión del propietario **impida continuar**, se presenta **en ese momento** —no al cierre
++   de la jornada— con **(i) pregunta comprensible, (ii) opciones, (iii) recomendación y (iv)
++   consecuencia de cada opción**, y **agrupada** con las decisiones ya conocidas que sigan
++   pendientes. Mientras la decisión no llegue se avanza **únicamente** en trabajo que cumpla las
++   tres condiciones a la vez: **no depende** de ella, está **autorizado** y está **suficientemente
++   definido** en el sentido de la regla 1. Si no queda ninguno, la entrada de
++   `PENDING_APPROVAL.md` lo dice y el proyecto **espera** — que es distinto de fabricar trabajo
++   (regla 6).
++5. **El presupuesto es del ciclo completo, no del agente** (`CA-10`). La misma entrega se sigue
++   **a través de todos los roles**, y **cambiar de agente, de fase o de nombre no reinicia ningún
++   límite**. Los contadores existentes **se conservan tal cual** —el primero, el tope de vueltas
++   dev↔QA **por REQ** que fija «Loop de error» más arriba, que se **cita** y **no se redeclara
++   aquí**—, y a su «no se reinicia con cada hallazgo nuevo» se le añade, por la misma propiedad,
++   **«ni por cambio de rol, de fase o de nombre de la comisión»**. **Agotado el presupuesto no se
++   aprueba por agotamiento ni se abre otra vuelta automáticamente:** se presenta el impedimento
++   con la forma de la regla 2 y **las alternativas concretas**, que son las dos que «Loop de
++   error» ya nombra —cerrar con el residual declarado, o `bloqueado` y escalar—.
++6. **Avance observable después de cada comisión** (`CA-10`). Su entrada del libro de comisiones
++   (sede en `docs/qa/`) dice, en **una línea**, **qué resultado se obtuvo** y **qué dependencia
++   falta**; y si la comisión siguiente **no acerca directamente la entrega**, esa misma línea dice
++   **por qué es necesaria**. Queda prohibido **fabricar cambios visibles, maquetas o tareas nuevas
++   para aparentar progreso**: un artefacto que ni es la entrega ni la acerca **no es avance**, y
++   anotarlo como si lo fuera es la cifra sin procedencia aplicada al trabajo en vez de al número.
++
+ **Nivel de rigor — cuánta ceremonia paga cada REQ.** No todo requerimiento merece el mismo
+ esfuerzo. Cada REQ declara `Rigor:` en su cabecera: `ligero` (analista + desarrollador +
+ quality gates), `estandar` (+ QA) o `critico` (+ auditoría de seguridad). Tabla completa en
+@@ -368,8 +439,14 @@ sensibilidad — exactamente como se juzgaba antes de que existieran los niveles
+ (por defecto: cierre de cada fase, decisiones arquitecturales, y cambios que tocan datos/credenciales de producción).
+ 
+ **Mecanismo de gate:** cuando una acción requiere aprobación, el agente escribe la decisión
+-pendiente en `PENDING_APPROVAL.md` y **detiene** el pipeline. No continúa hasta que el humano
+-resuelve (aprueba/rechaza) y limpia esa entrada. Así el bloqueo queda visible y por escrito.
++pendiente en `PENDING_APPROVAL.md` con la forma de la regla 4 —pregunta, opciones, recomendación
++y consecuencia—. **Y lo que esa entrada detiene va dicho con su alcance, no en absoluto:**
++mientras la cola tenga entradas bajo `## Pendientes` queda impedida la acción **aprobar/cerrar**
++de **todos** los REQ del proyecto, por construcción de `guard-completado`, que este mecanismo
++**no** cambia. **Implementar** y **probar** siguen permitidos, y **sólo** en trabajo que **no
++dependa** de la decisión, esté **autorizado** y esté **suficientemente definido** (regla 1). La
++propia entrada declara **qué trabajo sigue** o que **ninguno sigue**, y en ese segundo caso el
++proyecto **espera**. Así el bloqueo queda visible, por escrito y **con su alcance**.
+ 
+ > 🔒 **Vigilado por máquina:** mientras `PENDING_APPROVAL.md` tenga entradas en "## Pendientes",
+ > el hook `guard-completado` (plugin) deniega marcar cualquier REQ como `completado`. El avance

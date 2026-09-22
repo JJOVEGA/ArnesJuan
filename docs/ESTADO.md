@@ -10,6 +10,65 @@
 > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
 > `docs/estabilizacion/`.
 
+## ⏸ RETOMAR AQUÍ — REQ-025 entrega 1 (coordinación orientada a entregas), 2026-09-21
+
+**Este bloque SUSTITUYE a los de más abajo, que quedan como históricos.** Rama `feat/req-025-coordinacion-entregas`
+(desde `main` = `v1.34.0`). **Estado: `bloqueado` con alcance** —acción impedida **cerrar** (marcar REQ-025 como
+`completado`); implementar y probar no—, tras agotar las 3 vueltas con `QA: con-hallazgos` (R-3): lo encargado a
+las tres vueltas está reparado (8 de 9 hallazgos de QA cerrados); queda **QA-025-08** (`instrumento`): la conducta
+de la coordinadora ante un **hallazgo de QA** no fue observada en el ensayo S1…S4 (S4 no se disparó; el bloqueo se
+conservó por el veto de seguridad, vía que esta entrega no modifica). **La opción A (observación acotada sólo de S4)
+fue autorizada y consumida el 2026-09-21** (`ENS-S4-P` sobre `9f908d9`): **NO OBSERVADO** por la rama benigna —el
+desarrollador corrigió los dos defectos sembrados y QA no tuvo nada que retener—; QA lo acreditó (R-3b) y mantiene
+QA-025-08 abierto: dos ausencias no confirman. **No se repite** (instrucción del propietario). **QA-025-05 cerrado**
+por QA con el CI verde verificado sobre la cabeza exacta (903 · 0 · 9; CA-13 satisfecho; el verde no desmiente el FAIL
+local). **Decisión del propietario (2026-09-21): opción B, laguna aceptada** con condiciones literales (S4 se conserva
+«no observado», el hallazgo no se borra, residual con dueño y fecha de revisión, «mi aceptación no sustituye ninguna
+firma»); registrada en `PENDING_APPROVAL.md` §Resueltas (cola 1→0) y en REQ-025 CA-11 punto 3 (residual: dueño
+`qa-tester`, forzador = primer hallazgo de QA de cualquier REQ que llegue a la regla 3, fecha de revisión propuesta
+**2026-10-21**, modificable por el propietario; si no aparece el caso, se revisa la aceptación). `Estado:`
+`bloqueado` → `en-revisión`. **QA R-4 (`5c30281`): `aprobado`** sobre la entrega construida, no sobre la conducta de S4;
+QA-025-08 sigue en la cabecera (`instrumento`, residual aceptado). **Seguridad R-041 (`51a4430`): `con-hallazgos`, no
+veto**: CA-11 punto 4 satisfecho, delta normativo dentro del límite del propietario, orden de firmas correcto;
+**SEC-102** (`contrato`, dueño analista): el `Archivos:` de REQ-025 omite `requirements/README.md` y
+`requirements/REQ-028.md`, escritos por comisiones de este REQ, y frente a REQ-020 la intersección declarada queda vacía;
+remedio de una línea (añadir las dos rutas con fila de Historial), **autorizado excepcionalmente por el propietario el
+2026-09-21** («no reinicies contadores ni abras otras reparaciones»), **aplicado por el analista en `1932492`** y
+**reverificado por seguridad: `R-041-A` → SEC-102 `mitigado`, `Seguridad: aprobado` sobre `1932492`** (reutiliza la
+acreditación del delta normativo de R-041, que no cambió). **Las tres firmas están: QA aprobado, seguridad aprobado,
+cola 0, sólo `instrumento` abierto (QA-025-08, SEC-103, SEC-104).** ⚠️ **Advertencia del auditor, y es la regla para
+quien retome:** con eso `guard-completado` **ya no impide** marcar REQ-025 como `completado`, y **cerrarlo sería
+incorrecto**: la entrega 1b sigue `pendiente` dentro del REQ (CA-15 punto 9) y ninguna puerta comprueba esa cláusula.
+**No se cierra REQ-025.** SEC-104 (`instrumento`, dueño coordinadora): las decisiones del propietario posteriores a la
+opción B sólo estaban citadas dentro del REQ; ya pegadas literales en `PENDING_APPROVAL.md` §Resueltas (cierre del
+hallazgo: del auditor). Antes del write-back, SEC-102 no impedía nada operativo: REQ-025 no puede llegar a `completado` mientras quede la **entrega 1b**
+(CA-15 punto 9). **REQ-028 no se presenta como dependencia de cierre**: haber separado trabajo no la crea
+(propietario, 2026-09-21); el punto 9 lo enumera junto a la 1b y queda para el analista informar si ese texto la
+establece. **Confirmado por el propietario:** fecha de revisión del residual **2026-10-21**; la coordinadora señala el
+primer caso aplicable y **QA conserva la responsabilidad de verificarlo** (resuelve OBS-I); S4 sigue «no observado».
+**Fuente de la preferencia «edita por consola» identificada, nada modificado:** la emite el propio Claude Code como
+`system-reminder` en modo de permisos `auto` (texto compilado en el binario, 2.1.274 de la extensión de VS Code; sin
+rastro en `settings`, `CLAUDE.md`, memoria ni plugin). Detalle en la rama de evidencia,
+`req-025/preferencia-consola-fuente.md`. **SEC-103** = OBS-H, `instrumento`, abierto, no aceptado, sin
+reparación autorizada; sube a `contrato` si la reproducción muestra que `guard-codigo` permite. **OBS-I** (QA): el
+write-back añade que la coordinadora señale el caso, obligación que el propietario no escribió; a confirmar por él junto
+con la fecha 2026-10-21. Sin ensayos nuevos. **Observación independiente nueva,
+OBS-H** (`instrumento`, dueño coordinadora, en `docs/qa/REQ-025.md`): en el ensayo un `cp` por `Bash` del
+`qa-tester` hacia `src/*` tuvo efecto pese a que §13 lista `cp` como cubierto por `guard-codigo`; **no reproducido
+en la cabeza actual**, no se abre contra REQ-025 ni se repara sin decisión; siguiente paso: reproducción acotada
+como caso de banco cuando el propietario lo autorice.
+**Hecho:** contrato partido (REQ-025 entrega 1 / entrega 1b trazada / REQ-028 diferido); seis reglas en `AGENTS.md`
+§6 y gemela; cinco clases de acción (`cerrar` = marcar `completado`); cabeceras de la cola; entrada «Hacia 1.35.0»
+(preparada, no publicada); referencias en tres agentes con la cláusula de proyecto sin migrar; ADR-008 con adenda;
+ensayo acreditado por QA (CA-11 punto 3 satisfecho en el acto, S4 ante hallazgo de QA **no observado**, veto
+**observado**, regla 6 incumplida y corregida). **Pendiente:** la decisión B/C del propietario; CA-11 punto 4
+(seguridad no firma con QA `con-hallazgos`); OBS-D, OBS-G (margen del 93 % del techo en CI, dueño desarrollador),
+OBS-H (**separada y expresamente pendiente, no aceptada** por la decisión del 2026-09-21; no se abre su reparación) y la
+cola 1→7 del ensayo (material de la entrega 1b). Entrega 1b y REQ-028 **no se arrancan** sin autorización. Sedes: `requirements/REQ-025.md`, `docs/qa/REQ-025.md`, `docs/decisions/ADR-008-…`,
+rama de evidencia `req-025/`. Sin fusión ni publicación.
+
+---
+
 ## Fase actual
 Fase 0 — autoalojamiento. **v1.32.1 publicada.** Ventana **1.33.0 abierta**, gobernada por 1.32.1.
 Rama `cand/1.33.0`, PR **#43** en borrador.
@@ -226,7 +285,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-08 20:25
+## Estado derivado — 2026-09-21 13:46
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -236,10 +295,10 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.33.0` @ `7dc0699` — limpio
-**Arnés:** plugin instalado `1.32.1` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
-**Aprobaciones pendientes:** 0
-**REQ:** 25 — completado 13 · en-revisión 1 · en-progreso 1 · bloqueado 1 · otros 9
+**Repositorio:** `feat/req-025-coordinacion-entregas` @ `bb50ecd` — CON CAMBIOS SIN COMITEAR
+**Arnés:** plugin instalado `1.34.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
+**Aprobaciones pendientes:** 1
+**REQ:** 26 — completado 13 · en-revisión 1 · en-progreso 1 · bloqueado 2 · otros 9
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
 _Sólo los REQ abiertos; los 13 completados no se listan._
@@ -257,6 +316,7 @@ _Sólo los REQ abiertos; los 13 completados no se listan._
 | REQ-022 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-023 | borrador | pendiente | pendiente | critico | sec-052(contrato) |
 | REQ-024 | borrador | pendiente | pendiente | critico | (ninguno) |
-| REQ-025 | borrador | pendiente | pendiente | critico | (ninguno) |
+| REQ-025 | bloqueado | con-hallazgos | pendiente | critico | qa-025-05(instrumento),qa-025-08(instrum… |
+| REQ-028 | borrador | pendiente | pendiente | critico | (ninguno) |
 
 <!-- ARNES:DERIVADO fin -->

@@ -1,8 +1,18 @@
 # PENDING_APPROVAL — ArnesJuan
 
-> Cola de decisiones que esperan visto bueno humano antes de que el pipeline continúe.
-> Un agente AÑADE una entrada y se detiene; el humano la resuelve y la mueve a "Resueltas".
-> Mientras haya algo en "Pendientes", el pipeline NO avanza en ese hilo.
+> Cola de decisiones que esperan visto bueno humano. Un agente AÑADE una entrada con su forma
+> —pregunta, opciones, recomendación y consecuencia de cada opción (`AGENTS.md` §6, regla 4)—;
+> el humano la resuelve y la mueve a "Resueltas".
+>
+> **Qué impide esta cola, dicho con su alcance y no en absoluto.** Mientras haya algo en
+> "Pendientes", `guard-completado` deniega **marcar cualquier REQ como `completado`** —la
+> transición del campo `Estado:` de ese REQ al valor `completado`—. Y sus tres fronteras:
+> **no** impide **implementar** ni **probar**, así que el trabajo que **no dependa** de la
+> decisión, esté **autorizado** y esté **suficientemente definido** continúa; **no es** ninguna
+> de las aprobaciones humanas normativas de `AGENTS.md` §6, y **vaciar la cola no concede
+> ninguna**; y **no absorbe** ninguna otra restricción normativa —el orden de fases, el veto de
+> seguridad, el tope de vueltas dev↔QA—, que bloquean por su propia regla. Por eso **cada
+> entrada declara qué trabajo sigue**, o que **ninguno sigue** y el proyecto espera.
 >
 > **Formato de una entrada** (va bajo `## Pendientes`, con `###`):
 > `### [AAAA-MM-DD] (agente) — Título de la decisión`, y debajo: **Contexto** (por qué se
@@ -20,11 +30,40 @@
 > el bloque derivado dice `sin datos`: nunca 0.
 >
 > El ejemplo vive AQUÍ, fuera de la cola, y a propósito: un ejemplo dentro de la sección se
-> cuenta como una pendiente real y bloquea todos los cierres.
+> cuenta como una pendiente real e impide la acción de clase «cerrar» —**marcar cualquier REQ
+> como `completado`**, la transición de su campo `Estado:` a ese valor—, porque la regla que lo
+> impide, `guard-completado`, no distingue un ejemplo de una pendiente.
 
 ## Pendientes
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-09-21, decisión tomada fuera de la cola y registrada aquí a posteriori) — **REQ-025 entrega 1: write-back excepcional de SEC-102 y confirmaciones del residual**
+
+**Por qué está aquí:** estas dos decisiones no nacieron como entrada pendiente —el propietario las tomó en respuesta al informe de la coordinadora— y su única copia literal vivía dentro de `requirements/REQ-025.md`, el documento que autorizan (SEC-104, `instrumento`, registro de seguridad R-041-A). La cola es la sede donde la procedencia de una decisión vive **fuera** del artefacto al que da permiso; por eso se pegan aquí literales. **Registrarlas no las convierte en aprobación de nada más.**
+
+**Texto del propietario, literal:** «Autorizo excepcionalmente el write-back de SEC-102: incorporar las dos rutas omitidas en Archivos: y registrar la corrección en el Historial. No reinicies contadores ni abras otras reparaciones. Después, seguridad reverifica ese hallazgo y emite el estado correspondiente sobre la cabeza corregida. Reutiliza la evidencia vigente para lo que no cambie. Confirmo el 2026-10-21 como fecha de revisión del residual. Acepto que la coordinadora señale el primer caso aplicable; QA conserva la responsabilidad de verificarlo. S4 sigue "no observado". No presentes REQ-028 como dependencia para cerrar REQ-025 salvo que el contrato la establezca: haber separado trabajo no crea por sí solo esa dependencia. La entrega 1b sí permanece pendiente. Conserva SEC-103 separado y sin aceptación. Identifica la fuente exacta de la preferencia de edición por consola, sin aplicarla ni modificar configuraciones dentro de este encargo. Actualiza el PR y verifica el CI sobre la cabeza resultante. Sin nuevos ensayos, sin iniciar otras entregas, sin fusionar ni publicar.»
+
+**Ejecución:** write-back del analista en `1932492`; reverificación de seguridad `R-041-A` sobre esa cabeza → SEC-102 `mitigado`, `Seguridad: aprobado`. Fuente de la preferencia identificada (rama de evidencia, `req-025/preferencia-consola-fuente.md`), nada modificado.
+
+### RESUELTA (propietario, 2026-09-21) — **REQ-025 entrega 1: se ACEPTA la laguna de evidencia de QA-025-08 (opción B)**, con residual y sin sustituir ninguna firma
+
+**Texto del propietario, literal:** «Acepto la laguna de evidencia de QA-025-08 para la entrega 1. Conserva S4 como "no observado"; no lo conviertas en satisfecho ni borres el hallazgo. Registra el residual con dueño y fecha de revisión. En el primer caso real aplicable se comprobará si la coordinadora conserva el bloqueo de QA. Si no aparece antes de la fecha, se revisa la aceptación; no se da por acreditado. Pide a QA que determine el veredicto correspondiente con esta aceptación y, si permite avanzar según las reglas vigentes, continúa con seguridad acotada. Mi aceptación no sustituye ninguna firma. OBS-H queda separado y expresamente pendiente: lo observado cuestiona una protección declarada y no queda aceptado por esta decisión. No abras su reparación ahora. Entrega el resultado con el CI de la cabeza actual. Sin nuevos ensayos, sin iniciar 1b ni REQ-028, sin fusión ni publicación.»
+
+**Qué cambia y qué no:** QA-025-08 pasa a **residual aceptado** en `requirements/REQ-025.md` (CA-11 punto 3), con S4 conservado como **no observado**; el veredicto de QA y la firma de seguridad se emiten por sus autores con esta aceptación como dato. **OBS-H** (`guard-codigo` y un `cp` con efecto en el ensayo) **no queda aceptado** ni se repara por esta decisión.
+
+**La entrada tal como estaba, conservada:**
+
+#### [2026-09-21] (coordinadora) — REQ-025 entrega 1: cómo se resuelve la condición de aceptación que QA determinó pendiente (QA-025-08) *(histórica; resuelta arriba)*
+- **Contexto:** la vuelta 3 de 3 se agotó con `QA: con-hallazgos` (R-3, sobre `a441e04`). Lo encargado a la vuelta 3 quedó reparado (QA-025-07, ENS-01, OBS-C, OBS-E). QA determinó, como el propietario le pidió, que **falta una condición de aceptación**: la conducta que la entrega 1 modifica —el tratamiento de un **hallazgo de QA** bajo la regla 3— no tiene evidencia de tercero; en la única corrida del ensayo QA aprobó y S4 no se disparó, y el bloqueo se conservó por la vía del **veto de seguridad**, que esta entrega **no** modifica. El propietario escribió: «no se elimina esa condición por agotarse las vueltas», «no aceptes residuales en mi nombre», «no autorizo repetir el ensayo completo ni construir mecanismos nuevos».
+- **Acción que impide (regla 2):** **cerrar** — marcar `REQ-025` como `completado`. **Regla que lo impide:** `QA: con-hallazgos` y CA-13 (`guard-completado`, `AGENTS.md` §6 y §13). **No** impide implementar ni probar; **no** afecta a la entrega 1b ni a REQ-028. **Evidencia:** `docs/qa/REQ-025.md`, §«Acreditación del ensayo S1…S4» (S4) y §«Vuelta 3 de 3» (QA-025-08).
+- **Opciones:**
+  - ~~**A — Observación acotada de UNA sola situación**~~ — **AUTORIZADA Y CONSUMIDA (propietario, 2026-09-21; sesión `ENS-S4-P` sobre `9f908d9`): resultado NO OBSERVADO.** El desarrollador corrigió los dos defectos sembrados (CA-01 y CA-03) en su entrega, así que QA no tuvo defecto que retener y la conducta no ocurrió; nadie escribió veredictos ajenos ni cerró el REQ. QA lo acreditó en `docs/qa/REQ-025.md` §«R-3b» y determinó que **QA-025-08 sigue abierto**: dos ausencias no son una confirmación. Por instrucción del propietario («si la situación vuelve a no producirse, informa "no observado" y detente; no encadenes intentos») **no se repite**. **Ya no está disponible.**
+  - **B — Cerrar con la laguna declarada**: aceptar que la entrega se acredita sin observar esa conducta, con dueño, forzador y vencimiento. **Sólo el propietario puede elegirla.** Consecuencia: la sede queda acreditada sobre el camino que el cambio no toca. Forzador propuesto por QA, que se arma solo: «la primera vez que un hallazgo de QA de cualquier REQ llegue a la clasificación de la regla 3, se anota si el bloqueo se conservó», en vez de otra sesión de ensayo.
+  - **C — Mantener `Estado: bloqueado`**: detener la entrega 1 hasta otra ventana. Consecuencia: para la entrega entera por una laguna de evidencia, no por un defecto medido.
+- **Recomendación (2026-09-21, tras consumir A):** B con el forzador de QA. Es la recomendación de QA y de la coordinadora; la elección es del propietario.
+- **Estado tras A:** `QA: con-hallazgos (R-3b, sobre 9f908d9)`; **QA-025-05 cerrado** (CI verde verificado por QA sobre la cabeza exacta; CA-13 satisfecho; el verde no desmiente el FAIL local); `Hallazgos abiertos: QA-025-08 (instrumento)`. Seguridad (CA-11 punto 4) no emitida.
+- **Espera:** elección del propietario entre B y C. **Trabajo que sigue mientras tanto:** ninguno de esta entrega. La entrega 1b y REQ-028 no dependen de esta decisión y no se arrancan sin autorización.
 
 ### RESUELTA (propietario, 2026-09-09) — **se PUBLICA `v1.33.0`**: revierte el aplazamiento de ayer, con límite declarado
 
