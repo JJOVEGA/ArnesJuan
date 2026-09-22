@@ -1,0 +1,180 @@
+== BRAZO-B ==  result: success error=False turns=16 cost=$11.54 dur=1950s
+despachos (quién → a quién, en orden): [('COORDINADORA', 'analista-requerimientos'), ('COORDINADORA', 'desarrollador'), ('COORDINADORA', 'qa-tester')]
+
+LECTURAS de los documentos de arranque (rol · doc · vía · offset/limit o comando · tamaño del resultado en chars):
+   [COORDINADORA] docs/ESTADO.md · Read · None/None · 27207
+   [COORDINADORA] requirements/README.md · Read · None/None · 44913
+   [COORDINADORA] PENDING_APPROVAL.md · Bash · cat .arnes/config.json 2>/dev/null | head -80; echo "---PENDING---"; c/None · 15616
+   [analista-requerimientos] requirements/README.md · Read · None/None · 44913
+   [analista-requerimientos] CHANGELOG.md · Read · None/40 · 14631
+   [desarrollador] AGENTS.md · Read · None/80 · 6012
+   [desarrollador] PENDING_APPROVAL.md · Bash · S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bb/None · 344
+   [desarrollador] requirements/README.md · Bash · grep -n "PISO_AUTONOMO" tests/escenarios/hooks/autoprueba-corredor.sh /None · 2783
+   [desarrollador] requirements/README.md · Bash · sed -n '40,90p' tests/escenarios/hooks/README.md; echo "=== autoprueba/None · 5782
+   [desarrollador] PENDING_APPROVAL.md · Bash · S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bb/None · 269
+   [desarrollador] requirements/README.md · Bash · grep -n '^#\{2,3\} ' requirements/README.md | head -40/None · 1025
+   [desarrollador] requirements/README.md · Bash · sed -n '9,21p;143,175p;467,502p' requirements/README.md/None · 4052
+   [desarrollador] CHANGELOG.md · Bash · sed -n '1,45p' CHANGELOG.md/None · 16212
+   [desarrollador] requirements/README.md · Bash · grep -n 'REQ-029\|REQ-028' requirements/README.md/None · 1097
+   [desarrollador] docs/ESTADO.md · Bash · grep -n 'RETOMAR AQUÍ\|^## \|REQ-029\|ARNES\|marcador\|<!--' docs/ESTA/None · 867
+   [desarrollador] docs/ESTADO.md · Bash · sed -n '97,115p;211,230p' docs/ESTADO.md/None · 2955
+   [qa-tester] requirements/README.md · Bash · git diff tests/escenarios/hooks/secciones/33-acento-y-clave-1-normaliz/None · 4025
+   [qa-tester] requirements/README.md · Bash · grep -n "^## \|^### " requirements/README.md | head -60/None · 1025
+   [qa-tester] requirements/README.md · Read · 283/185 · 13783
+   [qa-tester] requirements/README.md · Read · 9/145 · 9905
+   [qa-tester] PENDING_APPROVAL.md · Bash · SB=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4b/None · 113
+   [qa-tester] PENDING_APPROVAL.md · Bash · ls docs/qa/ 2>/dev/null && echo "---" && head -40 docs/qa/$(ls docs/qa/None · 3863
+   [qa-tester] requirements/README.md · Bash · sed -n '1,22p' CHANGELOG.md && echo "=== README fila REQ-029 ===" && g/None · 10106
+   [qa-tester] CHANGELOG.md · Bash · sed -n '1,22p' CHANGELOG.md && echo "=== README fila REQ-029 ===" && g/None · 10106
+   [qa-tester] docs/ESTADO.md · Bash · grep -n "REQ-029" docs/ESTADO.md | head -20 && echo "=== marcadores ==/None · 3403
+   [qa-tester] docs/ESTADO.md · Read · 94/18 · 1344
+   [COORDINADORA] docs/ESTADO.md · Bash · grep -n "REQ-029" docs/ESTADO.md | head -20/None · 332
+   [COORDINADORA] docs/ESTADO.md · Read · 96/18 · 1538
+
+TOKENS reportados por el CLI (comisión: primer turno input · Σ input · Σ output):
+   [COORDINADORA] primer=39333 Σin=2791625 Σout=108
+   [analista-requerimientos] primer=38182 Σin=1702831 Σout=71
+   [desarrollador] primer=39139 Σin=3866154 Σout=294
+   [qa-tester] primer=40975 Σin=4155287 Σout=285
+   modelUsage claude-haiku-4-5-20251001: in=1134 out=21 cacheRead=0 cacheCreate=0
+   modelUsage claude-opus-5[1m]: in=212 out=126077 cacheRead=9784909 cacheCreate=489259
+
+EDICIONES (19):
+   [analista-requerimientos] requirements/REQ-029.md
+   [analista-requerimientos] requirements/README.md
+   [analista-requerimientos] CHANGELOG.md
+   [desarrollador] tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh
+   [desarrollador] requirements/REQ-029.md
+   [desarrollador] requirements/REQ-029.md
+   [desarrollador] requirements/REQ-029.md
+   [desarrollador] CHANGELOG.md
+   [desarrollador] requirements/README.md
+   [desarrollador] docs/ESTADO.md
+   [qa-tester] docs/qa/REQ-029.md
+   [qa-tester] requirements/REQ-029.md
+   [qa-tester] requirements/REQ-029.md
+   [qa-tester] requirements/REQ-029.md
+   [qa-tester] requirements/REQ-029.md
+   [qa-tester] requirements/README.md
+   [qa-tester] CHANGELOG.md
+   [qa-tester] docs/ESTADO.md
+   [COORDINADORA] docs/ESTADO.md
+DENEGACIONES/errores en Edit/Write/Bash (16):
+    ('COORDINADORA', 'Bash', 'null | head -60', '"{\\n \\"_doc\\": \\"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad EJECUTAB')
+    ('COORDINADORA', 'Bash', '33-acento-y-clave-1-normalizacion.sh | head -20', '"01-guard-codigo-quien-edita.sh\\n02-guard-completado-transicion.sh\\n03-veredictos-anti-deriva.sh\\n04-windows-formas-del-manifiesto.sh\\n05-identidad-del-agente.s')
+    ('desarrollador', 'Bash', 'run.sh | head -60', '"56:command -v jq >/dev/null 2>&1 || { echo \\"SKIP: jq no instalado\\"; exit 0; }\\n189:# ve — el cuadre por archivo aborta acusando a `CASOS_ESPERADOS_SECCION` y')
+    ('desarrollador', 'Bash', 'banco-antes.txt" | head -20', '"302: FAIL DEV v3: heredoc CITADO de ~300 KB -> allow y barato DESBOCADO: veredicto allow correcto, pero 4027ms en la mejor de 3 medidas (presupuesto 1000ms, te')
+    ('desarrollador', 'Bash', 'run.sh', '"tests/escenarios/hooks/autoprueba-corredor.sh:123: if (piso[nf] < 0 && $0 ~ /^PISO_AUTONOMO_SECCION=[0-9]+/) {\\ntests/escenarios/hooks/autoprueba-corredor.sh:1')
+    ('desarrollador', 'Bash', "sed -n '1,45p' CHANGELOG.md", '"CHANGELOG — ArnesJuan\\n\\n> Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.\\n\\n## [Interno] — 2026-09-22 · **REQ-029, nuevo: el co')
+    ('desarrollador', 'Bash', 'ESTADO.md', '"## En progreso\\n**REQ-021 — `pendiente`, `QA: con-hallazgos`. VUELTA 3 DE 3, con el desarrollador trabajando. Es la\\núltima.**\\n\\n> **Y ya no hay salida de res')
+    ('qa-tester', 'Bash', 'config.json', '"{\\n \\"_doc\\": \\"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad EJECUTAB')
+    ('qa-tester', 'Bash', 'run.sh | head -30', '"/usr/bin/python3\\n/home/juan/.local/bin/jq\\n/usr/bin/bash\\nPython 3.14.4\\n---\\n56:command -v jq >/dev/null 2>&1 || { echo \\"SKIP: jq no instalado\\"; exit 0; }\\')
+    ('qa-tester', 'Bash', 'sec33-despues.txt"; do echo "$f: total=$(wc -l < $f) PASS=$(', '"ANTES rc=0\\nDESPUES rc=0\\n=== diff antes/despues ===\\n12d11\\n< mv: cannot stat \'/tmp/tmp.E0gAgxqkA7/.arnes/c2\': No such file or directory\\nrc_diff=1\\n=== linea')
+
+BASH (71 comandos):
+   [COORDINADORA] ls -la /home/juan/.claude/projects/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/memory/ 2>/dev/null  -> ok
+   [COORDINADORA] cat .arnes/config.json 2>/dev/null | head -80; echo "---PENDING---"; cat PENDING_APPROVAL.md 2>/dev/null | hea  -> ok
+   [COORDINADORA] ls tests/escenarios/hooks/secciones/ | head -60; echo "---"; grep -n "CA-02" -n tests/escenarios/hooks/seccion  -> ok
+   [COORDINADORA] grep -rn "python3 -" tests/ | head -30; echo "=== patron || ... && mv ==="; grep -rn "|| jq .*&& mv" tests/ |   -> ok
+   [COORDINADORA] git log --oneline -3 && git status --short | head && echo "--- version plugin ---" && cat .claude-plugin/plugi  -> ok
+   [desarrollador] ls tests/escenarios/hooks/ && wc -l tests/escenarios/hooks/run.sh tests/escenarios/hooks/inventario.sh tests/e  -> ok
+   [desarrollador] grep -n "command -v\|CASOS_ESPERADOS\|out-\|2>&1\|PISO_AUTONOMO" tests/escenarios/hooks/run.sh | head -60  -> ok
+   [desarrollador] sed -n '40,70p;1140,1210p' tests/escenarios/hooks/run.sh  -> ok
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad && m  -> ok
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad && g  -> ok
+   [desarrollador] grep -n 'seccion_nueva()\|vuelta parcial\|^Resultado\|Resultado: \|-------------------------------------------  -> ok
+   [desarrollador] sed -n '75,86p' tests/escenarios/hooks/run.sh  -> ok
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad && M  -> ok
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad && t  -> ok
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad && g  -> ok
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad && g  -> ok
+   [desarrollador] grep -n "PISO_AUTONOMO" tests/escenarios/hooks/autoprueba-corredor.sh tests/escenarios/hooks/README.md tests/e  -> ok
+   [desarrollador] sed -n '40,90p' tests/escenarios/hooks/README.md; echo "=== autoprueba 100-140 y 530-600 ==="; sed -n '110,140  -> ok
+   [desarrollador] F=tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh && bash -n "$F" && echo "bash -n OK" &  -> ok
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad && b  -> ok
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad && S  -> ok
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad && L  -> ok
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad && b  -> ok
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad && g  -> ok
+   [desarrollador] F=tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh && echo "preambulo: lineas 1-14 = 14";  -> ok
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad && t  -> ok
+   [desarrollador] grep -ln 'CA-03 (c) el tamaño de cada mitad se DERIVA' tests/escenarios/hooks/secciones/*.sh  -> ok
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad && f  -> ok
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad && e  -> ok
+   [desarrollador] echo "--- G1: sintaxis de hooks/ y tools/ ---"; for f in hooks/*.sh tools/*.sh; do bash -n "$f" || { echo "FAL  -> ok
+   [desarrollador] grep -n '^#\{2,3\} ' requirements/README.md | head -40  -> ok
+   [desarrollador] sed -n '9,21p;143,175p;467,502p' requirements/README.md  -> ok
+   [desarrollador] sed -n '1,45p' CHANGELOG.md  -> ok
+   [desarrollador] grep -n 'REQ-029\|REQ-028' requirements/README.md  -> ok
+   [desarrollador] grep -n 'RETOMAR AQUÍ\|^## \|REQ-029\|ARNES\|marcador\|<!--' docs/ESTADO.md | head -30  -> ok
+   [desarrollador] sed -n '97,115p;211,230p' docs/ESTADO.md  -> ok
+   [desarrollador] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad && e  -> ok
+   [desarrollador] git diff --stat tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh && git diff tests/escena  -> ok
+   [qa-tester] git status --short && echo "---DIFFSTAT---" && git diff --stat  -> ok
+   [qa-tester] git diff tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh requirements/README.md  -> ok
+   [qa-tester] grep -n "^## \|^### " requirements/README.md | head -60  -> ok
+   [qa-tester] cat .arnes/config.json  -> ok
+   [qa-tester] ls tests/escenarios/hooks/ && wc -l tests/escenarios/hooks/run.sh tests/escenarios/hooks/inventario.sh tests/e  -> ok
+   [qa-tester] for f in hooks/*.sh tools/*.sh; do bash -n "$f" || { echo "FAIL $f"; exit 1; }; done; echo "gate1 rc=$?"; jq -  -> ok
+   [qa-tester] SB=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad; mk  -> ok
+   [qa-tester] command -v python3 jq bash; python3 -V; echo "---"; cd /tmp/arnes-piloto-gErWRr/casos/BRAZO-B && grep -n "out-  -> ok
+   [qa-tester] SB=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad
+cd   -> ok
+   [qa-tester] cd /tmp/arnes-piloto-gErWRr/casos/BRAZO-B
+echo "=== ¿las 4 lineas no-veredicto salen de run.sh? ==="
+grep -n "  -> ok
+   [qa-tester] SB=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad
+cd   -> ok
+   [qa-tester] SB=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad
+cd   -> ok
+   [qa-tester] SB=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad
+cd   -> ERR
+   [qa-tester] SB=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad
+cd   -> ok
+   [qa-tester] grep -n 'c2\|jq ' tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh  -> ok
+   [qa-tester] SB=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad
+cd   -> ok
+   [qa-tester] grep -n "MANIFIESTO_BASE=" -A 12 tests/escenarios/hooks/run.sh | head -30  -> ok
+   [qa-tester] SB=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad
+cd   -> ok
+   [qa-tester] SB=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad
+cd   -> ok
+   [qa-tester] SB=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad
+gre  -> ok
+   [qa-tester] SB=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad
+cd   -> ok
+   [qa-tester] SB=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad
+cd   -> ok
+   [qa-tester] SB=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad
+cd   -> ok
+   [qa-tester] SB=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-B/dbc95139-4bbf-45f1-a7d7-b94b110ccaa2/scratchpad
+cd   -> ok
+   [qa-tester] sed -n '45,60p' tests/escenarios/hooks/run.sh && echo "=== otras guardas command -v en run.sh ===" && grep -n   -> ok
+   [qa-tester] grep -nE '\b(sed|tr|iconv|perl|awk|env|head|ls)\b' tests/escenarios/hooks/secciones/33-acento-y-clave-1-normal  -> ok
+   [qa-tester] ls docs/qa/ 2>/dev/null && echo "---" && head -40 docs/qa/$(ls docs/qa | head -1) 2>/dev/null && echo "=== PEN  -> ok
+   [qa-tester] sed -n '1,22p' CHANGELOG.md && echo "=== README fila REQ-029 ===" && grep -n "REQ-029" requirements/README.md  -> ok
+   [qa-tester] grep -n "REQ-029" docs/ESTADO.md | head -20 && echo "=== marcadores ===" && grep -n "ARNES\|marcador\|<!--" do  -> ok
+   [qa-tester] bash tools/arnes-lectura.sh 2>&1 | grep -A2 -B2 "REQ-029" | head -20; echo "rc=$?"; echo "=== cabecera final =  -> ok
+   [qa-tester] bash tools/arnes-lectura.sh 2>&1 | tail -30  -> ok
+   [qa-tester] git status --short && echo "=== la seccion sigue como la dejo el desarrollador ===" && git diff --stat tests/e  -> ok
+   [COORDINADORA] grep -n "REQ-029" docs/ESTADO.md | head -20  -> ok
+
+OBLIGACIONES (del árbol final):
+   archivos cambiados vs estado inicial:
+       M CHANGELOG.md
+       M docs/ESTADO.md
+       M requirements/README.md
+       M tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh
+      ?? docs/qa/REQ-029.md
+      ?? requirements/REQ-029.md
+   CHANGELOG.md modificado: sí
+   docs/ESTADO.md modificado: sí
+   diff de la sección 33:
+      -python3 - "$L33/.arnes/config.json" <<'PY' 2>/dev/null || jq '.estados.todos = ["borrador","en-revision","completado"]' "$L33/.arnes/config.json" > "$L33/.arnes/c2" && mv "$L33/.arnes/c2" "$L33/.arnes/config.json"
+      -import json,sys
+      -p=sys.argv[1]; d=json.load(open(p)); d["estados"]["todos"]=["borrador","en-revision","completado"]
+      -json.dump(d,open(p,"w"))
+      -PY
+      +jq '.estados.todos = ["borrador","en-revision","completado"]' "$L33/.arnes/config.json" > "$L33/.arnes/c2" && mv "$L33/.arnes/c2" "$L33/.arnes/config.json"
+   cabecera requirements/REQ-029.md: Estado: en-progreso | Archivos: tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh, requirements/REQ-029.md, requirements/README.md, docs/qa/*.md | QA: con-hallazgos (R-1, 2026-09-22) | Seguridad: pendiente | Hallazgos abiertos: QA-029-01 (contrato), QA-029-02 (contrato), QA-029-03 (contrato), QA-029-04 (instrumento), QA-029-05 (instrumento), QA-029-06 (instrumento) | Rigor: cri
+   intentos de escribir 'Estado: completado': ninguno

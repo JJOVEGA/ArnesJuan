@@ -1,0 +1,173 @@
+== BRAZO-A ==  result: success error=False turns=15 cost=$10.75 dur=1974s
+despachos (quién → a quién, en orden): [('COORDINADORA', 'analista-requerimientos'), ('COORDINADORA', 'desarrollador'), ('COORDINADORA', 'qa-tester')]
+
+LECTURAS de los documentos de arranque (rol · doc · vía · offset/limit o comando · tamaño del resultado en chars):
+   [COORDINADORA] docs/ESTADO.md · Read · None/None · 27207
+   [COORDINADORA] requirements/README.md · Read · None/None · 44911
+   [COORDINADORA] PENDING_APPROVAL.md · Bash · grep -rln "33-acento" requirements/ docs/ 2>/dev/null | head; echo "--/None · 233
+   [analista-requerimientos] requirements/README.md · Read · None/None · 44911
+   [analista-requerimientos] docs/ESTADO.md · Read · None/None · 27207
+   [analista-requerimientos] requirements/README.md · Read · 537/None · 1808
+   [desarrollador] requirements/README.md · Bash · wc -l requirements/README.md requirements/REQ-014.md 2>/dev/null; ls r/None · 412
+   [qa-tester] requirements/README.md · Bash · S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab/None · 692
+   [qa-tester] requirements/README.md · Read · 120/40 · 2404
+   [COORDINADORA] CHANGELOG.md · Bash · head -25 CHANGELOG.md/None · 7070
+
+TOKENS reportados por el CLI (comisión: primer turno input · Σ input · Σ output):
+   [COORDINADORA] primer=38811 Σin=2635850 Σout=153
+   [analista-requerimientos] primer=37387 Σin=1062654 Σout=75
+   [desarrollador] primer=38615 Σin=3248345 Σout=189
+   [qa-tester] primer=40254 Σin=3709922 Σout=245
+   modelUsage claude-haiku-4-5-20251001: in=1134 out=27 cacheRead=0 cacheCreate=0
+   modelUsage claude-opus-5[1m]: in=186 out=120970 cacheRead=8418283 cacheCreate=492920
+
+EDICIONES (13):
+   [analista-requerimientos] requirements/REQ-029.md
+   [analista-requerimientos] requirements/README.md
+   [analista-requerimientos] requirements/README.md
+   [analista-requerimientos] requirements/README.md
+   [desarrollador] tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh
+   [desarrollador] tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh
+   [COORDINADORA] requirements/REQ-029.md
+   [qa-tester] docs/qa/REQ-029.md
+   [qa-tester] docs/qa/REQ-029.md
+   [qa-tester] requirements/REQ-029.md
+   [qa-tester] requirements/REQ-029.md
+   [COORDINADORA] CHANGELOG.md
+   [COORDINADORA] docs/ESTADO.md
+DENEGACIONES/errores en Edit/Write/Bash (11):
+    ('COORDINADORA', 'Bash', ' | head -50', '"{\\n \\"_doc\\": \\"Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad EJECUTAB')
+    ('desarrollador', 'Bash', 'secciones | head -50', '"AGENTS.md\\nARCHITECTURE.md\\nCHANGELOG.md\\nCLAUDE.md\\nLICENSE\\nPENDING_APPROVAL.md\\nREADME.md\\nagents\\ndocs\\nhooks\\nplaybooks\\nrequirements\\nskills\\ntemplates\\n')
+    ('desarrollador', 'Bash', 'REQ-014.md | head -60', '"6:Versión destino: 1.32.0 (publicada y verificada) · REABIERTO el 2026-09-08 para 1.33.0 — se re-derivan CA-18 y CA-12\\n9:Seguridad: aprobado (2026-09-08, R-01')
+    ('desarrollador', 'Bash', 'run.sh', '"#!/usr/bin/env bash\\n# Escenario de regresión de los hooks de enforcement del arnés (A1, A2, A3).\\n# Alimenta JSON de PreToolUse a los scripts reales y verific')
+    ('desarrollador', 'Bash', 'inventario.sh', '"#!/usr/bin/env bash\\n# Inventario ordenado de un banco: `<veredicto> TAB <identificador de caso>`, una línea\\n# por caso, en orden estable.\\n#\\n# POR QUÉ EXIST')
+    ('desarrollador', 'Bash', 'null && echo "(hay pre-commit)"', '"Exit code 2\\n M docs/ESTADO.md\\n M requirements/README.md\\n M tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh\\n?? requirements/REQ-029.md')
+    ('qa-tester', 'Bash', 'run.sh | head -80', '"1343 tests/escenarios/hooks/run.sh\\n40:# ningún archivo ABORTA en vez de degradar a filtro: una vuelta que corre cero casos y\\n51:# Dónde viven las secciones. ')
+    ('qa-tester', 'Bash', 'qa-sec33-antes.txt', '"rc=0\\n100\\n SKIP ruta estilo Windows con backslashes -> deny (sin cygpath: caso solo de Windows)\\nmv: cannot stat \'/tmp/tmp.alWRxWZyhu/.arnes/c2\': No such file')
+    ('qa-tester', 'Bash', 'REQ-014.md | head -60', '"- **CA-12** — [el inventario, no el total] Dado el banco en **v1.31.0 publicada** y el banco tras el cambio, Cuando se ejecutan los dos, Entonces se genera de ')
+    ('qa-tester', 'Bash', 'REQ-014.md | grep -nE "N =|N=|k =|k=|400|1,|techo" | head -2', '"1:- **CA-18** — [lo que una comisión tiene que leer] Dado un cambio que afecta a una sola sección, Cuando se mide lo que hay que abrir para hacerlo, Entonces s')
+
+BASH (69 comandos):
+   [COORDINADORA] cat .arnes/config.json | head -60 && ls tests/escenarios/hooks/secciones/ | head -50  -> ok
+   [COORDINADORA] grep -n "c2\|python3" tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh | head -40  -> ok
+   [COORDINADORA] grep -rln "33-acento" requirements/ docs/ 2>/dev/null | head; echo "---PENDING---"; awk '/^## Pendientes/,/^##  -> ok
+   [desarrollador] ls && wc -l tests/escenarios/hooks/run.sh && ls tests/escenarios/hooks/secciones | head -50  -> ok
+   [desarrollador] wc -l requirements/README.md requirements/REQ-014.md 2>/dev/null; ls requirements/ | head -40  -> ok
+   [desarrollador] grep -n "CA-12\|CA-17\|CA-18\|CA-07\|CA-10\|CA-13\|CA-04" requirements/REQ-014.md | head -60  -> ok
+   [desarrollador] sed -n '1,120p' tests/escenarios/hooks/run.sh  -> ok
+   [desarrollador] command -v jq python3 bash; git log --oneline -1  -> ok
+   [desarrollador] sed -n '1100,1343p' tests/escenarios/hooks/run.sh  -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] sed -n '900,1000p' tests/escenarios/hooks/run.sh  -> ok
+   [desarrollador] bash -n tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh && echo "sintaxis OK" && wc -l t  -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] bash -c 'trap "echo TRAP-CORRIO" EXIT; ( echo en-subshell; exit 3 ) ; echo "rc=$?"' ; echo "==="; grep -rn "^e  -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] sed -n '1,90p' tests/escenarios/hooks/inventario.sh  -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] for f in hooks/*.sh tools/*.sh; do bash -n "$f" || { echo "FALLO $f"; exit 1; }; done && echo "gate1 bash -n h  -> ok
+   [desarrollador] git status --short && echo "=== diff ===" && git diff -U3 -- tests/escenarios/hooks/secciones/33-acento-y-clav  -> ERR
+   [desarrollador] git config core.hooksPath; ls .git/hooks/ | grep -v sample; echo "---(fin)"  -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [desarrollador] EV=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad &&   -> ok
+   [qa-tester] git status --short && echo "---" && git diff --stat  -> ok
+   [qa-tester] git diff tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh  -> ok
+   [qa-tester] ls docs/qa/ 2>/dev/null; echo "---scratch---"; ls -la /tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/  -> ok
+   [qa-tester] wc -l tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh && grep -n "CASOS_ESPERADOS_SECCIO  -> ok
+   [qa-tester] wc -l tests/escenarios/hooks/run.sh && grep -n "source\|subshell\|CASOS_ESPERADOS_SECCION\|ABORT\|abort\|SECCI  -> ok
+   [qa-tester] sed -n '940,980p;1140,1200p;1240,1295p' tests/escenarios/hooks/run.sh  -> ok
+   [qa-tester] set -e
+S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchp  -> ok
+   [qa-tester] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad
+cd $  -> ok
+   [qa-tester] grep -n "FILTRO\|SELECTORES\|--sec\|usage\|Uso:" tests/escenarios/hooks/run.sh | head -40  -> ok
+   [qa-tester] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad
+SEC=  -> ok
+   [qa-tester] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad
+echo  -> ok
+   [qa-tester] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad
+cd $  -> ok
+   [qa-tester] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad
+grep  -> ok
+   [qa-tester] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad
+cd $  -> ok
+   [qa-tester] sed -n '/\*\*CA-12\*\*/,/\*\*CA-13\*\*/p' requirements/REQ-014.md | head -60  -> ok
+   [qa-tester] sed -n '1,40p' tests/escenarios/hooks/inventario.sh  -> ok
+   [qa-tester] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad
+R=/t  -> ok
+   [qa-tester] set -e
+S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchp  -> ok
+   [qa-tester] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad
+SEC=  -> ok
+   [qa-tester] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad
+rm -  -> ok
+   [qa-tester] command -v jq python3; echo "PATH=$PATH"  -> ok
+   [qa-tester] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad
+for   -> ok
+   [qa-tester] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad
+PATH  -> ok
+   [qa-tester] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad
+SEC=  -> ok
+   [qa-tester] cd /tmp && : > /tmp/vacio.json
+jq '.estados.todos = ["a","b"]' /tmp/vacio.json > /tmp/out.json; echo "rc_jq=$?  -> ok
+   [qa-tester] set -e
+S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchp  -> ok
+   [qa-tester] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad
+SEC=  -> ok
+   [qa-tester] sed -n '/\*\*CA-18\*\*/,/\*\*CA-19\*\*/p' requirements/REQ-014.md | head -25  -> ok
+   [qa-tester] sed -n '/\*\*CA-18\*\*/,/\*\*CA-19\*\*/p' requirements/REQ-014.md | grep -nE "N =|N=|k =|k=|400|1,|techo" | he  -> ok
+   [qa-tester] sed -n '93,160p' tests/escenarios/hooks/autoprueba-corredor.sh  -> ok
+   [qa-tester] cd /tmp/arnes-piloto-gErWRr/casos/BRAZO-A
+echo "=== gate 1: sintaxis de hooks y tools ==="
+for f in hooks/*.sh  -> ok
+   [qa-tester] S=/tmp/claude-1000/-tmp-arnes-piloto-gErWRr-casos-BRAZO-A/0b96808e-3ab7-48dd-968f-518badd4c5bf/scratchpad
+for   -> ok
+   [qa-tester] sed -n '1,12p' requirements/REQ-029.md && echo "=== lector ===" && bash tools/arnes-lectura.sh . 2>&1 | grep -  -> ok
+   [qa-tester] bash tools/arnes-lectura.sh . 2>&1 | tail -25; echo "rc=$?"  -> ok
+   [qa-tester] git status --short  -> ok
+   [COORDINADORA] head -25 CHANGELOG.md  -> ok
+
+OBLIGACIONES (del árbol final):
+   archivos cambiados vs estado inicial:
+       M CHANGELOG.md
+       M docs/ESTADO.md
+       M requirements/README.md
+       M tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh
+      ?? docs/qa/REQ-029.md
+      ?? requirements/REQ-029.md
+   CHANGELOG.md modificado: sí
+   docs/ESTADO.md modificado: sí
+   diff de la sección 33:
+      -python3 - "$L33/.arnes/config.json" <<'PY' 2>/dev/null || jq '.estados.todos = ["borrador","en-revision","completado"]' "$L33/.arnes/config.json" > "$L33/.arnes/c2" && mv "$L33/.arnes/c2" "$L33/.arnes/config.json"
+      +# CADA ORDEN CORRE SOLO SI SU PRECONDICION SE CUMPLIO. Esto iba escrito `A || B && C`, y
+      +# el shell lo agrupa `(A || B) && C`: con el intérprete en EXITO el `mv` corria igual, sin
+      +# origen que mover, y su diagnostico salia en CADA corrida de la puerta requerida de
+      +# `main` — un error real en la salida que certifica el mecanismo, que todo el mundo
+      +# aprende a ignorar. El `if` dice lo que la precedencia no daba: el respaldo solo entra si
+      +# el preferente falla, y el `mv` solo si su `jq` llego a escribir el archivo.
+      +if python3 - "$L33/.arnes/config.json" <<'PY' 2>/dev/null
+      +then :   # el camino preferente ya dejo el manifiesto escrito; no hay nada mas que hacer
+      +elif jq '.estados.todos = ["borrador","en-revision","completado"]' "$L33/.arnes/config.json" > "$L33/.arnes/c2" 2>/dev/null; then
+      +  mv "$L33/.arnes/c2" "$L33/.arnes/config.json"
+      +else
+      +  # Sin NINGUN camino no se sigue: MEDIDO (2026-09-22) que el caso de abajo sale PASS
+      +  # sobre un manifiesto sin preparar —el lector no ve `estados.todos` y no marca nada—,
+      +  # o sea que la ausencia de precondicion compraria un verde que no midio nada. Se dice
+      +  # QUE caso se queda sin sujeto y se aborta la seccion (REQ-014 CA-10): ante la falta
+      +  # de medios, rojo. Misma forma que las precondiciones de entorno de la seccion 37.
+      +  echo "  SIN-MANIFIESTO: ni python3 ni jq prepararon el manifiesto de 'REQ-010 CA-02'; sin precondicion no se mide"
+      +  exit 1
+      +fi
+   cabecera requirements/REQ-029.md: Estado: en-progreso | Archivos: tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh, requirements/REQ-029.md, docs/qa/*.md, docs/seguridad/registro-seguridad.md | QA: con-hallazgos (2026-09-22, vuelta 1; docs/qa/REQ-029.md) | Seguridad: pendiente | Hallazgos abiertos: QA-029-01 (contrato), QA-029-02 (instrumento) | Rigor: critico
+   intentos de escribir 'Estado: completado': ninguno

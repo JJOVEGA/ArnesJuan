@@ -1,0 +1,6 @@
+ M CHANGELOG.md
+ M docs/ESTADO.md
+ M requirements/README.md
+ M tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh
+?? docs/qa/REQ-029.md
+?? requirements/REQ-029.md

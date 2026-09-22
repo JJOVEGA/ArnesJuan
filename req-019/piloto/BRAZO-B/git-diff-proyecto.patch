@@ -1,0 +1,147 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index cbfeba4..97e7581 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -2,6 +2,31 @@ CHANGELOG — ArnesJuan
+ 
+ > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
+ 
++## [Interno] — 2026-09-22 · **REQ-029 validado por QA (R-1): `con-hallazgos`** — cinco criterios y medio pasan con medición propia y pareada, y **tres hallazgos `contrato`** bloquean: CA-03 (ii) es inalcanzable tal como está escrito, y la acreditación de CA-04 registra el **incumplimiento** de su propio CA-04 (iii)
++> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `qa-tester` (despachado con **Opus** por la política de autoalojamiento de §5). Tercer paso del procedimiento completo —analista → desarrollador → QA → seguridad— que rige porque el `AGENTS.md` de este proyecto lleva la **declaración negativa** de la vía proporcional (§6). Archivos escritos: `docs/qa/REQ-029.md` (nuevo), `requirements/REQ-029.md` (sólo `Estado:`, `QA:`, `Hallazgos abiertos:`, `Trazabilidad` e Historial), el índice de `requirements/README.md`, `docs/ESTADO.md` y este `CHANGELOG.md`, con `Edit`/`Write` y **sin consola** (§13). Sin comitear, sin fusión, sin tag y sin publicación.
++
++**Lo medido, y se midió de nuevo: no se dio por buena ninguna cifra del desarrollador.** Quality gates §7 **todas en verde**. Corridas **pareadas** del banco completo, misma máquina y misma comisión, sobre el árbol de hoy y el arreglado: **rc 0 en los dos**, 895 PASS / 0 FAIL / 17 SKIP (912 = `CASOS_ESPERADOS`), e inventario **idéntico byte a byte** — **912 casos / 75.129 bytes, sin ninguna línea volátil**. Ruido de fixture: **1 → 0** en la sección y **1 → 0** en el banco entero, con el `diff` de las dos salidas unidas conteniendo **esa única línea** de diferencia. Con `python3` fuera del `PATH`, salida e inventario **idénticos byte a byte** (45 casos, 3.423 B). Piso re-derivado término a término (14 + 13 + **147** medido de `mk_req()` en la 183 al final en la 329 = **174**), `autoprueba-corredor.sh` **106 PASS / 0 FAIL**, y CA-06 con **511 / 384** bytes e iguales como `jq -S .` sobre el manifiesto efímero real. **Falsación añadida:** 3 corridas consecutivas de la sección (deterministas, 3 inventarios idénticos); `jq` fuera del `PATH` → abstención **visible** del corredor (`SKIP: jq no instalado`) antes de ejecutar nada; manifiesto **corrupto** → `jq` falla con rc 5, el `&&` **corta**, `mv` no corre y el manifiesto queda intacto; y el temporal vive dentro del proyecto efímero **por sección** (`proj-$BASHPID`), así que el paralelismo del corredor no abre ninguna carrera.
++
++**Los hallazgos (sitio único de su clase, dueño y forzador: `docs/qa/REQ-029.md`).** **Bloquean**, los tres `contrato`: **QA-029-01** — CA-03 (ii) exige que la sección «no invoque ningún programa que no esté en esa lista», y el **sitio único** que el propio criterio cita (`run.sh:56`) contiene **un solo** programa, `jq`, mientras la sección invoca `awk`, `grep` y `head`: leído a la letra es inalcanzable, y leído «como se entiende» obliga a QA a inventarse el contrato; la redacción la decide el **analista** (§9: aquí el write-back es suyo). **QA-029-02** — la fila de Historial que acredita CA-04 registra `rc 1` «fuera de alcance» cuando **CA-04 (iii) exige `rc 0`**: un criterio no se satisface declarando su incumplimiento fuera de alcance, y además la medición de QA da **`rc 0` en los dos árboles**, así que el REQ afirma algo falso sobre lo construido. **QA-029-03** — el Historial cita la línea **73** para el camino único (está en la **77**) y la **86** para la forma de referencia (hoy la **82**). **No bloquean**, y **ninguno es de este REQ**: **QA-029-04** (el `rc` del banco cuelga de un **reloj absoluto** —forma (d) prohibida en `requirements/README.md`—: `DEV v3: heredoc CITADO` pasó aquí en **3.927 ms** contra techo 4.000, y falló en 4.027 / 4.965 ms en las corridas del desarrollador), **QA-029-05** (`REQ-021 CA-03 (c)` **flaky**: PASS en las dos corridas de QA, PASS·PASS·PASS·FAIL en las del desarrollador — un test no determinista no es evidencia ni a favor ni en contra) y **QA-029-06** (posible falso positivo de `guard-codigo` sobre un `cp` cuyo **origen** es `.arnes/config.json` y cuyo destino estaba **fuera** del repositorio).
++
++**Discrepancia declarada con la clasificación de la coordinadora, y es de hecho, no de clase.** Coincido en que las dos condiciones que registró el desarrollador son `instrumento`, ajenas y quedan fuera de esta entrega. Lo que **no** es cierto es que «el corredor sale `rc 1` antes y después»: hoy salió **`rc 0` dos veces**. No es un estado del árbol, es una **oscilación con la carga**. Por eso el bloqueo no viene del rojo ajeno sino del **write-back**: mientras el REQ acredite CA-04 (iii) con una corrida que lo incumple, el contrato miente.
++
++**Lo que NO hace.** No toca código ni tests —los tres `contrato` vuelven al analista/desarrollador—; no escribe `Seguridad:` en ningún REQ (el `auditor-seguridad` va **después**, y `Rigor: critico` lo exige); no investiga REQ-021, REQ-014, REQ-020, REQ-025 ni REQ-028; no toca `Rigor:`, `Sensible a seguridad:`, `Archivos:` ni ningún criterio de aceptación; no cierra ningún hallazgo ni marca nada como `completado`; no hay commit, fusión, tag, publicación ni git destructivo. **Tampoco escribe guía de usuario:** se documenta lo probado **y aprobado**, y este REQ tiene hallazgos abiertos. **Vuelta 1 de 3 consumida**, y el contador es del REQ: no se reinicia con cada hallazgo nuevo.
++
++## [Interno] — 2026-09-22 · **REQ-029 implementado: el preparativo de fixture de la sección 33 queda en UN SOLO camino, el de `jq`** — la salida de la puerta pasa de **1** línea de diagnóstico a **0**, y el recuento de casos no se mueve
++> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `desarrollador`. Segundo paso del procedimiento completo —analista → desarrollador → QA → seguridad— que rige porque el `AGENTS.md` de este proyecto lleva la **declaración negativa** de la vía proporcional (§6): la comisión de análisis ya se hizo y su contrato es `requirements/REQ-029.md`. Archivos escritos: `tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh`, `requirements/REQ-029.md` y este `CHANGELOG.md`, con `Edit` y **sin consola** (§13: para tocar un archivo que una invariante protege se usan las herramientas de edición). Sin comitear, sin fusión, sin tag y sin publicación.
++
++**Lo hecho, una línea de código y seis criterios medidos.** El preparativo del fixture del caso `REQ-010 CA-02` (líneas 77-81) pasa de `python3 - … <<'PY' … PY 2>/dev/null || jq … > c2 && mv c2 config.json` —que por la **precedencia izquierda e igual** de `||` y `&&` es `(A || B) && C`, de modo que el `mv` corría también cuando `python3` había tenido éxito y su temporal nunca se creó— a **un solo camino de una línea** con la forma que la propia sección ya usaba para el fixture de `REQ-010 CA-10` (línea 86): `jq '.estados.todos = […]' config.json > c2 && mv c2 config.json`. La sección pasa de **333 a 329 líneas**. **CA-01, fail-before/pass-after en la misma máquina y la misma comisión**: contra el árbol de hoy la salida unida stdout+stderr de la sección traía **1** diagnóstico de preparativo (`mv: cannot stat '…/.arnes/c2'`), contra el árbol arreglado trae **0** — las 4 líneas no-veredicto que quedan las escriben, todas, ayudantes del corredor. **CA-02**: el camino ejercido sale **0**, con **0 bytes** en stderr y sin temporal residual. **CA-03**: con `python3` **inalcanzable desde el `PATH`**, el inventario de la sección sale **idéntico byte a byte** (45 casos); la única aparición de `python3` que queda en el archivo es texto dentro del patrón de `grep` del caso `REQ-010 CA-20`, no una invocación. **CA-04**: `CASOS_ESPERADOS_SECCION=45` y `CASOS_ESPERADOS=912` **intactos**, cuadres por archivo y total cerrados sin `ABORT`, inventario del banco completo idéntico byte a byte (911 casos, 74.859 bytes) salvo **una** línea acreditada como volátil por temporización y ajena a esta sección. **CA-05**: **ningún término del piso cambia**, así que `PISO_AUTONOMO_SECCION=174` **se deja quieto y se dice por qué** (14 preámbulo + 13 maquinaria + 147 bloque indivisible mayor, que sólo se **desplaza**); `autoprueba-corredor.sh` sale **106 PASS / 0 FAIL**. **CA-06**: los manifiestos de los dos productores son **iguales como JSON** (`jq -S .`) pese a los 384 vs 511 bytes. Quality gates §7 todas en verde. `requirements/REQ-029.md` pasa a `Estado: en-revisión` y gana su fila de Historial con toda esa evidencia.
++
++**Lo que NO hace.** **No construye la generalización** —la comprobación que detectaría ruido de fixture en **cualquier** sección—: el propio REQ la declara capacidad nueva, fuera de alcance y con dueño (`analista-requerimientos`), y añadirla aquí sería ampliación de alcance. **No toca ningún otro archivo del banco**, ni `hooks/`, ni `tools/`, ni el workflow de CI, ni `.arnes/config.json`, ni REQ-014/020/021/025/028. **No toca `Rigor:`, `Sensible a seguridad:`, `QA:`, `Seguridad:`, `Archivos:` ni ningún criterio de aceptación** de REQ-029: son del analista y del auditor según §6. No cierra ningún hallazgo, no emite ninguna firma y **no marca nada como `completado`**. **Registrado y no reparado** (fuera de alcance, para que la coordinadora decida): en esta máquina el corredor sale `rc 1` **antes y después** del arreglo por casos de **presupuesto de tiempo** —`DEV v3: heredoc CITADO de ~300 KB` da 4.027 ms antes y 4.965 ms después sobre un techo de 4.000 ms— y el caso `REQ-021 CA-03 (c)` de `38-sondas-compartidas-2-la-calibracion.sh` **oscila PASS/FAIL con el árbol fijo** (PASS·PASS·PASS·FAIL en 4 vueltas consecutivas sin tocar nada); ambas condiciones son **preexistentes y ajenas** a este arreglo.
++
++## [Interno] — 2026-09-22 · **REQ-029, nuevo: el contrato de la reparación del preparativo de fixture de la sección 33** — `(A || B) && C` deja un `mv` sin su archivo y la puerta requerida de `main` publica un error en cada corrida
++> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agente: `analista-requerimientos`. Comisión de análisis **obligatoria**: la coordinadora comprobó por escrito en el encargo que el `AGENTS.md` de este proyecto lleva la **declaración negativa** de la vía proporcional (§6), de modo que rige el procedimiento anterior —analista → desarrollador → QA → seguridad—. Archivos escritos: `requirements/REQ-029.md` (nuevo), el índice de `requirements/README.md` y este `CHANGELOG.md`, con `Write`/`Edit` y **sin consola**. Sin comitear.
++
++**Lo hecho.** Nace **`REQ-029`** en `pendiente`, con `Rigor: critico` · `Sensible a seguridad: sí` · `QA: pendiente` · `Seguridad: pendiente` · `Hallazgos abiertos: (ninguno)` (política de autoalojamiento de `AGENTS.md` §6: todo REQ nace así, y el efecto alcanza `tests/`, declarado crítico por nombre). Seis criterios: **CA-01** fail-before/pass-after sobre la salida unida stdout+stderr de la sección (≥ 1 línea de diagnóstico hoy, ≤ 0 después; los dos números **de contrato**, la clase definida **por propiedad** con el sitio único en el corredor, sin enumerar); **CA-02** la causa —ninguna orden sobre un artefacto que su rama no produjo, agrupación explícita, `||` y `&&` tienen la misma precedencia—; **CA-03** la **decisión de contrato** que el encargo dejaba al analista: **un solo camino**, el de la dependencia que el banco ya comprueba antes de correr nada, porque `python3` es hoy una dependencia **no declarada** cuyo respaldo nunca se ejerció en CI, con verificación por inventario idéntico con `python3` inalcanzable; **CA-04** el recuento **no** cambia —y si tuviera que cambiar, el desarrollador **para**—; **CA-05** el `PISO_AUTONOMO_SECCION` se re-deriva término a término si algún término encoge; **CA-06** la reparación no se compra cambiando lo que el caso mide (igualdad **como JSON**, no byte a byte). El `Archivos:` va con las rutas **sin decoración** (`SEC-020` abierto) y declara la colisión con `REQ-014` y `REQ-020`.
++
++**Lo que NO hace.** **No escribe el arreglo** —el archivo del banco lo toca el `desarrollador` (§3 y §5)—; no abre ni toca `REQ-021`, `REQ-025` ni `REQ-028`; no reclasifica el rigor de ningún otro REQ; no asigna ventana (planificación del propietario/coordinadora, declarada como tal y **no** como pregunta abierta); no propone fusión, tag ni publicación; y deja **fuera de alcance, con dueño**, la generalización —una comprobación que detecte ruido de fixture en **cualquier** sección—, que es capacidad nueva y necesita su propio REQ. Ningún veredicto de otro REQ se toca y ningún hallazgo se cierra.
++
+ ## [Interno] — 2026-09-22 · **REQ-019 entrega 1: el piloto de lectura por encargo se APLICA** — `AGENTS.md` §0 gana el ritual acotado al encargo para el subagente, y el write-back de CA-06 sobre REQ-007 y REQ-018 va en el mismo cambio
+ > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `desarrollador` (el bloque de §0) + `analista-requerimientos` (write-back, cabecera, Historial y esta entrada). Worktree `ArnesJuan-req019`, rama `feat/req-019-piloto-lectura` reconciliada con `main` @ `cfb1106` (fusión `ed14828`). Escrito con `Edit` y **sin consola**. Sin comitear en esta tanda.
+ 
+diff --git a/docs/ESTADO.md b/docs/ESTADO.md
+index 9136945..2dee78c 100644
+--- a/docs/ESTADO.md
++++ b/docs/ESTADO.md
+@@ -95,6 +95,40 @@ el descontrol del ciclo 3.
+ > exista**. La palanca de tokens es **REQ-019**, y está en 1.34.0.
+ 
+ ## En progreso
++
++> **PARADA DE LA COORDINADORA — 2026-09-22, presupuesto de la sesión agotado, no decisión.** El ciclo de
++> REQ-029 llegó hasta QA R-1 (analista → desarrollador → QA) y **se detiene ahí por falta de presupuesto**,
++> no por un bloqueo normativo. **Acción impedida:** despachar las comisiones siguientes —**implementar** la
++> reparación de los tres `contrato` y **probar** en QA R-2—. **Regla que lo impide:** ninguna; es un límite
++> de recursos de la sesión. **Parte de la entrega afectada:** toda la que queda. **Evidencia:**
++> `docs/qa/REQ-029.md` (R-1, 2026-09-22) y esta entrada. **Qué lo resuelve:** una sesión con presupuesto que
++> retome por el **analista** (QA-029-01, QA-029-02) y luego el **desarrollador** (QA-029-03), R-2 de QA y
++> `auditor-seguridad`. **El contador dev↔QA sigue en 1 de 3 y no se reinicia** por haber cambiado de sesión.
++> **Nada se comiteó, fusionó, etiquetó ni publicó.**
++
++**REQ-029 — `en-progreso`, `QA: con-hallazgos (R-1, 2026-09-22)`. VUELTA 1 DE 3 consumida. El arreglo del
++`desarrollador` (un solo camino, `jq`) está **medido y bien**: QA acredita CA-01, CA-02, CA-04, CA-05, CA-06
++y CA-03 (i)/(iii) con corridas propias y pareadas. Lo que bloquea es el **contrato**, no el código.
++Próximo paso: **analista** (QA-029-01 y QA-029-02) y **desarrollador** (QA-029-03, sus citas de línea);
++luego QA R-2 y, por `Rigor: critico`, `auditor-seguridad`.**
++
++> **Tres hallazgos `contrato` abiertos** (sitio único: `docs/qa/REQ-029.md`). **QA-029-01**: CA-03 (ii)
++> exige que la sección no invoque «ningún programa que no esté en esa lista», y el sitio único que cita
++> (`run.sh:56`) tiene **uno solo**, `jq`, mientras la sección invoca `awk`, `grep` y `head` — inalcanzable
++> tal como está escrito; la redacción es decisión del **analista**. **QA-029-02**: la fila de Historial que
++> acredita CA-04 registra `rc 1` y lo declara «fuera de alcance», cuando **CA-04 (iii) exige `rc 0`**.
++> **QA-029-03**: el Historial cita la línea 73 (es la **77**) y la 86 (hoy la **82**).
++>
++> **Corrección de hecho sobre lo registrado en la comisión anterior:** el banco completo salió **`rc 0` en
++> los dos árboles** en las corridas pareadas de QA del 2026-09-22 (895 PASS / 0 FAIL / 17 SKIP; inventario
++> **idéntico byte a byte**, 912 casos / 75.129 bytes, **sin línea volátil**). El `rc 1` no es un estado del
++> árbol sino una **oscilación con la carga**: `DEV v3: heredoc CITADO` pasó aquí en **3.927 ms** contra un
++> techo **absoluto** de 4.000 ms (margen 1,8 %) → **QA-029-04** (`instrumento`, ajeno: un reloj absoluto es
++> la forma (d) prohibida en `requirements/README.md`), y `REQ-021 CA-03 (c)` pasó las dos veces →
++> **QA-029-05** (`instrumento`, ajeno, **flaky**). Ninguno de los dos bloquea, y QA **coincide** con la
++> clasificación de independientes de la coordinadora. Suelto además **QA-029-06** (`instrumento`, ajeno):
++> posible falso positivo de `guard-codigo` sobre un `cp` cuyo **origen** es `.arnes/config.json`.
++
+ **REQ-021 — `pendiente`, `QA: con-hallazgos`. VUELTA 3 DE 3, con el desarrollador trabajando. Es la
+ última.**
+ 
+@@ -285,7 +319,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
+ - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
+ 
+ <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
+-## Estado derivado — 2026-09-21 13:46
++## Estado derivado — 2026-09-22 11:11
+ 
+ > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
+ > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
+@@ -295,10 +329,10 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
+ > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
+ > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
+ 
+-**Repositorio:** `feat/req-025-coordinacion-entregas` @ `bb50ecd` — CON CAMBIOS SIN COMITEAR
++**Repositorio:** `master` @ `68865c4` — CON CAMBIOS SIN COMITEAR
+ **Arnés:** plugin instalado `1.34.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
+-**Aprobaciones pendientes:** 1
+-**REQ:** 26 — completado 13 · en-revisión 1 · en-progreso 1 · bloqueado 2 · otros 9
++**Aprobaciones pendientes:** 0
++**REQ:** 27 — completado 13 · en-revisión 2 · en-progreso 3 · bloqueado 1 · otros 8
+ **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
+ 
+ _Sólo los REQ abiertos; los 13 completados no se listan._
+@@ -310,13 +344,14 @@ _Sólo los REQ abiertos; los 13 completados no se listan._
+ | REQ-011 | pendiente | pendiente | pendiente | critico | (ninguno) |
+ | REQ-013 | en-revision | con-hallazgos | con-hallazgos | critico | sec-014(contrato),sec-020(contrato),qa-2… |
+ | REQ-018 | borrador | pendiente | pendiente | critico | (ninguno) |
+-| REQ-019 | pendiente | pendiente | preventiva | critico | sec-033(contrato) |
++| REQ-019 | en-progreso | pendiente | preventiva | critico | sec-033(contrato),sec-055(contrato) |
+ | REQ-020 | pendiente | pendiente | preventiva | critico | sec-038(contrato),sec-039(contrato),sec-… |
+ | REQ-021 | bloqueado | con-hallazgos | preventiva | critico | dev-021-05(instrumento,dueñoanalista-req… |
+ | REQ-022 | pendiente | pendiente | pendiente | critico | (ninguno) |
+ | REQ-023 | borrador | pendiente | pendiente | critico | sec-052(contrato) |
+ | REQ-024 | borrador | pendiente | pendiente | critico | (ninguno) |
+-| REQ-025 | bloqueado | con-hallazgos | pendiente | critico | qa-025-05(instrumento),qa-025-08(instrum… |
++| REQ-025 | en-revision | aprobado | aprobado | critico | qa-025-08(instrumento),sec-103(instrumen… |
+ | REQ-028 | borrador | pendiente | pendiente | critico | (ninguno) |
++| REQ-029 | en-progreso | con-hallazgos | pendiente | critico | qa-029-01(contrato),qa-029-02(contrato),… |
+ 
+ <!-- ARNES:DERIVADO fin -->
+diff --git a/requirements/README.md b/requirements/README.md
+index da1bac6..fda507e 100644
+--- a/requirements/README.md
++++ b/requirements/README.md
+@@ -536,3 +536,4 @@ Tocado por: (agente / fecha)
+ | [REQ-024](REQ-024.md) | La ausencia de un campo no se resuelve del lado que abre, y el mismo estado en el segundo lector: la cola que cuenta cero sobre lo que no pudo medir. **Ventana 1.34.0**: va después de REQ-023, con el que comparte nueve rutas | `borrador` | critico | pendiente | pendiente |
+ | [REQ-025](REQ-025.md) | El arnés vigila también a quien orquesta: la sesión coordinadora acredita, decide y publica, y ninguna puerta la mide. **Ventana 1.35.0**; línea base = 20 errores de coordinación catalogados. Tras la **partición del 2026-09-21** conserva **la entrega 1** —las **seis reglas** del propietario en `AGENTS.md` §6, su gemela, las dos sedes de `PENDING_APPROVAL`, la entrada de `arnes-upgrade` **preparada, no publicada**, las referencias en los agentes y el **ADR-008**— y, desde el mismo día, una **entrega 1b `pendiente` dentro del propio REQ** (CA-01, CA-02, las preguntas 1, 2 y 4 de CA-09 (B), la regla del `git add -A` y la primera mitad de CA-10), **sin ventana asignada**: **aprobar la entrega 1 no completa REQ-025**. Vuelta **1 de 3** consumida (QA `con-hallazgos`, R-1) | `en-progreso` | critico | con-hallazgos | pendiente |
+ | [REQ-028](REQ-028.md) | Las capacidades que REQ-025 difiere (**entregas 2+**): `tools/arnes-comprobar.sh` con par discriminante y denominador, su sección del banco, la **procedencia y la atribución** de la cifra que llega al `CHANGELOG.md`, las **columnas de instantes** del libro de comisiones y los umbrales de coste. Nace de la **partición de REQ-025** (2026-09-21) conservando los identificadores CA-03…CA-08, CA-12 y las mitades de CA-10, CA-11 y CA-13. `borrador` con **cuatro decisiones del propietario abiertas** (B-1…B-4) y **sin ventana asignada** | `borrador` | critico | pendiente | pendiente |
++| [REQ-029](REQ-029.md) | El preparativo que corre en las dos ramas: `A \|\| B && C` ejecuta un `mv` sobre el archivo que su rama no creó, y la puerta requerida de `main` publica un error en cada corrida. Reparación acotada del fixture de `REQ-010 CA-02` en la sección 33 del banco; decide por contrato **un solo camino** (la dependencia que el banco ya declara) y **no** cambia el recuento de casos. **Sin ventana asignada**. Vuelta **1 de 3** consumida (QA `con-hallazgos`, R-1): pasan CA-01, CA-02, CA-04, CA-05, CA-06 y CA-03 (i)/(iii); **tres hallazgos `contrato`** abiertos (CA-03 (ii) inalcanzable como está escrito, la acreditación de CA-04 contradice a CA-04 (iii), y dos citas de línea equivocadas) y tres `instrumento` **ajenos** | `en-progreso` | critico | con-hallazgos | pendiente |
+diff --git a/tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh b/tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh
+index ef67d4a..a11b8ed 100644
+--- a/tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh
++++ b/tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh
+@@ -74,11 +74,7 @@ lec33 "REQ-010 CA-13 ...y al lado el normalizado que lee la maquina" 1 'se lee:
+ rm -f "$L33/requirements/REQ-810.md" "$L33/requirements/REQ-811.md"
+ # CA-02: LA DIRECCION INVERSA. El manifiesto declara el estado SIN tilde y el REQ lo
+ # escribe CON tilde: la normalizacion se aplica a los DOS lados de la comparacion.
+-python3 - "$L33/.arnes/config.json" <<'PY' 2>/dev/null || jq '.estados.todos = ["borrador","en-revision","completado"]' "$L33/.arnes/config.json" > "$L33/.arnes/c2" && mv "$L33/.arnes/c2" "$L33/.arnes/config.json"
+-import json,sys
+-p=sys.argv[1]; d=json.load(open(p)); d["estados"]["todos"]=["borrador","en-revision","completado"]
+-json.dump(d,open(p,"w"))
+-PY
++jq '.estados.todos = ["borrador","en-revision","completado"]' "$L33/.arnes/config.json" > "$L33/.arnes/c2" && mv "$L33/.arnes/c2" "$L33/.arnes/config.json"
+ printf '# REQ-812\nEstado: en-revisi%sn\nQA: aprobado\nSeguridad: n/a\n' 'ó' > "$L33/requirements/REQ-812.md"
+ lec33 "REQ-010 CA-02 manifiesto SIN tilde + REQ CON tilde: tampoco es anomalia" 0 'REQ-812' no
+ # CA-10: LA FRONTERA. La `ñ` NO es una `n` con adorno: plegarla haria iguales dos palabras

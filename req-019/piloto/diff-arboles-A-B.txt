@@ -1,0 +1,6 @@
+Files /tmp/arnes-piloto-gErWRr/casos/BRAZO-A/AGENTS.md and /tmp/arnes-piloto-gErWRr/casos/BRAZO-B/AGENTS.md differ
+Files /tmp/arnes-piloto-gErWRr/casos/BRAZO-A/CHANGELOG.md and /tmp/arnes-piloto-gErWRr/casos/BRAZO-B/CHANGELOG.md differ
+Files /tmp/arnes-piloto-gErWRr/casos/BRAZO-A/requirements/README.md and /tmp/arnes-piloto-gErWRr/casos/BRAZO-B/requirements/README.md differ
+Files /tmp/arnes-piloto-gErWRr/casos/BRAZO-A/requirements/REQ-007.md and /tmp/arnes-piloto-gErWRr/casos/BRAZO-B/requirements/REQ-007.md differ
+Files /tmp/arnes-piloto-gErWRr/casos/BRAZO-A/requirements/REQ-018.md and /tmp/arnes-piloto-gErWRr/casos/BRAZO-B/requirements/REQ-018.md differ
+Files /tmp/arnes-piloto-gErWRr/casos/BRAZO-A/requirements/REQ-019.md and /tmp/arnes-piloto-gErWRr/casos/BRAZO-B/requirements/REQ-019.md differ

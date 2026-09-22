@@ -1,0 +1,167 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 483eb9c..33fbcde 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -2,6 +2,21 @@ CHANGELOG — ArnesJuan
+ 
+ > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
+ 
++## [Interno] — 2026-09-22 · **REQ-029 (nuevo)**: la orden del fixture que se ejecutaba con su precondición incumplida — analista, desarrollador y QA vuelta 1; **QA `con-hallazgos`**, vuelve al desarrollador
++> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (1M context) · agentes: `analista-requerimientos`, `desarrollador`, `qa-tester` (Opus por la política de autoalojamiento) · coordinadora. Sin comitear, sin fusión, sin publicación.
++
++**Sujeto.** `tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh:77`, fixture de `REQ-010 CA-02`: `python3 … || jq … > c2 && mv c2 …` se agrupa como `(A||B) && C`, así que el `mv` corría también en el camino de éxito y CI imprimía `mv: cannot stat '…/.arnes/c2'` en **cada** corrida de la puerta requerida de `main`. Ningún veredicto cambiaba; el error sí era real.
++
++**Vía (comprobada por escrito antes de despachar, `AGENTS.md` §6).** Archivo leído: el `AGENTS.md` **de este proyecto**. Resuelto: **no** declara la vía proporcional de reparación —rige «Este proyecto todavía no ha declarado esa autorización»—, y además el efecto cae en `tests/`, criterio `critico` del proyecto. Se corrió el **ciclo completo** analista → desarrollador → QA → seguridad, sin omitir ninguna fase, y el write-back del REQ queda en el `analista-requerimientos` (§9).
++
++**Analista.** REQ nuevo **REQ-029** (`Rigor: critico`, `Sensible a seguridad: sí`), con CA-01…CA-06 y `Archivos:` sin decoración (SEC-020 abierto). Motivo de no reabrir REQ-010: el defecto no desmiente su contrato y `completado` no se reescribe por redacción.
++
++**Desarrollador.** El `||`/`&&` pasa a `if / elif / else` con `SIN-MANIFIESTO` + `exit 1` en la rama sin caminos (333 → 351 líneas, techo 400). Fail-before/pass-after: **1 → 0** diagnósticos; sección 33 en **45 PASS**; banco completo **895 PASS · 0 FAIL · 17 SKIP** (= 912, cuadre); autoprueba 106 PASS; quality gates de §7 en verde.
++
++**QA (vuelta 1 de 3): `con-hallazgos`.** CA-01, CA-04, CA-05, CA-06 y CA-02 (i) **PASS**, acreditados con corridas propias e inventario idéntico byte a byte. **CA-02 (ii) y CA-03 FAIL** por **QA-029-01** (`contrato`, alta): `jq` sobre un archivo vacío devuelve **rc 0 con salida vacía**, así que si el camino preferente trunca el manifiesto y muere, el `elif` toma ese rc por «llegó a escribir», el `mv` instala un manifiesto **vacío** y `REQ-010 CA-02` sale **PASS sin medir nada** — el `else` nunca se alcanza. **No es regresión** (el árbol previo hacía lo mismo): lo nuevo es que ahora hay un criterio que lo prohíbe. **QA-029-02** (`instrumento`, no bloquea): sin `jq`, `run.sh` sale con **rc 0** y 0 casos; preexistente, vive en `run.sh`, fuera de alcance. Log: `docs/qa/REQ-029.md`.
++
++**Estado al cerrar la sesión.** REQ-029 `en-progreso`, `QA: con-hallazgos`, `Seguridad: pendiente` (el auditor **no** firma sobre un árbol sin validar). **Acción impedida: `cerrar`** REQ-029 —regla: `guard-completado` con un hallazgo `contrato` abierto—; **implementar y probar no están impedidos**. Lo resuelve la vuelta 2 del desarrollador sobre QA-029-01. **La fase 4 (`auditor-seguridad`) queda sin despachar** por presupuesto de la sesión, no por decisión.
++
+ ## [Interno] — 2026-09-21 · REQ-025 entrega 1 con las tres firmas; decisiones del propietario posteriores a la opción B pegadas literales en la cola (SEC-104); punto de retomar con la advertencia «no se cierra REQ-025»; fuente de la preferencia de consola identificada
+ > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. `PENDING_APPROVAL.md` §Resueltas gana una entrada «decisión tomada fuera de la cola y registrada a posteriori» con el texto literal del propietario que autorizó el write-back excepcional de SEC-102, confirmó la fecha 2026-10-21, aceptó que la coordinadora señale el primer caso (QA verifica), conservó S4 «no observado» y SEC-103 sin aceptación, y pidió no presentar REQ-028 como dependencia de cierre: es el remedio barato que SEC-104 describe; su cierre es del auditor. `docs/ESTADO.md` «RETOMAR AQUÍ»: QA `aprobado` (R-4), seguridad `aprobado` (R-041-A), cola 0, sólo `instrumento` abierto; **la puerta ya no impide cerrar y cerrar sería incorrecto porque la entrega 1b sigue pendiente (CA-15 punto 9)**; REQ-028 es trabajo separado, no dependencia. Fuente de la preferencia «edita por consola»: el propio Claude Code en modo de permisos `auto` (texto compilado en el binario; sin rastro en settings, CLAUDE.md, memoria ni plugin); nada modificado; detalle en la rama de evidencia `req-025/preferencia-consola-fuente.md`. Sin ensayos nuevos, sin otras entregas, sin fusión ni publicación; el CI de la cabeza resultante se adjunta en la rama de evidencia.
+ 
+diff --git a/docs/ESTADO.md b/docs/ESTADO.md
+index 9136945..4772b8b 100644
+--- a/docs/ESTADO.md
++++ b/docs/ESTADO.md
+@@ -10,7 +10,51 @@
+ > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
+ > `docs/estabilizacion/`.
+ 
+-## ⏸ RETOMAR AQUÍ — REQ-025 entrega 1 (coordinación orientada a entregas), 2026-09-21
++## ⏸ RETOMAR AQUÍ — REQ-029 (el `mv` del fixture de la sección 33), 2026-09-22
++
++**Este bloque SUSTITUYE al de REQ-025 de más abajo, que queda como el punto de retomar de SU entrega.**
++Rama `master`, cambios **sin comitear**. **Fase: QA vuelta 1 de 3 gastada, `con-hallazgos`; vuelve al
++desarrollador.** REQ-029 `en-progreso`, `QA: con-hallazgos (2026-09-22, vuelta 1)`, `Seguridad: pendiente`.
++
++**Qué es.** `tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh:77`: por la precedencia
++`(A||B) && C`, el `mv` del fixture de `REQ-010 CA-02` corría también cuando `python3` tenía éxito y CI emitía
++`mv: cannot stat '…/.arnes/c2'` en cada corrida de la puerta requerida. **Vía comprobada por escrito** sobre
++el `AGENTS.md` de este proyecto: **no** declara la vía proporcional y el efecto cae en `tests/` (`critico`),
++así que se corrió el ciclo completo analista → desarrollador → QA → seguridad.
++
++**Hecho.** REQ-029 creado por el analista (CA-01…CA-06, `Rigor: critico`). Desarrollador: `if / elif / else`
++con `SIN-MANIFIESTO` + `exit 1`; 333 → 351 líneas (techo 400); fail-before/pass-after **1 → 0**; banco
++completo **895 PASS · 0 FAIL · 17 SKIP**; quality gates en verde. QA acreditó CA-01, CA-04, CA-05, CA-06 y
++CA-02 (i) con corridas propias.
++
++**Lo que bloquea, con su alcance.** **QA-029-01** (`contrato`, alta, `docs/qa/REQ-029.md`): `jq` sobre un
++archivo vacío devuelve **rc 0 con salida vacía**, así que si el camino preferente trunca el manifiesto y
++muere, el `elif` lo toma por éxito, el `mv` instala un manifiesto **vacío** y el caso sale **PASS sin medir
++nada**; el `else` nunca se alcanza. **CA-02 (ii) y CA-03 en FAIL.** No es regresión: el árbol previo hacía lo
++mismo — lo nuevo es el criterio que lo prohíbe. **Acción impedida: `cerrar` REQ-029** (regla:
++`guard-completado`, hallazgo `contrato` abierto). **Implementar y probar NO están impedidos.**
++**QA-029-02** (`instrumento`, no bloquea, dueño por decidir): sin `jq`, `run.sh` sale **rc 0** con 0 casos;
++vive en `run.sh`, **fuera del alcance de REQ-029** — registrar no autoriza reparar.
++
++**Próximo paso concreto, en orden.**
++1. **Desarrollador, vuelta 2 de 3:** que el fixture compruebe el **efecto** (que el manifiesto quedó con el
++   valor que el caso necesita) y no el `rc` antes de seguir. Si en vez de eso se decide **acotar CA-02 (ii) /
++   CA-03**, eso es write-back de criterio y es del **`analista-requerimientos`** (§9), no del desarrollador ni
++   de QA. La coordinadora clasificó QA-029-01 como **defecto que impide entregar el alcance acordado** →
++   vuelve al desarrollador.
++2. **QA vuelta 2** sobre el arreglo y sus dependencias.
++3. **`auditor-seguridad`** — fase 4, **sin despachar** (parada por presupuesto de la sesión, no por decisión).
++   No puede firmar antes: su firma sobre un árbol sin validar acreditaría algo que no revisó.
++4. Commit con su entrada de `CHANGELOG.md` (ya escrita), y sólo entonces el resto.
++
++**Observaciones independientes registradas, fuera de esta entrega:** correr el banco con
++`ARNES_SECCIONES_DIR` sobre una copia produce 15 FAIL en secciones de REQ-016/REQ-017 que derivan rutas del
++directorio de secciones (dueño propuesto `analista-requerimientos`); y el índice de `requirements/README.md`
++da `en-progreso` a REQ-014 mientras su cabecera dice `completado` — manda la cabecera.
++
++---
++
++## ⏸ RETOMAR (entrega REQ-025) — REQ-025 entrega 1 (coordinación orientada a entregas), 2026-09-21
+ 
+ **Este bloque SUSTITUYE a los de más abajo, que quedan como históricos.** Rama `feat/req-025-coordinacion-entregas`
+ (desde `main` = `v1.34.0`). **Estado: `bloqueado` con alcance** —acción impedida **cerrar** (marcar REQ-025 como
+@@ -285,7 +329,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
+ - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
+ 
+ <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
+-## Estado derivado — 2026-09-21 13:46
++## Estado derivado — 2026-09-22 11:12
+ 
+ > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
+ > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
+@@ -295,10 +339,10 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
+ > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
+ > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
+ 
+-**Repositorio:** `feat/req-025-coordinacion-entregas` @ `bb50ecd` — CON CAMBIOS SIN COMITEAR
++**Repositorio:** `master` @ `4ed7436` — CON CAMBIOS SIN COMITEAR
+ **Arnés:** plugin instalado `1.34.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
+-**Aprobaciones pendientes:** 1
+-**REQ:** 26 — completado 13 · en-revisión 1 · en-progreso 1 · bloqueado 2 · otros 9
++**Aprobaciones pendientes:** 0
++**REQ:** 27 — completado 13 · en-revisión 2 · en-progreso 2 · bloqueado 1 · otros 9
+ **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
+ 
+ _Sólo los REQ abiertos; los 13 completados no se listan._
+@@ -310,13 +354,14 @@ _Sólo los REQ abiertos; los 13 completados no se listan._
+ | REQ-011 | pendiente | pendiente | pendiente | critico | (ninguno) |
+ | REQ-013 | en-revision | con-hallazgos | con-hallazgos | critico | sec-014(contrato),sec-020(contrato),qa-2… |
+ | REQ-018 | borrador | pendiente | pendiente | critico | (ninguno) |
+-| REQ-019 | pendiente | pendiente | preventiva | critico | sec-033(contrato) |
++| REQ-019 | pendiente | pendiente | preventiva | critico | sec-033(contrato),sec-055(contrato) |
+ | REQ-020 | pendiente | pendiente | preventiva | critico | sec-038(contrato),sec-039(contrato),sec-… |
+ | REQ-021 | bloqueado | con-hallazgos | preventiva | critico | dev-021-05(instrumento,dueñoanalista-req… |
+ | REQ-022 | pendiente | pendiente | pendiente | critico | (ninguno) |
+ | REQ-023 | borrador | pendiente | pendiente | critico | sec-052(contrato) |
+ | REQ-024 | borrador | pendiente | pendiente | critico | (ninguno) |
+-| REQ-025 | bloqueado | con-hallazgos | pendiente | critico | qa-025-05(instrumento),qa-025-08(instrum… |
++| REQ-025 | en-revision | aprobado | aprobado | critico | qa-025-08(instrumento),sec-103(instrumen… |
+ | REQ-028 | borrador | pendiente | pendiente | critico | (ninguno) |
++| REQ-029 | en-progreso | con-hallazgos | pendiente | critico | qa-029-01(contrato),qa-029-02(instrument… |
+ 
+ <!-- ARNES:DERIVADO fin -->
+diff --git a/requirements/README.md b/requirements/README.md
+index 0e267ae..1336648 100644
+--- a/requirements/README.md
++++ b/requirements/README.md
+@@ -536,3 +536,4 @@ Tocado por: (agente / fecha)
+ | [REQ-024](REQ-024.md) | La ausencia de un campo no se resuelve del lado que abre, y el mismo estado en el segundo lector: la cola que cuenta cero sobre lo que no pudo medir. **Ventana 1.34.0**: va después de REQ-023, con el que comparte nueve rutas | `borrador` | critico | pendiente | pendiente |
+ | [REQ-025](REQ-025.md) | El arnés vigila también a quien orquesta: la sesión coordinadora acredita, decide y publica, y ninguna puerta la mide. **Ventana 1.35.0**; línea base = 20 errores de coordinación catalogados. Tras la **partición del 2026-09-21** conserva **la entrega 1** —las **seis reglas** del propietario en `AGENTS.md` §6, su gemela, las dos sedes de `PENDING_APPROVAL`, la entrada de `arnes-upgrade` **preparada, no publicada**, las referencias en los agentes y el **ADR-008**— y, desde el mismo día, una **entrega 1b `pendiente` dentro del propio REQ** (CA-01, CA-02, las preguntas 1, 2 y 4 de CA-09 (B), la regla del `git add -A` y la primera mitad de CA-10), **sin ventana asignada**: **aprobar la entrega 1 no completa REQ-025**. Vuelta **1 de 3** consumida (QA `con-hallazgos`, R-1) | `en-progreso` | critico | con-hallazgos | pendiente |
+ | [REQ-028](REQ-028.md) | Las capacidades que REQ-025 difiere (**entregas 2+**): `tools/arnes-comprobar.sh` con par discriminante y denominador, su sección del banco, la **procedencia y la atribución** de la cifra que llega al `CHANGELOG.md`, las **columnas de instantes** del libro de comisiones y los umbrales de coste. Nace de la **partición de REQ-025** (2026-09-21) conservando los identificadores CA-03…CA-08, CA-12 y las mitades de CA-10, CA-11 y CA-13. `borrador` con **cuatro decisiones del propietario abiertas** (B-1…B-4) y **sin ventana asignada** | `borrador` | critico | pendiente | pendiente |
++| [REQ-029](REQ-029.md) | Una orden del fixture se ejecuta con su precondición incumplida: la sección 33 del banco emite un error de `mv` en **cada** corrida de la puerta requerida de `main`. REQ **nuevo** (2026-09-22) nacido de una reparación; no se reabre REQ-010 ni REQ-014, por los motivos escritos en sus «Notas / alcance». **Sin ventana asignada** | `pendiente` | critico | pendiente | pendiente |
+diff --git a/tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh b/tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh
+index ef67d4a..426f512 100644
+--- a/tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh
++++ b/tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh
+@@ -74,11 +74,29 @@ lec33 "REQ-010 CA-13 ...y al lado el normalizado que lee la maquina" 1 'se lee:
+ rm -f "$L33/requirements/REQ-810.md" "$L33/requirements/REQ-811.md"
+ # CA-02: LA DIRECCION INVERSA. El manifiesto declara el estado SIN tilde y el REQ lo
+ # escribe CON tilde: la normalizacion se aplica a los DOS lados de la comparacion.
+-python3 - "$L33/.arnes/config.json" <<'PY' 2>/dev/null || jq '.estados.todos = ["borrador","en-revision","completado"]' "$L33/.arnes/config.json" > "$L33/.arnes/c2" && mv "$L33/.arnes/c2" "$L33/.arnes/config.json"
++# CADA ORDEN CORRE SOLO SI SU PRECONDICION SE CUMPLIO. Esto iba escrito `A || B && C`, y
++# el shell lo agrupa `(A || B) && C`: con el intérprete en EXITO el `mv` corria igual, sin
++# origen que mover, y su diagnostico salia en CADA corrida de la puerta requerida de
++# `main` — un error real en la salida que certifica el mecanismo, que todo el mundo
++# aprende a ignorar. El `if` dice lo que la precedencia no daba: el respaldo solo entra si
++# el preferente falla, y el `mv` solo si su `jq` llego a escribir el archivo.
++if python3 - "$L33/.arnes/config.json" <<'PY' 2>/dev/null
+ import json,sys
+ p=sys.argv[1]; d=json.load(open(p)); d["estados"]["todos"]=["borrador","en-revision","completado"]
+ json.dump(d,open(p,"w"))
+ PY
++then :   # el camino preferente ya dejo el manifiesto escrito; no hay nada mas que hacer
++elif jq '.estados.todos = ["borrador","en-revision","completado"]' "$L33/.arnes/config.json" > "$L33/.arnes/c2" 2>/dev/null; then
++  mv "$L33/.arnes/c2" "$L33/.arnes/config.json"
++else
++  # Sin NINGUN camino no se sigue: MEDIDO (2026-09-22) que el caso de abajo sale PASS
++  # sobre un manifiesto sin preparar —el lector no ve `estados.todos` y no marca nada—,
++  # o sea que la ausencia de precondicion compraria un verde que no midio nada. Se dice
++  # QUE caso se queda sin sujeto y se aborta la seccion (REQ-014 CA-10): ante la falta
++  # de medios, rojo. Misma forma que las precondiciones de entorno de la seccion 37.
++  echo "  SIN-MANIFIESTO: ni python3 ni jq prepararon el manifiesto de 'REQ-010 CA-02'; sin precondicion no se mide"
++  exit 1
++fi
+ printf '# REQ-812\nEstado: en-revisi%sn\nQA: aprobado\nSeguridad: n/a\n' 'ó' > "$L33/requirements/REQ-812.md"
+ lec33 "REQ-010 CA-02 manifiesto SIN tilde + REQ CON tilde: tampoco es anomalia" 0 'REQ-812' no
+ # CA-10: LA FRONTERA. La `ñ` NO es una `n` con adorno: plegarla haria iguales dos palabras
