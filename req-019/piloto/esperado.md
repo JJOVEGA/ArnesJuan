@@ -20,3 +20,6 @@ Cada punto: **observado / no observado / ambiguo**, con cita del `stream-json` (
 
 ## Qué no acredita
 Ningún porcentaje de ahorro; ningún determinismo (n=1); nada sobre proyectos consumidores (la plantilla no cambia); nada sobre el reparto documental ni el techo 0,72×; ni que el defecto de la sección 33 quede corregido en `main` (las salidas de los brazos no se fusionan).
+
+---
+**Nota fechada (2026-09-22, tras la acreditación de QA; el texto de arriba no se reescribe):** QA-019-03 — la fila «Diferencia declarada entre árboles» enumera cinco archivos y el `diff -rq` previo al lanzamiento (`diff-arboles-A-B.txt`) registró **seis**: falta `requirements/README.md`, cuyo cambio es una celda del índice (fila de REQ-019, `pendiente` → `en-progreso`). El diseño ejecutado es el de `diff-arboles-A-B.txt`.
