@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029 / SEC-105: la entrada de la cola deja de decir que la copia literal vive en el REQ (ahora la cola es la única copia y el REQ remite)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Parte de SEC-105 que corresponde a la coordinadora; la parte del `Tocado por:` la hizo el analista en esta misma tanda. Cierre del hallazgo: del auditor.
+
+## [Interno] — 2026-09-23 · REQ-029: write-back de SEC-107 y de la parte `Tocado por:` de SEC-105 — `Archivos:` declara el registro de seguridad (12 → 13 rutas) y `Tocado por:` nombra a todos los que tocaron el REQ
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos`. Archivos escritos: `requirements/REQ-029.md` (línea `Archivos:`, `Tocado por:` y una fila de Historial) y este `CHANGELOG.md`, con `Edit` y **sin consola**. Sin comitear. Causa: `docs/seguridad/registro-seguridad.md` § «Revisión R-042», puntos 3 (SEC-105) y 4-bis (SEC-107). El número de CA-11.1 («no más de 0» archivos fuera del campo) **no cambia**. **Sin tocar** `Estado:`, `QA:`, `Seguridad:`, `Hallazgos abiertos:` ni `Rigor:`: SEC-107 y SEC-105 los cierra el `auditor-seguridad` (adenda `R-042-A`). El recuento de archivos fuera del campo **no** lo re-ejecutó esta comisión (sin consola): se deriva de la medición del auditor —13 archivos en el delta, 1 fuera, que es la ruta añadida— y queda para la reverificación.
+
 ## [Interno] — 2026-09-23 · REQ-029 seguridad R-042: `con-hallazgos` sobre `1117204` (no veto) — el delta normativo pasa; SEC-107 (`contrato`): `Archivos:` no declara el registro de seguridad
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `auditor-seguridad`. Revisión acotada a `cfb1106..1117204` (12 archivos, 0 de mecanismo), después de QA R-2 y sobre su árbol más su registro. Archivos escritos con `Edit`, sin consola y sin comitear: `docs/seguridad/registro-seguridad.md` (§Revisión R-042), la cabecera de `requirements/REQ-029.md` (`Seguridad:` y `Hallazgos abiertos:`; `Estado:` no se toca), su celda del índice en `requirements/README.md` y esta entrada.
 

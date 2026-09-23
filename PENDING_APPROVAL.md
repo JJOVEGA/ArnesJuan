@@ -40,7 +40,7 @@
 
 ### RESUELTA (propietario, 2026-09-23, decisión tomada fuera de la cola y registrada aquí) — **REQ-029, fidelidad al encargo: autorizada la implementación de la propuesta `fidelidad-encargo/` (`d4e7a4f`) con tres precisiones**
 
-**Por qué está aquí:** la decisión nació en respuesta a la propuesta de la coordinadora, no como entrada pendiente; su copia literal vive en `requirements/REQ-029.md` (§Trazabilidad), y esta cola es la sede donde la procedencia de una decisión vive **fuera** del artefacto que autoriza (misma figura que SEC-104).
+**Por qué está aquí:** la decisión nació en respuesta a la propuesta de la coordinadora, no como entrada pendiente; **esta entrada es su única copia literal** (`requirements/REQ-029.md` §Trazabilidad remite aquí desde el write-back de QA-029-01; corregido por SEC-105), y esta cola es la sede donde la procedencia de una decisión vive **fuera** del artefacto que autoriza (misma figura que SEC-104).
 
 **Texto del propietario, ÍNTEGRO y literal (mensaje del 2026-09-23 a la coordinadora; esta copia sustituye a una anterior «en lo esencial» que cortaba pasajes sin marca — hallazgo QA-029-01):**
 
