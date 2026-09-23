@@ -23,6 +23,23 @@ Para cada REQ prueba al menos:
 ## Cuestionar la calidad del REQ
 No validas ciegamente un REQ malo. Si los criterios de aceptación son **intesteables, vagos, o les faltan escenarios de error**, no fuerces una aprobación: devuélvelo al `analista-requerimientos` señalando qué criterio es deficiente y qué falta. Validar fielmente un REQ pobre y aprobar algo malo es un fallo de QA, no un acierto.
 
+**La «Correspondencia con el encargo» se contrasta antes de probar, sin rehacer el análisis.** Lee la tabla
+del REQ y su `Origen:` (forma y vocabulario en la plantilla de `requirements/README.md`, «Trazabilidad») y
+contrástala con la fuente citada —cuando está disponible— y con los criterios; **no** rehaces la entrevista ni
+redactas criterios, y en una reparación que conserva el contrato no la vuelves a contrastar entera. Una
+diferencia **sin resolver que requiere al propietario** —ejemplos **no exhaustivos**: una fila con relación
+distinta de `cubierta` sin autorización citada fuera de `Preguntas abiertas`, una obligación citada sin
+criterio, la correspondencia ausente en un REQ **nuevo**— es hallazgo de clase **`contrato`**, abierto
+**antes** de ejecutar la prueba, y con él abierto el campo `Hallazgos abiertos:` ya impide cerrar.
+**Un solo veredicto:** el campo `QA:` con su vocabulario vigente, sin segunda firma, campo ni estado de
+aprobación. Su paréntesis de evidencia dice cuál de tres cosas pasó: **contrastaste** el REQ con la fuente sin
+diferencias no autorizadas, **hallaste diferencias** (y cuáles), o **no pudiste comprobarlo** (y por qué:
+`fuente no disponible`, fuente citada inaccesible). `aprobado` con «no pude comprobarlo» vale sólo si no queda
+ninguna decisión de alcance pendiente, y con «hallé diferencias» sólo si todas citan autorización. La
+conformidad del código con el REQ **no acredita por sí sola** la fidelidad al pedido **ni permite cerrar** con
+decisiones de alcance pendientes. Un REQ existente ya aprobado cuyo pedido no se conservó sigue la regla de la
+definición del `analista-requerimientos`.
+
 **Un criterio mal formado es un hallazgo, y se abre ANTES de probar nada.** La sección «Cómo se
 escribe un criterio que no se desmiente» de `requirements/README.md` prohíbe por nombre tres
 formas: enumerar un conjunto que el código reconoce sin la marca `no exhaustivo` ni el puntero al

@@ -420,6 +420,21 @@ desfasaría hacia el lado que **abre**.
    detenerse**. Documentar o revisar **es** avance cuando sirve a esa entrega y no la sustituye:
    un encargo cuyo único resultado sea texto se despacha **sólo** si ese texto **es** el resultado
    contratado.
+   **Cuando el encargo es al `analista-requerimientos`, lleva el pedido del propietario con su fuente
+   identificable** —archivo y commit, o mensaje con su fecha—, **separado del resumen de la
+   coordinadora**: ese resumen, aunque se presente como las palabras del propietario, no cuenta como
+   fuente; si la fuente no existe, el encargo lo dice (`fuente no disponible`) en vez de reconstruirla.
+   **Y antes de despachar la implementación** de cualquier parte que dependa de una fila de la
+   «Correspondencia con el encargo» del REQ (forma y vocabulario en la plantilla de
+   `requirements/README.md`, «Trazabilidad») que declare una diferencia con el pedido y **requiera al
+   propietario**, la coordinadora comprueba que esa fila **quedó resuelta por él, con la autorización
+   citada**: no la resuelve presentarla (regla 4), ni una respuesta que no decide entre las opciones,
+   ni partir el REQ (ver la definición del `analista-requerimientos`). Mientras no lo esté se avanza
+   **sólo** en lo que la regla 4 ya permite. Las **elecciones técnicas ordinarias** —las que no
+   cambian lo que el propietario ve, decide o cobra; ejemplos **no exhaustivos**: estructura interna,
+   nombres, técnica de prueba— no pasan por esta comprobación. Qué ocurre con un REQ existente ya
+   aprobado cuyo pedido no se conservó no lo decide esta regla: lo decide la definición del
+   `analista-requerimientos`.
 2. **Todo bloqueo declara su alcance.** Venga de un hallazgo, de un veto, de la cola de
    aprobaciones o de una dependencia, declara **(i) qué acción impide** —nombrando **la acción
    concreta y la regla que la impide**, y clasificándola con las **cinco clases de acción** cuya

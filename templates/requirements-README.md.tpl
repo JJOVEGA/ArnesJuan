@@ -401,8 +401,23 @@ Como [rol], quiero [acción], para [beneficio].
 (preguntas sin resolver; conflictos con otros REQs identificando ambos y la contradicción. Mientras haya algo aquí, el REQ se queda en `borrador`.)
 
 ## Trazabilidad
-Origen: (...)
+Origen: (fuente identificable del pedido: archivo y commit, o mensaje y fecha — o el literal `fuente no disponible`; un resumen del agente no es fuente)
 Tocado por: (agente / fecha)
+
+### Correspondencia con el encargo
+(se establece al crear el REQ. Una fila por **obligación verificable** del pedido —algo cuyo cumplimiento se decide
+sí/no contra el REQ o lo construido—, no por frase: una frase con dos obligaciones da dos filas, y una de contexto o de
+motivo no da ninguna. Cada fila lleva su cita; si el pedido no se conservó, `fuente no disponible` en su lugar: nunca
+se reconstruyen las palabras del propietario. «Relación» toma **exactamente** uno de estos valores: `cubierta`,
+`omitida`, `sustituida`, `excluida` o `añadida` (decisión de negocio no pedida); **éste es el sitio único de ese
+vocabulario** y todo otro texto que lo nombre remite aquí. La tabla se actualiza **sólo cuando cambia el alcance**, en
+la misma fila del Historial de cambios que registra ese cambio (`AGENTS.md` §9); una reparación que conserva el
+contrato la reutiliza, sin tabla nueva ni comparación completa, y una que altera qué obligación cubre un criterio no
+conserva el contrato: es cambio de alcance. Para un REQ existente ya aprobado cuyo pedido no se conservó, ver la
+definición del `analista-requerimientos`.)
+| Obligación del pedido (cita) | Criterio que la cubre | Relación | Autorización citada, o pregunta abierta |
+|---|---|---|---|
+| «...» (o `fuente no disponible`) | CA-xx | (uno de los cinco valores) | (fuente de la autorización, o `→ Preguntas abiertas`) |
 
 ## Historial de cambios
 | Fecha | Antes → Después | Causa | ADR |
