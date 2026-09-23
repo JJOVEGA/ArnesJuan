@@ -2,6 +2,9 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029 / QA-029-01: la copia del pedido del propietario en `PENDING_APPROVAL.md` §Resueltas pasa a ser ÍNTEGRA y literal (la anterior, «en lo esencial», cortaba pasajes sin marca)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Es la fuente que el analista cita en la «Correspondencia con el encargo» de REQ-029 al corregir el hallazgo; la propia entrega hizo visible el defecto en su primer uso. Cola `## Pendientes` sin cambios (0).
+
 ## [Interno] — 2026-09-23 · REQ-029 QA R-1 (vuelta 1 de 3): `con-hallazgos` — el texto implementado pasa CA-01…CA-14; la correspondencia del propio REQ no corresponde a su fuente (QA-029-01, `contrato`)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. Cabeza validada `d1c65ac` sobre `cfb1106`. Archivos escritos con `Edit`/`Write`, sin consola y sin comitear: `docs/qa/REQ-029.md` (nuevo), la cabecera de `requirements/REQ-029.md` (`Estado:` `en-revisión` → `en-progreso`, `QA:` → `con-hallazgos (…)`, `Hallazgos abiertos:` → `QA-029-01 (contrato)`), su fila del índice en `requirements/README.md` y esta entrada.
 

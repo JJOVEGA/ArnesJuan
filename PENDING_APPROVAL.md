@@ -42,7 +42,48 @@
 
 **Por qué está aquí:** la decisión nació en respuesta a la propuesta de la coordinadora, no como entrada pendiente; su copia literal vive en `requirements/REQ-029.md` (§Trazabilidad), y esta cola es la sede donde la procedencia de una decisión vive **fuera** del artefacto que autoriza (misma figura que SEC-104).
 
-**Texto del propietario, literal en lo esencial:** «Autorizo implementar la propuesta de fidelidad del encargo preparada en `fidelidad-encargo/`, commit `d4e7a4f`, incorporando estas tres precisiones en la misma entrega. No prepares otra ronda de propuestas. 1. Un solo veredicto de QA. No crees dos firmas, campos ni estados de aprobación. En la evidencia del veredicto vigente, QA indica si contrastó el REQ con la fuente, encontró diferencias o no pudo comprobarlo. La conformidad del código con el REQ no acredita por sí sola fidelidad al pedido ni permite cerrar con decisiones de alcance pendientes. 2. Sin bloqueo retroactivo por conversaciones ausentes. La falta del pedido original no devuelve automáticamente a `borrador` un REQ existente con contrato y decisiones aprobados. Conserva esas aprobaciones y declara la limitación de trazabilidad. Pregunta únicamente por decisiones realmente pendientes o contradicciones detectadas. En encargos nuevos, conserva la fuente desde el inicio; no reconstruyas palabras del propietario. 3. Partir un REQ no concede autoridad sobre el alcance. El analista puede preparar y registrar la partición conforme a las reglas vigentes. Si implica excluir, sustituir o diferir alcance comprometido, necesita la decisión correspondiente del propietario. No uses una partición para esquivar preguntas pendientes o reiniciar contadores. […] Puedes hacer los commits locales necesarios con los controles activos. Sin push, fusión ni publicación.» **Fuera de alcance, literal:** «Reparaciones de la demo, REQ-019, otras entregas de REQ-025, sondas de coste, cambios en hooks, herramientas, permisos o umbrales. No cambies la versión ni actualices consumidores.»
+**Texto del propietario, ÍNTEGRO y literal (mensaje del 2026-09-23 a la coordinadora; esta copia sustituye a una anterior «en lo esencial» que cortaba pasajes sin marca — hallazgo QA-029-01):**
+
+> Autorizo implementar la propuesta de fidelidad del encargo preparada en `fidelidad-encargo/`, commit `d4e7a4f`, incorporando estas tres precisiones en la misma entrega. No prepares otra ronda de propuestas.
+>
+> 1. **Un solo veredicto de QA.** No crees dos firmas, campos ni estados de aprobación. En la evidencia del veredicto vigente, QA indica si contrastó el REQ con la fuente, encontró diferencias o no pudo comprobarlo. La conformidad del código con el REQ no acredita por sí sola fidelidad al pedido ni permite cerrar con decisiones de alcance pendientes.
+>
+> 2. **Sin bloqueo retroactivo por conversaciones ausentes.** La falta del pedido original no devuelve automáticamente a `borrador` un REQ existente con contrato y decisiones aprobados. Conserva esas aprobaciones y declara la limitación de trazabilidad. Pregunta únicamente por decisiones realmente pendientes o contradicciones detectadas. En encargos nuevos, conserva la fuente desde el inicio; no reconstruyas palabras del propietario.
+>
+> 3. **Partir un REQ no concede autoridad sobre el alcance.** El analista puede preparar y registrar la partición conforme a las reglas vigentes. Si implica excluir, sustituir o diferir alcance comprometido, necesita la decisión correspondiente del propietario. No uses una partición para esquivar preguntas pendientes o reiniciar contadores.
+>
+> **Objetivo de esta entrega**
+>
+> Detectar omisiones, sustituciones y decisiones de negocio no autorizadas antes de implementar. Reutiliza la correspondencia en reparaciones sin cambio contractual; no exijas una tabla nueva ni una revisión completa para cada corrección.
+>
+> **Ejecución autorizada**
+>
+> * Verifica la cabeza vigente de `main` y trabaja en una rama aislada, respetando los cambios ajenos.
+> * Abre el REQ acotado necesario y realiza el ciclo exigido por las reglas actuales: analista, desarrollador, QA y seguridad cuando corresponda.
+> * Incluye el write-back de REQ-025 y la entrada de migración necesarios para mantener las sedes coherentes, sin reabrir sus otras entregas.
+> * Conserva una sede normativa con referencias; no copies la regla completa en cada rol.
+> * Agrupa las reparaciones de esta entrega y conserva sus contadores. No abras trabajos adicionales por observaciones independientes.
+>
+> **Validación**
+>
+> Comprueba gemelas y referencias, ejecuta las verificaciones locales exigidas y verifica que se distinguen estos casos:
+>
+> * Encargo nuevo con una obligación omitida o sustituida sin autorización.
+> * REQ existente aprobado cuya conversación original no está disponible.
+> * Reparación que conserva el contrato y reutiliza la correspondencia.
+> * Decisión técnica ordinaria que puede avanzar sin aprobación humana adicional.
+>
+> Usa ejemplos acotados para verificar esas distinciones, sin repetir la demo completa. Distingue revisión del texto de conducta observada: no presentes una lectura del diff como prueba de que los agentes lo cumplirán.
+>
+> No inventes un encargo para medir ahorro. El coste y la utilidad en un REQ real quedan pendientes de observación si no hay uno disponible y autorizado. No afirmes reducción de tokens, tiempo o dinero.
+>
+> **Fuera de alcance**
+>
+> Reparaciones de la demo, REQ-019, otras entregas de REQ-025, sondas de coste, cambios en hooks, herramientas, permisos o umbrales. No cambies la versión ni actualices consumidores.
+>
+> Puedes hacer los commits locales necesarios con los controles activos. Sin push, fusión ni publicación; cualquier validación de CI pendiente debe quedar identificada.
+>
+> Entrega un único resultado con la cabeza revisada, cambios realizados, veredictos y su alcance, comprobaciones efectuadas, crecimiento neto del texto obligatorio y pendientes concretos. No declares acreditado lo que todavía no se haya observado.
 
 **Ejecución:** REQ-029 creado por el analista (`1e3ac6f`), con la fila de write-back en REQ-025; implementación, QA y seguridad por el ciclo de autoalojamiento en la rama local `feat/fidelidad-encargo`.
 
