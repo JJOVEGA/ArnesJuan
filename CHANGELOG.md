@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029: write-back de QA-029-01 — `Origen:` remite a la fuente íntegra y la «Correspondencia con el encargo» se rehace contra ella (23 → 36 filas; 0 `añadida`, 0 `excluida`); `Estado:` → `en-revisión`
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos`. Archivos escritos: `requirements/REQ-029.md`, la fila de REQ-029 en el índice de `requirements/README.md` y este `CHANGELOG.md`, con `Edit` y **sin consola**. Sin comitear.
+
+**Lo hecho.** `Origen:` deja de transcribir el mensaje del propietario y **remite** a su copia íntegra en `PENDING_APPROVAL.md` §«Resueltas». La tabla se rehízo contra esa fuente: 34 `cubierta` y 2 `sustituida` (las precisiones 1 y 2 sobre el diseño). La validación con ejemplos acotados pasa de `añadida` a `cubierta` con cita del propietario; la medición posterior de coste y utilidad pasa de `excluida` a `cubierta`, porque la pidió él; entran «Fuera de alcance», «Comprueba gemelas y referencias», las verificaciones locales, la CI pendiente identificada y «No declares acreditado lo que no se haya observado». Las obligaciones de proceso de la coordinadora no dan fila por la regla de la plantilla y quedan listadas literales bajo la tabla. **CA-11 punto 4** gana la identificación de la CI pendiente (ya cumplida por el log de QA); **CA-14** cita al propietario. **OBS-029-A** queda registrada sin cambiar CA-04 ni la plantilla.
+
+**Lo NO hecho.** `QA:`, `Seguridad:` y `Hallazgos abiertos:` sin tocar: **QA-029-01 lo cierra el `qa-tester`**. Ningún cambio en la plantilla, los agentes ni `AGENTS.md`. Este write-back no cierra ningún hallazgo ni emite ninguna firma.
+
 ## [Interno] — 2026-09-23 · REQ-029 / QA-029-01: la copia del pedido del propietario en `PENDING_APPROVAL.md` §Resueltas pasa a ser ÍNTEGRA y literal (la anterior, «en lo esencial», cortaba pasajes sin marca)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Es la fuente que el analista cita en la «Correspondencia con el encargo» de REQ-029 al corregir el hallazgo; la propia entrega hizo visible el defecto en su primer uso. Cola `## Pendientes` sin cambios (0).
 
