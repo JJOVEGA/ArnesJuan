@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029 QA R-2b: `aprobado` ratificado sobre `02ce2f6`; **vuelta 3 de 3 consumida, contador agotado**
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. Escrito con `Edit`/`Write`, sin consola y sin comitear: `docs/qa/REQ-029.md` (Adenda R-2b), el paréntesis de `QA:` en `requirements/REQ-029.md` (el veredicto no cambia) y esta entrada.
+
+**Resultado.**
+- **Delta.** `efa1c5c..02ce2f6` solo toca registro: no cambia `AGENTS.md`, `templates/`, `agents/`, `skills/`, el mecanismo, ningún criterio ni ninguna fila de la correspondencia.
+- **Cola.** La copia literal de la cola sigue idéntica a la fuente.
+- **CA-11.1.** Verificado sobre `02ce2f6`: 13 rutas tocadas, 13 declaradas, 0 fuera.
+- **Gates y CI.** Las gates de §7 están en verde. El CI está pendiente sobre `02ce2f6` porque no hay push.
+- **Contador.** Por `AGENTS.md` §6 (regla 4 de fases y «Loop de error»: una reparación que vuelve al mismo agente gasta vuelta, y «revisión acotada» no cambia eso), esta re-validación tras el write-back de SEC-107 **gasta la vuelta 3 de 3**. Si hay otra reparación, se cierra con el residual declarado o se escala. Si se lee de otra manera, decide el propietario.
+
+**Qué no acredita:** la conducta de los agentes, el CI ni la firma de seguridad (`con-hallazgos`, con SEC-107 `contrato` abierto).
+
 ## [Interno] — 2026-09-23 · REQ-029 / SEC-105: la entrada de la cola deja de decir que la copia literal vive en el REQ (ahora la cola es la única copia y el REQ remite)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Parte de SEC-105 que corresponde a la coordinadora; la parte del `Tocado por:` la hizo el analista en esta misma tanda. Cierre del hallazgo: del auditor.
 
