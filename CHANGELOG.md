@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029 QA R-1 (vuelta 1 de 3): `con-hallazgos` — el texto implementado pasa CA-01…CA-14; la correspondencia del propio REQ no corresponde a su fuente (QA-029-01, `contrato`)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. Cabeza validada `d1c65ac` sobre `cfb1106`. Archivos escritos con `Edit`/`Write`, sin consola y sin comitear: `docs/qa/REQ-029.md` (nuevo), la cabecera de `requirements/REQ-029.md` (`Estado:` `en-revisión` → `en-progreso`, `QA:` → `con-hallazgos (…)`, `Hallazgos abiertos:` → `QA-029-01 (contrato)`), su fila del índice en `requirements/README.md` y esta entrada.
+
+**Resultado.** Gates de §7 en verde; banco completo **local** 908 PASS / 0 FAIL / 4 SKIP en 35 s (CI pendiente: sin push); 0 archivos fuera de `Archivos:` y 0 en el mecanismo; gemelas con 0 líneas distintas en las secciones espejo; los cuatro ejemplos acotados de CA-12 se deciden con el texto. **Contraste con la fuente hecho:** el mensaje del propietario del 2026-09-23 está disponible, y la transcripción que recibió el analista corta sin marca al menos tres pasajes; la fila de CA-12 atribuye a la coordinadora («añadida», «elección técnica ordinaria») el bloque «Validación» que pidió el propietario. Ninguna obligación queda sin criterio ni hay decisión de alcance pendiente: lo resuelve un write-back del `analista-requerimientos`, no el `desarrollador`. **Qué no acredita:** que los agentes cumplan estas reglas (conducta no observada) ni el CI.
+
 ## [Interno] — 2026-09-23 · REQ-029: ajuste del contrato antes de QA — `Archivos:` gana `PENDING_APPROVAL.md` y CA-02 precisa que las gemelas se comparan sobre las secciones espejo (no el índice propio de este repositorio)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` (edición) / coordinadora (bitácora). Causa: la medición del desarrollador (CA-11.1: `PENDING_APPROVAL.md` fuera del campo tras registrar allí la decisión del propietario; CA-02: una línea distinta que era la fila del índice, ausente en la gemela por diseño). Cambio menor (§9), sin ADR; fila de Historial en REQ-029; índice actualizado a `en-revisión`. No gasta vuelta dev↔QA: QA aún no ha validado.
 
