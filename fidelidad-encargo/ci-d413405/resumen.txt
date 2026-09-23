@@ -1,0 +1,16 @@
+  PASS  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  cociente de duplicación (70000→140000 bytes, k=20) = 1.820× (techo 2.600×; 446759µs sobre 245426
+  FAIL  REQ-017 CA-03 fail-before: sobre v1.32.1 el cociente da 2.443× y NO se pasa: la sonda no distingue el defecto que este REQ arregla
+  PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  1.195× (0.0921 s/llamada frente a 0.0770 s; convergencia 1.008×/1.154×)
+  SKIP  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  la sonda NO convergió: segundo mínimo / mínimo = 1.498× (este) y 1.562× (heredada), por enci
+Resultado: 903 PASS, 1 FAIL, 8 SKIP — ninguna causa común: cada uno con su motivo
+       · REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  la sonda NO convergió: segundo mínimo / mínimo = 1.498× (este) y 1.562× (heredada), por en
+RUN_ID=35924622453 HEAD=d4134057e16f1b6180b0f8505eb201176f877b60
+1 Set up job → success
+2 Run actions/checkout@v4 → success
+3 bit de ejecución en todo punto de entrada → success
+4 sintaxis de todo el mecanismo y de todas las secciones del banco → success
+5 jq → success
+6 banco de hooks (proyectos efímeros, en paralelo) → failure
+7 autoprueba del corredor del banco → skipped
+14 Post Run actions/checkout@v4 → success
+15 Complete job → success
