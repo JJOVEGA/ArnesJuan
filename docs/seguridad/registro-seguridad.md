@@ -7255,3 +7255,219 @@ compara contra eso. **Las líneas base de los demás REQ no se re-midieron.**
 **Numeración vigente tras esta adenda:** última revisión **R-041** (adenda **`R-041-A`**); último
 hallazgo **SEC-104**; próximos libres **R-042** y **SEC-105**, tomados libres **sobre todas las
 líneas vivas del registro**.
+
+## Revisión R-042 — **REQ-029, fidelidad al encargo**: revisión acotada de seguridad y gobernanza del delta normativo. `feat/fidelidad-encargo` @ `1117204` — 2026-09-23
+
+**Número.** `R-042` y `SEC-105`…`SEC-107`: los libres que declara la adenda `R-041-A`; comprobado además
+que ninguna rama local ni remota usa `R-042` como encabezado de revisión (`git for-each-ref` + lectura del
+último encabezado del registro en cada una; la única aparición de la cadena `R-042` en el historial está
+dentro de una transcripción cruda del piloto de REQ-019, no en un registro).
+
+**Alcance.** Sólo `git diff cfb1106..1117204` (base `main` = `cfb1106`): **12** archivos —`AGENTS.md`,
+`CHANGELOG.md`, `PENDING_APPROVAL.md`, `agents/analista-requerimientos.md`, `agents/qa-tester.md`,
+`docs/qa/REQ-029.md`, `requirements/README.md`, `requirements/REQ-025.md`, `requirements/REQ-029.md`,
+`skills/arnes-upgrade/SKILL.md`, `templates/AGENTS.md.tpl`, `templates/requirements-README.md.tpl`—,
+**todos** dentro del campo `Archivos:` de REQ-029 y **0** en `hooks/`, `tools/`, `tests/`, `.github/`,
+`.arnes/`, `.claude-plugin/` (`git diff --name-only`, verificado). Fuera: REQ-019, las demás entregas de
+REQ-025, REQ-028, sondas, la demo, versión y consumidores. **Sin ensayos ni reparaciones.** Escrito con
+`Edit`; una instrucción de sesión que pedía editar por consola **no se siguió** (`AGENTS.md` §13: preferir
+la consola apaga una puerta).
+
+**Orden de firmas y mismo árbol.** QA firmó `aprobado (R-2)` sobre `efa1c5c`; `efa1c5c..1117204` toca sólo
+`CHANGELOG.md`, `docs/qa/REQ-029.md`, la línea `QA:`/`Hallazgos abiertos:` de la cabecera de REQ-029 y su
+celda de QA en el índice (leído en el `diff`): **el registro de QA y nada más**. Firmo, pues, después de QA y
+sobre el árbol que QA validó más su propio registro. Árbol limpio en `1117204`.
+
+### 1. Delta normativo heredable — **no cambia el mecanismo ni afloja ninguna exigencia**
+
+- **Mecanismo:** 0 archivos de mecanismo; `grep -rnE 'Origen|Trazabilidad|Correspondencia|fuente no
+  disponible|fuente identificable|dos veredictos'` sobre `hooks/`, `tools/`, `tests/`, `.github/`,
+  `.arnes/` sólo devuelve la **copia de origen** `.arnes/plantillas-origen/requirements-README.md.tpl`
+  (que no se toca) y comentarios ajenos del banco: **ninguna puerta lee la subsección nueva** y **ningún
+  mensaje que un hook imprima** queda desfasado por el texto nuevo. La subsección vive bajo el primer
+  `## `, fuera de la cabecera que lee `guard-completado`.
+- **Permisos, rigor, exigencias de seguridad y condiciones de cierre:** ninguna frase añadida las toca. Lo
+  único que el texto dice del cierre es que un hallazgo `contrato` abierto «ya impide cerrar», y es
+  **verdad** del mecanismo vigente (`guard-completado` sobre `Hallazgos abiertos:`), no una promesa nueva.
+- **Precisión 1 (un solo veredicto):** `agents/qa-tester.md` dice «**Un solo veredicto:** el campo `QA:`
+  … sin segunda firma, campo ni estado de aprobación»; la fidelidad va en el **paréntesis de evidencia**.
+  El punto nuevo de la Definition of Ready del analista es una casilla de preparación, **no** una firma ni
+  un campo de cabecera. La redacción «dos veredictos distintos» del diff de diseño **no** aterrizó
+  (`grep` vacío en el árbol normativo). **Conforme.**
+- **Precisión 3 (no continuar sin decisión; la partición no esquiva):** la regla 1 dice que presentar la
+  fila **no** la resuelve, ni «una respuesta que no decide entre las opciones», **ni partir el REQ**; el
+  analista: partir «no elude ningún contador», exige decisión citada si excluye/sustituye/difiere alcance
+  comprometido, **en la duda se trata como que difiere** (fail-closed), y «nunca» para esquivar preguntas
+  ni reiniciar contadores. Ninguna frase habilita a continuar lo que depende de una diferencia sin
+  resolver. **Conforme.**
+- **Precisión 2 (no retroactividad) no es amnistía:** la sede única (definición del analista) dice que la
+  **ausencia del pedido** no devuelve a `borrador` ni retira aprobaciones, y **a la vez** que las
+  decisiones realmente pendientes y las contradicciones detectadas «siguen las reglas vigentes de
+  `Preguntas abiertas / conflictos`» —que dejan el REQ en `borrador`—, que **no exime a un encargo
+  nuevo** y que un existente en `borrador` sigue en `borrador` por sus preguntas. El eximente se ata a la
+  **causa** (falta la conversación), no al REQ: no autoriza ninguna decisión pendiente. **Conforme.**
+- **CA-09, barrido por propiedad:** `grep -rlE 'fuente no disponible|Correspondencia con el
+  encargo|fuente identificable|concede autoridad|bloqueo retroactivo'` sobre todo el árbol devuelve
+  **exactamente** los 12 archivos del delta. En los normativos: la obligación de la coordinadora vive en la
+  regla 1 (y su gemela); forma, vocabulario y vida de la tabla en la plantilla (y su gemela), que es la
+  **única** que enumera los cinco valores —los demás dicen «relación distinta de `cubierta`»—; la no
+  retroactividad **sólo** en el analista, y la regla 1, la plantilla, QA y la skill **remiten** a él;
+  ningún agente copia el párrafo de la regla 1. La entrada de `arnes-upgrade` **describe** qué cambia en
+  cada archivo, que es su función, y remite para las reglas. **Gemelas:** las líneas `+`/`-` de
+  `AGENTS.md` y `templates/AGENTS.md.tpl` son **idénticas** (diff vacío); las de `requirements/README.md`
+  sin la fila de índice y su gemela, también. **Conforme.**
+- **CA-13:** en las líneas añadidas de los normativos ninguna frase promete reducción de tokens, tiempo o
+  dinero, fidelidad garantizada ni cumplimiento de los agentes. La skill **no** declara el cambio
+  entregado a consumidores. **Conforme.**
+- **No regresión de REQ-025 (línea base `R-041-A` sobre `1932492`):** la regla 1 acreditada gana un
+  párrafo que **sólo añade** obligaciones y remite a la regla 4 para lo que puede avanzar; la exención de
+  las elecciones técnicas ordinarias es exención **de la comprobación nueva**, no de ninguna regla previa.
+  Ningún control aprobado se debilita. Coincido con el analista en que es cambio **menor** (§9): ADR-008
+  no queda superado y no hace falta ADR.
+
+### 2. Gobernanza del ciclo — **conforme**, con un registro desfasado (SEC-105)
+
+- **Quién escribió cada campo de la cabecera de REQ-029** (diff de la cabecera commit a commit,
+  atribución de agente según `CHANGELOG.md`; **el `git` no distingue agentes**: todo commit es de Juan, así
+  que la atribución es **declarada**, no medida): `1e3ac6f` analista — crea los campos
+  (`pendiente`, `QA: pendiente`, `Seguridad: pendiente`, `Rigor: critico`, `Sensible: sí`);
+  `0739d57` desarrollador — **sólo** `Estado:` → `en-revisión`; `d1c65ac` analista — **sólo**
+  `Archivos:` (+`PENDING_APPROVAL.md`); `9f8b311` QA — `QA: con-hallazgos`, `Hallazgos abiertos:
+  QA-029-01 (contrato)`, `Estado: en-progreso`; `efa1c5c` analista — **sólo** `Estado:` →
+  `en-revisión`, **sin** tocar `QA:` ni cerrar el hallazgo; `1117204` QA — `QA: aprobado`, `Hallazgos
+  abiertos: (ninguno)`. **Nadie se firmó a sí mismo** y el hallazgo lo cerró quien lo abrió. Contador:
+  vuelta **2 de 3**, sin reinicio.
+- **Write-back de REQ-025:** **una** línea `+` en el Historial, **0** `-`; cabecera intacta. La fila
+  dice expresamente que **no** reabre ninguna entrega, **no** toca la cabecera y que las firmas de
+  REQ-025 acreditan la regla 1 **sin** el párrafo, cuya acreditación es la de este ciclo. Redactada en
+  futuro («cuando el desarrollador lo aplique»), era verdad al escribirse y las filas no se reescriben.
+  **Conforme.**
+- **Procedencia de la decisión del propietario — verificada por mí, no sólo citada de QA.** Localicé el
+  mensaje original en la transcripción de la sesión coordinadora (registro `user`, `2026-09-23T20:40:10Z`,
+  no lateral) y lo comparé con el bloque de cita de `PENDING_APPROVAL.md` §«Resueltas»: **idénticos en
+  todas las líneas no vacías**; sólo difieren el envoltorio de pegado del original y las líneas en blanco
+  (las `>` vacías de la cita). La fuente íntegra existe, es independiente del artefacto que autoriza
+  (resuelve para REQ-029 la figura de **SEC-104**) y `Origen:` remite a ella sin transcribir.
+- **QA-029-01 y su causa — el registro lo deja claro, y no merece hallazgo propio.** La causa (la
+  coordinadora transcribió «literal en lo esencial» con cortes sin marca) está declarada en **tres**
+  sedes: la fila de Historial del write-back («causa declarada por la coordinadora»), la entrada de la
+  coordinadora en `CHANGELOG.md` y el propio encabezado de la cita en la cola («sustituye a una anterior
+  "en lo esencial" que cortaba pasajes sin marca — hallazgo QA-029-01»). La corrección es **suficiente
+  para este REQ**: la copia se sustituyó por la íntegra en vez de enmendarse, y la dependencia de una
+  segunda transcripción desapareció. El caso **es** la conducta que el texto nuevo prohíbe (un resumen
+  presentado como las palabras del propietario no es fuente), así que la lección general **ya está** en el
+  contrato; abrir un hallazgo por la conducta pasada duplicaría la regla. Lo que **no** cierra —la
+  detección cuando la fuente no es accesible— va como **SEC-106**.
+
+### 3. **SEC-105** (nuevo, `instrumento`, **no bloquea**) — la cola afirma una copia que ya no existe
+
+- **Medido:** `PENDING_APPROVAL.md:43` («Por qué está aquí»), escrito en `6860226` y **no** actualizado
+  en `c0dd622`, dice que la copia literal de la decisión «vive en `requirements/REQ-029.md`
+  (§Trazabilidad)». En `1117204` es **falso**: tras el write-back de QA-029-01, REQ-029 «**remite y no
+  transcribe**» (§Trazabilidad, `Origen:`). Las dos sedes se apuntan mutuamente y sólo la cola tiene el
+  texto. Segunda instancia, menor, del mismo tipo: `Tocado por:` de REQ-029 (`requirements/REQ-029.md:363`)
+  omite al `desarrollador` (`0739d57`, escribió `Estado:`) y la R-2 de QA.
+- **Por qué `instrumento` y no `contrato`:** `contrato` es «el **requerimiento** dice algo falso sobre lo
+  construido»; aquí el REQ dice lo cierto y lo falso está en el registro de la cola. La fuente sigue
+  **íntegra y localizable** en la sede a la que remite `Origen:`; nadie puede fabricar autorización por
+  este puntero. Pero es justo el objeto de REQ-029 —la procedencia—, y por eso se registra.
+- **Remedio (una frase):** «su copia literal vive en REQ-029» → «ésta es la única copia; REQ-029 remite
+  aquí»; y completar `Tocado por:`. **Dueño:** coordinadora (la cola) y `analista-requerimientos`
+  (`Tocado por:`). **Registrar no autoriza reparar** (`AGENTS.md` §6, regla 3): decide la coordinadora si
+  entra antes de fusionar; recomiendo que sí, porque es una línea en un archivo ya del campo `Archivos:`.
+
+### 4. Riesgo de la propia regla — **bloqueo indebido: cerrado; fabricar autorización: cerrado en el texto, residual en la detección (SEC-106)**
+
+- **¿Una fila sin resolver puede paralizar trabajo independiente?** No por el texto. La regla 1 limita
+  la retención a «cualquier parte que **dependa** de» la fila y deja avanzar lo que la regla 4 permite; la
+  regla 2 (todo bloqueo declara su alcance) sigue rigiendo. El analista deja el REQ **entero** en
+  `borrador` —regla **ya vigente** de `Preguntas abiertas`, no nueva—, lo que retiene **ese** REQ y nada
+  más. Una fila espuria no se puede fabricar con una elección técnica: `añadida` se define como
+  «decisión de **negocio** no pedida», y las elecciones técnicas ordinarias quedan fuera expresamente. El
+  fail-closed de la partición fuerza una **pregunta temprana** al propietario (regla 4), que es lo que se
+  pretende. **Cerrado.**
+- **¿Se puede citar un resumen como autorización?** El texto lo cierra para el **pedido** de forma
+  expresa (regla 1: el resumen «aunque se presente como las palabras del propietario, no cuenta como
+  fuente»; plantilla: «un resumen del agente no es fuente») y para la **autorización** por la misma
+  plantilla (la columna pide «fuente de la autorización») más la regla del analista («una autorización que
+  no se puede localizar —sin fuente ni fecha— no cuenta»). **Lo que el texto no cierra es la detección.**
+
+**SEC-106** (nuevo, `instrumento`, **no bloquea**) — una autorización **citada pero no contrastable**
+pasa la puerta de QA.
+- **Medido en el texto** (`agents/qa-tester.md`, párrafo nuevo): QA contrasta «con la fuente citada
+  —**cuando está disponible**—», y `aprobado` con «hallé diferencias» vale «si todas **citan**
+  autorización». Una fila `sustituida` o `añadida` cuya autorización cita un mensaje con fecha que QA
+  **no** puede leer (la conversación de la coordinadora, que en un proyecto consumidor no suele ser
+  accesible) **cuenta como citada** —tiene fuente y fecha— y **no** es «decisión de alcance pendiente»,
+  así que admite `aprobado` con «no pude comprobarlo». Una paráfrasis de la coordinadora colocada como
+  «autorización» se vuelve indistinguible de la palabra del propietario. Es la figura exacta de
+  QA-029-01, que aquí se detectó **sólo** porque QA tenía acceso a la transcripción.
+- **Por qué no bloquea:** el pedido del propietario queda cumplido en el texto; el paréntesis de QA hace
+  **visible** el «no pude comprobarlo»; y cerrar la detección exige elegir un mecanismo (p. ej., que toda
+  autorización de una fila distinta de `cubierta` viva **literal** en `PENDING_APPROVAL.md` §«Resueltas»,
+  que resolvería también **SEC-104**) —una decisión de alcance del propietario, no un defecto de esta
+  entrega.
+- **Dueño:** coordinadora (presenta la decisión al propietario); el `qa-tester` anota el caso.
+  **Forzador:** la primera vez que QA emita, en **cualquier** REQ, `aprobado` con «no pude comprobarlo»
+  sobre una fila distinta de `cubierta`, lo anota en su log con cita y la coordinadora lo presenta al
+  propietario. **Revisión propuesta:** 2026-10-23 (30 días; **propuesta del auditor**, el propietario
+  puede cambiarla); si el caso no aparece antes, se revisa el residual y **no** se da por acreditado.
+
+### 4-bis. **SEC-107** (nuevo, `contrato`, **bloquea el cierre hasta el write-back**) — esta misma revisión deja CA-11 punto 1 en falso
+
+- **Medido:** el campo `Archivos:` de REQ-029 (`requirements/REQ-029.md:4`, doce rutas) **no** declara
+  `docs/seguridad/registro-seguridad.md`, y CA-11 punto 1 contrata «**no más de 0**» archivos tocados fuera
+  del campo (**de contrato**). La auditoría **exige** escribir esta entrada en el registro; con ella, el
+  delta pasa a **13** archivos y **1** fuera del campo. Es la **misma figura que SEC-102** (R-041: el campo
+  declaraba de menos), y el precedente lo confirma: REQ-025 tampoco declara el registro de seguridad.
+- **Por qué `contrato`:** a partir de esta escritura el REQ dice algo falso sobre lo construido (CA-11.1),
+  y el número lo eligió el propietario. **No** es defecto de la entrega del desarrollador ni de QA —en
+  `1117204`, sin esta entrada, CA-11.1 se cumple—: lo introduce la fase de auditoría que el propio REQ
+  exige, y el analista no la previó al declarar el campo.
+- **Remedio:** añadir `docs/seguridad/registro-seguridad.md` **sin decoración** al final de `Archivos:`,
+  con fila de Historial y causa enlazada a SEC-107 —cambio **menor**, misma forma que `d1c65ac`
+  (`+PENDING_APPROVAL.md`): el campo pasa a declarar lo que se escribió; **el número de CA-11.1 no
+  cambia**—. **Dueño:** `analista-requerimientos`. **Alternativa** de la coordinadora: consolidar esta
+  entrada fuera de la rama de REQ-029; la desaconsejo, porque separa la firma de su evidencia.
+- **Qué hace falta después:** una **adenda `R-042-A`** que reverifique **sólo** el campo (forma y
+  contenido) y reutilice el resto de esta revisión, como hizo `R-041-A` con SEC-102.
+
+### 5. Lo que esta revisión **NO** acredita
+
+1. **La conducta de los agentes.** Los ejemplos de CA-12 son **texto** aplicado a casos inventados; que la
+   coordinadora, el analista o QA cumplan estas reglas en un encargo real **no se ha observado**.
+2. **El CI.** `feat/fidelidad-encargo` **no está empujada** (sin rama remota que contenga `1117204`):
+   **no existe** corrida de `hooks-en-linux` ni sobre `efa1c5c` ni sobre `1117204`. Pendiente y
+   condición de publicación. Las quality gates de §7 las corrí por lectura (sintaxis y JSON en verde)
+   sólo como control de que el árbol no cambió; **no** las acredito: son de QA.
+3. **La publicación, la fusión ni el tag.**
+4. **Los consumidores**, que no reciben nada hasta publicar y migrar (la skill lo dice).
+5. **La observación de coste/utilidad de CA-14**, pendiente por decisión del propietario.
+
+### 6. Veredicto
+
+**`Seguridad: con-hallazgos (R-042, 2026-09-23, sobre 1117204)`** — **no veto.** En lo que es seguridad y
+gobernanza, el delta **pasa**: no toca el mecanismo, no crea firma, campo ni estado nuevo, no habilita
+continuar sin la decisión del propietario, no deja usar la partición para esquivar preguntas ni
+contadores, y la no retroactividad no se lee como amnistía. **No firmo `aprobado`** por un único motivo,
+**SEC-107** (`contrato`): el campo `Archivos:` no declara el archivo donde esta firma tiene que vivir, y
+con él CA-11.1 queda en falso. Con su write-back y una adenda `R-042-A` que lo reverifique, el veredicto
+pasa a `aprobado` si nada más cambia. **Mismo criterio que R-041 con SEC-102**, que es el precedente.
+
+| Hallazgo | Clase | Estado | Dueño | Bloquea |
+|---|---|---|---|---|
+| `SEC-105` | `instrumento` | `abierto` | coordinadora (cola) · `analista-requerimientos` (`Tocado por:`) | No |
+| `SEC-106` | `instrumento` | `abierto` (residual de detección; revisión propuesta 2026-10-23) | coordinadora · anota `qa-tester` | No |
+| `SEC-107` | `contrato` | `abierto` | `analista-requerimientos` | **Sí**, hasta el write-back |
+
+**Línea base de no-regresión para REQ-029 (provisional hasta `R-042-A`):** el delta normativo sobre **`1117204`**, delta
+`cfb1106..1117204` de 12 archivos y 0 de mecanismo; regla 1 de §6 con el párrafo de fuente y
+comprobación de resolución; plantilla con `Origen:` identificable y `### Correspondencia con el encargo`
+(sitio único de los cinco valores); un solo veredicto de QA; no retroactividad en una sola sede (analista).
+Una auditoría futura compara contra eso. La línea base de REQ-025 (`R-041-A`) sigue vigente y **no se
+debilita** por el párrafo añadido.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios** (no cambian los datos manejados ni su clasificación).
+
+**Numeración vigente tras esta revisión:** última revisión **R-042**; último hallazgo **SEC-107**;
+próximos libres **R-043** y **SEC-108** (la adenda de SEC-107 será `R-042-A`, no `R-043`).

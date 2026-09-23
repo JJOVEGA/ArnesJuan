@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029 seguridad R-042: `con-hallazgos` sobre `1117204` (no veto) — el delta normativo pasa; SEC-107 (`contrato`): `Archivos:` no declara el registro de seguridad
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `auditor-seguridad`. Revisión acotada a `cfb1106..1117204` (12 archivos, 0 de mecanismo), después de QA R-2 y sobre su árbol más su registro. Archivos escritos con `Edit`, sin consola y sin comitear: `docs/seguridad/registro-seguridad.md` (§Revisión R-042), la cabecera de `requirements/REQ-029.md` (`Seguridad:` y `Hallazgos abiertos:`; `Estado:` no se toca), su celda del índice en `requirements/README.md` y esta entrada.
+
+**Resultado.**
+- **Delta normativo:** no cambia hooks, permisos, rigor, exigencias de seguridad ni condiciones de cierre; ningún mensaje de hook queda desfasado; un solo veredicto de QA; la partición no esquiva preguntas ni contadores; la no retroactividad no autoriza decisiones pendientes; cada obligación en una sede y gemelas idénticas en lo que cambia.
+- **Procedencia:** cotejé yo la copia de `PENDING_APPROVAL.md` §Resueltas con el mensaje original de la transcripción (2026-09-23T20:40:10Z): idénticas en todas las líneas no vacías.
+- **SEC-107 (`contrato`, dueño `analista-requerimientos`, bloquea):** esta revisión debe vivir en `docs/seguridad/registro-seguridad.md`, que no está en `Archivos:`; con ella CA-11.1 («no más de 0» fuera del campo) queda en falso. Remedio: añadir la ruta al campo (cambio menor, como `d1c65ac`) y adenda `R-042-A`.
+- **SEC-105 (`instrumento`):** `PENDING_APPROVAL.md:43` afirma que la copia literal vive en REQ-029, que ya sólo remite; `Tocado por:` omite al desarrollador y a QA R-2.
+- **SEC-106 (`instrumento`, residual):** una autorización citada que QA no puede leer admite `aprobado` con «no pude comprobarlo»; revisión propuesta 2026-10-23.
+
+**Qué no acredita:** la conducta de los agentes (no observada), el CI (`hooks-en-linux` sin corrida sobre `1117204` por falta de push), la publicación ni los consumidores.
+
 ## [Interno] — 2026-09-23 · REQ-029 QA R-2 (vuelta 2 de 3): `aprobado` — QA-029-01 cerrado contra la fuente íntegra; CI pendiente sobre `efa1c5c`
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. Cabeza validada: `efa1c5c`. Archivos escritos con `Edit`/`Write`, sin consola y sin comitear: `docs/qa/REQ-029.md` (Adenda R-2 y aviso de veredicto vigente al principio; R-1 no se reescribe), la cabecera de `requirements/REQ-029.md` (`QA:` → `aprobado (…)`, `Hallazgos abiertos:` → `(ninguno)`; `Estado:` sigue en `en-revisión`), su fila del índice y esta entrada.
 
