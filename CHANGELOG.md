@@ -2,6 +2,9 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029: la decisión del propietario que autoriza la implementación queda registrada literal en `PENDING_APPROVAL.md` §Resueltas (procedencia fuera del artefacto que autoriza)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Misma figura que SEC-104: la única copia literal vivía dentro de REQ-029. Sin efecto sobre la cola (`## Pendientes` sigue vacía). Rama local `feat/fidelidad-encargo`, sin push.
+
 ## [Interno] — 2026-09-23 · **REQ-029 creado en `pendiente`: fidelidad al encargo** — fuente del pedido, correspondencia pedido → criterio, un solo veredicto de QA, sin bloqueo retroactivo y partición sin autoridad sobre el alcance; write-back mínimo en REQ-025 (una fila de Historial)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos`. Archivos escritos: `requirements/REQ-029.md` (nuevo), `requirements/REQ-025.md` (**sólo** una fila añadida al «Historial de cambios»), `requirements/README.md` (**sólo** la fila de REQ-029 en el índice) y este `CHANGELOG.md`, con `Edit`/`Write` y **sin consola**. Sin comitear.
 
