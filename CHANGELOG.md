@@ -2,6 +2,9 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029: ajuste del contrato antes de QA — `Archivos:` gana `PENDING_APPROVAL.md` y CA-02 precisa que las gemelas se comparan sobre las secciones espejo (no el índice propio de este repositorio)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` (edición) / coordinadora (bitácora). Causa: la medición del desarrollador (CA-11.1: `PENDING_APPROVAL.md` fuera del campo tras registrar allí la decisión del propietario; CA-02: una línea distinta que era la fila del índice, ausente en la gemela por diseño). Cambio menor (§9), sin ADR; fila de Historial en REQ-029; índice actualizado a `en-revisión`. No gasta vuelta dev↔QA: QA aún no ha validado.
+
 ## [Interno] — 2026-09-23 · **REQ-029 implementado y en `en-revisión`: fidelidad al encargo** en los cuatro archivos heredables, sus dos sedes gemelas y la entrada «Hacia 1.35.0»
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador`. Archivos escritos, con `Edit` y **sin consola**: `AGENTS.md` y `templates/AGENTS.md.tpl` (regla 1 de §6, un párrafo, idénticos byte a byte en lo añadido), `requirements/README.md` y `templates/requirements-README.md.tpl` (plantilla: `Origen:` y `### Correspondencia con el encargo`, idénticos en lo añadido), `agents/analista-requerimientos.md`, `agents/qa-tester.md`, `skills/arnes-upgrade/SKILL.md`, la línea `Estado:` de `requirements/REQ-029.md` (`pendiente` → `en-progreso` → `en-revisión`) y este `CHANGELOG.md`. Rama local `feat/fidelidad-encargo`, sin comitear ni empujar.
 
