@@ -1,38 +1,41 @@
 diff -ruN a/AGENTS.md b/AGENTS.md
 --- a/AGENTS.md	2026-09-23 12:43:36.562854401 -0600
-+++ b/AGENTS.md	2026-09-23 12:43:36.662821453 -0600
-@@ -420,6 +420,14 @@
++++ b/AGENTS.md	2026-09-23 13:10:05.794164127 -0600
+@@ -420,6 +420,15 @@
     detenerse**. Documentar o revisar **es** avance cuando sirve a esa entrega y no la sustituye:
     un encargo cuyo único resultado sea texto se despacha **sólo** si ese texto **es** el resultado
     contratado.
 +   **Cuando el encargo es al `analista-requerimientos`, lleva el pedido del propietario con su fuente
 +   identificable** —archivo y commit, o mensaje con su fecha—, **separado del resumen de la coordinadora**; si
 +   esa fuente no existe, el encargo lo dice (`fuente no disponible`) en vez de reconstruirla. **Y antes de
-+   despachar la implementación**, la coordinadora comprueba que toda fila de la «Correspondencia con el
-+   encargo» del REQ (`requirements/README.md`, plantilla, §Trazabilidad) marcada como omitida, sustituida,
-+   excluida o añadida **sin autorización citada** se presentó al propietario con la forma de la regla 4;
-+   las decisiones técnicas ordinarias y el trabajo independiente autorizado **no** esperan esa
-+   presentación.
++   despachar la implementación de lo que dependa de ella**, la coordinadora comprueba que toda fila de la
++   «Correspondencia con el encargo» del REQ (`requirements/README.md`, plantilla, §Trazabilidad) marcada como
++   omitida, sustituida, excluida o añadida **quedó resuelta por el propietario** —presentarla (regla 4) no la
++   resuelve—; mientras no lo esté, el REQ sigue en `borrador` y se avanza sólo en el trabajo que la regla 4
++   ya permite: el que no depende de esa decisión, está autorizado y está suficientemente definido. Las
++   elecciones técnicas ordinarias no pasan por esta comprobación.
  2. **Todo bloqueo declara su alcance.** Venga de un hallazgo, de un veto, de la cola de
     aprobaciones o de una dependencia, declara **(i) qué acción impide** —nombrando **la acción
     concreta y la regla que la impide**, y clasificándola con las **cinco clases de acción** cuya
 diff -ruN a/agents/analista-requerimientos.md b/agents/analista-requerimientos.md
 --- a/agents/analista-requerimientos.md	2026-09-23 12:43:36.622854390 -0600
-+++ b/agents/analista-requerimientos.md	2026-09-23 12:43:36.663617771 -0600
-@@ -44,6 +44,12 @@
++++ b/agents/analista-requerimientos.md	2026-09-23 13:10:05.795024774 -0600
+@@ -44,6 +44,14 @@
  - Haz preguntas claras y **de a una idea por vez** (el usuario puede responder por dictado de voz).
  - Metodología: parte de la visión, identifica roles/actores, luego capacidades, luego criterios de aceptación (felices **y** de error/borde), y separa lo no funcional cuantificado.
  - No inventes alcance. Si algo no está confirmado, márcalo como `borrador` y anota la pregunta abierta.
 +- **Conserva el pedido con su fuente, separado de tu resumen**, y rellena la «Correspondencia con el encargo»
-+  de la plantilla: cada obligación del pedido con el criterio que la cubre. Una omisión, sustitución,
-+  exclusión o decisión de negocio añadida que no cite autorización del propietario va a `Preguntas
-+  abiertas` (y el REQ sigue en `borrador` en esa parte); no la resuelvas tú. Si el pedido original no está
-+  disponible, escribe `fuente no disponible`: la parte que dependa de una decisión de negocio no
-+  documentada no se implementa hasta que el propietario la dé; las decisiones técnicas ordinarias sí.
++  de la plantilla al crear el REQ: una fila por obligación **verificable** del pedido con el criterio que la
++  cubre; la actualizas sólo cuando cambia el alcance, y una reparación que conserva el contrato la reutiliza.
++  Una omisión, sustitución, exclusión o decisión de negocio añadida que no cite autorización del propietario
++  va a `Preguntas abiertas`: el REQ **entero** sigue en `borrador` hasta que él la resuelva; no la resuelvas tú
++  ni la des por autorizada porque se presentó. Si conviene que lo decidido avance mientras tanto, la salida
++  es **partir el REQ por alcance** (`AGENTS.md` §6), una decisión que se registra, no un estado parcial. Si el
++  pedido original no está disponible, escribe `fuente no disponible` y no reconstruyas sus palabras.
  
  ## Cambios de requerimientos (versionado)
  - Aplicas la política de cambios de `AGENTS.md`: un REQ **no se reescribe encima**, se **versiona**.
-@@ -106,6 +112,7 @@
+@@ -106,6 +114,7 @@
  - [ ] Flag de sensibilidad a seguridad evaluado y marcado si aplica.
  - [ ] Conflictos con otros REQs resueltos (o el REQ queda en `borrador`).
  - [ ] Sin preguntas abiertas pendientes; si las hay, el REQ permanece en `borrador`.
@@ -42,26 +45,28 @@ diff -ruN a/agents/analista-requerimientos.md b/agents/analista-requerimientos.m
  Cumplida esta lista, el REQ pasa de `borrador` a `pendiente` (listo para desarrollo). Si algo falta, permanece en `borrador`.
 diff -ruN a/agents/qa-tester.md b/agents/qa-tester.md
 --- a/agents/qa-tester.md	2026-09-23 12:43:36.638854386 -0600
-+++ b/agents/qa-tester.md	2026-09-23 12:43:36.663672813 -0600
-@@ -23,6 +23,14 @@
++++ b/agents/qa-tester.md	2026-09-23 13:10:05.795078034 -0600
+@@ -23,6 +23,16 @@
  ## Cuestionar la calidad del REQ
  No validas ciegamente un REQ malo. Si los criterios de aceptación son **intesteables, vagos, o les faltan escenarios de error**, no fuerces una aprobación: devuélvelo al `analista-requerimientos` señalando qué criterio es deficiente y qué falta. Validar fielmente un REQ pobre y aprobar algo malo es un fallo de QA, no un acierto.
  
 +**La «Correspondencia con el encargo» se contrasta antes de probar, sin repetir el análisis.** Lee la tabla
-+del REQ (§Trazabilidad) y su `Origen:`: si falta, si una obligación del pedido citado no tiene criterio, o
-+si una fila omitida/sustituida/excluida/añadida no cita autorización ni está en `Preguntas abiertas`, es
-+hallazgo de clase **`contrato`** antes de ejecutar la prueba. Verificas la tabla contra la fuente citada
-+—cuando está disponible— y contra los criterios; **no** rehaces la entrevista ni redactas criterios. Con
-+`fuente no disponible` declarada, no acredites que el REQ refleja el pedido: acredita lo construido contra
-+los criterios y deja dicho que la fidelidad al pedido no se pudo contrastar.
++del REQ (§Trazabilidad) y su `Origen:`: si falta, si una obligación del pedido citado no tiene criterio, o si
++una fila omitida/sustituida/excluida/añadida no cita autorización ni está en `Preguntas abiertas`, es hallazgo
++de clase **`contrato`** antes de ejecutar la prueba. Verificas la tabla contra la fuente citada —cuando está
++disponible— y contra los criterios; **no** rehaces la entrevista ni redactas criterios, y en una reparación
++que conserva el contrato no la vuelves a contrastar entera. **Conformidad con el REQ y fidelidad al pedido son
++dos veredictos distintos:** con `fuente no disponible`, o con filas pendientes, acreditas lo construido
++contra los criterios y dejas escrito que la fidelidad al pedido **no se pudo contrastar**; aprobar la
++conformidad **no** acredita la fidelidad ni autoriza ninguna decisión pendiente.
 +
  **Un criterio mal formado es un hallazgo, y se abre ANTES de probar nada.** La sección «Cómo se
  escribe un criterio que no se desmiente» de `requirements/README.md` prohíbe por nombre tres
  formas: enumerar un conjunto que el código reconoce sin la marca `no exhaustivo` ni el puntero al
 diff -ruN a/requirements/README.md b/requirements/README.md
 --- a/requirements/README.md	2026-09-23 12:43:36.594854395 -0600
-+++ b/requirements/README.md	2026-09-23 12:43:36.663404622 -0600
-@@ -491,9 +491,15 @@
++++ b/requirements/README.md	2026-09-23 13:10:05.794755792 -0600
+@@ -491,9 +491,17 @@
  (preguntas sin resolver; conflictos con otros REQs identificando ambos y la contradicción. Mientras haya algo aquí, el REQ se queda en `borrador`.)
  
  ## Trazabilidad
@@ -70,7 +75,9 @@ diff -ruN a/requirements/README.md b/requirements/README.md
  Tocado por: (agente / fecha)
  
 +### Correspondencia con el encargo
-+(una fila por obligación del pedido, con su cita literal; `fuente no disponible` si no hay pedido conservado)
++(se establece al crear el REQ y se actualiza sólo cuando cambia su alcance, en la misma fila del Historial; una
++reparación que conserva el contrato la reutiliza sin repetirla. Una fila por **obligación verificable** del pedido
++—no por frase—, con su cita; `fuente no disponible` si no hay pedido conservado)
 +| Obligación del pedido (cita) | Criterio que la cubre | Relación | Autorización citada, o pregunta abierta |
 +|---|---|---|---|
 +| «...» | CA-xx | cubierta / omitida / sustituida / excluida / añadida (decisión de negocio no pedida) | (fuente, o `→ Preguntas abiertas`) |
@@ -80,26 +87,27 @@ diff -ruN a/requirements/README.md b/requirements/README.md
  |------------|-----------------|-------------------------|--------|
 diff -ruN a/templates/AGENTS.md.tpl b/templates/AGENTS.md.tpl
 --- a/templates/AGENTS.md.tpl	2026-09-23 12:43:36.582854398 -0600
-+++ b/templates/AGENTS.md.tpl	2026-09-23 12:43:36.663161999 -0600
-@@ -386,6 +386,14 @@
++++ b/templates/AGENTS.md.tpl	2026-09-23 13:10:05.794501457 -0600
+@@ -386,6 +386,15 @@
     detenerse**. Documentar o revisar **es** avance cuando sirve a esa entrega y no la sustituye:
     un encargo cuyo único resultado sea texto se despacha **sólo** si ese texto **es** el resultado
     contratado.
 +   **Cuando el encargo es al `analista-requerimientos`, lleva el pedido del propietario con su fuente
 +   identificable** —archivo y commit, o mensaje con su fecha—, **separado del resumen de la coordinadora**; si
 +   esa fuente no existe, el encargo lo dice (`fuente no disponible`) en vez de reconstruirla. **Y antes de
-+   despachar la implementación**, la coordinadora comprueba que toda fila de la «Correspondencia con el
-+   encargo» del REQ (`requirements/README.md`, plantilla, §Trazabilidad) marcada como omitida, sustituida,
-+   excluida o añadida **sin autorización citada** se presentó al propietario con la forma de la regla 4;
-+   las decisiones técnicas ordinarias y el trabajo independiente autorizado **no** esperan esa
-+   presentación.
++   despachar la implementación de lo que dependa de ella**, la coordinadora comprueba que toda fila de la
++   «Correspondencia con el encargo» del REQ (`requirements/README.md`, plantilla, §Trazabilidad) marcada como
++   omitida, sustituida, excluida o añadida **quedó resuelta por el propietario** —presentarla (regla 4) no la
++   resuelve—; mientras no lo esté, el REQ sigue en `borrador` y se avanza sólo en el trabajo que la regla 4
++   ya permite: el que no depende de esa decisión, está autorizado y está suficientemente definido. Las
++   elecciones técnicas ordinarias no pasan por esta comprobación.
  2. **Todo bloqueo declara su alcance.** Venga de un hallazgo, de un veto, de la cola de
     aprobaciones o de una dependencia, declara **(i) qué acción impide** —nombrando **la acción
     concreta y la regla que la impide**, y clasificándola con las **cinco clases de acción** cuya
 diff -ruN a/templates/requirements-README.md.tpl b/templates/requirements-README.md.tpl
 --- a/templates/requirements-README.md.tpl	2026-09-23 12:43:36.610854392 -0600
-+++ b/templates/requirements-README.md.tpl	2026-09-23 12:43:36.663513446 -0600
-@@ -401,9 +401,15 @@
++++ b/templates/requirements-README.md.tpl	2026-09-23 13:10:05.794916472 -0600
+@@ -401,9 +401,17 @@
  (preguntas sin resolver; conflictos con otros REQs identificando ambos y la contradicción. Mientras haya algo aquí, el REQ se queda en `borrador`.)
  
  ## Trazabilidad
@@ -108,7 +116,9 @@ diff -ruN a/templates/requirements-README.md.tpl b/templates/requirements-README
  Tocado por: (agente / fecha)
  
 +### Correspondencia con el encargo
-+(una fila por obligación del pedido, con su cita literal; `fuente no disponible` si no hay pedido conservado)
++(se establece al crear el REQ y se actualiza sólo cuando cambia su alcance, en la misma fila del Historial; una
++reparación que conserva el contrato la reutiliza sin repetirla. Una fila por **obligación verificable** del pedido
++—no por frase—, con su cita; `fuente no disponible` si no hay pedido conservado)
 +| Obligación del pedido (cita) | Criterio que la cubre | Relación | Autorización citada, o pregunta abierta |
 +|---|---|---|---|
 +| «...» | CA-xx | cubierta / omitida / sustituida / excluida / añadida (decisión de negocio no pedida) | (fuente, o `→ Preguntas abiertas`) |
