@@ -1,7 +1,7 @@
-# REQ-029 · fidelidad al encargo — registro de la entrega (2026-09-23; en curso hasta la firma de seguridad)
+# REQ-029 · fidelidad al encargo — registro de la entrega (2026-09-23; ciclo completo, REQ sin cerrar)
 
 **Pedido del propietario:** implementar la propuesta `propuesta.md` (revisión 2, `d4e7a4f`) con tres precisiones (un solo veredicto de QA; sin bloqueo retroactivo; partir no concede autoridad sobre el alcance). Copia **íntegra y literal** del pedido: `PENDING_APPROVAL.md` §Resueltas de la rama `feat/fidelidad-encargo` (entrada del 2026-09-23), única copia; el REQ remite a ella.
-**Cabeza revisada de `main`:** `cfb1106`. **Rama aislada:** `feat/fidelidad-encargo` (worktree `/home/juan/dev/ArnesJuan-fidelidad`), local, **sin push**.
+**Cabeza revisada de `main`:** `cfb1106`. **Cabeza final de la rama:** `d413405` (13 commits). **Rama aislada:** `feat/fidelidad-encargo` (worktree `/home/juan/dev/ArnesJuan-fidelidad`), local, **sin push**.
 
 ## Ciclo (vía negativa del autoalojamiento: analista → desarrollador → QA → seguridad)
 | Commit | Qué |
@@ -16,7 +16,9 @@
 | `1117204` | **QA R-2 (vuelta 2 de 3): `aprobado`**, QA-029-01 cerrado; contrastó el REQ con la fuente íntegra sin diferencias no autorizadas |
 | `ec7b2fe` | **Seguridad R-042: `con-hallazgos`, sin veto** — delta normativo y gobernanza conformes; SEC-107 (`contrato`: el registro de seguridad no estaba en `Archivos:`), SEC-105 y SEC-106 (`instrumento`) |
 | `02ce2f6` | Analista: write-back SEC-107 (13 rutas) y SEC-105 (`Tocado por:`); coordinadora: línea de la cola. **CA-11.1 medido: 13 de 13, 0 fuera** |
-| (pendiente) | QA R-2b acotado sobre `02ce2f6`; seguridad R-042-A |
+| `9e4980c` | **QA R-2b**: `aprobado` ratificado sobre `02ce2f6` (el delta es sólo registro; CA-11.1 13 de 13); **contador dev↔QA registrado 3 de 3 AGOTADO** por las reglas escritas (una reparación que vuelve al mismo agente gasta vuelta) |
+| `50c3b17` | **Seguridad R-042-A: `aprobado` sobre `9e4980c`**; SEC-107 y SEC-105 `mitigado`; SEC-106 (`instrumento`) abierto. Juicio del auditor: **el REQ no debe cerrarse** sin el CI en verde sobre la cabeza (CA-11.4) |
+| `d413405` | Coordinadora: «RETOMAR AQUÍ — REQ-029» en `docs/ESTADO.md`; rama local, sin push |
 
 ## Crecimiento neto del texto (medido `cfb1106` → `02ce2f6`, `wc -c`)
 | Archivo | Neto |
