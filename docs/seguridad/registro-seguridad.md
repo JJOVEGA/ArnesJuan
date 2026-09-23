@@ -7471,3 +7471,103 @@ debilita** por el párrafo añadido.
 
 **Numeración vigente tras esta revisión:** última revisión **R-042**; último hallazgo **SEC-107**;
 próximos libres **R-043** y **SEC-108** (la adenda de SEC-107 será `R-042-A`, no `R-043`).
+
+## Adenda a R-042 (**`R-042-A`**) — **reverificación acotada de SEC-107 y SEC-105** sobre la cabeza `9e4980c` — 2026-09-23
+
+**Por qué adenda y no `R-043`.** No vuelvo a auditar el delta normativo: reverifico **dos hallazgos
+propios** sobre su write-back, igual que `R-041-A` con SEC-102.
+
+**Orden y árbol.** Cabeza actual `9e4980c` (árbol limpio). Commits desde mi R-042 (`1117204`):
+`ec7b2fe` (mi propia R-042), `02ce2f6` (write-back del analista y corrección de la coordinadora en la
+cola) y `9e4980c` (QA **R-2b**, que ratifica `aprobado` sobre `02ce2f6`). **QA firmó antes que yo sobre
+este árbol**, y `02ce2f6..9e4980c` es sólo su registro.
+
+**Alcance, y lo reutilizado dicho por su nombre.** `git diff --stat 1117204 9e4980c`: **6** archivos —
+`CHANGELOG.md`, `PENDING_APPROVAL.md` (1 línea), `docs/qa/REQ-029.md`, `docs/seguridad/registro-seguridad.md`,
+`requirements/README.md` (sólo la fila de índice de REQ-029; 0 líneas más), `requirements/REQ-029.md`.
+**Ninguno** es sede, gemela, agente, skill ni mecanismo: `git diff --name-only 1117204 9e4980c` no
+devuelve nada en `AGENTS.md`, `templates/`, `agents/`, `skills/`, `hooks/`, `tools/`, `tests/`,
+`.github/`, `.arnes/` ni `.claude-plugin/`. Y el registro de seguridad no cambió después de `ec7b2fe`
+(`git diff --stat ec7b2fe 9e4980c -- docs/seguridad/registro-seguridad.md` vacío): nadie más escribió en
+mi revisión. **Reutilizo por tanto la acreditación de `R-042` §1–§4** (delta normativo, las tres
+precisiones, CA-09, CA-13, no regresión de REQ-025, gobernanza del ciclo, procedencia cotejada, riesgos
+de la regla y SEC-106) **sin volver a auditarla**. La reutilización es legítima porque el delta no toca
+ninguna de esas sedes.
+
+### 1. **SEC-107 → `mitigado`**
+
+- **Campo, leído en crudo** (`sed -n 4p … | cat -A`): **13** rutas, la última
+  `docs/seguridad/registro-seguridad.md`, **sin decoración** de Markdown, separadas por comas, relativas,
+  línea terminada limpia (`$`, sin `\r`). Nada insertado que un diff no enseñe.
+- **Efecto, que es lo que el hallazgo medía (CA-11.1):** lo medí yo con `comm` entre el campo y
+  `git diff --name-only cfb1106 9e4980c`: **13 tocados, 13 declarados, 0 fuera, 0 declarados sin
+  tocar**. Coincide con la medición de la coordinadora y de QA sobre `02ce2f6`, y la cabeza actual no
+  añade rutas.
+- **Fila de Historial** con causa enlazada a SEC-107; el número de CA-11.1 («no más de 0») **no
+  cambia**. El write-back **no se firmó a sí mismo**: dejó `Seguridad:` y `Hallazgos abiertos:` como yo
+  los escribí. **Deja de bloquear** y sale de `Hallazgos abiertos:`.
+
+### 2. **SEC-105 → `mitigado`**
+
+- **La cola** (`PENDING_APPROVAL.md:43`) dice ahora que **esa entrada es la única copia literal** y que
+  REQ-029 §Trazabilidad remite a ella. Es **verdad** en `9e4980c`: REQ-029 sigue sin transcribir. El
+  bloque de cita **no** se tocó (el diff de la cola es esa única línea), así que mi cotejo con la
+  transcripción de R-042 §2 sigue valiendo. `## Pendientes` sigue vacía.
+- **`Tocado por:`** (`requirements/REQ-029.md:363-371`) nombra ahora cada paso con agente, fecha y commit,
+  incluidos el `desarrollador` (`0739d57`), QA R-2 y esta auditoría, y **dice** que la atribución de
+  agente es **declarada** por `CHANGELOG.md` y no medida por `git`. Es la cautela que yo pedía.
+- Los dos puntos de R-042 §3 quedan resueltos. Sale de `Hallazgos abiertos:`.
+
+### 3. SEC-106: sin cambio
+
+`abierto`, `instrumento`, no bloquea; dueño la coordinadora, anota el `qa-tester`; revisión propuesta
+2026-10-23. Nada del delta lo toca.
+
+### 4. Veredicto, y si el REQ puede cerrarse
+
+**`Seguridad: aprobado (R-042-A, 2026-09-23, sobre 9e4980c)`.** Con SEC-107 y SEC-105 `mitigado`, lo único
+que queda abierto de esta línea es **SEC-106** (`instrumento`).
+
+**Advertencia, porque es el efecto real de esta firma.** Con `QA: aprobado`, `Seguridad: aprobado`, la
+cola vacía y sólo un `instrumento` abierto, **`guard-completado` ya no impediría marcar REQ-029
+`completado`**, siempre que las quality gates locales estén en verde. **A mi juicio todavía no debe
+cerrarse**, por una razón que pone el propio contrato y que ninguna puerta mide:
+- **CA-11 punto 4** exige que «el banco completo corre en CI en verde», y hasta entonces sólo permite
+  **identificar la corrida como pendiente**. Sobre `9e4980c` **no existe** corrida de `hooks-en-linux`:
+  la rama no está empujada (ninguna rama remota contiene `9e4980c`). Mientras no haya CI en verde sobre la
+  cabeza que se cierre, CA-11.4 **no está cumplido**. Empujar es decisión de la coordinadora o del
+  propietario (el encargo lo prohibió en esta fase).
+- **Lo que no impide cerrar, aunque siga sin acreditarse:** la **conducta** de los agentes (no observada;
+  el REQ la excluye de su contrato en la frase inicial de los criterios, CA-12 y CA-13) y la **medición en
+  un REQ real** (CA-14 sólo contrata registrarla como pendiente, y lo está). Cerrar el REQ no convierte ni
+  una ni otra en acreditadas; quien lo cierre no puede presentarlas como observadas.
+- **Contador:** QA registra la vuelta dev↔QA **3 de 3 agotada**. Cualquier hallazgo nuevo `contrato` o
+  `usuario/dinero` no abre otra vuelta: va a residual declarado o a `bloqueado` y al propietario
+  (`AGENTS.md` §6).
+
+### 5. Lo que esta adenda **NO** acredita
+
+1. **La conducta de los agentes** (no observada).
+2. **El CI:** `hooks-en-linux` sin corrida sobre `9e4980c` (sin push). Las quality gates no las miro: son
+   de QA.
+3. **El delta normativo de nuevo:** su acreditación es la de `R-042` sobre `1117204`, reutilizada.
+4. **La publicación, la fusión ni el tag; ni los consumidores**, que no reciben nada hasta publicar y
+   migrar.
+5. **Que REQ-029 pueda cerrarse hoy** (§4).
+
+### 6. Estado de hallazgos de esta línea tras `R-042-A`
+
+| Hallazgo | Clase | Estado | Dueño | Bloquea |
+|---|---|---|---|---|
+| `SEC-105` | `instrumento` | **`mitigado`** (sobre `9e4980c`) | coordinadora · `analista-requerimientos` | No |
+| `SEC-106` | `instrumento` | `abierto` (revisión propuesta 2026-10-23) | coordinadora · anota `qa-tester` | No |
+| `SEC-107` | `contrato` | **`mitigado`** (sobre `9e4980c`) | `analista-requerimientos` | **No** |
+
+**Línea base de no-regresión para REQ-029, que sustituye a la provisional de `R-042`:** `Seguridad:
+aprobado` sobre **`9e4980c`**. El delta `cfb1106..9e4980c` tiene 13 archivos, los 13 declarados, 0 de
+mecanismo. El contenido normativo es el acreditado en `R-042` sobre `1117204`, sin cambios después.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta adenda:** última revisión **R-042** (adenda **`R-042-A`**); último hallazgo
+**SEC-107**; próximos libres **R-043** y **SEC-108**.

@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029 seguridad R-042-A: `aprobado` sobre `9e4980c` — SEC-107 y SEC-105 mitigados; no cerrar hasta tener el CI de CA-11.4
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `auditor-seguridad`. Adenda acotada a SEC-107 y SEC-105, después de QA R-2b. Archivos escritos con `Edit`, sin consola y sin comitear: `docs/seguridad/registro-seguridad.md` (§Adenda R-042-A), la cabecera de `requirements/REQ-029.md` (`Seguridad:` y `Hallazgos abiertos:`; `Estado:` no se toca), su celda del índice en `requirements/README.md` y esta entrada.
+
+**Resultado.**
+- **SEC-107 → `mitigado`:** `Archivos:` tiene 13 rutas sin decoración. Con `comm` contra `git diff --name-only cfb1106 9e4980c`: 13 tocados, 13 declarados, 0 fuera.
+- **SEC-105 → `mitigado`:** `PENDING_APPROVAL.md:43` dice ahora que la cola es la única copia literal, y es verdad. `Tocado por:` está completo, con la atribución declarada como tal.
+- **Lo reutilizado:** `git diff 1117204 9e4980c` no toca sede, gemelas, agentes, skills ni mecanismo, así que reutilizo la acreditación de R-042 sin volver a auditarla. SEC-106 sigue abierto (`instrumento`).
+- **Advertencia:** `guard-completado` ya no impediría cerrar REQ-029. A mi juicio no debe cerrarse hasta que CA-11.4 tenga `hooks-en-linux` en verde sobre la cabeza que se cierre; sobre `9e4980c` no hay corrida porque no hay push.
+
+**Qué no acredita:** la conducta de los agentes ni la medición en un REQ real (no observadas), el CI, la publicación ni los consumidores.
+
 ## [Interno] — 2026-09-23 · REQ-029 QA R-2b: `aprobado` ratificado sobre `02ce2f6`; **vuelta 3 de 3 consumida, contador agotado**
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. Escrito con `Edit`/`Write`, sin consola y sin comitear: `docs/qa/REQ-029.md` (Adenda R-2b), el paréntesis de `QA:` en `requirements/REQ-029.md` (el veredicto no cambia) y esta entrada.
 
