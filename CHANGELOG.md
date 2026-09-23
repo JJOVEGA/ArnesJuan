@@ -2,6 +2,19 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029 QA R-2 (vuelta 2 de 3): `aprobado` — QA-029-01 cerrado contra la fuente íntegra; CI pendiente sobre `efa1c5c`
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. Cabeza validada: `efa1c5c`. Archivos escritos con `Edit`/`Write`, sin consola y sin comitear: `docs/qa/REQ-029.md` (Adenda R-2 y aviso de veredicto vigente al principio; R-1 no se reescribe), la cabecera de `requirements/REQ-029.md` (`QA:` → `aprobado (…)`, `Hallazgos abiertos:` → `(ninguno)`; `Estado:` sigue en `en-revisión`), su fila del índice y esta entrada.
+
+**Resultado.**
+- **Copia de la cola:** la de `PENDING_APPROVAL.md` §Resueltas es idéntica al mensaje original del propietario (`diff` = 0).
+- **Correspondencia:** 36 filas, 34 `cubierta` y 2 `sustituida` con P1/P2 citadas. Todas las citas son literales.
+- **Obligaciones de proceso:** quedan fuera de la tabla de forma conforme con la plantilla implementada.
+- **CA-11.4:** la frase nueva pasa. El CI de `hooks-en-linux` sobre `efa1c5c` sigue pendiente porque no hay push.
+- **CA-14:** el dato previo se actualiza de 23 a 36 filas.
+- **Texto implementado y mecanismo:** sin cambios desde R-1, así que no se repitió el banco. Las gates de §7 están en verde.
+
+**Qué no acredita:** la conducta de los agentes (no observada), el CI, la firma de seguridad (`Seguridad: pendiente`, que el cierre de un REQ `critico` exige) ni la publicación.
+
 ## [Interno] — 2026-09-23 · REQ-029: write-back de QA-029-01 — `Origen:` remite a la fuente íntegra y la «Correspondencia con el encargo» se rehace contra ella (23 → 36 filas; 0 `añadida`, 0 `excluida`); `Estado:` → `en-revisión`
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos`. Archivos escritos: `requirements/REQ-029.md`, la fila de REQ-029 en el índice de `requirements/README.md` y este `CHANGELOG.md`, con `Edit` y **sin consola**. Sin comitear.
 
