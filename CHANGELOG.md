@@ -2,6 +2,9 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029 fidelidad al encargo: ciclo completo con las tres firmas (QA R-2/R-2b, seguridad R-042-A); punto de continuidad; el REQ NO se cierra (CI sobre la cabeza pendiente por falta de push; conducta de agentes y medición en REQ real no observadas)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. `docs/ESTADO.md` gana el bloque «RETOMAR AQUÍ — REQ-029». Sin push, fusión ni publicación; sin cambios en mecanismo, versión ni consumidores.
+
 ## [Interno] — 2026-09-23 · REQ-029 seguridad R-042-A: `aprobado` sobre `9e4980c` — SEC-107 y SEC-105 mitigados; no cerrar hasta tener el CI de CA-11.4
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `auditor-seguridad`. Adenda acotada a SEC-107 y SEC-105, después de QA R-2b. Archivos escritos con `Edit`, sin consola y sin comitear: `docs/seguridad/registro-seguridad.md` (§Adenda R-042-A), la cabecera de `requirements/REQ-029.md` (`Seguridad:` y `Hallazgos abiertos:`; `Estado:` no se toca), su celda del índice en `requirements/README.md` y esta entrada.
 
