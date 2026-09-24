@@ -413,11 +413,17 @@ se reconstruyen las palabras del propietario. «Relación» toma **exactamente**
 vocabulario** y todo otro texto que lo nombre remite aquí. La tabla se actualiza **sólo cuando cambia el alcance**, en
 la misma fila del Historial de cambios que registra ese cambio (`AGENTS.md` §9); una reparación que conserva el
 contrato la reutiliza, sin tabla nueva ni comparación completa, y una que altera qué obligación cubre un criterio no
-conserva el contrato: es cambio de alcance. Para un REQ existente ya aprobado cuyo pedido no se conservó, ver la
-definición del `analista-requerimientos`.)
+conserva el contrato: es cambio de alcance. Una **autorización citada** es una copia fiel y verificable de la
+decisión del propietario, o su confirmación concreta, registrada en una sede **localizable por ruta en el
+repositorio** (ejemplos **no exhaustivos**: una entrada de `PENDING_APPROVAL.md` §«Resueltas», una fila del
+Historial de cambios con la cita, un archivo bajo `docs/`); no exige archivar conversaciones completas. **Una
+referencia cuyo contenido no puede verificarse no cuenta como autorización** para una decisión nueva que requiere
+al propietario: la fila sigue sin resolver, lo que dependa de ella no se implementa, y el trabajo independiente
+autorizado continúa. Para un REQ existente ya aprobado cuyo pedido o conversación original no se conservó, ver la
+definición del `analista-requerimientos`: esa ausencia no invalida sus aprobaciones ni lo devuelve a `borrador`.)
 | Obligación del pedido (cita) | Criterio que la cubre | Relación | Autorización citada, o pregunta abierta |
 |---|---|---|---|
-| «...» (o `fuente no disponible`) | CA-xx | (uno de los cinco valores) | (fuente de la autorización, o `→ Preguntas abiertas`) |
+| «...» (o `fuente no disponible`) | CA-xx | (uno de los cinco valores) | (ruta de la autorización verificable, o `→ Preguntas abiertas`) |
 
 ## Historial de cambios
 | Fecha | Antes → Después | Causa | ADR |

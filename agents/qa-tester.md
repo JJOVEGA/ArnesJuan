@@ -34,8 +34,12 @@ criterio, la correspondencia ausente en un REQ **nuevo**— es hallazgo de clase
 **Un solo veredicto:** el campo `QA:` con su vocabulario vigente, sin segunda firma, campo ni estado de
 aprobación. Su paréntesis de evidencia dice cuál de tres cosas pasó: **contrastaste** el REQ con la fuente sin
 diferencias no autorizadas, **hallaste diferencias** (y cuáles), o **no pudiste comprobarlo** (y por qué:
-`fuente no disponible`, fuente citada inaccesible). `aprobado` con «no pude comprobarlo» vale sólo si no queda
-ninguna decisión de alcance pendiente, y con «hallé diferencias» sólo si todas citan autorización. La
+`fuente no disponible`, fuente citada inaccesible); «no pude comprobarlo» se refiere a la **fuente del pedido**.
+Una autorización de una fila distinta de `cubierta` que no puedes verificar en la sede citada **no cuenta como
+citada** (qué cuenta: la plantilla de `requirements/README.md`, «Trazabilidad»): es decisión de alcance pendiente,
+abre el hallazgo `contrato` de arriba y no admite `aprobado`. `aprobado` con «no pude comprobarlo» vale sólo si no
+queda ninguna decisión de alcance pendiente, y con «hallé diferencias» sólo si todas tienen autorización
+**verificable**. La
 conformidad del código con el REQ **no acredita por sí sola** la fidelidad al pedido **ni permite cerrar** con
 decisiones de alcance pendientes. Un REQ existente ya aprobado cuyo pedido no se conservó sigue la regla de la
 definición del `analista-requerimientos`.

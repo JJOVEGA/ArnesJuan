@@ -428,7 +428,7 @@ desfasaría hacia el lado que **abre**.
    «Correspondencia con el encargo» del REQ (forma y vocabulario en la plantilla de
    `requirements/README.md`, «Trazabilidad») que declare una diferencia con el pedido y **requiera al
    propietario**, la coordinadora comprueba que esa fila **quedó resuelta por él, con la autorización
-   citada**: no la resuelve presentarla (regla 4), ni una respuesta que no decide entre las opciones,
+   citada y verificable** (qué lo es: la plantilla de `requirements/README.md`, «Trazabilidad»): no la resuelve presentarla (regla 4), ni una respuesta que no decide entre las opciones,
    ni partir el REQ (ver la definición del `analista-requerimientos`). Mientras no lo esté se avanza
    **sólo** en lo que la regla 4 ya permite. Las **elecciones técnicas ordinarias** —las que no
    cambian lo que el propietario ve, decide o cobra; ejemplos **no exhaustivos**: estructura interna,
