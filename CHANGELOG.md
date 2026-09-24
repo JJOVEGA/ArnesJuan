@@ -2,6 +2,20 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029 QA R-3 (vuelta excepcional acotada a SEC-106; contador 3 de 3 conservado): `con-hallazgos` — QA-029-02 y QA-029-03 (`contrato`)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. Cabeza validada: `699dee3`. Escrito con `Edit`/`Write`, sin consola y sin comitear: `docs/qa/REQ-029.md` (Adenda R-3 y casos 5-8 de CA-12 como fixtures inventados), la cabecera de `requirements/REQ-029.md` (`Estado:` → `en-progreso`, `QA:` → `con-hallazgos (…)`, `Hallazgos abiertos:` + QA-029-02 y QA-029-03), su fila del índice y esta entrada.
+
+**Resultado.**
+- **Fuente:** la copia de la decisión sobre SEC-106 en la cola es idéntica al mensaje original.
+- **Correspondencia:** 55 filas (53 `cubierta`, 2 `sustituida`), sin diferencias no autorizadas.
+- **Pasan:** CA-03.4 (definición única en la plantilla), sus remisiones (CA-01.2, CA-06), CA-12 casos 6-8 y la variante 5a, las gemelas (0 diferencias), las gates de §7, 0 archivos de mecanismo y CA-13.
+- **SEC-106:** el texto cierra el hueco medido para las decisiones nuevas. Pero `agents/qa-tester.md:38-40` enuncia la regla sin condición de población, y el caso 5b (REQ existente aprobado con correspondencia marcada `fuente no disponible`) sale al revés de CA-08.5: **QA-029-02**.
+- **CA-11.1:** falla sobre `699dee3`. `docs/ESTADO.md` (tocado en `d413405`) está fuera de `Archivos:`, 14 contra 13: **QA-029-03**. Es independiente de SEC-106, y queda identificado sin encadenar su reparación.
+- **Vía (b), confirmación registrada en una ruta:** es coherente con la decisión del propietario, como derivación de «no acepto… una referencia cuyo contenido no puede verificarse».
+- **Contador:** 3 de 3 consumido más la vuelta excepcional. Qué sigue lo decide el propietario.
+
+**Qué no acredita:** la conducta de los agentes, el CI (pendiente sobre `699dee3`; el FAIL de `35924622453` se conserva) ni el estado de SEC-106, que es del auditor.
+
 ## [Interno] — 2026-09-23 · REQ-029 / SEC-106: «autorización citada» pasa a exigir copia fiel y verificable, o confirmación concreta registrada; una referencia inaccesible no autoriza una decisión nueva; los REQ ya aprobados conservan su situación
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos` (contrato) y `desarrollador` (sedes heredables); bitácora escrita por la coordinadora al comitear ambos trabajos juntos. **Intervención acotada a SEC-106 por excepción expresa del propietario al contador agotado de REQ-029 (dev↔QA 3 de 3, conservado, no reiniciado)**; fuente íntegra en `PENDING_APPROVAL.md` §Resueltas. Contrato: CA-03 gana el punto 4 (definición única de autorización comprobada, dos poblaciones: REQ existente aprobado conserva su situación; decisión nueva con cita inaccesible no se da por autorizada), CA-08 gana el punto 5, CA-12 pasa de cuatro a ocho casos, CA-01.2 y CA-06 remiten; correspondencia con el encargo 36 → 55 filas (53 `cubierta`, 2 `sustituida`); Historial sin efecto retroactivo. Sedes: la definición vive en la plantilla del REQ (`requirements/README.md` §Plantilla) y su gemela; `agents/qa-tester.md` («no pude comprobarlo» es sobre la fuente del pedido; una autorización no verificable de una fila distinta de `cubierta` no cuenta y no admite `aprobado`), `agents/analista-requerimientos.md` y la regla 1 de `AGENTS.md` con su gemela sólo remiten («citada y verificable»). Gemelas 0 diferencias; gates §7 en verde; 0 archivos de mecanismo. Crecimiento: `AGENTS.md` +87 B; plantilla +752 B; QA +373 B; analista +20 B. Sin ensayos, sin push, sin cerrar hallazgos: QA y seguridad determinan el resultado y el estado de SEC-106.
 
