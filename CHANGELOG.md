@@ -2,6 +2,159 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029 seguridad R-042-C: `aprobado` sobre `41d2cec` — SEC-106 mitigado; no cerrar sin el CI de CA-11.4
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `auditor-seguridad`. Revisión acotada al control corregido, después de QA R-4 favorable, bajo la excepción del propietario registrada en `PENDING_APPROVAL.md` §Resueltas; el contador 3 de 3 se conserva. Archivos escritos con `Edit`, sin consola y sin comitear: `docs/seguridad/registro-seguridad.md` (§Adenda R-042-C), la cabecera de `requirements/REQ-029.md` (`Seguridad:` y `Hallazgos abiertos:`; `Estado:` no se toca), su celda del índice y esta entrada.
+
+**Resultado.**
+- **SEC-106 → `mitigado`:** se cumple la condición de R-042-B. La regla está acotada a la decisión nueva en `agents/qa-tester.md:38-41` y en `agents/analista-requerimientos.md:52-53`. En ese caso la autorización no verificable sigue sin contar y sin admitir `aprobado`, y las dos sedes remiten a la plantilla sin copiarla. QA R-4 aprobó sin hallazgos `contrato`.
+- **La excepción de los REQ existentes no deja pasar un cambio nuevo:** se ata a la falta de la conversación original, y un cambio de alcance posterior sigue siendo decisión nueva.
+- **Cobertura:** revisé las sedes cambiadas desde `9e4980c`. La regla 1, la plantilla y sus gemelas no cambian desde R-042-B; los dos agentes los reviso aquí. Reutilizo R-042 para lo demás. CA-11.1 da 14 de 14 y hay 0 archivos de mecanismo.
+- **Observación sin hallazgo:** `Tocado por:` no nombra la edición del `desarrollador` en `afcc6a5`, que `CHANGELOG.md` sí registra.
+
+**Qué no acredita:** la conducta de los agentes ni la medición en un REQ real (no observadas), el CI (sin corrida sobre `41d2cec`; la remota `d413405` tiene el FAIL del run `35924622453`), el cierre, la publicación ni los consumidores. **REQ-029 no debe cerrarse hasta tener CA-11.4 en verde**, aunque `guard-completado` ya no lo impida.
+
+## [Interno] — 2026-09-23 · REQ-029 QA R-4 (vuelta excepcional acotada a QA-029-02 y QA-029-03; contador 3 de 3 conservado): `aprobado` — los dos hallazgos cerrados
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. Cabeza validada: `afcc6a5`. Escrito con `Edit`/`Write`, sin consola y sin comitear: `docs/qa/REQ-029.md` (Adenda R-4), la cabecera de `requirements/REQ-029.md` (`Estado:` → `en-revisión`, `QA:` → `aprobado (…)`, `Hallazgos abiertos:` → `SEC-106 (instrumento)`), su fila del índice y esta entrada.
+
+**Resultado.**
+- **Fuente:** la copia de la decisión del propietario en la cola es idéntica al original.
+- **Correspondencia:** se reutilizó con sus 55 filas, sin diferencias no autorizadas.
+- **QA-029-02, cerrado:** `agents/qa-tester.md:38-43` y `agents/analista-requerimientos.md:52-54` distinguen ya la «decisión nueva que requiere aprobación del propietario» del «REQ existente con contrato y aprobaciones registrados». No cambian la distinción ni añaden requisitos de aprobación. El barrido por propiedad no deja ninguna frase sin acotar. Los casos 5-8 de CA-12, 5b incluido, se deciden sin interpretar.
+- **QA-029-03, cerrado:** CA-11.1 queda en 14 de 14, medido por mí.
+- **Comprobaciones:** las gates de §7 están en verde y hay 0 archivos de mecanismo.
+
+**Qué no acredita:** la conducta de los agentes; el CI, pendiente sobre `afcc6a5` y con el FAIL de `35924622453` conservado; el estado de SEC-106 ni la firma de seguridad, que son del auditor. REQ-029 no se cierra.
+
+## [Interno] — 2026-09-23 · REQ-029: corrección conjunta de QA-029-02 (las frases de QA y del analista se acotan a «decisión nueva que requiere aprobación del propietario»; un REQ existente aprobado conserva su situación y declara la limitación) y QA-029-03 (`Archivos:` gana `docs/ESTADO.md`: 14 rutas)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `desarrollador` (dos definiciones de agente) y `analista-requerimientos` (campo, `Origen:`, Historial); bitácora de la coordinadora al comitear juntos. **Excepción acotada del propietario al contador agotado; dev↔QA 3 de 3 conservado.** Sin cambio en la distinción ni requisitos de aprobación nuevos; CA-03.4 y CA-08.5 intactos; correspondencia reutilizada (55 filas, sin transcribir instrucciones). Gates §7 en verde; 0 archivos de mecanismo. Sin push. QA y seguridad determinan el estado de los hallazgos.
+
+## [Interno] — 2026-09-23 · REQ-029 / QA-029-02 y QA-029-03: autorización del propietario para la corrección conjunta (excepción acotada al contador agotado) registrada íntegra en la cola
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Única copia literal; contador dev↔QA 3 de 3 conservado, sin reiniciar. Cola `## Pendientes` sin cambios (0). Sin push.
+
+## [Interno] — 2026-09-23 · REQ-029 seguridad R-042-B: SEC-106 → `en-mitigación`; `Seguridad:` → `pendiente` (mi `aprobado` de R-042-A no cubre `47a61ef`)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `auditor-seguridad`. Adenda acotada a SEC-106, bajo la excepción expresa del propietario registrada en `PENDING_APPROVAL.md` §Resueltas; el contador 3 de 3 se conserva. Después de QA R-3. Archivos escritos con `Edit`, sin consola y sin comitear: `docs/seguridad/registro-seguridad.md` (§Adenda R-042-B), la cabecera de `requirements/REQ-029.md` (sólo `Seguridad:`; `Hallazgos abiertos:` ya lista SEC-106 y no cambia), su celda del índice y esta entrada.
+
+**Resultado.**
+- **SEC-106 → `en-mitigación`:** el control ya está en CA-03.4 y CA-08.5 y en la sede única de la plantilla y su gemela. La regla 1, el analista y QA remiten a ella, y el hueco queda cerrado para decisiones nuevas.
+- **Condición para `mitigado`:** que QA-029-02 se repare en `agents/qa-tester.md` conservando que la autorización no verificable de una decisión nueva no cuenta, y que QA lo valide.
+- **Corrección de la presentación:** «residual» y la fecha 2026-10-23 eran propuestas mías, no decisiones del propietario, y no rigen. El historial de R-042 y R-042-A se conserva. La decisión del propietario se registra sin efecto retroactivo: los REQ aprobados antes conservan su situación.
+- **Firma:** `Seguridad: pendiente`. El delta toca sedes heredables, así que R-042-A no lo cubre, y no firmo con QA en `con-hallazgos`. No hay veto: nada se debilita.
+- **QA-029-03:** identificado (`docs/ESTADO.md`, 14 tocados y 13 declarados) y no encadenado.
+
+**Qué no acredita:** la conducta de los agentes, el CI (sin corrida sobre `47a61ef`; la cabeza remota `d413405` tiene el FAIL del run `35924622453`), el cierre de REQ-029, la publicación ni los consumidores.
+
+## [Interno] — 2026-09-23 · REQ-029 QA R-3 (vuelta excepcional acotada a SEC-106; contador 3 de 3 conservado): `con-hallazgos` — QA-029-02 y QA-029-03 (`contrato`)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. Cabeza validada: `699dee3`. Escrito con `Edit`/`Write`, sin consola y sin comitear: `docs/qa/REQ-029.md` (Adenda R-3 y casos 5-8 de CA-12 como fixtures inventados), la cabecera de `requirements/REQ-029.md` (`Estado:` → `en-progreso`, `QA:` → `con-hallazgos (…)`, `Hallazgos abiertos:` + QA-029-02 y QA-029-03), su fila del índice y esta entrada.
+
+**Resultado.**
+- **Fuente:** la copia de la decisión sobre SEC-106 en la cola es idéntica al mensaje original.
+- **Correspondencia:** 55 filas (53 `cubierta`, 2 `sustituida`), sin diferencias no autorizadas.
+- **Pasan:** CA-03.4 (definición única en la plantilla), sus remisiones (CA-01.2, CA-06), CA-12 casos 6-8 y la variante 5a, las gemelas (0 diferencias), las gates de §7, 0 archivos de mecanismo y CA-13.
+- **SEC-106:** el texto cierra el hueco medido para las decisiones nuevas. Pero `agents/qa-tester.md:38-40` enuncia la regla sin condición de población, y el caso 5b (REQ existente aprobado con correspondencia marcada `fuente no disponible`) sale al revés de CA-08.5: **QA-029-02**.
+- **CA-11.1:** falla sobre `699dee3`. `docs/ESTADO.md` (tocado en `d413405`) está fuera de `Archivos:`, 14 contra 13: **QA-029-03**. Es independiente de SEC-106, y queda identificado sin encadenar su reparación.
+- **Vía (b), confirmación registrada en una ruta:** es coherente con la decisión del propietario, como derivación de «no acepto… una referencia cuyo contenido no puede verificarse».
+- **Contador:** 3 de 3 consumido más la vuelta excepcional. Qué sigue lo decide el propietario.
+
+**Qué no acredita:** la conducta de los agentes, el CI (pendiente sobre `699dee3`; el FAIL de `35924622453` se conserva) ni el estado de SEC-106, que es del auditor.
+
+## [Interno] — 2026-09-23 · REQ-029 / SEC-106: «autorización citada» pasa a exigir copia fiel y verificable, o confirmación concreta registrada; una referencia inaccesible no autoriza una decisión nueva; los REQ ya aprobados conservan su situación
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `analista-requerimientos` (contrato) y `desarrollador` (sedes heredables); bitácora escrita por la coordinadora al comitear ambos trabajos juntos. **Intervención acotada a SEC-106 por excepción expresa del propietario al contador agotado de REQ-029 (dev↔QA 3 de 3, conservado, no reiniciado)**; fuente íntegra en `PENDING_APPROVAL.md` §Resueltas. Contrato: CA-03 gana el punto 4 (definición única de autorización comprobada, dos poblaciones: REQ existente aprobado conserva su situación; decisión nueva con cita inaccesible no se da por autorizada), CA-08 gana el punto 5, CA-12 pasa de cuatro a ocho casos, CA-01.2 y CA-06 remiten; correspondencia con el encargo 36 → 55 filas (53 `cubierta`, 2 `sustituida`); Historial sin efecto retroactivo. Sedes: la definición vive en la plantilla del REQ (`requirements/README.md` §Plantilla) y su gemela; `agents/qa-tester.md` («no pude comprobarlo» es sobre la fuente del pedido; una autorización no verificable de una fila distinta de `cubierta` no cuenta y no admite `aprobado`), `agents/analista-requerimientos.md` y la regla 1 de `AGENTS.md` con su gemela sólo remiten («citada y verificable»). Gemelas 0 diferencias; gates §7 en verde; 0 archivos de mecanismo. Crecimiento: `AGENTS.md` +87 B; plantilla +752 B; QA +373 B; analista +20 B. Sin ensayos, sin push, sin cerrar hallazgos: QA y seguridad determinan el resultado y el estado de SEC-106.
+
+## [Interno] — 2026-09-23 · REQ-029 / SEC-106: la autorización del propietario para la intervención acotada (excepción expresa al contador agotado) queda registrada íntegra en `PENDING_APPROVAL.md` §Resueltas
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Única copia literal; los write-backs remiten a ella. Contadores de REQ-029 sin reiniciar (dev↔QA 3 de 3 consumidas). Cola `## Pendientes` sin cambios (0). Rama local, sin push.
+
+## [Interno] — 2026-09-23 · REQ-029 fidelidad al encargo: ciclo completo con las tres firmas (QA R-2/R-2b, seguridad R-042-A); punto de continuidad; el REQ NO se cierra (CI sobre la cabeza pendiente por falta de push; conducta de agentes y medición en REQ real no observadas)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. `docs/ESTADO.md` gana el bloque «RETOMAR AQUÍ — REQ-029». Sin push, fusión ni publicación; sin cambios en mecanismo, versión ni consumidores.
+
+## [Interno] — 2026-09-23 · REQ-029 seguridad R-042-A: `aprobado` sobre `9e4980c` — SEC-107 y SEC-105 mitigados; no cerrar hasta tener el CI de CA-11.4
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `auditor-seguridad`. Adenda acotada a SEC-107 y SEC-105, después de QA R-2b. Archivos escritos con `Edit`, sin consola y sin comitear: `docs/seguridad/registro-seguridad.md` (§Adenda R-042-A), la cabecera de `requirements/REQ-029.md` (`Seguridad:` y `Hallazgos abiertos:`; `Estado:` no se toca), su celda del índice en `requirements/README.md` y esta entrada.
+
+**Resultado.**
+- **SEC-107 → `mitigado`:** `Archivos:` tiene 13 rutas sin decoración. Con `comm` contra `git diff --name-only cfb1106 9e4980c`: 13 tocados, 13 declarados, 0 fuera.
+- **SEC-105 → `mitigado`:** `PENDING_APPROVAL.md:43` dice ahora que la cola es la única copia literal, y es verdad. `Tocado por:` está completo, con la atribución declarada como tal.
+- **Lo reutilizado:** `git diff 1117204 9e4980c` no toca sede, gemelas, agentes, skills ni mecanismo, así que reutilizo la acreditación de R-042 sin volver a auditarla. SEC-106 sigue abierto (`instrumento`).
+- **Advertencia:** `guard-completado` ya no impediría cerrar REQ-029. A mi juicio no debe cerrarse hasta que CA-11.4 tenga `hooks-en-linux` en verde sobre la cabeza que se cierre; sobre `9e4980c` no hay corrida porque no hay push.
+
+**Qué no acredita:** la conducta de los agentes ni la medición en un REQ real (no observadas), el CI, la publicación ni los consumidores.
+
+## [Interno] — 2026-09-23 · REQ-029 QA R-2b: `aprobado` ratificado sobre `02ce2f6`; **vuelta 3 de 3 consumida, contador agotado**
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. Escrito con `Edit`/`Write`, sin consola y sin comitear: `docs/qa/REQ-029.md` (Adenda R-2b), el paréntesis de `QA:` en `requirements/REQ-029.md` (el veredicto no cambia) y esta entrada.
+
+**Resultado.**
+- **Delta.** `efa1c5c..02ce2f6` solo toca registro: no cambia `AGENTS.md`, `templates/`, `agents/`, `skills/`, el mecanismo, ningún criterio ni ninguna fila de la correspondencia.
+- **Cola.** La copia literal de la cola sigue idéntica a la fuente.
+- **CA-11.1.** Verificado sobre `02ce2f6`: 13 rutas tocadas, 13 declaradas, 0 fuera.
+- **Gates y CI.** Las gates de §7 están en verde. El CI está pendiente sobre `02ce2f6` porque no hay push.
+- **Contador.** Por `AGENTS.md` §6 (regla 4 de fases y «Loop de error»: una reparación que vuelve al mismo agente gasta vuelta, y «revisión acotada» no cambia eso), esta re-validación tras el write-back de SEC-107 **gasta la vuelta 3 de 3**. Si hay otra reparación, se cierra con el residual declarado o se escala. Si se lee de otra manera, decide el propietario.
+
+**Qué no acredita:** la conducta de los agentes, el CI ni la firma de seguridad (`con-hallazgos`, con SEC-107 `contrato` abierto).
+
+## [Interno] — 2026-09-23 · REQ-029 / SEC-105: la entrada de la cola deja de decir que la copia literal vive en el REQ (ahora la cola es la única copia y el REQ remite)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Parte de SEC-105 que corresponde a la coordinadora; la parte del `Tocado por:` la hizo el analista en esta misma tanda. Cierre del hallazgo: del auditor.
+
+## [Interno] — 2026-09-23 · REQ-029: write-back de SEC-107 y de la parte `Tocado por:` de SEC-105 — `Archivos:` declara el registro de seguridad (12 → 13 rutas) y `Tocado por:` nombra a todos los que tocaron el REQ
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos`. Archivos escritos: `requirements/REQ-029.md` (línea `Archivos:`, `Tocado por:` y una fila de Historial) y este `CHANGELOG.md`, con `Edit` y **sin consola**. Sin comitear. Causa: `docs/seguridad/registro-seguridad.md` § «Revisión R-042», puntos 3 (SEC-105) y 4-bis (SEC-107). El número de CA-11.1 («no más de 0» archivos fuera del campo) **no cambia**. **Sin tocar** `Estado:`, `QA:`, `Seguridad:`, `Hallazgos abiertos:` ni `Rigor:`: SEC-107 y SEC-105 los cierra el `auditor-seguridad` (adenda `R-042-A`). El recuento de archivos fuera del campo **no** lo re-ejecutó esta comisión (sin consola): se deriva de la medición del auditor —13 archivos en el delta, 1 fuera, que es la ruta añadida— y queda para la reverificación.
+
+## [Interno] — 2026-09-23 · REQ-029 seguridad R-042: `con-hallazgos` sobre `1117204` (no veto) — el delta normativo pasa; SEC-107 (`contrato`): `Archivos:` no declara el registro de seguridad
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `auditor-seguridad`. Revisión acotada a `cfb1106..1117204` (12 archivos, 0 de mecanismo), después de QA R-2 y sobre su árbol más su registro. Archivos escritos con `Edit`, sin consola y sin comitear: `docs/seguridad/registro-seguridad.md` (§Revisión R-042), la cabecera de `requirements/REQ-029.md` (`Seguridad:` y `Hallazgos abiertos:`; `Estado:` no se toca), su celda del índice en `requirements/README.md` y esta entrada.
+
+**Resultado.**
+- **Delta normativo:** no cambia hooks, permisos, rigor, exigencias de seguridad ni condiciones de cierre; ningún mensaje de hook queda desfasado; un solo veredicto de QA; la partición no esquiva preguntas ni contadores; la no retroactividad no autoriza decisiones pendientes; cada obligación en una sede y gemelas idénticas en lo que cambia.
+- **Procedencia:** cotejé yo la copia de `PENDING_APPROVAL.md` §Resueltas con el mensaje original de la transcripción (2026-09-23T20:40:10Z): idénticas en todas las líneas no vacías.
+- **SEC-107 (`contrato`, dueño `analista-requerimientos`, bloquea):** esta revisión debe vivir en `docs/seguridad/registro-seguridad.md`, que no está en `Archivos:`; con ella CA-11.1 («no más de 0» fuera del campo) queda en falso. Remedio: añadir la ruta al campo (cambio menor, como `d1c65ac`) y adenda `R-042-A`.
+- **SEC-105 (`instrumento`):** `PENDING_APPROVAL.md:43` afirma que la copia literal vive en REQ-029, que ya sólo remite; `Tocado por:` omite al desarrollador y a QA R-2.
+- **SEC-106 (`instrumento`, residual):** una autorización citada que QA no puede leer admite `aprobado` con «no pude comprobarlo»; revisión propuesta 2026-10-23.
+
+**Qué no acredita:** la conducta de los agentes (no observada), el CI (`hooks-en-linux` sin corrida sobre `1117204` por falta de push), la publicación ni los consumidores.
+
+## [Interno] — 2026-09-23 · REQ-029 QA R-2 (vuelta 2 de 3): `aprobado` — QA-029-01 cerrado contra la fuente íntegra; CI pendiente sobre `efa1c5c`
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. Cabeza validada: `efa1c5c`. Archivos escritos con `Edit`/`Write`, sin consola y sin comitear: `docs/qa/REQ-029.md` (Adenda R-2 y aviso de veredicto vigente al principio; R-1 no se reescribe), la cabecera de `requirements/REQ-029.md` (`QA:` → `aprobado (…)`, `Hallazgos abiertos:` → `(ninguno)`; `Estado:` sigue en `en-revisión`), su fila del índice y esta entrada.
+
+**Resultado.**
+- **Copia de la cola:** la de `PENDING_APPROVAL.md` §Resueltas es idéntica al mensaje original del propietario (`diff` = 0).
+- **Correspondencia:** 36 filas, 34 `cubierta` y 2 `sustituida` con P1/P2 citadas. Todas las citas son literales.
+- **Obligaciones de proceso:** quedan fuera de la tabla de forma conforme con la plantilla implementada.
+- **CA-11.4:** la frase nueva pasa. El CI de `hooks-en-linux` sobre `efa1c5c` sigue pendiente porque no hay push.
+- **CA-14:** el dato previo se actualiza de 23 a 36 filas.
+- **Texto implementado y mecanismo:** sin cambios desde R-1, así que no se repitió el banco. Las gates de §7 están en verde.
+
+**Qué no acredita:** la conducta de los agentes (no observada), el CI, la firma de seguridad (`Seguridad: pendiente`, que el cierre de un REQ `critico` exige) ni la publicación.
+
+## [Interno] — 2026-09-23 · REQ-029: write-back de QA-029-01 — `Origen:` remite a la fuente íntegra y la «Correspondencia con el encargo» se rehace contra ella (23 → 36 filas; 0 `añadida`, 0 `excluida`); `Estado:` → `en-revisión`
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos`. Archivos escritos: `requirements/REQ-029.md`, la fila de REQ-029 en el índice de `requirements/README.md` y este `CHANGELOG.md`, con `Edit` y **sin consola**. Sin comitear.
+
+**Lo hecho.** `Origen:` deja de transcribir el mensaje del propietario y **remite** a su copia íntegra en `PENDING_APPROVAL.md` §«Resueltas». La tabla se rehízo contra esa fuente: 34 `cubierta` y 2 `sustituida` (las precisiones 1 y 2 sobre el diseño). La validación con ejemplos acotados pasa de `añadida` a `cubierta` con cita del propietario; la medición posterior de coste y utilidad pasa de `excluida` a `cubierta`, porque la pidió él; entran «Fuera de alcance», «Comprueba gemelas y referencias», las verificaciones locales, la CI pendiente identificada y «No declares acreditado lo que no se haya observado». Las obligaciones de proceso de la coordinadora no dan fila por la regla de la plantilla y quedan listadas literales bajo la tabla. **CA-11 punto 4** gana la identificación de la CI pendiente (ya cumplida por el log de QA); **CA-14** cita al propietario. **OBS-029-A** queda registrada sin cambiar CA-04 ni la plantilla.
+
+**Lo NO hecho.** `QA:`, `Seguridad:` y `Hallazgos abiertos:` sin tocar: **QA-029-01 lo cierra el `qa-tester`**. Ningún cambio en la plantilla, los agentes ni `AGENTS.md`. Este write-back no cierra ningún hallazgo ni emite ninguna firma.
+
+## [Interno] — 2026-09-23 · REQ-029 / QA-029-01: la copia del pedido del propietario en `PENDING_APPROVAL.md` §Resueltas pasa a ser ÍNTEGRA y literal (la anterior, «en lo esencial», cortaba pasajes sin marca)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Es la fuente que el analista cita en la «Correspondencia con el encargo» de REQ-029 al corregir el hallazgo; la propia entrega hizo visible el defecto en su primer uso. Cola `## Pendientes` sin cambios (0).
+
+## [Interno] — 2026-09-23 · REQ-029 QA R-1 (vuelta 1 de 3): `con-hallazgos` — el texto implementado pasa CA-01…CA-14; la correspondencia del propio REQ no corresponde a su fuente (QA-029-01, `contrato`)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. Cabeza validada `d1c65ac` sobre `cfb1106`. Archivos escritos con `Edit`/`Write`, sin consola y sin comitear: `docs/qa/REQ-029.md` (nuevo), la cabecera de `requirements/REQ-029.md` (`Estado:` `en-revisión` → `en-progreso`, `QA:` → `con-hallazgos (…)`, `Hallazgos abiertos:` → `QA-029-01 (contrato)`), su fila del índice en `requirements/README.md` y esta entrada.
+
+**Resultado.** Gates de §7 en verde; banco completo **local** 908 PASS / 0 FAIL / 4 SKIP en 35 s (CI pendiente: sin push); 0 archivos fuera de `Archivos:` y 0 en el mecanismo; gemelas con 0 líneas distintas en las secciones espejo; los cuatro ejemplos acotados de CA-12 se deciden con el texto. **Contraste con la fuente hecho:** el mensaje del propietario del 2026-09-23 está disponible, y la transcripción que recibió el analista corta sin marca al menos tres pasajes; la fila de CA-12 atribuye a la coordinadora («añadida», «elección técnica ordinaria») el bloque «Validación» que pidió el propietario. Ninguna obligación queda sin criterio ni hay decisión de alcance pendiente: lo resuelve un write-back del `analista-requerimientos`, no el `desarrollador`. **Qué no acredita:** que los agentes cumplan estas reglas (conducta no observada) ni el CI.
+
+## [Interno] — 2026-09-23 · REQ-029: ajuste del contrato antes de QA — `Archivos:` gana `PENDING_APPROVAL.md` y CA-02 precisa que las gemelas se comparan sobre las secciones espejo (no el índice propio de este repositorio)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos` (edición) / coordinadora (bitácora). Causa: la medición del desarrollador (CA-11.1: `PENDING_APPROVAL.md` fuera del campo tras registrar allí la decisión del propietario; CA-02: una línea distinta que era la fila del índice, ausente en la gemela por diseño). Cambio menor (§9), sin ADR; fila de Historial en REQ-029; índice actualizado a `en-revisión`. No gasta vuelta dev↔QA: QA aún no ha validado.
+
+## [Interno] — 2026-09-23 · **REQ-029 implementado y en `en-revisión`: fidelidad al encargo** en los cuatro archivos heredables, sus dos sedes gemelas y la entrada «Hacia 1.35.0»
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `desarrollador`. Archivos escritos, con `Edit` y **sin consola**: `AGENTS.md` y `templates/AGENTS.md.tpl` (regla 1 de §6, un párrafo, idénticos byte a byte en lo añadido), `requirements/README.md` y `templates/requirements-README.md.tpl` (plantilla: `Origen:` y `### Correspondencia con el encargo`, idénticos en lo añadido), `agents/analista-requerimientos.md`, `agents/qa-tester.md`, `skills/arnes-upgrade/SKILL.md`, la línea `Estado:` de `requirements/REQ-029.md` (`pendiente` → `en-progreso` → `en-revisión`) y este `CHANGELOG.md`. Rama local `feat/fidelidad-encargo`, sin comitear ni empujar.
+
+**Lo hecho.** Partiendo del diff de diseño ajustado, con REQ-029 como contrato donde difieren: la coordinadora lleva al analista el pedido con fuente identificable o `fuente no disponible`, y comprueba **antes de despachar** que la diferencia que requiere al propietario quedó resuelta por él con la autorización citada; las elecciones técnicas ordinarias quedan fuera, con su definición (CA-01). La plantilla es el sitio único de la forma, el vocabulario de cinco valores y la vida de la correspondencia (CA-03, CA-04). **Sede única de CA-05: la definición del `analista-requerimientos`**; `AGENTS.md`, la plantilla y QA remiten a ella. El analista conserva la fuente remitiendo a la plantilla, y la partición no concede autoridad sobre el alcance comprometido (CA-06, CA-07). QA contrasta antes de probar y declara el resultado en el paréntesis de su **único** veredicto `QA:` (CA-08). Entrada «Hacia 1.35.0» con los cuatro archivos heredables y sin declarar nada entregado a consumidores (CA-10). Quality gates de §7 en verde; `hooks/`, `tools/`, `tests/` siguen sin mencionar `Trazabilidad`, `Correspondencia` ni `Origen:`.
+
+**Lo no hecho.** No se corrió el banco completo (ningún archivo del mecanismo cambia; lo decide QA). No se escribieron los ejemplos de CA-12 ni el dato previo de CA-14 (son de QA en `docs/qa/REQ-029.md`). No se tocaron `REQ-025.md`, el índice de `requirements/README.md`, hooks, herramientas, pruebas, CI, manifiesto ni versión. Esta entrada no afirma ninguna reducción de tokens, tiempo ni dinero, ni que los agentes vayan a cumplir el texto.
+
+## [Interno] — 2026-09-23 · REQ-029: la decisión del propietario que autoriza la implementación queda registrada literal en `PENDING_APPROVAL.md` §Resueltas (procedencia fuera del artefacto que autoriza)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Misma figura que SEC-104: la única copia literal vivía dentro de REQ-029. Sin efecto sobre la cola (`## Pendientes` sigue vacía). Rama local `feat/fidelidad-encargo`, sin push.
+
+## [Interno] — 2026-09-23 · **REQ-029 creado en `pendiente`: fidelidad al encargo** — fuente del pedido, correspondencia pedido → criterio, un solo veredicto de QA, sin bloqueo retroactivo y partición sin autoridad sobre el alcance; write-back mínimo en REQ-025 (una fila de Historial)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `analista-requerimientos`. Archivos escritos: `requirements/REQ-029.md` (nuevo), `requirements/REQ-025.md` (**sólo** una fila añadida al «Historial de cambios»), `requirements/README.md` (**sólo** la fila de REQ-029 en el índice) y este `CHANGELOG.md`, con `Edit`/`Write` y **sin consola**. Sin comitear.
+
+**Qué contrata REQ-029**, por propiedad y con 14 criterios: la obligación de la coordinadora en la regla 1 de `AGENTS.md` §6 y su gemela idéntica en lo que cambia (CA-01, CA-02); `Origen:` con fuente identificable o `fuente no disponible` y la subsección «Correspondencia con el encargo» en la plantilla y su gemela, establecida al crear el REQ, actualizada sólo con cambios de alcance y reutilizada en reparaciones que conservan el contrato (CA-03, CA-04); **sin bloqueo retroactivo** para REQ existentes aprobados (CA-05); analista y partición (CA-06, CA-07); **un solo veredicto de QA** con la fidelidad en el paréntesis de evidencia, y la diferencia sin resolver como hallazgo `contrato` (CA-08); una sede por obligación (CA-09); entrada «Hacia 1.35.0» sin declarar nada entregado (CA-10); 0 archivos fuera de `Archivos:` y 0 en hooks, herramientas, pruebas, CI, manifiesto y versión (CA-11); cuatro ejemplos acotados de texto en `docs/qa/REQ-029.md` que acreditan **lo que el texto dice, no la conducta** (CA-12); ninguna afirmación de ahorro (CA-13); y la medición «en el primer REQ real» de la propuesta, registrada como posterior y no afirmada (CA-14).
+
+**Tres ajustes al diff de diseño son obligatorios** porque, tal cual, contradice las precisiones del propietario: «dos veredictos distintos» en `agents/qa-tester.md`; la ausencia de fuente que llevaría a `borrador` a un REQ existente aprobado; y la partición presentada como salida sin decisión sobre el alcance comprometido. **El diff no se aplicó**: lo aplica el `desarrollador`. **REQ-025:** su regla 1 gana el párrafo **bajo REQ-029**; sus firmas acreditan la regla sin el párrafo; ninguna entrega se reabre y su cabecera no se toca. **No afirma** ahorro de tokens, tiempo ni dinero, ni que los agentes cumplirán el texto.
+
 ## [Interno] — 2026-09-21 · REQ-025 entrega 1 con las tres firmas; decisiones del propietario posteriores a la opción B pegadas literales en la cola (SEC-104); punto de retomar con la advertencia «no se cierra REQ-025»; fuente de la preferencia de consola identificada
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. `PENDING_APPROVAL.md` §Resueltas gana una entrada «decisión tomada fuera de la cola y registrada a posteriori» con el texto literal del propietario que autorizó el write-back excepcional de SEC-102, confirmó la fecha 2026-10-21, aceptó que la coordinadora señale el primer caso (QA verifica), conservó S4 «no observado» y SEC-103 sin aceptación, y pidió no presentar REQ-028 como dependencia de cierre: es el remedio barato que SEC-104 describe; su cierre es del auditor. `docs/ESTADO.md` «RETOMAR AQUÍ»: QA `aprobado` (R-4), seguridad `aprobado` (R-041-A), cola 0, sólo `instrumento` abierto; **la puerta ya no impide cerrar y cerrar sería incorrecto porque la entrega 1b sigue pendiente (CA-15 punto 9)**; REQ-028 es trabajo separado, no dependencia. Fuente de la preferencia «edita por consola»: el propio Claude Code en modo de permisos `auto` (texto compilado en el binario; sin rastro en settings, CLAUDE.md, memoria ni plugin); nada modificado; detalle en la rama de evidencia `req-025/preferencia-consola-fuente.md`. Sin ensayos nuevos, sin otras entregas, sin fusión ni publicación; el CI de la cabeza resultante se adjunta en la rama de evidencia.
 

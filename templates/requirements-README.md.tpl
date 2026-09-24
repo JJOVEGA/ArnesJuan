@@ -401,8 +401,29 @@ Como [rol], quiero [acción], para [beneficio].
 (preguntas sin resolver; conflictos con otros REQs identificando ambos y la contradicción. Mientras haya algo aquí, el REQ se queda en `borrador`.)
 
 ## Trazabilidad
-Origen: (...)
+Origen: (fuente identificable del pedido: archivo y commit, o mensaje y fecha — o el literal `fuente no disponible`; un resumen del agente no es fuente)
 Tocado por: (agente / fecha)
+
+### Correspondencia con el encargo
+(se establece al crear el REQ. Una fila por **obligación verificable** del pedido —algo cuyo cumplimiento se decide
+sí/no contra el REQ o lo construido—, no por frase: una frase con dos obligaciones da dos filas, y una de contexto o de
+motivo no da ninguna. Cada fila lleva su cita; si el pedido no se conservó, `fuente no disponible` en su lugar: nunca
+se reconstruyen las palabras del propietario. «Relación» toma **exactamente** uno de estos valores: `cubierta`,
+`omitida`, `sustituida`, `excluida` o `añadida` (decisión de negocio no pedida); **éste es el sitio único de ese
+vocabulario** y todo otro texto que lo nombre remite aquí. La tabla se actualiza **sólo cuando cambia el alcance**, en
+la misma fila del Historial de cambios que registra ese cambio (`AGENTS.md` §9); una reparación que conserva el
+contrato la reutiliza, sin tabla nueva ni comparación completa, y una que altera qué obligación cubre un criterio no
+conserva el contrato: es cambio de alcance. Una **autorización citada** es una copia fiel y verificable de la
+decisión del propietario, o su confirmación concreta, registrada en una sede **localizable por ruta en el
+repositorio** (ejemplos **no exhaustivos**: una entrada de `PENDING_APPROVAL.md` §«Resueltas», una fila del
+Historial de cambios con la cita, un archivo bajo `docs/`); no exige archivar conversaciones completas. **Una
+referencia cuyo contenido no puede verificarse no cuenta como autorización** para una decisión nueva que requiere
+al propietario: la fila sigue sin resolver, lo que dependa de ella no se implementa, y el trabajo independiente
+autorizado continúa. Para un REQ existente ya aprobado cuyo pedido o conversación original no se conservó, ver la
+definición del `analista-requerimientos`: esa ausencia no invalida sus aprobaciones ni lo devuelve a `borrador`.)
+| Obligación del pedido (cita) | Criterio que la cubre | Relación | Autorización citada, o pregunta abierta |
+|---|---|---|---|
+| «...» (o `fuente no disponible`) | CA-xx | (uno de los cinco valores) | (ruta de la autorización verificable, o `→ Preguntas abiertas`) |
 
 ## Historial de cambios
 | Fecha | Antes → Después | Causa | ADR |

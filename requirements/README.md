@@ -491,8 +491,29 @@ Como [rol], quiero [acción], para [beneficio].
 (preguntas sin resolver; conflictos con otros REQs identificando ambos y la contradicción. Mientras haya algo aquí, el REQ se queda en `borrador`.)
 
 ## Trazabilidad
-Origen: (...)
+Origen: (fuente identificable del pedido: archivo y commit, o mensaje y fecha — o el literal `fuente no disponible`; un resumen del agente no es fuente)
 Tocado por: (agente / fecha)
+
+### Correspondencia con el encargo
+(se establece al crear el REQ. Una fila por **obligación verificable** del pedido —algo cuyo cumplimiento se decide
+sí/no contra el REQ o lo construido—, no por frase: una frase con dos obligaciones da dos filas, y una de contexto o de
+motivo no da ninguna. Cada fila lleva su cita; si el pedido no se conservó, `fuente no disponible` en su lugar: nunca
+se reconstruyen las palabras del propietario. «Relación» toma **exactamente** uno de estos valores: `cubierta`,
+`omitida`, `sustituida`, `excluida` o `añadida` (decisión de negocio no pedida); **éste es el sitio único de ese
+vocabulario** y todo otro texto que lo nombre remite aquí. La tabla se actualiza **sólo cuando cambia el alcance**, en
+la misma fila del Historial de cambios que registra ese cambio (`AGENTS.md` §9); una reparación que conserva el
+contrato la reutiliza, sin tabla nueva ni comparación completa, y una que altera qué obligación cubre un criterio no
+conserva el contrato: es cambio de alcance. Una **autorización citada** es una copia fiel y verificable de la
+decisión del propietario, o su confirmación concreta, registrada en una sede **localizable por ruta en el
+repositorio** (ejemplos **no exhaustivos**: una entrada de `PENDING_APPROVAL.md` §«Resueltas», una fila del
+Historial de cambios con la cita, un archivo bajo `docs/`); no exige archivar conversaciones completas. **Una
+referencia cuyo contenido no puede verificarse no cuenta como autorización** para una decisión nueva que requiere
+al propietario: la fila sigue sin resolver, lo que dependa de ella no se implementa, y el trabajo independiente
+autorizado continúa. Para un REQ existente ya aprobado cuyo pedido o conversación original no se conservó, ver la
+definición del `analista-requerimientos`: esa ausencia no invalida sus aprobaciones ni lo devuelve a `borrador`.)
+| Obligación del pedido (cita) | Criterio que la cubre | Relación | Autorización citada, o pregunta abierta |
+|---|---|---|---|
+| «...» (o `fuente no disponible`) | CA-xx | (uno de los cinco valores) | (ruta de la autorización verificable, o `→ Preguntas abiertas`) |
 
 ## Historial de cambios
 | Fecha | Antes → Después | Causa | ADR |
@@ -536,3 +557,4 @@ Tocado por: (agente / fecha)
 | [REQ-024](REQ-024.md) | La ausencia de un campo no se resuelve del lado que abre, y el mismo estado en el segundo lector: la cola que cuenta cero sobre lo que no pudo medir. **Ventana 1.34.0**: va después de REQ-023, con el que comparte nueve rutas | `borrador` | critico | pendiente | pendiente |
 | [REQ-025](REQ-025.md) | El arnés vigila también a quien orquesta: la sesión coordinadora acredita, decide y publica, y ninguna puerta la mide. **Ventana 1.35.0**; línea base = 20 errores de coordinación catalogados. Tras la **partición del 2026-09-21** conserva **la entrega 1** —las **seis reglas** del propietario en `AGENTS.md` §6, su gemela, las dos sedes de `PENDING_APPROVAL`, la entrada de `arnes-upgrade` **preparada, no publicada**, las referencias en los agentes y el **ADR-008**— y, desde el mismo día, una **entrega 1b `pendiente` dentro del propio REQ** (CA-01, CA-02, las preguntas 1, 2 y 4 de CA-09 (B), la regla del `git add -A` y la primera mitad de CA-10), **sin ventana asignada**: **aprobar la entrega 1 no completa REQ-025**. Vuelta **1 de 3** consumida (QA `con-hallazgos`, R-1) | `en-progreso` | critico | con-hallazgos | pendiente |
 | [REQ-028](REQ-028.md) | Las capacidades que REQ-025 difiere (**entregas 2+**): `tools/arnes-comprobar.sh` con par discriminante y denominador, su sección del banco, la **procedencia y la atribución** de la cifra que llega al `CHANGELOG.md`, las **columnas de instantes** del libro de comisiones y los umbrales de coste. Nace de la **partición de REQ-025** (2026-09-21) conservando los identificadores CA-03…CA-08, CA-12 y las mitades de CA-10, CA-11 y CA-13. `borrador` con **cuatro decisiones del propietario abiertas** (B-1…B-4) y **sin ventana asignada** | `borrador` | critico | pendiente | pendiente |
+| [REQ-029](REQ-029.md) | Fidelidad al encargo: detectar omisiones, sustituciones y decisiones de negocio no autorizadas antes de implementar — fuente identificable del pedido, «Correspondencia con el encargo» en la plantilla, comprobación de resolución antes de despachar, **un solo veredicto de QA**, sin bloqueo retroactivo, y la partición que no concede autoridad sobre el alcance. **Ventana 1.35.0**; decisión del propietario del 2026-09-23 sobre la propuesta `d4e7a4f` | `en-revisión` | critico | aprobado | aprobado |

@@ -38,6 +38,122 @@
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-09-23, decisión tomada fuera de la cola y registrada aquí íntegra) — **REQ-029 / QA-029-02 y QA-029-03: corrección conjunta, excepción acotada al contador agotado**
+
+**Por qué está aquí:** procedencia de una decisión fuera del artefacto que autoriza (REQ-029 remite). Única copia literal.
+
+> Autorizo corregir juntos QA-029-02 y QA-029-03 en `feat/fidelidad-encargo`, partiendo de la cabeza local verificada. Esta es una excepción acotada al contador agotado de REQ-029: registra la autorización y conserva todas las vueltas consumidas, sin reiniciarlas.
+>
+> **Correcciones autorizadas**
+>
+> 1. **QA-029-02:** acota la frase de QA y la referencia del analista a decisiones nuevas que requieren aprobación del propietario. Una autorización inaccesible no acredita esas decisiones. Un REQ existente con contrato y aprobaciones registrados conserva su situación aunque falte la conversación original, declarando la limitación. No cambies esta distinción ni añadas nuevos requisitos de aprobación.
+>
+> 2. **QA-029-03:** el analista añade `docs/ESTADO.md` al campo `Archivos:` y registra el write-back correspondiente. Comprueba que el campo cubre las rutas realmente modificadas dentro del alcance contratado. Dejar de editar ESTADO no subsana las modificaciones ya realizadas.
+>
+> Agrupa ambas correcciones en una sola intervención. Reutiliza el contrato, la correspondencia y la evidencia existentes; actualiza únicamente lo afectado, sin rehacer la tabla completa ni transcribir nuevamente mis instrucciones.
+>
+> **Validación y cierre de esta intervención**
+>
+> * QA revisa el delta y determina el estado de los dos hallazgos. Comprueba especialmente que la redacción distingue decisiones nuevas pendientes de autorización y contratos existentes aprobados.
+> * Sólo después de QA favorable, seguridad revisa el control corregido y determina el estado de SEC-106 y la cobertura de su firma.
+> * Ejecuta las comprobaciones locales exigidas y reutiliza la evidencia válida. No repitas la demo ni abras ensayos generales.
+> * No aceptes residuales en mi nombre ni apruebes por agotamiento. Si aparece otro impedimento, informa de su acción afectada y su evidencia sin encadenar reparaciones.
+>
+> **Límites**
+>
+> Puedes hacer commits locales con los controles activos. Sin push, nuevas corridas de CI, cambios en sondas, umbrales, mecanismos, versión o consumidores. El FAIL del run 35924622453 se conserva.
+>
+> No trabajes en Adelantos. Tampoco incorpores todavía el ajuste de continuidad: queda para el siguiente encargo, contrastándolo primero con REQ-025, sin añadir otra capa de reglas.
+>
+> Entrega un único resultado breve: cabeza local, correcciones, comprobaciones, veredictos con su cobertura y pendientes concretos. Distingue revisión del texto de conducta observada. Sin cerrar REQ-029, fusionar ni publicar.
+
+### RESUELTA (propietario, 2026-09-23, decisión tomada fuera de la cola y registrada aquí íntegra) — **REQ-029 / SEC-106: intervención adicional acotada, excepción expresa al contador agotado**
+
+**Por qué está aquí:** procedencia de una decisión fuera del artefacto que autoriza (REQ-029 remite). Es la **única copia literal**.
+
+> Autorizo una intervención adicional, acotada exclusivamente a SEC-106 en `feat/fidelidad-encargo`, PR #53. Es una excepción expresa al contador agotado de REQ-029: conserva las vueltas consumidas y registra esta autorización; no reinicies contadores.
+>
+> **Decisión de fondo**
+>
+> No acepto como autorización comprobada una referencia cuyo contenido no puede verificarse. Distingue estos dos casos:
+>
+> * **REQ existente con contrato y aprobaciones registrados:** la ausencia de su conversación original no invalida esas aprobaciones ni lo devuelve automáticamente a borrador. Conserva la limitación de trazabilidad.
+> * **Decisión nueva que requiere al propietario:** citar una autorización inaccesible no acredita que exista ni qué alcance tiene. Aporta una copia fiel y verificable de la decisión o solicita mi confirmación concreta. Hasta resolverlo no se implementa lo dependiente; el trabajo independiente autorizado continúa conforme a las reglas vigentes.
+>
+> No exijas archivar conversaciones completas, no crees otra firma de QA ni conviertas decisiones técnicas ordinarias en aprobaciones humanas.
+>
+> **Trabajo autorizado**
+>
+> 1. Verifica la cabeza vigente del PR y el texto exacto que origina SEC-106.
+> 2. Aplica la corrección mínima en su sede normativa y ajusta sólo las referencias, gemelas, contrato y registro necesarios para evitar contradicciones. Reutiliza los roles existentes y las revisiones exigidas, acotadas a este delta.
+> 3. Corrige la presentación de SEC-106: el residual y la fecha 2026-10-23 eran propuestas del auditor, no decisiones mías. Conserva el historial y registra esta decisión sin atribuirle efecto retroactivo.
+> 4. Comprueba estos casos:
+>
+>    * REQ previamente aprobado sin conversación original: conserva su situación.
+>    * Cambio nuevo con autorización citada pero inaccesible: no se da por autorizado.
+>    * Copia verificable o confirmación explícita: permite resolver la decisión dentro de su alcance.
+>    * Trabajo independiente y decisión técnica ordinaria: no quedan bloqueados por esa carencia.
+> 5. QA y seguridad determinan el resultado y el estado del hallazgo. Distingue comprobación del texto de conducta observada; no repitas la demo ni abras ensayos generales.
+>
+> **CI y límites**
+>
+> El FAIL del run `35924622453` sobre `d413405` se conserva. Esta autorización no permite relanzarlo, cambiar sondas, umbrales, tests, workflows ni rulesets.
+>
+> Puedes realizar commits locales con los controles activos. No hagas push todavía: así separamos la reparación de SEC-106 de la decisión sobre las sondas y evitamos disparar otra corrida sin autorización.
+>
+> No atiendas paralelismo, otros hallazgos, reparaciones de consumidores ni mejoras colaterales. Si aparece otro impedimento, identifícalo sin encadenar su reparación.
+>
+> Entrega un único resultado: cabeza local, diff acotado, comprobaciones, veredictos y su cobertura, estado determinado de SEC-106 y pendientes. Sin cerrar REQ-029, fusionar, publicar ni cambiar la versión.
+
+### RESUELTA (propietario, 2026-09-23, decisión tomada fuera de la cola y registrada aquí) — **REQ-029, fidelidad al encargo: autorizada la implementación de la propuesta `fidelidad-encargo/` (`d4e7a4f`) con tres precisiones**
+
+**Por qué está aquí:** la decisión nació en respuesta a la propuesta de la coordinadora, no como entrada pendiente; **esta entrada es su única copia literal** (`requirements/REQ-029.md` §Trazabilidad remite aquí desde el write-back de QA-029-01; corregido por SEC-105), y esta cola es la sede donde la procedencia de una decisión vive **fuera** del artefacto que autoriza (misma figura que SEC-104).
+
+**Texto del propietario, ÍNTEGRO y literal (mensaje del 2026-09-23 a la coordinadora; esta copia sustituye a una anterior «en lo esencial» que cortaba pasajes sin marca — hallazgo QA-029-01):**
+
+> Autorizo implementar la propuesta de fidelidad del encargo preparada en `fidelidad-encargo/`, commit `d4e7a4f`, incorporando estas tres precisiones en la misma entrega. No prepares otra ronda de propuestas.
+>
+> 1. **Un solo veredicto de QA.** No crees dos firmas, campos ni estados de aprobación. En la evidencia del veredicto vigente, QA indica si contrastó el REQ con la fuente, encontró diferencias o no pudo comprobarlo. La conformidad del código con el REQ no acredita por sí sola fidelidad al pedido ni permite cerrar con decisiones de alcance pendientes.
+>
+> 2. **Sin bloqueo retroactivo por conversaciones ausentes.** La falta del pedido original no devuelve automáticamente a `borrador` un REQ existente con contrato y decisiones aprobados. Conserva esas aprobaciones y declara la limitación de trazabilidad. Pregunta únicamente por decisiones realmente pendientes o contradicciones detectadas. En encargos nuevos, conserva la fuente desde el inicio; no reconstruyas palabras del propietario.
+>
+> 3. **Partir un REQ no concede autoridad sobre el alcance.** El analista puede preparar y registrar la partición conforme a las reglas vigentes. Si implica excluir, sustituir o diferir alcance comprometido, necesita la decisión correspondiente del propietario. No uses una partición para esquivar preguntas pendientes o reiniciar contadores.
+>
+> **Objetivo de esta entrega**
+>
+> Detectar omisiones, sustituciones y decisiones de negocio no autorizadas antes de implementar. Reutiliza la correspondencia en reparaciones sin cambio contractual; no exijas una tabla nueva ni una revisión completa para cada corrección.
+>
+> **Ejecución autorizada**
+>
+> * Verifica la cabeza vigente de `main` y trabaja en una rama aislada, respetando los cambios ajenos.
+> * Abre el REQ acotado necesario y realiza el ciclo exigido por las reglas actuales: analista, desarrollador, QA y seguridad cuando corresponda.
+> * Incluye el write-back de REQ-025 y la entrada de migración necesarios para mantener las sedes coherentes, sin reabrir sus otras entregas.
+> * Conserva una sede normativa con referencias; no copies la regla completa en cada rol.
+> * Agrupa las reparaciones de esta entrega y conserva sus contadores. No abras trabajos adicionales por observaciones independientes.
+>
+> **Validación**
+>
+> Comprueba gemelas y referencias, ejecuta las verificaciones locales exigidas y verifica que se distinguen estos casos:
+>
+> * Encargo nuevo con una obligación omitida o sustituida sin autorización.
+> * REQ existente aprobado cuya conversación original no está disponible.
+> * Reparación que conserva el contrato y reutiliza la correspondencia.
+> * Decisión técnica ordinaria que puede avanzar sin aprobación humana adicional.
+>
+> Usa ejemplos acotados para verificar esas distinciones, sin repetir la demo completa. Distingue revisión del texto de conducta observada: no presentes una lectura del diff como prueba de que los agentes lo cumplirán.
+>
+> No inventes un encargo para medir ahorro. El coste y la utilidad en un REQ real quedan pendientes de observación si no hay uno disponible y autorizado. No afirmes reducción de tokens, tiempo o dinero.
+>
+> **Fuera de alcance**
+>
+> Reparaciones de la demo, REQ-019, otras entregas de REQ-025, sondas de coste, cambios en hooks, herramientas, permisos o umbrales. No cambies la versión ni actualices consumidores.
+>
+> Puedes hacer los commits locales necesarios con los controles activos. Sin push, fusión ni publicación; cualquier validación de CI pendiente debe quedar identificada.
+>
+> Entrega un único resultado con la cabeza revisada, cambios realizados, veredictos y su alcance, comprobaciones efectuadas, crecimiento neto del texto obligatorio y pendientes concretos. No declares acreditado lo que todavía no se haya observado.
+
+**Ejecución:** REQ-029 creado por el analista (`1e3ac6f`), con la fila de write-back en REQ-025; implementación, QA y seguridad por el ciclo de autoalojamiento en la rama local `feat/fidelidad-encargo`.
+
 ### RESUELTA (propietario, 2026-09-21, decisión tomada fuera de la cola y registrada aquí a posteriori) — **REQ-025 entrega 1: write-back excepcional de SEC-102 y confirmaciones del residual**
 
 **Por qué está aquí:** estas dos decisiones no nacieron como entrada pendiente —el propietario las tomó en respuesta al informe de la coordinadora— y su única copia literal vivía dentro de `requirements/REQ-025.md`, el documento que autorizan (SEC-104, `instrumento`, registro de seguridad R-041-A). La cola es la sede donde la procedencia de una decisión vive **fuera** del artefacto al que da permiso; por eso se pegan aquí literales. **Registrarlas no las convierte en aprobación de nada más.**
