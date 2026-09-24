@@ -35,3 +35,15 @@ La propia regla midió a la coordinadora: la transcripción «literal en lo esen
 
 ## Qué no acredita
 Conducta de los agentes (revisión de texto y ejemplos inventados); CI `hooks-en-linux` (sin corrida por falta de push, identificado con la cabeza); publicación; consumidores (nada llega hasta publicar y migrar); reducción de tokens, tiempo o dinero.
+
+## Intervención acotada a SEC-106 (excepción expresa del propietario al contador agotado, 2026-09-23) — SIN push
+Fuente íntegra: `PENDING_APPROVAL.md` §Resueltas, primera entrada (`12b4bbb`). Contador dev↔QA **3 de 3 conservado**; esta intervención se registra como excepcional.
+| Commit | Qué |
+|---|---|
+| `12b4bbb` | Coordinadora: autorización íntegra en la cola |
+| `699dee3` | Analista: CA-03.4 (definición única de «autorización comprobada»: copia fiel y verificable en ruta localizable, o confirmación concreta registrada; una referencia inaccesible no autoriza una **decisión nueva**; un **REQ existente aprobado** conserva su situación), CA-08.5, CA-12 ocho casos, correspondencia 36 → 55 · Desarrollador: la definición vive en la plantilla del REQ y su gemela; QA, analista y regla 1 (+ gemela) remiten («citada y verificable») |
+| `47a61ef` | **QA R-3 (vuelta excepcional): `con-hallazgos`** — la definición y las remisiones pasan; cierra el hueco para decisiones nuevas (caso 6); **QA-029-02 (`contrato`)**: la frase de `agents/qa-tester.md:38-40` cierra **de más** (no la limita a la decisión nueva; choca con CA-08.5 y con la regla del analista para un REQ existente aprobado); **QA-029-03 (`contrato`, independiente)**: `docs/ESTADO.md` recibió el «RETOMAR AQUÍ» de la coordinadora en `d413405` y no está en `Archivos:` (14 tocados, 13 declarados) |
+| (cabeza) | **Seguridad R-042-B**: **SEC-106 → `en-mitigación`** (control en el contrato y en sede única; pasa a `mitigado` cuando QA-029-02 quede reparado acotando la frase a la decisión nueva, QA lo valide y seguridad lo reverifique); **`Seguridad: pendiente`** porque R-042-A (`9e4980c`) no cubre este delta, que toca sedes heredables, y QA está `con-hallazgos`; «residual» y la fecha 2026-10-23 eran **propuestas del auditor**, sin efecto retroactivo |
+
+**Cabecera de REQ-029:** `Estado: en-progreso` · `QA: con-hallazgos (R-3)` · `Seguridad: pendiente (R-042-B)` · `Hallazgos abiertos: QA-029-02 (contrato), QA-029-03 (contrato), SEC-106 (instrumento)`. **Cabeza local por delante de la remota `d413405` (PR #53), sin push por instrucción.** CI: el FAIL del run 35924622453 sobre `d413405` se conserva; sin corrida sobre la cabeza local.
+**Pendientes de decisión del propietario (no se encadenan reparaciones):** QA-029-02 (una frase del desarrollador acotada a «decisión nueva», más la misma forma en la definición del analista `:52-53`, que QA anotó) y QA-029-03 (añadir `docs/ESTADO.md` a `Archivos:` por el analista, o dejar de tocarlo en esta rama); después, QA valida y seguridad reverifica SEC-106. El contador está agotado: cualquiera de esas reparaciones exige una excepción suya, o el REQ cierra con residual declarado (sólo él) o pasa a `bloqueado`.
