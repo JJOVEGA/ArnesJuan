@@ -2,6 +2,9 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029: corrección conjunta de QA-029-02 (las frases de QA y del analista se acotan a «decisión nueva que requiere aprobación del propietario»; un REQ existente aprobado conserva su situación y declara la limitación) y QA-029-03 (`Archivos:` gana `docs/ESTADO.md`: 14 rutas)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `desarrollador` (dos definiciones de agente) y `analista-requerimientos` (campo, `Origen:`, Historial); bitácora de la coordinadora al comitear juntos. **Excepción acotada del propietario al contador agotado; dev↔QA 3 de 3 conservado.** Sin cambio en la distinción ni requisitos de aprobación nuevos; CA-03.4 y CA-08.5 intactos; correspondencia reutilizada (55 filas, sin transcribir instrucciones). Gates §7 en verde; 0 archivos de mecanismo. Sin push. QA y seguridad determinan el estado de los hallazgos.
+
 ## [Interno] — 2026-09-23 · REQ-029 / QA-029-02 y QA-029-03: autorización del propietario para la corrección conjunta (excepción acotada al contador agotado) registrada íntegra en la cola
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Única copia literal; contador dev↔QA 3 de 3 conservado, sin reiniciar. Cola `## Pendientes` sin cambios (0). Sin push.
 

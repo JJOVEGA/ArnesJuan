@@ -35,14 +35,16 @@ criterio, la correspondencia ausente en un REQ **nuevo**— es hallazgo de clase
 aprobación. Su paréntesis de evidencia dice cuál de tres cosas pasó: **contrastaste** el REQ con la fuente sin
 diferencias no autorizadas, **hallaste diferencias** (y cuáles), o **no pudiste comprobarlo** (y por qué:
 `fuente no disponible`, fuente citada inaccesible); «no pude comprobarlo» se refiere a la **fuente del pedido**.
-Una autorización de una fila distinta de `cubierta` que no puedes verificar en la sede citada **no cuenta como
-citada** (qué cuenta: la plantilla de `requirements/README.md`, «Trazabilidad»): es decisión de alcance pendiente,
-abre el hallazgo `contrato` de arriba y no admite `aprobado`. `aprobado` con «no pude comprobarlo» vale sólo si no
+En una **decisión nueva que requiere aprobación del propietario**, una autorización de una fila distinta de
+`cubierta` que no puedes verificar en la sede citada **no cuenta como citada** (qué cuenta: la plantilla de
+`requirements/README.md`, «Trazabilidad»): es decisión de alcance pendiente, abre el hallazgo `contrato` de arriba
+y no admite `aprobado`. Un **REQ existente con contrato y aprobaciones registrados** conserva su situación aunque
+falte la conversación original: declaras la limitación («no pude comprobarlo» sobre la fuente del pedido) y **no**
+abres hallazgo por esa carencia (regla en la definición del `analista-requerimientos`). `aprobado` con «no pude comprobarlo» vale sólo si no
 queda ninguna decisión de alcance pendiente, y con «hallé diferencias» sólo si todas tienen autorización
 **verificable**. La
 conformidad del código con el REQ **no acredita por sí sola** la fidelidad al pedido **ni permite cerrar** con
-decisiones de alcance pendientes. Un REQ existente ya aprobado cuyo pedido no se conservó sigue la regla de la
-definición del `analista-requerimientos`.
+decisiones de alcance pendientes.
 
 **Un criterio mal formado es un hallazgo, y se abre ANTES de probar nada.** La sección «Cómo se
 escribe un criterio que no se desmiente» de `requirements/README.md` prohíbe por nombre tres

@@ -49,8 +49,9 @@ Si un requerimiento nuevo choca con uno existente, **regístralo explícitamente
   sitio único de su forma, su vocabulario y su vida: no la copies aquí ni en el REQ. Toda fila con una relación
   distinta de `cubierta` que **no cite autorización** del propietario va a `Preguntas abiertas`, y el REQ
   **entero** sigue en `borrador` hasta que él la resuelva (regla ya vigente; no hay estado parcial): no la
-  resuelves tú ni la das por autorizada porque se presentó. Una «autorización» que no se puede verificar no
-  cuenta como citada (qué cuenta: la plantilla, «Trazabilidad»). Si el pedido no está disponible, escribe `fuente no disponible` y
+  resuelves tú ni la das por autorizada porque se presentó. Para una decisión nueva que requiere aprobación del
+  propietario, una «autorización» que no se puede verificar no cuenta como citada (qué cuenta: la plantilla,
+  «Trazabilidad»; el REQ existente sigue la regla «Sin bloqueo retroactivo» de abajo). Si el pedido no está disponible, escribe `fuente no disponible` y
   **no reconstruyas** sus palabras.
 - **Partir un REQ no concede autoridad sobre el alcance.** Puedes preparar y registrar una partición por alcance
   conforme a las reglas vigentes (`AGENTS.md` §6, «Loop de error»: partir por alcance no elude ningún contador).
