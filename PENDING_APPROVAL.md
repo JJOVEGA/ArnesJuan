@@ -38,6 +38,44 @@
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-09-23, decisión tomada fuera de la cola y registrada aquí íntegra) — **REQ-029 / SEC-106: intervención adicional acotada, excepción expresa al contador agotado**
+
+**Por qué está aquí:** procedencia de una decisión fuera del artefacto que autoriza (REQ-029 remite). Es la **única copia literal**.
+
+> Autorizo una intervención adicional, acotada exclusivamente a SEC-106 en `feat/fidelidad-encargo`, PR #53. Es una excepción expresa al contador agotado de REQ-029: conserva las vueltas consumidas y registra esta autorización; no reinicies contadores.
+>
+> **Decisión de fondo**
+>
+> No acepto como autorización comprobada una referencia cuyo contenido no puede verificarse. Distingue estos dos casos:
+>
+> * **REQ existente con contrato y aprobaciones registrados:** la ausencia de su conversación original no invalida esas aprobaciones ni lo devuelve automáticamente a borrador. Conserva la limitación de trazabilidad.
+> * **Decisión nueva que requiere al propietario:** citar una autorización inaccesible no acredita que exista ni qué alcance tiene. Aporta una copia fiel y verificable de la decisión o solicita mi confirmación concreta. Hasta resolverlo no se implementa lo dependiente; el trabajo independiente autorizado continúa conforme a las reglas vigentes.
+>
+> No exijas archivar conversaciones completas, no crees otra firma de QA ni conviertas decisiones técnicas ordinarias en aprobaciones humanas.
+>
+> **Trabajo autorizado**
+>
+> 1. Verifica la cabeza vigente del PR y el texto exacto que origina SEC-106.
+> 2. Aplica la corrección mínima en su sede normativa y ajusta sólo las referencias, gemelas, contrato y registro necesarios para evitar contradicciones. Reutiliza los roles existentes y las revisiones exigidas, acotadas a este delta.
+> 3. Corrige la presentación de SEC-106: el residual y la fecha 2026-10-23 eran propuestas del auditor, no decisiones mías. Conserva el historial y registra esta decisión sin atribuirle efecto retroactivo.
+> 4. Comprueba estos casos:
+>
+>    * REQ previamente aprobado sin conversación original: conserva su situación.
+>    * Cambio nuevo con autorización citada pero inaccesible: no se da por autorizado.
+>    * Copia verificable o confirmación explícita: permite resolver la decisión dentro de su alcance.
+>    * Trabajo independiente y decisión técnica ordinaria: no quedan bloqueados por esa carencia.
+> 5. QA y seguridad determinan el resultado y el estado del hallazgo. Distingue comprobación del texto de conducta observada; no repitas la demo ni abras ensayos generales.
+>
+> **CI y límites**
+>
+> El FAIL del run `35924622453` sobre `d413405` se conserva. Esta autorización no permite relanzarlo, cambiar sondas, umbrales, tests, workflows ni rulesets.
+>
+> Puedes realizar commits locales con los controles activos. No hagas push todavía: así separamos la reparación de SEC-106 de la decisión sobre las sondas y evitamos disparar otra corrida sin autorización.
+>
+> No atiendas paralelismo, otros hallazgos, reparaciones de consumidores ni mejoras colaterales. Si aparece otro impedimento, identifícalo sin encadenar su reparación.
+>
+> Entrega un único resultado: cabeza local, diff acotado, comprobaciones, veredictos y su cobertura, estado determinado de SEC-106 y pendientes. Sin cerrar REQ-029, fusionar, publicar ni cambiar la versión.
+
 ### RESUELTA (propietario, 2026-09-23, decisión tomada fuera de la cola y registrada aquí) — **REQ-029, fidelidad al encargo: autorizada la implementación de la propuesta `fidelidad-encargo/` (`d4e7a4f`) con tres precisiones**
 
 **Por qué está aquí:** la decisión nació en respuesta a la propuesta de la coordinadora, no como entrada pendiente; **esta entrada es su única copia literal** (`requirements/REQ-029.md` §Trazabilidad remite aquí desde el write-back de QA-029-01; corregido por SEC-105), y esta cola es la sede donde la procedencia de una decisión vive **fuera** del artefacto que autoriza (misma figura que SEC-104).

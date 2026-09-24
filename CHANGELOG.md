@@ -2,6 +2,9 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029 / SEC-106: la autorización del propietario para la intervención acotada (excepción expresa al contador agotado) queda registrada íntegra en `PENDING_APPROVAL.md` §Resueltas
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Única copia literal; los write-backs remiten a ella. Contadores de REQ-029 sin reiniciar (dev↔QA 3 de 3 consumidas). Cola `## Pendientes` sin cambios (0). Rama local, sin push.
+
 ## [Interno] — 2026-09-23 · REQ-029 fidelidad al encargo: ciclo completo con las tres firmas (QA R-2/R-2b, seguridad R-042-A); punto de continuidad; el REQ NO se cierra (CI sobre la cabeza pendiente por falta de push; conducta de agentes y medición en REQ real no observadas)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. `docs/ESTADO.md` gana el bloque «RETOMAR AQUÍ — REQ-029». Sin push, fusión ni publicación; sin cambios en mecanismo, versión ni consumidores.
 
