@@ -7729,3 +7729,134 @@ esta adenda.
 
 **Numeración vigente tras esta adenda:** última revisión **R-042** (adendas **`R-042-A`** y **`R-042-B`**);
 último hallazgo **SEC-107**; próximos libres **R-043** y **SEC-108**.
+
+## Adenda a R-042 (**`R-042-C`**) — **SEC-106 contra su condición, y firma sobre la cabeza** `41d2cec` — 2026-09-23
+
+**Por qué adenda y no `R-043`.** Es la reverificación acotada que `R-042-B` §2 anunció. El control es el
+mismo, en la misma línea de REQ-029, y la revisión se limita a los textos normativos que cambiaron desde
+mi última firma.
+
+**Fuente de la intervención.** La decisión del propietario del 2026-09-23 está en `PENDING_APPROVAL.md`
+§«Resueltas», primera entrada («REQ-029 / QA-029-02 y QA-029-03: corrección conjunta, excepción acotada
+al contador agotado»), íntegra, y la leí entera. El contador dev↔QA **3 de 3 se conserva**. La decisión
+exige «sólo después de QA favorable» y «no apruebes por agotamiento». **Sin ensayos ni reparaciones.**
+Escrito con `Edit`, sin consola.
+
+**Árbol y orden.** La cabeza es `41d2cec`, con el árbol limpio antes de escribir. Desde mi `R-042-B`
+(`47a61ef`, comiteada en `a5b304e`) hay tres commits:
+- `0d29d44`: la autorización en la cola.
+- `afcc6a5`: la corrección conjunta. Según `CHANGELOG.md`, el `desarrollador` editó las dos definiciones
+  de agente y el `analista-requerimientos` el REQ.
+- `41d2cec`: QA **R-4**, `aprobado` sobre `afcc6a5`. Su delta es sólo registro: `CHANGELOG.md`,
+  `docs/qa/REQ-029.md`, la cabecera y la fila del índice.
+
+**QA fue antes que yo, favorable, y sobre el árbol que reviso.** Nadie más escribió en el registro de
+seguridad después de `a5b304e`.
+
+### 1. SEC-106 contra la condición que fijé en `R-042-B` §2 → **`mitigado`**
+
+| Condición (R-042-B §2) | Evidencia sobre `41d2cec` | Cumple |
+|---|---|---|
+| La regla de la autorización no verificable se limita a la **decisión nueva que requiere al propietario** | `agents/qa-tester.md:38-39` empieza «En una **decisión nueva que requiere aprobación del propietario**, una autorización … que no puedes verificar …». `agents/analista-requerimientos.md:52-53` dice «Para una decisión nueva que requiere aprobación del propietario, una "autorización" que no se puede verificar …». Barrido por propiedad de las frases que dicen que una autorización o referencia no verificable «no cuenta», en la regla 1, la plantilla, sus gemelas, los dos agentes y `skills/`: **las cuatro sedes que lo dicen están acotadas** a la decisión nueva. La plantilla y su gemela ya lo estaban desde `699dee3`, y la regla 1 sólo remite («citada y verificable», qué lo es: la plantilla). **Ninguna frase queda sin acotar** | Sí |
+| En ese caso la autorización **sigue sin contar** y **no admite `aprobado`** | `qa-tester.md:39-41`: «**no cuenta como citada** … es decisión de alcance pendiente, abre el hallazgo `contrato` de arriba y no admite `aprobado`». Y el borde se conserva: «con "hallé diferencias" sólo si todas tienen autorización **verificable**». **No se debilitó nada** frente a `699dee3` | Sí |
+| **Remite** a la plantilla sin copiarla | Las dos sedes dicen «qué cuenta: la plantilla … «Trazabilidad»». Ninguna transcribe la definición de «autorización citada» (copia fiel y verificable, sede localizable por ruta), que sigue viviendo sólo en la plantilla y su gemela. La regla de los REQ existentes vive en el analista («Sin bloqueo retroactivo»), y QA la **remite** («regla en la definición del `analista-requerimientos`») | Sí |
+| **QA validó ese árbol sin `contrato`** | `QA: aprobado (R-4 … cabeza afcc6a5)`, con QA-029-02 y QA-029-03 cerrados. `Hallazgos abiertos:` no lleva ningún `contrato` | Sí |
+
+**Dos comprobaciones que añado porque la condición no las nombraba y el riesgo sí:**
+- **La excepción de los REQ existentes no deja pasar una decisión nueva.** La excepción se ata a «aunque
+  falte **la conversación original**»: es una carencia del pasado. Un cambio de alcance nuevo sobre un
+  REQ existente es **decisión nueva**, y la plantilla la decide así: su tabla se actualiza en el cambio de
+  alcance, y la autorización de esa fila tiene que ser verificable. **Nadie puede usar «el REQ ya estaba
+  aprobado» para colar una autorización inaccesible sobre un cambio posterior.** Lo decide el texto, sin
+  interpretación.
+- **No se crea otra firma ni se endurece más de lo pedido.** QA sigue teniendo un solo veredicto. La
+  corrección sólo acota (el propietario: «No cambies esta distinción ni añadas nuevos requisitos de
+  aprobación»). CA-03.4 y CA-08.5 no cambiaron.
+
+**Estado: `mitigado`.** SEC-106 **sale de `Hallazgos abiertos:`** y no se borra de este registro, porque
+en él los hallazgos cambian de estado, no desaparecen. El control **vive en el contrato** (CA-03.4, CA-08.5,
+CA-12 casos 5-8) **y en el texto heredable**, así que no es deriva (`AGENTS.md` §9). Lo que acredito es
+**el texto**. Que un agente lo aplique en un encargo real **no se ha observado** (§4).
+
+### 2. Cobertura de la firma: revisión acotada de `9e4980c..41d2cec` en las sedes que cambiaron
+
+Mi `R-042-A` (sobre `9e4980c`) no cubría estas sedes. Las reviso ahora, cada una por la vía que
+corresponde:
+
+| Sede | Cambio desde `9e4980c` | Revisado en |
+|---|---|---|
+| Regla 1 de `AGENTS.md` y su gemela | 1 línea: «citada y verificable» con remisión a la plantilla | `R-042-B` §2. **Sin cambio** desde `47a61ef` (`git diff 47a61ef 41d2cec -- AGENTS.md templates/`: vacío). Gemelas idénticas en sus líneas `+`/`-` |
+| La plantilla (`requirements/README.md`) y su gemela | La definición de «autorización citada» y la columna «ruta de la autorización verificable» | `R-042-B` §2. **Sin cambio** desde `47a61ef` en la plantilla: lo único que cambió en `requirements/README.md` fue la fila del índice |
+| `agents/qa-tester.md` | La frase del control, acotada, y la regla de REQ existentes remitida | **Aquí**, §1 |
+| `agents/analista-requerimientos.md` | La frase acotada, con remisión a «Sin bloqueo retroactivo» | **Aquí**, §1 |
+
+- **Mecanismo:** `git diff --name-only 9e4980c 41d2cec` no devuelve **ninguna** ruta de `hooks/`,
+  `tools/`, `tests/`, `.github/`, `.arnes/`, `.claude-plugin/` ni `skills/`. **Ningún mensaje de hook**
+  queda desfasado. Las quality gates de §7 las leí sólo como control de que el árbol no cambió
+  (sintaxis y JSON en verde); **no las acredito**, porque son de QA.
+- **CA-11.1:** medido por mí con `comm` entre el campo y `git diff --name-only cfb1106 41d2cec`. Da **14
+  tocados, 14 declarados, 0 fuera, 0 declarados sin tocar**. El campo termina en `docs/ESTADO.md`, sin
+  decoración ni `\r`, así que la figura de SEC-107 y QA-029-03 no se repite.
+- **Reutilizo sin volver a auditarlo** todo lo que **no cambió** desde `1117204`, en su acreditación de
+  `R-042` §1–§3: la entrada «Hacia 1.35.0» de `arnes-upgrade`, el write-back de REQ-025, las tres
+  precisiones, CA-09, CA-13 y la no regresión de REQ-025. La reutilización es legítima porque ninguna de
+  esas sedes aparece en el delta.
+- **Sin efecto retroactivo:** la corrección no toca ninguna aprobación anterior, y REQ-025 conserva su
+  línea base `R-041-A`.
+- **Observación sin hallazgo, sólo identificada:** `Tocado por:` de REQ-029 nombra el write-back del
+  analista de QA-029-03 pero no la edición del `desarrollador` en `afcc6a5` (las dos definiciones de
+  agente, que `CHANGELOG.md` sí registra). Es la forma menor de SEC-105. **No la abro:** el dato vive en
+  `CHANGELOG.md`, no bloquea nada, y el propietario pidió no encadenar reparaciones. La reparación, si
+  se quiere, es del `analista-requerimientos`.
+
+### 3. Veredicto y si REQ-029 puede cerrarse
+
+**`Seguridad: aprobado (R-042-C, 2026-09-23, sobre 41d2cec)`.** Lo emito porque el control corregido
+cumple la condición que fijé antes de verlo y QA es favorable sobre ese árbol. **No** lo emito porque el
+contador esté agotado. Sustituye a mi `pendiente` de `R-042-B`, que se conserva arriba.
+
+**Aviso, porque es el efecto real de esta firma.** Con QA y seguridad aprobados, la cola sin pendientes y
+`Hallazgos abiertos: (ninguno)`, **`guard-completado` ya no impediría marcar REQ-029 `completado`**,
+siempre que las quality gates locales estén en verde. **A mi juicio no debe cerrarse todavía:**
+- **CA-11 punto 4** exige que el banco completo corra en CI en verde. Sobre `41d2cec` **no existe
+  corrida**: la cabeza remota sigue en `d413405`, cuyo run `35924622453` es **FAIL** y se conserva, y las
+  cabezas posteriores no están empujadas. Mientras no haya `hooks-en-linux` en verde sobre la cabeza que
+  se cierre, o una decisión del propietario sobre ese FAIL, CA-11.4 **no está cumplido**. **Ninguna puerta
+  mide esto.** Empujar y relanzar lo decide el propietario, porque su autorización actual lo prohíbe.
+- **No impiden cerrar, pero siguen sin acreditarse:** la **conducta** de los agentes, que el REQ excluye
+  de su contrato (frase inicial de los criterios, CA-12 límite, CA-13), y la **medición en un REQ real**,
+  que CA-14 sólo contrata registrar como pendiente. Cerrar el REQ **no** convierte ninguna de las dos en
+  acreditada.
+
+### 4. Lo que esta adenda **NO** acredita
+
+1. **La conducta de los agentes.** Los ocho casos de CA-12 son **texto aplicado a ejemplos**, y la
+   distinción entre decisión nueva y REQ existente está **leída**, no observada en un encargo real.
+2. **El CI:** no hay corrida sobre `41d2cec`, y el FAIL de `d413405` sigue en pie.
+3. **Las quality gates**, que son de QA.
+4. **El cierre de REQ-029** (§3), **la fusión, el tag, la publicación ni los consumidores.**
+
+### 5. Estado de hallazgos de esta línea tras `R-042-C`
+
+| Hallazgo | Clase | Estado | Dueño | Bloquea |
+|---|---|---|---|---|
+| `SEC-105` | `instrumento` | `mitigado` (sobre `9e4980c`, sin cambio) | coordinadora · `analista-requerimientos` | No |
+| `SEC-106` | `instrumento` | **`mitigado`** (sobre `41d2cec`: condición de `R-042-B` §2 cumplida, sin residual) | `desarrollador` · verificó `qa-tester` · reverificó `auditor-seguridad` | No |
+| `SEC-107` | `contrato` | `mitigado` (sobre `9e4980c`, sin cambio) | `analista-requerimientos` | No |
+
+**Línea base de no-regresión para REQ-029**, que sustituye a la de `R-042-A`:
+- `Seguridad: aprobado` sobre **`41d2cec`**.
+- El delta `cfb1106..41d2cec` tiene 14 archivos, los 14 declarados, y 0 de mecanismo.
+- La regla 1 exige una autorización «citada y verificable».
+- La plantilla y su gemela son la sede única de «autorización citada» y de su no validez para decisiones
+  nuevas.
+- QA y el analista acotan la regla a la decisión nueva y remiten; el REQ existente aprobado conserva su
+  situación.
+- QA tiene un solo veredicto.
+
+Una auditoría futura compara contra eso.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta adenda:** última revisión **R-042** (adendas **`R-042-A`**, **`R-042-B`** y
+**`R-042-C`**); último hallazgo **SEC-107**; próximos libres **R-043** y **SEC-108**.

@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029 seguridad R-042-C: `aprobado` sobre `41d2cec` — SEC-106 mitigado; no cerrar sin el CI de CA-11.4
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `auditor-seguridad`. Revisión acotada al control corregido, después de QA R-4 favorable, bajo la excepción del propietario registrada en `PENDING_APPROVAL.md` §Resueltas; el contador 3 de 3 se conserva. Archivos escritos con `Edit`, sin consola y sin comitear: `docs/seguridad/registro-seguridad.md` (§Adenda R-042-C), la cabecera de `requirements/REQ-029.md` (`Seguridad:` y `Hallazgos abiertos:`; `Estado:` no se toca), su celda del índice y esta entrada.
+
+**Resultado.**
+- **SEC-106 → `mitigado`:** se cumple la condición de R-042-B. La regla está acotada a la decisión nueva en `agents/qa-tester.md:38-41` y en `agents/analista-requerimientos.md:52-53`. En ese caso la autorización no verificable sigue sin contar y sin admitir `aprobado`, y las dos sedes remiten a la plantilla sin copiarla. QA R-4 aprobó sin hallazgos `contrato`.
+- **La excepción de los REQ existentes no deja pasar un cambio nuevo:** se ata a la falta de la conversación original, y un cambio de alcance posterior sigue siendo decisión nueva.
+- **Cobertura:** revisé las sedes cambiadas desde `9e4980c`. La regla 1, la plantilla y sus gemelas no cambian desde R-042-B; los dos agentes los reviso aquí. Reutilizo R-042 para lo demás. CA-11.1 da 14 de 14 y hay 0 archivos de mecanismo.
+- **Observación sin hallazgo:** `Tocado por:` no nombra la edición del `desarrollador` en `afcc6a5`, que `CHANGELOG.md` sí registra.
+
+**Qué no acredita:** la conducta de los agentes ni la medición en un REQ real (no observadas), el CI (sin corrida sobre `41d2cec`; la remota `d413405` tiene el FAIL del run `35924622453`), el cierre, la publicación ni los consumidores. **REQ-029 no debe cerrarse hasta tener CA-11.4 en verde**, aunque `guard-completado` ya no lo impida.
+
 ## [Interno] — 2026-09-23 · REQ-029 QA R-4 (vuelta excepcional acotada a QA-029-02 y QA-029-03; contador 3 de 3 conservado): `aprobado` — los dos hallazgos cerrados
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. Cabeza validada: `afcc6a5`. Escrito con `Edit`/`Write`, sin consola y sin comitear: `docs/qa/REQ-029.md` (Adenda R-4), la cabecera de `requirements/REQ-029.md` (`Estado:` → `en-revisión`, `QA:` → `aprobado (…)`, `Hallazgos abiertos:` → `SEC-106 (instrumento)`), su fila del índice y esta entrada.
 
