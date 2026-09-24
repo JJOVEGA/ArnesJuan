@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029 QA R-4 (vuelta excepcional acotada a QA-029-02 y QA-029-03; contador 3 de 3 conservado): `aprobado` — los dos hallazgos cerrados
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. Cabeza validada: `afcc6a5`. Escrito con `Edit`/`Write`, sin consola y sin comitear: `docs/qa/REQ-029.md` (Adenda R-4), la cabecera de `requirements/REQ-029.md` (`Estado:` → `en-revisión`, `QA:` → `aprobado (…)`, `Hallazgos abiertos:` → `SEC-106 (instrumento)`), su fila del índice y esta entrada.
+
+**Resultado.**
+- **Fuente:** la copia de la decisión del propietario en la cola es idéntica al original.
+- **Correspondencia:** se reutilizó con sus 55 filas, sin diferencias no autorizadas.
+- **QA-029-02, cerrado:** `agents/qa-tester.md:38-43` y `agents/analista-requerimientos.md:52-54` distinguen ya la «decisión nueva que requiere aprobación del propietario» del «REQ existente con contrato y aprobaciones registrados». No cambian la distinción ni añaden requisitos de aprobación. El barrido por propiedad no deja ninguna frase sin acotar. Los casos 5-8 de CA-12, 5b incluido, se deciden sin interpretar.
+- **QA-029-03, cerrado:** CA-11.1 queda en 14 de 14, medido por mí.
+- **Comprobaciones:** las gates de §7 están en verde y hay 0 archivos de mecanismo.
+
+**Qué no acredita:** la conducta de los agentes; el CI, pendiente sobre `afcc6a5` y con el FAIL de `35924622453` conservado; el estado de SEC-106 ni la firma de seguridad, que son del auditor. REQ-029 no se cierra.
+
 ## [Interno] — 2026-09-23 · REQ-029: corrección conjunta de QA-029-02 (las frases de QA y del analista se acotan a «decisión nueva que requiere aprobación del propietario»; un REQ existente aprobado conserva su situación y declara la limitación) y QA-029-03 (`Archivos:` gana `docs/ESTADO.md`: 14 rutas)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agentes: `desarrollador` (dos definiciones de agente) y `analista-requerimientos` (campo, `Origen:`, Historial); bitácora de la coordinadora al comitear juntos. **Excepción acotada del propietario al contador agotado; dev↔QA 3 de 3 conservado.** Sin cambio en la distinción ni requisitos de aprobación nuevos; CA-03.4 y CA-08.5 intactos; correspondencia reutilizada (55 filas, sin transcribir instrucciones). Gates §7 en verde; 0 archivos de mecanismo. Sin push. QA y seguridad determinan el estado de los hallazgos.
 
