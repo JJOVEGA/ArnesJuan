@@ -2,6 +2,9 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029 / QA-029-02 y QA-029-03: autorización del propietario para la corrección conjunta (excepción acotada al contador agotado) registrada íntegra en la cola
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Única copia literal; contador dev↔QA 3 de 3 conservado, sin reiniciar. Cola `## Pendientes` sin cambios (0). Sin push.
+
 ## [Interno] — 2026-09-23 · REQ-029 seguridad R-042-B: SEC-106 → `en-mitigación`; `Seguridad:` → `pendiente` (mi `aprobado` de R-042-A no cubre `47a61ef`)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `auditor-seguridad`. Adenda acotada a SEC-106, bajo la excepción expresa del propietario registrada en `PENDING_APPROVAL.md` §Resueltas; el contador 3 de 3 se conserva. Después de QA R-3. Archivos escritos con `Edit`, sin consola y sin comitear: `docs/seguridad/registro-seguridad.md` (§Adenda R-042-B), la cabecera de `requirements/REQ-029.md` (sólo `Seguridad:`; `Hallazgos abiertos:` ya lista SEC-106 y no cambia), su celda del índice y esta entrada.
 
