@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-23 · REQ-029 seguridad R-042-B: SEC-106 → `en-mitigación`; `Seguridad:` → `pendiente` (mi `aprobado` de R-042-A no cubre `47a61ef`)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `auditor-seguridad`. Adenda acotada a SEC-106, bajo la excepción expresa del propietario registrada en `PENDING_APPROVAL.md` §Resueltas; el contador 3 de 3 se conserva. Después de QA R-3. Archivos escritos con `Edit`, sin consola y sin comitear: `docs/seguridad/registro-seguridad.md` (§Adenda R-042-B), la cabecera de `requirements/REQ-029.md` (sólo `Seguridad:`; `Hallazgos abiertos:` ya lista SEC-106 y no cambia), su celda del índice y esta entrada.
+
+**Resultado.**
+- **SEC-106 → `en-mitigación`:** el control ya está en CA-03.4 y CA-08.5 y en la sede única de la plantilla y su gemela. La regla 1, el analista y QA remiten a ella, y el hueco queda cerrado para decisiones nuevas.
+- **Condición para `mitigado`:** que QA-029-02 se repare en `agents/qa-tester.md` conservando que la autorización no verificable de una decisión nueva no cuenta, y que QA lo valide.
+- **Corrección de la presentación:** «residual» y la fecha 2026-10-23 eran propuestas mías, no decisiones del propietario, y no rigen. El historial de R-042 y R-042-A se conserva. La decisión del propietario se registra sin efecto retroactivo: los REQ aprobados antes conservan su situación.
+- **Firma:** `Seguridad: pendiente`. El delta toca sedes heredables, así que R-042-A no lo cubre, y no firmo con QA en `con-hallazgos`. No hay veto: nada se debilita.
+- **QA-029-03:** identificado (`docs/ESTADO.md`, 14 tocados y 13 declarados) y no encadenado.
+
+**Qué no acredita:** la conducta de los agentes, el CI (sin corrida sobre `47a61ef`; la cabeza remota `d413405` tiene el FAIL del run `35924622453`), el cierre de REQ-029, la publicación ni los consumidores.
+
 ## [Interno] — 2026-09-23 · REQ-029 QA R-3 (vuelta excepcional acotada a SEC-106; contador 3 de 3 conservado): `con-hallazgos` — QA-029-02 y QA-029-03 (`contrato`)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 · agente: `qa-tester`. Cabeza validada: `699dee3`. Escrito con `Edit`/`Write`, sin consola y sin comitear: `docs/qa/REQ-029.md` (Adenda R-3 y casos 5-8 de CA-12 como fixtures inventados), la cabecera de `requirements/REQ-029.md` (`Estado:` → `en-progreso`, `QA:` → `con-hallazgos (…)`, `Hallazgos abiertos:` + QA-029-02 y QA-029-03), su fila del índice y esta entrada.
 

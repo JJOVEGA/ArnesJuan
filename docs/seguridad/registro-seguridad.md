@@ -7571,3 +7571,161 @@ mecanismo. El contenido normativo es el acreditado en `R-042` sobre `1117204`, s
 
 **Numeración vigente tras esta adenda:** última revisión **R-042** (adenda **`R-042-A`**); último hallazgo
 **SEC-107**; próximos libres **R-043** y **SEC-108**.
+
+## Adenda a R-042 (**`R-042-B`**) — **estado de SEC-106** tras la decisión del propietario y su write-back; cabeza `47a61ef` — 2026-09-23
+
+**Por qué adenda y no `R-043`.** Determina el estado de **un hallazgo propio** (SEC-106) sobre el delta que
+lo repara. No es una auditoría nueva del REQ. **Tampoco firma nada**, por la razón del §3.
+
+**Fuente de la intervención.** La decisión del propietario del 2026-09-23 está en `PENDING_APPROVAL.md`
+§«Resueltas», primera entrada («REQ-029 / SEC-106: intervención adicional acotada, excepción expresa al
+contador agotado»), íntegra. La leí entera. Es una **excepción expresa** al contador agotado de REQ-029:
+el contador dev↔QA **3 de 3 se conserva y no se reinicia**, y esta adenda no gasta ni devuelve vueltas.
+**Sin ensayos ni reparaciones.** Escrito con `Edit`, sin consola.
+
+**Árbol y orden.** La cabeza es `47a61ef`, con el árbol limpio antes de escribir. Commits desde
+`9e4980c`:
+- `50c3b17`: mi R-042-A.
+- `d413405`: el «RETOMAR AQUÍ» de la coordinadora. Es la cabeza empujada: `origin/feat/fidelidad-encargo`
+  = `d413405`, con el FAIL del run `35924622453`, que se conserva.
+- `12b4bbb`: la autorización en la cola.
+- `699dee3`: el write-back del analista y la corrección del desarrollador en las sedes.
+- `47a61ef`: QA **R-3**, `con-hallazgos` sobre `699dee3`.
+
+QA fue antes que yo. El registro de seguridad no lo tocó nadie más después de `50c3b17`.
+
+### 1. Corrección de la presentación de SEC-106, sin reescribir el historial
+
+Lo que escribí en `R-042` §4 y en su tabla (`abierto (residual de detección; revisión propuesta
+2026-10-23)`), y lo que repitió `R-042-A` §3 y §6, **se conserva tal cual**. Lo corrijo aquí en vez de
+reescribirlo:
+- **«Residual»** era **calificación mía**, no una aceptación. **El propietario nunca aceptó** SEC-106 como
+  residual. Un residual existe sólo cuando lo acepta quien puede aceptarlo, y esa palabra no debió ir en la
+  tabla como si describiera un estado.
+- **La fecha 2026-10-23** fue **propuesta mía** (en §4 dice «propuesta del auditor, el propietario puede
+  cambiarla»). El propietario **no** la adoptó, y **deja de regir**: no hay fecha de revisión, porque el
+  hallazgo ya no espera observación, sino su reparación (§2).
+- También quedan sin efecto el **forzador** que yo le asigné y el razonamiento de que «no bloquea» porque
+  se toleraba. El propietario **no tolera** el hueco.
+- La misma calificación está en mi entrada de `CHANGELOG.md` (R-042) y en `docs/ESTADO.md:28` (la
+  coordinadora). Las entradas de bitácora no se reescriben: vale esta corrección. `docs/ESTADO.md` no es
+  mío.
+
+**La decisión de fondo del propietario**, registrada **sin efecto retroactivo**. Cito la cola:
+- **Principio:** «No acepto como autorización comprobada una referencia cuyo contenido no puede
+  verificarse».
+- **REQ existente con contrato y aprobaciones registrados:** la ausencia de su conversación original
+  **no** invalida esas aprobaciones ni lo devuelve a `borrador`. Se conserva la limitación de
+  trazabilidad.
+- **Decisión nueva que requiere al propietario:** una autorización citada inaccesible **no** acredita
+  que exista ni qué alcance tiene. Hace falta una copia fiel y verificable o su confirmación concreta, y
+  hasta entonces **no se implementa lo dependiente**. El trabajo independiente autorizado continúa.
+- **Límites:** no archivar conversaciones completas, no crear otra firma de QA, no convertir decisiones
+  técnicas ordinarias en aprobaciones humanas.
+
+**Sin efecto retroactivo** quiere decir que **ningún REQ aprobado antes de esta decisión cambia de
+situación por ella**. Eso incluye REQ-025 y su línea base `R-041-A`, y las firmas de REQ-029 anteriores
+a `699dee3`: se conservan como lo que fueron y sobre el árbol que cubrieron. La decisión rige **hacia
+delante**, para las decisiones nuevas.
+
+### 2. **Estado de SEC-106: `en-mitigación`** (ni `abierto` ni `mitigado`)
+
+**Por qué deja de estar `abierto`.**
+- **El control existe como contrato.** CA-03 punto 4 define «autorización comprobada» y CA-08 punto 5
+  lo aplica en QA. CA-12 pasa a tener ocho casos. Es el write-back exigido: el control no vive sólo en
+  el texto de un agente.
+- **El control existe en el texto heredable, con una sola sede.**
+  - La sede es la plantilla de `requirements/README.md` y su gemela, «Trazabilidad». Dice que una
+    **autorización citada** es una copia fiel y verificable, o una confirmación concreta, **en una sede
+    localizable por ruta en el repositorio**. Los ejemplos van marcados **no exhaustivos**, así que el
+    control está descrito por propiedad y no por lista.
+  - Dice también que la referencia no verificable **no cuenta** «para una decisión nueva que requiere al
+    propietario».
+  - Remiten a ella sin copiarla: la regla 1 de `AGENTS.md` y su gemela («citada y verificable»), el
+    analista (`:52-53`) y QA (`:37-42`).
+  - **Gemelas idénticas** en sus líneas `+`/`-` desde `9e4980c`, tanto `AGENTS.md` como la plantilla
+    (diff vacío).
+- **El hueco que medí en R-042 está cerrado para decisiones nuevas.** R-042 medía esto: la autorización
+  citada con fuente y fecha contaba como citada aunque QA no pudiera leerla, así que admitía `aprobado`
+  con «no pude comprobarlo». Ahora esa autorización **no cuenta**, es decisión de alcance pendiente y no
+  admite `aprobado`. QA lo comprobó en el caso 6 de CA-12 y yo lo confirmo leyendo las cuatro sedes.
+- **Los límites del propietario se respetan:** no exige archivar conversaciones, no crea firma ni campo,
+  y los casos 7 y 8 no convierten decisiones técnicas en aprobaciones.
+- **Sin cambios en el mecanismo:** ninguna ruta de `hooks/`, `tools/`, `tests/`, `.github/`, `.arnes/`,
+  `.claude-plugin/` ni `skills/` en `git diff --name-only 9e4980c 47a61ef`.
+
+**Por qué todavía no está `mitigado`.**
+- **QA-029-02 (`contrato`) está abierto justo en la frase que aplica el control en la sede de QA.**
+  `agents/qa-tester.md:37-40` dice la regla **sin condición de población** y decide **al revés** el
+  caso 5 de CA-12: la cierra de más. En términos de seguridad ese exceso **no abre** nada, pero contradice
+  la decisión del propietario sobre los REQ existentes.
+- **La reparación reescribirá esa frase.** Mal acotada, podría reabrir el hueco: por ejemplo, si
+  limitara la regla a «cuando la fuente esté disponible» en vez de a la **decisión nueva**.
+- **No declaro mitigado un control cuyo texto en una sede está pendiente de cambio y que QA no ha
+  validado sin hallazgos `contrato`.**
+
+**Condición de paso a `mitigado`, que es una propiedad y no una lista.** Hace falta que la sede de QA,
+una vez reparada:
+- limite la regla de la autorización no verificable a la **decisión nueva que requiere al
+  propietario**;
+- conserve que en ese caso **no cuenta** y **no admite `aprobado`**;
+- no copie la definición y siga remitiendo a la plantilla;
+- tenga una validación de QA sin hallazgos `contrato` sobre ese árbol.
+
+Después, una reverificación mía acotada.
+
+Al reparar QA-029-02 conviene **barrer la promesa completa**. QA ya lo anotó en `docs/qa/REQ-029.md`
+(fila CA-06): la frase del analista (`:52-53`) tiene **la misma forma incondicional**, aunque en su
+contexto (crear el REQ) rija para REQ nuevos y pase. Lo digo como sede a revisar en esa reparación,
+**no** como hallazgo nuevo.
+
+**Clase.** Con la decisión del propietario, SEC-106 pasa a ser un **control del contrato** y no una
+deuda tolerada. **No lo reclasifico a `contrato`**, porque lo que hoy bloquea por ese texto ya está
+abierto con su nombre y su dueño (QA-029-02). Abrir otro `contrato` por el mismo texto sería una segunda
+transcripción del mismo defecto. Conserva la clase `instrumento` en `Hallazgos abiertos:` para que la
+puerta pueda medirlo, **en `en-mitigación`**, y sigue ligado a QA-029-02: **se cierra con él, no
+antes**.
+
+### 3. Qué cubre mi firma anterior y qué pongo en el campo
+
+- **`Seguridad: aprobado (R-042-A … sobre 9e4980c)` no cubre `47a61ef`.** El delta `9e4980c..47a61ef`
+  toca **sedes heredables**: la regla 1 y su gemela, la plantilla y su gemela, y los dos agentes. Una
+  firma sobre otro árbol no acredita éste.
+- **No puedo firmar `aprobado`,** porque QA está en `con-hallazgos` (R-3) con dos `contrato` abiertos, y
+  no firmo lo que QA no ha validado (`AGENTS.md` §6).
+- Pongo **`Seguridad: pendiente`**, con la revisión previa de esta adenda en el paréntesis. **No es
+  `vetado`:** nada del delta debilita un control ni abre una vía. **No es `con-hallazgos`:** eso sería un
+  veredicto sobre un árbol que no es mi turno juzgar.
+
+**QA-029-03** (`docs/ESTADO.md` fuera de `Archivos:`) queda **identificado y no lo encadeno**, como pide
+la decisión. Lo confirmo por medición: `git diff --name-only cfb1106 47a61ef` da **14** rutas y **13**
+están declaradas; la que falta es `docs/ESTADO.md`. Es la misma figura que **SEC-107**. Su reparación la
+decide el propietario.
+
+### 4. Lo que esta adenda **NO** acredita
+
+1. **La conducta de los agentes** (no observada; los ocho casos son texto aplicado a ejemplos).
+2. **El CI.** `47a61ef` no está empujada, y la cabeza remota es `d413405`, cuyo run `35924622453` es
+   **FAIL** y se conserva. No hay corrida sobre `47a61ef`, y la autorización no permite relanzar ni
+   empujar.
+3. **Ninguna firma sobre `47a61ef`**, ni el cierre de REQ-029, que **no** debe cerrarse: quedan
+   QA-029-02 y QA-029-03 (`contrato`), CA-11.4 sin CI en verde y SEC-106 `en-mitigación`.
+4. **La publicación, la fusión, el tag ni los consumidores.**
+
+### 5. Estado de hallazgos de esta línea tras `R-042-B`
+
+| Hallazgo | Clase | Estado | Dueño | Bloquea |
+|---|---|---|---|---|
+| `SEC-105` | `instrumento` | `mitigado` (sobre `9e4980c`, sin cambio) | coordinadora · `analista-requerimientos` | No |
+| `SEC-106` | `instrumento` (ver §2) | **`en-mitigación`**: el control está en el contrato y en la sede única. Pasa a `mitigado` cuando se cumpla la condición del §2, ligada a QA-029-02. **Sin residual aceptado y sin fecha de revisión** | `desarrollador` (sede de QA, vía QA-029-02) · verifica `qa-tester` · reverifica `auditor-seguridad` | No por sí mismo; lo que bloquea es QA-029-02 |
+| `SEC-107` | `contrato` | `mitigado` (sobre `9e4980c`, sin cambio) | `analista-requerimientos` | No |
+
+**Línea base de no-regresión para REQ-029.** La vigente sigue siendo la de `R-042-A` sobre `9e4980c`,
+porque **no hay firma nueva**. El delta `9e4980c..47a61ef` **no debilita** ningún control de esa línea
+base: añade la definición de autorización comprobada y sólo estrecha. Una firma futura compara contra
+esta adenda.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta adenda:** última revisión **R-042** (adendas **`R-042-A`** y **`R-042-B`**);
+último hallazgo **SEC-107**; próximos libres **R-043** y **SEC-108**.
