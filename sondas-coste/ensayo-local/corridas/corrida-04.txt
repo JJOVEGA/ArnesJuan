@@ -1,0 +1,84 @@
+--- 37/1 · el coste del escáner: el dominio de equivalencia, dentro y fuera (REQ-017 CA-01 y CA-10) ---
+  PASS  REQ-017 CA-01 diferencial dentro del dominio: cada línea por separado (ARNES_LINEA/CITA/CR/CR_LINEA)  (dentro 311 · fuera 9 · no clasificables 0 de 320; estado idéntico byte a byte y este árbol repite k=6)
+  PASS  REQ-017 CA-01 ...y en secuencia, que es donde el estado de cita y de CR cruza líneas  (dentro 311 · fuera 9 · no clasificables 0 de 320; el recorrido de las 311 entradas del dominio sale idéntico byte a byte)
+  PASS  REQ-017 CA-01 el corpus conserva las fronteras nombradas y la clase que no puede perder (320 entradas, 281 con UTF-8 inválido, semilla fija)
+  PASS  REQ-017 CA-10 (i) fuera del dominio este árbol decide siempre lo mismo, y lo mismo en los dos locales  0 de 9 violaciones de determinismo o invariancia de la DECISIÓN (k=6 por locale) — bash 5.3.9(1)-release, locale del entorno C.UTF-8, dentro 311 · fuera 9 · no clasificables 0 de 320
+  PASS  REQ-017 CA-10 (ii) ...y esa decisión es la del ORÁCULO: la heredada bajo LC_ALL=C  las 9 entradas de fuera coinciden con el oráculo; sin esta mitad, (i) la cumpliría también una implementación CONSTANTE — bash 5.3.9(1)-release, locale del entorno C.UTF-8, dentro 311 · fuera 9 · no clasificables 0 de 320
+  PASS  REQ-017 CA-10 (iii) fail-before: la heredada bajo el locale del entorno NO cumple (i) o (ii), y se registra sin fallar por ello  la heredada incumple el DETERMINISMO en 7 de 9 y la INVARIANCIA DE LOCALE en 4 de 9; este árbol, 0 y 0 — bash 5.3.9(1)-release, locale del entorno C.UTF-8, dentro 311 · fuera 9 · no clasificables 0 de 320
+--- 37/2 · el coste del escáner: la escala y las razones (REQ-017 CA-03, CA-04 y CA-06) ---
+  ·   ENSAYO dato CA-03 este=[2239 2351 1925 1738 1810 ] her=[3741 3702 3805 4801 4019 ] (milésimas, por repetición; x = no midió)
+  PASS  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  máx(cociente) 2.351× <= techo 2,600× en 5 de 5 (70000→140000 bytes, k=20); calibración resuelta: v1.32.1 recorre [3.702×, 4.801×]
+  PASS  REQ-017 CA-04 el camino de campo no cuesta más de 2× lo que costaba en v1.32.0 (140 000 bytes sin CR)  razón contra v1.32.0 = 1.271× (techo 2.000×; 652882µs sobre 513360µs)
+  PASS  REQ-017 CA-04 fail-before: v1.32.1 cuesta 9.354× lo de v1.32.0 y se pasa del techo 2,000×
+  PASS  REQ-017 CA-06 sin línea base y bajo el suelo de 50 ms la sonda emite SKIP con motivo, nunca PASS
+--- 37/3 · el coste del escáner: la pared de los 60 s (REQ-017 CA-09) ---
+  PASS  REQ-017 CA-09 la pared de los 60 s de este árbol NO es menor que la de v1.32.1, pareado en la misma corrida  el PEOR de este árbol vale 1.771× el MEJOR de v1.32.1 medido EN ESTA MISMA corrida (>= 1,000×; los rangos no se solapan, así que la dirección no es ruido). La magnitud es del Historial y de SEC-030
+  PASS  REQ-017 CA-09 la dirección se COMPRUEBA por rangos, no se publica: por debajo es FAIL y el solapamiento es SKIP  (7 pares de rangos → PASS PASS FAIL SKIP SKIP SKIP SKIP )
+--- 37/4 · la ruta crítica del banco (REQ-017 CA-05, con la mitad de CA-06 que la prueba) ---
+  SKIP  REQ-017 CA-05 (i) la ruta crítica cuesta no más de 0,250× lo de v1.32.1  no se pide: evidencia acreditada en el Historial de REQ-017 (0,125× — 9,60 s frente a 76,19 s, medido el 2026-09-07); es acreditación de fail-before, no puerta de cada PR — se repite con ARNES_COSTE_RUTA_CRITICA=1
+  SKIP  REQ-017 CA-05 (ii) la comparación no se compra dejando de probar  no se pide: evidencia acreditada en el Historial de REQ-017 (0,125× — 9,60 s frente a 76,19 s, medido el 2026-09-07); es acreditación de fail-before, no puerta de cada PR — se repite con ARNES_COSTE_RUTA_CRITICA=1
+  PASS  REQ-017 CA-05 (i)/(ii) una corrida que termina EN ROJO no cuenta como medición: deciden el rc y los casos, no el número de líneas
+  PASS  REQ-017 CA-05 (i) sólo el vencimiento del plazo, y con el reloj de acuerdo, prueba la cota: una muerte por señal dice SKIP  (10 formas de terminar → SKIP SKIP PASS SKIP SKIP PASS SKIP FAIL SKIP SKIP )
+--- 37/5 · el camino de una cabecera normal: procesos y reloj (REQ-017 CA-08 y CA-06) ---
+  ·   ENSAYO dato CA-08 REQ-100 rep=1 reg=[vacio]
+  ·   ENSAYO dato CA-08 REQ-100 rep=2 reg=[vacio]
+  ·   ENSAYO dato CA-08 REQ-100 rep=3 reg=[vacio]
+  ·   ENSAYO dato CA-08 REQ-100 rep=4 reg=[vacio]
+  ·   ENSAYO dato CA-08 REQ-100 rep=5 reg=[vacio]
+  ·   ENSAYO dato CA-08 REQ-200 rep=1 reg=[vacio]
+  ·   ENSAYO dato CA-08 REQ-200 rep=2 reg=[vacio]
+  ·   ENSAYO dato CA-08 REQ-200 rep=3 reg=[vacio]
+  ·   ENSAYO dato CA-08 REQ-200 rep=4 reg=[vacio]
+  ·   ENSAYO dato CA-08 REQ-200 rep=5 reg=[vacio]
+  PASS  REQ-017 CA-08 (i) un REQ real de 6 líneas: 0 procesos añadidos respecto a v1.32.1  5 procesos frente a 5 (menos es conforme)
+  PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.164× <= techo 1.250× en 5 de 5 repeticiones: 1.062× 0.995× 0.972× 0.993× 1.164× (todas resueltas)
+  PASS  REQ-017 CA-08 (i) una cabecera de 200 líneas: 0 procesos añadidos respecto a v1.32.1  5 procesos frente a 5 (menos es conforme)
+  PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.042× <= techo 1.250× en 5 de 5 repeticiones: 0.989× 0.973× 0.978× 1.042× 0.990× (todas resueltas)
+  PASS  REQ-017 CA-08 (ii) la sonda que no converge se ABSTIENE: nunca PASS y nunca FAIL, y la abstención manda sobre el rojo  (7 sondas → PASS FAIL SKIP SKIP SKIP SKIP SKIP )
+  PASS  REQ-017 CA-06 el envoltorio resuelve rutas absolutas antes de tocar el PATH y no se llama a sí mismo (<5> procesos)
+  PASS  REQ-017 CA-06 el corredor acusa POR SU NOMBRE a la sección que deja un proceso vivo, y la vuelta sale en rojo
+--- 37/9 · ENSAYO: controles del procedimiento propuesto (idénticos, envoltorio 0, demora fija) ---
+  ·   ENSAYO dato REQ-100 I rep=1 us=2622967 reg=[vacio]
+  ·   ENSAYO dato REQ-100 I rep=2 us=2858103 reg=[vacio]
+  ·   ENSAYO dato REQ-100 I rep=3 us=2411280 reg=[vacio]
+  ·   ENSAYO dato REQ-100 I rep=4 us=2293937 reg=[vacio]
+  ·   ENSAYO dato REQ-100 I rep=5 us=2407029 reg=[vacio]
+  PASS  ENSAYO control I (un REQ real de 6 líneas): sujetos idénticos, razón verdadera 1,0 — nunca FAIL  máx(r) 1.099× <= techo 1.250× en 5 de 5 repeticiones: 1.047× 1.017× 1.099× 0.992× 0.937× (todas resueltas)
+  ·   ENSAYO dato REQ-100 W0 rep=1 us=2336157 reg=[vacio]
+  ·   ENSAYO dato REQ-100 W0 rep=2 us=2314234 reg=[vacio]
+  ·   ENSAYO dato REQ-100 W0 rep=3 us=2056643 reg=[vacio]
+  ·   ENSAYO dato REQ-100 W0 rep=4 us=2325903 reg=[vacio]
+  ·   ENSAYO dato REQ-100 W0 rep=5 us=2713671 reg=[vacio]
+  PASS  ENSAYO control W0 (un REQ real de 6 líneas): envoltorio con demora 0 — nunca FAIL  máx(r) 1.123× <= techo 1.250× en 5 de 5 repeticiones: 1.029× 0.930× 1.025× 0.962× 1.123× (todas resueltas)
+  ·   ENSAYO dato REQ-100 WD rep=1 us=3607810 reg=[vacio]
+  ·   ENSAYO dato REQ-100 WD rep=2 us=3540533 reg=[vacio]
+  ·   ENSAYO dato REQ-100 WD rep=3 us=3698395 reg=[vacio]
+  ·   ENSAYO dato REQ-100 WD rep=4 us=3514001 reg=[vacio]
+  ·   ENSAYO dato REQ-100 WD rep=5 us=3526919 reg=[vacio]
+  FAIL  ENSAYO control WD (un REQ real de 6 líneas): envoltorio con demora fija 0.040s por llamada — se espera FAIL (detecta DEMORA AÑADIDA, no regresión interna)  mín(r) 1.892× > techo 1.250× en TODAS las 5 repeticiones resueltas de 5: 1.897× 2.085× 1.892× 1.937× 2.090× — la medición excede el techo; no afirma la causa
+  ·   ENSAYO dato REQ-200 I rep=1 us=6150342 reg=[vacio]
+  ·   ENSAYO dato REQ-200 I rep=2 us=5569464 reg=[vacio]
+  ·   ENSAYO dato REQ-200 I rep=3 us=5757162 reg=[vacio]
+  ·   ENSAYO dato REQ-200 I rep=4 us=5995296 reg=[vacio]
+  ·   ENSAYO dato REQ-200 I rep=5 us=6959296 reg=[vacio]
+  PASS  ENSAYO control I (una cabecera de 200 líneas): sujetos idénticos, razón verdadera 1,0 — nunca FAIL  máx(r) 1.119× <= techo 1.250× en 5 de 5 repeticiones: 0.903× 0.983× 1.119× 1.078× 0.985× (todas resueltas)
+  ·   ENSAYO dato REQ-200 W0 rep=1 us=7151981 reg=[vacio]
+  ·   ENSAYO dato REQ-200 W0 rep=2 us=6140515 reg=[vacio]
+  ·   ENSAYO dato REQ-200 W0 rep=3 us=6049948 reg=[vacio]
+  ·   ENSAYO dato REQ-200 W0 rep=4 us=6268583 reg=[vacio]
+  ·   ENSAYO dato REQ-200 W0 rep=5 us=5864711 reg=[vacio]
+  PASS  ENSAYO control W0 (una cabecera de 200 líneas): envoltorio con demora 0 — nunca FAIL  máx(r) 1.140× <= techo 1.250× en 5 de 5 repeticiones: 1.015× 0.999× 0.972× 1.140× 0.992× (todas resueltas)
+  ·   ENSAYO dato REQ-200 WD rep=1 us=9621868 reg=[vacio]
+  ·   ENSAYO dato REQ-200 WD rep=2 us=7796342 reg=[vacio]
+  ·   ENSAYO dato REQ-200 WD rep=3 us=8610557 reg=[vacio]
+  ·   ENSAYO dato REQ-200 WD rep=4 us=8791250 reg=[vacio]
+  ·   ENSAYO dato REQ-200 WD rep=5 us=8701504 reg=[vacio]
+  FAIL  ENSAYO control WD (una cabecera de 200 líneas): envoltorio con demora fija 0.100s por llamada — se espera FAIL (detecta DEMORA AÑADIDA, no regresión interna)  mín(r) 1.911× > techo 1.250× en TODAS las 5 repeticiones resueltas de 5: 2.082× 2.168× 2.122× 1.911× 1.978× — la medición excede el techo; no afirma la causa
+ABORT: la sección 37-coste-del-escaner-2-las-razones.sh declara 5 casos y ejecutó 4 (PASS 4 · FAIL 0 · SKIP 0).
+       O falta un caso por el camino, o alguien añadió uno y no actualizó
+       CASOS_ESPERADOS_SECCION en ese archivo. Las dos cosas hay que mirarlas.
+aviso: vuelta parcial (6 de 52 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 25 PASS, 2 FAIL, 2 SKIP — ninguna causa común: cada uno con su motivo
+       · REQ-017 CA-05 (i) la ruta crítica cuesta no más de 0,250× lo de v1.32.1  no se pide: evidencia acreditada en el Historial de REQ-017 (0,125× — 9,60 s frente a 76,19 s, medido el 2026-09-07); es acreditación de fail-before, no puerta de cada PR — se repite con ARNES_COSTE_RUTA_CRITICA=1
+       · REQ-017 CA-05 (ii) la comparación no se compra dejando de probar  no se pide: evidencia acreditada en el Historial de REQ-017 (0,125× — 9,60 s frente a 76,19 s, medido el 2026-09-07); es acreditación de fail-before, no puerta de cada PR — se repite con ARNES_COSTE_RUTA_CRITICA=1

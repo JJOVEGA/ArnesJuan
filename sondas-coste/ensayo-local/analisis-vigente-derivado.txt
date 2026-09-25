@@ -1,0 +1,34 @@
+corrida | CA-08 6l | CA-08 200l | I-6l | W0-6l | WD-6l | I-200l | W0-200l | WD-200l   (vigente derivado de la repetición #1)
+01 | PASS(0.946) | PASS(1.076) | PASS(1.007) | PASS(1.161) | FAIL(1.909) | PASS(0.901) | PASS(0.986) | FAIL(2.100)
+02 | PASS(1.077) | PASS(0.874) | PASS(1.013) | PASS(1.061) | FAIL(1.976) | PASS(1.017) | PASS(0.923) | FAIL(2.183)
+03 | PASS(1.043) | PASS(1.015) | PASS(0.966) | PASS(1.109) | FAIL(2.033) | PASS(1.043) | PASS(1.008) | FAIL(2.203)
+04 | PASS(1.062) | PASS(0.989) | PASS(1.047) | PASS(1.029) | FAIL(1.897) | PASS(0.903) | PASS(1.015) | FAIL(2.082)
+05 | PASS(1.043) | PASS(0.932) | PASS(1.086) | PASS(1.116) | FAIL(1.935) | PASS(1.043) | PASS(1.041) | FAIL(1.927)
+06 | PASS(0.929) | PASS(0.987) | PASS(1.028) | PASS(1.006) | FAIL(1.992) | PASS(0.922) | PASS(1.006) | FAIL(2.178)
+07 | PASS(0.978) | PASS(1.075) | PASS(1.081) | PASS(1.084) | FAIL(2.115) | PASS(0.924) | PASS(0.959) | FAIL(2.032)
+08 | PASS(1.015) | PASS(0.994) | PASS(1.088) | PASS(0.948) | FAIL(2.045) | PASS(0.931) | PASS(0.980) | FAIL(2.196)
+09 | PASS(1.011) | PASS(0.985) | PASS(1.062) | PASS(1.040) | FAIL(2.131) | PASS(1.066) | PASS(1.113) | FAIL(2.275)
+10 | PASS(0.986) | PASS(0.975) | PASS(1.088) | SKIP(no-converge(1.251/1.317)) | FAIL(2.047) | PASS(1.055) | PASS(1.098) | FAIL(2.235)
+
+RECUENTO vigente derivado (#1):
+  CA-08 6l: {'PASS': 10}
+  CA-08 200l: {'PASS': 10}
+  I-6l: {'PASS': 10}
+  W0-6l: {'PASS': 9, 'SKIP': 1}
+  WD-6l: {'FAIL': 10}
+  I-200l: {'PASS': 10}
+  W0-200l: {'PASS': 10}
+  WD-200l: {'FAIL': 10}
+
+RECORRIDO de TODAS las razones resueltas (propuesto, 10 corridas × hasta 5):
+  CA-08 6l: n=49 mín 0.796 máx 1.164 · > techo: 0 · igual al techo: 0
+  CA-08 200l: n=50 mín 0.865 máx 1.131 · > techo: 0 · igual al techo: 0
+  I-6l: n=49 mín 0.915 máx 1.113 · > techo: 0 · igual al techo: 0
+  W0-6l: n=49 mín 0.904 máx 1.161 · > techo: 0 · igual al techo: 0
+  WD-6l: n=50 mín 1.715 máx 2.291 · > techo: 50 · igual al techo: 0
+  I-200l: n=49 mín 0.901 máx 1.119 · > techo: 0 · igual al techo: 0
+  W0-200l: n=50 mín 0.900 máx 1.144 · > techo: 0 · igual al techo: 0
+  WD-200l: n=50 mín 1.812 máx 2.324 · > techo: 50 · igual al techo: 0
+
+CA-03 directa: n=50 mín 1.441 máx 2.373 · > 2,6: 0
+CA-03 calibración v1.32.1: n=50 mín 3.059 máx 4.801 · ≤ 2,6 (no resuelve): 0
