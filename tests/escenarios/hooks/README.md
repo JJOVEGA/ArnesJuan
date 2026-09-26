@@ -32,7 +32,7 @@ bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del cor
 ARNES_SONDA_CONTROLES=1 bash tests/escenarios/hooks/run.sh secciones/37-coste-del-escaner-7-*.sh
                                                          # los controles de medición de las sondas de coste
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **919 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **920 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`). La línea
 `Resultado:` cuenta **aparte** los `SKIP` que son **INCONCLUSO** —una sonda de coste que no acreditó
 nada en esa corrida— y los nombra debajo; el código de salida **no** depende de ellos
@@ -255,6 +255,7 @@ Tres reglas nacidas de fallos reales:
 | Coste (37/5) | una repetición cuya sonda **no converge** (2.º mínimo / mínimo > 1,25×) | **no resuelta**: no cuenta para PASS ni para FAIL; el juez que decide lo prueba con las siete entradas de siempre |
 | Coste (37/6) | los **dos jueces** de las sondas de coste sobre **vectores fijos** (fronteras, 2 frente a 3 resueltas, calibración 2 frente a 3, mezclas, sin línea base, los 9 del ensayo, la corrida 5 del ensayo en CI) | cada vector con la salida que la regla prescribe, o **FAIL** nombrándolo |
 | Coste (37/7) | controles **I** (idénticos), **W0** (envoltorio sin demora) y **WD** (demora fija), **sólo con `ARNES_SONDA_CONTROLES=1`** | I y W0 sin FAIL; WD **PASS si el juez dice FAIL**; apagados, **SKIP** con su última acreditación, nunca PASS |
+| Coste (37/7) | control **C3**: el cociente de duplicación de **v1.32.1** con el instrumento de CA-03, **sólo con `ARNES_SONDA_CONTROLES=1`** | PASS si **todas** > 2,6× en ≥ 3 resueltas; **FAIL real** si todas ≤ 2,6× (avería demostrada); si no, **INCONCLUSO**, nunca PASS |
 | Coste (37/5) | una sección sintética que deja un proceso vivo | el corredor la **acusa por su nombre** |
 | Sondas (38/1) | `bash -n` y los modos de cada `tests/util/*.sh` | ejecutable **y** con shebang, o **aborta nombrándolo** |
 | Sondas (38/1) | los registros de las **dos** sondas de `tests/util/` | **una** línea, y **ninguna** con la forma de un caso |
@@ -420,7 +421,10 @@ se movieron**; cambió el procedimiento:
 - **La calibración de CA-03 es precondición.** En cada repetición se mide también v1.32.1 con el mismo
   `k`; si ese lado no queda con ≥ 3 resueltas **todas por encima** del techo (exactamente el techo no
   resuelve), el instrumento no demostró ver el defecto y el caso **no decide**: nunca FAIL del
-  candidato. El antiguo caso `REQ-017 CA-03 fail-before` (con `k = 1`) desaparece por eso.
+  candidato. El antiguo caso `REQ-017 CA-03 fail-before` (con `k = 1`) desaparece por eso, y su
+  función de **detector de un instrumento roto** la recupera el control **C3** de 37/7 (abajo), que
+  sólo corre con la palanca: en el modo por defecto, un instrumento de CA-03 roto sale INCONCLUSO, no
+  FAIL.
 - **INCONCLUSO** es el nombre de «no decide», y significa **rendimiento no acreditado en esa
   corrida**. Se imprime `SKIP <nombre>  [INCONCLUSO] <motivo y cifras>` —el nombre del caso es el
   mismo que en PASS y FAIL, para que `inventario.sh` los reconozca—; en el cuadre sigue siendo un
@@ -435,10 +439,29 @@ se movieron**; cambió el procedimiento:
   de la demora **no** acredita detección. Detectar una demora añadida es un control **de la prueba**,
   no su finalidad: no garantiza detectar una regresión del escáner, cuyo control sigue siendo la
   calibración contra v1.32.1.
+- **C3, el control del instrumento de CA-03** (37/7, séptimo caso, SEC-108). Mide el mismo cociente
+  de duplicación que CA-03 —70 000 → 140 000 bytes, `k = 20`, 5 repeticiones, la misma resolución—
+  sobre **v1.32.1**, el árbol cuadrático, y lo juzga `sonda_juez_control_c3` (corredor). Tres
+  resultados, que **no** se confunden entre sí:
+  - **PASS — «el instrumento ve la cuadrática»:** ≥ 3 resueltas y **todas** > 2,6×. Acredita que
+    resolvía en esa corrida, no que detecte cualquier regresión.
+  - **FAIL — «avería demostrada»:** ≥ 3 resueltas y **todas** ≤ 2,6×. Es un FAIL **real**, no
+    esperado: pone el banco en rojo con la palanca encendida, como hacía el `fail-before` retirado.
+  - **INCONCLUSO — «el control no pudo acreditar el funcionamiento»:** menos de 3 resueltas,
+    resueltas a los dos lados del techo, o sin línea base. Marcado y contado como cualquier
+    INCONCLUSO, **nunca PASS**, y **no** demuestra avería.
+
+  Y ninguno es la **medición real inconclusa** de CA-03 en 37/2, que es **rendimiento** no
+  acreditado del árbol candidato; un INCONCLUSO de C3 es **instrumento** no acreditado.
 
 **Qué es mecánico y qué no — dicho sin atribuirle a nadie más de lo que hace.** *Mecánico*, en cada
 corrida del banco: el evaluador, la marca y el recuento del resumen, y las pruebas sintéticas; y,
-**sólo con la palanca**, los controles de medición. *No mecánico*: decidir qué significa un
+**sólo con la palanca**, los controles de medición: el PASS, FAIL o INCONCLUSO de cada caso —C3
+incluido— y el código de salida del banco, que un FAIL de C3 pone en 1. *No mecánico*: la **regla de
+aceptación** del instrumento en una entrega que toca la sonda —3 corridas fijas con la palanca;
+I y W0 sin FAIL, WD detectado en las 3, y C3 **sin FAIL en ninguna y PASS en al menos una**
+(REQ-030 CA-07 (e))— la aplican el `qa-tester` y el `auditor-seguridad`; el banco no cuenta corridas ni
+la lee, y el workflow tampoco. Igual de no mecánico es decidir qué significa un
 INCONCLUSO para una integración —si el PR es documental, cambia el mecanismo o cambia la propia
 sonda (REQ-030 CA-08)—, que lo determina el `desarrollador`, lo verifica el `qa-tester` dentro de su
 veredicto, lo revisa el `auditor-seguridad` y lo decide quien integra (CA-09). **El workflow

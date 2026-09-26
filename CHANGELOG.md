@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-26 · **REQ-030, vuelta 3 de 3 (desarrollador): control C3 del instrumento de CA-03 (SEC-108, opción A del propietario)**; banco a 920 casos
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (1M context) · agente: `desarrollador`. Sobre `8278153` más el árbol de trabajo, sin commit ni push. Decisión del propietario en `PENDING_APPROVAL.md` § Resueltas, «REQ-030: opción A para SEC-108».
+
+**Qué se añade.** `sonda_juez_control_c3` en `tests/escenarios/hooks/run.sh`: un juez puro con tres resultados. **PASS** («el instrumento ve la cuadrática»: ≥ 3 resueltas, todas > 2,6×). **FAIL real** («avería demostrada»: ≥ 3 resueltas, todas ≤ 2,6×), que pone el banco en rojo. **INCONCLUSO** («el control no pudo acreditar el funcionamiento»), nunca PASS. El 7.º caso de `37-coste-del-escaner-7-los-controles.sh` mide el cociente de duplicación de v1.32.1 con los números de CA-03 (70 000 → 140 000 bytes, `k = 20`, 5 repeticiones) mediante copias literales de `mat37`/`mide37` (una copia más del residual AN-021-01), a demanda con `ARNES_SONDA_CONTROLES=1`. 37/6 gana 9 vectores de C3 sin casos nuevos. `CASOS_ESPERADOS` 919 → 920. El README del banco explica C3 y qué es mecánico y qué no. 37/2, `hooks/`, `tools/`, `tests/util/`, `.github/`, techos, `k`, R, suelo y demoras: sin tocar.
+
+**Evidencia.** Fail-before del control con una sonda sustituta de tiempo constante (60 000 µs, sólo en las medidas de C3, vía `ARNES_UTIL_DIR`): C3 **FAIL** («avería demostrada», 1,000× en 5 de 5), rc 1. Una corrida con la palanca: C3 **PASS** (mín 2,939× en 5 de 5), 7 PASS · 0 FAIL, 276,4 s; no es la validación de CA-07 (e), que son las 3 corridas de QA. Banco completo por defecto: `907 PASS, 0 FAIL, 13 SKIP (de ellos 1 INCONCLUSO)`, cuadre 920, rc 0, 202,4 s; el INCONCLUSO es la calibración de CA-03 (repetición #1 a 2,324×) y se conserva. Autoprueba: 113 PASS, 0 FAIL. Mutaciones de las dos fronteras del juez de C3 sobre copia: las dos ponen 37/6 en FAIL.
+
 ## [Interno] — 2026-09-26 · REQ-030: auditoría de seguridad R-043 → `Seguridad: con-hallazgos` (SEC-108 contrato, SEC-109 instrumento); decisión pendiente del propietario
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (auditor-seguridad) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, coordinadora.
 

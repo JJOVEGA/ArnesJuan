@@ -60,6 +60,8 @@ de CA-03 donde el vigente habría fallado).
 4. **Los controles del instrumento se separan en dos clases:** pruebas **sintéticas** del evaluador
    (vectores fijos, siempre en el banco) y pruebas **de medición** (sujetos idénticos, envoltorio de
    demora 0 y demora fija, a demanda), con el FAIL esperado de la demora **comprobado como esperado**.
+   *Ampliado el 2026-09-26 (SEC-108):* las pruebas de medición incluyen también el control **C3** del
+   instrumento de CA-03, cuyo FAIL **no** es esperado sino una avería demostrada (ver Consecuencias).
 5. **Sede del contrato:** desde esta fecha el procedimiento y el vocabulario de CA-03 y CA-08 (ii) los
    contrata **REQ-030**; REQ-017 conserva su texto y enlaza aquí.
 
@@ -94,6 +96,21 @@ de CA-03 donde el vigente habría fallado).
   precio de no afirmar lo que el instrumento no resuelve.
 - (−) **El caso `REQ-017 CA-03 fail-before` desaparece del banco** (−1 en el cuadre): su función pasa a la
   calibración, dentro del veredicto de CA-03.
+  **Corregido el 2026-09-26 (SEC-108, R-043; opción A del propietario):** la frase de arriba era
+  incompleta. La calibración conserva la función de **precondición** del caso real, pero **no** la de
+  detector mecánico de un instrumento roto: el `fail-before` daba **FAIL** si la sonda no distinguía el
+  árbol cuadrático, y la calibración da **INCONCLUSO**. Con eso, un instrumento roto de CA-03 dejaba de
+  ponerse rojo, y la validación de la clase (iii) —juez sintético más controles de CA-08 (ii)— **no
+  cubría el instrumento de CA-03**. Se restituye con el control **C3** (REQ-030 CA-07 (g)): a demanda,
+  mide el cociente de v1.32.1 con la misma regla; **PASS** si lo ve, **FAIL real** si demuestra avería,
+  **INCONCLUSO** si no puede acreditarlo, y forma parte de la regla de aceptación del instrumento de
+  CA-07 (e). **En el modo por defecto del banco un instrumento roto de CA-03 sigue sin ponerse rojo**:
+  C3 lo detecta en la validación de toda entrega (iii), no en cada PR.
+- (−) **Una regresión real puede salir INCONCLUSO donde la base daba FAIL, en tres formas** (R-043 §1,
+  SEC-109): (a) el recorrido de las razones abarca el techo; (b) la calibración de CA-03 no resuelve
+  —medido en 4 de 7 corridas completas locales, una **limitación de utilidad del procedimiento** en
+  palabras del propietario—; (c) el instrumento de CA-03 está roto, cubierta ahora por C3 con la palanca.
+  En las tres el rendimiento queda **no acreditado, nunca aprobado** (REQ-030 CA-08).
 - **CA-09 queda fuera**, con su sonda y sus resultados (FAIL 1 de 5 y SKIP 1 de 5 en el ensayo en CI sobre
   mecanismo idéntico); puede seguir bloqueando una integración, y esta decisión no promete desbloquear el
   PR #53.

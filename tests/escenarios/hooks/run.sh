@@ -600,6 +600,37 @@ sonda_juez_duplicacion() {
   fi
 }
 
+# sonda_juez_control_c3 <nombre> <techo ‰> <pares de v1.32.1 'u1:u2 …'> [<motivo sin línea base>]
+# REQ-030 CA-07 (g), SEC-108: el control del INSTRUMENTO de CA-03. Mide si el instrumento VE el
+# árbol cuadrático, con la misma resolución por repetición que CA-03 (a). FUNCIÓN PURA. Tres
+# resultados, y ninguno se convierte en otro:
+#   PASS        — ≥ 3 resueltas y TODAS > techo: el instrumento resolvía en esta corrida;
+#   FAIL        — ≥ 3 resueltas y TODAS <= techo: AVERÍA DEMOSTRADA, un FAIL real que pone el banco
+#                 en rojo (lo que hacía el `fail-before` retirado de CA-03);
+#   INCONCLUSO  — < 3 resueltas, resueltas mezcladas o sin línea base: el control NO PUDO ACREDITAR
+#                 el funcionamiento. No demuestra avería, y NO acredita el instrumento.
+sonda_juez_control_c3() {
+  local nombre="$1" techo="$2" her="$3" sinbase="${4:-}" t emin emax
+  sonda_x "$techo"; t="$SONDA_X"
+  if [ -n "$sinbase" ]; then
+    echo "  SKIP  $nombre  [INCONCLUSO] el control NO PUDO ACREDITAR el instrumento de CA-03 (no demuestra avería): sin línea base v1.32.1 ($sinbase) · 0 de $SONDA_COSTE_R repeticiones medidas · techo ${t}×"
+    return 0
+  fi
+  sonda_recorrido_pares "$her"
+  if [ "$REC_N" -lt "$SONDA_COSTE_MINRES" ]; then
+    echo "  SKIP  $nombre  [INCONCLUSO] el control NO PUDO ACREDITAR el instrumento de CA-03 (no demuestra avería): pocas resueltas, $REC_N de $REC_TOT (mínimo $SONDA_COSTE_MINRES): ${REC_RAZ}· ${REC_MOT}· techo ${t}×"
+    return 0
+  fi
+  sonda_x "$REC_MIN"; emin="$SONDA_X"; sonda_x "$REC_MAX"; emax="$SONDA_X"
+  if [ "$REC_MIN" -gt "$techo" ]; then
+    echo "  PASS  $nombre  el instrumento VE la cuadrática: mín(cociente de v1.32.1) ${emin}× > techo ${t}× en las $REC_N de $REC_TOT resueltas: ${REC_RAZ}— acredita que resolvía en esta corrida, no que detecte cualquier regresión"
+  elif [ "$REC_MAX" -le "$techo" ]; then
+    echo "  FAIL  $nombre  AVERÍA DEMOSTRADA del instrumento de CA-03: máx(cociente de v1.32.1) ${emax}× <= techo ${t}× en las $REC_N de $REC_TOT resueltas: ${REC_RAZ}— no distingue el árbol cuadrático, o la línea base no es la que dice ser; el cambio de la sonda no se acredita"
+  else
+    echo "  SKIP  $nombre  [INCONCLUSO] el control NO PUDO ACREDITAR el instrumento de CA-03 (no demuestra avería): resueltas mezcladas a ambos lados del techo ${t}×, recorrido [${emin}×, ${emax}×] en $REC_N de $REC_TOT: ${REC_RAZ}· presupuesto fijo, no se repite"
+  fi
+}
+
 # sonda_juez_razon <nombre> <techo ‰> <repeticiones 'ue:ue2:uh:uh2 …'> [<motivo sin línea base>]
 # REQ-030 CA-02 (CA-08 (ii) de REQ-017), y el mismo juez para los controles de CA-07. Cada
 # repetición trae mín y 2.º mín (µs) de este árbol y de la referencia. RESUELTA si los cuatro
@@ -1467,7 +1498,9 @@ done
 # deja de ser un caso aparte y pasa a ser la calibración, dentro del veredicto de CA-03; +2 en
 # 37/6, nueva (un caso sintético por juez de las sondas de coste); +6 en 37/7, nueva (los
 # controles I, W0 y WD por entrada, que sin `ARNES_SONDA_CONTROLES=1` dicen SKIP).
-CASOS_ESPERADOS=919
+# Y 919 → 920 por SEC-108 (REQ-030 CA-07 (g)): +1 en 37/7 (6 → 7), el control C3 del
+# instrumento de CA-03, también a demanda.
+CASOS_ESPERADOS=920
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

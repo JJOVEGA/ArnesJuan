@@ -114,9 +114,21 @@ if [ -z "$FILTRO" ] || printf '%s' "$nom46" | grep -qi -- "$FILTRO"; then
   # sólo depende de los extremos—. El procedimiento de `cfb1106`, con una lectura, dio FAIL
   # 2,693× sobre ese árbol; éste tiene que abstenerse.
   v46 'corrida 5 del ensayo en CI'                  INCONCLUSO "$(d46 '100000:198000 100000:210000 100000:230000 100000:250000 100000:269300' '100000:269900 100000:300000 100000:350000 100000:380000 100000:391900')"
-  if [ -z "$MAL46" ] && [ "$N46" -eq 17 ]; then
-    echo "  PASS  $nom46  $N46 de 17 vectores con la salida que la regla prescribe"
+  # C3, el control del instrumento de CA-03 (CA-07 (g), SEC-108): mismo cociente, misma resolución,
+  # y un FAIL de AVERÍA cuando todas las resueltas quedan en el techo o por debajo.
+  c46() { sonda_juez_control_c3 caso46 2600 "$1" "${2:-}"; }
+  v46 'C3: todas en 2,600 = avería demostrada'      FAIL       "$(c46 "$(r5 100000:260000)")"
+  v46 'C3: tiempos constantes (1,000×) = avería'    FAIL       "$(c46 "$(r5 100000:100000)")"
+  v46 'C3: 3 resueltas <= techo y 2 sin medir'      FAIL       "$(c46 '100000:200000 100000:210000 100000:220000 x x')"
+  v46 'C3: todas en 2,601 = ve la cuadrática'       PASS       "$(c46 "$(r5 100000:260100)")"
+  v46 'C3: 3 resueltas > techo y 2 bajo el suelo'   PASS       "$(c46 '100000:300000 100000:310000 100000:320000 40000:120000 40000:120000')"
+  v46 'C3: una en 2,601 y el resto en 2,600'        INCONCLUSO "$(c46 '100000:260100 100000:260000 100000:260000 100000:260000 100000:260000')"
+  v46 'C3: la forma de QA-030-05 (la #1 baja)'      INCONCLUSO "$(c46 '100000:255300 100000:394200 100000:392200 100000:400300 100000:409100')"
+  v46 'C3: 2 resueltas > techo'                     INCONCLUSO "$(c46 '100000:300000 100000:300000 x x x')"
+  v46 'C3: sin línea base'                          INCONCLUSO "$(c46 '' 'la-referencia-no-resuelve:v1.32.1')"
+  if [ -z "$MAL46" ] && [ "$N46" -eq 26 ]; then
+    echo "  PASS  $nom46  $N46 de 26 vectores con la salida que la regla prescribe"
   else
-    echo "  FAIL  $nom46  $N46 vectores corridos (se esperaban 17); no casan: ${MAL46:-ninguno}"
+    echo "  FAIL  $nom46  $N46 vectores corridos (se esperaban 26); no casan: ${MAL46:-ninguno}"
   fi
 fi
