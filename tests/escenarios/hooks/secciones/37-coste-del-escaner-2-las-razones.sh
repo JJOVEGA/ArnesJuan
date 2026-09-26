@@ -198,35 +198,57 @@ razon37() {
 # k=20 sobre 70 000 bytes es lo que hace falta para pasar el suelo de 50 ms EN ESTE ÁRBOL
 # (con k=10 la serie corta se queda en ~49 ms y la sonda tendría que decir SKIP).
 S37=70000
-u1_37=''; u2_37=''
-mide37 "$LIB37" arnes_sin_cita "$S37"          20 && u1_37="$MED37_US"
-mide37 "$LIB37" arnes_sin_cita "$(( S37 * 2 ))" 20 && u2_37="$MED37_US"
-razon37 "REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica" \
-  "$u2_37" "$u1_37" 2600 "cociente de duplicación (${S37}→$(( S37 * 2 )) bytes, k=20)"
-
-# FAIL-BEFORE. Un cociente verde no prueba nada si la sonda daría verde también sobre el
-# árbol enfermo: se comprueba que sobre v1.32.1 el MISMO cociente se pasa del techo. Con
-# k=1 basta —el árbol cuadrático cruza el suelo de 50 ms de sobra— y así el fail-before
-# cuesta segundos en vez de medio minuto.
-h1_37=''; h2_37=''
-if [ "$HER37_OK" = si ]; then
-  mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$S37"           1 && h1_37="$MED37_US"
-  mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$(( S37 * 2 ))" 1 && h2_37="$MED37_US"
-fi
-if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-03 fail-before" | grep -qi -- "$FILTRO"; then
-  if [ -z "$h1_37" ] || [ -z "$h2_37" ]; then
-    echo "  SKIP  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  no hay línea base v1.32.1 (${MED37_MOTIVO:-tag ausente})"
-  elif [ "$h1_37" -lt 50000 ] || [ "$h2_37" -lt 50000 ]; then
-    echo "  SKIP  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  serie bajo el suelo de 50 ms (${h1_37}µs / ${h2_37}µs)"
+# PRESUPUESTO FIJO (propuesta 2026-09-25): REP37 pares (S, 2S) sobre ESTE árbol y REP37 pares
+# sobre el heredado v1.32.1, con el MISMO k=20 los dos —hasta hoy la calibración usaba k=1,
+# un presupuesto 20 veces menor que la medición que calibra, y salió 2,443× una vez—. Las
+# razones de cada lado se publican enteras. Reglas, fijadas antes de medir:
+#   · CALIBRACIÓN resuelta si mín(razón heredada) > techo en todas sus repeticiones: el
+#     instrumento demuestra en ESTA corrida que ve el defecto que CA-03 arregla;
+#   · con la calibración NO resuelta, el caso directo es NO CONCLUYENTE aunque su razón esté
+#     bajo el techo: no se acredita con un instrumento que no resolvió;
+#   · con calibración resuelta: PASS si máx(razón este) <= techo; FAIL si mín(razón este) > techo;
+#     NO CONCLUYENTE si el techo cae dentro del recorrido.
+REP37=${ARNES_SONDA_REP:-5}
+u1_37=''; u2_37=''; RAZ37_ESTE=''; RAZ37_HER=''
+for _n37 in $(seq 1 "$REP37"); do
+  u1_37=''; u2_37=''
+  mide37 "$LIB37" arnes_sin_cita "$S37"          20 && u1_37="$MED37_US"
+  mide37 "$LIB37" arnes_sin_cita "$(( S37 * 2 ))" 20 && u2_37="$MED37_US"
+  if [ -n "$u1_37" ] && [ -n "$u2_37" ] && [ "$u1_37" -ge 50000 ]; then RAZ37_ESTE+="$(( u2_37 * 1000 / u1_37 )) "; else RAZ37_ESTE+="x "; fi
+  if [ "$HER37_OK" = si ]; then
+    h1_37=''; h2_37=''
+    mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$S37"           20 && h1_37="$MED37_US"
+    mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$(( S37 * 2 ))" 20 && h2_37="$MED37_US"
+    if [ -n "$h1_37" ] && [ -n "$h2_37" ] && [ "$h1_37" -ge 50000 ]; then RAZ37_HER+="$(( h2_37 * 1000 / h1_37 )) "; else RAZ37_HER+="x "; fi
+  fi
+done
+echo "  ·   ENSAYO dato CA-03 este=[$RAZ37_ESTE] her=[$RAZ37_HER] (milésimas, por repetición; x = no midió)"
+# recorrido de un vector de razones en milésimas: publica mín, máx y cuántas midieron
+recorrido37() { local v r n=0 mn='' mx=''; for r in $1; do [ "$r" = x ] && continue; n=$((n+1)); [ -z "$mn" ] || [ "$r" -lt "$mn" ] && mn=$r; [ -z "$mx" ] || [ "$r" -gt "$mx" ] && mx=$r; done; REC37_N=$n; REC37_MIN="$mn"; REC37_MAX="$mx"; }
+fmt37() { awk -v c="$1" 'BEGIN{printf "%.3f", c/1000}'; }
+nom37="REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica"
+if [ -z "$FILTRO" ] || printf '%s' "$nom37" | grep -qi -- "$FILTRO"; then
+  recorrido37 "$RAZ37_HER"; CAL37_N=$REC37_N; CAL37_MIN="$REC37_MIN"; CAL37_MAX="$REC37_MAX"
+  recorrido37 "$RAZ37_ESTE"
+  if [ "$HER37_OK" != si ]; then
+    echo "  SKIP  $nom37  [INCONCLUSO] sin línea base v1.32.1 no hay calibración en esta corrida (${MED37_MOTIVO:-tag ausente}); razones de este árbol: $(for r in $RAZ37_ESTE; do [ $r = x ] && printf 'x ' || printf '%s× ' $(fmt37 $r); done)"
+  elif [ "$CAL37_N" -lt 3 ] || [ -z "$CAL37_MIN" ] || [ "$CAL37_MIN" -le 2600 ]; then
+    echo "  SKIP  $nom37  [INCONCLUSO] la calibración NO resolvió: sobre v1.32.1 el cociente recorre [$(fmt37 ${CAL37_MIN:-0})×, $(fmt37 ${CAL37_MAX:-0})×] en $CAL37_N de $REP37 y no queda entero por encima del techo 2,600×; el instrumento no demostró ver el defecto en esta corrida · este árbol: [$(fmt37 ${REC37_MIN:-0})×, $(fmt37 ${REC37_MAX:-0})×] en $REC37_N de $REP37"
+  elif [ "$REC37_N" -lt 3 ]; then
+    echo "  SKIP  $nom37  [INCONCLUSO] sólo $REC37_N de $REP37 repeticiones midieron sobre este árbol (suelo o fallo de medida)"
+  elif [ "$REC37_MAX" -le 2600 ]; then
+    echo "  PASS  $nom37  máx(cociente) $(fmt37 $REC37_MAX)× <= techo 2,600× en $REC37_N de $REP37 (${S37}→$(( S37 * 2 )) bytes, k=20); calibración resuelta: v1.32.1 recorre [$(fmt37 $CAL37_MIN)×, $(fmt37 $CAL37_MAX)×]"; PASS=$((PASS+1))
+  elif [ "$REC37_MIN" -gt 2600 ]; then
+    echo "  FAIL  $nom37  mín(cociente) $(fmt37 $REC37_MIN)× > techo 2,600× en TODAS las $REC37_N repeticiones (${S37}→$(( S37 * 2 )) bytes, k=20); calibración resuelta: v1.32.1 recorre [$(fmt37 $CAL37_MIN)×, $(fmt37 $CAL37_MAX)×] — la medición excede el techo; no afirma la causa"; FAIL=$((FAIL+1))
   else
-    coc37=$(( h2_37 * 1000 / h1_37 ))
-    if [ "$coc37" -gt 2600 ]; then
-      echo "  PASS  REQ-017 CA-03 fail-before: sobre v1.32.1 el mismo cociente da $(awk -v c=$coc37 'BEGIN{printf "%.3f", c/1000}')× y se pasa del techo 2,600×"; PASS=$((PASS+1))
-    else
-      echo "  FAIL  REQ-017 CA-03 fail-before: sobre v1.32.1 el cociente da $(awk -v c=$coc37 'BEGIN{printf "%.3f", c/1000}')× y NO se pasa: la sonda no distingue el defecto que este REQ arregla"; FAIL=$((FAIL+1))
-    fi
+    echo "  SKIP  $nom37  [INCONCLUSO] el techo 2,600× cae DENTRO del recorrido [$(fmt37 $REC37_MIN)×, $(fmt37 $REC37_MAX)×] de este árbol ($REC37_N de $REP37); calibración resuelta [$(fmt37 $CAL37_MIN)×, $(fmt37 $CAL37_MAX)×]; presupuesto fijo, no se repite"
   fi
 fi
+
+# FAIL-BEFORE (calibración): RETIRADO como caso aparte con k=1 el 2026-09-25 (propuesta). Vive
+# arriba, dentro del veredicto de CA-03, con el MISMO presupuesto que la medición directa y
+# convertido en PRECONDICIÓN de resolución: si no resuelve, el caso directo es NO CONCLUYENTE,
+# nunca FAIL del candidato (el candidato no cambió; el instrumento no midió).
 
 # ---------- CA-04 · LA RAZÓN CONTRA LA ÚLTIMA VERSIÓN SIN LA GUARDA ----------
 # DESVIACIÓN DECLARADA, y no es un atajo: v1.32.0 NO TIENE `arnes_sin_cita` —la noción de

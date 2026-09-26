@@ -1310,7 +1310,10 @@ done
 # de seguridad sigue mandando sobre el piso del matiz. El caso 12.º no suma: era
 # `D16: ligero con matiz sigue ligero`, que declaraba `allow` sobre el propio
 # fail-open, y se corrige en su sitio en vez de añadirse.
-CASOS_ESPERADOS=912
+# ENSAYO ensayo/sondas-r5 (2026-09-25): 912 - 1 (el fail-before de CA-03 con k=1 se retira: la
+# calibracion vive dentro del caso directo) + 6 (seccion 37/9 de controles del ensayo) = 917.
+# Esta rama NUNCA se fusiona; el literal de main sigue siendo 912.
+CASOS_ESPERADOS=917
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

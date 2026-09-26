@@ -2,6 +2,9 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-25 · RAMA DE ENSAYO `ensayo/sondas-r5` (nunca se fusiona): procedimiento propuesto para las sondas de REQ-017 + sección de controles, para una comprobación acotada en CI autorizada por el propietario (máximo 5 ejecuciones)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. Contenido: parche `sondas-coste/propuesta-sondas-REQ-017.patch` (37/2 y 37/5: R=5 repeticiones, juez sobre el vector de razones, calibración de CA-03 en la misma corrida con k=20, marca `[INCONCLUSO]`), sección `37/9` de controles (idénticos, envoltorio 0, demora fija 40/100 ms), dos líneas de instrumentación y `CASOS_ESPERADOS` 912 → 917 sólo aquí. **No toca `hooks/`, `tools/`, umbrales, `.github/` ni ruleset. Los FAIL del control WD son esperados y ponen el check en rojo a propósito.** Preregistro y resultados en la rama de evidencia, `sondas-coste/ensayo-ci/`.
+
 ## [Interno] — 2026-09-21 · REQ-025 entrega 1 con las tres firmas; decisiones del propietario posteriores a la opción B pegadas literales en la cola (SEC-104); punto de retomar con la advertencia «no se cierra REQ-025»; fuente de la preferencia de consola identificada
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora. `PENDING_APPROVAL.md` §Resueltas gana una entrada «decisión tomada fuera de la cola y registrada a posteriori» con el texto literal del propietario que autorizó el write-back excepcional de SEC-102, confirmó la fecha 2026-10-21, aceptó que la coordinadora señale el primer caso (QA verifica), conservó S4 «no observado» y SEC-103 sin aceptación, y pidió no presentar REQ-028 como dependencia de cierre: es el remedio barato que SEC-104 describe; su cierre es del auditor. `docs/ESTADO.md` «RETOMAR AQUÍ»: QA `aprobado` (R-4), seguridad `aprobado` (R-041-A), cola 0, sólo `instrumento` abierto; **la puerta ya no impide cerrar y cerrar sería incorrecto porque la entrega 1b sigue pendiente (CA-15 punto 9)**; REQ-028 es trabajo separado, no dependencia. Fuente de la preferencia «edita por consola»: el propio Claude Code en modo de permisos `auto` (texto compilado en el binario; sin rastro en settings, CLAUDE.md, memoria ni plugin); nada modificado; detalle en la rama de evidencia `req-025/preferencia-consola-fuente.md`. Sin ensayos nuevos, sin otras entregas, sin fusión ni publicación; el CI de la cabeza resultante se adjunta en la rama de evidencia.
 
@@ -8091,3 +8094,11 @@ log y el REQ termine describiendo algo distinto de lo construido. Tres capas:
 
 ## [1.1.0] — 2026-06-01
 - Estructura inicial: 4 agentes, skills `/arnes-init` y `/arnes-close`, plantillas, hook pre-commit y tests.
+
+<!-- ENSAYO corrida 2 de 5 (2026-09-26T01:29:42Z): solo esta linea cambia; tests/ identico a 83f1e9c -->
+
+<!-- ENSAYO corrida 3 de 5 (2026-09-26T01:33:05Z): solo esta linea cambia; tests/ identico a 83f1e9c -->
+
+<!-- ENSAYO corrida 4 de 5 (2026-09-26T01:37:28Z): solo esta linea cambia; tests/ identico a 83f1e9c -->
+
+<!-- ENSAYO corrida 5 de 5 (2026-09-26T01:40:49Z): solo esta linea cambia; tests/ identico a 83f1e9c -->
