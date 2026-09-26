@@ -1,0 +1,3 @@
+# REQ-030 · logs de la vuelta 1 de QA (2026-09-25 hora local, −0600)
+
+Versión base validada: `cbfe8a2b2d00a05041516b6e1e980c846b4e048c` (rama `feat/req-030-sondas-r5`, sin push). Máquina: WSL2, 12 CPU, la misma del desarrollador. Método: los logs son la salida íntegra de `bash tests/escenarios/hooks/run.sh` (banco1 = modo por defecto; controles1..3 = con `ARNES_SONDA_CONTROLES=1`, las tres corridas fijadas por CA-07 (e); sintags = clon sin tags; autoprueba = `autoprueba-corredor.sh`). Las cifras transcritas y el veredicto están en `docs/qa/REQ-030.md` de esa rama, sección «Validación del qa-tester — vuelta 1». Copiados desde el scratchpad de la sesión antes de perderse; no se editaron.

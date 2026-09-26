@@ -1,0 +1,27 @@
+--- 37/2 · el coste del escáner: la escala y las razones (REQ-017 CA-03, CA-04 y CA-06) ---
+  SKIP  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  [INCONCLUSO] sin calibración: no hay línea base v1.32.1 en esta corrida (no-hay-.git-en-el-repositorio) · este árbol: 1.733× 2.014× 1.861× 1.984× 1.910× (5 de 5 resueltas) · techo 2.600×
+  SKIP  REQ-017 CA-04 el camino de campo no cuesta más de 2× lo que costaba en v1.32.0 (140 000 bytes sin CR)  no hay con qué medir: falta uno de los dos términos (medido=<557987> base=<vacío>)
+  SKIP  REQ-017 CA-04 fail-before: la razón delata a v1.32.1  falta línea base o serie bajo el suelo (v1.32.1=<vacío>µs v1.32.0=<vacío>µs)
+  PASS  REQ-017 CA-06 sin línea base y bajo el suelo de 50 ms la sonda emite SKIP con motivo, nunca PASS
+--- 37/5 · el camino de una cabecera normal: procesos y reloj (REQ-017 CA-08 y CA-06) ---
+  SKIP  REQ-017 CA-08 (i) un REQ real de 6 líneas: 0 procesos añadidos respecto a v1.32.1  sin línea base v1.32.1 (este=<5> heredado=<vacío>)
+  SKIP  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  [INCONCLUSO] sin línea base: el árbol v1.32.1 no se pudo materializar (no-hay-.git-en-el-repositorio) · 0 de 5 repeticiones medidas · techo 1.250×
+  SKIP  REQ-017 CA-08 (i) una cabecera de 200 líneas: 0 procesos añadidos respecto a v1.32.1  sin línea base v1.32.1 (este=<5> heredado=<vacío>)
+  SKIP  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  [INCONCLUSO] sin línea base: el árbol v1.32.1 no se pudo materializar (no-hay-.git-en-el-repositorio) · 0 de 5 repeticiones medidas · techo 1.250×
+  PASS  REQ-017 CA-08 (ii) la sonda que no converge se ABSTIENE: nunca PASS y nunca FAIL, y la abstención manda sobre el rojo  (7 sondas → PASS FAIL INCONCLUSO INCONCLUSO INCONCLUSO INCONCLUSO INCONCLUSO )
+  PASS  REQ-017 CA-06 el envoltorio resuelve rutas absolutas antes de tocar el PATH y no se llama a sí mismo (<5> procesos)
+  PASS  REQ-017 CA-06 el corredor acusa POR SU NOMBRE a la sección que deja un proceso vivo, y la vuelta sale en rojo
+aviso: vuelta parcial (2 de 53 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 4 PASS, 0 FAIL, 7 SKIP (de ellos 3 INCONCLUSO) — ninguna causa común: cada uno con su motivo
+INCONCLUSO: 3 — rendimiento NO acreditado en esta corrida; no pone el banco en rojo y un check verde no lo acredita (REQ-030):
+       ! REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica
+       ! REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1
+       ! REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1
+       · REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  [INCONCLUSO] sin calibración: no hay línea base v1.32.1 en esta corrida (no-hay-.git-en-el-repositorio) · este árbol: 1.733× 2.014× 1.861× 1.984× 1.910× (5 de 5 resueltas) · techo 2.600×
+       · REQ-017 CA-04 el camino de campo no cuesta más de 2× lo que costaba en v1.32.0 (140 000 bytes sin CR)  no hay con qué medir: falta uno de los dos términos (medido=<557987> base=<vacío>)
+       · REQ-017 CA-04 fail-before: la razón delata a v1.32.1  falta línea base o serie bajo el suelo (v1.32.1=<vacío>µs v1.32.0=<vacío>µs)
+       · REQ-017 CA-08 (i) un REQ real de 6 líneas: 0 procesos añadidos respecto a v1.32.1  sin línea base v1.32.1 (este=<5> heredado=<vacío>)
+       · REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  [INCONCLUSO] sin línea base: el árbol v1.32.1 no se pudo materializar (no-hay-.git-en-el-repositorio) · 0 de 5 repeticiones medidas · techo 1.250×
+       · REQ-017 CA-08 (i) una cabecera de 200 líneas: 0 procesos añadidos respecto a v1.32.1  sin línea base v1.32.1 (este=<5> heredado=<vacío>)
+       · REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  [INCONCLUSO] sin línea base: el árbol v1.32.1 no se pudo materializar (no-hay-.git-en-el-repositorio) · 0 de 5 repeticiones medidas · techo 1.250×
