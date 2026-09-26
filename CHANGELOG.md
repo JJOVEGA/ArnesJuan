@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-26 · REQ-030: QA vuelta 3 de 3 → `con-hallazgos`; REQ `bloqueado` (tope agotado) con QA-030-07 y QA-030-09 (`contrato`); SEC-108 sigue abierto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
+
+Sobre `7b96dcc`: la regla de CA-07 (e) se cumplió en las 3 corridas fijadas (C3 PASS 3/3, mín 3,221–3,611×; WD PASS 3/3; I/W0 sin FAIL) y el fail-before de C3 se cumplió (reloj constante → FAIL; bajo el suelo y mezcla → INCONCLUSO). Pero C3 mide con una **copia** del instrumento de 37/2: una avería reproducida en 37/2 (ruta de la línea base) deja C3 en PASS y CA-03 en INCONCLUSO → la validación (iii) acreditaría un instrumento roto (**QA-030-07**). **QA-030-09**: el resumen rotula un C3 INCONCLUSO como «rendimiento NO acreditado». Banco por defecto 213,1 s rc 0 (908/0/12, 1 INCONCLUSO); con palanca 356–374 s, rc 1 en 2 de 3 por casos ajenos (sección 25 y cuatro de REQ-021 en K2), conservados. No se pasó a seguridad. Decisión (A/B/C/D) en `PENDING_APPROVAL.md` § Pendientes. Logs íntegros en la rama de evidencia (`req-030/qa-vuelta-3/`). Sin push.
+
 ## [Interno] — 2026-09-26 · **REQ-030, vuelta 3 de 3 (desarrollador): control C3 del instrumento de CA-03 (SEC-108, opción A del propietario)**; banco a 920 casos
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (1M context) · agente: `desarrollador`. Sobre `8278153` más el árbol de trabajo, sin commit ni push. Decisión del propietario en `PENDING_APPROVAL.md` § Resueltas, «REQ-030: opción A para SEC-108».
 
