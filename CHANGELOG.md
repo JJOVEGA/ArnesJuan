@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-26 · REQ-030: QA de la intervención documental → `con-hallazgos` (QA-030-10, `contrato`: dos sedes siguen prometiendo «toda avería»); REQ `bloqueado`; SEC-110/SEC-109 sin determinar por seguridad
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
+
+Sobre `b20ad39` (código = `ccdc7e4`, sin diff en código): SEC-109(b) fiel en sus cinco puntos; la propuesta anterior no queda vigente; límites conservados (10 de 16, 2,603×, ≈ 0,20 no medido); SEC-110 corregido salvo dos frases (CA-07 (g) del REQ y README del banco) cuya promesa principal sigue absoluta. No se corrió banco ni ensayos (autorización documental). Seguridad no despachada (sólo tras QA favorable). Decisión en `PENDING_APPROVAL.md` § Pendientes. Sin push.
+
 ## [Interno] — 2026-09-26 · REQ-030: intervención documental por excepción del propietario — SEC-110 (cobertura de C3 dicha por efecto) y SEC-109(b) (decisión del propietario incorporada); sin código
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (analista-requerimientos) / Fable 5.1 (coordinadora) · agente: analista-requerimientos, coordinadora.
 
