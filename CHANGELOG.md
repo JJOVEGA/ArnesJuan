@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-26 · REQ-030: validación de QA, vuelta 2 de 3 → `QA: aprobado` sobre `322bc7c`
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
+
+Los 13 criterios pasan sobre `322bc7c`; QA-030-01, -02, -04 y -06 cerrados; quedan **QA-030-03** y **QA-030-05** (`instrumento`, no bloquean; el segundo es decisión del propietario: la calibración de CA-03 no resolvió en 4 de 7 corridas locales, siempre por la repetición #1 de v1.32.1). Banco completo de QA: 220,6 s, `908 PASS, 1 FAIL, 10 SKIP (0 INCONCLUSO)`, **rc 1** por un caso de reloj absoluto ajeno al REQ (sección 25), conservado y registrado en `docs/PENDIENTES.md`, no relanzado. Evidencia: `docs/qa/REQ-030.md` § vuelta 2; logs íntegros en la rama `evidencia/prueba-despacho-2026-09-14` (`req-030/qa-vuelta-2/`). Sin push.
+
 ## [Interno] — 2026-09-26 · **REQ-030, vuelta 2 de 3 (desarrollador)**: corregido el juez de CA-08 (ii) (QA-030-01), muertas las mutaciones M5 y M9 (QA-030-03) y recuperado el motivo de la sonda en las repeticiones que no miden (QA-030-06); vuelve a `en-revisión`
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (1M context) · agente: `desarrollador`. Sobre `cbfe8a2` más el árbol de trabajo, sin commit ni push.
 
