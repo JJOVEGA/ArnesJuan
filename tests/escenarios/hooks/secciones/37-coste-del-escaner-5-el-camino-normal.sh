@@ -8,13 +8,14 @@
 # — mientras el reloj de la ruta crítica se multiplicaba por diez. Una magnitud correcta,
 # medible sin ruido y ORTOGONAL a lo que se degradó. Por eso las dos aquí y en la misma
 # corrida: los procesos, porque el arreglo no vale si compra tiempo con un `fork`; y el
-# reloj, porque es lo que se degradó. Son baratas (~14 s) y corren SIEMPRE.
+# reloj, porque es lo que se degradó. Corren SIEMPRE; desde REQ-030 el reloj toma un
+# presupuesto fijo de repeticiones del par y lo juzga `sonda_juez_razon`, del corredor.
 #
 # PARTE 5 DE 5 POR REQ-014 CA-18: `mat47` viene DUPLICADO de
 # `37-coste-del-escaner-4-la-ruta-critica.sh`, donde está escrito su motivo largo, porque
 # CA-08 necesita el árbol heredado y CA-04 + CA-19 + H-04 hacen imposible factorizarlo.
 CASOS_ESPERADOS_SECCION=7
-PISO_AUTONOMO_SECCION=273  # 21 preámbulo (líneas 1-21) + 100 maquinaria compartida duplicada (num47 y mat47 con la línea base, líneas 22-121) + 152 bloque indivisible mayor (CA-08 entero: la medición de las dos magnitudes, veredicto08_47 y los casos que lo usan, líneas 123-274) · REQ-014 CA-18
+PISO_AUTONOMO_SECCION=261  # 22 preámbulo (líneas 1-22) + 100 maquinaria compartida duplicada (num47 y mat47 con la línea base, líneas 23-122) + 139 bloque indivisible mayor (CA-08 entero: la medición de las dos magnitudes con su presupuesto fijo y los casos que la juzgan, líneas 124-262) · REQ-014 CA-18
 seccion_nueva "--- 37/5 · el camino de una cabecera normal: procesos y reloj (REQ-017 CA-08 y CA-06) ---"
 
 BANCO47="${SEC_DIR%/}/../run.sh"
@@ -146,12 +147,21 @@ K47=4
 TECHO47=1250   # ‰. EL MISMO número para la razón y para la convergencia, y no es casualidad:
                # «un instrumento tiene que resolver al menos el factor que vigila». No es un
                # techo nuevo, es el de CA-08 (ii) leído sobre la propia sonda.
-declare -A PROCS47 RELOJ47 RELOJ2_47
+# PRESUPUESTO FIJO (REQ-030, ADR-012): el par intercalado completo —SER47 series por árbol—
+# se mide `SONDA_COSTE_R` veces por entrada (el literal del corredor, que no se lee del
+# entorno) y cada repetición guarda SU registro. Ninguna se descarta, se sustituye ni se
+# repite por su resultado: la que no midió entra como NO RESUELTA. Y no queda ninguna
+# medición fuera del presupuesto: el veredicto sale sólo de éstas (CA-02 (d)).
+declare -A PROCS47 REPS47 SINBASE47
 falta47=''
 JSON47="$RAIZ/json47-$BASHPID.json"
 for _cual47 in REQ-100 REQ-200; do
+  REPS47["$_cual47"]=''; SINBASE47["$_cual47"]=''
   json47 "$_cual47" > "$JSON47" 2>/dev/null
-  if [ ! -s "$JSON47" ]; then falta47="el JSON de $_cual47 salió vacío: el hook no habría recibido entrada"; continue; fi
+  if [ ! -s "$JSON47" ]; then
+    falta47="el JSON de $_cual47 salió vacío: el hook no habría recibido entrada"
+    SINBASE47["$_cual47"]="$falta47"; continue
+  fi
   # Los procesos, una vez por árbol: es un recuento, no una medida de reloj, y no tiene ruido.
   for _arb47 in este heredado; do
     _hd47="$HOOKS_DIR"; [ "$_arb47" = heredado ] && _hd47="$HER47/hooks"
@@ -167,28 +177,28 @@ for _cual47 in REQ-100 REQ-200; do
   # Y EL RELOJ, INTERCALADO EN UNA SOLA INVOCACIÓN. La alternancia la hace la sonda: las dos
   # series consecutivas de árboles distintos ven el mismo vecindario, y en bloque cada árbol
   # veía vecinos distintos (QA-017-06: 1,217 en bloque frente a 1,012 intercalado).
-  if [ "$HER47_OK" = si ]; then
-    _reg47="$("$UTIL_DIR/sonda-reloj.sh" --k "$K47" --r "$SER47" --etiqueta "$_cual47" \
+  if [ "$HER47_OK" != si ]; then
+    _m47='tag ausente'
+    case "$REGHER47" in *motivo=*) _m47="${REGHER47#*motivo=}"; _m47="${_m47%% *}" ;; esac
+    SINBASE47["$_cual47"]="el árbol v1.32.1 no se pudo materializar ($_m47)"; continue
+  fi
+  for ((_n47 = 1; _n47 <= SONDA_COSTE_R; _n47++)); do
+    _reg47="$("$UTIL_DIR/sonda-reloj.sh" --k "$K47" --r "$SER47" --etiqueta "$_cual47-$_n47" \
       --sujeto-a "CLAUDE_PROJECT_DIR='$PROJ' bash '$HOOKS_DIR/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" \
       --sujeto-b "CLAUDE_PROJECT_DIR='$PROJ' bash '$HER47/hooks/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" 2>/dev/null)"
-  else
-    _reg47="$("$UTIL_DIR/sonda-reloj.sh" --k "$K47" --r "$SER47" --etiqueta "$_cual47" \
-      --sujeto "CLAUDE_PROJECT_DIR='$PROJ' bash '$HOOKS_DIR/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" 2>/dev/null)"
-  fi
-  if sonda_lee "$_reg47" && [ "${SONDA[estado]}" = ok ]; then
-    RELOJ47["$_cual47-este"]="${SONDA[min_a]:-}";     RELOJ2_47["$_cual47-este"]="${SONDA[min2_a]:-}"
-    RELOJ47["$_cual47-heredado"]="${SONDA[min_b]:-}"; RELOJ2_47["$_cual47-heredado"]="${SONDA[min2_b]:-}"
-  else
-    falta47="la sonda de reloj no midió (${SONDA_MOTIVO:-estado=${SONDA[estado]:-?} motivo=${SONDA[motivo]:-?}})"
-    RELOJ47["$_cual47-este"]=''; RELOJ2_47["$_cual47-este"]=''
-    RELOJ47["$_cual47-heredado"]=''; RELOJ2_47["$_cual47-heredado"]=''
-  fi
+    if sonda_lee "$_reg47" && [ "${SONDA[estado]}" = ok ]; then
+      REPS47["$_cual47"]+="${SONDA[min_a]:-x}:${SONDA[min2_a]:-x}:${SONDA[min_b]:-x}:${SONDA[min2_b]:-x} "
+    else
+      REPS47["$_cual47"]+="x:x:x:x "   # no midió: entra como NO RESUELTA, no se descarta
+    fi
+  done
 done
 rm -f "$JSON47"
 
-# EL VEREDICTO DE CA-08 (ii), EN UNA FUNCIÓN PURA — y pura para poder probar la abstención con
-# entradas sintéticas: en una corrida sana la sonda CONVERGE, así que el camino que más
-# importa es justamente el que nunca se recorrería.
+# EL VEREDICTO DE CA-08 (ii) LO DICTA `sonda_juez_razon`, EN EL CORREDOR (REQ-030 CA-02): una
+# función pura que 37/6 prueba con vectores fijos y 37/7 con los controles de medición. Lo que
+# sigue es por qué la convergencia existe; desde REQ-030 es condición de que UNA REPETICIÓN
+# esté resuelta, y ya no decide el caso.
 #
 # LA SONDA DECLARA SU RESOLUCIÓN ANTES DE JUZGAR. Medido en la vuelta 1 con el procedimiento
 # sin implementar: 26 medidas, 2 en rojo (1,252× y 1,443× contra 1,250×) y 1 de cada 4 vueltas
@@ -198,31 +208,10 @@ rm -f "$JSON47"
 # negativo, luego 0,821–1,443 sobre el MISMO estimando es varianza de la sonda.
 #
 # Por eso, además de intercalar, se compara el SEGUNDO MÍNIMO con el MÍNIMO de CADA árbol
-# contra el PROPIO techo, y si lo supera el caso se ABSTIENE: nunca PASS y nunca FAIL. La
-# abstención no tapa una regresión real —una regresión sube los dos mínimos del árbol nuevo
-# por igual y NO separa su serie de sí misma; lo que separa una serie de sí misma es el
-# vecino—. Y el techo NO se toca: es `operativo` y su dirección admitida es BAJAR.
-veredicto08_47() {   # <nombre> <mín este> <2º mín este> <mín her> <2º mín her>
-  local nombre="$1" ue="${2:-}" ue2="${3:-}" uh="${4:-}" uh2="${5:-}" ce ch r x
-  for x in "$ue" "$ue2" "$uh" "$uh2"; do
-    num47 "$x" && [ "$x" -gt 0 ] && continue
-    echo "  SKIP  $nombre  la sonda no dio $SER47 series por árbol con sus dos mínimos (este ${ue:-vacío}/${ue2:-vacío}µs · heredada ${uh:-vacío}/${uh2:-vacío}µs)"; return 0
-  done
-  if [ "$uh" -lt 50000 ] || [ "$ue" -lt 50000 ]; then
-    echo "  SKIP  $nombre  serie por debajo del suelo de 50 ms (este ${ue}µs · heredada ${uh}µs): el reloj no distingue del ruido"; return 0
-  fi
-  ce=$(( ue2 * 1000 / ue )); ch=$(( uh2 * 1000 / uh ))
-  r=$(( ue * 1000 / uh ))
-  if [ "$ce" -gt "$TECHO47" ] || [ "$ch" -gt "$TECHO47" ]; then
-    echo "  SKIP  $nombre  la sonda NO convergió: segundo mínimo / mínimo = $(awk -v c=$ce 'BEGIN{printf "%.3f", c/1000}')× (este) y $(awk -v c=$ch 'BEGIN{printf "%.3f", c/1000}')× (heredada), por encima de su propio techo $(awk -v t=$TECHO47 'BEGIN{printf "%.3f", t/1000}')× — no puede distinguir una regresión de su ruido. La razón que sí obtuvo es $(awk -v c=$r 'BEGIN{printf "%.3f", c/1000}')×, y sobre eso no se firma"
-    return 0
-  fi
-  if [ "$r" -le "$TECHO47" ]; then
-    echo "  PASS  $nombre  $(awk -v c=$r 'BEGIN{printf "%.3f", c/1000}')× ($(awk -v u=$ue -v k=$K47 'BEGIN{printf "%.4f", u/(k*1e6)}') s/llamada frente a $(awk -v u=$uh -v k=$K47 'BEGIN{printf "%.4f", u/(k*1e6)}') s; convergencia $(awk -v c=$ce 'BEGIN{printf "%.3f", c/1000}')×/$(awk -v c=$ch 'BEGIN{printf "%.3f", c/1000}')×)"; PASS=$((PASS+1))
-  else
-    echo "  FAIL  $nombre  $(awk -v c=$r 'BEGIN{printf "%.3f", c/1000}')× > $(awk -v t=$TECHO47 'BEGIN{printf "%.3f", t/1000}')× ($(awk -v u=$ue -v k=$K47 'BEGIN{printf "%.4f", u/(k*1e6)}') s/llamada frente a $(awk -v u=$uh -v k=$K47 'BEGIN{printf "%.4f", u/(k*1e6)}') s), y la sonda SÍ convergió ($(awk -v c=$ce 'BEGIN{printf "%.3f", c/1000}')×/$(awk -v c=$ch 'BEGIN{printf "%.3f", c/1000}')×): esto es una regresión, no ruido"; FAIL=$((FAIL+1))
-  fi
-}
+# contra el PROPIO techo, y si lo supera esa repetición NO está resuelta: nunca cuenta para
+# PASS ni para FAIL. Eso no tapa una regresión real —una regresión sube los dos mínimos del
+# árbol nuevo por igual y NO separa su serie de sí misma; lo que separa una serie de sí misma
+# es el vecino—. Y el techo NO se toca: es `operativo` y su dirección admitida es BAJAR.
 
 for _cual47 in REQ-100 REQ-200; do
   _etq47="un REQ real de 6 líneas"; [ "$_cual47" = REQ-200 ] && _etq47="una cabecera de 200 líneas"
@@ -239,12 +228,7 @@ for _cual47 in REQ-100 REQ-200; do
   fi
   nom47="REQ-017 CA-08 (ii) $_etq47: el reloj no sube más de 1,25× el de v1.32.1"
   if [ -z "$FILTRO" ] || printf '%s' "$nom47" | grep -qi -- "$FILTRO"; then
-    ue47="${RELOJ47[$_cual47-este]:-}"; uh47="${RELOJ47[$_cual47-heredado]:-}"
-    if [ -z "$ue47" ] || [ -z "$uh47" ]; then
-      echo "  SKIP  $nom47  ${falta47:-no se pudo medir} (este=<${ue47:-vacío}>µs heredado=<${uh47:-vacío}>µs)"
-    else
-      veredicto08_47 "$nom47" "$ue47" "${RELOJ2_47[$_cual47-este]:-}" "$uh47" "${RELOJ2_47[$_cual47-heredado]:-}"
-    fi
+    sonda_juez_razon "$nom47" "$TECHO47" "${REPS47[$_cual47]:-}" "${SINBASE47[$_cual47]:-}"
   fi
 done
 
@@ -252,26 +236,30 @@ done
 # corrida sana la sonda converge, así que el camino que de verdad importa —la abstención— no
 # se recorrería nunca y nadie sabría si cierra. Es la misma lección que cerró QA-017-03 y
 # QA-017-04 una capa más arriba: la puerta corría sólo cuando la palanca la encendía.
+# Desde REQ-030 ejerce EL JUEZ QUE DECIDE (`sonda_juez_razon`, CA-06 (b)): las siete entradas
+# de siempre, cada una repetida en las `SONDA_COSTE_R` repeticiones, y la abstención tiene que
+# salir MARCADA como INCONCLUSO. Las fronteras del juez nuevo las prueba 37/6.
+cinco47() { local i s=''; for ((i = 0; i < SONDA_COSTE_R; i++)); do s+="$1 "; done; printf '%s' "$s"; }
 if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-08 (ii) la sonda que no converge se ABSTIENE" | grep -qi -- "$FILTRO"; then
   nom47="REQ-017 CA-08 (ii) la sonda que no converge se ABSTIENE: nunca PASS y nunca FAIL, y la abstención manda sobre el rojo"
   obs08_47="$( {
-    veredicto08_47 sonda-de-prueba 1000000 1050000 1000000 1020000   # converge y está bajo el techo
-    veredicto08_47 sonda-de-prueba 1300000 1310000 1000000 1020000   # converge y lo CRUZA: eso sí es FAIL
-    veredicto08_47 sonda-de-prueba 1000000 1400000 1000000 1020000   # este árbol no converge (1,400×)
-    veredicto08_47 sonda-de-prueba 1000000 1050000 1000000 1400000   # la heredada no converge
-    veredicto08_47 sonda-de-prueba 1300000 1700000 1000000 1020000   # cruzaría el techo Y no converge (1,308×): manda la abstención
-    veredicto08_47 sonda-de-prueba      '' 1050000 1000000 1020000   # falta un número
-    veredicto08_47 sonda-de-prueba   40000   41000   40000   41000   # bajo el suelo de 50 ms
-  } 2>&1 | sed -nE 's/^  (PASS|FAIL|SKIP)  .*/\1/p' | tr '\n' ' ' )"
-  esp08_47='PASS FAIL SKIP SKIP SKIP SKIP SKIP '
+    sonda_juez_razon sonda-de-prueba "$TECHO47" "$(cinco47 1000000:1050000:1000000:1020000)"   # converge y está bajo el techo
+    sonda_juez_razon sonda-de-prueba "$TECHO47" "$(cinco47 1300000:1310000:1000000:1020000)"   # converge y lo CRUZA: eso sí es FAIL
+    sonda_juez_razon sonda-de-prueba "$TECHO47" "$(cinco47 1000000:1400000:1000000:1020000)"   # este árbol no converge (1,400×)
+    sonda_juez_razon sonda-de-prueba "$TECHO47" "$(cinco47 1000000:1050000:1000000:1400000)"   # la heredada no converge
+    sonda_juez_razon sonda-de-prueba "$TECHO47" "$(cinco47 1300000:1700000:1000000:1020000)"   # cruzaría el techo Y no converge: manda la abstención
+    sonda_juez_razon sonda-de-prueba "$TECHO47" "$(cinco47 :1050000:1000000:1020000)"          # falta un número
+    sonda_juez_razon sonda-de-prueba "$TECHO47" "$(cinco47 40000:41000:40000:41000)"           # bajo el suelo de 50 ms
+  } 2>&1 | sed -nE 's/^  (PASS|FAIL)  .*/\1/p; s/^  SKIP  sonda-de-prueba  \[INCONCLUSO\] .*/INCONCLUSO/p; s/^  SKIP  .*/SKIP-SIN-MARCA/p' | tr '\n' ' ' )"
+  esp08_47='PASS FAIL INCONCLUSO INCONCLUSO INCONCLUSO INCONCLUSO INCONCLUSO '
   if [ "$obs08_47" = "$esp08_47" ]; then
-    echo "  PASS  $nom47  (7 sondas → $obs08_47)"; PASS=$((PASS+1))
+    echo "  PASS  $nom47  (7 sondas → $obs08_47)"
   else
-    echo "  FAIL  $nom47  se esperaba <$esp08_47> y se obtuvo <$obs08_47>"; FAIL=$((FAIL+1))
+    echo "  FAIL  $nom47  se esperaba <$esp08_47> y se obtuvo <$obs08_47>"
   fi
 fi
-# Los contadores no se tocan de más: `veredicto08_47` corrió dentro de una sustitución de
-# comandos, que es un subshell, y sus PASS/FAIL murieron con él.
+# Los contadores no se tocan: el juez es puro —sólo escribe una línea— y corrió dentro de una
+# sustitución de comandos; el banco cuenta del TEXTO que llega a la salida de la sección.
 
 # La sonda de procesos se comprueba A SÍ MISMA: si el envoltorio se resolviera a sí mismo
 # —el fallo real de 1.32.1— la sonda tiene que DECIRLO y no dar un número. Se le da un

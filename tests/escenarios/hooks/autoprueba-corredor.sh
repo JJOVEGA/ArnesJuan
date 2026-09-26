@@ -22,7 +22,7 @@ PASS=0; FAIL=0
 # Cuántos casos corre esta autoprueba. Se comprueba al final: la misma invariante que
 # el banco exige a cada archivo de sección, aplicada al artefacto que certifica al
 # corredor (QA 1.32.0, H-06).
-AUTOPRUEBA_CASOS_ESPERADOS=106
+AUTOPRUEBA_CASOS_ESPERADOS=113   # 106 → 113 por REQ-030 CA-05 (e): el recuento de inconclusos
 
 command -v jq >/dev/null 2>&1 || { echo "SKIP: jq no instalado"; exit 0; }
 
@@ -510,6 +510,39 @@ SALIDA="$(ARNES_SECCIONES_DIR="$DIRSEC" ARNES_HOOKS_DIR="$RAIZ/sin-hooks" bash "
 casa "CA-09 sin hooks el canario aborta la corrida entera" 'ABORT: el canario no denegó' "$SALIDA"
 no_casa "CA-09 y no llegó a ejecutarse ninguna sección" 'esta sección no debería haber corrido' "$SALIDA"
 igual "CA-09 y sale distinta de 0" "no-cero" "$([ "$RC" -ne 0 ] && echo no-cero || echo cero)"
+
+# --- REQ-030 CA-05 · los INCONCLUSOS se cuentan aparte y se nombran -----------
+# PAR DISCRIMINANTE (CA-05 (e)): la MISMA sección con la línea marcada, sin la marca y con la
+# marca dentro de un PASS. Un recuento que contara todo SKIP, o todo texto que lleve la marca,
+# daría el mismo número en las tres; éste tiene que dar 1, 0 y 0. Y la cuarta cierra «tras el
+# nombre»: un SKIP que menciona la marca más adelante tampoco es un inconcluso.
+nuevo_dir
+pon_seccion "01-inconclusa.sh" 2 'echo "  PASS  caso normal"
+echo "  SKIP  sonda de coste de prueba  [INCONCLUSO] el techo cae dentro del recorrido"'
+corre_corredor
+casa "REQ-030 CA-05 (e) un SKIP con la marca tras el nombre: el resumen cuenta 1 INCONCLUSO" \
+  '^Resultado: 1 PASS, 0 FAIL, 1 SKIP \(de ellos 1 INCONCLUSO\)' "$SALIDA"
+casa "REQ-030 CA-05 (a) …y lo NOMBRA tras la línea Resultado" '^       ! sonda de coste de prueba$' "$SALIDA"
+igual "REQ-030 CA-05 (d) con 0 FAIL el corredor sale 0 aunque haya un inconcluso" "0" "$RC"
+nuevo_dir
+pon_seccion "01-inconclusa.sh" 2 'echo "  PASS  caso normal"
+echo "  SKIP  sonda de coste de prueba  el techo cae dentro del recorrido"'
+corre_corredor
+casa "REQ-030 CA-05 (e) la misma línea SKIP SIN la marca: 0 INCONCLUSO" \
+  '^Resultado: 1 PASS, 0 FAIL, 1 SKIP \(de ellos 0 INCONCLUSO\)' "$SALIDA"
+no_casa "REQ-030 CA-05 (e) …y no nombra a nadie" '^       ! ' "$SALIDA"
+nuevo_dir
+pon_seccion "01-inconclusa.sh" 2 'echo "  PASS  sonda de coste de prueba  [INCONCLUSO] es un PASS"
+echo "  SKIP  caso normal  se abstiene por su palanca"'
+corre_corredor
+casa "REQ-030 CA-05 (e) la marca dentro de una línea PASS: 0 INCONCLUSO" \
+  '^Resultado: 1 PASS, 0 FAIL, 1 SKIP \(de ellos 0 INCONCLUSO\)' "$SALIDA"
+nuevo_dir
+pon_seccion "01-inconclusa.sh" 2 'echo "  PASS  caso normal"
+echo "  SKIP  sonda de coste de prueba  cita la marca [INCONCLUSO] lejos del nombre"'
+corre_corredor
+casa "REQ-030 CA-05 (b) un SKIP que cita la marca lejos del nombre: 0 INCONCLUSO" \
+  '^Resultado: 1 PASS, 0 FAIL, 1 SKIP \(de ellos 0 INCONCLUSO\)' "$SALIDA"
 
 # --- Estructura del árbol real: CA-01, CA-11, CA-18, CA-19, CA-27 -------------
 igual "CA-01 run.sh no contiene ninguna definición seccion_NN()" "0" \

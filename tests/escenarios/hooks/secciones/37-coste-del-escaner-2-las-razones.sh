@@ -1,6 +1,7 @@
 # ---------- 37 (2/5) · EL COSTE DEL ESCÁNER: LAS RAZONES ----------
-# REQ-017. La escala (CA-03), la razón contra la última versión sin la guarda (CA-04) y la
-# regla de que una sonda que no pudo medir dice SKIP y nunca PASS (CA-06).
+# REQ-017. La escala (CA-03, con el procedimiento de REQ-030), la razón contra la última
+# versión sin la guarda (CA-04) y la regla de que una sonda que no pudo medir dice SKIP y
+# nunca PASS (CA-06).
 #
 # POR QUÉ TODO AQUÍ SON RAZONES Y NO SEGUNDOS. Un techo en segundos lo falsea la máquina
 # y lo falsea la carga —esta misma ventana midió lo que pasa cuando una sonda desbocada
@@ -16,8 +17,8 @@
 # cambio de mecanismo no autorizado—. Su motivo largo, y las cuatro propiedades de CA-05
 # que porta, están escritos UNA vez, en `37-coste-del-escaner-1-el-dominio.sh`. Ésta es la
 # única parte que materializa ADEMÁS v1.32.0: sólo la usa CA-04.
-CASOS_ESPERADOS_SECCION=5
-PISO_AUTONOMO_SECCION=192  # 24 preámbulo (líneas 1-24) + 122 maquinaria compartida duplicada (mat37 y las dos líneas base, líneas 25-146) + 46 bloque indivisible mayor (mide37 y razon37, el medidor y la única puerta de las tres razones, líneas 148-193) · REQ-014 CA-18
+CASOS_ESPERADOS_SECCION=4  # 5 → 4 por REQ-030: `REQ-017 CA-03 fail-before` pasa a ser la calibración, dentro del veredicto de CA-03
+PISO_AUTONOMO_SECCION=194  # 25 preámbulo (líneas 1-25) + 122 maquinaria compartida duplicada (mat37 y las dos líneas base, líneas 26-147) + 47 bloque indivisible mayor (mide37 y razon37, el medidor y la puerta de las razones de una lectura, líneas 149-195) · REQ-014 CA-18
 seccion_nueva "--- 37/2 · el coste del escáner: la escala y las razones (REQ-017 CA-03, CA-04 y CA-06) ---"
 
 num37() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
@@ -170,7 +171,8 @@ mide37() {   # <lib> <fn> <bytes> <k> -> MED37_US = mínimo de 3 series, en micr
 }
 
 # razon37 <nombre> <us_medido> <us_base> <techo_por_mil> <qué mide>
-# UNA SOLA puerta para las tres razones de esta sección, y con la regla de CA-06 metida
+# UNA SOLA puerta para las razones de UNA lectura de esta sección (CA-04; CA-03 decide desde
+# REQ-030 con `sonda_juez_duplicacion`, del corredor), y con la regla de CA-06 metida
 # dentro: si falta cualquiera de los dos términos, o si alguna serie no llega al suelo de
 # 50 ms (donde el reloj deja de tener resolución frente al ruido), el caso dice SKIP CON
 # EL MOTIVO Y CON EL NÚMERO QUE SÍ OBTUVO, y NUNCA PASS. Un PASS de una sonda que no pudo
@@ -197,35 +199,41 @@ razon37() {
 # Lineal ≈ 2, cuadrático ≈ 4. La velocidad de la máquina se cancela.
 # k=20 sobre 70 000 bytes es lo que hace falta para pasar el suelo de 50 ms EN ESTE ÁRBOL
 # (con k=10 la serie corta se queda en ~49 ms y la sonda tendría que decir SKIP).
+#
+# UNA LECTURA POR CORRIDA YA NO DECIDE (REQ-030, ADR-012): el techo 2,6 cae DENTRO de la
+# dispersión del runner sobre código idéntico (1,49–2,75 en 11 corridas de CI). Se toman
+# `SONDA_COSTE_R` repeticiones —el literal del corredor, que no se lee del entorno— y en CADA
+# una se mide este árbol (S y 2S) y el heredado v1.32.1 (S y 2S), los cuatro con k=20.
+# Ninguna se descarta, se sustituye ni se repite por su resultado; decide
+# `sonda_juez_duplicacion`, que vive en el corredor.
+#
+# EL FAIL-BEFORE YA NO ES UN CASO APARTE. Era `REQ-017 CA-03 fail-before`, con k=1 —un
+# presupuesto 20 veces menor que la medición que calibraba, y salió 2,443× una vez sobre el
+# árbol enfermo—. Ahora es la CALIBRACIÓN, con el mismo k y en la misma corrida, y es
+# PRECONDICIÓN del veredicto: si el instrumento no demuestra ver el defecto, el caso no
+# decide, y nunca es FAIL del candidato.
 S37=70000
-u1_37=''; u2_37=''
-mide37 "$LIB37" arnes_sin_cita "$S37"          20 && u1_37="$MED37_US"
-mide37 "$LIB37" arnes_sin_cita "$(( S37 * 2 ))" 20 && u2_37="$MED37_US"
-razon37 "REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica" \
-  "$u2_37" "$u1_37" 2600 "cociente de duplicación (${S37}→$(( S37 * 2 )) bytes, k=20)"
-
-# FAIL-BEFORE. Un cociente verde no prueba nada si la sonda daría verde también sobre el
-# árbol enfermo: se comprueba que sobre v1.32.1 el MISMO cociente se pasa del techo. Con
-# k=1 basta —el árbol cuadrático cruza el suelo de 50 ms de sobra— y así el fail-before
-# cuesta segundos en vez de medio minuto.
-h1_37=''; h2_37=''
-if [ "$HER37_OK" = si ]; then
-  mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$S37"           1 && h1_37="$MED37_US"
-  mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$(( S37 * 2 ))" 1 && h2_37="$MED37_US"
-fi
-if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-03 fail-before" | grep -qi -- "$FILTRO"; then
-  if [ -z "$h1_37" ] || [ -z "$h2_37" ]; then
-    echo "  SKIP  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  no hay línea base v1.32.1 (${MED37_MOTIVO:-tag ausente})"
-  elif [ "$h1_37" -lt 50000 ] || [ "$h2_37" -lt 50000 ]; then
-    echo "  SKIP  REQ-017 CA-03 fail-before: la sonda distingue el árbol cuadrático  serie bajo el suelo de 50 ms (${h1_37}µs / ${h2_37}µs)"
-  else
-    coc37=$(( h2_37 * 1000 / h1_37 ))
-    if [ "$coc37" -gt 2600 ]; then
-      echo "  PASS  REQ-017 CA-03 fail-before: sobre v1.32.1 el mismo cociente da $(awk -v c=$coc37 'BEGIN{printf "%.3f", c/1000}')× y se pasa del techo 2,600×"; PASS=$((PASS+1))
-    else
-      echo "  FAIL  REQ-017 CA-03 fail-before: sobre v1.32.1 el cociente da $(awk -v c=$coc37 'BEGIN{printf "%.3f", c/1000}')× y NO se pasa: la sonda no distingue el defecto que este REQ arregla"; FAIL=$((FAIL+1))
-    fi
+PARES37_ESTE=''; PARES37_HER=''
+for ((_n37 = 1; _n37 <= SONDA_COSTE_R; _n37++)); do
+  u1_37=''; u2_37=''
+  mide37 "$LIB37" arnes_sin_cita "$S37"          20 && u1_37="$MED37_US"
+  mide37 "$LIB37" arnes_sin_cita "$(( S37 * 2 ))" 20 && u2_37="$MED37_US"
+  PARES37_ESTE+="${u1_37:-x}:${u2_37:-x} "   # la que no midió entra como NO RESUELTA
+  if [ "$HER37_OK" = si ]; then
+    h1_37=''; h2_37=''
+    mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$S37"           20 && h1_37="$MED37_US"
+    mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$(( S37 * 2 ))" 20 && h2_37="$MED37_US"
+    PARES37_HER+="${h1_37:-x}:${h2_37:-x} "
   fi
+done
+SINBASE37=''
+if [ "$HER37_OK" != si ]; then
+  SINBASE37='tag ausente'
+  case "$REGHER37" in *motivo=*) SINBASE37="${REGHER37#*motivo=}"; SINBASE37="${SINBASE37%% *}" ;; esac
+fi
+nom37="REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica"
+if [ -z "$FILTRO" ] || printf '%s' "$nom37" | grep -qi -- "$FILTRO"; then
+  sonda_juez_duplicacion "$nom37" 2600 "$PARES37_ESTE" "$PARES37_HER" "$SINBASE37"
 fi
 
 # ---------- CA-04 · LA RAZÓN CONTRA LA ÚLTIMA VERSIÓN SIN LA GUARDA ----------

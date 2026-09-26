@@ -499,6 +499,156 @@ sonda_banda() {
   esac
 }
 
+# --- EL JUEZ DE LAS SONDAS DE COSTE DE PRESUPUESTO FIJO (REQ-030, ADR-012) -----
+# REQ-017 CA-03 y CA-08 (ii) deciden sobre un PRESUPUESTO FIJO de repeticiones con un
+# evaluador por RECORRIDO, y cuando no resuelven dicen INCONCLUSO: rendimiento NO acreditado
+# en esa corrida, impreso como `SKIP <nombre>  [INCONCLUSO] …` (el banco sigue teniendo tres
+# clases; el resumen final los cuenta aparte).
+#
+# POR QUÉ VIVE EN EL CORREDOR Y NO EN LAS SECCIONES QUE MIDEN. Lo usan cuatro: 37/2 y 37/5
+# para decidir, 37/6 para probarlo con vectores fijos y 37/7 con los controles de medición.
+# REQ-014 CA-04 no admite un ayudante compartido definido dentro de una sección, y una copia
+# por sección haría que la prueba sintética acreditara una función que no decide nada. Y por
+# el mismo motivo que la banda de arriba: alterar lo que se mide y alterar quién lo juzga
+# quedan en dos archivos distintos.
+#
+# LOS NÚMEROS SON DE CONTRATO (REQ-030 CA-01) y van como LITERALES: no se leen del entorno
+# ni de ningún sitio que se pueda fijar desde fuera en la corrida. Un presupuesto que se baja
+# desde fuera es la forma mecánica de «ajustar parámetros para obtener verde». Los TECHOS no
+# viven aquí: los pasa cada sección, que es donde REQ-017 los contrata.
+SONDA_COSTE_R=5          # repeticiones por caso y corrida: ni una más, ni una menos
+SONDA_COSTE_MINRES=3     # repeticiones resueltas que hacen falta para decidir
+SONDA_COSTE_SUELO=50000  # µs: bajo 50 ms el reloj no distingue del ruido (requirements/README.md (d))
+
+# sonda_x <milésimas> -> SONDA_X = "1.250". `printf -v` es builtin: sin proceso por cifra.
+SONDA_X=''
+sonda_x() { printf -v SONDA_X '%d.%03d' "$(( 10#$1 / 1000 ))" "$(( 10#$1 % 1000 ))"; }
+
+# sonda_repeticiones <lista> -> SONDA_REPS (array) y SONDA_REPS_TOT. El denominador es el
+# presupuesto aunque la lista traiga menos: una repetición AUSENTE entra como no resuelta y
+# nunca achica el denominador (CA-01 (b)). `read -a` y no `for x in $lista`: sin glob.
+declare -a SONDA_REPS=()
+SONDA_REPS_TOT=0
+sonda_repeticiones() {
+  SONDA_REPS=()
+  read -r -a SONDA_REPS <<< "${1:-}"
+  SONDA_REPS_TOT=${#SONDA_REPS[@]}
+  [ "$SONDA_REPS_TOT" -ge "$SONDA_COSTE_R" ] || SONDA_REPS_TOT=$SONDA_COSTE_R
+}
+
+# sonda_recorrido_pares <pares 'u1:u2 …'> — un lado de CA-03: µs de la serie S y de la 2S.
+# Una repetición está RESUELTA si midió sus dos series (enteros positivos) y la serie corta
+# llega al suelo (REQ-030 CA-03 (a)). Deja REC_N (resueltas), REC_TOT, REC_MIN, REC_MAX (‰),
+# REC_RAZ (todas, en orden, `x` la no resuelta) y REC_MOT (el motivo de cada no resuelta).
+REC_N=0; REC_TOT=0; REC_MIN=''; REC_MAX=''; REC_RAZ=''; REC_MOT=''
+sonda_recorrido_pares() {
+  local rep u1 u2 r i=0
+  sonda_repeticiones "${1:-}"
+  REC_N=0; REC_TOT=$SONDA_REPS_TOT; REC_MIN=''; REC_MAX=''; REC_RAZ=''; REC_MOT=''
+  while [ "$i" -lt "$REC_TOT" ]; do
+    rep="${SONDA_REPS[i]:-}"; i=$((i + 1))
+    if [ -z "$rep" ]; then REC_MOT+="#$i:ausente "; REC_RAZ+="x "; continue; fi
+    u1="${rep%%:*}"; u2="${rep#*:}"
+    if [ "$u1" = "$rep" ] || ! sonda_num "$u1" || ! sonda_num "$u2" || [ "$((10#$u1))" -eq 0 ] || [ "$((10#$u2))" -eq 0 ]; then
+      REC_MOT+="#$i:no-midió "; REC_RAZ+="x "; continue
+    fi
+    if [ "$((10#$u1))" -lt "$SONDA_COSTE_SUELO" ]; then REC_MOT+="#$i:suelo(${u1}µs) "; REC_RAZ+="x "; continue; fi
+    r=$(( 10#$u2 * 1000 / 10#$u1 )); sonda_x "$r"; REC_RAZ+="$SONDA_X× "
+    REC_N=$((REC_N + 1))
+    if [ -z "$REC_MIN" ] || [ "$r" -lt "$REC_MIN" ]; then REC_MIN=$r; fi
+    if [ -z "$REC_MAX" ] || [ "$r" -gt "$REC_MAX" ]; then REC_MAX=$r; fi
+  done
+}
+
+# sonda_juez_duplicacion <nombre> <techo ‰> <pares de este árbol> <pares de v1.32.1> [<motivo sin línea base>]
+# REQ-030 CA-03, en su orden. FUNCIÓN PURA: no mide, no toca contadores (el banco cuenta del
+# TEXTO) y escribe UNA línea. La calibración —el MISMO cociente sobre v1.32.1, con el mismo
+# presupuesto y en la misma corrida— es PRECONDICIÓN: si no resuelve, el caso no decide, y
+# nunca es FAIL del candidato (el candidato no cambió; el instrumento no midió).
+sonda_juez_duplicacion() {
+  local nombre="$1" techo="$2" este="$3" her="$4" sinbase="${5:-}"
+  local t cn ctot cmin cmax cal emin emax
+  sonda_x "$techo"; t="$SONDA_X"
+  if [ -n "$sinbase" ]; then
+    sonda_recorrido_pares "$este"
+    echo "  SKIP  $nombre  [INCONCLUSO] sin calibración: no hay línea base v1.32.1 en esta corrida ($sinbase) · este árbol: ${REC_RAZ}($REC_N de $REC_TOT resueltas) · techo ${t}×"
+    return 0
+  fi
+  sonda_recorrido_pares "$her"
+  cn=$REC_N; ctot=$REC_TOT; cmin="$REC_MIN"; cmax="$REC_MAX"
+  cal="v1.32.1: ${REC_RAZ}($cn de $ctot resueltas)"
+  sonda_recorrido_pares "$este"
+  # Exactamente el techo NO resuelve (CA-03 (b)): la calibración tiene que quedar ENTERA por
+  # encima, o el instrumento no demostró ver el defecto en esta corrida.
+  if [ "$cn" -lt "$SONDA_COSTE_MINRES" ] || [ "$cmin" -le "$techo" ]; then
+    echo "  SKIP  $nombre  [INCONCLUSO] la calibración NO resolvió: hacen falta $SONDA_COSTE_MINRES o más repeticiones resueltas de v1.32.1 y todas por encima de ${t}× · $cal · este árbol: ${REC_RAZ}($REC_N de $REC_TOT resueltas) · no es FAIL del candidato: el instrumento no demostró ver el defecto"
+    return 0
+  fi
+  sonda_x "$cmin"; cal="calibración resuelta: v1.32.1 recorre [$SONDA_X×"
+  sonda_x "$cmax"; cal+=", $SONDA_X×] en $cn de $ctot"
+  if [ "$REC_N" -lt "$SONDA_COSTE_MINRES" ]; then
+    echo "  SKIP  $nombre  [INCONCLUSO] pocas resueltas: $REC_N de $REC_TOT sobre este árbol (mínimo $SONDA_COSTE_MINRES): ${REC_RAZ}· ${REC_MOT}· $cal · presupuesto fijo, no se repite"
+    return 0
+  fi
+  sonda_x "$REC_MIN"; emin="$SONDA_X"; sonda_x "$REC_MAX"; emax="$SONDA_X"
+  if [ "$REC_MAX" -le "$techo" ]; then
+    echo "  PASS  $nombre  máx(cociente) ${emax}× <= techo ${t}× en $REC_N de $REC_TOT resueltas: ${REC_RAZ}· $cal"
+  elif [ "$REC_MIN" -gt "$techo" ]; then
+    echo "  FAIL  $nombre  mín(cociente) ${emin}× > techo ${t}× en las $REC_N de $REC_TOT resueltas: ${REC_RAZ}· $cal — describe una medición que excede el techo; no afirma la causa"
+  else
+    echo "  SKIP  $nombre  [INCONCLUSO] el techo ${t}× cae DENTRO del recorrido [${emin}×, ${emax}×] de este árbol ($REC_N de $REC_TOT resueltas): ${REC_RAZ}· $cal · presupuesto fijo, no se repite"
+  fi
+}
+
+# sonda_juez_razon <nombre> <techo ‰> <repeticiones 'ue:ue2:uh:uh2 …'> [<motivo sin línea base>]
+# REQ-030 CA-02 (CA-08 (ii) de REQ-017), y el mismo juez para los controles de CA-07. Cada
+# repetición trae mín y 2.º mín (µs) de este árbol y de la referencia. RESUELTA si los cuatro
+# son enteros positivos, los dos mínimos llegan al suelo y CADA brazo converge
+# (2.º mín / mín <= techo; la igualdad converge). La convergencia es precondición de la
+# repetición y nunca decide el caso. FUNCIÓN PURA, como la de arriba.
+sonda_juez_razon() {
+  local nombre="$1" techo="$2" lista="$3" sinbase="${4:-}"
+  local rep ue ue2 uh uh2 sobra ce ch r i=0 res=0 rmin='' rmax='' razones='' motivos='' t emin emax
+  sonda_x "$techo"; t="$SONDA_X"
+  if [ -n "$sinbase" ]; then
+    echo "  SKIP  $nombre  [INCONCLUSO] sin línea base: $sinbase · 0 de $SONDA_COSTE_R repeticiones medidas · techo ${t}×"
+    return 0
+  fi
+  sonda_repeticiones "$lista"
+  while [ "$i" -lt "$SONDA_REPS_TOT" ]; do
+    rep="${SONDA_REPS[i]:-}"; i=$((i + 1))
+    if [ -z "$rep" ]; then motivos+="#$i:ausente "; continue; fi
+    ue=''; ue2=''; uh=''; uh2=''; sobra=''
+    IFS=: read -r ue ue2 uh uh2 sobra <<< "$rep"
+    if [ -n "$sobra" ] || ! sonda_num "$ue" || ! sonda_num "$ue2" || ! sonda_num "$uh" || ! sonda_num "$uh2" \
+       || [ "$((10#$ue))" -eq 0 ] || [ "$((10#$uh))" -eq 0 ]; then
+      motivos+="#$i:no-midió "; continue
+    fi
+    if [ "$((10#$ue))" -lt "$SONDA_COSTE_SUELO" ] || [ "$((10#$uh))" -lt "$SONDA_COSTE_SUELO" ]; then
+      motivos+="#$i:suelo(${ue}/${uh}µs) "; continue
+    fi
+    ce=$(( 10#$ue2 * 1000 / 10#$ue )); ch=$(( 10#$uh2 * 1000 / 10#$uh ))
+    if [ "$ce" -gt "$techo" ] || [ "$ch" -gt "$techo" ]; then
+      sonda_x "$ce"; motivos+="#$i:no-converge($SONDA_X/"; sonda_x "$ch"; motivos+="$SONDA_X) "; continue
+    fi
+    r=$(( 10#$ue * 1000 / 10#$uh )); res=$((res + 1)); sonda_x "$r"; razones+="$SONDA_X× "
+    if [ -z "$rmin" ] || [ "$r" -lt "$rmin" ]; then rmin=$r; fi
+    if [ -z "$rmax" ] || [ "$r" -gt "$rmax" ]; then rmax=$r; fi
+  done
+  if [ "$res" -lt "$SONDA_COSTE_MINRES" ]; then
+    echo "  SKIP  $nombre  [INCONCLUSO] pocas resueltas: $res de $SONDA_REPS_TOT (mínimo $SONDA_COSTE_MINRES): ${motivos:-—} · razones ${razones:-ninguna }· techo ${t}× · presupuesto fijo, no se repite"
+    return 0
+  fi
+  sonda_x "$rmin"; emin="$SONDA_X"; sonda_x "$rmax"; emax="$SONDA_X"
+  if [ "$rmax" -le "$techo" ]; then
+    echo "  PASS  $nombre  máx(r) ${emax}× <= techo ${t}× en $res de $SONDA_REPS_TOT resueltas: ${razones}(${motivos:-todas resueltas})"
+  elif [ "$rmin" -gt "$techo" ]; then
+    echo "  FAIL  $nombre  mín(r) ${emin}× > techo ${t}× en las $res de $SONDA_REPS_TOT resueltas: ${razones}(${motivos:-todas resueltas}) — describe una medición que excede el techo; no afirma la causa"
+  else
+    echo "  SKIP  $nombre  [INCONCLUSO] el techo ${t}× cae DENTRO del recorrido [${emin}×, ${emax}×] de $res razones resueltas de $SONDA_REPS_TOT: ${razones}(${motivos:-todas resueltas}) · presupuesto fijo, no se repite"
+  fi
+}
+
 # --- LA MITAD DISCORDANTE DE CA-03 (a.2), Y SU TESTIGO -------------------------
 # LA PROCEDENCIA DEL FACTOR NO SE LEE EN EL REGISTRO: la sonda honesta y la tautológica
 # publican EL MISMO NÚMERO. Medido (QA-021-01): el factor de `sonda-linea-base.sh` se
@@ -1310,7 +1460,12 @@ done
 # de seguridad sigue mandando sobre el piso del matiz. El caso 12.º no suma: era
 # `D16: ligero con matiz sigue ligero`, que declaraba `allow` sobre el propio
 # fail-open, y se corrige en su sitio en vez de añadirse.
-CASOS_ESPERADOS=912
+#
+# Y 912 → 919 por REQ-030 (ADR-012): −1 en 37/2 (5 → 4), porque `REQ-017 CA-03 fail-before`
+# deja de ser un caso aparte y pasa a ser la calibración, dentro del veredicto de CA-03; +2 en
+# 37/6, nueva (un caso sintético por juez de las sondas de coste); +6 en 37/7, nueva (los
+# controles I, W0 y WD por entrada, que sin `ARNES_SONDA_CONTROLES=1` dicen SKIP).
+CASOS_ESPERADOS=919
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
@@ -1332,11 +1487,33 @@ echo "-------------------------------------------"
 # Cada SKIP ya trae su motivo en su línea, así que en vez de inventar una causa común se
 # RECAPITULAN: es lo que hace falta para decidir si un SKIP es diseño o avería, y es la
 # clase de defecto que este REQ persigue —un resumen que dice más de lo que midió—.
+#
+# LOS INCONCLUSOS SE CUENTAN APARTE Y SE NOMBRAN (REQ-030 CA-05), porque un INCONCLUSO es
+# rendimiento NO acreditado y el estado de salida no depende de él: sin esto, un banco en
+# verde con una sonda de coste que no resolvió sólo se vería en el log detallado. Éste es el
+# SITIO ÚNICO del reconocimiento: cuenta una línea de caso `SKIP` cuya evidencia EMPIEZA por la
+# marca `[INCONCLUSO]` —justo tras el nombre, que termina en los dos espacios, igual que lo
+# corta `inventario.sh`—. Un PASS o un FAIL que contenga el texto no cuenta, ni un SKIP que lo
+# mencione más adelante. Siguen siendo SKIP en el cuadre: la marca no crea una cuarta clase.
 if [ "${SKIP:-0}" -gt 0 ]; then
-  echo "Resultado: $PASS PASS, $FAIL FAIL, $SKIP SKIP — ninguna causa común: cada uno con su motivo"
+  RESUMEN_SKIP=''
   if [ "${#SALIDAS[@]}" -gt 0 ]; then
-    awk '/^  SKIP /{ sub(/^  SKIP[ \t]+/, ""); printf "       · %s\n", $0 }' "${SALIDAS[@]}"
+    RESUMEN_SKIP="$(awk '
+      /^  SKIP / { l = $0; sub(/^  SKIP[ \t]+/, "", l); rec[++n] = l
+                   c = index(l, "  ")
+                   if (c > 1 && substr(l, c + 2, 12) == "[INCONCLUSO]") inc[++ni] = substr(l, 1, c - 1) }
+      END { printf "%d\n", ni
+            for (i = 1; i <= ni; i++) printf "       ! %s\n", inc[i]
+            for (i = 1; i <= n; i++)  printf "       · %s\n", rec[i] }
+    ' "${SALIDAS[@]}")"
   fi
+  NINC="${RESUMEN_SKIP%%$'\n'*}"
+  case "$NINC" in ''|*[!0-9]*) NINC=0 ;; esac
+  echo "Resultado: $PASS PASS, $FAIL FAIL, $SKIP SKIP (de ellos $NINC INCONCLUSO) — ninguna causa común: cada uno con su motivo"
+  if [ "$NINC" -gt 0 ]; then
+    echo "INCONCLUSO: $NINC — rendimiento NO acreditado en esta corrida; no pone el banco en rojo y un check verde no lo acredita (REQ-030):"
+  fi
+  case "$RESUMEN_SKIP" in *$'\n'*) printf '%s\n' "${RESUMEN_SKIP#*$'\n'}" ;; esac
 else
   echo "Resultado: $PASS PASS, $FAIL FAIL"
 fi
