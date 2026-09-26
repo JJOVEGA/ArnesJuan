@@ -1,0 +1,16 @@
+--- 37/2 · el coste del escáner: la escala y las razones (REQ-017 CA-03, CA-04 y CA-06) ---
+  PASS  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  máx(cociente) 2.059× <= techo 2.600× en 5 de 5 resueltas: 2.059× 2.016× 1.908× 1.974× 1.890× · calibración resuelta: v1.32.1 recorre [3.644×, 4.072×] en 4 de 5 · la sonda no midió: v1.32.1 2S #1: la sonda de reloj no dejó registro; 
+  PASS  REQ-017 CA-04 el camino de campo no cuesta más de 2× lo que costaba en v1.32.0 (140 000 bytes sin CR)  razón contra v1.32.0 = 1.229× (techo 2.000×; 571013µs sobre 464395µs)
+  PASS  REQ-017 CA-04 fail-before: v1.32.1 cuesta 8.512× lo de v1.32.0 y se pasa del techo 2,000×
+  PASS  REQ-017 CA-06 sin línea base y bajo el suelo de 50 ms la sonda emite SKIP con motivo, nunca PASS
+--- 37/5 · el camino de una cabecera normal: procesos y reloj (REQ-017 CA-08 y CA-06) ---
+  PASS  REQ-017 CA-08 (i) un REQ real de 6 líneas: 0 procesos añadidos respecto a v1.32.1  5 procesos frente a 5 (menos es conforme)
+  PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.014× <= techo 1.250× en 4 de 5 resueltas: 0.988× 1.014× 1.012× 0.980× (#3:no-midió ) · la sonda no midió: #3: el registro salió VACÍO: la sonda no se ejecutó; 
+  PASS  REQ-017 CA-08 (i) una cabecera de 200 líneas: 0 procesos añadidos respecto a v1.32.1  5 procesos frente a 5 (menos es conforme)
+  PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.001× <= techo 1.250× en 5 de 5 resueltas: 0.935× 1.001× 0.989× 0.945× 0.988× (todas resueltas)
+  PASS  REQ-017 CA-08 (ii) la sonda que no converge se ABSTIENE: nunca PASS y nunca FAIL, y la abstención manda sobre el rojo  (7 sondas → PASS FAIL INCONCLUSO INCONCLUSO INCONCLUSO INCONCLUSO INCONCLUSO )
+  PASS  REQ-017 CA-06 el envoltorio resuelve rutas absolutas antes de tocar el PATH y no se llama a sí mismo (<5> procesos)
+  PASS  REQ-017 CA-06 el corredor acusa POR SU NOMBRE a la sección que deja un proceso vivo, y la vuelta sale en rojo
+aviso: vuelta parcial (2 de 53 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 11 PASS, 0 FAIL
