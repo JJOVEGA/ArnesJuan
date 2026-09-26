@@ -8094,3 +8094,5 @@ log y el REQ termine describiendo algo distinto de lo construido. Tres capas:
 
 ## [1.1.0] — 2026-06-01
 - Estructura inicial: 4 agentes, skills `/arnes-init` y `/arnes-close`, plantillas, hook pre-commit y tests.
+
+<!-- ENSAYO corrida 2 de 5 (2026-09-26T01:29:42Z): solo esta linea cambia; tests/ identico a 83f1e9c -->
