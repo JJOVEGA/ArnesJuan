@@ -1,0 +1,7 @@
+remote: 
+remote: Create a pull request for 'ensayo/sondas-r5' on GitHub by visiting:        
+remote:      https://github.com/JJOVEGA/ArnesJuan/pull/new/ensayo/sondas-r5        
+remote: 
+ERROR: este commit no actualiza CHANGELOG.md.
+El arnes exige registrar cada commit en CHANGELOG.md (ver AGENTS.md seccion 8).
+Agrega tu entrada y vuelve a commitear.

@@ -1,0 +1,69 @@
+corrida | dur(s) | CA-03 prop | CA-03 vig(#1) | CA-08 6l prop | vig | CA-08 200l prop | vig | I-6l | W0-6l | WD-6l | I-200l | W0-200l | WD-200l
+01 | 224 | PASS | PASS(2.589) | her#1=2701 | PASS | SKIP(no-midió) | PASS | SKIP(no-midió) | PASS | PASS | FAIL | PASS | PASS | FAIL
+02 | 183 | PASS | PASS(2.367) | her#1=2709 | PASS | SKIP(no-midió) | PASS | SKIP(no-midió) | PASS | PASS | FAIL | PASS | PASS | FAIL
+03 | 225 | PASS | PASS(2.110) | her#1=2809 | PASS | SKIP(no-midió) | PASS | SKIP(no-midió) | SKIP[INC] | SKIP[INC] | FAIL | PASS | PASS | FAIL
+04 | 184 | PASS | PASS(2.533) | her#1=2731 | PASS | SKIP(no-midió) | PASS | SKIP(no-midió) | SKIP[INC] | PASS | FAIL | PASS | PASS | FAIL
+05 | 139 | SKIP[INC] | FAIL(2.693) | her#1=2699 | PASS | SKIP(no-midió) | PASS | SKIP(no-midió) | PASS | PASS | FAIL | PASS | PASS | FAIL
+
+RECUENTOS (propuesto) por caso:
+  CA-03: {'PASS': 4, 'SKIP[INC]': 1}
+  CA-08 6l: {'PASS': 5}
+  CA-08 200l: {'PASS': 5}
+  ctl I-6l: {'PASS': 3, 'SKIP[INC]': 2}
+  ctl W0-6l: {'PASS': 4, 'SKIP[INC]': 1}
+  ctl WD-6l: {'FAIL': 5}
+  ctl I-200l: {'PASS': 5}
+  ctl W0-200l: {'PASS': 5}
+  ctl WD-200l: {'FAIL': 5}
+
+VIGENTE derivado (#1) — CA-08 6l: {'SKIP': 5} · 200l: {'SKIP': 5} · CA-03 directa: {'PASS': 4, 'FAIL': 1}
+VIGENTE derivado (#1) — controles: {('01', 'REQ-100', 'I'): 'SKIP', ('01', 'REQ-100', 'W0'): 'SKIP', ('01', 'REQ-100', 'WD'): 'SKIP', ('01', 'REQ-200', 'I'): 'SKIP', ('01', 'REQ-200', 'W0'): 'SKIP', ('01', 'REQ-200', 'WD'): 'SKIP', ('02', 'REQ-100', 'I'): 'SKIP', ('02', 'REQ-100', 'W0'): 'SKIP', ('02', 'REQ-100', 'WD'): 'SKIP', ('02', 'REQ-200', 'I'): 'SKIP', ('02', 'REQ-200', 'W0'): 'SKIP', ('02', 'REQ-200', 'WD'): 'SKIP', ('03', 'REQ-100', 'I'): 'SKIP', ('03', 'REQ-100', 'W0'): 'SKIP', ('03', 'REQ-100', 'WD'): 'SKIP', ('03', 'REQ-200', 'I'): 'SKIP', ('03', 'REQ-200', 'W0'): 'SKIP', ('03', 'REQ-200', 'WD'): 'SKIP', ('04', 'REQ-100', 'I'): 'SKIP', ('04', 'REQ-100', 'W0'): 'SKIP', ('04', 'REQ-100', 'WD'): 'SKIP', ('04', 'REQ-200', 'I'): 'SKIP', ('04', 'REQ-200', 'W0'): 'SKIP', ('04', 'REQ-200', 'WD'): 'SKIP', ('05', 'REQ-100', 'I'): 'SKIP', ('05', 'REQ-100', 'W0'): 'SKIP', ('05', 'REQ-100', 'WD'): 'SKIP', ('05', 'REQ-200', 'I'): 'SKIP', ('05', 'REQ-200', 'W0'): 'SKIP', ('05', 'REQ-200', 'WD'): 'SKIP'}
+
+DURACIÓN: 5 corridas, total 955 s, mín 139 s, máx 225 s
+
+MENSAJES completos (propuesto):
+  [01] PASS  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  máx(cociente) 2.589× <= techo 2,600× en 5 de 5 (70000→140000 bytes, k=20); calibración resuelta: v1.32.1 recorre [2.701×, 4.126×]
+  [01] PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.166× <= techo 1.250× en 3 de 5 repeticiones: 1.039× 1.166× 1.022× (#1:no-converge(1.487/1.087) #2:no-converge(1.613/1.096) )
+  [01] PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.107× <= techo 1.250× en 5 de 5 repeticiones: 1.107× 0.866× 1.011× 0.963× 1.002× (todas resueltas)
+  [01] PASS  ENSAYO control I (un REQ real de 6 líneas): sujetos idénticos, razón verdadera 1,0 — nunca FAIL  máx(r) 1.043× <= techo 1.250× en 5 de 5 repeticiones: 0.924× 0.875× 0.926× 1.043× 0.929× (todas resueltas)
+  [01] PASS  ENSAYO control W0 (un REQ real de 6 líneas): envoltorio con demora 0 — nunca FAIL  máx(r) 1.184× <= techo 1.250× en 3 de 5 repeticiones: 0.971× 1.130× 1.184× (#4:no-converge(1.328/1.280) #5:no-converge(1.319/1.010) )
+  [01] FAIL  ENSAYO control WD (un REQ real de 6 líneas): envoltorio con demora fija 0.040s por llamada — se espera FAIL (detecta DEMORA AÑADIDA, no regresión interna)  mín(r) 2.107× > techo 1.250× en TODAS las 4 repeticiones resueltas d
+  [01] PASS  ENSAYO control I (una cabecera de 200 líneas): sujetos idénticos, razón verdadera 1,0 — nunca FAIL  máx(r) 1.016× <= techo 1.250× en 5 de 5 repeticiones: 1.016× 1.001× 0.998× 1.003× 0.997× (todas resueltas)
+  [01] PASS  ENSAYO control W0 (una cabecera de 200 líneas): envoltorio con demora 0 — nunca FAIL  máx(r) 1.018× <= techo 1.250× en 5 de 5 repeticiones: 1.016× 1.014× 1.014× 1.014× 1.018× (todas resueltas)
+  [01] FAIL  ENSAYO control WD (una cabecera de 200 líneas): envoltorio con demora fija 0.100s por llamada — se espera FAIL (detecta DEMORA AÑADIDA, no regresión interna)  mín(r) 2.286× > techo 1.250× en TODAS las 5 repeticiones resuelta
+  [02] PASS  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  máx(cociente) 2.367× <= techo 2,600× en 5 de 5 (70000→140000 bytes, k=20); calibración resuelta: v1.32.1 recorre [2.709×, 3.919×]
+  [02] PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.090× <= techo 1.250× en 4 de 5 repeticiones: 1.083× 1.090× 1.023× 1.021× (#3:no-converge(1.133/1.331) )
+  [02] PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.059× <= techo 1.250× en 5 de 5 repeticiones: 0.941× 0.971× 1.059× 0.975× 0.961× (todas resueltas)
+  [02] PASS  ENSAYO control I (un REQ real de 6 líneas): sujetos idénticos, razón verdadera 1,0 — nunca FAIL  máx(r) 1.250× <= techo 1.250× en 4 de 5 repeticiones: 0.935× 0.993× 0.970× 1.250× (#4:no-converge(1.272/1.338) )
+  [02] PASS  ENSAYO control W0 (un REQ real de 6 líneas): envoltorio con demora 0 — nunca FAIL  máx(r) 1.216× <= techo 1.250× en 5 de 5 repeticiones: 1.216× 1.042× 1.006× 1.108× 0.788× (todas resueltas)
+  [02] FAIL  ENSAYO control WD (un REQ real de 6 líneas): envoltorio con demora fija 0.040s por llamada — se espera FAIL (detecta DEMORA AÑADIDA, no regresión interna)  mín(r) 2.768× > techo 1.250× en TODAS las 5 repeticiones resueltas d
+  [02] PASS  ENSAYO control I (una cabecera de 200 líneas): sujetos idénticos, razón verdadera 1,0 — nunca FAIL  máx(r) 1.011× <= techo 1.250× en 5 de 5 repeticiones: 1.011× 1.002× 1.002× 0.997× 0.999× (todas resueltas)
+  [02] PASS  ENSAYO control W0 (una cabecera de 200 líneas): envoltorio con demora 0 — nunca FAIL  máx(r) 1.029× <= techo 1.250× en 5 de 5 repeticiones: 1.029× 1.004× 1.015× 1.012× 1.013× (todas resueltas)
+  [02] FAIL  ENSAYO control WD (una cabecera de 200 líneas): envoltorio con demora fija 0.100s por llamada — se espera FAIL (detecta DEMORA AÑADIDA, no regresión interna)  mín(r) 2.540× > techo 1.250× en TODAS las 5 repeticiones resuelta
+  [03] PASS  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  máx(cociente) 2.147× <= techo 2,600× en 5 de 5 (70000→140000 bytes, k=20); calibración resuelta: v1.32.1 recorre [2.809×, 4.268×]
+  [03] PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 0.886× <= techo 1.250× en 3 de 5 repeticiones: 0.882× 0.875× 0.886× (#1:no-converge(1.773/1.209) #4:no-converge(1.151/1.680) )
+  [03] PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.063× <= techo 1.250× en 5 de 5 repeticiones: 0.956× 1.018× 1.032× 0.928× 1.063× (todas resueltas)
+  [03] SKIP  ENSAYO control I (un REQ real de 6 líneas): sujetos idénticos, razón verdadera 1,0 — nunca FAIL  [INCONCLUSO] sólo 2 de 5 repeticiones resueltas (mínimo 3): #1:no-converge(1.485/1.222) #4:no-converge(1.379/1.260) #5:no-conve
+  [03] SKIP  ENSAYO control W0 (un REQ real de 6 líneas): envoltorio con demora 0 — nunca FAIL  [INCONCLUSO] el techo 1.250× cae DENTRO del recorrido [1.047×, 1.522×] de 3 razones: 1.522× 1.047× 1.047× · el instrumento no resuelve el fac
+  [03] FAIL  ENSAYO control WD (un REQ real de 6 líneas): envoltorio con demora fija 0.040s por llamada — se espera FAIL (detecta DEMORA AÑADIDA, no regresión interna)  mín(r) 2.287× > techo 1.250× en TODAS las 3 repeticiones resueltas d
+  [03] PASS  ENSAYO control I (una cabecera de 200 líneas): sujetos idénticos, razón verdadera 1,0 — nunca FAIL  máx(r) 1.005× <= techo 1.250× en 5 de 5 repeticiones: 0.991× 1.005× 0.999× 0.990× 1.000× (todas resueltas)
+  [03] PASS  ENSAYO control W0 (una cabecera de 200 líneas): envoltorio con demora 0 — nunca FAIL  máx(r) 1.020× <= techo 1.250× en 5 de 5 repeticiones: 1.020× 1.013× 1.011× 1.011× 1.007× (todas resueltas)
+  [03] FAIL  ENSAYO control WD (una cabecera de 200 líneas): envoltorio con demora fija 0.100s por llamada — se espera FAIL (detecta DEMORA AÑADIDA, no regresión interna)  mín(r) 2.294× > techo 1.250× en TODAS las 5 repeticiones resuelta
+  [04] PASS  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  máx(cociente) 2.533× <= techo 2,600× en 5 de 5 (70000→140000 bytes, k=20); calibración resuelta: v1.32.1 recorre [2.731×, 3.915×]
+  [04] PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.105× <= techo 1.250× en 5 de 5 repeticiones: 0.746× 1.013× 1.103× 0.839× 1.105× (todas resueltas)
+  [04] PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.040× <= techo 1.250× en 5 de 5 repeticiones: 1.008× 1.040× 0.998× 1.022× 0.955× (todas resueltas)
+  [04] SKIP  ENSAYO control I (un REQ real de 6 líneas): sujetos idénticos, razón verdadera 1,0 — nunca FAIL  [INCONCLUSO] el techo 1.250× cae DENTRO del recorrido [0.935×, 1.291×] de 3 razones: 0.935× 1.080× 1.291× · el instrumento no r
+  [04] PASS  ENSAYO control W0 (un REQ real de 6 líneas): envoltorio con demora 0 — nunca FAIL  máx(r) 1.132× <= techo 1.250× en 4 de 5 repeticiones: 1.132× 1.039× 0.865× 1.028× (#1:no-converge(1.285/1.353) )
+  [04] FAIL  ENSAYO control WD (un REQ real de 6 líneas): envoltorio con demora fija 0.040s por llamada — se espera FAIL (detecta DEMORA AÑADIDA, no regresión interna)  mín(r) 2.489× > techo 1.250× en TODAS las 5 repeticiones resueltas d
+  [04] PASS  ENSAYO control I (una cabecera de 200 líneas): sujetos idénticos, razón verdadera 1,0 — nunca FAIL  máx(r) 1.001× <= techo 1.250× en 5 de 5 repeticiones: 0.999× 0.977× 0.994× 0.997× 1.001× (todas resueltas)
+  [04] PASS  ENSAYO control W0 (una cabecera de 200 líneas): envoltorio con demora 0 — nunca FAIL  máx(r) 1.018× <= techo 1.250× en 5 de 5 repeticiones: 1.014× 1.018× 1.008× 1.014× 1.016× (todas resueltas)
+  [04] FAIL  ENSAYO control WD (una cabecera de 200 líneas): envoltorio con demora fija 0.100s por llamada — se espera FAIL (detecta DEMORA AÑADIDA, no regresión interna)  mín(r) 2.534× > techo 1.250× en TODAS las 5 repeticiones resuelta
+  [05] SKIP  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  [INCONCLUSO] el techo 2,600× cae DENTRO del recorrido [1.980×, 2.693×] de este árbol (5 de 5); calibración resuelta [2.699×, 3.919×]; pre
+  [05] PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.085× <= techo 1.250× en 3 de 5 repeticiones: 1.085× 0.970× 1.073× (#2:no-converge(1.172/1.365) #4:no-converge(1.492/1.106) )
+  [05] PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.051× <= techo 1.250× en 5 de 5 repeticiones: 0.911× 1.025× 1.051× 0.927× 1.005× (todas resueltas)
+  [05] PASS  ENSAYO control I (un REQ real de 6 líneas): sujetos idénticos, razón verdadera 1,0 — nunca FAIL  máx(r) 0.980× <= techo 1.250× en 3 de 5 repeticiones: 0.883× 0.917× 0.980× (#1:no-converge(1.449/1.247) #2:no-converge(1.072/1.
+  [05] PASS  ENSAYO control W0 (un REQ real de 6 líneas): envoltorio con demora 0 — nunca FAIL  máx(r) 1.192× <= techo 1.250× en 3 de 5 repeticiones: 1.039× 1.192× 0.993× (#2:no-converge(1.171/1.270) #5:no-converge(1.373/1.048) )
+  [05] FAIL  ENSAYO control WD (un REQ real de 6 líneas): envoltorio con demora fija 0.040s por llamada — se espera FAIL (detecta DEMORA AÑADIDA, no regresión interna)  mín(r) 2.876× > techo 1.250× en TODAS las 5 repeticiones resueltas d
+  [05] PASS  ENSAYO control I (una cabecera de 200 líneas): sujetos idénticos, razón verdadera 1,0 — nunca FAIL  máx(r) 1.018× <= techo 1.250× en 5 de 5 repeticiones: 0.991× 1.004× 1.000× 1.018× 0.994× (todas resueltas)
+  [05] PASS  ENSAYO control W0 (una cabecera de 200 líneas): envoltorio con demora 0 — nunca FAIL  máx(r) 1.022× <= techo 1.250× en 5 de 5 repeticiones: 1.014× 1.022× 1.022× 1.003× 1.015× (todas resueltas)
+  [05] FAIL  ENSAYO control WD (una cabecera de 200 líneas): envoltorio con demora fija 0.100s por llamada — se espera FAIL (detecta DEMORA AÑADIDA, no regresión interna)  mín(r) 3.194× > techo 1.250× en TODAS las 5 repeticiones resuelta
