@@ -1,0 +1,3 @@
+# REQ-030 · logs de la vuelta 3 de QA (2026-09-26, −0600)
+
+Versión base validada: `7b96dcc558a13a8e00be5c552ee3e65ffa561a8f`. Máquina: WSL2, 12 CPU. `v3-banco.log` = banco completo por defecto; `v3-ctl1..3.log` = las 3 corridas fijadas con `ARNES_SONDA_CONTROLES=1` (7 controles); `fb-const/fb-suelo/fb-mezcla.log` = fail-before de C3 con sonda sustituta (reloj constante ≥ suelo → FAIL; bajo el suelo → INCONCLUSO; mezcla → INCONCLUSO); `hueco.log` = reproducción de QA-030-07 (avería en 37/2 con C3 en PASS). Veredicto `con-hallazgos`, REQ-030 `bloqueado` (tope agotado). Copiados del scratchpad sin editar.

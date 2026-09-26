@@ -1,0 +1,5 @@
+--- 37/7 · los controles de medición del instrumento de CA-08 (ii) y de CA-03, a demanda (REQ-030 CA-07) ---
+  FAIL  REQ-030 CA-07 control C3 (instrumento de CA-03): el cociente de duplicación de v1.32.1 con k=20 supera 2,6×  AVERÍA DEMOSTRADA del instrumento de CA-03: máx(cociente de v1.32.1) 1.000× <= techo 2.600× en las 5 de 5 resueltas: 1.000× 1.000× 1.000× 1.000× 1.000× — no distingue el árbol cuadrático, o la línea base no es la que dice ser; el cambio de la sonda no se acredita (0,2 s)
+aviso: vuelta parcial (1 de 53 secciones, filtro 'control C3'): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 0 PASS, 1 FAIL
