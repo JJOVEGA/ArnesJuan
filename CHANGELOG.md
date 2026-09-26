@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-26 · REQ-030: auditoría de seguridad R-043 → `Seguridad: con-hallazgos` (SEC-108 contrato, SEC-109 instrumento); decisión pendiente del propietario
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (auditor-seguridad) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, coordinadora.
+
+R-043 sobre `3c9b7e6` (código de `322bc7c`): sin veto; el mecanismo no cambia; la clase (iii) sin (ii) confirmada; el recuento de inconclusos no se fabrica ni se borra desde un caso; el delta de workflow propuesto (no aplicado) es correcto en `pipefail` y no convierte rojo en verde, pero su `grep` recorre el log entero y debe extraer sólo el resumen final antes de aplicarse. **SEC-108** (`contrato`): retirar el fail-before de CA-03 dejó sin detector mecánico a un instrumento de CA-03 roto (quedaría INCONCLUSO con check verde). **SEC-109** (`instrumento`): la «acreditación pendiente» de CA-08 (ii) sin sede/dueño/forzador/vencimiento. Decisión (A/B/C) escrita en `PENDING_APPROVAL.md` § Pendientes; REQ-030 sigue `en-revisión`, contador 2 de 3. Sin push.
+
 ## [Interno] — 2026-09-26 · REQ-030: validación de QA, vuelta 2 de 3 → `QA: aprobado` sobre `322bc7c`
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
 
