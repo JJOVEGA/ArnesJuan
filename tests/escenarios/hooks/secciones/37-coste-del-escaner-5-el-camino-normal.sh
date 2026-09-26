@@ -143,10 +143,16 @@ json47() {   # <REQ> -> el Edit que cierra ese REQ
 # series y más cortas— es el que reduce la varianza que este criterio venía a quitar.
 SER47=6   # >= 6 por árbol (CA-08, OPERATIVO: se sube con la medición)
 K47=4
+# PRESUPUESTO FIJO DE REPETICIONES DEL PAR (propuesta REQ-017, 2026-09-25): el par intercalado
+# completo (SER47 series por árbol) se mide REP47 veces y cada repetición produce SU razón. El
+# presupuesto no se amplía por el resultado: nunca se repite «hasta que salga». MINRES47 es el
+# número mínimo de repeticiones RESUELTAS (las dos ramas convergidas) para emitir veredicto.
+REP47=${ARNES_SONDA_REP:-5}
+MINRES47=3
 TECHO47=1250   # ‰. EL MISMO número para la razón y para la convergencia, y no es casualidad:
                # «un instrumento tiene que resolver al menos el factor que vigila». No es un
                # techo nuevo, es el de CA-08 (ii) leído sobre la propia sonda.
-declare -A PROCS47 RELOJ47 RELOJ2_47
+declare -A PROCS47 RELOJ47 RELOJ2_47 REPS47
 falta47=''
 JSON47="$RAIZ/json47-$BASHPID.json"
 for _cual47 in REQ-100 REQ-200; do
@@ -167,7 +173,21 @@ for _cual47 in REQ-100 REQ-200; do
   # Y EL RELOJ, INTERCALADO EN UNA SOLA INVOCACIÓN. La alternancia la hace la sonda: las dos
   # series consecutivas de árboles distintos ven el mismo vecindario, y en bloque cada árbol
   # veía vecinos distintos (QA-017-06: 1,217 en bloque frente a 1,012 intercalado).
+  # REP47 REPETICIONES DEL PAR, cada una con su propio registro. Se guardan TODAS: una
+  # repetición no resuelta cuenta como no resuelta, no se descarta ni se sustituye.
+  REPS47["$_cual47"]=''
   if [ "$HER47_OK" = si ]; then
+    for _n47 in $(seq 1 "$REP47"); do
+      _reg47="$("$UTIL_DIR/sonda-reloj.sh" --k "$K47" --r "$SER47" --etiqueta "$_cual47-$_n47" \
+        --sujeto-a "CLAUDE_PROJECT_DIR='$PROJ' bash '$HOOKS_DIR/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" \
+        --sujeto-b "CLAUDE_PROJECT_DIR='$PROJ' bash '$HER47/hooks/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" 2>/dev/null)"
+      if sonda_lee "$_reg47" && [ "${SONDA[estado]}" = ok ]; then
+        REPS47["$_cual47"]+="${SONDA[min_a]:-x}:${SONDA[min2_a]:-x}:${SONDA[min_b]:-x}:${SONDA[min2_b]:-x} "
+      else
+        REPS47["$_cual47"]+="x:x:x:x "   # no midió: entra como NO RESUELTA, no se descarta
+      fi
+      echo "  ·   ENSAYO dato CA-08 $_cual47 rep=$_n47 reg=[${REPS47[$_cual47]##* }]" | sed "s/reg=\[\]/reg=[vacio]/"
+    done
     _reg47="$("$UTIL_DIR/sonda-reloj.sh" --k "$K47" --r "$SER47" --etiqueta "$_cual47" \
       --sujeto-a "CLAUDE_PROJECT_DIR='$PROJ' bash '$HOOKS_DIR/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" \
       --sujeto-b "CLAUDE_PROJECT_DIR='$PROJ' bash '$HER47/hooks/guard-completado.sh' < '$JSON47' >/dev/null 2>&1" 2>/dev/null)"
@@ -224,6 +244,40 @@ veredicto08_47() {   # <nombre> <mín este> <2º mín este> <mín her> <2º mín
   fi
 }
 
+# EL VEREDICTO SOBRE EL VECTOR DE RAZONES (propuesta 2026-09-25). Reglas fijadas ANTES de medir:
+#   · una repetición está RESUELTA si sus dos brazos convergen (2º mín / mín <= techo) y ninguna
+#     serie cae bajo el suelo de 50 ms; la convergencia por brazo es PRECONDICIÓN, nunca decide;
+#   · con menos de MINRES47 repeticiones resueltas: NO CONCLUYENTE (se imprime como SKIP con la
+#     marca [INCONCLUSO] y las cifras: el banco no tiene una cuarta clase de veredicto);
+#   · PASS si máx(r) <= techo sobre las resueltas; FAIL si mín(r) > techo sobre las resueltas;
+#   · NO CONCLUYENTE si el techo cae DENTRO del recorrido [mín(r), máx(r)];
+#   · no se descarta ninguna lectura y no se repite: el presupuesto es REP47, fijo.
+# Lo que la unanimidad NO afirma: no atribuye la causa (un FAIL unánime describe, no descarta el
+# vecino); por eso las cifras se publican enteras en todas las ramas.
+veredicto08r_47() {   # <nombre> <lista de repeticiones 'ue:ue2:uh:uh2 ...'>
+  local nombre="$1" lista="$2" rep ue ue2 uh uh2 ce ch r n=0 res=0 rmin='' rmax='' razones='' motivos=''
+  for rep in $lista; do
+    n=$((n+1)); IFS=: read -r ue ue2 uh uh2 <<< "$rep"
+    if ! { num47 "$ue" && num47 "$ue2" && num47 "$uh" && num47 "$uh2" && [ "$ue" -gt 0 ] && [ "$uh" -gt 0 ]; }; then motivos+="#$n:no-midió "; continue; fi
+    if [ "$ue" -lt 50000 ] || [ "$uh" -lt 50000 ]; then motivos+="#$n:suelo "; continue; fi
+    ce=$(( ue2 * 1000 / ue )); ch=$(( uh2 * 1000 / uh ))
+    if [ "$ce" -gt "$TECHO47" ] || [ "$ch" -gt "$TECHO47" ]; then motivos+="#$n:no-converge($(awk -v c=$ce 'BEGIN{printf "%.3f", c/1000}')/$(awk -v c=$ch 'BEGIN{printf "%.3f", c/1000}')) "; continue; fi
+    r=$(( ue * 1000 / uh )); res=$((res+1)); razones+="$(awk -v c=$r 'BEGIN{printf "%.3f", c/1000}')× "
+    [ -z "$rmin" ] || [ "$r" -lt "$rmin" ] && rmin=$r; [ -z "$rmax" ] || [ "$r" -gt "$rmax" ] && rmax=$r
+  done
+  local techo="$(awk -v t=$TECHO47 'BEGIN{printf "%.3f", t/1000}')"
+  if [ "$res" -lt "$MINRES47" ]; then
+    echo "  SKIP  $nombre  [INCONCLUSO] sólo $res de $n repeticiones resueltas (mínimo $MINRES47): ${motivos:-—} · razones ${razones:-ninguna}· techo $techo× · presupuesto fijo, no se repite"; return 0
+  fi
+  if [ "$rmax" -le "$TECHO47" ]; then
+    echo "  PASS  $nombre  máx(r) $(awk -v c=$rmax 'BEGIN{printf "%.3f", c/1000}')× <= techo $techo× en $res de $n repeticiones: $razones(${motivos:-todas resueltas})"; PASS=$((PASS+1))
+  elif [ "$rmin" -gt "$TECHO47" ]; then
+    echo "  FAIL  $nombre  mín(r) $(awk -v c=$rmin 'BEGIN{printf "%.3f", c/1000}')× > techo $techo× en TODAS las $res repeticiones resueltas de $n: $razones— la medición excede el techo; no afirma la causa"; FAIL=$((FAIL+1))
+  else
+    echo "  SKIP  $nombre  [INCONCLUSO] el techo $techo× cae DENTRO del recorrido [$(awk -v c=$rmin 'BEGIN{printf "%.3f", c/1000}')×, $(awk -v c=$rmax 'BEGIN{printf "%.3f", c/1000}')×] de $res razones: $razones· el instrumento no resuelve el factor que vigila en esta corrida; presupuesto fijo, no se repite"
+  fi
+}
+
 for _cual47 in REQ-100 REQ-200; do
   _etq47="un REQ real de 6 líneas"; [ "$_cual47" = REQ-200 ] && _etq47="una cabecera de 200 líneas"
   nom47="REQ-017 CA-08 (i) $_etq47: 0 procesos añadidos respecto a v1.32.1"
@@ -242,6 +296,8 @@ for _cual47 in REQ-100 REQ-200; do
     ue47="${RELOJ47[$_cual47-este]:-}"; uh47="${RELOJ47[$_cual47-heredado]:-}"
     if [ -z "$ue47" ] || [ -z "$uh47" ]; then
       echo "  SKIP  $nom47  ${falta47:-no se pudo medir} (este=<${ue47:-vacío}>µs heredado=<${uh47:-vacío}>µs)"
+    elif [ -n "${REPS47[$_cual47]:-}" ]; then
+      veredicto08r_47 "$nom47" "${REPS47[$_cual47]}"
     else
       veredicto08_47 "$nom47" "$ue47" "${RELOJ2_47[$_cual47-este]:-}" "$uh47" "${RELOJ2_47[$_cual47-heredado]:-}"
     fi
