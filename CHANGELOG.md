@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-26 · REQ-030: QA vuelta 4 (excepción del propietario, opción D) → `QA: aprobado` sobre `ccdc7e4`; QA-030-07 y QA-030-09 cerrados
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
+
+Validación decisiva: la avería reproducida (ruta de la línea base en copia de 37/2) pasa de **C3 PASS** (vuelta 3, `7b96dcc`) a **C3 FAIL «avería demostrada»** (máx 2,479× ≤ 2,600×, rc 1). Fail-before en tres modos (constante → FAIL; bajo el suelo y mezcla → INCONCLUSO [instrumento]). CA-07 (e) en 3 corridas fijadas: I/W0 sin FAIL, WD PASS 3/3, C3 PASS 1 de 3 (2,603×) e INCONCLUSO [instrumento] en 2 (mezcla): cumple la regla escrita. Resumen por grupo verificado con tres mutaciones del reconocedor. Banco por defecto 190,3 s, rc 0 (908/0/12, 1 INCONCLUSO rendimiento). Dato nuevo para QA-030-05, sin interpretar: calibración sin resolver en 10 de 16 corridas locales; C3 es INCONCLUSO exactamente cuando la calibración no resuelve. Quedan QA-030-03, QA-030-05 (`instrumento`), SEC-108/SEC-109 (los mueve el auditor). Logs en la rama de evidencia (`req-030/qa-vuelta-4/`). Sin push.
+
 ## [Interno] — 2026-09-26 · **REQ-030, vuelta 4 por excepción expresa del propietario (decisión D)**: C3 se muda a 37/2 y juzga la misma calibración que CA-03 (SEC-108, QA-030-07); el resumen separa instrumento de rendimiento no acreditado (QA-030-09); vuelve a `en-revisión`
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (1M context) · agente: `desarrollador`. Sobre `a9bc66f` más el árbol de trabajo, sin commit ni push. El contador dev↔QA 3 de 3 se conserva.
 
