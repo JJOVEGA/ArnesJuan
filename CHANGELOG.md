@@ -8100,3 +8100,5 @@ log y el REQ termine describiendo algo distinto de lo construido. Tres capas:
 <!-- ENSAYO corrida 3 de 5 (2026-09-26T01:33:05Z): solo esta linea cambia; tests/ identico a 83f1e9c -->
 
 <!-- ENSAYO corrida 4 de 5 (2026-09-26T01:37:28Z): solo esta linea cambia; tests/ identico a 83f1e9c -->
+
+<!-- ENSAYO corrida 5 de 5 (2026-09-26T01:40:49Z): solo esta linea cambia; tests/ identico a 83f1e9c -->
