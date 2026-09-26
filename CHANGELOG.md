@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-26 · REQ-030: R-043-A → `Seguridad: con-hallazgos`; SEC-108 `mitigado`, SEC-109 en mitigación (b pendiente del propietario), SEC-110 (`contrato`, sólo texto) abierto
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (auditor-seguridad) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, coordinadora.
+
+R-043-A sobre `44f9d58` (código de `ccdc7e4`): C3 juzga la misma medición que decide CA-03, el detector de avería existe de nuevo y sin la palanca no aprueba nada → **SEC-108 mitigado**. Recuento por grupo sin hallazgo (el grupo lo escribe el banco en posición fija). **SEC-110**: cuatro sedes de texto prometen más cobertura de la que C3 tiene; corrección redactada por el auditor, no aplicada (instrucción del propietario: informar sin encadenar). Observación: el delta de workflow propuesto ya no reconoce las cabeceras nuevas del resumen; revisarlo antes de proponerlo. Decisión en `PENDING_APPROVAL.md` § Pendientes (junto a SEC-109(b)). Sin push.
+
 ## [Interno] — 2026-09-26 · REQ-030: QA vuelta 4 (excepción del propietario, opción D) → `QA: aprobado` sobre `ccdc7e4`; QA-030-07 y QA-030-09 cerrados
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
 

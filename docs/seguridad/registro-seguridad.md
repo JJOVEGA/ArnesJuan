@@ -7497,3 +7497,189 @@ anticipada.
 
 **Numeración vigente tras esta revisión:** última revisión **R-043**; último hallazgo **SEC-109**;
 próximos libres **R-044** y **SEC-110**, comprobados sobre todas las ramas y worktrees vivos.
+
+---
+
+## Adenda a R-043 (**`R-043-A`**) — **REQ-030 tras las vueltas 3 y 4** (opción A y opción D del propietario): estado de SEC-108 y SEC-109, recuento por grupo. `feat/req-030-sondas-r5` @ `44f9d58` — 2026-09-26
+
+**Por qué adenda y no `R-044`.** Reverifica mis dos hallazgos sobre el delta que los remedia y el recuento
+nuevo; no vuelve a auditar lo que R-043 ya cubrió y el delta no toca.
+
+**Versión base y alcance.** Cabeza `44f9d58afec7cf6b1b31a8d586d087e04e5bfb8b`, árbol limpio.
+`git diff --stat ccdc7e4..44f9d58` = sólo `CHANGELOG.md`, `docs/qa/REQ-030.md` y `requirements/REQ-030.md`:
+el código revisado es el de `ccdc7e4`, el que validó QA (`QA: aprobado`, vuelta 4 por excepción). Delta
+auditado: `git diff 3c9b7e6..ccdc7e4` (13 archivos, +1096 −86), leído en `run.sh`, 37/2, 37/7, ADR-012,
+CA-03, CA-05 (a-bis), CA-07 (c)-(g), CA-08 (iii) y las tres formas; `docs/qa/REQ-030.md` § vueltas 3 y 4.
+`git diff --stat cfb1106..44f9d58 -- hooks tools .github .arnes templates skills agents playbooks .claude-plugin tests/util`
+**vacío**. Leídas íntegras en `PENDING_APPROVAL.md` las decisiones del propietario «opción A para SEC-108»
+y «opción D…», y la entrada de `## Pendientes` sobre SEC-109(b). **Orden respetado:** QA firmó antes
+(«seguridad sólo después de QA favorable»). **No miré quality gates ni corrí el banco.** Mi única ejecución:
+el `awk` del recuento por grupo de `run.sh`, extraído literal, sobre un archivo sintético del scratchpad.
+
+### 1. SEC-108 → **`mitigado`** (sobre `ccdc7e4`)
+
+Lo que R-043 exigía: que la validación (iii) cubriera el instrumento de CA-03 y que volviera a existir un
+detector de ese instrumento roto, con write-back. **Comprobado:**
+- **Juzga la medición que decide, no una copia.** `sonda_juez_control_c3` (`run.sh`) recibe
+  `PARES37_HER`, la serie de calibración que 37/2 acaba de medir para CA-03 (mismo `mide37`, `$HER37`,
+  tamaños, k = 20, R = 5) y usa la misma resolución por repetición (`sonda_recorrido_pares`). En 37/7 no
+  queda `mat57`, `mide57` ni ningún juez de C3 (leído).
+- **Es el detector mecánico restituido:** C3 FAIL («avería demostrada», ≥ 3 resueltas y todas
+  ≤ 2,600×) es un FAIL real que pone el banco en rojo **con la palanca**. Sin la palanca: SKIP «no se pide»,
+  sin marca y nunca PASS, y la calibración sigue siendo la precondición de CA-03, que sale
+  `[INCONCLUSO] [rendimiento]`: **no** se convierte en aprobación (leído en 37/2 y en `sonda_juez_duplicacion`).
+- **Está en el contrato:** CA-03, CA-07 (e)(g), CA-08 (iii) y la forma (c) de CA-08; ADR-012 § Consecuencias.
+  CA-08 (iii) exige los 7 controles con la regla de CA-07 (e), C3 incluido.
+- **Evidencia de QA que lo sostiene** (`docs/qa/REQ-030.md` vuelta 4 §2-§4): la avería reproducida pasa de
+  **C3 PASS** (copia en 37/7, `7b96dcc`) a **C3 FAIL** (`ccdc7e4`); reloj constante → FAIL; bajo el suelo →
+  INCONCLUSO; mezcla → INCONCLUSO; CA-07 (e) cumplida en las 3 corridas fijadas (C3 PASS 1 de 3).
+
+**Revisión adversarial.**
+- **¿Hay una avería del instrumento de CA-03 que deje C3 en PASS?** Sí, y son dos clases:
+  (1) toda avería **del brazo «este árbol»**, que C3 no mira (declarada fuera en CA-07 (g));
+  (2) toda avería que altere lo que mide la calibración **sin** bajarla del techo. Ejemplo no exhaustivo:
+  una línea base sustituida por otro árbol cuyo cociente también supere 2,600× (la vía del tag móvil de
+  **SEC-048**). La (2) contradice cómo se enuncia la cobertura: ver SEC-110.
+- **¿Puede «PASS en ≥ 1 de 3» acreditar un instrumento que no ve la cuadrática?** No. C3 PASS exige ≥ 3
+  resueltas de v1.32.1, todas > 2,600×, que es exactamente la condición de calibración resuelta de
+  CA-03 (b). Un instrumento que en esa corrida no distingue el árbol cuadrático da FAIL (todas ≤) o
+  INCONCLUSO (mezcla, < 3), y tres INCONCLUSO dejan el instrumento no acreditado. La asimetría vale
+  **para esa propiedad**, no para «todo instrumento averiado» (SEC-110).
+- **Límite que queda, declarado y correcto:** en el modo por defecto —el de la puerta requerida— C3 está
+  apagado, así que un instrumento roto de CA-03 sigue saliendo INCONCLUSO con check verde. Lo detecta la
+  validación de la clase (iii), que aplican QA y seguridad y no es mecánica (forma (c) de CA-08; ADR-012).
+  No es residual nuevo: es la forma que el propietario eligió (D).
+- **Dato que conservo sin interpretarlo:** el único C3 PASS de la validación quedó en 2,603×, un 0,1 % sobre
+  el techo; y la probabilidad de rechazar un instrumento sano calculada por QA (≈ 0,20) es un **cálculo**
+  con supuestos no medidos (QA-030-05).
+
+**Estado: `mitigado`.** Deja de bloquear y sale de `Hallazgos abiertos:`. Lo que falla en el enunciado de
+la cobertura de la mitigación es un defecto **distinto**, del texto y no del mecanismo: SEC-110.
+
+### 2. SEC-109 → **`en-mitigación`**: parte (a) mitigada, parte (b) abierta y pendiente del propietario
+
+- **(a) Las tres formas, con su consecuencia:** escritas en REQ-030 CA-08 («Las tres formas en que una
+  regresión REAL sale INCONCLUSO…») y en ADR-012 (−), con la consecuencia común («rendimiento no
+  acreditado, nunca aprobado»), la limitación «7 de 12» con las palabras del propietario y, en (c), el
+  límite de la palanca. **Mitigada.**
+- **(b) Sede, dueño, forzador y vencimiento de la «acreditación pendiente», y si un inconcluso heredado de
+  `main` impide acogerse a (i):** **no** se incorporó al REQ. Está presentada en `PENDING_APPROVAL.md` §
+  Pendientes con texto propuesto, responsable, acción afectada, dos opciones con sus consecuencias y una
+  recomendación marcada como del analista, tal como pidió el propietario («no la incorpores como si ya
+  estuviera autorizada ni la declares resuelta»). **Abierta.** No la doy por autorizada ni por resuelta, y
+  no acepto ninguna de las opciones en su nombre.
+- **Clase `instrumento`**, no bloquea por sí misma. **Dueño:** propietario (la decisión) y, después,
+  `analista-requerimientos` (write-back en CA-08 (ii) y, si procede, (i)). **Forzador y vencimiento:** los
+  de R-043: el primer PR de clase (ii) con un INCONCLUSO de CA-03 o CA-08 (ii) en su cabeza; como tarde
+  1.35.0. **Efecto aparte, que no es mío:** mientras esa entrada siga en `## Pendientes`, `guard-completado`
+  deniega marcar como `completado` **cualquier** REQ (`AGENTS.md` §6).
+
+### 3. Recuento por grupo (`run.sh`, CA-05 (a-bis)): **sin hallazgo**
+
+El `awk` reconoce la marca como antes y lee el grupo **sólo** en la posición fija que sigue a
+`[INCONCLUSO] `: `[rendimiento]` o `[instrumento]`, 13 caracteres. Probado sobre un archivo sintético con el
+programa literal:
+- un sufijo de motivo que contiene `[INCONCLUSO] [rendimiento]` no cambia de grupo a un caso `[instrumento]`;
+- `[rendimientoX]`, doble espacio antes del grupo o `[INCONCLUSO][instrumento]` pegado van a **«sin
+  clasificar»**, visibles y nunca contados como rendimiento;
+- una línea PASS con la marca y el grupo no cuenta.
+
+**Emisores:** `grep` de `[INCONCLUSO]` en todas las secciones y en el corredor: **toda** línea emitida lleva
+grupo. Los de medición (`sonda_juez_duplicacion`, `sonda_juez_razon`) llevan `[rendimiento]`; los de control
+(`sonda_juez_control_c3` y los de 37/7) llevan `[instrumento]`. 37/7 retira el prefijo `[rendimiento]` del
+juez de CA-08 (ii) antes de poner el suyo, también en WD y en «JSON vacío». El grupo lo pone código del
+banco antes de cualquier contenido variable (nombre y motivos van en otras posiciones), así que ningún dato
+de entrada puede fijarlo ni moverlo. Coincide con las tres mutaciones de QA. El `NINC` con caída a 0 de
+R-043 §2 desapareció: si el `awk` falla, ahora falta la línea `Resultado:` entera, que se ve.
+
+**Observaciones (sin hallazgo):**
+- La normalización de la palanca se duplicó en 37/2 (`_pide37`/`RARO37`, 37/2:254-260), con el mismo
+  valor raro **sin aplanar** en el motivo que señalé en R-043 §2 para 37/7. No altera recuento ni cuadre.
+- **El delta de workflow propuesto quedó desfasado del código:** su `grep '^(Resultado: |INCONCLUSO: |       ! )'`
+  ya no casa las cabeceras nuevas `INCONCLUSO (rendimiento NO acreditado): …` / `INCONCLUSO (instrumento
+  NO acreditado): …`. Aplicado tal cual, el resumen del job llevaría la línea `Resultado:` con los tres
+  recuentos, pero los nombres `       ! ` de los dos grupos, **mezclados y sin su cabecera**. Eso reintroduce
+  en el resumen del job la confusión que QA-030-09 cerró en el log. Se suma al defecto de R-043 §5 (el
+  `grep` recorre el log entero). No está aplicado; hay que revisarlo antes de proponerlo al propietario.
+
+### 4. Hallazgo nuevo
+
+#### SEC-110 — `contrato` · **abierto** · severidad baja · REQ-030 · dueño `analista-requerimientos` (write-back)
+
+**La cobertura de C3 se enuncia más ancha de lo que es: «un instrumento averiado no puede producir PASS» y «cubre toda avería que altere lo que mide la calibración»**
+
+- **Sedes (barrido por propiedad: toda frase que afirme qué averías ve C3; `grep` en REQ, ADR, README del
+  banco, `run.sh` y secciones):**
+  - `requirements/REQ-030.md`:270 (CA-07 (e)): «un PASS de C3 es algo que un instrumento averiado **no
+    puede** producir»;
+  - `requirements/REQ-030.md`:327-328 (CA-07 (g)): «cubre **toda avería que altere lo que mide la
+    calibración de CA-03**»;
+  - `docs/decisions/ADR-012-…md`:114 y `tests/escenarios/hooks/README.md`:452, la misma frase.
+  - Los **mensajes que imprime el programa** son correctos y no entran: el PASS de C3 dice «acredita que
+    resolvía en esta corrida, no que detecte cualquier regresión».
+- **Por qué es falsa:**
+  - La primera sede contradice el mismo REQ: CA-07 (g) declara que una avería del brazo «este árbol» puede
+    salir PASS sin que C3 la vea. Un instrumento de CA-03 averiado **sí** puede, por tanto, producir C3 PASS.
+  - La segunda promete por **causa** («altere lo que mide»), y la propiedad real es de **efecto**. Una
+    avería que altere la calibración sin bajarla del techo da C3 PASS. Ejemplo no exhaustivo: la línea base
+    sustituida por otro árbol que también supere 2,600×, que es la vía del tag móvil de SEC-048.
+  - Es la forma que el propietario prohibió en la decisión D («No prometas cobertura de toda avería
+    posible»): el matiz «sin prometer toda avería posible» cuelga de una promesa que sigue siendo más ancha
+    que la verdad.
+- **La propiedad verdadera, para el write-back:** «C3 no puede dar PASS —ni, por tanto, acreditar el
+  instrumento— salvo que en esa corrida la calibración de v1.32.1 vea la cuadrática: ≥ 3 resueltas y todas
+  > 2,600×. Toda avería que lo impida sale FAIL (todas ≤) o no acreditada (mezcla o < 3). No ve lo que no
+  pasa por la calibración (el brazo «este árbol») ni la avería que la altera sin bajarla del techo (p. ej.,
+  una línea base que no es v1.32.1 pero también supera 2,600×, SEC-048).» En la sede :270, «un instrumento
+  averiado» → «un instrumento que no distingue el árbol cuadrático en esa corrida».
+- **Remediación:** sólo texto, en las cuatro sedes: sin código ni nueva medición. La regla de aceptación de
+  CA-07 (e) **no** cambia: su asimetría es cierta para la propiedad corregida.
+- **Clase `contrato`**, porque el REQ afirma algo que él mismo desmiente. **Bloquea el cierre** hasta el
+  write-back. **No** lo acepto como residual en nombre del propietario, y registrarlo no autoriza repararlo:
+  la decisión de abrir la corrección, dentro o fuera del contador, es suya y de la coordinadora.
+  **Vencimiento:** antes del cierre de REQ-030.
+
+### 5. Repositorio público — **sin hallazgo**
+
+`git diff 3c9b7e6..44f9d58` barrido por `insumos`, `mejoras-arnes`, `cliente`, `conciliador`, cuentas y
+correos: sólo aparecen citas de mi propia R-043. Nada de clientes.
+
+### 6. Veredicto
+
+**`Seguridad: con-hallazgos (R-043-A, 2026-09-26, sobre 44f9d58 = código de ccdc7e4)`.**
+- **No es veto.** SEC-108 queda `mitigado`. SEC-109 queda `en-mitigación`: (a) hecha, (b) pendiente del
+  propietario. **SEC-110 (`contrato`) bloquea** hasta su write-back.
+- **Acredita:** la revisión de seguridad y gobernanza del delta de las vueltas 3 y 4. Es decir: C3 en 37/2
+  sobre la misma calibración de CA-03, con sus tres resultados distintos y sin convertir una calibración
+  insuficiente en aprobación; la retirada de la copia de 37/7; el recuento por grupo íntegro frente a las
+  inyecciones probadas; la clase (iii) sin (ii); el contrato de SEC-108 y de SEC-109(a).
+- **No acredita:** las quality gates, el banco ni el CI (no los miré; no hay corrida en CI); el
+  rendimiento; que la frecuencia «7 de 12» mejore (QA ve 10 de 16); que C3 detecte averías fuera de la
+  propiedad de SEC-110; el delta de workflow; la decisión de SEC-109(b); REQ-029, el PR #53 ni CA-09 de
+  REQ-017.
+
+### 7. Estado de hallazgos de esta línea tras `R-043-A`
+
+| Hallazgo | Clase | Estado | Dueño | Bloquea |
+|---|---|---|---|---|
+| `SEC-108` | `contrato` | **`mitigado`** (sobre `ccdc7e4`) | `analista-requerimientos` + propietario | No |
+| `SEC-109` | `instrumento` | `en-mitigación` ((a) mitigada; (b) pendiente del propietario en la cola) | propietario + `analista-requerimientos` | No |
+| `SEC-110` | `contrato` | `abierto` | `analista-requerimientos` | **Sí** (REQ-030) |
+| `SEC-048` | `instrumento` | `abierto` (sin cambio) | propietario + `desarrollador` | No |
+
+**Línea base de no-regresión para REQ-030 (se suma a la de R-043):**
+- C3 vive en 37/2, juzga `PARES37_HER` con `sonda_juez_control_c3` y da tres resultados distintos;
+- sin la palanca, C3 da SKIP sin marca y nunca PASS;
+- en 37/7 no hay ninguna copia del medidor de CA-03;
+- toda línea `[INCONCLUSO]` lleva grupo en posición fija, y lo que no lo lleve sale «sin clasificar».
+
+Regresiones a vigilar (no exhaustivo):
+- que C3 vuelva a medir aparte o sobre una copia;
+- que un INCONCLUSO de C3 cuente para la regla de aceptación;
+- que el grupo se derive de una lista de nombres o de una subcadena;
+- que una calibración no resuelta salga PASS por cualquier camino.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta adenda:** última revisión **R-043** (adenda **`R-043-A`**); último hallazgo
+**SEC-110**; próximos libres **R-044** y **SEC-111**, comprobados sobre todas las ramas y worktrees vivos.
