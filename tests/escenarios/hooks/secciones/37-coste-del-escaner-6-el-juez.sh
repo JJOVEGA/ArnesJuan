@@ -14,7 +14,7 @@
 # es de contrato (REQ-030 CA-01) y un vector que se adaptara al presupuesto no vería que
 # alguien lo cambió. Las razones en milésimas, con división entera, como el juez.
 CASOS_ESPERADOS_SECCION=2
-PISO_AUTONOMO_SECCION=78  # 18 preámbulo (líneas 1-18) + 0 maquinaria compartida duplicada (el juez vive en el corredor) + 60 bloque indivisible mayor (el comparador v46 y el caso del juez de CA-08 (ii), líneas 20-79) · REQ-014 CA-18
+PISO_AUTONOMO_SECCION=85  # 18 preámbulo (líneas 1-18) + 0 maquinaria compartida duplicada (el juez vive en el corredor) + 67 bloque indivisible mayor (el comparador v46 y el caso del juez de CA-08 (ii), líneas 20-86) · REQ-014 CA-18
 seccion_nueva "--- 37/6 · el juez de las sondas de coste sobre vectores fijos (REQ-030 CA-06) ---"
 
 # v46 <etiqueta> <esperado: PASS|FAIL|INCONCLUSO> <salida del juez> — anota en MAL46 lo que no
@@ -58,6 +58,13 @@ if [ -z "$FILTRO" ] || printf '%s' "$nom46" | grep -qi -- "$FILTRO"; then
   v46 'mezcla: 3 > techo, 1 sin registro, 1 sin converger' FAIL "$(j46 "126000:127000:100000:101000 130000:131000:100000:102000 140000:141000:100000:100500 $x4 100000:150000:100000:100100")"
   v46 'vector de demora (todas ≈ 1,6)'             FAIL       "$(j46 '160000:162000:100000:101000 158000:160000:100000:101000 165000:166000:100000:101000 161000:163000:100000:101000 159000:161000:100000:101000')"
   v46 'sin línea base'                             INCONCLUSO "$(j46 '' 'el árbol v1.32.1 no se pudo materializar (la-referencia-no-resuelve:v1.32.1)')"
+  # Los CUATRO números tienen que ser enteros positivos (CA-02 (a); QA-030-01): un 2.º mínimo en 0
+  # no es una serie medida, aunque su convergencia salga 0,000 y «converja».
+  v46 '2.º mín = 0 en este árbol (QA-030-01)'      INCONCLUSO "$(j46 "$(r5 100000:0:100000:101000)")"
+  v46 '2.º mín = 0 en la referencia (QA-030-01)'   INCONCLUSO "$(j46 "$(r5 100000:100000:100000:0)")"
+  # La cara INFERIOR del FAIL (QA-030-03): con el mínimo EXACTAMENTE en el techo y el resto por
+  # encima, el techo cae dentro del recorrido —el mínimo cumple— y el caso no decide.
+  v46 'mín(r) = 1,250 y el resto por encima'       INCONCLUSO "$(j46 '125000:126000:100000:101000 130000:131000:100000:101000 140000:141000:100000:101000 135000:136000:100000:101000 128000:129000:100000:101000')"
   # Los 9 vectores del ensayo local (`sondas-coste/ensayo-local/juez-sintetico.sh`, rama de
   # evidencia), con la salida que la REGLA prescribe. En su vector 4 la expectativa estaba mal
   # escrita en el ensayo (3 resueltas todas <= techo): la regla da PASS, y así se fija aquí.
@@ -71,10 +78,10 @@ if [ -z "$FILTRO" ] || printf '%s' "$nom46" | grep -qi -- "$FILTRO"; then
   v46 'ensayo 7'  INCONCLUSO "$(j46 "100000:101000:40000:41000 110000:111000:100000:102000 100000:101000:100000:100500 $x4 $x4")"
   v46 'ensayo 8'  FAIL       "$(j46 "126000:127000:100000:101000 130000:131000:100000:102000 140000:141000:100000:100500 $x4 100000:150000:100000:100100")"
   v46 'ensayo 9'  INCONCLUSO "$(j46 "126000:127000:100000:101000 130000:131000:100000:102000 $x4 $x4 100000:150000:100000:100100")"
-  if [ -z "$MAL46" ] && [ "$N46" -eq 26 ]; then
-    echo "  PASS  $nom46  $N46 de 26 vectores con la salida que la regla prescribe"
+  if [ -z "$MAL46" ] && [ "$N46" -eq 29 ]; then
+    echo "  PASS  $nom46  $N46 de 29 vectores con la salida que la regla prescribe"
   else
-    echo "  FAIL  $nom46  $N46 vectores corridos (se esperaban 26); no casan: ${MAL46:-ninguno}"
+    echo "  FAIL  $nom46  $N46 vectores corridos (se esperaban 29); no casan: ${MAL46:-ninguno}"
   fi
 fi
 
@@ -99,15 +106,17 @@ if [ -z "$FILTRO" ] || printf '%s' "$nom46" | grep -qi -- "$FILTRO"; then
   v46 'serie corta de 49 999 µs no resuelve'        INCONCLUSO "$(d46 '100000:200000 100000:200000 49999:99998 x x' "$cal46")"
   v46 'serie corta de 50 000 µs sí resuelve'        PASS       "$(d46 '100000:200000 100000:200000 50000:100000 x x' "$cal46")"
   v46 'sin línea base'                              INCONCLUSO "$(d46 "$ok46" '' 'la-referencia-no-resuelve:v1.32.1')"
+  v46 'serie 2S = 0 no resuelve (QA-030-01)'        INCONCLUSO "$(d46 "$(r5 100000:0)" "$cal46")"
+  v46 'mín(este) = 2,600 y el resto por encima (QA-030-03)' INCONCLUSO "$(d46 '100000:260000 100000:300000 100000:310000 100000:320000 100000:330000' "$cal46")"
   # EL FAIL-BEFORE DE REQ-030: la corrida 5 del ensayo en CI (`sondas-coste/ensayo-ci/resultados.md`
   # §2). Este árbol recorrió [1,980; 2,693] y la calibración [2,699; 3,919]; los tres valores
   # intermedios de cada lado no se publicaron y se ponen DENTRO del recorrido —el veredicto
   # sólo depende de los extremos—. El procedimiento de `cfb1106`, con una lectura, dio FAIL
   # 2,693× sobre ese árbol; éste tiene que abstenerse.
   v46 'corrida 5 del ensayo en CI'                  INCONCLUSO "$(d46 '100000:198000 100000:210000 100000:230000 100000:250000 100000:269300' '100000:269900 100000:300000 100000:350000 100000:380000 100000:391900')"
-  if [ -z "$MAL46" ] && [ "$N46" -eq 15 ]; then
-    echo "  PASS  $nom46  $N46 de 15 vectores con la salida que la regla prescribe"
+  if [ -z "$MAL46" ] && [ "$N46" -eq 17 ]; then
+    echo "  PASS  $nom46  $N46 de 17 vectores con la salida que la regla prescribe"
   else
-    echo "  FAIL  $nom46  $N46 vectores corridos (se esperaban 15); no casan: ${MAL46:-ninguno}"
+    echo "  FAIL  $nom46  $N46 vectores corridos (se esperaban 17); no casan: ${MAL46:-ninguno}"
   fi
 fi

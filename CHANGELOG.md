@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-26 · **REQ-030, vuelta 2 de 3 (desarrollador)**: corregido el juez de CA-08 (ii) (QA-030-01), muertas las mutaciones M5 y M9 (QA-030-03) y recuperado el motivo de la sonda en las repeticiones que no miden (QA-030-06); vuelve a `en-revisión`
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (1M context) · agente: `desarrollador`. Sobre `cbfe8a2` más el árbol de trabajo, sin commit ni push.
+
+**QA-030-01 (`contrato`).** `sonda_juez_razon` exige ahora que los **cuatro** números de cada repetición sean `> 0`, no sólo los dos mínimos (CA-02 (a)). Fail-before/pass-after sobre una copia: los dos vectores nuevos de 37/6 dan PASS con el juez de `cbfe8a2` y dan INCONCLUSO con el arreglo. `sonda_juez_duplicacion` no tenía la laguna.
+
+**QA-030-03 (`instrumento`).** 37/6 gana, en cada juez, el vector «mínimo exactamente en el techo y el resto por encima → INCONCLUSO»: M5 y M9 mueren, y M1, M2, M3 y M8 siguen muriendo (29 + 17 vectores). **No** se añadió la comprobación del «de 5» en las líneas reales de 37/2 y 37/5: exigiría medir o un caso nuevo por sección, que es ampliar alcance; queda la verificación manual de QA.
+
+**QA-030-06 (`instrumento`).** 37/2 y 37/5 publican al final de la línea del veredicto el motivo de cada medición que no midió, sin tocar ninguna decisión. Comprobado con una sonda sustituta en el scratchpad vía `ARNES_UTIL_DIR`. El README del banco no transcribe el conjunto medido de QA-030-02: nada que alinear.
+
+**Validación.** Gates de sintaxis y `jq` en verde. Banco completo por defecto: `907 PASS, 1 FAIL, 11 SKIP (de ellos 1 INCONCLUSO)`, cuadre 919, **rc 1**, 198,0 s. El FAIL es el reloj absoluto de `25-presupuesto-de-analisis.sh` (4 032 ms contra 4 000), de la clase QA-017-13 y fuera de `Archivos:`; está registrado en `docs/PENDIENTES.md` y no se relanzó. El INCONCLUSO (calibración de CA-03, repetición #1 a 2,102×) se conserva. Autoprueba: 113 PASS, 0 FAIL.
+
 ## [Interno] — 2026-09-26 · **REQ-030 implementado y en revisión**: las sondas de coste CA-03 y CA-08 (ii) de REQ-017 deciden sobre un presupuesto fijo de 5 repeticiones y dicen INCONCLUSO, contado aparte en la línea `Resultado:`; los techos 2,6 y 1,25× no se tocan
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (1M context) · agente: `desarrollador`. Sobre `cfb1106` (`origin/main`), rama `feat/req-030-sondas-r5`, árbol de trabajo sin commit (lo hace la coordinadora). Decisión del propietario del 2026-09-26 (`PENDING_APPROVAL.md` § Resueltas) y `ADR-012`.
 

@@ -15,7 +15,7 @@
 # `37-coste-del-escaner-4-la-ruta-critica.sh`, donde está escrito su motivo largo, porque
 # CA-08 necesita el árbol heredado y CA-04 + CA-19 + H-04 hacen imposible factorizarlo.
 CASOS_ESPERADOS_SECCION=7
-PISO_AUTONOMO_SECCION=261  # 22 preámbulo (líneas 1-22) + 100 maquinaria compartida duplicada (num47 y mat47 con la línea base, líneas 23-122) + 139 bloque indivisible mayor (CA-08 entero: la medición de las dos magnitudes con su presupuesto fijo y los casos que la juzgan, líneas 124-262) · REQ-014 CA-18
+PISO_AUTONOMO_SECCION=266  # 22 preámbulo (líneas 1-22) + 100 maquinaria compartida duplicada (num47 y mat47 con la línea base, líneas 23-122) + 144 bloque indivisible mayor (CA-08 entero: la medición de las dos magnitudes con su presupuesto fijo y los casos que la juzgan, líneas 124-267) · REQ-014 CA-18
 seccion_nueva "--- 37/5 · el camino de una cabecera normal: procesos y reloj (REQ-017 CA-08 y CA-06) ---"
 
 BANCO47="${SEC_DIR%/}/../run.sh"
@@ -152,11 +152,13 @@ TECHO47=1250   # ‰. EL MISMO número para la razón y para la convergencia, y 
 # entorno) y cada repetición guarda SU registro. Ninguna se descarta, se sustituye ni se
 # repite por su resultado: la que no midió entra como NO RESUELTA. Y no queda ninguna
 # medición fuera del presupuesto: el veredicto sale sólo de éstas (CA-02 (d)).
-declare -A PROCS47 REPS47 SINBASE47
+# NOMIDIO47 guarda el MOTIVO de cada repetición que no midió, y se publica tras el veredicto
+# (QA-030-06): el juez sólo ve `x:x:x:x`. No entra en ninguna decisión.
+declare -A PROCS47 REPS47 SINBASE47 NOMIDIO47
 falta47=''
 JSON47="$RAIZ/json47-$BASHPID.json"
 for _cual47 in REQ-100 REQ-200; do
-  REPS47["$_cual47"]=''; SINBASE47["$_cual47"]=''
+  REPS47["$_cual47"]=''; SINBASE47["$_cual47"]=''; NOMIDIO47["$_cual47"]=''
   json47 "$_cual47" > "$JSON47" 2>/dev/null
   if [ ! -s "$JSON47" ]; then
     falta47="el JSON de $_cual47 salió vacío: el hook no habría recibido entrada"
@@ -190,6 +192,8 @@ for _cual47 in REQ-100 REQ-200; do
       REPS47["$_cual47"]+="${SONDA[min_a]:-x}:${SONDA[min2_a]:-x}:${SONDA[min_b]:-x}:${SONDA[min2_b]:-x} "
     else
       REPS47["$_cual47"]+="x:x:x:x "   # no midió: entra como NO RESUELTA, no se descarta
+      _m47="${SONDA_MOTIVO:-estado=${SONDA[estado]:-?} motivo=${SONDA[motivo]:-?}}"
+      NOMIDIO47["$_cual47"]+="#$_n47: ${_m47//$'\n'/ }; "
     fi
   done
 done
@@ -228,7 +232,8 @@ for _cual47 in REQ-100 REQ-200; do
   fi
   nom47="REQ-017 CA-08 (ii) $_etq47: el reloj no sube más de 1,25× el de v1.32.1"
   if [ -z "$FILTRO" ] || printf '%s' "$nom47" | grep -qi -- "$FILTRO"; then
-    sonda_juez_razon "$nom47" "$TECHO47" "${REPS47[$_cual47]:-}" "${SINBASE47[$_cual47]:-}"
+    sal47="$(sonda_juez_razon "$nom47" "$TECHO47" "${REPS47[$_cual47]:-}" "${SINBASE47[$_cual47]:-}")"
+    printf '%s%s\n' "$sal47" "${NOMIDIO47[$_cual47]:+ · la sonda no midió: ${NOMIDIO47[$_cual47]}}"
   fi
 done
 

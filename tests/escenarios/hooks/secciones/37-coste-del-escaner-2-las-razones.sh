@@ -214,15 +214,19 @@ razon37() {
 # decide, y nunca es FAIL del candidato.
 S37=70000
 PARES37_ESTE=''; PARES37_HER=''
+# El MOTIVO de cada medición que no midió se guarda y se publica tras el veredicto (QA-030-06):
+# el juez sólo ve `x` y diría «no-midió» sin decir por qué. No entra en ninguna decisión.
+NOMIDIO37=''
+nomidio37() { NOMIDIO37+="$1#$_n37: ${MED37_MOTIVO//$'\n'/ }; "; }
 for ((_n37 = 1; _n37 <= SONDA_COSTE_R; _n37++)); do
   u1_37=''; u2_37=''
-  mide37 "$LIB37" arnes_sin_cita "$S37"          20 && u1_37="$MED37_US"
-  mide37 "$LIB37" arnes_sin_cita "$(( S37 * 2 ))" 20 && u2_37="$MED37_US"
+  mide37 "$LIB37" arnes_sin_cita "$S37"          20 && u1_37="$MED37_US" || nomidio37 'este S '
+  mide37 "$LIB37" arnes_sin_cita "$(( S37 * 2 ))" 20 && u2_37="$MED37_US" || nomidio37 'este 2S '
   PARES37_ESTE+="${u1_37:-x}:${u2_37:-x} "   # la que no midió entra como NO RESUELTA
   if [ "$HER37_OK" = si ]; then
     h1_37=''; h2_37=''
-    mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$S37"           20 && h1_37="$MED37_US"
-    mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$(( S37 * 2 ))" 20 && h2_37="$MED37_US"
+    mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$S37"           20 && h1_37="$MED37_US" || nomidio37 'v1.32.1 S '
+    mide37 "$HER37/hooks/lib.sh" arnes_sin_cita "$(( S37 * 2 ))" 20 && h2_37="$MED37_US" || nomidio37 'v1.32.1 2S '
     PARES37_HER+="${h1_37:-x}:${h2_37:-x} "
   fi
 done
@@ -233,7 +237,8 @@ if [ "$HER37_OK" != si ]; then
 fi
 nom37="REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica"
 if [ -z "$FILTRO" ] || printf '%s' "$nom37" | grep -qi -- "$FILTRO"; then
-  sonda_juez_duplicacion "$nom37" 2600 "$PARES37_ESTE" "$PARES37_HER" "$SINBASE37"
+  sal37="$(sonda_juez_duplicacion "$nom37" 2600 "$PARES37_ESTE" "$PARES37_HER" "$SINBASE37")"
+  printf '%s%s\n' "$sal37" "${NOMIDIO37:+ · la sonda no midió: $NOMIDIO37}"
 fi
 
 # ---------- CA-04 · LA RAZÓN CONTRA LA ÚLTIMA VERSIÓN SIN LA GUARDA ----------

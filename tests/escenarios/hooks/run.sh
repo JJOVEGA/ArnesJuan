@@ -620,8 +620,10 @@ sonda_juez_razon() {
     if [ -z "$rep" ]; then motivos+="#$i:ausente "; continue; fi
     ue=''; ue2=''; uh=''; uh2=''; sobra=''
     IFS=: read -r ue ue2 uh uh2 sobra <<< "$rep"
+    # Los CUATRO > 0, no sólo los dos mínimos (QA-030-01): un 2.º mínimo en 0 daba convergencia
+    # 0,000 y la repetición «resolvía» sin ser una serie medida.
     if [ -n "$sobra" ] || ! sonda_num "$ue" || ! sonda_num "$ue2" || ! sonda_num "$uh" || ! sonda_num "$uh2" \
-       || [ "$((10#$ue))" -eq 0 ] || [ "$((10#$uh))" -eq 0 ]; then
+       || [ "$((10#$ue))" -eq 0 ] || [ "$((10#$ue2))" -eq 0 ] || [ "$((10#$uh))" -eq 0 ] || [ "$((10#$uh2))" -eq 0 ]; then
       motivos+="#$i:no-midió "; continue
     fi
     if [ "$((10#$ue))" -lt "$SONDA_COSTE_SUELO" ] || [ "$((10#$uh))" -lt "$SONDA_COSTE_SUELO" ]; then
