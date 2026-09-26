@@ -1,0 +1,3 @@
+# REQ-030 · logs de la vuelta 4 de QA (excepción del propietario, opción D; 2026-09-26, −0600)
+
+Versión base validada: `ccdc7e4cf7e5a259d7c7660a65c913e6263d4922`. Máquina: WSL2, 12 CPU. `v4-banco.log` = banco completo por defecto; `v4-ctl1..3.log` = las 3 corridas fijadas con `ARNES_SONDA_CONTROLES=1` (6 controles en 37/7 + C3 en 37/2); `v4-hueco.log` = avería reproducida (ruta de la línea base en copia de 37/2): C3 FAIL (antes, vuelta 3: PASS, `../qa-vuelta-3/hueco.log`); `v4-fb-{const,suelo,mezcla}.log` = fail-before de C3 en tres modos. Veredicto `QA: aprobado`. Copiados del scratchpad sin editar.

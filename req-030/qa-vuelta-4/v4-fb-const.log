@@ -1,0 +1,9 @@
+--- 37/2 · el coste del escáner: la escala y las razones (REQ-017 CA-03, CA-04 y CA-06) ---
+  SKIP  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  [INCONCLUSO] [rendimiento] la calibración NO resolvió: hacen falta 3 o más repeticiones resueltas de v1.32.1 y todas por encima de 2.600× · v1.32.1: 1.000× 1.000× 1.000× 1.000× 1.000× (5 de 5 resueltas) · este árbol: 1.000× 1.000× 1.000× 1.000× 1.000× (5 de 5 resueltas) · no es FAIL del candidato: el instrumento no demostró ver el defecto
+  FAIL  REQ-030 CA-07 control C3 (instrumento de CA-03): el cociente de duplicación de v1.32.1 con k=20 supera 2,6×  AVERÍA DEMOSTRADA del instrumento de CA-03: máx(cociente de v1.32.1) 1.000× <= techo 2.600× en las 5 de 5 resueltas: 1.000× 1.000× 1.000× 1.000× 1.000× — no distingue el árbol cuadrático, o la línea base no es la que dice ser; el cambio de la sonda no se acredita
+aviso: vuelta parcial (1 de 53 secciones, filtro 'CA-03 el esc\|control C3'): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 0 PASS, 1 FAIL, 1 SKIP (de ellos 1 INCONCLUSO: 1 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+INCONCLUSO (rendimiento NO acreditado): 1 — la medición real no resolvió en esta corrida; no pone el banco en rojo y un check verde no lo acredita (REQ-030):
+       ! REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica
+       · REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  [INCONCLUSO] [rendimiento] la calibración NO resolvió: hacen falta 3 o más repeticiones resueltas de v1.32.1 y todas por encima de 2.600× · v1.32.1: 1.000× 1.000× 1.000× 1.000× 1.000× (5 de 5 resueltas) · este árbol: 1.000× 1.000× 1.000× 1.000× 1.000× (5 de 5 resueltas) · no es FAIL del candidato: el instrumento no demostró ver el defecto
