@@ -1,7 +1,7 @@
 # ---------- 37 (2/5) · EL COSTE DEL ESCÁNER: LAS RAZONES ----------
 # REQ-017. La escala (CA-03, con el procedimiento de REQ-030), la razón contra la última
 # versión sin la guarda (CA-04) y la regla de que una sonda que no pudo medir dice SKIP y
-# nunca PASS (CA-06).
+# nunca PASS (CA-06). Y el control C3 del instrumento de CA-03 (REQ-030 CA-07 (g)), a demanda.
 #
 # POR QUÉ TODO AQUÍ SON RAZONES Y NO SEGUNDOS. Un techo en segundos lo falsea la máquina
 # y lo falsea la carga —esta misma ventana midió lo que pasa cuando una sonda desbocada
@@ -17,8 +17,8 @@
 # cambio de mecanismo no autorizado—. Su motivo largo, y las cuatro propiedades de CA-05
 # que porta, están escritos UNA vez, en `37-coste-del-escaner-1-el-dominio.sh`. Ésta es la
 # única parte que materializa ADEMÁS v1.32.0: sólo la usa CA-04.
-CASOS_ESPERADOS_SECCION=4  # 5 → 4 por REQ-030: `REQ-017 CA-03 fail-before` pasa a ser la calibración, dentro del veredicto de CA-03
-PISO_AUTONOMO_SECCION=194  # 25 preámbulo (líneas 1-25) + 122 maquinaria compartida duplicada (mat37 y las dos líneas base, líneas 26-147) + 47 bloque indivisible mayor (mide37 y razon37, el medidor y la puerta de las razones de una lectura, líneas 149-195) · REQ-014 CA-18
+CASOS_ESPERADOS_SECCION=5  # 5 → 4 por REQ-030 (`REQ-017 CA-03 fail-before` pasa a ser la calibración) y 4 → 5 por la decisión D (el control C3 vive aquí)
+PISO_AUTONOMO_SECCION=224  # 25 preámbulo (líneas 1-25) + 122 maquinaria compartida duplicada (mat37 y las dos líneas base, líneas 26-147) + 77 bloque indivisible mayor (CA-03 con su calibración y el control C3 que juzga esa misma serie, líneas 197-273) · REQ-014 CA-18
 seccion_nueva "--- 37/2 · el coste del escáner: la escala y las razones (REQ-017 CA-03, CA-04 y CA-06) ---"
 
 num37() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
@@ -239,6 +239,37 @@ nom37="REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea
 if [ -z "$FILTRO" ] || printf '%s' "$nom37" | grep -qi -- "$FILTRO"; then
   sal37="$(sonda_juez_duplicacion "$nom37" 2600 "$PARES37_ESTE" "$PARES37_HER" "$SINBASE37")"
   printf '%s%s\n' "$sal37" "${NOMIDIO37:+ · la sonda no midió: $NOMIDIO37}"
+fi
+
+# ---------- C3 · EL INSTRUMENTO QUE DECIDE CA-03 VE EL ÁRBOL CUADRÁTICO (REQ-030 CA-07 (g)) ----------
+# SEC-108 y QA-030-07, decisión D del propietario: el control vive AQUÍ y juzga LA MISMA serie de
+# calibración que acaba de medir CA-03 (`PARES37_HER`: mismo `mide37`, misma ruta `$HER37`,
+# mismos tamaños, k y repeticiones). NO mide nada aparte: una copia del instrumento —el C3 de
+# la vuelta 3, en 37/7— daba PASS con una avería que vivía sólo en este archivo. Decide
+# `sonda_juez_control_c3` (corredor): PASS, FAIL real («avería demostrada», pone el banco en
+# rojo) o INCONCLUSO («no pudo acreditar el instrumento»), nunca PASS por una calibración
+# insuficiente. Sólo con `ARNES_SONDA_CONTROLES=1`; sin la palanca, SKIP con motivo y sin
+# marca, y la calibración sigue siendo la precondición silenciosa de CA-03. La regla «ningún
+# FAIL en 3 corridas y PASS en al menos 1» la aplican QA y seguridad, no esta sección.
+_pide37="${ARNES_SONDA_CONTROLES-}"
+_pide37="${_pide37#"${_pide37%%[![:space:]]*}"}"
+_pide37="${_pide37%"${_pide37##*[![:space:]]}"}"
+PIDE37=no; RARO37=''
+case "${_pide37,,}" in
+  1|si|sí|yes|true|on) PIDE37=si ;;
+  ''|0|no|false|off)   : ;;
+  *)                   RARO37="$_pide37" ;;
+esac
+nom37="REQ-030 CA-07 control C3 (instrumento de CA-03): el cociente de duplicación de v1.32.1 con k=20 supera 2,6×"
+if [ -z "$FILTRO" ] || printf '%s' "$nom37" | grep -qi -- "$FILTRO"; then
+  if [ "$PIDE37" != si ]; then
+    mot37="no se pide: control del instrumento, a demanda con ARNES_SONDA_CONTROLES=1; la de cada cambio de la sonda, en docs/qa/ de su REQ"
+    [ -z "$RARO37" ] || mot37="ARNES_SONDA_CONTROLES=<$RARO37> no se reconoce y NO enciende el control; $mot37"
+    echo "  SKIP  $nom37  $mot37"
+  else
+    sal37="$(sonda_juez_control_c3 "$nom37" 2600 "$PARES37_HER" "$SINBASE37")"
+    printf '%s%s\n' "$sal37" "${NOMIDIO37:+ · la sonda no midió: $NOMIDIO37}"
+  fi
 fi
 
 # ---------- CA-04 · LA RAZÓN CONTRA LA ÚLTIMA VERSIÓN SIN LA GUARDA ----------

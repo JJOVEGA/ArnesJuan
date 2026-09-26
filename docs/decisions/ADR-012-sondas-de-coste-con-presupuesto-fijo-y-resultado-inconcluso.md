@@ -106,10 +106,18 @@ de CA-03 donde el vigente habría fallado).
   **INCONCLUSO** si no puede acreditarlo, y forma parte de la regla de aceptación del instrumento de
   CA-07 (e). **En el modo por defecto del banco un instrumento roto de CA-03 sigue sin ponerse rojo**:
   C3 lo detecta en la validación de toda entrega (iii), no en cada PR.
+  **Corregido otra vez el 2026-09-26 (QA-030-07; decisión D del propietario, que sustituye la ubicación
+  de la opción A):** el primer C3 vivía en 37/7 y medía v1.32.1 con una **copia** del medidor de 37/2, así
+  que una avería que vivía sólo en 37/2 —la ruta de la línea base cambiada— lo dejaba en PASS y la regla
+  de aceptación acreditaba el instrumento roto. C3 pasa a ser un caso **de 37/2** que juzga **la misma
+  serie de calibración** que CA-03 ya mide, sin copia y sin compartir código entre secciones. Cubre, por
+  propiedad, **toda avería que altere lo que mide esa calibración**; **no** cubre lo que no pasa por ella
+  —por ejemplo, el brazo «este árbol» de CA-03— y no promete detectar toda avería posible.
 - (−) **Una regresión real puede salir INCONCLUSO donde la base daba FAIL, en tres formas** (R-043 §1,
   SEC-109): (a) el recorrido de las razones abarca el techo; (b) la calibración de CA-03 no resuelve
-  —medido en 4 de 7 corridas completas locales, una **limitación de utilidad del procedimiento** en
-  palabras del propietario—; (c) el instrumento de CA-03 está roto, cubierta ahora por C3 con la palanca.
+  —medido en 4 de 7 corridas completas locales y, según la decisión D, en **7 de 12**, una **limitación
+  de utilidad del procedimiento** en palabras del propietario, que esta reparación no mejora—; (c) el
+  instrumento de CA-03 está roto, cubierta ahora por C3 con la palanca y dentro de su cobertura.
   En las tres el rendimiento queda **no acreditado, nunca aprobado** (REQ-030 CA-08).
 - **CA-09 queda fuera**, con su sonda y sus resultados (FAIL 1 de 5 y SKIP 1 de 5 en el ensayo en CI sobre
   mecanismo idéntico); puede seguir bloqueando una integración, y esta decisión no promete desbloquear el

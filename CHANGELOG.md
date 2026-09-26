@@ -2,6 +2,20 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-26 · **REQ-030, vuelta 4 por excepción expresa del propietario (decisión D)**: C3 se muda a 37/2 y juzga la misma calibración que CA-03 (SEC-108, QA-030-07); el resumen separa instrumento de rendimiento no acreditado (QA-030-09); vuelve a `en-revisión`
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (1M context) · agente: `desarrollador`. Sobre `a9bc66f` más el árbol de trabajo, sin commit ni push. El contador dev↔QA 3 de 3 se conserva.
+
+**C3 en 37/2.** `sonda_juez_control_c3` se aplica a `PARES37_HER`, la misma serie de calibración de v1.32.1 que CA-03 ya mide (mismo `mide37`, ruta, tamaños, `k` y R). No mide nada aparte. La copia de 37/7 (`mat57`/`mide57` y el caso C3) se retira: 37/7 vuelve a 6 casos, 37/2 pasa a 5 y `CASOS_ESPERADOS` sigue en 920. No se comparte código entre secciones.
+
+**Resumen con grupos (CA-05 (a-bis)).** Cada inconcluso declara su grupo en la propia línea: `[INCONCLUSO] [rendimiento]` o `[INCONCLUSO] [instrumento]`. `run.sh` publica `(de ellos N INCONCLUSO: R rendimiento, I instrumento, X sin clasificar)` y, grupo a grupo, `INCONCLUSO (rendimiento NO acreditado)`, `INCONCLUSO (instrumento NO acreditado)` e `INCONCLUSO (sin clasificar)`, con los nombres. La autoprueba pasa a 117 casos, con el par discriminante de los grupos.
+
+**Validación decisiva** (scratchpad, una ejecución por modo):
+- **(a)** Con la avería de QA (37/2 midiendo este árbol como si fuera la línea base): C3 **INCONCLUSO** `[instrumento]` (resueltas mezcladas), nunca PASS; en la vuelta 3 daba PASS. CA-03 sale INCONCLUSO.
+- **(b)** Con una sonda de reloj constante: C3 **FAIL** «avería demostrada», rc 1.
+- **(c)** Árbol sano con la palanca: C3 **PASS** (mín 3,669×), 161,3 s.
+
+Banco completo por defecto: `908 PASS, 0 FAIL, 12 SKIP (de ellos 1 INCONCLUSO: 1 rendimiento, 0 instrumento, 0 sin clasificar)`, rc 0, 208,7 s; el inconcluso es la calibración de CA-03 (repetición #1 a 2,574×) y se conserva. Autoprueba: 117 PASS, 0 FAIL. Sin cambios en `hooks/`, `tools/`, `tests/util/`, `.github/`, umbrales, R, `k`, suelo, demoras, CA-09 ni la sección 25.
+
 ## [Interno] — 2026-09-26 · REQ-030: QA vuelta 3 de 3 → `con-hallazgos`; REQ `bloqueado` (tope agotado) con QA-030-07 y QA-030-09 (`contrato`); SEC-108 sigue abierto
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
 

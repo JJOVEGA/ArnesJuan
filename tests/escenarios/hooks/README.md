@@ -255,7 +255,7 @@ Tres reglas nacidas de fallos reales:
 | Coste (37/5) | una repetición cuya sonda **no converge** (2.º mínimo / mínimo > 1,25×) | **no resuelta**: no cuenta para PASS ni para FAIL; el juez que decide lo prueba con las siete entradas de siempre |
 | Coste (37/6) | los **dos jueces** de las sondas de coste sobre **vectores fijos** (fronteras, 2 frente a 3 resueltas, calibración 2 frente a 3, mezclas, sin línea base, los 9 del ensayo, la corrida 5 del ensayo en CI) | cada vector con la salida que la regla prescribe, o **FAIL** nombrándolo |
 | Coste (37/7) | controles **I** (idénticos), **W0** (envoltorio sin demora) y **WD** (demora fija), **sólo con `ARNES_SONDA_CONTROLES=1`** | I y W0 sin FAIL; WD **PASS si el juez dice FAIL**; apagados, **SKIP** con su última acreditación, nunca PASS |
-| Coste (37/7) | control **C3**: el cociente de duplicación de **v1.32.1** con el instrumento de CA-03, **sólo con `ARNES_SONDA_CONTROLES=1`** | PASS si **todas** > 2,6× en ≥ 3 resueltas; **FAIL real** si todas ≤ 2,6× (avería demostrada); si no, **INCONCLUSO**, nunca PASS |
+| Coste (37/2) | control **C3**: la **misma** serie de calibración de **v1.32.1** que mide CA-03, juzgada como control del instrumento, **sólo con `ARNES_SONDA_CONTROLES=1`** | PASS si **todas** > 2,6× en ≥ 3 resueltas; **FAIL real** si todas ≤ 2,6× (avería demostrada); si no, **INCONCLUSO**, nunca PASS |
 | Coste (37/5) | una sección sintética que deja un proceso vivo | el corredor la **acusa por su nombre** |
 | Sondas (38/1) | `bash -n` y los modos de cada `tests/util/*.sh` | ejecutable **y** con shebang, o **aborta nombrándolo** |
 | Sondas (38/1) | los registros de las **dos** sondas de `tests/util/` | **una** línea, y **ninguna** con la forma de un caso |
@@ -422,15 +422,20 @@ se movieron**; cambió el procedimiento:
   `k`; si ese lado no queda con ≥ 3 resueltas **todas por encima** del techo (exactamente el techo no
   resuelve), el instrumento no demostró ver el defecto y el caso **no decide**: nunca FAIL del
   candidato. El antiguo caso `REQ-017 CA-03 fail-before` (con `k = 1`) desaparece por eso, y su
-  función de **detector de un instrumento roto** la recupera el control **C3** de 37/7 (abajo), que
-  sólo corre con la palanca: en el modo por defecto, un instrumento de CA-03 roto sale INCONCLUSO, no
-  FAIL.
-- **INCONCLUSO** es el nombre de «no decide», y significa **rendimiento no acreditado en esa
-  corrida**. Se imprime `SKIP <nombre>  [INCONCLUSO] <motivo y cifras>` —el nombre del caso es el
-  mismo que en PASS y FAIL, para que `inventario.sh` los reconozca—; en el cuadre sigue siendo un
-  SKIP. La línea `Resultado:` publica `(de ellos N INCONCLUSO)` y debajo nombra cada uno con `!`; el
-  reconocimiento vive **sólo** en `run.sh` y cuenta una línea `SKIP` cuya evidencia **empieza** por
-  la marca.
+  función de **detector de un instrumento roto** la recupera el control **C3**, en la misma 37/2
+  (abajo), que sólo corre con la palanca: en el modo por defecto, un instrumento de CA-03 roto sale
+  INCONCLUSO, no FAIL.
+- **INCONCLUSO** es el nombre de «no decide». Se imprime `SKIP <nombre>  [INCONCLUSO] [<grupo>]
+  <motivo y cifras>` —el nombre del caso es el mismo que en PASS y FAIL, para que `inventario.sh` los
+  reconozca—; en el cuadre sigue siendo un SKIP. El **grupo** lo declara la propia línea:
+  `[rendimiento]` en una medición real (CA-03, CA-08 (ii): **rendimiento no acreditado** en esa
+  corrida) e `[instrumento]` en un control (C3 y los de 37/7: **instrumento no acreditado**). La línea
+  `Resultado:` publica `(de ellos N INCONCLUSO: R rendimiento, I instrumento, X sin clasificar)` y
+  debajo, grupo a grupo, `INCONCLUSO (rendimiento NO acreditado): R …`,
+  `INCONCLUSO (instrumento NO acreditado): I …` e `INCONCLUSO (sin clasificar): X …`, cada uno con
+  sus casos nombrados con `!`. Una línea con la marca y sin grupo reconocible sale «sin clasificar»:
+  no se cuenta como rendimiento en silencio. El reconocimiento vive **sólo** en `run.sh` y cuenta una
+  línea `SKIP` cuya evidencia **empieza** por la marca.
 - **Dos clases de control del instrumento.** Las pruebas **sintéticas** del evaluador (37/6: vectores
   fijos, sin reloj, **siempre**) y las pruebas **de medición** (37/7: sujetos idénticos, envoltorio
   sin demora y envoltorio con demora fija, **a demanda** con `ARNES_SONDA_CONTROLES=1`, porque son 30
@@ -439,17 +444,23 @@ se movieron**; cambió el procedimiento:
   de la demora **no** acredita detección. Detectar una demora añadida es un control **de la prueba**,
   no su finalidad: no garantiza detectar una regresión del escáner, cuyo control sigue siendo la
   calibración contra v1.32.1.
-- **C3, el control del instrumento de CA-03** (37/7, séptimo caso, SEC-108). Mide el mismo cociente
-  de duplicación que CA-03 —70 000 → 140 000 bytes, `k = 20`, 5 repeticiones, la misma resolución—
-  sobre **v1.32.1**, el árbol cuadrático, y lo juzga `sonda_juez_control_c3` (corredor). Tres
-  resultados, que **no** se confunden entre sí:
+- **C3, el control del instrumento de CA-03** (37/2, SEC-108, decisión D del propietario). **No
+  mide nada aparte:** juzga con `sonda_juez_control_c3` (corredor) **la misma serie de calibración de
+  v1.32.1** que CA-03 acaba de medir —el mismo `mide37`, la misma ruta de la línea base, 70 000 →
+  140 000 bytes, `k = 20`, 5 repeticiones—. Hasta la vuelta 3 vivía en 37/7 con una copia del
+  medidor, y una avería que vivía sólo en 37/2 (la ruta de la línea base cambiada) lo dejaba en PASS
+  (QA-030-07). Cubre por propiedad **toda avería que altere lo que mide la calibración de CA-03**; no
+  cubre el brazo «este árbol» de CA-03 ni las sondas de CA-08 (ii). Tres resultados, que **no** se
+  confunden entre sí:
   - **PASS — «el instrumento ve la cuadrática»:** ≥ 3 resueltas y **todas** > 2,6×. Acredita que
     resolvía en esa corrida, no que detecte cualquier regresión.
   - **FAIL — «avería demostrada»:** ≥ 3 resueltas y **todas** ≤ 2,6×. Es un FAIL **real**, no
     esperado: pone el banco en rojo con la palanca encendida, como hacía el `fail-before` retirado.
   - **INCONCLUSO — «el control no pudo acreditar el funcionamiento»:** menos de 3 resueltas,
-    resueltas a los dos lados del techo, o sin línea base. Marcado y contado como cualquier
-    INCONCLUSO, **nunca PASS**, y **no** demuestra avería.
+    resueltas a los dos lados del techo, o sin línea base. Marcado `[INCONCLUSO] [instrumento]` y
+    contado en su grupo, **nunca PASS**, y **no** demuestra avería.
+  - **Sin la palanca:** SKIP con motivo, sin marca, nunca PASS; la calibración sigue siendo la
+    precondición silenciosa de CA-03 y una calibración insuficiente no aprueba el instrumento.
 
   Y ninguno es la **medición real inconclusa** de CA-03 en 37/2, que es **rendimiento** no
   acreditado del árbol candidato; un INCONCLUSO de C3 es **instrumento** no acreditado.

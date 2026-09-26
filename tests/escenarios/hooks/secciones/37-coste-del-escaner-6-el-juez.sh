@@ -19,16 +19,19 @@ seccion_nueva "--- 37/6 · el juez de las sondas de coste sobre vectores fijos (
 
 # v46 <etiqueta> <esperado: PASS|FAIL|INCONCLUSO> <salida del juez> — anota en MAL46 lo que no
 # casa. Exige UNA línea, el nombre del caso tal cual, la marca tras el nombre en el
-# inconcluso y el denominador «de 5» en TODA salida (CA-01 (a), CA-04).
-MAL46=''; N46=0
+# inconcluso y el denominador «de 5» en TODA salida (CA-01 (a), CA-04). Y en el inconcluso, el
+# GRUPO que toca a ese juez tras la marca —`G46`: `rendimiento` en una medición real,
+# `instrumento` en el control C3— (CA-05 (a-bis)).
+MAL46=''; N46=0; G46=rendimiento
 v46() {
   local etq="$1" esp="$2" sal="$3" got
   case "$sal" in
-    *$'\n'*)                            got='VARIAS-LINEAS' ;;
-    "  PASS  caso46  "*)                got=PASS ;;
-    "  FAIL  caso46  "*)                got=FAIL ;;
-    "  SKIP  caso46  [INCONCLUSO] "*)   got=INCONCLUSO ;;
-    *)                                  got="OTRA<${sal:0:50}>" ;;
+    *$'\n'*)                                  got='VARIAS-LINEAS' ;;
+    "  PASS  caso46  "*)                      got=PASS ;;
+    "  FAIL  caso46  "*)                      got=FAIL ;;
+    "  SKIP  caso46  [INCONCLUSO] [$G46] "*)  got=INCONCLUSO ;;
+    "  SKIP  caso46  [INCONCLUSO] "*)         got="INCONCLUSO-SIN-GRUPO-$G46" ;;
+    *)                                        got="OTRA<${sal:0:50}>" ;;
   esac
   case "$sal" in *" de 5"[" ):"]*) ;; *) got="$got-SIN-DE-5" ;; esac
   N46=$((N46 + 1))
@@ -117,6 +120,7 @@ if [ -z "$FILTRO" ] || printf '%s' "$nom46" | grep -qi -- "$FILTRO"; then
   # C3, el control del instrumento de CA-03 (CA-07 (g), SEC-108): mismo cociente, misma resolución,
   # y un FAIL de AVERÍA cuando todas las resueltas quedan en el techo o por debajo.
   c46() { sonda_juez_control_c3 caso46 2600 "$1" "${2:-}"; }
+  G46=instrumento   # el control se abstiene como INSTRUMENTO no acreditado, no como rendimiento
   v46 'C3: todas en 2,600 = avería demostrada'      FAIL       "$(c46 "$(r5 100000:260000)")"
   v46 'C3: tiempos constantes (1,000×) = avería'    FAIL       "$(c46 "$(r5 100000:100000)")"
   v46 'C3: 3 resueltas <= techo y 2 sin medir'      FAIL       "$(c46 '100000:200000 100000:210000 100000:220000 x x')"
