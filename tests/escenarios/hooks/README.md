@@ -449,9 +449,14 @@ se movieron**; cambió el procedimiento:
   v1.32.1** que CA-03 acaba de medir —el mismo `mide37`, la misma ruta de la línea base, 70 000 →
   140 000 bytes, `k = 20`, 5 repeticiones—. Hasta la vuelta 3 vivía en 37/7 con una copia del
   medidor, y una avería que vivía sólo en 37/2 (la ruta de la línea base cambiada) lo dejaba en PASS
-  (QA-030-07). Cubre por propiedad **toda avería que altere lo que mide la calibración de CA-03**; no
-  cubre el brazo «este árbol» de CA-03 ni las sondas de CA-08 (ii). Tres resultados, que **no** se
-  confunden entre sí:
+  (QA-030-07). **Qué garantiza, por su efecto (SEC-110):** C3 no puede dar PASS —ni acreditar el
+  instrumento— salvo que en esa corrida la calibración de v1.32.1 vea la cuadrática (≥ 3 resueltas y
+  todas > 2,6×). Detecta **toda avería que lo impida**: sale FAIL si con ella todas quedan ≤ 2,6×. Queda
+  **inconcluso**, sin acreditar ni demostrar avería, con < 3 resueltas o resueltas a los dos lados del
+  techo. **No cubre** lo que no pasa por la calibración —el brazo «este árbol» de CA-03, las sondas de
+  CA-08 (ii)— ni la avería que altera la calibración **sin bajarla del techo**: una línea base que no es
+  v1.32.1 pero cuyo cociente también supera 2,6× (SEC-048) da C3 PASS. No promete detectar toda avería
+  posible. Tres resultados, que **no** se confunden entre sí:
   - **PASS — «el instrumento ve la cuadrática»:** ≥ 3 resueltas y **todas** > 2,6×. Acredita que
     resolvía en esa corrida, no que detecte cualquier regresión.
   - **FAIL — «avería demostrada»:** ≥ 3 resueltas y **todas** ≤ 2,6×. Es un FAIL **real**, no

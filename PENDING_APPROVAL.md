@@ -36,7 +36,55 @@
 
 ## Pendientes
 
-### [2026-09-26] (coordinadora) — REQ-030: SEC-110 (`contrato`, sólo texto) impide cerrar; ¿se autoriza el write-back textual fuera del contador?
+## Resueltas
+
+### RESUELTA (propietario, 2026-09-26) — **REQ-030: intervención documental acotada para SEC-110 y decisión sobre SEC-109(b)**, excepción expresa al presupuesto agotado; contadores y excepciones anteriores conservados
+
+**Texto del propietario, literal e íntegro:**
+
+> Autorizo una intervención documental acotada para SEC-110 y la decisión de SEC-109(b) en `feat/req-030-sondas-r5`. Es una excepción expresa al presupuesto agotado para este write-back y su revisión; conserva todas las vueltas y excepciones anteriores, sin reiniciar contadores ni declarar que la intervención no cuenta.
+>
+> El objetivo sigue siendo terminar esta dependencia de REQ-029. No abras otra investigación ni reparación de código.
+>
+> **SEC-110**
+>
+> El analista corrige las cuatro sedes que prometen más cobertura de la demostrada, usando la propiedad verdadera identificada por el auditor. Deben distinguir qué avería detecta C3, qué no cubre y bajo qué condiciones queda inconcluso.
+>
+> Conserva los resultados medidos y sus límites. No cambies el código, los umbrales, el presupuesto de mediciones ni la regla de validación para acomodarlos a la redacción.
+>
+> **Decisión sobre SEC-109(b)**
+>
+> 1. Un inconcluso heredado de `main` no impide por sí solo integrar un PR documental que no altere el sujeto ni el instrumento medidos. Deben comprobarse los dos SHA y el conjunto de rutas correspondiente, y citarse el pendiente por identificador. Esto no elimina otros requisitos de integración ni convierte el inconcluso en PASS.
+>
+> 2. En un REQ que cambia el mecanismo, si la acreditación de rendimiento es un criterio exigido, su ausencia impide dar ese criterio por satisfecho y cerrar el REQ. No autorizo convertirla en deuda no bloqueante mediante la etiqueta `instrumento`, trasladarla para cerrar "por otra vía" ni exceptuarla por inferencia.
+>
+> 3. Registra el pendiente en la sede existente del REQ afectado, con dueño —su desarrollador— y revisión de QA y seguridad según corresponda. Si se referencia desde `docs/PENDIENTES.md`, usa un puntero: no crees una segunda versión del pendiente.
+>
+> 4. No acepto "una corrida posterior en PASS" como resolución automática. La acreditación debe seguir un procedimiento y presupuesto fijados antes de medir, conservar todas las ejecuciones y considerar el conjunto de resultados. No elijas una corrida favorable ni borres resultados adversos.
+>
+> 5. Puedes fijar 1.35.0 como hito de revisión del pendiente. Llegar a ese hito obliga a revisarlo; no lo resuelve ni autoriza el cierre automáticamente.
+>
+> Usa el procedimiento vigente donde sea suficiente. Si falta una regla concreta para acreditar el conjunto de resultados, identifica ese hueco y su consecuencia; no inventes otro diseño de medición dentro de este write-back.
+>
+> **Revisión**
+>
+> Agrupa el write-back en una sola intervención. QA verifica la coherencia con esta decisión y, después de QA favorable, seguridad determina el estado de SEC-110 y SEC-109. Las firmas deben indicar la cabeza y el alcance revisados.
+>
+> No repitas ensayos: esta autorización es documental. Conserva como limitaciones las 10 de 16 calibraciones inconclusas, el PASS cercano al techo y el carácter no medido de la estimación de rechazo. No presentes la corrección textual como mejora de fiabilidad o rendimiento.
+>
+> **Límites y entrega**
+>
+> Sin cambios en código, workflow, ruleset, otras sondas, consumidores, REQ-029 o el PR #53. El delta de workflow sigue sin aplicar.
+>
+> Puedes realizar commits locales con los controles activos. Sin push, CI remoto, fusión, publicación ni cambio de versión.
+>
+> Entrega un único resultado breve: cabeza local, textos corregidos, estados determinados por QA y seguridad, cobertura de las firmas y cualquier impedimento restante. No encadenes reparaciones adicionales ni cierres REQ-029.
+
+**Lo que la coordinadora añade, rotulado como suyo:** se registra como **«intervención documental por excepción expresa (2026-09-26)»**, quinta intervención sobre el REQ tras las tres vueltas y la vuelta 4 por excepción; nada se reinicia ni se declara «no contado». Sin código, sin ensayos.
+
+**Las dos entradas tal como estaban, conservadas:**
+
+#### [2026-09-26] (coordinadora) — REQ-030: SEC-110 (`contrato`, sólo texto) impide cerrar; ¿se autoriza el write-back textual fuera del contador?
 
 - **Contexto:** tras la vuelta 4 (excepción, opción D), `QA: aprobado` sobre `ccdc7e4` y `Seguridad: con-hallazgos` (R-043-A sobre `44f9d58`): **SEC-108 `mitigado`** (C3 en 37/2 juzga la misma calibración que decide CA-03; la avería reproducida pasó de C3 PASS a C3 FAIL), QA-030-07 y QA-030-09 cerrados. El auditor abrió **SEC-110** (`contrato`, severidad baja): la cobertura de C3 está escrita más ancha de lo que es en cuatro sedes de texto —`requirements/REQ-030.md`:270 («un instrumento averiado no puede producir PASS»; lo contradice CA-07 (g), que admite que una avería del brazo «este árbol» salga PASS) y :327-328, `ADR-012`:114 y `tests/escenarios/hooks/README.md`:452 («cubre toda avería que altere lo que mide la calibración»; una avería que la altere sin bajarla del techo da PASS, p. ej. una línea base que no es v1.32.1 pero supera 2,600×, vía SEC-048)—. Es la forma que el propietario prohibió («no prometas cobertura de toda avería posible»). Los mensajes que imprime el programa son correctos. La propiedad verdadera está redactada por el auditor en R-043-A §4. **No hay código ni medición que cambiar**; la regla de aceptación de CA-07 (e) no cambia.
 - **Acción que impide (regla 2):** cerrar REQ-030 (hallazgo `contrato` abierto). No impide presentar la entrega ni preparar el PR.
@@ -46,7 +94,14 @@
 - **Recomendación de la coordinadora:** A. La instrucción vigente («si aparece otro impedimento, informa sin encadenar su reparación») es la razón de que no se haya hecho ya.
 - **Espera:** decisión del propietario. **Trabajo que sigue mientras tanto:** ninguno de REQ-030.
 
-### [2026-09-26] (analista-requerimientos) — SEC-109(b): dónde vive la «acreditación pendiente» de REQ-030 CA-08 (ii), y si un inconcluso heredado de `main` impide acogerse a la clase (i)
+#### [2026-09-26] (analista-requerimientos) — SEC-109(b): dónde vive la «acreditación pendiente» de REQ-030 CA-08 (ii), y si un inconcluso heredado de `main` impide acogerse a la clase (i)
+
+> **Nota del analista (2026-09-26), no del propietario: esta propuesta NO es texto vigente.** El
+> propietario la resolvió arriba con otra redacción. Su «texto propuesto» —el pendiente en `Hallazgos
+> abiertos:` como `instrumento` y su traslado a `docs/PENDIENTES.md` si el REQ se cerraba por otra vía—
+> y su forzador «una corrida sobre la cabeza integrada o posterior con el caso en PASS» quedan
+> **rechazados** por los puntos 2 a 4 de su decisión. Lo vigente está en `requirements/REQ-030.md`
+> CA-08 (i) y (ii). La entrada se conserva sólo como historia.
 
 - **Contexto:** SEC-109 (`instrumento`, R-043, `docs/seguridad/registro-seguridad.md`:7443-7462). REQ-030
   CA-08 (ii) dice que, si un PR cambia el mecanismo (`hooks/`, `tools/`) y sale con un INCONCLUSO de
@@ -101,7 +156,7 @@
   depende de esta decisión y continúa.
 - **Espera:** decisión del propietario.
 
-## Resueltas
+*(históricas; resueltas arriba)*
 
 ### RESUELTA (propietario, 2026-09-26) — **REQ-030: opción D para QA-030-07/SEC-108**, una vuelta adicional por excepción, acotada a SEC-108, QA-030-07 y QA-030-09; contador 3 de 3 conservado
 

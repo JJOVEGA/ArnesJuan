@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-26 · REQ-030: intervención documental por excepción del propietario — SEC-110 (cobertura de C3 dicha por efecto) y SEC-109(b) (decisión del propietario incorporada); sin código
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (analista-requerimientos) / Fable 5.1 (coordinadora) · agente: analista-requerimientos, coordinadora.
+
+Sólo texto. SEC-110: las cuatro sedes del auditor y tres más halladas por propiedad (CA-03, FAIL de CA-07 (g), forma (c)) enuncian la cobertura de C3 por efecto: no puede dar PASS salvo que la calibración de v1.32.1 vea la cuadrática; qué detecta, cuándo queda inconcluso y qué no cubre (brazo «este árbol», línea base sustituida que supera el techo, SEC-048). SEC-109(b), cinco puntos literales del propietario en CA-08 (i)/(ii), tres formas y ADR-012: un inconcluso heredado no impide por sí solo un PR documental (dos SHA, conjunto de rutas, pendiente citado por identificador); un criterio de rendimiento exigido no satisfecho impide cerrar el REQ y no se convierte en deuda por etiqueta; sede en «Alcance de la medición» del REQ afectado (`ACR-<REQ>-NN`), puntero desde PENDIENTES; sin resolución automática por corrida posterior; 1.35.0 hito de revisión. Hueco identificado: falta la regla para juzgar un conjunto de varias corridas; mientras falte, un pendiente de clase (ii) no se resuelve por ninguna vía. Limitaciones conservadas (10 de 16, PASS en 2,603×, estimación no medida). Sin push.
+
 ## [Interno] — 2026-09-26 · REQ-030: R-043-A → `Seguridad: con-hallazgos`; SEC-108 `mitigado`, SEC-109 en mitigación (b pendiente del propietario), SEC-110 (`contrato`, sólo texto) abierto
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (auditor-seguridad) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, coordinadora.
 

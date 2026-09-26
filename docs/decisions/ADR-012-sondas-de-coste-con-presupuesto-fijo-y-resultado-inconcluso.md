@@ -64,6 +64,10 @@ de CA-03 donde el vigente habría fallado).
    instrumento de CA-03, cuyo FAIL **no** es esperado sino una avería demostrada (ver Consecuencias).
 5. **Sede del contrato:** desde esta fecha el procedimiento y el vocabulario de CA-03 y CA-08 (ii) los
    contrata **REQ-030**; REQ-017 conserva su texto y enlaza aquí.
+6. *Añadido el 2026-09-26 (SEC-109(b), decisión del propietario):* el pendiente de acreditación que deja
+   un inconcluso en un cambio de mecanismo **impide cerrar** el REQ que lo exige, vive en la sede
+   existente de ese REQ y no se resuelve por una corrida posterior en PASS; el detalle, los cinco puntos y
+   el hueco que queda, en Consecuencias y en REQ-030 CA-08.
 
 ## Alternativas consideradas
 
@@ -110,15 +114,37 @@ de CA-03 donde el vigente habría fallado).
   de la opción A):** el primer C3 vivía en 37/7 y medía v1.32.1 con una **copia** del medidor de 37/2, así
   que una avería que vivía sólo en 37/2 —la ruta de la línea base cambiada— lo dejaba en PASS y la regla
   de aceptación acreditaba el instrumento roto. C3 pasa a ser un caso **de 37/2** que juzga **la misma
-  serie de calibración** que CA-03 ya mide, sin copia y sin compartir código entre secciones. Cubre, por
-  propiedad, **toda avería que altere lo que mide esa calibración**; **no** cubre lo que no pasa por ella
-  —por ejemplo, el brazo «este árbol» de CA-03— y no promete detectar toda avería posible.
+  serie de calibración** que CA-03 ya mide, sin copia y sin compartir código entre secciones.
+  **Qué garantiza C3, enunciado por su efecto** (corregido el 2026-09-26, SEC-110: la redacción anterior
+  de esta frase —«cubre toda avería que altere lo que mide esa calibración»— prometía más de lo
+  demostrado): C3 no puede dar PASS —ni acreditar el instrumento— salvo que en esa corrida la
+  calibración de v1.32.1 vea la cuadrática (≥ 3 resueltas y todas > 2,600×). Toda avería que lo impida
+  sale FAIL (todas ≤ 2,600×) o queda no acreditada, sin demostrar avería (< 3 resueltas o mezcla). **No**
+  ve lo que no pasa por la calibración —el brazo «este árbol» de CA-03— ni la avería que la altera sin
+  bajarla del techo (p. ej., una línea base que no es v1.32.1 pero también supera 2,600×, SEC-048). No
+  promete detectar toda avería posible, y la corrección es de texto: no mejora la fiabilidad.
+  **Límites medidos que se conservan:** 10 de 16 calibraciones locales sin resolver; el único C3 PASS de
+  la validación de la vuelta 4 en 2,603×, un 0,1 % sobre el techo; y la probabilidad de rechazar un
+  instrumento sano estimada por QA (≈ 0,20), que es un cálculo no medido.
 - (−) **Una regresión real puede salir INCONCLUSO donde la base daba FAIL, en tres formas** (R-043 §1,
   SEC-109): (a) el recorrido de las razones abarca el techo; (b) la calibración de CA-03 no resuelve
-  —medido en 4 de 7 corridas completas locales y, según la decisión D, en **7 de 12**, una **limitación
-  de utilidad del procedimiento** en palabras del propietario, que esta reparación no mejora—; (c) el
-  instrumento de CA-03 está roto, cubierta ahora por C3 con la palanca y dentro de su cobertura.
-  En las tres el rendimiento queda **no acreditado, nunca aprobado** (REQ-030 CA-08).
+  —medido en 4 de 7 corridas completas locales, según la decisión D en **7 de 12** y según la
+  intervención documental en **10 de 16**, una **limitación de utilidad del procedimiento** en palabras
+  del propietario, que esta reparación no mejora—; (c) el instrumento de CA-03 no ve la cuadrática,
+  cubierta ahora por C3 con la palanca y dentro de su cobertura. En las tres el rendimiento queda **no
+  acreditado, nunca aprobado** (REQ-030 CA-08).
+- (−) **Qué pasa con un inconcluso de un cambio de mecanismo (SEC-109(b), decisión del propietario del
+  2026-09-26, incorporada en REQ-030 CA-08 (i) y (ii)):** (1) un inconcluso heredado de `main` no impide
+  por sí solo integrar un PR documental, con los dos SHA, el conjunto de rutas y el pendiente citado por
+  identificador; (2) en el REQ que cambia el mecanismo, si la acreditación de rendimiento es un criterio
+  exigido, su ausencia impide darlo por satisfecho y cerrar el REQ, sin convertirla en deuda
+  `instrumento`, trasladarla ni exceptuarla por inferencia; (3) el pendiente vive en la sede existente
+  del REQ afectado, con dueño su desarrollador y revisión de QA y seguridad, y `docs/PENDIENTES.md` sólo
+  lo apunta; (4) no se resuelve con una corrida posterior en PASS, sino con un procedimiento y un
+  presupuesto fijados antes que juzguen el conjunto; (5) 1.35.0 es un hito de revisión, no de
+  resolución. **Consecuencia:** falta la regla para juzgar un conjunto de varias corridas; mientras
+  falte, un pendiente de ese tipo no se puede dar por resuelto y su REQ no cierra (REQ-030 § Notas,
+  «Hueco de SEC-109(b)»).
 - **CA-09 queda fuera**, con su sonda y sus resultados (FAIL 1 de 5 y SKIP 1 de 5 en el ensayo en CI sobre
   mecanismo idéntico); puede seguir bloqueando una integración, y esta decisión no promete desbloquear el
   PR #53.
