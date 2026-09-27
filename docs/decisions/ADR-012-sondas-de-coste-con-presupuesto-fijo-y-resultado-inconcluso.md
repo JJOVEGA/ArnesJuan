@@ -124,7 +124,9 @@ de CA-03 donde el vigente habría fallado).
   bajarla del techo (p. ej., una línea base que no es v1.32.1 pero también supera 2,600×, SEC-048). No
   promete detectar toda avería posible, y la corrección es de texto: no mejora la fiabilidad.
   *Precisión del 2026-09-26 (QA-030-10):* donde las dos notas anteriores de este punto dicen que C3 «lo
-  detecta» o que su FAIL «demuestra avería», se leen con esta propiedad. **FAIL** significa que se cumplió
+  detecta», que el detector «se restituye» con C3 o que su FAIL «demuestra avería», se leen con esta
+  propiedad. C3 **no** es el mismo detector que el `fail-before`: aquél fallaba con una sola lectura
+  ≤ 2,600× (`k = 1`); C3 asume esa función con la regla de R = 5 y no da esos FAIL. **FAIL** significa que se cumplió
   la condición de fallo del control (≥ 3 resueltas y todas ≤ 2,600×). **INCONCLUSO** significa que el
   funcionamiento no quedó acreditado y no demuestra por sí solo una avería. **PASS** acredita sólo lo que
   el control mide, con los límites de arriba. Una avería que deja resueltas a los dos lados del techo, o

@@ -463,7 +463,8 @@ se movieron**; cambió el procedimiento:
     límites de arriba; no que detecte cualquier regresión.
   - **FAIL — «avería demostrada»:** se cumple la condición de fallo del control, ≥ 3 resueltas y
     **todas** ≤ 2,6×. Es un FAIL **real**, no
-    esperado: pone el banco en rojo con la palanca encendida, como hacía el `fail-before` retirado.
+    esperado: pone el banco en rojo con la palanca encendida. El `fail-before` retirado también ponía
+    rojo, pero con otra regla —una sola lectura ≤ 2,6× (`k = 1`)—; C3 no da esos FAIL.
   - **INCONCLUSO — «el control no pudo acreditar el funcionamiento»:** el funcionamiento no quedó
     acreditado; ocurre con menos de 3 resueltas, resueltas a los dos lados del techo, o sin línea base. Marcado `[INCONCLUSO] [instrumento]` y
     contado en su grupo, **nunca PASS**, y **no** demuestra avería.

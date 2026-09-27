@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-26 · REQ-030: QA de la 2.ª intervención documental → `con-hallazgos` (QA-030-10 por una sede: «restituye el detector que el fail-before daba»); corregida esa sede y tres equivalentes bajo la misma autorización
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (qa-tester, analista-requerimientos) / Fable 5.1 (coordinadora) · agente: qa-tester, analista-requerimientos, coordinadora.
+
+QA sobre `8152c4c`: nueve sedes coherentes con FAIL/INCONCLUSO/PASS del propietario; QA-030-10 seguía por REQ-030 CA-07 (g) «sólo restituye… el detector mecánico que el fail-before daba» (atribuye a C3 el FAIL con k=1 que su regla no da). Sin decisión nueva (el propietario cubrió «otra repetición de la misma afirmación»): el analista corrigió esa sede y tres equivalentes (viñeta FAIL de CA-07 (g), forma (c), viñeta FAIL del README del banco) y amplió la precisión fechada de ADR-012; textos históricos conservados; `grep` sin apariciones vigentes. Sin código, sin push.
+
 ## [Interno] — 2026-09-26 · REQ-030: segunda intervención documental por excepción — QA-030-10 corregido por propiedad (cobertura de C3: «sale FAIL o queda no acreditada»); sin código
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (analista-requerimientos) / Fable 5.1 (coordinadora) · agente: analista-requerimientos, coordinadora.
 
