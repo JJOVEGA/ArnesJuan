@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-26 · REQ-030: segunda intervención documental por excepción — QA-030-10 corregido por propiedad (cobertura de C3: «sale FAIL o queda no acreditada»); sin código
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (analista-requerimientos) / Fable 5.1 (coordinadora) · agente: analista-requerimientos, coordinadora.
+
+Sólo texto. Barrido por propiedad de toda frase vigente que atribuya a C3 detectar toda avería: corregidas las dos señaladas (CA-07 (g) del REQ y README del banco) y siete más (viñetas PASS/FAIL/INCONCLUSO de CA-07 (g), tres abstenciones, fail-before, CA-03, forma (c), ADR-012 forma (c) y precisión fechada). Definiciones: FAIL = se cumple la condición de fallo del control; INCONCLUSO = funcionamiento no acreditado, no demuestra avería; PASS = acredita sólo lo que el control mide. Textos históricos conservados. `grep` final: sin promesas vigentes de detectar toda avería. Sin push.
+
 ## [Interno] — 2026-09-26 · REQ-030: QA de la intervención documental → `con-hallazgos` (QA-030-10, `contrato`: dos sedes siguen prometiendo «toda avería»); REQ `bloqueado`; SEC-110/SEC-109 sin determinar por seguridad
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
 

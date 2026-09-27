@@ -123,6 +123,12 @@ de CA-03 donde el vigente habría fallado).
   ve lo que no pasa por la calibración —el brazo «este árbol» de CA-03— ni la avería que la altera sin
   bajarla del techo (p. ej., una línea base que no es v1.32.1 pero también supera 2,600×, SEC-048). No
   promete detectar toda avería posible, y la corrección es de texto: no mejora la fiabilidad.
+  *Precisión del 2026-09-26 (QA-030-10):* donde las dos notas anteriores de este punto dicen que C3 «lo
+  detecta» o que su FAIL «demuestra avería», se leen con esta propiedad. **FAIL** significa que se cumplió
+  la condición de fallo del control (≥ 3 resueltas y todas ≤ 2,600×). **INCONCLUSO** significa que el
+  funcionamiento no quedó acreditado y no demuestra por sí solo una avería. **PASS** acredita sólo lo que
+  el control mide, con los límites de arriba. Una avería que deja resueltas a los dos lados del techo, o
+  menos de 3, impide el PASS pero **no** sale FAIL: queda no acreditada.
   **Límites medidos que se conservan:** 10 de 16 calibraciones locales sin resolver; el único C3 PASS de
   la validación de la vuelta 4 en 2,603×, un 0,1 % sobre el techo; y la probabilidad de rechazar un
   instrumento sano estimada por QA (≈ 0,20), que es un cálculo no medido.
@@ -131,7 +137,7 @@ de CA-03 donde el vigente habría fallado).
   —medido en 4 de 7 corridas completas locales, según la decisión D en **7 de 12** y según la
   intervención documental en **10 de 16**, una **limitación de utilidad del procedimiento** en palabras
   del propietario, que esta reparación no mejora—; (c) el instrumento de CA-03 no ve la cuadrática,
-  cubierta ahora por C3 con la palanca y dentro de su cobertura. En las tres el rendimiento queda **no
+  que con la palanca C3 da FAIL o deja no acreditada, dentro de su cobertura. En las tres el rendimiento queda **no
   acreditado, nunca aprobado** (REQ-030 CA-08).
 - (−) **Qué pasa con un inconcluso de un cambio de mecanismo (SEC-109(b), decisión del propietario del
   2026-09-26, incorporada en REQ-030 CA-08 (i) y (ii)):** (1) un inconcluso heredado de `main` no impide

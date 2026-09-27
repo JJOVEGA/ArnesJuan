@@ -422,9 +422,9 @@ se movieron**; cambió el procedimiento:
   `k`; si ese lado no queda con ≥ 3 resueltas **todas por encima** del techo (exactamente el techo no
   resuelve), el instrumento no demostró ver el defecto y el caso **no decide**: nunca FAIL del
   candidato. El antiguo caso `REQ-017 CA-03 fail-before` (con `k = 1`) desaparece por eso, y su
-  función de **detector de un instrumento roto** la recupera el control **C3**, en la misma 37/2
-  (abajo), que sólo corre con la palanca: en el modo por defecto, un instrumento de CA-03 roto sale
-  INCONCLUSO, no FAIL.
+  función de **detector de un instrumento que no ve el árbol cuadrático** la asume el control **C3**,
+  en la misma 37/2 (abajo), que sólo corre con la palanca y da FAIL o no acredita según su regla: en el
+  modo por defecto, un instrumento de CA-03 que no ve la cuadrática sale INCONCLUSO, no FAIL.
 - **INCONCLUSO** es el nombre de «no decide». Se imprime `SKIP <nombre>  [INCONCLUSO] [<grupo>]
   <motivo y cifras>` —el nombre del caso es el mismo que en PASS y FAIL, para que `inventario.sh` los
   reconozca—; en el cuadre sigue siendo un SKIP. El **grupo** lo declara la propia línea:
@@ -451,18 +451,21 @@ se movieron**; cambió el procedimiento:
   medidor, y una avería que vivía sólo en 37/2 (la ruta de la línea base cambiada) lo dejaba en PASS
   (QA-030-07). **Qué garantiza, por su efecto (SEC-110):** C3 no puede dar PASS —ni acreditar el
   instrumento— salvo que en esa corrida la calibración de v1.32.1 vea la cuadrática (≥ 3 resueltas y
-  todas > 2,6×). Detecta **toda avería que lo impida**: sale FAIL si con ella todas quedan ≤ 2,6×. Queda
-  **inconcluso**, sin acreditar ni demostrar avería, con < 3 resueltas o resueltas a los dos lados del
-  techo. **No cubre** lo que no pasa por la calibración —el brazo «este árbol» de CA-03, las sondas de
+  todas > 2,6×). Una avería que lo impida **sale FAIL o queda no acreditada**: FAIL sólo si se cumple
+  la condición de fallo del control (≥ 3 resueltas y todas ≤ 2,6×); **inconcluso**, sin acreditar el
+  instrumento y sin demostrar por sí solo una avería, si deja < 3 resueltas o resueltas a los dos lados
+  del techo. No toda avería que impide el PASS sale FAIL (QA-030-10). **No cubre** lo que no pasa por la calibración —el brazo «este árbol» de CA-03, las sondas de
   CA-08 (ii)— ni la avería que altera la calibración **sin bajarla del techo**: una línea base que no es
   v1.32.1 pero cuyo cociente también supera 2,6× (SEC-048) da C3 PASS. No promete detectar toda avería
   posible. Tres resultados, que **no** se confunden entre sí:
-  - **PASS — «el instrumento ve la cuadrática»:** ≥ 3 resueltas y **todas** > 2,6×. Acredita que
-    resolvía en esa corrida, no que detecte cualquier regresión.
-  - **FAIL — «avería demostrada»:** ≥ 3 resueltas y **todas** ≤ 2,6×. Es un FAIL **real**, no
+  - **PASS — «el instrumento ve la cuadrática»:** ≥ 3 resueltas y **todas** > 2,6×. Acredita
+    **únicamente** lo que el control mide —que en esa corrida la calibración vio la cuadrática—, con los
+    límites de arriba; no que detecte cualquier regresión.
+  - **FAIL — «avería demostrada»:** se cumple la condición de fallo del control, ≥ 3 resueltas y
+    **todas** ≤ 2,6×. Es un FAIL **real**, no
     esperado: pone el banco en rojo con la palanca encendida, como hacía el `fail-before` retirado.
-  - **INCONCLUSO — «el control no pudo acreditar el funcionamiento»:** menos de 3 resueltas,
-    resueltas a los dos lados del techo, o sin línea base. Marcado `[INCONCLUSO] [instrumento]` y
+  - **INCONCLUSO — «el control no pudo acreditar el funcionamiento»:** el funcionamiento no quedó
+    acreditado; ocurre con menos de 3 resueltas, resueltas a los dos lados del techo, o sin línea base. Marcado `[INCONCLUSO] [instrumento]` y
     contado en su grupo, **nunca PASS**, y **no** demuestra avería.
   - **Sin la palanca:** SKIP con motivo, sin marca, nunca PASS; la calibración sigue siendo la
     precondición silenciosa de CA-03 y una calibración insuficiente no aprueba el instrumento.
