@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-26 · REQ-030: QA `aprobado` (re-verificación documental sobre `0f7e668`); QA-030-10 cerrado; pendiente de seguridad
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
+
+Barrido final por propiedad sin frases vigentes que prometan de más; código = `ccdc7e4` (vuelta 4), sin ensayos. `Estado:` vuelve a `en-revisión` citando la excepción. Fila del índice actualizada por la coordinadora a los veredictos emitidos. Sin push.
+
 ## [Interno] — 2026-09-26 · REQ-030: QA de la 2.ª intervención documental → `con-hallazgos` (QA-030-10 por una sede: «restituye el detector que el fail-before daba»); corregida esa sede y tres equivalentes bajo la misma autorización
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (qa-tester, analista-requerimientos) / Fable 5.1 (coordinadora) · agente: qa-tester, analista-requerimientos, coordinadora.
 
