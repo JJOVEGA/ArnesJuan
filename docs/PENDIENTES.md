@@ -1943,3 +1943,34 @@ Es cambio en `tests/`, o sea **`critico`** por `AGENTS.md` §6: ciclo completo
 `analista → desarrollador → qa-tester → auditor-seguridad`. Estimado al ritmo medido el 2026-09-08:
 **4 comisiones, ~1–2 h**. La medición de arriba es la parte cara del análisis y **ya está hecha**: se
 cita, no se rehace.
+
+## `REQ-021 CA-03 (c)` pone el banco en rojo bajo carga, también con los controles de REQ-030 (QA-030-04, 2026-09-25)
+
+**Qué se midió.** En la validación de REQ-030 (vuelta 1 de QA, cabeza `cbfe8a2`), el banco completo con
+`ARNES_SONDA_CONTROLES=1` salió **rc 1 en 1 de 3** corridas (C1, `load` 0,40 al arrancar). El único FAIL
+fue `REQ-021 CA-03 (c) el tamaño de cada mitad se DERIVA del suelo medido…` («el sensible base mide
+138742µs y no llega a 150000µs»), de `secciones/38-sondas-compartidas-2-la-calibracion.sh`. Los seis
+controles de 37/7 se comportaron como se esperaba en las tres. Evidencia: `docs/qa/REQ-030.md` §
+«Validación del `qa-tester` — vuelta 1», §2 y §8. Es la misma sensibilidad a la carga ya medida en
+`docs/qa/1.33.0.md`:2508 (1 de 16 corridas con carga 4/12).
+
+**Hipótesis, no medida:** R = 5 en las sondas de REQ-030 multiplica por 5 las invocaciones de la sonda de
+reloj que corren a la vez que la sección 38, y eso podría subir la tasa de ese FAIL también en el modo
+por defecto del job requerido.
+
+**Clase:** `instrumento` (el caso es una prueba del propio arnés; no toca el producto). **No es alcance de
+REQ-030**: REQ-030 CA-07 (c) promete sólo que sus seis controles no producen FAIL, no el estado de salida
+del corredor entero. **Dueño:** `desarrollador` (dueño de las sondas de REQ-021). **Forzador:** el primer
+FAIL de ese caso en el job `hooks-en-linux` de un PR, o la reapertura de REQ-021, lo que llegue antes; esa
+comisión mide la tasa en modo por defecto antes de proponer nada. **Vencimiento:** 1.35.0. **No** se
+repara desde REQ-030, ni se relanza una corrida para obtener verde.
+
+**Observación añadida (desarrollador, vuelta 2 de REQ-030, 2026-09-25), otro caso con la misma forma:**
+el banco completo **en modo por defecto** (sin la palanca), sobre `cbfe8a2` más el árbol de trabajo de la
+vuelta 2, salió **rc 1** por `DEV v3: heredoc CITADO de ~300 KB -> allow y barato` de
+`secciones/25-presupuesto-de-analisis.sh`: veredicto `allow` correcto, **4 032 ms** contra el techo
+absoluto de **4 000 ms** (`load` 2,63 al arrancar; 21:26:55 −0600, WSL2, 12 CPU). Es la clase
+**QA-017-13** —un reloj absoluto sensible a `JOBS=6`, declarada en el Historial de REQ-017—, en un archivo
+fuera de `Archivos:` de REQ-030. Cuenta: **1 de 2** corridas completas por defecto del desarrollador
+(la de la vuelta 1 salió rc 0). Es dato para la **misma hipótesis de carga** de arriba, no una medida de
+ella. Mismo dueño, forzador y vencimiento; no se relanzó.
