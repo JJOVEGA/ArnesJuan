@@ -1,0 +1,3 @@
+# PR #56 (cierre administrativo de REQ-029 y REQ-030) · CI sobre `b355552001c8ef1e2956eb950be1e5c3f92e2281`
+
+Run 36358803110, intento 1, https://github.com/JJOVEGA/ArnesJuan/actions/runs/36358803110. Método: `run.meta` = `gh run view --json`; `run.txt` = log íntegro; `run-limpio.txt`; `resumen.txt`. Job 23:28:25Z → 23:32:01Z (216 s). `Resultado: 905 PASS, 0 FAIL, 15 SKIP (0 INCONCLUSO)`, cuadre 920; `Autoprueba: 117 PASS, 0 FAIL`; check success. CA-03 PASS (calibración resuelta, mín 3,159×); CA-08 (ii) PASS en las dos entradas. Sin relanzar. El cambio es sólo de estado y trazabilidad (dos REQ, índice, CHANGELOG).

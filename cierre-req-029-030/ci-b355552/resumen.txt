@@ -1,0 +1,5 @@
+Resultado: 905 PASS, 0 FAIL, 15 SKIP (de ellos 0 INCONCLUSO: 0 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+Autoprueba: 117 PASS, 0 FAIL
+  PASS  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  máx(cociente) 2.021× <= techo 2.600× en 5 de 5 resueltas: 1.607× 1.719× 2.013× 2.021× 2.017× · calibración resuelta: v1.32.1 recorre [3.159×,
+  PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.185× <= techo 1.250× en 4 de 5 resueltas: 1.025× 1.185× 1.102× 0.993× (#1:no-converge(1.372/1.143) )
+  PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 0.988× <= techo 1.250× en 5 de 5 resueltas: 0.986× 0.983× 0.981× 0.974× 0.988× (todas resueltas)
