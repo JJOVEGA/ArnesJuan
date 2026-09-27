@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-26 · REQ-030: R-043-B → `Seguridad: aprobado` (documental, sobre `192d7b6`); SEC-110 y SEC-109 `mitigados`; SEC-111 (`instrumento`) registra el hueco de la regla multi-corrida
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (auditor-seguridad) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, coordinadora.
+
+Acredita el texto de SEC-110 y SEC-109(b) frente a las dos decisiones del propietario y, con R-043/R-043-A, la revisión de seguridad del código de `ccdc7e4`; no acredita gates, CI, rendimiento ni mejora de fiabilidad o frecuencia. SEC-111: no existe regla para acreditar rendimiento sobre un conjunto de corridas; un pendiente `ACR-<REQ>-NN` de clase (ii) no se resuelve por ninguna vía y su REQ no cierra (falla al lado cerrado); no bloquea REQ-030 (clase (iii)); dueño propietario (regla) y analista (write-back); hito 1.35.0. Fila del índice de REQ-030 corregida por la coordinadora (QA y seguridad al día; el commit anterior la dejó a medias). Sin push.
+
 ## [Interno] — 2026-09-26 · REQ-030: QA `aprobado` (re-verificación documental sobre `0f7e668`); QA-030-10 cerrado; pendiente de seguridad
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
 

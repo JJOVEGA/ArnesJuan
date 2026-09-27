@@ -7683,3 +7683,200 @@ Regresiones a vigilar (no exhaustivo):
 
 **Numeración vigente tras esta adenda:** última revisión **R-043** (adenda **`R-043-A`**); último hallazgo
 **SEC-110**; próximos libres **R-044** y **SEC-111**, comprobados sobre todas las ramas y worktrees vivos.
+
+---
+
+## Adenda a R-043 (**`R-043-B`**) — **REQ-030, revisión documental**: SEC-110 y SEC-109(b) tras las dos intervenciones documentales por excepción del propietario. `feat/req-030-sondas-r5` @ `192d7b6` — 2026-09-26
+
+**Alcance: documental.** Cabeza `192d7b625fa42c572bd1bcb8f6ae66914f8040a4`, árbol limpio. **El código no
+cambió desde `ccdc7e4`**: `git diff --stat ccdc7e4..192d7b6 -- tests/escenarios/hooks/run.sh tests/escenarios/hooks/secciones tests/escenarios/hooks/autoprueba-corredor.sh hooks tools .github tests/util .arnes`
+sale **vacío**. El código lo cubre R-043-A; aquí no lo re-audito ni corro nada.
+
+**Método.**
+- Leí íntegras las dos decisiones del propietario en `PENDING_APPROVAL.md` § Resueltas («intervención
+  documental acotada para SEC-110 y decisión sobre SEC-109(b)» y «se autoriza corregir QA-030-10»).
+- Leí el diff `git diff 44f9d58..192d7b6` de `requirements/REQ-030.md`, ADR-012, `tests/escenarios/hooks/README.md`,
+  `requirements/README.md` y la cola, y las secciones documentales de `docs/qa/REQ-030.md`.
+- **Barrido propio por propiedad** —toda frase vigente que atribuya a C3 una cobertura o que defina qué
+  significan sus salidas— con `grep -iE 'toda aver|cualquier aver|averiado|instrumento roto|restitu|lo que (hacía|daba) el .?fail-before|detecta toda|cubre toda|detector mecánico'`.
+  Lo corrí sobre REQ-030, REQ-017, ADR-012, el README del banco, `requirements/README.md`,
+  `docs/PENDIENTES.md`, `run.sh`, las secciones 37 y la autoprueba, y leí cada coincidencia en su contexto.
+- `## Pendientes` de la cola está **vacía** (comprobado).
+- **Orden respetado:** QA firmó antes (`aprobado`, re-verificación documental sobre `0f7e668`).
+  `0f7e668..192d7b6` sólo añade el veredicto de QA, `CHANGELOG.md` y `docs/qa/REQ-030.md`.
+
+### 1. SEC-110 → **`mitigado`** (sobre `192d7b6`, documental)
+
+- **Ninguna sede vigente atribuye a C3 más cobertura que la demostrada.** Lo comprobé en cuatro sitios:
+  - CA-03 (:128-131): C3 «asume» la función de detectar un instrumento que no ve el árbol cuadrático,
+    «no "toda avería"», con la regla de R = 5.
+  - CA-07 (e) (:274-277): «un instrumento que no distingue el árbol cuadrático en esa corrida no puede
+    producir PASS», y la asimetría vale **para esa propiedad**.
+  - CA-07 (g) (:343-360): la propiedad, lo que pasa con una avería que la impide, y **qué no cubre**. No
+    cubre el brazo «este árbol», las sondas de CA-08 (ii) ni la avería que altera la calibración sin bajarla
+    del techo (SEC-048 → PASS). La frase «C3 no promete detectar toda avería posible» cuelga ahora de una
+    promesa principal que **sí** es cierta.
+  - La forma (c) de CA-08, ADR-012 («Qué garantiza C3, enunciado por su efecto») y el README del banco
+    (:449-460) dicen lo mismo.
+- **Las tres salidas, como las dictó el propietario:**
+  - **FAIL:** se cumple la condición de fallo del control, ≥ 3 resueltas y todas ≤ 2,600×.
+  - **INCONCLUSO:** el funcionamiento no quedó acreditado y no demuestra por sí solo una avería.
+  - **PASS:** acredita únicamente lo que el control mide, que en esa corrida la calibración vio la
+    cuadrática.
+  - Así en CA-07 (g), ADR-012 y el README.
+  - Los mensajes que **imprime** `sonda_juez_control_c3` ya concordaban (R-043-A) y no cambiaron.
+- **La formulación acotada conserva sus condiciones:** «sale FAIL o queda no acreditada» va siempre
+  seguida de cuándo es cada cosa (FAIL: ≥ 3 y todas ≤; no acreditada: < 3, mezcla o sin línea base) y de que
+  **no** toda avería que impide el PASS sale FAIL (QA-030-10). Está así en CA-07 (g), la forma (c), ADR-012 y
+  el README.
+- **Lo histórico queda como historia:**
+  - Las notas fechadas de ADR-012 («Corregido el 2026-09-26 (SEC-108…)», «Corregido otra vez…») conservan
+    su texto: «se restituye», «lo detecta», «demuestra avería». Una *Precisión del 2026-09-26 (QA-030-10)*
+    que las sigue dice cómo se leen, sin reescribirlas.
+  - El Historial conserva la fila de la primera intervención tal como se escribió («detecta toda avería
+    que lo impida»). La fila siguiente registra su corrección.
+  - El motivo antiguo de `Estado:` se sustituyó por el vigente; el antiguo queda en el diff y en el Historial.
+  - Mis R-043 y R-043-A no se tocaron (comprobado con `git log` del registro: sólo mis commits).
+  - **Ningún veredicto anterior se reescribió.**
+- **La observación de QA sobre `run.sh`:610-611**, comentario «FAIL — … AVERÍA DEMOSTRADA, un FAIL real
+  que pone el banco en rojo (lo que hacía el `fail-before` retirado de CA-03)»: **sin hallazgo.**
+  - Dice la condición de FAIL exacta, y el paréntesis afirma un **efecto** que es cierto: poner el banco en
+    rojo, como hacía el `fail-before`. No afirma una cobertura ni que la regla sea la misma.
+  - «Avería demostrada» es el rótulo que el propio contrato da a esa salida, definida como «se cumple la
+    condición de fallo del control».
+  - Es un comentario, no un mensaje impreso. Si algún día se toca `run.sh` por otra causa, podría ganar
+    «con otra regla (R = 5)» por coherencia con CA-07 (g). **No** abre trabajo.
+
+**Estado: `mitigado`.** Deja de bloquear y sale de `Hallazgos abiertos:`.
+
+### 2. SEC-109 → **`mitigado`**; el hueco que deja la propia decisión va aparte, en **SEC-111**
+
+Lo que R-043 pedía: una decisión del propietario sobre la **sede** del pendiente y sobre si un inconcluso
+heredado impide acogerse a (i); después, el write-back en CA-08 y el (−) de ADR-012 con las tres formas.
+**Comprobado contra los cinco puntos del propietario:**
+1. **Inconcluso heredado de `main`** (CA-08 (i)): no impide por sí solo un PR documental. Exige los dos
+   SHA, la salida vacía del conjunto de rutas y el pendiente **citado por identificador**; no elimina otros
+   requisitos ni convierte el inconcluso en PASS. **Fiel.**
+2. **Criterio no satisfecho** (CA-08 (ii), primer punto; forma de CA-08): el REQ de mecanismo **no se
+   cierra**. Constan las tres prohibiciones literales: la etiqueta `instrumento`, el traslado «por otra
+   vía» y la excepción por inferencia. **Fiel.** Cómo se hace cumplir: `QA:` no puede ser `aprobado` sobre
+   un criterio no satisfecho, y `guard-completado` exige `QA: aprobado`. La puerta mide el **veredicto**, no
+   el criterio: lo hace cumplir **si** QA lo respeta, que es lo que el texto dice.
+3. **Sede:** la `## Alcance de la medición` del REQ afectado (la que CA-09 (b) ya usa). Dueño, el
+   `desarrollador`; revisión, QA y, en `critico`, seguridad. Desde `docs/PENDIENTES.md`, sólo un puntero.
+   **Fiel.** El identificador `ACR-<REQ>-NN` lo eligió el analista, rotulado **A** en la tabla de
+   correspondencia; el punto 1 del propietario exige *un* identificador y no fija su forma. Se hizo en la
+   primera intervención, antes de la instrucción «sin nuevas familias de identificadores» de la segunda.
+   Queda impugnable por el propietario; no lo trato como hallazgo.
+4. **Sin resolución automática por una corrida posterior en PASS:** procedimiento y presupuesto fijados
+   antes de medir, todas las ejecuciones conservadas y juicio sobre el conjunto. **Fiel.** La propuesta
+   anterior de la cola, que usaba precisamente ese forzador, quedó marcada como **rechazada** y conservada
+   como historia.
+5. **1.35.0 como hito de revisión:** obliga a revisar y no resuelve ni autoriza cerrar. **Fiel.**
+
+Las tres formas figuran con su consecuencia en CA-08 y en ADR-012 (−), con la limitación en 10 de 16 y el
+PASS cercano al techo conservados como medida.
+
+**Por qué `mitigado` y no más ni menos.** El riesgo de SEC-109 era que una regresión real que sale
+INCONCLUSO en un cambio de mecanismo quedara **sin sede ni forzador**, indefinidamente, mientras los PR
+documentales se integraban por (i). Ahora tiene sede, dueño y revisión. **Impide cerrar su REQ.** Cada PR
+documental que se acoja a (i) con ese inconcluso tiene que **citarlo**, y hay hito de revisión. Lo que la
+decisión exigía está incorporado. **No lo cierro:** `mitigado` no es `cerrado`, y el hueco sigue abierto.
+
+**El hueco, que no doy por resuelto:** no existe la regla para juzgar **un conjunto de varias corridas**
+(cuántas, sobre qué cabeza, cómo se decide un conjunto que mezcla PASS, INCONCLUSO y FAIL). Está declarado
+en § Notas («Hueco de SEC-109(b)») con su consecuencia: un pendiente de clase (ii) **no se resuelve por
+ninguna vía** y su REQ no cierra; la revisión de 1.35.0 empieza por fijar esa regla, que es decisión del
+propietario. **Falla hacia el lado cerrado:** bloquea, no deja pasar. Es un defecto distinto del que medía
+SEC-109, así que lo registro aparte para que no quede escondido dentro de un hallazgo `mitigado`.
+
+#### SEC-111 — `instrumento` · **abierto** · severidad media · REQ-030 (sede del contrato) · dueño **propietario** (la regla) y `analista-requerimientos` (write-back)
+
+**No existe regla para acreditar el rendimiento sobre un conjunto de varias corridas; mientras falte, un pendiente de clase (ii) no se resuelve por ninguna vía**
+
+- **Sede:** `requirements/REQ-030.md` CA-08 (ii) («Cómo se resuelve») y § Notas «Hueco de SEC-109(b)»;
+  decisión del propietario, punto 4.
+- **Efecto:** todo REQ futuro que cambie `hooks/` o `tools/`, exija la acreditación de CA-03 o CA-08 (ii) y
+  obtenga un INCONCLUSO abre un `ACR-<REQ>-NN` que no tiene procedimiento de resolución. Ese REQ **no puede
+  cerrar**. Con la frecuencia medida de calibración no resuelta (10 de 16 en local), no es un caso raro.
+  El PR de ese cambio puede integrarse: la fusión es decisión de `AGENTS.md` §6, y con `QA:` no aprobado no
+  hay delegación. En ese caso el pendiente queda visible en `main` y citado por cada PR documental.
+- **Por qué es `instrumento` y no convierte nada en deuda por etiqueta.** Es una laguna del procedimiento
+  del propio arnés, que falla hacia el lado cerrado. **No** rebaja ni sustituye la prohibición del punto 2
+  del propietario: el pendiente de un REQ de mecanismo sigue impidiendo su cierre. Este hallazgo sólo
+  registra que falta la regla para levantarlo.
+- **No bloquea REQ-030:** es clase (iii) y no abre ningún pendiente de clase (ii) (§ Notas, comprobado).
+- **Forzador:** el primer REQ de mecanismo que abra un `ACR-…`. **Vencimiento:** el hito 1.35.0, que obliga a
+  revisarlo. **Remediación:** decisión del propietario sobre la regla del conjunto de corridas y después
+  write-back. **Registrarlo no autoriza diseñarla** («no inventes otro diseño de medición»).
+
+### 3. Observaciones, sin hallazgo
+
+- **Fila de REQ-030 en `requirements/README.md` desfasada.** Dice `con-hallazgos (intervención
+  documental, b20ad39)` en la columna QA, y el REQ dice `aprobado (re-verificación documental, cabeza
+  0f7e668)`. El commit `192d7b6` la anuncia como «índice al día». Con mi veredicto, la columna de seguridad
+  también quedará vieja. Dueño: quien orquesta. No la toco: no es mi rebanada.
+- **Delta de workflow**: sigue sin aplicar y **sigue desfasado** del recuento por grupo (R-043-A §3). Nada
+  nuevo.
+
+### 4. Repositorio público — **sin hallazgo**
+
+`git diff 44f9d58..192d7b6` barrido por `insumos`, `mejoras-arnes`, `cliente`, `conciliador` y correos:
+sólo aparecen mis propias citas de R-043-A. Nada de clientes.
+
+### 5. Veredicto
+
+**`Seguridad: aprobado (R-043-B, 2026-09-26, sobre 192d7b6; documental: SEC-110 y SEC-109(b); código = ccdc7e4, cubierto por R-043-A)`.**
+
+Ningún hallazgo mío `contrato` ni `usuario/dinero` queda abierto:
+- SEC-108: `mitigado` (R-043-A).
+- SEC-110: `mitigado`.
+- SEC-109: `mitigado`.
+- SEC-111: `instrumento`, no bloquea.
+
+**Qué acredita:**
+- Que ninguna sede vigente atribuye a C3 más cobertura que la demostrada.
+- Las tres salidas, como las dictó el propietario.
+- La decisión de SEC-109(b), incorporada fiel en sus cinco puntos.
+- El hueco del conjunto de corridas, declarado con una consecuencia que falla hacia el lado cerrado.
+- Lo histórico, conservado sin reescribir veredictos.
+- Junto con R-043 y R-043-A, la revisión de seguridad y gobernanza del código de `ccdc7e4`.
+
+**Qué NO acredita:**
+- Las quality gates, el banco ni el CI; no hay corrida en CI.
+- El rendimiento.
+- Ninguna mejora de fiabilidad, ni de la frecuencia de calibraciones resueltas (10 de 16 sin resolver),
+  ni del PASS cercano al techo, ni de la estimación de rechazo, que no está medida.
+- La regla del conjunto de corridas (SEC-111).
+- El delta de workflow.
+- REQ-029, el PR #53 ni CA-09 de REQ-017.
+- **Que REQ-030 pueda cerrarse.** Es decisión de quien orquesta, con `QA-030-03`, `QA-030-05`, `SEC-109`
+  y `SEC-111` como `instrumento` abiertos y sin aceptar por mí en nombre de nadie.
+
+### 6. Estado de hallazgos de esta línea tras `R-043-B`
+
+| Hallazgo | Clase | Estado | Dueño | Bloquea |
+|---|---|---|---|---|
+| `SEC-108` | `contrato` | `mitigado` (R-043-A, código `ccdc7e4`) | `analista-requerimientos` + propietario | No |
+| `SEC-109` | `instrumento` | **`mitigado`** (documental, `192d7b6`) | propietario + `analista-requerimientos` | No |
+| `SEC-110` | `contrato` | **`mitigado`** (documental, `192d7b6`) | `analista-requerimientos` | No |
+| `SEC-111` | `instrumento` | `abierto` | propietario + `analista-requerimientos` | No |
+| `SEC-048` | `instrumento` | `abierto` (sin cambio) | propietario + `desarrollador` | No |
+
+`SEC-109` y `SEC-110` salen de `Hallazgos abiertos:` al quedar `mitigado`; `SEC-111` entra. Los hallazgos
+de QA son de QA.
+
+**Línea base de no-regresión para REQ-030 (se suma a las de R-043 y R-043-A):**
+- La cobertura de C3 se enuncia por **efecto**, con lo que no cubre nombrado.
+- «Sale FAIL o queda no acreditada» va siempre con sus condiciones.
+- En clase (ii), un inconcluso deja el criterio **no satisfecho** y el REQ sin cerrar, con sede en «Alcance
+  de la medición», sin resolución automática por corrida posterior.
+
+Regresiones a vigilar (no exhaustivo):
+- una frase que vuelva a prometer «toda avería»;
+- un pendiente de clase (ii) que pase a `instrumento`, se traslade o se resuelva con una corrida.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta adenda:** última revisión **R-043** (adenda **`R-043-B`**); último hallazgo
+**SEC-111**; próximos libres **R-044** y **SEC-112**, comprobados sobre todas las ramas y worktrees vivos.
