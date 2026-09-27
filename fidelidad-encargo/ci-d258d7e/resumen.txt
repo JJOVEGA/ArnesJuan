@@ -1,0 +1,6 @@
+Resultado: 905 PASS, 0 FAIL, 15 SKIP (de ellos 0 INCONCLUSO: 0 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+Autoprueba: 117 PASS, 0 FAIL
+  PASS  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  máx(cociente) 2.019× <= techo 2.600× en 5 de 5 resueltas: 1.969× 2.016× 1.969× 2.019× 2.009× · calibración resuelta: v1.32.1 recorre [2.604×, 4.180×] en 5 de 5
+  SKIP  REQ-017 CA-09 la pared de los 60 s de este árbol NO es menor que la de v1.32.1, pareado en la misma corrida  los rangos de las dos pasadas SE SOLAPAN (este 0.916×–1.304× de v1.32.1): la sonda no distingue la dirección de su propio ruido, y su dispersión (~3,7 sobre el mismo árbol) es de SEC-030, no de este REQ
+  PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.124× <= techo 1.250× en 5 de 5 resueltas: 1.124× 0.967× 1.052× 1.040× 1.052× (todas resueltas)
+  PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 0.986× <= techo 1.250× en 5 de 5 resueltas: 0.986× 0.984× 0.986× 0.986× 0.979× (todas resueltas)
