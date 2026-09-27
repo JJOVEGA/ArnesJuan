@@ -1,0 +1,5 @@
+run=https://github.com/JJOVEGA/ArnesJuan/actions/runs/36359366076 attempt=1 conclusion=success sha=37a7942829fc3dc04ee39d2b1b767ee2b681dc9c
+Resultado: 904 PASS, 0 FAIL, 16 SKIP (de ellos 2 INCONCLUSO: 2 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+       ! REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica
+       ! REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1
+Autoprueba: 117 PASS, 0 FAIL
