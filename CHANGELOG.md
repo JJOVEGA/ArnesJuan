@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-27 · Cierre administrativo de REQ-029 y REQ-030 (autorizado por el propietario); `completado` no acredita rendimiento, conducta ni ahorro
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora.
+
+`Estado: en-revisión` → `completado` en los dos REQ, con las herramientas de edición y la puerta `guard-completado` en verde (gates del manifiesto, veredictos, cola vacía). REQ-029: firmas `QA: aprobado (R-4)` y `Seguridad: aprobado (R-042-C)` sobre `f7a6fdf`, reutilizadas por la comprobación de conservación aceptada por el propietario; integrado por el PR #53 (`11c5df2`); sin hallazgos abiertos; no acredita conducta ni ahorro. REQ-030: firmas sobre `ccdc7e4`/`0f7e668`/`192d7b6`; integrado por el PR #55 (`c4d92c0`); conserva abiertos QA-030-03, QA-030-05 y SEC-111 (`instrumento`); no acredita rendimiento ni mejora de fiabilidad (calibración de CA-03 inconclusa en 2 de 9 corridas de CI, incluidas las dos de `main` tras la integración). Sólo se actualizan las sedes de estado y trazabilidad (los dos REQ, el índice, esta bitácora); sin ensayos ni ciclo nuevo. Rama `cierre/req-029-req-030`, PR de cierre; sin escritura directa en `main`.
+
 ## [Interno] — 2026-09-26 · REQ-030: R-043-B → `Seguridad: aprobado` (documental, sobre `192d7b6`); SEC-110 y SEC-109 `mitigados`; SEC-111 (`instrumento`) registra el hueco de la regla multi-corrida
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (auditor-seguridad) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, coordinadora.
 
