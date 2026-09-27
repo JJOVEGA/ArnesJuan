@@ -1,0 +1,15 @@
+ruta estilo Windows con backslashes -> deny  (sin cygpath: caso solo de Windows)
+REQ-017 CA-10 (i) fuera del dominio este árbol decide siempre lo mismo, y lo mismo en los dos locales  36 entradas NO son clasificables: la heredada 
+REQ-017 CA-10 (ii) ...y esa decisión es la del ORÁCULO: la heredada bajo LC_ALL=C  36 entradas NO son clasificables: la heredada tampoco publica una
+REQ-017 CA-10 (iii) fail-before: la heredada bajo el locale del entorno NO cumple (i) o (ii), y se registra sin fallar por ello  36 entradas NO son cl
+REQ-030 CA-07 control C3 (instrumento de CA-03): el cociente de duplicación de v1.32.1 con k=20 supera 2,6×  no se pide: control del instrumento, a 
+REQ-017 CA-09 la pared de los 60 s de este árbol NO es menor que la de v1.32.1, pareado en la misma corrida  los rangos de las dos pasadas SE SOLAPAN
+REQ-017 CA-05 (i) la ruta crítica cuesta no más de 0,250× lo de v1.32.1  no se pide: evidencia acreditada en el Historial de REQ-017 (0,125× — 9
+REQ-017 CA-05 (ii) la comparación no se compra dejando de probar  no se pide: evidencia acreditada en el Historial de REQ-017 (0,125× — 9,60 s fre
+REQ-030 CA-07 control I (un REQ real de 6 líneas): sujetos idénticos, razón verdadera 1,0  no se pide: control del instrumento, a demanda con ARNES
+REQ-030 CA-07 control W0 (un REQ real de 6 líneas): envoltorio de pruebas con demora 0  no se pide: control del instrumento, a demanda con ARNES_SOND
+REQ-030 CA-07 control WD (un REQ real de 6 líneas): envoltorio de pruebas con demora fija de 0.040s por llamada  no se pide: control del instrumento,
+REQ-030 CA-07 control I (una cabecera de 200 líneas): sujetos idénticos, razón verdadera 1,0  no se pide: control del instrumento, a demanda con AR
+REQ-030 CA-07 control W0 (una cabecera de 200 líneas): envoltorio de pruebas con demora 0  no se pide: control del instrumento, a demanda con ARNES_S
+REQ-030 CA-07 control WD (una cabecera de 200 líneas): envoltorio de pruebas con demora fija de 0.100s por llamada  no se pide: control del instrumen
+REQ-021 CA-08 (iii) calibrar sonda-reloj.sh no cuesta más de 6× una medición suya con los MISMOS mandos  reloj 1.478× (3096212µs sobre 2094331µs
