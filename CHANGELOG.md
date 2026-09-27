@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-27 · Modelos de los agentes: preferencia del propietario (Opus 5.5 ×3, Sonnet 5 para QA) registrada; fijado por identificador PENDIENTE por la versión de Claude Code; QA deja de forzarse a Opus en el autoalojamiento
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora.
+
+Comprobado antes de tocar nada: los agentes se seleccionan **una sola vez** en el frontmatter `model:` de `agents/*.md` (alias `opus`/`sonnet`, iguales en la copia instalada 1.33.2); ningún `.claude/agents/`, plantilla ni skill duplica la selección. Documentación oficial (Claude Code 2.1.272): el frontmatter acepta alias e identificadores completos; IDs oficiales `claude-opus-5-5` y `claude-sonnet-5`. **Medido:** el CLI 2.1.272 **rechaza** `claude-opus-5-5` (exige ≥ 2.1.280) y acepta `claude-sonnet-5`; el alias `opus` resuelve a `claude-opus-5` desde el CLI y a `claude-opus-5-5[1m]` desde la sesión del editor; `sonnet` → `claude-sonnet-5` en ambos. Por eso **no** se fijan identificadores (ese ajuste queda pendiente de actualizar Claude Code, decisión del propietario) y el único cambio efectivo es de política: **QA corre con Sonnet 5 también en el autoalojamiento** (`AGENTS.md` §5; la coordinadora deja de pasar `model` al despachar). Ninguna sesión abierta ni ninguna aprobación anterior cambia de modelo por esto. Sin publicar versión ni actualizar consumidores.
+
 ## [Interno] — 2026-09-26 · REQ-030: R-043-B → `Seguridad: aprobado` (documental, sobre `192d7b6`); SEC-110 y SEC-109 `mitigados`; SEC-111 (`instrumento`) registra el hueco de la regla multi-corrida
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5 (auditor-seguridad) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, coordinadora.
 

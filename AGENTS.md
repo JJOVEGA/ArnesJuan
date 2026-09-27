@@ -83,22 +83,37 @@ aprueba cada fase.
 
 | Agente | Modelo | Responsabilidad |
 |--------|--------|-----------------|
-| `analista-requerimientos` | Opus | Levanta y documenta requerimientos en `requirements/` |
-| `desarrollador` | Opus | Codifica los requerimientos + documentación **técnica**, dueño de `ARCHITECTURE.md` (vista de sistema e integración) |
-| `qa-tester` | **Opus** (sólo aquí; ver abajo) | Prueba el trabajo del desarrollador, corre quality gates, escribe documentación de **usuario final** |
-| `auditor-seguridad` | Opus | Revisa seguridad y gobernanza; mantiene `docs/seguridad/`; puede vetar |
+| `analista-requerimientos` | alias `opus` → Opus 5.5 en el editor, Opus 5 desde el CLI 2.1.272 (preferencia: Opus 5.5; ver nota) | Levanta y documenta requerimientos en `requirements/` |
+| `desarrollador` | alias `opus` (ídem) | Codifica los requerimientos + documentación **técnica**, dueño de `ARCHITECTURE.md` (vista de sistema e integración) |
+| `qa-tester` | alias `sonnet` → Sonnet 5 en los dos hosts (preferencia: Sonnet 5) | Prueba el trabajo del desarrollador, corre quality gates, escribe documentación de **usuario final** |
+| `auditor-seguridad` | alias `opus` (ídem) | Revisa seguridad y gobernanza; mantiene `docs/seguridad/`; puede vetar |
 
 Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
 
-> 🔒 **QA corre con Opus en el autoalojamiento (decisión del propietario, 2026-09-05).** Aquí el
-> `qa-tester` no valida una función de negocio: valida **el mecanismo que gobierna a todos los demás
-> proyectos**, e intenta romperlo. Se lanza con el modelo **Opus**, por encima del `sonnet` que
-> declara el agente.
+> 🔒 **Modelos: preferencia del propietario (2026-09-27) y lo que la instalación permite hoy.** La
+> preferencia es **Opus 5.5** para analista, desarrollador y auditor, y **Sonnet 5** para QA. El modelo
+> de cada agente vive **una sola vez**, en el frontmatter `model:` de `agents/<agente>.md` del plugin;
+> esta tabla sólo lo **describe** y, si divergen, manda el frontmatter. Hoy el frontmatter usa los
+> **alias** `opus` y `sonnet`, y **no** los identificadores oficiales (`claude-opus-5-5`,
+> `claude-sonnet-5`), por una limitación **medida** el 2026-09-27: Claude Code **2.1.272**, la versión
+> instalada, **rechaza** `claude-opus-5-5` («does not support this model; version 2.1.280 or newer is
+> required»), mientras que acepta `claude-sonnet-5`. Y un alias resuelve a «el último» **según el
+> host**, también medido ese día: desde el CLI 2.1.272 (`claude -p --agent …`, campo `model` de la
+> salida `stream-json`) `opus` → `claude-opus-5` (**Opus 5**) y `sonnet` → `claude-sonnet-5`; desde la
+> sesión del editor (herramienta `Agent`, system prompt del subagente) `opus` → `claude-opus-5-5[1m]`
+> (**Opus 5.5**, 1M) y `sonnet` → `claude-sonnet-5`. **Consecuencia:** Sonnet 5 para QA está
+> efectivo en los dos hosts; Opus 5.5 para los otros tres **sólo** en la sesión del editor y **no** desde
+> el CLI instalado. **Pendiente, decisión del propietario:** actualizar Claude Code a ≥ 2.1.280 y
+> entonces fijar los cuatro identificadores oficiales en el frontmatter (una sola sede). Nada se
+> sustituye en silencio: mientras tanto la tabla nombra el alias y lo que resuelve en cada host.
 >
-> **Cómo se aplica, y por qué así:** con el parámetro `model` de la herramienta `Agent` al despachar
-> el subagente, que tiene precedencia sobre el frontmatter. **No** se edita `agents/qa-tester.md` del
-> plugin: ese archivo lo heredan todos los proyectos que instalan el arnés, y esta decisión es de
-> este repositorio, no suya. Misma frontera que el resto de la política de autoalojamiento.
+> **QA corre con Sonnet 5 también en el autoalojamiento.** Sustituye la decisión del 2026-09-05 (QA
+> con Opus, forzado con el parámetro `model` de la herramienta `Agent` al despachar). Desde esta fecha
+> la coordinadora **no** pasa `model` al despachar a ningún agente del arnés: la selección efectiva es
+> la del frontmatter. Las validaciones de QA anteriores a esta fecha se emitieron con Opus y así consta
+> en sus registros; nada de eso se reescribe, y ninguna sesión ya abierta cambia de modelo por editar
+> este archivo. **La versión instalada del plugin (`1.33.2`) es la que carga los agentes** en las
+> sesiones de este repositorio; tiene los mismos alias que este árbol.
 
 > Documentación distribuida (no hay 5º agente "documentador"): cada agente documenta su
 > rebanada con el contexto vivo, y el `desarrollador` consolida la vista de arquitectura en
