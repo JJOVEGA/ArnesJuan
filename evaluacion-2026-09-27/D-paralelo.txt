@@ -1,0 +1,29 @@
+== [REQ-A REQ-B]
+Paralelismo por archivos — requirements/ (2 REQ evaluados)
+  REQ-A      en-progreso   src/a.ts docs/a.md
+  REQ-B      en-progreso   src/b.ts
+  REQ-A      vs REQ-B       disjunto   
+Todos los pares son DISJUNTOS por archivos.
+rc=0
+== [REQ-A REQ-C]
+Paralelismo por archivos — requirements/ (2 REQ evaluados)
+  REQ-A      en-progreso   src/a.ts docs/a.md
+  REQ-C      en-progreso   src/a.ts
+  REQ-A      vs REQ-C       colisiona  src/a.ts
+Hay pares que COLISIONAN: esas comisiones van en serie.
+rc=1
+== [REQ-A REQ-D]
+Paralelismo por archivos — requirements/ (2 REQ evaluados)
+  REQ-A      en-progreso   src/a.ts docs/a.md
+  REQ-D      en-progreso   SIN DECLARAR: no declara el campo `Archivos:` en su cabecera
+                           (colisiona con todos: una herramienta que no puede medir no autoriza)
+  REQ-A      vs REQ-D       colisiona  (sin declarar)
+Hay pares que COLISIONAN: esas comisiones van en serie.
+rc=1
+== [REQ-B REQ-E]
+Paralelismo por archivos — requirements/ (2 REQ evaluados)
+  REQ-B      en-progreso   src/b.ts
+  REQ-E      en-progreso   (ninguno)
+  REQ-B      vs REQ-E       disjunto   
+Todos los pares son DISJUNTOS por archivos.
+rc=0

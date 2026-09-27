@@ -1,0 +1,10 @@
+# C — escrituras en código de la app por Bash, sin agente (coordinadora); guard-codigo
+[Bash: echo x > src/app.ts] => deny rc=0 | ARNES: el comando escribe en 'src/app.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión co
+[Bash: sed -i s/base/x/ src/app.ts] => deny rc=0 | ARNES: el comando escribe en 'src/app.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión co
+[Bash: python3 -c "open('src/app.ts','w').write('py')"] => allow rc=0 
+[Bash: node -e "require('fs').writeFileSync('src/app.ts','node')"] => allow rc=0 
+[Bash: bash escribe.sh] => allow rc=0 
+[Bash: printf x | dd of=src/app.ts] => deny rc=0 | ARNES: el comando escribe en 'src/app.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión co
+[Edit src/app.ts] => deny rc=0 | ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cam
+EFECTO tras ejecutar el python permitido: src/app.ts = py
+eventos de hook: PreToolUse, Stop, SubagentStop → sin PostToolUse: no hay detección posterior mecánica

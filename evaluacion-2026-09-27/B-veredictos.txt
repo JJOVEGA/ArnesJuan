@@ -1,0 +1,7 @@
+# B — veredictos (fecha, caducidad por código, paréntesis); config de este repo: exigir_fecha=false caducan_con_codigo=false
+[firma 2026-09-01, código cambiado hoy, opciones APAGADAS] => allow rc=0 
+[firma 2026-09-01, código cambiado hoy, ENCENDIDAS] => deny rc=0 | ARNES: no se puede completar 'requirements/REQ-B.md': el veredicto 'QA: aprobado (R-1, 2026-09-01)' es del 2026-09-01 y el codigo de la app 
+[firma HOY, código cambiado HOY (resolución de día), ENCENDIDAS] => allow rc=0 
+[aprobado sin fecha, ENCENDIDAS] => deny rc=0 | ARNES: no se puede completar 'requirements/REQ-B.md': el veredicto 'QA: aprobado' no lleva fecha y el manifiesto la exige (veredictos). Un v
+[aprobado que declara un criterio incumplido en el paréntesis, ENCENDIDAS] => allow rc=0 
+[aprobado (con reservas), ENCENDIDAS] => allow rc=0 

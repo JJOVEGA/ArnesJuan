@@ -1,0 +1,6 @@
+# A — separador de Hallazgos abiertos (guard-completado, Edit Estado: en-revisión → completado)
+[SEC-A (instrumento) · SEC-B (usuario/dinero)] => allow rc=0  → EFECTO: Estado: completado
+[SEC-A (instrumento), SEC-B (usuario/dinero)] => deny rc=0 | ARNES: no se puede completar 'requirements/REQ-A.md': el hallazgo 'sec-b' es de clase 'usuario/dinero' y bloquea el cierre. Resuelvelo — o
+[SEC-A (instrumento)] => allow rc=0  → EFECTO: Estado: completado
+[SEC-B (usuario/dinero) · SEC-A (instrumento)] => deny rc=0 | ARNES: no se puede completar 'requirements/REQ-A.md': el hallazgo 'sec-b' es de clase 'usuario/dinero' y bloquea el cierre. Resuelvelo — o
+[SEC-A (instrumento); SEC-B (contrato)] => allow rc=0  → EFECTO: Estado: completado
