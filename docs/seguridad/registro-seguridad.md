@@ -7860,3 +7860,627 @@ Una auditoría futura compara contra eso.
 
 **Numeración vigente tras esta adenda:** última revisión **R-042** (adendas **`R-042-A`**, **`R-042-B`** y
 **`R-042-C`**); último hallazgo **SEC-107**; próximos libres **R-043** y **SEC-108**.
+---
+
+## Revisión R-043 — **REQ-030**, sondas de coste con presupuesto fijo e INCONCLUSO: revisión de seguridad y gobernanza del banco, del contrato y del delta de workflow propuesto. `feat/req-030-sondas-r5` @ `3c9b7e6` — 2026-09-25
+
+**Numeración.** Este registro, en esta rama, decía «próximos libres R-042 y SEC-105», pero otras líneas
+vivas ya los usaron: `R-042` (con adendas A/B/C) y `SEC-105`…`SEC-107` en `feat/fidelidad-encargo` y en
+los worktrees `ArnesJuan-ensayo-sondas`, `-req019`, `-req025`. **Método:** `git show <ref>:docs/seguridad/registro-seguridad.md`
+sobre **todas** las ramas locales y remotas del repositorio, más `grep` sobre los registros de todos los
+worktrees de `/home/juan/dev`: lo más alto **usado** es `R-042` / `SEC-107`; `R-043` y `SEC-108` sólo
+aparecen como «próximos libres». Tomo **R-043**, **SEC-108** y **SEC-109**.
+
+**Versión base y alcance.** Base `cfb110624c99203b49b7700e0afdb8a3b27c45ae` (`origin/main`); cabeza
+`3c9b7e65cc7ba5e373b9a4e2a35367ee3934b127`, árbol limpio. `git diff --stat 322bc7c..3c9b7e6` = sólo
+`CHANGELOG.md`, `docs/qa/REQ-030.md` y `requirements/REQ-030.md`: el **código** revisado es el de
+`322bc7c`, el que validó QA (`QA: aprobado`, vuelta 2 de 3). `git diff --stat cfb1106..3c9b7e6 -- hooks tools .github .arnes templates skills agents playbooks .claude-plugin tests/util`
+**vacío**. Leídos: `requirements/REQ-030.md` entero, ADR-012, el diff de `run.sh`, `autoprueba-corredor.sh`,
+37/2 y 37/5; 37/6 y 37/7 enteros; el delta de REQ-017, README del banco y `docs/PENDIENTES.md`;
+`docs/qa/REQ-030.md` (dos vueltas y el delta de workflow); el pedido íntegro en `PENDING_APPROVAL.md` §
+Resueltas (2026-09-26). **Orden de fases respetado:** QA firmó antes. **No miré las quality gates ni corrí
+el banco**; mi única ejecución fue el reconocedor de inconclusos de `run.sh` (el `awk` de las líneas
+1503-1510, copiado tal cual) sobre un archivo sintético del scratchpad, sin tocar el árbol.
+
+**Rigor: `critico` confirmado** (cambio en `tests/`, `Sensible a seguridad: sí`). Ya es el máximo.
+
+### 1. ¿Puede un INCONCLUSO hacer verde lo que antes era rojo? **Sí, en tres formas**
+
+Comparado con `cfb1106` (una lectura por corrida; no convergencia = SKIP; cociente > techo = FAIL;
+`CA-03 fail-before` como caso aparte que daba **FAIL** si v1.32.1 no pasaba del techo):
+
+- **(a) Recorrido que abarca el techo.** FAIL exige que **todas** las resueltas (≥ 3) excedan el techo
+  (`sonda_juez_razon`, `sonda_juez_duplicacion`, `run.sh`). Un mecanismo degradado cuya razón verdadera
+  supera el techo pero con **una** repetición resuelta en el techo o por debajo sale INCONCLUSO, con check
+  verde; en la base, una lectura por encima era FAIL y bloqueaba la puerta requerida.
+- **(b) CA-03 con calibración no resuelta.** Si una sola repetición de v1.32.1 queda ≤ 2,600×, el caso es
+  INCONCLUSO **aunque este árbol esté entero por encima del techo** («nunca FAIL del candidato», CA-03
+  (d)). Medido por QA: calibración no resuelta en **4 de 7** corridas completas locales (QA-030-05). En
+  esas corridas **una regresión cuadrática del escáner no podía salir FAIL**.
+- **(c) El instrumento roto de CA-03 deja de ponerse rojo.** `REQ-017 CA-03 fail-before` era el único
+  detector **mecánico** de «la sonda de CA-03 no distingue el árbol cuadrático» y daba FAIL; desaparece y su
+  función pasa a la calibración, que da INCONCLUSO. Ver SEC-108.
+- **No es nuevo:** la no convergencia ya era SKIP en la base.
+
+**Qué está declarado.** La **regla** de cada forma sí está escrita (CA-02 (c), CA-03 (d), ADR-012
+decisión 1) y la consecuencia general también («un CI verde puede contener una sonda no acreditada»,
+ADR-012 (−); CA-10). **No están declaradas como consecuencia** las formas (a)-(c): que un rojo de la base
+pasa a verde con inconcluso **para una regresión real**, no sólo para ruido. Y la mitigación que las cubre
+—«un inconcluso deja pendiente la acreditación», CA-08 (ii)— **no tiene sede, dueño, forzador ni
+vencimiento**. Ver SEC-109.
+
+**Selección de corrida / repetir hasta verde: nada en el árbol lo permite.** `SONDA_COSTE_R=5`,
+`SONDA_COSTE_MINRES=3` y `SONDA_COSTE_SUELO=50000` son literales (`run.sh`:519-521) que el corredor asigna
+sobre lo que herede del entorno; `grep -rn ARNES_SONDA_REP` sobre `tests/ hooks/ tools/ .github/`, sin
+resultados. Los bucles de 37/2, 37/5 y 37/7 son `for ((…; <= SONDA_COSTE_R; …))` sin salida anticipada ni
+relanzamiento. El juez no descarta nada fuera de sus reglas escritas: repetición vacía → `ausente`; campo
+sobrante, no entero o cero → `no-midió`; bajo el suelo → `suelo`; no converge → `no-converge`; todas **no
+resueltas** y dentro del denominador (`sonda_repeticiones` nunca lo baja de R). Un vector con **más** de R
+entradas agranda el denominador y publicaría «de N»: es QA-030-03 (b), abierto, `instrumento`. **Relanzar
+el CI** es la única vía de «repetir hasta verde» y está fuera del árbol: sólo la cubre CA-08 (d), que es no
+mecánica y así lo declara CA-10.
+
+### 2. Integridad del recuento del resumen — **sin hallazgo**
+
+Reconocedor (`run.sh`:1503-1510): cuenta una línea `^  SKIP ` cuya evidencia —tras el primer doble espacio—
+**empieza** por `[INCONCLUSO]`. Probado con líneas adversariales sobre una copia literal del `awk`: una
+línea FAIL con la marca → no cuenta; un SKIP con la marca lejos del nombre → no cuenta; un nombre con doble
+espacio interno → el nombre se corta ahí y la marca **no** se reconoce (borraría un inconcluso), pero
+**ninguno** de los nombres de los tres casos ni de los controles tiene doble espacio (leídos `nom37`,
+`nom47`, `nom57`) y es la misma convención de corte que `inventario.sh`. El sufijo de QA-030-06 (`· la
+sonda no midió: …`) va **después** de la evidencia y sus dos motivos se aplanan con `${…//$'\n'/ }`: no
+puede partir la línea ni fabricar otra; un CR interno no parte la línea para `awk` (comprobado). Ningún
+contenido de un REQ del banco entra en el nombre ni en el principio de la evidencia. Una marca fabricada
+sólo **sube** el recuento visible (lado cerrado). `NINC` cae a 0 si el `awk` no emite un entero; exige que
+`awk` falle, y entonces falla también el recuento por archivo (`run.sh`:1363-1372).
+
+**Observación (sin hallazgo):** el valor no reconocido de `ARNES_SONDA_CONTROLES` se imprime **sin
+aplanar** en el motivo del SKIP (37/7:69). Con un salto de línea dentro, la sección emite líneas nuevas
+—medido: `       ! falso` e `INCONCLUSO: 9` en la salida—. **No altera el recuento ni el cuadre** (no son
+líneas de caso, y una línea de caso fabricada rompería el cuadre por sección), pero **sí** entraría en el
+resumen del job si se aplicara el delta de workflow tal como está (§5). El valor lo fija quien lanza el
+banco. Se cierra con el mismo `${…//$'\n'/ }` de los otros motivos.
+
+### 3. Controles a demanda — **sin hallazgo**
+
+`ARNES_SONDA_CONTROLES` sólo lo lee 37/7:30. Se recortan blancos y se pasa a minúsculas; enciende sólo
+`1|si|sí|yes|true|on`; `''|0|no|false|off` apagan; cualquier otro valor **no enciende** y se dice en el
+motivo (`SÍ` bajo `LC_ALL=C` no se pasa a minúsculas → no enciende → se dice: lado cerrado). Apagado, cada
+caso es `SKIP` «no se pide», **sin** marca y **nunca** PASS; ningún otro caso ni otra sección depende de la
+palanca. El envoltorio de demora es sólo de pruebas, vive en `$RAIZ` y se borra al terminar.
+
+### 4. La clase documental (CA-08 (i)) y su determinación (CA-09) — **coincide: (iii) sonda, sin (ii)**
+
+Recalculado sobre `3c9b7e6` con el comando vigente de CA-08 (i): los mismos 6 archivos, +540 −101, que
+desarrollador y QA; `-- hooks tools tests/util .github` **vacío**; CA-13 vacío; `requirements/REQ-029.md`
+no existe. **Revisión de la determinación (CA-09 (d)): correcta.**
+
+**Vías que alteran sujeto o procedimiento sin tocar el conjunto medido — buscadas por propiedad:**
+- `.arnes/config.json` del repositorio: **no** entra; el proyecto efímero se construye con
+  `MANIFIESTO_BASE` de `run.sh`:89 (dentro del conjunto). `hooks.json` está en `hooks/`.
+- `inventario.sh` no participa en la medición ni en el veredicto. Submódulos: no hay `.gitmodules`. Otras
+  secciones corren cada una en su subshell (`run.sh`:1320) y no pueden redefinir el juez; su **carga** es
+  entorno, no procedimiento (observación de QA que comparto).
+- **Variables del entorno** que cambian el instrumento (no exhaustivo: `ARNES_UTIL_DIR`,
+  `ARNES_HOOKS_DIR`, `ARNES_SECCIONES_DIR`, `ARNES_SONDA_CAL_N`/`_R`, `ARNES_JOBS`): anteriores a este REQ.
+  En CI sólo las fija el workflow —**dentro** del conjunto— y `banco.yml` no usa expresiones `${{ … }}` ni
+  `vars.*` (`grep`, sin resultados). Si un día las usara, un cambio de variable del repositorio alteraría
+  el procedimiento **sin diff**: queda escrito aquí como condición.
+- **Referencias mutables — la vía que sí existe, y ya está registrada.** La línea base v1.32.1 se
+  materializa **por nombre de tag** (`mat37 v1.32.1`, 37/2:143; `HER47` en 37/5) sin fijar su árbol, y
+  `actions/checkout@v4` es un tag móvil. Mover el tag cambia la **referencia** de CA-08 (ii) y la
+  **calibración** de CA-03 sin aparecer en ningún diff. Es **SEC-048** (abierto, alta: no hay ruleset de
+  tags). REQ-030 **aumenta su peso**: la calibración contra ese tag pasa a ser precondición del veredicto.
+  No abro hallazgo nuevo porque SEC-048 lo cubre, y no es una vía de clase (i) en sentido estricto —el PR
+  no mueve el tag—; pero CA-08 afirma que el conjunto contiene «el sujeto, su instrumento y el
+  procedimiento», y la **identidad del árbol de referencia** no está en él.
+
+**CA-10 — sin atribución falsa al workflow.** REQ, ADR-012 y README del banco dicen que `banco.yml` no
+comprueba la identidad del árbol ni lee inconclusos, y que un check verde puede contener una sonda no
+acreditada. `.github` sin diff. **Punto 5 del propietario:** CA-09 reparte desarrollador (determina) → QA
+(verifica dentro de `QA:`) → auditor (revisa dentro de su R-nnn), sin agente, herramienta ni aprobación
+nueva; `tools/arnes-paralelo.sh` sin tocar. Cumple.
+
+### 5. Delta de workflow propuesto, **NO aplicado** (`docs/qa/REQ-030.md` § «Delta de workflow propuesto») — insumo para el propietario
+
+- **`set -o pipefail`: correcto y necesario.** `banco.yml` no declara `shell:` ni `defaults`, así que el
+  paso corre con `bash -e {0}`, **sin** `pipefail`: sin esa línea, el `tee` taparía el rc del banco. Con
+  ella, el rc del paso es el del banco (o el del `tee` si falla: rojo, lado cerrado).
+- **No puede volver verde un rojo:** el paso de resumen es aparte, `if: always()`, y su único comando que
+  puede fallar (`grep`) va con `|| echo …`; la conclusión del job sigue siendo la del paso del banco.
+  **Verde → rojo** sólo si fallara `RUNNER_TEMP` o la escritura del resumen: lado cerrado.
+- `2>&1 | tee` no cambia la conducta del banco: ni `run.sh` ni las secciones ni `tests/util` miran `-t`
+  (`grep`, sin resultados).
+- **Filtración:** el workflow no usa secretos; el resumen del job es tan público como el log.
+- **Defecto de diseño, a corregir antes de aplicarlo:** el `grep -E '^(Resultado: |INCONCLUSO: |       ! )'`
+  recorre **el log entero**, y el corredor vuelca antes la salida de todas las secciones (`run.sh`:1352).
+  Cualquier línea de sección en columna 0 con esos prefijos —un `diag` que vuelque la salida de un banco
+  anidado (37/4 escribe `Resultado: …` en archivos, hoy no a la salida) o el valor de la palanca con salto
+  de línea (§2)— entraría al resumen **antes** que el resumen real, que es justo donde el propietario pidió
+  leer la verdad. **Recomendación:** extraer sólo lo que sigue a la **última** línea separadora del
+  corredor (`awk` desde el último `^-{43}$`), o que el corredor escriba su resumen en un archivo propio.
+  Menor: un nombre de caso con tres acentos graves cerraría la valla de código del Markdown (nombres
+  controlados por el repositorio; baja).
+
+### 6. Repositorio público — **sin hallazgo**
+
+`git diff cfb1106..3c9b7e6` barrido por `insumos`, `mejoras-arnes`, `cliente`, cuentas y correos: sólo
+rutas locales de la rama de evidencia (`/home/juan/dev/ArnesJuan-evidencia/…`), práctica ya presente en
+`main` (`docs/qa/1.33.2-*`). Nada de clientes ni de `insumos/`.
+
+### 7. Hallazgos nuevos
+
+#### SEC-108 — `contrato` · **abierto** · severidad media · REQ-030 · dueño `analista-requerimientos` (write-back) y **propietario** (regla de aceptación)
+
+**La validación del instrumento que exige CA-08 (iii) no cubre el instrumento de CA-03, y el único detector mecánico de ese instrumento roto se retiró**
+
+- **Ubicación:** `requirements/REQ-030.md` CA-08 (iii) («pruebas sintéticas de CA-06 en verde y controles
+  de CA-07 corridos con su presupuesto») y CA-07 (sus tres controles son sólo de CA-08 (ii)); el retiro del
+  caso en `tests/escenarios/hooks/secciones/37-coste-del-escaner-2-las-razones.sh` (diff `cfb1106..322bc7c`,
+  bloque `REQ-017 CA-03 fail-before`); ADR-012 § Consecuencias.
+- **Estado aprobado con el que se compara:** REQ-017 `Seguridad: aprobado (R-012)`. En ese estado,
+  `CA-03 fail-before` daba **FAIL** si sobre v1.32.1 el cociente no pasaba del techo —«la sonda no
+  distingue el defecto que este REQ arregla»—.
+- **Lo que pasa ahora.** CA-06 prueba sólo el **juez** con vectores; CA-07 prueba sólo la sonda de reloj de
+  **CA-08 (ii)**. Nada prueba la **medición** de CA-03 (`mide37`, su `--prep`, el tamaño, la función
+  medida). Un PR de clase (iii) que rompa esa medición de modo que la calibración **nunca** resuelva —p.
+  ej., que los dos árboles midan algo lineal— deja CA-03 **INCONCLUSO en cada corrida**, con check verde,
+  **y cumple la letra de CA-08 (iii)**, porque CA-06 y CA-07 siguen verdes. En la base eso era FAIL. Es una
+  **regresión de un control aprobado** que el REQ no declara, contra el pedido del propietario: «Un cambio
+  al propio instrumento … requiere validar el instrumento» y «Conserva los controles de regresión
+  necesarios».
+- **No afecta a esta entrega, y lo digo:** sobre el árbol de REQ-030 **sí** hay evidencia de que la
+  calibración de CA-03 ve el defecto —QA V2-B `[2,652×; 4,256×]` 5 de 5; parcial del desarrollador
+  `[3,059×; 4,432×]`; 3 de 7 corridas completas locales resueltas (`docs/qa/REQ-030.md` vuelta 2 §1-§2)—.
+  El defecto es del **contrato** que gobernará los PR (iii) siguientes.
+- **Remediación (write-back; no exige código):** CA-08 (iii) —y CA-07 (e) si se reutiliza su
+  presupuesto— dice que validar el instrumento tras un cambio (iii) incluye **la calibración de CA-03
+  resuelta** en las corridas del presupuesto fijo de validación, con la **regla de aceptación que decida el
+  propietario** (opciones: en las 3; en la mayoría; al menos en una, con todas registradas). Con QA-030-05
+  abierto (calibración no resuelta 4 de 7 en local), la opción estricta puede no cumplirse: por eso la regla
+  es suya y se presenta **junto** a QA-030-05. Y ADR-012 § Consecuencias gana el (−) de que el instrumento
+  roto de CA-03 deja de ser rojo.
+- **Clase `contrato`: bloquea el cierre de REQ-030** hasta el write-back. Alternativa del propietario:
+  aceptarlo como residual con dueño, forzador (el primer PR (iii) que toque 37/2 o `tests/util/`) y
+  vencimiento; aceptarlo **no** lo acredita.
+
+#### SEC-109 — `instrumento` · **abierto** · severidad media · REQ-030 · dueño **propietario** (decisión) y `analista-requerimientos` (write-back)
+
+**La «acreditación pendiente» de CA-08 (ii) no tiene sede, dueño, forzador ni vencimiento, y las formas en que una regresión real sale INCONCLUSO no están declaradas como consecuencia**
+
+- **Ubicación:** `requirements/REQ-030.md` CA-08 (ii) y (i); ADR-012 § Consecuencias.
+- **Lo que falta.** CA-08 (ii) transcribe bien al propietario —la acreditación queda pendiente y no se da
+  por satisfecha— pero no dice **dónde** se registra ese pendiente, **quién** lo sigue ni **qué** lo
+  resuelve, ni si un PR (ii) con inconcluso **puede** integrarse. La secuencia que eso deja abierta: un PR
+  (ii) con una regresión real que cae en §1 (a) o (b) se integra con check verde y el pendiente sólo en su
+  PR; desde entonces `main` da INCONCLUSO en esas sondas, y **cada** PR documental siguiente se integra por
+  (i) declarando «no acreditado sobre esta cabeza». Ningún paso es falso y la regresión queda
+  **indefinidamente** sin acreditar ni detectar. La visibilidad (la línea `Resultado:`) existe; el forzador
+  no.
+- **Remediación:** decisión del propietario sobre la sede del pendiente —p. ej., `Hallazgos abiertos:` del
+  REQ que cambia el mecanismo con la clase que él fije, o `docs/PENDIENTES.md` con dueño, forzador y
+  vencimiento— y sobre si un inconcluso heredado de `main` impide acogerse a (i) mientras haya un pendiente
+  abierto; después, write-back en CA-08 (ii) y el (−) de ADR-012 nombrando las formas §1 (a)-(c).
+- **Clase `instrumento`, no bloquea REQ-030:** es una laguna de la política, no una promesa falsa del REQ,
+  y REQ-030 es (iii), no (ii). **Forzador:** el primer PR de clase (ii) con un INCONCLUSO de CA-03 o CA-08
+  (ii) en su cabeza. **Vencimiento:** antes de integrar ese PR, y como tarde 1.35.0.
+
+### 8. Veredicto
+
+**`Seguridad: con-hallazgos (R-043, 2026-09-25, sobre 3c9b7e6)`** — no es veto: no hay exposición de
+usuarios ni de datos, y el mecanismo (`hooks/`, `tools/`, `.github/`) no cambia. **SEC-108 (`contrato`)
+bloquea el cierre** hasta su write-back o su aceptación por el propietario.
+
+**Lo que acredita:** la revisión de seguridad y gobernanza del código de `322bc7c` y de los registros de
+`3c9b7e6`: R literal y no seleccionable; un juez que no descarta nada fuera de sus reglas; recuento de
+inconclusos íntegro frente a las inyecciones probadas; palanca de controles cerrada; clase (iii) sin (ii)
+confirmada; CA-10 sin atribución falsa; CA-09 sin agente ni aprobación nueva; nada de clientes en el
+repositorio público. **Lo que NO acredita:** las quality gates, el banco ni el CI (no los miré; no consta
+corrida sobre `3c9b7e6`); el rendimiento de nada; los controles sobre `322bc7c` (QA no los repitió); la
+frecuencia de inconclusos en CI; el delta de workflow en GitHub (no aplicado ni corrido); la integración de
+REQ-029 ni del PR #53; CA-09 de REQ-017.
+
+### 9. Estado de hallazgos de esta línea tras `R-043`
+
+| Hallazgo | Clase | Estado | Dueño | Bloquea |
+|---|---|---|---|---|
+| `SEC-108` | `contrato` | `abierto` | `analista-requerimientos` + propietario | **Sí** (REQ-030) |
+| `SEC-109` | `instrumento` | `abierto` | propietario + `analista-requerimientos` | No |
+| `SEC-048` | `instrumento` | `abierto` (sin cambio; REQ-030 aumenta su peso, §4) | propietario + `desarrollador` | No |
+
+**Línea base de no-regresión para REQ-030** (para la auditoría siguiente): R = 5, mínimo 3 y suelo
+50 000 µs como **literales** del corredor, nunca leídos del entorno; techos 2600/1250 pasados por las
+secciones; juez puro, sin contadores, que trata todo lo no medido como no resuelto dentro del denominador;
+reconocedor de inconclusos **único** en `run.sh`, anclado a una evidencia que **empieza** por la marca y
+sólo en líneas `SKIP`; palanca de 37/7 que sólo enciende con su lista y nunca da PASS apagada; `.github/`
+sin cambios. Regresiones a vigilar (no exhaustivo): un `${ARNES_…:-5}` o equivalente, un reconocedor que
+cuente por subcadena, un juez que descarte o sustituya repeticiones, un bucle de sección con salida
+anticipada.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios** (no cambian los datos manejados).
+
+**Numeración vigente tras esta revisión:** última revisión **R-043**; último hallazgo **SEC-109**;
+próximos libres **R-044** y **SEC-110**, comprobados sobre todas las ramas y worktrees vivos.
+
+---
+
+## Adenda a R-043 (**`R-043-A`**) — **REQ-030 tras las vueltas 3 y 4** (opción A y opción D del propietario): estado de SEC-108 y SEC-109, recuento por grupo. `feat/req-030-sondas-r5` @ `44f9d58` — 2026-09-26
+
+**Por qué adenda y no `R-044`.** Reverifica mis dos hallazgos sobre el delta que los remedia y el recuento
+nuevo; no vuelve a auditar lo que R-043 ya cubrió y el delta no toca.
+
+**Versión base y alcance.** Cabeza `44f9d58afec7cf6b1b31a8d586d087e04e5bfb8b`, árbol limpio.
+`git diff --stat ccdc7e4..44f9d58` = sólo `CHANGELOG.md`, `docs/qa/REQ-030.md` y `requirements/REQ-030.md`:
+el código revisado es el de `ccdc7e4`, el que validó QA (`QA: aprobado`, vuelta 4 por excepción). Delta
+auditado: `git diff 3c9b7e6..ccdc7e4` (13 archivos, +1096 −86), leído en `run.sh`, 37/2, 37/7, ADR-012,
+CA-03, CA-05 (a-bis), CA-07 (c)-(g), CA-08 (iii) y las tres formas; `docs/qa/REQ-030.md` § vueltas 3 y 4.
+`git diff --stat cfb1106..44f9d58 -- hooks tools .github .arnes templates skills agents playbooks .claude-plugin tests/util`
+**vacío**. Leídas íntegras en `PENDING_APPROVAL.md` las decisiones del propietario «opción A para SEC-108»
+y «opción D…», y la entrada de `## Pendientes` sobre SEC-109(b). **Orden respetado:** QA firmó antes
+(«seguridad sólo después de QA favorable»). **No miré quality gates ni corrí el banco.** Mi única ejecución:
+el `awk` del recuento por grupo de `run.sh`, extraído literal, sobre un archivo sintético del scratchpad.
+
+### 1. SEC-108 → **`mitigado`** (sobre `ccdc7e4`)
+
+Lo que R-043 exigía: que la validación (iii) cubriera el instrumento de CA-03 y que volviera a existir un
+detector de ese instrumento roto, con write-back. **Comprobado:**
+- **Juzga la medición que decide, no una copia.** `sonda_juez_control_c3` (`run.sh`) recibe
+  `PARES37_HER`, la serie de calibración que 37/2 acaba de medir para CA-03 (mismo `mide37`, `$HER37`,
+  tamaños, k = 20, R = 5) y usa la misma resolución por repetición (`sonda_recorrido_pares`). En 37/7 no
+  queda `mat57`, `mide57` ni ningún juez de C3 (leído).
+- **Es el detector mecánico restituido:** C3 FAIL («avería demostrada», ≥ 3 resueltas y todas
+  ≤ 2,600×) es un FAIL real que pone el banco en rojo **con la palanca**. Sin la palanca: SKIP «no se pide»,
+  sin marca y nunca PASS, y la calibración sigue siendo la precondición de CA-03, que sale
+  `[INCONCLUSO] [rendimiento]`: **no** se convierte en aprobación (leído en 37/2 y en `sonda_juez_duplicacion`).
+- **Está en el contrato:** CA-03, CA-07 (e)(g), CA-08 (iii) y la forma (c) de CA-08; ADR-012 § Consecuencias.
+  CA-08 (iii) exige los 7 controles con la regla de CA-07 (e), C3 incluido.
+- **Evidencia de QA que lo sostiene** (`docs/qa/REQ-030.md` vuelta 4 §2-§4): la avería reproducida pasa de
+  **C3 PASS** (copia en 37/7, `7b96dcc`) a **C3 FAIL** (`ccdc7e4`); reloj constante → FAIL; bajo el suelo →
+  INCONCLUSO; mezcla → INCONCLUSO; CA-07 (e) cumplida en las 3 corridas fijadas (C3 PASS 1 de 3).
+
+**Revisión adversarial.**
+- **¿Hay una avería del instrumento de CA-03 que deje C3 en PASS?** Sí, y son dos clases:
+  (1) toda avería **del brazo «este árbol»**, que C3 no mira (declarada fuera en CA-07 (g));
+  (2) toda avería que altere lo que mide la calibración **sin** bajarla del techo. Ejemplo no exhaustivo:
+  una línea base sustituida por otro árbol cuyo cociente también supere 2,600× (la vía del tag móvil de
+  **SEC-048**). La (2) contradice cómo se enuncia la cobertura: ver SEC-110.
+- **¿Puede «PASS en ≥ 1 de 3» acreditar un instrumento que no ve la cuadrática?** No. C3 PASS exige ≥ 3
+  resueltas de v1.32.1, todas > 2,600×, que es exactamente la condición de calibración resuelta de
+  CA-03 (b). Un instrumento que en esa corrida no distingue el árbol cuadrático da FAIL (todas ≤) o
+  INCONCLUSO (mezcla, < 3), y tres INCONCLUSO dejan el instrumento no acreditado. La asimetría vale
+  **para esa propiedad**, no para «todo instrumento averiado» (SEC-110).
+- **Límite que queda, declarado y correcto:** en el modo por defecto —el de la puerta requerida— C3 está
+  apagado, así que un instrumento roto de CA-03 sigue saliendo INCONCLUSO con check verde. Lo detecta la
+  validación de la clase (iii), que aplican QA y seguridad y no es mecánica (forma (c) de CA-08; ADR-012).
+  No es residual nuevo: es la forma que el propietario eligió (D).
+- **Dato que conservo sin interpretarlo:** el único C3 PASS de la validación quedó en 2,603×, un 0,1 % sobre
+  el techo; y la probabilidad de rechazar un instrumento sano calculada por QA (≈ 0,20) es un **cálculo**
+  con supuestos no medidos (QA-030-05).
+
+**Estado: `mitigado`.** Deja de bloquear y sale de `Hallazgos abiertos:`. Lo que falla en el enunciado de
+la cobertura de la mitigación es un defecto **distinto**, del texto y no del mecanismo: SEC-110.
+
+### 2. SEC-109 → **`en-mitigación`**: parte (a) mitigada, parte (b) abierta y pendiente del propietario
+
+- **(a) Las tres formas, con su consecuencia:** escritas en REQ-030 CA-08 («Las tres formas en que una
+  regresión REAL sale INCONCLUSO…») y en ADR-012 (−), con la consecuencia común («rendimiento no
+  acreditado, nunca aprobado»), la limitación «7 de 12» con las palabras del propietario y, en (c), el
+  límite de la palanca. **Mitigada.**
+- **(b) Sede, dueño, forzador y vencimiento de la «acreditación pendiente», y si un inconcluso heredado de
+  `main` impide acogerse a (i):** **no** se incorporó al REQ. Está presentada en `PENDING_APPROVAL.md` §
+  Pendientes con texto propuesto, responsable, acción afectada, dos opciones con sus consecuencias y una
+  recomendación marcada como del analista, tal como pidió el propietario («no la incorpores como si ya
+  estuviera autorizada ni la declares resuelta»). **Abierta.** No la doy por autorizada ni por resuelta, y
+  no acepto ninguna de las opciones en su nombre.
+- **Clase `instrumento`**, no bloquea por sí misma. **Dueño:** propietario (la decisión) y, después,
+  `analista-requerimientos` (write-back en CA-08 (ii) y, si procede, (i)). **Forzador y vencimiento:** los
+  de R-043: el primer PR de clase (ii) con un INCONCLUSO de CA-03 o CA-08 (ii) en su cabeza; como tarde
+  1.35.0. **Efecto aparte, que no es mío:** mientras esa entrada siga en `## Pendientes`, `guard-completado`
+  deniega marcar como `completado` **cualquier** REQ (`AGENTS.md` §6).
+
+### 3. Recuento por grupo (`run.sh`, CA-05 (a-bis)): **sin hallazgo**
+
+El `awk` reconoce la marca como antes y lee el grupo **sólo** en la posición fija que sigue a
+`[INCONCLUSO] `: `[rendimiento]` o `[instrumento]`, 13 caracteres. Probado sobre un archivo sintético con el
+programa literal:
+- un sufijo de motivo que contiene `[INCONCLUSO] [rendimiento]` no cambia de grupo a un caso `[instrumento]`;
+- `[rendimientoX]`, doble espacio antes del grupo o `[INCONCLUSO][instrumento]` pegado van a **«sin
+  clasificar»**, visibles y nunca contados como rendimiento;
+- una línea PASS con la marca y el grupo no cuenta.
+
+**Emisores:** `grep` de `[INCONCLUSO]` en todas las secciones y en el corredor: **toda** línea emitida lleva
+grupo. Los de medición (`sonda_juez_duplicacion`, `sonda_juez_razon`) llevan `[rendimiento]`; los de control
+(`sonda_juez_control_c3` y los de 37/7) llevan `[instrumento]`. 37/7 retira el prefijo `[rendimiento]` del
+juez de CA-08 (ii) antes de poner el suyo, también en WD y en «JSON vacío». El grupo lo pone código del
+banco antes de cualquier contenido variable (nombre y motivos van en otras posiciones), así que ningún dato
+de entrada puede fijarlo ni moverlo. Coincide con las tres mutaciones de QA. El `NINC` con caída a 0 de
+R-043 §2 desapareció: si el `awk` falla, ahora falta la línea `Resultado:` entera, que se ve.
+
+**Observaciones (sin hallazgo):**
+- La normalización de la palanca se duplicó en 37/2 (`_pide37`/`RARO37`, 37/2:254-260), con el mismo
+  valor raro **sin aplanar** en el motivo que señalé en R-043 §2 para 37/7. No altera recuento ni cuadre.
+- **El delta de workflow propuesto quedó desfasado del código:** su `grep '^(Resultado: |INCONCLUSO: |       ! )'`
+  ya no casa las cabeceras nuevas `INCONCLUSO (rendimiento NO acreditado): …` / `INCONCLUSO (instrumento
+  NO acreditado): …`. Aplicado tal cual, el resumen del job llevaría la línea `Resultado:` con los tres
+  recuentos, pero los nombres `       ! ` de los dos grupos, **mezclados y sin su cabecera**. Eso reintroduce
+  en el resumen del job la confusión que QA-030-09 cerró en el log. Se suma al defecto de R-043 §5 (el
+  `grep` recorre el log entero). No está aplicado; hay que revisarlo antes de proponerlo al propietario.
+
+### 4. Hallazgo nuevo
+
+#### SEC-110 — `contrato` · **abierto** · severidad baja · REQ-030 · dueño `analista-requerimientos` (write-back)
+
+**La cobertura de C3 se enuncia más ancha de lo que es: «un instrumento averiado no puede producir PASS» y «cubre toda avería que altere lo que mide la calibración»**
+
+- **Sedes (barrido por propiedad: toda frase que afirme qué averías ve C3; `grep` en REQ, ADR, README del
+  banco, `run.sh` y secciones):**
+  - `requirements/REQ-030.md`:270 (CA-07 (e)): «un PASS de C3 es algo que un instrumento averiado **no
+    puede** producir»;
+  - `requirements/REQ-030.md`:327-328 (CA-07 (g)): «cubre **toda avería que altere lo que mide la
+    calibración de CA-03**»;
+  - `docs/decisions/ADR-012-…md`:114 y `tests/escenarios/hooks/README.md`:452, la misma frase.
+  - Los **mensajes que imprime el programa** son correctos y no entran: el PASS de C3 dice «acredita que
+    resolvía en esta corrida, no que detecte cualquier regresión».
+- **Por qué es falsa:**
+  - La primera sede contradice el mismo REQ: CA-07 (g) declara que una avería del brazo «este árbol» puede
+    salir PASS sin que C3 la vea. Un instrumento de CA-03 averiado **sí** puede, por tanto, producir C3 PASS.
+  - La segunda promete por **causa** («altere lo que mide»), y la propiedad real es de **efecto**. Una
+    avería que altere la calibración sin bajarla del techo da C3 PASS. Ejemplo no exhaustivo: la línea base
+    sustituida por otro árbol que también supere 2,600×, que es la vía del tag móvil de SEC-048.
+  - Es la forma que el propietario prohibió en la decisión D («No prometas cobertura de toda avería
+    posible»): el matiz «sin prometer toda avería posible» cuelga de una promesa que sigue siendo más ancha
+    que la verdad.
+- **La propiedad verdadera, para el write-back:** «C3 no puede dar PASS —ni, por tanto, acreditar el
+  instrumento— salvo que en esa corrida la calibración de v1.32.1 vea la cuadrática: ≥ 3 resueltas y todas
+  > 2,600×. Toda avería que lo impida sale FAIL (todas ≤) o no acreditada (mezcla o < 3). No ve lo que no
+  pasa por la calibración (el brazo «este árbol») ni la avería que la altera sin bajarla del techo (p. ej.,
+  una línea base que no es v1.32.1 pero también supera 2,600×, SEC-048).» En la sede :270, «un instrumento
+  averiado» → «un instrumento que no distingue el árbol cuadrático en esa corrida».
+- **Remediación:** sólo texto, en las cuatro sedes: sin código ni nueva medición. La regla de aceptación de
+  CA-07 (e) **no** cambia: su asimetría es cierta para la propiedad corregida.
+- **Clase `contrato`**, porque el REQ afirma algo que él mismo desmiente. **Bloquea el cierre** hasta el
+  write-back. **No** lo acepto como residual en nombre del propietario, y registrarlo no autoriza repararlo:
+  la decisión de abrir la corrección, dentro o fuera del contador, es suya y de la coordinadora.
+  **Vencimiento:** antes del cierre de REQ-030.
+
+### 5. Repositorio público — **sin hallazgo**
+
+`git diff 3c9b7e6..44f9d58` barrido por `insumos`, `mejoras-arnes`, `cliente`, `conciliador`, cuentas y
+correos: sólo aparecen citas de mi propia R-043. Nada de clientes.
+
+### 6. Veredicto
+
+**`Seguridad: con-hallazgos (R-043-A, 2026-09-26, sobre 44f9d58 = código de ccdc7e4)`.**
+- **No es veto.** SEC-108 queda `mitigado`. SEC-109 queda `en-mitigación`: (a) hecha, (b) pendiente del
+  propietario. **SEC-110 (`contrato`) bloquea** hasta su write-back.
+- **Acredita:** la revisión de seguridad y gobernanza del delta de las vueltas 3 y 4. Es decir: C3 en 37/2
+  sobre la misma calibración de CA-03, con sus tres resultados distintos y sin convertir una calibración
+  insuficiente en aprobación; la retirada de la copia de 37/7; el recuento por grupo íntegro frente a las
+  inyecciones probadas; la clase (iii) sin (ii); el contrato de SEC-108 y de SEC-109(a).
+- **No acredita:** las quality gates, el banco ni el CI (no los miré; no hay corrida en CI); el
+  rendimiento; que la frecuencia «7 de 12» mejore (QA ve 10 de 16); que C3 detecte averías fuera de la
+  propiedad de SEC-110; el delta de workflow; la decisión de SEC-109(b); REQ-029, el PR #53 ni CA-09 de
+  REQ-017.
+
+### 7. Estado de hallazgos de esta línea tras `R-043-A`
+
+| Hallazgo | Clase | Estado | Dueño | Bloquea |
+|---|---|---|---|---|
+| `SEC-108` | `contrato` | **`mitigado`** (sobre `ccdc7e4`) | `analista-requerimientos` + propietario | No |
+| `SEC-109` | `instrumento` | `en-mitigación` ((a) mitigada; (b) pendiente del propietario en la cola) | propietario + `analista-requerimientos` | No |
+| `SEC-110` | `contrato` | `abierto` | `analista-requerimientos` | **Sí** (REQ-030) |
+| `SEC-048` | `instrumento` | `abierto` (sin cambio) | propietario + `desarrollador` | No |
+
+**Línea base de no-regresión para REQ-030 (se suma a la de R-043):**
+- C3 vive en 37/2, juzga `PARES37_HER` con `sonda_juez_control_c3` y da tres resultados distintos;
+- sin la palanca, C3 da SKIP sin marca y nunca PASS;
+- en 37/7 no hay ninguna copia del medidor de CA-03;
+- toda línea `[INCONCLUSO]` lleva grupo en posición fija, y lo que no lo lleve sale «sin clasificar».
+
+Regresiones a vigilar (no exhaustivo):
+- que C3 vuelva a medir aparte o sobre una copia;
+- que un INCONCLUSO de C3 cuente para la regla de aceptación;
+- que el grupo se derive de una lista de nombres o de una subcadena;
+- que una calibración no resuelta salga PASS por cualquier camino.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta adenda:** última revisión **R-043** (adenda **`R-043-A`**); último hallazgo
+**SEC-110**; próximos libres **R-044** y **SEC-111**, comprobados sobre todas las ramas y worktrees vivos.
+
+---
+
+## Adenda a R-043 (**`R-043-B`**) — **REQ-030, revisión documental**: SEC-110 y SEC-109(b) tras las dos intervenciones documentales por excepción del propietario. `feat/req-030-sondas-r5` @ `192d7b6` — 2026-09-26
+
+**Alcance: documental.** Cabeza `192d7b625fa42c572bd1bcb8f6ae66914f8040a4`, árbol limpio. **El código no
+cambió desde `ccdc7e4`**: `git diff --stat ccdc7e4..192d7b6 -- tests/escenarios/hooks/run.sh tests/escenarios/hooks/secciones tests/escenarios/hooks/autoprueba-corredor.sh hooks tools .github tests/util .arnes`
+sale **vacío**. El código lo cubre R-043-A; aquí no lo re-audito ni corro nada.
+
+**Método.**
+- Leí íntegras las dos decisiones del propietario en `PENDING_APPROVAL.md` § Resueltas («intervención
+  documental acotada para SEC-110 y decisión sobre SEC-109(b)» y «se autoriza corregir QA-030-10»).
+- Leí el diff `git diff 44f9d58..192d7b6` de `requirements/REQ-030.md`, ADR-012, `tests/escenarios/hooks/README.md`,
+  `requirements/README.md` y la cola, y las secciones documentales de `docs/qa/REQ-030.md`.
+- **Barrido propio por propiedad** —toda frase vigente que atribuya a C3 una cobertura o que defina qué
+  significan sus salidas— con `grep -iE 'toda aver|cualquier aver|averiado|instrumento roto|restitu|lo que (hacía|daba) el .?fail-before|detecta toda|cubre toda|detector mecánico'`.
+  Lo corrí sobre REQ-030, REQ-017, ADR-012, el README del banco, `requirements/README.md`,
+  `docs/PENDIENTES.md`, `run.sh`, las secciones 37 y la autoprueba, y leí cada coincidencia en su contexto.
+- `## Pendientes` de la cola está **vacía** (comprobado).
+- **Orden respetado:** QA firmó antes (`aprobado`, re-verificación documental sobre `0f7e668`).
+  `0f7e668..192d7b6` sólo añade el veredicto de QA, `CHANGELOG.md` y `docs/qa/REQ-030.md`.
+
+### 1. SEC-110 → **`mitigado`** (sobre `192d7b6`, documental)
+
+- **Ninguna sede vigente atribuye a C3 más cobertura que la demostrada.** Lo comprobé en cuatro sitios:
+  - CA-03 (:128-131): C3 «asume» la función de detectar un instrumento que no ve el árbol cuadrático,
+    «no "toda avería"», con la regla de R = 5.
+  - CA-07 (e) (:274-277): «un instrumento que no distingue el árbol cuadrático en esa corrida no puede
+    producir PASS», y la asimetría vale **para esa propiedad**.
+  - CA-07 (g) (:343-360): la propiedad, lo que pasa con una avería que la impide, y **qué no cubre**. No
+    cubre el brazo «este árbol», las sondas de CA-08 (ii) ni la avería que altera la calibración sin bajarla
+    del techo (SEC-048 → PASS). La frase «C3 no promete detectar toda avería posible» cuelga ahora de una
+    promesa principal que **sí** es cierta.
+  - La forma (c) de CA-08, ADR-012 («Qué garantiza C3, enunciado por su efecto») y el README del banco
+    (:449-460) dicen lo mismo.
+- **Las tres salidas, como las dictó el propietario:**
+  - **FAIL:** se cumple la condición de fallo del control, ≥ 3 resueltas y todas ≤ 2,600×.
+  - **INCONCLUSO:** el funcionamiento no quedó acreditado y no demuestra por sí solo una avería.
+  - **PASS:** acredita únicamente lo que el control mide, que en esa corrida la calibración vio la
+    cuadrática.
+  - Así en CA-07 (g), ADR-012 y el README.
+  - Los mensajes que **imprime** `sonda_juez_control_c3` ya concordaban (R-043-A) y no cambiaron.
+- **La formulación acotada conserva sus condiciones:** «sale FAIL o queda no acreditada» va siempre
+  seguida de cuándo es cada cosa (FAIL: ≥ 3 y todas ≤; no acreditada: < 3, mezcla o sin línea base) y de que
+  **no** toda avería que impide el PASS sale FAIL (QA-030-10). Está así en CA-07 (g), la forma (c), ADR-012 y
+  el README.
+- **Lo histórico queda como historia:**
+  - Las notas fechadas de ADR-012 («Corregido el 2026-09-26 (SEC-108…)», «Corregido otra vez…») conservan
+    su texto: «se restituye», «lo detecta», «demuestra avería». Una *Precisión del 2026-09-26 (QA-030-10)*
+    que las sigue dice cómo se leen, sin reescribirlas.
+  - El Historial conserva la fila de la primera intervención tal como se escribió («detecta toda avería
+    que lo impida»). La fila siguiente registra su corrección.
+  - El motivo antiguo de `Estado:` se sustituyó por el vigente; el antiguo queda en el diff y en el Historial.
+  - Mis R-043 y R-043-A no se tocaron (comprobado con `git log` del registro: sólo mis commits).
+  - **Ningún veredicto anterior se reescribió.**
+- **La observación de QA sobre `run.sh`:610-611**, comentario «FAIL — … AVERÍA DEMOSTRADA, un FAIL real
+  que pone el banco en rojo (lo que hacía el `fail-before` retirado de CA-03)»: **sin hallazgo.**
+  - Dice la condición de FAIL exacta, y el paréntesis afirma un **efecto** que es cierto: poner el banco en
+    rojo, como hacía el `fail-before`. No afirma una cobertura ni que la regla sea la misma.
+  - «Avería demostrada» es el rótulo que el propio contrato da a esa salida, definida como «se cumple la
+    condición de fallo del control».
+  - Es un comentario, no un mensaje impreso. Si algún día se toca `run.sh` por otra causa, podría ganar
+    «con otra regla (R = 5)» por coherencia con CA-07 (g). **No** abre trabajo.
+
+**Estado: `mitigado`.** Deja de bloquear y sale de `Hallazgos abiertos:`.
+
+### 2. SEC-109 → **`mitigado`**; el hueco que deja la propia decisión va aparte, en **SEC-111**
+
+Lo que R-043 pedía: una decisión del propietario sobre la **sede** del pendiente y sobre si un inconcluso
+heredado impide acogerse a (i); después, el write-back en CA-08 y el (−) de ADR-012 con las tres formas.
+**Comprobado contra los cinco puntos del propietario:**
+1. **Inconcluso heredado de `main`** (CA-08 (i)): no impide por sí solo un PR documental. Exige los dos
+   SHA, la salida vacía del conjunto de rutas y el pendiente **citado por identificador**; no elimina otros
+   requisitos ni convierte el inconcluso en PASS. **Fiel.**
+2. **Criterio no satisfecho** (CA-08 (ii), primer punto; forma de CA-08): el REQ de mecanismo **no se
+   cierra**. Constan las tres prohibiciones literales: la etiqueta `instrumento`, el traslado «por otra
+   vía» y la excepción por inferencia. **Fiel.** Cómo se hace cumplir: `QA:` no puede ser `aprobado` sobre
+   un criterio no satisfecho, y `guard-completado` exige `QA: aprobado`. La puerta mide el **veredicto**, no
+   el criterio: lo hace cumplir **si** QA lo respeta, que es lo que el texto dice.
+3. **Sede:** la `## Alcance de la medición` del REQ afectado (la que CA-09 (b) ya usa). Dueño, el
+   `desarrollador`; revisión, QA y, en `critico`, seguridad. Desde `docs/PENDIENTES.md`, sólo un puntero.
+   **Fiel.** El identificador `ACR-<REQ>-NN` lo eligió el analista, rotulado **A** en la tabla de
+   correspondencia; el punto 1 del propietario exige *un* identificador y no fija su forma. Se hizo en la
+   primera intervención, antes de la instrucción «sin nuevas familias de identificadores» de la segunda.
+   Queda impugnable por el propietario; no lo trato como hallazgo.
+4. **Sin resolución automática por una corrida posterior en PASS:** procedimiento y presupuesto fijados
+   antes de medir, todas las ejecuciones conservadas y juicio sobre el conjunto. **Fiel.** La propuesta
+   anterior de la cola, que usaba precisamente ese forzador, quedó marcada como **rechazada** y conservada
+   como historia.
+5. **1.35.0 como hito de revisión:** obliga a revisar y no resuelve ni autoriza cerrar. **Fiel.**
+
+Las tres formas figuran con su consecuencia en CA-08 y en ADR-012 (−), con la limitación en 10 de 16 y el
+PASS cercano al techo conservados como medida.
+
+**Por qué `mitigado` y no más ni menos.** El riesgo de SEC-109 era que una regresión real que sale
+INCONCLUSO en un cambio de mecanismo quedara **sin sede ni forzador**, indefinidamente, mientras los PR
+documentales se integraban por (i). Ahora tiene sede, dueño y revisión. **Impide cerrar su REQ.** Cada PR
+documental que se acoja a (i) con ese inconcluso tiene que **citarlo**, y hay hito de revisión. Lo que la
+decisión exigía está incorporado. **No lo cierro:** `mitigado` no es `cerrado`, y el hueco sigue abierto.
+
+**El hueco, que no doy por resuelto:** no existe la regla para juzgar **un conjunto de varias corridas**
+(cuántas, sobre qué cabeza, cómo se decide un conjunto que mezcla PASS, INCONCLUSO y FAIL). Está declarado
+en § Notas («Hueco de SEC-109(b)») con su consecuencia: un pendiente de clase (ii) **no se resuelve por
+ninguna vía** y su REQ no cierra; la revisión de 1.35.0 empieza por fijar esa regla, que es decisión del
+propietario. **Falla hacia el lado cerrado:** bloquea, no deja pasar. Es un defecto distinto del que medía
+SEC-109, así que lo registro aparte para que no quede escondido dentro de un hallazgo `mitigado`.
+
+#### SEC-111 — `instrumento` · **abierto** · severidad media · REQ-030 (sede del contrato) · dueño **propietario** (la regla) y `analista-requerimientos` (write-back)
+
+**No existe regla para acreditar el rendimiento sobre un conjunto de varias corridas; mientras falte, un pendiente de clase (ii) no se resuelve por ninguna vía**
+
+- **Sede:** `requirements/REQ-030.md` CA-08 (ii) («Cómo se resuelve») y § Notas «Hueco de SEC-109(b)»;
+  decisión del propietario, punto 4.
+- **Efecto:** todo REQ futuro que cambie `hooks/` o `tools/`, exija la acreditación de CA-03 o CA-08 (ii) y
+  obtenga un INCONCLUSO abre un `ACR-<REQ>-NN` que no tiene procedimiento de resolución. Ese REQ **no puede
+  cerrar**. Con la frecuencia medida de calibración no resuelta (10 de 16 en local), no es un caso raro.
+  El PR de ese cambio puede integrarse: la fusión es decisión de `AGENTS.md` §6, y con `QA:` no aprobado no
+  hay delegación. En ese caso el pendiente queda visible en `main` y citado por cada PR documental.
+- **Por qué es `instrumento` y no convierte nada en deuda por etiqueta.** Es una laguna del procedimiento
+  del propio arnés, que falla hacia el lado cerrado. **No** rebaja ni sustituye la prohibición del punto 2
+  del propietario: el pendiente de un REQ de mecanismo sigue impidiendo su cierre. Este hallazgo sólo
+  registra que falta la regla para levantarlo.
+- **No bloquea REQ-030:** es clase (iii) y no abre ningún pendiente de clase (ii) (§ Notas, comprobado).
+- **Forzador:** el primer REQ de mecanismo que abra un `ACR-…`. **Vencimiento:** el hito 1.35.0, que obliga a
+  revisarlo. **Remediación:** decisión del propietario sobre la regla del conjunto de corridas y después
+  write-back. **Registrarlo no autoriza diseñarla** («no inventes otro diseño de medición»).
+
+### 3. Observaciones, sin hallazgo
+
+- **Fila de REQ-030 en `requirements/README.md` desfasada.** Dice `con-hallazgos (intervención
+  documental, b20ad39)` en la columna QA, y el REQ dice `aprobado (re-verificación documental, cabeza
+  0f7e668)`. El commit `192d7b6` la anuncia como «índice al día». Con mi veredicto, la columna de seguridad
+  también quedará vieja. Dueño: quien orquesta. No la toco: no es mi rebanada.
+- **Delta de workflow**: sigue sin aplicar y **sigue desfasado** del recuento por grupo (R-043-A §3). Nada
+  nuevo.
+
+### 4. Repositorio público — **sin hallazgo**
+
+`git diff 44f9d58..192d7b6` barrido por `insumos`, `mejoras-arnes`, `cliente`, `conciliador` y correos:
+sólo aparecen mis propias citas de R-043-A. Nada de clientes.
+
+### 5. Veredicto
+
+**`Seguridad: aprobado (R-043-B, 2026-09-26, sobre 192d7b6; documental: SEC-110 y SEC-109(b); código = ccdc7e4, cubierto por R-043-A)`.**
+
+Ningún hallazgo mío `contrato` ni `usuario/dinero` queda abierto:
+- SEC-108: `mitigado` (R-043-A).
+- SEC-110: `mitigado`.
+- SEC-109: `mitigado`.
+- SEC-111: `instrumento`, no bloquea.
+
+**Qué acredita:**
+- Que ninguna sede vigente atribuye a C3 más cobertura que la demostrada.
+- Las tres salidas, como las dictó el propietario.
+- La decisión de SEC-109(b), incorporada fiel en sus cinco puntos.
+- El hueco del conjunto de corridas, declarado con una consecuencia que falla hacia el lado cerrado.
+- Lo histórico, conservado sin reescribir veredictos.
+- Junto con R-043 y R-043-A, la revisión de seguridad y gobernanza del código de `ccdc7e4`.
+
+**Qué NO acredita:**
+- Las quality gates, el banco ni el CI; no hay corrida en CI.
+- El rendimiento.
+- Ninguna mejora de fiabilidad, ni de la frecuencia de calibraciones resueltas (10 de 16 sin resolver),
+  ni del PASS cercano al techo, ni de la estimación de rechazo, que no está medida.
+- La regla del conjunto de corridas (SEC-111).
+- El delta de workflow.
+- REQ-029, el PR #53 ni CA-09 de REQ-017.
+- **Que REQ-030 pueda cerrarse.** Es decisión de quien orquesta, con `QA-030-03`, `QA-030-05`, `SEC-109`
+  y `SEC-111` como `instrumento` abiertos y sin aceptar por mí en nombre de nadie.
+
+### 6. Estado de hallazgos de esta línea tras `R-043-B`
+
+| Hallazgo | Clase | Estado | Dueño | Bloquea |
+|---|---|---|---|---|
+| `SEC-108` | `contrato` | `mitigado` (R-043-A, código `ccdc7e4`) | `analista-requerimientos` + propietario | No |
+| `SEC-109` | `instrumento` | **`mitigado`** (documental, `192d7b6`) | propietario + `analista-requerimientos` | No |
+| `SEC-110` | `contrato` | **`mitigado`** (documental, `192d7b6`) | `analista-requerimientos` | No |
+| `SEC-111` | `instrumento` | `abierto` | propietario + `analista-requerimientos` | No |
+| `SEC-048` | `instrumento` | `abierto` (sin cambio) | propietario + `desarrollador` | No |
+
+`SEC-109` y `SEC-110` salen de `Hallazgos abiertos:` al quedar `mitigado`; `SEC-111` entra. Los hallazgos
+de QA son de QA.
+
+**Línea base de no-regresión para REQ-030 (se suma a las de R-043 y R-043-A):**
+- La cobertura de C3 se enuncia por **efecto**, con lo que no cubre nombrado.
+- «Sale FAIL o queda no acreditada» va siempre con sus condiciones.
+- En clase (ii), un inconcluso deja el criterio **no satisfecho** y el REQ sin cerrar, con sede en «Alcance
+  de la medición», sin resolución automática por corrida posterior.
+
+Regresiones a vigilar (no exhaustivo):
+- una frase que vuelva a prometer «toda avería»;
+- un pendiente de clase (ii) que pase a `instrumento`, se traslade o se resuelva con una corrida.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta adenda:** última revisión **R-043** (adenda **`R-043-B`**); último hallazgo
+**SEC-111**; próximos libres **R-044** y **SEC-112**, comprobados sobre todas las ramas y worktrees vivos.

@@ -38,6 +38,358 @@
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-09-26) — **REQ-030: se autoriza corregir QA-030-10**, segunda intervención documental por excepción adicional; historial y contadores conservados
+
+**Texto del propietario, literal e íntegro:**
+
+> Autorizo corregir QA-030-10 en `feat/req-030-sondas-r5`, partiendo de la cabeza local verificada. Registra esta intervención documental como excepción adicional, conservando todo el historial y los contadores.
+>
+> **Alcance autorizado**
+>
+> Corrige las dos frases señaladas en CA-07 (g) y el README del banco, y cualquier aparición equivalente de esa misma promesa excesiva en las sedes afectadas por REQ-030.
+>
+> La autorización cubre el defecto por propiedad, no sólo dos cadenas literales: no necesitas otra decisión mía para corregir otra repetición de la misma afirmación dentro de ese alcance.
+>
+> La redacción debe distinguir:
+>
+> - FAIL: se cumple la condición de fallo definida por el control.
+> - INCONCLUSO: el funcionamiento no quedó acreditado; no demuestra por sí solo una avería.
+> - PASS: acredita únicamente lo que el control mide, con los límites ya declarados.
+>
+> Usa la formulación acotada de ADR-012 —«sale FAIL o queda no acreditada»— donde corresponda, conservando sus condiciones. No prometas detectar toda avería ni amplíes la cobertura atribuida a C3.
+>
+> **Ejecución y revisión**
+>
+> Agrupa las correcciones en un único write-back del analista. Haz un barrido de coherencia de la misma promesa en las sedes vigentes; conserva los textos históricos como historia, sin reescribir veredictos anteriores.
+>
+> QA verifica el delta documental y determina QA-030-10. Sólo después de QA favorable, seguridad revisa el texto y determina SEC-110 y SEC-109. Cada veredicto debe identificar su cabeza y alcance.
+>
+> No repitas ensayos ni revisiones del código que no cambió. Esta intervención no demuestra mejoras de rendimiento, fiabilidad o frecuencia de resultados concluyentes.
+>
+> **Pendiente separado**
+>
+> La regla para resolver una acreditación de rendimiento pendiente de un cambio del mecanismo sigue sin definirse. No la inventes, no la des por resuelta y no conviertas una corrida favorable en resolución automática.
+>
+> En la entrega, explica concretamente qué acciones impide ese vacío: cierre de qué clase de REQ, integración o publicación, citando la regla aplicable. Distingue los impedimentos actuales de las limitaciones para trabajos futuros.
+>
+> **Límites**
+>
+> Sin código, mediciones nuevas, cambios de umbral, workflow, ruleset, otras sondas, consumidores, REQ-029 o PR #53. Sin nuevas familias de identificadores, formularios ni obligaciones ajenas a esta corrección.
+>
+> Puedes realizar los commits locales necesarios con los controles activos. Sin push, CI remoto, fusión, publicación ni cambio de versión.
+>
+> Entrega un único resultado breve: cabeza final, sedes corregidas, veredictos y cobertura, estado de los hallazgos y lista consolidada de impedimentos restantes. Si aparece un defecto distinto, regístralo sin encadenar su reparación. No cierres REQ-029.
+
+**Lo que la coordinadora añade, rotulado como suyo:** sexta intervención sobre el REQ (tres vueltas, vuelta 4 por excepción, dos intervenciones documentales por excepción); nada se reinicia. Sin código, sin ensayos. Cabeza local verificada de partida: `db70d31` (código = `ccdc7e4`).
+
+**La entrada tal como estaba, conservada:**
+
+#### [2026-09-26] (coordinadora) — REQ-030 `bloqueado` tras la intervención documental: QA-030-10 (`contrato`, dos frases) deja SEC-110 sin cerrar; ¿se autoriza corregir esas dos sedes?
+
+- **Contexto:** la intervención documental por excepción corrigió SEC-110 en siete sedes e incorporó SEC-109(b) fiel en sus cinco puntos (QA lo contrastó literalmente). Pero en dos sedes —`requirements/REQ-030.md` CA-07 (g) («**Qué avería detecta:** toda la que impida eso… sale FAIL si…») y `tests/escenarios/hooks/README.md` («Detecta toda avería que lo impida: sale FAIL si…»)— la promesa principal sigue siendo absoluta con la condición colgando detrás: una avería que impide el PASS dejando resueltas a ambos lados del techo o < 3 resueltas **no** se detecta, queda INCONCLUSO «no demuestra avería» (medido: `v4-fb-mezcla.log`). Es la misma forma que SEC-110 y la decisión D prohíben, y es el defecto de barrido incompleto de la promesa. **QA-030-10 (`contrato`)**, dueño `analista-requerimientos`; corrección sólo de texto: alinear las dos frases con la de ADR-012 («toda avería que lo impida sale FAIL **o queda no acreditada**»). QA no pasó a seguridad (instrucción: sólo tras QA favorable). SEC-110 y SEC-109 siguen como los dejó R-043-A. Contadores y excepciones conservados: tres vueltas, vuelta 4 por excepción, intervención documental por excepción.
+- **Acción que impide (regla 2):** cerrar REQ-030. No impide presentar la entrega ni preparar el PR; no afecta a REQ-029/PR #53.
+- **Opciones:** **A** — autorizar la corrección de las dos frases (analista), re-verificación documental de QA y determinación del auditor sobre SEC-110/SEC-109 (sin código, sin ensayos), registrada como segunda intervención documental por excepción. **B** — dejar REQ-030 `bloqueado`.
+- **Recomendación de la coordinadora:** A. La causa es mía y del analista (barrido incompleto de la promesa, pese a la regla de barrer por propiedad); no se presenta como avance.
+- **Espera:** decisión del propietario. **Trabajo que sigue mientras tanto:** ninguno de REQ-030.
+
+*(histórica; resuelta arriba)*
+
+### RESUELTA (propietario, 2026-09-26) — **REQ-030: intervención documental acotada para SEC-110 y decisión sobre SEC-109(b)**, excepción expresa al presupuesto agotado; contadores y excepciones anteriores conservados
+
+**Texto del propietario, literal e íntegro:**
+
+> Autorizo una intervención documental acotada para SEC-110 y la decisión de SEC-109(b) en `feat/req-030-sondas-r5`. Es una excepción expresa al presupuesto agotado para este write-back y su revisión; conserva todas las vueltas y excepciones anteriores, sin reiniciar contadores ni declarar que la intervención no cuenta.
+>
+> El objetivo sigue siendo terminar esta dependencia de REQ-029. No abras otra investigación ni reparación de código.
+>
+> **SEC-110**
+>
+> El analista corrige las cuatro sedes que prometen más cobertura de la demostrada, usando la propiedad verdadera identificada por el auditor. Deben distinguir qué avería detecta C3, qué no cubre y bajo qué condiciones queda inconcluso.
+>
+> Conserva los resultados medidos y sus límites. No cambies el código, los umbrales, el presupuesto de mediciones ni la regla de validación para acomodarlos a la redacción.
+>
+> **Decisión sobre SEC-109(b)**
+>
+> 1. Un inconcluso heredado de `main` no impide por sí solo integrar un PR documental que no altere el sujeto ni el instrumento medidos. Deben comprobarse los dos SHA y el conjunto de rutas correspondiente, y citarse el pendiente por identificador. Esto no elimina otros requisitos de integración ni convierte el inconcluso en PASS.
+>
+> 2. En un REQ que cambia el mecanismo, si la acreditación de rendimiento es un criterio exigido, su ausencia impide dar ese criterio por satisfecho y cerrar el REQ. No autorizo convertirla en deuda no bloqueante mediante la etiqueta `instrumento`, trasladarla para cerrar "por otra vía" ni exceptuarla por inferencia.
+>
+> 3. Registra el pendiente en la sede existente del REQ afectado, con dueño —su desarrollador— y revisión de QA y seguridad según corresponda. Si se referencia desde `docs/PENDIENTES.md`, usa un puntero: no crees una segunda versión del pendiente.
+>
+> 4. No acepto "una corrida posterior en PASS" como resolución automática. La acreditación debe seguir un procedimiento y presupuesto fijados antes de medir, conservar todas las ejecuciones y considerar el conjunto de resultados. No elijas una corrida favorable ni borres resultados adversos.
+>
+> 5. Puedes fijar 1.35.0 como hito de revisión del pendiente. Llegar a ese hito obliga a revisarlo; no lo resuelve ni autoriza el cierre automáticamente.
+>
+> Usa el procedimiento vigente donde sea suficiente. Si falta una regla concreta para acreditar el conjunto de resultados, identifica ese hueco y su consecuencia; no inventes otro diseño de medición dentro de este write-back.
+>
+> **Revisión**
+>
+> Agrupa el write-back en una sola intervención. QA verifica la coherencia con esta decisión y, después de QA favorable, seguridad determina el estado de SEC-110 y SEC-109. Las firmas deben indicar la cabeza y el alcance revisados.
+>
+> No repitas ensayos: esta autorización es documental. Conserva como limitaciones las 10 de 16 calibraciones inconclusas, el PASS cercano al techo y el carácter no medido de la estimación de rechazo. No presentes la corrección textual como mejora de fiabilidad o rendimiento.
+>
+> **Límites y entrega**
+>
+> Sin cambios en código, workflow, ruleset, otras sondas, consumidores, REQ-029 o el PR #53. El delta de workflow sigue sin aplicar.
+>
+> Puedes realizar commits locales con los controles activos. Sin push, CI remoto, fusión, publicación ni cambio de versión.
+>
+> Entrega un único resultado breve: cabeza local, textos corregidos, estados determinados por QA y seguridad, cobertura de las firmas y cualquier impedimento restante. No encadenes reparaciones adicionales ni cierres REQ-029.
+
+**Lo que la coordinadora añade, rotulado como suyo:** se registra como **«intervención documental por excepción expresa (2026-09-26)»**, quinta intervención sobre el REQ tras las tres vueltas y la vuelta 4 por excepción; nada se reinicia ni se declara «no contado». Sin código, sin ensayos.
+
+**Las dos entradas tal como estaban, conservadas:**
+
+#### [2026-09-26] (coordinadora) — REQ-030: SEC-110 (`contrato`, sólo texto) impide cerrar; ¿se autoriza el write-back textual fuera del contador?
+
+- **Contexto:** tras la vuelta 4 (excepción, opción D), `QA: aprobado` sobre `ccdc7e4` y `Seguridad: con-hallazgos` (R-043-A sobre `44f9d58`): **SEC-108 `mitigado`** (C3 en 37/2 juzga la misma calibración que decide CA-03; la avería reproducida pasó de C3 PASS a C3 FAIL), QA-030-07 y QA-030-09 cerrados. El auditor abrió **SEC-110** (`contrato`, severidad baja): la cobertura de C3 está escrita más ancha de lo que es en cuatro sedes de texto —`requirements/REQ-030.md`:270 («un instrumento averiado no puede producir PASS»; lo contradice CA-07 (g), que admite que una avería del brazo «este árbol» salga PASS) y :327-328, `ADR-012`:114 y `tests/escenarios/hooks/README.md`:452 («cubre toda avería que altere lo que mide la calibración»; una avería que la altere sin bajarla del techo da PASS, p. ej. una línea base que no es v1.32.1 pero supera 2,600×, vía SEC-048)—. Es la forma que el propietario prohibió («no prometas cobertura de toda avería posible»). Los mensajes que imprime el programa son correctos. La propiedad verdadera está redactada por el auditor en R-043-A §4. **No hay código ni medición que cambiar**; la regla de aceptación de CA-07 (e) no cambia.
+- **Acción que impide (regla 2):** cerrar REQ-030 (hallazgo `contrato` abierto). No impide presentar la entrega ni preparar el PR.
+- **Opciones:**
+  - **A — Autorizar el write-back textual** (analista, cuatro sedes, con la propiedad de R-043-A §4) y su re-verificación por el auditor (R-043-B) y por QA sobre el texto (sin corridas nuevas: el código no cambia). No es una vuelta dev↔QA (no hay desarrollador); se registra como write-back autorizado fuera del contador, igual que SEC-102 en REQ-025.
+  - **B — Dejar SEC-110 abierto** y REQ-030 sin cerrar hasta otra ventana.
+- **Recomendación de la coordinadora:** A. La instrucción vigente («si aparece otro impedimento, informa sin encadenar su reparación») es la razón de que no se haya hecho ya.
+- **Espera:** decisión del propietario. **Trabajo que sigue mientras tanto:** ninguno de REQ-030.
+
+#### [2026-09-26] (analista-requerimientos) — SEC-109(b): dónde vive la «acreditación pendiente» de REQ-030 CA-08 (ii), y si un inconcluso heredado de `main` impide acogerse a la clase (i)
+
+> **Nota del analista (2026-09-26), no del propietario: esta propuesta NO es texto vigente.** El
+> propietario la resolvió arriba con otra redacción. Su «texto propuesto» —el pendiente en `Hallazgos
+> abiertos:` como `instrumento` y su traslado a `docs/PENDIENTES.md` si el REQ se cerraba por otra vía—
+> y su forzador «una corrida sobre la cabeza integrada o posterior con el caso en PASS» quedan
+> **rechazados** por los puntos 2 a 4 de su decisión. Lo vigente está en `requirements/REQ-030.md`
+> CA-08 (i) y (ii). La entrada se conserva sólo como historia.
+
+- **Contexto:** SEC-109 (`instrumento`, R-043, `docs/seguridad/registro-seguridad.md`:7443-7462). REQ-030
+  CA-08 (ii) dice que, si un PR cambia el mecanismo (`hooks/`, `tools/`) y sale con un INCONCLUSO de
+  CA-03 o CA-08 (ii), la acreditación de rendimiento queda **pendiente** y no se da por satisfecha. Pero
+  no dice **dónde** se registra ese pendiente, **quién** lo sigue, **qué** lo resuelve ni **cuándo**
+  vence. Queda abierta esta secuencia: un PR de mecanismo con una regresión real que sale INCONCLUSO se
+  integra con el check verde; desde entonces `main` da INCONCLUSO; y cada PR documental siguiente se
+  integra por (i) declarando «no acreditado sobre esta cabeza». Ningún paso es falso, y la regresión
+  queda **sin acreditar indefinidamente**. La mitad (a) de SEC-109, las tres formas en que una regresión
+  real sale INCONCLUSO, ya está escrita en REQ-030 CA-08. Esta mitad **no** se incorporó: impone
+  obligaciones nuevas y cambia qué PR puede integrar, y el propietario pidió presentarla como decisión
+  pendiente.
+- **Texto propuesto para REQ-030 CA-08 (ii)**, a añadir tras «…no tenga esos casos en PASS»:
+  > La acreditación pendiente tiene **sede**: el REQ que cambia el mecanismo la lleva en su campo
+  > `Hallazgos abiertos:` como `instrumento` mientras dure —p. ej., `PERF-<REQ>-01 (instrumento)`—, y si
+  > ese REQ se cierra por otra vía autorizada, pasa a `docs/PENDIENTES.md` con los mismos datos. **Dueño:**
+  > el `desarrollador` de ese REQ. **Forzador:** una corrida sobre la cabeza integrada o posterior con el
+  > caso en PASS, o el siguiente cambio de clase (iii), que obliga a validar el instrumento. **Vencimiento:**
+  > la ventana de versión abierta (hoy 1.35.0). Resolverlo exige esa corrida en PASS; ni la ausencia de FAIL
+  > ni la integración lo resuelven.
+- **Pregunta: ¿un inconcluso heredado de `main` impide acogerse a la clase (i) mientras haya un
+  pendiente abierto?**
+  - **Opción 1 (recomendada): no lo impide, pero obliga a citarlo.** Un PR documental puede acogerse a
+    (i) con un INCONCLUSO del mismo caso; su declaración en el PR tiene que **citar por identificador** el
+    pendiente abierto, y no puede presentarse como acreditación de rendimiento.
+    - *Consecuencia para la integración:* los PR documentales siguen integrándose; el pendiente sigue
+      visible en cada PR y no desaparece, porque tiene sede, dueño y vencimiento.
+    - *Riesgo:* la regresión puede seguir viva hasta el vencimiento.
+  - **Opción 2: lo impide.** Mientras exista un pendiente abierto sobre CA-03 o CA-08 (ii), ningún PR
+    puede acogerse a (i) por un INCONCLUSO de ese caso.
+    - *Consecuencia para la integración:* todo PR, también los documentales, queda bloqueado hasta que
+      alguien obtenga el PASS o el propietario decida.
+    - *Ventaja:* fuerza la acreditación enseguida.
+    - *Coste:* con la frecuencia medida de calibración no resuelta (7 de 12 en local), puede bloquear
+      trabajo que no toca nada medido.
+  - **Sin ninguna regla (lo que hay hoy):** la secuencia de arriba no tiene forzador. La visibilidad (la
+    línea `Resultado:`) existe; el seguimiento, no.
+- **Responsable de aplicarlo si se aprueba:** el `analista-requerimientos` hace el write-back en REQ-030
+  CA-08 (ii) y, si la opción cambia qué PR puede integrar, en CA-08 (i). El `desarrollador` de cada REQ de
+  mecanismo futuro lleva el pendiente. QA y el auditor lo verifican al validar ese REQ.
+- **Acción afectada:**
+  - *Integrar:* qué PR puede integrarse con un INCONCLUSO de CA-03/CA-08 (ii). La opción 2 lo restringe;
+    la opción 1 sólo añade una cita.
+  - *Cerrar:* un REQ de mecanismo con el pendiente abierto como `instrumento` **puede** cerrarse, porque
+    `guard-completado` no bloquea `instrumento`. Si el propietario quiere que no cierre, la clase tendría
+    que ser `contrato`, y esa es otra decisión.
+  - *Esta entrada, mientras siga en `## Pendientes`:* `guard-completado` deniega marcar **cualquier**
+    REQ como `completado`, incluido REQ-030. Es deliberado.
+- **Recomendación del analista:** opción 1 con el texto propuesto, que da seguimiento sin bloquear
+  trabajo que no toca lo medido.
+- **Trabajo que sigue mientras tanto:** la vuelta 4 de REQ-030 (SEC-108, QA-030-07 y QA-030-09) no
+  depende de esta decisión y continúa.
+- **Espera:** decisión del propietario.
+
+*(históricas; resueltas arriba)*
+
+### RESUELTA (propietario, 2026-09-26) — **REQ-030: opción D para QA-030-07/SEC-108**, una vuelta adicional por excepción, acotada a SEC-108, QA-030-07 y QA-030-09; contador 3 de 3 conservado
+
+**Texto del propietario, literal e íntegro:**
+
+> Elijo la opción D. Autorizo una vuelta adicional por excepción, acotada a SEC-108, QA-030-07 y QA-030-09, en `feat/req-030-sondas-r5`. Conserva las tres vueltas consumidas y registra esta autorización sin reiniciar contadores.
+>
+> El objetivo sigue siendo terminar la dependencia de medición que espera REQ-029, sin ampliar REQ-030.
+>
+> **Corrección autorizada**
+>
+> - Mueve el control a 37/2 y aplica el juez de C3 a la calibración que CA-03 ya ejecuta, utilizando el mismo medidor, ruta y tamaños. Retira la copia redundante de 37/7 y actualiza referencias, contrato, recuentos y autoprueba que dependan de esa retirada.
+> - Esta decisión sustituye expresamente mi indicación anterior de ubicar C3 en 37/7. No autoriza levantar la restricción de compartir código entre secciones.
+> - Corrige QA-030-09: el resumen debe distinguir instrumento no acreditado de rendimiento no acreditado, conservando el detalle de cada caso.
+> - Mantén R=5, los umbrales y la distinción entre avería demostrada y resultado inconcluso. No transformes una calibración insuficiente en aprobación del instrumento.
+>
+> **Validación decisiva**
+>
+> Reutiliza la avería que QA reprodujo: modifica la ruta de la línea base en una copia de prueba de 37/2 y verifica que el instrumento roto ya no puede darse por acreditado por un control independiente que siga pasando.
+>
+> Comprueba también el recorrido normal y las distinciones existentes. Conserva todos los resultados y declara qué consecuencia es mecánica y cuál deben aplicar QA y seguridad. No prometas cobertura de toda avería posible.
+>
+> Fija el presupuesto antes de medir; no repitas hasta obtener verde ni abras una batería general nueva. Ejecuta las verificaciones exigidas sobre la cabeza corregida y reutiliza la evidencia que siga siendo válida.
+>
+> **Revisión**
+>
+> Desarrollador → QA del delta → seguridad sólo después de QA favorable. Cada rol determina los hallazgos y veredictos que le corresponden. No aceptes residuales en mi nombre ni apruebes por agotamiento.
+>
+> Para SEC-109(b), presenta la decisión pendiente de forma concreta: texto propuesto, responsable, acción afectada y consecuencia para la integración. No la incorpores como si ya estuviera autorizada ni la declares resuelta.
+>
+> **Límites**
+>
+> Conserva como limitación las 7 de 12 calibraciones locales sin resolver. Esta reparación no demuestra que esa frecuencia mejore.
+>
+> Sin tocar CA-09, la sección 25, otros fallos, hooks, workflow, ruleset, consumidores, REQ-029 o el PR #53. Sin ajuste de continuidad.
+>
+> Puedes realizar commits locales con los controles activos. Sin push, CI remoto, fusión, publicación, cambio de versión ni cierre de REQ-029.
+>
+> Entrega un único resultado: cabeza local, delta, reproducción antes/después, comprobaciones, veredictos y su cobertura, estado de los tres hallazgos y decisión pendiente de SEC-109(b). Si aparece otro impedimento, informa sin encadenar su reparación.
+
+**Lo que la coordinadora añade, rotulado como suyo:** esta vuelta se registra como **«vuelta 4, por excepción expresa del propietario (2026-09-26)»**; las tres vueltas consumidas se conservan en el Historial y el contador no se reinicia. La decisión pendiente de SEC-109(b) se presentará como entrada nueva bajo `## Pendientes`, con texto propuesto, responsable, acción afectada y consecuencia, sin incorporarla al REQ.
+
+**La entrada tal como estaba, conservada:**
+
+#### [2026-09-26] (coordinadora) — REQ-030 `bloqueado`: tope de 3 vueltas dev↔QA agotado con QA-030-07 y QA-030-09 (`contrato`) abiertos; SEC-108 sigue abierto
+
+- **Contexto:** vuelta 3 de 3 (opción A del propietario) sobre `7b96dcc`. La regla de CA-07 (e) **se cumplió** en las 3 corridas fijadas (I/W0 sin FAIL, WD PASS 3/3 en las dos entradas, C3 PASS 3/3 con mínimos 3,611× · 3,396× · 3,221×) y el fail-before de C3 **se cumplió** (reloj constante → FAIL «avería demostrada»; bajo el suelo → INCONCLUSO; mezcla → INCONCLUSO; los tres distintos). Pero QA reprodujo que **C3 comprueba una COPIA del instrumento** (`mat57`/`mide57`, copias de `mat37`/`mide37` de 37/2, decisión del desarrollador para no compartir código entre secciones, CA-19/H-04 de REQ-014): una avería que vive sólo en 37/2 (QA cambió la ruta de la línea base en 37/2:228-229) deja **C3 en PASS** y CA-03 en INCONCLUSO indistinguible de QA-030-05 → la regla de CA-07 (e) **acreditaría** un cambio de clase (iii) con el instrumento de CA-03 roto. Es exactamente lo que el propietario pidió que no pasara («debe comprobar que una avería del instrumento impide acreditar un cambio de la propia sonda»). **QA-030-07 (`contrato`).** Además **QA-030-09 (`contrato`)**: la línea `INCONCLUSO: N — rendimiento NO acreditado…` del resumen (`run.sh`:1549) rotula igual un C3 INCONCLUSO (instrumento no acreditado) que una medición real inconclusa; la línea del caso sí distingue. QA no pasó a seguridad (instrucción: «sólo después de QA favorable»). **SEC-108 sigue abierto** (`contrato`); SEC-109 parcialmente escrito (las tres formas), su mitad de obligaciones nuevas sigue abierta por decisión del propietario.
+- **Acción que impide (regla 2):** cerrar REQ-030 y, con ello, la dependencia que REQ-029 necesita para una integración defendible. **No** impide nada de REQ-029/PR #53 por sí mismo (siguen como estaban). Contador **3 de 3 agotado**: cualquier vuelta más es excepción expresa del propietario.
+- **Opciones (las tres primeras las enumeró QA sin elegir; la cuarta es de la coordinadora):**
+  - **A — C3 invoca el medidor y la materialización de 37/2:** cubre el instrumento real, pero exige compartir código entre secciones (mudanza AN-021-01 de REQ-021 o excepción a CA-19/H-04 de REQ-014). Levantar un límite escrito para que quepa: señal de alcance mal elegido.
+  - **B — Guarda byte a byte entre las copias de 37/7 y sus originales de 37/2** (normalizando las etiquetas `c3-`): convierte AN-021-01 en comprobado, pero **no cubre** lo que vive fuera de las funciones copiadas (el bucle de 37/2, la ruta `HER37`, tamaños y k que pasa: la avería reproducida por QA está ahí). No cierra QA-030-07 entero.
+  - **C — Acotar por write-back lo que C3 promete** («avería de lo compartido») y declarar el resto residual con dueño: es aceptar un residual; **documentar no es remediar**; sólo el propietario.
+  - **D — Mover el control a 37/2, aplicando el juez de C3 a la calibración que CA-03 ya mide** (la serie de v1.32.1, k=20, R=5, con el mismo `mide37`, misma ruta, mismos tamaños y k): con la palanca, «todas ≤ 2,600× → FAIL avería demostrada», mezcla o < 3 → INCONCLUSO «instrumento no acreditado», resuelta → PASS; sin palanca, la calibración sigue siendo precondición silenciosa de CA-03 como hoy. Es el fail-before retirado, con la regla de R=5 y los tres resultados, **en su sitio original**. Cubre el instrumento que decide, no comparte nada entre secciones, retira la copia de AN-021-01 y ahorra los 166–193 s de C3 con la palanca (la medición ya se hace). Se aparta de la letra «añade a 37/7» de la decisión A, no de su fin. Exige **una vuelta más** (desarrollador + QA + seguridad) por excepción expresa; QA-030-09 (una línea de `run.sh` + autoprueba) cabe en la misma.
+- **Recomendación de la coordinadora:** **D**, con QA-030-09 agrupado, como excepción única y declarada al contador. Si el propietario no concede la excepción: REQ-030 queda `bloqueado` con SEC-108, QA-030-07 y QA-030-09 abiertos, y la integración de REQ-029 sigue sin esta dependencia.
+- **Espera:** decisión del propietario. **Trabajo que sigue mientras tanto:** ninguno de REQ-030. *(histórica; resuelta arriba)*
+
+### RESUELTA (propietario, 2026-09-26) — **REQ-030: opción A para SEC-108**, intervención conjunta y acotada en la vuelta 3 de 3
+
+**Texto del propietario, literal e íntegro:**
+
+> Elijo la opción A para SEC-108. Autorizo una intervención conjunta y acotada en `feat/req-030-sondas-r5`, usando la vuelta 3 de 3 disponible. Conserva el historial y los contadores; no los reinicies.
+>
+> El objetivo sigue siendo terminar esta dependencia para integrar REQ-029. No amplíes REQ-030 a otras sondas.
+>
+> **Reparación autorizada**
+>
+> Añade a 37/7 el control de medición de CA-03 necesario para cerrar SEC-108. Debe comprobar que una avería del instrumento impide acreditar un cambio de la propia sonda.
+>
+> Distingue expresamente:
+> - Una medición real inconclusa.
+> - Un control que demuestra una avería.
+> - Un control que no pudo acreditar el funcionamiento del instrumento.
+>
+> No conviertas esos tres resultados en una misma abstención que permita aprobar el instrumento. Un control inconcluso no acredita su funcionamiento. Declara qué consecuencia aplica mecánicamente y cuál deben aplicar QA y seguridad.
+>
+> Fija antes de ejecutarlo el presupuesto y los resultados esperados. Reutiliza los controles y la evidencia existentes; no ajustes parámetros después de ver los resultados ni repitas hasta obtener verde.
+>
+> **Agrupa en esta misma vuelta**
+>
+> - El write-back contractual y documental necesario para SEC-108.
+> - SEC-109: primero lee y explica brevemente su contenido. Si es únicamente el write-back asociado a esta reparación, inclúyelo; si requiere otra decisión o cambio de comportamiento, déjalo fuera y señálalo.
+> - La actualización de la fila desfasada de REQ-030 en `requirements/README.md`, conforme a los veredictos realmente emitidos.
+>
+> No hace falta detenerte por la explicación de SEC-109 si encaja en ese alcance.
+>
+> **Validación**
+>
+> QA revisa el delta y sus controles; sólo después de QA favorable pasa a seguridad para determinar el estado de SEC-108 y la cobertura de su firma. No apruebes por agotamiento ni aceptes residuales en mi nombre.
+>
+> Reutiliza las comprobaciones válidas y ejecuta las necesarias sobre la cabeza corregida. Mantén separados el veredicto de QA y el resultado del banco completo.
+>
+> Conserva los FAIL de la sección 25 y los resultados inconclusos de calibración. No los atribuyas al entorno sin evidencia ni investigues sus causas en este encargo. Que la calibración no resolviera en 4 de 7 corridas sigue siendo una limitación de utilidad del procedimiento.
+>
+> **Límites**
+>
+> Sin cambios en umbrales, hooks, otras sondas, workflow o ruleset. El delta del resumen del workflow sigue preparado, sin aplicar.
+>
+> Sin tocar REQ-029, el PR #53, consumidores ni el ajuste de continuidad. Sin nuevas investigaciones o reparaciones colaterales.
+>
+> Puedes hacer commits locales con los controles activos. No hagas push ni ejecutes CI remoto todavía.
+>
+> **Entrega única**
+>
+> Cabeza local, cambios, resultado de cada control y su consecuencia, veredictos con su cobertura, estado de SEC-108 y SEC-109, y pendientes concretos. Si queda un impedimento al agotar esta vuelta, informa sin abrir otra.
+>
+> Sin fusión, publicación, cambio de versión ni cierre de REQ-029. No prometas que esta reparación resuelve CA-09 o el reloj de la sección 25.
+
+**La entrada tal como estaba, conservada:**
+
+#### [2026-09-26] (coordinadora) — REQ-030: SEC-108 (`contrato`) y QA-030-05 — qué detector mecánico conserva CA-03 cuando su instrumento se rompe, y cómo se acredita la clase (iii) si la calibración no resuelve en local
+
+- **Contexto:** REQ-030 recorrió el ciclo completo sobre la rama local `feat/req-030-sondas-r5` (sin push): analista → desarrollador → `QA: aprobado` (vuelta 2 de 3, `322bc7c`) → `Seguridad: con-hallazgos` (R-043, `3c9b7e6`). El auditor abrió **SEC-108** (`contrato`, impide cerrar): al sustituir el caso *fail-before* de CA-03 (k=1, en `main`) por la calibración k=20 dentro del propio caso —tal como se ensayó—, **desapareció el único detector mecánico de un instrumento de CA-03 roto**: antes daba FAIL; ahora un instrumento ciego deja CA-03 en INCONCLUSO indefinidamente con el check verde, y una entrega de clase (iii) que lo rompa cumple la letra de CA-08 (iii) (CA-06 valida sólo el juez; CA-07 sólo la sonda de CA-08 (ii)). Esta entrega **no** está afectada (calibraciones resueltas medidas: CI 5/5, local 3/7). Y está ligado a **QA-030-05** (`instrumento`): en local la calibración no resolvió en 4 de 7 corridas completas, siempre por la repetición #1 de v1.32.1 (2,10–2,55× contra 2,600); en CI resolvió 5/5 con mínimos 2,699–2,809×. **SEC-109** (`instrumento`): la «acreditación pendiente» de CA-08 (ii) no tiene sede, dueño, forzador ni vencimiento, y no está declarado cuándo una regresión real sale INCONCLUSO donde la base daba FAIL. El contador dev↔QA está en **2 de 3**: queda una vuelta.
+- **Acción que impide (regla 2):** **cerrar** REQ-030 (`Seguridad: con-hallazgos` + hallazgo `contrato`). **No** impide presentar la entrega ni preparar el PR; **no** afecta a REQ-029 ni al PR #53. Punto 3 del propietario («conserva los controles de regresión necesarios») es la regla que SEC-108 invoca.
+- **Opciones:**
+  - **A — Control de medición para CA-03 en 37/7 (a demanda, clase (iii)):** un séptimo control «la calibración de CA-03 resuelve» (v1.32.1 con k=20 supera 2,600× en ≥ 3 de 5 repeticiones): PASS si resuelve, FAIL si no. Regla de aceptación **fijada de antemano** por el analista para la validación (iii): 3 corridas fijas, todas registradas, ninguna descartada; propuesta: resuelve en **al menos 1 de 3** (un instrumento ciego no resuelve nunca; uno sano puede no resolver por ruido, QA-030-05). Tensión declarada: una regla «≥ 1 de 3» se parece a «repetir hasta verde»; lo que la distingue es el presupuesto fijo previo, que todas cuentan y que la propiedad es asimétrica (detectar lo que un instrumento ciego no puede). **Consume la vuelta 3 de 3** (desarrollador + QA + auditor). Consecuencia si QA encuentra algo más: `bloqueado` y escalado.
+  - **B — Restaurar el caso fail-before en cada corrida del banco** (k=1 como en `main`, o k=20): recupera el detector mecánico en la puerta requerida, pero reintroduce el rojo por ruido que este REQ retira (2,443× medido en CI `d413405`). Contrario al objetivo del encargo.
+  - **C — Aceptar SEC-108 como residual declarado** (dueño, forzador = el próximo cambio de clase (iii), vencimiento 1.35.0) y hacer el write-back de SEC-109 (sede, dueño, forzador, vencimiento de la «acreditación pendiente» y las tres formas en que una regresión sale INCONCLUSO). Sólo el propietario puede bajar un `contrato`; el auditor re-verificaría (R-043-A) sin gastar vuelta dev↔QA. Deja el banco sin detector mecánico de un instrumento de CA-03 roto hasta 1.35.0.
+- **Sobre QA-030-05, en cualquier opción:** no se ajusta el techo ni k. Queda registrado con dueño (`desarrollador`, hipótesis de calentamiento de la repetición #1 **no medida**) y forzador (el primer INCONCLUSO de CA-03 en CI); investigar la causa es trabajo nuevo y no se abre sin autorización.
+- **Recomendación de la coordinadora:** **A**, con el write-back de SEC-109 en la misma vuelta (analista), porque es lo que el punto 3 del propietario pide literalmente y porque C convierte el hallazgo en documentación. Si el propietario prefiere no gastar la última vuelta, C con vencimiento 1.35.0.
+- **Espera:** elección del propietario entre A, B y C, y confirmación de la regla de aceptación de A si la elige. **Trabajo que sigue mientras tanto:** ninguno de REQ-030. *(histórica; resuelta arriba)*
+
+### RESUELTA (propietario, 2026-09-26, decisión tomada fuera de la cola y registrada aquí íntegra ANTES de despachar) — **REQ-030: se AUTORIZA implementar de forma acotada el procedimiento ensayado para CA-03 y CA-08 (ii) de REQ-017, con la decisión sobre inconclusos**
+
+**Por qué está aquí:** es la fuente íntegra y literal del encargo (`AGENTS.md` §14 y regla de fidelidad: el pedido del propietario viaja entero, nunca resumido por la coordinadora). Nació como mensaje del propietario a la sesión coordinadora tras el informe de las cinco corridas del ensayo en CI (`evidencia/prueba-despacho-2026-09-14` → `sondas-coste/ensayo-ci/resultados.md`, commit `d5ddc01`). Se copia sin cortes.
+
+**Texto del propietario, literal e íntegro:**
+
+> Autorizo implementar de forma acotada el procedimiento ensayado para CA-03 y CA-08 (ii) de REQ-017. Terminamos la fase experimental: reutiliza la evidencia local y las cinco corridas de CI, sin ampliar la muestra.
+>
+> El objetivo sigue siendo permitir una integración defendible de REQ-029 y mejorar la fiabilidad de estas dos sondas. No estamos rehaciendo todo el banco.
+>
+> **Decisión sobre resultados inconclusos**
+>
+> - Los umbrales permanecen intactos.
+> - Un inconcluso significa rendimiento no acreditado; debe quedar visible en el resumen, no sólo en el log detallado.
+> - Puede permitir integrar un cambio que no altere el sujeto medido ni el procedimiento de medición, con esa identidad comprobada y la limitación declarada. Esto no elimina ningún FAIL ni sustituye los demás requisitos de integración.
+> - Si el cambio afecta al rendimiento medido, un inconcluso deja pendiente su acreditación y no permite darla por satisfecha.
+> - Un cambio al propio instrumento, como esta entrega, requiere validar el instrumento; no puede acogerse a la excepción por "hooks idénticos".
+> - No se obtiene acreditación seleccionando una corrida favorable entre otras adversas.
+>
+> La detección de la demora artificial es un control de la prueba, no su finalidad ni garantía de detectar cualquier regresión.
+>
+> **Implementación autorizada**
+>
+> 1. Trabaja desde `main` verificada, en una rama nueva y separada de los PR #53 y #54.
+> 2. Abre el REQ acotado correspondiente y versiona los criterios afectados de REQ-017 mediante el ADR necesario, conservando su historia y los resultados anteriores.
+> 3. Incorpora el presupuesto fijo de repeticiones, el evaluador y la calibración de CA-03 conforme al procedimiento ensayado. Conserva los controles de regresión necesarios, distinguiendo pruebas sintéticas del evaluador y pruebas de medición.
+> 4. Los FAIL esperados de los controles deben comprobarse como resultados esperados; no deben dejar deliberadamente rojo el banco de producción.
+> 5. Define quién determina si un cambio afecta al sujeto o al instrumento, qué evidencia utiliza y quién verifica esa determinación. Reutiliza el análisis de alcance y las revisiones existentes, sin crear otro agente ni una aprobación general adicional.
+> 6. Declara qué parte de esta disciplina es mecánica y cuál depende de QA y seguridad. No atribuyas al workflow una protección que no implementa.
+>
+> **Validación**
+>
+> Realiza el ciclo exigido por las reglas vigentes, acotado al cambio. Reutiliza la evidencia experimental y ejecuta las verificaciones necesarias sobre la implementación final, sin repetir la investigación.
+>
+> Comprueba especialmente las fronteras, repeticiones no resueltas, calibración insuficiente y resultados mezclados. Mide el tiempo de la parte adoptable durante la validación normal; no abras otro experimento sólo para medirlo.
+>
+> No ajustes parámetros o umbrales para obtener verde. Conserva contadores y agrupa reparaciones dentro del alcance.
+>
+> **Fuera de alcance**
+>
+> CA-09 permanece intacto y con sus resultados conservados. Puede seguir bloqueando una integración; no prometas que esta entrega garantiza desbloquear el PR #53.
+>
+> No modifiques hooks, rulesets, consumidores, REQ-029 ni el ajuste de continuidad. El PR #54 es evidencia experimental y no se fusiona.
+>
+> Si la aplicación de esta decisión necesita cambiar el workflow, prepara ese delta concreto para mi aprobación antes de aplicarlo. No sustituyas esa necesidad por una afirmación documental de control automático.
+>
+> Puedes hacer commits locales con los controles activos. Sin push ni CI remoto todavía.
+>
+> **Entrega**
+>
+> Presenta la cabeza local, cambios, contrato actualizado, veredictos y su cobertura, resultados de validación, duración medida y limitaciones pendientes. Explica exactamente qué ocurrirá con un inconcluso en un PR documental, en un cambio del mecanismo y en un cambio de la propia sonda.
+>
+> Sin cerrar REQ-029, fusionar, publicar ni cambiar la versión. No encadenes otras reparaciones.
+
+**Lo que la coordinadora añade, rotulado como suyo (no es texto del propietario):** rama `feat/req-030-sondas-r5` creada desde `origin/main` = `cfb1106` (el `main` local estaba en `cf2009e`, desfasado; no se usó). El REQ acotado se numera **REQ-030** (REQ-029 vive en el PR #53 y no está en `main`). Evidencia reutilizable, por ruta en la rama `evidencia/prueba-despacho-2026-09-14`: `sondas-coste/propuesta.md`, `sondas-coste/propuesta-sondas-REQ-017.patch`, `sondas-coste/ensayo-local/{preregistro.md,resultados.md,juez-sintetico.sh,37-coste-del-escaner-9-ensayo-controles.sh}`, `sondas-coste/ensayo-ci/{preregistro.md,resultados.md,contenido-del-experimento.diff}`.
+
 ### RESUELTA (propietario, 2026-09-23, decisión tomada fuera de la cola y registrada aquí íntegra) — **REQ-029 / QA-029-02 y QA-029-03: corrección conjunta, excepción acotada al contador agotado**
 
 **Por qué está aquí:** procedencia de una decisión fuera del artefacto que autoriza (REQ-029 remite). Única copia literal.

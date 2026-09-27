@@ -29,9 +29,14 @@ bash tests/escenarios/hooks/run.sh                       # el banco entero
 bash tests/escenarios/hooks/run.sh secciones/07-*.sh     # sólo esa sección, más el canario
 bash tests/escenarios/hooks/run.sh bash                  # sólo los casos cuyo nombre contenga "bash"
 bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del corredor
+ARNES_SONDA_CONTROLES=1 bash tests/escenarios/hooks/run.sh secciones/37-coste-del-escaner-7-*.sh
+                                                         # los controles de medición de las sondas de coste
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **901 casos** (el número exacto lo cuadran
-`CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`).
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **920 casos** (el número exacto lo cuadran
+`CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`). La línea
+`Resultado:` cuenta **aparte** los `SKIP` que son **INCONCLUSO** —una sonda de coste que no acreditó
+nada en esa corrida— y los nombra debajo; el código de salida **no** depende de ellos
+([más abajo](#las-sondas-de-coste-deciden-sobre-un-presupuesto-fijo-y-pueden-decir-inconcluso-desde-1350)).
 
 En vuelta parcial —con un selector de archivos o con filtro de nombre— el cuadre **total** queda
 suspendido **diciéndolo en la salida**, y el cuadre **de cada sección** se sigue exigiendo. Un
@@ -237,8 +242,8 @@ Tres reglas nacidas de fallos reales:
 | Coste (37/1) | **fuera** del dominio: la decisión de este árbol, k=6 por locale | determinista **e invariante al locale** |
 | Coste (37/1) | **fuera** del dominio: esa decisión contra el **oráculo** (la heredada bajo `LC_ALL=C`) | **coincide**; sin esto (i) la cumpliría una constante |
 | Coste (37/1) | **fuera** del dominio: lo que la heredada incumple bajo el locale del entorno | se **registra** (fail-before) y **no falla** por ello |
-| Coste (37/2) | doblar la longitud de línea (70 000 → 140 000 bytes) | cociente ≤ **2,6** (lineal ≈ 2) |
-| Coste (37/2) | el mismo cociente **contra v1.32.1** | > 2,6 — la sonda distingue el defecto |
+| Coste (37/2) | doblar la longitud de línea (70 000 → 140 000 bytes), **5 repeticiones** con k=20 | máx(cociente) ≤ **2,6** en ≥ 3 resueltas (lineal ≈ 2); FAIL si **todas** > 2,6; si no, **INCONCLUSO** |
+| Coste (37/2) | el mismo cociente **contra v1.32.1**, en las **mismas** 5 repeticiones y con el mismo k | **calibración**: ≥ 3 resueltas y **todas** > 2,6, o el caso de arriba es **INCONCLUSO**, nunca FAIL del candidato |
 | Coste (37/2) | el camino de campo contra el de v1.32.0 (140 000 bytes sin CR) | razón ≤ **2,0×** |
 | Coste (37/2) | la sonda sin línea base, o bajo el suelo de 50 ms | **SKIP con motivo**, nunca PASS |
 | Coste (37/3) | la pared de los 60 s, **pareada** con v1.32.1 en la misma corrida (2 pasadas por árbol) | este árbol **no menor**; rangos que **solapan** ⇒ SKIP |
@@ -246,8 +251,11 @@ Tres reglas nacidas de fallos reales:
 | Coste (37/4) | las 3 corridas cronometradas de este árbol, entre sí | **mismo inventario** caso→veredicto |
 | Coste (37/4) | una corrida del numerador que termina **en rojo** (rc ≠ 0) o sin casos | **no cuenta como medición**: SKIP con motivo, nunca PASS |
 | Coste (37/4) | la heredada muerta por **señal** (137), un `124` que el reloj no corrobora, o un `124` **sin un solo caso** | **SKIP con motivo**; sólo `124` **+ reloj ≥ plazo + casos** demuestra la cota |
-| Coste (37/5) | una cabecera normal (6 líneas y 200 líneas) contra v1.32.1, **6 series intercaladas** por árbol | **0 procesos añadidos y** reloj ≤ **1,25×** |
-| Coste (37/5) | la misma sonda cuando **no converge** (2.º mínimo / mínimo > 1,25×) | **SKIP**, nunca PASS y nunca FAIL |
+| Coste (37/5) | una cabecera normal (6 líneas y 200 líneas) contra v1.32.1, **5 repeticiones** del par de **6 series intercaladas** por árbol | **0 procesos añadidos y** máx(reloj) ≤ **1,25×** en ≥ 3 resueltas; FAIL si **todas** > 1,25×; si no, **INCONCLUSO** |
+| Coste (37/5) | una repetición cuya sonda **no converge** (2.º mínimo / mínimo > 1,25×) | **no resuelta**: no cuenta para PASS ni para FAIL; el juez que decide lo prueba con las siete entradas de siempre |
+| Coste (37/6) | los **dos jueces** de las sondas de coste sobre **vectores fijos** (fronteras, 2 frente a 3 resueltas, calibración 2 frente a 3, mezclas, sin línea base, los 9 del ensayo, la corrida 5 del ensayo en CI) | cada vector con la salida que la regla prescribe, o **FAIL** nombrándolo |
+| Coste (37/7) | controles **I** (idénticos), **W0** (envoltorio sin demora) y **WD** (demora fija), **sólo con `ARNES_SONDA_CONTROLES=1`** | I y W0 sin FAIL; WD **PASS si el juez dice FAIL**; apagados, **SKIP** con su última acreditación, nunca PASS |
+| Coste (37/2) | control **C3**: la **misma** serie de calibración de **v1.32.1** que mide CA-03, juzgada como control del instrumento, **sólo con `ARNES_SONDA_CONTROLES=1`** | PASS si **todas** > 2,6× en ≥ 3 resueltas; **FAIL real** si todas ≤ 2,6× (avería demostrada); si no, **INCONCLUSO**, nunca PASS |
 | Coste (37/5) | una sección sintética que deja un proceso vivo | el corredor la **acusa por su nombre** |
 | Sondas (38/1) | `bash -n` y los modos de cada `tests/util/*.sh` | ejecutable **y** con shebang, o **aborta nombrándolo** |
 | Sondas (38/1) | los registros de las **dos** sondas de `tests/util/` | **una** línea, y **ninguna** con la forma de un caso |
@@ -322,8 +330,9 @@ salía roja con `load` 0,91 al arrancar, sobre un estimando que en aislamiento v
 - las series se **intercalan** (a, b, a, b, …), **6 por árbol**, estadístico el **mínimo**;
 - y en la misma corrida se comprueba que ese mínimo **convergió**: `2.º mínimo / mínimo` de **cada**
   árbol contra **el propio techo** (1,25× — no es un número nuevo: *un instrumento tiene que
-  resolver al menos el factor que vigila*). Si lo supera, **SKIP citando las dos convergencias y la
-  razón que sí obtuvo**, nunca PASS y **nunca FAIL**.
+  resolver al menos el factor que vigila*). Si lo supera, **esa repetición no está resuelta** y no
+  cuenta ni para PASS ni para FAIL (desde REQ-030; hasta entonces el caso entero decía SKIP con una
+  sola lectura, y así se leen sus resultados anteriores).
 
 La misma regla, con la forma que le toca, en la **pared de los 60 s**: dos pasadas por árbol
 intercaladas y comparación **por rangos** — se afirma la dirección si el peor de este árbol supera
@@ -387,12 +396,99 @@ la vuelta 0 no hacía** (QA-017-03 y QA-017-04, cerrados en la vuelta 1):
    `stdin`, un cerrojo, un `read` sin `</dev/null`— lo convierte en vencimiento. **Una corrida que
    no midió no es una corrida lenta**, igual que una corrida rota no es una corrida rápida.
 
-Las tres decisiones viven en funciones **puras** (`caso47`, `valida47`, `veredicto47`,
-`veredicto08_47`) y por eso el banco las prueba **siempre**, con entradas sintéticas y en
-milisegundos, aunque la comparación de 76 s esté apagada: una puerta que sólo se ejerce cuando
-alguien enciende una palanca es una puerta de la que nadie sabe si cierra. Y con la de convergencia
-el argumento es aún más fuerte: en una corrida sana la sonda **converge**, así que el camino que
-importa —la abstención— no se recorrería nunca.
+Las tres decisiones viven en funciones **puras** (`caso47`, `valida47`, `veredicto47`) y por eso el
+banco las prueba **siempre**, con entradas sintéticas y en milisegundos, aunque la comparación de
+76 s esté apagada: una puerta que sólo se ejerce cuando alguien enciende una palanca es una puerta
+de la que nadie sabe si cierra. Y con la de convergencia el argumento es aún más fuerte: en una
+corrida sana la sonda **converge**, así que el camino que importa —la abstención— no se recorrería
+nunca. Desde REQ-030 esa decisión es el juez del corredor `sonda_juez_razon`, y la prueba de
+siempre de 37/5 lo ejerce a **él**, no a una función retirada.
+
+### Las sondas de coste deciden sobre un presupuesto fijo y pueden decir INCONCLUSO (desde 1.35.0)
+
+`ADR-012`, contrato en `requirements/REQ-030.md`. **CA-03** (el cociente de duplicación) y **CA-08 (ii)**
+(el reloj contra v1.32.1 en 6 y en 200 líneas) decidían con **una lectura por corrida**, y sus techos
+—2,6 y 1,25×— caen **dentro** de la dispersión del runner de CI sobre código idéntico. Los techos **no
+se movieron**; cambió el procedimiento:
+
+- **Presupuesto fijo.** Cada caso toma **5 repeticiones** —ni una más, ni una menos, y el número no se
+  lee del entorno: es un literal del corredor—. Ninguna se descarta ni se repite por su resultado; la
+  que no midió entra como **no resuelta** y cuenta en el denominador («de 5» en todo mensaje).
+- **Evaluador por recorrido.** Con **menos de 3** repeticiones resueltas el caso no decide. Con 3 o
+  más: **PASS** si **todas** quedan en el techo o por debajo (la igualdad cumple), **FAIL** si
+  **todas** lo exceden —y el FAIL describe la medición, no afirma su causa—, y si el techo cae dentro
+  del recorrido, **no decide**.
+- **La calibración de CA-03 es precondición.** En cada repetición se mide también v1.32.1 con el mismo
+  `k`; si ese lado no queda con ≥ 3 resueltas **todas por encima** del techo (exactamente el techo no
+  resuelve), el instrumento no demostró ver el defecto y el caso **no decide**: nunca FAIL del
+  candidato. El antiguo caso `REQ-017 CA-03 fail-before` (con `k = 1`) desaparece por eso, y su
+  función de **detector de un instrumento que no ve el árbol cuadrático** la asume el control **C3**,
+  en la misma 37/2 (abajo), que sólo corre con la palanca y da FAIL o no acredita según su regla: en el
+  modo por defecto, un instrumento de CA-03 que no ve la cuadrática sale INCONCLUSO, no FAIL.
+- **INCONCLUSO** es el nombre de «no decide». Se imprime `SKIP <nombre>  [INCONCLUSO] [<grupo>]
+  <motivo y cifras>` —el nombre del caso es el mismo que en PASS y FAIL, para que `inventario.sh` los
+  reconozca—; en el cuadre sigue siendo un SKIP. El **grupo** lo declara la propia línea:
+  `[rendimiento]` en una medición real (CA-03, CA-08 (ii): **rendimiento no acreditado** en esa
+  corrida) e `[instrumento]` en un control (C3 y los de 37/7: **instrumento no acreditado**). La línea
+  `Resultado:` publica `(de ellos N INCONCLUSO: R rendimiento, I instrumento, X sin clasificar)` y
+  debajo, grupo a grupo, `INCONCLUSO (rendimiento NO acreditado): R …`,
+  `INCONCLUSO (instrumento NO acreditado): I …` e `INCONCLUSO (sin clasificar): X …`, cada uno con
+  sus casos nombrados con `!`. Una línea con la marca y sin grupo reconocible sale «sin clasificar»:
+  no se cuenta como rendimiento en silencio. El reconocimiento vive **sólo** en `run.sh` y cuenta una
+  línea `SKIP` cuya evidencia **empieza** por la marca.
+- **Dos clases de control del instrumento.** Las pruebas **sintéticas** del evaluador (37/6: vectores
+  fijos, sin reloj, **siempre**) y las pruebas **de medición** (37/7: sujetos idénticos, envoltorio
+  sin demora y envoltorio con demora fija, **a demanda** con `ARNES_SONDA_CONTROLES=1`, porque son 30
+  invocaciones de la sonda de reloj). En los controles el FAIL **esperado** de la demora se comprueba
+  como esperado —el caso es PASS si el juez dijo FAIL— y **no** deja el banco en rojo; un INCONCLUSO
+  de la demora **no** acredita detección. Detectar una demora añadida es un control **de la prueba**,
+  no su finalidad: no garantiza detectar una regresión del escáner, cuyo control sigue siendo la
+  calibración contra v1.32.1.
+- **C3, el control del instrumento de CA-03** (37/2, SEC-108, decisión D del propietario). **No
+  mide nada aparte:** juzga con `sonda_juez_control_c3` (corredor) **la misma serie de calibración de
+  v1.32.1** que CA-03 acaba de medir —el mismo `mide37`, la misma ruta de la línea base, 70 000 →
+  140 000 bytes, `k = 20`, 5 repeticiones—. Hasta la vuelta 3 vivía en 37/7 con una copia del
+  medidor, y una avería que vivía sólo en 37/2 (la ruta de la línea base cambiada) lo dejaba en PASS
+  (QA-030-07). **Qué garantiza, por su efecto (SEC-110):** C3 no puede dar PASS —ni acreditar el
+  instrumento— salvo que en esa corrida la calibración de v1.32.1 vea la cuadrática (≥ 3 resueltas y
+  todas > 2,6×). Una avería que lo impida **sale FAIL o queda no acreditada**: FAIL sólo si se cumple
+  la condición de fallo del control (≥ 3 resueltas y todas ≤ 2,6×); **inconcluso**, sin acreditar el
+  instrumento y sin demostrar por sí solo una avería, si deja < 3 resueltas o resueltas a los dos lados
+  del techo. No toda avería que impide el PASS sale FAIL (QA-030-10). **No cubre** lo que no pasa por la calibración —el brazo «este árbol» de CA-03, las sondas de
+  CA-08 (ii)— ni la avería que altera la calibración **sin bajarla del techo**: una línea base que no es
+  v1.32.1 pero cuyo cociente también supera 2,6× (SEC-048) da C3 PASS. No promete detectar toda avería
+  posible. Tres resultados, que **no** se confunden entre sí:
+  - **PASS — «el instrumento ve la cuadrática»:** ≥ 3 resueltas y **todas** > 2,6×. Acredita
+    **únicamente** lo que el control mide —que en esa corrida la calibración vio la cuadrática—, con los
+    límites de arriba; no que detecte cualquier regresión.
+  - **FAIL — «avería demostrada»:** se cumple la condición de fallo del control, ≥ 3 resueltas y
+    **todas** ≤ 2,6×. Es un FAIL **real**, no
+    esperado: pone el banco en rojo con la palanca encendida. El `fail-before` retirado también ponía
+    rojo, pero con otra regla —una sola lectura ≤ 2,6× (`k = 1`)—; C3 no da esos FAIL.
+  - **INCONCLUSO — «el control no pudo acreditar el funcionamiento»:** el funcionamiento no quedó
+    acreditado; ocurre con menos de 3 resueltas, resueltas a los dos lados del techo, o sin línea base. Marcado `[INCONCLUSO] [instrumento]` y
+    contado en su grupo, **nunca PASS**, y **no** demuestra avería.
+  - **Sin la palanca:** SKIP con motivo, sin marca, nunca PASS; la calibración sigue siendo la
+    precondición silenciosa de CA-03 y una calibración insuficiente no aprueba el instrumento.
+
+  Y ninguno es la **medición real inconclusa** de CA-03 en 37/2, que es **rendimiento** no
+  acreditado del árbol candidato; un INCONCLUSO de C3 es **instrumento** no acreditado.
+
+**Qué es mecánico y qué no — dicho sin atribuirle a nadie más de lo que hace.** *Mecánico*, en cada
+corrida del banco: el evaluador, la marca y el recuento del resumen, y las pruebas sintéticas; y,
+**sólo con la palanca**, los controles de medición: el PASS, FAIL o INCONCLUSO de cada caso —C3
+incluido— y el código de salida del banco, que un FAIL de C3 pone en 1. *No mecánico*: la **regla de
+aceptación** del instrumento en una entrega que toca la sonda —3 corridas fijas con la palanca;
+I y W0 sin FAIL, WD detectado en las 3, y C3 **sin FAIL en ninguna y PASS en al menos una**
+(REQ-030 CA-07 (e))— la aplican el `qa-tester` y el `auditor-seguridad`; el banco no cuenta corridas ni
+la lee, y el workflow tampoco. Igual de no mecánico es decidir qué significa un
+INCONCLUSO para una integración —si el PR es documental, cambia el mecanismo o cambia la propia
+sonda (REQ-030 CA-08)—, que lo determina el `desarrollador`, lo verifica el `qa-tester` dentro de su
+veredicto, lo revisa el `auditor-seguridad` y lo decide quien integra (CA-09). **El workflow
+`.github/workflows/banco.yml` no comprueba la identidad del árbol ni lee los inconclusos**: corre el
+banco y mira su código de salida, que con inconclusos y 0 FAIL es **0**. Un check verde, por tanto,
+**puede contener una sonda de rendimiento no acreditada**; lo que la hace visible es la línea
+`Resultado:` del log del job.
 
 ### Los instrumentos de `tests/util/`: la sonda mide, el corredor juzga (desde 1.33.0)
 
