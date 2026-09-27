@@ -44,6 +44,33 @@ Si un requerimiento nuevo choca con uno existente, **regístralo explícitamente
 - Haz preguntas claras y **de a una idea por vez** (el usuario puede responder por dictado de voz).
 - Metodología: parte de la visión, identifica roles/actores, luego capacidades, luego criterios de aceptación (felices **y** de error/borde), y separa lo no funcional cuantificado.
 - No inventes alcance. Si algo no está confirmado, márcalo como `borrador` y anota la pregunta abierta.
+- **Conserva el pedido con su fuente, separado de tu resumen**, y rellena la «Correspondencia con el encargo» al
+  crear el REQ **según la instrucción de la plantilla** de `requirements/README.md` («Trazabilidad»), que es el
+  sitio único de su forma, su vocabulario y su vida: no la copies aquí ni en el REQ. Toda fila con una relación
+  distinta de `cubierta` que **no cite autorización** del propietario va a `Preguntas abiertas`, y el REQ
+  **entero** sigue en `borrador` hasta que él la resuelva (regla ya vigente; no hay estado parcial): no la
+  resuelves tú ni la das por autorizada porque se presentó. Para una decisión nueva que requiere aprobación del
+  propietario, una «autorización» que no se puede verificar no cuenta como citada (qué cuenta: la plantilla,
+  «Trazabilidad»; el REQ existente sigue la regla «Sin bloqueo retroactivo» de abajo). Si el pedido no está disponible, escribe `fuente no disponible` y
+  **no reconstruyas** sus palabras.
+- **Partir un REQ no concede autoridad sobre el alcance.** Puedes preparar y registrar una partición por alcance
+  conforme a las reglas vigentes (`AGENTS.md` §6, «Loop de error»: partir por alcance no elude ningún contador).
+  Si la partición **excluye, sustituye o difiere alcance comprometido** —saca criterios de la entrega o de la
+  versión a la que estaban comprometidos, o cambia qué cubren—, necesita la **decisión correspondiente del
+  propietario, citada**; en la duda de si difiere, trátala como que difiere. Una partición registrada sin esa
+  decisión cuando mueve alcance comprometido fuera de su entrega incumple esta regla. Nunca la uses para
+  **esquivar preguntas pendientes** —viajan abiertas con la parte a la que pertenecen, y la parte que avanza no
+  depende de ellas— ni para **reiniciar contadores**.
+- **Sin bloqueo retroactivo por un pedido que no se conservó** (sitio único de esta regla; los demás textos
+  remiten aquí). En un REQ **existente** con contrato y decisiones aprobados, la ausencia del pedido original
+  **no** lo devuelve a `borrador` ni retira, rebaja o reabre ninguna aprobación ni veredicto: se declara la
+  limitación de trazabilidad (`Origen: fuente no disponible` y, si se escribe correspondencia, la misma marca),
+  se conservan las aprobaciones, y sólo se pregunta al propietario por **decisiones realmente pendientes** o
+  **contradicciones detectadas**, que siguen las reglas vigentes de `Preguntas abiertas / conflictos`. Nadie
+  reabre un REQ existente sólo para añadirle la correspondencia: rige hacia delante, con el mismo criterio que
+  «Alcance temporal» de `requirements/README.md`. **No exime a un encargo nuevo**: ahí la fuente se conserva
+  desde el inicio. Y un REQ existente todavía en `borrador` no entra en esta regla: sigue en `borrador` por sus
+  propias preguntas, no por la ausencia de la fuente.
 
 ## Cambios de requerimientos (versionado)
 - Aplicas la política de cambios de `AGENTS.md`: un REQ **no se reescribe encima**, se **versiona**.
@@ -106,6 +133,7 @@ inventes: si el REQ no encaja claramente, pregunta.
 - [ ] Flag de sensibilidad a seguridad evaluado y marcado si aplica.
 - [ ] Conflictos con otros REQs resueltos (o el REQ queda en `borrador`).
 - [ ] Sin preguntas abiertas pendientes; si las hay, el REQ permanece en `borrador`.
+- [ ] `Origen:` identificable (o `fuente no disponible` declarada), «Correspondencia con el encargo» rellenada, y ninguna fila con relación distinta de `cubierta` sin autorización citada fuera de `Preguntas abiertas`.
 - [ ] Índice de `requirements/README.md` actualizado.
 
 Cumplida esta lista, el REQ pasa de `borrador` a `pendiente` (listo para desarrollo). Si algo falta, permanece en `borrador`.

@@ -10,6 +10,24 @@
 > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
 > `docs/estabilizacion/`.
 
+## ⏸ RETOMAR AQUÍ — REQ-029 fidelidad al encargo: entrega implementada y firmada, SIN cerrar (2026-09-23)
+
+**Este bloque manda en esta rama (`feat/fidelidad-encargo`, local, sin push); el de REQ-025 de abajo es histórico de `main`.**
+Pedido íntegro del propietario: `PENDING_APPROVAL.md` §Resueltas (2026-09-23), única copia; REQ-029 §Trazabilidad remite a ella.
+**Ciclo completo por la vía negativa:** analista (`1e3ac6f`, `d1c65ac`) → desarrollador (`0739d57`) → QA R-1 `con-hallazgos` (`9f8b311`, QA-029-01
+`contrato`: la correspondencia del propio REQ no coincidía con la fuente porque la coordinadora transcribió el pedido con cortes sin marca)
+→ fuente íntegra en la cola (`c0dd622`) → write-back (`efa1c5c`) → QA R-2 `aprobado` (`1117204`) → seguridad R-042 `con-hallazgos`
+(`ec7b2fe`, SEC-107 `contrato`: registro de seguridad fuera de `Archivos:`) → write-back (`02ce2f6`) → QA R-2b ratifica sobre `02ce2f6` y
+registra el **contador dev↔QA 3 de 3 AGOTADO** (`9e4980c`) → **seguridad R-042-A `aprobado` sobre `9e4980c`**; SEC-107 y SEC-105 mitigados.
+**Cabecera:** `Estado: en-revisión` · `QA: aprobado (R-2/R-2b)` · `Seguridad: aprobado (R-042-A)` · `Hallazgos abiertos: SEC-106 (instrumento)` · cola 0.
+**No se cierra, y la puerta ya no lo impediría:** CA-11.4 exige el CI `hooks-en-linux` en verde sobre la cabeza que se cierre y **no hay corrida**
+(sin push, por instrucción). Cerrar y empujar son decisiones del propietario. Tampoco están acreditadas —y cerrar no las acreditaría— la
+**conducta de los agentes** (QA validó texto y ejemplos inventados) ni la **medición en un REQ real** (CA-14, pendiente y sin dueño).
+**Crecimiento medido** (`cfb1106` → cabeza): texto obligatorio de arranque `CLAUDE.md` + `AGENTS.md` **+1 428 B (+2,2 %)**; gemelas idénticas
+en sus secciones espejo; **0** archivos de mecanismo; gates §7 en verde; banco local 908 · 0 · 4 (QA R-1). **Abiertos con dueño, sin trabajo:**
+SEC-106 (`instrumento`, coordinadora; revisión propuesta 2026-10-23), OBS-029-A (nota en REQ-029). Evidencia: rama de evidencia,
+`fidelidad-encargo/README.md`. Fuera de alcance y sin tocar: la demo, REQ-019, otras entregas de REQ-025, sondas, hooks, versión, consumidores.
+
 ## ⏸ RETOMAR AQUÍ — REQ-025 entrega 1 (coordinación orientada a entregas), 2026-09-21
 
 **Este bloque SUSTITUYE a los de más abajo, que quedan como históricos.** Rama `feat/req-025-coordinacion-entregas`

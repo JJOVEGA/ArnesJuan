@@ -945,6 +945,35 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   trabajo se abre**. Si prefieres seguir con tu texto actual, **no migres estas secciones**:
   conservarlo es una respuesta válida.
 
+- **Fidelidad al encargo: el pedido del propietario llega al REQ con su fuente, y cada obligación
+  queda emparejada con el criterio que la cubre.** Esta entrada **se prepara con la versión y NO
+  declara que el cambio haya llegado a tu proyecto**: tu `AGENTS.md` y tu `requirements/README.md`
+  siguen **congelados** hasta que corras esta migración, y migrar es **un acto tuyo**. **Ningún hook
+  cambia**, tampoco `.arnes/config.json`: ninguna puerta lee la sección nueva, que vive debajo del
+  primer `## ` del REQ, fuera de la cabecera. Toca **cuatro** archivos heredables:
+  - **`templates/AGENTS.md.tpl`** — la regla 1 del bloque «La coordinación se orienta a entregas»
+    (§6) gana **un** párrafo: el encargo al `analista-requerimientos` lleva el pedido con fuente
+    identificable (o `fuente no disponible`), y antes de despachar la implementación de lo que
+    dependa de una diferencia que requiera al propietario, ésta tiene que estar resuelta por él.
+  - **`templates/requirements-README.md.tpl`** — la plantilla del REQ: `Origen:` pide fuente
+    identificable, y «Trazabilidad» gana la subsección `### Correspondencia con el encargo`, sitio
+    único de su forma, su vocabulario y cuándo se actualiza.
+  - **`agents/analista-requerimientos.md`** — conservar el pedido y rellenar la correspondencia
+    remitiendo a la plantilla; que partir un REQ no concede autoridad sobre el alcance; la regla
+    de que un REQ existente ya aprobado no vuelve a `borrador` porque su pedido no se conservó; y
+    un punto más en su Definition of Ready.
+  - **`agents/qa-tester.md`** — contrasta la correspondencia antes de probar, sin rehacer el
+    análisis, y lo declara en el paréntesis de evidencia de su **único** veredicto `QA:`.
+
+  **Qué se migra:** la regla 1 de `§6` de tu `AGENTS.md` y la sección `## Plantilla` de tu
+  `requirements/README.md`, cada una **por separado**, con la misma identificación por contenido y
+  título y la misma tabla de estados de la entrada anterior. **Los dos agentes no se migran:** llegan
+  **al actualizar el plugin**, por la misma separación que explica la entrada anterior. **Y no se
+  retroajusta nada:** los REQ que ya tienes no se reabren para añadirles la correspondencia; qué
+  pasa con uno ya aprobado cuyo pedido no se conservó lo dice la definición del
+  `analista-requerimientos`. Si prefieres seguir con tu texto actual, conservarlo es una respuesta
+  válida.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas
