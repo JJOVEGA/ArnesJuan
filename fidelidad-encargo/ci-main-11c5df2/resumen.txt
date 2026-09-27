@@ -1,0 +1,8 @@
+Resultado: 905 PASS, 0 FAIL, 15 SKIP (de ellos 1 INCONCLUSO: 1 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+INCONCLUSO (rendimiento NO acreditado): 1 — la medición real no resolvió en esta corrida; no pone el banco en rojo y un check verde no lo acredita (REQ-030):
+       ! REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica
+Autoprueba: 117 PASS, 0 FAIL
+  SKIP  REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  [INCONCLUSO] [rendimiento] la calibración NO resolvió: hacen falta 3 o más repeticiones resueltas de v1.32.1 y todas por encima de 2.600× · v1.32.1: 2.098× 3.757× 3.894× 3.799× 3.737× (5 de 5 resueltas) · este árbol: 1.6
+  PASS  REQ-017 CA-09 la pared de los 60 s de este árbol NO es menor que la de v1.32.1, pareado en la misma corrida  el PEOR de este árbol vale 1.010× el MEJOR de v1.32.1 medido EN ESTA MISMA corrida (>= 1,000×; los rangos no se solapan, así que la dirección no es ruido). La magnitud es del Historial y de SEC-030
+  PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.080× <= techo 1.250× en 3 de 5 resueltas: 1.080× 0.995× 1.000× (#2:no-converge(1.120/1.266) #3:no-converge(1.016/1.464) )
+  PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 0.995× <= techo 1.250× en 5 de 5 resueltas: 0.989× 0.981× 0.995× 0.987× 0.989× (todas resueltas)
