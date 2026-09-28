@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-27 · REQ-031, vuelta 2 (desarrollador): SEC-112 (clave `Hallazgos abiertos:` repetida → deny) y SEC-113 (techo de 16 384 bytes y recorrido por trozos) → `en-revisión`
+> Origen: Interno (manual; lo comitea la coordinadora con los hooks activos) · usuario: Juan · modelo de IA: Opus 5.5 · agente: desarrollador.
+
+CA-A12: si la cabecera declara `Hallazgos abiertos:` más de una vez (también decorada o sangrada), el cierre deniega nombrando las líneas; la puerta no elige ni fusiona (antes ganaba la última y un `contrato` escrito arriba no se leía). CA-A13: por encima de 16 384 bytes (lo escrito tras los dos puntos, en bytes y antes de normalizar), deniega sin interpretar. CA-A14: análisis en una función con `local LC_ALL=C` y acceso por trozos de 64 bytes, porque `LC_ALL=C` solo seguía siendo cuadrático (medido); 0 procesos y ninguna decisión cambia. Hook entero a 60 006 bytes: base 30,71 s, vuelta 1 64,70 s, vuelta 2 3,96 s (deny por tamaño); a 16 384: 5,02 s, 5,16 s y 0,60 s. El resto de los 3,96 s es `arnes_norm_campo` (cuadrático, de la base, común a todos los campos): registrado en `docs/PENDIENTES.md`, fuera de alcance. CA-A11.4: README § «Clases de hallazgo» y la plantilla, idénticas, dicen por propiedad qué lee la puerta y qué no; celda de `AGENTS.md` §13 y su plantilla ampliadas. Banco: +11 casos en la sección 08 (967 → 978); fail-before contra `a7a60c2`: 78 PASS / 27 FAIL (6 nuevos); pass-after 105/0; banco completo 966 PASS, 0 FAIL, 12 SKIP (1 INCONCLUSO ajeno, `REQ-017 CA-03`, no relanzado), `real 2m40s`. Detalle: Historial de `requirements/REQ-031.md`.
+
 ## [Interno] — 2026-09-27 · REQ-031: auditoría R-044 → `Seguridad: con-hallazgos` (SEC-112 contrato: clave repetida, gana la última; SEC-113 instrumento: lectura cuadrática sin techo, 81 s con 60 KB)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (auditor-seguridad) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, coordinadora.
 

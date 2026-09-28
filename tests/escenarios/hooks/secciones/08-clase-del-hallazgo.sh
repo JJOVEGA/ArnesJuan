@@ -2,7 +2,7 @@
 # Se ejecuta con `source` desde el corredor (`../run.sh`), en su propio subshell y con
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
-CASOS_ESPERADOS_SECCION=54
+CASOS_ESPERADOS_SECCION=65
 PISO_AUTONOMO_SECCION=23  # 8 preámbulo + 0 maquinaria compartida duplicada + 15 bloque indivisible mayor · REQ-014 CA-18
 
   seccion_nueva "Clase del hallazgo:"
@@ -187,6 +187,64 @@ check_efecto "REQ-031 CA-A08 en-progreso -> en-revisión con la lista no interpr
 r31 845 en-progreso "$MAL31"
 check_efecto "REQ-031 CA-A08 editar otra linea de un REQ en-progreso con la lista no interpretable -> allow" allow "$R31/REQ-845.md" \
   "$(emite_edit_real "$R31/REQ-845.md" 'Prioridad: alta' 'Prioridad: media')" en-progreso
+# --- REQ-031 vuelta 2 · CA-A12 (SEC-112): la clave REPETIDA deniega ---------------
+# Medido en R-044 (base y vuelta 1): con dos lineas `Hallazgos abiertos:` ganaba la ULTIMA, y un
+# `contrato` escrito en la de arriba no se leia. La puerta no elige ni fusiona: deniega.
+# r31d <n> <estado> <linea 1> <linea 2> [linea bajo el primer ##] — cabecera con dos lineas del campo.
+r31d() {
+  { printf '# REQ-%s\nEstado: %s\nPrioridad: alta\nSensible a seguridad: sí\nQA: aprobado\nSeguridad: aprobado\nRigor: critico\n' "$1" "$2"
+    printf '%s\n' "$3"; [ -z "$4" ] || printf '%s\n' "$4"
+    printf '\n## Historia\nx\n'; [ -z "${5:-}" ] || printf '%s\n' "$5"; } > "$PROJ/requirements/REQ-$1.md"
+}
+REP31="declara 'Hallazgos abiertos:' 2 veces \(linea [0-9]+: .*; linea [0-9]+: .*\).*no elige una.*Deja UNA sola linea"
+r31d 850 en-revisión 'Hallazgos abiertos: SEC-1 (contrato)' 'Hallazgos abiertos: (ninguno)'
+check_efecto "REQ-031 CA-A12 Edit: 'contrato' arriba y '(ninguno)' abajo (era allow) -> deny por clave repetida" deny "$R31/REQ-850.md" \
+  "$(emite_edit_real "$R31/REQ-850.md" 'en-revisión' 'completado')" en-revisión "$REP31"
+r31d 851 en-revisión 'Hallazgos abiertos: SEC-1 (contrato)' 'Hallazgos abiertos: (ninguno)'; T851="$(<"$R31/REQ-851.md")"
+check_efecto "REQ-031 CA-A12 Write: 'contrato' arriba y '(ninguno)' abajo (era allow) -> deny por clave repetida" deny "$R31/REQ-851.md" \
+  "$(emite_write "$R31/REQ-851.md" "${T851/en-revisión/completado}")" en-revisión "$REP31"
+r31d 852 en-revisión 'Hallazgos abiertos: SEC-1 (contrato)' '**Hallazgos abiertos:** (ninguno)'
+check_efecto "REQ-031 CA-A12 la segunda linea DECORADA tambien cuenta (era allow) -> deny por clave repetida" deny "$R31/REQ-852.md" \
+  "$(emite_edit_real "$R31/REQ-852.md" 'en-revisión' 'completado')" en-revisión "$REP31"
+r31d 853 en-revisión 'Hallazgos abiertos: QA-2 (instrumento)' 'Hallazgos abiertos: SEC-1 (contrato)'
+check_efecto "REQ-031 CA-A12 'instrumento' arriba y 'contrato' abajo -> deny por clave repetida, no por la clase" deny "$R31/REQ-853.md" \
+  "$(emite_edit_real "$R31/REQ-853.md" 'en-revisión' 'completado')" en-revisión "$REP31"
+r31d 854 en-revisión 'Hallazgos abiertos: SEC-1 (contrato)' ''
+check_efecto "REQ-031 CA-A12 control: una sola linea -> deny por su clase, como siempre" deny "$R31/REQ-854.md" \
+  "$(emite_edit_real "$R31/REQ-854.md" 'en-revisión' 'completado')" en-revisión "'sec-1' es de clase 'contrato'"
+r31d 855 en-revisión 'Hallazgos abiertos: SEC-1 (instrumento)' '' 'Hallazgos abiertos: SEC-9 (contrato)'
+check_efecto "REQ-031 CA-A12 control: la segunda linea bajo el primer '## ' no cuenta -> allow" allow "$R31/REQ-855.md" \
+  "$(emite_edit_real "$R31/REQ-855.md" 'en-revisión' 'completado')" completado
+r31d 856 completado 'Hallazgos abiertos: SEC-1 (contrato)' 'Hallazgos abiertos: (ninguno)'
+check_efecto "REQ-031 CA-A12 reabrir con la clave repetida -> allow" allow "$R31/REQ-856.md" \
+  "$(emite_edit_real "$R31/REQ-856.md" 'Estado: completado' 'Estado: en-progreso')" en-progreso
+# --- REQ-031 vuelta 2 · CA-A13 (SEC-113): techo de 16 384 BYTES ---------------------
+# v31 <bytes> [primer elemento] -> V31: un valor cuyo texto tras los dos puntos (con el blanco que
+# los sigue) mide EXACTAMENTE <bytes> bytes. Lleva `dueño`: en bytes mide mas que en caracteres,
+# asi que un techo contado en caracteres dejaria pasar el caso de 16 385.
+v31() {
+  local LC_ALL=C objetivo=$(( $1 - 1 )) v="${2:+$2, }" e i=0
+  while :; do
+    e="SEC-$i (instrumento, dueño x; vence 1.35.0)"
+    [ $(( ${#v} + ${#e} + 2 + 40 )) -lt "$objetivo" ] || break
+    v+="$e, "; i=$((i+1))
+  done
+  v+='SEC-Z (instrumento, '
+  while [ $(( ${#v} + 1 )) -lt "$objetivo" ]; do v+=x; done
+  V31="$v)"
+}
+v31 16384; r31 857 en-revisión "$V31"
+check_efecto "REQ-031 CA-A13 exactamente 16 384 bytes, todo instrumento -> allow" allow "$R31/REQ-857.md" \
+  "$(emite_edit_real "$R31/REQ-857.md" 'en-revisión' 'completado')" completado
+v31 16384 'SEC-X (contrato)'; r31 858 en-revisión "$V31"
+check_efecto "REQ-031 CA-A13 exactamente 16 384 bytes con un contrato -> deny por la clase" deny "$R31/REQ-858.md" \
+  "$(emite_edit_real "$R31/REQ-858.md" 'en-revisión' 'completado')" en-revisión "'sec-x' es de clase 'contrato'"
+v31 16385; r31 859 en-revisión "$V31"
+check_efecto "REQ-031 CA-A13 16 385 bytes, todo instrumento -> deny por tamaño" deny "$R31/REQ-859.md" \
+  "$(emite_edit_real "$R31/REQ-859.md" 'en-revisión' 'completado')" en-revisión "mide 16385 bytes.*techo es 16384 bytes.*no puede medir no deja pasar"
+v31 60006 'SEC-X (contrato)'; r31 860 en-revisión "$V31"
+check_efecto "REQ-031 CA-A13 60 006 bytes con un contrato delante (el caso de R-044) -> deny por tamaño" deny "$R31/REQ-860.md" \
+  "$(emite_edit_real "$R31/REQ-860.md" 'en-revisión' 'completado')" en-revisión "mide 60006 bytes.*techo es 16384 bytes"
 
 # --- Cierre de un REQ por Bash: se DERIVA a Edit/Write -------------------------
 # Era la limitacion conocida de la version anterior: `guard-completado` no miraba

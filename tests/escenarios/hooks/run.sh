@@ -1548,7 +1548,9 @@ done
 # Y 920 → 967 por REQ-031 (ADR-013): +47 en la sección 08 (7 → 54), la gramática cerrada de
 # `Hallazgos abiertos:` con decisión y efecto sobre el archivo (`check_efecto`). El caso
 # `REQ-717` de la 32 cambia de `allow` a `deny` sin cambiar el número.
-CASOS_ESPERADOS=967
+# Y 967 → 978 por la vuelta 2 de REQ-031 (R-044): +11 en la sección 08 (54 → 65), la clave
+# `Hallazgos abiertos:` repetida (SEC-112, CA-A12) y el techo de 16 384 bytes (SEC-113, CA-A13).
+CASOS_ESPERADOS=978
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

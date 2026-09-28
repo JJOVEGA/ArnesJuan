@@ -43,8 +43,16 @@ puerta lee el campo—, no por su tamaño.
   especificación y amplía la tolerancia sin límites.
 
 ## Consecuencias
-- (+) Ningún hallazgo bloqueante queda sin leer por su posición o su separador; lo que la puerta no
-  entiende lo dice, en vez de permitir.
+- (+) Ningún hallazgo bloqueante queda sin leer por su posición o su separador **dentro de la línea
+  `Hallazgos abiertos:` de la cabecera, ni por haber repartido el campo en dos líneas con esa clave**
+  (REQ-031 CA-A12: la clave repetida deniega); lo que la puerta no entiende lo dice, en vez de
+  permitir. **Alcance, enunciado por propiedad** (precisión del 2026-09-27, R-044 / SEC-112; el texto
+  anterior de esta viñeta prometía sin condición): la puerta lee **las líneas de la cabecera cuya clave
+  reconoce el lector**; lo que no está en una línea así no se lee. Ejemplos **no exhaustivos** de lo que
+  queda fuera: una continuación en la línea siguiente sin clave, una clave con un carácter invisible o
+  un homóglifo (SEC-047, SEC-078), un comentario HTML de la cabecera, una línea debajo del primer `## `.
+- (+) El tamaño del valor tiene techo y el recorrido no es cuadrático (REQ-031 CA-A13, CA-A14; R-044 /
+  SEC-113): un valor que la puerta no alcanzaría a juzgar antes de que el cliente la mate **deniega**.
 - (−) Una forma antes aceptada (`(clase) — nota`) pasa a denegar. Mitigación: el motivo enseña la forma
   equivalente; QA inventaría las cabeceras de `requirements/REQ-*.md` del arnés e informa los usos sin
   reescribirlos (REQ-031 CA-A04); un REQ `completado` no se reabre por esto.

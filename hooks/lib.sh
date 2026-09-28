@@ -1843,13 +1843,19 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
   # de las dos cabeceras que esta funcion lee deja lo que se leyo sin medir, y da igual en
   # cual estaba.
   ARNES_CR=0; ARNES_CR_LINEA=''
-  local texto l
+  # `Hallazgos abiertos:` REPETIDA en una misma cabecera (REQ-031 CA-A12, SEC-112): para las
+  # demas claves gana la ultima aparicion (regla que REQ-016 conservo), y asi un `contrato`
+  # escrito en una linea anterior no se leia y el cierre pasaba. Aqui solo se CUENTA y se
+  # publica —por texto, porque disco y fragmento son dos cabeceras—; decide la puerta.
+  ARNES_HALL_N=0; ARNES_HALL_LINEAS=''
+  local texto l n_l n_h lin_h
   for texto in "$1" "$2"; do
     [ -n "$texto" ] || continue
     # El rango de comentario CRUZA lineas, asi que su estado se reinicia por texto: el
     # fragmento entrante y el documento en disco son dos cabeceras, no una.
-    ARNES_CITA=0
+    ARNES_CITA=0; n_l=0; n_h=0; lin_h=''
     while IFS= read -r l; do
+      n_l=$((n_l+1))
       # LOS CAMPOS VALEN SOLO EN LA CABECERA: antes del primer `## `. Medido: una linea
       # `Seguridad: aprobado (A-009, 2026-09-02)` dentro de `## Historial de cambios` se
       # leia como EL veredicto y cerraba un REQ critico cuya cabecera decia `pendiente`.
@@ -1862,10 +1868,12 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
         'QA')                   ARNES_QA="$ARNES_VALOR" ;;
         'Seguridad')            ARNES_SEG="$ARNES_VALOR" ;;
         'Sensible a seguridad') ARNES_SENS="$ARNES_VALOR" ;;
-        'Hallazgos abiertos')   ARNES_HALL="$ARNES_VALOR" ;;
+        'Hallazgos abiertos')   ARNES_HALL="$ARNES_VALOR"
+                                n_h=$((n_h+1)); lin_h+="${lin_h:+; }linea $n_l: '${l:0:60}'" ;;
         'Rigor')                ARNES_RIGOR="$ARNES_VALOR" ;;
       esac
     done <<< "$texto"
+    [ "$n_h" -le "$ARNES_HALL_N" ] || { ARNES_HALL_N=$n_h; ARNES_HALL_LINEAS="$lin_h"; }
     # El fin de la cabecera con un rango ABIERTO: la cabecera no se puede medir. Se
     # publica y la puerta decide; aqui no se decide nada.
     [ "$ARNES_CITA" -eq 0 ] || ARNES_CITA_ABIERTA=1

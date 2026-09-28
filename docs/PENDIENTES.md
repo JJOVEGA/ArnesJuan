@@ -1974,3 +1974,20 @@ absoluto de **4 000 ms** (`load` 2,63 al arrancar; 21:26:55 −0600, WSL2, 12 CP
 fuera de `Archivos:` de REQ-030. Cuenta: **1 de 2** corridas completas por defecto del desarrollador
 (la de la vuelta 1 salió rc 0). Es dato para la **misma hipótesis de carga** de arriba, no una medida de
 ella. Mismo dueño, forzador y vencimiento; no se relanzó.
+
+## La normalización de campos es cuadrática en la longitud del valor (medido el 2026-09-27, REQ-031 vuelta 2)
+
+- **Qué:** `arnes_norm_campo` (`hooks/lib.sh`) retira los blancos con `${v// /}`, y en un locale
+  UTF-8 esa sustitución global es **cuadrática** en la longitud del valor. Es código de la base,
+  común a **todos** los campos de la cabecera, y corre **antes** que cualquier puerta.
+- **Medido** (Linux/WSL2, `LANG=C.UTF-8`, una corrida por punto, valor de `Hallazgos abiertos:`
+  hecho de elementos `SEC-i (instrumento, dueño x; vence 1.35.0)`): `${v// /}` tarda 0,29 s a
+  16 384 bytes y 3,62 s a 60 006 bytes; `arnes_norm_campo` entero, 0,26 s y 3,69 s. Con REQ-031 CA-A13,
+  la puerta deniega por tamaño a 60 006 bytes en 3,96 s de hook: casi todo es esta normalización. Por
+  extrapolación cuadrática (sin medir), unos 240 KB llegarían a los 60 s del cliente en esta máquina,
+  y menos en Windows/MSYS. El techo de REQ-031 **no** lo evita, porque se mide después de normalizar.
+- **Por qué no se arregló en REQ-031:** está fuera de su alcance (el lector de campos lo comparten
+  `tools/arnes-lectura.sh` y el bloque derivado), y el encargo prohíbe ampliarlo. Clase de SEC-113.
+- **Dueño:** `desarrollador` (implementación) y `analista-requerimientos` (REQ). **Forzador:** la
+  próxima comisión que toque `arnes_norm_campo` o los presupuestos de los hooks. **Vencimiento:**
+  la decisión de publicación de 1.35.0, junto con SEC-113.
