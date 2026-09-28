@@ -1,0 +1,5 @@
+{
+  "name": "ca-a16-sonda",
+  "description": "Plugin temporal de una sola sonda: comprobar como trata el entorno un hook que termina sin decision",
+  "version": "0.0.1"
+}
