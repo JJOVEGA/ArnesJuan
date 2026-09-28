@@ -42,12 +42,77 @@
 - **Acción que impide (regla 2):** ninguna de REQ-031 hoy (sus hallazgos abiertos son `instrumento`); impide **publicar 1.35.0** hasta decidir. Mientras esta entrada esté aquí, ningún REQ puede marcarse `completado` (mecanismo de la cola; deliberado).
 - **Asuntos:**
   1. **SEC-113 / SEC-114, remedio B — DECIDIDO el 2026-09-28 (autorizado en la vuelta 3; ver Resueltas):** medir el techo de `Hallazgos abiertos:` **antes** de normalizar (`hooks/lib.sh`), para que un valor de ~240 KB o más deniegue en vez de matar el hook (hoy: 255 371 bytes → 67 s, sin decisión; realismo bajo; residuo en `docs/PENDIENTES.md`). Coste: toca `lib.sh` y el banco y consume la **última vuelta** dev↔QA de REQ-031; incógnita: si otra parte (la lectura de la línea) seguiría cuadrática. Alternativa: publicar con la promesa acotada (ya escrita) y el residuo declarado.
-  2. **Hueco C (escrituras por intérprete):** `python3 -c`, `node -e`, `bash script.sh` escriben en `codigo_app.globs` sin que `guard-codigo` lo vea (medido el 2026-09-27); sin `PostToolUse` no hay detección posterior. Acciones fuera del control: cualquier escritura por intérprete o script desde la coordinadora u otro agente. Mitigación disponible: la «puerta posterior» (`PostToolUse`/`Stop` que compare hashes de `codigo_app.globs` con el agente activo), no implementada por instrucción. Protección que sigue dependiendo de los agentes: la regla de `AGENTS.md` §5 y §13. **No aceptado como aplazado**: decisión del propietario.
-  3. **Celda de `AGENTS.md` §13 frente a SEC-047:** promete denegar con BOM, espacio de anchura cero o blanco de más en la clave, y lo medido (R-044 §7) es allow por ausencia (`Hallazgos  abiertos:`, ZWSP/NBSP, `HALLAZGOS ABIERTOS:`, `SENSIBLE A  SEGURIDAD: sí` con `Rigor: ligero`, que tumba el suelo de rigor); además cita § R-024 (SEC-078/079), que no existe en el registro de `main`. Por la cláusula de SEC-047, vuelve a la mesa subido a `contrato`. Opciones: acotar la celda por propiedad (documental) o reconocer claves con blancos/mayúsculas (mecanismo, REQ propio).
+  2. **Hueco C (escrituras por intérprete):** `python3 -c`, `node -e`, `bash script.sh` escriben en `codigo_app.globs` sin que `guard-codigo` lo vea (medido el 2026-09-27); sin `PostToolUse` no hay detección posterior. Acciones fuera del control: cualquier escritura por intérprete o script desde la coordinadora u otro agente. Mitigación **posible, no disponible** (REQ-011, sin implementar): la «puerta posterior» (`PostToolUse`/`Stop` que compare hashes de `codigo_app.globs` con el agente activo), no implementada por instrucción; y detectar un cambio después **no demuestra que se impidió ni deshace sus efectos**. Protección que sigue dependiendo de los agentes: la regla de `AGENTS.md` §5 y §13. **No aceptado como aplazado**: decisión del propietario.
+  3. **SEC-047 y la celda de §13 — atribución corregida el 2026-09-28:** la celda que promete denegar con BOM, espacio de anchura cero o blanco de más en la clave y cita § R-024 (SEC-078/SEC-079) **no está en `main`** (cuya fila de §13 sólo cubre el retorno de carro interior): vive en `rel/registro-1.33.0` (`AGENTS.md:349`; commit `1154417`, 2026-09-09), igual que R-024 (`ef82d43`) y SEC-078/079. Los subagentes la citaron porque la sesión les carga el `AGENTS.md` de ese worktree. Lo medido sigue en pie (allow por ausencia con `Hallazgos  abiertos:`, ZWSP/NBSP, `HALLAZGOS ABIERTOS:`, `SENSIBLE A  SEGURIDAD: sí` con `Rigor: ligero`): es SEC-047 (definido en `main`, línea 3633) y QA-031-01, abiertos; CA-A17 no encontró exposición actual en las 29 cabeceras. Decisiones: (a) si se corrige esa celda en `rel/registro-1.33.0` y en qué PR; (b) reconocer claves con blancos/mayúsculas (mecanismo, REQ propio). Nada se añade a `main` para corregirlo.
 - **Recomendación de la coordinadora:** (1) publicar con la promesa acotada y B en 1.35.1 o cuando se toque `lib.sh`; (2) decidir C **antes** de publicar: o se declara en el CHANGELOG de la versión como limitación conocida sin fecha, o se abre el REQ de la puerta posterior antes del tag; (3) acotar la celda de §13 por propiedad ahora (documental, una sede y su plantilla) y abrir REQ para el mecanismo después.
 - **Espera:** decisión del propietario sobre los tres. **Trabajo que sigue mientras tanto:** ninguno.
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-09-28) — **REQ-031: comprobación acotada de procedencia de instrucciones y referencias**; intervención documental excepcional sin reiniciar el contador
+
+**Texto del propietario, literal e íntegro:**
+
+> Autorizo una comprobación acotada de la procedencia de instrucciones y referencias de REQ-031. El objetivo es determinar si el uso de AGENTS.md de otra rama afectó la entrega y dejar el PR #58 listo para una decisión de integración. No abrir otra revisión general del arnés.
+>
+> Base de la comprobación: cabeza `19c5ca762ec039958572c537a74a909c6caf0207` del PR #58, con CI verde. Verifica que sigue siendo la cabeza antes de actuar.
+>
+> **1. Establecer el contexto correcto**
+>
+> Identifica el directorio de trabajo, rama y archivos de instrucciones que cargó la sesión y cada comisión relevante. Distingue lo demostrado por registros de lo inferido.
+>
+> Para esta comprobación utiliza las instrucciones del worktree de REQ-031. Cambiar de directorio no demuestra que una sesión haya descargado instrucciones heredadas: si hace falta una sesión nueva para conseguir un contexto limpio, úsala con un encargo acotado y fuente explícita.
+>
+> No modifiques ni reconcilies `rel/registro-1.33.0`, no cambies la rama de una sesión que siga trabajando y no toques cambios ajenos.
+>
+> **2. Determinar el efecto de la mezcla de instrucciones**
+>
+> Compara sólo las instrucciones que pudieron afectar:
+> - Alcance de A y D.
+> - Permisos y separación de roles.
+> - Presupuesto de vueltas.
+> - Validación, firmas y conclusiones sobre SEC-047, SEC-078 y R-024.
+>
+> Indica qué diferencia influyó realmente y qué parte de la entrega afecta. No invalidez toda la evidencia por su procedencia ni la declares válida únicamente porque el código no cambió.
+>
+> **3. Corregir referencias del candidato**
+>
+> Autorizo una intervención documental excepcional, sin reiniciar el contador 3 de 3, para corregir referencias inexistentes o atribuidas a la rama equivocada en los archivos de esta entrega.
+>
+> Si una referencia sólo existe en otra rama, cita explícitamente su procedencia y commit cuando sea necesaria como antecedente; no la presentes como sede vigente en main. No inventes identificadores ni importes aquella rama para hacer resoluble una cita.
+>
+> La celda de §13 ausente de main no debe añadirse para luego corregirla. Registra que esa parte del encargo nació de una atribución equivocada.
+>
+> Reutiliza las aprobaciones existentes donde su evidencia siga siendo aplicable. QA y seguridad deben revisar únicamente las conclusiones o textos afectados por esta comprobación. No les atribuyas una ratificación que no hayan emitido.
+>
+> Si aparece una necesidad de cambiar código, criterios, permisos o alcance, entrega el delta concreto pendiente y detén sólo esa reparación; esta autorización no incluye implementarla.
+>
+> **4. Separar los riesgos de publicación**
+>
+> Conserva abiertos y sin aceptación mía:
+> - C: escrituras por intérpretes que el detector no reconoce.
+> - SEC-115: entradas que agotan el hook y permiten continuar sin decisión, observado en el CLI.
+>
+> Corrige cualquier texto de esta entrega que presente una futura comprobación posterior como prevención ya disponible. Detectar un cambio después no demuestra que se impidió ni que se deshicieron sus efectos.
+>
+> No diseñes ni implementes ahora una puerta posterior, límites globales o una nueva arquitectura. No conviertas estos pendientes en riesgos aceptados por registrarlos en CHANGELOG.
+>
+> **5. Entrega y límites**
+>
+> Autorizo commits documentales, push sin force y actualización del PR #58. Si cambia la cabeza, observa el CI requerido correspondiente, conserva su resultado y no relances buscando verde.
+>
+> Si no hace falta cambiar el candidato, conserva su SHA y registra la comprobación en la evidencia y un comentario del PR.
+>
+> Entrega un único resumen breve:
+> - Instrucciones ajenas que influyeron y efecto concreto.
+> - Referencias corregidas.
+> - Evidencia y aprobaciones reutilizadas, con su alcance.
+> - SHA y CI aplicables.
+> - Si recomiendas integrar #58 y, por separado, qué decisiones siguen pendientes para publicar.
+>
+> No fusiones, no cierres REQ-031, no publiques versión ni tag. No toques modelos, PR #54/#57, consumidores, sondas, umbrales, workflow ni ruleset. No abras otra campaña de mejoras.
+
+**Lo que la coordinadora añade, rotulado como suyo:** cabeza verificada `19c5ca7` (remoto idéntico, árbol limpio). Demostrado por registros (transcripts de las seis comisiones de REQ-030/031): todas cargaron «Contents of /home/juan/dev/ArnesJuan/AGENTS.md» (worktree de la sesión, rama `rel/registro-1.33.0`, 503 líneas, con §14 y la celda R-024), no el `AGENTS.md` de `main`/este worktree (807 líneas). Diferencias por sección: §5 y §7 idénticas; §13 difiere en dos filas (main: sólo CR; rel: celda ancha con BOM/R-024) y en el marcador de coordinación; §6 difiere mucho (main trae la política de «vía proporcional», 480 líneas frente a 132); §14 sólo en rel. Ambas fijan «Máximo 3 vueltas dev↔QA» y la regla de `arnes-paralelo.sh`.
 
 ### RESUELTA (propietario, 2026-09-28) — **REQ-031, vuelta 3 de 3: reparación agrupada** — SEC-113 remedio B (límite antes de normalizar, en `lib.sh`), celda de §13 / R-024 (SEC-047) y registro de evidencia (cuadre 920 → 978; PENDIENTES)
 

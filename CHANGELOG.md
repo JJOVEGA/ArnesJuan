@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-28 · REQ-031: comprobación de procedencia de instrucciones (autorizada por el propietario) — la sesión cargó el `AGENTS.md` de `rel/registro-1.33.0`; referencias a la celda de §13, R-024 y SEC-078/079 corregidas como antecedente de otra rama, no como sede de `main`
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (analista-requerimientos) / Fable 5.1 (coordinadora) · agente: analista-requerimientos, coordinadora.
+
+Demostrado por los transcripts de las seis comisiones de REQ-030/031: todas cargaron «Contents of /home/juan/dev/ArnesJuan/AGENTS.md» (worktree de la sesión, `rel/registro-1.33.0`, 503 líneas, con §14 y la celda ancha de §13), no el `AGENTS.md` de `main` (807 líneas; §5, §7 idénticas; §13 difiere en dos filas; §6 muy distinta: la política de vía proporcional está en `main`; §14 sólo en rel; ambas fijan 3 vueltas y `arnes-paralelo.sh`). Efecto real: sólo en las conclusiones sobre SEC-047/SEC-078/R-024 (R-044 §7, parte 2 del encargo de la vuelta 3, Notas y Preguntas abiertas de REQ-031, ADR-013:53): nacieron de una atribución equivocada; corregidas citando procedencia (`rel/registro-1.33.0`, commits `1154417` y `ef82d43`) sin importar nada; en `main` la fila de §13 sólo cubre el CR interior y no se añade ninguna celda. Alcance de A y D, permisos, roles y presupuesto de vueltas: sin efecto. La entrada pendiente de la cola deja de presentar la «puerta posterior» como mitigación disponible: es posible, no disponible, y detectar después no impide ni deshace. Evidencia: rama de evidencia `req-031/procedencia-2026-09-28/` (`8d107dc`). Sin código; sin push hasta aquí.
+
 ## [Interno] — 2026-09-28 · REQ-031: R-044-C → `Seguridad: aprobado` sobre `d49f319` (código `cdcad5d`); SEC-113 `mitigado`; SEC-115 y SEC-116 (`instrumento`) registrados; corrección de registro sobre SEC-047
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (auditor-seguridad, analista-requerimientos) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, analista-requerimientos, coordinadora.
 

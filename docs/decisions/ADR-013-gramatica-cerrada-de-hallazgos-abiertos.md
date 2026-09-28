@@ -50,7 +50,9 @@ puerta lee el campo—, no por su tamaño.
   anterior de esta viñeta prometía sin condición): la puerta lee **las líneas de la cabecera cuya clave
   reconoce el lector**; lo que no está en una línea así no se lee. Ejemplos **no exhaustivos** de lo que
   queda fuera: una continuación en la línea siguiente sin clave, una clave con un carácter invisible o
-  un homóglifo (SEC-047, SEC-078), un comentario HTML de la cabecera, una línea debajo del primer `## `.
+  un homóglifo (SEC-047, `docs/seguridad/registro-seguridad.md:3633`), un comentario HTML de la
+  cabecera, una línea debajo del primer `## `. *(Corregido el 2026-09-28: la cita anterior incluía
+  SEC-078, que sólo existe en la línea `rel/registro-1.33.0`, commit `1154417`, y no en `main`.)*
 - (+) El tamaño del valor tiene techo y el recorrido del bloque «Clase del hallazgo» no es cuadrático
   (REQ-031 CA-A13, CA-A14; R-044 / SEC-113): por encima de 16 384 bytes la puerta deniega sin
   interpretar el valor **siempre que el hook alcance a medirlo dentro del límite del cliente (60 s)**.
