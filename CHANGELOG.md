@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-28 · REQ-031: revisión acotada de procedencia por seguridad (R-044-D sobre `cb79473`): dos conclusiones anuladas por venir de la otra rama, el resto medido sobre el worktree; SEC-116 `mitigado`; entrada de publicación de la cola puesta al día
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (auditor-seguridad) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, coordinadora.
+
+Anuladas: R-044 §4 (viñeta «SEC-078/079 no se contradicen… lo que §13 permite») y R-044 §7 (atribución de la celda ancha y R-024 a `main`; ya corregida en R-044-C). Siguen en pie R-044 §1–§3, §5, §6, R-044-A/B enteras y R-044-C §1–§3, SEC-115 y SEC-116: se midieron sobre el worktree o ejecutando la puerta. La cláusula de subida de SEC-047 existe en `main` (`registro-seguridad.md:3683-3685`), pero su premisa no se cumple contra el §13 de `main` (que sólo promete el CR interior, y el árbol lo cumple): la clase de SEC-047 la decide el propietario contra `main`. La firma no cambia de cobertura (sigue R-044-C). Hallazgos abiertos: SEC-115 y QA-031-01, `instrumento`. La coordinadora pone al día la entrada «Decisión de publicación de 1.35.0» (SEC-113 ya resuelto; el residuo vigente es SEC-115). Sin código; push a continuación.
+
 ## [Interno] — 2026-09-28 · REQ-031: revisión acotada de procedencia por QA (sobre `fa9d561`): sólo una cita comparativa dependía de la otra rama; corregida; ningún `QA: aprobado` cambia
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Sonnet 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
 

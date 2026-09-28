@@ -8908,3 +8908,73 @@ Regresiones a vigilar (no exhaustivo):
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.**
 
 **Numeración vigente tras esta adenda:** última revisión **R-044** (adendas `R-044-A`, `R-044-B`, **`R-044-C`**); último hallazgo **SEC-116**; próximos libres **R-045** y **SEC-117**.
+
+---
+
+## Adenda a R-044 (**`R-044-D`**) — **REQ-031, revisión acotada de procedencia**: qué conclusiones de R-044…R-044-C se apoyaron en instrucciones de otra línea del repositorio, y estado de SEC-116. `feat/req-031-hallazgos-y-paralelo` @ `cb79473` — 2026-09-28
+
+**Alcance, y sólo éste** (autorización del propietario en `PENDING_APPROVAL.md` § Resueltas, «REQ-031: comprobación acotada de procedencia…»): revisar mis conclusiones y los textos que esta comprobación afecta. Esta adenda **no** re-audita la puerta ni ratifica nada que no esté escrito aquí.
+
+**Versión base y método.**
+- Cabeza `cb79473bf84fadf5a33da78dd27c9d658e7a35a1`, árbol limpio. `git diff 19c5ca7..cb79473 -- hooks tests tools` sale vacío: el código funcional sigue siendo `cdcad5d`.
+- **Fuente de instrucciones de esta revisión:** el `AGENTS.md` (807 líneas) y el registro de este worktree (`= main` + REQ-031), **no** el `AGENTS.md` que me carga la sesión, que es el de `rel/registro-1.33.0` (503 líneas).
+- Todo lo afirmado sale de `git show`, `git grep` y `git branch --contains` sobre la cabeza y sobre `a7a60c2`, y de comparar el `AGENTS.md` de este worktree con el de `/home/juan/dev/ArnesJuan`.
+
+### 1. Qué dependió de la otra línea, y qué no
+
+**Las reglas que apliqué valen igual en `main`.** Las reglas del auditor que usé son estas, y todas están en el `AGENTS.md` de `main`:
+- orden de fases (QA antes que seguridad) y excepción `preventiva`;
+- clases de hallazgo, con `instrumento` que no bloquea;
+- «un hook muerto no deniega» (§7);
+- rigor que sólo se sube.
+
+En `main`, §6 añade además la vía proporcional, que no cambia la obligación del auditor en un REQ `critico`. **Ningún veredicto de R-044…R-044-C cambia por la procedencia de las instrucciones.**
+
+**Qué se apoyó en archivos reales del worktree o en la ejecución de la puerta (sigue en pie):**
+- R-044 §1–§3, §5 y §6: sondas contra `hooks/guard-completado.sh` del worktree, las 29 cabeceras reales y tiempos medidos.
+- R-044 §4, salvo la viñeta de SEC-078/079: ADR-013, REQ-007 CA-41, README = plantilla y la celda de §13 **de hallazgos**, leídas con `git diff` sobre el worktree.
+- R-044-A entero: sus sedes de SEC-114 son del worktree, incluida la celda de hallazgos de `AGENTS.md:698`.
+- R-044-B entero.
+- R-044-C §1–§3 y SEC-115 y SEC-116: medidos contra la puerta o leídos del registro del worktree y de `a7a60c2`.
+
+Lo medido no se invalida por la procedencia de las instrucciones. Tampoco lo valido sólo porque el código no cambió: cada punto de arriba se midió o se leyó sobre el worktree.
+
+**Qué se apoyó en el `AGENTS.md` de `rel/registro-1.33.0`, y cómo queda:**
+- **R-044 §4, viñeta «SEC-078/SEC-079 no se contradicen … que es lo que §13 dice que permite»:** **anulada.** En `main`, §13 no dice nada de homóglifos en la clave. La única fila de ese tipo es la del CR interior (`AGENTS.md:705`), y SEC-078/SEC-079 no existen en este registro. Lo que queda cierto es lo que REQ-031 escribe ahora en sus Notas: un homóglifo en la clave da ausencia del campo, con antecedente vigente en SEC-047.
+- **R-044 §7, la atribución** («la celda de §13 … afirma que … deniegan», «la celda cita § R-024»): **anulada como afirmación sobre `main`**, ya corregida en R-044-C §4. Esa celda existe sólo en `rel/registro-1.33.0` y la introdujo el commit `1154417` (2026-09-09). **La conducta medida en R-044 §7 sigue en pie:** allow por ausencia con blanco doble, ZWSP, NBSP y mayúsculas en la clave, y con `Sensible a seguridad` alterado y `Rigor: ligero`. La frase «R-024 … no está en el registro de `main`» era **verdad**.
+- **La «cláusula de subida» de SEC-047:** la definición de `main` la contiene **literalmente** (`git show a7a60c2:docs/seguridad/registro-seguridad.md`, líneas 3683-3685): «Si 1.34.0 cierra sin esto, vuelve a la mesa **subido a `contrato`**, porque entonces `AGENTS.md` §13 estaría describiendo una guarda que el árbol no tiene en la extensión que la sección promete». Así que la cita es de `main` y no de `rel`. Pero la **razón** que la cláusula da **no se cumple en `main`**:
+  - el `AGENTS.md` de `main` promete sólo la guarda del CR interior, y el árbol la tiene: medido en R-044 §1, deny;
+  - su **condición temporal** sí se cumplió: existe la etiqueta `v1.34.0`, y `a7a60c2` declara 1.34.0.
+
+  Por tanto, **en `main`** la subida de SEC-047 no se deduce de la cláusula: la condición temporal sí, la premisa no. Que la clave corrupta dé ausencia sigue siendo un defecto `instrumento` abierto. Mi insistencia de R-044 §7 y R-044-A §1 («su propia cláusula dice que vuelve a la mesa subido a `contrato`») se apoyaba, para su premisa, en la celda ancha de `rel`. La corrijo así: la decisión sobre la clase de SEC-047 sigue siendo del propietario, y hoy se juzga sobre el `AGENTS.md` de `main`, que no promete esa extensión.
+
+### 2. Los textos corregidos (`git diff 19c5ca7..cb79473 -- requirements docs/decisions`, y la cola de decisiones)
+
+- **Ninguna sede vigente de `main` presenta como propia la celda ancha, R-024 ni SEC-078/079.** `git grep -nE "R-024|SEC-07[89]|BOM"` sobre `AGENTS.md`, `templates/`, `requirements/README.md`, `docs/decisions/`, `skills/` y `agents/` de la cabeza encuentra sólo dos cosas: ADR-013:55 y la fila del índice (README:614). Las dos citan esos nombres **como antecedente de `rel/registro-1.33.0`**, con commit. En REQ-031 (Notas § Fronteras, Preguntas abiertas, Correspondencia, Origen) aparecen igual: con su procedencia y rotulados «no son sede vigente aquí».
+- **La procedencia es verificable.** `1154417` («SEC-079: la promesa absoluta se BORRA, no se anota», 2026-09-09) toca `AGENTS.md` y `templates/AGENTS.md.tpl`. `ef82d43` (2026-09-09) añade «Revisión R-024» al registro. Los dos están contenidos en `rel/registro-1.33.0` (local y `origin`) y en `feat/1.34-cierre-alcance`.
+- **Nada se importó a `main`.** Ninguno de los dos commits es ancestro de `cb79473` (`git merge-base --is-ancestor`: no). No se añadió la celda para corregirla después, tal como pidió el propietario.
+- **Puerta posterior y hueco C.** Ningún texto de la entrega presenta la puerta posterior ni la detección posterior como prevención disponible. `PENDING_APPROVAL.md`, asunto 2, dice «Mitigación **posible, no disponible** (REQ-011, sin implementar)», «detectar un cambio después **no demuestra que se impidió ni deshace sus efectos**» y «No aceptado como aplazado». En REQ-031, la puerta posterior va sólo en «Fuera de alcance» y en la Correspondencia como `excluida`. C y SEC-115 siguen abiertos y sin aceptación del propietario.
+- **Observación fuera del objeto de esta comprobación (sin id; la resuelve la coordinadora antes de presentar la decisión):** en la entrada de `PENDING_APPROVAL.md` «Decisión de publicación de 1.35.0» quedan frases de antes de la vuelta 3:
+  - el Contexto cita «`Seguridad: aprobado (R-044-B)` sobre `9cc4c67`», cuando la firma vigente es R-044-C sobre `d49f319`/`cdcad5d`;
+  - el asunto 1 dice «hoy: 255 371 bytes → 67 s, sin decisión», «consume la **última vuelta**» y «incógnita…», que ya no es la situación, porque B está implementado y medido (0,31 s);
+  - la Recomendación (1) propone «B en 1.35.1».
+
+  El residuo vigente que corresponde presentar ahí es **SEC-115**. No cambia ninguna firma, pero es el texto que lee el propietario al decidir.
+
+### 3. SEC-116 → **`mitigado`**
+
+La frase falsa («… y lo mismo **SEC-047**») ya no está escrita. «Preguntas abiertas» dice ahora «**SEC-047 sí está** en el registro de `main` y de esta rama (`docs/seguridad/registro-seguridad.md:3633`; corrección SEC-116)», y así se comprueba en la cabeza y en `a7a60c2`. La causa que declara la coordinadora (buscó `#### SEC-047` cuando la definición usa `### SEC-047`) es coherente con lo que medí. La nota que pedí sobre las citas a SEC-078 también está resuelta: ADR-013 y REQ-031 la dan sólo como antecedente con procedencia. SEC-116 sale de `Hallazgos abiertos:`.
+
+### 4. Firma
+
+**La cobertura de `Seguridad: aprobado (R-044-C, …)` no cambia.** El código es el mismo, y la firma ya excluía «la decisión sobre §13/R-024, que es de otra línea del repositorio». Por eso no reescribo el paréntesis. Sólo actualizo `Hallazgos abiertos:` (sale SEC-116). **Hallazgos nuevos: ninguno.** Repositorio público: sin hallazgo.
+
+| Hallazgo | Clase | Estado | Bloquea |
+|---|---|---|---|
+| `SEC-112` | `contrato` | `mitigado` | No |
+| `SEC-113` | `instrumento` | `mitigado` | No |
+| `SEC-114` | `contrato` | `mitigado` | No |
+| `SEC-115` | `instrumento` | `abierto` | No |
+| `SEC-116` | `instrumento` | **`mitigado`** (R-044-D) | No |
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-044** (adendas A–**D**); último hallazgo **SEC-116**; próximos libres **R-045** y **SEC-117**.
