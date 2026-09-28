@@ -1,0 +1,6 @@
+base-a7a60c2     v60006    30.71 s  deny ARNES: no se puede completar 'requirements/REQ-A.md': el hallazgo 'sec-x' es de clase 'con
+base-a7a60c2     v16384     5.02 s  allow  
+vuelta1-cf3e420  v60006    64.70 s  deny ARNES: no se puede completar 'requirements/REQ-A.md': el hallazgo 'sec-x' es de clase 'con
+vuelta1-cf3e420  v16384     5.16 s  allow  
+vuelta2          v60006     3.96 s  deny ARNES: no se puede completar 'requirements/REQ-A.md': el valor de 'Hallazgos abiertos:' mi
+vuelta2          v16384     0.60 s  allow  
