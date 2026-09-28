@@ -1,0 +1,4 @@
+run=https://github.com/JJOVEGA/ArnesJuan/actions/runs/36375629196 attempt=1 conclusion=success sha=19c5ca762ec039958572c537a74a909c6caf0207
+job=hooks-en-linux success 2026-09-28T03:55:54Z 2026-09-28T03:59:37Z
+Resultado: 966 PASS, 0 FAIL, 14 SKIP (de ellos 0 INCONCLUSO: 0 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+Autoprueba: 117 PASS, 0 FAIL
