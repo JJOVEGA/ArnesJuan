@@ -1,0 +1,6 @@
+run=https://github.com/JJOVEGA/ArnesJuan/actions/runs/36462867722 attempt=1 conclusion=success sha=30b06feddb4c6f2113184801b14201781abcf545
+job=hooks-en-linux success 2026-09-28T18:06:36Z 2026-09-28T18:10:16Z
+Resultado: 964 PASS, 0 FAIL, 16 SKIP (de ellos 1 INCONCLUSO: 1 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+INCONCLUSO (rendimiento NO acreditado): 1 — la medición real no resolvió en esta corrida; no pone el banco en rojo y un check verde no lo acredita (REQ-030):
+       ! REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1
+Autoprueba: 117 PASS, 0 FAIL
