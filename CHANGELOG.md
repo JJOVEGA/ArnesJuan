@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-27 · REQ-031 (desarrollador): gramática cerrada de `Hallazgos abiertos:` en `guard-completado` (A) y casilla de `Archivos:` en la Definition of Ready (D) → `en-revisión`
+> Origen: Interno (manual; lo comitea la coordinadora con los hooks activos) · usuario: Juan · modelo de IA: Opus 5.5 · agente: desarrollador.
+
+A: la puerta valida la lista **entera** con la sintaxis de REQ-031 CA-A01 / ADR-013 antes de juzgar clases —comas fuera de paréntesis; `ID (clase[, evidencia])` y nada detrás salvo la coma o el fin— y deniega lo no interpretable nombrando el fragmento y diciendo cómo conservar la evidencia dentro del paréntesis; `SEC-A (instrumento) · SEC-B (usuario/dinero)` y `SEC-A (instrumento); SEC-B (contrato)`, que en 1.34.0 cerraban, ahora deniegan. Sin procesos nuevos; `hooks/lib.sh` sólo conserva el valor crudo del campo (blancos internos y letras no ASCII del identificador). REQ-007 CA-41 versionado: `REQ-717` pasa de `allow` a `deny`. Banco: +47 casos en la sección 08 con el ayudante nuevo `check_efecto` (decisión y efecto sobre el archivo, por `Edit`, `Write` y `MultiEdit`, y reapertura); 920 → 967. Fail-before contra `a7a60c2`: 21 FAIL en 08+32; pass-after 94/0; banco completo 955 PASS, 0 FAIL, 12 SKIP (1 INCONCLUSO de rendimiento, `REQ-017 CA-03`, ajeno y no relanzado), `real 3m6s`. Sintaxis escrita una vez en `requirements/README.md` § «Clases de hallazgo» y copiada idéntica en la plantilla; celda de `AGENTS.md` §13 (y plantilla) ampliada. D: casilla de CA-D01 en `agents/analista-requerimientos.md`; `tools/` y `.github/` sin cambios. Detalle, método y desviaciones: Historial de `requirements/REQ-031.md`.
+
 ## [Interno] — 2026-09-27 · Cierre administrativo de REQ-029 y REQ-030 (autorizado por el propietario); `completado` no acredita rendimiento, conducta ni ahorro
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora.
 

@@ -150,9 +150,13 @@ check "REQ-007 CA-41 control: '(Instrumento)' se sigue leyendo como hoy -> allow
 mkreq "$PROJ/requirements/REQ-716.md" no aprobado n/a 'QA-006 ( instrumento )'
 check "REQ-007 CA-41 control: '( instrumento )' se sigue leyendo como hoy -> allow" allow \
   guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-716.md" 'en-revisión' 'completado')"
+# REQ-031 / ADR-013 (decision del propietario, P-1 opcion B, 2026-09-27): el texto DETRAS del
+# parentesis deja de aceptarse. Antes este caso esperaba `allow` —REQ-007 CA-41 lo toleraba— y
+# por esa misma tolerancia `SEC-A (instrumento) · SEC-B (usuario/dinero)` cerraba. No es una
+# regresion: es la unica excepcion declarada de REQ-031 CA-A04.
 mkreq "$PROJ/requirements/REQ-717.md" no aprobado n/a 'QA-006 (instrumento) — REQ-007'
-check "REQ-007 CA-41 control: '(instrumento) — REQ-007' se sigue leyendo como hoy -> allow" allow \
-  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-717.md" 'en-revisión' 'completado')"
+check_motivo "REQ-007 CA-41 versionado (REQ-031): '(instrumento) — REQ-007' ya no se acepta -> deny, con la evidencia dentro del parentesis" \
+  "no se puede interpretar.*'—req-007'.*'QA-006 \(instrumento, REQ-007\)'" guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-717.md" 'en-revisión' 'completado')"
 
 # --- SEC-007 (CA-56/CA-57): la reconstruccion no tenia techo ---
 # El presupuesto fail-closed del analisis de Bash vivia SOLO en el detector de escrituras;

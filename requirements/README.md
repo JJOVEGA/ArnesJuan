@@ -126,6 +126,34 @@ cada proyecto pone el mapeo con sus ejemplos concretos.
 Todo hallazgo abierto se declara en el campo `Hallazgos abiertos:` de la cabecera, con
 su **clase entre paréntesis**: `SEC-121 (instrumento), SEC-144 (usuario/dinero)`.
 
+**La sintaxis del campo es cerrada, y ésta es su sede única.** El valor es **una ausencia** —vacío,
+`(ninguno)`, `n/a`, `-`: ejemplos no exhaustivos; la lista exacta la fija `guard-completado`— **o una
+lista**: uno o más hallazgos separados **sólo por comas que estén fuera de todo paréntesis**. Cada
+hallazgo es, exactamente y en este orden, `ID (clase)` o `ID (clase, evidencia)`:
+
+- **ID**: letras ASCII, dígitos y `-`, sin blancos dentro (ejemplos no exhaustivos: `SEC-121`,
+  `QA-030-03`, `H-07`).
+- **clase**: lo primero dentro del paréntesis, hasta la primera coma o hasta el cierre; una de las
+  tres de la tabla de abajo, sin distinguir mayúsculas ni blancos.
+- **evidencia** (opcional): tras la clase y una coma, **dentro del mismo paréntesis**. Puede llevar
+  comas, `;`, `·`, guiones y paréntesis anidados **equilibrados**, y **no declara nada**: un
+  identificador o una clase escritos dentro de la evidencia no se leen.
+- **Tras el `)` que cierra el hallazgo sólo cabe la coma que lo separa del siguiente, o el fin del
+  campo.** Los blancos alrededor no cambian nada.
+
+Todo lo que no casa con esa forma hace que la lista **no se pueda interpretar**, y entonces la puerta
+**deniega el cierre** nombrando el fragmento que no entendió: no reescribe el campo, no lo repara y no
+ignora la parte que no entiende. Así ningún hallazgo que bloquea queda sin leer por el sitio que ocupa
+ni por el carácter que lo separa del anterior. Ejemplos **no exhaustivos** —la regla es la de arriba—:
+un separador que no es la coma (`;`, `·`, `/`, `y`), texto o una nota detrás del paréntesis, dos
+paréntesis en un hallazgo, un paréntesis sin cerrar o uno sobrante, un elemento vacío (`,,` o una coma
+final), un elemento sin ID, un ID con blancos dentro, con una tilde (`SÉC-1`) o con marcado
+(`` `SEC-1` ``), y una ausencia
+mezclada con hallazgos. Lo que quieras anotar junto a un hallazgo va **dentro de su paréntesis**, tras
+la clase y una coma: `QA-006 (instrumento, REQ-007)`, no `QA-006 (instrumento) — REQ-007`. Un
+elemento **sin ningún paréntesis** (`SEC-4`, `QA-006 [instrumento]`) es un hallazgo **sin clase**
+(abajo), y también deniega.
+
 | Clase | Qué es | Efecto en el cierre |
 |---|---|---|
 | `usuario/dinero` | Afecta lo que alguien ve, decide o cobra | **Bloquea.** Reabre el REQ |
@@ -559,3 +587,4 @@ definición del `analista-requerimientos`: esa ausencia no invalida sus aprobaci
 | [REQ-028](REQ-028.md) | Las capacidades que REQ-025 difiere (**entregas 2+**): `tools/arnes-comprobar.sh` con par discriminante y denominador, su sección del banco, la **procedencia y la atribución** de la cifra que llega al `CHANGELOG.md`, las **columnas de instantes** del libro de comisiones y los umbrales de coste. Nace de la **partición de REQ-025** (2026-09-21) conservando los identificadores CA-03…CA-08, CA-12 y las mitades de CA-10, CA-11 y CA-13. `borrador` con **cuatro decisiones del propietario abiertas** (B-1…B-4) y **sin ventana asignada** | `borrador` | critico | pendiente | pendiente |
 | [REQ-029](REQ-029.md) | Fidelidad al encargo: detectar omisiones, sustituciones y decisiones de negocio no autorizadas antes de implementar — fuente identificable del pedido, «Correspondencia con el encargo» en la plantilla, comprobación de resolución antes de despachar, **un solo veredicto de QA**, sin bloqueo retroactivo, y la partición que no concede autoridad sobre el alcance. **Ventana 1.35.0**; decisión del propietario del 2026-09-23 sobre la propuesta `d4e7a4f`; integrado en `main` por el PR #53 (`11c5df2`) y cerrado administrativamente el 2026-09-27 sin acreditar conducta ni ahorro | `completado` | critico | aprobado | aprobado |
 | [REQ-030](REQ-030.md) | Las sondas de coste CA-03 y CA-08 (ii) de REQ-017 deciden sobre un **presupuesto fijo de 5 repeticiones** y dicen **INCONCLUSO** (rendimiento no acreditado, contado en el resumen) cuando no resuelven: los techos no se mueven. Versiona REQ-017 por **ADR-012**; autorizado por el propietario el 2026-09-26. **Ventana 1.35.0**; vuelta 4 y dos intervenciones documentales por excepción expresa del propietario (2026-09-26); integrado en `main` por el PR #55 (`c4d92c0`) y cerrado administrativamente el 2026-09-27 con QA-030-03, QA-030-05 y SEC-111 (`instrumento`) abiertos, sin acreditar rendimiento | `completado` | critico | aprobado (re-verificación documental, 0f7e668) | aprobado (R-043-B, 192d7b6) |
+| [REQ-031](REQ-031.md) | Ningún hallazgo bloqueante se ignora por su posición ni por su separador: sintaxis **cerrada** de `Hallazgos abiertos:` en `guard-completado` (A), y el mapa `Archivos:` comprobado desde la Definition of Ready antes de pedir paralelismo (D). **Ventana 1.35.0**; pedido del propietario del 2026-09-27. **P-1 resuelta (opción B)**: tras el paréntesis de un hallazgo sólo la coma o el fin del campo; versiona REQ-007 CA-41 por **ADR-013** | `en-revisión` | critico | pendiente | pendiente |

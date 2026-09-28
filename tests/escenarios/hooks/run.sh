@@ -355,6 +355,48 @@ ver_check() {
   echo "  PASS  $nombre  ($got)"; PASS=$((PASS+1))
 }
 
+# check_efecto <nombre> <deny|allow> <archivo> <json> <Estado: esperado despues> [regex del motivo]
+# REQ-031 CA-A07: la DECISION y el EFECTO sobre el archivo, con `guard-completado.sh`. Si la
+# puerta permite, el caso APLICA la edicion del JSON (Edit, Write o MultiEdit) como la
+# aplicaria el cliente; si deniega, no la aplica. En los dos casos lee la linea `Estado:` del
+# archivo en disco y la compara con la esperada: un deny tiene que dejarlo como estaba (la
+# puerta no escribe) y un allow tiene que dejar escrito el estado nuevo. Un caso que solo
+# mira la decision no dice que quedo en el disco, que es lo que la evidencia midio.
+check_efecto() {
+  local nombre="$1" esperado="$2" f="$3" json="$4" est_esp="$5" patron="${6:-}" out got motivo txt os ns k n est
+  if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
+  json_no_vacio "$nombre" "$json" || { FAIL=$((FAIL+1)); return 0; }
+  out="$(corre guard-completado.sh "$json")"
+  if printf '%s' "$out" | grep -Eq '"permissionDecision": *"deny"'; then got=deny; else got=allow; fi
+  motivo="$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecisionReason // empty' 2>/dev/null)"
+  if [ "$got" != "$esperado" ]; then
+    echo "  FAIL  $nombre  esperado=$esperado got=$got  <${motivo:0:180}>"; diag; FAIL=$((FAIL+1)); return 0
+  fi
+  if [ -n "$patron" ] && ! printf '%s' "$motivo" | grep -Eq -- "$patron"; then
+    echo "  FAIL  $nombre  el motivo no casa /$patron/  <${motivo:0:240}>"; FAIL=$((FAIL+1)); return 0
+  fi
+  if [ "$got" = allow ]; then
+    txt="$(<"$f")"
+    case "$(jq -r '.tool_name' <<< "$json")" in
+      Write) txt="$(jq -j '.tool_input.content' <<< "$json")" ;;
+      Edit)  os="$(jq -j '.tool_input.old_string' <<< "$json")"; ns="$(jq -j '.tool_input.new_string' <<< "$json")"
+             txt="${txt/"$os"/"$ns"}" ;;
+      MultiEdit) n="$(jq -r '.tool_input.edits | length' <<< "$json")"
+             for ((k = 0; k < n; k++)); do
+               os="$(jq -j --argjson k "$k" '.tool_input.edits[$k].old_string' <<< "$json")"
+               ns="$(jq -j --argjson k "$k" '.tool_input.edits[$k].new_string' <<< "$json")"
+               txt="${txt/"$os"/"$ns"}"
+             done ;;
+    esac
+    printf '%s\n' "$txt" > "$f"
+  fi
+  est="$(grep -m1 '^Estado:' "$f")"
+  if [ "$est" != "Estado: $est_esp" ]; then
+    echo "  FAIL  $nombre  ($got) efecto: el archivo dice <$est>, se esperaba <Estado: $est_esp>"; FAIL=$((FAIL+1)); return 0
+  fi
+  echo "  PASS  $nombre  ($got; $est)"; PASS=$((PASS+1))
+}
+
 LEC="$HOOKS_DIR/../tools/arnes-lectura.sh"
 # lec_check <nombre> <rc esperado> <patron> <si|no aparece>
 lec_check() {
@@ -1503,7 +1545,10 @@ done
 # Y 919 → 920 por SEC-108 (REQ-030 CA-07 (g)): +1 por el control C3 del instrumento de CA-03, a
 # demanda. Entró en 37/7 (6 → 7) y la decisión D del propietario lo mudó a 37/2 (4 → 5), donde
 # juzga la misma calibración que CA-03; 37/7 volvió a 6. El total no cambia con la mudanza.
-CASOS_ESPERADOS=920
+# Y 920 → 967 por REQ-031 (ADR-013): +47 en la sección 08 (7 → 54), la gramática cerrada de
+# `Hallazgos abiertos:` con decisión y efecto sobre el archivo (`check_efecto`). El caso
+# `REQ-717` de la 32 cambia de `allow` a `deny` sin cambiar el número.
+CASOS_ESPERADOS=967
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

@@ -494,44 +494,153 @@ arnes_guard_completado() {
     ''|ninguno|'(ninguno)'|n/a|na|-|'(-)') hall='' ;;
   esac
   if [ -n "$hall" ]; then
-    # La lista se parte por las comas DE FUERA del parentesis, sin procesos. Antes se
-    # partia con IFS a secas, y entonces `SEC-9 (usuario/dinero, dueno desarrollador)` se
-    # troceaba EN MEDIO de la clase: la puerta leia «un hallazgo sin clase» y denegaba el
-    # cierre. Es decir, castigaba precisamente la anotacion de dueno que AGENTS.md 6 pide
-    # para la deuda de instrumento (QA-014). Dentro del parentesis, la CLASE es el primer
-    # elemento y lo que venga tras ella es EVIDENCIA — la misma regla que ya rige el
-    # parentesis de un veredicto (`QA: aprobado (medido el 3/9)`).
-    ARNES_HALLAZGOS=(); acc=''; prof=0
-    for ((ci = 0; ci < ${#hall}; ci++)); do
-      c="${hall:ci:1}"
-      case "$c" in
-        '(') prof=$((prof+1)); acc+="$c" ;;
-        ')') [ "$prof" -gt 0 ] && prof=$((prof-1)); acc+="$c" ;;
-        ',') if [ "$prof" -eq 0 ]; then ARNES_HALLAZGOS+=("$acc"); acc=''; else acc+="$c"; fi ;;
-        *)   acc+="$c" ;;
-      esac
-    done
-    [ -n "$acc" ] && ARNES_HALLAZGOS+=("$acc")
-    for h in ${ARNES_HALLAZGOS[@]+"${ARNES_HALLAZGOS[@]}"}; do
-      [ -n "$h" ] || continue
-      id="${h%%(*}"
-      clase=''
-      case "$h" in
-        # La clase es lo que va hasta la primera coma de dentro del parentesis; el resto
-        # ACOMPANA al veredicto y nunca lo cambia.
-        *\(*\)*) clase="${h#*\(}"; clase="${clase%%\)*}"; clase="${clase%%,*}" ;;
-      esac
-      if [ -z "$clase" ]; then
-        arnes_deny "ARNES: no se puede completar '$rel': el hallazgo '$id' no declara su clase, y un hallazgo sin clase no cuenta como hallazgo. Clasificalo como 'usuario/dinero', 'contrato' o 'instrumento' (requirements/README.md, seccion 'Clases de hallazgo')."
+    # GRAMATICA CERRADA (REQ-031 CA-A01, ADR-013; sede unica de la sintaxis:
+    # requirements/README.md, seccion 'Clases de hallazgo'). La lista es uno o mas
+    # elementos separados por comas DE FUERA de todo parentesis, y cada elemento es,
+    # exactamente: identificador (letras ASCII, digitos, '-') + '(' clase [',' evidencia] ')'
+    # y NADA detras salvo la coma separadora o el fin del campo.
+    #
+    # Por que cerrada: hasta 1.34.0 se partia solo por comas y la clase se tomaba del
+    # PRIMER parentesis del elemento; lo que seguia a ese ')' no se leia. Medido
+    # (evaluacion-2026-09-27): `SEC-A (instrumento) · SEC-B (usuario/dinero)` y
+    # `SEC-A (instrumento); SEC-B (contrato)` CERRABAN con un bloqueante abierto, porque
+    # con `·` o `;` la lista entera era UN elemento. Aceptar «cualquier separador» no es una
+    # especificacion; lo que la puerta no sabe leer, lo DICE y no deja cerrar.
+    #
+    # La lista se valida ENTERA antes de juzgar clases, en UNA pasada y sin procesos: asi
+    # la decision y el tipo de motivo no dependen del orden de los elementos. Prioridad del
+    # motivo: no interpretable > sin clase / clase no valida > clase que bloquea.
+    # La evidencia puede llevar comas, ';', '·' y parentesis anidados equilibrados, y NO
+    # declara nada: lo escrito dentro del parentesis no se lee como identificador ni clase
+    # (misma regla que el parentesis de un veredicto, `QA: aprobado (medido el 3/9)`).
+    n_hall=${#hall}; est=0; prof=0; e_ini=0; idh=''; id_malo=''; clase=''
+    err=''; err_ini=0; sin_clase=''; clase_mala=''; clase_mala_v=''; bloq=''; bloq_v=''
+    for ((ci = 0; ci <= n_hall; ci++)); do
+      c="${hall:ci:1}"   # '' en ci = n_hall: centinela del fin del campo
+      if [ "$est" -eq 3 ]; then
+        # Tras el ')' que equilibra al de apertura: solo la coma o el fin.
+        case "$c" in
+          ''|,) ;;
+          ')') err="sobra un ')' detras del parentesis del hallazgo"; err_ini=$ci ;;
+          '(') err="el elemento lleva dos parentesis; cada hallazgo lleva UNO, con su clase" ; err_ini=$ci ;;
+          *)   err="hay texto detras del parentesis del hallazgo (un separador que no es la coma, una nota u otro hallazgo); tras el parentesis solo cabe la coma o el fin del campo"; err_ini=$ci ;;
+        esac
+      elif [ "$est" -ge 1 ]; then
+        # Dentro del parentesis: est 1 = clase (hasta la primera coma de profundidad 1),
+        # est 2 = evidencia (no se lee).
+        case "$c" in
+          '')  err="un parentesis abierto no se cierra"; err_ini=$e_ini ;;
+          '(') prof=$((prof+1)); [ "$est" -eq 1 ] && clase+="$c"; continue ;;
+          ')') prof=$((prof-1))
+               if [ "$prof" -eq 0 ]; then est=3; else [ "$est" -eq 1 ] && clase+="$c"; fi
+               continue ;;
+          ',') if [ "$est" -eq 1 ] && [ "$prof" -eq 1 ]; then est=2; elif [ "$est" -eq 1 ]; then clase+="$c"; fi
+               continue ;;
+          *)   [ "$est" -eq 1 ] && clase+="$c"; continue ;;
+        esac
+      else
+        # Identificador. Un elemento SIN parentesis sigue siendo «hallazgo sin clase»
+        # (REQ-007 CA-41: `QA-006 [instrumento]`), no «no interpretable».
+        case "$c" in
+          '(') if [ -z "$idh" ]; then
+                 err="el elemento no empieza por un identificador (o mezcla una ausencia como '(ninguno)' con hallazgos)"; err_ini=$e_ini
+               elif [ -n "$id_malo" ]; then
+                 err="el identificador lleva caracteres fuera de letras ASCII, digitos y '-' (el marcado de Markdown de un elemento suelto no se desenvuelve)"; err_ini=$e_ini
+               else
+                 est=1; prof=1; clase=''; continue
+               fi ;;
+          ''|,) if [ -z "$idh" ]; then
+                  err="hay un elemento vacio (una coma al principio, al final o dos seguidas)"; err_ini=$e_ini
+                else
+                  [ -n "$sin_clase" ] || sin_clase="$idh"
+                fi ;;
+          [abcdefghijklmnopqrstuvwxyz0123456789-]) idh+="$c"; continue ;;   # ya en minusculas
+          *)   id_malo=1; idh+="$c"; continue ;;
+        esac
       fi
-      case "$clase" in
-        instrumento) ;;   # no bloquea: va a deuda tecnica con dueno
-        usuario/dinero|contrato)
-          arnes_deny "ARNES: no se puede completar '$rel': el hallazgo '$id' es de clase '$clase' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no afecta a lo que alguien ve, decide o cobra ni a lo que el REQ afirma (requirements/README.md, seccion 'Clases de hallazgo')." ;;
-        *)
-          arnes_deny "ARNES: no se puede completar '$rel': el hallazgo '$id' declara '$clase', que no es una clase valida, asi que no declara su clase y un hallazgo sin clase no cuenta como hallazgo. Validas: 'usuario/dinero', 'contrato', 'instrumento'. La clase va la PRIMERA dentro del parentesis; lo que venga tras una coma es evidencia (dueno, forzador, vencimiento)." ;;
-      esac
+      [ -z "$err" ] || break
+      # Fin de un elemento bien formado: se anota su clase, sin decidir todavia.
+      if [ "$est" -eq 3 ]; then
+        case "$clase" in
+          instrumento) ;;   # no bloquea: va a deuda tecnica con dueno
+          usuario/dinero|contrato) [ -n "$bloq" ] || { bloq="$idh"; bloq_v="$clase"; } ;;
+          '') [ -n "$sin_clase" ] || sin_clase="$idh" ;;
+          *)  [ -n "$clase_mala" ] || { clase_mala="$idh"; clase_mala_v="$clase"; } ;;
+        esac
+      fi
+      est=0; prof=0; e_ini=$((ci+1)); idh=''; id_malo=''; clase=''
     done
+    # Dos reglas del identificador necesitan el valor TAL COMO SE ESCRIBIO, porque la
+    # normalizacion borra su huella: (a) blancos DENTRO del identificador (los retira todos:
+    # `SEC-A y SEC-B` se leeria `sec-aysec-b`) y (b) letras fuera de ASCII (pliega las tildes:
+    # `SÉC-A` se leeria `sec-a`). Una pasada mas sobre el crudo, solo si la estructura ya se
+    # leyo entera; mira solo lo que va ANTES del primer '(' de cada elemento, fuera de
+    # parentesis. Un blanco cuenta como interno solo entre dos caracteres del alfabeto del
+    # identificador (un blanco junto a un marcado envolvente, `** SEC-A`, no lo es).
+    crudo_h="${ARNES_HALL_CRUDO:-}"; id_crudo=''
+    if [ -z "$err" ]; then
+      # `pend`/`noasc` se comprometen SOLO al llegar al '(' del elemento: un elemento sin
+      # parentesis (`SEC-A y SEC-B`) sigue siendo «sin clase», como arriba.
+      prof=0; est=0; visto=''; blanco=''; pend=''; noasc=''; id_txt=''
+      for ((ci = 0; ci < ${#crudo_h}; ci++)); do
+        c="${crudo_h:ci:1}"
+        case "$c" in
+          '(') if [ "$prof" -eq 0 ] && [ "$est" -eq 0 ]; then
+                 [ -z "$pend$noasc" ] || { id_crudo=1; break; }
+                 est=1
+               fi
+               prof=$((prof+1)) ;;
+          ')') [ "$prof" -gt 0 ] && prof=$((prof-1)) ;;
+          ,)   [ "$prof" -eq 0 ] && { est=0; visto=''; blanco=''; pend=''; noasc=''; id_txt=''; } ;;
+          ' '|$'\t') [ "$est" -eq 0 ] && { [ -z "$visto" ] || blanco=1; id_txt+="$c"; } ;;
+          # Alfabeto escrito entero y no como rango: `[a-z]` depende del locale.
+          [abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-])
+               if [ "$est" -eq 0 ]; then
+                 [ -z "$blanco" ] || pend=1
+                 visto=1; id_txt+="$c"
+               fi ;;
+          *)   if [ "$est" -eq 0 ]; then
+                 case "$c" in [[:ascii:]]) ;; *) noasc=1 ;; esac
+                 visto=''; blanco=''; id_txt+="$c"
+               fi ;;
+        esac
+      done
+      if [ -n "$id_crudo" ]; then
+        id_txt="${id_txt#"${id_txt%%[![:blank:]]*}"}"; id_txt="${id_txt%"${id_txt##*[![:blank:]]}"}"
+        if [ -n "$pend" ]; then
+          err="el identificador '${id_txt,,}' lleva blancos dentro: si son dos hallazgos, cada uno lleva su propio parentesis con su clase"
+        else
+          err="el identificador '${id_txt,,}' lleva letras fuera de ASCII (una tilde o una letra de otro alfabeto)"
+        fi
+        frag_h="${id_txt,,}"; frag_h="${frag_h//[[:blank:]]/}"; elem_h="$frag_h"
+      fi
+    else
+      # El fragmento no interpretado llega hasta el fin de su elemento (la siguiente coma
+      # de fuera de parentesis). Solo corre una vez, ante el error: no es un recorrido por
+      # elemento.
+      p=0
+      for ((cj = ci; cj < n_hall; cj++)); do
+        case "${hall:cj:1}" in
+          '(') p=$((p+1)) ;;
+          ')') [ "$p" -gt 0 ] && p=$((p-1)) ;;
+          ,)   [ "$p" -eq 0 ] && [ "$cj" -gt "$err_ini" ] && break ;;
+        esac
+      done
+      frag_h="${hall:err_ini:cj-err_ini}"; elem_h="${hall:e_ini:cj-e_ini}"
+      [ -n "$frag_h" ] || { frag_h="$hall"; elem_h="$hall"; }
+    fi
+    if [ -n "$err" ]; then
+      arnes_deny "ARNES: no se puede completar '$rel': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no deja cerrar (podria esconder un hallazgo que bloquea). En el elemento '$elem_h' no se interpreta '$frag_h' (leido sin blancos y en minusculas): $err. Los hallazgos se separan SOLO con comas y cada uno lleva su propio parentesis con su clase: 'ID (clase)'. Conserva la evidencia DENTRO del parentesis del hallazgo, tras la clase y una coma: 'ID (clase, evidencia)' —p. ej. 'QA-006 (instrumento, REQ-007)'—. La puerta no reescribe el campo. Sintaxis: requirements/README.md, seccion 'Clases de hallazgo'."
+    fi
+    if [ -n "$sin_clase" ]; then
+      arnes_deny "ARNES: no se puede completar '$rel': el hallazgo '$sin_clase' no declara su clase, y un hallazgo sin clase no cuenta como hallazgo. Clasificalo como 'usuario/dinero', 'contrato' o 'instrumento' (requirements/README.md, seccion 'Clases de hallazgo')."
+    fi
+    if [ -n "$clase_mala" ]; then
+      arnes_deny "ARNES: no se puede completar '$rel': el hallazgo '$clase_mala' declara '$clase_mala_v', que no es una clase valida, asi que no declara su clase y un hallazgo sin clase no cuenta como hallazgo. Validas: 'usuario/dinero', 'contrato', 'instrumento'. La clase va la PRIMERA dentro del parentesis; la evidencia va detras, tras una coma y DENTRO del mismo parentesis (dueno, forzador, vencimiento)."
+    fi
+    if [ -n "$bloq" ]; then
+      arnes_deny "ARNES: no se puede completar '$rel': el hallazgo '$bloq' es de clase '$bloq_v' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no afecta a lo que alguien ve, decide o cobra ni a lo que el REQ afirma (requirements/README.md, seccion 'Clases de hallazgo')."
+    fi
   fi
 
   # --- Gate A2: no completar con aprobaciones pendientes ---

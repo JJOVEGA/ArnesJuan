@@ -134,6 +134,7 @@ inventes: si el REQ no encaja claramente, pregunta.
 - [ ] Conflictos con otros REQs resueltos (o el REQ queda en `borrador`).
 - [ ] Sin preguntas abiertas pendientes; si las hay, el REQ permanece en `borrador`.
 - [ ] `Origen:` identificable (o `fuente no disponible` declarada), «Correspondencia con el encargo» rellenada, y ninguna fila con relación distinta de `cubierta` sin autorización citada fuera de `Preguntas abiertas`.
+- [ ] Campo `Archivos:` en la cabecera con las rutas del alcance, sin decoración de Markdown, y `(ninguno)` sólo si el REQ no toca ningún archivo; antes de solicitar paralelismo, quien lo solicita comprueba que `tools/arnes-paralelo.sh <REQ>` lo lee (lista sus rutas, no `SIN DECLARAR`). Forma y fail-closed: `requirements/README.md` § «El mapa de archivos: el campo `Archivos:`».
 - [ ] Índice de `requirements/README.md` actualizado.
 
 Cumplida esta lista, el REQ pasa de `borrador` a `pendiente` (listo para desarrollo). Si algo falta, permanece en `borrador`.

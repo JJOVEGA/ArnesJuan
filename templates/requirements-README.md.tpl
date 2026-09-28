@@ -126,6 +126,34 @@ cada proyecto pone el mapeo con sus ejemplos concretos.
 Todo hallazgo abierto se declara en el campo `Hallazgos abiertos:` de la cabecera, con
 su **clase entre paréntesis**: `SEC-121 (instrumento), SEC-144 (usuario/dinero)`.
 
+**La sintaxis del campo es cerrada, y ésta es su sede única.** El valor es **una ausencia** —vacío,
+`(ninguno)`, `n/a`, `-`: ejemplos no exhaustivos; la lista exacta la fija `guard-completado`— **o una
+lista**: uno o más hallazgos separados **sólo por comas que estén fuera de todo paréntesis**. Cada
+hallazgo es, exactamente y en este orden, `ID (clase)` o `ID (clase, evidencia)`:
+
+- **ID**: letras ASCII, dígitos y `-`, sin blancos dentro (ejemplos no exhaustivos: `SEC-121`,
+  `QA-030-03`, `H-07`).
+- **clase**: lo primero dentro del paréntesis, hasta la primera coma o hasta el cierre; una de las
+  tres de la tabla de abajo, sin distinguir mayúsculas ni blancos.
+- **evidencia** (opcional): tras la clase y una coma, **dentro del mismo paréntesis**. Puede llevar
+  comas, `;`, `·`, guiones y paréntesis anidados **equilibrados**, y **no declara nada**: un
+  identificador o una clase escritos dentro de la evidencia no se leen.
+- **Tras el `)` que cierra el hallazgo sólo cabe la coma que lo separa del siguiente, o el fin del
+  campo.** Los blancos alrededor no cambian nada.
+
+Todo lo que no casa con esa forma hace que la lista **no se pueda interpretar**, y entonces la puerta
+**deniega el cierre** nombrando el fragmento que no entendió: no reescribe el campo, no lo repara y no
+ignora la parte que no entiende. Así ningún hallazgo que bloquea queda sin leer por el sitio que ocupa
+ni por el carácter que lo separa del anterior. Ejemplos **no exhaustivos** —la regla es la de arriba—:
+un separador que no es la coma (`;`, `·`, `/`, `y`), texto o una nota detrás del paréntesis, dos
+paréntesis en un hallazgo, un paréntesis sin cerrar o uno sobrante, un elemento vacío (`,,` o una coma
+final), un elemento sin ID, un ID con blancos dentro, con una tilde (`SÉC-1`) o con marcado
+(`` `SEC-1` ``), y una ausencia
+mezclada con hallazgos. Lo que quieras anotar junto a un hallazgo va **dentro de su paréntesis**, tras
+la clase y una coma: `QA-006 (instrumento, REQ-007)`, no `QA-006 (instrumento) — REQ-007`. Un
+elemento **sin ningún paréntesis** (`SEC-4`, `QA-006 [instrumento]`) es un hallazgo **sin clase**
+(abajo), y también deniega.
+
 | Clase | Qué es | Efecto en el cierre |
 |---|---|---|
 | `usuario/dinero` | Afecta lo que alguien ve, decide o cobra | **Bloquea.** Reabre el REQ |

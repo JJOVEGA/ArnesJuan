@@ -1837,7 +1837,7 @@ arnes_seguridad_cabecera() {   # <documento> -> ARNES_SEG_CABECERA
 
 arnes_campos_req() {   # <texto en disco> <texto entrante>
   ARNES_QA=''; ARNES_SEG=''; ARNES_SENS=''; ARNES_HALL=''; ARNES_RIGOR=''
-  ARNES_QA_CRUDO=''; ARNES_SEG_CRUDO=''; ARNES_CITA_ABIERTA=0
+  ARNES_QA_CRUDO=''; ARNES_SEG_CRUDO=''; ARNES_HALL_CRUDO=''; ARNES_CITA_ABIERTA=0
   ARNES_CR_INTERIOR=0; ARNES_CR_INTERIOR_LINEA=''
   # El CR interior NO se reinicia por texto, a diferencia del rango: un CR en CUALQUIERA
   # de las dos cabeceras que esta funcion lee deja lo que se leyo sin medir, y da igual en
@@ -1876,7 +1876,11 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
   # parentesis de evidencia, que la normalizacion retira a proposito (el parentesis es
   # evidencia, no veredicto). Se lee del crudo con el MISMO lector, no con un segundo
   # normalizador -- dos transcripciones de la misma regla se desfasan.
-  ARNES_QA_CRUDO="$ARNES_QA"; ARNES_SEG_CRUDO="$ARNES_SEG"
+  # `Hallazgos abiertos:` tambien: la normalizacion retira TODOS los blancos, y la gramatica
+  # del campo (REQ-031 CA-A01) prohibe blancos DENTRO de un identificador —`SEC-A y SEC-B
+  # (instrumento)` son dos hallazgos con una sola clase, y normalizado se lee `sec-aysec-b`,
+  # un identificador valido—. Solo esa regla mira el crudo; todo lo demas, el normalizado.
+  ARNES_QA_CRUDO="$ARNES_QA"; ARNES_SEG_CRUDO="$ARNES_SEG"; ARNES_HALL_CRUDO="$ARNES_HALL"
   arnes_campos_normaliza "$ARNES_QA" "$ARNES_SEG" "$ARNES_SENS" "$ARNES_HALL" "$ARNES_RIGOR"
 }
 
