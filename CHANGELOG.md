@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-28 · REQ-031 CA-A16: reproducido por la coordinadora en el CLI real — un hook `PreToolUse` que agota su timeout sin decisión deja pasar el `Write`; un hook muerto no deniega
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora (evidencia aportada; no es medición de QA).
+
+Un intento (el restante del presupuesto de CA-A16; QA no pudo ejecutarlo por el clasificador de permisos de su entorno). Claude Code CLI 2.1.272, `claude -p --plugin-dir … --allowedTools Write`, proyecto temporal: hook `sleep 10` con `timeout 5` y sin salida → rc 0, 13,3 s, **`x.txt` escrito**; control con hook que emite `deny` → `x.txt` no creado. Comprobado por efecto sobre el archivo. Alcance: CLI no interactivo; no medido en la sesión del editor ni en Windows. Evidencia: rama de evidencia `req-031/ca-a16/` (`be5dcef`). Confirma por qué SEC-113 era un fail-open real y por qué la parte super-lineal por `Write` (PENDIENTES) importa.
+
 ## [Interno] — 2026-09-28 · REQ-031: QA vuelta 3 de 3 (última) → `QA: aprobado` sobre `cdcad5d`; CA-A16 no comprobado por QA; CA-A17: 0 claves ignoradas en las 29 cabeceras (sin exposición actual, no sin defecto)
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Sonnet 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
 
