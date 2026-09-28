@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-28 · REQ-031: R-044-C → `Seguridad: aprobado` sobre `d49f319` (código `cdcad5d`); SEC-113 `mitigado`; SEC-115 y SEC-116 (`instrumento`) registrados; corrección de registro sobre SEC-047
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (auditor-seguridad, analista-requerimientos) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, analista-requerimientos, coordinadora.
+
+R-044-C acredita la puerta sobre `cdcad5d`: gramática cerrada, clave repetida deniega, techo medido antes de normalizar sin truncar ni tomarlo por ausencia, marcador no fabricable, `LC_ALL` local restaurado, 0 procesos, promesa por propiedad hasta lo medido (255 371 bytes). No acredita gates, banco, CI, Windows, la sesión del editor, lo que supera lo medido ni las claves que el lector no reconoce. **SEC-115** (`instrumento`, media): otras vías siguen matando al hook por tamaño —`QA: pendiente (…)` con ≈ 255 KB de evidencia tarda 73,6 s (los demás campos no tienen techo antes de normalizar); `Write` de 2 MB tarda 80,2 s (`arnes_sin_cr_transporte`)—, y CA-A16 confirmó en el cliente que un hook sin decisión deja pasar la herramienta; realismo bajo; vencimiento: decisión de publicación de 1.35.0. **SEC-116** (`instrumento`, baja): «Preguntas abiertas» afirmaba que SEC-047 no está en el registro de `main`; es falso (`### SEC-047`, línea 3633); lo que falta en `main` son SEC-078/079 y R-024; causa: comprobación errónea de la coordinadora; corregido por el analista en esta misma entrada (registro posterior a las firmas, sólo texto). El auditor corrige además su propio R-044 §7: la celda de §13 con BOM/R-024 la leyó del `AGENTS.md` del worktree de la sesión (`rel/registro-1.33.0`), no de esta cabeza. Sin push hasta aquí.
+
 ## [Interno] — 2026-09-28 · REQ-031 CA-A16: reproducido por la coordinadora en el CLI real — un hook `PreToolUse` que agota su timeout sin decisión deja pasar el `Write`; un hook muerto no deniega
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Fable 5.1 · agente: coordinadora (evidencia aportada; no es medición de QA).
 

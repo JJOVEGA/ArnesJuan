@@ -8790,3 +8790,121 @@ Regresiones a vigilar (no exhaustivo):
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.**
 
 **Numeración vigente tras esta adenda:** última revisión **R-044** (adendas `R-044-A`, **`R-044-B`**); último hallazgo **SEC-114**; próximos libres **R-045** y **SEC-115**.
+
+---
+
+## Adenda a R-044 (**`R-044-C`**) — **REQ-031, vuelta 3 de 3** (la última): remedio B de SEC-113 (CA-A15), evidencia de entorno CA-A16 e inventario CA-A17. `feat/req-031-hallazgos-y-paralelo` @ `d49f319` — 2026-09-28
+
+**Numeración.** Repetí el método de R-044 (todas las ramas y los 17 worktrees): `R-044-C`, `SEC-115` y `SEC-116` no estaban usados, y los tomo.
+
+**Versión base y alcance.**
+- Revisión anterior: `R-044-B`, sobre `9cc4c67` (consolidada en `373563f`).
+- Cabeza: `d49f319d907307670e6dfe63c71aef39a8d774ba`, árbol limpio.
+- `git diff --stat cdcad5d..d49f319` = sólo `CHANGELOG.md`, `docs/qa/REQ-031.md` y `requirements/REQ-031.md`. **El código revisado es el de `cdcad5d`**, que validó QA (`QA: aprobado`, vuelta 3 de 3).
+- Diffs leídos: `git diff 373563f..cdcad5d -- hooks tests docs/PENDIENTES.md docs/decisions`, y en `requirements/REQ-031.md` los criterios CA-A15, CA-A16 y CA-A17, la nota de CA-A13 y «Preguntas abiertas».
+- También leí `docs/qa/REQ-031.md` § Vuelta 3 (§ 27, CA-A17) y la evidencia de CA-A16: rama `evidencia/prueba-despacho-2026-09-14`, commit `be5dcef`, `req-031/ca-a16/`.
+- **Orden de fases respetado:** QA firmó antes. **No miré las quality gates ni corrí el banco.**
+
+**Método.** Sondas de R-044 contra la puerta real, en proyectos temporales del scratchpad. Los valores grandes van por archivo y el JSON por `jq --rawfile`. Salida vacía = allow. Cada sonda corre bajo `timeout 150` y se cronometra con `date +%s.%N`. Una corrida por punto, Linux/WSL2, `LANG=C.UTF-8`.
+
+### 1. SEC-113 → **`mitigado`** (remedio B, CA-A15, sobre `cdcad5d`)
+
+`arnes_campos_normaliza` mide los bytes del valor crudo con `_arnes_bytes` **antes** de `arnes_norm_campo`. Por encima de `ARNES_HALL_TECHO_BYTES` (16 384, único sitio del número, que la puerta también lee) no normaliza, y `ARNES_HALL` pasa a ser `(no medido: N bytes, techo 16384)`. La puerta deniega por tamaño sobre `ARNES_HALL_CRUDO` antes de mirar el valor.
+
+**Formas adversariales probadas** (todas con un valor de ≈ 255 KB):
+
+| Forma | Decisión | Tiempo |
+|---|---|---|
+| `contrato` delante, `Edit` | deny «mide 260507 bytes» | 0,31 s |
+| `contrato` delante, `Write` | deny | 1,61 s |
+| `contrato` delante, `MultiEdit` | deny | 0,31 s |
+| clave decorada `**Hallazgos abiertos:**` | deny | 0,31 s |
+| todo `instrumento` | deny por tamaño | 0,31 s |
+| reapertura `completado` → `en-progreso` | allow | 0,41 s |
+
+No encontré ningún camino por el que un valor sobre el techo llegue a `arnes_norm_campo` ni a la puerta como lista. Todas las variantes de clave que el lector reconoce pasan por la misma asignación y la misma medida. Un CR interior sigue denegando antes, por la guarda del CR interior.
+
+**El marcador no se confunde con una ausencia y no se puede fabricar.** Escritos en un REQ, `(no medido: 99999 bytes, techo 16384)`, `(no medido)`, `no medido` y `(nomedido:5bytes,techo16384)` **deniegan** («no interpretable» o «sin clase»). Además, un valor corto no dispara el techo. El bloque derivado de `docs/ESTADO.md` (lo probé con `stop.sh` en un proyecto temporal) muestra `(no medido: 260507 bytes, techo 16384)`, no `(ninguno)`.
+
+**`local LC_ALL=C` no se filtra.** Tras `_arnes_bytes`, `${#v}` sobre `é·日` vuelve a dar 3 caracteres (7 bytes medidos) y `LC_ALL` queda como estaba, tanto sin definir como con `C.UTF-8` exportado.
+
+**Decisiones de CA-A01 a CA-A14 sin cambio.** Las 29 cabeceras reales dan la misma decisión que en R-044-A. La única diferencia es REQ-031, porque su propio campo cambió: salió SEC-114.
+
+La promesa, en todas sus sedes, llega sólo hasta lo medido, y **es verdad medida**: README § «Techo de tamaño» idéntico a la plantilla (`diff` vacío), celda de §13 idéntica a la plantilla, ADR-013 con la precisión fechada que conserva el texto anterior, y comentario del hook. Dicen «hasta 255 371 bytes; por encima no hay promesa» y nombran el residuo por `Write`.
+
+SEC-113, que era **la lectura de `Hallazgos abiertos:`**, queda `mitigado` y sale de `Hallazgos abiertos:`. Lo que el remedio no cubre ya no es la lectura de este campo: va a SEC-115.
+
+### 2. SEC-115 — `instrumento` · **abierto** · severidad media · REQ-031 (sede del hallazgo; no es de su alcance) · dueño `desarrollador` (mecanismo) y `analista-requerimientos` (REQ)
+
+**Un hook que muere por tamaño deja pasar el cierre entero, y quedan dos vías medidas: los demás campos de la cabecera no tienen techo antes de `arnes_norm_campo`, y por `Write` el `content` pasa antes por una operación que crece más que linealmente.**
+
+- **Medido, vía (a):** `QA: pendiente (…)` con ≈ 255 KB de evidencia con blancos, `Seguridad: pendiente`, `Rigor: critico` y `Edit` a `completado` → el hook responde **deny en 73,6 s**. En el cliente eso no llega: CA-A16 comprobó que un hook que agota su tiempo sin decidir **deja pasar la herramienta**. El REQ se cerraría con QA y seguridad pendientes, porque **todas** las puertas del cierre dejan de correr, no sólo la de hallazgos. `docs/PENDIENTES.md` dice de esta vía «no se midió un caso real que los exponga»; ahora está medida.
+- **Medido, vía (b):** un `Write` de un documento de 2 025 113 bytes con cabecera pendiente → 80,2 s. De 1 012 650 bytes → 20,5 s. Por `Edit`, el mismo documento de 1 MB → 0,31 s. El REQ real más grande del árbol, `REQ-021.md` (296 976 bytes), por `Write` → 1,71 s: margen de más de 30 veces.
+- **Realismo:** bajo. Ni una línea de veredicto de cientos de KB ni un REQ de MB son un descuido. Pero cuando ocurre, el efecto es la omisión completa de todas las puertas del cierre, confirmada en el cliente. Por eso la severidad es media y no baja. Es preexistente (la base normaliza igual y `arnes_sin_cr_transporte` es anterior). REQ-031 no lo introduce, y CA-A15.4 ordena registrarlo como hallazgo sin ampliar el criterio. Es `instrumento` (`AGENTS.md` §6) y no bloquea REQ-031.
+- **Remediación (propiedad, no lista):** ninguna operación que crezca más que linealmente con la longitud de un valor o de un documento corre antes de una comprobación de tamaño que **deniegue** por encima. Ejemplos **no exhaustivos**: un techo en bytes para cada campo de la cabecera, medido antes de normalizar como ya se hace con `Hallazgos abiertos:`; un techo del `content` de `Write` antes de `arnes_sin_cr_transporte`, como el presupuesto que ya tiene `Edit`. Sin procesos nuevos.
+- **Forzador:** la próxima comisión que toque `arnes_norm_campo`, `arnes_sin_cr_transporte` o los presupuestos de los hooks. **Vencimiento:** la decisión de publicación de 1.35.0 (reparar, o que el propietario acepte con su firma). La entrada de `docs/PENDIENTES.md` pasa a remitir a este id, y su «(a) no se midió» queda desactualizado por esta medición.
+
+### 3. CA-A16 — la evidencia del entorno
+
+Es sólida para lo que dice. Plugin sonda con `timeout` 5 s y `sleep 10` → `x.txt` **escrito**. Plugin de control que emite `deny` → `x.txt` **no creado**. Se juzga por el efecto sobre el archivo y no por el código de salida. CLI 2.1.272, `claude -p --allowedTools Write`, un intento.
+
+Límites, bien declarados: no es la sesión interactiva del editor (donde, con permisos por pregunta, la persona podría ver la llamada), no es Windows y no hubo repetición.
+
+**Para `AGENTS.md` §7** («un hook muerto no deniega») es **confirmación**, no novedad: la frase ya era la premisa del diseño, y ahora está medida en el cliente. El contrato no **necesita** citarla para ser verdad. Sí conviene que la cite la sede que se apoye en ella para clasificar: esta adenda (§2) y `docs/PENDIENTES.md`. Hacer ese cambio en `AGENTS.md` sería alcance nuevo, y no lo exijo.
+
+### 4. SEC-047 / CA-A17 y la corrección de mi R-044 §7
+
+- **CA-A17:** conforme. Hay control positivo (tres líneas rotas inyectadas, las tres detectadas) y **0** líneas de exposición en las 29 cabeceras. El informe dice «sin exposición actual, no sin defecto», y nada se presenta como reparación ni como aceptación. SEC-047 y QA-031-01 siguen abiertos.
+- **Corrección de mi propio registro (R-044 §4 y §7).** Escribí que la celda de `AGENTS.md` §13 sobre líneas que no se pueden medir, con BOM, anchura cero, blanco de más y la cita a § R-024, estaba «en esta cabeza». **No lo estaba.** Leí el `AGENTS.md` del worktree de la sesión (`rel/registro-1.33.0`), no el de esta rama. Comprobado ahora: `grep -c "BOM\|R-024"` da 0 en `AGENTS.md` y en `templates/AGENTS.md.tpl` de esta rama, y 0 en `git show a7a60c2:AGENTS.md`. **Lo medido de la conducta sigue en pie** (esas claves dan allow por ausencia, en la base y en la candidata). Lo que estaba mal era **dónde está la promesa que lo contradice**: vive en `rel/registro-1.33.0`, no en `main`. El impedimento de «Preguntas abiertas» está bien acotado a esa otra línea del repositorio, y no se resolvió por inferencia. Conforme.
+- **SEC-116 — `instrumento` · abierto · severidad baja · REQ-031 · dueño `analista-requerimientos`.** La viñeta «Impedimento acotado» de «Preguntas abiertas» de REQ-031 afirma que R-024 está definida fuera de `main` «y lo mismo **SEC-047**». Lo segundo es **falso**: `### SEC-047` está en `docs/seguridad/registro-seguridad.md:3633` de esta rama **y** en `git show a7a60c2:docs/seguridad/registro-seguridad.md`, en la misma línea. Lo que sí falta en el registro de `main` es SEC-078/SEC-079 y R-024. Importa porque esa viñeta encuadra una decisión del propietario, y la decisión sobre la cláusula de subida de SEC-047 **sí** se puede tomar sobre el registro de `main`. **Remediación:** corregir esa frase, sin cambiar criterios. Hacer una nota, no un hallazgo aparte, para las citas a **SEC-078** en ADR-013 (`:53`) y en las Notas de REQ-031: citan un identificador que no está en el registro de esta línea, y basta con que la pregunta abierta lo diga, sin inventar la definición aquí. **Vencimiento:** antes de presentar al propietario la decisión de §13/R-024. No bloquea el cierre: no cambia lo que el REQ promete de la máquina.
+
+### 5. Repositorio público — **sin hallazgo**
+
+Las apariciones nuevas de «cliente» se refieren a Claude Code. No se citan clientes.
+
+### 6. Veredicto
+
+**`Seguridad: aprobado (R-044-C, 2026-09-28, sobre d49f319 = código de cdcad5d)`**.
+
+No hay veto, y **no es aprobación por agotamiento**: no queda abierto ningún hallazgo mío `contrato` ni `usuario/dinero`. SEC-112, SEC-113 y SEC-114 quedan `mitigado`. SEC-115 y SEC-116 son `instrumento`, con dueño y vencimiento. Los controles que exigían los hallazgos existen como criterios (CA-A11.4, CA-A12, CA-A13, CA-A14, CA-A15) y el código los implementa, medido.
+
+**Lo que acredita:** la revisión de seguridad de la puerta sobre `cdcad5d`:
+- gramática cerrada;
+- la clave repetida deniega;
+- el techo se mide antes de normalizar, sin truncar, sin tomarlo por ausencia, sin marcador fabricable y con `LC_ALL` local;
+- 0 procesos;
+- la promesa, por propiedad y hasta lo medido, en todas sus sedes.
+
+**Lo que NO acredita:**
+- quality gates, banco ni CI;
+- Windows/MSYS;
+- la sesión interactiva del editor;
+- valores o documentos por encima de lo medido (SEC-115);
+- claves que el lector no reconoce (QA-031-01, SEC-047);
+- la decisión sobre §13/R-024, que es de otra línea del repositorio y del propietario.
+
+### 7. Estado de hallazgos de esta línea tras `R-044-C`
+
+| Hallazgo | Clase | Estado | Dueño | Bloquea |
+|---|---|---|---|---|
+| `SEC-112` | `contrato` | `mitigado` (R-044-A) | — | No |
+| `SEC-113` | `instrumento` | **`mitigado`** (CA-A15, `cdcad5d`) | — | No (sale de `Hallazgos abiertos:`) |
+| `SEC-114` | `contrato` | `mitigado` (R-044-B) | — | No |
+| `SEC-115` | `instrumento` | `abierto` | `desarrollador` + `analista-requerimientos` | No |
+| `SEC-116` | `instrumento` | `abierto` | `analista-requerimientos` | No |
+| `QA-031-01` | `instrumento` | de QA | `desarrollador` | No |
+
+**Estado de seguridad aprobado de REQ-031** (línea base de no-regresión, suma de R-044 a R-044-C). Lo de R-044-B, más:
+- el techo se mide en `arnes_campos_normaliza` **antes** de `arnes_norm_campo`, con un único número en `ARNES_HALL_TECHO_BYTES`;
+- sobre el techo, `ARNES_HALL` lleva un marcador que no es ni ausencia ni lista;
+- `LC_ALL` local en `_arnes_bytes`.
+
+Regresiones a vigilar (no exhaustivo):
+- mover la medida detrás de la normalización;
+- un segundo número del techo;
+- un marcador que un lector trate como vacío;
+- una sede que prometa denegación por encima de lo medido.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta adenda:** última revisión **R-044** (adendas `R-044-A`, `R-044-B`, **`R-044-C`**); último hallazgo **SEC-116**; próximos libres **R-045** y **SEC-117**.
