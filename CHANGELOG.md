@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-27 · REQ-031: R-044-B → `Seguridad: aprobado` sobre `9cc4c67` (código `849c940`); SEC-112 y SEC-114 `mitigados`, SEC-113 `en-mitigación`; decisión de publicación registrada en la cola
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (auditor-seguridad) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, coordinadora.
+
+Acredita la revisión de seguridad de la puerta (gramática cerrada, clave repetida deniega, techo en bytes, acceso por trozos, 0 procesos) y su promesa escrita por propiedad en todas las sedes; no acredita gates, banco, CI, Windows, valores ≥ ~240 KB ni claves que el lector no reconoce. Quedan abiertos, `instrumento`: SEC-113 (residuo de `arnes_norm_campo`) y QA-031-01. La coordinadora registra en `PENDING_APPROVAL.md` § Pendientes la decisión de publicación: remedio B (medir el techo antes de normalizar), el hueco C (intérpretes) y la celda de §13 frente a SEC-047 / R-024. Sin push hasta este commit; el siguiente paso autorizado es push, PR en borrador y CI.
+
 ## [Interno] — 2026-09-27 · REQ-031: QA verificación documental de SEC-114 sobre `5ff9362` → `aprobado`; ocho sedes condicionadas, ninguna promesa absoluta vigente
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Sonnet 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
 

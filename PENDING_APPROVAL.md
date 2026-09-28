@@ -36,6 +36,17 @@
 
 ## Pendientes
 
+### [2026-09-27] (coordinadora) — Decisión de publicación de 1.35.0: tres asuntos que la entrega de REQ-031 deja abiertos y no decide
+
+- **Contexto:** REQ-031 (gramática cerrada de `Hallazgos abiertos:` + preparación del paralelismo) tiene `QA: aprobado` y `Seguridad: aprobado (R-044-B)` sobre `9cc4c67`; PR en borrador y CI pendientes de esta misma sesión. Quedan tres decisiones que el propietario reservó para la publicación.
+- **Acción que impide (regla 2):** ninguna de REQ-031 hoy (sus hallazgos abiertos son `instrumento`); impide **publicar 1.35.0** hasta decidir. Mientras esta entrada esté aquí, ningún REQ puede marcarse `completado` (mecanismo de la cola; deliberado).
+- **Asuntos:**
+  1. **SEC-113 / SEC-114, remedio B:** medir el techo de `Hallazgos abiertos:` **antes** de normalizar (`hooks/lib.sh`), para que un valor de ~240 KB o más deniegue en vez de matar el hook (hoy: 255 371 bytes → 67 s, sin decisión; realismo bajo; residuo en `docs/PENDIENTES.md`). Coste: toca `lib.sh` y el banco y consume la **última vuelta** dev↔QA de REQ-031; incógnita: si otra parte (la lectura de la línea) seguiría cuadrática. Alternativa: publicar con la promesa acotada (ya escrita) y el residuo declarado.
+  2. **Hueco C (escrituras por intérprete):** `python3 -c`, `node -e`, `bash script.sh` escriben en `codigo_app.globs` sin que `guard-codigo` lo vea (medido el 2026-09-27); sin `PostToolUse` no hay detección posterior. Acciones fuera del control: cualquier escritura por intérprete o script desde la coordinadora u otro agente. Mitigación disponible: la «puerta posterior» (`PostToolUse`/`Stop` que compare hashes de `codigo_app.globs` con el agente activo), no implementada por instrucción. Protección que sigue dependiendo de los agentes: la regla de `AGENTS.md` §5 y §13. **No aceptado como aplazado**: decisión del propietario.
+  3. **Celda de `AGENTS.md` §13 frente a SEC-047:** promete denegar con BOM, espacio de anchura cero o blanco de más en la clave, y lo medido (R-044 §7) es allow por ausencia (`Hallazgos  abiertos:`, ZWSP/NBSP, `HALLAZGOS ABIERTOS:`, `SENSIBLE A  SEGURIDAD: sí` con `Rigor: ligero`, que tumba el suelo de rigor); además cita § R-024 (SEC-078/079), que no existe en el registro de `main`. Por la cláusula de SEC-047, vuelve a la mesa subido a `contrato`. Opciones: acotar la celda por propiedad (documental) o reconocer claves con blancos/mayúsculas (mecanismo, REQ propio).
+- **Recomendación de la coordinadora:** (1) publicar con la promesa acotada y B en 1.35.1 o cuando se toque `lib.sh`; (2) decidir C **antes** de publicar: o se declara en el CHANGELOG de la versión como limitación conocida sin fecha, o se abre el REQ de la puerta posterior antes del tag; (3) acotar la celda de §13 por propiedad ahora (documental, una sede y su plantilla) y abrir REQ para el mecanismo después.
+- **Espera:** decisión del propietario sobre los tres. **Trabajo que sigue mientras tanto:** ninguno.
+
 ## Resueltas
 
 ### RESUELTA (propietario, 2026-09-27) — **REQ-031, decisión P-1: opción B** (tras el paréntesis de un hallazgo sólo el separador de la gramática o el fin del campo; texto adicional deniega); versionar REQ-007 CA-41 y REQ-717 pasa a deny

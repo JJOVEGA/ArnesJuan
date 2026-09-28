@@ -8693,3 +8693,100 @@ Regresiones a vigilar (no exhaustivo):
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.**
 
 **Numeración vigente tras esta adenda:** última revisión **R-044** (adenda **`R-044-A`**); último hallazgo **SEC-114**; próximos libres **R-045** y **SEC-115**, comprobados sobre todas las ramas y worktrees vivos.
+
+---
+
+## Adenda a R-044 (**`R-044-B`**) — **REQ-031, revisión documental** del write-back de SEC-114 (remedio A). `feat/req-031-hallazgos-y-paralelo` @ `9cc4c67` — 2026-09-27
+
+**Numeración.** `R-044-B` no está usado; no abro hallazgo nuevo. Próximos libres sin cambio: **R-045** y **SEC-115**.
+
+**Versión base y alcance.**
+- Revisión anterior: `R-044-A` sobre `73db128`, con código de `849c940`, consolidada en `dd2a30f`.
+- Cabeza: `9cc4c672136c22b6a86e2dce9faa84cb92ffd005`, árbol limpio.
+- `git diff --stat 849c940..9cc4c67 -- hooks tests tools` = sólo `hooks/guard-completado.sh`, 6+/3−, **todas las líneas son comentario** (`:54-60`); `bash -n` PASS. El código funcional sigue siendo el de `849c940`.
+- `5ff9362..9cc4c67` = sólo `CHANGELOG.md`, `docs/qa/REQ-031.md` y la línea `QA:` de `REQ-031.md`. QA verificó el write-back documental sobre `5ff9362`.
+- Diff leído: `git diff dd2a30f..9cc4c67 -- requirements docs/decisions AGENTS.md templates README.md hooks/guard-completado.sh`.
+- **Orden de fases respetado.** No miré gates ni banco.
+- Sonda de humo contra la cabeza (método de R-044): coma con `contrato` → deny; un `instrumento` → allow; 16 422 bytes → deny «mide 16422 bytes»; clave repetida → deny.
+
+### 1. SEC-114 → **`mitigado`** (defecto de promesa; remedio A, documental)
+
+**Barrido por propiedad** de toda sede que prometa que por encima del techo se deniega («16 384», «por encima de su techo», «techo de tamaño», «no alcanzaría a juzgar»). Recorrí todo el árbol, código incluido, sin contar el registro, `docs/qa/` ni el CHANGELOG. Resultado, sede por sede:
+
+- **CA-A13:**
+  - El título pasa a «deniega si el hook alcanza a medirlo».
+  - El Entonces lleva la condición «siempre que el hook alcance a medirlo dentro del límite del cliente (60 s)».
+  - Hay una frontera **dentro del criterio** que nombra `arnes_norm_campo`, la franja de ≈ 240 KB, las cifras medidas y el residuo.
+  - La tabla gana la fila «del orden de 240 KB o más → sin promesa». La fila de 60 006 bytes («deny por tamaño, antes de que el cliente mate el hook») es verdad medida. **Conforme.**
+- **Nota de CA-A09:** limita lo no cuadrático al bloque de la puerta y remite la normalización a la frontera de CA-A13. **Conforme.** CA-A14 habla del recorrido «durante el análisis», que es verdad.
+- **Correspondencia:** la fila de SEC-113 (a) lleva «siempre que el hook alcance a medirlo». **Conforme.**
+- **README § «Clases de hallazgo»:** el párrafo «Techo de tamaño» sigue, en el mismo párrafo, con la condición, el mecanismo, las cifras, el residuo y quién decide el remedio B. Es **idéntico** en la plantilla (`diff` de las dos secciones: vacío). **Conforme.**
+- **Celda de `AGENTS.md` §13:** lleva la condición y la franja de ≈ 240 KB, y es **idéntica** a la de `templates/AGENTS.md.tpl`. **Conforme.**
+- **ADR-013, Consecuencias:** la viñeta condiciona la promesa, cita el texto anterior y lleva la precisión fechada (R-044-A / SEC-114). **Conforme.**
+- **Índice de `requirements/README.md`:** la fila de REQ-031 dice «deniega si el hook alcanza a medirlo en 60 s; hacia 240 KB o más muere sin decidir». **Conforme.**
+- **Comentario de `hooks/guard-completado.sh:54-60`:** condicionado igual. El mensaje de `arnes_deny` sólo se imprime si el hook midió («mide N bytes… el techo es…»), así que no promete nada que no haya ocurrido. **Conforme.**
+- **Menciones sin promesa:** los nombres y comentarios del banco (sección 08, `run.sh:1552`) sólo nombran el techo; sus casos (16 384, 16 385 y 60 006 bytes) son verdad medida. `docs/PENDIENTES.md` es la sede del residuo.
+
+**Ninguna sede vigente promete el techo sin la condición ni sin nombrar el residuo.** La afirmación falsa ya no está escrita, así que SEC-114 queda `mitigado` y sale de `Hallazgos abiertos:`. El mecanismo no cambió, y no tenía que cambiar: el defecto era de la promesa. Lo que el mecanismo no alcanza sigue en SEC-113.
+
+### 2. SEC-113 — **sin cambio: `en-mitigación`, `instrumento`**
+
+El residuo sigue en `docs/PENDIENTES.md` («La normalización de campos es cuadrática…»):
+- dueño `desarrollador` + `analista-requerimientos`;
+- forzador: la próxima comisión que toque `arnes_norm_campo` o los presupuestos;
+- vencimiento: la decisión de publicación de 1.35.0, junto con SEC-113.
+
+Todo correcto y sin cambio desde R-044-A.
+
+**Remedio B** (medir el techo antes de normalizar): lo nombran CA-A13, el README, su plantilla y ADR-013 como decisión del propietario. Su **coste** —toca `hooks/lib.sh` y el banco, y es la última vuelta dev↔QA— y su **incógnita** —no está medido si dejaría cuadrática otra parte, la lectura de la línea— están en R-044-A §3 (SEC-114). **Observación, sin hallazgo:** hoy B no figura como pregunta en `PENDING_APPROVAL.md` ni en la entrada de `PENDIENTES.md`, que además conserva «≈ 240 KB, por extrapolación sin medir» cuando R-044-A ya lo midió (255 371 bytes → 67,0 s). Lo de `PENDIENTES.md` es desactualización y no falsedad. La coordinadora tiene que presentar B al propietario en la decisión de publicación con ese coste y esa incógnita.
+
+### 3. Lo que sigue remitido, sin resolver
+
+**R-044 §7** (la celda de §13 sobre líneas que no se pueden medir frente a SEC-047, y la cita a § R-024, que no está en el registro de `main`) sigue remitido al propietario en «Preguntas abiertas» de REQ-031 (`:494`). No lo resuelvo.
+
+**QA-031-01** es de QA y sigue en `instrumento`.
+
+### 4. Repositorio público — **sin hallazgo**
+
+Las apariciones nuevas de «cliente» se refieren a Claude Code.
+
+### 5. Veredicto
+
+**`Seguridad: aprobado (R-044-B, 2026-09-27, sobre 9cc4c67 = código funcional de 849c940)`.**
+
+No queda abierto ningún hallazgo mío `contrato` ni `usuario/dinero`: SEC-112 y SEC-114 están `mitigado`, y SEC-113 es `instrumento`. Los controles que exigían los hallazgos existen como criterios —CA-A11.4, CA-A12, CA-A13 con su frontera y CA-A14— y el código los implementa (medido en R-044-A).
+
+**Lo que acredita:** la revisión de seguridad de la puerta (bloque «Clase del hallazgo», `ARNES_HALL_CRUDO`, `ARNES_HALL_N`) sobre `849c940` y de su promesa, enunciada por propiedad, en todas sus sedes.
+
+**Lo que NO acredita:**
+- quality gates, banco ni CI;
+- Windows/MSYS;
+- el comportamiento con valores de ≈ 240 KB o más, donde el hook muere sin decidir (SEC-113);
+- las claves que el lector no reconoce (QA-031-01, SEC-047).
+
+### 6. Estado de hallazgos de esta línea tras `R-044-B`
+
+| Hallazgo | Clase | Estado | Dueño | Bloquea |
+|---|---|---|---|---|
+| `SEC-112` | `contrato` | `mitigado` (R-044-A) | — | No |
+| `SEC-113` | `instrumento` | `en-mitigación` (residuo en `docs/PENDIENTES.md`) | `desarrollador` | No |
+| `SEC-114` | `contrato` | **`mitigado`** (remedio A, `5ff9362`) | — | No (sale de `Hallazgos abiertos:`) |
+| `QA-031-01` | `instrumento` | de QA | `desarrollador` | No |
+
+**Estado de seguridad aprobado de REQ-031** (línea base de no-regresión, suma de R-044, R-044-A y esta adenda):
+- gramática cerrada, validada entera antes de juzgar clases;
+- la clave repetida deniega, con el contador en la misma rama que asigna el valor;
+- techo de 16 384 bytes sobre el crudo, en bytes, **condicionado** en toda sede a que el hook alcance a medirlo;
+- acceso por trozos con `LC_ALL` local;
+- 0 procesos en el bloque;
+- la regla sólo en la transición a `completado`.
+
+Regresiones a vigilar (no exhaustivo):
+- una sede nueva o reescrita que prometa el techo sin la condición;
+- un contador de repetición en otra rama;
+- un `export LC_ALL`;
+- un `$(…)` en el bucle.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.**
+
+**Numeración vigente tras esta adenda:** última revisión **R-044** (adendas `R-044-A`, **`R-044-B`**); último hallazgo **SEC-114**; próximos libres **R-045** y **SEC-115**.
