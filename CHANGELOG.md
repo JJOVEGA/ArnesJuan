@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-28 · REQ-031: revisión acotada de procedencia por QA (sobre `fa9d561`): sólo una cita comparativa dependía de la otra rama; corregida; ningún `QA: aprobado` cambia
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Sonnet 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
+
+QA verificó la procedencia citada por el analista (`origin/rel/registro-1.33.0:AGENTS.md:356`, commits `1154417` y `ef82d43`) y que ninguna sede vigente de `main` presenta la celda ancha de §13, R-024 o SEC-078/079 como propia, ni el hueco C o SEC-115 como prevenidos. Corrigió su propia entrada de QA-031-01 (SEC-047 con línea; SEC-078 sólo como antecedente de `rel`) y su bitácora; el campo sigue interpretable. Efecto sobre sus tres vueltas: gates, fail-before/pass-after, CA-A15 y CA-A17 se apoyaron en los archivos del worktree y en la puerta real, no en el `AGENTS.md` de la sesión; el veredicto no se re-emite ni cambia de alcance. Sin push hasta aquí.
+
 ## [Interno] — 2026-09-28 · REQ-031: comprobación de procedencia de instrucciones (autorizada por el propietario) — la sesión cargó el `AGENTS.md` de `rel/registro-1.33.0`; referencias a la celda de §13, R-024 y SEC-078/079 corregidas como antecedente de otra rama, no como sede de `main`
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (analista-requerimientos) / Fable 5.1 (coordinadora) · agente: analista-requerimientos, coordinadora.
 
