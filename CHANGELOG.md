@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-28 · REQ-031, vuelta 3 de 3 (desarrollador): SEC-113 remedio B — el techo de `Hallazgos abiertos:` se mide en el lector, antes de normalizar (CA-A15) → `en-revisión`
+> Origen: Interno (manual; lo comitea la coordinadora con los hooks activos) · usuario: Juan · modelo de IA: Opus 5.5 · agente: desarrollador.
+
+`hooks/lib.sh` (`arnes_campos_normaliza`) mide el valor crudo en bytes antes de `arnes_norm_campo` (cuadrático); por encima de 16 384 bytes (mismo umbral, ahora en `ARNES_HALL_TECHO_BYTES`) no lo normaliza, no lo recorta y publica `(no medido: N bytes, techo 16384)`, que ningún lector toma por ausencia; la puerta deniega con el mismo motivo de CA-A13. Hook entero por `Edit`, una corrida, WSL2: 255 371 bytes 70,7 s → 0,31 s; 60 006, 3,92 s → 0,21 s; 16 385, 0,41 s → 0,11 s; 16 384, 0,61 s → 0,71 s (allow). La reapertura con 255 KB, que tampoco decidía a tiempo, pasa a 0,42 s; la parada del bloque derivado, de 72,4 s a 0,11 s. Por debajo del techo, el lector es idéntico a `373563f` sobre los 29 REQ. Banco: `check_efecto` gana un tope operativo opcional y juzga por separado duración, decisión y archivo; +2 casos (255 371 y reapertura), 978 → 980; fail-before contra `373563f` 105/2 (los dos nuevos, por tiempo a los 30 s), pass-after 107/0, banco completo 968 PASS, 0 FAIL, 12 SKIP (0 INCONCLUSO), `real 2m24s`. Otra parte más que lineal, registrada en `docs/PENDIENTES.md` y no ampliada: por `Write`, `arnes_sin_cr_transporte` (1 MB → 28 s de hook; 2 MB → 84 s). Promesa por propiedad hasta lo medido (255 371 bytes) en README y plantilla, ADR-013, §13 y plantilla, y comentario del hook; PENDIENTES sustituye la extrapolación por la medida. No comprobado: cómo trata el cliente un hook sin decisión. Detalle: Historial de `requirements/REQ-031.md`.
+
 ## [Interno] — 2026-09-27 · REQ-031: R-044-B → `Seguridad: aprobado` sobre `9cc4c67` (código `849c940`); SEC-112 y SEC-114 `mitigados`, SEC-113 `en-mitigación`; decisión de publicación registrada en la cola
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (auditor-seguridad) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, coordinadora.
 

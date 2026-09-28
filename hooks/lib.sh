@@ -1707,11 +1707,32 @@ arnes_norm_clave() {   # <linea> -> 0 + ARNES_CLAVE/ARNES_VALOR; 1 si la linea n
   [ "$ARNES_CLAVE" = "$crudo" ] || ARNES_CLAVE_DECORADA=1
 }
 
+# TECHO DE `Hallazgos abiertos:` (REQ-031 CA-A13/CA-A15, SEC-113): 16 384 BYTES del valor crudo.
+# Numero de CONTRATO, anunciado en requirements/README.md § «Clases de hallazgo»; se sube con la
+# medicion, nunca se baja (mayor valor real medido al fijarlo: 6 672 bytes). Vive AQUI porque se
+# comprueba AQUI, antes de normalizar, y la puerta lo lee de este mismo nombre: un solo numero.
+ARNES_HALL_TECHO_BYTES=16384
+
+# Longitud en BYTES de una cadena, sin procesos: `${#v}` cuenta caracteres en un locale UTF-8.
+# El `local` devuelve el locale al salir, asi que nada de lo que sigue cambia de lectura.
+_arnes_bytes() { local LC_ALL=C; ARNES_BYTES=${#1}; }
+
 arnes_campos_normaliza() {   # <qa> <seg> <sens> <hall> <rigor> -> ARNES_QA/SEG/SENS/HALL/RIGOR
   arnes_norm_campo "$1"; arnes_veredicto "$ARNES_CAMPO"; ARNES_QA="$ARNES_VEREDICTO"
   arnes_norm_campo "$2"; arnes_veredicto "$ARNES_CAMPO"; ARNES_SEG="$ARNES_VEREDICTO"
   arnes_norm_campo "$3"; ARNES_SENS="$ARNES_CAMPO"
-  arnes_norm_campo "$4"; ARNES_HALL="$ARNES_CAMPO"
+  # EL TECHO SE MIDE ANTES DE NORMALIZAR (CA-A15). `arnes_norm_campo` es cuadratico en la longitud
+  # del valor (`${v// /}` en UTF-8): medido, 255 371 bytes -> 67,0 s, y el cliente mata el hook a
+  # los 60 s sin decision. Por encima del techo el valor NO se normaliza, NO se recorta y NO queda
+  # vacio: ARNES_HALL lleva un marcador que no es ninguna ausencia legitima ni ninguna lista, para
+  # que ningun lector —la puerta, el bloque derivado— lo lea como «sin hallazgos». La puerta
+  # deniega por tamaño antes de mirarlo (guard-completado, CA-A13). Por debajo, lo de siempre.
+  _arnes_bytes "$4"; ARNES_HALL_BYTES=$ARNES_BYTES
+  if [ "$ARNES_HALL_BYTES" -gt "$ARNES_HALL_TECHO_BYTES" ]; then
+    ARNES_HALL="(no medido: $ARNES_HALL_BYTES bytes, techo $ARNES_HALL_TECHO_BYTES)"
+  else
+    arnes_norm_campo "$4"; ARNES_HALL="$ARNES_CAMPO"
+  fi
   arnes_norm_campo "$5"
   # Los niveles simples ya quedaron normalizados arriba; sólo la evidencia
   # parentética necesita el veredicto común. Así el camino habitual no paga

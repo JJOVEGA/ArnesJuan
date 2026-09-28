@@ -2,7 +2,7 @@
 # Se ejecuta con `source` desde el corredor (`../run.sh`), en su propio subshell y con
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
-CASOS_ESPERADOS_SECCION=65
+CASOS_ESPERADOS_SECCION=67
 PISO_AUTONOMO_SECCION=23  # 8 preámbulo + 0 maquinaria compartida duplicada + 15 bloque indivisible mayor · REQ-014 CA-18
 
   seccion_nueva "Clase del hallazgo:"
@@ -233,18 +233,30 @@ v31() {
   while [ $(( ${#v} + 1 )) -lt "$objetivo" ]; do v+=x; done
   V31="$v)"
 }
+# TOPE31: tope OPERATIVO de las tres comprobaciones (CA-A15.4): la mitad de los 60 s del cliente, para
+# que un hook que no decide se note sin esperarlo entero. No es un reloj contratado.
+TOPE31=30
 v31 16384; r31 857 en-revisión "$V31"
 check_efecto "REQ-031 CA-A13 exactamente 16 384 bytes, todo instrumento -> allow" allow "$R31/REQ-857.md" \
-  "$(emite_edit_real "$R31/REQ-857.md" 'en-revisión' 'completado')" completado
+  "$(emite_edit_real "$R31/REQ-857.md" 'en-revisión' 'completado')" completado '' "$TOPE31"
 v31 16384 'SEC-X (contrato)'; r31 858 en-revisión "$V31"
 check_efecto "REQ-031 CA-A13 exactamente 16 384 bytes con un contrato -> deny por la clase" deny "$R31/REQ-858.md" \
-  "$(emite_edit_real "$R31/REQ-858.md" 'en-revisión' 'completado')" en-revisión "'sec-x' es de clase 'contrato'"
+  "$(emite_edit_real "$R31/REQ-858.md" 'en-revisión' 'completado')" en-revisión "'sec-x' es de clase 'contrato'" "$TOPE31"
 v31 16385; r31 859 en-revisión "$V31"
 check_efecto "REQ-031 CA-A13 16 385 bytes, todo instrumento -> deny por tamaño" deny "$R31/REQ-859.md" \
-  "$(emite_edit_real "$R31/REQ-859.md" 'en-revisión' 'completado')" en-revisión "mide 16385 bytes.*techo es 16384 bytes.*no puede medir no deja pasar"
+  "$(emite_edit_real "$R31/REQ-859.md" 'en-revisión' 'completado')" en-revisión "mide 16385 bytes.*techo es 16384 bytes.*no puede medir no deja pasar" "$TOPE31"
 v31 60006 'SEC-X (contrato)'; r31 860 en-revisión "$V31"
 check_efecto "REQ-031 CA-A13 60 006 bytes con un contrato delante (el caso de R-044) -> deny por tamaño" deny "$R31/REQ-860.md" \
-  "$(emite_edit_real "$R31/REQ-860.md" 'en-revisión' 'completado')" en-revisión "mide 60006 bytes.*techo es 16384 bytes"
+  "$(emite_edit_real "$R31/REQ-860.md" 'en-revisión' 'completado')" en-revisión "mide 60006 bytes.*techo es 16384 bytes" "$TOPE31"
+# Vuelta 3 · CA-A15 (SEC-113, remedio B): el techo se mide ANTES de normalizar, en el lector. El caso de
+# 255 371 bytes es el de R-044-A (67,0 s sin decision en 373563f): contra el lector anterior, el tope
+# operativo de este caso lo corta y sale FAIL (a) en ${TOPE31}s, sin esperar los 67 s.
+v31 255371 'SEC-X (contrato)'; r31 861 en-revisión "$V31"
+check_efecto "REQ-031 CA-A15 255 371 bytes con un contrato delante (R-044-A: 67 s sin decision) -> deny por tamaño a tiempo" deny "$R31/REQ-861.md" \
+  "$(emite_edit_real "$R31/REQ-861.md" 'en-revisión' 'completado')" en-revisión "mide 255371 bytes.*techo es 16384 bytes" "$TOPE31"
+r31 862 completado "$V31"
+check_efecto "REQ-031 CA-A15 reabrir con 255 371 bytes (sobre el techo) -> allow" allow "$R31/REQ-862.md" \
+  "$(emite_edit_real "$R31/REQ-862.md" 'Estado: completado' 'Estado: en-progreso')" en-progreso '' "$TOPE31"
 
 # --- Cierre de un REQ por Bash: se DERIVA a Edit/Write -------------------------
 # Era la limitacion conocida de la version anterior: `guard-completado` no miraba

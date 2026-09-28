@@ -41,13 +41,70 @@
 - **Contexto:** REQ-031 (gramática cerrada de `Hallazgos abiertos:` + preparación del paralelismo) tiene `QA: aprobado` y `Seguridad: aprobado (R-044-B)` sobre `9cc4c67`; PR en borrador y CI pendientes de esta misma sesión. Quedan tres decisiones que el propietario reservó para la publicación.
 - **Acción que impide (regla 2):** ninguna de REQ-031 hoy (sus hallazgos abiertos son `instrumento`); impide **publicar 1.35.0** hasta decidir. Mientras esta entrada esté aquí, ningún REQ puede marcarse `completado` (mecanismo de la cola; deliberado).
 - **Asuntos:**
-  1. **SEC-113 / SEC-114, remedio B:** medir el techo de `Hallazgos abiertos:` **antes** de normalizar (`hooks/lib.sh`), para que un valor de ~240 KB o más deniegue en vez de matar el hook (hoy: 255 371 bytes → 67 s, sin decisión; realismo bajo; residuo en `docs/PENDIENTES.md`). Coste: toca `lib.sh` y el banco y consume la **última vuelta** dev↔QA de REQ-031; incógnita: si otra parte (la lectura de la línea) seguiría cuadrática. Alternativa: publicar con la promesa acotada (ya escrita) y el residuo declarado.
+  1. **SEC-113 / SEC-114, remedio B — DECIDIDO el 2026-09-28 (autorizado en la vuelta 3; ver Resueltas):** medir el techo de `Hallazgos abiertos:` **antes** de normalizar (`hooks/lib.sh`), para que un valor de ~240 KB o más deniegue en vez de matar el hook (hoy: 255 371 bytes → 67 s, sin decisión; realismo bajo; residuo en `docs/PENDIENTES.md`). Coste: toca `lib.sh` y el banco y consume la **última vuelta** dev↔QA de REQ-031; incógnita: si otra parte (la lectura de la línea) seguiría cuadrática. Alternativa: publicar con la promesa acotada (ya escrita) y el residuo declarado.
   2. **Hueco C (escrituras por intérprete):** `python3 -c`, `node -e`, `bash script.sh` escriben en `codigo_app.globs` sin que `guard-codigo` lo vea (medido el 2026-09-27); sin `PostToolUse` no hay detección posterior. Acciones fuera del control: cualquier escritura por intérprete o script desde la coordinadora u otro agente. Mitigación disponible: la «puerta posterior» (`PostToolUse`/`Stop` que compare hashes de `codigo_app.globs` con el agente activo), no implementada por instrucción. Protección que sigue dependiendo de los agentes: la regla de `AGENTS.md` §5 y §13. **No aceptado como aplazado**: decisión del propietario.
   3. **Celda de `AGENTS.md` §13 frente a SEC-047:** promete denegar con BOM, espacio de anchura cero o blanco de más en la clave, y lo medido (R-044 §7) es allow por ausencia (`Hallazgos  abiertos:`, ZWSP/NBSP, `HALLAZGOS ABIERTOS:`, `SENSIBLE A  SEGURIDAD: sí` con `Rigor: ligero`, que tumba el suelo de rigor); además cita § R-024 (SEC-078/079), que no existe en el registro de `main`. Por la cláusula de SEC-047, vuelve a la mesa subido a `contrato`. Opciones: acotar la celda por propiedad (documental) o reconocer claves con blancos/mayúsculas (mecanismo, REQ propio).
 - **Recomendación de la coordinadora:** (1) publicar con la promesa acotada y B en 1.35.1 o cuando se toque `lib.sh`; (2) decidir C **antes** de publicar: o se declara en el CHANGELOG de la versión como limitación conocida sin fecha, o se abre el REQ de la puerta posterior antes del tag; (3) acotar la celda de §13 por propiedad ahora (documental, una sede y su plantilla) y abrir REQ para el mecanismo después.
 - **Espera:** decisión del propietario sobre los tres. **Trabajo que sigue mientras tanto:** ninguno.
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-09-28) — **REQ-031, vuelta 3 de 3: reparación agrupada** — SEC-113 remedio B (límite antes de normalizar, en `lib.sh`), celda de §13 / R-024 (SEC-047) y registro de evidencia (cuadre 920 → 978; PENDIENTES)
+
+**Texto del propietario, literal e íntegro:**
+
+> Autorizo usar la vuelta 3 de 3 de REQ-031 para una reparación agrupada y acotada. Trabaja sobre la rama del PR #58, partiendo de `373563f42605d1840d76d629c127110bd6e28e4b`, verificando primero su estado y preservando cambios ajenos.
+>
+> Objetivo: resolver SEC-113 y corregir las afirmaciones documentales señaladas, conservando la reparación A y el recorrido D. No ampliar esta entrega a una revisión general del arnés.
+>
+> **1. SEC-113: comprobar el tamaño antes de normalizar**
+>
+> Autorizo el remedio B, incluido el cambio necesario en `lib.sh`: aplicar el límite antes de la operación costosa, sin alterar el umbral autorizado ni truncar contenido para hacerlo pasar.
+>
+> Mantén las entradas legítimas dentro del límite y la reapertura de REQ. Verifica las fronteras del límite, la entrada de 255 371 bytes ya medida y los caminos del parser afectados.
+>
+> Comprueba por separado:
+> - La respuesta y duración del hook.
+> - La decisión que recibe el entorno.
+> - Si el archivo protegido queda modificado.
+>
+> Si puedes reproducir de forma aislada cómo trata el entorno la terminación del hook sin decisión, hazlo con presupuesto acotado. Si no puedes, declara esa parte no comprobada: un código de salida por sí solo no demuestra que la escritura quedó bloqueada.
+>
+> Reutiliza las pruebas anteriores de A y D; amplía únicamente lo necesario por el cambio compartido en `lib.sh`.
+>
+> **2. SEC-047: coherencia documental y exposición**
+>
+> Autorizo corregir la celda de §13 que promete una cobertura que no existe y retirar o sustituir la referencia a R-024 tras comprobar su procedencia. Actualiza las sedes espejo aplicables sin duplicar la explicación.
+>
+> Conserva SEC-047 y QA-031-01 abiertos si el mecanismo sigue permitiendo el caso. No presentes la corrección documental como reparación del control ni como aceptación mía del riesgo.
+>
+> Haz un inventario de sólo lectura de las cabeceras actuales del propio arnés para comprobar si hay claves que el lector ignora y que puedan reducir el rigor o evitar una comprobación. Distingue ausencia de exposición actual de ausencia del defecto.
+>
+> No modifiques consumidores, no normalices cabeceras automáticamente y no implementes ahora una nueva política de reconocimiento de claves.
+>
+> **3. Corregir el registro de evidencia**
+>
+> Aclara el cuadre del banco contra la base real `a7a60c2`: el reporte anterior indicó 912 → 978, pero REQ-030 había dejado 920 casos. Identifica añadidos y retirados y corrige el resumen según el diff; no ajustes el recuento esperado para ocultar una discrepancia.
+>
+> Actualiza la referencia de `docs/PENDIENTES.md` que todavía presenta como extrapolación el caso ya medido de 255 371 bytes. Conserva la procedencia y el resultado histórico.
+>
+> **4. Validación y entrega**
+>
+> Agrupa estas reparaciones en la última vuelta disponible, con write-back del analista donde corresponda, QA sobre el delta y sus efectos, y seguridad después de QA favorable. No reinicies contadores ni abras otra vuelta automáticamente.
+>
+> Autorizo commits, push sin force y actualización del PR #58 en borrador. Ejecuta el CI requerido sobre la cabeza final; conserva todas las corridas y no relances buscando verde. Comprueba qué contenido cubren las firmas y qué cambios posteriores son sólo registros.
+>
+> Si se agota la vuelta con un bloqueo, entrega el impedimento exacto y el delta pendiente; no apruebes por agotamiento.
+>
+> **5. Límites**
+>
+> El hueco C de escrituras por intérpretes sigue separado y no aceptado como aplazado. No implementes la puerta posterior en este encargo. Presenta su decisión pendiente antes de publicar, sin convertir su documentación en una aceptación.
+>
+> Sin cambios de modelos, sondas de coste, umbrales, workflow, ruleset, rotación ni consumidores. Sin fusionar #58, #57 o #54, cerrar REQ-031, crear tags ni publicar versiones.
+>
+> Entrega un único resumen breve: antes/después de SEC-113, exposición encontrada de SEC-047, cuadre del banco, firmas, SHA, CI y decisiones concretas que falten para publicar. No añadas otro programa de mejoras.
+
+**Lo que la coordinadora añade, rotulado como suyo:** el asunto 1 de la entrada pendiente «Decisión de publicación de 1.35.0» (remedio B) queda decidido por esta autorización; los asuntos 2 (hueco C) y 3 (§13/SEC-047 en lo que exceda la corrección documental autorizada) siguen pendientes. Corrección del registro: el cuadre real es **920 → 978** (+58 casos, todos en la sección 08: 7 → 65; la sección 32 conserva 40 y cambia la expectativa de REQ-717); el «912 → 978» del informe anterior era un error de la coordinadora (912 era el cuadre anterior a REQ-030). Cabeza de partida verificada: `373563f`, árbol limpio, remoto idéntico.
 
 ### RESUELTA (propietario, 2026-09-27) — **REQ-031, decisión P-1: opción B** (tras el paréntesis de un hallazgo sólo el separador de la gramática o el fin del campo; texto adicional deniega); versionar REQ-007 CA-41 y REQ-717 pasa a deny
 

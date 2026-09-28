@@ -166,16 +166,17 @@ lo que va dentro de un comentario HTML de la cabecera y una línea igual debajo 
 blanco que los sigue, contado en **bytes** y antes de normalizar— mide **más de 16 384 bytes**, la
 puerta deniega el cierre sin interpretarlo y dice el tamaño medido: una puerta que no puede medir no
 deja pasar. Con 16 384 bytes o menos decide la clase, como arriba. La evidencia larga va al registro
-del hallazgo y en el paréntesis queda la referencia. **Esa denegación vale siempre que el hook alcance
-a medir el valor dentro del límite del cliente (60 s)**, y no siempre lo alcanza: la normalización de
-los campos de la cabecera (`arnes_norm_campo`, código anterior a este techo y cuadrático en la
-longitud) corre **antes** que el techo, así que con un valor del orden de **240 KB o más** el hook muere
-sin decidir, y **un hook muerto no deniega**. Cifras **medidas** en Linux/WSL2, una corrida por punto y
-no exhaustivas: 60 006 bytes → deniega por tamaño en 3,85 s; 255 371 bytes → 67,0 s, sin denegación en
-el cliente; en Windows/MSYS no está medido y el umbral será menor. Es un residuo `instrumento` del
-arnés, con dueño y vencimiento en el `docs/PENDIENTES.md` del repositorio del arnés («La normalización
-de campos es cuadrática…»); medir el techo antes de normalizar es la corrección por mecanismo, y
-decidirla es del propietario del arnés.
+del hallazgo y en el paréntesis queda la referencia. **El techo se mide en el lector, antes de
+normalizar el valor**: por encima, el valor no se normaliza, no se recorta y ningún lector lo toma por
+«sin hallazgos» (el bloque derivado de `docs/ESTADO.md` lo muestra como `(no medido: N bytes, techo
+16384)`). **Esa denegación se promete hasta lo medido, y no más allá**, porque el hook tiene que
+decidir dentro del límite del cliente (60 s) y un hook muerto no deniega. Medido en Linux/WSL2, una
+corrida por punto, hook entero, lista no exhaustiva: 60 006 bytes → deniega por tamaño en 0,21 s;
+255 371 bytes → 0,31 s por `Edit` y `MultiEdit` y 1,6 s por `Write`. Por encima de 255 371 bytes **no
+hay promesa**: por `Edit` sigue siendo lineal (2 000 000 bytes → 2,1 s), pero por `Write` el contenido
+entrante pasa antes por otra operación del hook que crece más que linealmente (1 000 000 bytes →
+28 s; 2 000 000 → 84 s, por encima de los 60 s del cliente). En Windows/MSYS no está medido y será más lento.
+Ese residuo tiene dueño y vencimiento en el `docs/PENDIENTES.md` del repositorio del arnés.
 
 | Clase | Qué es | Efecto en el cierre |
 |---|---|---|
@@ -610,4 +611,4 @@ definición del `analista-requerimientos`: esa ausencia no invalida sus aprobaci
 | [REQ-028](REQ-028.md) | Las capacidades que REQ-025 difiere (**entregas 2+**): `tools/arnes-comprobar.sh` con par discriminante y denominador, su sección del banco, la **procedencia y la atribución** de la cifra que llega al `CHANGELOG.md`, las **columnas de instantes** del libro de comisiones y los umbrales de coste. Nace de la **partición de REQ-025** (2026-09-21) conservando los identificadores CA-03…CA-08, CA-12 y las mitades de CA-10, CA-11 y CA-13. `borrador` con **cuatro decisiones del propietario abiertas** (B-1…B-4) y **sin ventana asignada** | `borrador` | critico | pendiente | pendiente |
 | [REQ-029](REQ-029.md) | Fidelidad al encargo: detectar omisiones, sustituciones y decisiones de negocio no autorizadas antes de implementar — fuente identificable del pedido, «Correspondencia con el encargo» en la plantilla, comprobación de resolución antes de despachar, **un solo veredicto de QA**, sin bloqueo retroactivo, y la partición que no concede autoridad sobre el alcance. **Ventana 1.35.0**; decisión del propietario del 2026-09-23 sobre la propuesta `d4e7a4f`; integrado en `main` por el PR #53 (`11c5df2`) y cerrado administrativamente el 2026-09-27 sin acreditar conducta ni ahorro | `completado` | critico | aprobado | aprobado |
 | [REQ-030](REQ-030.md) | Las sondas de coste CA-03 y CA-08 (ii) de REQ-017 deciden sobre un **presupuesto fijo de 5 repeticiones** y dicen **INCONCLUSO** (rendimiento no acreditado, contado en el resumen) cuando no resuelven: los techos no se mueven. Versiona REQ-017 por **ADR-012**; autorizado por el propietario el 2026-09-26. **Ventana 1.35.0**; vuelta 4 y dos intervenciones documentales por excepción expresa del propietario (2026-09-26); integrado en `main` por el PR #55 (`c4d92c0`) y cerrado administrativamente el 2026-09-27 con QA-030-03, QA-030-05 y SEC-111 (`instrumento`) abiertos, sin acreditar rendimiento | `completado` | critico | aprobado (re-verificación documental, 0f7e668) | aprobado (R-043-B, 192d7b6) |
-| [REQ-031](REQ-031.md) | Ningún hallazgo bloqueante se ignora por su posición ni por su separador: sintaxis **cerrada** de `Hallazgos abiertos:` en `guard-completado` (A), y el mapa `Archivos:` comprobado desde la Definition of Ready antes de pedir paralelismo (D). **Ventana 1.35.0**; pedido del propietario del 2026-09-27. **P-1 resuelta (opción B)**: tras el paréntesis de un hallazgo sólo la coma o el fin del campo; versiona REQ-007 CA-41 por **ADR-013**. **Vuelta 2 de 3** abierta por el write-back de R-044: clave repetida deniega (SEC-112, CA-A12), techo de 16 384 bytes —deniega **si el hook alcanza a medirlo** en 60 s; hacia 240 KB o más muere sin decidir (SEC-114, remedio A)— y acceso de coste constante (SEC-113, CA-A13/A14) | `en-revisión` | critico | aprobado (vuelta 2, 849c940) | con-hallazgos (R-044-A) |
+| [REQ-031](REQ-031.md) | Ningún hallazgo bloqueante se ignora por su posición ni por su separador: sintaxis **cerrada** de `Hallazgos abiertos:` en `guard-completado` (A), y el mapa `Archivos:` comprobado desde la Definition of Ready antes de pedir paralelismo (D). **Ventana 1.35.0**; pedido del propietario del 2026-09-27. **P-1 resuelta (opción B)**: tras el paréntesis de un hallazgo sólo la coma o el fin del campo; versiona REQ-007 CA-41 por **ADR-013**. Vuelta 2: clave repetida deniega (SEC-112, CA-A12), techo de 16 384 bytes —deniega **si el hook alcanza a medirlo** en 60 s (SEC-114, remedio A)— y acceso de coste constante (CA-A13/A14). **Vuelta 3 de 3 (última)**, autorizada por el propietario el 2026-09-28: el techo se mide **antes** de normalizar (SEC-113 remedio B, CA-A15), reproducción aislada de un hook sin decisión (CA-A16) e inventario de claves ignoradas (CA-A17); la celda de §13 / R-024 no existe en esta rama (Preguntas abiertas) | `en-revisión` | critico | aprobado (vuelta 2, 849c940) | aprobado (R-044-B) |

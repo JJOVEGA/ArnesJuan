@@ -362,18 +362,35 @@ ver_check() {
 # archivo en disco y la compara con la esperada: un deny tiene que dejarlo como estaba (la
 # puerta no escribe) y un allow tiene que dejar escrito el estado nuevo. Un caso que solo
 # mira la decision no dice que quedo en el disco, que es lo que la evidencia midio.
+#
+# [tope_s] (REQ-031 CA-A15.4): con el 7.º argumento, el caso juzga TRES COSAS POR SEPARADO y lo
+# dice por separado: (a) la respuesta y la DURACION del hook, medidas con `mide_hook` bajo
+# `timeout tope_s` —si no responde, FAIL (a): un hook muerto no decide, y el cliente lo trata
+# como si no hubiera hook—; (b) la decision que recibe el entorno (`permissionDecision`, o su
+# ausencia = allow); (c) si el archivo quedo modificado. El tope es OPERATIVO, no un reloj
+# contratado: esta por debajo de los 60 s del cliente para que el caso no espere a un hook
+# muerto, y la duracion medida se imprime para anotar el margen.
 check_efecto() {
-  local nombre="$1" esperado="$2" f="$3" json="$4" est_esp="$5" patron="${6:-}" out got motivo txt os ns k n est
+  local nombre="$1" esperado="$2" f="$3" json="$4" est_esp="$5" patron="${6:-}" tope="${7:-}" \
+        out got motivo txt os ns k n est dur=''
   if [ -n "$FILTRO" ] && ! printf '%s' "$nombre" | grep -qi -- "$FILTRO"; then return 0; fi
   json_no_vacio "$nombre" "$json" || { FAIL=$((FAIL+1)); return 0; }
-  out="$(corre guard-completado.sh "$json")"
+  if [ -n "$tope" ]; then
+    mide_hook guard-completado.sh "$json" "$tope"; out="$SALIDA_HOOK"
+    if [ "$CRONO_RC" -eq 124 ]; then
+      echo "  FAIL  $nombre  (a) duracion: el hook NO RESPONDIO en ${tope}s (timeout lo corto; un hook muerto no decide)"; diag; FAIL=$((FAIL+1)); return 0
+    fi
+    dur="(a) ${CRONO_MS}ms, tope operativo ${tope}s; "
+  else
+    out="$(corre guard-completado.sh "$json")"
+  fi
   if printf '%s' "$out" | grep -Eq '"permissionDecision": *"deny"'; then got=deny; else got=allow; fi
   motivo="$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecisionReason // empty' 2>/dev/null)"
   if [ "$got" != "$esperado" ]; then
-    echo "  FAIL  $nombre  esperado=$esperado got=$got  <${motivo:0:180}>"; diag; FAIL=$((FAIL+1)); return 0
+    echo "  FAIL  $nombre  ${dur}(b) decision: esperado=$esperado got=$got  <${motivo:0:180}>"; diag; FAIL=$((FAIL+1)); return 0
   fi
   if [ -n "$patron" ] && ! printf '%s' "$motivo" | grep -Eq -- "$patron"; then
-    echo "  FAIL  $nombre  el motivo no casa /$patron/  <${motivo:0:240}>"; FAIL=$((FAIL+1)); return 0
+    echo "  FAIL  $nombre  ${dur}(b) el motivo no casa /$patron/  <${motivo:0:240}>"; FAIL=$((FAIL+1)); return 0
   fi
   if [ "$got" = allow ]; then
     txt="$(<"$f")"
@@ -392,9 +409,13 @@ check_efecto() {
   fi
   est="$(grep -m1 '^Estado:' "$f")"
   if [ "$est" != "Estado: $est_esp" ]; then
-    echo "  FAIL  $nombre  ($got) efecto: el archivo dice <$est>, se esperaba <Estado: $est_esp>"; FAIL=$((FAIL+1)); return 0
+    echo "  FAIL  $nombre  ${dur}($got) (c) efecto: el archivo dice <$est>, se esperaba <Estado: $est_esp>"; FAIL=$((FAIL+1)); return 0
   fi
-  echo "  PASS  $nombre  ($got; $est)"; PASS=$((PASS+1))
+  if [ -n "$dur" ]; then
+    echo "  PASS  $nombre  ${dur}(b) $got; (c) $est"; PASS=$((PASS+1))
+  else
+    echo "  PASS  $nombre  ($got; $est)"; PASS=$((PASS+1))
+  fi
 }
 
 LEC="$HOOKS_DIR/../tools/arnes-lectura.sh"
@@ -1550,7 +1571,10 @@ done
 # `REQ-717` de la 32 cambia de `allow` a `deny` sin cambiar el número.
 # Y 967 → 978 por la vuelta 2 de REQ-031 (R-044): +11 en la sección 08 (54 → 65), la clave
 # `Hallazgos abiertos:` repetida (SEC-112, CA-A12) y el techo de 16 384 bytes (SEC-113, CA-A13).
-CASOS_ESPERADOS=978
+# Y 978 → 980 por la vuelta 3 de REQ-031 (SEC-113, remedio B): +2 en la sección 08 (65 → 67),
+# 255 371 bytes y la reapertura sobre el techo; los cuatro casos de CA-A13 ganan las tres
+# comprobaciones de CA-A15.4 sin cambiar el número.
+CASOS_ESPERADOS=980
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

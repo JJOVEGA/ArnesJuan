@@ -60,7 +60,13 @@ puerta lee el campo—, no por su tamaño.
   valor del orden de 240 KB o más el hook muere sin denegar (medido, una corrida, Linux/WSL2: 255 371
   bytes → 67,0 s; en Windows/MSYS no medido y menor): un hook muerto no deniega. Residuo `instrumento`
   con dueño y vencimiento en `docs/PENDIENTES.md`; medir el techo antes de normalizar es decisión del
-  propietario para la publicación.
+  propietario para la publicación. *(Precisión del 2026-09-28, vuelta 3, REQ-031 CA-A15: el propietario
+  autorizó ese remedio y el techo **se mide ya en el lector, antes de normalizar**; lo de arriba queda
+  como lo que se escribió entonces.)* La denegación por tamaño se promete **hasta lo medido**: 60 006
+  bytes → 0,21 s; 255 371 bytes → 0,31 s por `Edit`/`MultiEdit` y 1,6 s por `Write` (Linux/WSL2, una
+  corrida por punto). Por encima de 255 371 bytes no hay promesa: por `Write`, otra operación anterior
+  del hook sobre el contenido entrante crece más que linealmente (1 000 000 bytes → 28 s; 2 000 000 →
+  84 s), residuo en `docs/PENDIENTES.md`.
 - (−) Una forma antes aceptada (`(clase) — nota`) pasa a denegar. Mitigación: el motivo enseña la forma
   equivalente; QA inventaría las cabeceras de `requirements/REQ-*.md` del arnés e informa los usos sin
   reescribirlos (REQ-031 CA-A04); un REQ `completado` no se reabre por esto.

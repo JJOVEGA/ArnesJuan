@@ -40,7 +40,7 @@ arnes_clase_hallazgo() {
   # principio, asi que leer un valor largo era CUADRATICO (60 006 bytes: 81 s, y el cliente
   # mata el hook a los 60 s — un hook muerto no deniega). `local` devuelve el locale al salir.
   local LC_ALL=C
-  local techo=16384 hall crudo_h n_hall n_crudo est prof e_ini idh id_malo clase err err_ini \
+  local techo="$ARNES_HALL_TECHO_BYTES" hall crudo_h n_hall n_crudo est prof e_ini idh id_malo clase err err_ini \
         sin_clase clase_mala clase_mala_v bloq bloq_v ci cj c p t0 trozo id_crudo visto blanco \
         pend noasc id_txt frag_h elem_h
 
@@ -53,11 +53,14 @@ arnes_clase_hallazgo() {
 
   # CA-A13 (SEC-113): techo de tamaño, medido en BYTES sobre el valor tal como se escribio
   # (tras los dos puntos, antes de normalizar). Por encima no se interpreta y deniega SI EL HOOK
-  # ALCANZA A MEDIRLO dentro del limite del cliente (60 s): `arnes_norm_campo` corre ANTES de
-  # este techo y es cuadratico, y con valores del orden de 240 KB o mas el hook muere sin
-  # decidir, y un hook muerto no deniega (residuo en docs/PENDIENTES.md; SEC-114). Numero de
-  # CONTRATO, anunciado en requirements/README.md (mayor valor real medido al fijarlo:
-  # 6 672 bytes); se sube con la medicion, nunca se baja.
+  # ALCANZA A MEDIRLO dentro del limite del cliente (60 s). Desde CA-A15 el lector
+  # (`arnes_campos_normaliza`, hooks/lib.sh) mide el techo ANTES de `arnes_norm_campo`, que es
+  # cuadratico, y por encima no normaliza: medido, 255 371 bytes deniega en 0,31 s por Edit y
+  # 1,6 s por Write. Por encima de lo medido no hay promesa (por Write, otra operacion anterior
+  # sobre el contenido crece mas que linealmente; residuo en docs/PENDIENTES.md), y un hook muerto
+  # no deniega. El numero vive en `ARNES_HALL_TECHO_BYTES` (hooks/lib.sh): es de CONTRATO,
+  # anunciado en requirements/README.md (mayor valor real medido al fijarlo: 6 672 bytes); se
+  # sube con la medicion, nunca se baja.
   crudo_h="${ARNES_HALL_CRUDO:-}"; n_crudo=${#crudo_h}
   if [ "$n_crudo" -gt "$techo" ]; then
     arnes_deny "ARNES: no se puede completar '$rel': el valor de 'Hallazgos abiertos:' mide $n_crudo bytes (contados en bytes, lo escrito tras los dos puntos y antes de normalizar) y el techo es $techo bytes, asi que no se interpreta: una puerta que no puede medir no deja pasar. Acorta el campo: la evidencia larga va al registro del hallazgo (docs/qa/, docs/seguridad/) y en el parentesis queda la referencia (requirements/README.md, seccion 'Clases de hallazgo')."
