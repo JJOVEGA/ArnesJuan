@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-27 · REQ-031: validación de QA, vuelta 1 de 3 → `QA: aprobado` sobre `cf3e420`
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Sonnet 5 (qa-tester, sin override, según la decisión de modelos del propietario del 2026-09-27) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
+
+Banco completo re-ejercido: 955 PASS · 0 FAIL · 12 SKIP (1 INCONCLUSO de calibración de CA-03, ajeno, conservado), cuadre 967, ≈ 4 min 10 s; autoprueba 117/0. Fail-before re-derivado sobre `a7a60c2`: 21 FAIL antes / 0 después en las secciones 08 y 32. Falsación directa con ~45 valores de `Hallazgos abiertos:` (casos mínimos del propietario y fronteras): ninguna variante permite cerrar con un bloqueante ignorado; `SEC-A (instrumento) · SEC-B` deniega nombrando `sec-b`. Inventario de compatibilidad: 29 de 29 REQ interpretables, 0 con la forma retirada. Recorrido D: REQ mínimo declarado, disjunto rc 0, compartido rc 1, sin declarar rc 1, `(ninguno)` disjunto; `tools/` idéntico a la base. Sin hallazgos. Evidencia: `docs/qa/REQ-031.md`. Sin push.
+
 ## [Interno] — 2026-09-27 · REQ-031 (desarrollador): gramática cerrada de `Hallazgos abiertos:` en `guard-completado` (A) y casilla de `Archivos:` en la Definition of Ready (D) → `en-revisión`
 > Origen: Interno (manual; lo comitea la coordinadora con los hooks activos) · usuario: Juan · modelo de IA: Opus 5.5 · agente: desarrollador.
 
