@@ -1,0 +1,8 @@
+antes-373563f  v16384   Edit allow rc=0 0.610 s |  | disco: Estado: en-revisión
+antes-373563f  v16385   Edit deny rc=0 0.411 s | ARNES: no se puede completar 'requirements/REQ-A.md': el valor de 'Hallazgos abiertos:' mide 16385 bytes (cont | disco: Estado: en-revisión
+antes-373563f  v60006   Edit deny rc=0 3.915 s | ARNES: no se puede completar 'requirements/REQ-A.md': el valor de 'Hallazgos abiertos:' mide 60006 bytes (cont | disco: Estado: en-revisión
+antes-373563f  v255371  Edit deny rc=0 70.725 s | ARNES: no se puede completar 'requirements/REQ-A.md': el valor de 'Hallazgos abiertos:' mide 255371 bytes (con | disco: Estado: en-revisión
+despues        v16384   Edit allow rc=0 0.712 s |  | disco: Estado: en-revisión
+despues        v16385   Edit deny rc=0 0.109 s | ARNES: no se puede completar 'requirements/REQ-A.md': el valor de 'Hallazgos abiertos:' mide 16385 bytes (cont | disco: Estado: en-revisión
+despues        v60006   Edit deny rc=0 0.210 s | ARNES: no se puede completar 'requirements/REQ-A.md': el valor de 'Hallazgos abiertos:' mide 60006 bytes (cont | disco: Estado: en-revisión
+despues        v255371  Edit deny rc=0 0.310 s | ARNES: no se puede completar 'requirements/REQ-A.md': el valor de 'Hallazgos abiertos:' mide 255371 bytes (con | disco: Estado: en-revisión
