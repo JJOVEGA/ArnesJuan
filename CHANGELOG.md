@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-27 · REQ-031: QA verificación documental de SEC-114 sobre `5ff9362` → `aprobado`; ocho sedes condicionadas, ninguna promesa absoluta vigente
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Sonnet 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
+
+Delta de código desde `849c940` = 9 líneas de comentario en `guard-completado.sh` (`bash -n` en verde); código funcional acreditado = `849c940`. Barrido por propiedad: README = plantilla, §13 = plantilla, ADR-013 con el texto anterior citado y precisión fechada, CA-A13 con la frontera dentro del criterio, índice y Correspondencia; el mensaje de `arnes_deny` no afirma de más (sólo se imprime si midió); el remedio B figura como decisión pendiente. No es vuelta dev↔QA (contador 2 de 3). Sin push.
+
 ## [Interno] — 2026-09-27 · REQ-031: write-back documental de SEC-114 (remedio A elegido por la coordinadora): la promesa del techo condicionada por propiedad en todas sus sedes; comentario del hook alineado sin cambio funcional
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (analista-requerimientos, desarrollador) / Fable 5.1 (coordinadora) · agente: analista-requerimientos, desarrollador, coordinadora.
 
