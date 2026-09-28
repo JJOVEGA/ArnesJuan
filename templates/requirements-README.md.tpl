@@ -166,7 +166,16 @@ lo que va dentro de un comentario HTML de la cabecera y una línea igual debajo 
 blanco que los sigue, contado en **bytes** y antes de normalizar— mide **más de 16 384 bytes**, la
 puerta deniega el cierre sin interpretarlo y dice el tamaño medido: una puerta que no puede medir no
 deja pasar. Con 16 384 bytes o menos decide la clase, como arriba. La evidencia larga va al registro
-del hallazgo y en el paréntesis queda la referencia.
+del hallazgo y en el paréntesis queda la referencia. **Esa denegación vale siempre que el hook alcance
+a medir el valor dentro del límite del cliente (60 s)**, y no siempre lo alcanza: la normalización de
+los campos de la cabecera (`arnes_norm_campo`, código anterior a este techo y cuadrático en la
+longitud) corre **antes** que el techo, así que con un valor del orden de **240 KB o más** el hook muere
+sin decidir, y **un hook muerto no deniega**. Cifras **medidas** en Linux/WSL2, una corrida por punto y
+no exhaustivas: 60 006 bytes → deniega por tamaño en 3,85 s; 255 371 bytes → 67,0 s, sin denegación en
+el cliente; en Windows/MSYS no está medido y el umbral será menor. Es un residuo `instrumento` del
+arnés, con dueño y vencimiento en el `docs/PENDIENTES.md` del repositorio del arnés («La normalización
+de campos es cuadrática…»); medir el techo antes de normalizar es la corrección por mecanismo, y
+decidirla es del propietario del arnés.
 
 | Clase | Qué es | Efecto en el cierre |
 |---|---|---|

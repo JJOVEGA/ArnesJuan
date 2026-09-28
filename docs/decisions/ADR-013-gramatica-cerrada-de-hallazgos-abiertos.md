@@ -51,8 +51,16 @@ puerta lee el campo—, no por su tamaño.
   reconoce el lector**; lo que no está en una línea así no se lee. Ejemplos **no exhaustivos** de lo que
   queda fuera: una continuación en la línea siguiente sin clave, una clave con un carácter invisible o
   un homóglifo (SEC-047, SEC-078), un comentario HTML de la cabecera, una línea debajo del primer `## `.
-- (+) El tamaño del valor tiene techo y el recorrido no es cuadrático (REQ-031 CA-A13, CA-A14; R-044 /
-  SEC-113): un valor que la puerta no alcanzaría a juzgar antes de que el cliente la mate **deniega**.
+- (+) El tamaño del valor tiene techo y el recorrido del bloque «Clase del hallazgo» no es cuadrático
+  (REQ-031 CA-A13, CA-A14; R-044 / SEC-113): por encima de 16 384 bytes la puerta deniega sin
+  interpretar el valor **siempre que el hook alcance a medirlo dentro del límite del cliente (60 s)**.
+  *(Precisión del 2026-09-27, R-044-A / SEC-114; el texto anterior decía que «un valor que la puerta no
+  alcanzaría a juzgar antes de que el cliente la mate deniega», sin condición.)* La normalización de
+  campos (`arnes_norm_campo`, cuadrática, código anterior a este REQ) corre antes del techo, y con un
+  valor del orden de 240 KB o más el hook muere sin denegar (medido, una corrida, Linux/WSL2: 255 371
+  bytes → 67,0 s; en Windows/MSYS no medido y menor): un hook muerto no deniega. Residuo `instrumento`
+  con dueño y vencimiento en `docs/PENDIENTES.md`; medir el techo antes de normalizar es decisión del
+  propietario para la publicación.
 - (−) Una forma antes aceptada (`(clase) — nota`) pasa a denegar. Mitigación: el motivo enseña la forma
   equivalente; QA inventaría las cabeceras de `requirements/REQ-*.md` del arnés e informa los usos sin
   reescribirlos (REQ-031 CA-A04); un REQ `completado` no se reabre por esto.

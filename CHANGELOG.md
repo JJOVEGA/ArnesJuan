@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-27 · REQ-031: write-back documental de SEC-114 (remedio A elegido por la coordinadora): la promesa del techo condicionada por propiedad en todas sus sedes; comentario del hook alineado sin cambio funcional
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (analista-requerimientos, desarrollador) / Fable 5.1 (coordinadora) · agente: analista-requerimientos, desarrollador, coordinadora.
+
+«Por encima de 16 384 bytes deniega» pasa a «deniega si el hook alcanza a medirlo dentro del límite del cliente (60 s); `arnes_norm_campo` corre antes del techo y con valores del orden de 240 KB o más (medido: 255 371 bytes → 67 s) el hook muere sin decidir; residuo `instrumento` en `docs/PENDIENTES.md`; el remedio por mecanismo es decisión de publicación del propietario». Sedes: CA-A13 y tabla, nota de CA-A09, Correspondencia, README § «Clases de hallazgo» y plantilla (idénticas), celda de §13 y plantilla, ADR-013, índice; comentario de `guard-completado.sh` condicionado (diff de `hooks/` sólo de comentarios, 0 líneas funcionales; `bash -n` en verde); el mensaje de `arnes_deny` no cambia porque sólo se imprime cuando la puerta sí midió. No es vuelta dev↔QA: contador 2 de 3. Sin push.
+
 ## [Interno] — 2026-09-27 · REQ-031: R-044-A → `Seguridad: con-hallazgos`; SEC-112 `mitigado`, SEC-113 `en-mitigación`, SEC-114 (`contrato`, baja): la promesa del techo es más ancha que lo medido
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (auditor-seguridad) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, coordinadora.
 

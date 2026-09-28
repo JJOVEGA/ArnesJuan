@@ -52,9 +52,12 @@ arnes_clase_hallazgo() {
   fi
 
   # CA-A13 (SEC-113): techo de tamaño, medido en BYTES sobre el valor tal como se escribio
-  # (tras los dos puntos, antes de normalizar). Por encima no se interpreta: una puerta que no
-  # puede medir no deja pasar. Numero de CONTRATO, anunciado en requirements/README.md
-  # (mayor valor real medido al fijarlo: 6 672 bytes); se sube con la medicion, nunca se baja.
+  # (tras los dos puntos, antes de normalizar). Por encima no se interpreta y deniega SI EL HOOK
+  # ALCANZA A MEDIRLO dentro del limite del cliente (60 s): `arnes_norm_campo` corre ANTES de
+  # este techo y es cuadratico, y con valores del orden de 240 KB o mas el hook muere sin
+  # decidir, y un hook muerto no deniega (residuo en docs/PENDIENTES.md; SEC-114). Numero de
+  # CONTRATO, anunciado en requirements/README.md (mayor valor real medido al fijarlo:
+  # 6 672 bytes); se sube con la medicion, nunca se baja.
   crudo_h="${ARNES_HALL_CRUDO:-}"; n_crudo=${#crudo_h}
   if [ "$n_crudo" -gt "$techo" ]; then
     arnes_deny "ARNES: no se puede completar '$rel': el valor de 'Hallazgos abiertos:' mide $n_crudo bytes (contados en bytes, lo escrito tras los dos puntos y antes de normalizar) y el techo es $techo bytes, asi que no se interpreta: una puerta que no puede medir no deja pasar. Acorta el campo: la evidencia larga va al registro del hallazgo (docs/qa/, docs/seguridad/) y en el parentesis queda la referencia (requirements/README.md, seccion 'Clases de hallazgo')."
