@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-27 · REQ-031: QA vuelta 2 de 3 → `QA: aprobado` sobre `849c940`; QA-031-01 (`instrumento`) registrado
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Sonnet 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
+
+Re-derivación independiente: fail-before contra `a7a60c2` 78/27 y contra `cf3e420` 99/6, pass-after 105/0, banco completo 967 PASS · 0 FAIL · 11 SKIP (cuadre 978), autoprueba 117/0; ~15 casos directos de CA-A12/A13/A14 por `Edit` y `Write` con fronteras (sangría, tabulador, comentario HTML, `---`, reapertura); mediciones de 16 384/16 385/60 006 bytes re-derivadas. **QA-031-01** (`instrumento`): una segunda línea con la clave en mayúsculas (`HALLAZGOS ABIERTOS:`) no la reconoce el lector y su bloqueante no se lee (clase SEC-047: clave no reconocida = campo ausente; excluida por nombre de la promesa). Título e índice de REQ-031 juzgados coherentes con la promesa acotada. Evidencia: `docs/qa/REQ-031.md` § Vuelta 2. Sin push.
+
 ## [Interno] — 2026-09-27 · REQ-031, vuelta 2 (desarrollador): SEC-112 (clave `Hallazgos abiertos:` repetida → deny) y SEC-113 (techo de 16 384 bytes y recorrido por trozos) → `en-revisión`
 > Origen: Interno (manual; lo comitea la coordinadora con los hooks activos) · usuario: Juan · modelo de IA: Opus 5.5 · agente: desarrollador.
 
