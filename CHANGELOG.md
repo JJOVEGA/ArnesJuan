@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-28 · REQ-031: QA vuelta 3 de 3 (última) → `QA: aprobado` sobre `cdcad5d`; CA-A16 no comprobado por QA; CA-A17: 0 claves ignoradas en las 29 cabeceras (sin exposición actual, no sin defecto)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Sonnet 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
+
+Banco completo 969 PASS · 0 FAIL · 11 SKIP (0 INCONCLUSO), cuadre 980; autoprueba 117/0. Fail-before contra `373563f` re-derivado 105/2 (los dos casos de 255 371 bytes, cortados por el tope operativo de 30 s), pass-after 107/0. CA-A15 re-derivado con las tres comprobaciones separadas: 255 371 bytes → deny por tamaño en 0,31 s (Edit/MultiEdit) y 1,7 s (Write), archivo sin cambio; reapertura allow; salidas de `arnes_campos_req` idénticas entre `373563f` y `cdcad5d` en los 29 REQ; `tools/arnes-lectura.sh` idéntico; ningún lector toma el marcador `(no medido: N bytes, techo 16384)` por ausencia. CA-A16: **no comprobado** (el clasificador de permisos del entorno de QA denegó `claude -p --plugin-dir`; «un código de salida por sí solo no demuestra que la escritura quedó bloqueada»). CA-A17: inventario con control positivo (3 claves rotas inyectadas, 3 detectadas) y 0 líneas detectadas en las 29 cabeceras reales: sin exposición actual; SEC-047 y QA-031-01 siguen abiertos. Nueva parte super-lineal por `Write` (`arnes_sin_cr_transporte`) confirmada (200 000 → 0,60 s; 400 000 → 3,09 s) y registrada en PENDIENTES. Sin push.
+
 ## [Interno] — 2026-09-28 · REQ-031, vuelta 3 de 3 (desarrollador): SEC-113 remedio B — el techo de `Hallazgos abiertos:` se mide en el lector, antes de normalizar (CA-A15) → `en-revisión`
 > Origen: Interno (manual; lo comitea la coordinadora con los hooks activos) · usuario: Juan · modelo de IA: Opus 5.5 · agente: desarrollador.
 
