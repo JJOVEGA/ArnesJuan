@@ -8484,3 +8484,112 @@ Regresiones a vigilar (no exhaustivo):
 
 **Numeración vigente tras esta adenda:** última revisión **R-043** (adenda **`R-043-B`**); último hallazgo
 **SEC-111**; próximos libres **R-044** y **SEC-112**, comprobados sobre todas las ramas y worktrees vivos.
+
+---
+
+## Revisión R-044 — **REQ-031**, gramática cerrada de `Hallazgos abiertos:` (A) y casilla de `Archivos:` en la DoR (D): revisión de seguridad y gobernanza del bloque «Clase del hallazgo», de `ARNES_HALL_CRUDO`, de las secciones 08 y 32, de `check_efecto` y del contrato. `feat/req-031-hallazgos-y-paralelo` @ `5cf8e0c` — 2026-09-27
+
+**Numeración.** Este registro decía «próximos libres R-044 y SEC-112». **Método:** `git grep -nE "Revisi[oó]n R-04[4-9]|#### SEC-11[2-9]"` sobre **todas** las ramas locales y remotas, más `grep` de lo mismo sobre `docs/seguridad/`, `docs/qa/` y `requirements/` de los 17 worktrees de `/home/juan/dev`: **ninguna** definición; `R-044`/`SEC-112` sólo aparecen como «próximos libres». Tomo **R-044**, **SEC-112** y **SEC-113**.
+
+**Versión base y alcance.** Base `a7a60c247aae6853d492a71313ab9fabed3c17a7` (`origin/main`, plugin 1.34.0); cabeza `5cf8e0cca787f9a0f8c293de27974ebc298517dc`, árbol limpio. `git diff --stat cf3e420..5cf8e0c` = sólo `CHANGELOG.md`, `docs/qa/REQ-031.md` y `requirements/REQ-031.md`: **el código revisado es el de `cf3e420`**, el que validó QA (`QA: aprobado`, vuelta 1 de 3). `git diff a7a60c2..5cf8e0c -- tools .github .arnes` **vacío**. Leídos: `AGENTS.md` §6, §9, §13; `requirements/README.md` § «Clases de hallazgo» y su plantilla; `requirements/REQ-031.md` entero; ADR-013; la fila y el versionado de REQ-007 CA-41; `docs/qa/REQ-031.md`; las dos decisiones íntegras del propietario en `PENDING_APPROVAL.md` § Resueltas; el diff completo de `hooks/`, secciones 08 y 32 y `run.sh`. **Orden de fases respetado:** QA firmó antes. **No miré las quality gates ni corrí el banco.**
+
+**Rigor: `critico` confirmado** (cambio en `hooks/` y `tests/`; `Sensible a seguridad: sí`). Ya es el máximo.
+
+**Método de las sondas.** Un arnés propio en el scratchpad de la sesión (fuera del árbol): por cada caso, un proyecto temporal nuevo con el manifiesto base del banco (`quality_gates: ["true"]`, cola vacía), un REQ «listo para cerrar» (`Estado: en-revisión`, `Sensible a seguridad: sí`, `QA: aprobado`, `Seguridad: aprobado`, `Rigor: critico`) y el valor probado en `Hallazgos abiertos:`; un JSON `PreToolUse` real (`Edit` `en-revisión` → `completado`; `Write` y `MultiEdit` donde se indica) por la tubería a `hooks/guard-completado.sh`. **Salida vacía = allow**; con salida, `jq -e` confirma que el JSON es válido antes de leer la decisión. Cada caso que importa se corrió contra la candidata **y** contra la base (worktree `ArnesJuan-eval`, `HEAD` = `a7a60c2`, `hooks/` limpio), para separar regresión de defecto heredado. Linux (WSL2), `LANG=C.UTF-8`.
+
+### 1. Fail-open → fail-closed desde el lado adversarial — **la propiedad del valor se sostiene**
+
+Ninguna forma probada **dentro del valor de la línea que la puerta lee** deja cerrar con un `usuario/dinero` o `contrato` presente. Lista **elemento por elemento** (todas **deny** salvo las marcadas):
+
+- Separadores Unicode entre `SEC-A (instrumento)` y `SEC-B (contrato)`: coma árabe `،` (`\xd8\x8c`), coma baja `‚` (`\xe2\x80\x9a`), coma de anchura completa `，` (`\xef\xbc\x8c`), NBSP antes y después de la coma, espacio de anchura cero antes y después de la coma, BOM delante del primer y del segundo elemento, tabulador como separador → **deny** «no interpretable» (o «sin clase»). Tabulador **junto a** una coma real → deny por la clase (es un blanco, correcto).
+- CR interior (`\r` + blanco, `\r` + coma) → **deny** por la guarda del CR interior (preexistente).
+- Paréntesis de anchura completa `（contrato）`, solo y tras un instrumento → **deny** «sin clase».
+- Clase con mayúsculas/acentos/blancos: `Usuario/Dinero`, `CONTRATO`, `contráto`, `usuario / dinero`, `usuario/dinero ` → **deny por la clase** (bloqueante reconocido).
+- Clase compuesta o contaminada: `instrumento contrato`, `instrumento/contrato`, `instrumento; contrato`, `instrumento` + ZWSP, `instrumento` + NBSP, homóglifo cirílico delante o dentro de `instrumento` → **deny** «no es una clase válida». Ninguna se lee como `instrumento`.
+- Ausencia mezclada: `(ninguno), SEC-B (contrato)`, `(ninguno) SEC-B (contrato)`, `ninguno, SEC-B (contrato)`, `ninguno SEC-B (contrato)`, `**(ninguno)**, SEC-B (contrato)` → **deny**.
+- Paréntesis vacío o sin clase: `SEC-B ()`, `SEC-B (,contrato)`, `SEC-B ( , contrato)` → **deny** «sin clase». Identificador vacío: `(usuario/dinero)`, ` (contrato)` → **deny** «no interpretable».
+- Marcado: `**SEC-A (instrumento), SEC-B (contrato)**` y `` `SEC-A (instrumento), SEC-B (contrato)` `` → deny por la clase (se desenvuelve el valor entero, correcto); `**…** · **…**`, `*…*, *…*`, `` `…`, `…` `` (marcado **por elemento**: el desenvoltorio arranca un par que pertenece a dos elementos) → **deny** «no interpretable»; `SEC-A (instrumento)**` → deny. **Allow correcto:** `**SEC-A (instrumento)**`, `_SEC-A (instrumento)_`.
+- Evidencia: `SEC-A (instrumento, x), SEC-B (contrato` (sin cerrar), `…x)), SEC-B (contrato)` (sobrante), `SEC-A (instrumento, (x), SEC-B (contrato)` (desequilibrado) → **deny**; `…x) , SEC-B (contrato)` → deny por la clase. `SEC-A(instrumento)SEC-B(contrato)` → deny.
+- Texto detrás del `)`: `\\`, ` \\`, comillas, `$(id)` y acentos graves, `' ; rm -rf /`, UTF-8 partido → **deny** y **JSON válido** (`arnes_deny` pasa el motivo por `jq --arg`; el fragmento del usuario no rompe la salida ni se ejecuta).
+- `MultiEdit` que en la misma llamada cierra y reescribe el campo con `;` o `·` → **deny** (se juzga el documento resultante).
+- **Allow, por regla declarada y no por defecto de la puerta** (no son hallazgos): `SEC-A (instrumento) <!-- SEC-B (contrato) -->` y `<!-- SEC-B (contrato) -->` —lo que vive en un comentario de la cabecera no declara (`AGENTS.md` §13)—; y `SEC-A (instrumento, relacionado con SEC-B (contrato))` —la evidencia no declara (REQ-031 CA-A01 y Notas)—.
+- Ausencias legítimas que **siguen** en allow: `**(ninguno)**`, `_ninguno_`, `` `n/a` ``, `**-**`, `N/A`, `Ninguno`, `(Ninguno)`, `( ninguno )`, blancos finales. `—` (raya sola) → deny «sin clase»: no está en la lista de ausencias, fail-closed, frontera aceptable.
+
+Lo que QA ya falsó (≈45 valores, `docs/qa/REQ-031.md` § 4) no se repite aquí; lo de arriba es lo que añado.
+
+### 2. Fail-closed sin bloqueo falso — **sin hallazgo**
+
+- **Cabeceras reales:** extraje el valor de `Hallazgos abiertos:` de los **29** `requirements/REQ-*.md` y lo pasé por la base y por la candidata: **decisiones idénticas en los 29** (diff vacío). Deniegan por la **clase** (no por «no interpretable») REQ-007 (`qa-114`), REQ-013 (`sec-014`), REQ-019 (`sec-033`), REQ-020 (`sec-038`), REQ-021 (`qa-021-10`), REQ-023 (`sec-052`); los 23 restantes, allow. Coincide con el inventario de QA (0 formas retiradas, 0 separadores ajenos).
+- **Reapertura:** `completado` → `en-progreso` con `SEC-A (instrumento) · SEC-B (usuario/dinero)`, `QA-006 (instrumento) — REQ-007`, `SEC-A (instrumento) · SEC-B`, `(((` y `SEC-B (contrato)` → **allow** en los cinco.
+- **Motivo:** no filtra nada que no esté ya en la cabecera del propio REQ (el fragmento es texto del usuario, normalizado); dice que la puerta **no reescribe** el campo y enseña `ID (clase, evidencia)`; no propone ni aplica reescritura automática.
+
+### 3. Coste y forma (CA-A09) — **sin procesos nuevos; el contrato se cumple; hallazgo `instrumento` por el efecto del factor constante (SEC-113)**
+
+Diff de `hooks/` sin `$(…)`, tuberías, subshells ni programas nuevos: **0 procesos añadidos**, confirmado leyendo. Recorridos: pasada principal (la misma forma que la base), una pasada sobre el crudo sólo si la estructura se leyó entera, y una exploración hasta la coma siguiente sólo ante error. **Ninguno por elemento**: cumple la letra de CA-A09 («nada que crezca con el cuadrado del número de elementos respecto a lo que ya hace la base»). **Pero** la base ya es cuadrática en la longitud del valor —`${hall:ci:1}` en un locale UTF-8 recorre la cadena desde el principio en cada acceso— y la candidata hace **dos** pasadas así. Medido (una corrida por punto, sin repetición; **no** es un reloj contratado):
+
+| Valor (elementos `SEC-i (instrumento, dueño x; vence 1.35.0)`) | Bytes | Base | Candidata |
+|---|---|---|---|
+| 20 | 888 | 0,09 s | 0,09 s |
+| 200 | 9 088 | 0,82 s | 1,66 s |
+| 800 | 36 688 | 12,71 s | 27,59 s |
+| `SEC-X (contrato)` + 1 300 | 60 006 | **deny en 33,57 s** | **deny en 81,32 s** |
+
+El hook se registra sin `timeout` (`hooks/hooks.json`), así que vale el de Claude Code (60 s), y **un hook muerto no deniega** (`AGENTS.md` §7). En la última fila la base deniega a tiempo y la candidata **no**. Ver SEC-113.
+
+### 4. Contrato y gobernanza
+
+- **ADR-013** justificado por la regla de §9 (cambia la decisión base «no puede estrechar lo que ya se leía» de REQ-007 CA-41 y el significado de la lectura), **no** por tamaño. Conforme.
+- **REQ-007 CA-41** versionado debajo del texto original, que se conserva; declara que la forma `(instrumento) — REQ-007` deja de aceptarse y que la garantía se retira **sólo** para esa forma; fila de Historial con causa y ADR. Conforme.
+- **`REQ-717`** `allow` → `deny` declarado en la sección 32 con comentario y en CA-A04 como **única** excepción. Conforme.
+- **Sitio único:** README § «Clases de hallazgo» = plantilla (`diff` de las dos secciones: vacío); celda de §13 = plantilla (idénticas). La celda nueva «ni con una lista que la puerta no puede interpretar» **es verdad** medida (§1).
+- **SEC-078/SEC-079 no se contradicen:** REQ-031 Notas nombra el homóglifo en la clave como ausencia, que es lo que §13 dice que permite. (Observación fuera de perímetro al final.)
+- **D:** la casilla de la DoR es exactamente la de CA-D01; `agents/analista-requerimientos.md` no cambia su `tools:`; no transcribe la política de «El mapa de archivos» ni autoriza reparto manual (dice «quien lo solicita comprueba»). `git diff a7a60c2 -- tools/arnes-paralelo.sh` vacío. Conforme.
+- **La promesa de posición, en cambio, es más ancha que la máquina:** SEC-112.
+
+### 5. Repositorio público — **sin hallazgo**
+
+El diff no cita clientes: las dos apariciones de «cliente» se refieren a Claude Code como cliente de los hooks; las rutas `/home/juan/dev/…` ya tenían precedente en `main`.
+
+### 6. Hallazgos nuevos
+
+#### SEC-112 — `contrato` · **abierto** · severidad media · REQ-031 · dueño `analista-requerimientos` (write-back) y **propietario** (si se elige cambiar el lector)
+
+**La promesa heredable «ningún hallazgo que bloquea queda sin leer por el sitio que ocupa» es más ancha que la puerta: un bloqueante escrito en una línea `Hallazgos abiertos:` anterior de la misma cabecera no se lee, y el cierre pasa.**
+
+- **Medido (candidata y base, idéntico):** cabecera lista para cerrar con `Hallazgos abiertos: SEC-1 (contrato)` y, debajo, `Hallazgos abiertos: QA-2 (instrumento)` → **allow** por `Edit` y por `Write`; con `(ninguno)` o `**Hallazgos abiertos:** (ninguno)` en la segunda línea, también **allow**. Con el orden invertido, deny. Causa: `arnes_campos_req` (`hooks/lib.sh`) asigna `ARNES_HALL` en cada línea que casa, así que **gana la última aparición**; la regla es deliberada y REQ-016 la conservó para todos los campos, pero **no está escrita en ningún texto heredable** (búsqueda en README, plantillas y `AGENTS.md`: nada), y la gramática de REQ-031 juzga sólo el valor de esa línea.
+- **Por qué es `contrato` y no `instrumento`:** el propietario pidió literalmente «ningún hallazgo bloqueante puede quedar ignorado por su posición» y «sin prometer protección más amplia que la comprobada». REQ-031 marca esa obligación como `cubierta` (Correspondencia) y lo repiten sin condición `requirements/README.md:146` y su copia `templates/requirements-README.md.tpl:146` («Así ningún hallazgo que bloquea queda sin leer por el sitio que ocupa…»), y `docs/decisions/ADR-013-…md:46` («(+) Ningún hallazgo bloqueante queda sin leer por su posición…»). Las fronteras de REQ-031 (Notas) nombran la continuación sin clave, la clave con homóglifo y el comentario, **no** la línea repetida; y la sede heredable no nombra ninguna. Es la forma de SEC-079: una promesa cuyo alcance real vive fuera y cuya lista de fronteras deja fuera una vía medida. **Descuido plausible**: añadir una línea nueva en vez de editar la existente.
+- **Remediación (una de las dos; la elige el propietario si es la B):**
+  - **A (documental, dentro de REQ-031):** acotar la promesa por **propiedad** en todas las sedes —README y plantilla idénticas, ADR-013 (Consecuencias), REQ-031 (Notas § Fronteras y la fila de Correspondencia)—: la puerta juzga **el valor de una sola línea**, la **última** de la cabecera cuya clave reconoce el lector; lo que declare cualquier otra línea no se lee (ejemplos **no exhaustivos**: una línea anterior con la misma clave, una continuación sin clave, una línea cuya clave lleva un carácter invisible —SEC-047—, un comentario). Barrido por propiedad, código incluido, antes de devolverlo.
+  - **B (mecanismo, amplía alcance):** que la puerta deniegue cuando la cabecera declara `Hallazgos abiertos:` más de una vez (fail-closed, sin reparar). Toca el lector (`hooks/lib.sh`, ya en `Archivos:`), exige casos en el banco y vuelve a QA; es una vuelta del tope (quedan 2).
+- **Forzador:** bloquea el cierre de REQ-031 (`Hallazgos abiertos:`). **Vencimiento:** el cierre de REQ-031.
+
+#### SEC-113 — `instrumento` · **abierto** · severidad baja · REQ-031 · dueño `desarrollador`
+
+**La lectura de `Hallazgos abiertos:` no tiene techo de tamaño y es cuadrática en la longitud del valor; la candidata duplica el factor constante y baja el umbral en que el hook muere (y un hook muerto no deniega).**
+
+- **Medido:** tabla de §3. A 60 006 bytes con un `contrato` delante, la base deniega en 33,57 s y la candidata en 81,32 s, por encima de los 60 s del cliente. Preexistente en la clase (la base también muere, a un tamaño mayor); la candidata **no** añade un recorrido por elemento (CA-A09 se cumple) pero lleva el umbral de ≈ 80 KB a ≈ 50 KB en esta máquina. **No medido en Windows/MSYS**, donde cada operación de cadena es más lenta y el umbral será menor.
+- **Realismo:** bajo; una cabecera de decenas de KB no es un descuido. Por eso `instrumento` (defecto del propio guardián, `AGENTS.md` §6) y no bloquea REQ-031.
+- **Remediación:** techo de longitud del campo que **deniega** por encima («una puerta que no puede medir no deja pasar»), como ya hacen el análisis de Bash y la reconstrucción de ediciones; o un recorrido que no indexe por carácter desde el inicio. Sin procesos nuevos. **Forzador:** la próxima comisión que toque el bloque «Clase del hallazgo» o los presupuestos de `guard-completado`. **Vencimiento:** decisión (reparar o aceptar con firma del propietario) antes de publicar 1.35.0.
+
+### 7. Observación fuera de perímetro (sin id nuevo; no abro trabajo)
+
+La celda de `AGENTS.md` §13 sobre las líneas que la máquina «no puede medir» afirma que un BOM, un espacio de anchura cero o un blanco de más en la clave (`Sensible a  seguridad`) **deniegan**. Medido en esta cabeza y en la base: `Hallazgos  abiertos: SEC-B (contrato)`, `Hallazgos abier`+ZWSP+`tos: …`, `Hallazgos`+NBSP+`abiertos: …`, `hallazgos abiertos: …` y `- Hallazgos abiertos: …` → **allow por ausencia**; `Sensible a`+ZWSP+` seguridad: sí` y `Sensible a  seguridad: sí` con `Rigor: ligero` y `Seguridad: pendiente` → **allow**. Es la clase de **SEC-047** (abierto, `instrumento`), cuya propia cláusula dice que si 1.34.0 cierra sin la guarda «vuelve a la mesa subido a `contrato`»; y la celda cita `registro-seguridad.md` § R-024 (SEC-078/SEC-079), que **no está** en el registro de `main` (vive en `feat/1.34-cierre-alcance` y en `rel/registro-1.33.0`). No lo introduce REQ-031 ni lo agrava. Decisión de la coordinadora/propietario; no lo reclasifico aquí.
+
+### 8. Veredicto
+
+**`Seguridad: con-hallazgos (R-044, 2026-09-27, sobre 5cf8e0c = código de cf3e420)`** — no es veto: el cambio **cierra** el fail-open medido (separadores `;`/`·`), no abre ninguno dentro del valor y no expone datos. **SEC-112 (`contrato`) bloquea el cierre** hasta su remediación A (o B).
+
+**Lo que acredita:** la revisión de seguridad del bloque «Clase del hallazgo» de `hooks/guard-completado.sh` y de `ARNES_HALL_CRUDO` en `hooks/lib.sh` sobre `cf3e420`: fail-closed ante toda forma probada dentro del valor (§1), sin bloqueo falso sobre las 29 cabeceras reales ni sobre la reapertura (§2), 0 procesos añadidos (§3), JSON de denegación íntegro con entrada hostil, contrato y gobernanza (§4), nada de clientes (§5). **Lo que NO acredita:** las quality gates, el banco ni el CI (no los miré; no consta CI sobre `5cf8e0c`); el rendimiento en Windows; la lectura de la cabecera fuera del valor (líneas repetidas, clave corrupta: SEC-112, SEC-047); el bloque D más allá de leer la casilla y el diff vacío de `tools/` (el recorrido CA-D03 es de QA).
+
+### 9. Estado de hallazgos de esta línea tras `R-044`
+
+| Hallazgo | Clase | Estado | Dueño | Bloquea |
+|---|---|---|---|---|
+| `SEC-112` | `contrato` | `abierto` | `analista-requerimientos` (+ propietario si B) | **Sí** (REQ-031) |
+| `SEC-113` | `instrumento` | `abierto` | `desarrollador` | No |
+
+**Línea base de no-regresión para REQ-031** (para la auditoría siguiente): la lista se valida **entera** antes de juzgar clases; tras el `)` que equilibra sólo la coma o el fin; identificador sólo `[a-z0-9-]` sobre el normalizado y sin blancos internos ni letras no ASCII sobre el crudo; evidencia que no declara; prioridad de motivo no interpretable > sin clase / clase no válida > bloqueante; la regla sólo en la transición a `completado`; 0 procesos en el bloque. Regresiones a vigilar (no exhaustivo): un `continue` que salte elementos vacíos, una clase tomada del primer paréntesis ignorando lo que sigue, un `case` de ausencias que crezca con formas que contengan un hallazgo, un `$(…)` en el bucle.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios** (no cambian los datos manejados).
+
+**Numeración vigente tras esta revisión:** última revisión **R-044**; último hallazgo **SEC-113**; próximos libres **R-045** y **SEC-114**, comprobados sobre todas las ramas y worktrees vivos.

@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-27 · REQ-031: auditoría R-044 → `Seguridad: con-hallazgos` (SEC-112 contrato: clave repetida, gana la última; SEC-113 instrumento: lectura cuadrática sin techo, 81 s con 60 KB)
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (auditor-seguridad) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, coordinadora.
+
+Sobre `5cf8e0c` (código de `cf3e420`): el fail-open medido (`;`, `·`) queda cerrado; ninguna de las formas adversariales probadas (separadores y paréntesis Unicode, NBSP/ZWSP/BOM/CR, clases con mayúsculas o acentos o contaminadas, ausencia mezclada con hallazgos, marcado por elemento, entrada hostil, MultiEdit) permite cerrar con un bloqueante; las 29 cabeceras reales deciden igual que en la base; reapertura permitida; 0 procesos añadidos. **SEC-112** (`contrato`): con dos líneas `Hallazgos abiertos:` en la cabecera gana la última y un bloqueante en la anterior no se lee (base y candidata igual), mientras README, plantilla y ADR-013 prometen «ningún hallazgo que bloquea queda sin leer por el sitio que ocupa». **SEC-113** (`instrumento`): `${hall:ci:1}` en UTF-8 es cuadrático y sin techo (60 006 bytes: base 33,6 s, candidata 81,3 s > 60 s del cliente). Fuera de perímetro, anotado sin número: blancos/ZWSP/NBSP en la clave dan allow por ausencia contra lo que §13 promete (clase SEC-047), y §13 cita R-024 inexistente en `main`. Vuelta 2 agrupada: SEC-112 por mecanismo (denegar clave repetida) y SEC-113 con techo de longitud. Sin push.
+
 ## [Interno] — 2026-09-27 · REQ-031: validación de QA, vuelta 1 de 3 → `QA: aprobado` sobre `cf3e420`
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Sonnet 5 (qa-tester, sin override, según la decisión de modelos del propietario del 2026-09-27) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
 
