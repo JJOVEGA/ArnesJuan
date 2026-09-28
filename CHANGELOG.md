@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-27 · REQ-031: R-044-A → `Seguridad: con-hallazgos`; SEC-112 `mitigado`, SEC-113 `en-mitigación`, SEC-114 (`contrato`, baja): la promesa del techo es más ancha que lo medido
+> Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (auditor-seguridad) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, coordinadora.
+
+Sobre `73db128` (código de `849c940`): la clave repetida deniega en todas las formas que el lector lee (decorada, sangrada, tabulador, viñeta `*`, tras `---`/`#`, en bloque de código, por `Write` y `Edit`); las que el lector no reconoce (`- `, `> `, mayúsculas —QA-031-01—, blanco doble/NBSP/ZWSP/BOM, comentario HTML, bajo `## `) permiten y están excluidas por propiedad en README; 29 REQ deciden igual que la base; `LC_ALL=C` no se filtra ni cambia decisiones; 0 procesos; 60 006 bytes: 3,85 s. **SEC-114**: «por encima de 16 384 bytes deniega» se promete sin condición (CA-A13, README y plantilla, ADR-013, celda de §13) y a 255 371 bytes el hook tarda 67 s y no llega a denegar (`arnes_norm_campo` corre antes del techo; residual en PENDIENTES). Remedio elegido por la coordinadora: **A, documental** (acotar la promesa por propiedad en todas sus sedes) sin consumir la última vuelta; **B (mecanismo: medir antes de normalizar)** se presenta al propietario como decisión de publicación. Agravante anotado para SEC-047: `SENSIBLE A SEGURIDAD: sí` en mayúsculas tampoco se reconoce y cae el suelo de rigor. Sin push.
+
 ## [Interno] — 2026-09-27 · REQ-031: QA vuelta 2 de 3 → `QA: aprobado` sobre `849c940`; QA-031-01 (`instrumento`) registrado
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Sonnet 5 (qa-tester) / Fable 5.1 (coordinadora) · agente: qa-tester, coordinadora.
 
