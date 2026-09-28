@@ -1,0 +1,99 @@
+Clase del hallazgo:
+  PASS  hallazgo de instrumento -> allow  (allow)
+  PASS  hallazgo de usuario/dinero -> deny  (deny)
+  PASS  hallazgo de contrato -> deny  (deny)
+  PASS  hallazgo SIN clase -> deny  (deny)
+  PASS  mezcla: basta uno bloqueante -> deny  (deny)
+  PASS  sin hallazgos abiertos -> allow  (allow)
+  PASS  REQ antiguo sin el campo -> allow  (allow)
+  PASS  REQ-031 CA-A02 bloqueante EN MEDIO -> deny por su clase  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A02 permutacion: bloqueante al final -> deny por su clase  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A03 coma, bloqueante detras -> deny por su clase  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A03 coma, bloqueante delante -> deny por su clase  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A03 ';' con el bloqueante detras (era allow) -> deny no interpretable  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A03 ';' con el bloqueante delante -> deny no interpretable  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A03 '·' con el bloqueante detras (era allow) -> deny no interpretable  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A03 '·' con el bloqueante delante -> deny no interpretable  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A03 ';' aunque todo sea instrumento -> deny no interpretable  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A03 '·' aunque todo sea instrumento -> deny no interpretable  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A04 control: un instrumento -> allow  (allow; Estado: completado)
+  PASS  REQ-031 CA-A04 control: tres instrumento separados por coma -> allow  (allow; Estado: completado)
+  PASS  REQ-031 CA-A04 control: '(ninguno)' -> allow  (allow; Estado: completado)
+  PASS  REQ-031 CA-A04 control: campo vacio -> allow  (allow; Estado: completado)
+  PASS  REQ-031 CA-A04 control: REQ sin la linea -> allow  (allow; Estado: completado)
+  PASS  REQ-031 CA-A04 control: evidencia tras la clase (REQ-007 CA-40) -> allow  (allow; Estado: completado)
+  PASS  REQ-031 CA-A04 caso minimo: la forma equivalente, evidencia DENTRO del parentesis -> allow  (allow; Estado: completado)
+  PASS  REQ-031 CA-A04 caso minimo: comas y parentesis en la evidencia son UN hallazgo -> allow  (allow; Estado: completado)
+  PASS  REQ-031 CA-A04 control: comas, ';', '·' y parentesis DENTRO de la evidencia no separan -> allow  (allow; Estado: completado)
+  PASS  REQ-031 CA-A04 frontera: la evidencia no declara -> allow  (allow; Estado: completado)
+  PASS  REQ-031 CA-A04 la evidencia no cambia la clase -> deny por la clase  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A04 control: '(Instrumento)' -> allow  (allow; Estado: completado)
+  PASS  REQ-031 CA-A04 control: '( instrumento )' -> allow  (allow; Estado: completado)
+  PASS  REQ-031 CA-A04 control: la cabecera real de REQ-017 (siete instrumento) -> allow  (allow; Estado: completado)
+  PASS  REQ-031 CA-A04 la cabecera real de REQ-007 (';' y '—' dentro de la evidencia) -> deny por la clase, no por ilegible  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A05 dos parentesis en un elemento -> deny  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A05 parentesis sin cerrar -> deny  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A05 ')' sobrante (antes se ignoraba) -> deny  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A05 elemento vacio al final (antes se saltaba) -> deny  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A05 elemento vacio en medio -> deny  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A05 elemento sin identificador -> deny  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A05 identificador con blancos internos -> deny  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A05 identificador fuera del alfabeto (marcado por elemento) -> deny  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A05 identificador con una letra fuera de ASCII (la normalizacion pliega la tilde) -> deny  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A05 ausencia mezclada con una lista -> deny  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A05 caso minimo: texto detras del parentesis (forma retirada) -> deny y dice como conservar la evidencia  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A05 caso minimo: '·' y un segundo identificador sin clase -> deny que nombra sec-b  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A07 Write: '·' con el bloqueante detras -> deny  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A07 Write: control, dos instrumento -> allow  (allow; Estado: completado)
+  PASS  REQ-031 CA-A07 MultiEdit: '·' con el bloqueante detras -> deny  (deny; Estado: en-revisión)
+  PASS  REQ-031 CA-A07 MultiEdit: control, dos instrumento -> allow  (allow; Estado: completado)
+  PASS  REQ-031 CA-A08 reabrir completado -> en-progreso con la lista no interpretable -> allow  (allow; Estado: en-progreso)
+  PASS  REQ-031 CA-A08 reabrir completado -> en-revisión con la lista no interpretable -> allow  (allow; Estado: en-revisión)
+  PASS  REQ-031 CA-A08 caso minimo: reabrir con '(instrumento) — REQ-007' -> allow  (allow; Estado: en-progreso)
+  PASS  REQ-031 CA-A08 caso minimo: reabrir con '(instrumento) · SEC-B' -> allow  (allow; Estado: en-progreso)
+  PASS  REQ-031 CA-A08 en-progreso -> en-revisión con la lista no interpretable -> allow  (allow; Estado: en-revisión)
+  PASS  REQ-031 CA-A08 editar otra linea de un REQ en-progreso con la lista no interpretable -> allow  (allow; Estado: en-progreso)
+Huecos de la auditoria de seguridad R-001 (REQ-007, bloque H):
+  PASS  REQ-007 CA-47 SEC-003 Write a <raiz>//src//a.ts -> deny igual que con una barra  (deny)
+  PASS  REQ-007 CA-47 SEC-003 Edit que cierra un REQ en <raiz>//requirements//REQ-700.md -> deny  (deny)
+  PASS  REQ-007 CA-48 control <raiz>/./src/../src/a.ts sigue deny  (deny)
+  PASS  REQ-007 CA-48 control <raiz>/src/./a.ts sigue deny  (deny)
+  PASS  REQ-007 CA-48 control ruta relativa src/a.ts sigue deny  (deny)
+  PASS  REQ-007 CA-48 control ./src/a.ts sigue deny  (deny)
+  PASS  REQ-007 CA-48 <raiz>//docs//notas.md (fuera de los globs) -> allow  (allow)
+  PASS  REQ-007 CA-48 una ruta UNC //servidor/recurso/x.ts conserva su forma -> allow  (allow)
+  PASS  REQ-007 CA-48 el desarrollador si puede escribir en <raiz>//src//a.ts  (allow)
+  PASS  REQ-007 CA-43 SEC-001 MultiEdit con un byte de control en el new_string -> deny  (deny)
+  PASS  REQ-007 CA-43 SEC-001 Write con 'nota'+byte de control delante del documento cerrado -> deny  (deny)
+  PASS  REQ-007 CA-44 control: el MultiEdit HONESTO que cierra con QA pendiente ya denegaba  (deny)
+  PASS  REQ-007 CA-44 control: el mismo MultiEdit sobre un REQ en verde -> allow  (allow)
+  PASS  REQ-007 CA-44 control: tabuladores y saltos de linea legitimos no son un falso positivo  (allow)
+  PASS  REQ-007 CA-45 SEC-002 un NUL en el REQ: el cierre deniega con motivo propio
+  PASS  REQ-007 CA-46 control: sobre el REQ con NUL, una edicion que no toca el estado -> allow  (allow)
+  PASS  REQ-007 CA-46 control: el mismo REQ SIN NUL y con QA pendiente -> deny (como siempre)  (deny)
+  PASS  REQ-007 CA-46 control: el mismo REQ SIN NUL y con los veredictos completos -> allow  (allow)
+  PASS  REQ-007 CA-54 SEC-006 un techo de 4294967296 se recorta al maximo y el deny lo dice
+  PASS  REQ-007 CA-54 SEC-006 un valor que desborda 64 bits tampoco sube el techo
+  PASS  REQ-007 CA-54 SEC-006 '999999' entrecomillado no es un numero: cae al defecto
+  PASS  REQ-007 CA-55 control: un valor mas bajo que el defecto no baja el techo
+  PASS  REQ-007 CA-55 control: -5 cae al defecto
+  PASS  REQ-007 CA-55 control: 0 cae al defecto
+  PASS  REQ-007 CA-55 control: la clave ausente cae al defecto
+  PASS  REQ-007 CA-55 el deny por presupuesto no nombra ninguna ruta
+  PASS  REQ-007 CA-53 ninguna plantilla hereda los globs del autoalojamiento
+  PASS  REQ-007 CA-40 QA-014 '(instrumento, dueño REQ-007)': la clase es el primer elemento -> allow  (allow)
+  PASS  REQ-007 CA-40 QA-014 la evidencia acompana, nunca cambia el veredicto -> deny por la clase
+  PASS  REQ-007 CA-41 control: la clase NO es el primer elemento -> deny
+  PASS  REQ-007 CA-41 control: otro delimitador no es un parentesis -> deny
+  PASS  REQ-007 CA-41 control: sin ninguna clase -> deny
+  PASS  REQ-007 CA-41 control: '(Instrumento)' se sigue leyendo como hoy -> allow  (allow)
+  PASS  REQ-007 CA-41 control: '( instrumento )' se sigue leyendo como hoy -> allow  (allow)
+  PASS  REQ-007 CA-41 versionado (REQ-031): '(instrumento) — REQ-007' ya no se acepta -> deny, con la evidencia dentro del parentesis
+  PASS  REQ-007 CA-56 SEC-007 100 ediciones sobre 700 KB superan el presupuesto -> deny
+  PASS  REQ-007 CA-56 el deny por presupuesto de reconstruccion no nombra ninguna ruta
+  PASS  REQ-007 CA-57 control: 50 ediciones (bajo el presupuesto) se juzgan como siempre -> deny  (deny)
+  PASS  REQ-007 CA-57 control: el deny por presupuesto alcanza tambien al desarrollador  (deny)
+  PASS  REQ-007 CA-57 control: una edicion sola sobre el mismo REQ se juzga como siempre -> deny  (deny)
+aviso: vuelta parcial (2 de 53 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 94 PASS, 0 FAIL
