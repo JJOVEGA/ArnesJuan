@@ -10,6 +10,25 @@
 > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
 > `docs/estabilizacion/`.
 
+## ⏸ RETOMAR AQUÍ — candidato 1.35.0: construido y validado en conducta, SIN publicar; REQ-023 `bloqueado` esperando la decisión 4 (2026-09-29)
+
+**Este bloque manda en la rama `cand/1.35.0`** (worktree `/home/juan/dev/ArnesJuan-v1.35`, base `origin/main` = `713ac68`; PR en borrador de esa rama). La rama local `main` (`cf2009e`) está desfasada: no se usa. Los bloques de abajo son históricos.
+
+- **Autorización:** `PENDING_APPROVAL.md` § Resueltas, 2026-09-29 (literal). Incluye SEC-047 mitad 1 (REQ-023) y la preparación de 1.35.0; **sin** fusión, tag ni publicación.
+- **Contenido:** los cinco merges de `main` desde `v1.34.0`, más REQ-023 (cabecera ambigua; ADR-014), más la versión 1.35.0 en los tres manifiestos, las notas `[1.35.0]` y la guía «Hacia 1.35.0».
+- **REQ-023 `bloqueado`:** el contador dev↔QA está **agotado (3 de 3)** con **QA-023-05** abierto (`contrato`, **sólo texto**: el README no excluye la vía (g)).
+  - **Conducta validada** sin ningún FAIL en tres vueltas. El código ejecutable es el de `ad793ab`. Banco completo sobre `c4cc32c`: 1137 · 0 · 12, con 1 INCONCLUSO de reloj (REQ-017 CA-08 (ii)).
+  - **Seguridad:** revisión R-045 sin firma y sin veto. SEC-117 (= QA-023-02) y SEC-118 registrados; SEC-047 `en-mitigación`.
+- **Espera al propietario** (entrada de publicación de la cola): ficha 1 (SEC-115 y SEC-118), ficha 2 (hueco C), ficha 3 (QA-023-02 / SEC-117) y **decisión 4** (corrección documental fuera del contador, opción A recomendada).
+- **Próximo paso concreto, si la decisión 4 es (A):**
+  1. el analista hace el write-back de QA-023-05 y de las condiciones de texto de R-045 §6, con barrido por propiedad;
+  2. QA reverifica el texto;
+  3. seguridad lo confirma de forma documental y firma;
+  4. CI sobre la nueva cabeza.
+
+  Cerrar REQ-023 y REQ-031 sigue impedido mientras la cola tenga la entrada de publicación.
+- **Evidencia de las comisiones:** `docs/qa/REQ-023.md`, `docs/seguridad/registro-seguridad.md` § R-045 y las entradas de `CHANGELOG.md` del 2026-09-29. Hay salidas íntegras en el scratchpad de la sesión, que es efímero y no se ha versionado.
+
 ## ⏸ RETOMAR AQUÍ — REQ-029 fidelidad al encargo: entrega implementada y firmada, SIN cerrar (2026-09-23)
 
 **Este bloque manda en esta rama (`feat/fidelidad-encargo`, local, sin push); el de REQ-025 de abajo es histórico de `main`.**
@@ -303,7 +322,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-21 13:46
+## Estado derivado — 2026-09-29 14:17
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -313,13 +332,13 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `feat/req-025-coordinacion-entregas` @ `bb50ecd` — CON CAMBIOS SIN COMITEAR
-**Arnés:** plugin instalado `1.34.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
+**Repositorio:** `cand/1.35.0` @ `31d2a21` — CON CAMBIOS SIN COMITEAR
+**Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 1
-**REQ:** 26 — completado 13 · en-revisión 1 · en-progreso 1 · bloqueado 2 · otros 9
+**REQ:** 29 — completado 15 · en-revisión 3 · en-progreso 1 · bloqueado 2 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
-_Sólo los REQ abiertos; los 13 completados no se listan._
+_Sólo los REQ abiertos; los 15 completados no se listan._
 
 | REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
 |---|---|---|---|---|---|
@@ -332,9 +351,10 @@ _Sólo los REQ abiertos; los 13 completados no se listan._
 | REQ-020 | pendiente | pendiente | preventiva | critico | sec-038(contrato),sec-039(contrato),sec-… |
 | REQ-021 | bloqueado | con-hallazgos | preventiva | critico | dev-021-05(instrumento,dueñoanalista-req… |
 | REQ-022 | pendiente | pendiente | pendiente | critico | (ninguno) |
-| REQ-023 | borrador | pendiente | pendiente | critico | sec-052(contrato) |
+| REQ-023 | bloqueado | con-hallazgos | pendiente | critico | qa-023-02(instrumento,preexistenteycriti… |
 | REQ-024 | borrador | pendiente | pendiente | critico | (ninguno) |
-| REQ-025 | bloqueado | con-hallazgos | pendiente | critico | qa-025-05(instrumento),qa-025-08(instrum… |
+| REQ-025 | en-revision | aprobado | aprobado | critico | qa-025-08(instrumento),sec-103(instrumen… |
 | REQ-028 | borrador | pendiente | pendiente | critico | (ninguno) |
+| REQ-031 | en-revision | aprobado | aprobado | critico | sec-115(instrumento,r-044-c:unhookquemue… |
 
 <!-- ARNES:DERIVADO fin -->

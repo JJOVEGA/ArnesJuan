@@ -2,6 +2,19 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-29 · Cola: ficha 1 corregida («si el hook alcanza a medir **y a emitir su decisión**») y ampliada con SEC-118; ficha 3 con la valoración del auditor; decisión 4 con el alcance de R-045 §6; `docs/ESTADO.md` con el punto de retomar del candidato
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora.
+
+**Cola:**
+- **Ficha 1:** pasa a SEC-115 **y SEC-118**, la misma familia (un hook que no emite decisión deja pasar el cierre), con los hechos de SEC-118, su remedio en un solo sitio y sus condiciones de revisión anticipada. La limitación se corrige antes de presentarla, como pide R-045 §6: sin la precisión «y a emitir su decisión», el propietario decidiría sobre una premisa falsa.
+- **Ficha 3:** recoge que el auditor recomienda lo mismo que la coordinadora (publicar declarado y reparar de inmediato en un parche propio), con sus condiciones y la recomendación sobre REQ-001.
+- **Decisión 4 (A):** una sola corrección documental cubre QA-023-05 y las condiciones de texto de R-045 §6. Advierte que la promesa de que la clave repetida deniega sin límite vive también en texto de REQ-031 ya publicado en `main` (`AGENTS.md` §13 y su plantilla, README), y que SEC-118 la desmiente.
+- **Nada se acepta:** SEC-115, SEC-118, C y SEC-117 siguen abiertos y sin aceptar.
+
+**`docs/ESTADO.md`:** gana el bloque «RETOMAR AQUÍ» del candidato 1.35.0 (ritual de cierre, §0). El bloque derivado entra tal como lo re-derivó el hook desde el disco; la modificación que había al empezar la sesión ya estaba sustituida por esas re-derivaciones.
+
+**Avance (regla 6):** decisiones presentadas y agrupadas con su forma; falta la respuesta del propietario. Lo independiente sigue: push, PR en borrador y CI.
+
 ## [Interno] — 2026-09-29 · Candidato 1.35.0: revisión de seguridad R-045 sobre `31d2a21` (código de `ad793ab`) — REVISIÓN, NO FIRMA; puerta de REQ-023 sin vía de rodeo dentro de su frontera; QA-023-02 registrado como SEC-117; fail-open del motivo generalizado como SEC-118; SEC-047 `en-mitigación`
 > Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `auditor-seguridad`. Unos 370 k tokens.
 
