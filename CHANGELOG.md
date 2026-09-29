@@ -2,6 +2,26 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-29 · Candidato 1.35.0: revisión de seguridad R-045 sobre `31d2a21` (código de `ad793ab`) — REVISIÓN, NO FIRMA; puerta de REQ-023 sin vía de rodeo dentro de su frontera; QA-023-02 registrado como SEC-117; fail-open del motivo generalizado como SEC-118; SEC-047 `en-mitigación`
+> Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `auditor-seguridad`. Unos 370 k tokens.
+
+- **Qué se revisó:** `hooks/lib.sh`, `hooks/guard-completado.sh` y `tools/arnes-lectura.sh` contra REQ-023 CA-01…CA-12 y ADR-014. Se sondeó `hooks/guard.sh` real por `Edit`, `MultiEdit` y `Write`, candidata frente a `713ac68`. No se miraron las quality gates ni el banco, que son de QA. Con `QA: con-hallazgos` no hay firma (regla de orden, §6).
+- **Resultado:**
+  - ninguna vía de rodeo dentro de la frontera, incluidas formas que la tabla de CA-08 no tenía;
+  - ningún lector cambia sus valores;
+  - sin fail-open por locale, CRLF, comentario, CR ni por el tamaño del motivo propio de REQ-023;
+  - R-044-C sigue cubriendo la gramática y el techo (re-medido), y se corrige en un punto: la clave repetida no deniega sin límite (SEC-118).
+- **Hallazgos nuevos** (`instrumento`, preexistentes, no aceptados):
+  - **SEC-117**, crítico: es QA-023-02 descrito por propiedad. Cuando la puerta no puede reconstruir el documento que escribirá la herramienta, deja pasar el cierre.
+  - **SEC-118**, severidad media: un motivo de denegación de más de 128 KiB deja el hook sin decisión. Medido: `QA:` de ≈ 140 KB sin paréntesis → allow en 0,5 s, y 1 801 líneas `Hallazgos abiertos:` repetidas → allow.
+
+  Ninguno bloquea REQ-023.
+- **SEC-047** pasa a `en-mitigación`. Su cláusula de subida la decide el propietario.
+- **Valoración de la ficha 3:** publicar con la limitación declarada y abrir de inmediato el REQ de reparación, como parche propio. Retener 1.35.0 no protege a nadie, porque el defecto está en las versiones instaladas, y dejaría vivo el bypass por variante que 1.35.0 cierra.
+- **REQ-023:** `Seguridad: pendiente (revisión R-045 hecha…)`. El `contrato` que impide cerrarlo sigue siendo QA-023-05.
+- **Condiciones de publicación** (R-045 §6): declarar SEC-118 en las notas y corregir la fórmula «si el hook alcanza a medir», que debe decir «y a emitir su decisión», también en la ficha 1 antes de presentarla; citar SEC-117 en la guía; y el write-back de QA-023-05.
+- **Avance (regla 6):** revisión registrada; falta la decisión 4, las correcciones de texto, `QA: aprobado` y la confirmación documental de seguridad.
+
 ## [Interno] — 2026-09-29 · REQ-023: QA vuelta 3 de 3 (la última) sobre `c4cc32c` → `con-hallazgos`; QA-023-03 cerrado; QA-023-05 (`contrato`, sólo texto) abierto con el contador AGOTADO → REQ-023 `bloqueado` y escalado al propietario (decisión 4)
 > Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 (qa-tester) · agente: qa-tester; coordinadora (estado `bloqueado`, cola y una frase de las notas). Unos 75 k tokens de QA en esta vuelta.
 

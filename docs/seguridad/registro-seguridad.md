@@ -8978,3 +8978,272 @@ La frase falsa («… y lo mismo **SEC-047**») ya no está escrita. «Preguntas
 | `SEC-116` | `instrumento` | **`mitigado`** (R-044-D) | No |
 
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-044** (adendas A–**D**); último hallazgo **SEC-116**; próximos libres **R-045** y **SEC-117**.
+
+---
+
+## Revisión R-045 — **Candidato 1.35.0: la puerta de REQ-023 (cabecera ambigua, mitad 1 de SEC-047), el registro formal de QA-023-02 (SEC-117) y del motivo sin tope (SEC-118), el estado de SEC-047, y la versión y las notas.** `cand/1.35.0` @ `31d2a21` — 2026-09-29 — **REVISIÓN, NO FIRMA**
+
+**Numeración.** Repetí el método de R-044: todas las ramas locales y remotas, las etiquetas y los 18 worktrees. `R-045`, `SEC-117` y `SEC-118` sólo aparecían como «próximos libres», así que los tomo.
+
+**Base, alcance y orden de fases.**
+- **Cabeza:** `31d2a213df646d933c6cd3b4767232d0207f73f0`, que desciende de `origin/main` = `713ac68`. En el árbol hay `M docs/ESTADO.md` y `?? propuesta-v1.35.0/`; no los toqué.
+- **Código revisado:** `git diff 713ac68..31d2a21 -- hooks tools`, es decir `hooks/lib.sh`, `hooks/guard-completado.sh` y `tools/arnes-lectura.sh`. Desde `ad793ab` sólo cambian comentarios: quitadas las líneas `#`, el diff sale vacío. **El código ejecutable revisado es el de `ad793ab`.**
+- **Relación con R-044-C:** `hooks/` y `tools/` son idénticos entre `cdcad5d` (el código que firmé en R-044-C) y `713ac68`. El delta sobre aquel código es exactamente REQ-023.
+- **Instrucciones:** el `AGENTS.md` de este worktree, sin §14 y con la fila nueva de REQ-023 en §13. No el de `rel/registro-1.33.0`.
+- **Contrato leído:**
+  - `requirements/REQ-023.md` CA-01…CA-12 y ADR-014;
+  - `requirements/README.md` § «Veredictos de validación», idéntica en la plantilla (`diff` vacío);
+  - `docs/qa/REQ-023.md`, vueltas 1 a 3;
+  - `PENDING_APPROVAL.md`: las fichas 1 a 3, la decisión 4 y la entrada resuelta del 2026-09-29.
+- **Orden:** `QA: con-hallazgos` (vuelta 3 de 3, con QA-023-05 abierto). **No firmo `aprobado`.** No miré las quality gates ni corrí el banco.
+
+**Método.**
+- **Instrumento propio** (`lib-sonda.sh`): proyecto temporal y JSON `PreToolUse` por `Edit`, `MultiEdit` y `Write`, contra el entrypoint real `hooks/guard.sh`. Salida vacía = allow.
+- **Base de comparación:** `713ac68`, materializada con `git archive`. El sha256 de `lib.sh` es idéntico al de `git show 713ac68:hooks/lib.sh`.
+- **Condiciones:** Linux/WSL2, bash 5, una corrida por punto.
+- **Evidencia** en el scratchpad de la sesión, `evidencia-seg/`: `sondas-1` a `sondas-8d`, `lectura.txt` y `depura-locale*`.
+- **Dos defectos de mi instrumento, detectados y corregidos; conservo las salidas defectuosas:**
+  1. La función que juzga guardaba el tiempo en una variable global que pisaba la línea `Sensible a seguridad:` de los fixtures desde el segundo caso. Lo destapó una falsa diferencia entre locales. Repetí las tandas afectadas y dieron las mismas decisiones, salvo un caso cuyo fixture había dejado de ser la fila R8; lo rehíce en `sondas-8d`. Las salidas defectuosas llevan el sufijo `INSTRUMENTO-DEFECTUOSO`.
+  2. Una sonda por `Write` de ≈ 349 KB pasaba el contenido por `jq --arg` y salía allow porque el JSON quedaba vacío: la trampa de ADR-005. Repetida con `--rawfile`, deniega.
+
+### 1. La puerta de REQ-023: **ninguna vía para rodearla dentro de la frontera declarada**
+
+**Formas que no están en la tabla de CA-08.** Todas se probaron por `Edit` y por `Write`. La candidata deniega (AMBIGUA) y la base permite. Ejemplos de la clase, **no exhaustivos**:
+- marcadores: `-` seguido de TAB, `+ `, `123) `, y un marcador seguido de varios blancos;
+- bytes descartados dentro de la clave: DEL, U+00AD y U+200D;
+- bytes descartados delante: U+200B antes del marcador, y un BOM;
+- `Qa:`, y un NBSP entre la clave y `:`;
+- decoración sobre una variante: `**qa**:`, y `` `QA` `` repetida.
+
+La clave sangrada con TAB sigue siendo canónica y gobierna: las dos deniegan por su valor.
+
+**Intento de cierre** (con QA pendiente). Por `Edit`, `MultiEdit` y `Write`, la candidata **deniega** y la base permite en cada una de estas ediciones:
+- añadir `ESTADO: completado (fecha)`;
+- añadir `- Estado: **COMPLETADO**`;
+- añadir una segunda `Estado:completado`, o `Estado:<TAB>completado`;
+- cambiar la línea gobernante por su variante;
+- dejar vacía la gobernante con la terminal debajo.
+
+Para decidir si una línea `Estado` que no gobierna dice el terminal, la puerta usa la misma normalización que para la gobernante: `arnes_norm_campo` + `arnes_veredicto`.
+
+**Lo que el bloque nuevo no puede hacer, leído en el código.**
+- Sólo llama a `arnes_deny`. Si no encuentra el terminal, `est_despues` no es terminal y la función devuelve 0 en la línea siguiente. Por eso el `arnes_norm_campo` del bucle no puede alterar ninguna puerta posterior.
+- `_arnes_clave_control` trabaja sobre una copia de `ARNES_CLAVE`, y no toca `ARNES_CLAVE` ni `ARNES_VALOR`.
+- El prefiltro de letras ajenas es correcto: toda letra ASCII de una clave que no sea de estructura acaba en su esqueleto.
+
+**Sin fail-open por las vías que pide el encargo:**
+- **Locale.** La frontera de 256 bytes cae donde dice el contrato, bajo `C` y bajo `C.UTF-8`: con 254, 255 y 256 bytes deniega; con 257 queda fuera (e) y permite, en los dos. `LC_ALL` local no se filtra: con `LC_ALL` sin definir y con `C.UTF-8`, `${#v}` de `é·日` sigue dando 3 después de `arnes_campos_req` y después del motivo. El mismo documento da el mismo motivo en los dos locales.
+- **CRLF.** F0 en CRLF cierra. Una variante en CRLF y la fila R8 en CRLF deniegan en la candidata; en la base permitían.
+- **Comentario.** Una variante dentro de `<!-- -->` no dispara, ni el comentario sin espacio de CA-11. Una variante tras un comentario cerrado en la misma línea sí dispara. El rango sin cerrar deniega por su propia regla.
+- **CR.** Un CR dentro de la clave deniega por la guarda del CR interior, que no cambia.
+- **Tamaño del motivo.** 30 variantes, cada una con una cita de 80 bytes no ASCII: deniega con un motivo de 9 234 bytes (`C`) o 9 575 (`C.UTF-8`), y **ningún byte ≥ 0x80 sale crudo**. El tope de 20 líneas deja el motivo muy por debajo de 128 KiB, y también de 32 KiB. QA midió además 400 y 20 000 variantes: deniega.
+
+**Los lectores no cambian sus valores.**
+- `hooks/campos-req.awk` y `tools/arnes-paralelo.sh` no cambian (diff vacío).
+- `tools/arnes-lectura.sh` da sobre las 29 cabeceras reales la misma salida que la base, con código de salida 0. Sólo cambia la línea de versión del plugin, porque la base materializada no lleva `.claude-plugin/`.
+- Sobre un proyecto con variantes, el informe sale con código ≠ 0 y nombra la variante, también en un archivo que cuenta como nota.
+
+**Coste (observación, no acreditación; una corrida por punto, WSL2).** En cabeceras patológicas de 20 000 a 60 000 líneas de relleno, la candidata tarda entre un 6 % y un 42 % más que la base. El peor caso medido: 60 000 × `Prioridad: alta`, 20,7 s frente a 14,6 s. Todas deniegan a tiempo. No hay trabajo nuevo que crezca más que linealmente (CA-09 (iii)), pero el límite de 60 s queda más cerca en cabeceras de cientos de miles de líneas, que ya son terreno de SEC-115. No abro hallazgo.
+
+**Textos.**
+- La frontera está declarada sin prometer reconocimiento universal en todas sus sedes: CA-01, README y plantilla, §13 y su plantilla, ADR-014, la guía y las notas. En todas figura la limitación de más de 256 bytes como **no protegida**.
+- **Coincido con QA-023-05** (`contrato`, de QA; no lo reclasifico): el «Cuándo deniega, dicho entero» del README y de la plantilla no excluye la vía (g).
+- Coincido también con QA en que la fila de §13 queda cierta **por remisión** en cuanto el README declare (g) en «Fuera, y sin promesa». No pido tocarla.
+- **Observación sin id:** §13, su plantilla, la guía y las notas transcriben las seis claves de control. Es una lista cerrada de contrato, y el README dice que vive una sola vez en el código. Pero si algún día se retirara una clave de la constante sin tocar esas sedes, prometerían de más. Recomiendo que su próxima edición cite `ARNES_CLAVES_CONTROL` (`hooks/lib.sh`) como sitio único. No bloquea.
+
+### 2. Qué de R-044-C sigue cubriendo el código final, y qué no
+
+R-044-C acreditó, sobre `cdcad5d`: la gramática cerrada; que la clave repetida deniega; el techo medido antes de normalizar, sin truncar, sin tomarse por ausencia, con un marcador no fabricable y con `LC_ALL` local; 0 procesos; y la promesa en sus sedes.
+
+- **Lo que sigue cubriendo, porque ese código no cambió.** De `arnes_clase_hallazgo` sólo cambian comentarios, y el recuento `n_h`/`ARNES_HALL_N` y `arnes_campos_normaliza` están intactos. Siguen cubiertos, por tanto, la gramática, el techo, el marcador, el `LC_ALL` local de `_arnes_bytes` y los 0 procesos de esa parte. **Re-medido sobre `31d2a21`**, con un valor de 348 910 bytes y `contrato` delante:
+  - deniega por tamaño en 0,41 s por `Edit`, por `MultiEdit` y con la clave decorada;
+  - deniega en 3,2 s por `Write`;
+  - la reapertura permite;
+  - todo igual que en la base.
+- **Lo que cambió y R-044-C NO cubre; lo cubre esta revisión, sin firma:**
+  - todo lo nuevo de REQ-023 en `arnes_campos_req`, `guard-completado.sh` y `arnes-lectura.sh`;
+  - un cambio de conducta sobre casos de REQ-031. Si la repetición de `Hallazgos abiertos:` viene junto con otra ambigüedad, deniega REQ-023 con su motivo en lugar de CA-A12; sigue siendo deny. Sólo la repetición exacta, cuando es la única ambigüedad, conserva el motivo de CA-A12 (medido con U1, U4 y U6).
+- **Corrijo el alcance de mi propia firma R-044-C.** «La clave repetida deniega» **no** es verdad sin límite:
+  - con unas 1 700 líneas repetidas de 60 caracteres o más, el motivo de CA-A12 supera 128 KiB y la puerta sale sin decisión;
+  - con líneas cortas pasa hacia las 2 900, cifra estimada a partir de la medida de 2 501 líneas, que dan un motivo de 111 961 bytes.
+
+  Es SEC-118 (§4). Pasa igual en `cdcad5d`, en `713ac68` y en la candidata, y R-044-C no lo midió. No reescribo el paréntesis de REQ-031: lo dejo escrito aquí, y la cobertura de R-044-C se lee con esta corrección.
+
+### 3. SEC-117 — `instrumento` · **abierto** · severidad **crítica** · registro de seguridad de **QA-023-02** · dueños `desarrollador` (mecanismo), `analista-requerimientos` (REQ de reparación y REQ-001) y `auditor-seguridad` (registro y alcance)
+
+**La puerta de cierre juzga un documento distinto del que escribe la herramienta, y cuando no puede reconstruirlo, deja pasar.**
+- **El mecanismo.** Si algún `old_string` de un `Edit` o `MultiEdit` no está literal en el archivo, el hook no reconstruye el documento y cae a la vía de fragmentos. Ahí, si el `new_string` no contiene `estado: <terminal>`, devuelve allow sin mirar veredictos, clase, cola ni quality gates. Es la rama `else` de «HAY DOCUMENTO» en `hooks/guard-completado.sh`.
+- **La premisa falsa.** Esa rama da por hecho que la herramienta fallará y no escribirá nada. No es así cuando la herramienta encuentra lo que el hook no encuentra.
+- **Instancia medida (QA-023-02).** El `Edit` del CLI 2.1.284 normaliza ‘ ’ “ ” y desescapa `\uXXXX` antes de aplicar la edición. Lo leyó QA en el binario y lo emuló; **no se ha ejecutado en una sesión real**, y no se sabe desde qué versión del CLI ocurre.
+
+**Reproducido por mí en `31d2a21`, del lado del hook.** Sobre un REQ `critico` con QA y Seguridad pendientes y `SEC-1 (contrato)`:
+- `old_string` = `en-revisión` (con la barra literal) y `new_string` = `completado` → **allow** por `Edit` y por `MultiEdit`, en la candidata y en la base. El control con `old_string` literal deniega.
+- Con una entrada bajo `## Pendientes` → allow. El control literal deniega.
+- La fila crítica de SEC-047 (NBSP en `Sensible a seguridad`, con `Rigor: ligero`), con `old_string` escapado y la línea `Estado:` entera → **allow**. En esa vía no se aplica la regla de REQ-023 (caso B6).
+- Con la línea entera y una cabecera sin ambigüedad, las puertas de veredicto sí corren y deniegan.
+
+**Por qué `instrumento`, y por qué crítica.**
+- Es un defecto del guardián del arnés, y preexistente: está en 1.33.2, en `v1.34.0` y en `713ac68`. REQ-023 no lo introduce ni lo agrava, y lo declara en su frontera (g).
+- **Efecto:** un cierre que no pasa por ninguna puerta.
+- **Realismo:** no es bajo. La herramienta normaliza las comillas precisamente porque los modelos las reescriben rectas, y basta una cabecera con comillas tipográficas en la línea del estado. Hecho a propósito, es trivial.
+
+**Remediación, por propiedad y no por lista:** *cuando la puerta no puede reconstruir el documento que la herramienta escribiría, no permite una edición que pueda dejar el estado terminal*.
+- La forma más barata que falla cerrada, como ejemplo no exhaustivo: aplicar en la vía de fragmentos la misma regla ancha que ya rige cuando el disco no se puede leer, que deniega si la edición menciona el estado terminal en cualquier parte. La otra forma es emular la búsqueda de la herramienta.
+- Antes de reparar conviene ejecutar el lado del CLI en una sesión real. El remedio que falla cerrado no depende de esa medida.
+
+**REQ-001 CA-10 y CA-11 (`completado`).** CA-11 afirma que «la herramienta fallará entera y no escribirá nada». Con la evidencia de QA-023-02, esa premisa **no está sostenida**. Cómo debe quedar registrada:
+- **REQ-001 no se reabre ahora.** Su código no ha cambiado, y la conducta que CA-11 describe (ALLOW) sigue siendo la del hook; lo falso es la justificación.
+- La premisa disputada queda registrada aquí y en las limitaciones de las notas.
+- El REQ de reparación versiona CA-10 y CA-11 con causa SEC-117, como REQ-031 versionó REQ-007 CA-41. En ese acto REQ-001 se reabre y vuelve a recorrer el ciclo (§9, «Regla de estado»).
+- Recomiendo que el `analista-requerimientos` añada `SEC-117 (instrumento)` al `Hallazgos abiertos:` de REQ-001 sin tocar su `Estado:`, para que quien lea CA-11 vea que su premisa está disputada.
+
+**Forzador:**
+- la decisión sobre la ficha 3;
+- cualquier comisión que toque la reconstrucción del `Edit` en `guard-completado`;
+- un cierre observado por esa vía;
+- un cambio en el respaldo del `Edit` del CLI.
+
+**Vencimiento propuesto:** 2026-10-06, el de la ficha 3, con revisión anticipada si se da cualquiera de los forzadores. **No aceptado:** aceptarlo es decisión del propietario.
+
+### 4. SEC-118 — `instrumento` · **abierto** · severidad **media** · dueños `desarrollador` (`arnes_deny`, `hooks/lib.sh`) y `analista-requerimientos` (sedes de la promesa)
+
+**Una denegación cuyo motivo supera el límite de un argumento de línea de órdenes no llega a emitirse, y el hook sale sin decisión, que el cliente toma por permitir.**
+
+**El mecanismo.** `arnes_deny` pasa el motivo como un argumento de `jq` (`jq -cn --arg r "$1"`). Por encima de `MAX_ARG_STRLEN` (128 KiB en Linux), `jq` no arranca y el sistema responde «Argument list too long». No se escribe nada, y `arnes_deny` sale con `exit 0`.
+
+**La propiedad afectada:** está expuesto **todo motivo que interpole contenido sin tope**. Los sitios salen de recorrer los `arnes_deny` del árbol, y la lista de abajo es **no exhaustiva**.
+
+**Medido por `Edit`, en la candidata y en `713ac68`, con decisiones idénticas:**
+- `QA:` con ≈ 140 KB y sin paréntesis final (el motivo cita `$qa`) → **allow en 0,5 s**, con QA pendiente. El control, con el mismo valor entre paréntesis, deniega: el paréntesis se corta y el motivo mide 314 bytes.
+- `Seguridad:` igual (`$seg`) → allow en 0,3 s.
+- `Sensible a seguridad:` dudoso, de ≈ 140 KB (`ARNES_SENS_CRUDO`) → allow en 3,4 s.
+- Una línea de cabecera sin `:`, de ≈ 140 KB, con un CR interior → allow en 0,4 s. La guarda del CR cita la línea entera.
+- **REQ-031 CA-A12, con repeticiones de `Hallazgos abiertos:`:**
+  - de 60 caracteres o más: 1 601 → deny, con un motivo de 121 061 bytes; 1 801 → **allow**;
+  - cortas: 2 501 → deny (111 961 bytes); 3 000 → allow (medido por el desarrollador y por QA).
+
+**Candidatos sin medir:**
+- `ARNES_CR_INTERIOR_LINEA`, en la vía de fragmentos;
+- `$crudo`, en los veredictos fechados (opt-in);
+- en `guard-git`, la orden citada (`${args[*]}`). El techo de análisis la acota a 64 KiB por defecto, pero un manifiesto puede subirlo a 128 KiB.
+
+**REQ-023 no lo abre.** Su motivo tiene un tope de 20 líneas y mide como mucho ≈ 9,6 KB en el peor caso probado. Pero **cede el caso a CA-A12** cuando la repetición exacta de `Hallazgos abiertos:` es la única ambigüedad (U1), y ahí hereda el defecto.
+
+**Por qué importa más de lo que su realismo sugiere: no depende del reloj.** El hook mide y decide deny en menos de un segundo, y aun así deja pasar.
+- **La fórmula de SEC-115 es falsa tal como está escrita.** La ficha 1 y las notas lo acotan diciendo que la versión sólo puede prometerlo «si el hook alcanza a medir»; hace falta «si alcanza a medir **y a emitir su decisión**».
+- **Lo mismo vale para estas sedes:**
+  - la condición de la fila de §13 sobre `Hallazgos abiertos:` («siempre que el hook alcance a medirlo dentro del límite del cliente»);
+  - «Si hay más de una, deniega», del README y de su plantilla (§ «Clases de hallazgo»);
+  - «El campo repetido en la cabecera deniega (CA-A12)», de las notas;
+  - la entrada de REQ-031 en la guía.
+- **Windows/MSYS, sin medir.** Si `jq` es un binario nativo, el límite de línea de órdenes de `CreateProcess` (32 767 caracteres) podría bajar el umbral unas cuatro veces.
+
+**Clase `instrumento`, como SEC-113 y SEC-115.**
+- Es un defecto del guardián, y preexistente desde que `arnes_deny` pasa el motivo por argumento. REQ-031 y REQ-023 no lo introducen.
+- **Realismo, bajo en Linux.** No son descuidos corrientes un veredicto de más de 128 KB sin paréntesis final, unas 1 700 líneas repetidas ni una línea de 128 KB con un CR interior. Como referencia, la línea de control más larga de las 29 cabeceras mide 1 926 bytes.
+- **Efecto, el mismo que el de SEC-115:** dejan de correr todas las puertas del cierre. Y aquí además es determinista.
+
+**Remediación, por propiedad y en un solo sitio:** *ningún dato variable viaja a `jq` como argumento de línea de órdenes*.
+- El motivo pasa por la entrada estándar, con un here-string (sin proceso nuevo, como ya hace `arnes_jq_str`), o se acota en bytes dentro de `arnes_deny` antes de invocar a `jq`. Lo mismo para `arnes_emitir_avisos`.
+- Un arreglo en `arnes_deny` cubre todas las instancias, también las que no se han medido.
+- **Mientras no se repare:** las sedes de arriba tienen que acotar su promesa con la condición completa (write-back del analista), y las notas de 1.35.0 tienen que declarar el defecto.
+
+**Forzador:**
+- la próxima comisión que toque `arnes_deny`, `arnes_emitir_avisos` o cualquier motivo de denegación;
+- la decisión sobre SEC-115 (ficha 1), que hoy se presenta con la fórmula incompleta;
+- una medición en Windows.
+
+**Vencimiento propuesto:** la decisión de publicación de 1.35.0. Se repara antes, o el propietario lo acepta con su firma después de ver la ficha corregida. **No aceptado.**
+
+### 5. SEC-047 tras la mitad 1
+
+- **Mitad (1), el carácter que borra una clave: implementada en el candidato, dentro de la frontera declarada de REQ-023 CA-01.**
+  - Medido aquí: deniegan en la candidata las filas críticas, es decir, BOM y NBSP en `Sensible a seguridad` con `Rigor: ligero`, y BOM, ZWSP y `0xc3` delante de `Hallazgos abiertos:`.
+  - Siguen fuera, **declaradas y sin protección**: el homóglifo, la letra cambiada, los dos puntos no ASCII, la estructura visible, el NBSP tras el marcador, la clave de más de 256 bytes y la vía (g) (SEC-117).
+  - **No está publicada ni firmada:** la firma de REQ-023 espera a `QA: aprobado`.
+- **Mitad (2), la semántica de la ausencia: sin tocar.** Es REQ-024, fuera del candidato.
+- **Estado: `en-mitigación`** (antes `abierto`). La clase `instrumento` y la severidad crítica no cambian. Pasará a `mitigado` sólo cuando estén las dos mitades.
+- **La cláusula de subida** (R-014 §4; R-044-D) **no la decido yo.** Anoto los hechos para quien decide:
+  1. La condición 1 ocurrió: `v1.34.0` salió sin la mitad 1.
+  2. La condición 2 no consta: 0 de 29 cabeceras ambiguas, según el desarrollador y QA, y aquí el informe da código 0 e idéntico a la base.
+  3. La condición 3 es que un texto firmado prometa la propiedad mientras el código sólo guarda el CR. El código ya guarda más que el CR, y ninguna sede del candidato promete la propiedad general: CA-10 y CA-12 (iii) lo prohíben, y lo comprobé en §13, en su plantilla, en la guía y en las notas.
+
+  La decisión sigue siendo del propietario.
+
+### 6. Versión, notas y guía
+
+**Versión.** 1.35.0 en `plugin.json` (`.version`) y en `marketplace.json` (`.metadata.version` y `.plugins[0].version`); los tres concuerdan. `hooks/hooks.json`, `.github/` y `.arnes/` no cambian desde `v1.34.0`.
+
+**Conforme:**
+- **CI verde.** Ninguno se presenta como acreditación de rendimiento, conducta ni ahorro. Las notas lo dicen expresamente, conservan el FAIL de `cfb1106` y los INCONCLUSO, y no dan el ±1 % por medida.
+- **Puerta posterior.** REQ-011 aparece como lo que es: no es prevención, ni recuperación, ni mitigación disponible.
+- **Limitaciones declaradas:** SEC-115, C, QA-023-02 y la frontera de REQ-023, incluida la limitación de más de 256 bytes, que no está protegida.
+- **Nada de `rel/registro-1.33.0`.** Hay 0 commits suyos en `v1.34.0..31d2a21`; `1154417` y `ef82d43` no son ancestros de la cabeza; y R-024 y SEC-078 sólo aparecen en frases que constatan su ausencia.
+- **Repositorio público:** ningún hallazgo de cliente.
+  - «cliente» se refiere siempre a Claude Code, y «proyecto real» o «consumidor» son genéricos;
+  - el nombre de máquina de `docs/qa/REQ-023.md` ya figuraba en `main` y es del propietario.
+
+**Condiciones de publicación que dejo escritas.** No bloquean el cierre de REQ-023, que es otra clase de bloqueo.
+1. **Notas, § Limitaciones:** deben declarar **SEC-118** y dejar de presentar «si el hook alcanza a medir» como condición suficiente (§4). Hoy dicen que el motivo de CA-A12 está «pendiente de registro con responsable»; queda registrado aquí. La misma corrección hace falta en el cambio de compatibilidad 1 («El campo repetido en la cabecera deniega») y en la entrada de REQ-031 de la guía.
+2. **Ficha 1 de `PENDING_APPROVAL.md`:** repite la misma fórmula, así que el propietario decidiría SEC-115 sobre una premisa falsa. Hay que corregirla antes de presentarla (regla 4) y añadir SEC-118, en una ficha propia o junto a la 1.
+3. **Guía, «Vías conocidas que no encuentra»:** remite a `docs/seguridad/registro-seguridad.md`, «SEC-047 y SEC-050», como sitio único, pero QA-023-02 sólo vivía en el registro de QA. Desde esta revisión vive aquí como **SEC-117**, y la remisión debe citarlo.
+4. **El write-back de QA-023-05** (decisión 4).
+
+**Observación sin id.** Las notas dicen de las cifras del desarrollador sobre REQ-023 que «QA no las ha validado». Ya no es así: QA validó en tres vueltas y corrió el banco sobre `c4cc32c`. El error promete de menos, no de más; se corrige la próxima vez que se toquen las notas.
+
+### 7. Veredicto
+
+**Revisión hecha. Sin veto. Sin firma:** `QA:` está en `con-hallazgos`, y la regla de orden (`AGENTS.md` §6) no deja firmar antes.
+
+**Hallazgos míos que bloqueen el cierre de REQ-023: ninguno.**
+- SEC-117 y SEC-118 son `instrumento`, preexistentes y ajenos a su alcance. Entran en su `Hallazgos abiertos:` como sede provisional, hasta que exista su REQ de reparación.
+- Lo que impide cerrar REQ-023 sigue siendo QA-023-05 (de QA), además de la cola y de las firmas que faltan.
+
+**Lo que acredita:** la revisión de seguridad de la puerta de REQ-023 sobre el código ejecutable de `ad793ab` (= `31d2a21`):
+- ninguna vía para rodearla dentro de la frontera, por `Edit` con `old_string` literal, por `MultiEdit` y por `Write`;
+- los lectores no cambian sus valores;
+- ningún fail-open por locale, CRLF, comentario, CR ni por el tamaño de su propio motivo;
+- ninguna regresión de conducta sobre REQ-031, salvo qué motivo sale cuando hay más de una ambigüedad;
+- los textos del candidato, con las condiciones de §6.
+
+**Lo que NO acredita:**
+- las quality gates, el banco ni el CI;
+- Windows/MSYS;
+- la sesión interactiva del editor;
+- el lado del CLI de SEC-117, que QA leyó y emuló pero nadie ha ejecutado;
+- las formas que quedan fuera de la frontera;
+- SEC-115, SEC-118 ni el hueco C.
+
+**Para la firma.** Cuando QA apruebe:
+- si entre `31d2a21` y esa cabeza sólo cambia texto (el write-back de QA-023-05 y las correcciones de §6), bastará una confirmación documental acotada, con un `git diff` que muestre que no cambia nada ejecutable en `hooks/` ni en `tools/`;
+- si cambia código ejecutable, hace falta una revisión nueva.
+
+### 8. Estado de hallazgos tras R-045
+
+| Hallazgo | Clase | Estado | Dueño | ¿Bloquea el cierre de REQ-023? |
+|---|---|---|---|---|
+| `SEC-047` | `instrumento` | **`en-mitigación`** (la mitad 1 está en el candidato; la mitad 2 es REQ-024) | `analista-requerimientos` + `desarrollador` | No |
+| `SEC-115` | `instrumento` | `abierto`, ficha 1, no aceptado | `desarrollador` + `analista-requerimientos` | No |
+| **`SEC-117`** (= QA-023-02) | `instrumento` | **`abierto`**, ficha 3, no aceptado | `desarrollador` + `analista-requerimientos` + `auditor-seguridad` | No |
+| **`SEC-118`** | `instrumento` | **`abierto`**, no aceptado | `desarrollador` + `analista-requerimientos` | No |
+| `QA-023-02` | `instrumento` | de QA; registrado aquí como SEC-117 | — | No |
+| `QA-023-05` | `contrato` | de QA, abierto | `analista-requerimientos` | **Sí** |
+
+**Estado de seguridad revisado de REQ-023.** Es la línea base de no-regresión para la firma; todavía no es un estado aprobado.
+- la clave se mide en bytes **antes** de cualquier operación nueva, bajo `LC_ALL` local;
+- la frontera lee **una** constante (`ARNES_CLAVES_CONTROL`), y los esqueletos se derivan de ella;
+- la detección vive en el recorrido de `arnes_campos_req` y es observacional;
+- el bloque de la puerta **sólo** deniega;
+- el motivo tiene tope y escapa todo byte no imprimible;
+- `arnes-lectura` usa el mismo lector.
+
+**Regresiones a vigilar** (no exhaustivo):
+- una operación sobre la clave antes de medirla;
+- una segunda enumeración de las claves;
+- leer el valor de una variante para algo que no sea el intento de cierre;
+- retirar el tope del motivo;
+- mover la detección a la llamada cruda de `arnes_estado_cabecera`.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** REQ-023 no trata datos personales ni cambia la clasificación.
+
+**Numeración vigente:** última revisión **R-045**; último hallazgo **SEC-118**; próximos libres **R-046** y **SEC-119**.
