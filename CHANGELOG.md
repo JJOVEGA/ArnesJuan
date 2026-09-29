@@ -2,6 +2,27 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-29 · Tercera autorización del propietario registrada (literal e íntegra, copia verificada): reparación agrupada de SEC-117 y QA-023-06 en una vuelta excepcional; no se acepta publicar con SEC-117 aplazado; REQ-023 `bloqueado` → `en-progreso`
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora.
+
+**Qué se registra:** `PENDING_APPROVAL.md` § Resueltas gana la tercera autorización del 2026-09-29, **literal e íntegra**. Se verificó con `diff` contra el texto recibido: 0 diferencias.
+
+**Qué autoriza:**
+- una **vuelta excepcional agrupada**: el write-back indispensable del analista, desarrollador, QA y, después de QA favorable, seguridad;
+- el objeto: reparar SEC-117, corregir QA-023-06 y los comentarios de código que describen mal ese comportamiento.
+
+**Condiciones de gobernanza:**
+- el contador de REQ-023 sigue **agotado (3 de 3)** y **no se reinicia**;
+- no se crea otro REQ, y la sede es REQ-023.
+
+**Cola:**
+- se resuelven la **ficha 3** (SEC-117 se repara antes de publicar) y la **decisión 5** (QA-023-06, conservando las cifras con sus condiciones);
+- siguen pendientes y sin aceptar las fichas 1 (SEC-115/SEC-118) y 2 (C).
+
+**REQ-023:** `Estado: bloqueado` → `en-progreso`, para la vuelta excepcional.
+
+**Avance (regla 6):** alcance fijado; falta el write-back del analista, la implementación, la validación en el host real, QA y seguridad.
+
 ## [GitHub] — 2026-09-29 · Cola: decisión 5 (QA-023-06, cifras de SEC-118 medidas sólo con ASCII) presentada al propietario; ficha 1 con lo observado y lo inferido y la precisión de bytes; ESTADO al día
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora.
 
