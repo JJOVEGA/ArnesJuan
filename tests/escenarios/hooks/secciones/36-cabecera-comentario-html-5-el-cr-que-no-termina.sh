@@ -141,8 +141,9 @@ Seguridad: aprobado (A-001, 2026-09-01)
 check_motivo "SEC-024 boca Edit: el '<!\$CR--' vive en DISCO y la edición sólo cambia el estado -> deny (era ALLOW hoy)" \
   "retorno de carro" guard-completado.sh \
   "$(emite_edit_real "$PROJ/requirements/REQ-972.md" 'Estado: en-revisión' 'Estado: completado')"
-# BOCA FRAGMENTO — un `Edit` cuyo `old_string` NO está en el archivo: la herramienta fallará
-# entera, pero la puerta juzga el fragmento como siempre y ahí la guarda entra por
+# BOCA FRAGMENTO — un `Edit` cuyo `old_string` NO está literal en el archivo: la puerta no
+# reconstruye el documento (la herramienta puede escribir igualmente: frontera (g) de REQ-023,
+# QA-023-02), juzga el fragmento como siempre y ahí la guarda entra por
 # `ARNES_CR_INTERIOR`, que publica `arnes_campos_req`. Es una rama distinta del hook, con su
 # propio `arnes_deny`, y sin este caso quedaba sin medir.
 mk5 REQ-973 '# REQ-973

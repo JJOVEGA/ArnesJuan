@@ -31,8 +31,12 @@ DIR="${BASH_SOURCE[0]%/*}"
 # forma: mayusculas, un blanco de mas, un caracter invisible, un marcador de lista— tampoco se
 # lee, pero ya no se resuelve como ausencia: deja la cabecera AMBIGUA y, cuando hay documento
 # resultante que juzgar, el cierre se deniega antes de llegar aqui (REQ-023, SEC-047; frontera
-# en `_arnes_clave_control`, lib.sh; el `Edit` cuyo `old_string` no esta en el archivo —la
-# herramienta no escribira nada— se sigue juzgando como antes, frontera (g) de REQ-023). Lo
+# en `_arnes_clave_control`, lib.sh). El `Edit`/`MultiEdit` cuyo `old_string` no esta LITERAL en
+# el archivo no tiene documento resultante: se juzga su FRAGMENTO como antes y esta regla no lo
+# alcanza (frontera (g) de REQ-023). Y la herramienta PUEDE ESCRIBIR igualmente: el `Edit` del
+# CLI 2.1.284 normaliza las comillas tipograficas y desescapa `\uXXXX` (leido y emulado por QA,
+# no ejecutado en una sesion), asi que por esa via un cierre puede no pasar por ninguna puerta
+# —QA-023-02: preexistente, sin reparar, escalado al propietario—. Lo
 # demas que no alcanza a ver no lo lee (ejemplos no exhaustivos: una continuacion sin clave,
 # un homoglifo y lo que queda fuera de esa frontera, un comentario HTML de la cabecera, una
 # linea bajo el primer `## `): ahi no hay promesa, y el README lo dice.
@@ -390,9 +394,13 @@ arnes_guard_completado() {
   # que se aplica cada edicion al texto en disco —lo mismo que hara la herramienta— y
   # los campos se leen de lo que quedara escrito.
   #
-  # Si algun `old_string` no esta en el texto, la herramienta fallara entera y no
-  # escribira nada: entonces se leen los fragmentos como hasta ahora (y el banco, que
-  # fabrica ediciones con `old_string:"x"`, sigue midiendo lo mismo).
+  # Si algun `old_string` no esta LITERAL en el texto, no se reconstruye: se leen los
+  # fragmentos como hasta ahora (y el banco, que fabrica ediciones con `old_string:"x"`,
+  # sigue midiendo lo mismo). La herramienta NO necesariamente falla en ese caso: el `Edit`
+  # del CLI 2.1.284 normaliza las comillas tipograficas y desescapa `\uXXXX` antes de
+  # aplicar la edicion (leido y emulado por QA, no ejecutado en una sesion), y entonces
+  # escribe un documento que esta puerta no ha simulado. Es QA-023-02: preexistente, sin
+  # reparar y escalado al propietario (frontera (g) de REQ-023).
   # `Write` trae el documento COMPLETO: es su propio resultante, y por eso la transicion
   # tambien se lee de su cabecera. Medido con 1.30.2: un `Write` cuyo CUERPO citaba
   # `Estado: completado (...)` dentro de un criterio fue denegado, porque el `grep` miraba
@@ -572,9 +580,12 @@ arnes_guard_completado() {
     #
     # INTENTO DE CIERRE = el estado terminal en CUALQUIER `Estado` de la cabecera resultante,
     # variante o repeticion incluida —un `ESTADO: completado` no se lee y esconderia la
-    # transicion—, y el `Estado` que gobierna en disco NO era el terminal. Reabrir, editar sin
-    # cerrar o conservar la forma de un REQ que ya estaba cerrado no se bloquea (mismo alcance
-    # que el rango sin cerrar). El `Estado` que gobierna ya esta normalizado (`est_despues`);
+    # transicion—, y el `Estado` que gobierna en disco NO era el terminal. Reabrir o conservar
+    # la forma de un REQ que ya estaba cerrado no se bloquea (mismo alcance que el rango sin
+    # cerrar), y editar sin cerrar tampoco, SALVO una excepcion declarada (REQ-023 CA-01): si
+    # la cabecera EN DISCO declara el estado terminal SOLO en una variante (`ESTADO: completado`)
+    # con un `Estado` exacto no terminal, se deniega TODA edicion que conserve esa variante; la
+    # que la retira o la corrige no. El `Estado` que gobierna ya esta normalizado (`est_despues`);
     # los demas se normalizan SOLO aqui, SOLO si la cabecera es ambigua y SOLO hasta encontrar
     # el terminal: es la unica lectura del valor de una variante, y solo puede denegar.
     if [ -n "$resultante" ] && [ "$amb" = 1 ] && [ "$est_antes" != "$done_norm" ]; then
@@ -598,9 +609,13 @@ arnes_guard_completado() {
     [ "$est_despues" = "$done_norm" ] || return 0
     [ "$est_antes" != "$done_norm" ] || return 0
   else
-    # NO hay documento: un `Edit`/`MultiEdit` cuyo `old_string` no esta en el archivo. La
-    # herramienta fallara entera y no escribira nada, pero se juzga el fragmento como
-    # siempre —el banco fabrica ediciones asi y tiene que seguir midiendo lo mismo—.
+    # NO hay documento: un `Edit`/`MultiEdit` cuyo `old_string` no esta LITERAL en el archivo.
+    # Se juzga el fragmento como siempre —el banco fabrica ediciones asi y tiene que seguir
+    # midiendo lo mismo—. La herramienta PUEDE ESCRIBIR igualmente (el `Edit` del CLI 2.1.284
+    # normaliza las comillas tipograficas y desescapa `\uXXXX`; leido y emulado por QA, no
+    # ejecutado en una sesion); si el fragmento no dice `estado: <terminal>`, el `return 0` de
+    # abajo deja pasar un cierre sin mirar veredictos, clase, cola ni quality gates. Es
+    # QA-023-02: preexistente, sin reparar y escalado al propietario (frontera (g) de REQ-023).
     # Here-string en vez de `printf | grep`: la tuberia costaba un fork de mas.
     grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" <<< "$nuevo" || return 0
     # Y el mismo criterio sobre el FRAGMENTO: si la cabecera que se leyo —en disco o en lo

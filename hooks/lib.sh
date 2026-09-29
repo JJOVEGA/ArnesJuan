@@ -1756,8 +1756,12 @@ arnes_norm_clave() {   # <linea> -> 0 + ARNES_CLAVE/ARNES_VALOR; 1 si la linea n
 # LOCALE Y COSTE (REQ-023 CA-05, CA-09): todo bajo `LC_ALL=C` —bytes, sin colacion— y con las
 # clases escritas SIN RANGOS, porque una clasificacion que dependa de LC_CTYPE denegaria en el
 # CI de Linux y permitiria en Windows/MSYS, que es de donde sale el BOM. Lo PRIMERO es medir
-# la clave en bytes: por encima de 256 no se hace nada mas, y por debajo el trabajo nuevo
-# por linea queda acotado por una constante. Sin procesos, y en el recorrido que
+# la clave en bytes: por encima de 256 no se hace nada mas SOBRE LA CLAVE, y por debajo el
+# trabajo nuevo sobre ella —marcador, estructura, esqueleto— queda acotado por una constante.
+# Eso NO acota todo el trabajo nuevo por linea: la medicion de la clave crece con la clave, y
+# la captura de la cita de cada linea de control (`${l:0:80}` en `arnes_campos_req`, que en un
+# locale UTF-8 recorre la linea, valor incluido) crece con la linea. Las dos son LINEALES, y
+# no mas (REQ-023 CA-09 (iii); QA-023-04). Sin procesos, y en el recorrido que
 # `arnes_campos_req` YA hace: una pasada mas multiplicaba un coste que ya existe (SEC-115).
 ARNES_CLAVES_CONTROL='Estado|QA|Seguridad|Sensible a seguridad|Hallazgos abiertos|Rigor'
 # La clave de control de la que se lee la TRANSICION (la que lee `arnes_estado_cabecera`).

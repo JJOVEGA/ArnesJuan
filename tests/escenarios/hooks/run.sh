@@ -358,9 +358,11 @@ ver_check() {
 # check_efecto <nombre> <deny|allow> <archivo> <json> <Estado: esperado despues> [regex del motivo]
 # REQ-031 CA-A07: la DECISION y el EFECTO sobre el archivo, con `guard-completado.sh`. Si la
 # puerta permite, el caso APLICA la edicion del JSON (Edit, Write o MultiEdit) como la
-# aplicaria el cliente; si deniega, no la aplica. En los dos casos lee la linea `Estado:` del
-# archivo en disco y la compara con la esperada: un deny tiene que dejarlo como estaba (la
-# puerta no escribe) y un allow tiene que dejar escrito el estado nuevo. Un caso que solo
+# aplicaria el cliente con un `old_string` literal —sustitucion literal: NO emula la
+# normalizacion de comillas tipograficas ni el desescape `\uXXXX` del `Edit` del CLI,
+# frontera (g) de REQ-023 y QA-023-02—; si deniega, no la aplica. En los dos casos lee la
+# linea `Estado:` del archivo en disco y la compara con la esperada: un deny tiene que
+# dejarlo como estaba (la puerta no escribe) y un allow tiene que dejar escrito el estado nuevo. Un caso que solo
 # mira la decision no dice que quedo en el disco, que es lo que la evidencia midio.
 #
 # [tope_s] (REQ-031 CA-A15.4): con el 7.º argumento, el caso juzga TRES COSAS POR SEPARADO y lo

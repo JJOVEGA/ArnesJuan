@@ -2,6 +2,24 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-29 · REQ-023, vuelta 2 de 3 (desarrollador): comentarios de código de QA-023-01, -03 y -04 corregidos; ninguna línea ejecutable cambiada
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: desarrollador; coordinadora (commit). Unos 158 k tokens.
+
+**Comentarios corregidos:**
+- `hooks/guard-completado.sh`: cuatro comentarios nombran ahora la vía de QA-023-02 (el `Edit` normalizado que la puerta no simula) y la excepción de CA-01, sin repararla.
+- `hooks/lib.sh`: la cota constante vale sólo sobre la clave; la captura de la cita es lineal.
+- El barrido por propiedad encontró dos comentarios más en `tests/`: `run.sh`, `check_efecto`, que no emula la normalización del CLI, y la sección 36-5.
+- Ningún mensaje impreso repetía las afirmaciones.
+
+**Prueba de «sólo comentarios», por tres vías:**
+- las líneas del diff que no empiezan por `#`: vacío;
+- `cmp` de cada archivo sin comentarios;
+- `declare -f` del parser de bash: idéntico en los cuatro archivos, con control positivo que sí detecta un cambio ejecutable.
+
+**Comprobado:** tres gates en verde; secciones 41, 08, 32 y 36-5: 295 PASS · 0 FAIL.
+
+**Avance (regla 6):** vuelta 2 construida; falta la reverificación de QA y la auditoría.
+
 ## [GitHub] — 2026-09-29 · REQ-023, vuelta 2 de 3 (write-back del analista): QA-023-01, -03 y -04 corregidos en todas sus sedes de texto; QA-023-02 añadido a las limitaciones de las notas `[1.35.0]`
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: analista-requerimientos (write-back §9); coordinadora (una frase de las notas y commit). Unos 510 k tokens en total en la comisión del analista.
 
