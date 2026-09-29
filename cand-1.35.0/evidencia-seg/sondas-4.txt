@@ -1,0 +1,19 @@
+valor Hallazgos: 348909 caracteres
+C1 techo, contrato delante               E cand dec=deny  t=0.41s | valor de 'Hallazgos abiertos:' mide 348910 bytes (contados en bytes, lo escrito tras los do
+C1 techo, contrato delante               E base dec=deny  t=0.41s | valor de 'Hallazgos abiertos:' mide 348910 bytes (contados en bytes, lo escrito tras los do
+C1 techo, contrato delante               M cand dec=deny  t=0.41s | valor de 'Hallazgos abiertos:' mide 348910 bytes (contados en bytes, lo escrito tras los do
+C1 techo, contrato delante               M base dec=deny  t=0.41s | valor de 'Hallazgos abiertos:' mide 348910 bytes (contados en bytes, lo escrito tras los do
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-seg/lib-sonda.sh: line 17: /home/juan/.local/bin/jq: Argument list too long
+C1 techo, contrato delante               W cand dec=allow t=0.11s | 
+C1 techo, contrato delante               W base dec=allow t=0.11s | 
+C2 techo, decorada                       E cand dec=deny  t=0.41s | valor de 'Hallazgos abiertos:' mide 348910 bytes (contados en bytes, lo escrito tras los do
+C2 techo, decorada                       E base dec=deny  t=0.51s | valor de 'Hallazgos abiertos:' mide 348910 bytes (contados en bytes, lo escrito tras los do
+C3 reapertura con valor sobre techo      E cand dec=allow t=0.41s | 
+C3 reapertura con valor sobre techo      E base dec=allow t=0.42s | 
+## LC_ALL local no se filtra (lib.sh candidata, sourced)
+LC_ALL=<sin definir> tras arnes_campos_req: ${#v}=3 ARNES_AMBIGUA=1 lineas=2
+  tras arnes_ambigua_motivo: ${#v}=3 LC_ALL=<sin definir>
+  motivo: linea 2: 'qa: y' (variante de 'QA:', que la maquina NO lee como esa clave); linea 3: $'\357\273\277Rigor: z' (variante de 'Rigor:', que la maquina NO lee como esa clave)
+LC_ALL=C.UTF-8 tras arnes_campos_req: ${#v}=3 ARNES_AMBIGUA=1 lineas=2
+  tras arnes_ambigua_motivo: ${#v}=3 LC_ALL=C.UTF-8
+  motivo: linea 2: 'qa: y' (variante de 'QA:', que la maquina NO lee como esa clave); linea 3: $'\357\273\277Rigor: z' (variante de 'Rigor:', que la maquina NO lee como esa clave)

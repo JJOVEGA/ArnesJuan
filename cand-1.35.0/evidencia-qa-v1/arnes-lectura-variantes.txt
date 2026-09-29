@@ -1,0 +1,17 @@
+== limpio: rc cand=rc=0 base=rc=0
+== decorada unica: rc cand=rc=0
+  REQ-911      QA:
+== variante: rc cand=rc=1
+  REQ-912      QA:
+                 escrito:  «linea 3: 'QA: aprobado' ('QA:' declarada 2 veces en la cabecera)»
+--
+  REQ-912      QA:
+                 escrito:  «linea 4: 'qa: pendiente' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 2 veces)»
+   base: rc=rc=0
+0
+== nota (Estado ilegible por BOM): rc cand=rc=1
+  REQ-913      Estado:
+== repeticion mismo valor: rc cand=rc=1
+  REQ-914      Rigor:
+  REQ-914      Rigor:
+== 30 variantes: rc cand=rc=1 lineas citadas=30

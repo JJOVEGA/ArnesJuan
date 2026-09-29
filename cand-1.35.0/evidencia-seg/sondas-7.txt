@@ -1,0 +1,9 @@
+Q0 control: old literal 'en-revisión' -> 'completado' E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap
+Q1 old 'en-revisi\u00f3n' (literal \u) -> 'completado' E cand=allow  base=allow  | 
+Q2 idem por MultiEdit                                M cand=allow  base=allow  | 
+Q3 old con la linea entera escapada -> 'Estado: completado' E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap
+Q4 fila critica SEC-047 (NBSP), old literal          E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'Se
+Q5 fila critica SEC-047, old escapado + linea entera (B6) E cand=allow  base=allow  | 
+## cola con una entrada pendiente
+Q6 control con cola: old literal                     E cand=deny   base=deny   | ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado': hay 1 aprobación(es) pendiente(s) en PE
+Q7 con cola: old escapado                            E cand=allow  base=allow  | 

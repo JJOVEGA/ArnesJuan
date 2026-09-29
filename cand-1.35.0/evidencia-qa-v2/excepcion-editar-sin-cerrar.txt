@@ -1,0 +1,9 @@
+X0 (el caso que el texto nombra: variante terminal + exacto no terminal) | editar otra linea (Rigor): cand=deny base=allow | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Estado: en-revisi\303\263n' ('Estado:' dec
+X1 (repeticion EXACTA: la segunda Estado: completado, sin variante) | editar otra linea (Rigor): cand=deny base=allow | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Estado: en-revisi\303\263n' ('Estado:' dec
+X2 (sólo una variante terminal, SIN Estado exacto) | editar otra linea (Rigor): cand=deny base=allow | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 2: 'ESTADO: completado' (variante de 'Estado:',
+X3 (Estado exacto vacío + variante terminal) | editar otra linea (Rigor): cand=deny base=allow | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 2: 'Estado:' ('Estado:' declarada 2 veces en la
+X4 (exacto x2 no terminal + variante terminal) | editar otra linea (Rigor): cand=deny base=allow | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Estado: en-revisi\303\263n' ('Estado:' dec
+C0 control: repeticion de otra clave, sin terminal (debe permitir) | editar otra linea (Rigor): cand=allow base=allow | 
+X1 retirar la 2a linea cand=allow | 
+X2 corregir a Estado: completado (es un cierre real; QA pendiente) cand=deny | ARNES: no se puede completar 'requirements/REQ-950.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). 
+X2 corregir a Estado: en-revisión cand=allow | 

@@ -1,0 +1,140 @@
++  local seg_antes amb intento v
++  qa="$ARNES_QA"; seg="$ARNES_SEG"; sens="$ARNES_SENS"; rigor="$ARNES_RIGOR"; amb="$ARNES_AMBIGUA"
++    if [ -n "$resultante" ] && [ "$amb" = 1 ] && [ "$est_antes" != "$done_norm" ]; then
++      intento=0
++      if [ "$est_despues" = "$done_norm" ]; then
++        intento=1
++      else
++        for ((k = 0; k < ${#ARNES_ESTADO_OTROS[@]}; k++)); do
++          v="${ARNES_ESTADO_OTROS[k]}"
++          arnes_norm_campo "$v"; arnes_veredicto "$ARNES_CAMPO"
++          if [ "$ARNES_VEREDICTO" = "$done_norm" ]; then intento=1; break; fi
++        done
++      fi
++      if [ "$intento" -eq 1 ]; then
++        arnes_ambigua_motivo
++        arnes_deny "ARNES: no se puede completar '$rel': su cabecera es AMBIGUA para esta puerta: $ARNES_AMBIGUA_MOTIVO. Una clave de control escrita de otra forma no se lee como esa clave, y declarada mas de una vez obligaria a elegir una; la puerta no elige, no lee la variante como la clave y no permite por la AUSENCIA que eso produciria (AGENTS.md 1). Salida: escribe cada clave de control (${ARNES_CLAVES_CONTROL//|/, }) una sola vez y como la escribe la plantilla de requirements/README.md, seccion 'Veredictos de validacion'. La puerta no reescribe el archivo."
++      fi
++    fi
++ARNES_CLAVES_CONTROL='Estado|QA|Seguridad|Sensible a seguridad|Hallazgos abiertos|Rigor'
++ARNES_CLAVE_ESTADO='Estado'
++ARNES_CLAVE_CONTROL_MAX_BYTES=256
++ARNES_ESQ_LETRAS='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
++ARNES_ESTRUCTURA_ASCII=$'!"#$%&\'()*+,-./0123456789:;<=>?@[\\]^_`{|}~'
++ARNES_DELIM_CITA=($'\xc2\xab' $'\xc2\xbb' $'\xe2\x80\x9c' $'\xe2\x80\x9d' $'\xe2\x80\x98' \
++                  $'\xe2\x80\x99' $'\xe2\x80\x9e' $'\xe2\x80\xb9' $'\xe2\x80\xba')
++ARNES_AMBIGUA_CITA_BYTES=80
++ARNES_AMBIGUA_MOTIVO_LINEAS=20
++ARNES_ESQ_CONTROL=''; ARNES_ESQ_AJENAS=''
++
++_arnes_deriva_esqueletos() {
++  local resto="$ARNES_CLAVES_CONTROL|" c e todas=''
++  ARNES_ESQ_CONTROL='|'
++  while [ -n "$resto" ]; do
++    c="${resto%%|*}"; resto="${resto#*|}"
++    e="${c//[!"$ARNES_ESQ_LETRAS"]/}"
++    ARNES_ESQ_CONTROL+="${e,,}=$c|"; todas+="${e,,}"
++  done
++  ARNES_ESQ_AJENAS="${ARNES_ESQ_LETRAS//["$todas${todas^^}"]/}"
++}
++
++_arnes_clave_control() {
++  local LC_ALL=C k r d c
++  ARNES_CTRL=''; ARNES_CTRL_VARIANTE=0
++  [ "${#ARNES_CLAVE}" -le "$ARNES_CLAVE_CONTROL_MAX_BYTES" ] || return 1
++  k="$ARNES_CLAVE"
++  case "$k" in *'|'*) return 1 ;; esac
++  [ -n "$ARNES_ESQ_CONTROL" ] || _arnes_deriva_esqueletos
++  if [ -n "$ARNES_ESQ_AJENAS" ]; then case "$k" in *["$ARNES_ESQ_AJENAS"]*) return 1 ;; esac; fi
++  if arnes_en_vocab "$k" "$ARNES_CLAVES_CONTROL"; then ARNES_CTRL="$k"; return 0; fi
++  r="${k%%["$ARNES_ESQ_LETRAS$ARNES_ESTRUCTURA_ASCII"]*}"
++  r="${k:${#r}}"
++  case "$r" in
++    [-+][$' \t']*)                                        r="${r:2}" ;;
++    [0123456789][.\)][$' \t']*)                           r="${r:3}" ;;
++    [0123456789][0123456789][.\)][$' \t']*)               r="${r:4}" ;;
++    [0123456789][0123456789][0123456789][.\)][$' \t']*)   r="${r:5}" ;;
++  esac
++  case "$r" in *["$ARNES_ESTRUCTURA_ASCII"]*) return 1 ;; esac
++  r="${r//[!"$ARNES_ESQ_LETRAS"]/}"; r="${r,,}"
++  case "$ARNES_ESQ_CONTROL" in *"|$r="*) ;; *) return 1 ;; esac
++  for d in "${ARNES_DELIM_CITA[@]}"; do
++    case "$k" in *"$d"*) return 1 ;; esac
++  done
++  c="${ARNES_ESQ_CONTROL#*"|$r="}"
++  ARNES_CTRL="${c%%|*}"; ARNES_CTRL_VARIANTE=1
++  return 0
++}
++
++arnes_ambigua_item() {   # <indice en ARNES_AMB_*>
++  local LC_ALL=C i="$1" q que cortada
++  cortada="${ARNES_AMB_CORTADA[i]}"
++  q="${ARNES_AMB_CITA[i]}"
++  [ "${#q}" -le "$ARNES_AMBIGUA_CITA_BYTES" ] || { q="${q:0:$ARNES_AMBIGUA_CITA_BYTES}"; cortada=1; }
++  case "$q" in
++    *[!" $ARNES_ESQ_LETRAS$ARNES_ESTRUCTURA_ASCII"]*) printf -v q '%q' "$q" ;;
++    *) q="'$q'" ;;
++  esac
++  [ "$cortada" = 0 ] || q+='...'
++  if [ "${ARNES_AMB_VARIANTE[i]}" = 1 ]; then
++    que="variante de '${ARNES_AMB_CLAVE[i]}:', que la maquina NO lee como esa clave"
++    [ "${ARNES_AMB_VECES[i]}" -le 1 ] || que+=", y la clave se declara ${ARNES_AMB_VECES[i]} veces"
++  else
++    que="'${ARNES_AMB_CLAVE[i]}:' declarada ${ARNES_AMB_VECES[i]} veces en la cabecera"
++  fi
++  ARNES_AMB_ITEM="linea ${ARNES_AMB_N[i]}: $q ($que)"
++}
++
++arnes_ambigua_motivo() {
++  local i n=${#ARNES_AMB_N[@]}
++  ARNES_AMBIGUA_MOTIVO=''
++  for ((i = 0; i < n && i < ARNES_AMBIGUA_MOTIVO_LINEAS; i++)); do
++    arnes_ambigua_item "$i"
++    ARNES_AMBIGUA_MOTIVO+="${ARNES_AMBIGUA_MOTIVO:+; }$ARNES_AMB_ITEM"
++  done
++  [ "$n" -le "$ARNES_AMBIGUA_MOTIVO_LINEAS" ] ||
++    ARNES_AMBIGUA_MOTIVO+="; y $((n - ARNES_AMBIGUA_MOTIVO_LINEAS)) linea(s) ambigua(s) mas (tools/arnes-lectura.sh las nombra todas)"
++}
++
++  local texto l n_l n_h lin_h i n_rep k_rep est_visto
++  local -a c_n=() c_k=() c_v=() c_c=() c_x=()
++  local -A c_cnt=()
++  ARNES_AMBIGUA=0; ARNES_AMB_N=(); ARNES_AMB_CLAVE=(); ARNES_AMB_VARIANTE=(); ARNES_AMB_CITA=()
++  ARNES_AMB_CORTADA=(); ARNES_AMB_VECES=(); ARNES_ESTADO_OTROS=()
++    c_n=(); c_k=(); c_v=(); c_c=(); c_x=(); c_cnt=(); n_rep=0; k_rep=''; est_visto=0
++    ARNES_ESTADO_OTROS=()
++      if _arnes_clave_control; then
++        c_n+=("$n_l"); c_k+=("$ARNES_CTRL"); c_v+=("$ARNES_CTRL_VARIANTE")
++        c_c+=("${l:0:$ARNES_AMBIGUA_CITA_BYTES}"); c_x+=("${l:$ARNES_AMBIGUA_CITA_BYTES:1}")
++        c_cnt[$ARNES_CTRL]=$(( ${c_cnt[$ARNES_CTRL]:-0} + 1 ))
++        [ "${c_cnt[$ARNES_CTRL]}" -ne 2 ] || { n_rep=$((n_rep+1)); k_rep="$ARNES_CTRL"; }
++        if [ "$ARNES_CTRL" = "$ARNES_CLAVE_ESTADO" ]; then
++          if [ "$ARNES_CTRL_VARIANTE" = 1 ] || [ "$est_visto" = 1 ]; then
++            ARNES_ESTADO_OTROS+=("$ARNES_VALOR")
++          else
++            est_visto=1
++          fi
++        fi
++      fi
++    ARNES_AMBIGUA=0; ARNES_AMB_N=(); ARNES_AMB_CLAVE=(); ARNES_AMB_VARIANTE=(); ARNES_AMB_CITA=()
++    ARNES_AMB_CORTADA=(); ARNES_AMB_VECES=()
++    for ((i = 0; i < ${#c_n[@]}; i++)); do
++      [ "${c_v[i]}" = 1 ] || [ "${c_cnt[${c_k[i]}]}" -gt 1 ] || continue
++      [ "${c_v[i]}" = 0 ] || ARNES_AMBIGUA=1
++      ARNES_AMB_N+=("${c_n[i]}"); ARNES_AMB_CLAVE+=("${c_k[i]}"); ARNES_AMB_VARIANTE+=("${c_v[i]}")
++      ARNES_AMB_CITA+=("${c_c[i]}"); ARNES_AMB_VECES+=("${c_cnt[${c_k[i]}]}")
++      if [ -n "${c_x[i]}" ]; then ARNES_AMB_CORTADA+=(1); else ARNES_AMB_CORTADA+=(0); fi
++    done
++    if [ "$n_rep" -gt 1 ] || { [ "$n_rep" -eq 1 ] && [ "${c_cnt[$k_rep]}" -ne "$n_h" ]; }; then
++      ARNES_AMBIGUA=1
++    fi
++
++  for ((ia = 0; ia < ${#ARNES_AMB_N[@]}; ia++)); do
++    arnes_ambigua_item "$ia"
++    avisa "${base%.md}" "${ARNES_AMB_CLAVE[ia]}:" "$ARNES_AMB_ITEM" 'cabecera ambigua' \
++      "la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md."
++  done
++
++  if [ -z "$est" ]; then notas=$((notas+1)); continue; fi
++  reqs=$((reqs+1))
++    if [ "${CNT[$k]:-0}" -gt 1 ] && arnes_en_vocab "$k" "$ARNES_CLAVES_CONTROL"; then continue; fi

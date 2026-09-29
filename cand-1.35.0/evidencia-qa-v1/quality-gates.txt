@@ -1,0 +1,15 @@
+== gate 1
+rc=0
+== gate 2
+rc=0
+== gate 3
+rc=0
+== versiones
+1.35.0
+1.35.0
+1.35.0
+./
+== manifiesto vs AGENTS
+for f in hooks/*.sh tools/*.sh; do bash -n "$f" || exit 1; done
+jq -e . hooks/hooks.json >/dev/null
+jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null

@@ -1,0 +1,37 @@
+== caso 1: REQ-901 con variante de Estado ('ESTADO: en-progreso') y SIN canonica; REQ-902 normal, disjuntos
+-- /home/juan/dev/ArnesJuan-v1.35/tools
+  REQ-901    vs REQ-902     disjunto   
+
+Todos los pares son DISJUNTOS por archivos.
+
+Esta herramienta evalúa ARCHIVOS y NO el orden de fases: un «disjunto» no autoriza a correr el auditor-seguridad a la vez que el qa-tester, ni el qa-tester antes que el desarrollador. Esa regla es aparte, vive en AGENTS.md §6 y esta herramienta no la comprueba.
+rc=0
+-- /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/qa/base713/tools
+  REQ-901    vs REQ-902     disjunto   
+
+Todos los pares son DISJUNTOS por archivos.
+
+Esta herramienta evalúa ARCHIVOS y NO el orden de fases: un «disjunto» no autoriza a correr el auditor-seguridad a la vez que el qa-tester, ni el qa-tester antes que el desarrollador. Esa regla es aparte, vive en AGENTS.md §6 y esta herramienta no la comprueba.
+rc=0
+== caso 2: REQ-901 con BOM delante de Estado
+-- /home/juan/dev/ArnesJuan-v1.35/tools
+Todos los pares son DISJUNTOS por archivos.
+
+Esta herramienta evalúa ARCHIVOS y NO el orden de fases: un «disjunto» no autoriza a correr el auditor-seguridad a la vez que el qa-tester, ni el qa-tester antes que el desarrollador. Esa regla es aparte, vive en AGENTS.md §6 y esta herramienta no la comprueba.
+rc=0
+-- /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/qa/base713/tools
+Todos los pares son DISJUNTOS por archivos.
+
+Esta herramienta evalúa ARCHIVOS y NO el orden de fases: un «disjunto» no autoriza a correr el auditor-seguridad a la vez que el qa-tester, ni el qa-tester antes que el desarrollador. Esa regla es aparte, vive en AGENTS.md §6 y esta herramienta no la comprueba.
+rc=0
+== caso 3: canonica + variante de Estado (la puerta deniega al cerrar; paralelo lee la canonica)
+-- /home/juan/dev/ArnesJuan-v1.35/tools
+Todos los pares son DISJUNTOS por archivos.
+
+Esta herramienta evalúa ARCHIVOS y NO el orden de fases: un «disjunto» no autoriza a correr el auditor-seguridad a la vez que el qa-tester, ni el qa-tester antes que el desarrollador. Esa regla es aparte, vive en AGENTS.md §6 y esta herramienta no la comprueba.
+rc=0
+-- /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/qa/base713/tools
+Todos los pares son DISJUNTOS por archivos.
+
+Esta herramienta evalúa ARCHIVOS y NO el orden de fases: un «disjunto» no autoriza a correr el auditor-seguridad a la vez que el qa-tester, ni el qa-tester antes que el desarrollador. Esa regla es aparte, vive en AGENTS.md §6 y esta herramienta no la comprueba.
+rc=0

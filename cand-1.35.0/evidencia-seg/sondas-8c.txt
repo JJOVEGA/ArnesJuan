@@ -1,0 +1,4 @@
+[C] doc sha=fcd8533dd071 bytes=3350 linea3=0000000   S   e   n   s   i   b   l   e       a       s   e 
+[C] items=linea 3,linea 8, declarada 31 veces
+[C.UTF-8] doc sha=3a092b2ab6f5 bytes=3329 linea3=0000000   0   .   0   6  \n
+[C.UTF-8] items=linea 8,linea 9, declara 30 veces

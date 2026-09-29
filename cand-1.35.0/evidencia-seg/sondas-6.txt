@@ -1,0 +1,4 @@
+CA-A12 1601 repeticiones de 60+ car. cand dec=deny  motivo=121061B err=
+CA-A12 1601 repeticiones de 60+ car. base dec=deny  motivo=121061B err=
+CA-A12 1801 repeticiones de 60+ car. cand dec=allow motivo=0B err=Argument list too long
+CA-A12 1801 repeticiones de 60+ car. base dec=allow motivo=0B err=Argument list too long

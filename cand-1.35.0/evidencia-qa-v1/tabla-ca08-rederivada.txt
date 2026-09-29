@@ -1,0 +1,81 @@
+fecha 2026-09-29T12:40:26-06:00 · cand=ace43c20fde3e0ad02ca22e135c524c5f97be2c0 · base=713ac68 (git archive, hash verificado) · N=1.33.2 instalada · Linux 6.18.33.2-microsoft-standard-WSL2 x86_64 · GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)
+R1                                 E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: 'Hallazgos  abiertos: SEC-1 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa clave). Una clave
+R1                                 W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: 'Hallazgos  abiertos: SEC-1 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa clave). Una clave
+R2                                 E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: 'Hallazgos abiertos: QA-2 (instrumento)' ('Hallazgos abiertos:' declarada 2 veces en la cabecera); linea 7: 'HALLAZGOS ABIER
+R2                                 W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: 'Hallazgos abiertos: QA-2 (instrumento)' ('Hallazgos abiertos:' declarada 2 veces en la cabecera); linea 7: 'HALLAZGOS ABIER
+R3                                 E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: $'\357\273\277Hallazgos abiertos: SEC-1 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa clave
+R3                                 W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: $'\357\273\277Hallazgos abiertos: SEC-1 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa clave
+R4                                 E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: $'Hallazgos\342\200\213 abiertos: SEC-1 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa clave
+R4                                 W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: $'Hallazgos\342\200\213 abiertos: SEC-1 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa clave
+R5                                 E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: $'Hallazgos\302\240abiertos: SEC-1 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa clave). Un
+R5                                 W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: $'Hallazgos\302\240abiertos: SEC-1 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa clave). Un
+R6                                 E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: '- Hallazgos abiertos: SEC-1 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa clave). Una clav
+R6                                 W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: '- Hallazgos abiertos: SEC-1 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa clave). Una clav
+R7                                 E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'SENSIBLE A  SEGURIDAD: s\303\255' (variante de 'Sensible a seguridad:', que la maquina NO lee como esa clave). Una clave d
+R7                                 W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'SENSIBLE A  SEGURIDAD: s\303\255' (variante de 'Sensible a seguridad:', que la maquina NO lee como esa clave). Una clave d
+R8                                 E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'\357\273\277Sensible a seguridad: s\303\255' (variante de 'Sensible a seguridad:', que la maquina NO lee como esa clave). 
+R8                                 W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'\357\273\277Sensible a seguridad: s\303\255' (variante de 'Sensible a seguridad:', que la maquina NO lee como esa clave). 
+R9                                 E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: $'\303Hallazgos abiertos: SEC-1 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa clave). Una c
+R9                                 W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: $'\357\277\275Hallazgos abiertos: SEC-1 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa clave
+R10                                E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'qa: pendiente' (variante de 'QA:', que la maquina NO lee como esa clave). Una clave de control escrita de otra forma no se 
+R10                                W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'qa: pendiente' (variante de 'QA:', que la maquina NO lee como esa clave). Una clave de control escrita de otra forma no se 
+R11                                E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 7: 'RIGOR: critico' (variante de 'Rigor:', que la maquina NO lee como esa clave). Una clave de control escrita de otra forma no
+R11                                W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 7: 'RIGOR: critico' (variante de 'Rigor:', que la maquina NO lee como esa clave). Una clave de control escrita de otra forma no
+R12                                E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 2: 'ESTADO: completado' (variante de 'Estado:', que la maquina NO lee como esa clave). Una clave de control escrita de otra for
+R13                                E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'Sensible a seguridad: s\303\255' ('Sensible a seguridad:' declarada 2 veces en la cabecera); linea 8: 'Sensible a segurida
+R13                                W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'Sensible a seguridad: s\303\255' ('Sensible a seguridad:' declarada 2 veces en la cabecera); linea 8: 'Sensible a segurida
+R14                                E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 4: '1. QA: pendiente' (variante de 'QA:', que la maquina NO lee como esa clave). Una clave de control escrita de otra forma no 
+R14                                W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 4: '1. QA: pendiente' (variante de 'QA:', que la maquina NO lee como esa clave). Una clave de control escrita de otra forma no 
+R15                                E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'QA: pendiente' ('QA:' declarada 2 veces en la cabecera); linea 8: 'QA: aprobado' ('QA:' declarada 2 veces en la cabecera). 
+R15                                W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'QA: pendiente' ('QA:' declarada 2 veces en la cabecera); linea 8: 'QA: aprobado' ('QA:' declarada 2 veces en la cabecera). 
+R16                                E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'QA: aprobado' ('QA:' declarada 2 veces en la cabecera); linea 5: 'QA: aprobado' ('QA:' declarada 2 veces en la cabecera). U
+R16                                W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'QA: aprobado' ('QA:' declarada 2 veces en la cabecera); linea 5: 'QA: aprobado' ('QA:' declarada 2 veces en la cabecera). U
+R17                                E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Estado: en-revisi\303\263n' ('Estado:' declarada 2 veces en la cabecera); linea 8: 'Estado: completado' ('Estado:' declara
+R17                                W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Estado: en-revisi\303\263n' ('Estado:' declarada 2 veces en la cabecera); linea 8: 'Estado: completado' ('Estado:' declara
+R18                                E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: $'\357\273\277- Hallazgos abiertos: SEC-1 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa cla
+R18                                W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 6: $'\357\273\277- Hallazgos abiertos: SEC-1 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa cla
+A1                                 E cand=allow  base=allow  N=allow  | 
+A1                                 W cand=allow  base=allow  N=allow  | 
+A2                                 E cand=allow  base=allow  N=allow  | 
+A2                                 W cand=allow  base=allow  N=allow  | 
+A3                                 E cand=allow  base=allow  N=allow  | 
+A3                                 W cand=allow  base=allow  N=allow  | 
+A4                                 E cand=allow  base=allow  N=allow  | 
+A4                                 W cand=allow  base=allow  N=allow  | 
+A5                                 E cand=allow  base=allow  N=allow  | 
+A5                                 W cand=allow  base=allow  N=allow  | 
+A6                                 E cand=allow  base=allow  N=allow  | 
+A7                                 E cand=allow  base=allow  N=allow  | 
+A8                                 E cand=allow  base=allow  N=allow  | 
+A8                                 W cand=allow  base=allow  N=allow  | 
+A9                                 E cand=allow  base=allow  N=allow  | 
+A9                                 W cand=allow  base=allow  N=allow  | 
+S1                                 E cand=allow  base=allow  N=allow  | 
+S1                                 W cand=allow  base=allow  N=allow  | 
+S2                                 E cand=allow  base=allow  N=allow  | 
+S2                                 W cand=allow  base=allow  N=allow  | 
+S3                                 E cand=allow  base=allow  N=allow  | 
+S3                                 W cand=allow  base=allow  N=allow  | 
+S4                                 E cand=allow  base=allow  N=allow  | 
+S4                                 W cand=allow  base=allow  N=allow  | 
+S5                                 E cand=allow  base=allow  N=allow  | 
+S5                                 W cand=allow  base=allow  N=allow  | 
+U1                                 E cand=deny   base=deny   N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (linea 6: 'Hallazgos abiertos: SEC-1 (contrato)'; linea 8: 'Hallazgos abiertos: (ninguno)'), y la puerta no elige una: ni la
+U1                                 W cand=deny   base=deny   N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (linea 6: 'Hallazgos abiertos: SEC-1 (contrato)'; linea 8: 'Hallazgos abiertos: (ninguno)'), y la puerta no elige una: ni la
+U2                                 E cand=deny   base=deny   N=deny   | ARNES: no se puede completar 'requirements/REQ-950.md': el hallazgo 'sec-1' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no afecta a lo que alguien ve, decide o cobra ni a lo que el REQ a
+U2                                 W cand=deny   base=deny   N=deny   | ARNES: no se puede completar 'requirements/REQ-950.md': el hallazgo 'sec-1' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no afecta a lo que alguien ve, decide o cobra ni a lo que el REQ a
+U3-A1crlf                          E cand=allow  base=allow  N=allow  | 
+U3-A1crlf                          W cand=allow  base=allow  N=allow  | 
+U3-R8crlf                          E cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'\357\273\277Sensible a seguridad: s\303\255' (variante de 'Sensible a seguridad:', que la maquina NO lee como esa clave). 
+U3-R8crlf                          W cand=deny   base=allow  N=allow  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'\357\273\277Sensible a seguridad: s\303\255' (variante de 'Sensible a seguridad:', que la maquina NO lee como esa clave). 
+F1                                 E cand=allow  base=allow  N=allow  | 
+F1                                 W cand=allow  base=allow  N=allow  | 
+F2                                 E cand=allow  base=allow  N=allow  | 
+F2                                 W cand=allow  base=allow  N=allow  | 
+F3                                 E cand=allow  base=allow  N=allow  | 
+F3                                 W cand=allow  base=allow  N=allow  | 
+F4                                 E cand=allow  base=allow  N=allow  | 
+F4                                 W cand=allow  base=allow  N=allow  | 
+F5                                 E cand=allow  base=allow  N=allow  | 
+F5                                 W cand=allow  base=allow  N=allow  | 
+TOTAL=79 INESPERADOS=0

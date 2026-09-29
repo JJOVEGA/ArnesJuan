@@ -1,0 +1,12 @@
+'Nota: x'                  N=20000  cand dec=deny  t=5.8s doc=160167B
+'Nota: x'                  N=20000  base dec=deny  t=4.8s doc=160167B
+'Nota: x'                  N=60000  cand dec=deny  t=17.0s doc=480167B
+'Nota: x'                  N=60000  base dec=deny  t=14.3s doc=480167B
+'Prioridad: alta'          N=20000  cand dec=deny  t=5.3s doc=320167B
+'Prioridad: alta'          N=20000  base dec=deny  t=5.0s doc=320167B
+'Prioridad: alta'          N=60000  cand dec=deny  t=20.7s doc=960167B
+'Prioridad: alta'          N=60000  base dec=deny  t=14.6s doc=960167B
+'Seguridad del estado: x'  N=20000  cand dec=deny  t=6.8s doc=480167B
+'Seguridad del estado: x'  N=20000  base dec=deny  t=5.2s doc=480167B
+'Seguridad del estado: x'  N=60000  cand dec=deny  t=21.0s doc=1440167B
+'Seguridad del estado: x'  N=60000  base dec=deny  t=19.7s doc=1440167B

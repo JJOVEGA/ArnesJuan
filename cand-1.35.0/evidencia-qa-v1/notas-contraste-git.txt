@@ -1,0 +1,44 @@
+== first-parent v1.34.0..78e3d2f
+78e3d2f REQ-023: CA-01 (i) versionado - el motivo cita las primeras 20 lineas ambiguas y cuantas quedan (tope 
+ad793ab REQ-023: implementacion (vuelta 1 de 3) - cabecera ambigua (variante de clave de control o clave repet
+ce60bae REQ-023: contrato versionado (mitad 1 de SEC-047, ADR-014) - variante de clave de control o clave repe
+856d97d cand/1.35.0: autorizacion del propietario (SEC-047, mitad 1 de REQ-023) registrada literal; fichas fin
+713ac68 Merge PR #58: REQ-031 — gramática cerrada de Hallazgos abiertos (ningún bloqueante ignorado por se
+a7a60c2 Merge PR #56: cierre administrativo de REQ-029 y REQ-030 (autorizado por el propietario el 2026-09-27;
+11c5df2 Merge PR #53: REQ-029 — fidelidad al encargo (integración autorizada por el propietario el 2026-09-
+c4d92c0 Merge PR #55: REQ-030 — sondas de coste CA-03 y CA-08 (ii) con presupuesto fijo R=5, evaluador por r
+cfb1106 Merge PR #52: REQ-025 entrega 1 — coordinación orientada a entregas (integración autorizada por el
+entradas: 9
+merges: 5
+commits totales: 90
+== diff --stat v1.34.0..78e3d2f
+ 50 files changed, 17686 insertions(+), 1397 deletions(-)
+== mecanismo
+ hooks/guard-completado.sh | 308 ++++++++++++++++++++++++++++++++++++++--------
+ hooks/lib.sh              | 274 +++++++++++++++++++++++++++++++++++++++--
+ tools/arnes-lectura.sh    |  36 ++++--
+ 3 files changed, 551 insertions(+), 67 deletions(-)
+ 3 files changed, 551 insertions(+), 67 deletions(-)
+== hooks.json/.github/.arnes cambian?
+no cambian
+== hasta la cabeza ace43c2 (lo que se publicaria)
+91
+ 52 files changed, 18013 insertions(+), 1400 deletions(-)
+ 3 files changed, 551 insertions(+), 67 deletions(-)
+== rel/registro-1.33.0
+commits de rel en v1.34.0..78e3d2f: 194 (no alcanzables desde rel)
+commits de rel no en v1.34.0: 104
+commits de rel contenidos en ace43c2 y no en v1.34.0: 104 / en ace43c2: 0
+merge-base: 5e53f12
+merge-base es ancestro de v1.34.0
+== version en v1.34.0
+1.34.0
+1.34.0
+1.34.0
+== PR de cada merge
+cfb1106 Merge PR #52: REQ-025 entrega 1 — coordinación orientada a entregas (integración autor
+c4d92c0 Merge PR #55: REQ-030 — sondas de coste CA-03 y CA-08 (ii) con presupuesto fijo R=5, eva
+11c5df2 Merge PR #53: REQ-029 — fidelidad al encargo (integración autorizada por el propietario
+a7a60c2 Merge PR #56: cierre administrativo de REQ-029 y REQ-030 (autorizado por el propietario el
+713ac68 Merge PR #58: REQ-031 — gramática cerrada de Hallazgos abiertos (ningún bloqueante ign
+cc8972c Merge pull request #51: v1.34.0 — v1.33.2 + via proporcional de reparacion con autorizac

@@ -1,0 +1,15 @@
+cand rc=0
+base rc=0
+1c1
+< Lectura del arnés sobre requirements/ — plugin ?
+---
+> Lectura del arnés sobre requirements/ — plugin 1.35.0
+variantes cand rc=1
+variantes base rc=0
+  REQ-1        Estado:
+                 se lee:   <cabecera ambigua>
+  REQ-2        QA:
+                 se lee:   <cabecera ambigua>
+  REQ-2        QA:
+                 se lee:   <cabecera ambigua>
+  REQ-3        QA:

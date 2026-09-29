@@ -1,0 +1,7 @@
+2026-09-29T11:52:14-06:00
+ 11:52:14 up 2 days,  4:44,  1 user,  load average: 1.07, 1.92, 1.96
+A = candidata, B = base 713ac68; mínimo de k en r series intercaladas (sonda-reloj); OBSERVACIÓN, no acredita rendimiento
+REQ-100 k=10 r=6: estado=ok min_a=343735 min2_a=354117 min_b=341588 min2_b=342601 razon=1006 estado=-
+REQ-200 k=10 r=6: estado=ok min_a=867535 min2_a=886669 min_b=755029 min2_b=778174 razon=1149 estado=-
+REQ-300 k=1 r=4: estado=ok min_a=924531 min2_a=1043027 min_b=904542 min2_b=919690 razon=1022 estado=-
+ 11:52:37 up 2 days,  4:45,  1 user,  load average: 0.99, 1.83, 1.93

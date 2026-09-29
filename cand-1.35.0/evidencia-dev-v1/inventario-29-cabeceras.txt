@@ -1,0 +1,42 @@
+2026-09-29T11:52:55-06:00
+árbol: ce60baeeca28fa78bbdec0feb6e548ab8620ee65 + trabajo sin comitear (final); lector: hooks/lib.sh de la candidata
+== Las cabeceras reales de requirements/REQ-*.md
+REQ-001.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-002.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-003.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-004.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-005.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-006.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-007.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-008.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-009.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-010.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-011.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-012.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-013.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-014.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-015.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-016.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-017.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-018.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-019.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-020.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-021.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-022.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-023.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-024.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-025.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-028.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-029.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-030.md                               ambigua(puerta)=0 lineas-ambiguas=0
+REQ-031.md                               ambigua(puerta)=0 lineas-ambiguas=0
+TOTAL: 29 cabeceras, 0 con alguna línea ambigua
+
+== Control positivo (copias temporales fuera del árbol)
+CTRL-1.md                                ambigua(puerta)=1 lineas-ambiguas=2 | linea 3: 'HALLAZGOS ABIERTOS: SEC-9 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa clave, y la clave se declara 2 veces) | linea 10: 'Hallazgos abiertos: (ninguno)' ('Hallazgos abiertos:' declarada 2 veces en la cabecera)
+CTRL-2.md                                ambigua(puerta)=1 lineas-ambiguas=2 | linea 3: 'Hallazgos  abiertos: SEC-9 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa clave, y la clave se declara 2 veces) | linea 10: 'Hallazgos abiertos: (ninguno)' ('Hallazgos abiertos:' declarada 2 veces en la cabecera)
+CTRL-3.md                                ambigua(puerta)=1 lineas-ambiguas=2 | linea 3: '- Hallazgos abiertos: SEC-9 (contrato)' (variante de 'Hallazgos abiertos:', que la maquina NO lee como esa clave, y la clave se declara 2 veces) | linea 10: 'Hallazgos abiertos: (ninguno)' ('Hallazgos abiertos:' declarada 2 veces en la cabecera)
+CTRL-4.md                                ambigua(puerta)=1 lineas-ambiguas=2 | linea 3: $'\357\273\277Sensible a seguridad: s\303\255' (variante de 'Sensible a seguridad:', que la maquina NO lee como esa clave, y la clave se declara 2 veces) | linea 7: $'Sensible a seguridad: s\303\255' ('Sensible a seguridad:' declarada 2 veces en la cabecera)
+CTRL-5.md                                ambigua(puerta)=1 lineas-ambiguas=2 | linea 3: 'QA: aprobado' ('QA:' declarada 2 veces en la cabecera) | linea 8: 'QA: pendiente' ('QA:' declarada 2 veces en la cabecera)
+CTRL-6.md                                ambigua(puerta)=0 lineas-ambiguas=0
+TOTAL: 6 cabeceras, 5 con alguna línea ambigua

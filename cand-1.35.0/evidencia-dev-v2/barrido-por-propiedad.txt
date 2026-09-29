@@ -1,0 +1,17 @@
+== Barrido por propiedad sobre hooks/ tools/ tests/escenarios/hooks/ (arbol final), 2026-09-29T13:18:51-06:00
+-- P1: el Edit cuyo old_string no esta literal falla / no escribe
+tests/escenarios/hooks/secciones/14-campos-solo-en-la-cabecera.sh:166:check "QA: control, edit2 busca lo que edit1 destruyo: la herramienta fallaria -> allow" allow guard-completado.sh \
+-- P1b: menciones de la herramienta que falla (revisadas a mano)
+tests/escenarios/hooks/secciones/14-campos-solo-en-la-cabecera.sh:166:check "QA: control, edit2 busca lo que edit1 destruyo: la herramienta fallaria -> allow" allow guard-completado.sh \
+-- P2: reabrir / editar sin cerrar no se bloquea
+hooks/guard-completado.sh:551:    # edicion que lo retira no lleva CR y no se deniega). Reabrir un REQ nunca se bloquea.
+hooks/guard-completado.sh:584:    # la forma de un REQ que ya estaba cerrado no se bloquea (mismo alcance que el rango sin
+hooks/guard-completado.sh:585:    # cerrar), y editar sin cerrar tampoco, SALVO una excepcion declarada (REQ-023 CA-01): si
+hooks/lib.sh:1729:# (guard-completado; lo que no se bloquea y la frontera (g), en REQ-023 CA-01). Leer la
+tests/escenarios/hooks/secciones/36-cabecera-comentario-html-5-el-cr-que-no-termina.sh:191:# REABRIR NUNCA SE BLOQUEA. La salida de un REQ con la cabecera rota tiene que existir, y la
+tests/escenarios/hooks/secciones/36-cabecera-comentario-html-5-el-cr-que-no-termina.sh:193:check "SEC-024 reabrir un REQ con un CR interior nunca se bloquea -> allow" allow \
+tests/escenarios/hooks/secciones/09-cierre-de-req-por-bash.sh:18:check "anotar en un REQ sin cerrarlo -> allow" allow guard-completado.sh \
+-- P3: cota constante por linea
+hooks/lib.sh:1760:# trabajo nuevo sobre ella —marcador, estructura, esqueleto— queda acotado por una constante.
+-- mensajes impresos (arnes_deny/aviso/warn) que repitan alguna de las tres
+(sin coincidencias)

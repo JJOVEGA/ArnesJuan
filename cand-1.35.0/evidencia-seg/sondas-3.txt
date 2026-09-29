@@ -1,0 +1,16 @@
+MA QA sin parentesis ~140KB ($qa)            cand  dec=allow rc=0 t=0.5s motivo=0B err=/home/juan/dev/ArnesJuan-v1.35/hooks/lib.sh: line 191: /home/juan/.local/bin/jq: Argument 
+MA QA sin parentesis ~140KB ($qa)            base  dec=allow rc=0 t=0.5s motivo=0B err=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scrat
+MA0 control: QA con parentesis ~140KB        cand  dec=deny  rc=0 t=0.4s motivo=314B err=
+MA0 control: QA con parentesis ~140KB        base  dec=deny  rc=0 t=0.4s motivo=314B err=
+MB linea sin ':' con CR interior ~140KB      cand  dec=allow rc=0 t=0.4s motivo=0B err=/home/juan/dev/ArnesJuan-v1.35/hooks/lib.sh: line 191: /home/juan/.local/bin/jq: Argument 
+MB linea sin ':' con CR interior ~140KB      base  dec=allow rc=0 t=0.2s motivo=0B err=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scrat
+MC Sensible dudoso ~140KB (SENS_CRUDO)       cand  dec=allow rc=0 t=3.4s motivo=0B err=/home/juan/dev/ArnesJuan-v1.35/hooks/lib.sh: line 191: /home/juan/.local/bin/jq: Argument 
+MC Sensible dudoso ~140KB (SENS_CRUDO)       base  dec=allow rc=0 t=3.0s motivo=0B err=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scrat
+MD Seguridad sin parentesis ~140KB ($seg)    cand  dec=allow rc=0 t=0.3s motivo=0B err=/home/juan/dev/ArnesJuan-v1.35/hooks/lib.sh: line 191: /home/juan/.local/bin/jq: Argument 
+MD Seguridad sin parentesis ~140KB ($seg)    base  dec=allow rc=0 t=0.4s motivo=0B err=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scrat
+ME CA-A12 con 1501 canonicas                 cand  dec=deny  rc=0 t=0.8s motivo=66961B err=
+ME CA-A12 con 1501 canonicas                 base  dec=deny  rc=0 t=0.7s motivo=66961B err=
+ME CA-A12 con 2001 canonicas                 cand  dec=deny  rc=0 t=1.0s motivo=89461B err=
+ME CA-A12 con 2001 canonicas                 base  dec=deny  rc=0 t=0.8s motivo=89461B err=
+ME CA-A12 con 2501 canonicas                 cand  dec=deny  rc=0 t=1.3s motivo=111961B err=
+ME CA-A12 con 2501 canonicas                 base  dec=deny  rc=0 t=1.1s motivo=111961B err=

@@ -1,0 +1,267 @@
+Continuidad automatica (hook Stop -> bloque derivado):
+  PASS  el hook sale 0 (no bloquea la parada)
+  PASS  escribe el bloque derivado
+  PASS  no pisa lo que escribio una persona
+  PASS  cuenta los REQ, no el README
+  PASS  lee la cola de aprobaciones
+  PASS  el bloque delata el rigor efectivo
+  PASS  arbol sin repo -> desconocido, no inventado
+  PASS  idempotente: dos pasadas, un solo bloque
+  PASS  una nota sin Estado: no cuenta como REQ
+  PASS  ...y se dice cuantas hay, no se esconden
+  PASS  un REQ completado NO ocupa fila
+  PASS  un REQ abierto SI ocupa fila
+  PASS  Estado con evidencia cuenta como completado
+  PASS  ...y no ocupa fila entre los abiertos
+  PASS  la version del plugin se ve en el bloque
+  PASS  estado_derivado.archivo '../fuera.md' NO escribe fuera del proyecto
+  PASS  ...y sigue saliendo 0
+  PASS  docs -> externo (symlink): el bloque derivado NO se escribe fuera
+  PASS  ...y sigue saliendo 0
+  PASS  47 REQ grandes (3,7 MB): el bloque los cuenta todos
+  PASS  ...y los 15 completados salen como completados
+  PASS  campos DENTRO de una seccion NO se leen: QA queda vacio
+  PASS  ...y Rigor cae al defecto, no al 'critico' de la historia
+  PASS  un .md VACIO cuenta como nota, no desaparece
+  PASS  con activo:false no escribe
+  PASS  sin manifiesto no escribe (repo ajeno)
+  PASS  sin manifiesto tambien sale 0
+  PASS  sin la carpeta destino no la inventa
+Rotacion de artefactos (mover, nunca resumir):
+  PASS  apagada por defecto no toca nada
+  PASS  bajo el umbral no toca nada
+  PASS  conserva exactamente conservar_secciones
+  PASS  nada se pierde: origen + archivo = total
+  PASS  conserva LAS NUEVAS, no las viejas
+  PASS  no pisa el preambulo de una persona
+  PASS  deja el puntero al archivo
+  PASS  el hook sale 0 (no bloquea la parada)
+  PASS  idempotente: tres pasadas, mismo reparto
+  PASS  orden nuevo-al-final conserva el final
+  PASS  ...y archiva el principio
+  PASS  sin encabezados no corta nada
+  PASS  artefacto como CADENA sigue funcionando (compatibilidad)
+  PASS  ...y el OBJETO usa SU orden, opuesto, en la misma pasada
+  PASS  ...y SU conservar_secciones, distinto del global
+  PASS  un artefacto CRLF rota igual que uno LF
+  PASS  ...y no duplica: tres pasadas, mismo reparto
+  PASS  nada se pierde con CRLF: origen + archivo = total
+  PASS  el contenido movido conserva su CRLF
+  PASS  sin temporales huerfanos
+  PASS  rotacion con ruta '../fuera.md' NO toca nada fuera del proyecto
+  PASS  rotacion bajo un directorio symlink hacia fuera NO toca el externo
+  PASS  umbral_bytes mide BYTES: UTF-8 de 4002 bytes (< chars×2) con umbral 3000 ROTA
+  PASS  sin manifiesto no toca nada y sale 0
+hooks.json (la forma que NO deja Bash sin guardian):
+  PASS  es JSON valido
+  PASS  NINGUN handler lleva if: la redireccion no se puede seleccionar con if
+  PASS  un solo grupo cubre Edit|Write|MultiEdit|Bash
+  PASS  Bash esta en el matcher (la puerta de consola existe)
+  PASS  todos los handlers PreToolUse apuntan a guard.sh
+  PASS  Stop y SubagentStop: UN solo proceso, stop.sh
+stop.sh (continuidad y rotacion en un proceso):
+  PASS  stop.sh sale 0 (no bloquea la parada)
+  PASS  la continuidad escribio su bloque
+  PASS  ...y la rotacion corrio EN LA MISMA parada
+Continuidad bajo averia: el manifiesto ilegible y la escritura que falla:
+  PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible ({"agentes":{,}): bloque derivado + linea de degradado, sale 0
+  PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible ({"agentes":{,}): lo de la persona sigue, y sin jq crudo
+  PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible (<vacio>): bloque derivado + linea de degradado, sale 0
+  PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible (<vacio>): lo de la persona sigue, y sin jq crudo
+  PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible (null): bloque derivado + linea de degradado, sale 0
+  PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible (null): lo de la persona sigue, y sin jq crudo
+  PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible ([]): bloque derivado + linea de degradado, sale 0
+  PASS  DEV 1.31.0 v4: SEC-011 manifiesto ilegible ([]): lo de la persona sigue, y sin jq crudo
+  PASS  DEV 1.31.0 v4: SEC-011 un NUL en ESTADO.md: no se escribe nada, byte a byte, y se avisa
+  PASS  DEV 1.31.0 v4: SEC-011 ESTADO.md sin permiso de lectura: no se escribe nada, byte a byte
+  PASS  DEV 1.31.0 v4: SEC-011 carpeta sin permiso: original intacto, 0 temporales, y avisa
+  PASS  QA 1.31.0 v4: CA-64.2 disco lleno (ENOSPC): byte a byte, 0 temporales, avisa, sale 0
+  PASS  DEV 1.31.0 v5: QA-118 muerte por SIGXFSZ: byte a byte, 0 temporales, avisa, sale 0
+  PASS  QA 1.31.0 v4: CA-64.2 cuatro paradas a la vez x5: ni se pierde, ni se duplica, ni deja basura
+  PASS  DEV 1.31.0 v4: SEC-011 la reparacion avisa una vez, nombra el archivo y el agente
+  PASS  DEV 1.31.0 v4: SEC-011 control: otra ruta sigue deny y sin el aviso de reparacion
+  PASS  CA-17 la forma anterior (por ruta, secciones ##) no cambia
+  PASS  DEV 1.32.1: REQ-015 CA-03/CA-05 carrera forzada: el texto humano sigue, UN bloque bien formado, sin restos
+  PASS  DEV 1.32.1: REQ-015 CA-01 ocho procesos, ocho rutas DISTINTAS y todas junto al destino
+  PASS  DEV 1.32.1: REQ-015 CA-01 sin componente unica: fail-closed, byte a byte, 0 temporales, avisa, sale 0
+  PASS  DEV 1.32.1: REQ-015 CA-02 restos sin dueno retirados, la publicacion en curso intacta, el texto humano sigue
+  PASS  DEV 1.32.1: REQ-015 CA-07 rotacion de SECCION bajo la carrera: 5+15 entradas, cabecera intacta, un puntero, sin restos
+  PASS  DEV 1.32.1: REQ-015 CA-07 rotacion por RUTA bajo la carrera: 3+7 secciones, cabecera intacta, un puntero, sin restos
+Cola de aprobaciones: una sola regla, la de la puerta (REQ-009):
+  PASS  REQ-009 CA-01 la puerta cuenta 1 sobre la entrada del formato documentado
+  PASS  REQ-009 CA-01 el bloque derivado dice 1 sobre la misma entrada (decia 4)
+  PASS  REQ-009 CA-12 CRLF: la puerta sigue contando 1
+  PASS  REQ-009 CA-12 CRLF: el bloque derivado tambien dice 1
+  PASS  REQ-009 CA-07 un ejemplo comentado bajo Pendientes no bloquea el cierre  (allow)
+  PASS  REQ-009 CA-07 el bloque derivado tambien dice 0 con el ejemplo comentado
+  PASS  REQ-009 CA-06 la plantilla de PENDING no bloquea (ejemplo fuera de la cola)  (allow)
+  PASS  REQ-009 CA-09 cinco entradas bajo Resueltas no bloquean  (allow)
+  PASS  REQ-009 CA-10 cualquier seccion cierra la cola, no solo Resueltas  (allow)
+  PASS  REQ-009 CA-11 un '####' no es una entrada: sigue siendo 1
+  PASS  REQ-009 CA-13 '## Pendientes (2 abiertas)' abre la seccion por prefijo
+  PASS  REQ-009 CA-13 '##Pendientes' sin espacio no abre la seccion (como en v1.30.3)  (allow)
+  PASS  REQ-009 CA-05 con 0 entradas el cierre pasa  (allow)
+  PASS  REQ-009 CA-05 con 3 entradas deniega y dice cuantas
+  PASS  REQ-009 CA-14 sin PENDING_APPROVAL.md el cierre no se bloquea  (allow)
+  PASS  REQ-009 CA-14 sin archivo el bloque derivado dice 0, no error
+  PASS  REQ-009 CA-15 un NUL en la cola: DENY con motivo propio, nunca allow por 0
+  PASS  REQ-009 CA-16 con NUL el bloque dice 'sin datos', no 0
+  PASS  REQ-009 CA-16 con NUL la parada NO se bloquea (rc 0)
+  PASS  REQ-009 CA-17 una cola ilegible deniega el cierre con el mismo motivo
+  PASS  REQ-009 CA-02 ningun consumidor conserva su propio patron de conteo
+  PASS  REQ-009 CA-03 sin mutar, los tres lectores dicen 1
+  PASS  REQ-009 CA-03 mutada SOLO lib.sh, los tres cambian a 2 (la regla es una)
+  PASS  REQ-009 CA-03 retirada la mutacion, los tres vuelven a 1
+  PASS  REQ-009 CA-20 el cierre no arranca ningun awk para contar la cola
+Huecos de la auditoria de seguridad R-001 (REQ-007, bloque H):
+  PASS  REQ-007 CA-47 SEC-003 Write a <raiz>//src//a.ts -> deny igual que con una barra  (deny)
+  PASS  REQ-007 CA-47 SEC-003 Edit que cierra un REQ en <raiz>//requirements//REQ-700.md -> deny  (deny)
+  PASS  REQ-007 CA-48 control <raiz>/./src/../src/a.ts sigue deny  (deny)
+  PASS  REQ-007 CA-48 control <raiz>/src/./a.ts sigue deny  (deny)
+  PASS  REQ-007 CA-48 control ruta relativa src/a.ts sigue deny  (deny)
+  PASS  REQ-007 CA-48 control ./src/a.ts sigue deny  (deny)
+  PASS  REQ-007 CA-48 <raiz>//docs//notas.md (fuera de los globs) -> allow  (allow)
+  PASS  REQ-007 CA-48 una ruta UNC //servidor/recurso/x.ts conserva su forma -> allow  (allow)
+  PASS  REQ-007 CA-48 el desarrollador si puede escribir en <raiz>//src//a.ts  (allow)
+  PASS  REQ-007 CA-43 SEC-001 MultiEdit con un byte de control en el new_string -> deny  (deny)
+  PASS  REQ-007 CA-43 SEC-001 Write con 'nota'+byte de control delante del documento cerrado -> deny  (deny)
+  PASS  REQ-007 CA-44 control: el MultiEdit HONESTO que cierra con QA pendiente ya denegaba  (deny)
+  PASS  REQ-007 CA-44 control: el mismo MultiEdit sobre un REQ en verde -> allow  (allow)
+  PASS  REQ-007 CA-44 control: tabuladores y saltos de linea legitimos no son un falso positivo  (allow)
+  PASS  REQ-007 CA-45 SEC-002 un NUL en el REQ: el cierre deniega con motivo propio
+  PASS  REQ-007 CA-46 control: sobre el REQ con NUL, una edicion que no toca el estado -> allow  (allow)
+  PASS  REQ-007 CA-46 control: el mismo REQ SIN NUL y con QA pendiente -> deny (como siempre)  (deny)
+  PASS  REQ-007 CA-46 control: el mismo REQ SIN NUL y con los veredictos completos -> allow  (allow)
+  PASS  REQ-007 CA-54 SEC-006 un techo de 4294967296 se recorta al maximo y el deny lo dice
+  PASS  REQ-007 CA-54 SEC-006 un valor que desborda 64 bits tampoco sube el techo
+  PASS  REQ-007 CA-54 SEC-006 '999999' entrecomillado no es un numero: cae al defecto
+  PASS  REQ-007 CA-55 control: un valor mas bajo que el defecto no baja el techo
+  PASS  REQ-007 CA-55 control: -5 cae al defecto
+  PASS  REQ-007 CA-55 control: 0 cae al defecto
+  PASS  REQ-007 CA-55 control: la clave ausente cae al defecto
+  PASS  REQ-007 CA-55 el deny por presupuesto no nombra ninguna ruta
+  PASS  REQ-007 CA-53 ninguna plantilla hereda los globs del autoalojamiento
+  PASS  REQ-007 CA-40 QA-014 '(instrumento, dueño REQ-007)': la clase es el primer elemento -> allow  (allow)
+  PASS  REQ-007 CA-40 QA-014 la evidencia acompana, nunca cambia el veredicto -> deny por la clase
+  PASS  REQ-007 CA-41 control: la clase NO es el primer elemento -> deny
+  PASS  REQ-007 CA-41 control: otro delimitador no es un parentesis -> deny
+  PASS  REQ-007 CA-41 control: sin ninguna clase -> deny
+  PASS  REQ-007 CA-41 control: '(Instrumento)' se sigue leyendo como hoy -> allow  (allow)
+  PASS  REQ-007 CA-41 control: '( instrumento )' se sigue leyendo como hoy -> allow  (allow)
+  PASS  REQ-007 CA-41 versionado (REQ-031): '(instrumento) — REQ-007' ya no se acepta -> deny, con la evidencia dentro del parentesis
+  PASS  REQ-007 CA-56 SEC-007 100 ediciones sobre 700 KB superan el presupuesto -> deny
+  PASS  REQ-007 CA-56 el deny por presupuesto de reconstruccion no nombra ninguna ruta
+  PASS  REQ-007 CA-57 control: 50 ediciones (bajo el presupuesto) se juzgan como siempre -> deny  (deny)
+  PASS  REQ-007 CA-57 control: el deny por presupuesto alcanza tambien al desarrollador  (deny)
+  PASS  REQ-007 CA-57 control: una edicion sola sobre el mismo REQ se juzga como siempre -> deny  (deny)
+La ruta escrita y el manifiesto roto (SEC-004, SEC-005, SEC-006):
+  PASS  SEC-004 CA-49 Edit sobre un enlace a un REQ -> deny (salida fail-closed)
+  PASS  SEC-004 CA-49 Write sobre un enlace a codigo protegido -> deny tambien en guard-codigo  (deny)
+  PASS  SEC-004 CA-50a un archivo REGULAR en docs/ sigue -> allow  (allow)
+  PASS  SEC-004 CA-50a ...y tambien para la puerta de cierre  (allow)
+  PASS  SEC-004 CA-50b enlace ROTO: responde deny (114ms), ni cuelga ni revienta
+  PASS  SEC-004 CA-50c enlace que apunta FUERA -> deny, no allow  (deny)
+  PASS  SEC-004 CA-50c control: un enlace FUERA del proyecto no se juzga -> allow  (allow)
+  PASS  SEC-004 CA-50d el camino comun de Bash ('ls -la') sigue -> allow  (allow)
+  PASS  SEC-004 el desarrollador tampoco escribe a traves de un enlace -> deny  (deny)
+  PASS  REQ-007 CA-53 la ampliacion NO se propaga a templates/arnes-config.json.tpl
+  PASS  REQ-007 CA-53 la coordinadora NO escribe .arnes/config.json -> deny  (deny)
+  PASS  REQ-007 CA-53 ...ni .claude-plugin/plugin.json -> deny  (deny)
+  PASS  REQ-007 CA-53 el desarrollador SI lo escribe -> allow  (allow)
+  PASS  REQ-007 CA-51 SEC-005 manifiesto INVALIDO: Write -> deny con motivo
+  PASS  REQ-007 CA-51 SEC-005 manifiesto VACIO -> deny  (deny)
+  PASS  REQ-007 CA-51 SEC-005 manifiesto 'null' (JSON valido) -> deny  (deny)
+  PASS  REQ-007 CA-51 SEC-005 manifiesto ARRAY (JSON valido) -> deny  (deny)
+  PASS  REQ-007 CA-51 SEC-005 ...y la puerta de cierre tampoco deja pasar  (deny)
+  PASS  DEV 1.31.0 v2: QA-104 un comando que no escribe no consulta el manifiesto (ni avisa ni deniega)
+  PASS  REQ-007 CA-51 SEC-005 el aviso se emite siempre que el manifiesto se consulta (stderr), tambien cuando permite
+  PASS  DEV 1.31.0 v2: QA-105 manifiesto roto: Write al PROPIO manifiesto -> allow  (allow)
+  PASS  DEV 1.31.0 v2: QA-105 ...tambien por Bash (la via que el motivo nombra)  (allow)
+  PASS  DEV 1.31.0 v2: QA-105 ...y la puerta de cierre tampoco lo estorba  (allow)
+  PASS  DEV 1.31.0 v2: QA-105 control: cualquier OTRA ruta sigue denegada  (deny)
+  PASS  DEV 1.31.0 v2: QA-105 control: reparar Y escribir otra cosa no es reparar -> deny  (deny)
+  PASS  DEV 1.31.0 v2: QA-105 control: otro archivo bajo .arnes/ NO repara nada -> deny  (deny)
+  PASS  DEV 1.31.0 v2: QA-104 control: manifiesto roto + Bash que escribe -> deny (el fail-closed sigue)  (deny)
+  PASS  DEV 1.31.0 v2: QA-105 el motivo dice que la reparacion del manifiesto SI se puede
+  PASS  REQ-007 CA-51 SEC-005 ninguna variable del manifiesto se rellena con el input
+  PASS  REQ-007 CA-52 control: manifiesto AUSENTE sigue INERTE -> allow  (allow)
+  PASS  REQ-007 CA-52 control: manifiesto VALIDO decide igual que siempre -> deny  (deny)
+  PASS  REQ-007 CA-52 control: un manifiesto VALIDO no emite NINGUN aviso
+  PASS  REQ-007 CA-52 control: 'limites' ausente cae al defecto sin avisar ni denegar
+  PASS  DEV 1.31.0 v2: QA-106 'exigir_fecha' con la cadena "true" avisa y cae al defecto
+  PASS  DEV 1.31.0 v2: QA-106 'exigir_fecha' con el numero 1 avisa igual
+  PASS  DEV 1.31.0 v2: QA-106 control: el booleano de verdad no avisa
+  PASS  DEV 1.31.0 v2: QA-107 'bash_max_analisis: 1e9' avisa en vez de caer callado
+  PASS  DEV 1.31.0 v2: QA-107 'bash_max_analisis: 1.5' avisa igual
+  PASS  DEV 1.31.0 v2: QA-107 control: un entero valido no avisa
+  PASS  DEV 1.31.0 v2: QA-106 'git.activo' con cadena avisa y manda el defecto (encendida)
+  PASS  DEV 1.31.0 v2: QA-106 'codigo_app.globs' que no es un array avisa
+  PASS  DEV 1.31.0 v2: QA-106 control: el manifiesto ya reparado no avisa
+  PASS  DEV 1.31.0 v2: QA-106 'git.activo' con cadena no apaga la puerta de git -> deny  (deny)
+  PASS  DEV 1.31.0 v2: QA-104 'ls -la' cuesta 1 proceso jq (como v1.30.3)
+  PASS  DEV 1.31.0 v2: QA-104 'npm run build' cuesta 1 proceso jq (como v1.30.3)
+tools/arnes-paralelo.sh (REQ-013): qué dos comisiones NO colisionan:
+  PASS  paralelo: hooks/lib.sh vs hooks/*.sh -> colisiona
+  PASS  paralelo: hooks/*.sh vs hooks/hooks.json -> disjunto
+  PASS  paralelo: run.sh vs tests/** -> colisiona
+  PASS  paralelo: docs/qa/1.32.0.md vs docs/qa/*.md -> colisiona
+  PASS  paralelo: dos plantillas distintas -> disjunto
+  PASS  paralelo: dos globs distintos que alcanzan el mismo archivo -> colisiona y lo nombra
+  PASS  paralelo: un archivo que TODAVIA NO EXISTE se compara como ruta literal
+  PASS  paralelo: control positivo, dos rutas ajenas -> disjunto y rc 0
+  PASS  paralelo: (ninguno) es disjunto con todos, no 'sin declarar'
+  PASS  paralelo: ./x y x//y se normalizan a la misma ruta -> colisiona
+  PASS  paralelo: x/../x se normaliza a la misma ruta -> colisiona
+  PASS  paralelo: una ruta ABSOLUTA se rechaza con motivo propio y deja el REQ sin declarar
+  PASS  paralelo: una ruta que SALE de la raiz se rechaza igual (fail-closed)
+  PASS  paralelo: un REQ SIN el campo colisiona con todos y sale != 0
+  PASS  paralelo: un valor vacio no se interpreta: sin declarar
+  PASS  paralelo: clave decorada, sangrado, tabulador y acentos graves se reconocen
+  PASS  paralelo: el campo DEBAJO del primer '## ' no es una declaracion
+  PASS  paralelo: el parentesis final es EVIDENCIA, no un tercer archivo
+  PASS  paralelo: --json es JSON valido y dice lo mismo que el texto
+  PASS  paralelo: sin argumentos toma los REQ abiertos y salta los cerrados
+  PASS  paralelo: la salida advierte que NO evalua el orden de fases
+  PASS  paralelo: la advertencia del orden de fases tambien viaja en --json
+  PASS  paralelo: no escribe ni un archivo en el proyecto (ni un temporal)
+  PASS  paralelo: no invoca agentes ni toca PENDING_APPROVAL.md
+  PASS  paralelo: sin jq lo dice y sale 2, no responde 'adelante'
+  PASS  paralelo: sin .arnes/config.json lo dice y sale 2
+  PASS  paralelo: un requirements/ vacio lo dice y sale 2, no dice 'todo disjunto'
+  PASS  paralelo: no esta registrada en ningun hook (0 procesos anadidos por comando)
+  PASS  paralelo: bash -n pasa sobre la herramienta
+  PASS  paralelo/CA-05: un REQ SIN Archivos: cierra igual que en v1.31.0 -> allow  (allow)
+  PASS  paralelo/CA-05: un Archivos: ilegible tampoco bloquea el cierre -> allow  (allow)
+  PASS  paralelo: 60 REQ y 200 archivos en 236ms (techo 2000ms)
+  PASS  paralelo: 1 proceso(s) externo(s) para 60 REQ (techo 2 por REQ = 120)
+Noción de cita (4/5): lo que el informe dice, el coste y los textos heredados (REQ-016):
+  PASS  REQ-016 CA-05 la línea decorada que gobierna se nombra, con la línea tal como está escrita
+  PASS  REQ-016 CA-05 ...y enseña la línea literal y el valor que lee la máquina
+  PASS  REQ-016 CA-06 el aviso de forma NO cambia el código de salida (sale 0)
+  PASS  REQ-016 CA-06 dos declaraciones y gobierna la decorada -> anomalía con salida ≠ 0
+  PASS  REQ-016 CA-06 ...y lo dice por la vía única de las anomalías, no en el bloque de forma
+  PASS  REQ-016 CA-05 un rango sin cerrar en la cabecera es anomalía y lo dice (sale 1)
+  PASS  REQ-016 CA-01 el informe no reporta la cita como anomalía: dentro del rango no hay campo
+  PASS  REQ-016 CA-01 ...y tampoco la cuenta como línea decorada que gobierna
+  PASS  REQ-016 CA-08 'arnes_sin_cita' existe y es sólo expansión de parámetros (ningún proceso)
+  PASS  REQ-016 CA-08 el bloque derivado gasta las mismas pasadas de awk con citas que sin ellas (1)
+  PASS  REQ-016 CA-09 la migración lo dice sin eufemismo: se pudo cerrar un critico sin auditoría
+  PASS  REQ-016 CA-09 ...y trae el comando que barre las cabeceras con un comentario
+  PASS  REQ-016 CA-09 ...y dice que la pertenencia de versiones se deriva del historial del lector
+  PASS  REQ-016 CA-09 ...con el comando que lo comprueba tag a tag
+  PASS  REQ-016 CA-09 (i) la guía enuncia la propiedad por ESTADO: 'REQ en estado terminal que NO cerrarían hoy'
+  PASS  REQ-016 CA-09 (i) ...y dice que la pregunta de estado no envejece con la vía siguiente
+  PASS  REQ-016 CA-09 (ii) ...y que un barrido por vía calla sin acreditar: 'no acredita ausencia de exposición'
+  PASS  REQ-016 CA-09 (ii) ...y nombra las dos vías conocidas que el comando NO encuentra
+  PASS  REQ-016 CA-09 ...y dice que ningún comando del apartado responde hoy la pregunta de estado
+  PASS  REQ-016 CA-09 (i) la propiedad se enuncia ANTES del primer comando (línea 692 < 708)
+  PASS  REQ-016 CA-10 la plantilla trae la regla: la invariante manda sobre la preferencia de herramienta
+  PASS  REQ-016 CA-10 ...con su motivo: quien configura una sesión no suele ser quien lee esa sección
+  PASS  REQ-016 CA-10 y también en el AGENTS.md de este repositorio
+aviso: vuelta parcial (9 de 54 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 250 PASS, 0 FAIL
+
+real	0m7.810s
+user	0m12.837s
+sys	0m7.241s

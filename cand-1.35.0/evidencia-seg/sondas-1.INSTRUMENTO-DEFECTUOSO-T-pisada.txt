@@ -1,0 +1,32 @@
+## Controles del instrumento
+K1 F0 cierra (verde)                                 E cand=allow  base=allow  | 
+K2 QA pendiente canonica                             E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap
+## Marcadores y blancos dentro de la frontera (no en la tabla de CA-08)
+M1 '-<TAB>QA: pendiente'                             E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'-\
+M2 '+ QA: pendiente'                                 E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: '+ Q
+M3 '123) QA: pendiente'                              E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: '123
+M4 '-   QA' (marcador + blancos)                     E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: '-  
+M5 DEL dentro de QA                                  E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'Q\
+M6 ZWSP y luego '- QA'                               E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'\3
+M7 SHY (U+00AD) dentro de QA                         E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'Q\
+M8 BOM + QA: pendiente                               E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'\3
+M9 ZWJ en RIGOR (critico, sin Sens)                  E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 7: $'R\
+M10 'Qa:'                                            E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'Qa:
+M11 NBSP tras QA antes de ':'                        E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'QA
+M12 TAB inicial (sangrado canonico)                  E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap
+M13 '**qa**:' decorada y variante                    E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: '**q
+M14 '`QA`: pendiente' + QA aprobado (repetida)       E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: '`QA
+M1 '-<TAB>QA: pendiente'                             W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'-\
+M2 '+ QA: pendiente'                                 W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: '+ Q
+M3 '123) QA: pendiente'                              W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: '123
+M4 '-   QA' (marcador + blancos)                     W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: '-  
+M5 DEL dentro de QA                                  W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'Q\
+M6 ZWSP y luego '- QA'                               W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'\3
+M7 SHY (U+00AD) dentro de QA                         W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'Q\
+M8 BOM + QA: pendiente                               W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'\3
+M9 ZWJ en RIGOR (critico, sin Sens)                  W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 7: $'R\
+M10 'Qa:'                                            W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'Qa:
+M11 NBSP tras QA antes de ':'                        W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'QA
+M12 TAB inicial (sangrado canonico)                  W cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap
+M13 '**qa**:' decorada y variante                    W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: '**q
+M14 '`QA`: pendiente' + QA aprobado (repetida)       W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: '`QA

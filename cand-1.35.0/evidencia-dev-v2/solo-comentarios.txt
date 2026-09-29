@@ -1,0 +1,34 @@
+2026-09-29T13:18:01-06:00
+== HEAD 0fd387953fdf477100cfb308a942806971692d3e
+== git status --short
+ M docs/ESTADO.md
+ M hooks/guard-completado.sh
+ M hooks/lib.sh
+ M tests/escenarios/hooks/run.sh
+ M tests/escenarios/hooks/secciones/36-cabecera-comentario-html-5-el-cr-que-no-termina.sh
+?? propuesta-v1.35.0/
+== git diff --stat 0fd3879 -- hooks tools tests
+ hooks/guard-completado.sh                          | 37 +++++++++++++++-------
+ hooks/lib.sh                                       |  8 +++--
+ tests/escenarios/hooks/run.sh                      |  8 +++--
+ ...ecera-comentario-html-5-el-cr-que-no-termina.sh |  5 +--
+ 4 files changed, 40 insertions(+), 18 deletions(-)
+== (1) lineas +/- del diff que NO son comentario de linea completa (debe salir vacio)
+(vacio)
+== (2) archivos sin lineas de comentario, antes y despues (cmp rc 0 = identico)
+hooks/guard-completado.sh cmp_rc=0
+hooks/lib.sh cmp_rc=0
+tests/escenarios/hooks/run.sh cmp_rc=0
+tests/escenarios/hooks/secciones/36-cabecera-comentario-html-5-el-cr-que-no-termina.sh cmp_rc=0
+== (3) PARSER de bash: archivo envuelto en funcion + declare -f (descarta comentarios)
+hooks/guard-completado.sh antes=3f2796de3750f34f despues=3f2796de3750f34f IDENTICO
+hooks/lib.sh antes=48e5beddc2926cb0 despues=48e5beddc2926cb0 IDENTICO
+tests/escenarios/hooks/run.sh antes=3c8aca57d773fcb4 despues=3c8aca57d773fcb4 IDENTICO
+tests/escenarios/hooks/secciones/36-cabecera-comentario-html-5-el-cr-que-no-termina.sh antes=b8924fd07ac8106b despues=b8924fd07ac8106b IDENTICO
+control positivo (lib.sh con 80->81 en una copia): original=48e5beddc2926cb0 alterada=daebaacff2727589 DISTINTO: la prueba detecta un cambio ejecutable
+== lineas de comentario cambiadas (+ y -): 58
+== blobs
+hooks/guard-completado.sh 92c9b8ebd3fc -> 28a892bdddcb
+hooks/lib.sh 772293f6df41 -> fede43a35464
+tests/escenarios/hooks/run.sh 9e5af7b59cb7 -> 7b7fdc648496
+tests/escenarios/hooks/secciones/36-cabecera-comentario-html-5-el-cr-que-no-termina.sh a50cb3a4faa9 -> 707563263a03

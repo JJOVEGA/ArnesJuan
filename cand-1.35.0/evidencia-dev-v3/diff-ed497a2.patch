@@ -1,0 +1,30 @@
+diff --git a/hooks/guard-completado.sh b/hooks/guard-completado.sh
+index 28a892b..ed06bef 100755
+--- a/hooks/guard-completado.sh
++++ b/hooks/guard-completado.sh
+@@ -578,14 +578,17 @@ arnes_guard_completado() {
+     # sean los veredictos, citando las lineas. Lo publica `arnes_campos_req` sobre la cabecera
+     # resultante (la del ultimo texto que leyo, que aqui es `resultante`, si no esta vacia).
+     #
+-    # INTENTO DE CIERRE = el estado terminal en CUALQUIER `Estado` de la cabecera resultante,
+-    # variante o repeticion incluida —un `ESTADO: completado` no se lee y esconderia la
+-    # transicion—, y el `Estado` que gobierna en disco NO era el terminal. Reabrir o conservar
+-    # la forma de un REQ que ya estaba cerrado no se bloquea (mismo alcance que el rango sin
+-    # cerrar), y editar sin cerrar tampoco, SALVO una excepcion declarada (REQ-023 CA-01): si
+-    # la cabecera EN DISCO declara el estado terminal SOLO en una variante (`ESTADO: completado`)
+-    # con un `Estado` exacto no terminal, se deniega TODA edicion que conserve esa variante; la
+-    # que la retira o la corrige no. El `Estado` que gobierna ya esta normalizado (`est_despues`);
++    # INTENTO DE CIERRE = la cabecera resultante es AMBIGUA, ALGUNA de sus lineas `Estado`
++    # —la exacta, una repetida o una variante— dice el estado terminal (un `ESTADO: completado`
++    # no se lee y esconderia la transicion), y el `Estado` que GOBIERNA en disco —la primera
++    # declaracion exacta; si no hay ninguna, nada lo decia— NO lo decia. No se juzga nada mas:
++    # reabrir o editar un REQ cuyo `Estado` que gobierna en disco ya es el terminal no se bloquea
++    # (mismo alcance que el rango sin cerrar), ni una edicion cuya cabecera resultante no dice el
++    # terminal en ninguna linea `Estado`. CONSECUENCIA (REQ-023 CA-01): si en disco el terminal
++    # esta en una linea `Estado` que NO es la que gobierna —una variante, o una exacta que no es la
++    # primera— y la que gobierna no lo dice o no existe, se deniega TODA edicion que conserve esa
++    # linea mientras la cabecera siga siendo ambigua; la que la retira, la corrige o deshace la
++    # ambiguedad no se deniega por esto. El `Estado` que gobierna ya esta normalizado (`est_despues`);
+     # los demas se normalizan SOLO aqui, SOLO si la cabecera es ambigua y SOLO hasta encontrar
+     # el terminal: es la unica lectura del valor de una variante, y solo puede denegar.
+     if [ -n "$resultante" ] && [ "$amb" = 1 ] && [ "$est_antes" != "$done_norm" ]; then

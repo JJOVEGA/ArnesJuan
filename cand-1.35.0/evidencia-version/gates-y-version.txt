@@ -1,0 +1,30 @@
+# Quality gates — 2026-09-29T12:20:24-06:00 — HEAD 78e3d2f + arbol de trabajo
+$ for f in hooks/*.sh tools/*.sh; do bash -n "$f" || exit 1; done
+rc=0
+$ jq -e . hooks/hooks.json >/dev/null
+rc=0
+$ jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null
+rc=0
+
+# Concordancia de version
+plugin.json .version = 1.35.0
+marketplace .metadata.version = 1.35.0
+marketplace .plugins[0].version = 1.35.0
+marketplace .plugins[0].source = ./
+true
+concordancia rc (jq -e)=0
+.arnes/config.json arnes_version = 1.33.0 (no se toca)
+
+# git diff --name-only 78e3d2f.. (arbol de trabajo)
+.claude-plugin/marketplace.json
+.claude-plugin/plugin.json
+CHANGELOG.md
+docs/ESTADO.md
+skills/arnes-upgrade/SKILL.md
+# git status --short
+ M .claude-plugin/marketplace.json
+ M .claude-plugin/plugin.json
+ M CHANGELOG.md
+ M docs/ESTADO.md
+ M skills/arnes-upgrade/SKILL.md
+?? propuesta-v1.35.0/

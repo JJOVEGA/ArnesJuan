@@ -1,0 +1,3 @@
+json: 349438 bytes (no vacio)
+C1 techo por Write (rawfile) /home/juan/dev/ArnesJuan-v1.35/hooks dec=deny t=3.22s | valor de 'Hallazgos abiertos:' mide 348910 bytes (contados en bytes, lo
+C1 techo por Write (rawfile) /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-seg/base713/hooks dec=deny t=3.32s | valor de 'Hallazgos abiertos:' mide 348910 bytes (contados en bytes, lo

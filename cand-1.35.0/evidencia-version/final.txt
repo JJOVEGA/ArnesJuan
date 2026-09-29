@@ -1,0 +1,21 @@
+# Arbol final — 2026-09-29T12:21:52-06:00
+gate bash -n rc=0
+gate hooks.json rc=0
+gate manifiestos rc=0
+concordancia 1.35.0 x3 + source ./ rc=0
+Autoprueba: 117 PASS, 0 FAIL
+secciones rc=0
+Resultado: 250 PASS, 0 FAIL
+# diff --stat 78e3d2f (arbol de trabajo)
+ .claude-plugin/marketplace.json |   4 +-
+ .claude-plugin/plugin.json      |   2 +-
+ CHANGELOG.md                    | 255 ++++++++++++++++++++++++++++++++++++++++
+ skills/arnes-upgrade/SKILL.md   |  44 +++++++
+ 4 files changed, 302 insertions(+), 3 deletions(-)
+# fuera de lo encargado (debe ser solo docs/ESTADO.md, preexistente):
+docs/ESTADO.md
+# sha256
+5a508dc8bde3e69e209c4b943947dbdce643d3919010234fbb33071aa7ad1667  .claude-plugin/plugin.json
+620d1c16c72a710a3c3164ec4a128307b820fea2647e890a2377fb5f82dabd42  .claude-plugin/marketplace.json
+947210e3645517aabca40584e583b616293200a83fe9832835882971a79fe7db  CHANGELOG.md
+ecabbfc2003168c9182af30967d12e99dcb60573945286b08244d5abb0302e8a  skills/arnes-upgrade/SKILL.md

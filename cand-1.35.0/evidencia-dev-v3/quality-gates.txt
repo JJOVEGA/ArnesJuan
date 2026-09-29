@@ -1,0 +1,8 @@
+2026-09-29T13:33:50-06:00
+HEAD ed497a2 + arbol de trabajo (hooks: solo el comentario de la vuelta 3)
+== gate 1
+rc=0
+== gate 2
+rc=0
+== gate 3
+rc=0

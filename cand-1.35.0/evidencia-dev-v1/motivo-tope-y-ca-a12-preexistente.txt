@@ -1,0 +1,6 @@
+# (1) Tope del motivo de REQ-023: 3001 declaraciones de 'QA:' de 113 bytes -> deny, motivo acotado
+decisión: "permissionDecision":"deny" · longitud del motivo: 3402 bytes · y 2981 linea(s) ambigua(s) mas (tools/arnes-lectura
+
+# (2) PREEXISTENTE, ajeno a REQ-023 (REQ-031 CA-A12): 3000 líneas 'Hallazgos abiertos:' CANÓNICAS repetidas -> el motivo de CA-A12 supera el límite de un argumento de jq y la puerta NO emite decisión (el cliente lo trata como allow)
+base: salida=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/base/hooks/lib.sh: line 191: /home/juan/.local/bin/jq: Argument list too long>
+cand: salida=</home/juan/dev/ArnesJuan-v1.35/hooks/lib.sh: line 191: /home/juan/.local/bin/jq: Argument list too long>

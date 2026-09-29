@@ -1,0 +1,10 @@
+LC_ALL=C AMB=1 lineas=3 4 5 veces=3 3 3 variante=0 1 1 SENS=[si]
+  clave=Estado -> ctrl=Estado var=0
+  clave=Sensible\ a\ seguridad -> ctrl=Sensible a seguridad var=0
+  clave=$'\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200Sensible a seguridad' -> ctrl=Sensible a seguridad var=1
+  clave=$'\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200\360\237\230\200Sensible a seguridad' -> ctrl=Sensible a seguridad var=1
+LC_ALL=C.UTF-8 AMB=1 lineas=3 4 5 veces=3 3 3 variante=0 1 1 SENS=[si]
+  clave=Estado -> ctrl=Estado var=0
+  clave=Sensible\ a\ seguridad -> ctrl=Sensible a seguridad var=0
+  clave=😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀Sensible\ a\ seguridad -> ctrl=Sensible a seguridad var=1
+  clave=😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀Sensible\ a\ seguridad -> ctrl=Sensible a seguridad var=1

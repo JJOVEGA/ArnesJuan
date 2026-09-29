@@ -1,0 +1,229 @@
+__envoltorio__ () 
+{ 
+    CASOS_ESPERADOS_SECCION=19;
+    PISO_AUTONOMO_SECCION=117;
+    seccion_nueva "Noción de cita (5/5): un CR que no termina la línea no se puede medir (REQ-016 · SEC-024):";
+    CR5='';
+    function mk5 () 
+    { 
+        printf '%s\n' "$2" > "$PROJ/requirements/$1.md"
+    };
+    function w5 () 
+    { 
+        emite_write "$PROJ/requirements/$1.md" "$2"
+    };
+    BASE5='# REQ-970
+Estado: completado
+Sensible a seguridad: sí
+QA: aprobado
+Rigor: critico';
+    mk5 REQ-970 '# REQ-970
+Estado: en-revisión';
+    check_motivo "SEC-024 (1/4) base desnuda: critico sin ninguna declaración de 'Seguridad:' -> deny por AUSENTE" "ausente" guard-completado.sh "$(w5 REQ-970 "$BASE5
+")";
+    check_motivo "SEC-024 (2/4) + rango BIEN escrito citando 'Seguridad: aprobado' -> deny por AUSENTE (la vuelta 1, intacta)" "ausente" guard-completado.sh "$(w5 REQ-970 "$BASE5
+<!--
+Seguridad: aprobado (A-001, 2026-09-01)
+-->
+")";
+    check_motivo "SEC-024 (3/4) + el ABRE fabricado '<!\$CR--' citando 'Seguridad: aprobado' -> deny por el CR (era ALLOW hoy)" "retorno de carro" guard-completado.sh "$(w5 REQ-970 "$BASE5
+<!${CR5}--
+Seguridad: aprobado (A-001, 2026-09-01)
+-->
+")";
+    check "SEC-024 (4/4) CONTROL: el mismo '<!\$CR--' citando 'Seguridad: pendiente' -> deny" deny guard-completado.sh "$(w5 REQ-970 "$BASE5
+<!${CR5}--
+Seguridad: pendiente (A-001, 2026-09-01)
+-->
+")";
+    check "SEC-024 control con dientes: retirado el CR y con el veredicto FUERA del rango -> allow" allow guard-completado.sh "$(w5 REQ-970 "$BASE5
+Seguridad: aprobado (A-001, 2026-09-01)
+<!--
+Seguridad: con-hallazgos (A-000, 2026-08-01)
+-->
+")";
+    mk5 REQ-971 '# REQ-971
+Estado: en-revisión';
+    check_motivo "SEC-024 la CLAVE fabricada 'Seg\$CRuridad: aprobado' no desbanca a 'Seguridad: pendiente' -> deny (era ALLOW desde <=1.30.3)" "retorno de carro" guard-completado.sh "$(w5 REQ-971 "# REQ-971
+Estado: completado
+Sensible a seguridad: sí
+QA: aprobado
+Rigor: critico
+Seguridad: pendiente
+Seg${CR5}uridad: aprobado
+")";
+    check_motivo "SEC-024 ...y con TODO en verde el mismo CR deniega igual: la regla es de medibilidad, no de veredicto" "retorno de carro" guard-completado.sh "$(w5 REQ-971 "# REQ-971
+Estado: completado
+Sensible a seguridad: sí
+QA: aprobado
+Rigor: critico
+Seg${CR5}uridad: aprobado
+")";
+    mk5 REQ-972 "# REQ-972
+Estado: en-revisión
+Sensible a seguridad: sí
+QA: aprobado
+Rigor: critico
+<!${CR5}--
+Seguridad: aprobado (A-001, 2026-09-01)
+-->";
+    check_motivo "SEC-024 boca Edit: el '<!\$CR--' vive en DISCO y la edición sólo cambia el estado -> deny (era ALLOW hoy)" "retorno de carro" guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-972.md" 'Estado: en-revisión' 'Estado: completado')";
+    mk5 REQ-973 '# REQ-973
+Estado: en-revisión
+Sensible a seguridad: sí
+QA: aprobado
+Rigor: critico';
+    check_motivo "SEC-024 boca fragmento (old_string ausente): el CR del fragmento entrante también deniega" "retorno de carro" guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-973.md" '' '' "Estado: completado
+Seg${CR5}uridad: aprobado")";
+    function crlf5 () 
+    { 
+        printf '# %s\r\nEstado: completado\r\nSensible a seguridad: sí\r\nQA: aprobado\r\nSeguridad: %s\r\nRigor: critico\r\n<!-- historia: esto NO es el vigente\r\nSeguridad: con-hallazgos\r\n-->\r\n' "$1" "$2"
+    };
+    printf '%s\r\n' '# REQ-974' 'Estado: en-revisión' > "$PROJ/requirements/REQ-974.md";
+    check "SEC-024 CRLF entero + comentario bien escrito, todo en verde -> allow (el transporte no se toca)" allow guard-completado.sh "$(emite_write "$PROJ/requirements/REQ-974.md" "$(crlf5 REQ-974 aprobado)")";
+    check "SEC-024 ...y el MISMO REQ en CRLF con el veredicto en rojo -> deny, igual que en LF" deny guard-completado.sh "$(emite_write "$PROJ/requirements/REQ-974.md" "$(crlf5 REQ-974 pendiente)")";
+    check_motivo "SEC-024 ...y un CR INTERIOR dentro de un documento CRLF sigue denegando: el transporte no es coartada" "retorno de carro" guard-completado.sh "$(emite_write "$PROJ/requirements/REQ-974.md" "$(printf '# REQ-974\r\nEstado: completado\r\nSensible a seguridad: sí\r\nQA: aprobado\r\nSeg%suridad: aprobado\r\nRigor: critico\r\n' "$CR5")")";
+    mk5 REQ-975 '# REQ-975
+Estado: en-revisión';
+    check "SEC-024 frontera: un CR suelto DEBAJO del primer '## ' no es cabecera -> allow" allow guard-completado.sh "$(w5 REQ-975 "# REQ-975
+Estado: completado
+Sensible a seguridad: no
+QA: aprobado
+Seguridad: n/a
+
+## Historial
+una nota pegada de otro sitio con su Seg${CR5}uridad: aprobado dentro
+")";
+    check "SEC-024 reabrir un REQ con un CR interior nunca se bloquea -> allow" allow guard-completado.sh "$(w5 REQ-975 "# REQ-975
+Estado: en-progreso
+Sensible a seguridad: sí
+QA: aprobado
+Rigor: critico
+Seg${CR5}uridad: aprobado
+")";
+    if [ -z "$FILTRO" ] || printf '%s' "SEC-024 informe" | grep -qi -- "$FILTRO"; then
+        LECT5="$HOOKS_DIR/../tools/arnes-lectura.sh";
+        PROY5="$RAIZ/proy5-$BASHPID";
+        mkdir -p "$PROY5/.arnes" "$PROY5/requirements";
+        cp "$PROJ/.arnes/config.json" "$PROY5/.arnes/config.json";
+        printf '# REQ-976\nEstado: completado\nSensible a seguridad: sí\nQA: aprobado\nRigor: critico\nSeguridad: pendiente\nSeg%suridad: aprobado\n' "$CR5" > "$PROY5/requirements/REQ-976.md";
+        : > "$ERRLOG";
+        sal5="$(bash "$LECT5" "$PROY5" 2> "$ERRLOG")";
+        rc5=$?;
+        if [ -z "$sal5" ]; then
+            echo "  FAIL  SEC-024 informe: arnes-lectura no imprimió NADA: el caso no midió nada";
+            diag;
+            FAIL=$((FAIL+1));
+        else
+            if [ "$rc5" -eq 1 ] && printf '%s' "$sal5" | grep -q 'NO LEE COMO ESTÁN ESCRITOS'; then
+                echo "  PASS  SEC-024 informe: arnes-lectura llama anomalía a la clave fabricada y sale 1 (decía «ningún valor anómalo», rc=0)";
+                PASS=$((PASS+1));
+            else
+                echo "  FAIL  SEC-024 informe: rc=$rc5 (esperado 1) y/o no la cuenta como anomalía";
+                diag;
+                printf '%s\n' "$sal5" | head -10 | sed 's/^/          salida| /';
+                FAIL=$((FAIL+1));
+            fi;
+        fi;
+        if printf '%s' "$sal5" | grep -q 'Seg\\ruridad'; then
+            echo "  PASS  SEC-024 informe: ...y cita la línea con el CR escrito como \\r, no crudo";
+            PASS=$((PASS+1));
+        else
+            echo "  FAIL  SEC-024 informe: no cita la línea con el CR visible";
+            printf '%s\n' "$sal5" | head -10 | sed 's/^/          salida| /';
+            FAIL=$((FAIL+1));
+        fi;
+        PARA5="$HOOKS_DIR/../tools/arnes-paralelo.sh";
+        printf '# REQ-977\nEstado: pendiente\nArchivos: hooks/lib.sh\n' > "$PROY5/requirements/REQ-977.md";
+        printf '# REQ-978\nEstado: pendiente\nSeg%suridad: x\nArchivos: tools/arnes-lectura.sh\n' "$CR5" > "$PROY5/requirements/REQ-978.md";
+        rm -f "$PROY5/requirements/REQ-976.md";
+        : > "$ERRLOG";
+        sal5="$(bash "$PARA5" --proyecto "$PROY5" REQ-977 REQ-978 2> "$ERRLOG")";
+        rc5=$?;
+        [ -n "$sal5" ] || sal5="$(cat "$ERRLOG")";
+        if [ -z "$sal5" ]; then
+            echo "  FAIL  SEC-024 paralelo: la herramienta no imprimió NADA: el caso no midió nada";
+            FAIL=$((FAIL+1));
+        else
+            if [ "$rc5" -ne 0 ] && printf '%s' "$sal5" | grep -q 'retorno de carro'; then
+                echo "  PASS  SEC-024 paralelo: una cabecera con un CR interior colisiona con motivo, no responde 'disjunto'";
+                PASS=$((PASS+1));
+            else
+                echo "  FAIL  SEC-024 paralelo: rc=$rc5 (esperado ≠0) y/o el motivo no nombra el CR";
+                diag;
+                printf '%s\n' "$sal5" | head -10 | sed 's/^/          salida| /';
+                FAIL=$((FAIL+1));
+            fi;
+        fi;
+        rm -rf "$PROY5";
+    fi;
+    if [ -z "$FILTRO" ] || printf '%s' "SEC-024 lectores" | grep -qi -- "$FILTRO"; then
+        SONDA5="$RAIZ/sonda5-$BASHPID.sh";
+        cat > "$SONDA5" <<'S5'
+#!/usr/bin/env bash
+set -uo pipefail
+H="$1"; modo="$2"; f="$3"
+# shellcheck source=/dev/null
+. "$H/lib.sh"
+texto=''; IFS= read -r -d '' texto < "$f" || :
+if [ "$modo" = lib ]; then
+  arnes_estado_cabecera "$texto"; est="$ARNES_ESTADO"
+  arnes_campos_req "$texto" ''
+else
+  linea="$(awk -f "$H/campos-req.awk" "$f")"
+  IFS=$'\001' read -r _ruta c_est c_qa c_seg c_sens c_hall c_rig <<< "$linea"
+  arnes_norm_campo "$c_est"; arnes_veredicto "$ARNES_CAMPO"; est="$ARNES_VEREDICTO"
+  arnes_campos_normaliza "$c_qa" "$c_seg" "$c_sens" "$c_hall" "$c_rig"
+fi
+printf 'Estado=<%s> QA=<%s> Seg=<%s> Sens=<%s> Hall=<%s> Rigor=<%s>\n' \
+  "$est" "$ARNES_QA" "$ARNES_SEG" "$ARNES_SENS" "$ARNES_HALL" "$ARNES_RIGOR"
+S5
+
+        DOC5="$RAIZ/doc5-$BASHPID.md"
+        PLANT5='# R
+Estado: completado
+QA: aprobado
+<!-- historia: esto no es el vigente
+Seguridad: aprobado
+-->
+Seguridad: con-hallazgos
+Rigor: critico
+Sensible a seguridad: sí';
+        div5=0;
+        comp5=0;
+        primero5='';
+        for ((i5 = 1; i5 < ${#PLANT5}; i5 += 2))
+        do
+            doc5="${PLANT5:0:i5}$CR5${PLANT5:i5}";
+            printf '%s\n' "$doc5" > "$DOC5";
+            a5="$(bash "$SONDA5" "$HOOKS_DIR" lib "$DOC5" 2>> "$ERRLOG")";
+            b5="$(bash "$SONDA5" "$HOOKS_DIR" awk "$DOC5" 2>> "$ERRLOG")";
+            if [ -z "$a5" ] || [ -z "$b5" ]; then
+                div5=$((div5+1));
+                [ -n "$primero5" ] || primero5="posición $i5: una de las dos sondas no dijo nada";
+                continue;
+            fi;
+            comp5=$((comp5+1));
+            if [ "$a5" != "$b5" ]; then
+                div5=$((div5+1));
+                [ -n "$primero5" ] || primero5="posición $i5: lib=<$a5> awk=<$b5>";
+            fi;
+        done;
+        if [ "$comp5" -lt 40 ]; then
+            echo "  FAIL  SEC-024 lectores: el corpus del diferencial comparó $comp5 cabeceras: no mediría nada";
+            FAIL=$((FAIL+1));
+        else
+            echo "  PASS  SEC-024 lectores: el diferencial del CR recorre $comp5 cabeceras (enumeración fija, no semilla)";
+            PASS=$((PASS+1));
+        fi;
+        if [ "$div5" -eq 0 ]; then
+            echo "  PASS  SEC-024 lectores: 0 divergencias entre hooks/lib.sh y hooks/campos-req.awk sobre el CR";
+            PASS=$((PASS+1));
+        else
+            echo "  FAIL  SEC-024 lectores: $div5 divergencias — $primero5";
+            diag;
+            FAIL=$((FAIL+1));
+        fi;
+        rm -f "$SONDA5" "$DOC5";
+    fi
+}

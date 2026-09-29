@@ -1,0 +1,8 @@
+X3b[C] R8 (fila critica SEC-047) en CRLF             E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'\3
+X3c[C] gemelo sin BOM en CRLF (control)              E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap
+X3b[C] R8 (fila critica SEC-047) en CRLF             W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'\3
+X3c[C] gemelo sin BOM en CRLF (control)              W cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap
+X3b[C.UTF-8] R8 (fila critica SEC-047) en CRLF       E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'\3
+X3c[C.UTF-8] gemelo sin BOM en CRLF (control)        E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap
+X3b[C.UTF-8] R8 (fila critica SEC-047) en CRLF       W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'\3
+X3c[C.UTF-8] gemelo sin BOM en CRLF (control)        W cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap

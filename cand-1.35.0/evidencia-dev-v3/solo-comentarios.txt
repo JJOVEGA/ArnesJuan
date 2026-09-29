@@ -1,0 +1,36 @@
+2026-09-29T13:33:30-06:00
+== HEAD ed497a267d225159a74af2b43eaa6be3bb0b207d
+== git status --short
+ M CHANGELOG.md
+ M docs/ESTADO.md
+ M docs/decisions/ADR-014-cabecera-ambigua-variante-o-clave-de-control-repetida.md
+ M hooks/guard-completado.sh
+ M requirements/README.md
+ M requirements/REQ-023.md
+ M skills/arnes-upgrade/SKILL.md
+ M templates/requirements-README.md.tpl
+?? propuesta-v1.35.0/
+== git diff --stat ed497a2 -- hooks tools tests
+ hooks/guard-completado.sh | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
+== lineas del parrafo nuevo en el arbol final
+581:    # INTENTO DE CIERRE = la cabecera resultante es AMBIGUA, ALGUNA de sus lineas `Estado`
+593:    # el terminal: es la unica lectura del valor de una variante, y solo puede denegar.
+== (1) lineas +/- del diff que NO son comentario de linea completa (debe salir vacio)
+(vacio)
+== (2) archivos sin lineas de comentario, antes y despues (cmp rc 0 = identico)
+hooks/guard-completado.sh cmp_rc=0
+== (3) PARSER de bash: archivo envuelto en funcion + declare -f (descarta comentarios)
+hooks/guard-completado.sh antes=3f2796de3750f34f despues=3f2796de3750f34f IDENTICO
+control positivo (guard-completado.sh con [ "$amb" = 1 ] -> = 2 en una copia): original=3f2796de3750f34f alterada=eb1b1ed594ce94ff DISTINTO: la prueba detecta un cambio ejecutable
+== lineas de comentario cambiadas (+ y -): 19
+== blobs
+hooks/guard-completado.sh 28a892bdddcb -> ed06befabf95
+== lo que el banco lee del fuente
+tec41 (grep -Ec 'hallazgosabiertos|sensibleaseguridad|Estado, QA, Seguridad' sobre lib.sh + guard-completado.sh): antes=0 despues=0 (la seccion 41 exige 0)
+rango CABECERA AMBIGUA: inicio presente=1; fin presente=0
+rango de cod41 sin comentarios: antes=1efdc0464bf6a024 despues=1efdc0464bf6a024 lineas=17
+== CORRECCION de la linea 'rango CABECERA AMBIGUA' de arriba: el 'fin presente=0' salio de un patron BRE mal escrito en MI comprobacion (\] no casa); con grep -F:
+inicio (grep -Fn 'CABECERA AMBIGUA (REQ-023'): 573:    # CABECERA AMBIGUA (REQ-023, ADR-014; SEC-047, QA-03
+fin (grep -Fn '[ "$est_despues" = "$done_norm" ] || return 0'): 612:    [ "$est_despues" = "$done_norm" ] || return 0
+(el rango awk de cod41 ya lo demostraba: 17 lineas no comentario, mismo hash antes y despues)

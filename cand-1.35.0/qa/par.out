@@ -1,0 +1,10 @@
+Paralelismo por archivos — requirements/ (2 REQ evaluados)
+
+  REQ-901    en-progreso   a.sh
+  REQ-902    en-progreso   b.sh
+
+  REQ-901    vs REQ-902     disjunto   
+
+Todos los pares son DISJUNTOS por archivos.
+
+Esta herramienta evalúa ARCHIVOS y NO el orden de fases: un «disjunto» no autoriza a correr el auditor-seguridad a la vez que el qa-tester, ni el qa-tester antes que el desarrollador. Esa regla es aparte, vive en AGENTS.md §6 y esta herramienta no la comprueba.

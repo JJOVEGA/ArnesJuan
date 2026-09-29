@@ -1,0 +1,5 @@
+HEAD eeb627d016b475c46d9ab767fc6234a837acb971
+gate1 rc=0
+gate2 rc=0
+gate3 rc=0
+cabeceras=29 ambiguas=0

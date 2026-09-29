@@ -1,0 +1,13 @@
+CAA12-3000-canonicas ArnesJuan-v1.35/hooks dec=allow rc=0 bytes_motivo=0 t=2.73s err=/home/juan/dev/ArnesJuan-v1.35/hooks/lib.sh: line 191: /home/juan/.local/bin/jq: Argument list too long  | 
+CAA12-3000-canonicas base713/hooks dec=allow rc=0 bytes_motivo=0 t=2.19s err=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/qa/base713/hooks/lib.sh: | 
+QA-3000-canonicas ArnesJuan-v1.35/hooks dec=deny rc=0 bytes_motivo=2055 t=1.44s err= | s abiertos, Rigor) una sola vez y como la escribe la plantilla de requirements/README.md, seccion 'Veredictos de validacion'. La puerta no reescribe el archivo.
+QA-3000-canonicas base713/hooks dec=allow rc=0 bytes_motivo=0 t=0.92s err= | 
+qa-400-variantes ArnesJuan-v1.35/hooks dec=deny rc=0 bytes_motivo=2946 t=0.26s err= | s abiertos, Rigor) una sola vez y como la escribe la plantilla de requirements/README.md, seccion 'Veredictos de validacion'. La puerta no reescribe el archivo.
+qa-400-variantes base713/hooks dec=allow rc=0 bytes_motivo=0 t=0.17s err= | 
+qa-21-variantes ArnesJuan-v1.35/hooks dec=deny rc=0 bytes_motivo=2924 t=0.06s err= | s abiertos, Rigor) una sola vez y como la escribe la plantilla de requirements/README.md, seccion 'Veredictos de validacion'. La puerta no reescribe el archivo.
+qa-19-variantes ArnesJuan-v1.35/hooks dec=deny rc=0 bytes_motivo=2853 t=0.06s err= | s abiertos, Rigor) una sola vez y como la escribe la plantilla de requirements/README.md, seccion 'Veredictos de validacion'. La puerta no reescribe el archivo.
+CAA12-3000+variante ArnesJuan-v1.35/hooks dec=deny rc=0 bytes_motivo=2756 t=2.82s err= | s abiertos, Rigor) una sola vez y como la escribe la plantilla de requirements/README.md, seccion 'Veredictos de validacion'. La puerta no reescribe el archivo.
+/home/juan/dev/ArnesJuan-v1.35/hooks 20000 variantes: dec=allow rc=0 bytes_motivo=0 t=0.0s 
+base713/hooks 20000 variantes: dec=allow rc=0 bytes_motivo=0 t=0.0s 
+/home/juan/dev/ArnesJuan-v1.35/hooks 20000 variantes: dec=deny rc=0 bytes_salida=3096 t=9.9s y 19981 linea(s) err=
+base713/hooks 20000 variantes: dec=allow rc=0 bytes_salida=0 t=5.4s  err=

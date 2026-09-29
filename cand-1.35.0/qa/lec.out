@@ -1,0 +1,169 @@
+Lectura del arnés sobre requirements/ — plugin 1.35.0
+
+VALORES QUE LA MÁQUINA NO LEE COMO ESTÁN ESCRITOS (30)
+
+  REQ-915      QA:
+                 escrito:  «linea 3: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 4: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 5: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 6: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 7: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 8: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 9: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 10: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 11: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 12: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 13: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 14: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 15: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 16: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 17: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 18: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 19: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 20: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 21: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 22: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 23: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 24: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 25: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 26: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 27: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 28: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 29: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 30: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 31: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-915      QA:
+                 escrito:  «linea 32: 'qa: x' (variante de 'QA:', que la maquina NO lee como esa clave, y la clave se declara 30 veces)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+LÍNEAS DECORADAS QUE GOBIERNAN UN CAMPO (1) — forma legítima, NO altera el código de salida
+
+  REQ-911      QA:
+                 linea:    «**QA:** aprobado»
+                 se lee:   <aprobado>
+                 gobierna este campo, y la forma es legitima; el aviso existe porque la linea que manda no es la que parece.
+
+RESUMEN
+  3 REQ leídos
+  rigor efectivo: critico 2 · estandar 1 · ligero 0
+  cola de aprobaciones (PENDING_APPROVAL.md): 0 pendiente(s) — no bloquea el cierre
+
+  El rigor efectivo es DERIVADO: `Sensible a seguridad: sí` impone `critico`
+  aunque no se declare `Rigor:`. Si un REQ que crees crítico sale `estandar`,
+  su campo de sensibilidad no se está leyendo como crees.

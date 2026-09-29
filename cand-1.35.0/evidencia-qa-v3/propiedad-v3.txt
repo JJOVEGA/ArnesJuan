@@ -1,0 +1,58 @@
+2026-09-29T13:38:10-06:00 cand=c4cc32c LC_ALL=C.UTF-8 punto de entrada guard.sh
+## A. Propiedad (Edit literal, MultiEdit, Write): disco -> edición de otra línea (Rigor) o del estado
+A1 gob no-terminal + variante terminal, editar Rigor       E pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+A2 gob no-terminal + exacta repetida terminal (X1)         E pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+A3 sin exacta + variante terminal (X2)                     E pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+A4 gob TERMINAL + variante terminal (cerrado)              E pred=allow cand=allow | 
+A5 gob terminal + otra ambigüedad (cerrado)               E pred=allow cand=allow | 
+A6 ambigua, ninguna Estado terminal                        E pred=allow cand=allow | 
+A7 ambigua (QA), cierre del Estado exacto                  E pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+A8 no ambigua, cierre normal (verde)                       E pred=allow cand=allow | 
+A9 retirar la variante terminal                            E pred=allow cand=allow | 
+A10 X1: retirar la 1a (queda cierre normal, verde)         E pred=allow cand=allow | 
+A11 X1: retirar la 1a con QA pendiente (puerta de siempre) E pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': el veredicto d
+A12 variante terminal + otra ambig.; quitar sólo la otra  E pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+A1 gob no-terminal + variante terminal, editar Rigor       M pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+A2 gob no-terminal + exacta repetida terminal (X1)         M pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+A3 sin exacta + variante terminal (X2)                     M pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+A4 gob TERMINAL + variante terminal (cerrado)              M pred=allow cand=allow | 
+A5 gob terminal + otra ambigüedad (cerrado)               M pred=allow cand=allow | 
+A6 ambigua, ninguna Estado terminal                        M pred=allow cand=allow | 
+A7 ambigua (QA), cierre del Estado exacto                  M pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+A8 no ambigua, cierre normal (verde)                       M pred=allow cand=allow | 
+A9 retirar la variante terminal                            M pred=allow cand=allow | 
+A10 X1: retirar la 1a (queda cierre normal, verde)         M pred=allow cand=allow | 
+A11 X1: retirar la 1a con QA pendiente (puerta de siempre) M pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': el veredicto d
+A12 variante terminal + otra ambig.; quitar sólo la otra  M pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+A1 gob no-terminal + variante terminal, editar Rigor       W pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+A2 gob no-terminal + exacta repetida terminal (X1)         W pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+A3 sin exacta + variante terminal (X2)                     W pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+A4 gob TERMINAL + variante terminal (cerrado)              W pred=allow cand=allow | 
+A5 gob terminal + otra ambigüedad (cerrado)               W pred=allow cand=allow | 
+A6 ambigua, ninguna Estado terminal                        W pred=allow cand=allow | 
+A7 ambigua (QA), cierre del Estado exacto                  W pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+A8 no ambigua, cierre normal (verde)                       W pred=allow cand=allow | 
+A9 retirar la variante terminal                            W pred=allow cand=allow | 
+A10 X1: retirar la 1a (queda cierre normal, verde)         W pred=allow cand=allow | 
+A11 X1: retirar la 1a con QA pendiente (puerta de siempre) W pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': el veredicto d
+A12 variante terminal + otra ambig.; quitar sólo la otra  W pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+A13 archivo nuevo (sin disco) ambiguo con terminal, Write          W pred=deny  cand=deny
+
+## B. Frontera (g): Edit/MultiEdit cuyo old_string no está literal pero el CLI 2.1.284 sí lo encuentra (\uXXXX)
+B1 cierre con variante qa: pendiente, old LITERAL (control) E pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+B2 idem, old 'Estado: en-revisi\u00f3n' + línea Estado entera E pred=deny  cand=allow |   <<< CONTRADICE EL TEXTO
+B3 idem por MultiEdit                                      M pred=deny  cand=allow |   <<< CONTRADICE EL TEXTO
+B4 X0: editar Rigor con old 'Rigor: critic\u006f'          E pred=deny  cand=allow |   <<< CONTRADICE EL TEXTO
+B5 R8-like (NBSP en Sensible, ligero), literal (control)   E pred=deny  cand=deny  | ARNES: no se puede completar 'requirements/REQ-950.md': su cabecera es
+B6 idem con old escapado + línea Estado entera            E pred=deny  cand=allow |   <<< CONTRADICE EL TEXTO
+TOTAL=43 CONTRADICEN_EL_TEXTO=4
+
+== bajo LC_ALL=C
+TOTAL=43 CONTRADICEN_EL_TEXTO=4
+== emulación de $ke del CLI 2.1.284 (Python, traslado literal)
+B2/B3/B6 old_string= 'Estado: en-revisi\\u00f3n' -> el Edit sustituye: 'Estado: en-revisión'
+B4 old_string= 'Rigor: critic\\u006f' -> el Edit sustituye: 'Rigor: critico'
+B1 literal (control) | cand base713 N-1.33.2 v1.34.0 = deny allow allow allow
+B2 escape + linea Estado entera | cand base713 N-1.33.2 v1.34.0 = allow allow allow allow
+B5 fila critica SEC-047, literal (control) | cand base713 N-1.33.2 v1.34.0 = deny allow allow allow
+B6 fila critica SEC-047, escape + linea Estado entera | cand base713 N-1.33.2 v1.34.0 = allow allow allow allow

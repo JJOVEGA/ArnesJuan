@@ -1,0 +1,13 @@
+== modo poblacion (sin argumentos)
+-- REQ-901 cabecera: ESTADO:\ en-progreso
+   /home/juan/dev/ArnesJuan-v1.35/tools: rc=1 REQ-901    ?             SIN DECLARAR: no se le pudo leer el `Estado:` de la cabecera (¿está vacío, o los campos quedaron debajo del primer `## `?)
+   base713/tools: rc=1 REQ-901    ?             SIN DECLARAR: no se le pudo leer el `Estado:` de la cabecera (¿está vacío, o los campos quedaron debajo del primer `## `?)
+-- REQ-901 cabecera: ﻿Estado:\ en-progreso
+   /home/juan/dev/ArnesJuan-v1.35/tools: rc=1 REQ-901    ?             SIN DECLARAR: no se le pudo leer el `Estado:` de la cabecera (¿está vacío, o los campos quedaron debajo del primer `## `?)
+   base713/tools: rc=1 REQ-901    ?             SIN DECLARAR: no se le pudo leer el `Estado:` de la cabecera (¿está vacío, o los campos quedaron debajo del primer `## `?)
+-- REQ-901 cabecera: -\ Estado:\ en-progreso
+   /home/juan/dev/ArnesJuan-v1.35/tools: rc=1 REQ-901    ?             SIN DECLARAR: no se le pudo leer el `Estado:` de la cabecera (¿está vacío, o los campos quedaron debajo del primer `## `?)
+   base713/tools: rc=1 REQ-901    ?             SIN DECLARAR: no se le pudo leer el `Estado:` de la cabecera (¿está vacío, o los campos quedaron debajo del primer `## `?)
+-- REQ-901 cabecera: $'Estado: en-progreso\nestado: completado'
+   /home/juan/dev/ArnesJuan-v1.35/tools: rc=0 REQ-901    en-progreso   a.sh
+   base713/tools: rc=0 REQ-901    en-progreso   a.sh

@@ -1,0 +1,82 @@
+=== P1 (QA-023-01): un Edit/MultiEdit con old_string ausente falla / no escribe / no hay documento
+eeb627d:CHANGELOG.md:51:  - **QA-023-01** (`contrato`): la frontera (g) y el comentario de `guard-completado.sh` dicen que un `Edit` cuyo `old_string` no está literal en el archivo «no escribe nada». El `Edit` del CLI 2.1.284 n
+eeb627d:CHANGELOG.md:7375:  fallará entera y no escribirá nada—.
+eeb627d:CHANGELOG.md:7645:  el archivo la herramienta fallará entera y no escribirá nada, y entonces se leen los fragmentos como
+eeb627d:PENDING_APPROVAL.md:71:- **Alternativa — reparar antes de publicar:** un REQ nuevo (hoy no tiene sede; la premisa falsa de que «la herramienta falla y no escribe nada» vive también en REQ-001 CA-10/CA-11, `completado`
+eeb627d:docs/arnes/v1.35.0-propuesta-sec-047.md:57:- el camino de fragmento de un `Edit` cuyo `old_string` no está en el archivo (la herramienta falla y
+eeb627d:docs/qa/1.32.1-hallazgos.md:205:y sale por `[ "$est_antes" != "$done_norm" ] || return 0`: **no hay transición que juzgar**.
+eeb627d:docs/qa/1.33.2-falsacion/banco-corrida-unica.txt:181:  PASS  QA: control, edit2 busca lo que edit1 destruyo: la herramienta fallaria -> allow  (allow)
+eeb627d:docs/qa/1.33.2-vuelta-2/banco-195ae31.txt:181:  PASS  QA: control, edit2 busca lo que edit1 destruyo: la herramienta fallaria -> allow  (allow)
+eeb627d:docs/qa/REQ-001.md:1357:cabecera **en disco ya decía** el estado terminal no se deniega: no hay transición que juzgar.
+eeb627d:docs/qa/REQ-023.md:197:  está en el archivo —no hay documento que reconstruir; **la herramienta falla y no escribe
+eeb627d:docs/qa/REQ-023.md:199:  `hooks/guard-completado.sh:33-35` lo repite: «la herramienta no escribira nada».
+eeb627d:docs/seguridad/registro-seguridad.md:1115:| **La herramienta no despacha, no es puerta y no escribe** | **Cumple.** Sin `eval`, sin sustitución de comandos, sin redirección a archivo; no invoca agentes ni toca `PENDING_A
+eeb627d:docs/seguridad/registro-seguridad.md:1158:| **REQ-013** | **`con-hallazgos`** | 2026-09-06 | candidata 1.32.0 (`cand/1.32.0`) | **No firmo.** **SEC-014** (`contrato`) queda abierto: la herramienta responde `disjunto`/rc 0 
+eeb627d:requirements/REQ-001.md:32:- **CA-11** — Dado un REQ con `QA: pendiente` y un `Edit` cuyo `old_string` no existe en el archivo y cuyo `new_string` es sólo `completado`, Cuando llega la llamada, Entonces el hook responde
+eeb627d:requirements/REQ-013.md:40:- **CA-12** — [el árbol no se toca] Dado `tools/arnes-paralelo.sh`, Cuando se ejecuta con cualquier combinación de argumentos, Entonces `git status --porcelain` es **idéntico** antes y despu
+eeb627d:requirements/REQ-023.md:9:Hallazgos abiertos: QA-023-01 (contrato, la frontera g de CA-01 afirma que el Edit falla y no escribe nada), QA-023-02 (instrumento, preexistente y crítico: la vía de fragmentos cierra sin puert
+eeb627d:requirements/REQ-023.md:744:  —«la herramienta fallará entera y no escribirá nada»— vive en **REQ-001 CA-11** (`completado`), junto a
+eeb627d:requirements/REQ-023.md:885:| 2026-09-29 | **Write-back de QA-023-01 (vuelta 2 de 3): la frontera (g) de CA-01 decía algo falso sobre la herramienta.** Antes: «el camino de un `Edit`/`MultiEdit` cuyo `old_string` no est�
+eeb627d:tests/escenarios/hooks/secciones/14-campos-solo-en-la-cabecera.sh:166:check "QA: control, edit2 busca lo que edit1 destruyo: la herramienta fallaria -> allow" allow guard-completado.sh \
+
+=== P3 (QA-023-03): editar sin cerrar / reabrir no se bloquea
+eeb627d:AGENTS.md:705:| Una línea de la cabecera con un **retorno de carro que no es el que la termina** no se puede medir y no deja cerrar — se deniega por eso, citando la línea, aunque los veredictos estén en verde. El CR *
+eeb627d:AGENTS.md:706:| Una cabecera **ambigua** no deja cerrar: una **clave de control** (`Estado`, `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos`, `Rigor`) escrita de otra forma que la máquina no lee como esa c
+eeb627d:CHANGELOG.md:27:- **QA-023-03:** «reabrir o editar sin cerrar no se bloquea» lleva ahora su excepción en la misma frase, en el README, la plantilla, la guía, ADR-014 y las notas.
+eeb627d:CHANGELOG.md:53:  - **QA-023-03** (`contrato`): «editar sin cerrar no se bloquea» es absoluta, y su excepción vive en otro sitio.
+eeb627d:CHANGELOG.md:182:     Reabrir, o editar sin cerrar, no se bloquea, **salvo en un caso**: si la cabecera en disco declara
+eeb627d:CHANGELOG.md:417:- Reabrir no se bloquea.
+eeb627d:CHANGELOG.md:904:## [Interno] — 2026-09-21 · **Write-back de la VUELTA 3 de REQ-025 (entrega 1): QA-025-07 corregido por propiedad —salieron cinco frases, no tres—, `ENS-01` registrado sin cerrarlo y las distincione
+eeb627d:CHANGELOG.md:3472:  analista, sin cerrarlo: la opción «reinicio sólo si el propietario cambia el alcance, con el gasto
+eeb627d:CHANGELOG.md:6047:  transporte (CRLF decide idéntico a LF), el cuerpo no se restringe y **reabrir** no se bloquea.
+eeb627d:docs/arnes/v1.35.0-propuesta-sec-047.diff:158:+    # conservar la forma de un REQ que ya estaba cerrado no se bloquea. Lo publica
+eeb627d:docs/arnes/v1.35.0-propuesta-sec-047.md:74:   REQ ya cerrado no se bloquea. El motivo cita la línea con los bytes invisibles escapados
+eeb627d:docs/decisions/ADR-014-cabecera-ambigua-variante-o-clave-de-control-repetida.md:50:   sus valores; reabrir, editar sin intentar cerrar o conservar la forma de un REQ ya cerrado no se
+eeb627d:docs/qa/1.33.2-falsacion/banco-corrida-unica.txt:113:  PASS  anotar en un REQ sin cerrarlo -> allow  (allow)
+eeb627d:docs/qa/1.33.2-falsacion/banco-corrida-unica.txt:393:  PASS  el hook sale 0 (una parada no se bloquea)
+eeb627d:docs/qa/1.33.2-falsacion/banco-corrida-unica.txt:561:  PASS  CA-17 el hook sale 0 (la parada no se bloquea nunca)
+eeb627d:docs/qa/1.33.2-falsacion/banco-corrida-unica.txt:582:  PASS  REQ-009 CA-14 sin PENDING_APPROVAL.md el cierre no se bloquea  (allow)
+eeb627d:docs/qa/1.33.2-falsacion/banco-corrida-unica.txt:586:  PASS  REQ-009 CA-16 con NUL la parada NO se bloquea (rc 0)
+eeb627d:docs/qa/1.33.2-vuelta-2/banco-195ae31.txt:113:  PASS  anotar en un REQ sin cerrarlo -> allow  (allow)
+eeb627d:docs/qa/1.33.2-vuelta-2/banco-195ae31.txt:393:  PASS  el hook sale 0 (una parada no se bloquea)
+eeb627d:docs/qa/1.33.2-vuelta-2/banco-195ae31.txt:561:  PASS  CA-17 el hook sale 0 (la parada no se bloquea nunca)
+eeb627d:docs/qa/1.33.2-vuelta-2/banco-195ae31.txt:582:  PASS  REQ-009 CA-14 sin PENDING_APPROVAL.md el cierre no se bloquea  (allow)
+eeb627d:docs/qa/1.33.2-vuelta-2/banco-195ae31.txt:586:  PASS  REQ-009 CA-16 con NUL la parada NO se bloquea (rc 0)
+eeb627d:docs/qa/REQ-023.md:264:#### QA-023-03 (`contrato`): «editar sin cerrar no se bloquea», promesa absoluta con la excepción fuera
+eeb627d:docs/qa/REQ-023.md:268:    editarlo sin cerrarlo, no se bloquea por esto»;
+eeb627d:docs/seguridad/registro-seguridad.md:2582:| Lo que **no** restringe: CR final = transporte, CRLF ≡ LF, cuerpo intacto, reabrir no se bloquea | CA-12, (i)(ii)(iii), con la anti-coartada «*la acotación es de esa clase y 
+eeb627d:docs/seguridad/registro-seguridad.md:2668:| **REQ-016** | **`aprobado`** | 2026-09-07 | candidata 1.32.1 | **Firmo.** Se mantiene todo lo acreditado en R-008 —el interior de un rango no declara campo en los dos lectores 
+eeb627d:docs/seguridad/registro-seguridad.md:6408:materia, sin cerrarlos ni reclasificarlos:
+eeb627d:docs/seguridad/registro-seguridad.md:6609:### 6. `H-P3` desde seguridad — clasificación, sin cerrarlo ni reclasificarlo
+eeb627d:hooks/guard-completado.sh:584:    # la forma de un REQ que ya estaba cerrado no se bloquea (mismo alcance que el rango sin
+eeb627d:hooks/guard-completado.sh:585:    # cerrar), y editar sin cerrar tampoco, SALVO una excepcion declarada (REQ-023 CA-01): si
+eeb627d:hooks/lib.sh:11:#     aviso por stderr; NO se bloquean ediciones por falta de tooling (no brickear).
+eeb627d:hooks/lib.sh:1729:# (guard-completado; lo que no se bloquea y la frontera (g), en REQ-023 CA-01). Leer la
+eeb627d:hooks/rotar-artefactos.sh:303:  # el artefacto se ignora entero: no se toca nada. Una parada no se bloquea por esto.
+eeb627d:requirements/README.md:89:cambia el valor que lee. Reabrir un REQ, o editarlo sin cerrarlo, no se bloquea por esto, **salvo en un
+eeb627d:requirements/REQ-006.md:43:- **CA-17** — Dado un valor vacío, un valor que ya es sólo `…` y un valor de un solo carácter, Cuando se escribe el bloque, Entonces el hook sale **0** en los tres casos y la parada no se 
+eeb627d:requirements/REQ-009.md:32:- **CA-06** — [el ejemplo comentado] Dado el `PENDING_APPROVAL.md` de este repositorio tal cual está —con el ejemplo del formato en el bloque de cita **antes** de `## Pendientes`— y la sec
+eeb627d:requirements/REQ-016.md:384:| 2026-09-07 | **El tapón subido a criterio: CA-12 (nuevo), y CA-04 acotada.** Antes: ningún criterio, ninguna fila de `AGENTS.md` §13 ni de `templates/AGENTS.md.tpl` mencionaba el **retorno 
+eeb627d:requirements/REQ-023.md:9:Hallazgos abiertos: QA-023-01 (contrato, la frontera g de CA-01 afirma que el Edit falla y no escribe nada), QA-023-02 (instrumento, preexistente y crítico: la vía de fragmentos cierra sin puert
+eeb627d:requirements/REQ-023.md:105:  **Lo que NO se bloquea, y son casos (CA-08):**
+eeb627d:requirements/REQ-023.md:443:  mismo**; que se deniega citando las líneas; que **reabrir** no se bloquea; que la frontera de lo
+eeb627d:requirements/REQ-023.md:839:| «[coherencia entre] … reapertura de REQ» | CA-01 (lo que no se bloquea); CA-08 A6 | cubierta | ídem |
+eeb627d:requirements/REQ-023.md:877:| 2026-09-29 | **Versionado de fondo por ADR-014: el mecanismo pasa de «cabecera no medible por un carácter de la clase, en cualquier línea» a «cabecera AMBIGUA por una variante de una clav
+eeb627d:requirements/REQ-023.md:886:| 2026-09-29 | **Write-back de QA-023-03 (vuelta 2 de 3): «reabrir, o editar sin cerrar, no se bloquea» era absoluta y su excepción vivía en otra parte.** CA-01 ya la enunciaba junto («Lo q
+eeb627d:skills/arnes-upgrade/SKILL.md:1033:    de forma legible; **reabrir**, o editar un REQ sin cerrarlo, no se bloquea, **salvo en un caso**:
+eeb627d:templates/AGENTS.md.tpl:669:| Una línea de la cabecera con un **retorno de carro que no es el que la termina** no se puede medir y no deja cerrar — se deniega por eso, citando la línea, aunque los veredictos estén en 
+eeb627d:templates/AGENTS.md.tpl:670:| Una cabecera **ambigua** no deja cerrar: una **clave de control** (`Estado`, `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos`, `Rigor`) escrita de otra forma que la máquina no 
+eeb627d:templates/requirements-README.md.tpl:89:cambia el valor que lee. Reabrir un REQ, o editarlo sin cerrarlo, no se bloquea por esto, **salvo en un
+eeb627d:tests/escenarios/hooks/secciones/09-cierre-de-req-por-bash.sh:18:check "anotar en un REQ sin cerrarlo -> allow" allow guard-completado.sh \
+eeb627d:tests/escenarios/hooks/secciones/28-rotacion-seccion-1-la-historia.sh:89:rsec_check "el hook sale 0 (una parada no se bloquea)" "0" "$RSEC_RC"
+eeb627d:tests/escenarios/hooks/secciones/28-rotacion-seccion-2-el-estado.sh:293:# byte a byte, se avisa y la parada no se bloquea.
+eeb627d:tests/escenarios/hooks/secciones/30-celdas-recortadas.sh:55:der_check "CA-17 el hook sale 0 (la parada no se bloquea nunca)" "0" "$DER_RC"
+eeb627d:tests/escenarios/hooks/secciones/31-cola-una-sola-regla.sh:100:check "REQ-009 CA-14 sin PENDING_APPROVAL.md el cierre no se bloquea" allow guard-completado.sh "$CIERRE"
+eeb627d:tests/escenarios/hooks/secciones/31-cola-una-sola-regla.sh:118:der9_check "REQ-009 CA-16 con NUL la parada NO se bloquea (rc 0)" "0" "$DER9_RC"
+
+=== P4 (QA-023-04): cota constante independiente de la longitud / otra via de crecimiento
+eeb627d:docs/qa/REQ-023.md:282:  constante **independiente de la longitud de la línea**».
+eeb627d:hooks/lib.sh:1760:# trabajo nuevo sobre ella —marcador, estructura, esqueleto— queda acotado por una constante.
+eeb627d:requirements/REQ-023.md:403:  el trabajo nuevo **sobre la clave** —marcador, estructura, esqueleto— queda acotado por una constante
+eeb627d:requirements/REQ-023.md:404:  independiente de la longitud de la línea. Lo que sí crece con la longitud es **lineal**, y no más: la
+eeb627d:requirements/REQ-023.md:887:| 2026-09-29 | **Write-back de QA-023-04 (vuelta 2 de 3): la conclusión de CA-09 (iii) afirmaba una cota que la construcción no tiene.** Antes: «Así el trabajo nuevo por línea queda acotado

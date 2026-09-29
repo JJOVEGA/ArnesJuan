@@ -1,0 +1,10 @@
+== LC_ALL=C.UTF-8
+i-C0-DEL: entradas=30 candidata_deny=30 base_allow=30
+ii-anchura-cero-formato: entradas=23 candidata_deny=23 base_allow=23
+iii-utf8-malformado: entradas=10 candidata_deny=10 base_allow=10
+sorteo-seed20260929: entradas=61 candidata_deny=61 base_allow=61
+== LC_ALL=C
+i-C0-DEL: entradas=30 candidata_deny=30 base_allow=30
+ii-anchura-cero-formato: entradas=23 candidata_deny=23 base_allow=23
+iii-utf8-malformado: entradas=10 candidata_deny=10 base_allow=10
+sorteo-seed20260929: entradas=61 candidata_deny=61 base_allow=61

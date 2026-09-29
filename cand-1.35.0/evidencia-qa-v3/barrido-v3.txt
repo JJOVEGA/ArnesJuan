@@ -1,0 +1,61 @@
+=== sedes que dicen CUÁNDO deniega o QUÉ NO bloquea la cabecera ambigua (c4cc32c)
+AGENTS.md:706:| Una cabecera **ambigua** no deja cerrar: una **clave de control** (`Estado`, `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos`, `Rigor`) escrita de otra forma que la máquina no le
+CHANGELOG.md:5:## [GitHub] — 2026-09-29 · REQ-023, vuelta 3 de 3 (la última): QA-023-03 corregido POR PROPIEDAD en todas sus sedes — cuándo deniega la cabecera ambigua, dicho entero; comprobado contra la
+CHANGELOG.md:13:**No juzga nada más:** reabrir un REQ cuyo `Estado` que gobierna ya es terminal no se bloquea, ni una edición tras la cual ninguna línea `Estado` dice el terminal.
+CHANGELOG.md:15:**Consecuencia:** si en disco el terminal está en una línea `Estado` que no gobierna, toda edición que la conserve se deniega mientras la cabecera siga siendo ambigua. La que la retira, la co
+CHANGELOG.md:224:2. **REQ-023 (ADR-014): la cabecera ambigua deniega el cierre.** Las claves de control son `Estado`,
+CHANGELOG.md:229:   - **Cómo responde la puerta:** deniega citando las primeras 20 líneas ambiguas y cuántas quedan.
+CHANGELOG.md:230:     **Sólo deniega** cuando la cabecera resultante es ambigua, **alguna** línea `Estado` —la exacta,
+CHANGELOG.md:235:     exacta que no es la primera— y la que gobierna no lo dice o no existe, se deniega **toda** edición
+CHANGELOG.md:342:  - **La versión no puede prometer** que toda edición que la herramienta aplique pase por la puerta de
+CHANGELOG.md:430:## [GitHub] — 2026-09-29 · REQ-023 implementado (mitad 1 de SEC-047): una variante de una clave de control, o una clave de control repetida, deja la cabecera ambigua y no deja cerrar; `en-re
+CHANGELOG.md:455:## [GitHub] — 2026-09-29 · REQ-023 versionado (mitad 1 de SEC-047): una variante de una clave de control, o una clave de control repetida, deja la cabecera ambigua y no deja cerrar — ADR-0
+CHANGELOG.md:5258:**No se toca nada más:** `Estado:` sigue `en-progreso`, los otros siete criterios quedan **idénticos**
+CHANGELOG.md:6250:  denegación exige que **haya un intento de cierre**: denegar toda edición de un REQ con un comentario
+CHANGELOG.md:6979:se resuelve, y es deliberado:** resolverlo costaría un proceso en el camino de toda edición y
+docs/decisions/ADR-005-instrumentos-compartidos-en-tests-util.md:79:> **Alcance de la nota.** Toca el punto 4 y nada más: los puntos 1, 2, 3, 5, 6 y 7, el residual
+docs/decisions/ADR-014-cabecera-ambigua-variante-o-clave-de-control-repetida.md:1:# ADR-014 — Cabecera ambigua: una variante de una clave de control, o una clave de control repetida, deniega el cierre; la fro
+docs/decisions/ADR-014-cabecera-ambigua-variante-o-clave-de-control-repetida.md:50:   **nunca** se lee como la clave y ningún lector cambia sus valores. **Sólo deniega** cuando la cabecera
+docs/decisions/ADR-014-cabecera-ambigua-variante-o-clave-de-control-repetida.md:116:  no existe, se deniega **toda** edición que conserve esa línea mientras la cabecera siga siendo ambigua,
+hooks/guard-completado.sh:566:    # esa linea declaraba desde dentro de la cita. Denegar toda edicion de un REQ con un
+hooks/guard-completado.sh:584:    # declaracion exacta; si no hay ninguna, nada lo decia— NO lo decia. No se juzga nada mas:
+hooks/guard-completado.sh:589:    # primera— y la que gobierna no lo dice o no existe, se deniega TODA edicion que conserve esa
+hooks/lib.sh:1190:#   * resolver cuesta un proceso (`readlink`/`realpath`) en el camino de TODA edicion, y
+hooks/lib.sh:1544:# control declarada mas de una vez fuera de toda cita deja la cabecera ambigua y deniega.)
+hooks/lib.sh:1728:# puerta DENIEGA por cabecera ambigua un intento de cierre sobre el documento resultante
+hooks/lib.sh:2149:# y alguna de esas lineas dice el estado terminal, la puerta DENIEGA por cabecera ambigua
+requirements/README.md:87:**ambigua** y la puerta **deniega el cierre** citando las líneas —las primeras, y cuántas más hay—, con
+requirements/README.md:89:cambia el valor que lee. **Cuándo deniega, dicho entero:** cuando la cabecera que quedaría escrita es
+requirements/README.md:92:nada lo decía) **no** lo decía. Nada más: reabrir o editar un REQ cuyo `Estado` que gobierna en disco ya
+requirements/README.md:96:existe, se deniega **toda** edición que conserve esa línea mientras la cabecera siga siendo ambigua,
+requirements/README.md:656:| [REQ-023](REQ-023.md) | Una clave de control escrita de otra forma, o declarada dos veces, no se convierte en ausencia: la **cabecera ambigua no deja cerrar** (mitad 1 de SEC-047). 
+requirements/REQ-023.md:1:# REQ-023 — Una clave de control escrita de otra forma, o declarada dos veces, no se convierte en ausencia: la cabecera ambigua no deja cerrar (mitad 1 de SEC-047)
+requirements/REQ-023.md:34:  AMBIGUA, y una cabecera ambigua no deja cerrar.** Dado un REQ cuya **cabecera resultante** —la del
+requirements/REQ-023.md:105:  **Lo que NO se bloquea, y son casos (CA-08):** esta regla no juzga nada fuera de la condición de
+requirements/REQ-023.md:114:    que no es la primera— y la que gobierna no lo dice o no existe, se deniega **toda** edición que
+requirements/REQ-023.md:448:  ninguna de sus tres fronteras**— dice que **una cabecera ambigua no deja cerrar**: una clave de control
+requirements/REQ-023.md:893:| 2026-09-29 | **Write-back de QA-023-03 (vuelta 2 de 3): «reabrir, o editar sin cerrar, no se bloquea» era absoluta y su excepción vivía en otra parte.** CA-01 ya la enunciaba j
+requirements/REQ-023.md:895:| 2026-09-29 | **Write-back de QA-023-03, vuelta 3 de 3 (la última): la excepción se escribe por PROPIEDAD, no por un caso.** Antes (vuelta 2), en todas las sedes: «salvo en un ca
+skills/arnes-upgrade/SKILL.md:529:  proceso en toda edición y abriría una carrera entre la comprobación y la escritura. **Qué
+skills/arnes-upgrade/SKILL.md:985:  - **Lo que deja de cerrar, dicho entero.** La lista se separa **sólo** con comas fuera de todo
+skills/arnes-upgrade/SKILL.md:1027:  - **Lo que deja de cerrar, dicho entero.** Una cabecera con una **variante** de una clave de control
+skills/arnes-upgrade/SKILL.md:1033:    de forma legible. **Sólo deniega** cuando la cabecera resultante es ambigua, **alguna** línea
+skills/arnes-upgrade/SKILL.md:1039:    **toda** edición que conserve esa línea mientras la cabecera siga siendo ambigua, y no la que la
+templates/AGENTS.md.tpl:670:| Una cabecera **ambigua** no deja cerrar: una **clave de control** (`Estado`, `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos`, `Rigor`) escrita de otra forma que la 
+templates/requirements-README.md.tpl:87:**ambigua** y la puerta **deniega el cierre** citando las líneas —las primeras, y cuántas más hay—, con
+templates/requirements-README.md.tpl:89:cambia el valor que lee. **Cuándo deniega, dicho entero:** cuando la cabecera que quedaría escrita es
+templates/requirements-README.md.tpl:92:nada lo decía) **no** lo decía. Nada más: reabrir o editar un REQ cuyo `Estado` que gobierna en disco ya
+templates/requirements-README.md.tpl:96:existe, se deniega **toda** edición que conserve esa línea mientras la cabecera siga siendo ambigua,
+tests/escenarios/hooks/README.md:281:| Cabecera ambigua (41) | el **dominio de campos** derivado midiendo (presente deniega, ausente abre) y la clase descartada: C0/DEL, anchura cero, UTF-8 mal formado y una en
+tests/escenarios/hooks/secciones/36-cabecera-comentario-html-5-el-cr-que-no-termina.sh:88:# Una guarda que sólo deniega no se distingue de un veto. El mismo documento, con el CR
+tests/escenarios/hooks/secciones/41-variante-de-clave-de-control.sh:6:# ambigua no deja cerrar. Hasta 1.34.0 la variante se leía como AUSENCIA, y la ausencia abre: un BOM
+tools/arnes-lectura.sh:147:    # cabecera ambigua si la clave repetida es de control (al cerrar, la puerta deniega).
+
+=== ¿menciona cada sede la frontera (g) (old_string no literal / QA-023-02)?
+  requirements/README.md: 4 mención(es)
+  templates/requirements-README.md.tpl: 4 mención(es)
+  skills/arnes-upgrade/SKILL.md: 5 mención(es)
+  docs/decisions/ADR-014-cabecera-ambigua-variante-o-clave-de-control-repetida.md: 4 mención(es)
+  AGENTS.md: 1 mención(es)
+  templates/AGENTS.md.tpl: 0 mención(es)
+  CHANGELOG [1.35.0]: 6

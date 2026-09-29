@@ -1,0 +1,12 @@
+G0-control-literal cand=deny base=deny N=deny | ARNES: no se puede completar 'requirements/REQ-950.md': el veredicto de QA es 'pendiente' (se requie
+old_string usado: en-revisi\u00f3n (bytes: 16)
+G1-escape-u00f3 cand=allow base=allow N=allow | 
+G1m-multiedit-escape cand=allow base=allow N=allow | 
+G2-comillas-rectas cand=allow base=allow N=allow | 
+G3-escape-con-Estado cand=deny base=deny N=deny | ARNES: no se puede completar 'requirements/REQ-950.md': el veredicto de QA es 'pendiente' (se requie
+G1 old_string= 'en-revisi\\u00f3n' -> lo que el Edit sustituye: 'en-revisión'
+G2 old_string= 'en-revisión\nNota: "ver R-1"' -> lo que el Edit sustituye: 'en-revisión\nNota: “ver R-1”'
+control old_string= 'NOEXISTE' -> lo que el Edit sustituye: None
+/home/juan/dev/ArnesJuan-v1.35/hooks: literal(control)=deny [ARNES: no se puede marcar 'requirements/REQ-950.md' como 'completado': hay 1 aprobación(es] | escape=allow
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/qa/base713/hooks: literal(control)=deny [ARNES: no se puede marcar 'requirements/REQ-950.md' como 'completado': hay 1 aprobación(es] | escape=allow
+/home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.33.2/hooks: literal(control)=deny [ARNES: no se puede marcar 'requirements/REQ-950.md' como 'completado': hay 1 aprobación(es] | escape=allow

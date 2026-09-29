@@ -1,0 +1,615 @@
+__envoltorio__ () 
+{ 
+    set -uo pipefail;
+    DIR="${BASH_SOURCE[0]%/*}";
+    [ "$DIR" = "${BASH_SOURCE[0]}" ] && DIR=.;
+    . "$DIR/lib.sh";
+    function arnes_clase_hallazgo () 
+    { 
+        local LC_ALL=C;
+        local techo="$ARNES_HALL_TECHO_BYTES" hall crudo_h n_hall n_crudo est prof e_ini idh id_malo clase err err_ini sin_clase clase_mala clase_mala_v bloq bloq_v ci cj c p t0 trozo id_crudo visto blanco pend noasc id_txt frag_h elem_h;
+        if [ "${ARNES_HALL_N:-0}" -gt 1 ]; then
+            arnes_deny "ARNES: no se puede completar '$rel': la cabecera declara 'Hallazgos abiertos:' $ARNES_HALL_N veces (${ARNES_HALL_LINEAS}), y la puerta no elige una: ni la primera ni la ultima, y no las fusiona. Deja UNA sola linea 'Hallazgos abiertos:' en la cabecera y conserva en ella todos los hallazgos, separados por comas (requirements/README.md, seccion 'Clases de hallazgo'). La puerta no reescribe el archivo.";
+        fi;
+        crudo_h="${ARNES_HALL_CRUDO:-}";
+        n_crudo=${#crudo_h};
+        if [ "$n_crudo" -gt "$techo" ]; then
+            arnes_deny "ARNES: no se puede completar '$rel': el valor de 'Hallazgos abiertos:' mide $n_crudo bytes (contados en bytes, lo escrito tras los dos puntos y antes de normalizar) y el techo es $techo bytes, asi que no se interpreta: una puerta que no puede medir no deja pasar. Acorta el campo: la evidencia larga va al registro del hallazgo (docs/qa/, docs/seguridad/) y en el parentesis queda la referencia (requirements/README.md, seccion 'Clases de hallazgo').";
+        fi;
+        hall="$ARNES_HALL";
+        case "$hall" in 
+            '' | ninguno | '(ninguno)' | n/a | na | - | '(-)')
+                return 0
+            ;;
+        esac;
+        n_hall=${#hall};
+        est=0;
+        prof=0;
+        e_ini=0;
+        idh='';
+        id_malo='';
+        clase='';
+        err='';
+        err_ini=0;
+        sin_clase='';
+        clase_mala='';
+        clase_mala_v='';
+        bloq='';
+        bloq_v='';
+        t0=-64;
+        trozo='';
+        for ((ci = 0; ci <= n_hall; ci++))
+        do
+            (( ci - t0 < 64 )) || { 
+                t0=$ci;
+                trozo="${hall:ci:64}"
+            };
+            c="${trozo:ci-t0:1}";
+            if [ "$est" -eq 3 ]; then
+                case "$c" in 
+                    '' | ,)
+
+                    ;;
+                    ')')
+                        err="sobra un ')' detras del parentesis del hallazgo";
+                        err_ini=$ci
+                    ;;
+                    '(')
+                        err="el elemento lleva dos parentesis; cada hallazgo lleva UNO, con su clase";
+                        err_ini=$ci
+                    ;;
+                    *)
+                        err="hay texto detras del parentesis del hallazgo (un separador que no es la coma, una nota u otro hallazgo); tras el parentesis solo cabe la coma o el fin del campo";
+                        err_ini=$ci
+                    ;;
+                esac;
+            else
+                if [ "$est" -ge 1 ]; then
+                    case "$c" in 
+                        '')
+                            err="un parentesis abierto no se cierra";
+                            err_ini=$e_ini
+                        ;;
+                        '(')
+                            prof=$((prof+1));
+                            [ "$est" -eq 1 ] && clase+="$c";
+                            continue
+                        ;;
+                        ')')
+                            prof=$((prof-1));
+                            if [ "$prof" -eq 0 ]; then
+                                est=3;
+                            else
+                                [ "$est" -eq 1 ] && clase+="$c";
+                            fi;
+                            continue
+                        ;;
+                        ',')
+                            if [ "$est" -eq 1 ] && [ "$prof" -eq 1 ]; then
+                                est=2;
+                            else
+                                if [ "$est" -eq 1 ]; then
+                                    clase+="$c";
+                                fi;
+                            fi;
+                            continue
+                        ;;
+                        *)
+                            [ "$est" -eq 1 ] && clase+="$c";
+                            continue
+                        ;;
+                    esac;
+                else
+                    case "$c" in 
+                        '(')
+                            if [ -z "$idh" ]; then
+                                err="el elemento no empieza por un identificador (o mezcla una ausencia como '(ninguno)' con hallazgos)";
+                                err_ini=$e_ini;
+                            else
+                                if [ -n "$id_malo" ]; then
+                                    err="el identificador lleva caracteres fuera de letras ASCII, digitos y '-' (el marcado de Markdown de un elemento suelto no se desenvuelve)";
+                                    err_ini=$e_ini;
+                                else
+                                    est=1;
+                                    prof=1;
+                                    clase='';
+                                    continue;
+                                fi;
+                            fi
+                        ;;
+                        '' | ,)
+                            if [ -z "$idh" ]; then
+                                err="hay un elemento vacio (una coma al principio, al final o dos seguidas)";
+                                err_ini=$e_ini;
+                            else
+                                [ -n "$sin_clase" ] || sin_clase="$idh";
+                            fi
+                        ;;
+                        [abcdefghijklmnopqrstuvwxyz0123456789-])
+                            idh+="$c";
+                            continue
+                        ;;
+                        *)
+                            id_malo=1;
+                            idh+="$c";
+                            continue
+                        ;;
+                    esac;
+                fi;
+            fi;
+            [ -z "$err" ] || break;
+            if [ "$est" -eq 3 ]; then
+                case "$clase" in 
+                    instrumento)
+
+                    ;;
+                    usuario/dinero | contrato)
+                        [ -n "$bloq" ] || { 
+                            bloq="$idh";
+                            bloq_v="$clase"
+                        }
+                    ;;
+                    '')
+                        [ -n "$sin_clase" ] || sin_clase="$idh"
+                    ;;
+                    *)
+                        [ -n "$clase_mala" ] || { 
+                            clase_mala="$idh";
+                            clase_mala_v="$clase"
+                        }
+                    ;;
+                esac;
+            fi;
+            est=0;
+            prof=0;
+            e_ini=$((ci+1));
+            idh='';
+            id_malo='';
+            clase='';
+        done;
+        id_crudo='';
+        if [ -z "$err" ]; then
+            prof=0;
+            est=0;
+            visto='';
+            blanco='';
+            pend='';
+            noasc='';
+            id_txt='';
+            t0=-64;
+            trozo='';
+            for ((ci = 0; ci < n_crudo; ci++))
+            do
+                (( ci - t0 < 64 )) || { 
+                    t0=$ci;
+                    trozo="${crudo_h:ci:64}"
+                };
+                c="${trozo:ci-t0:1}";
+                case "$c" in 
+                    '(')
+                        if [ "$prof" -eq 0 ] && [ "$est" -eq 0 ]; then
+                            [ -z "$pend$noasc" ] || { 
+                                id_crudo=1;
+                                break
+                            };
+                            est=1;
+                        fi;
+                        prof=$((prof+1))
+                    ;;
+                    ')')
+                        [ "$prof" -gt 0 ] && prof=$((prof-1))
+                    ;;
+                    ,)
+                        [ "$prof" -eq 0 ] && { 
+                            est=0;
+                            visto='';
+                            blanco='';
+                            pend='';
+                            noasc='';
+                            id_txt=''
+                        }
+                    ;;
+                    ' ' | '	')
+                        [ "$est" -eq 0 ] && { 
+                            [ -z "$visto" ] || blanco=1;
+                            id_txt+="$c"
+                        }
+                    ;;
+                    [abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-])
+                        if [ "$est" -eq 0 ]; then
+                            [ -z "$blanco" ] || pend=1;
+                            visto=1;
+                            id_txt+="$c";
+                        fi
+                    ;;
+                    *)
+                        if [ "$est" -eq 0 ]; then
+                            case "$c" in 
+                                [[:ascii:]])
+
+                                ;;
+                                *)
+                                    noasc=1
+                                ;;
+                            esac;
+                            visto='';
+                            blanco='';
+                            id_txt+="$c";
+                        fi
+                    ;;
+                esac;
+            done;
+            if [ -n "$id_crudo" ]; then
+                id_txt="${id_txt#"${id_txt%%[![:blank:]]*}"}";
+                id_txt="${id_txt%"${id_txt##*[![:blank:]]}"}";
+                if [ -n "$pend" ]; then
+                    err="el identificador '${id_txt,,}' lleva blancos dentro: si son dos hallazgos, cada uno lleva su propio parentesis con su clase";
+                else
+                    err="el identificador '${id_txt,,}' lleva letras fuera de ASCII (una tilde o una letra de otro alfabeto)";
+                fi;
+                frag_h="${id_txt,,}";
+                frag_h="${frag_h//[[:blank:]]/}";
+                elem_h="$frag_h";
+            fi;
+        else
+            p=0;
+            t0=-64;
+            trozo='';
+            for ((cj = ci; cj < n_hall; cj++))
+            do
+                (( cj - t0 < 64 )) || { 
+                    t0=$cj;
+                    trozo="${hall:cj:64}"
+                };
+                case "${trozo:cj-t0:1}" in 
+                    '(')
+                        p=$((p+1))
+                    ;;
+                    ')')
+                        [ "$p" -gt 0 ] && p=$((p-1))
+                    ;;
+                    ,)
+                        [ "$p" -eq 0 ] && [ "$cj" -gt "$err_ini" ] && break
+                    ;;
+                esac;
+            done;
+            frag_h="${hall:err_ini:cj-err_ini}";
+            elem_h="${hall:e_ini:cj-e_ini}";
+            [ -n "$frag_h" ] || { 
+                frag_h="$hall";
+                elem_h="$hall"
+            };
+        fi;
+        if [ -n "$err" ]; then
+            arnes_deny "ARNES: no se puede completar '$rel': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no deja cerrar (podria esconder un hallazgo que bloquea). En el elemento '$elem_h' no se interpreta '$frag_h' (leido sin blancos y en minusculas): $err. Los hallazgos se separan SOLO con comas y cada uno lleva su propio parentesis con su clase: 'ID (clase)'. Conserva la evidencia DENTRO del parentesis del hallazgo, tras la clase y una coma: 'ID (clase, evidencia)' —p. ej. 'QA-006 (instrumento, REQ-007)'—. La puerta no reescribe el campo. Sintaxis: requirements/README.md, seccion 'Clases de hallazgo'.";
+        fi;
+        if [ -n "$sin_clase" ]; then
+            arnes_deny "ARNES: no se puede completar '$rel': el hallazgo '$sin_clase' no declara su clase, y un hallazgo sin clase no cuenta como hallazgo. Clasificalo como 'usuario/dinero', 'contrato' o 'instrumento' (requirements/README.md, seccion 'Clases de hallazgo').";
+        fi;
+        if [ -n "$clase_mala" ]; then
+            arnes_deny "ARNES: no se puede completar '$rel': el hallazgo '$clase_mala' declara '$clase_mala_v', que no es una clase valida, asi que no declara su clase y un hallazgo sin clase no cuenta como hallazgo. Validas: 'usuario/dinero', 'contrato', 'instrumento'. La clase va la PRIMERA dentro del parentesis; la evidencia va detras, tras una coma y DENTRO del mismo parentesis (dueno, forzador, vencimiento).";
+        fi;
+        if [ -n "$bloq" ]; then
+            arnes_deny "ARNES: no se puede completar '$rel': el hallazgo '$bloq' es de clase '$bloq_v' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no afecta a lo que alguien ve, decide o cobra ni a lo que el REQ afirma (requirements/README.md, seccion 'Clases de hallazgo').";
+        fi;
+        return 0
+    };
+    function arnes_guard_completado () 
+    { 
+        local tool fp bash_cmd req_dir estado_done pending_rel rel d escrituras nuevo;
+        local disk qa seg sens rigor hall h id clase pending abiertas tmp cmd out rc disk_medible acc c prof ci;
+        local -a piezas=();
+        local modo resultante reconstruido np k old new ra done_norm est_antes est_despues;
+        local cita_desp est_citado cr_desp cr_linea;
+        local seg_antes amb intento v;
+        arnes_parse_input;
+        arnes_deny_enlace;
+        tool="$ARNES_TOOL";
+        fp="$ARNES_FP";
+        bash_cmd="$ARNES_CMD";
+        case "$tool" in 
+            Bash)
+                [ -n "$bash_cmd" ] || return 0;
+                escrituras="$(arnes_bash_escrituras "$bash_cmd")";
+                rc=$?;
+                if [ "$rc" -eq "$ARNES_RC_EXCESO" ]; then
+                    arnes_parse_manifest;
+                    arnes_techo_bash;
+                    arnes_deny "ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande para analizarlo con garantia; no se analizo y no se permite. Una puerta que no puede medir no deja pasar (AGENTS.md 1): sin analisis no se puede saber si el comando toca '$ARNES_REQ_DIR'. El presupuesto de analisis vigente es de $ARNES_TECHO bytes y este comando lo supera. Salidas: heredoc CITADO (<<'EOF'), un archivo de script, o partir el comando en trozos por debajo de $ARNES_TECHO bytes. El techo se puede SUBIR en .arnes/config.json con 'limites.bash_max_analisis' (bytes), hasta un maximo de $ARNES_BASH_MAX_MANIFIESTO bytes: por encima el analisis dejaria de responder antes de que el hook muera, y un hook muerto no deniega.";
+                fi;
+                [ -n "$escrituras" ] || return 0
+            ;;
+            Edit | Write | MultiEdit)
+                [ -n "$fp" ] || return 0
+            ;;
+            *)
+                return 0
+            ;;
+        esac;
+        arnes_parse_manifest;
+        arnes_deny_manifiesto_roto "${escrituras:-}";
+        req_dir="$ARNES_REQ_DIR";
+        estado_done="$ARNES_ESTADO_DONE";
+        pending_rel="$ARNES_PENDING";
+        if [ "$tool" = "Bash" ]; then
+            while IFS= read -r d; do
+                [ -n "$d" ] || continue;
+                case "$d" in 
+                    /dev/* | /tmp/*)
+                        continue
+                    ;;
+                esac;
+                case "$d" in 
+                    /* | [A-Za-z]:*)
+                        arnes_ruta_relativa "$d" "$ARNES_PROJ";
+                        rel="$ARNES_REL"
+                    ;;
+                    *)
+                        arnes_norm_path "$d";
+                        rel="${ARNES_NORM#./}"
+                    ;;
+                esac;
+                case "$rel" in 
+                    "$req_dir"/*)
+                        if grep -iqE "(^|[^a-zA-Z])${estado_done}([^a-zA-Z]|$)" <<< "$bash_cmd"; then
+                            arnes_deny "ARNES: este comando escribe en '$rel' y menciona '$estado_done'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesitan el contenido resultante (veredictos de QA y Seguridad, cola de $pending_rel y quality gates). Hazlo con Edit/Write para que este mismo hook lo evalue (AGENTS.md 6).";
+                        fi
+                    ;;
+                esac;
+            done <<< "$escrituras";
+            return 0;
+        fi;
+        arnes_ruta_relativa "$fp" "$ARNES_PROJ";
+        rel="$ARNES_REL";
+        case "$rel" in 
+            "$req_dir"/*)
+
+            ;;
+            *)
+                return 0
+            ;;
+        esac;
+        arnes_jq_str "$ARNES_INPUT" -r '
+    (if ([.tool_input | .. | strings] | join("\n") | test("[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]"))
+     then "!" else "-" end) as $ctl |
+    (if   .tool_name == "Write" then ["W", (.tool_input.content // "")]
+     elif .tool_name == "Edit"  then ["E", (.tool_input.old_string // ""), (.tool_input.new_string // ""),
+                                      (if .tool_input.replace_all == true then "1" else "0" end)]
+     elif .tool_name == "MultiEdit" then ["E"] + [.tool_input.edits[]? |
+                                      (.old_string // ""), (.new_string // ""),
+                                      (if .replace_all == true then "1" else "0" end)]
+     else ["W", ""] end) | [$ctl] + . | join("\u0001")';
+        piezas=();
+        IFS='' read -r -d '' -a piezas <<< "$ARNES_JQ" || true;
+        if [ "${piezas[0]:-!}" = "!" ]; then
+            arnes_deny "ARNES: no se juzga esta edicion de '$rel': el tool_input trae bytes de control (C0 distintos de tabulador, salto de linea y retorno de carro). El hook trocea las piezas de la edicion con un separador que viaja dentro del propio dato, asi que un byte de control desincroniza la simulacion y el documento que se juzga deja de ser el que se escribiria. Un REQ legitimo no los lleva: quitalos y reintenta. Una puerta que no puede medir no deja pasar (AGENTS.md 1).";
+        fi;
+        modo="${piezas[1]:-W}";
+        disk='';
+        disk_medible=1;
+        if [ -f "$fp" ]; then
+            arnes_lee_archivo "$fp" || disk_medible=0;
+            disk="$ARNES_TEXTO";
+        fi;
+        if [ "$disk_medible" -eq 0 ]; then
+            if grep -iqE "(^|[^a-zA-Z])${estado_done}([^a-zA-Z]|$)" <<< "$ARNES_JQ"; then
+                arnes_deny "ARNES: no se puede tocar el estado de '$rel': el archivo en disco no se puede leer entero —un byte NUL lo trunca, o no hay permiso de lectura—, asi que no se pueden leer sus veredictos ni simular el documento resultante, y esta edicion menciona '$estado_done'. Una puerta que no puede medir no deja pasar (AGENTS.md 1). Quita el byte NUL del archivo y reintenta.";
+            fi;
+            return 0;
+        fi;
+        np=${#piezas[@]};
+        if [ "$modo" != "W" ]; then
+            k=$(( (np - 2) / 3 ));
+            [ "$k" -lt 1 ] && k=1;
+            if (( ${#disk} * k > ARNES_EDIT_MAX_PRESUPUESTO )); then
+                arnes_deny "ARNES: no se juzga esta edicion: reconstruir el documento resultante costaria mas de lo que esta puerta puede medir antes de morir (documento en disco x numero de ediciones supera el presupuesto de $ARNES_EDIT_MAX_PRESUPUESTO bytes-edicion). No es un veredicto sobre la edicion: es que la puerta no puede medirla, y una puerta que no puede medir no deja pasar (AGENTS.md 1). Salidas: parte el cambio en llamadas mas pequenas, o escribe el documento entero con Write.";
+            fi;
+        fi;
+        nuevo='';
+        resultante='';
+        reconstruido=0;
+        if [ "$modo" = "W" ]; then
+            nuevo="${piezas[2]:-}";
+            resultante="$nuevo";
+        else
+            resultante="${disk//'
+'/'
+'}";
+            reconstruido=1;
+            for ((k = 2; k + 2 < np; k += 3))
+            do
+                old="${piezas[k]//'
+'/'
+'}";
+                new="${piezas[k+1]//
+/
+}";
+                ra="${piezas[k+2]}";
+                nuevo+="$new"'
+';
+                if [ -z "$old" ] || [[ "$resultante" != *"$old"* ]]; then
+                    reconstruido=0;
+                    continue;
+                fi;
+                case "$ra" in 
+                    1*)
+                        resultante="${resultante//"$old"/"$new"}"
+                    ;;
+                    *)
+                        resultante="${resultante/"$old"/"$new"}"
+                    ;;
+                esac;
+            done;
+        fi;
+        if [ "$reconstruido" -eq 1 ]; then
+            arnes_campos_req "$resultante" '';
+        else
+            arnes_campos_req "$disk" "$nuevo";
+        fi;
+        qa="$ARNES_QA";
+        seg="$ARNES_SEG";
+        sens="$ARNES_SENS";
+        rigor="$ARNES_RIGOR";
+        amb="$ARNES_AMBIGUA";
+        if [ -n "$qa" ] && ! arnes_en_vocab "$qa" "$ARNES_VOCAB_QA" && grep -q 'QA:' <<< "$nuevo"; then
+            arnes_aviso "'$rel': 'QA:${ARNES_QA_CRUDO}' se lee como <$qa>, que NO es un veredicto ($ARNES_VOCAB_QA). Asi este REQ no podra cerrarse. Un matiz va entre parentesis —'QA: aprobado (R-045, 2026-09-01)'—; un veredicto distinto es otro valor.";
+        fi;
+        if [ -n "$seg" ] && ! arnes_en_vocab "$seg" "$ARNES_VOCAB_SEG" && grep -q 'Seguridad:' <<< "$nuevo"; then
+            arnes_aviso "'$rel': 'Seguridad:${ARNES_SEG_CRUDO}' se lee como <$seg>, que NO es un veredicto ($ARNES_VOCAB_SEG). Si el rigor efectivo es critico, asi este REQ no podra cerrarse.";
+        fi;
+        if [ "$seg" = "aprobado" ] && [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
+            arnes_seguridad_cabecera "$disk";
+            seg_antes="$ARNES_SEG_CABECERA";
+            if [ "$ARNES_SEG_CRUDO" != "$seg_antes" ]; then
+                arnes_deny "ARNES: '$rel' lleva 'Seguridad: aprobado' pero su 'QA:' es '$qa'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGENTS.md 6): la auditoria no firma sobre un arbol que QA no ha validado, porque no mira las quality gates. Si es una auditoria PREVENTIVA —sin codigo todavia— declarala con su propio veredicto: 'Seguridad: preventiva'.";
+            fi;
+        fi;
+        arnes_norm_campo "$estado_done";
+        done_norm="$ARNES_CAMPO";
+        if [ "$reconstruido" -eq 1 ] || [ "$modo" = "W" ]; then
+            arnes_estado_cabecera "$resultante";
+            est_despues="$ARNES_ESTADO";
+            cita_desp="$ARNES_ESTADO_CITA";
+            est_citado="$ARNES_ESTADO_CITADO";
+            cr_desp="$ARNES_ESTADO_CR";
+            cr_linea="$ARNES_ESTADO_CR_LINEA";
+            arnes_estado_cabecera "$disk";
+            est_antes="$ARNES_ESTADO";
+            if [ "$cr_desp" = "1" ] && [ "$est_despues" = "$done_norm" ]; then
+                arnes_deny "ARNES: no se puede completar '$rel': su cabecera lleva un retorno de carro (CR) que NO termina la linea, en «$cr_linea». Un CR suelto en mitad de una linea no es un fin de linea: es un caracter invisible que puede FABRICAR delimitadores para unos lectores y no para otros —un '<!'+CR+'--' que un renderizador de HTML esconde y esta puerta no lee como comentario, o un 'Seg'+CR+'uridad:' que se lee como la clave 'Seguridad'—, asi que la cabecera no se puede MEDIR y una puerta que no puede medir no deja pasar (AGENTS.md 1). Salida: retira ese CR. El CR que TERMINA una linea es transporte (CRLF de Windows) y no cuenta: un REQ guardado entero en CRLF cierra igual que en LF.";
+            fi;
+            if [ "$cita_desp" = "1" ] && [ "$est_antes" != "$done_norm" ] && { 
+                [ "$est_despues" = "$done_norm" ] || [ "$est_citado" = "$done_norm" ]
+            }; then
+                arnes_deny "ARNES: no se puede completar '$rel': su cabecera ABRE un rango de comentario '<!--' que NO se cierra con '-->' antes del fin de la cabecera (el primer '## '). Lo que cae dentro de un comentario no declara campo, asi que con el rango abierto esta puerta no puede saber que veredictos se han quedado dentro ni cual gobierna — y no permite por AUSENCIA de un campo que un comentario se trago. Salida: cierra el comentario con '-->' dentro de la cabecera, o saca la nota fuera de ella. Un veredicto historico se documenta en el Historial de cambios, no en la cabecera.";
+            fi;
+            if [ -n "$resultante" ] && [ "$amb" = 1 ] && [ "$est_antes" != "$done_norm" ]; then
+                intento=0;
+                if [ "$est_despues" = "$done_norm" ]; then
+                    intento=1;
+                else
+                    for ((k = 0; k < ${#ARNES_ESTADO_OTROS[@]}; k++))
+                    do
+                        v="${ARNES_ESTADO_OTROS[k]}";
+                        arnes_norm_campo "$v";
+                        arnes_veredicto "$ARNES_CAMPO";
+                        if [ "$ARNES_VEREDICTO" = "$done_norm" ]; then
+                            intento=1;
+                            break;
+                        fi;
+                    done;
+                fi;
+                if [ "$intento" -eq 1 ]; then
+                    arnes_ambigua_motivo;
+                    arnes_deny "ARNES: no se puede completar '$rel': su cabecera es AMBIGUA para esta puerta: $ARNES_AMBIGUA_MOTIVO. Una clave de control escrita de otra forma no se lee como esa clave, y declarada mas de una vez obligaria a elegir una; la puerta no elige, no lee la variante como la clave y no permite por la AUSENCIA que eso produciria (AGENTS.md 1). Salida: escribe cada clave de control (${ARNES_CLAVES_CONTROL//|/, }) una sola vez y como la escribe la plantilla de requirements/README.md, seccion 'Veredictos de validacion'. La puerta no reescribe el archivo.";
+                fi;
+            fi;
+            [ "$est_despues" = "$done_norm" ] || return 0;
+            [ "$est_antes" != "$done_norm" ] || return 0;
+        else
+            grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" <<< "$nuevo" || return 0;
+            if [ "${ARNES_CITA_ABIERTA:-0}" = "1" ]; then
+                arnes_deny "ARNES: no se puede completar '$rel': la cabecera que esta puerta pudo leer ABRE un rango de comentario '<!--' que no se cierra con '-->' antes del primer '## ', asi que los campos que vienen detras no se han leido y el cierre no se puede medir. Una puerta que no puede medir no deja pasar. Salida: cierra el comentario dentro de la cabecera, o saca la nota fuera de ella.";
+            fi;
+            if [ "${ARNES_CR_INTERIOR:-0}" = "1" ]; then
+                arnes_deny "ARNES: no se puede completar '$rel': la cabecera que esta puerta pudo leer lleva un retorno de carro (CR) que NO termina la linea, en «${ARNES_CR_INTERIOR_LINEA}». Un CR suelto en mitad de una linea es un caracter invisible que puede FABRICAR delimitadores para unos lectores y no para otros, asi que la cabecera no se puede MEDIR y una puerta que no puede medir no deja pasar (AGENTS.md 1). Salida: retira ese CR. El CR que TERMINA una linea es transporte (CRLF de Windows) y no cuenta.";
+            fi;
+        fi;
+        if [ "$rigor" != "ligero" ]; then
+            if [ -n "$qa" ] && [ "$qa" != "aprobado" ]; then
+                arnes_deny "ARNES: no se puede completar '$rel': el veredicto de QA es '$qa' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9).";
+            fi;
+            case "$rigor" in 
+                critico)
+                    if [ "$seg" != "aprobado" ]; then
+                        if [ "${ARNES_SENS_DUDOSA:-0}" = "1" ]; then
+                            arnes_deny "ARNES: no se puede completar '$rel': su 'Sensible a seguridad:' dice '${ARNES_SENS_CRUDO}', que no se reconoce ni como si ni como no, y un valor que no se entiende se trata como SENSIBLE —no saber no puede abrir una puerta—. Escribe 'si' o 'no' (el énfasis de Markdown y un comentario tras el valor si se toleran), o declara 'Seguridad: aprobado' si de verdad lo es.";
+                        fi;
+                        arnes_deny "ARNES: no se puede completar '$rel': su rigor efectivo es 'critico' y el veredicto de seguridad es '${seg:-ausente}' (se requiere 'Seguridad: aprobado'). El control hallado debe quedar como NFR antes de cerrar (AGENTS.md §9).";
+                    fi
+                ;;
+            esac;
+            if [ "${ARNES_VER_FECHA:-}" = "true" ] || [ "${ARNES_VER_CADUCAN:-}" = "true" ]; then
+                local -a vered=("QA:|$qa|$ARNES_QA_CRUDO");
+                [ "$rigor" = "critico" ] && vered+=("Seguridad:|$seg|$ARNES_SEG_CRUDO");
+                local fecha_codigo='' commit_codigo='' sucio='' v campo valor crudo linea_git rc_git;
+                if [ "${ARNES_VER_CADUCAN:-}" = "true" ]; then
+                    if [ "${#ARNES_GLOBS[@]}" -eq 0 ]; then
+                        arnes_deny "ARNES: no se puede completar '$rel': el manifiesto exige que el veredicto no sea anterior al ultimo cambio del codigo (veredictos.caducan_con_codigo) pero 'codigo_app.globs' esta vacio. Sin globs declarados la consulta mediria el repositorio entero, que es otra pregunta. Declara los globs del codigo de la app, o apaga la opcion.";
+                    fi;
+                    if ! command -v git > /dev/null 2>&1; then
+                        arnes_deny "ARNES: no se puede completar '$rel': el manifiesto exige medir la caducidad del veredicto contra el codigo (veredictos.caducan_con_codigo) y no hay 'git' en el PATH. Una puerta que no puede medir no deja pasar (AGENTS.md 1).";
+                    fi;
+                    linea_git="$(git -C "$ARNES_PROJ" log -1 --format='%cs %h' -- "${ARNES_GLOBS[@]}" 2> /dev/null)";
+                    rc_git=$?;
+                    if [ "$rc_git" -ne 0 ]; then
+                        arnes_deny "ARNES: no se puede completar '$rel': el manifiesto exige medir la caducidad del veredicto contra el codigo (veredictos.caducan_con_codigo) y 'git log' no pudo responder en '$ARNES_PROJ' (¿no es un repositorio git?). Una puerta que no puede medir no deja pasar (AGENTS.md 1).";
+                    fi;
+                    if [ -n "$linea_git" ]; then
+                        fecha_codigo="${linea_git%% *}";
+                        commit_codigo="${linea_git#* }";
+                        arnes_fecha_en "$fecha_codigo";
+                        if [ "$ARNES_FECHA" != "$fecha_codigo" ]; then
+                            arnes_deny "ARNES: no se puede completar '$rel': 'git log --format=%cs' devolvio '$fecha_codigo', que no es una fecha AAAA-MM-DD (git demasiado antiguo para ese formato). No se puede medir la caducidad del veredicto y no se deja pasar por no entender la salida (AGENTS.md 1).";
+                        fi;
+                    fi;
+                    sucio="$(git -C "$ARNES_PROJ" status --porcelain -- "${ARNES_GLOBS[@]}" 2> /dev/null)";
+                    rc_git=$?;
+                    if [ "$rc_git" -ne 0 ]; then
+                        arnes_deny "ARNES: no se puede completar '$rel': 'git status' no pudo responder en '$ARNES_PROJ' y el manifiesto exige medir la caducidad del veredicto contra el codigo (veredictos.caducan_con_codigo). Una puerta que no puede medir no deja pasar (AGENTS.md 1).";
+                    fi;
+                    sucio="${sucio%%'
+'*}";
+                fi;
+                for v in "${vered[@]}";
+                do
+                    campo="${v%%|*}";
+                    crudo="${v#*|}";
+                    valor="${crudo%%|*}";
+                    crudo="${crudo#*|}";
+                    [ "$valor" = "aprobado" ] || continue;
+                    arnes_fecha_en "$crudo";
+                    if [ -z "$ARNES_FECHA" ]; then
+                        arnes_deny "ARNES: no se puede completar '$rel': el veredicto '$campo$crudo' no lleva fecha y el manifiesto la exige (veredictos). Un veredicto sin fecha no se puede caducar, y uno que no caduca sobrevive a los cambios del codigo que juzga. Escribe la ronda y la fecha en formato AAAA-MM-DD dentro del parentesis de evidencia: '$campo aprobado (R-000, AAAA-MM-DD)'.";
+                    fi;
+                    if [ -n "$fecha_codigo" ] && [[ "$ARNES_FECHA" < "$fecha_codigo" ]]; then
+                        arnes_deny "ARNES: no se puede completar '$rel': el veredicto '$campo$crudo' es del $ARNES_FECHA y el codigo de la app cambio el $fecha_codigo ($commit_codigo). Un veredicto anterior al codigo que juzga no lo juzga: hace falta re-validar y volver a firmar con la fecha nueva (AGENTS.md 9). El empate no caduca: 'git log --format=%cs' tiene resolucion de dia.";
+                    fi;
+                done;
+                if [ -n "$sucio" ]; then
+                    arnes_deny "ARNES: no se puede completar '$rel': hay cambios SIN COMITEAR en el codigo de la app ('${sucio#???}'). Un veredicto no puede ser posterior a codigo que aun no existe en git, asi que la caducidad no se puede medir: comitea —o descarta— antes de cerrar (veredictos.caducan_con_codigo).";
+                fi;
+            fi;
+        fi;
+        arnes_clase_hallazgo;
+        pending="$ARNES_PROJ/$pending_rel";
+        if [ -f "$pending" ]; then
+            if ! arnes_cola_pendientes "$pending"; then
+                arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': la cola de aprobaciones ($pending_rel) no se pudo leer entera —un byte NUL la trunca, o el archivo no es legible—, asi que no se sabe cuantas aprobaciones humanas hay abiertas. Una puerta que no puede medir no deja pasar (AGENTS.md 1). Arregla el archivo y reintenta.";
+            fi;
+            abiertas="$ARNES_COLA";
+            if [ "${abiertas:-0}" -gt 0 ]; then
+                arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': hay $abiertas aprobación(es) pendiente(s) en $pending_rel. El humano debe resolverlas primero (ver AGENTS.md §6).";
+            fi;
+        fi;
+        arnes_jq_file "$ARNES_MANIFEST" -r '.quality_gates[]? | if type=="object" then (.comando // empty) else . end';
+        ARNES_GATES="$ARNES_JQ";
+        tmp="$(mktemp 2> /dev/null || echo /tmp/arnes_gate.$$)";
+        while IFS= read -r cmd; do
+            [ -n "$cmd" ] || continue;
+            if ! ( cd "$ARNES_PROJ" && eval "$cmd" ) > "$tmp" 2>&1; then
+                out="$(tail -c 600 "$tmp" 2> /dev/null)";
+                rm -f "$tmp";
+                arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': falló la quality gate \`$cmd\`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: $out";
+            fi;
+        done <<< "$ARNES_GATES";
+        rm -f "$tmp";
+        return 0
+    };
+    if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+        arnes_preludio || exit 0;
+        arnes_guard_completado;
+        arnes_emitir_avisos;
+        exit 0;
+    fi
+}

@@ -1,0 +1,10 @@
+== arbol real (ace43c2), candidata:
+29
+cabeceras=29 ambiguas=0
+== control positivo (6 copias fuera del arbol; 5 variantes/repeticiones + 1 homoglifo que NO debe detectarse):
+AMBIGUA REQ-001.md: 1 lineas (ARNES_AMBIGUA=1)
+AMBIGUA REQ-009.md: 1 lineas (ARNES_AMBIGUA=1)
+AMBIGUA REQ-016.md: 1 lineas (ARNES_AMBIGUA=1)
+AMBIGUA REQ-023.md: 1 lineas (ARNES_AMBIGUA=1)
+AMBIGUA REQ-031.md: 2 lineas (ARNES_AMBIGUA=1)
+cabeceras=6 ambiguas=5

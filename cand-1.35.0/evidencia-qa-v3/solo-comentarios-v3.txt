@@ -1,0 +1,9 @@
+Parser, ace43c2..c4cc32c y ed497a2..c4cc32c, archivos ejecutables:
+  hooks/guard-completado.sh: forma parseada IDENTICA (615 lineas)
+  lineas cambiadas que no empiezan por '#': 0
+  hooks/lib.sh, tools/, tests/ sin cambios: si
+  ejecutable identico a ad793ab (hooks tools tests): 
+    hooks/guard-completado.sh: identico a ad793ab
+    hooks/lib.sh: identico a ad793ab
+    tests/escenarios/hooks/run.sh: identico a ad793ab
+  otros archivos de hooks/tools/tests distintos de ad793ab: hooks/guard-completado.sh hooks/lib.sh tests/escenarios/hooks/run.sh tests/escenarios/hooks/secciones/36-cabecera-comentario-html-5-el-cr-que-no-termina.sh 

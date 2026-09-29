@@ -1,0 +1,10 @@
+PASS D0    esperado=deny  got=deny  ARNES: no se puede completar 'requirements/REQ-9.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Esta
+PASS D1    esperado=deny  got=deny  ARNES: no se puede completar 'requirements/REQ-9.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Esta
+PASS D2    esperado=deny  got=deny  ARNES: no se puede completar 'requirements/REQ-9.md': su cabecera es AMBIGUA para esta puerta: linea 2: 'ESTAD
+PASS P1    esperado=allow got=allow 
+PASS P2    esperado=allow got=allow 
+PASS P3    esperado=allow got=allow 
+PASS P4a   esperado=allow got=allow 
+PASS P4b   esperado=allow got=allow 
+PASS X1r   esperado=allow got=allow 
+PASS X1q   esperado=deny  got=deny  ARNES: no se puede completar 'requirements/REQ-9.md': el veredicto de QA es 'pendiente' (se requiere 'QA: apro

@@ -1,0 +1,60 @@
+Autorizo avanzar con SEC-047 y preparar el candidato v1.35.0. Completa este encargo de punta a punta dentro del alcance siguiente, sin pedir nuevamente autorización para cada paso ya incluido.
+
+1. Contexto y base
+
+Trabaja en `/home/juan/dev/ArnesJuan-v1.35`, desde la sesión nueva con las instrucciones de ese worktree. Comprueba rama, SHA y estado antes de editar.
+
+Usa `origin/main` como referencia, no la rama local main desfasada. Conserva el cambio preexistente de `docs/ESTADO.md` y la propuesta sin seguimiento; no los descartes ni los incluyas indiscriminadamente en commits.
+
+Lee `propuesta-v1.35.0/README.md` y `propuesta-v1.35.0/SEC-047.diff`. Conserva la propuesta original como antecedente.
+
+2. Implementar SEC-047
+
+Autorizo implementar la mitad 1 de REQ-023 y versionar los criterios y sedes afectados. REQ-024 queda fuera.
+
+Acepto expresamente que una clave de control repetida deniegue el cierre aunque sus valores coincidan. Registra este cambio de compatibilidad.
+
+La corrección debe:
+- Impedir que las variantes cubiertas se conviertan silenciosamente en ausencia y reduzcan el rigor u oculten un bloqueante.
+- Respetar la estructura de una declaración: extraer letras ASCII no debe convertir una cita, ejemplo o explicación en campo de control.
+- Mantener coherencia entre lectores, ausencias legítimas y reapertura de REQ.
+- Evitar elegir silenciosamente entre declaraciones contradictorias.
+- Conservar las fronteras de cobertura propuestas y declararlas sin prometer reconocimiento universal.
+
+Las claves de más de 256 bytes que queden fuera siguen siendo una limitación; no las presentes como protegidas por ese límite. No amplíes este encargo para resolver todo Unicode ni SEC-115.
+
+3. Validar y preparar la entrega
+
+Recorre el ciclo correspondiente al cambio de hooks, reutilizando las reproducciones y el inventario existentes. Agrupa los hallazgos de cada revisión antes de reparar; no reinicies contadores ni repitas revisiones sin un delta o riesgo concreto.
+
+Verifica casos legítimos, variantes, duplicados, prosa, reapertura, CRLF y las fronteras relevantes. Ejecuta el banco completo y las comprobaciones exigidas sobre el candidato; no presentes el ±1 % del ensayo preliminar como rendimiento acreditado.
+
+Autorizo rama de trabajo, commits, push sin force y PR en borrador. Conserva los resultados de CI; no relances buscando verde.
+
+Si se agota el presupuesto vigente con un bloqueo real, entrega el impedimento exacto y lo pendiente. No apruebes por agotamiento.
+
+4. Preparar v1.35.0
+
+Con la reparación validada, prepara el cambio de versión en los manifiestos correspondientes, las notas y la guía de actualización necesaria. Autorizo esos cambios como preparación del candidato, no su publicación.
+
+Describe el contenido realmente incluido desde v1.34.0. REQ-025 aporta sólo su entrega 1; no cierres el requisito completo ni incorpores trabajo de la rama antigua.
+
+Las notas deben explicar los cambios de compatibilidad y conservar los resultados históricos, los inconclusos y las limitaciones. No transformes un CI verde en acreditación de rendimiento, conducta o ahorro.
+
+Obtén el CI requerido sobre la cabeza final del candidato y deja identificada la cobertura de las firmas.
+
+5. Riesgos pendientes
+
+Este encargo NO acepta el aplazamiento de SEC-115 ni del hueco C. Conserva sus decisiones pendientes y prepara sus fichas finales con consecuencia, protección efectiva, responsable propuesto, fecha de revisión y condición de revisión anticipada.
+
+Reutiliza la fecha propuesta de SEC-115, 2026-10-29. Para C propone una fecha concreta. Ninguna propuesta cuenta como aceptación mía.
+
+No repares esos dos asuntos dentro de SEC-047 ni detengas el trabajo independiente autorizado únicamente porque esperan mi decisión. Si una regla impide un cierre, deja ese cierre pendiente y continúa lo permitido.
+
+6. Límites y resultado final
+
+Sin fusión, tag, publicación ni actualización de instalaciones o consumidores. PR #54 y #57 intactos. Sin reconciliar `rel/registro-1.33.0`, cambiar modelos, sondas, umbrales, workflow o ruleset.
+
+Entrega una sola propuesta de salida: reparación y compatibilidad verificadas, SHA y PR del candidato, firmas y CI, contenido de v1.35.0 y decisiones exactas que falten para publicarla.
+
+No propongas otra investigación general. El resultado buscado es un candidato concreto que yo pueda revisar y decidir.

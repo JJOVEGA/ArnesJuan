@@ -1,0 +1,5 @@
+lector: AMBIGUA=0 lineas_ambiguas=0 QA=<con-hallazgos> SEG=<pendiente> HALL_N=1 rigor=<critico> bytes_Hallazgos=931
+V1 copia tal cual, cierre: dec=deny | ARNES: no se puede completar 'requirements/REQ-023.md': el veredicto de QA es 'con-hallazgos' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9).
+V2 QA y Seguridad aprobados, cierre (espera deny por QA-023-05 contrato): dec=deny | ARNES: no se puede completar 'requirements/REQ-023.md': el hallazgo 'qa-023-05' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no afecta a lo que alguien ve, decide o cobra ni a lo que el R
+   (V3 lista: QA-023-02 (instrumento SEC-117 (instrumento SEC-118 (instrumento )
+V3 sin QA-023-05, cierre (espera allow: SEC-117, SEC-118 y QA-023-02 son instrumento): dec=allow | 

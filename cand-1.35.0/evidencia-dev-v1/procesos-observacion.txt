@@ -1,0 +1,6 @@
+2026-09-29T11:52:54-06:00
+sonda-procesos.sh: procesos por evaluación (A1 = REQ-100 cabecera normal; R8 = REQ-400 BOM delante de Sensible)
+REQ-100 cand: estado=ok vivos=0 cuenta=5
+REQ-100 base: estado=ok vivos=0 cuenta=5
+REQ-400 cand: estado=ok vivos=0 cuenta=4
+REQ-400 base: estado=ok vivos=0 cuenta=5

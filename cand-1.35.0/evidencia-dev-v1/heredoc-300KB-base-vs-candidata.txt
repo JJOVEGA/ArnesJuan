@@ -1,0 +1,12 @@
+# Caso de reloj 'DEV v3: heredoc CITADO de ~300 KB' (sección 25, guard-codigo), mismo banco, filtro por nombre, alternando árboles; corrida interrumpida a mano tras 3 medidas (coste: cada vuelta con filtro recorre las 54 secciones).
+# base = hooks de 713ac68 materializados; cand = árbol de trabajo. Ninguna línea de guard-codigo.sh cambia en este REQ.
+tests/escenarios/hooks/secciones/25-presupuesto-de-analisis.sh
+ 11:15:28 up 2 days,  4:07,  1 user,  load average: 3.20, 3.34, 2.21
+base corrida 1:   FAIL  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  DESBOCADO: veredicto allow correcto, pero 5150ms en la mejor de 3 medidas (presupuesto 1000ms, techo holgado 4000ms)
+aviso: vuelta parcial (54 de 54 secciones, filtro 'heredoc CITADO de ~300 KB'): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+cand corrida 1:   PASS  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  (allow en 3635ms; presupuesto 1000ms, techo holgado 4000ms)
+aviso: vuelta parcial (54 de 54 secciones, filtro 'heredoc CITADO de ~300 KB'): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+base corrida 2:   PASS  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  (allow en 3329ms; presupuesto 1000ms, techo holgado 4000ms)
+aviso: vuelta parcial (54 de 54 secciones, filtro 'heredoc CITADO de ~300 KB'): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+cand corrida 2: 
+[exited with code 144]

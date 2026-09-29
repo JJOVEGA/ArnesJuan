@@ -1,0 +1,22 @@
+Lectura del arnés sobre requirements/ — plugin 1.35.0
+
+VALORES QUE LA MÁQUINA NO LEE COMO ESTÁN ESCRITOS (2)
+
+  REQ-902      Hallazgos abiertos:
+                 escrito:  «linea 6: 'Hallazgos abiertos: SEC-A (instrumento)' ('Hallazgos abiertos:' declarada 2 veces en la cabecera)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+  REQ-902      Hallazgos abiertos:
+                 escrito:  «linea 7: 'Hallazgos abiertos: SEC-B (contrato)' ('Hallazgos abiertos:' declarada 2 veces en la cabecera)»
+                 se lee:   <cabecera ambigua>
+                 la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md.
+
+RESUMEN
+  3 REQ leídos
+  rigor efectivo: critico 0 · estandar 3 · ligero 0
+  cola de aprobaciones (PENDING_APPROVAL.md): 0 pendiente(s) — no bloquea el cierre
+
+  El rigor efectivo es DERIVADO: `Sensible a seguridad: sí` impone `critico`
+  aunque no se declare `Rigor:`. Si un REQ que crees crítico sale `estandar`,
+  su campo de sensibilidad no se está leyendo como crees.

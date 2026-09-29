@@ -1,0 +1,17 @@
+Comprobacion: parser de bash (declare -f de un envoltorio) sobre cada archivo cambiado, ace43c2 frente a eeb627d. 2026-09-29T13:20:46-06:00
+  ace43c2 rc=0 lineas_parseadas=615 err=
+  eeb627d rc=0 lineas_parseadas=615 err=
+hooks/guard-completado.sh: forma parseada IDENTICO (e54edebb3cbd3d39); lineas fuente 782 -> 797
+  ace43c2 rc=0 lineas_parseadas=1720 err=
+  eeb627d rc=0 lineas_parseadas=1720 err=
+hooks/lib.sh: forma parseada IDENTICO (8dcf5197113eb4e2); lineas fuente 2300 -> 2304
+  ace43c2 rc=0 lineas_parseadas=1459 err=
+  eeb627d rc=0 lineas_parseadas=1459 err=
+tests/escenarios/hooks/run.sh: forma parseada IDENTICO (134982d03300edc6); lineas fuente 1653 -> 1655
+  ace43c2 rc=0 lineas_parseadas=229 err=
+  eeb627d rc=0 lineas_parseadas=229 err=
+tests/escenarios/hooks/secciones/36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: forma parseada IDENTICO (adea025b1c63c408); lineas fuente 332 -> 333
+--- control positivo: un cambio de 1 caracter ejecutable sí se detecta
+  control: detectado (el instrumento distingue)
+--- control: un comentario dentro de un heredoc SÍ es dato
+  control heredoc: distingue (un # en heredoc cuenta como dato)

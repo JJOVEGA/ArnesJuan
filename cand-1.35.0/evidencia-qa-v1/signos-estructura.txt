@@ -1,0 +1,9 @@
+  \* -> cand=deny base=allow | ARNES: no se puede completar 'requirements/REQ-950.md': su c
+  _ -> cand=deny base=allow | ARNES: no se puede completar 'requirements/REQ-950.md': su c
+  \` -> cand=deny base=allow | ARNES: no se puede completar 'requirements/REQ-950.md': su c
+\!:cand=allow/base=allow \":cand=allow/base=allow \#:cand=allow/base=allow \$:cand=allow/base=allow %:cand=allow/base=allow \&:cand=allow/base=allow \':cand=allow/base=allow \(:cand=allow/base=allow \
+):cand=allow/base=allow \*:cand=deny/base=allow +:cand=allow/base=allow \,:cand=allow/base=allow -:cand=allow/base=allow .:cand=allow/base=allow /:cand=allow/base=allow 0:cand=allow/base=allow 1:cand=
+allow/base=allow 2:cand=allow/base=allow 3:cand=allow/base=allow 4:cand=allow/base=allow 5:cand=allow/base=allow 6:cand=allow/base=allow 7:cand=allow/base=allow 8:cand=allow/base=allow 9:cand=allow/ba
+se=allow \;:cand=allow/base=allow \<:cand=allow/base=allow =:cand=allow/base=allow \>:cand=allow/base=allow \?:cand=allow/base=allow @:cand=allow/base=allow \[:cand=allow/base=allow \\:cand=allow/base
+=allow \]:cand=allow/base=allow \^:cand=allow/base=allow _:cand=deny/base=allow \`:cand=deny/base=allow \{:cand=allow/base=allow \|:cand=allow/base=allow \}:cand=allow/base=allow \~:cand=allow/base=al
+low 

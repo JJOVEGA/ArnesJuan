@@ -1,0 +1,19 @@
+observacion de reloj, NO acreditacion. 2026-09-29T12:46:17-06:00 HEAD ace43c2 6.18.33.2-microsoft-standard-WSL2 nproc=12
+== par 1 base (ARNES_HOOKS_DIR=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/qa/base713/hooks) load: 2.50 2.08 1.47
+  PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas:   máx(r) 1.083× <= techo 1.250× en 5 de 5 resueltas: 1.041× 1.024× 1.051× 1.017× 1.083× (todas resueltas)
+  PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas:   máx(r) 1.024× <= techo 1.250× en 5 de 5 resueltas: 1.004× 1.020× 0.974× 1.024× 1.015× (todas resueltas)
+== par 1 cand (ARNES_HOOKS_DIR=/home/juan/dev/ArnesJuan-v1.35/hooks) load: 1.99 2.00 1.46
+  PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas:   máx(r) 1.099× <= techo 1.250× en 5 de 5 resueltas: 1.045× 1.099× 1.028× 1.017× 1.008× (todas resueltas)
+  PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas:   máx(r) 1.143× <= techo 1.250× en 5 de 5 resueltas: 1.101× 1.130× 1.121× 1.143× 1.113× (todas resueltas)
+== par 2 base (ARNES_HOOKS_DIR=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/qa/base713/hooks) load: 1.85 1.96 1.47
+  PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas:   máx(r) 1.081× <= techo 1.250× en 5 de 5 resueltas: 1.035× 0.998× 1.016× 1.081× 1.069× (todas resueltas)
+  PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas:   máx(r) 1.037× <= techo 1.250× en 4 de 5 resueltas: 1.009× 0.981× 1.037× 0.968× (#1:no-converge(1.346/1.052) )
+== par 2 cand (ARNES_HOOKS_DIR=/home/juan/dev/ArnesJuan-v1.35/hooks) load: 2.70 2.16 1.55
+  PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas:   máx(r) 1.159× <= techo 1.250× en 5 de 5 resueltas: 1.040× 1.159× 1.037× 0.998× 1.113× (todas resueltas)
+  PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas:   máx(r) 1.158× <= techo 1.250× en 5 de 5 resueltas: 1.128× 1.124× 1.124× 1.120× 1.158× (todas resueltas)
+== par 3 base (ARNES_HOOKS_DIR=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/qa/base713/hooks) load: 2.58 2.18 1.58
+  PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas:   máx(r) 1.087× <= techo 1.250× en 5 de 5 resueltas: 0.955× 1.022× 0.984× 1.087× 1.028× (todas resueltas)
+  PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas:   máx(r) 1.057× <= techo 1.250× en 5 de 5 resueltas: 1.057× 1.005× 1.038× 0.947× 0.999× (todas resueltas)
+== par 3 cand (ARNES_HOOKS_DIR=/home/juan/dev/ArnesJuan-v1.35/hooks) load: 2.57 2.22 1.62
+  PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas:   máx(r) 1.127× <= techo 1.250× en 5 de 5 resueltas: 1.041× 1.053× 1.122× 1.127× 1.072× (todas resueltas)
+  PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas:   máx(r) 1.143× <= techo 1.250× en 5 de 5 resueltas: 1.043× 1.143× 1.109× 1.095× 1.136× (todas resueltas)

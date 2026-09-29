@@ -1,5 +1,12 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-29 · Candidato 1.35.0 (`cand/1.35.0`, PR #59 en borrador): evidencia íntegra de las comisiones y CI de `45c2e5c`
+`cand-1.35.0/` (índice en su `README.md`):
+- las comisiones: desarrollador (implementación, versión, comentarios v2 y v3), QA (vueltas 1 a 3), auditor (R-045) y la comprobación previa de la coordinadora;
+- el CI del candidato: run 36625681278, `hooks-en-linux` success, 1114 PASS · 0 FAIL · 35 SKIP (2 INCONCLUSO de rendimiento; 18 SKIP del fail-before de REQ-023 porque el runner no tiene la instalación estable 1.33.2).
+
+Excluido: `qa/cc-strings.txt`, cadenas del binario del CLI, contenido de terceros. Nada de esto acredita rendimiento. Sin push.
+
 ## 2026-09-21 · REQ-025: observación acotada de S4 (ENS-S4-P, candidato `9f908d9`) — **NO OBSERVADO**: el desarrollador corrigió también CA-03, QA aprobó, seguridad aprobó, REQ-004 en `en-revisión`; no se repite por instrucción del propietario
 `req-025/ensayos/ENS-S4-P/` (salida completa, diff del proyecto, REQ-004, QA del proyecto, análisis). Acreditación formal pendiente de QA.
 

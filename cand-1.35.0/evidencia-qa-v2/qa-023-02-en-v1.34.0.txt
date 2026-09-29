@@ -1,0 +1,4 @@
+v134/hooks: control literal=deny · escape Edit=allow · escape MultiEdit=allow
+/home/juan/dev/ArnesJuan-v1.35/hooks: control literal=deny · escape Edit=allow · escape MultiEdit=allow
+v134/hooks con cola pendiente: literal=deny · escape=allow
+/home/juan/dev/ArnesJuan-v1.35/hooks con cola pendiente: literal=deny · escape=allow

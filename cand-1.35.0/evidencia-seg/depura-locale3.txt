@@ -1,0 +1,8 @@
+LC_ALL=C N=10 doc=f7e5d68a1eef dec=deny items=linea 3,linea 8,linea 9, veces=declarada 11 veces,declara 11 veces, resto=
+LC_ALL=C.UTF-8 N=10 doc=f7e5d68a1eef dec=deny items=linea 3,linea 8,linea 9, veces=declarada 11 veces,declara 11 veces, resto=
+LC_ALL=C N=20 doc=71bae503f4b6 dec=deny items=linea 3,linea 8,linea 9, veces=declarada 21 veces,declara 21 veces, resto=y 1 linea(s) ambigua(s) mas
+LC_ALL=C.UTF-8 N=20 doc=71bae503f4b6 dec=deny items=linea 3,linea 8,linea 9, veces=declarada 21 veces,declara 21 veces, resto=y 1 linea(s) ambigua(s) mas
+LC_ALL=C N=21 doc=bb9c32ee6ee7 dec=deny items=linea 3,linea 8,linea 9, veces=declarada 22 veces,declara 22 veces, resto=y 2 linea(s) ambigua(s) mas
+LC_ALL=C.UTF-8 N=21 doc=bb9c32ee6ee7 dec=deny items=linea 3,linea 8,linea 9, veces=declarada 22 veces,declara 22 veces, resto=y 2 linea(s) ambigua(s) mas
+LC_ALL=C N=30 doc=fcd8533dd071 dec=deny items=linea 3,linea 8,linea 9, veces=declarada 31 veces,declara 31 veces, resto=y 11 linea(s) ambigua(s) mas
+LC_ALL=C.UTF-8 N=30 doc=fcd8533dd071 dec=deny items=linea 3,linea 8,linea 9, veces=declarada 31 veces,declara 31 veces, resto=y 11 linea(s) ambigua(s) mas

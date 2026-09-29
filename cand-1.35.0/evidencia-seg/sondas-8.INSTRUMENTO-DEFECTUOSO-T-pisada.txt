@@ -1,0 +1,22 @@
+## LC_ALL=C
+X1 F0 en CRLF (control)                              E cand=allow  base=allow  | 
+X2 variante en CRLF                                  E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'qa:
+X3 R8 en CRLF                                        W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'\3
+X4 variante tras comentario cerrado                  E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'QA:
+X5 variante dentro de comentario (A5)                E cand=allow  base=allow  | 
+X6 comentario sin espacio (CA-11)                    E cand=allow  base=allow  | 
+X7 rango sin cerrar + variante                       E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera ABRE un rango de comentario '<!--' que NO 
+X8 CR interior en la clave                           E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera lleva un retorno de carro (CR) que NO term
+X9 30 variantes con 80 B escapados c/u               E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 8: $'\3
+   bytes del motivo: 0
+## LC_ALL=C.UTF-8
+X1 F0 en CRLF (control)                              E cand=allow  base=allow  | 
+X2 variante en CRLF                                  E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'qa:
+X3 R8 en CRLF                                        W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'\3
+X4 variante tras comentario cerrado                  E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'QA:
+X5 variante dentro de comentario (A5)                E cand=allow  base=allow  | 
+X6 comentario sin espacio (CA-11)                    E cand=allow  base=allow  | 
+X7 rango sin cerrar + variante                       E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera ABRE un rango de comentario '<!--' que NO 
+X8 CR interior en la clave                           E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera lleva un retorno de carro (CR) que NO term
+X9 30 variantes con 80 B escapados c/u               E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 8: $'\3
+   bytes del motivo: 0

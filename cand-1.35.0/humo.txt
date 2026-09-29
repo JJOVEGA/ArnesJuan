@@ -1,0 +1,34 @@
+== RECHAZO (la variante no puede convertirse en ausencia)
+PASS  R1   esperado=deny  base=allow prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es ambigua para esta puerta — linea 8: Hallazgos\ \ abiertos:\ SEC-1\ \(contrato>
+PASS  R2   esperado=deny  base=allow prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es ambigua para esta puerta — linea 9: HALLAZGOS\ ABIERTOS:\ SEC-1\ \(contrato\)>
+PASS  R3   esperado=deny  base=allow prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es ambigua para esta puerta — linea 8: $'\357\273\277Hallazgos abiertos: SEC-1 (>
+PASS  R4   esperado=deny  base=allow prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es ambigua para esta puerta — linea 8: $'Hallazgos abier\342\200\213tos: SEC-1 (>
+PASS  R5   esperado=deny  base=allow prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es ambigua para esta puerta — linea 8: $'Hallazgos\302\240abiertos: SEC-1 (contr>
+PASS  R6   esperado=deny  base=allow prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es ambigua para esta puerta — linea 8: -\ Hallazgos\ abiertos:\ SEC-1\ \(contrat>
+PASS  R7   esperado=deny  base=allow prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es ambigua para esta puerta — linea 4: $'SENSIBLE A  SEGURIDAD: s\303\255' es un>
+PASS  R8   esperado=deny  base=allow prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es ambigua para esta puerta — linea 4: $'\357\273\277Sensible a seguridad: s\303>
+PASS  R9   esperado=deny  base=allow prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es ambigua para esta puerta — linea 8: $'\303Hallazgos abiertos: SEC-1 (contrato>
+PASS  R10  esperado=deny  base=allow prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es ambigua para esta puerta — linea 6: qa:\ pendiente es una variante de 'QA:'. >
+PASS  R11  esperado=deny  base=allow prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es ambigua para esta puerta — linea 5: RIGOR:\ critico es una variante de 'Rigor>
+PASS  R12  esperado=deny  base=allow prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es ambigua para esta puerta — linea 2: ESTADO:\ completado es una variante de 'E>
+PASS  R13  esperado=deny  base=allow prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es ambigua para esta puerta — linea 9: 'Sensible a seguridad:' declarada otra ve>
+PASS  R14  esperado=deny  base=allow prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es ambigua para esta puerta — linea 6: 1.\ QA:\ pendiente es una variante de 'QA>
+PASS  R15  esperado=deny  base=allow prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es ambigua para esta puerta — linea 9: 'QA:' declarada otra vez. Una clave de co>
+== ACEPTACION (ausencia legitima, prosa, tolerancias, reapertura)
+PASS  A1   esperado=allow base=allow prop=allow
+PASS  A2   esperado=allow base=allow prop=allow
+PASS  A3   esperado=allow base=allow prop=allow
+PASS  A4   esperado=allow base=allow prop=allow
+PASS  A5   esperado=allow base=allow prop=allow
+PASS  A6   esperado=allow base=allow prop=allow
+PASS  A7   esperado=allow base=allow prop=allow
+PASS  A8   esperado=allow base=allow prop=allow
+PASS  A9   esperado=allow base=allow prop=allow
+== FUERA DE LA FRONTERA (declarado: sigue como hoy, ausencia)
+PASS  F1   esperado=allow base=allow prop=allow
+PASS  F2   esperado=allow base=allow prop=allow
+PASS  F3   esperado=allow base=allow prop=allow
+== SIN CAMBIO (puertas existentes)
+PASS  U1   esperado=deny  base=deny  prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (linea 8: 'Hallazgos abiertos: SEC-1 (contra>
+PASS  U2   esperado=deny  base=deny  prop=deny  <ARNES: no se puede completar 'requirements/REQ-900.md': el hallazgo 'sec-1' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo>
+CRLF  U3   esperado=allow base=allow prop=allow

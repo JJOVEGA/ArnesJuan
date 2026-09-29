@@ -1,0 +1,37 @@
+## Intento de cierre por lineas Estado que no gobiernan (QA pendiente en todas)
+I1 anade 'ESTADO: completado (2026-09-29)'           E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Es
+I2 anade '- Estado: **COMPLETADO**'                  E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Es
+I3 sin Estado exacto; anade 'estado: completado'     E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 7: 'est
+I4 cambia gobernante a variante 'ESTADO: completado' E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: 'EST
+I5 anade 'Estado:completado' exacta 2a (sin blanco)  E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Es
+I6 anade Estado exacta 2a con TAB 'Estado:\tcompletado' E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Es
+I7 gobernante vacio 'Estado:' + 2a completado        E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: 'Est
+I1 anade 'ESTADO: completado (2026-09-29)'           M cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Es
+I2 anade '- Estado: **COMPLETADO**'                  M cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Es
+I3 sin Estado exacto; anade 'estado: completado'     M cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 7: 'est
+I4 cambia gobernante a variante 'ESTADO: completado' M cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: 'EST
+I5 anade 'Estado:completado' exacta 2a (sin blanco)  M cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Es
+I6 anade Estado exacta 2a con TAB 'Estado:\tcompletado' M cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Es
+I7 gobernante vacio 'Estado:' + 2a completado        M cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: 'Est
+I1 anade 'ESTADO: completado (2026-09-29)'           W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Es
+I2 anade '- Estado: **COMPLETADO**'                  W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Es
+I3 sin Estado exacto; anade 'estado: completado'     W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 7: 'est
+I4 cambia gobernante a variante 'ESTADO: completado' W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: 'EST
+I5 anade 'Estado:completado' exacta 2a (sin blanco)  W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Es
+I6 anade Estado exacta 2a con TAB 'Estado:\tcompletado' W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Es
+I7 gobernante vacio 'Estado:' + 2a completado        W cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: 'Est
+## Locale: clave de 257 bytes (85 x U+200B + qa) y de 255 bytes (84 x U+200B + qa + 1)
+L1[C] 85xZWSP+qa (257 B, fuera (e))                  E cand=allow  base=allow  | 
+L2[C] 84xZWSP+qa (254 B, dentro)                     E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'\3
+L3[C] 84xZWSP+'Q A' (255 B)                          E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'\3
+L4[C] 84xZWSP+'Q  A' (256 B)                         E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'\3
+L5[C] 84xZWSP+'Q   A' (257 B)                        E cand=allow  base=allow  | 
+L1[C.UTF-8] 85xZWSP+qa (257 B, fuera (e))            E cand=allow  base=allow  | 
+L2[C.UTF-8] 84xZWSP+qa (254 B, dentro)               E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'\3
+L3[C.UTF-8] 84xZWSP+'Q A' (255 B)                    E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'\3
+L4[C.UTF-8] 84xZWSP+'Q  A' (256 B)                   E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: $'\3
+L5[C.UTF-8] 84xZWSP+'Q   A' (257 B)                  E cand=allow  base=allow  | 
+## Excepcion de REQ-031 CA-A12 (solo Hallazgos canonica repetida)
+U4 canonica + decorada (CA-A12)                      E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (lin
+U5 CA-A12 + QA repetida                              E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'QA:
+U6 Hallazgos (ninguno) x2 identicos                  E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (lin

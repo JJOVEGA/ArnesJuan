@@ -1,0 +1,6 @@
+$ for f in hooks/*.sh tools/*.sh; do bash -n "$f" || exit 1; done
+rc=0
+$ jq -e . hooks/hooks.json >/dev/null
+rc=0
+$ jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null
+rc=0

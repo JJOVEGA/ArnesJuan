@@ -1,0 +1,7 @@
+QA | base presente-restrictivo=deny base ausente=allow -> clase=SI | candidata con variante 'Qa: pendiente' = deny
+Seguridad | base presente-restrictivo=deny base ausente=deny -> clase=no | candidata con variante 'SEGURIDAD: pendiente' = deny
+Seguridad(estandar) | base presente-restrictivo=allow base ausente=allow -> clase=no | candidata con variante 'SEGURIDAD: pendiente' = deny
+Sensible a seguridad | base presente-restrictivo=deny base ausente=allow -> clase=SI | candidata con variante 'sensible a seguridad: sí' = deny
+Hallazgos abiertos | base presente-restrictivo=deny base ausente=allow -> clase=SI | candidata con variante 'HALLAZGOS abiertos: SEC-1 (contrato)' = deny
+Rigor | base presente-restrictivo=deny base ausente=allow -> clase=SI | candidata con variante 'rigor: critico' = deny
+Estado | base presente-restrictivo=deny base ausente=allow -> clase=SI | candidata con variante 'estado: completado' = deny
