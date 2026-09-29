@@ -2,6 +2,25 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-29 · REQ-023: QA vuelta 2 de 3 sobre `eeb627d` → `con-hallazgos` (QA-023-01 y -04 cerrados; QA-023-03 sigue abierto por reparación parcial)
+> Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 (qa-tester) · agente: qa-tester. Unos 110 k tokens en esta vuelta.
+
+- **Código:** el delta `ace43c2..eeb627d` sólo toca comentarios, verificado por QA con el parser de bash y con control positivo. Aun así, QA repitió el banco completo porque hay secciones que leen el fuente:
+  - banco completo sobre `eeb627d`: **1138 PASS · 0 FAIL · 11 SKIP** (0 INCONCLUSO), cuadre 1149;
+  - autoprueba 117/0; tres gates en verde;
+  - reloj, sólo como observación: REQ-017 CA-08 (ii) 1,154×.
+
+  La evidencia de conducta de la vuelta 1 sigue vigente.
+- **QA-023-01 cerrado.** La premisa falsa sigue, a propósito, en REQ-001 CA-10/CA-11 (`completado`), registrada en la ficha 3. QA recomienda que la decisión sobre esa ficha la resuelva de forma expresa. QA-023-02 queda además medido en `v1.34.0` (`cc8972c`): la afirmación «preexistente en `v1.34.0`» queda respaldada.
+- **QA-023-04 cerrado.**
+- **QA-023-03 abierto:** la excepción se escribió para un caso, y la máquina deniega también:
+  - X1: una segunda línea exacta `Estado: completado`;
+  - X2: sólo `ESTADO: completado`, sin ninguna línea exacta.
+
+  Seis sedes enuncian el caso en lugar de la propiedad de CA-01.
+- **Clasificación de la coordinadora:** es un defecto de esta entrega, de la misma forma y con el objeto cambiado. Se repara en la **vuelta 3 de 3, la última**, enunciando la propiedad en todas sus sedes.
+- **Avance (regla 6):** quedan cerrados dos de los tres `contrato`. Falta QA-023-03 (vuelta 3), la auditoría y la decisión del propietario sobre la ficha 3.
+
 ## [GitHub] — 2026-09-29 · REQ-023, vuelta 2 de 3 (desarrollador): comentarios de código de QA-023-01, -03 y -04 corregidos; ninguna línea ejecutable cambiada
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: desarrollador; coordinadora (commit). Unos 158 k tokens.
 
