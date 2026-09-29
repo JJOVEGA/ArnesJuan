@@ -1974,3 +1974,36 @@ absoluto de **4 000 ms** (`load` 2,63 al arrancar; 21:26:55 −0600, WSL2, 12 CP
 fuera de `Archivos:` de REQ-030. Cuenta: **1 de 2** corridas completas por defecto del desarrollador
 (la de la vuelta 1 salió rc 0). Es dato para la **misma hipótesis de carga** de arriba, no una medida de
 ella. Mismo dueño, forzador y vencimiento; no se relanzó.
+
+## La normalización de campos es cuadrática en la longitud del valor (medido el 2026-09-27, REQ-031 vuelta 2)
+
+- **Qué:** `arnes_norm_campo` (`hooks/lib.sh`) retira los blancos con `${v// /}`, y en un locale
+  UTF-8 esa sustitución global es **cuadrática** en la longitud del valor. Es código de la base,
+  común a **todos** los campos de la cabecera, y corre **antes** que cualquier puerta.
+- **Medido** (Linux/WSL2, `LANG=C.UTF-8`, una corrida por punto, valor de `Hallazgos abiertos:`
+  hecho de elementos `SEC-i (instrumento, dueño x; vence 1.35.0)`): `${v// /}` tarda 0,29 s a
+  16 384 bytes y 3,62 s a 60 006 bytes; `arnes_norm_campo` entero, 0,26 s y 3,69 s. Con REQ-031 CA-A13,
+  la puerta deniega por tamaño a 60 006 bytes en 3,96 s de hook: casi todo es esta normalización. Lo
+  que se escribió entonces fue una **extrapolación** («por extrapolación cuadrática (sin medir), unos
+  240 KB llegarían a los 60 s del cliente en esta máquina»); **después se midió**: 255 371 bytes →
+  **67,0 s** en `373563f` (R-044-A, `docs/seguridad/registro-seguridad.md`), sin decisión dentro del
+  límite del cliente; re-medido en la vuelta 3 sobre la misma cabeza, 70,7 s. El techo de REQ-031 no lo
+  evitaba, porque se medía después de normalizar.
+- **Estado tras REQ-031 vuelta 3 (CA-A15, remedio B autorizado por el propietario, 2026-09-28):
+  mitigado para `Hallazgos abiertos:`.** El techo se mide ahora en `arnes_campos_normaliza`, antes de
+  `arnes_norm_campo`, y por encima el valor no se normaliza: 255 371 bytes → deniega en 0,31 s por
+  `Edit` (hook entero, una corrida, misma máquina). **Lo que queda abierto:** (a) `arnes_norm_campo`
+  sigue siendo cuadrático para **los demás campos** (`QA:`, `Seguridad:`, `Rigor:`,
+  `Sensible a seguridad:`, `Estado:`), que no tienen techo; no se midió un caso real que los exponga, y
+  esto no lo arregla REQ-031. (b) **Hallazgo nuevo de la vuelta 3:** por `Write`, el `content` entero
+  pasa antes por `arnes_sin_cr_transporte` (`${1//$'\r\n'/$'\n'}`, `hooks/lib.sh`), que crece más que
+  linealmente: con un valor de 1 000 000 bytes, 19 s de los 28 s del hook son esa línea (perfil con
+  `EPOCHREALTIME`); hook entero por `Write`: 255 371 bytes → 1,6 s, 1 000 000 → 28 s,
+  2 000 000 → 84 s (por encima de los 60 s del cliente); por `Edit` y `MultiEdit`, lineal
+  (2 000 000 → 2,1 s). Código anterior a REQ-031; no se amplió.
+- **Por qué no se arregló entero en REQ-031:** el resto está fuera de su alcance (el lector de campos
+  lo comparten `tools/arnes-lectura.sh` y el bloque derivado) y el encargo prohíbe ampliarlo. Clase de
+  SEC-113.
+- **Dueño:** `desarrollador` (implementación) y `analista-requerimientos` (REQ). **Forzador:** la
+  próxima comisión que toque `arnes_norm_campo`, `arnes_sin_cr_transporte` o los presupuestos de los
+  hooks. **Vencimiento:** la decisión de publicación de 1.35.0, junto con SEC-113.

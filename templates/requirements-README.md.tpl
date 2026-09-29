@@ -126,6 +126,58 @@ cada proyecto pone el mapeo con sus ejemplos concretos.
 Todo hallazgo abierto se declara en el campo `Hallazgos abiertos:` de la cabecera, con
 su **clase entre paréntesis**: `SEC-121 (instrumento), SEC-144 (usuario/dinero)`.
 
+**La sintaxis del campo es cerrada, y ésta es su sede única.** El valor es **una ausencia** —vacío,
+`(ninguno)`, `n/a`, `-`: ejemplos no exhaustivos; la lista exacta la fija `guard-completado`— **o una
+lista**: uno o más hallazgos separados **sólo por comas que estén fuera de todo paréntesis**. Cada
+hallazgo es, exactamente y en este orden, `ID (clase)` o `ID (clase, evidencia)`:
+
+- **ID**: letras ASCII, dígitos y `-`, sin blancos dentro (ejemplos no exhaustivos: `SEC-121`,
+  `QA-030-03`, `H-07`).
+- **clase**: lo primero dentro del paréntesis, hasta la primera coma o hasta el cierre; una de las
+  tres de la tabla de abajo, sin distinguir mayúsculas ni blancos.
+- **evidencia** (opcional): tras la clase y una coma, **dentro del mismo paréntesis**. Puede llevar
+  comas, `;`, `·`, guiones y paréntesis anidados **equilibrados**, y **no declara nada**: un
+  identificador o una clase escritos dentro de la evidencia no se leen.
+- **Tras el `)` que cierra el hallazgo sólo cabe la coma que lo separa del siguiente, o el fin del
+  campo.** Los blancos alrededor no cambian nada.
+
+Todo lo que no casa con esa forma hace que la lista **no se pueda interpretar**, y entonces la puerta
+**deniega el cierre** nombrando el fragmento que no entendió: no reescribe el campo, no lo repara y no
+ignora la parte que no entiende. Ejemplos **no exhaustivos** —la regla es la de arriba—: un separador
+que no es la coma (`;`, `·`, `/`, `y`), texto o una nota detrás del paréntesis, dos paréntesis en un
+hallazgo, un paréntesis sin cerrar o uno sobrante, un elemento vacío (`,,` o una coma final), un
+elemento sin ID, un ID con blancos dentro, con una tilde (`SÉC-1`) o con marcado (`` `SEC-1` ``), y una
+ausencia mezclada con hallazgos. Lo que quieras anotar junto a un hallazgo va **dentro de su
+paréntesis**, tras la clase y una coma: `QA-006 (instrumento, REQ-007)`, no
+`QA-006 (instrumento) — REQ-007`. Un elemento **sin ningún paréntesis** (`SEC-4`,
+`QA-006 [instrumento]`) es un hallazgo **sin clase** (abajo), y también deniega.
+
+**Qué lee la puerta, y qué no.** La puerta juzga **el valor de la única línea de la cabecera** —antes
+del primer `## `— cuya clave reconoce su lector como `Hallazgos abiertos` (también decorada,
+`**Hallazgos abiertos:**`, o sangrada). **Si hay más de una, deniega** y las nombra: no elige la
+primera ni la última y no las fusiona; se deja una sola línea con todos los hallazgos. Dentro de esa
+línea, ningún hallazgo que bloquea queda sin leer por el sitio que ocupa en la lista ni por el
+carácter que lo separa del anterior. **Lo que el lector no reconoce como esa línea no se lee**, y ahí no
+hay promesa; ejemplos **no exhaustivos**: una continuación en la línea siguiente sin clave, una clave
+con un carácter invisible, un blanco de más o un homóglifo (`Hallazgos  abiertos:`, `Hallazgоs`),
+lo que va dentro de un comentario HTML de la cabecera y una línea igual debajo del primer `## `.
+
+**Techo de tamaño: 16 384 bytes.** Si el valor —todo lo que va tras los dos puntos, incluido el
+blanco que los sigue, contado en **bytes** y antes de normalizar— mide **más de 16 384 bytes**, la
+puerta deniega el cierre sin interpretarlo y dice el tamaño medido: una puerta que no puede medir no
+deja pasar. Con 16 384 bytes o menos decide la clase, como arriba. La evidencia larga va al registro
+del hallazgo y en el paréntesis queda la referencia. **El techo se mide en el lector, antes de
+normalizar el valor**: por encima, el valor no se normaliza, no se recorta y ningún lector lo toma por
+«sin hallazgos» (el bloque derivado de `docs/ESTADO.md` lo muestra como `(no medido: N bytes, techo
+16384)`). **Esa denegación se promete hasta lo medido, y no más allá**, porque el hook tiene que
+decidir dentro del límite del cliente (60 s) y un hook muerto no deniega. Medido en Linux/WSL2, una
+corrida por punto, hook entero, lista no exhaustiva: 60 006 bytes → deniega por tamaño en 0,21 s;
+255 371 bytes → 0,31 s por `Edit` y `MultiEdit` y 1,6 s por `Write`. Por encima de 255 371 bytes **no
+hay promesa**: por `Edit` sigue siendo lineal (2 000 000 bytes → 2,1 s), pero por `Write` el contenido
+entrante pasa antes por otra operación del hook que crece más que linealmente (1 000 000 bytes →
+28 s; 2 000 000 → 84 s, por encima de los 60 s del cliente). En Windows/MSYS no está medido y será más lento.
+Ese residuo tiene dueño y vencimiento en el `docs/PENDIENTES.md` del repositorio del arnés.
+
 | Clase | Qué es | Efecto en el cierre |
 |---|---|---|
 | `usuario/dinero` | Afecta lo que alguien ve, decide o cobra | **Bloquea.** Reabre el REQ |

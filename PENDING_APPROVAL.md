@@ -36,7 +36,230 @@
 
 ## Pendientes
 
+### [2026-09-27, puesta al día 2026-09-28] (coordinadora) — Decisión de publicación de 1.35.0: los asuntos que REQ-031 deja abiertos y no decide
+
+- **Contexto:** REQ-031 tiene `QA: aprobado` (vuelta 3 de 3, código `cdcad5d`) y `Seguridad: aprobado` (R-044-C; R-044-D no cambia la cobertura), PR #58 en borrador con CI verde sobre `19c5ca7`; los cambios posteriores son sólo registros y correcciones de referencias (comprobación de procedencia del 2026-09-28). Quedan decisiones que el propietario reservó para la publicación.
+- **Acción que impide (regla 2):** ninguna de REQ-031 hoy (abiertos sólo `instrumento`: SEC-115, QA-031-01); impide **publicar 1.35.0** hasta decidir. Mientras esta entrada esté aquí, ningún REQ puede marcarse `completado` (deliberado).
+- **Asuntos:**
+  1. **SEC-115 (`instrumento`, abierto, no aceptado):** el techo de `Hallazgos abiertos:` ya se mide antes de normalizar (remedio B implementado en la vuelta 3: 255 371 bytes → deny en 0,31 s), pero **otras vías siguen matando al hook por tamaño** y CA-A16 confirmó en el CLI que un hook sin decisión **deja pasar** la herramienta: `QA: pendiente (…)` con ≈ 255 KB de evidencia → 73,6 s (los demás campos no tienen techo antes de normalizar); `Write` de 2 MB → 80 s (`arnes_sin_cr_transporte`, código anterior). Realismo bajo (el REQ real más grande, 297 KB, tarda 1,7 s). Decidir: publicar con la promesa acotada (ya escrita: «deniega si el hook alcanza a medir; medido hasta 255 371 bytes por `Hallazgos abiertos:`») o exigir antes un REQ propio que aplique la propiedad «ninguna operación super-lineal corre antes de una comprobación de tamaño que deniegue». No es un límite global ni una arquitectura nueva; no se diseña aquí.
+  2. **Hueco C (escrituras por intérprete), no aceptado como aplazado:** `python3 -c`, `node -e`, `bash script.sh` escriben en `codigo_app.globs` sin que `guard-codigo` lo vea (medido el 2026-09-27); sin `PostToolUse` no hay detección posterior. Acciones fuera del control: cualquier escritura por intérprete o script desde cualquier agente. Mitigación **posible, no disponible** (REQ-011, sin implementar): la «puerta posterior»; y detectar un cambio después **no demuestra que se impidió ni deshace sus efectos**. Protección que sigue dependiendo de los agentes: `AGENTS.md` §5 y §13. Decidir antes del tag: declararlo en el CHANGELOG de la versión como limitación conocida sin fecha, o abrir el REQ de la puerta posterior antes de publicar. Registrarlo aquí no lo convierte en riesgo aceptado.
+  3. **SEC-047 y la celda de §13 — atribución corregida el 2026-09-28:** la celda que promete denegar con BOM, espacio de anchura cero o blanco de más en la clave y cita § R-024 (SEC-078/SEC-079) **no está en `main`** (cuya fila de §13 sólo cubre el retorno de carro interior, y el árbol la cumple): vive en `rel/registro-1.33.0` (`AGENTS.md:349`; commit `1154417`, 2026-09-09), igual que R-024 (`ef82d43`) y SEC-078/079. Los subagentes la citaron porque la sesión les carga el `AGENTS.md` de ese worktree. Lo medido sigue en pie (allow por ausencia con `Hallazgos  abiertos:`, ZWSP/NBSP, `HALLAZGOS ABIERTOS:`, `SENSIBLE A  SEGURIDAD: sí` con `Rigor: ligero`): es SEC-047 (definido en `main`, línea 3633; su cláusula de subida a `contrato` existe, pero su premisa no se cumple contra el §13 de `main`) y QA-031-01, abiertos; CA-A17 no encontró exposición actual en las 29 cabeceras. Decisiones: (a) si se corrige esa celda en `rel/registro-1.33.0` y en qué PR; (b) la clase de SEC-047 juzgada contra el `AGENTS.md` de `main`; (c) reconocer claves con blancos/mayúsculas (mecanismo, REQ propio). Nada se añade a `main` para corregirlo.
+- **Recomendación de la coordinadora:** (1) publicar con la promesa acotada y el REQ de la propiedad de tamaño después, a menos que prefieras cerrarlo antes; (2) decidir C **antes** del tag, y recomiendo abrir el REQ de la puerta posterior con ventana declarada en vez de sólo anotarlo; (3) tratar SEC-047/§13 como asunto de `rel/registro-1.33.0` y de la divergencia entre esa línea y `main` (123 y 101 commits desde `5e53f12`), que merece decisión propia.
+- **Espera:** decisión del propietario sobre los tres. **Trabajo que sigue mientras tanto:** ninguno de REQ-031.
+
 ## Resueltas
+
+### RESUELTA (propietario, 2026-09-28) — **REQ-031: comprobación acotada de procedencia de instrucciones y referencias**; intervención documental excepcional sin reiniciar el contador
+
+**Texto del propietario, literal e íntegro:**
+
+> Autorizo una comprobación acotada de la procedencia de instrucciones y referencias de REQ-031. El objetivo es determinar si el uso de AGENTS.md de otra rama afectó la entrega y dejar el PR #58 listo para una decisión de integración. No abrir otra revisión general del arnés.
+>
+> Base de la comprobación: cabeza `19c5ca762ec039958572c537a74a909c6caf0207` del PR #58, con CI verde. Verifica que sigue siendo la cabeza antes de actuar.
+>
+> **1. Establecer el contexto correcto**
+>
+> Identifica el directorio de trabajo, rama y archivos de instrucciones que cargó la sesión y cada comisión relevante. Distingue lo demostrado por registros de lo inferido.
+>
+> Para esta comprobación utiliza las instrucciones del worktree de REQ-031. Cambiar de directorio no demuestra que una sesión haya descargado instrucciones heredadas: si hace falta una sesión nueva para conseguir un contexto limpio, úsala con un encargo acotado y fuente explícita.
+>
+> No modifiques ni reconcilies `rel/registro-1.33.0`, no cambies la rama de una sesión que siga trabajando y no toques cambios ajenos.
+>
+> **2. Determinar el efecto de la mezcla de instrucciones**
+>
+> Compara sólo las instrucciones que pudieron afectar:
+> - Alcance de A y D.
+> - Permisos y separación de roles.
+> - Presupuesto de vueltas.
+> - Validación, firmas y conclusiones sobre SEC-047, SEC-078 y R-024.
+>
+> Indica qué diferencia influyó realmente y qué parte de la entrega afecta. No invalidez toda la evidencia por su procedencia ni la declares válida únicamente porque el código no cambió.
+>
+> **3. Corregir referencias del candidato**
+>
+> Autorizo una intervención documental excepcional, sin reiniciar el contador 3 de 3, para corregir referencias inexistentes o atribuidas a la rama equivocada en los archivos de esta entrega.
+>
+> Si una referencia sólo existe en otra rama, cita explícitamente su procedencia y commit cuando sea necesaria como antecedente; no la presentes como sede vigente en main. No inventes identificadores ni importes aquella rama para hacer resoluble una cita.
+>
+> La celda de §13 ausente de main no debe añadirse para luego corregirla. Registra que esa parte del encargo nació de una atribución equivocada.
+>
+> Reutiliza las aprobaciones existentes donde su evidencia siga siendo aplicable. QA y seguridad deben revisar únicamente las conclusiones o textos afectados por esta comprobación. No les atribuyas una ratificación que no hayan emitido.
+>
+> Si aparece una necesidad de cambiar código, criterios, permisos o alcance, entrega el delta concreto pendiente y detén sólo esa reparación; esta autorización no incluye implementarla.
+>
+> **4. Separar los riesgos de publicación**
+>
+> Conserva abiertos y sin aceptación mía:
+> - C: escrituras por intérpretes que el detector no reconoce.
+> - SEC-115: entradas que agotan el hook y permiten continuar sin decisión, observado en el CLI.
+>
+> Corrige cualquier texto de esta entrega que presente una futura comprobación posterior como prevención ya disponible. Detectar un cambio después no demuestra que se impidió ni que se deshicieron sus efectos.
+>
+> No diseñes ni implementes ahora una puerta posterior, límites globales o una nueva arquitectura. No conviertas estos pendientes en riesgos aceptados por registrarlos en CHANGELOG.
+>
+> **5. Entrega y límites**
+>
+> Autorizo commits documentales, push sin force y actualización del PR #58. Si cambia la cabeza, observa el CI requerido correspondiente, conserva su resultado y no relances buscando verde.
+>
+> Si no hace falta cambiar el candidato, conserva su SHA y registra la comprobación en la evidencia y un comentario del PR.
+>
+> Entrega un único resumen breve:
+> - Instrucciones ajenas que influyeron y efecto concreto.
+> - Referencias corregidas.
+> - Evidencia y aprobaciones reutilizadas, con su alcance.
+> - SHA y CI aplicables.
+> - Si recomiendas integrar #58 y, por separado, qué decisiones siguen pendientes para publicar.
+>
+> No fusiones, no cierres REQ-031, no publiques versión ni tag. No toques modelos, PR #54/#57, consumidores, sondas, umbrales, workflow ni ruleset. No abras otra campaña de mejoras.
+
+**Lo que la coordinadora añade, rotulado como suyo:** cabeza verificada `19c5ca7` (remoto idéntico, árbol limpio). Demostrado por registros (transcripts de las seis comisiones de REQ-030/031): todas cargaron «Contents of /home/juan/dev/ArnesJuan/AGENTS.md» (worktree de la sesión, rama `rel/registro-1.33.0`, 503 líneas, con §14 y la celda R-024), no el `AGENTS.md` de `main`/este worktree (807 líneas). Diferencias por sección: §5 y §7 idénticas; §13 difiere en dos filas (main: sólo CR; rel: celda ancha con BOM/R-024) y en el marcador de coordinación; §6 difiere mucho (main trae la política de «vía proporcional», 480 líneas frente a 132); §14 sólo en rel. Ambas fijan «Máximo 3 vueltas dev↔QA» y la regla de `arnes-paralelo.sh`.
+
+### RESUELTA (propietario, 2026-09-28) — **REQ-031, vuelta 3 de 3: reparación agrupada** — SEC-113 remedio B (límite antes de normalizar, en `lib.sh`), celda de §13 / R-024 (SEC-047) y registro de evidencia (cuadre 920 → 978; PENDIENTES)
+
+**Texto del propietario, literal e íntegro:**
+
+> Autorizo usar la vuelta 3 de 3 de REQ-031 para una reparación agrupada y acotada. Trabaja sobre la rama del PR #58, partiendo de `373563f42605d1840d76d629c127110bd6e28e4b`, verificando primero su estado y preservando cambios ajenos.
+>
+> Objetivo: resolver SEC-113 y corregir las afirmaciones documentales señaladas, conservando la reparación A y el recorrido D. No ampliar esta entrega a una revisión general del arnés.
+>
+> **1. SEC-113: comprobar el tamaño antes de normalizar**
+>
+> Autorizo el remedio B, incluido el cambio necesario en `lib.sh`: aplicar el límite antes de la operación costosa, sin alterar el umbral autorizado ni truncar contenido para hacerlo pasar.
+>
+> Mantén las entradas legítimas dentro del límite y la reapertura de REQ. Verifica las fronteras del límite, la entrada de 255 371 bytes ya medida y los caminos del parser afectados.
+>
+> Comprueba por separado:
+> - La respuesta y duración del hook.
+> - La decisión que recibe el entorno.
+> - Si el archivo protegido queda modificado.
+>
+> Si puedes reproducir de forma aislada cómo trata el entorno la terminación del hook sin decisión, hazlo con presupuesto acotado. Si no puedes, declara esa parte no comprobada: un código de salida por sí solo no demuestra que la escritura quedó bloqueada.
+>
+> Reutiliza las pruebas anteriores de A y D; amplía únicamente lo necesario por el cambio compartido en `lib.sh`.
+>
+> **2. SEC-047: coherencia documental y exposición**
+>
+> Autorizo corregir la celda de §13 que promete una cobertura que no existe y retirar o sustituir la referencia a R-024 tras comprobar su procedencia. Actualiza las sedes espejo aplicables sin duplicar la explicación.
+>
+> Conserva SEC-047 y QA-031-01 abiertos si el mecanismo sigue permitiendo el caso. No presentes la corrección documental como reparación del control ni como aceptación mía del riesgo.
+>
+> Haz un inventario de sólo lectura de las cabeceras actuales del propio arnés para comprobar si hay claves que el lector ignora y que puedan reducir el rigor o evitar una comprobación. Distingue ausencia de exposición actual de ausencia del defecto.
+>
+> No modifiques consumidores, no normalices cabeceras automáticamente y no implementes ahora una nueva política de reconocimiento de claves.
+>
+> **3. Corregir el registro de evidencia**
+>
+> Aclara el cuadre del banco contra la base real `a7a60c2`: el reporte anterior indicó 912 → 978, pero REQ-030 había dejado 920 casos. Identifica añadidos y retirados y corrige el resumen según el diff; no ajustes el recuento esperado para ocultar una discrepancia.
+>
+> Actualiza la referencia de `docs/PENDIENTES.md` que todavía presenta como extrapolación el caso ya medido de 255 371 bytes. Conserva la procedencia y el resultado histórico.
+>
+> **4. Validación y entrega**
+>
+> Agrupa estas reparaciones en la última vuelta disponible, con write-back del analista donde corresponda, QA sobre el delta y sus efectos, y seguridad después de QA favorable. No reinicies contadores ni abras otra vuelta automáticamente.
+>
+> Autorizo commits, push sin force y actualización del PR #58 en borrador. Ejecuta el CI requerido sobre la cabeza final; conserva todas las corridas y no relances buscando verde. Comprueba qué contenido cubren las firmas y qué cambios posteriores son sólo registros.
+>
+> Si se agota la vuelta con un bloqueo, entrega el impedimento exacto y el delta pendiente; no apruebes por agotamiento.
+>
+> **5. Límites**
+>
+> El hueco C de escrituras por intérpretes sigue separado y no aceptado como aplazado. No implementes la puerta posterior en este encargo. Presenta su decisión pendiente antes de publicar, sin convertir su documentación en una aceptación.
+>
+> Sin cambios de modelos, sondas de coste, umbrales, workflow, ruleset, rotación ni consumidores. Sin fusionar #58, #57 o #54, cerrar REQ-031, crear tags ni publicar versiones.
+>
+> Entrega un único resumen breve: antes/después de SEC-113, exposición encontrada de SEC-047, cuadre del banco, firmas, SHA, CI y decisiones concretas que falten para publicar. No añadas otro programa de mejoras.
+
+**Lo que la coordinadora añade, rotulado como suyo:** el asunto 1 de la entrada pendiente «Decisión de publicación de 1.35.0» (remedio B) queda decidido por esta autorización; los asuntos 2 (hueco C) y 3 (§13/SEC-047 en lo que exceda la corrección documental autorizada) siguen pendientes. Corrección del registro: el cuadre real es **920 → 978** (+58 casos, todos en la sección 08: 7 → 65; la sección 32 conserva 40 y cambia la expectativa de REQ-717); el «912 → 978» del informe anterior era un error de la coordinadora (912 era el cuadre anterior a REQ-030). Cabeza de partida verificada: `373563f`, árbol limpio, remoto idéntico.
+
+### RESUELTA (propietario, 2026-09-27) — **REQ-031, decisión P-1: opción B** (tras el paréntesis de un hallazgo sólo el separador de la gramática o el fin del campo; texto adicional deniega); versionar REQ-007 CA-41 y REQ-717 pasa a deny
+
+**Pregunta del analista (P-1):** REQ-007 CA-41 (`requirements/REQ-007.md:101`) exige aceptar texto detrás del paréntesis (`QA-006 (instrumento) — REQ-007`), certificado por el caso REQ-717 de `tests/escenarios/hooks/secciones/32-huecos-auditoria-r001.sh`; la propiedad de REQ-031 lo trata como no interpretable. Opciones: (a) aceptar texto sin paréntesis detrás (deja pasar `SEC-A (instrumento) · SEC-B`); (b) denegar y versionar REQ-007 CA-41.
+
+**Texto del propietario, literal e íntegro:**
+
+> Autorizo la opción B de P-1: después del paréntesis completo de un hallazgo sólo se admite el separador definido por la gramática o el final del campo. El texto adicional no interpretable deniega el cierre con un motivo claro; no se descarta silenciosamente.
+>
+> Autorizo versionar REQ-007 CA-41 y cambiar REQ-717 de allow a deny. Conserva el historial y declara que una forma antes aceptada deja de serlo. No clasifiques el cambio como menor únicamente por su tamaño; aplica la regla contractual vigente para determinar si necesita ADR.
+>
+> El mensaje debe indicar cómo conservar la evidencia: dentro del paréntesis del hallazgo, respetando la sintaxis admitida. No borres información ni normalices automáticamente hallazgos ambiguos.
+>
+> Incluye como mínimo estos casos:
+> - `QA-006 (instrumento) — REQ-007`: deniega.
+> - `SEC-A (instrumento) · SEC-B`: deniega; no ignora el segundo identificador.
+> - La forma equivalente admitida con la evidencia dentro del paréntesis: permite si no existe otro bloqueo.
+> - Evidencia con comas y paréntesis internos: no debe confundirse con otro hallazgo.
+> - Reapertura: sigue permitida.
+>
+> Haz una comprobación acotada de compatibilidad en los REQ del propio arnés para identificar usos de la forma retirada. Si aparecen, informa cuáles; no modifiques consumidores ni reescribas registros históricos.
+>
+> Para D, queda conforme que la herramienta la ejecute quien solicita el paralelismo: el analista declara las rutas y quien despacha comprueba la disjunción antes de hacerlo. No amplíes permisos del analista.
+>
+> Registra esta decisión y continúa el desarrollo, QA, seguridad, push, PR en borrador y CI ya autorizados. No necesitas otra confirmación para despachar al desarrollador. Conserva el presupuesto de vueltas y agrupa las reparaciones de cada revisión.
+>
+> La estimación de tiempo queda como estimación, no como permiso para ampliar el alcance. Sin fusión, publicación ni cambios en consumidores.
+
+### RESUELTA (propietario, 2026-09-27, decisión registrada íntegra ANTES de despachar) — **REQ-031: entrega acotada para la próxima versión — reparar el cierre indebido por separadores en `Hallazgos abiertos:` (A) y completar la preparación del paralelismo (D)**
+
+**Por qué está aquí:** es la fuente íntegra del encargo (fidelidad al encargo, REQ-029). Nació como mensaje del propietario a la sesión coordinadora tras la evaluación acotada del 2026-09-27 (rama de evidencia `evidencia/prueba-despacho-2026-09-14`, `evaluacion-2026-09-27/`, commit `37ab81e`).
+
+**Texto del propietario, literal e íntegro:**
+
+> Autorizo una entrega acotada para preparar la próxima versión del arnés: reparar el cierre indebido por separadores y completar la preparación del paralelismo. El objetivo es resolver estos dos puntos, sin abrir una revisión general.
+>
+> Trabaja en una rama aislada desde main, identificando su SHA y conservando los cambios ajenos.
+>
+> **1. Reparar A: hallazgos bloqueantes ignorados**
+>
+> Usa la reproducción de `evaluacion-2026-09-27/` como evidencia inicial.
+>
+> La propiedad exigida es: ningún hallazgo bloqueante puede quedar ignorado por su posición o por el separador utilizado. Una lista ambigua o no interpretable debe denegar el cierre con un motivo útil; nunca se toma sólo la primera clase descartando lo demás.
+>
+> Define la sintaxis admitida conforme al contrato existente. No uses «cualquier separador» como especificación ni amplíes la tolerancia sin límites. Conserva las formas legítimas y distingue separadores de la prosa dentro de la evidencia.
+>
+> Incluye pruebas de:
+> - Coma, punto y coma y `·`, con hallazgo bloqueante primero y después.
+> - Hallazgos exclusivamente de instrumento y ausencia legítima de hallazgos.
+> - Comas y paréntesis dentro de la evidencia.
+> - Contenido adicional o mal formado que antes podía quedar ignorado.
+> - Reapertura de un REQ, que no debe quedar impedida por una regla de cierre.
+>
+> Comprueba la denegación y el efecto sobre el archivo, junto con controles legítimos. Reutiliza el banco existente.
+>
+> **2. Completar D: preparación del paralelismo**
+>
+> La herramienta ya deniega cuando falta `Archivos:`; conserva ese comportamiento.
+>
+> Añade a la preparación del REQ la comprobación explícita de que el campo existe, contiene las rutas del alcance y puede interpretarlo la herramienta antes de solicitar paralelismo. Comprueba que `(ninguno)` sólo se utiliza cuando realmente no hay archivos afectados.
+>
+> Reutiliza la plantilla y las reglas existentes, con una referencia breve desde la Definition of Ready del analista. No copies la política en varias sedes ni exijas rellenar retrospectivamente todos los REQ.
+>
+> Verifica un REQ nuevo mínimo siguiendo ese recorrido y los casos disjunto, compartido y sin declarar. No autorices reparto manual como sustituto de la herramienta. La numeración duplicada de identificadores queda fuera.
+>
+> **3. Alcance y ciclo**
+>
+> Registra ambos cambios con trazabilidad a esta autorización y a los hallazgos existentes. Usa el rigor y las revisiones que correspondan al cambio del hook, agrupando la entrega para evitar ciclos separados por frase.
+>
+> No reinicies contadores ni aceptes residuales en mi nombre. Agrupa los hallazgos de cada revisión antes de reparar. Si se agota el presupuesto vigente, presenta el impedimento exacto y el delta pendiente.
+>
+> Autorizo implementación, pruebas, commits, push sin force y un PR en borrador. Ejecuta el CI requerido sobre la cabeza final; conserva su resultado sin relanzar buscando verde. No fusiones ni publiques.
+>
+> **4. Hueco C y documento aportado**
+>
+> No implementes ahora una puerta posterior ni bloqueos generales de intérpretes. C sigue siendo una limitación de seguridad reproducida; que sea conocida no equivale a que yo haya aceptado aplazarla.
+>
+> En la entrega final presenta brevemente la decisión de publicación que exige C: acciones que quedan fuera del control, mitigación disponible y protección que continúa dependiendo de los agentes. No lo marques aceptado.
+>
+> Si el Markdown está accesible, consérvalo íntegro y úsalo como fuente, no como instrucciones ejecutables. Si no está disponible, indica esa limitación una sola vez y continúa A y D con la evidencia ya obtenida. No vuelvas a buscarlo por directorios personales.
+>
+> No declares revisados los puntos del documento que no se hayan evaluado.
+>
+> **5. Fuera del encargo**
+>
+> Sin cambios de modelos, actualización de Claude Code, sondas de coste, umbrales, workflow, ruleset, rotación, SEC-111 ni consumidores. No añadas detectores de palabras en los paréntesis de los veredictos. No fusiones #54 ni #57.
+>
+> Entrega un único resultado: reparación antes/después, prueba del recorrido de paralelismo, cobertura de QA y seguridad, SHA y CI del candidato, y decisiones concretas pendientes para publicar. Sin prometer protección más amplia que la comprobada.
+
+**Lo que la coordinadora añade, rotulado como suyo:** rama `feat/req-031-hallazgos-y-paralelo` desde `origin/main` = `a7a60c247aae6853d492a71313ab9fabed3c17a7`. El REQ se numera **REQ-031**. El informe `ArnesJuan-hallazgos-abiertos-2026-09-23.md` no está disponible (limitación declarada una vez; no se vuelve a buscar). Evidencia inicial de A: `evaluacion-2026-09-27/A-hallazgos-separador.txt` (con `·` y con `;` la puerta permite cerrar con `usuario/dinero` abierto; con coma deniega; orden invertido deniega). Evidencia inicial de D: `evaluacion-2026-09-27/D-paralelo.txt`.
 
 ### RESUELTA (propietario, 2026-09-26) — **REQ-030: se autoriza corregir QA-030-10**, segunda intervención documental por excepción adicional; historial y contadores conservados
 

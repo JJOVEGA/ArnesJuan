@@ -659,7 +659,7 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 | La coordinadora no edita código de la app (sólo el `desarrollador`) | §5 | `guard-codigo` | `Edit`/`Write`/`MultiEdit` + `Bash` (parcial) |
 | No completar un REQ con aprobaciones pendientes | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | No completar un REQ con quality gates en rojo | §7 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
-| No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno **sin clase** | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno **sin clase**, ni con una lista que la puerta **no puede interpretar**, ni con el campo **repetido** en la cabecera o **por encima de su techo** de tamaño **siempre que el hook alcance a medirlo dentro del límite del cliente** (el techo se mide antes de normalizar; medido hasta 255 371 bytes, que deniega a tiempo; por encima no hay promesa, y un hook muerto no deniega) (sintaxis, techo, su residuo y lo que la puerta no lee: `requirements/README.md` § «Clases de hallazgo») | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | El rigor se puede subir, nunca bajar: `Sensible a seguridad: sí` impone `critico` | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | No completar sin `QA: aprobado` (salvo `Rigor: ligero`), ni un REQ `critico` sin `Seguridad: aprobado` | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | La transición a `completado` no se hace por shell | §6 | `guard-completado` | `Bash` (parcial) |
