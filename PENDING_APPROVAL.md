@@ -48,6 +48,14 @@
   - REQ-031 CA-A12 con líneas de 60 caracteres o más: 1 601 repeticiones de `Hallazgos abiertos:` deniegan y 1 801 permiten.
 
   Sin medir en Windows, donde el umbral podría bajar a unas 32 KiB. El motivo de REQ-023 tiene tope (20 líneas) y no está afectado.
+  - **Qué es observado y qué no, en SEC-118** (segunda autorización, punto 4; sin ensayos nuevos):
+    - **Observado directamente**, a nivel de hook, con la entrada JSON `PreToolUse` real alimentada a `guard.sh` en la candidata y en `713ac68` (R-045 §4): el hook termina **sin emitir decisión** en los casos citados, y el control con el mismo valor entre paréntesis (motivo de 314 bytes) deniega. Los recuentos de CA-A12 los midió el auditor (1 601 deniega, 1 801 permite) y los de 3 000 repeticiones, el desarrollador y QA.
+    - **Inferido, no observado:**
+      - que el host trate como permitir un hook que termina sin decisión en este caso concreto. Se apoya en el contrato de hooks y en CA-A16, que se observó en el CLI 2.1.272 por *timeout* y no por esta causa;
+      - el mecanismo exacto («Argument list too long» de `jq` con `MAX_ARG_STRLEN`), leído del código y del error;
+      - el umbral en Windows;
+      - los candidatos sin medir de R-045 §4.
+    - **Ningún caso de SEC-118 se ha ejecutado en el host real.**
 - **Protección efectiva hoy:** techo de 16 384 bytes para `Hallazgos abiertos:`, medido antes de normalizar (255 371 bytes → deny en 0,31 s por `Edit`); presupuesto de reconstrucción del `Edit`; el REQ real más grande (296 976 bytes) tarda 1,71 s por `Write`; la línea de control más larga de las 29 cabeceras mide 1 926 bytes.
 - **Qué depende de la disciplina del agente:** no escribir evidencia de cientos de KB en `QA:`, `Seguridad:`, `Rigor:`, `Sensible a seguridad:` ni `Estado:`, ni un REQ de MB por `Write`. Sólo `Hallazgos abiertos:` tiene regla escrita (`requirements/README.md`).
 - **Alternativa — reparar antes de publicar:** para SEC-115, la propiedad «ninguna operación que crezca más que linealmente corre antes de una comprobación de tamaño que deniegue»: techo por campo de control antes de `arnes_norm_campo`, y techo del `content` de `Write` antes de `arnes_sin_cr_transporte`. Para SEC-118, un solo sitio: que el motivo no viaje como argumento de `jq` (por la entrada estándar, o acotado en bytes). Exige un REQ nuevo (hoy no tienen sede de remediación) y la vía completa. Retrasa el tag lo que dure ese ciclo.
@@ -69,7 +77,14 @@
     - `MultiEdit` con la misma edición → ALLOW;
     - comillas rectas donde el archivo las tiene tipográficas → ALLOW;
     - con una entrada bajo `## Pendientes` → ALLOW.
-  - **Lado de la herramienta:** el `Edit` del CLI 2.1.284 normaliza ‘ ’ “ ” y desescapa `\uXXXX` antes de aplicar la edición. Está **leído en el binario y emulado; NO ejecutado en una sesión real**. No se sabe desde qué versión del CLI existe ese respaldo.
+  - **Lado de la herramienta:** QA leyó en el binario del CLI 2.1.284 que el `Edit` normaliza ‘ ’ “ ” y desescapa `\uXXXX`.
+  - **REPRODUCIDO EN EL HOST REAL el 2026-09-29** (segunda autorización, punto 3). Registro previo comiteado antes de ejecutar (`6c947ef`); resultado en `sec117-real/RESULTADO.md`, rama local de evidencia, `1c8c81c`. Claude Code **2.1.285**, `claude -p`, WSL2, `Edit` real del host, `guard.sh` del candidato sin cambios; el plugin 1.33.2 instalado no se cargó. Una ejecución por caso:
+    - **control positivo:** `old_string` literal → deny, el host bloquea y el archivo no cambia;
+    - **caso sospechoso:** comillas rectas donde el archivo tiene tipográficas → el hook sale sin decisión, el host aplica el `Edit` (su `tool_response.oldString` muestra las tipográficas del archivo: normalizó) y el REQ queda **`Estado: completado` con QA y seguridad pendientes, un `contrato` abierto y la cola ocupada**;
+    - **control legítimo:** se permite y se aplica.
+
+    **No ensayado en el host:** el escape `\uXXXX`, `MultiEdit`, el editor interactivo, Windows y otras versiones del CLI.
+  - **Propuesta mínima de reparación, no aplicada:** fallar cerrado en la vía de fragmentos. Cuando la puerta no puede reconstruir el documento de un REQ, deniega si la edición puede dejar el estado terminal (la «regla ancha» de la vía de `Bash`). No imitar la normalización del host. Sede: `hooks/guard-completado.sh`, con un REQ nuevo y la versión de REQ-001 CA-10/CA-11.
 - **Protección efectiva hoy:** ninguna mecánica en esa vía. La rama de fragmentos sólo sigue si el `new_string` contiene «estado: completado». Con la línea `Estado:` completa en el fragmento, juzga veredictos, clase, cola y quality gates (caso G3), pero **no** la regla de la cabecera ambigua de REQ-023: por esa vía la fila crítica de SEC-047 cierra aunque el agente escriba la línea entera (caso B6 de QA, vuelta 3, corregido el 2026-09-29).
 - **Qué depende de la disciplina del agente:** cerrar escribiendo la línea `Estado:` entera y con un `old_string` literal.
 - **No es regresión:** existe en `v1.33.2` y en `v1.34.0`. Publicar 1.35.0 no lo introduce ni lo agrava, y tampoco lo cierra.

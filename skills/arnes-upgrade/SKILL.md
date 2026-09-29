@@ -991,11 +991,18 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     elemento vacío; un ID con blancos, con tilde o con marcado; y una ausencia mezclada con
     hallazgos. La puerta **nombra el fragmento que no entendió** y no reescribe el campo. La forma
     equivalente conserva la nota **dentro** del paréntesis: `QA-006 (instrumento, REQ-007)`. El campo
-    **declarado más de una vez** con su forma exacta **deniega**: no elige la primera ni la última y
-    no las fusiona. Un valor de **más de 16 384 bytes** —contados en bytes y **antes** de
-    normalizar— deniega sin interpretarse, **siempre que el hook alcance a medirlo dentro del límite
-    del cliente**: medido hasta 255 371 bytes, que deniega a tiempo; por encima **no hay promesa**, y
-    un hook muerto no deniega.
+    **declarado más de una vez** con su forma exacta **deniega** —no elige la primera ni la última y
+    no las fusiona— **si el hook alcanza a medir y a emitir su decisión**: el motivo nombra todas las
+    líneas, y medido (Linux/WSL2, una corrida por punto) 1 601 líneas repetidas de 60 caracteres o más
+    deniegan con un motivo de 121 061 bytes, mientras que 1 801 salen **sin decisión** (con líneas
+    cortas, 2 501 deniegan y 3 000 no); por encima de lo medido **no hay promesa** (SEC-118, sin
+    reparar). Un valor de **más de 16 384 bytes** —contados en bytes y **antes** de normalizar—
+    deniega sin interpretarse, **siempre que el hook alcance a medirlo y a emitir su decisión dentro
+    del límite del cliente**: medido hasta 255 371 bytes, que deniega a tiempo; por encima **no hay
+    promesa**, y un hook muerto o que sale sin decisión no deniega. Y, como toda regla de la puerta de
+    cierre, ésta juzga el documento que la puerta reconstruye: por un `Edit`/`MultiEdit` cuyo
+    `old_string` no está literal en el archivo y que la herramienta aplica igualmente, un cierre puede
+    no pasar por esta regla ni por ninguna otra (SEC-117, sin reparar; entrada siguiente).
   - **Sin eufemismo: las versiones anteriores pudieron cerrar un REQ con un hallazgo bloqueante
     abierto.** Hasta `v1.34.0`, `SEC-A (instrumento) · SEC-B (usuario/dinero)` y
     `SEC-A (instrumento); SEC-B (contrato)` dejaban cerrar: la puerta sólo partía por comas y no leía
@@ -1029,14 +1036,19 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     duro delante o dentro de la clave, `- Rigor:`, `1. QA:`— **deniega el cierre**. Y una clave de
     control **declarada dos veces deniega el cierre también con el MISMO valor**: `QA: aprobado` dos
     veces cerraba hasta `v1.34.0` y ahora no cierra (cambio de compatibilidad aceptado expresamente
-    por el propietario, ADR-014). La puerta cita las líneas, con los caracteres invisibles escritos
-    de forma legible. **Sólo deniega** cuando la cabecera resultante es ambigua, **alguna** línea
-    `Estado` —la exacta, una repetida o una variante— dice el estado terminal y el `Estado` que gobierna
-    en disco (la primera declaración exacta; si no hay ninguna, nada lo decía) **no** lo decía. Por eso
-    **reabrir** un REQ cerrado no se bloquea, ni una edición tras la cual ninguna línea `Estado` dice el
-    terminal; pero si en disco el terminal está en una línea `Estado` que **no** es la que gobierna —una
-    variante, o una exacta que no es la primera— y la que gobierna no lo dice o no existe, se deniega
-    **toda** edición que conserve esa línea mientras la cabecera siga siendo ambigua, y no la que la
+    por el propietario, ADR-014); `Hallazgos abiertos` repetida con su forma exacta, cuando es la única
+    ambigüedad, la decide la regla de la entrada anterior, con su condición. La puerta cita las líneas,
+    con los caracteres invisibles escritos de forma legible. **Esta regla alcanza sólo a las ediciones
+    cuyo documento resultante la puerta reconstruye:** un `Write`, o un `Edit`/`MultiEdit` cuyo
+    `old_string` está literal en el archivo; la vía de un `old_string` que sólo coincide tras la
+    normalización de la herramienta queda fuera (SEC-117, abajo). Dentro de ese alcance, **sólo
+    deniega** cuando la cabecera resultante es ambigua, **alguna** línea `Estado` —la exacta, una
+    repetida o una variante— dice el estado terminal y el `Estado` que gobierna en disco (la primera
+    declaración exacta; si no hay ninguna, nada lo decía) **no** lo decía. Por eso **reabrir** un REQ
+    cerrado no se bloquea, ni una edición tras la cual ninguna línea `Estado` dice el terminal; pero si
+    en disco el terminal está en una línea `Estado` que **no** es la que gobierna —una variante, o una
+    exacta que no es la primera— y la que gobierna no lo dice o no existe, se deniega toda edición **de
+    ese alcance** que conserve esa línea mientras la cabecera siga siendo ambigua, y no la que la
     retira o la corrige (detalle en `requirements/REQ-023.md` CA-01 del arnés). La salida es de una
     línea: **cada clave de control una sola vez, escrita como la plantilla** de
     `requirements/README.md` (§ «Veredictos de validación»).
@@ -1058,22 +1070,25 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     vía, no la propiedad** —las variantes y repeticiones de las claves de control dentro de la
     frontera declarada—, y **no hallar nada NO acredita ausencia de exposición**. Vías conocidas que
     **no** encuentra (ejemplos **no exhaustivos**; el sitio único donde viven es
-    `docs/seguridad/registro-seguridad.md`, SEC-047 y SEC-050): una letra sustituida por un
+    `docs/seguridad/registro-seguridad.md`, SEC-047, SEC-050 y SEC-117): una letra sustituida por un
     **homoglifo**; una letra ASCII **de más, de menos o cambiada**; unos **dos puntos que no son
     ASCII**; una línea con un **signo de estructura** visible —también un espacio duro en lugar del
     blanco que sigue al guion del marcador—; una clave de **más de 256 bytes**, que es una
     **limitación**: se sigue leyendo como ausencia y ese límite **no** la protege; **comentar o
     borrar** la línea de un campo (SEC-050, la semántica de la ausencia, que esta versión no cambia);
     un cierre hecho con un `Edit` cuyo `old_string` el hook no encuentra literal y la herramienta sí
-    —comillas tipográficas o `\uXXXX`—, que no pasa por ninguna puerta (QA-023-02, preexistente, sin
-    reparar en esta versión); y lo que un lector de bash no ve (un byte NUL, un archivo en UTF-16). Si el informe no saca nada,
+    —comillas tipográficas o `\uXXXX`—, que puede no pasar por ninguna puerta (SEC-117, registro de
+    seguridad de QA-023-02, preexistente, sin reparar en esta versión; con las comillas, reproducido en
+    el CLI 2.1.285 el 2026-09-29, y con `\uXXXX`, `MultiEdit`, el editor interactivo, Windows u otras
+    versiones del CLI, sin ensayar); y lo que un lector de bash no ve (un byte NUL, un archivo en UTF-16). Si el informe no saca nada,
     **no has terminado**: vuelve a la pregunta de estado.
   - **Qué se migra de texto:** la **fila nueva de `AGENTS.md` §13** («una cabecera ambigua no deja
     cerrar») y el párrafo de **`requirements/README.md` § «Veredictos de validación»** que define la
     variante y su frontera, cada uno **por separado** y con la misma identificación por contenido y
     título y la misma tabla de estados de la primera entrada de este apartado. **Las notas de las
     versiones pasadas no cambian**: la regla de «última aparición» sigue siendo con la que **se leen**
-    los valores; lo nuevo es que, **al cerrar**, una clave de control repetida deniega.
+    los valores; lo nuevo es que, **al cerrar**, una clave de control repetida deniega, dentro del
+    alcance y con la condición que esta entrada y la anterior declaran.
 
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 

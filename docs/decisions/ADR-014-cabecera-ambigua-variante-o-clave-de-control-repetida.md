@@ -53,7 +53,12 @@ valor), no por su tamaño.
    nada lo decía) no lo decía: reabrir o editar un REQ ya cerrado no se bloquea, ni una edición tras la
    cual ninguna línea `Estado` dice el terminal. La consecuencia para las cabeceras que ya están así en
    disco va en «Consecuencias». `Hallazgos abiertos` canónica repetida conserva la puerta y el motivo de
-   REQ-031 CA-A12.
+   REQ-031 CA-A12, y con ellos su límite: ese motivo cita todas las líneas y no tiene tope, así que la
+   puerta deniega **si alcanza a medir y a emitir su decisión** (medido: 1 601 líneas de 60 caracteres o
+   más deniegan; 1 801 salen sin decisión — SEC-118, sin reparar).
+   *(Precisión del 2026-09-29, SEC-118 —R-045 §4 y §6—, corrección documental autorizada por el
+   propietario ese día —segunda autorización—: el texto anterior terminaba en «…y el motivo de REQ-031
+   CA-A12.», sin el límite.)*
 5. **Fuera, declarado y sin promesa de reconocimiento universal:** el homóglifo; una letra ASCII de más,
    de menos o cambiada; unos dos puntos no ASCII; las líneas con carácter de estructura visible —incluido
    un NBSP en lugar del blanco ASCII que sigue al marcador (`-`+NBSP+`Estado:`), que no forma marcador y
@@ -61,10 +66,19 @@ valor), no por su tamaño.
    del **valor**; las claves de más de 256 bytes, que son una **limitación**: se siguen leyendo como
    ausencia y **no** están protegidas por ese límite; y el `Edit`/`MultiEdit` cuyo `old_string` no está
    **literal** en el archivo: el hook no reconstruye el documento y juzga el fragmento como antes, pero
-   la herramienta **puede escribir igualmente** —el `Edit` del CLI 2.1.284 normaliza las comillas
-   tipográficas y desescapa `\uXXXX`; leído y emulado, no ejecutado en una sesión real—, y por esa vía un
-   cierre puede no pasar por ninguna puerta (**QA-023-02**, preexistente, escalado al propietario y no
-   aceptado; esta decisión no lo cierra).
+   la herramienta **puede escribir igualmente** —**reproducido** en el CLI 2.1.285 (`claude -p`, WSL2,
+   2026-09-29) con comillas rectas en el `old_string` donde el archivo tiene tipográficas: el hook sale
+   sin decisión, el host aplica la edición y un REQ `critico` queda cerrado con QA y seguridad
+   pendientes, un `contrato` abierto y la cola ocupada; que también desescapa `\uXXXX` se leyó en el
+   binario del CLI 2.1.284 y se emuló, sin ensayarlo en el host—, y por esa vía un cierre puede no pasar
+   por ninguna puerta (**QA-023-02** / **SEC-117**, preexistente, escalado al propietario y no aceptado;
+   esta decisión no lo cierra). Sin ensayar en el host: el escape `\uXXXX`, `MultiEdit`, el editor
+   interactivo, Windows y otras versiones del CLI.
+   *(Precisión del 2026-09-29, corrección documental autorizada por el propietario ese día —segunda
+   autorización—: el texto anterior decía «el `Edit` del CLI 2.1.284 normaliza las comillas tipográficas
+   y desescapa `\uXXXX`; leído y emulado, no ejecutado en una sesión real». La reproducción la hizo la
+   coordinadora, con registro previo en `6c947ef` y resultado en la rama local de evidencia,
+   `sec117-real/RESULTADO.md`, commit `1c8c81c`.)*
 
 El contrato exacto —casos, costes, lectores y superficie heredada— es `requirements/REQ-023.md` (CA-01…
 CA-12, versión del 2026-09-29).
@@ -113,9 +127,15 @@ semántica de la **ausencia** de un campo, que es REQ-024.
   Las claves de más de 256 bytes son una limitación, no una zona protegida.
 - (−) Si la cabecera **en disco** lleva el estado terminal en una línea `Estado` que **no** es la que
   gobierna —una variante, o una declaración exacta que no es la primera— y la que gobierna no lo dice o
-  no existe, se deniega **toda** edición que conserve esa línea mientras la cabecera siga siendo ambigua,
-  aunque no toque el estado; la que la retira, la corrige o deshace la ambigüedad no se deniega por esto
-  (si deja el terminal como el `Estado` que gobierna, es un cierre y lo juzgan las puertas de siempre).
-  Detalle en REQ-023 CA-01.
+  no existe, se deniega toda edición **cuyo documento resultante la puerta reconstruye** —un `Write`, o
+  un `Edit`/`MultiEdit` con el `old_string` literal en el archivo— que conserve esa línea mientras la
+  cabecera siga siendo ambigua, aunque no toque el estado; la que la retira, la corrige o deshace la
+  ambigüedad no se deniega por esto (si deja el terminal como el `Estado` que gobierna, es un cierre y lo
+  juzgan las puertas de siempre). Un `Edit`/`MultiEdit` cuyo `old_string` sólo coincide tras la
+  normalización de la herramienta queda fuera (Decisión 5). Detalle en REQ-023 CA-01.
+  *(Precisión del 2026-09-29, QA-023-05, corrección documental autorizada por el propietario ese día
+  —segunda autorización—: el texto anterior decía «se deniega **toda** edición que conserve esa línea»,
+  sin acotar, y la vía de la Decisión 5 lo desmentía — medido por QA, caso B4, `docs/qa/REQ-023.md`
+  § «Vuelta 3 de 3», §3.)*
 - (=) La guarda del retorno de carro, la noción de cita de la cabecera, el techo de `Hallazgos abiertos:`
   y la semántica de la ausencia (REQ-024) no cambian.

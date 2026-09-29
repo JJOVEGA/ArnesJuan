@@ -78,3 +78,18 @@ puerta lee el campo—, no por su tamaño.
   y se presenta en la decisión de publicación.
 - (=) La evidencia dentro del paréntesis sigue sin declarar nada; una continuación del campo en la línea
   siguiente sigue sin detectarse (fronteras declaradas en REQ-031, Notas).
+
+*(Nota posterior del 2026-09-29. **El texto de arriba no se altera.** Causa: SEC-118,
+`docs/seguridad/registro-seguridad.md` § R-045, §2 y §4. Es una corrección documental autorizada por el
+propietario ese día —segunda autorización: `PENDING_APPROVAL.md` § Resueltas, punto 2—. Precisa la
+primera viñeta de Consecuencias, «…ni por haber repartido el campo en dos líneas con esa clave (REQ-031
+CA-A12: la clave repetida deniega)». La clave repetida deniega **si el hook alcanza a medir y a emitir su
+decisión**, y se promete **hasta lo medido**. El motivo de CA-A12 nombra todas las líneas y viaja como
+**un** argumento de `jq`; por encima del límite de ese argumento (128 KiB en Linux) el hook sale sin
+decisión y no deniega. Medido en Linux/WSL2, una corrida por punto, en la candidata 1.35.0 y en `713ac68`:
+1 601 líneas repetidas de 60 caracteres o más deniegan, con un motivo de 121 061 bytes, y 1 801 salen sin
+decisión; con líneas cortas, 2 501 deniegan (111 961 bytes) y 3 000 no. Por encima de lo medido no hay
+promesa, y en Windows/MSYS no está medido. Que el cliente trate como permitir un hook sin decisión es
+**inferido**. SEC-118 sigue abierto, `instrumento` y no aceptado; esta nota lo documenta y no lo repara.
+REQ-031 CA-A12 lleva la misma condición desde la misma fecha. La segunda viñeta, la del techo, sigue
+siendo cierta tal como está: el motivo de tamaño no cita el valor, y R-045 §2 lo volvió a medir.)*

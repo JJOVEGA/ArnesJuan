@@ -695,7 +695,7 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 | La coordinadora no edita código de la app (sólo el `desarrollador`) | §5 | `guard-codigo` | `Edit`/`Write`/`MultiEdit` + `Bash` (parcial) |
 | No completar un REQ con aprobaciones pendientes | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | No completar un REQ con quality gates en rojo | §7 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
-| No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno **sin clase**, ni con una lista que la puerta **no puede interpretar**, ni con el campo **repetido** en la cabecera o **por encima de su techo** de tamaño **siempre que el hook alcance a medirlo dentro del límite del cliente** (el techo se mide antes de normalizar; medido hasta 255 371 bytes, que deniega a tiempo; por encima no hay promesa, y un hook muerto no deniega) (sintaxis, techo, su residuo y lo que la puerta no lee: `requirements/README.md` § «Clases de hallazgo») | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno **sin clase**, ni con una lista que la puerta **no puede interpretar**, ni con el campo **repetido** en la cabecera o **por encima de su techo** de tamaño **siempre que el hook alcance a medirlo y a emitir su decisión dentro del límite del cliente** (el techo se mide antes de normalizar; medido hasta 255 371 bytes, que deniega a tiempo; el campo repetido, medido hasta 1 601 líneas de 60 caracteres o más, que deniegan, mientras que 1 801 salen sin decisión porque el motivo no cabe en un argumento —SEC-118—; por encima de lo medido no hay promesa, y un hook muerto o sin decisión no deniega) (sintaxis, techo, repetición, sus residuos y lo que la puerta no lee: `requirements/README.md` § «Clases de hallazgo») | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | El rigor se puede subir, nunca bajar: `Sensible a seguridad: sí` impone `critico` | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | No completar sin `QA: aprobado` (salvo `Rigor: ligero`), ni un REQ `critico` sin `Seguridad: aprobado` | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | La transición a `completado` no se hace por shell | §6 | `guard-completado` | `Bash` (parcial) |
@@ -703,9 +703,27 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 | Los campos del REQ valen sólo en la cabecera: una línea igual dentro de una sección no es un veredicto | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Lo que vive dentro de un `<!-- … -->` de la cabecera **no declara campo**; un rango que abre y no cierra en la cabecera no la deja medir y no deja cerrar | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Una línea de la cabecera con un **retorno de carro que no es el que la termina** no se puede medir y no deja cerrar — se deniega por eso, citando la línea, aunque los veredictos estén en verde. El CR **final** es transporte (CRLF decide igual que LF), el cuerpo no se toca y **reabrir** no se bloquea | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
-| Una cabecera **ambigua** no deja cerrar: una **clave de control** (`Estado`, `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos`, `Rigor`) escrita de otra forma que la máquina no lee como esa clave —mayúsculas, un blanco de más, un carácter invisible, un marcador de lista—, o declarada **más de una vez aunque diga lo mismo**, se deniega citando las líneas, aunque los veredictos estén en verde; **reabrir** no se bloquea. Qué es una variante y dónde acaba la frontera de lo cubierto: `requirements/README.md` § «Veredictos de validación». Lo que queda fuera de esa frontera **no está protegido** y se sigue leyendo como ausencia —ejemplos **no exhaustivos**: un homóglifo, una letra cambiada, unos dos puntos que no son ASCII, una línea con carácter de estructura, una clave de más de 256 bytes (una **limitación**, no una zona protegida por ese límite)— | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| Una cabecera **ambigua** no deja cerrar: una **clave de control** (`Estado`, `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos`, `Rigor`) escrita de otra forma que la máquina no lee como esa clave —mayúsculas, un blanco de más, un carácter invisible, un marcador de lista—, o declarada **más de una vez aunque diga lo mismo**, se deniega citando las líneas, aunque los veredictos estén en verde (`Hallazgos abiertos` repetida con su forma exacta, cuando es la única ambigüedad, la decide la fila de los hallazgos, con su condición); **reabrir** no se bloquea. Qué es una variante y dónde acaba la frontera de lo cubierto: `requirements/README.md` § «Veredictos de validación». Lo que queda fuera de esa frontera **no está protegido** y se sigue leyendo como ausencia —ejemplos **no exhaustivos**: un homóglifo, una letra cambiada, unos dos puntos que no son ASCII, una línea con carácter de estructura, una clave de más de 256 bytes (una **limitación**, no una zona protegida por ese límite)— | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Un veredicto lleva fecha y no es anterior al último cambio del código —si el proyecto lo pide (`veredictos.*`, apagado por defecto) | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Ningún agente —tampoco la coordinadora— ejecuta git destructivo: `clean -f`, `reset --hard`, `checkout .`, `restore .`, `stash` (`git.prohibidos`) | §10 | `guard-git` | `Bash` |
+
+**Toda fila de esta tabla que dice que una puerta deniega vale con tres condiciones.** Se escriben aquí una
+vez, en lugar de fila a fila, y ninguna fila se lee como garantía sin ellas:
+1. **Si el hook alcanza a medir y a emitir su decisión.** Un hook que el cliente mata por tiempo
+   (SEC-115), o cuyo motivo de denegación no cabe en un argumento de línea de órdenes y sale sin decisión
+   (SEC-118), **no deniega**. Vale para todas las puertas.
+2. **Sobre las ediciones cuyo documento resultante la puerta reconstruye:** un `Write`, o un
+   `Edit`/`MultiEdit` cuyo `old_string` está literal en el archivo. Vale para las puertas de cierre
+   (`guard-completado`).
+3. **Un `Edit` cuyo `old_string` sólo coincide tras la normalización que aplica el host queda fuera de lo
+   que estas filas prometen:** la puerta no reconstruye el documento; si el fragmento no escribe la línea
+   `Estado:` entera, deja pasar el cierre sin mirar veredictos, clase, cola ni quality gates, y aun con la
+   línea entera no aplica la regla de la cabecera ambigua (SEC-117; reproducido con comillas
+   tipográficas en el CLI 2.1.285 el 2026-09-29; el escape `\uXXXX`, `MultiEdit`, el editor interactivo,
+   Windows y otras versiones del CLI, sin ensayar).
+
+Lo medido, los umbrales y los residuos de las tres viven en `docs/seguridad/registro-seguridad.md` del
+repositorio del arnés (SEC-115, SEC-117 y SEC-118), no aquí.
 
 **Un hook que avisa sin decidir.** Al escribir `QA:` o `Seguridad:` con un valor fuera del
 vocabulario (`pendiente` \| `aprobado` \| `con-hallazgos`; y en seguridad además `n/a`,

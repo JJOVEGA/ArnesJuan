@@ -86,17 +86,21 @@ sola vez). Si la cabecera escribe una de ellas **de otra forma** —una
 *variante*— o la declara **más de una vez**, **aunque las dos líneas digan lo mismo**, la cabecera es
 **ambigua** y la puerta **deniega el cierre** citando las líneas —las primeras, y cuántas más hay—, con
 los caracteres invisibles escritos de forma legible; `tools/arnes-lectura.sh` las nombra todas. No lee la variante como la clave ni elige entre dos declaraciones, y ningún lector
-cambia el valor que lee. **Cuándo deniega, dicho entero:** cuando la cabecera que quedaría escrita es
+cambia el valor que lee. **A qué ediciones alcanza esta regla:** a las que dejan a la puerta
+reconstruir el documento resultante —un `Write`, o un `Edit`/`MultiEdit` cuyo `old_string` (cada uno,
+en un `MultiEdit`) está **literal** en el archivo—. Un `Edit`/`MultiEdit` cuyo `old_string` sólo
+coincide tras la normalización que aplica la herramienta queda **fuera** («Fuera, y sin promesa»,
+abajo). **Cuándo deniega, dicho entero para ese alcance:** cuando la cabecera que quedaría escrita es
 ambigua, **alguna** de sus líneas `Estado` —la exacta, una repetida o una variante— dice el estado
 terminal, y la línea `Estado` que gobierna en disco (la primera declaración exacta; si no hay ninguna,
 nada lo decía) **no** lo decía. Nada más: reabrir o editar un REQ cuyo `Estado` que gobierna en disco ya
 es el terminal no se bloquea por esto, ni una edición tras la cual ninguna línea `Estado` dice el
 terminal. **Consecuencia:** si en disco el terminal está en una línea `Estado` que **no** es la que
 gobierna —una variante, o una declaración exacta que no es la primera— y la que gobierna no lo dice o no
-existe, se deniega **toda** edición que conserve esa línea mientras la cabecera siga siendo ambigua,
-aunque no toque el estado; la que la retira, la corrige o deshace la ambigüedad no se deniega por esto.
-Para
-`Hallazgos abiertos` repetida con su forma exacta decide su propia regla («Clases de hallazgo», abajo).
+existe, se deniega toda edición **de ese alcance** que conserve esa línea mientras la cabecera siga
+siendo ambigua, aunque no toque el estado; la que la retira, la corrige o deshace la ambigüedad no se
+deniega por esto. Para `Hallazgos abiertos` repetida con su forma exacta decide su propia regla, con
+su condición («Clases de hallazgo», abajo).
 
 **Qué es una variante, por propiedad.** Una línea de la cabecera —antes del primer `## `, fuera de todo
 `<!-- … -->`, con dos puntos ASCII (`:`)— cuya clave, tras la tolerancia de siempre (blancos de los
@@ -123,6 +127,17 @@ marcador (`-`+espacio duro+`Estado:`), que ya no forma marcador y deja el `-` co
 **más de 256 bytes**. Todo eso se sigue leyendo como hasta ahora: como si la línea no declarara el campo, que
 para ese campo es su **ausencia**. Las claves de más de 256 bytes son una **limitación**: se leen como
 ausencia y ese límite **no las protege**. Esta regla mira la **clave**: el valor se lee como siempre.
+**Y fuera también, por la vía y no por la forma de la línea:** un `Edit`/`MultiEdit` cuyo `old_string`
+no está literal en el archivo pero que la herramienta aplica igualmente, porque sólo coincide tras su
+normalización: **reproducido** en el CLI 2.1.285 (`claude -p`, WSL2, 2026-09-29) con comillas rectas en
+el `old_string` donde el archivo tiene tipográficas —el hook sale sin decisión, el host aplica la edición
+y el REQ queda cerrado—; que también desescapa `\uXXXX` se leyó en el binario del CLI 2.1.284 y se emuló.
+Sin ensayar en el host: el escape `\uXXXX`, `MultiEdit`, el editor interactivo, Windows y otras
+versiones del CLI; no se sabe desde qué versión existe. En esa vía la
+puerta no reconstruye el documento y juzga sólo el fragmento: esta regla **no** la alcanza, y por ella un
+cierre puede no pasar por ninguna puerta. Es QA-023-02 / SEC-117 del repositorio del arnés,
+preexistente y sin reparar: **no hay promesa** de que toda edición que la herramienta aplica pase por
+esta regla.
 
 ## Nivel de rigor
 Cuánta demostración se exige **por encima** de las quality gates, que son binarias y corren
@@ -199,8 +214,16 @@ paréntesis**, tras la clase y una coma: `QA-006 (instrumento, REQ-007)`, no
 
 **Qué lee la puerta, y qué no.** La puerta juzga **el valor de la única línea de la cabecera** —antes
 del primer `## `— cuya clave reconoce su lector como `Hallazgos abiertos` (también decorada,
-`**Hallazgos abiertos:**`, o sangrada). **Si hay más de una, deniega** y las nombra: no elige la
-primera ni la última y no las fusiona; se deja una sola línea con todos los hallazgos. Dentro de esa
+`**Hallazgos abiertos:**`, o sangrada). **Si hay más de una, deniega** y las nombra —no elige la
+primera ni la última y no las fusiona; se deja una sola línea con todos los hallazgos— **siempre que el
+hook alcance a medir y a emitir su decisión.** El motivo nombra **todas** las líneas y viaja como un
+argumento de línea de órdenes, que tiene límite: por encima, el hook sale **sin decisión** y no deniega.
+Cifras **medidas** —operativas: nadie de fuera elige su conducta por ellas; describen hasta dónde llega lo
+comprobado y sólo una medición nueva las mueve—, Linux/WSL2, una corrida por punto, lista no
+exhaustiva: 1 601 líneas repetidas de 60 caracteres o más deniegan con un motivo de 121 061 bytes, y
+1 801 salen sin decisión; con líneas cortas, 2 501 deniegan (111 961 bytes) y 3 000 salen sin decisión.
+Por encima de lo medido **no hay promesa**, y en Windows/MSYS no está medido. Es SEC-118 del
+repositorio del arnés, sin reparar. Dentro de esa
 línea, ningún hallazgo que bloquea queda sin leer por el sitio que ocupa en la lista ni por el
 carácter que lo separa del anterior. **Lo que el lector no reconoce como esa línea no se lee.** Si es
 una **variante** de la clave —`Hallazgos  abiertos:`, `HALLAZGOS ABIERTOS:`, la clave con un carácter
