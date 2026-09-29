@@ -2,6 +2,23 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-29 · REQ-023 CA-01 (i) versionado: el motivo de la denegación cita las 20 primeras líneas ambiguas y cuántas quedan (tope que falla cerrado); `arnes-lectura` las nombra todas
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: analista-requerimientos (write-back §9, a petición de la coordinadora); coordinadora (commit).
+
+**Qué cambia:**
+- Antes: «cita **cada** línea ambigua».
+- Ahora: la denegación cita las primeras N líneas, con N = 20; dice cuántas quedan; y la puerta **emite** su denegación con cualquier número de líneas ambiguas.
+
+**Por qué:** lo midió el desarrollador. Un motivo de más de ~128 KB no cabe en un argumento de `jq` y deja la puerta sin salida, y un hook que no decide no deniega.
+
+**Rango de N:** es un número operativo, no de contrato. Se cambia midiendo y nunca baja de 1.
+
+**Sedes actualizadas:** `requirements/README.md`, su plantilla y ADR-014.
+
+**Anotado sólo como dato, fuera de REQ-023:** el motivo de REQ-031 CA-A12 no tiene tope. Con unas 3000 líneas repetidas no emite decisión. Es un defecto preexistente e independiente: se registra con responsable y no se repara aquí.
+
+**Avance (regla 6):** contrato y código coinciden en CA-01 (i); falta la preparación de la versión, QA y seguridad.
+
 ## [GitHub] — 2026-09-29 · REQ-023 implementado (mitad 1 de SEC-047): una variante de una clave de control, o una clave de control repetida, deja la cabecera ambigua y no deja cerrar; `en-revisión` — SIN VALIDAR (pendiente QA y seguridad)
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: desarrollador (vuelta dev↔QA 1 de 3); coordinadora (commit). Unos 735 k tokens en la comisión del desarrollador.
 

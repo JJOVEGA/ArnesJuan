@@ -45,7 +45,8 @@ valor), no por su tamaño.
    declaración: la condición mira sólo caracteres **visibles**.
 4. **Respuesta:** una cabecera **ambigua** —una variante, o una clave de control declarada más de una
    vez, canónica o variante, **aunque los valores coincidan**— **deniega el cierre** citando las líneas
-   con los bytes invisibles escapados. La variante **nunca** se lee como la clave y ningún lector cambia
+   con los bytes invisibles escapados —las primeras N y cuántas quedan, porque un motivo sin tope puede
+   dejar la puerta sin salida y una puerta sin salida permite; el informe las nombra todas—. La variante **nunca** se lee como la clave y ningún lector cambia
    sus valores; reabrir, editar sin intentar cerrar o conservar la forma de un REQ ya cerrado no se
    bloquea. `Hallazgos abiertos` canónica repetida conserva la puerta y el motivo de REQ-031 CA-A12.
 5. **Fuera, declarado y sin promesa de reconocimiento universal:** el homóglifo; una letra ASCII de más,

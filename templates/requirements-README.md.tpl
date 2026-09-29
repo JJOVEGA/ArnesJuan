@@ -84,8 +84,8 @@ control son las seis cuya presencia o ausencia decide el cierre: `Estado`, `QA`,
 `Sensible a seguridad`, `Hallazgos abiertos` y `Rigor` (lista cerrada; en el código del arnés vive una
 sola vez). Si la cabecera escribe una de ellas **de otra forma** —una
 *variante*— o la declara **más de una vez**, **aunque las dos líneas digan lo mismo**, la cabecera es
-**ambigua** y la puerta **deniega el cierre** citando las líneas, con los caracteres invisibles escritos
-de forma legible. No lee la variante como la clave ni elige entre dos declaraciones, y ningún lector
+**ambigua** y la puerta **deniega el cierre** citando las líneas —las primeras, y cuántas más hay—, con
+los caracteres invisibles escritos de forma legible; `tools/arnes-lectura.sh` las nombra todas. No lee la variante como la clave ni elige entre dos declaraciones, y ningún lector
 cambia el valor que lee. Reabrir un REQ, o editarlo sin cerrarlo, no se bloquea por esto. Para
 `Hallazgos abiertos` repetida con su forma exacta decide su propia regla («Clases de hallazgo», abajo).
 
