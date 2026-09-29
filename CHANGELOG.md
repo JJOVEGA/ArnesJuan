@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-29 · SEC-117: REGISTRO PREVIO del experimento real y aislado (antes de ejecutarlo)
+`sec117-real/`: `PREREGISTRO.md` (entorno, CLI 2.1.285, plugin sonda, hook del candidato con sus sha, entradas exactas, precondiciones, resultado esperado, método de observación), los prompts, `run.sh`, los proyectos en su estado inicial y la comprobación del montaje a nivel de hook. Nada ejecutado todavía en el host.
+
 ## 2026-09-29 · Candidato 1.35.0 (`cand/1.35.0`, PR #59 en borrador): evidencia íntegra de las comisiones y CI de `45c2e5c`
 `cand-1.35.0/` (índice en su `README.md`):
 - las comisiones: desarrollador (implementación, versión, comentarios v2 y v3), QA (vueltas 1 a 3), auditor (R-045) y la comprobación previa de la coordinadora;
