@@ -100,7 +100,7 @@ gobierna —una variante, o una declaración exacta que no es la primera— y la
 existe, se deniega toda edición **de ese alcance** que conserve esa línea mientras la cabecera siga
 siendo ambigua, aunque no toque el estado; la que la retira, la corrige o deshace la ambigüedad no se
 deniega por esto. Para `Hallazgos abiertos` repetida con su forma exacta decide su propia regla, con
-su condición («Clases de hallazgo», abajo).
+su limitación SEC-118 («Clases de hallazgo», abajo).
 
 **Qué es una variante, por propiedad.** Una línea de la cabecera —antes del primer `## `, fuera de todo
 `<!-- … -->`, con dos puntos ASCII (`:`)— cuya clave, tras la tolerancia de siempre (blancos de los
@@ -214,16 +214,18 @@ paréntesis**, tras la clase y una coma: `QA-006 (instrumento, REQ-007)`, no
 
 **Qué lee la puerta, y qué no.** La puerta juzga **el valor de la única línea de la cabecera** —antes
 del primer `## `— cuya clave reconoce su lector como `Hallazgos abiertos` (también decorada,
-`**Hallazgos abiertos:**`, o sangrada). **Si hay más de una, deniega** y las nombra —no elige la
-primera ni la última y no las fusiona; se deja una sola línea con todos los hallazgos— **siempre que el
-hook alcance a medir y a emitir su decisión.** El motivo nombra **todas** las líneas y viaja como un
-argumento de línea de órdenes, que tiene límite: por encima, el hook sale **sin decisión** y no deniega.
-Cifras **medidas** —operativas: nadie de fuera elige su conducta por ellas; describen hasta dónde llega lo
-comprobado y sólo una medición nueva las mueve—, Linux/WSL2, una corrida por punto, lista no
-exhaustiva: 1 601 líneas repetidas de 60 caracteres o más deniegan con un motivo de 121 061 bytes, y
-1 801 salen sin decisión; con líneas cortas, 2 501 deniegan (111 961 bytes) y 3 000 salen sin decisión.
-Por encima de lo medido **no hay promesa**, y en Windows/MSYS no está medido. Es SEC-118 del
-repositorio del arnés, sin reparar. Dentro de esa
+`**Hallazgos abiertos:**`, o sangrada). **Si hay más de una, deniega** y las nombra: no elige la
+primera ni la última y no las fusiona; se deja una sola línea con todos los hallazgos. **Aparte de esa
+regla, su limitación conocida y sin reparar (SEC-118 del repositorio del arnés):** el motivo cita los
+primeros 60 caracteres de cada línea repetida y viaja como un argumento de línea de órdenes, cuyo
+límite es de **bytes**; por encima, el hook sale **sin decisión** y no deniega. Medido a nivel de hook
+en Linux/WSL2, una corrida por punto —cifras operativas: mediciones, no umbrales—: con líneas **ASCII**
+de 60 caracteres o más, 1 601 deniegan (motivo de 121 061 bytes) y 1 801 salen sin decisión; con líneas
+**ASCII** cortas, 2 501 deniegan (111 961 bytes) y 3 000 salen sin decisión; con caracteres
+**multibyte** en la parte citada, bajo `C.UTF-8`, salen sin decisión 1 601 líneas con `ñ`, 1 001 con
+caracteres de 4 bytes y 2 501 cortas con `ñ`. No hay cifra para otros caracteres, hosts ni tamaños; en
+Windows/MSYS no está medido, y que el cliente trate como permitir un hook sin decisión es inferido.
+Dentro de esa
 línea, ningún hallazgo que bloquea queda sin leer por el sitio que ocupa en la lista ni por el
 carácter que lo separa del anterior. **Lo que el lector no reconoce como esa línea no se lee.** Si es
 una **variante** de la clave —`Hallazgos  abiertos:`, `HALLAZGOS ABIERTOS:`, la clave con un carácter

@@ -2,6 +2,36 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-29 · Vuelta excepcional: QA-023-06 corregido en texto (sin validar); la reparación de SEC-117 se DETIENE en la decisión 6 (P-SEC117: choca con REQ-001 CA-10, CA-11 y CA-12, `completado`, y con REQ-007 CA-46 (c)); commit local, sin push
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: analista-requerimientos (texto) y coordinadora (cola y commit).
+
+- **Hecho por el analista (write-back, sin validar):**
+  - **QA-023-06:** la propiedad del control va separada de las limitaciones SEC-115 y SEC-118; el límite se enuncia en bytes; las cifras medidas se conservan con su condición ASCII; se retiran las estimaciones.
+  - **P-SEC117**, en REQ-023, con un borrador de CA-13.
+- **Por qué se detuvo SEC-117:** el criterio que exige la propiedad del propietario contradice **REQ-001 CA-11**, que contrata el ALLOW del propio fail-open, además de CA-10, CA-12 y REQ-007 CA-46 (c), y cambia 111 llamadas del banco en 20 secciones. Versionar REQ-001 lo reabre, y la autorización limita QA a REQ-023 y REQ-031.
+- **Cola:** entra la **decisión 6**, con la forma de la regla 4. La coordinadora recomienda (A): versionar esos criterios con ADR, adaptar el banco y extender QA y seguridad a REQ-001 y REQ-007, dejando REQ-001 reabierto y sin cerrar.
+- **Sin push:** la cabeza no es final y no se quiere un CI intermedio.
+- **Avance (regla 6):** la parte independiente está hecha. Se espera la decisión 6; el desarrollador, QA y seguridad esperan para no partir la vuelta.
+
+## [Interno] — 2026-09-29 · Vuelta excepcional de la tercera autorización, write-back del analista (primera parte): QA-023-06 corregido; SEC-117 DETENIDO por conflicto con REQ-001 CA-10/CA-11/CA-12 (`completado`) y REQ-007 CA-46 (c), registrado como P-SEC117 — SIN VALIDAR
+> Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `analista-requerimientos`. Unos 120 k tokens en esta parte.
+
+- **Contador:** REQ-023 sigue **3 de 3, agotado**; es la vuelta excepcional autorizada, no una cuarta vuelta, y no se crea otro REQ. Sin código.
+- **QA-023-06:** en cada sede, la propiedad del control va sola —la clave repetida deniega el cierre— y la limitación aparte y nombrada: SEC-118, y SEC-115 donde toca. El límite es de **bytes**, y las cifras llevan sus condiciones (ASCII frente a multibyte, `C.UTF-8`, Linux/WSL2, host inferido, Windows sin medir), sin estimaciones. Sedes:
+  - el README y su plantilla;
+  - `AGENTS.md` §13 y su gemela;
+  - REQ-031 CA-A12, título y nota, con Historial;
+  - la nota de REQ-023;
+  - las notas fechadas de ADR-013 y ADR-014;
+  - la guía, las notas `[1.35.0]` y el índice.
+- **SEC-117, sin escribir:** hay contratos que dicen lo contrario de lo que la reparación debe hacer.
+  - REQ-001 CA-11 (`completado`) contrata ALLOW para la entrada que la reparación debe denegar.
+  - REQ-001 CA-10 y CA-12, y REQ-007 CA-46 (c), contratan que el respaldo por fragmentos sigue vivo.
+  - CA-10 protege 92 llamadas del banco a `emite_edit` en 18 secciones.
+
+  Reabrir REQ-001, versionar REQ-007 y adaptar el banco quedan fuera del alcance nombrado, así que decide el propietario. Queda registrado en REQ-023 como **P-SEC117**, con las opciones.
+- **Avance (regla 6):** QA-023-06 escrito. Falta la decisión sobre P-SEC117 para escribir el criterio de SEC-117, la frontera (g), la cláusula de §13 y su fila nueva; después, desarrollador, QA y seguridad.
+
 ## [GitHub] — 2026-09-29 · Tercera autorización del propietario registrada (literal e íntegra, copia verificada): reparación agrupada de SEC-117 y QA-023-06 en una vuelta excepcional; no se acepta publicar con SEC-117 aplazado; REQ-023 `bloqueado` → `en-progreso`
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora.
 
@@ -360,16 +390,17 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      deja de cerrar `QA-006 (instrumento) — REQ-007`, que REQ-007 CA-41 toleraba hasta `v1.34.0`: su
      caso de banco `REQ-717` pasó de `allow` a `deny`. La forma equivalente es
      `QA-006 (instrumento, REQ-007)`.
-   - **El campo repetido** en la cabecera deniega (CA-A12) **si el hook alcanza a medir y a emitir
-     su decisión**. El motivo nombra todas las líneas y viaja como un argumento de línea de órdenes:
-     medido, 1 601 líneas repetidas de 60 caracteres o más deniegan con un motivo de 121 061 bytes, y
-     1 801 salen sin decisión (SEC-118, en las limitaciones de abajo). Por encima de lo medido no hay
-     promesa.
+   - **El campo repetido** en la cabecera deniega (CA-A12).
    - **Un valor de más de 16 384 bytes**, contados en bytes **antes de normalizar**, deniega sin
-     interpretarse, **siempre que el hook alcance a medirlo y a emitir su decisión dentro del límite
-     del cliente** (60 s). Medido hasta 255 371 bytes, que deniega en 0,31 s por `Edit` y `MultiEdit`
-     y en 1,6 s por `Write` (Linux/WSL2, una corrida por punto). Por encima no hay promesa, y un hook
-     muerto o que sale sin decisión no deniega.
+     interpretarse.
+   - **Aparte de esas reglas, sus limitaciones conocidas y sin reparar**, en las limitaciones de abajo:
+     - **SEC-115:** un hook que el cliente mata por tiempo (60 s) no deniega. La denegación por tamaño
+       está medida hasta 255 371 bytes, que deniega en 0,31 s por `Edit` y `MultiEdit` y en 1,6 s por
+       `Write` (Linux/WSL2, una corrida por punto); por encima no hay promesa.
+     - **SEC-118:** el motivo del campo repetido cita cada línea en un argumento cuyo límite es de
+       **bytes**, y por encima el hook sale sin decisión. Con líneas **ASCII** de 60 caracteres o más,
+       1 601 deniegan y 1 801 salen sin decisión; con caracteres multibyte bastan menos (medido: 1 001
+       con caracteres de 4 bytes). Las cifras completas y sus condiciones, abajo.
    - **Por qué:** hasta `v1.34.0`, `SEC-A (instrumento) · SEC-B (usuario/dinero)` y
      `SEC-A (instrumento); SEC-B (contrato)` dejaban cerrar un REQ con un bloqueante abierto.
 2. **REQ-023 (ADR-014): la cabecera ambigua deniega el cierre.** Las claves de control son `Estado`,
@@ -392,7 +423,7 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
    - **Una clave de control repetida deniega aunque sus valores coincidan. Hasta `v1.34.0`, esa
      cabecera cerraba.** Es un cambio **aceptado expresamente por el propietario** el 2026-09-29.
      `Hallazgos abiertos` repetida con su forma exacta, cuando es la única ambigüedad, la decide CA-A12
-     de REQ-031, con la condición del punto 1.
+     de REQ-031, con la limitación SEC-118 del punto 1.
    - **Por qué:** en las versiones anteriores, un BOM delante de `Sensible a seguridad: sí`, con
      `Rigor: ligero`, cerraba un REQ `critico` con QA y seguridad pendientes (SEC-047). Y unas
      mayúsculas en la clave `Hallazgos abiertos:` escondían un `contrato` (QA-031-01).
@@ -484,9 +515,10 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de 
   - La protección efectiva hoy es el techo de 16 384 bytes de `Hallazgos abiertos:`. Para `QA:`,
     `Seguridad:`, `Rigor:`, `Sensible a seguridad:` y `Estado:`, y para el tamaño de un `Write`,
     depende de la disciplina del agente.
-  - **La versión no puede prometer** que ningún REQ se cierre sin QA ni seguridad en absoluto. Sólo
-    puede prometerlo «si el hook alcanza a medir **y a emitir su decisión**»: medir no basta, porque
-    una denegación decidida a tiempo puede no llegar a emitirse (SEC-118, abajo).
+  - **La versión no puede prometer** que ningún REQ se cierre sin QA ni seguridad en absoluto. Un hook
+    que no alcanza a medir dentro del límite del cliente (SEC-115) no deniega, y tampoco uno que mide y
+    decide a tiempo pero no llega a emitir su decisión (SEC-118, abajo): medir no basta. Es una
+    limitación, y ninguna frase condicional sobre ella acredita protección.
   - Ficha y fecha propuesta: `PENDING_APPROVAL.md` § Pendientes, ficha 1. Una fecha propuesta no es
     una aceptación.
 - **El hueco C** (escrituras por intérprete o script): **abierto, con decisión pendiente del
@@ -536,14 +568,23 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de 
   tope**; los sitios conocidos son una lista **no exhaustiva**. Registro, dueños y forzador:
   `docs/seguridad/registro-seguridad.md` § R-045, §4. Sustituye a la entrada anterior de estas notas,
   que lo describía sólo en el motivo de CA-A12 y lo daba por «pendiente de registro».
+  - **El límite es de bytes.** El motivo de CA-A12 cita los primeros 60 caracteres de cada línea
+    repetida, y en UTF-8 un carácter pesa de 1 a 4 bytes: cuántas líneas caben depende de sus bytes.
   - **Observado a nivel de hook** (JSON `PreToolUse` real contra `hooks/guard.sh`, en la candidata y
-    en `713ac68` con decisiones idénticas; Linux/WSL2, una corrida por punto): salen **sin decisión**
-    —salida vacía— un `QA:` de ≈ 140 KB sin paréntesis final con QA pendiente, lo mismo en
-    `Seguridad:`, un `Sensible a seguridad:` dudoso de ≈ 140 KB, una línea de cabecera sin `:` de
-    ≈ 140 KB con un CR interior, y el campo `Hallazgos abiertos:` repetido 1 801 veces con líneas de
-    60 caracteres o más (las 3 000 repeticiones cortas, medidas por el desarrollador y por QA). Los
-    controles **deniegan**: el mismo `QA:` con el paréntesis final, cuyo motivo corto mide 314 bytes;
-    1 601 repeticiones largas, con un motivo de 121 061 bytes; y 2 501 cortas, con 111 961 bytes.
+    en `713ac68` con decisiones idénticas; Linux/WSL2, una corrida por punto). Salen **sin decisión**
+    —salida vacía—:
+    - un `QA:` de ≈ 140 KB sin paréntesis final con QA pendiente, y lo mismo en `Seguridad:`;
+    - un `Sensible a seguridad:` dudoso de ≈ 140 KB;
+    - una línea de cabecera sin `:` de ≈ 140 KB con un CR interior;
+    - el campo `Hallazgos abiertos:` repetido 1 801 veces con líneas **ASCII** de 60 caracteres o más,
+      y 3 000 veces con líneas **ASCII** cortas (éstas, medidas por el desarrollador y por QA);
+    - con caracteres **multibyte** en la parte citada, bajo `C.UTF-8`: 1 601 líneas con `ñ`, 1 001 con
+      caracteres de 4 bytes y 2 501 cortas con `ñ` (QA, QA-023-06, `docs/qa/REQ-023.md`).
+
+    Los controles **deniegan**: el mismo `QA:` con el paréntesis final, cuyo motivo corto mide 314
+    bytes; 1 601 repeticiones **ASCII** largas, con un motivo de 121 061 bytes; y 2 501 **ASCII**
+    cortas, con 111 961 bytes. **No hay cifra** para otros caracteres, hosts ni tamaños, y ningún
+    umbral estimado.
   - **Inferido, no observado por esta causa:** que el cliente trate como permitir un hook que termina
     sin decisión. Lo sostienen el contrato de hooks y la analogía con REQ-031 CA-A16, que se observó en
     el CLI por **timeout**, no por esta causa. Lo refuerza, también por otra causa, la reproducción de
@@ -552,10 +593,11 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de 
     veces), y los candidatos que el registro nombra sin medición: el CR interior en la vía de
     fragmentos, el valor crudo de los veredictos fechados (opt-in) y la orden citada por `guard-git`
     si un manifiesto sube su techo de análisis a 128 KiB.
-  - **Qué cambia en las promesas:** medir no basta; la puerta sólo decide si alcanza a medir **y a
-    emitir su decisión**. REQ-023 no lo abre —su motivo tiene tope de 20 líneas—, pero cuando la
-    repetición exacta de `Hallazgos abiertos:` es la única ambigüedad cede el caso a CA-A12 y hereda
-    el defecto. **Documentarlo no lo repara ni lo acepta.**
+  - **Qué cambia en las promesas:** cada regla que dice que la puerta deniega se enuncia sola, y
+    SEC-118 va aparte como su limitación: una frase condicional no acredita protección. REQ-023 no lo
+    abre —su motivo tiene tope de 20 líneas—, pero cuando la repetición exacta de `Hallazgos abiertos:`
+    es la única ambigüedad cede el caso a CA-A12 y hereda el defecto. **Documentarlo no lo repara ni lo
+    acepta.**
   - Vencimiento propuesto por el auditor: la decisión de publicación de 1.35.0. Una fecha propuesta no
     es una aceptación.
 - **La frontera de REQ-023**, descrita arriba.

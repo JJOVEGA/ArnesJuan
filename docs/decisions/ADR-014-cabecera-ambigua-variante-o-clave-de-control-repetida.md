@@ -53,12 +53,16 @@ valor), no por su tamaño.
    nada lo decía) no lo decía: reabrir o editar un REQ ya cerrado no se bloquea, ni una edición tras la
    cual ninguna línea `Estado` dice el terminal. La consecuencia para las cabeceras que ya están así en
    disco va en «Consecuencias». `Hallazgos abiertos` canónica repetida conserva la puerta y el motivo de
-   REQ-031 CA-A12, y con ellos su límite: ese motivo cita todas las líneas y no tiene tope, así que la
-   puerta deniega **si alcanza a medir y a emitir su decisión** (medido: 1 601 líneas de 60 caracteres o
-   más deniegan; 1 801 salen sin decisión — SEC-118, sin reparar).
+   REQ-031 CA-A12. Aparte de esa regla va su limitación conocida y sin reparar, **SEC-118**: ese motivo
+   cita cada línea repetida y no tiene tope, y el argumento que lo lleva tiene un límite de **bytes** por
+   encima del cual el hook sale sin decisión y no deniega. Lo medido, con sus condiciones (líneas ASCII
+   frente a multibyte, Linux/WSL2), está en la nota de versionado de REQ-031 CA-A12.
    *(Precisión del 2026-09-29, SEC-118 —R-045 §4 y §6—, corrección documental autorizada por el
    propietario ese día —segunda autorización—: el texto anterior terminaba en «…y el motivo de REQ-031
-   CA-A12.», sin el límite.)*
+   CA-A12.», sin el límite. **Corregida el mismo día por QA-023-06** —tercera autorización—: la precisión
+   decía «la puerta deniega si alcanza a medir y a emitir su decisión (medido: 1 601 líneas de 60
+   caracteres o más deniegan; 1 801 salen sin decisión)», con la limitación metida en la regla y la cifra
+   sin la condición ASCII.)*
 5. **Fuera, declarado y sin promesa de reconocimiento universal:** el homóglifo; una letra ASCII de más,
    de menos o cambiada; unos dos puntos no ASCII; las líneas con carácter de estructura visible —incluido
    un NBSP en lugar del blanco ASCII que sigue al marcador (`-`+NBSP+`Estado:`), que no forma marcador y

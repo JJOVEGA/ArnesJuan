@@ -991,15 +991,20 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     elemento vacío; un ID con blancos, con tilde o con marcado; y una ausencia mezclada con
     hallazgos. La puerta **nombra el fragmento que no entendió** y no reescribe el campo. La forma
     equivalente conserva la nota **dentro** del paréntesis: `QA-006 (instrumento, REQ-007)`. El campo
-    **declarado más de una vez** con su forma exacta **deniega** —no elige la primera ni la última y
-    no las fusiona— **si el hook alcanza a medir y a emitir su decisión**: el motivo nombra todas las
-    líneas, y medido (Linux/WSL2, una corrida por punto) 1 601 líneas repetidas de 60 caracteres o más
-    deniegan con un motivo de 121 061 bytes, mientras que 1 801 salen **sin decisión** (con líneas
-    cortas, 2 501 deniegan y 3 000 no); por encima de lo medido **no hay promesa** (SEC-118, sin
-    reparar). Un valor de **más de 16 384 bytes** —contados en bytes y **antes** de normalizar—
-    deniega sin interpretarse, **siempre que el hook alcance a medirlo y a emitir su decisión dentro
-    del límite del cliente**: medido hasta 255 371 bytes, que deniega a tiempo; por encima **no hay
-    promesa**, y un hook muerto o que sale sin decisión no deniega. Y, como toda regla de la puerta de
+    **declarado más de una vez** con su forma exacta **deniega**: no elige la primera ni la última y
+    no las fusiona. Un valor de **más de 16 384 bytes** —contados en bytes y **antes** de normalizar—
+    deniega sin interpretarse. **Aparte de esas reglas, sus limitaciones conocidas y sin reparar:**
+    - **SEC-115:** un hook que el cliente mata por tiempo no deniega. La denegación por tamaño está
+      medida hasta 255 371 bytes, que deniega a tiempo; por encima **no hay promesa**.
+    - **SEC-118:** el motivo del campo repetido cita cada línea en un argumento cuyo límite es de
+      **bytes**, y por encima el hook sale **sin decisión** y no deniega. Medido a nivel de hook en
+      Linux/WSL2, una corrida por punto: con líneas **ASCII** de 60 caracteres o más, 1 601 deniegan y
+      1 801 salen sin decisión; con líneas **ASCII** cortas, 2 501 deniegan y 3 000 no; con caracteres
+      **multibyte** en la parte citada salen sin decisión 1 601 líneas con `ñ`, 1 001 con caracteres de
+      4 bytes y 2 501 cortas con `ñ`. No hay cifra para otros caracteres, hosts ni tamaños; en Windows
+      no está medido, y que el cliente trate como permitir un hook sin decisión es inferido.
+
+    Y, como toda regla de la puerta de
     cierre, ésta juzga el documento que la puerta reconstruye: por un `Edit`/`MultiEdit` cuyo
     `old_string` no está literal en el archivo y que la herramienta aplica igualmente, un cierre puede
     no pasar por esta regla ni por ninguna otra (SEC-117, sin reparar; entrada siguiente).
@@ -1037,7 +1042,7 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     control **declarada dos veces deniega el cierre también con el MISMO valor**: `QA: aprobado` dos
     veces cerraba hasta `v1.34.0` y ahora no cierra (cambio de compatibilidad aceptado expresamente
     por el propietario, ADR-014); `Hallazgos abiertos` repetida con su forma exacta, cuando es la única
-    ambigüedad, la decide la regla de la entrada anterior, con su condición. La puerta cita las líneas,
+    ambigüedad, la decide la regla de la entrada anterior, con su limitación SEC-118. La puerta cita las líneas,
     con los caracteres invisibles escritos de forma legible. **Esta regla alcanza sólo a las ediciones
     cuyo documento resultante la puerta reconstruye:** un `Write`, o un `Edit`/`MultiEdit` cuyo
     `old_string` está literal en el archivo; la vía de un `old_string` que sólo coincide tras la
@@ -1088,7 +1093,7 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     título y la misma tabla de estados de la primera entrada de este apartado. **Las notas de las
     versiones pasadas no cambian**: la regla de «última aparición» sigue siendo con la que **se leen**
     los valores; lo nuevo es que, **al cerrar**, una clave de control repetida deniega, dentro del
-    alcance y con la condición que esta entrada y la anterior declaran.
+    alcance que esta entrada declara y con la limitación que la anterior nombra aparte.
 
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 

@@ -144,12 +144,37 @@
 
   Si se autoriza (A), O-1, O-2, O-4, O-5 y O-6 son del mismo tipo (el texto de §13, del README y de la guía) y conviene que entren en la misma corrección, **sólo si el propietario lo autoriza expresamente**. O-2 y O-3 son superficie de SEC-117 y van a su registro, no a esta corrección.
 
+**Decisión 6 — P-SEC117: la reparación de SEC-117 que exige la propiedad choca con criterios vigentes de REQ-001 (`completado`) y REQ-007. Añadida el 2026-09-29, durante la vuelta excepcional de la tercera autorización.**
+- **Pregunta.** ¿Autorizas que la reparación de SEC-117, dentro de esta misma vuelta excepcional, haga cuatro cosas?
+  1. Versionar **REQ-001 CA-10, CA-11 y CA-12** y **REQ-007 CA-46 (c)**. Con eso **REQ-001 se reabre** (§9) y queda `en-revisión` en el candidato, sin cerrarse.
+  2. Adaptar los casos del banco que fabrican un `old_string` no literal sobre `requirements/`.
+  3. Extender la revisión de QA y seguridad de la vuelta a esos dos REQ.
+  4. Lo que implica la condición «no reconstruible → deny».
+- **Por qué hace falta.** La propiedad que fijaste —«esa incertidumbre no puede convertirse en permiso silencioso»— obliga a denegar el `Edit`/`MultiEdit` sobre `requirements/` que el hook no puede reconstruir. Pero:
+  - **REQ-001 CA-11 contrata literalmente lo contrario:** ALLOW para `old_string` inexistente y `new_string` = `completado`, «la herramienta fallará entera». Es la premisa que el experimento real desmintió (SEC-117).
+  - CA-10 («el fallback sigue vivo») y CA-12 (un `Edit` sobre una ruta inexistente «cae al fragmento y no bloquea») van en el mismo sentido, y también REQ-007 CA-46 (c) («no elimina el fallback»).
+  - **El banco:** 111 llamadas a `emite_edit`, que fabrica `old_string:"x"`, en 20 secciones; unas 49 esperan allow y 55 deny, contadas por la coordinadora con `grep`. Las que apuntan a `requirements/` dejarían de medir las puertas que miden hoy, porque la regla nueva deniega antes, y habría que convertirlas en ediciones literales.
+  - La tercera autorización nombra sólo REQ-023 y REQ-031 como alcance de la revisión de QA.
+- **Opciones:**
+  - **(A) Sí, cumplir la propiedad.**
+    - **Contrato:** el analista versiona REQ-001 CA-10, CA-11 y CA-12 y REQ-007 CA-46 (c), con un ADR de fondo (SEC-117 supersede la premisa), y escribe el criterio nuevo en REQ-023 (su borrador de CA-13 está en REQ-023, «Preguntas abiertas», P-SEC117).
+    - **Código y banco:** el desarrollador implementa y convierte los casos afectados.
+    - **Revisión:** QA y seguridad revisan también REQ-001 y REQ-007.
+    - **Consecuencia:** es una vuelta mayor, con más riesgo de no cerrarla en su único intento, y REQ-001 queda reabierto en el candidato.
+  - **(B) Regla ancha sólo sobre el fragmento no reconstruible:** denegar si la edición menciona el estado terminal. **No cumple la propiedad.** El analista lo deriva leyendo, sin medirlo: un valor escrito con `\uXXXX` que el host desescapa, o retirar la línea `Estado` que gobierna para que gobierne otra terminal, siguen dando permiso silencioso. Además exige igual versionar CA-11.
+  - **(C) No reparar ahora:** ya lo rechazaste.
+- **Recomendación de la coordinadora:** (A), con el alcance escrito arriba y nada más. Es la única opción que cumple la propiedad. REQ-001 queda reabierto y **no** se cierra, porque cerrar requisitos no está autorizado.
+- **Acción que impide (regla 2):** **implementar** la reparación de SEC-117, porque su contrato no se puede escribir sin decidir esto. **Parte afectada:** SEC-117 y todo lo que depende de ella: la frontera (g), la condición 3 de la cláusula de §13, la fila nueva de §13, los comentarios de código de esa vía, la validación en el host, QA y seguridad. **Evidencia:** REQ-023, «Preguntas abiertas», P-SEC117; REQ-001 CA-10, CA-11 y CA-12; REQ-007 CA-46 (c); el recuento del banco. **Qué lo resuelve:** tu elección.
+- **Qué sigue mientras tanto:**
+  - La **corrección de texto de QA-023-06** ya está hecha por el analista, sin validar, en commit local. La vuelta agrupada no se parte, así que el desarrollador, QA y seguridad esperan a esta decisión.
+  - La coordinadora decide por su cuenta, sin necesitarte, que el principio «una frase condicional no acredita protección» se aplique también a REQ-031 CA-A13 (el techo) en la misma pasada del analista. Es una sede de REQ-031 afectada por el mismo principio y está dentro de la autorización.
+
 - **Recomendación de la coordinadora (propuesta, no decisión):**
   - **SEC-115 y C:** aplazarlos con esas fechas y publicar sus limitaciones en las notas de 1.35.0. SEC-115 tiene realismo bajo y un margen medido de más de 30× sobre los REQ reales; C no tiene reparación que quepa en esta versión sin ser otra versión.
   - **QA-023-02 / SEC-117:** es de severidad crítica y de realismo no bajo, pero preexistente y ajeno al alcance de 1.35.0. **El auditor (R-045 §3) recomienda lo mismo que la coordinadora:** publicarlo declarado y abrir su REQ de reparación de inmediato, como parche propio, con revisión el 2026-10-06. Motivo: el defecto ya está en 1.33.2 y en `v1.34.0`, que son las versiones instaladas, así que retener 1.35.0 no protege a nadie y deja vivo el bypass por variante que 1.35.0 cierra dentro de su frontera.
     - **Condiciones del auditor:** notas correctas y ficha 1 corregida (ya hecho aquí). Además, conviene ejecutar el lado del CLI en una sesión real antes de reparar.
     - **REQ-001:** el auditor recomienda añadir `SEC-117 (instrumento)` a su `Hallazgos abiertos:` sin tocar su `Estado:`. REQ-001 se reabriría por §9 cuando el REQ de reparación versione CA-10/CA-11. QA pide que tu decisión sobre esta ficha lo resuelva de forma expresa. **Registrarlas aquí no las convierte en riesgos aceptados.**
-- **Espera:** decisión del propietario sobre las fichas 1 (SEC-115/SEC-118) y 2 (C). La ficha 3 y la decisión 5 se resolvieron en la tercera autorización del 2026-09-29, y su reparación está en curso. La decisión 4 está resuelta y su corrección se hizo (`e7562e7`), con QA-023-05 cerrado; la determinación de seguridad no se ha emitido porque QA no fue favorable. **Trabajo que sigue mientras tanto:** el candidato v1.35.0 —SEC-047 (mitad 1 de REQ-023) y la preparación de la versión—, autorizado el 2026-09-29; no depende de estas dos decisiones. **Cerrar REQ-023 y REQ-031 queda pendiente** mientras esta entrada esté aquí.
+- **Espera:** decisión del propietario sobre la **decisión 6** (P-SEC117), que impide implementar SEC-117, y sobre las fichas 1 (SEC-115/SEC-118) y 2 (C). La ficha 3 y la decisión 5 se resolvieron en la tercera autorización del 2026-09-29. La decisión 4 está resuelta y su corrección se hizo (`e7562e7`), con QA-023-05 cerrado; la determinación de seguridad no se ha emitido porque QA no fue favorable. **Trabajo que sigue mientras tanto:** el candidato v1.35.0 —SEC-047 (mitad 1 de REQ-023) y la preparación de la versión—, autorizado el 2026-09-29; no depende de estas dos decisiones. **Cerrar REQ-023 y REQ-031 queda pendiente** mientras esta entrada esté aquí.
 
 ## Resueltas
 
