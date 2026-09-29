@@ -140,10 +140,11 @@ for f in "$PROY/$REQ_DIR"/*.md; do
     case "$vistos" in *"|$ARNES_CLAVE|"*) ;; *) continue ;; esac
     k="$ARNES_CLAVE"
     CNT[$k]=$(( ${CNT[$k]:-0} + 1 ))
-    # `Estado:` gobierna por su PRIMERA aparicion y los demas campos por la ULTIMA: es la
-    # asimetria heredada que aplican la puerta y `campos-req.awk`, y este informe la
+    # Para LEER, `Estado:` gobierna por su PRIMERA aparicion y los demas campos por la ULTIMA:
+    # es la asimetria heredada que aplican la puerta y `campos-req.awk`, y este informe la
     # respeta en vez de tener su propia opinion. Solo se nota en un REQ malformado — que
-    # es, exactamente, el REQ que hay que mirar.
+    # es, exactamente, el REQ que hay que mirar, y que desde REQ-023 ya se nombra abajo como
+    # cabecera ambigua si la clave repetida es de control (al cerrar, la puerta deniega).
     if [ "$k" != 'Estado' ] || [ "${CNT[$k]}" -eq 1 ]; then
       CRU[$k]="$ARNES_VALOR"; DEC[$k]="$ARNES_CLAVE_DECORADA"; LIN[$k]="$l"
     fi
@@ -159,11 +160,25 @@ for f in "$PROY/$REQ_DIR"/*.md; do
   # enterraba las 14 reales. Un informe que lee distinto de la puerta sobre la que informa
   # miente.
   arnes_norm_campo "$cru_est"; arnes_veredicto "$ARNES_CAMPO"; est="$ARNES_VEREDICTO"
+
+  # El mismo camino que recorren los hooks, ni uno distinto. Va ANTES de separar las notas:
+  # un archivo sin `Estado:` legible puede serlo justamente porque su `Estado:` es una variante.
+  arnes_campos_req "$texto" ''
+
+  # UNA CABECERA AMBIGUA ES ANOMALIA, tambien en un archivo que este informe cuenta como nota
+  # (REQ-023 CA-07): una clave de control escrita de otra forma que la maquina no lee como esa
+  # clave, o declarada mas de una vez —decorada o no, canonica o variante—. Es lo que la
+  # puerta de cierre DENIEGA, y una variante invisible no se ve en el diff: el informe no
+  # puede callarla. Las lineas, la clave y la forma de decirlo salen del MISMO lector que la
+  # puerta (`arnes_campos_req` y `arnes_ambigua_item`, hooks/lib.sh), no de una transcripcion.
+  for ((ia = 0; ia < ${#ARNES_AMB_N[@]}; ia++)); do
+    arnes_ambigua_item "$ia"
+    avisa "${base%.md}" "${ARNES_AMB_CLAVE[ia]}:" "$ARNES_AMB_ITEM" 'cabecera ambigua' \
+      "la puerta de cierre DENIEGA mientras siga así (una clave de control escrita de otra forma no se lee como esa clave, y dos declaraciones obligarían a elegir una). Deja cada clave de control una sola vez, escrita como la plantilla de requirements/README.md."
+  done
+
   if [ -z "$est" ]; then notas=$((notas+1)); continue; fi
   reqs=$((reqs+1))
-
-  # El mismo camino que recorren los hooks, ni uno distinto.
-  arnes_campos_req "$texto" ''
   case "$ARNES_RIGOR" in critico) nc=$((nc+1)) ;; estandar) ne=$((ne+1)) ;; ligero) nl=$((nl+1)) ;; esac
 
   case "$ESTADOS_OK" in *"|$est|"*) ;; *)
@@ -195,11 +210,14 @@ for f in "$PROY/$REQ_DIR"/*.md; do
   #   * la linea que manda viene DECORADA y es la unica que declara el campo -> aviso de
   #     forma: el valor es impecable, la puerta lo lee bien y el informe NO cambia de
   #     codigo por esto;
-  #   * la cabecera declara el campo MAS DE UNA VEZ y la que gobierna es la decorada ->
-  #     ANOMALIA por la via unica (`avisa`, salida != 0): el documento dice dos cosas y la
-  #     maquina elige una sin avisar. Ahi no sobra el ruido: falta el aviso.
+  #   * la cabecera declara el campo MAS DE UNA VEZ -> ANOMALIA por la via unica (`avisa`,
+  #     salida != 0): el documento dice dos cosas y la maquina elige una sin avisar. Para una
+  #     CLAVE DE CONTROL ya la ha nombrado, linea a linea y decorada o no, el bloque de la
+  #     cabecera ambigua de arriba (REQ-023 CA-07), y aqui no se repite; para cualquier otro
+  #     campo que el lector reconozca sigue la regla de antes: anomalia si gobierna la decorada.
   for k in "${CAMPOS[@]}"; do
     [ "${DEC[$k]:-0}" = "1" ] || continue
+    if [ "${CNT[$k]:-0}" -gt 1 ] && arnes_en_vocab "$k" "$ARNES_CLAVES_CONTROL"; then continue; fi
     arnes_norm_campo "${CRU[$k]:-}"; arnes_veredicto "$ARNES_CAMPO"
     if [ "${CNT[$k]:-0}" -gt 1 ]; then
       avisa "${base%.md}" "$k:" "${LIN[$k]}" "$ARNES_VEREDICTO" \

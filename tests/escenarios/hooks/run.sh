@@ -1574,7 +1574,10 @@ done
 # Y 978 → 980 por la vuelta 3 de REQ-031 (SEC-113, remedio B): +2 en la sección 08 (65 → 67),
 # 255 371 bytes y la reapertura sobre el techo; los cuatro casos de CA-A13 ganan las tres
 # comprobaciones de CA-A15.4 sin cambiar el número.
-CASOS_ESPERADOS=980
+# Y 980 → 1149 por REQ-023 (ADR-014): +169 en la sección 41, nueva —la cabecera ambigua: la tabla de
+# CA-08 por Edit y por Write con su fail-before contra 713ac68 y 1.33.2 y sus controles en las dos
+# direcciones, y los casos de CA-02 a CA-12—. Ninguna sección existente cambia su número.
+CASOS_ESPERADOS=1149
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

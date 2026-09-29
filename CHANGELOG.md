@@ -2,6 +2,31 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-29 · REQ-023 implementado (mitad 1 de SEC-047): una variante de una clave de control, o una clave de control repetida, deja la cabecera ambigua y no deja cerrar; `en-revisión` — SIN VALIDAR (pendiente QA y seguridad)
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: desarrollador (vuelta dev↔QA 1 de 3); coordinadora (commit). Unos 735 k tokens en la comisión del desarrollador.
+
+- **Código.** En `hooks/lib.sh`:
+  - la constante `ARNES_CLAVES_CONTROL`, única enumeración de las claves;
+  - la frontera `_arnes_clave_control`, que mide primero la clave en bytes. Después aplica un prefiltro derivado de la constante, busca el marcador tras los bytes descartados, comprueba la estructura con los nueve delimitadores y compara el esqueleto derivado. Corre bajo `LC_ALL=C`, sin rangos ni procesos;
+  - el recuento de la cabecera ambigua, dentro del recorrido que `arnes_campos_req` ya hacía.
+
+  En `hooks/guard-completado.sh`, la denegación del intento de cierre, con las líneas escapadas; U1 conserva el motivo de REQ-031 CA-A12. En `tools/arnes-lectura.sh`, toda variante y toda repetición de una clave de control son anomalía.
+- **Banco.** Sección 41 con 169 casos: la tabla de CA-08 por `Edit` y por `Write`, el fail-before contra `713ac68` y contra 1.33.2 con controles en las dos direcciones, y CA-02…CA-12. `CASOS_ESPERADOS` pasa de 980 a 1149.
+- **Superficie heredada.** Fila nueva en `AGENTS.md` §13 y en su plantilla; viñeta «Cabecera ambigua» en `arnes-upgrade` § «Hacia 1.35.0» (cambio de compatibilidad).
+- **Medido por el desarrollador** (WSL2, bash 5.3.9):
+  - Banco completo: 1137 PASS · 0 FAIL · 12 SKIP (1 INCONCLUSO ajeno, REQ-017 CA-03); cuadre 1149.
+  - Autoprueba: 117/0.
+  - 0 de 29 cabeceras ambiguas, con control positivo.
+  - Las 35 filas R permiten en `713ac68` y en 1.33.2, y deniegan en la candidata.
+
+  Una corrida intermedia dio 1 FAIL de reloj en la sección 25, que también falla contra `713ac68` en esta máquina; queda conservado en la evidencia. El reloj se registró sólo como observación: **no acredita rendimiento**.
+- **Declarado por el desarrollador.** Editó `hooks/` y `tools/` con `Edit`. Pero la sección 41, el README del banco, `AGENTS.md`, la plantilla, la guía y dos veces la fila del Historial de `requirements/REQ-023.md` se escribieron con scripts de python3, fuera de las herramientas de edición. Esas escrituras no tocaron la cabecera del REQ, pero `guard-completado` no las evaluó (`AGENTS.md` §13). QA lo comprueba.
+- **Abierto:**
+  - el tope de 20 líneas en el motivo, frente a CA-01 (i), que pide citar cada línea: lo decide el analista, porque un motivo de más de 128 KB deja la puerta sin salida;
+  - un fail-open preexistente del motivo de REQ-031 CA-A12 con miles de repeticiones: defecto independiente, se registra con responsable y **no** se repara aquí;
+  - el margen de REQ-017 CA-08 (ii): la candidata da 1,08–1,13× en reposo frente a 0,97–1,05× de la base, con techo 1,25×.
+- **Avance (regla 6):** implementación lista; falta la decisión del analista sobre CA-01 (i), la preparación de la versión, QA y seguridad.
+
 ## [GitHub] — 2026-09-29 · REQ-023 versionado (mitad 1 de SEC-047): una variante de una clave de control, o una clave de control repetida, deja la cabecera ambigua y no deja cerrar — ADR-014; `pendiente` para desarrollo
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: analista-requerimientos (write-back §9); coordinadora (ajuste del marcador y commit). Unos 430 k tokens en la comisión del analista.
 

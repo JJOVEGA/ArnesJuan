@@ -27,10 +27,15 @@ DIR="${BASH_SOURCE[0]%/*}"
 # "si" disfrazado.
 #
 # QUE LEE LA PUERTA (REQ-031 CA-A11.4): el valor de LA linea de cabecera cuya clave reconoce
-# el lector, que tiene que ser UNA sola (CA-A12). Lo que no alcanza a ver no lo lee
-# (ejemplos no exhaustivos: una continuacion sin clave, una clave con un caracter invisible o
-# un homoglifo —SEC-047/SEC-078—, un comentario HTML de la cabecera, una linea bajo el primer
-# `## `): ahi no hay promesa, y el README lo dice.
+# el lector, que tiene que ser UNA sola (CA-A12). Una VARIANTE de la clave —escrita de otra
+# forma: mayusculas, un blanco de mas, un caracter invisible, un marcador de lista— tampoco se
+# lee, pero ya no se resuelve como ausencia: deja la cabecera AMBIGUA y, cuando hay documento
+# resultante que juzgar, el cierre se deniega antes de llegar aqui (REQ-023, SEC-047; frontera
+# en `_arnes_clave_control`, lib.sh; el `Edit` cuyo `old_string` no esta en el archivo —la
+# herramienta no escribira nada— se sigue juzgando como antes, frontera (g) de REQ-023). Lo
+# demas que no alcanza a ver no lo lee (ejemplos no exhaustivos: una continuacion sin clave,
+# un homoglifo y lo que queda fuera de esa frontera, un comentario HTML de la cabecera, una
+# linea bajo el primer `## `): ahi no hay promesa, y el README lo dice.
 #
 # Se llama SOLO en la transicion a `completado` (reabrir no pasa por aqui, CA-A08). Usa `$rel`
 # y lo que publica `arnes_campos_req`. "Permitir" es `return 0`; `arnes_deny` termina.
@@ -44,9 +49,11 @@ arnes_clase_hallazgo() {
         sin_clase clase_mala clase_mala_v bloq bloq_v ci cj c p t0 trozo id_crudo visto blanco \
         pend noasc id_txt frag_h elem_h
 
-  # CA-A12 (SEC-112): la clave REPETIDA no se resuelve eligiendo una. Para el resto de claves
-  # el lector deja ganar a la ultima; aqui eso escondia un `contrato` escrito mas arriba. Se
-  # juzga ANTES que el valor, sea cual sea el de cada linea.
+  # CA-A12 (SEC-112): la clave REPETIDA no se resuelve eligiendo una. Para LEER, el resto de
+  # claves deja ganar a la ultima; aqui eso escondia un `contrato` escrito mas arriba. Se
+  # juzga ANTES que el valor, sea cual sea el de cada linea. (Al cerrar, cualquier otra clave
+  # de control repetida ya denego antes, por cabecera ambigua: REQ-023. Esta repeticion, cuando
+  # es la unica ambiguedad, conserva esta puerta y este motivo.)
   if [ "${ARNES_HALL_N:-0}" -gt 1 ]; then
     arnes_deny "ARNES: no se puede completar '$rel': la cabecera declara 'Hallazgos abiertos:' $ARNES_HALL_N veces (${ARNES_HALL_LINEAS}), y la puerta no elige una: ni la primera ni la ultima, y no las fusiona. Deja UNA sola linea 'Hallazgos abiertos:' en la cabecera y conserva en ella todos los hallazgos, separados por comas (requirements/README.md, seccion 'Clases de hallazgo'). La puerta no reescribe el archivo."
   fi
@@ -242,7 +249,7 @@ arnes_guard_completado() {
   local -a piezas=()
   local modo resultante reconstruido np k old new ra done_norm est_antes est_despues
   local cita_desp est_citado cr_desp cr_linea
-  local seg_antes
+  local seg_antes amb intento v
 
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
@@ -447,7 +454,7 @@ arnes_guard_completado() {
   # idéntica conservada al editar prosa no es una firma nueva.
   if [ "$reconstruido" -eq 1 ]; then arnes_campos_req "$resultante" ''
   else arnes_campos_req "$disk" "$nuevo"; fi
-  qa="$ARNES_QA"; seg="$ARNES_SEG"; sens="$ARNES_SENS"; rigor="$ARNES_RIGOR"
+  qa="$ARNES_QA"; seg="$ARNES_SEG"; sens="$ARNES_SENS"; rigor="$ARNES_RIGOR"; amb="$ARNES_AMBIGUA"
 
   # --- Aviso al ESCRIBIR un veredicto fuera del vocabulario (NO deniega) ------------
   # Medido en un proyecto real: cuatro REQ llevaban SEMANAS con un `QA:` que la puerta no
@@ -554,6 +561,39 @@ arnes_guard_completado() {
     if [ "$cita_desp" = "1" ] && [ "$est_antes" != "$done_norm" ] &&
        { [ "$est_despues" = "$done_norm" ] || [ "$est_citado" = "$done_norm" ]; }; then
       arnes_deny "ARNES: no se puede completar '$rel': su cabecera ABRE un rango de comentario '<!--' que NO se cierra con '-->' antes del fin de la cabecera (el primer '## '). Lo que cae dentro de un comentario no declara campo, asi que con el rango abierto esta puerta no puede saber que veredictos se han quedado dentro ni cual gobierna — y no permite por AUSENCIA de un campo que un comentario se trago. Salida: cierra el comentario con '-->' dentro de la cabecera, o saca la nota fuera de ella. Un veredicto historico se documenta en el Historial de cambios, no en la cabecera."
+    fi
+    # CABECERA AMBIGUA (REQ-023, ADR-014; SEC-047, QA-031-01): una VARIANTE de una clave de
+    # control —la clave escrita de otra forma, que el lector no lee como tal; frontera en
+    # `_arnes_clave_control`, lib.sh— o una clave de control declarada MAS DE UNA VEZ, aunque
+    # diga lo mismo. La puerta no lee la variante como la clave ni elige entre declaraciones, y
+    # sobre todo NO permite por la AUSENCIA que eso produciria: DENIEGA el cierre, sean cuales
+    # sean los veredictos, citando las lineas. Lo publica `arnes_campos_req` sobre la cabecera
+    # resultante (la del ultimo texto que leyo, que aqui es `resultante`, si no esta vacia).
+    #
+    # INTENTO DE CIERRE = el estado terminal en CUALQUIER `Estado` de la cabecera resultante,
+    # variante o repeticion incluida —un `ESTADO: completado` no se lee y esconderia la
+    # transicion—, y el `Estado` que gobierna en disco NO era el terminal. Reabrir, editar sin
+    # cerrar o conservar la forma de un REQ que ya estaba cerrado no se bloquea (mismo alcance
+    # que el rango sin cerrar). El `Estado` que gobierna ya esta normalizado (`est_despues`);
+    # los demas se normalizan SOLO aqui, SOLO si la cabecera es ambigua y SOLO hasta encontrar
+    # el terminal: es la unica lectura del valor de una variante, y solo puede denegar.
+    if [ -n "$resultante" ] && [ "$amb" = 1 ] && [ "$est_antes" != "$done_norm" ]; then
+      intento=0
+      if [ "$est_despues" = "$done_norm" ]; then
+        intento=1
+      else
+        for ((k = 0; k < ${#ARNES_ESTADO_OTROS[@]}; k++)); do
+          v="${ARNES_ESTADO_OTROS[k]}"
+          arnes_norm_campo "$v"; arnes_veredicto "$ARNES_CAMPO"
+          if [ "$ARNES_VEREDICTO" = "$done_norm" ]; then intento=1; break; fi
+        done
+      fi
+      if [ "$intento" -eq 1 ]; then
+        arnes_ambigua_motivo
+        # El texto fijo va en ASCII: asi NINGUN byte >= 0x80 aparece crudo en el motivo, y el
+        # que lleve una linea citada sale escapado (REQ-023 CA-01 (iii)).
+        arnes_deny "ARNES: no se puede completar '$rel': su cabecera es AMBIGUA para esta puerta: $ARNES_AMBIGUA_MOTIVO. Una clave de control escrita de otra forma no se lee como esa clave, y declarada mas de una vez obligaria a elegir una; la puerta no elige, no lee la variante como la clave y no permite por la AUSENCIA que eso produciria (AGENTS.md 1). Salida: escribe cada clave de control (${ARNES_CLAVES_CONTROL//|/, }) una sola vez y como la escribe la plantilla de requirements/README.md, seccion 'Veredictos de validacion'. La puerta no reescribe el archivo."
+      fi
     fi
     [ "$est_despues" = "$done_norm" ] || return 0
     [ "$est_antes" != "$done_norm" ] || return 0

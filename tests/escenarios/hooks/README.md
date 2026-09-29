@@ -32,7 +32,7 @@ bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del cor
 ARNES_SONDA_CONTROLES=1 bash tests/escenarios/hooks/run.sh secciones/37-coste-del-escaner-7-*.sh
                                                          # los controles de medición de las sondas de coste
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **920 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1149 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`). La línea
 `Resultado:` cuenta **aparte** los `SKIP` que son **INCONCLUSO** —una sonda de coste que no acreditó
 nada en esa corrida— y los nombra debajo; el código de salida **no** depende de ellos
@@ -275,6 +275,13 @@ Tres reglas nacidas de fallos reales:
 | Sondas (38/3) | el ayudante de veredicto sobre 13 registros sintéticos | `estado≠ok` o `vivos>0` en medición ⇒ **SKIP**; vacío, ilegible, ambiguo, `vivos` ausente, emisor no declarado o sin su calibración ⇒ **FAIL** |
 | Sondas (38/3) | `vivos>0` en una **calibración** frente a `vivos>0` en una **medición** | **FAIL** y **SKIP**: no es el mismo hecho |
 | Coste (37/1 a 37/5) | el **materializador inline** de la línea base (`mat37`/`mat47`) | contenido **y modo del objeto del árbol**, `archivos=<n>` publicado, y `sin-linea-base` **con motivo** cuando no puede |
+| Cabecera ambigua (41) | una **variante** de una clave de control (mayúsculas, blanco de más, BOM, U+200B, NBSP, `0xc3` suelto, `- `, `1. `, BOM y `- `) o una clave de control **repetida** —también con el mismo valor—, por `Edit` y por `Write` (filas R1–R18 de REQ-023 CA-08) | **deny** citando las líneas, con los bytes invisibles escapados |
+| Cabecera ambigua (41) | las mismas filas contra **713ac68** (materializado por SHA con `mat41`) y contra la instalación estable **1.33.2** | **allow** en las dos (fail-before); sin un árbol, **SKIP** con el motivo |
+| Cabecera ambigua (41) | cada fila R **sin** la variante o la repetición; y las filas A, S, U y F (ausencia legítima, prosa, cita, estructura `>`/`«»`/`()`/`[]`/`&`, reabrir, CRLF, fronteras declaradas) | **decide igual** en 713ac68 y en la candidata; U1 conserva el motivo de REQ-031 CA-A12 |
+| Cabecera ambigua (41) | el **dominio de campos** derivado midiendo (presente deniega, ausente abre) y la clase descartada: C0/DEL, anchura cero, UTF-8 mal formado y una entrada **al azar** con su semilla | toda variante **deniega**; la clase cabe en la constante; anti-vacuidad contra 713ac68 |
+| Cabecera ambigua (41) | el corpus del banco (por glob) y los REQ de `requirements/`, candidata frente a 713ac68; los cuatro lectores; C.UTF-8 frente a C | **mismos valores**; decisiones iguales salvo denegaciones por ambigüedad con variante o repetición **real**; veredicto y motivo **invariantes al locale** |
+| Cabecera ambigua (41) | el código nuevo leído (sin procesos, sin rangos, bajo `LC_ALL=C`, la clave medida antes de tocarla) y las invocaciones de `arnes_norm_clave` y `arnes_norm_campo` contadas contra 713ac68 | **0** construcciones que crean procesos; **no más** recorridos; normalizaciones añadidas sólo en la cabecera ambigua |
+| Cabecera ambigua (41) | `tools/arnes-lectura.sh` ante una variante, una repetición, una nota con `ESTADO:` y una decorada única | anomalía y salida **≠ 0** en las tres primeras; la decorada única **no** cambia el código de salida |
 
 **Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
 falsea la máquina, el runner del CI y la carga. Los de arriba son **cocientes de duplicación**

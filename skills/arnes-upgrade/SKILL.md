@@ -974,6 +974,54 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   `analista-requerimientos`. Si prefieres seguir con tu texto actual, conservarlo es una respuesta
   válida.
 
+- **Cabecera ambigua (REQ-023, ADR-014): una clave de control escrita de otra forma, o declarada más
+  de una vez, ya no se lee como AUSENCIA — deja la cabecera ambigua, y una cabecera ambigua no deja
+  cerrar. ES UN CAMBIO DE CONDUCTA Y DE COMPATIBILIDAD.** Las claves de control son `Estado`, `QA`,
+  `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos` y `Rigor`. La conducta nueva **llega con
+  el plugin**, sin migrar nada: está en `hooks/lib.sh` y `hooks/guard-completado.sh`, y no hay llave
+  nueva en `.arnes/config.json`.
+  - **Lo que deja de cerrar, dicho entero.** Una cabecera con una **variante** de una clave de control
+    —`HALLAZGOS ABIERTOS:`, `qa:`, un blanco de más, un BOM, un espacio de anchura cero o un espacio
+    duro delante o dentro de la clave, `- Rigor:`, `1. QA:`— **deniega el cierre**. Y una clave de
+    control **declarada dos veces deniega el cierre también con el MISMO valor**: `QA: aprobado` dos
+    veces cerraba hasta `v1.34.0` y ahora no cierra (cambio de compatibilidad aceptado expresamente
+    por el propietario, ADR-014). La puerta cita las líneas, con los caracteres invisibles escritos
+    de forma legible; **reabrir**, o editar un REQ sin cerrarlo, no se bloquea. La salida es de una
+    línea: **cada clave de control una sola vez, escrita como la plantilla** de
+    `requirements/README.md` (§ «Veredictos de validación»).
+  - **Sin eufemismo: las versiones anteriores pudieron cerrar un REQ `critico` sin validación ni
+    auditoría.** Un BOM —el que añade PowerShell al redirigir— delante de `Sensible a seguridad: sí`,
+    con `Rigor: ligero`, cerraba un REQ con `QA: pendiente` y `Seguridad: pendiente`; y un carácter
+    invisible, o unas mayúsculas, delante de `Hallazgos abiertos:` hacían desaparecer un hallazgo
+    `contrato` que bloqueaba (SEC-047, R-012; QA-031-01).
+  - **Qué hay que auditar, y va antes que cualquier comando: la pregunta es de ESTADO** —**cuáles de
+    tus REQ en estado terminal NO cerrarían hoy**, leídos con el lector de esta versión—. **Ningún
+    comando la responde todavía**: se hace a mano, REQ a REQ, comprobando que su cabecera vigente
+    autorizaba el cierre; el que no lo autorizaba se reabre (`AGENTS.md` §9).
+  - **El barrido POR VÍA que sí puedes correr, y lo que NO encuentra** —ayuda a empezar por los
+    sospechosos y **no** sustituye a la pregunta de arriba—. Con el informe de **esta** versión (el de
+    tu versión instalada no las ve), antes o después de actualizar:
+    `bash <plugin 1.35.0>/tools/arnes-lectura.sh <tu proyecto>` nombra cada línea ambigua —el REQ, la
+    línea escapada, la clave y la consecuencia— por la vía de las anomalías y **sale ≠ 0** mientras
+    quede alguna, también en un archivo que el informe cuenta como nota. **Ese comando interroga UNA
+    vía, no la propiedad** —las variantes y repeticiones de las claves de control dentro de la
+    frontera declarada—, y **no hallar nada NO acredita ausencia de exposición**. Vías conocidas que
+    **no** encuentra (ejemplos **no exhaustivos**; el sitio único donde viven es
+    `docs/seguridad/registro-seguridad.md`, SEC-047 y SEC-050): una letra sustituida por un
+    **homoglifo**; una letra ASCII **de más, de menos o cambiada**; unos **dos puntos que no son
+    ASCII**; una línea con un **signo de estructura** visible —también un espacio duro en lugar del
+    blanco que sigue al guion del marcador—; una clave de **más de 256 bytes**, que es una
+    **limitación**: se sigue leyendo como ausencia y ese límite **no** la protege; **comentar o
+    borrar** la línea de un campo (SEC-050, la semántica de la ausencia, que esta versión no cambia);
+    y lo que un lector de bash no ve (un byte NUL, un archivo en UTF-16). Si el informe no saca nada,
+    **no has terminado**: vuelve a la pregunta de estado.
+  - **Qué se migra de texto:** la **fila nueva de `AGENTS.md` §13** («una cabecera ambigua no deja
+    cerrar») y el párrafo de **`requirements/README.md` § «Veredictos de validación»** que define la
+    variante y su frontera, cada uno **por separado** y con la misma identificación por contenido y
+    título y la misma tabla de estados de la primera entrada de este apartado. **Las notas de las
+    versiones pasadas no cambian**: la regla de «última aparición» sigue siendo con la que **se leen**
+    los valores; lo nuevo es que, **al cerrar**, una clave de control repetida deniega.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas
