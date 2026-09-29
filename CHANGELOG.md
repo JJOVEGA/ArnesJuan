@@ -2,6 +2,35 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-29 · REQ-023, vuelta 3 de 3 (la última): QA-023-03 corregido POR PROPIEDAD en todas sus sedes — cuándo deniega la cabecera ambigua, dicho entero; comprobado contra la puerta real antes de devolverlo a QA
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: analista-requerimientos (texto, write-back §9); desarrollador (un comentario); coordinadora (comprobación previa y commit). Unos 35 k tokens del analista y 12 k del desarrollador en esta vuelta.
+
+**La propiedad, sustituyendo al caso suelto:** la puerta deniega cuando se cumplen a la vez tres condiciones:
+1. la cabecera resultante es ambigua;
+2. alguna de sus líneas `Estado` —la exacta, una repetida o una variante— dice el estado terminal;
+3. la línea `Estado` que gobierna en disco (la primera exacta; si no hay ninguna, nada lo decía) no lo decía.
+
+**No juzga nada más:** reabrir un REQ cuyo `Estado` que gobierna ya es terminal no se bloquea, ni una edición tras la cual ninguna línea `Estado` dice el terminal.
+
+**Consecuencia:** si en disco el terminal está en una línea `Estado` que no gobierna, toda edición que la conserve se deniega mientras la cabecera siga siendo ambigua. La que la retira, la corrige o deshace la ambigüedad no se deniega por esto.
+
+**Sedes corregidas:**
+- REQ-023 CA-01 e Historial;
+- `requirements/README.md` y su plantilla (idénticas, líneas 89–98);
+- `skills/arnes-upgrade/SKILL.md`;
+- ADR-014 (Decisión 4 y Consecuencias);
+- las notas `[1.35.0]`;
+- el comentario de `hooks/guard-completado.sh`: sólo comentario, demostrado con el parser y con control positivo.
+
+**Comprobación previa de la coordinadora, con la puerta real del candidato:** los diez casos coinciden con el texto.
+- Deniega: D0 (variante), D1/X1 (segunda línea exacta) y D2/X2 (sólo la variante).
+- Permite: P1 (reabrir), P2 y P3 (ninguna línea `Estado` terminal), y P4a/P4b (retirar la línea que sobra).
+- X1 retirando la primera línea es un cierre normal: con los veredictos en verde se permite, y con `QA: pendiente` lo deniega la puerta de siempre, no esta regla.
+
+**Comprobado por el desarrollador:** tres gates en verde; secciones 41, 08 y 32: 276 PASS · 0 FAIL.
+
+**Avance (regla 6):** reparación de la vuelta 3 construida; falta la reverificación final de QA y la auditoría.
+
 ## [Interno] — 2026-09-29 · REQ-023: QA vuelta 2 de 3 sobre `eeb627d` → `con-hallazgos` (QA-023-01 y -04 cerrados; QA-023-03 sigue abierto por reparación parcial)
 > Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 (qa-tester) · agente: qa-tester. Unos 110 k tokens en esta vuelta.
 
@@ -198,10 +227,14 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      **declarada más de una vez**. Variantes son, por ejemplo, la clave en mayúsculas, con un blanco
      de más, con un BOM o un carácter invisible, o con un marcador de lista.
    - **Cómo responde la puerta:** deniega citando las primeras 20 líneas ambiguas y cuántas quedan.
-     Reabrir, o editar sin cerrar, no se bloquea, **salvo en un caso**: si la cabecera en disco declara
-     el estado terminal sólo en una variante (`ESTADO: completado`) mientras su `Estado:` exacto dice
-     otro, se deniega toda edición que conserve esa variante; la que la retira o la corrige no se
-     deniega.
+     **Sólo deniega** cuando la cabecera resultante es ambigua, **alguna** línea `Estado` —la exacta,
+     una repetida o una variante— dice el estado terminal y el `Estado` que gobierna en disco (la
+     primera declaración exacta; si no hay ninguna, nada lo decía) no lo decía. Por eso reabrir un REQ
+     cerrado no se bloquea, ni una edición tras la cual ninguna línea `Estado` dice el terminal. Pero si
+     en disco el terminal está en una línea `Estado` que **no** es la que gobierna —una variante, o una
+     exacta que no es la primera— y la que gobierna no lo dice o no existe, se deniega **toda** edición
+     que conserve esa línea mientras la cabecera siga siendo ambigua, y no la que la retira o la corrige.
+     Detalle en `requirements/REQ-023.md` CA-01.
    - **Una clave de control repetida deniega aunque sus valores coincidan. Hasta `v1.34.0`, esa
      cabecera cerraba.** Es un cambio **aceptado expresamente por el propietario** el 2026-09-29.
    - **Por qué:** en las versiones anteriores, un BOM delante de `Sensible a seguridad: sí`, con

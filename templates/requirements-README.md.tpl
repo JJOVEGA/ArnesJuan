@@ -86,10 +86,16 @@ sola vez). Si la cabecera escribe una de ellas **de otra forma** —una
 *variante*— o la declara **más de una vez**, **aunque las dos líneas digan lo mismo**, la cabecera es
 **ambigua** y la puerta **deniega el cierre** citando las líneas —las primeras, y cuántas más hay—, con
 los caracteres invisibles escritos de forma legible; `tools/arnes-lectura.sh` las nombra todas. No lee la variante como la clave ni elige entre dos declaraciones, y ningún lector
-cambia el valor que lee. Reabrir un REQ, o editarlo sin cerrarlo, no se bloquea por esto, **salvo en un
-caso**: si la cabecera en disco declara el estado terminal sólo en una variante (`ESTADO: completado`)
-mientras su `Estado:` exacto dice otro, se deniega toda edición que conserve esa variante; la edición que
-la retira o la corrige no se deniega. Para
+cambia el valor que lee. **Cuándo deniega, dicho entero:** cuando la cabecera que quedaría escrita es
+ambigua, **alguna** de sus líneas `Estado` —la exacta, una repetida o una variante— dice el estado
+terminal, y la línea `Estado` que gobierna en disco (la primera declaración exacta; si no hay ninguna,
+nada lo decía) **no** lo decía. Nada más: reabrir o editar un REQ cuyo `Estado` que gobierna en disco ya
+es el terminal no se bloquea por esto, ni una edición tras la cual ninguna línea `Estado` dice el
+terminal. **Consecuencia:** si en disco el terminal está en una línea `Estado` que **no** es la que
+gobierna —una variante, o una declaración exacta que no es la primera— y la que gobierna no lo dice o no
+existe, se deniega **toda** edición que conserve esa línea mientras la cabecera siga siendo ambigua,
+aunque no toque el estado; la que la retira, la corrige o deshace la ambigüedad no se deniega por esto.
+Para
 `Hallazgos abiertos` repetida con su forma exacta decide su propia regla («Clases de hallazgo», abajo).
 
 **Qué es una variante, por propiedad.** Una línea de la cabecera —antes del primer `## `, fuera de todo

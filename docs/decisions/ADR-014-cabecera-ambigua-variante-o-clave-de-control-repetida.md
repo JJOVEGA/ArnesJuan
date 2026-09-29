@@ -46,11 +46,14 @@ valor), no por su tamaño.
 4. **Respuesta:** una cabecera **ambigua** —una variante, o una clave de control declarada más de una
    vez, canónica o variante, **aunque los valores coincidan**— **deniega el cierre** citando las líneas
    con los bytes invisibles escapados —las primeras N y cuántas quedan, porque un motivo sin tope puede
-   dejar la puerta sin salida y una puerta sin salida permite; el informe las nombra todas—. La variante **nunca** se lee como la clave y ningún lector cambia
-   sus valores; reabrir, editar sin intentar cerrar o conservar la forma de un REQ ya cerrado no se
-   bloquea, **con una excepción** (la de la variante en disco, en «Consecuencias»): una cabecera que en disco declara el
-   estado terminal sólo en una variante deniega toda edición que la conserve. `Hallazgos abiertos`
-   canónica repetida conserva la puerta y el motivo de REQ-031 CA-A12.
+   dejar la puerta sin salida y una puerta sin salida permite; el informe las nombra todas—. La variante
+   **nunca** se lee como la clave y ningún lector cambia sus valores. **Sólo deniega** cuando la cabecera
+   resultante es ambigua, **alguna** línea `Estado` —la exacta, una repetida o una variante— dice el
+   estado terminal y el `Estado` que gobierna en disco (la primera declaración exacta; si no hay ninguna,
+   nada lo decía) no lo decía: reabrir o editar un REQ ya cerrado no se bloquea, ni una edición tras la
+   cual ninguna línea `Estado` dice el terminal. La consecuencia para las cabeceras que ya están así en
+   disco va en «Consecuencias». `Hallazgos abiertos` canónica repetida conserva la puerta y el motivo de
+   REQ-031 CA-A12.
 5. **Fuera, declarado y sin promesa de reconocimiento universal:** el homóglifo; una letra ASCII de más,
    de menos o cambiada; unos dos puntos no ASCII; las líneas con carácter de estructura visible —incluido
    un NBSP en lugar del blanco ASCII que sigue al marcador (`-`+NBSP+`Estado:`), que no forma marcador y
@@ -108,8 +111,11 @@ semántica de la **ausencia** de un campo, que es REQ-024.
   vuelve a medir (REQ-023 CA-04).
 - (−) La frontera **no es universal**, y se dice: lo que queda fuera se sigue leyendo como ausencia.
   Las claves de más de 256 bytes son una limitación, no una zona protegida.
-- (−) Una cabecera que **en disco** declara el estado terminal sólo en una variante, con un `Estado:`
-  canónico no terminal, deniega toda edición que la conserve hasta que alguien la corrija; la edición
-  que la corrige no se deniega.
+- (−) Si la cabecera **en disco** lleva el estado terminal en una línea `Estado` que **no** es la que
+  gobierna —una variante, o una declaración exacta que no es la primera— y la que gobierna no lo dice o
+  no existe, se deniega **toda** edición que conserve esa línea mientras la cabecera siga siendo ambigua,
+  aunque no toque el estado; la que la retira, la corrige o deshace la ambigüedad no se deniega por esto
+  (si deja el terminal como el `Estado` que gobierna, es un cierre y lo juzgan las puertas de siempre).
+  Detalle en REQ-023 CA-01.
 - (=) La guarda del retorno de carro, la noción de cita de la cabecera, el techo de `Hallazgos abiertos:`
   y la semántica de la ausencia (REQ-024) no cambian.

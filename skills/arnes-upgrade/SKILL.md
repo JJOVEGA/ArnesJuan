@@ -1030,10 +1030,14 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     control **declarada dos veces deniega el cierre también con el MISMO valor**: `QA: aprobado` dos
     veces cerraba hasta `v1.34.0` y ahora no cierra (cambio de compatibilidad aceptado expresamente
     por el propietario, ADR-014). La puerta cita las líneas, con los caracteres invisibles escritos
-    de forma legible; **reabrir**, o editar un REQ sin cerrarlo, no se bloquea, **salvo en un caso**:
-    si la cabecera en disco declara el estado terminal sólo en una variante (`ESTADO: completado`)
-    mientras su `Estado:` exacto dice otro, se deniega toda edición que conserve esa variante, y la que
-    la retira o la corrige no se deniega. La salida es de una
+    de forma legible. **Sólo deniega** cuando la cabecera resultante es ambigua, **alguna** línea
+    `Estado` —la exacta, una repetida o una variante— dice el estado terminal y el `Estado` que gobierna
+    en disco (la primera declaración exacta; si no hay ninguna, nada lo decía) **no** lo decía. Por eso
+    **reabrir** un REQ cerrado no se bloquea, ni una edición tras la cual ninguna línea `Estado` dice el
+    terminal; pero si en disco el terminal está en una línea `Estado` que **no** es la que gobierna —una
+    variante, o una exacta que no es la primera— y la que gobierna no lo dice o no existe, se deniega
+    **toda** edición que conserve esa línea mientras la cabecera siga siendo ambigua, y no la que la
+    retira o la corrige (detalle en `requirements/REQ-023.md` CA-01 del arnés). La salida es de una
     línea: **cada clave de control una sola vez, escrita como la plantilla** de
     `requirements/README.md` (§ «Veredictos de validación»).
   - **Sin eufemismo: las versiones anteriores pudieron cerrar un REQ `critico` sin validación ni
