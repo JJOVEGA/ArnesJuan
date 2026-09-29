@@ -36,10 +36,10 @@
 
 ## Pendientes
 
-### [2026-09-27, puesta al día 2026-09-29] (coordinadora) — Decisión de publicación de 1.35.0: SEC-115 y hueco C, pendientes; SEC-047 ya decidido
+### [2026-09-27, puesta al día 2026-09-29] (coordinadora) — Decisión de publicación de 1.35.0: SEC-115, hueco C y QA-023-02, pendientes; SEC-047 ya decidido
 
 - **Contexto:** el 2026-09-29 el propietario autorizó implementar SEC-047 (mitad 1 de REQ-023) y preparar el candidato v1.35.0 (§ Resueltas, entrada de esa fecha, texto literal). **Esa autorización NO acepta el aplazamiento de SEC-115 ni del hueco C**: los dos siguen pendientes aquí, con sus fichas finales abajo. El antiguo asunto 3 (SEC-047 y la celda de §13) queda resuelto por esa autorización; los asuntos 1 y 2 de la redacción del 2026-09-28 se sustituyen por las fichas, sin perder nada de lo que decían.
-- **Acción que impide (regla 2):** **publicar** 1.35.0 —tag, publicación, actualización de la instalación estable— hasta que el propietario decida las dos fichas; y, mientras esta entrada esté aquí, **cerrar**: marcar **cualquier** REQ `completado` (`guard-completado`; deliberado). **No** impide **implementar** ni **probar** el candidato. **Parte afectada:** la publicación de 1.35.0 y el cierre de REQ-023 y REQ-031. **Evidencia:** la de cada ficha. **Qué lo resuelve:** la decisión del propietario sobre cada ficha.
+- **Acción que impide (regla 2):** **publicar** 1.35.0 —tag, publicación, actualización de la instalación estable— hasta que el propietario decida las tres fichas; y, mientras esta entrada esté aquí, **cerrar**: marcar **cualquier** REQ `completado` (`guard-completado`; deliberado). **No** impide **implementar** ni **probar** el candidato. **Parte afectada:** la publicación de 1.35.0 y el cierre de REQ-023 y REQ-031. **Evidencia:** la de cada ficha. **Qué lo resuelve:** la decisión del propietario sobre cada ficha.
 
 **Ficha 1 — SEC-115 (`instrumento`, abierto, NO aceptado): un hook que muere por tamaño deja pasar el cierre entero.**
 - **Consecuencia reproducida.** R-044-C sobre `cdcad5d` (2026-09-28, WSL2/Linux): `QA: pendiente (…)` con ≈ 255 KB de evidencia → deny en **73,6 s**; `Write` de 2 025 113 bytes → **80,2 s** (1 012 650 bytes → 20,5 s). CA-A16 (Claude Code CLI 2.1.272, `claude -p`, WSL2, un intento más un control `deny`, 2026-09-28): un hook que agota su timeout sin decidir **deja pasar la herramienta**. El REQ se cerraría con QA y seguridad pendientes: dejan de correr **todas** las puertas del cierre. **No comprobado** en la sesión interactiva del editor ni en Windows.
@@ -57,8 +57,29 @@
 - **Alternativa — aplazar (propuesta, no decisión):** responsable propuesto `desarrollador` (`guard-codigo`) y `analista-requerimientos` (ventana de REQ-011); **fecha de revisión propuesta: 2026-10-15** — antes que SEC-115 porque C está **observado** en un proyecto real y SEC-115 no; revisión **anticipada** si ocurre cualquiera de estas: una nueva instancia observada, en este repositorio o en un consumidor, de código protegido escrito por intérprete o script desde un agente distinto del `desarrollador`; o una comisión que toque `guard-codigo` o el detector de escrituras compartido.
 - **Limitación para las notas si se publica sin reparar:** `guard-codigo` no ve escrituras hechas por intérpretes o scripts (`python`, `node`, `bash script.sh`), formateadores que reescriben archivos, `patch` ni `git apply`, y no hay detección posterior. **La versión no puede prometer** que sólo el `desarrollador` modifique código protegido: promete que las herramientas de edición y las escrituras evidentes por shell lo deniegan.
 
-- **Recomendación de la coordinadora (propuesta, no decisión):** aplazar las dos con estas fechas y publicar sus limitaciones en las notas de 1.35.0; SEC-115 tiene realismo bajo y margen medido de más de 30× sobre los REQ reales, y C no tiene reparación que quepa en esta versión sin ser otra versión. **Registrarlas aquí no las convierte en riesgos aceptados.**
-- **Espera:** decisión del propietario sobre la ficha 1 y la ficha 2. **Trabajo que sigue mientras tanto:** el candidato v1.35.0 —SEC-047 (mitad 1 de REQ-023) y la preparación de la versión—, autorizado el 2026-09-29; no depende de estas dos decisiones. **Cerrar REQ-023 y REQ-031 queda pendiente** mientras esta entrada esté aquí.
+**Ficha 3 — QA-023-02 (`instrumento`, severidad crítica, preexistente; NO aceptado; añadida el 2026-09-29 al escalarla QA).** Un `Edit` que el hook no encuentra literal y la herramienta sí, y que sustituye **sólo el valor** del estado, cierra un REQ sin ninguna puerta.
+- **Consecuencia reproducida.**
+  - **Lado del hook, ejecutado** por QA (2026-09-29, `docs/qa/REQ-023.md` § QA-023-02, evidencia `frontera-g-edit-normaliza.txt`). Sobre un REQ `critico` con `QA: pendiente`, `Seguridad: pendiente` y `SEC-1 (contrato)` abierto:
+    - `Edit` con `old_string` = `en-revisi\u00f3n` (barra invertida literal) y `new_string` = `completado` → **ALLOW** en el candidato `ace43c2`, en `713ac68` y en 1.33.2;
+    - `MultiEdit` con la misma edición → ALLOW;
+    - comillas rectas donde el archivo las tiene tipográficas → ALLOW;
+    - con una entrada bajo `## Pendientes` → ALLOW.
+  - **Lado de la herramienta:** el `Edit` del CLI 2.1.284 normaliza ‘ ’ “ ” y desescapa `\uXXXX` antes de aplicar la edición. Está **leído en el binario y emulado; NO ejecutado en una sesión real**. No se sabe desde qué versión del CLI existe ese respaldo.
+- **Protección efectiva hoy:** ninguna mecánica en esa vía. La rama de fragmentos sólo juzga si el `new_string` contiene «estado: completado». Con la línea `Estado:` completa en el fragmento, la puerta sí juzga (caso G3).
+- **Qué depende de la disciplina del agente:** cerrar escribiendo la línea `Estado:` entera y con un `old_string` literal.
+- **No es regresión:** existe en `v1.33.2` y en `v1.34.0`. Publicar 1.35.0 no lo introduce ni lo agrava, y tampoco lo cierra.
+- **Alternativa — reparar antes de publicar:** un REQ nuevo (hoy no tiene sede; la premisa falsa de que «la herramienta falla y no escribe nada» vive también en REQ-001 CA-10/CA-11, `completado`) y la vía completa. Por ejemplo, que la reconstrucción del hook emule la búsqueda de la herramienta, o que deniegue cuando no pueda reconstruir y el fragmento pueda dejar el estado terminal. Retrasa el tag lo que dure ese ciclo.
+- **Alternativa — aplazar (propuesta, no decisión):**
+  - **Responsables propuestos:** `desarrollador` (mecanismo), `analista-requerimientos` (REQ, y qué hacer con REQ-001) y `auditor-seguridad` (registro y alcance).
+  - **Fecha de revisión propuesta: 2026-10-06**, la más temprana de las tres por su severidad.
+  - **Revisión anticipada** si ocurre cualquiera de estas: se observa un cierre por esa vía; cambia el respaldo del `Edit` del CLI; o una comisión toca la reconstrucción del `Edit` en `guard-completado`.
+- **Limitación para las notas si se publica sin reparar:** la puerta de cierre no juzga un cierre hecho con un `Edit` o `MultiEdit` cuyo `old_string` sólo coincide tras la normalización de la herramienta y cuyo `new_string` no contiene la línea `Estado:`. **La versión no puede prometer** que ningún cierre por `Edit` se salte las puertas.
+
+- **Recomendación de la coordinadora (propuesta, no decisión):**
+  - **SEC-115 y C:** aplazarlos con esas fechas y publicar sus limitaciones en las notas de 1.35.0. SEC-115 tiene realismo bajo y un margen medido de más de 30× sobre los REQ reales; C no tiene reparación que quepa en esta versión sin ser otra versión.
+  - **QA-023-02:** es de severidad crítica y de realismo no bajo, pero preexistente y ajeno al alcance de 1.35.0. Recomiendo publicarlo declarado y abrir su REQ de reparación de inmediato, como primer trabajo tras 1.35.0 y en una versión de parche propia.
+  - La auditoría del candidato lo evaluará antes de que decidas, y esta recomendación se revisará con su valoración. **Registrarlas aquí no las convierte en riesgos aceptados.**
+- **Espera:** decisión del propietario sobre las fichas 1, 2 y 3. **Trabajo que sigue mientras tanto:** el candidato v1.35.0 —SEC-047 (mitad 1 de REQ-023) y la preparación de la versión—, autorizado el 2026-09-29; no depende de estas dos decisiones. **Cerrar REQ-023 y REQ-031 queda pendiente** mientras esta entrada esté aquí.
 
 ## Resueltas
 

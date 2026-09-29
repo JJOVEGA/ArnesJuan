@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-29 · Cola: QA-023-02 (fail-open preexistente y crítico de la puerta de cierre por la normalización del `Edit`) escalado al propietario como ficha 3 de la decisión de publicación de 1.35.0; NO aceptado
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora (regla 3: una urgencia de seguridad se escala, no se aplaza).
+
+La entrada pendiente «Decisión de publicación de 1.35.0» suma la ficha 3, QA-023-02, a las de SEC-115 y C, con la forma de la regla 4: consecuencia reproducida (el lado del hook, ejecutado; el lado de la herramienta, leído en el binario y emulado, **no** ejecutado en una sesión), protección efectiva, alternativas, responsables propuestos, revisión propuesta el **2026-10-06** con sus condiciones de revisión anticipada, y lo que la versión no podría prometer. Es preexistente en `v1.33.2` y `v1.34.0`: 1.35.0 no lo introduce ni lo cierra. La recomendación de la coordinadora es publicarlo declarado y reparar de inmediato en un parche propio; se revisará con la valoración del auditor. La entrada sigue impidiendo **publicar** y **cerrar**, y no impide implementar ni probar. **Avance (regla 6):** decisión presentada a tiempo; el trabajo autorizado continúa (vuelta 2 de REQ-023).
+
 ## [Interno] — 2026-09-29 · REQ-023: QA vuelta 1 de 3 sobre `ace43c2` → `con-hallazgos` (3 `contrato` de texto; 1 `instrumento` preexistente crítico, QA-023-02, escalado al propietario)
 > Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 (qa-tester, por encima del `sonnet` del agente, política de autoalojamiento §5) · agente: qa-tester. Unos 440 k tokens.
 
