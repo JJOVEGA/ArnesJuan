@@ -1,5 +1,13 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-29 · SEC-117: RESULTADO del experimento real (tras el registro previo `6c947ef`) — REPRODUCIDO en el CLI 2.1.285 (comillas rectas donde el archivo las tiene tipográficas)
+`sec117-real/RESULTADO.md` y, por caso, `logs/` (entrada y salida del hook), `stream.jsonl` (eventos de hook y `tool_result`), el archivo final y su sha. Una ejecución por caso y sin repetición:
+- **positivo:** deny; el host bloquea; el archivo no cambia;
+- **sospechoso:** el hook sale sin decisión; el host aplica el `Edit`, y su `tool_response.oldString` muestra que normalizó las comillas; el REQ queda `completado` con todas las precondiciones en rojo;
+- **control:** se permite y se aplica.
+
+No se ensayó el escape `\uXXXX`. Sin reparación.
+
 ## 2026-09-29 · SEC-117: REGISTRO PREVIO del experimento real y aislado (antes de ejecutarlo)
 `sec117-real/`: `PREREGISTRO.md` (entorno, CLI 2.1.285, plugin sonda, hook del candidato con sus sha, entradas exactas, precondiciones, resultado esperado, método de observación), los prompts, `run.sh`, los proyectos en su estado inicial y la comprobación del montaje a nivel de hook. Nada ejecutado todavía en el host.
 
