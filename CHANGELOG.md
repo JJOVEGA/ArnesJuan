@@ -2,6 +2,28 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-29 · REQ-023: QA vuelta 1 de 3 sobre `ace43c2` → `con-hallazgos` (3 `contrato` de texto; 1 `instrumento` preexistente crítico, QA-023-02, escalado al propietario)
+> Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 (qa-tester, por encima del `sonnet` del agente, política de autoalojamiento §5) · agente: qa-tester. Unos 440 k tokens.
+
+- **Veredicto:** `QA: con-hallazgos`, sobre `ace43c2`; el código de `hooks/`, `tools/` y `tests/` es el de `ad793ab`. La conducta de CA-01…CA-12 está verificada sin ningún FAIL:
+  - banco completo 1138 PASS · 0 FAIL · 11 SKIP (0 INCONCLUSO), cuadre 1149, una sola corrida;
+  - autoprueba 117/0; sección 41 169/169, dos veces;
+  - fail-before re-derivado con un arnés propio: las 35 filas R deniegan en la candidata y permiten en `713ac68` y en 1.33.2;
+  - 146 casos de ruptura propios en tres árboles y dos locales, 0 inesperados;
+  - CA-03 con semilla 20260929: 124 entradas deniegan en la candidata y permitían todas en la base;
+  - clave de 256 bytes deniega y la de 257 permite (la limitación declarada);
+  - 0 de 29 cabeceras ambiguas.
+- **No regresión de REQ-031:** la sección 08 da 67/0 y la 32 40/0, y el motivo de U1 y CA-A12 sale idéntico byte a byte al de `713ac68`.
+- **Hallazgos:**
+  - **QA-023-01** (`contrato`): la frontera (g) y el comentario de `guard-completado.sh` dicen que un `Edit` cuyo `old_string` no está literal en el archivo «no escribe nada». El `Edit` del CLI 2.1.284 normaliza las comillas tipográficas y los escapes `\uXXXX`, y escribe. Se leyó en el binario y se emuló; no se ejecutó en una sesión real.
+  - **QA-023-02** (`instrumento`, crítico, preexistente en `713ac68` y 1.33.2): por esa vía, un `Edit` que sustituye sólo el valor del estado cierra un REQ `critico` sin veredictos, con un `contrato` abierto y con la cola pendiente. Se escala al propietario.
+  - **QA-023-03** (`contrato`): «editar sin cerrar no se bloquea» es absoluta, y su excepción vive en otro sitio.
+  - **QA-023-04** (`contrato`): CA-09 (iii) promete una cota constante por línea que la captura de la cita no tiene: es lineal, ≈ 13 ms por MB.
+- **QA-031-01:** la conducta validada lo cubre (R2). Sigue en el campo de REQ-031 hasta que REQ-023 esté aprobado.
+- **Observación sin acreditar:** REQ-017 CA-08 (ii) da en la candidata entre 1,04 y 1,16×, y como máximo 1,232× en el banco completo, frente al techo de 1,25×. La base da entre 0,95 y 1,06×. Es un riesgo real para el CI (`cfb1106` ya falló ahí con 1,255×).
+- **Clasificación de la coordinadora (regla 3):** QA-023-01, -03 y -04 son defectos de esta entrega y se reparan en la vuelta 2 de 3, con write-back del analista y comentarios del desarrollador. QA-023-02 es preexistente e independiente del alcance de REQ-023: es una urgencia de seguridad y se escala por la regla 4, **no** se repara aquí. El margen de CA-08 (ii) no se optimiza sin proponerlo antes.
+- **Avance (regla 6):** validación hecha; falta el write-back de los tres `contrato`, la reverificación de QA, la auditoría y la decisión del propietario sobre QA-023-02.
+
 ## [1.35.0] — 2026-09-29 · La puerta de cierre deja de tomar por ausencia lo que no entiende y deniega: dos cambios de compatibilidad, con sus límites a la vista
 > Origen: GitHub (commit de versión) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (preparación de la versión); el contenido que describe viene de los cinco merges de `main` desde `v1.34.0` y de REQ-023 en la rama `cand/1.35.0` · gobernado por la instalación estable **1.33.2**.
 
