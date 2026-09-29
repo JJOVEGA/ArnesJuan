@@ -1,0 +1,3 @@
+M1 MultiEdit, 2.º old_string sólo en el intermedio       cand=deny | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requie
+N1 Edit old_string vacío, archivo nuevo, **Estado:**      cand=allow | 
+N1w control: el mismo documento por Write                  cand=deny | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requie

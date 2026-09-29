@@ -1,0 +1,902 @@
+diff --git a/AGENTS.md b/AGENTS.md
+index b60cfc5..4fe484b 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -695,7 +695,7 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
+ | La coordinadora no edita código de la app (sólo el `desarrollador`) | §5 | `guard-codigo` | `Edit`/`Write`/`MultiEdit` + `Bash` (parcial) |
+ | No completar un REQ con aprobaciones pendientes | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | No completar un REQ con quality gates en rojo | §7 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+-| No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno **sin clase**, ni con una lista que la puerta **no puede interpretar**, ni con el campo **repetido** en la cabecera o **por encima de su techo** de tamaño **siempre que el hook alcance a medirlo dentro del límite del cliente** (el techo se mide antes de normalizar; medido hasta 255 371 bytes, que deniega a tiempo; por encima no hay promesa, y un hook muerto no deniega) (sintaxis, techo, su residuo y lo que la puerta no lee: `requirements/README.md` § «Clases de hallazgo») | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
++| No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno **sin clase**, ni con una lista que la puerta **no puede interpretar**, ni con el campo **repetido** en la cabecera o **por encima de su techo** de tamaño **siempre que el hook alcance a medirlo y a emitir su decisión dentro del límite del cliente** (el techo se mide antes de normalizar; medido hasta 255 371 bytes, que deniega a tiempo; el campo repetido, medido hasta 1 601 líneas de 60 caracteres o más, que deniegan, mientras que 1 801 salen sin decisión porque el motivo no cabe en un argumento —SEC-118—; por encima de lo medido no hay promesa, y un hook muerto o sin decisión no deniega) (sintaxis, techo, repetición, sus residuos y lo que la puerta no lee: `requirements/README.md` § «Clases de hallazgo») | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | El rigor se puede subir, nunca bajar: `Sensible a seguridad: sí` impone `critico` | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | No completar sin `QA: aprobado` (salvo `Rigor: ligero`), ni un REQ `critico` sin `Seguridad: aprobado` | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | La transición a `completado` no se hace por shell | §6 | `guard-completado` | `Bash` (parcial) |
+@@ -703,10 +703,28 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
+ | Los campos del REQ valen sólo en la cabecera: una línea igual dentro de una sección no es un veredicto | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | Lo que vive dentro de un `<!-- … -->` de la cabecera **no declara campo**; un rango que abre y no cierra en la cabecera no la deja medir y no deja cerrar | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | Una línea de la cabecera con un **retorno de carro que no es el que la termina** no se puede medir y no deja cerrar — se deniega por eso, citando la línea, aunque los veredictos estén en verde. El CR **final** es transporte (CRLF decide igual que LF), el cuerpo no se toca y **reabrir** no se bloquea | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+-| Una cabecera **ambigua** no deja cerrar: una **clave de control** (`Estado`, `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos`, `Rigor`) escrita de otra forma que la máquina no lee como esa clave —mayúsculas, un blanco de más, un carácter invisible, un marcador de lista—, o declarada **más de una vez aunque diga lo mismo**, se deniega citando las líneas, aunque los veredictos estén en verde; **reabrir** no se bloquea. Qué es una variante y dónde acaba la frontera de lo cubierto: `requirements/README.md` § «Veredictos de validación». Lo que queda fuera de esa frontera **no está protegido** y se sigue leyendo como ausencia —ejemplos **no exhaustivos**: un homóglifo, una letra cambiada, unos dos puntos que no son ASCII, una línea con carácter de estructura, una clave de más de 256 bytes (una **limitación**, no una zona protegida por ese límite)— | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
++| Una cabecera **ambigua** no deja cerrar: una **clave de control** (`Estado`, `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos`, `Rigor`) escrita de otra forma que la máquina no lee como esa clave —mayúsculas, un blanco de más, un carácter invisible, un marcador de lista—, o declarada **más de una vez aunque diga lo mismo**, se deniega citando las líneas, aunque los veredictos estén en verde (`Hallazgos abiertos` repetida con su forma exacta, cuando es la única ambigüedad, la decide la fila de los hallazgos, con su condición); **reabrir** no se bloquea. Qué es una variante y dónde acaba la frontera de lo cubierto: `requirements/README.md` § «Veredictos de validación». Lo que queda fuera de esa frontera **no está protegido** y se sigue leyendo como ausencia —ejemplos **no exhaustivos**: un homóglifo, una letra cambiada, unos dos puntos que no son ASCII, una línea con carácter de estructura, una clave de más de 256 bytes (una **limitación**, no una zona protegida por ese límite)— | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | Un veredicto lleva fecha y no es anterior al último cambio del código —si el proyecto lo pide (`veredictos.*`, apagado por defecto) | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | Ningún agente —tampoco la coordinadora— ejecuta git destructivo: `clean -f`, `reset --hard`, `checkout .`, `restore .`, `stash` (`git.prohibidos`) | §10 | `guard-git` | `Bash` |
+ 
++**Toda fila de esta tabla que dice que una puerta deniega vale con tres condiciones.** Se escriben aquí una
++vez, en lugar de fila a fila, y ninguna fila se lee como garantía sin ellas:
++1. **Si el hook alcanza a medir y a emitir su decisión.** Un hook que el cliente mata por tiempo
++   (SEC-115), o cuyo motivo de denegación no cabe en un argumento de línea de órdenes y sale sin decisión
++   (SEC-118), **no deniega**. Vale para todas las puertas.
++2. **Sobre las ediciones cuyo documento resultante la puerta reconstruye:** un `Write`, o un
++   `Edit`/`MultiEdit` cuyo `old_string` está literal en el archivo. Vale para las puertas de cierre
++   (`guard-completado`).
++3. **Un `Edit` cuyo `old_string` sólo coincide tras la normalización que aplica el host queda fuera de lo
++   que estas filas prometen:** la puerta no reconstruye el documento; si el fragmento no escribe la línea
++   `Estado:` entera, deja pasar el cierre sin mirar veredictos, clase, cola ni quality gates, y aun con la
++   línea entera no aplica la regla de la cabecera ambigua (SEC-117; reproducido con comillas
++   tipográficas en el CLI 2.1.285 el 2026-09-29; el escape `\uXXXX`, `MultiEdit`, el editor interactivo,
++   Windows y otras versiones del CLI, sin ensayar).
++
++Lo medido, los umbrales y los residuos de las tres viven en `docs/seguridad/registro-seguridad.md` del
++repositorio del arnés (SEC-115, SEC-117 y SEC-118), no aquí.
++
+ **Un hook que avisa sin decidir.** Al escribir `QA:` o `Seguridad:` con un valor fuera del
+ vocabulario (`pendiente` \| `aprobado` \| `con-hallazgos`; y en seguridad además `n/a`,
+ `preventiva`, `vetado`), el arnés lo dice **en ese momento** con un mensaje a la persona y
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index dc09034..84c2ec5 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -2,6 +2,52 @@ CHANGELOG — ArnesJuan
+ 
+ > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
+ 
++## [GitHub] — 2026-09-29 · Commit de la corrección documental excepcional (SIN VALIDAR) y de la cola: ficha 3 con SEC-117 reproducido en el host real; ficha 1 con lo observado y lo inferido de SEC-118
++> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora (cola y commit); el texto de las sedes contractuales es del `analista-requerimientos` (entrada `[Interno]` de abajo).
++
++**Sedes contractuales:** consolida la corrección documental del analista, que sigue sin validar. Falta QA sobre el delta de texto y, después, la determinación de seguridad. **Ningún archivo de `hooks/`, `tools/`, `tests/`, `.claude-plugin/`, `.github/` ni `.arnes/` cambia.**
++
++**Cola:**
++- **Ficha 3:** SEC-117 queda **reproducido en el host real** (CLI 2.1.285; registro previo `6c947ef`, resultado `1c8c81c` en la rama local de evidencia). Incluye la propuesta mínima de reparación, sin aplicar, y lo que no se ensayó.
++- **Ficha 1:** separa en SEC-118 lo observado a nivel de hook de lo inferido y de lo no medido. Ningún caso de SEC-118 se ejecutó en el host.
++
++**Nada se acepta.**
++
++**Comentarios de código que repiten premisas ya falsas, NO modificados** porque la autorización prohíbe tocar código en este apartado; quedan para la reparación de SEC-117 y SEC-118:
++- `hooks/lib.sh:188` (`arnes_deny`: «exit 0 = decisión aplicada»);
++- `hooks/guard-completado.sh:37-38`, `:401` y `:618` («no ejecutado en una sesión»);
++- `hooks/guard-completado.sh:56-60` (CA-A12 sin límite);
++- `tools/arnes-lectura.sh:147`.
++
++**Avance (regla 6):** texto listo para QA; falta QA sobre el delta, la determinación de seguridad y el CI de la nueva cabeza.
++
++## [Interno] — 2026-09-29 · Corrección documental EXCEPCIONAL fuera del contador (segunda autorización, punto 2): write-back de QA-023-05, correcciones de texto de R-045 §6 (SEC-118 declarado; «si alcanza a medir **y a emitir su decisión**»; SEC-117 citado y su reproducción en el host 2.1.285) y promesa de la clave repetida de REQ-031 acotada por propiedad (con cláusula general en `AGENTS.md` §13 y nota fechada en ADR-013); fail-before local separado del SKIP de CI — SIN VALIDAR
++> Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `analista-requerimientos`. Unos 380 k tokens.
++
++- **Contador:** REQ-023 sigue **3 de 3, agotado**, y no se reinicia. Esto no es una vuelta. Sin código: en `hooks/`, `tools/` y `tests/` no cambia ni un comentario.
++- **QA-023-05:** el «Cuándo deniega» de `requirements/README.md` y de su plantilla (idénticos) se acota a las ediciones cuyo documento la puerta reconstruye —`Write`, o `Edit`/`MultiEdit` con `old_string` literal—, y su «Fuera, y sin promesa» gana la vía (g), remitiendo a QA-023-02 / SEC-117. «Toda edición» queda acotada en `skills/arnes-upgrade/SKILL.md`, en ADR-014 (nota fechada) y en las notas `[1.35.0]`.
++- **R-045 §6:** las notas declaran **SEC-118** en sus limitaciones —observado a nivel de hook, frente a lo inferido y lo sin medir— en lugar de «pendiente de registro». La fórmula pasa a «si alcanza a medir **y a emitir su decisión**» en el cambio de compatibilidad 1, en la limitación de SEC-115 y en la entrada de REQ-031 de la guía. La guía cita SEC-117. Se corrige «QA no las ha validado».
++- **Promesa de REQ-031** («la clave repetida deniega» sin condición), barrida por propiedad: REQ-031 CA-A12 (cambio **menor**, con Historial), el README y su plantilla, la fila de `AGENTS.md` §13 y su gemela (y una remisión en la fila de la cabecera ambigua), la guía, las notas, ADR-014 y el índice. **ADR-013 no se reescribe**, porque está publicado: lleva al final una **nota posterior fechada** que precisa esa viñeta sin alterar el texto original. No se crea ningún ADR nuevo.
++- **`AGENTS.md` §13 y su plantilla:** una sola cláusula tras la tabla condiciona toda fila que dice que una puerta deniega: si el hook alcanza a medir y a emitir su decisión (SEC-115, SEC-118); sobre ediciones cuyo documento la puerta reconstruye; y el `Edit` con `old_string` normalizado por el host queda fuera (SEC-117).
++- **SEC-117 reproducido en el host real:** la reproducción de la coordinadora (CLI 2.1.285, `claude -p`, WSL2; resultado en `1c8c81c`) sustituye a «leído y emulado, no ejecutado en una sesión real» en CA-01 (g) y «Fuera de alcance» de REQ-023, el README y su plantilla, ADR-014 (nota fechada), la guía y las notas. Sigue sin ensayar en el host: `\uXXXX`, `MultiEdit`, el editor interactivo, Windows y otras versiones del CLI.
++- **Fail-before:** las notas separan el ejercido **en local** (desarrollador y QA, contra `713ac68` y 1.33.2) de los **SKIP** del CI de `45c2e5c`, donde el runner no tiene la 1.33.2.
++- **Sin tocar:** `Estado:`, `QA:`, `Seguridad:` y `Hallazgos abiertos:` de todo REQ. El índice de REQ-023 se sincroniza con su cabecera (`bloqueado`, `con-hallazgos`). **Nada se acepta:** SEC-115, SEC-117, SEC-118 y C siguen abiertos.
++- **Avance (regla 6):** texto escrito; falta la revisión de QA sobre el delta documental y, tras QA favorable, la determinación documental de seguridad.
++
++## [GitHub] — 2026-09-29 · Segunda autorización del propietario registrada (literal, llegó truncada): corrección documental excepcional fuera del contador y reproducción real de SEC-117; decisión 4 resuelta con (A)
++> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora.
++
++**Qué se registra:** `PENDING_APPROVAL.md` § Resueltas gana la segunda autorización del 2026-09-29, literal y **tal como llegó**. El mensaje termina cortado en «Registra con precisión la cobertura de QA y»; no se reconstruye lo que falta.
++
++**Qué autoriza:**
++- Una intervención documental **fuera del contador de REQ-023**, que sigue agotado (3 de 3) y no se reinicia. Agrupa QA-023-05, las correcciones de texto de R-045 §6 y las promesas de REQ-031 afectadas.
++- Un experimento real y aislado de SEC-117, con registro previo.
++- Precisiones sobre SEC-118, sobre las ediciones hechas con Python y sobre la política de versiones.
++
++**Estado de la cola:** la decisión 4 queda resuelta con la opción (A). SEC-115, SEC-118, C y SEC-117 siguen **no aceptados**, y la entrada pendiente sigue impidiendo **publicar** y **cerrar**.
++
++**Avance (regla 6):** autorización registrada; falta la corrección documental (analista → QA → seguridad) y el experimento.
++
+ ## [GitHub] — 2026-09-29 · Cola: ficha 1 corregida («si el hook alcanza a medir **y a emitir su decisión**») y ampliada con SEC-118; ficha 3 con la valoración del auditor; decisión 4 con el alcance de R-045 §6; `docs/ESTADO.md` con el punto de retomar del candidato
+ > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora.
+ 
+@@ -211,6 +257,8 @@ REQ-025, REQ-028, REQ-024 (la mitad 2 de SEC-047) ni REQ-011.
+     publique se identifica en el PR del candidato.
+   - SEC-115 y QA-031-01 siguen en su `Hallazgos abiertos:`. REQ-023 ataca el mecanismo de QA-031-01,
+     pero estas notas no lo dan por cerrado.
++  - R-045 §2 corrige el alcance de R-044-C en un punto: «la clave repetida deniega» **no** es verdad
++    sin límite (SEC-118). El texto de CA-A12 lleva desde el 2026-09-29 esa condición.
+ - **REQ-023 no está cerrado.** Estas notas **no afirman ni anticipan** su estado ni ningún veredicto suyo: su
+   estado y sus firmas viven en su cabecera, en `docs/qa/REQ-023.md` y en
+   `docs/seguridad/registro-seguridad.md`. La cobertura de las firmas sobre la cabeza final se
+@@ -259,12 +307,16 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo
+      deja de cerrar `QA-006 (instrumento) — REQ-007`, que REQ-007 CA-41 toleraba hasta `v1.34.0`: su
+      caso de banco `REQ-717` pasó de `allow` a `deny`. La forma equivalente es
+      `QA-006 (instrumento, REQ-007)`.
+-   - **El campo repetido** en la cabecera deniega (CA-A12).
++   - **El campo repetido** en la cabecera deniega (CA-A12) **si el hook alcanza a medir y a emitir
++     su decisión**. El motivo nombra todas las líneas y viaja como un argumento de línea de órdenes:
++     medido, 1 601 líneas repetidas de 60 caracteres o más deniegan con un motivo de 121 061 bytes, y
++     1 801 salen sin decisión (SEC-118, en las limitaciones de abajo). Por encima de lo medido no hay
++     promesa.
+    - **Un valor de más de 16 384 bytes**, contados en bytes **antes de normalizar**, deniega sin
+-     interpretarse, **siempre que el hook alcance a medirlo dentro del límite del cliente** (60 s).
+-     Medido hasta 255 371 bytes, que deniega en 0,31 s por `Edit` y `MultiEdit` y en 1,6 s por
+-     `Write` (Linux/WSL2, una corrida por punto). Por encima no hay promesa, y un hook muerto no
+-     deniega.
++     interpretarse, **siempre que el hook alcance a medirlo y a emitir su decisión dentro del límite
++     del cliente** (60 s). Medido hasta 255 371 bytes, que deniega en 0,31 s por `Edit` y `MultiEdit`
++     y en 1,6 s por `Write` (Linux/WSL2, una corrida por punto). Por encima no hay promesa, y un hook
++     muerto o que sale sin decisión no deniega.
+    - **Por qué:** hasta `v1.34.0`, `SEC-A (instrumento) · SEC-B (usuario/dinero)` y
+      `SEC-A (instrumento); SEC-B (contrato)` dejaban cerrar un REQ con un bloqueante abierto.
+ 2. **REQ-023 (ADR-014): la cabecera ambigua deniega el cierre.** Las claves de control son `Estado`,
+@@ -273,16 +325,21 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo
+      **declarada más de una vez**. Variantes son, por ejemplo, la clave en mayúsculas, con un blanco
+      de más, con un BOM o un carácter invisible, o con un marcador de lista.
+    - **Cómo responde la puerta:** deniega citando las primeras 20 líneas ambiguas y cuántas quedan.
+-     **Sólo deniega** cuando la cabecera resultante es ambigua, **alguna** línea `Estado` —la exacta,
+-     una repetida o una variante— dice el estado terminal y el `Estado` que gobierna en disco (la
+-     primera declaración exacta; si no hay ninguna, nada lo decía) no lo decía. Por eso reabrir un REQ
+-     cerrado no se bloquea, ni una edición tras la cual ninguna línea `Estado` dice el terminal. Pero si
+-     en disco el terminal está en una línea `Estado` que **no** es la que gobierna —una variante, o una
+-     exacta que no es la primera— y la que gobierna no lo dice o no existe, se deniega **toda** edición
+-     que conserve esa línea mientras la cabecera siga siendo ambigua, y no la que la retira o la corrige.
+-     Detalle en `requirements/REQ-023.md` CA-01.
++     **Alcanza sólo a las ediciones cuyo documento resultante la puerta reconstruye:** un `Write`, o un
++     `Edit`/`MultiEdit` cuyo `old_string` está literal en el archivo. Dentro de ese alcance, **sólo
++     deniega** cuando la cabecera resultante es ambigua, **alguna** línea `Estado` —la exacta, una
++     repetida o una variante— dice el estado terminal y el `Estado` que gobierna en disco (la primera
++     declaración exacta; si no hay ninguna, nada lo decía) no lo decía. Por eso reabrir un REQ cerrado
++     no se bloquea, ni una edición tras la cual ninguna línea `Estado` dice el terminal. Pero si en
++     disco el terminal está en una línea `Estado` que **no** es la que gobierna —una variante, o una
++     exacta que no es la primera— y la que gobierna no lo dice o no existe, se deniega toda edición
++     **de ese alcance** que conserve esa línea mientras la cabecera siga siendo ambigua, y no la que la
++     retira o la corrige. La vía de un `old_string` que sólo coincide tras la normalización de la
++     herramienta queda fuera (frontera, abajo). Detalle en `requirements/REQ-023.md` CA-01.
+    - **Una clave de control repetida deniega aunque sus valores coincidan. Hasta `v1.34.0`, esa
+      cabecera cerraba.** Es un cambio **aceptado expresamente por el propietario** el 2026-09-29.
++     `Hallazgos abiertos` repetida con su forma exacta, cuando es la única ambigüedad, la decide CA-A12
++     de REQ-031, con la condición del punto 1.
+    - **Por qué:** en las versiones anteriores, un BOM delante de `Sensible a seguridad: sí`, con
+      `Rigor: ligero`, cerraba un REQ `critico` con QA y seguridad pendientes (SEC-047). Y unas
+      mayúsculas en la clave `Hallazgos abiertos:` escondían un `contrato` (QA-031-01).
+@@ -298,9 +355,10 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo
+      - los caracteres del **valor**;
+      - un `Edit` o `MultiEdit` cuyo `old_string` no está **literal** en el archivo: el hook no
+        reconstruye el documento y juzga el fragmento como antes, pero la herramienta **puede escribir
+-       igualmente** (el `Edit` del CLI 2.1.284 normaliza las comillas tipográficas y desescapa
+-       `\uXXXX`; leído y emulado, no ejecutado en una sesión real). Por esa vía un cierre puede no pasar
+-       por ninguna puerta: es QA-023-02, en las limitaciones de abajo;
++       igualmente** (con las comillas tipográficas, **reproducido** en el CLI 2.1.285 el 2026-09-29;
++       el escape `\uXXXX`, leído en el binario del CLI 2.1.284 y emulado, sin ensayar en el host). Por
++       esa vía un cierre puede no pasar por ninguna puerta: es QA-023-02 / SEC-117, en las limitaciones
++       de abajo;
+      - lo que un lector de bash no ve: un byte NUL o un archivo en UTF-16;
+      - y **las claves de más de 256 bytes, que son una limitación y NO están protegidas por ese
+        límite**.
+@@ -325,8 +383,7 @@ CI `hooks-en-linux` sobre `main` desde `v1.34.0`. Los datos se leyeron con `gh r
+   caso «un REQ real de 6 líneas», aparece en `a7a60c2` y en `713ac68`. Un INCONCLUSO no pone el banco
+   en rojo, y un check verde no lo acredita (REQ-030).
+ - **Las cifras del desarrollador sobre REQ-023** salen de su entrada de este CHANGELOG: 2026-09-29,
+-  «REQ-023 implementado…», commit `ad793ab`. Se midieron en WSL2 con bash 5.3.9 y **QA no las ha
+-  validado**:
++  «REQ-023 implementado…», commit `ad793ab`. Se midieron en WSL2 con bash 5.3.9:
+   - banco completo: 1137 PASS · 0 FAIL · 12 SKIP (1 INCONCLUSO ajeno, REQ-017 CA-03), cuadre 1149;
+   - autoprueba: 117 · 0;
+   - 0 de 29 cabeceras de `requirements/` ambiguas, con control positivo;
+@@ -335,6 +392,21 @@ CI `hooks-en-linux` sobre `main` desde `v1.34.0`. Los datos se leyeron con `gh r
+   Una corrida intermedia dio 1 FAIL de reloj en la sección 25 (el heredoc de ~300 KB de
+   `guard-codigo`). Ese caso también falla contra `713ac68` en esa máquina, y se conserva en su
+   evidencia.
++
++  QA las re-derivó por su cuenta en sus tres vueltas, con el mismo código ejecutable
++  (`docs/qa/REQ-023.md`). En la vuelta 3, sobre `c4cc32c`: banco completo 1137 PASS · 0 FAIL ·
++  12 SKIP, con 1 INCONCLUSO de rendimiento distinto, REQ-017 CA-08 (ii), que se conserva; autoprueba
++  117 · 0. *(Corrige «QA no las ha validado», que prometía de menos: observación sin id de R-045 §6.)*
++- **El fail-before de REQ-023 se ejerció en local, y el CI no lo ejerce.** Son dos cosas distintas y
++  no se suman:
++  - **En local**, contra `713ac68` y contra la instalación estable 1.33.2: el desarrollador en su
++    entrega (`ad793ab`), y QA en sus tres vueltas —la sección 41 dio 169 de 169 con las dos bases
++    presentes, y en la vuelta 1 re-derivó además la tabla de CA-08 fila a fila, 79 decisiones y
++    0 inesperadas (`docs/qa/REQ-023.md` § «Vuelta 1 de 3», §4)—.
++  - **En el CI de `45c2e5c`** (run 36625681278, dato de la coordinadora): las 18 filas R del
++    fail-before salen **SKIP**, porque el runner no tiene instalada la 1.33.2 y REQ-023 CA-08
++    (Materialización) manda SKIP con el motivo, nunca PASS. Ese CI no acredita el fail-before, sea
++    cual sea su conclusión.
+ - **Observación, no acreditación: el margen de REQ-017 CA-08 (ii).** Con la cabecera de 200 líneas,
+   en dos corridas pareadas en reposo, la candidata dio 1,08–1,13× y la base 0,97–1,05×; el techo es
+   1,25×. En la corrida del banco completo del desarrollador, con el banco en paralelo, dio PASS con un
+@@ -360,7 +432,8 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de
+     `Seguridad:`, `Rigor:`, `Sensible a seguridad:` y `Estado:`, y para el tamaño de un `Write`,
+     depende de la disciplina del agente.
+   - **La versión no puede prometer** que ningún REQ se cierre sin QA ni seguridad en absoluto. Sólo
+-    puede prometerlo «si el hook alcanza a medir».
++    puede prometerlo «si el hook alcanza a medir **y a emitir su decisión**»: medir no basta, porque
++    una denegación decidida a tiempo puede no llegar a emitirse (SEC-118, abajo).
+   - Ficha y fecha propuesta: `PENDING_APPROVAL.md` § Pendientes, ficha 1. Una fecha propuesta no es
+     una aceptación.
+ - **El hueco C** (escrituras por intérprete o script): **abierto, con decisión pendiente del
+@@ -375,27 +448,63 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de
+   - **La «puerta posterior» (REQ-011) no es prevención, ni recuperación, ni mitigación disponible.**
+     Es sólo una propuesta de detección, `pendiente` y sin implementar.
+   - Ficha: `PENDING_APPROVAL.md` § Pendientes, ficha 2.
+-- **QA-023-02** (`instrumento`, severidad crítica): **abierto, preexistente en 1.33.2 y 1.34.0, con
+-  decisión pendiente del propietario y NO aceptado.** Un `Edit` o `MultiEdit` cuyo `old_string` el hook
++- **QA-023-02 / SEC-117** (`instrumento`, severidad crítica): **abierto, preexistente en 1.33.2 y
++  1.34.0, con decisión pendiente del propietario y NO aceptado.** Un `Edit` o `MultiEdit` cuyo `old_string` el hook
+   no encuentra literal y la herramienta sí —comillas tipográficas o `\uXXXX`—, y que sustituye sólo el
+   valor del estado, cierra un REQ sin pasar por ninguna puerta: ni veredictos, ni clase del hallazgo, ni
+   quality gates, ni la cola.
+-  - Lo reproducido: el lado del hook, ejecutado por QA sobre el candidato, `713ac68` y 1.33.2 (ALLOW en
+-    los tres); el lado de la herramienta, leído en el binario del CLI 2.1.284 y emulado, **no ejecutado
+-    en una sesión real**. No se sabe desde qué versión del CLI existe ese respaldo.
++  - Lo reproducido:
++    - el lado del hook, ejecutado por QA sobre el candidato, `713ac68` y 1.33.2 (ALLOW en los tres), y
++      por el auditor en R-045 §3;
++    - **en el host real, de punta a punta**, la variante de las comillas: la coordinadora, el
++      2026-09-29, en el CLI **2.1.285** (`claude -p`, WSL2), con el `Edit` real del host y el `guard.sh`
++      del candidato sin cambios. Con el `old_string` literal, el hook deniega y el archivo no cambia
++      (control positivo). Con comillas rectas donde el archivo tiene tipográficas, el hook sale sin
++      decisión, el host aplica la edición —su `tool_response.oldString` muestra la normalización— y un
++      REQ `critico` queda `completado` con QA y seguridad pendientes, un `contrato` abierto y la cola
++      ocupada. Una edición legítima se permite y se aplica (control). Registro previo en `6c947ef`;
++      resultado en la rama local de evidencia, `sec117-real/RESULTADO.md`, commit `1c8c81c`.
++    - **Sin ensayar en el host:** el escape `\uXXXX` (leído en el binario del CLI 2.1.284 y emulado),
++      `MultiEdit`, el editor interactivo, Windows y otras versiones del CLI. No se sabe desde qué
++      versión del CLI existe ese respaldo.
+   - La protección efectiva hoy depende de la disciplina del agente: cerrar escribiendo la línea
+     `Estado:` entera y con un `old_string` literal.
+   - **La versión no puede prometer** que toda edición que la herramienta aplique pase por la puerta de
+     cierre. Este candidato no lo introduce, no lo agrava y no lo cierra.
+-  - Ficha: `PENDING_APPROVAL.md` § Pendientes, ficha 3. Sede del hallazgo: `docs/qa/REQ-023.md`.
++  - Ficha: `PENDING_APPROVAL.md` § Pendientes, ficha 3. Sede del hallazgo: `docs/qa/REQ-023.md`, y su
++    registro de seguridad, SEC-117 (`docs/seguridad/registro-seguridad.md` § R-045, §3).
+ - **La mitad 2 de SEC-047 (REQ-024) no entra.** No cambia qué significa la ausencia de un campo, por
+   ejemplo al comentar o borrar su línea.
+ - **SEC-103 (OBS-H) y SEC-104** siguen abiertos.
+-- **Un fail-open preexistente en el motivo de REQ-031 CA-A12.** Con unas 3000 líneas
+-  `Hallazgos abiertos:` canónicas repetidas, el motivo da «Argument list too long» y la puerta **no
+-  emite decisión**; en el cliente, eso equivale a permitir. Pasa igual en `713ac68` y en la candidata.
+-  Es un defecto independiente, **no reparado** y **pendiente de registro con responsable**. Sede del
+-  dato: `requirements/REQ-023.md`, «Notas / alcance».
++- **SEC-118** (`instrumento`, severidad media): **abierto, preexistente, no reparado y NO aceptado.**
++  Una denegación cuyo motivo supera el límite de un argumento de línea de órdenes no llega a emitirse:
++  `arnes_deny` pasa el motivo a `jq` como argumento, por encima de 128 KiB (`MAX_ARG_STRLEN`, Linux)
++  `jq` no arranca, y el hook sale sin decisión. Está expuesto **todo motivo que interpole contenido sin
++  tope**; los sitios conocidos son una lista **no exhaustiva**. Registro, dueños y forzador:
++  `docs/seguridad/registro-seguridad.md` § R-045, §4. Sustituye a la entrada anterior de estas notas,
++  que lo describía sólo en el motivo de CA-A12 y lo daba por «pendiente de registro».
++  - **Observado a nivel de hook** (JSON `PreToolUse` real contra `hooks/guard.sh`, en la candidata y
++    en `713ac68` con decisiones idénticas; Linux/WSL2, una corrida por punto): salen **sin decisión**
++    —salida vacía— un `QA:` de ≈ 140 KB sin paréntesis final con QA pendiente, lo mismo en
++    `Seguridad:`, un `Sensible a seguridad:` dudoso de ≈ 140 KB, una línea de cabecera sin `:` de
++    ≈ 140 KB con un CR interior, y el campo `Hallazgos abiertos:` repetido 1 801 veces con líneas de
++    60 caracteres o más (las 3 000 repeticiones cortas, medidas por el desarrollador y por QA). Los
++    controles **deniegan**: el mismo `QA:` con el paréntesis final, cuyo motivo corto mide 314 bytes;
++    1 601 repeticiones largas, con un motivo de 121 061 bytes; y 2 501 cortas, con 111 961 bytes.
++  - **Inferido, no observado por esta causa:** que el cliente trate como permitir un hook que termina
++    sin decisión. Lo sostienen el contrato de hooks y la analogía con REQ-031 CA-A16, que se observó en
++    el CLI por **timeout**, no por esta causa. Lo refuerza, también por otra causa, la reproducción de
++    SEC-117 en el CLI 2.1.285: allí el hook sale sin decisión y el host aplica la edición. **Sin medir:** el umbral en Windows/MSYS (si `jq` es un
++    binario nativo, el límite de línea de órdenes de `CreateProcess` podría bajarlo unas cuatro
++    veces), y los candidatos que el registro nombra sin medición: el CR interior en la vía de
++    fragmentos, el valor crudo de los veredictos fechados (opt-in) y la orden citada por `guard-git`
++    si un manifiesto sube su techo de análisis a 128 KiB.
++  - **Qué cambia en las promesas:** medir no basta; la puerta sólo decide si alcanza a medir **y a
++    emitir su decisión**. REQ-023 no lo abre —su motivo tiene tope de 20 líneas—, pero cuando la
++    repetición exacta de `Hallazgos abiertos:` es la única ambigüedad cede el caso a CA-A12 y hereda
++    el defecto. **Documentarlo no lo repara ni lo acepta.**
++  - Vencimiento propuesto por el auditor: la decisión de publicación de 1.35.0. Una fecha propuesta no
++    es una aceptación.
+ - **La frontera de REQ-023**, descrita arriba.
+ - **REQ-025:** la entrega 1b y OBS-H.
+ - **`arnes_version` de `.arnes/config.json` de este repositorio sigue en `1.33.0`**, frente a un plugin
+diff --git a/PENDING_APPROVAL.md b/PENDING_APPROVAL.md
+index 65618fa..e6229e0 100644
+--- a/PENDING_APPROVAL.md
++++ b/PENDING_APPROVAL.md
+@@ -39,7 +39,7 @@
+ ### [2026-09-27, puesta al día 2026-09-29] (coordinadora) — Decisión de publicación de 1.35.0: SEC-115, hueco C y QA-023-02, pendientes; y REQ-023 `bloqueado` con el contador agotado (decisión 4)
+ 
+ - **Contexto:** el 2026-09-29 el propietario autorizó implementar SEC-047 (mitad 1 de REQ-023) y preparar el candidato v1.35.0 (§ Resueltas, entrada de esa fecha, texto literal). **Esa autorización NO acepta el aplazamiento de SEC-115 ni del hueco C**: los dos siguen pendientes aquí, con sus fichas finales abajo. El antiguo asunto 3 (SEC-047 y la celda de §13) queda resuelto por esa autorización; los asuntos 1 y 2 de la redacción del 2026-09-28 se sustituyen por las fichas, sin perder nada de lo que decían.
+-- **Acción que impide (regla 2):** **publicar** 1.35.0 —tag, publicación, actualización de la instalación estable— hasta que el propietario decida las tres fichas y la decisión 4; y, mientras esta entrada esté aquí, **cerrar**: marcar **cualquier** REQ `completado` (`guard-completado`; deliberado). **No** impide **implementar** ni **probar** el candidato. **Parte afectada:** la publicación de 1.35.0 y el cierre de REQ-023 y REQ-031. **Evidencia:** la de cada ficha. **Qué lo resuelve:** la decisión del propietario sobre cada ficha.
++- **Acción que impide (regla 2):** **publicar** 1.35.0 —tag, publicación, actualización de la instalación estable— hasta que el propietario decida las tres fichas (la decisión 4 quedó resuelta el 2026-09-29); y, mientras esta entrada esté aquí, **cerrar**: marcar **cualquier** REQ `completado` (`guard-completado`; deliberado). **No** impide **implementar** ni **probar** el candidato. **Parte afectada:** la publicación de 1.35.0 y el cierre de REQ-023 y REQ-031. **Evidencia:** la de cada ficha. **Qué lo resuelve:** la decisión del propietario sobre cada ficha.
+ 
+ **Ficha 1 — SEC-115 y SEC-118 (`instrumento`, abiertos, NO aceptados): un hook que no emite decisión —por tiempo (SEC-115) o por el tamaño de su propio motivo (SEC-118)— deja pasar el cierre entero.** *(SEC-118 añadido y fórmula de la limitación corregida el 2026-09-29, por R-045 §6.)*
+ - **Consecuencia reproducida.** R-044-C sobre `cdcad5d` (2026-09-28, WSL2/Linux): `QA: pendiente (…)` con ≈ 255 KB de evidencia → deny en **73,6 s**; `Write` de 2 025 113 bytes → **80,2 s** (1 012 650 bytes → 20,5 s). CA-A16 (Claude Code CLI 2.1.272, `claude -p`, WSL2, un intento más un control `deny`, 2026-09-28): un hook que agota su timeout sin decidir **deja pasar la herramienta**. El REQ se cerraría con QA y seguridad pendientes: dejan de correr **todas** las puertas del cierre. **No comprobado** en la sesión interactiva del editor ni en Windows.
+@@ -48,6 +48,14 @@
+   - REQ-031 CA-A12 con líneas de 60 caracteres o más: 1 601 repeticiones de `Hallazgos abiertos:` deniegan y 1 801 permiten.
+ 
+   Sin medir en Windows, donde el umbral podría bajar a unas 32 KiB. El motivo de REQ-023 tiene tope (20 líneas) y no está afectado.
++  - **Qué es observado y qué no, en SEC-118** (segunda autorización, punto 4; sin ensayos nuevos):
++    - **Observado directamente**, a nivel de hook, con la entrada JSON `PreToolUse` real alimentada a `guard.sh` en la candidata y en `713ac68` (R-045 §4): el hook termina **sin emitir decisión** en los casos citados, y el control con el mismo valor entre paréntesis (motivo de 314 bytes) deniega. Los recuentos de CA-A12 los midió el auditor (1 601 deniega, 1 801 permite) y los de 3 000 repeticiones, el desarrollador y QA.
++    - **Inferido, no observado:**
++      - que el host trate como permitir un hook que termina sin decisión en este caso concreto. Se apoya en el contrato de hooks y en CA-A16, que se observó en el CLI 2.1.272 por *timeout* y no por esta causa;
++      - el mecanismo exacto («Argument list too long» de `jq` con `MAX_ARG_STRLEN`), leído del código y del error;
++      - el umbral en Windows;
++      - los candidatos sin medir de R-045 §4.
++    - **Ningún caso de SEC-118 se ha ejecutado en el host real.**
+ - **Protección efectiva hoy:** techo de 16 384 bytes para `Hallazgos abiertos:`, medido antes de normalizar (255 371 bytes → deny en 0,31 s por `Edit`); presupuesto de reconstrucción del `Edit`; el REQ real más grande (296 976 bytes) tarda 1,71 s por `Write`; la línea de control más larga de las 29 cabeceras mide 1 926 bytes.
+ - **Qué depende de la disciplina del agente:** no escribir evidencia de cientos de KB en `QA:`, `Seguridad:`, `Rigor:`, `Sensible a seguridad:` ni `Estado:`, ni un REQ de MB por `Write`. Sólo `Hallazgos abiertos:` tiene regla escrita (`requirements/README.md`).
+ - **Alternativa — reparar antes de publicar:** para SEC-115, la propiedad «ninguna operación que crezca más que linealmente corre antes de una comprobación de tamaño que deniegue»: techo por campo de control antes de `arnes_norm_campo`, y techo del `content` de `Write` antes de `arnes_sin_cr_transporte`. Para SEC-118, un solo sitio: que el motivo no viaje como argumento de `jq` (por la entrada estándar, o acotado en bytes). Exige un REQ nuevo (hoy no tienen sede de remediación) y la vía completa. Retrasa el tag lo que dure ese ciclo.
+@@ -69,7 +77,14 @@
+     - `MultiEdit` con la misma edición → ALLOW;
+     - comillas rectas donde el archivo las tiene tipográficas → ALLOW;
+     - con una entrada bajo `## Pendientes` → ALLOW.
+-  - **Lado de la herramienta:** el `Edit` del CLI 2.1.284 normaliza ‘ ’ “ ” y desescapa `\uXXXX` antes de aplicar la edición. Está **leído en el binario y emulado; NO ejecutado en una sesión real**. No se sabe desde qué versión del CLI existe ese respaldo.
++  - **Lado de la herramienta:** QA leyó en el binario del CLI 2.1.284 que el `Edit` normaliza ‘ ’ “ ” y desescapa `\uXXXX`.
++  - **REPRODUCIDO EN EL HOST REAL el 2026-09-29** (segunda autorización, punto 3). Registro previo comiteado antes de ejecutar (`6c947ef`); resultado en `sec117-real/RESULTADO.md`, rama local de evidencia, `1c8c81c`. Claude Code **2.1.285**, `claude -p`, WSL2, `Edit` real del host, `guard.sh` del candidato sin cambios; el plugin 1.33.2 instalado no se cargó. Una ejecución por caso:
++    - **control positivo:** `old_string` literal → deny, el host bloquea y el archivo no cambia;
++    - **caso sospechoso:** comillas rectas donde el archivo tiene tipográficas → el hook sale sin decisión, el host aplica el `Edit` (su `tool_response.oldString` muestra las tipográficas del archivo: normalizó) y el REQ queda **`Estado: completado` con QA y seguridad pendientes, un `contrato` abierto y la cola ocupada**;
++    - **control legítimo:** se permite y se aplica.
++
++    **No ensayado en el host:** el escape `\uXXXX`, `MultiEdit`, el editor interactivo, Windows y otras versiones del CLI.
++  - **Propuesta mínima de reparación, no aplicada:** fallar cerrado en la vía de fragmentos. Cuando la puerta no puede reconstruir el documento de un REQ, deniega si la edición puede dejar el estado terminal (la «regla ancha» de la vía de `Bash`). No imitar la normalización del host. Sede: `hooks/guard-completado.sh`, con un REQ nuevo y la versión de REQ-001 CA-10/CA-11.
+ - **Protección efectiva hoy:** ninguna mecánica en esa vía. La rama de fragmentos sólo sigue si el `new_string` contiene «estado: completado». Con la línea `Estado:` completa en el fragmento, juzga veredictos, clase, cola y quality gates (caso G3), pero **no** la regla de la cabecera ambigua de REQ-023: por esa vía la fila crítica de SEC-047 cierra aunque el agente escriba la línea entera (caso B6 de QA, vuelta 3, corregido el 2026-09-29).
+ - **Qué depende de la disciplina del agente:** cerrar escribiendo la línea `Estado:` entera y con un `old_string` literal.
+ - **No es regresión:** existe en `v1.33.2` y en `v1.34.0`. Publicar 1.35.0 no lo introduce ni lo agrava, y tampoco lo cierra.
+@@ -80,7 +95,7 @@
+   - **Revisión anticipada** si ocurre cualquiera de estas: se observa un cierre por esa vía; cambia el respaldo del `Edit` del CLI; o una comisión toca la reconstrucción del `Edit` en `guard-completado`.
+ - **Limitación para las notas si se publica sin reparar:** la puerta de cierre no juzga un cierre hecho con un `Edit` o `MultiEdit` cuyo `old_string` sólo coincide tras la normalización de la herramienta y cuyo `new_string` no contiene la línea `Estado:`. **La versión no puede prometer** que ningún cierre por `Edit` se salte las puertas.
+ 
+-**Decisión 4 — REQ-023 `bloqueado`: tope de vueltas dev↔QA agotado (3 de 3) con un hallazgo `contrato` de SÓLO TEXTO abierto (QA-023-05). Añadida el 2026-09-29.**
++**Decisión 4 — RESUELTA por el propietario el 2026-09-29 (segunda autorización, § Resueltas): opción (A), corrección documental excepcional fuera del contador, que sigue agotado.** *Texto original de la decisión, conservado:* REQ-023 `bloqueado`: tope de vueltas dev↔QA agotado (3 de 3) con un hallazgo `contrato` de SÓLO TEXTO abierto (QA-023-05). Añadida el 2026-09-29.
+ - **Qué ocurrió.** QA validó la conducta de CA-01…CA-12 en las tres vueltas sin un solo FAIL. El código ejecutable es el mismo desde `ad793ab`. Sobre `c4cc32c`: banco completo 1137 PASS · 0 FAIL · 12 SKIP, con 1 INCONCLUSO de REQ-017 CA-08 (ii) que se conserva; 37 de 37 decisiones coinciden con la propiedad escrita.
+   - Las vueltas 2 y 3 fueron sólo de texto: cerraron QA-023-01, QA-023-03 y QA-023-04.
+   - En la vuelta 3 el barrido encontró **QA-023-05**. `requirements/README.md` y su plantilla (líneas 89–98, sede heredada de la frontera) dicen «Cuándo deniega, dicho entero» y «se deniega toda edición…», pero no excluyen la vía (g): la del `Edit`/`MultiEdit` con `old_string` no literal que la herramienta aplica. Por esa vía la puerta permite (B2, B3, B4, B6), igual en `713ac68`, 1.33.2 y `v1.34.0`: es QA-023-02, preexistente.
+@@ -106,10 +121,74 @@
+   - **QA-023-02 / SEC-117:** es de severidad crítica y de realismo no bajo, pero preexistente y ajeno al alcance de 1.35.0. **El auditor (R-045 §3) recomienda lo mismo que la coordinadora:** publicarlo declarado y abrir su REQ de reparación de inmediato, como parche propio, con revisión el 2026-10-06. Motivo: el defecto ya está en 1.33.2 y en `v1.34.0`, que son las versiones instaladas, así que retener 1.35.0 no protege a nadie y deja vivo el bypass por variante que 1.35.0 cierra dentro de su frontera.
+     - **Condiciones del auditor:** notas correctas y ficha 1 corregida (ya hecho aquí). Además, conviene ejecutar el lado del CLI en una sesión real antes de reparar.
+     - **REQ-001:** el auditor recomienda añadir `SEC-117 (instrumento)` a su `Hallazgos abiertos:` sin tocar su `Estado:`. REQ-001 se reabriría por §9 cuando el REQ de reparación versione CA-10/CA-11. QA pide que tu decisión sobre esta ficha lo resuelva de forma expresa. **Registrarlas aquí no las convierte en riesgos aceptados.**
+-- **Espera:** decisión del propietario sobre las fichas 1, 2 y 3 y la decisión 4. **Trabajo que sigue mientras tanto:** el candidato v1.35.0 —SEC-047 (mitad 1 de REQ-023) y la preparación de la versión—, autorizado el 2026-09-29; no depende de estas dos decisiones. **Cerrar REQ-023 y REQ-031 queda pendiente** mientras esta entrada esté aquí.
++- **Espera:** decisión del propietario sobre las fichas 1, 2 y 3. La decisión 4 está resuelta; su corrección documental está en curso. **Trabajo que sigue mientras tanto:** el candidato v1.35.0 —SEC-047 (mitad 1 de REQ-023) y la preparación de la versión—, autorizado el 2026-09-29; no depende de estas dos decisiones. **Cerrar REQ-023 y REQ-031 queda pendiente** mientras esta entrada esté aquí.
+ 
+ ## Resueltas
+ 
++### RESUELTA (propietario, 2026-09-29, segunda autorización) — **Candidato del PR #59: corrección documental excepcional fuera del contador (QA-023-05 y R-045 §6, con las promesas de REQ-031 afectadas) y reproducción real y aislada de SEC-117**; resuelve la decisión 4 con la opción (A); SEC-115, SEC-118, C y SEC-117 **NO** aceptados
++
++**Texto del propietario, literal e íntegro TAL COMO LLEGÓ** (mensaje del 2026-09-29 a la sesión coordinadora del worktree `ArnesJuan-v1.35`). **El mensaje llegó truncado:** termina en «Registra con precisión la cobertura de QA y», sin punto final. La coordinadora no reconstruye lo que falta; aplica lo que está completo y lo declara en su entrega.
++
++> Autorizo un encargo acotado sobre el candidato del PR #59: corregir las promesas documentales pendientes y comprobar SEC-117 en una sesión real. El objetivo es obtener evidencia suficiente para decidir la publicación, sin ampliar otra vez la reparación.
++>
++> 1. Base y contexto
++>
++> Parte de `cand/1.35.0`, cabeza conocida `45c2e5c5ce90c5eae15e817d65522f3ee6b788cd`. Comprueba el estado antes de actuar y conserva cambios ajenos, la propuesta original y el bloque derivado de ESTADO.
++>
++> Trabaja con las instrucciones del worktree correcto, sin heredar como normativa las de `rel/registro-1.33.0`.
++>
++> 2. Corrección documental excepcional
++>
++> Autorizo una intervención documental fuera del contador agotado, registrada expresamente y sin reiniciarlo.
++>
++> Agrupa QA-023-05 y las correcciones de texto señaladas por R-045, incluidas las promesas de REQ-031 afectadas. Describe la propiedad realmente comprobada y sus límites; no conviertas una denegación condicionada en garantía universal.
++>
++> El analista actualiza las sedes contractuales correspondientes; QA revisa el delta documental y seguridad emite su determinación después de QA favorable. Reutiliza las pruebas y revisiones cuyo contenido no cambió. No repitas el banco completo por rutina ni modifiques código para resolver este apartado.
++>
++> La corrección documental no acepta SEC-115, SEC-118, C ni SEC-117 como riesgos de publicación.
++>
++> 3. SEC-117: reproducción real y aislada
++>
++> Autorizo un experimento acotado en un proyecto temporal, sin datos reales ni archivos de consumidores.
++>
++> Antes de ejecutarlo, registra:
++> - Versión y host del CLI, plugin y hook utilizados.
++> - Entrada exacta del caso derivado de la evidencia existente.
++> - Precondiciones que deberían impedir el cierre.
++> - Resultado esperado y cómo observarás el efecto.
++>
++> Presupuesto: un caso positivo de denegación, el caso sospechoso y un control legítimo permitido. Una ejecución por caso. Si falla la instrumentación, admite una sola repetición diagnóstica, conservando y explicando el intento anterior.
++>
++> Observa por separado:
++> - Argumentos que recibe el hook.
++> - Decisión emitida y tratamiento por el entorno.
++> - Resultado de la herramienta y contenido final del archivo.
++>
++> Utiliza la herramienta Edit real del host comprobado. Una emulación, un script que edite el archivo o una lectura del binario no sustituyen esta prueba. No desactives las puertas para conseguir el resultado.
++>
++> Si no puedes ejecutar la prueba real, informa de la limitación; no la presentes como reproducida. Si el control de denegación no funciona, el ensayo no permite atribuir el resultado a SEC-117.
++>
++> No repares SEC-117 dentro de este encargo. Si se confirma, entrega causa acotada, superficie afectada y propuesta mínima de reparación. Si no se reproduce, limita la conclusión a las condiciones ensayadas.
++>
++> 4. Precisiones con evidencia existente
++>
++> Sin nuevos ensayos adicionales:
++> - Separa en SEC-118 lo observado directamente de lo inferido o emulado.
++> - Identifica qué archivos se escribieron con Python, por qué rol y bajo qué permisos. No des por resuelto el asunto sólo porque la cabecera de REQ-023 no cambió; tampoco declares infracción por el nombre de la herramienta.
++> - Contrasta los cambios de compatibilidad con la política de versiones del repositorio. Presenta una recomendación fundada sobre 1.35.0; no cambies nuevamente la versión por tu cuenta.
++> - Mantén diferenciados los fail-before locales y los SKIP de CI.
++>
++> 5. Registro y CI
++>
++> Autorizo commits de la corrección documental, push sin force y actualización del PR #59. Si cambia la cabeza, observa el CI requerido sobre la cabeza resultante una vez; no relances buscando verde.
++>
++> Conserva la evidencia del experimento por separado, sin incorporar binarios ni volcados de terceros. Registra con precisión la cobertura de QA y
++
++**Lo que la coordinadora añade, rotulado como suyo:**
++- **Intervención documental excepcional:** fuera del contador dev↔QA de REQ-023, que **sigue agotado (3 de 3) y no se reinicia**. Es una comisión de analista, una de QA sobre el delta documental y una determinación de seguridad **después** de un QA favorable. Sin código.
++- **Cabeza de partida comprobada:** `45c2e5c5ce90c5eae15e817d65522f3ee6b788cd` = `origin/cand/1.35.0`. CLI del host: **2.1.285**; QA leyó el binario de la 2.1.284.
++- **El experimento de SEC-117** lo ejecuta la coordinadora, con registro previo en la rama local de evidencia antes de correrlo. No es una medición de QA, como no lo fue CA-A16.
++
+ ### RESUELTA (propietario, 2026-09-29) — **SEC-047 (mitad 1 de REQ-023) y candidato v1.35.0**: implementación y preparación autorizadas, sin publicación; SEC-115 y hueco C **NO** aceptados
+ 
+ **Texto del propietario, literal e íntegro** (mensaje del 2026-09-29 a la sesión coordinadora del worktree `ArnesJuan-v1.35`):
+diff --git a/docs/decisions/ADR-013-gramatica-cerrada-de-hallazgos-abiertos.md b/docs/decisions/ADR-013-gramatica-cerrada-de-hallazgos-abiertos.md
+index 9779e2b..7500cac 100644
+--- a/docs/decisions/ADR-013-gramatica-cerrada-de-hallazgos-abiertos.md
++++ b/docs/decisions/ADR-013-gramatica-cerrada-de-hallazgos-abiertos.md
+@@ -78,3 +78,18 @@ puerta lee el campo—, no por su tamaño.
+   y se presenta en la decisión de publicación.
+ - (=) La evidencia dentro del paréntesis sigue sin declarar nada; una continuación del campo en la línea
+   siguiente sigue sin detectarse (fronteras declaradas en REQ-031, Notas).
++
++*(Nota posterior del 2026-09-29. **El texto de arriba no se altera.** Causa: SEC-118,
++`docs/seguridad/registro-seguridad.md` § R-045, §2 y §4. Es una corrección documental autorizada por el
++propietario ese día —segunda autorización: `PENDING_APPROVAL.md` § Resueltas, punto 2—. Precisa la
++primera viñeta de Consecuencias, «…ni por haber repartido el campo en dos líneas con esa clave (REQ-031
++CA-A12: la clave repetida deniega)». La clave repetida deniega **si el hook alcanza a medir y a emitir su
++decisión**, y se promete **hasta lo medido**. El motivo de CA-A12 nombra todas las líneas y viaja como
++**un** argumento de `jq`; por encima del límite de ese argumento (128 KiB en Linux) el hook sale sin
++decisión y no deniega. Medido en Linux/WSL2, una corrida por punto, en la candidata 1.35.0 y en `713ac68`:
++1 601 líneas repetidas de 60 caracteres o más deniegan, con un motivo de 121 061 bytes, y 1 801 salen sin
++decisión; con líneas cortas, 2 501 deniegan (111 961 bytes) y 3 000 no. Por encima de lo medido no hay
++promesa, y en Windows/MSYS no está medido. Que el cliente trate como permitir un hook sin decisión es
++**inferido**. SEC-118 sigue abierto, `instrumento` y no aceptado; esta nota lo documenta y no lo repara.
++REQ-031 CA-A12 lleva la misma condición desde la misma fecha. La segunda viñeta, la del techo, sigue
++siendo cierta tal como está: el motivo de tamaño no cita el valor, y R-045 §2 lo volvió a medir.)*
+diff --git a/docs/decisions/ADR-014-cabecera-ambigua-variante-o-clave-de-control-repetida.md b/docs/decisions/ADR-014-cabecera-ambigua-variante-o-clave-de-control-repetida.md
+index 6489c22..2c0830b 100644
+--- a/docs/decisions/ADR-014-cabecera-ambigua-variante-o-clave-de-control-repetida.md
++++ b/docs/decisions/ADR-014-cabecera-ambigua-variante-o-clave-de-control-repetida.md
+@@ -53,7 +53,12 @@ valor), no por su tamaño.
+    nada lo decía) no lo decía: reabrir o editar un REQ ya cerrado no se bloquea, ni una edición tras la
+    cual ninguna línea `Estado` dice el terminal. La consecuencia para las cabeceras que ya están así en
+    disco va en «Consecuencias». `Hallazgos abiertos` canónica repetida conserva la puerta y el motivo de
+-   REQ-031 CA-A12.
++   REQ-031 CA-A12, y con ellos su límite: ese motivo cita todas las líneas y no tiene tope, así que la
++   puerta deniega **si alcanza a medir y a emitir su decisión** (medido: 1 601 líneas de 60 caracteres o
++   más deniegan; 1 801 salen sin decisión — SEC-118, sin reparar).
++   *(Precisión del 2026-09-29, SEC-118 —R-045 §4 y §6—, corrección documental autorizada por el
++   propietario ese día —segunda autorización—: el texto anterior terminaba en «…y el motivo de REQ-031
++   CA-A12.», sin el límite.)*
+ 5. **Fuera, declarado y sin promesa de reconocimiento universal:** el homóglifo; una letra ASCII de más,
+    de menos o cambiada; unos dos puntos no ASCII; las líneas con carácter de estructura visible —incluido
+    un NBSP en lugar del blanco ASCII que sigue al marcador (`-`+NBSP+`Estado:`), que no forma marcador y
+@@ -61,10 +66,19 @@ valor), no por su tamaño.
+    del **valor**; las claves de más de 256 bytes, que son una **limitación**: se siguen leyendo como
+    ausencia y **no** están protegidas por ese límite; y el `Edit`/`MultiEdit` cuyo `old_string` no está
+    **literal** en el archivo: el hook no reconstruye el documento y juzga el fragmento como antes, pero
+-   la herramienta **puede escribir igualmente** —el `Edit` del CLI 2.1.284 normaliza las comillas
+-   tipográficas y desescapa `\uXXXX`; leído y emulado, no ejecutado en una sesión real—, y por esa vía un
+-   cierre puede no pasar por ninguna puerta (**QA-023-02**, preexistente, escalado al propietario y no
+-   aceptado; esta decisión no lo cierra).
++   la herramienta **puede escribir igualmente** —**reproducido** en el CLI 2.1.285 (`claude -p`, WSL2,
++   2026-09-29) con comillas rectas en el `old_string` donde el archivo tiene tipográficas: el hook sale
++   sin decisión, el host aplica la edición y un REQ `critico` queda cerrado con QA y seguridad
++   pendientes, un `contrato` abierto y la cola ocupada; que también desescapa `\uXXXX` se leyó en el
++   binario del CLI 2.1.284 y se emuló, sin ensayarlo en el host—, y por esa vía un cierre puede no pasar
++   por ninguna puerta (**QA-023-02** / **SEC-117**, preexistente, escalado al propietario y no aceptado;
++   esta decisión no lo cierra). Sin ensayar en el host: el escape `\uXXXX`, `MultiEdit`, el editor
++   interactivo, Windows y otras versiones del CLI.
++   *(Precisión del 2026-09-29, corrección documental autorizada por el propietario ese día —segunda
++   autorización—: el texto anterior decía «el `Edit` del CLI 2.1.284 normaliza las comillas tipográficas
++   y desescapa `\uXXXX`; leído y emulado, no ejecutado en una sesión real». La reproducción la hizo la
++   coordinadora, con registro previo en `6c947ef` y resultado en la rama local de evidencia,
++   `sec117-real/RESULTADO.md`, commit `1c8c81c`.)*
+ 
+ El contrato exacto —casos, costes, lectores y superficie heredada— es `requirements/REQ-023.md` (CA-01…
+ CA-12, versión del 2026-09-29).
+@@ -113,9 +127,15 @@ semántica de la **ausencia** de un campo, que es REQ-024.
+   Las claves de más de 256 bytes son una limitación, no una zona protegida.
+ - (−) Si la cabecera **en disco** lleva el estado terminal en una línea `Estado` que **no** es la que
+   gobierna —una variante, o una declaración exacta que no es la primera— y la que gobierna no lo dice o
+-  no existe, se deniega **toda** edición que conserve esa línea mientras la cabecera siga siendo ambigua,
+-  aunque no toque el estado; la que la retira, la corrige o deshace la ambigüedad no se deniega por esto
+-  (si deja el terminal como el `Estado` que gobierna, es un cierre y lo juzgan las puertas de siempre).
+-  Detalle en REQ-023 CA-01.
++  no existe, se deniega toda edición **cuyo documento resultante la puerta reconstruye** —un `Write`, o
++  un `Edit`/`MultiEdit` con el `old_string` literal en el archivo— que conserve esa línea mientras la
++  cabecera siga siendo ambigua, aunque no toque el estado; la que la retira, la corrige o deshace la
++  ambigüedad no se deniega por esto (si deja el terminal como el `Estado` que gobierna, es un cierre y lo
++  juzgan las puertas de siempre). Un `Edit`/`MultiEdit` cuyo `old_string` sólo coincide tras la
++  normalización de la herramienta queda fuera (Decisión 5). Detalle en REQ-023 CA-01.
++  *(Precisión del 2026-09-29, QA-023-05, corrección documental autorizada por el propietario ese día
++  —segunda autorización—: el texto anterior decía «se deniega **toda** edición que conserve esa línea»,
++  sin acotar, y la vía de la Decisión 5 lo desmentía — medido por QA, caso B4, `docs/qa/REQ-023.md`
++  § «Vuelta 3 de 3», §3.)*
+ - (=) La guarda del retorno de carro, la noción de cita de la cabecera, el techo de `Hallazgos abiertos:`
+   y la semántica de la ausencia (REQ-024) no cambian.
+diff --git a/requirements/README.md b/requirements/README.md
+index 5b8c90d..b49c5c2 100644
+--- a/requirements/README.md
++++ b/requirements/README.md
+@@ -86,17 +86,21 @@ sola vez). Si la cabecera escribe una de ellas **de otra forma** —una
+ *variante*— o la declara **más de una vez**, **aunque las dos líneas digan lo mismo**, la cabecera es
+ **ambigua** y la puerta **deniega el cierre** citando las líneas —las primeras, y cuántas más hay—, con
+ los caracteres invisibles escritos de forma legible; `tools/arnes-lectura.sh` las nombra todas. No lee la variante como la clave ni elige entre dos declaraciones, y ningún lector
+-cambia el valor que lee. **Cuándo deniega, dicho entero:** cuando la cabecera que quedaría escrita es
++cambia el valor que lee. **A qué ediciones alcanza esta regla:** a las que dejan a la puerta
++reconstruir el documento resultante —un `Write`, o un `Edit`/`MultiEdit` cuyo `old_string` (cada uno,
++en un `MultiEdit`) está **literal** en el archivo—. Un `Edit`/`MultiEdit` cuyo `old_string` sólo
++coincide tras la normalización que aplica la herramienta queda **fuera** («Fuera, y sin promesa»,
++abajo). **Cuándo deniega, dicho entero para ese alcance:** cuando la cabecera que quedaría escrita es
+ ambigua, **alguna** de sus líneas `Estado` —la exacta, una repetida o una variante— dice el estado
+ terminal, y la línea `Estado` que gobierna en disco (la primera declaración exacta; si no hay ninguna,
+ nada lo decía) **no** lo decía. Nada más: reabrir o editar un REQ cuyo `Estado` que gobierna en disco ya
+ es el terminal no se bloquea por esto, ni una edición tras la cual ninguna línea `Estado` dice el
+ terminal. **Consecuencia:** si en disco el terminal está en una línea `Estado` que **no** es la que
+ gobierna —una variante, o una declaración exacta que no es la primera— y la que gobierna no lo dice o no
+-existe, se deniega **toda** edición que conserve esa línea mientras la cabecera siga siendo ambigua,
+-aunque no toque el estado; la que la retira, la corrige o deshace la ambigüedad no se deniega por esto.
+-Para
+-`Hallazgos abiertos` repetida con su forma exacta decide su propia regla («Clases de hallazgo», abajo).
++existe, se deniega toda edición **de ese alcance** que conserve esa línea mientras la cabecera siga
++siendo ambigua, aunque no toque el estado; la que la retira, la corrige o deshace la ambigüedad no se
++deniega por esto. Para `Hallazgos abiertos` repetida con su forma exacta decide su propia regla, con
++su condición («Clases de hallazgo», abajo).
+ 
+ **Qué es una variante, por propiedad.** Una línea de la cabecera —antes del primer `## `, fuera de todo
+ `<!-- … -->`, con dos puntos ASCII (`:`)— cuya clave, tras la tolerancia de siempre (blancos de los
+@@ -123,6 +127,17 @@ marcador (`-`+espacio duro+`Estado:`), que ya no forma marcador y deja el `-` co
+ **más de 256 bytes**. Todo eso se sigue leyendo como hasta ahora: como si la línea no declarara el campo, que
+ para ese campo es su **ausencia**. Las claves de más de 256 bytes son una **limitación**: se leen como
+ ausencia y ese límite **no las protege**. Esta regla mira la **clave**: el valor se lee como siempre.
++**Y fuera también, por la vía y no por la forma de la línea:** un `Edit`/`MultiEdit` cuyo `old_string`
++no está literal en el archivo pero que la herramienta aplica igualmente, porque sólo coincide tras su
++normalización: **reproducido** en el CLI 2.1.285 (`claude -p`, WSL2, 2026-09-29) con comillas rectas en
++el `old_string` donde el archivo tiene tipográficas —el hook sale sin decisión, el host aplica la edición
++y el REQ queda cerrado—; que también desescapa `\uXXXX` se leyó en el binario del CLI 2.1.284 y se emuló.
++Sin ensayar en el host: el escape `\uXXXX`, `MultiEdit`, el editor interactivo, Windows y otras
++versiones del CLI; no se sabe desde qué versión existe. En esa vía la
++puerta no reconstruye el documento y juzga sólo el fragmento: esta regla **no** la alcanza, y por ella un
++cierre puede no pasar por ninguna puerta. Es QA-023-02 / SEC-117 del repositorio del arnés,
++preexistente y sin reparar: **no hay promesa** de que toda edición que la herramienta aplica pase por
++esta regla.
+ 
+ ## Nivel de rigor
+ Cuánta demostración se exige **por encima** de las quality gates, que son binarias y corren
+@@ -199,8 +214,16 @@ paréntesis**, tras la clase y una coma: `QA-006 (instrumento, REQ-007)`, no
+ 
+ **Qué lee la puerta, y qué no.** La puerta juzga **el valor de la única línea de la cabecera** —antes
+ del primer `## `— cuya clave reconoce su lector como `Hallazgos abiertos` (también decorada,
+-`**Hallazgos abiertos:**`, o sangrada). **Si hay más de una, deniega** y las nombra: no elige la
+-primera ni la última y no las fusiona; se deja una sola línea con todos los hallazgos. Dentro de esa
++`**Hallazgos abiertos:**`, o sangrada). **Si hay más de una, deniega** y las nombra —no elige la
++primera ni la última y no las fusiona; se deja una sola línea con todos los hallazgos— **siempre que el
++hook alcance a medir y a emitir su decisión.** El motivo nombra **todas** las líneas y viaja como un
++argumento de línea de órdenes, que tiene límite: por encima, el hook sale **sin decisión** y no deniega.
++Cifras **medidas** —operativas: nadie de fuera elige su conducta por ellas; describen hasta dónde llega lo
++comprobado y sólo una medición nueva las mueve—, Linux/WSL2, una corrida por punto, lista no
++exhaustiva: 1 601 líneas repetidas de 60 caracteres o más deniegan con un motivo de 121 061 bytes, y
++1 801 salen sin decisión; con líneas cortas, 2 501 deniegan (111 961 bytes) y 3 000 salen sin decisión.
++Por encima de lo medido **no hay promesa**, y en Windows/MSYS no está medido. Es SEC-118 del
++repositorio del arnés, sin reparar. Dentro de esa
+ línea, ningún hallazgo que bloquea queda sin leer por el sitio que ocupa en la lista ni por el
+ carácter que lo separa del anterior. **Lo que el lector no reconoce como esa línea no se lee.** Si es
+ una **variante** de la clave —`Hallazgos  abiertos:`, `HALLAZGOS ABIERTOS:`, la clave con un carácter
+@@ -653,10 +676,10 @@ definición del `analista-requerimientos`: esa ausencia no invalida sus aprobaci
+ | [REQ-020](REQ-020.md) | ¿Esta prueba mide algo? Cuatro formas de estar verde sin haber medido — el caso vacío, el que no se ejecuta, el que sólo fija lo que hoy falla y el universo encogido en silencio. **Ventana 1.34.0**: depende de las sondas de REQ-021 | `pendiente` | critico | pendiente | pendiente |
+ | [REQ-021](REQ-021.md) | `tests/util/` con las sondas de reloj y de procesos, escritas una vez: se reconstruyen en cada comisión y dos se rompieron a la primera, una dejando un proceso vivo 3 h 41 min. Alcance reducido el 2026-09-08 (la sonda de línea base queda fuera). **BLOQUEADO el 2026-09-08**: agotó las 3 vueltas dev↔QA sin cerrar `QA-021-10` (`contrato`), y el propietario lo movió a **1.34.0** | `bloqueado` | critico | con-hallazgos | preventiva |
+ | [REQ-022](REQ-022.md) | Despacho en paralelo: tres dimensiones de colisión y la herramienta sólo ve una. Bloque de apertura de **1.34.0** | `pendiente` | critico | pendiente | pendiente |
+-| [REQ-023](REQ-023.md) | Una clave de control escrita de otra forma, o declarada dos veces, no se convierte en ausencia: la **cabecera ambigua no deja cerrar** (mitad 1 de SEC-047). **Ventana 1.35.0**, autorizada por el propietario el 2026-09-29; versionado por **ADR-014** (frontera por esqueleto ASCII de la clave y estructura de la declaración; **cambio de compatibilidad**: una clave repetida deniega aunque diga lo mismo; claves de más de 256 bytes, **limitación** no protegida). Ya no depende de las sondas de REQ-021 ni del gate de SEC-048 | `pendiente` | critico | pendiente | pendiente |
++| [REQ-023](REQ-023.md) | Una clave de control escrita de otra forma, o declarada dos veces, no se convierte en ausencia: la **cabecera ambigua no deja cerrar** (mitad 1 de SEC-047). **Ventana 1.35.0**, autorizada por el propietario el 2026-09-29; versionado por **ADR-014** (frontera por esqueleto ASCII de la clave y estructura de la declaración; **cambio de compatibilidad**: una clave repetida deniega aunque diga lo mismo; claves de más de 256 bytes, **limitación** no protegida). Ya no depende de las sondas de REQ-021 ni del gate de SEC-048. Tope dev↔QA agotado (3 de 3) con QA-023-05 abierto; corrección documental excepcional fuera del contador autorizada por el propietario el 2026-09-29 | `bloqueado` | critico | con-hallazgos | pendiente |
+ | [REQ-024](REQ-024.md) | La ausencia de un campo no se resuelve del lado que abre, y el mismo estado en el segundo lector: la cola que cuenta cero sobre lo que no pudo medir. **Ventana 1.34.0**: va después de REQ-023, con el que comparte nueve rutas | `borrador` | critico | pendiente | pendiente |
+ | [REQ-025](REQ-025.md) | El arnés vigila también a quien orquesta: la sesión coordinadora acredita, decide y publica, y ninguna puerta la mide. **Ventana 1.35.0**; línea base = 20 errores de coordinación catalogados. Tras la **partición del 2026-09-21** conserva **la entrega 1** —las **seis reglas** del propietario en `AGENTS.md` §6, su gemela, las dos sedes de `PENDING_APPROVAL`, la entrada de `arnes-upgrade` **preparada, no publicada**, las referencias en los agentes y el **ADR-008**— y, desde el mismo día, una **entrega 1b `pendiente` dentro del propio REQ** (CA-01, CA-02, las preguntas 1, 2 y 4 de CA-09 (B), la regla del `git add -A` y la primera mitad de CA-10), **sin ventana asignada**: **aprobar la entrega 1 no completa REQ-025**. Vuelta **1 de 3** consumida (QA `con-hallazgos`, R-1) | `en-progreso` | critico | con-hallazgos | pendiente |
+ | [REQ-028](REQ-028.md) | Las capacidades que REQ-025 difiere (**entregas 2+**): `tools/arnes-comprobar.sh` con par discriminante y denominador, su sección del banco, la **procedencia y la atribución** de la cifra que llega al `CHANGELOG.md`, las **columnas de instantes** del libro de comisiones y los umbrales de coste. Nace de la **partición de REQ-025** (2026-09-21) conservando los identificadores CA-03…CA-08, CA-12 y las mitades de CA-10, CA-11 y CA-13. `borrador` con **cuatro decisiones del propietario abiertas** (B-1…B-4) y **sin ventana asignada** | `borrador` | critico | pendiente | pendiente |
+ | [REQ-029](REQ-029.md) | Fidelidad al encargo: detectar omisiones, sustituciones y decisiones de negocio no autorizadas antes de implementar — fuente identificable del pedido, «Correspondencia con el encargo» en la plantilla, comprobación de resolución antes de despachar, **un solo veredicto de QA**, sin bloqueo retroactivo, y la partición que no concede autoridad sobre el alcance. **Ventana 1.35.0**; decisión del propietario del 2026-09-23 sobre la propuesta `d4e7a4f`; integrado en `main` por el PR #53 (`11c5df2`) y cerrado administrativamente el 2026-09-27 sin acreditar conducta ni ahorro | `completado` | critico | aprobado | aprobado |
+ | [REQ-030](REQ-030.md) | Las sondas de coste CA-03 y CA-08 (ii) de REQ-017 deciden sobre un **presupuesto fijo de 5 repeticiones** y dicen **INCONCLUSO** (rendimiento no acreditado, contado en el resumen) cuando no resuelven: los techos no se mueven. Versiona REQ-017 por **ADR-012**; autorizado por el propietario el 2026-09-26. **Ventana 1.35.0**; vuelta 4 y dos intervenciones documentales por excepción expresa del propietario (2026-09-26); integrado en `main` por el PR #55 (`c4d92c0`) y cerrado administrativamente el 2026-09-27 con QA-030-03, QA-030-05 y SEC-111 (`instrumento`) abiertos, sin acreditar rendimiento | `completado` | critico | aprobado (re-verificación documental, 0f7e668) | aprobado (R-043-B, 192d7b6) |
+-| [REQ-031](REQ-031.md) | Ningún hallazgo bloqueante se ignora por su posición ni por su separador: sintaxis **cerrada** de `Hallazgos abiertos:` en `guard-completado` (A), y el mapa `Archivos:` comprobado desde la Definition of Ready antes de pedir paralelismo (D). **Ventana 1.35.0**; pedido del propietario del 2026-09-27. **P-1 resuelta (opción B)**: tras el paréntesis de un hallazgo sólo la coma o el fin del campo; versiona REQ-007 CA-41 por **ADR-013**. Vuelta 2: clave repetida deniega (SEC-112, CA-A12), techo de 16 384 bytes —deniega **si el hook alcanza a medirlo** en 60 s (SEC-114, remedio A)— y acceso de coste constante (CA-A13/A14). **Vuelta 3 de 3 (última)**, autorizada por el propietario el 2026-09-28: el techo se mide **antes** de normalizar (SEC-113 remedio B, CA-A15), reproducción aislada de un hook sin decisión (CA-A16) e inventario de claves ignoradas (CA-A17); la parte de §13 / R-024 nació de una **atribución equivocada**: esa celda es de `rel/registro-1.33.0` (`1154417`), no de `main` (Preguntas abiertas) | `en-revisión` | critico | aprobado (vuelta 3 de 3) | aprobado (R-044-C) |
++| [REQ-031](REQ-031.md) | Ningún hallazgo bloqueante se ignora por su posición ni por su separador: sintaxis **cerrada** de `Hallazgos abiertos:` en `guard-completado` (A), y el mapa `Archivos:` comprobado desde la Definition of Ready antes de pedir paralelismo (D). **Ventana 1.35.0**; pedido del propietario del 2026-09-27. **P-1 resuelta (opción B)**: tras el paréntesis de un hallazgo sólo la coma o el fin del campo; versiona REQ-007 CA-41 por **ADR-013**. Vuelta 2: clave repetida deniega **si el hook alcanza a medir y a emitir su decisión** (SEC-112, CA-A12; el límite medido es SEC-118, versionado el 2026-09-29), techo de 16 384 bytes —deniega **si el hook alcanza a medirlo** en 60 s (SEC-114, remedio A)— y acceso de coste constante (CA-A13/A14). **Vuelta 3 de 3 (última)**, autorizada por el propietario el 2026-09-28: el techo se mide **antes** de normalizar (SEC-113 remedio B, CA-A15), reproducción aislada de un hook sin decisión (CA-A16) e inventario de claves ignoradas (CA-A17); la parte de §13 / R-024 nació de una **atribución equivocada**: esa celda es de `rel/registro-1.33.0` (`1154417`), no de `main` (Preguntas abiertas) | `en-revisión` | critico | aprobado (vuelta 3 de 3) | aprobado (R-044-C) |
+diff --git a/requirements/REQ-023.md b/requirements/REQ-023.md
+index cb799bb..65f7e83 100644
+--- a/requirements/REQ-023.md
++++ b/requirements/REQ-023.md
+@@ -147,12 +147,17 @@ protección.
+     rigor»);
+   - (g) el camino de un `Edit`/`MultiEdit` cuyo `old_string` no está **literal** en el archivo: el hook
+     **no reconstruye** el documento y juzga el **fragmento** como hoy, y esta regla no lo alcanza. **La
+-    herramienta puede escribir igualmente:** el `Edit` del CLI 2.1.284 normaliza las comillas tipográficas
+-    (`‘` `’` `“` `”`) y desescapa `\uXXXX` antes de aplicar la edición (leído en el binario y emulado por
+-    QA; **no** ejecutado en una sesión real; no se sabe desde qué versión del CLI). Por esa vía un cierre
+-    puede **no pasar por ninguna puerta**: es **QA-023-02** —preexistente en 1.33.2 y 1.34.0, fuera de este
+-    REQ, escalado al propietario como **ficha 3** de la entrada pendiente de `PENDING_APPROVAL.md` y **no
+-    aceptado**—. Este REQ no lo cierra ni lo agrava;
++    herramienta puede escribir igualmente:** el `Edit` normaliza las comillas tipográficas (`‘` `’` `“`
++    `”`) antes de aplicar la edición —**reproducido** en el CLI 2.1.285 (`claude -p`, WSL2, 2026-09-29,
++    por la coordinadora): con comillas rectas en el `old_string` donde el archivo tiene tipográficas, el
++    hook sale sin decisión, el host aplica la edición y un REQ `critico` queda `completado` con QA y
++    seguridad pendientes, un `contrato` abierto y la cola ocupada—; y desescapa `\uXXXX` (leído en el
++    binario del CLI 2.1.284 y emulado por QA, **no** ensayado en el host). Sin ensayar en el host: el escape
++    `\uXXXX`, `MultiEdit`, el editor interactivo, Windows y otras versiones del CLI; no se sabe desde qué
++    versión existe. Por esa vía un cierre puede **no pasar por ninguna puerta**: es **QA-023-02** /
++    **SEC-117** —preexistente en 1.33.2 y 1.34.0, fuera de este REQ, escalado al propietario como **ficha
++    3** de la entrada pendiente de `PENDING_APPROVAL.md` y **no aceptado**—. Este REQ no lo cierra ni lo
++    agrava;
+   - (h) lo que un lector de bash no puede ver (NUL, archivo en UTF-16): «Fuera de alcance».
+ 
+   Ninguna de esas formas es un incumplimiento de este criterio **ni está protegida por él**, y ningún
+@@ -747,7 +752,10 @@ dos.
+ - **QA-023-02: la vía del `Edit` que el hook no encuentra literal y la herramienta sí.** Preexistente
+   (1.33.2, 1.34.0), `instrumento`, severidad crítica según QA (`docs/qa/REQ-023.md` § QA-023-02), escalado
+   al propietario como **ficha 3** de la entrada pendiente de `PENDING_APPROVAL.md`, **no aceptado**. No se
+-  repara aquí: la frontera (g) de CA-01 lo declara. **Dato, sin reabrir nada:** la misma premisa falsa
++  repara aquí: la frontera (g) de CA-01 lo declara. *(Actualizado el 2026-09-29: registrado por el
++  auditor como **SEC-117** —`docs/seguridad/registro-seguridad.md` § R-045, §3— y **reproducido** por la
++  coordinadora en el host real, CLI 2.1.285, con la variante de las comillas; lo que sigue sin ensayar
++  está en la frontera (g).)* **Dato, sin reabrir nada:** la misma premisa falsa
+   —«la herramienta fallará entera y no escribirá nada»— vive en **REQ-001 CA-11** (`completado`), junto a
+   su gemelo de respaldo **CA-10**. REQ-001 **no se reabre** desde aquí; qué hacer con él se decide con
+   QA-023-02 (ficha 3).
+@@ -756,7 +764,13 @@ dos.
+   too long» y la puerta **no emite decisión** —que en el cliente equivale a permitir—, igual en `713ac68` y
+   en la candidata. Es **preexistente** y ajeno a este REQ; la coordinadora lo clasificó como defecto
+   independiente, que registrarán QA o seguridad con su clase y un responsable. Aquí no se repara ni entra
+-  en ningún criterio.
++  en ningún criterio. *(Actualizado el 2026-09-29: el auditor lo registró como **SEC-118** —`instrumento`,
++  abierto, no aceptado; `docs/seguridad/registro-seguridad.md` § R-045, §4—, generalizado a todo motivo
++  que interpole contenido sin tope, y con la medición completa: 1 601 repeticiones de 60 caracteres o más
++  deniegan con un motivo de 121 061 bytes y 1 801 salen sin decisión. Está en `Hallazgos abiertos:` de
++  este REQ como sede provisional, y REQ-031 CA-A12 lleva desde ese día la condición en su texto. Que el
++  cliente trate como permitir un hook sin decisión es **inferido** —contrato de hooks, y REQ-031 CA-A16
++  lo observó por timeout, no por esta causa—; lo observado es que el hook no emite decisión.)*
+ - **El segundo lector con noción de comentario propia: la cola de aprobaciones (`SEC-051`).** Clase,
+   dueños, forzador y vencimiento se **citan**: `docs/seguridad/registro-seguridad.md:4068` y siguientes. Su
+   contrato ya existe: REQ-024 CA-08, CA-09 y CA-10. No entra aquí por tres motivos: son tres cosas de
+@@ -893,3 +907,5 @@ Pedido: el texto literal del 2026-09-29, puntos 2 y 3. Autorización de todas la
+ | 2026-09-29 | **Write-back de QA-023-03 (vuelta 2 de 3): «reabrir, o editar sin cerrar, no se bloquea» era absoluta y su excepción vivía en otra parte.** CA-01 ya la enunciaba junto («Lo que NO se bloquea» y su consecuencia declarada), así que el criterio no cambia. Antes, en las sedes heredadas: «Reabrir un REQ, o editarlo sin cerrarlo, no se bloquea por esto». Después, en la misma frase: salvo si la cabecera en disco declara el estado terminal sólo en una variante (`ESTADO: completado`) con un `Estado:` exacto distinto, caso en que se deniega toda edición que conserve esa variante, y no la que la retira o la corrige. Sedes: `requirements/README.md` y su plantilla (§ «Veredictos de validación»), `skills/arnes-upgrade/SKILL.md` (§ «Hacia 1.35.0»), las notas `[1.35.0]` de `CHANGELOG.md` («Cómo responde la puerta») y ADR-014 (Decisión 4, que remite a su consecuencia). `AGENTS.md` §13 («reabrir no se bloquea») es cierto y no cambia | **QA-023-03** (`contrato`, baja, `docs/qa/REQ-023.md` § QA-023-03; casos C04–C06) | — |
+ | 2026-09-29 | **Write-back de QA-023-04 (vuelta 2 de 3): la conclusión de CA-09 (iii) afirmaba una cota que la construcción no tiene.** Antes: «Así el trabajo nuevo por línea queda acotado por una constante **independiente de la longitud de la línea**». Después: el trabajo nuevo **sobre la clave** queda acotado por una constante; lo que crece con la longitud es **lineal** y no más —la medición de la longitud de la clave y la captura de la cita de cada línea de control (`${l:0:80}`), unos 13 ms por MB y línea de control en C.UTF-8—; y «Lo que este criterio NO mide» pasa de «no añade otra vía de crecimiento» a «no añade trabajo que crezca más que linealmente». La comprobación prescrita no cambia y el código no se toca. Ni ADR-014 ni las notas `[1.35.0]` repetían la conclusión | **QA-023-04** (`contrato`, baja, `docs/qa/REQ-023.md` § QA-023-04: medición en 0,1, 1 y 10 MB, C.UTF-8 y C) | — |
+ | 2026-09-29 | **Write-back de QA-023-03, vuelta 3 de 3 (la última): la excepción se escribe por PROPIEDAD, no por un caso.** Antes (vuelta 2), en todas las sedes: «salvo en un caso: si la cabecera en disco declara el estado terminal **sólo en una variante** (`ESTADO: completado`) mientras su `Estado:` exacto dice otro, se deniega toda edición que conserve esa variante». Después: la regla sólo deniega cuando la cabecera resultante es **ambigua**, **alguna** línea `Estado` —la exacta, una repetida o una variante— dice el terminal y el `Estado` que gobierna en disco (la primera declaración exacta; si no hay ninguna, nada lo decía) no lo decía; no juzga nada más; y la consecuencia: si en disco el terminal está en una línea `Estado` que **no** es la que gobierna —variante, o exacta que no es la primera— y la que gobierna no lo dice o no existe, se deniega toda edición que conserve esa línea **mientras la cabecera siga siendo ambigua**; la que la retira, la corrige o deshace la ambigüedad no se deniega por esto. **En CA-01**, la condición de intento de cierre gana «la exacta, una repetida o una variante» y «si no hay ninguna, nada lo decía», y «Lo que NO se bloquea» abre con la propiedad; el criterio no cambia de conducta. **Sedes:** CA-01, `requirements/README.md` y su plantilla (§ «Veredictos de validación»), `skills/arnes-upgrade/SKILL.md` (§ «Hacia 1.35.0»), ADR-014 (Decisión 4 y Consecuencias) y las notas `[1.35.0]` de `CHANGELOG.md`; el comentario de `hooks/guard-completado.sh:581-590` lo corrige el desarrollador. **«Mientras la cabecera siga siendo ambigua»** es una precisión frente al texto de la coordinadora: si en X1 se retira la **primera** línea, la que dice el terminal queda como única y gobernante, la cabecera deja de ser ambigua y la edición es un cierre que juzgan las puertas de siempre, no esta regla | **QA-023-03** sin terminar (`docs/qa/REQ-023.md`, adenda «Vuelta 2 de 3»): la máquina deniega también **X1** (`Estado: en-revisión` y más abajo `Estado: completado`) y **X2** (sólo `ESTADO: completado`), medidos editando sólo `Rigor:`; el texto de la vuelta 2 los dejaba fuera. Propiedad enunciada por la coordinadora (encargo de la vuelta 3, 2026-09-29) | — |
++| 2026-09-29 | **Intervención documental EXCEPCIONAL, fuera del contador: write-back de QA-023-05 y de las correcciones de texto de R-045 §6.** **El contador dev↔QA sigue agotado (3 de 3) y no se reinicia**; esta fila no es una vuelta. Ningún criterio de este REQ cambia, y la conducta tampoco: todo es texto. **(1) QA-023-05.** Antes, en `requirements/README.md` y su plantilla (§ «Veredictos de validación»): «**Cuándo deniega, dicho entero:** …» y «se deniega **toda** edición que conserve esa línea», sin mencionar la frontera (g). Después: el párrafo abre con **a qué ediciones alcanza la regla** —las que dejan a la puerta reconstruir el documento: un `Write`, o un `Edit`/`MultiEdit` con el `old_string` literal—; «dicho entero» y «toda edición» quedan acotados a ese alcance; y «Fuera, y sin promesa» gana la vía (g) —el `old_string` que sólo coincide tras la normalización de la herramienta—, remitiendo a QA-023-02 / SEC-117. «Toda edición», acotada igual, en `skills/arnes-upgrade/SKILL.md` (§ «Hacia 1.35.0»), en ADR-014 (Consecuencias, con nota fechada, porque es un ADR de este candidato y no está publicado) y en las notas `[1.35.0]` de `CHANGELOG.md` (cambio de compatibilidad 2). CA-01 no cambia: su «Dado» ya habla de la cabecera **resultante** (el `Write` o el documento reconstruido), y su frontera (g) dice que esta regla no la alcanza. La fila de `AGENTS.md` §13 de la cabecera ambigua queda cierta por remisión, como dijeron QA y el auditor. **(2) R-045 §6.** Las notas `[1.35.0]` declaran **SEC-118** en sus limitaciones, en lugar del «pendiente de registro», separando lo **observado a nivel de hook** (JSON `PreToolUse` real, en la candidata y en `713ac68`: los casos de R-045 §4 salen sin decisión y los controles con motivo corto deniegan) de lo **inferido** (que el cliente trate como permitir un hook sin decisión: contrato de hooks y analogía con REQ-031 CA-A16, observado por timeout y no por esta causa) y de lo **sin medir** (Windows/MSYS y los candidatos de §4). «Si el hook alcanza a medir» pasa a «si alcanza a medir **y a emitir su decisión**» en el cambio de compatibilidad 1 de las notas, en la limitación de SEC-115 y en la entrada de REQ-031 de la guía. La guía cita SEC-117 donde remite al registro. Se corrige además «QA no las ha validado» sobre las cifras del desarrollador (observación sin id de R-045 §6). **(3) Promesas de REQ-031**, barridas por propiedad: «la clave repetida deniega» sin condición se corrige en REQ-031 CA-A12 (cambio menor, con su fila de Historial), en `requirements/README.md` y su plantilla (§ «Clases de hallazgo»), en la fila de `AGENTS.md` §13 y su gemela, en la guía y en las notas; y la frase equivalente de ADR-014 (Decisión 4) lleva nota fechada. ADR-013, publicado, no se reescribe: lleva una nota posterior fechada (fila siguiente). En este REQ, el dato de «Fuera de alcance» sobre el motivo de CA-A12 pasa a citar SEC-118. **(4) Fail-before frente a CI**, distinguido en las notas: se ejerció **en local**, contra `713ac68` y contra la instalación 1.33.2, por el desarrollador en su entrega (`ad793ab`) y por QA en sus tres vueltas (sección 41: 169 de 169 con las dos bases presentes; tabla de 79 decisiones en la vuelta 1). En el CI de `45c2e5c` (run 36625681278, dato de la coordinadora, no leído por esta comisión) esas 18 filas salen **SKIP**, porque el runner no tiene instalada la 1.33.2, así que ese CI no ejerce el fail-before. Es lo que CA-08 (Materialización) contrata. **Campos de la cabecera sin tocar:** `Estado: bloqueado`, `QA:`, `Seguridad:` y `Hallazgos abiertos:` los mueven QA, seguridad y la coordinadora. **Documentar no repara:** QA-023-02 / SEC-117, SEC-118, SEC-115 y el hueco C siguen abiertos y **no aceptados**. Coste de esta comisión de analista: unos 340 k tokens (`AGENTS.md` §6, «Control de costo») | **QA-023-05** (`contrato`; `docs/qa/REQ-023.md` § «Vuelta 3 de 3», §3 y §5). **R-045 §6**, condiciones de publicación 1, 3 y 4, y **SEC-118** (§4) (`docs/seguridad/registro-seguridad.md`). Autorización del propietario del 2026-09-29, **segunda**: `PENDING_APPROVAL.md` § Resueltas, entrada «RESUELTA (propietario, 2026-09-29, segunda autorización)…», punto 2 —intervención documental fuera del contador agotado, sin reiniciarlo; «Describe la propiedad realmente comprobada y sus límites; no conviertas una denegación condicionada en garantía universal»; no acepta SEC-115, SEC-118, C ni SEC-117— y punto 4 («Mantén diferenciados los fail-before locales y los SKIP de CI»), commit `7333906`; el texto llegó truncado y se aplica lo que está completo | — |
++| 2026-09-29 | **Misma intervención documental excepcional, tres ajustes de texto pedidos por la coordinadora dentro del mismo encargo.** **El contador sigue 3 de 3 y no se reinicia**; no es una vuelta, no cambia código ni conducta, y no cambia ningún criterio salvo el dato de hecho de la frontera (g). **(1) SEC-117 reproducido en el host real.** Antes, en todas las sedes: «leído en el binario y emulado; **no** ejecutado en una sesión real». Después: la variante de las **comillas** está **reproducida** en el CLI 2.1.285 (`claude -p`, WSL2, 2026-09-29, `Edit` real del host y `guard.sh` del candidato sin cambios). Con el `old_string` literal, deny y el archivo no cambia. Con comillas rectas donde el archivo tiene tipográficas, el hook sale sin decisión, el host aplica la edición —su `tool_response.oldString` muestra la normalización— y un REQ `critico` queda `completado` con QA y seguridad pendientes, un `contrato` abierto y la cola ocupada. El control legítimo se permite y se aplica. **Sigue sin ensayar en el host:** el escape `\uXXXX` (sólo leído en el binario del CLI 2.1.284 y emulado), `MultiEdit`, el editor interactivo, Windows y otras versiones del CLI. Barrido **por propiedad** —toda sede no-código que diga de QA-023-02 / SEC-117 «emulado», «no ejecutado en una sesión real» o equivalente—: CA-01 (g) y «Fuera de alcance» de este REQ; `requirements/README.md` y su plantilla («Fuera, y sin promesa»); ADR-014 (Decisión 5, con nota fechada); `skills/arnes-upgrade/SKILL.md` («Vías conocidas que no encuentra»); y las notas `[1.35.0]` (frontera de REQ-023 y limitación de QA-023-02 / SEC-117, que ahora separa lo reproducido en el host de lo no ensayado). En la limitación de SEC-118 de las notas, lo inferido lleva además esta observación como refuerzo por otra causa, sin dejar de ser inferido. Quedan sin tocar: las entradas antiguas del `CHANGELOG.md`, que son registro, y los comentarios de `hooks/guard-completado.sh:37-38, :401 y :618`, que son código y quedan listados para el desarrollador. **(2) `AGENTS.md` §13 y su plantilla, gemelas:** una sola cláusula tras la tabla condiciona **toda** fila que diga que una puerta deniega: vale si el hook alcanza a medir **y a emitir su decisión** (SEC-115, SEC-118); vale sobre las ediciones cuyo documento la puerta reconstruye; y el `Edit` con `old_string` normalizado por el host queda fuera de lo que prometen (SEC-117, reproducido en 2.1.285). Remite al registro. **(3) ADR-013:** una **nota posterior fechada** al final, que **no altera el texto original**, precisa la viñeta de la clave repetida: deniega si el hook alcanza a medir y a emitir su decisión, hasta lo medido en R-045 §4 (SEC-118). No se crea ningún ADR nuevo. **Campos de cabecera y estados sin tocar.** **Documentar no repara:** SEC-117 y SEC-118 siguen abiertos y no aceptados; reproducir SEC-117 no lo acepta | Reproducción de SEC-117 hecha por la coordinadora el 2026-09-29: registro previo en `6c947ef` y resultado en la rama local de evidencia, `sec117-real/RESULTADO.md`, commit `1c8c81c`. **Es dato de la coordinadora, y esta comisión no leyó esa rama.** Encargo de la coordinadora del mismo día, dentro de la autorización del propietario del 2026-09-29 —segunda: `PENDING_APPROVAL.md` § Resueltas, punto 2, «no conviertas una denegación condicionada en garantía universal», y punto 3, la reproducción de SEC-117—, commit `7333906`. Observación 1 de la comisión de analista (las filas de §13) | — |
+diff --git a/requirements/REQ-031.md b/requirements/REQ-031.md
+index 0a710b4..a7c767c 100644
+--- a/requirements/REQ-031.md
++++ b/requirements/REQ-031.md
+@@ -292,7 +292,9 @@ Convenciones de todo este apartado:
+      frase, mensaje o comentario que prometa que un bloqueante no queda sin leer por su posición—, con
+      el resultado en `docs/qa/REQ-031.md`.
+ 
+-- **CA-A12 — La clave repetida no se resuelve eligiendo una: deniega.** *(añadido el 2026-09-27;
++- **CA-A12 — La clave repetida no se resuelve eligiendo una: deniega, si el hook alcanza a medir y a
++  emitir su decisión.** *(añadido el 2026-09-27; condición del título añadida el 2026-09-29, nota de
++  versionado al final de este criterio;
+   write-back de SEC-112, remedio B por mecanismo)* Dado un REQ listo para cerrar cuya cabecera
+   resultante (antes del primer `## `) contiene **más de una** línea cuya clave el lector reconoce como
+   `Hallazgos abiertos` —con las mismas tolerancias de clave que ya aplica, p. ej. `**Hallazgos
+@@ -319,6 +321,27 @@ Convenciones de todo este apartado:
+   clave:** las demás claves repetidas de la cabecera conservan su regla actual («gana la última»), y
+   eso se declara en Notas § Fronteras.
+ 
++  *(Versionado el 2026-09-29, cambio **menor**, write-back de **SEC-118** —`docs/seguridad/registro-seguridad.md`
++  § R-045, §4 y §6—. El «Entonces deniega» de arriba se lee con esta condición, que es parte del
++  criterio: **deniega si el hook alcanza a medir y a emitir su decisión.** El motivo nombra todas las
++  líneas repetidas —(i) de arriba— y `arnes_deny` (`hooks/lib.sh`) lo pasa a `jq` como **un** argumento
++  de línea de órdenes; por encima del límite de ese argumento (128 KiB en Linux) el hook sale **sin
++  decisión** y no deniega. Cifras **medidas**, Linux/WSL2, una corrida por punto, lista **no
++  exhaustiva**, con decisiones idénticas en el candidato 1.35.0 y en `713ac68` —son **operativas**:
++  nadie de fuera elige su conducta por ellas, describen hasta dónde llega lo comprobado y sólo una
++  medición nueva las mueve, con fila de Historial—: 1 601 líneas repetidas de 60 caracteres o más →
++  **deny**, con un motivo de 121 061 bytes; 1 801 → **sin decisión**; con líneas cortas, 2 501 →
++  **deny** (111 961 bytes) y 3 000 → **sin decisión**. El umbral, según el auditor, cae hacia las
++  1 700 líneas largas —entre las dos medidas— y hacia las 2 900 cortas —estimado a partir de la de
++  2 501—. Por encima de lo medido **no hay promesa**; en Windows/MSYS no está medido y puede ser menor.
++  Que el cliente trate como permitir un hook sin decisión es **inferido** —contrato de hooks; CA-A16 lo
++  observó por timeout, no por esta causa—. Si la cabecera tiene además otra ambigüedad de REQ-023, lo
++  medido (R-045 §2, con pocas líneas) es que la puerta deniega con el motivo de REQ-023, que tiene tope;
++  el contrato admite el motivo de cualquiera de las dos reglas (REQ-023 CA-01, «Repeticiones»), así que
++  esta nota no promete nada en ese caso más allá de lo medido. **Este versionado documenta el límite; no lo repara ni lo acepta:** SEC-118 sigue
++  abierto, `instrumento` y no aceptado. La conducta no cambia. El título decía «…: deniega.»; el resto del
++  texto de arriba se conserva tal como se escribió.)*
++
+ - **CA-A13 — Techo de tamaño del valor: por encima, deniega si el hook alcanza a medirlo.** *(añadido
+   el 2026-09-27; write-back de SEC-113, medida (a); **frontera añadida el mismo día por SEC-114**,
+   R-044-A)* Dado un REQ listo para cerrar, Cuando llega la transición y el valor escrito de
+@@ -644,7 +667,7 @@ efectos, ejecuta CA-A16 y CA-A17; el auditor revisa después de QA favorable.
+ 
+ ## Trazabilidad
+ Origen: `PENDING_APPROVAL.md` § Resueltas, entrada «RESUELTA (propietario, 2026-09-27, decisión registrada íntegra ANTES de despachar) — REQ-031: entrega acotada…», texto literal del propietario y añadido rotulado de la coordinadora; y entrada «RESUELTA (propietario, 2026-09-27) — REQ-031, decisión P-1: opción B» (texto literal del propietario); rama `feat/req-031-hallazgos-y-paralelo`, base `a7a60c247aae6853d492a71313ab9fabed3c17a7`. Evidencia inicial: `/home/juan/dev/ArnesJuan-evidencia/evaluacion-2026-09-27/` (`README.md`, `A-hallazgos-separador.txt`, `D-paralelo.txt`; commit `37ab81e` de la rama `evidencia/prueba-despacho-2026-09-14`). Reglas: `AGENTS.md` §6 (clases de hallazgo; despacho en paralelo sólo con la herramienta) y §13 (fila «No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno sin clase», que debe seguir siendo verdad: CA-A11.2).
+-Tocado por: `analista-requerimientos` / 2026-09-27 (creación); `analista-requerimientos` / 2026-09-27 (P-1 resuelta: opción B, ADR-013, versionado de REQ-007 CA-41); `desarrollador` / 2026-09-27 (implementación CA-A01…A11, CA-D01, CA-D04); `qa-tester` / 2026-09-27 (vuelta 1 de 3, `QA: aprobado` sobre `cf3e420`); `auditor-seguridad` / 2026-09-27 (R-044, `Seguridad: con-hallazgos` sobre `5cf8e0c`); `auditor-seguridad` / 2026-09-27 (R-044-A, `Seguridad: con-hallazgos` sobre `73db128`); `auditor-seguridad` / 2026-09-27 (R-044-B, `Seguridad: aprobado` sobre `9cc4c67`); `auditor-seguridad` / 2026-09-28 (R-044-C, `Seguridad: aprobado` sobre `d49f319`)
++Tocado por: `analista-requerimientos` / 2026-09-27 (creación); `analista-requerimientos` / 2026-09-27 (P-1 resuelta: opción B, ADR-013, versionado de REQ-007 CA-41); `desarrollador` / 2026-09-27 (implementación CA-A01…A11, CA-D01, CA-D04); `qa-tester` / 2026-09-27 (vuelta 1 de 3, `QA: aprobado` sobre `cf3e420`); `auditor-seguridad` / 2026-09-27 (R-044, `Seguridad: con-hallazgos` sobre `5cf8e0c`); `auditor-seguridad` / 2026-09-27 (R-044-A, `Seguridad: con-hallazgos` sobre `73db128`); `auditor-seguridad` / 2026-09-27 (R-044-B, `Seguridad: aprobado` sobre `9cc4c67`); `auditor-seguridad` / 2026-09-28 (R-044-C, `Seguridad: aprobado` sobre `d49f319`); `analista-requerimientos` / 2026-09-29 (notas de versionado por REQ-023; CA-A12 versionado por SEC-118, cambio menor)
+ 
+ ### Correspondencia con el encargo
+ | Obligación del pedido (cita) | Criterio que la cubre | Relación | Autorización citada, o pregunta abierta |
+@@ -758,3 +781,4 @@ Tocado por: `analista-requerimientos` / 2026-09-27 (creación); `analista-requer
+ | 2026-09-28 | **QA: revisión de procedencia sobre `fa9d561`, acotada (no re-emito el veredicto, no cambia lo que `QA:` cubre).** Confirmé `git diff 19c5ca7..fa9d561 -- hooks tests tools` vacío (código sigue en `cdcad5d`). Verifiqué por mi cuenta la causa de fondo: el `AGENTS.md` que esta sesión recibió al principio es el de `/home/juan/dev/ArnesJuan` (`rel/registro-1.33.0`, 503 líneas, celda ancha de §13 en su línea 349, con §14), no el de mi worktree real `/home/juan/dev/ArnesJuan-req031` (`main`, 807 líneas, sin esa celda ni §14); confirmé además `origin/rel/registro-1.33.0:AGENTS.md` (celda en su línea 356) y que `git log … -S'Revisión R-024'` da `ef82d43`, y que ambos commits citados (`1154417`, `ef82d43`) existen. Revisé el write-back del analista sede por sede (ADR-013, Notas § Fronteras, Preguntas abiertas, Correspondencia): ninguna presenta ya la celda ancha, R-024 o SEC-078/079 como sede vigente en `main`; todas citan procedencia y commit cuando hace falta el antecedente; ninguna añade la celda a `main` para corregirla; ninguna presenta el hueco C o SEC-115 como ya prevenidos. **Corregí mi propia sede** (`QA-031-01` en `Hallazgos abiertos:`, y el pasaje equivalente de `docs/qa/REQ-031.md`): «SEC-047/SEC-078» → SEC-047 con su línea (`registro-seguridad.md:3633`) como antecedente vigente, y SEC-078 sólo como antecedente de `rel/registro-1.33.0` (commit `1154417`), sin sede en `main`; verifiqué que el campo `Hallazgos abiertos:` sigue interpretable tras el cambio. **Efecto sobre mis tres vueltas, en una frase:** la única dependencia real de una instrucción de la rama equivocada fue esa cita comparativa en `QA-031-01`, ya corregida; la clasificación (`instrumento`) no dependía de ella —se apoya en `requirements/README.md`, que sí está en `main`—, y ninguna otra conclusión mía (gates, fail-before/pass-after, las tres comprobaciones de CA-A15, el inventario de CA-A17) depende de §13/R-024/SEC-078/079, de §14 ni de la política de «vía proporcional» de §6; el presupuesto de vueltas y los roles/permisos son la misma regla en las dos ramas. Ningún veredicto (`QA: aprobado` de las vueltas 1, 2 y 3) cambia. Detalle completo en `docs/qa/REQ-031.md` § «Revisión de procedencia, `fa9d561`» | Autorización del propietario, `PENDING_APPROVAL.md` § Resueltas, «REQ-031: comprobación acotada de procedencia de instrucciones y referencias» (2026-09-28) | — |
+ | 2026-09-28 | **Seguridad: revisión acotada de procedencia R-044-D, sobre `cb79473`.** El código funcional sigue siendo `cdcad5d`. **No reescribo el paréntesis de `Seguridad:`, porque su cobertura no cambia.** Sólo `Hallazgos abiertos:` cambia: **SEC-116 → `mitigado`** y sale del campo. Qué dependió de `rel/registro-1.33.0`: la viñeta de R-044 §4 sobre SEC-078/079 (anulada) y la atribución de R-044 §7 (anulada, ya corregida en R-044-C). La conducta medida sigue en pie. La cláusula de subida de SEC-047 **sí está** en la definición de `main` (`:3683-3685`); su condición temporal se cumplió (`v1.34.0`), pero su premisa no se cumple en `main`, cuyo §13 sólo promete la guarda del CR interior. La subida no se deduce de ahí y la decisión sigue siendo del propietario. Los textos corregidos citan la celda ancha, R-024 y SEC-078/079 sólo como antecedente, con commits verificables (`1154417` y `ef82d43`, contenidos en `rel/registro-1.33.0` y no ancestros de `cb79473`). Nada se importó, y la puerta posterior no se presenta como prevención disponible. **Observación sin hallazgo:** la entrada de publicación de `PENDING_APPROVAL.md` conserva frases de antes de la vuelta 3; la coordinadora debe ponerla al día y presentar SEC-115 como el residuo vigente | Auditoría acotada del `auditor-seguridad`, `docs/seguridad/registro-seguridad.md` § R-044-D | — |
+ | 2026-09-29 | **Dos notas de versionado en Notas § «Fronteras deliberadas del bloque A»**, sin cambiar ningún criterio, ninguna obligación ni la cabecera de este REQ: tras la viñeta «La clave del campo…» y tras la viñeta «La clave repetida (CA-A12) es sólo `Hallazgos abiertos`…». Antes: las dos describían sólo el alcance de REQ-031 (la variante da ausencia; las demás claves repetidas, «gana la última»). Después: siguen diciendo eso de REQ-031, y remiten a REQ-023, que en el mismo candidato hace que una variante de una clave de control, o una clave de control repetida aunque diga lo mismo, deniegue el cierre; «gana la última» queda como regla de **lectura**, y CA-A12 conserva su puerta y su motivo. **No invalida los veredictos de QA ni de seguridad**: no cambia nada de lo que firmaron | Barrido por propiedad de los textos de contrato que REQ-023 vuelve falsos (encargo de la coordinadora del 2026-09-29, sobre la autorización del propietario de esa fecha, `PENDING_APPROVAL.md` § Resueltas, punto 2: «versionar los criterios y sedes afectados») | **ADR-014** |
++| 2026-09-29 | **CA-A12 versionado, cambio menor: la denegación de la clave repetida lleva su condición.** Antes: título «La clave repetida no se resuelve eligiendo una: deniega.» y un «Entonces deniega» sin límite. Después: el título dice «…: deniega, si el hook alcanza a medir y a emitir su decisión», y una nota de versionado al final del criterio —parte de él— declara el mecanismo (el motivo nombra todas las líneas y viaja como **un** argumento de `jq`), las cifras medidas y **operativas** (1 601 líneas de 60 caracteres o más → deny, motivo de 121 061 bytes; 1 801 → sin decisión; cortas: 2 501 → deny, 111 961 bytes; 3 000 → sin decisión), que por encima de lo medido no hay promesa, lo **inferido** (que el cliente trate como permitir un hook sin decisión) y lo **no medido** (Windows/MSYS). El resto del texto de CA-A12 se conserva. **Conducta: sin cambio.** **Mismo barrido por propiedad** —«la clave repetida deniega» sin condición— en: `requirements/README.md` y su plantilla, § «Clases de hallazgo»; la fila de `Hallazgos abiertos:` de `AGENTS.md` §13 y su gemela, y una remisión en la fila de la cabecera ambigua; `skills/arnes-upgrade/SKILL.md`, entradas de REQ-031 y de REQ-023; las notas `[1.35.0]` de `CHANGELOG.md` (cambios de compatibilidad 1 y 2, y la limitación SEC-118); ADR-014, con nota fechada; y el índice de `requirements/README.md`. **ADR-013 no se reescribe**, porque está publicado: su viñeta de Consecuencias «ni por haber repartido el campo en dos líneas con esa clave (REQ-031 CA-A12: la clave repetida deniega)» queda desmentida por encima de lo medido, y la precisa una **nota posterior fechada** al final del ADR, que no altera su texto (instrucción de la coordinadora en esta misma intervención, en lugar de un ADR nuevo). **Correspondencia con el encargo: sin cambio.** La obligación de la fila de SEC-112 sigue cubierta por CA-A12; el límite es un defecto del instrumento (SEC-118), no un cambio de alcance. **Campos de la cabecera sin tocar** (`Estado:`, `QA:`, `Seguridad:`, `Hallazgos abiertos:`). Si este versionado afecta a lo que firmaron `QA:` (vuelta 3, `cdcad5d`) y `Seguridad:` (R-044-C), lo deciden QA y seguridad. R-045 §2 ya corrigió en el registro el alcance de R-044-C en este punto, y el paréntesis de `Seguridad:` («clave repetida que deniega») sólo lo reescribe el auditor. **Documentar no repara:** SEC-118 sigue abierto y no aceptado | **SEC-118** (`instrumento`, media; `docs/seguridad/registro-seguridad.md` § R-045, §4, y condición de publicación 1 de §6). Intervención documental excepcional autorizada por el propietario el 2026-09-29, segunda autorización: `PENDING_APPROVAL.md` § Resueltas, entrada «RESUELTA (propietario, 2026-09-29, segunda autorización)…», punto 2 («Describe la propiedad realmente comprobada y sus límites; no conviertas una denegación condicionada en garantía universal»), commit `7333906` | — |
+diff --git a/skills/arnes-upgrade/SKILL.md b/skills/arnes-upgrade/SKILL.md
+index fa59a93..182473d 100644
+--- a/skills/arnes-upgrade/SKILL.md
++++ b/skills/arnes-upgrade/SKILL.md
+@@ -991,11 +991,18 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
+     elemento vacío; un ID con blancos, con tilde o con marcado; y una ausencia mezclada con
+     hallazgos. La puerta **nombra el fragmento que no entendió** y no reescribe el campo. La forma
+     equivalente conserva la nota **dentro** del paréntesis: `QA-006 (instrumento, REQ-007)`. El campo
+-    **declarado más de una vez** con su forma exacta **deniega**: no elige la primera ni la última y
+-    no las fusiona. Un valor de **más de 16 384 bytes** —contados en bytes y **antes** de
+-    normalizar— deniega sin interpretarse, **siempre que el hook alcance a medirlo dentro del límite
+-    del cliente**: medido hasta 255 371 bytes, que deniega a tiempo; por encima **no hay promesa**, y
+-    un hook muerto no deniega.
++    **declarado más de una vez** con su forma exacta **deniega** —no elige la primera ni la última y
++    no las fusiona— **si el hook alcanza a medir y a emitir su decisión**: el motivo nombra todas las
++    líneas, y medido (Linux/WSL2, una corrida por punto) 1 601 líneas repetidas de 60 caracteres o más
++    deniegan con un motivo de 121 061 bytes, mientras que 1 801 salen **sin decisión** (con líneas
++    cortas, 2 501 deniegan y 3 000 no); por encima de lo medido **no hay promesa** (SEC-118, sin
++    reparar). Un valor de **más de 16 384 bytes** —contados en bytes y **antes** de normalizar—
++    deniega sin interpretarse, **siempre que el hook alcance a medirlo y a emitir su decisión dentro
++    del límite del cliente**: medido hasta 255 371 bytes, que deniega a tiempo; por encima **no hay
++    promesa**, y un hook muerto o que sale sin decisión no deniega. Y, como toda regla de la puerta de
++    cierre, ésta juzga el documento que la puerta reconstruye: por un `Edit`/`MultiEdit` cuyo
++    `old_string` no está literal en el archivo y que la herramienta aplica igualmente, un cierre puede
++    no pasar por esta regla ni por ninguna otra (SEC-117, sin reparar; entrada siguiente).
+   - **Sin eufemismo: las versiones anteriores pudieron cerrar un REQ con un hallazgo bloqueante
+     abierto.** Hasta `v1.34.0`, `SEC-A (instrumento) · SEC-B (usuario/dinero)` y
+     `SEC-A (instrumento); SEC-B (contrato)` dejaban cerrar: la puerta sólo partía por comas y no leía
+@@ -1029,14 +1036,19 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
+     duro delante o dentro de la clave, `- Rigor:`, `1. QA:`— **deniega el cierre**. Y una clave de
+     control **declarada dos veces deniega el cierre también con el MISMO valor**: `QA: aprobado` dos
+     veces cerraba hasta `v1.34.0` y ahora no cierra (cambio de compatibilidad aceptado expresamente
+-    por el propietario, ADR-014). La puerta cita las líneas, con los caracteres invisibles escritos
+-    de forma legible. **Sólo deniega** cuando la cabecera resultante es ambigua, **alguna** línea
+-    `Estado` —la exacta, una repetida o una variante— dice el estado terminal y el `Estado` que gobierna
+-    en disco (la primera declaración exacta; si no hay ninguna, nada lo decía) **no** lo decía. Por eso
+-    **reabrir** un REQ cerrado no se bloquea, ni una edición tras la cual ninguna línea `Estado` dice el
+-    terminal; pero si en disco el terminal está en una línea `Estado` que **no** es la que gobierna —una
+-    variante, o una exacta que no es la primera— y la que gobierna no lo dice o no existe, se deniega
+-    **toda** edición que conserve esa línea mientras la cabecera siga siendo ambigua, y no la que la
++    por el propietario, ADR-014); `Hallazgos abiertos` repetida con su forma exacta, cuando es la única
++    ambigüedad, la decide la regla de la entrada anterior, con su condición. La puerta cita las líneas,
++    con los caracteres invisibles escritos de forma legible. **Esta regla alcanza sólo a las ediciones
++    cuyo documento resultante la puerta reconstruye:** un `Write`, o un `Edit`/`MultiEdit` cuyo
++    `old_string` está literal en el archivo; la vía de un `old_string` que sólo coincide tras la
++    normalización de la herramienta queda fuera (SEC-117, abajo). Dentro de ese alcance, **sólo
++    deniega** cuando la cabecera resultante es ambigua, **alguna** línea `Estado` —la exacta, una
++    repetida o una variante— dice el estado terminal y el `Estado` que gobierna en disco (la primera
++    declaración exacta; si no hay ninguna, nada lo decía) **no** lo decía. Por eso **reabrir** un REQ
++    cerrado no se bloquea, ni una edición tras la cual ninguna línea `Estado` dice el terminal; pero si
++    en disco el terminal está en una línea `Estado` que **no** es la que gobierna —una variante, o una
++    exacta que no es la primera— y la que gobierna no lo dice o no existe, se deniega toda edición **de
++    ese alcance** que conserve esa línea mientras la cabecera siga siendo ambigua, y no la que la
+     retira o la corrige (detalle en `requirements/REQ-023.md` CA-01 del arnés). La salida es de una
+     línea: **cada clave de control una sola vez, escrita como la plantilla** de
+     `requirements/README.md` (§ «Veredictos de validación»).
+@@ -1058,22 +1070,25 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
+     vía, no la propiedad** —las variantes y repeticiones de las claves de control dentro de la
+     frontera declarada—, y **no hallar nada NO acredita ausencia de exposición**. Vías conocidas que
+     **no** encuentra (ejemplos **no exhaustivos**; el sitio único donde viven es
+-    `docs/seguridad/registro-seguridad.md`, SEC-047 y SEC-050): una letra sustituida por un
++    `docs/seguridad/registro-seguridad.md`, SEC-047, SEC-050 y SEC-117): una letra sustituida por un
+     **homoglifo**; una letra ASCII **de más, de menos o cambiada**; unos **dos puntos que no son
+     ASCII**; una línea con un **signo de estructura** visible —también un espacio duro en lugar del
+     blanco que sigue al guion del marcador—; una clave de **más de 256 bytes**, que es una
+     **limitación**: se sigue leyendo como ausencia y ese límite **no** la protege; **comentar o
+     borrar** la línea de un campo (SEC-050, la semántica de la ausencia, que esta versión no cambia);
+     un cierre hecho con un `Edit` cuyo `old_string` el hook no encuentra literal y la herramienta sí
+-    —comillas tipográficas o `\uXXXX`—, que no pasa por ninguna puerta (QA-023-02, preexistente, sin
+-    reparar en esta versión); y lo que un lector de bash no ve (un byte NUL, un archivo en UTF-16). Si el informe no saca nada,
++    —comillas tipográficas o `\uXXXX`—, que puede no pasar por ninguna puerta (SEC-117, registro de
++    seguridad de QA-023-02, preexistente, sin reparar en esta versión; con las comillas, reproducido en
++    el CLI 2.1.285 el 2026-09-29, y con `\uXXXX`, `MultiEdit`, el editor interactivo, Windows u otras
++    versiones del CLI, sin ensayar); y lo que un lector de bash no ve (un byte NUL, un archivo en UTF-16). Si el informe no saca nada,
+     **no has terminado**: vuelve a la pregunta de estado.
+   - **Qué se migra de texto:** la **fila nueva de `AGENTS.md` §13** («una cabecera ambigua no deja
+     cerrar») y el párrafo de **`requirements/README.md` § «Veredictos de validación»** que define la
+     variante y su frontera, cada uno **por separado** y con la misma identificación por contenido y
+     título y la misma tabla de estados de la primera entrada de este apartado. **Las notas de las
+     versiones pasadas no cambian**: la regla de «última aparición» sigue siendo con la que **se leen**
+-    los valores; lo nuevo es que, **al cerrar**, una clave de control repetida deniega.
++    los valores; lo nuevo es que, **al cerrar**, una clave de control repetida deniega, dentro del
++    alcance y con la condición que esta entrada y la anterior declaran.
+ 
+ *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
+ 
+diff --git a/templates/AGENTS.md.tpl b/templates/AGENTS.md.tpl
+index b0bd8ff..4b3e46f 100644
+--- a/templates/AGENTS.md.tpl
++++ b/templates/AGENTS.md.tpl
+@@ -659,7 +659,7 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
+ | La coordinadora no edita código de la app (sólo el `desarrollador`) | §5 | `guard-codigo` | `Edit`/`Write`/`MultiEdit` + `Bash` (parcial) |
+ | No completar un REQ con aprobaciones pendientes | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | No completar un REQ con quality gates en rojo | §7 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+-| No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno **sin clase**, ni con una lista que la puerta **no puede interpretar**, ni con el campo **repetido** en la cabecera o **por encima de su techo** de tamaño **siempre que el hook alcance a medirlo dentro del límite del cliente** (el techo se mide antes de normalizar; medido hasta 255 371 bytes, que deniega a tiempo; por encima no hay promesa, y un hook muerto no deniega) (sintaxis, techo, su residuo y lo que la puerta no lee: `requirements/README.md` § «Clases de hallazgo») | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
++| No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno **sin clase**, ni con una lista que la puerta **no puede interpretar**, ni con el campo **repetido** en la cabecera o **por encima de su techo** de tamaño **siempre que el hook alcance a medirlo y a emitir su decisión dentro del límite del cliente** (el techo se mide antes de normalizar; medido hasta 255 371 bytes, que deniega a tiempo; el campo repetido, medido hasta 1 601 líneas de 60 caracteres o más, que deniegan, mientras que 1 801 salen sin decisión porque el motivo no cabe en un argumento —SEC-118—; por encima de lo medido no hay promesa, y un hook muerto o sin decisión no deniega) (sintaxis, techo, repetición, sus residuos y lo que la puerta no lee: `requirements/README.md` § «Clases de hallazgo») | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | El rigor se puede subir, nunca bajar: `Sensible a seguridad: sí` impone `critico` | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | No completar sin `QA: aprobado` (salvo `Rigor: ligero`), ni un REQ `critico` sin `Seguridad: aprobado` | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | La transición a `completado` no se hace por shell | §6 | `guard-completado` | `Bash` (parcial) |
+@@ -667,10 +667,28 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
+ | Los campos del REQ valen sólo en la cabecera: una línea igual dentro de una sección no es un veredicto | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | Lo que vive dentro de un `<!-- … -->` de la cabecera **no declara campo**; un rango que abre y no cierra en la cabecera no la deja medir y no deja cerrar | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | Una línea de la cabecera con un **retorno de carro que no es el que la termina** no se puede medir y no deja cerrar — se deniega por eso, citando la línea, aunque los veredictos estén en verde. El CR **final** es transporte (CRLF decide igual que LF), el cuerpo no se toca y **reabrir** no se bloquea | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+-| Una cabecera **ambigua** no deja cerrar: una **clave de control** (`Estado`, `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos`, `Rigor`) escrita de otra forma que la máquina no lee como esa clave —mayúsculas, un blanco de más, un carácter invisible, un marcador de lista—, o declarada **más de una vez aunque diga lo mismo**, se deniega citando las líneas, aunque los veredictos estén en verde; **reabrir** no se bloquea. Qué es una variante y dónde acaba la frontera de lo cubierto: `requirements/README.md` § «Veredictos de validación». Lo que queda fuera de esa frontera **no está protegido** y se sigue leyendo como ausencia —ejemplos **no exhaustivos**: un homóglifo, una letra cambiada, unos dos puntos que no son ASCII, una línea con carácter de estructura, una clave de más de 256 bytes (una **limitación**, no una zona protegida por ese límite)— | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
++| Una cabecera **ambigua** no deja cerrar: una **clave de control** (`Estado`, `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos`, `Rigor`) escrita de otra forma que la máquina no lee como esa clave —mayúsculas, un blanco de más, un carácter invisible, un marcador de lista—, o declarada **más de una vez aunque diga lo mismo**, se deniega citando las líneas, aunque los veredictos estén en verde (`Hallazgos abiertos` repetida con su forma exacta, cuando es la única ambigüedad, la decide la fila de los hallazgos, con su condición); **reabrir** no se bloquea. Qué es una variante y dónde acaba la frontera de lo cubierto: `requirements/README.md` § «Veredictos de validación». Lo que queda fuera de esa frontera **no está protegido** y se sigue leyendo como ausencia —ejemplos **no exhaustivos**: un homóglifo, una letra cambiada, unos dos puntos que no son ASCII, una línea con carácter de estructura, una clave de más de 256 bytes (una **limitación**, no una zona protegida por ese límite)— | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | Un veredicto lleva fecha y no es anterior al último cambio del código —si el proyecto lo pide (`veredictos.*`, apagado por defecto) | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+ | Ningún agente —tampoco la coordinadora— ejecuta git destructivo: `clean -f`, `reset --hard`, `checkout .`, `restore .`, `stash` (`git.prohibidos`) | §10 | `guard-git` | `Bash` |
+ 
++**Toda fila de esta tabla que dice que una puerta deniega vale con tres condiciones.** Se escriben aquí una
++vez, en lugar de fila a fila, y ninguna fila se lee como garantía sin ellas:
++1. **Si el hook alcanza a medir y a emitir su decisión.** Un hook que el cliente mata por tiempo
++   (SEC-115), o cuyo motivo de denegación no cabe en un argumento de línea de órdenes y sale sin decisión
++   (SEC-118), **no deniega**. Vale para todas las puertas.
++2. **Sobre las ediciones cuyo documento resultante la puerta reconstruye:** un `Write`, o un
++   `Edit`/`MultiEdit` cuyo `old_string` está literal en el archivo. Vale para las puertas de cierre
++   (`guard-completado`).
++3. **Un `Edit` cuyo `old_string` sólo coincide tras la normalización que aplica el host queda fuera de lo
++   que estas filas prometen:** la puerta no reconstruye el documento; si el fragmento no escribe la línea
++   `Estado:` entera, deja pasar el cierre sin mirar veredictos, clase, cola ni quality gates, y aun con la
++   línea entera no aplica la regla de la cabecera ambigua (SEC-117; reproducido con comillas
++   tipográficas en el CLI 2.1.285 el 2026-09-29; el escape `\uXXXX`, `MultiEdit`, el editor interactivo,
++   Windows y otras versiones del CLI, sin ensayar).
++
++Lo medido, los umbrales y los residuos de las tres viven en `docs/seguridad/registro-seguridad.md` del
++repositorio del arnés (SEC-115, SEC-117 y SEC-118), no aquí.
++
+ **Un hook que avisa sin decidir.** Al escribir `QA:` o `Seguridad:` con un valor fuera del
+ vocabulario (`pendiente` \| `aprobado` \| `con-hallazgos`; y en seguridad además `n/a`,
+ `preventiva`, `vetado`), el arnés lo dice **en ese momento** con un mensaje a la persona y
+diff --git a/templates/requirements-README.md.tpl b/templates/requirements-README.md.tpl
+index ca7170f..d4d9dd2 100644
+--- a/templates/requirements-README.md.tpl
++++ b/templates/requirements-README.md.tpl
+@@ -86,17 +86,21 @@ sola vez). Si la cabecera escribe una de ellas **de otra forma** —una
+ *variante*— o la declara **más de una vez**, **aunque las dos líneas digan lo mismo**, la cabecera es
+ **ambigua** y la puerta **deniega el cierre** citando las líneas —las primeras, y cuántas más hay—, con
+ los caracteres invisibles escritos de forma legible; `tools/arnes-lectura.sh` las nombra todas. No lee la variante como la clave ni elige entre dos declaraciones, y ningún lector
+-cambia el valor que lee. **Cuándo deniega, dicho entero:** cuando la cabecera que quedaría escrita es
++cambia el valor que lee. **A qué ediciones alcanza esta regla:** a las que dejan a la puerta
++reconstruir el documento resultante —un `Write`, o un `Edit`/`MultiEdit` cuyo `old_string` (cada uno,
++en un `MultiEdit`) está **literal** en el archivo—. Un `Edit`/`MultiEdit` cuyo `old_string` sólo
++coincide tras la normalización que aplica la herramienta queda **fuera** («Fuera, y sin promesa»,
++abajo). **Cuándo deniega, dicho entero para ese alcance:** cuando la cabecera que quedaría escrita es
+ ambigua, **alguna** de sus líneas `Estado` —la exacta, una repetida o una variante— dice el estado
+ terminal, y la línea `Estado` que gobierna en disco (la primera declaración exacta; si no hay ninguna,
+ nada lo decía) **no** lo decía. Nada más: reabrir o editar un REQ cuyo `Estado` que gobierna en disco ya
+ es el terminal no se bloquea por esto, ni una edición tras la cual ninguna línea `Estado` dice el
+ terminal. **Consecuencia:** si en disco el terminal está en una línea `Estado` que **no** es la que
+ gobierna —una variante, o una declaración exacta que no es la primera— y la que gobierna no lo dice o no
+-existe, se deniega **toda** edición que conserve esa línea mientras la cabecera siga siendo ambigua,
+-aunque no toque el estado; la que la retira, la corrige o deshace la ambigüedad no se deniega por esto.
+-Para
+-`Hallazgos abiertos` repetida con su forma exacta decide su propia regla («Clases de hallazgo», abajo).
++existe, se deniega toda edición **de ese alcance** que conserve esa línea mientras la cabecera siga
++siendo ambigua, aunque no toque el estado; la que la retira, la corrige o deshace la ambigüedad no se
++deniega por esto. Para `Hallazgos abiertos` repetida con su forma exacta decide su propia regla, con
++su condición («Clases de hallazgo», abajo).
+ 
+ **Qué es una variante, por propiedad.** Una línea de la cabecera —antes del primer `## `, fuera de todo
+ `<!-- … -->`, con dos puntos ASCII (`:`)— cuya clave, tras la tolerancia de siempre (blancos de los
+@@ -123,6 +127,17 @@ marcador (`-`+espacio duro+`Estado:`), que ya no forma marcador y deja el `-` co
+ **más de 256 bytes**. Todo eso se sigue leyendo como hasta ahora: como si la línea no declarara el campo, que
+ para ese campo es su **ausencia**. Las claves de más de 256 bytes son una **limitación**: se leen como
+ ausencia y ese límite **no las protege**. Esta regla mira la **clave**: el valor se lee como siempre.
++**Y fuera también, por la vía y no por la forma de la línea:** un `Edit`/`MultiEdit` cuyo `old_string`
++no está literal en el archivo pero que la herramienta aplica igualmente, porque sólo coincide tras su
++normalización: **reproducido** en el CLI 2.1.285 (`claude -p`, WSL2, 2026-09-29) con comillas rectas en
++el `old_string` donde el archivo tiene tipográficas —el hook sale sin decisión, el host aplica la edición
++y el REQ queda cerrado—; que también desescapa `\uXXXX` se leyó en el binario del CLI 2.1.284 y se emuló.
++Sin ensayar en el host: el escape `\uXXXX`, `MultiEdit`, el editor interactivo, Windows y otras
++versiones del CLI; no se sabe desde qué versión existe. En esa vía la
++puerta no reconstruye el documento y juzga sólo el fragmento: esta regla **no** la alcanza, y por ella un
++cierre puede no pasar por ninguna puerta. Es QA-023-02 / SEC-117 del repositorio del arnés,
++preexistente y sin reparar: **no hay promesa** de que toda edición que la herramienta aplica pase por
++esta regla.
+ 
+ ## Nivel de rigor
+ Cuánta demostración se exige **por encima** de las quality gates, que son binarias y corren
+@@ -199,8 +214,16 @@ paréntesis**, tras la clase y una coma: `QA-006 (instrumento, REQ-007)`, no
+ 
+ **Qué lee la puerta, y qué no.** La puerta juzga **el valor de la única línea de la cabecera** —antes
+ del primer `## `— cuya clave reconoce su lector como `Hallazgos abiertos` (también decorada,
+-`**Hallazgos abiertos:**`, o sangrada). **Si hay más de una, deniega** y las nombra: no elige la
+-primera ni la última y no las fusiona; se deja una sola línea con todos los hallazgos. Dentro de esa
++`**Hallazgos abiertos:**`, o sangrada). **Si hay más de una, deniega** y las nombra —no elige la
++primera ni la última y no las fusiona; se deja una sola línea con todos los hallazgos— **siempre que el
++hook alcance a medir y a emitir su decisión.** El motivo nombra **todas** las líneas y viaja como un
++argumento de línea de órdenes, que tiene límite: por encima, el hook sale **sin decisión** y no deniega.
++Cifras **medidas** —operativas: nadie de fuera elige su conducta por ellas; describen hasta dónde llega lo
++comprobado y sólo una medición nueva las mueve—, Linux/WSL2, una corrida por punto, lista no
++exhaustiva: 1 601 líneas repetidas de 60 caracteres o más deniegan con un motivo de 121 061 bytes, y
++1 801 salen sin decisión; con líneas cortas, 2 501 deniegan (111 961 bytes) y 3 000 salen sin decisión.
++Por encima de lo medido **no hay promesa**, y en Windows/MSYS no está medido. Es SEC-118 del
++repositorio del arnés, sin reparar. Dentro de esa
+ línea, ningún hallazgo que bloquea queda sin leer por el sitio que ocupa en la lista ni por el
+ carácter que lo separa del anterior. **Lo que el lector no reconoce como esa línea no se lee.** Si es
+ una **variante** de la clave —`Hallazgos  abiertos:`, `HALLAZGOS ABIERTOS:`, la clave con un carácter

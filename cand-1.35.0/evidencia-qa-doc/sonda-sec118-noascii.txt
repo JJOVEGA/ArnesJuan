@@ -1,0 +1,28 @@
+bytes de los primeros 60 caracteres: ASC=60 NA2=80 NA3=80
+control ASCII (=R-045)             n=1601  LC_ALL=C.UTF-8  cand dec=deny  salida=121061B err=
+control ASCII (=R-045)             n=1601  LC_ALL=C.UTF-8  base dec=deny  salida=121061B err=
+ñ (2 bytes) en los 60 primeros    n=1601  LC_ALL=C.UTF-8  cand dec=allow salida=0B err=Argument list too long
+ñ (2 bytes) en los 60 primeros    n=1601  LC_ALL=C.UTF-8  base dec=allow salida=0B err=Argument list too long
+ñ (2 bytes) en los 60 primeros    n=1601  LC_ALL=C        cand dec=deny  salida=105061B err=
+ñ (2 bytes) en los 60 primeros    n=1601  LC_ALL=C        base dec=deny  salida=105061B err=
+«» (2 bytes) en los 60 primeros  n=1601  LC_ALL=C.UTF-8  cand dec=allow salida=0B err=Argument list too long
+«» (2 bytes) en los 60 primeros  n=1601  LC_ALL=C.UTF-8  base dec=allow salida=0B err=Argument list too long
+ñ (2 bytes) en los 60 primeros    n=1201  LC_ALL=C.UTF-8  cand dec=deny  salida=90661B err=
+ñ (2 bytes) en los 60 primeros    n=1201  LC_ALL=C.UTF-8  base dec=deny  salida=90661B err=
+bytes de los primeros 60 caracteres: NA4=120
+😀 (4 bytes) en los 60 primeros  n=801   LC_ALL=C.UTF-8  cand dec=deny  salida=60453B err=
+😀 (4 bytes) en los 60 primeros  n=801   LC_ALL=C.UTF-8  base dec=deny  salida=60453B err=
+control ASCII con el mismo n       n=801   LC_ALL=C.UTF-8  cand dec=deny  salida=60453B err=
+control ASCII con el mismo n       n=801   LC_ALL=C.UTF-8  base dec=deny  salida=60453B err=
+😀 (4 bytes) en los 60 primeros  n=601   LC_ALL=C.UTF-8  cand dec=deny  salida=45453B err=
+😀 (4 bytes) en los 60 primeros  n=601   LC_ALL=C.UTF-8  base dec=deny  salida=45453B err=
+# Tercera tanda: n=1001 y 1201 con 😀 (120 bytes en los 60 primeros caracteres)
+😀 (4 bytes) en los 60 primeros  n=1001  LC_ALL=C.UTF-8  cand dec=allow salida=0B err=Argument list too long
+😀 (4 bytes) en los 60 primeros  n=1001  LC_ALL=C.UTF-8  base dec=allow salida=0B err=Argument list too long
+😀 (4 bytes) en los 60 primeros  n=1201  LC_ALL=C.UTF-8  cand dec=allow salida=0B err=Argument list too long
+😀 (4 bytes) en los 60 primeros  n=1201  LC_ALL=C.UTF-8  base dec=allow salida=0B err=Argument list too long
+# Cuarta tanda: líneas CORTAS (29 caracteres) con n=2501, ASCII (=R-045) frente a 9 ñ
+cortas ASCII (=R-045)              n=2501  LC_ALL=C.UTF-8  cand dec=deny  salida=111961B err=
+cortas ASCII (=R-045)              n=2501  LC_ALL=C.UTF-8  base dec=deny  salida=111961B err=
+cortas con ñ (29 car., 38 B)      n=2501  LC_ALL=C.UTF-8  cand dec=allow salida=0B err=Argument list too long
+cortas con ñ (29 car., 38 B)      n=2501  LC_ALL=C.UTF-8  base dec=allow salida=0B err=Argument list too long

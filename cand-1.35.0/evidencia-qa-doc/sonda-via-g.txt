@@ -1,0 +1,10 @@
+G0 control literal, línea entera                    E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap
+G2 rectas, sólo el valor                            E cand=allow  base=allow  | 
+G3 rectas, línea Estado entera                      E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap
+G4 rectas, línea entera con fecha                   E cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap
+G5 rectas, línea decorada **Estado:**               E cand=allow  base=allow  | 
+G6 rectas, línea con punto final                    E cand=allow  base=allow  | 
+G7 rectas, valor entre comillas invertidas           E cand=allow  base=allow  | 
+G3m rectas, línea entera, MultiEdit                 M cand=deny   base=deny   | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap
+B5 control literal, fila SEC-047                     E cand=deny   base=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'Se
+B6 rectas, línea entera, fila SEC-047               E cand=allow  base=allow  | 

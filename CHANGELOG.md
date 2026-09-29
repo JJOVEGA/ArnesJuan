@@ -1,5 +1,11 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-29 · Candidato 1.35.0: CI de `df550fa` y evidencia de la QA del delta documental
+- `cand-1.35.0/ci-cand-df550fa/`: run 36637448792, `hooks-en-linux` success, 1115 PASS · 0 FAIL · 34 SKIP (2 INCONCLUSO de rendimiento; 18 SKIP del fail-before de REQ-023 por falta de 1.33.2 en el runner). Sin relanzar.
+- `cand-1.35.0/evidencia-qa-doc/`: la revisión de QA del delta documental, incluida la sonda multibyte de QA-023-06.
+
+Sin push.
+
 ## 2026-09-29 · SEC-117: RESULTADO del experimento real (tras el registro previo `6c947ef`) — REPRODUCIDO en el CLI 2.1.285 (comillas rectas donde el archivo las tiene tipográficas)
 `sec117-real/RESULTADO.md` y, por caso, `logs/` (entrada y salida del hook), `stream.jsonl` (eventos de hook y `tool_result`), el archivo final y su sha. Una ejecución por caso y sin repetición:
 - **positivo:** deny; el host bloquea; el archivo no cambia;

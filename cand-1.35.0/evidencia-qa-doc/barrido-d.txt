@@ -1,0 +1,17 @@
+### (d) no ejecutado / emulado (SEC-117/QA-023-02)
+requirements/REQ-023.md:155:    binario del CLI 2.1.284 y emulado por QA, **no** ensayado en el host). Sin ensayar en el host: el escape
+requirements/REQ-023.md:883:| 2026-09-08 | **Pregunta abierta 2 → RESUELTA: CONFIRMADA, y retirada del apartado.** Antes: «queda por **ejecutar** si `<!-- Sensible a seguridad: sí -->` + `Rigor: ligero` + `QA: pendiente` + `Se
+requirements/REQ-023.md:906:| 2026-09-29 | **Write-back de QA-023-01 (vuelta 2 de 3): la frontera (g) de CA-01 decía algo falso sobre la herramienta.** Antes: «el camino de un `Edit`/`MultiEdit` cuyo `old_string` no está en el 
+requirements/REQ-023.md:911:| 2026-09-29 | **Misma intervención documental excepcional, tres ajustes de texto pedidos por la coordinadora dentro del mismo encargo.** **El contador sigue 3 de 3 y no se reinicia**; no es una vuelta
+requirements/REQ-022.md:317:| 2026-09-07 | `borrador` (cabecera reescrita, cuerpo sin actualizar) → `pendiente` (Definition of Ready cumplida) | **Reanudación de una comisión interrumpida**, por el camino «continuar» de `arn
+PENDING_APPROVAL.md:176:> - Separa en SEC-118 lo observado directamente de lo inferido o emulado.
+docs/decisions/ADR-014-cabecera-ambigua-variante-o-clave-de-control-repetida.md:79:   y desescapa `\uXXXX`; leído y emulado, no ejecutado en una sesión real». La reproducción la hizo la
+hooks/guard-completado.sh:37:# CLI 2.1.284 normaliza las comillas tipograficas y desescapa `\uXXXX` (leido y emulado por QA,
+hooks/guard-completado.sh:38:# no ejecutado en una sesion), asi que por esa via un cierre puede no pasar por ninguna puerta
+hooks/guard-completado.sh:401:  # aplicar la edicion (leido y emulado por QA, no ejecutado en una sesion), y entonces
+hooks/guard-completado.sh:618:    # normaliza las comillas tipograficas y desescapa `\uXXXX`; leido y emulado por QA, no
+hooks/lib.sh:494:# llamada, y en MSYS un `fork` está emulado copiando memoria: medido en Windows,
+
+### (d2) CHANGELOG [1.35.0] notas (líneas 200-520)
+160:       el escape `\uXXXX`, leído en el binario del CLI 2.1.284 y emulado, sin ensayar en el host). Por
+268:    - **Sin ensayar en el host:** el escape `\uXXXX` (leído en el binario del CLI 2.1.284 y emulado),

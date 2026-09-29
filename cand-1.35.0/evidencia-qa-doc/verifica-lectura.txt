@@ -1,0 +1,12 @@
+Lectura del arnés sobre requirements/ — plugin 1.35.0
+
+Ningún valor anómalo: la máquina lee los 2 REQ como están escritos.
+
+RESUMEN
+  2 REQ leídos
+  rigor efectivo: critico 2 · estandar 0 · ligero 0
+  cola de aprobaciones (PENDING_APPROVAL.md): 0 pendiente(s) — no bloquea el cierre
+
+  El rigor efectivo es DERIVADO: `Sensible a seguridad: sí` impone `critico`
+  aunque no se declare `Rigor:`. Si un REQ que crees crítico sale `estandar`,
+  su campo de sensibilidad no se está leyendo como crees.

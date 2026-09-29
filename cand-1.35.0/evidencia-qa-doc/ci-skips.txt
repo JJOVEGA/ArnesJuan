@@ -1,0 +1,35 @@
+SKIP  ruta estilo Windows con backslashes -> deny  (sin cygpath: caso solo de Windows)
+SKIP  REQ-017 CA-10 (i) fuera del dominio este árbol decide siempre lo mismo, y lo mismo en los dos locales  36 entradas NO son clasificables: la heredada tampoco public
+SKIP  REQ-017 CA-10 (ii) ...y esa decisión es la del ORÁCULO: la heredada bajo LC_ALL=C  36 entradas NO son clasificables: la heredada tampoco publica una decisión ún
+SKIP  REQ-017 CA-10 (iii) fail-before: la heredada bajo el locale del entorno NO cumple (i) o (ii), y se registra sin fallar por ello  36 entradas NO son clasificables: l
+SKIP  REQ-030 CA-07 control C3 (instrumento de CA-03): el cociente de duplicación de v1.32.1 con k=20 supera 2,6×  no se pide: control del instrumento, a demanda con AR
+SKIP  REQ-017 CA-09 la pared de los 60 s de este árbol NO es menor que la de v1.32.1, pareado en la misma corrida  los rangos de las dos pasadas SE SOLAPAN (este 0.975×
+SKIP  REQ-017 CA-05 (i) la ruta crítica cuesta no más de 0,250× lo de v1.32.1  no se pide: evidencia acreditada en el Historial de REQ-017 (0,125× — 9,60 s frente a
+SKIP  REQ-017 CA-05 (ii) la comparación no se compra dejando de probar  no se pide: evidencia acreditada en el Historial de REQ-017 (0,125× — 9,60 s frente a 76,19 s,
+SKIP  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo 1.250× cae DENTRO del recorrido [0.
+SKIP  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo 1.250× cae DENTRO del recorrido 
+SKIP  REQ-030 CA-07 control I (un REQ real de 6 líneas): sujetos idénticos, razón verdadera 1,0  no se pide: control del instrumento, a demanda con ARNES_SONDA_CONTROL
+SKIP  REQ-030 CA-07 control W0 (un REQ real de 6 líneas): envoltorio de pruebas con demora 0  no se pide: control del instrumento, a demanda con ARNES_SONDA_CONTROLES=1;
+SKIP  REQ-030 CA-07 control WD (un REQ real de 6 líneas): envoltorio de pruebas con demora fija de 0.040s por llamada  no se pide: control del instrumento, a demanda con
+SKIP  REQ-030 CA-07 control I (una cabecera de 200 líneas): sujetos idénticos, razón verdadera 1,0  no se pide: control del instrumento, a demanda con ARNES_SONDA_CONT
+SKIP  REQ-030 CA-07 control W0 (una cabecera de 200 líneas): envoltorio de pruebas con demora 0  no se pide: control del instrumento, a demanda con ARNES_SONDA_CONTROLES
+SKIP  REQ-030 CA-07 control WD (una cabecera de 200 líneas): envoltorio de pruebas con demora fija de 0.100s por llamada  no se pide: control del instrumento, a demanda 
+SKIP  REQ-021 CA-08 (iii) calibrar sonda-reloj.sh no cuesta más de 6× una medición suya con los MISMOS mandos  reloj 1.580× (3077140µs sobre 1947033µs) cabe en el t
+SKIP  REQ-023 CA-08 (i) R1 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache/
+SKIP  REQ-023 CA-08 (i) R2 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache/
+SKIP  REQ-023 CA-08 (i) R3 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache/
+SKIP  REQ-023 CA-08 (i) R4 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache/
+SKIP  REQ-023 CA-08 (i) R5 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache/
+SKIP  REQ-023 CA-08 (i) R6 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache/
+SKIP  REQ-023 CA-08 (i) R7 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache/
+SKIP  REQ-023 CA-08 (i) R8 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache/
+SKIP  REQ-023 CA-08 (i) R9 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache/
+SKIP  REQ-023 CA-08 (i) R10 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache
+SKIP  REQ-023 CA-08 (i) R11 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache
+SKIP  REQ-023 CA-08 (i) R12 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache
+SKIP  REQ-023 CA-08 (i) R13 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache
+SKIP  REQ-023 CA-08 (i) R14 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache
+SKIP  REQ-023 CA-08 (i) R15 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache
+SKIP  REQ-023 CA-08 (i) R16 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache
+SKIP  REQ-023 CA-08 (i) R17 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache
+SKIP  REQ-023 CA-08 (i) R18 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache

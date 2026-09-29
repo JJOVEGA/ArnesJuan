@@ -1,0 +1,59 @@
+== positivo
+{"tool_name":"Edit","cwd":"/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/sec117/positivo/proj","old":"en-revisión (tras “R-4”)","new":"completado","fp":"/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/sec117/positivo/proj/requirements/REQ-900.md"}
+out: {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (s
+rc: 0
+sha antes 2a19ec48a860d1df6e3eeba80bb472 despues 2a19ec48a860d1df6e3eeba80bb472
+# REQ-900 — prueba SEC-117
+Estado: en-revisión (tras “R-4”)
+Prioridad: alta
+Sensible a seguridad: sí
+QA: pendiente
+Seguridad: pendiente
+Hallazgos abiertos: SEC-1 (contrato)
+Rigor: critico
+
+## Pendientes
+
+### [2026-09-29] (prueba) — Aprobación humana pendiente del experimento
+- Espera: decisión humana.
+
+## Resueltas
+== sospechoso
+{"tool_name":"Edit","cwd":"/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/sec117/sospechoso/proj","old":"en-revisión (tras \"R-4\")","new":"completado","fp":"/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/sec117/sospechoso/proj/requirements/REQ-900.md"}
+out: 
+rc: 0
+{"old_in":"en-revisión (tras \"R-4\")","oldString":"en-revisión (tras “R-4”)"}
+sha antes 2a19ec48a860d1df6e3eeba80bb472 despues e968b0de783b1fa8c99148506168ef
+# REQ-900 — prueba SEC-117
+Estado: completado
+Prioridad: alta
+Sensible a seguridad: sí
+QA: pendiente
+Seguridad: pendiente
+Hallazgos abiertos: SEC-1 (contrato)
+Rigor: critico
+
+## Pendientes
+
+### [2026-09-29] (prueba) — Aprobación humana pendiente del experimento
+- Espera: decisión humana.
+
+## Resueltas
+== control
+{"tool_name":"Edit","cwd":"/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/sec117/control/proj","old":"en-revisión (tras “R-4”)","new":"completado","fp":"/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/sec117/control/proj/requirements/REQ-900.md"}
+out: 
+rc: 0
+{"old_in":"en-revisión (tras “R-4”)","oldString":"en-revisión (tras “R-4”)"}
+sha antes 59990df2a517ba9c4f2d787a95b0d9 despues e494154edbd5fd5421e5412dbb3028
+# REQ-900 — prueba SEC-117 (control legítimo)
+Estado: completado
+Prioridad: alta
+Sensible a seguridad: sí
+QA: aprobado
+Seguridad: aprobado
+Hallazgos abiertos: (ninguno)
+Rigor: critico
+
+## Pendientes
+
+## Resueltas

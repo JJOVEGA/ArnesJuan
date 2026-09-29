@@ -1,0 +1,1 @@
+QA: con-hallazgos (intervención documental excepcional fuera del contador, que sigue agotado —3 de 3— y no se reinicia; 2026-09-29, cabeza e7562e7 con el código ejecutable de ad793ab, delta 45c2e5c..e7562e7 sólo de texto; QA-023-05 cerrado; QA-023-06 abierto; banco parcial 556/0/0 en 17 secciones, autoprueba 117/0 y gates rc 0; docs/qa/REQ-023.md)

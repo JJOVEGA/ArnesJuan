@@ -1,0 +1,54 @@
+### (b) repetida/más de una -> deniega
+templates/requirements-README.md.tpl:217:`**Hallazgos abiertos:**`, o sangrada). **Si hay más de una, deniega** y las nombra —no elige la
+templates/requirements-README.md.tpl:223:exhaustiva: 1 601 líneas repetidas de 60 caracteres o más deniegan con un motivo de 121 061 bytes, y
+AGENTS.md:698:| No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno **sin clase**, ni con una lista que la puerta **no puede interpretar**, ni con el campo **repetido** en la cabecera o **por encima de su techo** de tama�
+AGENTS.md:706:| Una cabecera **ambigua** no deja cerrar: una **clave de control** (`Estado`, `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos`, `Rigor`) escrita de otra forma que la máquina no lee como esa clave —mayúsculas, un blan
+hooks/lib.sh:1544:# control declarada mas de una vez fuera de toda cita deja la cabecera ambigua y deniega.)
+hooks/lib.sh:2054:  #   ARNES_AMBIGUA=1        una variante, o una clave de control declarada mas de una vez,
+templates/AGENTS.md.tpl:662:| No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno **sin clase**, ni con una lista que la puerta **no puede interpretar**, ni con el campo **repetido** en la cabecera o **por encima de su te
+templates/AGENTS.md.tpl:670:| Una cabecera **ambigua** no deja cerrar: una **clave de control** (`Estado`, `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos`, `Rigor`) escrita de otra forma que la máquina no lee como esa clave —mayús
+skills/arnes-upgrade/SKILL.md:994:    **declarado más de una vez** con su forma exacta **deniega** —no elige la primera ni la última y
+skills/arnes-upgrade/SKILL.md:1090:    los valores; lo nuevo es que, **al cerrar**, una clave de control repetida deniega, dentro del
+hooks/guard-completado.sh:575:    # `_arnes_clave_control`, lib.sh— o una clave de control declarada MAS DE UNA VEZ, aunque
+hooks/guard-completado.sh:609:        arnes_deny "ARNES: no se puede completar '$rel': su cabecera es AMBIGUA para esta puerta: $ARNES_AMBIGUA_MOTIVO. Una clave de control escrita de otra forma no se lee como esa clave, y declarada mas de una vez obl
+requirements/README.md:217:`**Hallazgos abiertos:**`, o sangrada). **Si hay más de una, deniega** y las nombra —no elige la
+requirements/README.md:223:exhaustiva: 1 601 líneas repetidas de 60 caracteres o más deniegan con un motivo de 121 061 bytes, y
+requirements/README.md:679:| [REQ-023](REQ-023.md) | Una clave de control escrita de otra forma, o declarada dos veces, no se convierte en ausencia: la **cabecera ambigua no deja cerrar** (mitad 1 de SEC-047). **Ventana 1.35.0**, autorizada por el pr
+requirements/README.md:685:| [REQ-031](REQ-031.md) | Ningún hallazgo bloqueante se ignora por su posición ni por su separador: sintaxis **cerrada** de `Hallazgos abiertos:` en `guard-completado` (A), y el mapa `Archivos:` comprobado desde la Defini
+docs/decisions/ADR-014-cabecera-ambigua-variante-o-clave-de-control-repetida.md:1:# ADR-014 — Cabecera ambigua: una variante de una clave de control, o una clave de control repetida, deniega el cierre; la frontera es el esqueleto ASCII de la clave 
+docs/decisions/ADR-014-cabecera-ambigua-variante-o-clave-de-control-repetida.md:99:  declaraciones repetidas; y extendida a los valores deniega por caracteres que hoy ya caen del lado
+tools/arnes-lectura.sh:147:    # cabecera ambigua si la clave repetida es de control (al cerrar, la puerta deniega).
+tools/arnes-lectura.sh:170:  # clave, o declarada mas de una vez —decorada o no, canonica o variante—. Es lo que la
+docs/decisions/ADR-013-gramatica-cerrada-de-hallazgos-abiertos.md:48:  (REQ-031 CA-A12: la clave repetida deniega); lo que la puerta no entiende lo dice, en vez de
+docs/decisions/ADR-013-gramatica-cerrada-de-hallazgos-abiertos.md:86:CA-A12: la clave repetida deniega)». La clave repetida deniega **si el hook alcanza a medir y a emitir su
+docs/decisions/ADR-013-gramatica-cerrada-de-hallazgos-abiertos.md:90:1 601 líneas repetidas de 60 caracteres o más deniegan, con un motivo de 121 061 bytes, y 1 801 salen sin
+requirements/REQ-023.md:176:  clave de control repetida, en su cabecera, Cuando se intenta el cierre, Entonces **deniega igual**, y
+requirements/REQ-023.md:454:  escrita de otra forma que la máquina no lee como esa clave, o declarada más de una vez **aunque diga lo
+requirements/REQ-023.md:570:| `hooks/guard-completado.sh:47-49` | «para el resto de claves el lector deja ganar a la última» | es la regla de **lectura**; al cerrar, una clave de control repetida deniega (REQ-023) |
+requirements/REQ-023.md:575:| `hooks/lib.sh:1867-1871` | «para las demás claves gana la última aparición (regla que REQ-016 conservó)» | anotar que al cerrar una clave de control repetida deniega |
+requirements/REQ-023.md:706:cerrar**, una clave de control declarada más de una vez deniega. Su **CA-12** (el CR) no se reescribe: la letra
+requirements/REQ-023.md:854:| «Acepto expresamente que una clave de control repetida deniegue el cierre aunque sus valores coincidan.» | CA-01 (Repeticiones); CA-08 R16 | cubierta | ídem |
+requirements/REQ-023.md:901:| 2026-09-29 | **Cambio de compatibilidad registrado:** una cabecera con una clave de control declarada dos veces **con el mismo valor**, que cerraba hasta `v1.34.0`, **deniega el cierre** (CA-01, caso R16). Se registra ta
+requirements/REQ-023.md:910:| 2026-09-29 | **Intervención documental EXCEPCIONAL, fuera del contador: write-back de QA-023-05 y de las correcciones de texto de R-045 §6.** **El contador dev↔QA sigue agotado (3 de 3) y no se reinicia**; esta fila 
+requirements/REQ-023.md:911:| 2026-09-29 | **Misma intervención documental excepcional, tres ajustes de texto pedidos por la coordinadora dentro del mismo encargo.** **El contador sigue 3 de 3 y no se reinicia**; no es una vuelta, no cambia código 
+requirements/REQ-031.md:8:Seguridad: aprobado (R-044-C, 2026-09-28, cabeza `d49f319` = código de `cdcad5d`; acredita la revisión de seguridad de la puerta —gramática cerrada, clave repetida que deniega, techo medido antes de normalizar sin trunc
+requirements/REQ-031.md:35:| **A** | Analista | **Vuelta 2:** CA-A12 (clave repetida deniega, con la fila decorada que midió R-044 y el control del cuerpo), CA-A13 (techo de contrato, dirección y sedes que lo anuncian), CA-A14 (acceso de coste cons
+requirements/REQ-031.md:295:- **CA-A12 — La clave repetida no se resuelve eligiendo una: deniega, si el hook alcanza a medir y a
+requirements/REQ-031.md:577:  pero desde **REQ-023** (candidato 1.35.0) una clave de control declarada más de una vez, **aunque diga
+requirements/REQ-031.md:765:| 2026-09-27 | **Write-back de R-044, agrupado (abre la vuelta 2 de 3).** **SEC-112** (remedio B): antes, dos líneas `Hallazgos abiertos:` en la cabecera → gana la última y el cierre pasa con un `contrato` en la primer
+requirements/REQ-031.md:766:| 2026-09-27 | **Vuelta 2 (desarrollador), SEC-112 → CA-A12 y CA-A11.4.** `Estado: en-revisión` se conserva. **Antes:** dos líneas `Hallazgos abiertos:` en la cabecera → `arnes_campos_req` asignaba en cada una y **ga
+requirements/REQ-031.md:783:| 2026-09-29 | **Dos notas de versionado en Notas § «Fronteras deliberadas del bloque A»**, sin cambiar ningún criterio, ninguna obligación ni la cabecera de este REQ: tras la viñeta «La clave del campo…» y tras 
+requirements/REQ-031.md:784:| 2026-09-29 | **CA-A12 versionado, cambio menor: la denegación de la clave repetida lleva su condición.** Antes: título «La clave repetida no se resuelve eligiendo una: deniega.» y un «Entonces deniega» sin límite
+
+### (c) alcance/alcanza a medir SIN emitir
+docs/decisions/ADR-013-gramatica-cerrada-de-hallazgos-abiertos.md:58:  interpretar el valor **siempre que el hook alcance a medirlo dentro del límite del cliente (60 s)**.
+hooks/guard-completado.sh:67:  # ALCANZA A MEDIRLO dentro del limite del cliente (60 s). Desde CA-A15 el lector
+requirements/REQ-031.md:295:- **CA-A12 — La clave repetida no se resuelve eligiendo una: deniega, si el hook alcanza a medir y a
+requirements/REQ-031.md:345:- **CA-A13 — Techo de tamaño del valor: por encima, deniega si el hook alcanza a medirlo.** *(añadido
+requirements/REQ-031.md:350:  **techo** y que una puerta que no puede medir no deja pasar —**siempre que el hook alcance a medirlo
+requirements/REQ-031.md:739:| *(vuelta 2, C)* SEC-113 (a): techo de longitud que deniega por encima, 16 384 bytes (**siempre que el hook alcance a medirlo**; frontera por SEC-114) | CA-A13 | cubierta | pedido original, sección 1 («Una lista ambigua
+requirements/REQ-031.md:770:| 2026-09-27 | **Write-back documental de SEC-114 (remedio A). No es una vuelta dev↔QA:** no hay desarrollador y no cambia código; el contador sigue en 2 de 3. **Antes:** «por encima de 16 384 bytes, deniega», sin con
+requirements/REQ-031.md:772:| 2026-09-27 | **Comentario del techo condicionado (desarrollador); sin cambio funcional; diff sólo de comentarios.** `hooks/guard-completado.sh:54-57`, **antes**: «Por encima no se interpreta: una puerta que no puede me
+requirements/REQ-031.md:773:| 2026-09-27 | **Verificación documental de QA sobre `5ff9362` (SEC-114). No consume vuelta dev↔QA: código funcional sigue siendo `849c940`.** Confirmé por mi cuenta (no de oídas) que `git diff 849c940..5ff9362 -- ho
+CHANGELOG.md:502:  - **Qué cambia en las promesas:** medir no basta; la puerta sólo decide si alcanza a medir **y a
+CHANGELOG.md:696:«Por encima de 16 384 bytes deniega» pasa a «deniega si el hook alcanza a medirlo dentro del límite del cliente (60 s); `arnes_norm_campo` corre antes del techo y con valores del orden de 240 KB o más (medido: 255 371 bytes → 

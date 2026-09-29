@@ -1,0 +1,15 @@
+REQ-023 tal cual           cierre -> deny | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'con-hallazgos' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9).
+REQ-023 veredictos verdes cierre -> deny | ARNES: no se puede completar 'requirements/REQ-900.md': el hallazgo 'qa-023-06' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no afecta a lo que alguien ve, decide o cobra ni a lo que el REQ afirma (requirements/README.md, seccion 'Clases de hallazgo').
+REQ-023 edición sin cierre -> allow | 
+REQ-031 tal cual           cierre -> deny | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'con-hallazgos' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9).
+REQ-031 veredictos verdes cierre -> deny | ARNES: no se puede completar 'requirements/REQ-900.md': el hallazgo 'qa-023-06' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no afecta a lo que alguien ve, decide o cobra ni a lo que el REQ afirma (requirements/README.md, seccion 'Clases de hallazgo').
+REQ-031 edición sin cierre -> allow | 
+arnes-lectura rc=0
+Lectura del arnés sobre requirements/ — plugin 1.35.0
+
+Ningún valor anómalo: la máquina lee los 2 REQ como están escritos.
+
+REQ-023 escribir QA: nuevo -> allow | 
+REQ-031 escribir QA: nuevo -> allow | 
+REQ-023 control: QA-023-06 como instrumento, verdes -> allow | 
+REQ-031 control: QA-023-06 como instrumento, verdes -> allow | 

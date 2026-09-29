@@ -1,0 +1,45 @@
+### (a) toda edición
+requirements/README.md:100:existe, se deniega toda edición **de ese alcance** que conserve esa línea mientras la cabecera siga
+requirements/README.md:139:preexistente y sin reparar: **no hay promesa** de que toda edición que la herramienta aplica pase por
+requirements/REQ-031.md:775:| 2026-09-28 | **Vuelta 3 de 3 (desarrollador), SEC-113 remedio B → CA-A15.** `Estado: en-revisión` se conserva. **Antes** (`373563f`): `arnes_campos_req` asignaba `ARNES_HALL_CRUDO` y llamaba a `arn
+requirements/REQ-023.md:9:Hallazgos abiertos: QA-023-02 (instrumento, preexistente y crítico, también en v1.34.0: la vía de fragmentos cierra sin puertas, y con la línea Estado entera se salta esta regla; casos B2 y B6; ficha 
+requirements/REQ-023.md:907:| 2026-09-29 | **Write-back de QA-023-03 (vuelta 2 de 3): «reabrir, o editar sin cerrar, no se bloquea» era absoluta y su excepción vivía en otra parte.** CA-01 ya la enunciaba junto («Lo que NO se
+requirements/REQ-023.md:909:| 2026-09-29 | **Write-back de QA-023-03, vuelta 3 de 3 (la última): la excepción se escribe por PROPIEDAD, no por un caso.** Antes (vuelta 2), en todas las sedes: «salvo en un caso: si la cabecera e
+requirements/REQ-023.md:910:| 2026-09-29 | **Intervención documental EXCEPCIONAL, fuera del contador: write-back de QA-023-05 y de las correcciones de texto de R-045 §6.** **El contador dev↔QA sigue agotado (3 de 3) y no se re
+PENDING_APPROVAL.md:101:  - En la vuelta 3 el barrido encontró **QA-023-05**. `requirements/README.md` y su plantilla (líneas 89–98, sede heredada de la frontera) dicen «Cuándo deniega, dicho entero» y «se deniega toda edi
+PENDING_APPROVAL.md:102:  - «Toda edición», sin acotar, aparece también en `SKILL.md`, ADR-014 y las notas, que sí declaran (g) en el mismo apartado.
+PENDING_APPROVAL.md:106:    - **Qué se toca en REQ-023:** el analista acota el «Cuándo deniega» del README y de la plantilla a las ediciones que la puerta reconstruye (`Write`, o `Edit`/`MultiEdit` con `old_string` literal), a
+docs/qa/REQ-023.md:563:  primera exacta, si existe) no lo dice: entonces se deniega toda edición que conserve esa línea, y la
+docs/qa/REQ-023.md:714:  cubiertas»). **Observado:** «dicho entero», «Nada más» y «toda edición», sin excepción ni remisión.
+docs/qa/REQ-023.md:730:  - Acotar igual «toda edición» en `SKILL.md`, ADR-014 y las notas.
+docs/qa/REQ-023.md:761:  - «toda edición» en `SKILL.md:1039`, `ADR-014:116` y las notas `[1.35.0]:235`.
+CHANGELOG.md:28:- **QA-023-05:** el «Cuándo deniega» de `requirements/README.md` y de su plantilla (idénticos) se acota a las ediciones cuyo documento la puerta reconstruye —`Write`, o `Edit`/`MultiEdit` con `old_string` lit
+CHANGELOG.md:91:- **QA-023-05** (`contrato`, sólo texto): el README y la plantilla, sede heredada de la frontera, dicen «Cuándo deniega, dicho entero» y «toda edición» sin excluir la vía (g). Por esa vía la puerta permite
+CHANGELOG.md:107:**Consecuencia:** si en disco el terminal está en una línea `Estado` que no gobierna, toda edición que la conserve se deniega mientras la cabecera siga siendo ambigua. La que la retira, la corrige o deshace la 
+CHANGELOG.md:335:     exacta que no es la primera— y la que gobierna no lo dice o no existe, se deniega toda edición
+CHANGELOG.md:472:  - **La versión no puede prometer** que toda edición que la herramienta aplique pase por la puerta de
+CHANGELOG.md:6405:  denegación exige que **haya un intento de cierre**: denegar toda edición de un REQ con un comentario
+CHANGELOG.md:7134:se resuelve, y es deliberado:** resolverlo costaría un proceso en el camino de toda edición y
+docs/decisions/ADR-014-cabecera-ambigua-variante-o-clave-de-control-repetida.md:130:  no existe, se deniega toda edición **cuyo documento resultante la puerta reconstruye** —un `Write`, o
+templates/requirements-README.md.tpl:100:existe, se deniega toda edición **de ese alcance** que conserve esa línea mientras la cabecera siga
+templates/requirements-README.md.tpl:139:preexistente y sin reparar: **no hay promesa** de que toda edición que la herramienta aplica pase por
+hooks/guard-completado.sh:566:    # esa linea declaraba desde dentro de la cita. Denegar toda edicion de un REQ con un
+hooks/guard-completado.sh:589:    # primera— y la que gobierna no lo dice o no existe, se deniega TODA edicion que conserve esa
+skills/arnes-upgrade/SKILL.md:529:  proceso en toda edición y abriría una carrera entre la comprobación y la escritura. **Qué
+skills/arnes-upgrade/SKILL.md:1050:    exacta que no es la primera— y la que gobierna no lo dice o no existe, se deniega toda edición **de
+hooks/lib.sh:1190:#   * resolver cuesta un proceso (`readlink`/`realpath`) en el camino de TODA edicion, y
+
+### (g) dicho entero
+requirements/README.md:93:abajo). **Cuándo deniega, dicho entero para ese alcance:** cuando la cabecera que quedaría escrita es
+docs/qa/REQ-023.md:620:  §13. Ahora dicen «**Cuándo deniega, dicho entero** … Nada más» y «se deniega **toda** edición que
+docs/qa/REQ-023.md:692:  - «**Cuándo deniega, dicho entero:** cuando la cabecera que quedaría escrita es ambigua, alguna de
+docs/qa/REQ-023.md:714:  cubiertas»). **Observado:** «dicho entero», «Nada más» y «toda edición», sin excepción ni remisión.
+PENDING_APPROVAL.md:101:  - En la vuelta 3 el barrido encontró **QA-023-05**. `requirements/README.md` y su plantilla (líneas 89–98, sede heredada de la frontera) dicen «Cuándo deniega, dicho en
+requirements/REQ-023.md:9:Hallazgos abiertos: QA-023-02 (instrumento, preexistente y crítico, también en v1.34.0: la vía de fragmentos cierra sin puertas, y con la línea Estado entera se salta est
+requirements/REQ-023.md:910:| 2026-09-29 | **Intervención documental EXCEPCIONAL, fuera del contador: write-back de QA-023-05 y de las correcciones de texto de R-045 §6.** **El contador dev↔QA sig
+skills/arnes-upgrade/SKILL.md:985:  - **Lo que deja de cerrar, dicho entero.** La lista se separa **sólo** con comas fuera de todo
+skills/arnes-upgrade/SKILL.md:1034:  - **Lo que deja de cerrar, dicho entero.** Una cabecera con una **variante** de una clave de control
+docs/seguridad/registro-seguridad.md:9050:- **Coincido con QA-023-05** (`contrato`, de QA; no lo reclasifico): el «Cuándo deniega, dicho entero» del README y de la plantilla no excluye la vía (g).
+templates/requirements-README.md.tpl:93:abajo). **Cuándo deniega, dicho entero para ese alcance:** cuando la cabecera que quedaría escrita es
+CHANGELOG.md:91:- **QA-023-05** (`contrato`, sólo texto): el README y la plantilla, sede heredada de la frontera, dicen «Cuándo deniega, dicho entero» y «toda edición» sin excluir la vía (g). 
+CHANGELOG.md:97:## [GitHub] — 2026-09-29 · REQ-023, vuelta 3 de 3 (la última): QA-023-03 corregido POR PROPIEDAD en todas sus sedes — cuándo deniega la cabecera ambigua, dicho entero; comprobad

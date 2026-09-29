@@ -1,0 +1,1 @@
+QA-023-06 (contrato, baja, sólo texto, REQ-031 CA-A12: las cifras de su nota de versionado —1 601 líneas repetidas de 60 caracteres o más y 2 501 cortas → deny— sólo están medidas con líneas ASCII; con caracteres multibyte en la parte citada salen sin decisión 1 001 largas y 2 501 cortas; registro en docs/qa/REQ-023.md)

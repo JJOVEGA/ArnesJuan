@@ -1,0 +1,7 @@
+== gates 2026-09-29T15:50:36-06:00 e7562e7
+gate1 rc=0
+gate2 rc=0
+gate3 rc=0
+for f in hooks/*.sh tools/*.sh; do bash -n "$f" || exit 1; done
+jq -e . hooks/hooks.json >/dev/null
+jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null
