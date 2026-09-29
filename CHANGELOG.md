@@ -2,6 +2,20 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-29 · Segunda autorización del propietario registrada (literal, llegó truncada): corrección documental excepcional fuera del contador y reproducción real de SEC-117; decisión 4 resuelta con (A)
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora.
+
+**Qué se registra:** `PENDING_APPROVAL.md` § Resueltas gana la segunda autorización del 2026-09-29, literal y **tal como llegó**. El mensaje termina cortado en «Registra con precisión la cobertura de QA y»; no se reconstruye lo que falta.
+
+**Qué autoriza:**
+- Una intervención documental **fuera del contador de REQ-023**, que sigue agotado (3 de 3) y no se reinicia. Agrupa QA-023-05, las correcciones de texto de R-045 §6 y las promesas de REQ-031 afectadas.
+- Un experimento real y aislado de SEC-117, con registro previo.
+- Precisiones sobre SEC-118, sobre las ediciones hechas con Python y sobre la política de versiones.
+
+**Estado de la cola:** la decisión 4 queda resuelta con la opción (A). SEC-115, SEC-118, C y SEC-117 siguen **no aceptados**, y la entrada pendiente sigue impidiendo **publicar** y **cerrar**.
+
+**Avance (regla 6):** autorización registrada; falta la corrección documental (analista → QA → seguridad) y el experimento.
+
 ## [GitHub] — 2026-09-29 · Cola: ficha 1 corregida («si el hook alcanza a medir **y a emitir su decisión**») y ampliada con SEC-118; ficha 3 con la valoración del auditor; decisión 4 con el alcance de R-045 §6; `docs/ESTADO.md` con el punto de retomar del candidato
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora.
 
