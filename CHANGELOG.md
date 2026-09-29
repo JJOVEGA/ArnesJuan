@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-29 · Candidato 1.35.0 abierto: autorización del propietario registrada (SEC-047, mitad 1 de REQ-023); fichas finales de SEC-115 y del hueco C en la cola, NO aceptadas
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora. Rama `cand/1.35.0` desde `origin/main` = `713ac68`.
+
+`PENDING_APPROVAL.md` § Resueltas gana la autorización del 2026-09-29, **literal e íntegra**: implementar la mitad 1 de REQ-023 (SEC-047), versionar sus criterios y sedes, y preparar el candidato 1.35.0 **sin** fusión, tag ni publicación. El propietario acepta expresamente un cambio de compatibilidad: una clave de control repetida deniega el cierre aunque sus valores coincidan. La entrada pendiente «Decisión de publicación de 1.35.0» se pone al día: el asunto de SEC-047 queda resuelto, y **SEC-115 y el hueco C siguen pendientes**, cada uno con su ficha final (consecuencia reproducida, protección efectiva, responsable propuesto, revisión propuesta —SEC-115 el 2026-10-29, C el 2026-10-15— y condición de revisión anticipada). Ninguna fecha es una aceptación. La entrada sigue impidiendo **publicar** y **cerrar** (`completado`) cualquier REQ; no impide implementar ni probar. Antecedente: la propuesta del 2026-09-29, copiada literal en `docs/arnes/v1.35.0-propuesta-sec-047.{md,diff}` y `-humo.txt`. Sus cifras de coste son de un ensayo preliminar y **no** acreditan rendimiento. **Avance (regla 6):** fuente del pedido fijada; falta el versionado del contrato de REQ-023 por el analista.
+
 ## [Interno] — 2026-09-28 · REQ-031: revisión acotada de procedencia por seguridad (R-044-D sobre `cb79473`): dos conclusiones anuladas por venir de la otra rama, el resto medido sobre el worktree; SEC-116 `mitigado`; entrada de publicación de la cola puesta al día
 > Origen: Interno (manual) · usuario: Juan · modelo de IA: Opus 5.5 (auditor-seguridad) / Fable 5.1 (coordinadora) · agente: auditor-seguridad, coordinadora.
 

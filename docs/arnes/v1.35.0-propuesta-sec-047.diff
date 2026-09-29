@@ -1,0 +1,183 @@
+--- a/hooks/lib.sh
++++ b/hooks/lib.sh
+@@ -1687,7 +1687,7 @@
+ }
+ 
+ arnes_norm_clave() {   # <linea> -> 0 + ARNES_CLAVE/ARNES_VALOR; 1 si la linea no declara campo
+-  ARNES_CLAVE=''; ARNES_VALOR=''; ARNES_CLAVE_DECORADA=0
++  ARNES_CLAVE=''; ARNES_VALOR=''; ARNES_CLAVE_DECORADA=0; ARNES_CLAVE_VARIANTE=''
+   local l="${1//$'\r'/}" k r crudo
+   case "$l" in *:*) ;; *) return 1 ;; esac
+   crudo="${l%%:*}"
+@@ -1705,6 +1705,84 @@
+   # `tools/arnes-lectura.sh` pueda NOMBRAR la linea que gobierna cuando la forma es
+   # legitima pero el documento se lee distinto de como parece.
+   [ "$ARNES_CLAVE" = "$crudo" ] || ARNES_CLAVE_DECORADA=1
++  # OBSERVACIONAL: no cambia ARNES_CLAVE ni ARNES_VALOR. Solo anota si la clave es una
++  # VARIANTE de una clave de control (SEC-047, QA-031-01; frontera en `arnes_clave_variante`).
++  arnes_en_vocab "$ARNES_CLAVE" "$ARNES_CLAVES_CONTROL" || arnes_clave_variante "$ARNES_CLAVE"
++  return 0
++}
++
++# --- VARIANTE DE UNA CLAVE DE CONTROL: la frontera, escrita una vez ----------------
++#
++# EL DEFECTO (SEC-047, QA-031-01, REQ-023): el lector casa la clave por IGUALDAD EXACTA tras
++# retirar blancos de los extremos y enfasis. `HALLAZGOS ABIERTOS:`, `Hallazgos  abiertos:`, un
++# BOM o un U+200B delante o dentro, un NBSP en lugar del espacio, `- Rigor:` o `1. QA:` no
++# casan, y la linea se resuelve como «no declara campo». Para las claves de control la AUSENCIA
++# abre: sin `Sensible a seguridad:` no hay suelo, sin `QA:` no se exige QA, sin `Hallazgos
++# abiertos:` no hay hallazgos, sin `Rigor:` rige el heredado, y un `Estado:` que no se lee
++# esconde la propia transicion.
++#
++# LA FRONTERA, COMPROBABLE Y SIN LISTA DE CARACTERES. El ESQUELETO de una clave son sus LETRAS
++# ASCII (A-Z, a-z) en minusculas; todo lo demas —blancos de cualquier clase, digitos,
++# puntuacion, marcadores de lista o de cita, CUALQUIER byte >= 0x80— se descarta PARA COMPARAR,
++# nunca para leer. Si el esqueleto es el de una clave de control y la clave leida no es esa
++# clave, la linea es una VARIANTE: esa clave escrita de otra forma.
++#
++# LO QUE QUEDA FUERA, declarado: una letra ASCII de mas, de menos o cambiada (`Rigr:`,
++# `Hallazgo abierto:`: es otra palabra), una letra SUSTITUIDA por un homoglifo (`Е` cirilico,
++# `Ｅ` fullwidth: la letra desaparece del esqueleto), unos dos puntos que no son ASCII (`：`) y
++# una clave de mas de ARNES_CLAVE_ESQ_MAX bytes (no se compara). Todo eso se sigue leyendo como
++# hoy: ausencia del campo. No se «normaliza Unicode» ni se enumera ningun caracter.
++#
++# POR QUE NO SE LEE LA VARIANTE COMO LA CLAVE: ensancharia la tolerancia y obligaria a ELEGIR
++# entre variante y canonica cuando discrepan. Aqui no se elige: la linea se ANOTA y la puerta
++# deniega el cierre por cabecera ambigua (guard-completado). Los VALORES que leen la puerta,
++# el informe, el bloque derivado (`campos-req.awk`) y `arnes-paralelo.sh` no cambian.
++#
++# LOCALE Y COSTE (REQ-023 CA-05, CA-09): bajo `LC_ALL=C` —bytes, sin colacion—, con la clase
++# de letras escrita sin rangos, y solo sobre claves de hasta ARNES_CLAVE_ESQ_MAX bytes, porque
++# `${k//patron/}` crece mas que linealmente con la longitud (SEC-113). Sin procesos.
++ARNES_CLAVES_CONTROL='Estado|QA|Seguridad|Sensible a seguridad|Hallazgos abiertos|Rigor'
++ARNES_CLAVE_ESQ_MAX=256
++arnes_clave_variante() {   # <clave normalizada> -> ARNES_CLAVE_VARIANTE (clave de control o '')
++  local LC_ALL=C k="$1"
++  ARNES_CLAVE_VARIANTE=''
++  [ "${#k}" -le "$ARNES_CLAVE_ESQ_MAX" ] || return 0
++  k="${k//[!ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz]/}"
++  case "${k,,}" in
++    estado)             ARNES_CLAVE_VARIANTE='Estado' ;;
++    qa)                 ARNES_CLAVE_VARIANTE='QA' ;;
++    seguridad)          ARNES_CLAVE_VARIANTE='Seguridad' ;;
++    sensibleaseguridad) ARNES_CLAVE_VARIANTE='Sensible a seguridad' ;;
++    hallazgosabiertos)  ARNES_CLAVE_VARIANTE='Hallazgos abiertos' ;;
++    rigor)              ARNES_CLAVE_VARIANTE='Rigor' ;;
++  esac
++  return 0
++}
++
++# Cuenta, en UNA cabecera, las declaraciones de claves de control (canonicas y variantes) y
++# publica si la cabecera es AMBIGUA: una variante, o una clave de control declarada mas de una
++# vez. `Hallazgos abiertos:` canonica repetida NO se cuenta aqui: tiene su propia puerta y su
++# propio motivo (REQ-031 CA-A12). La llama quien recorre la cabecera, tras `arnes_norm_clave`;
++# el estado (ARNES_AMBIGUA, ARNES_AMBIGUA_MOTIVO, _ARNES_CTRL_VISTAS) vive en el llamador.
++_arnes_cuenta_control() {   # <n linea> <linea cruda>
++  # `%q` bajo `LC_ALL=C`: todo byte >= 0x80 sale escapado, asi el motivo ENSEÑA el caracter
++  # invisible en vez de reproducirlo (REQ-023 CA-01).
++  local LC_ALL=C k="$ARNES_CLAVE" q
++  if [ -n "$ARNES_CLAVE_VARIANTE" ]; then
++    k="$ARNES_CLAVE_VARIANTE"
++    printf -v q '%q' "${2:0:80}"
++    ARNES_AMBIGUA=1; ARNES_AMBIGUA_MOTIVO+="${ARNES_AMBIGUA_MOTIVO:+; }linea $1: $q es una variante de '$k:'"
++  else
++    arnes_en_vocab "$k" "$ARNES_CLAVES_CONTROL" || return 0
++  fi
++  case "$_ARNES_CTRL_VISTAS" in
++    *"|$k|"*)
++      if [ -z "$ARNES_CLAVE_VARIANTE" ] && [ "$k" != 'Hallazgos abiertos' ]; then
++        ARNES_AMBIGUA=1; ARNES_AMBIGUA_MOTIVO+="${ARNES_AMBIGUA_MOTIVO:+; }linea $1: '$k:' declarada otra vez"
++      fi ;;
++    *) _ARNES_CTRL_VISTAS+="|$k|" ;;
++  esac
++  return 0
+ }
+ 
+ # TECHO DE `Hallazgos abiertos:` (REQ-031 CA-A13/CA-A15, SEC-113): 16 384 BYTES del valor crudo.
+@@ -1858,6 +1936,7 @@
+ 
+ arnes_campos_req() {   # <texto en disco> <texto entrante>
+   ARNES_QA=''; ARNES_SEG=''; ARNES_SENS=''; ARNES_HALL=''; ARNES_RIGOR=''
++  ARNES_AMBIGUA=0; ARNES_AMBIGUA_MOTIVO=''; ARNES_ESTADO_TODOS='|'
+   ARNES_QA_CRUDO=''; ARNES_SEG_CRUDO=''; ARNES_HALL_CRUDO=''; ARNES_CITA_ABIERTA=0
+   ARNES_CR_INTERIOR=0; ARNES_CR_INTERIOR_LINEA=''
+   # El CR interior NO se reinicia por texto, a diferencia del rango: un CR en CUALQUIERA
+@@ -1869,12 +1948,19 @@
+   # escrito en una linea anterior no se leia y el cierre pasaba. Aqui solo se CUENTA y se
+   # publica —por texto, porque disco y fragmento son dos cabeceras—; decide la puerta.
+   ARNES_HALL_N=0; ARNES_HALL_LINEAS=''
+-  local texto l n_l n_h lin_h
++  local texto l n_l n_h lin_h _ARNES_CTRL_VISTAS
+   for texto in "$1" "$2"; do
+     [ -n "$texto" ] || continue
+     # El rango de comentario CRUZA lineas, asi que su estado se reinicia por texto: el
+     # fragmento entrante y el documento en disco son dos cabeceras, no una.
+     ARNES_CITA=0; n_l=0; n_h=0; lin_h=''
++    # SEC-047: la cabecera AMBIGUA (variante de una clave de control, o clave de control
++    # repetida) y TODOS los `Estado:` que declara, variantes incluidas. Se reinicia por texto
++    # y queda publicada la del ULTIMO leido, que es la cabecera resultante (Write, o el
++    # documento reconstruido); la puerta solo la usa cuando hay documento. Va en ESTE recorrido
++    # y no en otro: normalizar la clave de una linea larga es caro, y una segunda pasada
++    # multiplicaba un coste que ya existe (SEC-115).
++    ARNES_AMBIGUA=0; ARNES_AMBIGUA_MOTIVO=''; ARNES_ESTADO_TODOS='|'; _ARNES_CTRL_VISTAS='|'
+     while IFS= read -r l; do
+       n_l=$((n_l+1))
+       # LOS CAMPOS VALEN SOLO EN LA CABECERA: antes del primer `## `. Medido: una linea
+@@ -1885,6 +1971,10 @@
+       # nombre de ninguna seccion, que seria mapeo del proyecto.
+       case "$l" in '## '*) break ;; esac
+       arnes_campo_linea "$l" || continue
++      _arnes_cuenta_control "$n_l" "$l"
++      if [ "$ARNES_CLAVE" = 'Estado' ] || [ "$ARNES_CLAVE_VARIANTE" = 'Estado' ]; then
++        arnes_norm_campo "$ARNES_VALOR"; arnes_veredicto "$ARNES_CAMPO"; ARNES_ESTADO_TODOS+="$ARNES_VEREDICTO|"
++      fi
+       case "$ARNES_CLAVE" in
+         'QA')                   ARNES_QA="$ARNES_VALOR" ;;
+         'Seguridad')            ARNES_SEG="$ARNES_VALOR" ;;
+--- a/hooks/guard-completado.sh
++++ b/hooks/guard-completado.sh
+@@ -448,6 +448,7 @@
+   if [ "$reconstruido" -eq 1 ]; then arnes_campos_req "$resultante" ''
+   else arnes_campos_req "$disk" "$nuevo"; fi
+   qa="$ARNES_QA"; seg="$ARNES_SEG"; sens="$ARNES_SENS"; rigor="$ARNES_RIGOR"
++  amb_desp="$ARNES_AMBIGUA"; amb_motivo="$ARNES_AMBIGUA_MOTIVO"; est_todos="$ARNES_ESTADO_TODOS"
+ 
+   # --- Aviso al ESCRIBIR un veredicto fuera del vocabulario (NO deniega) ------------
+   # Medido en un proyecto real: cuatro REQ llevaban SEMANAS con un `QA:` que la puerta no
+@@ -519,6 +520,20 @@
+     est_despues="$ARNES_ESTADO"; cita_desp="$ARNES_ESTADO_CITA"; est_citado="$ARNES_ESTADO_CITADO"
+     cr_desp="$ARNES_ESTADO_CR"; cr_linea="$ARNES_ESTADO_CR_LINEA"
+     arnes_estado_cabecera "$disk";       est_antes="$ARNES_ESTADO"
++    # CABECERA AMBIGUA (SEC-047, QA-031-01): una VARIANTE de una clave de control —la clave
++    # escrita de otra forma, que el lector no lee como tal; frontera en `arnes_clave_variante`,
++    # lib.sh— o una clave de control declarada DOS veces. La puerta no elige entre ellas ni lee
++    # la variante como la clave: DENIEGA el cierre citando las lineas. Intento de cierre = el
++    # estado terminal en CUALQUIER `Estado:` de la cabecera resultante, variante incluida, no
++    # solo en el que gobierna: un `ESTADO: completado` no se lee y esconderia la transicion.
++    # Mismo alcance que el rango sin cerrar: solo al cerrar; reabrir, editar otra linea o
++    # conservar la forma de un REQ que ya estaba cerrado no se bloquea. Lo publica
++    # `arnes_campos_req` sobre la cabecera resultante, arriba.
++    if [ "$amb_desp" = "1" ] && [ "$est_antes" != "$done_norm" ]; then
++      case "$est_todos" in *"|$done_norm|"*)
++        arnes_deny "ARNES: no se puede completar '$rel': su cabecera es ambigua para esta puerta — $amb_motivo. Una clave de control (Estado, QA, Seguridad, Sensible a seguridad, Hallazgos abiertos, Rigor) escrita de otra forma no se lee como esa clave, y declarada dos veces obligaria a elegir una; la puerta no elige y no permite por la AUSENCIA que eso produciria (AGENTS.md 1). Salida: escribe cada clave como la plantilla de requirements/README.md, una sola vez. La puerta no reescribe el archivo." ;;
++      esac
++    fi
+     # UN CR QUE NO TERMINA LA LINEA: tampoco se juzga, se DENIEGA. Es la MISMA regla que el
+     # rango sin cerrar, aplicada al caracter: la cabecera no se puede MEDIR (SEC-024,
+     # R-007). El motivo cita la linea con el CR escrito `\r`, porque un renderizador de
+--- a/tools/arnes-lectura.sh
++++ b/tools/arnes-lectura.sh
+@@ -137,6 +137,13 @@
+     # comentario diria que gobierna un veredicto que la puerta ya no lee: las dos formas de
+     # mentir son la misma, y por eso hay UN solo lector.
+     arnes_campo_linea "$l" || continue
++    # SEC-047 (REQ-023 CA-07): una VARIANTE de una clave de control es lo que la puerta
++    # deniega al cerrar, y el informe no la calla. Misma frontera, misma funcion (lib.sh).
++    if [ -n "$ARNES_CLAVE_VARIANTE" ]; then
++      LC_ALL=C printf -v qv '%q' "${l:0:80}"
++      avisa "${base%.md}" "$ARNES_CLAVE_VARIANTE:" "$qv" "(no se lee)" \
++        "es una variante de \`$ARNES_CLAVE_VARIANTE:\` que la máquina NO lee como esa clave; la puerta deniega el cierre mientras siga así. Escribe la clave como la plantilla."
++    fi
+     case "$vistos" in *"|$ARNES_CLAVE|"*) ;; *) continue ;; esac
+     k="$ARNES_CLAVE"
+     CNT[$k]=$(( ${CNT[$k]:-0} + 1 ))

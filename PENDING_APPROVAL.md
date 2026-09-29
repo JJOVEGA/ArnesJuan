@@ -36,18 +36,104 @@
 
 ## Pendientes
 
-### [2026-09-27, puesta al día 2026-09-28] (coordinadora) — Decisión de publicación de 1.35.0: los asuntos que REQ-031 deja abiertos y no decide
+### [2026-09-27, puesta al día 2026-09-29] (coordinadora) — Decisión de publicación de 1.35.0: SEC-115 y hueco C, pendientes; SEC-047 ya decidido
 
-- **Contexto:** REQ-031 tiene `QA: aprobado` (vuelta 3 de 3, código `cdcad5d`) y `Seguridad: aprobado` (R-044-C; R-044-D no cambia la cobertura), PR #58 en borrador con CI verde sobre `19c5ca7`; los cambios posteriores son sólo registros y correcciones de referencias (comprobación de procedencia del 2026-09-28). Quedan decisiones que el propietario reservó para la publicación.
-- **Acción que impide (regla 2):** ninguna de REQ-031 hoy (abiertos sólo `instrumento`: SEC-115, QA-031-01); impide **publicar 1.35.0** hasta decidir. Mientras esta entrada esté aquí, ningún REQ puede marcarse `completado` (deliberado).
-- **Asuntos:**
-  1. **SEC-115 (`instrumento`, abierto, no aceptado):** el techo de `Hallazgos abiertos:` ya se mide antes de normalizar (remedio B implementado en la vuelta 3: 255 371 bytes → deny en 0,31 s), pero **otras vías siguen matando al hook por tamaño** y CA-A16 confirmó en el CLI que un hook sin decisión **deja pasar** la herramienta: `QA: pendiente (…)` con ≈ 255 KB de evidencia → 73,6 s (los demás campos no tienen techo antes de normalizar); `Write` de 2 MB → 80 s (`arnes_sin_cr_transporte`, código anterior). Realismo bajo (el REQ real más grande, 297 KB, tarda 1,7 s). Decidir: publicar con la promesa acotada (ya escrita: «deniega si el hook alcanza a medir; medido hasta 255 371 bytes por `Hallazgos abiertos:`») o exigir antes un REQ propio que aplique la propiedad «ninguna operación super-lineal corre antes de una comprobación de tamaño que deniegue». No es un límite global ni una arquitectura nueva; no se diseña aquí.
-  2. **Hueco C (escrituras por intérprete), no aceptado como aplazado:** `python3 -c`, `node -e`, `bash script.sh` escriben en `codigo_app.globs` sin que `guard-codigo` lo vea (medido el 2026-09-27); sin `PostToolUse` no hay detección posterior. Acciones fuera del control: cualquier escritura por intérprete o script desde cualquier agente. Mitigación **posible, no disponible** (REQ-011, sin implementar): la «puerta posterior»; y detectar un cambio después **no demuestra que se impidió ni deshace sus efectos**. Protección que sigue dependiendo de los agentes: `AGENTS.md` §5 y §13. Decidir antes del tag: declararlo en el CHANGELOG de la versión como limitación conocida sin fecha, o abrir el REQ de la puerta posterior antes de publicar. Registrarlo aquí no lo convierte en riesgo aceptado.
-  3. **SEC-047 y la celda de §13 — atribución corregida el 2026-09-28:** la celda que promete denegar con BOM, espacio de anchura cero o blanco de más en la clave y cita § R-024 (SEC-078/SEC-079) **no está en `main`** (cuya fila de §13 sólo cubre el retorno de carro interior, y el árbol la cumple): vive en `rel/registro-1.33.0` (`AGENTS.md:349`; commit `1154417`, 2026-09-09), igual que R-024 (`ef82d43`) y SEC-078/079. Los subagentes la citaron porque la sesión les carga el `AGENTS.md` de ese worktree. Lo medido sigue en pie (allow por ausencia con `Hallazgos  abiertos:`, ZWSP/NBSP, `HALLAZGOS ABIERTOS:`, `SENSIBLE A  SEGURIDAD: sí` con `Rigor: ligero`): es SEC-047 (definido en `main`, línea 3633; su cláusula de subida a `contrato` existe, pero su premisa no se cumple contra el §13 de `main`) y QA-031-01, abiertos; CA-A17 no encontró exposición actual en las 29 cabeceras. Decisiones: (a) si se corrige esa celda en `rel/registro-1.33.0` y en qué PR; (b) la clase de SEC-047 juzgada contra el `AGENTS.md` de `main`; (c) reconocer claves con blancos/mayúsculas (mecanismo, REQ propio). Nada se añade a `main` para corregirlo.
-- **Recomendación de la coordinadora:** (1) publicar con la promesa acotada y el REQ de la propiedad de tamaño después, a menos que prefieras cerrarlo antes; (2) decidir C **antes** del tag, y recomiendo abrir el REQ de la puerta posterior con ventana declarada en vez de sólo anotarlo; (3) tratar SEC-047/§13 como asunto de `rel/registro-1.33.0` y de la divergencia entre esa línea y `main` (123 y 101 commits desde `5e53f12`), que merece decisión propia.
-- **Espera:** decisión del propietario sobre los tres. **Trabajo que sigue mientras tanto:** ninguno de REQ-031.
+- **Contexto:** el 2026-09-29 el propietario autorizó implementar SEC-047 (mitad 1 de REQ-023) y preparar el candidato v1.35.0 (§ Resueltas, entrada de esa fecha, texto literal). **Esa autorización NO acepta el aplazamiento de SEC-115 ni del hueco C**: los dos siguen pendientes aquí, con sus fichas finales abajo. El antiguo asunto 3 (SEC-047 y la celda de §13) queda resuelto por esa autorización; los asuntos 1 y 2 de la redacción del 2026-09-28 se sustituyen por las fichas, sin perder nada de lo que decían.
+- **Acción que impide (regla 2):** **publicar** 1.35.0 —tag, publicación, actualización de la instalación estable— hasta que el propietario decida las dos fichas; y, mientras esta entrada esté aquí, **cerrar**: marcar **cualquier** REQ `completado` (`guard-completado`; deliberado). **No** impide **implementar** ni **probar** el candidato. **Parte afectada:** la publicación de 1.35.0 y el cierre de REQ-023 y REQ-031. **Evidencia:** la de cada ficha. **Qué lo resuelve:** la decisión del propietario sobre cada ficha.
+
+**Ficha 1 — SEC-115 (`instrumento`, abierto, NO aceptado): un hook que muere por tamaño deja pasar el cierre entero.**
+- **Consecuencia reproducida.** R-044-C sobre `cdcad5d` (2026-09-28, WSL2/Linux): `QA: pendiente (…)` con ≈ 255 KB de evidencia → deny en **73,6 s**; `Write` de 2 025 113 bytes → **80,2 s** (1 012 650 bytes → 20,5 s). CA-A16 (Claude Code CLI 2.1.272, `claude -p`, WSL2, un intento más un control `deny`, 2026-09-28): un hook que agota su timeout sin decidir **deja pasar la herramienta**. El REQ se cerraría con QA y seguridad pendientes: dejan de correr **todas** las puertas del cierre. **No comprobado** en la sesión interactiva del editor ni en Windows.
+- **Protección efectiva hoy:** techo de 16 384 bytes para `Hallazgos abiertos:`, medido antes de normalizar (255 371 bytes → deny en 0,31 s por `Edit`); presupuesto de reconstrucción del `Edit`; el REQ real más grande (296 976 bytes) tarda 1,71 s por `Write`; la línea de control más larga de las 29 cabeceras mide 1 926 bytes.
+- **Qué depende de la disciplina del agente:** no escribir evidencia de cientos de KB en `QA:`, `Seguridad:`, `Rigor:`, `Sensible a seguridad:` ni `Estado:`, ni un REQ de MB por `Write`. Sólo `Hallazgos abiertos:` tiene regla escrita (`requirements/README.md`).
+- **Alternativa — reparar antes de publicar:** la propiedad «ninguna operación que crezca más que linealmente corre antes de una comprobación de tamaño que deniegue»: techo por campo de control antes de `arnes_norm_campo`, y techo del `content` de `Write` antes de `arnes_sin_cr_transporte`. Exige un REQ nuevo (hoy no tiene sede de remediación) y la vía completa. Retrasa el tag lo que dure ese ciclo.
+- **Alternativa — aplazar (propuesta, no decisión):** responsable propuesto `desarrollador` (mecanismo) y `analista-requerimientos` (REQ); **fecha de revisión propuesta: 2026-10-29**; revisión **anticipada** si ocurre cualquiera de estas: una línea de control de más de 16 KB en este repositorio o en un informe de consumidor; un informe de consumidor de un hook muerto por tiempo; una medición en el editor o en Windows de que un timeout también deja pasar; o una comisión que toque `arnes_norm_campo`, `arnes_sin_cr_transporte` o los presupuestos de los hooks (el forzador ya escrito en R-044-C).
+- **Limitación para las notas si se publica sin reparar:** la puerta de cierre decide sólo si el hook alcanza a medir dentro del límite del cliente (60 s); un hook que lo agota no deniega (comprobado en el CLI 2.1.272); lo agotan, medido, un veredicto de ≈ 255 KB o un `Write` de ≈ 2 MB. **La versión no puede prometer** que ningún REQ se cierre sin QA ni seguridad en absoluto: sólo «si el hook alcanza a medir».
+
+**Ficha 2 — hueco C (escrituras por intérprete o script), NO aceptado como aplazado.**
+- **Consecuencia reproducida.** 2026-09-27, `guard-codigo` de `a7a60c2` (sin cambios desde `v1.34.0` ni en el candidato), proyecto temporal en WSL2: desde la sesión coordinadora, `python3 -c "open('src/app.ts','w')…"`, `node -e "…writeFileSync…"` y `bash escribe.sh` → **allow**, y el archivo queda escrito (`src/app.ts = py`); `echo >`, `sed -i`, `dd of=` y `Edit` → deny. No hay `PostToolUse`: ninguna detección posterior. `docs/PENDIENTES.md` registra además tres instancias en un proyecto real el 2026-09-07.
+- **Protección efectiva hoy:** `Edit`/`Write`/`MultiEdit` sobre `codigo_app.globs` fuera del `desarrollador`, y las escrituras evidentes por `Bash` (`>`, `>>`, `tee`, `cp`, `mv`, `install`, `sed -i`, `perl -i`, `dd of=`).
+- **Qué depende de la disciplina del agente:** que ninguno use un intérprete, un script, un formateador o `patch`/`git apply` para escribir código protegido (`AGENTS.md` §5 y §13, que ya lo declaran).
+- **Alternativas — reparar antes de publicar:** (A1) ampliar el detector a `python -c`/`node -e` cuando el texto del comando nombra una ruta protegida: impediría las dos formas en línea medidas, **no** `bash script.sh` ni una ruta construida dentro del programa; crítico, vía completa, riesgo de falsos positivos (§13). (A2) REQ-011, la «puerta posterior» (`pendiente`, destino 1.33.0 vencido): **sólo una propuesta de detección** posterior; **no** es prevención, ni recuperación, ni mitigación disponible (no está implementada), y su tamaño es el de una versión propia.
+- **Alternativa — aplazar (propuesta, no decisión):** responsable propuesto `desarrollador` (`guard-codigo`) y `analista-requerimientos` (ventana de REQ-011); **fecha de revisión propuesta: 2026-10-15** — antes que SEC-115 porque C está **observado** en un proyecto real y SEC-115 no; revisión **anticipada** si ocurre cualquiera de estas: una nueva instancia observada, en este repositorio o en un consumidor, de código protegido escrito por intérprete o script desde un agente distinto del `desarrollador`; o una comisión que toque `guard-codigo` o el detector de escrituras compartido.
+- **Limitación para las notas si se publica sin reparar:** `guard-codigo` no ve escrituras hechas por intérpretes o scripts (`python`, `node`, `bash script.sh`), formateadores que reescriben archivos, `patch` ni `git apply`, y no hay detección posterior. **La versión no puede prometer** que sólo el `desarrollador` modifique código protegido: promete que las herramientas de edición y las escrituras evidentes por shell lo deniegan.
+
+- **Recomendación de la coordinadora (propuesta, no decisión):** aplazar las dos con estas fechas y publicar sus limitaciones en las notas de 1.35.0; SEC-115 tiene realismo bajo y margen medido de más de 30× sobre los REQ reales, y C no tiene reparación que quepa en esta versión sin ser otra versión. **Registrarlas aquí no las convierte en riesgos aceptados.**
+- **Espera:** decisión del propietario sobre la ficha 1 y la ficha 2. **Trabajo que sigue mientras tanto:** el candidato v1.35.0 —SEC-047 (mitad 1 de REQ-023) y la preparación de la versión—, autorizado el 2026-09-29; no depende de estas dos decisiones. **Cerrar REQ-023 y REQ-031 queda pendiente** mientras esta entrada esté aquí.
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-09-29) — **SEC-047 (mitad 1 de REQ-023) y candidato v1.35.0**: implementación y preparación autorizadas, sin publicación; SEC-115 y hueco C **NO** aceptados
+
+**Texto del propietario, literal e íntegro** (mensaje del 2026-09-29 a la sesión coordinadora del worktree `ArnesJuan-v1.35`):
+
+> Autorizo avanzar con SEC-047 y preparar el candidato v1.35.0. Completa este encargo de punta a punta dentro del alcance siguiente, sin pedir nuevamente autorización para cada paso ya incluido.
+>
+> 1. Contexto y base
+>
+> Trabaja en `/home/juan/dev/ArnesJuan-v1.35`, desde la sesión nueva con las instrucciones de ese worktree. Comprueba rama, SHA y estado antes de editar.
+>
+> Usa `origin/main` como referencia, no la rama local main desfasada. Conserva el cambio preexistente de `docs/ESTADO.md` y la propuesta sin seguimiento; no los descartes ni los incluyas indiscriminadamente en commits.
+>
+> Lee `propuesta-v1.35.0/README.md` y `propuesta-v1.35.0/SEC-047.diff`. Conserva la propuesta original como antecedente.
+>
+> 2. Implementar SEC-047
+>
+> Autorizo implementar la mitad 1 de REQ-023 y versionar los criterios y sedes afectados. REQ-024 queda fuera.
+>
+> Acepto expresamente que una clave de control repetida deniegue el cierre aunque sus valores coincidan. Registra este cambio de compatibilidad.
+>
+> La corrección debe:
+> - Impedir que las variantes cubiertas se conviertan silenciosamente en ausencia y reduzcan el rigor u oculten un bloqueante.
+> - Respetar la estructura de una declaración: extraer letras ASCII no debe convertir una cita, ejemplo o explicación en campo de control.
+> - Mantener coherencia entre lectores, ausencias legítimas y reapertura de REQ.
+> - Evitar elegir silenciosamente entre declaraciones contradictorias.
+> - Conservar las fronteras de cobertura propuestas y declararlas sin prometer reconocimiento universal.
+>
+> Las claves de más de 256 bytes que queden fuera siguen siendo una limitación; no las presentes como protegidas por ese límite. No amplíes este encargo para resolver todo Unicode ni SEC-115.
+>
+> 3. Validar y preparar la entrega
+>
+> Recorre el ciclo correspondiente al cambio de hooks, reutilizando las reproducciones y el inventario existentes. Agrupa los hallazgos de cada revisión antes de reparar; no reinicies contadores ni repitas revisiones sin un delta o riesgo concreto.
+>
+> Verifica casos legítimos, variantes, duplicados, prosa, reapertura, CRLF y las fronteras relevantes. Ejecuta el banco completo y las comprobaciones exigidas sobre el candidato; no presentes el ±1 % del ensayo preliminar como rendimiento acreditado.
+>
+> Autorizo rama de trabajo, commits, push sin force y PR en borrador. Conserva los resultados de CI; no relances buscando verde.
+>
+> Si se agota el presupuesto vigente con un bloqueo real, entrega el impedimento exacto y lo pendiente. No apruebes por agotamiento.
+>
+> 4. Preparar v1.35.0
+>
+> Con la reparación validada, prepara el cambio de versión en los manifiestos correspondientes, las notas y la guía de actualización necesaria. Autorizo esos cambios como preparación del candidato, no su publicación.
+>
+> Describe el contenido realmente incluido desde v1.34.0. REQ-025 aporta sólo su entrega 1; no cierres el requisito completo ni incorpores trabajo de la rama antigua.
+>
+> Las notas deben explicar los cambios de compatibilidad y conservar los resultados históricos, los inconclusos y las limitaciones. No transformes un CI verde en acreditación de rendimiento, conducta o ahorro.
+>
+> Obtén el CI requerido sobre la cabeza final del candidato y deja identificada la cobertura de las firmas.
+>
+> 5. Riesgos pendientes
+>
+> Este encargo NO acepta el aplazamiento de SEC-115 ni del hueco C. Conserva sus decisiones pendientes y prepara sus fichas finales con consecuencia, protección efectiva, responsable propuesto, fecha de revisión y condición de revisión anticipada.
+>
+> Reutiliza la fecha propuesta de SEC-115, 2026-10-29. Para C propone una fecha concreta. Ninguna propuesta cuenta como aceptación mía.
+>
+> No repares esos dos asuntos dentro de SEC-047 ni detengas el trabajo independiente autorizado únicamente porque esperan mi decisión. Si una regla impide un cierre, deja ese cierre pendiente y continúa lo permitido.
+>
+> 6. Límites y resultado final
+>
+> Sin fusión, tag, publicación ni actualización de instalaciones o consumidores. PR #54 y #57 intactos. Sin reconciliar `rel/registro-1.33.0`, cambiar modelos, sondas, umbrales, workflow o ruleset.
+>
+> Entrega una sola propuesta de salida: reparación y compatibilidad verificadas, SHA y PR del candidato, firmas y CI, contenido de v1.35.0 y decisiones exactas que falten para publicarla.
+>
+> No propongas otra investigación general. El resultado buscado es un candidato concreto que yo pueda revisar y decidir.
+
+**Lo que la coordinadora añade, rotulado como suyo:**
+- **Antecedente citado por la autorización** («Lee `propuesta-v1.35.0/README.md` y `propuesta-v1.35.0/SEC-047.diff`»): la propuesta se conserva sin seguimiento en el worktree, intacta, y su copia literal queda versionada en `docs/arnes/v1.35.0-propuesta-sec-047.md`, `docs/arnes/v1.35.0-propuesta-sec-047.diff` y `docs/arnes/v1.35.0-propuesta-sec-047-humo.txt` para poder citarla con commit. Sus cifras de coste (±1 %) son de un **ensayo preliminar** y **no** acreditan rendimiento.
+- **El encargo anterior** del que nace la propuesta está íntegro en `traspaso-v1.35.0/README.md`, rama `evidencia/prueba-despacho-2026-09-14`, commit `94e2d3b`.
+- **Cambio de compatibilidad aceptado expresamente:** una clave de control repetida deniega el cierre **aunque sus valores coincidan**.
+- **Contador:** REQ-023 no ha gastado ninguna vuelta dev↔QA (sólo trabajo de analista y una cata); el tope es 3 y no se reinicia.
+- **Rama del candidato:** `cand/1.35.0`, desde `origin/main` = `713ac68`. La rama local `main` (`cf2009e`) está desfasada y no se usa.
+- **El asunto 3** de la entrada pendiente de publicación (SEC-047/§13) queda resuelto por esta autorización; **SEC-115 y C siguen pendientes** en esa entrada, con sus fichas finales.
 
 ### RESUELTA (propietario, 2026-09-28) — **REQ-031: comprobación acotada de procedencia de instrucciones y referencias**; intervención documental excepcional sin reiniciar el contador
 
