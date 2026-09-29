@@ -2,6 +2,38 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-29 · Cola: decisión 5 (QA-023-06, cifras de SEC-118 medidas sólo con ASCII) presentada al propietario; ficha 1 con lo observado y lo inferido y la precisión de bytes; ESTADO al día
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora.
+
+**Por qué para el flujo:** la autorización cubría **una** intervención documental excepcional. QA la revisó y no fue favorable, así que no se abre otra corrección ni se pide la determinación de seguridad.
+
+**Decisión 5:** con la forma de la regla 4. Recomienda (A): las sedes heredadas se quedan con la propiedad sin cifras, y las cifras viven sólo en R-045 con «medido con líneas ASCII». Declara que el origen del defecto es el encargo de la coordinadora, que pidió escribir la propiedad «con lo medido». Recoge además las observaciones O-1…O-6 de QA, sin identificador, que no bloquean.
+
+**Ficha 1:**
+- «allow» pasa a «sin decisión» a nivel de hook; que el host lo trate como permitir es inferido;
+- el umbral de CA-A12 se da en bytes, con las mediciones multibyte de QA.
+
+**`docs/ESTADO.md`:** el bloque «RETOMAR AQUÍ» se pone al día; el bloque derivado entra tal como lo re-derivó el hook.
+
+**Nada se acepta.**
+
+**Avance (regla 6):** impedimento presentado con su forma; falta la decisión del propietario.
+
+## [Interno] — 2026-09-29 · QA: revisión del delta documental de la intervención excepcional de REQ-023 (fuera del contador) sobre `e7562e7` — QA-023-05 cerrado; QA-023-06 (`contrato`) abierto; REQ-023 y REQ-031 `QA: con-hallazgos`
+> Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `qa-tester`. Unos 330 k tokens.
+
+- **No es una vuelta:** REQ-023 sigue 3 de 3 y no se reinicia; tampoco se reabre el contador de REQ-031. Sin código.
+- **Evidencia reutilizada:** el delta no toca `hooks/`, `tools/`, `tests/`, `.claude-plugin/`, `.github/` ni `.arnes/`, así que siguen vigentes las vueltas 1–3 de QA y R-045. Sólo se corrió lo que lee archivos cambiados:
+  - 17 secciones: **556 PASS · 0 FAIL · 0 SKIP**. La 41 da 169, con las 18 filas del fail-before en PASS **en local**, contra `713ac68` y 1.33.2;
+  - la 08: 67/0; autoprueba 117/0; gates rc 0.
+- **QA-023-05 cerrado.**
+- **Contrastado y cierto:** SEC-117 reproducido en la 2.1.285, contra los archivos crudos de `6c947ef`/`1c8c81c`; la separación de SEC-118; el fail-before local frente a los 18 SKIP del CI 36625681278; las tres condiciones de la cláusula nueva de §13.
+- **QA-023-06** (`contrato`, baja, sólo texto): las cifras de SEC-118 están medidas sólo con líneas ASCII. Con multibyte salen sin decisión 1 601 y 1 001 líneas largas y 2 501 cortas, igual en `713ac68`.
+- **Campos:**
+  - REQ-023 `QA: con-hallazgos`: sale QA-023-05 y entra QA-023-06;
+  - REQ-031 `QA: aprobado` → `con-hallazgos`, porque el cambio de CA-A12 es parte del criterio: entra QA-023-06; QA-031-01 se queda.
+- **Avance (regla 6):** delta revisado; falta la decisión del propietario sobre QA-023-06, porque la autorización de una sola intervención ya se usó.
+
 ## [GitHub] — 2026-09-29 · Commit de la corrección documental excepcional (SIN VALIDAR) y de la cola: ficha 3 con SEC-117 reproducido en el host real; ficha 1 con lo observado y lo inferido de SEC-118
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora (cola y commit); el texto de las sedes contractuales es del `analista-requerimientos` (entrada `[Interno]` de abajo).
 

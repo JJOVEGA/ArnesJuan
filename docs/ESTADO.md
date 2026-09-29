@@ -10,24 +10,18 @@
 > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
 > `docs/estabilizacion/`.
 
-## ⏸ RETOMAR AQUÍ — candidato 1.35.0: construido y validado en conducta, SIN publicar; REQ-023 `bloqueado` esperando la decisión 4 (2026-09-29)
+## ⏸ RETOMAR AQUÍ — candidato 1.35.0 (PR #59): conducta validada, SEC-117 reproducido en el host real, SIN publicar; esperando la decisión 5 y las fichas 1–3 (2026-09-29)
 
-**Este bloque manda en la rama `cand/1.35.0`** (worktree `/home/juan/dev/ArnesJuan-v1.35`, base `origin/main` = `713ac68`; PR en borrador de esa rama). La rama local `main` (`cf2009e`) está desfasada: no se usa. Los bloques de abajo son históricos.
+**Este bloque manda en la rama `cand/1.35.0`** (worktree `/home/juan/dev/ArnesJuan-v1.35`, base `origin/main` = `713ac68`). La rama local `main` está desfasada: no se usa. Los bloques de abajo son históricos.
 
-- **Autorización:** `PENDING_APPROVAL.md` § Resueltas, 2026-09-29 (literal). Incluye SEC-047 mitad 1 (REQ-023) y la preparación de 1.35.0; **sin** fusión, tag ni publicación.
-- **Contenido:** los cinco merges de `main` desde `v1.34.0`, más REQ-023 (cabecera ambigua; ADR-014), más la versión 1.35.0 en los tres manifiestos, las notas `[1.35.0]` y la guía «Hacia 1.35.0».
-- **REQ-023 `bloqueado`:** el contador dev↔QA está **agotado (3 de 3)** con **QA-023-05** abierto (`contrato`, **sólo texto**: el README no excluye la vía (g)).
-  - **Conducta validada** sin ningún FAIL en tres vueltas. El código ejecutable es el de `ad793ab`. Banco completo sobre `c4cc32c`: 1137 · 0 · 12, con 1 INCONCLUSO de reloj (REQ-017 CA-08 (ii)).
-  - **Seguridad:** revisión R-045 sin firma y sin veto. SEC-117 (= QA-023-02) y SEC-118 registrados; SEC-047 `en-mitigación`.
-- **Espera al propietario** (entrada de publicación de la cola): ficha 1 (SEC-115 y SEC-118), ficha 2 (hueco C), ficha 3 (QA-023-02 / SEC-117) y **decisión 4** (corrección documental fuera del contador, opción A recomendada).
-- **Próximo paso concreto, si la decisión 4 es (A):**
-  1. el analista hace el write-back de QA-023-05 y de las condiciones de texto de R-045 §6, con barrido por propiedad;
-  2. QA reverifica el texto;
-  3. seguridad lo confirma de forma documental y firma;
-  4. CI sobre la nueva cabeza.
-
-  Cerrar REQ-023 y REQ-031 sigue impedido mientras la cola tenga la entrada de publicación.
-- **Evidencia de las comisiones:** `docs/qa/REQ-023.md`, `docs/seguridad/registro-seguridad.md` § R-045 y las entradas de `CHANGELOG.md` del 2026-09-29. Hay salidas íntegras en el scratchpad de la sesión, que es efímero y no se ha versionado.
+- **Autorizaciones:** `PENDING_APPROVAL.md` § Resueltas, dos del 2026-09-29. La segunda llegó truncada y se transcribió tal cual.
+- **REQ-023 `bloqueado`**, con el contador dev↔QA agotado (3 de 3).
+  - **Conducta validada** sin ningún FAIL. El código ejecutable es el de `ad793ab`, sin cambios después. Banco completo sobre `c4cc32c`: 1137/0/12, con 1 INCONCLUSO.
+  - **La intervención documental excepcional** (`e7562e7`) cerró QA-023-05. La revisión de QA de ese delta abrió **QA-023-06** (`contrato`, sólo texto: las cifras de SEC-118 están medidas sólo con ASCII y el límite es de bytes). Por eso REQ-023 y **REQ-031** tienen ahora `QA: con-hallazgos`.
+  - **Seguridad:** R-045 como revisión, sin firma. La determinación sobre el delta no se emitió, porque QA no fue favorable.
+- **SEC-117 reproducido en el host real** (CLI 2.1.285, registro previo `6c947ef`, resultado `1c8c81c` en la rama local de evidencia): un `Edit` con comillas rectas cierra un REQ `critico` con todo en rojo. No está reparado; la propuesta mínima está en la ficha 3.
+- **Espera al propietario:** la **decisión 5** (una segunda corrección documental acotada a QA-023-06; recomendada la opción (A), sin cifras en las sedes heredadas) y las fichas 1 (SEC-115 y SEC-118), 2 (C) y 3 (SEC-117). Nada está aceptado.
+- **Próximo paso concreto, si la decisión 5 es (A):** el analista retira las cifras de las sedes heredadas → QA sobre el texto → determinación de seguridad → CI de la nueva cabeza. Cerrar sigue impedido mientras la cola tenga la entrada de publicación.
 
 ## ⏸ RETOMAR AQUÍ — REQ-029 fidelidad al encargo: entrega implementada y firmada, SIN cerrar (2026-09-23)
 
@@ -322,7 +316,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-29 14:17
+## Estado derivado — 2026-09-29 16:04
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -332,7 +326,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `31d2a21` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.35.0` @ `e7562e7` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 1
 **REQ:** 29 — completado 15 · en-revisión 3 · en-progreso 1 · bloqueado 2 · otros 8
@@ -355,6 +349,6 @@ _Sólo los REQ abiertos; los 15 completados no se listan._
 | REQ-024 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-025 | en-revision | aprobado | aprobado | critico | qa-025-08(instrumento),sec-103(instrumen… |
 | REQ-028 | borrador | pendiente | pendiente | critico | (ninguno) |
-| REQ-031 | en-revision | aprobado | aprobado | critico | sec-115(instrumento,r-044-c:unhookquemue… |
+| REQ-031 | en-revision | con-hallazgos | aprobado | critico | sec-115(instrumento,r-044-c:unhookquemue… |
 
 <!-- ARNES:DERIVADO fin -->
