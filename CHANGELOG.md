@@ -2,6 +2,19 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-29 · REQ-023: QA vuelta 3 de 3 (la última) sobre `c4cc32c` → `con-hallazgos`; QA-023-03 cerrado; QA-023-05 (`contrato`, sólo texto) abierto con el contador AGOTADO → REQ-023 `bloqueado` y escalado al propietario (decisión 4)
+> Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 (qa-tester) · agente: qa-tester; coordinadora (estado `bloqueado`, cola y una frase de las notas). Unos 75 k tokens de QA en esta vuelta.
+
+- **Código:** el delta es sólo un comentario (parser de bash). El código ejecutable sigue siendo el de `ad793ab`.
+  - Banco completo sobre `c4cc32c`: 1137 PASS · 0 FAIL · 12 SKIP, con **1 INCONCLUSO** de REQ-017 CA-08 (ii) (recorrido medido [1,094×, 1,256×], techo 1,25×). Se conserva y no se repite. Con el mismo código dio 1,232× en la vuelta 1 y 1,154× en la vuelta 2: el margen es estrecho.
+  - Autoprueba 117/0; tres gates en verde.
+- **QA-023-03 cerrado:** 37 de 37 decisiones de la puerta real coinciden con la propiedad escrita (`Edit`, `MultiEdit`, `Write` y archivo nuevo, en dos locales).
+- **QA-023-05** (`contrato`, sólo texto): el README y la plantilla, sede heredada de la frontera, dicen «Cuándo deniega, dicho entero» y «toda edición» sin excluir la vía (g). Por esa vía la puerta permite, igual que en `713ac68`, 1.33.2 y `v1.34.0` (B2, B3, B4, B6; es QA-023-02).
+- **QA-023-02:** su efecto es más amplio que lo registrado. Con la línea `Estado` entera también se salta la regla de REQ-023 (B6). La coordinadora corrige esa frase de la ficha 3 y añade la medición en `v1.34.0`.
+- **Contador agotado (3 de 3):** no se aprueba por agotamiento ni se abre otra vuelta. Cerrar con residual no es posible, porque es `contrato`. REQ-023 pasa a **`bloqueado`** (`AGENTS.md` §6, «Loop de error») y la decisión se presenta en la cola como **decisión 4**, con la forma de la regla 4. La recomendación de la coordinadora es (A): una corrección documental fuera del contador, acotada a QA-023-05, sin código.
+- **Notas `[1.35.0]`:** «REQ-023 está `en-revisión`» pasa a «REQ-023 no está cerrado», con el estado y las firmas remitidos a sus sedes.
+- **Avance (regla 6):** validación terminada con el contador agotado. Lo independiente continúa: revisión de seguridad (no firma), registro de QA-023-02 y del fail-open de CA-A12, push, PR en borrador y CI. Falta la decisión 4 y las fichas 1 a 3.
+
 ## [GitHub] — 2026-09-29 · REQ-023, vuelta 3 de 3 (la última): QA-023-03 corregido POR PROPIEDAD en todas sus sedes — cuándo deniega la cabecera ambigua, dicho entero; comprobado contra la puerta real antes de devolverlo a QA
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: analista-requerimientos (texto, write-back §9); desarrollador (un comentario); coordinadora (comprobación previa y commit). Unos 35 k tokens del analista y 12 k del desarrollador en esta vuelta.
 
@@ -165,8 +178,8 @@ REQ-025, REQ-028, REQ-024 (la mitad 2 de SEC-047) ni REQ-011.
     publique se identifica en el PR del candidato.
   - SEC-115 y QA-031-01 siguen en su `Hallazgos abiertos:`. REQ-023 ataca el mecanismo de QA-031-01,
     pero estas notas no lo dan por cerrado.
-- **REQ-023 está `en-revisión`.** Estas notas **no afirman ni anticipan** ningún veredicto suyo. El
-  estado de sus firmas vive en su cabecera, en `docs/qa/REQ-023.md` y en
+- **REQ-023 no está cerrado.** Estas notas **no afirman ni anticipan** su estado ni ningún veredicto suyo: su
+  estado y sus firmas viven en su cabecera, en `docs/qa/REQ-023.md` y en
   `docs/seguridad/registro-seguridad.md`. La cobertura de las firmas sobre la cabeza final se
   identifica en el PR del candidato.
 
