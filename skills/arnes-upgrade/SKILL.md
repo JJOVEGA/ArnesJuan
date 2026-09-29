@@ -1030,7 +1030,10 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     control **declarada dos veces deniega el cierre también con el MISMO valor**: `QA: aprobado` dos
     veces cerraba hasta `v1.34.0` y ahora no cierra (cambio de compatibilidad aceptado expresamente
     por el propietario, ADR-014). La puerta cita las líneas, con los caracteres invisibles escritos
-    de forma legible; **reabrir**, o editar un REQ sin cerrarlo, no se bloquea. La salida es de una
+    de forma legible; **reabrir**, o editar un REQ sin cerrarlo, no se bloquea, **salvo en un caso**:
+    si la cabecera en disco declara el estado terminal sólo en una variante (`ESTADO: completado`)
+    mientras su `Estado:` exacto dice otro, se deniega toda edición que conserve esa variante, y la que
+    la retira o la corrige no se deniega. La salida es de una
     línea: **cada clave de control una sola vez, escrita como la plantilla** de
     `requirements/README.md` (§ «Veredictos de validación»).
   - **Sin eufemismo: las versiones anteriores pudieron cerrar un REQ `critico` sin validación ni
@@ -1057,7 +1060,9 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     blanco que sigue al guion del marcador—; una clave de **más de 256 bytes**, que es una
     **limitación**: se sigue leyendo como ausencia y ese límite **no** la protege; **comentar o
     borrar** la línea de un campo (SEC-050, la semántica de la ausencia, que esta versión no cambia);
-    y lo que un lector de bash no ve (un byte NUL, un archivo en UTF-16). Si el informe no saca nada,
+    un cierre hecho con un `Edit` cuyo `old_string` el hook no encuentra literal y la herramienta sí
+    —comillas tipográficas o `\uXXXX`—, que no pasa por ninguna puerta (QA-023-02, preexistente, sin
+    reparar en esta versión); y lo que un lector de bash no ve (un byte NUL, un archivo en UTF-16). Si el informe no saca nada,
     **no has terminado**: vuelve a la pregunta de estado.
   - **Qué se migra de texto:** la **fila nueva de `AGENTS.md` §13** («una cabecera ambigua no deja
     cerrar») y el párrafo de **`requirements/README.md` § «Veredictos de validación»** que define la

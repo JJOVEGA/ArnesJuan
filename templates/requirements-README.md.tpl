@@ -86,7 +86,10 @@ sola vez). Si la cabecera escribe una de ellas **de otra forma** —una
 *variante*— o la declara **más de una vez**, **aunque las dos líneas digan lo mismo**, la cabecera es
 **ambigua** y la puerta **deniega el cierre** citando las líneas —las primeras, y cuántas más hay—, con
 los caracteres invisibles escritos de forma legible; `tools/arnes-lectura.sh` las nombra todas. No lee la variante como la clave ni elige entre dos declaraciones, y ningún lector
-cambia el valor que lee. Reabrir un REQ, o editarlo sin cerrarlo, no se bloquea por esto. Para
+cambia el valor que lee. Reabrir un REQ, o editarlo sin cerrarlo, no se bloquea por esto, **salvo en un
+caso**: si la cabecera en disco declara el estado terminal sólo en una variante (`ESTADO: completado`)
+mientras su `Estado:` exacto dice otro, se deniega toda edición que conserve esa variante; la edición que
+la retira o la corrige no se deniega. Para
 `Hallazgos abiertos` repetida con su forma exacta decide su propia regla («Clases de hallazgo», abajo).
 
 **Qué es una variante, por propiedad.** Una línea de la cabecera —antes del primer `## `, fuera de todo

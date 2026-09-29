@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-29 · REQ-023, vuelta 2 de 3 (write-back del analista): QA-023-01, -03 y -04 corregidos en todas sus sedes de texto; QA-023-02 añadido a las limitaciones de las notas `[1.35.0]`
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: analista-requerimientos (write-back §9); coordinadora (una frase de las notas y commit). Unos 510 k tokens en total en la comisión del analista.
+
+- **QA-023-01:** la frontera (g) de CA-01 dice ahora lo cierto. El hook juzga el fragmento, la herramienta puede escribir igualmente (normaliza ‘ ’ “ ” y `\uXXXX`; leído y emulado, no ejecutado en sesión), y por esa vía un cierre puede no pasar por ninguna puerta: QA-023-02, ficha 3. Corregido en REQ-023, ADR-014, la guía y las notas. La premisa también vive en REQ-001 CA-10/CA-11 (`completado`): queda registrada como dato y **no** se reabre.
+- **QA-023-03:** «reabrir o editar sin cerrar no se bloquea» lleva ahora su excepción en la misma frase, en el README, la plantilla, la guía, ADR-014 y las notas.
+- **QA-023-04:** CA-09 (iii) acota por una constante sólo el trabajo sobre la clave. La medición de la clave y la captura de la cita son lineales en la línea; nada crece más que linealmente.
+- **Notas `[1.35.0]`:** QA-023-02 pasa a las limitaciones, como abierto, crítico, preexistente y no aceptado. La coordinadora retira además una frase que había caducado («`docs/qa/REQ-023.md` aún no existe», «`QA: pendiente`»): el estado de las firmas se remite a sus sedes.
+- **Sin cambio de conducta ni de código.** Los comentarios de `hooks/` que repiten las tres afirmaciones los corrige el desarrollador a continuación.
+- **Avance (regla 6):** texto corregido; faltan los comentarios de código, la reverificación de QA (vuelta 2 de 3) y la auditoría.
+
 ## [GitHub] — 2026-09-29 · Cola: QA-023-02 (fail-open preexistente y crítico de la puerta de cierre por la normalización del `Edit`) escalado al propietario como ficha 3 de la decisión de publicación de 1.35.0; NO aceptado
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora (regla 3: una urgencia de seguridad se escala, no se aplaza).
 
@@ -89,10 +99,10 @@ REQ-025, REQ-028, REQ-024 (la mitad 2 de SEC-047) ni REQ-011.
     publique se identifica en el PR del candidato.
   - SEC-115 y QA-031-01 siguen en su `Hallazgos abiertos:`. REQ-023 ataca el mecanismo de QA-031-01,
     pero estas notas no lo dan por cerrado.
-- **REQ-023 está `en-revisión` y todavía SIN firmas** (`QA: pendiente`, `Seguridad: pendiente`;
-  vuelta dev↔QA 1 de 3). Estas notas **no afirman ni anticipan** ningún veredicto. Los darán sus
-  sedes y el PR del candidato: `docs/qa/REQ-023.md`, que aún no existe en esta cabeza, y
-  `docs/seguridad/registro-seguridad.md`.
+- **REQ-023 está `en-revisión`.** Estas notas **no afirman ni anticipan** ningún veredicto suyo. El
+  estado de sus firmas vive en su cabecera, en `docs/qa/REQ-023.md` y en
+  `docs/seguridad/registro-seguridad.md`. La cobertura de las firmas sobre la cabeza final se
+  identifica en el PR del candidato.
 
 ### Qué recibe un consumidor al actualizar
 
@@ -151,7 +161,10 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      **declarada más de una vez**. Variantes son, por ejemplo, la clave en mayúsculas, con un blanco
      de más, con un BOM o un carácter invisible, o con un marcador de lista.
    - **Cómo responde la puerta:** deniega citando las primeras 20 líneas ambiguas y cuántas quedan.
-     Reabrir, o editar sin cerrar, no se bloquea.
+     Reabrir, o editar sin cerrar, no se bloquea, **salvo en un caso**: si la cabecera en disco declara
+     el estado terminal sólo en una variante (`ESTADO: completado`) mientras su `Estado:` exacto dice
+     otro, se deniega toda edición que conserve esa variante; la que la retira o la corrige no se
+     deniega.
    - **Una clave de control repetida deniega aunque sus valores coincidan. Hasta `v1.34.0`, esa
      cabecera cerraba.** Es un cambio **aceptado expresamente por el propietario** el 2026-09-29.
    - **Por qué:** en las versiones anteriores, un BOM delante de `Sensible a seguridad: sí`, con
@@ -167,6 +180,11 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      - las líneas con un carácter de estructura visible;
      - un NBSP en lugar del blanco que sigue al marcador;
      - los caracteres del **valor**;
+     - un `Edit` o `MultiEdit` cuyo `old_string` no está **literal** en el archivo: el hook no
+       reconstruye el documento y juzga el fragmento como antes, pero la herramienta **puede escribir
+       igualmente** (el `Edit` del CLI 2.1.284 normaliza las comillas tipográficas y desescapa
+       `\uXXXX`; leído y emulado, no ejecutado en una sesión real). Por esa vía un cierre puede no pasar
+       por ninguna puerta: es QA-023-02, en las limitaciones de abajo;
      - lo que un lector de bash no ve: un byte NUL o un archivo en UTF-16;
      - y **las claves de más de 256 bytes, que son una limitación y NO están protegidas por ese
        límite**.
@@ -241,6 +259,19 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de 
   - **La «puerta posterior» (REQ-011) no es prevención, ni recuperación, ni mitigación disponible.**
     Es sólo una propuesta de detección, `pendiente` y sin implementar.
   - Ficha: `PENDING_APPROVAL.md` § Pendientes, ficha 2.
+- **QA-023-02** (`instrumento`, severidad crítica): **abierto, preexistente en 1.33.2 y 1.34.0, con
+  decisión pendiente del propietario y NO aceptado.** Un `Edit` o `MultiEdit` cuyo `old_string` el hook
+  no encuentra literal y la herramienta sí —comillas tipográficas o `\uXXXX`—, y que sustituye sólo el
+  valor del estado, cierra un REQ sin pasar por ninguna puerta: ni veredictos, ni clase del hallazgo, ni
+  quality gates, ni la cola.
+  - Lo reproducido: el lado del hook, ejecutado por QA sobre el candidato, `713ac68` y 1.33.2 (ALLOW en
+    los tres); el lado de la herramienta, leído en el binario del CLI 2.1.284 y emulado, **no ejecutado
+    en una sesión real**. No se sabe desde qué versión del CLI existe ese respaldo.
+  - La protección efectiva hoy depende de la disciplina del agente: cerrar escribiendo la línea
+    `Estado:` entera y con un `old_string` literal.
+  - **La versión no puede prometer** que toda edición que la herramienta aplique pase por la puerta de
+    cierre. Este candidato no lo introduce, no lo agrava y no lo cierra.
+  - Ficha: `PENDING_APPROVAL.md` § Pendientes, ficha 3. Sede del hallazgo: `docs/qa/REQ-023.md`.
 - **La mitad 2 de SEC-047 (REQ-024) no entra.** No cambia qué significa la ausencia de un campo, por
   ejemplo al comentar o borrar su línea.
 - **SEC-103 (OBS-H) y SEC-104** siguen abiertos.

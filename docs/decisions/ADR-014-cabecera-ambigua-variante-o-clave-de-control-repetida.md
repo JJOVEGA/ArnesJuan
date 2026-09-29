@@ -48,13 +48,20 @@ valor), no por su tamaño.
    con los bytes invisibles escapados —las primeras N y cuántas quedan, porque un motivo sin tope puede
    dejar la puerta sin salida y una puerta sin salida permite; el informe las nombra todas—. La variante **nunca** se lee como la clave y ningún lector cambia
    sus valores; reabrir, editar sin intentar cerrar o conservar la forma de un REQ ya cerrado no se
-   bloquea. `Hallazgos abiertos` canónica repetida conserva la puerta y el motivo de REQ-031 CA-A12.
+   bloquea, **con una excepción** (la de la variante en disco, en «Consecuencias»): una cabecera que en disco declara el
+   estado terminal sólo en una variante deniega toda edición que la conserve. `Hallazgos abiertos`
+   canónica repetida conserva la puerta y el motivo de REQ-031 CA-A12.
 5. **Fuera, declarado y sin promesa de reconocimiento universal:** el homóglifo; una letra ASCII de más,
    de menos o cambiada; unos dos puntos no ASCII; las líneas con carácter de estructura visible —incluido
    un NBSP en lugar del blanco ASCII que sigue al marcador (`-`+NBSP+`Estado:`), que no forma marcador y
    deja el `-` como estructura—; los caracteres
-   del **valor**; y las claves de más de 256 bytes, que son una **limitación**: se siguen leyendo como
-   ausencia y **no** están protegidas por ese límite.
+   del **valor**; las claves de más de 256 bytes, que son una **limitación**: se siguen leyendo como
+   ausencia y **no** están protegidas por ese límite; y el `Edit`/`MultiEdit` cuyo `old_string` no está
+   **literal** en el archivo: el hook no reconstruye el documento y juzga el fragmento como antes, pero
+   la herramienta **puede escribir igualmente** —el `Edit` del CLI 2.1.284 normaliza las comillas
+   tipográficas y desescapa `\uXXXX`; leído y emulado, no ejecutado en una sesión real—, y por esa vía un
+   cierre puede no pasar por ninguna puerta (**QA-023-02**, preexistente, escalado al propietario y no
+   aceptado; esta decisión no lo cierra).
 
 El contrato exacto —casos, costes, lectores y superficie heredada— es `requirements/REQ-023.md` (CA-01…
 CA-12, versión del 2026-09-29).
