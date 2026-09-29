@@ -974,6 +974,50 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   `analista-requerimientos`. Si prefieres seguir con tu texto actual, conservarlo es una respuesta
   válida.
 
+- **`Hallazgos abiertos:` con gramática CERRADA (REQ-031, ADR-013): una lista que la puerta no puede
+  interpretar, el campo declarado dos veces o un valor por encima de su techo de tamaño ya no dejan
+  cerrar. ES UN CAMBIO DE CONDUCTA Y DE COMPATIBILIDAD.** La conducta nueva **llega con el plugin**,
+  sin migrar nada: está en `hooks/guard-completado.sh` y `hooks/lib.sh`, y no hay llave nueva en
+  `.arnes/config.json`. Esta entrada **se prepara con la versión y NO declara que el cambio haya
+  llegado a tu proyecto**: la puerta deniega con la regla nueva **desde que actualizas el plugin**,
+  pero tu `requirements/README.md` y tu `AGENTS.md` siguen **congelados**, y **no explicarán esa
+  regla** hasta que corras esta migración; migrar es **un acto tuyo**.
+  - **Lo que deja de cerrar, dicho entero.** La lista se separa **sólo** con comas fuera de todo
+    paréntesis, y cada hallazgo es `ID (clase)` o `ID (clase, evidencia)`; **tras el `)` que cierra un
+    hallazgo sólo cabe la coma o el fin del campo**. Ejemplos **no exhaustivos** de lo que ahora
+    deniega —la regla es la de la frase anterior—: un separador que no es la coma (`;`, `·`, `/`,
+    `y`); **texto o una nota detrás del paréntesis**, como `QA-006 (instrumento) — REQ-007`, que se
+    aceptaba **hasta `v1.34.0`**; dos paréntesis en un hallazgo, uno sin cerrar o uno sobrante; un
+    elemento vacío; un ID con blancos, con tilde o con marcado; y una ausencia mezclada con
+    hallazgos. La puerta **nombra el fragmento que no entendió** y no reescribe el campo. La forma
+    equivalente conserva la nota **dentro** del paréntesis: `QA-006 (instrumento, REQ-007)`. El campo
+    **declarado más de una vez** con su forma exacta **deniega**: no elige la primera ni la última y
+    no las fusiona. Un valor de **más de 16 384 bytes** —contados en bytes y **antes** de
+    normalizar— deniega sin interpretarse, **siempre que el hook alcance a medirlo dentro del límite
+    del cliente**: medido hasta 255 371 bytes, que deniega a tiempo; por encima **no hay promesa**, y
+    un hook muerto no deniega.
+  - **Sin eufemismo: las versiones anteriores pudieron cerrar un REQ con un hallazgo bloqueante
+    abierto.** Hasta `v1.34.0`, `SEC-A (instrumento) · SEC-B (usuario/dinero)` y
+    `SEC-A (instrumento); SEC-B (contrato)` dejaban cerrar: la puerta sólo partía por comas y no leía
+    lo que seguía al primer paréntesis (ADR-013).
+  - **Qué hay que auditar: la pregunta es de ESTADO** —**cuáles de tus REQ en estado terminal tenían
+    en `Hallazgos abiertos:` un hallazgo `usuario/dinero` o `contrato` que la puerta anterior no
+    leyó**—. Ése no estaba autorizado a cerrar y se reabre (`AGENTS.md` §9). **Ningún comando responde
+    esa pregunta:** `tools/arnes-lectura.sh` de esta versión **no juzga la gramática del campo ni su
+    techo**; sólo nombra el campo **repetido**, por la vía de la entrada siguiente («Cabecera
+    ambigua»). Se hace a mano, REQ a REQ. Un REQ cerrado cuyo campo sólo usa una forma ya no admitida
+    **sin** esconder un bloqueante no se reabre por eso: la puerta juzga **la transición** a
+    `completado`, y la forma se corrige la próxima vez que ese REQ vaya a cerrarse.
+  - **Qué se migra de texto:** la **fila de `AGENTS.md` §13** que empieza «No completar con un
+    hallazgo `usuario/dinero` o `contrato` abierto» y la sección **«Clases de hallazgo»** de tu
+    `requirements/README.md` —la sintaxis cerrada, qué lee la puerta y qué no, y el techo—, cada una
+    **por separado** y con la misma identificación por contenido y título y la misma tabla de estados
+    de la primera entrada de este apartado. Se migra **el texto de esta versión**, que ya incluye el
+    ajuste de REQ-023 al párrafo «Qué lee la puerta, y qué no». Si prefieres seguir con tu texto
+    actual, conservarlo es una respuesta válida; la puerta decide igual. **Lo que no se migra:** la
+    casilla del campo `Archivos:` que gana la Definition of Ready del `analista-requerimientos` llega
+    **al actualizar el plugin**, por la misma separación de la primera entrada de este apartado.
+
 - **Cabecera ambigua (REQ-023, ADR-014): una clave de control escrita de otra forma, o declarada más
   de una vez, ya no se lee como AUSENCIA — deja la cabecera ambigua, y una cabecera ambigua no deja
   cerrar. ES UN CAMBIO DE CONDUCTA Y DE COMPATIBILIDAD.** Las claves de control son `Estado`, `QA`,

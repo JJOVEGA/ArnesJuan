@@ -2,6 +2,286 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [1.35.0] — 2026-09-29 · La puerta de cierre deja de tomar por ausencia lo que no entiende y deniega: dos cambios de compatibilidad, con sus límites a la vista
+> Origen: GitHub (commit de versión) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (preparación de la versión); el contenido que describe viene de los cinco merges de `main` desde `v1.34.0` y de REQ-023 en la rama `cand/1.35.0` · gobernado por la instalación estable **1.33.2**.
+
+**Estas notas preparan el candidato. No lo publican.** El propietario autorizó el 2026-09-29 preparar
+el cambio de versión «como preparación del candidato, no su publicación» (`PENDING_APPROVAL.md`
+§ Resueltas, entrada de esa fecha, punto 4, texto literal). Publicar 1.35.0 sigue impedido por la
+entrada pendiente de la cola —el propietario tiene que decidir las fichas de SEC-115 y del hueco C—,
+y por el CI de la cabeza final, que todavía no existe.
+
+### Alcance real, medido
+
+`git log --first-parent v1.34.0..78e3d2f` (78e3d2f es la cabeza anterior a este commit) da nueve
+entradas: cinco merges de `main` y cuatro commits de `cand/1.35.0`. En total son 90 commits.
+`git diff --stat v1.34.0..78e3d2f` da 50 archivos, 17 686 inserciones y 1 397 borrados; casi todo es
+requisitos, evidencia de QA, registro de seguridad y gobernanza. **El mecanismo cambia en tres
+archivos:** `hooks/guard-completado.sh`, `hooks/lib.sh` y `tools/arnes-lectura.sh`, con 551
+inserciones y 67 borrados. `hooks/hooks.json`, `.github/` y `.arnes/` **no cambian**.
+
+| Commit | PR | Qué trae |
+|---|---|---|
+| `cfb1106` | #52 | REQ-025, **sólo la entrega 1**: coordinación orientada a entregas |
+| `c4d92c0` | #55 | REQ-030: sondas de coste de REQ-017 CA-03 y CA-08 (ii) con presupuesto fijo e INCONCLUSO visible |
+| `11c5df2` | #53 | REQ-029: fidelidad al encargo |
+| `a7a60c2` | #56 | Cierre administrativo de REQ-029 y REQ-030 |
+| `713ac68` | #58 | REQ-031: gramática cerrada de `Hallazgos abiertos:` y preparación del paralelismo |
+| `856d97d`…`78e3d2f` | — (rama `cand/1.35.0`) | Autorización del propietario y REQ-023, mitad 1 de SEC-047: contrato, implementación y versionado de CA-01 (i) |
+
+**No entra nada de `rel/registro-1.33.0`.** Medido: esa rama tiene 0 commits en `v1.34.0..78e3d2f`, y
+su base común con el candidato (`5e53f12`) es anterior a `v1.34.0`. Tampoco entran la entrega 1b de
+REQ-025, REQ-028, REQ-024 (la mitad 2 de SEC-047) ni REQ-011.
+
+### Por requisito: lo construido y lo que no
+
+- **REQ-025 publica sólo su entrega 1, y el requisito sigue `en-revisión`.**
+  - Construido: las seis reglas de la coordinadora en `AGENTS.md` §6, con «Loop de error» y
+    «Mecanismo de gate» reescritos en su promesa completa, y la cabecera de `PENDING_APPROVAL.md`.
+  - No construido: la **entrega 1b**, que sigue dentro de REQ-025, y **REQ-028** (entregas 2 y
+    siguientes, `borrador`).
+  - **OBS-H** (SEC-103) sigue **pendiente y no aceptada**.
+  - **QA-025-08** es un **residual aceptado** por el propietario el 2026-09-21. Su dueño es
+    `qa-tester` y su revisión es el **2026-10-21**. La conducta de S4 ante un hallazgo de QA sigue
+    **no observada**.
+  - REQ-025 no cambia ningún hook.
+- **REQ-029 y REQ-030 están `completado`**, por cierre administrativo que el propietario autorizó el
+  2026-09-27. **`completado` no acredita rendimiento, conducta ni ahorro.**
+  - REQ-029 lleva al REQ el pedido del propietario con su fuente, y la «Correspondencia con el
+    encargo».
+  - REQ-030 cambia sólo el banco. Las sondas de REQ-017 CA-03 y CA-08 (ii) corren con presupuesto
+    fijo (R = 5). Cuando no resuelven, dan **INCONCLUSO**: queda visible, no pone el banco en rojo y
+    un check verde no lo acredita (ADR-012).
+  - Los hallazgos `instrumento` de REQ-030 siguen abiertos: QA-030-03, QA-030-05 y SEC-111.
+- **REQ-031 está `en-revisión`.** Su cabecera lleva `QA: aprobado` (vuelta 3 de 3, sobre `cdcad5d`)
+  y `Seguridad: aprobado` (R-044-C, sobre `d49f319`, cuyo código es el de `cdcad5d`).
+  - **Su cierre queda pendiente** mientras la cola tenga la entrada de publicación: `guard-completado`
+    deniega cerrar cualquier REQ si hay una pendiente.
+  - Esas firmas valen para la cabeza sobre la que se emitieron. Después, el candidato modifica
+    `hooks/lib.sh` y `hooks/guard-completado.sh` (REQ-023). Qué cubren sobre la cabeza que se
+    publique se identifica en el PR del candidato.
+  - SEC-115 y QA-031-01 siguen en su `Hallazgos abiertos:`. REQ-023 ataca el mecanismo de QA-031-01,
+    pero estas notas no lo dan por cerrado.
+- **REQ-023 está `en-revisión` y todavía SIN firmas** (`QA: pendiente`, `Seguridad: pendiente`;
+  vuelta dev↔QA 1 de 3). Estas notas **no afirman ni anticipan** ningún veredicto. Los darán sus
+  sedes y el PR del candidato: `docs/qa/REQ-023.md`, que aún no existe en esta cabeza, y
+  `docs/seguridad/registro-seguridad.md`.
+
+### Qué recibe un consumidor al actualizar
+
+**Con el plugin, sin migrar nada.** Actúa desde que se actualiza:
+- `hooks/guard-completado.sh` y `hooks/lib.sh`: la gramática cerrada de `Hallazgos abiertos:`
+  (REQ-031) y la cabecera ambigua (REQ-023). Son los dos cambios de compatibilidad de abajo.
+- `tools/arnes-lectura.sh`: nombra cada variante y cada repetición de una clave de control, y sale
+  ≠ 0 mientras quede alguna (REQ-023). **No juzga** la gramática ni el techo de `Hallazgos abiertos:`.
+  Comprobado sobre este árbol: una lista separada con `;` y otra con una nota tras el paréntesis no
+  aparecen en el informe.
+- Los agentes:
+  - `qa-tester`, `auditor-seguridad` y `desarrollador` declaran sus bloqueos con la forma de las
+    seis reglas. Si el `AGENTS.md` del proyecto todavía no las tiene, los describen con sus palabras,
+    avisan del desfase y conservan las restricciones vigentes del proyecto (REQ-025).
+  - `analista-requerimientos` conserva el pedido del propietario con su fuente, y `qa-tester`
+    contrasta la «Correspondencia con el encargo» antes de probar (REQ-029).
+  - La Definition of Ready del `analista-requerimientos` gana la casilla del campo `Archivos:`
+    (REQ-031).
+- La guía `arnes-upgrade`, § «Hacia 1.35.0», con cuatro entradas.
+
+**Sólo si el proyecto migra con `arnes-upgrade`.** Hasta entonces, su `AGENTS.md`, su
+`requirements/README.md` y su `PENDING_APPROVAL.md` siguen congelados, y migrar es un acto suyo:
+- `AGENTS.md` §6: las seis reglas, «Loop de error» y «Mecanismo de gate» (REQ-025), y el párrafo de
+  la regla 1 sobre el pedido con fuente (REQ-029).
+- `AGENTS.md` §13: la fila de `Hallazgos abiertos:`, ampliada (REQ-031), y la fila nueva de la
+  cabecera ambigua (REQ-023).
+- `PENDING_APPROVAL.md`: la cabecera que dice qué impide la cola (REQ-025). Las entradas no se tocan.
+- `requirements/README.md`: `Origen:` y «Correspondencia con el encargo» (REQ-029), «Clases de
+  hallazgo» (REQ-031) y «Veredictos de validación» (REQ-023).
+
+**Un proyecto que actualiza el plugin y no migra tiene la puerta nueva con el texto viejo.** La puerta
+deniega formas que su `requirements/README.md` todavía no explica. La guía lo dice en cada entrada.
+
+### Cambios de compatibilidad
+
+1. **REQ-031 (ADR-013): `Hallazgos abiertos:` tiene gramática cerrada.** La sede de la sintaxis es
+   `requirements/README.md` § «Clases de hallazgo».
+   - **La forma:** los elementos se separan sólo con comas que estén fuera de todo paréntesis. Cada
+     uno es `ID (clase)` o `ID (clase, evidencia)`, y tras el `)` sólo cabe la coma o el fin del
+     campo.
+   - **Lo demás no se puede interpretar, y deniega el cierre** nombrando el fragmento. Por ejemplo,
+     deja de cerrar `QA-006 (instrumento) — REQ-007`, que REQ-007 CA-41 toleraba hasta `v1.34.0`: su
+     caso de banco `REQ-717` pasó de `allow` a `deny`. La forma equivalente es
+     `QA-006 (instrumento, REQ-007)`.
+   - **El campo repetido** en la cabecera deniega (CA-A12).
+   - **Un valor de más de 16 384 bytes**, contados en bytes **antes de normalizar**, deniega sin
+     interpretarse, **siempre que el hook alcance a medirlo dentro del límite del cliente** (60 s).
+     Medido hasta 255 371 bytes, que deniega en 0,31 s por `Edit` y `MultiEdit` y en 1,6 s por
+     `Write` (Linux/WSL2, una corrida por punto). Por encima no hay promesa, y un hook muerto no
+     deniega.
+   - **Por qué:** hasta `v1.34.0`, `SEC-A (instrumento) · SEC-B (usuario/dinero)` y
+     `SEC-A (instrumento); SEC-B (contrato)` dejaban cerrar un REQ con un bloqueante abierto.
+2. **REQ-023 (ADR-014): la cabecera ambigua deniega el cierre.** Las claves de control son `Estado`,
+   `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos` y `Rigor`.
+   - **Qué es ambigua:** una **variante** de una clave de control, o una clave de control
+     **declarada más de una vez**. Variantes son, por ejemplo, la clave en mayúsculas, con un blanco
+     de más, con un BOM o un carácter invisible, o con un marcador de lista.
+   - **Cómo responde la puerta:** deniega citando las primeras 20 líneas ambiguas y cuántas quedan.
+     Reabrir, o editar sin cerrar, no se bloquea.
+   - **Una clave de control repetida deniega aunque sus valores coincidan. Hasta `v1.34.0`, esa
+     cabecera cerraba.** Es un cambio **aceptado expresamente por el propietario** el 2026-09-29.
+   - **Por qué:** en las versiones anteriores, un BOM delante de `Sensible a seguridad: sí`, con
+     `Rigor: ligero`, cerraba un REQ `critico` con QA y seguridad pendientes (SEC-047). Y unas
+     mayúsculas en la clave `Hallazgos abiertos:` escondían un `contrato` (QA-031-01).
+   - **Sede del contrato:** `requirements/REQ-023.md` CA-01 y ADR-014.
+   - **Frontera declarada, sin prometer reconocimiento universal.** Lo que queda fuera se sigue
+     leyendo como hasta ahora y **no está protegido** por esta regla: una línea fuera de la frontera
+     no declara el campo, y para ese campo eso es ausencia; el valor se lee como siempre. Queda fuera:
+     - un homóglifo;
+     - una letra ASCII de más, de menos o cambiada;
+     - unos dos puntos que no son ASCII;
+     - las líneas con un carácter de estructura visible;
+     - un NBSP en lugar del blanco que sigue al marcador;
+     - los caracteres del **valor**;
+     - lo que un lector de bash no ve: un byte NUL o un archivo en UTF-16;
+     - y **las claves de más de 256 bytes, que son una limitación y NO están protegidas por ese
+       límite**.
+
+### Resultados históricos, conservados tal cual
+
+CI `hooks-en-linux` sobre `main` desde `v1.34.0`. Los datos se leyeron con `gh run view --log` el
+2026-09-29, sin relanzar nada:
+
+| Merge | PR | Run | Conclusión | Resultado |
+|---|---|---|---|---|
+| `cc8972c` (tag `v1.34.0`) | #51 | 35160309648 | success | publicación de 1.34.0 |
+| `cfb1106` REQ-025 entrega 1 | #52 | 35742539672 | **failure** | 903 PASS · **2 FAIL** · 7 SKIP: REQ-017 CA-03 (cociente 2,747× > techo 2,600×) y REQ-017 CA-08 (ii) (1,255× > 1,250×, con la sonda convergida) |
+| `c4d92c0` REQ-030 | #55 | 36343388823 | success | 904 PASS · 0 FAIL · 16 SKIP (1 INCONCLUSO de rendimiento: REQ-017 CA-03) |
+| `11c5df2` REQ-029 | #53 | 36358331427 | success | 905 PASS · 0 FAIL · 15 SKIP (1 INCONCLUSO de rendimiento: REQ-017 CA-03) |
+| `a7a60c2` cierre de REQ-029/030 | #56 | 36359910761 | success | 903 PASS · 0 FAIL · 17 SKIP (2 INCONCLUSO de rendimiento: REQ-017 CA-03 y CA-08 (ii)) |
+| `713ac68` REQ-031 | #58 | 36573224349 | success | 963 PASS · 0 FAIL · 17 SKIP (2 INCONCLUSO de rendimiento: REQ-017 CA-03 y CA-08 (ii)); autoprueba 117 · 0 |
+
+- **El FAIL de `cfb1106` se conserva.** No se relanzó y no se tocó la sonda. El propietario autorizó
+  integrar el 2026-09-22 con la limitación de REQ-017 CA-08 (ii) declarada en el PR.
+- **Los INCONCLUSO se conservan.** REQ-017 CA-03 aparece desde `c4d92c0`. REQ-017 CA-08 (ii), en su
+  caso «un REQ real de 6 líneas», aparece en `a7a60c2` y en `713ac68`. Un INCONCLUSO no pone el banco
+  en rojo, y un check verde no lo acredita (REQ-030).
+- **Las cifras del desarrollador sobre REQ-023** salen de su entrada de este CHANGELOG: 2026-09-29,
+  «REQ-023 implementado…», commit `ad793ab`. Se midieron en WSL2 con bash 5.3.9 y **QA no las ha
+  validado**:
+  - banco completo: 1137 PASS · 0 FAIL · 12 SKIP (1 INCONCLUSO ajeno, REQ-017 CA-03), cuadre 1149;
+  - autoprueba: 117 · 0;
+  - 0 de 29 cabeceras de `requirements/` ambiguas, con control positivo;
+  - las 35 filas R permiten en `713ac68` y en 1.33.2, y deniegan en la candidata.
+
+  Una corrida intermedia dio 1 FAIL de reloj en la sección 25 (el heredoc de ~300 KB de
+  `guard-codigo`). Ese caso también falla contra `713ac68` en esa máquina, y se conserva en su
+  evidencia.
+- **Observación, no acreditación: el margen de REQ-017 CA-08 (ii).** Con la cabecera de 200 líneas,
+  en dos corridas pareadas en reposo, la candidata dio 1,08–1,13× y la base 0,97–1,05×; el techo es
+  1,25×. En la corrida del banco completo del desarrollador, con el banco en paralelo, dio PASS con un
+  máximo de 1,213×. Antes del prefiltro, sobre un árbol intermedio, había dado 1,09–1,24×, y una
+  corrida del banco completo con carga la dejó INCONCLUSA en [1,128×, 1,260×]. El margen es estrecho.
+  Sede: Historial de `requirements/REQ-023.md`, 2026-09-29.
+
+**La certificación de una cabeza es la corrida que se ejecutó sobre ella, y nada más amplio.** Esta
+cabeza todavía no tiene corrida de CI. La cabeza que se publique tendrá **la suya**, y estas notas
+**no** afirman su resultado por adelantado. **Ningún CI verde acredita rendimiento, conducta ni
+ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de SEC-047.
+
+### Limitaciones que el candidato conserva
+
+- **SEC-115** (`instrumento`): **abierto, con decisión pendiente del propietario y NO aceptado.** Un
+  hook que muere por tamaño deja pasar el cierre entero.
+  - Lo reproducido: con `QA: pendiente (…)` y ≈ 255 KB de evidencia, el hook tarda 73,6 s en
+    denegar, más que los 60 s del cliente; un `Write` de 2 025 113 bytes tarda 80,2 s (R-044-C,
+    2026-09-28, WSL2). En el CLI 2.1.272, un hook que agota su timeout sin decidir **deja pasar la
+    herramienta** (REQ-031 CA-A16). No está comprobado en la sesión interactiva del editor ni en
+    Windows.
+  - La protección efectiva hoy es el techo de 16 384 bytes de `Hallazgos abiertos:`. Para `QA:`,
+    `Seguridad:`, `Rigor:`, `Sensible a seguridad:` y `Estado:`, y para el tamaño de un `Write`,
+    depende de la disciplina del agente.
+  - **La versión no puede prometer** que ningún REQ se cierre sin QA ni seguridad en absoluto. Sólo
+    puede prometerlo «si el hook alcanza a medir».
+  - Ficha y fecha propuesta: `PENDING_APPROVAL.md` § Pendientes, ficha 1. Una fecha propuesta no es
+    una aceptación.
+- **El hueco C** (escrituras por intérprete o script): **abierto, con decisión pendiente del
+  propietario y NO aceptado.**
+  - `guard-codigo` no ve escrituras hechas por intérpretes o scripts (`python`, `node`,
+    `bash script.sh`), por formateadores que reescriben archivos, por `patch` ni por `git apply`, y no
+    hay detección posterior. Reproducido el 2026-09-27 desde la sesión coordinadora: el archivo
+    protegido queda escrito. Hay además tres instancias en un proyecto real (`docs/PENDIENTES.md`).
+    El detector de escrituras no cambia en este candidato.
+  - **La versión no puede prometer** que sólo el `desarrollador` modifique código protegido. Promete
+    que las herramientas de edición y las escrituras evidentes por shell lo deniegan.
+  - **La «puerta posterior» (REQ-011) no es prevención, ni recuperación, ni mitigación disponible.**
+    Es sólo una propuesta de detección, `pendiente` y sin implementar.
+  - Ficha: `PENDING_APPROVAL.md` § Pendientes, ficha 2.
+- **La mitad 2 de SEC-047 (REQ-024) no entra.** No cambia qué significa la ausencia de un campo, por
+  ejemplo al comentar o borrar su línea.
+- **SEC-103 (OBS-H) y SEC-104** siguen abiertos.
+- **Un fail-open preexistente en el motivo de REQ-031 CA-A12.** Con unas 3000 líneas
+  `Hallazgos abiertos:` canónicas repetidas, el motivo da «Argument list too long» y la puerta **no
+  emite decisión**; en el cliente, eso equivale a permitir. Pasa igual en `713ac68` y en la candidata.
+  Es un defecto independiente, **no reparado** y **pendiente de registro con responsable**. Sede del
+  dato: `requirements/REQ-023.md`, «Notas / alcance».
+- **La frontera de REQ-023**, descrita arriba.
+- **REQ-025:** la entrega 1b y OBS-H.
+- **`arnes_version` de `.arnes/config.json` de este repositorio sigue en `1.33.0`**, frente a un plugin
+  `1.35.0`. La discrepancia es **preexistente**; las notas de 1.34.0 ya la declararon. Este commit no
+  la toca, por la misma razón que entonces: ese campo representa la migración del proyecto, no la
+  versión del plugin, y es el manifiesto que los hooks leen en runtime.
+
+### Semver: `minor` por la convención de este arnés, y no `minor` puro en SemVer estricto
+
+El número `1.35.0` lo fijó el propietario en su autorización. **En SemVer estricto, esta versión no es
+`minor` pura:** dos cambios hacen que se deniegue lo que hasta `v1.34.0` cerraba sin esconder ningún
+bloqueante. Uno es la nota tras el paréntesis en `Hallazgos abiertos:`; el otro, la clave de control
+repetida con el mismo valor. Esa regla, aplicada a la letra, pediría una versión mayor.
+
+La convención de este arnés publica como `minor` o `patch` los cambios que cierran un fail-open de la
+puerta de cierre, aunque hagan denegar lo que antes cerraba. Por ejemplo, `QA-P48-01` salió como
+`patch` en 1.33.2. Aquí se deniegan además dos formas que no escondían nada, y para eso **no hay
+precedente escrito**. Por eso las dos incompatibilidades van **declaradas una por una**, arriba, en
+vez de quedar escondidas detrás del número. Si el propietario prefiere SemVer estricto, la versión
+sería `2.0.0`, y esa decisión es suya.
+
+Sube de `1.34.0` a `1.35.0` en los **tres** campos de distribución: `.claude-plugin/plugin.json`
+`.version`, y `.claude-plugin/marketplace.json` en `.metadata.version` y `.plugins[0].version`. Los tres
+**concuerdan**, comprobado con `jq`, y `source: "./"` queda intacto.
+
+### Lo que este commit NO hace
+
+- No fusiona, no etiqueta, no publica, no empuja y no actualiza ninguna instalación.
+- No cierra ningún REQ ni ningún hallazgo, y no afirma ningún veredicto de REQ-023.
+- No repara SEC-115, el hueco C ni el defecto del motivo de CA-A12.
+- No toca `hooks/`, `tools/`, `tests/`, `.arnes/`, `.github/`, `requirements/`, `docs/seguridad/`,
+  `docs/qa/` ni `docs/ESTADO.md`.
+- No corre el banco completo sobre esta cabeza; eso lo hace QA sobre el candidato final. Lo que se
+  ejecutó para preparar la versión lo registra la entrada `[GitHub]` que acompaña a este commit.
+
+## [GitHub] — 2026-09-29 · Candidato 1.35.0 preparado, sin publicar: versión 1.34.0 → 1.35.0 en los tres campos de distribución, notas `[1.35.0]` y entrada de REQ-031 en la guía de actualización
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: desarrollador (preparación de la versión, autorizada por el propietario el 2026-09-29, punto 4); coordinadora (commit). Unos 180 k tokens.
+
+**Qué contiene:**
+- **Manifiestos:** los tres campos pasan a `1.35.0` y concuerdan (`jq`). `source: "./"` queda intacto. `.arnes/config.json` `arnes_version` sigue en `1.33.0`: es una discrepancia preexistente, declarada en las notas.
+- **Notas `[1.35.0]`:**
+  - el alcance medido desde `v1.34.0`: cinco merges de `main` más REQ-023, y 0 commits de `rel/registro-1.33.0`;
+  - lo construido y lo pendiente de cada REQ, con REQ-025 limitado a su entrega 1;
+  - qué llega con el plugin y qué sólo migrando;
+  - los dos cambios de compatibilidad;
+  - la tabla de CI de `main`, releída, con el FAIL de `cfb1106` y los INCONCLUSO;
+  - las limitaciones: SEC-115 y C abiertos y no aceptados; REQ-024; SEC-103 y SEC-104; el fail-open del motivo de CA-A12;
+  - semver `minor` por la convención del arnés, advirtiendo que en SemVer estricto no es `minor` pura.
+- **Guía:** entra la entrada de REQ-031 en «Hacia 1.35.0», que faltaba.
+
+**Comprobado por el desarrollador:**
+- las tres gates;
+- la concordancia de versión;
+- la autoprueba: 117/0;
+- las secciones 20, 21, 22, 28, 31, 32, 33, 34 y 36: 250 PASS / 0 FAIL.
+
+**Orden declarado por la coordinadora:** la autorización dice «con la reparación validada, prepara el cambio de versión», y esta preparación se hizo **antes** de la validación de QA y de seguridad de REQ-023. Así las dos revisan el candidato completo de una vez. Va en un commit propio y no toca la reparación. Si su validación cambia la conducta de REQ-023, las notas y la guía se corrigen en la misma vuelta.
+
+**Avance (regla 6):** versión preparada; faltan QA y seguridad del candidato, el CI de la cabeza final y la decisión del propietario sobre SEC-115 y C.
+
 ## [GitHub] — 2026-09-29 · REQ-023 CA-01 (i) versionado: el motivo de la denegación cita las 20 primeras líneas ambiguas y cuántas quedan (tope que falla cerrado); `arnes-lectura` las nombra todas
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: analista-requerimientos (write-back §9, a petición de la coordinadora); coordinadora (commit).
 
