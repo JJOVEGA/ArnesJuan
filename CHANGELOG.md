@@ -2,6 +2,39 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-29 · REQ-023 versionado (mitad 1 de SEC-047): una variante de una clave de control, o una clave de control repetida, deja la cabecera ambigua y no deja cerrar — ADR-014; `pendiente` para desarrollo
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: analista-requerimientos (write-back §9); coordinadora (ajuste del marcador y commit). Unos 430 k tokens en la comisión del analista.
+
+Contrato nuevo de REQ-023, cambio de fondo (ADR-014). Los identificadores CA-01…CA-12 se conservan; el texto anterior está en `856d97d:requirements/REQ-023.md`.
+
+**Qué define:**
+- **Claves de control:** una lista cerrada de seis.
+- **Variante:** misma clave escrita de otra forma. El esqueleto son las letras ASCII en minúsculas; se descartan blancos, C0, DEL y bytes ≥ 0x80. Se tolera un marcador de lista inicial, que se busca tras los bytes descartados. Sólo se consideran claves de hasta 256 bytes.
+- **Condición de estructura, exigida por el propietario:** un imprimible ASCII que no sea letra, o uno de nueve delimitadores de cita tipográficos, hace de la línea una cita o mención, no una variante.
+- **Repetición:** deniega el cierre aunque los valores coincidan. Es un cambio de compatibilidad aceptado expresamente.
+
+**Cómo responde la puerta:**
+- La variante nunca se lee como la clave.
+- Al cerrar, la puerta deniega citando las líneas con los bytes escapados.
+- Reabrir no se bloquea.
+
+**Frontera declarada, sin prometer reconocimiento universal:** homóglifo; letra de más, de menos o cambiada; dos puntos no ASCII; líneas con estructura visible; NBSP tras el marcador; claves de más de 256 bytes, que son una limitación y no están protegidas por ese límite; el valor; y NUL/UTF-16.
+
+**Criterios que cambian:**
+- CA-03: el sorteo pasa a la clase descartada.
+- CA-06: una sola constante, y el esqueleto derivado de ella.
+- CA-09: por propiedades (0 procesos, 0 recorridos añadidos, trabajo nuevo sólo en claves de ≤ 256 bytes, sin normalización de valor añadida en cabecera sin ambigüedad); el reloj sólo como observación, y el ±1 % preliminar no se acredita.
+- CA-08: casos R1–R18, A1–A9, S1–S5, U1–U3 y F1–F5, con fail-before contra `713ac68` y contra la estable 1.33.2.
+
+**Otros cambios:**
+- SEC-052 sale de `Hallazgos abiertos:` (R-015).
+- `requirements/README.md` y su plantilla describen la conducta de CA-01. Van por delante del código hasta la entrega del desarrollador.
+- REQ-031 gana dos notas de versionado, sin cambio de criterios ni de cabecera.
+
+**Ajuste de la coordinadora:** un byte descartado delante del marcador ya no saca la línea de la cobertura (R18), porque la propuesta que el propietario ordenó conservar cubría esa forma.
+
+**Avance (regla 6):** contrato listo y sin preguntas abiertas; falta la implementación del desarrollador.
+
 ## [GitHub] — 2026-09-29 · Candidato 1.35.0 abierto: autorización del propietario registrada (SEC-047, mitad 1 de REQ-023); fichas finales de SEC-115 y del hueco C en la cola, NO aceptadas
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora. Rama `cand/1.35.0` desde `origin/main` = `713ac68`.
 

@@ -79,6 +79,42 @@ El hook `guard-completado` **impide** marcar `completado` sin `QA: aprobado`, y 
 `Sensible a seguridad: sí` sin `Seguridad: aprobado`. Llegar a "aprobado" exige que los
 hallazgos estén resueltos **y reflejados en el REQ/NFR** (write-back, ver `AGENTS.md` §9).
 
+**Cada clave de control se escribe una sola vez, y como la escribe la plantilla.** Las claves de
+control son las seis cuya presencia o ausencia decide el cierre: `Estado`, `QA`, `Seguridad`,
+`Sensible a seguridad`, `Hallazgos abiertos` y `Rigor` (lista cerrada; en el código del arnés vive una
+sola vez). Si la cabecera escribe una de ellas **de otra forma** —una
+*variante*— o la declara **más de una vez**, **aunque las dos líneas digan lo mismo**, la cabecera es
+**ambigua** y la puerta **deniega el cierre** citando las líneas, con los caracteres invisibles escritos
+de forma legible. No lee la variante como la clave ni elige entre dos declaraciones, y ningún lector
+cambia el valor que lee. Reabrir un REQ, o editarlo sin cerrarlo, no se bloquea por esto. Para
+`Hallazgos abiertos` repetida con su forma exacta decide su propia regla («Clases de hallazgo», abajo).
+
+**Qué es una variante, por propiedad.** Una línea de la cabecera —antes del primer `## `, fuera de todo
+`<!-- … -->`, con dos puntos ASCII (`:`)— cuya clave, tras la tolerancia de siempre (blancos de los
+extremos, `*`, `_` y `` ` ``) y tras quitar **como mucho un** marcador de lista inicial (`-` o `+`
+seguido de un blanco; o de 1 a 3 dígitos seguidos de `.` o `)` y de un blanco; los caracteres
+invisibles que lo precedan no impiden reconocerlo), tiene **las mismas
+letras ASCII**, sin distinguir mayúsculas, que una clave de control, y no es exactamente esa clave.
+Para comparar —nunca para leer— se descartan los espacios, los caracteres de control y todo carácter no
+ASCII. Ejemplos **no exhaustivos**: `HALLAZGOS ABIERTOS:`, `qa:`, `Hallazgos  abiertos:` (blanco doble),
+la clave con un BOM, un espacio de anchura cero o un espacio duro delante o dentro, `- Rigor:` y
+`1. QA:`. Una línea con exactamente la forma de una declaración (`- Estado: …`) se trata como tal.
+
+**Lo que no es una declaración, y por tanto no es variante:** una línea cuya clave, tras el marcador,
+contiene un signo ASCII visible que no es letra —`>`, comillas, paréntesis, corchetes, dígitos, `&`,
+`/`, `.`, etc.— o una comilla tipográfica (`«` `»` `“` `”` `‘` `’` `„` `‹` `›`, lista cerrada): es una
+cita, una mención o una referencia. Ejemplos **no exhaustivos**: `> Estado: completado`,
+`«Estado»: …`, `(QA): …`, `Q&A: …`.
+
+**Fuera, y sin promesa:** una letra cambiada por otra que se le parece (`Hallazgоs` con `о` cirílica,
+letras de ancho completo); una letra ASCII de más, de menos o distinta (`Hallazgo abierto:`, `Rigr:`);
+unos dos puntos que no son ASCII (`：`); las líneas con un signo visible de los de arriba, aunque lleven
+además un carácter invisible; un espacio duro en lugar del blanco que sigue al guion o al número del
+marcador (`-`+espacio duro+`Estado:`), que ya no forma marcador y deja el `-` como signo; y las claves de
+**más de 256 bytes**. Todo eso se sigue leyendo como hasta ahora: como si la línea no declarara el campo, que
+para ese campo es su **ausencia**. Las claves de más de 256 bytes son una **limitación**: se leen como
+ausencia y ese límite **no las protege**. Esta regla mira la **clave**: el valor se lee como siempre.
+
 ## Nivel de rigor
 Cuánta demostración se exige **por encima** de las quality gates, que son binarias y corren
 siempre. Lo fija el analista en la cabecera del REQ.
@@ -157,10 +193,13 @@ del primer `## `— cuya clave reconoce su lector como `Hallazgos abiertos` (tam
 `**Hallazgos abiertos:**`, o sangrada). **Si hay más de una, deniega** y las nombra: no elige la
 primera ni la última y no las fusiona; se deja una sola línea con todos los hallazgos. Dentro de esa
 línea, ningún hallazgo que bloquea queda sin leer por el sitio que ocupa en la lista ni por el
-carácter que lo separa del anterior. **Lo que el lector no reconoce como esa línea no se lee**, y ahí no
-hay promesa; ejemplos **no exhaustivos**: una continuación en la línea siguiente sin clave, una clave
-con un carácter invisible, un blanco de más o un homóglifo (`Hallazgos  abiertos:`, `Hallazgоs`),
-lo que va dentro de un comentario HTML de la cabecera y una línea igual debajo del primer `## `.
+carácter que lo separa del anterior. **Lo que el lector no reconoce como esa línea no se lee.** Si es
+una **variante** de la clave —`Hallazgos  abiertos:`, `HALLAZGOS ABIERTOS:`, la clave con un carácter
+invisible; definición y frontera en «Veredictos de validación», arriba—, la puerta **deniega el cierre**
+por cabecera ambigua, sin leer su valor. En lo demás no hay promesa; ejemplos **no exhaustivos**: una
+continuación en la línea siguiente sin clave, un homóglifo (`Hallazgоs`) y lo que queda fuera de esa
+frontera, lo que va dentro de un comentario HTML de la cabecera y una línea igual debajo del primer
+`## `.
 
 **Techo de tamaño: 16 384 bytes.** Si el valor —todo lo que va tras los dos puntos, incluido el
 blanco que los sigue, contado en **bytes** y antes de normalizar— mide **más de 16 384 bytes**, la
@@ -605,7 +644,7 @@ definición del `analista-requerimientos`: esa ausencia no invalida sus aprobaci
 | [REQ-020](REQ-020.md) | ¿Esta prueba mide algo? Cuatro formas de estar verde sin haber medido — el caso vacío, el que no se ejecuta, el que sólo fija lo que hoy falla y el universo encogido en silencio. **Ventana 1.34.0**: depende de las sondas de REQ-021 | `pendiente` | critico | pendiente | pendiente |
 | [REQ-021](REQ-021.md) | `tests/util/` con las sondas de reloj y de procesos, escritas una vez: se reconstruyen en cada comisión y dos se rompieron a la primera, una dejando un proceso vivo 3 h 41 min. Alcance reducido el 2026-09-08 (la sonda de línea base queda fuera). **BLOQUEADO el 2026-09-08**: agotó las 3 vueltas dev↔QA sin cerrar `QA-021-10` (`contrato`), y el propietario lo movió a **1.34.0** | `bloqueado` | critico | con-hallazgos | preventiva |
 | [REQ-022](REQ-022.md) | Despacho en paralelo: tres dimensiones de colisión y la herramienta sólo ve una. Bloque de apertura de **1.34.0** | `pendiente` | critico | pendiente | pendiente |
-| [REQ-023](REQ-023.md) | El carácter que no se ve apaga el enforcement: la guarda nombra el CR cuando la propiedad es «una cabecera que no se puede medir». **Ventana 1.34.0** (salió de 1.33.0 el 2026-09-08, decisión del propietario): depende de las sondas de REQ-021 y del gate de SEC-048 | `borrador` | critico | pendiente | pendiente |
+| [REQ-023](REQ-023.md) | Una clave de control escrita de otra forma, o declarada dos veces, no se convierte en ausencia: la **cabecera ambigua no deja cerrar** (mitad 1 de SEC-047). **Ventana 1.35.0**, autorizada por el propietario el 2026-09-29; versionado por **ADR-014** (frontera por esqueleto ASCII de la clave y estructura de la declaración; **cambio de compatibilidad**: una clave repetida deniega aunque diga lo mismo; claves de más de 256 bytes, **limitación** no protegida). Ya no depende de las sondas de REQ-021 ni del gate de SEC-048 | `pendiente` | critico | pendiente | pendiente |
 | [REQ-024](REQ-024.md) | La ausencia de un campo no se resuelve del lado que abre, y el mismo estado en el segundo lector: la cola que cuenta cero sobre lo que no pudo medir. **Ventana 1.34.0**: va después de REQ-023, con el que comparte nueve rutas | `borrador` | critico | pendiente | pendiente |
 | [REQ-025](REQ-025.md) | El arnés vigila también a quien orquesta: la sesión coordinadora acredita, decide y publica, y ninguna puerta la mide. **Ventana 1.35.0**; línea base = 20 errores de coordinación catalogados. Tras la **partición del 2026-09-21** conserva **la entrega 1** —las **seis reglas** del propietario en `AGENTS.md` §6, su gemela, las dos sedes de `PENDING_APPROVAL`, la entrada de `arnes-upgrade` **preparada, no publicada**, las referencias en los agentes y el **ADR-008**— y, desde el mismo día, una **entrega 1b `pendiente` dentro del propio REQ** (CA-01, CA-02, las preguntas 1, 2 y 4 de CA-09 (B), la regla del `git add -A` y la primera mitad de CA-10), **sin ventana asignada**: **aprobar la entrega 1 no completa REQ-025**. Vuelta **1 de 3** consumida (QA `con-hallazgos`, R-1) | `en-progreso` | critico | con-hallazgos | pendiente |
 | [REQ-028](REQ-028.md) | Las capacidades que REQ-025 difiere (**entregas 2+**): `tools/arnes-comprobar.sh` con par discriminante y denominador, su sección del banco, la **procedencia y la atribución** de la cifra que llega al `CHANGELOG.md`, las **columnas de instantes** del libro de comisiones y los umbrales de coste. Nace de la **partición de REQ-025** (2026-09-21) conservando los identificadores CA-03…CA-08, CA-12 y las mitades de CA-10, CA-11 y CA-13. `borrador` con **cuatro decisiones del propietario abiertas** (B-1…B-4) y **sin ventana asignada** | `borrador` | critico | pendiente | pendiente |
