@@ -1629,7 +1629,12 @@ done
 # motivos, el tope de la cita y los procesos—; y +1 en la 32 (40 → 41): el control de CA-46 que
 # esperaba allow sobre el REQ con NUL pasa a deny (R1) sin cambiar el número, y gana su control
 # nuevo, el Write sin estado terminal (R6 (a)).
-CASOS_ESPERADOS=1326
+# Y 1326 → 1334 por REQ-007 CA-66 punto 5, que pasa de tres a seis movimientos de deny a allow: +8 en
+# la sección 43 (147 → 155), las tres rutas que casaban con el ámbito sólo por su texto y designan un
+# archivo de fuera —Write <raíz>/src/../README.md, echo x > src/../README.md y un sed -i con el
+# terminal hacia requirements/../docs/x.md—, cada una con su movimiento contra 9596e39, y el control
+# opuesto `echo x > src/a.ts` (deny en los dos); los del Write y del sed ya eran I1 src e I2 req.
+CASOS_ESPERADOS=1334
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

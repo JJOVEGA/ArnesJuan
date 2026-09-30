@@ -32,7 +32,7 @@ bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del cor
 ARNES_SONDA_CONTROLES=1 bash tests/escenarios/hooks/run.sh secciones/37-coste-del-escaner-7-*.sh
                                                          # los controles de medición de las sondas de coste
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1326 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1334 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`). La línea
 `Resultado:` cuenta **aparte** los `SKIP` que son **INCONCLUSO** —una sonda de coste que no acreditó
 nada en esa corrida— y los nombra debajo; el código de salida **no** depende de ellos
@@ -290,7 +290,7 @@ Tres reglas nacidas de fallos reales:
 | Identidad del destino (43) | lo legítimo fuera del ámbito, la creación y la reapertura por ruta equivalente (L1–L7, K1–K3, S1, S3) | **allow** por `guard.sh`, igual que en 9596e39; L5 y K2 **deny** en los dos |
 | Identidad del destino (43) | destino no determinable: `..` sobre un directorio que no existe, un directorio en modo 000, un bucle de enlaces, una relativa sin `cwd` (D1–D4) | **deny** con el motivo de CA-47 punto 7 (causa y arreglo, ninguna herramienta); D2 **SKIP** como administrador |
 | Identidad del destino (43) | REQ ilegible: NUL, UTF-16LE, sin permiso de lectura, un directorio en su ruta; `Edit` sin estado, con mención y N4; `Write` juzgado entero (R1–R7) | `Edit` **deny** con el motivo de CA-45 (ii); `Write` sin terminal **allow**, con terminal y QA pendiente **deny** |
-| Identidad del destino (43) | los tres movimientos declarados de deny a allow: L8, R6 (c) y M1 (a) | **allow** aquí y **deny** en 9596e39 |
+| Identidad del destino (43) | los seis movimientos declarados de deny a allow (CA-66, punto 5): L8, R6 (c) y M1 (a), y las tres rutas que casaban con el ámbito sólo por su texto y designan un archivo de fuera —`Write <raíz>/src/../README.md`, `echo x > src/../README.md` y un `sed -i` con el estado terminal hacia `requirements/../docs/x.md`— | **allow** aquí y **deny** en 9596e39; su control opuesto, la ruta canónica protegida con la misma forma (I1 src, I2 req y `echo x > src/a.ts`), **deny** en los dos |
 | Identidad del destino (43) | fuera de la tabla mínima: las dos lecturas que designan archivos distintos (V1), el enlace dentro de la raíz escrito con `..` (V2) y un destino no determinable por `Bash` en `guard-completado`, sin y con el estado terminal en el comando (V3, V4) | V1, V2 y V4 **deny** (allow en 9596e39); V3 **allow** en los dos |
 | Identidad del destino (43) | una ruta de más de 4 096 caracteres; los procesos contra 9596e39 en I1, `/dev/stderr`, `ls -la` y un enlace resuelto (L3) | no determinable con una cita de 200 bytes; **0** procesos añadidos, **1** en L3 (el `readlink` de CA-49 (ii)) |
 

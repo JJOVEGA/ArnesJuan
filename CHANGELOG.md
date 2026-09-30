@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-30 · Banco: los tres movimientos nuevos de REQ-007 CA-66 punto 5 entran en la sección 43, con fail-before y control opuesto — SIN VALIDAR
+> Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Unos 125 k tokens.
+
+- **Qué entra:** la sección 43 incorpora `Write <raíz>/src/../README.md`, `echo x > src/../README.md` y un `sed -i` con el terminal hacia `requirements/../docs/x.md`, cada uno contra `9596e39`, más el control opuesto `echo x > src/a.ts`, que deniega en los dos árboles. Los controles opuestos del `Write` y del `sed -i` ya existían (I1 src, I2 req).
+- **Cuentas:** la sección pasa de 147 a 155 casos y `CASOS_ESPERADOS` de 1326 a 1334. El README del banco dice «seis». Los hooks no cambian (`git diff 104ffd1 -- hooks tools` vacío).
+- **Comprobado:** sección 43 155/0; contra `9596e39`, 46 FAIL, y contra 1.33.2, 49, que son los de antes más exactamente los tres nuevos; gates y autoprueba (117/0) en verde.
+- **Pendiente menor, anotado:** REQ-007 CA-66 punto 5 sigue citando la sonda aparte como medición de los tres movimientos, lo cual es cierto. Podría citar además la sección 43.
+- **Avance (regla 6):** los seis movimientos quedan en el banco; falta QA con el banco completo y después seguridad.
+
 ## [GitHub] — 2026-09-30 · REQ-007: la promesa de CA-47 queda completa — seis movimientos de deny a allow declarados en CA-66 (no tres), CA-47 6 (b) acotado a rutas sin `..`, nota en CA-24; ADR-016, notas y guía coherentes; validación en el host real de la reparación hecha (evidencia `94c6191`)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: analista-requerimientos (write-back) y coordinadora (validación en el host y commit).
 

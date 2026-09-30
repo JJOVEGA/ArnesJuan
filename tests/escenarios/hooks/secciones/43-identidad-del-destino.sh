@@ -9,11 +9,11 @@
 # 6), que es de la coordinadora; la columna «Host» de CA-66 dice qué filas llegan desde el host.
 # DOS ÁRBOLES: la CANDIDATA es `$HOOKS_DIR`; la BASE, 9596e39 materializado POR SHA (`mat43`,
 # copia de `mat42`). Fila con `allow` en la base: FAIL-BEFORE, tiene que permitir de verdad allí;
-# con `deny` en la base y `allow` aquí: uno de los TRES movimientos declarados (L8, R6 (c), M1 (a),
-# CA-66 punto 5); con `igual`: control, decide igual en los dos. Sin la base, SKIP con su motivo.
+# con `deny` en la base y `allow` aquí: uno de los SEIS movimientos declarados de CA-66 punto 5 (L8,
+# R6 (c), M1 (a) y los tres «punto 5»); con `igual`: control, decide igual. Sin la base, SKIP y motivo.
 # A mano, `ARNES_HOOKS_DIR=<hooks de 9596e39 o de 1.33.2> run.sh secciones/43-*.sh` deja en FAIL
 # las filas que la candidata deniega.
-CASOS_ESPERADOS_SECCION=147
+CASOS_ESPERADOS_SECCION=155
 PISO_AUTONOMO_SECCION=76  # 19 preámbulo (líneas 1-19, con seccion_nueva y la blanca que la sigue) + 24 maquinaria compartida duplicada (mat43_reg y mat43, copia de mat42, líneas 20-43) + 33 bloque indivisible mayor (las filas I, líneas 103-135) · REQ-014 CA-18
 seccion_nueva "--- 43 · identidad del destino y archivo ilegible (REQ-007 CA-45/CA-47/CA-49/CA-60, SEC-119, O-11) ---"
 
@@ -146,6 +146,14 @@ fila43 "L5 mv a src"  guard-codigo.sh deny igual "$SRC43" "$(j43 Bash "$P" - 'co
 fila43 "L6" guard.sh allow igual - "$(j43 Bash "$P" - 'command=ls -la')"
 fila43 "L7" guard.sh allow igual - "$(j43 Bash "$P" - 'command=echo x > docs/claude.md')"
 fila43 "L8" guard.sh allow deny - "$(j43 Bash "$P/docs" - 'command=echo x > src/a.ts')"
+# Los otros tres movimientos de CA-66 punto 5, sin fila en su tabla: rutas que casaban con el ámbito sólo
+# por su TEXTO y designan un archivo de fuera; reciben el veredicto de la canónica que designan. Su control
+# opuesto es la canónica PROTEGIDA con la misma forma, y sigue en deny: I1 src para el `Write`, I2 req
+# para el `sed -i` y, para el `echo`, la fila de aquí (I2 src escribe con `printf`).
+fila43 "punto 5 (a) Write <raíz>/src/../README.md" guard.sh allow deny - "$(src43 "$P/src/../README.md")"
+fila43 "punto 5 (b) echo x > src/../README.md" guard.sh allow deny - "$(j43 Bash "$P" - 'command=echo x > src/../README.md')"
+fila43 "punto 5 (b) control opuesto: echo x > src/a.ts" guard-codigo.sh deny igual "$SRC43" "$(j43 Bash "$P" - 'command=echo x > src/a.ts')"
+fila43 "punto 5 (c) sed -i con el terminal hacia requirements/../docs/x.md" guard.sh allow deny - "$(sed43 requirements/../docs/x.md)"
 
 # --- K: creación legítima; «todavía no existe» no es «no se pudo determinar» ----------------
 nuevo43=$'# REQ-930\nEstado: borrador\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n'
