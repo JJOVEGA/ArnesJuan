@@ -1,5 +1,11 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-30 · SEC-119 y O-11 v3: RESULTADO de la validación de la reparación en el host real
+`sec119-v3/RESULTADO.md`. Los doce casos coinciden con lo registrado previamente:
+- **dejan de escapar** el directorio enlazado por `Edit`, `..` en `Bash` hacia el código y hacia un REQ, y el REQ en UTF-16LE (O-11), sin cambio en el disco;
+- los legítimos se aplican;
+- el control de denegación y la regresión de SEC-117 se mantienen.
+
 ## 2026-09-30 · SEC-119 y O-11 v3: REGISTRO PREVIO de la validación de la reparación en el host real (antes de ejecutar)
 `sec119-v3/`: doce casos con lo esperado. Hook reparado de `104ffd1`, con sus sha. Incluye el control de denegación, los casos que en la línea base escaparon, los legítimos y la regresión de SEC-117. Nada ejecutado todavía.
 
