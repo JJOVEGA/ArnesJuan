@@ -2,6 +2,26 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-30 · QA de la vuelta excepcional agrupada de REQ-023 (tercera y cuarta autorización) sobre `cd47f06` — REQ-023, REQ-031 y REQ-001 `QA: aprobado`; QA-023-07 (ruta con `..`, preexistente) escalado; QA-023-08 registrado
+> Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 (qa-tester) · agente: qa-tester; coordinadora (cola). Unos 375 k tokens.
+
+- **REQ-023 `QA: aprobado`.** CA-13 cumple su contrato y ADR-015.
+  - Fail-before de la sección 42, re-derivado: 18/11 contra `df550fa` y 1.33.2, y 29/0 en la candidata.
+  - 50 casos de ruptura propios por árbol, en tres árboles, más una pasada con `LC_ALL=C`: todas las formas no reconstruibles deniegan (comillas, `ó`, NFD, blanco final, `replace_all`, `MultiEdit` encadenado, vacío, directorio, FIFO, `//`, `./`, reapertura y README); pasan lo reconstruible, la creación juzgada entera y la reapertura literal.
+  - Adaptación del banco verificada con una sonda de motivos propia: ninguna retirada, 6 sustituciones justificadas, y sólo 3 denegaciones por CA-13, todas a propósito.
+  - Banco completo **1164 PASS · 1 FAIL · 13 SKIP** (2 INCONCLUSO), cuadre 1178. El FAIL es de reloj en la sección 25 (heredoc de 300 KB), no atribuible (alternado con `df550fa`: 3 de 3 frente a 2 de 3), y **se conserva**.
+  - Autoprueba 117/0; gates rc 0.
+  - La validación en el host es fiel a sus archivos crudos.
+  - Cierra QA-023-02 y QA-023-06.
+- **REQ-031 `QA: aprobado`** sobre el delta. **REQ-001 `QA: aprobado`** sobre CA-10, CA-11 y CA-12 versionados. **REQ-007:** CA-46 (c) verificado.
+- **Nuevos, preexistentes:**
+  - **QA-023-07** (`instrumento`, alta): una ruta con `..` evade `guard-completado` y `guard-codigo`. Medido a nivel de hook. Escalado como urgencia de seguridad: **ficha 4** en la cola, sin reparación automática.
+  - **QA-023-08** (`contrato`, baja, contra REQ-007 CA-46 (b)): registrado con responsable; no bloquea esta entrega.
+  - **O-11** (el archivo ilegible fuera de CA-13): **decisión 7** en la cola.
+  - O-9 y O-10 sin ensayar en el host.
+- **Declarado por QA:** dos líneas de su adenda en `docs/qa/` se escribieron con `python3`, porque su herramienta convierte `\uXXXX` al transportar el texto. No es una ruta protegida.
+- **Avance (regla 6):** QA favorable; falta la determinación de seguridad, y después push y CI.
+
 ## [GitHub] — 2026-09-30 · REQ-023: sección 42 en `Archivos:` y cifra del inventario corregida (114 filas, 92 sobre `requirements/`); validación de la reparación de SEC-117 en el host real hecha y conservada (evidencia `bc65966`)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: analista-requerimientos (los dos campos) y coordinadora (validación en el host y commit).
 
