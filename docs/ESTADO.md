@@ -10,18 +10,25 @@
 > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
 > `docs/estabilizacion/`.
 
-## ⏸ RETOMAR AQUÍ — candidato 1.35.0 (PR #59): conducta validada, SEC-117 reproducido en el host real, SIN publicar; esperando la decisión 5 y las fichas 1–3 (2026-09-29)
+## ⏸ RETOMAR AQUÍ — candidato 1.35.0 (PR #59): SEC-117 reparado, validado en el host real y con QA y seguridad aprobados; SIN publicar; esperando las fichas 1, 2 y 4 y la decisión 7 (2026-09-30)
 
 **Este bloque manda en la rama `cand/1.35.0`** (worktree `/home/juan/dev/ArnesJuan-v1.35`, base `origin/main` = `713ac68`). La rama local `main` está desfasada: no se usa. Los bloques de abajo son históricos.
 
-- **Autorizaciones:** `PENDING_APPROVAL.md` § Resueltas, dos del 2026-09-29. La segunda llegó truncada y se transcribió tal cual.
-- **REQ-023 `bloqueado`**, con el contador dev↔QA agotado (3 de 3).
-  - **Conducta validada** sin ningún FAIL. El código ejecutable es el de `ad793ab`, sin cambios después. Banco completo sobre `c4cc32c`: 1137/0/12, con 1 INCONCLUSO.
-  - **La intervención documental excepcional** (`e7562e7`) cerró QA-023-05. La revisión de QA de ese delta abrió **QA-023-06** (`contrato`, sólo texto: las cifras de SEC-118 están medidas sólo con ASCII y el límite es de bytes). Por eso REQ-023 y **REQ-031** tienen ahora `QA: con-hallazgos`.
-  - **Seguridad:** R-045 como revisión, sin firma. La determinación sobre el delta no se emitió, porque QA no fue favorable.
-- **SEC-117 reproducido en el host real** (CLI 2.1.285, registro previo `6c947ef`, resultado `1c8c81c` en la rama local de evidencia): un `Edit` con comillas rectas cierra un REQ `critico` con todo en rojo. No está reparado; la propuesta mínima está en la ficha 3.
-- **Espera al propietario:** la **decisión 5** (una segunda corrección documental acotada a QA-023-06; recomendada la opción (A), sin cifras en las sedes heredadas) y las fichas 1 (SEC-115 y SEC-118), 2 (C) y 3 (SEC-117). Nada está aceptado.
-- **Próximo paso concreto, si la decisión 5 es (A):** el analista retira las cifras de las sedes heredadas → QA sobre el texto → determinación de seguridad → CI de la nueva cabeza. Cerrar sigue impedido mientras la cola tenga la entrada de publicación.
+- **Autorizaciones:** `PENDING_APPROVAL.md` § Resueltas, cuatro del 2026-09-29/30, literales. La segunda llegó truncada.
+- **Vuelta excepcional agrupada** (tercera y cuarta autorización): el contador de REQ-023 sigue agotado (3 de 3), no se reinició y no se creó otro REQ.
+  - **Contrato:** REQ-023 CA-13 (SEC-117) con ADR-015; REQ-001 CA-10/11/12 y REQ-007 CA-46 (c) versionados; REQ-001 reabierto; QA-023-06 y REQ-031 CA-A13.
+  - **Código:** `5dfabb3`, con el banco adaptado sin retirar casos y la sección 42.
+  - **Validación en el host real:** en la rama local de evidencia, `sec117-real-v2/`. El caso que antes cerraba ahora deniega.
+  - **QA:** aprobado en REQ-023, REQ-031 y REQ-001. **Seguridad:** R-045-A aprobado en los mismos tres, con SEC-117 `mitigado`.
+- **Estados:** REQ-023, REQ-031 y REQ-001 en `en-revisión`, **sin cerrar**, porque cerrar está impedido por la cola y no autorizado. REQ-007 sigue `en-progreso`.
+- **Espera al propietario:**
+  - ficha 1 (SEC-115/SEC-118);
+  - ficha 2 (C);
+  - **ficha 4 (SEC-119, rutas no canónicas; seguridad recomienda reparar antes de publicar)**;
+  - **decisión 7 (O-11, archivo ilegible; recomendada la opción B)**.
+
+  Nada de esto está aceptado.
+- **Condiciones de publicación todavía pendientes:** las notas deben declarar SEC-119, SEC-120 y la tercera vía de SEC-115, o sus reparaciones, según se decida; el CI de la cabeza final; y la fusión, el tag y la publicación, que son decisión del propietario.
 
 ## ⏸ RETOMAR AQUÍ — REQ-029 fidelidad al encargo: entrega implementada y firmada, SIN cerrar (2026-09-23)
 
@@ -316,7 +323,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-29 16:04
+## Estado derivado — 2026-09-30 10:32
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -326,16 +333,17 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `e7562e7` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.35.0` @ `8745b3f` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 1
-**REQ:** 29 — completado 15 · en-revisión 3 · en-progreso 1 · bloqueado 2 · otros 8
+**REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
-_Sólo los REQ abiertos; los 15 completados no se listan._
+_Sólo los REQ abiertos; los 14 completados no se listan._
 
 | REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
 |---|---|---|---|---|---|
+| REQ-001 | en-revision | aprobado | aprobado | critico | qa-006(instrumento),qa-011(instrumento),… |
 | REQ-007 | en-progreso | pendiente | pendiente | critico | qa-114(contrato,dueñoanalista-requerimie… |
 | REQ-008 | pendiente | pendiente | pendiente | critico | (ninguno) |
 | REQ-011 | pendiente | pendiente | pendiente | critico | (ninguno) |
@@ -345,10 +353,10 @@ _Sólo los REQ abiertos; los 15 completados no se listan._
 | REQ-020 | pendiente | pendiente | preventiva | critico | sec-038(contrato),sec-039(contrato),sec-… |
 | REQ-021 | bloqueado | con-hallazgos | preventiva | critico | dev-021-05(instrumento,dueñoanalista-req… |
 | REQ-022 | pendiente | pendiente | pendiente | critico | (ninguno) |
-| REQ-023 | bloqueado | con-hallazgos | pendiente | critico | qa-023-02(instrumento,preexistenteycriti… |
+| REQ-023 | en-revision | aprobado | aprobado | critico | sec-118(instrumento,r-045:unmotivodedene… |
 | REQ-024 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-025 | en-revision | aprobado | aprobado | critico | qa-025-08(instrumento),sec-103(instrumen… |
 | REQ-028 | borrador | pendiente | pendiente | critico | (ninguno) |
-| REQ-031 | en-revision | con-hallazgos | aprobado | critico | sec-115(instrumento,r-044-c:unhookquemue… |
+| REQ-031 | en-revision | aprobado | aprobado | critico | sec-115(instrumento,r-044-c:unhookquemue… |
 
 <!-- ARNES:DERIVADO fin -->

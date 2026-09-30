@@ -180,7 +180,13 @@
 - **Alternativas:**
   - **reparar antes de publicar**, con una reparación en ciclo propio, que la autorización vigente no abre automáticamente;
   - **aplazar**, con responsable propuesto `desarrollador` (lector de rutas) y `analista-requerimientos` (contrato), revisión propuesta el 2026-10-07 y revisión anticipada ante cualquier observación de una escritura por ruta con `..` en este repositorio o en un consumidor.
-- La valoración de seguridad se añadirá tras su determinación.
+- **Valoración de seguridad** (R-045-A, 2026-09-30):
+  - registrado como **SEC-119** (`instrumento`, alta), ampliado por propiedad: las puertas deciden por la **ruta escrita**, no por la canónica. A nivel de hook, en tres árboles, `docs/../requirements/`, `././requirements/` y un directorio enlazado evaden `guard-completado`, y lo mismo pasa con `guard-codigo` para `src/`;
+  - remedio de sede única: canonicalizar la ruta y usar `test -ef` en `arnes_ruta_relativa`, sin procesos nuevos;
+  - **recomienda reparar antes de publicar**, porque tiene el mismo efecto que SEC-117, un bypass total y silencioso, y alcanza además a `guard-codigo`;
+  - en contra: no está ensayado en el host, no hay exposición accidental observada, y retener 1.35.0 deja a los consumidores sin SEC-117 ni SEC-047;
+  - si se aplaza, la cláusula de §13 y las notas deben declarar SEC-119 como limitación de todas las filas.
+- **Recomendación de la coordinadora:** coincide con el auditor en que es la misma clase de efecto que SEC-117, y tú ya fijaste no publicar con un bypass total aplazado. Recomiendo **reparar antes de publicar**, con una autorización expresa, porque la vuelta vigente no lo cubre.
 
 **Decisión 7 — O-11 (QA, 2026-09-30): la vía del archivo ilegible (NUL en disco, SEC-002) queda fuera de CA-13.** Con NUL en el disco, una edición no reconstruible que no escribe la palabra del estado terminal recibe permiso, y CA-13 (iv) lo excluye con la causa que da la tercera autorización («porque no encuentra literalmente el texto anterior»). Pero tu cuarta autorización reformula la propiedad **sin esa causa** («una edición sobre un REQ protegido que el hook no puede reconstruir no puede recibir permiso silencioso»).
 - **Pregunta:** ¿la vía del archivo ilegible entra en la propiedad?
@@ -188,6 +194,7 @@
   - **(A)** No: se queda como está, declarada en CA-13 (iv), con SEC-002 como sede. La **consecuencia** es un residuo estrecho: requiere un NUL ya escrito en el REQ.
   - **(B)** Sí: se repara en ciclo propio (denegar toda edición de un REQ ilegible), fuera de esta vuelta.
 - **Recomendación de la coordinadora:** (B) como trabajo siguiente, fuera de esta vuelta, y declararlo mientras tanto. Es la misma clase de defecto, pero su causa, el disco ilegible, es distinta de la que reparó esta vuelta.
+- **Valoración de seguridad** (R-045-A): **(B)**. La propiedad de la cuarta autorización lo alcanza de lleno. Tiene un productor natural conocido: PowerShell 5.1 escribiendo en UTF-16LE. El remedio es denegar todo `Edit`/`MultiEdit` de un REQ que no se puede leer entero, dejando `Write` como salida. Si se elige (A), la cláusula de §13 tiene que llevar escrita la excepción antes de publicar.
 - **Qué sigue mientras tanto:** la determinación de seguridad.
 
 **Registrado, no bloquea: QA-023-08** (`contrato`, baja, preexistente, contra REQ-007 CA-46 (b), que está `en-progreso`). El criterio dice que con NUL en disco decide «la transición», y la puerta decide si la edición menciona el estado terminal. Además, la nota de versionado del 2026-09-30 repitió «(b) sigue igual». Responsable: `analista-requerimientos` (write-back). No impide REQ-023, REQ-031 ni REQ-001, y REQ-007 ya no cerraba por otros hallazgos.

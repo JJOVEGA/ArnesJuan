@@ -9247,3 +9247,271 @@ R-044-C acreditó, sobre `cdcad5d`: la gramática cerrada; que la clave repetida
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.** REQ-023 no trata datos personales ni cambia la clasificación.
 
 **Numeración vigente:** última revisión **R-045**; último hallazgo **SEC-118**; próximos libres **R-046** y **SEC-119**.
+
+---
+
+## Adenda a R-045 (**`R-045-A`**) — **Determinación de seguridad de la vuelta excepcional agrupada** (tercera y cuarta autorización): REQ-023 CA-13 (SEC-117), REQ-031, REQ-001 y REQ-007 CA-46 (c). `cand/1.35.0` @ `8745b3f` — 2026-09-30
+
+**Numeración.** Repetí el método de R-044: todas las ramas locales y remotas, las etiquetas y los 18 worktrees. `R-045-A`, `SEC-119` y `SEC-120` sólo aparecían como «próximos libres», así que los tomo.
+
+**Base, alcance y orden de fases.**
+- **Cabeza:** `8745b3f6aa2d9b0a53305edd47b1b122c02c1b83`, local. En el árbol hay `M docs/ESTADO.md` y `?? propuesta-v1.35.0/`; no los toqué.
+- **Código revisado:** `git diff 31d2a21..5dfabb3 -- hooks tools`.
+  - Sólo `hooks/guard-completado.sh` cambia código ejecutable.
+  - En `hooks/lib.sh` y `tools/arnes-lectura.sh` sólo cambian comentarios: quitadas las líneas `#`, el diff sale vacío.
+  - `git diff 5dfabb3..8745b3f -- hooks tools tests` está vacío, y `cd47f06..8745b3f` sólo toca registros y veredictos. **El código ejecutable revisado es el de `5dfabb3`, el mismo que validó QA.**
+- **Autorizaciones:** la tercera (2026-09-29) y la cuarta (2026-09-30), leídas enteras en `PENDING_APPROVAL.md` § Resueltas. La que me aplica: «Después de QA favorable, seguridad determina su aprobación y cobertura»; «Reutiliza la evidencia de las partes intactas»; el alcance es REQ-023, REQ-031, REQ-001 y REQ-007.
+- **Orden:** `QA: aprobado` en REQ-023, REQ-031 y REQ-001 (adenda «Vuelta excepcional agrupada…» de `docs/qa/REQ-023.md`, sobre `cd47f06`). REQ-007 sigue en `QA: pendiente`. No miré las quality gates ni corrí el banco.
+- **Instrucciones:** el `AGENTS.md` de este worktree.
+
+**Método.**
+- **Instrumento propio** (`lib-sonda.sh` v2), con JSON `PreToolUse` contra el entrypoint real `hooks/guard.sh`, en **tres árboles**:
+  - la candidata;
+  - `31d2a21`, lo que revisó R-045;
+  - `713ac68`.
+
+  Los dos últimos se materializaron con `git archive`.
+- **Condiciones:** Linux/WSL2, una corrida por punto.
+- **Evidencia** en el scratchpad de la sesión, `evidencia-seg-v2/`: `sondas-ca13`, `sondas-ca13b`, `sondas-regresion`, `sondas-techo`, `sondas-req001`, `sondas-agente`, `sondas-rutas`, `sondas-forma`, `sondas-forma2`, `sondas-busqueda` y `campos/prueba.txt`.
+- **Punto de partida:** la evidencia de QA y la de la validación en el host (`sec117-real-v2/`, `bc65966`). No la tomé como prueba.
+- **Tres defectos de mi instrumento, detectados y repetidos; los resultados de abajo son los repetidos:**
+  1. el proyecto de prueba vive bajo `/tmp`, y la vía `Bash` salta a propósito los destinos `/tmp/*`: un `sed -i` con ruta absoluta salía allow. Repetido con ruta relativa: deniega;
+  2. un `old_string` de 200 KB por `jq --arg` dejaba el JSON vacío. Repetido con `--rawfile`;
+  3. sin `agent_id` la puerta trata la llamada como de la coordinadora. CA-24 de REQ-001 y la sonda del `desarrollador` se repitieron con `agent_id`.
+
+### 1. CA-13 y el código de `5dfabb3`: **determinación favorable**
+
+**(a) Ninguna vía de permiso silencioso dentro de su alcance** (un `Edit`/`MultiEdit` sobre un archivo que la puerta reconoce dentro de `requirements_dir`). La candidata **deniega**, y `31d2a21` y `713ac68` permitían, en estos casos:
+- comillas rectas donde el archivo tiene tipográficas (el caso del host);
+- `ó` literal;
+- un `old_string` inexistente;
+- un blanco final de más;
+- en un `MultiEdit`, la segunda edición no literal detrás de una literal;
+- una edición no literal en el cuerpo que no toca el estado, sobre un REQ en verde;
+- un `Edit` con `old_string` no vacío sobre un REQ que no existe;
+- la reapertura no literal;
+- la creación con `**Estado:** completado` y QA pendiente (O-3);
+- las mismas ediciones desde el agente `desarrollador`, con `agent_id`.
+
+Además, el `old_string` vacío sobre un archivo que existe y el `MultiEdit` de creación con dos ediciones deniegan también en la base.
+
+**Lo que no se toca:**
+- las ediciones literales, en el REQ en verde y en el de prosa;
+- el `MultiEdit` cuya segunda edición casa con lo que deja la primera;
+- la reapertura literal con la cola ocupada;
+- la creación legítima y la creación completada en verde;
+- el disco CRLF con un `old_string` en LF.
+
+Todas deciden igual en los tres árboles. Fuera de `requirements/`, un `Edit` no literal sigue permitido: está fuera de su alcance, por diseño.
+
+**(b) Retirar la rama de fragmentos no abre nada.**
+- Lo único que cambia en el código es esto:
+  - la función de denegación, que sólo llama a `arnes_deny`;
+  - la rama de creación;
+  - la denegación dentro del bucle de reconstrucción;
+  - la desaparición del `else` de fragmentos.
+- Los bloques del CR interior, del rango sin cerrar y de la cabecera ambigua son los mismos; ahora corren siempre, porque siempre hay documento. La creación los recibe por primera vez: antes se juzgaba por fragmento.
+- `Write`, la vía `Bash` (un `sed -i` relativo con el estado terminal → deny), los bytes de control, el presupuesto y el disco ilegible no cambian.
+
+**(c) El motivo no hereda SEC-118.** Con un `old_string` no literal de 200 000 bytes de `ñ`, deniega con un motivo de **1 100 bytes**, y ningún byte ≥ 0x80 sale crudo. La cita se mide y se corta en bytes bajo `LC_ALL` local, y el resto del motivo es texto fijo, la ruta y la causa.
+
+**(d) Ningún agente ni herramienta es un atajo.**
+- CA-13 no exime al `desarrollador`.
+- El motivo no propone `Bash`.
+- `Write` se juzga sobre el documento entero, y la vía `Bash` conserva su regla.
+
+**(e) Lo que el host podría escribir distinto con un `old_string` literal.** Leí en el binario del CLI 2.1.284, en las cadenas extraídas por QA, sin re-leerlo en la 2.1.285 y sin ejecutarlo:
+- `Two(e,n,r)` y `u4e(e,n,r)` devuelven el `new_string` **sin tocar** cuando `old_string === actual`;
+- `d4e` (recortar blancos finales del `new_string`) no se aplica a `/\.(md|mdx)$/i`;
+- el mapa de desinfección `O` sólo actúa cuando el `old_string` no es literal, y entonces CA-13 deniega.
+
+**Consecuencia:** para un REQ `.md` con `old_string` literal no encontré ninguna divergencia entre lo que reconstruye el hook y lo que escribe el host. Eso resuelve la **O-10** de QA por lectura: el host no desescapa el `new_string` cuando casa literal.
+
+La **O-9** (`replace_all` como cadena): el esquema del host preprocesa con `eP` (`"true"`→`true`). Pero en el host el `tool_input` que llegó al hook venía en el **orden de claves del esquema** (`file_path`, `old_string`, `new_string`, `replace_all`), no en el del modelo (`replace_all` primero) ni en el de la función de normalización. Eso indica que el hook recibe la entrada ya parseada, con el booleano. Es una **inferencia con evidencia**, no un ensayo con `"true"` en el host.
+
+**(f) Sin regresión.**
+- **Frente a R-045:** 28 decisiones (variantes, repeticiones, intento de cierre, comentario, CR, CRLF, U1/U2, la gramática de REQ-031, la frontera (e) y la reapertura) salen **idénticas** en la candidata y en `31d2a21`.
+- **Techo de REQ-031:** 348 910 bytes deniegan por `Edit` y por `Write`.
+- **SEC-118:** sigue igual. 1 801 repeticiones ASCII y un `QA:` de 140 KB salen allow en los tres árboles: no lo repara ni lo agrava.
+
+### 2. SEC-117 → **`mitigado`**
+
+La propiedad del hallazgo era que la puerta juzgaba un documento distinto del que escribe la herramienta, y dejaba pasar cuando no podía reconstruirlo. Queda reparada por REQ-023 CA-13 (criterio, ADR-015) e implementada en `5dfabb3`.
+- **Medido a nivel de hook:** §1.
+- **Validado por la coordinadora en el host 2.1.285** (`sec117-real-v2/`, registro previo `0680a2a` y resultado `bc65966`):
+  - el caso que en la v1 cerraba ahora deniega y el archivo no cambia;
+  - el control positivo deniega;
+  - el control legítimo y la reapertura se aplican.
+- **El write-back existe:** CA-13, más REQ-001 CA-10/11/12 y REQ-007 CA-46 (c) versionados.
+
+**Lo que NO cubre:**
+- `MultiEdit` en el host: el 2.1.285 no lo expone. Sólo está a nivel de hook.
+- `\uXXXX` en el host: sólo a nivel de hook.
+- **O-9**, inferida con evidencia (§1 (e)), y **O-10**, leída en el binario 2.1.284: ninguna ejecutada.
+- El archivo ilegible (O-11, SEC-002), fuera de CA-13 (iv). Está en la decisión 7.
+- Las rutas no canónicas (SEC-119), que eluden todas las puertas.
+- Los REQ ya cerrados por esa vía con versiones anteriores: la puerta no detecta cierres pasados.
+- Windows, el editor interactivo y otras versiones del CLI.
+
+**QA-023-02** lo cerró QA. SEC-117 sale de `Hallazgos abiertos:` de REQ-023.
+
+### 3. SEC-119 — `instrumento` · **abierto** · severidad **alta** · registro de seguridad de **QA-023-07**, ampliado por propiedad · dueños `desarrollador` (lector de rutas) y `analista-requerimientos` (contrato)
+
+**Las puertas deciden por la ruta escrita, no por la canónica. Una ruta que el sistema de archivos resuelve dentro de `requirements_dir` o de `codigo_app.globs`, pero que no empieza léxicamente por ellos, no la juzga ninguna puerta.**
+
+**La causa.** `arnes_ruta_relativa` y `arnes_norm_path` recortan el prefijo del proyecto como texto y colapsan barras. No resuelven `..`, y sólo retiran un `./` inicial. `arnes_deny_enlace` (SEC-004) mira si el **último** componente es un enlace, no los directorios padre.
+
+**Medido a nivel de hook**, igual en la candidata, en `31d2a21` y en `713ac68`. Con un `Edit` literal que cierra un REQ `critico` con QA pendiente:
+- `<raíz>/docs/../requirements/…` → **allow**;
+- `<raíz>/././requirements/…` → **allow**;
+- un directorio enlazado a `requirements/` dentro del proyecto → **allow**;
+- el mismo enlace fuera del proyecto → **allow**;
+- controles: la ruta canónica y `<raíz>/requirements/./…` deniegan.
+
+En `guard-codigo`, un `Write` de la coordinadora a `src/a.ts` por `docs/../`, por `././` o por un directorio enlazado → **allow**, y el control canónico deniega.
+
+**Candidatos sin medir:**
+- mayúsculas distintas en sistemas de archivos que no las distinguen (Windows, macOS);
+- alias de plataforma (`/tmp` frente a `/private/tmp` en macOS; nombres 8.3);
+- un `CLAUDE_PROJECT_DIR` lógico frente a una ruta física.
+
+En estos casos el prefijo del proyecto no casa, y **todas** las puertas de la sesión podrían quedar sin efecto en silencio.
+
+**No ensayado en el host:** no sé si el CLI entrega al hook el `file_path` sin normalizar. La lectura del binario 2.1.284 sugiere que se pasa tal cual: la función de normalización devuelve el `file_path` recibido.
+
+**Por qué `instrumento` y alta.** Es un defecto del guardián, preexistente, y ningún criterio promete canonicalizar rutas. CA-13 se acota a «el mismo alcance que ya juzga `guard-completado`». El efecto es el de SEC-117: todas las puertas del cierre y `guard-codigo`, sin rastro. El realismo de un descuido es bajo en Linux con `..`, y desconocido con los alias de plataforma.
+
+**Remediación, por propiedad:** *la puerta decide sobre la ruta canónica, y si no puede establecerla, no deja pasar*. Ejemplos no exhaustivos:
+- colapsar `.` y `..` de forma léxica antes de recortar el prefijo;
+- para los enlaces y los alias, comprobar sin procesos si algún ancestro de la ruta es el mismo archivo que la raíz del proyecto, `requirements_dir` o el directorio de un glob (`test -ef`, que es un builtin), y denegar si lo es.
+
+La sede es `arnes_ruta_relativa`, que comparten todas las puertas.
+
+**Forzador:**
+- la decisión de la ficha 4;
+- una comisión que toque `arnes_ruta_relativa`, `arnes_norm_path` o `arnes_deny_enlace`;
+- una escritura observada por ruta no canónica.
+
+**Vencimiento propuesto:** 2026-10-07, el de la ficha 4. **No aceptado.**
+
+### 4. SEC-120 — `instrumento` · **abierto** · severidad **baja** · dueño `desarrollador`
+
+**Si `jq` no puede leer o trocear la entrada del hook, la puerta no decide y deja pasar.**
+
+**El mecanismo.** Ni `arnes_parse_input` ni el troceo de `arnes_guard_completado` comprueban el código de salida de `jq`:
+- si `jq` no puede **leer** la entrada, `ARNES_TOOL` queda vacío y los guardianes salen con allow;
+- si puede leerla pero **no trocearla**, `ARNES_JQ` conserva la salida anterior y la puerta juzga el documento en disco como si la edición no cambiara nada.
+
+**Medido a nivel de hook**, igual en la candidata y en la base:
+- un `MultiEdit` con `edits` como cadena o con un número → allow;
+- un `Edit` de cierre con QA pendiente y una clave extra con 10 001 niveles de anidamiento (`jq: Exceeds depth limit for parsing`) → **allow**. Con 9 000 niveles, deny.
+
+**Alcance:** no alcanzable desde el host en lo observado. El host valida contra el esquema, y lo que recibió el hook traía sólo las claves del esquema y en su orden; una entrada malformada no llega a aplicarse. **No verificado.**
+
+**Remediación:** que un fallo de `jq` al leer o trocear la entrada **deniegue** en las herramientas que las puertas juzgan. Es una comprobación del código de salida, sin procesos nuevos.
+
+**Forzador:** una comisión que toque `arnes_parse_input` o el troceo del `tool_input`. **Vencimiento:** con SEC-119, si se repara en el mismo ciclo; si no, 2026-10-29. **No aceptado.**
+
+### 5. SEC-115 (sigue abierto): **una tercera vía medida**
+
+**La búsqueda literal del `old_string` en la reconstrucción** (`[[ … == *"$old"* ]]`) cuesta del orden de `|disco| × |old_string|`. El presupuesto de reconstrucción (SEC-007) mide `|disco| × ediciones`, no la longitud del `old_string`.
+
+Medido con una racha de `a` en la cabecera y un `old_string` de media racha, literal al final: 8 000 → 0,9 s; 16 000 → 1,3 s; **32 000 → 3,8 s**. Crece más que linealmente. Pasa igual en la base (2,1 s con 32 000). **No medido hasta 60 s: no extrapolo.**
+
+Encaja en la remediación ya escrita de SEC-115 («ninguna operación que crezca más que linealmente corre antes de una comprobación de tamaño que deniegue»). Por ejemplo, un techo de `|old_string|` o incluirlo en el presupuesto. **Realismo:** muy bajo, sólo deliberado.
+
+### 6. O-11 (decisión 7) y QA-023-08
+
+**O-11.** Con el REQ en disco ilegible (SEC-002), una edición que no escribe el estado terminal pasa sin reconstruirse. El caso N4 de QA cierra sin escribir la palabra. CA-13 (iv) lo declara fuera.
+- **La propiedad que escribió el propietario en la cuarta autorización —«una edición sobre un REQ protegido que el hook no puede reconstruir no puede recibir permiso silencioso»— lo alcanza de lleno.**
+- **Realismo:** bajo, porque exige que el REQ ya tenga un NUL. Pero tiene un **productor natural conocido**: PowerShell 5.1 redirigiendo en UTF-16LE (REQ-023, «Fuera de alcance»).
+- **Mi valoración para la decisión 7: (B).** Repararlo en su propio ciclo, denegando todo `Edit`/`MultiEdit` de un REQ que no se puede leer entero. `Write` puede seguir sirviendo de salida para rehacer un archivo legible, con su regla actual.
+- **Mientras tanto**, declararlo en las notas, que ya lo hacen. Y en la cláusula 2 de §13, que hoy dice sin excepción «Lo que no puede reconstruir no lo deja pasar: lo deniega». Esa frase sólo es cierta por remisión a CA-13 (iv).
+- Si el propietario elige (A), esa frase debe llevar la excepción escrita **antes de publicar**.
+
+**QA-023-08** (`contrato`, de QA, contra REQ-007 CA-46 (b)): **coincido** con su clase. El apartado (b) dice que decide la transición; en realidad decide la mención del estado terminal, y el error es **en la dirección que abre**: N4 cierra sin la palabra. No bloquea REQ-023, REQ-031 ni REQ-001.
+
+### 7. Textos
+
+- **La sede única es CA-13.** La fila de §13, la cláusula 2, el README, la guía y las notas remiten a ella, y la cumplen por remisión. Es el mismo criterio que apliqué en R-045 a la fila de la cabecera ambigua, y el que ordenó el propietario («sin duplicar la norma en varias sedes»).
+- **Las notas** declaran el archivo ilegible y lo que la reparación no cubre. **No encontré ninguna afirmación de que la validación en el host acredite `MultiEdit`, `\uXXXX`, Windows ni el editor.**
+- **Las condiciones de R-045 §6 están cumplidas:**
+  - SEC-118, con «alcanza a medir **y a emitir su decisión**» en las notas, la guía, §13 y el README;
+  - la ficha 1, corregida;
+  - SEC-117, citado en la guía;
+  - QA-023-05, cerrado por QA.
+- **Condiciones de publicación nuevas** (no bloquean el cierre de ningún REQ):
+  1. **Si la ficha 4 se aplaza:** la cláusula de §13 («Lo que la limita se escribe aquí, una vez y aparte») y las notas deben declarar **SEC-119** como limitación de **todas** las filas. Sin eso, la cláusula se lee como completa y no lo es.
+  2. **Si la decisión 7 es (A):** la cláusula 2 de §13 debe llevar escrita la excepción del archivo ilegible.
+  3. **En los dos casos:** las notas deben declarar SEC-120 y la tercera vía de SEC-115.
+
+### 8. Firmas y cobertura
+
+- **REQ-023: `Seguridad: aprobado (R-045-A, …)`.** Cubre CA-01 a CA-13 sobre el código ejecutable de `5dfabb3`.
+  - **En `Hallazgos abiertos:`:** sale SEC-117 (`mitigado`); quedan SEC-118 y QA-023-07 (de QA); entran SEC-119 y SEC-120, las dos `instrumento`.
+  - **No es aprobación por agotamiento:** no tengo abierto ningún hallazgo mío `contrato` ni `usuario/dinero`.
+- **REQ-031: `Seguridad: aprobado (R-045-A, …)`.** Sustituye la cobertura de R-044-C, que era `cdcad5d`: el código de su puerta no cambió y está re-medido. Sus textos CA-A12 y CA-A13 enuncian la propiedad sola, con SEC-115 y SEC-118 aparte. Queda escrita la corrección de R-044-C: la clave repetida no deniega sin límite.
+  - **Retiro QA-031-01 de su campo**, por la condición que fijó QA: «se retira cuando REQ-023 tenga seguridad aprobada». QA comprobó además que el caso medido ya deniega por CA-01, y yo también: su forma exacta (canónica `instrumento` más `HALLAZGOS ABIERTOS: SEC-1 (contrato)`) deniega por `Edit` y por `Write` en la candidata y en `31d2a21`, y permitía en `713ac68` (`sondas-qa031.txt`).
+  - Queda SEC-115.
+- **REQ-001** (reabierto): **`Seguridad: aprobado (R-045-A, …)`**.
+  - **Lo que verifiqué:** CA-10, CA-11 y CA-12 versionados, contra la puerta real: la edición no reconstruible deniega, la creación se juzga entera, y la salida es válida y sin traza (código 0, sin stderr).
+  - **Por muestreo:** CA-01, CA-05, CA-06, CA-07, CA-13, CA-16, CA-23 y CA-24 deciden igual que en la base.
+  - **El resto del contrato** conserva la evidencia de R-001 y de las revisiones posteriores del mismo código.
+  - La firma R-001 cubría sólo el contrato anterior. **No cierro REQ-001:** su `Estado:` no es mío.
+- **REQ-007:** `Seguridad: pendiente (R-045-A, …)`. CA-46 (c) queda determinado conforme. La firma del REQ no procede: QA pendiente, bloques B y C sin rendir y `contrato` abiertos (QA-114, QA-116, QA-117 y QA-023-08).
+- **Comprobación previa:** cada campo se comprobó antes de escribirlo, con la puerta real sobre una copia (`campos/prueba.txt`):
+  - cada `Edit` literal sale allow;
+  - el lector no ve ambigüedad y lee `Seguridad` como veredicto;
+  - un cierre simulado con veredictos en verde y la cola vacía permite en REQ-023, REQ-031 y REQ-001, y deniega en REQ-007 por su primer `contrato`.
+
+### 9. Valoración para la ficha 4 (QA-023-07 / SEC-119)
+
+**Qué puede ocurrir:** que cualquier REQ de un proyecto consumidor se cierre sin ninguna puerta, y que la coordinadora o cualquier subagente escriba código protegido, siempre que la ruta llegue sin canonicalizar al hook. Pasa igual en `v1.34.0` y 1.33.2.
+
+**Mi valoración: reparar antes de publicar.** Tres razones:
+- el efecto es el mismo que el de SEC-117 (un bypass total y silencioso) y alcanza además a `guard-codigo`;
+- con SEC-117 el propietario ya fijó que un bypass total no se publica aplazado;
+- el remedio tiene una sede única (`arnes_ruta_relativa`) y no necesita procesos.
+
+**En contra:**
+- no está ensayado en el host;
+- no hay ninguna exposición accidental observada;
+- la reparación toca el lector de rutas que comparten todas las puertas, así que pide un ciclo completo y retrasa 1.35.0;
+- publicar 1.35.0 no empeora SEC-119, y retenerlo mantiene a los consumidores sin la reparación de SEC-117 ni la de SEC-047.
+
+**Si se prefiere no ampliar la ventana,** aplazarlo con la limitación declarada es defendible sólo con la condición 1 de §7 cumplida, revisión el 2026-10-07 y revisión anticipada ante cualquiera de estas:
+- una escritura observada por ruta no canónica;
+- una medición en el host;
+- un informe desde macOS o Windows.
+
+Decide el propietario.
+
+### 10. Estado tras R-045-A
+
+| Hallazgo | Clase | Estado | Dueño | ¿Bloquea algún cierre de esta vuelta? |
+|---|---|---|---|---|
+| `SEC-117` (= QA-023-02) | `instrumento` | **`mitigado`** (CA-13, `5dfabb3`, validado en el host) | — | No |
+| `SEC-118` | `instrumento` | `abierto`, ficha 1, no aceptado | `desarrollador` + `analista-requerimientos` | No |
+| `SEC-115` | `instrumento` | `abierto`, ficha 1; tercera vía medida (§5) | `desarrollador` + `analista-requerimientos` | No |
+| **`SEC-119`** (= QA-023-07, ampliado) | `instrumento` | **`abierto`**, ficha 4, no aceptado | `desarrollador` + `analista-requerimientos` | No |
+| **`SEC-120`** | `instrumento` | **`abierto`**, no aceptado | `desarrollador` | No |
+| `SEC-047` | `instrumento` | `en-mitigación` (mitad 1 en el candidato; mitad 2 = REQ-024) | `analista-requerimientos` + `desarrollador` | No |
+| `QA-031-01` | `instrumento` | de QA; **retirado** del campo de REQ-031 por su condición | — | No |
+| `QA-023-08` | `contrato` | de QA, contra REQ-007 | `analista-requerimientos` | Sólo REQ-007, que no cierra por otros |
+
+**Estado de seguridad aprobado de REQ-023 (línea base de no-regresión).** Lo de R-045 §8, más lo siguiente:
+- toda edición `Edit`/`MultiEdit` de `requirements_dir` es **literal** o **creación**, y si no, se deniega **antes** de cualquier otra regla, sin buscar cadenas en el `new_string`;
+- la creación se juzga entera;
+- el motivo de CA-13 cita como mucho 80 bytes, escapados;
+- no hay excepción por agente.
+
+**Estado aprobado de REQ-031:** el de R-044-C, sobre el código final, con la corrección de SEC-118.
+
+**Regresiones a vigilar** (no exhaustivo):
+- una vía que vuelva a juzgar el fragmento;
+- una búsqueda de «estado» en el `new_string` como condición de permiso;
+- una excepción por agente o por herramienta;
+- subir la cita del motivo sin medir el peor caso;
+- que la creación vuelva a juzgarse por fragmento.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-045** (adenda **`R-045-A`**); último hallazgo **SEC-120**; próximos libres **R-046** y **SEC-121**.

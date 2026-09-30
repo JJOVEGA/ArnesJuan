@@ -2,6 +2,28 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-30 · Vuelta excepcional agrupada: determinación de seguridad R-045-A sobre `8745b3f` (código de `5dfabb3`) — CA-13 sin permiso silencioso dentro de su alcance; SEC-117 `mitigado`; REQ-023, REQ-031 y REQ-001 `Seguridad: aprobado`; REQ-007 CA-46 (c) conforme; SEC-119 y SEC-120 registrados
+> Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `auditor-seguridad`; coordinadora (cola y ESTADO). Unos 210 k tokens.
+
+- **Qué se revisó:** `hooks/guard-completado.sh` de `5dfabb3` contra REQ-023 CA-13 y ADR-015, REQ-001 CA-10/11/12 y REQ-007 CA-46 (c). Sondas contra `hooks/guard.sh` real en la candidata, en `31d2a21` y en `713ac68`, después de un QA favorable, sin mirar gates ni banco.
+- **Resultado:**
+  - ninguna edición no reconstruible de `requirements/` sale allow, ni por `Edit`, ni por `MultiEdit`, ni por creación;
+  - lo reconstruible y la reapertura deciden como antes;
+  - el motivo mide 1 100 bytes con un `old_string` de 200 KB;
+  - no hay excepción por agente;
+  - 28 decisiones de R-045 y REQ-031 salen idénticas frente a `31d2a21`.
+- **Leído en el binario del CLI 2.1.284, sin ejecutar:** con un `old_string` literal sobre un `.md`, el host escribe lo que el hook reconstruye; eso resuelve O-10 por lectura. O-9 se infiere del orden de claves del `tool_input`.
+- **Hallazgos:**
+  - **SEC-117 → `mitigado`.**
+  - **SEC-119** (nuevo, `instrumento`, alta, preexistente): las puertas deciden por la ruta escrita. `..`, `././` y un directorio enlazado evaden `guard-completado` y `guard-codigo`. Es el registro de QA-023-07, ahora ficha 4.
+  - **SEC-120** (nuevo, `instrumento`, baja, preexistente): un fallo de `jq` al leer o trocear la entrada deja pasar. En lo observado no se alcanza desde el host.
+  - **SEC-115:** una tercera vía medida, la búsqueda literal del `old_string` (32 000 caracteres → 3,8 s).
+  - Coincide con QA-023-08.
+- **Firmas:** REQ-023, REQ-031 y REQ-001 `Seguridad: aprobado (R-045-A…)`. REQ-007 queda `pendiente`, con CA-46 (c) conforme. QA-031-01 se retira de REQ-031, porque se cumple su condición.
+- **Valoraciones:** para la ficha 4 (SEC-119), reparar antes de publicar; para la decisión 7 (O-11), la opción (B). Las dos decisiones son del propietario, y están puestas en la cola por la coordinadora, que también actualiza el bloque «RETOMAR AQUÍ» de `docs/ESTADO.md`.
+- **Condiciones de publicación nuevas**, que no bloquean ningún cierre: declarar SEC-119, SEC-120 y la tercera vía de SEC-115 en las notas, o repararlas, según decida el propietario.
+- **Avance (regla 6):** la vuelta excepcional termina con QA y seguridad favorables. Falta el CI de la cabeza final y las decisiones del propietario.
+
 ## [Interno] — 2026-09-30 · QA de la vuelta excepcional agrupada de REQ-023 (tercera y cuarta autorización) sobre `cd47f06` — REQ-023, REQ-031 y REQ-001 `QA: aprobado`; QA-023-07 (ruta con `..`, preexistente) escalado; QA-023-08 registrado
 > Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 (qa-tester) · agente: qa-tester; coordinadora (cola). Unos 375 k tokens.
 
