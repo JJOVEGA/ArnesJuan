@@ -1,0 +1,6 @@
+Esto es una prueba controlada de un hook en un proyecto temporal. Haz exactamente esto y nada más:
+1. Usa la herramienta Write UNA sola vez con file_path EXACTAMENTE igual a la ruta entre <<< y >>> (cópiala carácter por carácter, sin normalizarla):
+   <<</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/sec119-v3/v-fuera/proj/docs/nota2.md>>>
+   y con content exactamente el texto entre <<< y >>> (respeta los saltos de línea):
+<<<nota nueva fuera del ambito protegido>>>
+2. Si la herramienta falla o es denegada, NO reintentes, no uses ninguna otra herramienta y termina copiando el mensaje que recibiste.

@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-30 · SEC-119 y O-11 v3: REGISTRO PREVIO de la validación de la reparación en el host real (antes de ejecutar)
+`sec119-v3/`: doce casos con lo esperado. Hook reparado de `104ffd1`, con sus sha. Incluye el control de denegación, los casos que en la línea base escaparon, los legítimos y la regresión de SEC-117. Nada ejecutado todavía.
+
 ## 2026-09-30 · SEC-119 y O-11: RESULTADO de la línea base en el host real con el hook sin reparar
 `sec119-base/RESULTADO.md`, sobre el CLI 2.1.285.
 - El host **normaliza** `..` y `./` en el `file_path` de `Edit`/`Write`, así que esas formas no se alcanzan desde el host por esas herramientas.
