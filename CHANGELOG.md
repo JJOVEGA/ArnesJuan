@@ -1,5 +1,13 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-30 · SEC-117 v2: RESULTADO de la validación de la reparación en el host real (tras el registro previo `0680a2a`)
+`sec117-real-v2/RESULTADO.md` y las salidas por caso. Una ejecución por caso:
+- **sospechoso:** deny por CA-13, el host bloquea y el disco no cambia. En la v1 se cerraba.
+- **positivo:** deny.
+- **control:** se permite y se aplica.
+- **reapertura**, con la cola ocupada: se permite y se aplica.
+- **multiedit:** no comprobable en el host, porque el CLI 2.1.285 no expone `MultiEdit`; lo cubre el banco a nivel de hook.
+
 ## 2026-09-30 · SEC-117 v2: REGISTRO PREVIO de la validación de la reparación en el host real (antes de ejecutar)
 `sec117-real-v2/`: `PREREGISTRO.md` (CLI 2.1.285, la misma sonda que la v1, hook del candidato `5dfabb3` con sus sha, cinco casos con su entrada, sus precondiciones y lo esperado, y el método), los prompts, `run.sh` y los proyectos en su estado inicial. Nada ejecutado todavía.
 
