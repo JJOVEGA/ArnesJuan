@@ -1148,10 +1148,12 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
       toque el estado**;
     - una escritura cuyo destino la puerta **no puede determinar**: un directorio que no se puede recorrer,
       un bucle de enlaces, `..` sobre un directorio que todavía no existe.
-  - **Lo que pasa a permitirse, y son sólo tres casos:** una ruta relativa que casaba con una zona protegida
-    sólo porque se leía desde la raíz cuando el directorio de trabajo era otro; un `Write` que cierra un REQ
-    ilegible con todo en verde, porque se juzga entero; y una ruta equivalente al manifiesto mientras está
-    ilegible.
+  - **Lo que pasa a permitirse, y son sólo seis casos** (REQ-007 CA-66, punto 5, del arnés): una ruta
+    relativa que casaba con una zona protegida sólo porque se leía desde la raíz cuando el directorio de
+    trabajo era otro; un `Write` que cierra un REQ ilegible con todo en verde, porque se juzga entero; una
+    ruta equivalente al manifiesto mientras está ilegible; y tres rutas con `..` que casaban con una zona
+    protegida sólo por su texto y designan un archivo de fuera —por ejemplo, `src/../README.md` por `Write` o
+    por `Bash`—. Ninguno debilita una protección.
   - **Lo que se conserva:** por `Edit`/`Write`/`MultiEdit` no se escribe a través de un enlace situado dentro
     del proyecto, sea cual sea su destino (entrada «Hacia 1.31.0»). Lo que esa entrada decía —«el arnés juzga
     la ruta escrita, no su destino»— **queda superado**: los directorios enlazados y los enlaces de fuera se

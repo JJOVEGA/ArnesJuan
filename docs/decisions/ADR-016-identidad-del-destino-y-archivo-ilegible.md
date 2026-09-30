@@ -99,10 +99,13 @@ Este ADR registra la decisión y su porqué; no transcribe la norma.
   través de un enlace hacia una zona protegida; un `Edit`/`MultiEdit` sobre un REQ ilegible aunque no toque
   el estado; y un destino no determinable. *Mitigación:* cada motivo dice la causa y cómo corregirla, sin
   proponer otra herramienta.
-- (−) **Tres movimientos de `deny` a `allow`, declarados** en REQ-007 CA-66: una ruta relativa que casaba con
-  el ámbito sólo porque se leía desde la raíz cuando el directorio de trabajo es otro; un `Write` que cierra
-  un REQ ilegible con todo en verde, porque se juzga entero; y una ruta equivalente al manifiesto durante su
-  avería (CA-60).
+- (−) **Seis movimientos de `deny` a `allow`, declarados** en REQ-007 CA-66, punto 5: una ruta relativa que
+  casaba con el ámbito sólo porque se leía desde la raíz cuando el directorio de trabajo es otro; un `Write`
+  que cierra un REQ ilegible con todo en verde, porque se juzga entero; una ruta equivalente al manifiesto
+  durante su avería (CA-60); y tres rutas con `..` que casaban con el ámbito sólo por su texto y designan un
+  archivo de fuera —`Write <raíz>/src/../README.md`, `echo x > src/../README.md` y un `sed -i` que menciona
+  el estado terminal hacia `requirements/../docs/x.md`—. Ninguno debilita una protección: todos designan un
+  archivo que la regla no protege.
 - (−) **Coste:** 0 procesos añadidos salvo leer el destino de un enlace en el último componente cuando hay
   que resolverlo (como mucho 1 por destino enlazado). En Windows/MSYS no está medido.
 - (−) **Fronteras sin promesa**, con su sede en REQ-007 CA-47: carreras entre la decisión y la escritura, un

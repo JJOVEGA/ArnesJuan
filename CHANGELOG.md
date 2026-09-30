@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-30 · REQ-007: la promesa de CA-47 queda completa — seis movimientos de deny a allow declarados en CA-66 (no tres), CA-47 6 (b) acotado a rutas sin `..`, nota en CA-24; ADR-016, notas y guía coherentes; validación en el host real de la reparación hecha (evidencia `94c6191`)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: analista-requerimientos (write-back) y coordinadora (validación en el host y commit).
+
+- **Contrato:**
+  - CA-66, punto 5, pasa de tres a seis movimientos declarados. Los tres nuevos son rutas que casaban con el ámbito sólo por su texto y designan un archivo de fuera: `Write <raíz>/src/../README.md`, `echo x > src/../README.md` y un `sed -i` con el terminal hacia `requirements/../docs/x.md`. Ninguno debilita una protección.
+  - CA-47, 6 (b), conserva el veredicto de hoy sólo para rutas sin segmentos `..`.
+  - CA-24 gana una nota: esos seis movimientos, y sólo esos, no son hallazgo.
+  - ADR-016, las notas `[1.35.0]` y la guía dicen ahora «seis».
+  - Esta entrada **sustituye** el «tres» de las entradas anteriores de esta bitácora sin reescribirlas.
+- **Validación en el host real** (registro previo `76058a8`, resultado `94c6191` en la rama local de evidencia, `sec119-v3/`): CLI 2.1.285, el hook de `104ffd1`, doce casos con una ejecución cada uno. Los tres vectores de SEC-119 alcanzables desde el host —el directorio enlazado por `Edit` y `..` en `Bash` hacia el código y hacia un REQ— y la vía de O-11 —el REQ en UTF-16LE— **dejan de escapar**, sin cambio en el disco. Los legítimos se aplican (fuera del ámbito, creación, edición literal y reapertura con la cola ocupada), y el control de denegación y la regresión de SEC-117 se mantienen. Es evidencia de la coordinadora, no una medición de QA.
+- **Avance (regla 6):** contrato coherente y reparación validada en el host. Falta que el desarrollador añada al banco los tres movimientos nuevos (y el README del banco pase a «seis»), después QA y seguridad.
+
 ## [Interno] — 2026-09-30 · Quinta autorización, implementación (desarrollador): SEC-119 y O-11 — las dos puertas deciden por la identidad del destino (REQ-007 CA-47) y tratan el REQ ilegible por CA-45; sección 43 del banco; 32 y 33-2 adaptadas — SIN VALIDAR
 > Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Unos 700 k tokens.
 
@@ -691,10 +703,13 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      lectura—, **aunque no toque el estado**; y una escritura cuyo destino la puerta no puede determinar.
      Hasta `v1.34.0` las puertas decidían por la ruta escrita, y con el REQ ilegible sólo se denegaba la
      edición que mencionaba el estado terminal.
-   - **Qué pasa a permitirse, y son sólo tres casos:** una ruta relativa que casaba con una zona protegida
-     sólo porque se leía desde la raíz cuando el directorio de trabajo era otro; un `Write` que cierra un
-     REQ ilegible con todo en verde, porque se juzga entero; y una ruta equivalente al manifiesto mientras
-     está ilegible.
+   - **Qué pasa a permitirse, y son sólo seis casos** (REQ-007 CA-66, punto 5): una ruta relativa que
+     casaba con una zona protegida sólo porque se leía desde la raíz cuando el directorio de trabajo era
+     otro; un `Write` que cierra un REQ ilegible con todo en verde, porque se juzga entero; una ruta
+     equivalente al manifiesto mientras está ilegible; y tres rutas con `..` que casaban con una zona
+     protegida sólo por su texto y designan un archivo de fuera —`Write <raíz>/src/../README.md`,
+     `echo x > src/../README.md` y un `sed -i` que menciona el estado terminal hacia
+     `requirements/../docs/x.md`—. Ninguno debilita una protección.
    - **Qué se conserva:** por `Edit`/`Write`/`MultiEdit` no se escribe a través de un enlace situado dentro
      del proyecto, sea cual sea su destino. La premisa de REQ-007 CA-49, «el arnés juzga la ruta escrita, no
      su destino», queda superada.
