@@ -2,6 +2,38 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-30 · Quinta autorización, implementación (desarrollador): SEC-119 y O-11 — las dos puertas deciden por la identidad del destino (REQ-007 CA-47) y tratan el REQ ilegible por CA-45; sección 43 del banco; 32 y 33-2 adaptadas — SIN VALIDAR
+> Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Unos 700 k tokens.
+
+- **Identidad del destino (CA-47)**, en `hooks/lib.sh` (`arnes_identidad`, `arnes_id_pertenece`):
+  - una ruta relativa se ancla en el `cwd` de la entrada, leído en la misma llamada a `jq`;
+  - lectura física con `cd -P`/`$PWD`, y nombres sobre lo inexistente; lectura léxica; divergencia;
+  - tres vías de pertenencia; lo no determinable se trata como dentro; «todavía no existe» no es «no se pudo determinar»;
+  - la barra final de `cp`/`mv` conserva su sentido; memoria por invocación;
+  - sin procesos, salvo el `readlink -f` de CA-49 (ii);
+  - `arnes_ruta_relativa` se retira; `arnes_norm_path` no cambia.
+- **CA-49:** (i) ya no excluye `..` y lleva un motivo nuevo; (ii) decide por el destino del enlace. **CA-60**, por identidad.
+- **CA-45**, en `guard-completado`:
+  - archivo inexistente: como siempre;
+  - ilegible (NUL, UTF-16, sin permiso, no regular): `Edit`/`MultiEdit` deniegan siempre y `Write` se juzga entero;
+  - no determinable: deny.
+
+  Los motivos dicen la causa y el arreglo, no nombran herramientas, y citan la ruta con tope.
+- **Banco:** sección 43 (147 casos: CA-66 con fail-before contra `9596e39`, V1–V4, motivos, tope y procesos); sección 32 (R1 y R6 (a), de 40 a 41 casos); sección 33-2 (motivo nuevo; se retira una etiqueta obsoleta). En total, de 1178 a 1326 casos. Los comentarios con la premisa desmentida se corrigen en `hooks/` y en `tools/arnes-paralelo.sh`, sin cambio de conducta.
+- **Medido:**
+  - banco completo del árbol final: **1313 PASS · 1 FAIL · 12 SKIP**. El FAIL es de reloj: REQ-021 CA-03 (c), sección 38-2, que no ejerce ningún hook. **Se conserva;**
+  - sección 43: 43 FAIL contra `9596e39` y 46 contra 1.33.2;
+  - en 45 secciones cambia una sola decisión (R1);
+  - procesos: +0, y +1 en L3;
+  - `arnes-paralelo`, con la misma salida que en `9596e39`.
+- **Abierto:**
+  - tres movimientos de deny a allow que CA-66 punto 5 no enumera: rutas que casaban sólo por su texto y designan un archivo de fuera. Es un write-back del analista;
+  - coste por volumen frente a REQ-007 CA-54: 64 KiB con 4 163 destinos tarda entre 4,0 y 5,7 s, frente a 2,3–2,9 s de la base, con techo de 5 s. Lo evalúa QA;
+  - REQ-017 CA-08 (ii): INCONCLUSO en paralelo y PASS aislado;
+  - `ARCHITECTURE.md` no refleja `cwd` ni `readlink`: no está en `Archivos:` y queda pendiente.
+- **Declarado por el desarrollador:** dos ediciones por consola sin la razón que exige §13: tres sustituciones con `python3` en `guard-completado.sh` y un `sed -i` en la sección 32. No se desactivó ningún hook.
+- **Avance (regla 6):** implementación y banco listos; falta el write-back de los tres movimientos, la validación en el host, QA y seguridad.
+
 ## [Interno] — 2026-09-30 · Quinta autorización, contrato (analista): SEC-119 y O-11 en REQ-007 — CA-47 (identidad del destino) y CA-45 (lectura del archivo protegido) como sedes únicas; ADR-016; REQ-023 CA-13 (iv) remite; sin REQ nuevo ni reabiertos — SIN VALIDAR
 > Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `analista-requerimientos`. Unos 540 k tokens.
 

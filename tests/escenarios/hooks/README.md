@@ -32,7 +32,7 @@ bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del cor
 ARNES_SONDA_CONTROLES=1 bash tests/escenarios/hooks/run.sh secciones/37-coste-del-escaner-7-*.sh
                                                          # los controles de medición de las sondas de coste
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1149 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1326 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`). La línea
 `Resultado:` cuenta **aparte** los `SKIP` que son **INCONCLUSO** —una sonda de coste que no acreditó
 nada en esa corrida— y los nombra debajo; el código de salida **no** depende de ellos
@@ -286,6 +286,13 @@ Tres reglas nacidas de fallos reales:
 | Edición no reconstruible (42) | las mismas filas contra **df550fa** (materializado por SHA con `mat42`) | **allow** (fail-before); sin el árbol, **SKIP** con el motivo |
 | Edición no reconstruible (42) | la creación con `old_string` vacío, juzgada entera (C5 y C6); una edición literal (C7); la reapertura literal (C8); un archivo CRLF (C13) | la decisión de la puerta sobre el documento resultante; los controles **deciden igual** en df550fa |
 | Edición no reconstruible (42) | la cita de un `old_string` de 4 000 bytes y los procesos contra df550fa (sonda de procesos) | 80 bytes escapados y un motivo de pocos cientos de bytes; **0** procesos añadidos |
+| Identidad del destino (43) | rutas equivalentes a un REQ y a `src/a.ts`: `..`, `././`, `//`, relativa a otro `cwd`, `/tmp/..`, directorio enlazado dentro y fuera de la raíz, `requirements` que es un enlace, enlace en el último componente fuera de la raíz y por `Bash` (filas I1–I13 de REQ-007 CA-66) | **deny** por la puerta de cada fila, con su motivo; contra **9596e39** (materializado por SHA con `mat43`) **allow** (fail-before) o **deny** (control) |
+| Identidad del destino (43) | lo legítimo fuera del ámbito, la creación y la reapertura por ruta equivalente (L1–L7, K1–K3, S1, S3) | **allow** por `guard.sh`, igual que en 9596e39; L5 y K2 **deny** en los dos |
+| Identidad del destino (43) | destino no determinable: `..` sobre un directorio que no existe, un directorio en modo 000, un bucle de enlaces, una relativa sin `cwd` (D1–D4) | **deny** con el motivo de CA-47 punto 7 (causa y arreglo, ninguna herramienta); D2 **SKIP** como administrador |
+| Identidad del destino (43) | REQ ilegible: NUL, UTF-16LE, sin permiso de lectura, un directorio en su ruta; `Edit` sin estado, con mención y N4; `Write` juzgado entero (R1–R7) | `Edit` **deny** con el motivo de CA-45 (ii); `Write` sin terminal **allow**, con terminal y QA pendiente **deny** |
+| Identidad del destino (43) | los tres movimientos declarados de deny a allow: L8, R6 (c) y M1 (a) | **allow** aquí y **deny** en 9596e39 |
+| Identidad del destino (43) | fuera de la tabla mínima: las dos lecturas que designan archivos distintos (V1), el enlace dentro de la raíz escrito con `..` (V2) y un destino no determinable por `Bash` en `guard-completado`, sin y con el estado terminal en el comando (V3, V4) | V1, V2 y V4 **deny** (allow en 9596e39); V3 **allow** en los dos |
+| Identidad del destino (43) | una ruta de más de 4 096 caracteres; los procesos contra 9596e39 en I1, `/dev/stderr`, `ls -la` y un enlace resuelto (L3) | no determinable con una cita de 200 bytes; **0** procesos añadidos, **1** en L3 (el `readlink` de CA-49 (ii)) |
 
 **Desde REQ-023 CA-13, un `Edit` de `requirements/` que la puerta no puede reconstruir se deniega antes
 que cualquier otra puerta.** Por eso los casos que miden otra puerta de `guard-completado` usan
@@ -293,6 +300,12 @@ que cualquier otra puerta.** Por eso los casos que miden otra puerta de `guard-c
 creación— y, si no, deja el JSON vacío y el caso en FAIL en vez de pasar porque lo detuvo CA-13.
 `emite_edit`, con su `old_string:"x"`, queda para `guard-codigo` y para los casos que miden esa
 denegación.
+
+**Desde REQ-007 CA-47 (ADR-016), las dos puertas juzgan la identidad del destino, no el texto de la
+ruta**, y una ruta relativa se ancla en el `cwd` de la entrada. Los emisores compartidos fijan `cwd` en
+la raíz, así que las rutas relativas de los casos existentes siguen designando lo mismo. La sección 43
+trae su propio emisor porque sus filas necesitan un `cwd` distinto de la raíz, o ninguno. Y es una
+prueba **a nivel de hook**: la validación en el host real (CA-66, punto 6) es de la coordinadora.
 
 **Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
 falsea la máquina, el runner del CI y la carga. Los de arriba son **cocientes de duplicación**

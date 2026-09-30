@@ -1623,7 +1623,13 @@ done
 # `old_string` no literal se adaptan SIN cambiar su número: las que medían otra puerta pasan a
 # `emite_edit_lit`, y las que medían la vía no reconstruible comprueban la denegación nueva
 # (REQ-001 CA-10, CA-11 y CA-12 versionados, en la 14).
-CASOS_ESPERADOS=1178
+# Y 1178 → 1326 por REQ-007 CA-66 (SEC-119 y O-11, ADR-016): +147 en la sección 43, nueva —las filas
+# I, L, K, D, R, S y M1 de la identidad del destino y del REQ ilegible, y V1-V4 fuera de la tabla
+# mínima, cada una con su fail-before, su control o su movimiento declarado contra 9596e39; los
+# motivos, el tope de la cita y los procesos—; y +1 en la 32 (40 → 41): el control de CA-46 que
+# esperaba allow sobre el REQ con NUL pasa a deny (R1) sin cambiar el número, y gana su control
+# nuevo, el Write sin estado terminal (R6 (a)).
+CASOS_ESPERADOS=1326
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

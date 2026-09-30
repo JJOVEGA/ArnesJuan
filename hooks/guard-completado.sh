@@ -11,7 +11,10 @@
 # Se dispara cuando una edición dentro de `requirements/` deja el `Estado:` del REQ en el
 # valor terminal (`completado`). Si la transición no ocurre, el hook no hace nada — salvo
 # lo que no puede medir: un `Edit`/`MultiEdit` de `requirements/` cuyo documento resultante
-# no puede reconstruir se DENIEGA, toque o no el estado (REQ-023 CA-13, ADR-015).
+# no puede reconstruir se DENIEGA, toque o no el estado (REQ-023 CA-13, ADR-015), y también
+# el que cae sobre un archivo que no puede leer entero, y toda escritura cuyo destino no puede
+# determinar (REQ-007 CA-45 y CA-47, ADR-016). «Dentro de `requirements/`» es por la identidad
+# del destino, no por el texto de la ruta.
 set -uo pipefail
 # Directorio del propio script por expansión de parámetro. La forma habitual
 # —`$(cd "$(dirname ...)" && pwd)"`— son DOS forks anidados, y en esta
@@ -292,16 +295,19 @@ arnes_deny_no_reconstruible() {   # <n.o de la edicion> <total de ediciones> <ol
 # correcto: una denegación es final y no hay nada más que juzgar.
 arnes_guard_completado() {
   local tool fp bash_cmd req_dir estado_done pending_rel rel d escrituras nuevo
-  local disk qa seg sens rigor hall h id clase pending abiertas tmp cmd out rc disk_medible acc c prof ci
+  local disk qa seg sens rigor hall h id clase pending abiertas tmp cmd out rc acc c prof ci
   local -a piezas=()
   local modo resultante reconstruido np ne k old new ra causa done_norm est_antes est_despues
   local cita_desp est_citado cr_desp cr_linea
   local seg_antes amb intento v
+  local obj existe ilegible arreglo
 
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
   arnes_parse_input
-  # SEC-004: una escritura a traves de un enlace simbolico no se juzga, se deniega.
+  # SEC-004 (REQ-007 CA-49 (i)): por Edit/Write/MultiEdit, un enlace en el ULTIMO componente
+  # situado dentro de la raiz se deniega sea cual sea su destino. Cualquier otro enlace —un
+  # directorio enlazado, uno de fuera de la raiz— lo juzga la identidad del destino, abajo.
   arnes_deny_enlace
   tool="$ARNES_TOOL"; fp="$ARNES_FP"; bash_cmd="$ARNES_CMD"
 
@@ -348,30 +354,44 @@ arnes_guard_completado() {
   # del comando, no `estado:` seguido del valor—. Razón medida: la forma más natural
   # de cerrar un REQ por shell es `sed -i 's/en-revision/completado/' REQ-001.md`,
   # que sustituye el VALOR y no escribe nunca la palabra "Estado".
+  #
+  # «ESCRIBE EN requirements/» SE DECIDE POR LA IDENTIDAD DEL DESTINO (REQ-007 CA-47), no por su
+  # texto: el host no normaliza el comando, y `sed -i … docs/../requirements/REQ-X.md` cerro un REQ
+  # en el host real. Ningun atajo textual decide que un destino esta fuera —hasta 9596e39 todo lo
+  # que empezaba por `/tmp/` se saltaba, y un proyecto puede vivir bajo `/tmp`—. Un destino que no
+  # se puede determinar se trata como dentro, con la misma regla (CA-47, punto 7).
   if [ "$tool" = "Bash" ]; then
     while IFS= read -r d; do
       [ -n "$d" ] || continue
-      case "$d" in /dev/*|/tmp/*) continue ;; esac
-      case "$d" in
-        /*|[A-Za-z]:*) arnes_ruta_relativa "$d" "$ARNES_PROJ"; rel="$ARNES_REL" ;;
-        *)             arnes_norm_path "$d"; rel="${ARNES_NORM#./}" ;;
-      esac
-      case "$rel" in
-        "$req_dir"/*)
-          if grep -iqE "(^|[^a-zA-Z])${estado_done}([^a-zA-Z]|$)" <<< "$bash_cmd"; then
-            arnes_deny "ARNES: este comando escribe en '$rel' y menciona '$estado_done'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesitan el contenido resultante (veredictos de QA y Seguridad, cola de $pending_rel y quality gates). Hazlo con Edit/Write para que este mismo hook lo evalue (AGENTS.md 6)."
-          fi ;;
-      esac
+      arnes_identidad "$d"; arnes_id_pertenece req; rc=$?
+      [ "$rc" -ne 1 ] || continue
+      if grep -iqE "(^|[^a-zA-Z])${estado_done}([^a-zA-Z]|$)" <<< "$bash_cmd"; then
+        if [ "$rc" -eq 2 ]; then
+          arnes_cita_ruta "$d"
+          arnes_deny "ARNES: este comando escribe en $ARNES_CITA_RUTA y menciona '$estado_done', y no se pudo determinar a que archivo escribe: $ARNES_ID_C. Podria ser un REQ de '$req_dir', y la transicion de estado de un REQ no puede juzgarse desde Bash; una puerta que no puede medir no deja pasar (REQ-007 CA-47). Para corregirlo, $ARNES_ID_A."
+        fi
+        arnes_deny "ARNES: este comando escribe en '$ARNES_ID_REL' y menciona '$estado_done'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesitan el contenido resultante (veredictos de QA y Seguridad, cola de $pending_rel y quality gates). Hazlo con Edit/Write para que este mismo hook lo evalue (AGENTS.md 6)."
+      fi
     done <<< "$escrituras"
     return 0
   fi
 
   # --- Via Edit/Write/MultiEdit ---
-  arnes_ruta_relativa "$fp" "$ARNES_PROJ"; rel="$ARNES_REL"
-  case "$rel" in
-    "$req_dir"/*) ;;          # dentro de requirements/ -> seguimos
-    *) return 0 ;;
+  # Dentro de `requirements_dir` POR IDENTIDAD (REQ-007 CA-47): la ruta equivalente se juzga como
+  # la canonica, y la edicion no reconstruible de SEC-117 se deniega tambien por ella (REQ-023
+  # CA-13). Un destino que no se puede determinar se DENIEGA a todo agente: no hay archivo que leer
+  # ni documento que reconstruir (CA-45 (iii), CA-47 punto 7).
+  arnes_identidad "$fp"; arnes_id_pertenece req; rc=$?
+  case "$rc" in
+    1) return 0 ;;
+    2) arnes_cita_ruta "$fp"
+       arnes_deny "ARNES: no se pudo determinar a que archivo escribe $ARNES_CITA_RUTA: $ARNES_ID_C. Sin saber que archivo es, esta puerta no puede leerlo ni reconstruir el documento que quedaria escrito, y una puerta que no puede medir no deja pasar: no se permite a ningun agente (REQ-007 CA-45 y CA-47). Para corregirlo, $ARNES_ID_A." ;;
   esac
+  rel="$ARNES_ID_REL"
+  # Lo que se lee es el archivo de la lectura FISICA —o el destino del enlace, ya resuelto—, nunca
+  # la ruta escrita tomada desde el directorio del proceso del hook (CA-47, punto 9). Y «no existe»
+  # lo dice la identidad, que resolvio el tramo existente (punto 8).
+  obj="$ARNES_ID_O"; existe="$ARNES_ID_X"
 
   # Lo que entra, por herramienta, en UNA llamada a jq. Piezas separadas por \001 —un
   # byte que ningun Markdown lleva; bash no puede guardar NUL en una variable—:
@@ -406,27 +426,42 @@ arnes_guard_completado() {
   fi
   modo="${piezas[1]:-W}"
 
-  # El REQ en disco, leido de forma que DICE si no pudo leerse entero (SEC-002, R-001).
-  # `read -d ''` se detiene en el primer NUL y devuelve el trozo: un NUL en la primera
-  # linea dejaba `disk` vacio, los veredictos se leian de un texto incompleto —y un campo
-  # vacio no exige nada—, y ademas el `old_string` no se encontraba, asi que la puerta
-  # caia a la via mas laxa. Bastaba una escritura previa en requirements/, que ninguna
-  # puerta restringe.
-  disk=''; disk_medible=1
-  if [ -f "$fp" ]; then
-    arnes_lee_archivo "$fp" || disk_medible=0
-    disk="$ARNES_TEXTO"
-  fi
-  if [ "$disk_medible" -eq 0 ]; then
-    # No se puede reconstruir el documento resultante ni leer los veredictos que hay en
-    # disco. Lo que decide sigue siendo LA TRANSICION: solo se deniega si la edicion trae
-    # el estado terminal —la regla ancha de la via Bash, por la misma razon: sustituir el
-    # VALOR es la forma mas natural de cerrar un REQ a mano y no escribe «Estado» en ninguna
-    # parte—. Una edicion que no lo menciona no queda bloqueada por el byte.
-    if grep -iqE "(^|[^a-zA-Z])${estado_done}([^a-zA-Z]|$)" <<< "$ARNES_JQ"; then
-      arnes_deny "ARNES: no se puede tocar el estado de '$rel': el archivo en disco no se puede leer entero —un byte NUL lo trunca, o no hay permiso de lectura—, asi que no se pueden leer sus veredictos ni simular el documento resultante, y esta edicion menciona '$estado_done'. Una puerta que no puede medir no deja pasar (AGENTS.md 1). Quita el byte NUL del archivo y reintenta."
+  # --- El REQ en disco: INEXISTENTE, LEGIBLE o EXISTENTE PERO ILEGIBLE (REQ-007 CA-45) -------
+  # `read -d ''` se detiene en el primer NUL y devuelve el trozo (SEC-002, R-001), asi que se lee
+  # con `arnes_lee_archivo`, que DICE si no pudo leer el archivo entero.
+  #
+  # Hasta 9596e39, con el archivo ilegible solo se denegaba la edicion que MENCIONABA el estado
+  # terminal, con la premisa de que «lo que decide es la transicion». Era falso en las dos
+  # direcciones (QA-023-08): decidia la mencion, y una edicion que cierra sin escribir la palabra
+  # —`Estado: ado` y el `Edit` literal 'Estado: ' -> 'Estado: complet'— pasaba sin juzgarse
+  # (O-11). Y no poder leer el archivo no significa que la herramienta no pueda escribirlo: medido
+  # en el host (CLI 2.1.285), el `Edit` aplico una edicion sobre un REQ en UTF-16LE que este hook
+  # no podia leer. Ahora:
+  #   * un `Edit`/`MultiEdit` sobre un archivo ilegible NO se puede reconstruir: se DENIEGA, toque
+  #     o no el estado, sin buscar ninguna cadena y sin juzgar ninguna otra regla del cierre;
+  #   * un `Write` trae el documento entero y se juzga ENTERO, como posible transicion y sin tomar
+  #     NADA del disco: el estado anterior se desconoce, asi que se trata como si no dijera el
+  #     terminal, y veredictos, clase, rigor y sensibilidad salen solo del documento que llega.
+  # Frontera sin promesa: un error de lectura a mitad del archivo, que el shell no distingue del
+  # final, y un cambio del archivo entre esta lectura y la escritura (CA-47, F1).
+  disk=''; ilegible=''
+  if [ "$existe" = 1 ]; then
+    if arnes_lee_archivo "$obj"; then
+      disk="$ARNES_TEXTO"
+    elif [ ! -f "$obj" ]; then
+      ilegible="en esa ruta hay algo que no es un archivo regular (un directorio, un dispositivo o una tuberia)"
+      arreglo="deja en esa ruta un archivo regular de texto"
+    elif [ ! -r "$obj" ]; then
+      ilegible="el archivo no tiene permiso de lectura"
+      arreglo="devuelvele el permiso de lectura"
+    else
+      ilegible="el archivo contiene un byte NUL, que corta la lectura (lo lleva todo archivo en UTF-16 o UTF-32 con texto ASCII, por ejemplo las claves de la cabecera)"
+      arreglo="quita el byte NUL o guarda el archivo en UTF-8"
     fi
-    return 0
+  fi
+  if [ -n "$ilegible" ] && [ "$modo" != "W" ]; then
+    arnes_cita_ruta "$rel"
+    arnes_deny "ARNES: no se permite esta edicion de $ARNES_CITA_RUTA: el archivo existe pero no se puede leer entero como archivo de texto —$ilegible—, asi que esta puerta no puede reconstruir el documento que quedaria escrito ni leer sus veredictos. Sin ese documento no se puede saber si la edicion cierra el REQ, cambia un veredicto o no toca nada, y una puerta que no puede medir no deja pasar, toque o no el estado (REQ-007 CA-45). Para corregirlo, deja el archivo legible entero: $arreglo. La puerta no reescribe el archivo."
   fi
 
   # --- El documento RESULTANTE, no los fragmentos ----------------------------------
@@ -466,13 +501,14 @@ arnes_guard_completado() {
   nuevo=''; resultante=''; reconstruido=0
   if [ "$modo" = "W" ]; then
     nuevo="${piezas[2]:-}"; resultante="$nuevo"
-  elif [ "$np" -eq 5 ] && [ -z "${piezas[2]}" ] && [ ! -e "$fp" ]; then
+  elif [ "$np" -eq 5 ] && [ -z "${piezas[2]}" ] && [ "$existe" != 1 ]; then
     # (b) CREACION (REQ-023 CA-13 (i)): el archivo NO existe, la llamada trae UNA sola edicion
     # (np = bandera + modo + una tripleta) y su `old_string` es vacio. El documento resultante
     # es el `new_string`, y se juzga ENTERO, como el contenido de un `Write` sobre un archivo que
     # no existe. Hasta df550fa se juzgaba como fragmento: `**Estado:** completado` con QA
-    # pendiente salia allow (O-3 de QA). `-e` y no `-f`: una ruta que existe y no es un archivo
-    # normal no es una creacion, y entonces no se reconstruye.
+    # pendiente salia allow (O-3 de QA). «No existe» es el de la identidad (REQ-007 CA-47,
+    # punto 8): nada en la lectura fisica, con el tramo existente resuelto. Una ruta que existe y
+    # no es un archivo normal no es una creacion, y entonces no se reconstruye.
     nuevo="${piezas[3]//$'\r\n'/$'\n'}"; resultante="$nuevo"; reconstruido=1
   else
     # (a) LITERAL (REQ-023 CA-13 (i)): cada edicion, en su orden, con un `old_string` NO vacio
@@ -497,7 +533,7 @@ arnes_guard_completado() {
       old="${piezas[k]//$'\r\n'/$'\n'}"; new="${piezas[k+1]//$'\r\n'/$'\n'}"; ra="${piezas[k+2]}"
       nuevo+="$new"$'\n'
       if [ -z "$old" ] || [[ "$resultante" != *"$old"* ]]; then
-        if [ ! -e "$fp" ]; then
+        if [ "$existe" != 1 ]; then
           causa="el archivo no existe y esta llamada no es una creacion: crear un archivo es UNA sola edicion con old_string vacio y el documento entero como new_string"
         elif [ -z "$old" ]; then
           causa="su old_string esta vacio y el archivo ya existe: un old_string vacio solo describe la creacion de un archivo que no existe, no que texto se sustituye"
