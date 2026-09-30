@@ -2,6 +2,25 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-30 · Quinta autorización del propietario registrada (literal e íntegra, copia verificada): reparación acotada de SEC-119 (identificación del archivo protegido) y O-11 (lectura fallida) en una nueva vuelta excepcional; alcance identificado antes de despachar; SEC-120, independiente, queda fuera
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora.
+
+**Registro:** `PENDING_APPROVAL.md` § Resueltas gana la quinta autorización, literal. Se verificó con `diff` contra el texto recibido: 0 diferencias. Un primer envío llegó cortado y fue sustituido por el completo. Se resuelven la **ficha 4** (SEC-119 se repara) y la **decisión 7** (O-11 se corrige en esta frontera). Contadores: el de REQ-023 sigue 3 de 3; es una vuelta excepcional nueva, sin reinicio y sin REQ nuevo.
+
+**Alcance identificado antes de despachar** (quinta autorización, punto 4):
+- **SEC-120**, leído en R-045-A §4. **Causa:** un fallo de `jq` al leer o trocear **la entrada JSON del hook**, sin comprobar su código de salida. **Consecuencia:** allow (`MultiEdit` malformado; más de 10 000 niveles de anidamiento). **Evidencia:** a nivel de hook, y no alcanzable desde el host en lo observado. **Es independiente** de la identificación y la lectura del archivo protegido: queda **pendiente**, sin abrir su reparación.
+- **Criterios afectados:**
+  - REQ-007 **CA-45/CA-46** (SEC-002: NUL en disco; el control CA-46 que hoy espera allow para una edición sin estado sobre un REQ con NUL; QA-023-08 contra CA-46 (b));
+  - REQ-007 **CA-47/CA-48** (SEC-003: formas de ruta);
+  - REQ-007 **CA-49/CA-50** (SEC-004: «el arnés juzga la ruta escrita, no su destino», justo la premisa que SEC-119 desmiente; `arnes_deny_enlace` no mira directorios enlazados ni rutas con `..`);
+  - REQ-023 **CA-13 (iv)** (el archivo ilegible, fuera de CA-13).
+
+  El analista confirmará si REQ-001, REQ-004, REQ-009 o REQ-021, que también mencionan rutas o SEC-002/003/004, quedan afectados.
+- **Archivos de código:** `hooks/lib.sh` (`arnes_norm_path`, `arnes_ruta_relativa`, `arnes_deny_enlace`; la lectura `arnes_lee_archivo` se usa sin cambiar); `hooks/guard-completado.sh` (la ruta por `Edit`/`Write`/`MultiEdit` y por `Bash`, y la vía `disk_medible`); `hooks/guard-codigo.sh` (la ruta del archivo y los destinos de `Bash`). Hay **otro lector que comparte** `arnes_norm_path`: `tools/arnes-paralelo.sh`, que compara rutas declaradas y cuya conducta no debe cambiar.
+- **Pruebas afectadas:** la sección 32 (CA-45 a CA-48), la 33-2 (CA-49/CA-50), la 04 (formas de Windows), la 01 y la 16 (`guard-codigo`), y la 42 y la 14 (regresión de CA-13); el analista y el desarrollador completarán la lista por propiedad.
+
+**Avance (regla 6):** alcance fijado. Siguen el contrato del analista y, en paralelo, la línea base en el host real con el hook actual.
+
 ## [Interno] — 2026-09-30 · Vuelta excepcional agrupada: determinación de seguridad R-045-A sobre `8745b3f` (código de `5dfabb3`) — CA-13 sin permiso silencioso dentro de su alcance; SEC-117 `mitigado`; REQ-023, REQ-031 y REQ-001 `Seguridad: aprobado`; REQ-007 CA-46 (c) conforme; SEC-119 y SEC-120 registrados
 > Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `auditor-seguridad`; coordinadora (cola y ESTADO). Unos 210 k tokens.
 

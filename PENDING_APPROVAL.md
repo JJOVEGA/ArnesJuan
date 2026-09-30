@@ -39,7 +39,7 @@
 ### [2026-09-27, puesta al día 2026-09-29] (coordinadora) — Decisión de publicación de 1.35.0: SEC-115/SEC-118 y hueco C, pendientes; SEC-117 en reparación autorizada (ficha 3 resuelta); decisiones 4 y 5 resueltas
 
 - **Contexto:** el 2026-09-29 el propietario autorizó implementar SEC-047 (mitad 1 de REQ-023) y preparar el candidato v1.35.0 (§ Resueltas, entrada de esa fecha, texto literal). **Esa autorización NO acepta el aplazamiento de SEC-115 ni del hueco C**: los dos siguen pendientes aquí, con sus fichas finales abajo. El antiguo asunto 3 (SEC-047 y la celda de §13) queda resuelto por esa autorización; los asuntos 1 y 2 de la redacción del 2026-09-28 se sustituyen por las fichas, sin perder nada de lo que decían.
-- **Acción que impide (regla 2):** **publicar** 1.35.0 —tag, publicación, actualización de la instalación estable— hasta que el propietario decida las fichas 1, 2 y 4 y la decisión 7, y se complete la reparación de SEC-117 (ficha 3 y decisiones 4, 5 y 6 resueltas); y, mientras esta entrada esté aquí, **cerrar**: marcar **cualquier** REQ `completado` (`guard-completado`; deliberado). **No** impide **implementar** ni **probar** el candidato. **Parte afectada:** la publicación de 1.35.0 y el cierre de REQ-023 y REQ-031. **Evidencia:** la de cada ficha. **Qué lo resuelve:** la decisión del propietario sobre cada ficha.
+- **Acción que impide (regla 2):** **publicar** 1.35.0 —tag, publicación, actualización de la instalación estable— hasta que el propietario decida las fichas 1 y 2 y se complete la reparación de SEC-119 y O-11 (ficha 3, ficha 4 y decisiones 4 a 7 resueltas); y, mientras esta entrada esté aquí, **cerrar**: marcar **cualquier** REQ `completado` (`guard-completado`; deliberado). **No** impide **implementar** ni **probar** el candidato. **Parte afectada:** la publicación de 1.35.0 y el cierre de REQ-023 y REQ-031. **Evidencia:** la de cada ficha. **Qué lo resuelve:** la decisión del propietario sobre cada ficha.
 
 **Ficha 1 — SEC-115 y SEC-118 (`instrumento`, abiertos, NO aceptados): un hook que no emite decisión —por tiempo (SEC-115) o por el tamaño de su propio motivo (SEC-118)— deja pasar el cierre entero.** *(SEC-118 añadido y fórmula de la limitación corregida el 2026-09-29, por R-045 §6.)*
 - **Consecuencia reproducida.** R-044-C sobre `cdcad5d` (2026-09-28, WSL2/Linux): `QA: pendiente (…)` con ≈ 255 KB de evidencia → deny en **73,6 s**; `Write` de 2 025 113 bytes → **80,2 s** (1 012 650 bytes → 20,5 s). CA-A16 (Claude Code CLI 2.1.272, `claude -p`, WSL2, un intento más un control `deny`, 2026-09-28): un hook que agota su timeout sin decidir **deja pasar la herramienta**. El REQ se cerraría con QA y seguridad pendientes: dejan de correr **todas** las puertas del cierre. **No comprobado** en la sesión interactiva del editor ni en Windows.
@@ -169,7 +169,7 @@
   - La **corrección de texto de QA-023-06** ya está hecha por el analista, sin validar, en commit local. La vuelta agrupada no se parte, así que el desarrollador, QA y seguridad esperan a esta decisión.
   - La coordinadora decide por su cuenta, sin necesitarte, que el principio «una frase condicional no acredita protección» se aplique también a REQ-031 CA-A13 (el techo) en la misma pasada del analista. Es una sede de REQ-031 afectada por el mismo principio y está dentro de la autorización.
 
-**Ficha 4 — QA-023-07 (`instrumento`, severidad alta, PREEXISTENTE; NO aceptado; añadida el 2026-09-30, escalada por QA como urgencia de seguridad).** Una ruta con segmentos `..` que entra en `requirements/` o en el código protegido desde un directorio libre no la juzga ninguna puerta.
+**Ficha 4 — RESUELTA por el propietario el 2026-09-30 (quinta autorización): SEC-119 se REPARA en esta frontera.** *Texto original, conservado:* QA-023-07 (`instrumento`, severidad alta, PREEXISTENTE; NO aceptado; añadida el 2026-09-30, escalada por QA como urgencia de seguridad). Una ruta con segmentos `..` que entra en `requirements/` o en el código protegido desde un directorio libre no la juzga ninguna puerta.
 - **Consecuencia medida a nivel de hook, no en el host** (QA, 2026-09-30, igual en el candidato `cd47f06`, en `df550fa` y en 1.33.2; `docs/qa/REQ-023.md`, adenda de la vuelta excepcional, §10):
   - un `Edit` que cierra un REQ `critico` con QA pendiente, a través de una ruta con `..`, sale **allow**, sea literal o no literal;
   - un `Write` de la coordinadora a `<raíz>/docs/../src/a.ts` sale **allow** en `guard-codigo`.
@@ -188,7 +188,7 @@
   - si se aplaza, la cláusula de §13 y las notas deben declarar SEC-119 como limitación de todas las filas.
 - **Recomendación de la coordinadora:** coincide con el auditor en que es la misma clase de efecto que SEC-117, y tú ya fijaste no publicar con un bypass total aplazado. Recomiendo **reparar antes de publicar**, con una autorización expresa, porque la vuelta vigente no lo cubre.
 
-**Decisión 7 — O-11 (QA, 2026-09-30): la vía del archivo ilegible (NUL en disco, SEC-002) queda fuera de CA-13.** Con NUL en el disco, una edición no reconstruible que no escribe la palabra del estado terminal recibe permiso, y CA-13 (iv) lo excluye con la causa que da la tercera autorización («porque no encuentra literalmente el texto anterior»). Pero tu cuarta autorización reformula la propiedad **sin esa causa** («una edición sobre un REQ protegido que el hook no puede reconstruir no puede recibir permiso silencioso»).
+**Decisión 7 — RESUELTA por el propietario el 2026-09-30 (quinta autorización): O-11 se corrige dentro de esta misma frontera.** *Texto original, conservado:* O-11 (QA, 2026-09-30): la vía del archivo ilegible (NUL en disco, SEC-002) queda fuera de CA-13. Con NUL en el disco, una edición no reconstruible que no escribe la palabra del estado terminal recibe permiso, y CA-13 (iv) lo excluye con la causa que da la tercera autorización («porque no encuentra literalmente el texto anterior»). Pero tu cuarta autorización reformula la propiedad **sin esa causa** («una edición sobre un REQ protegido que el hook no puede reconstruir no puede recibir permiso silencioso»).
 - **Pregunta:** ¿la vía del archivo ilegible entra en la propiedad?
 - **Opciones:**
   - **(A)** No: se queda como está, declarada en CA-13 (iv), con SEC-002 como sede. La **consecuencia** es un residuo estrecho: requiere un NUL ya escrito en el REQ.
@@ -204,9 +204,89 @@
   - **QA-023-02 / SEC-117:** es de severidad crítica y de realismo no bajo, pero preexistente y ajeno al alcance de 1.35.0. **El auditor (R-045 §3) recomienda lo mismo que la coordinadora:** publicarlo declarado y abrir su REQ de reparación de inmediato, como parche propio, con revisión el 2026-10-06. Motivo: el defecto ya está en 1.33.2 y en `v1.34.0`, que son las versiones instaladas, así que retener 1.35.0 no protege a nadie y deja vivo el bypass por variante que 1.35.0 cierra dentro de su frontera.
     - **Condiciones del auditor:** notas correctas y ficha 1 corregida (ya hecho aquí). Además, conviene ejecutar el lado del CLI en una sesión real antes de reparar.
     - **REQ-001:** el auditor recomienda añadir `SEC-117 (instrumento)` a su `Hallazgos abiertos:` sin tocar su `Estado:`. REQ-001 se reabriría por §9 cuando el REQ de reparación versione CA-10/CA-11. QA pide que tu decisión sobre esta ficha lo resuelva de forma expresa. **Registrarlas aquí no las convierte en riesgos aceptados.**
-- **Espera:** decisión del propietario sobre las fichas 1 (SEC-115/SEC-118), 2 (C) y **4 (QA-023-07)**, y sobre la **decisión 7 (O-11)**. La reparación de SEC-117 tiene QA favorable y está en la determinación de seguridad. La ficha 3 y la decisión 5 se resolvieron en la tercera autorización del 2026-09-29. La decisión 4 está resuelta y su corrección se hizo (`e7562e7`), con QA-023-05 cerrado; la determinación de seguridad no se ha emitido porque QA no fue favorable. **Trabajo que sigue mientras tanto:** el candidato v1.35.0 —SEC-047 (mitad 1 de REQ-023) y la preparación de la versión—, autorizado el 2026-09-29; no depende de estas dos decisiones. **Cerrar REQ-023 y REQ-031 queda pendiente** mientras esta entrada esté aquí.
+- **Espera:** decisión del propietario sobre las fichas 1 (SEC-115/SEC-118) y 2 (C). La ficha 4 y la decisión 7 se resolvieron en la quinta autorización (2026-09-30), y su reparación está en curso. La reparación de SEC-117 tiene QA favorable y está en la determinación de seguridad. La ficha 3 y la decisión 5 se resolvieron en la tercera autorización del 2026-09-29. La decisión 4 está resuelta y su corrección se hizo (`e7562e7`), con QA-023-05 cerrado; la determinación de seguridad no se ha emitido porque QA no fue favorable. **Trabajo que sigue mientras tanto:** el candidato v1.35.0 —SEC-047 (mitad 1 de REQ-023) y la preparación de la versión—, autorizado el 2026-09-29; no depende de estas dos decisiones. **Cerrar REQ-023 y REQ-031 queda pendiente** mientras esta entrada esté aquí.
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-09-30, quinta autorización) — **Reparación acotada de la identificación y lectura de archivos protegidos: SEC-119 y O-11** (SEC-120 sólo si comparte la causa); nueva vuelta excepcional agrupada, sin reiniciar contadores; resuelve la ficha 4 (reparar) y la decisión 7 (se corrige dentro de esta frontera)
+
+**Texto del propietario, literal e íntegro** (mensaje del 2026-09-30 a la sesión coordinadora del worktree `ArnesJuan-v1.35`). Un primer envío del mismo mensaje llegó cortado y el propietario lo reenvió completo; se transcribe el completo.
+
+> Autorizo una reparación acotada de la identificación y lectura de archivos protegidos: SEC-119 y su relación con O-11. El objetivo es terminar esta frontera de seguridad, conservando la reparación de SEC-117 y evitando otra revisión general.
+>
+> 1. Base y contexto
+>
+> Parte de `cand/1.35.0`, cabeza conocida `9596e39fca6c8eda6506ee1b26f4bdbd71918313`, PR #59. Verifica el estado y utiliza las instrucciones del worktree correcto. Conserva cambios ajenos y toda la evidencia anterior.
+>
+> SEC-117 está mitigado dentro de lo ensayado. No reabras su investigación; comprueba únicamente las regresiones que pueda introducir este cambio.
+>
+> 2. SEC-119: identificar el archivo protegido
+>
+> Propiedad exigida: las rutas equivalentes que apuntan al mismo archivo protegido no pueden recibir permisos distintos por su escritura.
+>
+> Reutiliza las reproducciones existentes de `..`, `././` y directorios enlazados. Distingue:
+> - Lo que recibe realmente el hook desde el host.
+> - Lo que sólo se ha inyectado directamente al hook.
+> - La ruta utilizada finalmente por la herramienta.
+>
+> Implementa una resolución de rutas coherente para `guard-completado` y `guard-codigo`, conforme a sus contratos. No basta con borrar segmentos del texto: considera el directorio de trabajo y los enlaces simbólicos.
+>
+> Preserva las operaciones legítimas fuera del ámbito protegido. Contempla archivos nuevos mediante su directorio padre existente, sin confundir «todavía no existe» con «no se pudo determinar el destino».
+>
+> No prometas resolver carreras de enlaces o cambios concurrentes si no existe un mecanismo que lo garantice; declara esa frontera.
+>
+> 3. O-11: lectura fallida
+>
+> Autorizo corregir el tratamiento del archivo ilegible dentro de esta misma frontera.
+>
+> Distingue archivo inexistente, archivo existente pero ilegible y error al resolver la ruta. Para una operación dentro del ámbito protegido, no poder leer o reconstruir lo necesario para juzgarla no puede convertirse en permiso silencioso.
+>
+> No supongas que, porque el hook no puede leer, la herramienta tampoco podrá escribir. Comprueba esa relación donde sea reproducible; si no lo es, declara el límite.
+>
+> El mensaje debe indicar la causa y cómo corregirla, sin recomendar otra herramienta para eludir la puerta.
+>
+> 4. SEC-120 y contratos afectados
+>
+> Lee primero la ficha existente de SEC-120 y resume causa, consecuencia y evidencia. Inclúyelo en esta reparación sólo si comparte directamente la causa de identificación o lectura del archivo. Si es independiente, consérvalo pendiente y no abras su reparación.
+>
+> Autorizo al analista a versionar los criterios existentes directamente afectados, con ADR si corresponde, y a reabrir los requisitos que lo exijan. No conserves una expectativa de allow basada en una premisa desmentida. Registra el cambio de compatibilidad y no cierres requisitos automáticamente.
+>
+> No crees otro REQ para eludir contadores. Antes de despachar, deja identificados los criterios, archivos y pruebas afectados, sin volver a pedirme autorización por las dependencias indispensables de esta frontera.
+>
+> 5. Validación y presupuesto
+>
+> Autorizo una nueva vuelta excepcional agrupada: analista para el contrato, desarrollador, QA y seguridad. Registra la excepción sin reiniciar los contadores anteriores.
+>
+> Prueba al menos:
+> - Ruta canónica y rutas equivalentes hacia el mismo archivo protegido.
+> - Enlace de directorio que conduce a un destino protegido.
+> - Operación legítima fuera del ámbito protegido.
+> - Creación legítima de un archivo nuevo.
+> - Archivo ilegible y error de resolución.
+> - Edición literal, rechazo de la edición no reconstruible de SEC-117 y reapertura legítima.
+>
+> Comprueba en el host real los casos alcanzables mediante sus herramientas, con control de denegación y verificación del archivo final. Separa esas pruebas de las realizadas sólo a nivel de hook. No atribuyas cobertura a Windows, MultiEdit u otros hosts no ejercidos.
+>
+> Adapta los fixtures afectados para que cada prueba siga llegando al control que pretende medir. No cambies expectativas indiscriminadamente a deny ni retires casos para obtener verde.
+>
+> QA revisa el delta y sus regresiones; seguridad después de QA favorable. Reutiliza evidencia intacta. Si esta vuelta termina con un bloqueo, entrega el impedimento preciso y no abras otra automáticamente.
+>
+> 6. Entrega y límites
+>
+> Autorizo commits, push sin force y actualización del PR #59 en borrador. Ejecuta las comprobaciones exigidas y observa el CI sobre la cabeza final. Conserva todas las corridas y no relances buscando verde.
+>
+> Actualiza notas, guía y comentarios únicamente para describir fielmente esta reparación, su compatibilidad y sus límites.
+>
+> Entrega un único resultado: antes/después, cobertura real por host, determinación de SEC-119/O-11/SEC-120, contratos afectados, firmas, SHA, CI y decisiones pendientes de publicación.
+>
+> SEC-115, SEC-118 y el hueco C siguen sin aceptación. No abras trabajo independiente sobre ellos, modelos, sondas, workflow, ruleset o consumidores.
+>
+> Sin fusión, cierres automáticos, tag ni publicación. El resultado buscado es esta frontera reparada y un candidato concreto; no otra propuesta preliminar ni una campaña nueva de mejoras.
+
+**Lo que la coordinadora añade, rotulado como suyo:**
+- **Cabeza de partida comprobada:** `9596e39fca6c8eda6506ee1b26f4bdbd71918313` = `origin/cand/1.35.0` = PR #59, en borrador.
+- **Contadores:** el de REQ-023 sigue **agotado (3 de 3)**. Ésta es una segunda vuelta excepcional, autorizada, que no reinicia ningún contador. No se crea otro REQ.
+- **Siguen abiertos y sin aceptar:** SEC-115, SEC-118 y C.
 
 ### RESUELTA (propietario, 2026-09-30, cuarta autorización) — **Decisión 6 (P-SEC117): opción A.** Se amplía el alcance para corregir los contratos (REQ-001 CA-10, CA-11 y CA-12, y REQ-007 CA-46 (c), con ADR) y las pruebas que dependen de la premisa desmentida por la reproducción real de SEC-117; se reabre REQ-001 según §9; QA y seguridad cubren también REQ-001 y REQ-007; todo dentro de la misma vuelta excepcional agrupada
 
