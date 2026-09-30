@@ -1004,10 +1004,9 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
       4 bytes y 2 501 cortas con `ñ`. No hay cifra para otros caracteres, hosts ni tamaños; en Windows
       no está medido, y que el cliente trate como permitir un hook sin decisión es inferido.
 
-    Y, como toda regla de la puerta de
-    cierre, ésta juzga el documento que la puerta reconstruye: por un `Edit`/`MultiEdit` cuyo
-    `old_string` no está literal en el archivo y que la herramienta aplica igualmente, un cierre puede
-    no pasar por esta regla ni por ninguna otra (SEC-117, sin reparar; entrada siguiente).
+    Y, como toda regla de la puerta de cierre, ésta juzga el documento que la puerta reconstruye. Lo
+    que no puede reconstruir se deniega antes de llegar a ella: es la entrada «Edición no
+    reconstruible», más abajo.
   - **Sin eufemismo: las versiones anteriores pudieron cerrar un REQ con un hallazgo bloqueante
     abierto.** Hasta `v1.34.0`, `SEC-A (instrumento) · SEC-B (usuario/dinero)` y
     `SEC-A (instrumento); SEC-B (contrato)` dejaban cerrar: la puerta sólo partía por comas y no leía
@@ -1044,9 +1043,9 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     por el propietario, ADR-014); `Hallazgos abiertos` repetida con su forma exacta, cuando es la única
     ambigüedad, la decide la regla de la entrada anterior, con su limitación SEC-118. La puerta cita las líneas,
     con los caracteres invisibles escritos de forma legible. **Esta regla alcanza sólo a las ediciones
-    cuyo documento resultante la puerta reconstruye:** un `Write`, o un `Edit`/`MultiEdit` cuyo
-    `old_string` está literal en el archivo; la vía de un `old_string` que sólo coincide tras la
-    normalización de la herramienta queda fuera (SEC-117, abajo). Dentro de ese alcance, **sólo
+    cuyo documento resultante la puerta reconstruye:** un `Write`, o un `Edit`/`MultiEdit`
+    reconstruible. La edición que la puerta no puede reconstruir la deniega otra regla: la entrada
+    «Edición no reconstruible», abajo. Dentro de ese alcance, **sólo
     deniega** cuando la cabecera resultante es ambigua, **alguna** línea `Estado` —la exacta, una
     repetida o una variante— dice el estado terminal y el `Estado` que gobierna en disco (la primera
     declaración exacta; si no hay ninguna, nada lo decía) **no** lo decía. Por eso **reabrir** un REQ
@@ -1075,17 +1074,16 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     vía, no la propiedad** —las variantes y repeticiones de las claves de control dentro de la
     frontera declarada—, y **no hallar nada NO acredita ausencia de exposición**. Vías conocidas que
     **no** encuentra (ejemplos **no exhaustivos**; el sitio único donde viven es
-    `docs/seguridad/registro-seguridad.md`, SEC-047, SEC-050 y SEC-117): una letra sustituida por un
+    `docs/seguridad/registro-seguridad.md`, SEC-047, SEC-050 y, para los cierres del pasado, SEC-117): una letra sustituida por un
     **homoglifo**; una letra ASCII **de más, de menos o cambiada**; unos **dos puntos que no son
     ASCII**; una línea con un **signo de estructura** visible —también un espacio duro en lugar del
     blanco que sigue al guion del marcador—; una clave de **más de 256 bytes**, que es una
     **limitación**: se sigue leyendo como ausencia y ese límite **no** la protege; **comentar o
     borrar** la línea de un campo (SEC-050, la semántica de la ausencia, que esta versión no cambia);
-    un cierre hecho con un `Edit` cuyo `old_string` el hook no encuentra literal y la herramienta sí
-    —comillas tipográficas o `\uXXXX`—, que puede no pasar por ninguna puerta (SEC-117, registro de
-    seguridad de QA-023-02, preexistente, sin reparar en esta versión; con las comillas, reproducido en
-    el CLI 2.1.285 el 2026-09-29, y con `\uXXXX`, `MultiEdit`, el editor interactivo, Windows u otras
-    versiones del CLI, sin ensayar); y lo que un lector de bash no ve (un byte NUL, un archivo en UTF-16). Si el informe no saca nada,
+    un REQ que **ya se cerró con una versión anterior** por un `Edit` cuyo `old_string` el hook no
+    encontraba literal y la herramienta sí —comillas tipográficas o `\uXXXX`—, que pudo no pasar por
+    ninguna puerta (SEC-117; desde esta versión esa vía se deniega, entrada «Edición no reconstruible»);
+    y lo que un lector de bash no ve (un byte NUL, un archivo en UTF-16). Si el informe no saca nada,
     **no has terminado**: vuelve a la pregunta de estado.
   - **Qué se migra de texto:** la **fila nueva de `AGENTS.md` §13** («una cabecera ambigua no deja
     cerrar») y el párrafo de **`requirements/README.md` § «Veredictos de validación»** que define la
@@ -1094,6 +1092,42 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     versiones pasadas no cambian**: la regla de «última aparición» sigue siendo con la que **se leen**
     los valores; lo nuevo es que, **al cerrar**, una clave de control repetida deniega, dentro del
     alcance que esta entrada declara y con la limitación que la anterior nombra aparte.
+
+- **Edición no reconstruible (REQ-023 CA-13, ADR-015): un `Edit` o `MultiEdit` de `requirements/` que
+  la puerta no puede reconstruir se DENIEGA. ES UN CAMBIO DE CONDUCTA Y DE COMPATIBILIDAD.** La conducta
+  nueva **llega con el plugin**, sin migrar nada: está en `hooks/guard-completado.sh`, y no hay llave nueva
+  en `.arnes/config.json`. Esta entrada **se prepara con la versión y NO declara que el cambio haya
+  llegado a tu proyecto**: tu `AGENTS.md` y tu `requirements/README.md` siguen **congelados** hasta que
+  migres, y migrar es **un acto tuyo**.
+  - **Lo que deja de pasar.** Un `Edit`/`MultiEdit` dentro de `requirements/` cuyo `old_string` no está
+    **literal** en el archivo —por ejemplo, con comillas rectas donde el archivo tiene tipográficas, o con
+    un escape `\uXXXX`— se deniega **aunque no toque el estado**. Vale también al reabrir un REQ y en
+    archivos que no son REQ, como `requirements/README.md`. Hasta `v1.34.0` esa edición se juzgaba por su
+    fragmento y, si no escribía el estado terminal, pasaba.
+    - Lo que la puerta **sí** puede reconstruir se juzga como siempre: la edición literal, la creación de
+      un archivo con una sola edición de `old_string` vacío —que se juzga entera, como un `Write`— y la
+      reapertura literal.
+    - Qué cuenta exactamente como reconstruible está en `requirements/REQ-023.md` CA-13 del arnés; esta
+      guía no lo transcribe.
+  - **La salida:** el motivo dice qué edición falló y enseña el comienzo de su `old_string` con los
+    caracteres invisibles escritos de forma legible. Lee el archivo y repite la edición copiando el
+    `old_string` **literal** —comillas, guiones, espacios y acentos tal como están—.
+  - **Sin eufemismo: las versiones anteriores pudieron cerrar un REQ sin pasar por ninguna puerta.** Con
+    un `Edit` cuyo `old_string` el hook no encontraba literal y la herramienta sí, que sustituía sólo el
+    valor del estado, un REQ `critico` quedaba `completado` con QA y seguridad pendientes, un `contrato`
+    abierto y la cola ocupada (SEC-117). Está reproducido en el CLI 2.1.285, con comillas tipográficas.
+  - **Qué hay que auditar: la pregunta es de ESTADO,** y es la misma de la entrada anterior: **cuáles de
+    tus REQ en estado terminal no cerrarían hoy**. Un REQ que se cerró por esa vía no deja rastro que un
+    comando pueda encontrar: `tools/arnes-lectura.sh` **no** lo detecta. Se hace a mano, REQ a REQ,
+    comprobando que su cabecera vigente autorizaba el cierre; el que no lo autorizaba se reabre
+    (`AGENTS.md` §9).
+  - **Qué se migra de texto:** la **fila nueva de `AGENTS.md` §13** («un `Edit`/`MultiEdit` de
+    `requirements/` que la puerta no puede reconstruir se deniega»), la **cláusula que sigue a la tabla de
+    §13** —que separa la propiedad de cada fila de sus limitaciones y dice qué pasa con la edición no
+    reconstruible— y los párrafos de **`requirements/README.md` § «Veredictos de validación»** que remiten
+    a esta regla. Cada uno va **por separado**, con la misma identificación por contenido y título y la
+    misma tabla de estados de la primera entrada de este apartado. Si prefieres seguir con tu texto
+    actual, conservarlo es una respuesta válida; la puerta decide igual.
 
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 

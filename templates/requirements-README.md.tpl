@@ -86,11 +86,11 @@ sola vez). Si la cabecera escribe una de ellas **de otra forma** —una
 *variante*— o la declara **más de una vez**, **aunque las dos líneas digan lo mismo**, la cabecera es
 **ambigua** y la puerta **deniega el cierre** citando las líneas —las primeras, y cuántas más hay—, con
 los caracteres invisibles escritos de forma legible; `tools/arnes-lectura.sh` las nombra todas. No lee la variante como la clave ni elige entre dos declaraciones, y ningún lector
-cambia el valor que lee. **A qué ediciones alcanza esta regla:** a las que dejan a la puerta
-reconstruir el documento resultante —un `Write`, o un `Edit`/`MultiEdit` cuyo `old_string` (cada uno,
-en un `MultiEdit`) está **literal** en el archivo—. Un `Edit`/`MultiEdit` cuyo `old_string` sólo
-coincide tras la normalización que aplica la herramienta queda **fuera** («Fuera, y sin promesa»,
-abajo). **Cuándo deniega, dicho entero para ese alcance:** cuando la cabecera que quedaría escrita es
+cambia el valor que lee. **A qué ediciones alcanza esta regla:** a las que la puerta puede
+reconstruir: un `Write`, o un `Edit`/`MultiEdit` reconstruible según REQ-023 CA-13 del repositorio del
+arnés, que es la sede única de esa definición. **Una edición que la puerta no puede reconstruir no
+queda fuera ni pasa:** la deniega esa otra regla antes de llegar a ésta. **Cuándo deniega, dicho entero
+para ese alcance:** cuando la cabecera que quedaría escrita es
 ambigua, **alguna** de sus líneas `Estado` —la exacta, una repetida o una variante— dice el estado
 terminal, y la línea `Estado` que gobierna en disco (la primera declaración exacta; si no hay ninguna,
 nada lo decía) **no** lo decía. Nada más: reabrir o editar un REQ cuyo `Estado` que gobierna en disco ya
@@ -127,17 +127,10 @@ marcador (`-`+espacio duro+`Estado:`), que ya no forma marcador y deja el `-` co
 **más de 256 bytes**. Todo eso se sigue leyendo como hasta ahora: como si la línea no declarara el campo, que
 para ese campo es su **ausencia**. Las claves de más de 256 bytes son una **limitación**: se leen como
 ausencia y ese límite **no las protege**. Esta regla mira la **clave**: el valor se lee como siempre.
-**Y fuera también, por la vía y no por la forma de la línea:** un `Edit`/`MultiEdit` cuyo `old_string`
-no está literal en el archivo pero que la herramienta aplica igualmente, porque sólo coincide tras su
-normalización: **reproducido** en el CLI 2.1.285 (`claude -p`, WSL2, 2026-09-29) con comillas rectas en
-el `old_string` donde el archivo tiene tipográficas —el hook sale sin decisión, el host aplica la edición
-y el REQ queda cerrado—; que también desescapa `\uXXXX` se leyó en el binario del CLI 2.1.284 y se emuló.
-Sin ensayar en el host: el escape `\uXXXX`, `MultiEdit`, el editor interactivo, Windows y otras
-versiones del CLI; no se sabe desde qué versión existe. En esa vía la
-puerta no reconstruye el documento y juzga sólo el fragmento: esta regla **no** la alcanza, y por ella un
-cierre puede no pasar por ninguna puerta. Es QA-023-02 / SEC-117 del repositorio del arnés,
-preexistente y sin reparar: **no hay promesa** de que toda edición que la herramienta aplica pase por
-esta regla.
+**La edición que la puerta no puede reconstruir ya no está en esta lista.** Un `Edit`/`MultiEdit` cuyo
+`old_string` sólo coincide tras la normalización que aplica la herramienta —comillas tipográficas,
+`\uXXXX`— **se deniega**. La norma está en REQ-023 CA-13 del repositorio del arnés (ADR-015), que es la
+vía de SEC-117. Para editar un REQ, copia el `old_string` literal del archivo.
 
 ## Nivel de rigor
 Cuánta demostración se exige **por encima** de las quality gates, que son binarias y corren
@@ -249,7 +242,9 @@ corrida por punto, hook entero, lista no exhaustiva: 60 006 bytes → deniega po
 hay promesa**: por `Edit` sigue siendo lineal (2 000 000 bytes → 2,1 s), pero por `Write` el contenido
 entrante pasa antes por otra operación del hook que crece más que linealmente (1 000 000 bytes →
 28 s; 2 000 000 → 84 s, por encima de los 60 s del cliente). En Windows/MSYS no está medido y será más lento.
-Ese residuo tiene dueño y vencimiento en el `docs/PENDIENTES.md` del repositorio del arnés.
+Ese residuo tiene dueño y vencimiento en el `docs/PENDIENTES.md` del repositorio del arnés. Es una
+limitación aparte de la regla —SEC-115 del mismo repositorio— y no forma parte de lo que la regla
+promete.
 
 | Clase | Qué es | Efecto en el cierre |
 |---|---|---|

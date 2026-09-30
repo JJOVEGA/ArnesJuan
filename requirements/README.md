@@ -86,11 +86,11 @@ sola vez). Si la cabecera escribe una de ellas **de otra forma** —una
 *variante*— o la declara **más de una vez**, **aunque las dos líneas digan lo mismo**, la cabecera es
 **ambigua** y la puerta **deniega el cierre** citando las líneas —las primeras, y cuántas más hay—, con
 los caracteres invisibles escritos de forma legible; `tools/arnes-lectura.sh` las nombra todas. No lee la variante como la clave ni elige entre dos declaraciones, y ningún lector
-cambia el valor que lee. **A qué ediciones alcanza esta regla:** a las que dejan a la puerta
-reconstruir el documento resultante —un `Write`, o un `Edit`/`MultiEdit` cuyo `old_string` (cada uno,
-en un `MultiEdit`) está **literal** en el archivo—. Un `Edit`/`MultiEdit` cuyo `old_string` sólo
-coincide tras la normalización que aplica la herramienta queda **fuera** («Fuera, y sin promesa»,
-abajo). **Cuándo deniega, dicho entero para ese alcance:** cuando la cabecera que quedaría escrita es
+cambia el valor que lee. **A qué ediciones alcanza esta regla:** a las que la puerta puede
+reconstruir: un `Write`, o un `Edit`/`MultiEdit` reconstruible según REQ-023 CA-13 del repositorio del
+arnés, que es la sede única de esa definición. **Una edición que la puerta no puede reconstruir no
+queda fuera ni pasa:** la deniega esa otra regla antes de llegar a ésta. **Cuándo deniega, dicho entero
+para ese alcance:** cuando la cabecera que quedaría escrita es
 ambigua, **alguna** de sus líneas `Estado` —la exacta, una repetida o una variante— dice el estado
 terminal, y la línea `Estado` que gobierna en disco (la primera declaración exacta; si no hay ninguna,
 nada lo decía) **no** lo decía. Nada más: reabrir o editar un REQ cuyo `Estado` que gobierna en disco ya
@@ -127,17 +127,10 @@ marcador (`-`+espacio duro+`Estado:`), que ya no forma marcador y deja el `-` co
 **más de 256 bytes**. Todo eso se sigue leyendo como hasta ahora: como si la línea no declarara el campo, que
 para ese campo es su **ausencia**. Las claves de más de 256 bytes son una **limitación**: se leen como
 ausencia y ese límite **no las protege**. Esta regla mira la **clave**: el valor se lee como siempre.
-**Y fuera también, por la vía y no por la forma de la línea:** un `Edit`/`MultiEdit` cuyo `old_string`
-no está literal en el archivo pero que la herramienta aplica igualmente, porque sólo coincide tras su
-normalización: **reproducido** en el CLI 2.1.285 (`claude -p`, WSL2, 2026-09-29) con comillas rectas en
-el `old_string` donde el archivo tiene tipográficas —el hook sale sin decisión, el host aplica la edición
-y el REQ queda cerrado—; que también desescapa `\uXXXX` se leyó en el binario del CLI 2.1.284 y se emuló.
-Sin ensayar en el host: el escape `\uXXXX`, `MultiEdit`, el editor interactivo, Windows y otras
-versiones del CLI; no se sabe desde qué versión existe. En esa vía la
-puerta no reconstruye el documento y juzga sólo el fragmento: esta regla **no** la alcanza, y por ella un
-cierre puede no pasar por ninguna puerta. Es QA-023-02 / SEC-117 del repositorio del arnés,
-preexistente y sin reparar: **no hay promesa** de que toda edición que la herramienta aplica pase por
-esta regla.
+**La edición que la puerta no puede reconstruir ya no está en esta lista.** Un `Edit`/`MultiEdit` cuyo
+`old_string` sólo coincide tras la normalización que aplica la herramienta —comillas tipográficas,
+`\uXXXX`— **se deniega**. La norma está en REQ-023 CA-13 del repositorio del arnés (ADR-015), que es la
+vía de SEC-117. Para editar un REQ, copia el `old_string` literal del archivo.
 
 ## Nivel de rigor
 Cuánta demostración se exige **por encima** de las quality gates, que son binarias y corren
@@ -249,7 +242,9 @@ corrida por punto, hook entero, lista no exhaustiva: 60 006 bytes → deniega po
 hay promesa**: por `Edit` sigue siendo lineal (2 000 000 bytes → 2,1 s), pero por `Write` el contenido
 entrante pasa antes por otra operación del hook que crece más que linealmente (1 000 000 bytes →
 28 s; 2 000 000 → 84 s, por encima de los 60 s del cliente). En Windows/MSYS no está medido y será más lento.
-Ese residuo tiene dueño y vencimiento en el `docs/PENDIENTES.md` del repositorio del arnés.
+Ese residuo tiene dueño y vencimiento en el `docs/PENDIENTES.md` del repositorio del arnés. Es una
+limitación aparte de la regla —SEC-115 del mismo repositorio— y no forma parte de lo que la regla
+promete.
 
 | Clase | Qué es | Efecto en el cierre |
 |---|---|---|
@@ -656,7 +651,7 @@ definición del `analista-requerimientos`: esa ausencia no invalida sus aprobaci
 
 | ID | Título | Estado | Rigor | QA | Seguridad |
 |---|---|---|---|---|---|
-| [REQ-001](REQ-001.md) | Dos bypass del enforcement en v1.30.2: cierre sustituyendo sólo el valor, y sustitución de comandos en heredoc sin citar | `completado` | critico | aprobado | aprobado |
+| [REQ-001](REQ-001.md) | Dos bypass del enforcement en v1.30.2: cierre sustituyendo sólo el valor, y sustitución de comandos en heredoc sin citar. **Reabierto el 2026-09-30** (§9): CA-10, CA-11 y CA-12 versionados por **ADR-015** (SEC-117); sus firmas anteriores cubren sólo el contrato anterior | `en-revisión` | critico | pendiente | pendiente |
 | [REQ-002](REQ-002.md) | Veredicto fechado y no caduco: una firma no vale sobre código que cambió después | `completado` | critico | aprobado | aprobado |
 | [REQ-003](REQ-003.md) | Un solo lector y un solo vocabulario: `con-hallazgos` en Seguridad, aviso al escribir fuera del vocabulario, y el informe que lee como la puerta | `completado` | critico | aprobado | aprobado |
 | [REQ-004](REQ-004.md) | Rotación de UNA sección del documento: la historia se archiva, el contrato no se toca | `completado` | critico | aprobado | aprobado |
@@ -678,10 +673,10 @@ definición del `analista-requerimientos`: esa ausencia no invalida sus aprobaci
 | [REQ-020](REQ-020.md) | ¿Esta prueba mide algo? Cuatro formas de estar verde sin haber medido — el caso vacío, el que no se ejecuta, el que sólo fija lo que hoy falla y el universo encogido en silencio. **Ventana 1.34.0**: depende de las sondas de REQ-021 | `pendiente` | critico | pendiente | pendiente |
 | [REQ-021](REQ-021.md) | `tests/util/` con las sondas de reloj y de procesos, escritas una vez: se reconstruyen en cada comisión y dos se rompieron a la primera, una dejando un proceso vivo 3 h 41 min. Alcance reducido el 2026-09-08 (la sonda de línea base queda fuera). **BLOQUEADO el 2026-09-08**: agotó las 3 vueltas dev↔QA sin cerrar `QA-021-10` (`contrato`), y el propietario lo movió a **1.34.0** | `bloqueado` | critico | con-hallazgos | preventiva |
 | [REQ-022](REQ-022.md) | Despacho en paralelo: tres dimensiones de colisión y la herramienta sólo ve una. Bloque de apertura de **1.34.0** | `pendiente` | critico | pendiente | pendiente |
-| [REQ-023](REQ-023.md) | Una clave de control escrita de otra forma, o declarada dos veces, no se convierte en ausencia: la **cabecera ambigua no deja cerrar** (mitad 1 de SEC-047). **Ventana 1.35.0**, autorizada por el propietario el 2026-09-29; versionado por **ADR-014** (frontera por esqueleto ASCII de la clave y estructura de la declaración; **cambio de compatibilidad**: una clave repetida deniega aunque diga lo mismo; claves de más de 256 bytes, **limitación** no protegida). Ya no depende de las sondas de REQ-021 ni del gate de SEC-048. Tope dev↔QA agotado (3 de 3) con QA-023-05 abierto; corrección documental excepcional fuera del contador autorizada por el propietario el 2026-09-29 | `bloqueado` | critico | con-hallazgos | pendiente |
+| [REQ-023](REQ-023.md) | Una clave de control escrita de otra forma, o declarada dos veces, no se convierte en ausencia: la **cabecera ambigua no deja cerrar** (mitad 1 de SEC-047). **Ventana 1.35.0**, autorizada por el propietario el 2026-09-29; versionado por **ADR-014** (frontera por esqueleto ASCII de la clave y estructura de la declaración; **cambio de compatibilidad**: una clave repetida deniega aunque diga lo mismo; claves de más de 256 bytes, **limitación** no protegida). Ya no depende de las sondas de REQ-021 ni del gate de SEC-048. Tope dev↔QA agotado (3 de 3); vuelta excepcional agrupada de la tercera y la cuarta autorización (2026-09-29 y 2026-09-30): QA-023-06 y **CA-13** (SEC-117, **ADR-015**) | `en-progreso` | critico | con-hallazgos | pendiente |
 | [REQ-024](REQ-024.md) | La ausencia de un campo no se resuelve del lado que abre, y el mismo estado en el segundo lector: la cola que cuenta cero sobre lo que no pudo medir. **Ventana 1.34.0**: va después de REQ-023, con el que comparte nueve rutas | `borrador` | critico | pendiente | pendiente |
 | [REQ-025](REQ-025.md) | El arnés vigila también a quien orquesta: la sesión coordinadora acredita, decide y publica, y ninguna puerta la mide. **Ventana 1.35.0**; línea base = 20 errores de coordinación catalogados. Tras la **partición del 2026-09-21** conserva **la entrega 1** —las **seis reglas** del propietario en `AGENTS.md` §6, su gemela, las dos sedes de `PENDING_APPROVAL`, la entrada de `arnes-upgrade` **preparada, no publicada**, las referencias en los agentes y el **ADR-008**— y, desde el mismo día, una **entrega 1b `pendiente` dentro del propio REQ** (CA-01, CA-02, las preguntas 1, 2 y 4 de CA-09 (B), la regla del `git add -A` y la primera mitad de CA-10), **sin ventana asignada**: **aprobar la entrega 1 no completa REQ-025**. Vuelta **1 de 3** consumida (QA `con-hallazgos`, R-1) | `en-progreso` | critico | con-hallazgos | pendiente |
 | [REQ-028](REQ-028.md) | Las capacidades que REQ-025 difiere (**entregas 2+**): `tools/arnes-comprobar.sh` con par discriminante y denominador, su sección del banco, la **procedencia y la atribución** de la cifra que llega al `CHANGELOG.md`, las **columnas de instantes** del libro de comisiones y los umbrales de coste. Nace de la **partición de REQ-025** (2026-09-21) conservando los identificadores CA-03…CA-08, CA-12 y las mitades de CA-10, CA-11 y CA-13. `borrador` con **cuatro decisiones del propietario abiertas** (B-1…B-4) y **sin ventana asignada** | `borrador` | critico | pendiente | pendiente |
 | [REQ-029](REQ-029.md) | Fidelidad al encargo: detectar omisiones, sustituciones y decisiones de negocio no autorizadas antes de implementar — fuente identificable del pedido, «Correspondencia con el encargo» en la plantilla, comprobación de resolución antes de despachar, **un solo veredicto de QA**, sin bloqueo retroactivo, y la partición que no concede autoridad sobre el alcance. **Ventana 1.35.0**; decisión del propietario del 2026-09-23 sobre la propuesta `d4e7a4f`; integrado en `main` por el PR #53 (`11c5df2`) y cerrado administrativamente el 2026-09-27 sin acreditar conducta ni ahorro | `completado` | critico | aprobado | aprobado |
 | [REQ-030](REQ-030.md) | Las sondas de coste CA-03 y CA-08 (ii) de REQ-017 deciden sobre un **presupuesto fijo de 5 repeticiones** y dicen **INCONCLUSO** (rendimiento no acreditado, contado en el resumen) cuando no resuelven: los techos no se mueven. Versiona REQ-017 por **ADR-012**; autorizado por el propietario el 2026-09-26. **Ventana 1.35.0**; vuelta 4 y dos intervenciones documentales por excepción expresa del propietario (2026-09-26); integrado en `main` por el PR #55 (`c4d92c0`) y cerrado administrativamente el 2026-09-27 con QA-030-03, QA-030-05 y SEC-111 (`instrumento`) abiertos, sin acreditar rendimiento | `completado` | critico | aprobado (re-verificación documental, 0f7e668) | aprobado (R-043-B, 192d7b6) |
-| [REQ-031](REQ-031.md) | Ningún hallazgo bloqueante se ignora por su posición ni por su separador: sintaxis **cerrada** de `Hallazgos abiertos:` en `guard-completado` (A), y el mapa `Archivos:` comprobado desde la Definition of Ready antes de pedir paralelismo (D). **Ventana 1.35.0**; pedido del propietario del 2026-09-27. **P-1 resuelta (opción B)**: tras el paréntesis de un hallazgo sólo la coma o el fin del campo; versiona REQ-007 CA-41 por **ADR-013**. Vuelta 2: clave repetida deniega (SEC-112, CA-A12; su limitación conocida, aparte, es SEC-118: nota del 2026-09-29), techo de 16 384 bytes —deniega **si el hook alcanza a medirlo** en 60 s (SEC-114, remedio A)— y acceso de coste constante (CA-A13/A14). **Vuelta 3 de 3 (última)**, autorizada por el propietario el 2026-09-28: el techo se mide **antes** de normalizar (SEC-113 remedio B, CA-A15), reproducción aislada de un hook sin decisión (CA-A16) e inventario de claves ignoradas (CA-A17); la parte de §13 / R-024 nació de una **atribución equivocada**: esa celda es de `rel/registro-1.33.0` (`1154417`), no de `main` (Preguntas abiertas) | `en-revisión` | critico | aprobado (vuelta 3 de 3) | aprobado (R-044-C) |
+| [REQ-031](REQ-031.md) | Ningún hallazgo bloqueante se ignora por su posición ni por su separador: sintaxis **cerrada** de `Hallazgos abiertos:` en `guard-completado` (A), y el mapa `Archivos:` comprobado desde la Definition of Ready antes de pedir paralelismo (D). **Ventana 1.35.0**; pedido del propietario del 2026-09-27. **P-1 resuelta (opción B)**: tras el paréntesis de un hallazgo sólo la coma o el fin del campo; versiona REQ-007 CA-41 por **ADR-013**. Vuelta 2: clave repetida deniega (SEC-112, CA-A12; su limitación conocida, aparte, es SEC-118: nota del 2026-09-29), techo de 16 384 bytes —deniega por encima; su limitación, SEC-115, va aparte (nota del 2026-09-30)— y acceso de coste constante (CA-A13/A14). **Vuelta 3 de 3 (última)**, autorizada por el propietario el 2026-09-28: el techo se mide **antes** de normalizar (SEC-113 remedio B, CA-A15), reproducción aislada de un hook sin decisión (CA-A16) e inventario de claves ignoradas (CA-A17); la parte de §13 / R-024 nació de una **atribución equivocada**: esa celda es de `rel/registro-1.33.0` (`1154417`), no de `main` (Preguntas abiertas) | `en-revisión` | critico | con-hallazgos (QA-023-06) | aprobado (R-044-C) |

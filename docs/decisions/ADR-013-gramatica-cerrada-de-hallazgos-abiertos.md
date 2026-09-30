@@ -94,7 +94,8 @@ salen sin decisión; con caracteres **multibyte** en la parte citada, bajo `C.UT
 para otros caracteres, hosts ni tamaños; en Windows/MSYS no está medido. Que el cliente trate como
 permitir un hook sin decisión es **inferido**. SEC-118 sigue abierto, `instrumento` y no aceptado; esta
 nota lo documenta y no lo repara. REQ-031 CA-A12 lo declara igual, aparte de su propiedad. La segunda
-viñeta, la del techo, sigue siendo cierta tal como está: el motivo de tamaño no cita el valor, y R-045 §2
-lo volvió a medir. *(Esta nota se corrigió el mismo día por QA-023-06, tercera autorización: decía «la
+viñeta, la del techo, sigue siendo cierta: el motivo de tamaño no cita el valor, y R-045 §2 lo volvió a
+medir. Desde el 2026-09-30 se lee como REQ-031 CA-A13: la propiedad —por encima de 16 384 bytes, deniega—
+va sola, y su inciso «siempre que el hook alcance a medirlo…» es la limitación SEC-115, aparte. *(Esta nota se corrigió el mismo día por QA-023-06, tercera autorización: decía «la
 clave repetida deniega si el hook alcanza a medir y a emitir su decisión» y daba las cifras sin la
 condición ASCII.)*)*

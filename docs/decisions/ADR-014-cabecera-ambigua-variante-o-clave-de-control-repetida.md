@@ -83,6 +83,17 @@ valor), no por su tamaño.
    y desescapa `\uXXXX`; leído y emulado, no ejecutado en una sesión real». La reproducción la hizo la
    coordinadora, con registro previo en `6c947ef` y resultado en la rama local de evidencia,
    `sec117-real/RESULTADO.md`, commit `1c8c81c`.)*
+   *(Nota posterior del 2026-09-30, [ADR-015](ADR-015-edicion-no-reconstruible-se-deniega.md); cuarta
+   autorización del propietario, `PENDING_APPROVAL.md` § Resueltas, commit `66c67cf`.)*
+   - **El último elemento de este punto 5 ya no está fuera:** el `Edit`/`MultiEdit` que la puerta no
+     puede reconstruir **se deniega**. La norma está en REQ-023 CA-13, su sede única, y la decisión en
+     ADR-015.
+   - Esta regla, la de la cabecera ambigua, sigue sin juzgar esa vía, porque no hay cabecera resultante
+     que leer. Pero la vía ya no queda sin juicio, y la frase «por esa vía un cierre puede no pasar por
+     ninguna puerta… esta decisión no lo cierra» describe la conducta anterior a CA-13.
+   - Lo mismo vale para la última frase de la consecuencia (−) sobre las cabeceras que ya están así en
+     disco: la edición no reconstruible no «queda fuera», se deniega.
+   - El texto de arriba se conserva tal como se escribió.
 
 El contrato exacto —casos, costes, lectores y superficie heredada— es `requirements/REQ-023.md` (CA-01…
 CA-12, versión del 2026-09-29).
