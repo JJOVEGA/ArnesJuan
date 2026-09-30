@@ -1,0 +1,6 @@
+== gate 1: sintaxis de hooks/*.sh y tools/*.sh
+rc=0
+== gate 2: hooks.json
+rc=0
+== gate 3: plugin.json y marketplace.json
+rc=0

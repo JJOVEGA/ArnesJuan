@@ -1,0 +1,5 @@
+a48716bedc919e48ca26028e892b2a00a7975debf61036122a203e170da471af  hooks/guard-completado.sh
+067ed6edd983096ba2152cf733f2bcabfcc0cf9a922745a655e628945080fb78  hooks/lib.sh
+23395265af76ed25ddde18de7395c3c1d55007448046b3cf2122f33b33360a74  tools/arnes-lectura.sh
+4936346baf3f91390bc0f8589febc927f0faa3bc3b005d7288211cfba6594191  tests/escenarios/hooks/run.sh
+a4dd229856a5be0751867fccea962e5d7fc4b97bdb736c42d925c469ad8d8aa1  tests/escenarios/hooks/secciones/42-edicion-no-reconstruible.sh

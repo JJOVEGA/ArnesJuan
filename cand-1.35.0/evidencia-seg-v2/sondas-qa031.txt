@@ -1,0 +1,2 @@
+QA-031-01 (R2): canonica instrumento + HALLAZGOS ABIERTOS contrato, Edit cand=deny  r045=deny  base=allow | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 6: 'Hallazgos abi
+QA-031-01 (R2), Write                                      cand=deny  r045=deny  base=allow | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 6: 'Hallazgos abi

@@ -1,0 +1,55 @@
+== arbol 1.33.2 (/home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.33.2/hooks) 2026-09-30T09:27:57-06:00 LANG=C.UTF-8 (v2: K15/K17 con barra invertida real, K45 ruta relativa, K46-K48 rutas)
+K01  | deny  | disco:igual | ARNES: no se puede completar 'requirements/REQ-1.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y r
+K02  | allow | disco:igual | 
+K03  | deny  | disco:igual | ARNES: no se puede completar 'requirements/REQ-1.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y r
+K04  | allow | disco:igual | 
+K05  | allow | disco:igual | 
+K05b | allow | disco:igual | 
+K06  | allow | disco:igual | 
+K07  | allow | disco:igual | 
+K08  | allow | disco:igual | 
+K09  | allow | disco:igual | 
+K10  | allow | disco:igual | 
+K11  | deny  | disco:igual | ARNES: no se puede completar 'requirements/REQ-1.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y r
+K12  | allow | disco:igual | 
+K13  | allow | disco:igual | 
+K14  | allow | disco:igual | 
+K15  | deny  | disco:igual | ARNES: no se puede completar 'requirements/REQ-1.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y r
+K16  | allow | disco:igual | 
+K17  | allow | disco:igual | 
+K18  | allow | disco:igual | 
+K18b | allow | disco:igual | 
+K19  | deny  | disco:igual | ARNES: 'requirements/enlace.md' es un ENLACE SIMBOLICO y no se escribe a traves de el. El arnés juzga la ruta escrita, no su destino: un enlace en una
+K20  | deny  | disco:igual | ARNES: 'requirements/colgante.md' es un ENLACE SIMBOLICO y no se escribe a traves de el. El arnés juzga la ruta escrita, no su destino: un enlace en u
+K21  | allow | disco:igual | 
+K22  | deny  | disco:igual | ARNES: 'src/../requirements/REQ-1.md' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega e
+K23  | allow | disco:igual | 
+K24  | allow | disco:igual | 
+K25  | allow | disco:igual | 
+K26  | allow | disco:igual | 
+K27  | allow | disco:igual | 
+K28  | allow | disco:igual | 
+K29  | deny  | disco:igual | ARNES: no se puede completar 'requirements/REQ-2.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y r
+K30  | deny  | disco:igual | ARNES: no se puede completar 'requirements/sub/REQ-3.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA
+K31  | allow | disco:igual | 
+K32  | deny  | disco:igual | ARNES: no se puede completar 'requirements/REQ-5.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y r
+K33  | deny  | disco:igual | ARNES: no se puede completar 'requirements/REQ-5.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y r
+K34  | allow | disco:igual | 
+K35  | allow | disco:igual | 
+K36  | allow | disco:igual | 
+K37  | allow | disco:igual | 
+K38  | allow | disco:igual | 
+K39  | allow | disco:igual | 
+K40  | allow | disco:igual | 
+K41  | deny  | disco:igual | ARNES: no se puede tocar el estado de 'requirements/REQ-8.md': el archivo en disco no se puede leer entero —un byte NUL lo trunca, o no hay permiso de
+K42  | allow | disco:igual | 
+K43  | allow | disco:igual | 
+K44  | deny  | disco:igual | ARNES: no se puede completar 'requirements/REQ-10.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y 
+K45  | deny  | disco:igual | ARNES: este comando escribe en 'requirements/REQ-10.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las p
+K46  | allow | disco:igual | 
+K47  | allow | disco:igual | 
+K48  | allow | disco:igual | 
+M1   | motivo old=60 comillas tipograficas (180 bytes): 0 bytes; bytes>=0x80 crudos: 0; nombra Bash/Write/MultiEdit-en-Edit: 
+M1t  | 
+M2t  | 
+M3t  | 

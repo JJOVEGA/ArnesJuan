@@ -1,0 +1,3 @@
+{"agentes":{"agente_codigo":"desarrollador","conocidos":["desarrollador","qa-tester","auditor-seguridad","analista-requerimientos"]},
+ "codigo_app":{"globs":["src/*"]},"quality_gates":[],"estados":{"completado":"completado","todos":["borrador","pendiente","en-progreso","en-revisión","completado","bloqueado"]},
+ "estado_derivado":{"activo":false},"requirements_dir":"requirements","pending_approval":"PENDING_APPROVAL.md","git":{"activo":false}}

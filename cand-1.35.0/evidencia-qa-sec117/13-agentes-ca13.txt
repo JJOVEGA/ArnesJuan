@@ -1,0 +1,5 @@
+agente=desarrollador              -> deny
+agente=arnes-juan:desarrollador   -> deny
+agente=qa-tester                  -> deny
+agente=auditor-seguridad          -> deny
+agente=coordinadora               -> deny

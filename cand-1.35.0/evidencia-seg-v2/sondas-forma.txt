@@ -1,0 +1,8 @@
+F1 Edit old_string numerico (5)                            cand=deny  r045=allow base=allow | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el 
+F2 Edit sin old_string ni new_string                       cand=deny  r045=allow base=allow | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el 
+F3 Edit con alias old_str/new_str (CLI los acepta)         cand=deny  r045=allow base=allow | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el 
+F4 Edit replace_all como cadena "true"                     cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). 
+F5 MultiEdit edits no es lista (cadena)                    cand=allow r045=allow base=allow | 
+F6 MultiEdit edits con numero                              cand=allow r045=allow base=allow | 
+F7 MultiEdit edits vacio                                   cand=allow r045=allow base=allow | 
+F8 MultiEdit old_string numerico                           cand=deny  r045=allow base=allow | ARNES: no se permite la edicion 1 de 1 de este MultiEdit sobre 'requirements/REQ-900.md': esta puerta no puede reconstru

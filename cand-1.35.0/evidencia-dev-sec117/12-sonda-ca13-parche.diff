@@ -1,0 +1,2 @@
+268a269
+>   printf "%s\t%s\t%s\t%q\n" "${CLAUDE_PROJECT_DIR##*/}" "$rel" "$tool" "$3" >> "$ARNES_SONDA_CA13_LOG"

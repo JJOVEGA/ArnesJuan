@@ -1,0 +1,4 @@
+REQ-023 (archivo final, QA forzado a aprobado en la copia, cola vacía): cierre -> allow 
+REQ-031 (archivo final, QA forzado a aprobado en la copia, cola vacía): cierre -> allow 
+REQ-001 (archivo final, QA forzado a aprobado en la copia, cola vacía): cierre -> allow 
+REQ-007 (archivo final, QA forzado a aprobado en la copia, cola vacía): cierre -> deny ARNES: no se puede completar 'requirements/REQ-007.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'p

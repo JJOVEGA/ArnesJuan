@@ -1,0 +1,379 @@
+run.sh: line 22: cd: ./../../../templates: No such file or directory
+A3/A2 — guard-completado.sh (transición a completado):
+  PASS  REQ -> en-progreso (no completado) -> allow  (allow)  MOTIVO<<>>
+  PASS  REQ -> completado, sin pendientes, gate ok -> allow  (allow)  MOTIVO<<>>
+Veredictos QA/Seguridad (anti-deriva):
+  PASS  completado con QA: pendiente -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-010.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  completado con QA: aprobado (no sensible) -> allow  (allow)  MOTIVO<<>>
+  PASS  sensible + Seguridad: pendiente -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-012.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  sensible + QA y Seguridad aprobados -> allow  (allow)  MOTIVO<<>>
+  PASS  REQ -> completado con aprobación pendiente -> deny  (deny)  MOTIVO<<ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': hay 1 aprobación(es) pendiente(s) en P>>
+  PASS  REQ -> completado con quality gate roja -> deny  (deny)  MOTIVO<<ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality gate `false`. Corríg>>
+Regresión Windows / formas del manifiesto:
+  PASS  quality_gates como objetos, en verde -> allow  (allow)  MOTIVO<<>>
+  PASS  quality_gates como objetos, en rojo -> deny  (deny)  MOTIVO<<ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality gate `false`. Corríg>>
+  SKIP  ruta estilo Windows con backslashes -> deny  (sin cygpath: caso solo de Windows)
+Clase del hallazgo:
+  PASS  hallazgo de instrumento -> allow  (allow)  MOTIVO<<>>
+  PASS  hallazgo de usuario/dinero -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-021.md': el hallazgo 'sec-2' es de clase 'usuario/dinero' y blo>>
+  PASS  hallazgo de contrato -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-022.md': el hallazgo 'sec-3' es de clase 'contrato' y bloquea e>>
+  PASS  hallazgo SIN clase -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-023.md': el hallazgo 'sec-4' no declara su clase, y un hallazgo>>
+  PASS  mezcla: basta uno bloqueante -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-024.md': el hallazgo 'sec-6' es de clase 'usuario/dinero' y blo>>
+  PASS  sin hallazgos abiertos -> allow  (allow)  MOTIVO<<>>
+  PASS  REQ antiguo sin el campo -> allow  (allow)  MOTIVO<<>>
+  PASS  REQ-031 CA-A02 bloqueante EN MEDIO -> deny por su clase  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-800.md': el hallazgo 'sec-m' es de clase 'contrato' y bloquea e>>
+  PASS  REQ-031 CA-A02 permutacion: bloqueante al final -> deny por su clase  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-801.md': el hallazgo 'sec-m' es de clase 'contrato' y bloquea e>>
+  PASS  REQ-031 CA-A03 coma, bloqueante detras -> deny por su clase  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-802.md': el hallazgo 'sec-b' es de clase 'usuario/dinero' y blo>>
+  PASS  REQ-031 CA-A03 coma, bloqueante delante -> deny por su clase  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-803.md': el hallazgo 'sec-b' es de clase 'usuario/dinero' y blo>>
+  PASS  REQ-031 CA-A03 ';' con el bloqueante detras (era allow) -> deny no interpretable  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-804.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A03 ';' con el bloqueante delante -> deny no interpretable  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-805.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A03 '·' con el bloqueante detras (era allow) -> deny no interpretable  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-806.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A03 '·' con el bloqueante delante -> deny no interpretable  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-807.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A03 ';' aunque todo sea instrumento -> deny no interpretable  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-808.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A03 '·' aunque todo sea instrumento -> deny no interpretable  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-809.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A04 control: un instrumento -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A04 control: tres instrumento separados por coma -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A04 control: '(ninguno)' -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A04 control: campo vacio -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A04 control: REQ sin la linea -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A04 control: evidencia tras la clase (REQ-007 CA-40) -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A04 caso minimo: la forma equivalente, evidencia DENTRO del parentesis -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A04 caso minimo: comas y parentesis en la evidencia son UN hallazgo -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A04 control: comas, ';', '·' y parentesis DENTRO de la evidencia no separan -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A04 frontera: la evidencia no declara -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A04 la evidencia no cambia la clase -> deny por la clase  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-820.md': el hallazgo 'sec-9' es de clase 'usuario/dinero' y blo>>
+  PASS  REQ-031 CA-A04 control: '(Instrumento)' -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A04 control: '( instrumento )' -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A04 control: la cabecera real de REQ-017 (siete instrumento) -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A04 la cabecera real de REQ-007 (';' y '—' dentro de la evidencia) -> deny por la clase, no por ilegible  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-824.md': el hallazgo 'qa-114' es de clase 'contrato' y bloquea >>
+  PASS  REQ-031 CA-A05 dos parentesis en un elemento -> deny  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-825.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A05 parentesis sin cerrar -> deny  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-826.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A05 ')' sobrante (antes se ignoraba) -> deny  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-827.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A05 elemento vacio al final (antes se saltaba) -> deny  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-828.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A05 elemento vacio en medio -> deny  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-829.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A05 elemento sin identificador -> deny  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-830.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A05 identificador con blancos internos -> deny  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-831.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A05 identificador fuera del alfabeto (marcado por elemento) -> deny  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-832.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A05 identificador con una letra fuera de ASCII (la normalizacion pliega la tilde) -> deny  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-846.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A05 ausencia mezclada con una lista -> deny  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-833.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A05 caso minimo: texto detras del parentesis (forma retirada) -> deny y dice como conservar la evidencia  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-834.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A05 caso minimo: '·' y un segundo identificador sin clase -> deny que nombra sec-b  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-835.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A07 Write: '·' con el bloqueante detras -> deny  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-836.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A07 Write: control, dos instrumento -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A07 MultiEdit: '·' con el bloqueante detras -> deny  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-838.md': la lista de 'Hallazgos abiertos:' no se puede interpre>>
+  PASS  REQ-031 CA-A07 MultiEdit: control, dos instrumento -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A08 reabrir completado -> en-progreso con la lista no interpretable -> allow  (allow; Estado: en-progreso)  MOTIVO<<>>
+  PASS  REQ-031 CA-A08 reabrir completado -> en-revisión con la lista no interpretable -> allow  (allow; Estado: en-revisión)  MOTIVO<<>>
+  PASS  REQ-031 CA-A08 caso minimo: reabrir con '(instrumento) — REQ-007' -> allow  (allow; Estado: en-progreso)  MOTIVO<<>>
+  PASS  REQ-031 CA-A08 caso minimo: reabrir con '(instrumento) · SEC-B' -> allow  (allow; Estado: en-progreso)  MOTIVO<<>>
+  PASS  REQ-031 CA-A08 en-progreso -> en-revisión con la lista no interpretable -> allow  (allow; Estado: en-revisión)  MOTIVO<<>>
+  PASS  REQ-031 CA-A08 editar otra linea de un REQ en-progreso con la lista no interpretable -> allow  (allow; Estado: en-progreso)  MOTIVO<<>>
+  PASS  REQ-031 CA-A12 Edit: 'contrato' arriba y '(ninguno)' abajo (era allow) -> deny por clave repetida  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-850.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (lin>>
+  PASS  REQ-031 CA-A12 Write: 'contrato' arriba y '(ninguno)' abajo (era allow) -> deny por clave repetida  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-851.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (lin>>
+  PASS  REQ-031 CA-A12 la segunda linea DECORADA tambien cuenta (era allow) -> deny por clave repetida  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-852.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (lin>>
+  PASS  REQ-031 CA-A12 'instrumento' arriba y 'contrato' abajo -> deny por clave repetida, no por la clase  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-853.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (lin>>
+  PASS  REQ-031 CA-A12 control: una sola linea -> deny por su clase, como siempre  (deny; Estado: en-revisión)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-854.md': el hallazgo 'sec-1' es de clase 'contrato' y bloquea e>>
+  PASS  REQ-031 CA-A12 control: la segunda linea bajo el primer '## ' no cuenta -> allow  (allow; Estado: completado)  MOTIVO<<>>
+  PASS  REQ-031 CA-A12 reabrir con la clave repetida -> allow  (allow; Estado: en-progreso)  MOTIVO<<>>
+  PASS  REQ-031 CA-A13 exactamente 16 384 bytes, todo instrumento -> allow  (a) 1635ms, tope operativo 30s; (b) allow; (c) Estado: completado  MOTIVO<<>>
+  PASS  REQ-031 CA-A13 exactamente 16 384 bytes con un contrato -> deny por la clase  (a) 1417ms, tope operativo 30s; (b) deny; (c) Estado: en-revisión  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-858.md': el hallazgo 'sec-x' es de clase 'contrato' y bloquea e>>
+  PASS  REQ-031 CA-A13 16 385 bytes, todo instrumento -> deny por tamaño  (a) 318ms, tope operativo 30s; (b) deny; (c) Estado: en-revisión  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-859.md': el valor de 'Hallazgos abiertos:' mide 16385 bytes (co>>
+  PASS  REQ-031 CA-A13 60 006 bytes con un contrato delante (el caso de R-044) -> deny por tamaño  (a) 740ms, tope operativo 30s; (b) deny; (c) Estado: en-revisión  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-860.md': el valor de 'Hallazgos abiertos:' mide 60006 bytes (co>>
+  PASS  REQ-031 CA-A15 255 371 bytes con un contrato delante (R-044-A: 67 s sin decision) -> deny por tamaño a tiempo  (a) 1348ms, tope operativo 30s; (b) deny; (c) Estado: en-revisión  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-861.md': el valor de 'Hallazgos abiertos:' mide 255371 bytes (c>>
+  PASS  REQ-031 CA-A15 reabrir con 255 371 bytes (sobre el techo) -> allow  (a) 1601ms, tope operativo 30s; (b) allow; (c) Estado: en-progreso  MOTIVO<<>>
+Arranque limpio — plantilla de PENDING_APPROVAL:
+cp: cannot stat '/PENDING_APPROVAL.md.tpl': No such file or directory
+  PASS  PENDING recien copiado de la plantilla -> allow  (allow)  MOTIVO<<>>
+Nivel de rigor:
+  PASS  sin Rigor + QA pendiente -> deny (como siempre)  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-040.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  sin Rigor + sensible sin seguridad -> deny (como siempre)  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-041.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  LIGERO no exige veredictos -> allow  (allow)  MOTIVO<<>>
+  PASS  estandar exige QA -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-043.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  critico exige seguridad -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-044.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  critico con QA y seguridad -> allow  (allow)  MOTIVO<<>>
+  PASS  ligero sobre SENSIBLE no baja el suelo -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-046.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  estandar sobre SENSIBLE no baja el suelo -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-047.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  Rigor invalido se ignora, no abre -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-048.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+Rigor ligero: salta veredictos, no puertas:
+  PASS  ligero con quality gate ROJA -> deny (la plantilla promete gates)  (deny)  MOTIVO<<ARNES: no se puede marcar 'requirements/REQ-090.md' como 'completado': falló la quality gate `false`. Corríg>>
+  PASS  ligero con aprobacion humana PENDIENTE -> deny  (deny)  MOTIVO<<ARNES: no se puede marcar 'requirements/REQ-090.md' como 'completado': hay 1 aprobación(es) pendiente(s) en P>>
+  PASS  ligero con hallazgo usuario/dinero ABIERTO -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-091.md': el hallazgo 'sec-7' es de clase 'usuario/dinero' y blo>>
+  PASS  ligero SIN veredicto de QA y todo verde -> allow (eso si lo salta)  (allow)  MOTIVO<<>>
+Orden del ciclo (seguridad tras QA):
+  PASS  firmar Seguridad con QA pendiente -> deny  (deny)  MOTIVO<<ARNES: 'requirements/REQ-050.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'pendiente'. El ciclo es desarro>>
+  PASS  ...y tampoco al cerrar de paso -> deny  (deny)  MOTIVO<<ARNES: 'requirements/REQ-050.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'pendiente'. El ciclo es desarro>>
+  PASS  auditoria PREVENTIVA declarada -> allow  (allow)  MOTIVO<<>>
+  PASS  orden correcto: QA ya aprobado -> allow  (allow)  MOTIVO<<>>
+  PASS  edicion que NO toca Seguridad -> allow  (allow)  MOTIVO<<>>
+  PASS  REQ antiguo sin campo QA -> allow  (allow)  MOTIVO<<>>
+  PASS  critico: solo firma preventiva no cierra -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-054.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  critico: auditoria real si cierra -> allow  (allow)  MOTIVO<<>>
+  PASS  sensible: QA firma sin esperar a seguridad -> allow  (allow)  MOTIVO<<>>
+Campos solo en la cabecera (la historia no es un veredicto):
+  PASS  historia con 'Seguridad: aprobado (...)' a col. 0 NO cierra -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-110.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  control: la CABECERA si se lee (aprobado arriba, pendiente en historia) -> allow  (allow)  MOTIVO<<>>
+  PASS  vineta '- Seguridad:' en historia tampoco cuenta -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-112.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  un Edit que aprueba QA y cierra a la vez: se lee el documento resultante -> allow  (allow)  MOTIVO<<>>
+  PASS  MultiEdit: cierra y aprueba SOLO la linea del historial -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-114.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  control: MultiEdit que aprueba la CABECERA y cierra -> allow  (allow)  MOTIVO<<>>
+  PASS  MultiEdit sobre un REQ CRLF: el bypass tambien -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-115.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  Edit: 'Estado: completado' solo en la historia NO es una transicion -> allow  (allow)  MOTIVO<<>>
+  PASS  transicion por documento: Edit que sustituye SOLO el valor -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-120.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  transicion por documento: ...y el motivo nombra el veredicto que falta  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-120.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  transicion por documento: control, SOLO el valor con todo en verde -> allow  (allow)  MOTIVO<<>>
+  PASS  transicion por documento: SOLO el valor sobre un REQ sensible sin auditoria -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-122.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  transicion por documento: MultiEdit con SOLO el valor + fila de historial -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-124.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  transicion por documento: replace_all sustituye TODAS las ocurrencias -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-125.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  transicion por documento: control, sin replace_all solo la primera y la cabecera no cambia -> allow  (allow)  MOTIVO<<>>
+  PASS  transicion por documento: SOLO el valor sobre un REQ CRLF -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-123.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  transicion por documento: Write con la cabecera completa -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-126.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  transicion por documento: control, Write que solo CITA el estado en el cuerpo -> allow  (allow)  MOTIVO<<>>
+  PASS  transicion por documento: Write sobre un REQ que EN DISCO ya estaba terminal -> allow  (allow)  MOTIVO<<>>
+  PASS  transicion por documento: control, el mismo Write sobre un REQ NO terminal -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-132.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  transicion por documento: old_string ausente + 'Estado: completado' -> deny por no reconstruible (REQ-001 CA-10)  MOTIVO<<ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-127.md': esta puerta no puede recon>>
+  PASS  transicion por documento: old_string ausente y 'completado' a secas -> deny por no reconstruible (REQ-001 CA-11, era allow)  MOTIVO<<ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-127.md': esta puerta no puede recon>>
+  PASS  transicion por documento: REQ inexistente en disco -> deny por no reconstruible (REQ-001 CA-12) y sin traza de bash
+  PASS  transicion por documento: la cabecera en disco YA decia completado -> allow  (allow)  MOTIVO<<>>
+  PASS  transicion por documento: reabrir un REQ cerrado a en-progreso -> allow  (allow)  MOTIVO<<>>
+  PASS  transicion por documento: SOLO el valor con la cola de aprobaciones abierta -> deny  MOTIVO<<ARNES: no se puede marcar 'requirements/REQ-129.md' como 'completado': hay 1 aprobación(es) pendiente(s) en PE>>
+  PASS  transicion por documento: SOLO el valor con una quality gate roja -> deny  MOTIVO<<ARNES: no se puede marcar 'requirements/REQ-129.md' como 'completado': falló la quality gate `false`. Corrígel>>
+  PASS  transicion por documento: estado terminal 'hecho' del manifiesto -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-130.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  transicion por documento: control, 'completado' ya no es terminal en ese manifiesto -> allow  (allow)  MOTIVO<<>>
+  PASS  QA: Edit con la LINEA ENTERA 'Estado: completado' -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-140.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  QA: el valor en MAYUSCULAS -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-140.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  QA: el valor con su parentesis de evidencia -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-140.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  QA: el valor en **negrita** -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-140.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  QA: el valor con espacios de mas tras los dos puntos -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-140.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  QA: MultiEdit encadenado (edit1 crea lo que busca edit2) -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-141.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  QA: control, edit2 busca lo que edit1 destruyo: no reconstruible -> deny nombrando la edicion 2 (era allow)  MOTIVO<<ARNES: no se permite la edicion 2 de 2 de este MultiEdit sobre 'requirements/REQ-141.md': esta puerta no puede>>
+Formas decoradas (marcado de Markdown en el valor):
+  PASS  sensible en **negrita** exige auditoria -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-060.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  negrita + comentario tras el valor -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-061.md': su 'Sensible a seguridad:' dice '**si**—tocaautentic>>
+  PASS  comentario tras el valor, sin negrita -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-062.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  sensible en _cursiva_ -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-063.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  valor que NO se entiende -> deny (lado seguro)  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-064.md': su 'Sensible a seguridad:' dice 'porevaluar', que no s>>
+  PASS  ...y la denegacion dice por que  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-064.md': su 'Sensible a seguridad:' dice 'porevaluar', que no s>>
+  PASS  no sensible en **negrita** -> allow  (allow)  MOTIVO<<>>
+  PASS  'n/a' no abre la puerta -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-066.md': su 'Sensible a seguridad:' dice 'n/a', que no se recon>>
+  PASS  ...y 'no aplica' dice lo mismo -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-072.md': su 'Sensible a seguridad:' dice 'noaplica', que no se >>
+  PASS  'ninguna' tampoco abre -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-073.md': su 'Sensible a seguridad:' dice 'ninguna', que no se r>>
+  PASS  no + comentario tras el valor -> allow  (allow)  MOTIVO<<>>
+  PASS  QA en **negrita** cuenta como aprobado -> allow  (allow)  MOTIVO<<>>
+  PASS  Seguridad en **negrita** cierra un critico -> allow  (allow)  MOTIVO<<>>
+  PASS  preventiva decorada TAMPOCO cierra -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-070.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  Rigor **ligero** decorado se reconoce -> allow  (allow)  MOTIVO<<>>
+guard.sh — punto de entrada unico (los dos guardianes, un proceso):
+  PASS  A1 por guard.sh: coordinadora edita src/ -> deny  (deny)  MOTIVO<<ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesió>>
+  PASS  A1 por guard.sh: desarrollador edita src/ -> allow  (allow)  MOTIVO<<>>
+  PASS  A1 por guard.sh: edicion neutra -> allow  (allow)  MOTIVO<<>>
+  PASS  guard.sh: el 2o guardian sigue corriendo tras el 1o -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-030.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  guard.sh: cierre limpio -> allow  (allow)  MOTIVO<<>>
+  PASS  guard.sh: sensible sin seguridad -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-032.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  guard.sh: hallazgo de instrumento -> allow  (allow)  MOTIVO<<>>
+  PASS  guard.sh: Bash escribe en src/ -> deny  (deny)  MOTIVO<<ARNES: el comando escribe en 'src/app.ts', que es código de la app; sólo el agente 'desarrollador' puede hac>>
+  PASS  guard.sh: Bash cierra un REQ -> deny  (deny)  MOTIVO<<ARNES: este comando escribe en 'requirements/REQ-031.md' y menciona 'completado'. La transicion de estado de u>>
+  PASS  guard.sh: Bash de lectura -> allow  (allow)  MOTIVO<<>>
+Asterisco de nota al pie (una salvedad no es una firma):
+  PASS  'aprobado*' NO cierra un critico -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-074.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  '*aprobado' tampoco -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-075.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  '*aprobado*' pareado si cierra -> allow  (allow)  MOTIVO<<>>
+  PASS  y '**sí**' sigue exigiendo auditoria -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-077.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+Parentesis = evidencia (el veredicto no cambia):
+  PASS  QA con su evidencia entre parentesis cierra -> allow  (allow)  MOTIVO<<>>
+  PASS  Seguridad con evidencia cierra un critico -> allow  (allow)  MOTIVO<<>>
+  PASS  parentesis sin cerrar no es evidencia -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-083.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  preventiva NO cierra un critico -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-082.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  preventiva desbloquea el ORDEN del ciclo -> allow  (allow)  MOTIVO<<>>
+  PASS  enfasis + evidencia: misma escritura, mismo veredicto -> allow  (allow)  MOTIVO<<>>
+Cola de aprobaciones: la seccion acaba en la siguiente cabecera:
+  PASS  un ### bajo OTRA cabecera no es cola -> allow  (allow)  MOTIVO<<>>
+  PASS  ...pero uno bajo Pendientes si -> deny  (deny)  MOTIVO<<ARNES: no se puede marcar 'requirements/REQ-085.md' como 'completado': hay 1 aprobación(es) pendiente(s) en P>>
+Veredicto fechado y no caduco (veredictos.*, opt-in):
+  PASS  CA-01 sin opt-in: veredictos SIN fecha -> allow  (allow)  MOTIVO<<>>
+  PASS  CA-02 exigir_fecha: 'aprobado' sin parentesis -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-101.md': el veredicto 'QA: aprobado' no lleva fecha y el manifi>>
+  PASS  CA-03 parentesis SIN fecha -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-102.md': el veredicto 'QA: aprobado (R-045)' no lleva fecha y e>>
+  PASS  CA-04 fecha en cualquier posicion del parentesis -> allow  (allow)  MOTIVO<<>>
+  PASS  CA-05 '01/09/2026' no es una fecha -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-104.md': el veredicto 'QA: aprobado (01/09/2026)' no lleva fech>>
+  PASS  CA-05 '2026-9-1' no es una fecha -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-104.md': el veredicto 'QA: aprobado (2026-9-1)' no lleva fecha >>
+  PASS  CA-05 '20260901' no es una fecha -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-104.md': el veredicto 'QA: aprobado (20260901)' no lleva fecha >>
+  PASS  CA-05 '2026-13-05' no es una fecha -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-104.md': el veredicto 'QA: aprobado (2026-13-05)' no lleva fech>>
+  PASS  CA-07 critico: la fecha se exige tambien a Seguridad -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-105.md': el veredicto 'Seguridad: aprobado' no lleva fecha y el>>
+  PASS  CA-08 ligero no pide veredictos ni sus fechas -> allow  (allow)  MOTIVO<<>>
+  PASS  CA-09 QA pendiente: deniega el VEREDICTO, no la fecha  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-107.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  CA-10 veredicto POSTERIOR al commit, arbol limpio -> allow  (allow)  MOTIVO<<>>
+  PASS  CA-11 veredicto ANTERIOR al commit -> deny con las dos fechas y el sha  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-111.md': el veredicto 'QA: aprobado (2026-08-29)' es del 2026-0>>
+  PASS  CA-12 mismo dia que el commit -> allow (el empate no caduca)  (allow)  MOTIVO<<>>
+  PASS  CA-19 caducan sin exigir_fecha: 'aprobado' sin fecha -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-113.md': el veredicto 'QA: aprobado' no lleva fecha y el manifi>>
+  PASS  CA-21 la caducidad alcanza a Seguridad, no solo a QA -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-114.md': el veredicto 'Seguridad: aprobado (2026-08-29)' es del>>
+  PASS  CA-14 sucio FUERA de los globs -> allow  (allow)  MOTIVO<<>>
+  PASS  CA-13 cambio sin comitear en el codigo -> deny nombrando el archivo  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-110.md': hay cambios SIN COMITEAR en el codigo de la app ('src/>>
+  PASS  CA-15 sin repositorio git -> deny (no puedo medir)  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-120.md': el manifiesto exige medir la caducidad del veredicto c>>
+  PASS  CA-16 git que no entiende %cs -> deny (no puedo medir)
+  PASS  CA-17 caducan con codigo_app.globs vacio -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-122.md': el manifiesto exige que el veredicto no sea anterior a>>
+  PASS  CA-18 ningun commit toca los globs y el arbol esta limpio -> allow  (allow)  MOTIVO<<>>
+  PASS  CA-20 sin las claves: codigo posterior y arbol sucio -> allow  (allow)  MOTIVO<<>>
+Vocabulario de veredictos, aviso y lectura (REQ-003):
+  PASS  CA-02 critico con Seguridad: con-hallazgos -> deny (valido, pero no firma)  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-200.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  CA-03 escribir con-hallazgos sin cerrar -> allow  (allow)  MOTIVO<<>>
+  PASS  CA-08 con-hallazgos con QA pendiente -> allow (no es una firma)  (allow)  MOTIVO<<>>
+  PASS  CA-06 critico con Seguridad: vetado -> deny (como en 1.30.3)  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-202.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  CA-06 critico con Seguridad: preventiva -> deny (como en 1.30.3)  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-202.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  CA-06 critico con Seguridad: pendiente -> deny (como en 1.30.3)  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-202.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  CA-06 critico con Seguridad: n/a -> deny (como en 1.30.3)  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-202.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  CA-07 ligero con con-hallazgos -> allow  (allow)  MOTIVO<<>>
+  PASS  CA-09 escribir 'QA: aprobadisimo' -> avisa sin denegar
+  PASS  CA-10 escribir un valor del vocabulario -> sin aviso
+  PASS  CA-11 el REQ ya lo tenia en disco y la edicion no lo toca -> sin aviso
+  PASS  CA-12 'Seguridad: aprobado' dentro del historial -> sin aviso
+  PASS  CA-15 el mismo texto FUERA de requirements/ -> sin aviso
+  PASS  CA-13 valor fuera del vocabulario Y cierre -> deny (manda la puerta)  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-212.md': el veredicto de QA es 'aprobadisimo' (se requiere 'QA:>>
+  PASS  CA-01 'Seguridad: con-hallazgos' no es una anomalia (sale 0)
+  PASS  CA-16/CA-17 Estado con parentesis o enfasis no es anomalia (sale 0)
+  PASS  CA-18/CA-20 un estado que NO existe sigue siendo anomalia (sale 1)
+  PASS  CA-20 ...y se imprime el bloque que lo explica
+  PASS  CA-04 el vocabulario viene de lib.sh, no de una copia en el informe
+Celdas del bloque derivado recortadas (presentacion, no lectura):
+  PASS  CA-01 la celda mide 41 como mucho y termina en elipsis
+  PASS  CA-02 el valor completo no entra en el archivo
+  PASS  CA-05 toda fila de la tabla tiene 7 separadores
+  PASS  CA-06 una barra dentro del valor no crea una columna
+  PASS  CA-03 los valores cortos salen intactos y sin elipsis
+  PASS  CA-04 borde exacto: 40 intacto, 41 recortado
+  PASS  CA-10 un 'Hallazgos abiertos:' vacio sigue mostrando el guion
+  PASS  CA-17 el hook sale 0 (la parada no se bloquea nunca)
+  PASS  DEV 1.31.0 v5: QA-119 la cabecera lleva la marca de tiempo, con su formato
+  PASS  CA-09 idempotente: el bloque no cambia ni la celda gana otra elipsis
+  PASS  DEV 1.31.0 v5: QA-119 cruzar el minuto no rompe la idempotencia (y byte a byte si)
+  PASS  CA-11 hallazgo largo de clase contrato: la puerta lee el campo entero -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-604.md': el hallazgo 'sec-9999999999999999999999999999999999999>>
+  PASS  CA-12 un QA largo que empieza por aprobado se lee como siempre -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-605.md': el veredicto de QA es 'aprobadoconlacondiciondequesere>>
+tools/arnes-paralelo.sh (REQ-013): qué dos comisiones NO colisionan:
+  PASS  paralelo: hooks/lib.sh vs hooks/*.sh -> colisiona
+  PASS  paralelo: hooks/*.sh vs hooks/hooks.json -> disjunto
+  PASS  paralelo: run.sh vs tests/** -> colisiona
+  PASS  paralelo: docs/qa/1.32.0.md vs docs/qa/*.md -> colisiona
+  PASS  paralelo: dos plantillas distintas -> disjunto
+  PASS  paralelo: dos globs distintos que alcanzan el mismo archivo -> colisiona y lo nombra
+  PASS  paralelo: un archivo que TODAVIA NO EXISTE se compara como ruta literal
+  PASS  paralelo: control positivo, dos rutas ajenas -> disjunto y rc 0
+  PASS  paralelo: (ninguno) es disjunto con todos, no 'sin declarar'
+  PASS  paralelo: ./x y x//y se normalizan a la misma ruta -> colisiona
+  PASS  paralelo: x/../x se normaliza a la misma ruta -> colisiona
+  PASS  paralelo: una ruta ABSOLUTA se rechaza con motivo propio y deja el REQ sin declarar
+  PASS  paralelo: una ruta que SALE de la raiz se rechaza igual (fail-closed)
+  PASS  paralelo: un REQ SIN el campo colisiona con todos y sale != 0
+  PASS  paralelo: un valor vacio no se interpreta: sin declarar
+  PASS  paralelo: clave decorada, sangrado, tabulador y acentos graves se reconocen
+  PASS  paralelo: el campo DEBAJO del primer '## ' no es una declaracion
+  PASS  paralelo: el parentesis final es EVIDENCIA, no un tercer archivo
+  PASS  paralelo: --json es JSON valido y dice lo mismo que el texto
+  PASS  paralelo: sin argumentos toma los REQ abiertos y salta los cerrados
+  PASS  paralelo: la salida advierte que NO evalua el orden de fases
+  PASS  paralelo: la advertencia del orden de fases tambien viaja en --json
+  PASS  paralelo: no escribe ni un archivo en el proyecto (ni un temporal)
+  PASS  paralelo: no invoca agentes ni toca PENDING_APPROVAL.md
+  PASS  paralelo: sin jq lo dice y sale 2, no responde 'adelante'
+  PASS  paralelo: sin .arnes/config.json lo dice y sale 2
+  PASS  paralelo: un requirements/ vacio lo dice y sale 2, no dice 'todo disjunto'
+  PASS  paralelo: no esta registrada en ningun hook (0 procesos anadidos por comando)
+  PASS  paralelo: bash -n pasa sobre la herramienta
+  PASS  paralelo/CA-05: un REQ SIN Archivos: cierra igual que en v1.31.0 -> allow  (allow)  MOTIVO<<>>
+  PASS  paralelo/CA-05: un Archivos: ilegible tampoco bloquea el cierre -> allow  (allow)  MOTIVO<<>>
+  PASS  paralelo: 60 REQ y 200 archivos en 811ms (techo 2000ms)
+  PASS  paralelo: 1 proceso(s) externo(s) para 60 REQ (techo 2 por REQ = 120)
+Noción de cita (5/5): un CR que no termina la línea no se puede medir (REQ-016 · SEC-024):
+  PASS  SEC-024 (1/4) base desnuda: critico sin ninguna declaración de 'Seguridad:' -> deny por AUSENTE  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-970.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  SEC-024 (2/4) + rango BIEN escrito citando 'Seguridad: aprobado' -> deny por AUSENTE (la vuelta 1, intacta)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-970.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  SEC-024 (3/4) + el ABRE fabricado '<!$CR--' citando 'Seguridad: aprobado' -> deny por el CR (era ALLOW hoy)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-970.md': su cabecera lleva un retorno de carro (CR) que NO term>>
+  PASS  SEC-024 (4/4) CONTROL: el mismo '<!$CR--' citando 'Seguridad: pendiente' -> deny  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-970.md': su cabecera lleva un retorno de carro (CR) que NO term>>
+  PASS  SEC-024 control con dientes: retirado el CR y con el veredicto FUERA del rango -> allow  (allow)  MOTIVO<<>>
+  PASS  SEC-024 la CLAVE fabricada 'Seg$CRuridad: aprobado' no desbanca a 'Seguridad: pendiente' -> deny (era ALLOW desde <=1.30.3)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-971.md': su cabecera lleva un retorno de carro (CR) que NO term>>
+  PASS  SEC-024 ...y con TODO en verde el mismo CR deniega igual: la regla es de medibilidad, no de veredicto  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-971.md': su cabecera lleva un retorno de carro (CR) que NO term>>
+  PASS  SEC-024 boca Edit: el '<!$CR--' vive en DISCO y la edición sólo cambia el estado -> deny (era ALLOW hoy)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-972.md': su cabecera lleva un retorno de carro (CR) que NO term>>
+  PASS  SEC-024 boca texto entrante (Edit literal): el CR que trae el new_string también deniega  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-973.md': su cabecera lleva un retorno de carro (CR) que NO term>>
+  PASS  SEC-024 CRLF entero + comentario bien escrito, todo en verde -> allow (el transporte no se toca)  (allow)  MOTIVO<<>>
+  PASS  SEC-024 ...y el MISMO REQ en CRLF con el veredicto en rojo -> deny, igual que en LF  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-974.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  SEC-024 ...y un CR INTERIOR dentro de un documento CRLF sigue denegando: el transporte no es coartada  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-974.md': su cabecera lleva un retorno de carro (CR) que NO term>>
+  PASS  SEC-024 frontera: un CR suelto DEBAJO del primer '## ' no es cabecera -> allow  (allow)  MOTIVO<<>>
+  PASS  SEC-024 reabrir un REQ con un CR interior nunca se bloquea -> allow  (allow)  MOTIVO<<>>
+  PASS  SEC-024 informe: arnes-lectura llama anomalía a la clave fabricada y sale 1 (decía «ningún valor anómalo», rc=0)
+  PASS  SEC-024 informe: ...y cita la línea con el CR escrito como \r, no crudo
+  PASS  SEC-024 paralelo: una cabecera con un CR interior colisiona con motivo, no responde 'disjunto'
+  PASS  SEC-024 lectores: el diferencial del CR recorre 80 cabeceras (enumeración fija, no semilla)
+  PASS  SEC-024 lectores: 0 divergencias entre hooks/lib.sh y hooks/campos-req.awk sobre el CR
+Estabilizacion: rigor y firma por lector comun:
+  PASS  D16: matiz CERRADO no rebaja critico  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-940.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  QA-P48-01: matiz no regala la exencion de QA  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-941.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  D16: desconocido conserva derivacion heredada  (allow)  MOTIVO<<>>
+  PASS  QA-P48-01: ligero limpio conserva su exencion  (allow)  MOTIVO<<>>
+  PASS  QA-P48-01: matiz sube a estandar, no a critico  (allow)  MOTIVO<<>>
+  PASS  QA-P48-01: matiz con fecha y coma exige QA  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-952.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  QA-P48-01: matiz pegado a la clave exige QA  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-953.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  QA-P48-01: matiz vacio exige QA  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-954.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  QA-P48-01: el texto del matiz no decide el nivel  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-955.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  QA-P48-01: estandar con matiz sigue pidiendo QA  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-956.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  QA-P48-01: estandar con matiz cierra con QA  (allow)  MOTIVO<<>>
+  PASS  QA-P48-01: critico con matiz cierra con ambas firmas  (allow)  MOTIVO<<>>
+  PASS  QA-P48-01: sensible con matiz conserva el suelo critico  (deny)  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-959.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  QA-P48-01: el diagnostico nombra el veredicto de QA  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-941.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap>>
+  PASS  SEC084: Edit solo valor decorado  (deny)  MOTIVO<<ARNES: 'requirements/REQ-943.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'con-hallazgos'. El ciclo es des>>
+  PASS  SEC084: Edit valor sin clave  (deny)  MOTIVO<<ARNES: 'requirements/REQ-943.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'con-hallazgos'. El ciclo es des>>
+  PASS  SEC084: MultiEdit decorado  (deny)  MOTIVO<<ARNES: 'requirements/REQ-943.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'con-hallazgos'. El ciclo es des>>
+  PASS  SEC084: Write decorado  (deny)  MOTIVO<<ARNES: 'requirements/REQ-943.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'con-hallazgos'. El ciclo es des>>
+  PASS  SEC084: preventiva decorada permitida  (allow)  MOTIVO<<>>
+  PASS  SEC084: QA y seguridad aprobados en MultiEdit  (allow)  MOTIVO<<>>
+  PASS  SEC084: prosa con Seguridad no firma  (allow)  MOTIVO<<>>
+  PASS  SEC084: Write conserva firma vieja y cambia prosa  (allow)  MOTIVO<<>>
+  PASS  SEC084: cambiar evidencia de firma requiere QA  (deny)  MOTIVO<<ARNES: 'requirements/REQ-944.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'pendiente'. El ciclo es desarro>>
+  PASS  SEC084: ausencia QA conserva comportamiento heredado  (allow)  MOTIVO<<>>
+  PASS  SEC084: QA previo permite firma decorada  (allow)  MOTIVO<<>>
+  PASS  SEC084: nueva cabecera Write sin archivo  (deny)  MOTIVO<<ARNES: 'requirements/REQ-948.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'pendiente'. El ciclo es desarro>>
+  PASS  D16: diagnostico nombra rigor critico  MOTIVO<<ARNES: no se puede completar 'requirements/REQ-940.md': su rigor efectivo es 'critico' y el veredicto de segur>>
+  PASS  SEC084: diagnostico nombra el orden QA  MOTIVO<<ARNES: 'requirements/REQ-943.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'con-hallazgos'. El ciclo es des>>
+--- 42 · edición que la puerta no puede reconstruir (REQ-023 CA-13, SEC-117) ---
+  PASS  REQ-023 CA-13 C1 candidata  (deny)
+  SKIP  REQ-023 CA-13 C1 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+  PASS  REQ-023 CA-13 C2 candidata  (deny)
+  SKIP  REQ-023 CA-13 C2 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+  PASS  REQ-023 CA-13 C3 candidata  (deny)
+  SKIP  REQ-023 CA-13 C3 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+  PASS  REQ-023 CA-13 C4 candidata  (deny)
+  SKIP  REQ-023 CA-13 C4 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+  PASS  REQ-023 CA-13 C5 candidata  (deny)
+  SKIP  REQ-023 CA-13 C5 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+  PASS  REQ-023 CA-13 C6 candidata  (allow)
+  SKIP  REQ-023 CA-13 C6 df550fa: control, decide igual  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+  PASS  REQ-023 CA-13 C7 candidata  (allow)
+  SKIP  REQ-023 CA-13 C7 df550fa: control, decide igual  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+  PASS  REQ-023 CA-13 C8 candidata  (allow)
+  SKIP  REQ-023 CA-13 C8 df550fa: control, decide igual  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+  PASS  REQ-023 CA-13 C9 candidata  (deny)
+  SKIP  REQ-023 CA-13 C9 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+  PASS  REQ-023 CA-13 C10 candidata  (deny)
+  SKIP  REQ-023 CA-13 C10 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+  PASS  REQ-023 CA-13 C11 candidata  (deny)
+  SKIP  REQ-023 CA-13 C11 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+  PASS  REQ-023 CA-13 C12 candidata  (deny)
+  SKIP  REQ-023 CA-13 C12 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+  PASS  REQ-023 CA-13 C13 candidata  (allow)
+  SKIP  REQ-023 CA-13 C13 df550fa: control, decide igual  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+  PASS  REQ-023 CA-13 (ii) motivo de C1: old_string escapado, edición verificable, sin bytes crudos ni otra herramienta
+  PASS  REQ-023 CA-13 (ii) tope: de un old_string de 4000 bytes enseña 80, escapados, y el motivo cabe con holgura  (1098 bytes)
+  SKIP  REQ-023 CA-13 (viii) 0 procesos añadidos respecto a df550fa en C1 (no reconstruible) y C7 (reconstruible)  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+aviso: vuelta parcial (21 de 55 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 323 PASS, 0 FAIL, 15 SKIP (de ellos 0 INCONCLUSO: 0 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+       · ruta estilo Windows con backslashes -> deny  (sin cygpath: caso solo de Windows)
+       · REQ-023 CA-13 C1 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+       · REQ-023 CA-13 C2 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+       · REQ-023 CA-13 C3 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+       · REQ-023 CA-13 C4 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+       · REQ-023 CA-13 C5 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+       · REQ-023 CA-13 C6 df550fa: control, decide igual  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+       · REQ-023 CA-13 C7 df550fa: control, decide igual  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+       · REQ-023 CA-13 C8 df550fa: control, decide igual  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+       · REQ-023 CA-13 C9 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+       · REQ-023 CA-13 C10 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+       · REQ-023 CA-13 C11 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+       · REQ-023 CA-13 C12 df550fa: fail-before, permite  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+       · REQ-023 CA-13 C13 df550fa: control, decide igual  df550fa no se materializó (la-referencia-no-resuelve:df550fa)
+       · REQ-023 CA-13 (viii) 0 procesos añadidos respecto a df550fa en C1 (no reconstruible) y C7 (reconstruible)  df550fa no se materializó (la-referencia-no-resuelve:df550fa)

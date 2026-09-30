@@ -1,0 +1,33 @@
+## A. No reconstruible sobre requirements/ -> deny (REQ rojo)
+K1 control literal, cierre                                 cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). 
+N1 comillas rectas (el caso del host), cierre              cand=deny  r045=allow base=allow | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el 
+N2 \u00f3 literal, cierre                                  cand=deny  r045=allow base=allow | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el 
+N3 old inexistente, sin estado                             cand=deny  r045=allow base=allow | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el 
+N4 old vacio sobre archivo existente                       cand=deny  r045=deny  base=deny  | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el 
+N5 old con blanco final de mas                             cand=deny  r045=allow base=allow | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el 
+N6 MultiEdit: 1 literal + 2 no literal                     cand=deny  r045=allow base=allow | ARNES: no se permite la edicion 2 de 2 de este MultiEdit sobre 'requirements/REQ-900.md': esta puerta no puede reconstru
+N7 MultiEdit: 2 casa lo que deja 1 (legitimo)              cand=allow r045=allow base=allow | 
+N8 no literal en el cuerpo, sin tocar estado (REQ verde)   cand=deny  r045=allow base=allow | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el 
+N9 Edit sobre REQ inexistente, old no vacio                cand=deny  r045=allow base=allow | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/NUEVO.md': esta puerta no puede reconstruir el do
+## B. Legitimo y reapertura (reconstruible) -> como antes
+L1 cierre literal, REQ verde                               cand=allow r045=allow base=allow | 
+L2 edicion literal de prosa                                cand=allow r045=allow base=allow | 
+L3 reapertura literal con cola ocupada                     cand=allow r045=allow base=allow | 
+L4 reapertura NO literal (comillas rectas)                 cand=deny  r045=allow base=allow | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el 
+## C. Creacion por Edit (old vacio, archivo inexistente)
+C1 nace completado con QA pendiente                        cand/r045/base= deny deny deny | 
+C2 nace **Estado:** completado con QA pendiente (O-3)      cand/r045/base= deny allow allow | 
+C3 nace en-progreso                                        cand/r045/base= allow allow allow | 
+C4 nace completado en verde                                cand/r045/base= allow allow allow | 
+C5 MultiEdit de creacion con 2 ediciones                   cand/r045/base= deny deny deny 
+## D. Otras vias y alcance
+D1 no literal FUERA de requirements/ (docs/nota.md)            cand=allow
+D2 no literal desde el agente desarrollador                cand=deny  r045=allow base=allow | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el 
+D3 Bash sed -i con el estado terminal                         cand=allow
+D4 Write de cierre, REQ rojo                               cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). 
+D5 disco CRLF, cierre literal con old LF (rojo)            cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). 
+D6 disco CRLF, cierre literal con old LF (verde)           cand=allow r045=allow base=allow | 
+## E. Motivo de CA-13: no hereda SEC-118
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-seg-v2/lib-sonda.sh: line 13: /home/juan/.local/bin/jq: Argument list too long
+E1 old_string no literal de 200 000 bytes multibyte: dec=allow motivo=0 bytes; crudo>=0x80: 0
+   

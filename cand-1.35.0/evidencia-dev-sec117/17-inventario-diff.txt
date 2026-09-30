@@ -1,0 +1,76 @@
+359c359
+< PASS	QA: control, edit2 busca lo que edit1 destruyo: la herramienta fallaria -> allow  (allow)
+---
+> PASS	QA: control, edit2 busca lo que edit1 destruyo: no reconstruible -> deny nombrando la edicion 2 (era allow)
+515c515
+< PASS	REQ-016 CA-02 el corpus de cabeceras se cosecha por glob del corredor (104 cabeceras)
+---
+> PASS	REQ-016 CA-02 el corpus de cabeceras se cosecha por glob del corredor (102 cabeceras)
+517c517
+< PASS	REQ-016 CA-02 ningún deny se volvió allow al insertar un rango (249 variantes sobre las 83 cabeceras que deniegan, de 104 cosechadas)
+---
+> PASS	REQ-016 CA-02 ningún deny se volvió allow al insertar un rango (246 variantes sobre las 82 cabeceras que deniegan, de 102 cosechadas)
+563d562
+< PASS	REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  máx(cociente) N× <= techo N× en N de N resueltas: N× N× N× N× N× · calibración resuelta: v1.32.1 recorre [N×, N×] en N de N
+619c618
+< PASS	REQ-023 CA-03 (reservada) entrada al azar U+E556A = $'\363\245\225\252', semilla ARNES_SEMILLA_41=12718 (bash 5.3.9(1)-release)  N/N DENY en la candidata (713ac68 las dejaba cerrar: N/N)
+---
+> PASS	REQ-023 CA-03 (reservada) entrada al azar U+F0380 = $'\363\260\216\200', semilla ARNES_SEMILLA_41=20965 (bash 5.3.9(1)-release)  N/N DENY en la candidata (713ac68 las dejaba cerrar: N/N)
+621,623c620,622
+< PASS	REQ-023 CA-04 corpus: 104 cabeceras del banco por glob + 29 REQ de requirements/, con clave no ASCII, valor no ASCII y clave decorada
+< PASS	REQ-023 CA-04 las 133 decisiones coinciden con 713ac68 salvo 34 denegaciones por cabecera ambigua, cada una con variante o repetición real (REQ de requirements/ ambiguos: 0)
+< PASS	REQ-023 CA-04 los 133 documentos dan el mismo valor en cada campo que 713ac68
+---
+> PASS	REQ-023 CA-04 corpus: 102 cabeceras del banco por glob + 29 REQ de requirements/, con clave no ASCII, valor no ASCII y clave decorada
+> PASS	REQ-023 CA-04 las 131 decisiones coinciden con 713ac68 salvo 33 denegaciones por cabecera ambigua, cada una con variante o repetición real (REQ de requirements/ ambiguos: 0)
+> PASS	REQ-023 CA-04 los 131 documentos dan el mismo valor en cada campo que 713ac68
+780a780,808
+> PASS	REQ-023 CA-13 (ii) motivo de C1: old_string escapado, edición verificable, sin bytes crudos ni otra herramienta
+> PASS	REQ-023 CA-13 (ii) tope: de un old_string de 4000 bytes enseña 80, escapados, y el motivo cabe con holgura  (N bytes)
+> PASS	REQ-023 CA-13 (viii) 0 procesos añadidos respecto a df550fa en C1 (no reconstruible) y C7 (reconstruible)  (C1 N frente a N; C7 N frente a N; menos es conforme)
+> PASS	REQ-023 CA-13 C1 candidata  (deny)
+> PASS	REQ-023 CA-13 C1 df550fa: fail-before, permite  (df550fa allow)
+> PASS	REQ-023 CA-13 C10 candidata  (deny)
+> PASS	REQ-023 CA-13 C10 df550fa: fail-before, permite  (df550fa allow)
+> PASS	REQ-023 CA-13 C11 candidata  (deny)
+> PASS	REQ-023 CA-13 C11 df550fa: fail-before, permite  (df550fa allow)
+> PASS	REQ-023 CA-13 C12 candidata  (deny)
+> PASS	REQ-023 CA-13 C12 df550fa: fail-before, permite  (df550fa allow)
+> PASS	REQ-023 CA-13 C13 candidata  (allow)
+> PASS	REQ-023 CA-13 C13 df550fa: control, decide igual  (df550fa allow)
+> PASS	REQ-023 CA-13 C2 candidata  (deny)
+> PASS	REQ-023 CA-13 C2 df550fa: fail-before, permite  (df550fa allow)
+> PASS	REQ-023 CA-13 C3 candidata  (deny)
+> PASS	REQ-023 CA-13 C3 df550fa: fail-before, permite  (df550fa allow)
+> PASS	REQ-023 CA-13 C4 candidata  (deny)
+> PASS	REQ-023 CA-13 C4 df550fa: fail-before, permite  (df550fa allow)
+> PASS	REQ-023 CA-13 C5 candidata  (deny)
+> PASS	REQ-023 CA-13 C5 df550fa: fail-before, permite  (df550fa allow)
+> PASS	REQ-023 CA-13 C6 candidata  (allow)
+> PASS	REQ-023 CA-13 C6 df550fa: control, decide igual  (df550fa allow)
+> PASS	REQ-023 CA-13 C7 candidata  (allow)
+> PASS	REQ-023 CA-13 C7 df550fa: control, decide igual  (df550fa allow)
+> PASS	REQ-023 CA-13 C8 candidata  (allow)
+> PASS	REQ-023 CA-13 C8 df550fa: control, decide igual  (df550fa allow)
+> PASS	REQ-023 CA-13 C9 candidata  (deny)
+> PASS	REQ-023 CA-13 C9 df550fa: fail-before, permite  (df550fa allow)
+863c891
+< PASS	SEC-024 boca fragmento (old_string ausente): el CR del fragmento entrante también deniega
+---
+> PASS	SEC-024 boca texto entrante (Edit literal): el CR que trae el new_string también deniega
+1109c1137
+< PASS	transicion por documento: REQ inexistente en disco -> allow y sin traza de bash
+---
+> PASS	transicion por documento: REQ inexistente en disco -> deny por no reconstruible (REQ-001 CA-12) y sin traza de bash
+1123,1124c1151,1152
+< PASS	transicion por documento: old_string ausente + 'Estado: completado' en el fragmento -> deny  (deny)
+< PASS	transicion por documento: old_string ausente y fragmento 'completado' a secas -> allow  (allow)
+---
+> PASS	transicion por documento: old_string ausente + 'Estado: completado' -> deny por no reconstruible (REQ-001 CA-10)
+> PASS	transicion por documento: old_string ausente y 'completado' a secas -> deny por no reconstruible (REQ-001 CA-11, era allow)
+1129a1158
+> PASS	un Edit que aprueba QA y cierra a la vez: se lee el documento resultante -> allow  (allow)
+1133d1161
+< PASS	un fragmento sin '##' se lee entero: QA aprobado en el Edit -> allow  (allow)
+1138a1167
+> SKIP	REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  [INCONCLUSO] [rendimiento] la calibración NO resolvió: hacen falta N o más repeticiones resueltas de v1.32.1 y todas por encima de N× · v1.32.1: N× N× N× N× N× (N de N resueltas) · este árbol: N× N× N× N× N× (N de N resueltas) · no es FAIL del candidato: el instrumento no demostró ver el defecto

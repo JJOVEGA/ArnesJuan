@@ -1,0 +1,6 @@
+racha=8000 old=4020B ArnesJuan-v1.35 dec=deny rc=0 t=0.94s
+racha=8000 old=4020B base713 dec=deny rc=0 t=0.84s
+racha=16000 old=8020B ArnesJuan-v1.35 dec=deny rc=0 t=1.32s
+racha=16000 old=8020B base713 dec=deny rc=0 t=0.92s
+racha=32000 old=16020B ArnesJuan-v1.35 dec=deny rc=0 t=3.82s
+racha=32000 old=16020B base713 dec=deny rc=0 t=2.12s

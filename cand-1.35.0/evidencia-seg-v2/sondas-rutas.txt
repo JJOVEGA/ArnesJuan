@@ -1,0 +1,11 @@
+RC0 control: ruta canonica                                 cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). 
+RC1 '<raiz>/docs/../requirements/'                         cand=allow r045=allow base=allow | 
+RC2 '<raiz>/././requirements/'                             cand=allow r045=allow base=allow | 
+RC3 directorio enlazado dentro del proyecto                cand=allow r045=allow base=allow | 
+RC4 directorio enlazado fuera del proyecto                 cand=allow r045=allow base=allow | 
+RC5 '<raiz>/requirements/./' (control: casa el glob)       cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/./REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado')
+## guard-codigo (coordinadora escribe src/a.ts)
+GC0 control: <raiz>/src/a.ts                               ArnesJuan-v1.35=deny base713=deny 
+GC1 <raiz>/docs/../src/a.ts                                ArnesJuan-v1.35=allow base713=allow 
+GC2 <raiz>/././src/a.ts                                    ArnesJuan-v1.35=allow base713=allow 
+GC3 directorio enlazado a src/                             ArnesJuan-v1.35=allow base713=allow 

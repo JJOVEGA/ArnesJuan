@@ -1,0 +1,14 @@
+REQ-023 linea 8: Edit literal -> allow 
+REQ-023 linea 9: Edit literal -> allow 
+REQ-023: cierre simulado en verde -> allow 
+REQ-023: lector -> AMB=0 SEG=<aprobado> HALL_N=1
+REQ-031 linea 8: Edit literal -> allow 
+REQ-031 linea 9: Edit literal -> allow 
+REQ-031: cierre simulado en verde -> allow 
+REQ-031: lector -> AMB=0 SEG=<aprobado> HALL_N=1
+REQ-001 linea 8: Edit literal -> allow 
+REQ-001: cierre simulado en verde -> allow 
+REQ-001: lector -> AMB=0 SEG=<aprobado> HALL_N=1
+REQ-007 linea 9: Edit literal -> allow 
+REQ-007: cierre simulado en verde -> deny ARNES: no se puede completar 'requirements/REQ-007.md': el hallazgo 'qa-114' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en real
+REQ-007: lector -> AMB=0 SEG=<pendiente> HALL_N=1

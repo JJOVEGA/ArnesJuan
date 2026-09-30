@@ -1,0 +1,57 @@
+ M docs/ESTADO.md
+ M hooks/guard-completado.sh
+ M hooks/lib.sh
+ M requirements/REQ-023.md
+ M tests/escenarios/hooks/README.md
+ M tests/escenarios/hooks/run.sh
+ M tests/escenarios/hooks/secciones/02-guard-completado-transicion.sh
+ M tests/escenarios/hooks/secciones/03-veredictos-anti-deriva.sh
+ M tests/escenarios/hooks/secciones/04-windows-formas-del-manifiesto.sh
+ M tests/escenarios/hooks/secciones/08-clase-del-hallazgo.sh
+ M tests/escenarios/hooks/secciones/10-plantilla-pending-approval.sh
+ M tests/escenarios/hooks/secciones/11-nivel-de-rigor.sh
+ M tests/escenarios/hooks/secciones/12-rigor-ligero.sh
+ M tests/escenarios/hooks/secciones/13-orden-del-ciclo.sh
+ M tests/escenarios/hooks/secciones/14-campos-solo-en-la-cabecera.sh
+ M tests/escenarios/hooks/secciones/15-formas-decoradas.sh
+ M tests/escenarios/hooks/secciones/16-guard-punto-de-entrada.sh
+ M tests/escenarios/hooks/secciones/17-asterisco-de-nota-al-pie.sh
+ M tests/escenarios/hooks/secciones/18-parentesis-es-evidencia.sh
+ M tests/escenarios/hooks/secciones/19-cola-hasta-la-cabecera.sh
+ M tests/escenarios/hooks/secciones/26-veredicto-fechado.sh
+ M tests/escenarios/hooks/secciones/27-vocabulario-de-veredictos.sh
+ M tests/escenarios/hooks/secciones/30-celdas-recortadas.sh
+ M tests/escenarios/hooks/secciones/34-arnes-paralelo.sh
+ M tests/escenarios/hooks/secciones/36-cabecera-comentario-html-5-el-cr-que-no-termina.sh
+ M tests/escenarios/hooks/secciones/40-estabilizacion-firmas-y-rigor.sh
+ M tools/arnes-lectura.sh
+?? propuesta-v1.35.0/
+?? tests/escenarios/hooks/secciones/42-edicion-no-reconstruible.sh
+ docs/ESTADO.md                                     |  11 +-
+ hooks/guard-completado.sh                          | 351 ++++++++++++---------
+ hooks/lib.sh                                       |  15 +-
+ requirements/REQ-023.md                            |   5 +-
+ tests/escenarios/hooks/README.md                   |  11 +
+ tests/escenarios/hooks/run.sh                      |  50 ++-
+ .../secciones/02-guard-completado-transicion.sh    |   4 +-
+ .../hooks/secciones/03-veredictos-anti-deriva.sh   |  12 +-
+ .../secciones/04-windows-formas-del-manifiesto.sh  |   4 +-
+ .../hooks/secciones/08-clase-del-hallazgo.sh       |  14 +-
+ .../secciones/10-plantilla-pending-approval.sh     |   2 +-
+ .../hooks/secciones/11-nivel-de-rigor.sh           |  18 +-
+ .../escenarios/hooks/secciones/12-rigor-ligero.sh  |   8 +-
+ .../hooks/secciones/13-orden-del-ciclo.sh          |  21 +-
+ .../secciones/14-campos-solo-en-la-cabecera.sh     |  42 ++-
+ .../hooks/secciones/15-formas-decoradas.sh         |  30 +-
+ .../hooks/secciones/16-guard-punto-de-entrada.sh   |   8 +-
+ .../hooks/secciones/17-asterisco-de-nota-al-pie.sh |   8 +-
+ .../hooks/secciones/18-parentesis-es-evidencia.sh  |  12 +-
+ .../hooks/secciones/19-cola-hasta-la-cabecera.sh   |   4 +-
+ .../hooks/secciones/26-veredicto-fechado.sh        |   2 +-
+ .../secciones/27-vocabulario-de-veredictos.sh      |  20 +-
+ .../hooks/secciones/30-celdas-recortadas.sh        |   4 +-
+ .../hooks/secciones/34-arnes-paralelo.sh           |   4 +-
+ ...ecera-comentario-html-5-el-cr-que-no-termina.sh |  14 +-
+ .../secciones/40-estabilizacion-firmas-y-rigor.sh  |  30 +-
+ tools/arnes-lectura.sh                             |   6 +-
+ 27 files changed, 416 insertions(+), 294 deletions(-)

@@ -1,0 +1,5 @@
+D3b Bash sed -i relativo con el estado terminal: ArnesJuan-v1.35 dec=deny | ARNES: este comando escribe en 'requirements/REQ-900.md' y menciona 'completado'. La trans
+D3b Bash sed -i relativo con el estado terminal: base713 dec=deny | ARNES: este comando escribe en 'requirements/REQ-900.md' y menciona 'completado'. La trans
+json del instrumento: 200393 bytes (no vacio)
+E1b old_string no literal de 200 000 bytes (ñ): dec=deny motivo=1100 bytes, crudo>=0x80 fuera del texto fijo: 0 err=
+   El old_string de la unica edicion de este Edit es $'\303\261\303\261\303\261\303\261\303\261\303\261\303\261\303\261\303\261\303\261\303\261\303\261\303\261\303\261\303\261\303\261\303\261\303\261\303\261\303\261\303\

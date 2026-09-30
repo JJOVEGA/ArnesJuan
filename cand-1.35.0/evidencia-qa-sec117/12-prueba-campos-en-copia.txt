@@ -1,0 +1,20 @@
+cand    REQ-023 qa   Edit literal -> allow 
+cand    REQ-023 hall Edit literal -> allow 
+cand    REQ-031 qa   Edit literal -> allow 
+cand    REQ-031 hall Edit literal -> allow 
+cand    REQ-001 qa   Edit literal -> allow 
+cand    REQ-007 qa   Edit literal -> allow 
+cand    REQ-007 hall Edit literal -> allow 
+cand    REQ-023 cierre simulado (veredictos verdes, cola vacia) -> allow 
+cand    REQ-031 cierre simulado (veredictos verdes, cola vacia) -> allow 
+cand    REQ-007 cierre simulado (veredictos verdes, cola vacia) -> deny ARNES: no se puede completar 'requirements/REQ-007.md': el hallazgo 'qa-114' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo 
+1.33.2  REQ-023 qa   Edit literal -> allow 
+1.33.2  REQ-023 hall Edit literal -> allow 
+1.33.2  REQ-031 qa   Edit literal -> allow 
+1.33.2  REQ-031 hall Edit literal -> allow 
+1.33.2  REQ-001 qa   Edit literal -> allow 
+1.33.2  REQ-007 qa   Edit literal -> allow 
+1.33.2  REQ-007 hall Edit literal -> allow 
+1.33.2  REQ-023 cierre simulado (veredictos verdes, cola vacia) -> allow 
+1.33.2  REQ-031 cierre simulado (veredictos verdes, cola vacia) -> allow 
+1.33.2  REQ-007 cierre simulado (veredictos verdes, cola vacia) -> deny ARNES: no se puede completar 'requirements/REQ-007.md': el hallazgo 'qa-114' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo 

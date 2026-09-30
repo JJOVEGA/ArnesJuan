@@ -1,0 +1,4 @@
+T1 techo 348 910 B, Edit                                   cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el valor de 'Hallazgos abiertos:' mide 348910 bytes (contados en
+T2 techo 348 910 B, Write                                  cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el valor de 'Hallazgos abiertos:' mide 348910 bytes (contados en
+S1 SEC-118: CA-A12 con 1 801 lineas ASCII (sigue abierto)  cand=allow r045=allow base=allow | 
+S2 SEC-118: QA de 140 KB sin parentesis (sigue abierto)    cand=allow r045=allow base=allow | 

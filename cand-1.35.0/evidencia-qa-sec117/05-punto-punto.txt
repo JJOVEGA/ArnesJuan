@@ -1,0 +1,18 @@
+== cand:/home/juan/dev/ArnesJuan-v1.35/hooks
+P1 Edit cierre (QA pendiente) <raiz>/requirements/REQ-1.md       -> deny
+P2 Edit cierre (QA pendiente) <raiz>/docs/../requirements/REQ-1.md -> allow
+P3 Edit cierre (QA pendiente) docs/../requirements/REQ-1.md (rel) -> allow
+P4 Write coordinadora <raiz>/src/a.ts                             -> deny
+P5 Write coordinadora <raiz>/docs/../src/a.ts                     -> allow
+== df550fa:/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-sec117/arboles/df550fa/hooks
+P1 Edit cierre (QA pendiente) <raiz>/requirements/REQ-1.md       -> deny
+P2 Edit cierre (QA pendiente) <raiz>/docs/../requirements/REQ-1.md -> allow
+P3 Edit cierre (QA pendiente) docs/../requirements/REQ-1.md (rel) -> allow
+P4 Write coordinadora <raiz>/src/a.ts                             -> deny
+P5 Write coordinadora <raiz>/docs/../src/a.ts                     -> allow
+== 1.33.2:/home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.33.2/hooks
+P1 Edit cierre (QA pendiente) <raiz>/requirements/REQ-1.md       -> deny
+P2 Edit cierre (QA pendiente) <raiz>/docs/../requirements/REQ-1.md -> allow
+P3 Edit cierre (QA pendiente) docs/../requirements/REQ-1.md (rel) -> allow
+P4 Write coordinadora <raiz>/src/a.ts                             -> deny
+P5 Write coordinadora <raiz>/docs/../src/a.ts                     -> allow

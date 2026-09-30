@@ -1,0 +1,54 @@
+K01  | deny  | disco:igual | ARNES: no se puede completar 'requirements/REQ-1.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y r
+K02  | deny  | disco:igual | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-1.md': esta puerta no puede reconstruir el documento que quedaria escrito, 
+K03  | deny  | disco:igual | ARNES: no se puede completar 'requirements/REQ-1.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y r
+K04  | deny  | disco:igual | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-1.md': esta puerta no puede reconstruir el documento que quedaria escrito, 
+K05  | allow | disco:igual | 
+K05b | allow | disco:igual | 
+K06  | allow | disco:igual | 
+K07  | deny  | disco:igual | ARNES: no se permite la edicion 2 de 2 de este MultiEdit sobre 'requirements/REQ-1.md': esta puerta no puede reconstruir el documento que quedaria esc
+K08  | allow | disco:igual | 
+K09  | deny  | disco:igual | ARNES: no se permite la edicion 2 de 2 de este MultiEdit sobre 'requirements/REQ-1.md': esta puerta no puede reconstruir el documento que quedaria esc
+K10  | allow | disco:igual | 
+K11  | deny  | disco:igual | ARNES: no se permite la edicion 1 de 1 de este MultiEdit sobre 'requirements/REQ-1.md': esta puerta no puede reconstruir el documento que quedaria esc
+K12  | deny  | disco:igual | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-1.md': esta puerta no puede reconstruir el documento que quedaria escrito, 
+K13  | deny  | disco:igual | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-1.md': esta puerta no puede reconstruir el documento que quedaria escrito, 
+K14  | deny  | disco:igual | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-1.md': esta puerta no puede reconstruir el documento que quedaria escrito, 
+K15  | deny  | disco:igual | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-1.md': esta puerta no puede reconstruir el documento que quedaria escrito, 
+K16  | allow | disco:igual | 
+K17  | allow | disco:igual | 
+K18  | deny  | disco:igual | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/dir.md': esta puerta no puede reconstruir el documento que quedaria escrito, po
+K18b | deny  | disco:igual | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/dir.md': esta puerta no puede reconstruir el documento que quedaria escrito, po
+K19  | deny  | disco:igual | ARNES: 'requirements/enlace.md' es un ENLACE SIMBOLICO y no se escribe a traves de el. El arnés juzga la ruta escrita, no su destino: un enlace en un
+K20  | deny  | disco:igual | ARNES: 'requirements/colgante.md' es un ENLACE SIMBOLICO y no se escribe a traves de el. El arnés juzga la ruta escrita, no su destino: un enlace en 
+K21  | deny  | disco:igual | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/fifo.md': esta puerta no puede reconstruir el documento que quedaria escrito, p
+K22  | deny  | disco:igual | ARNES: 'src/../requirements/REQ-1.md' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Deleg
+K23  | deny  | disco:igual | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-1.md': esta puerta no puede reconstruir el documento que quedaria escrito, 
+K24  | deny  | disco:igual | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-1.md': esta puerta no puede reconstruir el documento que quedaria escrito, 
+K25  | allow | disco:igual | 
+K26  | deny  | disco:igual | ARNES: no se puede completar 'requirements/REQ-2.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y r
+K27  | allow | disco:igual | 
+K28  | deny  | disco:igual | ARNES: no se permite la edicion 1 de 2 de este MultiEdit sobre 'requirements/REQ-2.md': esta puerta no puede reconstruir el documento que quedaria esc
+K29  | deny  | disco:igual | ARNES: no se puede completar 'requirements/REQ-2.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y r
+K30  | deny  | disco:igual | ARNES: no se puede completar 'requirements/sub/REQ-3.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA
+K31  | deny  | disco:igual | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/vacio.md': esta puerta no puede reconstruir el documento que quedaria escrito, 
+K32  | deny  | disco:igual | ARNES: no se puede completar 'requirements/REQ-5.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y r
+K33  | deny  | disco:igual | ARNES: no se puede completar 'requirements/REQ-5.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y r
+K34  | allow | disco:igual | 
+K35  | allow | disco:igual | 
+K36  | deny  | disco:igual | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-6.md': esta puerta no puede reconstruir el documento que quedaria escrito, 
+K37  | allow | disco:igual | 
+K38  | allow | disco:igual | 
+K39  | allow | disco:igual | 
+K40  | allow | disco:igual | 
+K41  | deny  | disco:igual | ARNES: no se puede tocar el estado de 'requirements/REQ-8.md': el archivo en disco no se puede leer entero —un byte NUL lo trunca, o no hay permiso 
+K42  | deny  | disco:igual | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/README.md': esta puerta no puede reconstruir el documento que quedaria escrito,
+K43  | allow | disco:igual | 
+K44  | deny  | disco:igual | ARNES: no se puede completar 'requirements/REQ-10.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y 
+K45  | deny  | disco:igual | ARNES: este comando escribe en 'requirements/REQ-10.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las p
+K46  | allow | disco:igual | 
+K47  | allow | disco:igual | 
+K48  | deny  | disco:igual | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/./REQ-1.md': esta puerta no puede reconstruir el documento que quedaria escrito
+M1   | motivo old=60 comillas tipograficas (180 bytes): 1095 bytes; bytes>=0x80 crudos: 0; nombra Bash/Write/MultiEdit-en-Edit: 
+M1t  | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-1.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_string no esta LITERAL en el texto del archivo. Sin ese documento no se puede saber si la edicion cierra el REQ, cambia un veredicto o no toca nada, y una puerta que no puede medir no deja pasar: la incertidumbre no se convierte en permiso (REQ-023 CA-13). El old_string de la unica edicion de este Edit es $'\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200\234\342\200'... (mide 180 bytes; se muestran los primeros 80). Para hacer una edicion verificable: lee el archivo y repite la edicion con un old_string copiado LITERALMENTE de el, con las comillas, los guiones, los espacios y los acentos tal como estan escritos, sin retocarlos. La puerta no reescribe el archivo.
+M2t  | El old_string de la unica edicion de este Edit es $'it\'s \'x\' en-revisi\303\263n'.
+M3t  | ARNES: no se permite la edicion 2 de 2 de este MultiEdit sobre 'requirements/REQ-1.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_string no esta LITERAL en el t

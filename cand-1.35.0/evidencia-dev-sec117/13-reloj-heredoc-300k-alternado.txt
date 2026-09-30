@@ -1,0 +1,13 @@
+seccion: tests/escenarios/hooks/secciones/25-presupuesto-de-analisis.sh
+df550fa #1:   PASS  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  (allow en 2114ms; presupuesto 1000ms, techo holgado 4000ms)
+aviso: vuelta parcial (1 de 55 secciones, filtro 'heredoc CITADO de ~300 KB'): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+final #1:   PASS  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  (allow en 1813ms; presupuesto 1000ms, techo holgado 4000ms)
+aviso: vuelta parcial (1 de 55 secciones, filtro 'heredoc CITADO de ~300 KB'): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+df550fa #2:   PASS  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  (allow en 2622ms; presupuesto 1000ms, techo holgado 4000ms)
+aviso: vuelta parcial (1 de 55 secciones, filtro 'heredoc CITADO de ~300 KB'): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+final #2:   PASS  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  (allow en 2414ms; presupuesto 1000ms, techo holgado 4000ms)
+aviso: vuelta parcial (1 de 55 secciones, filtro 'heredoc CITADO de ~300 KB'): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+df550fa #3:   PASS  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  (allow en 3021ms; presupuesto 1000ms, techo holgado 4000ms)
+aviso: vuelta parcial (1 de 55 secciones, filtro 'heredoc CITADO de ~300 KB'): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+final #3:   PASS  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  (allow en 2719ms; presupuesto 1000ms, techo holgado 4000ms)
+aviso: vuelta parcial (1 de 55 secciones, filtro 'heredoc CITADO de ~300 KB'): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.

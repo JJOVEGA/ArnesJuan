@@ -1,0 +1,35 @@
+== seccion 42 con ARNES_HOOKS_DIR=1.33.2 (2026-09-30T09:45:18-06:00)
+--- 42 · edición que la puerta no puede reconstruir (REQ-023 CA-13, SEC-117) ---
+  FAIL  REQ-023 CA-13 C1 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C1 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C2 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C2 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C3 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C3 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C4 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C4 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C5 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C5 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C6 candidata  (allow)
+  PASS  REQ-023 CA-13 C6 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C7 candidata  (allow)
+  PASS  REQ-023 CA-13 C7 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C8 candidata  (allow)
+  PASS  REQ-023 CA-13 C8 df550fa: control, decide igual  (df550fa allow)
+  FAIL  REQ-023 CA-13 C9 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C9 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C10 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C10 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C11 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C11 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C12 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C12 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C13 candidata  (allow)
+  PASS  REQ-023 CA-13 C13 df550fa: control, decide igual  (df550fa allow)
+  FAIL  REQ-023 CA-13 (ii) motivo de C1: old_string escapado, edición verificable, sin bytes crudos ni otra herramienta  (C1 no dejó motivo)
+  FAIL  REQ-023 CA-13 (ii) tope: de un old_string de 4000 bytes enseña 80, escapados, y el motivo cabe con holgura  decisión=allow motivo=0 bytes  <>
+  PASS  REQ-023 CA-13 (viii) 0 procesos añadidos respecto a df550fa en C1 (no reconstruible) y C7 (reconstruible)  (C1 4 frente a 4; C7 3 frente a 3; menos es conforme)
+aviso: vuelta parcial (1 de 55 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 18 PASS, 11 FAIL
+rc=1

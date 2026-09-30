@@ -1,0 +1,154 @@
+src/app.ts	ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' 
+requirements/REQ-040.md	ARNES: no se puede completar 'requirements/REQ-040.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-010.md	ARNES: no se puede completar 'requirements/REQ-010.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-041.md	ARNES: no se puede completar 'requirements/REQ-041.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-021.md	ARNES: no se puede completar 'requirements/REQ-021.md': el hallazgo 'sec-2' es de clase 'usuario/dinero' y bloquea el cierre. Resuelvelo — o reclasificalo si 
+requirements/REQ-001.md	ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality gate `false`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 
+requirements/REQ-090.md	ARNES: no se puede marcar 'requirements/REQ-090.md' como 'completado': falló la quality gate `false`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 
+requirements/REQ-050.md	ARNES: 'requirements/REQ-050.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'pendiente'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGENTS.m
+requirements/REQ-012.md	ARNES: no se puede completar 'requirements/REQ-012.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-022.md	ARNES: no se puede completar 'requirements/REQ-022.md': el hallazgo 'sec-3' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en rea
+requirements/REQ-090.md	ARNES: no se puede marcar 'requirements/REQ-090.md' como 'completado': hay 1 aprobación(es) pendiente(s) en PENDING_APPROVAL.md. El humano debe resolverlas prim
+requirements/REQ-110.md	ARNES: no se puede completar 'requirements/REQ-110.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-050.md	ARNES: 'requirements/REQ-050.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'pendiente'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGENTS.m
+requirements/REQ-043.md	ARNES: no se puede completar 'requirements/REQ-043.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-023.md	ARNES: no se puede completar 'requirements/REQ-023.md': el hallazgo 'sec-4' no declara su clase, y un hallazgo sin clase no cuenta como hallazgo. Clasificalo co
+requirements/REQ-091.md	ARNES: no se puede completar 'requirements/REQ-091.md': el hallazgo 'sec-7' es de clase 'usuario/dinero' y bloquea el cierre. Resuelvelo — o reclasificalo si 
+requirements/REQ-044.md	ARNES: no se puede completar 'requirements/REQ-044.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-024.md	ARNES: no se puede completar 'requirements/REQ-024.md': el hallazgo 'sec-6' es de clase 'usuario/dinero' y bloquea el cierre. Resuelvelo — o reclasificalo si 
+requirements/REQ-001.md	ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': hay 1 aprobación(es) pendiente(s) en PENDING_APPROVAL.md. El humano debe resolverlas prim
+requirements/REQ-112.md	ARNES: no se puede completar 'requirements/REQ-112.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-001.md	ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality gate `false`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 
+requirements/REQ-046.md	ARNES: no se puede completar 'requirements/REQ-046.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-060.md	ARNES: no se puede completar 'requirements/REQ-060.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-114.md	ARNES: no se puede completar 'requirements/REQ-114.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+src/app.ts	ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' 
+requirements/REQ-047.md	ARNES: no se puede completar 'requirements/REQ-047.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-054.md	ARNES: no se puede completar 'requirements/REQ-054.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'preventiva' (se requiere 'Seguridad: apro
+requirements/REQ-061.md	ARNES: no se puede completar 'requirements/REQ-061.md': su 'Sensible a seguridad:' dice '**si**—tocaautenticacion', que no se reconoce ni como si ni como no, y 
+requirements/REQ-048.md	ARNES: no se puede completar 'requirements/REQ-048.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-800.md	ARNES: no se puede completar 'requirements/REQ-800.md': el hallazgo 'sec-m' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en rea
+requirements/REQ-062.md	ARNES: no se puede completar 'requirements/REQ-062.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-801.md	ARNES: no se puede completar 'requirements/REQ-801.md': el hallazgo 'sec-m' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en rea
+requirements/REQ-074.md	ARNES: no se puede completar 'requirements/REQ-074.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'aprobado*' (se requiere 'Seguridad: aprob
+requirements/REQ-063.md	ARNES: no se puede completar 'requirements/REQ-063.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-115.md	ARNES: no se puede completar 'requirements/REQ-115.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-075.md	ARNES: no se puede completar 'requirements/REQ-075.md': su rigor efectivo es 'critico' y el veredicto de seguridad es '*aprobado' (se requiere 'Seguridad: aprob
+requirements/REQ-030.md	ARNES: no se puede completar 'requirements/REQ-030.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-802.md	ARNES: no se puede completar 'requirements/REQ-802.md': el hallazgo 'sec-b' es de clase 'usuario/dinero' y bloquea el cierre. Resuelvelo — o reclasificalo si 
+requirements/REQ-064.md	ARNES: no se puede completar 'requirements/REQ-064.md': su 'Sensible a seguridad:' dice 'porevaluar', que no se reconoce ni como si ni como no, y un valor que n
+requirements/REQ-064.md	ARNES: no se puede completar 'requirements/REQ-064.md': su 'Sensible a seguridad:' dice 'porevaluar', que no se reconoce ni como si ni como no, y un valor que n
+requirements/REQ-120.md	ARNES: no se puede completar 'requirements/REQ-120.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-803.md	ARNES: no se puede completar 'requirements/REQ-803.md': el hallazgo 'sec-b' es de clase 'usuario/dinero' y bloquea el cierre. Resuelvelo — o reclasificalo si 
+requirements/REQ-120.md	ARNES: no se puede completar 'requirements/REQ-120.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-077.md	ARNES: no se puede completar 'requirements/REQ-077.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-804.md	ARNES: no se puede completar 'requirements/REQ-804.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-083.md	ARNES: no se puede completar 'requirements/REQ-083.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'aprobado(sincerrar' (se requiere 'Segurid
+requirements/REQ-032.md	ARNES: no se puede completar 'requirements/REQ-032.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-066.md	ARNES: no se puede completar 'requirements/REQ-066.md': su 'Sensible a seguridad:' dice 'n/a', que no se reconoce ni como si ni como no, y un valor que no se en
+requirements/REQ-805.md	ARNES: no se puede completar 'requirements/REQ-805.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-082.md	ARNES: no se puede completar 'requirements/REQ-082.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'preventiva' (se requiere 'Seguridad: apro
+requirements/REQ-122.md	ARNES: no se puede completar 'requirements/REQ-122.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-072.md	ARNES: no se puede completar 'requirements/REQ-072.md': su 'Sensible a seguridad:' dice 'noaplica', que no se reconoce ni como si ni como no, y un valor que no 
+requirements/REQ-085.md	ARNES: no se puede marcar 'requirements/REQ-085.md' como 'completado': hay 1 aprobación(es) pendiente(s) en PENDING_APPROVAL.md. El humano debe resolverlas prim
+requirements/REQ-806.md	ARNES: no se puede completar 'requirements/REQ-806.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-124.md	ARNES: no se puede completar 'requirements/REQ-124.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-073.md	ARNES: no se puede completar 'requirements/REQ-073.md': su 'Sensible a seguridad:' dice 'ninguna', que no se reconoce ni como si ni como no, y un valor que no s
+src/app.ts	ARNES: el comando escribe en 'src/app.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo
+requirements/REQ-807.md	ARNES: no se puede completar 'requirements/REQ-807.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-125.md	ARNES: no se puede completar 'requirements/REQ-125.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-031.md	ARNES: este comando escribe en 'requirements/REQ-031.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2
+requirements/REQ-200.md	ARNES: no se puede completar 'requirements/REQ-200.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'con-hallazgos' (se requiere 'Seguridad: a
+requirements/REQ-808.md	ARNES: no se puede completar 'requirements/REQ-808.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-101.md	ARNES: no se puede completar 'requirements/REQ-101.md': el veredicto 'QA: aprobado' no lleva fecha y el manifiesto la exige (veredictos). Un veredicto sin fecha
+requirements/REQ-809.md	ARNES: no se puede completar 'requirements/REQ-809.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-123.md	ARNES: no se puede completar 'requirements/REQ-123.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-102.md	ARNES: no se puede completar 'requirements/REQ-102.md': el veredicto 'QA: aprobado (R-045)' no lleva fecha y el manifiesto la exige (veredictos). Un veredicto s
+requirements/REQ-126.md	ARNES: no se puede completar 'requirements/REQ-126.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-202.md	ARNES: no se puede completar 'requirements/REQ-202.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'vetado' (se requiere 'Seguridad: aprobado
+requirements/REQ-070.md	ARNES: no se puede completar 'requirements/REQ-070.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'preventiva' (se requiere 'Seguridad: apro
+requirements/REQ-202.md	ARNES: no se puede completar 'requirements/REQ-202.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'preventiva' (se requiere 'Seguridad: apro
+requirements/REQ-104.md	ARNES: no se puede completar 'requirements/REQ-104.md': el veredicto 'QA: aprobado (01/09/2026)' no lleva fecha y el manifiesto la exige (veredictos). Un veredi
+requirements/REQ-202.md	ARNES: no se puede completar 'requirements/REQ-202.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-132.md	ARNES: no se puede completar 'requirements/REQ-132.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-104.md	ARNES: no se puede completar 'requirements/REQ-104.md': el veredicto 'QA: aprobado (2026-9-1)' no lleva fecha y el manifiesto la exige (veredictos). Un veredict
+requirements/REQ-202.md	ARNES: no se puede completar 'requirements/REQ-202.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'n/a' (se requiere 'Seguridad: aprobado').
+requirements/REQ-127.md	ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-127.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque s
+requirements/REQ-104.md	ARNES: no se puede completar 'requirements/REQ-104.md': el veredicto 'QA: aprobado (20260901)' no lleva fecha y el manifiesto la exige (veredictos). Un veredict
+requirements/REQ-604.md	ARNES: no se puede completar 'requirements/REQ-604.md': el hallazgo 'sec-9999999999999999999999999999999999999' es de clase 'contrato' y bloquea el cierre. Resu
+requirements/REQ-127.md	ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-127.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque s
+requirements/REQ-605.md	ARNES: no se puede completar 'requirements/REQ-605.md': el veredicto de QA es 'aprobadoconlacondiciondequeserepitalarondacuandoelmodulocambie' (se requiere 'QA:
+requirements/REQ-104.md	ARNES: no se puede completar 'requirements/REQ-104.md': el veredicto 'QA: aprobado (2026-13-05)' no lleva fecha y el manifiesto la exige (veredictos). Un veredi
+requirements/REQ-999.md	ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-999.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque e
+requirements/REQ-970.md	ARNES: no se puede completar 'requirements/REQ-970.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'ausente' (se requiere 'Seguridad: aprobad
+requirements/REQ-105.md	ARNES: no se puede completar 'requirements/REQ-105.md': el veredicto 'Seguridad: aprobado' no lleva fecha y el manifiesto la exige (veredictos). Un veredicto si
+requirements/REQ-970.md	ARNES: no se puede completar 'requirements/REQ-970.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'ausente' (se requiere 'Seguridad: aprobad
+requirements/REQ-129.md	ARNES: no se puede marcar 'requirements/REQ-129.md' como 'completado': hay 1 aprobación(es) pendiente(s) en PENDING_APPROVAL.md. El humano debe resolverlas prim
+requirements/REQ-970.md	ARNES: no se puede completar 'requirements/REQ-970.md': su cabecera lleva un retorno de carro (CR) que NO termina la linea, en «<!\r--». Un CR suelto en mitad d
+requirements/REQ-107.md	ARNES: no se puede completar 'requirements/REQ-107.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-970.md	ARNES: no se puede completar 'requirements/REQ-970.md': su cabecera lleva un retorno de carro (CR) que NO termina la linea, en «<!\r--». Un CR suelto en mitad d
+requirements/REQ-129.md	ARNES: no se puede marcar 'requirements/REQ-129.md' como 'completado': falló la quality gate `false`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 
+requirements/REQ-212.md	ARNES: no se puede completar 'requirements/REQ-212.md': el veredicto de QA es 'aprobadisimo' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléj
+requirements/REQ-130.md	ARNES: no se puede completar 'requirements/REQ-130.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-971.md	ARNES: no se puede completar 'requirements/REQ-971.md': su cabecera lleva un retorno de carro (CR) que NO termina la linea, en «Seg\ruridad: aprobado». Un CR su
+requirements/REQ-111.md	ARNES: no se puede completar 'requirements/REQ-111.md': el veredicto 'QA: aprobado (2026-08-29)' es del 2026-08-29 y el codigo de la app cambio el 2026-08-30 (f
+requirements/REQ-971.md	ARNES: no se puede completar 'requirements/REQ-971.md': su cabecera lleva un retorno de carro (CR) que NO termina la linea, en «Seg\ruridad: aprobado». Un CR su
+requirements/REQ-140.md	ARNES: no se puede completar 'requirements/REQ-140.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-972.md	ARNES: no se puede completar 'requirements/REQ-972.md': su cabecera lleva un retorno de carro (CR) que NO termina la linea, en «<!\r--». Un CR suelto en mitad d
+requirements/REQ-140.md	ARNES: no se puede completar 'requirements/REQ-140.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-973.md	ARNES: no se puede completar 'requirements/REQ-973.md': su cabecera lleva un retorno de carro (CR) que NO termina la linea, en «Seg\ruridad: aprobado». Un CR su
+requirements/REQ-140.md	ARNES: no se puede completar 'requirements/REQ-140.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-113.md	ARNES: no se puede completar 'requirements/REQ-113.md': el veredicto 'QA: aprobado' no lleva fecha y el manifiesto la exige (veredictos). Un veredicto sin fecha
+requirements/REQ-820.md	ARNES: no se puede completar 'requirements/REQ-820.md': el hallazgo 'sec-9' es de clase 'usuario/dinero' y bloquea el cierre. Resuelvelo — o reclasificalo si 
+requirements/REQ-140.md	ARNES: no se puede completar 'requirements/REQ-140.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-940.md	ARNES: no se puede completar 'requirements/REQ-940.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-114.md	ARNES: no se puede completar 'requirements/REQ-114.md': el veredicto 'Seguridad: aprobado (2026-08-29)' es del 2026-08-29 y el codigo de la app cambio el 2026-0
+requirements/REQ-974.md	ARNES: no se puede completar 'requirements/REQ-974.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-140.md	ARNES: no se puede completar 'requirements/REQ-140.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-941.md	ARNES: no se puede completar 'requirements/REQ-941.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-974.md	ARNES: no se puede completar 'requirements/REQ-974.md': su cabecera lleva un retorno de carro (CR) que NO termina la linea, en «Seg\ruridad: aprobado». Un CR su
+requirements/REQ-141.md	ARNES: no se puede completar 'requirements/REQ-141.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-141.md	ARNES: no se permite la edicion 2 de 2 de este MultiEdit sobre 'requirements/REQ-141.md': esta puerta no puede reconstruir el documento que quedaria escrito, po
+requirements/REQ-110.md	ARNES: no se puede completar 'requirements/REQ-110.md': hay cambios SIN COMITEAR en el codigo de la app ('src/app.ts'). Un veredicto no puede ser posterior a co
+requirements/REQ-120.md	ARNES: no se puede completar 'requirements/REQ-120.md': el manifiesto exige medir la caducidad del veredicto contra el codigo (veredictos.caducan_con_codigo) y 
+requirements/REQ-952.md	ARNES: no se puede completar 'requirements/REQ-952.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-121.md	ARNES: no se puede completar 'requirements/REQ-121.md': 'git log --format=%cs' devolvio '%cs', que no es una fecha AAAA-MM-DD (git demasiado antiguo para ese fo
+requirements/REQ-824.md	ARNES: no se puede completar 'requirements/REQ-824.md': el hallazgo 'qa-114' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en re
+requirements/REQ-953.md	ARNES: no se puede completar 'requirements/REQ-953.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-954.md	ARNES: no se puede completar 'requirements/REQ-954.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-122.md	ARNES: no se puede completar 'requirements/REQ-122.md': el manifiesto exige que el veredicto no sea anterior al ultimo cambio del codigo (veredictos.caducan_con
+requirements/REQ-825.md	ARNES: no se puede completar 'requirements/REQ-825.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-955.md	ARNES: no se puede completar 'requirements/REQ-955.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-826.md	ARNES: no se puede completar 'requirements/REQ-826.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-956.md	ARNES: no se puede completar 'requirements/REQ-956.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-827.md	ARNES: no se puede completar 'requirements/REQ-827.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-828.md	ARNES: no se puede completar 'requirements/REQ-828.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-959.md	ARNES: no se puede completar 'requirements/REQ-959.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-829.md	ARNES: no se puede completar 'requirements/REQ-829.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-941.md	ARNES: no se puede completar 'requirements/REQ-941.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalo
+requirements/REQ-943.md	ARNES: 'requirements/REQ-943.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'con-hallazgos'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGEN
+requirements/REQ-830.md	ARNES: no se puede completar 'requirements/REQ-830.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-943.md	ARNES: 'requirements/REQ-943.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'con-hallazgos'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGEN
+requirements/REQ-831.md	ARNES: no se puede completar 'requirements/REQ-831.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-943.md	ARNES: 'requirements/REQ-943.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'con-hallazgos'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGEN
+requirements/REQ-832.md	ARNES: no se puede completar 'requirements/REQ-832.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-943.md	ARNES: 'requirements/REQ-943.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'con-hallazgos'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGEN
+requirements/REQ-846.md	ARNES: no se puede completar 'requirements/REQ-846.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-833.md	ARNES: no se puede completar 'requirements/REQ-833.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-834.md	ARNES: no se puede completar 'requirements/REQ-834.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-835.md	ARNES: no se puede completar 'requirements/REQ-835.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-944.md	ARNES: 'requirements/REQ-944.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'pendiente'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGENTS.m
+requirements/REQ-836.md	ARNES: no se puede completar 'requirements/REQ-836.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-948.md	ARNES: 'requirements/REQ-948.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'pendiente'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGENTS.m
+requirements/REQ-838.md	ARNES: no se puede completar 'requirements/REQ-838.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer no dej
+requirements/REQ-940.md	ARNES: no se puede completar 'requirements/REQ-940.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+requirements/REQ-943.md	ARNES: 'requirements/REQ-943.md' lleva 'Seguridad: aprobado' pero su 'QA:' es 'con-hallazgos'. El ciclo es desarrollador -> qa-tester -> auditor-seguridad (AGEN
+requirements/REQ-850.md	ARNES: no se puede completar 'requirements/REQ-850.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (linea 8: 'Hallazgos abiertos: SEC-1 (contrato)'; line
+requirements/REQ-851.md	ARNES: no se puede completar 'requirements/REQ-851.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (linea 8: 'Hallazgos abiertos: SEC-1 (contrato)'; line
+requirements/REQ-852.md	ARNES: no se puede completar 'requirements/REQ-852.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (linea 8: 'Hallazgos abiertos: SEC-1 (contrato)'; line
+requirements/REQ-853.md	ARNES: no se puede completar 'requirements/REQ-853.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (linea 8: 'Hallazgos abiertos: QA-2 (instrumento)'; li
+requirements/REQ-854.md	ARNES: no se puede completar 'requirements/REQ-854.md': el hallazgo 'sec-1' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en rea
+requirements/REQ-858.md	ARNES: no se puede completar 'requirements/REQ-858.md': el hallazgo 'sec-x' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en rea
+requirements/REQ-859.md	ARNES: no se puede completar 'requirements/REQ-859.md': el valor de 'Hallazgos abiertos:' mide 16385 bytes (contados en bytes, lo escrito tras los dos puntos y 
+requirements/REQ-860.md	ARNES: no se puede completar 'requirements/REQ-860.md': el valor de 'Hallazgos abiertos:' mide 60006 bytes (contados en bytes, lo escrito tras los dos puntos y 
+requirements/REQ-861.md	ARNES: no se puede completar 'requirements/REQ-861.md': el valor de 'Hallazgos abiertos:' mide 255371 bytes (contados en bytes, lo escrito tras los dos puntos y

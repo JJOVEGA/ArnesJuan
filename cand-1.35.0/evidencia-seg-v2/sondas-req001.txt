@@ -1,0 +1,11 @@
+CA-01 valor solo, QA pendiente                             cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). 
+CA-05 MultiEdit valor + historial                          cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). 
+CA-06 replace_all true                                     cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). 
+CA-07 CRLF, valor solo                                     cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). 
+CA-13 control positivo (verde)                             cand=allow r045=allow base=allow | 
+CA-12 ruta inexistente, old 'x': ArnesJuan-v1.35 dec=deny rc=0 stderr=[]
+CA-12 ruta inexistente, old 'x': base713 dec=allow rc=0 stderr=[]
+CA-12 ruta inexistente, creacion: ArnesJuan-v1.35 dec=allow rc=0 stderr=[]
+CA-12 ruta inexistente, creacion: base713 dec=allow rc=0 stderr=[]
+CA-16/CA-23/CA-24 ArnesJuan-v1.35: deny / deny / deny
+CA-16/CA-23/CA-24 base713: deny / deny / deny

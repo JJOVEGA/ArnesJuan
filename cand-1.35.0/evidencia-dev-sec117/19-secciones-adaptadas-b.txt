@@ -1,0 +1,20 @@
+02-guard-completado-transicion.sh                    Resultado: 2 PASS, 0 FAIL
+03-veredictos-anti-deriva.sh                         Resultado: 6 PASS, 0 FAIL
+04-windows-formas-del-manifiesto.sh                  Resultado: 2 PASS, 0 FAIL, 1 SKIP (de ellos 0 INCONCLUSO: 0 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+08-clase-del-hallazgo.sh                             Resultado: 67 PASS, 0 FAIL
+10-plantilla-pending-approval.sh                     Resultado: 1 PASS, 0 FAIL
+11-nivel-de-rigor.sh                                 Resultado: 9 PASS, 0 FAIL
+12-rigor-ligero.sh                                   Resultado: 4 PASS, 0 FAIL
+13-orden-del-ciclo.sh                                Resultado: 9 PASS, 0 FAIL
+14-campos-solo-en-la-cabecera.sh                     Resultado: 36 PASS, 0 FAIL
+15-formas-decoradas.sh                               Resultado: 15 PASS, 0 FAIL
+16-guard-punto-de-entrada.sh                         Resultado: 10 PASS, 0 FAIL
+17-asterisco-de-nota-al-pie.sh                       Resultado: 4 PASS, 0 FAIL
+18-parentesis-es-evidencia.sh                        Resultado: 6 PASS, 0 FAIL
+19-cola-hasta-la-cabecera.sh                         Resultado: 2 PASS, 0 FAIL
+26-veredicto-fechado.sh                              Resultado: 23 PASS, 0 FAIL
+27-vocabulario-de-veredictos.sh                      Resultado: 19 PASS, 0 FAIL
+30-celdas-recortadas.sh                              Resultado: 13 PASS, 0 FAIL
+34-arnes-paralelo.sh                                 Resultado: 33 PASS, 0 FAIL
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh Resultado: 19 PASS, 0 FAIL
+40-estabilizacion-firmas-y-rigor.sh                  Resultado: 28 PASS, 0 FAIL

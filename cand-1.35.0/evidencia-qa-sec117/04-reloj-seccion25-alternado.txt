@@ -1,0 +1,1413 @@
+A/B alternado del caso FAIL de reloj (seccion 25), para atribuirlo; NO sustituye la corrida 01. 2026-09-30T09:28:57-06:00
+ 09:28:57 up 3 days,  1:08,  1 user,  load average: 2.41, 4.04, 3.85
+df550fa #1:   PASS  el hook sale 0 (no bloquea la parada)
+  PASS  idempotente: dos pasadas, un solo bloque
+  PASS  estado_derivado.archivo '../fuera.md' NO escribe fuera del proyecto
+  PASS  ...y sigue saliendo 0
+  PASS  docs -> externo (symlink): el bloque derivado NO se escribe fuera
+  PASS  ...y sigue saliendo 0
+  PASS  sin manifiesto tambien sale 0
+  PASS  sin la carpeta destino no la inventa
+  FAIL  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  DESBOCADO: veredicto allow correcto, pero 4352ms en la mejor de 3 medidas (presupuesto 1000ms, techo holgado 4000ms)
+  PASS  DEV 1.31.0 v3: QA-111 ...y NO por el presupuesto de analisis
+  PASS  CA-04 el vocabulario viene de lib.sh, no de una copia en el informe
+  PASS  CA-29 guard-git.sh es ejecutable
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C.UTF-8
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=es_ES.UTF-8
+  PASS  REQ-010 CA-07 las tres escrituras caen en la MISMA casilla del bloque derivado
+  PASS  REQ-010 CA-14 el plegado vive SOLO en lib.sh; nadie tiene el suyo
+  PASS  REQ-010 CA-18 no queda ninguna pareja de letras escrita a mano
+  PASS  REQ-010 CA-20 el plegado es solo expansion de parametros (ningun binario)
+  PASS  REQ-010 CA-19 'ls -la' por guard.sh: registros de sed, tr e iconv VACIOS
+  FAIL  REQ-007 CA-22 el informe no leyo el REQ de clave decorada (rc=127)
+  PASS  REQ-007 CA-22 el bloque derivado tambien lee la clave decorada
+  PASS  SEC-004 CA-50b enlace ROTO: responde deny (122ms), ni cuelga ni revienta
+  PASS  REQ-007 CA-53 la ampliacion NO se propaga a templates/arnes-config.json.tpl
+  PASS  DEV 1.31.0 v2: QA-104 un comando que no escribe no consulta el manifiesto (ni avisa ni deniega)
+  PASS  REQ-007 CA-51 SEC-005 el aviso se emite siempre que el manifiesto se consulta (stderr), tambien cuando permite
+  PASS  REQ-007 CA-51 SEC-005 ninguna variable del manifiesto se rellena con el input
+  PASS  DEV 1.31.0 v2: QA-104 'ls -la' cuesta 1 proceso jq (como v1.30.3)
+  PASS  DEV 1.31.0 v2: QA-104 'npm run build' cuesta 1 proceso jq (como v1.30.3)
+  PASS  REQ-016 CA-01 los dos lectores y la cabecera sin el rango coinciden campo a campo (8 pares)
+  PASS  REQ-016 CA-02 'Est<!--x-->ado:' NO fabrica un campo y el 'QA:' de fuera del rango sí se lee
+  PASS  REQ-016 CA-02 el corpus de cabeceras se cosecha por glob del corredor (102 cabeceras)
+  PASS  REQ-016 CA-02 ningún deny se volvió allow al insertar un rango (246 variantes sobre las 82 cabeceras que deniegan, de 102 cosechadas)
+  PASS  REQ-016 CA-11 los campos de la equivalencia se derivan del lector de lib.sh (5 campos)
+  PASS  REQ-016 CA-11 comentar decide igual que borrar en las 15 parejas comprobadas
+  PASS  REQ-016 CA-11 las parejas tienen dientes en las dos direcciones (1 deny · 14 allow)
+  PASS  REQ-016 CA-08 'arnes_sin_cita' existe y es sólo expansión de parámetros (ningún proceso)
+  PASS  REQ-016 CA-08 el bloque derivado gasta las mismas pasadas de awk con citas que sin ellas (1)
+  PASS  REQ-021 CA-09 bash -n pasa en los 2 archivos de tests/util/ (las gates del manifiesto no miran tests/, y .arnes/config.json no se toca)
+  PASS  REQ-021 CA-01.1/CA-09 los 2 instrumentos son ejecutables y traen shebang: se INVOCAN, no se hacen source, y por eso $BASHPID dentro de $( ) deja de ser expresable
+  PASS  REQ-021 CA-01.2/CA-01.3 las 2 sondas emiten UN registro de UNA línea y ninguna imprime una línea con la forma que el corredor usa para contar casos
+  PASS  REQ-021 CA-01.5/CA-10.2 el parser valida cada campo POR SEPARADO —ausente, vacío y no numérico son errores con motivo, nunca un cero—, exige 'vivos' sólo a quien puede observarlo y acep
+  PASS  REQ-021 CA-01.4 tests/util/README.md apunta al único parser (sonda_lee, en el corredor) y no lo transcribe
+  PASS  REQ-023 CA-08 R1 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R1 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R1 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R1 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R2 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R2 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R2 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R2 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R3 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R3 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R3 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R3 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R4 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R4 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R4 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R4 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R5 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R5 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R5 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R5 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R6 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R6 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R6 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R6 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R7 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R7 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R7 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R7 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R8 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R8 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R8 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R8 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R9 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R9 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R9 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R9 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R10 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R10 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R10 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R10 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R11 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R11 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R11 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R11 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R12 (Edit)  (deny)
+  PASS  REQ-023 CA-08 (i) R12 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (1 vía(s))
+  PASS  REQ-023 CA-08 (ii) R12 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R13 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R13 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R13 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R13 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R14 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R14 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R14 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R14 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R15 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R15 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R15 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R15 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R16 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R16 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R16 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R16 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R17 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R17 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R17 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R17 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R18 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R18 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R18 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R18 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 A1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A6 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A6 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A6 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A7 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A7 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A7 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A8 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A8 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A8 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A9 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A9 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A9 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 U1 (Edit)  (deny)
+  PASS  REQ-023 CA-08 U1 (Write)  (deny)
+  PASS  REQ-023 CA-08 U1 sólo el motivo de REQ-031 CA-A12, sin el de este REQ
+  PASS  REQ-023 CA-08 (iii) U1 control positivo: 713ac68 y la candidata deciden igual y con el mismo motivo
+  PASS  REQ-023 CA-08 U2 (Edit)  (deny)
+  PASS  REQ-023 CA-08 U2 (Write)  (deny)
+  PASS  REQ-023 CA-08 (iii) U2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 U3a (Edit)  (allow)
+  PASS  REQ-023 CA-08 U3a (Write)  (allow)
+  PASS  REQ-023 CA-08 U3b (Edit)  (deny)
+  PASS  REQ-023 CA-08 U3b (Write)  (deny)
+  PASS  REQ-023 CA-08 (iii) U3 cada árbol decide en CRLF como en LF (A1 y R8, las dos vías)
+  PASS  REQ-023 CA-08 F1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-05 los 81 casos de CA-08 dan veredicto y motivo idénticos bajo C.UTF-8 y C
+  PASS  REQ-023 CA-02 dominio derivado del lector (6 campos) y clase medida en esta corrida: Estado, Hallazgos abiertos, QA, Rigor, Sensible a seguridad
+  PASS  REQ-023 CA-02 todo campo de la clase es clave de control de la constante
+  PASS  REQ-023 CA-02 declarado por una variante, cada campo de la clase DENIEGA
+  PASS  REQ-023 CA-02 anti-vacuidad: 5 campo(s) de la clase abren con la variante en 713ac68
+  PASS  REQ-023 CA-03 (i) bytes de control C0 (salvo tab, LF, CR y NUL) y DEL  29/29 DENY en la candidata (713ac68 las dejaba cerrar: 29/29)
+  PASS  REQ-023 CA-03 (ii) puntos de anchura cero o de formato  12/12 DENY en la candidata (713ac68 las dejaba cerrar: 12/12)
+  PASS  REQ-023 CA-03 (iii) UTF-8 mal formado: arranque sin continuación, continuación huérfana, sobrelarga, sustituto  4/4 DENY en la candidata (713ac68 las dejaba cerrar: 4/4)
+  PASS  REQ-023 CA-03 (reservada) entrada al azar U+001D = $'\035', semilla ARNES_SEMILLA_41=12779 (bash 5.3.9(1)-release)  1/1 DENY en la candidata (713ac68 las dejaba cerrar: 1/1)
+  PASS  REQ-023 CA-03 anti-vacuidad: ninguna familia vacía y 46 entradas abrían en 713ac68
+  PASS  REQ-023 CA-04 corpus: 102 cabeceras del banco por glob + 29 REQ de requirements/, con clave no ASCII, valor no ASCII y clave decorada
+  PASS  REQ-023 CA-04 los 131 documentos dan el mismo valor en cada campo que 713ac68
+  PASS  REQ-023 CA-04 las 131 decisiones coinciden con 713ac68 salvo 33 denegaciones por cabecera ambigua, cada una con variante o repetición real (REQ de requirements/ ambiguos: 0)
+  PASS  REQ-023 CA-06 puerta, informe, campos-req.awk y arnes-paralelo (arnes_campo_linea) leen igual que 713ac68 en los 41 documentos de CA-08
+  PASS  REQ-023 CA-06 ningún esqueleto ni lista de claves tecleados; una clave añadida a la constante queda cubierta sin editar nada más
+  PASS  REQ-023 CA-09 (i) y (iii) el código nuevo no crea procesos, y lo primero que hace con la clave es medirla en bytes
+  PASS  REQ-023 CA-05 la clasificación corre bajo LC_ALL=C y sin rangos ni clases sujetos a colación
+  PASS  REQ-023 CA-09 (ii) recorridos: no más invocaciones de arnes_norm_clave que 713ac68 (A1, R17, R12 por Write)
+  PASS  REQ-023 CA-09 (iv) normalizaciones: ninguna añadida sin ambigüedad, y sólo la del Estado que no gobierna con ella (A1, R17, R12 por Write)
+  PASS  REQ-023 CA-11 '<!--Estado: completado -->' decide y motiva igual que 713ac68 (allow)
+  PASS  REQ-023 CA-11 '<!--Rigor: ligero-->' decide y motiva igual que 713ac68 (deny)
+  PASS  REQ-023 CA-12 (i) y (ii) ninguna transcripción nueva de la cita, y arnes_cola_pendientes cuenta y devuelve lo mismo que 713ac68 en 8 colas
+  FAIL  REQ-023 CA-13 C1 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C1 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C2 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C2 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C3 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C3 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C4 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C4 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C5 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C5 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C6 candidata  (allow)
+  PASS  REQ-023 CA-13 C6 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C7 candidata  (allow)
+  PASS  REQ-023 CA-13 C7 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C8 candidata  (allow)
+  PASS  REQ-023 CA-13 C8 df550fa: control, decide igual  (df550fa allow)
+  FAIL  REQ-023 CA-13 C9 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C9 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C10 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C10 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C11 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C11 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C12 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C12 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C13 candidata  (allow)
+  PASS  REQ-023 CA-13 C13 df550fa: control, decide igual  (df550fa allow)
+  FAIL  REQ-023 CA-13 (ii) motivo de C1: old_string escapado, edición verificable, sin bytes crudos ni otra herramienta  (C1 no dejó motivo)
+  FAIL  REQ-023 CA-13 (ii) tope: de un old_string de 4000 bytes enseña 80, escapados, y el motivo cabe con holgura  decisión=allow motivo=0 bytes  <>
+  PASS  REQ-023 CA-13 (viii) 0 procesos añadidos respecto a df550fa en C1 (no reconstruible) y C7 (reconstruible)  (C1 4 frente a 4; C7 3 frente a 3; menos es conforme)
+Resultado: 221 PASS, 13 FAIL, 1 SKIP (de ellos 0 INCONCLUSO: 0 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+cand #1:   PASS  el hook sale 0 (no bloquea la parada)
+  PASS  idempotente: dos pasadas, un solo bloque
+  PASS  estado_derivado.archivo '../fuera.md' NO escribe fuera del proyecto
+  PASS  ...y sigue saliendo 0
+  PASS  docs -> externo (symlink): el bloque derivado NO se escribe fuera
+  PASS  ...y sigue saliendo 0
+  PASS  sin manifiesto tambien sale 0
+  PASS  sin la carpeta destino no la inventa
+  FAIL  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  DESBOCADO: veredicto allow correcto, pero 5050ms en la mejor de 3 medidas (presupuesto 1000ms, techo holgado 4000ms)
+  PASS  DEV 1.31.0 v3: QA-111 ...y NO por el presupuesto de analisis
+  PASS  CA-04 el vocabulario viene de lib.sh, no de una copia en el informe
+  PASS  CA-29 guard-git.sh es ejecutable
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C.UTF-8
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=es_ES.UTF-8
+  PASS  REQ-010 CA-07 las tres escrituras caen en la MISMA casilla del bloque derivado
+  PASS  REQ-010 CA-14 el plegado vive SOLO en lib.sh; nadie tiene el suyo
+  PASS  REQ-010 CA-18 no queda ninguna pareja de letras escrita a mano
+  PASS  REQ-010 CA-20 el plegado es solo expansion de parametros (ningun binario)
+  PASS  REQ-010 CA-19 'ls -la' por guard.sh: registros de sed, tr e iconv VACIOS
+  PASS  REQ-007 CA-22 el informe lee la clave decorada igual que la puerta (1 REQ, 0 notas)
+  PASS  REQ-007 CA-22 el bloque derivado tambien lee la clave decorada
+  PASS  SEC-004 CA-50b enlace ROTO: responde deny (123ms), ni cuelga ni revienta
+  PASS  REQ-007 CA-53 la ampliacion NO se propaga a templates/arnes-config.json.tpl
+  PASS  DEV 1.31.0 v2: QA-104 un comando que no escribe no consulta el manifiesto (ni avisa ni deniega)
+  PASS  REQ-007 CA-51 SEC-005 el aviso se emite siempre que el manifiesto se consulta (stderr), tambien cuando permite
+  PASS  REQ-007 CA-51 SEC-005 ninguna variable del manifiesto se rellena con el input
+  PASS  DEV 1.31.0 v2: QA-104 'ls -la' cuesta 1 proceso jq (como v1.30.3)
+  PASS  DEV 1.31.0 v2: QA-104 'npm run build' cuesta 1 proceso jq (como v1.30.3)
+  PASS  REQ-016 CA-01 los dos lectores y la cabecera sin el rango coinciden campo a campo (8 pares)
+  PASS  REQ-016 CA-02 'Est<!--x-->ado:' NO fabrica un campo y el 'QA:' de fuera del rango sí se lee
+  PASS  REQ-016 CA-02 el corpus de cabeceras se cosecha por glob del corredor (102 cabeceras)
+  PASS  REQ-016 CA-02 ningún deny se volvió allow al insertar un rango (246 variantes sobre las 82 cabeceras que deniegan, de 102 cosechadas)
+  PASS  REQ-016 CA-11 los campos de la equivalencia se derivan del lector de lib.sh (5 campos)
+  PASS  REQ-016 CA-11 comentar decide igual que borrar en las 15 parejas comprobadas
+  PASS  REQ-016 CA-11 las parejas tienen dientes en las dos direcciones (1 deny · 14 allow)
+  PASS  REQ-016 CA-08 'arnes_sin_cita' existe y es sólo expansión de parámetros (ningún proceso)
+  PASS  REQ-016 CA-08 el bloque derivado gasta las mismas pasadas de awk con citas que sin ellas (1)
+  PASS  REQ-021 CA-09 bash -n pasa en los 2 archivos de tests/util/ (las gates del manifiesto no miran tests/, y .arnes/config.json no se toca)
+  PASS  REQ-021 CA-01.1/CA-09 los 2 instrumentos son ejecutables y traen shebang: se INVOCAN, no se hacen source, y por eso $BASHPID dentro de $( ) deja de ser expresable
+  PASS  REQ-021 CA-01.2/CA-01.3 las 2 sondas emiten UN registro de UNA línea y ninguna imprime una línea con la forma que el corredor usa para contar casos
+  PASS  REQ-021 CA-01.5/CA-10.2 el parser valida cada campo POR SEPARADO —ausente, vacío y no numérico son errores con motivo, nunca un cero—, exige 'vivos' sólo a quien puede observarlo y acep
+  PASS  REQ-021 CA-01.4 tests/util/README.md apunta al único parser (sonda_lee, en el corredor) y no lo transcribe
+  PASS  REQ-023 CA-08 R1 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R1 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R1 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R1 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R2 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R2 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R2 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R2 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R3 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R3 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R3 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R3 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R4 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R4 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R4 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R4 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R5 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R5 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R5 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R5 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R6 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R6 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R6 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R6 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R7 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R7 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R7 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R7 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R8 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R8 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R8 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R8 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R9 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R9 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R9 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R9 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R10 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R10 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R10 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R10 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R11 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R11 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R11 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R11 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R12 (Edit)  (deny)
+  PASS  REQ-023 CA-08 (i) R12 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (1 vía(s))
+  PASS  REQ-023 CA-08 (ii) R12 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R13 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R13 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R13 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R13 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R14 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R14 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R14 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R14 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R15 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R15 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R15 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R15 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R16 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R16 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R16 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R16 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R17 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R17 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R17 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R17 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R18 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R18 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R18 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R18 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 A1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A6 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A6 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A6 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A7 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A7 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A7 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A8 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A8 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A8 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A9 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A9 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A9 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 U1 (Edit)  (deny)
+  PASS  REQ-023 CA-08 U1 (Write)  (deny)
+  PASS  REQ-023 CA-08 U1 sólo el motivo de REQ-031 CA-A12, sin el de este REQ
+  PASS  REQ-023 CA-08 (iii) U1 control positivo: 713ac68 y la candidata deciden igual y con el mismo motivo
+  PASS  REQ-023 CA-08 U2 (Edit)  (deny)
+  PASS  REQ-023 CA-08 U2 (Write)  (deny)
+  PASS  REQ-023 CA-08 (iii) U2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 U3a (Edit)  (allow)
+  PASS  REQ-023 CA-08 U3a (Write)  (allow)
+  PASS  REQ-023 CA-08 U3b (Edit)  (deny)
+  PASS  REQ-023 CA-08 U3b (Write)  (deny)
+  PASS  REQ-023 CA-08 (iii) U3 cada árbol decide en CRLF como en LF (A1 y R8, las dos vías)
+  PASS  REQ-023 CA-08 F1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-05 los 81 casos de CA-08 dan veredicto y motivo idénticos bajo C.UTF-8 y C
+  PASS  REQ-023 CA-02 dominio derivado del lector (6 campos) y clase medida en esta corrida: Estado, Hallazgos abiertos, QA, Rigor, Sensible a seguridad
+  PASS  REQ-023 CA-02 todo campo de la clase es clave de control de la constante
+  PASS  REQ-023 CA-02 declarado por una variante, cada campo de la clase DENIEGA
+  PASS  REQ-023 CA-02 anti-vacuidad: 5 campo(s) de la clase abren con la variante en 713ac68
+  PASS  REQ-023 CA-03 (i) bytes de control C0 (salvo tab, LF, CR y NUL) y DEL  29/29 DENY en la candidata (713ac68 las dejaba cerrar: 29/29)
+  PASS  REQ-023 CA-03 (ii) puntos de anchura cero o de formato  12/12 DENY en la candidata (713ac68 las dejaba cerrar: 12/12)
+  PASS  REQ-023 CA-03 (iii) UTF-8 mal formado: arranque sin continuación, continuación huérfana, sobrelarga, sustituto  4/4 DENY en la candidata (713ac68 las dejaba cerrar: 4/4)
+  PASS  REQ-023 CA-03 (reservada) entrada al azar U+2DBC4 = $'\360\255\257\204', semilla ARNES_SEMILLA_41=11119 (bash 5.3.9(1)-release)  1/1 DENY en la candidata (713ac68 las dejaba cerrar: 1/1)
+  PASS  REQ-023 CA-03 anti-vacuidad: ninguna familia vacía y 46 entradas abrían en 713ac68
+  PASS  REQ-023 CA-04 corpus: 102 cabeceras del banco por glob + 29 REQ de requirements/, con clave no ASCII, valor no ASCII y clave decorada
+  PASS  REQ-023 CA-04 los 131 documentos dan el mismo valor en cada campo que 713ac68
+  PASS  REQ-023 CA-04 las 131 decisiones coinciden con 713ac68 salvo 33 denegaciones por cabecera ambigua, cada una con variante o repetición real (REQ de requirements/ ambiguos: 0)
+  PASS  REQ-023 CA-06 puerta, informe, campos-req.awk y arnes-paralelo (arnes_campo_linea) leen igual que 713ac68 en los 41 documentos de CA-08
+  PASS  REQ-023 CA-06 ningún esqueleto ni lista de claves tecleados; una clave añadida a la constante queda cubierta sin editar nada más
+  PASS  REQ-023 CA-09 (i) y (iii) el código nuevo no crea procesos, y lo primero que hace con la clave es medirla en bytes
+  PASS  REQ-023 CA-05 la clasificación corre bajo LC_ALL=C y sin rangos ni clases sujetos a colación
+  PASS  REQ-023 CA-09 (ii) recorridos: no más invocaciones de arnes_norm_clave que 713ac68 (A1, R17, R12 por Write)
+  PASS  REQ-023 CA-09 (iv) normalizaciones: ninguna añadida sin ambigüedad, y sólo la del Estado que no gobierna con ella (A1, R17, R12 por Write)
+  PASS  REQ-023 CA-11 '<!--Estado: completado -->' decide y motiva igual que 713ac68 (allow)
+  PASS  REQ-023 CA-11 '<!--Rigor: ligero-->' decide y motiva igual que 713ac68 (deny)
+  PASS  REQ-023 CA-12 (i) y (ii) ninguna transcripción nueva de la cita, y arnes_cola_pendientes cuenta y devuelve lo mismo que 713ac68 en 8 colas
+  PASS  REQ-023 CA-13 C1 candidata  (deny)
+  PASS  REQ-023 CA-13 C1 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C2 candidata  (deny)
+  PASS  REQ-023 CA-13 C2 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C3 candidata  (deny)
+  PASS  REQ-023 CA-13 C3 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C4 candidata  (deny)
+  PASS  REQ-023 CA-13 C4 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C5 candidata  (deny)
+  PASS  REQ-023 CA-13 C5 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C6 candidata  (allow)
+  PASS  REQ-023 CA-13 C6 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C7 candidata  (allow)
+  PASS  REQ-023 CA-13 C7 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C8 candidata  (allow)
+  PASS  REQ-023 CA-13 C8 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C9 candidata  (deny)
+  PASS  REQ-023 CA-13 C9 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C10 candidata  (deny)
+  PASS  REQ-023 CA-13 C10 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C11 candidata  (deny)
+  PASS  REQ-023 CA-13 C11 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C12 candidata  (deny)
+  PASS  REQ-023 CA-13 C12 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C13 candidata  (allow)
+  PASS  REQ-023 CA-13 C13 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 (ii) motivo de C1: old_string escapado, edición verificable, sin bytes crudos ni otra herramienta
+  PASS  REQ-023 CA-13 (ii) tope: de un old_string de 4000 bytes enseña 80, escapados, y el motivo cabe con holgura  (1098 bytes)
+  PASS  REQ-023 CA-13 (viii) 0 procesos añadidos respecto a df550fa en C1 (no reconstruible) y C7 (reconstruible)  (C1 4 frente a 4; C7 3 frente a 3; menos es conforme)
+Resultado: 233 PASS, 1 FAIL, 1 SKIP (de ellos 0 INCONCLUSO: 0 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+df550fa #2:   PASS  el hook sale 0 (no bloquea la parada)
+  PASS  idempotente: dos pasadas, un solo bloque
+  PASS  estado_derivado.archivo '../fuera.md' NO escribe fuera del proyecto
+  PASS  ...y sigue saliendo 0
+  PASS  docs -> externo (symlink): el bloque derivado NO se escribe fuera
+  PASS  ...y sigue saliendo 0
+  PASS  sin manifiesto tambien sale 0
+  PASS  sin la carpeta destino no la inventa
+  FAIL  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  DESBOCADO: veredicto allow correcto, pero 5549ms en la mejor de 3 medidas (presupuesto 1000ms, techo holgado 4000ms)
+  PASS  DEV 1.31.0 v3: QA-111 ...y NO por el presupuesto de analisis
+  PASS  CA-04 el vocabulario viene de lib.sh, no de una copia en el informe
+  PASS  CA-29 guard-git.sh es ejecutable
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C.UTF-8
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=es_ES.UTF-8
+  PASS  REQ-010 CA-07 las tres escrituras caen en la MISMA casilla del bloque derivado
+  PASS  REQ-010 CA-14 el plegado vive SOLO en lib.sh; nadie tiene el suyo
+  PASS  REQ-010 CA-18 no queda ninguna pareja de letras escrita a mano
+  PASS  REQ-010 CA-20 el plegado es solo expansion de parametros (ningun binario)
+  PASS  REQ-010 CA-19 'ls -la' por guard.sh: registros de sed, tr e iconv VACIOS
+  FAIL  REQ-007 CA-22 el informe no leyo el REQ de clave decorada (rc=127)
+  PASS  REQ-007 CA-22 el bloque derivado tambien lee la clave decorada
+  PASS  SEC-004 CA-50b enlace ROTO: responde deny (132ms), ni cuelga ni revienta
+  PASS  REQ-007 CA-53 la ampliacion NO se propaga a templates/arnes-config.json.tpl
+  PASS  DEV 1.31.0 v2: QA-104 un comando que no escribe no consulta el manifiesto (ni avisa ni deniega)
+  PASS  REQ-007 CA-51 SEC-005 el aviso se emite siempre que el manifiesto se consulta (stderr), tambien cuando permite
+  PASS  REQ-007 CA-51 SEC-005 ninguna variable del manifiesto se rellena con el input
+  PASS  DEV 1.31.0 v2: QA-104 'ls -la' cuesta 1 proceso jq (como v1.30.3)
+  PASS  DEV 1.31.0 v2: QA-104 'npm run build' cuesta 1 proceso jq (como v1.30.3)
+  PASS  REQ-016 CA-01 los dos lectores y la cabecera sin el rango coinciden campo a campo (8 pares)
+  PASS  REQ-016 CA-02 'Est<!--x-->ado:' NO fabrica un campo y el 'QA:' de fuera del rango sí se lee
+  PASS  REQ-016 CA-02 el corpus de cabeceras se cosecha por glob del corredor (102 cabeceras)
+  PASS  REQ-016 CA-02 ningún deny se volvió allow al insertar un rango (246 variantes sobre las 82 cabeceras que deniegan, de 102 cosechadas)
+  PASS  REQ-016 CA-11 los campos de la equivalencia se derivan del lector de lib.sh (5 campos)
+  PASS  REQ-016 CA-11 comentar decide igual que borrar en las 15 parejas comprobadas
+  PASS  REQ-016 CA-11 las parejas tienen dientes en las dos direcciones (1 deny · 14 allow)
+  PASS  REQ-016 CA-08 'arnes_sin_cita' existe y es sólo expansión de parámetros (ningún proceso)
+  PASS  REQ-016 CA-08 el bloque derivado gasta las mismas pasadas de awk con citas que sin ellas (1)
+  PASS  REQ-021 CA-09 bash -n pasa en los 2 archivos de tests/util/ (las gates del manifiesto no miran tests/, y .arnes/config.json no se toca)
+  PASS  REQ-021 CA-01.1/CA-09 los 2 instrumentos son ejecutables y traen shebang: se INVOCAN, no se hacen source, y por eso $BASHPID dentro de $( ) deja de ser expresable
+  PASS  REQ-021 CA-01.2/CA-01.3 las 2 sondas emiten UN registro de UNA línea y ninguna imprime una línea con la forma que el corredor usa para contar casos
+  PASS  REQ-021 CA-01.5/CA-10.2 el parser valida cada campo POR SEPARADO —ausente, vacío y no numérico son errores con motivo, nunca un cero—, exige 'vivos' sólo a quien puede observarlo y acep
+  PASS  REQ-021 CA-01.4 tests/util/README.md apunta al único parser (sonda_lee, en el corredor) y no lo transcribe
+  PASS  REQ-023 CA-08 R1 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R1 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R1 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R1 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R2 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R2 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R2 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R2 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R3 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R3 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R3 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R3 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R4 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R4 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R4 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R4 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R5 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R5 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R5 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R5 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R6 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R6 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R6 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R6 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R7 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R7 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R7 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R7 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R8 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R8 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R8 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R8 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R9 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R9 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R9 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R9 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R10 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R10 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R10 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R10 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R11 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R11 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R11 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R11 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R12 (Edit)  (deny)
+  PASS  REQ-023 CA-08 (i) R12 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (1 vía(s))
+  PASS  REQ-023 CA-08 (ii) R12 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R13 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R13 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R13 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R13 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R14 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R14 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R14 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R14 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R15 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R15 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R15 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R15 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R16 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R16 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R16 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R16 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R17 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R17 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R17 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R17 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R18 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R18 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R18 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R18 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 A1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A6 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A6 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A6 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A7 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A7 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A7 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A8 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A8 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A8 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A9 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A9 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A9 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 U1 (Edit)  (deny)
+  PASS  REQ-023 CA-08 U1 (Write)  (deny)
+  PASS  REQ-023 CA-08 U1 sólo el motivo de REQ-031 CA-A12, sin el de este REQ
+  PASS  REQ-023 CA-08 (iii) U1 control positivo: 713ac68 y la candidata deciden igual y con el mismo motivo
+  PASS  REQ-023 CA-08 U2 (Edit)  (deny)
+  PASS  REQ-023 CA-08 U2 (Write)  (deny)
+  PASS  REQ-023 CA-08 (iii) U2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 U3a (Edit)  (allow)
+  PASS  REQ-023 CA-08 U3a (Write)  (allow)
+  PASS  REQ-023 CA-08 U3b (Edit)  (deny)
+  PASS  REQ-023 CA-08 U3b (Write)  (deny)
+  PASS  REQ-023 CA-08 (iii) U3 cada árbol decide en CRLF como en LF (A1 y R8, las dos vías)
+  PASS  REQ-023 CA-08 F1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-05 los 81 casos de CA-08 dan veredicto y motivo idénticos bajo C.UTF-8 y C
+  PASS  REQ-023 CA-02 dominio derivado del lector (6 campos) y clase medida en esta corrida: Estado, Hallazgos abiertos, QA, Rigor, Sensible a seguridad
+  PASS  REQ-023 CA-02 todo campo de la clase es clave de control de la constante
+  PASS  REQ-023 CA-02 declarado por una variante, cada campo de la clase DENIEGA
+  PASS  REQ-023 CA-02 anti-vacuidad: 5 campo(s) de la clase abren con la variante en 713ac68
+  PASS  REQ-023 CA-03 (i) bytes de control C0 (salvo tab, LF, CR y NUL) y DEL  29/29 DENY en la candidata (713ac68 las dejaba cerrar: 29/29)
+  PASS  REQ-023 CA-03 (ii) puntos de anchura cero o de formato  12/12 DENY en la candidata (713ac68 las dejaba cerrar: 12/12)
+  PASS  REQ-023 CA-03 (iii) UTF-8 mal formado: arranque sin continuación, continuación huérfana, sobrelarga, sustituto  4/4 DENY en la candidata (713ac68 las dejaba cerrar: 4/4)
+  PASS  REQ-023 CA-03 (reservada) entrada al azar U+E9129 = $'\363\251\204\251', semilla ARNES_SEMILLA_41=19308 (bash 5.3.9(1)-release)  1/1 DENY en la candidata (713ac68 las dejaba cerrar: 1/1)
+  PASS  REQ-023 CA-03 anti-vacuidad: ninguna familia vacía y 46 entradas abrían en 713ac68
+  PASS  REQ-023 CA-04 corpus: 102 cabeceras del banco por glob + 29 REQ de requirements/, con clave no ASCII, valor no ASCII y clave decorada
+  PASS  REQ-023 CA-04 los 131 documentos dan el mismo valor en cada campo que 713ac68
+  PASS  REQ-023 CA-04 las 131 decisiones coinciden con 713ac68 salvo 33 denegaciones por cabecera ambigua, cada una con variante o repetición real (REQ de requirements/ ambiguos: 0)
+  PASS  REQ-023 CA-06 puerta, informe, campos-req.awk y arnes-paralelo (arnes_campo_linea) leen igual que 713ac68 en los 41 documentos de CA-08
+  PASS  REQ-023 CA-06 ningún esqueleto ni lista de claves tecleados; una clave añadida a la constante queda cubierta sin editar nada más
+  PASS  REQ-023 CA-09 (i) y (iii) el código nuevo no crea procesos, y lo primero que hace con la clave es medirla en bytes
+  PASS  REQ-023 CA-05 la clasificación corre bajo LC_ALL=C y sin rangos ni clases sujetos a colación
+  PASS  REQ-023 CA-09 (ii) recorridos: no más invocaciones de arnes_norm_clave que 713ac68 (A1, R17, R12 por Write)
+  PASS  REQ-023 CA-09 (iv) normalizaciones: ninguna añadida sin ambigüedad, y sólo la del Estado que no gobierna con ella (A1, R17, R12 por Write)
+  PASS  REQ-023 CA-11 '<!--Estado: completado -->' decide y motiva igual que 713ac68 (allow)
+  PASS  REQ-023 CA-11 '<!--Rigor: ligero-->' decide y motiva igual que 713ac68 (deny)
+  PASS  REQ-023 CA-12 (i) y (ii) ninguna transcripción nueva de la cita, y arnes_cola_pendientes cuenta y devuelve lo mismo que 713ac68 en 8 colas
+  FAIL  REQ-023 CA-13 C1 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C1 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C2 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C2 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C3 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C3 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C4 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C4 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C5 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C5 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C6 candidata  (allow)
+  PASS  REQ-023 CA-13 C6 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C7 candidata  (allow)
+  PASS  REQ-023 CA-13 C7 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C8 candidata  (allow)
+  PASS  REQ-023 CA-13 C8 df550fa: control, decide igual  (df550fa allow)
+  FAIL  REQ-023 CA-13 C9 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C9 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C10 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C10 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C11 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C11 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C12 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C12 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C13 candidata  (allow)
+  PASS  REQ-023 CA-13 C13 df550fa: control, decide igual  (df550fa allow)
+  FAIL  REQ-023 CA-13 (ii) motivo de C1: old_string escapado, edición verificable, sin bytes crudos ni otra herramienta  (C1 no dejó motivo)
+  FAIL  REQ-023 CA-13 (ii) tope: de un old_string de 4000 bytes enseña 80, escapados, y el motivo cabe con holgura  decisión=allow motivo=0 bytes  <>
+  PASS  REQ-023 CA-13 (viii) 0 procesos añadidos respecto a df550fa en C1 (no reconstruible) y C7 (reconstruible)  (C1 4 frente a 4; C7 3 frente a 3; menos es conforme)
+Resultado: 221 PASS, 13 FAIL, 1 SKIP (de ellos 0 INCONCLUSO: 0 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+cand #2:   PASS  el hook sale 0 (no bloquea la parada)
+  PASS  idempotente: dos pasadas, un solo bloque
+  PASS  estado_derivado.archivo '../fuera.md' NO escribe fuera del proyecto
+  PASS  ...y sigue saliendo 0
+  PASS  docs -> externo (symlink): el bloque derivado NO se escribe fuera
+  PASS  ...y sigue saliendo 0
+  PASS  sin manifiesto tambien sale 0
+  PASS  sin la carpeta destino no la inventa
+  FAIL  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  DESBOCADO: veredicto allow correcto, pero 4331ms en la mejor de 3 medidas (presupuesto 1000ms, techo holgado 4000ms)
+  PASS  DEV 1.31.0 v3: QA-111 ...y NO por el presupuesto de analisis
+  PASS  CA-04 el vocabulario viene de lib.sh, no de una copia en el informe
+  PASS  CA-29 guard-git.sh es ejecutable
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C.UTF-8
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=es_ES.UTF-8
+  PASS  REQ-010 CA-07 las tres escrituras caen en la MISMA casilla del bloque derivado
+  PASS  REQ-010 CA-14 el plegado vive SOLO en lib.sh; nadie tiene el suyo
+  PASS  REQ-010 CA-18 no queda ninguna pareja de letras escrita a mano
+  PASS  REQ-010 CA-20 el plegado es solo expansion de parametros (ningun binario)
+  PASS  REQ-010 CA-19 'ls -la' por guard.sh: registros de sed, tr e iconv VACIOS
+  PASS  REQ-007 CA-22 el informe lee la clave decorada igual que la puerta (1 REQ, 0 notas)
+  PASS  REQ-007 CA-22 el bloque derivado tambien lee la clave decorada
+  PASS  SEC-004 CA-50b enlace ROTO: responde deny (122ms), ni cuelga ni revienta
+  PASS  REQ-007 CA-53 la ampliacion NO se propaga a templates/arnes-config.json.tpl
+  PASS  DEV 1.31.0 v2: QA-104 un comando que no escribe no consulta el manifiesto (ni avisa ni deniega)
+  PASS  REQ-007 CA-51 SEC-005 el aviso se emite siempre que el manifiesto se consulta (stderr), tambien cuando permite
+  PASS  REQ-007 CA-51 SEC-005 ninguna variable del manifiesto se rellena con el input
+  PASS  DEV 1.31.0 v2: QA-104 'ls -la' cuesta 1 proceso jq (como v1.30.3)
+  PASS  DEV 1.31.0 v2: QA-104 'npm run build' cuesta 1 proceso jq (como v1.30.3)
+  PASS  REQ-016 CA-01 los dos lectores y la cabecera sin el rango coinciden campo a campo (8 pares)
+  PASS  REQ-016 CA-02 'Est<!--x-->ado:' NO fabrica un campo y el 'QA:' de fuera del rango sí se lee
+  PASS  REQ-016 CA-02 el corpus de cabeceras se cosecha por glob del corredor (102 cabeceras)
+  PASS  REQ-016 CA-02 ningún deny se volvió allow al insertar un rango (246 variantes sobre las 82 cabeceras que deniegan, de 102 cosechadas)
+  PASS  REQ-016 CA-11 los campos de la equivalencia se derivan del lector de lib.sh (5 campos)
+  PASS  REQ-016 CA-11 comentar decide igual que borrar en las 15 parejas comprobadas
+  PASS  REQ-016 CA-11 las parejas tienen dientes en las dos direcciones (1 deny · 14 allow)
+  PASS  REQ-016 CA-08 'arnes_sin_cita' existe y es sólo expansión de parámetros (ningún proceso)
+  PASS  REQ-016 CA-08 el bloque derivado gasta las mismas pasadas de awk con citas que sin ellas (1)
+  PASS  REQ-021 CA-09 bash -n pasa en los 2 archivos de tests/util/ (las gates del manifiesto no miran tests/, y .arnes/config.json no se toca)
+  PASS  REQ-021 CA-01.1/CA-09 los 2 instrumentos son ejecutables y traen shebang: se INVOCAN, no se hacen source, y por eso $BASHPID dentro de $( ) deja de ser expresable
+  PASS  REQ-021 CA-01.2/CA-01.3 las 2 sondas emiten UN registro de UNA línea y ninguna imprime una línea con la forma que el corredor usa para contar casos
+  PASS  REQ-021 CA-01.5/CA-10.2 el parser valida cada campo POR SEPARADO —ausente, vacío y no numérico son errores con motivo, nunca un cero—, exige 'vivos' sólo a quien puede observarlo y acep
+  PASS  REQ-021 CA-01.4 tests/util/README.md apunta al único parser (sonda_lee, en el corredor) y no lo transcribe
+  PASS  REQ-023 CA-08 R1 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R1 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R1 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R1 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R2 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R2 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R2 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R2 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R3 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R3 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R3 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R3 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R4 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R4 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R4 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R4 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R5 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R5 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R5 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R5 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R6 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R6 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R6 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R6 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R7 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R7 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R7 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R7 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R8 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R8 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R8 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R8 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R9 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R9 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R9 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R9 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R10 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R10 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R10 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R10 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R11 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R11 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R11 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R11 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R12 (Edit)  (deny)
+  PASS  REQ-023 CA-08 (i) R12 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (1 vía(s))
+  PASS  REQ-023 CA-08 (ii) R12 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R13 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R13 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R13 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R13 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R14 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R14 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R14 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R14 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R15 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R15 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R15 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R15 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R16 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R16 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R16 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R16 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R17 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R17 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R17 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R17 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R18 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R18 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R18 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R18 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 A1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A6 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A6 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A6 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A7 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A7 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A7 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A8 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A8 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A8 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A9 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A9 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A9 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 U1 (Edit)  (deny)
+  PASS  REQ-023 CA-08 U1 (Write)  (deny)
+  PASS  REQ-023 CA-08 U1 sólo el motivo de REQ-031 CA-A12, sin el de este REQ
+  PASS  REQ-023 CA-08 (iii) U1 control positivo: 713ac68 y la candidata deciden igual y con el mismo motivo
+  PASS  REQ-023 CA-08 U2 (Edit)  (deny)
+  PASS  REQ-023 CA-08 U2 (Write)  (deny)
+  PASS  REQ-023 CA-08 (iii) U2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 U3a (Edit)  (allow)
+  PASS  REQ-023 CA-08 U3a (Write)  (allow)
+  PASS  REQ-023 CA-08 U3b (Edit)  (deny)
+  PASS  REQ-023 CA-08 U3b (Write)  (deny)
+  PASS  REQ-023 CA-08 (iii) U3 cada árbol decide en CRLF como en LF (A1 y R8, las dos vías)
+  PASS  REQ-023 CA-08 F1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-05 los 81 casos de CA-08 dan veredicto y motivo idénticos bajo C.UTF-8 y C
+  PASS  REQ-023 CA-02 dominio derivado del lector (6 campos) y clase medida en esta corrida: Estado, Hallazgos abiertos, QA, Rigor, Sensible a seguridad
+  PASS  REQ-023 CA-02 todo campo de la clase es clave de control de la constante
+  PASS  REQ-023 CA-02 declarado por una variante, cada campo de la clase DENIEGA
+  PASS  REQ-023 CA-02 anti-vacuidad: 5 campo(s) de la clase abren con la variante en 713ac68
+  PASS  REQ-023 CA-03 (i) bytes de control C0 (salvo tab, LF, CR y NUL) y DEL  29/29 DENY en la candidata (713ac68 las dejaba cerrar: 29/29)
+  PASS  REQ-023 CA-03 (ii) puntos de anchura cero o de formato  12/12 DENY en la candidata (713ac68 las dejaba cerrar: 12/12)
+  PASS  REQ-023 CA-03 (iii) UTF-8 mal formado: arranque sin continuación, continuación huérfana, sobrelarga, sustituto  4/4 DENY en la candidata (713ac68 las dejaba cerrar: 4/4)
+  PASS  REQ-023 CA-03 (reservada) entrada al azar U+ABBF9 = $'\362\253\257\271', semilla ARNES_SEMILLA_41=21707 (bash 5.3.9(1)-release)  1/1 DENY en la candidata (713ac68 las dejaba cerrar: 1/1)
+  PASS  REQ-023 CA-03 anti-vacuidad: ninguna familia vacía y 46 entradas abrían en 713ac68
+  PASS  REQ-023 CA-04 corpus: 102 cabeceras del banco por glob + 29 REQ de requirements/, con clave no ASCII, valor no ASCII y clave decorada
+  PASS  REQ-023 CA-04 los 131 documentos dan el mismo valor en cada campo que 713ac68
+  PASS  REQ-023 CA-04 las 131 decisiones coinciden con 713ac68 salvo 33 denegaciones por cabecera ambigua, cada una con variante o repetición real (REQ de requirements/ ambiguos: 0)
+  PASS  REQ-023 CA-06 puerta, informe, campos-req.awk y arnes-paralelo (arnes_campo_linea) leen igual que 713ac68 en los 41 documentos de CA-08
+  PASS  REQ-023 CA-06 ningún esqueleto ni lista de claves tecleados; una clave añadida a la constante queda cubierta sin editar nada más
+  PASS  REQ-023 CA-09 (i) y (iii) el código nuevo no crea procesos, y lo primero que hace con la clave es medirla en bytes
+  PASS  REQ-023 CA-05 la clasificación corre bajo LC_ALL=C y sin rangos ni clases sujetos a colación
+  PASS  REQ-023 CA-09 (ii) recorridos: no más invocaciones de arnes_norm_clave que 713ac68 (A1, R17, R12 por Write)
+  PASS  REQ-023 CA-09 (iv) normalizaciones: ninguna añadida sin ambigüedad, y sólo la del Estado que no gobierna con ella (A1, R17, R12 por Write)
+  PASS  REQ-023 CA-11 '<!--Estado: completado -->' decide y motiva igual que 713ac68 (allow)
+  PASS  REQ-023 CA-11 '<!--Rigor: ligero-->' decide y motiva igual que 713ac68 (deny)
+  PASS  REQ-023 CA-12 (i) y (ii) ninguna transcripción nueva de la cita, y arnes_cola_pendientes cuenta y devuelve lo mismo que 713ac68 en 8 colas
+  PASS  REQ-023 CA-13 C1 candidata  (deny)
+  PASS  REQ-023 CA-13 C1 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C2 candidata  (deny)
+  PASS  REQ-023 CA-13 C2 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C3 candidata  (deny)
+  PASS  REQ-023 CA-13 C3 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C4 candidata  (deny)
+  PASS  REQ-023 CA-13 C4 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C5 candidata  (deny)
+  PASS  REQ-023 CA-13 C5 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C6 candidata  (allow)
+  PASS  REQ-023 CA-13 C6 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C7 candidata  (allow)
+  PASS  REQ-023 CA-13 C7 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C8 candidata  (allow)
+  PASS  REQ-023 CA-13 C8 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C9 candidata  (deny)
+  PASS  REQ-023 CA-13 C9 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C10 candidata  (deny)
+  PASS  REQ-023 CA-13 C10 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C11 candidata  (deny)
+  PASS  REQ-023 CA-13 C11 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C12 candidata  (deny)
+  PASS  REQ-023 CA-13 C12 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C13 candidata  (allow)
+  PASS  REQ-023 CA-13 C13 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 (ii) motivo de C1: old_string escapado, edición verificable, sin bytes crudos ni otra herramienta
+  PASS  REQ-023 CA-13 (ii) tope: de un old_string de 4000 bytes enseña 80, escapados, y el motivo cabe con holgura  (1098 bytes)
+  PASS  REQ-023 CA-13 (viii) 0 procesos añadidos respecto a df550fa en C1 (no reconstruible) y C7 (reconstruible)  (C1 4 frente a 4; C7 3 frente a 3; menos es conforme)
+Resultado: 233 PASS, 1 FAIL, 1 SKIP (de ellos 0 INCONCLUSO: 0 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+df550fa #3:   PASS  el hook sale 0 (no bloquea la parada)
+  PASS  idempotente: dos pasadas, un solo bloque
+  PASS  estado_derivado.archivo '../fuera.md' NO escribe fuera del proyecto
+  PASS  ...y sigue saliendo 0
+  PASS  docs -> externo (symlink): el bloque derivado NO se escribe fuera
+  PASS  ...y sigue saliendo 0
+  PASS  sin manifiesto tambien sale 0
+  PASS  sin la carpeta destino no la inventa
+  FAIL  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  DESBOCADO: veredicto allow correcto, pero 4631ms en la mejor de 3 medidas (presupuesto 1000ms, techo holgado 4000ms)
+  PASS  DEV 1.31.0 v3: QA-111 ...y NO por el presupuesto de analisis
+  PASS  CA-04 el vocabulario viene de lib.sh, no de una copia en el informe
+  PASS  CA-29 guard-git.sh es ejecutable
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C.UTF-8
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=es_ES.UTF-8
+  PASS  REQ-010 CA-07 las tres escrituras caen en la MISMA casilla del bloque derivado
+  PASS  REQ-010 CA-14 el plegado vive SOLO en lib.sh; nadie tiene el suyo
+  PASS  REQ-010 CA-18 no queda ninguna pareja de letras escrita a mano
+  PASS  REQ-010 CA-20 el plegado es solo expansion de parametros (ningun binario)
+  PASS  REQ-010 CA-19 'ls -la' por guard.sh: registros de sed, tr e iconv VACIOS
+  FAIL  REQ-007 CA-22 el informe no leyo el REQ de clave decorada (rc=127)
+  PASS  REQ-007 CA-22 el bloque derivado tambien lee la clave decorada
+  PASS  SEC-004 CA-50b enlace ROTO: responde deny (131ms), ni cuelga ni revienta
+  PASS  REQ-007 CA-53 la ampliacion NO se propaga a templates/arnes-config.json.tpl
+  PASS  DEV 1.31.0 v2: QA-104 un comando que no escribe no consulta el manifiesto (ni avisa ni deniega)
+  PASS  REQ-007 CA-51 SEC-005 el aviso se emite siempre que el manifiesto se consulta (stderr), tambien cuando permite
+  PASS  REQ-007 CA-51 SEC-005 ninguna variable del manifiesto se rellena con el input
+  PASS  DEV 1.31.0 v2: QA-104 'ls -la' cuesta 1 proceso jq (como v1.30.3)
+  PASS  DEV 1.31.0 v2: QA-104 'npm run build' cuesta 1 proceso jq (como v1.30.3)
+  PASS  REQ-016 CA-01 los dos lectores y la cabecera sin el rango coinciden campo a campo (8 pares)
+  PASS  REQ-016 CA-02 'Est<!--x-->ado:' NO fabrica un campo y el 'QA:' de fuera del rango sí se lee
+  PASS  REQ-016 CA-02 el corpus de cabeceras se cosecha por glob del corredor (102 cabeceras)
+  PASS  REQ-016 CA-02 ningún deny se volvió allow al insertar un rango (246 variantes sobre las 82 cabeceras que deniegan, de 102 cosechadas)
+  PASS  REQ-016 CA-11 los campos de la equivalencia se derivan del lector de lib.sh (5 campos)
+  PASS  REQ-016 CA-11 comentar decide igual que borrar en las 15 parejas comprobadas
+  PASS  REQ-016 CA-11 las parejas tienen dientes en las dos direcciones (1 deny · 14 allow)
+  PASS  REQ-016 CA-08 'arnes_sin_cita' existe y es sólo expansión de parámetros (ningún proceso)
+  PASS  REQ-016 CA-08 el bloque derivado gasta las mismas pasadas de awk con citas que sin ellas (1)
+  PASS  REQ-021 CA-09 bash -n pasa en los 2 archivos de tests/util/ (las gates del manifiesto no miran tests/, y .arnes/config.json no se toca)
+  PASS  REQ-021 CA-01.1/CA-09 los 2 instrumentos son ejecutables y traen shebang: se INVOCAN, no se hacen source, y por eso $BASHPID dentro de $( ) deja de ser expresable
+  PASS  REQ-021 CA-01.2/CA-01.3 las 2 sondas emiten UN registro de UNA línea y ninguna imprime una línea con la forma que el corredor usa para contar casos
+  PASS  REQ-021 CA-01.5/CA-10.2 el parser valida cada campo POR SEPARADO —ausente, vacío y no numérico son errores con motivo, nunca un cero—, exige 'vivos' sólo a quien puede observarlo y acep
+  PASS  REQ-021 CA-01.4 tests/util/README.md apunta al único parser (sonda_lee, en el corredor) y no lo transcribe
+  PASS  REQ-023 CA-08 R1 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R1 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R1 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R1 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R2 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R2 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R2 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R2 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R3 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R3 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R3 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R3 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R4 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R4 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R4 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R4 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R5 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R5 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R5 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R5 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R6 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R6 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R6 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R6 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R7 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R7 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R7 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R7 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R8 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R8 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R8 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R8 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R9 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R9 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R9 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R9 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R10 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R10 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R10 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R10 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R11 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R11 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R11 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R11 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R12 (Edit)  (deny)
+  PASS  REQ-023 CA-08 (i) R12 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (1 vía(s))
+  PASS  REQ-023 CA-08 (ii) R12 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R13 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R13 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R13 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R13 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R14 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R14 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R14 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R14 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R15 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R15 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R15 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R15 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R16 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R16 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R16 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R16 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R17 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R17 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R17 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R17 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R18 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R18 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R18 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R18 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 A1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A6 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A6 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A6 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A7 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A7 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A7 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A8 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A8 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A8 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A9 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A9 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A9 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 U1 (Edit)  (deny)
+  PASS  REQ-023 CA-08 U1 (Write)  (deny)
+  PASS  REQ-023 CA-08 U1 sólo el motivo de REQ-031 CA-A12, sin el de este REQ
+  PASS  REQ-023 CA-08 (iii) U1 control positivo: 713ac68 y la candidata deciden igual y con el mismo motivo
+  PASS  REQ-023 CA-08 U2 (Edit)  (deny)
+  PASS  REQ-023 CA-08 U2 (Write)  (deny)
+  PASS  REQ-023 CA-08 (iii) U2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 U3a (Edit)  (allow)
+  PASS  REQ-023 CA-08 U3a (Write)  (allow)
+  PASS  REQ-023 CA-08 U3b (Edit)  (deny)
+  PASS  REQ-023 CA-08 U3b (Write)  (deny)
+  PASS  REQ-023 CA-08 (iii) U3 cada árbol decide en CRLF como en LF (A1 y R8, las dos vías)
+  PASS  REQ-023 CA-08 F1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-05 los 81 casos de CA-08 dan veredicto y motivo idénticos bajo C.UTF-8 y C
+  PASS  REQ-023 CA-02 dominio derivado del lector (6 campos) y clase medida en esta corrida: Estado, Hallazgos abiertos, QA, Rigor, Sensible a seguridad
+  PASS  REQ-023 CA-02 todo campo de la clase es clave de control de la constante
+  PASS  REQ-023 CA-02 declarado por una variante, cada campo de la clase DENIEGA
+  PASS  REQ-023 CA-02 anti-vacuidad: 5 campo(s) de la clase abren con la variante en 713ac68
+  PASS  REQ-023 CA-03 (i) bytes de control C0 (salvo tab, LF, CR y NUL) y DEL  29/29 DENY en la candidata (713ac68 las dejaba cerrar: 29/29)
+  PASS  REQ-023 CA-03 (ii) puntos de anchura cero o de formato  12/12 DENY en la candidata (713ac68 las dejaba cerrar: 12/12)
+  PASS  REQ-023 CA-03 (iii) UTF-8 mal formado: arranque sin continuación, continuación huérfana, sobrelarga, sustituto  4/4 DENY en la candidata (713ac68 las dejaba cerrar: 4/4)
+  PASS  REQ-023 CA-03 (reservada) entrada al azar U+183EE = $'\360\230\217\256', semilla ARNES_SEMILLA_41=18205 (bash 5.3.9(1)-release)  1/1 DENY en la candidata (713ac68 las dejaba cerrar: 1/1)
+  PASS  REQ-023 CA-03 anti-vacuidad: ninguna familia vacía y 46 entradas abrían en 713ac68
+  PASS  REQ-023 CA-04 corpus: 102 cabeceras del banco por glob + 29 REQ de requirements/, con clave no ASCII, valor no ASCII y clave decorada
+  PASS  REQ-023 CA-04 los 131 documentos dan el mismo valor en cada campo que 713ac68
+  PASS  REQ-023 CA-04 las 131 decisiones coinciden con 713ac68 salvo 33 denegaciones por cabecera ambigua, cada una con variante o repetición real (REQ de requirements/ ambiguos: 0)
+  PASS  REQ-023 CA-06 puerta, informe, campos-req.awk y arnes-paralelo (arnes_campo_linea) leen igual que 713ac68 en los 41 documentos de CA-08
+  PASS  REQ-023 CA-06 ningún esqueleto ni lista de claves tecleados; una clave añadida a la constante queda cubierta sin editar nada más
+  PASS  REQ-023 CA-09 (i) y (iii) el código nuevo no crea procesos, y lo primero que hace con la clave es medirla en bytes
+  PASS  REQ-023 CA-05 la clasificación corre bajo LC_ALL=C y sin rangos ni clases sujetos a colación
+  PASS  REQ-023 CA-09 (ii) recorridos: no más invocaciones de arnes_norm_clave que 713ac68 (A1, R17, R12 por Write)
+  PASS  REQ-023 CA-09 (iv) normalizaciones: ninguna añadida sin ambigüedad, y sólo la del Estado que no gobierna con ella (A1, R17, R12 por Write)
+  PASS  REQ-023 CA-11 '<!--Estado: completado -->' decide y motiva igual que 713ac68 (allow)
+  PASS  REQ-023 CA-11 '<!--Rigor: ligero-->' decide y motiva igual que 713ac68 (deny)
+  PASS  REQ-023 CA-12 (i) y (ii) ninguna transcripción nueva de la cita, y arnes_cola_pendientes cuenta y devuelve lo mismo que 713ac68 en 8 colas
+  FAIL  REQ-023 CA-13 C1 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C1 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C2 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C2 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C3 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C3 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C4 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C4 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C5 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C5 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C6 candidata  (allow)
+  PASS  REQ-023 CA-13 C6 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C7 candidata  (allow)
+  PASS  REQ-023 CA-13 C7 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C8 candidata  (allow)
+  PASS  REQ-023 CA-13 C8 df550fa: control, decide igual  (df550fa allow)
+  FAIL  REQ-023 CA-13 C9 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C9 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C10 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C10 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C11 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C11 df550fa: fail-before, permite  (df550fa allow)
+  FAIL  REQ-023 CA-13 C12 candidata  esperado=deny got=allow  <>
+  PASS  REQ-023 CA-13 C12 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C13 candidata  (allow)
+  PASS  REQ-023 CA-13 C13 df550fa: control, decide igual  (df550fa allow)
+  FAIL  REQ-023 CA-13 (ii) motivo de C1: old_string escapado, edición verificable, sin bytes crudos ni otra herramienta  (C1 no dejó motivo)
+  FAIL  REQ-023 CA-13 (ii) tope: de un old_string de 4000 bytes enseña 80, escapados, y el motivo cabe con holgura  decisión=allow motivo=0 bytes  <>
+  PASS  REQ-023 CA-13 (viii) 0 procesos añadidos respecto a df550fa en C1 (no reconstruible) y C7 (reconstruible)  (C1 4 frente a 4; C7 3 frente a 3; menos es conforme)
+Resultado: 221 PASS, 13 FAIL, 1 SKIP (de ellos 0 INCONCLUSO: 0 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+cand #3:   PASS  el hook sale 0 (no bloquea la parada)
+  PASS  idempotente: dos pasadas, un solo bloque
+  PASS  estado_derivado.archivo '../fuera.md' NO escribe fuera del proyecto
+  PASS  ...y sigue saliendo 0
+  PASS  docs -> externo (symlink): el bloque derivado NO se escribe fuera
+  PASS  ...y sigue saliendo 0
+  PASS  sin manifiesto tambien sale 0
+  PASS  sin la carpeta destino no la inventa
+  PASS  DEV v3: heredoc CITADO de ~300 KB -> allow y barato  (allow en 3836ms; presupuesto 1000ms, techo holgado 4000ms)
+  PASS  DEV 1.31.0 v3: QA-111 ...y NO por el presupuesto de analisis
+  PASS  CA-04 el vocabulario viene de lib.sh, no de una copia en el informe
+  PASS  CA-29 guard-git.sh es ejecutable
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=C.UTF-8
+  PASS  REQ-010 CA-22 mismo veredicto (deny) bajo LC_ALL=es_ES.UTF-8
+  PASS  REQ-010 CA-07 las tres escrituras caen en la MISMA casilla del bloque derivado
+  PASS  REQ-010 CA-14 el plegado vive SOLO en lib.sh; nadie tiene el suyo
+  PASS  REQ-010 CA-18 no queda ninguna pareja de letras escrita a mano
+  PASS  REQ-010 CA-20 el plegado es solo expansion de parametros (ningun binario)
+  PASS  REQ-010 CA-19 'ls -la' por guard.sh: registros de sed, tr e iconv VACIOS
+  PASS  REQ-007 CA-22 el informe lee la clave decorada igual que la puerta (1 REQ, 0 notas)
+  PASS  REQ-007 CA-22 el bloque derivado tambien lee la clave decorada
+  PASS  SEC-004 CA-50b enlace ROTO: responde deny (223ms), ni cuelga ni revienta
+  PASS  REQ-007 CA-53 la ampliacion NO se propaga a templates/arnes-config.json.tpl
+  PASS  DEV 1.31.0 v2: QA-104 un comando que no escribe no consulta el manifiesto (ni avisa ni deniega)
+  PASS  REQ-007 CA-51 SEC-005 el aviso se emite siempre que el manifiesto se consulta (stderr), tambien cuando permite
+  PASS  REQ-007 CA-51 SEC-005 ninguna variable del manifiesto se rellena con el input
+  PASS  DEV 1.31.0 v2: QA-104 'ls -la' cuesta 1 proceso jq (como v1.30.3)
+  PASS  DEV 1.31.0 v2: QA-104 'npm run build' cuesta 1 proceso jq (como v1.30.3)
+  PASS  REQ-016 CA-01 los dos lectores y la cabecera sin el rango coinciden campo a campo (8 pares)
+  PASS  REQ-016 CA-02 'Est<!--x-->ado:' NO fabrica un campo y el 'QA:' de fuera del rango sí se lee
+  PASS  REQ-016 CA-02 el corpus de cabeceras se cosecha por glob del corredor (102 cabeceras)
+  PASS  REQ-016 CA-02 ningún deny se volvió allow al insertar un rango (246 variantes sobre las 82 cabeceras que deniegan, de 102 cosechadas)
+  PASS  REQ-016 CA-11 los campos de la equivalencia se derivan del lector de lib.sh (5 campos)
+  PASS  REQ-016 CA-11 comentar decide igual que borrar en las 15 parejas comprobadas
+  PASS  REQ-016 CA-11 las parejas tienen dientes en las dos direcciones (1 deny · 14 allow)
+  PASS  REQ-016 CA-08 'arnes_sin_cita' existe y es sólo expansión de parámetros (ningún proceso)
+  PASS  REQ-016 CA-08 el bloque derivado gasta las mismas pasadas de awk con citas que sin ellas (1)
+  PASS  REQ-021 CA-09 bash -n pasa en los 2 archivos de tests/util/ (las gates del manifiesto no miran tests/, y .arnes/config.json no se toca)
+  PASS  REQ-021 CA-01.1/CA-09 los 2 instrumentos son ejecutables y traen shebang: se INVOCAN, no se hacen source, y por eso $BASHPID dentro de $( ) deja de ser expresable
+  PASS  REQ-021 CA-01.2/CA-01.3 las 2 sondas emiten UN registro de UNA línea y ninguna imprime una línea con la forma que el corredor usa para contar casos
+  PASS  REQ-021 CA-01.5/CA-10.2 el parser valida cada campo POR SEPARADO —ausente, vacío y no numérico son errores con motivo, nunca un cero—, exige 'vivos' sólo a quien puede observarlo y acep
+  PASS  REQ-021 CA-01.4 tests/util/README.md apunta al único parser (sonda_lee, en el corredor) y no lo transcribe
+  PASS  REQ-023 CA-08 R1 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R1 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R1 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R1 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R2 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R2 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R2 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R2 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R3 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R3 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R3 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R3 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R4 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R4 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R4 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R4 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R5 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R5 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R5 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R5 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R6 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R6 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R6 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R6 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R7 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R7 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R7 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R7 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R8 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R8 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R8 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R8 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R9 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R9 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R9 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R9 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R10 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R10 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R10 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R10 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R11 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R11 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R11 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R11 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R12 (Edit)  (deny)
+  PASS  REQ-023 CA-08 (i) R12 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (1 vía(s))
+  PASS  REQ-023 CA-08 (ii) R12 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R13 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R13 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R13 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R13 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R14 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R14 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R14 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R14 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R15 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R15 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R15 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R15 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 R16 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R16 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R16 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R16 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R17 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R17 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R17 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R17 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (allow)
+  PASS  REQ-023 CA-08 R18 (Edit)  (deny)
+  PASS  REQ-023 CA-08 R18 (Write)  (deny)
+  PASS  REQ-023 CA-08 (i) R18 fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata (2 vía(s))
+  PASS  REQ-023 CA-08 (ii) R18 control negativo: sin la variante o la repetición decide igual en 713ac68 y en la candidata (deny)
+  PASS  REQ-023 CA-08 A1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A6 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A6 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A6 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A7 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A7 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A7 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A8 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A8 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A8 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 A9 (Edit)  (allow)
+  PASS  REQ-023 CA-08 A9 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) A9 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 S5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 S5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) S5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 U1 (Edit)  (deny)
+  PASS  REQ-023 CA-08 U1 (Write)  (deny)
+  PASS  REQ-023 CA-08 U1 sólo el motivo de REQ-031 CA-A12, sin el de este REQ
+  PASS  REQ-023 CA-08 (iii) U1 control positivo: 713ac68 y la candidata deciden igual y con el mismo motivo
+  PASS  REQ-023 CA-08 U2 (Edit)  (deny)
+  PASS  REQ-023 CA-08 U2 (Write)  (deny)
+  PASS  REQ-023 CA-08 (iii) U2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 U3a (Edit)  (allow)
+  PASS  REQ-023 CA-08 U3a (Write)  (allow)
+  PASS  REQ-023 CA-08 U3b (Edit)  (deny)
+  PASS  REQ-023 CA-08 U3b (Write)  (deny)
+  PASS  REQ-023 CA-08 (iii) U3 cada árbol decide en CRLF como en LF (A1 y R8, las dos vías)
+  PASS  REQ-023 CA-08 F1 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F1 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F1 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F2 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F2 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F2 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F3 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F3 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F3 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F4 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F4 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F4 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-08 F5 (Edit)  (allow)
+  PASS  REQ-023 CA-08 F5 (Write)  (allow)
+  PASS  REQ-023 CA-08 (iii) F5 control positivo: 713ac68 y la candidata deciden igual
+  PASS  REQ-023 CA-05 los 81 casos de CA-08 dan veredicto y motivo idénticos bajo C.UTF-8 y C
+  PASS  REQ-023 CA-02 dominio derivado del lector (6 campos) y clase medida en esta corrida: Estado, Hallazgos abiertos, QA, Rigor, Sensible a seguridad
+  PASS  REQ-023 CA-02 todo campo de la clase es clave de control de la constante
+  PASS  REQ-023 CA-02 declarado por una variante, cada campo de la clase DENIEGA
+  PASS  REQ-023 CA-02 anti-vacuidad: 5 campo(s) de la clase abren con la variante en 713ac68
+  PASS  REQ-023 CA-03 (i) bytes de control C0 (salvo tab, LF, CR y NUL) y DEL  29/29 DENY en la candidata (713ac68 las dejaba cerrar: 29/29)
+  PASS  REQ-023 CA-03 (ii) puntos de anchura cero o de formato  12/12 DENY en la candidata (713ac68 las dejaba cerrar: 12/12)
+  PASS  REQ-023 CA-03 (iii) UTF-8 mal formado: arranque sin continuación, continuación huérfana, sobrelarga, sustituto  4/4 DENY en la candidata (713ac68 las dejaba cerrar: 4/4)
+  PASS  REQ-023 CA-03 (reservada) entrada al azar U+001E = $'\036', semilla ARNES_SEMILLA_41=32721 (bash 5.3.9(1)-release)  1/1 DENY en la candidata (713ac68 las dejaba cerrar: 1/1)
+  PASS  REQ-023 CA-03 anti-vacuidad: ninguna familia vacía y 46 entradas abrían en 713ac68
+  PASS  REQ-023 CA-04 corpus: 102 cabeceras del banco por glob + 29 REQ de requirements/, con clave no ASCII, valor no ASCII y clave decorada
+  PASS  REQ-023 CA-04 los 131 documentos dan el mismo valor en cada campo que 713ac68
+  PASS  REQ-023 CA-04 las 131 decisiones coinciden con 713ac68 salvo 33 denegaciones por cabecera ambigua, cada una con variante o repetición real (REQ de requirements/ ambiguos: 0)
+  PASS  REQ-023 CA-06 puerta, informe, campos-req.awk y arnes-paralelo (arnes_campo_linea) leen igual que 713ac68 en los 41 documentos de CA-08
+  PASS  REQ-023 CA-06 ningún esqueleto ni lista de claves tecleados; una clave añadida a la constante queda cubierta sin editar nada más
+  PASS  REQ-023 CA-09 (i) y (iii) el código nuevo no crea procesos, y lo primero que hace con la clave es medirla en bytes
+  PASS  REQ-023 CA-05 la clasificación corre bajo LC_ALL=C y sin rangos ni clases sujetos a colación
+  PASS  REQ-023 CA-09 (ii) recorridos: no más invocaciones de arnes_norm_clave que 713ac68 (A1, R17, R12 por Write)
+  PASS  REQ-023 CA-09 (iv) normalizaciones: ninguna añadida sin ambigüedad, y sólo la del Estado que no gobierna con ella (A1, R17, R12 por Write)
+  PASS  REQ-023 CA-11 '<!--Estado: completado -->' decide y motiva igual que 713ac68 (allow)
+  PASS  REQ-023 CA-11 '<!--Rigor: ligero-->' decide y motiva igual que 713ac68 (deny)
+  PASS  REQ-023 CA-12 (i) y (ii) ninguna transcripción nueva de la cita, y arnes_cola_pendientes cuenta y devuelve lo mismo que 713ac68 en 8 colas
+  PASS  REQ-023 CA-13 C1 candidata  (deny)
+  PASS  REQ-023 CA-13 C1 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C2 candidata  (deny)
+  PASS  REQ-023 CA-13 C2 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C3 candidata  (deny)
+  PASS  REQ-023 CA-13 C3 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C4 candidata  (deny)
+  PASS  REQ-023 CA-13 C4 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C5 candidata  (deny)
+  PASS  REQ-023 CA-13 C5 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C6 candidata  (allow)
+  PASS  REQ-023 CA-13 C6 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C7 candidata  (allow)
+  PASS  REQ-023 CA-13 C7 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C8 candidata  (allow)
+  PASS  REQ-023 CA-13 C8 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C9 candidata  (deny)
+  PASS  REQ-023 CA-13 C9 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C10 candidata  (deny)
+  PASS  REQ-023 CA-13 C10 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C11 candidata  (deny)
+  PASS  REQ-023 CA-13 C11 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C12 candidata  (deny)
+  PASS  REQ-023 CA-13 C12 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C13 candidata  (allow)
+  PASS  REQ-023 CA-13 C13 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 (ii) motivo de C1: old_string escapado, edición verificable, sin bytes crudos ni otra herramienta
+  PASS  REQ-023 CA-13 (ii) tope: de un old_string de 4000 bytes enseña 80, escapados, y el motivo cabe con holgura  (1098 bytes)
+  PASS  REQ-023 CA-13 (viii) 0 procesos añadidos respecto a df550fa en C1 (no reconstruible) y C7 (reconstruible)  (C1 4 frente a 4; C7 3 frente a 3; menos es conforme)
+Resultado: 234 PASS, 0 FAIL, 1 SKIP (de ellos 0 INCONCLUSO: 0 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+ 09:56:28 up 3 days,  1:35,  1 user,  load average: 3.86, 4.44, 4.48

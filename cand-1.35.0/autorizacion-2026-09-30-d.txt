@@ -1,0 +1,41 @@
+Autorizo la opción A de la decisión 6. Amplío expresamente el alcance para corregir los contratos y las pruebas que dependen de la premisa desmentida por la reproducción real de SEC-117.
+
+1. Contrato
+
+El analista versiona REQ-001 CA-10, CA-11 y CA-12, y REQ-007 CA-46(c), con el ADR correspondiente y trazabilidad al experimento real. Completa el criterio de SEC-117 en REQ-023 sin duplicar la norma en varias sedes.
+
+Autorizo reabrir REQ-001 según §9. No lo cierres automáticamente al terminar ni atribuyas sus firmas anteriores al contrato modificado.
+
+La propiedad se mantiene: una edición sobre un REQ protegido que el hook no puede reconstruir no puede recibir permiso silencioso. No adoptes la opción B ni vuelvas a confiar únicamente en que new_string mencione el estado terminal.
+
+2. Implementación y banco
+
+El desarrollador implementa la denegación acotada al supuesto anterior, con un mensaje que permita realizar una edición verificable. Preserva las operaciones legítimas reconstruibles y la reapertura.
+
+Autorizo adaptar las llamadas del banco afectadas por old_string ficticios:
+- Las que prueban otras puertas deben usar ediciones literales válidas, para seguir llegando al control que pretenden medir.
+- Las que prueban reconstrucción fallida deben conservar esa condición y comprobar la nueva denegación.
+- No cambies masivamente expectativas a deny: una prueba que pasa porque la detuvo otra puerta no acredita su propósito original.
+- No retires casos para obtener verde; justifica cualquier sustitución y conserva su cobertura.
+
+Usa el inventario de llamadas existente. No amplíes esta tarea a una limpieza general del banco.
+
+3. Revisión agrupada
+
+Amplío la revisión de QA y seguridad a los criterios y caminos afectados de REQ-001 y REQ-007, además de REQ-023 y REQ-031. Reutiliza la evidencia de las partes intactas; no repitas la revisión completa de cada requisito.
+
+Esta ampliación forma parte de la vuelta excepcional agrupada ya autorizada: no reinicia contadores ni concede vueltas ilimitadas. Registra la ampliación y continúa el trabajo pendiente sin separar artificialmente nuevas rondas.
+
+Incluye en la misma entrega QA-023-06, la precisión de REQ-031 CA-A13 y los comentarios incorrectos ya autorizados. Mantén separadas la propiedad del control y las limitaciones SEC-115/118.
+
+4. Validación y entrega
+
+Repite de forma acotada la comprobación con Edit real: caso que escapaba, denegación de control y edición legítima. Verifica también reapertura y los caminos compartidos afectados. Distingue argumentos, decisión y efecto en disco.
+
+Después de QA favorable, seguridad determina su aprobación y cobertura. Autorizo commits, push sin force y actualización del PR #59, con CI sobre la cabeza final. Conserva los resultados y no relances buscando verde.
+
+Si la vuelta termina con un bloqueo, entrega el hallazgo exacto y el delta pendiente; no apruebes por agotamiento ni abras otra reparación automáticamente.
+
+SEC-115, SEC-118 y el hueco C continúan abiertos y sin aceptación. Sin fusión, cierres automáticos, tag, publicación ni cambios en consumidores.
+
+El resultado esperado es la reparación completa de SEC-117 con sus contratos y pruebas coherentes, no otra propuesta previa. Continúa con esta autorización sin volver a solicitar aprobación por las dependencias enumeradas aquí.

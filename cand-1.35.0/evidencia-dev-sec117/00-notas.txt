@@ -1,0 +1,1 @@
+Nota: la corrida 01 se hizo con los hooks del worktree mientras se editaban COMENTARIOS de hooks/guard-completado.sh (sin cambio de conducta; la función nueva aún no se llamaba). La corrida 02 repite el 'antes' limpio: banco del worktree sin cambios contra los hooks materializados de df550fa (git diff df550fa e0a8ee2 -- hooks tools tests vacío).

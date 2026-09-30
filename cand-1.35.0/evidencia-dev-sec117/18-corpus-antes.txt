@@ -1,0 +1,104 @@
+09-cierre-de-req-por-bash.sh: Estado: completado
+13-orden-del-ciclo.sh: Seguridad: aprobado')"
+14-campos-solo-en-la-cabecera.sh: Estado: completado')"
+32-huecos-auditoria-r001.sh: Estado: completado\002QA: pendiente
+33-acento-y-clave-1-normalizacion.sh: Estado:${TAB}completado\002QA: pendiente\002Seguridad: n/a
+33-acento-y-clave-1-normalizacion.sh: **Estado:** completado\002QA: pendiente\002Seguridad: n/a
+33-acento-y-clave-1-normalizacion.sh:  Estado: completado\002QA: pendiente\002Seguridad: n/a
+33-acento-y-clave-1-normalizacion.sh:   Estado: completado\002QA: pendiente\002Seguridad: n/a
+33-acento-y-clave-1-normalizacion.sh: QA: pendiente\002Seguridad: n/a
+33-acento-y-clave-1-normalizacion.sh: Estado : completado\002QA: pendiente\002Seguridad: n/a
+33-acento-y-clave-1-normalizacion.sh: __Estado:__ completado\002QA: pendiente\002Seguridad: n/a
+33-acento-y-clave-1-normalizacion.sh: *Estado:* completado\002QA: pendiente\002Seguridad: n/a
+33-acento-y-clave-1-normalizacion.sh: QA: pendiente\002Seguridad: n/a
+33-acento-y-clave-1-normalizacion.sh: **Estado** : completado\002QA: pendiente\002Seguridad: n/a
+33-acento-y-clave-1-normalizacion.sh: Estado: completado\002QA: aprobado\002Seguridad: n/a\002**Hallazgos abiertos:** SEC-9 (usuario/dinero)
+33-acento-y-clave-1-normalizacion.sh: Estado: completado\002**Sensible a seguridad:** sí\002QA: aprobado\002Seguridad: pendiente
+33-acento-y-clave-1-normalizacion.sh: Estado: completado\002Sensible a seguridad: no\002**QA:** pendiente\002Seguridad: n/a
+33-acento-y-clave-1-normalizacion.sh: Estado: completado\002Sensible a seguridad: sí\002**Rigor:** ligero\002QA: aprobado\002Seguridad: pendiente
+33-acento-y-clave-1-normalizacion.sh: Estado: completado\002Sensible a seguridad: no\002**Rigor:** critico\002QA: aprobado\002Seguridad: pendiente
+33-acento-y-clave-1-normalizacion.sh: **Estado:** completado\002**Sensible a seguridad:** no\002**QA:** aprobado\002**Seguridad:** n/a\002**Hallazgos abiertos:** (ninguno)
+33-acento-y-clave-2-manifiesto.sh: Estado: completado\002QA: pendiente
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: en-revisión'
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: sí\002QA: aprobado\002Seguridad: con-hallazgos\002Rigor: critico
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: sí\002QA: aprobado\002Seguridad: con-hallazgos\002Rigor: critico
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: sí\002QA: aprobado\002Seguridad: aprobado\002Rigor: critico
+36-cabecera-comentario-html-1-la-puerta.sh: **Seguridad:** con-hallazgos (A-001, 2026-09-01)
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: no\002QA: pendiente\002Seguridad: n/a
+36-cabecera-comentario-html-1-la-puerta.sh: **QA:** aprobado
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: no\002QA: aprobado\002Seguridad: n/a\002Hallazgos abiertos: SEC-9 (usuario/dinero)
+36-cabecera-comentario-html-1-la-puerta.sh: **Hallazgos abiertos:** (ninguno)
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: sí\002QA: aprobado\002Seguridad: pendiente
+36-cabecera-comentario-html-1-la-puerta.sh: **Sensible a seguridad:** no
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: no\002Rigor: critico\002QA: aprobado\002Seguridad: pendiente
+36-cabecera-comentario-html-1-la-puerta.sh: **Rigor:** ligero
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: sí\002QA: aprobado
+36-cabecera-comentario-html-1-la-puerta.sh: Rigor: critico
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: no\002QA: aprobado\002Seguridad: n/a
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: no
+36-cabecera-comentario-html-1-la-puerta.sh: QA: pendiente\002Seguridad: n/a
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002QA: pendiente
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: no\002QA: aprobado\002Seguridad: n/a
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: no\002QA: aprobado\002Seguridad: n/a
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: en-revisión'
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002QA: pendiente
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: en-revisión\002Sensible a seguridad: sí\002QA: aprobado\002Seguridad: pendiente\002Rigor: critico'
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: sí\002QA: aprobado\002Seguridad: pendiente\002Rigor: critico
+36-cabecera-comentario-html-1-la-puerta.sh: Seguridad: aprobado (A-001, 2026-09-01)
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: en-revisión\002Sensible a seguridad: sí\002QA: aprobado\002Seguridad: pendiente\002Rigor: critico
+36-cabecera-comentario-html-1-la-puerta.sh: Seguridad: aprobado (A-001, 2026-09-01)
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: en-revisión'
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: no
+36-cabecera-comentario-html-1-la-puerta.sh: QA: pendiente
+36-cabecera-comentario-html-1-la-puerta.sh: Seguridad: n/a
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: en-revisión'
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: sí\002QA: aprobado\002Seguridad: pendiente\002Rigor: critico
+36-cabecera-comentario-html-1-la-puerta.sh: Seguridad: aprobado (A-001, 2026-09-01)
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: en-revisión'
+36-cabecera-comentario-html-1-la-puerta.sh: **Estado:** completado\002QA: pendiente\002Seguridad: n/a
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: sí\002QA: aprobado\002  Seguridad: pendiente
+36-cabecera-comentario-html-1-la-puerta.sh: Estado: completado\002Sensible a seguridad: sí\002**QA:** aprobado\002**Seguridad:** aprobado\002**Rigor:** critico
+36-cabecera-comentario-html-2-los-lectores.sh: Estado: en-revisión\002QA: aprobado\002Seguridad: con-hallazgos
+36-cabecera-comentario-html-2-los-lectores.sh: Estado: en-revisión\002QA: aprobado\002Seguridad: con-hallazgos'
+36-cabecera-comentario-html-2-los-lectores.sh: Estado: en-revisión
+36-cabecera-comentario-html-2-los-lectores.sh: **QA:** aprobado\002**Seguridad:** aprobado\002**Rigor:** ligero
+36-cabecera-comentario-html-2-los-lectores.sh: QA: pendiente\002Seguridad: pendiente\002Sensible a seguridad: sí' '# R\002Estado: en-revisión\002QA: pendiente\002Seguridad: pendiente\002Sensible a seguridad: sí'
+36-cabecera-comentario-html-2-los-lectores.sh: Estado: en-revisión <!-- se cerró el 3 -->\002QA: aprobado\002Seguridad: n/a\002Hallazgos abiertos: <!-- SEC-9 (usuario/dinero) --> (ninguno)' '# R\002Estado: en-revisión\002QA: aprobado\002Seguridad: n/a\002Hallazgos abiertos:  (ninguno)'
+36-cabecera-comentario-html-2-los-lectores.sh: Estado: en-revisión\002QA: aprobado\002Seguridad: n/a' '# R\002Estado: en-revisión\002QA: aprobado\002Seguridad: n/a'
+36-cabecera-comentario-html-2-los-lectores.sh: Estado: en-revisión\002QA: aprobado <!-- ronda 1 --> <!-- ronda 2 -->\002Seguridad: n/a' '# R\002Estado: en-revisión\002QA: aprobado  \002Seguridad: n/a'
+36-cabecera-comentario-html-2-los-lectores.sh: Estado: en-revisión\002QA: aprobado
+36-cabecera-comentario-html-2-los-lectores.sh:      Seguridad: pendiente -->\002Seguridad: n/a' '# R\002Estado: en-revisión\002QA: aprobado\002Seguridad: n/a'
+36-cabecera-comentario-html-2-los-lectores.sh: Estado: en-revisión\002QA: aprobado\002Seguridad: n/a
+36-cabecera-comentario-html-2-los-lectores.sh: Estado: en-revisión\002QA: aprobado\002Seguridad: n/a'
+36-cabecera-comentario-html-2-los-lectores.sh: Estado: en-revisión\002QA: aprobado\002Seguridad: con-hallazgos
+36-cabecera-comentario-html-2-los-lectores.sh: **Seguridad:** aprobado\002QA: pendiente
+36-cabecera-comentario-html-2-los-lectores.sh: Estado: en-revisión\002QA: aprobado\002Seguridad: con-hallazgos'
+36-cabecera-comentario-html-2-los-lectores.sh: QA: pendiente'; then
+36-cabecera-comentario-html-2-los-lectores.sh: **Seguridad:** aprobado\002**QA:** aprobado\002**Rigor:** ligero\002**Sensible a seguridad:** no\002**Hallazgos abiertos:** (ninguno)
+36-cabecera-comentario-html-2-los-lectores.sh: Estado: en-revisión'
+36-cabecera-comentario-html-3-comentar-retira.sh: Estado: completado\002Sensible a seguridad: sí\002QA: aprobado
+36-cabecera-comentario-html-3-comentar-retira.sh: Seguridad: pendiente
+36-cabecera-comentario-html-3-comentar-retira.sh: Rigor: critico
+36-cabecera-comentario-html-3-comentar-retira.sh: Estado: completado\002Sensible a seguridad: no
+36-cabecera-comentario-html-3-comentar-retira.sh: QA: con-hallazgos\002Hallazgos abiertos: SEC-9 (usuario/dinero)
+36-cabecera-comentario-html-3-comentar-retira.sh: Seguridad: n/a
+36-cabecera-comentario-html-3-comentar-retira.sh: Estado: completado\002Sensible a seguridad: no\002Seguridad: n/a
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Estado: completado\002Sensible a seguridad: sí\002QA: aprobado\002Rigor: critico'
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Estado: en-revisión'
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Seguridad: aprobado (A-001, 2026-09-01)
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Seguridad: aprobado (A-001, 2026-09-01)
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Seguridad: pendiente (A-001, 2026-09-01)
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Seguridad: aprobado (A-001, 2026-09-01)
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Seguridad: con-hallazgos (A-000, 2026-08-01)
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Estado: en-revisión'
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Estado: completado\002Sensible a seguridad: sí\002QA: aprobado\002Rigor: critico\002Seguridad: pendiente
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Estado: completado\002Sensible a seguridad: sí\002QA: aprobado\002Rigor: critico
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Estado: en-revisión\002Sensible a seguridad: sí\002QA: aprobado\002Rigor: critico
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Seguridad: aprobado (A-001, 2026-09-01)
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Estado: en-revisión\002Sensible a seguridad: sí\002QA: aprobado\002Rigor: critico'
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Estado: en-revisión'
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Estado: completado\002Sensible a seguridad: no\002QA: aprobado\002Seguridad: n/a
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Estado: en-progreso\002Sensible a seguridad: sí\002QA: aprobado\002Rigor: critico
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Estado: completado\002QA: aprobado
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Seguridad: aprobado
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh: Seguridad: con-hallazgos\002Rigor: critico\002Sensible a seguridad: sí'

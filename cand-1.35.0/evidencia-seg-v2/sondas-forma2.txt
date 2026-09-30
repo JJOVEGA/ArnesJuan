@@ -1,0 +1,4 @@
+N9000 anidamiento 9000 en clave extra, cierre con QA pendiente: ArnesJuan-v1.35 dec=deny err=
+N9000 anidamiento 9000 en clave extra, cierre con QA pendiente: base713 dec=deny err=
+N10001 anidamiento 10001 en clave extra, cierre con QA pendiente: ArnesJuan-v1.35 dec=allow err=jq: parse error: Exceeds depth limit for parsing at line 1, column 10420 /home/juan/dev/ArnesJuan-v1.35/hooks/lib.sh: li
+N10001 anidamiento 10001 en clave extra, cierre con QA pendiente: base713 dec=allow err=jq: parse error: Exceeds depth limit for parsing at line 1, column 10420 /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35

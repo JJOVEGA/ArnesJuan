@@ -1,0 +1,65 @@
+Autorizo una reparación agrupada del candidato del PR #59: SEC-117, QA-023-06 y los comentarios que describen incorrectamente ese comportamiento. No acepto publicar con SEC-117 aplazado.
+
+Parte de `cand/1.35.0`, cabeza conocida `df550fa2e8e7ae7906b39ede8711143d2488936b`. Verifica el estado y trabaja con las instrucciones del worktree correcto, preservando cambios ajenos.
+
+1. Reparar SEC-117
+
+La reproducción real ya permite implementar; no prepares otra investigación general.
+
+Propiedad exigida: cuando el hook no puede reconstruir una edición de un REQ protegido porque no encuentra literalmente el texto anterior, esa incertidumbre no puede convertirse en permiso silencioso.
+
+Define la condición de denegación de forma comprobable. No vuelvas a depender sólo de encontrar «estado: completado» en `new_string` ni intentes imitar toda la normalización del host.
+
+La denegación debe explicar cómo realizar una edición verificable. Conserva las ediciones legítimas y la reapertura cuando el hook pueda reconstruirlas. No autorices otra herramienta como atajo para eludir el control.
+
+Revisa los caminos que comparten esa reconstrucción, incluido MultiEdit si corresponde, sin ampliar el encargo a todas las herramientas o formas de escritura.
+
+2. Corregir QA-023-06 y comentarios afectados
+
+Autorizo corregir las sedes de REQ-023 y REQ-031 afectadas:
+- Expresa correctamente que el límite relevante es de bytes.
+- Conserva las cifras medidas en la evidencia junto con sus condiciones, incluida la restricción ASCII.
+- No extrapoles resultados a caracteres, hosts o tamaños no probados.
+- Separa la propiedad del control de las limitaciones SEC-115/118; una frase condicional no acredita protección.
+
+Autorizo modificar los comentarios de código señalados cuando describan incorrectamente el comportamiento, además de la documentación correspondiente. No es autorización para otras refactorizaciones.
+
+Las seis observaciones menores quedan fuera, salvo que una sea inseparable de estas correcciones; en ese caso explica la dependencia y limita el cambio.
+
+3. Presupuesto y gobernanza
+
+Autorizo expresamente una vuelta excepcional agrupada de desarrollador → QA → seguridad para esta reparación, más el write-back contractual indispensable del analista. Conserva el contador agotado y registra la excepción sin reiniciarlo ni crear otro REQ para eludirlo.
+
+Reutiliza las firmas y evidencias que sigan siendo aplicables. QA revisa el delta y sus efectos sobre REQ-023 y REQ-031; seguridad emite su determinación después de QA favorable.
+
+Si esta vuelta termina con un hallazgo bloqueante, entrega el impedimento exacto y lo pendiente. No abras otra vuelta ni apruebes por agotamiento.
+
+4. Validación
+
+Reutiliza el experimento real de SEC-117 y sus precondiciones. En un proyecto temporal aislado verifica:
+- El caso de comillas que antes escapaba ahora queda bloqueado y el archivo no cambia.
+- El control positivo de denegación sigue bloqueando.
+- Una edición legítima reconstruible sigue funcionando.
+- La reapertura reconstruible sigue permitida.
+- Los caminos afectados por el cambio tienen pruebas de regresión.
+
+Distingue argumentos recibidos, decisión del hook, tratamiento del host y efecto en disco. No presentes una emulación como ejecución real ni extiendas la conclusión a Windows o al editor sin evidencia.
+
+Ejecuta las comprobaciones necesarias del candidato. Conserva todas las corridas; un resultado posterior no borra uno anterior.
+
+5. PR y entrega final
+
+Autorizo commits, push sin force y actualización del PR #59 en borrador. Obtén el CI requerido sobre la cabeza final y no lo relances buscando verde.
+
+Verifica que la copia íntegra de este encargo quede conservada en la sede de autorización. No reconstruyas el mensaje anterior que llegó cortado: este texto define el alcance autorizado ahora.
+
+Entrega un único resumen:
+- SEC-117 antes/después, con evidencia real.
+- QA-023-06 y comentarios corregidos.
+- Compatibilidad y límites.
+- Firmas y cobertura sobre el candidato.
+- SHA, CI y decisiones de publicación todavía pendientes.
+
+SEC-115, SEC-118 y el hueco C siguen abiertos y sin aceptación mía. Sin nuevas reparaciones de esos asuntos, modelos, sondas, workflow, ruleset o consumidores.
+
+No fusiones, no cierres requisitos, no crees tags ni publiques. El objetivo es dejar esta reparación terminada y un candidato concreto para decidir la salida.

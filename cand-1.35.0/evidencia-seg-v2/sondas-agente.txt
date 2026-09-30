@@ -1,0 +1,2 @@
+ArnesJuan-v1.35: CA-24 desarrollador heredoc=allow | D2b desarrollador Edit no literal=deny (ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.m)
+base713: CA-24 desarrollador heredoc=allow | D2b desarrollador Edit no literal=allow ()

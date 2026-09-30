@@ -1,5 +1,14 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-30 · Candidato 1.35.0, vuelta excepcional agrupada: evidencia del desarrollador, de QA y de seguridad, y CI de la cabeza final `9596e39`
+- `cand-1.35.0/evidencia-dev-sec117/`: corridas 00–27, sin borrar ninguna; incluye el banco final con 2 FAIL de reloj conservados.
+- `cand-1.35.0/evidencia-qa-sec117/`: banco 1164/1/13, casos de ruptura, sonda de motivos y QA-023-07.
+- `cand-1.35.0/evidencia-seg-v2/`: sondas de R-045-A, SEC-119 y SEC-120.
+- `cand-1.35.0/ci-cand-9596e39/`: run 36745052075, success, 1146 PASS · 0 FAIL · 32 SKIP (0 INCONCLUSO; 18 SKIP del fail-before de REQ-023 por falta de 1.33.2 en el runner). Sin relanzar.
+- También: el inventario de llamadas del banco y las copias de trabajo de la tercera y la cuarta autorización. Las copias de registro están en `PENDING_APPROVAL.md` del candidato.
+
+Sin binarios ni volcados de terceros. Sin push.
+
 ## 2026-09-30 · SEC-117 v2: RESULTADO de la validación de la reparación en el host real (tras el registro previo `0680a2a`)
 `sec117-real-v2/RESULTADO.md` y las salidas por caso. Una ejecución por caso:
 - **sospechoso:** deny por CA-13, el host bloquea y el disco no cambia. En la v1 se cerraba.

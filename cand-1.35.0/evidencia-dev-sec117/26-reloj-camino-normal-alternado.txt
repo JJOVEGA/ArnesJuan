@@ -1,0 +1,9 @@
+reloj por invocación (µs), bloques de 10 alternados, cierre legítimo por Edit literal (todo en verde, gate 'true')
+df550fa 42258  final 47551
+df550fa 40727  final 41765
+df550fa 39265  final 42252
+df550fa 79953  final 70728
+df550fa 93405  final 76488
+df550fa 45747  final 50149
+decisión df550fa: 
+decisión final: 

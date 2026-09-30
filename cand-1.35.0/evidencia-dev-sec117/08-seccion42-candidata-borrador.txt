@@ -1,0 +1,33 @@
+--- 42 · edición que la puerta no puede reconstruir (REQ-023 CA-13, SEC-117) ---
+  PASS  REQ-023 CA-13 C1 candidata  (deny)
+  PASS  REQ-023 CA-13 C1 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C2 candidata  (deny)
+  PASS  REQ-023 CA-13 C2 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C3 candidata  (deny)
+  PASS  REQ-023 CA-13 C3 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C4 candidata  (deny)
+  PASS  REQ-023 CA-13 C4 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C5 candidata  (deny)
+  PASS  REQ-023 CA-13 C5 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C6 candidata  (allow)
+  PASS  REQ-023 CA-13 C6 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C7 candidata  (allow)
+  PASS  REQ-023 CA-13 C7 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C8 candidata  (allow)
+  PASS  REQ-023 CA-13 C8 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 C9 candidata  (deny)
+  PASS  REQ-023 CA-13 C9 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C10 candidata  (deny)
+  PASS  REQ-023 CA-13 C10 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C11 candidata  (deny)
+  PASS  REQ-023 CA-13 C11 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C12 candidata  (deny)
+  PASS  REQ-023 CA-13 C12 df550fa: fail-before, permite  (df550fa allow)
+  PASS  REQ-023 CA-13 C13 candidata  (allow)
+  PASS  REQ-023 CA-13 C13 df550fa: control, decide igual  (df550fa allow)
+  PASS  REQ-023 CA-13 (ii) motivo de C1: old_string escapado, edición verificable, sin bytes crudos ni otra herramienta
+  PASS  REQ-023 CA-13 (ii) tope: de un old_string de 4000 bytes enseña 80, escapados, y el motivo cabe con holgura  (1098 bytes)
+  PASS  REQ-023 CA-13 (viii) 0 procesos añadidos respecto a df550fa en C1 (no reconstruible) y C7 (reconstruible)  (C1 4 frente a 4; C7 3 frente a 3; menos es conforme)
+aviso: vuelta parcial (1 de 55 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 29 PASS, 0 FAIL

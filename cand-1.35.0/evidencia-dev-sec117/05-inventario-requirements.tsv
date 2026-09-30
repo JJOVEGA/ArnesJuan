@@ -1,0 +1,92 @@
+02-guard-completado-transicion.sh	9	REQ-001.md	allow	REQ -> en-progreso (no completado) -> allow
+02-guard-completado-transicion.sh	10	REQ-001.md	allow	REQ -> completado, sin pendientes, gate ok -> allow
+03-veredictos-anti-deriva.sh	10	REQ-010.md	deny	completado con QA: pendiente -> deny
+03-veredictos-anti-deriva.sh	12	REQ-011.md	allow	completado con QA: aprobado (no sensible) -> allow
+03-veredictos-anti-deriva.sh	14	REQ-012.md	deny	sensible + Seguridad: pendiente -> deny
+03-veredictos-anti-deriva.sh	16	REQ-013.md	allow	sensible + QA y Seguridad aprobados -> allow
+03-veredictos-anti-deriva.sh	20	REQ-001.md	deny	REQ -> completado con aprobación pendiente -> deny
+03-veredictos-anti-deriva.sh	25	REQ-001.md	deny	REQ -> completado con quality gate roja -> deny
+04-windows-formas-del-manifiesto.sh	13	REQ-001.md	allow	quality_gates como objetos, en verde -> allow
+04-windows-formas-del-manifiesto.sh	15	REQ-001.md	deny	quality_gates como objetos, en rojo -> deny
+08-clase-del-hallazgo.sh	10	REQ-020.md	allow	hallazgo de instrumento -> allow
+08-clase-del-hallazgo.sh	12	REQ-021.md	deny	hallazgo de usuario/dinero -> deny
+08-clase-del-hallazgo.sh	14	REQ-022.md	deny	hallazgo de contrato -> deny
+08-clase-del-hallazgo.sh	16	REQ-023.md	deny	hallazgo SIN clase -> deny
+08-clase-del-hallazgo.sh	18	REQ-024.md	deny	mezcla: basta uno bloqueante -> deny
+08-clase-del-hallazgo.sh	20	REQ-025.md	allow	sin hallazgos abiertos -> allow
+08-clase-del-hallazgo.sh	23	REQ-026.md	allow	REQ antiguo sin el campo -> allow
+10-plantilla-pending-approval.sh	11	REQ-001.md	allow	PENDING recien copiado de la plantilla -> allow
+11-nivel-de-rigor.sh	10	REQ-040.md	deny	sin Rigor + QA pendiente -> deny (como siempre)
+11-nivel-de-rigor.sh	12	REQ-041.md	deny	sin Rigor + sensible sin seguridad -> deny (como siempre)
+11-nivel-de-rigor.sh	14	REQ-042.md	allow	LIGERO no exige veredictos -> allow
+11-nivel-de-rigor.sh	16	REQ-043.md	deny	estandar exige QA -> deny
+11-nivel-de-rigor.sh	18	REQ-044.md	deny	critico exige seguridad -> deny
+11-nivel-de-rigor.sh	20	REQ-045.md	allow	critico con QA y seguridad -> allow
+11-nivel-de-rigor.sh	23	REQ-046.md	deny	ligero sobre SENSIBLE no baja el suelo -> deny
+11-nivel-de-rigor.sh	25	REQ-047.md	deny	estandar sobre SENSIBLE no baja el suelo -> deny
+11-nivel-de-rigor.sh	28	REQ-048.md	deny	Rigor invalido se ignora, no abre -> deny
+12-rigor-ligero.sh	17	REQ-090.md	deny	ligero con quality gate ROJA -> deny (la plantilla promete gates)
+12-rigor-ligero.sh	21	REQ-090.md	deny	ligero con aprobacion humana PENDIENTE -> deny
+12-rigor-ligero.sh	26	REQ-091.md	deny	ligero con hallazgo usuario/dinero ABIERTO -> deny
+12-rigor-ligero.sh	29	REQ-090.md	allow	ligero SIN veredicto de QA y todo verde -> allow (eso si lo salta)
+13-orden-del-ciclo.sh	11	REQ-050.md	deny	firmar Seguridad con QA pendiente -> deny
+13-orden-del-ciclo.sh	13	REQ-050.md	deny	...y tampoco al cerrar de paso -> deny
+13-orden-del-ciclo.sh	17	REQ-050.md	allow	auditoria PREVENTIVA declarada -> allow
+13-orden-del-ciclo.sh	20	REQ-051.md	allow	orden correcto: QA ya aprobado -> allow
+13-orden-del-ciclo.sh	23	REQ-052.md	allow	edicion que NO toca Seguridad -> allow
+13-orden-del-ciclo.sh	27	REQ-053.md	allow	REQ antiguo sin campo QA -> allow
+13-orden-del-ciclo.sh	33	REQ-054.md	deny	critico: solo firma preventiva no cierra -> deny
+13-orden-del-ciclo.sh	36	REQ-055.md	allow	critico: auditoria real si cierra -> allow
+13-orden-del-ciclo.sh	40	REQ-056.md	allow	sensible: QA firma sin esperar a seguridad -> allow
+14-campos-solo-en-la-cabecera.sh	18	REQ-110.md	deny	historia con 'Seguridad: aprobado (...)' a col. 0 NO cierra -> deny
+14-campos-solo-en-la-cabecera.sh	21	REQ-111.md	allow	control: la CABECERA si se lee (aprobado arriba, pendiente en historia) -> allow
+14-campos-solo-en-la-cabecera.sh	24	REQ-112.md	deny	vineta '- Seguridad:' en historia tampoco cuenta -> deny
+14-campos-solo-en-la-cabecera.sh	28	REQ-113.md	allow	un fragmento sin '##' se lee entero: QA aprobado en el Edit -> allow
+14-campos-solo-en-la-cabecera.sh	109	REQ-127.md	deny	transicion por documento: old_string ausente + 'Estado: completado' en el fragmento -> den
+14-campos-solo-en-la-cabecera.sh	111	REQ-127.md	allow	transicion por documento: old_string ausente y fragmento 'completado' a secas -> allow
+15-formas-decoradas.sh	11	REQ-060.md	deny	sensible en **negrita** exige auditoria -> deny
+15-formas-decoradas.sh	14	REQ-061.md	deny	negrita + comentario tras el valor -> deny
+15-formas-decoradas.sh	17	REQ-062.md	deny	comentario tras el valor, sin negrita -> deny
+15-formas-decoradas.sh	20	REQ-063.md	deny	sensible en _cursiva_ -> deny
+15-formas-decoradas.sh	25	REQ-064.md	deny	valor que NO se entiende -> deny (lado seguro)
+15-formas-decoradas.sh	27	REQ-064.md	deny	valor que NO se entiende -> deny (lado seguro)
+15-formas-decoradas.sh	31	REQ-065.md	allow	no sensible en **negrita** -> allow
+15-formas-decoradas.sh	39	REQ-066.md	deny	'n/a' no abre la puerta -> deny
+15-formas-decoradas.sh	42	REQ-072.md	deny	...y 'no aplica' dice lo mismo -> deny
+15-formas-decoradas.sh	45	REQ-073.md	deny	'ninguna' tampoco abre -> deny
+15-formas-decoradas.sh	48	REQ-067.md	allow	no + comentario tras el valor -> allow
+15-formas-decoradas.sh	52	REQ-068.md	allow	QA en **negrita** cuenta como aprobado -> allow
+15-formas-decoradas.sh	55	REQ-069.md	allow	Seguridad en **negrita** cierra un critico -> allow
+15-formas-decoradas.sh	61	REQ-070.md	deny	preventiva decorada TAMPOCO cierra -> deny
+15-formas-decoradas.sh	64	REQ-071.md	allow	Rigor **ligero** decorado se reconoce -> allow
+16-guard-punto-de-entrada.sh	18	REQ-030.md	deny	guard.sh: el 2o guardian sigue corriendo tras el 1o -> deny
+16-guard-punto-de-entrada.sh	21	REQ-031.md	allow	guard.sh: cierre limpio -> allow
+16-guard-punto-de-entrada.sh	24	REQ-032.md	deny	guard.sh: sensible sin seguridad -> deny
+16-guard-punto-de-entrada.sh	27	REQ-033.md	allow	guard.sh: hallazgo de instrumento -> allow
+17-asterisco-de-nota-al-pie.sh	11	REQ-074.md	deny	'aprobado*' NO cierra un critico -> deny
+17-asterisco-de-nota-al-pie.sh	14	REQ-075.md	deny	'*aprobado' tampoco -> deny
+17-asterisco-de-nota-al-pie.sh	19	REQ-076.md	allow	'*aprobado*' pareado si cierra -> allow
+17-asterisco-de-nota-al-pie.sh	22	REQ-077.md	deny	y '**sí**' sigue exigiendo auditoria -> deny
+18-parentesis-es-evidencia.sh	11	REQ-080.md	allow	QA con su evidencia entre parentesis cierra -> allow
+18-parentesis-es-evidencia.sh	14	REQ-081.md	allow	Seguridad con evidencia cierra un critico -> allow
+18-parentesis-es-evidencia.sh	19	REQ-083.md	deny	parentesis sin cerrar no es evidencia -> deny
+18-parentesis-es-evidencia.sh	23	REQ-082.md	deny	preventiva NO cierra un critico -> deny
+18-parentesis-es-evidencia.sh	26	REQ-084.md	allow	preventiva desbloquea el ORDEN del ciclo -> allow
+18-parentesis-es-evidencia.sh	32	REQ-086.md	allow	enfasis + evidencia: misma escritura, mismo veredicto -> allow
+19-cola-hasta-la-cabecera.sh	12	REQ-085.md	allow	un ### bajo OTRA cabecera no es cola -> allow
+19-cola-hasta-la-cabecera.sh	15	REQ-085.md	deny	...pero uno bajo Pendientes si -> deny
+27-vocabulario-de-veredictos.sh	14	REQ-200.md	deny	CA-02 critico con Seguridad: con-hallazgos -> deny (valido, pero no firma)
+27-vocabulario-de-veredictos.sh	16	REQ-200.md	allow	CA-03 escribir con-hallazgos sin cerrar -> allow
+27-vocabulario-de-veredictos.sh	21	REQ-201.md	allow	CA-08 con-hallazgos con QA pendiente -> allow (no es una firma)
+27-vocabulario-de-veredictos.sh	26	REQ-202.md	deny	CA-06 critico con Seguridad: $v -> deny (como en 1.30.3)
+27-vocabulario-de-veredictos.sh	30	REQ-203.md	allow	CA-07 ligero con con-hallazgos -> allow
+27-vocabulario-de-veredictos.sh	38	REQ-210.md	?	?
+27-vocabulario-de-veredictos.sh	40	REQ-210.md	?	?
+27-vocabulario-de-veredictos.sh	45	REQ-211.md	?	?
+27-vocabulario-de-veredictos.sh	47	REQ-211.md	?	?
+27-vocabulario-de-veredictos.sh	53	REQ-212.md	deny	CA-13 valor fuera del vocabulario Y cierre -> deny (manda la puerta)
+30-celdas-recortadas.sh	96	REQ-604.md	deny	CA-11 hallazgo largo de clase contrato: la puerta lee el campo entero -> deny
+30-celdas-recortadas.sh	99	REQ-605.md	deny	CA-12 un QA largo que empieza por aprobado se lee como siempre -> deny
+34-arnes-paralelo.sh	281	REQ-740.md	allow	paralelo/CA-05: un REQ SIN Archivos: cierra igual que en v1.31.0 -> allow
+34-arnes-paralelo.sh	285	REQ-741.md	allow	paralelo/CA-05: un Archivos: ilegible tampoco bloquea el cierre -> allow
+36-cabecera-comentario-html-5-el-cr-que-no-termina.sh	156	REQ-973.md	?	?

@@ -1,0 +1,12 @@
+# REQ-900 — sonda
+Estado: completado
+Sensible a seguridad: sí
+QA: aprobado
+Seguridad: aprobado
+Hallazgos abiertos: QA-2 (instrumento)
+HALLAZGOS ABIERTOS: SEC-1 (contrato)
+Rigor: critico
+
+## Criterios
+
+- CA-01 x

@@ -1,0 +1,28 @@
+[jedit] A1 F0 cierra                                       cand=allow r045=allow base=allow | 
+[jedit] R10 qa: pendiente                                  cand=deny  r045=deny  base=allow | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'qa: pendiente
+[jedit] R8 BOM Sensible + ligero                           cand=deny  r045=deny  base=allow | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'\357\273\277
+[jedit] R5 NBSP en Hallazgos                               cand=deny  r045=deny  base=allow | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 6: $'Hallazgos\30
+[jedit] R16 QA repetida mismo valor                        cand=deny  r045=deny  base=allow | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'QA: aprobado'
+[jedit] R17 Estado repetida terminal                       cand=deny  r045=deny  base=allow | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: 'Estado: compl
+[jedit] A5 variante en comentario                          cand=allow r045=allow base=allow | 
+[jedit] U1 CA-A12 unica ambiguedad                         cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (linea 6: 'Hal
+[jedit] U2 contrato canonico                               cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el hallazgo 'sec-1' es de clase 'contrato' y bloquea el cierre. 
+[jedit] REQ-031 separador ·                               cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una
+[jedit] REQ-031 nota tras parentesis                       cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una
+[jedit] U3 R8 en CRLF                                      cand=deny  r045=deny  base=allow | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'\357\273\277
+[jedit] CR interior                                        cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera lleva un retorno de carro (CR) que NO termina la lin
+[jwrite] A1 F0 cierra                                      cand=allow r045=allow base=allow | 
+[jwrite] R10 qa: pendiente                                 cand=deny  r045=deny  base=allow | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'qa: pendiente
+[jwrite] R8 BOM Sensible + ligero                          cand=deny  r045=deny  base=allow | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'\357\273\277
+[jwrite] R5 NBSP en Hallazgos                              cand=deny  r045=deny  base=allow | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 6: $'Hallazgos\30
+[jwrite] R16 QA repetida mismo valor                       cand=deny  r045=deny  base=allow | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'QA: aprobado'
+[jwrite] R17 Estado repetida terminal                      cand=deny  r045=deny  base=allow | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 2: 'Estado: compl
+[jwrite] A5 variante en comentario                         cand=allow r045=allow base=allow | 
+[jwrite] U1 CA-A12 unica ambiguedad                        cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (linea 6: 'Hal
+[jwrite] U2 contrato canonico                              cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el hallazgo 'sec-1' es de clase 'contrato' y bloquea el cierre. 
+[jwrite] REQ-031 separador ·                              cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una
+[jwrite] REQ-031 nota tras parentesis                      cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una
+[jwrite] U3 R8 en CRLF                                     cand=deny  r045=deny  base=allow | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera es AMBIGUA para esta puerta: linea 3: $'\357\273\277
+[jwrite] CR interior                                       cand=deny  r045=deny  base=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': su cabecera lleva un retorno de carro (CR) que NO termina la lin
+F3 clave de 273 B (fuera (e), limitacion)                  cand=allow r045=allow base=allow | 
+A4 gobernante terminal + variante (reabrir no se bloquea)  cand=allow r045=allow base=allow | 

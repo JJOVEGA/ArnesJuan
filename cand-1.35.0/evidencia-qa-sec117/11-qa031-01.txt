@@ -1,0 +1,10 @@
+== cand
+'HALLAZGOS ABIERTOS:'      Edit literal cierre -> deny  ARNES: no se puede completar 'requirements/REQ-5.md': su cabecera es AMBIGUA para esta pue
+'hallazgos abiertos:'      Edit literal cierre -> deny  ARNES: no se puede completar 'requirements/REQ-5.md': su cabecera es AMBIGUA para esta pue
+'Hallazgos  abiertos:'     Edit literal cierre -> deny  ARNES: no se puede completar 'requirements/REQ-5.md': su cabecera es AMBIGUA para esta pue
+'- Hallazgos abiertos:'    Edit literal cierre -> deny  ARNES: no se puede completar 'requirements/REQ-5.md': su cabecera es AMBIGUA para esta pue
+== 1.33.2
+'HALLAZGOS ABIERTOS:'      Edit literal cierre -> allow 
+'hallazgos abiertos:'      Edit literal cierre -> allow 
+'Hallazgos  abiertos:'     Edit literal cierre -> allow 
+'- Hallazgos abiertos:'    Edit literal cierre -> allow 

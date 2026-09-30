@@ -1,0 +1,15 @@
+== cand
+N1 NUL, cierre que escribe la palabra (Estado: en-revisión -> Estado: completado)         -> deny
+N2 NUL, sin transicion, la palabra en prosa (## Historia -> ## Historia (ver REQ-9 completado)) -> deny
+N3 NUL, sin transicion ni palabra (## Historia -> ## Historia.)                           -> allow
+N4 NUL, transicion SIN escribir la palabra (disco 'Estado: ado'; 'Estado: ' -> 'Estado: complet') -> allow
+== df550fa
+N1 NUL, cierre que escribe la palabra (Estado: en-revisión -> Estado: completado)         -> deny
+N2 NUL, sin transicion, la palabra en prosa (## Historia -> ## Historia (ver REQ-9 completado)) -> deny
+N3 NUL, sin transicion ni palabra (## Historia -> ## Historia.)                           -> allow
+N4 NUL, transicion SIN escribir la palabra (disco 'Estado: ado'; 'Estado: ' -> 'Estado: complet') -> allow
+== 1.33.2
+N1 NUL, cierre que escribe la palabra (Estado: en-revisión -> Estado: completado)         -> deny
+N2 NUL, sin transicion, la palabra en prosa (## Historia -> ## Historia (ver REQ-9 completado)) -> deny
+N3 NUL, sin transicion ni palabra (## Historia -> ## Historia.)                           -> allow
+N4 NUL, transicion SIN escribir la palabra (disco 'Estado: ado'; 'Estado: ' -> 'Estado: complet') -> allow
