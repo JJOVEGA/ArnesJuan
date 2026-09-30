@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-30 · SEC-119/O-11 v3b: REGISTRO PREVIO de los casos de host que faltaban (QA-023-11) y del alcance real de QA-023-09 (antes de ejecutar)
+`sec119-v3b/`: cuatro casos: R5 (REQ sin permiso de lectura); `cwd` tras un `cd` anterior; `cd` a un directorio con salto de línea y cierre por la ruta canónica; y el control de éste sin salto de línea. Nada ejecutado todavía.
+
 ## 2026-09-30 · SEC-119 y O-11 v3: RESULTADO de la validación de la reparación en el host real
 `sec119-v3/RESULTADO.md`. Los doce casos coinciden con lo registrado previamente:
 - **dejan de escapar** el directorio enlazado por `Edit`, `..` en `Bash` hacia el código y hacia un REQ, y el REQ en UTF-16LE (O-11), sin cambio en el disco;
