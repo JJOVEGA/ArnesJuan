@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-30 · SEC-119 y O-11: REGISTRO PREVIO de la línea base en el host real con el hook sin reparar (antes de ejecutar)
+`sec119-base/`: `PREREGISTRO.md` con siete casos: controles canónicos; `..`; `././`; un directorio enlazado; `Write` de código por `..`; y un REQ en UTF-16LE (O-11). Incluye lo que se espera según el host normalice o no la ruta, y el método. Nada ejecutado todavía.
+
 ## 2026-09-30 · Candidato 1.35.0, vuelta excepcional agrupada: evidencia del desarrollador, de QA y de seguridad, y CI de la cabeza final `9596e39`
 - `cand-1.35.0/evidencia-dev-sec117/`: corridas 00–27, sin borrar ninguna; incluye el banco final con 2 FAIL de reloj conservados.
 - `cand-1.35.0/evidencia-qa-sec117/`: banco 1164/1/13, casos de ruptura, sonda de motivos y QA-023-07.
