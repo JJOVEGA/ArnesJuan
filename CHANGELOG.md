@@ -1,5 +1,14 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-30 · SEC-119 y O-11: RESULTADO de la línea base en el host real con el hook sin reparar
+`sec119-base/RESULTADO.md`, sobre el CLI 2.1.285.
+- El host **normaliza** `..` y `./` en el `file_path` de `Edit`/`Write`, así que esas formas no se alcanzan desde el host por esas herramientas.
+- El host **no resuelve los enlaces**: por un directorio enlazado se cerró un REQ `critico` con todo en rojo.
+- El host **no normaliza `Bash`**: por `..` se creó código protegido y se cerró un REQ por shell.
+- **O-11:** la herramienta editó un REQ en UTF-16LE que el hook no puede leer.
+
+Una ejecución por caso; controles conformes.
+
 ## 2026-09-30 · SEC-119 y O-11: REGISTRO PREVIO de la línea base en el host real con el hook sin reparar (antes de ejecutar)
 `sec119-base/`: `PREREGISTRO.md` con siete casos: controles canónicos; `..`; `././`; un directorio enlazado; `Write` de código por `..`; y un REQ en UTF-16LE (O-11). Incluye lo que se espera según el host normalice o no la ruta, y el método. Nada ejecutado todavía.
 
