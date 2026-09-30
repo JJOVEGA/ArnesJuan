@@ -93,8 +93,8 @@ der_check "DEV 1.31.0 v5: QA-119 cruzar el minuto no rompe la idempotencia (y by
 cp "$DER/requirements/REQ-603.md" "$PROJ/requirements/REQ-603.md"
 printf '# REQ-604\nEstado: en-revisión\nQA: aprobado\nSeguridad: n/a\nHallazgos abiertos: SEC-9999999999999999999999999999999999999 (contrato)\n' > "$PROJ/requirements/REQ-604.md"
 check "CA-11 hallazgo largo de clase contrato: la puerta lee el campo entero -> deny" deny guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-604.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-604.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 printf '# REQ-605\nEstado: en-revisión\nQA: aprobado con la condicion de que se repita la ronda cuando el modulo cambie\nSeguridad: n/a\n' > "$PROJ/requirements/REQ-605.md"
 check "CA-12 un QA largo que empieza por aprobado se lee como siempre -> deny" deny guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-605.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-605.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 rm -rf "$DER"

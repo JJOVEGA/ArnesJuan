@@ -144,7 +144,11 @@ for f in "$PROY/$REQ_DIR"/*.md; do
     # es la asimetria heredada que aplican la puerta y `campos-req.awk`, y este informe la
     # respeta en vez de tener su propia opinion. Solo se nota en un REQ malformado — que
     # es, exactamente, el REQ que hay que mirar, y que desde REQ-023 ya se nombra abajo como
-    # cabecera ambigua si la clave repetida es de control (al cerrar, la puerta deniega).
+    # cabecera ambigua si la clave repetida es de control. Al cerrar por Edit/MultiEdit/Write,
+    # la puerta deniega un intento de cierre sobre esa cabecera (REQ-023 CA-01; y si no puede
+    # reconstruir el documento, lo deniega CA-13). Aparte, sus limitaciones conocidas y sin
+    # reparar: SEC-115 (un hook que el cliente mata por tiempo no deniega) y SEC-118 (un motivo
+    # que no cabe en un argumento de `jq` no se emite).
     if [ "$k" != 'Estado' ] || [ "${CNT[$k]}" -eq 1 ]; then
       CRU[$k]="$ARNES_VALOR"; DEC[$k]="$ARNES_CLAVE_DECORADA"; LIN[$k]="$l"
     fi

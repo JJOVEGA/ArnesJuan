@@ -282,6 +282,17 @@ Tres reglas nacidas de fallos reales:
 | Cabecera ambigua (41) | el corpus del banco (por glob) y los REQ de `requirements/`, candidata frente a 713ac68; los cuatro lectores; C.UTF-8 frente a C | **mismos valores**; decisiones iguales salvo denegaciones por ambigüedad con variante o repetición **real**; veredicto y motivo **invariantes al locale** |
 | Cabecera ambigua (41) | el código nuevo leído (sin procesos, sin rangos, bajo `LC_ALL=C`, la clave medida antes de tocarla) y las invocaciones de `arnes_norm_clave` y `arnes_norm_campo` contadas contra 713ac68 | **0** construcciones que crean procesos; **no más** recorridos; normalizaciones añadidas sólo en la cabecera ambigua |
 | Cabecera ambigua (41) | `tools/arnes-lectura.sh` ante una variante, una repetición, una nota con `ESTADO:` y una decorada única | anomalía y salida **≠ 0** en las tres primeras; la decorada única **no** cambia el código de salida |
+| Edición no reconstruible (42) | `Edit`/`MultiEdit` de `requirements/` que la puerta no puede reconstruir: comillas rectas donde el archivo las tiene tipográficas (el caso del host real), el escape de barra y `u` con cuatro hex, `replace_all`, `old_string` vacío sobre un archivo que existe, dos ediciones sobre un archivo que no existe, reapertura no literal y `requirements/README.md` (filas C1–C4 y C9–C12 de REQ-023 CA-13) | **deny** con el motivo de CA-13: qué edición, como mucho 80 bytes del `old_string` escapados, cómo hacer una edición verificable y ninguna otra herramienta |
+| Edición no reconstruible (42) | las mismas filas contra **df550fa** (materializado por SHA con `mat42`) | **allow** (fail-before); sin el árbol, **SKIP** con el motivo |
+| Edición no reconstruible (42) | la creación con `old_string` vacío, juzgada entera (C5 y C6); una edición literal (C7); la reapertura literal (C8); un archivo CRLF (C13) | la decisión de la puerta sobre el documento resultante; los controles **deciden igual** en df550fa |
+| Edición no reconstruible (42) | la cita de un `old_string` de 4 000 bytes y los procesos contra df550fa (sonda de procesos) | 80 bytes escapados y un motivo de pocos cientos de bytes; **0** procesos añadidos |
+
+**Desde REQ-023 CA-13, un `Edit` de `requirements/` que la puerta no puede reconstruir se deniega antes
+que cualquier otra puerta.** Por eso los casos que miden otra puerta de `guard-completado` usan
+`emite_edit_lit`, que comprueba al emitir que el `old_string` está literal en el archivo —o que es una
+creación— y, si no, deja el JSON vacío y el caso en FAIL en vez de pasar porque lo detuvo CA-13.
+`emite_edit`, con su `old_string:"x"`, queda para `guard-codigo` y para los casos que miden esa
+denegación.
 
 **Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
 falsea la máquina, el runner del CI y la carga. Los de arriba son **cocientes de duplicación**

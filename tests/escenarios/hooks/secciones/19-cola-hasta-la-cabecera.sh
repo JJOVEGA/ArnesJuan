@@ -9,10 +9,10 @@ PISO_AUTONOMO_SECCION=19  # 8 preámbulo + 0 maquinaria compartida duplicada + 1
 mkreq "$PROJ/requirements/REQ-085.md" "no" "aprobado" "n/a"
 printf '## Pendientes\n\n## Notas\n### [2026-01-01] esto NO es una aprobacion\n- contexto\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 check "un ### bajo OTRA cabecera no es cola -> allow" allow guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-085.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-085.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 printf '## Pendientes\n### [2026-01-01] una aprobacion de verdad\n- contexto\n\n## Notas\n### otra cosa\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 check "...pero uno bajo Pendientes si -> deny" deny guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-085.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-085.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 
 # --- Continuidad automatica: el bloque DERIVADO de ESTADO.md -------------------

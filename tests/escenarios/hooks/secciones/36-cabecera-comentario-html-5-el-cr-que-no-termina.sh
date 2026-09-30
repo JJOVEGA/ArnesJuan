@@ -141,19 +141,19 @@ Seguridad: aprobado (A-001, 2026-09-01)
 check_motivo "SEC-024 boca Edit: el '<!\$CR--' vive en DISCO y la edición sólo cambia el estado -> deny (era ALLOW hoy)" \
   "retorno de carro" guard-completado.sh \
   "$(emite_edit_real "$PROJ/requirements/REQ-972.md" 'Estado: en-revisión' 'Estado: completado')"
-# BOCA FRAGMENTO — un `Edit` cuyo `old_string` NO está literal en el archivo: la puerta no
-# reconstruye el documento (la herramienta puede escribir igualmente: frontera (g) de REQ-023,
-# QA-023-02), juzga el fragmento como siempre y ahí la guarda entra por
-# `ARNES_CR_INTERIOR`, que publica `arnes_campos_req`. Es una rama distinta del hook, con su
-# propio `arnes_deny`, y sin este caso quedaba sin medir.
+# BOCA TEXTO ENTRANTE — el CR NO está en disco: llega en el `new_string` de un `Edit` y queda en
+# la cabecera del documento reconstruido. Hasta df550fa esta boca se medía con un `old_string`
+# NO literal, por la rama de fragmentos y su guarda `ARNES_CR_INTERIOR`; desde REQ-023 CA-13
+# esa rama ya no existe (lo no reconstruible se deniega antes), así que la misma propiedad se
+# mide con una edición literal, y la condición no literal la cubren los casos de CA-13.
 mk5 REQ-973 '# REQ-973
 Estado: en-revisión
 Sensible a seguridad: sí
 QA: aprobado
 Rigor: critico'
-check_motivo "SEC-024 boca fragmento (old_string ausente): el CR del fragmento entrante también deniega" \
+check_motivo "SEC-024 boca texto entrante (Edit literal): el CR que trae el new_string también deniega" \
   "retorno de carro" guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-973.md" '' '' "Estado: completado
+  "$(emite_edit_lit "$PROJ/requirements/REQ-973.md" '' '' 'Estado: en-revisión' "Estado: completado
 Seg${CR5}uridad: aprobado")"
 
 # ---------- LO QUE LA GUARDA NO PUEDE TOCAR ----------

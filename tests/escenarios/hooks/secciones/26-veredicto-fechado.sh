@@ -35,7 +35,7 @@ ver_req() {
   printf '# %s\nEstado: en-revisión\nSensible a seguridad: no\nQA: %s\nSeguridad: %s\nRigor: %s\n' \
     "$(basename "$1" .md)" "$2" "$3" "$4" > "$1"
 }
-ver_cierra() { emite_edit "$1" "" "" 'Estado: completado'; }
+ver_cierra() { emite_edit_lit "$1" "" "" 'Estado: en-revisión' 'Estado: completado'; }
 
 # --- Bloque A: el interruptor y la forma de la fecha ---
 # CA-01: sin opt-in, byte a byte lo de 1.30.3. Es el control que protege a todo proyecto

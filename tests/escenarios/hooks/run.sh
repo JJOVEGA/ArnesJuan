@@ -96,6 +96,10 @@ seccion_nueva          # el canario necesita proyecto antes de la primera secci�
 # emite_edit <file_path> <agent_id> <agent_type> <new_string>
 # Los campos agent_id/agent_type se OMITEN cuando van vacíos: así llega el input
 # real de la sesión coordinadora (sin agent_id).
+# Su `old_string:"x"` NO está literal en el archivo: dentro de `requirements/`, desde REQ-023
+# CA-13, `guard-completado` DENIEGA esa edición por no reconstruible antes de mirar ninguna otra
+# puerta. Sirve para `guard-codigo` (que no reconstruye) y para los casos que miden justo esa
+# denegación; para medir otra puerta de `guard-completado`, `emite_edit_lit` (abajo).
 emite_edit() {
   jq -n --arg fp "$1" --arg aid "$2" --arg at "$3" --arg ns "$4" \
     '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,
@@ -112,6 +116,38 @@ emite_edit_real() {
     '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,
       tool_input:({file_path:$fp,old_string:$os,new_string:$ns}
                   + (if $ra!="" then {replace_all:true} else {} end))}'
+}
+
+# emite_edit_lit <file_path> <agent_id> <agent_type> <old_string> <new_string> — REQ-023 CA-13 (v).
+# Un Edit que el hook PUEDE reconstruir: su `old_string` esta LITERAL en el archivo (tras CRLF->LF,
+# la unica normalizacion que hace el hook), o es VACIO y el archivo NO existe (una creacion, que el
+# hook juzga entera, como un Write). Lleva los campos agent_id/agent_type de `emite_edit`, que se
+# omiten cuando van vacios.
+# Lo usan los casos que hasta df550fa fabricaban `old_string:"x"` con `emite_edit` para medir OTRA
+# puerta: desde CA-13 esa edicion se deniega antes de llegar a ninguna, y un caso que espera deny
+# pasaria por la razon equivocada. Por eso el emisor COMPRUEBA la condicion al emitir y, si no se
+# cumple, NO emite nada y lo dice por stderr: el caso sale FAIL por JSON vacio (`json_no_vacio`) en
+# vez de pasar porque lo detuvo CA-13.
+emite_edit_lit() {
+  local fp="$1" aid="$2" at="$3" os="$4" ns="$5" txt=''
+  if [ -z "$os" ]; then
+    if [ -e "$fp" ]; then
+      echo "emite_edit_lit: old_string vacio sobre '$fp', que existe: no es una creacion y el hook no la reconstruye" >&2
+      return 0
+    fi
+  else
+    # `read -d ''` y no `$(<f)`: conserva los saltos de linea finales del archivo.
+    [ -f "$fp" ] && { IFS= read -r -d '' txt < "$fp" || true; }
+    if [[ "${txt//$'\r\n'/$'\n'}" != *"${os//$'\r\n'/$'\n'}"* ]]; then
+      echo "emite_edit_lit: el old_string no esta literal en '$fp': el hook no reconstruiria la edicion" >&2
+      return 0
+    fi
+  fi
+  jq -n --arg fp "$fp" --arg aid "$aid" --arg at "$at" --arg os "$os" --arg ns "$ns" \
+    '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:env.CLAUDE_PROJECT_DIR,
+      tool_input:{file_path:$fp,old_string:$os,new_string:$ns}}
+     + (if $aid!="" then {agent_id:$aid} else {} end)
+     + (if $at!=""  then {agent_type:$at} else {} end)'
 }
 
 # emite_write <file_path> <contenido> — un Write de la coordinadora con el documento entero.
@@ -359,8 +395,10 @@ ver_check() {
 # REQ-031 CA-A07: la DECISION y el EFECTO sobre el archivo, con `guard-completado.sh`. Si la
 # puerta permite, el caso APLICA la edicion del JSON (Edit, Write o MultiEdit) como la
 # aplicaria el cliente con un `old_string` literal —sustitucion literal: NO emula la
-# normalizacion de comillas tipograficas ni el desescape `\uXXXX` del `Edit` del CLI,
-# frontera (g) de REQ-023 y QA-023-02—; si deniega, no la aplica. En los dos casos lee la
+# normalizacion de comillas tipograficas del `Edit` del host, y no le hace falta: desde REQ-023
+# CA-13 la puerta solo permite un `Edit`/`MultiEdit` de `requirements/` que puede reconstruir
+# (`old_string` literal, o una creacion), y uno cuyo `old_string` no esta literal se deniega—;
+# si deniega, no la aplica. En los dos casos lee la
 # linea `Estado:` del archivo en disco y la compara con la esperada: un deny tiene que
 # dejarlo como estaba (la puerta no escribe) y un allow tiene que dejar escrito el estado nuevo. Un caso que solo
 # mira la decision no dice que quedo en el disco, que es lo que la evidencia midio.
@@ -1579,7 +1617,13 @@ done
 # Y 980 → 1149 por REQ-023 (ADR-014): +169 en la sección 41, nueva —la cabecera ambigua: la tabla de
 # CA-08 por Edit y por Write con su fail-before contra 713ac68 y 1.33.2 y sus controles en las dos
 # direcciones, y los casos de CA-02 a CA-12—. Ninguna sección existente cambia su número.
-CASOS_ESPERADOS=1149
+# Y 1149 → 1178 por REQ-023 CA-13 (SEC-117, ADR-015): +29 en la sección 42, nueva —la edición que
+# la puerta no puede reconstruir: las filas C1-C13, cada una con su fail-before o su control contra
+# df550fa, el motivo, el tope de su cita y el coste en procesos—. Las secciones que fabricaban un
+# `old_string` no literal se adaptan SIN cambiar su número: las que medían otra puerta pasan a
+# `emite_edit_lit`, y las que medían la vía no reconstruible comprueban la denegación nueva
+# (REQ-001 CA-10, CA-11 y CA-12 versionados, en la 14).
+CASOS_ESPERADOS=1178
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

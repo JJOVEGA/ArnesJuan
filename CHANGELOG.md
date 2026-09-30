@@ -2,6 +2,32 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-30 · Vuelta excepcional agrupada (tercera y cuarta autorización), entrega del desarrollador: SEC-117 reparado — un Edit/MultiEdit de requirements/ que la puerta no puede reconstruir se deniega (REQ-023 CA-13) —, banco adaptado sin retirar casos, sección 42 nueva y comentarios corregidos — SIN VALIDAR
+> Origen: GitHub (commit de la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Unos 590 k tokens.
+
+- **Contador:** REQ-023 sigue **3 de 3, agotado**; es la misma vuelta excepcional y no se crea otro REQ. `Estado: en-progreso` → `en-revisión`. `QA:`, `Seguridad:`, `Hallazgos abiertos:` y `Archivos:` no se tocan.
+- **Código (`hooks/guard-completado.sh`):**
+  - la primera edición no reconstruible deniega, para todo agente, sin buscar cadenas y sin imitar al host. Reconstruible significa literal (con CRLF→LF) o creación de una sola edición con `old_string` vacío, que se juzga entera;
+  - el motivo dice qué edición falla, cita como mucho 80 bytes escapados, explica cómo hacer una edición verificable y no nombra ninguna otra herramienta;
+  - se retira la rama de fragmentos, que había quedado inalcanzable;
+  - `Write`, `Bash`, el presupuesto, los bytes de control y SEC-002 no cambian; 0 procesos añadidos.
+- **Comentarios corregidos:** en `hooks/lib.sh` (la premisa de SEC-118 en `arnes_deny`), en `guard-completado.sh` (CA-A12 y CA-A13 con SEC-118 y SEC-115 aparte, y la reconstrucción), en `tools/arnes-lectura.sh:147` y en `run.sh`.
+- **Banco:**
+  - `emite_edit_lit` comprueba la literalidad al emitir;
+  - 20 secciones adaptadas según las reglas del propietario: las otras puertas, con ediciones literales; REQ-001 CA-10, CA-11 y CA-12 y el control de `MultiEdit`, con la denegación nueva;
+  - 6 casos renombrados, 3 cambios de allow a deny, todos declarados, y 0 casos retirados;
+  - una sonda de motivos confirma que ningún caso adaptado deniega por cabecera ambigua;
+  - sección 42 nueva, con 29 casos. `CASOS_ESPERADOS` pasa de 1149 a 1178.
+- **Hallazgos previos del banco, corregidos dentro de la adaptación:** el caso de REQ-067 (sección 15) pasaba sin transición, y la sección 40 medía por fragmentos. El corpus cosechado baja de 104 a 102 cabeceras, porque salen dos artefactos de código; está declarado.
+- **Comprobaciones del desarrollador** (WSL2):
+  - gates rc 0; autoprueba 117/0;
+  - sección 42: 29/0 en la candidata; fail-before contra `df550fa` y contra 1.33.2: 11 FAIL cada uno;
+  - banco completo, corrida 11: **1166 PASS · 0 FAIL · 12 SKIP** (1 INCONCLUSO);
+  - banco completo, corrida 24, sobre los bytes finales: **1163 PASS · 2 FAIL · 13 SKIP (2 INCONCLUSO)**. Los 2 FAIL son de reloj, con carga 4,2, en caminos que no se tocaron: el heredoc de 300 KB de `guard-codigo` y REQ-021 CA-03 (c). **Se conserva sin relanzar.** Las mediciones alternadas con `df550fa` no muestran regresión atribuible, como observación y no como acreditación;
+  - `arnes-lectura`, rc 0.
+- **Nada se acepta.** SEC-115, SEC-118 y C siguen abiertos.
+- **Avance (regla 6):** SEC-117 reparado en el código, con su banco. Falta enrutar la sección 42 a `Archivos:`, la validación en el host, QA sobre REQ-023, REQ-031, REQ-001 y REQ-007, y seguridad tras un QA favorable.
+
 ## [Interno] — 2026-09-30 · Vuelta excepcional ampliada por la cuarta autorización, write-back del analista (segunda parte): SEC-117 entra en REQ-023 como CA-13 (sede única), ADR-015, REQ-001 reabierto con CA-10/11/12 versionados, REQ-007 CA-46 (c) versionado, REQ-031 CA-A13 separado de SEC-115 y cláusula de §13 reescrita — SIN VALIDAR
 > Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `analista-requerimientos`. Unos 150 k tokens en esta parte.
 

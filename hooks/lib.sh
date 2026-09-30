@@ -185,7 +185,13 @@ arnes_require_jq() {
   return 0
 }
 
-# Emite una decisión DENY de PreToolUse y termina (exit 0 = decisión aplicada).
+# Emite una decisión DENY de PreToolUse y termina con `exit 0`. La decisión existe SÓLO si
+# `jq` llegó a escribir el JSON: el `exit 0` no la acredita.
+# APARTE, LA LIMITACIÓN CONOCIDA Y SIN REPARAR: SEC-118. El motivo viaja como UN argumento de
+# `jq`; si supera el límite de un argumento (128 KiB en Linux) —o `jq` no arranca por otra
+# causa—, no se escribe nada y el hook sale sin decisión, que no es una denegación. Los motivos
+# de REQ-023 CA-01 y CA-13 llevan tope por eso; los que interpolan contenido sin tope están en
+# docs/seguridad/registro-seguridad.md, R-045 §4, en una lista que no es exhaustiva.
 # Salida compacta (-c): una sola línea, el formato que esperan los hooks.
 arnes_deny() {
   jq -cn --arg r "$1" \
@@ -2108,7 +2114,9 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
     done <<< "$texto"
     [ "$n_h" -le "$ARNES_HALL_N" ] || { ARNES_HALL_N=$n_h; ARNES_HALL_LINEAS="$lin_h"; }
     # El fin de la cabecera con un rango ABIERTO: la cabecera no se puede medir. Se
-    # publica y la puerta decide; aqui no se decide nada.
+    # publica; aqui no se decide nada. (Desde REQ-023 CA-13 ninguna puerta lee esta
+    # publicacion: la leia solo la via de fragmentos, que ya no existe; `guard-completado`
+    # juzga el rango abierto sobre el documento resultante, con `ARNES_ESTADO_CITA`.)
     [ "$ARNES_CITA" -eq 0 ] || ARNES_CITA_ABIERTA=1
     # La cabecera ambigua de ESTE texto. Solo se publica; decide la puerta.
     ARNES_AMBIGUA=0; ARNES_AMB_N=(); ARNES_AMB_CLAVE=(); ARNES_AMB_VARIANTE=(); ARNES_AMB_CITA=()
@@ -2127,7 +2135,8 @@ arnes_campos_req() {   # <texto en disco> <texto entrante>
       ARNES_AMBIGUA=1
     fi
   done
-  # Igual que el rango abierto: se PUBLICA y la puerta decide.
+  # Igual que el rango abierto: se PUBLICA, y desde REQ-023 CA-13 ninguna puerta lo lee (la
+  # puerta juzga el CR interior sobre el documento resultante, con `ARNES_ESTADO_CR`).
   ARNES_CR_INTERIOR="$ARNES_CR"; ARNES_CR_INTERIOR_LINEA="$ARNES_CR_LINEA"
   # El valor CRUDO se conserva ANTES de normalizar: la fecha del veredicto vive en el
   # parentesis de evidencia, que la normalizacion retira a proposito (el parentesis es
