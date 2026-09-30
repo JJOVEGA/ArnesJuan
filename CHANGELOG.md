@@ -2,6 +2,23 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-30 · REQ-023: sección 42 en `Archivos:` y cifra del inventario corregida (114 filas, 92 sobre `requirements/`); validación de la reparación de SEC-117 en el host real hecha y conservada (evidencia `bc65966`)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: analista-requerimientos (los dos campos) y coordinadora (validación en el host y commit).
+
+**Ajustes del analista en REQ-023:**
+- `Archivos:` gana `tests/escenarios/hooks/secciones/42-edicion-no-reconstruible.sh`;
+- CA-13 (v) cita el inventario real, con su antes → después en el Historial.
+
+**Validación en el host real** (CA-13 (vii); registro previo `0680a2a`, resultado `bc65966` en la rama local de evidencia, `sec117-real-v2/`): CLI 2.1.285, el `Edit` real, el hook de `5dfabb3`, una ejecución por caso.
+- El caso que en la v1 **cerraba** un REQ con todo en rojo ahora **deniega por CA-13**: el host bloquea y el disco no cambia.
+- El positivo deniega.
+- El control legítimo y la reapertura, esta con la cola ocupada, se permiten y se aplican.
+- `MultiEdit` queda **no comprobable en el host**, porque el CLI 2.1.285 no la expone; la cubre el banco a nivel de hook.
+
+Es evidencia de la coordinadora, no una medición de QA.
+
+**Avance (regla 6):** reparación construida y validada en el host; falta QA sobre REQ-023, REQ-031, REQ-001 y REQ-007, y después seguridad.
+
 ## [GitHub] — 2026-09-30 · Vuelta excepcional agrupada (tercera y cuarta autorización), entrega del desarrollador: SEC-117 reparado — un Edit/MultiEdit de requirements/ que la puerta no puede reconstruir se deniega (REQ-023 CA-13) —, banco adaptado sin retirar casos, sección 42 nueva y comentarios corregidos — SIN VALIDAR
 > Origen: GitHub (commit de la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Unos 590 k tokens.
 
