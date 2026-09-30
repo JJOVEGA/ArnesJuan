@@ -30,3 +30,13 @@ Autorización: `PENDING_APPROVAL.md` § Resueltas, quinta autorización, punto 2
 **Fallo de instrumentación:** que el modelo normalice por su cuenta la ruta pedida. Se ve en `pre-*-in.json`.
 
 **No se extiende a:** Windows, el editor interactivo, `MultiEdit` (no expuesta en la 2.1.285) ni otras versiones del CLI.
+
+## Adenda, antes de ejecutarla: dos casos por `Bash` (2026-09-30)
+En los siete primeros casos el host 2.1.285 **normalizó** las rutas con `..` y `././` antes del hook, pero **no** resolvió el directorio enlazado. Un comando de `Bash` es texto que el host no normaliza como ruta, así que se añaden dos casos, con `--allowedTools Bash` y el resto de herramientas prohibidas:
+
+| Caso | Comando | Si es alcanzable desde el host | Si el hook lo juzgara por el destino |
+|---|---|---|---|
+| h6-bash-codigo | `printf 'prueba\n' > docs/../src/a.ts` (coordinadora) | allow → se crea `src/a.ts` | deny (`guard-codigo`) |
+| h7-bash-req | `sed -i 's/^Estado: en-revisión (tras “R-4”)$/Estado: completado/' docs/../requirements/REQ-900.md` | allow → el REQ en rojo queda `completado` | deny (`guard-completado` desvía a `Edit`/`Write` el cierre por shell) |
+
+Se observa lo mismo que en los otros casos: `logs/pre-*-in.json` (`tool_input.command`), la decisión, el `tool_result` y el disco.
