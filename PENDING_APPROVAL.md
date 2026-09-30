@@ -144,7 +144,7 @@
 
   Si se autoriza (A), O-1, O-2, O-4, O-5 y O-6 son del mismo tipo (el texto de §13, del README y de la guía) y conviene que entren en la misma corrección, **sólo si el propietario lo autoriza expresamente**. O-2 y O-3 son superficie de SEC-117 y van a su registro, no a esta corrección.
 
-**Decisión 6 — P-SEC117: la reparación de SEC-117 que exige la propiedad choca con criterios vigentes de REQ-001 (`completado`) y REQ-007. Añadida el 2026-09-29, durante la vuelta excepcional de la tercera autorización.**
+**Decisión 6 — RESUELTA por el propietario el 2026-09-30 (cuarta autorización): opción (A).** *Texto original, conservado:* P-SEC117: la reparación de SEC-117 que exige la propiedad choca con criterios vigentes de REQ-001 (`completado`) y REQ-007. Añadida el 2026-09-29, durante la vuelta excepcional de la tercera autorización.
 - **Pregunta.** ¿Autorizas que la reparación de SEC-117, dentro de esta misma vuelta excepcional, haga cuatro cosas?
   1. Versionar **REQ-001 CA-10, CA-11 y CA-12** y **REQ-007 CA-46 (c)**. Con eso **REQ-001 se reabre** (§9) y queda `en-revisión` en el candidato, sin cerrarse.
   2. Adaptar los casos del banco que fabrican un `old_string` no literal sobre `requirements/`.
@@ -174,9 +174,61 @@
   - **QA-023-02 / SEC-117:** es de severidad crítica y de realismo no bajo, pero preexistente y ajeno al alcance de 1.35.0. **El auditor (R-045 §3) recomienda lo mismo que la coordinadora:** publicarlo declarado y abrir su REQ de reparación de inmediato, como parche propio, con revisión el 2026-10-06. Motivo: el defecto ya está en 1.33.2 y en `v1.34.0`, que son las versiones instaladas, así que retener 1.35.0 no protege a nadie y deja vivo el bypass por variante que 1.35.0 cierra dentro de su frontera.
     - **Condiciones del auditor:** notas correctas y ficha 1 corregida (ya hecho aquí). Además, conviene ejecutar el lado del CLI en una sesión real antes de reparar.
     - **REQ-001:** el auditor recomienda añadir `SEC-117 (instrumento)` a su `Hallazgos abiertos:` sin tocar su `Estado:`. REQ-001 se reabriría por §9 cuando el REQ de reparación versione CA-10/CA-11. QA pide que tu decisión sobre esta ficha lo resuelva de forma expresa. **Registrarlas aquí no las convierte en riesgos aceptados.**
-- **Espera:** decisión del propietario sobre la **decisión 6** (P-SEC117), que impide implementar SEC-117, y sobre las fichas 1 (SEC-115/SEC-118) y 2 (C). La ficha 3 y la decisión 5 se resolvieron en la tercera autorización del 2026-09-29. La decisión 4 está resuelta y su corrección se hizo (`e7562e7`), con QA-023-05 cerrado; la determinación de seguridad no se ha emitido porque QA no fue favorable. **Trabajo que sigue mientras tanto:** el candidato v1.35.0 —SEC-047 (mitad 1 de REQ-023) y la preparación de la versión—, autorizado el 2026-09-29; no depende de estas dos decisiones. **Cerrar REQ-023 y REQ-031 queda pendiente** mientras esta entrada esté aquí.
+- **Espera:** decisión del propietario sobre las fichas 1 (SEC-115/SEC-118) y 2 (C). La decisión 6 se resolvió el 2026-09-30 con (A) y la reparación de SEC-117 está en curso. La ficha 3 y la decisión 5 se resolvieron en la tercera autorización del 2026-09-29. La decisión 4 está resuelta y su corrección se hizo (`e7562e7`), con QA-023-05 cerrado; la determinación de seguridad no se ha emitido porque QA no fue favorable. **Trabajo que sigue mientras tanto:** el candidato v1.35.0 —SEC-047 (mitad 1 de REQ-023) y la preparación de la versión—, autorizado el 2026-09-29; no depende de estas dos decisiones. **Cerrar REQ-023 y REQ-031 queda pendiente** mientras esta entrada esté aquí.
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-09-30, cuarta autorización) — **Decisión 6 (P-SEC117): opción A.** Se amplía el alcance para corregir los contratos (REQ-001 CA-10, CA-11 y CA-12, y REQ-007 CA-46 (c), con ADR) y las pruebas que dependen de la premisa desmentida por la reproducción real de SEC-117; se reabre REQ-001 según §9; QA y seguridad cubren también REQ-001 y REQ-007; todo dentro de la misma vuelta excepcional agrupada
+
+**Texto del propietario, literal e íntegro** (mensaje del 2026-09-30 a la sesión coordinadora del worktree `ArnesJuan-v1.35`):
+
+> Autorizo la opción A de la decisión 6. Amplío expresamente el alcance para corregir los contratos y las pruebas que dependen de la premisa desmentida por la reproducción real de SEC-117.
+>
+> 1. Contrato
+>
+> El analista versiona REQ-001 CA-10, CA-11 y CA-12, y REQ-007 CA-46(c), con el ADR correspondiente y trazabilidad al experimento real. Completa el criterio de SEC-117 en REQ-023 sin duplicar la norma en varias sedes.
+>
+> Autorizo reabrir REQ-001 según §9. No lo cierres automáticamente al terminar ni atribuyas sus firmas anteriores al contrato modificado.
+>
+> La propiedad se mantiene: una edición sobre un REQ protegido que el hook no puede reconstruir no puede recibir permiso silencioso. No adoptes la opción B ni vuelvas a confiar únicamente en que new_string mencione el estado terminal.
+>
+> 2. Implementación y banco
+>
+> El desarrollador implementa la denegación acotada al supuesto anterior, con un mensaje que permita realizar una edición verificable. Preserva las operaciones legítimas reconstruibles y la reapertura.
+>
+> Autorizo adaptar las llamadas del banco afectadas por old_string ficticios:
+> - Las que prueban otras puertas deben usar ediciones literales válidas, para seguir llegando al control que pretenden medir.
+> - Las que prueban reconstrucción fallida deben conservar esa condición y comprobar la nueva denegación.
+> - No cambies masivamente expectativas a deny: una prueba que pasa porque la detuvo otra puerta no acredita su propósito original.
+> - No retires casos para obtener verde; justifica cualquier sustitución y conserva su cobertura.
+>
+> Usa el inventario de llamadas existente. No amplíes esta tarea a una limpieza general del banco.
+>
+> 3. Revisión agrupada
+>
+> Amplío la revisión de QA y seguridad a los criterios y caminos afectados de REQ-001 y REQ-007, además de REQ-023 y REQ-031. Reutiliza la evidencia de las partes intactas; no repitas la revisión completa de cada requisito.
+>
+> Esta ampliación forma parte de la vuelta excepcional agrupada ya autorizada: no reinicia contadores ni concede vueltas ilimitadas. Registra la ampliación y continúa el trabajo pendiente sin separar artificialmente nuevas rondas.
+>
+> Incluye en la misma entrega QA-023-06, la precisión de REQ-031 CA-A13 y los comentarios incorrectos ya autorizados. Mantén separadas la propiedad del control y las limitaciones SEC-115/118.
+>
+> 4. Validación y entrega
+>
+> Repite de forma acotada la comprobación con Edit real: caso que escapaba, denegación de control y edición legítima. Verifica también reapertura y los caminos compartidos afectados. Distingue argumentos, decisión y efecto en disco.
+>
+> Después de QA favorable, seguridad determina su aprobación y cobertura. Autorizo commits, push sin force y actualización del PR #59, con CI sobre la cabeza final. Conserva los resultados y no relances buscando verde.
+>
+> Si la vuelta termina con un bloqueo, entrega el hallazgo exacto y el delta pendiente; no apruebes por agotamiento ni abras otra reparación automáticamente.
+>
+> SEC-115, SEC-118 y el hueco C continúan abiertos y sin aceptación. Sin fusión, cierres automáticos, tag, publicación ni cambios en consumidores.
+>
+> El resultado esperado es la reparación completa de SEC-117 con sus contratos y pruebas coherentes, no otra propuesta previa. Continúa con esta autorización sin volver a solicitar aprobación por las dependencias enumeradas aquí.
+
+**Lo que la coordinadora añade, rotulado como suyo:**
+- **Cabeza de partida:** `0e5df92`, local y sin push; el PR #59 está en `df550fa`.
+- **ADR-015 está libre** en todas las ramas: será el ADR que supersede la premisa «un `Edit` cuyo `old_string` no está literal falla y no escribe nada».
+- **Contadores:** el de REQ-023 sigue **agotado (3 de 3)** y no se reinicia. Esta ampliación es parte de la vuelta excepcional de la tercera autorización, no una vuelta nueva. REQ-001 se reabre por §9 sin contador nuevo, y sus firmas anteriores quedan acotadas al contrato anterior.
+- **Siguen abiertos y sin aceptar:** SEC-115, SEC-118 y C.
 
 ### RESUELTA (propietario, 2026-09-29, tercera autorización) — **Reparación agrupada del candidato del PR #59: SEC-117, QA-023-06 y los comentarios de código que describen mal ese comportamiento**; vuelta excepcional agrupada desarrollador → QA → seguridad, más el write-back indispensable del analista, sin reiniciar el contador; **no se acepta publicar con SEC-117 aplazado**; resuelve la ficha 3 (reparar) y la decisión 5
 

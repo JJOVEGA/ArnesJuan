@@ -2,6 +2,22 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-09-30 · Cuarta autorización del propietario registrada (literal e íntegra, copia verificada): decisión 6 con la opción (A) — se versionan REQ-001 CA-10, CA-11 y CA-12 y REQ-007 CA-46 (c), se reabre REQ-001 y se adapta el banco afectado, dentro de la misma vuelta excepcional
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora.
+
+**Qué se registra:** `PENDING_APPROVAL.md` § Resueltas gana la cuarta autorización, literal. Se comparó con `diff` contra el texto recibido: 0 diferencias.
+
+**Qué autoriza:**
+- versionar REQ-001 CA-10, CA-11 y CA-12 y REQ-007 CA-46 (c), con un ADR (será ADR-015, libre en todas las ramas) y trazabilidad al experimento real;
+- completar el criterio de SEC-117 en REQ-023, sin duplicar la norma;
+- reabrir REQ-001 según §9, sin cerrarlo y sin atribuir sus firmas anteriores al contrato modificado;
+- adaptar las llamadas del banco con un `old_string` ficticio, con las reglas del propietario: las que prueban otras puertas pasan a ediciones literales; las que prueban reconstrucción fallida comprueban la denegación nueva; sin cambios masivos a deny y sin retirar casos;
+- extender QA y seguridad a los criterios y caminos afectados de REQ-001 y REQ-007.
+
+**Gobernanza:** es la misma vuelta excepcional. Los contadores no se reinician y no se conceden vueltas ilimitadas.
+
+**Avance (regla 6):** alcance fijado; falta el write-back del analista, la implementación, la validación en el host, QA y seguridad.
+
 ## [GitHub] — 2026-09-29 · Vuelta excepcional: QA-023-06 corregido en texto (sin validar); la reparación de SEC-117 se DETIENE en la decisión 6 (P-SEC117: choca con REQ-001 CA-10, CA-11 y CA-12, `completado`, y con REQ-007 CA-46 (c)); commit local, sin push
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: analista-requerimientos (texto) y coordinadora (cola y commit).
 
