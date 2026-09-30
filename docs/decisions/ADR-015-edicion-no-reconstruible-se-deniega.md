@@ -1,6 +1,6 @@
 # ADR-015 — Una edición de `requirements/` que la puerta no puede reconstruir se deniega; supersede la premisa «un `Edit` cuyo `old_string` no está literal falla y no escribe nada»
 Fecha: 2026-09-30
-Estado: aceptada
+Estado: aceptada; superada **en parte** por [ADR-016](ADR-016-identidad-del-destino-y-archivo-ilegible.md) (2026-09-30), sólo en la consecuencia «(=)» sobre el archivo que no se puede leer entero (SEC-002). La decisión de este ADR no cambia.
 
 ## Contexto
 **La decisión que se supersede.** REQ-001 (2026-09-05) hizo que `guard-completado` reconstruyera el
@@ -92,5 +92,7 @@ ediciones que hasta ahora pasaban.
   - ninguno pasa a deny en bloque.
 - (=) No cambian `Write`, la vía de `Bash`, el presupuesto de reconstrucción, los bytes de control ni el
   archivo que no se puede leer entero (SEC-002).
+  *(Superado el 2026-09-30 por ADR-016 en lo del archivo que no se puede leer entero: un `Edit`/`MultiEdit`
+  sobre él se deniega, y la norma vive en REQ-007 CA-45. El texto de arriba se conserva.)*
 - (=) Este ADR no afirma que la reparación esté verificada. Eso lo acreditan QA, seguridad y la
   validación en el host que exige REQ-023 CA-13 (vii), cada uno en su sede.

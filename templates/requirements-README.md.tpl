@@ -89,7 +89,9 @@ los caracteres invisibles escritos de forma legible; `tools/arnes-lectura.sh` la
 cambia el valor que lee. **A qué ediciones alcanza esta regla:** a las que la puerta puede
 reconstruir: un `Write`, o un `Edit`/`MultiEdit` reconstruible según REQ-023 CA-13 del repositorio del
 arnés, que es la sede única de esa definición. **Una edición que la puerta no puede reconstruir no
-queda fuera ni pasa:** la deniega esa otra regla antes de llegar a ésta. **Cuándo deniega, dicho entero
+queda fuera ni pasa:** la deniega esa otra regla antes de llegar a ésta. **Tampoco pasa un
+`Edit`/`MultiEdit` de un REQ que la puerta no puede leer entero:** lo deniega REQ-007 CA-45 del mismo
+repositorio, que dice también cómo se juzga un `Write` sobre él. **Cuándo deniega, dicho entero
 para ese alcance:** cuando la cabecera que quedaría escrita es
 ambigua, **alguna** de sus líneas `Estado` —la exacta, una repetida o una variante— dice el estado
 terminal, y la línea `Estado` que gobierna en disco (la primera declaración exacta; si no hay ninguna,

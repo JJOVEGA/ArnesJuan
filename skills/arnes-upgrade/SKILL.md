@@ -1129,6 +1129,58 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     misma tabla de estados de la primera entrada de este apartado. Si prefieres seguir con tu texto
     actual, conservarlo es una respuesta válida; la puerta decide igual.
 
+- **Identidad del destino y archivo ilegible (REQ-007 CA-47 y CA-45, ADR-016): las puertas juzgan el
+  ARCHIVO que la escritura alcanzaría, no la forma de su ruta, y un REQ que la puerta no puede leer entero
+  no se edita. ES UN CAMBIO DE CONDUCTA Y DE COMPATIBILIDAD.** La conducta nueva **llega con el plugin**, sin
+  migrar nada: está en `hooks/lib.sh`, `hooks/guard-codigo.sh` y `hooks/guard-completado.sh`, y no hay llave
+  nueva en `.arnes/config.json`. Esta entrada **se prepara con la versión y NO declara que el cambio haya
+  llegado a tu proyecto**: tu `AGENTS.md` y tu `requirements/README.md` siguen **congelados** hasta que
+  migres, y migrar es **un acto tuyo**.
+  - **Lo que deja de pasar** (ejemplos **no exhaustivos**; la regla está en `requirements/REQ-007.md` CA-47 y
+    CA-45 del arnés, y esta guía no la transcribe):
+    - una escritura a código protegido o a `requirements/` por una **ruta equivalente** —con `..`, `./` o
+      `//`, relativa a otro directorio de trabajo, o a través de un directorio enlazado—, que hasta
+      `v1.34.0` se juzgaba por su texto;
+    - una escritura a través de un enlace situado **fuera** del proyecto que apunta a una zona protegida, y
+      una escritura por `Bash` a través de un enlace hacia una zona protegida;
+    - un `Edit`/`MultiEdit` sobre un REQ que la puerta **no puede leer entero** —un byte NUL, un archivo en
+      UTF-16 como el que produce PowerShell 5.1 al redirigir, un archivo sin permiso de lectura—, **aunque no
+      toque el estado**;
+    - una escritura cuyo destino la puerta **no puede determinar**: un directorio que no se puede recorrer,
+      un bucle de enlaces, `..` sobre un directorio que todavía no existe.
+  - **Lo que pasa a permitirse, y son sólo tres casos:** una ruta relativa que casaba con una zona protegida
+    sólo porque se leía desde la raíz cuando el directorio de trabajo era otro; un `Write` que cierra un REQ
+    ilegible con todo en verde, porque se juzga entero; y una ruta equivalente al manifiesto mientras está
+    ilegible.
+  - **Lo que se conserva:** por `Edit`/`Write`/`MultiEdit` no se escribe a través de un enlace situado dentro
+    del proyecto, sea cual sea su destino (entrada «Hacia 1.31.0»). Lo que esa entrada decía —«el arnés juzga
+    la ruta escrita, no su destino»— **queda superado**: los directorios enlazados y los enlaces de fuera se
+    resuelven.
+  - **La salida:** cada motivo dice la causa y cómo corregirla —escribir por una ruta cuyos directorios
+    existan y se puedan recorrer, o dejar el REQ legible entero: quitar el NUL, guardarlo en UTF-8,
+    devolverle el permiso de lectura—.
+  - **Sin eufemismo: las versiones anteriores pudieron dejar pasar escrituras protegidas por una ruta
+    equivalente.** Reproducido en el CLI 2.1.285: por un directorio enlazado a `requirements/`, un REQ
+    `critico` con todo en rojo quedó `completado`; por `Bash`, `..` creó código protegido desde la
+    coordinadora y cerró un REQ (SEC-119). Y con un REQ en UTF-16LE, un `Edit` se aplicó sin que la puerta
+    pudiera leer el archivo (O-11).
+  - **Qué hay que auditar: la pregunta es de ESTADO,** la misma de las entradas anteriores: **cuáles de tus
+    REQ en estado terminal no cerrarían hoy**, y qué archivos protegidos cambiaron sin pasar por el agente
+    de código. Una escritura por esas vías no deja rastro que un comando pueda encontrar. Antes de
+    actualizar, además: `find . -type l -not -path './.git/*'` para ver los enlaces del proyecto —en
+    particular los directorios enlazados hacia zonas protegidas o desde ellas— y comprueba que ningún REQ
+    tenga un byte NUL ni esté en UTF-16: con esta versión no podrás editarlo hasta dejarlo legible.
+  - **Lo que NO cubre** (ejemplos **no exhaustivos**; la sede es REQ-007 CA-47 del arnés): un cambio del
+    sistema de archivos entre la decisión del hook y la escritura; un `cd` dentro del propio comando de
+    `Bash`; enlaces duros y montajes; sistemas de archivos que no distinguen mayúsculas; y Windows/MSYS,
+    `MultiEdit` en el host y el editor interactivo, que no se han ejercido.
+  - **Qué se migra de texto:** la **fila nueva de `AGENTS.md` §13** («las puertas juzgan el archivo que la
+    escritura alcanzaría…»), los **puntos 2 y 3 de la cláusula que sigue a la tabla de §13** y el párrafo de
+    **`requirements/README.md` § «Veredictos de validación»** que remite a REQ-007 CA-45. Cada uno va **por
+    separado**, con la misma identificación por contenido y título y la misma tabla de estados de la primera
+    entrada de este apartado. Si prefieres seguir con tu texto actual, conservarlo es una respuesta válida;
+    la puerta decide igual.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

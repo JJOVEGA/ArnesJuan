@@ -669,6 +669,7 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 | Una línea de la cabecera con un **retorno de carro que no es el que la termina** no se puede medir y no deja cerrar — se deniega por eso, citando la línea, aunque los veredictos estén en verde. El CR **final** es transporte (CRLF decide igual que LF), el cuerpo no se toca y **reabrir** no se bloquea | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Una cabecera **ambigua** no deja cerrar: una **clave de control** (`Estado`, `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos`, `Rigor`) escrita de otra forma que la máquina no lee como esa clave —mayúsculas, un blanco de más, un carácter invisible, un marcador de lista—, o declarada **más de una vez aunque diga lo mismo**, se deniega citando las líneas, aunque los veredictos estén en verde (`Hallazgos abiertos` repetida con su forma exacta, cuando es la única ambigüedad, la decide la fila de los hallazgos, con su limitación SEC-118); **reabrir** no se bloquea. Qué es una variante y dónde acaba la frontera de lo cubierto: `requirements/README.md` § «Veredictos de validación». Lo que queda fuera de esa frontera **no está protegido** y se sigue leyendo como ausencia —ejemplos **no exhaustivos**: un homóglifo, una letra cambiada, unos dos puntos que no son ASCII, una línea con carácter de estructura, una clave de más de 256 bytes (una **limitación**, no una zona protegida por ese límite)— | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Un `Edit`/`MultiEdit` de `requirements/` que la puerta **no puede reconstruir** se deniega (norma única: REQ-023 CA-13 del repositorio del arnés) | §9 | `guard-completado` | `Edit`/`MultiEdit` |
+| Las puertas juzgan el **archivo** que la escritura alcanzaría, no la forma de su ruta: una ruta equivalente recibe el veredicto de la canónica, un destino que no se puede determinar **no pasa**, y un `Edit`/`MultiEdit` de un REQ que la puerta no puede leer entero se deniega (norma única: REQ-007 CA-47 y CA-45 del repositorio del arnés) | §5, §9 | `guard-codigo`, `guard-completado` | `Edit`/`Write`/`MultiEdit` + `Bash` (parcial) |
 | Un veredicto lleva fecha y no es anterior al último cambio del código —si el proyecto lo pide (`veredictos.*`, apagado por defecto) | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Ningún agente —tampoco la coordinadora— ejecuta git destructivo: `clean -f`, `reset --hard`, `checkout .`, `restore .`, `stash` (`git.prohibidos`) | §10 | `guard-git` | `Bash` |
 
@@ -682,9 +683,14 @@ y aparte, y ninguna fila se lee como garantía sin ello:**
    Afecta a todas las puertas.
 2. **Las filas de `guard-completado` por `Edit`, `Write` y `MultiEdit` juzgan el documento resultante:**
    el de un `Write`, o el que la puerta reconstruye de un `Edit`/`MultiEdit`. Lo que no puede reconstruir
-   **no lo deja pasar: lo deniega** (fila de arriba, REQ-023 CA-13 del repositorio del arnés). Antes de
-   1.35.0 esa vía se juzgaba por fragmento, y un cierre podía no pasar por ninguna puerta: es SEC-117,
-   reproducido con comillas tipográficas en el CLI 2.1.285.
+   —tampoco porque el REQ no se pueda leer entero— **no lo deja pasar: lo deniega** (REQ-023 CA-13 y
+   REQ-007 CA-45 del repositorio del arnés). Antes de 1.35.0 esa vía se juzgaba por fragmento, y un cierre
+   podía no pasar por ninguna puerta: es SEC-117, reproducido con comillas tipográficas en el CLI 2.1.285.
+3. **Todas las filas deciden sobre el archivo que identifica REQ-007 CA-47 del repositorio del arnés, y esa
+   identificación tiene fronteras declaradas sin promesa** —por ejemplo, un cambio del sistema de archivos
+   entre la decisión del hook y la escritura—. La lista vive sólo en ese criterio. Antes de 1.35.0 las
+   puertas decidían por la ruta escrita, y `..`, `./` o un directorio enlazado las evadían (SEC-119; por un
+   directorio enlazado, reproducido en el CLI 2.1.285).
 
 Lo medido de SEC-115 y SEC-118 está en la fila de los hallazgos y en `requirements/README.md` § «Clases
 de hallazgo». Los registros completos están en `docs/seguridad/registro-seguridad.md` del repositorio del

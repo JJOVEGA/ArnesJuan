@@ -2,6 +2,29 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-09-30 · Quinta autorización, contrato (analista): SEC-119 y O-11 en REQ-007 — CA-47 (identidad del destino) y CA-45 (lectura del archivo protegido) como sedes únicas; ADR-016; REQ-023 CA-13 (iv) remite; sin REQ nuevo ni reabiertos — SIN VALIDAR
+> Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `analista-requerimientos`. Unos 540 k tokens.
+
+- **CA-47:** dos rutas que designan el mismo archivo, por directorio de trabajo, `.`, `..`, barras repetidas o enlaces, reciben el mismo veredicto, y lo no determinable no recibe permiso silencioso.
+  - Una ruta relativa se ancla en el `cwd` de la entrada.
+  - Se hacen dos lecturas, una física y otra léxica. Si designan archivos distintos y alguna cae en el ámbito, el destino es no determinable.
+  - Pertenencia al ámbito por lista cerrada: física, léxica o tramo fijo del patrón.
+  - Lo no determinable se trata como dentro del ámbito.
+  - «Todavía no existe» no es «no se pudo determinar».
+  - Fronteras F1–F7 declaradas sin promesa: carreras, `cd` dentro del comando, enlaces duros y montajes, mayúsculas y nombres 8.3, enlace que sale de la raíz, hosts no ejercidos, y el `cwd` del comando.
+- **CA-45:** tres casos.
+  - Inexistente: lo de siempre.
+  - Existente pero ilegible: `Edit`/`MultiEdit` deniegan siempre; `Write` se juzga entero como posible transición.
+  - No determinable: deny.
+  - El motivo dice la causa y cómo corregirla, sin nombrar herramientas.
+- **CA-46, CA-48, CA-49, CA-50, CA-58 (nota) y CA-60** versionados. CA-46 (b) pasa de ALLOW a DENY, que es el write-back de QA-023-08. CA-49 deja de afirmar «se juzga la ruta escrita».
+- **CA-66 (Bloque K):** 41 casos con fail-before contra `9596e39` y la columna «Host» (medido, inyectado, por `Bash`, sin medir). Tres movimientos de deny a allow, declarados: L8, relativa con otro `cwd`; R6 (c), `Write` completo sobre un REQ ilegible; M1 (a), ruta equivalente al manifiesto roto.
+- **ADR-016** supersede «el arnés juzga la ruta escrita», la ruta relativa anclada en la raíz y la regla del archivo ilegible. ADR-015 queda superado en parte.
+- **Otras sedes:** la fila de §13 y su gemela, y la cláusula general (idénticas); la remisión en `requirements/README.md` y su plantilla; las notas `[1.35.0]` (cambio de compatibilidad 4, SEC-119/O-11, SEC-120 como abierto e independiente); la sexta entrada de la guía.
+- **Ningún REQ `completado` queda afectado**, comprobado por propiedad. **P-119-A** (F2, F3, F5 y F7, no nombradas por la autorización) va a la decisión del propietario y no impide implementar.
+- **Incorpora la línea base del host real** (`bf47f37`).
+- **Avance (regla 6):** contrato listo; falta el desarrollador, la validación en el host, QA y seguridad.
+
 ## [GitHub] — 2026-09-30 · Quinta autorización del propietario registrada (literal e íntegra, copia verificada): reparación acotada de SEC-119 (identificación del archivo protegido) y O-11 (lectura fallida) en una nueva vuelta excepcional; alcance identificado antes de despachar; SEC-120, independiente, queda fuera
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: coordinadora.
 
@@ -426,7 +449,7 @@ La entrada pendiente «Decisión de publicación de 1.35.0» suma la ficha 3, QA
 - **Clasificación de la coordinadora (regla 3):** QA-023-01, -03 y -04 son defectos de esta entrega y se reparan en la vuelta 2 de 3, con write-back del analista y comentarios del desarrollador. QA-023-02 es preexistente e independiente del alcance de REQ-023: es una urgencia de seguridad y se escala por la regla 4, **no** se repara aquí. El margen de CA-08 (ii) no se optimiza sin proponerlo antes.
 - **Avance (regla 6):** validación hecha; falta el write-back de los tres `contrato`, la reverificación de QA, la auditoría y la decisión del propietario sobre QA-023-02.
 
-## [1.35.0] — 2026-09-29 · La puerta de cierre deja de tomar por ausencia lo que no entiende y deniega, y deja de permitir lo que no puede reconstruir: tres cambios de compatibilidad, con sus límites a la vista
+## [1.35.0] — 2026-09-29 · La puerta de cierre deja de tomar por ausencia lo que no entiende y deniega, y deja de permitir lo que no puede reconstruir; y las dos puertas juzgan el archivo que se escribe, no la forma de su ruta: cuatro cambios de compatibilidad, con sus límites a la vista
 > Origen: GitHub (commit de versión) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (preparación de la versión); el contenido que describe viene de los cinco merges de `main` desde `v1.34.0` y de REQ-023 en la rama `cand/1.35.0` · gobernado por la instalación estable **1.33.2**.
 
 **Estas notas preparan el candidato. No lo publican.** El propietario autorizó el 2026-09-29 preparar
@@ -499,14 +522,17 @@ REQ-025, REQ-028, REQ-024 (la mitad 2 de SEC-047) ni REQ-011.
   SEC-117 desmintió. Sus firmas anteriores cubren sólo el contrato anterior al 2026-09-30, y la cabecera
   lleva `QA:` y `Seguridad:` en `pendiente`. Estas notas no anticipan su cierre.
 - **REQ-007 sigue `en-progreso`**, con CA-46 (c) versionado por ADR-015: ya no hay respaldo por
-  fragmentos dentro de `requirements/`.
+  fragmentos dentro de `requirements/`. Desde el 2026-09-30 lleva además, por **ADR-016** y la quinta
+  autorización del propietario, **CA-45 a CA-50, CA-60 y CA-66** versionados o nuevos: es el cambio de
+  compatibilidad 4. Estas notas no anticipan su estado ni sus firmas. REQ-023 CA-13 (iv) remite a él.
 
 ### Qué recibe un consumidor al actualizar
 
 **Con el plugin, sin migrar nada.** Actúa desde que se actualiza:
 - `hooks/guard-completado.sh` y `hooks/lib.sh`: la gramática cerrada de `Hallazgos abiertos:`
   (REQ-031), la cabecera ambigua (REQ-023) y la edición no reconstruible (REQ-023 CA-13; en
-  `hooks/guard-completado.sh`). Son los tres cambios de compatibilidad de abajo.
+  `hooks/guard-completado.sh`). Y con `hooks/guard-codigo.sh`, la identidad del destino y el REQ ilegible
+  (REQ-007 CA-47 y CA-45). Son los cuatro cambios de compatibilidad de abajo.
 - `tools/arnes-lectura.sh`: nombra cada variante y cada repetición de una clave de control, y sale
   ≠ 0 mientras quede alguna (REQ-023). **No juzga** la gramática ni el techo de `Hallazgos abiertos:`.
   Comprobado sobre este árbol: una lista separada con `;` y otra con una nota tras el paréntesis no
@@ -519,18 +545,18 @@ REQ-025, REQ-028, REQ-024 (la mitad 2 de SEC-047) ni REQ-011.
     contrasta la «Correspondencia con el encargo» antes de probar (REQ-029).
   - La Definition of Ready del `analista-requerimientos` gana la casilla del campo `Archivos:`
     (REQ-031).
-- La guía `arnes-upgrade`, § «Hacia 1.35.0», con cinco entradas.
+- La guía `arnes-upgrade`, § «Hacia 1.35.0», con seis entradas.
 
 **Sólo si el proyecto migra con `arnes-upgrade`.** Hasta entonces, su `AGENTS.md`, su
 `requirements/README.md` y su `PENDING_APPROVAL.md` siguen congelados, y migrar es un acto suyo:
 - `AGENTS.md` §6: las seis reglas, «Loop de error» y «Mecanismo de gate» (REQ-025), y el párrafo de
   la regla 1 sobre el pedido con fuente (REQ-029).
 - `AGENTS.md` §13: la fila de `Hallazgos abiertos:`, ampliada (REQ-031); las filas nuevas de la
-  cabecera ambigua y de la edición no reconstruible (REQ-023); y la cláusula que sigue a la tabla, que
-  separa la propiedad de cada fila de sus limitaciones.
+  cabecera ambigua y de la edición no reconstruible (REQ-023) y de la identidad del destino (REQ-007); y la
+  cláusula que sigue a la tabla, que separa la propiedad de cada fila de sus limitaciones.
 - `PENDING_APPROVAL.md`: la cabecera que dice qué impide la cola (REQ-025). Las entradas no se tocan.
 - `requirements/README.md`: `Origen:` y «Correspondencia con el encargo» (REQ-029), «Clases de
-  hallazgo» (REQ-031) y «Veredictos de validación» (REQ-023).
+  hallazgo» (REQ-031) y «Veredictos de validación» (REQ-023, y la remisión a REQ-007 CA-45).
 
 **Un proyecto que actualiza el plugin y no migra tiene la puerta nueva con el texto viejo.** La puerta
 deniega formas que su `requirements/README.md` todavía no explica. La guía lo dice en cada entrada.
@@ -593,7 +619,8 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      - las líneas con un carácter de estructura visible;
      - un NBSP en lugar del blanco que sigue al marcador;
      - los caracteres del **valor**;
-     - lo que un lector de bash no ve: un byte NUL o un archivo en UTF-16;
+     - lo que un lector de bash no ve: un byte NUL o un archivo en UTF-16 (desde el cambio 4, un
+       `Edit`/`MultiEdit` sobre ese archivo se deniega; lo que sigue sin verse es su cabecera);
      - y **las claves de más de 256 bytes, que son una limitación y NO están protegidas por ese
        límite**.
 
@@ -608,8 +635,8 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      no escribía el estado terminal, pasaba.
    - **Qué no cambia:** lo reconstruible se juzga como siempre, reapertura incluida. Una creación con una
      sola edición de `old_string` vacío se juzga entera, como un `Write`. `Write`, la vía de `Bash`, el
-     presupuesto de reconstrucción, los bytes de control y el archivo que no se puede leer entero
-     conservan su regla.
+     presupuesto de reconstrucción y los bytes de control conservan su regla. El archivo que no se puede
+     leer entero queda fuera de este cambio y lo trata el cambio 4.
    - **La salida:** el motivo dice qué edición falló y enseña el comienzo de su `old_string` escapado.
      Basta repetirla copiando el texto literal del archivo.
    - **Por qué:** por esa vía un cierre podía no pasar por ninguna puerta (SEC-117). La coordinadora lo
@@ -620,6 +647,39 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
    - **Lo que no afirman estas notas:** que la reparación esté verificada. Sus veredictos y la validación
      en el host que exige CA-13 (vii) se registran en `requirements/REQ-023.md`, en `docs/qa/REQ-023.md`
      y en `docs/seguridad/registro-seguridad.md`.
+4. **REQ-007 CA-47 y CA-45 (ADR-016): las dos puertas juzgan el archivo que la escritura alcanzaría, no la
+   forma de su ruta, y un REQ que la puerta no puede leer entero no se edita.** La norma vive sólo en
+   `requirements/REQ-007.md`: CA-47 para la identidad del destino y CA-45 para la lectura; CA-66 declara los
+   casos, los movimientos de veredicto y la validación en el host.
+   - **Qué deja de pasar** (ejemplos **no exhaustivos**): una escritura a código protegido o a
+     `requirements/` por una ruta equivalente —con `..`, `./` o `//`, relativa a otro directorio de trabajo,
+     o a través de un directorio enlazado—; un enlace situado fuera del proyecto que apunta a una zona
+     protegida; una escritura por `Bash` a través de un enlace hacia una zona protegida; un
+     `Edit`/`MultiEdit` sobre un REQ que la puerta no puede leer entero —un byte NUL, UTF-16, sin permiso de
+     lectura—, **aunque no toque el estado**; y una escritura cuyo destino la puerta no puede determinar.
+     Hasta `v1.34.0` las puertas decidían por la ruta escrita, y con el REQ ilegible sólo se denegaba la
+     edición que mencionaba el estado terminal.
+   - **Qué pasa a permitirse, y son sólo tres casos:** una ruta relativa que casaba con una zona protegida
+     sólo porque se leía desde la raíz cuando el directorio de trabajo era otro; un `Write` que cierra un
+     REQ ilegible con todo en verde, porque se juzga entero; y una ruta equivalente al manifiesto mientras
+     está ilegible.
+   - **Qué se conserva:** por `Edit`/`Write`/`MultiEdit` no se escribe a través de un enlace situado dentro
+     del proyecto, sea cual sea su destino. La premisa de REQ-007 CA-49, «el arnés juzga la ruta escrita, no
+     su destino», queda superada.
+   - **La salida:** cada motivo dice la causa y cómo corregirla, sin proponer otra herramienta.
+   - **Por qué:** SEC-119 y O-11. La coordinadora lo midió en el CLI 2.1.285 con el hook anterior a la
+     reparación: por un directorio enlazado a `requirements/`, un REQ `critico` con todo en rojo quedó
+     `completado`; por `Bash`, `..` creó código protegido desde la coordinadora y cerró un REQ; y con un REQ
+     en UTF-16LE, un `Edit` sin estado se aplicó sin que la puerta pudiera leer el archivo. El `..`, el `./`
+     y el `//` en el `file_path` de `Edit`/`Write` sólo se alcanzan inyectando la entrada del hook: el host
+     los normaliza antes.
+   - **Fronteras, sin promesa** (lista no exhaustiva; la sede es REQ-007 CA-47): un cambio del sistema de
+     archivos entre la decisión del hook y la escritura; un `cd` dentro del propio comando de `Bash`; enlaces
+     duros y montajes; sistemas que no distinguen mayúsculas; y Windows/MSYS, `MultiEdit` en el host, el
+     editor interactivo y otras versiones del CLI, que no se han ejercido. Las que la quinta autorización no
+     nombra están planteadas al propietario (REQ-007, P-119-A).
+   - **Lo que no afirman estas notas:** que la reparación esté verificada. Sus veredictos y la validación en
+     el host que exige REQ-007 CA-66 se registran en sus sedes.
 
 ### Resultados históricos, conservados tal cual
 
@@ -720,8 +780,8 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de 
       no detecta cierres pasados; lo que queda es la pregunta de estado de la guía;
     - lo que la validación en el host no ensaye: se limita al CLI y la versión con que se ejecute, y no
       se extiende a Windows ni al editor interactivo sin evidencia propia;
-    - el archivo en disco que no se puede leer entero (SEC-002), que conserva su regla y queda fuera de
-      CA-13 (iv).
+    - el archivo en disco que no se puede leer entero (SEC-002), que queda fuera de CA-13 (iv). Desde el
+      2026-09-30 lo trata el cambio de compatibilidad 4 (REQ-007 CA-45), con su propia verificación.
   - Lo reproducido **antes de la reparación**:
     - el lado del hook, ejecutado por QA sobre el candidato, `713ac68` y 1.33.2 (ALLOW en los tres), y
       por el auditor en R-045 §3;
@@ -739,6 +799,18 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de 
   - Ficha 3 de `PENDING_APPROVAL.md`, resuelta por el propietario (reparar). Sede del hallazgo:
     `docs/qa/REQ-023.md`, y su registro de seguridad, SEC-117 (`docs/seguridad/registro-seguridad.md`
     § R-045, §3). Decisión: ADR-015.
+- **SEC-119 y O-11** (`instrumento`, preexistentes en 1.33.2 y `v1.34.0`): **reparados en este candidato**
+  por REQ-007 CA-47 y CA-45, que son el cambio de compatibilidad 4. El propietario ordenó repararlos en esta
+  frontera (quinta autorización; ficha 4 y decisión 7). **Estas notas no afirman que la reparación esté
+  verificada:** QA, seguridad y la validación en el host real que exige REQ-007 CA-66 se registran en sus
+  sedes.
+  - **Lo que la reparación no cubre**, sea cual sea el resultado de su verificación: las escrituras que
+    **ya** pasaron por esas vías con versiones anteriores —la puerta no detecta el pasado; queda la pregunta
+    de estado de la guía—, y las fronteras de REQ-007 CA-47 (arriba, cambio 4).
+  - **SEC-120** (`instrumento`, baja): **abierto, no reparado y NO aceptado.** Un fallo de `jq` al leer o
+    trocear la entrada JSON del hook deja pasar; a nivel de hook, y no alcanzable desde el host en lo
+    observado. Es independiente de esta reparación y queda fuera de ella (`docs/seguridad/registro-seguridad.md`
+    § R-045-A, §4).
 - **La mitad 2 de SEC-047 (REQ-024) no entra.** No cambia qué significa la ausencia de un campo, por
   ejemplo al comentar o borrar su línea.
 - **SEC-103 (OBS-H) y SEC-104** siguen abiertos.
@@ -792,19 +864,22 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de 
 ### Semver: `minor` por la convención de este arnés, y no `minor` puro en SemVer estricto
 
 El número `1.35.0` lo fijó el propietario en su autorización. **En SemVer estricto, esta versión no es
-`minor` pura:** tres cambios hacen que se deniegue lo que hasta `v1.34.0` se permitía sin esconder
+`minor` pura:** cuatro cambios hacen que se deniegue lo que hasta `v1.34.0` se permitía sin esconder
 ningún bloqueante:
 - la nota tras el paréntesis en `Hallazgos abiertos:`;
 - la clave de control repetida con el mismo valor;
 - una edición legítima de `requirements/` cuyo `old_string` no está literal, aunque no toque el estado
-  (REQ-023 CA-13, que además cierra el fail-open de SEC-117).
+  (REQ-023 CA-13, que además cierra el fail-open de SEC-117);
+- un `Edit`/`MultiEdit` que no toca el estado sobre un REQ que la puerta no puede leer entero, y una
+  escritura cuyo destino la puerta no puede determinar (REQ-007 CA-45 y CA-47, que además cierran los
+  fail-open de O-11 y SEC-119).
 
 Esa regla, aplicada a la letra, pediría una versión mayor.
 
 La convención de este arnés publica como `minor` o `patch` los cambios que cierran un fail-open de la
 puerta de cierre, aunque hagan denegar lo que antes cerraba. Por ejemplo, `QA-P48-01` salió como
-`patch` en 1.33.2. Aquí se deniegan además tres formas que no escondían nada, y para eso **no hay
-precedente escrito**. Por eso las tres incompatibilidades van **declaradas una por una**, arriba, en
+`patch` en 1.33.2. Aquí se deniegan además cuatro formas que no escondían nada, y para eso **no hay
+precedente escrito**. Por eso las cuatro incompatibilidades van **declaradas una por una**, arriba, en
 vez de quedar escondidas detrás del número. Si el propietario prefiere SemVer estricto, la versión
 sería `2.0.0`, y esa decisión es suya.
 
