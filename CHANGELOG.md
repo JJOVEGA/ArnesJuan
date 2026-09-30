@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-09-30 · SEC-117 v2: REGISTRO PREVIO de la validación de la reparación en el host real (antes de ejecutar)
+`sec117-real-v2/`: `PREREGISTRO.md` (CLI 2.1.285, la misma sonda que la v1, hook del candidato `5dfabb3` con sus sha, cinco casos con su entrada, sus precondiciones y lo esperado, y el método), los prompts, `run.sh` y los proyectos en su estado inicial. Nada ejecutado todavía.
+
 ## 2026-09-29 · Candidato 1.35.0: CI de `df550fa` y evidencia de la QA del delta documental
 - `cand-1.35.0/ci-cand-df550fa/`: run 36637448792, `hooks-en-linux` success, 1115 PASS · 0 FAIL · 34 SKIP (2 INCONCLUSO de rendimiento; 18 SKIP del fail-before de REQ-023 por falta de 1.33.2 en el runner). Sin relanzar.
 - `cand-1.35.0/evidencia-qa-doc/`: la revisión de QA del delta documental, incluida la sonda multibyte de QA-023-06.

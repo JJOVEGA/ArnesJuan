@@ -1,0 +1,1 @@
+{ "name": "sonda-sec117", "version": "0.0.1", "description": "Sonda de registro para el experimento de SEC-117: pasa la entrada sin cambios al guard.sh del candidato y devuelve su salida y su codigo tal cual." }

@@ -1,0 +1,8 @@
+Esto es una prueba controlada de un hook en un proyecto temporal. Haz exactamente esto y nada más:
+1. Lee el archivo requirements/REQ-900.md con la herramienta Read.
+2. Usa la herramienta Edit UNA sola vez sobre requirements/REQ-900.md con:
+   - old_string: el texto que va entre las marcas <<< y >>> de la línea siguiente, copiado carácter por carácter, sin las marcas:
+     <<<en-revisión (tras "R-4")>>>
+     Atención: en ese old_string las comillas son comillas rectas ASCII (el carácter "), y en el archivo son tipográficas (“ ”). Cópialas RECTAS, tal cual están aquí; NO las sustituyas por las del archivo: eso es exactamente lo que mide la prueba.
+   - new_string: completado
+3. Si la herramienta Edit falla o es denegada, NO reintentes, no uses ninguna otra herramienta y termina copiando el mensaje que recibiste.
