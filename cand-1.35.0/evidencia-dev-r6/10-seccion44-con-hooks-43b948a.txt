@@ -1,0 +1,83 @@
+--- 44 · integridad de la entrada del hook (QA-023-09; REQ-007 CA-47 punto 1, CA-24 y CA-66 punto 5) ---
+  FAIL  QA-023-09 N1 Edit que cierra un REQ critico, cwd /tmp\nb candidata  esperado=deny got=allow  <>
+  PASS  QA-023-09 N1 Edit que cierra un REQ critico, cwd /tmp\nb 43b948a: fail-before: permite (el regreso de 104ffd1)  (allow)
+  PASS  QA-023-09 N1 Edit que cierra un REQ critico, cwd /tmp\nb 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N2 Edit que cierra, cwd <raíz>\n (salto final) candidata  esperado=deny got=allow  <>
+  PASS  QA-023-09 N2 Edit que cierra, cwd <raíz>\n (salto final) 43b948a: fail-before: permite (el regreso de 104ffd1)  (allow)
+  PASS  QA-023-09 N2 Edit que cierra, cwd <raíz>\n (salto final) 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N3 MultiEdit que cierra, cwd /tmp\nb candidata  esperado=deny got=allow  <>
+  PASS  QA-023-09 N3 MultiEdit que cierra, cwd /tmp\nb 43b948a: fail-before: permite (el regreso de 104ffd1)  (allow)
+  PASS  QA-023-09 N3 MultiEdit que cierra, cwd /tmp\nb 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N4 Write de la coordinadora a src/a.ts, cwd /tmp\nb candidata  esperado=deny got=allow  <>
+  PASS  QA-023-09 N4 Write de la coordinadora a src/a.ts, cwd /tmp\nb 43b948a: fail-before: permite (el regreso de 104ffd1)  (allow)
+  PASS  QA-023-09 N4 Write de la coordinadora a src/a.ts, cwd /tmp\nb 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N5 Write a src/a.ts, cwd <raíz>\n<raíz>/docs candidata  esperado=deny got=allow  <>
+  PASS  QA-023-09 N5 Write a src/a.ts, cwd <raíz>\n<raíz>/docs 43b948a: fail-before: permite (el regreso de 104ffd1)  (allow)
+  PASS  QA-023-09 N5 Write a src/a.ts, cwd <raíz>\n<raíz>/docs 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N6 SEC-117 no reconstruible, cwd /tmp\nb candidata  esperado=deny got=allow  <>
+  PASS  QA-023-09 N6 SEC-117 no reconstruible, cwd /tmp\nb 43b948a: fail-before: permite (el regreso de 104ffd1)  (allow)
+  PASS  QA-023-09 N6 SEC-117 no reconstruible, cwd /tmp\nb 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N7 CA-49 (i) enlace dentro de la raíz, cwd /tmp\nb candidata  esperado=deny got=allow  <>
+  PASS  QA-023-09 N7 CA-49 (i) enlace dentro de la raíz, cwd /tmp\nb 43b948a: fail-before: permite (el regreso de 104ffd1)  (allow)
+  PASS  QA-023-09 N7 CA-49 (i) enlace dentro de la raíz, cwd /tmp\nb 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N8 por guard.sh: Edit que cierra, cwd /tmp\nb candidata  esperado=deny got=allow  <>
+  PASS  QA-023-09 N8 por guard.sh: Edit que cierra, cwd /tmp\nb 43b948a: fail-before: permite (el regreso de 104ffd1)  (allow)
+  PASS  QA-023-09 N8 por guard.sh: Edit que cierra, cwd /tmp\nb 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N9 por guard.sh: Write a src/a.ts, cwd <raíz>\n candidata  esperado=deny got=allow  <>
+  PASS  QA-023-09 N9 por guard.sh: Write a src/a.ts, cwd <raíz>\n 43b948a: fail-before: permite (el regreso de 104ffd1)  (allow)
+  PASS  QA-023-09 N9 por guard.sh: Write a src/a.ts, cwd <raíz>\n 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N10 Bash printf > ../../src/a.ts desde docs/a\nb candidata  el motivo no cita la ruta juzgada «'src/a.ts', que es código de la app»  <ARNES: no se pudo determinar a que archivo escribe '../../src/a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer. Sin saber que archivo es, esta puerta no puede decidir si >
+  PASS  QA-023-09 N10 Bash printf > ../../src/a.ts desde docs/a\nb 43b948a: fail-before: deniega juzgando otra ruta (el regreso de 104ffd1)  (deny, juzga otra ruta)
+  PASS  QA-023-09 N10 Bash printf > ../../src/a.ts desde docs/a\nb 9596e39: permite: preexistente, no del regreso  (allow)
+  FAIL  QA-023-09 N11 Bash printf > a.ts desde src/s\nt candidata  el motivo no cita la ruta juzgada «'src/s
+t/a.ts', que es código de la app»  <ARNES: no se pudo determinar a que archivo escribe 'a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer. Sin saber que archivo es, esta puerta no puede decidir si es codigo >
+  PASS  QA-023-09 N11 Bash printf > a.ts desde src/s\nt 43b948a: fail-before: deniega juzgando otra ruta (el regreso de 104ffd1)  (deny, juzga otra ruta)
+  PASS  QA-023-09 N11 Bash printf > a.ts desde src/s\nt 9596e39: permite: preexistente, no del regreso  (allow)
+  FAIL  QA-023-09 N12 Bash sed -i con el terminal desde requirements/r\nq candidata  el motivo no cita la ruta juzgada «'requirements/r
+q/REQ-9.md' y menciona 'completado'»  <ARNES: este comando escribe en 'REQ-9.md' y menciona 'completado', y no se pudo determinar a que archivo escribe: es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer. Podria ser un>
+  PASS  QA-023-09 N12 Bash sed -i con el terminal desde requirements/r\nq 43b948a: fail-before: deniega juzgando otra ruta (el regreso de 104ffd1)  (deny, juzga otra ruta)
+  PASS  QA-023-09 N12 Bash sed -i con el terminal desde requirements/r\nq 9596e39: permite: preexistente, no del regreso  (allow)
+  FAIL  QA-023-09 N13 agent_type qa-tester\ndesarrollador escribe src/a.ts candidata  esperado=deny got=allow  <>
+  PASS  QA-023-09 N13 agent_type qa-tester\ndesarrollador escribe src/a.ts 43b948a: fail-before: permite (el regreso de 104ffd1)  (allow)
+  PASS  QA-023-09 N13 agent_type qa-tester\ndesarrollador escribe src/a.ts 9596e39: permite: preexistente, no del regreso  (allow)
+  FAIL  QA-023-09 N14 agent_id a\n1 (qa-tester) escribe src/a.ts candidata  esperado=deny got=allow  <>
+  PASS  QA-023-09 N14 agent_id a\n1 (qa-tester) escribe src/a.ts 43b948a: fail-before: permite (el regreso de 104ffd1)  (allow)
+  PASS  QA-023-09 N14 agent_id a\n1 (qa-tester) escribe src/a.ts 9596e39: permite: preexistente, no del regreso  (allow)
+  FAIL  QA-023-09 N15 file_path <raíz>/docs/x\n/../../src/a.ts candidata  esperado=deny got=allow  <>
+  PASS  QA-023-09 N15 file_path <raíz>/docs/x\n/../../src/a.ts 43b948a: fail-before: permite (el regreso de 104ffd1)  (allow)
+  PASS  QA-023-09 N15 file_path <raíz>/docs/x\n/../../src/a.ts 9596e39: permite: preexistente, no del regreso  (allow)
+  PASS  QA-023-09 C1 el desarrollador escribe src/a.ts, cwd /tmp\nb candidata  (allow)
+  PASS  QA-023-09 C1 el desarrollador escribe src/a.ts, cwd /tmp\nb 43b948a: control, decide igual  (allow)
+  PASS  QA-023-09 C1 el desarrollador escribe src/a.ts, cwd /tmp\nb 9596e39: control, decide igual  (allow)
+  PASS  QA-023-09 C2 el desarrollador: Bash printf > a.ts desde src/s\nt candidata  (allow)
+  PASS  QA-023-09 C2 el desarrollador: Bash printf > a.ts desde src/s\nt 43b948a: control, decide igual  (allow)
+  PASS  QA-023-09 C2 el desarrollador: Bash printf > a.ts desde src/s\nt 9596e39: control, decide igual  (allow)
+  PASS  QA-023-09 C3 coordinadora escribe docs/n.md, cwd /tmp\nb candidata  (allow)
+  PASS  QA-023-09 C3 coordinadora escribe docs/n.md, cwd /tmp\nb 43b948a: control, decide igual  (allow)
+  PASS  QA-023-09 C3 coordinadora escribe docs/n.md, cwd /tmp\nb 9596e39: control, decide igual  (allow)
+  FAIL  QA-023-09 C4 coordinadora: Bash echo > n.md desde docs/a\nb candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe 'n.md': es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer. Sin saber que archivo es, esta puerta no puede d>
+  PASS  QA-023-09 C4 coordinadora: Bash echo > n.md desde docs/a\nb 43b948a: deniega por el cwd desplazado: la reparación lo restituye  (deny)
+  PASS  QA-023-09 C4 coordinadora: Bash echo > n.md desde docs/a\nb 9596e39: control, decide igual  (allow)
+  PASS  QA-023-09 C5 cierre de un REQ en verde, cwd /tmp\nb candidata  (allow)
+  PASS  QA-023-09 C5 cierre de un REQ en verde, cwd /tmp\nb 43b948a: control, decide igual  (allow)
+  PASS  QA-023-09 C5 cierre de un REQ en verde, cwd /tmp\nb 9596e39: control, decide igual  (allow)
+  FAIL  QA-023-09 C6 cierre de un REQ en verde, cwd docs/a\nb candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe 'b': es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer. Sin saber que archivo es, esta puerta no puede deci>
+  PASS  QA-023-09 C6 cierre de un REQ en verde, cwd docs/a\nb 43b948a: deniega por el cwd desplazado: la reparación lo restituye  (deny)
+  PASS  QA-023-09 C6 cierre de un REQ en verde, cwd docs/a\nb 9596e39: control, decide igual  (allow)
+  PASS  QA-023-09 C7 Edit literal sin estado, cwd /tmp\nb candidata  (allow)
+  PASS  QA-023-09 C7 Edit literal sin estado, cwd /tmp\nb 43b948a: control, decide igual  (allow)
+  PASS  QA-023-09 C7 Edit literal sin estado, cwd /tmp\nb 9596e39: control, decide igual  (allow)
+  PASS  QA-023-09 C8 ls -la, cwd /tmp\nb candidata  (allow)
+  PASS  QA-023-09 C8 ls -la, cwd /tmp\nb 43b948a: control, decide igual  (allow)
+  PASS  QA-023-09 C8 ls -la, cwd /tmp\nb 9596e39: control, decide igual  (allow)
+  PASS  QA-023-09 C9 coordinadora escribe <raíz>/docs/n.md\n candidata  (allow)
+  PASS  QA-023-09 C9 coordinadora escribe <raíz>/docs/n.md\n 43b948a: control, decide igual  (allow)
+  PASS  QA-023-09 C9 coordinadora escribe <raíz>/docs/n.md\n 9596e39: control, decide igual  (allow)
+  PASS  QA-023-09 C10 coordinadora escribe <raíz>/src/a.ts\n candidata  (deny)
+  PASS  QA-023-09 C10 coordinadora escribe <raíz>/src/a.ts\n 43b948a: control, decide igual  (deny)
+  PASS  QA-023-09 C10 coordinadora escribe <raíz>/src/a.ts\n 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 P1 arnes_parse_input conserva los seis campos con saltos de línea en cada uno  candidata: <Bash|a|1|qa|x|$'/tmp\nb\n\nf\ng\nls\n  x > y'|> en vez de <Bash|$'a\n1'|$'qa\nx'|$'/tmp\nb\n'|$'f\ng'|$'ls\n  x > y'|>
+  PASS  QA-023-09 P1 arnes_parse_input conserva los seis campos con saltos de línea en cada uno  43b948a (fail-before): los desplaza  <Bash|a|1|qa|x|$'/tmp\nb\n\nf\ng\nls\n  x > y'|>
+aviso: vuelta parcial (1 de 57 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 59 PASS, 18 FAIL

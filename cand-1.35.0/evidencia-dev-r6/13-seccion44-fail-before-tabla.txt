@@ -1,0 +1,27 @@
+fila (comprobación «candidata» = la expectativa de la reparación) mio       43b948a   9596e39   1.33.2   
+N1                                                             PASS      FAIL      PASS      PASS     
+N2                                                             PASS      FAIL      PASS      PASS     
+N3                                                             PASS      FAIL      PASS      PASS     
+N4                                                             PASS      FAIL      PASS      PASS     
+N5                                                             PASS      FAIL      PASS      PASS     
+N6                                                             PASS      FAIL      PASS      FAIL     
+N7                                                             PASS      FAIL      PASS      PASS     
+N8                                                             PASS      FAIL      PASS      PASS     
+N9                                                             PASS      FAIL      PASS      PASS     
+N10                                                            PASS      FAIL      FAIL      FAIL     
+N11                                                            PASS      FAIL      FAIL      FAIL     
+N12                                                            PASS      FAIL      FAIL      FAIL     
+N13                                                            PASS      FAIL      FAIL      FAIL     
+N14                                                            PASS      FAIL      FAIL      FAIL     
+N15                                                            PASS      FAIL      FAIL      FAIL     
+C1                                                             PASS      PASS      PASS      PASS     
+C2                                                             PASS      PASS      PASS      PASS     
+C3                                                             PASS      PASS      PASS      PASS     
+C4                                                             PASS      FAIL      PASS      PASS     
+C5                                                             PASS      PASS      PASS      PASS     
+C6                                                             PASS      FAIL      PASS      PASS     
+C7                                                             PASS      PASS      PASS      PASS     
+C8                                                             PASS      PASS      PASS      PASS     
+C9                                                             PASS      PASS      PASS      PASS     
+C10                                                            PASS      PASS      PASS      PASS     
+P1                                                             PASS      FAIL      FAIL      FAIL     

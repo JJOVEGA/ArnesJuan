@@ -1,0 +1,3 @@
+forma A, us por destino: calcula=457 calcula+guarda=401 identidad(sin memo,1a vez ya memo)=61 identidad(memo)+pert_codigo=307 identidad(memo)+pert_req=207 lexica=15 fisica=54 stat-L-e=9
+forma B, us por destino: calcula=363 calcula+guarda=296 identidad(sin memo,1a vez ya memo)=41 identidad(memo)+pert_codigo=232 identidad(memo)+pert_req=208 lexica=21 fisica=122 stat-L-e=12
+forma C, us por destino: calcula=360 calcula+guarda=485 identidad(sin memo,1a vez ya memo)=39 identidad(memo)+pert_codigo=314 identidad(memo)+pert_req=294 lexica=88 fisica=46 stat-L-e=12

@@ -1,0 +1,3 @@
+== camino comun (ORIENTATIVO): reloj de guard.sh, 40 corridas alternadas por árbol, 2026-10-01T16:11:48-06:00, carga 0.06 0.42 0.71 ==
+Edit literal sobre un REQ de 9 líneas: 43b948a media 37 ms, min 33 ms | mio media 38 ms, min 33 ms
+Bash ls -la: 43b948a media 26 ms, min 22 ms | mio media 25 ms, min 20 ms

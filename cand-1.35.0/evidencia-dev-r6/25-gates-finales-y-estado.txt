@@ -1,0 +1,28 @@
+== quality gates finales (AGENTS.md §7), 2026-10-01T16:12:46-06:00 ==
+bash -n hooks/*.sh tools/*.sh: rc=0
+jq hooks.json: rc=0
+plugin+marketplace: rc=0
+bash -n seccion 44: rc=0
+100644 6ba29e8235d94af9389e0d6bcdc7109fa2fa7d77 0	tests/escenarios/hooks/secciones/43-identidad-del-destino.sh
+644 tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh
+== sha256 (16 hex) del árbol final ==
+4a641cac9d1a2afe hooks/estado-derivado.sh
+a1a7d8d7f55e19d5 hooks/guard-codigo.sh
+89e5023eefd95edc hooks/guard-completado.sh
+7496adcf1c6d9735 hooks/guard-git.sh
+2e7ec8cb189d025c hooks/guard.sh
+1ec210f511ece194 hooks/lib.sh
+dd9e6dcf62c79336 hooks/rotar-artefactos.sh
+0570ec9dd0edf145 hooks/stop.sh
+f52870a38576991b hooks/campos-req.awk
+ca064887f5572665 tests/escenarios/hooks/run.sh
+cc38b7e8c8b96294 tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh
+== git status ==
+ M docs/ESTADO.md
+ M hooks/guard-codigo.sh
+ M hooks/guard-completado.sh
+ M hooks/lib.sh
+ M tests/escenarios/hooks/README.md
+ M tests/escenarios/hooks/run.sh
+?? propuesta-v1.35.0/
+?? tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh

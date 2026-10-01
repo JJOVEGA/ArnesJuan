@@ -1,0 +1,1 @@
+traza-A.txt (26 890 582 bytes, traza `set -x` orientativa del perfil de la forma A) se conserva sólo en el scratchpad de la sesión: no se versiona por tamaño.

@@ -1,0 +1,11 @@
+== verificacion de arboles (desarrollador, 2026-10-01T14:52:21-06:00) ==
+43b948a: hooks+tools verificados contra oid del arbol: OK
+9596e39: hooks+tools verificados contra oid del arbol: OK
+worktree hooks vs 43b948a (antes de editar): 0 lineas de diff
+1.33.2 cache: campos-req.awk estado-derivado.sh guard-codigo.sh guard-completado.sh guard-git.sh guard.sh hooks.json lib.sh rotar-artefactos.sh stop.sh 
+1.33.2 guard.sh tag=2e7ec8cb189d025c cache=2e7ec8cb189d025c OK
+1.33.2 guard-codigo.sh tag=0700ce03a9e37f7c cache=0700ce03a9e37f7c OK
+1.33.2 guard-completado.sh tag=6b5cd6ff66351abd cache=6b5cd6ff66351abd OK
+1.33.2 lib.sh tag=d8453de560928296 cache=d8453de560928296 OK
+1.33.2 guard-git.sh tag=7496adcf1c6d9735 cache=7496adcf1c6d9735 OK
+jq: jq-1.8.2  bash: 5.3.9(1)-release  kernel: 6.18.33.2-microsoft-standard-WSL2

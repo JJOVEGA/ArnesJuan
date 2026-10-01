@@ -1,0 +1,21 @@
+[paso1: detector memorizado] forma=A | 43b948a/hooks 8317ms allow | /home/juan/dev/ArnesJuan-v1.35/hooks 7416ms allow | carga=0.39 0.37 0.27
+[paso1: detector memorizado] forma=B | 43b948a/hooks 7616ms allow | /home/juan/dev/ArnesJuan-v1.35/hooks 6816ms allow | carga=0.74 0.45 0.30
+[paso1: detector memorizado] forma=C | 43b948a/hooks 8131ms allow | /home/juan/dev/ArnesJuan-v1.35/hooks 6615ms allow | carga=0.80 0.48 0.31
+forma A LC_ALL=C.UTF-8: 6403 ms (orientativo, techo superior del ahorro por locale)
+forma A LC_ALL=C: 5154 ms (orientativo, techo superior del ahorro por locale)
+forma B LC_ALL=C.UTF-8: 6558 ms (orientativo, techo superior del ahorro por locale)
+forma B LC_ALL=C: 5091 ms (orientativo, techo superior del ahorro por locale)
+forma C LC_ALL=C.UTF-8: 5849 ms (orientativo, techo superior del ahorro por locale)
+forma C LC_ALL=C: 4769 ms (orientativo, techo superior del ahorro por locale)
+[paso2: +C en detector y CRLF] forma=A | 43b948a/hooks 8517ms allow | /home/juan/dev/ArnesJuan-v1.35/hooks 6015ms allow | carga=0.44 0.39 0.30
+[paso2: +C en detector y CRLF] forma=B | 43b948a/hooks 12427ms allow | /home/juan/dev/ArnesJuan-v1.35/hooks 6516ms allow | carga=0.52 0.41 0.31
+[paso2: +C en detector y CRLF] forma=C | 43b948a/hooks 7617ms allow | /home/juan/dev/ArnesJuan-v1.35/hooks 6716ms allow | carga=0.60 0.43 0.32
+[paso3: pertenencia y lectura fisica sin ramas frias] forma=A | 43b948a/hooks 7916ms allow | /home/juan/dev/ArnesJuan-v1.35/hooks 5013ms allow | carga=0.70 0.43 0.34
+[paso3: pertenencia y lectura fisica sin ramas frias] forma=B | 43b948a/hooks 7717ms allow | /home/juan/dev/ArnesJuan-v1.35/hooks 5014ms allow | carga=0.75 0.45 0.35
+[paso3: pertenencia y lectura fisica sin ramas frias] forma=C | 43b948a/hooks 6613ms allow | /home/juan/dev/ArnesJuan-v1.35/hooks 4312ms allow | carga=0.80 0.47 0.36
+[paso4: restaura aparte, llamadas memorizadas, bucle por array] forma=A | 43b948a/hooks 7715ms allow | /home/juan/dev/ArnesJuan-v1.35/hooks 4612ms allow | carga=0.55 0.45 0.36
+[paso4: restaura aparte, llamadas memorizadas, bucle por array] forma=B | 43b948a/hooks 7517ms allow | /home/juan/dev/ArnesJuan-v1.35/hooks 4712ms allow | carga=1.02 0.56 0.40
+[paso4: restaura aparte, llamadas memorizadas, bucle por array] forma=C | 43b948a/hooks 6815ms allow | /home/juan/dev/ArnesJuan-v1.35/hooks 4311ms allow | carga=1.02 0.58 0.41
+[paso5: ramas raras de calcula aparte] forma=A | 43b948a/hooks 7616ms allow | /home/juan/dev/ArnesJuan-v1.35/hooks 4611ms allow | carga=0.62 0.60 0.45
+[paso5: ramas raras de calcula aparte] forma=B | 43b948a/hooks 7414ms allow | /home/juan/dev/ArnesJuan-v1.35/hooks 4812ms allow | carga=0.68 0.62 0.45
+[paso5: ramas raras de calcula aparte] forma=C | 43b948a/hooks 6614ms allow | /home/juan/dev/ArnesJuan-v1.35/hooks 4211ms allow | carga=0.73 0.63 0.46

@@ -1,0 +1,38 @@
+== diagnóstico (ORIENTATIVO, una corrida por fila; no es la medición de CA-54), 2026-10-01T15:58:23-06:00, carga 0.02 0.49 0.75 ==
+proyecto de la sonda: 135 caracteres de ruta
+-- forma A, árbol 43b948a/hooks
+   preludio+parse: 275 ms
+   guard_git: 4 ms
+   guard_codigo: 6499 ms
+   guard_completado: 3217 ms
+-- forma A, árbol /home/juan/dev/ArnesJuan-v1.35/hooks
+   preludio+parse: 30 ms
+   guard_git: 3 ms
+   guard_codigo: 4458 ms
+   guard_completado: 3057 ms
+-- forma B, árbol 43b948a/hooks
+   preludio+parse: 1040 ms
+   guard_git: 8 ms
+   guard_codigo: 8495 ms
+   guard_completado: 3531 ms
+-- forma B, árbol /home/juan/dev/ArnesJuan-v1.35/hooks
+   preludio+parse: 32 ms
+   guard_git: 3 ms
+   guard_codigo: 5297 ms
+   guard_completado: 2412 ms
+-- forma C, árbol 43b948a/hooks
+   preludio+parse: 407 ms
+   guard_git: 4 ms
+   guard_codigo: 6478 ms
+   guard_completado: 2667 ms
+-- forma C, árbol /home/juan/dev/ArnesJuan-v1.35/hooks
+   preludio+parse: 33 ms
+   guard_git: 3 ms
+   guard_codigo: 5990 ms
+   guard_completado: 1485 ms
+== efecto de la longitud de la ruta del proyecto (forma A, 8258 destinos, mismo comando, mismo manifiesto) ==
+   árbol 43b948a/hooks ruta de 135 caracteres: 12018 ms allow
+   árbol 43b948a/hooks ruta de 13 caracteres: 8460 ms allow
+   árbol /home/juan/dev/ArnesJuan-v1.35/hooks ruta de 135 caracteres: 7472 ms allow
+   árbol /home/juan/dev/ArnesJuan-v1.35/hooks ruta de 13 caracteres: 5294 ms allow
+carga final 0.89 0.66 0.79

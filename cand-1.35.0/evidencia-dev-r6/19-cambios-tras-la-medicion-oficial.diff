@@ -1,0 +1,36 @@
+--- /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-dev-r6/lib.sh.medido-en-16	2026-10-01 16:00:15.330537439 -0600
++++ hooks/lib.sh	2026-10-01 16:00:15.341734398 -0600
+@@ -73,7 +73,7 @@
+   fi
+   ARNES_TOOL=''; ARNES_AGENT_ID=''; ARNES_AGENT_TYPE=''; ARNES_CWD=''; ARNES_FP=''; ARNES_CMD=''
+   if [ -n "$ARNES_JQ" ]; then
+-    { read -r n_tool n_aid n_aty n_cwd n_fp
++    { IFS=' ' read -r n_tool n_aid n_aty n_cwd n_fp
+       _arnes_lee_campo "$n_tool"; ARNES_TOOL="$ARNES_CAMPO"
+       _arnes_lee_campo "$n_aid";  ARNES_AGENT_ID="$ARNES_CAMPO"
+       _arnes_lee_campo "$n_aty";  ARNES_AGENT_TYPE="$ARNES_CAMPO"
+@@ -597,8 +597,9 @@
+ # Los motivos de la identificacion, por clave, en una funcion APARTE del camino caliente. No es
+ # estilo: bash COPIA el arbol de ordenes de una funcion en cada llamada, cadenas literales
+ # incluidas, y las funciones que corren una vez por destino pagaban en cada destino el tamano de
+-# unos motivos que casi nunca emiten (medido: con miles de destinos, la mayor partida del reloj;
+-# REQ-007 CA-54, QA-023-10). Aqui se copian solo cuando se emiten. El texto es el de siempre.
++# unos motivos que casi nunca emiten (medido: entrar en `_arnes_id_calcula` costaba decenas de
++# microsegundos solo por su tamano; REQ-007 CA-54, QA-023-10). Aqui se copian solo cuando se
++# emiten. El texto es el de siempre.
+ _arnes_nodet_por() {   # <clave> [dato]
+   case "$1" in
+     vacia)      _arnes_nodet "la ruta esta vacia" "escribe la ruta del archivo" ;;
+@@ -910,9 +911,9 @@
+ arnes_id_pertenece() {
+   local amb="$1" x rel
+   # Lo que sigue es la misma regla de siempre —las tres vias en el mismo orden, los mismos
+-  # candidatos en el mismo orden y los mismos patrones—, escrita sin arrays temporales ni
+-  # referencias por nombre en el camino comun: con miles de destinos por comando, esa
+-  # sobrecarga por destino era la mayor partida del reloj del hook (REQ-007 CA-54, QA-023-10).
++  # candidatos en el mismo orden y los mismos patrones—, escrita sin arrays temporales, con una
++  # sola llamada por candidato para casar todos los patrones y con lo raro aparte: con miles de
++  # destinos por comando, cada sentencia por destino se multiplica (REQ-007 CA-54, QA-023-10).
+   [ -n "${ARNES_AMB_LISTO[$amb]:-}" ] || _arnes_ambito "$amb"
+   local -n pats="ARNES_AMB_${amb}_P"
+   # Un ambito sin ningun patron no tiene «dentro»: ni siquiera un destino no determinable cae en el.

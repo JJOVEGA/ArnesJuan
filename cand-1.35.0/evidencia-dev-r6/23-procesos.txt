@@ -1,0 +1,4 @@
+== procesos por invocación (tests/util/sonda-procesos.sh), 2026-10-01T16:12:08-06:00 ==
+Bash printf > docs/n.md: 9596e39/hooks: cuenta=2 (estado=ok) 43b948a/hooks: cuenta=2 (estado=ok) /home/juan/dev/ArnesJuan-v1.35/hooks: cuenta=2 (estado=ok)
+Edit literal REQ: 9596e39/hooks: cuenta=3 (estado=ok) 43b948a/hooks: cuenta=3 (estado=ok) /home/juan/dev/ArnesJuan-v1.35/hooks: cuenta=3 (estado=ok)
+forma A 131072 (sonda): 9596e39/hooks: cuenta=3 (estado=ok) 43b948a/hooks: cuenta=3 (estado=ok) /home/juan/dev/ArnesJuan-v1.35/hooks: cuenta=3 (estado=ok)

@@ -1,0 +1,27 @@
+OPCIÓN B (NO APLICADA) para el `file_path` con salto de línea — sólo si el propietario/analista la decide.
+
+Contexto: con la extracción fiel (la que queda en el árbol), un `file_path` que lleva un salto de línea se
+juzga ENTERO, como lo escribiría el host si no lo recorta. Eso produce movimientos de deny a allow frente a
+9596e39, 43b948a y 1.33.2 en bordes (B2, B3, B4, B6, B9 de 02-bateria-qa02309-v1.txt), porque esos árboles
+juzgaban sólo la primera línea. CA-66 punto 5 no los declara.
+
+La opción B los convertiría en deny añadiendo una causa de «no determinable» que CA-47 hoy NO tiene (cambio
+de contrato: CA-47 punto 2 sólo exige que los segmentos restantes sean nombres). Cambio de código, en
+`_arnes_id_calcula` (hooks/lib.sh), tras el control de longitud:
+
+  if [ -z "$ARNES_RAIZ_FIS" ]; then _arnes_nodet_por sin-raiz; return 0; fi
++ case "$p" in *$'\n'*) _arnes_nodet_por salto; return 0 ;; esac
+
+y en `_arnes_nodet_por`:
+
++    salto)      _arnes_nodet "lleva un salto de linea, y no se sabe si la herramienta escribira ese nombre o lo recortara" \
++                             "escribe la ruta sin saltos de linea" ;;
+
+Efecto previsto (por propiedad de CA-47 punto 7: no determinable = dentro del ámbito de cada puerta):
+  - B2, B3, B4, B6, B9: deny (cierra los cinco movimientos de deny a allow);
+  - de allow a deny, a declarar: B8 (Write de <REQ>\n sin terminal), B10 (O-16: <fuera>\n<REQ>), B14
+    (Write de la coordinadora a docs/n.md\n) y, en guard-completado, TODO Edit/Write/MultiEdit con salto en
+    el file_path, sea cual sea su ruta y su agente (CA-45 (iii)); la fila C9 de la sección 44 pasaría a
+    deny y habría que reescribirla;
+  - C6 (tool_name 'Bash\n') no cambia: no es un file_path.
+No medido: no se aplicó. Requiere versionar CA-47 (analista) antes de implementarse.

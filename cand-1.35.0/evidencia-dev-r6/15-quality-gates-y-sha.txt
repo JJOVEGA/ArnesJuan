@@ -1,0 +1,19 @@
+== quality gates (AGENTS.md §7), 2026-10-01T15:33:21-06:00 ==
+bash -n hooks/*.sh tools/*.sh: rc=0
+jq -e . hooks/hooks.json: rc=0
+plugin.json && marketplace.json: rc=0
+== sha256 (16 hex) de los hooks del árbol final medido ==
+4a641cac9d1a2afe hooks/estado-derivado.sh
+a1a7d8d7f55e19d5 hooks/guard-codigo.sh
+89e5023eefd95edc hooks/guard-completado.sh
+7496adcf1c6d9735 hooks/guard-git.sh
+2e7ec8cb189d025c hooks/guard.sh
+913c38372a7fc564 hooks/lib.sh
+dd9e6dcf62c79336 hooks/rotar-artefactos.sh
+0570ec9dd0edf145 hooks/stop.sh
+f52870a38576991b hooks/campos-req.awk
+git diff --stat contra fb6eaab:
+ hooks/guard-codigo.sh     |   7 +-
+ hooks/guard-completado.sh |   7 +-
+ hooks/lib.sh              | 404 +++++++++++++++++++++++++++++++---------------
+ 3 files changed, 279 insertions(+), 139 deletions(-)

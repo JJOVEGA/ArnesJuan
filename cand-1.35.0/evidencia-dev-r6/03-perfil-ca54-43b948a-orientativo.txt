@@ -1,0 +1,22 @@
+== forma A (43b948a)
+parse_input: 296 ms
+detector (1 vez): 1230 ms, destinos=8258
+manifiesto: 5 ms
+identidad x8258: 1969 ms
+identidad(memo)+pertenece codigo: 2150 ms
+identidad(memo)+pertenece req: 2055 ms
+== forma B (43b948a)
+parse_input: 309 ms
+detector (1 vez): 1063 ms, destinos=7341
+manifiesto: 6 ms
+identidad x7341: 2127 ms
+identidad(memo)+pertenece codigo: 2424 ms
+identidad(memo)+pertenece req: 1853 ms
+== forma C (43b948a)
+parse_input: 295 ms
+detector (1 vez): 817 ms, destinos=5506
+manifiesto: 6 ms
+identidad x5506: 1954 ms
+identidad(memo)+pertenece codigo: 1826 ms
+identidad(memo)+pertenece req: 1269 ms
+carga 0.65 0.38 0.22

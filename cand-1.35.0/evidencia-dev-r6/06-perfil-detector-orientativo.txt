@@ -1,0 +1,14 @@
+== A
+sin_texto: 23 ms
+7 sustituciones: 573 ms
+troceo (41290 palabras): 10 ms
+detector entero: 1232 ms
+mapfile 8258: 30 ms
+while-read 8258: 54 ms
+== C
+sin_texto: 21 ms
+7 sustituciones: 370 ms
+troceo (27530 palabras): 6 ms
+detector entero: 824 ms
+mapfile 5506: 1 ms
+while-read 5506: 27 ms
