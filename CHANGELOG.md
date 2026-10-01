@@ -2,6 +2,26 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-01 · REQ-007: write-back de las dos decisiones de implementación de `cd6afa6` (punto 12 en toda llamada que no sea de `Bash`; movimientos del manifiesto ilegible) y tabla de CA-66 contrastada con el banco; validación de QA-023-09 en el host real hecha (evidencia `3eb279d`) — SIN VALIDAR
+> Origen: GitHub · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (continuación de su comisión) y la coordinadora.
+
+- **Analista:**
+  - **CA-47 punto 12** pasa a decir lo construido: «en toda llamada que no sea de `Bash`», también la de una herramienta desconocida. Limitarlo a `Edit`/`Write`/`MultiEdit` movería X1 y X2 de deny a allow.
+  - **CA-60** gana una nota: un `file_path` o un `tool_name` con salto de línea no son la reparación del manifiesto (M1 a M5; M3 es el control).
+  - **CA-66:**
+    - punto 5 reestructurado en (a) agente, (a′) `tool_name`, (b) `file_path` y (c) clases del 2026-09-30;
+    - tabla con T4 y con el caso de los motivos;
+    - recuentos verificados (sección 44: 167 casos; total 1501).
+  - Ningún movimiento de deny a allow nuevo.
+- **Coordinadora, validación en el host real** (registro previo `215f916` y resultado `3eb279d`, rama local de evidencia, `sec119-r6/`). CLI 2.1.285, una ejecución por caso, con el hook de `cd6afa6` y un `cwd` con salto de línea literal en la entrada:
+  - el `Write` que cierra el REQ en rojo se deniega por QA pendiente, citando `requirements/REQ-900.md`, y el disco no cambia;
+  - el `Write` de la coordinadora a `src/a.ts` se deniega como código de la app, y el archivo no se crea;
+  - el control legítimo `docs/nota-r6.md` pasa y se escribe.
+
+  La denegación de v3b (juzgando `'y'`) no se cuenta como protección.
+- **CI:** push sin force `9596e39..cd6afa6`. La corrida `36940134971` sobre `cd6afa6` está en curso. Es intermedia: la que cuenta es la de la cabeza final.
+- **Avance (regla 6):** la entrega queda construida, con contrato, código, banco y host. Falta QA (Opus) y, si es favorable, seguridad.
+
 ## [Interno] — 2026-10-01 · Sexta autorización, implementación (desarrollador): QA-023-09 cerrado a nivel de hook (la entrada se lee campo a campo, entera) y CA-47 puntos 12 y 13 (`file_path` y `tool_name` con LF, no determinables); optimización de QA-023-10 retirada del candidato; sección 44 del banco (1334 → 1501) — SIN VALIDAR
 > Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Unos 690 k tokens de contexto acumulado en la comisión, con su continuación.
 
