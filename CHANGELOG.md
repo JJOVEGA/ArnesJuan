@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-01 · Sexta autorización, write-back (analista): QA-023-09 en CA-47 punto 11 (integridad de la entrada); `file_path` con LF no determinable (CA-47 punto 12, opción B) y `tool_name` con LF (punto 13); QA-023-11 en CA-45; QA-023-10 registrado en CA-54 sin tocar umbral, defecto ni máximo — SIN VALIDAR
+> Origen: GitHub (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `analista-requerimientos`. Unos 427 k tokens (cifra del arnés para la comisión).
+
+- **Por qué hubo que decidir contrato.** El desarrollador cerró QA-023-09 a nivel de hook leyendo cada campo entero, y se detuvo: con el `file_path` entero, cinco bordes con salto de línea (B2, B3, B4, B6, B9) pasaban de deny a allow sin estar declarados. Los árboles anteriores juzgaban sólo la primera línea.
+- **Decisión del analista: opción (B).** Un `file_path` con LF es no determinable (CA-47 punto 12) y se trata como dentro del ámbito (punto 7). La (A), declarar esos movimientos, daría permiso apoyándose en una conducta del host no medida, que es F7, no aceptada, y reduciría cobertura. **Extensión del analista, punto 13:** un `tool_name` con LF se trata como escritura no determinable, para no abrir C6 como séptimo movimiento.
+  - **Clasificación de la coordinadora** (§6, justificación breve): (B) y el punto 13 sólo añaden denegaciones, con motivo y sin sustituir caracteres. Son los ajustes necesarios para resolver QA-023-09 sin un movimiento de deny a allow que CA-24 prohíbe. Están **dentro** de la sexta autorización («Sólo exige otra decisión un cambio de alcance, contrato o cobertura que exceda expresamente estos límites»), porque no reducen cobertura ni abren alcance.
+  - **Movimientos de deny a allow nuevos: ninguno;** siguen siendo los seis de CA-66 punto 5. Los de allow a deny están declarados en CA-66.
+- **QA-023-11:** CA-45 incorpora la v3b. El `cwd` sigue a un `cd` (observado una vez). R5 falló en el `Read` antes de llegar al hook y queda como límite de la comprobación en el host, no como prueba de denegación.
+- **QA-023-10:** CA-54 conserva el umbral, el defecto y el máximo, y registra lo medido (en el máximo, `9596e39` 2,9–7,2 s, `43b948a` 9,1–13,8 s y el intento optimizado 6,5–9,5 s). Registra también que la reparación se detuvo por instrucción del propietario y que **el intento queda fuera del candidato** (parche conservado en la evidencia, `3b947a1`). Sigue abierto y lo decide el propietario. Las notas `[1.35.0]` lo declaran como limitación.
+- **Sedes:** `requirements/REQ-007.md` (CA-24 nota, CA-45, CA-47 7, 11, 12 y 13, CA-54, CA-66, notas, Trazabilidad, Historial), ADR-016 (adenda del 2026-10-01), `skills/arnes-upgrade/SKILL.md`, la sección `[1.35.0]` de este archivo y `requirements/README.md`. `AGENTS.md` §13 remite a CA-47 y no cambia.
+- **Avance (regla 6):** el contrato de los tres hallazgos queda escrito. Falta que el desarrollador retire la optimización detenida e implemente los puntos 12 y 13; después, el host, QA y seguridad.
+
 ## [GitHub] — 2026-10-01 · Sexta autorización del propietario registrada (literal e íntegra, copia verificada con `diff`: 0 diferencias): decisión 8, opción A — vuelta excepcional agrupada para QA-023-09, QA-023-10 y QA-023-11, sin reiniciar contadores
 > Origen: GitHub · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
@@ -600,7 +612,10 @@ REQ-025, REQ-028, REQ-024 (la mitad 2 de SEC-047) ni REQ-011.
 - **REQ-007 sigue `en-progreso`**, con CA-46 (c) versionado por ADR-015: ya no hay respaldo por
   fragmentos dentro de `requirements/`. Desde el 2026-09-30 lleva además, por **ADR-016** y la quinta
   autorización del propietario, **CA-45 a CA-50, CA-60 y CA-66** versionados o nuevos: es el cambio de
-  compatibilidad 4. Estas notas no anticipan su estado ni sus firmas. REQ-023 CA-13 (iv) remite a él.
+  compatibilidad 4. Desde el 2026-10-01, por la sexta autorización, CA-47 gana la **integridad de la entrada**
+  (puntos 11 a 13), CA-45 lo comprobado en el host y CA-54 una nota con su incumplimiento abierto (QA-023-10,
+  en las limitaciones de abajo). Estas notas no anticipan su estado ni sus firmas. REQ-023 CA-13 (iv) remite
+  a él.
 
 ### Qué recibe un consumidor al actualizar
 
@@ -732,9 +747,18 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      o a través de un directorio enlazado—; un enlace situado fuera del proyecto que apunta a una zona
      protegida; una escritura por `Bash` a través de un enlace hacia una zona protegida; un
      `Edit`/`MultiEdit` sobre un REQ que la puerta no puede leer entero —un byte NUL, UTF-16, sin permiso de
-     lectura—, **aunque no toque el estado**; y una escritura cuyo destino la puerta no puede determinar.
+     lectura—, **aunque no toque el estado**; y una escritura cuyo destino la puerta no puede determinar
+     —entre otras causas, un `Edit`/`Write`/`MultiEdit` cuyo `file_path` lleva un salto de línea, sea cual sea
+     la ruta y el agente, porque no está medido qué archivo escribiría la herramienta con ese argumento—.
      Hasta `v1.34.0` las puertas decidían por la ruta escrita, y con el REQ ilegible sólo se denegaba la
      edición que mencionaba el estado terminal.
+   - **La entrada del hook se lee campo a campo** (REQ-007 CA-47, punto 11): un salto de línea dentro del
+     directorio de trabajo, del agente o de la ruta no desplaza los demás campos ni hace juzgar otra cosa, y
+     una entrada cuyo nombre de herramienta lleva un salto de línea se deniega. Medido a nivel de hook en
+     1.33.2, inyectando la entrada (batería del desarrollador, rama local de evidencia,
+     `cand-1.35.0/evidencia-dev-r6/20-bateria-qa02309-final.txt`): un salto dentro del agente o del nombre de
+     la herramienta desplazaba los campos siguientes, y una escritura a código protegido salía permitida.
+     Desde el host, sin medir.
    - **Qué pasa a permitirse, y son sólo seis casos** (REQ-007 CA-66, punto 5): una ruta relativa que
      casaba con una zona protegida sólo porque se leía desde la raíz cuando el directorio de trabajo era
      otro; un `Write` que cierra un REQ ilegible con todo en verde, porque se juzga entero; una ruta
@@ -890,6 +914,14 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de 
     trocear la entrada JSON del hook deja pasar; a nivel de hook, y no alcanzable desde el host en lo
     observado. Es independiente de esta reparación y queda fuera de ella (`docs/seguridad/registro-seguridad.md`
     § R-045-A, §4).
+  - **QA-023-10** (`contrato` en REQ-007, media): **abierto, con decisión pendiente del propietario y NO
+    aceptado.** Identificar cada destino encarece el análisis de un comando de `Bash` con muchos destinos, y en
+    el máximo de REQ-007 CA-54 (131 072 bytes) el peor caso no cumple su umbral de 5 s: de 9,1 a 13,8 s en el
+    árbol de la reparación, frente a 2,9–7,2 s antes de ella, que ya lo superaba en una de las tres formas
+    medidas (Linux/WSL2; QA el 2026-09-30 y el desarrollador el 2026-10-01). En el valor por defecto
+    (65 536 bytes) también se supera. Una optimización intentada no lo consiguió y quedó fuera del candidato.
+    No hay fallo en abierto medido: la corrida más lenta queda a más de cuatro veces de los 60 s en que muere
+    un hook. Windows/MSYS, sin medir. Sede: la nota de REQ-007 CA-54 del 2026-10-01.
 - **La mitad 2 de SEC-047 (REQ-024) no entra.** No cambia qué significa la ausencia de un campo, por
   ejemplo al comentar o borrar su línea.
 - **SEC-103 (OBS-H) y SEC-104** siguen abiertos.

@@ -1147,7 +1147,11 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
       UTF-16 como el que produce PowerShell 5.1 al redirigir, un archivo sin permiso de lectura—, **aunque no
       toque el estado**;
     - una escritura cuyo destino la puerta **no puede determinar**: un directorio que no se puede recorrer,
-      un bucle de enlaces, `..` sobre un directorio que todavía no existe.
+      un bucle de enlaces, `..` sobre un directorio que todavía no existe, o un `Edit`/`Write`/`MultiEdit`
+      cuyo `file_path` lleva un salto de línea —sea cual sea la ruta y el agente: no está medido qué archivo
+      escribiría la herramienta con ese argumento—.
+    - Y la entrada del hook se lee **campo a campo**: un salto de línea dentro del directorio de trabajo, del
+      agente o de la ruta ya no desplaza los demás campos ni hace juzgar otra cosa.
   - **Lo que pasa a permitirse, y son sólo seis casos** (REQ-007 CA-66, punto 5, del arnés): una ruta
     relativa que casaba con una zona protegida sólo porque se leía desde la raíz cuando el directorio de
     trabajo era otro; un `Write` que cierra un REQ ilegible con todo en verde, porque se juzga entero; una
@@ -1159,8 +1163,8 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     la ruta escrita, no su destino»— **queda superado**: los directorios enlazados y los enlaces de fuera se
     resuelven.
   - **La salida:** cada motivo dice la causa y cómo corregirla —escribir por una ruta cuyos directorios
-    existan y se puedan recorrer, o dejar el REQ legible entero: quitar el NUL, guardarlo en UTF-8,
-    devolverle el permiso de lectura—.
+    existan y se puedan recorrer y sin saltos de línea, o dejar el REQ legible entero: quitar el NUL, guardarlo
+    en UTF-8, devolverle el permiso de lectura—.
   - **Sin eufemismo: las versiones anteriores pudieron dejar pasar escrituras protegidas por una ruta
     equivalente.** Reproducido en el CLI 2.1.285: por un directorio enlazado a `requirements/`, un REQ
     `critico` con todo en rojo quedó `completado`; por `Bash`, `..` creó código protegido desde la

@@ -116,3 +116,52 @@ Este ADR registra la decisión y su porqué; no transcribe la norma.
   `Bash` de `guard-completado` —que sigue sin leer el archivo— ni `tools/arnes-paralelo.sh`.
 - (=) Este ADR no afirma que la reparación esté verificada. Lo acreditan QA, seguridad y la validación en el
   host de REQ-007 CA-66, cada uno en su sede.
+
+## Adenda — 2026-10-01 (sexta autorización): la entrada se lee campo a campo, y un salto de línea en la ruta o en el nombre de la herramienta no da permiso
+
+**Esta adenda manda sobre las consecuencias de arriba en lo que toca; lo de arriba no se reescribe.** La norma
+vive en `requirements/REQ-007.md` **CA-47, puntos 11 a 13** (versionado del 2026-10-01); aquí sólo la decisión y
+su porqué.
+
+**Causa.** QA-023-09 (`docs/qa/REQ-023.md` § «Vuelta excepcional de la quinta autorización», §9): la
+implementación de este ADR (`104ffd1`) añadió el `cwd` a una lectura de la entrada «uno por línea», y un salto de
+línea en el `cwd` desplazaba los campos siguientes; las dos puertas juzgaban otra ruta y un cierre en rojo por la
+ruta canónica salía **allow** a nivel de hook. En el host real (`sec119-v3b/RESULTADO.md`, CLI 2.1.285, una
+ejecución) el desplazamiento se produjo; la denegación que se observó se debió a que el destino desplazado no se
+podía determinar, y no acredita protección. **Decisión del propietario:** la sexta autorización (2026-10-01),
+literal en `PENDING_APPROVAL.md` § Resueltas, commit `fb6eaab`: preservar los límites entre campos del formato
+de entrada, sin prohibir el nombre ensayado ni sustituir caracteres en silencio.
+
+**Decisión.**
+1. **Los campos de la entrada se leen enteros, con los límites que fija el formato** (punto 11). Un `cwd` con
+   saltos de línea se admite y ancla como cualquier otro.
+2. **Un `file_path` con un salto de línea es no determinable** (punto 12). La puerta lo lee entero, pero qué
+   archivo escribirá la herramienta con ese argumento —el nombre literal o uno recortado— no está medido; es el
+   mismo fundamento que la divergencia de las dos lecturas (CA-47, punto 4).
+3. **Un `tool_name` con un salto de línea no identifica ninguna herramienta** y se trata como una escritura no
+   determinable (punto 13).
+
+**Alternativas descartadas.**
+- **Juzgar la ruta entera y declarar como movimientos de `deny` a `allow` los casos que eso permite** —un
+  `app/a.ts` seguido de un salto con el patrón `app/*.ts`, un enlace seguido de un salto—, y lo mismo con el
+  `tool_name` `Bash` seguido de un salto. **No:** daba permiso apoyándose en una conducta del host sin medir —lo
+  que el host haga con la ruta es la frontera F7, que el propietario no ha aceptado (REQ-007, P-119-A) y que
+  prohíbe usar para cubrir QA-023-09—, contradecía «no determinable no pasa» y reducía la cobertura frente a lo
+  publicado.
+- **Juzgar sólo la primera línea**, como hacían las versiones anteriores. **No:** es juzgar un fragmento del
+  campo, la misma clase de defecto que QA-023-09.
+- **Prohibir el `cwd` con saltos.** **No:** la sexta autorización dice que no basta con prohibir el nombre
+  ensayado.
+
+**Consecuencias.**
+- (+) Un salto de línea en el `cwd`, en el agente o en la ruta ya no hace que las puertas juzguen otra cosa.
+- (−) **Compatibilidad, además de la de arriba:** se deniega todo `Edit`, `Write` o `MultiEdit` cuyo
+  `file_path` lleva un salto de línea, sea cual sea su ruta y su agente, y toda entrada cuyo `tool_name` lo
+  lleva. La declarada está en REQ-007 CA-66 (versionado del 2026-10-01).
+- (=) **Los movimientos de `deny` a `allow` siguen siendo los seis de arriba.** Los de este día son todos de
+  `allow` a `deny`.
+- (−) **Coste de reloj, que la consecuencia «Coste» de arriba no decía:** identificar cada destino encarece el
+  análisis de un comando de `Bash` con muchos destinos, y en el máximo de REQ-007 CA-54 no se cumple el < 5 s
+  (QA-023-10, abierto; cifras en la nota de CA-54 del 2026-10-01). La optimización intentada en la vuelta de
+  este día no lo consiguió y quedó fuera del candidato. Lo decide el propietario.
+- (=) Sin procesos nuevos. Esta adenda no afirma que la reparación esté verificada.
