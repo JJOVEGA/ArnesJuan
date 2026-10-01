@@ -1,0 +1,3 @@
+./PENDING_APPROVAL.md
+./docs/nota-r6.md
+./requirements/REQ-900.md
