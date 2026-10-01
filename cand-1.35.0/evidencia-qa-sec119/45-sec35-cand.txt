@@ -1,0 +1,30 @@
+tools/arnes-paralelo.sh: lo que no se puede medir no autoriza nada:
+  PASS  paralelo: un REQ SIN PERMISO de lectura se declara y colisiona con todos
+  PASS  paralelo: el recuento de REQ evaluados no baja en silencio
+  PASS  paralelo: un REQ truncado por un byte NUL se declara, no se descarta
+  PASS  paralelo: un archivo que AUN NO EXISTE colisiona con el glob que lo alcanzara
+  PASS  paralelo: un archivo que AUN NO EXISTE colisiona con el DIRECTORIO que lo contendra
+  PASS  paralelo: control, un archivo futuro AJENO al glob sigue siendo disjunto
+  PASS  paralelo: SIMETRIA, archivo futuro y glob colisionan en los DOS ordenes
+  PASS  paralelo: SIMETRIA, archivo futuro y su DIRECTORIO colisionan en los DOS ordenes
+  PASS  paralelo: SIMETRIA control, un futuro AJENO al glob es disjunto en los DOS ordenes
+  PASS  paralelo: un marcador de posicion (TBD) no se acepta como ruta futura
+  PASS  paralelo: y tampoco el que TIENE forma de ruta por accidente (N/A)
+  PASS  paralelo: con Archivos: duplicado gana el ULTIMO, igual que en las puertas
+  PASS  paralelo: --json declara el PATRON, no los archivos que casa hoy
+  PASS  paralelo: control de QA-211, tres REQ bien escritos -> 3 evaluados y colisiona
+  PASS  paralelo: un REQ con los campos DEBAJO del primer ## no desaparece en silencio
+  PASS  paralelo: un REQ SIN Estado: no encoge la poblacion evaluada (siguen siendo 3)
+  PASS  paralelo: un REQ de 0 bytes se declara con motivo, no se descarta
+  PASS  paralelo: un marcador con barra (n/d) tampoco se acepta como ruta futura
+  PASS  paralelo: control, un futuro en un directorio que aun no existe SI es ruta
+  PASS  paralelo/SEC-014: anotar CADA elemento no borra la cola del mapa (los DOS ordenes)
+  PASS  paralelo/SEC-014: los DOS elementos anotados llegan al mapa, ninguno se pierde
+  PASS  paralelo/SEC-014: una anotacion SUELTA entre comas se declara, no se descarta
+  PASS  paralelo/SEC-014 control: la coma DENTRO de la evidencia no parte la lista
+  PASS  paralelo/SEC-014 control: dos elementos anotados AJENOS siguen siendo disjuntos
+  PASS  paralelo: un TABULADOR en el motivo no rompe el JSON
+  PASS  paralelo: un control DENTRO de una ruta se escapa y vuelve igual al leerlo
+aviso: vuelta parcial (1 de 56 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 26 PASS, 0 FAIL

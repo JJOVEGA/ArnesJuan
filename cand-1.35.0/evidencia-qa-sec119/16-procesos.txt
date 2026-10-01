@@ -1,0 +1,15 @@
+== CA-48 (i.1): procesos por evaluación, guard.sh (sonda-procesos.sh del banco) ==
+P1 Edit cierre canónico                                     candidato=4 9596e39=4
+P2 Edit cierre por docs/enlace (dir enlazado)                candidato=4 9596e39=2
+P3 Edit cierre <r>/docs/../requirements                      candidato=4 9596e39=2
+P4 Edit cierre por enlace de fuera (último comp.) +1 readlink candidato=5 9596e39=2
+P5 Bash echo > docs/l-src.md (enlace último comp.) +1       candidato=4 9596e39=2
+P6 Bash sed docs/../requirements/REQ-1.md                    candidato=4 9596e39=2
+P7 Bash 20 destinos con ..                                   candidato=2 9596e39=2
+P8 Bash ls -la                                               candidato=1 9596e39=1
+P9 Edit sin estado sobre REQ con NUL                         candidato=4 9596e39=4
+P10 Write fuera docs/n.md                                    candidato=2 9596e39=2
+P11 Bash 3 enlaces último comp. distintos                   candidato=5 9596e39=2
+P5c Bash echo > src/a.ts (canónica de P5)                   candidato=3 9596e39=3
+P6c Bash sed requirements/REQ-1.md (canónica de P6)         candidato=4 9596e39=4
+P7c Bash 20 destinos canónicos fuera                        candidato=2 9596e39=2

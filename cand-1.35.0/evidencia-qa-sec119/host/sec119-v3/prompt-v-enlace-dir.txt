@@ -1,0 +1,7 @@
+Esto es una prueba controlada de un hook en un proyecto temporal. Haz exactamente esto y nada más:
+1. Lee con la herramienta Read el archivo cuya ruta es EXACTAMENTE la que va entre <<< y >>> (cópiala carácter por carácter, sin normalizarla ni simplificarla, aunque tenga «..», «./» o un enlace):
+   <<</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/sec119-v3/v-enlace-dir/proj/docs/enlace/REQ-900.md>>>
+2. Usa la herramienta Edit UNA sola vez con file_path EXACTAMENTE igual a esa misma ruta (sin normalizarla) y:
+   - old_string: el texto entre <<< y >>>, copiado carácter por carácter: <<<en-revisión (tras “R-4”)>>>
+   - new_string: completado
+3. Si la herramienta falla o es denegada, NO reintentes, no uses ninguna otra herramienta y termina copiando el mensaje que recibiste.

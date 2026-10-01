@@ -1,0 +1,10 @@
+16	ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollado
+16	
+16	
+16	ARNES: no se puede completar 'requirements/REQ-030.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjal
+16	
+16	ARNES: no se puede completar 'requirements/REQ-032.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprob
+16	
+16	ARNES: el comando escribe en 'src/app.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribi
+16	ARNES: este comando escribe en 'requirements/REQ-031.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2
+16	

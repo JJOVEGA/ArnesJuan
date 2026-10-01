@@ -1,0 +1,7 @@
+ruta: 4088 caracteres; comando 1: 60280 bytes (2500 destinos con ..); comando 2: 54890 bytes (3500 destinos)
+<S>/b0/hooks caso 1: allow rc=0 106 ms  
+<S>/b0/hooks caso 2: allow rc=0 2510 ms  
+<S>/b0/hooks caso 3: allow rc=0 1708 ms  
+hooks caso 1: allow rc=0 1206 ms  
+hooks caso 2: deny rc=0 2809 ms  ARNES: no se pudo determinar a que archivo escribe 'd0/../f0': lleva '..' sobre un directorio que todavia no e
+hooks caso 3: allow rc=0 5114 ms  

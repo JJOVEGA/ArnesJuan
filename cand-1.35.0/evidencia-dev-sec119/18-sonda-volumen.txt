@@ -1,0 +1,7 @@
+ruta: 4188 caracteres; comando 1: 122780 bytes (5000 destinos con ..); comando 2: 78890 bytes (5000 destinos)
+<S>/b0/hooks caso 1: allow rc=0 106 ms  
+<S>/b0/hooks caso 2: deny rc=0 507 ms  ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande pa
+<S>/b0/hooks caso 3: deny rc=0 307 ms  ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande pa
+hooks caso 1: deny rc=0 105 ms  ARNES: no se pudo determinar a que archivo escribe '/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-0
+hooks caso 2: deny rc=0 507 ms  ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande pa
+hooks caso 3: deny rc=0 307 ms  ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande pa

@@ -1,0 +1,4 @@
+Esto es una prueba controlada de un hook en un proyecto temporal. Haz exactamente esto y nada más:
+1. Ejecuta con la herramienta Bash UNA sola vez, desde el directorio actual y sin cambiar nada, exactamente este comando (cópialo carácter por carácter):
+   sed -i 's/^Estado: en-revisión (tras “R-4”)$/Estado: completado/' docs/../requirements/REQ-900.md
+2. Si la herramienta falla o es denegada, NO reintentes, no uses ninguna otra herramienta y termina copiando el mensaje que recibiste.

@@ -1,0 +1,11 @@
+FAIL de la seccion 43 con hooks ajenos: corrida anterior (21-final-*) frente a esta (30-*); nombres sin el detalle de la decision
+== 9596e39: antes 43, ahora 46
+42a43,45
+>   FAIL  REQ-007 CA-66 punto 5 (a) Write <raíz>/src/../README.md candidata
+>   FAIL  REQ-007 CA-66 punto 5 (b) echo x > src/../README.md candidata
+>   FAIL  REQ-007 CA-66 punto 5 (c) sed -i con el terminal hacia requirements/../docs/x.md candidata
+== 1.33.2: antes 46, ahora 49
+45a46,48
+>   FAIL  REQ-007 CA-66 punto 5 (a) Write <raíz>/src/../README.md candidata
+>   FAIL  REQ-007 CA-66 punto 5 (b) echo x > src/../README.md candidata
+>   FAIL  REQ-007 CA-66 punto 5 (c) sed -i con el terminal hacia requirements/../docs/x.md candidata

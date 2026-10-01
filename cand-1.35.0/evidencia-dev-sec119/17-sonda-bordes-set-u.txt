@@ -1,0 +1,1 @@
+casos=540 anomalias=0

@@ -1,0 +1,12 @@
+== /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/b0/hooks
+  allow  guard-completado.sh  V1 divergencia: docs/enlace/../requirements/REQ-1.md
+  allow  guard-completado.sh  V2 CA-49 (iv): <raiz>/docs/../docs/enlace-req.md
+  allow  guard-completado.sh  V3 Bash nodet sin mencion: echo x > nuevo/../requirements/REQ-1.md
+  allow  guard-completado.sh  V4 Bash nodet con mencion: sed -i s/x/completado/ nuevo/../requirements/REQ-1.md
+  allow  guard-codigo.sh  V5 Bash nodet en guard-codigo: echo x > nuevo/../docs/x.md
+== hooks
+  deny   guard-completado.sh  V1 divergencia: docs/enlace/../requirements/REQ-1.md :: ARNES: no se pudo determinar a que archivo escribe '<raiz>/docs/enlace/../requirements/REQ-1.md': sus dos lecturas —la del sistema de archivos, que sigue los enlaces, y l
+  deny   guard-completado.sh  V2 CA-49 (iv): <raiz>/docs/../docs/enlace-req.md :: ARNES: 'docs/enlace-req.md' es un ENLACE SIMBOLICO situado dentro del proyecto, y no se escribe a traves de un enlace dentro del proyecto, apunte adonde apunte y lo inten
+  allow  guard-completado.sh  V3 Bash nodet sin mencion: echo x > nuevo/../requirements/REQ-1.md
+  deny   guard-completado.sh  V4 Bash nodet con mencion: sed -i s/x/completado/ nuevo/../requirements/REQ-1.md :: ARNES: este comando escribe en 'nuevo/../requirements/REQ-1.md' y menciona 'completado', y no se pudo determinar a que archivo escribe: lleva '..' sobre un directorio que
+  deny   guard-codigo.sh  V5 Bash nodet en guard-codigo: echo x > nuevo/../docs/x.md :: ARNES: no se pudo determinar a que archivo escribe 'nuevo/../docs/x.md': lleva '..' sobre un directorio que todavia no existe, y el sistema no puede resolverlo. Sin saber

@@ -1,0 +1,5 @@
+== B10: 30 invocaciones simultáneas por entrada (90 procesos a la vez) ==
+J1: deny=30 allow=0
+J2: deny=30 allow=0
+J3: deny=0 allow=30
+cwd del proceso tras las corridas: sin efecto (cada hook es su propio proceso)

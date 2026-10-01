@@ -1,0 +1,2 @@
+base 9596e39 verificada=1
+1.33.2 cache vs tag v1.33.2 comprobado

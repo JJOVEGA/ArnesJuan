@@ -1,0 +1,21 @@
+2026-09-30T12:25:20-06:00
+f603a8c4ac7d8b76b1ce8f782b3ed730eff36d3a
+ M docs/ESTADO.md
+ M hooks/guard-codigo.sh
+ M hooks/guard-completado.sh
+ M hooks/lib.sh
+ M tests/escenarios/hooks/README.md
+ M tests/escenarios/hooks/run.sh
+ M tests/escenarios/hooks/secciones/32-huecos-auditoria-r001.sh
+ M tests/escenarios/hooks/secciones/33-acento-y-clave-2-manifiesto.sh
+?? propuesta-v1.35.0/
+?? tests/escenarios/hooks/secciones/43-identidad-del-destino.sh
+ docs/ESTADO.md                                     |   4 +-
+ hooks/guard-codigo.sh                              |  36 +-
+ hooks/guard-completado.sh                          | 120 +++--
+ hooks/lib.sh                                       | 489 +++++++++++++++++++--
+ tests/escenarios/hooks/README.md                   |  14 +-
+ tests/escenarios/hooks/run.sh                      |   7 +-
+ .../hooks/secciones/32-huecos-auditoria-r001.sh    |  21 +-
+ .../secciones/33-acento-y-clave-2-manifiesto.sh    |  27 +-
+ 8 files changed, 603 insertions(+), 115 deletions(-)

@@ -1,0 +1,7 @@
+techo=65536 forma=A bytes=65482 destinos=4162 | 9596e39 ms: 4715(allow,rc0) 5721(allow,rc0) 3413(allow,rc0) 2309(allow,rc0) 3011(allow,rc0) | candidato ms: 13738(allow,rc0) 8121(allow,rc0) 6116(allow,rc0) 7918(allow,rc0) 6717(allow,rc0) | carga=7.83 6.76 4.61
+techo=65536 forma=B bytes=65490 destinos=3700 | 9596e39 ms: 2410(allow,rc0) 2509(allow,rc0) 2911(allow,rc0) 1808(allow,rc0) 1609(allow,rc0) | candidato ms: 7019(allow,rc0) 7420(allow,rc0) 5414(allow,rc0) 5820(allow,rc0) 4813(allow,rc0) | carga=4.99 6.15 4.52
+techo=65536 forma=C bytes=65490 destinos=2775 | 9596e39 ms: 1308(allow,rc0) 1307(allow,rc0) 1613(allow,rc0) 1509(allow,rc0) 1407(allow,rc0) | candidato ms: 3911(allow,rc0) 6015(allow,rc0) 4713(allow,rc0) 5615(allow,rc0) 4311(allow,rc0) | carga=3.48 5.64 4.42
+techo=131072 forma=A bytes=131018 destinos=8258 | 9596e39 ms: 6815(allow,rc0) 5214(allow,rc0) 6930(allow,rc0) 5914(allow,rc0) 5813(allow,rc0) | candidato ms: 11121(allow,rc0) 12122(allow,rc0) 11025(allow,rc0) 9722(allow,rc0) 9720(allow,rc0) | carga=2.64 4.75 4.22
+techo=131072 forma=B bytes=131028 destinos=7341 | 9596e39 ms: 4313(allow,rc0) 3811(allow,rc0) 3712(allow,rc0) 3911(allow,rc0) 3711(allow,rc0) | candidato ms: 10219(allow,rc0) 9920(allow,rc0) 10420(allow,rc0) 10320(allow,rc0) 10622(allow,rc0) | carga=2.31 4.14 4.05
+techo=131072 forma=C bytes=131034 destinos=5506 | 9596e39 ms: 2909(allow,rc0) 2909(allow,rc0) 2910(allow,rc0) 2910(allow,rc0) 2911(allow,rc0) | candidato ms: 9719(allow,rc0) 9620(allow,rc0) 9819(allow,rc0) 9519(allow,rc0) 9719(allow,rc0) | carga=2.67 3.83 3.95
+rc=0

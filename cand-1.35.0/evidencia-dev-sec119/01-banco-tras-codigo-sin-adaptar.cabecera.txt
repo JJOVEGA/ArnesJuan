@@ -1,0 +1,7 @@
+2026-09-30T12:00:52-06:00
+f603a8c4ac7d8b76b1ce8f782b3ed730eff36d3a
+ M docs/ESTADO.md
+ M hooks/guard-codigo.sh
+ M hooks/guard-completado.sh
+ M hooks/lib.sh
+?? propuesta-v1.35.0/

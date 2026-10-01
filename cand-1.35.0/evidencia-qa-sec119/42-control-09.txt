@@ -1,0 +1,12 @@
+Cierre de REQ por Bash (guard-completado):
+  PASS  sed -i que cierra un REQ -> deny  (deny)
+  PASS  heredoc que cierra un REQ -> deny  (deny)
+  PASS  leer un REQ que menciona completado -> allow  (allow)
+  PASS  anotar en un REQ sin cerrarlo -> allow  (allow)
+  PASS  escribir fuera de requirements/ -> allow  (allow)
+  PASS  heredoc sin citar que cierra un REQ con sed -i -> deny  (deny)
+  PASS  QA: comilla impar en el cuerpo NO puede desarmar el sed -i que cierra el REQ -> deny  (deny)
+  PASS  QA: control, el mismo sed -i sin el heredoc delante -> deny  (deny)
+aviso: vuelta parcial (1 de 56 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 8 PASS, 0 FAIL

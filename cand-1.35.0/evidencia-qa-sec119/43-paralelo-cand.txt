@@ -1,0 +1,127 @@
+Paralelismo por archivos — requirements/ (15 REQ evaluados)
+
+  REQ-001    en-revision   hooks/guard-completado.sh hooks/lib.sh tests/escenarios/hooks/run.sh tests/escenarios/hooks/autoprueba-corredor.sh tests/escenarios/hooks/secciones/*.sh
+  REQ-007    en-progreso   hooks/lib.sh hooks/campos-req.awk hooks/guard-completado.sh hooks/guard-codigo.sh hooks/estado-derivado.sh hooks/stop.sh tools/arnes-lectura.sh tools/arnes-paralelo.sh templates skills/arnes-upgrade/SKILL.md AGENTS.md requirements/README.md requirements/REQ-007.md requirements/REQ-023.md docs/decisions/ADR-015-edicion-no-reconstruible-se-deniega.md docs/decisions/ADR-016-identidad-del-destino-y-archivo-ilegible.md tests/escenarios/hooks/run.sh tests/escenarios/hooks/README.md tests/escenarios/hooks/autoprueba-corredor.sh tests/escenarios/hooks/secciones/01-guard-codigo-quien-edita.sh tests/escenarios/hooks/secciones/04-windows-formas-del-manifiesto.sh tests/escenarios/hooks/secciones/06-bash-escrituras-evidentes.sh tests/escenarios/hooks/secciones/07-bash-falsos-positivos.sh tests/escenarios/hooks/secciones/09-cierre-de-req-por-bash.sh tests/escenarios/hooks/secciones/14-campos-solo-en-la-cabecera.sh tests/escenarios/hooks/secciones/16-guard-punto-de-entrada.sh tests/escenarios/hooks/secciones/32-huecos-auditoria-r001.sh tests/escenarios/hooks/secciones/33-acento-y-clave-2-manifiesto.sh tests/escenarios/hooks/secciones/42-edicion-no-reconstruible.sh tests/escenarios/hooks/secciones/43-identidad-del-destino.sh docs/qa/1.33.0.md docs/qa/REQ-023.md docs/seguridad/registro-seguridad.md CHANGELOG.md
+  REQ-008    pendiente     skills/arnes-panel/SKILL.md skills/arnes-panel/templates/panel.html tools/arnes-avance.sh templates/arnes-config.json.tpl skills/arnes-upgrade/SKILL.md tests/escenarios requirements/REQ-008.md docs/qa/1.34.0.md
+  REQ-011    pendiente     hooks/post-bash.sh hooks/hooks.json hooks/lib.sh templates skills/arnes-upgrade/SKILL.md tests/escenarios/hooks/run.sh requirements/REQ-011.md docs/qa/1.33.0.md CHANGELOG.md
+  REQ-013    en-revision   tools/arnes-paralelo.sh requirements/README.md requirements/REQ-013.md AGENTS.md templates/AGENTS.md.tpl templates/requirements-README.md.tpl skills/arnes-upgrade/SKILL.md tests/escenarios/hooks/secciones/34-arnes-paralelo.sh tests/escenarios/hooks/secciones/35-arnes-paralelo-fail-open.sh tests/escenarios/hooks/run.sh tests/escenarios/hooks/autoprueba-corredor.sh tests/escenarios/hooks/README.md ARCHITECTURE.md docs/qa/1.32.0.md CHANGELOG.md
+  REQ-018    borrador      requirements/REQ-018.md .github/ISSUE_TEMPLATE/config.yml .github/ISSUE_TEMPLATE/defecto-del-arnes.yml .github/ISSUE_TEMPLATE/mejora-del-arnes.yml AGENTS.md templates/AGENTS.md.tpl docs/seguridad/gobernanza-datos.md hooks/lib.sh hooks/estado-derivado.sh .arnes/config.json templates/arnes-config.json.tpl tests/escenarios/hooks/secciones/*canal-de-informes*.sh tests/escenarios/hooks/run.sh docs/qa/REQ-018.md
+  REQ-019    pendiente     AGENTS.md requirements/README.md docs/arnes/*.md docs/gobernanza/autoalojamiento.md docs/decisions/ADR-*.md requirements/REQ-*.md docs/qa/1.34.0.md CHANGELOG.md
+  REQ-020    pendiente     requirements/REQ-020.md requirements/README.md templates/requirements-README.md.tpl tests/escenarios/hooks/run.sh tests/escenarios/hooks/autoprueba-corredor.sh tests/escenarios/hooks/README.md tests/escenarios/hooks/secciones/*.sh docs/qa/1.33.0.md
+  REQ-021    bloqueado     requirements/REQ-021.md tests/util/sonda-reloj.sh tests/util/sonda-procesos.sh tests/util/sonda-linea-base.sh tests/util/README.md tests/escenarios/hooks/run.sh tests/escenarios/hooks/README.md tests/escenarios/hooks/autoprueba-corredor.sh tests/escenarios/hooks/secciones/37-coste-del-escaner-1-escala.sh tests/escenarios/hooks/secciones/37-coste-del-escaner-2-la-seccion-caliente.sh tests/escenarios/hooks/secciones/38-sondas-compartidas.sh docs/decisions/ADR-005-instrumentos-compartidos-en-tests-util.md docs/qa/1.33.0.md docs/qa/1.34.0.md
+  REQ-022    pendiente     requirements/REQ-022.md requirements/REQ-007.md requirements/REQ-008.md requirements/REQ-011.md requirements/REQ-013.md requirements/REQ-017.md requirements/REQ-019.md requirements/REQ-020.md requirements/REQ-021.md requirements/README.md AGENTS.md .arnes/config.json tools/arnes-paralelo.sh tools/arnes-ambito.sh hooks/guard-codigo.sh hooks/lib.sh agents/qa-tester.md templates/AGENTS.md.tpl templates/requirements-README.md.tpl templates/arnes-config.json.tpl skills/arnes-upgrade/SKILL.md tests/escenarios/hooks/secciones/*ambito*.sh tests/escenarios/hooks/run.sh ARCHITECTURE.md docs/qa/REQ-022.md
+  REQ-023    en-revision   hooks/lib.sh hooks/guard-completado.sh tools/arnes-lectura.sh tests/escenarios/hooks/secciones/41-variante-de-clave-de-control.sh tests/escenarios/hooks/run.sh tests/escenarios/hooks/README.md tests/escenarios/hooks/autoprueba-corredor.sh tests/escenarios/hooks/secciones/01-guard-codigo-quien-edita.sh tests/escenarios/hooks/secciones/02-guard-completado-transicion.sh tests/escenarios/hooks/secciones/03-veredictos-anti-deriva.sh tests/escenarios/hooks/secciones/04-windows-formas-del-manifiesto.sh tests/escenarios/hooks/secciones/05-identidad-del-agente.sh tests/escenarios/hooks/secciones/08-clase-del-hallazgo.sh tests/escenarios/hooks/secciones/10-plantilla-pending-approval.sh tests/escenarios/hooks/secciones/11-nivel-de-rigor.sh tests/escenarios/hooks/secciones/12-rigor-ligero.sh tests/escenarios/hooks/secciones/13-orden-del-ciclo.sh tests/escenarios/hooks/secciones/14-campos-solo-en-la-cabecera.sh tests/escenarios/hooks/secciones/15-formas-decoradas.sh tests/escenarios/hooks/secciones/16-guard-punto-de-entrada.sh tests/escenarios/hooks/secciones/17-asterisco-de-nota-al-pie.sh tests/escenarios/hooks/secciones/18-parentesis-es-evidencia.sh tests/escenarios/hooks/secciones/19-cola-hasta-la-cabecera.sh tests/escenarios/hooks/secciones/26-veredicto-fechado.sh tests/escenarios/hooks/secciones/27-vocabulario-de-veredictos.sh tests/escenarios/hooks/secciones/30-celdas-recortadas.sh tests/escenarios/hooks/secciones/31-cola-una-sola-regla.sh tests/escenarios/hooks/secciones/32-huecos-auditoria-r001.sh tests/escenarios/hooks/secciones/33-acento-y-clave-1-normalizacion.sh tests/escenarios/hooks/secciones/34-arnes-paralelo.sh tests/escenarios/hooks/secciones/36-cabecera-comentario-html-5-el-cr-que-no-termina.sh tests/escenarios/hooks/secciones/37-coste-del-escaner-5-el-camino-normal.sh tests/escenarios/hooks/secciones/37-coste-del-escaner-7-los-controles.sh tests/escenarios/hooks/secciones/40-estabilizacion-firmas-y-rigor.sh tests/escenarios/hooks/secciones/42-edicion-no-reconstruible.sh AGENTS.md templates/AGENTS.md.tpl skills/arnes-upgrade/SKILL.md
+  REQ-024    borrador      hooks/lib.sh hooks/guard-completado.sh tools/arnes-lectura.sh tests/escenarios/hooks/secciones/31-cola-una-sola-regla.sh tests/escenarios/hooks/secciones/40-ausencia-que-abre-1-la-clase-derivada.sh tests/escenarios/hooks/secciones/40-ausencia-que-abre-2-migracion-y-punteros.sh tests/escenarios/hooks/run.sh tests/escenarios/hooks/README.md AGENTS.md templates/AGENTS.md.tpl skills/arnes-upgrade/SKILL.md .arnes/config.json templates/arnes-config.json.tpl docs/decisions/ADR-006-la-ausencia-de-un-campo-no-se-resuelve-del-lado-que-abre.md docs/decisions/ADR-007-el-grano-de-la-nocion-de-comentario-en-la-cola.md CHANGELOG.md
+  REQ-025    en-revision   requirements/REQ-025.md requirements/README.md requirements/REQ-028.md AGENTS.md templates/AGENTS.md.tpl templates/PENDING_APPROVAL.md.tpl PENDING_APPROVAL.md skills/arnes-upgrade/SKILL.md agents/qa-tester.md agents/auditor-seguridad.md agents/desarrollador.md agents/analista-requerimientos.md docs/decisions/*.md docs/arnes/*.md docs/qa/REQ-025.md
+  REQ-028    borrador      requirements/REQ-028.md tools/arnes-comprobar.sh tests/escenarios/hooks/secciones/*comprobar*.sh tests/escenarios/hooks/run.sh AGENTS.md templates/AGENTS.md.tpl skills/arnes-upgrade/SKILL.md .github/workflows/*.yml docs/arnes/*.md docs/qa/REQ-028.md
+  REQ-031    en-revision   requirements/REQ-031.md requirements/README.md templates/requirements-README.md.tpl hooks/guard-completado.sh hooks/lib.sh tests/escenarios/hooks/secciones/08-clase-del-hallazgo.sh tests/escenarios/hooks/secciones/32-huecos-auditoria-r001.sh tests/escenarios/hooks/run.sh requirements/REQ-007.md docs/decisions/ADR-013-gramatica-cerrada-de-hallazgos-abiertos.md agents/analista-requerimientos.md AGENTS.md templates/AGENTS.md.tpl docs/qa/REQ-031.md docs/seguridad/registro-seguridad.md
+
+  REQ-001    vs REQ-007     colisiona  hooks/guard-completado.sh
+  REQ-001    vs REQ-008     colisiona  tests/escenarios/hooks/run.sh
+  REQ-001    vs REQ-011     colisiona  hooks/lib.sh
+  REQ-001    vs REQ-013     colisiona  tests/escenarios/hooks/run.sh
+  REQ-001    vs REQ-018     colisiona  hooks/lib.sh
+  REQ-001    vs REQ-019     disjunto   
+  REQ-001    vs REQ-020     colisiona  tests/escenarios/hooks/run.sh
+  REQ-001    vs REQ-021     colisiona  tests/escenarios/hooks/run.sh
+  REQ-001    vs REQ-022     colisiona  hooks/lib.sh
+  REQ-001    vs REQ-023     colisiona  hooks/guard-completado.sh
+  REQ-001    vs REQ-024     colisiona  hooks/guard-completado.sh
+  REQ-001    vs REQ-025     disjunto   
+  REQ-001    vs REQ-028     colisiona  tests/escenarios/hooks/run.sh
+  REQ-001    vs REQ-031     colisiona  hooks/guard-completado.sh
+  REQ-007    vs REQ-008     colisiona  tests/escenarios/hooks/run.sh
+  REQ-007    vs REQ-011     colisiona  hooks/lib.sh
+  REQ-007    vs REQ-013     colisiona  tests/escenarios/hooks/run.sh
+  REQ-007    vs REQ-018     colisiona  hooks/lib.sh
+  REQ-007    vs REQ-019     colisiona  AGENTS.md
+  REQ-007    vs REQ-020     colisiona  tests/escenarios/hooks/run.sh
+  REQ-007    vs REQ-021     colisiona  tests/escenarios/hooks/run.sh
+  REQ-007    vs REQ-022     colisiona  hooks/lib.sh
+  REQ-007    vs REQ-023     colisiona  hooks/guard-completado.sh
+  REQ-007    vs REQ-024     colisiona  hooks/guard-completado.sh
+  REQ-007    vs REQ-025     colisiona  templates/AGENTS.md.tpl
+  REQ-007    vs REQ-028     colisiona  tests/escenarios/hooks/run.sh
+  REQ-007    vs REQ-031     colisiona  hooks/guard-completado.sh
+  REQ-008    vs REQ-011     colisiona  tests/escenarios/hooks/run.sh
+  REQ-008    vs REQ-013     colisiona  tests/escenarios/hooks/run.sh
+  REQ-008    vs REQ-018     colisiona  tests/escenarios/hooks/run.sh
+  REQ-008    vs REQ-019     colisiona  requirements/REQ-008.md
+  REQ-008    vs REQ-020     colisiona  tests/escenarios/hooks/run.sh
+  REQ-008    vs REQ-021     colisiona  tests/escenarios/hooks/run.sh
+  REQ-008    vs REQ-022     colisiona  tests/escenarios/hooks/run.sh
+  REQ-008    vs REQ-023     colisiona  tests/escenarios/hooks/run.sh
+  REQ-008    vs REQ-024     colisiona  tests/escenarios/hooks/run.sh
+  REQ-008    vs REQ-025     colisiona  skills/arnes-upgrade/SKILL.md
+  REQ-008    vs REQ-028     colisiona  tests/escenarios/hooks/run.sh
+  REQ-008    vs REQ-031     colisiona  tests/escenarios/hooks/run.sh
+  REQ-011    vs REQ-013     colisiona  tests/escenarios/hooks/run.sh
+  REQ-011    vs REQ-018     colisiona  hooks/lib.sh
+  REQ-011    vs REQ-019     colisiona  CHANGELOG.md
+  REQ-011    vs REQ-020     colisiona  tests/escenarios/hooks/run.sh
+  REQ-011    vs REQ-021     colisiona  tests/escenarios/hooks/run.sh
+  REQ-011    vs REQ-022     colisiona  hooks/lib.sh
+  REQ-011    vs REQ-023     colisiona  hooks/lib.sh
+  REQ-011    vs REQ-024     colisiona  hooks/lib.sh
+  REQ-011    vs REQ-025     colisiona  templates/AGENTS.md.tpl
+  REQ-011    vs REQ-028     colisiona  tests/escenarios/hooks/run.sh
+  REQ-011    vs REQ-031     colisiona  hooks/lib.sh
+  REQ-013    vs REQ-018     colisiona  tests/escenarios/hooks/run.sh
+  REQ-013    vs REQ-019     colisiona  AGENTS.md
+  REQ-013    vs REQ-020     colisiona  tests/escenarios/hooks/run.sh
+  REQ-013    vs REQ-021     colisiona  tests/escenarios/hooks/run.sh
+  REQ-013    vs REQ-022     colisiona  tests/escenarios/hooks/run.sh
+  REQ-013    vs REQ-023     colisiona  tests/escenarios/hooks/run.sh
+  REQ-013    vs REQ-024     colisiona  tests/escenarios/hooks/run.sh
+  REQ-013    vs REQ-025     colisiona  templates/AGENTS.md.tpl
+  REQ-013    vs REQ-028     colisiona  tests/escenarios/hooks/run.sh
+  REQ-013    vs REQ-031     colisiona  tests/escenarios/hooks/run.sh
+  REQ-018    vs REQ-019     colisiona  AGENTS.md
+  REQ-018    vs REQ-020     colisiona  tests/escenarios/hooks/run.sh
+  REQ-018    vs REQ-021     colisiona  tests/escenarios/hooks/run.sh
+  REQ-018    vs REQ-022     colisiona  hooks/lib.sh
+  REQ-018    vs REQ-023     colisiona  hooks/lib.sh
+  REQ-018    vs REQ-024     colisiona  hooks/lib.sh
+  REQ-018    vs REQ-025     colisiona  templates/AGENTS.md.tpl
+  REQ-018    vs REQ-028     colisiona  tests/escenarios/hooks/run.sh
+  REQ-018    vs REQ-031     colisiona  hooks/lib.sh
+  REQ-019    vs REQ-020     colisiona  requirements/README.md
+  REQ-019    vs REQ-021     colisiona  docs/qa/1.34.0.md
+  REQ-019    vs REQ-022     colisiona  AGENTS.md
+  REQ-019    vs REQ-023     colisiona  AGENTS.md
+  REQ-019    vs REQ-024     colisiona  AGENTS.md
+  REQ-019    vs REQ-025     colisiona  AGENTS.md
+  REQ-019    vs REQ-028     colisiona  AGENTS.md
+  REQ-019    vs REQ-031     colisiona  AGENTS.md
+  REQ-020    vs REQ-021     colisiona  tests/escenarios/hooks/run.sh
+  REQ-020    vs REQ-022     colisiona  tests/escenarios/hooks/run.sh
+  REQ-020    vs REQ-023     colisiona  tests/escenarios/hooks/run.sh
+  REQ-020    vs REQ-024     colisiona  tests/escenarios/hooks/run.sh
+  REQ-020    vs REQ-025     colisiona  requirements/README.md
+  REQ-020    vs REQ-028     colisiona  tests/escenarios/hooks/run.sh
+  REQ-020    vs REQ-031     colisiona  tests/escenarios/hooks/run.sh
+  REQ-021    vs REQ-022     colisiona  tests/escenarios/hooks/run.sh
+  REQ-021    vs REQ-023     colisiona  tests/escenarios/hooks/run.sh
+  REQ-021    vs REQ-024     colisiona  tests/escenarios/hooks/run.sh
+  REQ-021    vs REQ-025     colisiona  docs/decisions/ADR-005-instrumentos-compartidos-en-tests-util.md
+  REQ-021    vs REQ-028     colisiona  tests/escenarios/hooks/run.sh
+  REQ-021    vs REQ-031     colisiona  tests/escenarios/hooks/run.sh
+  REQ-022    vs REQ-023     colisiona  hooks/lib.sh
+  REQ-022    vs REQ-024     colisiona  hooks/lib.sh
+  REQ-022    vs REQ-025     colisiona  templates/AGENTS.md.tpl
+  REQ-022    vs REQ-028     colisiona  tests/escenarios/hooks/run.sh
+  REQ-022    vs REQ-031     colisiona  hooks/lib.sh
+  REQ-023    vs REQ-024     colisiona  hooks/guard-completado.sh
+  REQ-023    vs REQ-025     colisiona  templates/AGENTS.md.tpl
+  REQ-023    vs REQ-028     colisiona  tests/escenarios/hooks/run.sh
+  REQ-023    vs REQ-031     colisiona  hooks/guard-completado.sh
+  REQ-024    vs REQ-025     colisiona  templates/AGENTS.md.tpl
+  REQ-024    vs REQ-028     colisiona  tests/escenarios/hooks/run.sh
+  REQ-024    vs REQ-031     colisiona  hooks/guard-completado.sh
+  REQ-025    vs REQ-028     colisiona  templates/AGENTS.md.tpl
+  REQ-025    vs REQ-031     colisiona  templates/AGENTS.md.tpl
+  REQ-028    vs REQ-031     colisiona  tests/escenarios/hooks/run.sh
+
+Hay pares que COLISIONAN: esas comisiones van en serie.
+
+Esta herramienta evalúa ARCHIVOS y NO el orden de fases: un «disjunto» no autoriza a correr el auditor-seguridad a la vez que el qa-tester, ni el qa-tester antes que el desarrollador. Esa regla es aparte, vive en AGENTS.md §6 y esta herramienta no la comprueba.

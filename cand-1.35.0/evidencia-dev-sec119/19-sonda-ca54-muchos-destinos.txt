@@ -1,0 +1,10 @@
+techo 65536: comando de 65498 bytes con 4163 destinos
+  b0/hooks corrida 1: allow rc=0 2809 ms
+  b0/hooks corrida 2: allow rc=0 2108 ms
+  hooks corrida 1: allow rc=0 4913 ms
+  hooks corrida 2: allow rc=0 6214 ms
+techo 131072: comando de 131034 bytes con 8259 destinos
+  b0/hooks corrida 1: allow rc=0 4813 ms
+  b0/hooks corrida 2: allow rc=0 7733 ms
+  hooks corrida 1: allow rc=0 12840 ms
+  hooks corrida 2: allow rc=0 16161 ms

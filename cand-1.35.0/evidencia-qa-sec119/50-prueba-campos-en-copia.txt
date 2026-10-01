@@ -1,0 +1,15 @@
+== (a) cada Edit, literal, por la puerta real (agente qa-tester)
+REQ-007  007-qa    allow
+REQ-007  007-hall  allow
+REQ-023  023-qa    allow
+REQ-023  023-hall  allow
+REQ-031  031-qa    allow
+REQ-001  001-qa    allow
+== (b) cierre simulado sobre la copia ya editada (REQ-007 con QA y Seguridad puestos en aprobado SOLO en la copia; cola vacía)
+REQ-007  cierre: deny | ARNES: no se puede completar 'requirements/REQ-007.md': el hallazgo 'qa-114' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no afecta a lo que alguien ve, decide o cobra ni a lo que el RE
+REQ-023  cierre: allow
+REQ-031  cierre: allow
+REQ-001  cierre: allow
+== (c) lectura de campos con el lector del arnés (tools/arnes-lectura.sh) sobre la copia
+== (d) REQ-007 en la copia sólo con QA-023-09/10/11: deny | ARNES: no se puede completar 'requirements/REQ-007.md': el hallazgo 'qa-023-09' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no afecta a lo que alguien ve,
+== (e) las mismas tres pasadas a instrumento (sólo en la copia): allow

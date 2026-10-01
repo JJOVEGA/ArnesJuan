@@ -1,0 +1,40 @@
+Campos solo en la cabecera (la historia no es un veredicto):
+  PASS  historia con 'Seguridad: aprobado (...)' a col. 0 NO cierra -> deny  (deny)
+  PASS  control: la CABECERA si se lee (aprobado arriba, pendiente en historia) -> allow  (allow)
+  PASS  vineta '- Seguridad:' en historia tampoco cuenta -> deny  (deny)
+  PASS  un Edit que aprueba QA y cierra a la vez: se lee el documento resultante -> allow  (allow)
+  PASS  MultiEdit: cierra y aprueba SOLO la linea del historial -> deny  (deny)
+  PASS  control: MultiEdit que aprueba la CABECERA y cierra -> allow  (allow)
+  PASS  MultiEdit sobre un REQ CRLF: el bypass tambien -> deny  (deny)
+  PASS  Edit: 'Estado: completado' solo en la historia NO es una transicion -> allow  (allow)
+  PASS  transicion por documento: Edit que sustituye SOLO el valor -> deny  (deny)
+  PASS  transicion por documento: ...y el motivo nombra el veredicto que falta
+  PASS  transicion por documento: control, SOLO el valor con todo en verde -> allow  (allow)
+  PASS  transicion por documento: SOLO el valor sobre un REQ sensible sin auditoria -> deny  (deny)
+  PASS  transicion por documento: MultiEdit con SOLO el valor + fila de historial -> deny  (deny)
+  PASS  transicion por documento: replace_all sustituye TODAS las ocurrencias -> deny  (deny)
+  PASS  transicion por documento: control, sin replace_all solo la primera y la cabecera no cambia -> allow  (allow)
+  PASS  transicion por documento: SOLO el valor sobre un REQ CRLF -> deny  (deny)
+  PASS  transicion por documento: Write con la cabecera completa -> deny  (deny)
+  PASS  transicion por documento: control, Write que solo CITA el estado en el cuerpo -> allow  (allow)
+  PASS  transicion por documento: Write sobre un REQ que EN DISCO ya estaba terminal -> allow  (allow)
+  PASS  transicion por documento: control, el mismo Write sobre un REQ NO terminal -> deny  (deny)
+  PASS  transicion por documento: old_string ausente + 'Estado: completado' -> deny por no reconstruible (REQ-001 CA-10)
+  PASS  transicion por documento: old_string ausente y 'completado' a secas -> deny por no reconstruible (REQ-001 CA-11, era allow)
+  PASS  transicion por documento: REQ inexistente en disco -> deny por no reconstruible (REQ-001 CA-12) y sin traza de bash
+  PASS  transicion por documento: la cabecera en disco YA decia completado -> allow  (allow)
+  PASS  transicion por documento: reabrir un REQ cerrado a en-progreso -> allow  (allow)
+  PASS  transicion por documento: SOLO el valor con la cola de aprobaciones abierta -> deny
+  PASS  transicion por documento: SOLO el valor con una quality gate roja -> deny
+  PASS  transicion por documento: estado terminal 'hecho' del manifiesto -> deny  (deny)
+  PASS  transicion por documento: control, 'completado' ya no es terminal en ese manifiesto -> allow  (allow)
+  PASS  QA: Edit con la LINEA ENTERA 'Estado: completado' -> deny  (deny)
+  PASS  QA: el valor en MAYUSCULAS -> deny  (deny)
+  PASS  QA: el valor con su parentesis de evidencia -> deny  (deny)
+  PASS  QA: el valor en **negrita** -> deny  (deny)
+  PASS  QA: el valor con espacios de mas tras los dos puntos -> deny  (deny)
+  PASS  QA: MultiEdit encadenado (edit1 crea lo que busca edit2) -> deny  (deny)
+  PASS  QA: control, edit2 busca lo que edit1 destruyo: no reconstruible -> deny nombrando la edicion 2 (era allow)
+aviso: vuelta parcial (1 de 56 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 36 PASS, 0 FAIL

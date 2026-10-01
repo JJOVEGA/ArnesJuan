@@ -1,0 +1,97 @@
+== 9596e39
+      1 otro | una ruta de 4187 caracteres: no determinable, y el motivo cita 200 bytes y cabe con holgura  decisión=allow motivo=0 bytes
+      1 otro | los motivos de D y R dicen su causa y no nombran otra herramienta como salida  D1 req: sin motivo D1 src: sin motivo D3 req: sin motivo D4 guard-codigo: sin motivo
+      1 otro | R7 candidata  el motivo no casa /no se puede leer entero como archivo de texto.*no es un archivo regular/
+      1 otro | R6 (b) terminal y QA pendiente candidata  el motivo no casa /veredicto de QA es 'pendiente'/
+      1 otro | R2 candidata  el motivo no casa /no se puede leer entero como archivo de texto/
+      1 failbefore(cand deny,base allow) | V4 Bash no determinable, con mención candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | V2 CA-49 (iv) candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | V1 divergencia candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | S2 (b) por I3 candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | R5 candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | R4 candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | R3 candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | R1 candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I9 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I9 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I8 raíz bajo /tmp candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I8 /tmp/.. delante candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I7 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I7 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I6 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I6 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I4 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I4 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I3 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I3 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I13 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I13 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I12 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I12 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I11 (b) su destino, directo candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I10 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I10 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D4 guard-completado candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D4 guard-codigo candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D3 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D3 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D2 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D2 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D1 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D1 req candidata  esperado=deny got=allow
+      1 MOVIMIENTO(cand allow,base deny) | punto 5 (c) sed -i con el terminal hacia requirements/../docs/x.md candidata  esperado=allow got=deny
+      1 MOVIMIENTO(cand allow,base deny) | punto 5 (b) echo x > src/../README.md candidata  esperado=allow got=deny
+      1 MOVIMIENTO(cand allow,base deny) | punto 5 (a) Write <raíz>/src/../README.md candidata  esperado=allow got=deny
+      1 MOVIMIENTO(cand allow,base deny) | R6 (c) terminal y todo en verde candidata  esperado=allow got=deny
+      1 MOVIMIENTO(cand allow,base deny) | M1 (a) ruta equivalente al manifiesto, sola candidata  esperado=allow got=deny
+      1 MOVIMIENTO(cand allow,base deny) | L8 candidata  esperado=allow got=deny
+== 1.33.2
+      1 otro | una ruta de 4187 caracteres: no determinable, y el motivo cita 200 bytes y cabe con holgura  decisión=allow motivo=0 bytes
+      1 otro | los motivos de D y R dicen su causa y no nombran otra herramienta como salida  D1 req: sin motivo D1 src: sin motivo D3 req: sin motivo D4 guard-codigo: sin motivo
+      1 otro | S2 (a) canónica 9596e39: control, decide igual  9596e39=deny candidata=allow
+      1 otro | R7 9596e39: control, decide igual  9596e39=deny candidata=allow
+      1 otro | R6 (b) terminal y QA pendiente candidata  el motivo no casa /veredicto de QA es 'pendiente'/
+      1 otro | R2 candidata  el motivo no casa /no se puede leer entero como archivo de texto/
+      1 failbefore(cand deny,base allow) | V4 Bash no determinable, con mención candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | V2 CA-49 (iv) candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | V1 divergencia candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | S2 (b) por I3 candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | S2 (a) canónica candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | R7 candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | R5 candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | R4 candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | R3 candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | R1 candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I9 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I9 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I8 raíz bajo /tmp candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I8 /tmp/.. delante candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I7 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I7 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I6 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I6 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I4 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I4 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I3 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I3 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I13 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I13 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I12 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I12 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I11 (b) su destino, directo candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I10 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | I10 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D4 guard-completado candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D4 guard-codigo candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D3 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D3 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D2 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D2 req candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D1 src candidata  esperado=deny got=allow
+      1 failbefore(cand deny,base allow) | D1 req candidata  esperado=deny got=allow
+      1 MOVIMIENTO(cand allow,base deny) | punto 5 (c) sed -i con el terminal hacia requirements/../docs/x.md candidata  esperado=allow got=deny
+      1 MOVIMIENTO(cand allow,base deny) | punto 5 (b) echo x > src/../README.md candidata  esperado=allow got=deny
+      1 MOVIMIENTO(cand allow,base deny) | punto 5 (a) Write <raíz>/src/../README.md candidata  esperado=allow got=deny
+      1 MOVIMIENTO(cand allow,base deny) | R6 (c) terminal y todo en verde candidata  esperado=allow got=deny
+      1 MOVIMIENTO(cand allow,base deny) | M1 (a) ruta equivalente al manifiesto, sola candidata  esperado=allow got=deny
+      1 MOVIMIENTO(cand allow,base deny) | L8 candidata  esperado=allow got=deny

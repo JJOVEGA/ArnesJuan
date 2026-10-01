@@ -1,0 +1,6 @@
+## gate 1
+rc=0
+## gate 2
+rc=0
+## gate 3
+rc=0

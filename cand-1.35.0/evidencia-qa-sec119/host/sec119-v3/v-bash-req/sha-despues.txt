@@ -1,0 +1,1 @@
+2a19ec48a860d1df6e3eeba80bb472f5cbe5719f2788d66d400e8524f9662434  /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/sec119-v3/v-bash-req/proj/requirements/REQ-900.md

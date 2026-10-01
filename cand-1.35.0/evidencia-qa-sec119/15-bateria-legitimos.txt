@@ -1,0 +1,30 @@
+== B8: operaciones legítimas de la coordinadora (deben permitir) ==
+B8.1 npm test > out.log 2>&1                               cand=allow 9596e39=allow 1.33.2=allow | 
+B8.2 mkdir -p a/b && echo x > a/b/c.txt                    cand=allow 9596e39=allow 1.33.2=allow | 
+B8.3 echo x > /tmp/qa-x.txt                                cand=allow 9596e39=allow 1.33.2=allow | 
+B8.4 cmd 2>/dev/null >/dev/null                            cand=allow 9596e39=allow 1.33.2=allow | 
+B8.5 cat > docs/n.md <<EOF (heredoc citado)                cand=allow 9596e39=allow 1.33.2=allow | 
+B8.6 git commit -m "a > b" (> entre comillas)              cand=allow 9596e39=allow 1.33.2=allow | 
+B8.7 echo x >> ~/.bash_history_qa                          cand=allow 9596e39=allow 1.33.2=allow | 
+B8.8 tee -a build/log.txt                                  cand=allow 9596e39=allow 1.33.2=allow | 
+B8.9 cp -r src/ /tmp/copia/ (src como origen)              cand=allow 9596e39=allow 1.33.2=allow | 
+B8.10 sed -i en docs/n.md                                  cand=allow 9596e39=allow 1.33.2=allow | 
+B8.11 python x.py > results/out.json (dir nuevo)           cand=allow 9596e39=allow 1.33.2=allow | 
+B8.12 echo x > ../fuera-del-proyecto.txt                   cand=allow 9596e39=allow 1.33.2=allow | 
+B8.13 echo x > docs/nuevo/../n.md (.. sobre dir inexistente, fuera) cand=deny  9596e39=allow 1.33.2=allow | ARNES: no se pudo determinar a que archivo escribe 'docs/nuevo/../n.md': lleva '..' sobre un directorio que todavia no existe, y el sistema no puede resolverlo. Sin saber que archivo es, esta puerta no puede decidir si es codigo de la app, y una puerta que no 
+B8.14 cwd=docs, echo x > n.md                              cand=allow 9596e39=allow 1.33.2=allow | 
+B8.15 cwd=/tmp, echo x > qa.txt                            cand=allow 9596e39=allow 1.33.2=allow | 
+B8.16 echo x > $TMPDIR/f (variable)                        cand=allow 9596e39=allow 1.33.2=allow | 
+B8.17 echo x > $(mktemp) (sustitución)                    cand=allow 9596e39=allow 1.33.2=allow | 
+B8.18 dd of=/dev/null                                      cand=allow 9596e39=allow 1.33.2=allow | 
+B8.19 echo > /proc/self/fd/1                               cand=allow 9596e39=allow 1.33.2=allow | 
+B8.20 install -D x build/bin/x                             cand=allow 9596e39=allow 1.33.2=allow | 
+B8.21 mv build/a build/b                                   cand=allow 9596e39=allow 1.33.2=allow | 
+B8.22 Write docs/sub/nuevo/n.md                            cand=allow 9596e39=allow 1.33.2=allow | 
+B8.23 Write /tmp/x/y/z.md                                  cand=allow 9596e39=allow 1.33.2=allow | 
+B8.24 Edit docs/n.md (inexistente, old vacío = creación) cand=allow 9596e39=allow 1.33.2=allow | 
+== B9: el desarrollador escribe código por formas equivalentes (deben permitir) ==
+B9.1 dev Bash printf > docs/../src/a.ts                    cand=allow 9596e39=allow 1.33.2=allow | 
+B9.2 dev Write src/nuevo/b.ts (subdir nuevo)               cand=allow 9596e39=allow 1.33.2=allow | 
+B9.3 dev Bash echo > nuevo/../src/a.ts (no determinable)   cand=allow 9596e39=allow 1.33.2=allow | 
+B9.4 dev Edit nuevo/../src/a.ts (no determinable)          cand=deny  9596e39=allow 1.33.2=allow | ARNES: no se pudo determinar a que archivo escribe '/tmp/qa119d-ptcM/p/nuevo/../src/a.ts': lleva '..' sobre un directorio que todavia no existe, y el sistema no puede resolverlo. Sin saber que archivo es, esta puerta no puede leerlo ni reconstruir el documento

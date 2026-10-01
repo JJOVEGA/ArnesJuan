@@ -1,0 +1,54 @@
+== 07-bash-falsos-positivos: 50 llamadas en base, 50 en candidata
+  -- veredictos del banco que cambian (base < | > candidata):
+     < PASS QA v2: UNA linea de cuerpo con 8.000 expansiones + escritura real -> deny  (deny en 914ms;
+> PASS QA v2: UNA linea de cuerpo con 8.000 expansiones + escritura real -> deny  (deny en 1013ms
+< PASS QA v2: control, la misma escritura sin el cuerpo delante -> deny  (deny en 112ms; presupue
+> PASS QA v2: control, la misma escritura sin el cuerpo delante -> deny  (deny en 113ms; presupue
+< PASS heredoc sin citar: 10.000 lineas de cuerpo SIN expansiones -> allow  (allow en 2614ms; pre
+> PASS heredoc sin citar: 10.000 lineas de cuerpo SIN expansiones -> allow  (allow en 5027ms; pre
+== 08-clase-del-hallazgo: 68 llamadas en base, 68 en candidata
+  -- veredictos del banco que cambian (base < | > candidata):
+     < PASS REQ-031 CA-A13 16 385 bytes, todo instrumento -> deny por tamaño  (a) 110ms, tope operativ
+> PASS REQ-031 CA-A13 16 385 bytes, todo instrumento -> deny por tamaño  (a) 112ms, tope operativ
+< PASS REQ-031 CA-A13 exactamente 16 384 bytes con un contrato -> deny por la clase  (a) 1217ms, 
+< PASS REQ-031 CA-A13 exactamente 16 384 bytes, todo instrumento -> allow  (a) 1318ms, tope opera
+> PASS REQ-031 CA-A13 exactamente 16 384 bytes con un contrato -> deny por la clase  (a) 812ms, t
+> PASS REQ-031 CA-A13 exactamente 16 384 bytes, todo instrumento -> allow  (a) 712ms, tope operat
+< PASS REQ-031 CA-A15 reabrir con 255 371 bytes (sobre el techo) -> allow  (a) 413ms, tope operat
+> PASS REQ-031 CA-A15 reabrir con 255 371 bytes (sobre el techo) -> allow  (a) 411ms, tope operat
+== 25-presupuesto-de-analisis: 43 llamadas en base, 43 en candidata
+  -- veredictos del banco que cambian (base < | > candidata):
+     < PASS DEV v3: UNA linea con 16.000 expansiones + escritura real -> deny  (deny en 511ms; presupu
+> PASS DEV v3: UNA linea con 16.000 expansiones + escritura real -> deny  (deny en 513ms; presupu
+< PASS DEV v3: control, la misma escritura sin el cuerpo -> deny  (deny en 111ms; presupuesto 500
+> PASS DEV v3: control, la misma escritura sin el cuerpo -> deny  (deny en 110ms; presupuesto 500
+< PASS DEV v3: heredoc CITADO de ~300 KB -> allow y barato  (allow en 2113ms; presupuesto 1000ms,
+< PASS DEV v3: heredoc SIN citar de ~300 KB SIN expansiones -> allow  (allow en 2918ms; presupues
+> PASS DEV v3: heredoc CITADO de ~300 KB -> allow y barato  (allow en 2114ms; presupuesto 1000ms,
+> PASS DEV v3: heredoc SIN citar de ~300 KB SIN expansiones -> allow  (allow en 2114ms; presupues
+== 32-huecos-auditoria-r001: 41 llamadas en base, 41 en candidata
+  32-huecos-auditoria-r001 #4 MOTIVO (deny) guard-codigo.sh: base <ARNES: 'src/../src/a.ts' es código de la app; sólo el agente 'desarrollador' p> | cand <ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede ed>
+  32-huecos-auditoria-r001 #5 MOTIVO (deny) guard-codigo.sh: base <ARNES: 'src/./a.ts' es código de la app; sólo el agente 'desarrollador' puede > | cand <ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede ed>
+  32-huecos-auditoria-r001 #16 MOTIVO (deny) guard-completado.sh: base <ARNES: no se puede tocar el estado de 'requirements/REQ-702.md': el archivo en d> | cand <ARNES: no se permite esta edicion de 'requirements/REQ-702.md': el archivo exist>
+  32-huecos-auditoria-r001 #17 DECISION guard-completado.sh: base allow <> | cand deny <ARNES: no se permite esta edicion de 'requirements/REQ-702.md': el archivo exist>
+  -- veredictos del banco que cambian (base < | > candidata):
+     < FAIL REQ-007 CA-46 (b) versionado: sobre el REQ con NUL, una edicion que no toca el estado -> d
+> PASS REQ-007 CA-46 (b) versionado: sobre el REQ con NUL, una edicion que no toca el estado -> d
+== 33-acento-y-clave-2-manifiesto: 44 llamadas en base, 44 en candidata
+  33-acento-y-clave-2-manifiesto #2 MOTIVO (deny) guard-completado.sh: base <ARNES: 'docs/enlace.md' es un ENLACE SIMBOLICO y no se escribe a traves de el. E> | cand <ARNES: 'docs/enlace.md' es un ENLACE SIMBOLICO situado dentro del proyecto, y no>
+  33-acento-y-clave-2-manifiesto #3 MOTIVO (deny) guard-codigo.sh: base <ARNES: 'docs/enlace-src.md' es un ENLACE SIMBOLICO y no se escribe a traves de e> | cand <ARNES: 'docs/enlace-src.md' es un ENLACE SIMBOLICO situado dentro del proyecto, >
+  33-acento-y-clave-2-manifiesto #6 MOTIVO (deny) guard.sh: base <ARNES: 'docs/enlace-roto.md' es un ENLACE SIMBOLICO y no se escribe a traves de > | cand <ARNES: 'docs/enlace-roto.md' es un ENLACE SIMBOLICO situado dentro del proyecto,>
+  33-acento-y-clave-2-manifiesto #7 MOTIVO (deny) guard-codigo.sh: base <ARNES: 'docs/enlace-fuera.md' es un ENLACE SIMBOLICO y no se escribe a traves de> | cand <ARNES: 'docs/enlace-fuera.md' es un ENLACE SIMBOLICO situado dentro del proyecto>
+  33-acento-y-clave-2-manifiesto #10 MOTIVO (deny) guard-codigo.sh: base <ARNES: 'docs/enlace-src.md' es un ENLACE SIMBOLICO y no se escribe a traves de e> | cand <ARNES: 'docs/enlace-src.md' es un ENLACE SIMBOLICO situado dentro del proyecto, >
+  -- veredictos del banco que cambian (base < | > candidata):
+     < FAIL SEC-004 CA-49 Edit sobre un enlace a un REQ -> deny (salida fail-closed)  motivo=<ARNES: '
+> PASS SEC-004 CA-49 Edit sobre un enlace a un REQ -> deny (salida fail-closed)
+== 34-arnes-paralelo: 3 llamadas en base, 3 en candidata
+  -- veredictos del banco que cambian (base < | > candidata):
+     < PASS paralelo: 60 REQ y 200 archivos en 145ms (techo 2000ms)
+> PASS paralelo: 60 REQ y 200 archivos en 164ms (techo 2000ms)
+== 41-variante-de-clave-de-control: 401 llamadas en base, 401 en candidata
+  -- veredictos del banco que cambian (base < | > candidata):
+     < PASS REQ-023 CA-03 (reservada) entrada al azar U+000B = $'\v', semilla ARNES_SEMILLA_41=656 (ba
+> PASS REQ-023 CA-03 (reservada) entrada al azar U+3CFD2 = $'\360\274\277\222', semilla ARNES_SEM
+== resumen: 45 secciones comparadas

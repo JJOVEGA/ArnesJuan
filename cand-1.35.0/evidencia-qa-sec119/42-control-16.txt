@@ -1,0 +1,14 @@
+guard.sh — punto de entrada unico (los dos guardianes, un proceso):
+  PASS  A1 por guard.sh: coordinadora edita src/ -> deny  (deny)
+  PASS  A1 por guard.sh: desarrollador edita src/ -> allow  (allow)
+  PASS  A1 por guard.sh: edicion neutra -> allow  (allow)
+  PASS  guard.sh: el 2o guardian sigue corriendo tras el 1o -> deny  (deny)
+  PASS  guard.sh: cierre limpio -> allow  (allow)
+  PASS  guard.sh: sensible sin seguridad -> deny  (deny)
+  PASS  guard.sh: hallazgo de instrumento -> allow  (allow)
+  PASS  guard.sh: Bash escribe en src/ -> deny  (deny)
+  PASS  guard.sh: Bash cierra un REQ -> deny  (deny)
+  PASS  guard.sh: Bash de lectura -> allow  (allow)
+aviso: vuelta parcial (1 de 56 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 10 PASS, 0 FAIL

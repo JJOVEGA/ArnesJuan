@@ -1,0 +1,10 @@
+== /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/b0/hooks
+  deny   Write <raiz>/src/../README.md
+  deny   Bash echo x > src/../README.md
+  deny   Bash sed -i s/en-revisión/completado/ requirements/../docs/x.md
+  allow  Write <raiz>/requirements/../docs/x.md
+== hooks
+  allow  Write <raiz>/src/../README.md
+  allow  Bash echo x > src/../README.md
+  allow  Bash sed -i s/en-revisión/completado/ requirements/../docs/x.md
+  allow  Write <raiz>/requirements/../docs/x.md

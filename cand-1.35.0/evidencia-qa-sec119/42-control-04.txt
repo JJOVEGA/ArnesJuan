@@ -1,0 +1,8 @@
+Regresión Windows / formas del manifiesto:
+  PASS  quality_gates como objetos, en verde -> allow  (allow)
+  PASS  quality_gates como objetos, en rojo -> deny  (deny)
+  SKIP  ruta estilo Windows con backslashes -> deny  (sin cygpath: caso solo de Windows)
+aviso: vuelta parcial (1 de 56 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 2 PASS, 0 FAIL, 1 SKIP (de ellos 0 INCONCLUSO: 0 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+       · ruta estilo Windows con backslashes -> deny  (sin cygpath: caso solo de Windows)

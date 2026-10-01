@@ -1,0 +1,5 @@
+== B7: bajada de rigor por Write, legible frente a ilegible ==
+B7.1 Write legible (disco Sensible sí/critico) -> ligero+completado+QA pend cand=allow 9596e39=allow 1.33.2=allow | 
+B7.2 Write REQ nuevo (no existe) ligero+completado+QA pend cand=allow 9596e39=allow 1.33.2=allow | 
+B7.3 Write ilegible NUL (B5.17 repetido)                   cand=allow 9596e39=deny  1.33.2=deny  | 
+B7.4 Edit legible: Rigor critico->ligero (sin cierre)      cand=allow 9596e39=allow 1.33.2=allow | 

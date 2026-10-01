@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+in="$(cat)"; out="$(printf "%s" "$in" | bash "/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-sec119/arboles/cand-log/real-guard.sh" "$@")"; rc=$?; printf "%s\t%s\n" "${ARNES_SEC_QA:-?}" "$(printf "%s" "$out" | jq -r ".hookSpecificOutput.permissionDecisionReason // \"ALLOW\"" 2>/dev/null | head -c 160 | tr "\n\t" "  ")" >> "/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-sec119/arboles/cand-log/log.tsv"; printf "%s" "$out"; exit $rc

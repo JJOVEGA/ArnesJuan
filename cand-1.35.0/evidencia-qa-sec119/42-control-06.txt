@@ -1,0 +1,23 @@
+Bash — escrituras evidentes (cobertura parcial):
+  PASS  coordinadora: redirección a código -> deny  (deny)
+  PASS  coordinadora: >> pegado al archivo -> deny  (deny)
+  PASS  coordinadora: ruta absoluta del proyecto -> deny  (deny)
+  PASS  coordinadora: tee sobre código -> deny  (deny)
+  PASS  coordinadora: sed -i sobre código -> deny  (deny)
+  PASS  coordinadora: cp a directorio de código -> deny  (deny)
+  PASS  coordinadora: mv a directorio de código -> deny  (deny)
+  PASS  coordinadora: escritura en la segunda orden encadenada -> deny  (deny)
+  PASS  heredoc: el cuerpo se descuenta, pero el cp DESPUES del cierre -> deny  (deny)
+  PASS  heredoc: la redireccion en la PROPIA linea del heredoc -> deny  (deny)
+  PASS  here-string (<<<) no es heredoc: el cp de detras sigue viendose -> deny  (deny)
+  PASS  aritmetica $((1<<n)) no es heredoc: el cp de la linea siguiente sigue viendose -> deny  (deny)
+  PASS  heredoc sin citar: una sustitucion escribe en codigo protegido -> deny  (deny)
+  PASS  heredoc sin citar: ...y el motivo nombra el archivo que se crearia
+  PASS  heredoc sin citar: acentos graves que escriben en codigo -> deny  (deny)
+  PASS  heredoc sin citar con <<- y sangria: cp al codigo dentro de la sustitucion -> deny  (deny)
+  PASS  heredoc sin citar y sin cierre: la sustitucion se sigue viendo -> deny  (deny)
+  PASS  el deny por Bash admite que la cobertura es parcial
+  PASS  desarrollador (con prefijo) escribe por Bash -> allow  (allow)
+aviso: vuelta parcial (1 de 56 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 19 PASS, 0 FAIL

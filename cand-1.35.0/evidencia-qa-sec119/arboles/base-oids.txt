@@ -1,0 +1,10 @@
+6ec2b1cdeb8d0e1ccbce68288a9c4aa76084463d  hooks/campos-req.awk
+d45085f46a701211b6f619d09ac7c3e9b6993f9c  hooks/estado-derivado.sh
+57e767ed5d32a363fb754cf1ba061f45efe78eb2  hooks/guard-codigo.sh
+12f8e15f3ae493574a40ecdcb9043505a7c624c5  hooks/guard-completado.sh
+c0cba21a27841a5388e913d1490eeaa974c6805a  hooks/guard-git.sh
+f962b791e9076cc652d19b3ddec6011d38cead9e  hooks/guard.sh
+76b696b8923312593d8dfae05e1f4c709a30ba51  hooks/hooks.json
+0340efd69bb2ea1bbd75156e4a6e1b2957eb65a8  hooks/lib.sh
+ba6ee9dc7cfa9ce0060e3bf101bb22365fbc43a5  hooks/rotar-artefactos.sh
+f2f9ccba539282cc112479dd749f086dab35f248  hooks/stop.sh

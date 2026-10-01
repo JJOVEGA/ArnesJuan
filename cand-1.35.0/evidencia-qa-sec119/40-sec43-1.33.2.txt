@@ -1,0 +1,159 @@
+--- 43 · identidad del destino y archivo ilegible (REQ-007 CA-45/CA-47/CA-49/CA-60, SEC-119, O-11) ---
+  PASS  REQ-007 CA-66 I1 req candidata  (deny)
+  PASS  REQ-007 CA-66 I1 req 9596e39: control, decide igual  (9596e39 deny)
+  PASS  REQ-007 CA-66 I1 src candidata  (deny)
+  PASS  REQ-007 CA-66 I1 src 9596e39: control, decide igual  (9596e39 deny)
+  PASS  REQ-007 CA-66 I2 req candidata  (deny)
+  PASS  REQ-007 CA-66 I2 req 9596e39: control, decide igual  (9596e39 deny)
+  PASS  REQ-007 CA-66 I2 src candidata  (deny)
+  PASS  REQ-007 CA-66 I2 src 9596e39: control, decide igual  (9596e39 deny)
+  FAIL  REQ-007 CA-66 I3 req candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I3 req 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I3 src candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I3 src 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I4 req candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I4 req 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I4 src candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I4 src 9596e39: fail-before, permite  (9596e39 allow)
+  PASS  REQ-007 CA-66 I5 req candidata  (deny)
+  PASS  REQ-007 CA-66 I5 req 9596e39: control, decide igual  (9596e39 deny)
+  PASS  REQ-007 CA-66 I5 src candidata  (deny)
+  PASS  REQ-007 CA-66 I5 src 9596e39: control, decide igual  (9596e39 deny)
+  FAIL  REQ-007 CA-66 I6 req candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I6 req 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I6 src candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I6 src 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I7 req candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I7 req 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I7 src candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I7 src 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I8 /tmp/.. delante candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I8 /tmp/.. delante 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I8 raíz bajo /tmp candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I8 raíz bajo /tmp 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I9 req candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I9 req 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I9 src candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I9 src 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I10 req candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I10 req 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I10 src candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I10 src 9596e39: fail-before, permite  (9596e39 allow)
+  PASS  REQ-007 CA-66 I11 (a) requirements es un enlace de fuera candidata  (deny)
+  PASS  REQ-007 CA-66 I11 (a) requirements es un enlace de fuera 9596e39: control, decide igual  (9596e39 deny)
+  FAIL  REQ-007 CA-66 I11 (b) su destino, directo candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I11 (b) su destino, directo 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I12 req candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I12 req 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I12 src candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I12 src 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I13 src candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I13 src 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 I13 req candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 I13 req 9596e39: fail-before, permite  (9596e39 allow)
+  PASS  REQ-007 CA-66 L1 docs/notas.md candidata  (allow)
+  PASS  REQ-007 CA-66 L1 docs/notas.md 9596e39: control, decide igual  (9596e39 allow)
+  PASS  REQ-007 CA-66 L1 docs/../docs/notas.md candidata  (allow)
+  PASS  REQ-007 CA-66 L1 docs/../docs/notas.md 9596e39: control, decide igual  (9596e39 allow)
+  PASS  REQ-007 CA-66 L1 fuera de la raíz candidata  (allow)
+  PASS  REQ-007 CA-66 L1 fuera de la raíz 9596e39: control, decide igual  (9596e39 allow)
+  PASS  REQ-007 CA-66 L2 candidata  (allow)
+  PASS  REQ-007 CA-66 L2 9596e39: control, decide igual  (9596e39 allow)
+  PASS  REQ-007 CA-66 L3 candidata  (allow)
+  PASS  REQ-007 CA-66 L3 9596e39: control, decide igual  (9596e39 allow)
+  PASS  REQ-007 CA-66 L4 por I3 candidata  (allow)
+  PASS  REQ-007 CA-66 L4 por I3 9596e39: control, decide igual  (9596e39 allow)
+  PASS  REQ-007 CA-66 L4 por I9 candidata  (allow)
+  PASS  REQ-007 CA-66 L4 por I9 9596e39: control, decide igual  (9596e39 allow)
+  PASS  REQ-007 CA-66 L5 cp a src/ candidata  (deny)
+  PASS  REQ-007 CA-66 L5 cp a src/ 9596e39: control, decide igual  (9596e39 deny)
+  PASS  REQ-007 CA-66 L5 mv a src candidata  (deny)
+  PASS  REQ-007 CA-66 L5 mv a src 9596e39: control, decide igual  (9596e39 deny)
+  PASS  REQ-007 CA-66 L6 candidata  (allow)
+  PASS  REQ-007 CA-66 L6 9596e39: control, decide igual  (9596e39 allow)
+  PASS  REQ-007 CA-66 L7 candidata  (allow)
+  PASS  REQ-007 CA-66 L7 9596e39: control, decide igual  (9596e39 allow)
+  FAIL  REQ-007 CA-66 L8 candidata  esperado=allow got=deny  <ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no salta la regla: delega el cambio en 'desarrollado>
+  PASS  REQ-007 CA-66 L8 9596e39: movimiento declarado de deny a allow, deniega  (9596e39 deny)
+  FAIL  REQ-007 CA-66 punto 5 (a) Write <raíz>/src/../README.md candidata  esperado=allow got=deny  <ARNES: 'src/../README.md' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS>
+  PASS  REQ-007 CA-66 punto 5 (a) Write <raíz>/src/../README.md 9596e39: movimiento declarado de deny a allow, deniega  (9596e39 deny)
+  FAIL  REQ-007 CA-66 punto 5 (b) echo x > src/../README.md candidata  esperado=allow got=deny  <ARNES: el comando escribe en 'src/../README.md', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no salta la regla: delega el cambio en 'desa>
+  PASS  REQ-007 CA-66 punto 5 (b) echo x > src/../README.md 9596e39: movimiento declarado de deny a allow, deniega  (9596e39 deny)
+  PASS  REQ-007 CA-66 punto 5 (b) control opuesto: echo x > src/a.ts candidata  (deny)
+  PASS  REQ-007 CA-66 punto 5 (b) control opuesto: echo x > src/a.ts 9596e39: control, decide igual  (9596e39 deny)
+  FAIL  REQ-007 CA-66 punto 5 (c) sed -i con el terminal hacia requirements/../docs/x.md candidata  esperado=allow got=deny  <ARNES: este comando escribe en 'requirements/../docs/x.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesitan el contenido resultante (veredictos de QA y >
+  PASS  REQ-007 CA-66 punto 5 (c) sed -i con el terminal hacia requirements/../docs/x.md 9596e39: movimiento declarado de deny a allow, deniega  (9596e39 deny)
+  PASS  REQ-007 CA-66 K1 requirements/ candidata  (allow)
+  PASS  REQ-007 CA-66 K1 requirements/ 9596e39: control, decide igual  (9596e39 allow)
+  PASS  REQ-007 CA-66 K1 subdirectorio nuevo candidata  (allow)
+  PASS  REQ-007 CA-66 K1 subdirectorio nuevo 9596e39: control, decide igual  (9596e39 allow)
+  PASS  REQ-007 CA-66 K2 requirements/ candidata  (deny)
+  PASS  REQ-007 CA-66 K2 requirements/ 9596e39: control, decide igual  (9596e39 deny)
+  PASS  REQ-007 CA-66 K2 subdirectorio nuevo candidata  (deny)
+  PASS  REQ-007 CA-66 K2 subdirectorio nuevo 9596e39: control, decide igual  (9596e39 deny)
+  PASS  REQ-007 CA-66 K3 candidata  (allow)
+  PASS  REQ-007 CA-66 K3 9596e39: control, decide igual  (9596e39 allow)
+  FAIL  REQ-007 CA-66 D1 req candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 D1 req 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 D1 src candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 D1 src 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 D2 req candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 D2 req 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 D2 src candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 D2 src 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 D3 req candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 D3 req 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 D3 src candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 D3 src 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 D4 guard-codigo candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 D4 guard-codigo 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 D4 guard-completado candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 D4 guard-completado 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 V1 divergencia candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 V1 divergencia 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 V2 CA-49 (iv) candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 V2 CA-49 (iv) 9596e39: fail-before, permite  (9596e39 allow)
+  PASS  REQ-007 CA-66 V3 Bash no determinable, sin mención candidata  (allow)
+  PASS  REQ-007 CA-66 V3 Bash no determinable, sin mención 9596e39: control, decide igual  (9596e39 allow)
+  FAIL  REQ-007 CA-66 V4 Bash no determinable, con mención candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 V4 Bash no determinable, con mención 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 R1 candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 R1 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 R2 candidata  el motivo no casa /no se puede leer entero como archivo de texto/  <ARNES: no se puede tocar el estado de 'requirements/REQ-910.md': el archivo en disco no se puede leer entero —un byte NUL lo trunca, o no hay permiso de lectura—, asi que no se pueden leer sus veredictos ni simular el documento resultante, >
+  PASS  REQ-007 CA-66 R2 9596e39: control, decide igual  (9596e39 deny)
+  FAIL  REQ-007 CA-66 R3 candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 R3 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 R4 candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 R4 9596e39: fail-before, permite  (9596e39 allow)
+  FAIL  REQ-007 CA-66 R5 candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 R5 9596e39: fail-before, permite  (9596e39 allow)
+  PASS  REQ-007 CA-66 R6 (a) sin el estado terminal candidata  (allow)
+  PASS  REQ-007 CA-66 R6 (a) sin el estado terminal 9596e39: control, decide igual  (9596e39 allow)
+  FAIL  REQ-007 CA-66 R6 (b) terminal y QA pendiente candidata  el motivo no casa /veredicto de QA es 'pendiente'/  <ARNES: no se puede tocar el estado de 'requirements/REQ-910.md': el archivo en disco no se puede leer entero —un byte NUL lo trunca, o no hay permiso de lectura—, asi que no se pueden leer sus veredictos ni simular el documento resultante, >
+  PASS  REQ-007 CA-66 R6 (b) terminal y QA pendiente 9596e39: control, decide igual  (9596e39 deny)
+  FAIL  REQ-007 CA-66 R6 (c) terminal y todo en verde candidata  esperado=allow got=deny  <ARNES: no se puede tocar el estado de 'requirements/REQ-910.md': el archivo en disco no se puede leer entero —un byte NUL lo trunca, o no hay permiso de lectura—, asi que no se pueden leer sus veredictos ni simular el do>
+  PASS  REQ-007 CA-66 R6 (c) terminal y todo en verde 9596e39: movimiento declarado de deny a allow, deniega  (9596e39 deny)
+  FAIL  REQ-007 CA-66 R7 candidata  esperado=deny got=allow  <>
+  FAIL  REQ-007 CA-66 R7 9596e39: control, decide igual  9596e39=deny candidata=allow
+  PASS  REQ-007 CA-66 S1 candidata  (allow)
+  PASS  REQ-007 CA-66 S1 9596e39: control, decide igual  (9596e39 allow)
+  FAIL  REQ-007 CA-66 S2 (a) canónica candidata  esperado=deny got=allow  <>
+  FAIL  REQ-007 CA-66 S2 (a) canónica 9596e39: control, decide igual  9596e39=deny candidata=allow
+  FAIL  REQ-007 CA-66 S2 (b) por I3 candidata  esperado=deny got=allow  <>
+  PASS  REQ-007 CA-66 S2 (b) por I3 9596e39: fail-before, permite  (9596e39 allow)
+  PASS  REQ-007 CA-66 S3 canónica candidata  (allow)
+  PASS  REQ-007 CA-66 S3 canónica 9596e39: control, decide igual  (9596e39 allow)
+  PASS  REQ-007 CA-66 S3 por I9 candidata  (allow)
+  PASS  REQ-007 CA-66 S3 por I9 9596e39: control, decide igual  (9596e39 allow)
+  FAIL  REQ-007 CA-66 M1 (a) ruta equivalente al manifiesto, sola candidata  esperado=allow got=deny  <ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas protege este proyecto, quien es el agente de codigo ni cual es el esta>
+  PASS  REQ-007 CA-66 M1 (a) ruta equivalente al manifiesto, sola 9596e39: movimiento declarado de deny a allow, deniega  (9596e39 deny)
+  PASS  REQ-007 CA-66 M1 (b) acompañada de otra ruta candidata  (deny)
+  PASS  REQ-007 CA-66 M1 (b) acompañada de otra ruta 9596e39: control, decide igual  (9596e39 deny)
+  PASS  REQ-007 CA-66 M1 (c) destino no determinable candidata  (deny)
+  PASS  REQ-007 CA-66 M1 (c) destino no determinable 9596e39: control, decide igual  (9596e39 deny)
+  FAIL  REQ-007 CA-66 los motivos de D y R dicen su causa y no nombran otra herramienta como salida  D1 req: sin motivo D1 src: sin motivo D3 req: sin motivo D4 guard-codigo: sin motivo R1: sin motivo R3: sin motivo R4: sin motivo R7: sin motivo
+  FAIL  REQ-007 CA-66 una ruta de 4187 caracteres: no determinable, y el motivo cita 200 bytes y cabe con holgura  decisión=allow motivo=0 bytes  <>
+  PASS  REQ-007 CA-48 (i.1) procesos frente a 9596e39: I1 y /dev/stderr y ls -la no añaden ninguno; L3 (enlace resuelto) como mucho 1 ( guard-completado.sh 4/4 (+0) guard-codigo.sh 3/3 (+0) guard.sh 2/2 (+0) guard.sh 1/1 (+0) guard.sh 2/2 (+1))
+aviso: vuelta parcial (1 de 56 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 106 PASS, 49 FAIL

@@ -1,0 +1,23 @@
+== N1: cwd con salto de línea, mecanismo ==
+JSON: {"hook_event_name":"PreToolUse","tool_name":"Edit","tool_input":{"file_path":"/tmp/qa119-IkVV/p/requirements/REQ-1.md","old_string":"Estado: en-revisión","new_string":"Estado: completado"},"cwd":"/tmp\nb"}
+TOOL=[Edit] CWD=[/tmp] FP=[b] CMD=[/tmp/qa119-IkVV/p/requirements/REQ-1.md]
+-- cada guardián por separado --
+N1.a guard-completado.sh Edit cierre, cwd=/tmp\nb          cand=allow 9596e39=deny  1.33.2=deny  | 
+N1.b guard-codigo.sh Write src, cwd=/tmp\nb                cand=allow 9596e39=deny  1.33.2=deny  | 
+N1.c cwd = '<raíz>/docs/a\nb' (dir del proyecto con salto) cand=deny  9596e39=deny  1.33.2=deny  | ARNES: no se pudo determinar a que archivo escribe 'b': es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer. Sin saber que archivo es, esta puerta no puede decidir si es codigo de la app, y una puerta
+N1.d cwd = raíz + '\n' final                              cand=allow 9596e39=deny  1.33.2=deny  | 
+N1.e MultiEdit cierre cwd con salto                        cand=allow 9596e39=deny  1.33.2=deny  | 
+N1.f Bash sed canónico abs, cwd con salto                 cand=deny  9596e39=allow 1.33.2=allow | ARNES: este comando escribe en 'requirements/REQ-1.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesitan el contenido resultante (veredictos de QA y Seguridad, cola de PENDING_APPROVAL.md y qua
+N1.g Bash printf > src/a.ts, cwd=raíz\nx                  cand=deny  9596e39=deny  1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no salta la regla: delega el cambio en 'desarrollador' (ver AGENTS.md §5). Nota: la detecció
+N1.h agente desarrollador (control) Edit src cwd salto     cand=allow 9596e39=allow 1.33.2=allow | 
+== N2: destino entrecomillado (Bloque C, preexistente?) ==
+N2.1 echo x > "src/a.ts"                                   cand=allow 9596e39=allow 1.33.2=allow | 
+N2.2 echo x > 'src/a.ts'                                   cand=allow 9596e39=allow 1.33.2=allow | 
+N2.3 echo x > "docs/../src/a.ts"                           cand=allow 9596e39=allow 1.33.2=allow | 
+N2.4 sed -i ... "requirements/REQ-1.md"                    cand=allow 9596e39=allow 1.33.2=allow | 
+N3.a SEC-117 no reconstruible, cwd=raíz (control)         cand=deny  9596e39=deny  1.33.2=allow | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-2.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_string no esta LITERAL en el texto del archivo. Sin ese documento no se puede saber si la edicio
+N3.b SEC-117 no reconstruible, cwd=/tmp\nb                 cand=allow 9596e39=deny  1.33.2=allow | 
+N3.c REQ con NUL, Edit sin estado, cwd=raíz (control)     cand=deny  9596e39=allow 1.33.2=allow | ARNES: no se permite esta edicion de 'requirements/REQ-3.md': el archivo existe pero no se puede leer entero como archivo de texto —el archivo contiene un byte NUL, que corta la lectura (lo lleva todo archivo en UTF-16 o UTF-32 con texto ASCII, por ejemplo las
+N3.d REQ con NUL, Edit sin estado, cwd=/tmp\nb             cand=allow 9596e39=allow 1.33.2=allow | 
+N3.e manifiesto: coordinadora Write .arnes/config.json, cwd=/tmp\nb cand=allow 9596e39=allow 1.33.2=allow | 
+N3.f enlace dentro de la raíz (CA-49 i), cwd=/tmp\nb      cand=allow 9596e39=deny  1.33.2=deny  | 

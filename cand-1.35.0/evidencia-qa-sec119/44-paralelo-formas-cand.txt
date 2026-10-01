@@ -1,0 +1,17 @@
+Paralelismo por archivos — requirements/ (4 REQ evaluados)
+
+  REQ-801    en-progreso   hooks/lib.sh tools/x.sh a/b.md
+  REQ-802    en-progreso   tools/x.sh a/b.md
+  REQ-803    en-progreso   docs/enlace/c.md
+  REQ-804    en-progreso   hooks/c.md
+
+  REQ-801    vs REQ-802     colisiona  tools/x.sh
+  REQ-801    vs REQ-803     disjunto   
+  REQ-801    vs REQ-804     disjunto   
+  REQ-802    vs REQ-803     disjunto   
+  REQ-802    vs REQ-804     disjunto   
+  REQ-803    vs REQ-804     disjunto   
+
+Hay pares que COLISIONAN: esas comisiones van en serie.
+
+Esta herramienta evalúa ARCHIVOS y NO el orden de fases: un «disjunto» no autoriza a correr el auditor-seguridad a la vez que el qa-tester, ni el qa-tester antes que el desarrollador. Esa regla es aparte, vive en AGENTS.md §6 y esta herramienta no la comprueba.

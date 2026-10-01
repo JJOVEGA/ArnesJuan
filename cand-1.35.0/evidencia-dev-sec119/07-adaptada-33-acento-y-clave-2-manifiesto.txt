@@ -1,0 +1,153 @@
+== seccion VIEJA (9596e39) con hooks CANDIDATOS
+La ruta escrita y el manifiesto roto (SEC-004, SEC-005, SEC-006):
+  PASS  SEC-004 CA-49 Edit sobre un enlace a un REQ -> deny (salida fail-closed)
+  PASS  SEC-004 CA-49 Write sobre un enlace a codigo protegido -> deny tambien en guard-codigo  (deny)
+  PASS  SEC-004 CA-50a un archivo REGULAR en docs/ sigue -> allow  (allow)
+  PASS  SEC-004 CA-50a ...y tambien para la puerta de cierre  (allow)
+  PASS  SEC-004 CA-50b enlace ROTO: responde deny (111ms), ni cuelga ni revienta
+  PASS  SEC-004 CA-50c enlace que apunta FUERA -> deny, no allow  (deny)
+  PASS  SEC-004 CA-50c control: un enlace FUERA del proyecto no se juzga -> allow  (allow)
+  PASS  SEC-004 CA-50d el camino comun de Bash ('ls -la') sigue -> allow  (allow)
+  PASS  SEC-004 el desarrollador tampoco escribe a traves de un enlace -> deny  (deny)
+  PASS  REQ-007 CA-53 la ampliacion NO se propaga a templates/arnes-config.json.tpl
+  PASS  REQ-007 CA-53 la coordinadora NO escribe .arnes/config.json -> deny  (deny)
+  PASS  REQ-007 CA-53 ...ni .claude-plugin/plugin.json -> deny  (deny)
+  PASS  REQ-007 CA-53 el desarrollador SI lo escribe -> allow  (allow)
+  PASS  REQ-007 CA-51 SEC-005 manifiesto INVALIDO: Write -> deny con motivo
+  PASS  REQ-007 CA-51 SEC-005 manifiesto VACIO -> deny  (deny)
+  PASS  REQ-007 CA-51 SEC-005 manifiesto 'null' (JSON valido) -> deny  (deny)
+  PASS  REQ-007 CA-51 SEC-005 manifiesto ARRAY (JSON valido) -> deny  (deny)
+  PASS  REQ-007 CA-51 SEC-005 ...y la puerta de cierre tampoco deja pasar  (deny)
+  PASS  DEV 1.31.0 v2: QA-104 un comando que no escribe no consulta el manifiesto (ni avisa ni deniega)
+  PASS  REQ-007 CA-51 SEC-005 el aviso se emite siempre que el manifiesto se consulta (stderr), tambien cuando permite
+  PASS  DEV 1.31.0 v2: QA-105 manifiesto roto: Write al PROPIO manifiesto -> allow  (allow)
+  PASS  DEV 1.31.0 v2: QA-105 ...tambien por Bash (la via que el motivo nombra)  (allow)
+  PASS  DEV 1.31.0 v2: QA-105 ...y la puerta de cierre tampoco lo estorba  (allow)
+  PASS  DEV 1.31.0 v2: QA-105 control: cualquier OTRA ruta sigue denegada  (deny)
+  PASS  DEV 1.31.0 v2: QA-105 control: reparar Y escribir otra cosa no es reparar -> deny  (deny)
+  PASS  DEV 1.31.0 v2: QA-105 control: otro archivo bajo .arnes/ NO repara nada -> deny  (deny)
+  PASS  DEV 1.31.0 v2: QA-104 control: manifiesto roto + Bash que escribe -> deny (el fail-closed sigue)  (deny)
+  PASS  DEV 1.31.0 v2: QA-105 el motivo dice que la reparacion del manifiesto SI se puede
+  PASS  REQ-007 CA-51 SEC-005 ninguna variable del manifiesto se rellena con el input
+  PASS  REQ-007 CA-52 control: manifiesto AUSENTE sigue INERTE -> allow  (allow)
+  PASS  REQ-007 CA-52 control: manifiesto VALIDO decide igual que siempre -> deny  (deny)
+  PASS  REQ-007 CA-52 control: un manifiesto VALIDO no emite NINGUN aviso
+  PASS  REQ-007 CA-52 control: 'limites' ausente cae al defecto sin avisar ni denegar
+  PASS  DEV 1.31.0 v2: QA-106 'exigir_fecha' con la cadena "true" avisa y cae al defecto
+  PASS  DEV 1.31.0 v2: QA-106 'exigir_fecha' con el numero 1 avisa igual
+  PASS  DEV 1.31.0 v2: QA-106 control: el booleano de verdad no avisa
+  PASS  DEV 1.31.0 v2: QA-107 'bash_max_analisis: 1e9' avisa en vez de caer callado
+  PASS  DEV 1.31.0 v2: QA-107 'bash_max_analisis: 1.5' avisa igual
+  PASS  DEV 1.31.0 v2: QA-107 control: un entero valido no avisa
+  PASS  DEV 1.31.0 v2: QA-106 'git.activo' con cadena avisa y manda el defecto (encendida)
+  PASS  DEV 1.31.0 v2: QA-106 'codigo_app.globs' que no es un array avisa
+  PASS  DEV 1.31.0 v2: QA-106 control: el manifiesto ya reparado no avisa
+  PASS  DEV 1.31.0 v2: QA-106 'git.activo' con cadena no apaga la puerta de git -> deny  (deny)
+  PASS  DEV 1.31.0 v2: QA-104 'ls -la' cuesta 1 proceso jq (como v1.30.3)
+  PASS  DEV 1.31.0 v2: QA-104 'npm run build' cuesta 1 proceso jq (como v1.30.3)
+aviso: vuelta parcial (1 de 1 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 45 PASS, 0 FAIL
+rc=0
+== seccion NUEVA con hooks de 9596e39
+El enlace en el ultimo componente y el manifiesto roto (SEC-004, SEC-005, SEC-006):
+  FAIL  SEC-004 CA-49 Edit sobre un enlace a un REQ -> deny (salida fail-closed)  motivo=<ARNES: 'docs/enlace.md' es un ENLACE SIMBOLICO y no se escribe a traves de el. El arnés juzga la ruta escrita, no su destino: un enlace en una ruta libre que apunte a código protegido o a un REQ recibiría el veredicto de su nombre y no el de lo que realmente toca. Resolver el destino tampoco valdría —entre la comprobación y la escritura el enlace puede cambiar, y una puerta que mide otra cosa no es una puerta—. Salida: escribe directamente sobre la ruta real (SEC-004, REQ-007 CA-49).> no casa /ENLACE SIMBOLICO situado dentro del proyecto/
+  PASS  SEC-004 CA-49 Write sobre un enlace a codigo protegido -> deny tambien en guard-codigo  (deny)
+  PASS  SEC-004 CA-50a un archivo REGULAR en docs/ sigue -> allow  (allow)
+  PASS  SEC-004 CA-50a ...y tambien para la puerta de cierre  (allow)
+  PASS  SEC-004 CA-50b enlace ROTO: responde deny (114ms), ni cuelga ni revienta
+  PASS  SEC-004 CA-50c enlace que apunta FUERA -> deny, no allow  (deny)
+  PASS  SEC-004 CA-50c control: un enlace FUERA del proyecto hacia un archivo de fuera -> allow (L3)  (allow)
+  PASS  SEC-004 CA-50d el camino comun de Bash ('ls -la') sigue -> allow  (allow)
+  PASS  SEC-004 el desarrollador tampoco escribe a traves de un enlace -> deny  (deny)
+  PASS  REQ-007 CA-53 la ampliacion NO se propaga a templates/arnes-config.json.tpl
+  PASS  REQ-007 CA-53 la coordinadora NO escribe .arnes/config.json -> deny  (deny)
+  PASS  REQ-007 CA-53 ...ni .claude-plugin/plugin.json -> deny  (deny)
+  PASS  REQ-007 CA-53 el desarrollador SI lo escribe -> allow  (allow)
+  PASS  REQ-007 CA-51 SEC-005 manifiesto INVALIDO: Write -> deny con motivo
+  PASS  REQ-007 CA-51 SEC-005 manifiesto VACIO -> deny  (deny)
+  PASS  REQ-007 CA-51 SEC-005 manifiesto 'null' (JSON valido) -> deny  (deny)
+  PASS  REQ-007 CA-51 SEC-005 manifiesto ARRAY (JSON valido) -> deny  (deny)
+  PASS  REQ-007 CA-51 SEC-005 ...y la puerta de cierre tampoco deja pasar  (deny)
+  PASS  DEV 1.31.0 v2: QA-104 un comando que no escribe no consulta el manifiesto (ni avisa ni deniega)
+  PASS  REQ-007 CA-51 SEC-005 el aviso se emite siempre que el manifiesto se consulta (stderr), tambien cuando permite
+  PASS  DEV 1.31.0 v2: QA-105 manifiesto roto: Write al PROPIO manifiesto -> allow  (allow)
+  PASS  DEV 1.31.0 v2: QA-105 ...tambien por Bash (la via que el motivo nombra)  (allow)
+  PASS  DEV 1.31.0 v2: QA-105 ...y la puerta de cierre tampoco lo estorba  (allow)
+  PASS  DEV 1.31.0 v2: QA-105 control: cualquier OTRA ruta sigue denegada  (deny)
+  PASS  DEV 1.31.0 v2: QA-105 control: reparar Y escribir otra cosa no es reparar -> deny  (deny)
+  PASS  DEV 1.31.0 v2: QA-105 control: otro archivo bajo .arnes/ NO repara nada -> deny  (deny)
+  PASS  DEV 1.31.0 v2: QA-104 control: manifiesto roto + Bash que escribe -> deny (el fail-closed sigue)  (deny)
+  PASS  DEV 1.31.0 v2: QA-105 el motivo dice que la reparacion del manifiesto SI se puede
+  PASS  REQ-007 CA-51 SEC-005 ninguna variable del manifiesto se rellena con el input
+  PASS  REQ-007 CA-52 control: manifiesto AUSENTE sigue INERTE -> allow  (allow)
+  PASS  REQ-007 CA-52 control: manifiesto VALIDO decide igual que siempre -> deny  (deny)
+  PASS  REQ-007 CA-52 control: un manifiesto VALIDO no emite NINGUN aviso
+  PASS  REQ-007 CA-52 control: 'limites' ausente cae al defecto sin avisar ni denegar
+  PASS  DEV 1.31.0 v2: QA-106 'exigir_fecha' con la cadena "true" avisa y cae al defecto
+  PASS  DEV 1.31.0 v2: QA-106 'exigir_fecha' con el numero 1 avisa igual
+  PASS  DEV 1.31.0 v2: QA-106 control: el booleano de verdad no avisa
+  PASS  DEV 1.31.0 v2: QA-107 'bash_max_analisis: 1e9' avisa en vez de caer callado
+  PASS  DEV 1.31.0 v2: QA-107 'bash_max_analisis: 1.5' avisa igual
+  PASS  DEV 1.31.0 v2: QA-107 control: un entero valido no avisa
+  PASS  DEV 1.31.0 v2: QA-106 'git.activo' con cadena avisa y manda el defecto (encendida)
+  PASS  DEV 1.31.0 v2: QA-106 'codigo_app.globs' que no es un array avisa
+  PASS  DEV 1.31.0 v2: QA-106 control: el manifiesto ya reparado no avisa
+  PASS  DEV 1.31.0 v2: QA-106 'git.activo' con cadena no apaga la puerta de git -> deny  (deny)
+  PASS  DEV 1.31.0 v2: QA-104 'ls -la' cuesta 1 proceso jq (como v1.30.3)
+  PASS  DEV 1.31.0 v2: QA-104 'npm run build' cuesta 1 proceso jq (como v1.30.3)
+aviso: vuelta parcial (1 de 56 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 44 PASS, 1 FAIL
+rc=1
+== seccion NUEVA con hooks CANDIDATOS
+El enlace en el ultimo componente y el manifiesto roto (SEC-004, SEC-005, SEC-006):
+  PASS  SEC-004 CA-49 Edit sobre un enlace a un REQ -> deny (salida fail-closed)
+  PASS  SEC-004 CA-49 Write sobre un enlace a codigo protegido -> deny tambien en guard-codigo  (deny)
+  PASS  SEC-004 CA-50a un archivo REGULAR en docs/ sigue -> allow  (allow)
+  PASS  SEC-004 CA-50a ...y tambien para la puerta de cierre  (allow)
+  PASS  SEC-004 CA-50b enlace ROTO: responde deny (114ms), ni cuelga ni revienta
+  PASS  SEC-004 CA-50c enlace que apunta FUERA -> deny, no allow  (deny)
+  PASS  SEC-004 CA-50c control: un enlace FUERA del proyecto hacia un archivo de fuera -> allow (L3)  (allow)
+  PASS  SEC-004 CA-50d el camino comun de Bash ('ls -la') sigue -> allow  (allow)
+  PASS  SEC-004 el desarrollador tampoco escribe a traves de un enlace -> deny  (deny)
+  PASS  REQ-007 CA-53 la ampliacion NO se propaga a templates/arnes-config.json.tpl
+  PASS  REQ-007 CA-53 la coordinadora NO escribe .arnes/config.json -> deny  (deny)
+  PASS  REQ-007 CA-53 ...ni .claude-plugin/plugin.json -> deny  (deny)
+  PASS  REQ-007 CA-53 el desarrollador SI lo escribe -> allow  (allow)
+  PASS  REQ-007 CA-51 SEC-005 manifiesto INVALIDO: Write -> deny con motivo
+  PASS  REQ-007 CA-51 SEC-005 manifiesto VACIO -> deny  (deny)
+  PASS  REQ-007 CA-51 SEC-005 manifiesto 'null' (JSON valido) -> deny  (deny)
+  PASS  REQ-007 CA-51 SEC-005 manifiesto ARRAY (JSON valido) -> deny  (deny)
+  PASS  REQ-007 CA-51 SEC-005 ...y la puerta de cierre tampoco deja pasar  (deny)
+  PASS  DEV 1.31.0 v2: QA-104 un comando que no escribe no consulta el manifiesto (ni avisa ni deniega)
+  PASS  REQ-007 CA-51 SEC-005 el aviso se emite siempre que el manifiesto se consulta (stderr), tambien cuando permite
+  PASS  DEV 1.31.0 v2: QA-105 manifiesto roto: Write al PROPIO manifiesto -> allow  (allow)
+  PASS  DEV 1.31.0 v2: QA-105 ...tambien por Bash (la via que el motivo nombra)  (allow)
+  PASS  DEV 1.31.0 v2: QA-105 ...y la puerta de cierre tampoco lo estorba  (allow)
+  PASS  DEV 1.31.0 v2: QA-105 control: cualquier OTRA ruta sigue denegada  (deny)
+  PASS  DEV 1.31.0 v2: QA-105 control: reparar Y escribir otra cosa no es reparar -> deny  (deny)
+  PASS  DEV 1.31.0 v2: QA-105 control: otro archivo bajo .arnes/ NO repara nada -> deny  (deny)
+  PASS  DEV 1.31.0 v2: QA-104 control: manifiesto roto + Bash que escribe -> deny (el fail-closed sigue)  (deny)
+  PASS  DEV 1.31.0 v2: QA-105 el motivo dice que la reparacion del manifiesto SI se puede
+  PASS  REQ-007 CA-51 SEC-005 ninguna variable del manifiesto se rellena con el input
+  PASS  REQ-007 CA-52 control: manifiesto AUSENTE sigue INERTE -> allow  (allow)
+  PASS  REQ-007 CA-52 control: manifiesto VALIDO decide igual que siempre -> deny  (deny)
+  PASS  REQ-007 CA-52 control: un manifiesto VALIDO no emite NINGUN aviso
+  PASS  REQ-007 CA-52 control: 'limites' ausente cae al defecto sin avisar ni denegar
+  PASS  DEV 1.31.0 v2: QA-106 'exigir_fecha' con la cadena "true" avisa y cae al defecto
+  PASS  DEV 1.31.0 v2: QA-106 'exigir_fecha' con el numero 1 avisa igual
+  PASS  DEV 1.31.0 v2: QA-106 control: el booleano de verdad no avisa
+  PASS  DEV 1.31.0 v2: QA-107 'bash_max_analisis: 1e9' avisa en vez de caer callado
+  PASS  DEV 1.31.0 v2: QA-107 'bash_max_analisis: 1.5' avisa igual
+  PASS  DEV 1.31.0 v2: QA-107 control: un entero valido no avisa
+  PASS  DEV 1.31.0 v2: QA-106 'git.activo' con cadena avisa y manda el defecto (encendida)
+  PASS  DEV 1.31.0 v2: QA-106 'codigo_app.globs' que no es un array avisa
+  PASS  DEV 1.31.0 v2: QA-106 control: el manifiesto ya reparado no avisa
+  PASS  DEV 1.31.0 v2: QA-106 'git.activo' con cadena no apaga la puerta de git -> deny  (deny)
+  PASS  DEV 1.31.0 v2: QA-104 'ls -la' cuesta 1 proceso jq (como v1.30.3)
+  PASS  DEV 1.31.0 v2: QA-104 'npm run build' cuesta 1 proceso jq (como v1.30.3)
+aviso: vuelta parcial (1 de 56 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 45 PASS, 0 FAIL
+rc=0

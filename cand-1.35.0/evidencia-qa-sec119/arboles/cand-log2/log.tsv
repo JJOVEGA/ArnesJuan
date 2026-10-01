@@ -1,0 +1,99 @@
+01	ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siqui
+01	ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siqui
+01	ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de el subagente 'qa-tester'). Delega el cambio en 'desarrollador' — ni siq
+04	ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siqui
+04	ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality gate `false`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 
+06	ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siqui
+06	ARNES: el comando escribe en 'src/app.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+06	ARNES: el comando escribe en 'src/app.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+06	ARNES: el comando escribe en 'src/app.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+06	ARNES: el comando escribe en 'src/app.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+06	ARNES: el comando escribe en 'src/app.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+06	ARNES: el comando escribe en 'src/', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no sal
+06	ARNES: el comando escribe en 'src/', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no sal
+06	ARNES: el comando escribe en 'app/gen.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+06	ARNES: el comando escribe en 'src/', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no sal
+06	ARNES: el comando escribe en 'src/gen.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+06	ARNES: el comando escribe en 'src/', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no sal
+06	ARNES: el comando escribe en 'src/', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no sal
+06	ARNES: el comando escribe en 'src/generated.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por
+06	ARNES: el comando escribe en 'src/generated.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por
+06	ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no
+06	ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no
+06	ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no
+06	ARNES: el comando escribe en 'src/app.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+07	ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siqui
+07	ARNES: el comando escribe en 'src/robado.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Ba
+07	ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande para analizarlo con garantia, asi que no se analizo y no se pe
+07	ARNES: el comando escribe en 'src/robado.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Ba
+07	ARNES: el comando escribe en 'src/robado.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Ba
+07	ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no
+07	ARNES: el comando escribe en 'src/robado.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Ba
+07	ARNES: el comando escribe en 'src/f2.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash n
+07	ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no
+07	ARNES: el comando escribe en 'src/multi.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bas
+07	ARNES: el comando escribe en 'src/v1.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash n
+07	ARNES: el comando escribe en 'src/v2.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash n
+07	ARNES: el comando escribe en 'src/v3.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash n
+07	ARNES: el comando escribe en 'src/v4.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash n
+07	ARNES: el comando escribe en 'src/v5.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash n
+07	ARNES: el comando escribe en 'src/v7.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash n
+07	ARNES: el comando escribe en 'src/v8.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash n
+07	ARNES: el comando escribe en 'src/v9.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash n
+07	ARNES: el comando escribe en 'src/v10.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+07	ARNES: el comando escribe en 'src/v11.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+07	ARNES: el comando escribe en 'src/v12.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+07	ARNES: el comando escribe en 'src/v13.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+07	ARNES: el comando escribe en 'src/v14.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+07	ARNES: el comando escribe en 'src/qa7.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+07	ARNES: el comando escribe en 'src/qa7.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+09	ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siqui
+09	ARNES: este comando escribe en 'requirements/REQ-001.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesi
+09	ARNES: este comando escribe en 'requirements/REQ-001.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesi
+09	ARNES: este comando escribe en 'requirements/REQ-001.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesi
+09	ARNES: este comando escribe en 'requirements/REQ-001.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesi
+09	ARNES: este comando escribe en 'requirements/REQ-001.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesi
+14	ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siqui
+14	ARNES: no se puede completar 'requirements/REQ-110.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprobado'). El 
+14	ARNES: no se puede completar 'requirements/REQ-112.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprobado'). El 
+14	ARNES: no se puede completar 'requirements/REQ-114.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprobado'). El 
+14	ARNES: no se puede completar 'requirements/REQ-115.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprobado'). El 
+14	ARNES: no se puede completar 'requirements/REQ-120.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+14	ARNES: no se puede completar 'requirements/REQ-120.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+14	ARNES: no se puede completar 'requirements/REQ-122.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprobado'). El 
+14	ARNES: no se puede completar 'requirements/REQ-124.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+14	ARNES: no se puede completar 'requirements/REQ-125.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+14	ARNES: no se puede completar 'requirements/REQ-123.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+14	ARNES: no se puede completar 'requirements/REQ-126.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+14	ARNES: no se puede completar 'requirements/REQ-132.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+14	ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-127.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_stri
+14	ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-127.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_stri
+14	ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-999.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque el archivo 
+14	ARNES: no se puede marcar 'requirements/REQ-129.md' como 'completado': hay 1 aprobación(es) pendiente(s) en PENDING_APPROVAL.md. El humano debe resolverlas primero (ver A
+14	ARNES: no se puede marcar 'requirements/REQ-129.md' como 'completado': falló la quality gate `false`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 
+14	ARNES: no se puede completar 'requirements/REQ-130.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+14	ARNES: no se puede completar 'requirements/REQ-140.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+14	ARNES: no se puede completar 'requirements/REQ-140.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+14	ARNES: no se puede completar 'requirements/REQ-140.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+14	ARNES: no se puede completar 'requirements/REQ-140.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+14	ARNES: no se puede completar 'requirements/REQ-140.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+14	ARNES: no se puede completar 'requirements/REQ-141.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+14	ARNES: no se permite la edicion 2 de 2 de este MultiEdit sobre 'requirements/REQ-141.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su ol
+16	ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siqui
+16	ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siqui
+16	ARNES: no se puede completar 'requirements/REQ-030.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+16	ARNES: no se puede completar 'requirements/REQ-032.md': su rigor efectivo es 'critico' y el veredicto de seguridad es 'pendiente' (se requiere 'Seguridad: aprobado'). El 
+16	ARNES: el comando escribe en 'src/app.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash 
+16	ARNES: este comando escribe en 'requirements/REQ-031.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesi
+42	ARNES: 'src/app.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siqui
+42	ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_stri
+42	ARNES: no se permite la edicion 1 de 2 de este MultiEdit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su ol
+42	ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_stri
+42	ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_stri
+42	ARNES: no se puede completar 'requirements/REQ-905.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+42	ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-908.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_stri
+42	ARNES: no se permite la unica edicion de este Edit sobre 'requirements/README.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_strin
+42	ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_stri
+42	ARNES: no se permite la edicion 1 de 2 de este MultiEdit sobre 'requirements/REQ-912.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque el ar
+42	ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_stri
+42	ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_stri

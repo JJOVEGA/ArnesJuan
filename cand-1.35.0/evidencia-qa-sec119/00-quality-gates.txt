@@ -1,0 +1,11 @@
+arbol=43b948a932c245e05373e82e61c88a45ec6409a0 fecha=2026-09-30T13:28:25-06:00
+ M docs/ESTADO.md
+?? propuesta-v1.35.0/
+gate1 sintaxis OK
+gate2 hooks.json OK
+gate3 plugin/marketplace OK
+[
+  "for f in hooks/*.sh tools/*.sh; do bash -n \"$f\" || exit 1; done",
+  "jq -e . hooks/hooks.json >/dev/null",
+  "jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null"
+]

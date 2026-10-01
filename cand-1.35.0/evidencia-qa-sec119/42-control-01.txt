@@ -1,0 +1,8 @@
+A1 — guard-codigo.sh (quién edita código de la app):
+  PASS  coordinadora edita src/ -> deny  (deny)
+  PASS  desarrollador edita src/ -> allow  (allow)
+  PASS  qa-tester edita src/ -> deny  (deny)
+  PASS  coordinadora edita doc fuera de app -> allow  (allow)
+aviso: vuelta parcial (1 de 56 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 4 PASS, 0 FAIL

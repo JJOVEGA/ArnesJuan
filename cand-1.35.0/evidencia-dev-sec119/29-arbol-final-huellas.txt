@@ -1,0 +1,24 @@
+2026-09-30T13:10:21-06:00
+HEAD f603a8c4ac7d8b76b1ce8f782b3ed730eff36d3a (cambios sin comitear)
+ M docs/ESTADO.md
+ M hooks/guard-codigo.sh
+ M hooks/guard-completado.sh
+ M hooks/lib.sh
+ M requirements/REQ-007.md
+ M tests/escenarios/hooks/README.md
+ M tests/escenarios/hooks/run.sh
+ M tests/escenarios/hooks/secciones/32-huecos-auditoria-r001.sh
+ M tests/escenarios/hooks/secciones/33-acento-y-clave-2-manifiesto.sh
+ M tools/arnes-paralelo.sh
+?? propuesta-v1.35.0/
+?? tests/escenarios/hooks/secciones/43-identidad-del-destino.sh
+0f6df183aee7412e25ea1880175e2c25b8372ab8  hooks/lib.sh
+4badbe2b1bc99a8db34ecaad793f709917d9deb0  hooks/guard-codigo.sh
+78f9e858ed88ee22ee54ac032c98975b7d6c20c1  hooks/guard-completado.sh
+17f612cb6368f3d45ee95037f89cdea86bfab75b  tools/arnes-paralelo.sh
+76ed8466c890e3079dec8f107c5f5003488b9d18  tests/escenarios/hooks/run.sh
+540704c1fff181e1eb4256c53ec672dd6e97d347  tests/escenarios/hooks/README.md
+ac9105094beea13a8cb990c7b05c8f5746c47ab9  tests/escenarios/hooks/secciones/32-huecos-auditoria-r001.sh
+afea8cdbdabb82fccf548d849648334e09301a8e  tests/escenarios/hooks/secciones/33-acento-y-clave-2-manifiesto.sh
+e6bb11fa062ec54ef95314aaace2644f0cdd2f05  tests/escenarios/hooks/secciones/43-identidad-del-destino.sh
+dbc48fc7c92c276762804bfedfec249191eddeca  requirements/REQ-007.md
