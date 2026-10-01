@@ -2,6 +2,22 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-01 · Quinta autorización: QA sobre `43b948a` NO favorable — QA-023-09 (regresión de `104ffd1`: un `cwd` con salto de línea desplaza los campos de la entrada y las dos puertas juzgan otra ruta), QA-023-10 (REQ-007 CA-54, coste) y QA-023-11 (validación en el host incompleta); casos de host que faltaban ejecutados (v3b); decisión 8 en la cola; sin otra vuelta
+> Origen: GitHub (commit local de la coordinadora, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (lanzado con Opus, §5) y la coordinadora. Tokens de la comisión de QA: no recuperados tras la interrupción de la sesión.
+
+- **QA, sobre `43b948a`** (`docs/qa/REQ-023.md` § «Vuelta excepcional de la quinta autorización»):
+  - **Conforme:** CA-45, CA-46 (b), (d) y (e), CA-47 a CA-50, la nota de CA-58, CA-60 y CA-66 puntos 1 a 5, 7 y 8, con el fail-before re-derivado contra `9596e39` y 1.33.2. Banco completo 1322 PASS · 0 FAIL · 12 SKIP, cuadre 1334; autoprueba 117/0; gates rc 0. QA-023-07 y QA-023-08 quedan cerrados.
+  - **Abiertos, `contrato` en REQ-007:** QA-023-09 (alta a nivel de hook, regresión), QA-023-10 (media) y QA-023-11 (media). QA-023-09 entra también en REQ-023 como `instrumento`.
+  - **Veredictos:** REQ-023, REQ-031 y REQ-001 mantienen `QA: aprobado` sobre el código final, sin cubrir QA-023-09. REQ-007 sigue en `QA: pendiente`. QA no tocó `Estado:`, `Seguridad:` ni la cola.
+- **Coordinadora: los casos de host que faltaban** (validación ya autorizada, no una reparación; registro previo `f209d06` y resultado `7a3cb6e`, rama local de evidencia, `sec119-v3b/`). CLI 2.1.285, una ejecución por caso:
+  - el `cwd` del hook sigue a un `cd` anterior;
+  - QA-023-09 se manifiesta en el host: el hook juzgó un fragmento del `cwd` en lugar de la ruta canónica, y denegó sólo porque ese destino desplazado no se podía determinar; un permiso desde el host no está observado ni descartado;
+  - R5 no llega al hook, porque el `Read` previo falla con `EACCES`.
+- **Evidencia** del desarrollador y de QA de esta vuelta, en la rama local de evidencia: `cand-1.35.0/evidencia-dev-sec119/` y `cand-1.35.0/evidencia-qa-sec119/` (`66de607`).
+- **Cola:** se añade la **decisión 8**, con pregunta, opciones, recomendación y consecuencias. QA-023-08 pasa a cerrado. Las líneas de «Espera» y de la acción que impide se corrigen: SEC-117 ya tiene seguridad aprobada y está `mitigado`.
+- **Lo que NO se hizo, a propósito:** ninguna reparación, ninguna petición a seguridad (QA no fue favorable, §6), ningún cierre y ningún push. `origin/cand/1.35.0` y el PR #59 siguen en `9596e39`. `docs/ESTADO.md` (bloque derivado previo) y `propuesta-v1.35.0/` se conservan sin comitear.
+- **Avance (regla 6):** la vuelta de SEC-119/O-11 queda medida, y su bloqueo, presentado con su alcance. Falta la decisión del propietario (decisión 8, fichas 1 y 2 y P-119-A).
+
 ## [Interno] — 2026-09-30 · Banco: los tres movimientos nuevos de REQ-007 CA-66 punto 5 entran en la sección 43, con fail-before y control opuesto — SIN VALIDAR
 > Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Unos 125 k tokens.
 
