@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-01 · Sexta autorización del propietario registrada (literal e íntegra, copia verificada con `diff`: 0 diferencias): decisión 8, opción A — vuelta excepcional agrupada para QA-023-09, QA-023-10 y QA-023-11, sin reiniciar contadores
+> Origen: GitHub · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Registro:** `PENDING_APPROVAL.md` § Resueltas, con la base comprobada (`8f4dda7` local; PR #59 en `9596e39`, ancestro) y el orden de la vuelta. La decisión 8 pasa a resuelta. Las fichas 1 y 2 y P-119-A siguen pendientes y sin aceptación.
+- **Contadores:** el de REQ-023 sigue agotado (3 de 3); no se reinicia ninguno y no se crea otro REQ.
+- **Avance (regla 6):** la vuelta queda autorizada por escrito antes de despacharla. Lo siguiente es la comisión del desarrollador.
+
 ## [GitHub] — 2026-10-01 · Quinta autorización: QA sobre `43b948a` NO favorable — QA-023-09 (regresión de `104ffd1`: un `cwd` con salto de línea desplaza los campos de la entrada y las dos puertas juzgan otra ruta), QA-023-10 (REQ-007 CA-54, coste) y QA-023-11 (validación en el host incompleta); casos de host que faltaban ejecutados (v3b); decisión 8 en la cola; sin otra vuelta
 > Origen: GitHub (commit local de la coordinadora, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (lanzado con Opus, §5) y la coordinadora. Tokens de la comisión de QA: no recuperados tras la interrupción de la sesión.
 
