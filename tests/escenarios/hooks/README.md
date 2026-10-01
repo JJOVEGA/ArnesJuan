@@ -293,6 +293,11 @@ Tres reglas nacidas de fallos reales:
 | Identidad del destino (43) | los seis movimientos declarados de deny a allow (CA-66, punto 5): L8, R6 (c) y M1 (a), y las tres rutas que casaban con el ámbito sólo por su texto y designan un archivo de fuera —`Write <raíz>/src/../README.md`, `echo x > src/../README.md` y un `sed -i` con el estado terminal hacia `requirements/../docs/x.md`— | **allow** aquí y **deny** en 9596e39; su control opuesto, la ruta canónica protegida con la misma forma (I1 src, I2 req y `echo x > src/a.ts`), **deny** en los dos |
 | Identidad del destino (43) | fuera de la tabla mínima: las dos lecturas que designan archivos distintos (V1), el enlace dentro de la raíz escrito con `..` (V2) y un destino no determinable por `Bash` en `guard-completado`, sin y con el estado terminal en el comando (V3, V4) | V1, V2 y V4 **deny** (allow en 9596e39); V3 **allow** en los dos |
 | Identidad del destino (43) | una ruta de más de 4 096 caracteres; los procesos contra 9596e39 en I1, `/dev/stderr`, `ls -la` y un enlace resuelto (L3) | no determinable con una cita de 200 bytes; **0** procesos añadidos, **1** en L3 (el `readlink` de CA-49 (ii)) |
+| Integridad de la entrada (44) | REQ-007 CA-47 punto 11 (QA-023-09): un salto de línea dentro de un campo de la entrada —el `cwd` (en medio, al final, con dos rutas, o un directorio real cuyo nombre lo lleva), el agente— por `Edit`, `MultiEdit`, `Write` y `Bash` (filas E1–E5 de CA-66) | **deny**, y el motivo cita la ruta que la entrada designa; contra **43b948a** (materializado por SHA con `mat44`) **allow** o deny **juzgando otra ruta** (fail-before); contra **9596e39**, la referencia de los movimientos |
+| Integridad de la entrada (44) | lo legítimo con el MISMO `cwd` de varias líneas: el `desarrollador` escribiendo código, escrituras fuera del ámbito, el cierre de un REQ en verde, una edición literal, `ls -la` (G1, G2), y `echo x > src/a.ts` desde `docs/a␊b`, instancia de L8 (G3) | **allow**; G2 **deny** en 43b948a (el `cwd` desplazado no existía), G3 **deny** en 43b948a y 9596e39 |
+| Integridad de la entrada (44) | CA-47 punto 12: un `file_path` con salto de línea —el que ya se denegaba (F1, con C10), el que la lectura entera habría permitido (F2: `app/*.ts`, un patrón exacto, una creación, el enlace de CA-49 (i)), con `..` detrás (F3) y fuera del ámbito o legítimo (F4, con C9)— | **deny** con el motivo de no determinable (la ruta lleva un salto de línea; corrígela sin saltos), a todo agente en `guard-completado` |
+| Integridad de la entrada (44) | CA-47 punto 13: un `tool_name` con salto de línea (`Write␊`, `Bash␊`, `Edit␊`, y `Write␊` del `desarrollador`) (T1) | **deny**: no identifica ninguna herramienta; en 43b948a y 9596e39 `Write␊` y `Edit␊` **allow** y `Bash␊` **deny** |
+| Integridad de la entrada (44) | los motivos de F y T, y `arnes_parse_input` campo a campo con un salto en cada uno (P1) | dicen su causa y no nombran ninguna herramienta como salida; los seis campos **intactos** (en 43b948a, desplazados) |
 
 **Desde REQ-023 CA-13, un `Edit` de `requirements/` que la puerta no puede reconstruir se deniega antes
 que cualquier otra puerta.** Por eso los casos que miden otra puerta de `guard-completado` usan
@@ -306,6 +311,8 @@ ruta**, y una ruta relativa se ancla en el `cwd` de la entrada. Los emisores com
 la raíz, así que las rutas relativas de los casos existentes siguen designando lo mismo. La sección 43
 trae su propio emisor porque sus filas necesitan un `cwd` distinto de la raíz, o ninguno. Y es una
 prueba **a nivel de hook**: la validación en el host real (CA-66, punto 6) es de la coordinadora.
+La sección 44 también trae su propio emisor: pone en el `cwd` y en el agente su texto LITERAL, saltos
+de línea incluidos, porque lo que mide es que ningún contenido de un campo desplace a los demás.
 
 **Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
 falsea la máquina, el runner del CI y la carga. Los de arriba son **cocientes de duplicación**

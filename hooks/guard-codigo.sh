@@ -31,6 +31,20 @@ arnes_guard_codigo() {
   local objetivo="" via_bash=0 exceso=0 cand quien escrituras="" rc nodet=0 nd_ruta='' nd_causa='' nd_arreglo=''
 
   arnes_parse_input
+  # REQ-007 CA-47, punto 13: un `tool_name` con un salto de linea no identifica ninguna herramienta
+  # —leido entero, `Bash` seguido de un salto ya no es `Bash`—, y tratarlo como una herramienta que
+  # esta puerta no juzga lo dejaria pasar. Es una escritura no determinable (punto 7): solo el agente
+  # de codigo pasa. El agente de codigo lo dice el manifiesto; si no se puede leer, no pasa nadie.
+  if [[ "$ARNES_TOOL" == *$'\n'* ]]; then
+    arnes_parse_manifest
+    if [ -n "$ARNES_AGENT_ID" ] && arnes_agente_coincide "$ARNES_AGENT_TYPE" "${ARNES_AGENTE_CODIGO:-}"; then
+      return 0
+    fi
+    if [ -n "$ARNES_AGENT_ID" ]; then quien="el subagente $(arnes_agente_legible "${ARNES_AGENT_TYPE:-desconocido}")"
+    else quien="la sesión coordinadora"; fi
+    arnes_cita_ruta "$ARNES_TOOL"
+    arnes_deny "ARNES: el nombre de la herramienta de esta llamada, $ARNES_CITA_RUTA, lleva un salto de linea y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe ni en que archivo: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar (intento de $quien; REQ-007 CA-47, punto 13)."
+  fi
   # SEC-004 (REQ-007 CA-49 (i)): por Edit/Write/MultiEdit, un enlace en el ULTIMO componente
   # situado dentro de la raiz se deniega sea cual sea su destino. Cualquier otro enlace —un
   # directorio enlazado, uno de fuera de la raiz— lo juzga la identidad del destino, abajo.

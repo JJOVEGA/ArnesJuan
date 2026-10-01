@@ -32,23 +32,70 @@ arnes_preludio() {
   return 0
 }
 
-# Campos del input que usan los guardianes. UNA llamada a jq para los dos.
-# `command` va al final porque puede ser multilinea: se lleva el resto del texto.
-# `cwd` es el directorio de trabajo de la llamada, en el que se ANCLA una ruta relativa
-# (REQ-007 CA-47, punto 1). Va ANTES de `file_path` a proposito: lo escribe el host, y un
-# salto de linea dentro de un `file_path` —que escribe el modelo— no puede desplazarlo.
+# Campos del input que usan los guardianes. UNA llamada a jq para los dos. Esta lista es la sede de
+# los campos de la entrada que leen las puertas (REQ-007 CA-47, punto 11). `cwd` es el directorio de
+# trabajo de la llamada, en el que se ANCLA una ruta relativa (CA-47, punto 1).
+#
+# LOS LIMITES ENTRE CAMPOS LOS FIJA EL FORMATO, NUNCA EL CONTENIDO (QA-023-09, CA-47 punto 11). jq
+# escribe los campos uno tras otro, separados por saltos de linea, y CUALQUIERA puede llevar saltos
+# dentro: el `cwd` es el nombre de un directorio —ni el host ni nadie impide que lo lleve— y el
+# `file_path` lo escribe el modelo. Leidos a «una linea por campo», un salto dentro de uno desplazaba
+# todos los siguientes: medido en 104ffd1, con `"cwd": "/tmp\nb"` el hook juzgo `b` como destino, la
+# ruta real acabo en `command`, y un cierre en rojo por la ruta canonica salio allow. Ninguna premisa
+# sobre quien escribe un campo protege a los demas.
+#
+# Por eso la PRIMERA linea declara, para cada campo menos el ultimo, cuantos saltos de linea lleva
+# (`indices("\n")`, en la misma llamada a jq), y de cada campo se leen exactamente esas lineas mas una.
+# El ultimo, `command`, se lleva el resto. Nada se prohibe y nada se sustituye: cada campo llega
+# entero, con sus saltos. Dos detalles que lo hacen exacto:
+#   * la normalizacion de transporte de `arnes_jq_str` (CRLF -> LF, por el jq de Windows) no cambia
+#     el numero de LF que cuenta jq;
+#   * `$( )` solo retira saltos FINALES de la salida, es decir, lineas vacias del final: leer mas
+#     alla del final del flujo devuelve vacio, que es exactamente lo que eran.
+# Un valor que no es una cadena se lee con `tostring` (su JSON compacto, en una linea) — salvo el
+# `cwd`, que si no es una cadena no ancla nada, como antes. Sin procesos nuevos. Que un `file_path` o
+# un `tool_name` CON salto no se puedan juzgar como cualquier otro lo deciden CA-47 puntos 12 y 13
+# (`_arnes_id_calcula` y los guardianes), no esta lectura: aqui solo se lee, entero.
+#
+# Si jq no puede leer la entrada, los campos quedan VACIOS: nunca se reparte entre los campos una
+# salida anterior de jq (el fallo de jq al leer la entrada es SEC-120, fuera de esta reparacion).
 arnes_parse_input() {
   [ -z "${ARNES_INPUT_LISTO:-}" ] || return 0
-  arnes_jq_str "$ARNES_INPUT" -r '[.tool_name // "",
-                                   .agent_id // "",
-                                   .agent_type // "",
-                                   (.cwd // "" | if type == "string" then . else "" end),
-                                   .tool_input.file_path // "",
-                                   .tool_input.command // ""] | .[]'
-  { IFS= read -r ARNES_TOOL; IFS= read -r ARNES_AGENT_ID; IFS= read -r ARNES_AGENT_TYPE
-    IFS= read -r ARNES_CWD; IFS= read -r ARNES_FP; IFS= read -r -d '' ARNES_CMD; } <<< "$ARNES_JQ"
-  ARNES_CMD="${ARNES_CMD%$'\n'}"
+  local n_tool='' n_aid='' n_aty='' n_cwd='' n_fp=''
+  if ! arnes_jq_str "$ARNES_INPUT" -r '[.tool_name // "",
+                                        .agent_id // "",
+                                        .agent_type // "",
+                                        (.cwd // "" | if type == "string" then . else "" end),
+                                        .tool_input.file_path // "",
+                                        .tool_input.command // ""]
+                                       | map(tostring)
+                                       | (.[0:5] | map(indices("\n") | length | tostring) | join(" ")),
+                                         .[]'; then
+    ARNES_JQ=''
+  fi
+  ARNES_TOOL=''; ARNES_AGENT_ID=''; ARNES_AGENT_TYPE=''; ARNES_CWD=''; ARNES_FP=''; ARNES_CMD=''
+  if [ -n "$ARNES_JQ" ]; then
+    { IFS=' ' read -r n_tool n_aid n_aty n_cwd n_fp
+      _arnes_lee_campo "$n_tool"; ARNES_TOOL="$ARNES_CAMPO"
+      _arnes_lee_campo "$n_aid";  ARNES_AGENT_ID="$ARNES_CAMPO"
+      _arnes_lee_campo "$n_aty";  ARNES_AGENT_TYPE="$ARNES_CAMPO"
+      _arnes_lee_campo "$n_cwd";  ARNES_CWD="$ARNES_CAMPO"
+      _arnes_lee_campo "$n_fp";   ARNES_FP="$ARNES_CAMPO"
+      IFS= read -r -d '' ARNES_CMD; } <<< "$ARNES_JQ"
+    ARNES_CMD="${ARNES_CMD%$'\n'}"
+  fi
   ARNES_INPUT_LISTO=1
+}
+
+# Lee UN campo de `arnes_parse_input`: su primera linea y tantas mas como saltos declaro jq.
+# El contador se compara con `[ -gt ]`, que exige un entero literal y no evalua expresiones.
+_arnes_lee_campo() {   # <saltos de linea del campo> -> ARNES_CAMPO (del flujo abierto por el llamador)
+  local n="$1" l
+  IFS= read -r ARNES_CAMPO
+  while [ "$n" -gt 0 ] 2>/dev/null; do
+    l=''; IFS= read -r l
+    ARNES_CAMPO+=$'\n'"$l"; n=$((n - 1))
+  done
 }
 
 # Campos del manifiesto, tambien en UNA llamada. Los globs van al final porque son
@@ -660,6 +707,19 @@ _arnes_id_calcula() {
   ARNES_ID_O='' ARNES_ID_R=0
   _arnes_raices
   if [ -z "$p" ]; then _arnes_nodet "la ruta esta vacia" "escribe la ruta del archivo"; return 0; fi
+  # CA-47, punto 12: el `file_path` que la puerta juzga, si su texto TAL COMO LLEGA lleva un salto de
+  # linea, es no determinable (y se aplica el punto 7). La ruta se lee entera (punto 11), pero que
+  # archivo escribira la herramienta con ese argumento —el nombre literal, con el salto, o uno
+  # recortado— no esta medido, y juzgar solo la ruta entera daria permiso apoyandose en esa conducta.
+  # SOLO el `file_path`: ni el `cwd` (que solo ancla) ni los destinos de `Bash`, que el shell escribe
+  # tal como los deletrea el comando —y que ademas nunca llevan un salto: el detector trocea por
+  # palabras y sus llamadores leen sus destinos de uno en uno, por lineas—.
+  case "$p" in
+    *$'\n'*) if [ "${ARNES_TOOL:-}" != Bash ] && [ "$p" = "${ARNES_FP:-}" ]; then
+               _arnes_nodet "lleva un salto de linea, y no se sabe que archivo se escribiria con esa ruta: el nombre literal, con el salto, o uno recortado" \
+                            "escribe la ruta sin saltos de linea"; return 0
+             fi ;;
+  esac
   if [ "${#p}" -gt "$ARNES_ID_MAX" ]; then
     _arnes_nodet "mide ${#p} caracteres, mas de los $ARNES_ID_MAX que el sistema abre" "acorta la ruta"; return 0
   fi
@@ -1692,15 +1752,20 @@ arnes_deny_manifiesto_roto() {   # [destinos de escritura ya detectados por Bash
   [ "${ARNES_MANIFEST_ROTO:-0}" = "1" ] || return 0
   local destinos d solo_manifiesto=1 manif_rel="$ARNES_MANIF_REL"
   case "$ARNES_TOOL" in
-    Edit|Write|MultiEdit) destinos="$ARNES_FP" ;;
-    Bash) destinos="${1:-}"; [ -n "$destinos" ] || return 0 ;;
+    # El `file_path` es UN destino y se identifica ENTERO, nunca linea a linea (CA-47, puntos 11 y
+    # 12): troceado por lineas, `<manifiesto>\n` pasaba por la reparacion. Con un salto es no
+    # determinable, y un destino que no se puede determinar no es el manifiesto (CA-60).
+    Edit|Write|MultiEdit)
+      if [ -n "$ARNES_FP" ]; then arnes_identidad "$ARNES_FP"; arnes_id_pertenece manifiesto || solo_manifiesto=0; fi ;;
+    Bash)
+      destinos="${1:-}"; [ -n "$destinos" ] || return 0
+      while IFS= read -r d; do
+        [ -n "$d" ] || continue
+        arnes_identidad "$d"
+        arnes_id_pertenece manifiesto || { solo_manifiesto=0; break; }
+      done <<< "$destinos" ;;
     *) return 0 ;;
   esac
-  while IFS= read -r d; do
-    [ -n "$d" ] || continue
-    arnes_identidad "$d"
-    arnes_id_pertenece manifiesto || { solo_manifiesto=0; break; }
-  done <<< "$destinos"
   # Un comando que repara el manifiesto Y ademas escribe en otro sitio no es una
   # reparacion: la excepcion vale cuando TODO lo que escribe es el manifiesto.
   #

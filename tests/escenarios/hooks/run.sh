@@ -1634,7 +1634,14 @@ done
 # archivo de fuera —Write <raíz>/src/../README.md, echo x > src/../README.md y un sed -i con el
 # terminal hacia requirements/../docs/x.md—, cada una con su movimiento contra 9596e39, y el control
 # opuesto `echo x > src/a.ts` (deny en los dos); los del Write y del sed ya eran I1 src e I2 req.
-CASOS_ESPERADOS=1334
+# Y 1334 → 1501 por REQ-007 CA-47 puntos 11 a 13 y CA-66, versionado del 2026-10-01 (QA-023-09, sexta
+# autorización): +167 en la sección 44, nueva —un salto de línea dentro de un campo de la entrada ya no
+# desplaza los demás, un `file_path` con salto es no determinable y un `tool_name` con salto no identifica
+# ninguna herramienta—: 44 filas de la tabla de CA-66 (E1–E5, G1–G3, F1–F4, T1), cada una en la candidata,
+# contra 43b948a (fail-before) y contra 9596e39 (la referencia de los movimientos), y en la candidata por
+# guard.sh las 32 que juzga un guardián; los motivos de F y T; y P1, el análisis campo a campo, en la
+# candidata y en 43b948a. Ninguna sección existente cambia su número.
+CASOS_ESPERADOS=1501
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

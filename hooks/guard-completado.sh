@@ -305,6 +305,13 @@ arnes_guard_completado() {
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
   arnes_parse_input
+  # REQ-007 CA-47, punto 13: un `tool_name` con un salto de linea no identifica ninguna herramienta,
+  # y se trata como una escritura no determinable por Edit/Write/MultiEdit (punto 7): esta puerta la
+  # deniega a TODO agente, porque no hay archivo que leer ni documento que reconstruir.
+  if [[ "$ARNES_TOOL" == *$'\n'* ]]; then
+    arnes_cita_ruta "$ARNES_TOOL"
+    arnes_deny "ARNES: el nombre de la herramienta de esta llamada, $ARNES_CITA_RUTA, lleva un salto de linea y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe en un REQ ni leer el documento que quedaria escrito: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar; no se permite a ningun agente (REQ-007 CA-47, punto 13)."
+  fi
   # SEC-004 (REQ-007 CA-49 (i)): por Edit/Write/MultiEdit, un enlace en el ULTIMO componente
   # situado dentro de la raiz se deniega sea cual sea su destino. Cualquier otro enlace —un
   # directorio enlazado, uno de fuera de la raiz— lo juzga la identidad del destino, abajo.

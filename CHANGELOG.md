@@ -2,6 +2,24 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-01 · Sexta autorización, implementación (desarrollador): QA-023-09 cerrado a nivel de hook (la entrada se lee campo a campo, entera) y CA-47 puntos 12 y 13 (`file_path` y `tool_name` con LF, no determinables); optimización de QA-023-10 retirada del candidato; sección 44 del banco (1334 → 1501) — SIN VALIDAR
+> Origen: Interno (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Unos 690 k tokens de contexto acumulado en la comisión, con su continuación.
+
+- **QA-023-09:** `arnes_parse_input` sigue haciendo una sola llamada a `jq`, sin procesos ni opciones nuevas. La primera línea de la salida declara cuántos saltos lleva cada campo, y `_arnes_lee_campo` lee cada uno entero. El comentario falso («lo escribe el host») queda reescrito.
+- **CA-47 punto 12:** en `_arnes_id_calcula`, sólo para el `file_path` de una llamada que no es `Bash`. **Punto 13:** en `guard-codigo` y `guard-completado`. `arnes_deny_manifiesto_roto` identifica el `file_path` entero.
+- **Dos decisiones de implementación pendientes de que el analista las confirme o declare:**
+  - el punto 12 cubre también el `file_path` de una herramienta desconocida. Si no lo cubriera, X1 y X2 pasarían de deny a allow;
+  - M1, M2 y M4 pasan de allow a deny frente a `9596e39`.
+- **QA-023-10:** la optimización sale del candidato, conservada en `evidencia-dev-r6/r6-arbol-completo-con-optimizacion.patch` (rama local de evidencia, `3b947a1`). `git diff 43b948a -- hooks`: 3 archivos, 107 inserciones y 21 supresiones.
+- **Comprobado por el desarrollador:**
+  - sección 44: 167 PASS con estos hooks; 72 FAIL con los de `43b948a`, 52 con los de `9596e39` y 54 con 1.33.2;
+  - batería de bordes sobre el árbol final: ningún movimiento de deny a allow fuera de los seis de CA-66 punto 5;
+  - banco completo: **1488 PASS, 1 FAIL, 12 SKIP**, cuadre 1501. El FAIL es de reloj, en la sección 25 («heredoc CITADO de ~300 KB → allow y barato»): veredicto correcto, 4632 ms frente a un techo de 4000. Es preexistente: aislado tarda igual en `9596e39`, en `43b948a` y en el árbol final. Se conserva sin relanzar;
+  - autoprueba 117/0 y gates rc 0.
+- **Sonda de CA-54 sobre el árbol final** (sólo registro), en 131 072: 8,6–10,3 s, frente a 8,6–9,4 s de `43b948a` y 2,9–4,5 s de `9596e39`. **FAIL**, como se esperaba.
+- **sha256 (16 hex):** `guard.sh` 2e7ec8cb189d025c (sin cambios), `guard-completado.sh` 743469771cc85be1, `lib.sh` 12d4762fadc84710 y `guard-codigo.sh` 8da615c2f778f591.
+- **Avance (regla 6):** el código de QA-023-09 queda en el candidato. Faltan la validación en el host del caso reutilizado, el write-back de las dos decisiones de implementación, QA y seguridad.
+
 ## [GitHub] — 2026-10-01 · Sexta autorización, write-back (analista): QA-023-09 en CA-47 punto 11 (integridad de la entrada); `file_path` con LF no determinable (CA-47 punto 12, opción B) y `tool_name` con LF (punto 13); QA-023-11 en CA-45; QA-023-10 registrado en CA-54 sin tocar umbral, defecto ni máximo — SIN VALIDAR
 > Origen: GitHub (lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `analista-requerimientos`. Unos 427 k tokens (cifra del arnés para la comisión).
 
