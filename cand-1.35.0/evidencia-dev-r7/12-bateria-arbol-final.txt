@@ -1,0 +1,122 @@
+== proyecto: /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-dev-r7/sb.JRu79B/proj   fuera: /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-dev-r7/sb.JRu79B/fuera
+   cd6afa6  lib.sh 12d4762fadc84710  guard-codigo 8da615c2f778f591  guard-completado 743469771cc85be1
+   9596e39  lib.sh 067ed6edd983096b  guard-codigo 0700ce03a9e37f7c  guard-completado a48716bedc919e48
+   1.33.2   lib.sh d8453de560928296  guard-codigo 0700ce03a9e37f7c  guard-completado 6b5cd6ff66351abd
+   cand     lib.sh 4a9b05fab6ab92a0  guard-codigo 94ad57ff577d2964  guard-completado 872916a33041f11d
+
+== A. El cwd con CR (QA-023-13) ==
+A1 coordinadora: echo x > src/a.ts, cwd <fuera>/d␍ (-> raíz) [guard-codigo.sh]  cd6afa6=allow  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certeza (el del final se confunde con el fin de linea de Windows), asi que no se sabe en que directorio se anclaria. Sin saber que 
+A1g idem por guard.sh [guard.sh]  cd6afa6=allow  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certeza (el del final se confunde con el fin de linea de Windows), asi que no se sabe en que directorio se anclaria. Sin saber que 
+A2 sed -i que cierra REQ-900 (rojo), cwd <fuera>/d␍ [guard-completado.sh]  cd6afa6=allow  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: este comando escribe en 'requirements/REQ-900.md' y menciona 'completado', y no se pudo determinar a que archivo escribe: es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certeza (el del final se confunde con el fin de linea de Windows)
+A2g idem por guard.sh [guard.sh]  cd6afa6=allow  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe 'requirements/REQ-900.md': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certeza (el del final se confunde con el fin de linea de Windows), asi que no se sabe en que directorio se anclaria.
+A3 coordinadora: echo x > src/a.ts, cwd <fuera>/e␍f (CR en medio) [guard.sh]  cd6afa6=deny  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certeza (el del final se confunde con el fin de linea de Windows), asi que no se sabe en que directorio se anclaria. Sin saber que 
+A4 coordinadora: echo x > src/a.ts, cwd <fuera>/g␍␊h (CR antes de LF) [guard.sh]  cd6afa6=allow  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certeza (el del final se confunde con el fin de linea de Windows), asi que no se sabe en que directorio se anclaria. Sin saber que 
+A5 coordinadora: echo x > src/a.ts, cwd <fuera>/s␍ (recortado no existe) [guard.sh]  cd6afa6=deny  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certeza (el del final se confunde con el fin de linea de Windows), asi que no se sabe en que directorio se anclaria. Sin saber que 
+A6 Write de la coordinadora a src/a.ts RELATIVO, cwd <fuera>/d␍ [guard.sh]  cd6afa6=allow  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certeza (el del final se confunde con el fin de linea de Windows), asi que no se sabe en que directorio se anclaria. Sin saber que 
+A7 Edit que cierra REQ-900 por ruta relativa, cwd <fuera>/d␍ [guard.sh]  cd6afa6=allow  9596e39=deny  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe 'requirements/REQ-900.md': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certeza (el del final se confunde con el fin de linea de Windows), asi que no se sabe en que directorio se anclaria.
+
+== B. Controles con el mismo cwd con CR (lo que no depende de él) ==
+B1 coordinadora: Write ABSOLUTO a docs/n.md, cwd <fuera>/d␍ [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 
+B2 coordinadora: Write ABSOLUTO a src/a.ts, cwd <fuera>/d␍ [guard.sh]  cd6afa6=deny  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5).
+B3 Edit ABSOLUTO que cierra REQ-900 (rojo), cwd <fuera>/d␍ [guard.sh]  cd6afa6=deny  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9).
+B4 Edit ABSOLUTO que cierra REQ-901 (verde), cwd <fuera>/d␍ [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 
+B5 ls -la, cwd <fuera>/d␍ [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 
+B6 printf x > ABSOLUTO docs/n.md, cwd <fuera>/d␍ [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 
+B7 coordinadora: echo x > n.md RELATIVO, cwd <fuera>/d␍ [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe 'n.md': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certeza (el del final se confunde con el fin de linea de Windows), asi que no se sabe en que directorio se anclaria. Sin saber que arch
+B8 desarrollador: echo x > src/a.ts RELATIVO, cwd <fuera>/d␍ [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 
+B9 desarrollador: sed -i completado docs/x.md RELATIVO, cwd <fuera>/d␍ [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: este comando escribe en 'docs/x.md' y menciona 'completado', y no se pudo determinar a que archivo escribe: es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certeza (el del final se confunde con el fin de linea de Windows), asi que no s
+
+== C. Controles sin CR (deciden como antes) ==
+C1 coordinadora: echo x > src/a.ts, cwd <raíz> [guard.sh]  cd6afa6=deny  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no salta la regla: delega el cambio en 'desarrollador' (ver AGENTS.md §5). Nota: la detección en Bash es parcial (redirecciones, tee, cp/mv/install, sed -i, dd) —
+C2 coordinadora: echo x > src/a.ts, cwd <fuera>/d (real fuera) [guard.sh]  cd6afa6=allow  9596e39=deny  1.33.2=deny  cand=allow
+      motivo(cand): 
+C3 sed -i cierra REQ-900, cwd <raíz> [guard.sh]  cd6afa6=deny  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: este comando escribe en 'requirements/REQ-900.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesitan el contenido resultante (veredictos de QA y Seguridad, cola de PENDING_APPROVAL.md y quality gates). Hazlo con Edit/Write para que este mismo hook lo evalue
+C4 coordinadora: echo x > n.md, cwd <raíz>/docs [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 
+C5 Write ABSOLUTO a docs/n.md, cwd <raíz> [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 
+C6 cwd con LF /tmp␊b: Edit que cierra REQ-900 [guard.sh]  cd6afa6=deny  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9).
+C7 cwd con LF /tmp␊b: Write a docs/n.md [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 
+
+== D. file_path con CR (punto 12 por coherencia) ==
+D1 coordinadora: Write <raíz>/docs/l␍ (enlace dentro -> src/a.ts) [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe $'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-dev-r7/sb.JRu79B/proj/docs/l\r': lleva un retorno de carro, y no se sabe que archivo se escribiria con esa ruta: el nombre literal, con el retorno de carro, o uno recortad
+D2 coordinadora: Write <fuera>/l␍ (enlace fuera -> src/a.ts) [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe $'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-dev-r7/sb.JRu79B/fuera/l\r': lleva un retorno de carro, y no se sabe que archivo se escribiria con esa ruta: el nombre literal, con el retorno de carro, o uno recortado. S
+D3 Edit que cierra <REQ-901.md␍> (rojo; REQ-901.md verde) [guard-completado.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe $'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-dev-r7/sb.JRu79B/proj/requirements/REQ-901.md\r': lleva un retorno de carro, y no se sabe que archivo se escribiria con esa ruta: el nombre literal, con el retorno de carr
+D3g idem por guard.sh [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe $'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-dev-r7/sb.JRu79B/proj/requirements/REQ-901.md\r': lleva un retorno de carro, y no se sabe que archivo se escribiria con esa ruta: el nombre literal, con el retorno de carr
+D4 coordinadora: Write <raíz>/src/a.ts␍ [guard.sh]  cd6afa6=deny  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe $'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-dev-r7/sb.JRu79B/proj/src/a.ts\r': lleva un retorno de carro, y no se sabe que archivo se escribiria con esa ruta: el nombre literal, con el retorno de carro, o uno recort
+D5 coordinadora: Write <raíz>/docs/n.md␍ (fuera del ámbito) [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe $'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-dev-r7/sb.JRu79B/proj/docs/n.md\r': lleva un retorno de carro, y no se sabe que archivo se escribiria con esa ruta: el nombre literal, con el retorno de carro, o uno recor
+D6 coordinadora: Write <raíz>/docs/n␍x.md (CR en medio) [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe $'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-dev-r7/sb.JRu79B/proj/docs/n\rx.md': lleva un retorno de carro, y no se sabe que archivo se escribiria con esa ruta: el nombre literal, con el retorno de carro, o uno reco
+D7 desarrollador: Write <raíz>/src/a.ts␍ [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: no se pudo determinar a que archivo escribe $'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-dev-r7/sb.JRu79B/proj/src/a.ts\r': lleva un retorno de carro, y no se sabe que archivo se escribiria con esa ruta: el nombre literal, con el retorno de carro, o uno recort
+D8 Bash con file_path con CR (ninguna puerta lo juzga): ls [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 
+
+== T. tool_name con CR (punto 13 por coherencia) ==
+T1 coordinadora: Bash␍ con ls y file_path src/a.ts [guard-codigo.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: el nombre de la herramienta de esta llamada, $'Bash\r', lleva un retorno de carro y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe ni en que archivo: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar (intento de la sesión coordinadora; R
+T1g idem por guard.sh [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: el nombre de la herramienta de esta llamada, $'Bash\r', lleva un retorno de carro y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe ni en que archivo: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar (intento de la sesión coordinadora; R
+T2 coordinadora: Write␍ a src/a.ts [guard.sh]  cd6afa6=deny  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: el nombre de la herramienta de esta llamada, $'Write\r', lleva un retorno de carro y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe ni en que archivo: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar (intento de la sesión coordinadora; 
+T3 coordinadora: Edit␍ que cierra REQ-900 [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: el nombre de la herramienta de esta llamada, $'Edit\r', lleva un retorno de carro y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe ni en que archivo: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar (intento de la sesión coordinadora; R
+T4 coordinadora: Bash␍ con echo x > src/a.ts [guard.sh]  cd6afa6=deny  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: el nombre de la herramienta de esta llamada, $'Bash\r', lleva un retorno de carro y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe ni en que archivo: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar (intento de la sesión coordinadora; R
+T5 desarrollador: Write␍ a src/a.ts [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: el nombre de la herramienta de esta llamada, $'Write\r', lleva un retorno de carro y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe en un REQ ni leer el documento que quedaria escrito: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar; n
+T6 coordinadora: B␍ash con ls (CR en medio) [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: el nombre de la herramienta de esta llamada, $'B\rash', lleva un retorno de carro y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe ni en que archivo: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar (intento de la sesión coordinadora; R
+
+== G. Campos del agente con CR ==
+G1 agent_type desarrollador␍ escribe src/a.ts [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 
+G2 agent_type qa-tester␍ escribe src/a.ts [guard.sh]  cd6afa6=deny  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de el subagente 'qa-tester'). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5).
+G3 agent_id ␍ (solo CR), agent_type desarrollador, escribe src/a.ts [guard.sh]  cd6afa6=deny  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5).
+G4 agent_id ␍ (solo CR), agent_type qa-tester, escribe src/a.ts [guard.sh]  cd6afa6=deny  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5).
+G5 agent_type desarrollador␍␊qa escribe src/a.ts [guard.sh]  cd6afa6=deny  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de el subagente 'desarrollador
+qa'). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5).
+
+== K. command de Bash con CR (solo se ANOTA; el analizador no se toca) ==
+K1 coordinadora: printf x > k␍ (CR final del command), cwd <raíz>/docs [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 
+K2 coordinadora: printf x > k␍␊true, cwd <raíz>/docs [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 
+K3 coordinadora: printf x > src/a.ts␍ (CR final), cwd <raíz> [guard.sh]  cd6afa6=deny  9596e39=deny  1.33.2=deny  cand=deny
+      motivo(cand): ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no salta la regla: delega el cambio en 'desarrollador' (ver AGENTS.md §5). Nota: la detección en Bash es parcial (redirecciones, tee, cp/mv/install, sed -i, dd) —
+
+== Efecto en disco que el hook juzga (shell real, en una copia aparte) ==
+   cd "<fuera>/d␍" && echo ESCRITO > src/a.ts  ->  <raíz>/src/a.ts antes 73cb3858a687a849, despues b71377c3e4e7621d, contenido "ESCRITO"; <fuera>/d/src/a.ts existe: no
+   printf K > k␍ desde docs/  ->  <raíz>/src/a.ts contiene "K"

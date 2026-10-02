@@ -1,0 +1,35 @@
+== sha256 (16 hex) del arbol final (hooks, tools, banco tocado)
+4a641cac9d1a2afe  hooks/estado-derivado.sh
+94ad57ff577d2964  hooks/guard-codigo.sh
+872916a33041f11d  hooks/guard-completado.sh
+7496adcf1c6d9735  hooks/guard-git.sh
+2e7ec8cb189d025c  hooks/guard.sh
+4a9b05fab6ab92a0  hooks/lib.sh
+dd9e6dcf62c79336  hooks/rotar-artefactos.sh
+0570ec9dd0edf145  hooks/stop.sh
+7ed85d30562de028  hooks/hooks.json
+f52870a38576991b  hooks/campos-req.awk
+23395265af76ed25  tools/arnes-lectura.sh
+c9a2916a060b36e5  tools/arnes-paralelo.sh
+4996a647ab3c2a8c  tests/escenarios/hooks/run.sh
+0196813f01594120  tests/escenarios/hooks/README.md
+f066d203763a2c4f  tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh
+
+== git diff --stat cd6afa6 -- hooks tools tests
+ hooks/guard-codigo.sh                              |   9 +-
+ hooks/guard-completado.sh                          |  11 +-
+ hooks/lib.sh                                       |  84 ++++++++++++++-
+ tests/escenarios/hooks/README.md                   |  10 +-
+ tests/escenarios/hooks/run.sh                      |   8 +-
+ .../hooks/secciones/44-integridad-de-la-entrada.sh | 116 +++++++++++++++++----
+ 6 files changed, 204 insertions(+), 34 deletions(-)
+
+== git status --short
+ M docs/ESTADO.md
+ M hooks/guard-codigo.sh
+ M hooks/guard-completado.sh
+ M hooks/lib.sh
+ M tests/escenarios/hooks/README.md
+ M tests/escenarios/hooks/run.sh
+ M tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh
+?? propuesta-v1.35.0/

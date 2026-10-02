@@ -1,0 +1,61 @@
+== Movimientos de veredicto (a nivel de hook), desde 12-, 13- y 14- (arbol final). Columnas: cd6afa6 9596e39 1.33.2 cand
+   frente a 9596e39: D->A = deny a allow (prohibido salvo los seis de CA-66 p5); A->D = allow a deny (a declarar)
+A1      deny    | vs9596e39 igual | vscd6afa6 A->D  | A1 coordinadora: echo x > src/a.ts, cwd <fuera>/d␍ (-> raíz)
+A1g     deny    | vs9596e39 igual | vscd6afa6 A->D  | A1g idem por guard.sh
+A2      deny    | vs9596e39 igual | vscd6afa6 A->D  | A2 sed -i que cierra REQ-900 (rojo), cwd <fuera>/d␍
+A2g     deny    | vs9596e39 igual | vscd6afa6 A->D  | A2g idem por guard.sh
+A3      deny    | vs9596e39 igual | vscd6afa6 igual | A3 coordinadora: echo x > src/a.ts, cwd <fuera>/e␍f (CR en medio)
+A4      deny    | vs9596e39 igual | vscd6afa6 A->D  | A4 coordinadora: echo x > src/a.ts, cwd <fuera>/g␍␊h (CR antes de LF)
+A5      deny    | vs9596e39 igual | vscd6afa6 igual | A5 coordinadora: echo x > src/a.ts, cwd <fuera>/s␍ (recortado no existe)
+A6      deny    | vs9596e39 igual | vscd6afa6 A->D  | A6 Write de la coordinadora a src/a.ts RELATIVO, cwd <fuera>/d␍
+A7      deny    | vs9596e39 igual | vscd6afa6 A->D  | A7 Edit que cierra REQ-900 por ruta relativa, cwd <fuera>/d␍
+B1      allow   | vs9596e39 igual | vscd6afa6 igual | B1 coordinadora: Write ABSOLUTO a docs/n.md, cwd <fuera>/d␍
+B2      deny    | vs9596e39 igual | vscd6afa6 igual | B2 coordinadora: Write ABSOLUTO a src/a.ts, cwd <fuera>/d␍
+B3      deny    | vs9596e39 igual | vscd6afa6 igual | B3 Edit ABSOLUTO que cierra REQ-900 (rojo), cwd <fuera>/d␍
+B4      allow   | vs9596e39 igual | vscd6afa6 igual | B4 Edit ABSOLUTO que cierra REQ-901 (verde), cwd <fuera>/d␍
+B5      allow   | vs9596e39 igual | vscd6afa6 igual | B5 ls -la, cwd <fuera>/d␍
+B6      allow   | vs9596e39 igual | vscd6afa6 igual | B6 printf x > ABSOLUTO docs/n.md, cwd <fuera>/d␍
+B7      deny    | vs9596e39 A->D  | vscd6afa6 A->D  | B7 coordinadora: echo x > n.md RELATIVO, cwd <fuera>/d␍
+B8      allow   | vs9596e39 igual | vscd6afa6 igual | B8 desarrollador: echo x > src/a.ts RELATIVO, cwd <fuera>/d␍
+B9      deny    | vs9596e39 A->D  | vscd6afa6 A->D  | B9 desarrollador: sed -i completado docs/x.md RELATIVO, cwd <fuera>/d␍
+C1      deny    | vs9596e39 igual | vscd6afa6 igual | C1 coordinadora: echo x > src/a.ts, cwd <raíz>
+C2      allow   | vs9596e39 D->A  | vscd6afa6 igual | C2 coordinadora: echo x > src/a.ts, cwd <fuera>/d (real fuera)
+C3      deny    | vs9596e39 igual | vscd6afa6 igual | C3 sed -i cierra REQ-900, cwd <raíz>
+C4      allow   | vs9596e39 igual | vscd6afa6 igual | C4 coordinadora: echo x > n.md, cwd <raíz>/docs
+C5      allow   | vs9596e39 igual | vscd6afa6 igual | C5 Write ABSOLUTO a docs/n.md, cwd <raíz>
+C6      deny    | vs9596e39 igual | vscd6afa6 igual | C6 cwd con LF /tmp␊b: Edit que cierra REQ-900
+C7      allow   | vs9596e39 igual | vscd6afa6 igual | C7 cwd con LF /tmp␊b: Write a docs/n.md
+D1      deny    | vs9596e39 A->D  | vscd6afa6 A->D  | D1 coordinadora: Write <raíz>/docs/l␍ (enlace dentro -> src/a.ts)
+D2      deny    | vs9596e39 A->D  | vscd6afa6 A->D  | D2 coordinadora: Write <fuera>/l␍ (enlace fuera -> src/a.ts)
+D3      deny    | vs9596e39 A->D  | vscd6afa6 A->D  | D3 Edit que cierra <REQ-901.md␍> (rojo; REQ-901.md verde)
+D3g     deny    | vs9596e39 A->D  | vscd6afa6 A->D  | D3g idem por guard.sh
+D4      deny    | vs9596e39 igual | vscd6afa6 igual | D4 coordinadora: Write <raíz>/src/a.ts␍
+D5      deny    | vs9596e39 A->D  | vscd6afa6 A->D  | D5 coordinadora: Write <raíz>/docs/n.md␍ (fuera del ámbito)
+D6      deny    | vs9596e39 A->D  | vscd6afa6 A->D  | D6 coordinadora: Write <raíz>/docs/n␍x.md (CR en medio)
+D7      deny    | vs9596e39 A->D  | vscd6afa6 A->D  | D7 desarrollador: Write <raíz>/src/a.ts␍
+D8      allow   | vs9596e39 igual | vscd6afa6 igual | D8 Bash con file_path con CR (ninguna puerta lo juzga): ls
+T1      deny    | vs9596e39 A->D  | vscd6afa6 A->D  | T1 coordinadora: Bash␍ con ls y file_path src/a.ts
+T1g     deny    | vs9596e39 A->D  | vscd6afa6 A->D  | T1g idem por guard.sh
+T2      deny    | vs9596e39 igual | vscd6afa6 igual | T2 coordinadora: Write␍ a src/a.ts
+T3      deny    | vs9596e39 A->D  | vscd6afa6 A->D  | T3 coordinadora: Edit␍ que cierra REQ-900
+T4      deny    | vs9596e39 igual | vscd6afa6 igual | T4 coordinadora: Bash␍ con echo x > src/a.ts
+T5      deny    | vs9596e39 A->D  | vscd6afa6 A->D  | T5 desarrollador: Write␍ a src/a.ts
+T6      deny    | vs9596e39 A->D  | vscd6afa6 A->D  | T6 coordinadora: B␍ash con ls (CR en medio)
+G1      allow   | vs9596e39 igual | vscd6afa6 igual | G1 agent_type desarrollador␍ escribe src/a.ts
+G2      deny    | vs9596e39 igual | vscd6afa6 igual | G2 agent_type qa-tester␍ escribe src/a.ts
+G3      deny    | vs9596e39 igual | vscd6afa6 igual | G3 agent_id ␍ (solo CR), agent_type desarrollador, escribe src/a.ts
+G4      deny    | vs9596e39 igual | vscd6afa6 igual | G4 agent_id ␍ (solo CR), agent_type qa-tester, escribe src/a.ts
+G5      deny    | vs9596e39 A->D  | vscd6afa6 igual | G5 agent_type desarrollador␍␊qa escribe src/a.ts
+K1      allow   | vs9596e39 igual | vscd6afa6 igual | K1 coordinadora: printf x > k␍ (CR final del command), cwd <raíz>/docs
+K2      allow   | vs9596e39 igual | vscd6afa6 igual | K2 coordinadora: printf x > k␍␊true, cwd <raíz>/docs
+K3      deny    | vs9596e39 igual | vscd6afa6 igual | K3 coordinadora: printf x > src/a.ts␍ (CR final), cwd <raíz>
+M1      allow   | vs9596e39 igual | vscd6afa6 igual | M1 coordinadora: Write <raíz>/.arnes/config.json (control: la reparación)
+M2      deny    | vs9596e39 A->D  | vscd6afa6 A->D  | M2 coordinadora: Write <raíz>/.arnes/config.json␍ (CR final en el file_path)
+M3      deny    | vs9596e39 A->D  | vscd6afa6 A->D  | M3 coordinadora: Write␍ a <raíz>/.arnes/config.json (CR en el tool_name)
+M4      deny    | vs9596e39 A->D  | vscd6afa6 A->D  | M4 desarrollador: Write <raíz>/.arnes/config.json␍
+M5      deny    | vs9596e39 A->D  | vscd6afa6 igual | M5 coordinadora: printf {} > .arnes/config.json desde <fuera>/d␍ (relativa, cwd con CR)
+M6      allow   | vs9596e39 igual | vscd6afa6 igual | M6 control: printf {} > .arnes/config.json desde <raíz>
+K1      allow   | vs9596e39 igual | vscd6afa6 igual | K1 coordinadora: printf x > k␍ (CR final del command), cwd <raíz>/docs
+K2      allow   | vs9596e39 igual | vscd6afa6 igual | K2 coordinadora: printf x > k␍␊true (CR antes de un salto), cwd <raíz>/docs
+K4      deny    | vs9596e39 A->D  | vscd6afa6 igual | K4 coordinadora: printf x > k␍z (CR en medio: el transporte no lo toca), cwd <raíz>/docs
+K5      deny    | vs9596e39 A->D  | vscd6afa6 igual | K5 control: printf x > k␍z ; true (CR en medio, no final)

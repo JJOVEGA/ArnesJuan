@@ -1,0 +1,12 @@
+M1 coordinadora: Write <raíz>/.arnes/config.json (control: la reparación) [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 
+M2 coordinadora: Write <raíz>/.arnes/config.json␍ (CR final en el file_path) [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas protege este proyecto, quien es el agente de codigo ni cual es el estado terminal. Un manifiesto AUSENTE deja los hooks inertes a proposito; uno ROTO no puede, porque el proyecto s
+M3 coordinadora: Write␍ a <raíz>/.arnes/config.json (CR en el tool_name) [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: el nombre de la herramienta de esta llamada, $'Write\r', lleva un retorno de carro y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe ni en que archivo: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar (intento de la sesión coordinadora; 
+M4 desarrollador: Write <raíz>/.arnes/config.json␍ [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas protege este proyecto, quien es el agente de codigo ni cual es el estado terminal. Un manifiesto AUSENTE deja los hooks inertes a proposito; uno ROTO no puede, porque el proyecto s
+M5 coordinadora: printf {} > .arnes/config.json desde <fuera>/d␍ (relativa, cwd con CR) [guard.sh]  cd6afa6=deny  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas protege este proyecto, quien es el agente de codigo ni cual es el estado terminal. Un manifiesto AUSENTE deja los hooks inertes a proposito; uno ROTO no puede, porque el proyecto s
+M6 control: printf {} > .arnes/config.json desde <raíz> [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 

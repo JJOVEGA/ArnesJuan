@@ -1,0 +1,14 @@
+K1 coordinadora: printf x > k␍ (CR final del command), cwd <raíz>/docs [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 
+K2 coordinadora: printf x > k␍␊true (CR antes de un salto), cwd <raíz>/docs [guard.sh]  cd6afa6=allow  9596e39=allow  1.33.2=allow  cand=allow
+      motivo(cand): 
+K4 coordinadora: printf x > k␍z (CR en medio: el transporte no lo toca), cwd <raíz>/docs [guard.sh]  cd6afa6=deny  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no salta la regla: delega el cambio en 'desarrollador' (ver AGENTS.md §5). Nota: la detección en Bash es parcial (redirecciones, tee, cp/mv/install, sed -i, dd) —
+K5 control: printf x > k␍z ; true (CR en medio, no final) [guard.sh]  cd6afa6=deny  9596e39=allow  1.33.2=allow  cand=deny
+      motivo(cand): ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no salta la regla: delega el cambio en 'desarrollador' (ver AGENTS.md §5). Nota: la detección en Bash es parcial (redirecciones, tee, cp/mv/install, sed -i, dd) —
+-- lo que el detector extrae, por árbol (lib directa):
+   cd6afa6  K1 destinos: printf\ x\ \>\ k -> k 
+   cd6afa6  K4 destinos: $'printf x > k\rz' -> $'k\rz' 
+   cand     K1 destinos: printf\ x\ \>\ k -> k 
+   cand     K4 destinos: $'printf x > k\rz' -> $'k\rz' 
+-- efecto real del shell: (cd docs && printf K > k␍) -> src/a.ts contiene: K

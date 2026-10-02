@@ -1,0 +1,4 @@
+sin CLAUDE_PROJECT_DIR, cwd <fuera>/d␍ (enlace a la raíz), echo x > src/a.ts: cd6afa6  allow  
+sin CLAUDE_PROJECT_DIR, cwd <fuera>/d␍ (enlace a la raíz), echo x > src/a.ts: 9596e39  deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+sin CLAUDE_PROJECT_DIR, cwd <fuera>/d␍ (enlace a la raíz), echo x > src/a.ts: 1.33.2   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+sin CLAUDE_PROJECT_DIR, cwd <fuera>/d␍ (enlace a la raíz), echo x > src/a.ts: cand     deny  ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de car

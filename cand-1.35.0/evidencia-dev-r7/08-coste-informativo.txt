@@ -1,0 +1,8 @@
+write-src    cd6afa6  min= 29023 us
+write-src    cand     min= 30527 us
+bash-ls      cd6afa6  min= 23745 us
+bash-ls      cand     min= 23583 us
+bash-131k    cd6afa6  min=390964 us
+bash-131k    cand     min=384607 us
+fp-largo-cr  cd6afa6  min= 37376 us
+fp-largo-cr  cand     min= 41661 us

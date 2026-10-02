@@ -1,0 +1,17 @@
+== quality gates (AGENTS.md §7), 2026-10-02T08:35:00-06:00
+$ for f in hooks/*.sh tools/*.sh; do bash -n "$f" || exit 1; done
+rc=0
+$ jq -e . hooks/hooks.json >/dev/null
+rc=0
+$ jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null
+rc=0
+$ bash -n tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh && bash -n tests/escenarios/hooks/run.sh
+rc=0
+== manifiesto .arnes/config.json quality_gates:
+for f in hooks/*.sh tools/*.sh; do bash -n "$f" || exit 1; done
+jq -e . hooks/hooks.json >/dev/null
+jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null
+== ejecutadas tal cual desde el manifiesto:
+rc=0 :: for f in hooks/*.sh tools/*.sh; do bash -n "$f" || exit 1; done
+rc=0 :: jq -e . hooks/hooks.json >/dev/null
+rc=0 :: jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null

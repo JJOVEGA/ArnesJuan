@@ -1,0 +1,417 @@
+diff --git a/hooks/guard-codigo.sh b/hooks/guard-codigo.sh
+index b0e2bbe..a105383 100755
+--- a/hooks/guard-codigo.sh
++++ b/hooks/guard-codigo.sh
+@@ -35,15 +35,18 @@ arnes_guard_codigo() {
+   # —leido entero, `Bash` seguido de un salto ya no es `Bash`—, y tratarlo como una herramienta que
+   # esta puerta no juzga lo dejaria pasar. Es una escritura no determinable (punto 7): solo el agente
+   # de codigo pasa. El agente de codigo lo dice el manifiesto; si no se puede leer, no pasa nadie.
+-  if [[ "$ARNES_TOOL" == *$'\n'* ]]; then
++  # Con un retorno de carro, igual (QA-023-13): el transporte retiraba el del final y `Bash␍` con
++  # `ls` y un `file_path` en `src/` se juzgaba como `Bash`, sin mirar el `file_path`. El CR lo cuenta
++  # jq en el valor crudo (`ARNES_TOOL_CR`); el salto, si hay los dos, da el motivo de siempre.
++  if [[ "$ARNES_TOOL" == *$'\n'* ]] || [ "${ARNES_TOOL_CR:-0}" = 1 ]; then
+     arnes_parse_manifest
+     if [ -n "$ARNES_AGENT_ID" ] && arnes_agente_coincide "$ARNES_AGENT_TYPE" "${ARNES_AGENTE_CODIGO:-}"; then
+       return 0
+     fi
+     if [ -n "$ARNES_AGENT_ID" ]; then quien="el subagente $(arnes_agente_legible "${ARNES_AGENT_TYPE:-desconocido}")"
+     else quien="la sesión coordinadora"; fi
+-    arnes_cita_ruta "$ARNES_TOOL"
+-    arnes_deny "ARNES: el nombre de la herramienta de esta llamada, $ARNES_CITA_RUTA, lleva un salto de linea y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe ni en que archivo: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar (intento de $quien; REQ-007 CA-47, punto 13)."
++    arnes_cita_ruta "$ARNES_TOOL"; arnes_causa_herramienta
++    arnes_deny "ARNES: el nombre de la herramienta de esta llamada, $ARNES_CITA_RUTA, $ARNES_CAUSA_HERR y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe ni en que archivo: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar (intento de $quien; REQ-007 CA-47, punto 13)."
+   fi
+   # SEC-004 (REQ-007 CA-49 (i)): por Edit/Write/MultiEdit, un enlace en el ULTIMO componente
+   # situado dentro de la raiz se deniega sea cual sea su destino. Cualquier otro enlace —un
+diff --git a/hooks/guard-completado.sh b/hooks/guard-completado.sh
+index 1fe8dc1..8b92675 100755
+--- a/hooks/guard-completado.sh
++++ b/hooks/guard-completado.sh
+@@ -307,10 +307,13 @@ arnes_guard_completado() {
+   arnes_parse_input
+   # REQ-007 CA-47, punto 13: un `tool_name` con un salto de linea no identifica ninguna herramienta,
+   # y se trata como una escritura no determinable por Edit/Write/MultiEdit (punto 7): esta puerta la
+-  # deniega a TODO agente, porque no hay archivo que leer ni documento que reconstruir.
+-  if [[ "$ARNES_TOOL" == *$'\n'* ]]; then
+-    arnes_cita_ruta "$ARNES_TOOL"
+-    arnes_deny "ARNES: el nombre de la herramienta de esta llamada, $ARNES_CITA_RUTA, lleva un salto de linea y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe en un REQ ni leer el documento que quedaria escrito: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar; no se permite a ningun agente (REQ-007 CA-47, punto 13)."
++  # deniega a TODO agente, porque no hay archivo que leer ni documento que reconstruir. Con un retorno
++  # de carro, igual (QA-023-13): el transporte retiraba el del final y `Edit␍` se leia como `Edit` aqui
++  # y como otra herramienta en la segunda llamada a jq, que juzgaba un `Write` vacio y dejaba pasar el
++  # cierre de un REQ en rojo.
++  if [[ "$ARNES_TOOL" == *$'\n'* ]] || [ "${ARNES_TOOL_CR:-0}" = 1 ]; then
++    arnes_cita_ruta "$ARNES_TOOL"; arnes_causa_herramienta
++    arnes_deny "ARNES: el nombre de la herramienta de esta llamada, $ARNES_CITA_RUTA, $ARNES_CAUSA_HERR y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe en un REQ ni leer el documento que quedaria escrito: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar; no se permite a ningun agente (REQ-007 CA-47, punto 13)."
+   fi
+   # SEC-004 (REQ-007 CA-49 (i)): por Edit/Write/MultiEdit, un enlace en el ULTIMO componente
+   # situado dentro de la raiz se deniega sea cual sea su destino. Cualquier otro enlace —un
+diff --git a/hooks/lib.sh b/hooks/lib.sh
+index 944cc34..415d4c7 100755
+--- a/hooks/lib.sh
++++ b/hooks/lib.sh
+@@ -57,11 +57,34 @@ arnes_preludio() {
+ # un `tool_name` CON salto no se puedan juzgar como cualquier otro lo deciden CA-47 puntos 12 y 13
+ # (`_arnes_id_calcula` y los guardianes), no esta lectura: aqui solo se lee, entero.
+ #
++# EL RETORNO DE CARRO SE CUENTA ANTES DEL TRANSPORTE, PORQUE EL TRANSPORTE LO PUEDE BORRAR (QA-023-13).
++# `arnes_jq_str` retira el CR que precede a un salto de linea y el que cierra la salida: es el que
++# anade el jq de Windows a cada linea, y en el flujo de bytes es INDISTINGUIBLE de un CR que forme
++# parte del dato. En Linux un campo que termina en CR lo pierde: medido en cd6afa6, con
++# `"cwd": "<fuera>/d\r"` —un enlace a la raiz— la relativa de `Bash` se anclaba en `<fuera>/d`, otro
++# directorio que el del shell, y `echo x > src/a.ts` de la coordinadora y un `sed -i` que cerraba un
++# REQ en rojo salian allow (9596e39 y 1.33.2 deniegan). Lo que se lea despues del transporte no
++# puede saber si habia un CR. Por eso la MISMA llamada a jq, sobre el valor JSON crudo, declara en la
++# primera linea cuantos CR traen el `tool_name`, el `cwd` y el `file_path`, y con eso:
++#   * un `cwd` con un CR, en cualquier posicion, NO ANCLA: se vacia y queda marcado
++#     (`ARNES_CWD_CR`), y la ruta relativa que dependa de el es no determinable (`_arnes_id_calcula`,
++#     CA-47 punto 7). Las rutas absolutas no dependen de el y se juzgan como siempre;
++#   * el `file_path` y el `tool_name` con un CR quedan marcados (`ARNES_FP_CR`, `ARNES_TOOL_CR`) y se
++#     tratan como los que llevan un salto (CA-47 puntos 12 y 13, por coherencia): juzgar el valor
++#     recortado seria juzgar otra ruta, u otra herramienta;
++#   * en esos dos, si no llevan salto, se REPONE el CR final que el transporte retiro: sin salto, el
++#     unico CR que se pierde es el ultimo, y solo uno (`_arnes_repone_cr`). Asi el motivo cita lo que
++#     llego, y un campo hecho solo de CR no se lee como vacio. Con salto, el punto 12 o 13 decide
++#     primero, y el CR que precedia a un salto interno no se repone.
++# Los campos del agente no se marcan: `arnes_norm_ident` retira todo CR al comparar, por su propia
++# regla, y un `agent_id` que solo era un CR se lee vacio, que es la sesion coordinadora, el lado
++# estricto. El `command` tampoco: su transporte no se toca aqui (el analizador de `Bash` es otra cosa).
++#
+ # Si jq no puede leer la entrada, los campos quedan VACIOS: nunca se reparte entre los campos una
+ # salida anterior de jq (el fallo de jq al leer la entrada es SEC-120, fuera de esta reparacion).
+ arnes_parse_input() {
+   [ -z "${ARNES_INPUT_LISTO:-}" ] || return 0
+-  local n_tool='' n_aid='' n_aty='' n_cwd='' n_fp=''
++  local n_tool='' n_aid='' n_aty='' n_cwd='' n_fp='' r_tool='' r_cwd='' r_fp=''
+   if ! arnes_jq_str "$ARNES_INPUT" -r '[.tool_name // "",
+                                         .agent_id // "",
+                                         .agent_type // "",
+@@ -69,13 +92,16 @@ arnes_parse_input() {
+                                         .tool_input.file_path // "",
+                                         .tool_input.command // ""]
+                                        | map(tostring)
+-                                       | (.[0:5] | map(indices("\n") | length | tostring) | join(" ")),
++                                       | ((.[0:5] | map(indices("\n") | length))
++                                          + ([.[0], .[3], .[4]] | map(indices("\r") | length))
++                                          | map(tostring) | join(" ")),
+                                          .[]'; then
+     ARNES_JQ=''
+   fi
+   ARNES_TOOL=''; ARNES_AGENT_ID=''; ARNES_AGENT_TYPE=''; ARNES_CWD=''; ARNES_FP=''; ARNES_CMD=''
++  ARNES_TOOL_CR=0; ARNES_CWD_CR=0; ARNES_FP_CR=0
+   if [ -n "$ARNES_JQ" ]; then
+-    { IFS=' ' read -r n_tool n_aid n_aty n_cwd n_fp
++    { IFS=' ' read -r n_tool n_aid n_aty n_cwd n_fp r_tool r_cwd r_fp
+       _arnes_lee_campo "$n_tool"; ARNES_TOOL="$ARNES_CAMPO"
+       _arnes_lee_campo "$n_aid";  ARNES_AGENT_ID="$ARNES_CAMPO"
+       _arnes_lee_campo "$n_aty";  ARNES_AGENT_TYPE="$ARNES_CAMPO"
+@@ -83,10 +109,36 @@ arnes_parse_input() {
+       _arnes_lee_campo "$n_fp";   ARNES_FP="$ARNES_CAMPO"
+       IFS= read -r -d '' ARNES_CMD; } <<< "$ARNES_JQ"
+     ARNES_CMD="${ARNES_CMD%$'\n'}"
++    # Fail-closed: un contador que no sea exactamente 0 marca el campo.
++    [ "$r_cwd" = 0 ] || { ARNES_CWD_CR=1; ARNES_CWD=''; }
++    [ "$r_tool" = 0 ] || { ARNES_TOOL_CR=1; _arnes_repone_cr "$n_tool" "$r_tool" "$ARNES_TOOL"; ARNES_TOOL="$ARNES_CAMPO"; }
++    [ "$r_fp" = 0 ] || { ARNES_FP_CR=1; _arnes_repone_cr "$n_fp" "$r_fp" "$ARNES_FP"; ARNES_FP="$ARNES_CAMPO"; }
+   fi
+   ARNES_INPUT_LISTO=1
+ }
+ 
++# La causa de que el `tool_name` no identifique ninguna herramienta (CA-47 punto 13), para el motivo
++# de los dos guardianes: el salto si lo hay —el motivo de siempre—, y si no, el retorno de carro.
++arnes_causa_herramienta() {   # -> ARNES_CAUSA_HERR
++  if [[ "$ARNES_TOOL" == *$'\n'* ]]; then ARNES_CAUSA_HERR='lleva un salto de linea'
++  else ARNES_CAUSA_HERR='lleva un retorno de carro'; fi
++}
++
++# Repone el CR final que el transporte retiro de un campo SIN saltos de linea. Sin salto, el campo
++# ocupa una sola linea del flujo y lo unico que el transporte le puede quitar es UN retorno de carro:
++# el ultimo, que en Linux precede al separador (o cierra la salida). En Windows —por construccion, sin
++# medir alli— no le quita ninguno: el jq anade su propio CR antes de cada salto y es ese el que se
++# retira, asi que la cuenta de jq y la del valor leido coinciden y no se repone nada. Con salto el campo
++# no se repone: decide primero el punto 12 o 13 de CA-47. Lo que decide es la marca, que salio del valor
++# crudo; la reposicion hace que el motivo cite lo que llego, que un campo hecho solo de CR no quede
++# vacio, y que `Bash␍` no se tome por `Bash` en ninguna otra comparacion.
++_arnes_repone_cr() {   # <saltos del campo> <CR que conto jq en el valor crudo> <valor leido> -> ARNES_CAMPO
++  local quedan="${3//[!$'\r']/}"
++  ARNES_CAMPO="$3"
++  if [ "$1" = 0 ] && [ "${#quedan}" -lt "$2" ] 2>/dev/null; then ARNES_CAMPO+=$'\r'; fi
++  return 0
++}
++
+ # Lee UN campo de `arnes_parse_input`: su primera linea y tantas mas como saltos declaro jq.
+ # El contador se compara con `[ -gt ]`, que exige un entero literal y no evalua expresiones.
+ _arnes_lee_campo() {   # <saltos de linea del campo> -> ARNES_CAMPO (del flujo abierto por el llamador)
+@@ -301,6 +353,13 @@ arnes_emitir_avisos() {
+ # nombra esta clase). Lo que Windows añade es el CR que TERMINA cada línea, así que es
+ # eso lo que se descuenta: pregunta cerrada, no un patrón que ensanchar.
+ #
++# Y SU COSTE, QUE NO ES CERO (QA-023-13): en el flujo de bytes, un CR DEL DATO que
++# precede a un salto —el último carácter de un campo, que va seguido del separador, o el
++# de una línea interna— no se distingue del de transporte, y en Linux también se retira.
++# Para un texto que se lee por cabecera da igual; para un campo cuyo valor DESIGNA algo
++# —un directorio, una ruta, una herramienta— es leer otro. Quien lea campos así cuenta el
++# CR antes, en la misma llamada a jq y sobre el valor crudo (`arnes_parse_input`).
++#
+ # La regla vive en `arnes_sin_cr_transporte` —una sola vez, sin forks—: tres copias de la
+ # misma normalización se desfasan, y ésta ya se desfasó una vez contra `campos-req.awk`.
+ arnes_sin_cr_transporte() {   # <texto> -> ARNES_SIN_CR
+@@ -711,7 +770,8 @@ _arnes_id_calcula() {
+   # linea, es no determinable (y se aplica el punto 7). La ruta se lee entera (punto 11), pero que
+   # archivo escribira la herramienta con ese argumento —el nombre literal, con el salto, o uno
+   # recortado— no esta medido, y juzgar solo la ruta entera daria permiso apoyandose en esa conducta.
+-  # SOLO el `file_path`: ni el `cwd` (que solo ancla) ni los destinos de `Bash`, que el shell escribe
++  # SOLO el `file_path`: ni el `cwd` (que solo ancla: con un salto se admite, y con un retorno de
++  # carro no ancla, mas abajo) ni los destinos de `Bash`, que el shell escribe
+   # tal como los deletrea el comando —y que ademas nunca llevan un salto: el detector trocea por
+   # palabras y sus llamadores leen sus destinos de uno en uno, por lineas—.
+   case "$p" in
+@@ -720,6 +780,15 @@ _arnes_id_calcula() {
+                             "escribe la ruta sin saltos de linea"; return 0
+              fi ;;
+   esac
++  # Lo mismo con un retorno de carro, por coherencia con el punto 12 (QA-023-13). Lo decide la cuenta
++  # que hizo jq sobre el valor crudo (`ARNES_FP_CR`, `arnes_parse_input`), no el texto que llega aqui:
++  # el transporte retira el CR del final, y hasta cd6afa6 la puerta juzgaba `<raiz>/docs/l` cuando la
++  # herramienta escribe en `<raiz>/docs/l␍` —un enlace a `src/a.ts`—, que es permitir otra ruta. Mismo
++  # alcance que el salto: el `file_path` de toda llamada que no sea de `Bash`.
++  if [ "${ARNES_FP_CR:-0}" = 1 ] && [ "${ARNES_TOOL:-}" != Bash ] && [ "$p" = "${ARNES_FP:-}" ]; then
++    _arnes_nodet "lleva un retorno de carro, y no se sabe que archivo se escribiria con esa ruta: el nombre literal, con el retorno de carro, o uno recortado" \
++                 "escribe la ruta sin retornos de carro"; return 0
++  fi
+   if [ "${#p}" -gt "$ARNES_ID_MAX" ]; then
+     _arnes_nodet "mide ${#p} caracteres, mas de los $ARNES_ID_MAX que el sistema abre" "acorta la ruta"; return 0
+   fi
+@@ -734,6 +803,13 @@ _arnes_id_calcula() {
+     /*) abs="$p" ;;
+     [A-Za-z]:[/\\]*) abs="${p//\\//}" ;;
+     *)
++      # QA-023-13: un `cwd` con un retorno de carro no ancla. El transporte de la entrada retira el
++      # CR que lo cierra, y anclar en lo que queda era juzgar OTRO directorio que el del shell;
++      # `arnes_parse_input` lo detecta en el valor crudo y lo vacia. Se dice por que, no «falta».
++      if [ "${ARNES_CWD_CR:-0}" = 1 ]; then
++        _arnes_nodet "es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certeza (el del final se confunde con el fin de linea de Windows), asi que no se sabe en que directorio se anclaria" \
++                     "escribe la ruta absoluta, o trabaja desde un directorio cuyo nombre no lleve retornos de carro"; return 0
++      fi
+       c="${ARNES_CWD:-}"
+       case "$c" in
+         /*) ;;
+diff --git a/tests/escenarios/hooks/README.md b/tests/escenarios/hooks/README.md
+index 954dde8..d4b55e1 100644
+--- a/tests/escenarios/hooks/README.md
++++ b/tests/escenarios/hooks/README.md
+@@ -32,7 +32,7 @@ bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del cor
+ ARNES_SONDA_CONTROLES=1 bash tests/escenarios/hooks/run.sh secciones/37-coste-del-escaner-7-*.sh
+                                                          # los controles de medición de las sondas de coste
+ ```
+-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1334 casos** (el número exacto lo cuadran
++Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1581 casos** (el número exacto lo cuadran
+ `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`). La línea
+ `Resultado:` cuenta **aparte** los `SKIP` que son **INCONCLUSO** —una sonda de coste que no acreditó
+ nada en esa corrida— y los nombra debajo; el código de salida **no** depende de ellos
+@@ -298,6 +298,10 @@ Tres reglas nacidas de fallos reales:
+ | Integridad de la entrada (44) | CA-47 punto 12: un `file_path` con salto de línea —el que ya se denegaba (F1, con C10), el que la lectura entera habría permitido (F2: `app/*.ts`, un patrón exacto, una creación, el enlace de CA-49 (i)), con `..` detrás (F3) y fuera del ámbito o legítimo (F4, con C9)— | **deny** con el motivo de no determinable (la ruta lleva un salto de línea; corrígela sin saltos), a todo agente en `guard-completado` |
+ | Integridad de la entrada (44) | CA-47 punto 13: un `tool_name` con salto de línea (`Write␊`, `Bash␊`, `Edit␊`, y `Write␊` del `desarrollador`) (T1) | **deny**: no identifica ninguna herramienta; en 43b948a y 9596e39 `Write␊` y `Edit␊` **allow** y `Bash␊` **deny** |
+ | Integridad de la entrada (44) | los motivos de F y T, y `arnes_parse_input` campo a campo con un salto en cada uno (P1) | dicen su causa y no nombran ninguna herramienta como salida; los seis campos **intactos** (en 43b948a, desplazados) |
++| Integridad de la entrada (44) | QA-023-13, el retorno de carro en el `cwd`: desde `<fuera>/d␍` —un enlace a la raíz, con `<fuera>/d` un directorio normal—, `echo x > src/a.ts` de la coordinadora, un `sed -i` y un `Edit` relativo que cierran un REQ en rojo; y el CR en medio (`e␍f`) y antes de un salto (`g␍␊h`) (R1–R5) | **deny**: el `cwd` con CR no ancla y el motivo lo dice; contra **cd6afa6** (fail-before) **allow** —anclaba en `<fuera>/d`—, salvo el CR en medio; contra **9596e39** **deny** |
++| Integridad de la entrada (44) | con el mismo `cwd` con CR, lo que no depende de él —escrituras y cierres por ruta absoluta, `ls -la`, el `desarrollador` escribiendo código (RC1–RC6)—; la escritura relativa fuera del ámbito (RM1); y las mismas operaciones desde un `cwd` sin CR (RS1–RS3) | RC como siempre en los tres árboles; RM1 **deny** (de allow a deny, declarado); RS como cd6afa6, y RS3 (L8) **deny** en 9596e39 |
++| Integridad de la entrada (44) | un `file_path` con CR —el enlace dentro de la raíz `docs/l␍`, un `Edit` que cierra `REQ-901.md␍` en rojo cuando `REQ-901.md` está en verde, una ruta fuera del ámbito y un `file_path` que sólo es un CR (RF1–RF4)— y un `tool_name` con CR —`Bash␍` con `ls` y un `file_path` en `src/`, `Edit␍` que cierra un REQ en rojo, `Write␍` del `desarrollador`, `Bash␍` con `echo x > src/a.ts` (RT1–RT4)— | **deny**, como los que llevan un salto; en cd6afa6 y 9596e39 **allow** (el CR final se recortaba y se juzgaba otra ruta u otra herramienta), salvo RT4, **deny** en los tres |
++| Integridad de la entrada (44) | los motivos del CR, y `arnes_parse_input` con un CR final en el `tool_name`, el `cwd` y el `file_path` (P2) | dicen su causa y cómo corregirla, sin herramientas como salida; el CR se **cuenta** antes del transporte (en cd6afa6, recortado) |
+ 
+ **Desde REQ-023 CA-13, un `Edit` de `requirements/` que la puerta no puede reconstruir se deniega antes
+ que cualquier otra puerta.** Por eso los casos que miden otra puerta de `guard-completado` usan
+@@ -312,7 +316,9 @@ la raíz, así que las rutas relativas de los casos existentes siguen designando
+ trae su propio emisor porque sus filas necesitan un `cwd` distinto de la raíz, o ninguno. Y es una
+ prueba **a nivel de hook**: la validación en el host real (CA-66, punto 6) es de la coordinadora.
+ La sección 44 también trae su propio emisor: pone en el `cwd` y en el agente su texto LITERAL, saltos
+-de línea incluidos, porque lo que mide es que ningún contenido de un campo desplace a los demás.
++de línea incluidos, porque lo que mide es que ningún contenido de un campo desplace a los demás. Su
++bloque R (QA-023-13) mide el retorno de carro, que el transporte de jq retira del final de un campo y
++que por eso se cuenta antes; su árbol de fail-before es cd6afa6, no 43b948a.
+ 
+ **Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
+ falsea la máquina, el runner del CI y la carga. Los de arriba son **cocientes de duplicación**
+diff --git a/tests/escenarios/hooks/run.sh b/tests/escenarios/hooks/run.sh
+index 5a33b0d..25a0c65 100755
+--- a/tests/escenarios/hooks/run.sh
++++ b/tests/escenarios/hooks/run.sh
+@@ -1641,7 +1641,13 @@ done
+ # contra 43b948a (fail-before) y contra 9596e39 (la referencia de los movimientos), y en la candidata por
+ # guard.sh las 32 que juzga un guardián; los motivos de F y T; y P1, el análisis campo a campo, en la
+ # candidata y en 43b948a. Ninguna sección existente cambia su número.
+-CASOS_ESPERADOS=1501
++# Y 1501 → 1581 por QA-023-13 (séptima autorización): +80 en la sección 44, bloque R —el retorno de carro
++# de la entrada se cuenta antes del transporte: un `cwd` con CR no ancla, y un `file_path` o un
++# `tool_name` con CR se tratan como los que llevan un salto—: 23 filas, cada una en la candidata, contra
++# cd6afa6 (fail-before) y contra 9596e39, y en la candidata por guard.sh las 8 que juzga un guardián; los
++# motivos del CR; y P2, en la candidata y en cd6afa6. Las 167 de antes no cambian ni de nombre ni de
++# veredicto.
++CASOS_ESPERADOS=1581
+ # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
+ # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
+ # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
+diff --git a/tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh b/tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh
+index e52f149..1cfa0b3 100644
+--- a/tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh
++++ b/tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh
+@@ -8,15 +8,18 @@
+ # llevan entre paréntesis su fila de la tabla de CA-66 (E1-E5, G1-G3, F1-F4, T1, P1).
+ #   N  lo que la candidata deniega (E, F, T); el motivo de la candidata se comprueba por lo que cita;
+ #   C  lo legítimo con el MISMO `cwd` de varias líneas (G), y C9/C10, el salto final en un `file_path`;
+-#   P  el análisis de la entrada, campo a campo.
+-# TRES ÁRBOLES por fila: la CANDIDATA (`$HOOKS_DIR`); 43b948a, el árbol con la regresión (fail-before);
+-# y 9596e39, la referencia de antes de la regresión, que es la que cuenta para los movimientos. Los dos,
+-# materializados POR SHA (`mat44`, copia de `mat43`); sin ellos, SKIP y motivo. Cada fila juzgada por
+-# un guardián se comprueba además en la candidata POR `guard.sh` (CA-66, versionado, punto 3).
++#   P  el análisis de la entrada, campo a campo;
++#   R  el retorno de carro (QA-023-13): un `cwd` con CR no ancla, y un `file_path` o un `tool_name` con
++#      CR se tratan como los que llevan un salto; con sus controles (RC, RS), su movimiento (RM) y P2.
++# TRES ÁRBOLES por fila: la CANDIDATA (`$HOOKS_DIR`); el del fail-before —43b948a, el árbol con la
++# regresión, y en el bloque R cd6afa6, el de antes de reparar QA-023-13—; y 9596e39, la referencia de
++# antes de la regresión, que es la que cuenta para los movimientos. Materializados POR SHA (`mat44`,
++# copia de `mat43`); sin ellos, SKIP y motivo. Cada fila juzgada por un guardián se comprueba además en
++# la candidata POR `guard.sh` (CA-66, versionado, punto 3).
+ # Esto NO es la validación en el host: el efecto en disco lo comprueba la coordinadora.
+-CASOS_ESPERADOS_SECCION=167
+-PISO_AUTONOMO_SECCION=59  # 19 preámbulo (líneas 1-19, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO44, mat44_reg y mat44, copia de mat43, líneas 20-43) + 16 bloque indivisible mayor (fila44, líneas 89-104) · REQ-014 CA-18
+-seccion_nueva "--- 44 · integridad de la entrada del hook (QA-023-09; REQ-007 CA-47 puntos 11-13, CA-24 y CA-66) ---"
++CASOS_ESPERADOS_SECCION=247
++PISO_AUTONOMO_SECCION=62  # 22 preámbulo (líneas 1-22, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO44, mat44_reg y mat44, copia de mat43, líneas 23-46) + 16 bloque indivisible mayor (fila44, líneas 97-112) · REQ-014 CA-18
++seccion_nueva "--- 44 · integridad de la entrada del hook (QA-023-09 y QA-023-13; REQ-007 CA-47 puntos 11-13, CA-24 y CA-66) ---"
+ REPO44="${SEC_DIR%/}/../../../.."; MAT44_RUTAS='hooks'; MAT44_REG=''; MAT44_T0=0; MAT44_REF='-'
+ mat44_reg() {   # <estado> <motivo> <archivos> <procesos> -> MAT44_REG, UNA sola línea (la lee `sonda_lee`)
+   local mot="${2//[[:space:]]/_}"; [ -n "$mot" ] || mot='-'
+@@ -42,10 +45,15 @@ mat44() {
+   mat44_reg ok - "$n" 6
+ }
+ R43A="$RAIZ/r43-$BASHPID"; R43A_OK=no; R43A_MOT=''; R95="$RAIZ/r95-$BASHPID"; R95_OK=no; R95_MOT=''
++RCD="$RAIZ/rcd-$BASHPID"; RCD_OK=no; RCD_MOT=''
+ if mat44 43b948a "$R43A"; then R43A_OK=si
+ else R43A_MOT="43b948a no se materializó (${MAT44_REG#*motivo=})"; R43A_MOT="${R43A_MOT%% corrida=*})"; fi
+ if mat44 9596e39 "$R95"; then R95_OK=si
+ else R95_MOT="9596e39 no se materializó (${MAT44_REG#*motivo=})"; R95_MOT="${R95_MOT%% corrida=*})"; fi
++if mat44 cd6afa6 "$RCD"; then RCD_OK=si
++else RCD_MOT="cd6afa6 no se materializó (${MAT44_REG#*motivo=})"; RCD_MOT="${RCD_MOT%% corrida=*})"; fi
++# El árbol del fail-before de cada bloque: 43b948a para QA-023-09; el bloque R lo cambia a cd6afa6.
++H44='QA-023-09'; FB44=43b948a; FB44_DIR="$R43A"; FB44_OK="$R43A_OK"; FB44_MOT="$R43A_MOT"
+ v44() { echo "  $1  $2"; case "$1" in PASS) PASS=$((PASS + 1)) ;; FAIL) FAIL=$((FAIL + 1)) ;; esac; }
+ 
+ # --- LA PUERTA REAL -------------------------------------------------------------------------
+@@ -72,11 +80,11 @@ juicio44() {
+   elif [ "$esp" = deny ] && [ "$cita" != - ] && [[ "$M44" != *"$cita"* ]]; then v44 FAIL "$nom  el motivo no cita «$cita»  <${M44:0:240}>"
+   else v44 PASS "$nom  ($D44)"; fi
+ }
+-etq44() {   # <árbol> <candidata> <esperado en el árbol> -> ETQ44
++etq44() {   # <árbol: fb (el del fail-before) | 95> <candidata> <esperado en el árbol> -> ETQ44
+   case "$1:$2:$3" in
+-    43*:deny:allow)  ETQ44='fail-before: permite' ;;
+-    43*:*:deny-otra) ETQ44='fail-before: deniega juzgando otra ruta' ;;
+-    43*:allow:deny)  ETQ44='deniega por el cwd desplazado: la reparación lo restituye' ;;
++    fb:deny:allow)   ETQ44='fail-before: permite' ;;
++    fb:*:deny-otra)  ETQ44='fail-before: deniega juzgando otra ruta' ;;
++    fb:allow:deny)   ETQ44='deniega por el cwd desplazado: la reparación lo restituye' ;;
+     95*:deny:allow)  ETQ44='permite: preexistente, de allow a deny declarado' ;;
+     95*:deny:deny)   ETQ44='antes del regreso, deniega' ;;
+     95*:allow:deny)  ETQ44='deniega: instancia de L8, movimiento declarado' ;;
+@@ -84,20 +92,20 @@ etq44() {   # <árbol> <candidata> <esperado en el árbol> -> ETQ44
+   esac
+ }
+ declare -A MC44=()
+-# fila44 <id> <guardián> <candidata> <43b948a> <9596e39> <cita|-> <json>: un caso por árbol y, si el
+-# guardián no es guard.sh, otro de la candidata por guard.sh.
++# fila44 <id> <guardián> <candidata> <fail-before> <9596e39> <cita|-> <json>: un caso por árbol y, si el
++# guardián no es guard.sh, otro de la candidata por guard.sh. El fail-before es el árbol de FB44.
+ fila44() {
+-  local id="$1" s="$2" ec="$3" e43="$4" e95="$5" cita="$6" json="$7" nom="QA-023-09 $1" c43
++  local id="$1" s="$2" ec="$3" e43="$4" e95="$5" cita="$6" json="$7" nom="$H44 $1" c43
+   if ! json_no_vacio "$nom candidata" "$json"; then
+-    json_no_vacio "$nom 43b948a" "$json"; json_no_vacio "$nom 9596e39" "$json"; FAIL=$((FAIL + 3))
++    json_no_vacio "$nom $FB44" "$json"; json_no_vacio "$nom 9596e39" "$json"; FAIL=$((FAIL + 3))
+     [ "$s" = guard.sh ] || { json_no_vacio "$nom candidata por guard.sh" "$json"; FAIL=$((FAIL + 1)); }
+     return 0
+   fi
+   g44 "$HOOKS_DIR" "$s" "$json"; MC44[$id]="$M44"; juicio44 "$nom candidata" "$ec" "$cita"
+   if [ "$s" != guard.sh ]; then g44 "$HOOKS_DIR" guard.sh "$json"; juicio44 "$nom candidata por guard.sh" "$ec" "$cita"; fi
+-  etq44 43 "$ec" "$e43"
+-  if [ "$R43A_OK" = si ]; then g44 "$R43A/hooks" "$s" "$json"; c43=-; [ "$e43" != deny-otra ] || c43="$cita"; juicio44 "$nom 43b948a: $ETQ44" "$e43" "$c43"
+-  else v44 SKIP "$nom 43b948a: $ETQ44  $R43A_MOT"; fi
++  etq44 fb "$ec" "$e43"
++  if [ "$FB44_OK" = si ]; then g44 "$FB44_DIR/hooks" "$s" "$json"; c43=-; [ "$e43" != deny-otra ] || c43="$cita"; juicio44 "$nom $FB44: $ETQ44" "$e43" "$c43"
++  else v44 SKIP "$nom $FB44: $ETQ44  $FB44_MOT"; fi
+   etq44 95 "$ec" "$e95"
+   if [ "$R95_OK" = si ]; then g44 "$R95/hooks" "$s" "$json"; juicio44 "$nom 9596e39: $ETQ44" "$e95" -
+   else v44 SKIP "$nom 9596e39: $ETQ44  $R95_MOT"; fi
+@@ -218,4 +226,72 @@ else
+   if [ -n "$P44" ] && [ "$P44" != "$P44_ESP" ]; then v44 PASS "$nom44  43b948a (fail-before): los desplaza  <$P44>"
+   else v44 FAIL "$nom44  43b948a (fail-before): no los desplaza, el caso no distingue  <$P44>"; fi
+ fi
+-rm -rf "$R43A" "$R95"
++
++# --- R: el retorno de carro en la entrada (QA-023-13; séptima autorización) ---------------------
++# El transporte de jq retira el CR que cierra un campo. Con `cwd` = `<fuera>/d␍`, un enlace a la raíz,
++# cd6afa6 anclaba en `<fuera>/d` —un directorio normal fuera— y permitía; el shell escribe en la raíz.
++# Un `cwd` con CR no ancla (la relativa es no determinable); un `file_path` o un `tool_name` con CR se
++# tratan como los que llevan un salto (CA-47 puntos 12 y 13). Fail-before: cd6afa6; referencia, 9596e39.
++H44='QA-023-13'; FB44=cd6afa6; FB44_DIR="$RCD"; FB44_OK="$RCD_OK"; FB44_MOT="$RCD_MOT"
++CR=$'\r'; FCR="$RAIZ/fuera44cr-$BASHPID"; mkdir -p "$FCR/d" "$FCR/g${NL}h"
++ln -s "$P" "$FCR/d$CR"; ln -s "$P" "$FCR/e${CR}f"; ln -s "$P" "$FCR/g$CR${NL}h"
++ln -s ../src/a.ts "$P/docs/l$CR"; cp "$R/REQ-900.md" "$R/REQ-901.md$CR"   # el REQ «con CR» va en rojo
++CRD44="('cwd') contiene un retorno de carro"; CRF44='lleva un retorno de carro, y no se sabe que archivo se escribiria'
++CRT44='lleva un retorno de carro y no identifica ninguna herramienta'
++fila44 "R1 coordinadora: echo x > src/a.ts desde <fuera>/d\\r (enlace a la raíz)" guard-codigo.sh deny allow deny "$CRD44" "$(j44 Bash "$FCR/d$CR" - 'command=echo x > src/a.ts')"
++fila44 "R2 sed -i que cierra un REQ en rojo desde <fuera>/d\\r"        guard-completado.sh deny allow deny "$CRD44" "$(j44 Bash "$FCR/d$CR" - "command=sed -i 's/en-revisión/completado/' requirements/REQ-900.md")"
++fila44 "R3 Edit relativo que cierra un REQ en rojo desde <fuera>/d\\r" guard-completado.sh deny allow deny "$CRD44" "$(cierre44 "$FCR/d$CR" requirements/REQ-900.md)"
++fila44 "R4 CR en medio: echo x > src/a.ts desde <fuera>/e\\rf"         guard.sh deny deny deny "$CRD44" "$(j44 Bash "$FCR/e${CR}f" - 'command=echo x > src/a.ts')"
++fila44 "R5 CR antes de un salto: echo x > src/a.ts desde <fuera>/g\\r\\nh" guard.sh deny allow deny "$CRD44" "$(j44 Bash "$FCR/g$CR${NL}h" - 'command=echo x > src/a.ts')"
++# Lo que no depende del `cwd` se juzga como siempre, con el mismo `cwd`; y la misma operación sin CR.
++fila44 "RC1 coordinadora: Write ABSOLUTO a docs/n.md desde <fuera>/d\\r" guard.sh allow allow allow - "$(j44 Write "$FCR/d$CR" - "file_path=$P/docs/n.md" content=x)"
++fila44 "RC2 cierre ABSOLUTO de un REQ en verde desde <fuera>/d\\r"      guard.sh allow allow allow - "$(cierre44 "$FCR/d$CR" "$R/REQ-901.md")"
++fila44 "RC3 ls -la desde <fuera>/d\\r"                                 guard.sh allow allow allow - "$(j44 Bash "$FCR/d$CR" - 'command=ls -la')"
++fila44 "RC4 coordinadora: Write ABSOLUTO a src/a.ts desde <fuera>/d\\r" guard.sh deny deny deny "$SRC44" "$(j44 Write "$FCR/d$CR" - "file_path=$P/src/a.ts" content=x)"
++fila44 "RC5 cierre ABSOLUTO de un REQ en rojo desde <fuera>/d\\r"       guard.sh deny deny deny "$QA44" "$(cierre44 "$FCR/d$CR")"
++fila44 "RC6 el desarrollador: echo x > src/a.ts desde <fuera>/d\\r"     guard.sh allow allow allow - "$(j44 Bash "$FCR/d$CR" desarrollador 'command=echo x > src/a.ts')"
++fila44 "RM1 coordinadora: echo x > n.md desde <fuera>/d\\r (de allow a deny, declarado)" guard.sh deny allow allow "$CRD44" "$(j44 Bash "$FCR/d$CR" - 'command=echo x > n.md')"
++fila44 "RS1 sin CR: echo x > src/a.ts desde <raíz>"                    guard.sh deny deny deny "'src/a.ts', que es código de la app" "$(j44 Bash "$P" - 'command=echo x > src/a.ts')"
++fila44 "RS2 sin CR: sed -i que cierra un REQ en rojo desde <raíz>"     guard.sh deny deny deny "'requirements/REQ-900.md' y menciona 'completado'" "$(j44 Bash "$P" - "command=sed -i 's/en-revisión/completado/' requirements/REQ-900.md")"
++fila44 "RS3 sin CR: echo x > src/a.ts desde <fuera>/d (designa <fuera>/d/src/a.ts: L8)" guard.sh allow allow deny - "$(j44 Bash "$FCR/d" - 'command=echo x > src/a.ts')"
++# El `file_path` con CR (punto 12, por coherencia): el valor recortado designaba otro archivo.
++fila44 "RF1 coordinadora: Write <raíz>/docs/l\\r (enlace dentro hacia src/a.ts)" guard-codigo.sh deny allow allow "$CRF44" "$(j44 Write "$P" - "file_path=$P/docs/l$CR" content=x)"
++fila44 "RF2 Edit que cierra <REQ-901.md\\r> (en rojo; REQ-901.md en verde)" guard-completado.sh deny allow allow "$CRF44" "$(cierre44 "$P" "$R/REQ-901.md$CR")"
++fila44 "RF3 coordinadora: Write <raíz>/docs/n.md\\r (fuera del ámbito)" guard.sh deny allow allow "$CRF44" "$(j44 Write "$P" - "file_path=$P/docs/n.md$CR" content=x)"
++fila44 "RF4 un file_path que solo es un retorno de carro"               guard.sh deny allow allow "$CRF44" "$(j44 Write "$P" - "file_path=$CR" content=x)"
++# El `tool_name` con CR (punto 13, por coherencia): recortado, se juzgaba otra herramienta.
++fila44 "RT1 coordinadora: Bash\\r con ls y file_path <raíz>/src/a.ts"   guard-codigo.sh deny allow allow "$CRT44" "$(j44 "Bash$CR" "$P" - 'command=ls' "file_path=$P/src/a.ts")"
++fila44 "RT2 coordinadora: Edit\\r que cierra un REQ en rojo"            guard-completado.sh deny allow allow "$CRT44" "$(j44 "Edit$CR" "$P" - "file_path=$R/REQ-900.md" 'old_string=Estado: en-revisión' 'new_string=Estado: completado')"
++fila44 "RT3 el desarrollador: Write\\r a src/a.ts"                      guard-completado.sh deny allow allow "$CRT44" "$(j44 "Write$CR" "$P" desarrollador "file_path=$P/src/a.ts" content=x)"
++fila44 "RT4 coordinadora: Bash\\r con echo x > src/a.ts (ya se denegaba)" guard.sh deny deny deny "$CRT44" "$(j44 "Bash$CR" "$P" - 'command=echo x > src/a.ts')"
++nom44="QA-023-13 los motivos del retorno de carro dicen su causa y cómo corregirla, y no nombran ninguna herramienta como salida"; mal44=''
++for id44 in "R1 coordinadora: echo x > src/a.ts desde <fuera>/d\\r (enlace a la raíz)" "R3 Edit relativo que cierra un REQ en rojo desde <fuera>/d\\r" \
++            "RF1 coordinadora: Write <raíz>/docs/l\\r (enlace dentro hacia src/a.ts)" "RF4 un file_path que solo es un retorno de carro" \
++            "RT1 coordinadora: Bash\\r con ls y file_path <raíz>/src/a.ts" "RT2 coordinadora: Edit\\r que cierra un REQ en rojo"; do
++  m44="${MC44[$id44]:-}"; [ -n "$m44" ] || { mal44+=" ${id44%% *}: sin motivo"; continue; }
++  r44="${m44#*retorno de carro}"   # la causa y lo que sigue, sin la cita
++  [ "$r44" != "$m44" ] || mal44+=" ${id44%% *}: no dice su causa"
++  grep -Eqi '(^|[^a-z])(bash|write|edit|multiedit|shell|consola|terminal|python)([^a-z]|$)' <<< "$r44" && mal44+=" ${id44%% *}: <${r44:0:120}>"
++  case "${id44%% *}" in
++    R1|R3) [[ "$m44" == *'Para corregirlo, escribe la ruta absoluta, o trabaja desde un directorio cuyo nombre no lleve retornos de carro'* ]] || mal44+=" ${id44%% *}: no dice como corregirlo" ;;
++    RF*)   [[ "$m44" == *'Para corregirlo, escribe la ruta sin retornos de carro'* ]] || mal44+=" ${id44%% *}: no dice como corregirlo" ;;
++  esac
++done
++if [ -n "$mal44" ]; then v44 FAIL "$nom44 $mal44"; else v44 PASS "$nom44"; fi
++# P2: el CR se cuenta antes del transporte; el `cwd` con CR no ancla, y el CR final del `tool_name` y del
++# `file_path` llega (en cd6afa6, recortado).
++P44_IN="$(jq -cn '{tool_name:"Bash\r",cwd:"/tmp/d\r",tool_input:{file_path:"/tmp/f\r",command:"ls"}}')"
++printf -v P44_ESP '%q|' "Bash$CR" '' "/tmp/f$CR" ls 1 1 1
++p44cr() {   # <dir de hooks> -> P44
++  P44="$( . "$1/lib.sh" 2>/dev/null; ARNES_INPUT="$P44_IN"; ARNES_INPUT_LISTO=''; arnes_parse_input
++          printf '%q|' "$ARNES_TOOL" "${ARNES_CWD-}" "$ARNES_FP" "$ARNES_CMD" "${ARNES_TOOL_CR-}" "${ARNES_CWD_CR-}" "${ARNES_FP_CR-}" )"
++}
++nom44="QA-023-13 P2 arnes_parse_input cuenta el retorno de carro antes del transporte"; p44cr "$HOOKS_DIR"
++if [ "$P44" = "$P44_ESP" ]; then v44 PASS "$nom44  candidata"; else v44 FAIL "$nom44  candidata: <$P44> en vez de <$P44_ESP>"; fi
++if [ "$RCD_OK" != si ]; then v44 SKIP "$nom44  cd6afa6 (fail-before)  $RCD_MOT"
++else
++  p44cr "$RCD/hooks"
++  if [ -n "$P44" ] && [ "$P44" != "$P44_ESP" ]; then v44 PASS "$nom44  cd6afa6 (fail-before): lo recorta  <$P44>"
++  else v44 FAIL "$nom44  cd6afa6 (fail-before): no lo recorta, el caso no distingue  <$P44>"; fi
++fi
++rm -rf "$R43A" "$R95" "$RCD" "$FCR"
