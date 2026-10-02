@@ -1,0 +1,790 @@
+diff --git a/hooks/guard-codigo.sh b/hooks/guard-codigo.sh
+index a105383..2502706 100755
+--- a/hooks/guard-codigo.sh
++++ b/hooks/guard-codigo.sh
+@@ -65,6 +65,11 @@ arnes_guard_codigo() {
+       # con las mismas reglas que cualquier otra escritura. Al agente de codigo no le
+       # estorba, porque a el ya se le permitia escribir.
+       exceso=1; objetivo="(comando no analizable)"
++    elif [ "$rc" -eq "$ARNES_RC_CR" ]; then
++      # P-023-13-A: el delimitador de un heredoc lleva un retorno de carro y el analizador no puede
++      # seguirlo como el shell (`arnes_bash_sin_texto`). Mismo destinatario que el presupuesto: solo
++      # se prohibe a quien no es el agente de codigo.
++      exceso=2; objetivo="(comando no analizable)"
+     else
+       # EL MANIFIESTO SE LEE SOLO SI HAY UNA ESCRITURA QUE JUZGAR (QA-104).
+       #
+@@ -144,6 +149,9 @@ arnes_guard_codigo() {
+     arnes_techo_bash
+     arnes_deny "ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande para analizarlo con garantia, asi que no se analizo y no se permite (intento de $quien). No es un veredicto sobre lo que hace el comando: es que la puerta no puede medirlo, y una puerta que no puede medir no deja pasar. El presupuesto de analisis vigente es de $ARNES_TECHO bytes y este comando lo supera. Salidas: usa un heredoc CITADO (<<'EOF'), que se descuenta entero y no tiene este techo; escribe el contenido en un archivo de script y ejecutalo; o parte el comando en trozos por debajo de $ARNES_TECHO bytes. El techo se puede SUBIR en .arnes/config.json con 'limites.bash_max_analisis' (bytes), hasta un maximo de $ARNES_BASH_MAX_MANIFIESTO bytes: por encima el analisis dejaria de responder antes de que el hook muera, y un hook muerto no deniega."
+   fi
++  if [ "$exceso" -eq 2 ]; then
++    arnes_deny "ARNES: el comando lleva un heredoc cuyo delimitador contiene un retorno de carro. Para el shell ese retorno de carro es parte del delimitador, y el analisis de esta puerta no puede seguirlo asi: no sabria donde acaba el cuerpo ni que escribe lo que va detras, asi que no lo analiza y no lo permite (intento de $quien). Una puerta que no puede medir no deja pasar, y el retorno de carro no se retira en silencio para juzgar otro comando (REQ-007 CA-47, punto 11). Para corregirlo, escribe el comando sin retornos de carro: lineas terminadas solo en salto de linea."
++  fi
+   if [ "$nodet" -eq 1 ]; then
+     # REQ-007 CA-47, punto 7: la ruta tal como llego (acotada), que no se pudo determinar, por
+     # que, y como corregirlo. Sin nombrar ninguna herramienta como salida.
+diff --git a/hooks/guard-completado.sh b/hooks/guard-completado.sh
+index 8b92675..f112b5c 100755
+--- a/hooks/guard-completado.sh
++++ b/hooks/guard-completado.sh
+@@ -337,6 +337,13 @@ arnes_guard_completado() {
+         arnes_techo_bash
+         arnes_deny "ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande para analizarlo con garantia; no se analizo y no se permite. Una puerta que no puede medir no deja pasar (AGENTS.md 1): sin analisis no se puede saber si el comando toca '$ARNES_REQ_DIR'. El presupuesto de analisis vigente es de $ARNES_TECHO bytes y este comando lo supera. Salidas: heredoc CITADO (<<'EOF'), un archivo de script, o partir el comando en trozos por debajo de $ARNES_TECHO bytes. El techo se puede SUBIR en .arnes/config.json con 'limites.bash_max_analisis' (bytes), hasta un maximo de $ARNES_BASH_MAX_MANIFIESTO bytes: por encima el analisis dejaria de responder antes de que el hook muera, y un hook muerto no deniega."
+       fi
++      # P-023-13-A: un delimitador de heredoc con un retorno de carro, que el analizador no puede
++      # seguir como el shell. Como el presupuesto, alcanza a TODOS los agentes: sin analisis no se sabe
++      # si el comando toca un REQ.
++      if [ "$rc" -eq "$ARNES_RC_CR" ]; then
++        arnes_parse_manifest
++        arnes_deny "ARNES: el comando lleva un heredoc cuyo delimitador contiene un retorno de carro. Para el shell ese retorno de carro es parte del delimitador, y el analisis de esta puerta no puede seguirlo asi: no sabria donde acaba el cuerpo ni que escribe lo que va detras, asi que no se puede saber si el comando toca '$ARNES_REQ_DIR'; no se analiza y no se permite a ningun agente. Una puerta que no puede medir no deja pasar, y el retorno de carro no se retira en silencio para juzgar otro comando (REQ-007 CA-47, punto 11). Para corregirlo, escribe el comando sin retornos de carro: lineas terminadas solo en salto de linea."
++      fi
+       [ -n "$escrituras" ] || return 0 ;;
+     Edit|Write|MultiEdit)
+       [ -n "$fp" ] || return 0 ;;
+diff --git a/hooks/lib.sh b/hooks/lib.sh
+index 415d4c7..04a0828 100755
+--- a/hooks/lib.sh
++++ b/hooks/lib.sh
+@@ -57,46 +57,62 @@ arnes_preludio() {
+ # un `tool_name` CON salto no se puedan juzgar como cualquier otro lo deciden CA-47 puntos 12 y 13
+ # (`_arnes_id_calcula` y los guardianes), no esta lectura: aqui solo se lee, entero.
+ #
+-# EL RETORNO DE CARRO SE CUENTA ANTES DEL TRANSPORTE, PORQUE EL TRANSPORTE LO PUEDE BORRAR (QA-023-13).
+-# `arnes_jq_str` retira el CR que precede a un salto de linea y el que cierra la salida: es el que
+-# anade el jq de Windows a cada linea, y en el flujo de bytes es INDISTINGUIBLE de un CR que forme
+-# parte del dato. En Linux un campo que termina en CR lo pierde: medido en cd6afa6, con
+-# `"cwd": "<fuera>/d\r"` —un enlace a la raiz— la relativa de `Bash` se anclaba en `<fuera>/d`, otro
+-# directorio que el del shell, y `echo x > src/a.ts` de la coordinadora y un `sed -i` que cerraba un
+-# REQ en rojo salian allow (9596e39 y 1.33.2 deniegan). Lo que se lea despues del transporte no
+-# puede saber si habia un CR. Por eso la MISMA llamada a jq, sobre el valor JSON crudo, declara en la
+-# primera linea cuantos CR traen el `tool_name`, el `cwd` y el `file_path`, y con eso:
++# EL RETORNO DE CARRO DEL DATO LLEGA ENTERO: EL CR DE TRANSPORTE SE RETIRA SOLO SI LO HAY (octava
++# autorizacion; QA-023-14 y P-023-13-A). El jq de Windows escribe en modo texto y anade un CR delante
++# de CADA salto de linea de su salida; ese CR es de transporte y hay que retirarlo. Pero en el flujo de
++# bytes es indistinguible de un CR del dato que preceda a un salto —el ultimo caracter de un campo, que
++# va seguido del separador, o el de una linea interna—, y retirarlo a ciegas, como hacia hasta aqui
++# `arnes_jq_str`, borraba ese CR del dato EN LINUX, donde jq no anade ninguno: medido en cd6afa6, con
++# `"cwd": "<fuera>/d\r"` la relativa de `Bash` se anclaba en `<fuera>/d`, otro directorio que el del
++# shell (QA-023-13); y el texto de un comando de `Bash` perdia su CR final y el que precede a un salto,
++# asi que `printf x > k\r` se juzgaba como `printf x > k` mientras el shell escribe `k\r` (P-023-13-A).
++# La reposicion que lo remediaba en dos campos (`_arnes_repone_cr`, 3bc7d3c) contaba los CR del valor
++# con `${v//[!\r]/}`, que crece mas que linealmente, antes de cualquier techo (QA-023-14).
++#
++# Ahora la salida de jq se lee CRUDA y la PRIMERA linea, que escribe esta misma llamada y solo lleva
++# digitos y espacios, dice si hay transporte que retirar: si acaba en CR, jq anadio un CR a cada salto
++# y se retira exactamente ese —`arnes_sin_cr_transporte`, cuya sustitucion `\r\n` -> `\n` es la inversa
++# exacta de anadir un CR delante de cada salto: un CR del dato delante de un salto llega como `\r\r\n` y
++# sale como `\r\n`—; si no, no se toca nada. En los dos casos cada campo llega con sus CR, y nada
++# recorre el valor para reponer nada. Sin procesos nuevos: es la misma llamada a jq.
++#
++# Y AUN ASI LO QUE DECIDE EN TRES CAMPOS ES LA CUENTA SOBRE EL VALOR CRUDO (QA-023-13, CA-47 punto 11).
++# La misma llamada a jq declara en la primera linea cuantos CR traen el `tool_name`, el `cwd` y el
++# `file_path` (`indices`, en C), y con eso:
+ #   * un `cwd` con un CR, en cualquier posicion, NO ANCLA: se vacia y queda marcado
+ #     (`ARNES_CWD_CR`), y la ruta relativa que dependa de el es no determinable (`_arnes_id_calcula`,
+ #     CA-47 punto 7). Las rutas absolutas no dependen de el y se juzgan como siempre;
+ #   * el `file_path` y el `tool_name` con un CR quedan marcados (`ARNES_FP_CR`, `ARNES_TOOL_CR`) y se
+-#     tratan como los que llevan un salto (CA-47 puntos 12 y 13, por coherencia): juzgar el valor
+-#     recortado seria juzgar otra ruta, u otra herramienta;
+-#   * en esos dos, si no llevan salto, se REPONE el CR final que el transporte retiro: sin salto, el
+-#     unico CR que se pierde es el ultimo, y solo uno (`_arnes_repone_cr`). Asi el motivo cita lo que
+-#     llego, y un campo hecho solo de CR no se lee como vacio. Con salto, el punto 12 o 13 decide
+-#     primero, y el CR que precedia a un salto interno no se repone.
++#     tratan como los que llevan un salto (CA-47 puntos 12 y 13, por coherencia). El motivo cita el valor
++#     tal como llego, con su CR, porque ahora llega con el.
+ # Los campos del agente no se marcan: `arnes_norm_ident` retira todo CR al comparar, por su propia
+ # regla, y un `agent_id` que solo era un CR se lee vacio, que es la sesion coordinadora, el lado
+-# estricto. El `command` tampoco: su transporte no se toca aqui (el analizador de `Bash` es otra cosa).
++# estricto. El `command` tampoco se marca: llega con sus CR y lo juzga el analizador de `Bash`, que
++# trata el CR como el shell —un caracter de palabra— y DENIEGA donde no puede seguir su significado
++# (`arnes_bash_sin_texto`, `ARNES_RC_CR`).
+ #
+ # Si jq no puede leer la entrada, los campos quedan VACIOS: nunca se reparte entre los campos una
+ # salida anterior de jq (el fallo de jq al leer la entrada es SEC-120, fuera de esta reparacion).
+ arnes_parse_input() {
+   [ -z "${ARNES_INPUT_LISTO:-}" ] || return 0
+-  local n_tool='' n_aid='' n_aty='' n_cwd='' n_fp='' r_tool='' r_cwd='' r_fp=''
+-  if ! arnes_jq_str "$ARNES_INPUT" -r '[.tool_name // "",
+-                                        .agent_id // "",
+-                                        .agent_type // "",
+-                                        (.cwd // "" | if type == "string" then . else "" end),
+-                                        .tool_input.file_path // "",
+-                                        .tool_input.command // ""]
+-                                       | map(tostring)
+-                                       | ((.[0:5] | map(indices("\n") | length))
+-                                          + ([.[0], .[3], .[4]] | map(indices("\r") | length))
+-                                          | map(tostring) | join(" ")),
+-                                         .[]'; then
+-    ARNES_JQ=''
++  local n_tool='' n_aid='' n_aty='' n_cwd='' n_fp='' r_tool='' r_cwd='' r_fp='' out
++  ARNES_JQ=''
++  if out="$(jq -r '[.tool_name // "",
++                    .agent_id // "",
++                    .agent_type // "",
++                    (.cwd // "" | if type == "string" then . else "" end),
++                    .tool_input.file_path // "",
++                    .tool_input.command // ""]
++                   | map(tostring)
++                   | ((.[0:5] | map(indices("\n") | length))
++                      + ([.[0], .[3], .[4]] | map(indices("\r") | length))
++                      | map(tostring) | join(" ")),
++                     .[]' <<< "$ARNES_INPUT")"; then
++    # La primera linea solo lleva digitos y espacios: un CR al final es el de transporte (arriba).
++    case "${out%%$'\n'*}" in
++      *$'\r') arnes_sin_cr_transporte "$out"; ARNES_JQ="$ARNES_SIN_CR" ;;
++      *)      ARNES_JQ="$out" ;;
++    esac
+   fi
+   ARNES_TOOL=''; ARNES_AGENT_ID=''; ARNES_AGENT_TYPE=''; ARNES_CWD=''; ARNES_FP=''; ARNES_CMD=''
+   ARNES_TOOL_CR=0; ARNES_CWD_CR=0; ARNES_FP_CR=0
+@@ -111,8 +127,8 @@ arnes_parse_input() {
+     ARNES_CMD="${ARNES_CMD%$'\n'}"
+     # Fail-closed: un contador que no sea exactamente 0 marca el campo.
+     [ "$r_cwd" = 0 ] || { ARNES_CWD_CR=1; ARNES_CWD=''; }
+-    [ "$r_tool" = 0 ] || { ARNES_TOOL_CR=1; _arnes_repone_cr "$n_tool" "$r_tool" "$ARNES_TOOL"; ARNES_TOOL="$ARNES_CAMPO"; }
+-    [ "$r_fp" = 0 ] || { ARNES_FP_CR=1; _arnes_repone_cr "$n_fp" "$r_fp" "$ARNES_FP"; ARNES_FP="$ARNES_CAMPO"; }
++    [ "$r_tool" = 0 ] || ARNES_TOOL_CR=1
++    [ "$r_fp" = 0 ] || ARNES_FP_CR=1
+   fi
+   ARNES_INPUT_LISTO=1
+ }
+@@ -124,21 +140,6 @@ arnes_causa_herramienta() {   # -> ARNES_CAUSA_HERR
+   else ARNES_CAUSA_HERR='lleva un retorno de carro'; fi
+ }
+ 
+-# Repone el CR final que el transporte retiro de un campo SIN saltos de linea. Sin salto, el campo
+-# ocupa una sola linea del flujo y lo unico que el transporte le puede quitar es UN retorno de carro:
+-# el ultimo, que en Linux precede al separador (o cierra la salida). En Windows —por construccion, sin
+-# medir alli— no le quita ninguno: el jq anade su propio CR antes de cada salto y es ese el que se
+-# retira, asi que la cuenta de jq y la del valor leido coinciden y no se repone nada. Con salto el campo
+-# no se repone: decide primero el punto 12 o 13 de CA-47. Lo que decide es la marca, que salio del valor
+-# crudo; la reposicion hace que el motivo cite lo que llego, que un campo hecho solo de CR no quede
+-# vacio, y que `Bash␍` no se tome por `Bash` en ninguna otra comparacion.
+-_arnes_repone_cr() {   # <saltos del campo> <CR que conto jq en el valor crudo> <valor leido> -> ARNES_CAMPO
+-  local quedan="${3//[!$'\r']/}"
+-  ARNES_CAMPO="$3"
+-  if [ "$1" = 0 ] && [ "${#quedan}" -lt "$2" ] 2>/dev/null; then ARNES_CAMPO+=$'\r'; fi
+-  return 0
+-}
+-
+ # Lee UN campo de `arnes_parse_input`: su primera linea y tantas mas como saltos declaro jq.
+ # El contador se compara con `[ -gt ]`, que exige un entero literal y no evalua expresiones.
+ _arnes_lee_campo() {   # <saltos de linea del campo> -> ARNES_CAMPO (del flujo abierto por el llamador)
+@@ -357,8 +358,9 @@ arnes_emitir_avisos() {
+ # precede a un salto —el último carácter de un campo, que va seguido del separador, o el
+ # de una línea interna— no se distingue del de transporte, y en Linux también se retira.
+ # Para un texto que se lee por cabecera da igual; para un campo cuyo valor DESIGNA algo
+-# —un directorio, una ruta, una herramienta— es leer otro. Quien lea campos así cuenta el
+-# CR antes, en la misma llamada a jq y sobre el valor crudo (`arnes_parse_input`).
++# —un directorio, una ruta, una herramienta, el texto de un comando— es leer otro. Quien
++# lea campos así no usa estas funciones a ciegas: lee la salida cruda y aplica ésta SÓLO
++# si la propia salida dice que hay transporte (`arnes_parse_input`, octava autorización).
+ #
+ # La regla vive en `arnes_sin_cr_transporte` —una sola vez, sin forks—: tres copias de la
+ # misma normalización se desfasan, y ésta ya se desfasó una vez contra `campos-req.awk`.
+@@ -572,6 +574,19 @@ arnes_norm_path() {   # <ruta> -> ARNES_NORM
+ #   miles de destinos lo multiplica (medido y declarado en REQ-007, Historial del 2026-09-30).
+ # - Sin promesa (F1-F7 de CA-47): carreras, `cd` dentro del comando, enlaces duros y montajes,
+ #   mayusculas, hosts no ejercidos. `arnes_norm_path` no cambia: la usa `tools/arnes-paralelo.sh`.
++# - NINGUN PREFIJO QUEDA FUERA DE LA IDENTIDAD (SEC-122, octava autorizacion). Hasta 3bc7d3c todo
++#   destino cuya lectura lexica caia bajo `/dev/` o `/proc/` salia sin lectura fisica, sin enlace y
++#   sin existencia: un enlace corriente en `/dev/shm` hacia `requirements/` cerraba un REQ en rojo
++#   (cara a, preexistente), y en un proyecto situado bajo `/dev/` se apagaban CA-49 (i) y la
++#   existencia (cara b, regresion de 104ffd1). Ahora esos destinos se identifican como cualquier otro.
++#   Lo que no es resolucion de nombres es lo que DEPENDE DEL PROCESO QUE ABRE LA RUTA: el nucleo
++#   resuelve `/proc/self` y `/proc/thread-self` —y por ellos `/dev/fd` y `/dev/std*`— hacia la
++#   entrada en /proc de quien resuelve, y la puerta no es quien escribira. Eso se DETECTA, no se
++#   enumera: una resolucion que aterriza en la entrada propia del proceso que resuelve depende de el
++#   (`_arnes_propio`), y la que pasa por su directorio de trabajo se resuelve desde el directorio del
++#   que escribira, si la puerta lo sabe, o desde dentro de esa entrada propia, si no
++#   (`_arnes_cd_resolucion`). Un descriptor abierto del shell se juzga como descriptor; todo lo demas
++#   que dependa del proceso es no determinable (`_arnes_id_propio`). Detalle y limites, alli.
+ ARNES_ID_MAX=4096   # PATH_MAX: una ruta mas larga no la abre el sistema; es no determinable
+ declare -gA ARNES_IDM_E=() ARNES_IDM_C=() ARNES_IDM_A=() ARNES_IDM_F=() ARNES_IDM_F2=() \
+             ARNES_IDM_L=() ARNES_IDM_LN=() ARNES_IDM_B=() ARNES_IDM_K=() ARNES_IDM_X=() \
+@@ -642,6 +657,80 @@ _arnes_bajo() {
+ # No determinable: la causa y como corregirlo, SIN nombrar ninguna herramienta (CA-47, punto 7).
+ _arnes_nodet() { ARNES_ID_E=nodet; ARNES_ID_C="$1"; ARNES_ID_A="$2"; }
+ 
++# --- Lo que depende del proceso que abre la ruta (SEC-122, octava autorizacion) ------------------
++# ¿<ruta> esta en la entrada de /proc del proceso que esta resolviendo, o debajo? Es donde aterriza
++# toda resolucion que pasa por `/proc/self` o `/proc/thread-self` —y por ellos `/dev/fd/N`—; y, desde
++# `_arnes_cd_resolucion`, tambien la que pasa por el directorio de trabajo cuando la puerta no sabe
++# cual es el del proceso que escribira. `$BASHPID` y no `$$`: en un subshell resuelve el subshell.
++_arnes_propio() { case "$1/" in "/proc/$BASHPID/"*) return 0 ;; esac; return 1; }
++
++# ¿La lectura fisica del tramo <ruta> (ARNES_PWD_FIS) es su propio texto? Entonces no atraveso ningun
++# enlace —tampoco `/proc/self`— y el directorio desde el que se resolvio no pinto nada.
++_arnes_mismo_texto() {
++  case "$1/" in */./*|*/../*) return 1 ;; esac
++  [ "$ARNES_PWD_FIS" = "$1" ]
++}
++
++# ¿El `cwd` de la entrada ancla? Las mismas condiciones que CA-47, punto 1: absoluto, sin retorno de
++# carro, y un directorio que existe. -> ARNES_ANCLA
++_arnes_ancla() {
++  local c="${ARNES_CWD:-}"
++  [ "${ARNES_CWD_CR:-0}" = 0 ] || return 1
++  case "$c" in /*) ;; [A-Za-z]:[/\\]*) c="${c//\\//}" ;; *) return 1 ;; esac
++  [ -d "$c" ] || return 1
++  ARNES_ANCLA="$c"
++}
++
++# El directorio desde el que se resuelve una ruta que atraviesa un enlace (SEC-122). Un enlace puede
++# llevar al directorio de trabajo del proceso que lo abre —`/proc/self/cwd`, o cualquier enlace que
++# apunte ahi— y el de este hook no es el del proceso que escribira:
++#   * por `Bash`, la puerta sabe cual es: el `cwd` de la entrada, el mismo en que ancla una relativa
++#     (CA-47, punto 1, sobre la premisa que declara F7). Se resuelve desde el, y queda como en el shell;
++#   * por `Edit`/`Write`/`MultiEdit` escribe el proceso del host, cuyo directorio la puerta no conoce,
++#     y por `Bash` sin un `cwd` que ancle, tampoco. Se resuelve desde DENTRO de la entrada en /proc del
++#     propio proceso: toda dependencia del directorio de trabajo aterriza en ella, y `_arnes_propio` la
++#     ve. Sin /proc no hay `/proc/self` por el que depender, y se resuelve desde donde se este.
++# LIMITE, declarado: una cadena que, tras llegar al directorio de trabajo, sube con `..` por encima de
++# esa entrada (`/proc/<pid>/task/<pid>/fdinfo`: cinco niveles) sale de ella y no se ve.
++# Vale igual en un subshell (lo usa `_arnes_id_resuelve_enlace`): `$BASHPID` es el suyo.
++# 1 = el `cwd` que ancla ya no se deja recorrer.
++_arnes_cd_resolucion() {
++  if [ "${ARNES_TOOL:-}" = Bash ] && _arnes_ancla; then cd -- "$ARNES_ANCLA" 2>/dev/null; return; fi
++  cd -- "/proc/$BASHPID/task/$BASHPID/fdinfo" 2>/dev/null || cd -- "/proc/$BASHPID" 2>/dev/null
++  return 0
++}
++
++# Un destino que aterrizo en la entrada de /proc del proceso que lo resolvio: lo que designa depende de
++# ese proceso, que no es el que escribira.
++#   * Una RANURA DE DESCRIPTOR —`fd/<x>` del proceso o de uno de sus hilos, sin nada detras— designa un
++#     descriptor abierto. Por `Bash` es un descriptor del shell: se los da el host (la salida que
++#     captura) o los abre el propio comando, y lo que el comando abre antes de escribir es la frontera
++#     de construir su propio contexto (F2). Se juzga como descriptor, fuera de todo ambito: es lo que
++#     hace legitimo `> /dev/stderr`, sin excepcion por su nombre. Por otra herramienta el descriptor es
++#     del proceso del host, que la puerta no ve: no determinable.
++#   * Todo lo demas —el directorio del proceso, sus pseudoarchivos, una ruta que sigue detras de un
++#     descriptor, el directorio de trabajo cuando no se conoce el del que escribe— no determinable.
++# <dir> es el directorio fisico, <resto> 1 si lleva segmentos que no existen, <base> el ultimo
++# componente (vacio si la ruta designa un directorio) y <pid> el del proceso que resolvio.
++ARNES_PROC_CAUSA='depende del proceso que la abre —pasa por su entrada en /proc, como /proc/self, /proc/thread-self o /dev/fd, o es uno de sus descriptores—, y esta puerta, que no es ese proceso, no puede saber a que archivo llega'
++ARNES_PROC_ARREGLO='escribe la ruta del archivo por su nombre, sin pasar por la entrada en /proc de un proceso ni por sus descriptores'
++_arnes_id_propio() {   # <dir fisico> <resto 0|1> <base> <pid>
++  local p="/proc/$4" t
++  if [ "$2" = 0 ] && [ -n "$3" ]; then
++    case "$1" in
++      "$p/fd") _arnes_id_descriptor; return 0 ;;
++      "$p/task/"*/fd)
++        t="${1#"$p/task/"}"; t="${t%/fd}"
++        case "$t" in ''|*[!0-9]*) ;; *) _arnes_id_descriptor; return 0 ;; esac ;;
++    esac
++  fi
++  _arnes_nodet "$ARNES_PROC_CAUSA" "$ARNES_PROC_ARREGLO"
++}
++_arnes_id_descriptor() {
++  if [ "${ARNES_TOOL:-}" = Bash ]; then ARNES_ID_E=desc; ARNES_ID_C=''; ARNES_ID_A=''
++  else _arnes_nodet "$ARNES_PROC_CAUSA" "$ARNES_PROC_ARREGLO"; fi
++}
++
+ # Lectura LEXICA (CA-47, punto 3): la ruta absoluta con `.`, `..` y las barras repetidas retirados
+ # como texto, conservando la doble barra inicial de una ruta UNC. `..` en la raiz se queda en ella.
+ _arnes_lectura_lexica() {   # <ruta absoluta> -> ARNES_LL
+@@ -680,29 +769,51 @@ _arnes_lectura_lexica() {   # <ruta absoluta> -> ARNES_LL
+ # engana: al subir se llega a ese antecesor, que existe y no deja entrar. (Un `cd` que falla no
+ # cambia de directorio: solo hay que volver tras el que acierta.) Cada directorio resuelto se
+ # memoriza por invocacion: miles de destinos en el mismo `cwd` pagan UN `cd -P`, no miles.
++#
++# DESDE DONDE SE RESUELVE (SEC-122). La primera pasada se hace desde donde este el proceso, que es lo
++# barato y basta casi siempre: si el tramo resuelto da como lectura fisica exactamente su propio
++# texto, no atraveso ningun enlace y el directorio de trabajo no pinto nada. Si no —un enlace, un
++# `..`, `/proc/self`—, se rehace entera desde el directorio que fija `_arnes_cd_resolucion`, y vale
++# esa. Asi el camino comun no paga ni un `cd` mas. Una resolucion que aterriza en la entrada propia de
++# /proc depende del proceso y NO se memoriza: otro proceso —un subshell— aterrizaria en la suya.
+ _arnes_lectura_fisica() {   # <ruta absoluta, sin barra final> <dir 0|1> -> ARNES_LF, ARNES_LF_DIR, ARNES_LF_RESTO ; 1 = no determinable
+-  local dir="$1" base='' cur resto='' seg d r orig="$PWD" CDPATH=''
++  local dir="$1" base='' cur resto seg d r orig="$PWD" CDPATH='' pasada=1 rc=0
+   [ "$2" = 1 ] || { base="${1##*/}"; dir="${1%/*}"; }
+-  cur="${dir:-/}"
+   while :; do
+-    if [ -n "${ARNES_DIRFIS[$cur]+x}" ]; then ARNES_PWD_FIS="${ARNES_DIRFIS[$cur]}"; break; fi
+-    if cd -P -- "$cur" 2>/dev/null; then
+-      _arnes_pwd_fisico; cd -- "$orig" 2>/dev/null; ARNES_DIRFIS[$cur]="$ARNES_PWD_FIS"; break
+-    fi
+-    if [ -e "$cur" ] || [ -L "$cur" ]; then
+-      arnes_cita_ruta "$cur"
+-      _arnes_nodet "el directorio $ARNES_CITA_RUTA de la ruta existe pero no se puede recorrer (sin permiso, no es un directorio, o es un enlace roto o en bucle)" \
+-                   "escribe la ruta a traves de directorios que se puedan recorrer"
+-      return 1
++    cur="${dir:-/}"; resto=''
++    while :; do
++      if [ -n "${ARNES_DIRFIS[$cur]+x}" ]; then ARNES_PWD_FIS="${ARNES_DIRFIS[$cur]}"; break; fi
++      if cd -P -- "$cur" 2>/dev/null; then
++        _arnes_pwd_fisico
++        if [ "$pasada" = 1 ] && ! _arnes_mismo_texto "$cur"; then rc=2; break; fi
++        _arnes_propio "$ARNES_PWD_FIS" || ARNES_DIRFIS[$cur]="$ARNES_PWD_FIS"
++        break
++      fi
++      if [ -e "$cur" ] || [ -L "$cur" ]; then
++        arnes_cita_ruta "$cur"
++        _arnes_nodet "el directorio $ARNES_CITA_RUTA de la ruta existe pero no se puede recorrer (sin permiso, no es un directorio, o es un enlace roto o en bucle)" \
++                     "escribe la ruta a traves de directorios que se puedan recorrer"
++        rc=1; break
++      fi
++      case "$cur" in
++        /|//|[A-Za-z]:|[A-Za-z]:/)
++          _arnes_nodet "ni siquiera su raiz se puede recorrer" "escribe la ruta a traves de directorios que se puedan recorrer"
++          rc=1; break ;;
++      esac
++      resto="${cur##*/}${resto:+/$resto}"; cur="${cur%/*}"
++      case "$cur" in '') cur=/ ;; [A-Za-z]:) cur="$cur/" ;; esac
++    done
++    [ "$rc" = 2 ] || break
++    # Atraveso un enlace: se rehace desde el directorio del proceso que escribira (arriba).
++    rc=0; pasada=2; cd -- "$orig" 2>/dev/null
++    if ! _arnes_cd_resolucion; then
++      _arnes_nodet "el directorio de trabajo de la entrada ('cwd'), desde el que se resuelve la ruta, ya no se puede recorrer" \
++                   "escribe la ruta desde un directorio de trabajo que exista"
++      rc=1; break
+     fi
+-    case "$cur" in
+-      /|//|[A-Za-z]:|[A-Za-z]:/)
+-        _arnes_nodet "ni siquiera su raiz se puede recorrer" "escribe la ruta a traves de directorios que se puedan recorrer"
+-        return 1 ;;
+-    esac
+-    resto="${cur##*/}${resto:+/$resto}"; cur="${cur%/*}"
+-    case "$cur" in '') cur=/ ;; [A-Za-z]:) cur="$cur/" ;; esac
+   done
++  [ "$PWD" = "$orig" ] || cd -- "$orig" 2>/dev/null
++  [ "$rc" = 0 ] || return 1
+   ARNES_LF_RESTO=0
+   if [ -n "$resto" ]; then
+     ARNES_LF_RESTO=1; r="$resto"
+@@ -725,7 +836,8 @@ _arnes_lectura_fisica() {   # <ruta absoluta, sin barra final> <dir 0|1> -> ARNE
+ }
+ 
+ # arnes_identidad <ruta tal como llego> — la identidad de UN destino, memorizada por invocacion.
+-# Publica: ARNES_ID_E (ok|nodet), ARNES_ID_C/ARNES_ID_A (causa y arreglo, si nodet), ARNES_ID_F
++# Publica: ARNES_ID_E (ok|nodet|desc: un descriptor del shell, SEC-122), ARNES_ID_C/ARNES_ID_A
++# (causa y arreglo, si nodet), ARNES_ID_F
+ # (lectura fisica), ARNES_ID_F2 (fisica de la lexica, si la ruta lleva `..`), ARNES_ID_L (lexica;
+ # su forma de comparacion, ARNES_ID_LN, la da `_arnes_id_ln` cuando hace falta), ARNES_ID_B (barra
+ # final), ARNES_ID_K (el ultimo componente es un enlace), ARNES_ID_FD (directorio fisico del ultimo
+@@ -829,9 +941,8 @@ _arnes_id_calcula() {
+       abs="$c/$p" ;;
+   esac
+   _arnes_lectura_lexica "$abs"; ARNES_ID_L="$ARNES_LL"
+-  # F3 de CA-47: bajo /dev/ y /proc/ la identidad no es resolucion de nombres (`/dev/stderr`,
+-  # `/proc/self/…`), asi que no se resuelve y se juzga solo por su lectura lexica.
+-  case "$ARNES_ID_L/" in /dev/*|/proc/*) return 0 ;; esac
++  # Ningun prefijo queda fuera (SEC-122): `/dev/…` y `/proc/…` se identifican como cualquier otra
++  # ruta, con su lectura fisica, su enlace y su existencia. Lo que dependa del proceso se ve abajo.
+   # Las barras repetidas no cambian el archivo (salvo la doble INICIAL, que es de la plataforma).
+   case "$abs" in
+     *//*) case "$abs" in //|//[!/]*) c='//'; abs="${abs#//}" ;; *) c='' ;; esac
+@@ -842,6 +953,11 @@ _arnes_id_calcula() {
+   [ "$ARNES_ID_B" = 0 ] || dirref=1
+   _arnes_lectura_fisica "$abs" "$dirref" || return 0
+   ARNES_ID_F="$ARNES_LF"; ARNES_ID_FD="$ARNES_LF_DIR"; ARNES_ID_O="$ARNES_LF"
++  # SEC-122: aterrizo en la entrada propia de /proc -> depende del proceso (`_arnes_id_propio`).
++  if _arnes_propio "$ARNES_LF_DIR"; then
++    c=''; [ "$dirref" = 1 ] || c="${ARNES_LF##*/}"
++    _arnes_id_propio "$ARNES_LF_DIR" "$ARNES_LF_RESTO" "$c" "$BASHPID"; return 0
++  fi
+   if [ "$ARNES_LF_RESTO" = 0 ]; then
+     if [ "$dirref" = 0 ] && [ -L "$ARNES_LF" ]; then ARNES_ID_K=1; ARNES_ID_X=1
+     elif [ -e "$ARNES_LF" ]; then ARNES_ID_X=1; fi
+@@ -851,6 +967,8 @@ _arnes_id_calcula() {
+   case "/$abs/" in
+     */../*)
+       if _arnes_lectura_fisica "$ARNES_ID_L" "$dirref"; then
++        # La lectura del texto, sin los `..`, depende del proceso (SEC-122): no se sabe que designa.
++        if _arnes_propio "$ARNES_LF_DIR"; then _arnes_nodet "$ARNES_PROC_CAUSA" "$ARNES_PROC_ARREGLO"; return 0; fi
+         ARNES_ID_F2="$ARNES_LF"; [ "$ARNES_ID_F2" = "$ARNES_ID_F" ] || ARNES_ID_V=1
+       else
+         # La lectura lexica no se puede situar: no se sabe si designan el mismo archivo.
+@@ -864,16 +982,37 @@ _arnes_id_calcula() {
+ # seccion que cuesta un proceso —bash no lee un enlace sin uno— y se paga solo aqui: como mucho uno
+ # por destino, y memorizado. `readlink -f` resuelve la cadena entera en esa sola llamada; si no
+ # puede (un bucle, un destino cuyo directorio no existe, `readlink` ausente), no determinable.
++#
++# LO QUE DEPENDE DEL PROCESO (SEC-122), en dos pasos y sin procesos de mas:
++#   1. ¿El enlace lleva a un descriptor ESTANDAR de quien lo abre —`/dev/stderr`, `/dev/stdout`,
++#      `/dev/stdin`, o cualquier enlace a `/proc/self/fd/{0,1,2}`—? Se le PREGUNTA al sistema, no a una
++#      lista de nombres: se cambian por un instante los descriptores 0, 1 y 2 de este proceso (a
++#      `/dev/null`, y luego cerrados) y se mira si el enlace existe en los dos casos. Si su existencia
++#      cambia con nuestros descriptores, lleva a uno de ellos: es un descriptor (`_arnes_id_propio`).
++#      Sin proceso, que es lo que deja `> /dev/stderr` en 0 procesos (CA-48 (i.1)). Hace falta antes de
++#      `readlink`, porque hay `readlink` que reabren sus descriptores estandar al arrancar y responden
++#      `/dev/null` (medido en uutils coreutils 0.8.0).
++#   2. Si no, `readlink -f` en un subshell que, antes de convertirse en `readlink`, se situa en el
++#      directorio de `_arnes_cd_resolucion` y dice su propio PID: lo que aterrice en SU entrada de /proc
++#      depende del proceso (`/proc/self/…`, `/dev/fd/N` con N >= 3, su directorio de trabajo cuando no
++#      se conoce el del que escribe). Sigue siendo un solo proceso: `exec`.
+ _arnes_id_resuelve_enlace() {
+-  local t
++  local t pid a=1 b=1
+   [ "$ARNES_ID_K" = 1 ] && [ "$ARNES_ID_R" = 0 ] || return 0
+   ARNES_ID_R=1
+-  t="$(readlink -f -- "$ARNES_ID_F" 2>/dev/null)"
++  { [ -e "$ARNES_ID_F" ] && a=0; } 0</dev/null 1>/dev/null 2>/dev/null
++  { [ -e "$ARNES_ID_F" ] && b=0; } 0<&- 1>&- 2>&-
++  if [ "$a" != "$b" ]; then _arnes_id_descriptor; _arnes_id_guarda; return 0; fi
++  t="$(_arnes_cd_resolucion && printf '%s\n' "$BASHPID" && exec readlink -f -- "$ARNES_ID_F" 2>/dev/null)"
++  case "$t" in *$'\n'*) pid="${t%%$'\n'*}"; t="${t#*$'\n'}" ;; *) pid=''; t='' ;; esac
+   case "$t" in
+     /*|[A-Za-z]:/*)
+       case "$t" in //|//[!/]*) [ "${ARNES_DOBLE_ES_RAIZ:-0}" = 1 ] && t="${t#/}" ;; esac
+-      ARNES_ID_O="$t"; ARNES_ID_X=0
+-      if [ -e "$t" ] || [ -L "$t" ]; then ARNES_ID_X=1; fi ;;
++      case "$t/" in
++        "/proc/$pid/"*) _arnes_id_propio "${t%/*}" 0 "${t##*/}" "$pid" ;;
++        *) ARNES_ID_O="$t"; ARNES_ID_X=0
++           if [ -e "$t" ] || [ -L "$t" ]; then ARNES_ID_X=1; fi ;;
++      esac ;;
+     *)
+       _arnes_nodet "su ultimo componente es un enlace simbolico cuyo destino no se puede resolver (un bucle, o un destino cuyo directorio no existe)" \
+                    "escribe sobre el archivo al que apunta, por su ruta" ;;
+@@ -957,8 +1096,13 @@ arnes_id_pertenece() {
+   local -n pats="ARNES_AMB_${amb}_P" ct="ARNES_AMB_${amb}_T" cf="ARNES_AMB_${amb}_F" cq="ARNES_AMB_${amb}_Q"
+   # Un ambito sin ningun patron no tiene «dentro»: ni siquiera un destino no determinable cae en el.
+   [ "${#pats[@]}" -gt 0 ] || return 1
++  # Un descriptor del shell no es un archivo de ningun ambito (SEC-122, `_arnes_id_propio`).
++  [ "$ARNES_ID_E" != desc ] || return 1
+   [ "$ARNES_ID_E" = ok ] || return 2
+-  if [ "$ARNES_ID_K" = 1 ]; then _arnes_id_resuelve_enlace; [ "$ARNES_ID_E" = ok ] || return 2; fi
++  if [ "$ARNES_ID_K" = 1 ]; then
++    _arnes_id_resuelve_enlace
++    case "$ARNES_ID_E" in ok) ;; desc) return 1 ;; *) return 2 ;; esac
++  fi
+   [ -z "$ARNES_ID_F" ]  || fis+=("$ARNES_ID_F")
+   [ -z "$ARNES_ID_F2" ] || fis+=("$ARNES_ID_F2")
+   [ "$ARNES_ID_O" = "$ARNES_ID_F" ] || [ -z "$ARNES_ID_O" ] || fis+=("$ARNES_ID_O")
+@@ -1206,6 +1350,10 @@ ARNES_GIT_PROHIBIDOS_DEFECTO=$'clean -f\treset --hard\tcheckout .\trestore .\tst
+ ARNES_EDIT_MAX_PRESUPUESTO=67108864
+ # Codigo de salida de `arnes_bash_escrituras` cuando NO analizo por presupuesto.
+ ARNES_RC_EXCESO=2
++# Codigo de salida cuando NO analizo porque un retorno de carro del comando cae donde el analizador no
++# puede seguir su significado (P-023-13-A, octava autorizacion; ver `arnes_bash_sin_texto`). Como el de
++# arriba, nunca sale por la salida estandar y los dos guardianes lo traducen a una denegacion con motivo.
++ARNES_RC_CR=3
+ 
+ # Techo efectivo, resuelto UNA vez por proceso y SOLO cuando hace falta.
+ #
+@@ -1492,6 +1640,19 @@ _arnes_expansiones() {   # <linea del cuerpo> -> acumula fragmentos en ARNES_EXP
+ # NADA cuando el material supera el presupuesto (ver `ARNES_BASH_MAX_ANALISIS`). Un
+ # `return 2` no deja nada en `ARNES_SIN_TEXTO` que se pueda confundir con "no hay nada":
+ # los llamadores miran el codigo y lo traducen a una denegacion con motivo.
++#
++# Y `$ARNES_RC_CR` (3), TAMBIEN SIN ANALIZAR NADA, cuando el delimitador de un heredoc lleva
++# un retorno de carro (P-023-13-A, octava autorizacion). El texto del comando llega ahora con
++# sus CR (`arnes_parse_input`), y para el shell un CR es un caracter de palabra: el troceado
++# de abajo lo trata igual (`IFS` sin CR) y un destino `k\r` se juzga como `k\r`, que es lo que
++# el shell escribe. El unico sitio donde este analizador NO lo sigue es el delimitador del
++# heredoc: lo corta en `[[:space:]]`, que incluye el CR, mientras que para el shell `EOF\r` es
++# la palabra entera y el cuerpo acaba en una linea `EOF\r`. Con el CR conservado, un
++# `cat <<'EOF'\r` haria buscar una linea `EOF` que no llega nunca, y todo lo que sigue se
++# descontaria como cuerpo —tambien un `echo x > src/a.ts` que el shell SI ejecuta—: el
++# fallo en abierto que la autorizacion prohibe («nunca lo elimines silenciosamente para
++# juzgar un comando distinto»). No se reescribe el analizador para seguirlo: se deniega,
++# como ordena la misma autorizacion cuando el analisis no puede preservar el significado.
+ arnes_bash_sin_texto() {   # <comando> -> ARNES_SIN_TEXTO
+   local cmd="$1" limpio
+   local ARNES_SINCOM=''
+@@ -1532,7 +1693,7 @@ arnes_bash_sin_texto() {   # <comando> -> ARNES_SIN_TEXTO
+   #    analisis comillas que en el cuerpo son texto (ver `_arnes_desentrecomilla`).
+   #    Las limitaciones de este recorte estan escritas en `_arnes_expansiones`.
+   if [[ "$limpio" == *'<<'* ]]; then
+-    local linea delim='' dentro=0 citado=0 resto sinhs
++    local linea delim='' dentro=0 citado=0 resto sinhs cr_delim=0
+     local -a sin=()
+     while IFS= read -r linea || [ -n "$linea" ]; do
+       if [ "$dentro" -eq 1 ]; then
+@@ -1564,6 +1725,10 @@ arnes_bash_sin_texto() {   # <comando> -> ARNES_SIN_TEXTO
+         # Citado o escapado -> cuerpo literal. Se anota ANTES de pelar las comillas,
+         # que es justo la marca que las distingue.
+         citado=0; case "$resto" in \'*|\"*|\\*) citado=1 ;; esac
++        # La palabra del delimitador tal como la corta el shell —hasta un blanco o un metacaracter,
++        # y el CR no es ninguna de las dos cosas—: si lleva un CR, este analizador no la sigue
++        # (arriba). Lineal: el `%%` se detiene en el primer metacaracter.
++        case "${resto%%[[:blank:]\;\|\&\(\)\<\>]*}" in *$'\r'*) cr_delim=1; break ;; esac
+         delim="${resto%%[[:space:]\;\|\&\)\<\>]*}"
+         delim="${delim#\'}"; delim="${delim%\'}"; delim="${delim#\"}"; delim="${delim%\"}"
+         delim="${delim#\\}"
+@@ -1574,6 +1739,7 @@ arnes_bash_sin_texto() {   # <comando> -> ARNES_SIN_TEXTO
+         esac ;;
+       esac
+     done <<< "$limpio"
++    [ "$cr_delim" -eq 0 ] || return "$ARNES_RC_CR"
+     IFS=$'\n'; limpio="${sin[*]}"; IFS=$' \t\n'
+   fi
+   # Segundo sumando del presupuesto: el texto de comando que queda FUERA de los cuerpos
+@@ -1601,7 +1767,8 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
+   # `ARNES_BASH_MAX_ANALISIS`. Los dos guardianes traducen ese 2 a una denegacion con
+   # motivo. Un `return 2` nunca sale por la salida estandar, asi que un llamador que
+   # ignore el codigo ve una lista vacia: eso seria permitir, y por eso los dos
+-  # llamadores lo miran (y hay caso de banco para cada uno).
++  # llamadores lo miran (y hay caso de banco para cada uno). Lo mismo con
++  # `$ARNES_RC_CR` (3): el delimitador de un heredoc con un retorno de carro.
+   local limpio i j n tok
+   # IFS explicito: el troceado en palabras de esta funcion (y el de sus auxiliares) no
+   # puede depender de como lo haya dejado el llamador.
+diff --git a/tests/escenarios/hooks/README.md b/tests/escenarios/hooks/README.md
+index d4b55e1..bfbc3ca 100644
+--- a/tests/escenarios/hooks/README.md
++++ b/tests/escenarios/hooks/README.md
+@@ -32,7 +32,7 @@ bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del cor
+ ARNES_SONDA_CONTROLES=1 bash tests/escenarios/hooks/run.sh secciones/37-coste-del-escaner-7-*.sh
+                                                          # los controles de medición de las sondas de coste
+ ```
+-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1581 casos** (el número exacto lo cuadran
++Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1741 casos** (el número exacto lo cuadran
+ `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`). La línea
+ `Resultado:` cuenta **aparte** los `SKIP` que son **INCONCLUSO** —una sonda de coste que no acreditó
+ nada en esa corrida— y los nombra debajo; el código de salida **no** depende de ellos
+@@ -302,6 +302,10 @@ Tres reglas nacidas de fallos reales:
+ | Integridad de la entrada (44) | con el mismo `cwd` con CR, lo que no depende de él —escrituras y cierres por ruta absoluta, `ls -la`, el `desarrollador` escribiendo código (RC1–RC6)—; la escritura relativa fuera del ámbito (RM1); y las mismas operaciones desde un `cwd` sin CR (RS1–RS3) | RC como siempre en los tres árboles; RM1 **deny** (de allow a deny, declarado); RS como cd6afa6, y RS3 (L8) **deny** en 9596e39 |
+ | Integridad de la entrada (44) | un `file_path` con CR —el enlace dentro de la raíz `docs/l␍`, un `Edit` que cierra `REQ-901.md␍` en rojo cuando `REQ-901.md` está en verde, una ruta fuera del ámbito y un `file_path` que sólo es un CR (RF1–RF4)— y un `tool_name` con CR —`Bash␍` con `ls` y un `file_path` en `src/`, `Edit␍` que cierra un REQ en rojo, `Write␍` del `desarrollador`, `Bash␍` con `echo x > src/a.ts` (RT1–RT4)— | **deny**, como los que llevan un salto; en cd6afa6 y 9596e39 **allow** (el CR final se recortaba y se juzgaba otra ruta u otra herramienta), salvo RT4, **deny** en los tres |
+ | Integridad de la entrada (44) | los motivos del CR, y `arnes_parse_input` con un CR final en el `tool_name`, el `cwd` y el `file_path` (P2) | dicen su causa y cómo corregirla, sin herramientas como salida; el CR se **cuenta** antes del transporte (en cd6afa6, recortado) |
++| Dependencia del proceso y CR del comando (45) | SEC-122, cara (a): un enlace corriente bajo `/dev/shm` hacia `requirements/` o `src/` —`Edit`, `Write`, `sed -i`, `echo >`, la edición no reconstruible— (S1–S6); y cara (b): un proyecto situado bajo `/dev/shm` —el enlace del último componente, el directorio enlazado y la existencia— (B1–B5) | **deny** donde designa un archivo protegido, como en cualquier otro sitio; contra **3bc7d3c** (fail-before) **allow**, y en la cara (b) **allow** lo que 9596e39 deniega; B3 y B5, lo legítimo que 3bc7d3c sobredenegaba, **allow**. Sólo en Linux; fuera, SKIP con motivo |
++| Dependencia del proceso y CR del comando (45) | lo que depende del proceso que abre la ruta —`/proc/self/cwd` desde el `cwd` de la entrada o sin él, `/proc/self/root`, un enlace a `/proc/self/cwd`, `/dev/fd/9/a.ts`, un `Write` a `/dev/stderr`— (P1–P9) y lo legítimo bajo `/dev`: `/dev/null`, `/dev/stderr`, `/dev/stdout`, `/dev/fd/2`, `tee /dev/stderr` (N1–N6) | por `Bash`, el directorio de trabajo se resuelve desde el `cwd` de la entrada (P1 **deny**, P2 **allow**); lo que depende del proceso y no se puede determinar, **deny** con motivo; un descriptor del shell, **allow** sin excepción por nombre; por el host, un descriptor es **deny** (P9, de allow a deny, declarado) |
++| Dependencia del proceso y CR del comando (45) | P-023-13-A: el CR final del comando y el que precede a un salto, por un enlace `docs/k␍` hacia `src/a.ts` y `docs/r␍` hacia un REQ en rojo (K1–K4); lo legítimo y los movimientos (K5–K8); el delimitador de heredoc con CR (H1–H6); y `guard-git` (G1–G3) | **deny** donde el shell escribe un archivo protegido (en 3bc7d3c y 9596e39, **allow**: el CR se perdía); K6 y G1 **allow** (de deny a allow, declarados: el shell escribe `app/a.ts␍`, y git rechaza `--hard␍`); el delimitador con CR **deny** con motivo |
++| Dependencia del proceso y CR del comando (45) | QA-023-14: `arnes_parse_input` con el CR final y el que precede a un salto en el `tool_name`, el `file_path` y el `command` (Q1), y con un `jq` que añade un CR a cada línea —emulación del de Windows, no Windows— (Q2, Q3) | los valores llegan **enteros** sin recorrerlos para reponer nada (en 3bc7d3c, los pierde); con la emulación, iguales y sin ningún CR de más |
+ 
+ **Desde REQ-023 CA-13, un `Edit` de `requirements/` que la puerta no puede reconstruir se deniega antes
+ que cualquier otra puerta.** Por eso los casos que miden otra puerta de `guard-completado` usan
+@@ -319,6 +323,9 @@ La sección 44 también trae su propio emisor: pone en el `cwd` y en el agente s
+ de línea incluidos, porque lo que mide es que ningún contenido de un campo desplace a los demás. Su
+ bloque R (QA-023-13) mide el retorno de carro, que el transporte de jq retira del final de un campo y
+ que por eso se cuenta antes; su árbol de fail-before es cd6afa6, no 43b948a.
++La sección 45 (octava autorización) trae el mismo emisor y su árbol de fail-before es 3bc7d3c. Las filas
++que dependen de `/dev/shm` o de `/proc` sólo se miden en Linux —donde se midió—; fuera salen SKIP con
++motivo, y las que necesitan un enlace con un retorno de carro en el nombre, también si no se puede crear.
+ 
+ **Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
+ falsea la máquina, el runner del CI y la carga. Los de arriba son **cocientes de duplicación**
+diff --git a/tests/escenarios/hooks/run.sh b/tests/escenarios/hooks/run.sh
+index 25a0c65..1dcbbc5 100755
+--- a/tests/escenarios/hooks/run.sh
++++ b/tests/escenarios/hooks/run.sh
+@@ -1647,7 +1647,13 @@ done
+ # cd6afa6 (fail-before) y contra 9596e39, y en la candidata por guard.sh las 8 que juzga un guardián; los
+ # motivos del CR; y P2, en la candidata y en cd6afa6. Las 167 de antes no cambian ni de nombre ni de
+ # veredicto.
+-CASOS_ESPERADOS=1581
++# Y 1581 → 1741 por la octava autorización (SEC-122, P-023-13-A y QA-023-14): +160 en la sección 45,
++# nueva —ningún prefijo queda fuera de la identidad del destino, lo que depende del proceso que abre la
++# ruta no recibe permiso por esa incertidumbre, el texto del comando llega con sus retornos de carro y
++# la lectura de la entrada no recorre el valor para reponerlos—: 43 filas, cada una en la candidata,
++# contra 3bc7d3c (fail-before) y contra 9596e39, y en la candidata por guard.sh las que juzga un
++# guardián; y Q1–Q3, el análisis de la entrada. Ninguna sección existente cambia su número.
++CASOS_ESPERADOS=1741
+ # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
+ # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
+ # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
+diff --git a/tests/escenarios/hooks/secciones/45-dependencia-del-proceso-y-cr-del-comando.sh b/tests/escenarios/hooks/secciones/45-dependencia-del-proceso-y-cr-del-comando.sh
+new file mode 100644
+index 0000000..da51688
+--- /dev/null
++++ b/tests/escenarios/hooks/secciones/45-dependencia-del-proceso-y-cr-del-comando.sh
+@@ -0,0 +1,206 @@
++# Sección 45 del banco — 45-dependencia-del-proceso-y-cr-del-comando
++# Se hace `source` desde el corredor, en su propio subshell y con sus ayudantes; no se ejecuta
++# suelto ni hace `source` de otra sección (invariantes 3 y 4 del README del banco).
++# Octava autorización del propietario (2026-10-02), punto 2, a NIVEL DE HOOK:
++#   S, B  SEC-122: ningún prefijo queda fuera de la identidad del destino —un enlace corriente bajo
++#         /dev/shm (cara a) y un proyecto situado bajo /dev/shm (cara b) se juzgan como en otro sitio—;
++#   P, N  lo que depende del proceso que abre la ruta no recibe permiso por esa incertidumbre, y lo
++#         legítimo bajo /dev (/dev/null, /dev/stderr) sigue pasando sin excepción por su nombre;
++#   K, H, G  P-023-13-A: el texto del comando de `Bash` llega con sus retornos de carro, se juzga lo
++#         que el shell escribe, y el delimitador de heredoc con CR —que el analizador no sigue— se
++#         deniega con motivo;
++#   Q     QA-023-14: la lectura de la entrada conserva el CR del dato sin recorrer el valor.
++# TRES ÁRBOLES por fila: la CANDIDATA (`$HOOKS_DIR`), el FAIL-BEFORE 3bc7d3c y la REFERENCIA de los
++# movimientos 9596e39, materializados POR SHA (`mat45`, copia de `mat44`); sin ellos, SKIP y motivo.
++# Cada fila juzgada por un guardián se comprueba además en la candidata por `guard.sh`. Las filas que
++# dependen de /dev/shm o de /proc se miden sólo en Linux (donde se midió; F6), y fuera, SKIP y motivo.
++# Esto NO es la validación en el host.
++CASOS_ESPERADOS_SECCION=160
++PISO_AUTONOMO_SECCION=76  # 20 preámbulo (líneas 1-20, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO45, mat45_reg y mat45, copia de mat44, líneas 21-44) + 32 bloque indivisible mayor (g45, juicio45, fila45 y fila45c, líneas 58-89)
++seccion_nueva "--- 45 · dependencia del proceso y CR del comando (SEC-122, P-023-13-A, QA-023-14; octava autorización) ---"
++REPO45="${SEC_DIR%/}/../../../.."; MAT45_RUTAS='hooks'; MAT45_REG=''; MAT45_T0=0; MAT45_REF='-'
++mat45_reg() {   # <estado> <motivo> <archivos> <procesos> -> MAT45_REG, UNA sola línea (la lee `sonda_lee`)
++  local mot="${2//[[:space:]]/_}"; [ -n "$mot" ] || mot='-'
++  MAT45_REG="sonda=linea-base modo=medicion estado=$1 motivo=$mot corrida=${ARNES_CORRIDA:-desconocido} invocacion=$BASHPID-$MAT45_T0 arbol=${ARNES_ARBOL:-desconocido} k=1 r=1 us=$(( ${EPOCHREALTIME/./} - MAT45_T0 )) procesos=$4 etiqueta=$MAT45_REF ref=$MAT45_REF archivos=$3"
++}
++# mat45 <ref> <destino>: las propiedades de REQ-021 CA-05 —cada archivo con el contenido Y el modo del
++# objeto de ESE árbol, verificados; `archivos=<n>`; y `sin-linea-base` con motivo, nunca un árbol a medias—.
++mat45() {
++  local ref="$1" dst="$2" lista m o r i n=0 hs; local -a modos=() oids=() rutas=()
++  MAT45_T0=${EPOCHREALTIME/./}; MAT45_REF="${ref//[[:space:]]/_}"
++  lista="$(git -C "$REPO45" ls-tree -r "$ref" -- $MAT45_RUTAS 2>/dev/null)"
++  [ -n "$lista" ] || { mat45_reg sin-linea-base "la-referencia-no-resuelve:$ref" desconocido 1; return 1; }
++  while IFS=$' \t' read -r m _ o r; do n=$((n + 1)); modos+=("$m"); oids+=("$o"); rutas+=("$dst/$r"); done <<< "$lista"
++  mkdir -p "$dst" && git -C "$REPO45" archive "$ref" $MAT45_RUTAS 2>/dev/null | tar -x -C "$dst" 2>/dev/null \
++    || { mat45_reg sin-linea-base no-se-pudo-materializar desconocido 4; return 1; }
++  hs="$(printf '%s\n' "${rutas[@]}" | git -C "$REPO45" hash-object --stdin-paths 2>/dev/null)"$'\n'
++  for ((i = 0; i < n; i++)); do
++    [ "${hs%%$'\n'*}" = "${oids[i]}" ] || { mat45_reg sin-linea-base "el-contenido-no-coincide-en:${rutas[i]#"$dst"/}" desconocido 6; return 1; }
++    hs="${hs#*$'\n'}"
++    case "${modos[i]}" in *755) [ -x "${rutas[i]}" ] ;; *) [ ! -x "${rutas[i]}" ] ;; esac \
++      || { mat45_reg sin-linea-base "el-modo-no-coincide-en:${rutas[i]#"$dst"/}" desconocido 6; return 1; }
++  done
++  mat45_reg ok - "$n" 6
++}
++RFB="$RAIZ/r3bc-$BASHPID"; RFB_OK=no; RFB_MOT=''; R95="$RAIZ/r95b-$BASHPID"; R95_OK=no; R95_MOT=''
++if mat45 3bc7d3c "$RFB"; then RFB_OK=si
++else RFB_MOT="3bc7d3c no se materializó (${MAT45_REG#*motivo=})"; RFB_MOT="${RFB_MOT%% corrida=*})"; fi
++if mat45 9596e39 "$R95"; then R95_OK=si
++else R95_MOT="9596e39 no se materializó (${MAT45_REG#*motivo=})"; R95_MOT="${R95_MOT%% corrida=*})"; fi
++v45() { echo "  $1  $2"; case "$1" in PASS) PASS=$((PASS + 1)) ;; FAIL) FAIL=$((FAIL + 1)) ;; esac; }
++# ¿Se puede medir lo que depende de /dev/shm y de /proc? Sólo en Linux, donde se midió.
++LNX45=no; LNX45_MOT='sólo se midió en Linux (F6 de REQ-007 CA-47); aquí no es Linux'
++if [ "$(uname -s 2>/dev/null)" = Linux ]; then
++  if [ -d /dev/shm ] && [ -w /dev/shm ] && [ "$(cd -P /proc/self 2>/dev/null && [ "$PWD" = "/proc/$BASHPID" ] && printf si)" = si ]; then LNX45=si
++  else LNX45_MOT='Linux sin /dev/shm escribible o sin /proc/self'; fi
++fi
++P45="$PROJ"; NL=$'\n'; CR=$'\r'
++# g45 <dir de hooks> <guardián> <json> -> D45 (deny|allow) y M45 (el motivo). El proyecto es $P45.
++D45=''; M45=''
++g45() {
++  local h="$1" s="$2" json="$3" out; D45=''; M45=''; [ -n "$json" ] || return 1
++  out="$(printf '%s' "$json" | CLAUDE_PROJECT_DIR="$P45" bash "$h/$s" 2>>"$ERRLOG")"
++  case "$out" in *'"permissionDecision":"deny"'*) D45=deny ;; *) D45=allow ;; esac
++  M45="$(jq -r '.hookSpecificOutput.permissionDecisionReason // empty' <<< "$out" 2>/dev/null)"
++}
++juicio45() {   # <nombre> <allow|deny> <cita|-> — sobre D45/M45; la cita se exige al motivo de un deny
++  if [ "$D45" != "$2" ]; then v45 FAIL "$1  esperado=$2 got=$D45  <${M45:0:220}>"
++  elif [ "$2" = deny ] && [ "$3" != - ] && [[ "$M45" != *"$3"* ]]; then v45 FAIL "$1  el motivo no cita «$3»  <${M45:0:240}>"
++  else v45 PASS "$1  ($D45)"; fi
++}
++# fila45 <id> <guardián> <candidata> <3bc7d3c> <9596e39> <cita|-> <json>: un caso por árbol y, si el
++# guardián no es guard.sh, otro de la candidata por guard.sh. La cita se exige sólo en la candidata.
++# `<guardián>:solo` mide sólo ese guardián (la fila que mide justo lo que otro guardián cambiaría).
++fila45() {
++  local id="$1" s="${2%:solo}" ec="$3" efb="$4" e95="$5" cita="$6" json="$7" nom="REQ-007 octava $1" g=1
++  [ "$s" != guard.sh ] && [ "$s" = "$2" ] || g=0
++  if ! json_no_vacio "$nom candidata" "$json"; then FAIL=$((FAIL + 2 + g)); return 0; fi
++  g45 "$HOOKS_DIR" "$s" "$json"; juicio45 "$nom candidata" "$ec" "$cita"
++  if [ "$g" = 1 ]; then g45 "$HOOKS_DIR" guard.sh "$json"; juicio45 "$nom candidata por guard.sh" "$ec" "$cita"; fi
++  if [ "$RFB_OK" = si ]; then g45 "$RFB/hooks" "$s" "$json"; juicio45 "$nom 3bc7d3c (fail-before o control)" "$efb" -
++  else v45 SKIP "$nom 3bc7d3c  $RFB_MOT"; fi
++  if [ "$R95_OK" = si ]; then g45 "$R95/hooks" "$s" "$json"; juicio45 "$nom 9596e39 (referencia de los movimientos)" "$e95" -
++  else v45 SKIP "$nom 9596e39  $R95_MOT"; fi
++}
++fila45c() {   # <si|no> <motivo> <fila45…>: la fila, o tantos SKIP como casos tendría
++  if [ "$1" = si ]; then shift 2; fila45 "$@"; return 0; fi
++  local mot="$2" k n=3; shift 2; case "$2" in guard.sh|*:solo) ;; *) n=4 ;; esac
++  for ((k = 0; k < n; k++)); do v45 SKIP "REQ-007 octava $1 ($((k + 1))/$n)  $mot"; done
++}
++jq '.codigo_app.globs = ["src/*", "app/*.ts"]' "$P45/.arnes/config.json" > "$P45/.arnes/c45" && mv "$P45/.arnes/c45" "$P45/.arnes/config.json"
++mkdir -p "$P45/app"; R="$P45/requirements"; printf 'x\n' > "$P45/src/a.ts"
++req45() { printf '# %s\nEstado: en-revisión\nSensible a seguridad: sí\nQA: %s\nSeguridad: %s\nRigor: critico\n\n## Historia\nnota\n' "${1##*/}" "$2" "$2" > "$1"; }
++req45 "$R/REQ-900.md" pendiente; req45 "$R/REQ-901.md" aprobado
++printf '# REQ-920\nEstado: en-revisión (tras “R-4”)\nSensible a seguridad: sí\nQA: pendiente\nSeguridad: pendiente\nRigor: critico\n' > "$R/REQ-920.md"
++j45() {   # <herramienta> <cwd|-> <agente|-> <k=v…>: todo LITERAL, saltos y CR incluidos
++  local t="$1" c="$2" a="$3"; shift 3
++  jq -cn --arg t "$t" --arg c "$c" --arg a "$a" --args \
++    '{hook_event_name:"PreToolUse",tool_name:$t,tool_input:($ARGS.positional | map(index("=") as $i | {(.[:$i]): .[$i+1:]}) | add)}
++     + (if $c != "-" then {cwd:$c} else {} end) + (if $a != "-" then {agent_id:"a1",agent_type:$a} else {} end)' "$@"
++}
++cierre45() { j45 Edit "${2:-$P45}" - "file_path=$1" 'old_string=Estado: en-revisión' 'new_string=Estado: completado'; }
++QA45="veredicto de QA es 'pendiente'"; SRC45="código de la app"; ND45='no se pudo determinar a que archivo escribe'
++PRO45='depende del proceso que la abre'; HCR45='delimitador contiene un retorno de carro'; ENL45='ENLACE SIMBOLICO situado dentro del proyecto'
++FUERA45="$RAIZ/fuera45-$BASHPID"; mkdir -p "$FUERA45"; SHM45="/dev/shm/arnes-banco45-$BASHPID"
++if [ "$LNX45" = si ]; then
++  mkdir -p "$SHM45"; ln -s "$R" "$SHM45/req"; ln -s "$P45/src" "$SHM45/src"; ln -s "$P45/src/a.ts" "$SHM45/a.ts"
++  ln -s /proc/self/cwd "$FUERA45/pc"
++fi
++
++# --- S: SEC-122, cara (a) — enlaces corrientes bajo /dev/shm (resolución de nombres) -------------
++fila45c "$LNX45" "$LNX45_MOT" "S1 Edit /dev/shm/<enlace a requirements>/REQ-900.md cierra en rojo" guard-completado.sh deny allow allow "$QA45" "$(cierre45 "$SHM45/req/REQ-900.md")"
++fila45c "$LNX45" "$LNX45_MOT" "S2 coordinadora: Write /dev/shm/<enlace a src>/a.ts" guard-codigo.sh deny allow allow "$SRC45" "$(j45 Write "$P45" - "file_path=$SHM45/src/a.ts" content=x)"
++fila45c "$LNX45" "$LNX45_MOT" "S3 sed -i que cierra por /dev/shm/<enlace>/REQ-900.md" guard-completado.sh deny allow allow "menciona 'completado'" "$(j45 Bash "$P45" - "command=sed -i 's/en-revisión/completado/' $SHM45/req/REQ-900.md")"
++fila45c "$LNX45" "$LNX45_MOT" "S4 coordinadora: echo x > /dev/shm/<enlace de archivo a src/a.ts>" guard-codigo.sh deny allow allow "$SRC45" "$(j45 Bash "$P45" - "command=echo x > $SHM45/a.ts")"
++fila45c "$LNX45" "$LNX45_MOT" "S5 SEC-117 no reconstruible por /dev/shm/<enlace>/REQ-920.md" guard-completado.sh deny allow allow 'no puede reconstruir' "$(j45 Edit "$P45" - "file_path=$SHM45/req/REQ-920.md" 'old_string=en-revisión (tras "R-4")' new_string=completado)"
++fila45c "$LNX45" "$LNX45_MOT" "S6 el desarrollador: echo x > /dev/shm/<enlace a src>/a.ts (control)" guard.sh allow allow allow - "$(j45 Bash "$P45" desarrollador "command=echo x > $SHM45/src/a.ts")"
++
++# --- P: lo que depende del proceso que abre la ruta ---------------------------------------------
++fila45c "$LNX45" "$LNX45_MOT" "P1 coordinadora: echo x > /proc/self/cwd/src/a.ts, cwd <raíz> (el shell escribe src/a.ts)" guard-codigo.sh deny allow allow "$SRC45" "$(j45 Bash "$P45" - 'command=echo x > /proc/self/cwd/src/a.ts')"
++fila45c "$LNX45" "$LNX45_MOT" "P2 coordinadora: lo mismo con cwd <raíz>/docs (designa docs/src/a.ts)" guard.sh allow allow allow - "$(j45 Bash "$P45/docs" - 'command=echo x > /proc/self/cwd/src/a.ts')"
++fila45c "$LNX45" "$LNX45_MOT" "P3 coordinadora: Write /proc/self/cwd/src/a.ts (escribe el host, cuyo cwd no se conoce)" guard-codigo.sh deny allow allow "$PRO45" "$(j45 Write "$P45" - "file_path=/proc/self/cwd/src/a.ts" content=x)"
++fila45c "$LNX45" "$LNX45_MOT" "P4 Edit /proc/self/root<raíz>/requirements/REQ-900.md cierra en rojo" guard-completado.sh deny allow allow "$QA45" "$(cierre45 "/proc/self/root$R/REQ-900.md")"
++fila45c "$LNX45" "$LNX45_MOT" "P5 coordinadora: echo x > <fuera>/pc/src/a.ts (pc -> /proc/self/cwd), cwd <raíz>" guard-codigo.sh deny allow allow "$SRC45" "$(j45 Bash "$P45" - "command=echo x > $FUERA45/pc/src/a.ts")"
++fila45c "$LNX45" "$LNX45_MOT" "P6 coordinadora: echo x > /dev/fd/9/a.ts (una ruta detrás de un descriptor)" guard-codigo.sh deny allow allow "$PRO45" "$(j45 Bash "$P45" - 'command=echo x > /dev/fd/9/a.ts')"
++fila45c "$LNX45" "$LNX45_MOT" "P7 coordinadora: echo x > /proc/self/cwd/src/a.ts sin cwd en la entrada" guard-codigo.sh deny allow allow "$PRO45" "$(j45 Bash - - 'command=echo x > /proc/self/cwd/src/a.ts')"
++fila45c "$LNX45" "$LNX45_MOT" "P8 el desarrollador: echo x > /proc/self/cwd/src/a.ts (control)" guard.sh allow allow allow - "$(j45 Bash "$P45" desarrollador 'command=echo x > /proc/self/cwd/src/a.ts')"
++fila45c "$LNX45" "$LNX45_MOT" "P9 coordinadora: Write /dev/stderr (descriptor del proceso del host: de allow a deny, declarado)" guard-codigo.sh deny allow allow "$PRO45" "$(j45 Write "$P45" - "file_path=/dev/stderr" content=x)"
++
++# --- N: lo legítimo bajo /dev sigue pasando, sin excepción por su nombre ---------------------------
++fila45 "N1 coordinadora: ls -la > /dev/null 2>&1" guard.sh allow allow allow - "$(j45 Bash "$P45" - 'command=ls -la > /dev/null 2>&1')"
++fila45 "N2 coordinadora: echo hola > /dev/stderr" guard.sh allow allow allow - "$(j45 Bash "$P45" - 'command=echo hola > /dev/stderr')"
++fila45 "N3 coordinadora: echo hola > /dev/stdout" guard.sh allow allow allow - "$(j45 Bash "$P45" - 'command=echo hola > /dev/stdout')"
++fila45 "N4 coordinadora: echo hola > /dev/fd/2" guard.sh allow allow allow - "$(j45 Bash "$P45" - 'command=echo hola > /dev/fd/2')"
++fila45 "N5 coordinadora: echo hola | tee /dev/stderr" guard.sh allow allow allow - "$(j45 Bash "$P45" - 'command=echo hola | tee /dev/stderr')"
++fila45 "N6 coordinadora: Write /dev/null" guard.sh allow allow allow - "$(j45 Write "$P45" - "file_path=/dev/null" content=x)"
++
++# --- K: el retorno de carro del texto del comando (P-023-13-A): se juzga lo que el shell escribe ---
++ln -s ../src/a.ts "$P45/docs/k$CR" 2>/dev/null; ln -s ../requirements/REQ-900.md "$P45/docs/r$CR" 2>/dev/null
++LK45=no; LK45_MOT='aquí no se pudo crear un enlace simbólico con un retorno de carro en el nombre'
++[ -L "$P45/docs/k$CR" ] && [ -L "$P45/docs/r$CR" ] && LK45=si
++fila45c "$LK45" "$LK45_MOT" "K1 coordinadora: printf x > k\\r (CR final), cwd docs; k\\r -> src/a.ts" guard-codigo.sh deny allow allow "$SRC45" "$(j45 Bash "$P45/docs" - "command=printf x > k$CR")"
++fila45c "$LK45" "$LK45_MOT" "K2 coordinadora: printf x > k\\r\\ntrue (CR antes de un salto), cwd docs" guard-codigo.sh deny allow allow "$SRC45" "$(j45 Bash "$P45/docs" - "command=printf x > k$CR${NL}true")"
++fila45c "$LK45" "$LK45_MOT" "K3 sed -i que cierra por docs/r\\r (enlace al REQ en rojo)" guard-completado.sh deny allow allow "menciona 'completado'" "$(j45 Bash "$P45" - "command=sed -i 's/en-revisión/completado/' docs/r$CR")"
++fila45c "$LK45" "$LK45_MOT" "K4 coordinadora: echo x | tee docs/k\\r" guard-codigo.sh deny allow allow "$SRC45" "$(j45 Bash "$P45" - "command=echo x | tee docs/k$CR")"
++fila45 "K5 coordinadora: printf x > docs/n.md\\r (escribe docs/n.md\\r, fuera)" guard.sh allow allow allow - "$(j45 Bash "$P45" - "command=printf x > docs/n.md$CR")"
++fila45 "K6 coordinadora: printf x > app/a.ts\\r (no casa app/*.ts: de deny a allow, declarado)" guard.sh allow deny deny - "$(j45 Bash "$P45" - "command=printf x > app/a.ts$CR")"
++fila45 "K7 coordinadora: printf x > app/a.ts (control: casa app/*.ts)" guard-codigo.sh deny deny deny "$SRC45" "$(j45 Bash "$P45" - 'command=printf x > app/a.ts')"
++fila45 "K8 coordinadora: echo hola\\r\\nls\\r\\n (comando CRLF sin escrituras)" guard.sh allow allow allow - "$(j45 Bash "$P45" - "command=echo hola$CR${NL}ls$CR$NL")"
++
++# --- H: el delimitador de un heredoc con CR — el analizador no lo sigue, y se deniega con motivo ---
++H1="cat > docs/x.md <<'EOF'$CR${NL}cuerpo$CR${NL}EOF$CR${NL}echo x > src/a.ts$NL"; H2="cat > docs/x.md <<'EOF'$CR${NL}cuerpo$CR${NL}EOF$CR$NL"
++fila45 "H1 coordinadora: heredoc CRLF citado y después echo x > src/a.ts" guard-codigo.sh deny deny deny "$HCR45" "$(j45 Bash "$P45" - "command=$H1")"
++fila45 "H2 coordinadora: heredoc CRLF citado a docs/x.md (de allow a deny, declarado)" guard-codigo.sh deny allow allow "$HCR45" "$(j45 Bash "$P45" - "command=$H2")"
++fila45 "H3 coordinadora: delimitador que empieza por CR y comillas en el cuerpo (preexistente)" guard-codigo.sh deny allow allow "$HCR45" "$(j45 Bash "$P45" - "command=cat <<${CR}EOF${NL}don't${NL}${CR}EOF${NL}echo x > 'src/a.ts'$NL")"
++fila45 "H4 coordinadora: heredoc con CR sólo en el cuerpo (delimitador limpio)" guard.sh allow allow allow - "$(j45 Bash "$P45" - "command=cat > docs/x.md <<'EOF'${NL}cuerpo$CR${NL}EOF$NL")"
++fila45 "H5 el desarrollador: H2 por guard-codigo (podía escribir)" guard-codigo.sh:solo allow allow allow - "$(j45 Bash "$P45" desarrollador "command=$H2")"
++fila45 "H6 el desarrollador: H2 por guard-completado (sin análisis no se sabe si toca un REQ)" guard-completado.sh deny allow allow "$HCR45" "$(j45 Bash "$P45" desarrollador "command=$H2")"
++
++# --- G: guard-git juzga el comando que recibe git (git rechaza el argumento con CR) ---------------
++fila45 "G1 git reset --hard\\r (opción desconocida para git: de deny a allow, declarado)" guard-git.sh allow deny deny - "$(j45 Bash "$P45" - "command=git reset --hard$CR")"
++fila45 "G2 git reset --hard (control)" guard-git.sh deny deny deny "reset --hard" "$(j45 Bash "$P45" - 'command=git reset --hard')"
++fila45 "G3 git reset --hard \\r (el CR es otro argumento: --hard se ve)" guard-git.sh deny deny deny "reset --hard" "$(j45 Bash "$P45" - "command=git reset --hard $CR")"
++
++# --- B: SEC-122, cara (b) — el proyecto situado bajo /dev/shm ------------------------------------
++PB45="$SHM45/proj"
++if [ "$LNX45" = si ]; then
++  mkdir -p "$PB45/requirements" "$PB45/src" "$PB45/docs"; cp -r "$P45/.arnes" "$P45/PENDING_APPROVAL.md" "$PB45/"
++  req45 "$PB45/requirements/REQ-900.md" pendiente; req45 "$PB45/requirements/REQ-901.md" aprobado; printf 'x\n' > "$PB45/src/a.ts"
++  ln -s ../requirements/REQ-900.md "$PB45/docs/enlace.md"; ln -s ../src/a.ts "$PB45/docs/a-enlace.ts"; ln -s ../src "$PB45/docs/dsrc"
++  P45="$PB45"
++fi
++fila45c "$LNX45" "$LNX45_MOT" "B1 Edit por docs/enlace.md (enlace en el último componente) que cierra" guard-completado.sh deny allow deny "$ENL45" "$(cierre45 "$PB45/docs/enlace.md" "$PB45")"
++fila45c "$LNX45" "$LNX45_MOT" "B2 coordinadora: Write por docs/a-enlace.ts (-> src/a.ts)" guard-codigo.sh deny allow deny "$ENL45" "$(j45 Write "$PB45" - "file_path=$PB45/docs/a-enlace.ts" content=x)"
++fila45c "$LNX45" "$LNX45_MOT" "B3 Edit literal sin estado sobre un REQ que existe (3bc7d3c lo sobredenegaba)" guard.sh allow deny allow - "$(j45 Edit "$PB45" - "file_path=$PB45/requirements/REQ-900.md" old_string=nota 'new_string=otra nota')"
++fila45c "$LNX45" "$LNX45_MOT" "B4 coordinadora: echo x > docs/dsrc/a.ts (directorio enlazado)" guard-codigo.sh deny allow allow "$SRC45" "$(j45 Bash "$PB45" - 'command=echo x > docs/dsrc/a.ts')"
++fila45c "$LNX45" "$LNX45_MOT" "B5 cierre en verde de REQ-901 (3bc7d3c lo sobredenegaba)" guard.sh allow deny allow - "$(cierre45 "$PB45/requirements/REQ-901.md" "$PB45")"
++P45="$PROJ"
++
++# --- Q: la lectura de la entrada conserva el CR del dato (QA-023-14), sin recorrer el valor --------
++Q45_IN="$(jq -cn '{tool_name:"Bash\r",cwd:"/tmp",tool_input:{file_path:"a\r\nb\r",command:"ls\r\nx > y\r"}}')"
++printf -v Q45_ESP '%q|' "Bash$CR" "a$CR${NL}b$CR" "ls$CR${NL}x > y$CR" 1 0 1
++q45() {   # <dir de hooks> [dir con un jq envoltorio delante en el PATH] -> Q45
++  Q45="$( [ -z "${2:-}" ] || PATH="$2:$PATH"; . "$1/lib.sh" 2>/dev/null; ARNES_INPUT="$Q45_IN"; ARNES_INPUT_LISTO=''; arnes_parse_input
++          printf '%q|' "$ARNES_TOOL" "$ARNES_FP" "$ARNES_CMD" "${ARNES_TOOL_CR-}" "${ARNES_CWD_CR-}" "${ARNES_FP_CR-}" )"
++}
++nom45="QA-023-14 Q1 arnes_parse_input conserva el CR final y el que precede a un salto, en tool_name, file_path y command"
++q45 "$HOOKS_DIR"
++if [ "$Q45" = "$Q45_ESP" ]; then v45 PASS "$nom45  candidata"; else v45 FAIL "$nom45  candidata: <$Q45> en vez de <$Q45_ESP>"; fi
++if [ "$RFB_OK" != si ]; then v45 SKIP "$nom45  3bc7d3c (fail-before)  $RFB_MOT"
++else
++  q45 "$RFB/hooks"
++  if [ -n "$Q45" ] && [ "$Q45" != "$Q45_ESP" ]; then v45 PASS "$nom45  3bc7d3c (fail-before): los pierde  <$Q45>"
++  else v45 FAIL "$nom45  3bc7d3c (fail-before): no los pierde, el caso no distingue  <$Q45>"; fi
++fi
++# El transporte del jq de Windows, EMULADO sobre Linux (no es Windows): un envoltorio que añade un CR a
++# cada línea de la salida. La primera línea lo delata y se retira exactamente ese CR.
++JQW45="$RAIZ/jqw45-$BASHPID"; mkdir -p "$JQW45"; JQR45="$(command -v jq)"
++printf '#!/usr/bin/env bash\nset -o pipefail\n"%s" "$@" | sed '"'"'s/$/\\r/'"'"'\n' "$JQR45" > "$JQW45/jq"; chmod +x "$JQW45/jq"
++nom45="QA-023-14 Q2 con un jq que añade CR a cada línea (emulación del de Windows), los valores llegan iguales"
++q45 "$HOOKS_DIR" "$JQW45"
++if [ "$Q45" = "$Q45_ESP" ]; then v45 PASS "$nom45  candidata"; else v45 FAIL "$nom45  candidata: <$Q45> en vez de <$Q45_ESP>"; fi
++Q45_IN="$(jq -cn '{tool_name:"Write",cwd:"/tmp",tool_input:{file_path:"/tmp/f",command:"ls"}}')"; printf -v Q45_ESP '%q|' Write /tmp/f ls 0 0 0
++nom45="QA-023-14 Q3 sin CR en el dato, el jq que añade CR no deja ninguno (ningún falso positivo)"
++q45 "$HOOKS_DIR" "$JQW45"
++if [ "$Q45" = "$Q45_ESP" ]; then v45 PASS "$nom45  candidata"; else v45 FAIL "$nom45  candidata: <$Q45> en vez de <$Q45_ESP>"; fi
++rm -rf "$RFB" "$R95" "$FUERA45" "$JQW45"; [ "$LNX45" != si ] || rm -rf "$SHM45"

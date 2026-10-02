@@ -1,0 +1,12 @@
+== Operaciones legítimas desde cwd = <fuera>/d<CR> (enlace a la raíz), candidato fa070b7, 2026-10-02T12:23:01-06:00 ==
+   pwd -P desde ese cwd: /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev8/qa/proj-l
+L1 coordinadora Bash: printf ok > <raíz>/docs/legit.md (ABS)  decisión=allow  docs/legit.md: antes= después=2689367b205c16ce  contenido=ok
+L2 coordinadora Bash: ls -la (no escribe)                      decisión=allow  docs/legit.md: antes=2689367b205c16ce después=2689367b205c16ce  contenido=ok
+L3 coordinadora Write ABS <raíz>/docs/legit2.md               decisión=allow  docs/legit2.md: antes= después=b221d9dbb083a7f3  contenido=hola
+L4 desarrollador Bash relativo: printf dev > src/b.ts          decisión=allow  src/b.ts: antes= después=ef260e9aa3c673af  contenido=dev
+L5 Edit ABS que cierra REQ-901 (en verde)                      decisión=allow  requirements/REQ-901.md: antes=23c32792ddcb23bb después=34869617c1f9034d  contenido=\#\ REQ-901.md\|Estado:\ completado\|Sensible\ a\ seguridad:\ sí\|QA
+-- y lo que se deniega no llega al disco:
+D1 coordinadora Bash relativo: printf x > src/a.ts             decisión=deny   src/a.ts: antes=73cb3858a687a849 después=73cb3858a687a849  contenido=x\|
+      motivo: ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con c
+D2 coordinadora Bash relativo fuera del ámbito: printf x > n.md (declarado de allow a deny) decisión=deny   n.md: antes= después=  contenido=''
+      motivo: ARNES: no se pudo determinar a que archivo escribe 'n.md': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certe

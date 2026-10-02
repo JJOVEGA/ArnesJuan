@@ -1,0 +1,19 @@
+cabeza de partida: 01b4a59 ; commit del codigo: 9220c71
+hooks/ de 01b4a59 = 3bc7d3c: edff8ac527e21e92350ff79d0a5e9d2adba25cc7
+4a641cac9d1a2afeec87f5f6547528d19b9f423ce97b37912985f45ffa2acb39  hooks/estado-derivado.sh
+d41ad471ab53edb031ce8d0cd2a215247c7e1af0bc27eedaa4f25ae04a5fa718  hooks/guard-codigo.sh
+a2ee3e8186c65e0bcbc24162ae4b6c07d942ae93a7cb37848474ad50683f42f5  hooks/guard-completado.sh
+7496adcf1c6d973513b32b5c36131d962bee7f2acf937fa0490ebf5334c3b9b1  hooks/guard-git.sh
+2e7ec8cb189d025c089bfc103a0a6d5d1fcb8aab41175293ac44e7796e7de7c5  hooks/guard.sh
+31176f7febf28631d1e2342cb86cf73d8e2e82ac9943c1af9e2f3a63e97d700c  hooks/lib.sh
+dd9e6dcf62c79336bd749f5b19b697a9b00509337882811de0d877b3b58e902a  hooks/rotar-artefactos.sh
+0570ec9dd0edf14523e812bb53a247d967c261b9eaf781a6c80f5d1d36c532ca  hooks/stop.sh
+f52870a38576991beb2c6c7db428c1347009966c77d5916451cbb852aaf18897  hooks/campos-req.awk
+1e771799b783c0ba1c81e7d7210deb1e99827c1f41737c0181d5475354294ce2  tests/escenarios/hooks/run.sh
+923cd9184e8e4c9b77d3230ea81a47e4dde28e76a24e3aba8db292d39c177930  tests/escenarios/hooks/secciones/45-dependencia-del-proceso-y-cr-del-comando.sh
+
+quality gates (AGENTS.md §7):
+hooks.json rc=0
+plugin/marketplace rc=0
+
+Autoprueba: 117 PASS, 0 FAIL
