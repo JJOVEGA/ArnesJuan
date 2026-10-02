@@ -330,6 +330,31 @@
 
 **QA-023-14** (`instrumento`, introducido por `3bc7d3c`; R-046 coincide): va con la **ficha 1**, como regresión de coste del candidato. Si se abre la vuelta de la decisión 10, se repara en ella.
 
+**Decisión 11 — PENDIENTE (añadida el 2026-10-02): SEC-124, registrado por seguridad en R-047 sobre el delta de la octava autorización.**
+- **Qué es:** un movimiento de deny a allow introducido por `9220c71` y no declarado. Está en el tratamiento del CR en un heredoc.
+  - Medido como seguro por efecto en bash de Linux.
+  - Descansa en una premisa no escrita sobre el shell.
+  - Deja falsa la frase «siete clases, y sólo ésas» de CA-66 punto 5, de la nota de CA-24, de las notas `[1.35.0]` y de la guía.
+  - Detalle: R-047 en `docs/seguridad/registro-seguridad.md`; evidencia en `cand-1.35.0/evidencia-seg-r8/` (`8837d3f`, `af2eddd`).
+- **Acción que impide (regla 2):**
+  - **publicar** con las notas actuales;
+  - el **push y la corrida de CI** de esta intervención: la octava autorización los condiciona a que seguridad sea favorable para el delta;
+  - **cerrar** REQ-007, que ya no cerraba.
+  - **El presupuesto de la octava autorización está agotado:** se gastaron la implementación, QA, la pasada correctiva y su re-verificación.
+- **Opciones:**
+  - **(A) Write-back documental,** sin tocar código. Declara la clase por su propiedad y la premisa del shell, y después pasa por QA de texto y la determinación de seguridad. **Lo recomienda el auditor.**
+  - **(B) Volver a denegar ese caso en código,** en una vuelta corta: desarrollador, QA y seguridad.
+  - **(C) Retener la publicación.**
+- **Recomendación de la coordinadora:** **(B).**
+  - La premisa sobre el shell no está medida en Windows/MSYS, que es una plataforma donde se usa el arnés.
+  - Volver al veredicto publicado cierra la clase sin depender de esa premisa.
+  - Si prefieres no tocar código, (A) es coherente con la propiedad, siempre que la premisa quede escrita.
+
+**Junto a esta decisión, registrados en R-047 (`instrumento`, no impiden por sí solos):**
+- **SEC-123:** un límite ya declarado en F3 y en el punto 16 de CA-47, que está mal cuantificado y no dice que su consecuencia es un permiso. Es preexistente (1.33.2 también lo permite), y desde el host sólo se alcanza inyectando. P-119-A no puede presentarse sin corregir esos datos.
+- **SEC-125:** preexistente y fuera del delta: una forma de escritura por `Bash` que el detector de escrituras no reconoce. No está declarada como límite.
+  - **Opciones:** declararla en las notas (el mínimo que recomienda el auditor), o repararla en su propio vehículo.
+
 **Registrado, cerrado el 2026-09-30: QA-023-08** (`contrato`, baja, preexistente, contra REQ-007 CA-46 (b)). Lo cerró QA en la vuelta de la quinta autorización (`docs/qa/REQ-023.md` §9): CA-46 (b) está versionado y la puerta deniega todo `Edit`/`MultiEdit` sobre un REQ ilegible. *Texto original:* el criterio decía que con NUL en disco decide «la transición», y la puerta decidía si la edición menciona el estado terminal. Responsable: `analista-requerimientos` (write-back).
 
 - **Recomendación de la coordinadora (propuesta, no decisión):**

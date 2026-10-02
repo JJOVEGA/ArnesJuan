@@ -9671,3 +9671,209 @@ Decide el propietario.
 - una excepción por prefijo que desactive el enlace del último componente o la existencia.
 
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-046**; último hallazgo **SEC-122** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-047** y **SEC-123**.
+
+---
+
+## Revisión R-047 — **Determinación de seguridad del delta de la octava autorización**: SEC-122 (las dos caras), QA-023-14, P-023-13-A / QA-023-15 y la pasada correctiva (QA-023-16, QA-023-17, P-122-A (1)); no-regresión; movimientos; firmas. `cand/1.35.0` @ `57129fb` — 2026-10-02
+
+**Numeración.** Mismo método que en R-046: ramas locales y remotas, etiquetas y worktrees. `R-047` y `SEC-123` sólo aparecían como «próximo libre» (aquí arriba y en `docs/qa/REQ-023.md`); `SEC-124` y `SEC-125` no aparecían. Los tomo.
+
+**Base, alcance y orden de fases.**
+- **Cabeza:** `57129fb`, local. En el árbol, `M docs/ESTADO.md` y `?? propuesta-v1.35.0/`; no los toqué.
+- **Autorización:** la octava (`PENDING_APPROVAL.md` § Resueltas, commit `01b4a59`), leída entera y literal. Me aplican su punto 2 (las propiedades), su punto 3 («seguridad revisa el delta cuando QA sea favorable»; sin más vueltas) y su punto 7 (las firmas del delta **no** se presentan como aprobación completa del candidato si quedan impedimentos).
+- **Delta:** `45368ce..57129fb`. Código: `9220c71` y la pasada correctiva `befc17a`, en `hooks/lib.sh`, `hooks/guard-codigo.sh`, `hooks/guard-completado.sh` y `hooks/guard-git.sh`, más la sección 45 del banco. `HEAD:hooks` = `befc17a:hooks` = `f7d6ae7`, y `git diff HEAD -- hooks tools tests` está vacío: **el código ejecutable es el de `befc17a`, el que re-verificó QA sobre `5669a2c`.** `guard.sh` no cambia.
+- **Orden:** QA favorable para el delta (`docs/qa/REQ-023.md` § «Vuelta excepcional de la octava autorización», §12). No miré las quality gates ni corrí el banco: esa evidencia es de QA.
+- **Instrucciones:** el `AGENTS.md` de este worktree.
+
+**Método.**
+- **Instrumento propio** (`lib-sonda8.sh`, derivado del de R-046): JSON `PreToolUse` contra el entrypoint real `hooks/guard.sh`, **con el hook corriendo en la raíz del proyecto**, que es como lo lanza el host —así lo que dependa del directorio del hook se mide en la condición real—. Cinco árboles materializados con `git archive` y verificados por oid (`00-arboles.txt`): el candidato (`f7d6ae7`), `3bc7d3c` (`edff8ac`, el código que acreditó R-046), `9220c71` (`a636553`, sólo para la pasada correctiva), `9596e39` (`5202b17`) y `v1.33.2` (`a6810ac`). Linux/WSL2, bash 5.3.9, una corrida por punto.
+- **Evidencia** en el scratchpad de la sesión, `ev8/`: `t1-sec122`, `t2-limite-punto16`, `t2b-cwd-cr`, `t3-cr-bash`, `t4-estructura-cr`, `t5-continuacion`, `t5b-continuacion-req`, `t6-reparaciones-r046`, `t7-no-regresion-r045`, `t8-coste` (con su registro previo, escrito antes de medir), `t9-descriptor-y-emulacion`, `t10-pasada-correctiva` y `campos/prueba.txt`.
+- **El efecto en disco** lo medí ejecutando bash aparte, en árboles desechables. **No ejecuté ningún git:** las filas de `guard-git` sólo generan la entrada del hook; la conducta de git con `help.autocorrect` es medición de QA (git 2.53.0).
+- **Dos defectos de mi instrumento, detectados y repetidos; conservo las salidas defectuosas con el sufijo `INSTRUMENTO-DEFECTUOSO`:**
+  1. `t8`: `jq --arg` con 200 000 bytes superó el límite de un argumento y los JSON salieron vacíos; repetido con `--rawfile`;
+  2. `t2b`: la fila k=5 corrió sin hook, porque el árbol de efecto reasignó la raíz del proyecto; repetido fijándola.
+- **Reutilizada, no tomada como prueba de lo que medí:** `evidencia-dev-r8/`, `evidencia-dev-r8b/`, `evidencia-qa-r8/`, `evidencia-qa-r8b/` y mi `evidencia-seg-r7/`.
+
+### 1. Lo reparado, dentro de su alcance
+
+| Hallazgo | Determinación | Lo medido por mí (candidato · `3bc7d3c` · `9596e39` · 1.33.2) |
+|---|---|---|
+| **SEC-122, cara (a)** | **Sin vía de permiso silencioso dentro de su alcance, a nivel de hook** | `t1` A1–A17: un enlace corriente en `/dev/shm` hacia `requirements/` o `src/` por `Edit`, `Write`, `sed -i` y `echo`, la edición no reconstruible de SEC-117, el `Write` del REQ cerrado, `/proc/self/root` seguido de la ruta absoluta, `/proc/self/cwd/…` por `Bash` anclado y por `Write`, `/proc/thread-self/cwd/…`, un enlace a `/proc/self` bajo `/dev/shm` y uno a `/proc/self/cwd` fuera del proyecto: **deny** · allow · allow · allow (A13–A15 ya eran deny en `3bc7d3c`). El shell escribe de verdad por esas formas (comprobado aparte) |
+| **SEC-122, cara (b)** | **Reparada** | Proyecto bajo `/dev/shm`: el enlace del último componente por `Edit` y `Write` (B1–B3) **deny** · allow · deny · deny; el `Edit` literal legítimo de un REQ que existe y el cierre en verde (B4, B6) **allow** · deny · allow · allow |
+| Lo legítimo bajo `/dev` | **Se conserva, sin excepción por nombre** | `> /dev/null`, `> /dev/stderr`, `tee /dev/stderr`, `> /proc/self/fd/2`, `2>/dev/fd/1` y `Write /dev/null`: allow en los cuatro. `Write /dev/stderr`: deny (movimiento declarado) |
+| Lo que depende del proceso | **Conforme, salvo SEC-123** (§2) | `t2`: `/proc/self/cwd` seguido de uno a tres `..`, por `Edit`, `Write` y `Bash` sin `cwd`: deny con el motivo «depende del proceso». Con cuatro o más, §2 |
+| **QA-023-14** | **Conforme en Linux** | `t8`, procedimiento registrado antes: `Write` con un `file_path` de 200 000 bytes y un CR, **210 ms** frente a 9 523 ms; `Bash` con ese `tool_input.file_path`, **110 ms** frente a 10 425 ms. Leído en el código: ninguna sustitución sobre el valor de un campo salvo la retirada del transporte, que sólo corre si la primera línea de `jq` acaba en CR. En Windows esa retirada es superlineal (observación de QA, F6): es la clase de SEC-115 |
+| **QA-023-15 / P-023-13-A** | **Conforme dentro de su alcance; SEC-124 aparte** (§3) | `t3`: `printf x > docs/k␍` (enlace a `src/a.ts`) **deny** · allow · allow · allow; `docs/n.md␍`, allow. El CR delante de `>`, tras el destino, en `tee`, `cp`, `sed -i␍` y en comandos CRLF de varias líneas: deny en los cuatro. El heredoc cuyo delimitador lleva CR —también con espacios delante, `<<-`, comillas, barra invertida o el CR en medio—: deny; el del CR en medio cierra un fallo en abierto preexistente (el shell ejecuta la escritura que va detrás; medido). Con un **tabulador** delante del delimitador no se reconoce como delimitador con CR, pero la puerta analiza entonces todas las líneas y deniega: sobredetección, dirección segura. CR sólo en el cuerpo: allow |
+| **QA-023-16** | **Conforme** | `t10`: `git checkout .␍`, `checkout -- .␍`, `restore .␍`, `checkout HEAD .␍` y `reset --hard␍`: **deny** · allow en `9220c71` · deny · deny. Variantes propias (`t3`): `git clean -f␍`, `git -c help.autocorrect=immediate stash␍`, `git restore .␍␊`: deny; el CR en medio (`git st␍ash`, `git␍ reset --hard`): deny, la clase (f) declarada. Lecturas con CR (`log`, `stash list`, `commit -m`, `restore --staged`): allow. `git 'stash'␍` y `git "checkout" .␍`: allow en los cuatro árboles: es **LIM-10** (token entrecomillado), preexistente y declarado; no es movimiento |
+| **QA-023-17** | **Conforme** | `t10` y `t9`: `echo x > src/log` y `2> src/log`, con `src/log → /dev/stderr`: **deny** · allow en `9220c71` · deny · deny; un enlace a `/proc/self/fd/1` dentro de `requirements/` con el estado terminal: deny; `docs/err → /dev/stderr`, fuera del ámbito: allow; el `desarrollador`: allow |
+| **P-122-A (1)** | **Conforme** | `git stash␍`: **deny** · allow en `9220c71` · deny · deny |
+| Emulación del transporte de Windows | **Sin diferencias**; emulación, no medición | `t9`: con un `jq` envoltorio que añade un CR a cada línea, doce filas (enlace con CR, heredoc con CR, `git stash␍`, `cwd` con CR, cierres, `/dev/stderr`…) deciden igual que en Linux |
+
+**El motivo no hereda SEC-118 por este delta.** Los motivos nuevos —heredoc con CR, la nota del CR de `guard-git`, `ARNES_PROC_CAUSA`— son texto fijo, y la ruta citada pasa por `arnes_cita_ruta`. El motivo de `guard-git` sigue citando la orden con sus argumentos, como antes: acotado por el techo de análisis, sin cambio.
+
+**Sin procesos nuevos en el camino común.** La lectura de la entrada es la misma llamada a `jq`; la segunda lectura de `guard-git` y el reconocimiento de un descriptor estándar no crean procesos; `readlink -f` sigue siendo uno por enlace del último componente, memorizado.
+
+### 2. SEC-123 — `instrumento` (REQ-007) · **abierto** · severidad **baja** · dueños `desarrollador` (`_arnes_cd_resolucion`, `_arnes_propio`) y `analista-requerimientos` (CA-47 F3 y punto 16, notas, ADR-016)
+
+**Una ruta que pasa por el directorio de trabajo del proceso y después sube con `..` por encima de la entrada de `/proc` del hook se juzga por donde aterriza el hook, no por donde aterriza quien escribe.**
+
+**El mecanismo.** Por `Edit`, `Write` y `MultiEdit`, y por `Bash` sin un `cwd` que ancle, la segunda pasada de la lectura física se hace desde `/proc/<pid>/task/<pid>/fdinfo` del hook, y `_arnes_propio` sólo reconoce lo que aterriza bajo `/proc/<pid>/`. Con `/proc/self/cwd` seguido de **cuatro** `..` se aterriza en `/proc`, y con cinco o más en `/` o por encima: fuera de la entrada propia. El hook juzga entonces el archivo al que llega él; quien escribe parte de su propio directorio y llega a otro. La lectura léxica también se va: `/proc/self/cwd` menos k niveles es `/`.
+
+**Medido a nivel de hook** (`t2`, raíz del proyecto a siete niveles, hook en la raíz):
+- con uno a tres `..`: deny, «depende del proceso»;
+- con cuatro, cinco y seis: un `Edit` que cierra un REQ en rojo, un `Write` de la coordinadora a `src/a.ts` y un `Bash` sin `cwd` salen **allow** en el candidato, **deny** en `3bc7d3c` —que resolvía desde el directorio del hook, y ese coincide con el del host por cómo lo lanza— y **allow** en `9596e39` y 1.33.2;
+- con siete o más (la raíz entera): deny;
+- `Bash` con un `cwd` que ancla: deny en todos los casos (control);
+- **efecto real:** un proceso cuyo directorio es la raíz escribe `src/a.ts` por esas mismas rutas;
+- `t2b`: por `Bash` con un `cwd` que lleva un retorno de carro —no ancla, QA-023-13—, con cuatro y cinco `..`: **allow en los cuatro árboles**, con efecto real.
+
+**Cómo se alcanza.** Por `Edit`/`Write`, el host medido (CLI 2.1.285) normaliza léxicamente el `..` del `file_path` antes del hook (CA-47, «Medido en el host real»), y la herramienta escribe esa ruta normalizada —inferido de la misma medición—: **sólo inyectando** la entrada. Por `Bash`, el host envía el `cwd`: sólo sin él (inyección) o con un directorio de trabajo cuyo nombre lleve un retorno de carro (exótico; no ejercido en el host). Y hace falta la raíz del proyecto a **cinco o más** niveles, lo que no es raro (`/mnt/c/Users/<u>/…`).
+
+**Qué dice el contrato.** Lo declara como límite **sin promesa** en CA-47, F3 y punto 16: «una cadena que, tras llegar al directorio de trabajo, sube con `..` por encima de esa entrada —cinco niveles— sale de ella y no se ve». Es cierto en lo sustancial, pero:
+- el umbral es **impreciso**: basta con **cuatro** `..`;
+- **no dice la consecuencia**: que lo que no se ve se juzga por el archivo al que llega el hook, y que con la raíz a cinco o más niveles eso es un permiso sobre un archivo protegido.
+
+**Frente a la propiedad de la autorización** («una identidad dependiente del proceso que no pueda determinarse de forma fiable no recibe permiso por esa incertidumbre»): **este rincón la contradice**, la declaración no la acepta y el propietario no lo ha aceptado.
+
+**Por qué `instrumento` y baja.**
+- El REQ no promete protección aquí: la frontera dice «no se ve». El número es una imprecisión que hay que corregir, no una promesa falsa.
+- **No es movimiento frente a lo publicado:** 9596e39 y 1.33.2 permiten lo mismo, y además permiten uno a tres `..`, que el candidato deniega. Sí lo es frente a `3bc7d3c`, que nunca se publicó.
+- No lo alcanza el host medido salvo por un `cwd` exótico; es evasión deliberada, la clase del hueco C.
+
+**Remediación, por propiedad:** *lo que depende del directorio de trabajo de quien escribe no recibe permiso cuando la puerta no conoce ese directorio, sea cual sea el número de `..` que siga.* La técnica es del desarrollador.
+
+**Write-back exigido (§9), por el `analista-requerimientos`:** F3 y punto 16 de CA-47, la adenda de ADR-016 y las notas, con el umbral por propiedad («desde que la cadena sale de la entrada de `/proc` del propio hook») y su consecuencia. **P-119-A no puede presentarse al propietario sin estos datos:** umbral, consecuencia, profundidad de la raíz y alcance desde el host.
+
+**Forzador:** la respuesta a P-119-A; una comisión que toque `_arnes_cd_resolucion` o `_arnes_propio`. **Vencimiento propuesto:** la decisión de publicación de 1.35.0. **No aceptado.** **Desde el host, no ejercido.**
+
+### 3. SEC-124 — `contrato` (REQ-007) · **abierto** · severidad **baja** · **introducido por `9220c71`** · dueños `analista-requerimientos` (CA-24, CA-66 punto 5 y punto 7, notas, guía, ADR-016) y `desarrollador` (sólo si se decide volver a `deny`)
+
+**Una línea del cuerpo de un heredoc que es el delimitador seguido de un retorno de carro ya no cierra el cuerpo para el analizador —como tampoco lo cierra para el shell—, y lo que va detrás deja de analizarse como orden. Es un movimiento de `deny` a `allow` frente a lo publicado que no está entre las clases declaradas.**
+
+**El mecanismo.** El comando llega ahora con sus CR. `arnes_bash_sin_texto` cierra el heredoc al ver una línea igual al delimitador, y `EOF␍` no es `EOF`, igual que para bash: el cuerpo sigue. En `9596e39` y 1.33.2 el transporte borraba ese CR, la línea pasaba a ser `EOF`, el analizador cerraba el heredoc y analizaba las líneas siguientes como órdenes.
+
+**Medido** (`t3` H2; `t4` E1, E2 con `<<-` y tabulador, E9 con `<<'EOF'`): **allow** · deny · deny · deny. **Efecto:** bash 5.3.9 no ejecuta esas líneas y `src/a.ts` queda intacto, así que el `deny` de antes era un falso positivo. En la emulación del transporte de Windows, igual (`t9`, W11).
+
+**Qué contradice.**
+- **CA-66 punto 5** (octava autorización, «la regla, no un inventario»): un movimiento de `deny` a `allow` frente a `9596e39` y 1.33.2 es conforme **sólo** si pertenece a las seis clases del 2026-09-30 o a la de K6, y «cualquier otro … es un hallazgo (CA-24)». La de K6 es, por propiedad, «un destino de `Bash` cuyo nombre acaba en un retorno de carro y que con él ya no casa con el patrón»: no es ésta.
+- La nota de CA-24 («añade **una** clase»), el punto 7 de compatibilidad («Pasa a permitirse la clase de K6»), las notas de 1.35.0 y la guía («siete clases de casos, y sólo ésas»), y la precisión de ADR-016.
+- El barrido de QA (`docs/qa/REQ-023.md` §12.4) no incluía esta forma.
+
+**La premisa que no está escrita.** Esta clase y la de K6 suponen un shell que trata el CR como carácter de palabra. Bash en Linux lo hace. Bash de Cygwin tiene la opción `igncr`, que lo ignora: si el bash que use el host en Windows la tiene y está activa, las dos clases serían permiso sobre lo que el shell **sí** ejecuta. **Es una inferencia, no un ensayo**, y Windows está bajo F6.
+
+**Por qué `contrato` y baja.** El REQ afirma algo falso sobre lo construido —el conjunto cerrado de clases—, igual que en QA-023-16. Por efecto, en bash de Linux el movimiento va hacia lo que el shell hace de verdad.
+
+**Remediación, por propiedad** (decisión del propietario: el presupuesto de la octava autorización está agotado):
+- **(A) recomendada:** write-back documental que declare la clase, sin tocar el código: *lo que el shell lee como cuerpo de un heredoc —también una línea que es el delimitador seguido de un retorno de carro— no se analiza como orden; lo publicado lo analizaba porque el transporte borraba ese retorno de carro.* Con la premisa del shell que no ignora el retorno de carro, declarada bajo F6.
+- **(B):** volver a `deny`. No la recomiendo: juzgaría una estructura distinta de la que ejecuta el shell, que es justo lo que la autorización prohíbe («nunca lo elimines silenciosamente para juzgar un comando distinto»).
+
+**Forzador:** la decisión de publicación de 1.35.0. **Vencimiento propuesto:** esa decisión. **No aceptado.** **Desde el host, no ejercido.**
+
+### 4. SEC-125 — `instrumento` (REQ-007) · **abierto** · severidad **media** · **preexistente y ajeno al delta** · dueños `desarrollador` (`arnes_bash_escrituras`) y `analista-requerimientos`
+
+**El detector de escrituras de `Bash` no pliega la continuación de línea entre el operador de redirección y su destino.** Con `echo x > \` y, en la línea siguiente, `src/a.ts`, el destino que ve es `\`, fuera de todo ámbito.
+
+**Medido** (`t5`, `t5b`):
+- `echo x > \`⏎`src/a.ts`, `echo x >\`⏎`src/a.ts` y `echo x >> \`⏎`src/a.ts`: **allow en los cuatro árboles**, y el shell escribe `src/a.ts`;
+- `printf … 'Estado: completado' > \`⏎`requirements/REQ-900.md`: **allow en los cuatro árboles**, y el shell sobrescribe el REQ con el estado terminal;
+- **controles:** la continuación delante de `>`, en `cp`, en `tee` y en `sed -i`: deny. (`> src/\`⏎`a.ts` deniega por casualidad: `src/\` casa con `src/*`.)
+
+**No figura entre los límites declarados** —AGENTS.md §13 ni LIM-01 a LIM-17—, y `guard-git` sí pliega la continuación desde SEC-009 (R-003): el detector de escrituras no.
+
+**Por qué `instrumento` y media.** Es un defecto del guardián, y ningún criterio promete detectar toda redirección partida por una continuación: REQ-001 trata de heredocs, y §13 enumera las formas sin ésta. El efecto es total en las dos puertas; el realismo es bajo, porque es una forma deliberada, la clase del hueco C.
+
+**No lo introduce este candidato:** está en 1.33.2 y en `v1.34.0`, así que retener 1.35.0 no protege a nadie. **No lo meto en este delta**, que la autorización cierra a defectos de su alcance. Lo decide el propietario:
+- declararlo como límite conocido en §13 y en las notas (mínimo recomendado);
+- o repararlo en su propio vehículo, plegando la continuación antes de analizar, como ya hace `guard-git`.
+
+**Forzador:** la decisión de publicación de 1.35.0 (para declararlo) y la próxima comisión que toque `arnes_bash_escrituras`. **Vencimiento propuesto:** la decisión de publicación, para la declaración. **No aceptado.**
+
+### 5. No-regresión sobre R-045, R-045-A y R-046 (por muestreo: `t6`, `t7`)
+
+**El candidato decide igual que `3bc7d3c` en todas las filas, sin excepción:**
+- **REQ-023 / SEC-047 mitad 1:** el NBSP en `Sensible a seguridad` con `Rigor: ligero`, el BOM delante de `Hallazgos abiertos:`, la variante `- Estado: …` y `QA:` repetida deniegan; el control en verde cierra;
+- **REQ-031:** un `contrato`, `instrumento` + `contrato`, texto tras el paréntesis, un hallazgo sin clase, el campo repetido y el campo por encima de 16 384 bytes deniegan; sólo `instrumento` cierra;
+- **REQ-001 CA-10/11/12 versionados:** la edición no reconstruible y la de un REQ inexistente deniegan, la creación en rojo deniega, y la cola impide cerrar sin impedir reabrir;
+- **SEC-117:** el `old_string` con el escape literal deniega; las ediciones literales legítimas pasan;
+- **R-046:** QA-023-13 (`cwd` con CR), el CR en `file_path` y `tool_name`, QA-023-09 (`cwd` con LF), las instancias de SEC-119 —`..`, `./`, directorio enlazado, por `Edit`, `Write` y `Bash`—, CA-45 (REQ ilegible) y CA-60 (manifiesto roto) deciden igual;
+- **SEC-118, SEC-115 y SEC-120:** sin cambio de conducta (allow en los cuatro árboles), como se esperaba.
+
+### 6. Movimientos frente a lo publicado (punto 4 del encargo)
+
+- **De `deny` a `allow`:**
+  - las seis clases del 2026-09-30 y la de K6, sostenidas: `Write src/../README.md`, el manifiesto roto por `docs/../`, `printf x > app/a.ts␍` con `app/*.ts`;
+  - **más la clase de SEC-124, sin declarar** (§3);
+  - SEC-123 no es movimiento frente a lo publicado (§2).
+- **De `allow` a `deny`, también lo legítimo:**
+  - `Write /dev/stderr` y todo `/proc/self/cwd/…` por `Edit`/`Write`, a todo agente;
+  - el heredoc CRLF, a todo agente por `guard-completado`, el `desarrollador` incluido;
+  - un pseudoarchivo del proceso por `Bash`, a quien no es el agente de código;
+  - toda orden de git que sin sus CR esté prohibida, también con el CR en medio;
+  - y, sin estar entre los ejemplos del contrato pero dentro de su regla, `/proc/self/cwd/../…` por `Bash` con el `cwd` anclado, con uno o dos `..`: no determinable.
+
+  **Son aceptables por seguridad:** todos fallan cerrados, con un motivo que da la causa y la salida sin nombrar otra herramienta, y ninguno impide reparar el manifiesto ni reabrir un REQ. El coste para el trabajo legítimo es bajo: el modelo rara vez emite CR, y escribir en `/dev/stderr` por `Write` no es una operación ordinaria.
+
+### 7. Firmas y cobertura
+
+- **REQ-023: `Seguridad: aprobado (R-047, …)`.** Extiende al código de `befc17a` la cobertura de R-046 y R-045-A sobre CA-01 a CA-13. En `Hallazgos abiertos:` **retiro SEC-119** (mitigado en el candidato, §9); SEC-118 y SEC-120 no cambian. No tengo abierto en REQ-023 ningún hallazgo `contrato` ni `usuario/dinero`.
+- **REQ-031: `Seguridad: aprobado (R-047, …)`**, extendido al código final. Queda SEC-115.
+- **REQ-001: `Seguridad: aprobado (R-047, …)`**, extendido al código final. **No cierro nada:** el `Estado:` no es mío.
+- **REQ-007: `Seguridad: pendiente (R-047, …)`.**
+  - Determino **mitigado** SEC-122 y conformes QA-023-14, QA-023-15 / P-023-13-A, QA-023-16, QA-023-17 y P-122-A (1).
+  - En `Hallazgos abiertos:` **retiro SEC-122** y **añado SEC-123 (`instrumento`), SEC-124 (`contrato`) y SEC-125 (`instrumento`)**.
+  - La firma no procede: QA pendiente, bloques B y C sin rendir, y hallazgos `contrato` abiertos (QA-114, QA-116, QA-117, QA-023-10 y SEC-124).
+- **Sin veto.** El `contrato` de SEC-124 ya impide por máquina cerrar REQ-007, que tampoco cerraba antes. La publicación es otra acción: §8.
+- **Rigor:** los cuatro ya son `critico`.
+- **Comprobación previa** con la puerta real sobre una copia (`campos/prueba.txt`), con la del candidato y con la instalada (1.33.2):
+  - las seis ediciones se permiten sin aviso de vocabulario;
+  - `tools/arnes-lectura.sh` responde «Ningún valor anómalo» (rc 0);
+  - un cierre simulado con la cola vacía pasa en REQ-023, REQ-031 y REQ-001;
+  - en REQ-007 se deniega por `QA: pendiente`, y con QA y seguridad forzados, por QA-114; con sólo SEC-124 en el campo, se deniega por `contrato`; con sólo SEC-123 y SEC-125, pasa (`instrumento`).
+
+**Lo que acredita mi firma:** la revisión de seguridad, **a nivel de hook en Linux/WSL2**, del código ejecutable de `befc17a` para los criterios de esos REQ, por muestreo propio con la puerta real.
+
+**Lo que NO acredita:**
+- las quality gates, el banco ni el CI (no hay corrida de CI sobre `57129fb`; la observa la coordinadora después);
+- **el host**: ninguna fila del delta se ejerció desde el CLI ni desde la extensión de VS Code; las validaciones en el host citadas en R-046 eran del hook anterior;
+- Windows/MSYS: sólo hay una **emulación** del transporte en Linux;
+- `MultiEdit` en el host, el editor interactivo, otras versiones del CLI y de git;
+- CA-54 (QA-023-10), SEC-115, SEC-118, SEC-120, el hueco C, P-119-A (F2, F5, F7 y el límite de F3, que es SEC-123), SEC-124 ni SEC-125.
+
+**Y, por el punto 7 de la autorización, estas firmas son del delta: no son una aprobación completa del candidato**, porque quedan los impedimentos del §8.
+
+### 8. Impedimentos de publicación que veo
+
+1. **SEC-124** — `contrato`, **introducido por este cambio** (`9220c71`). Las notas, la guía y CA-66 afirman un conjunto cerrado de movimientos que lo construido no cumple.
+   - **Impide:** **publicar** con las notas actuales; y **cerrar** REQ-007, que ya estaba impedido. **Evidencia:** §3, `t3` y `t4`.
+   - **Lo resuelve:** una decisión del propietario, porque el presupuesto de la octava autorización está agotado: (A) write-back documental (recomendada), (B) volver a `deny`, o (C) retener.
+2. **SEC-123** — `instrumento`, introducido sólo frente al candidato anterior; no es movimiento frente a lo publicado. **No impide por sí solo**, pero P-119-A no puede decidirse sin sus datos (§2). Va con P-119-A.
+3. **SEC-125** — `instrumento`, **preexistente y ajeno al delta**. **No impide por sí solo**: retener 1.35.0 no protege a nadie. El propietario decide si se declara en las notas (mínimo recomendado) o se repara en su propio vehículo.
+4. **Lo que ya estaba pendiente**, sin cambio por esta revisión y **sin aceptar**: CA-54 (QA-023-10, decisión 9b), ficha 1 (SEC-115 y SEC-118, con la retirada superlineal del transporte en Windows como instancia), ficha 2 (hueco C), P-119-A (F2, F5, F7 y ahora el límite de F3) y SEC-120 (vence el 2026-10-29). Y la corrida de CI sobre la cabeza final, que no existe todavía.
+
+### 9. Estado tras R-047
+
+| Hallazgo | Clase | Estado | Dueño | ¿Bloquea algún cierre? |
+|---|---|---|---|---|
+| `SEC-117` | `instrumento` | `mitigado` (sin regresión, §5) | — | No |
+| **`SEC-119`** | `instrumento` | **`mitigado` en el candidato (sin publicar)**: las instancias registradas y su residuo SEC-122 están reparados; las fronteras declaradas de CA-47 siguen en P-119-A, sin aceptar | — | No |
+| **`SEC-122`** | `contrato` (REQ-007) | **`mitigado` en el candidato (sin publicar)**: las dos caras deniegan y el contrato dice la verdad; residuo, SEC-123 | — | No |
+| **`SEC-123`** | **`instrumento`** (REQ-007) | **`abierto`**, no aceptado; con P-119-A | `desarrollador` + `analista-requerimientos` | No |
+| **`SEC-124`** | **`contrato`** (REQ-007) | **`abierto`**, no aceptado | `analista-requerimientos` (+ `desarrollador` si (B)) | REQ-007 (que ya no cerraba) |
+| **`SEC-125`** | **`instrumento`** (REQ-007) | **`abierto`**, preexistente, no aceptado | `desarrollador` + `analista-requerimientos` | No |
+| `SEC-120` | `instrumento` | `abierto`, vence 2026-10-29 | `desarrollador` | No |
+| `SEC-118` | `instrumento` | `abierto`, ficha 1 | `desarrollador` + `analista-requerimientos` | No |
+| `SEC-115` | `instrumento` | `abierto`, ficha 1 | `desarrollador` + `analista-requerimientos` | No |
+| `SEC-047` | `instrumento` | `en-mitigación` (mitad 2 = REQ-024) | `analista-requerimientos` + `desarrollador` | No |
+| `SEC-002` (O-11) | `instrumento` | mitigado en el candidato por REQ-007 CA-45 (sin publicar) | — | No |
+| `QA-023-14`, `QA-023-15`, `QA-023-16`, `QA-023-17`, `P-122-A (1)` | de QA | cerrados por QA; **conformes** (§1) | — | — |
+
+**Estado de seguridad aprobado de REQ-023, REQ-031 y REQ-001** (línea base de no-regresión): el de R-046 y R-045-A, sobre el código de `befc17a`. **De REQ-007, sin firma:** lo determinado conforme en el §1.
+
+**Regresiones a vigilar** (no exhaustivo):
+- una segunda pasada de la lectura física que deje de resolver desde la entrada propia de `/proc`;
+- cualquier excepción por el nombre de `/dev/stderr` o `/dev/null`;
+- una segunda lectura de `guard-git` que sustituya a la primera en vez de sumarse;
+- la retirada del transporte aplicada a ciegas;
+- un análisis de heredoc que deje de denegar el delimitador con CR.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-047**; último hallazgo **SEC-125** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-048** y **SEC-126**.

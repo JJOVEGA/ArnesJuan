@@ -2,6 +2,28 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-02 · Octava autorización: determinación de seguridad R-047 sobre `57129fb` (código de `befc17a`) — SEC-122 y SEC-119 mitigados en el candidato; QA-023-14, QA-023-15 y los tres defectos de la pasada conformes; SEC-124 nuevo (`contrato`, introducido por `9220c71`) impide publicar con las notas actuales; sin push ni CI; decisión 11 en la cola
+> Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `auditor-seguridad` y la coordinadora. Unos 394 k tokens en la comisión de seguridad (cifra del arnés).
+
+- **R-047** (`docs/seguridad/registro-seguridad.md`; evidencia en `cand-1.35.0/evidencia-seg-r8/`, `8837d3f` y `af2eddd`):
+  - **Conformes:** las reparaciones del delta, a nivel de hook en Linux/WSL2.
+  - **Sin regresión** sobre R-045, R-045-A y R-046.
+  - **Movimientos:** los de allow a deny son aceptables por seguridad.
+- **Hallazgos nuevos en REQ-007:**
+  - **SEC-124** (`contrato`, baja, introducido por `9220c71`): un movimiento de deny a allow sin declarar, seguro por efecto en bash de Linux.
+  - **SEC-123** (`instrumento`, baja, preexistente): un límite declarado mal cuantificado.
+  - **SEC-125** (`instrumento`, media, preexistente y fuera del delta).
+- **Campos:**
+  - **REQ-023, REQ-031 y REQ-001:** `Seguridad: aprobado (R-047 …)`. En REQ-023 sale SEC-119.
+  - **REQ-007:** `Seguridad: pendiente`. Sale SEC-122 y entran SEC-123, SEC-124 y SEC-125.
+  - Sin veto.
+- **Lo que no acredita:** banco ni CI sobre la cabeza final, el host (ni el CLI ni la extensión de VS Code), Windows/MSYS, CA-54, SEC-115, SEC-118, SEC-120, C ni P-119-A.
+- **Coordinadora:**
+  - **sin push ni CI:** la octava autorización los condiciona a que QA **y** seguridad sean favorables para el delta, y SEC-124 lo introduce el propio delta;
+  - **cola:** decisión 11 (SEC-124), con SEC-123 y SEC-125;
+  - **evidencia:** un repositorio git de prueba del auditor se conserva como `gitcr.tar`.
+- **Avance (regla 6):** las reparaciones autorizadas quedan hechas y revisadas, y el presupuesto de la octava autorización está agotado. Falta la decisión 11 del propietario.
+
 ## [Interno] — 2026-10-02 · Octava autorización: re-verificación de QA de la pasada correctiva FAVORABLE — QA-023-16, QA-023-17 y P-122-A (1) cerrados; sin hallazgos nuevos; seguridad despachada sobre el delta
 > Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, §5) y la coordinadora. Unos 90 k tokens (estimación de QA).
 
