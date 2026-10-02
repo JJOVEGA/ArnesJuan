@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-02 · Octava autorización: re-verificación de QA de la pasada correctiva FAVORABLE — QA-023-16, QA-023-17 y P-122-A (1) cerrados; sin hallazgos nuevos; seguridad despachada sobre el delta
+> Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, §5) y la coordinadora. Unos 90 k tokens (estimación de QA).
+
+- **QA** (`docs/qa/REQ-023.md` §12; evidencia en `cand-1.35.0/evidencia-qa-r8b/`):
+  - **Validación:** banco completo 1776 PASS, 0 FAIL, 11 SKIP, cuadre 1787; secciones 41 a 45 en verde; fail-before contra `9220c71`, 18 FAIL en el bloque C; autoprueba 117/0; gates rc 0.
+  - **Movimientos:** ninguno de deny a allow fuera de lo declarado.
+  - **Coste del mecanismo nuevo:** lineal, medido con registro previo. No acredita CA-54.
+- **Campos:**
+  - **REQ-007:** `QA: pendiente`, por lo ajeno al delta. En `Hallazgos abiertos:` quedan QA-114, QA-116, QA-117, QA-023-10 y SEC-122.
+  - **REQ-023, REQ-031 y REQ-001:** `QA: aprobado`, con la cobertura extendida a `befc17a`.
+- **Avance (regla 6):** el delta de la octava autorización tiene QA favorable. Sigue seguridad.
+
 ## [Interno] — 2026-10-02 · Octava autorización, write-back de la pasada correctiva (analista): QA-023-16, QA-023-17 y P-122-A reparados en REQ-007 (CA-24 nota, CA-47 puntos 11 y 15, CA-66); la enumeración cerrada pasa a regla; ADR-016, guía y notas — SIN VALIDAR
 > Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `analista-requerimientos`.
 
