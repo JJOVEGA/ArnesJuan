@@ -1,0 +1,9 @@
+== P3 camino comun 2026-10-02T13:16:48-06:00; loadavg 1.05 1.03 0.73 ==
+bash-ls        cand     min= 23698 us
+bash-ls        3bc7d3c  min= 25727 us
+bash-devnull   cand     min= 30950 us
+bash-devnull   3bc7d3c  min= 31593 us
+bash-stderr    cand     min= 33879 us
+bash-stderr    3bc7d3c  min= 32607 us
+write-src      cand     min= 31768 us
+write-src      3bc7d3c  min= 32393 us

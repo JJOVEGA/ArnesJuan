@@ -1,0 +1,1 @@
+bash: /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r8/bateria-G2-git.sh: No such file or directory

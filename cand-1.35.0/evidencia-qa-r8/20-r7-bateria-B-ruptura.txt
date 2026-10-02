@@ -1,0 +1,153 @@
+== Batería B — ruptura propia de QA-023-13 (2026-10-02T13:09:34-06:00) ==
+
+## B1. Formas del cwd con CR (coordinadora, echo x > src/a.ts, relativa) — todas deben denegar por el cwd
+B1a cwd=F/dd<CR><CR> (dos CR finales)                                  cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+B1b cwd=F/<CR> (componente que es sólo CR)                            cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+B1c cwd=<CR> (el cwd entero es un CR)                                  cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+B1d cwd=F/x<LF><CR> (LF y CR finales)                                  cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+B1e cwd=F/y<CR><LF> (CRLF final)                                       cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+B1f cwd=<raíz><CR> (enlace a la raíz)                                cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+B1g cwd=<raíz>/docs/c<CR> (dir REAL con CR), ../../src/a.ts           cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'../../src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ di
+B1h cwd=<CR><raíz> (CR inicial, no absoluto)                          cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+
+## B2. El CR escrito como escape \u000d en el JSON crudo, y claves cwd duplicadas
+B2a cwd con \u000d (JSON a mano)                                       cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+B2b cwd duplicado: limpio y luego con CR (jq toma el último)          cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+B2c cwd duplicado: con CR y luego la raíz limpia                      cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detección\ en\ Bash\ es\ parcial\ \(redirecciones\,\ tee
+
+## B3. Lo que NO depende del cwd con CR se juzga como siempre (cwd=F/d<CR>)
+B3a coordinadora Write ABS <raíz>/docs/n.md (legítimo)               cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+B3b coordinadora Write ABS <raíz>/src/a.ts                            cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ \'src/a.ts\'\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ editarlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Delega\ el\ cambio\ en\ \'desarrollador\'\ —\ ni\ siquiera\ al\ depurar\ se\ parchea\ a\ mano\ \(ver\ AGENTS.md\ §5\).
+B3c desarrollador Write ABS <raíz>/src/a.ts                           cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+B3d cierre ABS REQ-901 en verde                                        cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+B3e cierre ABS REQ-900 en rojo                                         cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ puede\ completar\ \'requirements/REQ-900.md\':\ el\ veredicto\ de\ QA\ es\ \'pendiente\'\ \(se\ requiere\ \'QA:\ aprobado\'\).\ Resuelve\ los\ hallazgos\ de\ QA\ y\ refléjalos\ en\ el\ REQ\ antes\ de\ cerrar\ \(AGENTS.md\ §9\).
+B3f Bash printf x > ABS <raíz>/docs/n.md (legítimo)                  cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+B3g Bash printf x > ABS <raíz>/src/a.ts                               cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detección\ en\ Bash\ es\ parcial\ \(redirecciones\,\ tee
+B3h Bash sed -i cierra ABS REQ-900                                     cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ este\ comando\ escribe\ en\ \'requirements/REQ-900.md\'\ y\ menciona\ \'completado\'.\ La\ transicion\ de\ estado\ de\ un\ REQ\ no\ puede\ juzgarse\ desde\ Bash:\ las\ puertas\ A2/A3\ necesitan\ el\ contenido\ resultante\ \(veredictos\ de\ QA\ y\ Seguridad\,\ cola\ de\ PENDING_APPROVAL.md\ y\ quality\ gates\).\ Hazlo\ con\ Edit/Write\ para
+B3i ls -la ; git status ; cat x 2>/dev/null                            cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+B3j echo x > /dev/null                                                 cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+B3k Bash ABS por el enlace con CR: printf x > F/d<CR>/src/a.ts         cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detección\ en\ Bash\ es\ parcial\ \(redirecciones\,\ tee
+B3l Write ABS por el enlace con CR: F/d<CR>/src/a.ts (file_path con CR) cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \$\'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r8/r7rerun/fuera-b/d\\r/src/a.ts\':\ lleva\ un\ retorno\ de\ carro\,\ y\ no\ se\ sabe\ que\ archivo\ se\ escribiria\ con\ esa\ ruta:\ el\ nombre\ literal\,\ con\ e
+B3m MultiEdit ABS REQ-900 cierra (rojo)                                cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ puede\ completar\ \'requirements/REQ-900.md\':\ el\ veredicto\ de\ QA\ es\ \'pendiente\'\ \(se\ requiere\ \'QA:\ aprobado\'\).\ Resuelve\ los\ hallazgos\ de\ QA\ y\ refléjalos\ en\ el\ REQ\ antes\ de\ cerrar\ \(AGENTS.md\ §9\).
+B3n MultiEdit RELATIVO REQ-901 cierra (verde)                          cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=allow [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'requirements/REQ-901.md\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ 
+B3o desarrollador Bash relativo sin terminal: echo x > src/a.ts        cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+B3p desarrollador Bash relativo con terminal: echo completado > docs/x.md cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ este\ comando\ escribe\ en\ \'docs/x.md\'\ y\ menciona\ \'completado\'\,\ y\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe:\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ l
+B3q qa-tester Bash relativo fuera: echo x > notas.md                   cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'notas.md\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+
+## B4. tool_name con CR en otras posiciones (punto 13), coordinadora y desarrollador
+B4 coord   tool=$'\rBash' Write-like a src/a.ts                        cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'\\rBash\'\,\ lleva\ un\ retorno\ de\ carro\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ ni\ en\ que\ archivo:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(intent
+B4 desarr. tool=$'\rBash' a docs/n.md                                  cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'\\rBash\'\,\ lleva\ un\ retorno\ de\ carro\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ en\ un\ REQ\ ni\ leer\ el\ documento\ que\ quedaria\ escrito:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no
+B4 coord   tool=$'Bash\r\r' Write-like a src/a.ts                      cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'Bash\\r\\r\'\,\ lleva\ un\ retorno\ de\ carro\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ ni\ en\ que\ archivo:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(inte
+B4 desarr. tool=$'Bash\r\r' a docs/n.md                                cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'Bash\\r\\r\'\,\ lleva\ un\ retorno\ de\ carro\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ en\ un\ REQ\ ni\ leer\ el\ documento\ que\ quedaria\ escrito:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ 
+B4 coord   tool=$'Ba\rsh' Write-like a src/a.ts                        cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'Ba\\rsh\'\,\ lleva\ un\ retorno\ de\ carro\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ ni\ en\ que\ archivo:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(intent
+B4 desarr. tool=$'Ba\rsh' a docs/n.md                                  cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'Ba\\rsh\'\,\ lleva\ un\ retorno\ de\ carro\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ en\ un\ REQ\ ni\ leer\ el\ documento\ que\ quedaria\ escrito:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no
+B4 coord   tool=$'\r' Write-like a src/a.ts                            cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'\\r\'\,\ lleva\ un\ retorno\ de\ carro\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ ni\ en\ que\ archivo:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(intento\ de
+B4 desarr. tool=$'\r' a docs/n.md                                      cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'\\r\'\,\ lleva\ un\ retorno\ de\ carro\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ en\ un\ REQ\ ni\ leer\ el\ documento\ que\ quedaria\ escrito:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no\ pue
+B4 coord   tool=$'Write\r\n' Write-like a src/a.ts                     cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'Write\\r\\n\'\,\ lleva\ un\ salto\ de\ linea\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ ni\ en\ que\ archivo:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(inten
+B4 desarr. tool=$'Write\r\n' a docs/n.md                               cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'Write\\r\\n\'\,\ lleva\ un\ salto\ de\ linea\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ en\ un\ REQ\ ni\ leer\ el\ documento\ que\ quedaria\ escrito:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ n
+B4 coord   tool=$'MultiEdit\r' Write-like a src/a.ts                   cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'MultiEdit\\r\'\,\ lleva\ un\ retorno\ de\ carro\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ ni\ en\ que\ archivo:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(i
+B4 desarr. tool=$'MultiEdit\r' a docs/n.md                             cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'MultiEdit\\r\'\,\ lleva\ un\ retorno\ de\ carro\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ en\ un\ REQ\ ni\ leer\ el\ documento\ que\ quedaria\ escrito:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ q
+
+## B5. file_path con CR en otras posiciones (punto 12)
+B5a coord Write <raíz>/src/a.ts<CR><CR>                               cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \$\'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r8/r7rerun/proj-b/src/a.ts\\r\\r\':\ lleva\ un\ retorno\ de\ carro\,\ y\ no\ se\ sabe\ que\ archivo\ se\ escribiria\ con\ esa\ ruta:\ el\ nombre\ literal\,\ con\ el
+B5b coord Write <CR><raíz>/docs/n.md (CR inicial)                     cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \$\'\\r/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r8/r7rerun/proj-b/docs/n.md\':\ lleva\ un\ retorno\ de\ carro\,\ y\ no\ se\ sabe\ que\ archivo\ se\ escribiria\ con\ esa\ ruta:\ el\ nombre\ literal\,\ con\ el\ 
+B5c coord Write <raíz>/docs/c<CR>/n.md (dir real con CR)              cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \$\'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r8/r7rerun/proj-b/docs/c\\r/n.md\':\ lleva\ un\ retorno\ de\ carro\,\ y\ no\ se\ sabe\ que\ archivo\ se\ escribiria\ con\ esa\ ruta:\ el\ nombre\ literal\,\ con\ e
+B5d coord Write <raíz>/docs/s<CR>/a.ts (enlace con CR -> src)         cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \$\'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r8/r7rerun/proj-b/docs/s\\r/a.ts\':\ lleva\ un\ retorno\ de\ carro\,\ y\ no\ se\ sabe\ que\ archivo\ se\ escribiria\ con\ esa\ ruta:\ el\ nombre\ literal\,\ con\ e
+B5e coord Write <raíz>/docs/n.md<CR><LF> (CR+LF: motivo del salto)    cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \$\'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r8/r7rerun/proj-b/docs/n.md\\r\\n\':\ lleva\ un\ salto\ de\ linea\,\ y\ no\ se\ sabe\ que\ archivo\ se\ escribiria\ con\ esa\ ruta:\ el\ nombre\ literal\,\ con\ el\ 
+B5f Bash con file_path con CR (no se juzga) y ls                       cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+B5g herramienta desconocida Foo con file_path <raíz>/src/a.ts<CR>     cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \$\'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r8/r7rerun/proj-b/src/a.ts\\r\':\ lleva\ un\ retorno\ de\ carro\,\ y\ no\ se\ sabe\ que\ archivo\ se\ escribiria\ con\ esa\ ruta:\ el\ nombre\ literal\,\ con\ el\ r
+B5h desarrollador Edit legítimo <raíz>/src/a.ts (sin CR, control)    cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+
+## B6. Campos del agente con CR en medio (no contados; ¿hay movimiento?)
+B6a agent_type desarr<CR>ollador escribe src/a.ts                      cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+B6b agent_type <CR>desarrollador escribe src/a.ts                      cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+B6c agent_type qa-tester<CR> escribe src/a.ts                          cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ \'src/a.ts\'\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ editarlo\ \(intento\ de\ el\ subagente\ \'qa-tester\'\).\ Delega\ el\ cambio\ en\ \'desarrollador\'\ —\ ni\ siquiera\ al\ depurar\ se\ parchea\ a\ mano\ \(ver\ AGENTS.md\ §5\).
+
+## B7. cwd que no es cadena (como antes: no ancla)
+B7 cwd=5, coordinadora echo x > docs/n.md (relativa)                   cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'docs/n.md\':\ es\ relativa\ y\ la\ entrada\ del\ hook\ no\ trae\ un\ directorio\ de\ trabajo\ absoluto\ \(\'cwd\'\)\ en\ el\ que\ anclarla.\ Sin\ saber\ que\ archivo\ es\,\ esta\ puerta\ no\ puede\ decidir\ si\ es\ codigo\ de\ la\ app\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(intent
+B7 cwd=true, coordinadora echo x > docs/n.md (relativa)                cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'docs/n.md\':\ es\ relativa\ y\ la\ entrada\ del\ hook\ no\ trae\ un\ directorio\ de\ trabajo\ absoluto\ \(\'cwd\'\)\ en\ el\ que\ anclarla.\ Sin\ saber\ que\ archivo\ es\,\ esta\ puerta\ no\ puede\ decidir\ si\ es\ codigo\ de\ la\ app\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(intent
+B7 cwd={"a":"\r"}, coordinadora echo x > docs/n.md (relativa)          cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'docs/n.md\':\ es\ relativa\ y\ la\ entrada\ del\ hook\ no\ trae\ un\ directorio\ de\ trabajo\ absoluto\ \(\'cwd\'\)\ en\ el\ que\ anclarla.\ Sin\ saber\ que\ archivo\ es\,\ esta\ puerta\ no\ puede\ decidir\ si\ es\ codigo\ de\ la\ app\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(intent
+B7 cwd=["/x\r"], coordinadora echo x > docs/n.md (relativa)            cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'docs/n.md\':\ es\ relativa\ y\ la\ entrada\ del\ hook\ no\ trae\ un\ directorio\ de\ trabajo\ absoluto\ \(\'cwd\'\)\ en\ el\ que\ anclarla.\ Sin\ saber\ que\ archivo\ es\,\ esta\ puerta\ no\ puede\ decidir\ si\ es\ codigo\ de\ la\ app\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(intent
+B7 cwd=null, coordinadora echo x > docs/n.md (relativa)                cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'docs/n.md\':\ es\ relativa\ y\ la\ entrada\ del\ hook\ no\ trae\ un\ directorio\ de\ trabajo\ absoluto\ \(\'cwd\'\)\ en\ el\ que\ anclarla.\ Sin\ saber\ que\ archivo\ es\,\ esta\ puerta\ no\ puede\ decidir\ si\ es\ codigo\ de\ la\ app\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(intent
+
+## B8. Sin CLAUDE_PROJECT_DIR: la raíz sale del cwd (arnes_project_dir, sede propia; «no cambia»)
+B8a sin env, cwd=F/d<CR>, echo x > src/a.ts (relativa)                 cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+B8b sin env, cwd=F/d<CR>, Write ABS <raíz>/src/a.ts                   cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ \'src/a.ts\'\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ editarlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Delega\ el\ cambio\ en\ \'desarrollador\'\ —\ ni\ siquiera\ al\ depurar\ se\ parchea\ a\ mano\ \(ver\ AGENTS.md\ §5\).
+B8c sin env, cwd=F/d<CR>, Write ABS F/d<CR>/src/a.ts                   cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \$\'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r8/r7rerun/fuera-b/d\\r/src/a.ts\':\ lleva\ un\ retorno\ de\ carro\,\ y\ no\ se\ sabe\ que\ archivo\ se\ escribiria\ con\ esa\ ruta:\ el\ nombre\ literal\,\ con\ e
+B8d sin env, cwd=<raíz><CR>, Bash printf x > ABS <raíz><CR>/src/a.ts cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detección\ en\ Bash\ es\ parcial\ \(redirecciones\,\ tee
+B8e sin env, cwd=<raíz><CR>, Bash printf x > ABS <raíz>/src/a.ts     cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detección\ en\ Bash\ es\ parcial\ \(redirecciones\,\ tee
+B8f sin env, cwd=<raíz><CR>, Write ABS <raíz>/docs/n.md (legítimo)  cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+
+## B9. guard-git: Bash<CR> con git reset --hard (guard-git por su cuenta y por guard.sh)
+B9 agente=- guard-git.sh solo: Bash<CR> git reset --hard               cand=allow 3bc7d3c=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>>
+      motivo(cand): ''
+B9 agente=- guard.sh: Bash<CR> git reset --hard                        cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'Bash\\r\'\,\ lleva\ un\ retorno\ de\ carro\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ ni\ en\ que\ archivo:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(intent
+B9 agente=desarrollador guard-git.sh solo: Bash<CR> git reset --hard   cand=allow 3bc7d3c=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>>
+      motivo(cand): ''
+B9 agente=desarrollador guard.sh: Bash<CR> git reset --hard            cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'Bash\\r\'\,\ lleva\ un\ retorno\ de\ carro\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ en\ un\ REQ\ ni\ leer\ el\ documento\ que\ quedaria\ escrito:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no
+
+sha REQ-900/901 y src/a.ts sin cambio: a4aaa0a4e7b7 23c32792ddcb  x

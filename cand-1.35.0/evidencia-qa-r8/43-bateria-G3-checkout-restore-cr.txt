@@ -1,0 +1,17 @@
+== Batería G3 (QA r8) 2026-10-02T13:30:49-06:00; git version 2.53.0; repo: a.txt=v2 (modificado), u.txt sin seguimiento ==
+G9 git checkout .<CR> (CR en el pathspec) [guard.sh]                       cand=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  <<deny->allow vs 9596e39>> <<deny->allow vs 1.33.2>> <<deny->allow vs 3bc7d3c>>
+      motivo(cand): ''
+      git (defecto): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 
+      git (immediate): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 
+G13 git checkout -- .<CR> [guard.sh]                                       cand=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  <<deny->allow vs 9596e39>> <<deny->allow vs 1.33.2>> <<deny->allow vs 3bc7d3c>>
+      motivo(cand): ''
+      git (defecto): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 
+      git (immediate): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 
+G12 git restore .<CR> [guard.sh]                                           cand=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  <<deny->allow vs 9596e39>> <<deny->allow vs 1.33.2>> <<deny->allow vs 3bc7d3c>>
+      motivo(cand): ''
+      git (defecto): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 
+      git (immediate): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 
+G17 git checkout HEAD .<CR> [guard.sh]                                     cand=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  <<deny->allow vs 9596e39>> <<deny->allow vs 1.33.2>> <<deny->allow vs 3bc7d3c>>
+      motivo(cand): ''
+      git (defecto): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 
+      git (immediate): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 

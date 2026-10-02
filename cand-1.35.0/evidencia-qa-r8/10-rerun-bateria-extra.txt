@@ -1,0 +1,21 @@
+== bateria-extra (2026-10-02T13:08:32-06:00) ==
+X1 echo > /proc/thread-self/fd/1 (descriptor por el hilo) [guard.sh]       cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+X2 echo > /proc/thread-self/cwd/src/a.ts, cwd raiz [guard.sh]              cand=deny 3bc7d3c=allow 9596e39=allow 1.33.2=allow  [allow->deny vs 3bc7d3c] OK
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detecció
+X3 echo > /dev/stdin [guard.sh]                                            cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+X4 echo > /proc/1/cwd/src/a.ts (otro proceso, sin permiso) [guard.sh]      cand=deny 3bc7d3c=allow 9596e39=allow 1.33.2=allow  [allow->deny vs 3bc7d3c] OK
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'/proc/1/cwd/src/a.ts\':\ el\ directorio\ \'/proc/1/cwd\'\ de\ la\ ruta\ existe\ pero\ no\ se\ puede\ recorrer\ \(sin\ permiso\,\ no\ es\ un\ directorio\,\ o\ es\ un\ enlace\ roto\ o\ en\ bucle\).\ Sin\ saber\ que\ archivo\ es\,\ esta\ puerta\ no\ pued
+X5 echo > /proc/self/fd/../cwd/src/a.ts, cwd raiz [guard.sh]               cand=deny 3bc7d3c=allow 9596e39=allow 1.33.2=allow  [allow->deny vs 3bc7d3c] OK
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detecció
+X6 echo > /proc/self/cwd/../../x, cwd raiz (fuera, sube por encima) [guard.sh] cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow 
+      motivo(cand): ''
+X7 Write /proc/self/root<raiz>/docs/n.md (legitimo por la raiz) [guard.sh] cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+X8 echo x > /dev/null; echo y > src/a.ts (el segundo destino manda) [guard.sh] cand=deny 3bc7d3c=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detecció
+X9 desarrollador Write /proc/self/cwd/src/a.ts (host) [guard.sh]           cand=deny 3bc7d3c=allow 9596e39=allow 1.33.2=allow  [allow->deny vs 3bc7d3c]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'/proc/self/cwd/src/a.ts\':\ depende\ del\ proceso\ que\ la\ abre\ —pasa\ por\ su\ entrada\ en\ /proc\,\ como\ /proc/self\,\ /proc/thread-self\ o\ /dev/fd\,\ o\ es\ uno\ de\ sus\ descriptores—\,\ y\ esta\ puerta\,\ que\ no\ es\ ese\ proceso\,\ no\ p
+X10 cierre por Write /dev/stderr de un REQ (no es REQ) [guard-completado.sh] cand=deny 3bc7d3c=allow 9596e39=allow 1.33.2=allow  [allow->deny vs 3bc7d3c] OK
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'/dev/stderr\':\ depende\ del\ proceso\ que\ la\ abre\ —pasa\ por\ su\ entrada\ en\ /proc\,\ como\ /proc/self\,\ /proc/thread-self\ o\ /dev/fd\,\ o\ es\ uno\ de\ sus\ descriptores—\,\ y\ esta\ puerta\,\ que\ no\ es\ ese\ proceso\,\ no\ puede\ saber\ a

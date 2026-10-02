@@ -1,0 +1,11 @@
+== Exploratorio, fuera del procedimiento registrado: escalado de la eliminación de sufijo de bash (5.3.9(1)-release, 2026-10-02T13:20:42-06:00) ==
+LC_ALL=C.UTF-8
+  N=  50000  %LF sin LF final:    38820 us · %LF con LF final:   1107 us · //CRLF sin coincidencias:    962 us
+  N= 100000  %LF sin LF final:   146924 us · %LF con LF final:   2096 us · //CRLF sin coincidencias:   1583 us
+  N= 200000  %LF sin LF final:   627066 us · %LF con LF final:   3991 us · //CRLF sin coincidencias:   3484 us
+  N= 400000  %LF sin LF final:  2992260 us · %LF con LF final:  10543 us · //CRLF sin coincidencias:   7425 us
+LC_ALL=C
+  N=  50000  %LF sin LF final:     7984 us · %LF con LF final:    332 us · //CRLF sin coincidencias:    391 us
+  N= 100000  %LF sin LF final:    36483 us · %LF con LF final:    814 us · //CRLF sin coincidencias:    833 us
+  N= 200000  %LF sin LF final:   150738 us · %LF con LF final:   1189 us · //CRLF sin coincidencias:   1824 us
+  N= 400000  %LF sin LF final:   606672 us · %LF con LF final:   3298 us · //CRLF sin coincidencias:   3457 us

@@ -1,0 +1,38 @@
+== CA-60: manifiesto roto, la reparación y sus bordes con LF y CR, 2026-10-02T13:10:12-06:00 ==
+-- controles (la reparación legítima)
+M-ctl Write al manifiesto (coordinadora)                               cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+M-dev Write al manifiesto (desarrollador)                              cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+M-bash reparación por Bash desde la raíz                             cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+M-ctlCR Write ABS al manifiesto con cwd F/d<CR> (no depende del cwd)   cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+M-bashABS reparación por Bash ABS desde cwd F/d<CR>                   cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+-- bordes con LF (sexta autorización, r6)
+M1 Write manifiesto<LF>                                                cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ \'.arnes/config.json\'\ existe\ pero\ NO\ se\ puede\ leer\ como\ objeto\ JSON\ \(invalido\,\ vacio\,\ \'null\'\ o\ un\ array\)\,\ asi\ que\ ninguna\ puerta\ sabe\ que\ rutas\ protege\ este\ proyecto\,\ quien\ es\ el\ agente\ de\ codigo\ ni\ cual\ es\ el\ estado\ terminal.\ Un\ manifiesto\ AUSENTE\ deja\ los\ hooks\ inertes\ a\ proposito\;\ uno\ ROTO\ 
+M2 Write manif<LF>manif                                                cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ \'.arnes/config.json\'\ existe\ pero\ NO\ se\ puede\ leer\ como\ objeto\ JSON\ \(invalido\,\ vacio\,\ \'null\'\ o\ un\ array\)\,\ asi\ que\ ninguna\ puerta\ sabe\ que\ rutas\ protege\ este\ proyecto\,\ quien\ es\ el\ agente\ de\ codigo\ ni\ cual\ es\ el\ estado\ terminal.\ Un\ manifiesto\ AUSENTE\ deja\ los\ hooks\ inertes\ a\ proposito\;\ uno\ ROTO\ 
+M4 M1 por guard-completado a solas                                     cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ \'.arnes/config.json\'\ existe\ pero\ NO\ se\ puede\ leer\ como\ objeto\ JSON\ \(invalido\,\ vacio\,\ \'null\'\ o\ un\ array\)\,\ asi\ que\ ninguna\ puerta\ sabe\ que\ rutas\ protege\ este\ proyecto\,\ quien\ es\ el\ agente\ de\ codigo\ ni\ cual\ es\ el\ estado\ terminal.\ Un\ manifiesto\ AUSENTE\ deja\ los\ hooks\ inertes\ a\ proposito\;\ uno\ ROTO\ 
+M5 Write<LF> al manifiesto                                             cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'Write\\n\'\,\ lleva\ un\ salto\ de\ linea\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ ni\ en\ que\ archivo:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(intento
+M-bash2 reparación + otra escritura                                   cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ \'.arnes/config.json\'\ existe\ pero\ NO\ se\ puede\ leer\ como\ objeto\ JSON\ \(invalido\,\ vacio\,\ \'null\'\ o\ un\ array\)\,\ asi\ que\ ninguna\ puerta\ sabe\ que\ rutas\ protege\ este\ proyecto\,\ quien\ es\ el\ agente\ de\ codigo\ ni\ cual\ es\ el\ estado\ terminal.\ Un\ manifiesto\ AUSENTE\ deja\ los\ hooks\ inertes\ a\ proposito\;\ uno\ ROTO\ 
+-- bordes con CR (séptima autorización)
+MC2 Write manifiesto<CR> (coordinadora)                                cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ \'.arnes/config.json\'\ existe\ pero\ NO\ se\ puede\ leer\ como\ objeto\ JSON\ \(invalido\,\ vacio\,\ \'null\'\ o\ un\ array\)\,\ asi\ que\ ninguna\ puerta\ sabe\ que\ rutas\ protege\ este\ proyecto\,\ quien\ es\ el\ agente\ de\ codigo\ ni\ cual\ es\ el\ estado\ terminal.\ Un\ manifiesto\ AUSENTE\ deja\ los\ hooks\ inertes\ a\ proposito\;\ uno\ ROTO\ 
+MC3 Write<CR> al manifiesto                                            cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'Write\\r\'\,\ lleva\ un\ retorno\ de\ carro\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ ni\ en\ que\ archivo:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(inten
+MC4 Write manifiesto<CR> (desarrollador)                               cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ \'.arnes/config.json\'\ existe\ pero\ NO\ se\ puede\ leer\ como\ objeto\ JSON\ \(invalido\,\ vacio\,\ \'null\'\ o\ un\ array\)\,\ asi\ que\ ninguna\ puerta\ sabe\ que\ rutas\ protege\ este\ proyecto\,\ quien\ es\ el\ agente\ de\ codigo\ ni\ cual\ es\ el\ estado\ terminal.\ Un\ manifiesto\ AUSENTE\ deja\ los\ hooks\ inertes\ a\ proposito\;\ uno\ ROTO\ 
+MC4b MC2 por guard-completado a solas                                  cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ \'.arnes/config.json\'\ existe\ pero\ NO\ se\ puede\ leer\ como\ objeto\ JSON\ \(invalido\,\ vacio\,\ \'null\'\ o\ un\ array\)\,\ asi\ que\ ninguna\ puerta\ sabe\ que\ rutas\ protege\ este\ proyecto\,\ quien\ es\ el\ agente\ de\ codigo\ ni\ cual\ es\ el\ estado\ terminal.\ Un\ manifiesto\ AUSENTE\ deja\ los\ hooks\ inertes\ a\ proposito\;\ uno\ ROTO\ 
+MC5 reparación relativa por Bash desde cwd F/d<CR>                    cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ \'.arnes/config.json\'\ existe\ pero\ NO\ se\ puede\ leer\ como\ objeto\ JSON\ \(invalido\,\ vacio\,\ \'null\'\ o\ un\ array\)\,\ asi\ que\ ninguna\ puerta\ sabe\ que\ rutas\ protege\ este\ proyecto\,\ quien\ es\ el\ agente\ de\ codigo\ ni\ cual\ es\ el\ estado\ terminal.\ Un\ manifiesto\ AUSENTE\ deja\ los\ hooks\ inertes\ a\ proposito\;\ uno\ ROTO\ 
+MC7 Write <raíz>/.arnes<CR>/config.json (CR en medio)                 cand=deny  3bc7d3c=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ \'.arnes/config.json\'\ existe\ pero\ NO\ se\ puede\ leer\ como\ objeto\ JSON\ \(invalido\,\ vacio\,\ \'null\'\ o\ un\ array\)\,\ asi\ que\ ninguna\ puerta\ sabe\ que\ rutas\ protege\ este\ proyecto\,\ quien\ es\ el\ agente\ de\ codigo\ ni\ cual\ es\ el\ estado\ terminal.\ Un\ manifiesto\ AUSENTE\ deja\ los\ hooks\ inertes\ a\ proposito\;\ uno\ ROTO\ 
+MC8 Edit relativo .arnes/config.json desde cwd F/d<CR>                 cand=deny  3bc7d3c=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ \'.arnes/config.json\'\ existe\ pero\ NO\ se\ puede\ leer\ como\ objeto\ JSON\ \(invalido\,\ vacio\,\ \'null\'\ o\ un\ array\)\,\ asi\ que\ ninguna\ puerta\ sabe\ que\ rutas\ protege\ este\ proyecto\,\ quien\ es\ el\ agente\ de\ codigo\ ni\ cual\ es\ el\ estado\ terminal.\ Un\ manifiesto\ AUSENTE\ deja\ los\ hooks\ inertes\ a\ proposito\;\ uno\ ROTO\ 

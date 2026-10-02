@@ -1,0 +1,16 @@
+== Emulación del jq de Windows (CRLF en su salida) sobre Linux, 2026-10-02T13:10:23-06:00 ==
+   prueba del envoltorio: $'x\r\nx\r'
+E1 coordinadora Write ABS docs/n.md (legítimo, sin CR)          esperado=allow cand=allow OK cd6afa6=allow | 
+E2 coordinadora Write src/a.ts (sin CR)                          esperado=deny  cand=deny  OK cd6afa6=deny  | ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coo
+E3 desarrollador Write src/a.ts (sin CR)                         esperado=allow cand=allow OK cd6afa6=allow | 
+E4 ls -la (sin CR)                                               esperado=allow cand=allow OK cd6afa6=allow | 
+E5 coordinadora echo x > docs/n.md, cwd raíz (sin CR)           esperado=allow cand=allow OK cd6afa6=allow | 
+E6 cierre REQ-901 en verde (sin CR)                              esperado=allow cand=allow OK cd6afa6=allow | 
+E7 cierre REQ-900 en rojo (sin CR)                               esperado=deny  cand=deny  OK cd6afa6=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: ap
+E8 QA-023-13: echo x > src/a.ts desde F/d<CR>                    esperado=deny  cand=deny  OK cd6afa6=deny  | ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y el directorio de trabajo de la en
+E9 Write ABS docs/n.md desde F/d<CR> (legítimo)                 esperado=allow cand=allow OK cd6afa6=allow | 
+E10 Write docs/n.md<CR> (file_path con CR)                       esperado=deny  cand=deny  OK cd6afa6=deny  | ARNES: no se pudo determinar a que archivo escribe $'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-
+E11 Write<CR> del desarrollador a docs/n.md                      esperado=deny  cand=deny  OK cd6afa6=deny  | ARNES: el nombre de la herramienta de esta llamada, $'Write\r', lleva un retorno de carro y no identifica ning
+-- lo que deja arnes_parse_input del candidato con el envoltorio, entrada P2 (CR final en tool, cwd y file_path):
+   tool=$'Bash\r' cwd='' fp=$'/tmp/f\r' cmd=ls marcas tool/cwd/fp=1/1/1
+   (sin CR) tool=Write cwd=/tmp/d fp=/tmp/f marcas=0/0/0

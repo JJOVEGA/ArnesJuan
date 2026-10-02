@@ -1,0 +1,19 @@
+== Batería X (QA r8) 2026-10-02T13:25:37-06:00; globs=[src/*, app/*.ts] ==
+-- P-122-A (2): enlace dentro del ámbito -> descriptor estándar --
+X-D1 coordinadora echo x > src/log (src/log -> /dev/stderr) [guard.sh]     cand=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  <<deny->allow vs 9596e39>> <<deny->allow vs 1.33.2>> <<deny->allow vs 3bc7d3c>>
+      motivo(cand): ''
+X-D2 coordinadora echo x > src/log por guard-codigo [guard-codigo.sh]      cand=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  <<deny->allow vs 9596e39>> <<deny->allow vs 1.33.2>> <<deny->allow vs 3bc7d3c>>
+      motivo(cand): ''
+X-D3 coordinadora Write src/log (file_path, no Bash) [guard-codigo.sh]     cand=deny 3bc7d3c=deny 9596e39=deny 1.33.2=deny 
+      motivo(cand): ARNES:\ \'src/log\'\ es\ un\ ENLACE\ SIMBOLICO\ situado\ dentro\ del\ proyecto\,\ y\ no\ se\ escribe\ a\ traves\ de\ un\ enlace\ dentro\ del\ proyecto\,\ apunte\ adonde\ apunte\ y\ lo\ intente\ quien\ lo\ intente.\ Salida:\ escribe\ sobre\ el\ archivo\ al\ que\ apunta\,\ por\ su\ ruta\ \(SEC-004\,\ REQ-007\ CA
+-- Controles: enlaces dentro del ámbito que NO van a un descriptor (deben seguir deny a la coordinadora) --
+X-C1 coordinadora echo x > src/nul (src/nul -> /dev/null, dispositivo) [guard.sh] cand=deny 3bc7d3c=deny 9596e39=deny 1.33.2=deny 
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/nul\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detección
+X-C2 coordinadora echo x > src/outside (-> docs/out.txt, fuera) [guard.sh] cand=deny 3bc7d3c=deny 9596e39=deny 1.33.2=deny 
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/outside\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detec
+X-C3 coordinadora echo x > src/alias (-> src/a.ts, dentro) [guard.sh]      cand=deny 3bc7d3c=deny 9596e39=deny 1.33.2=deny 
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/alias\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detecci
+X-C4 desarrollador echo x > src/log (control: puede escribir código) [guard.sh] cand=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow 
+      motivo(cand): ''
+-- Efecto real del shell: a dónde escribe 'echo INTRUSO > src/log' (árbol aparte) --
+   src/a.ts intacto: orig · lo escrito fue a stderr (captura): INTRUSO

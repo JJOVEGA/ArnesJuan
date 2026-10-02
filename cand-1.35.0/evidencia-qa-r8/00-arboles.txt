@@ -1,0 +1,8 @@
+== Árboles de comparación (QA r8, 2026-10-02T13:07:44-06:00) ==
+3bc7d3c: oid esperado edff8ac527e21e92350ff79d0a5e9d2adba25cc7 · 10 archivos, 0 distintos
+9596e39: oid esperado 5202b1754dc7f51ffdcd1d7fef5f82f91457964a · 10 archivos, 0 distintos
+cd6afa6: oid esperado b12ee3dd8ac3e2500b74b2d7a893a34521e7af15 · 10 archivos, 0 distintos
+v1.33.2: oid esperado a6810ac6f85f16ba951cd1c3119775cb6c90343c · 10 archivos, 0 distintos
+cand: worktree hooks/ == HEAD:hooks (a63655339ddee8f6d58ea7eee8cfc39c436d7b21); git diff vacío: sí
+sha256 lib.sh cand: 31176f7febf28631
+caché 1.33.2 frente al tag: 0 archivos distintos

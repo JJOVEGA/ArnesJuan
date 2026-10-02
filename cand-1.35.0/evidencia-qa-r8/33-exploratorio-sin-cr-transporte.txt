@@ -1,0 +1,9 @@
+== Exploratorio, FUERA del procedimiento registrado (una corrida por celda): coste de arnes_sin_cr_transporte, que en el candidato sólo corre si la primera línea delata transporte (Windows); en cd6afa6 corría siempre (2026-10-02T13:17:56-06:00; loadavg 0.42 0.84 0.69) ==
+N=  99999 muchas (CRLF= 10000)   244898 us  salida=89999 bytes
+N= 100005 pocas  (CRLF=     1)   149049 us  salida=100004 bytes
+N= 199999 muchas (CRLF= 20000)   982521 us  salida=179999 bytes
+N= 200005 pocas  (CRLF=     1)   684607 us  salida=200004 bytes
+N= 399999 muchas (CRLF= 40000)  3911884 us  salida=359999 bytes
+N= 400005 pocas  (CRLF=     1)  3187983 us  salida=400004 bytes
+N= 799999 muchas (CRLF= 80000) 15958613 us  salida=719999 bytes
+N= 800005 pocas  (CRLF=     1) 13281539 us  salida=800004 bytes
