@@ -2,6 +2,21 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-02 · Octava autorización: QA sobre `c877246` CON HALLAZGOS — reparación central verificada (SEC-122 caras a y b, QA-023-14 y QA-023-15 cerrados a nivel de hook); tres defectos dentro del alcance van a la pasada correctiva (QA-023-16, QA-023-17 y P-122-A (1))
+> Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, §5) y la coordinadora. Unos 333 k tokens en la comisión de QA (cifra del arnés).
+
+- **QA** (`docs/qa/REQ-023.md` § «Vuelta excepcional de la octava autorización»):
+  - **Validación:** banco completo 1729 PASS, 0 FAIL, 12 SKIP (1 INCONCLUSO de rendimiento), cuadre 1741; secciones 41 a 45 en verde; autoprueba 117/0; gates rc 0.
+  - **QA-023-14:** el coste es plano en Linux con los tamaños ya usados.
+- **Defectos introducidos por `9220c71`, para la pasada correctiva:**
+  - QA-023-16 (`contrato`);
+  - QA-023-17 (`instrumento`), que es P-122-A (2);
+  - P-122-A (1) (`instrumento`).
+
+  El detalle está en el informe de QA y en REQ-007, P-122-A.
+- **Seguridad no despachada:** hay un `contrato` introducido por este delta.
+- **Avance (regla 6):** la reparación central queda verificada. Falta la pasada correctiva, su re-verificación por QA y seguridad.
+
 ## [Interno] — 2026-10-02 · Octava autorización, write-back (analista): F3, CA-49, CA-47 (puntos 7, 11, 12 y nuevos 14 a 17) y CA-66 sobre `9220c71`; ADR-016, guía y notas con el texto de plataformas autorizado; P-122-A (dos movimientos de deny a allow no declarados) — SIN VALIDAR
 > Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` y la coordinadora.
 
