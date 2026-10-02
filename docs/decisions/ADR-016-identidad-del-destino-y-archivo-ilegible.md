@@ -222,3 +222,95 @@ carro, con un motivo preciso.
 - (=) Sin procesos nuevos: la cuenta va en la lectura de la entrada que ya existía. En Windows/MSYS, sin
   medir. Desde el host, el caso del retorno de carro no se ha ejercido. Esta adenda no afirma que la
   reparación esté verificada.
+
+## Adenda — 2026-10-02 (octava autorización): ningún prefijo queda fuera de la identidad, lo que depende del proceso que abre la ruta no recibe permiso por esa incertidumbre, y el texto de `Bash` llega con sus retornos de carro
+
+**Esta adenda manda sobre las de arriba en lo que toca; lo de arriba no se reescribe.** La norma vive en
+`requirements/REQ-007.md` **CA-47** (F3, puntos 7, 11, 12 y 14 a 17), **CA-49** (i) y (ii) y **CA-66**
+(versionado de la octava autorización); aquí sólo la decisión y su porqué. Corrige además dos afirmaciones de
+arriba: la consecuencia «Fronteras sin promesa» de la decisión original incluía como frontera las «identidades que
+no son resolución de nombres» con una implementación que excluía todo `/dev/` y `/proc/`, y la frase «los
+movimientos de `deny` a `allow` siguen siendo los seis de arriba» de las dos adendas anteriores era falsa en un
+proyecto situado bajo `/dev/` (SEC-122, cara b).
+
+**Causa.**
+- **SEC-122** (`docs/seguridad/registro-seguridad.md` § R-046, §2): F3 de CA-47 se implementaba como «todo
+  destino cuya lectura léxica cae bajo `/dev/` o `/proc/` no recibe identidad física». Un enlace simbólico
+  corriente bajo `/dev/shm` —resolución de nombres, la que CA-47 promete— y `/proc/self/root` seguido de la ruta
+  absoluta llevaban al REQ o al código protegido y las dos puertas permitían (cara a, preexistente); y en un
+  proyecto situado bajo `/dev/` se apagaban CA-49 (i) y la existencia (cara b, regresión de `104ffd1`).
+- **QA-023-14:** la reposición del retorno de carro que la séptima adenda dejó en la lectura de la entrada
+  (`3bc7d3c`) crecía más que linealmente con el tamaño del campo, antes de cualquier techo.
+- **QA-023-15 / P-023-13-A:** el texto del comando de `Bash` perdía en el transporte su retorno de carro final y el
+  que precede a un salto, y un destino cuyo nombre acaba así se juzgaba sin él mientras el shell lo escribía con él.
+
+**Decisión del propietario:** la octava autorización (2026-10-02), literal en `PENDING_APPROVAL.md` § Resueltas,
+commit `01b4a59`: eliminar la exclusión indiscriminada de `/dev/` y `/proc/`; que los destinos resolubles por
+nombres pasen por la identificación y sus reglas de protección, conservando las comprobaciones de existencia y
+enlaces; que una identidad dependiente del proceso que no pueda determinarse no reciba permiso por esa
+incertidumbre; conservar los usos legítimos previstos de `/dev/null` y `/dev/stderr` sin convertir sus nombres en
+una excepción general; eliminar la sustitución superlineal sin sustituirla por otra; corregir el transporte del
+retorno de carro en el texto de `Bash` y, si el análisis no puede preservar su significado, denegar
+explícitamente, sin reescribir el analizador general.
+
+**Decisión.**
+1. **Ningún prefijo queda fuera de la identificación** (F3 corregida): un destino bajo `/dev/` o `/proc/` tiene
+   lectura física, enlace del último componente y existencia como cualquier otro. F3 queda en lo que no es
+   resolución de nombres —enlaces duros, montajes— y no desactiva ninguna otra regla.
+2. **Lo que depende del proceso que abre la ruta se detecta, no se enumera** (punto 14): una resolución que
+   aterriza en la entrada de `/proc` del proceso que resuelve depende de él. Por `Bash`, una ranura de descriptor
+   es un descriptor del shell y queda fuera de todo ámbito (punto 15); por otra herramienta, y todo lo demás que
+   aterriza allí, es no determinable.
+3. **La lectura física que atraviesa un enlace se rehace desde el directorio del proceso que escribirá** (punto
+   16): el `cwd` de la entrada por `Bash`; la entrada propia de `/proc`, por el host o sin un `cwd` que ancle.
+4. **La entrada se lee cruda y el transporte se retira sólo si existe** (punto 11): cada campo llega con sus
+   retornos de carro y nada recorre el valor para reponerlos.
+5. **Donde el analizador de `Bash` no puede seguir el retorno de carro —el delimitador de un heredoc— se deniega**
+   (punto 17), con el destinatario del presupuesto de análisis.
+
+**Alternativas descartadas.**
+- **Conservar la exclusión y declarar la cara (b) como séptimo movimiento** (opción B de la decisión 10). No: el
+  propietario eligió reparar; y F3 seguiría dejando pasar enlaces corrientes que CA-47 promete cubrir.
+- **Exceptuar por nombre `/dev/null`, `/dev/stderr` y los demás.** No: la autorización prohíbe convertir sus
+  nombres en una excepción general; una lista de nombres se pudre hacia el lado que abre.
+- **Denegar todo destino bajo `/dev/` o `/proc/`.** No: rompe `> /dev/null` y `> /dev/stderr`, que tienen que
+  seguir pasando.
+- **Resolver cada destino con un programa externo.** No: cuesta un proceso por destino (`AGENTS.md` §2); el
+  descriptor estándar se reconoce sin proceso, y el único proceso sigue siendo el del enlace del último componente.
+- **Mantener la reposición del retorno de carro, u otra pasada sobre el valor.** No: la autorización prohíbe
+  sustituir ese coste por otra pasada superlineal.
+- **Seguir retirando el retorno de carro del texto de `Bash`.** No: es juzgar un comando distinto del que ejecuta
+  el shell. **Reescribir el analizador para seguir el delimitador con retorno de carro**, tampoco: lo excluye la
+  autorización, que manda denegar en su lugar.
+
+**Consecuencias.**
+- (+) Un enlace corriente bajo `/dev/`, `/proc/self/root` o `/proc/self/cwd` hacia una zona protegida se juzga
+  como en cualquier otro sitio, y un proyecto situado bajo `/dev/` conserva CA-49 (i) y la existencia.
+- (+) Un destino de `Bash` cuyo nombre acaba en un retorno de carro se juzga con él, que es lo que el shell
+  escribe.
+- (+) El coste de QA-023-14 desaparece: medido por el desarrollador a nivel de hook, un `file_path` de 600 000
+  bytes con un retorno de carro final tarda 405 ms, como en `cd6afa6`, frente a 83 929 ms en `3bc7d3c`
+  (`evidencia-dev-r8/10-`). No acredita CA-54 (QA-023-10, abierto).
+- (−) **Compatibilidad, además de la de arriba:** se deniegan, entre otras (lista no exhaustiva; la declarada está en
+  REQ-007 CA-66, versionado de la octava autorización), una escritura a una zona protegida a través de un enlace o
+  un alias bajo `/dev/` o `/proc/`; por `Edit`, `Write` o `MultiEdit`, toda ruta que depende del proceso del host
+  —`Write /dev/stderr` incluido— a todo agente; por `Bash`, lo que depende del proceso y no se puede determinar, a
+  quien no es el agente de código; y un heredoc cuyo delimitador lleva un retorno de carro —también el legítimo de
+  un script CRLF— a todo agente, por `guard-completado`.
+- (−) **Los movimientos de `deny` a `allow` pasan de seis a ocho declarados:** a los de arriba se suman un destino
+  de `Bash` acabado en retorno de carro que con él ya no casa con el patrón que casaba sin él (`app/a.ts␍` con
+  `app/*.ts`) y `git reset --hard␍`, que git rechaza. **Otros dos no están declarados** —`git stash␍`, cuya
+  conducta depende de `help.autocorrect`, y, por lectura del código y sin medir, un enlace situado dentro de un ámbito
+  protegido que lleva a un descriptor— y quedan en REQ-007, P-122-A.
+- (−) **Límites declarados, sin promesa:** una cadena que sube con `..` por encima de la entrada de `/proc` desde la
+  que se resuelve no se ve; sin `/proc`, se resuelve desde donde esté el hook; a qué archivo apunta un descriptor
+  que el propio comando abrió antes de escribir en él no se mira; que el delimitador de heredoc sea el único sitio
+  donde el analizador no sigue el retorno de carro es una declaración del desarrollador, no una medición
+  exhaustiva; en Windows/MSYS la detección del transporte está emulada, no medida.
+- (=) Procesos: **no más de 0** añadidos fuera de la resolución del enlace del último componente; `> /dev/stderr`
+  sigue en 0 (CA-48 (i.1)).
+- (=) **Plataformas, limitado a lo ejecutado:** hook en Linux/WSL2; CLI 2.1.285 en WSL2 mediante `claude -p`; hook
+  en Windows/MSYS, en una máquina; sin comprobación de la extensión de VS Code, del CLI en Windows ni de otros
+  clientes. Describe dónde se ejecutaron los casos y no acredita toda la plataforma. Lo construido en esta adenda
+  sólo se ejerció a nivel de hook en Linux/WSL2; desde el host, no.
+- (=) Esta adenda no afirma que la reparación esté verificada.

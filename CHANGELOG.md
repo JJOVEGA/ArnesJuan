@@ -2,6 +2,21 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-02 · Octava autorización, write-back (analista): F3, CA-49, CA-47 (puntos 7, 11, 12 y nuevos 14 a 17) y CA-66 sobre `9220c71`; ADR-016, guía y notas con el texto de plataformas autorizado; P-122-A (dos movimientos de deny a allow no declarados) — SIN VALIDAR
+> Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` y la coordinadora.
+
+- **Sedes:**
+  - `requirements/REQ-007.md`: cabecera (`Versión destino` y `Archivos:` con la sección 45); nota de CA-24; CA-47 (F3 corregida, frase de las fronteras, puntos 7, 11 y 12, y puntos 14 a 17 nuevos); CA-49; CA-66 (versionado de la octava autorización); Preguntas abiertas; notas; Trazabilidad; Historial;
+  - ADR-016 (adenda), `skills/arnes-upgrade/SKILL.md`, la sección `[1.35.0]` de este archivo y `requirements/README.md`.
+- **Movimientos de deny a allow:**
+  - dos sostenidos por la propiedad y declarados;
+  - **dos no declarados, que son hallazgo** (CA-24): uno medido en la batería del desarrollador y otro hallado leyendo el código, sin medir. Quedan en **P-122-A**. Detalle en REQ-007 y en la evidencia `evidencia-dev-r8/`.
+- **Decisión de la coordinadora:**
+  - P-122-A va a QA para que lo mida, y se corrige en la **única pasada correctiva** que prevé la octava autorización, junto con lo que QA encuentre;
+  - que el `Write` a `/dev/stderr` se deniegue se considera compatible con la autorización: las redirecciones por shell a `/dev/null` y `/dev/stderr` siguen pasando.
+- **Registro sobre `9220c71`** (AGENTS.md §13): el desarrollador escribió por consola un bloque de `hooks/lib.sh` (script de Python) y un total del README del banco (`sed -i`), en lugar de usar la herramienta de edición. Lo declaró él mismo, y ninguna puerta midió esas dos escrituras.
+- **Avance (regla 6):** el contrato de la octava autorización queda escrito. Sigue QA.
+
 ## [Interno] — 2026-10-02 · Octava autorización, implementación (desarrollador): SEC-122 (las dos caras), QA-023-14 y P-023-13-A reparados a nivel de hook — ningún prefijo queda fuera de la identidad del destino y lo que depende del proceso que abre la ruta se detecta; la entrada se lee cruda y el CR de transporte sólo se retira si lo hay; el delimitador de heredoc con CR se deniega; sección 45 (1581 → 1741) — SIN VALIDAR
 > Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
 
@@ -809,8 +824,10 @@ REQ-025, REQ-028, REQ-024 (la mitad 2 de SEC-047) ni REQ-011.
   autorización del propietario, **CA-45 a CA-50, CA-60 y CA-66** versionados o nuevos: es el cambio de
   compatibilidad 4. Desde el 2026-10-01, por la sexta autorización, CA-47 gana la **integridad de la entrada**
   (puntos 11 a 13), CA-45 lo comprobado en el host y CA-54 una nota con su incumplimiento abierto (QA-023-10,
-  en las limitaciones de abajo). Estas notas no anticipan su estado ni sus firmas. REQ-023 CA-13 (iv) remite
-  a él.
+  en las limitaciones de abajo). Desde el 2026-10-02, por la séptima autorización, el retorno de carro de la
+  entrada se cuenta antes del transporte, y por la octava, F3 está corregida, CA-47 gana la dependencia del
+  proceso y el retorno de carro del texto de `Bash`, y CA-66 la sección 45 (SEC-122, QA-023-14, P-023-13-A).
+  Estas notas no anticipan su estado ni sus firmas. REQ-023 CA-13 (iv) remite a él.
 
 ### Qué recibe un consumidor al actualizar
 
@@ -965,22 +982,47 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
        `cand-1.35.0/evidencia-dev-r7/12-bateria-arbol-final.txt`): una escritura de la coordinadora por un
        enlace cuyo nombre acaba en retorno de carro, `Edit␍` que cierra un REQ en rojo, o `Bash␍` con un
        `file_path` en código protegido, salían permitidos. Desde el host, no ejercido.
-     - **Límite conocido, no protegido y no aceptado:** el texto de un comando de `Bash` sigue perdiendo en la
-       lectura su retorno de carro final y el que precede a un salto, y un destino cuyo nombre acaba así se
-       juzga sin él mientras el shell lo escribe con él. Medido a nivel de hook, una escritura de la
-       coordinadora a código protegido por un enlace con ese nombre sale permitida en este candidato y en
-       1.33.2 (`evidencia-dev-r7/14-sonda-command-cr-arbol-final.txt`). Preexistente; sede, REQ-007 CA-47,
-       punto 11; lo decide el propietario (REQ-007, P-023-13-A).
-   - **Qué pasa a permitirse, y son sólo seis casos** (REQ-007 CA-66, punto 5): una ruta relativa que
+     - **El texto de un comando de `Bash` llega con sus retornos de carro** (desde el 2026-10-02, octava
+       autorización; REQ-007 CA-47, puntos 11 y 17, por QA-023-15 / P-023-13-A). *Sustituye a la entrada
+       anterior de estas notas, que lo declaraba límite conocido, no protegido y no aceptado.* Hasta entonces la
+       lectura le quitaba el retorno de carro final y el que precede a un salto, y un destino cuyo nombre acaba
+       así se juzgaba sin él mientras el shell lo escribía con él: medido a nivel de hook, una escritura de la
+       coordinadora a código protegido por un enlace con ese nombre salía permitida en el candidato anterior y
+       en 1.33.2 (`evidencia-dev-r7/14-…` y `evidencia-dev-r8/02-`). Ahora se juzga con él, y donde la puerta no
+       puede seguir el retorno de carro como el shell —el delimitador de un heredoc— **deniega con motivo, a
+       todo agente**; también un heredoc legítimo con fines de línea CRLF. La salida: escribir el comando con
+       líneas acabadas sólo en salto de línea. La lectura de la entrada ya no recorre el valor para reponer
+       retornos de carro (QA-023-14): un `file_path` de 600 000 bytes con uno final pasa de 83 929 ms a 405 ms
+       (`evidencia-dev-r8/10-`). Desde el host, no ejercido.
+   - **Ningún directorio queda fuera de la identificación, y lo que depende del proceso que abre la ruta no
+     pasa por esa incertidumbre** (desde el 2026-10-02, octava autorización; REQ-007 CA-47, F3 y puntos 14 a
+     16, por SEC-122). Hasta entonces todo destino bajo `/dev/` o `/proc/` se juzgaba sólo por su texto: un
+     enlace corriente en `/dev/shm`, o `/proc/self/root` seguido de la ruta absoluta, cerraba un REQ en rojo o
+     escribía código protegido —también en 1.33.2—, y en un proyecto situado bajo `/dev/` el candidato dejaba
+     de denegar la escritura a través de un enlace dentro del proyecto. Ahora esos destinos se identifican como
+     cualquier otro; lo que depende del proceso se detecta, y por `Edit`, `Write` o `MultiEdit` —escribe el
+     host— se deniega **a todo agente**, `Write /dev/stderr` incluido. `> /dev/null` y `> /dev/stderr` por
+     `Bash` siguen pasando, sin excepción por su nombre. Medido a nivel de hook en Linux/WSL2; desde el host,
+     no ejercido.
+   - **Qué pasa a permitirse: ocho casos declarados** (REQ-007 CA-66, punto 5): una ruta relativa que
      casaba con una zona protegida sólo porque se leía desde la raíz cuando el directorio de trabajo era
      otro; un `Write` que cierra un REQ ilegible con todo en verde, porque se juzga entero; una ruta
-     equivalente al manifiesto mientras está ilegible; y tres rutas con `..` que casaban con una zona
+     equivalente al manifiesto mientras está ilegible; tres rutas con `..` que casaban con una zona
      protegida sólo por su texto y designan un archivo de fuera —`Write <raíz>/src/../README.md`,
      `echo x > src/../README.md` y un `sed -i` que menciona el estado terminal hacia
-     `requirements/../docs/x.md`—. Ninguno debilita una protección.
+     `requirements/../docs/x.md`—; y, desde el 2026-10-02 (octava autorización), un destino de `Bash` cuyo
+     nombre acaba en un retorno de carro y que con él ya no casa con el patrón que casaba sin él
+     (`printf x > app/a.ts␍` con `app/*.ts`) y `git reset --hard␍`, que git rechaza. Ninguno debilita una
+     protección. *(Hasta el 2026-10-02 esta entrada decía «sólo seis casos»; era falso en un proyecto situado
+     bajo `/dev/`, donde el candidato dejaba pasar la escritura a través de un enlace dentro del proyecto —SEC-122,
+     ya reparado—.)* **Hay dos más sin declarar, pendientes** (REQ-007, P-122-A): `git stash␍`, que con
+     `help.autocorrect` configurado para ejecutar git corregiría y ejecutaría, y, por lectura del código y sin
+     medir, una escritura por `Bash` a través de un enlace situado dentro de una zona protegida que lleva a un
+     descriptor. Estas notas no los dan por buenos.
    - **Qué se conserva:** por `Edit`/`Write`/`MultiEdit` no se escribe a través de un enlace situado dentro
-     del proyecto, sea cual sea su destino. La premisa de REQ-007 CA-49, «el arnés juzga la ruta escrita, no
-     su destino», queda superada.
+     del proyecto, sea cual sea su destino —también en un proyecto situado bajo `/dev/`, desde la octava
+     autorización—. La premisa de REQ-007 CA-49, «el arnés juzga la ruta escrita, no su destino», queda
+     superada.
    - **La salida:** cada motivo dice la causa y cómo corregirla, sin proponer otra herramienta.
    - **Por qué:** SEC-119 y O-11. La coordinadora lo midió en el CLI 2.1.285 con el hook anterior a la
      reparación: por un directorio enlazado a `requirements/`, un REQ `critico` con todo en rojo quedó
@@ -990,9 +1032,25 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      los normaliza antes.
    - **Fronteras, sin promesa** (lista no exhaustiva; la sede es REQ-007 CA-47): un cambio del sistema de
      archivos entre la decisión del hook y la escritura; un `cd` dentro del propio comando de `Bash`; enlaces
-     duros y montajes; sistemas que no distinguen mayúsculas; y Windows/MSYS, `MultiEdit` en el host, el
-     editor interactivo y otras versiones del CLI, que no se han ejercido. Las que la quinta autorización no
-     nombra están planteadas al propietario (REQ-007, P-119-A).
+     duros y montajes —**ningún** directorio, tampoco `/dev/` ni `/proc/`, queda fuera de la identificación—;
+     los límites de la detección de lo que depende del proceso (una cadena que sube con `..` por encima de la
+     entrada de `/proc` desde la que se resuelve; un sistema sin `/proc`); que el delimitador de un heredoc sea
+     el único sitio donde la puerta no sigue un retorno de carro, que es una declaración del desarrollador y no
+     una medición exhaustiva; sistemas que no distinguen mayúsculas; y Windows/MSYS, `MultiEdit` en el host, el
+     editor interactivo y otras versiones del CLI, que no se han ejercido para esta regla. Las que la quinta
+     autorización no nombra están planteadas al propietario (REQ-007, P-119-A).
+   - **Dónde se ejecutaron los casos** (texto autorizado por el propietario el 2026-10-02, octava autorización,
+     punto 5, limitado a los casos realmente ejecutados):
+     - hook en Linux/WSL2;
+     - CLI 2.1.285 en WSL2 mediante `claude -p`;
+     - hook en Windows/MSYS, en una máquina;
+     - sin comprobación de la extensión de VS Code, del CLI en Windows ni de otros clientes.
+
+     Esto describe dónde se ejecutaron los casos; no acredita toda la plataforma ni todos sus comportamientos.
+     Lo reparado por la octava autorización sólo se ejerció a nivel de hook en Linux/WSL2, y el hook en
+     Windows/MSYS sólo para la latencia de CA-54. La reparación agrupada tampoco garantiza por sí sola que el
+     candidato quede publicable: CA-54, SEC-115 y SEC-118, el hueco C y las fronteras restantes conservan sus
+     decisiones pendientes.
    - **Lo que no afirman estas notas:** que la reparación esté verificada. Sus veredictos y la validación en
      el host que exige REQ-007 CA-66 se registran en sus sedes.
 
@@ -1195,7 +1253,9 @@ ningún bloqueante:
   (REQ-023 CA-13, que además cierra el fail-open de SEC-117);
 - un `Edit`/`MultiEdit` que no toca el estado sobre un REQ que la puerta no puede leer entero, y una
   escritura cuyo destino la puerta no puede determinar (REQ-007 CA-45 y CA-47, que además cierran los
-  fail-open de O-11 y SEC-119).
+  fail-open de O-11 y SEC-119); desde la octava autorización, también un heredoc legítimo cuyo delimitador
+  lleva un retorno de carro y una escritura por `Edit`/`Write`/`MultiEdit` a una ruta que depende del proceso
+  del host, como `Write /dev/stderr` (REQ-007 CA-47, puntos 14 y 17, que además cierran SEC-122 y QA-023-15).
 
 Esa regla, aplicada a la letra, pediría una versión mayor.
 

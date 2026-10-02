@@ -1151,25 +1151,43 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
       directorio de trabajo lleva un retorno de carro —también fuera de las zonas protegidas—, o un
       `Edit`/`Write`/`MultiEdit` cuyo `file_path` lleva un salto de línea o un retorno de carro —sea cual sea
       la ruta y el agente: no está medido qué archivo escribiría la herramienta con ese argumento—.
+    - una escritura a una zona protegida a través de un enlace o un alias bajo `/dev/` o `/proc/` —un enlace en
+      `/dev/shm`, `/proc/self/root`, `/proc/self/cwd`—: **ningún directorio queda fuera** de la identificación, y
+      un proyecto situado bajo `/dev/` recibe las mismas reglas que en cualquier otro sitio;
+    - una ruta que **depende del proceso que la abre** y que la puerta no puede situar: por `Edit`, `Write` o
+      `MultiEdit`, toda ruta que pasa por el directorio de trabajo o por un descriptor del proceso del host
+      —`Write /dev/stderr` incluido—, **a todo agente**; por `Bash`, una ruta detrás de un descriptor, un
+      pseudoarchivo del proceso o `/proc/self/cwd/…` sin directorio de trabajo, a quien no es el agente de código.
+      `> /dev/null` y `> /dev/stderr` por `Bash` **siguen pasando**, sin excepción por su nombre;
+    - un comando de `Bash` con un heredoc cuyo delimitador lleva un retorno de carro —por ejemplo, el de un
+      script con fines de línea CRLF—, **a todo agente**: la puerta no puede saber dónde acaba el cuerpo.
     - Y la entrada del hook se lee **campo a campo**: un salto de línea dentro del directorio de trabajo, del
       agente o de la ruta ya no desplaza los demás campos ni hace juzgar otra cosa. El retorno de carro del
       directorio de trabajo, de la ruta y del nombre de la herramienta se cuenta antes de que la lectura lo
       pueda recortar, así que tampoco hace juzgar otro directorio, otra ruta u otra herramienta: lo que no se
-      puede determinar se deniega.
-  - **Lo que pasa a permitirse, y son sólo seis casos** (REQ-007 CA-66, punto 5, del arnés): una ruta
+      puede determinar se deniega. **Y el texto de un comando de `Bash` llega con sus retornos de carro:** un
+      destino cuyo nombre acaba en uno se juzga con él, que es el nombre que escribe el shell.
+  - **Lo que pasa a permitirse: ocho casos declarados** (REQ-007 CA-66, punto 5, del arnés): una ruta
     relativa que casaba con una zona protegida sólo porque se leía desde la raíz cuando el directorio de
     trabajo era otro; un `Write` que cierra un REQ ilegible con todo en verde, porque se juzga entero; una
-    ruta equivalente al manifiesto mientras está ilegible; y tres rutas con `..` que casaban con una zona
+    ruta equivalente al manifiesto mientras está ilegible; tres rutas con `..` que casaban con una zona
     protegida sólo por su texto y designan un archivo de fuera —por ejemplo, `src/../README.md` por `Write` o
-    por `Bash`—. Ninguno debilita una protección.
+    por `Bash`—; un destino de `Bash` cuyo nombre acaba en un retorno de carro y que con él ya no casa con el
+    patrón que casaba sin él —`app/a.ts␍` con `app/*.ts`—; y `git reset --hard␍`, que git rechaza. Ninguno
+    debilita una protección: todos designan lo que de verdad recibe el shell o git. **Hay dos más sin
+    declarar**, pendientes en el arnés (REQ-007, P-122-A): `git stash␍`, que con `help.autocorrect`
+    configurado para ejecutar git corregiría y ejecutaría, y, sin medir, una escritura por `Bash` a través de
+    un enlace situado dentro de una zona protegida que lleva a un descriptor.
   - **Lo que se conserva:** por `Edit`/`Write`/`MultiEdit` no se escribe a través de un enlace situado dentro
     del proyecto, sea cual sea su destino (entrada «Hacia 1.31.0»). Lo que esa entrada decía —«el arnés juzga
     la ruta escrita, no su destino»— **queda superado**: los directorios enlazados y los enlaces de fuera se
     resuelven.
   - **La salida:** cada motivo dice la causa y cómo corregirla —escribir por una ruta cuyos directorios
     existan y se puedan recorrer, sin saltos de línea ni retornos de carro, y absoluta si es el directorio de
-    trabajo el que lleva el retorno de carro; o dejar el REQ legible entero: quitar el NUL, guardarlo en UTF-8,
-    devolverle el permiso de lectura—.
+    trabajo el que lleva el retorno de carro; escribir la ruta del archivo por su nombre, sin pasar por la
+    entrada en `/proc` de un proceso ni por sus descriptores; escribir el comando con líneas acabadas sólo en
+    salto de línea; o dejar el REQ legible entero: quitar el NUL, guardarlo en UTF-8, devolverle el permiso de
+    lectura—.
   - **Sin eufemismo: las versiones anteriores pudieron dejar pasar escrituras protegidas por una ruta
     equivalente.** Reproducido en el CLI 2.1.285: por un directorio enlazado a `requirements/`, un REQ
     `critico` con todo en rojo quedó `completado`; por `Bash`, `..` creó código protegido desde la
@@ -1180,13 +1198,18 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     de código. Una escritura por esas vías no deja rastro que un comando pueda encontrar. Antes de
     actualizar, además: `find . -type l -not -path './.git/*'` para ver los enlaces del proyecto —en
     particular los directorios enlazados hacia zonas protegidas o desde ellas— y comprueba que ningún REQ
-    tenga un byte NUL ni esté en UTF-16: con esta versión no podrás editarlo hasta dejarlo legible.
+    tenga un byte NUL ni esté en UTF-16: con esta versión no podrás editarlo hasta dejarlo legible. Si tus
+    agentes generan comandos con fines de línea CRLF y heredocs, con esta versión se denegarán: conviértelos a
+    líneas acabadas sólo en salto de línea.
   - **Lo que NO cubre** (ejemplos **no exhaustivos**; la sede es REQ-007 CA-47 del arnés): un cambio del
     sistema de archivos entre la decisión del hook y la escritura; un `cd` dentro del propio comando de
-    `Bash`; el retorno de carro del texto de un comando de `Bash` —el final, o el que precede a un salto—, que
-    la lectura de la entrada sigue retirando, de modo que un destino cuyo nombre acaba así se juzga sin él;
-    enlaces duros y montajes; sistemas de archivos que no distinguen mayúsculas; y Windows/MSYS, `MultiEdit`
-    en el host y el editor interactivo, que no se han ejercido.
+    `Bash`; enlaces duros y montajes; los límites de la detección de lo que depende del proceso —una cadena que
+    sube con `..` por encima de la entrada de `/proc` desde la que se resuelve, o un sistema sin `/proc`—;
+    que el delimitador de un heredoc sea el único sitio donde la puerta no sigue un retorno de carro, que es una
+    declaración del arnés, no una medición exhaustiva; sistemas de archivos que no distinguen mayúsculas; y
+    Windows/MSYS, `MultiEdit` en el host y el editor interactivo, que no se han ejercido para esta regla
+    (plataformas en las notas de 1.35.0). El retorno de carro del texto de `Bash` ya **no** está en esta lista:
+    en esta versión llega a la puerta.
   - **Qué se migra de texto:** la **fila nueva de `AGENTS.md` §13** («las puertas juzgan el archivo que la
     escritura alcanzaría…»), los **puntos 2 y 3 de la cláusula que sigue a la tabla de §13** y el párrafo de
     **`requirements/README.md` § «Veredictos de validación»** que remite a REQ-007 CA-45. Cada uno va **por
