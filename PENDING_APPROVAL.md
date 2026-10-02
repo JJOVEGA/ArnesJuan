@@ -301,6 +301,35 @@
   - **Por qué:** el incumplimiento es real, pero retener 1.35.0 por él dejaría a los proyectos con una base que, en esta medición de Windows, sí agotaba el tiempo en el caso máximo.
   - **Lo que (A) no hace:** no acepta que un timeout deje pasar la operación. Ese riesgo sigue en la ficha 1, sin aceptar.
 
+**Decisión 10 — PENDIENTE (añadida el 2026-10-02): SEC-122, registrado por seguridad en R-046.**
+- **Qué es:** una exclusión de ciertas rutas de sistema en la identificación del destino deja sin aplicar parte de CA-47 y CA-49 en casos concretos.
+  - Una cara es **preexistente**.
+  - La otra es una **regresión frente a 1.33.2, introducida por `104ffd1`** (la reparación de SEC-119, quinta autorización), y sólo afecta a proyectos situados bajo esas rutas.
+  - No la introduce la séptima autorización.
+  - Detalle y evidencia: `docs/seguridad/registro-seguridad.md` § R-046 y `cand-1.35.0/evidencia-seg-r7/` (`d7da950`).
+- **Acción que impide (regla 2):**
+  - **publicar**, a juicio del auditor, mientras no decidas;
+  - **cerrar** REQ-007 (es `contrato`).
+  - **Evidencia:** R-046.
+  - **Qué lo resuelve:** tu decisión.
+- **Opciones:**
+  - **(A) Una vuelta acotada** que repare SEC-122 por la propiedad que fija R-046, con QA-023-14 dentro. **Lo recomiendan el auditor y la coordinadora.**
+    - **Consecuencia:** otra vuelta corta: analista, desarrollador, QA y seguridad.
+  - **(B) Declararlo como séptimo movimiento** y corregir F3, CA-49, CA-66 y las notas.
+    - **Consecuencia:** 1.35.0 publicaría una regresión frente a 1.33.2, contra la línea que mantuviste en QA-023-09 y QA-023-13.
+  - **(C) Retener la publicación** sin reparar.
+- **Además:** P-119-A no puede presentarse con el texto actual de F3 hasta que el analista lo corrija (R-046).
+
+**P-023-13-A — PENDIENTE (abierta por el analista el 2026-10-02; = QA-023-15, `instrumento`, preexistente en los cuatro árboles).** El texto del comando de `Bash` sigue perdiendo un CR en el transporte, y eso queda fuera de esta reparación, porque excluiste reescribir el analizador de `Bash`. Está declarado en CA-47 punto 11 como límite conocido, no protegido y **no aceptado**.
+- **Opciones:**
+  - **(A) Declararlo fuera de la promesa de 1.35.0.**
+  - **(B) Repararlo** en una vuelta propia.
+  - **(C) Llevarlo con P-119-A.**
+- **Recomendación del analista:** (A), sin que eso acepte nada.
+- **Recomendación de la coordinadora:** decidirlo junto con la decisión 10. Si eliges una vuelta para SEC-122, que ésta valore si cabe dentro sin reescribir el analizador.
+
+**QA-023-14** (`instrumento`, introducido por `3bc7d3c`; R-046 coincide): va con la **ficha 1**, como regresión de coste del candidato. Si se abre la vuelta de la decisión 10, se repara en ella.
+
 **Registrado, cerrado el 2026-09-30: QA-023-08** (`contrato`, baja, preexistente, contra REQ-007 CA-46 (b)). Lo cerró QA en la vuelta de la quinta autorización (`docs/qa/REQ-023.md` §9): CA-46 (b) está versionado y la puerta deniega todo `Edit`/`MultiEdit` sobre un REQ ilegible. *Texto original:* el criterio decía que con NUL en disco decide «la transición», y la puerta decidía si la edición menciona el estado terminal. Responsable: `analista-requerimientos` (write-back).
 
 - **Recomendación de la coordinadora (propuesta, no decisión):**

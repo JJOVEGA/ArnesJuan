@@ -9515,3 +9515,159 @@ Decide el propietario.
 - que la creación vuelva a juzgarse por fragmento.
 
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-045** (adenda **`R-045-A`**); último hallazgo **SEC-120**; próximos libres **R-046** y **SEC-121**.
+
+---
+
+## Revisión R-046 — **Determinación de seguridad del delta posterior a R-045-A** (quinta, sexta y séptima autorización): SEC-119 y O-11 (REQ-007 CA-45 y CA-47), QA-023-09 y QA-023-13; hallazgos abiertos que afectan a la publicación; no-regresión; firmas. `cand/1.35.0` @ `666d9f2` — 2026-10-02
+
+**Numeración.** Repetí el método: ramas locales y remotas, etiquetas y worktrees. `R-046` sólo aparecía como «próximo libre». **`SEC-121` no lo tomo:** está en uso como identificador **de ejemplo** —`requirements/README.md` § «Clases de hallazgo», REQ-006 CA-03 y el `CHANGELOG`— con la clase `instrumento`, y un hallazgo real con ese número y otra clase confundiría al lector. Tomo **`SEC-122`**. `SEC-121` queda reservado al ejemplo y nunca se asigna.
+
+**Base, alcance y orden de fases.**
+- **Cabeza:** `666d9f2`, local. En el árbol, `M docs/ESTADO.md` y `?? propuesta-v1.35.0/`; no los toqué.
+- **Código revisado:** `git diff 8745b3f 3bc7d3c -- hooks tools`: `hooks/lib.sh` (lectura de la entrada campo a campo, cuenta del CR, identidad del destino, `arnes_deny_enlace`, `arnes_deny_manifiesto_roto`, `arnes_cita_ruta`), `hooks/guard-codigo.sh`, `hooks/guard-completado.sh` y un comentario de `tools/arnes-paralelo.sh`. `git diff 3bc7d3c 666d9f2 -- hooks tools tests` está vacío: **el código ejecutable es el de `3bc7d3c`, el que validó QA sobre `fa070b7`.**
+- **Árbol de comparación de no-regresión:** `9596e39`, cuyo `hooks/` es idéntico al de `8745b3f` (el que acreditó R-045-A; `git diff` vacío).
+- **Autorizaciones**, leídas enteras en `PENDING_APPROVAL.md` § Resueltas: la quinta (SEC-119 y O-11), la sexta (QA-023-09/10/11) y la séptima (QA-023-13; 9b no autorizada). La que me aplica: «Si QA es favorable para la reparación, despacha seguridad conforme a las reglas vigentes», y la propiedad «las puertas deben juzgar la ruta real de la operación o denegar explícitamente cuando no puedan determinarla».
+- **Orden:** QA favorable para la reparación sobre `fa070b7` (`docs/qa/REQ-023.md` § «Vuelta excepcional de la séptima autorización»). `QA: aprobado` en REQ-023, REQ-031 y REQ-001 sobre `fa070b7`; `QA: pendiente` en REQ-007. No miré las quality gates ni corrí el banco: la evidencia de banco y gates es de QA.
+- **Instrucciones:** el `AGENTS.md` de este worktree.
+
+**Método.**
+- **Instrumento propio** (`lib-sonda.sh`, R-046): JSON `PreToolUse` contra el entrypoint real `hooks/guard.sh` de **cuatro árboles** materializados con `git archive` —el candidato (sha256 de `lib.sh` idéntico a `git show 3bc7d3c:hooks/lib.sh`), `9596e39`, `cd6afa6` y `v1.33.2`—. Salida vacía = allow. Linux/WSL2, bash 5, una corrida por punto.
+- **Evidencia** en el scratchpad de la sesión, `ev/`: `s1-devshm-proc.txt`, `s2-proyecto-en-devshm.txt`, `s2c.txt`, `s3-reparaciones.txt`, `s4-no-regresion.txt`, `s5-coste-cr.txt` y `campos/prueba.txt`.
+- **Punto de partida:** la evidencia de QA (`evidencia-qa-{sec119,r6,r7}/`), la del desarrollador y la del host (`sec119-base`, `sec119-v3`, `sec119-v3b`, `sec119-r6`). La reutilicé; no la tomé como prueba de lo que medí.
+- **Dos defectos de mi instrumento, detectados y repetidos; conservo las salidas defectuosas con el sufijo `INSTRUMENTO-DEFECTUOSO`:**
+  1. para emular el efecto de un `Edit` a través de un enlace usé `sed -i`, que sustituye el enlace por un archivo en vez de seguirlo; repetido escribiendo por la ruta, que sigue el enlace como la herramienta (`s2c.txt`);
+  2. tres filas de REQ-031 usaban `;` como separador, que la gramática no admite; repetidas con la coma.
+
+### 1. Lo reparado, dentro de su alcance
+
+| Hallazgo | Determinación | Lo medido por mí (candidato · `9596e39` · `cd6afa6` · 1.33.2) |
+|---|---|---|
+| **QA-023-13** (`cwd` con CR) | **Sin vía de permiso silencioso dentro de su alcance, a nivel de hook.** Un `cwd` con CR no ancla: la relativa es no determinable y se deniega con motivo, en las dos puertas. Lo que no depende del `cwd` se juzga como siempre | `echo > src/a.ts`, `sed -i` que cierra, `Edit` y `Write` relativos desde `<fuera>/d␍` (enlace a la raíz): deny · deny · **allow** · deny (el `Edit`, allow en 1.33.2). `Write` absoluto legítimo, `ls` y el `desarrollador`: allow en los cuatro |
+| `file_path` y `tool_name` con CR (CA-47 puntos 12 y 13) | **Conforme.** Se tratan como los del salto de línea | `Write <raíz>/docs/l␍` (enlace a `src/a.ts`), `Edit␍` que cierra y `Bash␍` con `file_path` en `src/`: **deny** · allow · allow · allow. `Write` legítimo: allow |
+| **QA-023-09** (`cwd` con LF) | **Conforme.** La entrada se lee campo a campo; ningún salto desplaza campos | `cwd` = `/tmp␊b` con cierre canónico, `Write` a `src/` y la edición no reconstruible: deny en los cuatro, con el motivo de la ruta canónica. `cwd` real con salto y `Write` legítimo: allow. `file_path` con LF: deny |
+| **O-11 / SEC-002** (REQ-007 CA-45) | **Sin vía de permiso silencioso.** Todo `Edit` sobre un REQ ilegible se deniega, toque o no el estado; `Write` se juzga entero | `Edit` sin estado sobre un REQ con NUL: **deny** · allow · deny · allow. `Write` que cierra en rojo sobre el ilegible: deny. `Write` que lo rehace sin cerrar: allow (la salida) |
+| **SEC-119** | **NO queda sin vía.** Las instancias registradas están reparadas; la propiedad no, por SEC-122 (§2). **`abierto` → `en-mitigación`** | `docs/../requirements/`, `././`, directorio enlazado dentro y fuera del proyecto, `printf > docs/../src/a.ts`, `sed -i docs/../requirements/…`: **deny** · allow · deny · allow. El movimiento declarado `Write src/../README.md`: allow. Creación legítima en directorios nuevos: allow. `..` sobre un directorio inexistente dentro del ámbito: deny (no determinable) |
+| **CA-60** (manifiesto roto) | **Conforme** | La reparación por la ruta canónica y por una equivalente pasa; `Write` a `src/` con el manifiesto roto, deny |
+
+**El motivo no hereda SEC-118.** Toda ruta citada pasa por `arnes_cita_ruta` (tope de 200 bytes, bytes no imprimibles escapados) o es una relativa de la identidad, acotada por `ARNES_ID_MAX` (4096). No encontré ningún motivo nuevo que interpole contenido sin tope.
+
+**Sin procesos nuevos en el camino común.** `cd -P` y `$PWD` son de bash; el único proceso nuevo es `readlink -f` cuando el último componente es un enlace (CA-49 (ii)), uno por destino y memorizado. Coincide con CA-47.
+
+### 2. SEC-122 — `contrato` (REQ-007) · **abierto** · severidad **media** · dueños `desarrollador` (identidad del destino, `hooks/lib.sh`) y `analista-requerimientos` (CA-47 F3, CA-49, CA-66 punto 5 y las notas)
+
+**La frontera F3 de CA-47 se implementa como «todo destino cuya lectura léxica cae bajo `/dev/` o `/proc/` no recibe identidad física», y eso es más ancho que su premisa.** F3 dice «identidades que no son resolución de nombres»; la exclusión alcanza también resolución de nombres corriente, y apaga otras reglas de la identidad.
+
+**El mecanismo** (`hooks/lib.sh`, `_arnes_id_calcula`): `case "$ARNES_ID_L/" in /dev/*|/proc/*) return 0 ;; esac`, **antes** de la lectura física. El destino sale con `ARNES_ID_E=ok` pero sin lectura física (`ARNES_ID_F` vacío), sin marca de enlace (`ARNES_ID_K=0`) y sin existencia (`ARNES_ID_X=0`). La pertenencia queda sólo a la lectura léxica, `arnes_deny_enlace` no ve el enlace y `guard-completado` lo toma por inexistente.
+
+**Cara (a) — preexistente.** Un destino bajo `/dev/` o `/proc/` que el sistema resuelve hasta el archivo protegido no lo juzga ninguna puerta. Medido a nivel de hook (`s1-devshm-proc.txt`), con el mismo veredicto en los cuatro árboles:
+- un enlace simbólico corriente creado bajo `/dev/shm` (un tmpfs que cualquier usuario puede escribir) hacia `requirements/` o `src/`: el cierre de un REQ en rojo por `Edit`, por `Write` y por `sed -i`, la edición no reconstruible de SEC-117 y una escritura de la coordinadora en `src/` salen **allow**;
+- `/proc/self/root` seguido de la ruta absoluta, y `/proc/self/cwd/…` por `Bash`: **allow**;
+- el control: **el mismo enlace creado fuera de `/dev`** se deniega en el candidato. La diferencia es el prefijo;
+- comprobado aparte que el shell escribe de verdad el archivo protegido por las dos vías.
+
+`/proc/self/…` es un ejemplo **declarado** de F3. El enlace bajo `/dev/shm` **no**: es resolución de nombres por un enlace simbólico, que la promesa de CA-47 nombra expresamente como cubierta. Sólo lo «declara» la frase de efecto de F3, «un destino cuya lectura léxica cae bajo `/dev/` o `/proc/` no se resuelve», que se apoya en una premisa falsa para ese caso.
+
+**Cara (b) — introducida por este delta (`104ffd1`), movimiento de `deny` a `allow` frente a lo publicado.** En un proyecto **situado bajo `/dev/`** (medido con la raíz en `/dev/shm`; `s2-proyecto-en-devshm.txt` y `s2c.txt`):
+- **CA-49 (i) deja de aplicarse.** Un `Edit` o `Write` a través de un enlace del **último** componente situado dentro del proyecto sale **allow** en el candidato y en `cd6afa6`, y **deny** en `9596e39` y en 1.33.2. Con el efecto emulado, el REQ en rojo queda cerrado con `QA: pendiente`. Lo mismo hacia `src/` en `guard-codigo`.
+- **Sobredenegación de lo legítimo.** Un `Edit` literal sobre un REQ que existe se deniega con el motivo «el archivo no existe y esta llamada no es una creación»: allow en `9596e39` y 1.33.2. `Write` sigue funcionando.
+- Los directorios enlazados de SEC-119 siguen sin juzgarse en ese proyecto, como en lo publicado.
+- El mismo proyecto fuera de `/dev`: las tres cosas deciden bien.
+
+**Qué contradice:**
+- **CA-66 punto 5:** su lista cerrada de seis movimientos de `deny` a `allow` no incluye éste;
+- **CA-49 (i)** y las notas de 1.35.0 («Qué se conserva: … no se escribe a través de un enlace situado dentro del proyecto, sea cual sea su destino»): no se conserva en ese proyecto;
+- **la promesa de CA-47:** «dos rutas que designan el mismo archivo por resolución de nombres —… los enlaces simbólicos— reciben el mismo veredicto»;
+- **la frase de CA-47** «sin que ninguna parte de la implementación dependa de ellas» (de F2, F3, F5 y F7): la implementación sí depende de F3;
+- **la lista de fronteras de las notas,** que no menciona la exclusión de `/dev/` y `/proc/`.
+
+**Por qué `contrato` y media.**
+- **`contrato` en REQ-007:** el texto promete más de lo que el código hace, en la dirección que abre, y la cara (b) es un movimiento no declarado. No lo registro en REQ-023 aparte: SEC-119, que sigue en su campo, remite aquí.
+- **Severidad media**, por realismo, no por efecto, que es total en las dos puertas:
+  - la cara (a) exige crear el enlace a propósito o conocer `/proc/self/root`: es evasión deliberada, la misma clase que el hueco C, que ya da a un agente decidido una vía más barata;
+  - la cara (b) exige un proyecto que viva bajo `/dev/` (raro, pero hay quien trabaja en `/dev/shm` por velocidad) y un enlace en el último componente hacia un archivo protegido, que sí puede existir por descuido.
+
+**Remediación, por propiedad:** *un destino que el sistema de archivos resuelve por nombres se identifica como cualquier otro, también bajo `/dev/` o `/proc/`; lo que se deja fuera de la resolución es sólo lo que no es resolución de nombres, y dejarlo fuera no desactiva ninguna otra regla de la identidad —el enlace del último componente, la existencia, la lectura física—; y un destino cuya identidad depende del proceso que lo abre no recibe permiso silencioso cuando puede designar un archivo del ámbito.* Lo legítimo bajo `/dev` (`> /dev/null`, `> /dev/stderr`, que hoy pasan) tiene que seguir pasando. La técnica es del desarrollador.
+
+**Write-back exigido (§9), por el `analista-requerimientos`:** F3 con su premisa corregida y su alcance real; CA-66 punto 5 con el movimiento declarado o reparado; la frase sobre la dependencia de F3; las notas («Qué se conserva» y las fronteras). **P-119-A no puede presentarse al propietario con el texto actual de F3:** decidiría aceptar una frontera cuyo enunciado no dice que deja pasar enlaces simbólicos corrientes ni que apaga CA-49 (i) en un proyecto bajo `/dev/`.
+
+**Forzador:** la decisión de publicación de 1.35.0; la respuesta a P-119-A; una comisión que toque `_arnes_id_calcula`. **Vencimiento propuesto:** la decisión de publicación. **No aceptado.** **Desde el host, no ejercido.**
+
+### 3. Hallazgos abiertos que afectan a la publicación
+
+- **QA-023-14** (`instrumento`; lo introduce `3bc7d3c`). **Coincido con QA en la clase y en que va con la ficha 1. No es una regresión de la propiedad que impida publicar por sí sola.**
+  - **Reproducido** (`s5-coste-cr.txt`, `Write` con un `file_path` de N bytes más un CR, y `Bash` con un `tool_input.file_path` igual): con 100 000 bytes, 2,8 y 3,1 s frente a 0,1 y 0,3 s de `cd6afa6`; con 200 000, 10,3 y 11,6 s frente a 0,2 y 0,8 s. Crece más que linealmente.
+  - **Por qué no lo subo:** por `Edit`/`Write`, un `file_path` de más de 4096 bytes no lo abre ninguna herramienta en Linux, así que un hook muerto por tiempo deja pasar una operación que falla; un `tool_name` así no existe; y la única vía con efecto, un `Bash` con un `tool_input.file_path` extra, exige que el host entregue una clave fuera de su esquema. En el host observado, el `tool_input` llegó con sólo las claves del esquema y en su orden (R-045-A §1 (e)): es una inferencia, no un ensayo.
+  - **Lo que sí exijo:** que la ficha 1 lo nombre como **regresión de coste introducida por el candidato**, que las notas lo declaren si se publica sin reparar, y que, **si se abre otra vuelta por otra causa —SEC-122—, se repare en ella**, porque está en el mismo punto de lectura y su arreglo es barato.
+- **QA-023-15 = P-023-13-A** (`instrumento`, preexistente en los cuatro árboles). **Coincido.** Es evasión deliberada (un enlace cuyo nombre acaba en CR) y está declarada con verdad en CA-47 punto 11. La decide el propietario en P-023-13-A.
+- **SEC-120.** **Sin cambio de conducta:** un `MultiEdit` malformado y un `Edit` de cierre con 10 001 niveles de anidamiento salen allow en los cuatro árboles. `arnes_parse_input` vacía ahora los campos si `jq` falla, en lugar de repartir una salida anterior; sigue sin decidir. No se reparó con SEC-119: **vence el 2026-10-29.** No aceptado.
+- **QA-023-10, sólo en lo que toca a seguridad.** El riesgo de agotar el tiempo límite y salir sin decisión es la clase de SEC-115 (ficha 1, no aceptada). En la única medición en Windows/MSYS (`sec-ca54-win/`, `c51c5c7`), el candidato deja un margen de unas 2,1 veces y `9596e39` agotó el límite en las 15 corridas. **El candidato no abre ningún fail-open nuevo en esa vía; tampoco lo cierra**, y un margen de 2,1 veces en una máquina no es una garantía. Si el propietario elige 9b (A), las notas tienen que dar las cifras de las dos plataformas y remitir el riesgo de tiempo a la ficha 1, sin presentarlo como aceptado.
+- **SEC-115 y SEC-118.** Sin cambio: un `QA:` de 140 KB sin paréntesis sale allow en los tres árboles medidos. No aceptados.
+
+### 4. No-regresión sobre R-045 y R-045-A (por muestreo, `s4-no-regresion.txt`)
+
+**El candidato decide igual que `9596e39` en todas las filas:**
+- **REQ-023 / SEC-047 mitad 1:** el NBSP en `Sensible a seguridad` con `Rigor: ligero`, el BOM delante de `Hallazgos abiertos:`, una variante `- Estado: …` y `QA:` repetida deniegan; el control en verde cierra;
+- **REQ-031:** un `contrato`, `instrumento` + `contrato`, texto tras el paréntesis, un hallazgo sin clase, el campo repetido y el campo por encima de 16 384 bytes deniegan; sólo `instrumento` cierra;
+- **REQ-001 CA-10/11/12 versionados:** la edición no reconstruible y la de un REQ inexistente deniegan; la creación en rojo deniega; la cola impide cerrar y no impide reabrir;
+- **SEC-117:** el `old_string` con el escape literal deniega, y la edición literal legítima pasa (`s3`).
+
+### 5. Firmas y cobertura
+
+- **REQ-023: `Seguridad: aprobado (R-046, …)`.** Extiende al código de `3bc7d3c` la cobertura de R-045-A sobre CA-01 a CA-13.
+  - En `Hallazgos abiertos:`, SEC-119 pasa a «en mitigación» con su residuo SEC-122 (en REQ-007), y SEC-120 lleva su vencimiento. SEC-118 no cambia.
+  - **No es aprobación por agotamiento:** no tengo abierto en REQ-023 ningún hallazgo `contrato` ni `usuario/dinero`.
+- **REQ-031: `Seguridad: aprobado (R-046, …)`**, extendido al código final. Queda SEC-115.
+- **REQ-001: `Seguridad: aprobado (R-046, …)`**, extendido al código final. **No cierro nada:** el `Estado:` no es mío.
+- **REQ-007: `Seguridad: pendiente (R-046, …)`.** Determino conforme la reparación de QA-023-13, la de QA-023-09, el CR en `file_path` y `tool_name`, CA-45 y las instancias registradas de SEC-119. **Añado SEC-122 (`contrato`)** a `Hallazgos abiertos:`. La firma no procede: QA pendiente, bloques B y C sin rendir y hallazgos `contrato` abiertos.
+- **Sin veto.** El `contrato` de SEC-122 ya impide cerrar REQ-007 por máquina, y no toca los criterios de REQ-023, REQ-031 ni REQ-001. **La publicación es otra acción:** §7.
+- **Rigor:** los cuatro ya son `critico`.
+- **Comprobación previa** con la puerta real sobre una copia (`campos/prueba.txt`), con la instalada (1.33.2) y con la del candidato:
+  - las siete ediciones se permiten sin aviso de vocabulario;
+  - `tools/arnes-lectura.sh` lee los cuatro REQ sin valores anómalos (rc 0);
+  - un cierre simulado con veredictos en verde y la cola vacía pasa en REQ-023, REQ-031 y REQ-001, y se deniega en REQ-007, también con sólo SEC-122 en su campo, que se lee como `contrato`.
+
+**Lo que acredita mi firma:** la revisión de seguridad, a nivel de hook en Linux/WSL2, del código ejecutable de `3bc7d3c` para los criterios de esos REQ, más la reutilización de la validación en el host de la coordinadora (CLI 2.1.285, WSL2) para SEC-117 y para las instancias de SEC-119 y QA-023-09 que ella ejerció.
+
+**Lo que NO acredita:**
+- las quality gates, el banco ni el CI (no hay CI sobre `666d9f2`);
+- Windows/MSYS, salvo como cita de la medición de latencia de la coordinadora;
+- el caso del retorno de carro en el host, que no se ejerció;
+- `MultiEdit` y el escape `\uXXXX` en el host, el editor interactivo y otras versiones del CLI;
+- SEC-115, SEC-118, SEC-120, el hueco C, P-119-A, P-023-13-A ni SEC-122.
+
+### 6. Impedimentos de publicación que veo
+
+1. **SEC-122, cara (b)** — `contrato`, **introducido por este candidato** (`104ffd1`). Es un movimiento de `deny` a `allow` frente a 1.33.2 que el propietario no ha visto: con la línea que mantuvo en QA-023-09 y QA-023-13, **impide publicar hasta que él decida**.
+   - **Decisión que requiere:**
+     - (A) una vuelta acotada que lo repare por la propiedad del §2, con QA-023-14 dentro;
+     - (B) declararlo como séptimo movimiento y corregir F3, CA-49, CA-66 y las notas, publicando con la limitación escrita;
+     - (C) retener.
+   - **Mi recomendación: (A).** El remedio está en un solo sitio y la cara (b) es una regresión.
+2. **SEC-122, cara (a)** — preexistente. No impide por sí sola, pero **P-119-A no puede decidirse con el texto actual de F3**: hace falta el write-back del §2 antes de presentarla.
+3. **Lo que ya estaba pendiente**, sin cambio por esta revisión y sin aceptar: ficha 1 (SEC-115 y SEC-118, a la que se suma QA-023-14), ficha 2 (hueco C), P-119-A, P-023-13-A y 9b (QA-023-10).
+
+### 7. Estado tras R-046
+
+| Hallazgo | Clase | Estado | Dueño | ¿Bloquea algún cierre? |
+|---|---|---|---|---|
+| `SEC-117` | `instrumento` | `mitigado` (sin regresión, §4) | — | No |
+| **`SEC-119`** | `instrumento` | **`en-mitigación`**: instancias registradas reparadas; residuo SEC-122 | `desarrollador` + `analista-requerimientos` | No |
+| **`SEC-122`** | **`contrato`** (REQ-007) | **`abierto`**, no aceptado | `desarrollador` + `analista-requerimientos` | REQ-007 (que ya no cerraba) |
+| `SEC-120` | `instrumento` | `abierto`, vence 2026-10-29 | `desarrollador` | No |
+| `SEC-118` | `instrumento` | `abierto`, ficha 1 | `desarrollador` + `analista-requerimientos` | No |
+| `SEC-115` | `instrumento` | `abierto`, ficha 1 (+ QA-023-14) | `desarrollador` + `analista-requerimientos` | No |
+| `SEC-047` | `instrumento` | `en-mitigación` (mitad 2 = REQ-024) | `analista-requerimientos` + `desarrollador` | No |
+| `SEC-002` (O-11) | `instrumento` | **mitigado en el candidato** por REQ-007 CA-45 (sin publicar) | — | No |
+| `QA-023-13` | de QA | cerrado por QA; **conforme** | — | — |
+| `QA-023-14` | `instrumento` | de QA, abierto; con la ficha 1 | `desarrollador` | No |
+| `QA-023-15` | `instrumento` | de QA, abierto; P-023-13-A | `desarrollador` / `analista-requerimientos` | No |
+
+**Estado de seguridad aprobado de REQ-023, REQ-031 y REQ-001** (línea base de no-regresión): el de R-045-A, sobre el código de `3bc7d3c`.
+
+**Regresiones a vigilar** (no exhaustivo):
+- cualquier atajo textual que decida que un destino está **fuera** sin identidad física;
+- una lectura de la entrada que vuelva a trocear por líneas o a juzgar un campo después del transporte;
+- un motivo que cite una ruta sin `arnes_cita_ruta`;
+- una excepción por prefijo que desactive el enlace del último componente o la existencia.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-046**; último hallazgo **SEC-122** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-047** y **SEC-123**.

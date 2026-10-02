@@ -2,6 +2,24 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-02 · Séptima autorización: determinación de seguridad R-046 sobre `666d9f2` (código de `3bc7d3c`) — QA-023-13, QA-023-09, O-11 y el CR conformes; REQ-023, REQ-031 y REQ-001 `Seguridad: aprobado` sobre el código final; SEC-119 en mitigación; SEC-122 nuevo (`contrato` en REQ-007); decisiones 10 y P-023-13-A en la cola
+> Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `auditor-seguridad` y la coordinadora. Unos 327 k tokens en la comisión de seguridad (cifra del arnés).
+
+- **R-046** (`docs/seguridad/registro-seguridad.md`; evidencia en `cand-1.35.0/evidencia-seg-r7/`, `d7da950`):
+  - **Conformes:** QA-023-13, QA-023-09, `file_path` y nombre de herramienta con CR, y O-11 (mitigado en el candidato).
+  - **Sin regresión** sobre lo acreditado por R-045 y R-045-A, comprobado por muestreo.
+  - **SEC-119** pasa a «en mitigación»: sus instancias deniegan, pero su propiedad queda incumplida por SEC-122.
+- **SEC-122, nuevo** (`contrato` en REQ-007, severidad media): una cara es preexistente y la otra es una regresión frente a 1.33.2 introducida por `104ffd1`. **A juicio del auditor, impide publicar hasta que decida el propietario.**
+- **QA-023-14:** va con la ficha 1. QA-023-15 (= P-023-13-A) queda para el propietario.
+- **Campos:**
+  - REQ-023, REQ-031 y REQ-001: `Seguridad: aprobado (R-046 …)`, extendido al código final;
+  - REQ-007: `Seguridad: pendiente`, con SEC-122 en `Hallazgos abiertos:`.
+
+  Sin veto ni cambio de rigor.
+- **Qué no acredita la firma:** CI, Windows/MSYS, el caso CR en el host, SEC-115, SEC-118, SEC-120, C, P-119-A, P-023-13-A ni SEC-122.
+- **Cola:** decisión 10 (SEC-122), P-023-13-A y QA-023-14 con la ficha 1.
+- **Avance (regla 6):** la reparación de QA-023-13 tiene QA y seguridad favorables. Falta el CI de la cabeza final y la decisión del propietario sobre lo que queda pendiente.
+
 ## [Interno] — 2026-10-02 · Séptima autorización: QA sobre `fa070b7` FAVORABLE para la reparación de QA-023-13 (cerrado a nivel de hook, sin regresión); QA-023-14 y QA-023-15 abiertos (`instrumento`); decisión 9b preparada con la comprobación en Windows/MSYS
 > Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (lanzado con Opus, §5) y la coordinadora. Unos 434 k tokens en la comisión de QA (cifra del arnés).
 
