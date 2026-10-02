@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-02 · Octava autorización, write-back de la pasada correctiva (analista): QA-023-16, QA-023-17 y P-122-A reparados en REQ-007 (CA-24 nota, CA-47 puntos 11 y 15, CA-66); la enumeración cerrada pasa a regla; ADR-016, guía y notas — SIN VALIDAR
+> Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `analista-requerimientos`.
+
+- **Contenido:**
+  - contrastado con `evidencia-dev-r8b/` (`8b497c8`) y con el informe de QA;
+  - de deny a allow quedan sólo las seis clases del 2026-09-30 y la de K6;
+  - el CR en medio de una orden de git queda declarado como allow→deny dentro del alcance;
+  - P-122-A queda resuelta, y la única pregunta abierta es P-119-A.
+- **Sin medir:** el coste de la copia sin CR de `guard-git`. Que sea lineal y sin procesos se sostiene leyendo el código.
+- **Avance (regla 6):** el contrato de la pasada correctiva queda escrito. Sigue la re-verificación de QA.
+
 ## [Interno] — 2026-10-02 · Octava autorización, pasada correctiva única (desarrollador): P-122-A (1), QA-023-16 y QA-023-17 reparados a nivel de hook — `guard-git` juzga también sin el CR pegado a las palabras de una orden de git; la ruta de un enlace a un descriptor se juzga por las tres vías de CA-47, punto 6; sección 45 (1741 → 1787) — SIN VALIDAR
 > Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
 
@@ -866,7 +877,8 @@ REQ-025, REQ-028, REQ-024 (la mitad 2 de SEC-047) ni REQ-011.
   (puntos 11 a 13), CA-45 lo comprobado en el host y CA-54 una nota con su incumplimiento abierto (QA-023-10,
   en las limitaciones de abajo). Desde el 2026-10-02, por la séptima autorización, el retorno de carro de la
   entrada se cuenta antes del transporte, y por la octava, F3 está corregida, CA-47 gana la dependencia del
-  proceso y el retorno de carro del texto de `Bash`, y CA-66 la sección 45 (SEC-122, QA-023-14, P-023-13-A).
+  proceso y el retorno de carro del texto de `Bash`, y CA-66 la sección 45 (SEC-122, QA-023-14, P-023-13-A),
+  con su pasada correctiva (QA-023-16, QA-023-17).
   Estas notas no anticipan su estado ni sus firmas. REQ-023 CA-13 (iv) remite a él.
 
 ### Qué recibe un consumidor al actualizar
@@ -1044,21 +1056,27 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      host— se deniega **a todo agente**, `Write /dev/stderr` incluido. `> /dev/null` y `> /dev/stderr` por
      `Bash` siguen pasando, sin excepción por su nombre. Medido a nivel de hook en Linux/WSL2; desde el host,
      no ejercido.
-   - **Qué pasa a permitirse: ocho casos declarados** (REQ-007 CA-66, punto 5): una ruta relativa que
-     casaba con una zona protegida sólo porque se leía desde la raíz cuando el directorio de trabajo era
-     otro; un `Write` que cierra un REQ ilegible con todo en verde, porque se juzga entero; una ruta
-     equivalente al manifiesto mientras está ilegible; tres rutas con `..` que casaban con una zona
-     protegida sólo por su texto y designan un archivo de fuera —`Write <raíz>/src/../README.md`,
-     `echo x > src/../README.md` y un `sed -i` que menciona el estado terminal hacia
-     `requirements/../docs/x.md`—; y, desde el 2026-10-02 (octava autorización), un destino de `Bash` cuyo
-     nombre acaba en un retorno de carro y que con él ya no casa con el patrón que casaba sin él
-     (`printf x > app/a.ts␍` con `app/*.ts`) y `git reset --hard␍`, que git rechaza. Ninguno debilita una
-     protección. *(Hasta el 2026-10-02 esta entrada decía «sólo seis casos»; era falso en un proyecto situado
-     bajo `/dev/`, donde el candidato dejaba pasar la escritura a través de un enlace dentro del proyecto —SEC-122,
-     ya reparado—.)* **Hay dos más sin declarar, pendientes** (REQ-007, P-122-A): `git stash␍`, que con
-     `help.autocorrect` configurado para ejecutar git corregiría y ejecutaría, y, por lectura del código y sin
-     medir, una escritura por `Bash` a través de un enlace situado dentro de una zona protegida que lleva a un
-     descriptor. Estas notas no los dan por buenos.
+   - **Qué pasa a permitirse: siete clases de casos, y sólo ésas** (REQ-007 CA-66, punto 5, que lo enuncia
+     como regla: cualquier otro movimiento de `deny` a `allow` es un hallazgo): una ruta relativa que casaba con
+     una zona protegida sólo porque se leía desde la raíz cuando el directorio de trabajo era otro; un `Write`
+     que cierra un REQ ilegible con todo en verde, porque se juzga entero; una ruta equivalente al manifiesto
+     mientras está ilegible; tres rutas con `..` que casaban con una zona protegida sólo por su texto y
+     designan un archivo de fuera —`Write <raíz>/src/../README.md`, `echo x > src/../README.md` y un `sed -i`
+     que menciona el estado terminal hacia `requirements/../docs/x.md`—; y, desde el 2026-10-02 (octava
+     autorización), un destino de `Bash` cuyo nombre acaba en un retorno de carro y que con él ya no casa con el
+     patrón que casaba sin él (`printf x > app/a.ts␍` con `app/*.ts`). Ninguno debilita una protección. *(Hasta
+     el 2026-10-02 esta entrada decía «sólo seis casos», falso en un proyecto situado bajo `/dev/` —SEC-122, ya
+     reparado—; y antes de la pasada correctiva de la octava autorización decía «ocho», con `git reset --hard␍`,
+     y dejaba dos pendientes sin declarar: esa enumeración era falsa —QA midió además cuatro órdenes como
+     `git checkout .␍` en `allow` sin declarar, QA-023-16—, y la pasada devuelve todas a `deny`.)*
+   - **Una orden de git con un retorno de carro se juzga también sin él** (desde la pasada correctiva de la
+     octava autorización; REQ-007 CA-47, punto 11). Lo que git haga con ella depende de su configuración: QA
+     midió con git 2.53.0 que, con `help.autocorrect`, `git stash␍` se corrige y se ejecuta. Por eso
+     `git stash␍`, `git reset --hard␍` o `git checkout .␍` se deniegan como sin el retorno de carro, y también
+     una orden con el retorno de carro en medio, como `git clean␍ -f`, que hasta 1.33.2 se permitía. Y un enlace
+     dentro de una zona protegida que lleva a un descriptor (`src/log` → `/dev/stderr`) se juzga por su ruta,
+     como cualquier enlace (REQ-007 CA-47, punto 15). Medido a nivel de hook en Linux/WSL2; desde el host, no
+     ejercido.
    - **Qué se conserva:** por `Edit`/`Write`/`MultiEdit` no se escribe a través de un enlace situado dentro
      del proyecto, sea cual sea su destino —también en un proyecto situado bajo `/dev/`, desde la octava
      autorización—. La premisa de REQ-007 CA-49, «el arnés juzga la ruta escrita, no su destino», queda

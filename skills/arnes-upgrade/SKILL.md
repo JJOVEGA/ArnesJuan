@@ -1167,17 +1167,19 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
       pueda recortar, así que tampoco hace juzgar otro directorio, otra ruta u otra herramienta: lo que no se
       puede determinar se deniega. **Y el texto de un comando de `Bash` llega con sus retornos de carro:** un
       destino cuyo nombre acaba en uno se juzga con él, que es el nombre que escribe el shell.
-  - **Lo que pasa a permitirse: ocho casos declarados** (REQ-007 CA-66, punto 5, del arnés): una ruta
-    relativa que casaba con una zona protegida sólo porque se leía desde la raíz cuando el directorio de
-    trabajo era otro; un `Write` que cierra un REQ ilegible con todo en verde, porque se juzga entero; una
-    ruta equivalente al manifiesto mientras está ilegible; tres rutas con `..` que casaban con una zona
-    protegida sólo por su texto y designan un archivo de fuera —por ejemplo, `src/../README.md` por `Write` o
-    por `Bash`—; un destino de `Bash` cuyo nombre acaba en un retorno de carro y que con él ya no casa con el
-    patrón que casaba sin él —`app/a.ts␍` con `app/*.ts`—; y `git reset --hard␍`, que git rechaza. Ninguno
-    debilita una protección: todos designan lo que de verdad recibe el shell o git. **Hay dos más sin
-    declarar**, pendientes en el arnés (REQ-007, P-122-A): `git stash␍`, que con `help.autocorrect`
-    configurado para ejecutar git corregiría y ejecutaría, y, sin medir, una escritura por `Bash` a través de
-    un enlace situado dentro de una zona protegida que lleva a un descriptor.
+  - **Lo que pasa a permitirse: siete clases de casos, y sólo ésas** (REQ-007 CA-66, punto 5, del arnés,
+    que lo enuncia como regla): una ruta relativa que casaba con una zona protegida sólo porque se leía desde la
+    raíz cuando el directorio de trabajo era otro; un `Write` que cierra un REQ ilegible con todo en verde,
+    porque se juzga entero; una ruta equivalente al manifiesto mientras está ilegible; tres rutas con `..` que
+    casaban con una zona protegida sólo por su texto y designan un archivo de fuera —por ejemplo,
+    `src/../README.md` por `Write` o por `Bash`—; y un destino de `Bash` cuyo nombre acaba en un retorno de
+    carro y que con él ya no casa con el patrón que casaba sin él —`app/a.ts␍` con `app/*.ts`—. Ninguno debilita
+    una protección: todos designan lo que de verdad escribe el shell.
+  - **Una orden de git con un retorno de carro se juzga también sin él:** `git stash␍`, `git reset --hard␍`,
+    `git checkout .␍` o `git clean␍ -f` se deniegan como sin el retorno de carro, porque lo que git haga con
+    ellos depende de una configuración que la puerta no lee —con `help.autocorrect`, `git stash␍` y
+    `git clean␍ -f` se corrigen y se ejecutan—. Si tus agentes escriben comandos con fines de línea CRLF,
+    conviértelos.
   - **Lo que se conserva:** por `Edit`/`Write`/`MultiEdit` no se escribe a través de un enlace situado dentro
     del proyecto, sea cual sea su destino (entrada «Hacia 1.31.0»). Lo que esa entrada decía —«el arnés juzga
     la ruta escrita, no su destino»— **queda superado**: los directorios enlazados y los enlaces de fuera se

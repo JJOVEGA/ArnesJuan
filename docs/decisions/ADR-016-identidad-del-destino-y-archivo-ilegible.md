@@ -314,3 +314,28 @@ explícitamente, sin reescribir el analizador general.
   clientes. Describe dónde se ejecutaron los casos y no acredita toda la plataforma. Lo construido en esta adenda
   sólo se ejerció a nivel de hook en Linux/WSL2; desde el host, no.
 - (=) Esta adenda no afirma que la reparación esté verificada.
+
+**Precisión de la pasada correctiva (2026-10-02, `befc17a`) — manda sobre las consecuencias de esta adenda en lo que
+toca.** La octava autorización prevé una pasada correctiva para los defectos de su mismo alcance, y QA encontró tres
+(`docs/qa/REQ-023.md` § «Vuelta excepcional de la octava autorización»): QA-023-16 —la enumeración «seis más dos» era
+falsa sobre lo construido: `git checkout .␍`, `git restore .␍` y dos formas más salían `allow` sin declarar—,
+QA-023-17 —el enlace dentro de un ámbito protegido hacia un descriptor salía `allow` por `Bash`— y P-122-A (1)
+—QA midió que con `help.autocorrect` git corrige `git stash␍` y lo ejecuta—.
+- **Decisión 6, nueva:** `guard-git` juzga cada orden con sus retornos de carro **y** sin ellos, y deniega si
+  cualquiera de las dos lecturas casa; la copia sólo añade denegaciones. Lo que git haga con una orden que lleva un
+  retorno de carro depende de una configuración que la puerta no lee, y la autorización manda denegar cuando el
+  análisis no puede preservar el significado. *Alternativa descartada:* reparar sólo `git stash␍` y declarar
+  como movimientos `git reset --hard␍` y las órdenes de QA-023-16, que git rechaza en las dos configuraciones
+  medidas por QA; la regla uniforme sólo añade denegaciones y no obliga a saber qué palabras corrige git.
+- **Decisión 2, precisada:** la ranura de un descriptor no aporta pertenencia, pero la ruta escrita por la que se
+  llega a él se juzga por las tres vías de REQ-007 CA-47, punto 6, como la de cualquier enlace.
+- **Consecuencias que cambian:** los movimientos de `deny` a `allow` **no** pasan de seis a ocho: a las seis clases
+  de arriba se suma **una**, la del destino de `Bash` acabado en retorno de carro que con él ya no casa con el patrón
+  (`app/a.ts␍` con `app/*.ts`). `git reset --hard␍` vuelve a `deny`, y ya no queda ningún movimiento sin declarar.
+  REQ-007 CA-66 lo enuncia como regla, no como inventario: un movimiento de `deny` a `allow` fuera de esas clases es
+  un hallazgo. **Compatibilidad, además:** se deniega toda orden de git que sin sus retornos de carro está
+  prohibida, también con el retorno de carro en medio (`git clean␍ -f`), que lo publicado permitía y que con
+  `help.autocorrect` git ejecuta. El límite que queda: dos lecturas no reproducen lo que git haría con cualquier
+  palabra mal escrita, que es el límite de siempre de una lista que compara palabras.
+- (=) Sin procesos nuevos, desde el host no ejercido, y sin afirmar que la pasada esté verificada: falta la
+  re-verificación de QA.
