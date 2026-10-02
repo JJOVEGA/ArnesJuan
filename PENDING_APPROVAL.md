@@ -36,10 +36,10 @@
 
 ## Pendientes
 
-### [2026-09-27, puesta al día 2026-10-01] (coordinadora) — Decisión de publicación de 1.35.0: SEC-115/SEC-118 y hueco C, pendientes; P-119-A pendiente; **decisión 8 resuelta (sexta autorización): vuelta excepcional para QA-023-09, QA-023-10 y QA-023-11 en curso**; fichas 3 y 4 y decisiones 4 a 7 resueltas
+### [2026-09-27, puesta al día 2026-10-01] (coordinadora) — Decisión de publicación de 1.35.0: SEC-115/SEC-118 y hueco C, pendientes; P-119-A pendiente; **decisión 9 pendiente: la vuelta de la sexta autorización termina con QA no favorable por QA-023-13, y QA-023-10 sigue abierto**; fichas 3 y 4 y decisiones 4 a 8 resueltas
 
 - **Contexto:** el 2026-09-29 el propietario autorizó implementar SEC-047 (mitad 1 de REQ-023) y preparar el candidato v1.35.0 (§ Resueltas, entrada de esa fecha, texto literal). **Esa autorización NO acepta el aplazamiento de SEC-115 ni del hueco C**: los dos siguen pendientes aquí, con sus fichas finales abajo. El antiguo asunto 3 (SEC-047 y la celda de §13) queda resuelto por esa autorización; los asuntos 1 y 2 de la redacción del 2026-09-28 se sustituyen por las fichas, sin perder nada de lo que decían.
-- **Acción que impide (regla 2):** **publicar** 1.35.0 —tag, publicación, actualización de la instalación estable— hasta que el propietario decida las fichas 1 y 2 y P-119-A, y se complete la reparación de SEC-119 y O-11 con la vuelta de la decisión 8 (fichas 3 y 4 y decisiones 4 a 8 resueltas); y, mientras esta entrada esté aquí, **cerrar**: marcar **cualquier** REQ `completado` (`guard-completado`; deliberado). **No** impide **implementar** ni **probar** el candidato. **Parte afectada:** la publicación de 1.35.0 y el cierre de REQ-023 y REQ-031. **Evidencia:** la de cada ficha. **Qué lo resuelve:** la decisión del propietario sobre cada ficha.
+- **Acción que impide (regla 2):** **publicar** 1.35.0 —tag, publicación, actualización de la instalación estable— hasta que el propietario decida las fichas 1 y 2, P-119-A y la decisión 9, y se complete la reparación de SEC-119 y O-11 (fichas 3 y 4 y decisiones 4 a 8 resueltas); y, mientras esta entrada esté aquí, **cerrar**: marcar **cualquier** REQ `completado` (`guard-completado`; deliberado). **No** impide **implementar** ni **probar** el candidato. **Parte afectada:** la publicación de 1.35.0 y el cierre de REQ-023 y REQ-031. **Evidencia:** la de cada ficha. **Qué lo resuelve:** la decisión del propietario sobre cada ficha.
 
 **Ficha 1 — SEC-115 y SEC-118 (`instrumento`, abiertos, NO aceptados): un hook que no emite decisión —por tiempo (SEC-115) o por el tamaño de su propio motivo (SEC-118)— deja pasar el cierre entero.** *(SEC-118 añadido y fórmula de la limitación corregida el 2026-09-29, por R-045 §6.)*
 - **Consecuencia reproducida.** R-044-C sobre `cdcad5d` (2026-09-28, WSL2/Linux): `QA: pendiente (…)` con ≈ 255 KB de evidencia → deny en **73,6 s**; `Write` de 2 025 113 bytes → **80,2 s** (1 012 650 bytes → 20,5 s). CA-A16 (Claude Code CLI 2.1.272, `claude -p`, WSL2, un intento más un control `deny`, 2026-09-28): un hook que agota su timeout sin decidir **deja pasar la herramienta**. El REQ se cerraría con QA y seguridad pendientes: dejan de correr **todas** las puertas del cierre. **No comprobado** en la sesión interactiva del editor ni en Windows.
@@ -234,6 +234,44 @@
   - La v3b además ya midió parte de F7: el `cwd` sigue al `cd`.
 - **Trabajo que sigue mientras tanto:** ninguno de implementación ni de revisión. Esta vuelta queda registrada en el candidato con un commit local, y la evidencia en la rama local de evidencia. **El push de `cand/1.35.0` y el CI sobre la cabeza actual no se han hecho:** `origin` y el PR #59 siguen en `9596e39`. No hacen falta para decidir.
 
+**Decisión 9 — PENDIENTE (añadida el 2026-10-01): la vuelta de la sexta autorización termina con QA NO favorable por un hallazgo nuevo, QA-023-13; y QA-023-10 sigue abierto tras su parada. ¿Cómo sigue el candidato?**
+- **Qué ocurrió.** La vuelta se hizo entera: desarrollador, analista, host y QA con Opus (`docs/qa/REQ-023.md` § «Vuelta excepcional de la sexta autorización»; evidencia en la rama local de evidencia, `0d3d0c9`).
+  - **QA-023-09, cerrado.** La entrada del hook se lee campo a campo y entera (`cd6afa6`). Un `file_path` o un `tool_name` con LF es no determinable (CA-47 puntos 12 y 13). En el host real, con un `cwd` con salto de línea, las dos puertas juzgan la ruta pedida y el control legítimo pasa (`sec119-r6/`, `3eb279d`).
+  - **QA-023-11, cerrado.** CA-45 incorpora la v3b: el `cwd` sigue al `cd`, y R5 queda como límite de la comprobación en el host.
+  - **QA-023-10, abierto.** La optimización no alcanzó los 5 s (6,5–9,5 s en 131 072), se detuvo como mandaste y salió del candidato. Queda conservada como parche en la evidencia (`3b947a1`). El árbol final cuesta lo mismo que `43b948a`: 8,6–10,3 s según el desarrollador y 9,0–9,2 s según QA, frente a 2,9–7,2 s de `9596e39`. QA verificó que la parada fue fiel.
+  - **QA-023-13, nuevo** (`contrato` en REQ-007, `instrumento` en REQ-023). `arnes_sin_cr_transporte` recorta el CR final de cada campo, porque el `jq` de Windows termina las líneas en CRLF. Un CR que forma parte del nombre del `cwd` desaparece, y la puerta ancla las rutas relativas de `Bash` en otro directorio que el shell.
+    - **Medido a nivel de hook en la cabeza actual** (`evidencia-qa-r6/27-repro-CR-cwd.txt`): desde un directorio cuyo nombre termina en CR y enlaza a la raíz, el shell escribe en `<raíz>/src/a.ts`. Pero `echo x > src/a.ts` de la coordinadora y un `sed -i` que cierra un REQ en rojo salen **allow**, donde `9596e39` y 1.33.2 deniegan.
+    - **De dónde viene:** nace con el anclaje en el `cwd` que introdujo la reparación de SEC-119 (`104ffd1`). No es del delta de esta vuelta.
+    - **Qué exige:** un directorio con ese nombre, enlazado a la zona protegida, y un `cd` a él. Es ofuscación deliberada, no descuido. Alcanzable desde el host: sin medir.
+    - **Qué desmiente:** CA-47 punto 11 («anclado en el `cwd` entero») y CA-66 punto 5 («ninguno nuevo de deny a allow»).
+- **Acción que impide (regla 2):**
+  - la **determinación de seguridad** del delta de SEC-119/O-11: el auditor no firma sin QA favorable (§6), y no ha firmado nada desde R-045-A (`8745b3f`);
+  - **publicar** 1.35.0: QA-023-13 es un rodeo frente a lo publicado, y en las fichas 3 y 4 decidiste no publicar con un rodeo total aplazado;
+  - **cerrar** REQ-007.
+
+  **No** impide cerrar REQ-023, REQ-031 ni REQ-001 por clase (`QA: aprobado` sobre `9c53232`), pero lo impide ya la cola.
+  - **Parte afectada:** las rutas relativas de `Bash`, en las dos puertas, cuando el `cwd` termina en CR (QA-023-13); y el coste del análisis de `Bash` (QA-023-10).
+  - **Evidencia:** la citada arriba.
+  - **Qué lo resuelve:** tu decisión. La sexta autorización no abre otra vuelta automáticamente.
+- **9a — QA-023-13. Opciones:**
+  - **(A) Reparar fallando cerrado, en una vuelta excepcional acotada, sin reiniciar contadores.** El analista añade en CA-47 la causa, como hizo con el punto 12: un `cwd` cuyo texto contiene un CR no ancla una relativa, que pasa a ser no determinable. Otra técnica que preserve el CR del contenido la elige el desarrollador, si existe sin procesos nuevos. Después, desarrollador, QA y seguridad.
+    - **Consecuencia:** una vuelta más, de delta pequeño. Una escritura relativa por `Bash` desde un directorio con CR en el nombre se deniega, y eso en la práctica no existe.
+  - **(B) Aceptar la frontera del CR y declararla.** El analista la escribe en CA-47 y la añade como séptimo movimiento de deny a allow en CA-66 punto 5. Después, QA del texto y seguridad.
+    - **Consecuencia:** 1.35.0 publicaría un rodeo frente a 1.33.2 que exige ofuscación deliberada. Es coherente con «barandilla, no jaula» (§13), pero no con la línea que mantuviste en SEC-117 y SEC-119.
+- **9b — QA-023-10. Opciones:**
+  - **(A) Publicar con CA-54 incumplido, como residual declarado.** Dueños: `desarrollador` y `analista-requerimientos`. Vencimiento: la versión siguiente. Forzador: un hook de `Bash` muerto por tiempo, o una medición en Windows. Las notas ya lo declaran.
+    - **Consecuencia:** el análisis de `Bash` en el máximo tarda unos 9 s en WSL2, frente a 3–7 s en 1.33.2. No hay fallo en abierto medido: hay más de cuatro veces de margen hasta los 60 s. **Pero en Windows/MSYS no está medido**, y allí cada sentencia de bash cuesta más. Si el factor pasara de unas seis veces, el hook moriría por tiempo y dejaría pasar, que es la clase de SEC-115.
+  - **(B) Incorporar la optimización conservada** (6,5–9,5 s) y decidir el diseño del trabajo por destino.
+    - **Consecuencia:** sigue sin cumplir los 5 s. Reintroduce un refactor de las funciones de identidad de SEC-119, con otra vuelta de QA y de seguridad.
+  - **(C) Bajar el máximo, y el defecto, por la regla de CA-54** hasta que cumpla.
+    - **Consecuencia:** cambia, en todos los proyectos, qué comandos de `Bash` se deniegan por presupuesto. Bajar el defecto no es una medición: es una decisión.
+- **Recomendación de la coordinadora:**
+  - **9a (A).** El defecto es de identidad, la misma clase que reparaste en SEC-119, y fallar cerrado cuesta un delta pequeño.
+  - **9b (A),** con una condición antes de publicar: medir el caso del máximo en Windows/MSYS. Si se acerca a los 60 s, la decisión vuelve a ti con esa cifra.
+  - Las dos caben en una sola vuelta excepcional.
+- **Junto a esta decisión siguen pendientes:** la ficha 1 (SEC-115/SEC-118), la ficha 2 (C) y P-119-A. Ninguna está aceptada. Aceptar F7 no cubre QA-023-09 ni QA-023-13.
+- **Trabajo que sigue mientras tanto:** ninguno de implementación ni de revisión. La coordinadora sólo completa lo que la sexta autorización ya cubre: push, CI sobre la cabeza final y actualización del PR #59 en borrador.
+
 **Registrado, cerrado el 2026-09-30: QA-023-08** (`contrato`, baja, preexistente, contra REQ-007 CA-46 (b)). Lo cerró QA en la vuelta de la quinta autorización (`docs/qa/REQ-023.md` §9): CA-46 (b) está versionado y la puerta deniega todo `Edit`/`MultiEdit` sobre un REQ ilegible. *Texto original:* el criterio decía que con NUL en disco decide «la transición», y la puerta decidía si la edición menciona el estado terminal. Responsable: `analista-requerimientos` (write-back).
 
 - **Recomendación de la coordinadora (propuesta, no decisión):**
@@ -241,7 +279,7 @@
   - **QA-023-02 / SEC-117:** es de severidad crítica y de realismo no bajo, pero preexistente y ajeno al alcance de 1.35.0. **El auditor (R-045 §3) recomienda lo mismo que la coordinadora:** publicarlo declarado y abrir su REQ de reparación de inmediato, como parche propio, con revisión el 2026-10-06. Motivo: el defecto ya está en 1.33.2 y en `v1.34.0`, que son las versiones instaladas, así que retener 1.35.0 no protege a nadie y deja vivo el bypass por variante que 1.35.0 cierra dentro de su frontera.
     - **Condiciones del auditor:** notas correctas y ficha 1 corregida (ya hecho aquí). Además, conviene ejecutar el lado del CLI en una sesión real antes de reparar.
     - **REQ-001:** el auditor recomienda añadir `SEC-117 (instrumento)` a su `Hallazgos abiertos:` sin tocar su `Estado:`. REQ-001 se reabriría por §9 cuando el REQ de reparación versione CA-10/CA-11. QA pide que tu decisión sobre esta ficha lo resuelva de forma expresa. **Registrarlas aquí no las convierte en riesgos aceptados.**
-- **Espera:** decisión del propietario sobre las fichas 1 (SEC-115/SEC-118) y 2 (C) y sobre **P-119-A** (REQ-007, «Preguntas abiertas»). La ficha 4 y la decisión 7 se resolvieron en la quinta autorización (2026-09-30). Su vuelta terminó con QA no favorable, y la decisión 8 (sexta autorización, 2026-10-01) abrió la vuelta que la completa, en curso. La reparación de SEC-117 tiene QA favorable y seguridad aprobada (R-045-A, 2026-09-30), y SEC-117 quedó `mitigado`. La ficha 3 y la decisión 5 se resolvieron en la tercera autorización del 2026-09-29. La decisión 4 está resuelta y su corrección se hizo (`e7562e7`), con QA-023-05 cerrado. **Trabajo que sigue mientras tanto:** la vuelta de la sexta autorización (desarrollador → host → analista → QA → seguridad), que no depende de las fichas 1 y 2 ni de P-119-A. **Cerrar cualquier REQ queda pendiente** mientras esta entrada esté aquí.
+- **Espera:** decisión del propietario sobre las fichas 1 (SEC-115/SEC-118) y 2 (C), sobre **P-119-A** (REQ-007, «Preguntas abiertas») y sobre la **decisión 9**. La ficha 4 y la decisión 7 se resolvieron en la quinta autorización (2026-09-30). La decisión 8 (sexta autorización, 2026-10-01) cerró QA-023-09 y QA-023-11, pero su vuelta terminó con QA no favorable por QA-023-13, y no se abre otra sin tu decisión. La reparación de SEC-117 tiene QA favorable y seguridad aprobada (R-045-A, 2026-09-30), y SEC-117 quedó `mitigado`. La ficha 3 y la decisión 5 se resolvieron en la tercera autorización del 2026-09-29. La decisión 4 está resuelta y su corrección se hizo (`e7562e7`), con QA-023-05 cerrado. **Trabajo que sigue mientras tanto:** el que dice la decisión 9, es decir, sólo el push, el CI sobre la cabeza final y el PR #59 en borrador. **Cerrar cualquier REQ queda pendiente** mientras esta entrada esté aquí.
 
 ## Resueltas
 

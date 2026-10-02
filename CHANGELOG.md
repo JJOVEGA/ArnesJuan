@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-01 · Cola: decisión 9 (QA-023-13 y QA-023-10) con pregunta, opciones, recomendación y consecuencias, agrupada con las fichas 1 y 2 y P-119-A; sin otra vuelta
+> Origen: GitHub · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Decisión 9:**
+  - **9a, QA-023-13:** (A) reparar fallando cerrado, o (B) declarar la frontera del CR como séptimo movimiento.
+  - **9b, QA-023-10:** (A) residual declarado, (B) incorporar la optimización conservada, o (C) bajar el máximo y el defecto.
+  - **Recomendación:** 9a (A) y 9b (A), con una medición en Windows/MSYS antes de publicar.
+- **Avance (regla 6):** el bloqueo queda presentado con su alcance. Faltan la decisión del propietario, el CI de la cabeza final y el PR.
+
 ## [GitHub] — 2026-10-01 · Sexta autorización: QA sobre `9c53232` NO favorable — QA-023-09 y QA-023-11 cerrados; QA-023-10 abierto con la parada verificada como fiel; QA-023-13 nuevo (un CR al final del `cwd` se recorta y las puertas anclan en otro directorio: deny→allow frente a `9596e39` y 1.33.2); seguridad no despachada; decisión 9 en la cola
 > Origen: GitHub · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (lanzado con Opus, §5) y la coordinadora. Unos 387 k tokens en la comisión de QA (cifra del arnés).
 
