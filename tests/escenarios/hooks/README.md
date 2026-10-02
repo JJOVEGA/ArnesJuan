@@ -32,7 +32,7 @@ bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del cor
 ARNES_SONDA_CONTROLES=1 bash tests/escenarios/hooks/run.sh secciones/37-coste-del-escaner-7-*.sh
                                                          # los controles de medición de las sondas de coste
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1581 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1741 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`). La línea
 `Resultado:` cuenta **aparte** los `SKIP` que son **INCONCLUSO** —una sonda de coste que no acreditó
 nada en esa corrida— y los nombra debajo; el código de salida **no** depende de ellos
@@ -302,6 +302,10 @@ Tres reglas nacidas de fallos reales:
 | Integridad de la entrada (44) | con el mismo `cwd` con CR, lo que no depende de él —escrituras y cierres por ruta absoluta, `ls -la`, el `desarrollador` escribiendo código (RC1–RC6)—; la escritura relativa fuera del ámbito (RM1); y las mismas operaciones desde un `cwd` sin CR (RS1–RS3) | RC como siempre en los tres árboles; RM1 **deny** (de allow a deny, declarado); RS como cd6afa6, y RS3 (L8) **deny** en 9596e39 |
 | Integridad de la entrada (44) | un `file_path` con CR —el enlace dentro de la raíz `docs/l␍`, un `Edit` que cierra `REQ-901.md␍` en rojo cuando `REQ-901.md` está en verde, una ruta fuera del ámbito y un `file_path` que sólo es un CR (RF1–RF4)— y un `tool_name` con CR —`Bash␍` con `ls` y un `file_path` en `src/`, `Edit␍` que cierra un REQ en rojo, `Write␍` del `desarrollador`, `Bash␍` con `echo x > src/a.ts` (RT1–RT4)— | **deny**, como los que llevan un salto; en cd6afa6 y 9596e39 **allow** (el CR final se recortaba y se juzgaba otra ruta u otra herramienta), salvo RT4, **deny** en los tres |
 | Integridad de la entrada (44) | los motivos del CR, y `arnes_parse_input` con un CR final en el `tool_name`, el `cwd` y el `file_path` (P2) | dicen su causa y cómo corregirla, sin herramientas como salida; el CR se **cuenta** antes del transporte (en cd6afa6, recortado) |
+| Dependencia del proceso y CR del comando (45) | SEC-122, cara (a): un enlace corriente bajo `/dev/shm` hacia `requirements/` o `src/` —`Edit`, `Write`, `sed -i`, `echo >`, la edición no reconstruible— (S1–S6); y cara (b): un proyecto situado bajo `/dev/shm` —el enlace del último componente, el directorio enlazado y la existencia— (B1–B5) | **deny** donde designa un archivo protegido, como en cualquier otro sitio; contra **3bc7d3c** (fail-before) **allow**, y en la cara (b) **allow** lo que 9596e39 deniega; B3 y B5, lo legítimo que 3bc7d3c sobredenegaba, **allow**. Sólo en Linux; fuera, SKIP con motivo |
+| Dependencia del proceso y CR del comando (45) | lo que depende del proceso que abre la ruta —`/proc/self/cwd` desde el `cwd` de la entrada o sin él, `/proc/self/root`, un enlace a `/proc/self/cwd`, `/dev/fd/9/a.ts`, un `Write` a `/dev/stderr`— (P1–P9) y lo legítimo bajo `/dev`: `/dev/null`, `/dev/stderr`, `/dev/stdout`, `/dev/fd/2`, `tee /dev/stderr` (N1–N6) | por `Bash`, el directorio de trabajo se resuelve desde el `cwd` de la entrada (P1 **deny**, P2 **allow**); lo que depende del proceso y no se puede determinar, **deny** con motivo; un descriptor del shell, **allow** sin excepción por nombre; por el host, un descriptor es **deny** (P9, de allow a deny, declarado) |
+| Dependencia del proceso y CR del comando (45) | P-023-13-A: el CR final del comando y el que precede a un salto, por un enlace `docs/k␍` hacia `src/a.ts` y `docs/r␍` hacia un REQ en rojo (K1–K4); lo legítimo y los movimientos (K5–K8); el delimitador de heredoc con CR (H1–H6); y `guard-git` (G1–G3) | **deny** donde el shell escribe un archivo protegido (en 3bc7d3c y 9596e39, **allow**: el CR se perdía); K6 y G1 **allow** (de deny a allow, declarados: el shell escribe `app/a.ts␍`, y git rechaza `--hard␍`); el delimitador con CR **deny** con motivo |
+| Dependencia del proceso y CR del comando (45) | QA-023-14: `arnes_parse_input` con el CR final y el que precede a un salto en el `tool_name`, el `file_path` y el `command` (Q1), y con un `jq` que añade un CR a cada línea —emulación del de Windows, no Windows— (Q2, Q3) | los valores llegan **enteros** sin recorrerlos para reponer nada (en 3bc7d3c, los pierde); con la emulación, iguales y sin ningún CR de más |
 
 **Desde REQ-023 CA-13, un `Edit` de `requirements/` que la puerta no puede reconstruir se deniega antes
 que cualquier otra puerta.** Por eso los casos que miden otra puerta de `guard-completado` usan
@@ -319,6 +323,9 @@ La sección 44 también trae su propio emisor: pone en el `cwd` y en el agente s
 de línea incluidos, porque lo que mide es que ningún contenido de un campo desplace a los demás. Su
 bloque R (QA-023-13) mide el retorno de carro, que el transporte de jq retira del final de un campo y
 que por eso se cuenta antes; su árbol de fail-before es cd6afa6, no 43b948a.
+La sección 45 (octava autorización) trae el mismo emisor y su árbol de fail-before es 3bc7d3c. Las filas
+que dependen de `/dev/shm` o de `/proc` sólo se miden en Linux —donde se midió—; fuera salen SKIP con
+motivo, y las que necesitan un enlace con un retorno de carro en el nombre, también si no se puede crear.
 
 **Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
 falsea la máquina, el runner del CI y la carga. Los de arriba son **cocientes de duplicación**

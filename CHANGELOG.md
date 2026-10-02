@@ -2,6 +2,36 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-02 · Octava autorización, implementación (desarrollador): SEC-122 (las dos caras), QA-023-14 y P-023-13-A reparados a nivel de hook — ningún prefijo queda fuera de la identidad del destino y lo que depende del proceso que abre la ruta se detecta; la entrada se lee cruda y el CR de transporte sólo se retira si lo hay; el delimitador de heredoc con CR se deniega; sección 45 (1581 → 1741) — SIN VALIDAR
+> Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
+
+- **SEC-122** (`hooks/lib.sh`, identidad del destino):
+  - se retira la exclusión de `/dev/` y `/proc/`: esos destinos tienen lectura física, enlace del último componente y existencia, como cualquier otro;
+  - **lo que depende del proceso se detecta, no se enumera:** una resolución que aterriza en la entrada `/proc/<pid>` del proceso que resuelve depende de él;
+  - una ruta que atraviesa un enlace se rehace desde el `cwd` de la entrada si escribe el shell, o desde dentro de esa entrada propia si escribe el host o no hay `cwd` que ancle;
+  - por `Bash`, un descriptor del shell (`/dev/stderr`, `/dev/fd/N`) se juzga como descriptor, fuera de todo ámbito, sin excepción por su nombre y sin proceso. El enlace a un descriptor estándar se reconoce cambiando por un instante los descriptores 0 a 2 del hook. Por el host, un descriptor no es determinable, y todo lo demás que dependa del proceso tampoco.
+- **QA-023-14** (`arnes_parse_input`): la salida de `jq` se lee cruda, y la primera línea decide si hay CR de transporte que retirar. Se retira `_arnes_repone_cr`; los valores llegan enteros, con sus CR. Las marcas siguen saliendo de la cuenta sobre el valor crudo.
+- **P-023-13-A:**
+  - el texto del comando llega con sus CR y el analizador lo trata como el shell, como un carácter de palabra;
+  - donde no lo sigue —el delimitador de un heredoc— devuelve `ARNES_RC_CR` y las dos puertas deniegan con motivo. Mismo destinatario que el presupuesto: `guard-codigo`, a quien no es el agente de código; `guard-completado`, a todos.
+  - Sin reescribir el analizador.
+- **Movimientos, todos medidos** (`evidencia-dev-r8/`):
+  - **de deny a allow frente a 9596e39 y 1.33.2, por la propiedad:** un destino de `Bash` acabado en CR que no casa con un glob con sufijo (`app/a.ts␍` frente a `app/*.ts`); y `git reset --hard␍` y `git stash␍` en `guard-git`, que git rechaza (comprobado);
+  - **de allow a deny:** las dos caras de SEC-122; lo que depende del proceso (`/proc/self/cwd` por el host, `/dev/fd/9/a.ts`, `/proc/self/<pseudoarchivo>`, `Write /dev/stderr`); y el heredoc con delimitador CRLF, también el legítimo.
+- **Comprobado por el desarrollador, a nivel de hook en Linux/WSL2:**
+  - baterías propias en cuatro árboles;
+  - las de R-046 (s3, s4) y las de QA r7 (A, B, K, L) contra el candidato, iguales a 3bc7d3c salvo K1, K2, K6, K7 y K8, que pasan a deny;
+  - sección 45: 160/0, y contra los hooks de 3bc7d3c, 52 FAIL;
+  - banco completo: **1730 PASS, 0 FAIL, 11 SKIP**, cuadre 1741;
+  - autoprueba 117/0 y gates rc 0.
+- **Coste** (procedimiento registrado antes, `f224feb`):
+  - QA-023-14 desaparece: un `file_path` de 600 000 bytes con CR, 405 ms, frente a 83 929 ms en 3bc7d3c y 405 ms en cd6afa6;
+  - CA-54, informativo: sin cambio frente a 3bc7d3c; sigue sin cumplirse en el máximo;
+  - camino común: sin cambio;
+  - `/dev/stderr` sigue en 0 procesos añadidos (CA-48 (i.1)).
+- **sha256 (16 hex):** `lib.sh` 31176f7febf28631, `guard-codigo.sh` d41ad471ab53edb0, `guard-completado.sh` a2ee3e8186c65e0b, `guard.sh` y `guard-git.sh` sin cambios.
+- **Avance (regla 6):** el código de las tres reparaciones queda en el candidato. Faltan el write-back del analista (F3, CA-49, CA-66 punto 5, CA-47 puntos 7 y 11, `Archivos:` con la sección 45), QA y seguridad.
+
 ## [Interno] — 2026-10-02 · Octava autorización del propietario registrada (literal e íntegra, copia verificada con `diff`: 0 diferencias): reparación agrupada de SEC-122, QA-023-14, P-023-13-A y F3
 > Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 

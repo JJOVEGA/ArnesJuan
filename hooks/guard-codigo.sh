@@ -65,6 +65,11 @@ arnes_guard_codigo() {
       # con las mismas reglas que cualquier otra escritura. Al agente de codigo no le
       # estorba, porque a el ya se le permitia escribir.
       exceso=1; objetivo="(comando no analizable)"
+    elif [ "$rc" -eq "$ARNES_RC_CR" ]; then
+      # P-023-13-A: el delimitador de un heredoc lleva un retorno de carro y el analizador no puede
+      # seguirlo como el shell (`arnes_bash_sin_texto`). Mismo destinatario que el presupuesto: solo
+      # se prohibe a quien no es el agente de codigo.
+      exceso=2; objetivo="(comando no analizable)"
     else
       # EL MANIFIESTO SE LEE SOLO SI HAY UNA ESCRITURA QUE JUZGAR (QA-104).
       #
@@ -143,6 +148,9 @@ arnes_guard_codigo() {
     # el camino de la denegacion, que ya no es el camino comun (REQ-001, QA-016).
     arnes_techo_bash
     arnes_deny "ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande para analizarlo con garantia, asi que no se analizo y no se permite (intento de $quien). No es un veredicto sobre lo que hace el comando: es que la puerta no puede medirlo, y una puerta que no puede medir no deja pasar. El presupuesto de analisis vigente es de $ARNES_TECHO bytes y este comando lo supera. Salidas: usa un heredoc CITADO (<<'EOF'), que se descuenta entero y no tiene este techo; escribe el contenido en un archivo de script y ejecutalo; o parte el comando en trozos por debajo de $ARNES_TECHO bytes. El techo se puede SUBIR en .arnes/config.json con 'limites.bash_max_analisis' (bytes), hasta un maximo de $ARNES_BASH_MAX_MANIFIESTO bytes: por encima el analisis dejaria de responder antes de que el hook muera, y un hook muerto no deniega."
+  fi
+  if [ "$exceso" -eq 2 ]; then
+    arnes_deny "ARNES: el comando lleva un heredoc cuyo delimitador contiene un retorno de carro. Para el shell ese retorno de carro es parte del delimitador, y el analisis de esta puerta no puede seguirlo asi: no sabria donde acaba el cuerpo ni que escribe lo que va detras, asi que no lo analiza y no lo permite (intento de $quien). Una puerta que no puede medir no deja pasar, y el retorno de carro no se retira en silencio para juzgar otro comando (REQ-007 CA-47, punto 11). Para corregirlo, escribe el comando sin retornos de carro: lineas terminadas solo en salto de linea."
   fi
   if [ "$nodet" -eq 1 ]; then
     # REQ-007 CA-47, punto 7: la ruta tal como llego (acotada), que no se pudo determinar, por

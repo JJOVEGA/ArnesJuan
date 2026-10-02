@@ -1647,7 +1647,13 @@ done
 # cd6afa6 (fail-before) y contra 9596e39, y en la candidata por guard.sh las 8 que juzga un guardián; los
 # motivos del CR; y P2, en la candidata y en cd6afa6. Las 167 de antes no cambian ni de nombre ni de
 # veredicto.
-CASOS_ESPERADOS=1581
+# Y 1581 → 1741 por la octava autorización (SEC-122, P-023-13-A y QA-023-14): +160 en la sección 45,
+# nueva —ningún prefijo queda fuera de la identidad del destino, lo que depende del proceso que abre la
+# ruta no recibe permiso por esa incertidumbre, el texto del comando llega con sus retornos de carro y
+# la lectura de la entrada no recorre el valor para reponerlos—: 43 filas, cada una en la candidata,
+# contra 3bc7d3c (fail-before) y contra 9596e39, y en la candidata por guard.sh las que juzga un
+# guardián; y Q1–Q3, el análisis de la entrada. Ninguna sección existente cambia su número.
+CASOS_ESPERADOS=1741
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
