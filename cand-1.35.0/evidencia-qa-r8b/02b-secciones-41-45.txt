@@ -1,0 +1,5 @@
+sección 41: 169 PASS, 0 FAIL, 0 SKIP
+sección 42: 29 PASS, 0 FAIL, 0 SKIP
+sección 43: 155 PASS, 0 FAIL, 0 SKIP
+sección 44: 247 PASS, 0 FAIL, 0 SKIP
+sección 45: 206 PASS, 0 FAIL, 0 SKIP

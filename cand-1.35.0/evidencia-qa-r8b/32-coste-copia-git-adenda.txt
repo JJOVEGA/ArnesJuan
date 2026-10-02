@@ -1,0 +1,18 @@
+== ADENDA coste de la copia sin CR en guard-git (dentro del techo) (2026-10-02T14:16:28-06:00); loadavg 0.33 0.70 0.72 ==
+  forma=D N=  16384 bytes=  16380 CAND      406 ms allow
+  forma=D N=  16384 bytes=  16380 B922      305 ms allow
+  forma=A N=  16384 bytes=  16371 CAND      105 ms allow
+  forma=A N=  16384 bytes=  16371 B922      105 ms allow
+  forma=D N=  32768 bytes=  32760 CAND      706 ms allow
+  forma=D N=  32768 bytes=  32760 B922      404 ms allow
+  forma=A N=  32768 bytes=  32759 CAND      204 ms allow
+  forma=A N=  32768 bytes=  32759 B922      204 ms allow
+  forma=D N=  65536 bytes=  65532 CAND     1207 ms allow
+  forma=D N=  65536 bytes=  65532 B922      705 ms allow
+  forma=A N=  65536 bytes=  65535 CAND      206 ms allow
+  forma=A N=  65536 bytes=  65535 B922      205 ms allow
+  forma=D N= 131072 bytes= 131064 CAND     2408 ms allow
+  forma=D N= 131072 bytes= 131064 B922     1508 ms allow
+  forma=A N= 131072 bytes= 131070 CAND      304 ms allow
+  forma=A N= 131072 bytes= 131070 B922      405 ms allow
+== fin 2026-10-02T14:16:37-06:00; loadavg 0.38 0.71 0.72 ==

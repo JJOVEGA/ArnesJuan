@@ -1,0 +1,4 @@
+== QA-023-14: funciones de lectura idénticas a 9220c71 ==
+arnes_parse_input: cand 7ab88bf230993e6c · 9220c71 7ab88bf230993e6c
+arnes_sin_cr_transporte: cand c6329fb905350194 · 9220c71 c6329fb905350194
+hunks de lib.sh frente a 9220c71: 1 (función: arnes_id_pertenece() {)

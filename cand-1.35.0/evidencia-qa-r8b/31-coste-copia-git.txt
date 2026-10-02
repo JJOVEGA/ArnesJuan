@@ -1,0 +1,26 @@
+== coste de la copia sin CR en guard-git (2026-10-02T14:15:47-06:00); loadavg 0.32 0.76 0.74 ==
+  forma=A N=  65536 bytes=  65535 CAND      206 ms allow
+  forma=A N=  65536 bytes=  65535 B922      205 ms allow
+  forma=B N=  65536 bytes=  65536 CAND      205 ms allow
+  forma=B N=  65536 bytes=  65536 B922      204 ms allow
+  forma=C N=  65536 bytes=  65541 CAND      106 ms deny
+  forma=C N=  65536 bytes=  65541 B922      105 ms deny
+  forma=D N=  65536 bytes=  65532 CAND     1206 ms allow
+  forma=D N=  65536 bytes=  65532 B922      807 ms allow
+  forma=A N= 131072 bytes= 131070 CAND      105 ms deny
+  forma=A N= 131072 bytes= 131070 B922      105 ms deny
+  forma=B N= 131072 bytes= 131072 CAND      104 ms deny
+  forma=B N= 131072 bytes= 131072 B922      104 ms deny
+  forma=C N= 131072 bytes= 131077 CAND      106 ms deny
+  forma=C N= 131072 bytes= 131077 B922      106 ms deny
+  forma=D N= 131072 bytes= 131064 CAND      105 ms deny
+  forma=D N= 131072 bytes= 131064 B922      106 ms deny
+  forma=A N= 262144 bytes= 262140 CAND      204 ms deny
+  forma=A N= 262144 bytes= 262140 B922      206 ms deny
+  forma=B N= 262144 bytes= 262144 CAND      206 ms deny
+  forma=B N= 262144 bytes= 262144 B922      205 ms deny
+  forma=C N= 262144 bytes= 262149 CAND      206 ms deny
+  forma=C N= 262144 bytes= 262149 B922      206 ms deny
+  forma=D N= 262144 bytes= 262140 CAND      204 ms deny
+  forma=D N= 262144 bytes= 262140 B922      206 ms deny
+== fin 2026-10-02T14:15:53-06:00; loadavg 0.35 0.75 0.74 ==

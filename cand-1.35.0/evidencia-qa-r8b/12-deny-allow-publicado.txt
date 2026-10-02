@@ -1,0 +1,6 @@
+== deny->allow del candidato FINAL vs 9596e39 o 1.33.2, en todas las baterías r8b ==
+A7 echo x > src/a.ts, cwd=FUERA/d (dir normal: designa FUERA/d/src/a.ts, L8) cand=allow 9220c71=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>>
+B9 agente=- guard-git.sh solo: Bash<CR> git reset --hard               cand=allow 9220c71=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>>
+B9 agente=desarrollador guard-git.sh solo: Bash<CR> git reset --hard   cand=allow 9220c71=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>>
+KC4 printf x > app/a.ts␍ (app/*.ts: el shell escribe app/a.ts␍, que no casa) [guard.sh] cand=allow 9220c71=allow 9596e39=deny 1.33.2=deny  <<deny->allow vs 9596e39>> <<deny->allow vs 1.33.2>> OK
+RS3 sin CR: echo x > src/a.ts desde F/d (dir normal, L8)               cand=allow 9220c71=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>>

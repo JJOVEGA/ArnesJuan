@@ -1,0 +1,7 @@
+== Árboles (QA r8b, 2026-10-02T14:07:13-06:00) ==
+9220c71: oid a63655339ddee8f6d58ea7eee8cfc39c436d7b21 · 10 archivos, 0 distintos
+9220c71:hooks == 77d87b4:hooks == c877246:hooks: sí
+reutilizados de r8 (verificados por oid allí): 3bc7d3c, 9596e39, cd6afa6, v1.33.2 en /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r8/arb
+cand: HEAD 5669a2c, HEAD:hooks f7d6ae7ad968b4cb496e998ca57577b0ccaa38e6 = befc17a:hooks f7d6ae7ad968b4cb496e998ca57577b0ccaa38e6; git diff vacío: sí
+sha256: lib.sh 565b3c89bd82cb70 guard-git f65edc844cac31b2 guard.sh 2e7ec8cb189d025c guard-codigo d41ad471ab53edb0 guard-completado a2ee3e8186c65e0b
+cambian frente a 9220c71: hooks/guard-git.sh hooks/lib.sh 

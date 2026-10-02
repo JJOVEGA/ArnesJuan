@@ -1,0 +1,16 @@
+== Prueba de los campos sobre copia, repetida (la primera, marcada INSTRUMENTO-DEFECTUOSO, no cerraba de verdad) (2026-10-02T14:19:02-06:00) ==
+Ningún valor anómalo: la máquina lee los 4 REQ como están escritos.
+REQ-007 cierre simulado (cola vacía, gates true): deny :: ARNES: no se puede completar 'requirements/REQ-007.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazg
+REQ-023 cierre simulado (cola vacía, gates true): allow :: 
+REQ-031 cierre simulado (cola vacía, gates true): allow :: 
+REQ-001 cierre simulado (cola vacía, gates true): allow :: 
+-- REQ-007 con QA y Seguridad forzados a aprobado: deben bloquear sólo los contrato que quedan (QA-114 el primero)
+deny :: ARNES: no se puede completar 'requirements/REQ-007.md': el hallazgo 'qa-114' es de clase 'contrato' y bloquea el cierre.
+-- claves de control únicas:
+REQ-007: 6
+REQ-023: 6
+REQ-031: 6
+REQ-001: 6
+-- la puerta instalada (1.33.2) acepta las ediciones de cabecera sin aviso de vocabulario:
+REQ-007 QA: edición -> allow, sin aviso
+REQ-023 QA: edición -> allow, sin aviso

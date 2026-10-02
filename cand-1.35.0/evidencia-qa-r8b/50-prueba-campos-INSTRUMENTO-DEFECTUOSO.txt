@@ -1,0 +1,13 @@
+== Prueba de los campos sobre copia (2026-10-02T14:18:38-06:00), puerta del candidato ==
+Ningún valor anómalo: la máquina lee los 4 REQ como están escritos.
+REQ-007 cierre simulado: allow :: 
+REQ-023 cierre simulado: allow :: 
+REQ-031 cierre simulado: allow :: 
+REQ-001 cierre simulado: allow :: 
+-- REQ-007 con QA y Seguridad forzados a aprobado (copia): sólo deben bloquear los contrato que quedan
+deny :: ARNES: no se puede completar 'requirements/REQ-007.md': el hallazgo 'qa-114' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o recl
+-- claves de control únicas en la cabecera de cada copia:
+REQ-007: 6
+REQ-023: 6
+REQ-031: 6
+REQ-001: 6

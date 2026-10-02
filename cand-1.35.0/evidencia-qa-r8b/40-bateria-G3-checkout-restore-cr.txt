@@ -1,0 +1,17 @@
+== Batería G3 (QA r8) 2026-10-02T14:12:43-06:00; git version 2.53.0; repo: a.txt=v2 (modificado), u.txt sin seguimiento ==
+G9 git checkout .<CR> (CR en el pathspec) [guard.sh]                       cand=deny 9220c71=allow 9596e39=deny 1.33.2=deny  [allow->deny vs 9220c71]
+      motivo(cand): ARNES:\ \'git\ checkout\ .\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifie
+      git (defecto): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 
+      git (immediate): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 
+G13 git checkout -- .<CR> [guard.sh]                                       cand=deny 9220c71=allow 9596e39=deny 1.33.2=deny  [allow->deny vs 9220c71]
+      motivo(cand): ARNES:\ \'git\ checkout\ --\ .\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ mani
+      git (defecto): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 
+      git (immediate): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 
+G12 git restore .<CR> [guard.sh]                                           cand=deny 9220c71=allow 9596e39=deny 1.33.2=deny  [allow->deny vs 9220c71]
+      motivo(cand): ARNES:\ \'git\ restore\ .\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifies
+      git (defecto): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 
+      git (immediate): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 
+G17 git checkout HEAD .<CR> [guard.sh]                                     cand=deny 9220c71=allow 9596e39=deny 1.33.2=deny  [allow->deny vs 9220c71]
+      motivo(cand): ARNES:\ \'git\ checkout\ HEAD\ .\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ ma
+      git (defecto): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 
+      git (immediate): rc=1 · a.txt=v2 u.txt=presente · error: pathspec '.?' did not match any file(s) known to git 

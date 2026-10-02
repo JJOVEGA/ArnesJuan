@@ -1,0 +1,45 @@
+== Batería G (QA r8) 2026-10-02T14:12:37-06:00; git version 2.53.0; estado inicial de cada repo: a.txt=v2 (modificado), u.txt sin seguimiento, stash vacío ==
+G2c git stash (control) [guard.sh]                                         cand=deny 9220c71=deny 9596e39=deny 1.33.2=deny 
+      motivo(cand): ARNES:\ \'git\ stash\ \'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ 
+      git (defecto): rc=0 · a.txt=v1 u.txt=presente stash=1 · 
+      git (immediate): rc=0 · a.txt=v1 u.txt=presente stash=1 · 
+G4 git stash<CR> [guard.sh]                                                cand=deny 9220c71=allow 9596e39=deny 1.33.2=deny  [allow->deny vs 9220c71]
+      motivo(cand): ARNES:\ \'git\ stash\ \'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ 
+      git (defecto): rc=1 · a.txt=v2 u.txt=presente stash=0 · git: 'stash ' is not a git command. See 'git --help'.  The most similar command is 	stash 
+      git (immediate): rc=0 · a.txt=v1 u.txt=presente stash=1 · WARNING: You called a Git command named 'stash ', which does not exist. Continuing under the assumption that you meant 'stash'. 
+G4b git stash<CR> push [guard.sh]                                          cand=deny 9220c71=allow 9596e39=allow 1.33.2=allow  [allow->deny vs 9220c71]
+      motivo(cand): ARNES:\ \'git\ stash\ push\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifie
+      git (defecto): rc=1 · a.txt=v2 u.txt=presente stash=0 · git: 'stash ' is not a git command. See 'git --help'.  The most similar command is 	stash 
+      git (immediate): rc=0 · a.txt=v1 u.txt=presente stash=1 · WARNING: You called a Git command named 'stash ', which does not exist. Continuing under the assumption that you meant 'stash'. 
+G6 git clean<CR> -f [guard.sh]                                             cand=deny 9220c71=allow 9596e39=allow 1.33.2=allow  [allow->deny vs 9220c71]
+      motivo(cand): ARNES:\ \'git\ clean\ -f\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiest
+      git (defecto): rc=1 · a.txt=v2 u.txt=presente stash=0 · git: 'clean ' is not a git command. See 'git --help'.  The most similar command is 	clean 
+      git (immediate): rc=0 · a.txt=v2 u.txt=BORRADO stash=0 · WARNING: You called a Git command named 'clean ', which does not exist. Continuing under the assumption that you meant 'clean'. 
+G7 git clean -f<CR> [guard.sh]                                             cand=deny 9220c71=deny 9596e39=deny 1.33.2=deny 
+      motivo(cand): $'ARNES: \'git clean -f\r\' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, y esta orden los borra sin dejar rastro — git no puede devolver lo que nunca se comiteo. Lo prohibe el manifies'
+      git (defecto): rc=129 · a.txt=v2 u.txt=presente stash=0 · error: unknown switch `?' usage: git clean [-d] [-f] [-i] [-n] [-q] [-e <pattern>] [-x | -X] [--] [<pathspec>...]      -q, --[no-]quiet      do not pr
+      git (immediate): rc=129 · a.txt=v2 u.txt=presente stash=0 · error: unknown switch `?' usage: git clean [-d] [-f] [-i] [-n] [-q] [-e <pattern>] [-x | -X] [--] [<pathspec>...]      -q, --[no-]quiet      do not pr
+G8 git checkout<CR> . [guard.sh]                                           cand=deny 9220c71=allow 9596e39=allow 1.33.2=allow  [allow->deny vs 9220c71]
+      motivo(cand): ARNES:\ \'git\ checkout\ .\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifie
+      git (defecto): rc=1 · a.txt=v2 u.txt=presente stash=0 · git: 'checkout ' is not a git command. See 'git --help'.  The most similar command is 	checkout 
+      git (immediate): rc=0 · a.txt=v1 u.txt=presente stash=0 · WARNING: You called a Git command named 'checkout ', which does not exist. Continuing under the assumption that you meant 'checkout'. Updated 1 path f
+G9 git checkout .<CR> [guard.sh]                                           cand=deny 9220c71=allow 9596e39=deny 1.33.2=deny  [allow->deny vs 9220c71]
+      motivo(cand): ARNES:\ \'git\ checkout\ .\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifie
+      git (defecto): rc=1 · a.txt=v2 u.txt=presente stash=0 · error: pathspec '.?' did not match any file(s) known to git 
+      git (immediate): rc=1 · a.txt=v2 u.txt=presente stash=0 · error: pathspec '.?' did not match any file(s) known to git 
+G10 git restore<CR> . [guard.sh]                                           cand=deny 9220c71=allow 9596e39=allow 1.33.2=allow  [allow->deny vs 9220c71]
+      motivo(cand): ARNES:\ \'git\ restore\ .\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifies
+      git (defecto): rc=1 · a.txt=v2 u.txt=presente stash=0 · git: 'restore ' is not a git command. See 'git --help'.  The most similar command is 	restore 
+      git (immediate): rc=0 · a.txt=v1 u.txt=presente stash=0 · WARNING: You called a Git command named 'restore ', which does not exist. Continuing under the assumption that you meant 'restore'. 
+G1 git reset --hard<CR> [guard.sh]                                         cand=deny 9220c71=allow 9596e39=deny 1.33.2=deny  [allow->deny vs 9220c71]
+      motivo(cand): ARNES:\ \'git\ reset\ --hard\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manif
+      git (defecto): rc=129 · a.txt=v2 u.txt=presente stash=0 · error: unknown option `hard?' usage: git reset [--mixed | --soft | --hard | --merge | --keep] [-q] [<commit>]    or: git reset [-q] [<tree-ish>] [--] 
+      git (immediate): rc=129 · a.txt=v2 u.txt=presente stash=0 · error: unknown option `hard?' usage: git reset [--mixed | --soft | --hard | --merge | --keep] [-q] [<commit>]    or: git reset [-q] [<tree-ish>] [--] 
+G11 git reset<CR> --hard [guard.sh]                                        cand=deny 9220c71=allow 9596e39=allow 1.33.2=allow  [allow->deny vs 9220c71]
+      motivo(cand): ARNES:\ \'git\ reset\ --hard\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manif
+      git (defecto): rc=1 · a.txt=v2 u.txt=presente stash=0 · git: 'reset ' is not a git command. See 'git --help'.  The most similar command is 	reset 
+      git (immediate): rc=0 · a.txt=v1 u.txt=presente stash=0 · WARNING: You called a Git command named 'reset ', which does not exist. Continuing under the assumption that you meant 'reset'. 
+G2 git reset --hard (control) [guard.sh]                                   cand=deny 9220c71=deny 9596e39=deny 1.33.2=deny 
+      motivo(cand): ARNES:\ \'git\ reset\ --hard\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manif
+      git (defecto): rc=0 · a.txt=v1 u.txt=presente stash=0 · 
+      git (immediate): rc=0 · a.txt=v1 u.txt=presente stash=0 · 

@@ -1,0 +1,70 @@
+== bateria-k (2026-10-02T14:12:19-06:00); 6.18.33.2-microsoft-standard-WSL2; bash 5.3.9(1)-release; jq-1.8.2; git version 2.53.0 ==
+-- K: los casos medidos por el desarrollador y por QA (r7), mas variantes --
+K1 printf x > k␍ (CR final del command), cwd docs [guard.sh]             cand=deny 9220c71=deny 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detecció
+K2 printf x > k␍␊true (CR antes de un salto), cwd docs [guard.sh]      cand=deny 9220c71=deny 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detecció
+K3 printf x > src/a.ts␍ (el recortado era codigo) [guard.sh]             cand=deny 9220c71=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): $'ARNES: el comando escribe en \'src/a.ts\r\', que es código de la app; sólo el agente \'desarrollador\' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no salta la regla: delega el cambio en \'desarrollador\' (ver AGENTS.md §5). Nota: la detecci'
+K4 printf x > k␍z (CR en medio), cwd docs [guard.sh]                     cand=allow 9220c71=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+K6 printf x > <raiz>/docs/k␍ (absoluto) [guard.sh]                       cand=deny 9220c71=deny 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detecció
+K7 sed -i que cierra por docs/r␍ (enlace al REQ en rojo) [guard.sh]      cand=deny 9220c71=deny 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ARNES:\ este\ comando\ escribe\ en\ \'requirements/REQ-900.md\'\ y\ menciona\ \'completado\'.\ La\ transicion\ de\ estado\ de\ un\ REQ\ no\ puede\ juzgarse\ desde\ Bash:\ las\ puertas\ A2/A3\ necesitan\ el\ contenido\ resultante\ \(veredictos\ de\ QA\ y\ Seguridad\,\ cola\ de\ PENDING_APPROVAL.md\ y\ q
+K8 echo x | tee docs/k␍ [guard.sh]                                       cand=deny 9220c71=deny 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detecció
+K9 cp /etc/hostname docs/k␍ [guard.sh]                                   cand=deny 9220c71=deny 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detecció
+K10 printf x > k␍␍ (dos CR finales) [guard.sh]                         cand=allow 9220c71=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+K11 printf x > k␍ por guard-codigo solo [guard-codigo.sh]                cand=deny 9220c71=deny 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detecció
+K12 sed -i por docs/r␍ por guard-completado solo [guard-completado.sh]   cand=deny 9220c71=deny 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ARNES:\ este\ comando\ escribe\ en\ \'requirements/REQ-900.md\'\ y\ menciona\ \'completado\'.\ La\ transicion\ de\ estado\ de\ un\ REQ\ no\ puede\ juzgarse\ desde\ Bash:\ las\ puertas\ A2/A3\ necesitan\ el\ contenido\ resultante\ \(veredictos\ de\ QA\ y\ Seguridad\,\ cola\ de\ PENDING_APPROVAL.md\ y\ q
+K13 desarrollador: printf x > k␍ (puede escribir codigo) [guard.sh]      cand=allow 9220c71=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+-- Lo legitimo con CR en el texto: se juzga lo que el shell escribe --
+KC1 printf x > docs/n.md␍ (escribe docs/n.md␍, fuera) [guard.sh]       cand=allow 9220c71=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+KC2 ls -la␍ [guard.sh]                                                   cand=allow 9220c71=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+KC3 echo hola␍␊ls␍␊ (comando CRLF sin escrituras) [guard.sh]       cand=allow 9220c71=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+KC4 printf x > app/a.ts␍ (app/*.ts: el shell escribe app/a.ts␍, que no casa) [guard.sh] cand=allow 9220c71=allow 9596e39=deny 1.33.2=deny  <<deny->allow vs 9596e39>> <<deny->allow vs 1.33.2>> OK
+      motivo(cand): ''
+KC5 printf x > app/a.ts (control: casa app/*.ts) [guard.sh]                cand=deny 9220c71=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'app/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detecció
+-- H: el delimitador de un heredoc con CR (el analizador no lo sigue: se deniega) --
+H1 heredoc CRLF citado y luego echo > src/a.ts [guard.sh]                  cand=deny 9220c71=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ el\ comando\ lleva\ un\ heredoc\ cuyo\ delimitador\ contiene\ un\ retorno\ de\ carro.\ Para\ el\ shell\ ese\ retorno\ de\ carro\ es\ parte\ del\ delimitador\,\ y\ el\ analisis\ de\ esta\ puerta\ no\ puede\ seguirlo\ asi:\ no\ sabria\ donde\ acaba\ el\ cuerpo\ ni\ que\ escribe\ lo\ que\ va\ detras\,\ 
+H2 heredoc CRLF citado a docs/x.md (legitimo: de allow a deny) [guard.sh]  cand=deny 9220c71=deny 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ARNES:\ el\ comando\ lleva\ un\ heredoc\ cuyo\ delimitador\ contiene\ un\ retorno\ de\ carro.\ Para\ el\ shell\ ese\ retorno\ de\ carro\ es\ parte\ del\ delimitador\,\ y\ el\ analisis\ de\ esta\ puerta\ no\ puede\ seguirlo\ asi:\ no\ sabria\ donde\ acaba\ el\ cuerpo\ ni\ que\ escribe\ lo\ que\ va\ detras\,\ 
+H3 heredoc CRLF sin citar con $(echo > src/a.ts) [guard.sh]                cand=deny 9220c71=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ el\ comando\ lleva\ un\ heredoc\ cuyo\ delimitador\ contiene\ un\ retorno\ de\ carro.\ Para\ el\ shell\ ese\ retorno\ de\ carro\ es\ parte\ del\ delimitador\,\ y\ el\ analisis\ de\ esta\ puerta\ no\ puede\ seguirlo\ asi:\ no\ sabria\ donde\ acaba\ el\ cuerpo\ ni\ que\ escribe\ lo\ que\ va\ detras\,\ 
+H4 delimitador que EMPIEZA por CR (preexistente: las comillas del cuerpo) [guard.sh] cand=deny 9220c71=deny 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ARNES:\ el\ comando\ lleva\ un\ heredoc\ cuyo\ delimitador\ contiene\ un\ retorno\ de\ carro.\ Para\ el\ shell\ ese\ retorno\ de\ carro\ es\ parte\ del\ delimitador\,\ y\ el\ analisis\ de\ esta\ puerta\ no\ puede\ seguirlo\ asi:\ no\ sabria\ donde\ acaba\ el\ cuerpo\ ni\ que\ escribe\ lo\ que\ va\ detras\,\ 
+H5 heredoc con CR solo en el cuerpo (delimitador limpio) [guard.sh]        cand=allow 9220c71=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+H6 desarrollador: H2 por guard-codigo (le estaba permitido escribir) [guard-codigo.sh] cand=allow 9220c71=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+H7 desarrollador: H2 por guard.sh (guard-completado lo deniega a todos) [guard.sh] cand=deny 9220c71=deny 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ARNES:\ el\ comando\ lleva\ un\ heredoc\ cuyo\ delimitador\ contiene\ un\ retorno\ de\ carro.\ Para\ el\ shell\ ese\ retorno\ de\ carro\ es\ parte\ del\ delimitador\,\ y\ el\ analisis\ de\ esta\ puerta\ no\ puede\ seguirlo\ asi:\ no\ sabria\ donde\ acaba\ el\ cuerpo\ ni\ que\ escribe\ lo\ que\ va\ detras\,\ 
+-- G: guard-git con el CR (el comando que se juzga es el que git recibe) --
+G1 git reset --hard␍ (git lo rechaza: opcion desconocida) [guard.sh]     cand=deny 9220c71=allow 9596e39=deny 1.33.2=deny  [allow->deny vs 9220c71] ESPERADO=allow
+      motivo(cand): ARNES:\ \'git\ reset\ --hard\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manif
+G2 git reset --hard (control) [guard.sh]                                   cand=deny 9220c71=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ \'git\ reset\ --hard\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manif
+G3 git reset --hard ␍ (el CR es otro argumento: --hard se ve) [guard.sh] cand=deny 9220c71=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): $'ARNES: \'git reset --hard \r\' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, y esta orden los borra sin dejar rastro — git no puede devolver lo que nunca se comiteo. Lo prohibe el man'
+G4 git stash␍ (git: no es un comando) [guard.sh]                         cand=deny 9220c71=allow 9596e39=deny 1.33.2=deny  [allow->deny vs 9220c71] ESPERADO=allow
+      motivo(cand): ARNES:\ \'git\ stash\ \'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ 
+G5 echo␍␊git clean -fd (la segunda orden se ve) [guard.sh]             cand=deny 9220c71=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ \'git\ clean\ -fd\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifies
+-- El shell y git, de verdad (arbol aparte) --
+   K1: src/a.ts contiene: INTRUSO
+   KC1: docs contiene: $'k\r' $'n.md\r' 
+   H1: src/a.ts contiene: x
+   $'git reset --hard\r' rc=0 -> f=CAMBIO u.txt=sigue stash=0
+   $'git stash\r' rc=0 -> f=CAMBIO u.txt=sigue stash=0
+   $'git clean -fd\r' rc=0 -> f=CAMBIO u.txt=sigue stash=0

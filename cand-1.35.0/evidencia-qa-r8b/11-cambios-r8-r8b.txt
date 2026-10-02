@@ -1,0 +1,28 @@
+== Cambios de decisión del candidato: r8 (código 9220c71) -> r8b (código befc17a) ==
+-- 10-rerun-bateria-s122.txt (filas r8=48 r8b=48)
+-- 10-rerun-bateria-k.txt (filas r8=29 r8b=29)
+   G1 git reset --hard␍ (git lo rechaza: opcion desconocida) [guard.sh]: allow -> deny
+   G4 git stash␍ (git: no es un comando) [guard.sh]: allow -> deny
+-- 10-rerun-bateria-extra.txt (filas r8=10 r8b=10)
+-- 40-bateria-G-git.txt (filas r8=11 r8b=11)
+   G1 git reset --hard<CR> [guard.sh]: allow -> deny
+   G10 git restore<CR> . [guard.sh]: allow -> deny
+   G11 git reset<CR> --hard [guard.sh]: allow -> deny
+   G4 git stash<CR> [guard.sh]: allow -> deny
+   G4b git stash<CR> push [guard.sh]: allow -> deny
+   G6 git clean<CR> -f [guard.sh]: allow -> deny
+   G8 git checkout<CR> . [guard.sh]: allow -> deny
+   G9 git checkout .<CR> [guard.sh]: allow -> deny
+-- 40-bateria-G3-checkout-restore-cr.txt (filas r8=4 r8b=4)
+   G12 git restore .<CR> [guard.sh]: allow -> deny
+   G13 git checkout -- .<CR> [guard.sh]: allow -> deny
+   G17 git checkout HEAD .<CR> [guard.sh]: allow -> deny
+   G9 git checkout .<CR> (CR en el pathspec) [guard.sh]: allow -> deny
+-- 40-bateria-X-descr-en-scope.txt (filas r8=7 r8b=7)
+   X-D1 coordinadora echo x > src/log (src/log -> /dev/stderr) [guard.sh]: allow -> deny
+   X-D2 coordinadora echo x > src/log por guard-codigo [guard-codigo.sh]: allow -> deny
+-- 20-r7-bateria-A-repro.txt (filas r8=11 r8b=11)
+-- 20-r7-bateria-B-ruptura.txt (filas r8=66 r8b=66)
+-- 20-r7-bateria-K-texto-bash.txt (filas r8=17 r8b=17)
+-- 20-r7-bateria-L-legitimo.txt (filas r8=0 r8b=0)
+-- 20-r7-bateria-M-manifiesto.txt (filas r8=17 r8b=17)

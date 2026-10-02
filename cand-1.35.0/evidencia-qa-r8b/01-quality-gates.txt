@@ -1,0 +1,6 @@
+== Quality gates sobre 5669a2c (2026-10-02T14:07:13-06:00) ==
+bash -n hooks/tools rc=0
+hooks.json rc=0
+plugin/marketplace rc=0
+bash -n seccion45 rc=0
+bash -n run.sh rc=0
